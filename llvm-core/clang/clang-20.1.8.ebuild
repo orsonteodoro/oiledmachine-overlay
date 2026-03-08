@@ -1,5 +1,5 @@
 # Copyright 2022-2025 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -54,7 +54,7 @@ cet debug default-fortify-source-2 default-fortify-source-3 default-full-relro
 default-partial-relro default-ssp-buffer-size-4 default-stack-clash-protection
 doc +extra hardened hardened-compat ieee-long-double +pie ssp +static-analyzer
 test xml
-ebuild_revision_11
+ebuild_revision_13
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -594,6 +594,9 @@ _src_configure() {
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
+
+	# Workaround for bug #968756 (gcc PR123588)
+	tc-is-gcc && [[ $(gcc-major-version) -eq 16 ]] && local -x CXXFLAGS="${CXXFLAGS} -fno-tree-vectorize"
 
 	# LLVM can have very high memory consumption while linking,
 	# exhausting the limit on 32-bit linker executable

@@ -23,8 +23,8 @@ inherit llvm-ebuilds
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
 llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM21_FALLBACK_COMMIT}"
-		EGIT_BRANCH="${LLVM_EBUILDS_LLVM21_BRANCH}"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM22_FALLBACK_COMMIT}"
+		EGIT_BRANCH="${LLVM_EBUILDS_LLVM22_BRANCH}"
 	fi
 }
 _llvm_set_globals
@@ -34,7 +34,7 @@ inherit check-compiler-switch cmake dhms flag-o-matic git-r3 hip-versions libstd
 inherit multilib-minimal ninja-utils prefix python-single-r1 toolchain-funcs
 
 KEYWORDS="
-amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv ~sparc x86 ~arm64-macos ~x64-macos
+~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos
 "
 
 DESCRIPTION="C language family frontend for LLVM"
@@ -48,7 +48,7 @@ LICENSE="
 # sorttable.js: MIT
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
-${LLVM_EBUILDS_LLVM21_REVISION}
+${LLVM_EBUILDS_LLVM22_REVISION}
 cet debug default-fortify-source-2 default-fortify-source-3 default-full-relro
 default-partial-relro default-ssp-buffer-size-4 default-stack-clash-protection
 doc +extra hardened hardened-compat ieee-long-double +pie ssp +static-analyzer
@@ -136,6 +136,7 @@ RDEPEND+="
 	)
 	~llvm-core/llvm-${PV}:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},debug=]
 	llvm-core/llvm:=
+	!<llvm-core/llvm-22.1.0-r2:22
 "
 
 DEPEND="
@@ -155,7 +156,7 @@ BDEPEND="
 PDEPEND+="
 	llvm-core/clang-toolchain-symlinks:${LLVM_MAJOR}
 	llvm-core/clang-toolchain-symlinks:=
-	~llvm-runtimes/clang-runtime-${PV}
+	llvm-runtimes/clang-runtime:${LLVM_MAJOR}
 	llvm-runtimes/clang-runtime:=
 "
 RESTRICT="
@@ -313,7 +314,7 @@ ewarn
 	fi
 	if use default-ssp-buffer-size-4 ; then
 		patches_hardened+=(
-			"${FILESDIR}/clang-21.1.5-change-SSP-buffer-size-to-4.patch"
+			"${FILESDIR}/clang-22.1.0-r2-change-SSP-buffer-size-to-4.patch"
 		)
 	fi
 	if use default-fortify-source-2 ; then
@@ -433,6 +434,10 @@ check_distribution_components() {
 					docs-clang-html|docs-clang-tools-html)
 						use doc || continue
 						;;
+					# built only with tests
+					c-index-test)
+						continue
+						;;
 				esac
 
 				all_targets+=( "${l}" )
@@ -510,14 +515,12 @@ get_distribution_components() {
 			libclang-python-bindings
 
 			# tools
-			c-index-test
 			clang
 			clang-format
 			clang-installapi
 			clang-linker-wrapper
 			clang-nvlink-wrapper
 			clang-offload-bundler
-			clang-offload-packager
 			clang-refactor
 			clang-repl
 			clang-scan-deps
@@ -695,7 +698,7 @@ einfo
 		-DCLANG_DEFAULT_PIE_ON_LINUX=$(usex pie)
 
 		-DCLANG_ENABLE_LIBXML2=$(usex xml)
-		-DCLANG_ENABLE_ARCMT=$(usex static-analyzer)
+		-DCLANG_ENABLE_OBJC_REWRITER=ON
 		-DCLANG_ENABLE_STATIC_ANALYZER=$(usex static-analyzer)
 		# TODO: CLANG_ENABLE_HLSL?
 

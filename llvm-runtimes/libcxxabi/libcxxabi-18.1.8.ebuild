@@ -280,9 +280,7 @@ _configure_abi() {
 
 	if tc-is-clang ; then
 		if ! has_version "llvm-core/clang:${SLOT_MAJOR}" ; then
-eerror
 eerror "You must emerge clang:${SLOT_MAJOR} to build with clang."
-eerror
 		fi
 		export CC="${CHOST}-clang-${SLOT_MAJOR}"
 		export CXX="${CHOST}-clang++-${SLOT_MAJOR}"
@@ -290,10 +288,8 @@ eerror
 		strip-unsupported-flags
 	fi
 
-einfo
-einfo "CC:\t${CC}"
-einfo "CXX:\t${CXX}"
-einfo
+einfo "CC:  ${CC}"
+einfo "CXX:  ${CXX}"
 
 	local _lto=$(_usex_lto)
 	local _cfi=$(_usex_cfi)
@@ -345,10 +341,10 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DLIBCXXABI_INCLUDE_TESTS=$(usex test)
 		-DLIBCXXABI_USE_COMPILER_RT=${use_compiler_rt}
 
-		# upstream is omitting standard search path for this
-		# probably because gcc & clang are bundling their own unwind.h
-		-DLIBCXXABI_LIBUNWIND_INCLUDES="${EPREFIX}"/usr/include
-		# This is broken with standalone builds, and also meaningless
+	# upstream is omitting standard search path for this
+	# probably because gcc & clang are bundling their own unwind.h
+		-DLIBCXXABI_LIBUNWIND_INCLUDES="${EPREFIX}/usr/include"
+	# This is broken with standalone builds, and also meaningless
 		-DLIBCXXABI_USE_LLVM_UNWINDER=OFF
 
 		-DLIBCXX_LIBDIR_SUFFIX=
@@ -494,13 +490,9 @@ ewarn
 
 	if (( ${WANTS_LTO} == 1 )) && use static-libs ; then
 		if tc-is-clang ; then
-ewarn
 ewarn "You are only allowed to static link this library with clang."
-ewarn
 		elif tc-is-gcc ; then
-ewarn
 ewarn "You are only allowed to static link this library with gcc."
-ewarn
 		else
 ewarn
 ewarn "You are only allowed to static link this library with CC=${CC}"

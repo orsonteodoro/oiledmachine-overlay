@@ -310,7 +310,7 @@ check_distribution_components() {
 					LLVM|LLVMgold)
 						;;
 					# TableGen/mlir lib + deps
-					LLVMCodeGenTypes|LLVMDemangle|LLVMSupport|LLVMTableGen)
+					LLVMDemangle|LLVMSupport|LLVMTableGen)
 						;;
 					# for mlir-tblgen
 					LLVMCodeGenTypes)

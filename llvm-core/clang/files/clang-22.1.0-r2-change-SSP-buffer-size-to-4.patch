@@ -1,0 +1,34 @@
+diff '--color=auto' -urp clang.orig/include/clang/Basic/CodeGenOptions.def clang/include/clang/Basic/CodeGenOptions.def
+--- clang.orig/include/clang/Basic/CodeGenOptions.def	2026-02-23 23:35:28.000000000 -0800
++++ clang/include/clang/Basic/CodeGenOptions.def	2026-03-08 08:45:53.073107417 -0700
+@@ -390,7 +390,7 @@ VALUE_CODEGENOPT(NumRegisterParameters,
+ VALUE_CODEGENOPT(SmallDataLimit, 32, 0, Benign)
+ 
+ /// The lower bound for a buffer to be considered for stack protection.
+-VALUE_CODEGENOPT(SSPBufferSize, 32, 0, Benign)
++VALUE_CODEGENOPT(SSPBufferSize, 32, 4, Benign)
+ 
+ /// The kind of inlining to perform.
+ ENUM_CODEGENOPT(Inlining, InliningMethod, 2, NormalInlining, Compatible)
+Only in clang/include/clang/Basic: CodeGenOptions.def.orig
+diff '--color=auto' -urp clang.orig/include/clang/Options/Options.td clang/include/clang/Options/Options.td
+--- clang.orig/include/clang/Options/Options.td	2026-02-23 23:35:28.000000000 -0800
++++ clang/include/clang/Options/Options.td	2026-03-08 08:48:38.105038359 -0700
+@@ -4204,7 +4204,7 @@ def fstack_protector : Flag<["-"], "fsta
+   HelpText<"Enable stack protectors for some functions vulnerable to stack smashing. "
+            "This uses a loose heuristic which considers functions vulnerable if they "
+            "contain a char (or 8bit integer) array or constant sized calls to alloca "
+-           ", which are of greater size than ssp-buffer-size (default: 8 bytes). All "
++           ", which are of greater size than ssp-buffer-size (default: 4 bytes). All "         // Changed by oteodoro
+            "variable sized calls to alloca are considered vulnerable. A function with "
+            "a stack protector has a guard value added to the stack frame that is "
+            "checked on function exit. The guard value must be positioned in the "
+@@ -8722,7 +8722,7 @@ def stack_protector : Separate<["-"], "s
+   MarshallingInfoEnum<LangOpts<"StackProtector">, "SSPOff">;
+ def stack_protector_buffer_size : Separate<["-"], "stack-protector-buffer-size">,
+   HelpText<"Lower bound for a buffer to be considered for stack protection">,
+-  MarshallingInfoInt<CodeGenOpts<"SSPBufferSize">, "8">;
++  MarshallingInfoInt<CodeGenOpts<"SSPBufferSize">, "4">;                                       // Changed by oteodoro
+ def ftype_visibility : Joined<["-"], "ftype-visibility=">,
+   HelpText<"Default type visibility">,
+   MarshallingInfoVisibility<LangOpts<"TypeVisibilityMode">, fvisibility_EQ.KeyPath>;

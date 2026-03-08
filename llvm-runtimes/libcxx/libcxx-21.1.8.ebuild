@@ -241,9 +241,11 @@ pkg_setup() {
 	python-any-r1_pkg_setup
 
 	if ! use libcxxabi && ! tc-is-gcc ; then
-		eerror "To build ${PN} against libsupc++, you have to use gcc. Other"
-		eerror "compilers are not supported. Please set CC=gcc and CXX=g++"
-		eerror "and try again."
+eerror
+eerror "To build ${PN} against libsupc++, you have to use gcc. Other"
+eerror "compilers are not supported. Please set CC=gcc and CXX=g++"
+eerror "and try again."
+eerror
 		die
 	fi
 	libcxx-slot_verify
@@ -331,9 +333,7 @@ _configure_abi() {
 
 	if tc-is-clang ; then
 		if ! has_version "llvm-core/clang:${PV%%.*}" ; then
-eerror
 eerror "You must emerge clang:${PV%%.*} to build with clang."
-eerror
 		fi
 
 		llvm_prepend_path -b "${LLVM_MAJOR}"
@@ -342,20 +342,18 @@ eerror
 		export CPP="${CC} -E"
 		strip-unsupported-flags
 
-		# The full clang configuration might not be ready yet. Use the partial
-		# configuration of components that libunwind depends on.
+	# The full Clang configuration might not be ready yet. Use the partial
+	# configuration of components that libunwind depends on.
 		local flags=(
-			--config="${ESYSROOT}"/etc/clang/"${LLVM_MAJOR}"/gentoo-{rtlib,unwindlib,linker}.cfg
+			--config="${ESYSROOT}/etc/clang/${LLVM_MAJOR}/gentoo-"{"rtlib","unwindlib","linker"}".cfg"
 		)
 		local -x CFLAGS="${CFLAGS} ${flags[@]}"
 		local -x CXXFLAGS="${CXXFLAGS} ${flags[@]}"
 		local -x LDFLAGS="${LDFLAGS} ${flags[@]}"
 	fi
 
-einfo
-einfo "CC:\t${CC}"
-einfo "CXX:\t${CXX}"
-einfo
+einfo "CC:  ${CC}"
+einfo "CXX:  ${CXX}"
 
 	local _lto=$(_usex_lto)
 	local _cfi=$(_usex_cfi)
@@ -418,7 +416,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DLIBCXX_INSTALL_MODULES=ON
 		-DLIBCXX_USE_COMPILER_RT=${use_compiler_rt}
 
-		# this is broken with standalone builds, and also meaningless
+	# This is broken with standalone builds and also meaningless.
 		-DLIBCXXABI_USE_LLVM_UNWINDER=OFF
 
 		-DLLVM_ENABLE_RUNTIMES=libcxx
@@ -487,14 +485,14 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 
 	if is_crosspkg ; then
-		# Needed to target built libc headers
+	# Needed to target built libc headers
 		local -x CFLAGS="${CFLAGS} -isystem ${ESYSROOT}/usr/${CTARGET}/usr/include"
 		mycmakeargs+=(
-			# Without this, the compiler will compile a test program
-			# and fail due to no builtins.
+	# Without this, the compiler will compile a test program
+	# and fail due to no builtins.
 			-DCMAKE_C_COMPILER_WORKS=1
 			-DCMAKE_CXX_COMPILER_WORKS=1
-			# Install inside the cross sysroot.
+	# Install inside the cross sysroot.
 			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/${CTARGET}/usr"
 		)
 	fi
@@ -534,12 +532,12 @@ src_test() {
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			local -x LIT_PRESERVES_TMP=1
-			cmake_build install-cxx-test-suite-prefix
+			cmake_build "install-cxx-test-suite-prefix"
 			cp "${BUILD_DIR}"/{"lib","libcxx/test-suite-install/$(get_libdir)"}"/libc++_shared.so" || die
 			if use static-libs; then
 				cp "${BUILD_DIR}"/{"lib","libcxx/test-suite-install/$(get_libdir)"}"/libc++_static.a" || die
 			fi
-			cmake_build check-cxx
+			cmake_build "check-cxx"
 		done
 	}
 	multilib_foreach_abi test_abi
@@ -581,7 +579,7 @@ gen_shared_ldscript() {
 	mv "lib/libc++"{"","_shared"}".so" || die
 	local deps=(
 		"libc++_shared.so"
-		# libsupc++ doesn't have a shared version
+	# libsupc++ doesn't have a shared version.
 		$(usex libcxxabi "libc++abi.so" "libsupc++.a")
 	)
 
@@ -595,8 +593,8 @@ src_install() {
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			cmake_src_install
-			# since we've replaced libc++.{a,so} with ldscripts, now we have to
-			# install the extra symlinks
+	# Since we've replaced libc++.{a,so} with ldscripts, we have to
+	# install the extra symlinks.
 			if [[ "${CHOST}" != *"-darwin"* ]] ; then
 				is_crosspkg && into "/usr/${CTARGET}"
 				dolib.so "lib/libc++_shared.so"

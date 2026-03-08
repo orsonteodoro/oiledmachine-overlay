@@ -1,5 +1,5 @@
 # Copyright 2022-2025 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -10,7 +10,7 @@ GCC_COMPAT=(
 )
 
 CXX_STANDARD=17
-PYTHON_COMPAT=( "python3_"{12..14} )
+PYTHON_COMPAT=( "python3_"{13..14} )
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
@@ -23,8 +23,8 @@ inherit llvm-ebuilds
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
 llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM18_FALLBACK_COMMIT}"
-		EGIT_BRANCH="${LLVM_EBUILDS_LLVM18_BRANCH}"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM22_FALLBACK_COMMIT}"
+		EGIT_BRANCH="${LLVM_EBUILDS_LLVM22_BRANCH}"
 	fi
 }
 _llvm_set_globals
@@ -34,8 +34,7 @@ inherit check-compiler-switch cmake dhms libstdcxx-slot llvm.org multilib-minima
 inherit flag-o-matic git-r3 ninja-utils
 
 KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux
-~arm64-macos ~ppc-macos ~x64-macos
+~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos
 "
 
 DESCRIPTION="Low Level Virtual Machine"
@@ -54,10 +53,10 @@ LICENSE="
 # 4. ConvertUTF.h: TODO.
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
-${LLVM_EBUILDS_LLVM18_REVISION}
-+binutils-plugin bolt bolt-heatmap +debug debuginfod doc -dump exegesis jemalloc
-libedit +libffi ncurses tcmalloc test xml z3 zstd
-ebuild_revision_11
+${LLVM_EBUILDS_LLVM22_REVISION}
++binutils-plugin bolt bolt-heatmap debug debuginfod doc -dump exegesis jemalloc
+libedit +libffi tcmalloc test xml z3 zstd
+ebuild_revision_3
 "
 REQUIRED_USE+="
 	!amd64? (
@@ -129,9 +128,6 @@ RDEPEND="
 	libffi? (
 		>=dev-libs/libffi-3.0.13-r1:0=[${MULTILIB_USEDEP}]
 	)
-	ncurses? (
-		>=sys-libs/ncurses-5.9-r3:0=[${MULTILIB_USEDEP}]
-	)
 	tcmalloc? (
 		dev-util/google-perftools
 	)
@@ -158,7 +154,6 @@ BDEPEND="
 	sys-devel/gnuconfig
 	kernel_Darwin? (
 		<llvm-runtimes/libcxx-${LLVM_VERSION}.9999
-		>=sys-devel/binutils-apple-5.1
 	)
 	libffi? (
 		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
@@ -193,7 +188,6 @@ LLVM_COMPONENTS=(
 	"third-party"
 )
 LLVM_MANPAGES=1
-LLVM_PATCHSET="${PV}-r7"
 LLVM_USE_TARGETS="provide"
 llvm.org_set_globals
 
@@ -282,21 +276,22 @@ check_live_ebuild() {
 		has "${i}" "${prod_targets[@]}" || exp_targets+=( "${i}" )
 	done
 
+	local outdated
 	if [[ ${exp_targets[*]} != ${ALL_LLVM_EXPERIMENTAL_TARGETS[*]} ]]; then
-eqawarn
-eqawarn "ALL_LLVM_EXPERIMENTAL_TARGETS is outdated!"
-eqawarn "    Have: ${ALL_LLVM_EXPERIMENTAL_TARGETS[*]}"
-eqawarn "Expected: ${exp_targets[*]}"
-eqawarn
+eerror "ALL_LLVM_EXPERIMENTAL_TARGETS are outdated!"
+eerror "    Have: ${ALL_LLVM_EXPERIMENTAL_TARGETS[*]}"
+eerror "Expected: ${exp_targets[*]}"
+eerror
+		outdated=1
 	fi
 
 	if [[ ${prod_targets[*]} != ${ALL_LLVM_PRODUCTION_TARGETS[*]} ]]; then
-eqawarn
-eqawarn "ALL_LLVM_PRODUCTION_TARGETS is outdated!"
-eqawarn "    Have: ${ALL_LLVM_PRODUCTION_TARGETS[*]}"
-eqawarn "Expected: ${prod_targets[*]}"
-eqawarn
+eerror "ALL_LLVM_PRODUCTION_TARGETS are outdated!"
+eerror "    Have: ${ALL_LLVM_PRODUCTION_TARGETS[*]}"
+eerror "Expected: ${prod_targets[*]}"
+		outdated=1
 	fi
+	[[ ${outdated} ]] && die "Update ALL_LLVM*_TARGETS"
 }
 
 check_distribution_components() {
@@ -314,7 +309,10 @@ check_distribution_components() {
 					LLVM|LLVMgold)
 						;;
 					# TableGen/mlir lib + deps
-					LLVMDemangle|LLVMSupport|LLVMTableGen)
+					LLVMDemangle|LLVMSupport|LLVMSupportLSP|LLVMTableGen)
+						;;
+					# for mlir-tblgen
+					LLVMCodeGenTypes)
 						;;
 					# used by lldb
 					LLVMDebuginfod)
@@ -342,6 +340,14 @@ check_distribution_components() {
 					docs-llvm-html)
 						use doc || continue
 						;;
+					# used only w/ USE=debuginfd
+					llvm-debuginfod)
+						use debuginfod || continue
+						;;
+					# used only w/ USE=xml
+					llvm-mt)
+						use xml || continue
+						;;
 				esac
 
 				all_targets+=( "${l}" )
@@ -365,11 +371,11 @@ check_distribution_components() {
 		done
 
 		if [[ ${#add[@]} -gt 0 || ${#remove[@]} -gt 0 ]]; then
-eqawarn
-eqawarn "get_distribution_components() is outdated!"
-eqawarn "   Add: ${add[*]}"
-eqawarn "Remove: ${remove[*]}"
-eqawarn
+eerror "get_distribution_components() is outdated!"
+eerror "   Add: ${add[*]}"
+eerror "Remove: ${remove[*]}"
+eerror "Update get_distribution_components()!"
+die
 		fi
 		cd - >/dev/null || die
 	fi
@@ -386,14 +392,18 @@ src_prepare() {
 	# Update config.guess to support more systems
 	cp "${BROOT}/usr/share/gnuconfig/config.guess" "cmake/" || die
 
+	# Disable lit tests (we run them in dev-python/lit).
+	> "utils/lit/CMakeLists.txt" || die
+
 	# Verify that the live ebuild is up-to-date
 	check_live_ebuild
 
 	llvm.org_src_prepare
+
 	if use bolt ; then
 		pushd "${WORKDIR}" || die
 			eapply "${FILESDIR}/llvm-16.0.5-bolt-set-cmake-libdir.patch"
-			eapply "${FILESDIR}/llvm-17.0.0.9999-bolt_rt-RuntimeLibrary.cpp-path.patch"
+			eapply "${FILESDIR}/llvm-21.1.5-bolt_rt-RuntimeLibrary.cpp-path.patch"
 		popd
 	fi
 }
@@ -420,6 +430,10 @@ get_distribution_components() {
 		LLVMSupport
 		LLVMTableGen
 
+		# mlir-tblgen
+		LLVMCodeGenTypes
+		LLVMSupportLSP
+
 		# testing libraries
 		llvm_gtest
 		llvm_gtest_main
@@ -434,6 +448,7 @@ get_distribution_components() {
 
 			# utilities
 			llvm-tblgen
+			llvm-test-mustache-spec
 			FileCheck
 			llvm-PerfectShuffle
 			count
@@ -443,6 +458,7 @@ get_distribution_components() {
 
 			# tools
 			bugpoint
+			clang-offload-packager
 			dsymutil
 			llc
 			lli
@@ -453,10 +469,13 @@ get_distribution_components() {
 			llvm-bcanalyzer
 			llvm-bitcode-strip
 			llvm-c-test
+			llvm-cas
 			llvm-cat
 			llvm-cfi-verify
+			llvm-cgdata
 			llvm-config
 			llvm-cov
+			llvm-ctxprof-util
 			llvm-cvtres
 			llvm-cxxdump
 			llvm-cxxfilt
@@ -474,6 +493,7 @@ get_distribution_components() {
 			llvm-gsymutil
 			llvm-ifs
 			llvm-install-name-tool
+			llvm-ir2vec
 			llvm-jitlink
 			llvm-jitlink-executor
 			llvm-lib
@@ -485,11 +505,13 @@ get_distribution_components() {
 			llvm-mc
 			llvm-mca
 			llvm-ml
+			llvm-ml64
 			llvm-modextract
-			llvm-mt
 			llvm-nm
 			llvm-objcopy
 			llvm-objdump
+			llvm-offload-binary
+			llvm-offload-wrapper
 			llvm-opt-report
 			llvm-otool
 			llvm-pdbutil
@@ -516,6 +538,7 @@ get_distribution_components() {
 			llvm-xray
 			obj2yaml
 			opt
+			reduce-chunk-list
 			sancov
 			sanstats
 			split-file
@@ -557,6 +580,10 @@ get_distribution_components() {
 		use debuginfod && out+=(
 			llvm-debuginfod
 		)
+
+		use xml && out+=(
+			llvm-mt
+		)
 	fi
 
 	printf "%s${sep}" "${out[@]}"
@@ -582,13 +609,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 _src_configure() {
 	mkdir -p "${BUILD_DIR}" || die # strange?
 	cd "${BUILD_DIR}" || die
-
-	if use ppc && tc-is-gcc && [[ $(gcc-major-version) -lt "14" ]]; then
-		# Workaround for bug #880677
-		append-flags $(test-flags-CXX -fno-ipa-sra)
-		append-flags $(test-flags-CXX -fno-ipa-modref)
-		append-flags $(test-flags-CXX -fno-ipa-icf)
-	fi
 
 	# ODR violations (bug #917536, bug #926529). Just do it for GCC for now
 	# to avoid people grumbling. GCC is, anecdotally, more likely to miscompile
@@ -650,7 +670,6 @@ einfo
 		-DLLVM_ENABLE_DUMP=$(usex dump)
 		-DLLVM_ENABLE_FFI=$(usex libffi)
 		-DLLVM_ENABLE_LIBEDIT=$(usex libedit)
-		-DLLVM_ENABLE_TERMINFO=$(usex ncurses)
 		-DLLVM_ENABLE_LIBXML2=$(usex xml)
 		-DLLVM_ENABLE_ASSERTIONS=$(usex debug)
 		-DLLVM_ENABLE_LIBPFM=$(usex exegesis)
@@ -663,23 +682,15 @@ einfo
 
 		-DLLVM_HOST_TRIPLE="${CHOST}"
 
-		-DFFI_INCLUDE_DIR="${ffi_cflags#-I}"
-		-DFFI_LIBRARY_DIR="${ffi_ldflags#-L}"
-
 		-DPython3_EXECUTABLE="${PYTHON}"
 
 		# disable OCaml bindings (now in dev-ml/llvm-ocaml)
 		-DOCAMLFIND=NO
 	)
 
-	# On the macos prefix, this distro doesn't split sys-libs/ncurses to
-	# libtinfo and libncurses, but llvm tries to use libtinfo before
-	# libncurses, and ends up using libtinfo (actually, libncurses.dylib)
-	# from system instead of prefix.
 	use kernel_Darwin && mycmakeargs+=(
 		# Use our libtool instead of looking it up with xcrun \
 		-DCMAKE_LIBTOOL="${EPREFIX}/usr/bin/${CHOST}-libtool"
-		-DTerminfo_LIBRARIES="-lncurses"
 	)
 
 	local suffix=

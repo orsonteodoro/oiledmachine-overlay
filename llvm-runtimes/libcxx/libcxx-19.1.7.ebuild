@@ -234,9 +234,11 @@ pkg_setup() {
 	python-any-r1_pkg_setup
 
 	if ! use libcxxabi && ! tc-is-gcc ; then
-		eerror "To build ${PN} against libsupc++, you have to use gcc. Other"
-		eerror "compilers are not supported. Please set CC=gcc and CXX=g++"
-		eerror "and try again."
+eerror
+eerror "To build ${PN} against libsupc++, you have to use gcc. Other"
+eerror "compilers are not supported. Please set CC=gcc and CXX=g++"
+eerror "and try again."
+eerror
 		die
 	fi
 	libcxx-slot_verify
@@ -317,9 +319,7 @@ _configure_abi() {
 
 	if tc-is-clang ; then
 		if ! has_version "llvm-core/clang:${PV%%.*}" ; then
-eerror
 eerror "You must emerge clang:${PV%%.*} to build with clang."
-eerror
 		fi
 		export CC="${CHOST}-clang-${PV%%.*}"
 		export CXX="${CHOST}-clang++-${PV%%.*}"
@@ -327,8 +327,8 @@ eerror
 		strip-unsupported-flags
 	fi
 
-einfo "CC:\t${CC}"
-einfo "CXX:\t${CXX}"
+einfo "CC:  ${CC}"
+einfo "CXX:  ${CXX}"
 
 	local _lto=$(_usex_lto)
 	local _cfi=$(_usex_cfi)
@@ -492,7 +492,7 @@ src_test() {
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			local -x LIT_PRESERVES_TMP=1
-			cmake_build check-cxx
+			cmake_build "check-cxx"
 		done
 	}
 	multilib_foreach_abi test_abi
@@ -534,7 +534,7 @@ gen_shared_ldscript() {
 	mv "lib/libc++"{"","_shared"}".so" || die
 	local deps=(
 		"libc++_shared.so"
-		# libsupc++ doesn't have a shared version
+	# libsupc++ doesn't have a shared version.
 		$(usex libcxxabi "libc++abi.so" "libsupc++.a")
 	)
 
@@ -548,8 +548,8 @@ src_install() {
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			cmake_src_install
-			# since we've replaced libc++.{a,so} with ldscripts, now we have to
-			# install the extra symlinks
+	# Since we've replaced libc++.{a,so} with ldscripts, we have to
+	# install the extra symlinks.
 			if [[ "${CHOST}" != *"-darwin"* ]] ; then
 				dolib.so "lib/libc++_shared.so"
 				use static-libs && dolib.a "lib/libc++_static.a"

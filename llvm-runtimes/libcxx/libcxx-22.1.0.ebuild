@@ -15,8 +15,8 @@ inherit llvm-ebuilds
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
 llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM20_FALLBACK_COMMIT}"
-		EGIT_BRANCH="${LLVM_EBUILDS_LLVM20_BRANCH}"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM22_FALLBACK_COMMIT}"
+		EGIT_BRANCH="${LLVM_EBUILDS_LLVM22_BRANCH}"
 	fi
 }
 _llvm_set_globals
@@ -74,7 +74,7 @@ RESTRICT="
 "
 SLOT="0"
 IUSE+="
-${LLVM_EBUILDS_LLVM20_REVISION}
+${LLVM_EBUILDS_LLVM22_REVISION}
 clang hardened +libcxxabi +static-libs test +threads
 ebuild_revision_17
 "
@@ -395,8 +395,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	local nostdlib_flags=( -nostdlib++ )
 	if ! test_compiler && test_compiler "${nostdlib_flags[@]}"; then
-		local -x LDFLAGS="${LDFLAGS} ${nostdlib_flags[*]}"
-		ewarn "${CXX} seems to lack stdlib, trying with ${nostdlib_flags[*]}"
+		local -x LDFLAGS="${LDFLAGS} ${nort_flags[*]}"
+		ewarn "${CXX} seems to lack runtime, trying with ${nort_flags[*]}"
 	fi
 
 	local libdir=$(get_libdir)
@@ -484,6 +484,15 @@ einfo "Detected compiler switch.  Disabling LTO."
 		)
 	fi
 
+	if ! has_version -b sys-devel/gcc; then
+	# Since this package is merged before llvm-runtimes/clang-stdlib-config,
+	# clang will attempt to use libstdc++ for the C++ compiler check, and will
+	# fail if it is missing.
+		mycmakeargs+=(
+			-DCMAKE_CXX_COMPILER_WORKS=1
+		)
+	fi
+
 	if is_crosspkg ; then
 	# Needed to target built libc headers
 		local -x CFLAGS="${CFLAGS} -isystem ${ESYSROOT}/usr/${CTARGET}/usr/include"
@@ -517,6 +526,7 @@ src_compile() {
 			cd "${BUILD_DIR}" || die
 			cmake_src_compile
 			if [[ "${CHOST}" != *"-darwin"* ]] ; then
+				local libdir=$(get_libdir)
 				gen_shared_ldscript
 				use static-libs && gen_static_ldscript
 			fi
@@ -532,10 +542,15 @@ src_test() {
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			local -x LIT_PRESERVES_TMP=1
-			cmake_build "install-cxx-test-suite-prefix"
-			cp "${BUILD_DIR}"/{"lib","libcxx/test-suite-install/$(get_libdir)"}"/libc++_shared.so" || die
-			if use static-libs; then
-				cp "${BUILD_DIR}"/{"lib","libcxx/test-suite-install/$(get_libdir)"}"/libc++_static.a" || die
+	# https://github.com/llvm/llvm-project/issues/153940
+			local -x LIT_XFAIL="libcxx/gdb/gdb_pretty_printer_test.sh.cpp"
+			cmake_build "libcxx-test-suite-install-cxx"
+			if [[ "${CHOST}" != *"-darwin"* ]] ; then
+				local libdir=$(get_libdir)
+				cp "${BUILD_DIR}/"{"","libcxx/test-suite-install/"}"${libdir}/libc++_shared.so" || die
+				if use static-libs; then
+					cp "${BUILD_DIR}/"{"","libcxx/test-suite-install/"}"${libdir}/libc++_static.a" || die
+				fi
 			fi
 			cmake_build "check-cxx"
 		done
@@ -560,7 +575,7 @@ END_LDSCRIPT
 
 gen_static_ldscript() {
 	# Move it first.
-	mv "lib/libc++"{"","_static"}".a" || die
+	mv "${libdir}/libc++"{"","_static"}".a" || die
 	# Generate libc++.a ldscript for inclusion of its dependencies so that
 	# clang++ -stdlib=libc++ -static works out of the box.
 	local deps=(
@@ -571,19 +586,19 @@ gen_static_ldscript() {
 	# fine on FreeBSD.
 	use elibc_glibc && deps+=( "libpthread.a" "libdl.a" )
 
-	gen_ldscript "${deps[*]}" > "lib/libc++.a" || die
+	gen_ldscript "${deps[*]}" > "${libdir}/libc++.a" || die
 }
 
 gen_shared_ldscript() {
 	# Move it first.
-	mv "lib/libc++"{"","_shared"}".so" || die
+	mv "${libdir}/libc++"{"","_shared"}".so" || die
 	local deps=(
 		"libc++_shared.so"
 	# libsupc++ doesn't have a shared version.
 		$(usex libcxxabi "libc++abi.so" "libsupc++.a")
 	)
 
-	gen_ldscript "${deps[*]}" > "lib/libc++.so" || die
+	gen_ldscript "${deps[*]}" > "${libdir}/libc++.so" || die
 }
 
 src_install() {
@@ -596,10 +611,25 @@ src_install() {
 	# Since we've replaced libc++.{a,so} with ldscripts, we have to
 	# install the extra symlinks.
 			if [[ "${CHOST}" != *"-darwin"* ]] ; then
+				local libdir=$(get_libdir)
 				is_crosspkg && into "/usr/${CTARGET}"
-				dolib.so "lib/libc++_shared.so"
-				use static-libs && dolib.a "lib/libc++_static.a"
+				dolib.so "${libdir}/libc++_shared.so"
+				use static-libs && dolib.a "${libdir}/libc++_static.a"
 			fi
+
+			local install_prefix=
+			is_crosspkg && install_prefix="/usr/${CTARGET}"
+			insinto "${install_prefix}/usr/share/libc++/gdb"
+			doins "../libcxx/utils/gdb/libcxx/printers.py"
+
+			local lib_version=$(sed -n -e 's/^LIBCXX_LIBRARY_VERSION:STRING=//p' "CMakeCache.txt" || die)
+			[[ -n "${lib_version}" ]] || die "Could not determine LIBCXX_LIBRARY_VERSION from CMakeCache.txt"
+
+			insinto "${install_prefix}/usr/share/gdb/auto-load/usr/$(get_libdir)"
+			newins - "libc++.so.${lib_version}-gdb.py" <<-EOF
+				__import__("sys").path.insert(0, "${EPREFIX}/usr/share/libc++/gdb")
+				__import__("printers").register_libcxx_printer_loader()
+			EOF
 		done
 		multilib_check_headers
 	}
