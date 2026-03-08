@@ -178,8 +178,8 @@ RESTRICT="binchecks mirror strip test"
 SLOT="0/${PV%.*}.x"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-cfi pgo system-clang system-rust
-ebuild_revision_12
++cfi +pgo -system-clang -system-rust
+ebuild_revision_13
 "
 REQUIRED_USE="
 	^^ (
