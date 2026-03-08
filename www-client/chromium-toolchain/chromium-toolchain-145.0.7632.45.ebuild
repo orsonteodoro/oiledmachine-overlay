@@ -35,7 +35,7 @@ LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}" # 20, 21; For gn
+	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}" # 20-22; For gn
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
@@ -200,7 +200,7 @@ RDEPEND+="
 		llvm-core/llvm:${LLVM_OFFICIAL_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 		llvm-core/llvm:=
 
-		>=llvm-runtimes/libcxx-${LLVM_OFFICIAL_SLOT}[${LIBCXX_USEDEP}]
+		>=llvm-runtimes/libcxx-${LLVM_OFFICIAL_SLOT}[${LIBCXX_USEDEP},${LIBCXX_USEDEP}]
 		llvm-runtimes/libcxx:=
 
 		cfi? (
