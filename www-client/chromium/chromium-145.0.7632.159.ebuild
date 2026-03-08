@@ -7207,7 +7207,6 @@ ewarn "Unbundling libs and lowering security"
 	# entries, etc. This enables slotting the ebuild.
 		"enable_channel_branding=true"
 
-		"enable_glic=false"							# AI assistant features, not production ready but enabled by default
 		"enable_hevc_parser_and_hw_decoder=$(usex patent_status_nonfree $(usex vaapi-hevc true false) false)"
 		"enable_hidpi=$(usex hidpi true false)"
 		"enable_libaom=$(usex libaom $(usex encode true false) false)"
@@ -7249,6 +7248,21 @@ ewarn "Unbundling libs and lowering security"
 	# Since we build from tarballs, we need to set the channel here so that
 	# it can be used in the build.
 	export CHROME_VERSION_EXTRA="${SLOT}"
+
+	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
+		myconf_gn+=(
+			"enable_glic=false"
+		)
+	elif has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
+		myconf_gn+=(
+			"enable_glic=false"
+		)
+	else
+	# Required for chromium
+		myconf_gn+=(
+			"enable_glic=true"						# AI assistant features, not production ready but enabled by default
+		)
+	fi
 
 	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
 	# Prevent build error
