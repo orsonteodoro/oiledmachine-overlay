@@ -1671,7 +1671,7 @@ BDEPEND+="
 	net-libs/nodejs:=
 	sys-apps/hwdata
 	sys-devel/flex
-	www-client/chromium-toolchain:0/${PV%.*}.x[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cfi=,pgo=,system-clang=,system-rust=]
+	www-client/chromium-toolchain:0/${PV%.*}.x[cfi=,pgo=,system-clang=,system-rust=]
 	www-client/chromium-toolchain:=
 	mold? (
 		>=sys-devel/mold-2.33.0[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},-system-mimalloc]
