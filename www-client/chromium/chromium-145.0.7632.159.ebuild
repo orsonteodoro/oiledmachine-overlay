@@ -3395,8 +3395,18 @@ elog "Removing bundled binaries from source tree ..."
 	# if used instead of system versions.  Use `--wasm` to remove
 	# WebAssembly binaries; if desired, they're portable, so they shouldn't
 	# break builds.
-	if ! use ungoogled-chromium ; then
-	# Breaks ungoogled-chromium build
+	local allow_prune=1
+	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && ! use ungoogled-chromium ; then
+		allow_prune=0
+	fi
+	if has "cromite" ${IUSE_EFFECTIVE} && ! use cromite ; then
+		allow_prune=0
+	fi
+	if (( ${allow_prune} == 1 )) ; then
+	# Breaks ungoogled-chromium and cromite build
+
+# Error: Cannot find module @rollup/rollup-linux-x64-gnu. npm has a bug related to optional dependencies (https://github.com/npm/cli/issues/4828). Please try `npm i` again after removing both package-lock.json and node_modules directory.
+# [cause]: Error: Cannot find module '/var/tmp/portage/www-client/chromium-145.0.7632.159/work/chromium-145.0.7632.159/third_party/devtools-frontend/src/node_modules/@rollup/rollup-linux-x64-gnu/rollup-linux-x64-gnu.node'. Please verify that the package.json has a valid "main" entry
 
 elog "Removing bundled binaries from source tree ..."
 	# Purge bundled ELF files: These are non-portable and will cause issues if used instead of system versions.
