@@ -692,7 +692,7 @@ https://github.com/uazo/cromite/archive/refs/tags/v${CROMITE_PV}-${CROMITE_HASH}
 	"
 	# Force require the reviewed system compiler to prevent possibility of
 	# trojanized compiler injecting user fingerprinting code.
-	if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
+	if false && (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
 		REQUIRED_USE+="
 			cromite? (
 				system-libcxx
@@ -714,7 +714,7 @@ https://github.com/ungoogled-software/ungoogled-chromium/archive/refs/tags/${UNG
 	"
 	# Force require the reviewed system compiler to prevent possibility of
 	# trojanized compiler injecting user fingerprinting code.
-	if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ;then
+	if false && (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ;then
 		REQUIRED_USE+="
 			ungoogled-chromium? (
 				system-libcxx
