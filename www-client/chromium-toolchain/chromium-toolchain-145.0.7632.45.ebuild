@@ -6,7 +6,7 @@ EAPI=8
 
 inherit dhms
 
-CXX_STANDARD=20
+CXX_STANDARD=20 # gn = c++20, llvm = c++17, clang = c++17, lld = c++17, libcxx = c++23
 # https://github.com/chromium/chromium/blob/145.0.7632.45/DEPS#L533
 GN_COMMIT="5550ba0f4053c3cbb0bff3d60ded9d867b6fa371"
 GN_PV="0.2315" # See get_gn_ver.sh
@@ -27,27 +27,35 @@ VENDORED_RUST_VER="${RUST_COMMIT}-${RUST_SUB_REV}"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX20[@]}"
+	"${LIBSTDCXX_COMPAT_STDCXX20[@]}" # For gn
 )
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}"
+	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}" # 20, 21; For gn
 )
+LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
-inherit check-compiler-switch edo flag-o-matic libcxx-slot libstdcxx-slot ninja-utils
+inherit check-compiler-switch edo flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal ninja-utils
 
 KEYWORDS="~amd64"
 S="${WORKDIR}"
 SRC_URI="
-	amd64? (
-https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/clang-${VENDORED_CLANG_VER}.tar.xz
-	-> chromium-${PV%%\.*}-${LLVM_COMMIT:0:7}-${LLVM_SUB_REV}-clang-linux-x64.tar.xz
-https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/rust-toolchain-${VENDORED_RUST_VER}-${VENDORED_CLANG_VER%-*}.tar.xz
-	-> chromium-${PV%%\.*}-${RUST_COMMIT:0:7}-${RUST_SUB_REV}-rust-linux-x64.tar.xz
-	)
 https://gn.googlesource.com/gn/+archive/${GN_COMMIT}.tar.gz
 	-> gn-${GN_COMMIT:0:7}.tar.gz
+	!system-clang? (
+		amd64? (
+https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/clang-${VENDORED_CLANG_VER}.tar.xz
+	-> chromium-${PV%%\.*}-${LLVM_COMMIT:0:7}-${LLVM_SUB_REV}-clang-linux-x64.tar.xz
+		)
+	)
+	!system-rust? (
+		amd64? (
+https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/rust-toolchain-${VENDORED_RUST_VER}-${VENDORED_CLANG_VER%-*}.tar.xz
+	-> chromium-${PV%%\.*}-${RUST_COMMIT:0:7}-${RUST_SUB_REV}-rust-linux-x64.tar.xz
+		)
+	)
 "
 
 DESCRIPTION="The Chromium toolchain (Clang + Rust + gn)"
@@ -167,11 +175,51 @@ LICENSE="
 RESTRICT="binchecks mirror strip test"
 SLOT="0/${PV%.*}.x"
 IUSE+="
+${LLVM_COMPAT[@]/#/llvm_slot_}
+cfi pgo system-clang system-rust
 ebuild_revision_12
 "
 REQUIRED_USE="
+	^^ (
+		${LLVM_COMPAT[@]/#/llvm_slot_}
+	)
 "
+
 RDEPEND+="
+	system-clang? (
+		=llvm-runtimes/compiler-rt-${LLVM_OFFICIAL_SLOT}*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+		llvm-runtimes/compiler-rt:=
+		=llvm-runtimes/clang-runtime-${LLVM_OFFICIAL_SLOT}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
+		llvm-runtimes/clang-runtime:=
+		llvm-core/clang:${LLVM_OFFICIAL_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
+		llvm-core/clang:=
+		llvm-core/lld:${LLVM_OFFICIAL_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+		llvm-core/lld:=
+		llvm-core/llvm:${LLVM_OFFICIAL_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
+		llvm-core/llvm:=
+
+		>=llvm-runtimes/libcxx-${LLVM_OFFICIAL_SLOT}[${LIBCXX_USEDEP}]
+		llvm-runtimes/libcxx:=
+
+		cfi? (
+			=llvm-runtimes/compiler-rt-sanitizers-${LLVM_OFFICIAL_SLOT}*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},cfi]
+			llvm-runtimes/compiler-rt-sanitizers:=
+		)
+		pgo? (
+			=llvm-runtimes/compiler-rt-sanitizers-${LLVM_OFFICIAL_SLOT}*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},profile]
+			llvm-runtimes/compiler-rt-sanitizers:=
+		)
+	)
+	system-rust? (
+		|| (
+			=dev-lang/rust-9999
+			=dev-lang/rust-bin-9999
+		)
+		|| (
+			dev-lang/rust:=
+			dev-lang/rust-bin:=
+		)
+	)
 "
 DEPEND+="
 	${RDEPEND}
@@ -194,21 +242,25 @@ src_unpack() {
 		echo "${GN_PV}-${GN_COMMIT}" > gn-ver.txt || die
 	popd >/dev/null 2>&1 || die
 
-	mkdir -p "${WORKDIR}/clang" || die
-	pushd "${WORKDIR}/clang" >/dev/null 2>&1 || die
-		if [[ "${ARCH}" == "amd64" ]] ; then
-			unpack "chromium-${PV%%\.*}-${LLVM_COMMIT:0:7}-${LLVM_SUB_REV}-clang-linux-x64.tar.xz"
-		fi
-		echo "${VENDORED_CLANG_VER}" > clang-ver.txt || die
-	popd >/dev/null 2>&1 || die
+	if ! use system-clang ; then
+		mkdir -p "${WORKDIR}/clang" || die
+		pushd "${WORKDIR}/clang" >/dev/null 2>&1 || die
+			if [[ "${ARCH}" == "amd64" ]] ; then
+				unpack "chromium-${PV%%\.*}-${LLVM_COMMIT:0:7}-${LLVM_SUB_REV}-clang-linux-x64.tar.xz"
+			fi
+			echo "${VENDORED_CLANG_VER}" > clang-ver.txt || die
+		popd >/dev/null 2>&1 || die
+	fi
 
-	mkdir -p "${WORKDIR}/rust" || die
-	pushd "${WORKDIR}/rust" >/dev/null 2>&1 || die
-		if [[ "${ARCH}" == "amd64" ]] ; then
-			unpack "chromium-${PV%%\.*}-${RUST_COMMIT:0:7}-${RUST_SUB_REV}-rust-linux-x64.tar.xz"
-		fi
-		echo "${VENDORED_RUST_VER}" > rust-ver.txt || die
-	popd >/dev/null 2>&1 || die
+	if ! use system-rust ; then
+		mkdir -p "${WORKDIR}/rust" || die
+		pushd "${WORKDIR}/rust" >/dev/null 2>&1 || die
+			if [[ "${ARCH}" == "amd64" ]] ; then
+				unpack "chromium-${PV%%\.*}-${RUST_COMMIT:0:7}-${RUST_SUB_REV}-rust-linux-x64.tar.xz"
+			fi
+			echo "${VENDORED_RUST_VER}" > rust-ver.txt || die
+		popd >/dev/null 2>&1 || die
+	fi
 }
 
 build_gn() {
@@ -281,18 +333,22 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	build_gn
 
-	cd "${WORKDIR}/clang" || die
-	echo \
-		"${VENDORED_CLANG_VER}" \
-		> \
-		"cr_build_revision" \
-		|| die "Failed to set clang version"
+	if ! use system-clang ; then
+		cd "${WORKDIR}/clang" || die
+		echo \
+			"${VENDORED_CLANG_VER}" \
+			> \
+			"cr_build_revision" \
+			|| die "Failed to set clang version"
+	fi
 
-	cd "${WORKDIR}/rust" || die
-	cp \
-		"VERSION" \
-		"INSTALLED_VERSION" \
-		|| die "Failed to set rust version"
+	if ! use system-rust ; then
+		cd "${WORKDIR}/rust" || die
+		cp \
+			"VERSION" \
+			"INSTALLED_VERSION" \
+			|| die "Failed to set rust version"
+	fi
 }
 
 _method1() {

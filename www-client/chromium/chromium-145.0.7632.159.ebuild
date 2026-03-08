@@ -420,11 +420,6 @@ FFMPEG_COMPAT_SLOTS=(
 )
 FFMPEG_SLOT="60.62.62" # Same as ffmpeg 8.0 ; 0/libavutil_sover_maj.libavcodec_sover_maj.libformat_sover_maj
 
-IUSE_LIBCXX=(
-	"system-libcxx"
-	"system-libstdcxx"
-	"+vendored-libcxx"
-)
 # CFI Basic (.a) mode requires all third party modules built as static.
 
 # Option defaults based on patent status
@@ -695,7 +690,6 @@ https://github.com/uazo/cromite/archive/refs/tags/v${CROMITE_PV}-${CROMITE_HASH}
 	if false && (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
 		REQUIRED_USE+="
 			cromite? (
-				system-libcxx
 				system-toolchain
 			)
 		"
@@ -717,7 +711,6 @@ https://github.com/ungoogled-software/ungoogled-chromium/archive/refs/tags/${UNG
 	if false && (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ;then
 		REQUIRED_USE+="
 			ungoogled-chromium? (
-				system-libcxx
 				system-toolchain
 			)
 		"
@@ -784,7 +777,6 @@ ${CPU_FLAGS_RISCV[@]/#/cpu_flags_riscv_}
 ${CPU_FLAGS_S390[@]/#/cpu_flags_s390_}
 ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${IUSE_CODECS[@]}
-${IUSE_LIBCXX[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
 ${SYSTEM_USE[@]}
@@ -922,9 +914,6 @@ if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ;then
 		official? (
 			llvm_slot_22
 		)
-		system-toolchain? (
-			system-libcxx
-		)
 	"
 fi
 
@@ -970,21 +959,9 @@ LIBCXX_REQUIRED_USE=(
 #	vendored-libcxx? (
 #		${LIBCXX_REQUIRED_USE[@]}
 #	)
-if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
-	REQUIRED_USE+="
-		system-toolchain? (
-			vendored-libcxx
-		)
-	"
-else
-	REQUIRED_USE+="
-		vendored-libcxx
-	"
-fi
 REQUIRED_USE+="
 	${PATENT_USE_FLAGS}
 	!drumbrake
-	!system-libstdcxx
 	!headless (
 		extensions
 		pdf
@@ -993,9 +970,6 @@ REQUIRED_USE+="
 			wayland
 			X
 		)
-	)
-	^^ (
-		${IUSE_LIBCXX[@]/+}
 	)
 	partitionalloc
 	rar
@@ -1008,7 +982,6 @@ REQUIRED_USE+="
 	cfi? (
 		${SYSTEM_USE[@]/-/!}
 		!mold
-		vendored-libcxx
 	)
 
 	cpu_flags_ppc_power8-vector? (
@@ -1189,8 +1162,8 @@ REQUIRED_USE+="
 		!drumbrake
 		!hangouts
 		!mold
+		!system-toolchain
 		accessibility
-		vendored-libcxx
 		css-hyphen
 		cups
 		dav1d
@@ -1240,9 +1213,6 @@ REQUIRED_USE+="
 	)
 	screencast? (
 		wayland
-	)
-	system-libstdcxx? (
-		!cfi
 	)
 	test? (
 		cfi
@@ -1336,61 +1306,6 @@ LIBVA_DEPEND="
 		)
 	)
 "
-
-gen_depend_llvm() {
-	local o_all=""
-	local t=""
-	local o_official=""
-	local s
-	for s in "${LLVM_COMPAT[@]}" ; do
-		t="
-			!official? (
-				cfi? (
-					=llvm-runtimes/compiler-rt-sanitizers-${s}*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},cfi]
-					llvm-runtimes/compiler-rt-sanitizers:=
-				)
-			)
-			=llvm-runtimes/compiler-rt-${s}*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
-			llvm-runtimes/compiler-rt:=
-			=llvm-runtimes/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
-			llvm-runtimes/clang-runtime:=
-			llvm-core/clang:${s}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
-			llvm-core/clang:=
-			llvm-core/lld:${s}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
-			llvm-core/lld:=
-			llvm-core/llvm:${s}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
-			llvm-core/llvm:=
-			official? (
-				amd64? (
-					=llvm-runtimes/compiler-rt-sanitizers-${s}*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},cfi,profile]
-					llvm-runtimes/compiler-rt-sanitizers:=
-				)
-			)
-			pgo? (
-				=llvm-runtimes/compiler-rt-sanitizers-${s}*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},profile]
-				llvm-runtimes/compiler-rt-sanitizers:=
-			)
-			vendored-libcxx? (
-				>=llvm-runtimes/libcx-${s}[${LIBCXX_USEDEP}]
-				llvm-runtimes/libcx:=
-			)
-		"
-		o_all+="
-			(
-				${t}
-			)
-		"
-		(( ${s} == ${LLVM_OFFICIAL_SLOT} )) && o_official=" ${t} "
-	done
-	echo -e "
-		official? (
-			${o_official}
-		)
-		|| (
-			${o_all}
-		)
-	"
-}
 
 COMMON_X_DEPEND="
 	>=x11-libs/libXi-1.7.10[${MULTILIB_USEDEP}]
@@ -1697,23 +1612,6 @@ COMMON_DEPEND="
 		media-libs/flac:=
 	)
 "
-CLANG_RDEPEND="
-	cfi? (
-		$(gen_depend_llvm)
-	)
-	official? (
-		$(gen_depend_llvm)
-	)
-	vendored-libcxx? (
-		$(gen_depend_llvm)
-	)
-"
-
-if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
-	RDEPEND+="
-		${CLANG_RDEPEND}
-	"
-fi
 
 RDEPEND+="
 	${COMMON_DEPEND}
@@ -1772,42 +1670,13 @@ DEPEND+="
 		)
 	)
 "
+
 PDEPEND+="
 	firejail? (
 		sys-apps/firejail[X?,firejail_profiles_chromium]
 	)
 "
-CLANG_BDEPEND="
-	cfi? (
-		$(gen_depend_llvm)
-	)
-	official? (
-		$(gen_depend_llvm)
-	)
-	pgo? (
-		$(gen_depend_llvm)
-	)
-	vendored-libcxx? (
-		$(gen_depend_llvm)
-	)
-"
-if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ;then
-	RUST_BDEPEND="
-		llvm_slot_22? (
-			|| (
-				=dev-lang/rust-9999
-				=dev-lang/rust-bin-9999
-			)
-		)
-		|| (
-			dev-lang/rust:=
-			dev-lang/rust-bin:=
-		)
-	"
-	BDEPEND+="
-		${CLANG_BDEPEND}
-	"
-fi
+
 # Upstream uses live rust.  Rust version is relaxed.
 # Mold was relicensed as MIT in 2.0.  >=2.0 was used to avoid legal issues.
 # Using system-mimalloc with mold causes link failure.
@@ -1833,10 +1702,15 @@ BDEPEND+="
 	net-libs/nodejs:=
 	sys-apps/hwdata
 	sys-devel/flex
-	www-client/chromium-toolchain:0/${PV%.*}.x[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	www-client/chromium-toolchain:=
 	mold? (
 		>=sys-devel/mold-2.33.0[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},-system-mimalloc]
+	)
+	!system-toolchain? (
+		www-client/chromium-toolchain:0/${PV%.*}.x[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cfi?,pgo?,-system-clang,-system-rust]
+	)
+	system-toolchain? (
+		www-client/chromium-toolchain:0/${PV%.*}.x[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cfi?,pgo?,system-clang,system-rust]
 	)
 	vaapi? (
 		media-video/libva-utils
@@ -2218,36 +2092,8 @@ einfo "marked CFI protected."
 einfo
 }
 
-print_use_flags_using_clang() {
-	local U=(
-		"vendored-libcxx"
-		"cfi"
-		"official"
-		"pgo"
-	)
-
-	local u
-	for u in "${U[@]}" ; do
-		if use "${u}" ; then
-einfo "Using ${u} USE flag which is forcing clang."
-		fi
-	done
-}
-
 is_using_clang() {
-	# oiledmachine-overlay:  dropped lto check
-	local U=(
-		"vendored-libcxx"
-		"cfi"
-		"official"
-		"pgo"
-	)
-
-	local u
-	for u in "${U[@]}" ; do
-		use "${u}" && return 0
-	done
-	return 1
+	return 0
 }
 
 check_security_expire() {
@@ -2497,15 +2343,13 @@ ewarn
 		setup_vendor_clang_paths_pre
 	fi
 
-	print_use_flags_using_clang
-	if is_using_clang ; then
-		if _use_system_toolchain ; then
-			_use_system_clang
-		else
-			_use_vendor_clang
-		fi
-		strip-unsupported-flags
+	# We are always using.
+	if _use_system_toolchain ; then
+		_use_system_clang
+	else
+		_use_vendor_clang
 	fi
+	strip-unsupported-flags
 
 	if ver_test "${PV%%.*}" "-ne" "${PATCH_VER%%-*}" ; then # This line is always false, deadcode
 		if tc-is-gcc ; then
@@ -2542,13 +2386,6 @@ eerror
 ewarn
 ewarn "VA-API is not enabled by default for this arch.  Please disable it if"
 ewarn "problems are encountered."
-ewarn
-	fi
-
-	if use system-libstdcxx ; then
-ewarn
-ewarn "The system's libstdcxx may weaken the security.  Consider using only the"
-ewarn "vendored-libcxx instead."
 ewarn
 	fi
 
@@ -3620,6 +3457,7 @@ einfo "Moving rollup wasm-node package into place ..."
 		"third_party/lens_server_proto"
 		"third_party/leveldatabase"
 		"third_party/libaddressinput"
+		"third_party/libc++"
 		"third_party/libdrm"
 		"third_party/libgav1"
 		"third_party/libjingle"
@@ -3837,12 +3675,6 @@ einfo "Moving rollup wasm-node package into place ..."
 		)
 		$(use !system-libsecret && echo \
 			"third_party/libsecret" \
-		)
-
-	# We want the flexibility to one day use GCC again.  We do not want to
-	# be cornered into a particular license.
-		$(use !system-libstdcxx && echo \
-			"third_party/libc++" \
 		)
 
 		$(use !system-libvpx && echo \
@@ -4198,63 +4030,28 @@ eerror
 	fi
 }
 
-_use_system_gcc() {
-einfo "Switching to GCC"
-	if tc-is-cross-compiler ; then
-		export CC="${CBUILD}-gcc $(get_abi_CFLAGS ${ABI})"
-		export CXX="${CBUILD}-g++ $(get_abi_CFLAGS ${ABI})"
-		export BUILD_CC="${CBUILD}-gcc"
-		export BUILD_CXX="${CBUILD}-g++"
-		export BUILD_AR="ar"
-		export BUILD_NM="nm"
-	else
-		export CC="${CHOST}-gcc $(get_abi_CFLAGS ${ABI})"
-		export CXX="${CHOST}-g++ $(get_abi_CFLAGS ${ABI})"
-	fi
-
-	if tc-is-cross-compiler ; then
-		CPP="${CBUILD}-gcc -E"
-	else
-		CPP="${CHOST}-gcc -E"
-	fi
-
-	export AR="ar"
-	export NM="nm"
-	export READELF="readelf"
-	export STRIP="strip"
-	export LD="ld.bfd"
-}
-
 _set_system_cc() {
 	# Final CC selected
 	LLVM_SLOT=""
-	local clang_allowed=1
-	[[ "${FEATURES}" =~ "icecream" ]] && clang_allowed=0
-	if (( ${clang_allowed} == 1 )) && ( tc-is-clang || is_using_clang ) ; then # Force clang either way
-		_use_system_clang
 
-		# Get the stdatomic.h from clang not from gcc.
-		append-cflags "-stdlib=libc++"
-		append-ldflags "-stdlib=libc++"
-		if ver_test "${LLVM_SLOT}" -ge "16" ; then
-			append-cppflags "-isystem/usr/lib/clang/${LLVM_SLOT}/include"
-			show_clang_header_warning "${LLVM_SLOT}"
-		else
-			local clang_pv=$(best_version "llvm-core/clang:${LLVM_SLOT}" \
-				| sed -e "s|llvm-core/clang-||")
-			clang_pv=$(ver_cut "1-3" "${clang_pv}")
-			append-cppflags "-isystem/usr/lib/clang/${clang_pv}/include"
-			show_clang_header_warning "${clang_pv}"
-		fi
-		append-cppflags "-DFORCE_CLANG_STDATOMIC_H"
+	_use_system_clang
+
+	# Always use Clang.
+	# Get the stdatomic.h from clang not from gcc.
+	append-cflags "-stdlib=libc++"
+	append-ldflags "-stdlib=libc++"
+	if ver_test "${LLVM_SLOT}" -ge "16" ; then
+		append-cppflags "-isystem/usr/lib/clang/${LLVM_SLOT}/include"
+		show_clang_header_warning "${LLVM_SLOT}"
 	else
-		_use_system_gcc
-
-		if ! use system-libstdcxx ; then
-eerror "The system-libstdcxx USE flag must be enabled for GCC builds."
-			die
-		fi
+		local clang_pv=$(best_version "llvm-core/clang:${LLVM_SLOT}" \
+			| sed -e "s|llvm-core/clang-||")
+		clang_pv=$(ver_cut "1-3" "${clang_pv}")
+		append-cppflags "-isystem/usr/lib/clang/${clang_pv}/include"
+		show_clang_header_warning "${clang_pv}"
 	fi
+	append-cppflags "-DFORCE_CLANG_STDATOMIC_H"
+
 	# Check for missing symbols bug.
 	if ! "${CC}" --version ; then
 eerror
@@ -4418,25 +4215,10 @@ einfo "Using the bundled toolchain"
 }
 
 _configure_build_system() {
-	if \
-		( \
-			   use vendored-libcxx \
-			|| use cfi \
-			|| use official \
-			|| use pgo \
-		) \
-			&& \
-		[[ "${FEATURES}" =~ "icecream" ]] \
-	; then
+	if [[ "${FEATURES}" =~ "icecream" ]] ; then
 eerror
-eerror "FEATURES=icecream can only use GCC.  It can't use USE flags that depend"
-eerror "on clang."
-eerror
-eerror "Solutions"
-eerror
-eerror "1.  Replace this package with www-client/google-chrome."
-eerror "2.  Disable vendored-libcxx, cfi, official, pgo USE flags."
-eerror "3.  Disable icecream in FEATURES."
+eerror "FEATURES=icecream is not supported because it requires GCC."
+eerror "This ebuild always uses Clang."
 eerror
 		die
 	fi
@@ -5372,23 +5154,16 @@ eerror
 	# Use in-tree libc++ (buildtools/third_party/libc++ and buildtools/third_party/libc++abi)
 	# instead of the system C++ library for C++ standard library support.
 	# default: true, but let's be explicit (forced since 120 ; USE removed 127).
-	if use official || use vendored-libcxx ; then
-einfo "C++ standard library:  vendored libc++ (fully hardened)"
-	# If you didn't do systemwide CFI Cross-DSO, it must be static.
+	if use system-toolchain ; then
+ewarn "Using system libc++ (partially hardened to unhardened)"
+		myconf_gn+=(
+			"use_custom_libcxx=false"
+		)
+	else
+einfo "Using vendored libc++ (fully hardened)"
 		myconf_gn+=(
 			"use_custom_libcxx=true"
 			"use_custom_libcxx_for_host=true"
-		)
-	elif use system-libstdcxx ; then
-ewarn "C++ standard library:  system libstdc++ (unhardened)"
-		myconf_gn+=(
-			"use_custom_libcxx=false"
-			"use_custom_libcxx_for_host=false"
-		)
-	else
-ewarn "C++ standard library:  system libc++ (partially hardened to unhardened)"
-		myconf_gn+=(
-			"use_custom_libcxx=false"
 		)
 	fi
 
@@ -7192,15 +6967,24 @@ _configure_features() {
 	# [C]
 	local use_unbundler=0
 	if use official ; then
-	# Implies vendored-libcxx and cfi
-	# Unbundling or use of system libs weakens the security because it removes noexecstack, full RELRO, SSP.
-einfo "Using vendored libc++, CFI = y, official settings"
-	elif use cfi ; then
+	# Unbundling or use of system libs weakens the security because it"
+	# removes noexecstack, full RELRO, SSP.
+einfo "Clang provider:  Upstream"
+einfo "C++ implementation:  libc++ (vendored)"
+einfo "CFI:  Y"
+einfo "Official settings:  Y"
+	elif ! use system-toolchain && use cfi ; then
 	# Unbundling breaks cfi-icall and cfi-cast.
 	# Cross DSO CFI has a lesser security score than static CFI.
-einfo "Using vendored libc++, CFI = y"
-	elif use vendored-libcxx ; then
-ewarn "Using vendored libc++, CFI = n"
+einfo "Clang provider:  Upstream"
+einfo "C++ implementation:  libc++ (vendored)"
+einfo "CFI:  Y"
+einfo "Official settings:  N"
+	elif ! use system-toolchain ; then
+einfo "Clang provider:  Upstream"
+einfo "C++ implementation:  libc++ (vendored)"
+ewarn "CFI:  N"
+einfo "Official settings:  N"
 		if use force-unbundler ; then
 	# Usually other distros will use the unbundler incorrectly and make it unconditional.
 	# It may cause DoS (Denial of Service) runtime issues that manifest as crashes.
@@ -7209,9 +6993,15 @@ ewarn "Using vendored libc++, CFI = n"
 	else
 		if ! is_generating_credits ; then
 			if eselect profile show 2>/dev/null | grep -q "llvm" ; then
-ewarn "Using system libc++, CFI = n"
+einfo "Clang provider:  System"
+ewarn "C++ implementation:  libc++ (system)"
+ewarn "CFI:  N"
+einfo "Official settings:  N"
 			else
-ewarn "Using system libstdc++ and system libc++ together, CFI = n"
+einfo "Clang provider:  System"
+ewarn "C++ implementation:  libc++ (system) and libstdc++ (system)"
+ewarn "CFI:  N"
+einfo "Official settings:  N"
 			fi
 			use_unbundler=1
 		fi
