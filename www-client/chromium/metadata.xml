@@ -402,11 +402,6 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       and support for GATT (Generic Attribute Profile) for the Web Bluetooth
       API.
     </flag>
-    <flag name="bundled-libcxx">
-      Build against the internal hardened libc++ for proper cfi-icall and
-      cfi-icast protection.  This also builds libc++ with CFI, Full RELRO,
-      noexecstack, SSP security features.  This is the upstream default.
-    </flag>
     <flag name="cet">
       Use CET for hardware accelerated execution integrity checks.
 
@@ -985,6 +980,10 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       Enabling may decrease performance (w/o PGO) and increase vulnerabilities
       (w/o Clang CFI).
     </flag>
+    <flag name="system-libcxx">
+      Build against the system libcxx instead of the possibility of the
+      trojanized prebuilt libc++.
+    </flag>
     <flag name="system-toolchain">
       Use the system-clang and system-rust instead of the bundled one.
 
@@ -1054,6 +1053,11 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     <flag name="weston">
       Prefer weston to generate wayland PGO profile.  This option is mutually
       exclusive to X windowing system PGO profile generation
+    </flag>
+    <flag name="vendored-libcxx">
+      Build against the internal hardened libc++ for proper cfi-icall and
+      cfi-icast protection.  This also builds libc++ with CFI, Full RELRO,
+      noexecstack, SSP security features.  This is the upstream default.
     </flag>
     <flag name="widevine">
       Unsupported closed-source DRM capability (required for premium web

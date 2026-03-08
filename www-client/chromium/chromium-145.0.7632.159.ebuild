@@ -164,7 +164,7 @@ GEN_ABOUT_CREDITS=0
 
 ABSEIL_CPP_SLOT="20251021"
 ALLOW_MKSNAPSHOT=1 # Setting to a value other than 1 is untested.
-ALLOW_SYSTEM_TOOLCHAIN=0
+ALLOW_SYSTEM_TOOLCHAIN=1
 CFI_CAST=0 # Global variable
 CFI_ICALL=0 # Global variable
 CFI_VCALL=0 # Global variable
@@ -195,11 +195,11 @@ USE_LTO=0 # Global variable
 RE2_SLOT="20250512"
 # https://github.com/chromium/chromium/blob/145.0.7632.159/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
-RUST_MAX_VER="1.93.0" # Corresponds to llvm-21.1
-RUST_MIN_VER="1.93.0" # Corresponds to llvm-21.1
+RUST_MAX_VER="9999" # Corresponds to llvm 22 to match LLVM_COMPAT
+RUST_MIN_VER="9999" # Corresponds to llvm 22 to match LLVM_COMPAT
 RUST_NEEDS_LLVM="yes please"
 RUST_REQ_USE="rustfmt" # Upstream run rustfmt on bindgen output, so we need it to be available.
-RUST_OPTIONAL="yes" # Not actually optional, but we don't need system Rust (or LLVM) with USE=bundled-toolchain
+RUST_OPTIONAL="yes" # Not actually optional, but we don't need system Rust (or LLVM) with USE=-system-toolchain
 SHADOW_CALL_STACK=0 # Global variable
 
 GCC_PV="10.2.1" # Minimum
@@ -421,8 +421,9 @@ FFMPEG_COMPAT_SLOTS=(
 FFMPEG_SLOT="60.62.62" # Same as ffmpeg 8.0 ; 0/libavutil_sover_maj.libavcodec_sover_maj.libformat_sover_maj
 
 IUSE_LIBCXX=(
-	"bundled-libcxx"
+	"system-libcxx"
 	"system-libstdcxx"
+	"+vendored-libcxx"
 )
 # CFI Basic (.a) mode requires all third party modules built as static.
 
@@ -467,7 +468,8 @@ LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}" # 20-21
+	#"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}" # 20-21
+	22
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 LLVM_OFFICIAL_SLOT="22" # Cr official slot
@@ -688,6 +690,16 @@ https://github.com/uazo/cromite/archive/refs/tags/v${CROMITE_PV}-${CROMITE_HASH}
 	-> cromite-${CROMITE_PV}-${CROMITE_HASH}.tar.gz
 		)
 	"
+	# Force require the reviewed system compiler to prevent possibility of
+	# trojanized compiler injecting user fingerprinting code.
+	if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
+		REQUIRED_USE+="
+			cromite? (
+				system-libcxx
+				system-toolchain
+			)
+		"
+	fi
 fi
 
 if is_ungoogle_chromium_compatible ; then
@@ -700,6 +712,16 @@ https://github.com/ungoogled-software/ungoogled-chromium/archive/refs/tags/${UNG
 	-> ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}.tar.gz
 		)
 	"
+	# Force require the reviewed system compiler to prevent possibility of
+	# trojanized compiler injecting user fingerprinting code.
+	if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ;then
+		REQUIRED_USE+="
+			ungoogled-chromium? (
+				system-libcxx
+				system-toolchain
+			)
+		"
+	fi
 fi
 
 DESCRIPTION="The open-source version of the Chrome web browser"
@@ -766,12 +788,13 @@ ${IUSE_LIBCXX[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
 ${SYSTEM_USE[@]}
-+accessibility bindist bluetooth +bundled-libcxx +cfi -cet +cups +css-hyphen
++accessibility bindist bluetooth +cfi -cet +cups +css-hyphen
 -debug -drumbrake +encode +extensions ffmpeg-chromium firejail -force-unbundler
 -gtk4 -gwp-asan -hangouts -headless +hidpi +jit +js-type-check +kerberos
 +miracleptr mold +mpris -official +partitionalloc pax-kernel +pdf pic +pgo
 +plugins +pre-check-vaapi +pulseaudio +reporting-api qt6 +rar +screencast
-selinux systemd test +v8-snapshot +wayland +webassembly -widevine +X
+selinux systemd test +v8-snapshot +wayland +webassembly
+-widevine +X
 ebuild_revision_40
 "
 if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ; then
@@ -897,10 +920,10 @@ DISTRO_REQUIRE_USE="
 if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ;then
 	REQUIRED_USE+="
 		official? (
-			llvm_slot_21
+			llvm_slot_22
 		)
 		system-toolchain? (
-			bundled-libcxx
+			system-libcxx
 		)
 	"
 fi
@@ -944,7 +967,7 @@ LIBCXX_REQUIRED_USE=(
 # Drumbrake is broken in this release and off by default.
 #	!system-harfbuzz
 # Mold 2.40.4 is segfaulting
-#	bundled-libcxx? (
+#	vendored-libcxx? (
 #		${LIBCXX_REQUIRED_USE[@]}
 #	)
 REQUIRED_USE+="
@@ -960,12 +983,12 @@ REQUIRED_USE+="
 			X
 		)
 	)
-	^^ (
-		${IUSE_LIBCXX[@]}
-	)
-	bundled-libcxx
+	vendored-libcxx
 	partitionalloc
 	rar
+	^^ (
+		${IUSE_LIBCXX[@]/+}
+	)
 	amd64? (
 		cpu_flags_x86_sse2
 	)
@@ -975,7 +998,7 @@ REQUIRED_USE+="
 	cfi? (
 		${SYSTEM_USE[@]/-/!}
 		!mold
-		bundled-libcxx
+		vendored-libcxx
 	)
 
 	cpu_flags_ppc_power8-vector? (
@@ -1157,7 +1180,7 @@ REQUIRED_USE+="
 		!hangouts
 		!mold
 		accessibility
-		bundled-libcxx
+		vendored-libcxx
 		css-hyphen
 		cups
 		dav1d
@@ -1258,13 +1281,6 @@ if is_cromite_compatible ; then
 			!cromite
 		)
 	"
-	if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ;then
-		REQUIRED_USE+="
-			cromite? (
-				!system-toolchain
-			)
-		"
-	fi
 fi
 if is_ungoogle_chromium_compatible ; then
 	# USE=widevine is default ON, implying that it is allowed, in
@@ -1334,15 +1350,19 @@ gen_depend_llvm() {
 			llvm-core/lld:=
 			llvm-core/llvm:${s}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 			llvm-core/llvm:=
-			pgo? (
-				=llvm-runtimes/compiler-rt-sanitizers-${s}*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},profile]
-				llvm-runtimes/compiler-rt-sanitizers:=
-			)
 			official? (
 				amd64? (
 					=llvm-runtimes/compiler-rt-sanitizers-${s}*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},cfi,profile]
 					llvm-runtimes/compiler-rt-sanitizers:=
 				)
+			)
+			pgo? (
+				=llvm-runtimes/compiler-rt-sanitizers-${s}*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},profile]
+				llvm-runtimes/compiler-rt-sanitizers:=
+			)
+			vendored-libcxx? (
+				>=llvm-runtimes/libcx-${s}[${LIBCXX_USEDEP_LTS}]
+				llvm-runtimes/libcx:=
 			)
 		"
 		o_all+="
@@ -1668,13 +1688,13 @@ COMMON_DEPEND="
 	)
 "
 CLANG_RDEPEND="
-	bundled-libcxx? (
-		$(gen_depend_llvm)
-	)
 	cfi? (
 		$(gen_depend_llvm)
 	)
 	official? (
+		$(gen_depend_llvm)
+	)
+	vendored-libcxx? (
 		$(gen_depend_llvm)
 	)
 "
@@ -1748,9 +1768,6 @@ PDEPEND+="
 	)
 "
 CLANG_BDEPEND="
-	bundled-libcxx? (
-		$(gen_depend_llvm)
-	)
 	cfi? (
 		$(gen_depend_llvm)
 	)
@@ -1760,10 +1777,13 @@ CLANG_BDEPEND="
 	pgo? (
 		$(gen_depend_llvm)
 	)
+	vendored-libcxx? (
+		$(gen_depend_llvm)
+	)
 "
 if (( ${ALLOW_SYSTEM_TOOLCHAIN} == 1 )) ;then
 	RUST_BDEPEND="
-		llvm_slot_21? (
+		llvm_slot_22? (
 			|| (
 				=dev-lang/rust-9999
 				=dev-lang/rust-bin-9999
@@ -1781,18 +1801,21 @@ fi
 # Upstream uses live rust.  Rust version is relaxed.
 # Mold was relicensed as MIT in 2.0.  >=2.0 was used to avoid legal issues.
 # Using system-mimalloc with mold causes link failure.
-BDEPEND+="
+TRASH_BDEPEND="
+	${COMMON_SNAPSHOT_DEPEND}
+
+	www-client/chromium-toolchain:0/${PV%.*}.x[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	www-client/chromium-toolchain:=
+"
+aBDEPEND+="
 	$(python_gen_any_dep '
 		dev-python/setuptools[${PYTHON_USEDEP}]
 	')
-	${COMMON_SNAPSHOT_DEPEND}
 	${PYTHON_DEPS}
 	app-alternatives/ninja
 	dev-util/patchutils
 	www-client/chromium-sources:0/${PV}
 	www-client/chromium-sources:=
-	www-client/chromium-toolchain:0/${PV%.*}.x[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	www-client/chromium-toolchain:=
 	>=app-arch/gzip-1.7
 	>=dev-util/gperf-3.2[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
@@ -2190,7 +2213,7 @@ einfo
 
 print_use_flags_using_clang() {
 	local U=(
-		"bundled-libcxx"
+		"vendored-libcxx"
 		"cfi"
 		"official"
 		"pgo"
@@ -2207,7 +2230,7 @@ einfo "Using ${u} USE flag which is forcing clang."
 is_using_clang() {
 	# oiledmachine-overlay:  dropped lto check
 	local U=(
-		"bundled-libcxx"
+		"vendored-libcxx"
 		"cfi"
 		"official"
 		"pgo"
@@ -2518,7 +2541,7 @@ ewarn
 	if use system-libstdcxx ; then
 ewarn
 ewarn "The system's libstdcxx may weaken the security.  Consider using only the"
-ewarn "bundled-libcxx instead."
+ewarn "vendored-libcxx instead."
 ewarn
 	fi
 
@@ -4390,7 +4413,7 @@ einfo "Using the bundled toolchain"
 _configure_build_system() {
 	if \
 		( \
-			   use bundled-libcxx \
+			   use vendored-libcxx \
 			|| use cfi \
 			|| use official \
 			|| use pgo \
@@ -4405,7 +4428,7 @@ eerror
 eerror "Solutions"
 eerror
 eerror "1.  Replace this package with www-client/google-chrome."
-eerror "2.  Disable bundled-libcxx, cfi, official, pgo USE flags."
+eerror "2.  Disable vendored-libcxx, cfi, official, pgo USE flags."
 eerror "3.  Disable icecream in FEATURES."
 eerror
 		die
@@ -5342,7 +5365,7 @@ eerror
 	# Use in-tree libc++ (buildtools/third_party/libc++ and buildtools/third_party/libc++abi)
 	# instead of the system C++ library for C++ standard library support.
 	# default: true, but let's be explicit (forced since 120 ; USE removed 127).
-	if use official || use bundled-libcxx ; then
+	if use official || use vendored-libcxx ; then
 einfo "C++ standard library:  vendored libc++ (fully hardened)"
 	# If you didn't do systemwide CFI Cross-DSO, it must be static.
 		myconf_gn+=(
@@ -7162,14 +7185,14 @@ _configure_features() {
 	# [C]
 	local use_unbundler=0
 	if use official ; then
-	# Implies bundled-libcxx and cfi
+	# Implies vendored-libcxx and cfi
 	# Unbundling or use of system libs weakens the security because it removes noexecstack, full RELRO, SSP.
 einfo "Using vendored libc++, CFI = y, official settings"
 	elif use cfi ; then
 	# Unbundling breaks cfi-icall and cfi-cast.
 	# Cross DSO CFI has a lesser security score than static CFI.
 einfo "Using vendored libc++, CFI = y"
-	elif use bundled-libcxx ; then
+	elif use vendored-libcxx ; then
 ewarn "Using vendored libc++, CFI = n"
 		if use force-unbundler ; then
 	# Usually other distros will use the unbundler incorrectly and make it unconditional.
@@ -8320,7 +8343,7 @@ ewarn
 # Qt6 without Qt5 - pass
 # Mold linking - pass (mold 2.33.0)
 # Ccache with vendored clang - pass
-# USE="X bundled-libcxx custom-cflags dav1d mold openh264 opus pgo
+# USE="X vendored-libcxx custom-cflags dav1d mold openh264 opus pgo
 # proprietary-codecs pulseaudio qt6 vaapi vpx wayland -bindist
 # -bluetooth -branch-protection -cfi -cups (-debug) -encode -ffmpeg-chromium
 # -gtk4 -hangouts (-headless) -js-type-check -kerberos -libaom -official
@@ -8356,7 +8379,7 @@ ewarn
 #   CanvasMark 2013 (html5 canvas tests) - pass
 #   GPU Shader Experiments (https://www.kevs3d.co.uk/dev/shaders/) - pass, randomly selected
 # Test comments:  Built with clang 17.0.0, Python 3.11.  64-bit ABI only
-# USE="X bundled-libcxx cfi custom-cflags dav1d openh264 opus pgo (pic)
+# USE="X vendored-libcxx cfi custom-cflags dav1d openh264 opus pgo (pic)
 # CFLAGS:  -O2 -pipe (after conversion)
 # TODO:  Retest -Ofast in 115
 # proprietary-codecs pulseaudio vpx wayland -bluetooth -branch-protection
@@ -8397,7 +8420,7 @@ ewarn
 # OSHIT_OPT_LEVEL_TFLITE="1"
 # OSHIT_OPT_LEVEL_V8="2"
 # OSHIT_OPT_LEVEL_XNNPACK="1"
-# USE="X async-dns bundled-libcxx custom-cflags dav1d extensions mold openh264
+# USE="X async-dns vendored-libcxx custom-cflags dav1d extensions mold openh264
 # opus pdf plugins pointer-compression proprietary-codecs pulseaudio qt6
 # screen-capture vaapi vpx wayland -accessibility -bindist -bluetooth
 # -cet -cfi -css-hyphen -cups (-debug) -drumbrake -ebuild_revision_1 -encode
@@ -8415,7 +8438,7 @@ ewarn
 
 # OILEDMACHINE-OVERLAY-TEST: FAILED 137.0.7151.68 (20250608) - segfaults when playing videos, browsing without videos works.  distro patches only.  no oiledmachine-overlay settings or patchset.
 # CFLAGS:  Same as build scripts (-O3 or -O2).
-# USE="X bundled-libcxx custom-cflags dav1d extensions gwp-asan jit miracleptr mold opus
+# USE="X vendored-libcxx custom-cflags dav1d extensions gwp-asan jit miracleptr mold opus
 # partitionalloc pdf plugins pulseaudio qt6 vpx wayland webassembly -accessibility -bindist
 # -bluetooth -cet -cfi -css-hyphen -cups (-debug) -drumbrake -encode -ffmpeg-chromium -firejail
 # -gtk4 -hangouts (-headless) -hidpi -js-type-check -kerberos -libaom -mdns -mpris -official
