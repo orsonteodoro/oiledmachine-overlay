@@ -19,8 +19,10 @@ LLVM_SUB_REV="2"
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
 RUST_COMMIT="a4cfac7093a1c1c7fbdb6bc75d6b6dc4d385fc69"
 RUST_SUB_REV="2"
-RUST_MAX_VER="1.91.1" # Inclusive
-RUST_MIN_VER="1.91.1" # Corresponds to llvm-21.1, see https://github.com/rust-lang/rust/blob/a4cfac7093a1c1c7fbdb6bc75d6b6dc4d385fc69/RELEASES.md
+# Upstream uses 1.91.1 corresponding to 21.1
+# This ebuild assumes 1.96.0 (live 9999) corresponding to llvm 22 to reduce build time.
+RUST_MAX_VER="9999" # Inclusive
+RUST_MIN_VER="9999" # Corresponds to llvm-21.1, see https://github.com/rust-lang/rust/blob/a4cfac7093a1c1c7fbdb6bc75d6b6dc4d385fc69/RELEASES.md
 RUST_PV="${RUST_MIN_VER}"
 VENDORED_CLANG_VER="llvmorg-${LLVM_OFFICIAL_SLOT}-init-${LLVM_N_COMMITS}-g${LLVM_COMMIT:0:8}-${LLVM_SUB_REV}"
 VENDORED_RUST_VER="${RUST_COMMIT}-${RUST_SUB_REV}"
@@ -228,11 +230,36 @@ BDEPEND+="
 "
 DOCS=( )
 
+verify_rust() {
+	if "${RUSTC}" --version | grep -q -e "nightly" ; then
+	# Same as Rust 1.96.0 timestamp
+		local compatible_time=$(date --date="Feb 27, 2026 09:38:23 -0800" "+%s")
+
+		local merge_time=$(cat "/var/db/pkg/dev-lang/rust-bin-9999/BUILD_TIME")
+		if (( ${merge_time} < ${compatible_time} )) ; then
+eerror "Live merge time is old."
+eerror "Re-emerge =dev-lang/rust-bin-9999 or =dev-lang-rust-9999 or switch to rust 1.88 or later to continue."
+eerror "Merge time:  ${merge_time}"
+eerror "Compatible time:  ${compatible_time}"
+			die
+		fi
+	else
+		local actual_pv=$("${RUSTC}" --version | cut -f 2 -d " ")
+		if ver_test "${actual_pv}" "-lt" "${RUST_MIN_VER}" ; then
+eerror "Switch Rust to >= ${RUST_MIN_VER}"
+			die
+		fi
+	fi
+}
+
 pkg_setup() {
 	dhms_start
 	check-compiler-switch_start
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+	if use system-rust ; then
+		verify_rust
+	fi
 }
 
 src_unpack() {
