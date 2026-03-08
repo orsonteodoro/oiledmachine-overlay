@@ -6,7 +6,7 @@ EAPI=8
 
 inherit dhms
 
-CXX_STANDARD=20 # gn = c++20, llvm = c++17, clang = c++17, lld = c++17, libcxx = c++23
+CXX_STANDARD=20 # gn = c++20, llvm = c++17, clang = c++17, lld = c++17, libcxx = c++23, compiler-rt = c++17, compiler-rt-sanitizers = c++17
 # https://github.com/chromium/chromium/blob/145.0.7632.45/DEPS#L533
 GN_COMMIT="5550ba0f4053c3cbb0bff3d60ded9d867b6fa371"
 GN_PV="0.2315" # See get_gn_ver.sh
