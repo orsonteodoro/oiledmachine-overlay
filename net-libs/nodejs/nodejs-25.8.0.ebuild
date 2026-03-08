@@ -12,11 +12,12 @@ EAPI=8
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
 
-# Last deps commit date:  Jan 9, 2026
+# Last deps commit date:  Mar 2, 2026
 
 CFLAGS_HARDENED_PIE="1"
 CFLAGS_HARDENED_USE_CASES="jit language-runtime network server untrusted-data web-server"
 CFLAGS_HARDENED_VTABLE_VERIFY="1"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS DT ID OOBR PE PT UAF"
 CXX_STANDARD=20
 LTO_TYPE="none" # Global var
 PYTHON_COMPAT=( "python3_"{11..13} ) # See configure
@@ -27,12 +28,12 @@ UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
 
-ACORN_PV="8.15.0"
+ACORN_PV="8.16.0"
 AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
-COREPACK_PV="0.34.5"
-NGHTTP2_PV="1.67.1"
-NGHTTP3_PV="1.6.0"
-NPM_PV="11.6.2" # See https://github.com/nodejs/node/blob/v24.13.0/deps/npm/package.json
+COREPACK_PV="0.34.6"
+NGHTTP2_PV="1.68.0"
+NGHTTP3_PV="1.15.0"
+NPM_PV="11.11.0" # See https://github.com/nodejs/node/blob/v25.8.0/deps/npm/package.json
 WRK_PV="1.2.1" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 
 _TRAINERS=(
@@ -118,7 +119,7 @@ LICENSE="
 	Artistic-2
 	BSD
 	BSD-2
-	icu-71.1
+	icu-78.2
 	ISC
 	MIT
 	Unicode-DFS-2016
@@ -174,7 +175,7 @@ REQUIRED_USE+="
 "
 RDEPEND+="
 	!net-libs/nodejs:0
-	>=app-arch/brotli-1.1.0
+	>=app-arch/brotli-1.2.0
 	>=app-eselect/eselect-nodejs-20230521
 	>=dev-libs/libuv-1.51.0
 	>=net-dns/c-ares-1.34.6
@@ -182,11 +183,11 @@ RDEPEND+="
 	>=sys-libs/zlib-1.3.1
 	sys-kernel/mitigate-id
 	system-icu? (
-		>=dev-libs/icu-77.1[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+		>=dev-libs/icu-78.2[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 		dev-libs/icu:=
 	)
 	system-ssl? (
-		>=dev-libs/openssl-3.5.4:0[asm?,fips?]
+		>=dev-libs/openssl-3.5.5:0[asm?,fips?]
 		dev-libs/openssl:=
 	)
 "
@@ -226,8 +227,8 @@ PATCHES=(
 	"${FILESDIR}/${PN}-24.2.0-lto-update.patch"
 	"${FILESDIR}/${PN}-24.2.0-support-clang-pgo.patch"
 	"${FILESDIR}/${PN}-19.3.0-v8-oflags.patch"
-	"${FILESDIR}/${PN}-24.11.1-split-pointer-compression-and-v8-sandbox-options.patch"
-	"${FILESDIR}/${PN}-24.2.0-add-v8-jit-fine-grained-options.patch"
+	"${FILESDIR}/${PN}-25.1.0-split-pointer-compression-and-v8-sandbox-options.patch"
+	"${FILESDIR}/${PN}-25.8.0-add-v8-jit-fine-grained-options.patch"
 )
 
 _count_useflag_slots() {
@@ -277,7 +278,7 @@ einfo "FEATURES:  ${FEATURES}"
 
 # See https://github.com/nodejs/release#release-schedule
 # See https://github.com/nodejs/release#end-of-life-releases
-einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2028-04-30."
+einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2026-06-01."
 
 	local u
 	for u in "${PN}_trainers_http" "${PN}_trainers_https" ; do

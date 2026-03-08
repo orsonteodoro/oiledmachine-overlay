@@ -9,7 +9,7 @@ EAPI=8
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
 
-# Last deps commit date:  Oct 11, 2025
+# Last deps commit date:  Mar 4, 2026
 
 CFLAGS_HARDENED_PIE="1"
 CFLAGS_HARDENED_USE_CASES="jit language-runtime network server untrusted-data web-server"
@@ -27,9 +27,9 @@ UOPTS_SUPPORT_TPGO=1
 
 ACORN_PV="8.15.0"
 AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
-COREPACK_PV="0.34.0"
+COREPACK_PV="0.34.6"
 NGHTTP2_PV="1.64.0"
-NPM_PV="10.9.4" # See https://github.com/nodejs/node/blob/v22.22.0/deps/npm/package.json
+NPM_PV="10.9.4" # See https://github.com/nodejs/node/blob/v22.22.1/deps/npm/package.json
 WRK_PV="1.2.1" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 
 _TRAINERS=(
@@ -115,7 +115,7 @@ LICENSE="
 	Artistic-2
 	BSD
 	BSD-2
-	icu-71.1
+	icu-78.2
 	ISC
 	MIT
 	Unicode-DFS-2016
@@ -179,11 +179,11 @@ RDEPEND+="
 	>=sys-libs/zlib-1.3.1
 	sys-kernel/mitigate-id
 	system-icu? (
-		>=dev-libs/icu-77.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-libs/icu-78.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-libs/icu:=
 	)
 	system-ssl? (
-		>=dev-libs/openssl-3.0.17:0[asm?,fips?]
+		>=dev-libs/openssl-3.3.5:0[asm?,fips?]
 		dev-libs/openssl:=
 	)
 "

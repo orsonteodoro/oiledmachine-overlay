@@ -15,6 +15,7 @@ EAPI=8
 CFLAGS_HARDENED_PIE="1"
 CFLAGS_HARDENED_USE_CASES="jit language-runtime network server untrusted-data web-server"
 CFLAGS_HARDENED_VTABLE_VERIFY="1"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS DT ID OOBR PE PT UAF"
 CXX_STANDARD=14
 LTO_TYPE="none" # Global var
 PYTHON_COMPAT=( "python3_11" ) # See configure
