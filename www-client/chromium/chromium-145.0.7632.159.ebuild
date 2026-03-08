@@ -2940,8 +2940,19 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-optionalize-clang-flags.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-optionalize-omit-frame-pointer.patch"
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.75-dedupe-use-system-zlib.patch" # It appears twice in cromite build
-#		"${FILESDIR}/extra-patches/${PN}-145.0.7632.116-optionalize-glic.patch"
 	)
+
+	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
+	#  Glic removed
+		:
+	elif has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
+	#  Glic removed
+		:
+	else
+		PATCHES+=(
+			"${FILESDIR}/extra-patches/${PN}-145.0.7632.116-optionalize-glic.patch"
+		)
+	fi
 }
 
 is_cromite_patch_non_fatal() {
