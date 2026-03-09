@@ -231,6 +231,11 @@ BDEPEND+="
 DOCS=( )
 
 verify_rust() {
+	local is_nightly=$(rustc --version | grep -q "nightly")
+	is_nightly=$(( "${?}" == 0 ? 1 : 0 ))
+
+	(( ${is_nightly} != 0 )) && die "Only nightly Rust is currently supported."
+
 	if "${RUSTC}" --version | grep -q -e "nightly" ; then
 	# Same as Rust 1.96.0 timestamp
 		local compatible_time=$(date --date="Feb 27, 2026 09:38:23 -0800" "+%s")
