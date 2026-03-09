@@ -39,7 +39,7 @@ LLVM_COMPAT=(
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
-inherit check-compiler-switch edo flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal ninja-utils
+inherit check-compiler-switch edo flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal ninja-utils rust
 
 KEYWORDS="~amd64"
 S="${WORKDIR}"
@@ -231,7 +231,7 @@ BDEPEND+="
 DOCS=( )
 
 verify_rust() {
-	local is_nightly=$(rustc --version | grep -q "nightly")
+	local is_nightly=$("${RUSTC}" --version | grep -q "nightly")
 	is_nightly=$(( "${?}" == 0 ? 1 : 0 ))
 
 	if (( ${is_nightly} == 0 )) ; then
@@ -248,8 +248,8 @@ eerror "Switch to live with \`eselect rust\`"
 		if (( ${merge_time} < ${compatible_time} )) ; then
 eerror "The live merge time is old for rust or rust-bin."
 eerror "Re-emerge =dev-lang/rust-bin-9999 or =dev-lang-rust-9999 or switch to Rust 1.96.0 or later to continue."
-eerror "Merge time:  ${merge_time}"
-eerror "Compatible time:  ${compatible_time}"
+eerror "Merge time:  "$(date --date="@${merge_time}")
+eerror "Compatible time:  >= "$(date --date="@${compatible_time}")
 			die
 		fi
 	else
@@ -266,6 +266,7 @@ pkg_setup() {
 	check-compiler-switch_start
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+	rust_pkg_setup
 	if use system-rust ; then
 		verify_rust
 	fi

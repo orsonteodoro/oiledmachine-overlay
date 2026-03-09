@@ -2174,7 +2174,7 @@ einfo "PATH:  ${PATH} (After)"
 }
 
 verify_rust() {
-	local is_nightly=$(rustc --version | grep -q "nightly")
+	local is_nightly=$("${RUSTC}" --version | grep -q "nightly")
 	is_nightly=$(( "${?}" == 0 ? 1 : 0 ))
 
 	if (( ${is_nightly} == 0 )) ; then
@@ -2191,8 +2191,8 @@ eerror "Switch to live with \`eselect rust\`"
 		if (( ${merge_time} < ${compatible_time} )) ; then
 eerror "The live merge time is old for rust or rust-bin."
 eerror "Re-emerge =dev-lang/rust-bin-9999 or =dev-lang-rust-9999 or switch to Rust 1.96.0 or later to continue."
-eerror "Merge time:  ${merge_time}"
-eerror "Compatible time:  ${compatible_time}"
+eerror "Merge time:  "$(date --date="@${merge_time}")
+eerror "Compatible time:  >= "$(date --date="@${compatible_time}")
 			die
 		fi
 	else
@@ -2425,8 +2425,12 @@ ewarn "Enabling ${x} could weaken the security."
 	done
 
 	if use system-rust ; then
+		rust_pkg_setup
 		verify_rust
+	else
+		export RUSTC="${S}/third_party/rust-toolchain/bin/rustc"
 	fi
+einfo "RUSTC:  ${RUSTC}"
 }
 
 src_unpack() {
@@ -4501,9 +4505,6 @@ ewarn
 		CFLAGS_HARDENED_SANITIZERS_DEACTIVATE=1
 	fi
 
-	if ! use system-rust ; then
-		export RUSTC="${S}/third_party/rust-toolchain/bin/rustc"
-	fi
 einfo "RUSTC:  ${RUSTC}"
 	if ! "${RUSTC}" --version 2>&1 >/dev/null ; then
 eerror "QA:  RUSTC is not initialized or missing."

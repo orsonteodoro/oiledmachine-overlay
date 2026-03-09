@@ -422,12 +422,12 @@ verify_rust() {
 		if (( ${merge_time} < ${compatible_time} )) ; then
 eerror "Live merge time is old."
 eerror "Re-emerge =dev-lang/rust-bin-9999 or =dev-lang-rust-9999 or switch to rust 1.88 or later to continue."
-eerror "Merge time:  ${merge_time}"
-eerror "Compatible time:  ${compatible_time}"
+eerror "Merge time:  "$(date --date="@${merge_time}")
+eerror "Compatible time:  >= "$(date --date="@${compatible_time}")
 			die
 		fi
 	else
-		local actual_pv=$(rustc --version | cut -f 2 -d " ")
+		local actual_pv=$("${RUSTC}" --version | cut -f 2 -d " ")
 		if ver_test "${actual_pv}" "-lt" "${RUST_MIN_VER}" ; then
 eerror "Switch Rust to >= ${RUST_MIN_VER}"
 			die
