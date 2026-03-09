@@ -76,7 +76,7 @@ SLOT="0"
 IUSE+="
 ${LLVM_EBUILDS_LLVM19_REVISION}
 clang +libcxxabi +static-libs test +threads
-ebuild_revision_18
+ebuild_revision_19
 "
 RDEPEND="
 	!libcxxabi? (
@@ -224,6 +224,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 	# We're using our own mechanism for generating linker scripts.
 		-DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=OFF
 		-DLIBCXX_ENABLE_THREADS=$(usex threads)
+	# Match Chromium's default security level
+		-DLIBCXX_HARDENING_MODE=extensive
 		-DLIBCXX_HAS_MUSL_LIBC=$(llvm_cmake_use_musl)
 		-DLIBCXX_INCLUDE_BENCHMARKS=OFF
 		-DLIBCXX_INCLUDE_TESTS=$(usex test)
