@@ -39,7 +39,7 @@ LLVM_COMPAT=(
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
-inherit check-compiler-switch edo flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal ninja-utils rust
+inherit check-compiler-switch edo flag-o-matic flag-o-matic-om libcxx-slot libstdcxx-slot multilib-minimal ninja-utils rust toolchain-funcs
 
 KEYWORDS="~amd64"
 S="${WORKDIR}"
@@ -298,6 +298,39 @@ src_unpack() {
 			echo "${VENDORED_RUST_VER}" > rust-ver.txt || die
 		popd >/dev/null 2>&1 || die
 	fi
+}
+
+src_configure() {
+	if use system-clang ; then
+		local s
+		for s in "${LLVM_COMPAT[@]}" ; do
+			if use "llvm_slot_${s}" ; then
+				LLVM_SLOT="${s}"
+				break
+			fi
+		done
+
+		local llvm_path="${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}"
+		export PATH=$(echo "${PATH}" \
+			| tr ":" $'\n' \
+			| sed -E -e "/llvm\/[0-9]+/d" \
+			| tr $'\n' ":" \
+			| sed -e "s|/opt/bin|/opt/bin:${llvm_path}/bin|g")
+		export CC="${CHOST}-clang-${s}"
+		export CXX="${CHOST}-clang++-${s}"
+		"${CC}" --version || die
+	else
+		local llvm_path="${WORKDIR}/clang"
+		export PATH=$(echo "${PATH}" \
+			| tr ":" $'\n' \
+			| sed -E -e "/llvm\/[0-9]+/d" \
+			| tr $'\n' ":" \
+			| sed -e "s|/opt/bin|/opt/bin:${llvm_path}/bin|g")
+		export CC="clang"
+		export CXX="clang++"
+	fi
+	fix_mb_len_max
+	append-flags -D_POSIX_C_SOURCE=200809L
 }
 
 build_gn() {
