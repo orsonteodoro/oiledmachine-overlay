@@ -56,7 +56,7 @@ SLOT="0"
 IUSE+="
 ${LLVM_EBUILDS_LLVM19_REVISION}
 clang +static-libs test
-ebuild_revision_15
+ebuild_revision_16
 "
 # in 15.x, cxxabi.h is moving from libcxx to libcxxabi
 RDEPEND="
@@ -193,6 +193,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DLIBCXX_HAS_GCC_S_LIB=OFF
 		-DLIBCXX_INCLUDE_BENCHMARKS=OFF
 		-DLIBCXX_INCLUDE_TESTS=OFF
+		-DLIBCXX_HARDENING_MODE=extensive
 	)
 
 	if [[ "${lib_type}" == "static" ]] ; then
