@@ -2425,9 +2425,11 @@ ewarn "Enabling ${x} could weaken the security."
 	done
 
 	if use system-rust ; then
+einfo "Rust compiler:  Rust (system)"
 		rust_pkg_setup
 		verify_rust
 	else
+einfo "Rust compiler:  Rust (vendored)"
 		export RUSTC="${S}/third_party/rust-toolchain/bin/rustc"
 	fi
 einfo "RUSTC:  ${RUSTC}"
@@ -2623,18 +2625,17 @@ einfo "Applying the distro patchset ..."
 
 	if use system-clang ; then
 		PATCHES+=(
-			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/"
+			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr138-nodejs-version-check.patch"
+			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr145-fix-no-unrar.patch"
+			"${FILESDIR}/chromium-patches-${PATCH_VER}/common/cr145-channel-aware.patch"
+			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr144-glibc-2.43.patch"
+			$(use ungoogled-chromium || echo "${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr145-revert-to-rollup-wasm.patch")
+			$(use system-icu && echo "${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr131-unbundle-icu-target.patch")
+			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr145-fix-no-unrar-2-include-harder.patch"
+			$(use system-zlib && echo "${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr109-system-zlib.patch")
+			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr145-oauth2-client-switches.patch"
 		)
 	fi
-#	PATCHES+=(
-#		$(use system-zlib && echo "${FILESDIR}/${PN}-109-system-zlib.patch")
-#		$(use system-icu && echo "${FILESDIR}/${PN}-131-unbundle-icu-target.patch")
-#		$(use ungoogled-chromium || echo "${FILESDIR}/cr145-revert-to-rollup-wasm.patch") # Breaks ungoogled-chromium build
-#	)
-	# Prune
-#	use system-zlib || rm "${WORKDIR}/chromium-patches-${PATCH_VER}/common/"
-#	use system-icu || rm "${WORKDIR}/chromium-patches-${PATCH_VER}/common/"
-#	use ungoogled-chromium || rm "${WORKDIR}/chromium-patches-${PATCH_VER}/common/"
 
 	# https://issues.chromium.org/issues/442698344
 	# Unreleased fontconfig changed magic numbers and google have rolled to this version
@@ -3942,7 +3943,7 @@ ewarn
 }
 
 _use_system_clang() {
-einfo "Switching to clang."
+einfo "C++ compiler:  Clang (system)"
 	# See build/toolchain/linux/unbundle/BUILD.gn for allowed overridable envvars.
 	# See build/toolchain/gcc_toolchain.gni#L657 for consistency.
 
@@ -4059,6 +4060,7 @@ eerror
 }
 
 _use_vendor_clang() {
+einfo "C++ compiler:  Clang (vendored)"
 	setup_vendor_clang_paths
 	export CC="clang"
 	export CXX="clang++"
