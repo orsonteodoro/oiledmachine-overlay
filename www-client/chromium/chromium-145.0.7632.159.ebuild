@@ -2173,6 +2173,37 @@ einfo "PATH:  ${PATH} (Before)"
 einfo "PATH:  ${PATH} (After)"
 }
 
+verify_rust() {
+	local is_nightly=$(rustc --version | grep -q "nightly")
+	is_nightly=$(( "${?}" == 0 ? 1 : 0 ))
+
+	if (( ${is_nightly} != 0 )) ; then
+eerror "Only nightly Rust is currently supported."
+eerror "Switch to live with \`eselect rust\`"
+		die
+	fi
+
+	if "${RUSTC}" --version | grep -q -e "nightly" ; then
+	# Same as Rust 1.96.0 timestamp
+		local compatible_time=$(date --date="Feb 27, 2026 09:38:23 -0800" "+%s")
+
+		local merge_time=$(cat "/var/db/pkg/dev-lang/rust-bin-9999/BUILD_TIME")
+		if (( ${merge_time} < ${compatible_time} )) ; then
+eerror "The live merge time is old for rust or rust-bin."
+eerror "Re-emerge =dev-lang/rust-bin-9999 or =dev-lang-rust-9999 or switch to Rust 1.96.0 or later to continue."
+eerror "Merge time:  ${merge_time}"
+eerror "Compatible time:  ${compatible_time}"
+			die
+		fi
+	else
+		local actual_pv=$("${RUSTC}" --version | cut -f 2 -d " ")
+		if ver_test "${actual_pv}" "-lt" "${RUST_MIN_VER}" ; then
+eerror "Switch Rust to >= ${RUST_MIN_VER}"
+			die
+		fi
+	fi
+}
+
 pkg_setup() {
 ewarn "This ebuild is still under maintenance."
 	dhms_start
@@ -2392,6 +2423,10 @@ ewarn "Enabling ${x} could weaken the security or have C++ library compatibility
 ewarn "Enabling ${x} could weaken the security."
 		fi
 	done
+
+	if use system-rust ; then
+		verify_rust
+	fi
 }
 
 src_unpack() {
