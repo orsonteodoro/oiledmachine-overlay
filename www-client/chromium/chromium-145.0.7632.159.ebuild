@@ -2177,7 +2177,7 @@ verify_rust() {
 	local is_nightly=$(rustc --version | grep -q "nightly")
 	is_nightly=$(( "${?}" == 0 ? 1 : 0 ))
 
-	if (( ${is_nightly} != 0 )) ; then
+	if (( ${is_nightly} == 0 )) ; then
 eerror "Only nightly Rust is currently supported."
 eerror "Switch to live with \`eselect rust\`"
 		die
