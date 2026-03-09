@@ -1,0 +1,11 @@
+--- a/cmake/Modules/FindGRPC.cmake.orig	2026-02-23 23:35:28.000000000 -0800
++++ b/cmake/Modules/FindGRPC.cmake	2026-03-09 05:12:08.774886865 -0700
+@@ -14,7 +14,7 @@ find_package(Threads REQUIRED)
+ # Package managers like Homebrew will also install Config.cmake and user can
+ # specify GRPC_INSTALL_PATH or CMAKE_PREFIX_PATH to locate installed package.
+ set(protobuf_MODULE_COMPATIBLE TRUE)
+-find_package(Protobuf CONFIG HINTS ${GRPC_INSTALL_PATH})
++find_package(Protobuf CONFIG HINTS ${PROTOBUF_INSTALL_PATH})
+ message(STATUS "Using protobuf ${Protobuf_VERSION}")
+ # There's a `c-ares` library whose CMake file sets the `PACKAGE_VERSION` variable.
+ # Preserve the original `PACKAGE_VERSION` value and restore it.

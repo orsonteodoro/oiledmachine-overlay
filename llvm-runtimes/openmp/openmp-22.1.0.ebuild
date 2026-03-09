@@ -403,7 +403,7 @@ ewarn "You may need to uninstall =libomp-${PV} first if merge is unsuccessful."
 src_prepare() {
 	llvm.org_src_prepare # Already calls cmake_src_prepare
 	pushd "${WORKDIR}" || die
-		eapply "${FILESDIR}/${PN}-18.1.8-protobuf_install_path.patch"
+		eapply "${FILESDIR}/${PN}-22.1.0-protobuf_install_path.patch"
 	popd
 }
 
