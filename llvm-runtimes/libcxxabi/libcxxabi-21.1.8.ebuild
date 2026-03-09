@@ -34,10 +34,11 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
+CFLAGS_HARDENED_USE_CASES="multhreaded-confiential network p2p sandbox security-critical server web-browser web-server"
 CXX_STANDARD=23
 PYTHON_COMPAT=( "python3_"{13..14} )
 
-inherit check-compiler-switch cmake-multilib crossdev flag-o-matic libcxx-slot libstdcxx-slot llvm.org llvm-utils python-any-r1 toolchain-funcs
+inherit cflags-hardened check-compiler-switch cmake-multilib crossdev flag-o-matic libcxx-slot libstdcxx-slot llvm.org llvm-utils python-any-r1 toolchain-funcs
 
 LLVM_MAX_SLOT="${LLVM_MAJOR}"
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos"
@@ -54,8 +55,8 @@ LICENSE="
 SLOT="0"
 IUSE+="
 ${LLVM_EBUILDS_LLVM21_REVISION}
-clang hardened +static-libs test
-ebuild_revision_14
+clang +static-libs test
+ebuild_revision_15
 "
 # in 15.x, cxxabi.h is moving from libcxx to libcxxabi
 RDEPEND="
@@ -93,8 +94,6 @@ RESTRICT="
 "
 S="${WORKDIR}"
 PATCHES=(
-	"${FILESDIR}/libcxxabi-15.0.0.9999-hardened.patch"
-	"${FILESDIR}/libcxx-20.1.8-hardened.patch"
 )
 LLVM_COMPONENTS=(
 	"runtimes"
@@ -126,20 +125,6 @@ get_lib_types() {
 	use static-libs && echo "static"
 }
 
-is_hardened_clang() {
-	if tc-is-clang && clang --version 2>/dev/null | grep -q -e "Hardened:" ; then
-		return 0
-	fi
-	return 1
-}
-
-is_hardened_gcc() {
-	if tc-is-gcc && gcc --version 2>/dev/null | grep -q -e "Hardened" ; then
-		return 0
-	fi
-	return 1
-}
-
 test_compiler() {
 	target_is_not_host && return
 	$(tc-getCXX) ${CXXFLAGS} ${LDFLAGS} "${@}" -o /dev/null -x c - \
@@ -150,22 +135,12 @@ src_configure() {
 	llvm_prepend_path "${LLVM_MAJOR}"
 
 	check-compiler-switch_end
+	cflags-hardened_append
 	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
 	# Prevent static-libs IR mismatch.
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
-
-	is-flagq '-flto*' && HAVE_FLAG_LTO="1"
-	has_sanitizer_option "cfi-icall" && HAVE_FLAG_CFI_ICALL="1"
-	has_sanitizer_option "cfi-vcall" && HAVE_FLAG_CFI_VCALL="1"
-	has_sanitizer_option "shadow-call-stack" && HAVE_FLAG_SHADOW_CALL_STACK="1"
-	is-flagq '-fsanitize-cfi-cross-dso' && HAVE_FLAG_CFI_CROSS_DSO="1"
-	( \
-		   has_sanitizer_option "cfi-derived-cast" \
-		|| has_sanitizer_option "cfi-unrelated-cast" \
-	) \
-		&& HAVE_FLAG_CFI_CAST="1"
 
 	configure_abi() {
 		local lib_type
@@ -175,116 +150,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 		done
 	}
 	multilib_foreach_abi configure_abi
-}
-
-is_cfi_supported() {
-	[[ "${USE}" =~ "cfi" ]] || return 1
-	if [[ "${lib_type}" == "static" ]] ; then
-		return 0
-	elif is-flagq '-fsanitize-cfi-cross-dso' && [[ "${lib_type}" == "shared" ]] ; then
-		return 0
-	fi
-	return 1
-}
-
-has_sanitizer_option() {
-	local needle="${1}"
-	for haystack in $(echo "${CFLAGS}" \
-		| grep -E -e "-fsanitize=[a-z,]+( |$)" \
-		| sed -e "s|-fsanitize||g" | tr "," "\n") ; do
-		[[ "${haystack}" == "${needle}" ]] && return 0
-	done
-	return 1
-}
-
-HAVE_FLAG_CFI="0"
-WANTS_CFI=0
-_usex_cfi() {
-	local s=$(clang-major-version)
-	if tc-is-clang \
-		&& has_version "=llvm-runtimes/compiler-rt-sanitizers-${s}*[cfi]" \
-		&& [[ "${HAVE_FLAG_CFI}" == "1" ]] ; then
-		WANTS_CFI=1
-		echo "ON"
-	else
-		echo "OFF"
-	fi
-}
-
-HAVE_FLAG_CFI_CAST="0"
-_usex_cfi_cast() {
-	local s=$(clang-major-version)
-	if tc-is-clang \
-		&& has_version "=llvm-runtimes/compiler-rt-sanitizers-${s}*[cfi]" \
-		&& [[ "${HAVE_CFI_CAST}" == "1" ]] ; then
-		WANTS_CFI=1
-		echo "ON"
-	else
-		echo "OFF"
-	fi
-}
-
-HAVE_FLAG_CFI_ICALL="0"
-_usex_cfi_icall() {
-	local s=$(clang-major-version)
-	if tc-is-clang \
-		&& has_version "=llvm-runtimes/compiler-rt-sanitizers-${s}*[cfi]" \
-		&& [[ "${HAVE_FLAG_CFI_ICALL}" == "1" ]] ; then
-		WANTS_CFI=1
-		echo "ON"
-	else
-		echo "OFF"
-	fi
-}
-
-HAVE_FLAG_CFI_VCALL="0"
-_usex_cfi_vcall() {
-	local s=$(clang-major-version)
-	if tc-is-clang \
-		&& has_version "=llvm-runtimes/compiler-rt-sanitizers-${s}*[cfi]" \
-		&& [[ "${HAVE_FLAG_CFI_VCALL}" == "1" ]] ; then
-		WANTS_CFI=1
-		echo "ON"
-	else
-		echo "OFF"
-	fi
-}
-
-HAVE_FLAG_CFI_CROSS_DSO="0"
-WANTS_CFI_CROSS_DSO=0
-_usex_cfi_cross_dso() {
-	local s=$(clang-major-version)
-	if tc-is-clang \
-		&& has_version "=llvm-runtimes/compiler-rt-sanitizers-${s}*[cfi]" \
-		&& [[ "${HAVE_FLAG_CFI_CROSS_DSO}" == "1" ]] ; then
-		WANTS_CFI_CROSS_DSO=1
-		echo "ON"
-	else
-		echo "OFF"
-	fi
-}
-
-HAVE_FLAG_SHADOW_CALL_STACK="0"
-_usex_shadowcallstack() {
-	local s=$(clang-major-version)
-	if tc-is-clang \
-		&& has_version "=llvm-runtimes/compiler-rt-sanitizers-${s}*[shadowcallstack]" \
-		&& [[ "${HAVE_FLAG_SHADOW_CALL_STACK}" == "1" ]] ; then
-		echo "ON"
-	else
-		echo "OFF"
-	fi
-}
-
-HAVE_FLAG_LTO="0"
-WANTS_LTO=0
-_usex_lto() {
-	if [[ "${HAVE_FLAG_LTO}" == "1" ]] ; then
-		WANTS_LTO=1
-		echo "ON"
-	else
-		echo "OFF"
-	fi
 }
 
 _configure_abi() {
@@ -330,43 +195,15 @@ eerror "You must emerge clang:${SLOT_MAJOR} to build with clang."
 einfo "CC:  ${CC}"
 einfo "CXX:  ${CXX}"
 
-	local _lto=$(_usex_lto)
-	local _cfi=$(_usex_cfi)
-	local _cfi_cast=$(_usex_cfi_cast)
-	local _cfi_icall=$(_usex_cfi_icall)
-	local _cfi_vcall=$(_usex_cfi_vcall)
-	local _cross_dso_cfi=$(_usex_cfi_cross_dso)
-	local _shadowcallstack=$(_usex_shadowcallstack)
-
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
-		_lto=0
-		_cfi=0
-		_cfi_cast=0
-		_cfi_icall=0
-		_cfi_vcall=0
-		_cross_dso_cfi=0
 	fi
 
-	filter-flags \
-		'--param=ssp-buffer-size=*' \
-		'-f*sanitize*' \
-		'-f*stack*' \
-		'-f*visibility*' \
-		'-flto*' \
-		'-fsplit-lto-unit' \
-		'-fuse-ld=*' \
-		'-lubsan' \
-		'-Wl,-lubsan' \
-		'-Wl,-z,noexecstack' \
-		'-Wl,-z,now' \
-		'-Wl,-z,relro'
-
-	# link to compiler-rt
+	# Link compiler-rt
 	local use_compiler_rt=OFF
-	[[ $(tc-get-c-rtlib) == compiler-rt ]] && use_compiler_rt=ON
+	[[ $(tc-get-c-rtlib) == "compiler-rt" ]] && use_compiler_rt=ON
 
 	local libdir=$(get_libdir)
 	local mycmakeargs=(
@@ -396,51 +233,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DLIBCXX_HAS_GCC_S_LIB=OFF
 		-DLIBCXX_INCLUDE_BENCHMARKS=OFF
 		-DLIBCXX_INCLUDE_TESTS=OFF
-
-		-DLTO=${_lto}
-		-DNOEXECSTACK=$(usex hardened)
 	)
-
-	set_cfi() {
-		if tc-is-clang && is_cfi_supported ; then
-			mycmakeargs+=(
-				-DCFI=${_cfi}
-				-DCFI_CAST=${_cfi_cast}
-				-DCFI_ICALL=${_cfi_icall}
-				-DCFI_VCALL=${_cfi_vcall}
-				-DCROSS_DSO_CFI=${_cfi_cross_dso}
-			)
-		fi
-		mycmakeargs+=(
-			-DSHADOW_CALL_STACK=${_shadowcallstack}
-		)
-	}
-
-	if is_hardened_gcc ; then
-		:;
-	elif is_hardened_clang ; then
-		set_cfi
-	else
-		set_cfi
-		if use hardened ; then
-			mycmakeargs+=(
-				-DFULL_RELRO=$(usex hardened)
-				-DSSP=$(usex hardened)
-			)
-			if [[ -n "${USE_HARDENED_PROFILE_DEFAULTS}" \
-				&& "${USE_HARDENED_PROFILE_DEFAULTS}" == "1" ]] ; then
-				mycmakeargs+=(
-					-DFORTIFY_SOURCE=2
-					-DSTACK_CLASH_PROTECTION=ON
-					-DSSP_LEVEL="strong"
-				)
-			else
-				mycmakeargs+=(
-					-DSSP_LEVEL="weak"
-				)
-			fi
-		fi
-	fi
 
 	if [[ "${lib_type}" == "static" ]] ; then
 		mycmakeargs+=(
@@ -522,35 +315,6 @@ multilib_src_install_all() {
 	cd "${S}" || die
 	insinto /usr/include/libcxxabi
 	doins -r "${WORKDIR}"/libcxxabi/include/.
-}
-
-pkg_postinst() {
-	if (( ${WANTS_CFI_CROSS_DSO} == 1 )) ; then
-ewarn
-ewarn "Using cfi-cross-dso requires a rebuild of the app with only the clang"
-ewarn "compiler."
-ewarn
-	fi
-
-	if (( ${WANTS_CFI} == 1 )) && use static-libs ; then
-ewarn
-ewarn "Using cfi with static-libs requires the app be built with only the clang"
-ewarn "compiler."
-ewarn
-	fi
-
-	if (( ${WANTS_LTO} == 1 )) && use static-libs ; then
-		if tc-is-clang ; then
-ewarn "You are only allowed to static link this library with clang."
-		elif tc-is-gcc ; then
-ewarn "You are only allowed to static link this library with gcc."
-		else
-ewarn
-ewarn "You are only allowed to static link this library with CC=${CC}"
-ewarn "CXX=${CXX}."
-ewarn
-		fi
-	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
