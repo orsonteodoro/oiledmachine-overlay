@@ -2411,6 +2411,7 @@ einfo "CXX:  ${CXX}"
 	local x
 	for x in "${HAS_GLIBCXX[@]/-}" ; do
 		if use "${x}" ; then
+# It is possible for package to not be CFI protected.
 			if eselect profile show 2>/dev/null | grep -q "llvm" ; then
 ewarn "Enabling ${x} could weaken the security or have C++ library compatibility issues."
 			else
@@ -2418,11 +2419,20 @@ ewarn "Enabling ${x} could weaken the security or have C++ library compatibility
 			fi
 		fi
 	done
+
 	for x in "${HAS_NO_GLIBCXX[@]/-}" ; do
 		if use "${x}" ; then
 ewarn "Enabling ${x} could weaken the security."
 		fi
 	done
+
+	if use system-clang ; then
+# It is possible for the libc++ library to not be CFI protected.
+ewarn "Enabling system-clang (which implies system-libc++) could weaken the security."
+	else
+# It is possible that the prebuilt is a trojanized compiler.
+ewarn "Disabling system-clang could weaken the security or privacy."
+	fi
 
 	if use system-rust ; then
 einfo "Rust compiler:  Rust (system)"
@@ -4147,6 +4157,18 @@ _configure_compiler_common() {
 		)
 	fi
 
+	myconf_gn+=(
+		"use_glibc=$(usex elibc_glibc true false)"
+	)
+
+	# Set in system-clang-flags.patch
+	filter-flags \
+		"-D_POSIX_SEM_VALUE_MAX=*" \
+		"-DMB_LEN_MAX=*" \
+		"-DNAME_MAX=*" \
+		"-DPATH_MAX=*" \
+		"-DSSIZE_MAX=*"
+
 	check-compiler-switch_end
 
 	# Strip incompatable linker flags
@@ -5171,21 +5193,26 @@ eerror
 	# instead of the system C++ library for C++ standard library support.
 	# default: true, but let's be explicit (forced since 120 ; USE removed 127).
 	if use system-clang ; then
-ewarn "Using system libc++ (partially hardened to unhardened)"
+ewarn "C++ library:   libc++ (system)"
+ewarn "C++ library hardening:  partially hardened to unhardened"
 		myconf_gn+=(
 			"use_custom_libcxx=false"
 		)
 	else
-einfo "Using vendored libc++ (fully hardened)"
+einfo "C++ library:  libc++ (vendored)"
+einfo "C++ library hardening:  fully hardened"
 		myconf_gn+=(
 			"use_custom_libcxx=true"
 			"use_custom_libcxx_for_host=true"
 		)
 	fi
 
-	# May break top_domain_generator
 	myconf_gn+=(
+	# May break top_domain_generator
 		"use_sanitize_array_bounds=false"
+
+	# Testing:  Force hardening libc++
+		"use_safe_libcxx=true"
 	)
 
 	_remove_hardening_flags
