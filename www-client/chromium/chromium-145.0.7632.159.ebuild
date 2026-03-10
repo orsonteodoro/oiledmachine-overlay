@@ -2325,7 +2325,7 @@ ewarn
 		setup_vendor_clang_paths_pre
 	fi
 
-	# We are always using.
+	# We are always using clang.
 	if use system-clang ; then
 		_use_system_clang
 	else
@@ -2801,6 +2801,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-optionalize-clang-flags.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-optionalize-omit-frame-pointer.patch"
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.75-dedupe-use-system-zlib.patch" # It appears twice in cromite build
+		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-optionalize-clang-warning-suppression-mappings.patch"
 	)
 
 	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
@@ -2812,7 +2813,6 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	else
 		PATCHES+=(
 			"${FILESDIR}/extra-patches/${PN}-145.0.7632.116-optionalize-glic.patch"
-			"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-optionalize-clang-warning-suppression-mappings.patch"
 		)
 	fi
 }
@@ -3948,7 +3948,7 @@ ewarn
 }
 
 _use_system_clang() {
-einfo "C++ compiler:  Clang (system)"
+einfo "C/C++ compiler:  Clang (system)"
 	# See build/toolchain/linux/unbundle/BUILD.gn for allowed overridable envvars.
 	# See build/toolchain/gcc_toolchain.gni#L657 for consistency.
 
@@ -4070,7 +4070,7 @@ eerror
 }
 
 _use_vendor_clang() {
-einfo "C++ compiler:  Clang (vendored)"
+einfo "C/C++ compiler:  Clang (vendored)"
 	setup_vendor_clang_paths
 	export CC="clang"
 	export CXX="clang++"
@@ -4140,7 +4140,6 @@ _configure_compiler_common() {
 			"use_system_clang=true"
 		)
 	else
-einfo "Using the bundled toolchain"
 		myconf_gn+=(
 			"is_clang=true"
 			"use_system_clang=false"
