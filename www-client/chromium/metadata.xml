@@ -849,8 +849,8 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
 
       If disabled, it will build with a prebuilt pre-stable build of Clang.
 
-      If enabled it will use the use of the system libc++.  Using the system
-      libc++ may weaken security if missing hardening flags like CFI.
+      If enabled it will use the system libc++.  Using the system libc++ may
+      weaken security if missing hardening flags.
     </flag>
     <flag name="system-dav1d">
       Use system dav1d instead of the vendored copy.
@@ -858,7 +858,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       No modifications or no patch files in vendored package.
 
       Enabling may decrease performance (w/o PGO) and increase vulnerabilities
-      (w/o Clang CFI).
+      if missing hardening flags.
     </flag>
     <flag name="system-ffmpeg">
       Use system ffmpeg instead of the vendored copy.
@@ -867,7 +867,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       removeable, but the system one may be able to remove them.
 
       Enabling may decrease performance (w/o PGO) and increase vulnerabilities
-      (w/o Clang CFI).
+      if missing hardening flags.
     </flag>
     <flag name="system-flac">
       Use system flac instead of the vendored copy.
@@ -875,7 +875,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       No modifications or no patch files in vendored package.
 
       Enabling may decrease performance (w/o PGO) and increase vulnerabilities
-      (w/o Clang CFI).
+      if missing hardening flags.
     </flag>
     <flag name="system-fontconfig">
       Use system fontconfig instead of the vendored copy.
@@ -883,13 +883,13 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       No modifications or no patch files in vendored package.
 
       Enabling may decrease performance (w/o PGO) and increase vulnerabilities
-      (w/o Clang CFI).
+      if missing hardening flags.
     </flag>
     <flag name="system-freetype">
       Use system freetype instead of the vendored copy.
 
       Enabling may decrease performance (w/o PGO) and increase vulnerabilities
-      (w/o Clang CFI).
+      if missing hardening flags.
     </flag>
     <flag name="system-harfbuzz">
       Use system harfbuzz instead of the vendored copy.
@@ -897,7 +897,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       No modifications or no patch files in vendored package.
 
       Enabling may decrease performance (w/o PGO) and increase vulnerabilities
-      (w/o Clang CFI).
+      if missing hardening flags.
     </flag>
     <flag name="system-icu">
       Use system icu instead of the vendored copy.
@@ -907,7 +907,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       time/currency/regions/number-represenation.
 
       Enabling may decrease performance (w/o PGO) and increase vulnerabilities
-      (w/o Clang CFI).
+      if missing hardening flags.
     </flag>
     <flag name="system-libaom">
       Use system libaom instead of the vendored copy.
@@ -915,7 +915,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       No modifications or no patch files in vendored package.
 
       Enabling may decrease performance (w/o PGO) and increase vulnerabilities
-      (w/o Clang CFI).
+      if missing hardening flags.
     </flag>
     <flag name="system-libjpeg-turbo">
       Use system libjpeg-turbo instead of the vendored copy.
@@ -924,7 +924,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       ARM NEON assembly.
 
       Enabling may decrease performance (w/o PGO) and increase vulnerabilities
-      (w/o Clang CFI).
+      if missing hardening flags.
     </flag>
     <flag name="system-libpng">
       Use system libpng instead of the vendored copy.
@@ -932,7 +932,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       Vendored applies a patch to potentially prevent slow down or abuse.
 
       Enabling may decrease performance (w/o PGO) and increase vulnerabilities
-      (w/o Clang CFI).
+      if missing hardening flags.
     </flag>
     <flag name="system-libwebp">
       Use system libwebp instead of the vendored copy.
@@ -940,7 +940,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       No modifications or no patch files in vendored package.
 
       Enabling may decrease performance (w/o PGO) and increase vulnerabilities
-      (w/o Clang CFI).
+      if missing hardening flags.
     </flag>
     <flag name="system-libxml">
       Use system libxml instead of the vendored copy.
@@ -948,7 +948,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       Applies a vulnerabilty fix.
 
       Enabling may decrease performance (w/o PGO) and increase vulnerabilities
-      (w/o Clang CFI).
+      if missing hardening flags.
     </flag>
     <flag name="system-libxslt">
       Use system libxslt instead of the vendored copy.
@@ -956,13 +956,13 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       Applies fixes for testing or built time failures.
 
       Enabling may decrease performance (w/o PGO) and increase vulnerabilities
-      (w/o Clang CFI).
+      if missing hardening flags.
     </flag>
     <flag name="system-openh264">
       Use system openh264 instead of the vendored copy.
 
       Enabling may decrease performance (w/o PGO) and increase vulnerabilities
-      (w/o Clang CFI).
+      if missing hardening flags.
     </flag>
     <flag name="system-opus">
       Use system opus instead of the vendored copy.
@@ -970,7 +970,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       Applies disablement to assertions or int overflow checks.
 
       Enabling may decrease performance (w/o PGO) and increase vulnerabilities
-      (w/o Clang CFI).
+      if missing hardening flags.
     </flag>
     <flag name="system-re2">
       Use system re2 instead of the vendored copy.
@@ -978,7 +978,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       No modifications announced.
 
       Enabling may decrease performance (w/o PGO) and increase vulnerabilities
-      (w/o Clang CFI).
+      if missing hardening flags.
     </flag>
     <flag name="system-rust">
       Use the system-rust instead of the vendored copy.
@@ -996,13 +996,13 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       by the system is not.
 
       Enabling may decrease performance (w/o PGO) and increase vulnerabilities
-      (w/o Clang CFI).
+      if missing hardening flags.
     </flag>
     <flag name="system-zstd">
       Use system zstd instead of the vendored copy.
 
       Enabling may decrease performance (w/o PGO) and increase vulnerabilities
-      (w/o Clang CFI).
+      if missing hardening flags.
     </flag>
     <flag name="thinlto-opt">
       Enables selective ThinLTO -O2 optimizations for the browser binary and
