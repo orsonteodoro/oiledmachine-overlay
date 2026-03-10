@@ -2440,6 +2440,8 @@ einfo "Rust compiler:  Rust (system)"
 		verify_rust
 	else
 einfo "Rust compiler:  Rust (vendored)"
+	# It is possible that the prebuilt is a trojanized compiler.
+ewarn "Disabling system-rust could weaken the security or privacy."
 		export RUSTC="${S}/third_party/rust-toolchain/bin/rustc"
 	fi
 einfo "RUSTC:  ${RUSTC}"
@@ -5194,13 +5196,13 @@ eerror
 	# default: true, but let's be explicit (forced since 120 ; USE removed 127).
 	if use system-clang ; then
 ewarn "C++ library:   libc++ (system)"
-ewarn "C++ library hardening:  partially hardened to unhardened"
+ewarn "C++ library hardening:  Partially hardened to unhardened"
 		myconf_gn+=(
 			"use_custom_libcxx=false"
 		)
 	else
 einfo "C++ library:  libc++ (vendored)"
-einfo "C++ library hardening:  fully hardened"
+einfo "C++ library hardening:  Fully hardened"
 		myconf_gn+=(
 			"use_custom_libcxx=true"
 			"use_custom_libcxx_for_host=true"

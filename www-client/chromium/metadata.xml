@@ -703,7 +703,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       Unbundled C libraries are considered low risk for DoS crashes.
 
       It is only useful when official or cfi USE flags are disabled and
-      bundled-libcxx is enabled.  In the official and cfi USE cases, the
+      system-clang is disabled.  In the official and cfi USE cases, the
       unbundler is disabled to maximize security criticality.
     </flag>
     <flag name="gtk4">
@@ -839,8 +839,18 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     <flag name="suid">
       Build the SUID sandbox, which is only needed on CONFIG_USER_NS=n kernels
     </flag>
+    <flag name="system-clang">
+      Use the system-clang instead of the vendored one.
+
+      If enabled, it will mitigate against the possibility of using the prebuilt
+      trojanized C/C++ compiler and build tools or against of the possibility
+      of adding anti-privacy/user-tracking instrumented code or BLOBs or
+      inject vulnerable code for backdoors or easily DoS (Denial of Service).
+
+      If disabled, it will build with a prebuilt pre-stable build of Clang.
+    </flag>
     <flag name="system-dav1d">
-      Use system dav1d instead of the bundled one
+      Use system dav1d instead of the vendored copy.
 
       No modifications or no patch files in vendored package.
 
@@ -848,7 +858,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       (w/o Clang CFI).
     </flag>
     <flag name="system-ffmpeg">
-      Use system ffmpeg instead of the bundled one
+      Use system ffmpeg instead of the vendored copy.
 
       The internal vendered version has additional codecs that are not
       removeable, but the system one may be able to remove them.
@@ -857,7 +867,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       (w/o Clang CFI).
     </flag>
     <flag name="system-flac">
-      Use system flac instead of the bundled one
+      Use system flac instead of the vendored copy.
 
       No modifications or no patch files in vendored package.
 
@@ -865,7 +875,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       (w/o Clang CFI).
     </flag>
     <flag name="system-fontconfig">
-      Use system fontconfig instead of the bundled one
+      Use system fontconfig instead of the vendored copy.
 
       No modifications or no patch files in vendored package.
 
@@ -873,13 +883,13 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       (w/o Clang CFI).
     </flag>
     <flag name="system-freetype">
-      Use system freetype instead of the bundled one
+      Use system freetype instead of the vendored copy.
 
       Enabling may decrease performance (w/o PGO) and increase vulnerabilities
       (w/o Clang CFI).
     </flag>
     <flag name="system-harfbuzz">
-      Use system harfbuzz instead of the bundled one
+      Use system harfbuzz instead of the vendored copy.
 
       No modifications or no patch files in vendored package.
 
@@ -887,7 +897,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       (w/o Clang CFI).
     </flag>
     <flag name="system-icu">
-      Use system icu instead of the bundled one
+      Use system icu instead of the vendored copy.
 
       The internal vendored version has bug fixes, size reduced, adds spell check
       support few languages, locale style changes related to
@@ -897,7 +907,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       (w/o Clang CFI).
     </flag>
     <flag name="system-libaom">
-      Use system libaom instead of the bundled one
+      Use system libaom instead of the vendored copy.
 
       No modifications or no patch files in vendored package.
 
@@ -905,7 +915,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       (w/o Clang CFI).
     </flag>
     <flag name="system-libjpeg-turbo">
-      Use system libjpeg-turbo instead of the bundled one
+      Use system libjpeg-turbo instead of the vendored copy.
 
       Vendored applies data de-duplication change and removes non-performant
       ARM NEON assembly.
@@ -914,7 +924,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       (w/o Clang CFI).
     </flag>
     <flag name="system-libpng">
-      Use system libpng instead of the bundled one
+      Use system libpng instead of the vendored copy.
 
       Vendored applies a patch to potentially prevent slow down or abuse.
 
@@ -935,7 +945,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       (w/o Clang CFI).
     </flag>
     <flag name="system-libwebp">
-      Use system libwebp instead of the bundled one
+      Use system libwebp instead of the vendored copy.
 
       No modifications or no patch files in vendored package.
 
@@ -943,7 +953,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       (w/o Clang CFI).
     </flag>
     <flag name="system-libxml">
-      Use system libxml instead of the bundled one
+      Use system libxml instead of the vendored copy.
 
       Applies a vulnerabilty fix.
 
@@ -951,7 +961,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       (w/o Clang CFI).
     </flag>
     <flag name="system-libxslt">
-      Use system libxslt instead of the bundled one
+      Use system libxslt instead of the vendored copy.
 
       Applies fixes for testing or built time failures.
 
@@ -959,13 +969,13 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       (w/o Clang CFI).
     </flag>
     <flag name="system-openh264">
-      Use system openh264 instead of the bundled one
+      Use system openh264 instead of the vendored copy.
 
       Enabling may decrease performance (w/o PGO) and increase vulnerabilities
       (w/o Clang CFI).
     </flag>
     <flag name="system-opus">
-      Use system opus instead of the bundled one
+      Use system opus instead of the vendored copy.
 
       Applies disablement to assertions or int overflow checks.
 
@@ -973,7 +983,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       (w/o Clang CFI).
     </flag>
     <flag name="system-re2">
-      Use system re2 instead of the bundled one
+      Use system re2 instead of the vendored copy.
 
       No modifications announced.
 
@@ -984,18 +994,17 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       Build against the system libcxx instead of the possibility of the
       trojanized prebuilt libc++.
     </flag>
-    <flag name="system-toolchain">
-      Use the system-clang and system-rust instead of the bundled one.
+    <flag name="system-rust">
+      Use the system-rust instead of the vendored copy.
 
-      If enabled, it will mitigate against the possibility of using a
-      trojanized compiler and build tools or against of the possibility
-      of adding anti-privacy/user-tracking instrumented code or BLOBs.
+      Use the system-rust to avoid using a prebuilt trojanized Rust compiler to
+      inject compromised code for backdoors, easily DoS (Denial of Service),
+      or add user fingerprinting.
 
-      If disabled, it will build with a pre-stable build of Clang and a post
-      snapshot of Rust.
+      If disabled, it will build with a prebuilt post snapshot of Rust.
     </flag>
     <flag name="system-zlib">
-      Use system zlib instead of the bundled one
+      Use system zlib instead of the vendored copy.
 
       The internal vendored version is SIMD optimized but the vanilla zlib provided
       by the system is not.
@@ -1004,7 +1013,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       (w/o Clang CFI).
     </flag>
     <flag name="system-zstd">
-      Use system zstd instead of the bundled one
+      Use system zstd instead of the vendored copy.
 
       Enabling may decrease performance (w/o PGO) and increase vulnerabilities
       (w/o Clang CFI).
