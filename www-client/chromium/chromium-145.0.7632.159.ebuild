@@ -122,6 +122,8 @@ EAPI=8
 #
 # https://github.com/chromium/chromium/blob/145.0.7632.159/DEPS#L512									# Live
 #
+ # /usr/share/chromium/sources/third_party/libc++/src/include/__configuration/compiler.h						# Stable, update LIBCXX_SLOT_MIN
+
 
 #
 # About PGO version compatibility
@@ -467,6 +469,7 @@ LLVM_COMPAT=(
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 LLVM_OFFICIAL_SLOT="22" # Cr official slot
+LIBCXX_SLOT_MIN="20"
 PREGENERATED_PGO_PROFILE_MIN_LLVM_SLOT="${LLVM_OFFICIAL_SLOT}"
 
 PGO_LLVM_SUPPORTED_VERSIONS=(
@@ -2123,8 +2126,6 @@ setup_system_clang_paths() {
 	local slot
 	if use official ; then
 		slot="${LLVM_OFFICIAL_SLOT}"
-	elif tc-is-clang ; then
-		slot="$(clang-major-version)"
 	else
 		local s
 		for s in "${LLVM_COMPAT[@]}" ; do
@@ -4393,6 +4394,14 @@ einfo "Using the system toolchain"
 	# are required for CFI.
 	export RUSTC_BOOTSTRAP=1
 
+	# Add sanity checks for llvm.eclass and other LLVM variables.
+	if ver_test "${LLVM_SLOT}" "-lt" "${LIBCXX_SLOT_MIN}" ; then
+eerror "QA:  Update _LLVM_KNOWN_SLOTS in llvm.eclass"
+eerror "QA:  Update LIBCXX_SLOT_MIN"
+eerror "QA:  Update LLVM_SLOT in setup_system_clang_paths()"
+		die
+	fi
+
 	myconf_gn+=(
 	# From M127 we need to provide a location for libclang.
 	# We patch this in for gentoo - see chromium-*-bindgen-custom-toolchain.patch
@@ -5198,11 +5207,14 @@ eerror
 	# Use in-tree libc++ (buildtools/third_party/libc++ and buildtools/third_party/libc++abi)
 	# instead of the system C++ library for C++ standard library support.
 	# default: true, but let's be explicit (forced since 120 ; USE removed 127).
-	if use system-clang ; then
+	if false && use system-clang ; then
 ewarn "C++ library:   libc++ (system)"
 ewarn "C++ library hardening:  Partially hardened to unhardened"
 		myconf_gn+=(
 			"use_custom_libcxx=false"
+
+	# Testing:  Force hardening libc++
+	#		"use_safe_libcxx=true"
 		)
 	else
 einfo "C++ library:  libc++ (vendored)"
@@ -5216,9 +5228,6 @@ einfo "C++ library hardening:  Fully hardened"
 	myconf_gn+=(
 	# May break top_domain_generator
 		"use_sanitize_array_bounds=false"
-
-	# Testing:  Force hardening libc++
-		"use_safe_libcxx=true"
 	)
 
 	_remove_hardening_flags
@@ -7328,10 +7337,10 @@ ewarn "Unbundling libs and lowering security"
 		)
 	fi
 
-#	if use system-abseil-cpp ; then
-#ewarn "The system-abseil-cpp USE flag is experimental with multislot abseil-cpp.  Consider disabling the abseil-cpp USE flag if it fails."
-#		abseil-cpp_src_configure
-#	fi
+	if use system-abseil-cpp ; then
+ewarn "The system-abseil-cpp USE flag is experimental with multislot abseil-cpp.  Consider disabling the abseil-cpp USE flag if it fails."
+		abseil-cpp_src_configure
+	fi
 
 	if use system-ffmpeg ; then
 ewarn "The system-ffmpeg USE flag is experimental with multislot ffmpeg.  Consider disabling the ffmpeg USE flag if it fails."
