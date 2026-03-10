@@ -1,0 +1,21 @@
+--- a/build/config/compiler/BUILD.gn.orig	2026-03-09 18:27:45.652348434 -0700
++++ b/build/config/compiler/BUILD.gn	2026-03-09 19:03:38.189877140 -0700
+@@ -52,6 +52,7 @@ declare_args() {
+   lld_path = default_lld_path
+ 
+   enable_frame_pointers = true
++  use_system_clang = false
+ }
+ 
+ declare_args() {
+@@ -2221,7 +2222,9 @@ config("clang_warning_suppression") {
+     from_build_root =
+         rebase_path(clang_warning_suppression_file, root_build_dir)
+     inputs = [ clang_warning_suppression_file ]
+-    cflags = [ "--warning-suppression-mappings=" + from_build_root ]
++    if (!use_system_clang) {
++      cflags = [ "--warning-suppression-mappings=" + from_build_root ]
++    }
+   }
+ }
+ 

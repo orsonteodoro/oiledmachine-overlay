@@ -2635,6 +2635,9 @@ einfo "Applying the distro patchset ..."
 			$(use system-zlib && echo "${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr109-system-zlib.patch")
 			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr145-oauth2-client-switches.patch"
 		)
+
+		# Dedupe, oiledmachine-overlay changes preferred
+		rm -rf "${WORKDIR}/chromium-patches-${PATCH_VER}/toolchain/cr145-compiler.patch" || die
 	fi
 
 	# https://issues.chromium.org/issues/442698344
@@ -2742,7 +2745,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 # Did you run "gclient sync"?
 			"${FILESDIR}/extra-patches/${PN}-117.0.5938.92-skip-rust-check.patch"
 
-			"${FILESDIR}/extra-patches/${PN}-128.0.6613.84-clang-paths.patch"
+			"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-clang-paths.patch"
 		)
 	fi
 
@@ -2809,6 +2812,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	else
 		PATCHES+=(
 			"${FILESDIR}/extra-patches/${PN}-145.0.7632.116-optionalize-glic.patch"
+			"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-optionalize-clang-warning-suppression-mappings.patch"
 		)
 	fi
 }
@@ -3271,8 +3275,9 @@ elog "Removing bundled binaries from source tree ..."
 	if has "cromite" ${IUSE_EFFECTIVE} && ! use cromite ; then
 		allow_prune=0
 	fi
-	if (( ${allow_prune} == 1 )) ; then
+	if true || (( ${allow_prune} == 1 )) ; then
 	# Breaks ungoogled-chromium and cromite build
+	# Breaks on all cases
 
 # Error: Cannot find module @rollup/rollup-linux-x64-gnu. npm has a bug related to optional dependencies (https://github.com/npm/cli/issues/4828). Please try `npm i` again after removing both package-lock.json and node_modules directory.
 # [cause]: Error: Cannot find module '/var/tmp/portage/www-client/chromium-145.0.7632.159/work/chromium-145.0.7632.159/third_party/devtools-frontend/src/node_modules/@rollup/rollup-linux-x64-gnu/rollup-linux-x64-gnu.node'. Please verify that the package.json has a valid "main" entry
@@ -4044,10 +4049,15 @@ _set_system_cc() {
 	append-cppflags "-DFORCE_CLANG_STDATOMIC_H"
 
 	# Check for missing symbols bug.
-	if ! "${CC}" --version ; then
+	# ${CC} contaims a space.  Do not quote.
+	if ! ${CC} --version ; then
 eerror
-eerror "Failed sanity check.  Rebuild the entire compiler toolchain or unemerge"
-eerror "this slot."
+eerror "Failed sanity check."
+eerror
+eerror "CC:  ${CC} (system)"
+eerror "LLVM_SLOT:  ${LLVM_SLOT}"
+eerror "PATH:  ${PATH}"
+eerror "CFLAGS:  ${CFLAGS}"
 eerror
 		die
 	fi
@@ -4071,7 +4081,7 @@ einfo "C++ compiler:  Clang (vendored)"
 	export OBJDUMP="llvm-objdump"
 	export READELF="llvm-readelf"
 	export STRIP="llvm-strip"
-	LLVM_SLOT=$("${CC}" --version \
+	LLVM_SLOT=$(${CC} --version \
 		| head -n 1 \
 		| cut -f 3 -d " " \
 		| cut -f 1 -d ".")
@@ -4081,6 +4091,19 @@ eerror "Fix LLVM_OFFICIAL_SLOT.  Set it to LLVM_SLOT."
 eerror
 eerror "LLVM_OFFICIAL_SLOT:  ${LLVM_OFFICIAL_SLOT}"
 eerror "LLVM_SLOT:  ${LLVM_SLOT}"
+eerror
+		die
+	fi
+
+	# Check for missing symbols bug.
+	# ${CC} contaims a space.  Do not quote.
+	if ! ${CC} --version ; then
+eerror
+eerror "Failed sanity check."
+eerror
+eerror "CC:  ${CC} (vendor)"
+eerror "PATH:  ${PATH}"
+eerror "CFLAGS:  ${CFLAGS}"
 eerror
 		die
 	fi
@@ -4103,7 +4126,7 @@ _src_configure_compiler() {
 		filter-flags "-O*"
 		strip-flags
 	fi
-	"${CC}" --version || die
+	${CC} --version || die
 }
 
 src_configure() {
@@ -4113,10 +4136,14 @@ src_configure() {
 _configure_compiler_common() {
 	if use system-clang ; then
 		_configure_system_toolchain
+		myconf_gn+=(
+			"use_system_clang=true"
+		)
 	else
 einfo "Using the bundled toolchain"
 		myconf_gn+=(
 			"is_clang=true"
+			"use_system_clang=false"
 		)
 	fi
 

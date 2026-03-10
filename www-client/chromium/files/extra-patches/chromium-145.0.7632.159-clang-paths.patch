@@ -1,0 +1,75 @@
+--- a/build/toolchain/toolchain.gni.orig	2026-03-02 15:00:09.000000000 -0800
++++ b/build/toolchain/toolchain.gni	2026-03-09 12:51:11.220424305 -0700
+@@ -42,6 +42,7 @@ declare_args() {
+ 
+ declare_args() {
+   clang_version = "22"
++  llvm_libdir = "lib64" # /usr/lib/llvm/18/lib64, the 6 component with / as delimiter.
+ }
+ 
+ # Extension for shared library files (including leading dot).
+--- a/build/config/clang/BUILD.gn.orig	2026-03-02 15:00:09.000000000 -0800
++++ b/build/config/clang/BUILD.gn	2026-03-09 13:21:10.476862952 -0700
+@@ -178,20 +178,25 @@ template("clang_lib") {
+       } else if (is_apple) {
+         _dir = "darwin"
+       } else if (is_linux || is_chromeos) {
++        _dir = "linux"
+         if (current_cpu == "x64") {
+-          _dir = "x86_64-unknown-linux-gnu"
++#          _dir = "x86_64-unknown-linux-gnu"
++          _suffix = "-x86_64"
+         } else if (current_cpu == "x86") {
+-          _dir = "i386-unknown-linux-gnu"
++#          _dir = "i386-unknown-linux-gnu"
++          _suffix = "-i386"
+         } else if (current_cpu == "arm") {
+           _dir = "armv7-unknown-linux-gnueabihf"
+         } else if (current_cpu == "arm64") {
+-          _dir = "aarch64-unknown-linux-gnu"
++ #         _dir = "aarch64-unknown-linux-gnu"
++          _suffix = "-aarch64"
+         } else if (current_cpu == "loong64") {
+           _dir = "loongarch64-unknown-linux-gnu"
+         } else if (current_cpu == "riscv64") {
+           _dir = "riscv64-unknown-linux-gnu"
+         } else if (current_cpu == "ppc64") {
+-          _dir = "ppc64le-unknown-linux-gnu"
++#          _dir = "ppc64le-unknown-linux-gnu"
++          _suffix = "-powerpc64"
+         } else if (current_cpu == "s390x") {
+           _dir = "s390x-unknown-linux-gnu"
+         } else {
+@@ -224,7 +229,7 @@ template("clang_lib") {
+         assert(false)  # Unhandled target platform
+       }
+ 
+-      _clang_lib_dir = "$clang_base_path/lib/clang/$clang_version/lib"
++      _clang_lib_dir = "$clang_base_path/../../clang/$clang_version/lib"
+       _lib_file = "${_prefix}clang_rt.${_libname}${_suffix}.${_ext}"
+       libs = [ "$_clang_lib_dir/$_dir/$_lib_file" ]
+     }
+--- a/build/rust/rust_bindgen.gni.orig	2026-03-09 12:41:41.961989989 -0700
++++ b/build/rust/rust_bindgen.gni	2026-03-09 12:50:07.794382502 -0700
+@@ -22,8 +22,8 @@ if (clang_base_path != default_clang_bas
+   _clang_libpath = clang_base_path + "/include"
+   _clang_ld_libpath  = bindgen_libclang_path
+ } else {
+-  _clang_libpath = clang_base_path + "/lib/clang/" + clang_version
+-  _clang_ld_libpath = clang_base_path + "/lib"
++  _clang_libpath = clang_base_path + "/../../clang/" + clang_version
++  _clang_ld_libpath = clang_base_path + "/"
+ }
+ 
+ # Template to build Rust/C bindings with bindgen.
+--- a/build/rust/rs_bindings_from_cc.gni.orig	2026-03-02 15:00:09.000000000 -0800
++++ b/build/rust/rs_bindings_from_cc.gni	2026-03-09 12:50:07.794382502 -0700
+@@ -287,7 +287,7 @@ template("rs_bindings_from_cc") {
+       #
+       # Add it last so includes from deps and configs take precedence.
+       "-isystem" + rebase_path(
+-              clang_base_path + "/lib/clang/" + clang_version + "/include",
++              clang_base_path + "/../../clang/" + clang_version + "/include",
+               root_build_dir),
+ 
+       # Passes C comments through as rustdoc attributes.
