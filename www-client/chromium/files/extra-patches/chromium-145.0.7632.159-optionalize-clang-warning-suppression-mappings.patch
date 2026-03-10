@@ -1,5 +1,5 @@
---- a/build/config/compiler/BUILD.gn.orig	2026-03-09 18:27:45.652348434 -0700
-+++ b/build/config/compiler/BUILD.gn	2026-03-09 19:03:38.189877140 -0700
+--- a/build/config/compiler/BUILD.gn.orig	2026-03-09 21:25:00.012295222 -0700
++++ b/build/config/compiler/BUILD.gn	2026-03-09 21:24:00.942120250 -0700
 @@ -52,6 +52,7 @@ declare_args() {
    lld_path = default_lld_path
  
@@ -8,14 +8,12 @@
  }
  
  declare_args() {
-@@ -2221,7 +2222,9 @@ config("clang_warning_suppression") {
-     from_build_root =
-         rebase_path(clang_warning_suppression_file, root_build_dir)
-     inputs = [ clang_warning_suppression_file ]
--    cflags = [ "--warning-suppression-mappings=" + from_build_root ]
-+    if (!use_system_clang) {
-+      cflags = [ "--warning-suppression-mappings=" + from_build_root ]
-+    }
-   }
- }
+@@ -343,7 +344,7 @@ assert(is_bot ||
+ # Since this is referenced both when passing the file and when deciding which
+ # warnings to enable, store it in a separate variable here.
+ use_clang_warning_suppression_file =
+-    is_clang && clang_warning_suppression_file != ""
++    is_clang && !use_system_clang && clang_warning_suppression_file != ""
  
+ # default_include_dirs ---------------------------------------------------------
+ #
