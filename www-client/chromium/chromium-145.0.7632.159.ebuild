@@ -2411,7 +2411,7 @@ einfo "CXX:  ${CXX}"
 	local x
 	for x in "${HAS_GLIBCXX[@]/-}" ; do
 		if use "${x}" ; then
-# It is possible for package to not be CFI protected.
+	# It is possible for package to not be CFI protected.
 			if eselect profile show 2>/dev/null | grep -q "llvm" ; then
 ewarn "Enabling ${x} could weaken the security or have C++ library compatibility issues."
 			else
@@ -2427,10 +2427,10 @@ ewarn "Enabling ${x} could weaken the security."
 	done
 
 	if use system-clang ; then
-# It is possible for the libc++ library to not be CFI protected.
+	# It is possible for the libc++ library to not be CFI protected.
 ewarn "Enabling system-clang (which implies system-libc++) could weaken the security."
 	else
-# It is possible that the prebuilt is a trojanized compiler.
+	# It is possible that the prebuilt is a trojanized compiler.
 ewarn "Disabling system-clang could weaken the security or privacy."
 	fi
 
