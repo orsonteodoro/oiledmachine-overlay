@@ -7321,10 +7321,10 @@ ewarn "Unbundling libs and lowering security"
 		)
 	fi
 
-	if use system-abseil-cpp ; then
-ewarn "The system-abseil-cpp USE flag is experimental with multislot abseil-cpp.  Consider disabling the abseil-cpp USE flag if it fails."
-		abseil-cpp_src_configure
-	fi
+#	if use system-abseil-cpp ; then
+#ewarn "The system-abseil-cpp USE flag is experimental with multislot abseil-cpp.  Consider disabling the abseil-cpp USE flag if it fails."
+#		abseil-cpp_src_configure
+#	fi
 
 	if use system-ffmpeg ; then
 ewarn "The system-ffmpeg USE flag is experimental with multislot ffmpeg.  Consider disabling the ffmpeg USE flag if it fails."
