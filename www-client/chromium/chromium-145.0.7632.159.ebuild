@@ -2438,6 +2438,10 @@ ewarn "Disabling system-clang could weaken the security or privacy."
 einfo "Rust compiler:  Rust (system)"
 		rust_pkg_setup
 		verify_rust
+		if [[ "${RUSTC}" =~ "rust-bin" ]] ; then
+	# It is possible that the prebuilt is a trojanized compiler.
+ewarn "Using the prebuilt Rust could weaken the security."
+		fi
 	else
 einfo "Rust compiler:  Rust (vendored)"
 	# It is possible that the prebuilt is a trojanized compiler.
