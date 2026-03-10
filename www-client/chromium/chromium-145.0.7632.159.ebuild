@@ -4118,7 +4118,7 @@ eerror
 eerror
 eerror "Failed sanity check."
 eerror
-eerror "CC:  ${CC} (vendor)"
+eerror "CC:  ${CC} (vendored)"
 eerror "PATH:  ${PATH}"
 eerror "CFLAGS:  ${CFLAGS}"
 eerror
