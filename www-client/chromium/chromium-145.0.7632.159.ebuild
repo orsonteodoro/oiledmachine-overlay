@@ -2802,6 +2802,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-optionalize-omit-frame-pointer.patch"
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.75-dedupe-use-system-zlib.patch" # It appears twice in cromite build
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-optionalize-clang-warning-suppression-mappings.patch"
+		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-system-clang-flags.patch"
 	)
 
 	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
