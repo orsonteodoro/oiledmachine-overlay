@@ -82,7 +82,7 @@ DEPEND="!!llvm-core/llvm:0"
 # @INTERNAL
 # @DESCRIPTION:
 # Correct values of LLVM slots, newest first.
-declare -g -r _LLVM_KNOWN_SLOTS=( {21..8} ) # Changed in oiledmachine-overlay
+declare -g -r _LLVM_KNOWN_SLOTS=( {22..8} ) # Changed in oiledmachine-overlay
 
 # @ECLASS_VARIABLE: LLVM_ECLASS_SKIP_PKG_SETUP
 # @INTERNAL
