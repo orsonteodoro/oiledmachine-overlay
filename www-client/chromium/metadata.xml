@@ -845,7 +845,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       If enabled, it will mitigate against the possibility of using the prebuilt
       trojanized C/C++ compiler and build tools or against of the possibility
       of adding anti-privacy/user-tracking instrumented code or BLOBs, or
-      inject vulnerable code for backdoors or easily DoS (Denial of Service).
+      inject vulnerable code for backdoors or to easily DoS (Denial of Service).
 
       If disabled, it will build with a prebuilt pre-stable build of Clang.
     </flag>
@@ -998,7 +998,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       Use the system-rust instead of the vendored copy.
 
       Use the system-rust to avoid using a prebuilt trojanized Rust compiler to
-      inject compromised code for backdoors, easily DoS (Denial of Service),
+      inject compromised code for backdoors, to easily DoS (Denial of Service),
       or add user fingerprinting.
 
       If disabled, it will build with a prebuilt post snapshot of Rust.
