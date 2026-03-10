@@ -7019,19 +7019,19 @@ _configure_features() {
 	# Unbundling or use of system libs weakens the security because it"
 	# removes noexecstack, full RELRO, SSP.
 einfo "Clang provider:  Upstream"
-einfo "C++ implementation:  libc++ (vendored)"
+einfo "C++ library:  libc++ (vendored)"
 einfo "CFI:  Y"
 einfo "Official settings:  Y"
 	elif ! use system-clang && use cfi ; then
 	# Unbundling breaks cfi-icall and cfi-cast.
 	# Cross DSO CFI has a lesser security score than static CFI.
 einfo "Clang provider:  Upstream"
-einfo "C++ implementation:  libc++ (vendored)"
+einfo "C++ library:  libc++ (vendored)"
 einfo "CFI:  Y"
 einfo "Official settings:  N"
 	elif ! use system-clang ; then
 einfo "Clang provider:  Upstream"
-einfo "C++ implementation:  libc++ (vendored)"
+einfo "C++ library:  libc++ (vendored)"
 ewarn "CFI:  N"
 einfo "Official settings:  N"
 		if use force-unbundler ; then
@@ -7041,14 +7041,27 @@ einfo "Official settings:  N"
 		fi
 	else
 		if ! is_generating_credits ; then
+			local is_mixed_cxx=0
+			local x
+			for x in "${HAS_GLIBCXX[@]/-}" ; do
+				if use "${x}" ; then
+					is_mixed_cxx=1
+				fi
+			done
+
 			if eselect profile show 2>/dev/null | grep -q "llvm" ; then
 einfo "Clang provider:  System"
-ewarn "C++ implementation:  libc++ (system)"
+ewarn "C++ library:  libc++ (system)"
+ewarn "CFI:  N"
+einfo "Official settings:  N"
+			elif (( ${is_mixed_cxx} == 0 )) ; then
+einfo "Clang provider:  System"
+ewarn "C++ library:  libc++ (system)"
 ewarn "CFI:  N"
 einfo "Official settings:  N"
 			else
 einfo "Clang provider:  System"
-ewarn "C++ implementation:  libc++ (system) and libstdc++ (system)"
+ewarn "C++ library:  libc++ (system) and libstdc++ (system)"
 ewarn "CFI:  N"
 einfo "Official settings:  N"
 			fi
