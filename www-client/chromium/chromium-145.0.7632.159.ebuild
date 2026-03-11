@@ -4051,7 +4051,7 @@ _set_system_cc() {
 
 	# Always use Clang.
 	# Get the stdatomic.h from clang not from gcc.
-	# Already applied in the system-clang-flags-3.patch
+	# -stdlib=libc++ was already applied in the system-clang-flags-3.patch
 	filter-flags "-stdlib=libc++"
 
 	if ver_test "${LLVM_SLOT}" -ge "16" ; then
@@ -5202,15 +5202,20 @@ eerror
 	fi
 
 	#
+	# oiledmachine-overlay notes:
+	#
 	# There was some discussion that libcxx could be ASan-ed which would be
 	# a security advantage over the system's libstdc++.
 	#
+	# Linking with system's libc++ seems to works.
+	#
+	#
 	# Distro notes:
+	#
 	# Use in-tree libc++ (buildtools/third_party/libc++ and buildtools/third_party/libc++abi)
 	# instead of the system C++ library for C++ standard library support.
 	#
-	# Distro notes:
-	# default: true, but let's be explicit (libc++ forced since 120 ; USE removed 127).
+	# libc++ default: true, but let's be explicit (vendored libc++ was forced since 120 ; USE removed 127).
 	#
 	if use system-clang ; then
 ewarn "C++ library:   libc++ (system)"
