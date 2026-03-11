@@ -7,22 +7,25 @@ EAPI=8
 inherit dhms
 
 CXX_STANDARD=20 # gn = c++20, llvm = c++17, clang = c++17, lld = c++17, libcxx = c++23, compiler-rt = c++17, compiler-rt-sanitizers = c++17
-# https://github.com/chromium/chromium/blob/145.0.7632.45/DEPS#L533
-GN_COMMIT="5550ba0f4053c3cbb0bff3d60ded9d867b6fa371"
-GN_PV="0.2315" # See get_gn_ver.sh
-# https://github.com/chromium/chromium/blob/145.0.7632.45/tools/clang/scripts/update.py#L38 \
-LLVM_COMMIT="bd1bd178" # without the g prefix
-LLVM_N_COMMITS="17020"
-LLVM_OFFICIAL_SLOT="22" # Cr official slot
-LLVM_SUB_REV="2"
-# https://github.com/chromium/chromium/blob/145.0.7632.45/tools/rust/update_rust.py#L37 \
+# https://github.com/chromium/chromium/blob/146.0.7680.71/DEPS#L533
+GN_COMMIT="304bbef6c7e9a86630c12986b99c8654eb7fe648"
+GN_PV="0.2324" # See get_gn_ver.sh
+INSTALL_PREFIX="/usr/share/chromium/${PV%.*}.x"
+# https://github.com/chromium/chromium/blob/146.0.7680.71/tools/clang/scripts/update.py#L38 \
+LLVM_COMMIT="5bd8dadb" # without the g prefix
+LLVM_N_COMMITS="2224"
+LLVM_OFFICIAL_SLOT="23" # Cr official slot
+LLVM_SUB_REV="3"
+# https://github.com/chromium/chromium/blob/146.0.7680.71/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
-RUST_COMMIT="a4cfac7093a1c1c7fbdb6bc75d6b6dc4d385fc69"
-RUST_SUB_REV="2"
-# Upstream uses 1.91.1 corresponding to 21.1
+RUST_COMMIT="7d8ebe3128fc87f3da1ad64240e63ccf07b8f0bd"
+RUST_SUB_REV="3"
+# Upstream uses 1.95.0 corresponding to LLVM 22.1
 # This ebuild assumes 1.96.0 (live 9999) corresponding to llvm 22 to reduce build time.
+# For the LLVM version used for Rust snapshot, see https://github.com/rust-lang/rust/blob/7d8ebe3128fc87f3da1ad64240e63ccf07b8f0bd/.gitmodules#L28
+# For the Rust version, see https://github.com/rust-lang/rust/blob/7d8ebe3128fc87f3da1ad64240e63ccf07b8f0bd/src/version
 RUST_MAX_VER="9999" # Inclusive
-RUST_MIN_VER="9999" # Corresponds to llvm-21.1, see https://github.com/rust-lang/rust/blob/a4cfac7093a1c1c7fbdb6bc75d6b6dc4d385fc69/RELEASES.md
+RUST_MIN_VER="9999" # Corresponds to llvm-22.1
 RUST_PV="${RUST_MIN_VER}"
 VENDORED_CLANG_VER="llvmorg-${LLVM_OFFICIAL_SLOT}-init-${LLVM_N_COMMITS}-g${LLVM_COMMIT:0:8}-${LLVM_SUB_REV}"
 VENDORED_RUST_VER="${RUST_COMMIT}-${RUST_SUB_REV}"
@@ -175,7 +178,7 @@ LICENSE="
 #Apache-2.0-with-LLVM-exceptions - clang/lib/clang/19/include/__stdarg_va_copy.h
 
 RESTRICT="binchecks mirror strip test"
-SLOT="0/${PV%.*}.x"
+SLOT="${PV%.*}.x"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +cfi +pgo -system-clang -system-rust
@@ -188,6 +191,7 @@ REQUIRED_USE="
 "
 
 RDEPEND+="
+	!www-client/chromium-toolchain:0
 	system-clang? (
 		=llvm-runtimes/compiler-rt-${LLVM_OFFICIAL_SLOT}*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 		llvm-runtimes/compiler-rt:=
@@ -422,44 +426,44 @@ einfo "Detected compiler switch.  Disabling LTO."
 }
 
 _method1() {
-	rm -rf "/usr/share/chromium/toolchain"
-	mkdir -p "/usr/share/chromium/toolchain" || die
+	rm -rf "${INSTALL_PREFIX}/toolchain"
+	mkdir -p "${INSTALL_PREFIX}/toolchain" || die
 	# Bypass scanelf and writing to /var/pkg/db
 	# Use filesystem tricks (pointer change) to speed up merge time.
-	mv "${WORKDIR}/"* "/usr/share/chromium/toolchain" || die
+	mv "${WORKDIR}/"* "${INSTALL_PREFIX}/toolchain" || die
 # Completion time:  0 days, 0 hrs, 5 mins, 17 secs
 }
 
 _method2() {
-	mkdir -p "/usr/share/chromium/toolchain" || die
-	rsync -cavu "${WORKDIR}/" "/usr/share/chromium/toolchain" || die
+	mkdir -p "${INSTALL_PREFIX}/toolchain" || die
+	rsync -cavu "${WORKDIR}/" "${INSTALL_PREFIX}/toolchain" || die
 # Completion time:  0 days, 0 hrs, 12 mins, 11 secs
 }
 
 _method3() {
-	mkdir -p "/usr/share/chromium/toolchain" || die
-	rsync -avu --delete "${WORKDIR}/" "/usr/share/chromium/toolchain" || die
+	mkdir -p "${INSTALL_PREFIX}/toolchain" || die
+	rsync -avu --delete "${WORKDIR}/" "${INSTALL_PREFIX}/toolchain" || die
 # Completion time:  0 days, 0 hrs, 5 mins, 41 secs
 }
 
 src_install() {
-	keepdir "/usr/share/chromium/toolchain"
-	addwrite "/usr/share/chromium/toolchain"
+	keepdir "${INSTALL_PREFIX}/toolchain"
+	addwrite "${INSTALL_PREFIX}/toolchain"
 	_method1
 }
 
 pkg_preinst() {
 	dhms_end
-	local count=$(find "/usr/share/chromium/toolchain/" -type f | wc -l)
-	echo "${count}" >> "/usr/share/chromium/toolchain/file-count"
+	local count=$(find "${INSTALL_PREFIX}/toolchain/" -type f | wc -l)
+	echo "${count}" >> "${INSTALL_PREFIX}/toolchain/file-count"
 einfo "Files merged:"
-	find "/usr/share/chromium/toolchain/"
+	find "${INSTALL_PREFIX}/toolchain/"
 einfo "QA:  Update chromium ebuild with tc_count_expected=${count}"
 }
 
 pkg_postrm() {
 	if [[ -z "${REPLACED_BY_VERSION}" ]] ; then
-		rm -rf "/usr/share/chromium/toolchain"
+		rm -rf "${INSTALL_PREFIX}/toolchain/"
 	fi
 }
 
