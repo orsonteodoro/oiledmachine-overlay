@@ -182,7 +182,7 @@ SLOT="${PV%.*}.x"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +cfi +pgo -system-clang -system-rust
-ebuild_revision_13
+ebuild_revision_14
 "
 REQUIRED_USE="
 	^^ (
@@ -463,9 +463,6 @@ einfo "Files merged:"
 einfo "QA:  Update chromium ebuild with tc_count_expected=${count}"
 
 	# Remove old unislot
-	if [[ -e "/usr/share/chromium/sources" ]] ; then
-		rm -rf "/usr/share/chromium/sources"
-	fi
 	if [[ -e "/usr/share/chromium/toolchain" ]] ; then
 		rm -rf "/usr/share/chromium/toolchain"
 	fi
@@ -473,8 +470,14 @@ einfo "QA:  Update chromium ebuild with tc_count_expected=${count}"
 
 pkg_postrm() {
 	if [[ -z "${REPLACED_BY_VERSION}" ]] ; then
-	# Remove unislot and multislot
-		rm -rf "${INSTALL_PREFIX}/"
+		if ls "/usr/share/chromium/"*"/toolchain" ; then
+	# Remove all multislots
+			rm -rf "${INSTALL_PREFIX}/toolchain"
+		fi
+		if [[ "/usr/share/chromium/toolchain" ]] ; then
+	# Remove unislot
+			rm -rf "/usr/share/chromium/toolchain"
+		fi
 	fi
 }
 
