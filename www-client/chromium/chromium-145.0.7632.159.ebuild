@@ -2818,9 +2818,9 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-optionalize-clang-warning-suppression-mappings.patch"
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-system-clang-flags.patch"
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-system-clang-flags-2.patch"
-		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-system-clang-flags-3.patch"
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-libcxx-headers.patch"
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-libcxx-hardening-flag.patch"
+		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-system-clang-flags-3.patch"
 	)
 
 	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
