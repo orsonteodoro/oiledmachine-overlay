@@ -295,6 +295,11 @@ verify_clang() {
 		)
 		local pkg
 		for pkg in "${L[@]}" ; do
+			if ! ls "/var/db/pkg/${pkg}-${LLVM_SLOT_UNSTABLE}"* >/dev/null 2>&1 ; then
+eerror "${pkg} is not installed."
+eerror "Disable the system-clang USE flag or emerge =${pkg}-${LLVM_SLOT_UNSTABLE}*."
+				die
+			fi
 			local pkg_timestamp=$(cat "/var/db/pkg/${pkg}-${LLVM_SLOT_UNSTABLE}"*"/BUILD_TIME")
 			if (( ${pkg_timestamp} < ${upstream_timestamp} )) ; then
 eerror
