@@ -17,7 +17,7 @@ LLVM_LIVE_TIMESTAMP="Fri, 30 Jan 2026 13:04:23 +0000" # Timestamp from https://g
 LLVM_N_COMMITS="2224"
 LLVM_OFFICIAL_SLOT="23" # Cr official slot
 LLVM_SUB_REV="3"
-LLVM_SLOT_UNSTABLE="23"
+LLVM_SLOT_UNSTABLE="23" # Comment out if using stable slot
 # https://github.com/chromium/chromium/blob/146.0.7680.71/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
 RUST_LIVE_TIMESTAMP="Feb 27, 2026 09:38:23 -0800" # Same as Rust 1.96.0 timestamp
