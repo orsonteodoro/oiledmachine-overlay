@@ -6,6 +6,7 @@ EAPI=8
 
 MY_PV="chromium-${PV}"
 
+INSTALL_PREFIX="/usr/share/chromium/${PV%.*}/sources"
 TARBALL_FLAVOR="lite" # full or lite
 
 # For lite versus full tarball see:
@@ -44,7 +45,7 @@ LICENSE="
 	chromium-$(ver_cut 1-3 ${PV}).x.html
 "
 RESTRICT="binchecks mirror strip test"
-SLOT="0/${PV}"
+SLOT="${PV}"
 IUSE+=" ebuild_revision_4"
 RDEPEND+="
 "
@@ -74,34 +75,49 @@ src_unpack() {
 # }
 
 _method1() {
-	rm -rf "/usr/share/chromium/sources"
-	mkdir -p "/usr/share/chromium/sources"
+	rm -rf "${INSTALL_PREFIX}/sources"
+	mkdir -p "${INSTALL_PREFIX}/sources"
 	# Bypass scanelf and writing to /var/pkg/db
 	# Use filesystem tricks (pointer change) to speed up merge time.
-	mv "${WORKDIR}/chromium-${PV}/"* "/usr/share/chromium/sources" || die
-	mv $(find "${WORKDIR}/chromium-${PV}/" -maxdepth 1 -name ".*" -type f) "/usr/share/chromium/sources" || die
+	mv "${WORKDIR}/chromium-${PV}/"* "${INSTALL_PREFIX}/sources" || die
+	mv $(find "${WORKDIR}/chromium-${PV}/" -maxdepth 1 -name ".*" -type f) "${INSTALL_PREFIX}/sources" || die
 # Completion time:  0 days, 0 hrs, 26 mins, 22 secs
 }
 
 src_install() {
-	keepdir "/usr/share/chromium/sources"
-	addwrite "/usr/share/chromium/sources"
+	keepdir "${INSTALL_PREFIX}/sources"
+	addwrite "/usr/share/chromium/"
+	addwrite "/usr/share/chromium/${PV%.*}"
+	addwrite "${INSTALL_PREFIX}/sources"
 	_method1
 }
 
 pkg_postinst() {
 	dhms_end
 ewarn "When emerge runs after the speedup changes it will wipe some files.  Please re-emerge again."
-	local count=$(find "/usr/share/chromium/sources/" -type f | wc -l)
-	echo "${count}" > "/usr/share/chromium/sources/file-count"
+	local count=$(find "${INSTALL_PREFIX}/sources/" -type f | wc -l)
+	echo "${count}" > "${INSTALL_PREFIX}/sources/file-count"
 einfo "Files merged:"
-	find "/usr/share/chromium/sources"
+	find "${INSTALL_PREFIX}/sources"
 einfo "QA:  Update chromium ebuild with sources_count_expected=${count}"
+
+	if [[ -e "/usr/share/chromium/sources" ]] ; then
+	# Remove unislot
+		rm -rf "/usr/share/chromium/sources"
+	fi
 }
 
 pkg_postrm() {
 	if [[ -z "${REPLACED_BY_VERSION}" ]] ; then
-		rm -rf "/usr/share/chromium/sources"
+		if ls "/usr/share/chromium/"*"/sources" > /dev/null 2>&1 ; then
+		# Remove all multislots
+			rm -rf "/usr/share/chromium/"*"/sources"
+		fi
+
+		if [[ -e "/usr/share/chromium/sources" ]] ; then
+		# Remove unislot
+			rm -rf "/usr/share/chromium/sources"
+		fi
 	fi
 }
 
