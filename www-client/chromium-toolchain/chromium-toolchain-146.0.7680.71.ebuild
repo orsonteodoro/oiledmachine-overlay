@@ -185,7 +185,7 @@ SLOT="${PV%.*}.x"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +cfi +pgo -system-clang -system-rust
-ebuild_revision_15
+ebuild_revision_16
 "
 REQUIRED_USE="
 	^^ (
@@ -282,7 +282,7 @@ eerror "Switch Rust to >= ${RUST_MIN_VER}"
 }
 
 verify_clang() {
-	if [[ -n "${LLVM_SLOT_UNSTABLE}" ]] && use "llvm_slot_${LLVM_SLOT_UNSTABLE}" ; then
+	if [[ -n "${LLVM_SLOT_UNSTABLE}" ]] ; then
 		local upstream_timestamp=$(date --date="${LLVM_LIVE_TIMESTAMP}" "+%s")
 		local L=(
 			"llvm-core/clang"
