@@ -448,6 +448,8 @@ _method3() {
 
 src_install() {
 	keepdir "${INSTALL_PREFIX}/toolchain"
+	addwrite "/usr/share/chromium"
+	addwrite "${INSTALL_PREFIX}"
 	addwrite "${INSTALL_PREFIX}/toolchain"
 	_method1
 }
@@ -459,11 +461,20 @@ pkg_preinst() {
 einfo "Files merged:"
 	find "${INSTALL_PREFIX}/toolchain/"
 einfo "QA:  Update chromium ebuild with tc_count_expected=${count}"
+
+	# Remove old unislot
+	if [[ -e "/usr/share/chromium/sources" ]] ; then
+		rm -rf "/usr/share/chromium/sources"
+	fi
+	if [[ -e "/usr/share/chromium/toolchain" ]] ; then
+		rm -rf "/usr/share/chromium/toolchain"
+	fi
 }
 
 pkg_postrm() {
 	if [[ -z "${REPLACED_BY_VERSION}" ]] ; then
-		rm -rf "${INSTALL_PREFIX}/toolchain/"
+	# Remove unislot and multislot
+		rm -rf "${INSTALL_PREFIX}/"
 	fi
 }
 
