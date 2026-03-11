@@ -1,0 +1,19 @@
+--- a/build/config/compiler/BUILD.gn.orig	2026-03-10 16:51:52.921488805 -0700
++++ b/build/config/compiler/BUILD.gn	2026-03-10 17:34:54.854218565 -0700
+@@ -54,6 +54,7 @@ declare_args() {
+   enable_frame_pointers = true
+   use_system_clang = false
+   use_glibc = true
++  use_libcpp_hardening = true
+ }
+ 
+ declare_args() {
+@@ -2412,7 +2413,7 @@ config("runtime_library") {
+     defines += [ "COMPONENT_BUILD" ]
+   }
+ 
+-  if (use_safe_libcxx) {
++  if (use_libcpp_hardening) {
+     defines += [ "_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_EXTENSIVE" ]
+   } else {
+     defines += [ "_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_NONE" ]

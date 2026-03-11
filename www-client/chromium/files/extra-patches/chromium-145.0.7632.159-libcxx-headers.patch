@@ -1,0 +1,55 @@
+--- a/build/config/BUILDCONFIG.gn.orig	2026-03-10 10:20:41.188956227 -0700
++++ b/build/config/BUILDCONFIG.gn	2026-03-10 11:24:21.847757519 -0700
+@@ -152,6 +152,8 @@ declare_args() {
+   # True when compiling native code for use with robolectric_binary().
+   is_robolectric = false
+ 
++  buildconfig_use_custom_libcxx = true
++
+   # DON'T ADD MORE FLAGS HERE. Read the comment above.
+ }
+ 
+@@ -575,12 +577,17 @@ foreach(_target_type,
+         # When clang is used, some target may use clang module. This dependency
+         # is required for things to work, regardless of whether the libc++
+         # module is used in this target or not.
+-        public_deps += [
+-          "//buildtools/third_party/libc++:custom_headers",
+-          "//buildtools/third_party/libc++:libcxx_headers",
+-        ]
++        if (buildconfig_use_custom_libcxx) {
++          public_deps += [
++            "//buildtools/third_party/libc++:custom_headers",
++            "//buildtools/third_party/libc++:libcxx_headers",
++          ]
++        }
+       }
+ 
++      if (!buildconfig_use_custom_libcxx) {
++        use_libcxx_modules = false
++      }
+       if (!defined(use_libcxx_modules)) {
+         use_libcxx_modules = is_clang
+       }
+@@ -696,12 +703,17 @@ foreach(_target_type,
+         # When clang is used, some target may use clang module. This dependency
+         # is required for things to work, regardless of whether the libc++
+         # module is used in this target or not.
+-        public_deps += [
+-          "//buildtools/third_party/libc++:custom_headers",
+-          "//buildtools/third_party/libc++:libcxx_headers",
+-        ]
++        if (buildconfig_use_custom_libcxx) {
++          public_deps += [
++            "//buildtools/third_party/libc++:custom_headers",
++            "//buildtools/third_party/libc++:libcxx_headers",
++          ]
++        }
+       }
+ 
++      if (!buildconfig_use_custom_libcxx) {
++        use_libcxx_modules = false
++      }
+       if (!defined(use_libcxx_modules)) {
+         use_libcxx_modules = is_clang
+       }

@@ -180,7 +180,7 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF HO IO NPD OOBA OOBR OOBW PE RC SO U
 CHROMIUM_TOOLCHAIN=1
 CURRENT_PROFDATA_VERSION= # Global variable
 CURRENT_PROFDATA_LLVM_VERSION= # Global variable
-CXX_STANDARD=20
+CXX_STANDARD=23
 DISABLE_AUTOFORMATTING="yes"
 DISTRIBUTED_BUILD=0 # Global variable
 LLVM_SLOT="" # Global variable
@@ -458,13 +458,14 @@ PATENT_STATUS=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX20[@]}" # 13-16
+	"${LIBSTDCXX_COMPAT_STDCXX23[@]}" # 15-16
 )
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
+# See use_cxx23 in build/config/compiler/compiler.gni and build/config/compiler/BUILD.gn
 inherit libcxx-compat
 LLVM_COMPAT=(
-	#"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}" # 20-22
+	#"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}" # 21-22
 	22
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
@@ -2126,10 +2127,14 @@ setup_system_clang_paths() {
 	local slot
 	if use official ; then
 		slot="${LLVM_OFFICIAL_SLOT}"
+	elif ! use system-clang ; then
+	# Clang (vendored)
+		slot="${LLVM_OFFICIAL_SLOT}"
 	else
+	# Clang (system)
 		local s
 		for s in "${LLVM_COMPAT[@]}" ; do
-			if has_version "llvm-core/clang:${s}" ; then
+			if use "llvm_slot_${s}" ; then
 				slot="${s}"
 				break
 			fi
@@ -2426,14 +2431,6 @@ ewarn "Enabling ${x} could weaken the security or have C++ library compatibility
 ewarn "Enabling ${x} could weaken the security."
 		fi
 	done
-
-	if use system-clang ; then
-	# It is possible for the libc++ library to not be CFI protected.
-ewarn "Enabling system-clang (which implies system-libc++) could weaken the security."
-	else
-	# It is possible that the prebuilt is a trojanized compiler.
-ewarn "Disabling system-clang could weaken the security or privacy."
-	fi
 
 	if use system-rust ; then
 einfo "Rust compiler:  Rust (system)"
@@ -2820,6 +2817,10 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.75-dedupe-use-system-zlib.patch" # It appears twice in cromite build
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-optionalize-clang-warning-suppression-mappings.patch"
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-system-clang-flags.patch"
+		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-system-clang-flags-2.patch"
+		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-system-clang-flags-3.patch"
+		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-libcxx-headers.patch"
+		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-libcxx-hardening-flag.patch"
 	)
 
 	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
@@ -4050,10 +4051,13 @@ _set_system_cc() {
 
 	_use_system_clang
 
+	filter-flags "-Wl,--as-needed"
+
 	# Always use Clang.
 	# Get the stdatomic.h from clang not from gcc.
-	append-cflags "-stdlib=libc++"
+	append-cxxflags "-stdlib=libc++"
 	append-ldflags "-stdlib=libc++"
+
 	if ver_test "${LLVM_SLOT}" -ge "16" ; then
 		append-cppflags "-isystem/usr/lib/clang/${LLVM_SLOT}/include"
 		show_clang_header_warning "${LLVM_SLOT}"
@@ -5201,27 +5205,47 @@ eerror
 		append_all $(test-flags-CXX "-fno-allow-store-data-races")
 	fi
 
+	#
 	# There was some discussion that libcxx could be ASan-ed which would be
 	# a security advantage over the system's libstdc++.
 	#
 	# Use in-tree libc++ (buildtools/third_party/libc++ and buildtools/third_party/libc++abi)
 	# instead of the system C++ library for C++ standard library support.
+	#
+	# We always use the vendored libc++ because the -std=c++23 (Rolling)
+	# conflicts with the system's -std=gnu++17 (LTS) for versioned symbols.
+	#
 	# default: true, but let's be explicit (forced since 120 ; USE removed 127).
-	if false && use system-clang ; then
+	#
+	if use system-clang ; then
 ewarn "C++ library:   libc++ (system)"
 ewarn "C++ library hardening:  Partially hardened to unhardened"
 		myconf_gn+=(
+			"buildconfig_use_custom_libcxx=false"
 			"use_custom_libcxx=false"
 
-	# Testing:  Force hardening libc++
-	#		"use_safe_libcxx=true"
+	# Force hardening libc++
+			"use_libcpp_hardening=true"
+
+	# Prevent adding -D_GLIBCXX_ASSERTIONS=1 to avoid linking errors
+			"use_safe_libstdcxx=false"
+
+	# Prevent:
+#usr/include/c++/v1/cstddef:45:5: error: <cstddef> tried including <stddef.h> but didn't find libc++'s <stddef.h> header.           This usually means that your header search paths are not configured properly.           The header search paths should contain the C++ Standard Library headers before           any C Standard Library, and you are probably using compiler flags that make that           not be the case.
+#   45 | #   error <cstddef> tried including <stddef.h> but didn't find libc++'s <stddef.h> header. \
+
+			"llvm_slot=${LLVM_SLOT}"
 		)
 	else
 einfo "C++ library:  libc++ (vendored)"
 einfo "C++ library hardening:  Fully hardened"
 		myconf_gn+=(
+			"buildconfig_use_custom_libcxx=true"
 			"use_custom_libcxx=true"
 			"use_custom_libcxx_for_host=true"
+
+	# libc++ is already hardened enabled
+	#		"use_safe_libcxx=true"
 		)
 	fi
 
@@ -7480,6 +7504,7 @@ einfo "Configuring ungoogled-chromium..."
 	else
 einfo "Configuring Chromium..."
 	fi
+
 	set -- gn gen --args="${myconf_gn[*]}${EXTRA_GN:+ ${EXTRA_GN}}" "out/Release"
 
 	echo "$@"
