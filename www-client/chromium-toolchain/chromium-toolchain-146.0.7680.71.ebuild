@@ -6,18 +6,21 @@ EAPI=8
 
 inherit dhms
 
-CXX_STANDARD=20 # gn = c++20, llvm = c++17, clang = c++17, lld = c++17, libcxx = c++23, compiler-rt = c++17, compiler-rt-sanitizers = c++17
+CXX_STANDARD=20 # Same as gn.  gn = c++20, llvm = c++17, clang = c++17, lld = c++17, libcxx = c++23, compiler-rt = c++17, compiler-rt-sanitizers = c++17
 # https://github.com/chromium/chromium/blob/146.0.7680.71/DEPS#L533
 GN_COMMIT="304bbef6c7e9a86630c12986b99c8654eb7fe648"
 GN_PV="0.2324" # See get_gn_ver.sh
 INSTALL_PREFIX="/usr/share/chromium/${PV%.*}.x"
 # https://github.com/chromium/chromium/blob/146.0.7680.71/tools/clang/scripts/update.py#L38 \
 LLVM_COMMIT="5bd8dadb" # without the g prefix
+LLVM_LIVE_TIMESTAMP="Fri, 30 Jan 2026 13:04:23 +0000" # Timestamp from https://github.com/llvm/llvm-project/commit/${LLVM_COMMIT}.patch
 LLVM_N_COMMITS="2224"
 LLVM_OFFICIAL_SLOT="23" # Cr official slot
 LLVM_SUB_REV="3"
+LLVM_SLOT_UNSTABLE="23"
 # https://github.com/chromium/chromium/blob/146.0.7680.71/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
+RUST_LIVE_TIMESTAMP="Feb 27, 2026 09:38:23 -0800" # Same as Rust 1.96.0 timestamp
 RUST_COMMIT="7d8ebe3128fc87f3da1ad64240e63ccf07b8f0bd"
 RUST_SUB_REV="3"
 # Upstream uses 1.95.0 corresponding to LLVM 22.1
@@ -182,7 +185,7 @@ SLOT="${PV%.*}.x"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +cfi +pgo -system-clang -system-rust
-ebuild_revision_14
+ebuild_revision_15
 "
 REQUIRED_USE="
 	^^ (
@@ -204,8 +207,11 @@ RDEPEND+="
 		llvm-core/llvm:${LLVM_OFFICIAL_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 		llvm-core/llvm:=
 
-		>=llvm-runtimes/libcxx-${LLVM_OFFICIAL_SLOT}[${LIBCXX_USEDEP},${LIBCXX_USEDEP}]
+		>=llvm-runtimes/libcxx-${LLVM_OFFICIAL_SLOT}[${LIBCXX_USEDEP},${LIBCXX_USEDEP},libcxxabi]
 		llvm-runtimes/libcxx:=
+
+		>=llvm-runtimes/libcxxabi-${LLVM_OFFICIAL_SLOT}[${LIBCXX_USEDEP},${LIBCXX_USEDEP}]
+		llvm-runtimes/libcxxabi:=
 
 		cfi? (
 			=llvm-runtimes/compiler-rt-sanitizers-${LLVM_OFFICIAL_SLOT}*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},cfi]
@@ -245,15 +251,25 @@ eerror "Switch to live with \`eselect rust\`"
 	fi
 
 	if "${RUSTC}" --version | grep -q -e "nightly" ; then
-	# Same as Rust 1.96.0 timestamp
-		local compatible_time=$(date --date="Feb 27, 2026 09:38:23 -0800" "+%s")
+		local compatible_time=$(date --date="${RUST_LIVE_TIMESTAMP}" "+%s")
 
-		local merge_time=$(cat "/var/db/pkg/dev-lang/rust-bin-9999/BUILD_TIME")
+		local merge_time
+		local pkg_name
+		if [[ "${RUSTC}" =~ "rust-bin" ]] ; then
+			pkg_name="rust-bin"
+			merge_time=$(cat "/var/db/pkg/dev-lang/rust-bin-9999/BUILD_TIME")
+		else
+			pkg_name="rust"
+			merge_time=$(cat "/var/db/pkg/dev-lang/rust-9999/BUILD_TIME")
+		fi
 		if (( ${merge_time} < ${compatible_time} )) ; then
-eerror "The live merge time is old for rust or rust-bin."
-eerror "Re-emerge =dev-lang/rust-bin-9999 or =dev-lang-rust-9999 or switch to Rust 1.96.0 or later to continue."
-eerror "Merge time:  "$(date --date="@${merge_time}")
-eerror "Compatible time:  >= "$(date --date="@${compatible_time}")
+eerror
+eerror "Detected old live timestamp."
+eerror "Re-emerge ${pkg_name} or switch to Rust 1.96.0 or later."
+eerror
+eerror "Current timestamp:  "$(date --date="@${merge_time}")
+eerror "Expected timestamp:  >= "$(date --date="@${compatible_time}")
+eerror
 			die
 		fi
 	else
@@ -265,6 +281,35 @@ eerror "Switch Rust to >= ${RUST_MIN_VER}"
 	fi
 }
 
+verify_clang() {
+	if [[ -n "${LLVM_SLOT_UNSTABLE}" ]] && use "llvm_slot_${LLVM_SLOT_UNSTABLE}" ; then
+		local upstream_timestamp=$(date --date="${LLVM_LIVE_TIMESTAMP}" "+%s")
+		local L=(
+			"llvm-core/clang"
+			"llvm-core/llvm"
+			"llvm-core/lld"
+			"llvm-runtimes/libcxx"
+			"llvm-runtimes/libcxxabi"
+			"llvm-runtimes/compiler-rt"
+			"llvm-runtimes/compiler-rt-sanitizers"
+		)
+		local pkg
+		for pkg in "${L[@]}" ; do
+			local pkg_timestamp=$(cat "/var/db/pkg/${pkg}-${LLVM_SLOT_UNSTABLE}"*"/BUILD_TIME")
+			if (( ${pkg_timestamp} < ${upstream_timestamp} )) ; then
+eerror
+eerror "Detected old live timestamp."
+eerror "Re-emerge ${pkg}."
+eerror
+eerror "Current timestamp:  "$(date --date="@${pkg_timestamp}")
+eerror "Expected timestamp:  >= "$(date --date="@${upstream_timestamp}")
+eerror
+				die
+			fi
+		done
+	fi
+}
+
 pkg_setup() {
 	dhms_start
 	check-compiler-switch_start
@@ -273,6 +318,10 @@ pkg_setup() {
 	rust_pkg_setup
 	if use system-rust ; then
 		verify_rust
+	fi
+
+	if use system-clang ; then
+		verify_clang
 	fi
 }
 
