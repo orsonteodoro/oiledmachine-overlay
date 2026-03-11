@@ -1,5 +1,5 @@
---- a/build/config/compiler/BUILD.gn.orig	2026-03-10 21:56:26.610743037 -0700
-+++ b/build/config/compiler/BUILD.gn	2026-03-10 22:18:06.918693984 -0700
+--- a/build/config/compiler/BUILD.gn.orig	2026-03-11 08:27:02.586102775 -0700
++++ b/build/config/compiler/BUILD.gn	2026-03-11 08:28:39.663105655 -0700
 @@ -55,6 +55,7 @@ declare_args() {
    use_system_clang = false
    use_glibc = true
@@ -8,13 +8,15 @@
  }
  
  declare_args() {
-@@ -418,6 +419,11 @@ config("compiler") {
+@@ -418,6 +419,13 @@ config("compiler") {
      configs += [ "//build/config/zos:compiler" ]
    }
  
 +  if (use_system_clang) {
-+    cflags += [ "-resource-dir=/usr/lib/clang/${llvm_slot}" ]
-+    cflags += [ "-isystem/usr/lib/clang/${llvm_slot}/include" ]
++    #cflags += [ "-resource-dir=/usr/lib/clang/${llvm_slot}" ]
++    #cflags += [ "-isystem/usr/lib/clang/${llvm_slot}/include" ]
++    cflags += [ "-stdlib=libc++" ]
++    ldflags += [ "-stdlib=libc++" ]
 +  }
 +
    if (use_march != "") {

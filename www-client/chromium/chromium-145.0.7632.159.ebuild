@@ -2817,8 +2817,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.75-dedupe-use-system-zlib.patch" # It appears twice in cromite build
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-optionalize-clang-warning-suppression-mappings.patch"
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-system-clang-flags.patch"
-		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-system-clang-flags-2.patch"
-		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-libcxx-headers.patch"
+#		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-libcxx-headers.patch"
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-libcxx-hardening-flag.patch"
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-system-clang-flags-3.patch"
 	)
@@ -3282,11 +3281,6 @@ eerror "Expected to find ${src} to restore ${dst}, but it does not exist."
 	done
 	unset restore_list
 
-elog "Removing bundled binaries from source tree ..."
-	# Purge the bundled ELF files.  These are non-portable and cause issues
-	# if used instead of system versions.  Use `--wasm` to remove
-	# WebAssembly binaries; if desired, they're portable, so they shouldn't
-	# break builds.
 	local allow_prune=1
 	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && ! use ungoogled-chromium ; then
 		allow_prune=0
@@ -3302,10 +3296,12 @@ elog "Removing bundled binaries from source tree ..."
 # [cause]: Error: Cannot find module '/var/tmp/portage/www-client/chromium-145.0.7632.159/work/chromium-145.0.7632.159/third_party/devtools-frontend/src/node_modules/@rollup/rollup-linux-x64-gnu/rollup-linux-x64-gnu.node'. Please verify that the package.json has a valid "main" entry
 
 elog "Removing bundled binaries from source tree ..."
-	# Purge bundled ELF files: These are non-portable and will cause issues if used instead of system versions.
-	# Use `--wasm` to also remove WebAssembly binaries, if desired - they're portable so shouldn't break builds.
-		"${EPYTHON}" "${FILESDIR}/bin-finder.py" --elf "${S}" | awk '{print $1}' | xargs rm -f ||
-			die "Failed to remove bundled binaries"
+	# Purge the bundled ELF files.  These are non-portable and cause issues
+	# if used instead of system versions.  Use `--wasm` to remove
+	# WebAssembly binaries; if desired, they're portable, so they shouldn't
+	# break builds.
+#		"${EPYTHON}" "${FILESDIR}/bin-finder.py" --elf "${S}" | awk '{print $1}' | xargs rm -f ||
+#			die "Failed to remove bundled binaries"
 
 	# Until we can just symlink in a system rollup, we'll `mv` the wasm
 	# version and modify some files.
@@ -4055,17 +4051,17 @@ _set_system_cc() {
 
 	# Always use Clang.
 	# Get the stdatomic.h from clang not from gcc.
-	append-cxxflags "-stdlib=libc++"
-	append-ldflags "-stdlib=libc++"
+	# Already applied in the system-clang-flags-3.patch
+	filter-flags "-stdlib=libc++"
 
 	if ver_test "${LLVM_SLOT}" -ge "16" ; then
-		append-cppflags "-isystem/usr/lib/clang/${LLVM_SLOT}/include"
+#		append-cppflags "-isystem/usr/lib/clang/${LLVM_SLOT}/include"
 		show_clang_header_warning "${LLVM_SLOT}"
 	else
 		local clang_pv=$(best_version "llvm-core/clang:${LLVM_SLOT}" \
 			| sed -e "s|llvm-core/clang-||")
 		clang_pv=$(ver_cut "1-3" "${clang_pv}")
-		append-cppflags "-isystem/usr/lib/clang/${clang_pv}/include"
+#		append-cppflags "-isystem/usr/lib/clang/${clang_pv}/include"
 		show_clang_header_warning "${clang_pv}"
 	fi
 	append-cppflags "-DFORCE_CLANG_STDATOMIC_H"
@@ -5209,13 +5205,12 @@ eerror
 	# There was some discussion that libcxx could be ASan-ed which would be
 	# a security advantage over the system's libstdc++.
 	#
+	# Distro notes:
 	# Use in-tree libc++ (buildtools/third_party/libc++ and buildtools/third_party/libc++abi)
 	# instead of the system C++ library for C++ standard library support.
 	#
-	# We always use the vendored libc++ because the -std=c++23 (Rolling)
-	# conflicts with the system's -std=gnu++17 (LTS) for versioned symbols.
-	#
-	# default: true, but let's be explicit (forced since 120 ; USE removed 127).
+	# Distro notes:
+	# default: true, but let's be explicit (libc++ forced since 120 ; USE removed 127).
 	#
 	if use system-clang ; then
 ewarn "C++ library:   libc++ (system)"
@@ -5227,14 +5222,8 @@ ewarn "C++ library hardening:  Partially hardened to unhardened"
 	# Force hardening libc++
 			"use_libcpp_hardening=true"
 
-	# Prevent adding -D_GLIBCXX_ASSERTIONS=1 to avoid linking errors
-			"use_safe_libstdcxx=false"
-
-	# Prevent:
-#usr/include/c++/v1/cstddef:45:5: error: <cstddef> tried including <stddef.h> but didn't find libc++'s <stddef.h> header.           This usually means that your header search paths are not configured properly.           The header search paths should contain the C++ Standard Library headers before           any C Standard Library, and you are probably using compiler flags that make that           not be the case.
-#   45 | #   error <cstddef> tried including <stddef.h> but didn't find libc++'s <stddef.h> header. \
-
-			"llvm_slot=${LLVM_SLOT}"
+	# Prevent adding -D_GLIBCXX_ASSERTIONS=1 to avoid linker warnings
+	#		"use_safe_libstdcxx=false"
 		)
 	else
 einfo "C++ library:  libc++ (vendored)"
@@ -5244,7 +5233,7 @@ einfo "C++ library hardening:  Fully hardened"
 			"use_custom_libcxx=true"
 			"use_custom_libcxx_for_host=true"
 
-	# libc++ is already hardened enabled
+	# libc++ is already hardened enabled by default
 	#		"use_safe_libcxx=true"
 		)
 	fi
