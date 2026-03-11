@@ -35,13 +35,14 @@ VENDORED_RUST_VER="${RUST_COMMIT}-${RUST_SUB_REV}"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX20[@]}" # For gn
+	"${LIBSTDCXX_COMPAT_STDCXX20[@]}" # Same as gn
 )
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}" # 20-22; For gn
+	#"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}" # 20-22
+	22 # Same as gn and Rust's LLVM min to LLVM max
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
@@ -185,7 +186,7 @@ SLOT="${PV%.*}.x"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +cfi +pgo -system-clang -system-rust
-ebuild_revision_16
+ebuild_revision_19
 "
 REQUIRED_USE="
 	^^ (
@@ -510,11 +511,28 @@ src_install() {
 
 pkg_preinst() {
 	dhms_end
-	local count=$(find "${INSTALL_PREFIX}/toolchain/" -type f | wc -l)
-	echo "${count}" >> "${INSTALL_PREFIX}/toolchain/file-count"
+	local gn_count
+	local clang_count
+	local rust_count
+
+	gn_count=$(find "${INSTALL_PREFIX}/toolchain/gn" -type f | wc -l)
+	echo "${gn_count}" >> "${INSTALL_PREFIX}/toolchain/gn-file-count"
+
+	if ! use system-clang ; then
+		clang_count=$(find "${INSTALL_PREFIX}/toolchain/clang" -type f | wc -l)
+		echo "${clang_count}" >> "${INSTALL_PREFIX}/toolchain/clang-file-count"
+	fi
+
+	if ! use system-rust ; then
+		rust_count=$(find "${INSTALL_PREFIX}/toolchain/rust" -type f | wc -l)
+		echo "${rust_count}" >> "${INSTALL_PREFIX}/toolchain/rust-file-count"
+	fi
+
 einfo "Files merged:"
 	find "${INSTALL_PREFIX}/toolchain/"
-einfo "QA:  Update chromium ebuild with tc_count_expected=${count}"
+einfo "QA:  Update chromium ebuild with tc_count_expected_gn=${gn_count}"
+einfo "QA:  Update chromium ebuild with tc_count_expected_clang=${clang_count}"
+einfo "QA:  Update chromium ebuild with tc_count_expected_rust=${rust_count}"
 
 	# Remove old unislot
 	if [[ -e "/usr/share/chromium/toolchain" ]] ; then

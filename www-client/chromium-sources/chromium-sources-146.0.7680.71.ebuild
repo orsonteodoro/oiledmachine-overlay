@@ -6,7 +6,7 @@ EAPI=8
 
 MY_PV="chromium-${PV}"
 
-INSTALL_PREFIX="/usr/share/chromium/${PV%.*}/sources"
+INSTALL_PREFIX="/usr/share/chromium/${PV}"
 TARBALL_FLAVOR="lite" # full or lite
 
 # For lite versus full tarball see:
@@ -46,7 +46,7 @@ LICENSE="
 "
 RESTRICT="binchecks mirror strip test"
 SLOT="${PV}"
-IUSE+=" ebuild_revision_4"
+IUSE+=" ebuild_revision_5"
 RDEPEND+="
 "
 DEPEND+="
@@ -87,7 +87,7 @@ _method1() {
 src_install() {
 	keepdir "${INSTALL_PREFIX}/sources"
 	addwrite "/usr/share/chromium/"
-	addwrite "/usr/share/chromium/${PV%.*}"
+	addwrite "/usr/share/chromium/${PV}"
 	addwrite "${INSTALL_PREFIX}/sources"
 	_method1
 }
@@ -105,6 +105,10 @@ einfo "QA:  Update chromium ebuild with sources_count_expected=${count}"
 	# Remove unislot
 		rm -rf "/usr/share/chromium/sources"
 	fi
+	if [[ -e "/usr/share/chromium/${PV%.*}" ]] ; then
+	# Remove mistake
+		rm -rf "/usr/share/chromium/${PV%.*}"
+	fi
 }
 
 pkg_postrm() {
@@ -117,6 +121,11 @@ pkg_postrm() {
 		if [[ -e "/usr/share/chromium/sources" ]] ; then
 		# Remove unislot
 			rm -rf "/usr/share/chromium/sources"
+		fi
+
+		if [[ -e "/usr/share/chromium/${PV%.*}" ]] ; then
+	# Remove mistake
+			rm -rf "/usr/share/chromium/${PV%.*}"
 		fi
 	fi
 }
