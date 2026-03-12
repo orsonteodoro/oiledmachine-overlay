@@ -2463,6 +2463,26 @@ einfo "Rust compiler:  Rust (vendored)"
 ewarn "Disabling system-rust could weaken the security or privacy."
 		export RUSTC="${S}/third_party/rust-toolchain/bin/rustc"
 	fi
+
+	if use openh264 && ! use system-openh264 ; then
+	# Prebuilt OpenH64
+	# Contains BLOB(s) which may fingerprint user, or not fully hardened
+ewarn "Enabling openh264 and disabling system-openh264 could weaken the security or privacy."
+	fi
+
+	if use winevine ; then
+	# Contains BLOB(s) which may fingerprint user, or backdoor DoS, or not fully hardened
+ewarn "Enabling winevine could weaken the security or privacy."
+	fi
+
+	if has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
+		:
+	elif has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
+		:
+	else
+ewarn "The default DNS servers and settings could weaken the privacy."
+	fi
+
 einfo "RUSTC:  ${RUSTC}"
 }
 
