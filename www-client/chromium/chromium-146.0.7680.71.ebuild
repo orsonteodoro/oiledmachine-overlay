@@ -2471,7 +2471,7 @@ ewarn "Enabling openh264 and disabling system-openh264 could weaken the security
 	fi
 
 	if use widevine ; then
-	# Contains BLOB(s) which may fingerprint user, or backdoor DoS, or not fully hardened
+	# Contains BLOB(s) which may fingerprint user, or perform data collection, or not fully hardened, or have a backdoor DoS
 ewarn "Enabling widevine could weaken the security or privacy."
 	fi
 
