@@ -13084,6 +13084,10 @@ ewarn "app-forensics/aide should be added for integrity verification for dss wor
 _ot-kernel_checkpoint_dss_audit_logs_requirement() {
 	if [[ "${work_profile}" == "dss" ]] ; then
 		if ! use debug ; then
+# Logging is considered a debugging feature for disable_debug script, but it is
+# a necessary in cybersecurity audits to determine suspicious patterns if a
+# breach has happened or an ongoing attack is happening and is a necessary
+# requirement for some standards.
 eerror "Add debug to USE to enable logging for the dss work profile."
 			die
 		fi
