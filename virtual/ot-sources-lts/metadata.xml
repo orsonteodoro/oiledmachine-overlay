@@ -14,15 +14,6 @@
     done though a virtual ebuild.
   </longdescription>
   <use>
-    <flag name="4_14">
-      Monitor the 4.14 branch for updates.
-    </flag>
-    <flag name="4_19">
-      Monitor the 4.19 branch for updates.
-    </flag>
-    <flag name="5_4">
-      Monitor the 5.4 branch for updates.
-    </flag>
     <flag name="5_10">
       Monitor the 5.10 branch for updates.
     </flag>
@@ -31,6 +22,15 @@
     </flag>
     <flag name="6_1">
       Monitor the 6.1 branch for updates.
+    </flag>
+    <flag name="6_6">
+      Monitor the 6.6 branch for updates.
+    </flag>
+    <flag name="6_12">
+      Monitor the 6.12 branch for updates.
+    </flag>
+    <flag name="6_18">
+      Monitor the 6.18 branch for updates.
     </flag>
   </use>
 </pkgmetadata>
