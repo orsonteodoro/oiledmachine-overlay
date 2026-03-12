@@ -188,6 +188,7 @@ CURRENT_PROFDATA_LLVM_VERSION= # Global variable
 CXX_STANDARD=23
 DISABLE_AUTOFORMATTING="yes"
 DISTRIBUTED_BUILD=0 # Global variable
+LIBCXX_USEDEP_SKIP=1
 LLVM_SLOT="" # Global variable
 LTO_TYPE="" # Global variable
 NABIS=0 # Global variable
@@ -1701,7 +1702,7 @@ BDEPEND+="
 	net-libs/nodejs:=
 	sys-apps/hwdata
 	sys-devel/flex
-	www-client/chromium-toolchain:0/${PV%.*}.x[cfi=,pgo=,system-clang=,system-rust=]
+	www-client/chromium-toolchain:${PV%.*}.x[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cfi=,pgo=,system-clang=,system-rust=]
 	www-client/chromium-toolchain:=
 	mold? (
 		>=sys-devel/mold-2.33.0[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},-system-mimalloc]
@@ -2223,8 +2224,9 @@ ewarn "Expected file count (total):  ${tc_count_expected_total}"
 ewarn
 		fi
 	else
+		tc_count_expected_total=$(( ${tc_count_expected_gn} ))
 		tc_count_actual_gn=$(cat "${CHROMIUM_TOOLCHAIN_PREFIX}/gn-file-count")
-		tc_count_actual_total=$(( ${tc_count_actual_gn} + 0 ))
+		tc_count_actual_total=$(( ${tc_count_actual_gn} ))
 		if (( ${tc_count_actual_total} != ${tc_count_expected_total} )) ; then
 ewarn
 ewarn "The emerge package manager may have overpruned."
@@ -2289,7 +2291,7 @@ ewarn "-Oshit is missing in cflags for build speed optimized build.  See metadat
 		WARNING_SYSFS="CONFIG_SYSFS could be added for ptrace sandbox protection"
 		WARNING_MULTIUSER="CONFIG_MULTIUSER could be added for ptrace sandbox protection"
 		WARNING_SECURITY="CONFIG_SECURITY could be added for ptrace sandbox protection"
-		WARNING_SECURITY_YAMA="CONFIG_SECURITY_YAMA could be added for ptrace sandbox protection to mitigate against credential theft"
+		WARNING_SECURITY_YAMA="CONFIG_SECURITY_YAMA could be added for ptrace sandbox protection to mitigate against credential theft and sandbox escape"
 		check_extra_config
 
 		if ! linux_config_exists ; then
@@ -2714,7 +2716,6 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-libjpeg-turbo-optionalize-simd.patch"	# Fix missing symbols for disabled SIMD
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.45-opus-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.45-libwebp-optionalize-simd.patch"
-		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-fuzztest-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-crc32c-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-blink-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.45-lzma_sdk-optionalize-simd.patch"
@@ -2728,15 +2729,15 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
 	# Same as USE="ungoogled-chromium cromite" or USE=ungoogled-chromium
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-145.0.7632.45-mold-ungoogled-chromium.patch"
+			"A${FILESDIR}/extra-patches/${PN}-145.0.7632.45-mold-ungoogled-chromium.patch"
 		)
 	elif has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-143.0.7499.169-mold.patch"
+			"${FILESDIR}/extra-patches/${PN}-146.0.7680.71-mold.patch"
 		)
 	else
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-143.0.7499.169-mold.patch"
+			"${FILESDIR}/extra-patches/${PN}-146.0.7680.71-mold.patch"
 		)
 	fi
 

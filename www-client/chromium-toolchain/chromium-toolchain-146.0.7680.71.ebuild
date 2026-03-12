@@ -51,7 +51,7 @@ LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 inherit libcxx-compat
 LLVM_COMPAT=(
 	#"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}" # 21-22
-	23 # For chromium
+	23 # Simplify for chromium
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
