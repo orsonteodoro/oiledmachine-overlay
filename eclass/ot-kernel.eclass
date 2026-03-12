@@ -472,7 +472,7 @@ VULNERABILITIES_FIXED=(
 	"59efa08;DoS;" # 6.19.7, panic
 	"5b230da;NPD, DoS;" # 6.19.7, panic on oops
 	"5f1cfea;CRSH, NPD, DoS;" # 6.19.7
-	"625ef35;OF, OOB" # 6.19.7
+	"625ef35;OF, OOB, DC, DT" # 6.19.7
 	"63ee429;ML, DoS;" # 6.19.7
 	"696fa12;ML, DoS;" # 6.19.7
 	"607e923;KP, DoS;" # 6.19.7
@@ -485,8 +485,8 @@ VULNERABILITIES_FIXED=(
 	"7c8a7b7;OOB;" # 6.19.7, panic on warn
 	"85c98b8;CRSH, NPD, DoS;" # 6.19.7, panic on oops
 	"8650db8;KP, CRSH, NPD, DoS;" # 6.19.7
-	"94b9da7;CRSH, HF, DoS;" # 6.19.7, panic on oops
-	"972bf4a;OF;" # 6.19.7
+	"94b9da7;CRSH, HF, MC, DoS;" # 6.19.7, panic on oops
+	"972bf4a;OF, MC;" # 6.19.7
 	"978d4fe;OF;" # 6.19.7
 	"a03d965;H, DoS;" # 6.19.7
 	"abcd48e;DoS;" # 6.19.7, panic on oops
@@ -508,13 +508,14 @@ VULNERABILITIES_FIXED=(
 	"c9bd000;ML;" # 6.19.7
 	"ca83156;OOBW;" # 6.19.7
 	"cc83cd7;H, DoS;" # 6.19.7
-	"cca770d;OOBW;" # 6.19.7
+	"cca770d;OOBW, MC;" # 6.19.7
 	"c69df4e;UAF;" # 6.19.7, panic on warn
 	"cd2f529;UAF;" # 6.19.7, panic on warn
 	"d20d489;CRSH, DoS;" # 6.19.7
 	"d58d71c;OOBW;" # 6.19.7
 	"da4515f;UAF, DoS;" # 6.19.7
 	"dca4ea5;DoS;" # 6.19.7
+	"eaa6a56;RC, MC;" # 6.19.7
 	"ec54546;DoS;" # 6.19.7, panic on warn
 	"eeaf28c;OOBA;" # 6.19.7
 	"ee31ec8;CRSH, DoS;" # 6.19.7
