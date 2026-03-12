@@ -498,7 +498,7 @@ VULNERABILITIES_FIXED=(
 	"ac7ecb6;RC, UAF;" # 6.19.7
 	"ae88c82;NPD, DoS;" # 6.19.7, panic on oops
 	"b0f0510;KP, DoS;" # 6.19.7
-	"b38cbd4;ML; DoS;" # 6.19.7
+	"b38cbd4;ML, DoS;" # 6.19.7
 	"b7f6728;DoS;" # 6.19.7, panic on warn
 	"ba1c229;DoS;" # 6.19.7, panic on warn
 	"baef52d;DoS;" # 6.19.7, panic on warn
