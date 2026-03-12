@@ -6,11 +6,20 @@ EAPI=8
 
 inherit dhms
 
-CXX_STANDARD=20 # Same as gn.  gn = c++20, llvm = c++17, clang = c++17, lld = c++17, libcxx = c++23, compiler-rt = c++17, compiler-rt-sanitizers = c++17
+# clang = c++17
+# compiler-rt = c++17
+# compiler-rt-sanitizers = c++17
+# gn = c++20
+# libcxx = c++23
+# lld = c++17
+# llvm = c++17
+# chromium = c11, c++23
+CXX_STANDARD=23 # Same as libcxx and chromium.
 # https://github.com/chromium/chromium/blob/146.0.7680.71/DEPS#L533
 GN_COMMIT="304bbef6c7e9a86630c12986b99c8654eb7fe648"
 GN_PV="0.2324" # See get_gn_ver.sh
 INSTALL_PREFIX="/usr/share/chromium/${PV%.*}.x"
+LIBCXX_USEDEP_SKIP=1
 # https://github.com/chromium/chromium/blob/146.0.7680.71/tools/clang/scripts/update.py#L38 \
 LLVM_COMMIT="5bd8dadb" # without the g prefix
 LLVM_LIVE_TIMESTAMP="Fri, 30 Jan 2026 13:04:23 +0000" # Timestamp from https://github.com/llvm/llvm-project/commit/${LLVM_COMMIT}.patch
@@ -35,18 +44,18 @@ VENDORED_RUST_VER="${RUST_COMMIT}-${RUST_SUB_REV}"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX20[@]}" # Same as gn
+	"${LIBSTDCXX_COMPAT_STDCXX23[@]}" # 15-16, for chromium
 )
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	#"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}" # 20-22
-	22 # Same as gn and Rust's LLVM min to LLVM max
+	#"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}" # 21-22
+	23 # For chromium
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
-inherit check-compiler-switch edo flag-o-matic flag-o-matic-om libcxx-slot libstdcxx-slot multilib-minimal ninja-utils rust toolchain-funcs
+inherit check-compiler-switch edo flag-o-matic flag-o-matic-om libcxx-slot libstdcxx-slot multilib-minimal ninja-utils toolchain-funcs
 
 KEYWORDS="~amd64"
 S="${WORKDIR}"
@@ -186,7 +195,7 @@ SLOT="${PV%.*}.x"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +cfi +pgo -system-clang -system-rust
-ebuild_revision_19
+ebuild_revision_20
 "
 REQUIRED_USE="
 	^^ (
@@ -208,10 +217,10 @@ RDEPEND+="
 		llvm-core/llvm:${LLVM_OFFICIAL_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 		llvm-core/llvm:=
 
-		>=llvm-runtimes/libcxx-${LLVM_OFFICIAL_SLOT}[${LIBCXX_USEDEP},${LIBCXX_USEDEP},libcxxabi]
+		>=llvm-runtimes/libcxx-${LLVM_OFFICIAL_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},libcxxabi]
 		llvm-runtimes/libcxx:=
 
-		>=llvm-runtimes/libcxxabi-${LLVM_OFFICIAL_SLOT}[${LIBCXX_USEDEP},${LIBCXX_USEDEP}]
+		>=llvm-runtimes/libcxxabi-${LLVM_OFFICIAL_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		llvm-runtimes/libcxxabi:=
 
 		cfi? (
@@ -316,12 +325,40 @@ eerror
 	fi
 }
 
+# This is to avoid dependence on Rust eclass which cannot deal with bleeding edge LLVM 23.
+setup_rust() {
+	local VERSIONS=(
+		"9999"
+	)
+	local x
+	for x in "${VERSIONS[@]}" ; do
+		if has "=dev-lang/rust-${x}" ; then
+			export RUSTC="${BROOT}/usr/lib/rust/${x}/bin/rustc"
+			break
+		elif has "=dev-lang/rust-bin-${x}" ; then
+			export RUSTC="${BROOT}/opt/rust-bin-${x}/bin/rustc"
+			break
+		fi
+	done
+	if use system-rust && [[ -z "${RUSTC}" ]] ; then
+eerror
+eerror "RUSTC is not set."
+eerror
+eerror "The following implementations are currently only supported:"
+eerror
+eerror "USE=system-rust:  =dev-lang/rust-9999, =dev-lang/rust-bin-9999"
+eerror "USE=-system-rust:  ${CATEGORY}/${PN}"
+eerror
+		die
+	fi
+}
+
 pkg_setup() {
 	dhms_start
 	check-compiler-switch_start
 	libcxx-slot_verify
 	libstdcxx-slot_verify
-	rust_pkg_setup
+	setup_rust
 	if use system-rust ; then
 		verify_rust
 	fi

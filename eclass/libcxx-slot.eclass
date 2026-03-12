@@ -369,6 +369,10 @@ eerror "Valid values:  98, 03, 11, 14, 17, 20, 23, 26, ignore"
 		"
 	fi
 
+	# Use LIBCXX_USEDEP_SKIP=1 if live LLVM
+	if [[ -z "${usedep}" && "${LIBCXX_USEDEP_SKIP}" != "1" ]] ; then
+ewarn "QA:  Add LIBCXX_USEDEP_SKIP=1 for libcxx-slot to avoid LIBCXX_USEDEP issues or downgrade to LTS slots for LLVM_COMPAT."
+	fi
 	if [[ "${LIBCXX_USEDEP_SKIP}" == "1" ]] ; then
 	# Skip resolution but mark packages as having C++ version symbols.
 		LIBCXX_USEDEP="llvm_slot_skip(+)"
