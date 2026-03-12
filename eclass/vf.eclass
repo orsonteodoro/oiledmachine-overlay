@@ -304,7 +304,7 @@ einfo "IU = Integer Underflow"
 einfo "IV = Insufficient Validation of Input or Data"
 		fi
 
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"MC"($|" "|";"|",") ]] ; then
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"DC"($|" "|";"|",") ]] ; then
 # Not the same as Memory Corruption
 einfo "DC = Data Corruption"
 		fi
