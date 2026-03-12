@@ -468,6 +468,28 @@ einfo "SOF = Shift Overflow"
 einfo "SUF = Shift Underflow"
 		fi
 
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"OF"($|" "|";"|",") ]] ; then
+einfo "OF = Overflow"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UF"($|" "|";"|",") ]] ; then
+einfo "UF = Underflow"
+		fi
+
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UESE"($|" "|";"|",") ]] ; then
+# Taxonomic name
+# Same as CWE-194
+# Negative number gets 0 extended instead of 1 extended resulting in a large positive number.
+# 0xFFFF01 is negative, 0x000001 is positive.
+einfo "UESE = UnExpected Sign Extension"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SEV"($|" "|";"|",") ]] ; then
+# Informal
+# Same as CWE-194
+# Negative number gets 0 extended instead of 1 extended resulting in a large positive number.
+# 0xFFFF01 is negative, 0x000001 is positive.
+einfo "SEV = Sign Extension Vulnerability"
+		fi
+
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SOOB"($|" "|";"|",") ]] ; then
 einfo "SOOB = Shift Out Of Bounds"
 		fi
