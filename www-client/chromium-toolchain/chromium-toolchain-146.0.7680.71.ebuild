@@ -6,6 +6,7 @@ EAPI=8
 
 inherit dhms
 
+# chromium = c11, c++23
 # clang = c++17
 # compiler-rt = c++17
 # compiler-rt-sanitizers = c++17
@@ -13,7 +14,6 @@ inherit dhms
 # libcxx = c++23
 # lld = c++17
 # llvm = c++17
-# chromium = c11, c++23
 CXX_STANDARD=23 # Same as libcxx and chromium.
 # https://github.com/chromium/chromium/blob/146.0.7680.71/DEPS#L533
 GN_COMMIT="304bbef6c7e9a86630c12986b99c8654eb7fe648"
