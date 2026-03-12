@@ -708,12 +708,14 @@ https://github.com/uazo/cromite/archive/refs/tags/v${CROMITE_PV}-${CROMITE_HASH}
 	"
 	# Force require the reviewed system compiler to prevent possibility of
 	# trojanized compiler injecting user fingerprinting code.
+	if false ; then
 	REQUIRED_USE+="
 		cromite? (
 			system-clang
 			system-rust
 		)
 	"
+	fi
 fi
 
 if is_ungoogle_chromium_compatible ; then
@@ -728,12 +730,14 @@ https://github.com/ungoogled-software/ungoogled-chromium/archive/refs/tags/${UNG
 	"
 	# Force require the reviewed system compiler to prevent possibility of
 	# trojanized compiler injecting user fingerprinting code.
+	if false ; then
 	REQUIRED_USE+="
 		ungoogled-chromium? (
 			system-clang
 			system-rust
 		)
 	"
+	fi
 fi
 
 DESCRIPTION="The open-source version of the Chrome web browser"
