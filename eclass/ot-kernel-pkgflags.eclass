@@ -179,7 +179,7 @@ ban_disable_debug() {
 		]] \
 	; then
 		: # No feature conflict
-	elif ! ot-kernel_use debug ; then
+	elif ! ot-kernel_use "debug" ; then
 eerror
 eerror "Using OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS with the disabled debug"
 eerror "USE flag which will run the disable_debug script are in conflict with a"
@@ -1094,7 +1094,7 @@ ot-kernel-pkgflags_audit() { # DONE
 # Applies kernel config flags for the autofs package
 ot-kernel-pkgflags_autofs() { # DONE
 	if ot-kernel_has_version_pkgflags "net-fs/autofs" ; then
-		if ver_test "${KV_MAJOR_MINOR}" -ge "4.18" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "4.18" ; then
 			ot-kernel_y_configopt "CONFIG_AUTOFS_FS"
 		else
 			ot-kernel_y_configopt "CONFIG_AUTOFS4_FS"
@@ -1182,7 +1182,7 @@ ot-kernel-pkgflags_bcm_sta() { # DONE
 			ot-kernel_y_configopt "CONFIG_LIB80211_CRYPT_TKIP"
 		}
 
-		if ver_test "${MY_PV}" -ge "3.8.8" ; then
+		if ver_test "${MY_PV}" "-ge" "3.8.8" ; then
 			_s1
 			_s2
 			ot-kernel_y_configopt "CONFIG_CFG80211"
@@ -1196,16 +1196,16 @@ ewarn
 			ot-kernel_unset_configopt "CONFIG_PREEMPT_RCU"
 			# This package does not like PREEMPT*
 			ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
-		elif ver_test "${MY_PV}" -ge "2.6.32" ; then
+		elif ver_test "${MY_PV}" "-ge" "2.6.32" ; then
 			_s1
 			_s2
 			ot-kernel_y_configopt "CONFIG_CFG80211"
-		elif ver_test "${MY_PV}" -ge "2.6.31" ; then
+		elif ver_test "${MY_PV}" "-ge" "2.6.31" ; then
 			_s1
 			_s2
 			ot-kernel_y_configopt "CONFIG_WIRELESS_EXT"
 			ot-kernel_unset_configopt "CONFIG_MAC80211"
-		elif ver_test "${MY_PV}" -ge "2.6.29" ; then
+		elif ver_test "${MY_PV}" "-ge" "2.6.29" ; then
 			_s1
 			_s2
 			ot-kernel_y_configopt "CONFIG_WIRELESS_EXT"
@@ -1420,7 +1420,7 @@ ewarn "Setting vsyscall table none -> none may break some ${pkg} projects.  Chan
 			elif _ot-kernel_is_hardening_level_secure ; then
 				ot-kernel_y_configopt "CONFIG_LEGACY_VSYSCALL_EMULATE"
 			else
-				if [[ "${VSYSCALL_MODE}" == "native" ]] && ver_test "${KV_MAJOR_MINOR}" -le "4.15" ; then
+				if [[ "${VSYSCALL_MODE}" == "native" ]] && ver_test "${KV_MAJOR_MINOR}" "-le" "4.15" ; then
 ewarn "Setting vsyscall table:  none -> native"
 					warn_lowered_security "${pkg}" "vsyscall native may bypass ASLR, ROP gadget attack" "ID"
 					ot-kernel_y_configopt "CONFIG_LEGACY_VSYSCALL_NATIVE"
@@ -1452,7 +1452,7 @@ ot-kernel-pkgflags_bolt() { # DONE
 		   ot-kernel_has_version_pkgflags "${pkg}" \
 		&& ot-kernel_has_version "${pkg}[kernel_linux]" \
 	; then
-		if ver_test "${KV_MAJOR_MINOR}" -lt "5.6" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-lt" "5.6" ; then
 			ot-kernel_y_configopt "CONFIG_THUNDERBOLT"
 		else
 			ot-kernel_y_configopt "CONFIG_USB4"
@@ -1497,7 +1497,7 @@ ot-kernel-pkgflags_bridge_utils() { # DONE
 ot-kernel-pkgflags_broadcom_bt_firmware() { # DONE
 	local pkg="sys-firmware/broadcom-bt-firmware"
 	if ot-kernel_has_version_pkgflags "${pkg}" ; then
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.19" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.19" ; then
 			if ot-kernel_has_version_pkgflags "${pkg}[compress-xz]" ; then
 				ot-kernel_y_configopt "CONFIG_FW_LOADER_COMPRESS_XZ"
 			fi
@@ -1552,7 +1552,7 @@ ot-kernel-pkgflags_buildah() { # DONE
 # Applies kernel config flags for the bustd package
 ot-kernel-pkgflags_bustd() { # DONE
 	if ot-kernel_has_version_pkgflags "sys-apps/bustd" ; then
-		if ver_test "${KV_MAJOR_MINOR}" -ge "4.20" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "4.20" ; then
 			ot-kernel_y_configopt "CONFIG_PSI"
 		fi
 	fi
@@ -2081,7 +2081,7 @@ ot-kernel-pkgflags_conty() { # DONE
 # Applies kernel config flags for the conntrack-tools package
 ot-kernel-pkgflags_conntrack_tools() { # DONE
 	if ot-kernel_has_version_pkgflags "net-firewall/conntrack-tools" ; then
-		if ver_test "${MY_PV}" -lt "2.6.20" ; then
+		if ver_test "${MY_PV}" "-lt" "2.6.20" ; then
 			ot-kernel_y_configopt "CONFIG_IP_NF_CONNTRACK_NETLINK"
 		else
 			ot-kernel_y_configopt "CONFIG_NF_CT_NETLINK"
@@ -2371,7 +2371,7 @@ ot-kernel-pkgflags_cryptodev() { # DONE
 	if ot-kernel_has_version_pkgflags "sys-kernel/cryptodev" ; then
 		ot-kernel_y_configopt "CONFIG_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_AEAD"
-		if ver_test "${KV_MAJOR_MINOR}" -lt "4.8" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-lt" "4.8" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_BLKCIPHER"
 		else
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SKCIPHER"
@@ -2392,7 +2392,7 @@ ot-kernel-pkgflags_cryptmount() { # DONE
 # @DESCRIPTION:
 # Adds neon kernel config flags
 _ot-kernel-pkgflags_neon() {
-	if ot-kernel_use cpu_flags_arm_neon ; then
+	if ot-kernel_use "cpu_flags_arm_neon" ; then
 		ot-kernel_y_configopt "CONFIG_AEABI"
 		ot-kernel_y_configopt "CONFIG_NEON"
 		ot-kernel_y_configopt "CONFIG_KERNEL_MODE_NEON"
@@ -2409,7 +2409,7 @@ _ot-kernel-pkgflags_aes() {
 	if [[ "${arch}" == "arm" ]] ; then
 		ot-kernel_y_configopt "CONFIG_ARM_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_AES_ARM"
-		if ot-kernel_use cpu_flags_arm_neon ; then
+		if ot-kernel_use "cpu_flags_arm_neon" ; then
 			if [[ "${modes}" =~ ("CBC"|"CTR"|"CTS"|"ECB"|"XTS") ]] ; then
 # FIXME:  Update modes conditonals with CCM GCM to be more open-ended to add the
 # hardware accelerated cipher without AEAD.
@@ -2426,7 +2426,7 @@ _ot-kernel-pkgflags_aes() {
 	if [[ "${arch}" == "arm64" ]] ; then
 		ot-kernel_y_configopt "CONFIG_ARM64_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_AES_ARM64"
-		if ot-kernel_use cpu_flags_arm_neon ; then
+		if ot-kernel_use "cpu_flags_arm_neon" ; then
 			if [[ "${modes}" =~ ("CBC"|"CTR"|"CTS"|"ECB"|"XTS") ]] ; then
 				ot-kernel_y_configopt "CONFIG_CRYPTO_AES_ARM64_CE"
 				ot-kernel_y_configopt "CONFIG_CRYPTO_AES_ARM64_CE_BLK"
@@ -2480,11 +2480,11 @@ _ot-kernel-pkgflags_aes() {
 		fi
 	fi
 	if [[ "${arch}" == "x86_64" ]] ; then
-		if ot-kernel_use cpu_flags_x86_aes ; then
+		if ot-kernel_use "cpu_flags_x86_aes" ; then
 			if [[ "${modes}" =~ ("CBC"|"GCM"|"CTR"|"CTS"|"ECB"|"XTS") ]] ; then
 				ot-kernel_y_configopt "CONFIG_CRYPTO_AES_NI_INTEL"
 			fi
-		elif ver_test "${KV_MAJOR_MINOR}" -le "5.3" ; then
+		elif ver_test "${KV_MAJOR_MINOR}" "-le" "5.3" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_AES_X86_64"
 		fi
 	fi
@@ -2506,26 +2506,26 @@ _ot-kernel-pkgflags_aria() {
 	[[ -z "${modes}" ]] && modes="ECB CTR"
 	if [[ "${arch}" == "x86_64" ]] ; then
 		if [[ "${modes}" =~ ("ECB"|"CTR") ]] ; then
-			if ver_test "${KV_MAJOR_MINOR}" -ge "6.1" ; then
+			if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.1" ; then
 				if \
-					   ot-kernel_use cpu_flags_x86_avx \
-					&& ot-kernel_use cpu_flags_x86_avx2 \
-					&& ot-kernel_use cpu_flags_x86_avx512vl \
-					&& ot-kernel_use cpu_flags_x86_gfni \
+					   ot-kernel_use "cpu_flags_x86_avx" \
+					&& ot-kernel_use "cpu_flags_x86_avx2" \
+					&& ot-kernel_use "cpu_flags_x86_avx512vl" \
+					&& ot-kernel_use "cpu_flags_x86_gfni" \
 				; then
 					ot-kernel_y_configopt "CONFIG_CRYPTO_ARIA_GFNI_AVX512_X86_64"
 					ot-kernel_y_configopt "CONFIG_CRYPTO_ARIA_AESNI_AVX2_X86_64"
 					ot-kernel_y_configopt "CONFIG_CRYPTO_ARIA_AESNI_AVX_X86_64"
-				elif ot-kernel_use cpu_flags_x86_aesni && ot-kernel_use cpu_flags_x86_avx2 ; then
+				elif ot-kernel_use "cpu_flags_x86_aesni" && ot-kernel_use "cpu_flags_x86_avx2" ; then
 					ot-kernel_y_configopt "CONFIG_CRYPTO_ARIA_AESNI_AVX2_X86_64"
 					ot-kernel_y_configopt "CONFIG_CRYPTO_ARIA_AESNI_AVX_X86_64"
-				elif ot-kernel_use cpu_flags_x86_aesni && ot-kernel_use cpu_flags_x86_avx ; then
+				elif ot-kernel_use "cpu_flags_x86_aesni" && ot-kernel_use "cpu_flags_x86_avx" ; then
 					ot-kernel_y_configopt "CONFIG_CRYPTO_ARIA_AESNI_AVX_X86_64"
 				fi
-			elif ver_test "${KV_MAJOR_MINOR}" -ge "6.1" ; then
-				if ot-kernel_use cpu_flags_x86_aesni && ot-kernel_use cpu_flags_x86_avx2 ; then
+			elif ver_test "${KV_MAJOR_MINOR}" "-ge" "6.1" ; then
+				if ot-kernel_use "cpu_flags_x86_aesni" && ot-kernel_use "cpu_flags_x86_avx2" ; then
 					ot-kernel_y_configopt "CONFIG_CRYPTO_ARIA_AESNI_AVX_X86_64"
-				elif ot-kernel_use cpu_flags_x86_aesni && ot-kernel_use cpu_flags_x86_avx ; then
+				elif ot-kernel_use "cpu_flags_x86_aesni" && ot-kernel_use "cpu_flags_x86_avx" ; then
 					ot-kernel_y_configopt "CONFIG_CRYPTO_ARIA_AESNI_AVX_X86_64"
 				fi
 			fi
@@ -2551,7 +2551,7 @@ _ot-kernel-pkgflags_anubis() {
 _ot-kernel-pkgflags_blake2b() {
 	[[ "${OT_KERNEL_HAVE_CRYPTO_DEV_BLAKE2B}" == "1" ]] && continue
 	if [[ "${arch}" == "arm" ]] ; then
-		if ot-kernel_use cpu_flags_arm_neon ; then
+		if ot-kernel_use "cpu_flags_arm_neon" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_BLAKE2B_NEON"
 		fi
 	fi
@@ -2584,10 +2584,10 @@ _ot-kernel-pkgflags_camellia() {
 	local modes="${@}"
 	[[ -z "${modes}" ]] && modes="ECB CBC"
 	if [[ "${arch}" == "x86_64" ]] ; then
-		if ot-kernel_use cpu_flags_x86_avx2 && ot-kernel_use cpu_flags_x86_aes && [[ "${modes}" =~ ("CBC"|"ECB"|"XTS") ]] ; then
+		if ot-kernel_use "cpu_flags_x86_avx2" && ot-kernel_use "cpu_flags_x86_aes" && [[ "${modes}" =~ ("CBC"|"ECB"|"XTS") ]] ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CAMELLIA_AESNI_AVX2_X86_64"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CAMELLIA_AESNI_AVX_X86_64"
-		elif ot-kernel_use cpu_flags_x86_avx && ot-kernel_use cpu_flags_x86_aes && [[ "${modes}" =~ ("CBC"|"ECB"|"XTS") ]] ; then
+		elif ot-kernel_use "cpu_flags_x86_avx" && ot-kernel_use "cpu_flags_x86_aes" && [[ "${modes}" =~ ("CBC"|"ECB"|"XTS") ]] ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CAMELLIA_AESNI_AVX_X86_64"
 		elif [[ "${modes}" =~ ("CBC"|"CTR"|"ECB") ]] ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CAMELLIA_X86_64"
@@ -2612,7 +2612,7 @@ _ot-kernel-pkgflags_cast6() {
 	local modes="${@}"
 	[[ -z "${modes}" ]] && modes="ECB CBC"
 	if [[ "${arch}" == "x86_64" ]] ; then
-		if ot-kernel_use cpu_flags_x86_avx ; then
+		if ot-kernel_use "cpu_flags_x86_avx" ; then
 			if [[ "${modes}" =~ ("CBC"|"ECB"|"CTR"|"XTS") ]] ; then
 				ot-kernel_y_configopt "CONFIG_CRYPTO_CAST6_AVX_X86_64"
 			fi
@@ -2629,13 +2629,13 @@ _ot-kernel-pkgflags_chacha20() {
 	[[ "${OT_KERNEL_HAVE_CRYPTO_DEV_CHACHA20}" == "1" ]] && continue
 	if [[ "${arch}" == "arm" ]] ; then
 		ot-kernel_y_configopt "CONFIG_ARM_CRYPTO"
-		if ot-kernel_use cpu_flags_arm_neon ; then
+		if ot-kernel_use "cpu_flags_arm_neon" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CHACHA20_NEON"
 		fi
 	fi
 	if [[ "${arch}" == "arm64" ]] ; then
 		ot-kernel_y_configopt "CONFIG_ARM64_CRYPTO"
-		if ot-kernel_use cpu_flags_arm_neon ; then
+		if ot-kernel_use "cpu_flags_arm_neon" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CHACHA20_NEON"
 		fi
 	fi
@@ -2658,11 +2658,11 @@ _ot-kernel-pkgflags_chacha20() {
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CHACHA_S390"
 	fi
 	if [[ "${arch}" == "x86_64" ]] ; then
-		if ot-kernel_use cpu_flags_x86_avx512vl ; then
+		if ot-kernel_use "cpu_flags_x86_avx512vl" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CHACHA20_X86_64"
-		elif ot-kernel_use cpu_flags_x86_avx2 ; then
+		elif ot-kernel_use "cpu_flags_x86_avx2" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CHACHA20_X86_64"
-		elif ot-kernel_use cpu_flags_x86_ssse3 ; then
+		elif ot-kernel_use "cpu_flags_x86_ssse3" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CHACHA20_X86_64"
 		fi
 	fi
@@ -2691,7 +2691,7 @@ _ot-kernel-pkgflags_poly1305() {
 		ot-kernel_y_configopt "CONFIG_CRYPTO_POLY1305_ARM"
 	fi
 	if [[ "${arch}" == "arm64" ]] ; then
-		if ot-kernel_use cpu_flags_arm_neon ; then
+		if ot-kernel_use "cpu_flags_arm_neon" ; then
 			ot-kernel_y_configopt "CONFIG_KERNEL_MODE_NEON"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_POLY1305_NEON"
 		fi
@@ -2732,7 +2732,7 @@ _ot-kernel-pkgflags_chacha20_poly1305() {
 _ot-kernel-pkgflags_crc32() {
 	[[ "${OT_KERNEL_HAVE_CRYPTO_DEV_CRC32}" == "1" ]] && continue
 	if [[ "${arch}" == "arm" ]] ; then
-		if ot-kernel_use cpu_flags_arm_neon ; then
+		if ot-kernel_use "cpu_flags_arm_neon" ; then
 			ot-kernel_y_configopt "CONFIG_ARM_CRYPTO"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CRC32_ARM_CE"
 		fi
@@ -2749,7 +2749,7 @@ _ot-kernel-pkgflags_crc32() {
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CRC32_S390"
 	fi
 	if [[ "${arch}" == "x86_64" ]] ; then
-		if ot-kernel_use cpu_flags_x86_sse4_2 ; then
+		if ot-kernel_use "cpu_flags_x86_sse4_2" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CRC32_PCLMUL"
 		fi
 	fi
@@ -2763,7 +2763,7 @@ _ot-kernel-pkgflags_crc32() {
 _ot-kernel-pkgflags_crc32c() {
 	[[ "${OT_KERNEL_HAVE_CRYPTO_DEV_CRC32C}" == "1" ]] && continue
 	if [[ "${arch}" == "arm" ]] ; then
-		if ot-kernel_use cpu_flags_arm_neon ; then
+		if ot-kernel_use "cpu_flags_arm_neon" ; then
 			ot-kernel_y_configopt "CONFIG_ARM_CRYPTO"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CRC32_ARM_CE"
 		fi
@@ -2775,7 +2775,7 @@ _ot-kernel-pkgflags_crc32c() {
 	fi
 	if [[ "${arch}" == "powerpc" ]] ; then
 		if grep -q -E -e "^CONFIG_PPC64=y" "${path_config}" \
-			&& ot-kernel_use cpu_flags_ppc_altivec ; then
+			&& ot-kernel_use "cpu_flags_ppc_altivec" ; then
 			ot-kernel_y_configopt "CONFIG_ALTIVEC"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CRC32C_VPMSUM"
 		fi
@@ -2789,7 +2789,7 @@ _ot-kernel-pkgflags_crc32c() {
 		fi
 	fi
 	if [[ "${arch}" == "x86_64" ]] ; then
-		if ot-kernel_use cpu_flags_x86_sse4_2 ; then
+		if ot-kernel_use "cpu_flags_x86_sse4_2" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CRC32C_INTEL"
 		fi
 	fi
@@ -2804,7 +2804,7 @@ _ot-kernel-pkgflags_curve25519() {
 	[[ "${OT_KERNEL_HAVE_CRYPTO_DEV_CURVE25519}" == "1" ]] && continue
 	ot-kernel_y_configopt "CONFIG_CRYPTO_LIB_CURVE25519"
 	if [[ "${arch}" == "arm" ]] ; then
-		if ot-kernel_use cpu_flags_arm_neon ; then
+		if ot-kernel_use "cpu_flags_arm_neon" ; then
 			ot-kernel_y_configopt "CONFIG_AEABI"
 			ot-kernel_y_configopt "CONFIG_NEON"
 			ot-kernel_y_configopt "CONFIG_KERNEL_MODE_NEON"
@@ -2903,12 +2903,12 @@ _ot-kernel-pkgflags_csprng() {
 _ot-kernel-pkgflags_gcm() {
 	[[ "${OT_KERNEL_HAVE_CRYPTO_DEV_GCM}" == "1" ]] && continue
 	if [[ "${arch}" == "arm" ]] ; then
-		if ot-kernel_use cpu_flags_arm_neon ; then
+		if ot-kernel_use "cpu_flags_arm_neon" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_GHASH_ARM_CE" # ghash only
 		fi
 	fi
 	if [[ "${arch}" == "arm64" ]] ; then
-		if ot-kernel_use cpu_flags_arm_neon ; then
+		if ot-kernel_use "cpu_flags_arm_neon" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_GHASH_ARM64_CE"
 		fi
 	fi
@@ -2916,7 +2916,7 @@ _ot-kernel-pkgflags_gcm() {
 		ot-kernel_y_configopt "CONFIG_CRYPTO_GHASH_S390"
 	fi
 	if [[ "${arch}" == "x86_64" ]] ; then
-		if ot-kernel_use cpu_flags_x86_aes || ot-kernel_use cpu_flags_x86_clmul_ni ; then
+		if ot-kernel_use "cpu_flags_x86_aes" || ot-kernel_use "cpu_flags_x86_clmul_ni" ; then
 # There is an edge case or processor affected can verified at.
 # https://gist.github.com/mmcloughlin/66488e42a8fdbd9ab39c3f6438bb8ed7#file-cpuids-txt-L188
 			ot-kernel_y_configopt "CONFIG_CRYPTO_GHASH_CLMUL_NI_INTEL"
@@ -2957,13 +2957,13 @@ _ot-kernel-pkgflags_sha1() {
 	if [[ "${arch}" == "arm" ]] ; then
 		ot-kernel_y_configopt "CONFIG_ARM_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_SHA1_ARM"
-		if ot-kernel_use cpu_flags_arm_neon ; then
+		if ot-kernel_use "cpu_flags_arm_neon" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA1_ARM_NEON"
 		fi
 	fi
 	if [[ "${arch}" == "arm64" ]] ; then
 		ot-kernel_y_configopt "CONFIG_ARM64_CRYPTO"
-		if ot-kernel_use cpu_flags_arm_neon ; then
+		if ot-kernel_use "cpu_flags_arm_neon" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA1_ARM64_CE"
 		fi
 	fi
@@ -2988,13 +2988,13 @@ _ot-kernel-pkgflags_sha1() {
 		fi
 	fi
 	if [[ "${arch}" == "x86_64" ]] ; then
-		if ot-kernel_use cpu_flags_x86_sha ; then
+		if ot-kernel_use "cpu_flags_x86_sha" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA1_SSSE3"
-		elif ot-kernel_use cpu_flags_x86_avx2 ; then
+		elif ot-kernel_use "cpu_flags_x86_avx2" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA1_SSSE3"
-		elif ot-kernel_use cpu_flags_x86_avx ; then
+		elif ot-kernel_use "cpu_flags_x86_avx" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA1_SSSE3"
-		elif ot-kernel_use cpu_flags_x86_ssse3 ; then
+		elif ot-kernel_use "cpu_flags_x86_ssse3" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA1_SSSE3"
 		fi
 	fi
@@ -3010,14 +3010,14 @@ _ot-kernel-pkgflags_sha256() {
 	if [[ "${arch}" == "arm" ]] ; then
 		ot-kernel_y_configopt "CONFIG_ARM_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_SHA256_ARM"
-		if ot-kernel_use cpu_flags_arm_neon ; then
+		if ot-kernel_use "cpu_flags_arm_neon" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA2_ARM_CE"
 		fi
 	fi
 	if [[ "${arch}" == "arm64" ]] ; then
 		ot-kernel_y_configopt "CONFIG_ARM64_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_SHA256_ARM64"
-		if ot-kernel_use cpu_flags_arm_neon ; then
+		if ot-kernel_use "cpu_flags_arm_neon" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA2_ARM64_CE"
 		fi
 	fi
@@ -3041,13 +3041,13 @@ _ot-kernel-pkgflags_sha256() {
 		fi
 	fi
 	if [[ "${arch}" == "x86_64" ]] ; then
-		if ot-kernel_use cpu_flags_x86_sha ; then
+		if ot-kernel_use "cpu_flags_x86_sha" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA256_SSSE3"
-		elif ot-kernel_use cpu_flags_x86_avx2 ; then
+		elif ot-kernel_use "cpu_flags_x86_avx2" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA256_SSSE3"
-		elif ot-kernel_use cpu_flags_x86_avx ; then
+		elif ot-kernel_use "cpu_flags_x86_avx" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA256_SSSE3"
-		elif ot-kernel_use cpu_flags_x86_ssse3 ; then
+		elif ot-kernel_use "cpu_flags_x86_ssse3" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA256_SSSE3"
 		fi
 	fi
@@ -3062,7 +3062,7 @@ _ot-kernel-pkgflags_sha3() {
 	[[ "${OT_KERNEL_HAVE_CRYPTO_DEV_SHA3}" == "1" ]] && continue
 	if [[ "${arch}" == "arm64" ]] ; then
 		ot-kernel_y_configopt "CONFIG_ARM64_CRYPTO"
-		if ot-kernel_use cpu_flags_arm_neon ; then
+		if ot-kernel_use "cpu_flags_arm_neon" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA3_ARM64"
 		fi
 	fi
@@ -3081,14 +3081,14 @@ _ot-kernel-pkgflags_sha512() {
 	[[ "${OT_KERNEL_HAVE_CRYPTO_DEV_SHA512}" == "1" ]] && continue
 	if [[ "${arch}" == "arm" ]] ; then
 		ot-kernel_y_configopt "CONFIG_ARM_CRYPTO"
-		if ot-kernel_use cpu_flags_arm_neon ; then
+		if ot-kernel_use "cpu_flags_arm_neon" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA512_ARM"
 		fi
 	fi
 	if [[ "${arch}" == "arm64" ]] ; then
 		ot-kernel_y_configopt "CONFIG_ARM64_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_SHA512_ARM64"
-		if ot-kernel_use cpu_flags_arm_neon ; then
+		if ot-kernel_use "cpu_flags_arm_neon" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA512_ARM64_CE"
 		fi
 	fi
@@ -3106,11 +3106,11 @@ _ot-kernel-pkgflags_sha512() {
 		fi
 	fi
 	if [[ "${arch}" == "x86_64" ]] ; then
-		if ot-kernel_use cpu_flags_x86_avx2 ; then
+		if ot-kernel_use "cpu_flags_x86_avx2" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA512_SSSE3"
-		elif ot-kernel_use cpu_flags_x86_avx2 ; then
+		elif ot-kernel_use "cpu_flags_x86_avx2" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA512_SSSE3"
-		elif ot-kernel_use cpu_flags_x86_ssse3 ; then
+		elif ot-kernel_use "cpu_flags_x86_ssse3" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA512_SSSE3"
 		fi
 	fi
@@ -3124,7 +3124,7 @@ _ot-kernel-pkgflags_sha512() {
 _ot-kernel-pkgflags_sm3() {
 	[[ "${OT_KERNEL_HAVE_CRYPTO_DEV_SM3}" == "1" ]] && continue
 	if [[ "${arch}" == "x86_64" ]] ; then
-		if ot-kernel_use cpu_flags_x86_avx ; then
+		if ot-kernel_use "cpu_flags_x86_avx" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SM3_AVX_X86_64"
 		fi
 	fi
@@ -3141,17 +3141,17 @@ _ot-kernel-pkgflags_serpent() {
 	local modes="${@}"
 	[[ -z "${modes}" ]] && modes="ECB CBC"
 	if [[ "${arch}" == "x86_64" ]] ; then
-		if ot-kernel_use cpu_flags_x86_avx2 && [[ "${modes}" =~ ("CBC"|"CTR"|"ECB"|"XTS") ]] ; then
+		if ot-kernel_use "cpu_flags_x86_avx2" && [[ "${modes}" =~ ("CBC"|"CTR"|"ECB"|"XTS") ]] ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SERPENT_AVX2_X86_64"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SERPENT_AVX_X86_64"
-		elif ot-kernel_use cpu_flags_x86_avx && [[ "${modes}" =~ ("CBC"|"CTR"|"ECB"|"XTS") ]] ; then
+		elif ot-kernel_use "cpu_flags_x86_avx" && [[ "${modes}" =~ ("CBC"|"CTR"|"ECB"|"XTS") ]] ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SERPENT_AVX_X86_64"
-		elif ot-kernel_use cpu_flags_x86_sse2 && [[ "${modes}" =~ ("CBC"|"ECB"|"CTR") ]] ; then
+		elif ot-kernel_use "cpu_flags_x86_sse2" && [[ "${modes}" =~ ("CBC"|"ECB"|"CTR") ]] ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SERPENT_SSE2_X86_64"
 		fi
 	fi
 	if [[ "${arch}" == "x86" ]] ; then
-		if ot-kernel_use cpu_flags_x86_sse2 && [[ "${modes}" =~ ("CBC"|"CTR"|"ECB") ]] ; then
+		if ot-kernel_use "cpu_flags_x86_sse2" && [[ "${modes}" =~ ("CBC"|"CTR"|"ECB") ]] ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SERPENT_SSE2_586"
 		fi
 	fi
@@ -3168,10 +3168,10 @@ _ot-kernel-pkgflags_sm4() {
 	[[ -z "${modes}" ]] && modes="ECB CBC CTR"
 	if [[ "${arch}" == "x86_64" ]] ; then
 		if [[ "${modes}" =~ ("ECB"|"CBC"|"CTR") ]] ; then
-			if ot-kernel_use cpu_flags_x86_aesni && ot-kernel_use cpu_flags_x86_avx2 ; then
+			if ot-kernel_use "cpu_flags_x86_aesni" && ot-kernel_use "cpu_flags_x86_avx2" ; then
 				ot-kernel_y_configopt "CONFIG_CRYPTO_SM4_AESNI_AVX2_X86_64"
 				ot-kernel_y_configopt "CONFIG_CRYPTO_SM4_AESNI_AVX_X86_64"
-			elif ot-kernel_use cpu_flags_x86_aesni && ot-kernel_use cpu_flags_x86_avx ; then
+			elif ot-kernel_use "cpu_flags_x86_aesni" && ot-kernel_use "cpu_flags_x86_avx" ; then
 				ot-kernel_y_configopt "CONFIG_CRYPTO_SM4_AESNI_AVX_X86_64"
 			fi
 		fi
@@ -3193,7 +3193,7 @@ _ot-kernel-pkgflags_twofish() {
 		fi
 	fi
 	if [[ "${arch}" == "x86_64" ]] ; then
-		if ot-kernel_use cpu_flags_x86_avx && [[ "${modes}" =~ ("CBC"|"CTR"|"ECB"|"XTS") ]] ; then
+		if ot-kernel_use "cpu_flags_x86_avx" && [[ "${modes}" =~ ("CBC"|"CTR"|"ECB"|"XTS") ]] ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_TWOFISH_AVX_X86_64"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_TWOFISH_X86_64_3WAY"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_TWOFISH_X86_64"
@@ -3213,20 +3213,20 @@ _ot-kernel-pkgflags_nhpoly1305() {
 	[[ "${OT_KERNEL_HAVE_CRYPTO_DEV_NHPOLY1305}" == "1" ]] && continue
 	if [[ "${arch}" == "arm" ]] ; then
 		ot-kernel_y_configopt "CONFIG_ARM_CRYPTO"
-		if ot-kernel_use cpu_flags_arm_neon ; then
+		if ot-kernel_use "cpu_flags_arm_neon" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_NHPOLY1305_NEON"
 		fi
 	fi
 	if [[ "${arch}" == "arm64" ]] ; then
 		ot-kernel_y_configopt "CONFIG_ARM64_CRYPTO"
-		if ot-kernel_use cpu_flags_arm_neon ; then
+		if ot-kernel_use "cpu_flags_arm_neon" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_NHPOLY1305_NEON"
 		fi
 	fi
 	if [[ "${arch}" == "x86_64" ]] ; then
-		if ot-kernel_use cpu_flags_x86_avx2 ; then
+		if ot-kernel_use "cpu_flags_x86_avx2" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_NHPOLY1305_AVX2"
-		elif ot-kernel_use cpu_flags_x86_sse2 ; then
+		elif ot-kernel_use "cpu_flags_x86_sse2" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_NHPOLY1305_SSE2"
 		fi
 	fi
@@ -3245,7 +3245,7 @@ _ot-kernel-pkgflags_poly1305() {
 	fi
 	if [[ "${arch}" == "arm64" ]] ; then
 		ot-kernel_y_configopt "CONFIG_ARM64_CRYPTO"
-		if ot-kernel_use cpu_flags_arm_neon ; then
+		if ot-kernel_use "cpu_flags_arm_neon" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_POLY1305_NEON"
 		fi
 	fi
@@ -3324,7 +3324,7 @@ ewarn
 			_ot-kernel-pkgflags_aria ${cryptsetup_modes}
 		elif [[ "${dss_region}" =~ "ru" ]] ; then
 			_ot-kernel-pkgflags_kuznyechik ${cryptsetup_modes}
-			if ot-kernel_use gost ; then
+			if ot-kernel_use "gost" ; then
 	# Already provided in sys-kernel/gostcrypt-linux-crypto
 				ot-kernel_unset_configopt "CONFIG_CRYPTO_STREEBOG"
 			else
@@ -3345,7 +3345,7 @@ ewarn "Do not use CBC for disk encryption."
 	# ot-kernel_src_configure_assisted in the _ot-kernel-pkgflags_dss_*
 	# section.
 
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.16" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.16" ; then
 			ot-kernel_y_configopt "CONFIG_NET" # CONFIG_AUDIT dep
 			ot-kernel_y_configopt "CONFIG_AUDIT"
 			ot-kernel_y_configopt "CONFIG_BLK_DEV_DM"
@@ -3355,9 +3355,7 @@ ewarn "Do not use CBC for disk encryption."
 	elif ot-kernel_has_version_pkgflags "sys-fs/cryptsetup" ; then
 		if [[ "${work_profile}" == "dss" ]] ; then
 # The specs require all weak ciphers disabled.
-eerror
 eerror "DSS_DISK_ENCRYPTION=\"cryptsetup\" must be explictly used."
-eerror
 			die
 		fi
 		ot-kernel_y_configopt "CONFIG_MODULES"
@@ -3479,10 +3477,10 @@ ewarn "AEAD cryptsetup support is experimental"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_ADIANTUM" # Adds the generic versions of chacha20 and nhpoly1305.
 		fi
 
-		if [[ "${CRYPTSETUP_VERITY}" == "1" ]] && ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
+		if [[ "${CRYPTSETUP_VERITY}" == "1" ]] && ver_test "${KV_MAJOR_MINOR}" "-ge" "5.4" ; then
 			ot-kernel_y_configopt "CONFIG_DM_VERITY"
 			ot-kernel_y_configopt "CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG"
-			if ver_test "${KV_MAJOR_MINOR}" -ge "6.11" ; then
+			if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.11" ; then
 				ot-kernel_y_configopt "CONFIG_KEYS"
 				ot-kernel_y_configopt "CONFIG_SIGNATURE"
 				ot-kernel_y_configopt "CONFIG_SYSTEM_BLACKLIST_KEYRING"
@@ -3692,7 +3690,7 @@ ot-kernel-pkgflags_discord() { # DONE
 # Download link for stable at https://discord.com/download near the top of the page.
 		local pv=$(best_version "${pkg}" | sed -e "s|${pkg}-||g")
 		local expected_pv="0.0.101" # 20250713
-		if ver_test "${actual_pv}" -ne "${expected_pv}" ; then
+		if ver_test "${actual_pv}" "-ne" "${expected_pv}" ; then
 ewarn
 ewarn "Detected older ${pkg} ebuild.  Bump the ebuild manually in local repo or"
 ewarn "send an issue request at distro ebuild."
@@ -3711,7 +3709,7 @@ ewarn
 # in section "Where can I download these clients?" > "Linux:"
 		local pv=$(best_version "${pkg}" | sed -e "s|${pkg}-||g")
 		local expected_pv="0.0.717" # 20250713
-		if ver_test "${actual_pv}" -ne "${expected_pv}" ; then
+		if ver_test "${actual_pv}" "-ne" "${expected_pv}" ; then
 ewarn
 ewarn "Detected older ${pkg} ebuild.  Bump the ebuild or use distro ebuild"
 ewarn "instead."
@@ -3731,7 +3729,7 @@ ewarn
 # Download link for PTB at https://ptb.discord.com/ at bottom of the page.
 		local actual_pv=$(best_version "${pkg}" | sed -e "s|${pkg}-||g")
 		local expected_pv="0.0.152" # 20250713
-		if ver_test "${actual_pv}" -ne "${expected_pv}" ; then
+		if ver_test "${actual_pv}" "-ne" "${expected_pv}" ; then
 ewarn
 ewarn "Detected older ${pkg} ebuild.  Bump the ebuild or use distro ebuild"
 ewarn "instead."
@@ -3885,15 +3883,15 @@ ot-kernel-pkgflags_docker() { # DONE
 		ot-kernel_y_configopt "CONFIG_NET"
 		ot-kernel_y_configopt "CONFIG_CGROUPS"
 		ot-kernel_y_configopt "CONFIG_MEMCG"
-		if ver_test "${KV_MAJOR_MINOR}" -lt "6.1" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-lt" "6.1" ; then
 			ot-kernel_y_configopt "CONFIG_MEMCG_SWAP"
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -le "5.8" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-le" "5.8" ; then
 			ot-kernel_y_configopt "CONFIG_MEMCG_SWAP_ENABLED"
 		fi
 		ot-kernel_y_configopt "CONFIG_BLOCK"
 		ot-kernel_y_configopt "CONFIG_BLK_CGROUP"
-		if ver_test "${KV_MAJOR_MINOR}" -le "5.2" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-le" "5.2" ; then
 			ban_disable_debug "${pkg}" "CONFIG_DEBUG_BLK_CGROUP"
 			ot-kernel_y_configopt "CONFIG_DEBUG_BLK_CGROUP"
 		fi
@@ -3920,7 +3918,7 @@ ot-kernel-pkgflags_docker() { # DONE
 
 		ot-kernel_y_configopt "CONFIG_BLOCK"
 		ot-kernel_y_configopt "CONFIG_BLK_DEV_THROTTLING"
-		if ver_test "${KV_MAJOR_MINOR}" -lt "5.0" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-lt" "5.0" ; then
 			ot-kernel_y_configopt "CONFIG_IOSCHED_CFQ"
 			ot-kernel_y_configopt "CONFIG_CFQ_GROUP_IOSCHED"
 		fi
@@ -3943,7 +3941,7 @@ ot-kernel-pkgflags_docker() { # DONE
 		ot-kernel_y_configopt "CONFIG_IP_NF_FILTER"
 		ot-kernel_y_configopt "CONFIG_IP_NF_NAT"
 		ot-kernel_y_configopt "CONFIG_NF_NAT"
-		if ver_test "${KV_MAJOR_MINOR}" -le "5.0" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-le" "5.0" ; then
 			ot-kernel_y_configopt "CONFIG_NF_NAT_IPV4"
 		fi
 		ot-kernel_y_configopt "CONFIG_IP_NF_TARGET_MASQUERADE"
@@ -4001,39 +3999,39 @@ ot-kernel-pkgflags_docker() { # DONE
 #		# _ot-kernel_y_thp # References it but no madvise/fadvise
 		# LDT referenced
 
-		if ver_test "${KV_MAJOR_MINOR}" -lt "4.8" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-lt" "4.8" ; then
 			ot-kernel_y_configopt "CONFIG_DEVPTS_MULTIPLE_INSTANCES"
 			ot-kernel_y_configopt "CONFIG_UNIX98_PTYS"
 		fi
 
-		if ver_test "${KV_MAJOR_MINOR}" -le "5.2" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-le" "5.2" ; then
 			ot-kernel_y_configopt "CONFIG_NF_NAT_NEEDED"
 		fi
 
-		if ver_test "${KV_MAJOR_MINOR}" -ge "4.15" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "4.15" ; then
 			ot-kernel_y_configopt "CONFIG_CGROUP_BPF"
 			_ot-kernel_set_seccomp_bpf "${pkg}" # I think the the distro wiki is wrong.
 		fi
 
-		if ver_test "${KV_MAJOR_MINOR}" -lt "6.1" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-lt" "6.1" ; then
 			ot-kernel_y_configopt "CONFIG_MEMCG_SWAP"
 			ot-kernel_y_configopt "CONFIG_MEMCG"
 			ot-kernel_y_configopt "CONFIG_SWAP"
 		fi
 
-		if ver_test "${KV_MAJOR_MINOR}" -le "5.8" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-le" "5.8" ; then
 			ot-kernel_y_configopt "CONFIG_MEMCG_SWAP_ENABLED"
 		fi
 
 		ot-kernel_unset_configopt "CONFIG_LEGACY_VSYSCALL_NATIVE"
 
-		if ver_test "${KV_MAJOR_MINOR}" -lt "5.19" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-lt" "5.19" ; then
 			ot-kernel_y_configopt "CONFIG_LEGACY_VSYSCALL_EMULATE"
 		fi
 
 		ot-kernel_unset_configopt "CONFIG_LEGACY_VSYSCALL_NONE"
 
-		if ver_test "${KV_MAJOR_MINOR}" -le "4.5" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-le" "4.5" ; then
 			ot-kernel_y_configopt "CONFIG_MEMCG_KMEM"
 			ot-kernel_y_configopt "CONFIG_MEMCG"
 		fi
@@ -4061,7 +4059,7 @@ ot-kernel-pkgflags_docker() { # DONE
 		ot-kernel_y_configopt "CONFIG_XFRM_ALGO"
 		ot-kernel_y_configopt "CONFIG_INET_ESP"
 
-		if ver_test "${KV_MAJOR_MINOR}" -le "5.3" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-le" "5.3" ; then
 			ot-kernel_y_configopt "CONFIG_INET_XFRM_MODE_TRANSPORT"
 		fi
 
@@ -4375,9 +4373,9 @@ ot-kernel-pkgflags_eventd() { # DONE
 ot-kernel-pkgflags_ext4_crypt() { # DONE
 	if ot-kernel_has_version_pkgflags "sys-fs/ext4-crypt" ; then
 	        ot-kernel_y_configopt "CONFIG_EXT4_FS"
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.1" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.1" ; then
 		        ot-kernel_y_configopt "CONFIG_FS_ENCRYPTION"
-		elif ver_test "${KV_MAJOR_MINOR}" -le "5.0" ; then
+		elif ver_test "${KV_MAJOR_MINOR}" "-le" "5.0" ; then
 		        ot-kernel_y_configopt "CONFIG_EXT4_ENCRYPTION"
 		        ot-kernel_y_configopt "CONFIG_EXT4_FS_ENCRYPTION"
 		fi
@@ -4625,7 +4623,7 @@ ot-kernel-pkgflags_firewalld() { # DONE
 		ot-kernel_y_configopt "CONFIG_NFT_TPROXY"
 		ot-kernel_y_configopt "CONFIG_NFT_TUNNEL"
 		ot-kernel_y_configopt "CONFIG_NFT_XFRM"
-		if ver_test "${KV_MAJOR_MINOR}" -lt "4.19" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-lt" "4.19" ; then
 			ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_IPV4"
 			ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_IPV6"
 		fi
@@ -5434,7 +5432,7 @@ ot-kernel-pkgflags_ipt_netflow() { # DONE
 		fi
 		if ot-kernel_has_version "${pkg}[natevents]" ; then
 			ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_EVENTS"
-			if ver_test "${KV_MAJOR_MINOR}" -lt "5.2" ; then
+			if ver_test "${KV_MAJOR_MINOR}" "-lt" "5.2" ; then
 				ot-kernel_y_configopt "CONFIG_NF_NAT_NEEDED"
 			else
 				ot-kernel_y_configopt "CONFIG_NF_NAT"
@@ -5454,7 +5452,7 @@ ot-kernel-pkgflags_iptables() { # MOSTLY DONE
 		        _ot-kernel-pkgflags_tcpip
 		        ot-kernel_y_configopt "CONFIG_IPV6"
 			ot-kernel_y_configopt "CONFIG_NET_IPVTI"
-			if ver_test "${KV_MAJOR_MINOR}" -le "5.1" ; then
+			if ver_test "${KV_MAJOR_MINOR}" "-le" "5.1" ; then
 				ot-kernel_y_configopt "CONFIG_INET_XFRM_MODE_TRANSPORT"
 				ot-kernel_y_configopt "CONFIG_INET_XFRM_MODE_TUNNEL"
 			fi
@@ -5465,7 +5463,7 @@ ot-kernel-pkgflags_iptables() { # MOSTLY DONE
 			ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
 			ot-kernel_y_configopt "CONFIG_NETFILTER_XTABLES"
 			ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MATCH_CONNTRACK"
-			if ver_test "${KV_MAJOR_MINOR}" -le "4.18" ; then
+			if ver_test "${KV_MAJOR_MINOR}" "-le" "4.18" ; then
 				ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_IPV4"
 				ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_IPV6"
 			fi
@@ -5484,11 +5482,11 @@ ot-kernel-pkgflags_iptables() { # MOSTLY DONE
 			ot-kernel_set_configopt "CONFIG_INET_ESP" "m"
 			ot-kernel_set_configopt "CONFIG_INET_IPCOMP" "m"
 
-			if ver_test "${KV_MAJOR_MINOR}" -le "4.5" ; then
+			if ver_test "${KV_MAJOR_MINOR}" "-le" "4.5" ; then
 				ot-kernel_y_configopt "CONFIG_INET_LRO"
 			fi
 
-			if ver_test "${KV_MAJOR_MINOR}" -le "5.1" ; then
+			if ver_test "${KV_MAJOR_MINOR}" "-le" "5.1" ; then
 				ot-kernel_set_configopt "CONFIG_INET_XFRM_MODE_TRANSPORT" "m"
 				ot-kernel_set_configopt "CONFIG_INET_XFRM_MODE_TUNNEL" "m"
 				ot-kernel_set_configopt "CONFIG_INET_XFRM_MODE_BEET" "m"
@@ -5682,7 +5680,7 @@ ot-kernel-pkgflags_iwd() { # DONE
 			ot-kernel_has_version "net-wireless/crda" || die "Install net-wireless/crda first"
 		fi
 
-		if ver_test "${KV_MAJOR_MINOR}" -ge "4.20" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "4.20" ; then
 			# Implied ot-kernel_has_version "${pkg}[linux_kernel]"
 			ot-kernel_y_configopt "CONFIG_PKCS8_PRIVATE_KEY_PARSER"
 		fi
@@ -5699,11 +5697,11 @@ ot-kernel-pkgflags_kexec_tools() { # DONE
 			[[ -e "${OT_KERNEL_PRIVATE_KEY}" ]] || die "Missing private key for kexec signing"
 			[[ -e "${OT_KERNEL_PUBLIC_KEY}" ]] || die "Missing public key for kexec signing"
 			ot-kernel_y_configopt "CONFIG_KEXEC_FILE"
-			if ver_test "${KV_MAJOR_MINOR}" -lt "5" ; then
+			if ver_test "${KV_MAJOR_MINOR}" "-lt" "5" ; then
 				ot-kernel_y_configopt "CONFIG_CRYPTO"
 				_ot-kernel-pkgflags_sha256
 			fi
-			if ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
+			if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.4" ; then
 				ot-kernel_y_configopt "CONFIG_KEXEC_SIG"
 				ot-kernel_y_configopt "CONFIG_KEXEC_SIG_FORCE"
 			else
@@ -5723,13 +5721,13 @@ ot-kernel-pkgflags_keyutils() { # DONE
 		ot-kernel_y_configopt "CONFIG_KEYS"
 		if \
 			   ot-kernel_has_version "${pkg}[test]" \
-			&& ver_test "${MY_PV}" -ge "2.6.10" \
-			&& ver_test "${KV_MAJOR_MINOR}" -lt "4.0" \
+			&& ver_test "${MY_PV}" "-ge" "2.6.10" \
+			&& ver_test "${KV_MAJOR_MINOR}" "-lt" "4.0" \
 		; then
 			ban_disable_debug "${pkg}" "CONFIG_KEYS_DEBUG_PROC_KEYS"
 			ot-kernel_y_configopt "CONFIG_KEYS_DEBUG_PROC_KEYS"
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "4.7" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "4.7" ; then
 			ot-kernel_y_configopt "CONFIG_KEY_DH_OPERATIONS"
 		fi
 	fi
@@ -6072,7 +6070,7 @@ ot-kernel-pkgflags_libnftnl() { # DONE
 # Applies kernel config flags for the libnfnetlink package
 ot-kernel-pkgflags_libnfnetlink() { # DONE
 	if ot-kernel_has_version_pkgflags "net-libs/libnfnetlink" ; then
-		if ver_test "${MY_PV}" -lt "2.6.20" ; then
+		if ver_test "${MY_PV}" "-lt" "2.6.20" ; then
 			ot-kernel_y_configopt "CONFIG_IP_NF_CONNTRACK_NETLINK"
 		else
 			ot-kernel_y_configopt "CONFIG_NF_CT_NETLINK"
@@ -6103,7 +6101,7 @@ ot-kernel-pkgflags_libnetfilter_cthelper() { # DONE
 # Applies kernel config flags for the libnetfilter_conntrack package
 ot-kernel-pkgflags_libnetfilter_conntrack() { # DONE
 	if ot-kernel_has_version_pkgflags "net-libs/libnetfilter_conntrack" ; then
-		if ver_test "${MY_PV}" -lt "2.6.20" ; then
+		if ver_test "${MY_PV}" "-lt" "2.6.20" ; then
 			ot-kernel_y_configopt "CONFIG_IP_NF_CONNTRACK_NETLINK"
 		else
 			ot-kernel_y_configopt "CONFIG_NF_CT_NETLINK"
@@ -6281,7 +6279,7 @@ ot-kernel-pkgflags_libvirt() { # DONE
 			ot-kernel_unset_configopt "CONFIG_GRKERNSEC_CHROOT_PIVOT"
 			ot-kernel_unset_configopt "CONFIG_GRKERNSEC_CHROOT_CHMOD"
 			ot-kernel_unset_configopt "CONFIG_GRKERNSEC_CHROOT_CAPS"
-			if ver_test "${KV_MAJOR_MINOR}" -lt "4.7" ; then
+			if ver_test "${KV_MAJOR_MINOR}" "-lt" "4.7" ; then
 				ot-kernel_y_configopt "CONFIG_UNIX98_PTYS"
 				ot-kernel_y_configopt "CONFIG_DEVPTS_MULTIPLE_INSTANCES"
 			fi
@@ -6327,7 +6325,7 @@ ot-kernel-pkgflags_libvirt() { # DONE
 			ot-kernel_y_configopt "CONFIG_NET_SCH_INGRESS"
 			ot-kernel_y_configopt "CONFIG_NET_SCH_SFQ"
 
-			if ver_test "${KV_MAJOR_MINOR}" -lt "5.2" ; then
+			if ver_test "${KV_MAJOR_MINOR}" "-lt" "5.2" ; then
 				ot-kernel_y_configopt "CONFIG_IP_NF_TARGET_MASQUERADE"
 			else
 				ot-kernel_y_configopt "CONFIG_NETFILTER_XT_TARGET_MASQUERADE"
@@ -6640,7 +6638,7 @@ ot-kernel-pkgflags_mcelog() { # DONE
 	local pkg="app-admin/mcelog"
 	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_X86_MCE"
-		if ver_test "${KV_MAJOR_MINOR}" -ge "4.12" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "4.12" ; then
 			ban_disable_debug "${pkg}" "CONFIG_X86_MCELOG_LEGACY"
 			ot-kernel_y_configopt "CONFIG_X86_MCELOG_LEGACY"
 		fi
@@ -6717,7 +6715,7 @@ ot-kernel-pkgflags_midi() { # DONE
 		ot-kernel_y_configopt "CONFIG_SND_USB"
 		ot-kernel_y_configopt "CONFIG_SND_USB_AUDIO"
 
-		if ver_test "${KV_MAJOR_MINOR}" -le "4.14" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-le" "4.14" ; then
 			ot-kernel_y_configopt "CONFIG_SOUND_PRIME" # OSS support
 		fi
 
@@ -6750,7 +6748,7 @@ ot-kernel-pkgflags_memkind() { # DONE
 ot-kernel-pkgflags_mesa() { # DONE
 	local pkg="media-libs/mesa"
 	if ot-kernel_has_version_pkgflags "${pkg}" ; then
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5" ; then
 			ot-kernel_y_configopt "CONFIG_KCMP"
 			ot-kernel_y_configopt "CONFIG_CHECKPOINT_RESTORE"
 		else
@@ -6940,7 +6938,7 @@ ot-kernel-pkgflags_networkmanager() { # DONE
 	local pkg="net-misc/networkmanager"
 	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		if ot-kernel_has_version "${pkg}[connection-sharing]" ; then
-			if ver_test "${KV_MAJOR_MINOR}" -lt "5.1" ; then
+			if ver_test "${KV_MAJOR_MINOR}" "-lt" "5.1" ; then
 				ot-kernel_y_configopt "CONFIG_NF_NAT_IPV4"
 				ot-kernel_y_configopt "CONFIG_NF_NAT_MASQUERADE_IPV4"
 			else
@@ -7090,7 +7088,7 @@ ot-kernel-pkgflags_nfs_utils() { # DONE
 			ot-kernel_y_configopt "CONFIG_NFSD_V3"
 			ot-kernel_y_configopt "CONFIG_NFSD_V4"
 			ot-kernel_y_configopt "CONFIG_NFSD_PNFS"
-			if ver_test "${KV_MAJOR_MINOR}" -gt "4.5" ; then
+			if ver_test "${KV_MAJOR_MINOR}" "-gt" "4.5" ; then
 				ot-kernel_y_configopt "CONFIG_NFSD_BLOCKLAYOUT" # Selects NFSD_PNFS
 				ot-kernel_y_configopt "CONFIG_NFSD_SCSILAYOUT"  # Selects NFSD_PNFS
 				# NFSD_FLEXFILELAYOUT # For testing only not production
@@ -7104,7 +7102,7 @@ ot-kernel-pkgflags_nfs_utils() { # DONE
 # Applies kernel config flags for the nftables package
 ot-kernel-pkgflags_nftables() { # DONE
 	if ot-kernel_has_version_pkgflags "net-firewall/nftables" \
-		&& ver_test "${KV_MAJOR_MINOR}" -ge "3.13" ; then
+		&& ver_test "${KV_MAJOR_MINOR}" "-ge" "3.13" ; then
 		ot-kernel_y_configopt "CONFIG_NF_TABLES"
 	fi
 }
@@ -7255,7 +7253,7 @@ ot-kernel-pkgflags_nv() { # DONE
 		fi
 
 		if [[ "${arch}" == "x86_64" ]] ; then
-			if ver_test "${KV_MAJOR_MINOR}" -ge "5.8" ; then
+			if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.8" ; then
 				ot-kernel_y_configopt "CONFIG_X86_PAT"
 			fi
 		fi
@@ -7368,17 +7366,17 @@ ot-kernel-pkgflags_nvtop() { # DONE
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
 		if ot-kernel_has_version "${pkg}[video_cards_amdgpu]" ; then
 			if \
-					! has rock-dkms ${IUSE_EFFECTIVE} \
+					! has "rock-dkms" ${IUSE_EFFECTIVE} \
 			; then
 				ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
 			elif \
-					  has rock-dkms ${IUSE_EFFECTIVE} \
+					  has "rock-dkms" ${IUSE_EFFECTIVE} \
 				&& \
-					ot-kernel_use rock-dkms \
+					ot-kernel_use "rock-dkms" \
 				&& \
 				( \
-					   ver_test "${KV_MAJOR_MINOR}" -eq "5.4" \
-					|| ver_test "${KV_MAJOR_MINOR}" -eq "5.15" \
+					   ver_test "${KV_MAJOR_MINOR}" "-eq" "5.4" \
+					|| ver_test "${KV_MAJOR_MINOR}" "-eq" "5.15" \
 				) \
 			; then
 	# For sys-kernel/rock-dkms not installed yet scenario.
@@ -7412,7 +7410,7 @@ ot-kernel-pkgflags_obsidian() { # DONE
 # Applies kernel config flags for the oomd package
 ot-kernel-pkgflags_oomd() { # DONE
 	if ot-kernel_has_version_pkgflags "sys-apps/oomd" ; then
-		if ver_test "${KV_MAJOR_MINOR}" -ge "4.20" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "4.20" ; then
 			ot-kernel_y_configopt "CONFIG_PSI"
 		fi
 		ot-kernel_y_configopt "CONFIG_CGROUPS"
@@ -7708,14 +7706,14 @@ ot-kernel-pkgflags_open_vm_tools() { # DONE
 		if ot-kernel_has_version "${pkg}[X]" ; then
 			ot-kernel_y_configopt "CONFIG_DRM_VMWGFX"
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "3.9" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "3.9" ; then
 			ot-kernel_y_configopt "CONFIG_VMWARE_VMCI"
 			ot-kernel_y_configopt "CONFIG_VMWARE_VMCI_VSOCKETS"
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "3" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "3" ; then
 			ot-kernel_y_configopt "CONFIG_FUSE_FS"
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.5" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.5" ; then
 			ot-kernel_y_configopt "CONFIG_X86_IOPL_IOPERM"
 		fi
 	fi
@@ -7727,14 +7725,14 @@ ot-kernel-pkgflags_open_vm_tools() { # DONE
 ot-kernel-pkgflags_openafs() { # DONE
 	local pkg="net-fs/openafs"
 	if ot-kernel_has_version_pkgflags "${pkg}" ; then
-		if ver_test "${KV_MAJOR_MINOR}" -lt "5.17" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-lt" "5.17" ; then
 			if ot-kernel_has_version "${pkg}[modules]" ; then
 				ot-kernel_unset_configopt "CONFIG_AFS_FS"
 			else
 				ot-kernel_y_configopt "CONFIG_AFS_FS"
 			fi
 			ot-kernel_y_configopt "CONFIG_KEYS"
-		elif ver_test "${KV_MAJOR_MINOR}" -ge "5.17" ; then
+		elif ver_test "${KV_MAJOR_MINOR}" "-ge" "5.17" ; then
 ewarn "Kernel ${KV_MAJOR_MINOR}.x is not supported for openafs"
 		fi
 	fi
@@ -7973,7 +7971,7 @@ ot-kernel-pkgflags_openssl() { # DONE
 		if \
 			ot-kernel_has_version "${pkg}[ktls]" \
 				&& \
-			ver_test "${KV_MAJOR_MINOR}" -ge "4.18" \
+			ver_test "${KV_MAJOR_MINOR}" "-ge" "4.18" \
 		; then
 			_ot-kernel_tls_support
 			if ot-kernel_has_version "${pkg}[test]" ; then
@@ -8285,9 +8283,7 @@ einfo "SEV is disabled for KVM ${machine_type}"
 			done
 			if [[ ${SEV:-0} =~ "1" ]] && (( ${sev} == 1 )) ; then
 				if ! has_version "sys-kernel/linux-firmware" ; then
-eerror
 eerror "Install sys-kernel/linux-firmware first to install SEV firmware."
-eerror
 					die
 				fi
 				local cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g")
@@ -8393,7 +8389,7 @@ ot-kernel-pkgflags_pesign() { # DONE
 # @DESCRIPTION:
 # Auto enables extra CPU PMU performance events for oprofile
 _ot-kernel-pkgflags_cpu_pmu_events_oprofile() {
-	if ver_test "${KV_MAJOR_MINOR}" -le "5.11" ; then
+	if ver_test "${KV_MAJOR_MINOR}" "-le" "5.11" ; then
 		ot-kernel_y_configopt "CONFIG_PERF_EVENTS"
 		if [[ "${arch}" =~ ("arm") ]] ; then
 			ot-kernel_y_configopt "CONFIG_ARM_PMU"
@@ -8591,11 +8587,11 @@ ot-kernel-pkgflags_plymouth() { # DONE
 	if ot-kernel_has_version_pkgflags "sys-boot/plymouth" ; then
 		ot-kernel_unset_configopt "CONFIG_LOGO"
 		if grep -q -E -e "^CONFIG_DRM_I915=(y|m)" "${path_config}" \
-			&& ver_test "${KV_MAJOR_MINOR}" -le "4.2"  ; then
+			&& ver_test "${KV_MAJOR_MINOR}" "-le" "4.2"  ; then
 			ot-kernel_y_configopt "CONFIG_DRM_I915_KMS"
 		fi
 		if grep -q -E -e "^CONFIG_DRM_RADEON=(y|m)" "${path_config}" \
-			&& ver_test "${KV_MAJOR_MINOR}" -le "3.8"  ; then
+			&& ver_test "${KV_MAJOR_MINOR}" "-le" "3.8"  ; then
 			ot-kernel_y_configopt "CONFIG_DRM_RADEON_KMS"
 		fi
 	fi
@@ -8784,7 +8780,7 @@ ot-kernel-pkgflags_powertop() { # DONE
 
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_STAT"
-		if ver_test "${KV_MAJOR_MINOR}" -le "4.10" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-le" "4.10" ; then
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_STAT_DETAILS"
 		fi
 
@@ -8800,20 +8796,20 @@ ot-kernel-pkgflags_powertop() { # DONE
 		ot-kernel_y_configopt "CONFIG_BLK_DEV_IO_TRACE"
 		ot-kernel_y_configopt "CONFIG_TRACING"
 
-		if ver_test "${KV_MAJOR_MINOR}" -lt "3.7" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-lt" "3.7" ; then
 			if grep -q -E -e "^CONFIG_SND_HDA_INTEL=(y|m)" "${path_config}" ; then
 				ot-kernel_y_configopt "CONFIG_SND_HDA_POWER_SAVE"
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -lt "3.9" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-lt" "3.9" ; then
 			ot-kernel_y_configopt "CONFIG_EVENT_POWER_TRACING_DEPRECATED"
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -lt "3.13" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-lt" "3.13" ; then
 			ot-kernel_y_configopt "CONFIG_PM_RUNTIME"
 		else
 			ot-kernel_y_configopt "CONFIG_PM"
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -lt "4.11" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-lt" "4.11" ; then
 			ot-kernel_y_configopt "CONFIG_DEBUG_KERNEL"
 			ot-kernel_y_configopt "CONFIG_PROC_FS"
 			ot-kernel_y_configopt "CONFIG_TIMER_STATS"
@@ -8937,22 +8933,22 @@ ot-kernel-pkgflags_redis() { # DONE
 ot-kernel-pkgflags_roct() { # DONE
 	if \
 		ot-kernel_has_version_pkgflags "dev-libs/roct-thunk-interface" \
-		|| ( has rock-dkms ${IUSE_EFFECTIVE} && ot-kernel_use rock-dkms ) \
+		|| ( has "rock-dkms" ${IUSE_EFFECTIVE} && ot-kernel_use "rock-dkms" ) \
 	; then
 	# It enables the MMU_NOTIFIER indirectly. \
 		ot-kernel_y_configopt "CONFIG_HSA_AMD"
 		ot-kernel_y_configopt "CONFIG_HMM_MIRROR"
 		ot-kernel_y_configopt "CONFIG_ZONE_DEVICE"
 		if \
-			 ! has rock-dkms ${IUSE_EFFECTIVE} \
+			 ! has "rock-dkms" ${IUSE_EFFECTIVE} \
 		; then
 			ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
 		elif \
-			   has rock-dkms ${IUSE_EFFECTIVE} \
-			&& ot-kernel_use rock-dkms \
+			   has "rock-dkms" ${IUSE_EFFECTIVE} \
+			&& ot-kernel_use "rock-dkms" \
 			&& ( \
-				   ver_test "${KV_MAJOR_MINOR}" -eq "5.4" \
-				|| ver_test "${KV_MAJOR_MINOR}" -eq "5.15" \
+				   ver_test "${KV_MAJOR_MINOR}" "-eq" "5.4" \
+				|| ver_test "${KV_MAJOR_MINOR}" "-eq" "5.15" \
 			) \
 		; then
 	# For sys-kernel/rock-dkms not installed yet scenario.
@@ -9164,7 +9160,7 @@ ot-kernel-pkgflags_samba() { # DONE
 		ot-kernel_y_configopt "CONFIG_CIFS_STATS2"
 		ot-kernel_y_configopt "CONFIG_CIFS_XATTR"
 		ot-kernel_y_configopt "CONFIG_CIFS_POSIX"
-		if ver_test "${KV_MAJOR_MINOR}" -le "4.12" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-le" "4.12" ; then
 			ot-kernel_y_configopt "CONFIG_CIFS_SMB2"
 		fi
 	fi
@@ -9196,7 +9192,7 @@ ot-kernel-pkgflags_sane() { # DONE
 			if ot-kernel_has_version "${pkg}[-usb]" ; then
 ewarn "Re-emerge ${pkg}[usb] and ${PN} for USB scanner support."
 			fi
-			if ver_test "${KV_MAJOR_MINOR}" -le "3.4" ; then
+			if ver_test "${KV_MAJOR_MINOR}" "-le" "3.4" ; then
 				ot-kernel_y_configopt "CONFIG_USB_DEVICEFS"
 			fi
 		fi
@@ -9509,7 +9505,7 @@ ot-kernel-pkgflags_sddm() { # DONE
 	if ot-kernel_has_version_pkgflags "x11-misc/sddm" ; then
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_MULTIUSER"
-		ot-kernel_y_configopt "CONFIG_DRM" # has flag dependencies
+		ot-kernel_y_configopt "CONFIG_DRM" # Has flag dependencies
 	fi
 }
 
@@ -9604,7 +9600,7 @@ ot-kernel-pkgflags_shorewall() { # DONE
 	local pkg="net-firewall/shorewall"
 	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
-		if ver_test "${KV_MAJOR_MINOR}" -lt "4.19" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-lt" "4.19" ; then
 			if ot-kernel_has_version "${pkg}[ipv4]" ; then
 				_ot-kernel-pkgflags_tcpip
 				ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_IPV4"
@@ -9859,7 +9855,7 @@ ot-kernel-pkgflags_systemd() { # DONE
 		fi
 
 		if [[ "${SYSTEMD_FEATURE_FD_COMPARE:-kcmp}" == "kcmp" ]] ; then
-			if ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
+			if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.10" ; then
 				ot-kernel_y_configopt "CONFIG_KCMP" # >= 5.10.20
 			else
 				ot-kernel_y_configopt "CONFIG_CHECKPOINT_RESTORE"
@@ -9871,7 +9867,7 @@ ot-kernel-pkgflags_systemd() { # DONE
 	# See issue #7744, bug #642192, commit 755fdff
 
 		if [[ "${SYSTEMD_FEATURE_AUTOFS:-0}" == "1" ]] ; then
-			if ver_test "${KV_MAJOR_MINOR}" -ge "4.18" ; then
+			if ver_test "${KV_MAJOR_MINOR}" "-ge" "4.18" ; then
 				ot-kernel_y_configopt "CONFIG_AUTOFS_FS"
 			else
 				ot-kernel_y_configopt "CONFIG_AUTOFS4_FS"
@@ -9889,7 +9885,7 @@ ot-kernel-pkgflags_systemd() { # DONE
 
 		if [[ "${SYSTEMD_FEATURE_BPF:-0}" == "1" ]] ; then
 			_ot-kernel_set_bpf "${pkg}"
-			if ver_test "${KV_MAJOR_MINOR}" -ge "4.10" ; then
+			if ver_test "${KV_MAJOR_MINOR}" "-ge" "4.10" ; then
 				ot-kernel_y_configopt "CONFIG_CGROUP_BPF"
 			fi
 		fi
@@ -9947,7 +9943,7 @@ ot-kernel-pkgflags_systemd() { # DONE
 			ot-kernel_unset_configopt "CONFIG_RT_GROUP_SCHED"
 		fi
 
-		if ver_test "${KV_MAJOR_MINOR}" -ge "4.7" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "4.7" ; then
 			ot-kernel_y_configopt "CONFIG_DEVPTS_MULTIPLE_INSTANCES"
 		fi
 
@@ -9989,7 +9985,7 @@ eerror "Audit is required for dss profile to generate logs.  Set SYSTEMD_CONTAIN
 		#ot-kernel_y_configopt "CONFIG_FSNOTIFY" # [P] Selected by FANOTIFY
 		#ot-kernel_y_configopt "CONFIG_NLATTR" # [P] Selected by NET
 		if [[ "${SYSTEMD_UEFI:-1}" == "1" ]] ; then
-			if ver_test "${KV_MAJOR_MINOR}" -lt "6.0" ; then
+			if ver_test "${KV_MAJOR_MINOR}" "-lt" "6.0" ; then
 				if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 					ot-kernel_y_configopt "CONFIG_EFI_VARS" # [W]
 				fi
@@ -10358,7 +10354,7 @@ ewarn "Please change by hand CONFIG_IDE to CONFIG_PATA_ for proper DVD-RW suppor
 		_ot-kernel-pkgflags_disable_ide "${pkg}"
 		ot-kernel_y_configopt "CONFIG_TMPFS_POSIX_ACL"
 		ot-kernel_y_configopt "CONFIG_NLS_UTF8"
-		if ver_test "${KV_MAJOR_MINOR}" -lt "3.10" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-lt" "3.10" ; then
 			ot-kernel_y_configopt "CONFIG_USB_SUSPEND"
 		fi
 	fi
@@ -10388,13 +10384,13 @@ ot-kernel-pkgflags_ufw() { # DONE
 		ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MATCH_MULTIPORT"
 		ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MATCH_RECENT"
 		ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MATCH_STATE"
-		if ver_test "${MY_PV}" -ge "2.6.39" ; then
+		if ver_test "${MY_PV}" "-ge" "2.6.39" ; then
 			ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MATCH_ADDRTYPE"
 		else
 			ot-kernel_y_configopt "CONFIG_IP_NF_MATCH_ADDRTYPE"
 		fi
 		ban_disable_debug "${pkg}" "CONFIG_NETFILTER_XT_TARGET_LOG, CONFIG_IP_NF_TARGET_LOG, CONFIG_IP6_NF_TARGET_LOG" "NETFILTER"
-		if ver_test "${MY_PV}" -ge "3.4" ; then
+		if ver_test "${MY_PV}" "-ge" "3.4" ; then
 			ot-kernel_y_configopt "CONFIG_NETFILTER_XT_TARGET_LOG"
 		else
 			ot-kernel_y_configopt "CONFIG_IP_NF_TARGET_LOG"
@@ -10750,7 +10746,7 @@ ot-kernel-pkgflags_vtun() { # DONE
 # Applies kernel config flags for the xf86-input-wacom package
 ot-kernel-pkgflags_wacom() { # DONE
 	if ot-kernel_has_version_pkgflags "x11-drivers/xf86-input-wacom" ; then
-		if ver_test "${KV_MAJOR_MINOR}" -lt "3.17" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-lt" "3.17" ; then
 			ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
 			ot-kernel_y_configopt "CONFIG_INPUT_TABLET"
 			ot-kernel_y_configopt "CONFIG_USB_ARCH_HAS_HCD"
@@ -10947,7 +10943,7 @@ ot-kernel-pkgflags_wireguard_tools() { # DONE
 				ot-kernel_y_configopt "CONFIG_IP_NF_FILTER"
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.6" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.6" ; then
 			ot-kernel_y_configopt "CONFIG_WIREGUARD"
 			ot-kernel_y_configopt "CONFIG_NET_UDP_TUNNEL"
 			ot-kernel_y_configopt "CONFIG_DST_CACHE"
@@ -11219,7 +11215,7 @@ ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 		ot-kernel_has_version_pkgflags "x11-drivers/xf86-video-amdgpu" \
 			|| \
 		( \
-			has rock-dkms ${IUSE_EFFECTIVE} && ot-kernel_use rock-dkms \
+			has "rock-dkms" ${IUSE_EFFECTIVE} && ot-kernel_use "rock-dkms" \
 		) \
 	; then
 		ot-kernel_y_configopt "CONFIG_MTRR"
@@ -11240,22 +11236,22 @@ ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 		ot-kernel_y_configopt "CONFIG_DRM"
 		ot-kernel_y_configopt "CONFIG_MMU"
 		if \
-			 ! has rock-dkms ${IUSE_EFFECTIVE} \
+			 ! has "rock-dkms" ${IUSE_EFFECTIVE} \
 		; then
 			ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
 		elif \
-			   has rock-dkms ${IUSE_EFFECTIVE} \
-			&& ot-kernel_use rock-dkms \
+			   has "rock-dkms" ${IUSE_EFFECTIVE} \
+			&& ot-kernel_use "rock-dkms" \
 			&& ( \
-				   ver_test "${KV_MAJOR_MINOR}" -eq "5.4" \
-				|| ver_test "${KV_MAJOR_MINOR}" -eq "5.15" \
+				   ver_test "${KV_MAJOR_MINOR}" "-eq" "5.4" \
+				|| ver_test "${KV_MAJOR_MINOR}" "-eq" "5.15" \
 			) \
 		; then
 	# For sys-kernel/rock-dkms not installed yet scenario.
 			ot-kernel_y_configopt "CONFIG_MODULES"
 			ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
 
-			if ver_test "${KV_MAJOR_MINOR}" -le "5.5" ; then
+			if ver_test "${KV_MAJOR_MINOR}" "-le" "5.5" ; then
 				# Missing DP_UHBR20 in latest 5.4 but appears in 5.19
 				ot-kernel_n_configopt "CONFIG_DRM_AMD_DC_DSC_SUPPORT"
 			fi
@@ -11292,24 +11288,24 @@ ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 		ot-kernel_y_configopt "CONFIG_DRM_AMDGPU_CIK"
 		ot-kernel_y_configopt "CONFIG_DRM_AMDGPU_USERPTR"
 		ot-kernel_y_configopt "CONFIG_DRM_AMD_DC"
-		if ver_test "${KV_MAJOR_MINOR}" -ge "4.15" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "4.15" ; then
 			ot-kernel_y_configopt "CONFIG_DRM_AMD_DC_DCN1_0"
                 fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "4.15" \
-		        && ver_test "${KV_MAJOR_MINOR}" -le "4.17" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "4.15" \
+		        && ver_test "${KV_MAJOR_MINOR}" "-le" "4.17" ; then
 			ot-kernel_y_configopt "CONFIG_DRM_AMD_DC_PRE_VEGA"
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "4.17" \
-                        && ver_test "${KV_MAJOR_MINOR}" -le "4.18" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "4.17" \
+                        && ver_test "${KV_MAJOR_MINOR}" "-le" "4.18" ; then
 			ot-kernel_y_configopt "CONFIG_DRM_AMD_DC_FBC"
                 fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.5" \
-			&& ver_test "${KV_MAJOR_MINOR}" -le "5.3" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.5" \
+			&& ver_test "${KV_MAJOR_MINOR}" "-le" "5.3" ; then
 			ot-kernel_y_configopt "CONFIG_DRM_AMD_DC_DCN2_0"
 			ot-kernel_y_configopt "CONFIG_DRM_AMD_DC_DCN"
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.9" \
-			&& ver_test "${KV_MAJOR_MINOR}" -le "5.10" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.9" \
+			&& ver_test "${KV_MAJOR_MINOR}" "-le" "5.10" ; then
 			ot-kernel_y_configopt "CONFIG_DRM_AMD_DC_DCN"
 			ot-kernel_y_configopt "CONFIG_DRM_AMD_DC_DCN3_0"
 		fi
@@ -11346,7 +11342,7 @@ ot-kernel-pkgflags_xf86_video_ati() { # DONE
 		ot-kernel_y_configopt "CONFIG_DRM"
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_DRM_RADEON"
-		if ver_test "${KV_MAJOR_MINOR}" -ge "3.9" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "3.9" ; then
 			ot-kernel_unset_configopt "CONFIG_DRM_RADEON_UMS"
 		else
 			ot-kernel_y_configopt "CONFIG_DRM_RADEON_KMS"
@@ -11382,27 +11378,27 @@ ot-kernel-pkgflags_xf86_video_intel() { # DONE
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_DRM"
 		ot-kernel_y_configopt "CONFIG_DRM_I915"
-		if ver_test "${KV_MAJOR_MINOR}" -lt "4.3" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-lt" "4.3" ; then
 			ot-kernel_y_configopt "CONFIG_DRM_I915_KMS"
 			ot-kernel_y_configopt "CONFIG_DRM_I915_FBDEV"
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "4.3" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "4.3" ; then
 			_ot-kernel_set_drm_fbdev_emulation
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "4.6" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "4.6" ; then
 			ot-kernel_y_configopt "CONFIG_DRM_I915_USERPTR"
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "4.10" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "4.10" ; then
 			warn_lowered_security "${pkg}" "Reconnaissance, vulnerability pre attack scan"
 			ot-kernel_y_configopt "CONFIG_DRM_I915_CAPTURE_ERROR" # Debug
 			ot-kernel_y_configopt "CONFIG_DRM_I915_COMPRESS_ERROR"
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "4.14" \
-			&& ver_test "${KV_MAJOR_MINOR}" -lt "4.19" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "4.14" \
+			&& ver_test "${KV_MAJOR_MINOR}" "-lt" "4.19" ; then
 			ot-kernel_y_configopt "CONFIG_DRM_I915_ALPHA_SUPPORT"
 		fi
 
-		# For vaapi
+	# For vaapi
 		ot-kernel_y_configopt "CONFIG_ACPI"
 		ot-kernel_y_configopt "CONFIG_PCI_MSI"
 		ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
@@ -11412,7 +11408,7 @@ ot-kernel-pkgflags_xf86_video_intel() { # DONE
 
 		if ot-kernel_has_version "sys-kernel/linux-firmware" ; then
 			if [[ "${I915_GEN9_HWACCEL_LOW_POWER_VIDEO_ENCODING:-0}" == "1" ]] ; then
-				if ver_test "${KV_MAJOR_MINOR}" -ge "4.16" ; then
+				if ver_test "${KV_MAJOR_MINOR}" "-ge" "4.16" ; then
 					ot-kernel_set_kconfig_kernel_cmdline "i915.enable_guc=3"
 				else
 					ot-kernel_set_kconfig_kernel_cmdline "i915.enable_guc_loading=1"
@@ -11422,8 +11418,8 @@ ot-kernel-pkgflags_xf86_video_intel() { # DONE
 				ot-kernel_unset_pat_kconfig_kernel_cmdline "i915.enable_guc_loading=[0-9]"
 			fi
 
-			if ver_test "${KV_MAJOR_MINOR}" -ge "5.16" ; then
-				# For DG2 firmware for HW accelerated media decoding
+			if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.16" ; then
+	# For DG2 firmware for HW accelerated media decoding
 				ot-kernel_y_configopt "CONFIG_DRM_I915_PXP"
 				ot-kernel_y_configopt "CONFIG_INTEL_MEI"
 				ot-kernel_y_configopt "CONFIG_INTEL_MEI_ME"
@@ -11439,10 +11435,8 @@ ewarn "encoding."
 ewarn
 			fi
 
-			if ver_test "${KV_MAJOR_MINOR}" -ge "5.16" ; then
-ewarn
+			if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.16" ; then
 ewarn "Install sys-kernel/linux-firmware for HW accelerated media decoding."
-ewarn
 			fi
 		fi
 	fi
@@ -11676,7 +11670,7 @@ ot-kernel-pkgflags_zfs_kmod() { # DONE
 			ot-kernel_y_configopt "CONFIG_BLK_DEV_INITRD"
 			ot-kernel_y_configopt "CONFIG_DEVTMPFS"
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -lt "5" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-lt" "5" ; then
 			ot-kernel_y_configopt "CONFIG_IOSCHED_NOOP"
 		fi
 	fi
@@ -12248,7 +12242,7 @@ einfo "Added ${opt_raw}"
 # syscall.*__NR_futex.*31				; support dropped
 #
 _ot-kernel_set_futex() {
-	if has futex ${IUSE_EFFECTIVE} && ot-kernel_use futex ; then
+	if has "futex" ${IUSE_EFFECTIVE} && ot-kernel_use "futex" ; then
 einfo "Enabling futex in .config"
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_FUTEX"
@@ -12266,7 +12260,7 @@ einfo "Enabling futex in .config"
 # syscall.*__NR_futex_waitv
 #
 _ot-kernel_set_futex2() {
-	if has futex2 ${IUSE_EFFECTIVE} && ot-kernel_use futex2 ; then
+	if has "futex2" ${IUSE_EFFECTIVE} && ot-kernel_use "futex2" ; then
 einfo "Enabling futex2 in .config"
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_FUTEX"
@@ -12556,14 +12550,14 @@ ot-kernel_set_preempt() {
 		ot-kernel_unset_configopt "CONFIG_PREEMPT_RT_FULL"
 		ot-kernel_unset_configopt "CONFIG_PREEMPT_RT_BASE"
 		ot-kernel_unset_configopt "CONFIG_PREEMPT_VOLUNTARY"
-		if ot-kernel_use rt ; then
+		if ot-kernel_use "rt" ; then
 ewarn
 ewarn "The rt patchset is not compatible with ARCH=${arch}.  Forcing"
 ewarn "PREEMPT_NONE=y.  Remove rt from OT_KERNEL_USE to silence this error."
 ewarn
 		fi
 	else
-		if ot-kernel_supports_rt && ot-kernel_use rt ; then
+		if ot-kernel_supports_rt && ot-kernel_use "rt" ; then
 			if         grep -q -e "^CONFIG_PREEMPT_RT=y" "${path_config}" \
 				|| grep -q -e "^CONFIG_PREEMPT_RT_BASE=y" "${path_config}" \
 				|| grep -q -e "^CONFIG_PREEMPT_RT_FULL=y" "${path_config}" \
@@ -12573,7 +12567,7 @@ ewarn
 			else
 	# Promote/demote
 				if [[ "${preempt_option}" == "CONFIG_PREEMPT" ]] ; then
-					if ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
+					if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.4" ; then
 						ot-kernel_y_configopt "CONFIG_PREEMPT"
 						ot-kernel_unset_configopt "CONFIG_PREEMPT__LL"
 					else
@@ -12596,7 +12590,7 @@ ewarn
 					ot-kernel_unset_configopt "CONFIG_PREEMPT"
 					ot-kernel_unset_configopt "CONFIG_PREEMPT_NONE"
 					ot-kernel_unset_configopt "CONFIG_PREEMPT_RT_BASE"
-					if ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
+					if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.4" ; then
 						ot-kernel_y_configopt "CONFIG_PREEMPT_RT"
 					else
 						ot-kernel_y_configopt "CONFIG_PREEMPT_RT_FULL"
@@ -12756,7 +12750,7 @@ _ot-kernel_realtime_pkg() {
 	local prio_class="${2}"
 	if ot-kernel_has_version "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_RT_PACKAGE_FOUND"
-		if ot-kernel_use rt ; then
+		if ot-kernel_use "rt" ; then
 ewarn "Detected ${prio_class} package for ${pkg}.  Using PREEMPT_RT=y"
 			ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
 		else
@@ -13089,19 +13083,18 @@ ewarn "app-forensics/aide should be added for integrity verification for dss wor
 # Check for audit logs support.
 _ot-kernel_checkpoint_dss_audit_logs_requirement() {
 	if [[ "${work_profile}" == "dss" ]] ; then
-		if ! ot-kernel_use debug ; then
-eerror
-eerror "The debug USE flag should be enabled for the dss work profile"
-eerror "to enable logging."
-eerror
+		if ! use debug ; then
+eerror "Add debug to USE to enable logging for the dss work profile."
+			die
+		fi
+		if ! ot-kernel_use "debug" ; then
+eerror "Add debug to OT_KERNEL_USE to enable logging for the dss work profile."
 			die
 		fi
 		if ot-kernel_has_version "virtual/logger" ; then
 			:
 		else
-eerror
 eerror "A logger from virtual/logger is required for the dss work profile."
-eerror
 			die
 		fi
 	fi
@@ -13378,7 +13371,7 @@ ewarn "associated connection with accounts being protected."
 ewarn
 		local found=0
 		if [[ "${DSS_DISK_ENCRYPTION}" =~ "ext4-encryption" ]] ; then
-			if ver_test "${KV_MAJOR_MINOR}" -eq "4.19" ; then
+			if ver_test "${KV_MAJOR_MINOR}" "-eq" "4.19" ; then
 				:
 			else
 eerror
@@ -13773,9 +13766,7 @@ ewarn
 			:
 		else
 			if has_version "sys-kernel/gostcrypt-linux-crypto" ; then
-eerror
 eerror "sys-kernel/gostcrypt-linux-crypto must be unemerged to continue."
-eerror
 				die
 			fi
 		fi

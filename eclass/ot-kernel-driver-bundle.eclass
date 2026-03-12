@@ -1867,13 +1867,13 @@ ewarn "The 2020s-desktop-pc driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_tv_tuner "pcie usb-1.1 usb-2.0 usb-3.0"
 
 	# For AI support
-	if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] && ver_test "${KV_MAJOR_MINOR}" -ge "6.16" ; then
+	if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] && ver_test "${KV_MAJOR_MINOR}" "-ge" "6.16" ; then
 		ot-kernel_y_configopt "CONFIG_DRM"
 		ot-kernel_y_configopt "CONFIG_DRM_ACCEL"
 		ot-kernel_y_configopt "CONFIG_DRM_ACCEL_IVPU" # 2023
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_PCI_MSI"
-	elif [[ $(ot-kernel_get_cpu_vendor) =~ "amd" ]] && ver_test "${KV_MAJOR_MINOR}" -ge "6.14" ; then
+	elif [[ $(ot-kernel_get_cpu_vendor) =~ "amd" ]] && ver_test "${KV_MAJOR_MINOR}" "-ge" "6.14" ; then
 		ot-kernel_y_configopt "CONFIG_ACPI"
 		ot-kernel_y_configopt "CONFIG_AMD_IOMMU"
 		ot-kernel_y_configopt "CONFIG_DRM"
@@ -3955,7 +3955,7 @@ ewarn "It is assumed that you will use a bootdisk to fix driver issues with nvid
 
 	# Available drivers on the distro:
 		local consistency_failed=0
-		if has_version "=x11-drivers/nvidia-drivers-575*" && ver_test "${KV_MAJOR_MINOR}" -ge "4.15" && ver_test "${KV_MAJOR_MINOR}" -le "6.13" ; then
+		if has_version "=x11-drivers/nvidia-drivers-575*" && ver_test "${KV_MAJOR_MINOR}" "-ge" "4.15" && ver_test "${KV_MAJOR_MINOR}" "-le" "6.13" ; then
 			if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
 "maxwell"|\
 "pascal"|\
@@ -3992,7 +3992,7 @@ einfo "CUDA microarchitecture check:  PASSED"
 ewarn "CUDA microarchitecture check:  FAILED"
 				consistency_failed=1
 			fi
-		elif has_version "=x11-drivers/nvidia-drivers-570*" && ver_test "${KV_MAJOR_MINOR}" -ge "4.15" && ver_test "${KV_MAJOR_MINOR}" -le "6.13" ; then
+		elif has_version "=x11-drivers/nvidia-drivers-570*" && ver_test "${KV_MAJOR_MINOR}" "-ge" "4.15" && ver_test "${KV_MAJOR_MINOR}" "-le" "6.13" ; then
 			if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
 "maxwell"|\
 "pascal"|\
@@ -4029,7 +4029,7 @@ einfo "CUDA microarchitecture check:  PASSED"
 ewarn "CUDA microarchitecture check:  FAILED"
 				consistency_failed=1
 			fi
-		elif has_version "=x11-drivers/nvidia-drivers-535*" && ver_test "${KV_MAJOR_MINOR}" -ge "4.15" && ver_test "${KV_MAJOR_MINOR}" -le "6.8" ; then
+		elif has_version "=x11-drivers/nvidia-drivers-535*" && ver_test "${KV_MAJOR_MINOR}" "-ge" "4.15" && ver_test "${KV_MAJOR_MINOR}" "-le" "6.8" ; then
 			if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
 "maxwell"|\
 "pascal"|\
@@ -4056,7 +4056,7 @@ einfo "CUDA microarchitecture check:  PASSED"
 ewarn "CUDA microarchitecture check:  FAILED"
 				consistency_failed=1
 			fi
-		elif has_version "=x11-drivers/nvidia-drivers-470*" && ver_test "${KV_MAJOR_MINOR}" -ge "4.15" && ver_test "${KV_MAJOR_MINOR}" -le "6.8" ; then
+		elif has_version "=x11-drivers/nvidia-drivers-470*" && ver_test "${KV_MAJOR_MINOR}" "-ge" "4.15" && ver_test "${KV_MAJOR_MINOR}" "-le" "6.8" ; then
 			if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
 "kepler"|\
 "maxwell"|\
@@ -4086,7 +4086,7 @@ einfo "CUDA microarchitecture check:  PASSED"
 ewarn "CUDA microarchitecture check:  FAILED"
 				consistency_failed=1
 			fi
-		elif has_version "=x11-drivers/nvidia-drivers-390*" && ver_test "${KV_MAJOR_MINOR}" -ge "3.10" && ver_test "${KV_MAJOR_MINOR}" -le "5.19" ; then
+		elif has_version "=x11-drivers/nvidia-drivers-390*" && ver_test "${KV_MAJOR_MINOR}" "-ge" "3.10" && ver_test "${KV_MAJOR_MINOR}" "-le" "5.19" ; then
 			if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ (\
 "fermi"|\
 "kepler"|\
@@ -5924,7 +5924,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_VIDEO_TVP5150" # Analog decoder
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T USB-2.0"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-900"($|" ")|"tv-tuner:wintv-hvr-900-65018"($|" ")) ]] && ver_test "${KV_MAJOR_MINOR}" -le "2.6" ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-hvr-900"($|" ")|"tv-tuner:wintv-hvr-900-65018"($|" ")) ]] && ver_test "${KV_MAJOR_MINOR}" "-le" "2.6" ; then
 	# Not supported because the kernel is old
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_DRX397XD" # Demodulator for DVB-T
@@ -6577,7 +6577,7 @@ ot-kernel-driver-bundle_add_tv_tuner_usb_2_0_by_product_name() {
 		ot-kernel_y_configopt "CONFIG_USB"
 		export _OT_KERNEL_TV_TUNER_TAGS="DVB-T DVB-T2 USB-2.0"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-nova-s-usb2") ]] && ver_test "${KV_MAJOR_MINOR}" -le "6.0" ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:wintv-nova-s-usb2") ]] && ver_test "${KV_MAJOR_MINOR}" "-le" "6.0" ; then
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_CX24123" # Demodulator and tuner for DVB-S with CX24123; tuner and LNB controller for DVB-S with CX24109
 		ot-kernel_y_configopt "CONFIG_DVB_USB"
@@ -6900,7 +6900,7 @@ ewarn "After applying the patch use OT_KERNEL_WINTV_NOVA_S2_GH_162_FIX_APPLIED=1
 		ot-kernel_y_configopt "CONFIG_SOUND"
 		export _OT_KERNEL_TV_TUNER_TAGS="?-DVB-T USB-2.0"
 	fi
-	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:pctv-dvb-s2-stick-461e"($|" ")|"tv-tuner:pctv-dvb-s2-stick"($|" ")) ]] && ver_test "${KV_MAJOR_MINOR}" -le "4.0" ; then
+	if [[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ ("tv-tuner:pctv-dvb-s2-stick-461e"($|" ")|"tv-tuner:pctv-dvb-s2-stick"($|" ")) ]] && ver_test "${KV_MAJOR_MINOR}" "-le" "4.0" ; then
 		ot-kernel_y_configopt "CONFIG_DVB_A8293" # LNB controller
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
 		ot-kernel_y_configopt "CONFIG_DVB_M88DS3103" # Demodulator for DVB-S/S2

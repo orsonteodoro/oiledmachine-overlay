@@ -171,21 +171,21 @@ KERNEL_SERIES_TARBALL_FN="linux-${KV_MAJOR_MINOR}.tar.xz"
 KERNEL_INC_BASE_URI="https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${KV_MAJOR}.x/incr/"
 KERNEL_PATCH_0_TO_1_URI="https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${KV_MAJOR}.x/patch-${KV_MAJOR_MINOR}.1.xz"
 
-if ver_test "${KV_MAJOR_MINOR}" -ge "6.16" ; then
+if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.16" ; then
 	KCP_9_1_BN="more-ISA-levels-and-uarches-for-kernel-6.16%2B"
-elif ver_test "${KV_MAJOR_MINOR}" -ge "6.1" ; then
+elif ver_test "${KV_MAJOR_MINOR}" "-ge" "6.1" ; then
 	KCP_9_1_BN="more-ISA-levels-and-uarches-for-kernel-6.1.79%2B"
-elif ver_test "${KV_MAJOR_MINOR}" -ge "5.17" ; then
+elif ver_test "${KV_MAJOR_MINOR}" "-ge" "5.17" ; then
 	KCP_9_1_BN="more-ISA-levels-and-uarches-for-kernel-5.17-6.1.78"
-elif ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
+elif ver_test "${KV_MAJOR_MINOR}" "-ge" "5.15" ; then
 	KCP_9_1_BN="more-ISA-levels-and-uarches-for-kernel-5.15-5.16"
-elif ver_test "${KV_MAJOR_MINOR}" -ge "5.8" ; then
+elif ver_test "${KV_MAJOR_MINOR}" "-ge" "5.8" ; then
 	KCP_9_1_BN="more-ISA-levels-and-uarches-for-kernel-5.8-5.14"
-elif ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
+elif ver_test "${KV_MAJOR_MINOR}" "-ge" "5.4" ; then
 	KCP_9_1_BN="more-ISA-levels-and-uarches-for-kernel-4.19-5.4"
-elif ver_test "${KV_MAJOR_MINOR}" -ge "4.19" ; then
+elif ver_test "${KV_MAJOR_MINOR}" "-ge" "4.19" ; then
 	KCP_9_1_BN="more-ISA-levels-and-uarches-for-kernel-4.19-5.4"
-elif ver_test "${KV_MAJOR_MINOR}" -ge "4.13" ; then
+elif ver_test "${KV_MAJOR_MINOR}" "-ge" "4.13" ; then
 	KCP_8_1_BN="enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B"
 	KCP_4_9_BN="enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B"
 fi
@@ -214,9 +214,9 @@ KCP_SRC_CORTEX_A72_URI="
 		-> ${KCP_CORTEX_A72_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch
 "
 
-if ver_test "${MY_PV}" -eq "${KV_MAJOR_MINOR}" ; then
+if ver_test "${MY_PV}" "-eq" "${KV_MAJOR_MINOR}" ; then
 	KERNEL_NO_POINT_RELEASE="1"
-elif ver_test "${MY_PV}" -eq "${KV_MAJOR_MINOR}.1" ; then
+elif ver_test "${MY_PV}" "-eq" "${KV_MAJOR_MINOR}.1" ; then
 	KERNEL_0_TO_1_ONLY="1"
 fi
 
@@ -258,7 +258,7 @@ elif [[ \
 	)
 else
 	KERNEL_PATCH_TO_FROM=(
-		$(gen_kernel_seq $(ver_cut 3 ${MY_PV}))
+		$(gen_kernel_seq $(ver_cut "3" ${MY_PV}))
 	)
 	KERNEL_PATCH_FNS_EXT=(
 		${KERNEL_PATCH_TO_FROM[@]/%/.xz}
@@ -301,7 +301,7 @@ ${MULTIGEN_LRU_BASE_URI}.patch -> ${MULTIGEN_LRU_FN}
 	"
 fi
 
-if ver_test "${KV_MAJOR_MINOR}" -ge "6.7" ; then
+if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.7" ; then
 	NEST_FN="nest_patch_with_spinning_6.7" # Similar to 6.6 behavior
 	NEST_FN_ALT="nest_patch_nospin_6.7" # New change
 	NEST_URI="
@@ -310,13 +310,13 @@ https://gitlab.inria.fr/nest-public/nest-artifact/-/raw/main/extras/nest_patch_w
 https://gitlab.inria.fr/nest-public/nest-artifact/-/raw/main/extras/nest_patch_nospin_6.7?inline=false
 	-> ${NEST_FN_ALT}
 	"
-elif ver_test "${KV_MAJOR_MINOR}" -ge "6.1" ; then
+elif ver_test "${KV_MAJOR_MINOR}" "-ge" "6.1" ; then
 	NEST_FN="Nest_v6.6.patch"
 	NEST_URI="
 https://gitlab.inria.fr/nest-public/nest-artifact/-/raw/main/extras/Nest_v6.6.patch?inline=false
 	-> ${NEST_FN}
 	"
-elif ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
+elif ver_test "${KV_MAJOR_MINOR}" "-ge" "5.15" ; then
 	NEST_FN="Nest_v5.15.patch"
 	NEST_URI="
 https://gitlab.inria.fr/nest-public/nest-artifact/-/raw/main/extras/Nest_v5.15_patch?inline=false
@@ -1130,7 +1130,7 @@ einfo
 check_zen_tune_deps() {
 	local zen_tune_commit="${1}" # c in C, where C is all zen tune commits.
 	local v="ZEN_SAUCE_WHITELIST"
-	if ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
+	if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.10" ; then
 		local p
 		for p in ${PATCH_ZEN_TUNE_COMMITS_DEPS_ZEN_SAUCE[@]} ; do
 			local zleft=$(echo "${p}" | cut -f 1 -d ":") # Left
@@ -1204,7 +1204,7 @@ einfo "Verifying profraw version compatibility"
 	local PGO_SLOTS=( {18..13} )
 	local found=0
 	local x
-	for x in ${PGO_SLOTS[@]} ; do
+	for x in "${PGO_SLOTS[@]}" ; do
 		if ot-kernel_use "llvm_slot_${x}" ; then
 			local pv=$(best_version "=llvm-core/llvm-${x}*" | sed -e "s|llvm-core/llvm-||g")
 			found=1
@@ -1227,9 +1227,9 @@ ot-kernel_use() {
 	for u in ${OT_KERNEL_USE} ; do
 		[[ "${u}" =~ ^"-" ]] && continue
 		[[ "${u}" =~ ^"+" ]] && u="${u:1}"
-		has ${u} ${IUSE_EFFECTIVE} || continue
+		has "${u}" ${IUSE_EFFECTIVE} || continue
 	# IUSE will say false if hard mask
-		if use ${u} && [[ "${1}" == "${u}" ]] ; then
+		if use "${u}" && [[ "${1}" == "${u}" ]] ; then
 			return 0
 		fi
 	done
@@ -1243,7 +1243,7 @@ ot-kernel_pkg_setup() {
 	dhms_start
 
 	local cpu_sched_name="CFS"
-	ver_test "${KV_MAJOR_MINOR}" -ge "6.6" && cpu_sched_name="EEVDF"
+	ver_test "${KV_MAJOR_MINOR}" "-ge" "6.6" && cpu_sched_name="EEVDF"
 
 ewarn
 ewarn "The defaults use the ${cpu_sched_name} as the stock CPU scheduler per"
@@ -1273,7 +1273,7 @@ einfo "Time since the last security update:  ${dhms_passed}"
 	if declare -f ot-kernel_pkg_setup_cb > /dev/null ; then
 		ot-kernel_pkg_setup_cb
 	fi
-	if has zen-sauce ${IUSE_EFFECTIVE} ; then
+	if has "zen-sauce" ${IUSE_EFFECTIVE} ; then
 		if use zen-sauce ; then
 			zen_sauce_setup
 			zen_tune_setup
@@ -1287,32 +1287,32 @@ einfo "Time since the last security update:  ${dhms_passed}"
 		sandbox-changes_no_network_sandbox "To download logos"
 	fi
 
-	if has tresor ${IUSE_EFFECTIVE} ; then
+	if has "tresor" ${IUSE_EFFECTIVE} ; then
 		if [[ -z "${OT_KERNEL_DEVELOPER}" ]] && use tresor && ! tc-is-cross-compiler ; then
 			if [[ "${arch}" == "x86" ]] ; then
-				if ! grep -F -q "sse2" /proc/cpuinfo ; then
+				if ! grep -F -q "sse2" "/proc/cpuinfo" ; then
 ewarn "Tresor for i686 requires SSE2 CPU support."
 #					die
 				fi
-				if ! grep -F -q "mmx" /proc/cpuinfo ; then
+				if ! grep -F -q "mmx" "/proc/cpuinfo" ; then
 ewarn "Tresor for i686 requires MMX CPU support."
 #					die
 				fi
-			elif [[ "${arch}" == "x86_64" ]] && ! ot-kernel_use cpu_flags_x86_aes ; then
-				if ! grep -F -q "sse2" /proc/cpuinfo ; then
+			elif [[ "${arch}" == "x86_64" ]] && ! ot-kernel_use "cpu_flags_x86_aes" ; then
+				if ! grep -F -q "sse2" "/proc/cpuinfo" ; then
 ewarn "Tresor for x86_64 requires SSE2 CPU support."
 #					die
 				fi
-				if ! grep -F -q "mmx" /proc/cpuinfo ; then
+				if ! grep -F -q "mmx" "/proc/cpuinfo" ; then
 ewarn "Tresor for x86_64 requires MMX CPU support."
 #					die
 				fi
-			elif [[ "${arch}" == "x86_64" ]] && ot-kernel_use cpu_flags_x86_aes ; then
-				if ! grep -F -q "aes" /proc/cpuinfo ; then
+			elif [[ "${arch}" == "x86_64" ]] && ot-kernel_use "cpu_flags_x86_aes" ; then
+				if ! grep -F -q "aes" "/proc/cpuinfo" ; then
 ewarn "Tresor for x86_64 with aesni requires AES-NI CPU support."
 #					die
 				fi
-				if ! grep -F -q "sse2" /proc/cpuinfo ; then
+				if ! grep -F -q "sse2" "/proc/cpuinfo" ; then
 ewarn "Tresor for x86_64 with aesni requires SSE2 CPU support."
 #					die
 				fi
@@ -1320,7 +1320,7 @@ ewarn "Tresor for x86_64 with aesni requires SSE2 CPU support."
 		fi
 	fi
 
-	if has clang ${IUSE_EFFECTIVE} ; then
+	if has "clang" ${IUSE_EFFECTIVE} ; then
 		if use clang ; then
 			verify_profraw_compatibility
 		fi
@@ -1570,7 +1570,7 @@ apply_zen_sauce() {
 	if [[ "${CFLAGS}" =~ "-O3" ]] ; then
 		local key="str_${KV_MAJOR_MINOR//./_}_${extraversion}"
 		_OT_KERNEL_O3_PROVIDER["${key}"]="zen-sauce"
-		if ver_test "${KV_MAJOR_MINOR}" -eq "4.19" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-eq" "4.19" ; then
 			whitelisted+=" ${PATCH_O3_CO_COMMIT:0:7}"
 			whitelisted+=" ${PATCH_O3_RO_COMMIT:0:7}"
 		else
@@ -1583,7 +1583,7 @@ apply_zen_sauce() {
 		blacklisted+=" ${PATCH_KCP_COMMIT:0:7}"
 	fi
 
-	if has zen-sauce ${IUSE_EFFECTIVE} ; then
+	if has "zen-sauce" ${IUSE_EFFECTIVE} ; then
 		local bl_all_zen_sauce=0
 		local bl_all_zen_tune=0
 		local wl_all_zen_sauce=0
@@ -1621,22 +1621,22 @@ apply_zen_sauce() {
 			fi
 		done
 
-		if ot-kernel_use zen-sauce && (( ${bl_all_zen_tune} == 1 )) ; then
+		if ot-kernel_use "zen-sauce" && (( ${bl_all_zen_tune} == 1 )) ; then
 			for c in "${PATCH_ZEN_TUNE_COMMITS[@]}" ; do
 				blacklisted+=" ${c:0:7}"
 			done
 		fi
-		if ot-kernel_use zen-sauce && (( ${bl_all_zen_sauce} == 1 )) ; then
+		if ot-kernel_use "zen-sauce" && (( ${bl_all_zen_sauce} == 1 )) ; then
 			for c in "${PATCH_ZEN_SAUCE_COMMITS[@]}" ; do
 				blacklisted+=" ${c:0:7}"
 			done
 		fi
-		if ot-kernel_use zen-sauce && (( ${wl_all_zen_tune} == 1 )) ; then
+		if ot-kernel_use "zen-sauce" && (( ${wl_all_zen_tune} == 1 )) ; then
 			for c in "${PATCH_ZEN_TUNE_COMMITS[@]}" ; do
 				whitelisted+=" ${c:0:7}"
 			done
 		fi
-		if ot-kernel_use zen-sauce && (( ${wl_all_zen_sauce} == 1 )) ; then
+		if ot-kernel_use "zen-sauce" && (( ${wl_all_zen_sauce} == 1 )) ; then
 			for c in "${PATCH_ZEN_SAUCE_COMMITS[@]}" ; do
 				whitelisted+=" ${c:0:7}"
 			done
@@ -1731,9 +1731,9 @@ apply_cfi() {
 # Adds custom logo patch
 apply_custom_logo() {
 	if [[ -n "${OT_KERNEL_LOGO_URI}" ]] ; then
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.2" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.2" ; then
 			_fpatch "${FILESDIR}/custom-logo-for-6.1.patch"
-		elif ver_test "${KV_MAJOR_MINOR}" -ge "4.19" ; then
+		elif ver_test "${KV_MAJOR_MINOR}" "-ge" "4.19" ; then
 			_fpatch "${FILESDIR}/custom-logo-for-4.19.patch"
 		else
 			_fpatch "${FILESDIR}/custom-logo-for-4.14.patch"
@@ -1817,7 +1817,7 @@ ot-kernel_get_kcp_provider() {
 # GENPATCHES_BLACKLIST="2500 2600"
 _filter_genpatches() {
 	P_GENPATCHES_BLACKLIST=""
-	if ! ot-kernel_use genpatches_1510 ; then
+	if ! ot-kernel_use "genpatches_1510" ; then
 	# Possibly locks up computer during OOM tests
 		P_GENPATCHES_BLACKLIST+=" 1510"
 	fi
@@ -1836,11 +1836,11 @@ _filter_genpatches() {
 		! [[ "${GENPATCHES_BLACKLIST}" =~ "1500" ]] \
 			&& \
 		( \
-			has clang ${IUSE_EFFECTIVE} \
+			has "clang" ${IUSE_EFFECTIVE} \
 				&& \
-			ot-kernel_use clang \
+			ot-kernel_use "clang" \
 				&& \
-			ot-kernel_use pgo \
+			ot-kernel_use "pgo" \
 		) \
 	; then
 ewarn
@@ -1944,8 +1944,8 @@ apply_ck() {
 				blacklisted=1
 				break
 			fi
-			if ver_test "${KV_MAJOR_MINOR}" -eq "4.14" ; then
-				if ! ot-kernel_use bfq-mq ; then
+			if ver_test "${KV_MAJOR_MINOR}" "-eq" "4.14" ; then
+				if ! ot-kernel_use "bfq-mq" ; then
 					local b2
 					for b2 in ${CK_BFQ_MQ[@]} ; do
 						if [[ "${c}" == "${b2}" ]] ; then
@@ -1976,7 +1976,7 @@ einfo "Using genpatches from repo"
 		else
 			EGIT_CHECKOUT_DIR="${T}/linux-patches-${KV_MAJOR_MINOR}-head"
 		fi
-		EGIT_BRANCH="$(ver_cut 1-2 ${MY_PV})"
+		EGIT_BRANCH=$(ver_cut "1-2" "${MY_PV}")
 
 		git-r3_fetch
 		git-r3_checkout
@@ -2006,7 +2006,7 @@ einfo "Applying the genpatches"
 #
 apply_o3() {
 	cd "${BUILD_DIR}" || die
-	if ver_test "${KV_MAJOR_MINOR}" -eq "4.14" ; then
+	if ver_test "${KV_MAJOR_MINOR}" "-eq" "4.14" ; then
 		local key="str_${KV_MAJOR_MINOR//./_}_${extraversion}"
 		_OT_KERNEL_O3_PROVIDER["${key}"]="zen-sauce-4.14"
 		# fix patch
@@ -2071,7 +2071,7 @@ einfo "Applying TRESOR for x86_64"
 		# For development
 einfo "Applying TRESOR for x86"
 		platform="i686"
-	elif [[ "${arch}" == "x86_64" ]] && ot-kernel_use cpu_flags_x86_aes ; then
+	elif [[ "${arch}" == "x86_64" ]] && ot-kernel_use "cpu_flags_x86_aes" ; then
 einfo "Applying TRESOR for x86_64 with AES-NI"
 		platform="aesni"
 	elif [[ "${arch}" == "x86_64" ]] ; then
@@ -2164,11 +2164,11 @@ einfo "Applying the C2TCP / DeepCC / Orca patch"
 # @DESCRIPTION:
 # Apply patch to disable TBM to increase availability.
 ot-kernel_apply_noturbo() {
-	if ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
+	if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.15" ; then
 		eapply "${FILESDIR}/linux-6.14.6-no_turbo.patch"
-	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
+	elif ver_test "${KV_MAJOR_MINOR}" "-ge" "5.10" ; then
 		eapply "${FILESDIR}/linux-5.10.237-no_turbo.patch"
-	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
+	elif ver_test "${KV_MAJOR_MINOR}" "-ge" "5.4" ; then
 		eapply "${FILESDIR}/linux-5.4.293-no_turbo.patch"
 	else
 ewarn "QA:  Test no_turbo patch for pre 5.4.x"
@@ -2202,7 +2202,7 @@ verify_point_release() {
 	local c1=$(grep "^PATCHLEVEL = " "${BUILD_DIR}/Makefile" | cut -f 2 -d "=" | sed -e "s| ||g")
 	local c2=$(grep "^SUBLEVEL = " "${BUILD_DIR}/Makefile" | cut -f 2 -d "=" | sed -e "s| ||g")
 	local actual_pv="${c0}.${c1}.${c2}"
-	local expected_pv=$(ver_cut 1-3 "${MY_PV}")
+	local expected_pv=$(ver_cut "1-3" "${MY_PV}")
 
 	local nparts=$(echo "${expected_pv}" | tr "." "\n" | wc -l)
 	(( ${nparts} == 2 )) && return # Not a point release
@@ -2275,7 +2275,8 @@ einfo "OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER:  ${kcp_provider}"
 		local gcc_slot=$(get_gcc_slot)
 		gcc_slot="${gcc_slot%_*}"
 		local llvm_slot=$(get_llvm_slot)
-		local gcc_pv=$(best_version "${GCC_PKG}:$(ver_cut 1 ${gcc_slot})" | sed -r -e "s|${GCC_PKG}-||" -e "s|-r[0-9]+||")
+		local gcc_major_pv=$(ver_cut "1" "${gcc_slot}")
+		local gcc_pv=$(best_version "${GCC_PKG}:${gcc_major_pv}" | sed -r -e "s|${GCC_PKG}-||" -e "s|-r[0-9]+||")
 		local clang_pv=$(best_version "llvm-core/clang:${llvm_slot}" | sed -r -e "s|llvm-core/clang-||" -e "s|-r[0-9]+||")
 		#local vendor_id=$(cat /proc/cpuinfo | grep vendor_id | head -n 1 | cut -f 2 -d ":" | sed -E -e "s|[ ]+||g")
 		#local cpu_family=$(printf "%02x" $(cat /proc/cpuinfo | grep -F -e "cpu family" | head -n 1 | grep -E -o "[0-9]+"))
@@ -2295,8 +2296,8 @@ einfo
 
 	# KCP is applied globally
 	if (( ${wants_kcp} == 1 )) ; then
-		if (  (				  $(ver_test "${gcc_pv}"   -ge "9.1") ) \
-		   || ( [[ -n "${clang_pv}" ]] && $(ver_test "${clang_pv}" -ge "10.0") ) \
+		if (  (				  $(ver_test "${gcc_pv}"   "-ge" "9.1") ) \
+		   || ( [[ -n "${clang_pv}" ]] && $(ver_test "${clang_pv}" "-ge" "10.0") ) \
 		   ) \
 			&& test -f "${EDISTDIR}/${KCP_9_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
 		then
@@ -2304,14 +2305,14 @@ einfo "Queuing the kernel_compiler_patch for use under gcc >= 9.1 or clang >= 10
 			patches+=( "${EDISTDIR}/${KCP_9_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch")
 			export GCC_COMPAT_KPC=( $(seq ${gcc_pv%%.*} -1 9 ) )
 			export LLVM_COMPAT_KPC=( $(seq ${clang_pv%%.*} -1 9 ) )
-		elif ( tc-is-gcc && $(ver_test "${gcc_pv}" -ge "8.1") ) \
+		elif ( tc-is-gcc && $(ver_test "${gcc_pv}" "-ge" "8.1") ) \
 			&& test -f "${EDISTDIR}/${KCP_8_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
 		then
 einfo "Queuing the kernel_compiler_patch for use under gcc >= 8.1"
 			patches+=( "${EDISTDIR}/${KCP_8_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
 			export GCC_COMPAT_KPC=( $(seq ${gcc_pv%%.*} -1 8 ) )
 			export LLVM_COMPAT_KPC=( $(seq ${clang_pv%%.*} -1 9 ) ) # Undefined for this release
-		elif ( tc-is-gcc && $(ver_test "${gcc_pv}" -ge "4.9") ) \
+		elif ( tc-is-gcc && $(ver_test "${gcc_pv}" "-ge" "4.9") ) \
 			&& test -f "${EDISTDIR}/${KCP_4_9_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
 		then
 einfo "Queuing the kernel_compiler_patch for use under gcc >= 4.9"
@@ -2335,11 +2336,11 @@ einfo "Queuing the kernel_compiler_patch for the Cortex A72"
 		patches+=( "${EDISTDIR}/${KCP_CORTEX_A72_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
 	fi
 
-#	if ver_test "${KV_MAJOR_MINOR}" -eq "5.15" ; then
+#	if ver_test "${KV_MAJOR_MINOR}" "-eq" "5.15" ; then
 #		eapply "${FILESDIR}/external-modules-linking-changes-for-5.15.138.patch"
-#	elif ver_test "${KV_MAJOR_MINOR}" -eq "5.10" ; then
+#	elif ver_test "${KV_MAJOR_MINOR}" "-eq" "5.10" ; then
 #		eapply "${FILESDIR}/external-modules-linking-changes-for-5.4.260.patch"
-#	elif ver_test "${KV_MAJOR_MINOR}" -eq "5.4" ; then
+#	elif ver_test "${KV_MAJOR_MINOR}" "-eq" "5.4" ; then
 #		eapply "${FILESDIR}/external-modules-linking-changes-for-5.4.260.patch"
 #	fi
 
@@ -2389,19 +2390,19 @@ einfo "Applying the Nest scheduler patch"
 # @DESCRIPTION:
 # Add patch to avoid panic_on_warn for sanitizers
 ot-kernel_apply_kcmdline_for_sanitizers() {
-	if ver_test "${KV_MAJOR_MINOR}" -ge "6.16" ; then
+	if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.16" ; then
 		_fpatch "${FILESDIR}/sanitizers-kcmdline-panic-for-6.16.1.patch"
-	elif ver_test "${KV_MAJOR_MINOR}" -gt "6.6" ; then
+	elif ver_test "${KV_MAJOR_MINOR}" "-gt" "6.6" ; then
 		_fpatch "${FILESDIR}/sanitizers-kcmdline-panic-for-6.14.6.patch"
-	elif ver_test "${KV_MAJOR_MINOR}" -ge "6.6" ; then
+	elif ver_test "${KV_MAJOR_MINOR}" "-ge" "6.6" ; then
 		_fpatch "${FILESDIR}/sanitizers-kcmdline-panic-for-6.6.90.patch"
-	elif ver_test "${KV_MAJOR_MINOR}" -ge "6.1" ; then
+	elif ver_test "${KV_MAJOR_MINOR}" "-ge" "6.1" ; then
 		_fpatch "${FILESDIR}/sanitizers-kcmdline-panic-for-6.1.138.patch"
-	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
+	elif ver_test "${KV_MAJOR_MINOR}" "-ge" "5.15" ; then
 		_fpatch "${FILESDIR}/sanitizers-kcmdline-panic-for-5.15.182.patch"
-	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
+	elif ver_test "${KV_MAJOR_MINOR}" "-ge" "5.10" ; then
 		_fpatch "${FILESDIR}/sanitizers-kcmdline-panic-for-5.10.237.patch"
-	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
+	elif ver_test "${KV_MAJOR_MINOR}" "-ge" "5.4" ; then
 		_fpatch "${FILESDIR}/sanitizers-kcmdline-panic-for-5.4.293.patch"
 	else
 ewarn "QA:  Update sanitizer patch for kernel ${KV_MAJOR_MINOR}."
@@ -2414,9 +2415,9 @@ ewarn "QA:  Update sanitizer patch for kernel ${KV_MAJOR_MINOR}."
 _has_security_critical_type() {
 	local type="${1}"
 	local types
-	if has kcfi ${IUSE_EFFECTIVE} ; then
+	if has "kcfi" ${IUSE_EFFECTIVE} ; then
 		types=${OT_KERNEL_SECURITY_CRITICAL_TYPES:-"kasan ubsan kcfi"}
-	elif has cfi ${IUSE_EFFECTIVE} ; then
+	elif has "cfi" ${IUSE_EFFECTIVE} ; then
 		types=${OT_KERNEL_SECURITY_CRITICAL_TYPES:-"kasan ubsan cfi"}
 	else
 		types=${OT_KERNEL_SECURITY_CRITICAL_TYPES:-"kasan ubsan"}
@@ -2436,45 +2437,45 @@ _has_security_critical_type() {
 # @DESCRIPTION:
 # Apply the patches conditionally based on extraversion or cpu_sched
 apply_all_patchsets() {
-	if has rt ${IUSE_EFFECTIVE} && use rt ; then
-		if ot-kernel_use rt ; then
+	if has "rt" ${IUSE_EFFECTIVE} && use rt ; then
+		if ot-kernel_use "rt" ; then
 			apply_rt
 		fi
 	fi
 
-	if has uksm ${IUSE_EFFECTIVE} && use uksm ; then
-		if ot-kernel_use uksm ; then
+	if has "uksm" ${IUSE_EFFECTIVE} && use uksm ; then
+		if ot-kernel_use "uksm" ; then
 			apply_uksm
 		fi
 	fi
 
-	if has multigen_lru ${IUSE_EFFECTIVE} && use multigen_lru ; then
-		if ot-kernel_use multigen_lru ; then
+	if has "multigen_lru" ${IUSE_EFFECTIVE} && use multigen_lru ; then
+		if ot-kernel_use "multigen_lru" ; then
 			apply_multigen_lru
 		fi
 	fi
 
-	if has zen-multigen_lru ${IUSE_EFFECTIVE} && use zen-multigen_lru ; then
-		if ot-kernel_use zen-multigen_lru ; then
+	if has "zen-multigen_lru" ${IUSE_EFFECTIVE} && use zen-multigen_lru ; then
+		if ot-kernel_use "zen-multigen_lru" ; then
 			apply_zen_multigen_lru
 		fi
 	fi
 
-	if has bmq ${IUSE_EFFECTIVE} && use bmq ; then
-		if ot-kernel_use bmq && [[ "${cpu_sched}" == "bmq" ]] ; then
+	if has "bmq" ${IUSE_EFFECTIVE} && use bmq ; then
+		if ot-kernel_use "bmq" && [[ "${cpu_sched}" == "bmq" ]] ; then
 			apply_bmq
 		fi
 	fi
 
-	if has pds ${IUSE_EFFECTIVE} && use pds ; then
-		if ot-kernel_use pds && [[ "${cpu_sched}" == "pds" ]] ; then
+	if has "pds" ${IUSE_EFFECTIVE} && use pds ; then
+		if ot-kernel_use "pds" && [[ "${cpu_sched}" == "pds" ]] ; then
 			apply_pds
 		fi
 	fi
 
-	if has prjc ${IUSE_EFFECTIVE} && use prjc ; then
+	if has "prjc" ${IUSE_EFFECTIVE} && use prjc ; then
 		if \
-		ot-kernel_use prjc \
+		ot-kernel_use "prjc" \
 		&& \
 		[[ \
 			   "${cpu_sched}" == "prjc" \
@@ -2485,9 +2486,9 @@ apply_all_patchsets() {
 		fi
 	fi
 
-	if has muqss ${IUSE_EFFECTIVE} && use muqss ; then
+	if has "muqss" ${IUSE_EFFECTIVE} && use muqss ; then
 		if \
-			ot-kernel_use muqss \
+			ot-kernel_use "muqss" \
 				&& \
 			[[ \
 				   "${cpu_sched}" == "muqss" \
@@ -2499,20 +2500,20 @@ apply_all_patchsets() {
 		fi
 	fi
 
-	if has zen-muqss ${IUSE_EFFECTIVE} && use zen-muqss ; then
-		if ot-kernel_use zen-muqss && [[ "${cpu_sched}" == "zen-muqss" ]] ; then
+	if has "zen-muqss" ${IUSE_EFFECTIVE} && use zen-muqss ; then
+		if ot-kernel_use "zen-muqss" && [[ "${cpu_sched}" == "zen-muqss" ]] ; then
 			apply_zen_muqss
 		fi
 	fi
 
-	if has tresor ${IUSE_EFFECTIVE} && use tresor ; then
-		if ot-kernel_use tresor ; then
+	if has "tresor" ${IUSE_EFFECTIVE} && use tresor ; then
+		if ot-kernel_use "tresor" ; then
 			apply_tresor
 		fi
 	fi
 
-	if has genpatches ${IUSE_EFFECTIVE} && use genpatches ; then
-		if ot-kernel_use genpatches ; then
+	if has "genpatches" ${IUSE_EFFECTIVE} && use genpatches ; then
+		if ot-kernel_use "genpatches" ; then
 			apply_genpatches
 		fi
 	fi
@@ -2521,54 +2522,54 @@ apply_all_patchsets() {
 		apply_o3
 	fi
 
-	if has zen-sauce ${IUSE_EFFECTIVE} && use zen-sauce ; then
-		if ot-kernel_use zen-sauce ; then
+	if has "zen-sauce" ${IUSE_EFFECTIVE} && use zen-sauce ; then
+		if ot-kernel_use "zen-sauce" ; then
 			apply_zen_sauce
 		fi
 	fi
 
-	if has bbrv2 ${IUSE_EFFECTIVE} && use bbrv2 ; then
-		if ot-kernel_use bbrv2 ; then
+	if has "bbrv2" ${IUSE_EFFECTIVE} && use bbrv2 ; then
+		if ot-kernel_use "bbrv2" ; then
 			apply_bbrv2
 		fi
 	fi
 
-	if has bbrv3 ${IUSE_EFFECTIVE} && use bbrv3 ; then
-		if ot-kernel_use bbrv3 ; then
+	if has "bbrv3" ${IUSE_EFFECTIVE} && use bbrv3 ; then
+		if ot-kernel_use "bbrv3" ; then
 			apply_bbrv3
 		fi
 	fi
 
-	if has clang ${USE} && use clang && ot-kernel_use clang ; then
-		if use pgo && ot-kernel_use pgo ; then
+	if has "clang" ${USE} && use clang && ot-kernel_use "clang" ; then
+		if use pgo && ot-kernel_use "pgo" ; then
 			apply_clang_pgo
 		fi
 	fi
 
-	if has cfi ${IUSE_EFFECTIVE} && use cfi ; then
+	if has "cfi" ${IUSE_EFFECTIVE} && use cfi ; then
 		if _has_security_critical_type "cfi" && [[ "${arch}" == "x86_64" ]] ; then
 			apply_cfi
 		fi
 	fi
 
-	if has kcfi ${IUSE_EFFECTIVE} && use kcfi ; then
+	if has "kcfi" ${IUSE_EFFECTIVE} && use kcfi ; then
 		if _has_security_critical_type "kcfi" && [[ "${arch}" == "x86_64" ]] ; then
 			apply_kcfi
 		fi
 	fi
 
 	if \
-		   ( has c2tcp ${IUSE_EFFECTIVE}  && use c2tcp && ot-kernel_use c2tcp ) \
-		|| ( has deepcc ${IUSE_EFFECTIVE} && use deepcc && ot-kernel_use deepcc ) \
-		|| ( has orca ${IUSE_EFFECTIVE}   && use orca && ot-kernel_use orca ) \
+		   ( has "c2tcp" ${IUSE_EFFECTIVE}  && use c2tcp && ot-kernel_use "c2tcp" ) \
+		|| ( has "deepcc" ${IUSE_EFFECTIVE} && use deepcc && ot-kernel_use "deepcc" ) \
+		|| ( has "orca" ${IUSE_EFFECTIVE}   && use orca && ot-kernel_use "orca" ) \
 	; then
 		if [[ "${C2TCP_MAJOR_VER}" == "2" ]] ; then
 			apply_c2tcp_v2
 		fi
 	fi
 
-	if has nest ${IUSE_EFFECTIVE} && use nest ; then
-		if ot-kernel_use nest && [[ "${cpu_sched}" == "nest" ]] ; then
+	if has "nest" ${IUSE_EFFECTIVE} && use nest ; then
+		if ot-kernel_use "nest" && [[ "${cpu_sched}" == "nest" ]] ; then
 			apply_nest
 		fi
 	fi
@@ -2635,7 +2636,7 @@ einfo "Canceling ReiserFS"
 	sed -i -e "/Reiserfs/d" \
 		"scripts/ver_linux" || die
 
-	if ver_test "${KV_MAJOR_MINOR}" -ge "5.3" ; then
+	if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.3" ; then
 		sed -i -e "/reiserfs/d" \
 			"Documentation/kbuild/makefiles.rst" || die
 	else
@@ -2648,7 +2649,7 @@ einfo "Canceling ReiserFS"
 		-e "s| \(borrowed from reiserfs\)||g" \
 		"fs/ubifs/key.h" || die
 
-	if ver_test "${KV_MAJOR_MINOR}" -ge "5.3" ; then
+	if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.3" ; then
 		sed -i \
 			-e "s|/reiserfs||" \
 			-e "s|or ReiserFS filesystems||" \
@@ -2670,15 +2671,15 @@ einfo "Canceling ReiserFS"
 		| sed -e "0,/^Reiserfsprogs/ s|^Reiserfsprogs|2Reiserfsprogs|" \
 		| sed -e "/1Reiserfsprogs/,/reiserfsck/d" -e "/2Reiserfsprogs/,/reiserfs/d" \
 		> "Documentation/process/changes.rst.t" || die
-	mv "Documentation/process/changes.rst"{.t,} || die
-	if ver_test "${KV_MAJOR_MINOR}" -ge "5.1" ; then
+	mv "Documentation/process/changes.rst"{".t",""} || die
+	if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.1" ; then
 		cat "Documentation/translations/it_IT/process/changes.rst" \
 			| sed -e "/reiserfsprogs/d" \
 			| sed -e "0,/^Reiserfsprogs/ s|^Reiserfsprogs|1Reiserfsprogs|" \
 			| sed -e "0,/^Reiserfsprogs/ s|^Reiserfsprogs|2Reiserfsprogs|" \
 			| sed -e "/1Reiserfsprogs/,/reiserfsck/d" -e "/2Reiserfsprogs/,/reiserfs/d" \
 			> "Documentation/translations/it_IT/process/changes.rst.t" || die
-		mv "Documentation/translations/it_IT/process/changes.rst"{.t,} || die
+		mv "Documentation/translations/it_IT/process/changes.rst"{".t",""} || die
 	fi
 
 	sed -i \
@@ -2689,7 +2690,7 @@ einfo "Canceling ReiserFS"
 		-e "/reiserfs/d" \
 		"fs/buffer.c" || die
 
-	if ver_test "${KV_MAJOR_MINOR}" -ge "4.17" ; then
+	if ver_test "${KV_MAJOR_MINOR}" "-ge" "4.17" ; then
 		sed -i -e "s|reiserfs_||g" \
 			"Documentation/trace/ftrace.rst" \
 			|| die
@@ -2699,15 +2700,15 @@ einfo "Canceling ReiserFS"
 			|| die
 	fi
 
-	if ver_test "${KV_MAJOR_MINOR}" -ge "6.7" ; then
+	if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.7" ; then
 		sed -i -e "s|Reiserfs does not tolerate errors returned from the block device.||g" \
 			"Documentation/arch/powerpc/eeh-pci-error-recovery.rst" \
 			|| die
-	elif ver_test "${KV_MAJOR_MINOR}" -ge "6.0" && [[ "${PV}" =~ "9999" ]] ; then
+	elif ver_test "${KV_MAJOR_MINOR}" "-ge" "6.0" && [[ "${PV}" =~ "9999" ]] ; then
 		sed -i -e "s|Reiserfs does not tolerate errors returned from the block device.||g" \
 			"Documentation/arch/powerpc/eeh-pci-error-recovery.rst" \
 			|| die
-	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.3" ; then
+	elif ver_test "${KV_MAJOR_MINOR}" "-ge" "5.3" ; then
 		sed -i -e "s|Reiserfs does not tolerate errors returned from the block device.||g" \
 			"Documentation/powerpc/eeh-pci-error-recovery.rst" \
 			|| die
@@ -2716,25 +2717,25 @@ einfo "Canceling ReiserFS"
 			"Documentation/powerpc/eeh-pci-error-recovery.txt" \
 			|| die
 	fi
-	if ver_test "${KV_MAJOR_MINOR}" -ge "4.20" ; then
+	if ver_test "${KV_MAJOR_MINOR}" "-ge" "4.20" ; then
 		sed -i -e "s|, JFS, and ReiserFS| and JFS|g" \
 			"Documentation/admin-guide/ext4.rst" \
 			|| die
-	elif ver_test "${KV_MAJOR_MINOR}" -eq "4.19" ; then
+	elif ver_test "${KV_MAJOR_MINOR}" "-eq" "4.19" ; then
 		sed -i -e "s|, JFS, and ReiserFS| and JFS|g" \
 			"Documentation/filesystems/ext4/ext4.rst" \
 			|| die
-	elif ver_test "${KV_MAJOR_MINOR}" -le "4.18" ; then
+	elif ver_test "${KV_MAJOR_MINOR}" "-le" "4.18" ; then
 		sed -i -e "s|, JFS, and ReiserFS| and JFS|g" \
 			"Documentation/filesystems/ext4.txt" \
 			|| die
 	fi
-	if ver_test "${KV_MAJOR_MINOR}" -ge "5.5" ; then
+	if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.5" ; then
 		sed -i -e "s|linux/reiserfs_fs.h|Reserved|g" \
 			"Documentation/userspace-api/ioctl/ioctl-number.rst" \
 			|| die
-	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.3" \
-		&& ver_test "${KV_MAJOR_MINOR}" -le "5.4" ; then
+	elif ver_test "${KV_MAJOR_MINOR}" "-ge" "5.3" \
+		&& ver_test "${KV_MAJOR_MINOR}" "-le" "5.4" ; then
 		sed -i -e "s|linux/reiserfs_fs.h|Reserved|g" \
 			"Documentation/ioctl/ioctl-number.rst" \
 			|| die
@@ -2767,15 +2768,15 @@ einfo "Canceling Reiser4"
 		"scripts/ver_linux" || die
 	sed -i -e "/The Reiser4/,/kernel\./d" \
 		"Documentation/process/3.Early-stage.rst" || die
-	if ver_test "${KV_MAJOR_MINOR}" -ge "5.0" ; then
+	if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.0" ; then
 		sed -i -e "/Il filesystem Reiser4/,/kernel./d" \
 			"Documentation/translations/it_IT/process/3.Early-stage.rst" || die
 	fi
-	if ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
+	if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.15" ; then
 		sed -i -e "/Reiser4文/,/Reiser4置/d" \
 			"Documentation/translations/zh_TW/process/3.Early-stage.rst" || die
 	fi
-	if ver_test "${KV_MAJOR_MINOR}" -ge "5.2" ; then
+	if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.2" ; then
 		sed -i -e "/Reiser4文/,/Reiser4置/d" \
 			"Documentation/translations/zh_CN/process/3.Early-stage.rst" || die
 	fi
@@ -2791,7 +2792,7 @@ ot-kernel_src_prepare() {
 
 	cd "${BUILD_DIR}" || die
 
-	if has tresor_sysfs ${IUSE_EFFECTIVE} ; then
+	if has "tresor_sysfs" ${IUSE_EFFECTIVE} ; then
 		if use tresor_sysfs ; then
 			cat "${EDISTDIR}/tresor_sysfs.c" > "tresor_sysfs.c"
 		fi
@@ -2829,7 +2830,7 @@ einfo "Copying disable_debug to ${BUILD_DIR}"
 		"drivers/gpu/drm/Kconfig" \
 		|| die
 
-	if ver_test "${KV_MAJOR_MINOR}" -ge "5.7" \
+	if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.7" \
 		&& [[ "${IUSE_EFFECTIVE}" =~ "exfat" ]] \
 		&& ! use exfat ; then
 		ot-kernel_rm_exfat
@@ -2846,23 +2847,23 @@ einfo "Copying disable_debug to ${BUILD_DIR}"
 	#	cp -a "/lib/firmware/regulatory.db.p7s" "${BUILD_DIR}/"
 	#fi
 
-	if ver_test "${KV_MAJOR_MINOR}" -ge "5.18" ; then
+	if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.18" ; then
 		eapply "${FILESDIR}/ep800/add-ep800-to-build-for-5.18.patch"
 	else
 		eapply "${FILESDIR}/ep800/add-ep800-to-build.patch"
 	fi
 
-	if ver_test "${KV_MAJOR_MINOR}" -ge "6.4" ; then
+	if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.4" ; then
 		eapply "${FILESDIR}/gcc-pgo-flags-5.6.patch"
-	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
+	elif ver_test "${KV_MAJOR_MINOR}" "-ge" "5.15" ; then
 		eapply "${FILESDIR}/gcc-pgo-flags-5.15.patch"
-	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
+	elif ver_test "${KV_MAJOR_MINOR}" "-ge" "5.10" ; then
 		eapply "${FILESDIR}/gcc-pgo-flags-5.4.patch"
-	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
+	elif ver_test "${KV_MAJOR_MINOR}" "-ge" "5.4" ; then
 		eapply "${FILESDIR}/gcc-pgo-flags-5.4.patch"
-	elif ver_test "${KV_MAJOR_MINOR}" -ge "4.19" ; then
+	elif ver_test "${KV_MAJOR_MINOR}" "-ge" "4.19" ; then
 		eapply "${FILESDIR}/gcc-pgo-flags-4.19.patch"
-	elif ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
+	elif ver_test "${KV_MAJOR_MINOR}" "-ge" "4.14" ; then
 		eapply "${FILESDIR}/gcc-pgo-flags-4.14.patch"
 	fi
 
@@ -2933,9 +2934,9 @@ eerror
 		local arch="${OT_KERNEL_ARCH}" # ARCH in raw form.
 		local cpu_sched="${OT_KERNEL_CPU_SCHED}"
 		local cpu_sched_name="cfs"
-		ver_test "${KV_MAJOR_MINOR}" -ge "6.6" && cpu_sched_name="eevdf"
+		ver_test "${KV_MAJOR_MINOR}" "-ge" "6.6" && cpu_sched_name="eevdf"
 		[[ -z "${cpu_sched}" ]] && cpu_sched="${cpu_sched_name}"
-		ot-kernel_use rt && cpu_sched="${cpu_sched_name}"
+		ot-kernel_use "rt" && cpu_sched="${cpu_sched_name}"
 		BUILD_DIR="${WORKDIR}/linux-${UPSTREAM_PV}-${extraversion}"
 		cd "${BUILD_DIR}" || die
 einfo
@@ -2955,7 +2956,7 @@ einfo "Setting the extra version for the -${extraversion} build"
 			sed -i -e "s|EXTRAVERSION =\$|EXTRAVERSION = -${extraversion}|g" \
 				"Makefile" || die
 		fi
-		if ! use debug && ! ot-kernel_use debug ; then
+		if ! use debug && ! ot-kernel_use "debug" ; then
 			chmod +x "disable_debug" || die
 		fi
 		if [[ -n "${OT_KERNEL_PRIVATE_KEY}" ]] ; then
@@ -3742,7 +3743,7 @@ eerror
 		export OT_KERNEL_USE="${PKGUSE}"
 	fi
 
-	if [[ -z "${OT_KERNEL_BUILD}" ]] && ( use build || ot-kernel_use build ) ; then
+	if [[ -z "${OT_KERNEL_BUILD}" ]] && ( use build || ot-kernel_use "build" ) ; then
 		export OT_KERNEL_BUILD=1
 	fi
 
@@ -3859,9 +3860,9 @@ _ot-kernel_set_kconfig_get_init_tcp_congestion_controls() {
 	# Optimize for security.
 	# BBRv1 is not DoS resistant because ECN is ineffective.
 	# Cubic is the fallback if ECN is not supported by router.
-		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
+		if has "bbrv3" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv3" ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr3 cubic"}
-		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
+		elif has "bbrv2" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv2" ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2 cubic"}
 		else
 # TODO:  Update BBRv2, BBRv3 patches
@@ -3881,12 +3882,12 @@ _ot-kernel_set_kconfig_get_init_tcp_congestion_controls() {
 		   "${work_profile}" == "hpc-green" \
 	]] ; then
 	# Optimize for power savings.
-		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
+		if has "bbrv3" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv3" ; then
 	# bbrv3 Energy savings is unknown.
 	# Deterministic power savings allowed only.
 eerror "Remove bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}.  Use bbr or dctcp instead."
 			die
-		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
+		elif has "bbrv2" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv3" ; then
 	# Patching may cause an unintended consequence (e.g. increased energy use).
 eerror "Remove bbrv2 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}.  Use bbr or dctcp instead"
 			die
@@ -3900,9 +3901,9 @@ eerror "Remove bbrv2 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profil
 	# Optimize for maximum capacity and security.
 	# BBRv2 is resistant to DoS if ECN supported by router.
 	# Cubic is fallback if ECN is not supported by router.
-		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
+		if has "bbrv3" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv3" ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr3 cubic"}
-		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
+		elif has "bbrv2" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv2" ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2 cubic"}
 		else
 eerror "Enable bbrv2 or bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile} for DoS mitigation."
@@ -3914,9 +3915,9 @@ eerror "Enable bbrv2 or bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${wo
 	# Optimize for security.
 	# BBRv2 is resistant to DoS if ECN supported by router.
 	# Cubic is fallback if ECN is not supported by router.
-		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
+		if has "bbrv3" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv3" ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr3 cubic"}
-		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
+		elif has "bbrv2" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv2" ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2 cubic"}
 		else
 eerror "Enable bbrv2 or bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile} for DoS mitigation."
@@ -3928,9 +3929,9 @@ eerror "Enable bbrv2 or bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${wo
 	# Optimize for low latency.  Vegas for production mode.
 	# Optimize for high throughput. BBRv2 for maintenace mode and fallback if under DoS.
 	# If router doesn't support ECN, fallback to Cubic for DoS mitigation.
-		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
+		if has "bbrv3" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv3" ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"vegas bbr3 cubic"}
-		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
+		elif has "bbrv2" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv2" ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"vegas bbr2 cubic"}
 		else
 eerror "Enable bbrv2 or bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile} for fallback DoS mitigation."
@@ -3952,9 +3953,9 @@ eerror "Enable bbrv2 or bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${wo
 		|| "${work_profile}" == "sdr" \
 	]] ; then
 	# Optimize for low jitter.
-		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
+		if has "bbrv3" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv3" ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr3"}
-		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
+		elif has "bbrv2" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv2" ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2"}
 		else
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr"}
@@ -3967,10 +3968,10 @@ eerror "Enable bbrv2 or bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${wo
 		|| "${work_profile}" == "video-tablet" \
 	]] ; then
 	# Optimize for power savings.
-		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
+		if has "bbrv3" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv3" ; then
 eerror "Remove bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}.  Use bbr instead."
 			die
-		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
+		elif has "bbrv2" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv2" ; then
 eerror "Remove bbrv2 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}.  Use bbr instead"
 			die
 		else
@@ -3988,10 +3989,10 @@ eerror "Remove bbrv2 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profil
 		|| "${work_profile}" == "touchscreen-laptop" \
 	]] ; then
 	# Optimize for power savings.
-		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
+		if has "bbrv3" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv3" ; then
 eerror "Remove bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}.  Use bbr instead."
 			die
-		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
+		elif has "bbrv2" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv2" ; then
 eerror "Remove bbrv2 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}.  Use bbr instead."
 			die
 		else
@@ -3999,9 +4000,9 @@ eerror "Remove bbrv2 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profil
 		fi
 	else
 	# Optimize for capabilities.
-		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
+		if has "bbrv3" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv3" ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr3 htcp hybla lp vegas westwood"}
-		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
+		elif has "bbrv2" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv2" ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2 htcp hybla lp vegas westwood"}
 		else
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr htcp hybla lp vegas westwood"}
@@ -4078,8 +4079,8 @@ ot-kernel_set_kconfig_set_tcp_congestion_controls() {
 				alg_canonical="bbr"
 			fi
 			if [[ "${alg}" == "bbr2" ]] ; then
-				if has bbrv2 ${IUSE_EFFECTIVE} \
-					&& ! ot-kernel_use bbrv2 ; then
+				if has "bbrv2" ${IUSE_EFFECTIVE} \
+					&& ! ot-kernel_use "bbrv2" ; then
 					# Skip it if not patched.
 					continue
 				fi
@@ -4103,8 +4104,8 @@ einfo "Adding ${alg}"
 			picked_alg_canonical="bbr"
 		fi
 		if [[ "${picked_alg}" == "bbr2" ]] ; then
-			if has bbrv2 ${IUSE_EFFECTIVE} \
-				&& ! ot-kernel_use bbrv2 ; then
+			if has "bbrv2" ${IUSE_EFFECTIVE} \
+				&& ! ot-kernel_use "bbrv2" ; then
 				# Skip it if not patched.
 				return
 			fi
@@ -4366,7 +4367,7 @@ ot-kernel_set_kconfig_boot_args() {
 # Sets the kernel config for Control Flow Integrity (CFI) using the non-production patches
 ot-kernel_set_kconfig_cfi() {
 	local enable=${1:-1}
-	if (( ${enable} == 1 )) && has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi ; then
+	if (( ${enable} == 1 )) && has "cfi" ${IUSE_EFFECTIVE} && ot-kernel_use "cfi" ; then
 		if [[ "${arch}" == "arm64" ]] && (( ${llvm_slot} < 12 )) ; then
 eerror
 eerror "CFI requires LLVM >= 12 on arm64"
@@ -4397,7 +4398,7 @@ einfo "Disabling CFI support in the in the .config."
 # Sets the kernel config for Kernel Control Flow Integrity (KCFI)
 ot-kernel_set_kconfig_kcfi() {
 	local enable=${1:-1}
-	if (( ${enable} == 1 )) && has kcfi ${IUSE_EFFECTIVE} && use kcfi && _has_security_critical_type "kcfi" ; then
+	if (( ${enable} == 1 )) && has "kcfi" ${IUSE_EFFECTIVE} && use kcfi && _has_security_critical_type "kcfi" ; then
 		if [[ "${arch}" == "arm64" ]] && (( ${llvm_slot} < 15 )) ; then
 eerror
 eerror "CFI requires LLVM >= 15 on arm64"
@@ -4432,7 +4433,7 @@ einfo "Enabling KCFI support in the in the .config."
 		else
 			clang_slot=0
 		fi
-		if ot-kernel_use rust && ver_test "${KV_MAJOR_MINOR}" -ge "6.12" && tc-is-clang && (( ${clang_slot} >= 19 )) ; then
+		if ot-kernel_use "rust" && ver_test "${KV_MAJOR_MINOR}" "-ge" "6.12" && tc-is-clang && (( ${clang_slot} >= 19 )) ; then
 einfo "Enabling CFI support for Rust"
 			ot-kernel_y_configopt "CONFIG_CFI_ICALL_NORMALIZE_INTEGERS"
 		else
@@ -4610,7 +4611,7 @@ ewarn "Hibernation is going to be disabled."
 		ot-kernel_unset_configopt "CONFIG_HIBERNATION"
 
 ewarn "Enabling memory sanitation for faster clearing of sensitive data and keys"
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.9" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.9" ; then
 			if [[ $(test-flags-CC "-ftrivial-auto-var-init=zero") == "-ftrivial-auto-var-init=zero" ]] ; then
 				ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_PATTERN"
 				ot-kernel_y_configopt     "CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO"
@@ -4630,7 +4631,7 @@ ewarn "Enabling memory sanitation for faster clearing of sensitive data and keys
 				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_ZERO"
 				ot-kernel_y_configopt     "CONFIG_INIT_STACK_NONE"
 			fi
-		elif ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
+		elif ver_test "${KV_MAJOR_MINOR}" "-ge" "5.4" ; then
 			if [[ $(test-flags-CC "-ftrivial-auto-var-init=pattern") == "-ftrivial-auto-var-init=pattern" ]] ; then
 				ot-kernel_y_configopt     "CONFIG_CC_HAS_AUTO_VAR_INIT"
 				ot-kernel_y_configopt     "CONFIG_INIT_STACK_ALL"
@@ -4653,7 +4654,7 @@ ewarn "Enabling memory sanitation for faster clearing of sensitive data and keys
 # @DESCRIPTION:
 # Sets the kernel config using the compiler toolchain
 ot-kernel_set_kconfig_compiler_toolchain() {
-	if ot-kernel_use clang ; then
+	if ot-kernel_use "clang" ; then
 einfo "Using Clang ${llvm_slot}"
 		if ! ot-kernel_has_version "llvm-core/llvm:${llvm_slot}" ; then
 eerror "llvm-core/llvm:${llvm_slot} is missing"
@@ -4703,7 +4704,7 @@ ot-kernel_set_kconfig_compressors() {
 		for alg in ${mod_comp_algs[@]} ; do
 			ot-kernel_n_configopt "CONFIG_MODULE_COMPRESS_${alg}" # Reset
 		done
-		if ver_test "${KV_MAJOR_MINOR}" -le "5.10" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-le" "5.10" ; then
 			if [[ "${ot_kernel_modules_compressor^^}" == "ZSTD" ]] ; then
 eerror "ZSTD is not supported for ${KV_MAJOR_MINOR} in OT_KERNEL_MODULES_COMPRESSOR."
 				die
@@ -4734,7 +4735,7 @@ einfo "Using manual setting for compressed modules"
 		XZ
 		ZSTD
 	)
-	if ver_test "${KV_MAJOR_MINOR}" -lt "5.10" && [[ "${boot_decomp^^}" == "ZSTD" ]] ; then
+	if ver_test "${KV_MAJOR_MINOR}" "-lt" "5.10" && [[ "${boot_decomp^^}" == "ZSTD" ]] ; then
 eerror "ZSTD is only supported in 5.10+"
 		die
 	fi
@@ -4825,7 +4826,7 @@ einfo "Using the ${boot_decomp} boot decompressor settings"
 		ot-kernel_y_configopt "CONFIG_XZ_DEC_ARM"
 	fi
 
-	if [[ "${arch}" == "arm" ]] && ot-kernel_use cpu_flags_arm_thumb ; then
+	if [[ "${arch}" == "arm" ]] && ot-kernel_use "cpu_flags_arm_thumb" ; then
 		ot-kernel_y_configopt "CONFIG_XZ_DEC_ARMTHUMB"
 	fi
 
@@ -4870,7 +4871,7 @@ einfo "Using the ${boot_decomp} boot decompressor settings"
 # @DESCRIPTION:
 # Set muqss kernel config flags
 _ot-kernel_set_kconfig_muqss() {
-	if has muqss ${IUSE_EFFECTIVE} && ot-kernel_use muqss ; then
+	if has "muqss" ${IUSE_EFFECTIVE} && ot-kernel_use "muqss" ; then
 		:
 	else
 		return
@@ -5161,7 +5162,7 @@ einfo "You are using CPU_SYSTEM=auto which is not portable.  Portable users set 
 # @DESCRIPTION:
 # Set prjc kernel config flags
 _ot-kernel_set_kconfig_prjc() {
-	if has prjc ${IUSE_EFFECTIVE} && ot-kernel_use prjc ; then
+	if has "prjc" ${IUSE_EFFECTIVE} && ot-kernel_use "prjc" ; then
 		:
 	else
 		return
@@ -5200,7 +5201,7 @@ ewarn
 # Set bmq kernel config flags
 _ot-kernel_set_kconfig_bmq() {
 	if \
-		has bmq ${IUSE_EFFECTIVE} && ot-kernel_use bmq \
+		has "bmq" ${IUSE_EFFECTIVE} && ot-kernel_use "bmq" \
 			&& \
 		[[ "${cpu_sched}" == "bmq" ]] \
 	; then
@@ -5215,7 +5216,7 @@ einfo "Changed .config to use BMQ"
 # Set pds kernel config flags
 _ot-kernel_set_kconfig_pds() {
 	if \
-		has pds ${IUSE_EFFECTIVE} && ot-kernel_use pds \
+		has "pds" ${IUSE_EFFECTIVE} && ot-kernel_use "pds" \
 			&& \
 		[[ "${cpu_sched}" == "pds" ]] \
 	; then
@@ -5238,7 +5239,7 @@ _ot-kernel_set_kconfig_cfs() {
 	fi
 
 	local cpu_sched_name="CFS"
-	ver_test "${KV_MAJOR_MINOR}" -ge "6.6" && cpu_sched_name="EEVDF"
+	ver_test "${KV_MAJOR_MINOR}" "-ge" "6.6" && cpu_sched_name="EEVDF"
 
 	if [[ \
 		   "${cpu_sched}" == "cfs-throughput" \
@@ -5293,7 +5294,7 @@ ot-kernel_unset_all_cpu_freq_default_gov() {
 # Unbreak build for incompatible flags
 ot-kernel_set_kconfig_cpu_scheduler_post() {
 	local cpu_sched_name="cfs"
-	ver_test "${KV_MAJOR_MINOR}" -ge "6.6" && cpu_sched_name="eevdf"
+	ver_test "${KV_MAJOR_MINOR}" "-ge" "6.6" && cpu_sched_name="eevdf"
 
 	if [[ "${cpu_sched}" =~ "muqss" ]] ; then
 		if grep -q -E -e "^CONFIG_CPUSETS=y" "${path_config}" ; then
@@ -5508,7 +5509,7 @@ einfo "Enabled the ep800 driver"
 # @DESCRIPTION:
 # Sets the kernel config for the exFAT driver
 ot-kernel_set_kconfig_exfat() {
-	if has exfat ${IUSE_EFFECTIVE} && ot-kernel_use exfat ; then
+	if has "exfat" ${IUSE_EFFECTIVE} && ot-kernel_use "exfat" ; then
 		ot-kernel_y_configopt "CONFIG_EXFAT_FS"
 	else
 		ot-kernel_unset_configopt "CONFIG_EXFAT_FS"
@@ -5633,18 +5634,18 @@ einfo "Using ${hardening_level} hardening level"
 	fi
 
 	_y_retpoline() {
-		if ver_test "${KV_MAJOR_MINOR}" -ge "6.9" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.9" ; then
 			ot-kernel_y_configopt "CONFIG_MITIGATION_RETPOLINE"
-		elif ver_test "${KV_MAJOR_MINOR}" -ge "4.15" ; then
+		elif ver_test "${KV_MAJOR_MINOR}" "-ge" "4.15" ; then
 			ot-kernel_y_configopt "CONFIG_RETPOLINE"
 		else
 ewarn "Retpoline not supported for < 4.15"
 			return
 		fi
 		local ready=0
-		if tc-is-gcc && ver_test $(gcc-version) -ge "7.3" ; then
+		if tc-is-gcc && ver_test $(gcc-version) "-ge" "7.3" ; then
 			ready=1
-		elif tc-is-clang && ver_test $(clang-fullversion) -ge "5.0.2" ; then
+		elif tc-is-clang && ver_test $(clang-fullversion) "-ge" "5.0.2" ; then
 			ready=1
 		fi
 		if (( ${ready} == 0 )) ; then
@@ -5667,9 +5668,9 @@ eerror
 		local ready=0
 		local gcc_version=$(gcc-version)
 		local clang_version=$(clang-version)
-		if tc-is-gcc && ver_test "${gcc_version}" -ge "9" && ot-kernel_has_version ">=sys-devel/binutils-2.29" ; then
+		if tc-is-gcc && ver_test "${gcc_version}" "-ge" "9" && ot-kernel_has_version ">=sys-devel/binutils-2.29" ; then
 			ready=1
-		elif tc-is-clang && ver_test "${clang_version}" -ge "14" && ot-kernel_has_version ">=llvm-core/lld-${clang_version}" ; then
+		elif tc-is-clang && ver_test "${clang_version}" "-ge" "14" && ot-kernel_has_version ">=llvm-core/lld-${clang_version}" ; then
 			ready=1
 		fi
 		if (( ${ready} == 0 )) ; then
@@ -5687,7 +5688,7 @@ eerror "Actual Clang version:  ${clang_version}"
 eerror
 eerror "Tip:  Add/remove clang in OT_KERNEL_USE and in USE."
 eerror
-			if has cet ${IUSE_EFFECTIVE} && ot-kernel_use cet ; then
+			if has "cet" ${IUSE_EFFECTIVE} && ot-kernel_use "cet" ; then
 				die
 			else
 				:
@@ -5699,9 +5700,9 @@ eerror
 		local ready=0
 		local gcc_version=$(gcc-version)
 		local clang_version=$(clang-version)
-		if tc-is-gcc && ver_test "${gcc_version}" -ge "8" && ot-kernel_has_version ">=sys-devel/binutils-2.31" ; then
+		if tc-is-gcc && ver_test "${gcc_version}" "-ge" "8" && ot-kernel_has_version ">=sys-devel/binutils-2.31" ; then
 			ready=1
-		elif tc-is-clang && ver_test "${clang_version}" -ge "6" && ot-kernel_has_version ">=llvm-core/lld-6" ; then
+		elif tc-is-clang && ver_test "${clang_version}" "-ge" "6" && ot-kernel_has_version ">=llvm-core/lld-6" ; then
 			ready=1
 		fi
 		if (( ${ready} == 0 )) ; then
@@ -5719,7 +5720,7 @@ eerror "Actual Clang version:  ${clang_version}"
 eerror
 eerror "Tip:  Add/remove clang in OT_KERNEL_USE and in USE."
 eerror
-			if has cet ${IUSE_EFFECTIVE} && ot-kernel_use cet ; then
+			if has "cet" ${IUSE_EFFECTIVE} && ot-kernel_use "cet" ; then
 				die
 			else
 				:
@@ -5744,7 +5745,7 @@ eerror
 
 		ot-kernel_unset_configopt "CONFIG_GCC_PLUGINS"
 
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.15" ; then
 			ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_PATTERN"
 			ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STACKLEAK"
@@ -5754,7 +5755,7 @@ eerror
 			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
 			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_ZERO"
 			ot-kernel_y_configopt     "CONFIG_INIT_STACK_NONE"
-		elif ver_test "${KV_MAJOR_MINOR}" -ge "5.9" ; then
+		elif ver_test "${KV_MAJOR_MINOR}" "-ge" "5.9" ; then
 			ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_PATTERN"
 			ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STACKLEAK"
@@ -5764,7 +5765,7 @@ eerror
 			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
 			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_ZERO"
 			ot-kernel_y_configopt     "CONFIG_INIT_STACK_NONE"
-		elif ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
+		elif ver_test "${KV_MAJOR_MINOR}" "-ge" "5.4" ; then
 			ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT"
 			ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK"
@@ -5775,7 +5776,7 @@ eerror
 			ot-kernel_y_configopt     "CONFIG_INIT_STACK_NONE"
 		fi
 
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.19" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.19" ; then
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_RANDSTRUCT"
 			ot-kernel_y_configopt "CONFIG_RANDSTRUCT_NONE"
 			ot-kernel_unset_configopt "CONFIG_RANDSTRUCT"
@@ -5795,7 +5796,7 @@ eerror
 		elif [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
 			ot-kernel_unset_configopt "CONFIG_RANDOMIZE_MEMORY"
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "6.9" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.9" ; then
 			ot-kernel_unset_configopt "CONFIG_MITIGATION_RETPOLINE"
 		else
 			ot-kernel_unset_configopt "CONFIG_RETPOLINE"
@@ -5809,7 +5810,7 @@ eerror
 		ot-kernel_unset_configopt "CONFIG_CC_HAS_ZERO_CALL_USED_REGS"
 		ot-kernel_unset_configopt "CONFIG_ZERO_CALL_USED_REGS"
 		ot-kernel_unset_configopt "CONFIG_SCHED_CORE"
-		if ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "4.14" ; then
 			if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 				ot-kernel_unset_configopt "CONFIG_GDS_FORCE_MITIGATION"
 			fi
@@ -5861,7 +5862,7 @@ eerror
 				fi
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "4.15" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "4.15" ; then
 			if [[ "${arch}" == "x86" ]] && grep -q -E -e "^CONFIG_X86_PAE=y" "${path_config}" ; then
 				ot-kernel_unset_configopt "CONFIG_PAGE_TABLE_ISOLATION"
 			fi
@@ -5869,14 +5870,14 @@ eerror
 				ot-kernel_unset_configopt "CONFIG_PAGE_TABLE_ISOLATION"
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.8" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.8" ; then
 			if [[ "${arch}" == "amd64" ]] ; then
 				ot-kernel_unset_configopt "CONFIG_ARM64_BTI_KERNEL"
 				ot-kernel_unset_configopt "CONFIG_ARM64_BTI"
 				ot-kernel_unset_configopt "CONFIG_ARM64_PTR_AUTH"
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.10" ; then
 			ot-kernel_unset_configopt "CONFIG_CPU_MITIGATIONS"
 			if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 				ot-kernel_unset_configopt "CONFIG_MITIGATION_RFDS"
@@ -5893,10 +5894,10 @@ eerror
 			ot-kernel_unset_configopt "CONFIG_CPU_IBPB_ENTRY"
 			ot-kernel_unset_configopt "CONFIG_CPU_IBRS_ENTRY"
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.14" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.14" ; then
 			ot-kernel_set_kconfig_l1tf_mitigations "0"
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.15" ; then
 			if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 				ot-kernel_unset_configopt "CONFIG_MITIGATION_SPECTRE_BHI"
 			fi
@@ -5910,24 +5911,24 @@ eerror
 				ot-kernel_set_kconfig_kernel_cmdline "spectre_bhi=off"
 				ot-kernel_set_kconfig_kernel_cmdline "spec_store_bypass_disable=off" # Matches mitigations=off list
 			fi
-		elif ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
+		elif ver_test "${KV_MAJOR_MINOR}" "-ge" "4.14" ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "retbleed=off"
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.17" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.17" ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				ot-kernel_unset_configopt "CONFIG_CC_HAS_SLS"
 				ot-kernel_unset_configopt "CONFIG_SLS"
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.18" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.18" ; then
 			ot-kernel_unset_configopt "CONFIG_SPECULATION_MITIGATIONS"
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				ot-kernel_unset_configopt "CONFIG_X86_KERNEL_IBT"
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "6.1" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.1" ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "reg_file_data_sampling=off"
 				ot-kernel_unset_configopt "CONFIG_MITIGATION_RFDS"
@@ -5941,25 +5942,25 @@ eerror
 				fi
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "6.2" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.2" ; then
 			ot-kernel_unset_configopt "CONFIG_CALL_DEPTH_TRACKING"
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "6.4" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.4" ; then
 			if [[ "${arch}" == "x86_64" ]] ; then
 				ot-kernel_y_configopt "CONFIG_ADDRESS_MASKING" # SLAM
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "6.5" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.5" ; then
 			ot-kernel_unset_configopt "CONFIG_CPU_SRSO"
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "6.6" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.6" ; then
 			if [[ "${arch}" == "x86_64" ]] ; then
 				ot-kernel_unset_configopt "CONFIG_X86_CET"
 				ot-kernel_unset_configopt "CONFIG_X86_KERNEL_IBT"
 				ot-kernel_unset_configopt "CONFIG_X86_USER_SHADOW_STACK"
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "6.8" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.8" ; then
 			if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 				ot-kernel_unset_configopt "CONFIG_MITIGATION_SPECTRE_BHI"
 			fi
@@ -5967,7 +5968,7 @@ eerror
 				ot-kernel_set_kconfig_kernel_cmdline "spectre_bhi=off"
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "6.9" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.9" ; then
 			ot-kernel_unset_configopt "CONFIG_MITIGATION_RETPOLINE"
 			if [[ "${arch}" == "x86_64" ]] ; then
 				ot-kernel_unset_configopt "CONFIG_CC_HAS_SLS"
@@ -5999,18 +6000,18 @@ eerror
 		if \
 			tc-is-gcc \
 				&& \
-			test -e $(${CHOST}-gcc-${gcc_slot} -print-file-name=plugin)/include/plugin-version.h \
+			test -e $("${CHOST}-gcc-${gcc_slot}" -print-file-name=plugin)"/include/plugin-version.h" \
 				&& \
 			grep -q -E -e "^CONFIG_HAVE_GCC_PLUGINS=y" "${path_config}" \
 				&& \
-			! ot-kernel_use rust \
+			! ot-kernel_use "rust" \
 		; then
 			ot-kernel_y_configopt "CONFIG_GCC_PLUGINS"
 		else
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGINS"
 		fi
 
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.15" ; then
 			if [[ $(test-flags-CC "-ftrivial-auto-var-init=zero") == "-ftrivial-auto-var-init=zero" ]] ; then
 				ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_PATTERN"
 				ot-kernel_y_configopt     "CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO"
@@ -6028,7 +6029,7 @@ eerror
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
-		elif ver_test "${KV_MAJOR_MINOR}" -ge "5.9" ; then
+		elif ver_test "${KV_MAJOR_MINOR}" "-ge" "5.9" ; then
 			ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_PATTERN"
 			ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STACKLEAK"
@@ -6038,7 +6039,7 @@ eerror
 			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
 			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_ZERO"
 			ot-kernel_y_configopt     "CONFIG_INIT_STACK_NONE"
-		elif ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
+		elif ver_test "${KV_MAJOR_MINOR}" "-ge" "5.4" ; then
 			ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
@@ -6047,7 +6048,7 @@ eerror
 			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL"
 			ot-kernel_y_configopt     "CONFIG_INIT_STACK_NONE"
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.19" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.19" ; then
 			# CONFIG_COMPILE_TEST is not default ON.
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_RANDSTRUCT"
 			ot-kernel_unset_configopt "CONFIG_RANDSTRUCT"
@@ -6083,7 +6084,7 @@ eerror
 			ot-kernel_unset_configopt "CONFIG_ZERO_CALL_USED_REGS"
 		fi
 		ot-kernel_unset_configopt "CONFIG_SCHED_CORE"
-		if ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "4.14" ; then
 			if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 	# GDS:  Rely on automagic
 				ot-kernel_unset_configopt "CONFIG_GDS_FORCE_MITIGATION"
@@ -6124,7 +6125,7 @@ eerror
 				fi
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "4.15" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "4.15" ; then
 			if [[ "${arch}" == "x86" ]] && grep -q -E -e "^CONFIG_X86_PAE=y" "${path_config}" ; then
 				ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
 			fi
@@ -6132,28 +6133,28 @@ eerror
 				ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.8" ; then
-			if [[ "${arch}" == "arm64" ]] && ot-kernel_use cpu_flags_arm_bti ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.8" ; then
+			if [[ "${arch}" == "arm64" ]] && ot-kernel_use "cpu_flags_arm_bti" ; then
 				ot-kernel_y_configopt "CONFIG_ARM64_VHE"
 				ot-kernel_y_configopt "CONFIG_ARM64_PTR_AUTH"
 				ot-kernel_y_configopt "CONFIG_ARM64_BTI_KERNEL"
 				ot-kernel_unset_configopt "CONFIG_GCOV_KERNEL"
 				ot-kernel_unset_configopt "CONFIG_FUNCTION_GRAPH_TRACER"
 				ot-kernel_y_configopt "CONFIG_ARM64_BTI"
-			elif [[ "${arch}" == "arm64" ]] && ot-kernel_use cpu_flags_arm_pac ; then
+			elif [[ "${arch}" == "arm64" ]] && ot-kernel_use "cpu_flags_arm_pac" ; then
 # TODO:  Make it a fatal errror based on /proc/cpuinfo or lscpu.
 ewarn "cpu_flags_arm_bti is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags_arm_bti and USE=cpu_flags_arm_bti."
 			fi
-			if [[ "${arch}" == "arm64" ]] && ot-kernel_use cpu_flags_arm_pac ; then
+			if [[ "${arch}" == "arm64" ]] && ot-kernel_use "cpu_flags_arm_pac" ; then
 				ot-kernel_unset_configopt "CONFIG_FUNCTION_GRAPH_TRACER"
 				ot-kernel_y_configopt "CONFIG_ARM64_VHE"
 				ot-kernel_y_configopt "CONFIG_ARM64_PTR_AUTH"
-			elif [[ "${arch}" == "arm64" ]] && ot-kernel_use cpu_flags_arm_pac ; then
+			elif [[ "${arch}" == "arm64" ]] && ot-kernel_use "cpu_flags_arm_pac" ; then
 # TODO:  Make it a fatal errror based on /proc/cpuinfo or lscpu.
 ewarn "cpu_flags_arm_pac is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags_arm_pac and USE=cpu_flags_arm_pac."
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.10" ; then
 			ot-kernel_y_configopt "CONFIG_CPU_MITIGATIONS"
 			if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 				ot-kernel_y_configopt "CONFIG_MITIGATION_RFDS"
@@ -6170,10 +6171,10 @@ ewarn "cpu_flags_arm_pac is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags
 			ot-kernel_y_configopt "CONFIG_CPU_IBPB_ENTRY"
 			ot-kernel_y_configopt "CONFIG_CPU_IBRS_ENTRY"
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.14" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.14" ; then
 			ot-kernel_set_kconfig_l1tf_mitigations "0.5"
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.15" ; then
 			if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 				ot-kernel_y_configopt "CONFIG_MITIGATION_SPECTRE_BHI"
 			fi
@@ -6187,12 +6188,12 @@ ewarn "cpu_flags_arm_pac is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags
 				ot-kernel_set_kconfig_kernel_cmdline "spectre_bhi=on"
 				ot-kernel_set_kconfig_kernel_cmdline "spec_store_bypass_disable=auto"
 			fi
-		elif ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
+		elif ver_test "${KV_MAJOR_MINOR}" "-ge" "4.14" ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "retbleed=auto"
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.17" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.17" ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				if [[ $(test-flags-CC "-mharden-sls=all") == "-mharden-sls=all" ]] ; then
 					ot-kernel_y_configopt "CONFIG_CC_HAS_SLS"
@@ -6203,13 +6204,13 @@ ewarn "cpu_flags_arm_pac is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags
 				fi
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.18" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.18" ; then
 			ot-kernel_y_configopt "CONFIG_SPECULATION_MITIGATIONS"
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				_y_cet_ibt
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "6.1" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.1" ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 					ot-kernel_set_kconfig_kernel_cmdline "reg_file_data_sampling=on"
@@ -6222,25 +6223,25 @@ ewarn "cpu_flags_arm_pac is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags
 				fi
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "6.2" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.2" ; then
 			ot-kernel_y_configopt "CONFIG_CALL_DEPTH_TRACKING"
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "6.4" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.4" ; then
 			if [[ "${arch}" == "x86_64" ]] ; then
 				ot-kernel_unset_configopt "CONFIG_ADDRESS_MASKING" # SLAM
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "6.5" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.5" ; then
 			ot-kernel_y_configopt "CONFIG_CPU_SRSO"
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "6.6" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.6" ; then
 			if [[ "${arch}" == "x86_64" ]] ; then
 				ot-kernel_unset_configopt "CONFIG_X86_CET"
 				_y_cet_ibt  # Forward-edge CFI
 				_y_cet_ss   # Backward-edge CFI
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "6.8" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.8" ; then
 			if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 				ot-kernel_y_configopt "CONFIG_MITIGATION_SPECTRE_BHI"
 			fi
@@ -6248,7 +6249,7 @@ ewarn "cpu_flags_arm_pac is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags
 				ot-kernel_set_kconfig_kernel_cmdline "spectre_bhi=on"
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "6.9" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.9" ; then
 			if [[ "${arch}" == "x86_64" ]] ; then
 				ot-kernel_y_configopt "CONFIG_MITIGATION_PAGE_TABLE_ISOLATION"
 				if [[ $(test-flags-CC "-mharden-sls=all") == "-mharden-sls=all" ]] ; then
@@ -6275,19 +6276,19 @@ ewarn "cpu_flags_arm_pac is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags
 	# CFI and SCS handled later
 
 	# Mitigate against ROP attack.
-		if has cet ${IUSE_EFFECTIVE} && ot-kernel_use cet ; then
+		if has "cet" ${IUSE_EFFECTIVE} && ot-kernel_use "cet" ; then
 			: # Hardware based
-		elif has cfi ${IUSE_EFFECTIVE} && [[ "${OT_KERNEL_SECURITY_CRITICAL}" == "1" ]] && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ (" "|^)"cfi"(" "|$) ]] ; then
+		elif has "cfi" ${IUSE_EFFECTIVE} && [[ "${OT_KERNEL_SECURITY_CRITICAL}" == "1" ]] && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ (" "|^)"cfi"(" "|$) ]] ; then
 			: # Software based
-		elif has kcfi ${IUSE_EFFECTIVE} && [[ "${OT_KERNEL_SECURITY_CRITICAL}" == "1" ]] && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ (" "|^)"kcfi"(" "|$) ]] ; then
+		elif has "kcfi" ${IUSE_EFFECTIVE} && [[ "${OT_KERNEL_SECURITY_CRITICAL}" == "1" ]] && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ (" "|^)"kcfi"(" "|$) ]] ; then
 			: # Software based
-		elif has cpu_flags_arm_bti ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_arm_bti ; then
+		elif has "cpu_flags_arm_bti" ${IUSE_EFFECTIVE} && ot-kernel_use "cpu_flags_arm_bti" ; then
 			: # JOP mitigation, but implies use of pac
 	# For reassurance, see https://github.com/torvalds/linux/blob/v6.10/arch/arm64/Makefile#L77
-		elif has cpu_flags_arm_pac ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_arm_pac ; then
+		elif has "cpu_flags_arm_pac" ${IUSE_EFFECTIVE} && ot-kernel_use "cpu_flags_arm_pac" ; then
 			: # ROP mitigation
 		else
-			if [[ "${arch}" == "x86_64" ]] && ( has cet ${IUSE_EFFECTIVE} || has cfi ${IUSE_EFFECTIVE} || has kcfi ${IUSE_EFFECTIVE} ) ; then
+			if [[ "${arch}" == "x86_64" ]] && ( has "cet" ${IUSE_EFFECTIVE} || has "cfi" ${IUSE_EFFECTIVE} || has "kcfi" ${IUSE_EFFECTIVE} ) ; then
 eerror
 eerror "Enable either one of the following CFI providers to mitigate against ROP attacks:"
 eerror
@@ -6298,7 +6299,7 @@ eerror
 eerror "KCFI+CET can be combined and are complementary."
 eerror
 				die
-			elif [[ "${arch}" == "arm64" ]] && ( has cpu_flags_arm_bti ${IUSE_EFFECTIVE} || has cpu_flags_arm_pac ${IUSE_EFFECTIVE} || has cfi ${IUSE_EFFECTIVE} || has kcfi ${IUSE_EFFECTIVE} ) ; then
+			elif [[ "${arch}" == "arm64" ]] && ( has "cpu_flags_arm_bti" ${IUSE_EFFECTIVE} || has "cpu_flags_arm_pac" ${IUSE_EFFECTIVE} || has "cfi" ${IUSE_EFFECTIVE} || has "kcfi" ${IUSE_EFFECTIVE} ) ; then
 eerror
 eerror "Enable either one of the following CFI providers to mitigate against ROP attacks:"
 eerror
@@ -6312,14 +6313,14 @@ eerror "BTI+PAC is recommended over individual BTI and PAC."
 eerror "KCFI+BTI+PAC can be combined and are complementary."
 eerror
 				die
-			elif [[ "${arch}" == "arm" ]] && has kcfi ${IUSE_EFFECTIVE} ; then
+			elif [[ "${arch}" == "arm" ]] && has "kcfi" ${IUSE_EFFECTIVE} ; then
 eerror
 eerror "Enable either one of the following CFI providers to mitigate against ROP attacks:"
 eerror
 eerror "KCFI:  OT_KERNEL_SECURITY_CRITICAL=1, OT_KERNEL_SECURITY_CRITICAL_TYPES=\"kcfi\" USE=\"kcfi\""
 eerror
 				die
-			elif [[ "${arch}" == "riscv" ]] && has kcfi ${IUSE_EFFECTIVE} ; then
+			elif [[ "${arch}" == "riscv" ]] && has "kcfi" ${IUSE_EFFECTIVE} ; then
 eerror
 eerror "Enable either one of the following CFI providers to mitigate against ROP attacks:"
 eerror
@@ -6349,14 +6350,14 @@ ewarn
 				&& \
 			grep -q -E -e "^CONFIG_HAVE_GCC_PLUGINS=y" "${path_config}" \
 				&& \
-			! ot-kernel_use rust \
+			! ot-kernel_use "rust" \
 		; then
 			ot-kernel_y_configopt "CONFIG_GCC_PLUGINS"
 		else
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGINS"
 		fi
 
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.15" ; then
 			if [[ $(test-flags-CC "-ftrivial-auto-var-init=zero") == "-ftrivial-auto-var-init=zero" ]] ; then
 				ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_PATTERN"
 				ot-kernel_y_configopt     "CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO"
@@ -6397,7 +6398,7 @@ ewarn
 				ot-kernel_y_configopt     "CONFIG_INIT_STACK_NONE"
 				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_ZERO"
 			fi
-		elif ver_test "${KV_MAJOR_MINOR}" -ge "5.9" ; then
+		elif ver_test "${KV_MAJOR_MINOR}" "-ge" "5.9" ; then
 			if [[ $(test-flags-CC "-ftrivial-auto-var-init=zero") == "-ftrivial-auto-var-init=zero" ]] ; then
 				ot-kernel_unset_configopt "CONFIG_CC_HAS_AUTO_VAR_INIT_PATTERN"
 				ot-kernel_y_configopt     "CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO"
@@ -6439,7 +6440,7 @@ ewarn
 				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_ZERO"
 				ot-kernel_y_configopt     "CONFIG_INIT_STACK_NONE"
 			fi
-		elif ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
+		elif ver_test "${KV_MAJOR_MINOR}" "-ge" "5.4" ; then
 			if [[ $(test-flags-CC "-ftrivial-auto-var-init=pattern") == "-ftrivial-auto-var-init=pattern" ]] ; then
 				ot-kernel_y_configopt     "CONFIG_CC_HAS_AUTO_VAR_INIT"
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK"
@@ -6467,7 +6468,7 @@ ewarn
 			fi
 		fi
 
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.19" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.19" ; then
 			# ot-kernel_y_configopt "CONFIG_COMPILE_TEST" # Disabled line for Rust support
 			if tc-is-gcc && grep -q -E -e "^CONFIG_GCC_PLUGINS=y" "${path_config}" ; then
 				ot-kernel_y_configopt "CONFIG_GCC_PLUGIN_RANDSTRUCT"
@@ -6475,7 +6476,7 @@ ewarn
 				ot-kernel_y_configopt "CONFIG_RANDSTRUCT"
 				ot-kernel_y_configopt "CONFIG_RANDSTRUCT_FULL"
 				ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_PERFORMANCE"
-			elif tc-is-clang && ver_test $(clang-major-version) -ge "16" ; then
+			elif tc-is-clang && ver_test $(clang-major-version) "-ge" "16" ; then
 				ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_NONE"
 				ot-kernel_y_configopt "CONFIG_RANDSTRUCT"
 				ot-kernel_y_configopt "CONFIG_RANDSTRUCT_FULL"
@@ -6541,19 +6542,19 @@ ewarn "(or \`epkginfo -x ${PN}::oiledmachine-overlay\`) for details."
 ewarn
 			if [[ "${HT}" =~ ("custom"|"manual") ]] ; then
 				:
-			elif ver_test "${KV_MAJOR_MINOR}" -ge "6.6" && [[ "${HT}" =~ ("2") ]] && [[ "${arch}" == "powerpc" ]] ; then
+			elif ver_test "${KV_MAJOR_MINOR}" "-ge" "6.6" && [[ "${HT}" =~ ("2") ]] && [[ "${arch}" == "powerpc" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "nosmt"
-			elif ver_test "${KV_MAJOR_MINOR}" -ge "6.6" && [[ "${HT}" =~ ("3") ]] && [[ "${arch}" == "powerpc" ]] ; then
+			elif ver_test "${KV_MAJOR_MINOR}" "-ge" "6.6" && [[ "${HT}" =~ ("3") ]] && [[ "${arch}" == "powerpc" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "nosmt=force"
-			elif ver_test "${KV_MAJOR_MINOR}" -ge "6.5" && [[ "${HT}" =~ ("2"|"3") ]] && [[ "${arch}" == "mips" ]] ; then
+			elif ver_test "${KV_MAJOR_MINOR}" "-ge" "6.5" && [[ "${HT}" =~ ("2"|"3") ]] && [[ "${arch}" == "mips" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "nosmt"
-			elif ver_test "${KV_MAJOR_MINOR}" -ge "4.10" && [[ "${HT}" =~ ("2"|"3") ]] && [[ "${arch}" == "s390" ]] ; then
+			elif ver_test "${KV_MAJOR_MINOR}" "-ge" "4.10" && [[ "${HT}" =~ ("2"|"3") ]] && [[ "${arch}" == "s390" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "nosmt"
-			elif ver_test "${KV_MAJOR_MINOR}" -ge "4.14" && [[ "${HT}" =~ ("3") ]] && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+			elif ver_test "${KV_MAJOR_MINOR}" "-ge" "4.14" && [[ "${HT}" =~ ("3") ]] && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "nosmt=force"
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "4.14" ; then
 			if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 				ot-kernel_y_configopt "CONFIG_GDS_FORCE_MITIGATION"
 			fi
@@ -6592,7 +6593,7 @@ ewarn
 				fi
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "4.15" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "4.15" ; then
 			if [[ "${arch}" == "x86" ]] && grep -q -E -e "^CONFIG_X86_PAE=y" "${path_config}" ; then
 				ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
 			fi
@@ -6600,28 +6601,28 @@ ewarn
 				ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.8" ; then
-			if [[ "${arch}" == "arm64" ]] && ot-kernel_use cpu_flags_arm_bti ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.8" ; then
+			if [[ "${arch}" == "arm64" ]] && ot-kernel_use "cpu_flags_arm_bti" ; then
 				ot-kernel_y_configopt "CONFIG_ARM64_VHE"
 				ot-kernel_y_configopt "CONFIG_ARM64_PTR_AUTH"
 				ot-kernel_y_configopt "CONFIG_ARM64_BTI_KERNEL"
 				ot-kernel_unset_configopt "CONFIG_GCOV_KERNEL"
 				ot-kernel_unset_configopt "CONFIG_FUNCTION_GRAPH_TRACER"
 				ot-kernel_y_configopt "CONFIG_ARM64_BTI"
-			elif [[ "${arch}" == "arm64" ]] && ot-kernel_use cpu_flags_arm_pac ; then
+			elif [[ "${arch}" == "arm64" ]] && ot-kernel_use "cpu_flags_arm_pac" ; then
 # TODO:  Make it a fatal errror based on /proc/cpuinfo or lscpu.
 ewarn "cpu_flags_arm_bti is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags_arm_bti and USE=cpu_flags_arm_bti."
 			fi
-			if [[ "${arch}" == "arm64" ]] && ot-kernel_use cpu_flags_arm_bti ; then
+			if [[ "${arch}" == "arm64" ]] && ot-kernel_use "cpu_flags_arm_bti" ; then
 				ot-kernel_unset_configopt "CONFIG_FUNCTION_GRAPH_TRACER"
 				ot-kernel_y_configopt "CONFIG_ARM64_VHE"
 				ot-kernel_y_configopt "CONFIG_ARM64_PTR_AUTH"
-			elif [[ "${arch}" == "arm64" ]] && ot-kernel_use cpu_flags_arm_pac ; then
+			elif [[ "${arch}" == "arm64" ]] && ot-kernel_use "cpu_flags_arm_pac" ; then
 # TODO:  Make it a fatal errror based on /proc/cpuinfo or lscpu.
 ewarn "cpu_flags_arm_pac is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags_arm_pac and USE=cpu_flags_arm_pac."
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.10" ; then
 			ot-kernel_y_configopt "CONFIG_CPU_MITIGATIONS"
 			if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 				ot-kernel_y_configopt "CONFIG_MITIGATION_RFDS"
@@ -6657,10 +6658,10 @@ eerror
 				ot-kernel_y_configopt "CONFIG_CPU_UNRET_ENTRY"
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.14" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.14" ; then
 			ot-kernel_set_kconfig_l1tf_mitigations "1"
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.15" ; then
 			ot-kernel_set_kconfig_kernel_cmdline "l1d_flush=on"
 			if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 				ot-kernel_y_configopt "CONFIG_MITIGATION_SPECTRE_BHI"
@@ -6675,12 +6676,12 @@ eerror
 				ot-kernel_set_kconfig_kernel_cmdline "spectre_bhi=on"
 				ot-kernel_set_kconfig_kernel_cmdline "spec_store_bypass_disable=auto"
 			fi
-		elif ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
+		elif ver_test "${KV_MAJOR_MINOR}" "-ge" "4.14" ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "retbleed=auto"
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.17" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.17" ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				if [[ $(test-flags-CC "-mharden-sls=all") == "-mharden-sls=all" ]] ; then
 					ot-kernel_y_configopt "CONFIG_CC_HAS_SLS"
@@ -6691,13 +6692,13 @@ eerror
 				fi
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.18" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.18" ; then
 			ot-kernel_y_configopt "CONFIG_SPECULATION_MITIGATIONS"
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				_y_cet_ibt
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "6.1" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.1" ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 					ot-kernel_set_kconfig_kernel_cmdline "reg_file_data_sampling=on"
@@ -6710,29 +6711,29 @@ eerror
 				fi
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "6.2" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.2" ; then
 			ot-kernel_y_configopt "CONFIG_CALL_DEPTH_TRACKING"
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "6.4" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.4" ; then
 			if [[ "${arch}" == "x86_64" ]] ; then
 				ot-kernel_unset_configopt "CONFIG_ADDRESS_MASKING" # SLAM
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "6.5" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.5" ; then
 			if [[ "${arch}" == "x86_64" ]] && grep -q -E -e "^CONFIG_RETHUNK=y" "${path_config}" ; then
 				if [[ $(ot-kernel_get_cpu_vendor) =~ "amd" ]] ; then
 					ot-kernel_y_configopt "CONFIG_CPU_SRSO"
 				fi
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "6.6" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.6" ; then
 			if [[ "${arch}" == "x86_64" ]] ; then
 				ot-kernel_unset_configopt "CONFIG_X86_CET"
 				_y_cet_ibt  # Forward-edge CFI
 				_y_cet_ss   # Backward-edge CFI
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "6.8" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.8" ; then
 			if [[ $(ot-kernel_get_cpu_vendor) =~ "intel" ]] ; then
 				ot-kernel_y_configopt "CONFIG_MITIGATION_SPECTRE_BHI"
 			fi
@@ -6740,7 +6741,7 @@ eerror
 				ot-kernel_set_kconfig_kernel_cmdline "spectre_bhi=on"
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "6.9" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.9" ; then
 			if [[ "${arch}" == "x86_64" ]] ; then
 				ot-kernel_y_configopt "CONFIG_MITIGATION_PAGE_TABLE_ISOLATION"
 				if [[ $(test-flags-CC "-mharden-sls=all") == "-mharden-sls=all" ]] ; then
@@ -6766,7 +6767,7 @@ eerror
 	# See https://en.wikipedia.org/wiki/Kernel_same-page_merging#Security_risks
 		ot-kernel_unset_configopt "CONFIG_KSM"
 		ot-kernel_unset_configopt "CONFIG_UKSM"
-		if has uksm ${IUSE_EFFECTIVE} && ot-kernel_use uksm ; then
+		if has "uksm" ${IUSE_EFFECTIVE} && ot-kernel_use "uksm" ; then
 # This disables patching with uksm or unintended consequences of patching with"
 # it.
 eerror
@@ -7009,7 +7010,7 @@ einfo "Detected -mtune=generic"
 # @DESCRIPTION:
 # Sets the kernel config for the init systems
 ot-kernel_set_kconfig_init_systems() {
-	if has genpatches ${IUSE_EFFECTIVE} && ot-kernel_use genpatches ; then
+	if has "genpatches" ${IUSE_EFFECTIVE} && ot-kernel_use "genpatches" ; then
 		ot-kernel_unset_configopt "CONFIG_GENTOO_PRINT_FIRMWARE_INFO" # For debug only not production.
 		if ot-kernel_has_version "sys-apps/openrc" ; then
 			ot-kernel_y_configopt "CONFIG_GENTOO_LINUX_INIT_SCRIPT"
@@ -7430,7 +7431,7 @@ eerror
 # @DESCRIPTION:
 # Sets the kernel config for Link Time Optimization (LTO)
 ot-kernel_set_kconfig_lto() {
-	if has lto ${IUSE_EFFECTIVE} && ot-kernel_use lto ; then
+	if has "lto" ${IUSE_EFFECTIVE} && ot-kernel_use "lto" ; then
 		if (( ${llvm_slot} < 11 )) ; then
 			if [[ ! -e "/usr/lib/llvm/${slot}/bin/clang" ]] ; then
 				ot-kernel_show_llvm_requirement 11 "Missing clang"
@@ -7673,8 +7674,8 @@ einfo "Modules support disabled"
 # @DESCRIPTION:
 # Sets the kernel config for Multi-Gen LRU
 ot-kernel_set_kconfig_multigen_lru() {
-	if ( has multigen_lru ${IUSE_EFFECTIVE} && ot-kernel_use multigen_lru ) \
-		|| ( has zen-multigen_lru ${IUSE_EFFECTIVE} && ot-kernel_use zen-multigen_lru ) ; then
+	if ( has "multigen_lru" ${IUSE_EFFECTIVE} && ot-kernel_use "multigen_lru" ) \
+		|| ( has "zen-multigen_lru" ${IUSE_EFFECTIVE} && ot-kernel_use "zen-multigen_lru" ) ; then
 einfo "Changed .config to use Multi-Gen LRU"
 		ot-kernel_y_configopt "CONFIG_LRU_GEN"
 		ot-kernel_y_configopt "CONFIG_LRU_GEN_ENABLED"
@@ -8354,10 +8355,13 @@ _ot-kernel_set_kconfig_pgo_clang() {
 	local pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/pgophase"
 	local profraw_dpath="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/vmlinux.profraw"
 	local profdata_dpath="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/vmlinux.profdata"
-	if has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo ; then
+	if has "clang" ${IUSE_EFFECTIVE} && ot-kernel_use "clang" && ot-kernel_use "pgo" ; then
 		(( ${llvm_slot} < 13 )) && die "PGO requires LLVM >= 13"
-		local clang_pv=$(clang-${llvm_slot} --version | head -n 1 | cut -f 3 -d " ")
-		local clang_pv_major=$(echo "${clang_pv}" | cut -f 1 -d ".")
+		local clang_pv=$("clang-${llvm_slot}" --version \
+			| head -n 1 \
+			| cut -f 3 -d " ")
+		local clang_pv_major=$(echo "${clang_pv}" \
+			| cut -f 1 -d ".")
 		#ot-kernel_y_configopt "CONFIG_PGO_CLANG_LLVM_SELECT"
 		ot-kernel_n_configopt "CONFIG_PROFRAW_V8" # Reset
 		ot-kernel_n_configopt "CONFIG_PROFRAW_V7_LLVM14"
@@ -8555,7 +8559,7 @@ _ot-kernel_set_kconfig_pgo_gcc() {
 		local compiler_pv="$(gcc-version)" # major.minor
 		local raw_pv=$(best_version "=sys-devel/gcc-${compile_major_pv}*" \
 			| sed -e "s|sys-devel/gcc-||g")
-		local pgo_slot=$(ver_cut 1-2 "${compiler_pv}") # For stable ABI.
+		local pgo_slot=$(ver_cut "1-2" "${compiler_pv}") # For stable ABI.
 		if [[ "${raw_pv}" =~ "9999" ]] ; then
 			# Live unstable ABI.
 			local build_timestamp=$(_ot-kernel_get_build_time)
@@ -8579,7 +8583,7 @@ einfo "Detected compiler mismatch.  Restarting at PGI."
 		ot-kernel_y_configopt "CONFIG_DEBUG_FS"
 		ot-kernel_y_configopt "CONFIG_GCOV_KERNEL"
 		ot-kernel_y_configopt "CONFIG_GCOV_PROFILE_ALL"
-		if ver_test "${KV_MAJOR_MINOR}" -le "4.17" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-le" "4.17" ; then
 			ot-kernel_y_configopt "CONFIG_GCOV_FORMAT_AUTODETECT"
 		fi
 		ot-kernel_unset_configopt "CONFIG_COMPILE_TEST"
@@ -8596,7 +8600,7 @@ einfo "Detected compiler mismatch.  Restarting at PGI."
 		local compiler_pv="$(gcc-version)" # major.minor
 		local raw_pv=$(best_version "=sys-devel/gcc-${compile_major_pv}*" \
 			| sed -e "s|sys-devel/gcc-||g")
-		local pgo_slot=$(ver_cut 1-2 "${compiler_pv}") # For stable ABI.
+		local pgo_slot=$(ver_cut "1-2" "${compiler_pv}") # For stable ABI.
 		if [[ "${raw_pv}" =~ "9999" ]] ; then
 			# Live unstable ABI.
 			local build_timestamp=$(_ot-kernel_get_build_time)
@@ -8627,7 +8631,7 @@ ot-kernel_set_kconfig_pgo() {
 	else
 		return
 	fi
-	if has clang ${IUSE_EFFECTIVE} && use clang ; then
+	if has "clang" ${IUSE_EFFECTIVE} && use clang ; then
 		_ot-kernel_set_kconfig_pgo_clang
 	else
 		_ot-kernel_set_kconfig_pgo_gcc
@@ -8888,20 +8892,20 @@ eerror
 # Sets the kernel config for ShadowCallStack (SCS)
 ot-kernel_set_kconfig_scs() {
 	local enable=${1:-1}
-	if (( ${enable} == 1 )) && has shadowcallstack ${IUSE_EFFECTIVE} && ot-kernel_use shadowcallstack ; then
+	if (( ${enable} == 1 )) && has "shadowcallstack" ${IUSE_EFFECTIVE} && ot-kernel_use "shadowcallstack" ; then
 		if (( ${llvm_slot} < 10 )) && tc-is-clang ; then
 eerror
 eerror "Shadow Call Stack (SCS) requires LLVM >= 10"
 eerror
 			die
-		elif (( ${gcc_slot} < 12 )) && tc-is-gcc && ver_test "${KV_MAJOR_MINOR}" -ge "6.0" ; then
+		elif (( ${gcc_slot} < 12 )) && tc-is-gcc && ver_test "${KV_MAJOR_MINOR}" "-ge" "6.0" ; then
 eerror
 eerror "Shadow Call Stack (SCS) requires GCC >= 12.1"
 eerror
 			die
 		fi
 einfo "Enabling SCS support in the in the .config."
-		if tc-is-clang && ver_test "${KV_MAJOR_MINOR}" -ge "5.13" && ver_test "${KV_MAJOR_MINOR}" -le "6.0" ; then
+		if tc-is-clang && ver_test "${KV_MAJOR_MINOR}" "-ge" "5.13" && ver_test "${KV_MAJOR_MINOR}" "-le" "6.0" ; then
 			ot-kernel_y_configopt "CONFIG_CFI_CLANG_SHADOW"
 			ot-kernel_y_configopt "CONFIG_MODULES"
 		fi
@@ -8918,7 +8922,7 @@ ot-kernel_set_kconfig_slab_allocator() {
 	local alloc_name="${1^^}"
 	ot-kernel_y_configopt "CONFIG_EXPERT"
 	local slub_tiny=0
-	if ver_test "${KV_MAJOR_MINOR}" -ge "6.8" ; then
+	if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.8" ; then
 		alloc_name="SLUB"
 		if [[ "${alloc_name}" == "SLAB" ]] ; then
 ewarn "Changing SLAB -> SLUB.  SLAB has been removed.  Please update OT_KERNEL_SLAB_ALLOCATOR"
@@ -8928,7 +8932,7 @@ ewarn "Changing SLOB -> SLUB_TINY.  SLOB has been removed.  Please update OT_KER
 			alloc_name="SLUB"
 			slub_tiny=1
 		fi
-	elif ver_test "${KV_MAJOR_MINOR}" -ge "6.7" ; then
+	elif ver_test "${KV_MAJOR_MINOR}" "-ge" "6.7" ; then
 		if [[ "${alloc_name}" == "SLAB" ]] ; then
 			alloc_name="SLAB_DEPRECATED"
 		elif [[ "${alloc_name}" == "SLOB" ]] ; then
@@ -8936,7 +8940,7 @@ ewarn "Changing SLOB -> SLUB_TINY.  SLOB has been removed.  Please update OT_KER
 			alloc_name="SLUB"
 			slub_tiny=1
 		fi
-	elif ver_test "${KV_MAJOR_MINOR}" -ge "6.5" ; then
+	elif ver_test "${KV_MAJOR_MINOR}" "-ge" "6.5" ; then
 		if [[ "${alloc_name}" == "SLAB" ]] ; then
 			alloc_name="SLAB_DEPRECATED"
 		elif [[ "${alloc_name}" == "SLOB" ]] ; then
@@ -8944,13 +8948,13 @@ ewarn "Changing SLOB -> SLUB_TINY.  SLOB has been removed.  Please update OT_KER
 			alloc_name="SLUB"
 			slub_tiny=1
 		fi
-	elif ver_test "${KV_MAJOR_MINOR}" -ge "6.4" ; then
+	elif ver_test "${KV_MAJOR_MINOR}" "-ge" "6.4" ; then
 		if [[ "${alloc_name}" == "SLOB" ]] ; then
 ewarn "Changing SLOB -> SLUB_TINY.  SLOB has been removed.  Please update OT_KERNEL_SLAB_ALLOCATOR"
 			alloc_name="SLUB"
 			slub_tiny=1
 		fi
-	elif ver_test "${KV_MAJOR_MINOR}" -ge "6.2" ; then
+	elif ver_test "${KV_MAJOR_MINOR}" "-ge" "6.2" ; then
 		if [[ "${alloc_name}" == "SLOB" ]] ; then
 			alloc_name="SLOB_DEPRECATED"
 		fi
@@ -8964,7 +8968,7 @@ ewarn "Changing SLOB -> SLUB_TINY.  SLOB has been removed.  Please update OT_KER
 	ot-kernel_unset_configopt "CONFIG_SLUB_STATS"
 	ot-kernel_unset_configopt "CONFIG_SLOB" # For embedded
 	ot-kernel_unset_configopt "CONFIG_SLOB_DEPRECATED"
-	if ver_test "${KV_MAJOR_MINOR}" -ge "6.2" && (( ${slub_tiny} == 1 )) ; then
+	if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.2" && (( ${slub_tiny} == 1 )) ; then
 		alloc_name="SLUB"
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_SLUB_TINY"
@@ -8994,7 +8998,7 @@ ot-kernel_set_kconfig_auto_set_slab_allocator() {
 einfo "Using ${x}"
 	elif [[ "${slab_allocator}" == "auto" ]] ; then
 		if grep -q -E -e "^CONFIG_EMBEDDED=y" "${path_config}" ; then
-			if ver_test "${KV_MAJOR_MINOR}" -lt "6.4" ; then
+			if ver_test "${KV_MAJOR_MINOR}" "-lt" "6.4" ; then
 				ot-kernel_set_kconfig_slab_allocator "slob"
 			else
 				ot-kernel_set_kconfig_slab_allocator "slub"
@@ -9037,7 +9041,7 @@ einfo "Using manual swap settings"
 # @DESCRIPTION:
 # Sets the kernel config for TRESOR
 ot-kernel_set_kconfig_tresor() {
-	if has tresor ${IUSE_EFFECTIVE} && ot-kernel_use tresor && [[ "${arch}" == "x86" ]] ; then
+	if has "tresor" ${IUSE_EFFECTIVE} && ot-kernel_use "tresor" && [[ "${arch}" == "x86" ]] ; then
 einfo "Changed .config to use TRESOR (i686)"
 		ot-kernel_y_configopt "CONFIG_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CBC"
@@ -9046,7 +9050,7 @@ einfo "Changed .config to use TRESOR (i686)"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_ALGAPI"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_MANAGER"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_MANAGER2"
-		if ot-kernel_use tresor_prompt ; then
+		if ot-kernel_use "tresor_prompt" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_TRESOR_PROMPT" # default on upstream
 einfo "Disabling boot output for TRESOR early prompt."
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "2" # 7 is default
@@ -9055,7 +9059,7 @@ einfo "Disabling boot output for TRESOR early prompt."
 		fi
 	fi
 
-	if has tresor ${IUSE_EFFECTIVE} && ot-kernel_use tresor && [[ "${arch}" == "x86_64" ]] ; then
+	if has "tresor" ${IUSE_EFFECTIVE} && ot-kernel_use "tresor" && [[ "${arch}" == "x86_64" ]] ; then
 einfo "Changed .config to use TRESOR (x86_64)"
 		ot-kernel_y_configopt "CONFIG_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CBC"
@@ -9064,12 +9068,12 @@ einfo "Changed .config to use TRESOR (x86_64)"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_ALGAPI"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_MANAGER"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_MANAGER2"
-		if ot-kernel_use tresor_prompt ; then
+		if ot-kernel_use "tresor_prompt" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_TRESOR_PROMPT" # default on upstream
 		fi
 	fi
 
-	if has tresor ${IUSE_EFFECTIVE} && ot-kernel_use tresor && [[ "${arch}" == "x86_64" ]] && ot-kernel_use cpu_flags_x86_aes ; then
+	if has "tresor" ${IUSE_EFFECTIVE} && ot-kernel_use "tresor" && [[ "${arch}" == "x86_64" ]] && ot-kernel_use "cpu_flags_x86_aes" ; then
 einfo "Changed .config to use TRESOR (AES-NI)"
 		ot-kernel_y_configopt "CONFIG_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CBC"
@@ -9077,12 +9081,12 @@ einfo "Changed .config to use TRESOR (AES-NI)"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_ALGAPI"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_MANAGER"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_MANAGER2"
-		if ot-kernel_use tresor_prompt ; then
+		if ot-kernel_use "tresor_prompt" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_TRESOR_PROMPT" # default on upstream
 		fi
 	fi
 
-	if has tresor_sysfs ${IUSE_EFFECTIVE} && ot-kernel_use tresor_sysfs && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+	if has "tresor_sysfs" ${IUSE_EFFECTIVE} && ot-kernel_use "tresor_sysfs" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 einfo "Changed .config to use the TRESOR sysfs interface"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_TRESOR_SYSFS"
 
@@ -9094,8 +9098,8 @@ ewarn
 		ot-kernel_n_configopt "CONFIG_HIBERNATION"
 	fi
 
-	if has tresor ${IUSE_EFFECTIVE} && ot-kernel_use tresor && [[ "${arch}" == "x86_64" ]] ; then
-		if ot-kernel_use tresor_prompt ; then
+	if has "tresor" ${IUSE_EFFECTIVE} && ot-kernel_use "tresor" && [[ "${arch}" == "x86_64" ]] ; then
+		if ot-kernel_use "tresor_prompt" ; then
 einfo "Disabling boot output for TRESOR early prompt."
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "2" # 7 is default
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_QUIET" "2" # 4 is default
@@ -9115,7 +9119,7 @@ ot-kernel_set_kconfig_uksm() {
 einfo "Disabling UKSM"
 		ot-kernel_unset_configopt "CONFIG_KSM"
 		ot-kernel_unset_configopt "CONFIG_UKSM"
-		if has uksm ${IUSE_EFFECTIVE} && ot-kernel_use uksm ; then
+		if has "uksm" ${IUSE_EFFECTIVE} && ot-kernel_use "uksm" ; then
 eerror
 eerror "Please remove uksm from OT_KERNEL_USE for OT_KERNEL_USE=\"uksm\" for"
 eerror "OT_KERNEL_SWAP=\"0\"."
@@ -9130,7 +9134,7 @@ eerror
 		   _ot-kernel_is_hardening_level_secure \
 		|| _ot-kernel_is_hardening_level_most_secure \
 	; then
-		if has uksm ${IUSE_EFFECTIVE} && ot-kernel_use uksm ; then
+		if has "uksm" ${IUSE_EFFECTIVE} && ot-kernel_use "uksm" ; then
 ewarn "KSM/UKSM is only allowed in OT_KERNEL_HARDENING_LEVEL=fast-af"
 		fi
 		ot-kernel_unset_configopt "CONFIG_KSM"
@@ -9140,14 +9144,14 @@ ewarn "KSM/UKSM is only allowed in OT_KERNEL_HARDENING_LEVEL=fast-af"
 		ot-kernel_unset_configopt "CONFIG_KSM"
 		ot-kernel_unset_configopt "CONFIG_UKSM"
 
-		if has uksm ${IUSE_EFFECTIVE} && ot-kernel_use uksm && has rt ${IUSE_EFFECTIVE} && ot-kernel_use rt ; then
+		if has "uksm" ${IUSE_EFFECTIVE} && ot-kernel_use "uksm" && has "rt" ${IUSE_EFFECTIVE} && ot-kernel_use "rt" ; then
 eerror
 eerror "Please remove uksm from OT_KERNEL_USE for OT_KERNEL_USE=\"rt\" for"
 eerror "OT_KERNEL_EXTRAVERSION=\"${extraversion}\"."
 eerror
 			die
 		fi
-		if has uksm ${IUSE_EFFECTIVE} && ot-kernel_use uksm ; then
+		if has "uksm" ${IUSE_EFFECTIVE} && ot-kernel_use "uksm" ; then
 einfo "Changed .config to use UKSM"
 			if [[ "${arch}" == "arm" ]] ; then
 				ot-kernel_y_configopt "CONFIG_MMU"
@@ -9895,7 +9899,7 @@ ot-kernel_set_iosched() {
 	ot-kernel_unset_configopt "CONFIG_MQ_IOSCHED_KYBER"
 	ot-kernel_unset_configopt "CONFIG_IOSCHED_BFQ"
 	ot-kernel_unset_configopt "CONFIG_BFQ_GROUP_IOSCHED"
-	if ver_test "${KV_MAJOR_MINOR}" -lt "5" ; then
+	if ver_test "${KV_MAJOR_MINOR}" "-lt" "5" ; then
 		ot-kernel_y_configopt "CONFIG_IOSCHED_NOOP"
 		ot-kernel_unset_configopt "CONFIG_IOSCHED_DEADLINE"
 		ot-kernel_unset_configopt "CONFIG_IOSCHED_CFQ"
@@ -9904,13 +9908,13 @@ ot-kernel_set_iosched() {
 	fi
 
 	# Translate.  eclass simplifies to 5.x iosched
-	if ver_test "${KV_MAJOR_MINOR}" -ge "5" ; then
+	if ver_test "${KV_MAJOR_MINOR}" "-ge" "5" ; then
 		[[ "${ssd_iosched}" == "noop" ]] && ssd_iosched="none"
 		[[ "${hdd_iosched}" == "noop" ]] && hdd_iosched="none"
 	fi
 
 	# Translate to 4.x iosched
-	if ver_test "${KV_MAJOR_MINOR}" -lt "5" ; then
+	if ver_test "${KV_MAJOR_MINOR}" "-lt" "5" ; then
 		[[ "${ssd_iosched}" == "none" ]] && ssd_iosched="noop"
 		[[ "${hdd_iosched}" == "none" ]] && hdd_iosched="noop"
 	fi
@@ -9940,32 +9944,32 @@ ot-kernel_set_iosched() {
 		elif [[ "${s}" == "bfq-custom-interactive" ]] ; then
 			ot-kernel_y_configopt "CONFIG_IOSCHED_BFQ"
 			s="bfq"
-		elif [[ "${s}" == "deadline" ]] && ver_test "${KV_MAJOR_MINOR}" -lt "5" ; then
+		elif [[ "${s}" == "deadline" ]] && ver_test "${KV_MAJOR_MINOR}" "-lt" "5" ; then
 			ot-kernel_y_configopt "CONFIG_IOSCHED_DEADLINE"
 		elif [[ "${s}" == "mq-deadline" ]] ; then
 			ot-kernel_y_configopt "CONFIG_MQ_IOSCHED_DEADLINE"
-		elif [[ "${s}" == "cfq" ]] && ver_test "${KV_MAJOR_MINOR}" -lt "5" ; then
+		elif [[ "${s}" == "cfq" ]] && ver_test "${KV_MAJOR_MINOR}" "-lt" "5" ; then
 			ot-kernel_y_configopt "CONFIG_IOSCHED_CFQ"
 		elif [[ "${s}" == "kyber" ]] ; then
 			ot-kernel_y_configopt "CONFIG_MQ_IOSCHED_KYBER"
-		elif [[ "${s}" == "noop" ]] && ver_test "${KV_MAJOR_MINOR}" -lt "5" ; then
+		elif [[ "${s}" == "noop" ]] && ver_test "${KV_MAJOR_MINOR}" "-lt" "5" ; then
 			ot-kernel_y_configopt "CONFIG_IOSCHED_NOOP"
-		elif [[ "${s}" == "none" ]] && ver_test "${KV_MAJOR_MINOR}" -ge "5" ; then
+		elif [[ "${s}" == "none" ]] && ver_test "${KV_MAJOR_MINOR}" "-ge" "5" ; then
 			:
 		else
 			continue
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -lt "5" \
+		if ver_test "${KV_MAJOR_MINOR}" "-lt" "5" \
 			&& [[ -z "${s_first}" ]] \
 			&& [[ "${s}" =~ ("cfq"|"deadline"|"noop") ]] ; then
 			s_first="${s}"
 		fi
 einfo "Enabled ${s} as an I/O scheduler"
 	done
-	if ver_test "${KV_MAJOR_MINOR}" -lt "5" && [[ -n "${s_first}" ]] ; then
+	if ver_test "${KV_MAJOR_MINOR}" "-lt" "5" && [[ -n "${s_first}" ]] ; then
 einfo "${s_first} is set as the default I/O scheduler"
 		ot-kernel_set_configopt "CONFIG_DEFAULT_IOSCHED" "\"${s_first}\""
-	elif ver_test "${KV_MAJOR_MINOR}" -lt "5" && [[ -z "${s_first}" ]] ; then
+	elif ver_test "${KV_MAJOR_MINOR}" "-lt" "5" && [[ -z "${s_first}" ]] ; then
 		#
 		# We need either cfq, deadline, noop or it may result in a null
 		# pointer dereference.
@@ -10083,7 +10087,7 @@ ot-kernel_iosched_max_tps() {
 # @DESCRIPTION:
 # Configures the I/O scheduler with the upstream default
 ot-kernel_iosched_default() {
-	if ver_test "${KV_MAJOR_MINOR}" -lt "5" ; then
+	if ver_test "${KV_MAJOR_MINOR}" "-lt" "5" ; then
 		ot-kernel_set_iosched "cfq" "cfq"
 	else
 		ot-kernel_set_iosched "mq-deadline" "mq-deadline"
@@ -10116,7 +10120,7 @@ ot-kernel_set_kconfig_fallback_preempt() {
 	if ! grep -q -E -e "^CONFIG_RT_PACKAGE_FOUND=y" "${path_config}" ; then
 		if [[ "${FALLBACK_PREEMPT}" == "CONFIG_PREEMPT" && "${FALLBACK_PREEMPT_IS_RT_WORK_PROFILE}" == "1" ]] ; then
 			ot-kernel_set_preempt "${FALLBACK_PREEMPT}"
-			if ot-kernel_use rt ; then
+			if ot-kernel_use "rt" ; then
 ewarn
 ewarn "No realtime packages detected.  Consider removing rt from OT_KERNEL_USE"
 ewarn "from OT_KERNEL_EXTRAVERSION=\"${extraversion}\"."
@@ -11068,7 +11072,7 @@ ewarn "disable/remove USE=debug to improve energy reduction."
 ewarn
 	fi
 
-	if ot-kernel_use rt ; then
+	if ot-kernel_use "rt" ; then
 		if [[ \
 			-z "${work_profile}" \
 			|| "${work_profile}" == "custom" \
@@ -11361,10 +11365,10 @@ ewarn "The dss work profile is experimental and in development."
 			_OT_KERNEL_FORCE_SWAP_OFF="1"
 			ot-kernel_set_rt_rcu
 			ot-kernel_set_kconfig_set_highest_timer_hz # For reduced audio studdering
-			if   [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] && ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
+			if   [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] && ver_test "${KV_MAJOR_MINOR}" "-ge" "5.4" ; then
 	# Set blanket policy
 				ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
-			elif [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] && ver_test "${KV_MAJOR_MINOR}" -lt "5.4" ; then
+			elif [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] && ver_test "${KV_MAJOR_MINOR}" "-lt" "5.4" ; then
 	# Set blanket policy
 				ot-kernel_set_preempt "CONFIG_PREEMPT_RT_FULL"
 			else
@@ -11522,10 +11526,10 @@ ewarn "The dss work profile is experimental and in development."
 			   "${work_profile}" == "radio-broadcaster" \
 			|| "${work_profile}" == "voip" \
 		]] ; then
-			if   [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] && ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
+			if   [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] && ver_test "${KV_MAJOR_MINOR}" "-ge" "5.4" ; then
 	# Set blanket policy
 				ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
-			elif [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] && ver_test "${KV_MAJOR_MINOR}" -lt "5.4" ; then
+			elif [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] && ver_test "${KV_MAJOR_MINOR}" "-lt" "5.4" ; then
 	# Set blanket policy
 				ot-kernel_set_preempt "CONFIG_PREEMPT_RT_FULL"
 			else
@@ -11635,9 +11639,9 @@ ewarn "The dss work profile is experimental and in development."
 			timer_handling="tickless-full"
 			ot-kernel_set_kconfig_set_highest_timer_hz # Minimize jitter
 			ot-kernel_set_rt_rcu
-			if   ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
+			if   ver_test "${KV_MAJOR_MINOR}" "-ge" "5.4" ; then
 				ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
-			elif ver_test "${KV_MAJOR_MINOR}" -lt "5.4" ; then
+			elif ver_test "${KV_MAJOR_MINOR}" "-lt" "5.4" ; then
 				ot-kernel_set_preempt "CONFIG_PREEMPT_RT_FULL"
 			fi
 			ot-kernel_iosched_max_throughput
@@ -11666,9 +11670,9 @@ ewarn "The dss work profile is experimental and in development."
 		ot-kernel_set_kconfig_set_highest_timer_hz
 		ot-kernel_set_rt_rcu
 		# ML/DL case for self-driving car/drone
-		if   ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
+		if   ver_test "${KV_MAJOR_MINOR}" "-ge" "5.4" ; then
 			ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
-		elif ver_test "${KV_MAJOR_MINOR}" -lt "5.4" ; then
+		elif ver_test "${KV_MAJOR_MINOR}" "-lt" "5.4" ; then
 			ot-kernel_set_preempt "CONFIG_PREEMPT_RT_FULL"
 		fi
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
@@ -11941,9 +11945,9 @@ ewarn "Early KMS is disabled for the simpledrm driver."
 	fi
 
 	if \
-		   has c2tcp ${IUSE_EFFECTIVE} && ot-kernel_use c2tcp \
-		|| has orca ${IUSE_EFFECTIVE} && ot-kernel_use orca \
-		|| has deepcc ${IUSE_EFFECTIVE} && ot-kernel_use deepcc \
+		   has "c2tcp" ${IUSE_EFFECTIVE} && ot-kernel_use "c2tcp" \
+		|| has "orca" ${IUSE_EFFECTIVE} && ot-kernel_use "orca" \
+		|| has "deepcc" ${IUSE_EFFECTIVE} && ot-kernel_use "deepcc" \
 	; then
 #
 # Problem:
@@ -11957,7 +11961,7 @@ ewarn "Early KMS is disabled for the simpledrm driver."
 
 
 	if \
-		has rock-dkms ${IUSE_EFFECTIVE} && ot-kernel_use rock-dkms \
+		has "rock-dkms" ${IUSE_EFFECTIVE} && ot-kernel_use "rock-dkms" \
 	; then
 	# For sys-kernel/rock-dkms not installed yet scenario.
 ewarn "Enabling modules support for sys-kernel/rock-dkms."
@@ -11965,11 +11969,11 @@ ewarn "Early KMS is disabled for the amdgpu driver."
 		ot-kernel_y_configopt "CONFIG_MODULES"
 		ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
 	elif \
-		   has rock-dkms ${IUSE_EFFECTIVE} \
-		&& ot-kernel_use rock-dkms \
+		   has "rock-dkms" ${IUSE_EFFECTIVE} \
+		&& ot-kernel_use "rock-dkms" \
 		&& ( \
-			   ver_test "${KV_MAJOR_MINOR}" -eq "5.4" \
-			|| ver_test "${KV_MAJOR_MINOR}" -eq "5.15" \
+			   ver_test "${KV_MAJOR_MINOR}" "-eq" "5.4" \
+			|| ver_test "${KV_MAJOR_MINOR}" "-eq" "5.15" \
 		) \
 	; then
 ewarn "Enabling modules support for sys-kernel/rock-dkms."
@@ -12386,7 +12390,7 @@ ewarn
 ewarn "The OT_KERNEL_LOGO_URI will restore the console log levels to defaults."
 ewarn "This may decrease security."
 ewarn
-		if has tresor ${IUSE_EFFECTIVE} && ot-kernel_use tresor ; then
+		if has "tresor" ${IUSE_EFFECTIVE} && ot-kernel_use "tresor" ; then
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "2"
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_QUIET" "1"
 		else
@@ -12398,7 +12402,7 @@ ewarn
 		if [[ "${OT_KERNEL_LOGO_COUNT:-auto}" == "auto" ]] ; then
 			:
 		elif [[ "${OT_KERNEL_LOGO_COUNT}" =~ [0-9][0-9]* ]] ; then
-			if ver_test "${KV_MAJOR_MINOR}" -ge "5.6" ; then
+			if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.6" ; then
 				ot-kernel_set_kconfig_kernel_cmdline "fbcon=logo-count:${OT_KERNEL_LOGO_COUNT}"
 			else
 				sed -i -e "s|num_online_cpus()|${OT_KERNEL_LOGO_COUNT}|g" \
@@ -12542,7 +12546,7 @@ ot-kernel_set_rust() {
 		local key="str_${s//./_}"
 		local rust_llvm_slot=${RUST_PV_TO_LLVM_SLOT["${key}"]}
 		# llvm_slot is associated with CC
-		if [[ -z "${rust_llvm_slot}" ]] || ver_test "${rust_llvm_slot}" -ne "${llvm_slot}" ; then
+		if [[ -z "${rust_llvm_slot}" ]] || ver_test "${rust_llvm_slot}" "-ne" "${llvm_slot}" ; then
 			continue
 		fi
 
@@ -12731,7 +12735,7 @@ ewarn "Enabling ot-kernel_y_configopt for scx_lavd support and lowering security
 # Enable or disable the flag to allow for overclocking or voltage changes.
 #
 ot-kernel_set_kconfig_amdgpu_override_mask() {
-	ver_test "${KV_MAJOR_MINOR}" -lt "4.18" && return
+	ver_test "${KV_MAJOR_MINOR}" "-lt" "4.18" && return
 	if [[ "${AMDGPU_OVERDRIVE}" == "1" ]] ; then
 		if [[ -e "/sys/module/amdgpu/parameters/ppfeaturemask" ]] ; then
 ewarn "Enabling overdrive on the amdgpu driver."
@@ -12762,7 +12766,7 @@ einfo "Disabling overdrive on the amdgpu driver."
 # @DESCRIPTION:
 # Optimize the kernel for hardcore mode (irreversable death).
 ot-kernel_optimize_gaming_hardcore() {
-	if ot-kernel_use uksm ; then
+	if ot-kernel_use "uksm" ; then
 # Remove the unintended consequences of applying the patch.
 # UKSM also thrashes a lot so lets get rid of that.
 eerror
@@ -12778,7 +12782,7 @@ eerror
 				| grep -e "^Thread(s) per core:.*" \
 				| head -n 1 \
 				| grep -E -o "[0-9]+")
-			if (( ${tpc} > 1 )) && ver_test "${KV_MAJOR_MINOR}" -ge "4.10" ; then
+			if (( ${tpc} > 1 )) && ver_test "${KV_MAJOR_MINOR}" "-ge" "4.10" ; then
 				# Already set in ot-kernel_set_kconfig_cpu_system
 				# ot-kernel_y_configopt "CONFIG_SMP"
 				# ot-kernel_y_configopt "CONFIG_SCHED_MC"
@@ -12836,7 +12840,7 @@ ewarn
 		ot-kernel_unset_configopt "CONFIG_MICROCODE"
 		ot-kernel_unset_configopt "CONFIG_MICROCODE_LATE_LOADING"
 	fi
-	if ot-kernel_use uksm ; then
+	if ot-kernel_use "uksm" ; then
 # Remove the unintended consequences of applying the patch.
 # UKSM also thrashes a lot so lets get rid of that.
 eerror
@@ -12852,7 +12856,7 @@ eerror
 				| grep -e "^Thread(s) per core:.*" \
 				| head -n 1 \
 				| grep -E -o "[0-9]+")
-			if (( ${tpc} > 1 )) && ver_test "${KV_MAJOR_MINOR}" -ge "4.10" ; then
+			if (( ${tpc} > 1 )) && ver_test "${KV_MAJOR_MINOR}" "-ge" "4.10" ; then
 				# Already set in ot-kernel_set_kconfig_cpu_system
 				# ot-kernel_y_configopt "CONFIG_SMP"
 				# ot-kernel_y_configopt "CONFIG_SCHED_MC"
@@ -12915,22 +12919,22 @@ ot-kernel_optimize_realtime() {
 
 # Avoid lock contention penalty
 ewarn "Disabling smt for PREEMPT_RT=y.  If you do not like this, disable rt from OT_KERNEL_USE."
-		if ver_test "${KV_MAJOR_MINOR}" -ge "6.6" && [[ "${arch}" == "mips" || "${arch}" == "powerpc" || "${arch}" == "s390" ]] ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.6" && [[ "${arch}" == "mips" || "${arch}" == "powerpc" || "${arch}" == "s390" ]] ; then
 			ot-kernel_set_kconfig_kernel_cmdline "nosmt"
-		elif ver_test "${KV_MAJOR_MINOR}" -ge "6.6" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" || "${arch}" == "powerpc" ]] ; then
+		elif ver_test "${KV_MAJOR_MINOR}" "-ge" "6.6" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" || "${arch}" == "powerpc" ]] ; then
 			ot-kernel_set_kconfig_kernel_cmdline "nosmt=force"
 
-		elif ver_test "${KV_MAJOR_MINOR}" -ge "6.5" && [[ "${arch}" == "mips" || "${arch}" == "s390" ]] ; then
+		elif ver_test "${KV_MAJOR_MINOR}" "-ge" "6.5" && [[ "${arch}" == "mips" || "${arch}" == "s390" ]] ; then
 			ot-kernel_set_kconfig_kernel_cmdline "nosmt"
-		elif ver_test "${KV_MAJOR_MINOR}" -ge "6.5" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+		elif ver_test "${KV_MAJOR_MINOR}" "-ge" "6.5" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 			ot-kernel_set_kconfig_kernel_cmdline "nosmt=force"
 
-		elif ver_test "${KV_MAJOR_MINOR}" -ge "4.19" && [[ "${arch}" == "s390" ]] ; then
+		elif ver_test "${KV_MAJOR_MINOR}" "-ge" "4.19" && [[ "${arch}" == "s390" ]] ; then
 			ot-kernel_set_kconfig_kernel_cmdline "nosmt"
-		elif ver_test "${KV_MAJOR_MINOR}" -ge "4.19" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+		elif ver_test "${KV_MAJOR_MINOR}" "-ge" "4.19" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 			ot-kernel_set_kconfig_kernel_cmdline "nosmt=force"
 
-		elif ver_test "${KV_MAJOR_MINOR}" -eq "4.10" && [[ "${arch}" == "s390" ]] ; then
+		elif ver_test "${KV_MAJOR_MINOR}" "-eq" "4.10" && [[ "${arch}" == "s390" ]] ; then
 			ot-kernel_set_kconfig_kernel_cmdline "nosmt"
 		fi
 
@@ -13021,11 +13025,11 @@ ot-kernel-debugger() {
 	ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT"
 	ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_DWARF4"
 	ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_DWARF5"
-	if ver_test "${KV_MAJOR_MINOR}" -ge "5.18" ; then
+	if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.18" ; then
 		ot-kernel_y_configopt "CONFIG_DEBUG_INFO_NONE"
 	fi
-	if has dwarf4 ${IUSE_EFFECTIVE} && ot-kernel_use dwarf4 ; then
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.18" ; then
+	if has "dwarf4" ${IUSE_EFFECTIVE} && ot-kernel_use "dwarf4" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.18" ; then
 			ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_NONE"
 		fi
 		ot-kernel_y_configopt "CONFIG_DEBUG_KERNEL"
@@ -13034,8 +13038,8 @@ ot-kernel-debugger() {
 		picked=1
 ewarn "LTO is mutually exclusive with debug.  Disable the dwarf4 USE flag to use LTO."
 	fi
-	if has dwarf5 ${IUSE_EFFECTIVE} && ot-kernel_use dwarf5 ; then
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.18" ; then
+	if has "dwarf5" ${IUSE_EFFECTIVE} && ot-kernel_use "dwarf5" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.18" ; then
 			ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_NONE"
 		fi
 		ot-kernel_y_configopt "CONFIG_DEBUG_KERNEL"
@@ -13044,8 +13048,8 @@ ewarn "LTO is mutually exclusive with debug.  Disable the dwarf4 USE flag to use
 		picked=1
 ewarn "LTO is mutually exclusive with debug.  Disable the dwarf5 USE flag to use LTO."
 	fi
-	if has dwarf-auto ${IUSE_EFFECTIVE} && ot-kernel_use dwarf-auto ; then
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.18" ; then
+	if has "dwarf-auto" ${IUSE_EFFECTIVE} && ot-kernel_use "dwarf-auto" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.18" ; then
 			ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_NONE"
 		fi
 		ot-kernel_y_configopt "CONFIG_DEBUG_INFO"
@@ -13083,7 +13087,7 @@ _ot-kernel_set_bpf_jit() { # DONE
 	# The automagic happens when `make olddefconfig` is called in ot-kernel_src_configure_assisted
 
 	ot-kernel_y_configopt "CONFIG_BPF_JIT"
-	if ver_test "${KV_MAJOR_MINOR}" -lt "6.10" ; then
+	if ver_test "${KV_MAJOR_MINOR}" "-lt" "6.10" ; then
 		ot-kernel_y_configopt "CONFIG_MODULES"
 	fi
 }
@@ -13165,7 +13169,7 @@ ot-kernel_set_dev_mem() {
 			ot-kernel_unset_configopt "CONFIG_STRICT_DEVMEM"
 			ot-kernel_unset_configopt "CONFIG_IO_STRICT_DEVMEM"
 		fi
-		if (( ${_OT_KERNEL_DEV_KMEM} == 1 )) && [[  "${arch}" != "arm64" ]] && ver_test "${KV_MAJOR_MINOR}" -lt "4.13" ; then
+		if (( ${_OT_KERNEL_DEV_KMEM} == 1 )) && [[  "${arch}" != "arm64" ]] && ver_test "${KV_MAJOR_MINOR}" "-lt" "4.13" ; then
 			ot-kernel_y_configopt "CONFIG_DEVKMEM"
 		else
 			ot-kernel_unset_configopt "CONFIG_DEVKMEM"
@@ -13237,7 +13241,7 @@ ot-kernel_set_tbm() {
 ot-kernel_set_security_critical() {
 	local mte=0
 
-	if ot-kernel_use cpu_flags_arm_mte ; then
+	if ot-kernel_use "cpu_flags_arm_mte" ; then
 		mte=1
 	fi
 
@@ -13245,9 +13249,9 @@ ot-kernel_set_security_critical() {
 
 	local security_critical=${OT_KERNEL_SECURITY_CRITICAL:-0}
 	local types
-	if has kcfi ${IUSE_EFFECTIVE} ; then
+	if has "kcfi" ${IUSE_EFFECTIVE} ; then
 		types=${OT_KERNEL_SECURITY_CRITICAL_TYPES:-"kasan ubsan kcfi"}
-	elif has cfi ${IUSE_EFFECTIVE} ; then
+	elif has "cfi" ${IUSE_EFFECTIVE} ; then
 		types=${OT_KERNEL_SECURITY_CRITICAL_TYPES:-"kasan ubsan cfi"}
 	else
 		types=${OT_KERNEL_SECURITY_CRITICAL_TYPES:-"kasan ubsan"}
@@ -13305,7 +13309,7 @@ ot-kernel_set_security_critical() {
 				( [[ "${arch}" == "x86" ]] && grep -q -e "^CONFIG_X86_64=y" "${BUILD_DIR}/.config" ) \
 			) \
 						&& \
-			ver_test "${KV_MAJOR_MINOR}" -eq "4.0" \
+			ver_test "${KV_MAJOR_MINOR}" "-eq" "4.0" \
 		; then
 			asan=1
 			ot-kernel_y_configopt "CONFIG_KASAN"
@@ -13317,7 +13321,7 @@ ot-kernel_set_security_critical() {
 					"${mte}" == "1" \
 				]] \
 						&& \
-				ver_test "${KV_MAJOR_MINOR}" -ge "5.11" \
+				ver_test "${KV_MAJOR_MINOR}" "-ge" "5.11" \
 			; then
 	# 1.05x - 1.25 performance impact, best for production
 				ot-kernel_y_configopt "CONFIG_KASAN_HW_TAGS"
@@ -13334,7 +13338,7 @@ ot-kernel_set_security_critical() {
 					"${mte}" == "1" \
 				]] \
 						&& \
-				ver_test "${KV_MAJOR_MINOR}" -ge "5.4" \
+				ver_test "${KV_MAJOR_MINOR}" "-ge" "5.4" \
 			; then
 	# 1.2x - 2.0 performance impact, borderline production
 				ot-kernel_y_configopt "CONFIG_KASAN_SW_TAGS"
@@ -13343,13 +13347,13 @@ ot-kernel_set_security_critical() {
 				else
 					ot-kernel_set_kconfig_kernel_cmdline "kasan.page_alloc.sample=${kasan_sample_interval}"
 				fi
-			elif ver_test "${KV_MAJOR_MINOR}" -ge "5.0" ; then
+			elif ver_test "${KV_MAJOR_MINOR}" "-ge" "5.0" ; then
 	# 1.4x - 4.0x performance impact, slow for production
 				ot-kernel_y_configopt "CONFIG_KASAN_GENERIC"
 			fi
 			ot-kernel_unset_pat_kconfig_kernel_cmdline "kasan=(on|off)"
 			ot-kernel_set_kconfig_kernel_cmdline "kasan=on"
-			if ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
+			if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.15" ; then
 				ot-kernel_unset_pat_kconfig_kernel_cmdline "kasan.fault=(panic|panic_on_write|report)"
 			else
 				ot-kernel_set_kconfig_kernel_cmdline "kasan.fault=panic"
@@ -13382,7 +13386,7 @@ ot-kernel_set_security_critical() {
 				"${arch}" == "x86_64" \
 			]] \
 					&& \
-			ver_test "${KV_MAJOR_MINOR}" -ge "5.8" \
+			ver_test "${KV_MAJOR_MINOR}" "-ge" "5.8" \
 		; then
 			ot-kernel_y_configopt "CONFIG_KCSAN"
 			ot-kernel_set_kconfig_kernel_cmdline "kcsan.fault=panic"
@@ -13404,11 +13408,11 @@ ewarn "Disabling CFI will increase changes of trusted code hijack or code execut
 				"${arch}" == "x86_64" \
 			]] \
 					&& \
-			ver_test "${KV_MAJOR_MINOR}" -eq "5.15" \
+			ver_test "${KV_MAJOR_MINOR}" "-eq" "5.15" \
 					&& \
 			tc-is-clang \
 		; then
-			if has cfi ${IUSE_EFFECTIVE} && use cfi ; then
+			if has "cfi" ${IUSE_EFFECTIVE} && use cfi ; then
 				:
 			else
 eerror "Enable USE=cfi to enable Clang CFI support or remove cfi from OT_KERNEL_SECURITY_CRITICAL_TYPES."
@@ -13442,11 +13446,11 @@ ewarn "Disabling KCFI will increase changes of trusted code hijack or code execu
 				"${arch}" == "x86_64" \
 			]] \
 					&& \
-			ver_test "${KV_MAJOR_MINOR}" -ge "6.1" \
+			ver_test "${KV_MAJOR_MINOR}" "-ge" "6.1" \
 					&& \
 			tc-is-clang \
 		; then
-			if has kcfi ${IUSE_EFFECTIVE} && use kcfi ; then
+			if has "kcfi" ${IUSE_EFFECTIVE} && use kcfi ; then
 				:
 			else
 eerror "Enable USE=kcfi to enable KCFI support or remove kcfi from OT_KERNEL_SECURITY_CRITICAL_TYPES."
@@ -13468,9 +13472,9 @@ eerror "Enable USE=kcfi to enable KCFI support or remove kcfi from OT_KERNEL_SEC
 				"${arch}" == "riscv" \
 			]] \
 					&& \
-			ver_test "${KV_MAJOR_MINOR}" -ge "5.8" \
+			ver_test "${KV_MAJOR_MINOR}" "-ge" "5.8" \
 		; then
-			if has shadowcallstack ${IUSE_EFFECTIVE} && use shadowcallstack ; then
+			if has "shadowcallstack" ${IUSE_EFFECTIVE} && use shadowcallstack ; then
 				:
 			else
 eerror "Enable USE=shadowcallstack to enable ShadowCallStack support or remove scs from OT_KERNEL_SECURITY_CRITICAL_TYPES."
@@ -13506,7 +13510,7 @@ eerror "Enable USE=shadowcallstack to enable ShadowCallStack support or remove s
 				"${arch}" == "x86_64" \
 			]] \
 					&& \
-			ver_test "${KV_MAJOR_MINOR}" -ge "5.12" \
+			ver_test "${KV_MAJOR_MINOR}" "-ge" "5.12" \
 		; then
 			asan=1
 			ot-kernel_y_configopt "CONFIG_KFENCE"
@@ -13538,7 +13542,7 @@ eerror "Enable USE=shadowcallstack to enable ShadowCallStack support or remove s
 				"${arch}" == "x86_64" \
 			]] \
 					&& \
-			ver_test "${KV_MAJOR_MINOR}" -ge "6.1" \
+			ver_test "${KV_MAJOR_MINOR}" "-ge" "6.1" \
 		; then
 			ot-kernel_y_configopt "CONFIG_KMSAN"
 			ot-kernel_set_kconfig_kernel_cmdline "kmsan.fault=panic"
@@ -13572,23 +13576,23 @@ eerror "Enable USE=shadowcallstack to enable ShadowCallStack support or remove s
 				"${arch}" == "x86_64" \
 			]] \
 					&& \
-			ver_test "${KV_MAJOR_MINOR}" -ge "4.5" \
+			ver_test "${KV_MAJOR_MINOR}" "-ge" "4.5" \
 		; then
 			ot-kernel_y_configopt "CONFIG_UBSAN"
 			ot-kernel_y_configopt "CONFIG_UBSAN_ALIGNMENT"
-			if ver_test "${KV_MAJOR_MINOR}" -ge "4.5" && ver_test "${KV_MAJOR_MINOR}" -le "5.4" ; then
+			if ver_test "${KV_MAJOR_MINOR}" "-ge" "4.5" && ver_test "${KV_MAJOR_MINOR}" "-le" "5.4" ; then
 				ot-kernel_y_configopt "CONFIG_UBSAN_SANITIZE_ALL"
 			fi
-			if ver_test "${KV_MAJOR_MINOR}" -ge "4.9" && ver_test "${KV_MAJOR_MINOR}" -le "4.17" ; then
+			if ver_test "${KV_MAJOR_MINOR}" "-ge" "4.9" && ver_test "${KV_MAJOR_MINOR}" "-le" "4.17" ; then
 				ot-kernel_y_configopt "CONFIG_UBSAN_NULL"
 			fi
-			if ver_test "${KV_MAJOR_MINOR}" -ge "5.7" ; then
+			if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.7" ; then
 				ot-kernel_y_configopt "CONFIG_UBSAN_TRAP"
 			fi
-			if ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
+			if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.10" ; then
 				ot-kernel_y_configopt "CONFIG_UBSAN_BOUNDS"
 			fi
-			if ver_test "${KV_MAJOR_MINOR}" -ge "5.11" ; then
+			if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.11" ; then
 				ot-kernel_y_configopt "CONFIG_UBSAN_DIV_ZERO"
 				ot-kernel_y_configopt "CONFIG_UBSAN_SHIFT"
 			fi
@@ -13880,7 +13884,7 @@ einfo "Forcing the default hardening level for maximum uptime"
 
 	is_firmware_ready
 
-	if ! use debug && ! ot-kernel_use debug ; then
+	if ! use debug && ! ot-kernel_use "debug" ; then
 einfo "Disabling all debug and shortening logging buffers"
 		./disable_debug || die
 		rm "${BUILD_DIR}/.config.dd_backup" 2>/dev/null
@@ -13935,7 +13939,7 @@ einfo "Disabling all debug and shortening logging buffers"
 	ot-kernel_print_thp_status
 
 	if [[ -e "${BUILD_DIR}/.config" ]] ; then
-		if has exfat ${IUSE_EFFECTIVE} && ! use exfat ; then
+		if has "exfat" ${IUSE_EFFECTIVE} && ! use exfat ; then
 			sed -i -e "/CONFIG_EXFAT_FS/d" "${BUILD_DIR}/.config"
 		fi
 
@@ -14003,28 +14007,28 @@ ewarn ">=${_p} is maybe required by the kernel."
 # @DESCRIPTION:
 # Check qtversion is the same
 ot-kernel_check_qt_versions() {
-	if has qt5 ${IUSE_EFFECTIVE} && ot-kernel_use qt5 ; then
-		local QTCORE_PV=$(pkg-config --modversion Qt5Core)
-		local QTGUI_PV=$(pkg-config --modversion Qt5Gui)
-		local QTWIDGETS_PV=$(pkg-config --modversion Qt5Widgets)
-		if ver_test ${QTCORE_PV} -ne ${QTGUI_PV} ; then
+	if has "qt5" ${IUSE_EFFECTIVE} && ot-kernel_use "qt5" ; then
+		local QTCORE_PV=$(pkg-config --modversion "Qt5Core")
+		local QTGUI_PV=$(pkg-config --modversion "Qt5Gui")
+		local QTWIDGETS_PV=$(pkg-config --modversion "Qt5Widgets")
+		if ver_test "${QTCORE_PV}" "-ne" "${QTGUI_PV}" ; then
 eerror "QTCORE_PV is not the same version as Qt5Gui"
 			die
 		fi
-		if ver_test ${QTCORE_PV} -ne ${QTWIDGETS_PV} ; then
+		if ver_test "${QTCORE_PV}" "-ne" "${QTWIDGETS_PV}" ; then
 eerror "QTCORE_PV is not the same version as Qt5Widgets"
 			die
 		fi
 	fi
-	if has qt6 ${IUSE_EFFECTIVE} && ot-kernel_use qt6 ; then
-		local QTCORE_PV=$(pkg-config --modversion Qt6Core)
-		local QTGUI_PV=$(pkg-config --modversion Qt6Gui)
-		local QTWIDGETS_PV=$(pkg-config --modversion Qt6Widgets)
-		if ver_test ${QTCORE_PV} -ne ${QTGUI_PV} ; then
+	if has "qt6" ${IUSE_EFFECTIVE} && ot-kernel_use "qt6" ; then
+		local QTCORE_PV=$(pkg-config --modversion "Qt6Core")
+		local QTGUI_PV=$(pkg-config --modversion "Qt6Gui")
+		local QTWIDGETS_PV=$(pkg-config --modversion "Qt6Widgets")
+		if ver_test "${QTCORE_PV}" "-ne" "${QTGUI_PV}" ; then
 eerror "QTCORE_PV is not the same version as Qt5Gui"
 			die
 		fi
-		if ver_test ${QTCORE_PV} -ne ${QTWIDGETS_PV} ; then
+		if ver_test "${QTCORE_PV}" "-ne" "${QTWIDGETS_PV}" ; then
 eerror "QTCORE_PV is not the same version as Qt5Widgets"
 			die
 		fi
@@ -14059,9 +14063,9 @@ ot-kernel_src_configure() {
 		[[ "${target_triple}" == "CHOST" ]] && target_triple="${CHOST}"
 		[[ "${target_triple}" == "CBUILD" ]] && target_triple="${CBUILD}"
 		local cpu_sched_name="cfs"
-		ver_test "${KV_MAJOR_MINOR}" -ge "6.6" && cpu_sched_name="eevdf"
+		ver_test "${KV_MAJOR_MINOR}" "-ge" "6.6" && cpu_sched_name="eevdf"
 		[[ -z "${cpu_sched}" ]] && cpu_sched="${cpu_sched_name}"
-		ot-kernel_use rt && cpu_sched="${cpu_sched_name}"
+		ot-kernel_use "rt" && cpu_sched="${cpu_sched_name}"
 		[[ -z "${target_triple}" ]] && target_triple="${CHOST}"
 		#[[ -z "${boot_decomp}" ]] && boot_decomp="manual"
 		[[ -z "${extraversion}" ]] && die "extraversion cannot be empty"
@@ -14135,7 +14139,7 @@ ewarn
 get_llvm_slot() {
 	local llvm_slot=""
 	local x
-	for x in ${LLVM_COMPAT[@]} ; do
+	for x in "${LLVM_COMPAT[@]}" ; do
 		if ot-kernel_use "llvm_slot_${x}" ; then
 			llvm_slot="${x/llvm_slot_}"
 			break
@@ -14151,7 +14155,7 @@ get_llvm_slot() {
 get_gcc_slot() {
 	local gcc_slot=""
 	local x
-	for x in ${GCC_COMPAT[@]/gcc_slot_} ; do
+	for x in "${GCC_COMPAT[@]/gcc_slot_}" ; do
 		if ot-kernel_use "gcc_slot_${x}" ; then
 			gcc_slot="${x/gcc_slot_}"
 			break
@@ -14184,7 +14188,7 @@ einfo "Setting up the build toolchain"
 		)
 	fi
 
-	if tc-is-cross-compiler && ot-kernel_use clang ; then
+	if tc-is-cross-compiler && ot-kernel_use "clang" ; then
 eerror "OT_KERNEL_USE must not contain clang when cross compiling."
 		die
 	fi
@@ -14194,7 +14198,7 @@ eerror "CC/CC must not contain references to clang when cross compiling."
 		die
 	fi
 
-	if ot-kernel_use clang && ! use clang ; then
+	if ot-kernel_use "clang" && ! use clang ; then
 eerror "OT_KERNEL_USE must not contain clang when USE clang is disabled."
 		die
 	fi
@@ -14202,8 +14206,8 @@ eerror "OT_KERNEL_USE must not contain clang when USE clang is disabled."
 	# tresor is broken with clang?  puts missing.
 	# ld.lld: error: undefined symbol: puts
 
-	if ot-kernel_use clang ; then
-		if has tresor ${IUSE_EFFECTIVE} && ot-kernel_use tresor ; then
+	if ot-kernel_use "clang" ; then
+		if has "tresor" ${IUSE_EFFECTIVE} && ot-kernel_use "tresor" ; then
 # Ask to disable to remove clang patches or force GCC PGO.
 eerror
 eerror "TRESOR is not compatable with clang."
@@ -14293,7 +14297,7 @@ einfo
 	# Verify requirements
 	# Only LTS compiler slots allowed to avoid issues with closed source or
 	# out-of-source drivers
-	if ot-kernel_use clang ; then
+	if ot-kernel_use "clang" ; then
 		local _llvm_min_slot=$(ot-kernel_get_llvm_min_slot)
 		local _llvm_max_slot=$(ot-kernel_get_llvm_max_slot)
 		local s=$(clang-major-version)
@@ -14405,7 +14409,7 @@ einfo
 		)
 	fi
 
-	if has tresor ${IUSE_EFFECTIVE} && ot-kernel_use tresor && tc-is-clang ; then
+	if has "tresor" ${IUSE_EFFECTIVE} && ot-kernel_use "tresor" && tc-is-clang ; then
 		args+=(
 			"LLVM_IAS=0"
 		)
@@ -14433,8 +14437,8 @@ einfo "Passed check for ${x}"
 # @DESCRIPTION:
 # Builds the tresor_sysfs program.
 ot-kernel_build_tresor_sysfs() {
-	if has tresor_sysfs ${IUSE_EFFECTIVE} ; then
-		if ot-kernel_use tresor_sysfs ; then
+	if has "tresor_sysfs" ${IUSE_EFFECTIVE} ; then
+		if ot-kernel_use "tresor_sysfs" ; then
 einfo "Running:  $(tc-getCC) ${CFLAGS} -Wno-unused-result tresor_sysfs.c -o \
 tresor_sysfs"
 			$(tc-getCC) ${CFLAGS} -Wno-unused-result \
@@ -14744,11 +14748,11 @@ ot-kernel_build_kernel() {
 		if \
 			[[ "${CLANG_PGO_SUPPORTED}" == "1" ]] \
 				&& \
-			has clang ${IUSE_EFFECTIVE} \
+			has "clang" ${IUSE_EFFECTIVE} \
 				&& \
-			ot-kernel_use clang \
+			ot-kernel_use "clang" \
 				&& \
-			ot-kernel_use pgo \
+			ot-kernel_use "pgo" \
 		; then
 	# Clang PGO section
 			local pgo_compiler_fingerprint_file="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/compiler_fingerprint"
@@ -14816,13 +14820,13 @@ einfo "Resuming as PGI since no profile generated"
 			fi
 		elif \
 			( \
-				( has clang ${IUSE_EFFECTIVE} && ! ot-kernel_use clang ) \
+				( has "clang" ${IUSE_EFFECTIVE} && ! ot-kernel_use "clang" ) \
 					|| \
-				( ! has clang ${IUSE_EFFECTIVE} ) \
+				( ! has "clang" ${IUSE_EFFECTIVE} ) \
 			) \
 				&& \
 			( \
-				   ot-kernel_use pgo \
+				   ot-kernel_use "pgo" \
 			) \
 		; then
 	# GCC PGO section
@@ -14832,7 +14836,7 @@ einfo "Resuming as PGI since no profile generated"
 			local pgo_phase="${PGO_PHASE_UNK}"
 			if [[ -n "${FORCE_PGO_PHASE}" ]] ; then
 				pgo_phase="${FORCE_PGO_PHASE}"
-			elif [[ ! -e "${pgo_phase_statefile}" ]] && ot-kernel_use pgo ; then
+			elif [[ ! -e "${pgo_phase_statefile}" ]] && ot-kernel_use "pgo" ; then
 				pgo_phase="${PGO_PHASE_PGI}"
 			else
 				pgo_phase=$(cat "${pgo_phase_statefile}")
@@ -14874,7 +14878,7 @@ einfo "Building ${pgo_phase}"
 				local current_abi="LIBDIR_${DEFAULT_ABI}"
 				local binutils_pv=$(best_version sys-devel/binutils \
 					| sed -e "s|sys-devel/binutils-||g")
-				binutils_pv=$(ver_cut 1-2 "${binutils_pv}")
+				binutils_pv=$(ver_cut "1-2" "${binutils_pv}")
 				if [[ -n "${GCC_GCOV_DIR}" ]] ; then
 					args+=(
 						"GCC_GCOV_DIR=${GCC_GCOV_DIR}"
@@ -14964,7 +14968,7 @@ einfo "Resuming as ${makefile_pgo_phase} since no profile generated"
 				local current_abi="LIBDIR_${DEFAULT_ABI}"
 				local binutils_pv=$(best_version sys-devel/binutils \
 					| sed -e "s|sys-devel/binutils-||g")
-				binutils_pv=$(ver_cut 1-2 "${binutils_pv}")
+				binutils_pv=$(ver_cut "1-2" "${binutils_pv}")
 				if [[ -n "${GCC_GCOV_DIR}" ]] ; then
 					args+=(
 						"GCC_GCOV_DIR=${GCC_GCOV_DIR}"
@@ -15032,9 +15036,9 @@ ot-kernel_src_compile() {
 		[[ "${target_triple}" == "CHOST" ]] && target_triple="${CHOST}"
 		[[ "${target_triple}" == "CBUILD" ]] && target_triple="${CBUILD}"
 		local cpu_sched_name="cfs"
-		ver_test "${KV_MAJOR_MINOR}" -ge "6.6" && cpu_sched_name="eevdf"
+		ver_test "${KV_MAJOR_MINOR}" "-ge" "6.6" && cpu_sched_name="eevdf"
 		[[ -z "${cpu_sched}" ]] && cpu_sched="${cpu_sched_name}"
-		ot-kernel_use rt && cpu_sched="${cpu_sched_name}"
+		ot-kernel_use "rt" && cpu_sched="${cpu_sched_name}"
 		[[ -z "${target_triple}" ]] && target_triple="${CHOST}"
 		if [[ -z "${build_config}" ]] ; then
 			if ot-kernel_is_build ; then
@@ -15883,14 +15887,14 @@ EOF
 		_OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL=1
 	fi
 
-	if         has c2tcp ${IUSE_EFFECTIVE} \
-		|| has deepcc ${IUSE_EFFECTIVE} \
-		|| has orca ${IUSE_EFFECTIVE} ; then
-		if         ot-kernel_use c2tcp \
-			|| ot-kernel_use deepcc \
-			|| ot-kernel_use orca ; then
+	if         has "c2tcp" ${IUSE_EFFECTIVE} \
+		|| has "deepcc" ${IUSE_EFFECTIVE} \
+		|| has "orca" ${IUSE_EFFECTIVE} ; then
+		if         ot-kernel_use "c2tcp" \
+			|| ot-kernel_use "deepcc" \
+			|| ot-kernel_use "orca" ; then
 			if [[ "${C2TCP_MAJOR_VER}" == "2" ]] ; then
-				docinto licenses
+				docinto "licenses"
 				dodoc "${EDISTDIR}/copyright.c2tcp.${C2TCP_COMMIT:0:7}"
 			fi
 		fi
@@ -16084,11 +16088,11 @@ ot_kernel_serialize_pgo_state() {
 	[[ "${pgo_phase}" == "PDO" ]] && pgo_phase="PGO"
 	[[ "${pgo_phase}" == "PD0" ]] && pgo_phase="PG0"
 	local pgo_phase_statefile=""
-	if has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && use pgo && ot-kernel_use pgo ; then
+	if has "clang" ${IUSE_EFFECTIVE} && ot-kernel_use "clang" && use pgo && ot-kernel_use "pgo" ; then
 		if [[ "${CLANG_PGO_SUPPORTED}" == "1" ]] ; then
 			pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/pgophase"
 		fi
-	elif use pgo && ot-kernel_use pgo ; then
+	elif use pgo && ot-kernel_use "pgo" ; then
 		pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc/pgophase"
 	fi
 	if [[ -n "${pgo_phase_statefile}" ]] ; then
@@ -16345,7 +16349,7 @@ einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before
 		ot-kernel_install_tcca
 		ot-kernel_fix_modules
 
-		if has rock-dkms ${IUSE_EFFECTIVE} && ot-kernel_use rock-dkms ; then
+		if has "rock-dkms" ${IUSE_EFFECTIVE} && ot-kernel_use "rock-dkms" ; then
 			ot-kernel_slotify_amdgpu
 			ot-kernel_add_amdgpu_wrapper
 		fi
@@ -16358,7 +16362,7 @@ einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before
 # @DESCRIPTION:
 # Send user messages for tresor
 ot-kernel_postinst_tresor() {
-	if has tresor_sysfs ${IUSE_EFFECTIVE} ; then
+	if has "tresor_sysfs" ${IUSE_EFFECTIVE} ; then
 		if use tresor_sysfs ; then
 			local highest_tresor_pv=$(best_version "sys-kernel/ot-sources[tresor_sysfs]" \
 				| sed -r -e "s|sys-kernel/ot-sources-||" -e "s|-r[0-9]+||")
@@ -16387,7 +16391,7 @@ einfo
 einfo "Advanced users may use /sys/kernel/tresor/key instead."
 einfo
 		else
-			if has tresor ${IUSE_EFFECTIVE} ; then
+			if has "tresor" ${IUSE_EFFECTIVE} ; then
 				if use tresor ; then
 ewarn
 ewarn "You can only enter a password that is 53 characters long without the null"
@@ -16398,7 +16402,7 @@ ewarn
 		fi
 	fi
 
-	if has tresor ${IUSE_EFFECTIVE} ; then
+	if has "tresor" ${IUSE_EFFECTIVE} ; then
 		if use tresor ; then
 einfo
 einfo "To prevent the prompt on boot from scrolling off the screen, you can do"
@@ -16453,7 +16457,7 @@ ewarn "TRESOR for AES-NI has not been tested.  It's left for users to test and"
 ewarn "fix."
 ewarn
 	fi
-	if has tresor ${IUSE_EFFECTIVE} ; then
+	if has "tresor" ${IUSE_EFFECTIVE} ; then
 		if use tresor ; then
 ewarn
 ewarn "TRESOR is currently not compatible with Integrated Assembler used by Clang/LLVM."
@@ -16467,7 +16471,7 @@ ewarn
 # @DESCRIPTION:
 # Send user message about exfat
 ot-kernel_postinst_exfat() {
-	if has exfat ${IUSE_EFFECTIVE} && use exfat ; then
+	if has "exfat" ${IUSE_EFFECTIVE} && use exfat ; then
 einfo
 einfo "exFAT users:  You must be a member of OIN and agree to the OIN license"
 einfo "for patent use legal protections and royalty free benefits."
@@ -16493,7 +16497,7 @@ einfo "Installing tcca"
 		chown root:root "${EROOT}/usr/bin/tcca"
 	fi
 
-	if has bbrv2 ${IUSE_EFFECTIVE} ; then
+	if has "bbrv2" ${IUSE_EFFECTIVE} ; then
 		if use bbrv2 ; then
 einfo
 einfo "To enable BBRv2 go to"
@@ -16507,7 +16511,7 @@ einfo
 		fi
 	fi
 
-	if has bbrv3 ${IUSE_EFFECTIVE} ; then
+	if has "bbrv3" ${IUSE_EFFECTIVE} ; then
 		if use bbrv3 ; then
 einfo
 einfo "To enable BBRv3 go to"
@@ -16523,7 +16527,7 @@ einfo
 		fi
 	fi
 
-	if has c2tcp ${IUSE_EFFECTIVE} && use c2tcp ; then
+	if has "c2tcp" ${IUSE_EFFECTIVE} && use c2tcp ; then
 einfo
 einfo "C2TCP is disabled by default."
 einfo
@@ -16531,7 +16535,7 @@ einfo "See epkginfo -x sys-apps/c2tcp::oiledmachine-overlay for details about"
 einfo "enabling and the tunable target delay knob."
 einfo
 	fi
-	if has deepcc ${IUSE_EFFECTIVE} && use deepcc ; then
+	if has "deepcc" ${IUSE_EFFECTIVE} && use deepcc ; then
 einfo
 einfo "DeepCC is disabled by default and needs the DRL Agent or learned models"
 einfo "loaded."
@@ -16541,7 +16545,7 @@ einfo "enabling and loading the DRL Agent and learned model(s) and tunable"
 einfo "target delay knob."
 einfo
 	fi
-	if has orca ${IUSE_EFFECTIVE} && use orca ; then
+	if has "orca" ${IUSE_EFFECTIVE} && use orca ; then
 einfo
 einfo "Orca needs the DRL Agent or learned models loaded."
 einfo
@@ -16555,7 +16559,7 @@ einfo
 # @DESCRIPTION:
 # Send user message about initramfs
 ot-kernel_postinst_initramfs() {
-	if has build ${IUSE_EFFECTIVE} && use build ; then
+	if has "build" ${IUSE_EFFECTIVE} && use build ; then
 einfo
 einfo "The kernel(s) still needs to complete the following steps:"
 einfo
@@ -16574,7 +16578,7 @@ einfo
 # @DESCRIPTION:
 # Send user message about pgo
 ot-kernel_postinst_pgo() {
-	if use pgo && has build ${IUSE_EFFECTIVE} && use build ; then
+	if use pgo && has "build" ${IUSE_EFFECTIVE} && use build ; then
 einfo
 einfo "The kernel(s) still needs to complete the following steps:"
 einfo
@@ -16707,12 +16711,12 @@ einfo
 # Send user message about rt patchset
 ot-kernel_postinst_rt_patchset() {
 	local rt_option
-	if   ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
+	if   ver_test "${KV_MAJOR_MINOR}" "-ge" "5.4" ; then
 		rt_option="CONFIG_PREEMPT_RT"
-	elif ver_test "${KV_MAJOR_MINOR}" -lt "5.4" ; then
+	elif ver_test "${KV_MAJOR_MINOR}" "-lt" "5.4" ; then
 		rt_option="CONFIG_PREEMPT_RT_FULL"
 	fi
-	if has rt ${FEATURES} ; then
+	if has "rt" ${FEATURES} ; then
 		if use rt ; then
 einfo
 einfo "Don't forget to set ${rt_option} found at \"General setup\" in"
@@ -16742,17 +16746,17 @@ ot-kernel_postinst_clang_built_linux() {
 		-e "s|-r[0-9]+||" | cut -f 1 -d ".")
 	fi
 
-	if has cfi ${IUSE_EFFECTIVE} ; then
+	if has "cfi" ${IUSE_EFFECTIVE} ; then
 		if use cfi ; then
 			wants_cfi=1
 		fi
 	fi
-	if has kcfi ${IUSE_EFFECTIVE} ; then
+	if has "kcfi" ${IUSE_EFFECTIVE} ; then
 		if use kcfi ; then
 			wants_kcfi=1
 		fi
 	fi
-	if has lto ${IUSE_EFFECTIVE} ; then
+	if has "lto" ${IUSE_EFFECTIVE} ; then
 		if use lto ; then
 			wants_lto=1
 		fi
@@ -16805,7 +16809,7 @@ einfo
 # Send message about proton
 ot-kernel_postinst_proton() {
 	if has_version "app-emulation/wine-proton" \
-		&& ver_test "${KV_MAJOR_MINOR}" -ge "5.16" ; then
+		&& ver_test "${KV_MAJOR_MINOR}" "-ge" "5.16" ; then
 einfo
 einfo "You may need to set the environment variable WINEFSYNC=1 for futex2"
 einfo "support for the app-emulation/wine-proton package."

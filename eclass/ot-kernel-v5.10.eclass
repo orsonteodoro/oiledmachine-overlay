@@ -53,9 +53,9 @@ RTW_FIRMWARE_RELEASE_DATE="20200518" # Based on latest added rtw8821c_fw bin dri
 #
 # This also means that each vendor will have an early release or late release
 # of their devices' firmware.
-KV_MAJOR=$(ver_cut 1 "${MY_PV}")
-KV_MAJOR_MINOR=$(ver_cut 1-2 "${MY_PV}")
-if ver_test "${MY_PV}" -eq "${KV_MAJOR_MINOR}" ; then
+KV_MAJOR=$(ver_cut "1" "${MY_PV}")
+KV_MAJOR_MINOR=$(ver_cut "1-2" "${MY_PV}")
+if ver_test "${MY_PV}" "-eq" "${KV_MAJOR_MINOR}" ; then
 	# Normalize versioning
 	UPSTREAM_PV="${KV_MAJOR_MINOR}.0" # file context
 else
@@ -786,11 +786,11 @@ ot-kernel_apply_tresor_fixes() {
 	if [[ -n "${TRESOR_TARGET_OVERRIDE}" ]] ; then
 		# For development
 		tresor_patch_target="${TRESOR_TARGET_OVERRIDE}"
-	elif [[ "${arch}" == "x86_64" ]] && ot-kernel_use cpu_flags_x86_aes ; then
+	elif [[ "${arch}" == "x86_64" ]] && ot-kernel_use "cpu_flags_x86_aes" ; then
 		tresor_patch_target="x86_64_aesni_256"
 	elif [[ "${arch}" == "x86_64" ]] && [[ "${TRESOR_MAX_KEY_SIZE}" == "192" || "${TRESOR_MAX_KEY_SIZE}" == "256" ]] ; then
 		tresor_patch_target="x86_64_generic_256"
-	elif [[ "${arch}" == "x86_64" ]] && [[ "${TRESOR_MAX_KEY_SIZE}" == "128" ]]  ; then
+	elif [[ "${arch}" == "x86_64" ]] && [[ "${TRESOR_MAX_KEY_SIZE}" == "128" ]] ; then
 		tresor_patch_target="x86_64_generic_128"
 	elif [[ "${arch}" == "x86" ]] ; then
 		tresor_patch_target="x86_generic_128"
@@ -957,10 +957,10 @@ ot-kernel_filter_patch_cb() {
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/prjc_v5.10-lts-r3-fix-for-5.10.194.patch"
 
 	elif [[ "${path}" =~ "0001-z3fold-simplify-freeing-slots.patch" ]] \
-		&& ver_test $(ver_cut 1-3 "${MY_PV}") -ge "5.10.4" ; then
+		&& ver_test $(ver_cut "1-3" "${MY_PV}") "-ge" "5.10.4" ; then
 einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "0002-z3fold-stricter-locking-and-more-careful-reclaim.patch" ]] \
-		&& ver_test $(ver_cut 1-3 "${MY_PV}") -ge "5.10.4" ; then
+		&& ver_test $(ver_cut "1-3" "${MY_PV}") "-ge" "5.10.4" ; then
 einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "0008-x86-mm-highmem-Use-generic-kmap-atomic-implementatio.patch" ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
@@ -1017,7 +1017,7 @@ einfo "Already applied ${path} upstream"
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/zen-sauce-5.10.0-e1b127a-fix-for-5.10.194.patch"
 	elif [[ "${path}" =~ "zen-sauce-5.10.0-973d42f.patch" ]] ; then
-		if ot-kernel_use zen-sauce ; then
+		if ot-kernel_use "zen-sauce" ; then
 			# Already applied
 			:
 		else
@@ -1072,22 +1072,22 @@ ot-kernel_get_llvm_min_slot() {
 
 	local kcp_provider=$(ot-kernel_get_kcp_provider)
 
-	if ot-kernel_use pgo && [[ "${arch}" == "s390" ]] ; then
+	if ot-kernel_use "pgo" && [[ "${arch}" == "s390" ]] ; then
 		die "Clang PGO is not supported for this series.  Disable either the clang or pgo USE flag."
 	fi
-	if ot-kernel_use clang && ot-kernel_use pgo ; then
+	if ot-kernel_use "clang" && ot-kernel_use "pgo" ; then
 		die "Clang PGO is not supported for this series.  Disable either the clang or pgo USE flag."
 	fi
-	if has kcfi ${IUSE_EFFECTIVE} && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ "kcfi" ]] && [[ "${arch}" == "arm64" ]] ; then
+	if has "kcfi" ${IUSE_EFFECTIVE} && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ "kcfi" ]] && [[ "${arch}" == "arm64" ]] ; then
 		die "KCFI is not supported for this series.  Disable the kcfi USE flag."
 	fi
-	if has kcfi ${IUSE_EFFECTIVE} && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ "kcfi" ]] && [[ "${arch}" == "x86_64" ]] ; then
+	if has "kcfi" ${IUSE_EFFECTIVE} && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ "kcfi" ]] && [[ "${arch}" == "x86_64" ]] ; then
 		die "KCFI is not supported for this series.  Disable the kcfi USE flag."
 	fi
-	if has lto ${IUSE_EFFECTIVE} && ot-kernel_use lto ; then
+	if has "lto" ${IUSE_EFFECTIVE} && ot-kernel_use "lto" ; then
 		die "LTO is not supported for this series.  Disable the lto USE flag."
 	fi
-	if has shadowcallstack ${IUSE_EFFECTIVE} && ot-kernel_use shadowcallstack && [[ "${arch}" == "x86_64" ]] ; then
+	if has "shadowcallstack" ${IUSE_EFFECTIVE} && ot-kernel_use "shadowcallstack" && [[ "${arch}" == "x86_64" ]] ; then
 		die "ShadowCallStack is not supported for this series.  Disable the shadowcallstack USE flag."
 	fi
 

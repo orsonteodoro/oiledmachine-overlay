@@ -44,9 +44,9 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	#RC_PV="rc2"
 	# MY_PV is in ver_test context
 	if [[ -n "${RC_PV}" ]] ; then
-		MY_PV=$(ver_cut 1-3 "${PV}")"_${RC_PV}"
+		MY_PV=$(ver_cut "1-3" "${PV}")"_${RC_PV}"
 	else
-		MY_PV=$(ver_cut 1-3 "${PV}")
+		MY_PV=$(ver_cut "1-3" "${PV}")
 	fi
 else
 	RC_PV=""
@@ -77,9 +77,9 @@ RTW_FIRMWARE_RELEASE_DATE="20250630" # Based on latest added rtw8922a_fw-4 bin d
 #
 # This also means that each vendor will have an early release or late release
 # of their devices' firmware.
-KV_MAJOR=$(ver_cut 1 "${MY_PV}")
-KV_MAJOR_MINOR=$(ver_cut 1-2 "${MY_PV}")
-if ver_test "${MY_PV}" -eq "${KV_MAJOR_MINOR}" ; then
+KV_MAJOR=$(ver_cut "1" "${MY_PV}")
+KV_MAJOR_MINOR=$(ver_cut "1-2" "${MY_PV}")
+if ver_test "${MY_PV}" "-eq" "${KV_MAJOR_MINOR}" ; then
 	# Normalize versioning
 	UPSTREAM_PV="${KV_MAJOR_MINOR}.0" # file context
 else
@@ -1236,7 +1236,7 @@ ot-kernel_apply_tresor_fixes() {
 	if [[ -n "${TRESOR_TARGET_OVERRIDE}" ]] ; then
 		# For development
 		tresor_patch_target="${TRESOR_TARGET_OVERRIDE}"
-	elif [[ "${arch}" == "x86_64" ]] && ot-kernel_use cpu_flags_x86_aes ; then
+	elif [[ "${arch}" == "x86_64" ]] && ot-kernel_use "cpu_flags_x86_aes" ; then
 		tresor_patch_target="x86_64_aesni_256"
 	elif [[ "${arch}" == "x86_64" ]] && [[ "${TRESOR_MAX_KEY_SIZE}" == "192" || "${TRESOR_MAX_KEY_SIZE}" == "256" ]] ; then
 		tresor_patch_target="x86_64_generic_256"
@@ -1455,10 +1455,10 @@ ot-kernel_filter_patch_cb() {
 "${FILESDIR}/ck-patchset-5.12-ck1-fix-cpufreq-gov-performance.patch"
 
 	elif [[ "${path}" =~ "0001-z3fold-simplify-freeing-slots.patch" ]] \
-		&& ver_test $(ver_cut 1-3 "${MY_PV}") -ge "5.10.4" ; then
+		&& ver_test $(ver_cut "1-3" "${MY_PV}") "-ge" "5.10.4" ; then
 einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "0002-z3fold-stricter-locking-and-more-careful-reclaim.patch" ]] \
-		&& ver_test $(ver_cut 1-3 "${MY_PV}") -ge "5.10.4" ; then
+		&& ver_test $(ver_cut "1-3" "${MY_PV}") "-ge" "5.10.4" ; then
 einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "0008-x86-mm-highmem-Use-generic-kmap-atomic-implementatio.patch" ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
