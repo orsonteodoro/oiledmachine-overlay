@@ -2470,9 +2470,9 @@ ewarn "Disabling system-rust could weaken the security or privacy."
 ewarn "Enabling openh264 and disabling system-openh264 could weaken the security or privacy."
 	fi
 
-	if use winevine ; then
+	if use widevine ; then
 	# Contains BLOB(s) which may fingerprint user, or backdoor DoS, or not fully hardened
-ewarn "Enabling winevine could weaken the security or privacy."
+ewarn "Enabling widevine could weaken the security or privacy."
 	fi
 
 	if has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
