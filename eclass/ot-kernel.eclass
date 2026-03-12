@@ -413,8 +413,8 @@ UKSM_BASE_URI="https://raw.githubusercontent.com/dolohow/uksm/master/v${KV_MAJOR
 UKSM_FN="uksm-${KV_MAJOR_MINOR}.patch"
 UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
 
-MITIGATION_DATE="Mar 4, 2026" # Advisory date
-MITIGATION_LAST_UPDATE=1772722113 # From `date +%s -d "2026-03-05 09:48:33 -0500"` from changelog for latest tag
+MITIGATION_DATE="Mar 10, 2026" # Advisory date
+MITIGATION_LAST_UPDATE=1773313814 # From `date +%s -d "2026-03-12 07:10:14 -0400"` from changelog for latest tag
 MITIGATION_URI="https://lore.kernel.org/linux-cve-announce/"
 VULNERABILITIES_FIXED=(
 # High and critical are noted and only those that are fixed on this release day
@@ -427,6 +427,100 @@ VULNERABILITIES_FIXED=(
 
 # Some CVE reports may be slow released.  The second group may
 # catch these.
+
+# To halt on the vulnerability before the attacker exploit is used:
+
+# BUG: KASAN: - use panic_on_warn=1
+# BUG: kernel NULL pointer dereference - use panic_on_oops=1
+# KASAN: null-ptr-deref - use panic_on_oops=1
+# UBSAN: array-index-out-of-bounds - use panic_on_warn=1
+
+	# 6.19.7 (2026-03-12)
+	# Unofficial report by eclass maintainer:
+
+	"0aae18e;CRSH, DoS;" # 6.19.7
+	"0fb3b94;OOBA;" # 6.19.7
+	"105caae;H;" # 6.19.7
+	"142eacb;DoS;" # 6.19.7
+	"149f028;OOBA;" # 6.19.7
+	"15f9acc;OF;" # 6.19.7
+	"188338c;NPD, DoS;" # 6.19.7
+	"198824c;DoS;" # 6.19.7, panic on warn
+	"1df3ef7;DoS;" # 6.19.7, panic on oops
+	"20ef5c2;NPD, DoS;" # 6.19.7, panic on oops
+	"227ff4a;DF;" # 6.19.7
+	"22a6419;OOBA;" # 6.19.7
+	"27fccdb;DR;" # 6.19.7
+	"2833e13;OF" # 6.19.7
+	"284e35a;CRSH, DoS;" # 6.19.7
+	"28fd8ac;OOB;" # 6.19.7
+	"3557359;ML, DoS;" # 6.19.7
+	"3744ebd;IOOB, OOBA;" # 6.19.7
+	"372571d;ML;" # 6.19.7
+	"3b9499e;OOBA;" # 6.19.7
+	"3f550a0;OOBR;" # 6.19.7
+	"44ba32a;ML, DoS;" # 6.19.7
+	"44d49a4;DoS;" # 6.19.7
+	"45661d2;OOBA;" # 6.19.7
+	"460c56e;DoS;" # 6.19.7, panic on oops
+	"499ffd1;OOBR;" # 6.19.7
+	"4e8a000;CRSH, UAF, DoS;" # 6.19.7
+	"4f461da;ML, DoS;" # 6.19.7
+	"547d0b0;ML;" # 6.19.7
+	"575122c;CRSH, DoS;" # 6.19.7
+	"58f529f;DR;" # 6.19.7
+	"59efa08;DoS;" # 6.19.7, panic
+	"5b230da;NPD, DoS;" # 6.19.7, panic on oops
+	"5f1cfea;CRSH, NPD, DoS;" # 6.19.7
+	"625ef35;OF, OOB" # 6.19.7
+	"63ee429;ML, DoS;" # 6.19.7
+	"696fa12;ML, DoS;" # 6.19.7
+	"607e923;KP, DoS;" # 6.19.7
+	"65ff5d1;UAF, ML, DoS;" # 6.19.7
+	"691866c;OOB, DoS;" # 6.19.7, panic on warn
+	"700c13a;SOF;" # 6.19.7
+	"7bfda1a;CRSH, DoS;" # 6.19.7
+	"73aa05c;IO;" # 6.19.7
+	"79a26fe;UAF;" # 6.19.7
+	"7c8a7b7;OOB;" # 6.19.7, panic on warn
+	"85c98b8;CRSH, NPD, DoS;" # 6.19.7, panic on oops
+	"8650db8;KP, CRSH, NPD, DoS;" # 6.19.7
+	"94b9da7;CRSH, HF, DoS;" # 6.19.7, panic on oops
+	"972bf4a;OF;" # 6.19.7
+	"978d4fe;OF;" # 6.19.7
+	"a03d965;H, DoS;" # 6.19.7
+	"abcd48e;DoS;" # 6.19.7, panic on oops
+	"a3f88e3;ML, DoS;" # 6.19.7
+	"a9f55b1;UAF;" # 6.19.7
+	"a631770;CRSH, DoS;" # 6.19.7
+	"ab1a56c;RC, DF, UAF" # 6.19.7
+	"abe1d5c;OF, DbZ, DoS" # 6.19.7, panic on oops
+	"ac7ecb6;RC, UAF;" # 6.19.7
+	"ae88c82;NPD, DoS;" # 6.19.7, panic on oops
+	"b0f0510;KP, DoS;" # 6.19.7
+	"b38cbd4;ML; DoS;" # 6.19.7
+	"b7f6728;DoS;" # 6.19.7, panic on warn
+	"ba1c229;DoS;" # 6.19.7, panic on warn
+	"baef52d;DoS;" # 6.19.7, panic on warn
+	"be8b82c;CRSH, NPD, DoS;" # 6.19.7
+	"c2cd816;OF, UF, UESE;" # 6.19.7
+	"c726273;KP, NPD, DoS" # 6.19.7, panic on oops
+	"c9bd000;ML;" # 6.19.7
+	"ca83156;OOBW;" # 6.19.7
+	"cc83cd7;H, DoS;" # 6.19.7
+	"cca770d;OOBW;" # 6.19.7
+	"c69df4e;UAF;" # 6.19.7, panic on warn
+	"cd2f529;UAF;" # 6.19.7, panic on warn
+	"d20d489;CRSH, DoS;" # 6.19.7
+	"d58d71c;OOBW;" # 6.19.7
+	"da4515f;UAF, DoS;" # 6.19.7
+	"dca4ea5;DoS;" # 6.19.7
+	"ec54546;DoS;" # 6.19.7, panic on warn
+	"eeaf28c;OOBA;" # 6.19.7
+	"ee31ec8;CRSH, DoS;" # 6.19.7
+	"f558e54;CRSH, DoS;" # 6.19.7
+	"f6fa05f;CRSH, DoS;" # 6.19.7, panic
+
 	# 2026-03-10
 
 	"CVE-2026-23239;RC;"
