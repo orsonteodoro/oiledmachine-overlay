@@ -1,0 +1,167 @@
+--- a/content/browser/tracing/traces_internals/traces_internals_handler.cc.orig	2026-03-09 12:52:01.000000000 -0700
++++ b/content/browser/tracing/traces_internals/traces_internals_handler.cc	2026-03-11 22:02:54.330677121 -0700
+@@ -110,6 +110,7 @@ class TraceReader : public base::RefCoun
+   ~TraceReader() = default;
+ };
+ 
++#if defined(RTC_USE_PERFETTO)
+ void AddCategoriesToList(
+     const perfetto::internal::TrackEventCategoryRegistry& registry,
+     std::vector<traces_internals::mojom::TraceCategoryPtr>& categories) {
+@@ -132,6 +133,7 @@ void AddCategoriesToList(
+     categories.push_back(std::move(mojom_category));
+   }
+ }
++#endif
+ 
+ }  // namespace
+ 
+@@ -280,6 +282,7 @@ void TracesInternalsHandler::StopTraceSe
+ 
+ void TracesInternalsHandler::GetTrackEventCategories(
+     GetTrackEventCategoriesCallback callback) {
++#if defined(RTC_USE_PERFETTO)
+   std::vector<traces_internals::mojom::TraceCategoryPtr> categories;
+ 
+   AddCategoriesToList(base::perfetto_track_event::internal::kCategoryRegistry,
+@@ -290,6 +293,7 @@ void TracesInternalsHandler::GetTrackEve
+   AddCategoriesToList(GetWebRtcTrackEventCategoryRegistry(), categories);
+ 
+   std::move(callback).Run(std::move(categories));
++#endif
+ }
+ 
+ void TracesInternalsHandler::GetBufferUsage(GetBufferUsageCallback callback) {
+--- a/content/browser/tracing/tracing_controller_impl.cc.orig	2026-03-09 12:52:01.000000000 -0700
++++ b/content/browser/tracing/tracing_controller_impl.cc	2026-03-11 22:04:17.508111451 -0700
+@@ -103,6 +103,7 @@ inline constexpr char kRevisionMetadataK
+ 
+ TracingControllerImpl* g_tracing_controller = nullptr;
+ 
++#if defined(RTC_USE_PERFETTO)
+ void AddCategoriesToSet(
+     const perfetto::internal::TrackEventCategoryRegistry& registry,
+     std::set<std::string>& category_set) {
+@@ -113,7 +114,9 @@ void AddCategoriesToSet(
+     category_set.insert(registry.GetCategory(i)->name);
+   }
+ }
++#endif
+ 
++#if defined(RTC_USE_PERFETTO)
+ void AddCategoriesToDescriptor(
+     const perfetto::internal::TrackEventCategoryRegistry& registry,
+     perfetto::protos::gen::TrackEventDescriptor& descriptor) {
+@@ -137,6 +140,7 @@ void AddCategoriesToDescriptor(
+     *proto_category->mutable_tags() = std::move(tags_vector);
+   }
+ }
++#endif
+ 
+ }  // namespace
+ 
+@@ -232,6 +236,7 @@ TracingControllerImpl* TracingController
+ }
+ 
+ bool TracingControllerImpl::GetCategories(GetCategoriesDoneCallback callback) {
++#if defined(RTC_USE_PERFETTO)
+   std::set<std::string> category_set;
+ 
+   AddCategoriesToSet(base::perfetto_track_event::internal::kCategoryRegistry,
+@@ -243,16 +248,21 @@ bool TracingControllerImpl::GetCategorie
+ 
+   std::move(callback).Run(category_set);
+   return true;
++#else
++  return false;
++#endif
+ }
+ 
+ std::vector<uint8_t> TracingControllerImpl::GetTrackEventDescriptor() {
+   perfetto::protos::gen::TrackEventDescriptor track_event;
++#if defined(RTC_USE_PERFETTO)
+   AddCategoriesToDescriptor(
+       base::perfetto_track_event::internal::kCategoryRegistry, track_event);
+ #ifdef V8_USE_PERFETTO
+   AddCategoriesToDescriptor(v8::GetTrackEventCategoryRegistry(), track_event);
+ #endif  // V8_USE_PERFETTO
+   AddCategoriesToDescriptor(GetWebRtcTrackEventCategoryRegistry(), track_event);
++#endif
+   return track_event.SerializeAsArray();
+ }
+ 
+--- a/third_party/webrtc/webrtc.gni.orig	2026-03-09 12:52:01.000000000 -0700
++++ b/third_party/webrtc/webrtc.gni	2026-03-11 22:02:54.330677121 -0700
+@@ -365,7 +365,7 @@ if (is_mac || is_ios) {
+ }
+ 
+ if (build_with_chromium) {
+-  rtc_use_perfetto = true
++  rtc_use_perfetto = false
+ }
+ 
+ # Global public configuration that should be applied to all WebRTC targets. You
+--- a/content/browser/BUILD.gn.orig	2026-03-09 12:52:01.000000000 -0700
++++ b/content/browser/BUILD.gn	2026-03-11 22:02:54.330677121 -0700
+@@ -26,6 +26,10 @@ import("//testing/libfuzzer/fuzzer_test.
+ import("//third_party/blink/public/public_features.gni")
+ import("//tools/ipc_fuzzer/ipc_fuzzer.gni")
+ 
++declare_args() {
++  content_browser_rtc_use_perfetto = true
++}
++
+ if (is_mac) {
+   import("//content/public/app/mac_helpers.gni")
+ }
+@@ -2728,6 +2732,10 @@ source_set("browser") {
+     public_deps += [ "//ash/webui/common/resources" ]
+   }
+ 
++  if (content_browser_rtc_use_perfetto) {
++    defines += [ "RTC_USE_PERFETTO" ]
++  }
++
+   if (is_castos) {
+     sources += [
+       "tracing/cast_tracing_agent.cc",
+--- a/third_party/webrtc_overrides/init_webrtc.h.orig	2026-03-09 12:52:01.000000000 -0700
++++ b/third_party/webrtc_overrides/init_webrtc.h	2026-03-11 22:02:54.330677121 -0700
+@@ -16,7 +16,9 @@ RTC_EXPORT bool InitializeWebRtcModuleBe
+ // run after tracing is initialized, otherwise WebRTC traces won't work.
+ RTC_EXPORT void InitializeWebRtcModule();
+ 
++#if defined(RTC_USE_PERFETTO)
+ RTC_EXPORT const perfetto::internal::TrackEventCategoryRegistry&
+ GetWebRtcTrackEventCategoryRegistry();
++#endif
+ 
+ #endif  // THIRD_PARTY_WEBRTC_OVERRIDES_INIT_WEBRTC_H_
+--- a/v8/gni/v8.gni.orig	2026-03-11 23:52:31.771720615 -0700
++++ b/v8/gni/v8.gni	2026-03-11 23:58:38.276452716 -0700
+@@ -284,7 +284,7 @@ if (v8_use_perfetto_sdk) {
+ # Chromium is configured to use the perfetto client library, v8 should also
+ # use perfetto for tracing.
+ if (build_with_chromium && !use_fuzzing_engine) {
+-  v8_use_perfetto = true
++  v8_use_perfetto = false
+ }
+ 
+ # Enable JSON export by default when using perfetto but not the SDK.
+--- a/third_party/webrtc_overrides/init_webrtc.cc.orig	2026-03-09 12:52:01.000000000 -0700
++++ b/third_party/webrtc_overrides/init_webrtc.cc	2026-03-11 23:20:42.030714228 -0700
+@@ -17,10 +17,14 @@ bool InitializeWebRtcModuleBeforeSandbox
+ }
+ 
+ void InitializeWebRtcModule() {
++#if defined(RTC_USE_PERFETTO)
+   webrtc::RegisterPerfettoTrackEvents();
++#endif
+ }
+ 
++#if defined(RTC_USE_PERFETTO)
+ const perfetto::internal::TrackEventCategoryRegistry&
+ GetWebRtcTrackEventCategoryRegistry() {
+   return webrtc::perfetto_track_event::internal::kCategoryRegistry;
+ }
++#endif

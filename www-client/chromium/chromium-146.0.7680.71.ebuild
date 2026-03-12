@@ -164,8 +164,8 @@ TC_COUNT_EXPECTED_CLANG=422
 TC_COUNT_EXPECTED_GN=1074
 TC_COUNT_EXPECTED_RUST=7087
 SOURCES_COUNT_EXPECTED=539189
-CHROMIUM_EBUILD_MAINTAINER=1 # Also set GEN_ABOUT_CREDITS
-GEN_ABOUT_CREDITS=1
+CHROMIUM_EBUILD_MAINTAINER=0 # Also set GEN_ABOUT_CREDITS
+GEN_ABOUT_CREDITS=0
 
 ABSEIL_CPP_SLOT="20251021"
 ALLOW_MKSNAPSHOT=1 # Setting to a value other than 1 is untested.
@@ -238,8 +238,8 @@ TEST_FONT="a28b222b79851716f8358d2800157d9ffe117b3545031ae51f69b7e1e1b9a969"
 
 # SHA512 about_credits.html fingerprint: \
 LICENSE_FINGERPRINT="\
-5d50346e4aa012987fdc744970280660e953a7e6b34ace1ede347694c75546e3\
-fdda53cb0b3a5cbeb2781c71106ef41d52e76c598fc0702f88e180ae6154b082\
+c3331c52296636489eac713b74c3c8b05c3faa3c60394908d242f15017a98381\
+93f0313d37258dcba9747bff6798fefcf24562c13d35a9ec17757fbd9fb66bc5\
 "
 
 # One of the major sources of lag comes from dependencies
@@ -2776,8 +2776,8 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 
 	PATCHES+=(
 		"${FILESDIR}/extra-patches/${PN}-143.0.7499.169-custom-optimization-level.patch"
-		$((has "cromite" ${IUSE_EFFECTIVE} && use cromite) || echo "${FILESDIR}/extra-patches/${PN}-144.0.7559.59-hardening.patch")
-		$((has "cromite" ${IUSE_EFFECTIVE} && use cromite) && echo "${FILESDIR}/extra-patches/${PN}-144.0.7559.59-hardening-cromite.patch")
+		$((has "cromite" ${IUSE_EFFECTIVE} && use cromite) || echo "${FILESDIR}/extra-patches/${PN}-146.0.7680.71-hardening.patch")
+		$((has "cromite" ${IUSE_EFFECTIVE} && use cromite) && echo "${FILESDIR}/extra-patches/${PN}-146.0.7680.71-hardening-cromite.patch")
 		"${FILESDIR}/extra-patches/v8-14.3.127.17-custom-optimization-level.patch"			# Patch for the original version in the Chromium tarball.  Different v8 versions needs forward port.
 	)
 
@@ -2785,7 +2785,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	# This section contains significant changes.  The above sections contains minor changes.
 
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-145.0.7632.75-disable-perfetto.patch"
+			"${FILESDIR}/extra-patches/${PN}-146.0.7680.71-disable-perfetto.patch"
 			"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-icu-tracing.patch"
 		)
 
