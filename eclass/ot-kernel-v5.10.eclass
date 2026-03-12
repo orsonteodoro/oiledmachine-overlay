@@ -64,12 +64,12 @@ fi
 
 ARM_FLAGS=(
 # Some are default ON for security reasons or bug avoidance.
-	+cpu_flags_arm_bti
-	+cpu_flags_arm_lse # 8.1
-	+cpu_flags_arm_mte # 8.3, kernel 5.10, gcc 10.1, llvm 8 ; Disabled this and used v8_3 instead.
-	cpu_flags_arm_neon
-	+cpu_flags_arm_pac # 8.3-A
-	+cpu_flags_arm_tlbi # 8.4
+	"+cpu_flags_arm_bti"
+	"+cpu_flags_arm_lse" # 8.1
+	"+cpu_flags_arm_mte" # 8.3, kernel 5.10, gcc 10.1, llvm 8 ; Disabled this and used v8_3 instead.
+	"cpu_flags_arm_neon"
+	"+cpu_flags_arm_pac" # 8.3-A
+	"+cpu_flags_arm_tlbi" # 8.4
 )
 
 BBRV2_KV="5.10.0"
@@ -302,8 +302,8 @@ PATCH_ZEN_TUNE_COMMITS_DEPS_ZEN_SAUCE="
 # ZEN: Add CONFIG to rename the mq-deadline scheduler (513af58)
 
 PPC_FLAGS=(
-	cpu_flags_ppc_476fpe
-	cpu_flags_ppc_altivec
+	"cpu_flags_ppc_476fpe"
+	"cpu_flags_ppc_altivec"
 )
 X86_FLAGS=(
 # See also
@@ -311,19 +311,19 @@ X86_FLAGS=(
 # arch/x86/Makefile
 # include/opcode/i386.h from binutils <= 2.17.x
 # opcodes/i386-opc.tbl from binutils >= 2.18.x
-	cpu_flags_x86_aes
-	cpu_flags_x86_avx
-	cpu_flags_x86_avx2
-	cpu_flags_x86_avx512bw
-	cpu_flags_x86_avx512vl # kernel 5.7, gcc 5.1, llvm 3.7
-	cpu_flags_x86_pclmul # (CRYPTO_GHASH_CLMUL_NI_INTEL) pclmulqdq - kernel 2.6, gcc 4.4, llvm 3.2 ; 2010
-	cpu_flags_x86_sha
-	cpu_flags_x86_sha256
-	cpu_flags_x86_sse2
-	cpu_flags_x86_sse4_2 # crc32
-	cpu_flags_x86_ssse3
-	cpu_flags_x86_tpause
-	cpu_flags_x86_vaes
+	"cpu_flags_x86_aes"
+	"cpu_flags_x86_avx"
+	"cpu_flags_x86_avx2"
+	"cpu_flags_x86_avx512bw"
+	"cpu_flags_x86_avx512vl" # kernel 5.7, gcc 5.1, llvm 3.7
+	"cpu_flags_x86_pclmul" # (CRYPTO_GHASH_CLMUL_NI_INTEL) pclmulqdq - kernel 2.6, gcc 4.4, llvm 3.2 ; 2010
+	"cpu_flags_x86_sha"
+	"cpu_flags_x86_sha256"
+	"cpu_flags_x86_sse2"
+	"cpu_flags_x86_sse4_2" # crc32
+	"cpu_flags_x86_ssse3"
+	"cpu_flags_x86_tpause"
+	"cpu_flags_x86_vaes"
 )
 
 ZEN_KV="5.10.0"

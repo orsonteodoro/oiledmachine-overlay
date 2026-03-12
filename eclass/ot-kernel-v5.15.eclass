@@ -64,12 +64,12 @@ fi
 
 ARM_FLAGS=(
 # Some are default ON for security reasons or bug avoidance.
-	+cpu_flags_arm_bti
-	+cpu_flags_arm_lse # 8.1
-	+cpu_flags_arm_mte # 8.3, kernel 5.10, gcc 10.1, llvm 8 ; Disabled this and used v8_3 instead.
-	cpu_flags_arm_neon
-	+cpu_flags_arm_pac # 8.3-A
-	+cpu_flags_arm_tlbi # 8.4
+	"+cpu_flags_arm_bti"
+	"+cpu_flags_arm_lse" # 8.1
+	"+cpu_flags_arm_mte" # 8.3, kernel 5.10, gcc 10.1, llvm 8 ; Disabled this and used v8_3 instead.
+	"cpu_flags_arm_neon"
+	"+cpu_flags_arm_pac" # 8.3-A
+	"+cpu_flags_arm_tlbi" # 8.4
 )
 
 BBRV2_KV="5.13.12"
@@ -152,18 +152,18 @@ CLANG_PGO_SUPPORTED=1
 CXX_STANDARD="11" # Qt5 (11), perf-cpp (11)
 DISABLE_DEBUG_PV="1.4.2"
 EXCLUDE_SCS=(
-	alpha
-	amd64
-	arm
-	hppa
-	loong
-	mips
-	ppc
-	ppc64
-	riscv
-	s390
-	sparc
-	x86
+	"alpha"
+	"amd64"
+	"arm"
+	"hppa"
+	"loong"
+	"mips"
+	"ppc"
+	"ppc64"
+	"riscv"
+	"s390"
+	"sparc"
+	"x86"
 )
 EXTRAVERSION="-ot"
 GCC_PV="5.1"
@@ -289,8 +289,8 @@ be5ba234ca0a5aabe74bfc7e1f636f085bd3823c
 96c43bfad5c8dcb116ab2088e46228707aaeca9f
 )
 PPC_FLAGS=(
-	cpu_flags_ppc_476fpe
-	cpu_flags_ppc_altivec
+	"cpu_flags_ppc_476fpe"
+	"cpu_flags_ppc_altivec"
 )
 X86_FLAGS=(
 # See also
@@ -298,19 +298,19 @@ X86_FLAGS=(
 # arch/x86/Makefile
 # include/opcode/i386.h from binutils <= 2.17.x
 # opcodes/i386-opc.tbl from binutils >= 2.18.x
-	cpu_flags_x86_aes
-	cpu_flags_x86_avx
-	cpu_flags_x86_avx2
-	cpu_flags_x86_avx512bw
-	cpu_flags_x86_avx512vl # kernel 5.7, gcc 5.1, llvm 3.7
-	cpu_flags_x86_pclmul # (CRYPTO_GHASH_CLMUL_NI_INTEL) pclmulqdq - kernel 2.6, gcc 4.4, llvm 3.2 ; 2010
-	cpu_flags_x86_sha
-	cpu_flags_x86_sha256
-	cpu_flags_x86_sse2
-	cpu_flags_x86_sse4_2 # crc32
-	cpu_flags_x86_ssse3
-	cpu_flags_x86_tpause
-	cpu_flags_x86_vaes
+	"cpu_flags_x86_aes"
+	"cpu_flags_x86_avx"
+	"cpu_flags_x86_avx2"
+	"cpu_flags_x86_avx512bw"
+	"cpu_flags_x86_avx512vl" # kernel 5.7, gcc 5.1, llvm 3.7
+	"cpu_flags_x86_pclmul" # (CRYPTO_GHASH_CLMUL_NI_INTEL) pclmulqdq - kernel 2.6, gcc 4.4, llvm 3.2 ; 2010
+	"cpu_flags_x86_sha"
+	"cpu_flags_x86_sha256"
+	"cpu_flags_x86_sse2"
+	"cpu_flags_x86_sse4_2" # crc32
+	"cpu_flags_x86_ssse3"
+	"cpu_flags_x86_tpause"
+	"cpu_flags_x86_vaes"
 )
 ZEN_KV="5.15.0"
 
@@ -388,7 +388,7 @@ fi
 
 gen_scs_exclusion() {
 	local a
-        for a in ${EXCLUDE_SCS[@]} ; do
+        for a in "${EXCLUDE_SCS[@]}" ; do
                 echo " ${a}? ( !shadowcallstack )"
 	done
 }

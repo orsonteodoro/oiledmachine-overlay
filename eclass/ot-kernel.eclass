@@ -2601,10 +2601,10 @@ einfo "Removing exFAT"
 	sed -i -e "s|/EXFAT/|/|g" \
 		"fs/Kconfig" || die
 	rm -rf "fs/exfat" || die
-	for path in $(find "arch" \
-		-name "*_defconfig") ; do
-		sed -i -e "/CONFIG_EXFAT_FS/d" \
-			"${path}" || die
+	local path
+	for path in $(find "arch" -name "*_defconfig") ; do
+		sed -i -e "/CONFIG_EXFAT_FS/d" "${path}" \
+			|| die
 	done
 }
 
@@ -2614,34 +2614,56 @@ einfo "Removing exFAT"
 # the source code.
 ot-kernel_rm_reiserfs() {
 einfo "Canceling ReiserFS"
-	sed -i -e "\|fs/reiserfs/Kconfig|d" \
-		"fs/Kconfig" || die
-	sed -i -e "/CONFIG_REISERFS_FS/d" \
-		"fs/Makefile" || die
+	sed -i \
+		-e "\|fs/reiserfs/Kconfig|d" \
+		"fs/Kconfig" \
+		|| die
+	sed -i \
+		-e "/CONFIG_REISERFS_FS/d" \
+		"fs/Makefile" \
+		|| die
 
-	sed -i -e "/REISER/d" \
-		"include/uapi/linux/magic.h" || die
-	sed -i -e "/__reiserfs_panic/d" \
-		"tools/objtool/check.c" || die
-	sed -i -e "s|, reiserfs||g" \
-		"fs/btrfs/tree-log.c" || die
+	sed -i \
+		-e "/REISER/d" \
+		"include/uapi/linux/magic.h" \
+		|| die
+	sed -i \
+		-e "/__reiserfs_panic/d" \
+		"tools/objtool/check.c" \
+		|| die
+	sed -i \
+		-e "s|, reiserfs||g" \
+		"fs/btrfs/tree-log.c" \
+		|| die
 
-	sed -i -e "s|and reiserfs||g" \
-		"fs/quota/Kconfig" || die
-	sed -i -e "s/|reiserfs//g" \
-		"scripts/selinux/install_policy.sh" || die
-	sed -i -e "/reiserfs/d" \
-		"include/linux/stringhash.h" || die
+	sed -i \
+		-e "s|and reiserfs||g" \
+		"fs/quota/Kconfig" \
+		|| die
+	sed -i \
+		-e "s/|reiserfs//g" \
+		"scripts/selinux/install_policy.sh" \
+		|| die
+	sed -i \
+		-e "/reiserfs/d" \
+		"include/linux/stringhash.h" \
+		|| die
 
-	sed -i -e "/Reiserfs/d" \
-		"scripts/ver_linux" || die
+	sed -i \
+		-e "/Reiserfs/d" \
+		"scripts/ver_linux" \
+		|| die
 
 	if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.3" ; then
-		sed -i -e "/reiserfs/d" \
-			"Documentation/kbuild/makefiles.rst" || die
+		sed -i \
+			-e "/reiserfs/d" \
+			"Documentation/kbuild/makefiles.rst" \
+			|| die
 	else
-		sed -i -e "/reiserfs/d" \
-			"Documentation/kbuild/makefiles.txt" || die
+		sed -i \
+			-e "/reiserfs/d" \
+			"Documentation/kbuild/makefiles.txt" \
+			|| die
 	fi
 
 	sed -i -r \
@@ -2670,7 +2692,9 @@ einfo "Canceling ReiserFS"
 		| sed -e "0,/^Reiserfsprogs/ s|^Reiserfsprogs|1Reiserfsprogs|" \
 		| sed -e "0,/^Reiserfsprogs/ s|^Reiserfsprogs|2Reiserfsprogs|" \
 		| sed -e "/1Reiserfsprogs/,/reiserfsck/d" -e "/2Reiserfsprogs/,/reiserfs/d" \
-		> "Documentation/process/changes.rst.t" || die
+			> \
+		"Documentation/process/changes.rst.t" \
+		|| die
 	mv "Documentation/process/changes.rst"{".t",""} || die
 	if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.1" ; then
 		cat "Documentation/translations/it_IT/process/changes.rst" \
@@ -2678,17 +2702,21 @@ einfo "Canceling ReiserFS"
 			| sed -e "0,/^Reiserfsprogs/ s|^Reiserfsprogs|1Reiserfsprogs|" \
 			| sed -e "0,/^Reiserfsprogs/ s|^Reiserfsprogs|2Reiserfsprogs|" \
 			| sed -e "/1Reiserfsprogs/,/reiserfsck/d" -e "/2Reiserfsprogs/,/reiserfs/d" \
-			> "Documentation/translations/it_IT/process/changes.rst.t" || die
+				> \
+			"Documentation/translations/it_IT/process/changes.rst.t" \
+			|| die
 		mv "Documentation/translations/it_IT/process/changes.rst"{".t",""} || die
 	fi
 
 	sed -i \
 		-e "s|;.*reiserfs does this.*|;|" \
-		"fs/buffer.c" || die
+		"fs/buffer.c" \
+		|| die
 	sed -i \
 		-e "s|blockdev.  Not true|blockdev.|" \
 		-e "/reiserfs/d" \
-		"fs/buffer.c" || die
+		"fs/buffer.c" \
+		|| die
 
 	if ver_test "${KV_MAJOR_MINOR}" "-ge" "4.17" ; then
 		sed -i -e "s|reiserfs_||g" \
@@ -2744,41 +2772,58 @@ einfo "Canceling ReiserFS"
 			"Documentation/ioctl/ioctl-number.txt" \
 			|| die
 	fi
-	sed -i -e "/REISERFS/,/\/reiserfs/d" \
-		"MAINTAINERS" || die
-	sed -i -e "s|like reiserfs, ||g" \
-		"drivers/block/Kconfig" || die
-	sed -i -e "s|ifdef CONFIG_REISERFS_FS_SECURITY|if 0|g" \
-		"scripts/selinux/mdp/mdp.c" || die
-	sed -i -e "/reiserfs/d" \
-		"scripts/selinux/mdp/mdp.c" || die
+	sed -i \
+		-e "/REISERFS/,/\/reiserfs/d" \
+		"MAINTAINERS" \
+		|| die
+	sed -i \
+		-e "s|like reiserfs, ||g" \
+		"drivers/block/Kconfig" \
+		|| die
+	sed -i \
+		-e "s|ifdef CONFIG_REISERFS_FS_SECURITY|if 0|g" \
+		"scripts/selinux/mdp/mdp.c" \
+		|| die
+	sed -i \
+		-e "/reiserfs/d" \
+		"scripts/selinux/mdp/mdp.c" \
+		|| die
 	rm -rf \
 		"fs/reiserfs" \
 		"include/uapi/linux/reiserfs_xattr.h" \
 		"include/uapi/linux/reiserfs_fs.h" \
 		|| die
-		for path in $(find "arch" \
-			-name "*_defconfig") ; do
-			sed -i -e "/CONFIG_REISERFS_FS/d" \
-				"${path}" || die
+		for path in $(find "arch" -name "*_defconfig") ; do
+			sed -i -e "/CONFIG_REISERFS_FS/d" "${path}" \
+				|| die
 		done
 
 einfo "Canceling Reiser4"
-	sed -i -e "/Reiser4/d" \
-		"scripts/ver_linux" || die
-	sed -i -e "/The Reiser4/,/kernel\./d" \
-		"Documentation/process/3.Early-stage.rst" || die
+	sed -i \
+		-e "/Reiser4/d" \
+		"scripts/ver_linux" \
+		|| die
+	sed -i \
+		-e "/The Reiser4/,/kernel\./d" \
+		"Documentation/process/3.Early-stage.rst" \
+		|| die
 	if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.0" ; then
-		sed -i -e "/Il filesystem Reiser4/,/kernel./d" \
-			"Documentation/translations/it_IT/process/3.Early-stage.rst" || die
+		sed -i \
+			-e "/Il filesystem Reiser4/,/kernel./d" \
+			"Documentation/translations/it_IT/process/3.Early-stage.rst" \
+			|| die
 	fi
 	if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.15" ; then
-		sed -i -e "/Reiser4文/,/Reiser4置/d" \
-			"Documentation/translations/zh_TW/process/3.Early-stage.rst" || die
+		sed -i \
+			-e "/Reiser4文/,/Reiser4置/d" \
+			"Documentation/translations/zh_TW/process/3.Early-stage.rst" \
+			|| die
 	fi
 	if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.2" ; then
-		sed -i -e "/Reiser4文/,/Reiser4置/d" \
-			"Documentation/translations/zh_CN/process/3.Early-stage.rst" || die
+		sed -i \
+			-e "/Reiser4文/,/Reiser4置/d" \
+			"Documentation/translations/zh_CN/process/3.Early-stage.rst" \
+			|| die
 	fi
 }
 
@@ -2981,11 +3026,18 @@ einfo "Copying private/shared signing keys"
 			# Save Kconfig* for make olddefconfig.
 			# Save arch/um/scripts/Makefile.rules for make mrproper.
 			mkdir -p "${T}/pruned"
-			cp --parents -a $(find arch \
-				-name "Kconfig*") \
-				"${T}/pruned" || die
-			cp --parents -a arch/um/scripts/Makefile.rules \
-				"${T}/pruned" || die
+			cp \
+				--parents \
+				-a \
+				$(find "arch" -name "Kconfig*") \
+				"${T}/pruned" \
+				|| die
+			cp \
+				--parents \
+				-a \
+				"arch/um/scripts/Makefile.rules" \
+				"${T}/pruned" \
+				|| die
 
 			ot-kernel_prune_arches
 
@@ -3048,13 +3100,13 @@ ewarn "Securely wiping private keys for ${extraversion}"
 is_clang_ready() {
 	[[ -z "${llvm_slot}" ]] && die "QA:  llvm_slot is empty"
 einfo "Testing llvm slot ${llvm_slot}"
-	which clang-${llvm_slot} >/dev/null 2>&1 || return 1
+	which "clang-${llvm_slot}" >/dev/null 2>&1 || return 1
 	local has_error=0
-	if clang-${llvm_slot} --help | grep -q -F -e "symbol lookup error" ; then
+	if "clang-${llvm_slot}" --help | grep -q -F -e "symbol lookup error" ; then
 ewarn "Found clang error"
 		has_error=1
 	fi
-	if clang-${llvm_slot} --help | grep -q -F -e "undefined symbol:" ; then
+	if "clang-${llvm_slot}" --help | grep -q -F -e "undefined symbol:" ; then
 ewarn "Found library error"
 		has_error=1
 	fi
@@ -3074,13 +3126,13 @@ ewarn
 is_gcc_ready() {
 	[[ -z "${gcc_slot}" ]] && die "QA:  gcc_slot is empty"
 einfo "Testing gcc slot ${gcc_slot}"
-	which gcc-${gcc_slot} >/dev/null 2>&1 || return 1
+	which "gcc-${gcc_slot}" >/dev/null 2>&1 || return 1
 	local has_error=0
-	if gcc-${gcc_slot} --help | grep -q -F -e "symbol lookup error" ; then
+	if "gcc-${gcc_slot}" --help | grep -q -F -e "symbol lookup error" ; then
 ewarn "Found gcc error"
 		has_error=1
 	fi
-	if gcc-${gcc_slot} --help | grep -q -F -e "undefined symbol:" ; then
+	if "gcc-${gcc_slot}" --help | grep -q -F -e "undefined symbol:" ; then
 ewarn "Found library error"
 		has_error=1
 	fi
@@ -8368,7 +8420,7 @@ _ot-kernel_set_kconfig_pgo_clang() {
 		ot-kernel_n_configopt "CONFIG_PROFRAW_V7_LLVM13"
 		ot-kernel_n_configopt "CONFIG_PROFRAW_V6"
 		ot-kernel_n_configopt "CONFIG_PROFRAW_V5"
-		# See grep -r -e "INSTR_PROF_RAW_VERSION" /usr/lib/llvm/${llvm_slot}/include/llvm/ProfileData/InstrProfData.inc
+		# See grep -r -e "INSTR_PROF_RAW_VERSION" "/usr/lib/llvm/${llvm_slot}/include/llvm/ProfileData/InstrProfData.inc"
 		if (( ${llvm_slot} == 19 && ${clang_pv_major} == 19 )) ; then
 einfo "Using profraw v9 for LLVM 19"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V9"
@@ -9658,7 +9710,7 @@ ot-kernel_set_kconfig_abis() {
 	[[ -z "${OT_KERNEL_ABIS}" ]] && OT_KERNEL_ABIS="auto"
 	local lib_bitness=""
 	# Assumes stage3 tarball installed
-	[[ -e "/usr/lib/libbz2.so" ]] && lib_bitness=$(ot-kernel_get_lib_bitness $(readlink -f /usr/lib/libbz2.so))
+	[[ -e "/usr/lib/libbz2.so" ]] && lib_bitness=$(ot-kernel_get_lib_bitness $(readlink -f "/usr/lib/libbz2.so"))
 	if [[ "${arch}" == "alpha" ]] ; then
 einfo "Added support for alpha"
 		ot-kernel_y_configopt "CONFIG_64BIT"
@@ -11849,26 +11901,28 @@ ot-kernel_fix_config_for_boot() {
 	local symbols
 	local subsystem
 	if [[ -n "${OT_KERNEL_BOOT_SUBSYSTEMS}" ]] ; then
-		subsystems=( ${OT_KERNEL_BOOT_SUBSYSTEMS} )
+		subsystems=(
+			${OT_KERNEL_BOOT_SUBSYSTEMS}
+		)
 	else
 		subsystems=(
-			# All related to boot initialization and logins
-			crypto
-			drivers/ata
-			drivers/block
-			drivers/hid
-			drivers/md
-			drivers/scsi
-			drivers/usb
-			drivers/input/keyboard
-			fs
+	# All related to boot initialization and logins
+			"crypto"
+			"drivers/ata"
+			"drivers/block"
+			"drivers/hid"
+			"drivers/md"
+			"drivers/scsi"
+			"drivers/usb"
+			"drivers/input/keyboard"
+			"fs"
 			${OT_KERNEL_BOOT_SUBSYSTEMS_APPEND}
 		)
 		if [[ "${OT_KERNEL_EARLY_KMS:-1}" == "1" ]] ; then
 			subsystems+=(
-				drivers/char/agp
-				drivers/gpu
-				drivers/video
+				"drivers/char/agp"
+				"drivers/gpu"
+				"drivers/video"
 			)
 		fi
 	fi
@@ -11889,7 +11943,7 @@ ewarn
 		symbols=( "${OT_KERNEL_BOOT_KOPTIONS}" )
 	else
 		symbols=(
-			$(grep -E -e "^(config|menuconfig) [0-9A-Za-z_]+" $(find ${subsystems[@]} -name "Kconfig*") \
+			$(grep -E -e "^(config|menuconfig) [0-9A-Za-z_]+" $(find "${subsystems[@]}" -name "Kconfig*") \
 				| cut -f 2 -d ":" \
 				| sed -r -e "s/^(config|menuconfig) //g" \
 				| sed -e "s|^|CONFIG_|g")
@@ -14640,7 +14694,7 @@ einfo "Installing unsigned kernel"
 	local n_jobs
 	local n_procs=$(get_nproc)
 	local f
-	for f in $(find boot -type f) ; do
+	for f in $(find "boot" -type f) ; do
 		(
 			if file "${f}" | grep -q -E -e 'Linux kernel.*executable' ; then
 				fperms -x "/${f}"
@@ -14671,11 +14725,11 @@ einfo "Installing the kernel sources"
 	if [[ "${OT_KERNEL_FAST_SOURCE_CODE_INSTALL:-0}" == "1" ]] ; then
 		cp -a "${ED}/usr/src/linux-${UPSTREAM_PV}-${extraversion}/.config" "${T}"
 		rm -rf "${ED}/usr/src/linux-${UPSTREAM_PV}-${extraversion}"
-		dodir /usr/src
+		dodir "/usr/src"
 		mv "${BUILD_DIR}" "${ED}/usr/src" || die
 		cp -a "${T}/.config" "${ED}/usr/src/linux-${UPSTREAM_PV}-${extraversion}/.config"
 	else
-		insinto /usr/src
+		insinto "/usr/src"
 		doins -r "${BUILD_DIR}" # Sanitize file permissions
 
 		local n_procs=$(get_nproc)
@@ -14779,7 +14833,7 @@ einfo "Building PGI"
 			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" && -e "${profraw_dpath}" ]] ; then
 einfo "Merging PGT profiles"
 				PATH="/usr/lib/llvm/$(clang-major-version)/bin:${PATH}" \
-				which llvm-profdata >/dev/null 2>&1 || die "Cannot find llvm-profdata"
+				which "llvm-profdata" >/dev/null 2>&1 || die "Cannot find llvm-profdata"
 				local actual_profraw_ver=$(od -An -j 8 -N 1 -t d1 "${profraw_dpath}" | grep -E -o -e "[0-9]+")
 				local expected_profraw_ver=$(grep -r -e "INSTR_PROF_RAW_VERSION" "/usr/lib/llvm/${llvm_slot}/include/llvm/ProfileData/InstrProfData.inc" \
 					| head -n 1 | cut -f 3 -d " ")
@@ -14863,7 +14917,7 @@ eerror
 				die
 			fi
 
-einfo "GCC PATH:  "$(which ${CHOST}-gcc-${gcc_slot})
+einfo "GCC PATH:  "$(which "${CHOST}-gcc-${gcc_slot}")
 
 			local n_gcda=$(find "${pgo_profile_dir}" -name "*.gcda" 2>/dev/null | wc -l)
 			[[ -z "${n_gcda}" ]] && n_gcda=0
@@ -14876,7 +14930,7 @@ einfo "GCC PATH:  "$(which ${CHOST}-gcc-${gcc_slot})
 einfo "Building ${pgo_phase}"
 				local gcc_slot=$(gcc-major-version)
 				local current_abi="LIBDIR_${DEFAULT_ABI}"
-				local binutils_pv=$(best_version sys-devel/binutils \
+				local binutils_pv=$(best_version "sys-devel/binutils" \
 					| sed -e "s|sys-devel/binutils-||g")
 				binutils_pv=$(ver_cut "1-2" "${binutils_pv}")
 				if [[ -n "${GCC_GCOV_DIR}" ]] ; then
@@ -14966,7 +15020,7 @@ ewarn "If you see \"profile count data file not found\" that is a bug in gcc wit
 einfo "Resuming as ${makefile_pgo_phase} since no profile generated"
 				local gcc_slot=$(gcc-major-version)
 				local current_abi="LIBDIR_${DEFAULT_ABI}"
-				local binutils_pv=$(best_version sys-devel/binutils \
+				local binutils_pv=$(best_version "sys-devel/binutils" \
 					| sed -e "s|sys-devel/binutils-||g")
 				binutils_pv=$(ver_cut "1-2" "${binutils_pv}")
 				if [[ -n "${GCC_GCOV_DIR}" ]] ; then
@@ -15234,7 +15288,7 @@ ot-kernel_is_full_sources_required() {
 # Add a wrapper for install of vanilla amdgpu kernel driver as a fallback.
 ot-kernel_add_amdgpu_wrapper() {
 # For multiple slot support.
-dodir /usr/bin
+dodir "/usr/bin"
 cat <<EOF > "${ED}/usr/bin/install-amdgpu-kernel-module-for-${PV}-${extraversion}.sh"
 #!/bin/bash
 echo "Switching to the vanilla amdgpu kernel module for \${kernel_release}"
@@ -15882,7 +15936,7 @@ EOF
 		sed -i -e "s|__EXTRAVERSION__|${extraversion}|" "${T}/tcca" || die
 		sed -i -e "s|__PV__|${MY_PV}|" "${T}/tcca" || die
 		sed -i -e "s|__ARCH__|${arch}|" "${T}/tcca" || die
-		insinto /etc
+		insinto "/etc"
 		newins "${T}/tcca.conf" "tcca-${UPSTREAM_PV}-${extraversion}-${arch}.conf"
 		_OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL=1
 	fi
@@ -16025,7 +16079,7 @@ ot_kernel_fix_kernel_release() {
 # Fix the certs file permissions
 ot-kernel_fix_certs_permissions() {
 	local cert
-	for cert in $(find certs -type f) ; do
+	for cert in $(find "certs" -type f) ; do
 		fperms 600 "/usr/src/linux-${UPSTREAM_PV}-${extraversion}/${cert}"
 	done
 }
@@ -16060,11 +16114,11 @@ ot-kernel_install_genkernel_required() {
 	# Required for linux-info.eclass: getfilevar() VARNAME ${KERNEL_MAKEFILE}
 	local ed_kernel_path="${ED}/usr/src/linux-${UPSTREAM_PV}-${extraversion}"
 	insinto "/usr/src/linux-${UPSTREAM_PV}-${extraversion}/scripts"
-	doins scripts/Kbuild.include
-	doins scripts/Makefile.extrawarn
-	doins scripts/subarch.include
+	doins "scripts/Kbuild.include"
+	doins "scripts/Makefile.extrawarn"
+	doins "scripts/subarch.include"
 	local path
-	for path in $(find arch/* -maxdepth 1 -name "Makefile") ; do
+	for path in $(find "arch/"* -maxdepth 1 -name "Makefile") ; do
 		insinto "/usr/src/linux-${UPSTREAM_PV}-${extraversion}/"$(dirname "${path}")
 		doins "${path}"
 	done
@@ -16124,7 +16178,7 @@ ot-kernel_strink_install() {
 		# Restore arch/um/scripts/Makefile.rules for make mrproper.
 		cp -aT "${T}/pruned" \
 			"${BUILD_DIR}" || die
-		rm -rf $(find arch -name "Kconfig*") # Delete if not using any make *config.
+		rm -rf $(find "arch" -name "Kconfig*") # Delete if not using any make *config.
 	fi
 
 	if [[ "${OT_KERNEL_PRESERVE_HEADER_NOTICES:-0}" == "1" ]] \
@@ -16176,7 +16230,7 @@ ot-kernel_push_clean() {
 	)
 
 	local arches=(
-		$(ls arch)
+		$(ls "arch")
 	)
 	local _arch # arch already defined
 	for _arch in "${arches[@]}" ; do
@@ -16221,7 +16275,7 @@ ot-kernel_install_kernel_config() {
 	local default_config_dir="/etc/kernels"
 	local default_config="${default_config_dir}/${default_config_bn}"
 einfo "Saving the config for ${extraversion} to ${default_config}"
-	insinto /etc/kernels
+	insinto "/etc/kernels"
 	newins "${BUILD_DIR}/.config" "${default_config_bn}"
 	# dosym src_relpath_real dest_abspath_symlink
 
@@ -16254,7 +16308,7 @@ ot-kernel_src_install() {
 	export STRIP="/bin/true" # See https://github.com/torvalds/linux/blob/v5.16/init/Kconfig#L2169
 	if has tresor ${IUSE_EFFECTIVE} ; then
 		if use tresor ; then
-			docinto /usr/share/${PF}
+			docinto "/usr/share/${PF}"
 			dodoc "${EDISTDIR}/${TRESOR_README_FN}"
 			dodoc "${EDISTDIR}/${TRESOR_PDF_FN}"
 		fi
@@ -16370,8 +16424,8 @@ ot-kernel_postinst_tresor() {
 			# Avoid symlink collisons between multiple installs.
 			# dosym src_relpath_real dest_abspath_symlink
 			dosym \
-../../usr/src/linux-${highest_tresor_pv}-${main_extraversion_with_tresor}/tresor_sysfs \
-				/usr/bin/tresor_sysfs
+				"../../usr/src/linux-${highest_tresor_pv}-${main_extraversion_with_tresor}/tresor_sysfs" \
+				"/usr/bin/tresor_sysfs"
 			# It's the same hash for 5.1 and 5.0.13 for tresor_sysfs.
 einfo
 einfo "The /usr/bin/tresor_sysfs CLI command which uses /sys/kernel/tresor/key too"
@@ -16491,8 +16545,10 @@ einfo
 ot-kernel_postinst_network() {
 	if (( ${_OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL} == 1 )) ; then
 einfo "Installing tcca"
-		cat "${FILESDIR}/tcca" \
-			> "${EROOT}/usr/bin/tcca"
+		cat \
+			"${FILESDIR}/tcca" \
+				> \
+			"${EROOT}/usr/bin/tcca"
 		chmod 0755 "${EROOT}/usr/bin/tcca"
 		chown root:root "${EROOT}/usr/bin/tcca"
 	fi
@@ -16648,10 +16704,10 @@ einfo "Installing ot-kernel-iosched (OpenRC)"
 		mkdir -p "${EROOT}/etc/init.d"
 		cat \
 			"${FILESDIR}/ot-kernel-iosched.openrc" \
-			> \
+				> \
 			"${EROOT}/etc/init.d/ot-kernel-iosched"
 		chmod 0755 "${EROOT}/etc/init.d/ot-kernel-iosched"
-		chown root:root "${EROOT}/etc/init.d/ot-kernel-iosched"
+		chown "root:root" "${EROOT}/etc/init.d/ot-kernel-iosched"
 
 ewarn
 ewarn "The iosched has been changed to ${EPREFIX}/etc/init.d/ot-kernel-iosched"
@@ -16669,7 +16725,7 @@ ewarn
 		# Installed here to avoid merge conflict.
 		cat \
 			"${FILESDIR}/ot-kernel-iosched.sh" \
-			> \
+				> \
 			"${EROOT}/usr/bin/ot-kernel-iosched.sh"
 		chmod 0755 "${EROOT}/usr/bin/ot-kernel-iosched.sh"
 		chown root:root "${EROOT}/usr/bin/ot-kernel-iosched.sh"
@@ -16861,8 +16917,8 @@ ewarn
 	fi
 
 	local private_keys=(
-		$(find /var/tmp/portage/sys-kernel/ot-sources*/work/*/certs/ -maxdepth 1 -name "*.pem")
-		$(find /var/tmp/portage/sys-kernel/ot-sources*/work/*/ -maxdepth 1 -name "*.pem")
+		$(find "/var/tmp/portage/sys-kernel/ot-sources"*"/work/"*"/certs/" -maxdepth 1 -name "*.pem")
+		$(find "/var/tmp/portage/sys-kernel/ot-sources"*"/work/"*"/" -maxdepth 1 -name "*.pem")
 	)
 	if (( ${#private_keys[@]} > 0 )) ; then
 elog "Detected the following previous install or partial build of the ${PN}"
@@ -17130,7 +17186,7 @@ einfo "Secure wiping the private key in build directory for ${extraversion}"
 
 	if use symlink ; then
 		# dosym src_relpath_real dest_abspath_symlink
-		dosym linux-${highest_pv}-${main_extraversion} /usr/src/linux
+		dosym "linux-${highest_pv}-${main_extraversion}" "/usr/src/linux"
 	fi
 
 	if declare -f ot-kernel_pkg_postinst_cb > /dev/null ; then

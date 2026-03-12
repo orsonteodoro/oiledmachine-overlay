@@ -96,7 +96,7 @@ ot-kernel_has_version_use() {
 
 	X=$(echo "${pkg_raw}" | sed -e "s|.*\[||g" -e "s|\].*||g" | tr "," " ")
 	for x in ${X} ; do
-		for y in ${Y[@]} ; do
+		for y in "${Y[@]}" ; do
 			if [[ "${x}" == "${y}" ]] ; then
 				return 0
 			fi
@@ -176,7 +176,7 @@ ot-kernel_set_kconfig_kernel_cmdline() {
 		ot-kernel_set_configopt "CONFIG_CMDLINE" "\"${inargs[@]}\""
 	else
 		cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g")
-		for x in ${inargs[@]} ; do
+		for x in "${inargs[@]}" ; do
 			# Remove duplicates
 			cmd=$(echo "${cmd}" | sed -e "s|${x}||g")
 		done
@@ -206,7 +206,7 @@ ot-kernel_unset_pat_kconfig_kernel_cmdline() {
 		:
 	else
 		cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g")
-		for x in ${inargs[@]} ; do
+		for x in "${inargs[@]}" ; do
 			# Remove duplicates
 			cmd=$(echo "${cmd}" | sed -r -e "s#(^| )${x}#\1#g")
 		done

@@ -997,7 +997,7 @@ _OT_KERNEL_DRIVER_BUNDLE_DRIVER_SYMBOLS=(
 # Clear the driver bundle set.
 ot-kernel-driver-bundle_clear_driver_set() {
 	local s
-	for s in ${_OT_KERNEL_DRIVER_BUNDLE_DRIVER_SYMBOLS[@]} ; do
+	for s in "${_OT_KERNEL_DRIVER_BUNDLE_DRIVER_SYMBOLS[@]}" ; do
 		ot-kernel_unset_configopt "${s}"
 	done
 }
@@ -4162,7 +4162,7 @@ ewarn "CUDA microarchitecture check:  FAILED"
 			)
 
 			local a
-			for a in ${sm_arches[@]} ; do
+			for a in "${sm_arches[@]}" ; do
 				[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "${a}"($|" ") ]] && sm_arch="${a}"
 			done
 

@@ -27,14 +27,14 @@ esac
 inherit ot-kernel-kutils toolchain-funcs
 
 # To find missing package use:
-# for x in $(grep -E -r --exclude-dir=.git --exclude-dir=metadata --exclude=Manifest.gz -e "(CHECK_CONFIG|CONFIG_CHECK)(\+|=)" -e "linux_chkconfig_" /usr/portage  | sort | cut -f 1 -d ":" | cut -f 4-5 -d "/") ; do grep -q -e "${x}" ot-kernel-pkgflags.eclass || echo "Missing ${x}" ; done
-# for x in $(grep -E -r --exclude-dir=.git --exclude-dir=metadata --exclude=Manifest.gz -e "(CHECK_CONFIG|CONFIG_CHECK)(\+|=)" -e "linux_chkconfig_" /var/db/repos/*  | sort | cut -f 1 -d ":" | cut -f 6-7 -d "/") ; do grep -q -e "${x}" ot-kernel-pkgflags.eclass || echo "Missing ${x}" ; done
+# for x in $(grep -E -r --exclude-dir=".git" --exclude-dir="metadata" --exclude="Manifest.gz" -e "(CHECK_CONFIG|CONFIG_CHECK)(\+|=)" -e "linux_chkconfig_" "/usr/portage"  | sort | cut -f 1 -d ":" | cut -f 4-5 -d "/") ; do grep -q -e "${x}" ot-kernel-pkgflags.eclass || echo "Missing ${x}" ; done
+# for x in $(grep -E -r --exclude-dir=".git" --exclude-dir="metadata" --exclude="Manifest.gz" -e "(CHECK_CONFIG|CONFIG_CHECK)(\+|=)" -e "linux_chkconfig_" "/var/db/repos/"*  | sort | cut -f 1 -d ":" | cut -f 6-7 -d "/") ; do grep -q -e "${x}" ot-kernel-pkgflags.eclass || echo "Missing ${x}" ; done
 
 # These are discovered by doing one of the following:
-# grep -E -r --exclude-dir=.git --exclude-dir=metadata --exclude=Manifest.gz -e "(CHECK_CONFIG|CONFIG_CHECK)(\+|=)" -e "linux_chkconfig_" /usr/portage | sort
+# grep -E -r --exclude-dir=".git" --exclude-dir="metadata" --exclude="Manifest.gz" -e "(CHECK_CONFIG|CONFIG_CHECK)(\+|=)" -e "linux_chkconfig_" "/usr/portage" | sort
 
 # For checking required unsets:
-# grep -E -r --exclude-dir=.git --exclude-dir=metadata --exclude=Manifest.gz -e '(CHECK_CONFIG|CONFIG_CHECK).*!' /usr/portage
+# grep -E -r --exclude-dir=".git" --exclude-dir="metadata" --exclude="Manifest.gz" -e '(CHECK_CONFIG|CONFIG_CHECK).*!' "/usr/portage"
 
 # linux-info notes:
 
@@ -1227,11 +1227,11 @@ _ot-kernel-pkgflags_has_beep_udev_rules() {
 	[[ -e "${f}" ]] || return 1
 	if which getfacl "${f}" >/dev/null 2>&1 ; then
 		if ! getfacl "${f}" "group:beep:-w-" ; then
-			grep -q -e "^beep:" /etc/group > /dev/null || return 1
+			grep -q -e "^beep:" "/etc/group" > /dev/null || return 1
 			ls -lH "${f}" | grep -q -e " root beep " || return 1
 		fi
 	else
-		grep -q -e "^beep:" /etc/group > /dev/null || return 1
+		grep -q -e "^beep:" "/etc/group" > /dev/null || return 1
 		ls -lH "${f}" | grep -q -e " root beep " || return 1
 	fi
 	return 0
@@ -2195,76 +2195,78 @@ eerror
 
 CR_PKGS=(
 # Obtained from
-# From /usr/portage \
-# grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "chromium_suid_sandbox_check_kernel_config" ./ | cut -f 2-3 -d "/" | sort | uniq
-# grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "chrome-sandbox" ./ | cut -f 2-3 -d "/" | sort | uniq
-# grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "electron" ./ | grep ".ebuild:" | cut -f 2-3 -d "/"			# Requires manual inspection
-# From /var/lib/layman \
-# grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "chrome-sandbox" ./ | cut -f 3-4 -d "/" | sort | uniq
-# grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "electron-app" ./ | grep ".ebuild:" | cut -f 2-3 -d "/" | sort | uniq
-# grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "electron" ./ | grep ".ebuild:" | cut -f 3-4 -d "/" | sort | uniq	# Requires manual inspection
-app-admin/bitwarden-desktop-bin
-app-editors/epic-journal
-app-editors/vscode
-app-editors/vscodium
-app-office/drawio-desktop-bin
-dev-db/dbgate-bin
-dev-games/gdevelop
-dev-qt/qtwebengine
-dev-util/arctype
-dev-util/beekeeper-studio-bin
-dev-util/clion
-dev-util/devhub
-dev-util/eclipse-theia
-dev-util/electron-bin
-dev-util/electron-packager
-dev-util/insomnia-bin
-dev-util/lepton
-dev-util/postman
-dev-util/pycharm-community
-dev-util/pycharm-professional
-dev-util/testmace
-media-gfx/blockbench
-media-gfx/evoluspencil
-media-gfx/texturelab
-media-gfx/WebPlotDigitizer-bin
-media-sound/nuclear-bin
-media-sound/plexamp
-media-sound/teamspeak-client
-media-sound/tidal-hifi-bin
-media-video/obs-studio
-net-im/caprine
-net-im/discord
-net-im/discord-bin
-net-im/discord-canary-bin
-net-im/discord-ptb-bin
-net-im/discord-wayland
-net-im/element-desktop-bin
-net-im/guilded-bin
-net-im/session-desktop-bin
-net-im/signal-desktop-bin
-net-im/skypeforlinux
-net-im/slack
-net-im/teams
-net-im/whatsapp-desktop-bin
-net-libs/cef
-net-libs/cef-bin
-net-proxy/insomnia-bin
-sci-mathematics/rstudio-desktop-bin
-www-apps/BloodHound
-www-client/chromium
-www-client/chromium-bin
-www-client/google-chrome
-www-client/google-chrome-beta
-www-client/google-chrome-unstable
-www-client/microsoft-edge
-www-client/microsoft-edge-beta
-www-client/microsoft-edge-dev
-www-client/opera
-www-client/opera-beta
-www-client/opera-developer
-www-client/vivaldi
-www-misc/instatron
+#
+# cd "/usr/portage"
+# grep --exclude-dir="metadata" --exclude-dir=".git" --exclude-dir="distfiles" -r -e "chromium_suid_sandbox_check_kernel_config" "./" | cut -f 2-3 -d "/" | sort | uniq
+# grep --exclude-dir="metadata" --exclude-dir=".git" --exclude-dir="distfiles" -r -e "chrome-sandbox" "./" | cut -f 2-3 -d "/" | sort | uniq
+# grep --exclude-dir="metadata" --exclude-dir=".git" --exclude-dir="distfiles" -r -e "electron" "./" | grep ".ebuild:" | cut -f 2-3 -d "/"			# Requires manual inspection
+#
+# cd "/var/lib/layman"
+# grep --exclude-dir="metadata" --exclude-dir=".git" --exclude-dir="distfiles" -r -e "chrome-sandbox" "./" | cut -f 3-4 -d "/" | sort | uniq
+# grep --exclude-dir="metadata" --exclude-dir=".git" --exclude-dir="distfiles" -r -e "electron-app" "./" | grep ".ebuild:" | cut -f 2-3 -d "/" | sort | uniq
+# grep --exclude-dir="metadata" --exclude-dir=".git" --exclude-dir="distfiles" -r -e "electron" "./" | grep ".ebuild:" | cut -f 3-4 -d "/" | sort | uniq	# Requires manual inspection
+	"app-admin/bitwarden-desktop-bin"
+	"app-editors/epic-journal"
+	"app-editors/vscode"
+	"app-editors/vscodium"
+	"app-office/drawio-desktop-bin"
+	"dev-db/dbgate-bin"
+	"dev-games/gdevelop"
+	"dev-qt/qtwebengine"
+	"dev-util/arctype"
+	"dev-util/beekeeper-studio-bin"
+	"dev-util/clion"
+	"dev-util/devhub"
+	"dev-util/eclipse-theia"
+	"dev-util/electron-bin"
+	"dev-util/electron-packager"
+	"dev-util/insomnia-bin"
+	"dev-util/lepton"
+	"dev-util/postman"
+	"dev-util/pycharm-community"
+	"dev-util/pycharm-professional"
+	"dev-util/testmace"
+	"media-gfx/blockbench"
+	"media-gfx/evoluspencil"
+	"media-gfx/texturelab"
+	"media-gfx/WebPlotDigitizer-bin"
+	"media-sound/nuclear-bin"
+	"media-sound/plexamp"
+	"media-sound/teamspeak-client"
+	"media-sound/tidal-hifi-bin"
+	"media-video/obs-studio"
+	"net-im/caprine"
+	"net-im/discord"
+	"net-im/discord-bin"
+	"net-im/discord-canary-bin"
+	"net-im/discord-ptb-bin"
+	"net-im/discord-wayland"
+	"net-im/element-desktop-bin"
+	"net-im/guilded-bin"
+	"net-im/session-desktop-bin"
+	"net-im/signal-desktop-bin"
+	"net-im/skypeforlinux"
+	"net-im/slack"
+	"net-im/teams"
+	"net-im/whatsapp-desktop-bin"
+	"net-libs/cef"
+	"net-libs/cef-bin"
+	"net-proxy/insomnia-bin"
+	"sci-mathematics/rstudio-desktop-bin"
+	"www-apps/BloodHound"
+	"www-client/chromium"
+	"www-client/chromium-bin"
+	"www-client/google-chrome"
+	"www-client/google-chrome-beta"
+	"www-client/google-chrome-unstable"
+	"www-client/microsoft-edge"
+	"www-client/microsoft-edge-beta"
+	"www-client/microsoft-edge-dev"
+	"www-client/opera"
+	"www-client/opera-beta"
+	"www-client/opera-developer"
+	"www-client/vivaldi"
+	"www-misc/instatron"
 )
 
 # @FUNCTION: _ot-kernel-pkgflags_apply_cr_kconfig
@@ -2299,7 +2301,7 @@ _ot-kernel-pkgflags_apply_cr_kconfig() {
 # Applies kernel config flags for the cr based packages
 ot-kernel-pkgflags_cr() { # DONE
 	local pkg
-	for pkg in ${CR_PKGS[@]} ; do
+	for pkg in "${CR_PKGS[@]}" ; do
 		if [[ "${USE_SUID_SANDBOX:-0}" == "1" ]] ; then
 einfo "Applying kernel config flags for cr package (USE_SUID_SANDBOX=${USE_SUID_SANDBOX})"
 			_ot-kernel-pkgflags_apply_cr_kconfig "USE_SUID_SANDBOX=1"
@@ -4460,7 +4462,7 @@ _ot-kernel-pkgflags_apply_ff_kconfig() {
 # Applies kernel config flags for the ff based packages
 ot-kernel-pkgflags_ff() { # DONE
 	local pkg
-	for pkg in ${FF_PKGS[@]} ; do
+	for pkg in "${FF_PKGS[@]}" ; do
 		if ot-kernel_has_version_pkgflags_slow "${pkg}" ; then
 			_ot-kernel-pkgflags_apply_ff_kconfig "${pkg}"
 		fi
@@ -5071,13 +5073,14 @@ ot-kernel-pkgflags_i2c_tools() {
 		ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
 		ot-kernel_y_configopt "CONFIG_I2C_HELPER_AUTO"
 
-		local O=$(grep -E -e "config I2C_.*" $(find drivers/i2c/busses -name "Kconfig*") \
+	# TODO:  review
+		local O=$(grep -E -e "config I2C_.*" $(find "drivers/i2c/busses" -name "Kconfig*") \
 				| cut -f 2 -d ":" \
 				| sed -e "s|config ||g" \
 				| sed -e "s|^|CONFIG_|g")
 		local found=0
 		local o
-		for o in ${O[@]} ; do
+		for o in ${O} ; do
 			if grep -q -e "^${o}=" "${path_config}" ; then
 				found=1
 				break
@@ -5237,12 +5240,12 @@ ot-kernel-pkgflags_iucode() {
 
 			if ! which iucode_tool >/dev/null 2>&1 ; then
 ewarn "Missing iucode_tool"
-			elif iucode_tool ${args[@]} -l "/lib/firmware/intel-ucode/"* ; then
+			elif iucode_tool "${args[@]}" -l "/lib/firmware/intel-ucode/"* ; then
 				local signatures=( \
-					$(iucode_tool ${args[@]} -l "/lib/firmware/intel-ucode/"* \
+					$(iucode_tool "${args[@]}" -l "/lib/firmware/intel-ucode/"* \
 						| grep -o -E -e "0x[0-9a-f]+") \
 				)
-				for signature in ${signatures[@]} ; do
+				for signature in "${signatures[@]}" ; do
 					#    ee     # initials hi
 					#    fm fms # initials lo
 					#0123456789 # bash string index
@@ -7526,100 +7529,100 @@ ot-kernel-pkgflags_ovpn_dco() { # DONE
 ot-kernel-pkgflags_has_external_module() {
 # Discovered with
 # out=$(mktemp) ; \
-# cd /var/lib/layman ; grep --exclude-dir=.git --exclude-dir=metadata -r -e "linux-mod" -e "sys-kernel/dkms" ./ | cut -f 3-4 -d "/" > "${out}" ; \
-# cd /usr/portage ; grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -l -r -e "linux-mod" ./ | cut -f 2-3 -d "/" >> "${out}" ; \
+# cd "/var/lib/layman" ; grep --exclude-dir=".git" --exclude-dir="metadata" -r -e "linux-mod" -e "sys-kernel/dkms" "./" | cut -f 3-4 -d "/" > "${out}" ; \
+# cd "/usr/portage" ; grep --exclude-dir="metadata" --exclude-dir=".git" --exclude-dir="distfiles" -l -r -e "linux-mod" "./" | cut -f 2-3 -d "/" >> "${out}" ; \
 # cat "${out}" | sort | uniq ; rm "${out}"
 	local PKGS=(
-app-admin/ryzen_smu
-app-antivirus/lkrg
-app-antivirus/tyton
-app-crypt/tpm-emulator
-app-emulation/vendor-reset
-app-emulation/virtualbox-guest-additions
-app-emulation/virtualbox-modules
-app-emulation/vmware-modules
-app-forensics/kjackal
-app-forensics/prochunter
-app-laptop/tp_smapi
-app-laptop/tuxedo-keyboard
-bluetooth-drivers/rtbth
-dev-libs/gdrcopy
-dev-libs/libgpiod
-dev-util/lttng-modules
-dev-util/sysdig-kmod
-games-util/hid-nintendo
-games-util/xone
-games-util/xpadneo
-media-libs/svgalib
-media-sound/netcat-cpi
-media-tv/v4l-dvb-saa716x
-media-video/droidcam
-media-video/v4l2loopback
-net-analyzer/pkt-netflow
-net-dialup/accel-ppp
-net-firewall/ipset
-net-firewall/ipt_netflow
-net-firewall/ipt-ratelimit
-net-firewall/rtsp-conntrack
-net-firewall/xtables-addons
-net-firewall/xt_dns
-net-firewall/xt_nat
-net-fs/openafs
-net-misc/AQtion
-net-misc/dahdi
-net-misc/ena-driver
-net-misc/openvswitch
-net-misc/r8125
-net-misc/r8168
-net-misc/realtek-r8152
-net-vpn/wireguard-modules
-net-wireless/broadcom-sta
-net-wireless/broadcom-wl
-net-wireless/mt7610u_ulli-kroll
-net-wireless/rt3070
-net-wireless/rtl8192eu
-net-wireless/rtl8812au
-net-wireless/rtl8812au_aircrack-ng
-net-wireless/rtl8821ce
-net-wireless/rtl8821cu
-net-wireless/rtl8822bu
-sci-libs/linux-gpib-modules
-sec-policy/selinux-modemmanager
-sys-apps/openrazer
-sys-apps/smc-sum
-sys-cluster/knem
-sys-cluster/lustre
-sys-cluster/xpmem
-sys-fs/exfat-nofuse
-sys-fs/loop-aes
-sys-fs/vhba
-sys-fs/zfs
-sys-fs/zfs-kmod
-sys-kernel/compat-drivers
-sys-kernel/cryptodev
-sys-kernel/fragattacks-drivers58
-sys-kernel/ft60x_driver
-sys-kernel/gostcrypt-linux-crypto
-sys-kernel/kpatch
-sys-kernel/pcc
-sys-kernel/pf_ring-kmod
-sys-kernel/rte_kni-kmod
-sys-kernel/tirdad
-sys-kernel/ummunotify
-sys-kernel/zenpower3
-sys-libs/safeclib
-sys-power/acpi_call
-sys-power/bbswitch
-sys-power/phc-intel
-sys-power/tuxedo-cc-wmi
-sys-process/atop
-sys-process/falco-bin
-x11-drivers/evdi
-x11-drivers/nvidia-drivers
-x11-misc/openrazer
+		"app-admin/ryzen_smu"
+		"app-antivirus/lkrg"
+		"app-antivirus/tyton"
+		"app-crypt/tpm-emulator"
+		"app-emulation/vendor-reset"
+		"app-emulation/virtualbox-guest-additions"
+		"app-emulation/virtualbox-modules"
+		"app-emulation/vmware-modules"
+		"app-forensics/kjackal"
+		"app-forensics/prochunter"
+		"app-laptop/tp_smapi"
+		"app-laptop/tuxedo-keyboard"
+		"bluetooth-drivers/rtbth"
+		"dev-libs/gdrcopy"
+		"dev-libs/libgpiod"
+		"dev-util/lttng-modules"
+		"dev-util/sysdig-kmod"
+		"games-util/hid-nintendo"
+		"games-util/xone"
+		"games-util/xpadneo"
+		"media-libs/svgalib"
+		"media-sound/netcat-cpi"
+		"media-tv/v4l-dvb-saa716x"
+		"media-video/droidcam"
+		"media-video/v4l2loopback"
+		"net-analyzer/pkt-netflow"
+		"net-dialup/accel-ppp"
+		"net-firewall/ipset"
+		"net-firewall/ipt_netflow"
+		"net-firewall/ipt-ratelimit"
+		"net-firewall/rtsp-conntrack"
+		"net-firewall/xtables-addons"
+		"net-firewall/xt_dns"
+		"net-firewall/xt_nat"
+		"net-fs/openafs"
+		"net-misc/AQtion"
+		"net-misc/dahdi"
+		"net-misc/ena-driver"
+		"net-misc/openvswitch"
+		"net-misc/r8125"
+		"net-misc/r8168"
+		"net-misc/realtek-r8152"
+		"net-vpn/wireguard-modules"
+		"net-wireless/broadcom-sta"
+		"net-wireless/broadcom-wl"
+		"net-wireless/mt7610u_ulli-kroll"
+		"net-wireless/rt3070"
+		"net-wireless/rtl8192eu"
+		"net-wireless/rtl8812au"
+		"net-wireless/rtl8812au_aircrack-ng"
+		"net-wireless/rtl8821ce"
+		"net-wireless/rtl8821cu"
+		"net-wireless/rtl8822bu"
+		"sci-libs/linux-gpib-modules"
+		"sec-policy/selinux-modemmanager"
+		"sys-apps/openrazer"
+		"sys-apps/smc-sum"
+		"sys-cluster/knem"
+		"sys-cluster/lustre"
+		"sys-cluster/xpmem"
+		"sys-fs/exfat-nofuse"
+		"sys-fs/loop-aes"
+		"sys-fs/vhba"
+		"sys-fs/zfs"
+		"sys-fs/zfs-kmod"
+		"sys-kernel/compat-drivers"
+		"sys-kernel/cryptodev"
+		"sys-kernel/fragattacks-drivers58"
+		"sys-kernel/ft60x_driver"
+		"sys-kernel/gostcrypt-linux-crypto"
+		"sys-kernel/kpatch"
+		"sys-kernel/pcc"
+		"sys-kernel/pf_ring-kmod"
+		"sys-kernel/rte_kni-kmod"
+		"sys-kernel/tirdad"
+		"sys-kernel/ummunotify"
+		"sys-kernel/zenpower3"
+		"sys-libs/safeclib"
+		"sys-power/acpi_call"
+		"sys-power/bbswitch"
+		"sys-power/phc-intel"
+		"sys-power/tuxedo-cc-wmi"
+		"sys-process/atop"
+		"sys-process/falco-bin"
+		"x11-drivers/evdi"
+		"x11-drivers/nvidia-drivers"
+		"x11-misc/openrazer"
 	)
 	local p
-	for p in ${PKGS[@]} ; do
+	for p in "${PKGS[@]}" ; do
 		if ot-kernel_has_version "${p}" ; then
 			return 0
 		fi
@@ -13213,63 +13216,63 @@ _ot-kernel_set_acl() {
 #
 # Generated from:
 #
-# grep -r -E -l --exclude-dir=.git "IUSE.*acl" $(find /usr/portage -name "*.ebuild") | cut -f 4-5 -d "/" | sort | uniq
-# grep -r -E -l --exclude-dir=.git "IUSE.*acl" $(find /var/db/repos/ -name "*.ebuild") | cut -f 6-7 -d "/" | sort | uniq
+# grep -r -E -l --exclude-dir=".git" "IUSE.*acl" $(find "/usr/portage" -name "*.ebuild") | cut -f 4-5 -d "/" | sort | uniq
+# grep -r -E -l --exclude-dir=".git" "IUSE.*acl" $(find "/var/db/repos/" -name "*.ebuild") | cut -f 6-7 -d "/" | sort | uniq
 #
-app-admin/logrotate
-app-arch/rpm
-app-arch/tar
-app-backup/bacula
-app-backup/bareos
-app-backup/burp
-app-backup/tarsnap
-app-backup/tsm
-app-cdr/cdrtools
-app-editors/emacs
-app-editors/gvim
-app-editors/vim
-app-editors/vim-core
-app-editors/zile
-app-forensics/aide
-app-forensics/openscap
-dev-db/tora
-dev-lang/php
-dev-libs/libisoburn
-dev-libs/libisofs
-dev-util/diffoscope
-games-util/game-device-udev-rules
-kde-frameworks/kio
-net-analyzer/check_mk_agent
-net-fs/cifs-utils
-net-fs/netatalk
-net-fs/samba
-net-ftp/proftpd
-net-misc/rsync
-net-print/cups
-net-proxy/privoxy
-sci-geosciences/qgis
-sys-apps/bfs
-sys-apps/coreutils
-sys-apps/fakeroot
-sys-apps/sed
-sys-apps/shadow
-sys-apps/systemd
-sys-apps/systemd-utils
-sys-auth/elogind
-sys-auth/sssd
-sys-cluster/pacemaker
-sys-devel/gettext
-sys-fs/btrfs-progs
-sys-fs/mtd-utils
-sys-fs/ntfs3g
-sys-fs/udisks
-virtual/acl
-www-apps/tt-rss
+		"app-admin/logrotate"
+		"app-arch/rpm"
+		"app-arch/tar"
+		"app-backup/bacula"
+		"app-backup/bareos"
+		"app-backup/burp"
+		"app-backup/tarsnap"
+		"app-backup/tsm"
+		"app-cdr/cdrtools"
+		"app-editors/emacs"
+		"app-editors/gvim"
+		"app-editors/vim"
+		"app-editors/vim-core"
+		"app-editors/zile"
+		"app-forensics/aide"
+		"app-forensics/openscap"
+		"dev-db/tora"
+		"dev-lang/php"
+		"dev-libs/libisoburn"
+		"dev-libs/libisofs"
+		"dev-util/diffoscope"
+		"games-util/game-device-udev-rules"
+		"kde-frameworks/kio"
+		"net-analyzer/check_mk_agent"
+		"net-fs/cifs-utils"
+		"net-fs/netatalk"
+		"net-fs/samba"
+		"net-ftp/proftpd"
+		"net-misc/rsync"
+		"net-print/cups"
+		"net-proxy/privoxy"
+		"sci-geosciences/qgis"
+		"sys-apps/bfs"
+		"sys-apps/coreutils"
+		"sys-apps/fakeroot"
+		"sys-apps/sed"
+		"sys-apps/shadow"
+		"sys-apps/systemd"
+		"sys-apps/systemd-utils"
+		"sys-auth/elogind"
+		"sys-auth/sssd"
+		"sys-cluster/pacemaker"
+		"sys-devel/gettext"
+		"sys-fs/btrfs-progs"
+		"sys-fs/mtd-utils"
+		"sys-fs/ntfs3g"
+		"sys-fs/udisks"
+		"virtual/acl"
+		"www-apps/tt-rss"
 	)
 
 	local pkg
 	# Conditional USE flag
-	for pkg in ${PKGS[@]} ; do
+	for pkg in "${PKGS[@]}" ; do
 		  if [[ "${pkg}" == "sys-fs/btrfs-progs" ]] && ot-kernel_has_version "${pkg}[convert]" ; then
 			__ot-kernel_set_acl_one_package
 		elif [[ "${pkg}" == "sys-fs/mtd-utils" ]]   && ot-kernel_has_version "${pkg}[xattr]" ; then
@@ -13281,25 +13284,25 @@ www-apps/tt-rss
 		fi
 	done
 
-PKGS=(
+	local PKGS=(
 # Manually inspect for false-positives.
 #
 # Generated from:
 #
-# grep -r -E -l --exclude-dir=.git "sys-apps/acl" $(find /usr/portage -name "*.ebuild")
-# grep -r -E -l --exclude-dir=.git "sys-apps/acl" $(find /var/db/repos/ -name "*.ebuild")
-app-backup/snapper
-app-crypt/tpm2-tss
-app-editors/vis
-app-misc/clifm
-dev-python/pylibacl
-gnome-extra/eiciel
-kde-misc/krusader
-sys-apps/apply-default-acl
-)
+# grep -r -E -l --exclude-dir=".git" "sys-apps/acl" $(find "/usr/portage" -name "*.ebuild")
+# grep -r -E -l --exclude-dir=".git" "sys-apps/acl" $(find "/var/db/repos/" -name "*.ebuild")
+		"app-backup/snapper"
+		"app-crypt/tpm2-tss"
+		"app-editors/vis"
+		"app-misc/clifm"
+		"dev-python/pylibacl"
+		"gnome-extra/eiciel"
+		"kde-misc/krusader"
+		"sys-apps/apply-default-acl"
+	)
 
 	# Unconditional enable
-	for pkg in ${PKGS[@]} ; do
+	for pkg in "${PKGS[@]}" ; do
 		if ot-kernel_has_version "${pkg}" ; then
 			__ot-kernel_set_acl_one_package
 		fi
@@ -13987,13 +13990,13 @@ ewarn
 _ot-kernel_set_shebang_support() { # DONE
 	local pkgs=(
 	# List actively used for now
-		app-shells/bash
-		app-shells/dash
-		app-shells/pwsh-bin
-		dev-lang/perl
-		dev-lang/python
-		dev-lang/ruby
-		sys-apps/busybox
+		"app-shells/bash"
+		"app-shells/dash"
+		"app-shells/pwsh-bin"
+		"dev-lang/perl"
+		"dev-lang/python"
+		"dev-lang/ruby"
+		"sys-apps/busybox"
 	)
 	local shebang="${SHEBANG:-auto}"
 	if [[ "${shebang}" == "custom" ]] ; then
@@ -14004,7 +14007,7 @@ einfo "#! shebang support:  ON"
 	elif [[ "${shebang}" == "auto" ]] ; then
 		local pkg
 		ot-kernel_unset_configopt "CONFIG_BINFMT_SCRIPT"
-		for pkg in ${pkgs[@]} ; do
+		for pkg in "${pkgs[@]}" ; do
 			if ot-kernel_has_version_pkgflags "${pkg}" ; then
 				ot-kernel_y_configopt "CONFIG_BINFMT_SCRIPT" # For #! support
 				break

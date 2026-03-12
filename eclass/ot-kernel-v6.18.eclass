@@ -88,12 +88,12 @@ fi
 
 ARM_FLAGS=(
 # Some are default ON for security reasons or bug avoidance.
-	+cpu_flags_arm_bti
-	+cpu_flags_arm_lse # 8.1
-	+cpu_flags_arm_mte # 8.3, kernel 5.10, gcc 10.1, llvm 8 ; Disabled this and used v8_3 instead.
-	cpu_flags_arm_neon
-	+cpu_flags_arm_pac # 8.3-A
-	+cpu_flags_arm_tlbi # 8.4
+	"+cpu_flags_arm_bti"
+	"+cpu_flags_arm_lse" # 8.1
+	"+cpu_flags_arm_mte" # 8.3, kernel 5.10, gcc 10.1, llvm 8 ; Disabled this and used v8_3 instead.
+	"cpu_flags_arm_neon"
+	"+cpu_flags_arm_pac" # 8.3-A
+	"+cpu_flags_arm_tlbi" # 8.4
 )
 
 BBRV2_COMMITS=( # oldest
@@ -182,18 +182,18 @@ CLANG_PGO_SUPPORTED=0 # Needs updated patch for LLVM 20
 CXX_STANDARD="17" # Qt6 (17), Qt5 (11), perf-cpp (17)
 DISABLE_DEBUG_PV="1.4.2"
 EXCLUDE_SCS=(
-	alpha
-	amd64
-	arm
-	hppa
-	loong
-	mips
-	ppc
-	ppc64
-	riscv
-	s390
-	sparc
-	x86
+	"alpha"
+	"amd64"
+	"arm"
+	"hppa"
+	"loong"
+	"mips"
+	"ppc"
+	"ppc64"
+	"riscv"
+	"s390"
+	"sparc"
+	"x86"
 )
 EXTRAVERSION="-ot"
 GCC_PV="8.1"
@@ -313,13 +313,13 @@ a958950c2711ba2fe80e8bcb898bbafadd49b10d
 0c87fdcd1f9f7f1a09e8928422160159b8966784
 )
 PPC_FLAGS=(
-	cpu_flags_ppc_476fpe
-	cpu_flags_ppc_altivec
+	"cpu_flags_ppc_476fpe"
+	"cpu_flags_ppc_altivec"
 )
 QT5_PV="5.15"
 QT6_PV="6.4"
 RISCV_FLAGS=(
-	+cpu_flags_riscv_v
+	"+cpu_flags_riscv_v"
 )
 declare -A RUST_PV_TO_LLVM_SLOT=(
 # Capped by LLVM_COMPAT
@@ -357,21 +357,21 @@ X86_FLAGS=(
 # arch/x86/Makefile
 # include/opcode/i386.h from binutils <= 2.17.x
 # opcodes/i386-opc.tbl from binutils >= 2.18.x
-	cpu_flags_x86_aes
-	cpu_flags_x86_avx
-	cpu_flags_x86_avx2
-	cpu_flags_x86_avx512bw
-	cpu_flags_x86_avx512vl # kernel 5.7, gcc 5.1, llvm 3.7
-	cpu_flags_x86_gfni # kernel 6.1, gcc 8, llvm 6
-	cpu_flags_x86_pclmul # (CRYPTO_GHASH_CLMUL_NI_INTEL) pclmulqdq - kernel 2.6, gcc 4.4, llvm 3.2 ; 2010
-	cpu_flags_x86_sha
-	cpu_flags_x86_sha256
-	cpu_flags_x86_sse2
-	cpu_flags_x86_sse4_2 # crc32
-	cpu_flags_x86_ssse3
-	cpu_flags_x86_tpause # kernel 5.8, gcc 6.5, llvm 7
-	cpu_flags_x86_vaes # kernel 6.10
-	cpu_flags_x86_vpclmulqdq # (CRYPTO_POLYVAL_CLMUL_NI) vpclmulqdq - kernel 6.0, gcc 8.1, llvm 6 ; 2017
+	"cpu_flags_x86_aes"
+	"cpu_flags_x86_avx"
+	"cpu_flags_x86_avx2"
+	"cpu_flags_x86_avx512bw"
+	"cpu_flags_x86_avx512vl" # kernel 5.7, gcc 5.1, llvm 3.7
+	"cpu_flags_x86_gfni" # kernel 6.1, gcc 8, llvm 6
+	"cpu_flags_x86_pclmul" # (CRYPTO_GHASH_CLMUL_NI_INTEL) pclmulqdq - kernel 2.6, gcc 4.4, llvm 3.2 ; 2010
+	"cpu_flags_x86_sha"
+	"cpu_flags_x86_sha256"
+	"cpu_flags_x86_sse2"
+	"cpu_flags_x86_sse4_2" # crc32
+	"cpu_flags_x86_ssse3"
+	"cpu_flags_x86_tpause" # kernel 5.8, gcc 6.5, llvm 7
+	"cpu_flags_x86_vaes" # kernel 6.10
+	"cpu_flags_x86_vpclmulqdq" # (CRYPTO_POLYVAL_CLMUL_NI) vpclmulqdq - kernel 6.0, gcc 8.1, llvm 6 ; 2017
 )
 ZEN_KV="6.14.0"
 
@@ -471,7 +471,7 @@ fi
 
 gen_scs_exclusion() {
 	local a
-        for a in ${EXCLUDE_SCS[@]} ; do
+        for a in "${EXCLUDE_SCS[@]}" ; do
                 echo " ${a}? ( !shadowcallstack )"
 	done
 }
