@@ -438,6 +438,8 @@ pnpm_unpack_post() {
 		)
 		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 #		epnpm add "segfault-handler" ${NPM_INSTALL_ARGS[@]}
+
+		epnpm add "pg" "drizzle-orm"
 	fi
 }
 

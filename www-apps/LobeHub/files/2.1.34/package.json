@@ -278,7 +278,7 @@
     "debug": "^4.4.3",
     "dexie": "^3.2.7",
     "diff": "^8.0.3",
-    "drizzle-orm": "^0.44.7",
+    "drizzle-orm": "0.44.7",
     "drizzle-zod": "^0.5.1",
     "electron": "35.7.5",
     "epub2": "^3.0.2",
