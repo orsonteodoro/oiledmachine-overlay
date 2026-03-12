@@ -5073,14 +5073,15 @@ ot-kernel-pkgflags_i2c_tools() {
 		ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
 		ot-kernel_y_configopt "CONFIG_I2C_HELPER_AUTO"
 
-	# TODO:  review
-		local O=$(grep -E -e "config I2C_.*" $(find "drivers/i2c/busses" -name "Kconfig*") \
+		local O=(
+			$(grep -E -e "config I2C_.*" $(find "drivers/i2c/busses" -name "Kconfig*") \
 				| cut -f 2 -d ":" \
 				| sed -e "s|config ||g" \
 				| sed -e "s|^|CONFIG_|g")
+		)
 		local found=0
 		local o
-		for o in ${O} ; do
+		for o in "${O[@]}" ; do
 			if grep -q -e "^${o}=" "${path_config}" ; then
 				found=1
 				break
