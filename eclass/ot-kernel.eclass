@@ -427,6 +427,15 @@ VULNERABILITIES_FIXED=(
 
 # Some CVE reports may be slow released.  The second group may
 # catch these.
+	# 2026-03-10
+
+	"CVE-2026-23239;RC;"
+	"CVE-2026-23240;RC;"
+
+	# 2026-03-09
+
+	"CVE-2024-14027;DoS;"
+
 	# 2026-03-04
 
 	"CVE-2026-23237;DoS;"
