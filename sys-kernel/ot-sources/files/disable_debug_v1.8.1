@@ -76,7 +76,7 @@ strip_debug_from_config() {
 
 	local netfilter_syms=()
 	if [[ "${PERMIT_NETFILTER_SYMBOL_REMOVAL}" == "1" ]] ; then
-		nf_syms=(
+		netfilter_syms=(
 			CONFIG_BRIDGE_EBT_LOG
 			CONFIG_NETFILTER_NETLINK_LOG
 			CONFIG_NETFILTER_XT_TARGET_LOG
