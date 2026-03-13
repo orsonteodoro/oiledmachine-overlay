@@ -13089,14 +13089,14 @@ ewarn "app-forensics/aide should be added for integrity verification for dss wor
 _ot-kernel_checkpoint_dss_audit_logs_requirement() {
 	if [[ "${work_profile}" == "dss" ]] ; then
 einfo "Tip:  The debug USE flag and debug in OT_KERNEL_USE may be disabled in the dss work profile to allow only logging and disable the remaining debug symbols."
+#
 # Logging is is necessary in cybersecurity audits to determine suspicious
 # access patterns, or if a breach has happened, or an ongoing attack is
 # happening.  It is a mandatory requirement for some data security standards.
-ewarn "CONFIG_KALLSYMS will be enabled for the dss work profile but increases dma attack chances."
-		ot-kernel_y_configopt "CONFIG_KALLSYMS"
-		ot-kernel_y_configopt "CONFIG_KALLSYMS_ALL"
-ewarn "CONFIG_DEBUG_INFO will be enabled for the dss work profile but decreases security."
-		ot-kernel_y_configopt "CONFIG_DEBUG_INFO"
+#
+# The AI assistants disagree about debuginfo.
+# We just enable auditing for now.
+#
 		ot-kernel_y_configopt "CONFIG_AUDIT"
 		ot-kernel_y_configopt "CONFIG_AUDITSYSCALL"
 
