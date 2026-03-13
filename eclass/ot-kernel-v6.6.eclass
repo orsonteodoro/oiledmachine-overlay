@@ -163,7 +163,7 @@ CLANG_PGO_SUPPORTED=0 # Needs updated patch
 # https://github.com/torvalds/linux/blob/v6.6/tools/perf/Makefile.config#L276
 # https://github.com/torvalds/linux/blob/v6.6/scripts/kconfig/qconf-cfg.sh
 CXX_STANDARD="17" # Qt6 (17), perf-cpp (17)
-DISABLE_DEBUG_PV="1.5"
+DISABLE_DEBUG_PV="1.6"
 EXCLUDE_SCS=(
 	"alpha"
 	"amd64"

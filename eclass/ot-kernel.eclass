@@ -8392,9 +8392,25 @@ ot-kernel_set_kconfig_pcie_mps() {
 
 # @FUNCTION: _ot-kernel_disable_clang_pgi
 # @DESCRIPTION:
-# Disable clang -fprofile-generate
+# Disable Clang PGO and debugfs.
 _ot-kernel_disable_clang_pgi() {
 	if [[ "${_OT_KERNEL_NEEDS_DEBUGFS}" == "1" ]] ; then
+#
+# debugfs is not so easy to disable.
+#
+# Consumed by:
+#
+# bpftrace
+# ipt-netflow
+# opal-utils
+# powertop
+# qemu
+# rasdaemon
+# systemtap
+# usbview
+#
+# See also ot-kernel-pkgflags.eclass.
+#
 ewarn "debugfs disabled failed.  Unfortunately, a package still requires it."
 	else
 einfo "debugfs disabled success"
@@ -13813,24 +13829,22 @@ ewarn "KMS and framebuffers will be disabled for GPU passthrough on host.  Assum
 # Exclusion list:
 #
 # Logging for DSS	- hard requirement
+# PGO			- hard requirement before final phase
 # Sanitizers		- hard requirement when security is integrity-critical or in enforce mode
 # SCX support		- maximized benefit
 #
 ot-kernel_add_disable_debug_excludes() {
 	local L=()
-	if [[ "${OT_KERNEL_SECURITY_CRITICAL}" == "1" ]] ; then
-	# All integrity sanitizers should be excluded from disablement.
-		L+=(
-			"CFI"
-			"CFI_CLANG"
-			"KASAN"
-			"KCSAN"
-			"KFENCE"
-			"KMSAN"
-			"SHADOW_CALL_STACK"
-			"UBSAN"
-		)
-	fi
+
+	#
+	# Hard required debug symbols enabled after clean slate:
+	#
+	# _ot-kernel_disable_clang_pgi
+	# ot-kernel_set_security_critical
+	# ot-kernel_set_scx
+	# ot-kernel_set_rust
+	#
+
 	if [[ "${work_profile}" == "dss" ]] ; then
 	# All logging should be excluded from disablement.
 	# Logging is enabled in pkgflags on a per-package basis.
@@ -14009,7 +14023,7 @@ einfo "Disabling all debug and shortening logging buffers"
 	ot-kernel_set_kconfig_ima
 	ot-kernel_set_kconfig_lsms
 
-	ot-kernel_set_kconfig_pgo					# Uses llvm_slot
+	ot-kernel_set_kconfig_pgo					# Uses llvm_slot, must go after disable_debug for proper sanitization
 
 	ot-kernel_set_kconfig_module_support
 	ot-kernel_set_kconfig_build_all_modules_as
