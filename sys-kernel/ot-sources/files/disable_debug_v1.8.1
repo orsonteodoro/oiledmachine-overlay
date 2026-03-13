@@ -33,25 +33,21 @@ unset_kflags() {
 	IFS=$'\n'
 	for c in ${kflags[@]} ; do
 		local needs_skip=0
-		local sym=""
 		for s in ${skip[@]} ; do
 			if [[ "${c}" =~ "${s}" ]] ; then
 				needs_skip=1
-				sym=$(echo "${c}" | grep -E -e "CONFIG_[0-9A-Za-z_]+")
+				echo "Skipping disable debug for ${c}"
 				break
 			fi
 		done
-		if (( ${needs_skip} == 1 )) ; then
-			echo -e "\nSkipping disable debug for ${sym}"
-			continue
-		fi
+		(( ${needs_skip} == 1 )) && continue
 
 		for l in $(grep -r -e "$c" "$targetconfig") ; do
 			#echo "raw: $l"
 			a=$(echo "$l" | sed -r -e "s|# ||g" -e "s| is not set||g")
 			b=$(echo "$l" | sed -r -e "s|# ||g" -e "s| is not set||g" -e "s|=[0-9ynm]+||g")
 			[[ "${a}" =~ "CONFIG_" ]] || continue
-			echo "modding $a"
+			echo "Modding $a"
 			sed -i -r -e "s|[ ]*${a}\$|# $b is not set|g" "$targetconfig"
 		done
 	done
