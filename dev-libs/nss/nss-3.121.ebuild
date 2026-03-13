@@ -16,11 +16,22 @@ inherit cflags-hardened dot-a flag-o-matic multilib toolchain-funcs multilib-min
 NSPR_VER="4.38.2"
 RTM_NAME="NSS_${PV//./_}_RTM"
 
+# If the release is made in Github only, not released at the official archive.mozilla.org. These
+# Github-only tarballs have a different directory structure. Unfortunately more releases are
+# published through Github-only lately. Leave the variable empty for archive.mozilla.org release:
+# GH_ONLY_REL=
+GH_ONLY_REL=
+
 DESCRIPTION="Mozilla's Network Security Services library that implements PKI support"
 HOMEPAGE="https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS"
-SRC_URI="https://archive.mozilla.org/pub/security/nss/releases/${RTM_NAME}/src/${P}.tar.gz
-	cacert? ( https://dev.gentoo.org/~juippis/mozilla/patchsets/nss-3.104-cacert-class1-class3.patch )"
-S="${WORKDIR}/${P}/${PN}"
+if [[ -n ${GH_ONLY_REL} ]] ; then
+	SRC_URI="https://github.com/nss-dev/nss/archive/refs/tags/${RTM_NAME}.tar.gz -> ${P}.tar.gz"
+	S="${WORKDIR}/${PN}-${RTM_NAME}"
+else
+	SRC_URI="https://archive.mozilla.org/pub/security/nss/releases/${RTM_NAME}/src/${P}.tar.gz"
+	S="${WORKDIR}/${P}/${PN}"
+fi
+SRC_URI+=" cacert? ( https://dev.gentoo.org/~juippis/mozilla/patchsets/nss-3.104-cacert-class1-class3.patch )"
 
 LICENSE="|| ( MPL-2.0 GPL-2 LGPL-2.1 )"
 SLOT="0"
