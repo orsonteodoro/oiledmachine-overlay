@@ -124,7 +124,7 @@ EAPI=8
 #
 # https://github.com/chromium/chromium/blob/146.0.7680.75/DEPS#L512									# Live
 #
- # /usr/share/chromium/146.0.7680.75/sources/third_party/libc++/src/include/__configuration/compiler.h					# Stable, update LIBCXX_SLOT_MIN
+# /usr/share/chromium/146.0.7680.75/sources/third_party/libc++/src/include/__configuration/compiler.h					# Stable, update LIBCXX_SLOT_MIN
 
 
 #
@@ -153,9 +153,9 @@ EAPI=8
 #
 # For FFMPEG_SLOT, see also
 #
-# third_party/ffmpeg/libavutil/version.h
-# third_party/ffmpeg/libavcodec/version*.h
-# third_party/ffmpeg/libavformat/version*.h
+# /usr/share/chromium/146.0.7680.75/sources/third_party/ffmpeg/libavutil/version.h
+# /usr/share/chromium/146.0.7680.75/sources/third_party/ffmpeg/libavcodec/version*.h
+# /usr/share/chromium/146.0.7680.75/sources/third_party/ffmpeg/libavformat/version*.h
 #
 
 # The unbundle build files logic is in
