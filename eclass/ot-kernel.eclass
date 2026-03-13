@@ -13813,7 +13813,7 @@ ewarn "KMS and framebuffers will be disabled for GPU passthrough on host.  Assum
 # Exclusion list:
 #
 # Logging for DSS	- hard requirement
-# Sanitizers		- hard requirement
+# Sanitizers		- hard requirement when security is integrity-critical or in enforce mode
 # SCX support		- maximized benefit
 #
 ot-kernel_add_disable_debug_excludes() {
