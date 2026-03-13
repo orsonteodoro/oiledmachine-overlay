@@ -4477,7 +4477,7 @@ eerror
 		fi
 einfo "Enabling KCFI support in the in the .config."
 		ot-kernel_y_configopt "CONFIG_ARCH_SUPPORTS_CFI_CLANG"
-		if use ver_test "${KV_MAJOR_MINOR}" "-ge" "6.18" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.18" ; then
 			ot-kernel_y_configopt "CONFIG_CFI"
 		fi
 		ot-kernel_y_configopt "CONFIG_CFI_CLANG"
