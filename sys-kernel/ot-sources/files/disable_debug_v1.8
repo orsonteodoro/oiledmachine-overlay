@@ -37,7 +37,7 @@ unset_kflags() {
 		for s in ${skip[@]} ; do
 			if [[ "${c}" =~ "${s}" ]] ; then
 				needs_skip=1
-				sym=$(echo "${c}" | grep "CONFIG_[0-9A-Za-z_]+")
+				sym=$(echo "${c}" | grep -E -e "CONFIG_[0-9A-Za-z_]+")
 			fi
 		done
 		if (( ${needs_skip} == 1 )) ; then
