@@ -174,7 +174,7 @@ CLANG_PGO_SUPPORTED=0 # Needs updated patch for LLVM 20
 # https://github.com/torvalds/linux/blob/v6.12/tools/perf/Makefile.config#L276
 # https://github.com/torvalds/linux/blob/v6.12/scripts/kconfig/qconf-cfg.sh
 CXX_STANDARD="17" # Qt6 (17), Qt5 (11), perf-cpp (17)
-DISABLE_DEBUG_PV="1.4.2"
+DISABLE_DEBUG_PV="1.5"
 EXCLUDE_SCS=(
 	"alpha"
 	"amd64"

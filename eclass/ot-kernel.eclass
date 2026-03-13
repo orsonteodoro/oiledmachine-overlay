@@ -3755,6 +3755,8 @@ ot-kernel_clear_env() {
 	unset ZEN_DOM0
 	unset ZEN_DOMU
 
+	unset DISABLE_DEBUG_EXCLUDES
+
 	unset GENPATCHES_BLACKLIST
 
 	unset ZEN_SAUCE_BLACKLIST
@@ -4475,6 +4477,9 @@ eerror
 		fi
 einfo "Enabling KCFI support in the in the .config."
 		ot-kernel_y_configopt "CONFIG_ARCH_SUPPORTS_CFI_CLANG"
+		if use ver_test "${KV_MAJOR_MINOR}" "-ge" "6.18" ; then
+			ot-kernel_y_configopt "CONFIG_CFI"
+		fi
 		ot-kernel_y_configopt "CONFIG_CFI_CLANG"
 		ot-kernel_unset_configopt "CONFIG_CFI_PERMISSIVE"
 		ban_dma_attack_use "cfi" "CONFIG_KALLSYMS"
@@ -4494,6 +4499,7 @@ einfo "Disabling CFI support for Rust"
 		fi
 	else
 einfo "Disabling KCFI support in the in the .config."
+		ot-kernel_unset_configopt "CONFIG_CFI"
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
 einfo "Disabling CFI support for Rust"
 		ot-kernel_unset_configopt "CONFIG_CFI_ICALL_NORMALIZE_INTEGERS"
@@ -13799,6 +13805,45 @@ ewarn "KMS and framebuffers will be disabled for GPU passthrough on host.  Assum
 	fi
 }
 
+# @FUNCTION: ot-kernel_add_disable_debug_excludes
+# @DESCRIPTION:
+# Add exclusions for proper functioning of integrity critical or logging
+#
+# Exclusion list:
+#
+# Logging for DSS
+# Sanitizers
+# SCX support
+#
+ot-kernel_add_disable_debug_excludes() {
+	local L=()
+	if [[ "${OT_KERNEL_SECURITY_CRITICAL}" == "1" ]] ; then
+	# All integrity sanitizers should be excluded from disablement.
+		L+=(
+			"CFI"
+			"CFI_CLANG"
+			"KASAN"
+			"KCSAN"
+			"KFENCE"
+			"KMSAN"
+			"SHADOW_CALL_STACK"
+			"UBSAN"
+		)
+	fi
+	if [[ "${work_profile}" == "dss" ]] ; then
+	# All logging should be excluded from disablement.
+	# Logging is enabled in pkgflags on a per-package basis.
+		L+=(
+			"LOG"
+			"PRINT"
+			"VERBOSE"
+		)
+	fi
+
+	export DISABLE_DEBUG_EXCLUDES+=" ${L[@]}"
+	einfo "DISABLE_DEBUG_EXCLUDES:  ${DISABLE_DEBUG_EXCLUDES}"
+}
+
 # @FUNCTION: ot-kernel_src_configure_assisted
 # @DESCRIPTION:
 # More assisted configuration
@@ -13818,9 +13863,9 @@ einfo "Running:  make olddefconfig ${args[@]}"
 ewarn "Missing ${path_config} so generating a new default config."
 		make defconfig "${args[@]}" || die
 		is_default_config=1
-		[[ -z "${boot_decomp}" ]] && boot_decomp="default" # Reason why is for compatibility issues.
+		[[ -z "${boot_decomp}" ]] && boot_decomp="default"	# Reason why is for compatibility issues.
 	else
-		[[ -z "${boot_decomp}" ]] && boot_decomp="manual" # Assumes it was tested and working.
+		[[ -z "${boot_decomp}" ]] && boot_decomp="manual"	# Assumes it was tested and working.
 	fi
 
 einfo "Changing config options for -${extraversion}"
@@ -13860,11 +13905,11 @@ einfo "Forcing the default hardening level for maximum uptime"
 	gcc_slot="${gcc_slot%_*}"
 	local llvm_slot=$(get_llvm_slot)
 	ot-kernel_set_kconfig_compiler_toolchain # Inits llvm_slot, gcc_slot
-	ot-kernel_menuconfig "pre" # Uses llvm_slot
+	ot-kernel_menuconfig "pre"					# Uses llvm_slot
 
 	ot-kernel_set_kconfig_march
 	ot-kernel_set_kconfig_oflag
-	ot-kernel_set_kconfig_lto # Uses llvm_slot
+	ot-kernel_set_kconfig_lto					# Uses llvm_slot
 	ot-kernel_set_kconfig_abis
 	#ot-kernel_set_kconfig_mem
 
@@ -13895,7 +13940,7 @@ einfo "Forcing the default hardening level for maximum uptime"
 	# Place before ot-kernel_set_kconfig_work_profile \
 	_OT_KERNEL_FORCE_STABILITY=0
 
-	ot-kernel_set_kconfig_work_profile # Sets PREEMPT*
+	ot-kernel_set_kconfig_work_profile				# Sets PREEMPT*
 	ot-kernel_set_kconfig_pcie_mps
 	ot-kernel_set_kconfig_usb_flash_disk
 
@@ -13912,7 +13957,8 @@ einfo "Forcing the default hardening level for maximum uptime"
 	ot-kernel-driver-bundle_add_drivers
 	ot-kernel_set_kconfig_vm_host_gpu_passthrough
 
-	# The ot-kernel-pkgflags_apply has higher weight than ot-kernel_set_kconfig_work_profile for PREEMPT*
+	# The ot-kernel-pkgflags_apply has higher weight than
+	# ot-kernel_set_kconfig_work_profile for PREEMPT*
 	local _OT_KERNEL_DEV_MEM=0
 	local _OT_KERNEL_DEV_KMEM=0
 	local _OT_KERNEL_LSM_ADD_APPARMOR=0
@@ -13924,7 +13970,7 @@ einfo "Forcing the default hardening level for maximum uptime"
 	local _OT_KERNEL_LSM_ADD_SMACK=0
 	local _OT_KERNEL_LSM_ADD_YAMA=0
 	local _OT_KERNEL_PROC_KCORE=0
-	ot-kernel-pkgflags_apply # Sets PREEMPT*, uses hardening_level
+	ot-kernel-pkgflags_apply					# Sets PREEMPT*, uses hardening_level
 	ot-kernel_set_dev_mem
 	ot-kernel-debugger
 	ot-kernel_set_kconfig_fallback_preempt
@@ -13940,6 +13986,7 @@ einfo "Forcing the default hardening level for maximum uptime"
 
 	if ! use debug && ! ot-kernel_use "debug" ; then
 einfo "Disabling all debug and shortening logging buffers"
+		ot-kernel_add_disable_debug_excludes
 		./disable_debug || die
 		rm "${BUILD_DIR}/.config.dd_backup" 2>/dev/null
 	fi
@@ -13951,7 +13998,7 @@ einfo "Disabling all debug and shortening logging buffers"
 
 	# Continue hardening_level context:
 		ot-kernel_set_kconfig_hardening_level
-		ot-kernel_set_kconfig_bpf_spectre_mitigation # This call goes after the call to ot-kernel-pkgflags_apply.
+		ot-kernel_set_kconfig_bpf_spectre_mitigation		# This call goes after the call to ot-kernel-pkgflags_apply.
 	ot-kernel_set_kconfig_iommu_domain_type
 	ot-kernel-pkgflags_cipher_optional
 	ot-kernel_set_kconfig_cold_boot_mitigation
@@ -13961,7 +14008,7 @@ einfo "Disabling all debug and shortening logging buffers"
 	ot-kernel_set_kconfig_ima
 	ot-kernel_set_kconfig_lsms
 
-	ot-kernel_set_kconfig_pgo # Uses llvm_slot
+	ot-kernel_set_kconfig_pgo					# Uses llvm_slot
 
 	ot-kernel_set_kconfig_module_support
 	ot-kernel_set_kconfig_build_all_modules_as
@@ -13972,14 +14019,14 @@ einfo "Disabling all debug and shortening logging buffers"
 	ot-kernel_fix_external_modules
 
 	ot-kernel_set_rust
-	ot-kernel_set_scx
+	ot-kernel_set_scx						# Must go after disable_debug to avoid disablement
 	ot-kernel_set_kconfig_cpu_scheduler_post
 
-	_ot-kernel-pkgflags_dss_enable_hmacs # 3
-	_ot-kernel-pkgflags_dss_disable_remaining_block_ciphers # 3
-	_ot-kernel-pkgflags_dss_disable_remaining_hash_algs # 3
-	_ot-kernel-pkgflags_dss_disable_remaining_ecc_algs # 3
-	_ot-kernel-pkgflags_dss_disable_remaining_mac_algs # 3
+	_ot-kernel-pkgflags_dss_enable_hmacs				# 3
+	_ot-kernel-pkgflags_dss_disable_remaining_block_ciphers		# 3
+	_ot-kernel-pkgflags_dss_disable_remaining_hash_algs		# 3
+	_ot-kernel-pkgflags_dss_disable_remaining_ecc_algs		# 3
+	_ot-kernel-pkgflags_dss_disable_remaining_mac_algs		# 3
 	_ot-kernel-pkgflags_dss_disable_hw_crypto
 
 	_ot-kernel-pkgflags_csprng
@@ -13987,9 +14034,9 @@ einfo "Disabling all debug and shortening logging buffers"
 
 	_ot-kernel_enable_ppc_476fpe_workaround
 	ot-kernel_set_tbm
-	ot-kernel_set_security_critical
+	ot-kernel_set_security_critical					# Must go after disable_debug to avoid disablement
 
-	ot-kernel_set_kconfig_from_envvar_array # Final user override
+	ot-kernel_set_kconfig_from_envvar_array				# Final user override
 	ot-kernel_print_thp_status
 
 	if [[ -e "${BUILD_DIR}/.config" ]] ; then
@@ -14005,7 +14052,7 @@ einfo "Disabling all debug and shortening logging buffers"
 einfo "Updating the .config for defaults for the newly enabled options."
 einfo "Running:  make olddefconfig ${args[@]}"
 	make olddefconfig "${args[@]}" || die
-	ot-kernel_menuconfig "post" # Uses llvm_slot
+	ot-kernel_menuconfig "post"					# Uses llvm_slot
 }
 
 # @FUNCTION: ot-kernel_src_configure_custom

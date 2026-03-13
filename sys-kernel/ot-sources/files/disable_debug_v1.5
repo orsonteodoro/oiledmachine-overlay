@@ -33,10 +33,17 @@ unset_kflags() {
 	IFS=$'\n'
 	for c in ${kflags[@]} ; do
 		local needs_skip=0
+		local sym=""
 		for s in ${skip[@]} ; do
-			[[ "${c}" =~ "${s}" ]] && needs_skip=1
+			if [[ "${c}" =~ "${s}" ]] ; then
+				needs_skip=1
+				sym=$(echo "${c}" | grep "CONFIG_[0-9A-Za-z_]+")
+			fi
 		done
-		(( ${needs_skip} == 1 )) && continue
+		if (( ${needs_skip} == 1 )) ; then
+			echo -e "\nSkipping disable debug for ${sym}"
+			continue
+		fi
 
 		for l in $(grep -r -e "$c" "$targetconfig") ; do
 			#echo "raw: $l"
@@ -87,14 +94,17 @@ strip_debug_from_config() {
 		)
 	fi
 
+	# Sanitizers are assumed for debugging only.
+	# If you want sanitizers, add the sanitizer to DISABLE_DEBUG_EXCLUDES.
 	kflags=(
 		$(grep -r -e "CONFIG.*ASSERT" "$targetconfig" | grep "^CONFIG_")
 		$(grep -r -e "CONFIG.*DEBUG" "$targetconfig" | grep "^CONFIG_")
-		$(grep -r -e "CONFIG.*KASAN" "$targetconfig" | grep "^CONFIG_")
-		$(grep -r -e "CONFIG.*KCSAN" "$targetconfig" | grep "^CONFIG_")
-		$(grep -r -e "CONFIG.*KFENCE" "$targetconfig" | grep "^CONFIG_")
+		$(grep -r -e "CONFIG.*KASAN" "$targetconfig" | grep "^CONFIG_")		# Sanitizer
+		$(grep -r -e "CONFIG.*KCSAN" "$targetconfig" | grep "^CONFIG_")		# Sanitizer
+		$(grep -r -e "CONFIG.*KFENCE" "$targetconfig" | grep "^CONFIG_")	# Sanitizer
+		$(grep -r -e "CONFIG.*KMSAN" "$targetconfig" | grep "^CONFIG_")		# Sanitizer
 		$(grep -r -e "CONFIG.*KGDB" "$targetconfig" | grep "^CONFIG_")
-		$(grep -r -e "CONFIG.*UBSAN" "$targetconfig" | grep "^CONFIG_")
+		$(grep -r -e "CONFIG.*UBSAN" "$targetconfig" | grep "^CONFIG_")		# Sanitizer
 		$(grep -r -e "CONFIG.*KUNIT" "$targetconfig" | grep "^CONFIG_")
 		$(grep -r -e "CONFIG.*TEST" "$targetconfig" | grep "^CONFIG_")
 		$(grep -r -e "CONFIG.*TRACE" "$targetconfig" | grep "^CONFIG_")
@@ -108,6 +118,9 @@ strip_debug_from_config() {
 		CONFIG_ALLOW_DEV_COREDUMP
 		CONFIG_AIC7XXX_REG_PRETTY_PRINT
 		CONFIG_AIC79XX_REG_PRETTY_PRINT
+		CONFIG_CFI								# Sanitizer
+		CONFIG_CFI_CLANG							# Sanitizer
+		CONFIG_SHADOW_CALL_STACK						# Sanitizer
 		CONFIG_COREDUMP
 		CONFIG_CRASH_DUMP
 		CONFIG_CRYPTO_USER_API_RNG_CAVP
