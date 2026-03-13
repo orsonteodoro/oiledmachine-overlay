@@ -13087,6 +13087,7 @@ ewarn "app-forensics/aide should be added for integrity verification for dss wor
 # Check for audit logs support.
 _ot-kernel_checkpoint_dss_audit_logs_requirement() {
 	if [[ "${work_profile}" == "dss" ]] ; then
+einfo "Tip:  The debug USE flag and debug in OT_KERNEL_USE may be disabled in the dss work profile to allow only logging."
 # Logging is is necessary in cybersecurity audits to determine suspicious
 # access patterns, or if a breach has happened, or an ongoing attack is
 # happening.  It is a mandatory requirement for some data security standards.

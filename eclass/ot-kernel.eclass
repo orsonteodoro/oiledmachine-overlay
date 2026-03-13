@@ -13830,7 +13830,6 @@ ot-kernel_add_disable_debug_excludes() {
 			"UBSAN"
 		)
 	fi
-	if [[ "${work_profile}" == "dss" ]] ; then
 	# All logging should be excluded from disablement.
 	# Logging is enabled in pkgflags on a per-package basis.
 		L+=(
