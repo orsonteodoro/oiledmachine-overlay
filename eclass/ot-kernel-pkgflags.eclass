@@ -13087,10 +13087,9 @@ ewarn "app-forensics/aide should be added for integrity verification for dss wor
 # Check for audit logs support.
 _ot-kernel_checkpoint_dss_audit_logs_requirement() {
 	if [[ "${work_profile}" == "dss" ]] ; then
-# Logging is considered a debugging feature for disable_debug script, but it is
-# a necessary in cybersecurity audits to determine suspicious patterns if a
-# breach has happened or an ongoing attack is happening and is a necessary
-# requirement for some standards.
+# Logging is is necessary in cybersecurity audits to determine suspicious
+# access patterns, or if a breach has happened, or an ongoing attack is
+# happening.  It is a mandatory requirement for some data security standards.
 		if ot-kernel_has_version "virtual/logger" ; then
 			:
 		else
