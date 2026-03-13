@@ -4,6 +4,10 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="multhreaded-confiential network p2p sandbox security-critical server web-browser web-server"
+CXX_STANDARD=23
+PYTHON_COMPAT=( "python3_"{11..14} )
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX23[@]}
@@ -12,7 +16,7 @@ LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX23[@]/llvm_slot_}
+	${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
@@ -33,10 +37,6 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 }
 _llvm_set_globals
 unset -f _llvm_set_globals
-
-CFLAGS_HARDENED_USE_CASES="multhreaded-confiential network p2p sandbox security-critical server web-browser web-server"
-CXX_STANDARD=23
-PYTHON_COMPAT=( "python3_"{11..14} )
 
 inherit cflags-hardened check-compiler-switch cmake-multilib flag-o-matic libcxx-slot libstdcxx-slot llvm.org llvm-utils python-any-r1 toolchain-funcs
 
