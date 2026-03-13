@@ -2267,6 +2267,7 @@ einfo "Security announcement date:  ${MITIGATION_DATE}"
 einfo "Security fixes applied:  ${MITIGATION_URI}"
 	fi
 	vf_show
+ewarn "CVE-2026-3909 - Unpatched, AEITW, KEV"
 	pre_build_checks
 
 	if is-flagq '-Oshit' && ! use official ; then
