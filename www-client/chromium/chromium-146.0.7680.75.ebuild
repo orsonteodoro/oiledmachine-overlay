@@ -446,7 +446,7 @@ MITIGATION_DATE="Mar 12, 2026" # Official annoucement (blog)
 MITIGATION_LAST_UPDATE=1773267145 # From `date +%s -d "2026-03-11 22:12:25 UTC"` From tag in GH or upstream repo
 MITIGATION_URI="https://chromereleases.googleblog.com/2026/03/stable-channel-update-for-desktop_12.html"
 VULNERABILITIES_FIXED=(
-	"CVE-2026-3910;AEITW, II;"
+	"CVE-2026-3910;AEITW, KEV, II;"
 
 	"CVE-2026-3913;HO, MC;"
 	"CVE-2026-3914;IO, MC;"
