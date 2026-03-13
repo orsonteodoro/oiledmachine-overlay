@@ -138,6 +138,11 @@ strip_debug_from_config() {
 		CONFIG_PRINTK_NMI
 		CONFIG_SFC_MCDI_LOGGING
 		CONFIG_X86_CHECK_BIOS_CORRUPTION
+
+		CONFIG_DEBUG_INFO_NONE
+		CONFIG_DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT
+		CONFIG_DEBUG_INFO_DWARF4
+		CONFIG_DEBUG_INFO_DWARF5
 	)
 	skip=(
 		${DISABLE_DEBUG_EXCLUDES}
@@ -158,7 +163,8 @@ strip_debug_from_config() {
 
 	echo -e "\nSetting options to disable debug"
 	sed -i -E \
-		-e "s|# CRYPTO_MANAGER_DISABLE_TESTS is not set|CRYPTO_MANAGER_DISABLE_TESTS=y|g" \
+		-e "s|# CONFIG_DEBUG_INFO_NONE is not set|CONFIG_DEBUG_INFO_NONE=y|g" \
+		-e "s|# CONFIG_CRYPTO_MANAGER_DISABLE_TESTS is not set|CONFIG_CRYPTO_MANAGER_DISABLE_TESTS=y|g" \
 		"$targetconfig"
 
 	echo -e "\nReducing log levels and bits shifted"

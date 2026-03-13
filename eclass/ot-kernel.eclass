@@ -12655,7 +12655,7 @@ einfo "Adding Rust support and lowering security"
 		ot-kernel_y_configopt "CONFIG_BPF"
 ewarn "Enabling CONFIG_DEBUG_KERNEL for Rust support and lowering security"
 		ot-kernel_y_configopt "CONFIG_DEBUG_KERNEL"
-	# dwarf4/dwarf5/dwarf-auto handled in ot-kernel-debugger()
+	# dwarf4/dwarf5/dwarf-auto handled in ot-kernel_set_debugger()
 		ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
 		ot-kernel_unset_configopt "CONFIG_COMPILE_TEST"
 		ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_REDUCED"
@@ -12758,7 +12758,7 @@ ewarn "Enabling CONFIG_DEBUG_INFO for scx support and lowering security"
 		ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_SPLIT"
 		ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_REDUCED"
 		ot-kernel_unset_configopt "CONFIG_COMPILE_TEST"
-	# dwarf4/dwarf5/dwarf-auto handled in ot-kernel-debugger()
+	# dwarf4/dwarf5/dwarf-auto handled in ot-kernel_set_debugger()
 	# CONFIG_DEBUG_INFO_DWARF* is needed to add CONFIG_DEBUG_INFO indirectly and access the menuconfig option
 		ot-kernel_y_configopt "CONFIG_DEBUG_INFO_BTF"		# Required
 
@@ -13091,15 +13091,15 @@ _ot-kernel_toggle_fips_mode() {
 	fi
 }
 
-# @FUNCTION: ot-kernel-debugger
+# @FUNCTION: ot-kernel_set_debugger
 # @DESCRIPTION:
 # Add debugger support
-ot-kernel-debugger() {
+ot-kernel_set_debugger() {
 	local picked=0
 	ot-kernel_unset_configopt "CONFIG_DEBUG_KERNEL"
 	ot-kernel_unset_configopt "CONFIG_DEBUG_INFO"
 	ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT"
-	ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_DWARF4"
+	ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_CDWARF4"
 	ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_DWARF5"
 	if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.18" ; then
 		ot-kernel_y_configopt "CONFIG_DEBUG_INFO_NONE"
@@ -13987,7 +13987,6 @@ einfo "Forcing the default hardening level for maximum uptime"
 	local _OT_KERNEL_PROC_KCORE=0
 	ot-kernel-pkgflags_apply					# Sets PREEMPT*, uses hardening_level
 	ot-kernel_set_dev_mem
-	ot-kernel-debugger
 	ot-kernel_set_kconfig_fallback_preempt
 	ot-kernel_optimize_realtime
 	ot-kernel_set_kconfig_swap
@@ -14034,6 +14033,7 @@ einfo "Disabling all debug and shortening logging buffers"
 	ot-kernel_fix_external_modules
 
 	ot-kernel_set_rust
+	ot-kernel_set_debugger						# Must go after disable_debug to avoid scx disablement
 	ot-kernel_set_scx						# Must go after disable_debug to avoid disablement
 	ot-kernel_set_kconfig_cpu_scheduler_post
 

@@ -1142,7 +1142,7 @@ ot-kernel-pkgflags_bcc() { # DONE
 		ot-kernel_y_configopt "CONFIG_NET_CLS_BPF"
 		ot-kernel_y_configopt "CONFIG_NET_ACT_BPF"
 		ot-kernel_y_configopt "CONFIG_BPF_EVENTS"
-		ban_disable_debug "${pkg}" "CONFIG_DEBUG_INFO, CONFIG_FUNCTION_TRACER, CONFIG_DEBUG_KERNEL"
+		ban_disable_debug "${pkg}" "CONFIG_DEBUG_INFO, CONFIG_DEBUG_KERNEL, CONFIG_FUNCTION_TRACER, CONFIG_KPROBES"
 		ot-kernel_y_configopt "CONFIG_DEBUG_INFO"
 		ot-kernel_y_configopt "CONFIG_FUNCTION_TRACER"
 		ot-kernel_y_configopt "CONFIG_DEBUG_KERNEL"
@@ -1385,7 +1385,7 @@ ot-kernel-pkgflags_bpftrace() { # DONE
 	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		_ot-kernel_set_bpf "${pkg}"
 		ot-kernel_y_configopt "CONFIG_BPF_EVENTS"
-		ban_disable_debug "${pkg}" "CONFIG_FTRACE_SYSCALLS, CONFIG_DEBUG_FS"
+		ban_disable_debug "${pkg}" "CONFIG_DEBUG_FS, CONFIG_KPROBES, CONFIG_KPROBE_EVENTS, CONFIG_FTRACE_SYSCALLS, CONFIG_UPROBES, CONFIG_UPROBE_EVENTS"
 		ot-kernel_y_configopt "CONFIG_FTRACE_SYSCALLS"
 
 	# These were not listed in the ebuild but in the self check upstream.
@@ -3803,7 +3803,7 @@ ot-kernel-pkgflags_dropwatch() { # DONE
 	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_NET"
 		ot-kernel_y_configopt "CONFIG_INET"
-		ban_disable_debug "${pkg}" "CONFIG_TRACING_SUPPORT, CONFIG_FTRACE"
+		ban_disable_debug "${pkg}" "CONFIG_FTRACE, CONFIG_KPROBES, CONFIG_KPROBE_EVENTS, CONFIG_TRACING_SUPPORT, CONFIG_TRACEPOINTS, CONFIG_UPROBE_EVENTS"
 		ot-kernel_y_configopt "CONFIG_TRACING_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_FTRACE"
 
@@ -5314,6 +5314,7 @@ ot-kernel-pkgflags_livecd_tools() { # DONE
 ot-kernel-pkgflags_lkrg() { # DONE
 	local pkg="app-antivirus/lkrg"
 	if ot-kernel_has_version_pkgflags "${pkg}" ; then
+		ban_disable_debug "${pkg}" "CONFIG_DEBUG_KERNEL, CONFIG_KPROBES, CONFIG_STACKTRACE"
 		ot-kernel_y_configopt "CONFIG_HAVE_KRETPROBES"
 		ot-kernel_y_configopt "CONFIG_DEBUG_KERNEL"
 		ban_dma_attack "${pkg}" "CONFIG_KALLSYMS"
@@ -5330,7 +5331,6 @@ ewarn
 ewarn "If you need to use PREEMPT_RT, add OT_KERNEL_PKGFLAGS_REJECT[S${pkgid}]=1"
 ewarn
 		ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
-		ban_disable_debug "${pkg}" "CONFIG_STACKTRACE"
 		ot-kernel_y_configopt "CONFIG_STACKTRACE"
 	fi
 }
@@ -6463,7 +6463,7 @@ ot-kernel-pkgflags_lttng_modules() { # DONE
 		ban_dma_attack "${pkg}" "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_HIGH_RES_TIMERS"
-		ban_disable_debug "${pkg}" "CONFIG_TRACEPOINTS, CONFIG_EVENT_TRACING"
+		ban_disable_debug "${pkg}" "CONFIG_EVENT_TRACING, CONFIG_KPROBES, CONFIG_KRETPROBES, CONFIG_TRACEPOINTS"
 		ot-kernel_y_configopt "CONFIG_TRACEPOINTS"
 		ot-kernel_y_configopt "CONFIG_HAVE_SYSCALL_TRACEPOINTS"
 		ot-kernel_y_configopt "CONFIG_PERF_EVENTS"
@@ -7851,7 +7851,7 @@ ot-kernel-pkgflags_opensnitch_ebpf_module() { # DONE
 		_ot-kernel_set_bpf "${pkg}" # Uses syscall with number
 		ot-kernel_y_configopt "CONFIG_CGROUP_BPF"
 		ot-kernel_y_configopt "CONFIG_BPF_EVENTS"
-		ban_disable_debug "${pkg}" "CONFIG_FTRACE_SYSCALLS, CONFIG_DYNAMIC_FTRACE_WITH_REGS, CONFIG_KPROBES_ON_FTRACE"
+		ban_disable_debug "${pkg}" "CONFIG_FTRACE_SYSCALLS, CONFIG_DYNAMIC_FTRACE_WITH_REGS, CONFIG_KPROBE_EVENTS, CONFIG_KPROBES, CONFIG_KPROBES_ON_FTRACE, CONFIG_UPROBE_EVENTS"
 		ot-kernel_y_configopt "CONFIG_FTRACE_SYSCALLS"
 		ot-kernel_y_configopt "CONFIG_MODULES"
 		ot-kernel_y_configopt "CONFIG_KPROBES"
@@ -8771,7 +8771,7 @@ ot-kernel-pkgflags_powertop() { # DONE
 	local pkg="sys-power/powertop"
 	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_X86_MSR"
-		ban_disable_debug "${pkg}" "CONFIG_DEBUG_FS, CONFIG_FTRACE, CONFIG_TRACING_SUPPORT, CONFIG_TRACING, CONFIG_TRACEPOINTS, CONFIG_PM_DEBUG, CONFIG_PM_ADVANCED_DEBUG"
+		ban_disable_debug "${pkg}" "CONFIG_BLK_DEV_IO_TRACE, CONFIG_DEBUG_FS, CONFIG_DEBUG_KERNEL, CONFIG_FTRACE, CONFIG_TRACING_SUPPORT, CONFIG_TRACING, CONFIG_TRACEPOINTS, CONFIG_PM_DEBUG, CONFIG_PM_ADVANCED_DEBUG"
 		needs_debugfs
 		ot-kernel_y_configopt "CONFIG_DEBUG_FS"
 		ot-kernel_y_configopt "CONFIG_PERF_EVENTS"
@@ -9498,6 +9498,7 @@ ot-kernel-pkgflags_scx() { # DONE
 ot-kernel-pkgflags_scap_driver() { # DONE
 	if ot-kernel_has_version_pkgflags "dev-debug/scap-driver" ; then
 		ot-kernel_y_configopt "CONFIG_HAVE_SYSCALL_TRACEPOINTS"
+		ban_disable_debug "${pkg}" "CONFIG_TRACEPOINTS"
 		ot-kernel_y_configopt "CONFIG_TRACEPOINTS"
 	fi
 }
@@ -10031,9 +10032,9 @@ ot-kernel-pkgflags_systemd_bootchart() { # DONE
 ot-kernel-pkgflags_systemtap() { # DONE
 	local pkg="dev-debug/systemtap"
 	if ot-kernel_has_version_pkgflags "${pkg}" ; then
+		ban_disable_debug "${pkg}" "CONFIG_DEBUG_FS, CONFIG_KPROBES"
 		ot-kernel_y_configopt "CONFIG_KPROBES"
 		ot-kernel_y_configopt "CONFIG_RELAY"
-		ban_disable_debug "${pkg}" "CONFIG_DEBUG_FS"
 		needs_debugfs
 		ot-kernel_y_configopt "CONFIG_DEBUG_FS"
 	fi
@@ -10231,7 +10232,7 @@ ot-kernel-pkgflags_tpm2_tss() { # DONE
 ot-kernel-pkgflags_trace_cmd() { # DONE
 	local pkg="dev-util/trace-cmd"
 	if ot-kernel_has_version_pkgflags "${pkg}" ; then
-		ban_disable_debug "${pkg}" "CONFIG_TRACING, CONFIG_TRACING_SUPPORT, CONFIG_FTRACE"
+		ban_disable_debug "${pkg}" "CONFIG_BLK_DEV_IO_TRACE, CONFIG_TRACING, CONFIG_TRACING_SUPPORT, CONFIG_FTRACE"
 		ot-kernel_y_configopt "CONFIG_TRACING"
 		ot-kernel_y_configopt "CONFIG_TRACING_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_FTRACE"
@@ -10642,7 +10643,7 @@ ot-kernel-pkgflags_vdr_imonlcd() { # DONE
 ot-kernel-pkgflags_vendor_reset() { # DONE
 	local pkg="app-emulation/vendor-reset"
 	if ot-kernel_has_version_pkgflags "${pkg}" ; then
-		ban_disable_debug "${pkg}" "CONFIG_TRACING_SUPPORT, CONFIG_FTRACE, CONFIG_FUNCTION_TRACER"
+		ban_disable_debug "${pkg}" "CONFIG_FTRACE, CONFIG_FUNCTION_TRACER, CONFIG_KPROBES, CONFIG_TRACING_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_TRACING_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_FTRACE"
 		ot-kernel_y_configopt "CONFIG_KPROBES"
@@ -13091,6 +13092,14 @@ einfo "Tip:  The debug USE flag and debug in OT_KERNEL_USE may be disabled in th
 # Logging is is necessary in cybersecurity audits to determine suspicious
 # access patterns, or if a breach has happened, or an ongoing attack is
 # happening.  It is a mandatory requirement for some data security standards.
+ewarn "CONFIG_KALLSYMS will be enabled for the dss work profile but increases dma attack chances."
+		ot-kernel_y_configopt "CONFIG_KALLSYMS"
+		ot-kernel_y_configopt "CONFIG_KALLSYMS_ALL"
+ewarn "CONFIG_DEBUG_INFO will be enabled for the dss work profile but decreases security."
+		ot-kernel_y_configopt "CONFIG_DEBUG_INFO"
+		ot-kernel_y_configopt "CONFIG_AUDIT"
+		ot-kernel_y_configopt "CONFIG_AUDITSYSCALL"
+
 		if ot-kernel_has_version "virtual/logger" ; then
 			:
 		else

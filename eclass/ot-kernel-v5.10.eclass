@@ -154,7 +154,7 @@ CK_KV="5.10.0"
 # https://github.com/torvalds/linux/blob/v5.10/tools/perf/Makefile.config#L276
 # https://github.com/torvalds/linux/blob/v5.10/scripts/kconfig/qconf-cfg.sh
 CXX_STANDARD="11" # Qt5 (11), perf-cpp (11)
-DISABLE_DEBUG_PV="1.6"
+DISABLE_DEBUG_PV="1.8"
 EXTRAVERSION="-ot"
 GCC_PV="4.9"
 # Only LTS compiler slots allowed to avoid issues with closed source or
