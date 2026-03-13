@@ -1,5 +1,5 @@
-# Copyright 2024-2025 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 2024-2026 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
