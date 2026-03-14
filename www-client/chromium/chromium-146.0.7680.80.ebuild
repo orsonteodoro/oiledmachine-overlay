@@ -2127,11 +2127,9 @@ setup_vendor_clang_paths_pre() {
 	# Sanitize/isolate before adding
 	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "/llvm/d" | tr $'\n' ":")
 	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "/llvm-build/d" | tr $'\n' ":")
-	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "/rust-toolchain/d" | tr $'\n' ":")
 
 einfo "PATH:  ${PATH} (Before)"
 	export PATH="${ESYSROOT}${CHROMIUM_TOOLCHAIN_PREFIX}/clang/bin:${PATH}"
-	export PATH="${ESYSROOT}${CHROMIUM_TOOLCHAIN_PREFIX}/rust/bin:${PATH}"
 	export PATH=$(echo "${PATH}" | sed -E -e "s|[:]+|:|g" -e "s|[:]$||g" -e "s|^[:]||g") # Sanitize
 einfo "PATH:  ${PATH} (After)"
 }
@@ -2140,16 +2138,36 @@ setup_vendor_clang_paths() {
 	# Sanitize/isolate before adding
 	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "/llvm/d" | tr $'\n' ":")
 	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "/llvm-build/d" | tr $'\n' ":")
-	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "/rust-toolchain/d" | tr $'\n' ":")
 
 einfo "PATH:  ${PATH} (Before)"
 	export PATH="${S}/third_party/llvm-build/Release+Asserts/bin:${PATH}"
+	export PATH=$(echo "${PATH}" | sed -E -e "s|[:]+|:|g" -e "s|[:]$||g" -e "s|^[:]||g") # Sanitize
+einfo "PATH:  ${PATH} (After)"
+}
+
+setup_vendor_rust_paths_pre() {
+	# Sanitize/isolate before adding
+	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "/rust-toolchain/d" | tr $'\n' ":")
+	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "\|rust/bin|d" | tr $'\n' ":")
+
+einfo "PATH:  ${PATH} (Before)"
+	export PATH="${ESYSROOT}${CHROMIUM_TOOLCHAIN_PREFIX}/rust/bin:${PATH}"
+	export PATH=$(echo "${PATH}" | sed -E -e "s|[:]+|:|g" -e "s|[:]$||g" -e "s|^[:]||g") # Sanitize
+einfo "PATH:  ${PATH} (After)"
+}
+
+setup_vendor_rust_paths() {
+	# Sanitize/isolate before adding
+	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "/rust-toolchain/d" | tr $'\n' ":")
+	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "\|rust/bin|d" | tr $'\n' ":")
+
+einfo "PATH:  ${PATH} (Before)"
 	export PATH="${S}/third_party/rust-toolchain/bin:${PATH}"
 	export PATH=$(echo "${PATH}" | sed -E -e "s|[:]+|:|g" -e "s|[:]$||g" -e "s|^[:]||g") # Sanitize
 einfo "PATH:  ${PATH} (After)"
 }
 
-verify_rust() {
+verify_system_rust() {
 	local is_nightly=$("${RUSTC}" --version | grep -q "nightly")
 	is_nightly=$(( "${?}" == 0 ? 1 : 0 ))
 
@@ -2191,19 +2209,25 @@ eerror "Switch Rust to >= ${RUST_MIN_VER}"
 	fi
 }
 
+verify_vendor_rust() {
+	"${RUSTC}" --version || die
+}
+
 # This replaces rust_pkg_setup.
 # The rust eclass maximum LLVM cannot keep up with the LLVM requirement of Chromium.
-setup_rust() {
+setup_system_rust_paths() {
 	local VERSIONS=(
 		"9999"
 	)
 	local x
 	for x in "${VERSIONS[@]}" ; do
 		if has_version "=dev-lang/rust-${x}" ; then
+			export PATH="${BROOT}/usr/lib/rust/${x}/bin:${PATH}"
 			export RUSTC="${BROOT}/usr/lib/rust/${x}/bin/rustc"
 			export RUST_TYPE="source"
 			break
 		elif has_version "=dev-lang/rust-bin-${x}" ; then
+			export PATH="${BROOT}/opt/rust-bin-${x}/bin:${PATH}"
 			export RUSTC="${BROOT}/opt/rust-bin-${x}/bin/rustc"
 			export RUST_TYPE="binary"
 			break
@@ -2219,9 +2243,13 @@ eerror "USE=system-rust:  =dev-lang/rust-9999, =dev-lang/rust-bin-9999"
 eerror "USE=-system-rust:  ${CATEGORY}/${PN}"
 eerror
 		die
-	else
-		export RUST_TYPE="binary"
 	fi
+}
+
+setup_vendor_rust_paths() {
+	export PATH="${BROOT}/opt/rust-bin-${x}/bin:${PATH}"
+	export RUSTC="${S}/third_party/rust-toolchain/bin/rustc"
+	export RUST_TYPE="binary"
 }
 
 pkg_setup() {
@@ -2383,6 +2411,12 @@ ewarn
 		setup_vendor_clang_paths_pre
 	fi
 
+	if use system-rust ; then
+		setup_system_rust_paths
+	else
+		setup_vendor_rust_paths_pre
+	fi
+
 	# We are always using clang.
 	if use system-clang ; then
 		_use_system_clang
@@ -2486,8 +2520,8 @@ ewarn "Enabling ${x} could weaken the security."
 
 	if use system-rust ; then
 einfo "Rust compiler:  Rust (system)"
-		setup_rust
-		verify_rust
+		setup_system_rust_paths
+		verify_system_rust
 		if [[ "${RUSTC}" =~ "rust-bin" ]] ; then
 	# It is possible that the prebuilt is a trojanized compiler.
 ewarn "Using the prebuilt Rust could weaken the security."
@@ -2496,7 +2530,8 @@ ewarn "Using the prebuilt Rust could weaken the security."
 einfo "Rust compiler:  Rust (vendored)"
 	# It is possible that the prebuilt is a trojanized compiler.
 ewarn "Disabling system-rust could weaken the security or privacy."
-		export RUSTC="${S}/third_party/rust-toolchain/bin/rustc"
+		setup_vendor_rust_paths
+		verify_vendor_rust
 	fi
 
 	if use openh264 && ! use system-openh264 ; then
@@ -4426,7 +4461,7 @@ einfo "Using the system toolchain"
 		llvm_fix_tool_path "LLVM_CONFIG"
 	fi
 
-	setup_rust
+	setup_system_rust_paths
 	einfo "Using Rust slot ${RUST_SLOT}, ${RUST_TYPE} to build"
 
 	# I hate doing this but upstream Rust have yet to come up with a better
