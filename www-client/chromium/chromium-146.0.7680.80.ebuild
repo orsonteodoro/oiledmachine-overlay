@@ -2747,15 +2747,15 @@ einfo "Applying the distro patchset ..."
 
 	if use system-clang ; then
 		PATCHES+=(
-			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr138-nodejs-version-check.patch"
-			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr145-fix-no-unrar.patch"
-			"${FILESDIR}/chromium-patches-${PATCH_VER}/common/cr145-channel-aware.patch"
-			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr144-glibc-2.43.patch"
-			$(use ungoogled-chromium || echo "${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr145-revert-to-rollup-wasm.patch")
-			$(use system-icu && echo "${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr131-unbundle-icu-target.patch")
-			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr145-fix-no-unrar-2-include-harder.patch"
 			$(use system-zlib && echo "${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr109-system-zlib.patch")
+			$(use system-icu && echo "${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr131-unbundle-icu-target.patch")
+			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr138-nodejs-version-check.patch"
+			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr144-glibc-2.43.patch"
+			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr145-fix-no-unrar-2-include-harder.patch"
 			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr145-oauth2-client-switches.patch"
+			$(use ungoogled-chromium || echo "${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr145-revert-to-rollup-wasm.patch")
+			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr146-channel-aware-build.patch"
+			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cross-compile.patch"
 		)
 
 		# Dedupe, oiledmachine-overlay changes preferred
