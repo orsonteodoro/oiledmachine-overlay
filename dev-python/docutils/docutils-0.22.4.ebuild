@@ -68,7 +68,7 @@ install_txt_doc() {
 }
 
 python_install_all() {
-	local DOCS=( *.txt )
+	local DOCS=( *.rst )
 	local HTML_DOCS=( docs tools docutils/writers/html4css1/html4css1.css )
 
 	distutils-r1_python_install_all
@@ -76,7 +76,7 @@ python_install_all() {
 	local doc
 	while IFS= read -r -d '' doc; do
 		install_txt_doc "${doc}"
-	done < <(find docs tools -name '*.txt' -print0)
+	done < <(find docs tools -name '*.rst' -print0)
 }
 
 pkg_postinst() {
