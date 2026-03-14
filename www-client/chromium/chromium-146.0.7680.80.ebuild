@@ -711,15 +711,6 @@ https://github.com/uazo/cromite/archive/refs/tags/v${CROMITE_PV}-${CROMITE_HASH}
 	-> cromite-${CROMITE_PV}-${CROMITE_HASH}.tar.gz
 		)
 	"
-	# Force require the reviewed system compiler to prevent possibility of
-	# trojanized compiler injecting user fingerprinting code.
-	REQUIRED_USE+="
-		cromite? (
-			!rar
-			system-clang
-			system-rust
-		)
-	"
 fi
 
 if is_ungoogle_chromium_compatible ; then
@@ -730,14 +721,6 @@ if is_ungoogle_chromium_compatible ; then
 		ungoogled-chromium? (
 https://github.com/ungoogled-software/ungoogled-chromium/archive/refs/tags/${UNGOOGLED_CHROMIUM_PV}.tar.gz
 	-> ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}.tar.gz
-		)
-	"
-	# Force require the reviewed system compiler to prevent possibility of
-	# trojanized compiler injecting user fingerprinting code.
-	REQUIRED_USE+="
-		ungoogled-chromium? (
-			system-clang
-			system-rust
 		)
 	"
 fi
@@ -1245,6 +1228,10 @@ if is_cromite_compatible ; then
 	#
 	# The patchset build scripts say ffmpeg_branding="Chrome" which enables aac.
 	#
+	# Force require the use of the reviewed system-clang and system-rust
+	# compilers to prevent the possibility of a trojanized compiler
+	# injecting user fingerprinting code.
+	#
 	REQUIRED_USE+="
 		!patent_status_nonfree? (
 			!cromite
@@ -1254,6 +1241,7 @@ if is_cromite_compatible ; then
 			!hangouts
 			!official
 			!openh264
+			!rar
 			!reporting-api
 			!widevine
 			amd64
@@ -1261,6 +1249,8 @@ if is_cromite_compatible ; then
 			dav1d
 			pdf
 			plugins
+			system-clang
+			system-rust
 		)
 		official? (
 			!cromite
@@ -1268,6 +1258,7 @@ if is_cromite_compatible ; then
 	"
 fi
 if is_ungoogle_chromium_compatible ; then
+	#
 	# USE=widevine is default ON, implying that it is allowed, in
 	# ungoogled-chromium but dropped from being forced ON to allow the user
 	# to decide.
@@ -1276,11 +1267,18 @@ if is_ungoogle_chromium_compatible ; then
 	#
 	# The reason that these USE flags are forced to match the patchset
 	# defaults is because I don't know if these were pruned by the scripts.
+	#
+	# Force require the use of the reviewed system-clang and system-rust
+	# compilers to prevent the possibility of a trojanized compiler
+	# injecting user fingerprinting code.
+	#
 	REQUIRED_USE+="
 		ungoogled-chromium? (
 			!hangouts
 			!pgo
 			!reporting-api
+			system-clang
+			system-rust
 		)
 		official? (
 			!ungoogled-chromium
