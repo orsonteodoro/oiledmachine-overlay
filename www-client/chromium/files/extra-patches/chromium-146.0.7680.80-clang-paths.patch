@@ -1,5 +1,5 @@
---- build/toolchain/toolchain.gni.orig	2026-03-13 09:54:03.000000000 -0700
-+++ build/toolchain/toolchain.gni	2026-03-14 13:34:38.923650338 -0700
+--- a/build/toolchain/toolchain.gni.orig	2026-03-13 09:54:03.000000000 -0700
++++ b/build/toolchain/toolchain.gni	2026-03-14 13:34:38.923650338 -0700
 @@ -42,6 +42,7 @@ declare_args() {
  
  declare_args() {
@@ -8,8 +8,8 @@
  }
  
  # Extension for shared library files (including leading dot).
---- build/config/clang/BUILD.gn.orig	2026-03-13 09:54:03.000000000 -0700
-+++ build/config/clang/BUILD.gn	2026-03-14 13:34:06.392105419 -0700
+--- a/build/config/clang/BUILD.gn.orig	2026-03-13 09:54:03.000000000 -0700
++++ b/build/config/clang/BUILD.gn	2026-03-14 13:34:06.392105419 -0700
 @@ -182,20 +182,25 @@ template("clang_lib") {
        } else if (is_apple) {
          _dir = "darwin"
@@ -49,8 +49,8 @@
        _lib_file = "${_prefix}clang_rt.${_libname}${_suffix}.${_ext}"
        libs = [ "$_clang_lib_dir/$_dir/$_lib_file" ]
      }
---- build/rust/rust_bindgen.gni.orig	2026-03-14 13:20:58.567801893 -0700
-+++ build/rust/rust_bindgen.gni	2026-03-14 13:34:06.392274945 -0700
+--- a/build/rust/rust_bindgen.gni.orig	2026-03-14 13:20:58.567801893 -0700
++++ b/build/rust/rust_bindgen.gni	2026-03-14 13:34:06.392274945 -0700
 @@ -22,8 +22,8 @@ if (clang_base_path != default_clang_bas
    _clang_libpath = clang_base_path + "/include"
    _clang_ld_libpath  = bindgen_libclang_path
@@ -62,8 +62,8 @@
  }
  
  # Template to build Rust/C bindings with bindgen.
---- build/rust/rs_bindings_from_cc.gni.orig	2026-03-13 09:54:03.000000000 -0700
-+++ build/rust/rs_bindings_from_cc.gni	2026-03-14 13:34:06.392422327 -0700
+--- a/build/rust/rs_bindings_from_cc.gni.orig	2026-03-13 09:54:03.000000000 -0700
++++ b/build/rust/rs_bindings_from_cc.gni	2026-03-14 13:34:06.392422327 -0700
 @@ -287,7 +287,7 @@ template("rs_bindings_from_cc") {
        #
        # Add it last so includes from deps and configs take precedence.
