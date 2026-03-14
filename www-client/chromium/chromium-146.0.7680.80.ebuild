@@ -715,6 +715,7 @@ https://github.com/uazo/cromite/archive/refs/tags/v${CROMITE_PV}-${CROMITE_HASH}
 	# trojanized compiler injecting user fingerprinting code.
 	REQUIRED_USE+="
 		cromite? (
+			!rar
 			system-clang
 			system-rust
 		)
@@ -969,7 +970,6 @@ REQUIRED_USE+="
 		!system-clang
 	)
 	partitionalloc
-	rar
 	amd64? (
 		cpu_flags_x86_sse2
 	)
