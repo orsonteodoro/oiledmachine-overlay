@@ -7,7 +7,7 @@ DISTUTILS_USE_PEP517=flit
 PYTHON_COMPAT=( python3_{12..14} )
 PYTHON_REQ_USE="threads(+)"
 
-inherit distutils-r1
+inherit cython distutils-r1
 
 MY_P=${P/_}
 DESCRIPTION="Python documentation generator"
@@ -87,6 +87,11 @@ python_prepare_all() {
 		doc/conf.py || die
 
 	distutils-r1_python_prepare_all
+}
+
+python_configure() {
+	cython_set_cython_slot "3"
+	cython_python_configure
 }
 
 python_compile_all() {
