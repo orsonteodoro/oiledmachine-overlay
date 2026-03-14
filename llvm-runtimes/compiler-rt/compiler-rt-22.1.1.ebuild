@@ -1,4 +1,4 @@
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -19,8 +19,8 @@ inherit llvm-ebuilds
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
 llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM20_FALLBACK_COMMIT}"
-		EGIT_BRANCH="${LLVM_EBUILDS_LLVM20_BRANCH}"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM22_FALLBACK_COMMIT}"
+		EGIT_BRANCH="${LLVM_EBUILDS_LLVM22_BRANCH}"
 	fi
 }
 _llvm_set_globals
@@ -33,8 +33,7 @@ inherit check-compiler-switch cmake crossdev flag-o-matic libstdcxx-slot llvm.or
 inherit toolchain-funcs
 
 KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~mips ~ppc64 ~riscv ~x86 ~amd64-linux ~arm64-macos
-~ppc-macos ~x64-macos
+~amd64 ~arm ~arm64 ~loong ~mips ~ppc64 ~riscv ~x86 ~arm64-macos ~x64-macos
 "
 
 DESCRIPTION="Compiler runtime library for clang (built-in part)"
@@ -56,7 +55,7 @@ RESTRICT="
 "
 SLOT="${LLVM_MAJOR}"
 IUSE+="
-${LLVM_EBUILDS_LLVM20_REVISION}
+${LLVM_EBUILDS_LLVM22_REVISION}
 +abi_x86_32 abi_x86_64 +atomic-builtins +clang debug test
 ebuild_revision_5
 "
@@ -91,6 +90,7 @@ LLVM_COMPONENTS=(
 	"compiler-rt"
 	"cmake"
 	"llvm/cmake"
+	"third-party/siphash"
 )
 LLVM_TEST_COMPONENTS=(
 	"llvm/include/llvm/TargetParser"

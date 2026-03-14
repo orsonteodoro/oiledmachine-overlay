@@ -56,7 +56,7 @@ RESTRICT="
 SLOT="${LLVM_MAJOR}"
 IUSE+="
 ${LLVM_EBUILDS_LLVM17_REVISION}
-+abi_x86_32 abi_x86_64 +clang +debug test
++abi_x86_32 abi_x86_64 +clang debug test
 ebuild_revision_5
 "
 DEPEND="

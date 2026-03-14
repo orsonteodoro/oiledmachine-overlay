@@ -1,0 +1,434 @@
+# Copyright 2022-2025 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 1999-2025 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	IUSE+="
+		fallback-commit
+	"
+fi
+
+inherit llvm-ebuilds
+
+_llvm_set_globals() {
+	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
+llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM23_FALLBACK_COMMIT}"
+		EGIT_BRANCH="${LLVM_EBUILDS_LLVM23_BRANCH}"
+	fi
+}
+_llvm_set_globals
+unset -f _llvm_set_globals
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	${LIBSTDCXX_COMPAT_STDCXX23[@]}
+)
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}
+)
+LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
+
+LLVM_COMPONENTS=(
+	"runtimes"
+	"libcxx"{"","abi"}
+	"libc"
+	"llvm/"{"cmake","utils/llvm-lit"}
+	"cmake"
+)
+
+CFLAGS_HARDENED_USE_CASES="casual-messaging credentials crypto dss multithreaded-confedential network p2p sandbox secure-messaging security-critical server sensitive-data untrusted-data web-browser web-server"
+CMAKE_ECLASS="cmake"
+CXX_STANDARD=23
+LLVM_MAX_SLOT="${PV%%.*}"
+PYTHON_COMPAT=( "python3_"{13..14} )
+
+inherit check-compiler-switch cflags-hardened cmake-multilib crossdev flag-o-matic libcxx-slot libstdcxx-slot llvm.org llvm-utils python-any-r1 toolchain-funcs
+
+#KEYWORDS="
+#~amd64 ~arm ~arm64 ~loong ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos
+#"
+
+SRC_URI+="
+https://github.com/llvm/llvm-project/commit/ef843c8271027b89419d07ffc2aaa3abf91438ef.patch
+	-> libcxx-commit-ef843c8.patch
+"
+
+DESCRIPTION="New implementation of the C++ standard library, targeting C++11"
+HOMEPAGE="https://libcxx.llvm.org/"
+LICENSE="
+	Apache-2.0-with-LLVM-exceptions
+	|| (
+		MIT
+		UoI-NCSA
+	)
+"
+RESTRICT="
+	!test? (
+		test
+	)
+"
+SLOT="0"
+IUSE+="
+${LLVM_EBUILDS_LLVM23_REVISION}
+clang +libcxxabi +static-libs test +threads
+ebuild_revision_19
+"
+RDEPEND="
+	!libcxxabi? (
+		>=sys-devel/gcc-4.7[cxx]
+		sys-devel/gcc:=
+	)
+	libcxxabi? (
+		~llvm-runtimes/libcxxabi-${PV}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},static-libs?]
+		llvm-runtimes/libcxxabi:=
+	)
+"
+DEPEND="
+	${RDEPEND}
+	llvm-core/llvm:${PV%%.*}[${LIBSTDCXX_USEDEP_LTS}]
+	llvm-core/llvm:=
+"
+BDEPEND+="
+	dev-util/patchutils
+	sys-devel/gcc
+	clang? (
+		llvm-core/clang:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP_LTS}]
+		llvm-core/clang:=
+		llvm-core/clang-linker-config:${LLVM_MAJOR}
+		llvm-core/clang-linker-config:=
+		llvm-runtimes/clang-rtlib-config:${LLVM_MAJOR}
+		llvm-runtimes/clang-rtlib-config:=
+		llvm-runtimes/clang-unwindlib-config:${LLVM_MAJOR}
+		llvm-runtimes/clang-unwindlib-config:=
+	)
+	test? (
+		$(python_gen_any_dep '
+			dev-python/lit[${PYTHON_USEDEP}]
+		')
+		>=dev-build/cmake-3.16
+		>=llvm-core/clang-3.9.0[${LIBSTDCXX_USEDEP_LTS}]
+		llvm-core/clang:=
+		dev-debug/gdb[python]
+	)
+"
+PATCHES=(
+)
+llvm.org_set_globals
+
+python_check_deps() {
+	use test || return 0
+	python_has_version "dev-python/lit[${PYTHON_USEDEP}]"
+}
+
+test_compiler() {
+	$(tc-getCXX) ${CXXFLAGS} ${LDFLAGS} "${@}" -o /dev/null -x c++ - \
+		<<<'int main() { return 0; }' &>/dev/null
+}
+
+get_lib_types() {
+	echo "shared"
+	use static-libs && echo "static"
+}
+
+pkg_setup() {
+	check-compiler-switch_start
+	python-any-r1_pkg_setup
+
+	if ! use libcxxabi && ! tc-is-gcc ; then
+eerror
+eerror "To build ${PN} against libsupc++, you have to use gcc. Other"
+eerror "compilers are not supported. Please set CC=gcc and CXX=g++"
+eerror "and try again."
+eerror
+		die
+	fi
+	libcxx-slot_verify
+	libstdcxx-slot_verify
+}
+
+src_configure() {
+	local install_prefix="${EPREFIX}"
+	is_crosspkg && install_prefix+="/usr/${CTARGET}"
+
+	check-compiler-switch_end
+	cflags-hardened_append
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	# note: we need to do this before multilib kicks in since it will
+	# alter the CHOST
+	local cxxabi cxxabi_incs
+	if use libcxxabi; then
+		cxxabi=system-libcxxabi
+		cxxabi_incs="${install_prefix}/usr/include/c++/v1"
+	else
+		local gcc_inc="${EPREFIX}/usr/lib/gcc/${CHOST}/$(gcc-fullversion)/include/g++-v$(gcc-major-version)"
+		cxxabi=libsupc++
+		cxxabi_incs="${gcc_inc};${gcc_inc}/${CHOST}"
+	fi
+
+	configure_abi() {
+		local lib_type
+		for lib_type in $(get_lib_types) ; do
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
+			_configure_abi
+		done
+	}
+	multilib_foreach_abi configure_abi
+}
+
+_configure_abi() {
+	# Workaround for bgo #961153.
+	# TODO: Fix the multilib.eclass, so it sets CTARGET properly.
+	if ! is_crosspkg ; then
+		export CTARGET="${CHOST}"
+	fi
+
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+	export CPP=$(tc-getCPP)
+
+	if tc-is-clang ; then
+		if ! has_version "llvm-core/clang:${PV%%.*}" ; then
+eerror "You must emerge clang:${PV%%.*} to build with clang."
+		fi
+
+		llvm_prepend_path -b "${LLVM_MAJOR}"
+		local -x CC="${CTARGET}-clang-${LLVM_MAJOR}"
+		local -x CXX="${CTARGET}-clang++-${LLVM_MAJOR}"
+		export CPP="${CC} -E"
+		strip-unsupported-flags
+
+	# The full Clang configuration might not be ready yet. Use the partial
+	# configuration of components that libunwind depends on.
+		local flags=(
+			--config="${ESYSROOT}/etc/clang/${LLVM_MAJOR}/gentoo-"{"rtlib","unwindlib","linker"}".cfg"
+		)
+		local -x CFLAGS="${CFLAGS} ${flags[@]}"
+		local -x CXXFLAGS="${CXXFLAGS} ${flags[@]}"
+		local -x LDFLAGS="${LDFLAGS} ${flags[@]}"
+	fi
+
+einfo "CC:  ${CC}"
+einfo "CXX:  ${CXX}"
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	# link to compiler-rt
+	local use_compiler_rt=OFF
+	[[ $(tc-get-c-rtlib) == compiler-rt ]] && use_compiler_rt=ON
+
+	local nostdlib_flags=( -nostdlib++ )
+	if ! test_compiler && test_compiler "${nostdlib_flags[@]}"; then
+		local -x LDFLAGS="${LDFLAGS} ${nort_flags[*]}"
+		ewarn "${CXX} seems to lack runtime, trying with ${nort_flags[*]}"
+	fi
+
+	local libdir=$(get_libdir)
+	local mycmakeargs=(
+		-DLLVM_ROOT="${ESYSROOT}/usr/lib/llvm/${LLVM_MAJOR}"
+
+		-DCMAKE_CXX_COMPILER_TARGET="${CTARGET}"
+		-DCMAKE_SHARED_LINKER_FLAGS="${LDFLAGS}"
+		-DLIBCXX_CXX_ABI=${cxxabi}
+		-DLIBCXX_CXX_ABI_INCLUDE_PATHS=${cxxabi_incs}
+	# We're using our own mechanism for generating linker scripts.
+		-DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=OFF
+		-DLIBCXX_ENABLE_THREADS=$(usex threads)
+	# Match Chromium's default security level
+		-DLIBCXX_HARDENING_MODE=extensive
+		-DLIBCXX_HAS_MUSL_LIBC=$(llvm_cmake_use_musl)
+		-DLIBCXX_INCLUDE_BENCHMARKS=OFF
+		-DLIBCXX_INCLUDE_TESTS=$(usex test)
+		-DLIBCXX_INSTALL_MODULES=ON
+		-DLIBCXX_USE_COMPILER_RT=${use_compiler_rt}
+
+	# This is broken with standalone builds and also meaningless.
+		-DLIBCXXABI_USE_LLVM_UNWINDER=OFF
+
+		-DLLVM_ENABLE_RUNTIMES=libcxx
+		-DLLVM_INCLUDE_TESTS=OFF
+		-DLLVM_LIBDIR_SUFFIX=${libdir#lib}
+		-DPython3_EXECUTABLE="${PYTHON}"
+	)
+
+	if [[ "${lib_type}" == "static" ]] ; then
+		mycmakeargs+=(
+			-DLIBCXX_ENABLE_SHARED=OFF
+			-DLIBCXX_ENABLE_STATIC=ON
+		)
+	else
+		mycmakeargs+=(
+			-DLIBCXX_ENABLE_SHARED=ON
+			-DLIBCXX_ENABLE_STATIC=OFF
+		)
+	fi
+
+	if is_crosspkg ; then
+	# Needed to target built libc headers
+		local -x CFLAGS="${CFLAGS} -isystem ${ESYSROOT}/usr/${CTARGET}/usr/include"
+		mycmakeargs+=(
+	# Without this, the compiler will compile a test program
+	# and fail due to no builtins.
+			-DCMAKE_C_COMPILER_WORKS=1
+			-DCMAKE_CXX_COMPILER_WORKS=1
+	# Install inside the cross sysroot.
+			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/${CTARGET}/usr"
+		)
+	fi
+	if use test; then
+		local clang_path=$(type -P "${CHOST:+${CHOST}-}clang" 2>/dev/null)
+		[[ -n "${clang_path}" ]] || die "Unable to find ${CHOST}-clang for tests"
+
+		mycmakeargs+=(
+			-DLLVM_EXTERNAL_LIT="${EPREFIX}/usr/bin/lit"
+			-DLLVM_LIT_ARGS="$(get_lit_flags)"
+			-DPython3_EXECUTABLE="${PYTHON}"
+		)
+	fi
+	cmake_src_configure
+}
+
+src_compile() {
+	compile_abi() {
+		local lib_type
+		for lib_type in $(get_lib_types) ; do
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
+			cd "${BUILD_DIR}" || die
+			cmake_src_compile
+			if [[ "${CHOST}" != *"-darwin"* ]] ; then
+				local libdir=$(get_libdir)
+				gen_shared_ldscript
+				use static-libs && gen_static_ldscript
+			fi
+		done
+	}
+	multilib_foreach_abi compile_abi
+}
+
+src_test() {
+	test_abi() {
+		local lib_type
+		for lib_type in $(get_lib_types) ; do
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
+			cd "${BUILD_DIR}" || die
+			local -x LIT_PRESERVES_TMP=1
+	# https://github.com/llvm/llvm-project/issues/153940
+			local -x LIT_XFAIL="libcxx/gdb/gdb_pretty_printer_test.sh.cpp"
+			cmake_build "libcxx-test-suite-install-cxx"
+			if [[ "${CHOST}" != *"-darwin"* ]] ; then
+				local libdir=$(get_libdir)
+				cp "${BUILD_DIR}/"{"","libcxx/test-suite-install/"}"${libdir}/libc++_shared.so" || die
+				if use static-libs; then
+					cp "${BUILD_DIR}/"{"","libcxx/test-suite-install/"}"${libdir}/libc++_static.a" || die
+				fi
+			fi
+			cmake_build "check-cxx"
+		done
+	}
+	multilib_foreach_abi test_abi
+}
+
+# Usage: deps
+gen_ldscript() {
+	local output_format
+	output_format=$($(tc-getCC) ${CFLAGS} ${LDFLAGS} -Wl,--verbose 2>&1 | sed -n 's/^OUTPUT_FORMAT("\([^"]*\)",.*/\1/p')
+	[[ -n ${output_format} ]] && output_format="OUTPUT_FORMAT ( ${output_format} )"
+
+	cat <<-END_LDSCRIPT
+/* GNU ld script
+   Include missing dependencies
+*/
+${output_format}
+GROUP ( $@ )
+END_LDSCRIPT
+}
+
+gen_static_ldscript() {
+	# Move it first.
+	mv "${libdir}/libc++"{"","_static"}".a" || die
+	# Generate libc++.a ldscript for inclusion of its dependencies so that
+	# clang++ -stdlib=libc++ -static works out of the box.
+	local deps=(
+		"libc++_static.a"
+		$(usex libcxxabi "libc++abi.a" "libsupc++.a")
+	)
+	# On Linux/glibc it does not link without libpthread or libdl. It is
+	# fine on FreeBSD.
+	use elibc_glibc && deps+=( "libpthread.a" "libdl.a" )
+
+	gen_ldscript "${deps[*]}" > "${libdir}/libc++.a" || die
+}
+
+gen_shared_ldscript() {
+	# Move it first.
+	mv "${libdir}/libc++"{"","_shared"}".so" || die
+	local deps=(
+		"libc++_shared.so"
+	# libsupc++ doesn't have a shared version.
+		$(usex libcxxabi "libc++abi.so" "libsupc++.a")
+	)
+
+	gen_ldscript "${deps[*]}" > "${libdir}/libc++.so" || die
+}
+
+src_install() {
+	install_abi() {
+		local lib_type
+		for lib_type in $(get_lib_types) ; do
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
+			cd "${BUILD_DIR}" || die
+			cmake_src_install
+	# Since we've replaced libc++.{a,so} with ldscripts, we have to
+	# install the extra symlinks.
+			if [[ "${CHOST}" != *"-darwin"* ]] ; then
+				local libdir=$(get_libdir)
+				is_crosspkg && into "/usr/${CTARGET}"
+				dolib.so "${libdir}/libc++_shared.so"
+				use static-libs && dolib.a "${libdir}/libc++_static.a"
+			fi
+
+			local install_prefix=
+			is_crosspkg && install_prefix="/usr/${CTARGET}"
+			insinto "${install_prefix}/usr/share/libc++/gdb"
+			doins "../libcxx/utils/gdb/libcxx/printers.py"
+
+			local lib_version=$(sed -n -e 's/^LIBCXX_LIBRARY_VERSION:STRING=//p' "CMakeCache.txt" || die)
+			[[ -n "${lib_version}" ]] || die "Could not determine LIBCXX_LIBRARY_VERSION from CMakeCache.txt"
+
+			insinto "${install_prefix}/usr/share/gdb/auto-load/usr/$(get_libdir)"
+			newins - "libc++.so.${lib_version}-gdb.py" <<-EOF
+				__import__("sys").path.insert(0, "${EPREFIX}/usr/share/libc++/gdb")
+				__import__("printers").register_libcxx_printer_loader()
+			EOF
+		done
+		multilib_check_headers
+	}
+	multilib_foreach_abi install_abi
+}
+
+pkg_postinst() {
+einfo
+einfo "This package (${PN}) is mainly intended as a replacement for the C++"
+einfo "standard library when using clang."
+einfo "To use it, instead of libstdc++, use:"
+einfo "    clang++ -stdlib=libc++"
+einfo "to compile your C++ programs."
+einfo
+}
+
+# OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  ebuild, hardened-flags-patch

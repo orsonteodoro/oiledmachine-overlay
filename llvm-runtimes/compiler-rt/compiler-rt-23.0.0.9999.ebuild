@@ -19,8 +19,8 @@ inherit llvm-ebuilds
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
 llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM22_FALLBACK_COMMIT}"
-		EGIT_BRANCH="${LLVM_EBUILDS_LLVM22_BRANCH}"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM23_FALLBACK_COMMIT}"
+		EGIT_BRANCH="${LLVM_EBUILDS_LLVM23_BRANCH}"
 	fi
 }
 _llvm_set_globals
@@ -32,9 +32,9 @@ PYTHON_COMPAT=( "python3_"{13..14} )
 inherit check-compiler-switch cmake crossdev flag-o-matic libstdcxx-slot llvm.org llvm-utils python-any-r1
 inherit toolchain-funcs
 
-KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~mips ~ppc64 ~riscv ~x86 ~arm64-macos ~x64-macos
-"
+#KEYWORDS="
+#~amd64 ~arm ~arm64 ~loong ~mips ~ppc64 ~riscv ~x86 ~arm64-macos ~x64-macos
+#"
 
 DESCRIPTION="Compiler runtime library for clang (built-in part)"
 HOMEPAGE="https://llvm.org/"
@@ -55,7 +55,7 @@ RESTRICT="
 "
 SLOT="${LLVM_MAJOR}"
 IUSE+="
-${LLVM_EBUILDS_LLVM22_REVISION}
+${LLVM_EBUILDS_LLVM23_REVISION}
 +abi_x86_32 abi_x86_64 +atomic-builtins +clang +debug test
 ebuild_revision_5
 "
