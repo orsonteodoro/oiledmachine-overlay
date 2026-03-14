@@ -555,9 +555,9 @@ src_install() {
 
 pkg_preinst() {
 	dhms_end
-	local gn_count
-	local clang_count
-	local rust_count
+	local gn_count=0
+	local clang_count=0
+	local rust_count=0
 
 	gn_count=$(find "${INSTALL_PREFIX}/toolchain/gn" -type f | wc -l)
 	echo "${gn_count}" >> "${INSTALL_PREFIX}/toolchain/gn-file-count"
@@ -575,8 +575,12 @@ pkg_preinst() {
 einfo "Files merged:"
 	find "${INSTALL_PREFIX}/toolchain/"
 einfo "QA:  Update chromium ebuild with tc_count_expected_gn=${gn_count}"
+	if ! use system-clang ; then
 einfo "QA:  Update chromium ebuild with tc_count_expected_clang=${clang_count}"
+	fi
+	if ! use system-rust ; then
 einfo "QA:  Update chromium ebuild with tc_count_expected_rust=${rust_count}"
+	fi
 
 	# Remove old unislot
 	if [[ -e "/usr/share/chromium/toolchain" ]] ; then
