@@ -632,7 +632,7 @@ SYSTEM_USE=(
 inherit abseil-cpp cflags-depends cflags-hardened check-compiler-switch check-linker check-reqs chromium-2 dhms
 inherit desktop edo flag-o-matic flag-o-matic-om lcnr libcxx-slot libstdcxx-slot linux-info
 inherit multilib-minimal multiprocessing ninja-utils node pax-utils python-any-r1
-inherit re2 readme.gentoo-r1 rust systemd toolchain-funcs vf xdg-utils
+inherit re2 readme.gentoo-r1 systemd toolchain-funcs vf xdg-utils
 
 is_cromite_compatible() {
 	local c4_min=$(ver_cut "4" "${PV}")
@@ -2191,6 +2191,39 @@ eerror "Switch Rust to >= ${RUST_MIN_VER}"
 	fi
 }
 
+# This replaces rust_pkg_setup.
+# The rust eclass maximum LLVM cannot keep up with the LLVM requirement of Chromium.
+setup_rust() {
+	local VERSIONS=(
+		"9999"
+	)
+	local x
+	for x in "${VERSIONS[@]}" ; do
+		if has_version "=dev-lang/rust-${x}" ; then
+			export RUSTC="${BROOT}/usr/lib/rust/${x}/bin/rustc"
+			export RUST_TYPE="source"
+			break
+		elif has_version "=dev-lang/rust-bin-${x}" ; then
+			export RUSTC="${BROOT}/opt/rust-bin-${x}/bin/rustc"
+			export RUST_TYPE="binary"
+			break
+		fi
+	done
+	if use system-rust && [[ -z "${RUSTC}" ]] ; then
+eerror
+eerror "RUSTC is not set."
+eerror
+eerror "The following implementations are currently only supported:"
+eerror
+eerror "USE=system-rust:  =dev-lang/rust-9999, =dev-lang/rust-bin-9999"
+eerror "USE=-system-rust:  ${CATEGORY}/${PN}"
+eerror
+		die
+	else
+		export RUST_TYPE="binary"
+	fi
+}
+
 pkg_setup() {
 ewarn "This ebuild is still under maintenance."
 	dhms_start
@@ -2453,7 +2486,7 @@ ewarn "Enabling ${x} could weaken the security."
 
 	if use system-rust ; then
 einfo "Rust compiler:  Rust (system)"
-		rust_pkg_setup
+		setup_rust
 		verify_rust
 		if [[ "${RUSTC}" =~ "rust-bin" ]] ; then
 	# It is possible that the prebuilt is a trojanized compiler.
@@ -4393,7 +4426,7 @@ einfo "Using the system toolchain"
 		llvm_fix_tool_path "LLVM_CONFIG"
 	fi
 
-	rust_pkg_setup
+	setup_rust
 	einfo "Using Rust slot ${RUST_SLOT}, ${RUST_TYPE} to build"
 
 	# I hate doing this but upstream Rust have yet to come up with a better
