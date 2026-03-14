@@ -447,7 +447,7 @@ MITIGATION_DATE="Mar 13, 2026" # Official annoucement (blog)
 MITIGATION_LAST_UPDATE=1773420843 # From `date +%s -d "2026-03-13 16:54:03 UTC"` From tag in GH or upstream repo
 MITIGATION_URI="https://chromereleases.googleblog.com/2026/03/stable-channel-update-for-desktop_13.html"
 VULNERABILITIES_FIXED=(
-	"CVE-2026-3909;AEITW, KEV, OOBW, OOBA, DoS, DT, ID; High"
+	"CVE-2026-3909;AEITW, KEV, OOBW, OOBA, DoS, DT, ID;High"
 	"CVE-2026-3910;AEITW, KEV, II, SBE, ACE, DoS, DT, ID;High"
 
 	"CVE-2026-3913;HO, MC;"
@@ -2864,7 +2864,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 # Did you run "gclient sync"?
 			"${FILESDIR}/extra-patches/${PN}-117.0.5938.92-skip-rust-check.patch"
 
-			"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-clang-paths.patch"
+			"${FILESDIR}/extra-patches/${PN}-146.0.7680.80-clang-paths.patch"
 		)
 	fi
 
