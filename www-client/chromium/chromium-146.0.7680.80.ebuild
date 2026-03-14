@@ -1693,7 +1693,7 @@ BDEPEND+="
 	${PYTHON_DEPS}
 	app-alternatives/ninja
 	dev-util/patchutils
-	www-client/chromium-sources:0/${PV}
+	www-client/chromium-sources:${PV}
 	www-client/chromium-sources:=
 	>=app-arch/gzip-1.7
 	>=dev-util/gperf-3.2[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
