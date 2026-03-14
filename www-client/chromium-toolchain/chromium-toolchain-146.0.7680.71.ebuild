@@ -339,10 +339,10 @@ setup_rust() {
 	)
 	local x
 	for x in "${VERSIONS[@]}" ; do
-		if has "=dev-lang/rust-${x}" ; then
+		if has_version "=dev-lang/rust-${x}" ; then
 			export RUSTC="${BROOT}/usr/lib/rust/${x}/bin/rustc"
 			break
-		elif has "=dev-lang/rust-bin-${x}" ; then
+		elif has_version "=dev-lang/rust-bin-${x}" ; then
 			export RUSTC="${BROOT}/opt/rust-bin-${x}/bin/rustc"
 			break
 		fi
