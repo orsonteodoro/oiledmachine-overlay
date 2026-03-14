@@ -96,18 +96,18 @@ EAPI=8
 # https://github.com/chromium/chromium/tree/146.0.7680.80/third_party/libusb								# Stable
 # https://github.com/chromium/chromium/tree/146.0.7680.80/third_party/libvpx								# Stable
 # https://github.com/chromium/chromium/tree/146.0.7680.80/third_party/libwebp								# Stable
-# https://github.com/chromium/chromium/blob/146.0.7680.80/third_party/libxml/linux/config.h#L86						# Live
+# https://github.com/chromium/chromium/blob/146.0.7680.80/third_party/libxml/linux/config.h#L86						# Stable
 # https://github.com/chromium/chromium/blob/146.0.7680.80/third_party/libxslt/linux/config.h#L116					# Stable
 # https://github.com/chromium/chromium/blob/146.0.7680.80/third_party/node/update_node_binaries#L18					# Stable, marked no for security-critical by upstream
-# https://github.com/chromium/chromium/tree/146.0.7680.80/third_party/re2								# Stable
-# https://github.com/chromium/chromium/tree/146.0.7680.80/third_party/simdutf								# Stable.  The submodule has a newer version.
-# https://github.com/chromium/chromium/tree/146.0.7680.80/third_party/snappy								# Stable
-# https://github.com/chromium/chromium/tree/146.0.7680.80/third_party/spirv-headers							# Stable
-# https://github.com/chromium/chromium/tree/146.0.7680.80/third_party/spirv-tools							# Stable
+# https://github.com/chromium/chromium/tree/146.0.7680.80/third_party/re2								# Live.  Relaxed stable version used.
+# https://github.com/chromium/chromium/tree/146.0.7680.80/third_party/simdutf								# Stable.  The version listed is newer than the revision.  The version is used.
+# https://github.com/chromium/chromium/tree/146.0.7680.80/third_party/snappy								# Stable.  The submodule is newer than the version.git.revision listed.
+# https://github.com/chromium/chromium/tree/146.0.7680.80/third_party/spirv-headers							# Live.  Relaxed stable version used.
+# https://github.com/chromium/chromium/tree/146.0.7680.80/third_party/spirv-tools							# Live.  Relaxed stable version used.
 # https://github.com/chromium/chromium/blob/146.0.7680.80/third_party/woff2/README.chromium						# Live
 # https://github.com/chromium/chromium/blob/146.0.7680.80/third_party/zlib/zlib.h#L40							# Stable
 # https://github.com/chromium/chromium/blob/146.0.7680.80/tools/rust/update_rust.py#L35							#
-#   https://github.com/rust-lang/rust/blob/a4cfac7093a1c1c7fbdb6bc75d6b6dc4d385fc69/src/version						# Stable
+#   https://github.com/rust-lang/rust/blob/7d8ebe3128fc87f3da1ad64240e63ccf07b8f0bd/src/version						# Live
 # /usr/share/chromium/146.0.7680.80/sources/third_party/flac/BUILD.gn									L122	# Stable
 # /usr/share/chromium/146.0.7680.80/sources/third_party/fontconfig/src/fontconfig/fontconfig.h.in					L56     # Stable
 # /usr/share/chromium/146.0.7680.80/sources/third_party/freetype/src/CMakeLists.txt							L165	# Stable
@@ -120,8 +120,8 @@ EAPI=8
 # /usr/share/chromium/146.0.7680.80/sources/third_party/opus/README.chromium								L3	# Stable
 #   https://gitlab.xiph.org/xiph/opus/-/commit/55513e81d8f606bd75d0ff773d2144e5f2a732f5							# Stable
 # /usr/share/chromium/146.0.7680.80/sources/third_party/zstd/README.chromium								# Live
-#   https://github.com/facebook/zstd/commit/ae9f20ca2716f2605822ca375995b7d876389b64							# Live
-#   https://github.com/facebook/zstd/blob/ae9f20ca2716f2605822ca375995b7d876389b64/lib/zstd.h#L107					# Version
+#   https://github.com/facebook/zstd/commit/1168da0e567960d50cba1b58c9b0ba047ece4733							# Live
+#   https://github.com/facebook/zstd/blob/1168da0e567960d50cba1b58c9b0ba047ece4733/lib/zstd.h#L107					# Version
 #
 # https://github.com/chromium/chromium/blob/146.0.7680.80/DEPS#L512									# Live
 #
@@ -228,7 +228,7 @@ UNGOOGLED_CHROMIUM_PV="146.0.7680.75-1"
 # possible to use all 3.  The 13.7 series fixes contains the 5c595ad commit \
 # to fix a compile error when DrumBrake is enabled. \
 #V8_PV="13.7.152.7" # About the same as the latest Chromium beta release.
-VULKAN_PV="1.4.341"
+VULKAN_PV="1.4.341" # Version requirement relaxed
 ZLIB_PV="1.3.1"
 
 COPIUM_COMMIT="fe1caafa06f27542c18a881348f78e984e2d9fe2"
@@ -1335,6 +1335,7 @@ COMMON_X_DEPEND="
 
 # sys-libs/zlib: https://bugs.gentoo.org/930365; -ng is not compatible.
 # We _could_ use the bundled minizip, but that's against policy.
+# The re2 version requirement has been relaxed because no live ebuild.
 COMMON_SNAPSHOT_DEPEND="
 	!headless? (
 		${LIBVA_DEPEND}
@@ -1408,7 +1409,7 @@ COMMON_SNAPSHOT_DEPEND="
 		>=dev-libs/double-conversion-3.1.6[${MULTILIB_USEDEP}]
 	)
 	system-flatbuffers? (
-		=dev-libs/flatbuffers-25.9.23
+		=dev-libs/flatbuffers-25.12.19
 		dev-libs/flatbuffers:=
 	)
 	system-fontconfig? (
