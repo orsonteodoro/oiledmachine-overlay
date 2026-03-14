@@ -57,7 +57,7 @@ LLVM_COMPAT=(
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
 if [[ "${LLVM_SLOT_LIVE}" -eq "1" ]] ; then
-	USE_FALLBACK_COMMIT=",fallback_commit"
+	USE_FALLBACK_COMMIT=",fallback-commit"
 else
 	USE_FALLBACK_COMMIT=""
 fi
