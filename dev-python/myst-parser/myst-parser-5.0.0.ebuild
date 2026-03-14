@@ -13,7 +13,8 @@ EAPI=8
 # sphinx-togglebutton
 # sphinxext-rediraffe
 
-DISTUTILS_USE_PEP517="setuptools"
+DISTUTILS_USE_PEP517="flit"
+MY_PN="MyST-Parser"
 PYTHON_COMPAT=( "python3_"{11..14} )
 
 inherit distutils-r1
@@ -22,7 +23,7 @@ SRC_URI="
 https://github.com/executablebooks/MyST-Parser/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
-S="${WORKDIR}/${P}"
+S="${WORKDIR}/${MY_PN}-${PV}"
 RESTRICT="mirror"
 
 DESCRIPTION="An extended commonmark compliant parser, with bridges to docutils/sphinx"
@@ -33,7 +34,7 @@ HOMEPAGE="
 LICENSE="
 	MIT
 "
-#KEYWORDS="~amd64" # Ebuild needs test
+KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" codestyle doc linkify rtd test test-docutils"
 REQUIRED_USE="
