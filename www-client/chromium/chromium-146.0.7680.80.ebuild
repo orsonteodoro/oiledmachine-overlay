@@ -2148,7 +2148,8 @@ einfo "PATH:  ${PATH} (After)"
 setup_vendor_rust_paths_pre() {
 	# Sanitize/isolate before adding
 	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "/rust-toolchain/d" | tr $'\n' ":")
-	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "\|rust/bin|d" | tr $'\n' ":")
+	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "\|/rust/bin|d" | tr $'\n' ":")
+	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "\|rust-bin|d" | tr $'\n' ":")
 
 einfo "PATH:  ${PATH} (Before)"
 	export PATH="${ESYSROOT}${CHROMIUM_TOOLCHAIN_PREFIX}/rust/bin:${PATH}"
@@ -2159,7 +2160,8 @@ einfo "PATH:  ${PATH} (After)"
 setup_vendor_rust_paths() {
 	# Sanitize/isolate before adding
 	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "/rust-toolchain/d" | tr $'\n' ":")
-	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "\|rust/bin|d" | tr $'\n' ":")
+	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "\|/rust/bin|d" | tr $'\n' ":")
+	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "\|rust-bin|d" | tr $'\n' ":")
 
 einfo "PATH:  ${PATH} (Before)"
 	export PATH="${S}/third_party/rust-toolchain/bin:${PATH}"
