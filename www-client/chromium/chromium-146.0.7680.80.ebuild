@@ -2206,6 +2206,23 @@ ewarn "This ebuild is still under maintenance."
 	local tc_count_expected_total=0
 	local tc_count_actual_total=0
 	if use system-clang && use system-rust ; then
+		tc_count_expected_total=$(( ${tc_count_expected_gn} ))
+		tc_count_actual_gn=$(cat "${CHROMIUM_TOOLCHAIN_PREFIX}/gn-file-count")
+		tc_count_actual_total=$(( ${tc_count_actual_gn} ))
+		if (( ${tc_count_actual_total} != ${tc_count_expected_total} )) ; then
+ewarn
+ewarn "The emerge package manager may have overpruned."
+ewarn
+ewarn "The chromium-toolchain file count is not the same.  Please re-emerge the chromium-toolchain package."
+ewarn
+ewarn "Actual file count (gn):  ${tc_count_actual_gn}"
+ewarn "Actual file count (total):  ${tc_count_actual_total}"
+ewarn
+ewarn "Expected file count (gn):  ${tc_count_expected_gn}"
+ewarn "Expected file count (total):  ${tc_count_expected_total}"
+ewarn
+		fi
+	else
 		tc_count_expected_total=$(( ${tc_count_expected_clang} + ${tc_count_expected_gn} + ${tc_count_expected_rust} ))
 		tc_count_actual_clang=$(cat "${CHROMIUM_TOOLCHAIN_PREFIX}/clang-file-count")
 		tc_count_actual_gn=$(cat "${CHROMIUM_TOOLCHAIN_PREFIX}/gn-file-count")
@@ -2225,23 +2242,6 @@ ewarn
 ewarn "Expected file count (gn):  ${tc_count_expected_gn}"
 ewarn "Expected file count (clang):  ${tc_count_expected_clang}"
 ewarn "Expected file count (rust):  ${tc_count_expected_rust}"
-ewarn "Expected file count (total):  ${tc_count_expected_total}"
-ewarn
-		fi
-	else
-		tc_count_expected_total=$(( ${tc_count_expected_gn} ))
-		tc_count_actual_gn=$(cat "${CHROMIUM_TOOLCHAIN_PREFIX}/gn-file-count")
-		tc_count_actual_total=$(( ${tc_count_actual_gn} ))
-		if (( ${tc_count_actual_total} != ${tc_count_expected_total} )) ; then
-ewarn
-ewarn "The emerge package manager may have overpruned."
-ewarn
-ewarn "The chromium-toolchain file count is not the same.  Please re-emerge the chromium-toolchain package."
-ewarn
-ewarn "Actual file count (gn):  ${tc_count_actual_gn}"
-ewarn "Actual file count (total):  ${tc_count_actual_total}"
-ewarn
-ewarn "Expected file count (gn):  ${tc_count_expected_gn}"
 ewarn "Expected file count (total):  ${tc_count_expected_total}"
 ewarn
 		fi
