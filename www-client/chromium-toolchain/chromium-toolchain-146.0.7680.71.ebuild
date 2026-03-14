@@ -27,6 +27,7 @@ LLVM_N_COMMITS="2224"
 LLVM_OFFICIAL_SLOT="23" # Cr official slot
 LLVM_SUB_REV="3"
 LLVM_SLOT_UNSTABLE="23" # Comment out if using stable slot
+LLVM_SLOT_LIVE="1"
 # https://github.com/chromium/chromium/blob/146.0.7680.71/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
 RUST_LIVE_TIMESTAMP="Feb 27, 2026 09:38:23 -0800" # Same as Rust 1.96.0 timestamp
@@ -54,6 +55,12 @@ LLVM_COMPAT=(
 	23 # Simplify for chromium
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
+
+if [[ "${LLVM_SLOT_LIVE}" -eq "1" ]] ; then
+	USE_FALLBACK_COMMIT=",fallback_commit"
+else
+	USE_FALLBACK_COMMIT=""
+fi
 
 inherit check-compiler-switch edo flag-o-matic flag-o-matic-om libcxx-slot libstdcxx-slot multilib-minimal ninja-utils toolchain-funcs
 
@@ -206,29 +213,29 @@ REQUIRED_USE="
 RDEPEND+="
 	!www-client/chromium-toolchain:0
 	system-clang? (
-		=llvm-runtimes/compiler-rt-${LLVM_OFFICIAL_SLOT}*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+		=llvm-runtimes/compiler-rt-${LLVM_OFFICIAL_SLOT}*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}${USE_FALLBACK_COMMIT}]
 		llvm-runtimes/compiler-rt:=
 		=llvm-runtimes/clang-runtime-${LLVM_OFFICIAL_SLOT}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 		llvm-runtimes/clang-runtime:=
-		llvm-core/clang:${LLVM_OFFICIAL_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
+		llvm-core/clang:${LLVM_OFFICIAL_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}${USE_FALLBACK_COMMIT}]
 		llvm-core/clang:=
-		llvm-core/lld:${LLVM_OFFICIAL_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+		llvm-core/lld:${LLVM_OFFICIAL_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}${USE_FALLBACK_COMMIT}]
 		llvm-core/lld:=
-		llvm-core/llvm:${LLVM_OFFICIAL_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
+		llvm-core/llvm:${LLVM_OFFICIAL_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}${USE_FALLBACK_COMMIT}]
 		llvm-core/llvm:=
 
-		>=llvm-runtimes/libcxx-${LLVM_OFFICIAL_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},libcxxabi]
+		>=llvm-runtimes/libcxx-${LLVM_OFFICIAL_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},libcxxabi${USE_FALLBACK_COMMIT}]
 		llvm-runtimes/libcxx:=
 
-		>=llvm-runtimes/libcxxabi-${LLVM_OFFICIAL_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=llvm-runtimes/libcxxabi-${LLVM_OFFICIAL_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}${USE_FALLBACK_COMMIT}]
 		llvm-runtimes/libcxxabi:=
 
 		cfi? (
-			=llvm-runtimes/compiler-rt-sanitizers-${LLVM_OFFICIAL_SLOT}*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},cfi]
+			=llvm-runtimes/compiler-rt-sanitizers-${LLVM_OFFICIAL_SLOT}*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},cfi${USE_FALLBACK_COMMIT}]
 			llvm-runtimes/compiler-rt-sanitizers:=
 		)
 		pgo? (
-			=llvm-runtimes/compiler-rt-sanitizers-${LLVM_OFFICIAL_SLOT}*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},profile]
+			=llvm-runtimes/compiler-rt-sanitizers-${LLVM_OFFICIAL_SLOT}*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},profile${USE_FALLBACK_COMMIT}]
 			llvm-runtimes/compiler-rt-sanitizers:=
 		)
 	)
