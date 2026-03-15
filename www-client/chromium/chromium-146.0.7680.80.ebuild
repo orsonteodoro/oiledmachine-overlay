@@ -629,7 +629,9 @@ SYSTEM_USE=(
 	"-system-lua"				#					For testing only
 )
 
-# We avoid inherit llvm and inherit rust because they assume stable LLVM slots.
+# C++ needs LLVM 23.
+# Rust needs LLVM 22, but LLVM 23 is not allowed in rust.eclass
+# We avoid inheriting llvm and rust because the custom rust eclass mod breaks with LLVM 23 present in LLVM_COMPAT.
 inherit abseil-cpp cflags-depends cflags-hardened check-compiler-switch check-linker check-reqs chromium-2 dhms
 inherit desktop edo flag-o-matic flag-o-matic-om lcnr libcxx-slot libstdcxx-slot linux-info
 inherit multilib-minimal multiprocessing ninja-utils node pax-utils python-any-r1
