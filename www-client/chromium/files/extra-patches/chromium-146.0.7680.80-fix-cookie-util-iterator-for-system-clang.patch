@@ -1,5 +1,5 @@
---- a/net/cookies/cookie_util.cc.orig	2026-03-15 10:02:24.928185341 -0700
-+++ b/net/cookies/cookie_util.cc	2026-03-15 10:05:35.790660757 -0700
+--- a/net/cookies/cookie_util.cc.orig	2026-03-15 11:08:57.158767090 -0700
++++ b/net/cookies/cookie_util.cc	2026-03-15 11:10:54.502906328 -0700
 @@ -840,8 +840,9 @@ bool IsCookiePartitionedValid(
  
  void ParseRequestCookieLine(std::string_view header_value,
@@ -12,7 +12,7 @@
      // Here we are at the beginning of a cookie.
  
      // Eat whitespace.
-@@ -849,9 +850,9 @@ void ParseRequestCookieLine(std::string_
+@@ -849,26 +850,26 @@ void ParseRequestCookieLine(std::string_
      if (i == header_value.end()) return;
  
      // Find cookie name.
@@ -24,3 +24,23 @@
  
      // Find cookie value.
      std::string_view cookie_value;
+     // Cookies may have no value, in this case '=' may or may not be there.
+     if (i != header_value.end() && i + 1 != header_value.end()) {
+       ++i;  // Skip '='.
+-      std::string::const_iterator cookie_value_beginning = i;
++      auto cookie_value_beginning = i;
+       if (*i == '"') {
+         ++i;  // Skip '"'.
+         while (i != header_value.end() && *i != '"') ++i;
+         if (i == header_value.end()) return;
+         ++i;  // Skip '"'.
+-        cookie_value = std::string_view(cookie_value_beginning, i);
++        cookie_value = std::string_view(cookie_value_beginning, i - cookie_value_beginning);
+         // i points to character after '"', potentially a ';'.
+       } else {
+         while (i != header_value.end() && *i != ';') ++i;
+-        cookie_value = std::string_view(cookie_value_beginning, i);
++        cookie_value = std::string_view(cookie_value_beginning, i - cookie_value_beginning);
+         // i points to ';' or end of string.
+       }
+     }
