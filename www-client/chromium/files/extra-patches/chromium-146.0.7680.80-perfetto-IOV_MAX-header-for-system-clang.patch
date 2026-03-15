@@ -1,0 +1,12 @@
+--- a/third_party/perfetto/src/tracing/service/tracing_service_impl.cc.orig	2026-03-13 09:54:03.000000000 -0700
++++ b/third_party/perfetto/src/tracing/service/tracing_service_impl.cc	2026-03-14 23:29:10.398141612 -0700
+@@ -205,6 +205,9 @@ ssize_t writev(int fd, const struct iove
+ 
+ #elif PERFETTO_BUILDFLAG(PERFETTO_OS_QNX)
+ #define IOV_MAX 1024  // Linux compatible limit.
++#else
++  // Linux / Android / macOS / FreeBSD – pull in the system definition
++  #include <sys/uio.h>
+ #endif
+ 
+ void SerializeAndAppendPacket(std::vector<TracePacket>* packets,
