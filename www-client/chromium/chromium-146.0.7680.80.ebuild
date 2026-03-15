@@ -208,6 +208,7 @@ RUST_MAX_VER="9999" # Corresponds to llvm 22 to match LLVM_COMPAT
 RUST_MIN_VER="9999" # Corresponds to llvm 22 to match LLVM_COMPAT
 RUST_NEEDS_LLVM="yes please"
 RUST_REQ_USE="rustfmt" # Upstream run rustfmt on bindgen output, so we need it to be available.
+RUST_SLOT_VENDORED="1.95.0" # Check every major version bump
 RUST_OPTIONAL="yes" # Not actually optional, but we don't need system Rust (or LLVM) with USE=-system-clang
 SHADOW_CALL_STACK=0 # Global variable
 
@@ -2143,7 +2144,7 @@ einfo "PATH:  ${PATH} (Before)"
 einfo "PATH:  ${PATH} (After)"
 }
 
-setup_vendor_rust_paths_pre() {
+setup_vendored_rust_paths_pre() {
 	# Sanitize/isolate before adding
 	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "/rust-toolchain/d" | tr $'\n' ":")
 	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "\|/rust/bin|d" | tr $'\n' ":")
@@ -2155,7 +2156,7 @@ einfo "PATH:  ${PATH} (Before)"
 einfo "PATH:  ${PATH} (After)"
 }
 
-setup_vendor_rust_paths() {
+setup_vendored_rust_paths() {
 	# Sanitize/isolate before adding
 	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "/rust-toolchain/d" | tr $'\n' ":")
 	PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "\|/rust/bin|d" | tr $'\n' ":")
@@ -2209,7 +2210,7 @@ eerror "Switch Rust to >= ${RUST_MIN_VER}"
 	fi
 }
 
-verify_vendor_rust() {
+verify_vendored_rust() {
 	"${RUSTC}" --version || die
 }
 
@@ -2225,11 +2226,13 @@ setup_system_rust_paths() {
 			export PATH="${BROOT}/usr/lib/rust/${x}/bin:${PATH}"
 			export RUSTC="${BROOT}/usr/lib/rust/${x}/bin/rustc"
 			export RUST_TYPE="source"
+			export RUST_SLOT="${x}"
 			break
 		elif has_version "=dev-lang/rust-bin-${x}" ; then
 			export PATH="${BROOT}/opt/rust-bin-${x}/bin:${PATH}"
 			export RUSTC="${BROOT}/opt/rust-bin-${x}/bin/rustc"
 			export RUST_TYPE="binary"
+			export RUST_SLOT="${x}"
 			break
 		fi
 	done
@@ -2246,10 +2249,11 @@ eerror
 	fi
 }
 
-setup_vendor_rust_paths() {
+setup_vendored_rust_paths() {
 	export PATH="${S}/third_party/rust-toolchain/bin:${PATH}"
 	export RUSTC="${S}/third_party/rust-toolchain/bin/rustc"
-	export RUST_TYPE="binary"
+	export RUST_TYPE="vendored"
+	export RUST_SLOT="${RUST_SLOT_VENDORED}" # Check every bump
 }
 
 pkg_setup() {
@@ -2414,7 +2418,7 @@ ewarn
 	if use system-rust ; then
 		setup_system_rust_paths
 	else
-		setup_vendor_rust_paths_pre
+		setup_vendored_rust_paths_pre
 	fi
 
 	# We are always using clang.
@@ -2530,8 +2534,8 @@ ewarn "Using the prebuilt Rust could weaken the security."
 einfo "Rust compiler:  Rust (vendored)"
 	# It is possible that the prebuilt is a trojanized compiler.
 ewarn "Disabling system-rust could weaken the security or privacy."
-		setup_vendor_rust_paths
-		verify_vendor_rust
+		setup_vendored_rust_paths
+		verify_vendored_rust
 	fi
 
 	if use openh264 && ! use system-openh264 ; then
@@ -2578,6 +2582,9 @@ eerror "gn >= ${GN_MIN_VER} is required"
 	if use system-clang || use system-rust ; then
 		unpack "chromium-patches-${PATCH_VER}.tar.bz2"
 		unpack "chromium-patches-copium-${COPIUM_COMMIT:0:10}.tar.gz"
+		mkdir -p "${S}/third_party/rust-toolchain"
+		cat "${CHROMIUM_TOOLCHAIN_PREFIX}/rust/VERSION" > "${S}/third_party/rust-toolchain/VERSION" || die
+		cat "${CHROMIUM_TOOLCHAIN_PREFIX}/rust/INSTALLED_VERSION" > "${S}/third_party/rust-toolchain/INSTALLED_VERSION" || die
 	else
 		rm -rf "${S}/third_party/llvm-build/Release+Asserts" || true
 		mkdir -p "${S}/third_party/llvm-build"
@@ -2651,6 +2658,8 @@ apply_distro_patchset_for_system_toolchain() {
 		# Where `lt-23` means "apply this patch if the LLVM version is less than 23".
 		# Only categories in `slot_map` will be checked for version constraints.
 		shopt -s nullglob
+		[[ -z "${LLVM_SLOT}" ]] && die "QA:  LLVM_SLOT is not initalized."
+		[[ -z "${RUST_SLOT}" ]] && die "QA:  RUST_SLOT is not initalized."
 		local -A slot_map=(
 			[llvm]="${LLVM_SLOT}"
 			[rust]="${RUST_SLOT}"
@@ -2728,6 +2737,7 @@ apply_distro_patchset_for_system_toolchain() {
 	# We can't rely on the eselect'd Rust to actually include rustfmt, so
 	# we'll point to the selected slot specifically.
 		local suffix=""
+		[[ -z "${RUST_SLOT}" ]] && die "QA:  RUST_SLOT is not initalized."
 		if [[ "${RUST_TYPE}" == "binary" ]]; then
 			suffix="-bin-${RUST_SLOT}"
 		else
@@ -2758,7 +2768,7 @@ einfo "Applying the distro patchset ..."
 
 		# Dedupe, oiledmachine-overlay changes preferred
 		# Update every major version
-		rm -rf "${WORKDIR}/chromium-patches-${PATCH_VER}/toolchain/cr146-compiler.patch" || die
+		 rm -rf "${WORKDIR}/chromium-patches-${PATCH_VER}/toolchain/cr146-compiler.patch" || die
 	fi
 
 	# https://issues.chromium.org/issues/442698344
@@ -4372,6 +4382,31 @@ eerror
 	fi
 }
 
+# This function replaces get_rust_prefix().
+# Do not use the rust.eclass to avoid *DEPENDs issues.
+get_rust_sysroot_absolute() {
+	[[ -z "${RUST_SLOT}" ]] && die "QA:  RUST_SLOT is not initalized."
+	if [[ "${RUST_TYPE}" == "binary" ]] ; then
+		echo "${BROOT}/opt/rust-bin-${RUST_SLOT}"
+	elif [[ "${RUST_TYPE}" == "source" ]] ; then
+		echo "${BROOT}/usr/lib/rust/${RUST_SLOT}"
+	elif [[ "${RUST_TYPE}" == "vendored" ]] ; then
+		echo "${S}/third_party/rust-toolchain"
+	fi
+}
+
+# get_llvm_prefix is part of the llvm* eclass.
+# Do not use the llvm eclass to avoid *DEPENDs issues.
+# This function replaces get_llvm_prefix()
+get_bindgen_libclang_path() {
+	[[ -z "${LLVM_SLOT}" ]] && die "QA:  LLVM_SLOT not initalized."
+	if use system-clang ; then
+		echo "/usr/lib/llvm/${LLVM_SLOT}/$(get_libdir)"
+	else
+		echo "${CHROMIUM_TOOLCHAIN_PREFIX}/clang/lib/clang/23/lib"
+	fi
+}
+
 _configure_system_toolchain() {
 einfo "Using the system toolchain"
 	# We already forced the "correct" clang via pkg_setup
@@ -4458,11 +4493,18 @@ einfo "Using the system toolchain"
 
 	# Set LLVM_CONFIG to help Meson (bug #907965) but only do it
 	# for empty ESYSROOT (as a proxy for "are we cross-compiling?").
-	if [[ -z "${ESYSROOT}" ]] ; then
-		llvm_fix_tool_path "LLVM_CONFIG"
-	fi
+	# llvm_fix_tool_path() is from the llvm-utils.eclass.
+	# Do not use any llvm or rust eclass to avoid issues with *DEPENDs.
+ewarn "QA:  FIXME:  Disabled llvm_fix_tool_path to avoid issues with bleeding edge LLVM slot for C++ with and LLVM max limit with Rust eclass."
+einfo "DEBUG:  LLVM_CONFIG:  ${LLVM_CONFIG}"
+einfo "DEBUG:  !LLVM_CONFIG:  ${!LLVM_CONFIG}"
+	#if [[ -z "${ESYSROOT}" ]] ; then
+	#	llvm_fix_tool_path "LLVM_CONFIG"
+	#fi
 
 	setup_system_rust_paths
+	[[ -z "${RUST_SLOT}" ]] && die "QA:  RUST_SLOT is not initalized."
+	[[ -z "${RUST_TYPE}" ]] && die "QA:  RUST_TYPE is not initalized."
 	einfo "Using Rust slot ${RUST_SLOT}, ${RUST_TYPE} to build"
 
 	# I hate doing this but upstream Rust have yet to come up with a better
@@ -4478,6 +4520,8 @@ eerror "QA:  Update LLVM_SLOT in setup_system_clang_paths()"
 		die
 	fi
 
+
+	[[ -z "${RUST_SLOT}" ]] && die "QA:  RUST_SLOT is not initalized."
 	myconf_gn+=(
 	# From M127 we need to provide a location for libclang.
 	# We patch this in for gentoo - see chromium-*-bindgen-custom-toolchain.patch
@@ -4485,12 +4529,12 @@ eerror "QA:  Update LLVM_SLOT in setup_system_clang_paths()"
 	# We don't need to set 'clang_base_path' for anything in our build
 	# and it defaults to the google toolchain location. Instead provide a location
 	# to where system clang lives so that bindgen can find system headers (e.g. stddef.h)
-		"bindgen_libclang_path=\"$(get_llvm_prefix)/$(get_libdir)\""
+		"bindgen_libclang_path=\"$(get_bindgen_libclang_path)\""
 
 		"clang_base_path=\"${EPREFIX}/usr/lib/clang/${LLVM_SLOT}/\""
 		"custom_toolchain=\"//build/toolchain/linux/unbundle:default\""
 		"rust_bindgen_root=\"${EPREFIX}/usr/\""
-		"rust_sysroot_absolute=\"$(get_rust_prefix)\""
+		"rust_sysroot_absolute=\"$(get_rust_sysroot_absolute)\""
 		"rustc_version=\"${RUST_SLOT}\""
 
 	# Silence

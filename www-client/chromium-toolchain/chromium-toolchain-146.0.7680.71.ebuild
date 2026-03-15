@@ -202,7 +202,7 @@ SLOT="${PV%.*}.x"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +cfi +pgo -system-clang -system-rust
-ebuild_revision_20
+ebuild_revision_25
 "
 REQUIRED_USE="
 	^^ (
@@ -388,7 +388,7 @@ src_unpack() {
 			if [[ "${ARCH}" == "amd64" ]] ; then
 				unpack "chromium-${PV%%\.*}-${LLVM_COMMIT:0:7}-${LLVM_SUB_REV}-clang-linux-x64.tar.xz"
 			fi
-			echo "${VENDORED_CLANG_VER}" > clang-ver.txt || die
+			echo "${VENDORED_CLANG_VER}" > "clang-ver.txt" || die
 		popd >/dev/null 2>&1 || die
 	fi
 
@@ -398,7 +398,7 @@ src_unpack() {
 			if [[ "${ARCH}" == "amd64" ]] ; then
 				unpack "chromium-${PV%%\.*}-${RUST_COMMIT:0:7}-${RUST_SUB_REV}-rust-linux-x64.tar.xz"
 			fi
-			echo "${VENDORED_RUST_VER}" > rust-ver.txt || die
+			echo "${VENDORED_RUST_VER}" > "rust-ver.txt" || die
 		popd >/dev/null 2>&1 || die
 	fi
 }
@@ -512,15 +512,27 @@ einfo "Detected compiler switch.  Disabling LTO."
 			"${VENDORED_CLANG_VER}" \
 			> \
 			"cr_build_revision" \
-			|| die "Failed to set clang version"
+			|| die "Failed to set the Clang version."
 	fi
 
-	if ! use system-rust ; then
+	if use system-rust ; then
+		mkdir -p "${WORKDIR}/rust" || die
+		local rust_pv=$("${RUSTC}" --version | cut -f 2 -d " " | sed -e "s|-dev||" -e "s|-nightly||g")		# Rust version
+		local rust_commit=$("${RUSTC}" --version | cut -f 3 -d " " | cut -f 1 -d "-" | sed -e "s|[(]||g")	# Rust commit
+		#local parens_content=$("${RUSTC}" --version | cut -f 3- -d " ")					# Parenthesis content
+		local rust_sub_ver="0"											# Rust sub revision, placeholder
+		local llvm_major_pv="22"										# LLVM major version, from RUST_REPO/.gitmodules
+		local llvm_n_commits="0"										# LLVM N commits, placeholder
+		local llvm_commit="41f177ed26a5252a30ea6090a4da66ce0a96bf44"						# LLVM 8 digit commit, placeholder, from RUST_REPO/src/llvm-project
+	# Sample:  rustc 1.95.0 7d8ebe3128fc87f3da1ad64240e63ccf07b8f0bd (7d8ebe3128fc87f3da1ad64240e63ccf07b8f0bd-3-llvmorg-23-init-2224-g5bd8dadb chromium)
+		echo "rustc ${rust_pv} ${rust_commit} (${rust_commit}-${rust_sub_ver}-llvmorg-${llvm_major_pv}-init-${llvm_n_commits}-g${llvm_commit:0:8})" > "${WORKDIR}/rust/VERSION" || die
+		echo "rustc ${rust_pv} ${rust_commit} (${rust_commit}-${rust_sub_ver}-llvmorg-${llvm_major_pv}-init-${llvm_n_commits}-g${llvm_commit:0:8})" > "${WORKDIR}/rust/INSTALLED_VERSION" || die
+	else
 		cd "${WORKDIR}/rust" || die
 		cp \
 			"VERSION" \
 			"INSTALLED_VERSION" \
-			|| die "Failed to set rust version"
+			|| die "Failed to set the Rust version."
 	fi
 }
 
