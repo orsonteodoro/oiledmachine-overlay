@@ -4493,18 +4493,9 @@ einfo "Using the system toolchain"
 
 	# We don't want to depend on llvm/llvm-r1 eclasses.
 
-	# Set LLVM_CONFIG to help Meson (bug #907965) but only do it
-	# for empty ESYSROOT (as a proxy for "are we cross-compiling?").
-	# llvm_fix_tool_path() is from the llvm-utils.eclass.
-	# Do not use any llvm or rust eclass to avoid issues with *DEPENDs.
-	# LLVM_CONFIG has nothing
-	if [[ -z "${ESYSROOT}" ]] ; then
-		if use system-clang ; then
-			export LLVM_CONFIG="${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin/llvm-config"
-		else
-ewarn "LLVM_CONFIG is not supported in USE=-system-clang"
-		fi
-	fi
+	# LLVM_CONFIG is empty when unset when calling llvm_fix_tool_path.  (Default)
+	# When LLVM_CONFIG="llvm-config", it is set to LLVM_CONFIG="${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin/llvm-config".
+	# oiledmachine-overlay:  Removed LLVM_CONFIG change
 
 	setup_system_rust_paths
 	[[ -z "${RUST_SLOT}" ]] && die "QA:  RUST_SLOT is not initalized."
