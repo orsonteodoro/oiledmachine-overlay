@@ -1,5 +1,5 @@
---- a/net/cookies/cookie_util.cc.orig	2026-03-13 09:54:03.000000000 -0700
-+++ b/net/cookies/cookie_util.cc	2026-03-15 09:22:17.911423739 -0700
+--- a/net/cookies/cookie_util.cc.orig	2026-03-15 10:02:24.928185341 -0700
++++ b/net/cookies/cookie_util.cc	2026-03-15 10:05:35.790660757 -0700
 @@ -840,8 +840,9 @@ bool IsCookiePartitionedValid(
  
  void ParseRequestCookieLine(std::string_view header_value,
@@ -12,3 +12,15 @@
      // Here we are at the beginning of a cookie.
  
      // Eat whitespace.
+@@ -849,9 +850,9 @@ void ParseRequestCookieLine(std::string_
+     if (i == header_value.end()) return;
+ 
+     // Find cookie name.
+-    std::string::const_iterator cookie_name_beginning = i;
++    auto cookie_name_beginning = i;
+     while (i != header_value.end() && *i != '=') ++i;
+-    auto cookie_name = std::string_view(cookie_name_beginning, i);
++    auto cookie_name = std::string_view(cookie_name_beginning, i - cookie_name_beginning);
+ 
+     // Find cookie value.
+     std::string_view cookie_value;
