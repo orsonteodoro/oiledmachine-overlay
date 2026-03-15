@@ -937,6 +937,7 @@ LIBCXX_REQUIRED_USE=(
 #	vendored-libcxx? (
 #		${LIBCXX_REQUIRED_USE[@]}
 #	)
+#		llvm_slot_22
 REQUIRED_USE+="
 	${PATENT_USE_FLAGS}
 	!drumbrake
@@ -1157,7 +1158,6 @@ REQUIRED_USE+="
 		jit
 		kerberos
 		libaom
-		llvm_slot_23
 		miracleptr
 		mpris
 		openh264
@@ -4497,12 +4497,14 @@ einfo "Using the system toolchain"
 	# for empty ESYSROOT (as a proxy for "are we cross-compiling?").
 	# llvm_fix_tool_path() is from the llvm-utils.eclass.
 	# Do not use any llvm or rust eclass to avoid issues with *DEPENDs.
-ewarn "QA:  FIXME:  Disabled llvm_fix_tool_path to avoid issues with bleeding edge LLVM slot for C++ with and LLVM max limit with Rust eclass."
-einfo "DEBUG:  LLVM_CONFIG:  ${LLVM_CONFIG}"
-einfo "DEBUG:  !LLVM_CONFIG:  ${!LLVM_CONFIG}"
-	#if [[ -z "${ESYSROOT}" ]] ; then
-	#	llvm_fix_tool_path "LLVM_CONFIG"
-	#fi
+	# LLVM_CONFIG has nothing
+	if [[ -z "${ESYSROOT}" ]] ; then
+		if use system-clang ; then
+			export LLVM_CONFIG="${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin/llvm-config"
+		else
+ewarn "LLVM_CONFIG is not supported in USE=-system-clang"
+		fi
+	fi
 
 	setup_system_rust_paths
 	[[ -z "${RUST_SLOT}" ]] && die "QA:  RUST_SLOT is not initalized."
