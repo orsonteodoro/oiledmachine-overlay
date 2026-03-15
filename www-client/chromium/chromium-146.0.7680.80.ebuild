@@ -2938,10 +2938,16 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 #		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-libcxx-headers.patch"
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-libcxx-hardening-flag.patch"
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-system-clang-flags-3.patch"
-		"${FILESDIR}/extra-patches/${PN}-146.0.7680.80-perfetto-IOV_MAX-header-for-system-clang.patch"
-		"${FILESDIR}/extra-patches/${PN}-146.0.7680.80-NZERO-fallback-for-system-clang.patch"
-		"${FILESDIR}/extra-patches/${PN}-146.0.7680.80-crashpad-IOV_MAX-fallback-for-system-clang.patch"
 	)
+
+	if use system-clang ; then
+		PATCHES+=(
+			"${FILESDIR}/extra-patches/${PN}-146.0.7680.80-perfetto-IOV_MAX-header-for-system-clang.patch"
+			"${FILESDIR}/extra-patches/${PN}-146.0.7680.80-NZERO-fallback-for-system-clang.patch"
+			"${FILESDIR}/extra-patches/${PN}-146.0.7680.80-crashpad-IOV_MAX-fallback-for-system-clang.patch"
+			"${FILESDIR}/extra-patches/${PN}-146.0.7680.80-fix-cookie-util-iterator-for-system-clang.patch"
+		)
+	fi
 
 	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
 	#  Glic removed

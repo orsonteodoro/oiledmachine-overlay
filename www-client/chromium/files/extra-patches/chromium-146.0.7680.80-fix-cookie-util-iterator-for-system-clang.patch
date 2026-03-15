@@ -1,0 +1,14 @@
+--- a/net/cookies/cookie_util.cc.orig	2026-03-13 09:54:03.000000000 -0700
++++ b/net/cookies/cookie_util.cc	2026-03-15 09:22:17.911423739 -0700
+@@ -840,8 +840,9 @@ bool IsCookiePartitionedValid(
+ 
+ void ParseRequestCookieLine(std::string_view header_value,
+                             ParsedRequestCookies* parsed_cookies) {
+-  std::string::const_iterator i = header_value.begin();
+-  while (i != header_value.end()) {
++  auto i = header_value.begin();
++  auto end_it = header_value.end();
++  while (i != end_it) {
+     // Here we are at the beginning of a cookie.
+ 
+     // Eat whitespace.
