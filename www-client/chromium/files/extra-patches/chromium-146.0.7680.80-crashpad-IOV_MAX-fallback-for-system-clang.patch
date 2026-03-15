@@ -1,0 +1,12 @@
+--- a/third_party/crashpad/crashpad/util/file/file_writer.cc.orig	2026-03-13 09:54:03.000000000 -0700
++++ b/third_party/crashpad/crashpad/util/file/file_writer.cc	2026-03-15 07:26:26.973280589 -0700
+@@ -30,6 +30,9 @@
+ #include <sys/uio.h>
+ #include <unistd.h>
+ #include "base/posix/eintr_wrapper.h"
++#ifndef IOV_MAX
++  #define IOV_MAX 1024  // fallback
++#endif
+ #endif  // BUILDFLAG(IS_POSIX)
+ 
+ namespace crashpad {

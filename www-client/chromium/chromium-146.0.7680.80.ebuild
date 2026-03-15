@@ -2940,6 +2940,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-system-clang-flags-3.patch"
 		"${FILESDIR}/extra-patches/${PN}-146.0.7680.80-perfetto-IOV_MAX-header-for-system-clang.patch"
 		"${FILESDIR}/extra-patches/${PN}-146.0.7680.80-NZERO-fallback-for-system-clang.patch"
+		"${FILESDIR}/extra-patches/${PN}-146.0.7680.80-crashpad-IOV_MAX-fallback-for-system-clang.patch"
 	)
 
 	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
