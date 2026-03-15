@@ -2275,7 +2275,7 @@ ewarn "This ebuild is still under maintenance."
 	local tc_count_actual_total=0
 	if use system-clang && use system-rust ; then
 		tc_count_expected_total=$(( ${tc_count_expected_gn} ))
-		tc_count_actual_gn=$(cat "${ESYSROOT}${CHROMIUM_TOOLCHAIN_PREFIX}/gn-file-count")
+		tc_count_actual_gn=$(cat "${CHROMIUM_TOOLCHAIN_PREFIX}/gn-file-count")
 		tc_count_actual_total=$(( ${tc_count_actual_gn} ))
 		if (( ${tc_count_actual_total} != ${tc_count_expected_total} )) ; then
 ewarn
@@ -2292,9 +2292,9 @@ ewarn
 		fi
 	else
 		tc_count_expected_total=$(( ${tc_count_expected_clang} + ${tc_count_expected_gn} + ${tc_count_expected_rust} ))
-		tc_count_actual_clang=$(cat "${ESYSROOT}${CHROMIUM_TOOLCHAIN_PREFIX}/clang-file-count")
-		tc_count_actual_gn=$(cat "${ESYSROOT}${CHROMIUM_TOOLCHAIN_PREFIX}/gn-file-count")
-		tc_count_actual_rust=$(cat "${ESYSROOT}${CHROMIUM_TOOLCHAIN_PREFIX}/rust-file-count")
+		tc_count_actual_clang=$(cat "${CHROMIUM_TOOLCHAIN_PREFIX}/clang-file-count")
+		tc_count_actual_gn=$(cat "${CHROMIUM_TOOLCHAIN_PREFIX}/gn-file-count")
+		tc_count_actual_rust=$(cat "${CHROMIUM_TOOLCHAIN_PREFIX}/rust-file-count")
 		tc_count_actual_total=$(( ${tc_count_actual_clang} + ${tc_count_actual_gn} + ${tc_count_actual_rust} ))
 		if (( ${tc_count_actual_total} != ${tc_count_expected_total} )) ; then
 ewarn
@@ -2316,7 +2316,7 @@ ewarn
 	fi
 
 	local sources_count_expected=${SOURCES_COUNT_EXPECTED}
-	local sources_count_actual=$(cat "${ESYSROOT}${CHROMIUM_SOURCES_PREFIX}/file-count")
+	local sources_count_actual=$(cat "${CHROMIUM_SOURCES_PREFIX}/file-count")
 	if (( ${sources_count_actual} != ${sources_count_expected} )) ; then
 ewarn
 ewarn "The emerge package system may have overpruned."
@@ -2571,8 +2571,8 @@ src_unpack() {
 	# system package by just not unpacking it unless we're using the bundled
 	# toolchain.
 	mkdir -p "${S}" || die
-	cp -aT "${ESYSROOT}${CHROMIUM_SOURCES_PREFIX}" "${S}" || die
-	export PATH="${ESYSROOT}${CHROMIUM_TOOLCHAIN_PREFIX}/gn/out:${PATH}" # Adds gn to PATH.
+	cp -aT "${CHROMIUM_SOURCES_PREFIX}" "${S}" || die
+	export PATH="${CHROMIUM_TOOLCHAIN_PREFIX}/gn/out:${PATH}" # Adds gn to PATH.
 
 	# Sanity checks for development convenience
 	local gn_pv=$(gn --version || die)
@@ -2585,15 +2585,15 @@ eerror "gn >= ${GN_MIN_VER} is required"
 		unpack "chromium-patches-${PATCH_VER}.tar.bz2"
 		unpack "chromium-patches-copium-${COPIUM_COMMIT:0:10}.tar.gz"
 		mkdir -p "${S}/third_party/rust-toolchain"
-		cat "${ESYSROOT}${CHROMIUM_TOOLCHAIN_PREFIX}/rust/VERSION" > "${S}/third_party/rust-toolchain/VERSION" || die
-		cat "${ESYSROOT}${CHROMIUM_TOOLCHAIN_PREFIX}/rust/INSTALLED_VERSION" > "${S}/third_party/rust-toolchain/INSTALLED_VERSION" || die
+		cat "${CHROMIUM_TOOLCHAIN_PREFIX}/rust/VERSION" > "${S}/third_party/rust-toolchain/VERSION" || die
+		cat "${CHROMIUM_TOOLCHAIN_PREFIX}/rust/INSTALLED_VERSION" > "${S}/third_party/rust-toolchain/INSTALLED_VERSION" || die
 	else
 		rm -rf "${S}/third_party/llvm-build/Release+Asserts" || true
 		mkdir -p "${S}/third_party/llvm-build"
-		ln -s "${ESYSROOT}${CHROMIUM_TOOLCHAIN_PREFIX}/clang" "${S}/third_party/llvm-build/Release+Asserts" || die
+		ln -s "${CHROMIUM_TOOLCHAIN_PREFIX}/clang" "${S}/third_party/llvm-build/Release+Asserts" || die
 
 		rm -rf "${S}/third_party/rust-toolchain" || true
-		ln -s "${ESYSROOT}${CHROMIUM_TOOLCHAIN_PREFIX}/rust" "${S}/third_party/rust-toolchain" || die
+		ln -s "${CHROMIUM_TOOLCHAIN_PREFIX}/rust" "${S}/third_party/rust-toolchain" || die
 	fi
 
 	if use ppc64 && [[ "${KEYWORDS}" =~ "ppc64" ]] ; then
