@@ -1,0 +1,15 @@
+--- a/base/posix/can_lower_nice_to.cc.orig	2026-03-13 09:54:03.000000000 -0700
++++ b/base/posix/can_lower_nice_to.cc	2026-03-15 01:30:12.539336907 -0700
+@@ -50,7 +50,12 @@ bool CanLowerNiceTo(int nice_value) {
+   if (getrlimit(RLIMIT_NICE, &rlim) != 0) {
+     return false;
+   }
++#if defined(NZERO)
+   const int lowest_nice_allowed = NZERO - static_cast<int>(rlim.rlim_cur);
++#else
++  // 20 is the POSIX minimum; Linux/glibc uses this
++  const int lowest_nice_allowed = 20 - static_cast<int>(rlim.rlim_cur);
++#endif
+ 
+   // And lowering niceness to |nice_value| is allowed if it is greater than or
+   // equal to the limit:
