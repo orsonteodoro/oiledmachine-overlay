@@ -2269,7 +2269,8 @@ setup_vendored_rust_paths() {
 
 has_all_hardening_flags() {
 	local pkg="${1}"
-	local F=(
+	local F
+	F=(
 		"-O2"
 		"-fno-delete-null-pointer-checks"
 		"-fstrict-flex-arrays=3"
@@ -2286,8 +2287,38 @@ has_all_hardening_flags() {
 		fi
 	done
 
-	if (( ${found_count} == 6 )) ; then
-		return 0
+	# Transient execution CPU vulnerability mitigations
+	# ID = Information Disclosure
+	local found_count_id_mitigation=0
+	if [[ "${tags}" =~ "sensitive-data" ]] ; then
+		F=(
+			"-fcf-protection=full"
+			"-mbranch-protection=pac-ret+bti"
+			"-mbranch-protection=standard"
+			"-mharden-sls=all"
+			"-mretpoline"
+			"-mindirect-branch=thunk"
+			"-mindirect-branch=thunk-extern"
+			"-mindirect-branch=thunk-inline"
+			"-mfunction-return=thunk"
+			"-mfunction-return=thunk-extern"
+			"-mfunction-return=thunk-inline"
+		)
+		for f in "${F[@]}" ; do
+			if grep -q -e "${f}" "/var/db/pkg/${pkg}-"*"/CFLAGS" 2>/dev/null ; then
+				found_count_id_mitigation=$(( ${found_count_id_mitigation} + 1 ))
+			fi
+		done
+	fi
+
+	if [[ "${tags}" =~ "sensitive-data" ]] ; then
+		if (( ${found_count} == 6 && ${found_count_id_mitigation} >= 1 )) ; then
+			return 0
+		fi
+	else
+		if (( ${found_count} == 6 )) ; then
+			return 0
+		fi
 	fi
 	return 1
 }
@@ -2341,21 +2372,22 @@ verify_compiler_flags_hardening() {
 	# Manual hardening via per-package flags.
 	# No ebuild available on the oiledmachine-overlay.
 	#
-		'!headless:media-libs/alsa-lib:manual'						# loaded-library
+
+		'!headless:media-libs/alsa-lib:manual,loaded-library'
 		'!headless:media-libs/libglvnd:manual'
-		"accessibility:app-accessibility/at-spi2-core:manual"				# loaded-library
-		"cups:net-print/cups:manual"							# loaded-library, sensitive-data, untrusted-data
-		"ffmpeg-chromium:media-video/ffmpeg-chromium:manual"				# untrusted-data
-		"screencast:media-video/pipewire:manual"					# untrusted-data
+		"accessibility:app-accessibility/at-spi2-core:manual,loaded-library"
+		"cups:net-print/cups:manual,loaded-library,sensitive-data,untrusted-data"
+		"ffmpeg-chromium:media-video/ffmpeg-chromium:manual,untrusted-data"
+		"screencast:media-video/pipewire:manual,untrusted-data"
 		"selinux:sys-libs/libselinux:manual"
 		"system-double-conversion:dev-libs/double-conversion:manual"
-		"system-libopenjpeg:media-libs/openjpeg:manual"					# untrusted-data
+		"system-libopenjpeg:media-libs/openjpeg:manual,untrusted-data"
 		"system-libxnvctrl:x11-drivers/nvidia-drivers:manual"
-		"system-openh264:media-libs/openh264:manual"					# untrusted-data
+		"system-openh264:media-libs/openh264:manual,untrusted-data"
 		"system-vulkan-memory-allocator:media-libs/VulkanMemoryAllocator:manual"
 		"unconditional:dev-libs/nspr:manual"
-		"unconditional:sys-apps/dbus:manual"						# loaded-library, sensitive-data
-		"vaapi:media-libs/libva:manual"							# loaded-library, untrusted-data
+		"unconditional:sys-apps/dbus:manual,loaded-library,sensitive-data"
+		"vaapi:media-libs/libva:manual,loaded-library,untrusted-data"
 		"wayland:dev-libs/wayland:manual"
 
 	#
@@ -2364,62 +2396,62 @@ verify_compiler_flags_hardening() {
 	# The overlay adds the newer hardening flags which may be missing in the
 	# default hardening compiler settings.
 	#
-		'!gtk4:x11-libs/gtk+:'								# loaded-library, sensitive-data
-		'!headless:x11-libs/cairo:'							# sensitive-data
-		'!headless:x11-libs/gdk-pixbuf:'						# untrusted-data
-		'!headless:x11-libs/pango:'							# sensitive-data
-		"firejail:sys-apps/firejail:"							# untrusted-data
-		"gtk4:gui-libs/gtk:"								# loaded-library, sensitive-data
-		"qt6:dev-qt/qtbase:"								# sensitive-data
-		"X:x11-libs/libX11:"								# sensitive-data
-		"X:x11-base/xorg-server:"							# sensitive-data
+		'!gtk4:x11-libs/gtk+:loaded-library,sensitive-data'
+		'!headless:x11-libs/cairo:sensitive-data'
+		'!headless:x11-libs/gdk-pixbuf:untrusted-data'
+		'!headless:x11-libs/pango:sensitive-data'
+		"firejail:sys-apps/firejail:untrusted-data"
+		"gtk4:gui-libs/gtk:loaded-library,sensitive-data"
+		"qt6:dev-qt/qtbase:sensitive-data"
+		"X:x11-libs/libX11:sensitive-data"
+		"X:x11-base/xorg-server:sensitive-data"
 
-		"unconditional:app-arch/bzip2:"							# untrusted-data
-		"unconditional:dev-libs/expat:"							# attack-surface-risk
-		"unconditional:dev-libs/glib:"							# attack-surface-risk
+		"unconditional:app-arch/bzip2:untrusted-data"
+		"unconditional:dev-libs/expat:attack-surface-risk"
+		"unconditional:dev-libs/glib:attack-surface-risk"
 		"unconditional:dev-libs/nss:"
-		"unconditional:media-libs/mesa:"						# loaded-library, sensitive-data, untrusted-data
-		"unconditional:net-misc/curl:"							# sensitive-data, untrusted-data
-		"unconditional:sys-libs/zlib:"							# untrusted-data
-		"unconditional:x11-libs/libdrm:"						# loaded-library, attack-surface-risk
+		"unconditional:media-libs/mesa:loaded-library,sensitive-data,untrusted-data"
+		"unconditional:net-misc/curl:sensitive-data,untrusted-data"
+		"unconditional:sys-libs/zlib:untrusted-data"
+		"unconditional:x11-libs/libdrm:loaded-library,attack-surface-risk"
 
 	# system-* is marked security-critical by upstream in README.chromium.
 		"system-abseil-cpp:dev-cpp/abseil-cpp:"
 		"system-brotli:app-arch/brotli:"
 		"system-crc32c:dev-libs/crc32c:"
-		"system-clang:llvm-runtimes/libcxx:"						# attack-surface-risk
-		"system-clang:llvm-runtimes/libcxxabi:"						# attack-surface-risk
-		"system-dav1d:media-libs/dav1d:"						# untrusted-data
-		"system-ffmpeg:media-video/ffmpeg:"						# untrusted-data
-		"system-flac:media-libs/flac:"							# untrusted-data
+		"system-clang:llvm-runtimes/libcxx:attack-surface-risk"
+		"system-clang:llvm-runtimes/libcxxabi:attack-surface-risk"
+		"system-dav1d:media-libs/dav1d:untrusted-data"
+		"system-ffmpeg:media-video/ffmpeg:untrusted-data"
+		"system-flac:media-libs/flac:untrusted-data"
 		"system-flatbuffers:dev-libs/flatbuffers:"
-		"system-fontconfig:media-libs/fontconfig:"					# untrusted-data
-		"system-freetype:media-libs/freetype:"						# untrusted-data
-		"system-harfbuzz:media-libs/harfbuzz:"						# loaded-library
+		"system-fontconfig:media-libs/fontconfig:untrusted-data"
+		"system-freetype:media-libs/freetype:untrusted-data"
+		"system-harfbuzz:media-libs/harfbuzz:loaded-library"
 		"system-highway:dev-cpp/highway:"
 		"system-icu:dev-libs/icu:"
-		"system-jsoncpp:dev-libs/jsoncpp:"						# untrusted-data
+		"system-jsoncpp:dev-libs/jsoncpp:untrusted-data"
 		"system-lcms:media-libs/lcms:"
-		"system-libaom:media-libs/libaom:"						# untrusted-data
-		"system-libjpeg-turbo:media-libs/libjpeg-turbo:"				# untrusted-data
-		"system-libpng:media-libs/libpng:"						# untrusted-data
-		"system-libsecret:app-crypt/libsecret:"						# sensitive-data
-		"system-libusb:dev-libs/libusb:"						# attack-surface-risk
-		"system-libvpx:media-libs/libvpx:"						# untrusted-data
-		"system-libwebp:media-libs/libwebp:"						# untrusted-data
-		"system-libxml:dev-libs/libxml2:"						# untrusted-data
-		"system-libxslt:dev-libs/libxslt:"						# untrusted-data
+		"system-libaom:media-libs/libaom:untrusted-data"
+		"system-libjpeg-turbo:media-libs/libjpeg-turbo:untrusted-data"
+		"system-libpng:media-libs/libpng:untrusted-data"
+		"system-libsecret:app-crypt/libsecret:sensitive-data"
+		"system-libusb:dev-libs/libusb:attack-surface-risk"
+		"system-libvpx:media-libs/libvpx:untrusted-data"
+		"system-libwebp:media-libs/libwebp:untrusted-data"
+		"system-libxml:dev-libs/libxml2:untrusted-data"
+		"system-libxslt:dev-libs/libxslt:untrusted-data"
 		"system-libyuv:media-libs/libyuv:"
-		"system-opus:media-libs/opus:"							# untrusted-data
+		"system-opus:media-libs/opus:untrusted-data"
 		"system-protobuf:dev-libs/protobuf:"
-		"system-re2:dev-libs/re2:"							# sensitive-data, untrusted-data
+		"system-re2:dev-libs/re2:sensitive-data,untrusted-data"
 		"system-simdutf:dev-cpp/simdutf:"
 		"system-snappy:app-arch/snappy:"
 		"system-spirv-tools:dev-util/spirv-tools:"
 		"system-sqlite:dev-db/sqlite:"
-		"system-woff2:media-libs/woff2:"						# untrusted-data
-		"system-zlib:sys-libs/zlib:"							# untrusted-data
-		"system-zstd:app-arch/zstd:"							# untrusted-data
+		"system-woff2:media-libs/woff2:untrusted-data"
+		"system-zlib:sys-libs/zlib:untrusted-data"
+		"system-zstd:app-arch/zstd:untrusted-data"
 	)
 
 	local row

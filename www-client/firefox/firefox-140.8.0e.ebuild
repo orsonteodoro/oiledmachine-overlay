@@ -1284,7 +1284,8 @@ eerror
 
 has_all_hardening_flags() {
 	local pkg="${1}"
-	local F=(
+	local F
+	F=(
 		"-O2"
 		"-fno-delete-null-pointer-checks"
 		"-fstrict-flex-arrays=3"
@@ -1301,8 +1302,38 @@ has_all_hardening_flags() {
 		fi
 	done
 
-	if (( ${found_count} == 6 )) ; then
-		return 0
+	# Transient execution CPU vulnerability mitigations
+	# ID = Information Disclosure
+	local found_count_id_mitigation=0
+	if [[ "${tags}" =~ "sensitive-data" ]] ; then
+		F=(
+			"-fcf-protection=full"
+			"-mbranch-protection=pac-ret+bti"
+			"-mbranch-protection=standard"
+			"-mharden-sls=all"
+			"-mretpoline"
+			"-mindirect-branch=thunk"
+			"-mindirect-branch=thunk-extern"
+			"-mindirect-branch=thunk-inline"
+			"-mfunction-return=thunk"
+			"-mfunction-return=thunk-extern"
+			"-mfunction-return=thunk-inline"
+		)
+		for f in "${F[@]}" ; do
+			if grep -q -e "${f}" "/var/db/pkg/${pkg}-"*"/CFLAGS" 2>/dev/null ; then
+				found_count_id_mitigation=$(( ${found_count_id_mitigation} + 1 ))
+			fi
+		done
+	fi
+
+	if [[ "${tags}" =~ "sensitive-data" ]] ; then
+		if (( ${found_count} == 6 && ${found_count_id_mitigation} >= 1 )) ; then
+			return 0
+		fi
+	else
+		if (( ${found_count} == 6 )) ; then
+			return 0
+		fi
 	fi
 	return 1
 }
@@ -1325,11 +1356,11 @@ verify_compiler_flags_hardening() {
 	# No ebuild available on the oiledmachine-overlay.
 	#
 		"dbus:sys-apps/dbus:manual"
-		"speech:app-accessibility/speech-dispatcher:manual"	# sensitive-data, untrusted-data
+		"speech:app-accessibility/speech-dispatcher:manual,sensitive-data,untrusted-data"
 		"system-libevent:dev-libs/libevent:manual"
-		"system-pipewire:media-video/pipewire:manual"		# untrusted-data
+		"system-pipewire:media-video/pipewire:manual,untrusted-data"
 		"wayland:dev-libs/wayland:manual"
-		"openh264:media-libs/openh264:manual"			# untrusted-data
+		"openh264:media-libs/openh264:manual,untrusted-data"
 
 	#
 	# Hardened-by-default ebuilds available on the oiledmachine-overlay.
@@ -1337,41 +1368,41 @@ verify_compiler_flags_hardening() {
 	# The overlay adds the newer hardening flags which may be missing in the
 	# default hardening compiler settings.
 	#
-		"unconditional:dev-libs/expat:"				# untrusted-data
-		"unconditional:dev-libs/glib:"				# attack-surface-risk
-		"unconditional:media-libs/freetype:"			# untrusted-data
-		"unconditional:media-libs/fontconfig:"			# untrusted-data
-		"unconditional:media-video/ffmpeg"			# untrusted-data
+		"unconditional:dev-libs/expat:untrusted-data"
+		"unconditional:dev-libs/glib:attack-surface-risk"
+		"unconditional:media-libs/freetype:untrusted-data"
+		"unconditional:media-libs/fontconfig:untrusted-data"
+		"unconditional:media-video/ffmpeg:untrusted-data"
 		"unconditional:sys-libs/zlib:"
-		"unconditional:x11-libs/cairo:"				# sensitive-data
-		"unconditional:x11-libs/gdk-pixbuf"			# untrusted-data
+		"unconditional:x11-libs/cairo:sensitive-data,untrusted-data"
+		"unconditional:x11-libs/gdk-pixbuf:untrusted-data"
 		"unconditional:x11-libs/libdrm:"
-		"unconditional:x11-libs/pango:"				# sensitive-data
+		"unconditional:x11-libs/pango:sensitive-data"
 
-		"cups:net-print/cups:"					# sensitive-data, untrusted-data
-		"firejail:sys-apps/firejail:"				# attack-surface-risk
-		"libsecret:app-crypt/libsecret:"			# sensitive-data
-		"vaapi:media-libs/libva:"				# untrusted-data
-		"wayland:x11-libs/gtk+:"				# sensitive-data
-		"X:x11-libs/libX11:"					# sensitive-data
+		"cups:net-print/cups:sensitive-data,untrusted-data"
+		"firejail:sys-apps/firejail:attack-surface-risk"
+		"libsecret:app-crypt/libsecret:sensitive-data"
+		"vaapi:media-libs/libva:untrusted-data"
+		"wayland:x11-libs/gtk+:sensitive-data"
+		"X:x11-libs/libX11:sensitive-data"
 
-		"system-av1:media-libs/dav1d:"				# untrusted-data
-		"system-av1:media-libs/libaom:"				# untrusted-data
+		"system-av1:media-libs/dav1d:untrusted-data"
+		"system-av1:media-libs/libaom:untrusted-data"
 		"system-harfbuzz:media-gfx/graphite2:"
 		"system-harfbuzz:media-libs/harfbuzz:"
 		"system-icu:dev-libs/icu:"
-		"system-jpeg:media-libs/libjpeg-turbo:"
-		"system-libvpx:media-libs/libvpx:"			# untrusted-data
-		"system-png:media-libs/libpng:"				# untrusted-data
-		"system-webp:media-libs/libwebp:"			# untrusted-data
+		"system-jpeg:media-libs/libjpeg-turbo:untrusted-data"
+		"system-libvpx:media-libs/libvpx:untrusted-data"
+		"system-png:media-libs/libpng:untrusted-data"
+		"system-webp:media-libs/libwebp:untrusted-data"
 	)
 
 	local row
 	for row in "${L1[@]}" ; do
 		local u=$(echo "${row}" | cut -f 1 -d ":")
 		local p=$(echo "${row}" | cut -f 2 -d ":")
-		local tag=$(echo "${row}" | cut -f 3 -d ":")
-		if [[ "${tag}" =~ "manual" ]] ; then
+		local tags=$(echo "${row}" | cut -f 3 -d ":")
+		if [[ "${tags}" =~ "manual" ]] ; then
 			if [[ "${u}" == "unconditional" ]] ; then
 ewarn "The package ${p} must be manually security-critical hardened using per-package package.env.  Use the hardening flags from the build log."
 			elif use "${u}" && ! has_all_hardening_flags "${p}" ; then

@@ -2021,7 +2021,8 @@ eerror
 
 has_all_hardening_flags() {
 	local pkg="${1}"
-	local F=(
+	local F
+	F=(
 		"-O2"
 		"-fno-delete-null-pointer-checks"
 		"-fstrict-flex-arrays=3"
@@ -2038,8 +2039,38 @@ has_all_hardening_flags() {
 		fi
 	done
 
-	if (( ${found_count} == 6 )) ; then
-		return 0
+	# Transient execution CPU vulnerability mitigations
+	# ID = Information Disclosure
+	local found_count_id_mitigation=0
+	if [[ "${tags}" =~ "sensitive-data" ]] ; then
+		F=(
+			"-fcf-protection=full"
+			"-mbranch-protection=pac-ret+bti"
+			"-mbranch-protection=standard"
+			"-mharden-sls=all"
+			"-mretpoline"
+			"-mindirect-branch=thunk"
+			"-mindirect-branch=thunk-extern"
+			"-mindirect-branch=thunk-inline"
+			"-mfunction-return=thunk"
+			"-mfunction-return=thunk-extern"
+			"-mfunction-return=thunk-inline"
+		)
+		for f in "${F[@]}" ; do
+			if grep -q -e "${f}" "/var/db/pkg/${pkg}-"*"/CFLAGS" 2>/dev/null ; then
+				found_count_id_mitigation=$(( ${found_count_id_mitigation} + 1 ))
+			fi
+		done
+	fi
+
+	if [[ "${tags}" =~ "sensitive-data" ]] ; then
+		if (( ${found_count} == 6 && ${found_count_id_mitigation} >= 1 )) ; then
+			return 0
+		fi
+	else
+		if (( ${found_count} == 6 )) ; then
+			return 0
+		fi
 	fi
 	return 1
 }
@@ -2061,13 +2092,14 @@ verify_compiler_flags_hardening() {
 	# Manual hardening via per-package flags.
 	# No ebuild available on the oiledmachine-overlay.
 	#
-	"avif:media-libs/libavif:manual"			# untrusted-data
-	"geolocation:app-misc/geoclue:manual"			# sensitive-data
-	"libbacktrace:sys-libs/libbacktrace:manual"		# sensitive-data
-	"libhyphen:dev-libs/hyphen:manual"			# sensitive-data, untrusted-data
-	"libwebrtc:media-libs/alsa-lib:manual"			# untrusted-data
-	"unconditional:dev-libs/libgcrypt:manual"		# sensitive-data, untrusted-data
-	"wayland:dev-libs/wayland:manual"			# sensitive-data
+
+	"avif:media-libs/libavif:manual,untrusted-data"
+	"geolocation:app-misc/geoclue:manual,sensitive-data"
+	"libbacktrace:sys-libs/libbacktrace:manual,sensitive-data"
+	"libhyphen:dev-libs/hyphen:manual,sensitive-data,untrusted-data"
+	"libwebrtc:media-libs/alsa-lib:manual,untrusted-data"
+	"unconditional:dev-libs/libgcrypt:manualsensitive-data,untrusted-data"
+	"wayland:dev-libs/wayland:manual,sensitive-data"
 
 	#
 	# Hardened-by-default ebuilds available on the oiledmachine-overlay.
@@ -2076,53 +2108,53 @@ verify_compiler_flags_hardening() {
 	# default hardening compiler settings.
 	#
 
-	"unconditional:dev-db/sqlite:"				# sensitive-data, untrusted-data
+	"unconditional:dev-db/sqlite:sensitive-data,untrusted-data"
 	"unconditional:dev-libs/icu:"
-	"unconditional:net-libs/libsoup:"			# untrusted-data
-	"unconditional:dev-libs/libtasn1:"			# untrusted-data
-	"unconditional:dev-libs/libxml2:"			# untrusted-data
-	"unconditional:dev-libs/libxslt:"			# untrusted-data
-	"unconditional:media-libs/libwebp:"			# untrusted-data
-	"unconditional:media-libs/libpng:"			# untrusted-data
-	"unconditional:media-libs/fontconfig:"			# untrusted-data
-	"unconditional:media-libs/freetype:"			# untrusted-data
-	"unconditional:media-libs/harfbuzz"			# untrusted-data
-	"unconditional:sys-libs/zlib"				# untrusted-data
+	"unconditional:net-libs/libsoup:untrusted-data"
+	"unconditional:dev-libs/libtasn1:untrusted-data"
+	"unconditional:dev-libs/libxml2:untrusted-data"
+	"unconditional:dev-libs/libxslt:untrusted-data"
+	"unconditional:media-libs/libwebp:untrusted-data"
+	"unconditional:media-libs/libpng:untrusted-data"
+	"unconditional:media-libs/fontconfig:untrusted-data"
+	"unconditional:media-libs/freetype:untrusted-data"
+	"unconditional:media-libs/harfbuzz:untrusted-data"
+	"unconditional:sys-libs/zlib:untrusted-data"
 
-	"unconditional:x11-libs/gtk+:"				# sensitive-data
+	"unconditional:x11-libs/gtk+:sensitive-data"
 
-	"aom:media-plugins/gst-plugins-aom:"			# untrusted-data
-	"dash:media-plugins/gst-plugins-dash:"			# untrusted-data
-	"dav1d:media-plugins/gst-plugins-rs:"			# untrusted-data
-	"flite:app-accessibility/flite:"			# sensitive-data, untrusted-data
+	"aom:media-plugins/gst-plugins-aom:untrusted-data"
+	"dash:media-plugins/gst-plugins-dash:untrusted-data"
+	"dav1d:media-plugins/gst-plugins-rs:untrusted-data"
+	"flite:app-accessibility/flite:sensitive-data,untrusted-data"
 	"gbm:x11-libs/libdrm:"
-	"gles2:media-libs/mesa:"				# sensitive-data, untrusted-data
-	"gnome-keyring:app-crypt/libsecret:"			# sensitive-data
-	"gstwebrtc:dev-libs/openssl:"				# sensitive-data, untrusted-data
-	"gstwebrtc:media-plugins/gst-plugins-webrtc:"		# untrusted-data
-	"gstreamer:media-libs/gst-plugins-bad:"			# untrusted-data
-	"gstreamer:media-libs/gst-plugins-base:"		# untrusted-data
-	"gstreamer:media-libs/gstreamer:"			# untrusted-data
-	"gstreamer:media-plugins/gst-plugins-opus:"		# untrusted-data
-	"hls:media-plugins/gst-plugins-hls:"			# untrusted-data
-	"jpegxl:media-libs/libjxl:"				# untrusted-data
-	"libde265:media-plugins/gst-plugins-libde265:"		# untrusted-data
-	"libwebrtc:media-libs/libvpx:"				# untrusted-data
-	"libwebrtc:media-libs/opus:"				# untrusted-data
-	"libwebrtc:media-libs/openh264:"			# untrusted-data
-	"opengl:media-libs/mesa:"				# sensitive-data, untrusted-data
-	"seccomp:sys-apps/bubblewrap:"				# attack-surface-risk, untrusted-data
-	"speex:media-plugins/gst-plugins-speex:"		# untrusted-data
-	"vaapi:media-libs/gst-plugins-bad:"			# untrusted-data
+	"gles2:media-libs/mesa:sensitive-data,untrusted-data"
+	"gnome-keyring:app-crypt/libsecret:sensitive-data"
+	"gstwebrtc:dev-libs/openssl:sensitive-data,untrusted-data"
+	"gstwebrtc:media-plugins/gst-plugins-webrtc:untrusted-data"
+	"gstreamer:media-libs/gst-plugins-bad:untrusted-data"
+	"gstreamer:media-libs/gst-plugins-base:untrusted-data"
+	"gstreamer:media-libs/gstreamer:untrusted-data"
+	"gstreamer:media-plugins/gst-plugins-opus:untrusted-data"
+	"hls:media-plugins/gst-plugins-hls:untrusted-data"
+	"jpegxl:media-libs/libjxl:untrusted-data"
+	"libde265:media-plugins/gst-plugins-libde265:untrusted-data"
+	"libwebrtc:media-libs/libvpx:untrusted-data"
+	"libwebrtc:media-libs/opus:untrusted-data"
+	"libwebrtc:media-libs/openh264:untrusted-data"
+	"opengl:media-libs/mesa:sensitive-data,untrusted-data"
+	"seccomp:sys-apps/bubblewrap:attack-surface-risk,untrusted-data"
+	"speex:media-plugins/gst-plugins-speex:untrusted-data"
+	"vaapi:media-libs/gst-plugins-bad:untrusted-data"
 	"variation-fonts:media-libs/harfbuzz:"
 	"variation-fonts:media-libs/fontconfig:"
 	"variation-fonts:media-libs/freetype:"
 	"variation-fonts:x11-libs/cairo:"
-	"wayland:media-libs/mesa:"				# sensitive-data, untrusted-data
-	"webvtt:media-plugins/gst-plugins-rs:"			# untrusted-data
-	"woff2:media-libs/woff2:"				# untrusted-data
-	"webxr:media-libs/openxr:"				# untrusted-ata
-	"X:x11-libs/libX11:"					# sensitive-data
+	"wayland:media-libs/mesa:sensitive-data,untrusted-data"
+	"webvtt:media-plugins/gst-plugins-rs:untrusted-data"
+	"woff2:media-libs/woff2:untrusted-data"
+	"webxr:media-libs/openxr:untrusted-data"
+	"X:x11-libs/libX11:sensitive-data"
 
 	# system-* is implied security-critical.
 	)
@@ -2131,8 +2163,8 @@ verify_compiler_flags_hardening() {
 	for row in "${L1[@]}" ; do
 		local u=$(echo "${row}" | cut -f 1 -d ":")
 		local p=$(echo "${row}" | cut -f 2 -d ":")
-		local tag=$(echo "${row}" | cut -f 3 -d ":")
-		if [[ "${tag}" =~ "manual" ]] ; then
+		local tags=$(echo "${row}" | cut -f 3 -d ":")
+		if [[ "${tags}" =~ "manual" ]] ; then
 			if [[ "${u}" == "unconditional" ]] ; then
 ewarn "The package ${p} must be manually security-critical hardened using per-package package.env.  Use the hardening flags from the build log."
 			elif use "${u}" && ! has_all_hardening_flags "${p}" ; then
