@@ -1,0 +1,21 @@
+--- a/components/policy/core/common/cloud/cloud_policy_util.cc.orig	2026-03-13 09:54:03.000000000 -0700
++++ b/components/policy/core/common/cloud/cloud_policy_util.cc	2026-03-16 08:27:42.163957237 -0700
+@@ -41,6 +41,9 @@
+ 
+ #if BUILDFLAG(IS_LINUX)
+ #include <limits.h>  // For HOST_NAME_MAX
++#ifndef HOST_NAME_MAX
++#define HOST_NAME_MAX 255
++#endif
+ #endif
+ 
+ #include <algorithm>
+@@ -94,7 +97,7 @@ const int kMinimumVersionForExtensionIns
+ 
+ std::string GetMachineName() {
+ #if BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_FUCHSIA)
+-  char hostname[HOST_NAME_MAX];
++  char hostname[HOST_NAME_MAX+1];
+   if (gethostname(hostname, HOST_NAME_MAX) == 0)  // Success.
+     return hostname;
+   return std::string();
