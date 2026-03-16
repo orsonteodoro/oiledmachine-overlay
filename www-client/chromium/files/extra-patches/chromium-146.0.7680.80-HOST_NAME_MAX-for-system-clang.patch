@@ -19,3 +19,24 @@
    if (gethostname(hostname, HOST_NAME_MAX) == 0)  // Success.
      return hostname;
    return std::string();
+--- a/components/sync_device_info/local_device_info_util_linux.cc.orig	2026-03-13 09:54:03.000000000 -0700
++++ b/components/sync_device_info/local_device_info_util_linux.cc	2026-03-16 10:41:38.830768919 -0700
+@@ -3,6 +3,9 @@
+ // found in the LICENSE file.
+ 
+ #include <limits.h>  // for HOST_NAME_MAX
++#ifndef HOST_NAME_MAX
++#define HOST_NAME_MAX 255
++#endif
+ #include <unistd.h>  // for gethostname()
+ 
+ #include <string>
+@@ -12,7 +15,7 @@
+ namespace syncer {
+ 
+ std::string GetPersonalizableDeviceNameInternal() {
+-  char hostname[HOST_NAME_MAX];
++  char hostname[HOST_NAME_MAX+1]; // +1 for null terminator safety
+   if (gethostname(hostname, HOST_NAME_MAX) == 0) {  // Success.
+     return hostname;
+   }
