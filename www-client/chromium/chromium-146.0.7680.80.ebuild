@@ -2301,7 +2301,7 @@ verify_compiler_flags_hardening() {
 	# Packages that are listed:
 	#
 	# 1.  Security-critical packages.
-	# 2.  Processes untrusted-data or
+	# 2.  Processes untrusted-data
 	# 3.  Processes trusted-data
 	# 4.  A shared library loaded during runtime into the following processes - browser, UI, rendering
 	# 5.  Attack surface risks (sandbox escape potential, privilege gain, memory corruption potential)
@@ -2372,7 +2372,7 @@ verify_compiler_flags_hardening() {
 		'!headless:x11-libs/gdk-pixbuf:'						# untrusted-data
 		'!headless:x11-libs/pango:'							# sensitive-data
 		"firejail:sys-apps/firejail:"							# untrusted-data
-		"gtk4:gui-libs/gtk:"								# loaded-library
+		"gtk4:gui-libs/gtk:"								# loaded-library, sensitive-data
 		"qt6:dev-qt/qtbase:"								# sensitive-data
 		"X:x11-libs/libX11:"								# sensitive-data
 		"X:x11-base/xorg-server:"							# sensitive-data
@@ -2382,8 +2382,8 @@ verify_compiler_flags_hardening() {
 		"unconditional:dev-libs/glib:"							# attack-surface-risk
 		"unconditional:dev-libs/nss:"
 		"unconditional:media-libs/mesa:"						# loaded-library, sensitive-data, untrusted-data
-		"unconditional:net-misc/curl:"
-		"unconditional:sys-libs/zlib:"
+		"unconditional:net-misc/curl:"							# sensitive-data, untrusted-data
+		"unconditional:sys-libs/zlib:"							# untrusted-data
 		"unconditional:x11-libs/libdrm:"						# loaded-library, attack-surface-risk
 
 	# system-* is marked security-critical by upstream in README.chromium.
@@ -2401,17 +2401,17 @@ verify_compiler_flags_hardening() {
 		"system-harfbuzz:media-libs/harfbuzz:"						# loaded-library
 		"system-highway:dev-cpp/highway:"
 		"system-icu:dev-libs/icu:"
-		"system-jsoncpp:dev-libs/jsoncpp:"
+		"system-jsoncpp:dev-libs/jsoncpp:"						# untrusted-data
 		"system-lcms:media-libs/lcms:"
 		"system-libaom:media-libs/libaom:"						# untrusted-data
-		"system-libjpeg-turbo:media-libs/libjpeg-turbo:"
+		"system-libjpeg-turbo:media-libs/libjpeg-turbo:"				# untrusted-data
 		"system-libpng:media-libs/libpng:"						# untrusted-data
 		"system-libsecret:app-crypt/libsecret:"						# sensitive-data
-		"system-libusb:dev-libs/libusb:"
+		"system-libusb:dev-libs/libusb:"						# attack-surface-risk
 		"system-libvpx:media-libs/libvpx:"						# untrusted-data
 		"system-libwebp:media-libs/libwebp:"						# untrusted-data
-		"system-libxml:dev-libs/libxml2:"
-		"system-libxslt:dev-libs/libxslt:"
+		"system-libxml:dev-libs/libxml2:"						# untrusted-data
+		"system-libxslt:dev-libs/libxslt:"						# untrusted-data
 		"system-libyuv:media-libs/libyuv:"
 		"system-opus:media-libs/opus:"							# untrusted-data
 		"system-protobuf:dev-libs/protobuf:"
