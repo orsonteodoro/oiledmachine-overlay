@@ -1286,8 +1286,8 @@ verify_compiler_flags_hardening() {
 	#
 	# 1. Parent process - not sandboxed, security-critical
 	# 2. Content process - sandboxed, security-critical
-	# 3. GPU process - sandboxed, very high
-	# 4. RDD process - sandboxed, very high
+	# 3. GPU process - sandboxed, very high (same security-critical hardening)
+	# 4. RDD process - sandboxed, very high (same security-critical hardening)
 	# 5. Socket process - sandboxed, high
 	# 6. Utility process - sandboxed, high
 	# 7. GMP process - sandboxed, medium-high

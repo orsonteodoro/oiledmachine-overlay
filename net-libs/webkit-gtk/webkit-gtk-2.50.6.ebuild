@@ -2091,9 +2091,9 @@ verify_compiler_flags_hardening() {
 	# Understanding the problem of compiler hardening per process, ranked by
 	# compiler hardening triage/remediation rank:
 	#
-	# 1. UI process - not sandboxed, security-critical
+	# 1. UI process - not sandboxed, privileged, security-critical
 	# 2. Web process - sandboxed, security-critical
-	# 3. GPU process - sandboxed, very high
+	# 3. GPU process - sandboxed, very high (same security-critical hardening)
 	# 4. Network process - sandboxed, high
 	#
 
