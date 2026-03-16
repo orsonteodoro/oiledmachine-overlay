@@ -1237,6 +1237,7 @@ has_all_hardening_flags() {
 	if [[ "${tags}" =~ "sensitive-data" ]] ; then
 		F=(
 			"-fcf-protection=full"
+			"-fhardened"
 			"-mbranch-protection=pac-ret+bti"
 			"-mbranch-protection=standard"
 			"-mharden-sls=all"
