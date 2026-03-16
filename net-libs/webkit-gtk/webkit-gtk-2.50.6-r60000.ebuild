@@ -2049,12 +2049,15 @@ has_all_hardening_flags() {
 
 verify_compiler_flags_hardening() {
 	local L1=(
+	#
 	# Packages that are listed:
+	#
 	# 1.  Security-critical packages.
-	# 2.  Processes untrusted-data or
+	# 2.  Processes untrusted-data
 	# 3.  Processes trusted-data
 	# 4.  A shared library loaded during runtime into the following processes - browser, UI, rendering
 	# 5.  Attack surface risks (sandbox escape potential, privilege gain, memory corruption potential)
+	#
 	#	"<use-flag>:<pkg>:<tags>"
 
 	#
