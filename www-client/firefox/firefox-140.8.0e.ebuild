@@ -1383,7 +1383,6 @@ verify_compiler_flags_hardening() {
 	#
 		"dbus:sys-apps/dbus:manual"
 		"speech:app-accessibility/speech-dispatcher:manual,sensitive-data,untrusted-data"
-		"system-libevent:dev-libs/libevent:manual"
 		"system-pipewire:media-video/pipewire:manual,untrusted-data"
 		"wayland:dev-libs/wayland:manual"
 		"openh264:media-libs/openh264:manual,untrusted-data"
