@@ -2208,6 +2208,34 @@ ewarn "The package ${p}::${repo} may not be security-critical hardened.  Use the
 		fi
 	done
 
+	if use spell ; then
+		if has_version "app-text/enchant[aspell]" ; then
+			if ! has_all_hardening_flags "app-text/aspell" ; then
+ewarn "The package app-text/aspell must be manually security-critical hardened using per-package package.env.  Use the hardening flags from the build log."
+			fi
+		fi
+		if has_version "app-text/enchant[hunspell]" ; then
+			if ! has_all_hardening_flags "app-text/hunspell" ; then
+ewarn "The package app-text/hunspell must be manually security-critical hardened using per-package package.env.  Use the hardening flags from the build log."
+			fi
+		fi
+		if has_version "app-text/enchant[nuspell]" ; then
+			if ! has_all_hardening_flags "app-text/nuspell" ; then
+ewarn "The package app-text/nuspell must be manually security-critical hardened using per-package package.env.  Use the hardening flags from the build log."
+			fi
+		fi
+		if has_version "app-text/enchant[voikko]" ; then
+			if ! has_all_hardening_flags "dev-libs/libvoikko" ; then
+ewarn "The package dev-libs/libvoikko must be manually security-critical hardened using per-package package.env.  Use the hardening flags from the build log."
+			fi
+		fi
+		if has_version "app-text/enchant[zemberek]" ; then
+			if ! has_all_hardening_flags "app-text/zemberek" ; then
+ewarn "The package app-text/zemberek must be manually security-critical hardened using per-package package.env.  Use the hardening flags from the build log."
+			fi
+		fi
+	fi
+
 	local L2=(
 		"dev-libs/weston"
 		"gui-liri/liri-shell"
