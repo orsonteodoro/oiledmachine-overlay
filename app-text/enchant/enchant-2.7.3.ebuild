@@ -13,13 +13,14 @@ EAPI=8
 
 # nuspell in *DEPENDs needs multilib?
 
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
 QA_CONFIG_IMPL_DECL_SKIP=(
 	alignof
 	static_assert
 	unreachable
 )
 
-inherit multilib-minimal
+inherit cflags-hardened multilib-minimal
 
 KEYWORDS="~amd64"
 SRC_URI="
@@ -35,6 +36,7 @@ LICENSE="LGPL-2.1+"
 SLOT="2/${PV}"
 IUSE+="
 +aspell +hunspell +nuspell test +voikko -zemberek
+ebuild_revision_1
 "
 REQUIRED_USE="
 	|| (
@@ -81,6 +83,7 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	cflags-hardened_append
 	local myconf=(
 		$(multilib_native_usex nuspell)
 		$(multilib_native_usex voikko)
