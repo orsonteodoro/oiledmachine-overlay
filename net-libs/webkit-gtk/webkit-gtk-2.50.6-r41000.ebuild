@@ -2143,7 +2143,6 @@ verify_compiler_flags_hardening() {
 	"unconditional:media-libs/freetype:untrusted-data"
 	"unconditional:media-libs/harfbuzz:attack-surface-risk,untrusted-data"
 	"unconditional:sys-libs/zlib:untrusted-data"
-
 	"unconditional:x11-libs/gtk+:sensitive-data"
 
 	"aom:media-plugins/gst-plugins-aom:untrusted-data"

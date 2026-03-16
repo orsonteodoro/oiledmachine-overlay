@@ -2138,14 +2138,13 @@ verify_compiler_flags_hardening() {
 	"unconditional:dev-libs/libtasn1:untrusted-data"
 	"unconditional:dev-libs/libxml2:untrusted-data"
 	"unconditional:dev-libs/libxslt:untrusted-data"
+	"unconditional:gui-libs/gtk:sensitive-data"
 	"unconditional:media-libs/libwebp:untrusted-data"
 	"unconditional:media-libs/libpng:untrusted-data"
 	"unconditional:media-libs/fontconfig:untrusted-data"
 	"unconditional:media-libs/freetype:untrusted-data"
 	"unconditional:media-libs/harfbuzz:attack-surface-risk,untrusted-data"
 	"unconditional:sys-libs/zlib:untrusted-data"
-
-	"unconditional:x11-libs/gtk+:sensitive-data"
 
 	"aom:media-plugins/gst-plugins-aom:untrusted-data"
 	"dash:media-plugins/gst-plugins-dash:untrusted-data"
