@@ -2381,7 +2381,7 @@ verify_compiler_flags_hardening() {
 		"unconditional:dev-libs/expat:"							# attack-surface-risk
 		"unconditional:dev-libs/glib:"							# attack-surface-risk
 		"unconditional:dev-libs/nss:"
-		"unconditional:media-libs/mesa:"						# loaded-library, untrusted-data
+		"unconditional:media-libs/mesa:"						# loaded-library, sensitive-data, untrusted-data
 		"unconditional:net-misc/curl:"
 		"unconditional:sys-libs/zlib:"
 		"unconditional:x11-libs/libdrm:"						# loaded-library, attack-surface-risk
