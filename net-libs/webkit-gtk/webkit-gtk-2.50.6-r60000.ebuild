@@ -2094,7 +2094,7 @@ verify_compiler_flags_hardening() {
 	#
 	# 1. UI process - not sandboxed, privileged, security-critical
 	# 2. Web process - sandboxed, security-critical
-	# 3. GPU process - sandboxed, very high (same security-critical hardening)
+	# 3. GPU process - sandboxed, very high (same as security-critical hardening)
 	# 4. Network process - sandboxed, high
 	#
 
