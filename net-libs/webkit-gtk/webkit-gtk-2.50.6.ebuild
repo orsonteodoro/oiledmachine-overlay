@@ -2018,6 +2018,174 @@ eerror
 	fi
 }
 
+has_all_hardening_flags() {
+	local pkg="${1}"
+	local F=(
+		"-D_FORTIFY_SOURCE=3"
+		"-O2"
+		"-fno-delete-null-pointer-checks"
+		"-fstack-clash-protection"
+		"-fstack-protector-strong"
+		"-fstrict-flex-arrays=3"
+		"-ftrivial-auto-var-init=zero"
+		"-fzero-call-used-regs=all"
+		"-fwrapv"
+	)
+
+	local found_count=0
+	local f
+	for f in "${F[@]}" ; do
+		if grep -q -e "${f}" "/var/db/pkg/${pkg}-"*"/CFLAGS" ; then
+			found_count=$(( ${found_count} + 1 ))
+		fi
+	done
+
+	if (( ${found_count} == 9 )) ; then
+		return 0
+	fi
+	return 1
+}
+
+verify_compiler_flags_hardening() {
+	local L1=(
+	# Packages that are listed:
+	# 1.  Security-critical packages.
+	# 2.  Processes untrusted-data or
+	# 3.  Processes trusted-data
+	# 4.  A shared library loaded during runtime into the following processes - browser, UI, rendering
+	# 5.  Attack surface risks (sandbox escape potential, privilege gain, memory corruption potential)
+	#	"<use-flag>:<pkg>:<tags>"
+
+	#
+	# Manual hardening via per-package flags.
+	# No ebuild available on the oiledmachine-overlay.
+	#
+	"avif:media-libs/libavif:manual"			# untrusted-data
+	"geolocation:app-misc/geoclue:manual"			# sensitive-data
+	"libbacktrace:sys-libs/libbacktrace:manual"		# sensitive-data
+	"libhyphen:dev-libs/hyphen:manual"			# sensitive-data, untrusted-data
+	"libwebrtc:media-libs/alsa-lib:manual"			# untrusted-data
+	"unconditional:dev-libs/libgcrypt:manual"		# sensitive-data, untrusted-data
+	"wayland:dev-libs/wayland:manual"			# sensitive-data
+
+	#
+	# Hardened-by-default ebuilds available on the oiledmachine-overlay.
+	#
+	# The overlay adds the newer hardening flags which may be missing in the
+	# default hardening compiler settings.
+	#
+
+	"unconditional:dev-db/sqlite:"				# sensitive-data, untrusted-data
+	"unconditional:dev-libs/icu:"
+	"unconditional:net-libs/libsoup:"			# untrusted-data
+	"unconditional:dev-libs/libtasn1:"			# untrusted-data
+	"unconditional:dev-libs/libxml2:"			# untrusted-data
+	"unconditional:dev-libs/libxslt:"			# untrusted-data
+	"unconditional:media-libs/libwebp:"			# untrusted-data
+	"unconditional:media-libs/libpng:"			# untrusted-data
+	"unconditional:media-libs/fontconfig:"			# untrusted-data
+	"unconditional:media-libs/freetype:"			# untrusted-data
+	"unconditional:media-libs/harfbuzz"			# untrusted-data
+	"unconditional:sys-libs/zlib"				# untrusted-data
+
+	"unconditional:x11-libs/gtk+:"				# sensitive-data
+
+	"aom:media-plugins/gst-plugins-aom:"			# untrusted-data
+	"dash:media-plugins/gst-plugins-dash:"			# untrusted-data
+	"dav1d:media-plugins/gst-plugins-rs:"			# untrusted-data
+	"flite:app-accessibility/flite:"			# sensitive-data, untrusted-data
+	"gbm:x11-libs/libdrm:"
+	"gles2:media-libs/mesa:"				# sensitive-data, untrusted-data
+	"gnome-keyring:app-crypt/libsecret:"			# sensitive-data
+	"gstwebrtc:dev-libs/openssl:"				# sensitive-data, untrusted-data
+	"gstwebrtc:media-plugins/gst-plugins-webrtc:"		# untrusted-data
+	"gstreamer:media-libs/gst-plugins-bad:"			# untrusted-data
+	"gstreamer:media-libs/gst-plugins-base:"		# untrusted-data
+	"gstreamer:media-libs/gstreamer:"			# untrusted-data
+	"gstreamer:media-plugins/gst-plugins-opus:"		# untrusted-data
+	"hls:media-plugins/gst-plugins-hls:"			# untrusted-data
+	"jpegxl:media-libs/libjxl:"				# untrusted-data
+	"libde265:media-plugins/gst-plugins-libde265:"		# untrusted-data
+	"libwebrtc:media-libs/libvpx:"				# untrusted-data
+	"libwebrtc:media-libs/opus:"				# untrusted-data
+	"libwebrtc:media-libs/openh264:"			# untrusted-data
+	"opengl:media-libs/mesa:"				# sensitive-data, untrusted-data
+	"seccomp:sys-apps/bubblewrap:"				# attack-surface-risk, untrusted-data
+	"speex:media-plugins/gst-plugins-speex:"		# untrusted-data
+	"vaapi:media-libs/gst-plugins-bad:"			# untrusted-data
+	"variation-fonts:media-libs/harfbuzz:"
+	"variation-fonts:media-libs/fontconfig:"
+	"variation-fonts:media-libs/freetype:"
+	"variation-fonts:x11-libs/cairo:"
+	"wayland:media-libs/mesa:"				# sensitive-data, untrusted-data
+	"webvtt:media-plugins/gst-plugins-rs:"			# untrusted-data
+	"woff2:media-libs/woff2:"				# untrusted-data
+	"webxr:media-libs/openxr:"				# untrusted-ata
+	"X:x11-libs/libX11:"					# sensitive-data
+
+	# system-* is implied security-critical.
+	)
+
+	local row
+	for row in "${L1[@]}" ; do
+		local u=$(echo "${row}" | cut -f 1 -d ":")
+		local p=$(echo "${row}" | cut -f 2 -d ":")
+		local tag=$(echo "${row}" | cut -f 3 -d ":")
+		if [[ "${tag}" =~ "manual" ]] ; then
+			if ! has_all_hardening_flags "${p}" ; then
+ewarn "The package ${p} must be manually security-critical hardened using per-package package.env.  Use the hardening flags from the build log."
+			fi
+		elif [[ "${u}" == "unconditional" ]] ; then
+			local repo=$(cat "/var/db/pkg/${p}-"*"/repository" | sed -e "/oiledmachine-overlay/d" | head -n 1)
+ewarn "The package ${p}::${repo} may not be security-critical hardened.  Use the ${p}::oiledmachine-overlay ebuild instead."
+		elif use "${u}" ; then
+			if ! grep -q -e "oiledmachine-overlay" "${ESYSROOT}/var/db/pkg/${p}-"*"/repository" ; then
+				local repo=$(cat "/var/db/pkg/${p}-"*"/repository" | sed -e "/oiledmachine-overlay/d" | head -n 1)
+ewarn "The package ${p}::${repo} may not be security-critical hardened.  Use the ${p}::oiledmachine-overlay ebuild instead."
+			fi
+		fi
+	done
+
+	local L2=(
+		"dev-libs/weston"
+		"gui-liri/liri-shell"
+		"gui-wm/cage"
+		"gui-wm/cagebreak"
+		"gui-wm/dwl"
+		"gui-wm/kiwmi"
+		"gui-wm/hyprland"
+		"gui-wm/labwc"
+		"gui-wm/mangowc"
+		"gui-wm/miracle-wm"
+		"gui-wm/newm"
+		"gui-wm/niri"
+		"gui-wm/river"
+		"gui-wm/sway"
+		"gui-wm/waybox"
+		"gui-wm/wayfire"
+		"kde-plasma/kwin"
+		"x11-wm/enlightenment"
+		"x11-wm/mutter"
+	)
+
+	if use wayland ; then
+		local found_compositor=0
+		local x
+		for x in "${L2[@]}" ; do
+			if has_version "${x}" ; then
+				found_compositor=1
+ewarn "${x} must use security-critical hardened ebuilds or per-package package.env hardening.  Use the hardening flags from the build log."
+			fi
+		done
+
+		if (( ${found_compositor} == 0 )) ; then
+ewarn "Wayland compositors must use security-critical hardened ebuilds or per-package package.env hardening.  Use the hardening flags from the build log."
+		fi
+	fi
+
+ewarn "Packages that interact with ${PN} (e.g. password managers, clipboard managers) must use security-critical hardened ebuilds or per-package package.env hardening.  Use the hardening flags from the build log."
+}
+
 pkg_setup() {
 	dhms_start
 	check-compiler-switch_start
@@ -2107,6 +2275,7 @@ einfo
 
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+	verify_compiler_flags_hardening
 }
 
 _check_langs() {
