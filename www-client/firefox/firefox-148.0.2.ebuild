@@ -1339,6 +1339,7 @@ verify_compiler_flags_hardening() {
 		"libsecret:app-crypt/libsecret:sensitive-data"
 		"vaapi:media-libs/libva:untrusted-data"
 		"wayland:x11-libs/gtk+:sensitive-data"
+		"X:x11-base/xorg-server:sensitive-data"
 		"X:x11-libs/libX11:sensitive-data"
 
 		"system-av1:media-libs/dav1d:untrusted-data"

@@ -2177,6 +2177,7 @@ verify_compiler_flags_hardening() {
 	"webvtt:media-plugins/gst-plugins-rs:untrusted-data"
 	"woff2:media-libs/woff2:untrusted-data"
 	"webxr:media-libs/openxr:untrusted-data"
+	"X:x11-base/xorg-server:sensitive-data"
 	"X:x11-libs/libX11:sensitive-data"
 
 	# system-* is implied security-critical.
