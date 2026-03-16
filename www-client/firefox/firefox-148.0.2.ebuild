@@ -1284,7 +1284,7 @@ verify_compiler_flags_hardening() {
 	# Understanding the problem of compiler hardening per process, ranked by
 	# compiler hardening triage/remediation rank:
 	#
-	# 1. Parent process - not sandboxed, security-critical
+	# 1. Parent process - not sandboxed, privileged, security-critical
 	# 2. Content process - sandboxed, security-critical
 	# 3. GPU process - sandboxed, very high (same security-critical hardening)
 	# 4. RDD process - sandboxed, very high (same security-critical hardening)
