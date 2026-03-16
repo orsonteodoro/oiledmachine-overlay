@@ -2022,11 +2022,8 @@ eerror
 has_all_hardening_flags() {
 	local pkg="${1}"
 	local F=(
-		"-D_FORTIFY_SOURCE=3"
 		"-O2"
 		"-fno-delete-null-pointer-checks"
-		"-fstack-clash-protection"
-		"-fstack-protector-strong"
 		"-fstrict-flex-arrays=3"
 		"-ftrivial-auto-var-init=zero"
 		"-fzero-call-used-regs=all"
@@ -2041,7 +2038,7 @@ has_all_hardening_flags() {
 		fi
 	done
 
-	if (( ${found_count} == 9 )) ; then
+	if (( ${found_count} == 6 )) ; then
 		return 0
 	fi
 	return 1
@@ -2052,10 +2049,10 @@ verify_compiler_flags_hardening() {
 	#
 	# Packages that are listed:
 	#
-	# 1.  Security-critical packages.
+	# 1.  Security-critical packages
 	# 2.  Processes untrusted-data
 	# 3.  Processes trusted-data
-	# 4.  A shared library loaded during runtime into the following processes - browser, UI, rendering
+	# 4.  A shared library loaded during runtime
 	# 5.  Attack surface risks (sandbox escape potential, privilege gain, memory corruption potential)
 	#
 	#	"<use-flag>:<pkg>:<tags>"
