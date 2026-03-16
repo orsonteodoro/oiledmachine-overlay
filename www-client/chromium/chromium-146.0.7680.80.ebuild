@@ -2267,6 +2267,34 @@ setup_vendored_rust_paths() {
 	export RUST_SLOT="${RUST_SLOT_VENDORED}" # Check every bump
 }
 
+has_all_hardening_flags() {
+	local pkg="${1}"
+	local F=(
+		"-D_FORTIFY_SOURCE=3"
+		"-O2"
+		"-fno-delete-null-pointer-checks"
+		"-fstack-clash-protection"
+		"-fstack-protector-strong"
+		"-fstrict-flex-arrays=3"
+		"-ftrivial-auto-var-init=zero"
+		"-fzero-call-used-regs=all"
+		"-fwrapv"
+	)
+
+	local found_count=0
+	local f
+	for f in "${F[@]}" ; do
+		if grep -q -e "${f}" "/var/db/pkg/${pkg}-"*"/CFLAGS" ; then
+			found_count=$(( ${found_count} + 1 ))
+		fi
+	done
+
+	if (( ${found_count} == 9 )) ; then
+		return 0
+	fi
+	return 1
+}
+
 verify_compiler_flags_hardening() {
 	local L1=(
 	# Packages that are listed:
@@ -2401,7 +2429,9 @@ verify_compiler_flags_hardening() {
 		local p=$(echo "${row}" | cut -f 2 -d ":")
 		local tag=$(echo "${row}" | cut -f 3 -d ":")
 		if [[ "${tag}" =~ "manual" ]] ; then
+			if ! has_all_hardening_flags "${p}" ; then
 ewarn "The package ${p} must be manually security-critical hardened using per-package package.env.  Use the hardening flags from the build log."
+			fi
 		elif [[ "${u}" == "unconditional" ]] ; then
 			local repo=$(cat "/var/db/pkg/${p}-"*"/repository" | sed -e "/oiledmachine-overlay/d" | head -n 1)
 ewarn "The package ${p}::${repo} may not be security-critical hardened.  Use the ${p}::oiledmachine-overlay ebuild instead."
