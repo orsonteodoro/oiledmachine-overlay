@@ -15,7 +15,7 @@
  std::string GetMachineName() {
  #if BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_FUCHSIA)
 -  char hostname[HOST_NAME_MAX];
-+  char hostname[HOST_NAME_MAX+1];
++  char hostname[HOST_NAME_MAX+1]; // +1 for null terminator safety
    if (gethostname(hostname, HOST_NAME_MAX) == 0)  // Success.
      return hostname;
    return std::string();
