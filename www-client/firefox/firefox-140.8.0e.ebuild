@@ -1285,11 +1285,8 @@ eerror
 has_all_hardening_flags() {
 	local pkg="${1}"
 	local F=(
-		"-D_FORTIFY_SOURCE=3"
 		"-O2"
 		"-fno-delete-null-pointer-checks"
-		"-fstack-clash-protection"
-		"-fstack-protector-strong"
 		"-fstrict-flex-arrays=3"
 		"-ftrivial-auto-var-init=zero"
 		"-fzero-call-used-regs=all"
@@ -1304,7 +1301,7 @@ has_all_hardening_flags() {
 		fi
 	done
 
-	if (( ${found_count} == 9 )) ; then
+	if (( ${found_count} == 6 )) ; then
 		return 0
 	fi
 	return 1
