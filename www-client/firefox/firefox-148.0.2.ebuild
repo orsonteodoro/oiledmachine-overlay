@@ -1211,6 +1211,147 @@ eerror
 	fi
 }
 
+has_all_hardening_flags() {
+	local pkg="${1}"
+	local F=(
+		"-D_FORTIFY_SOURCE=3"
+		"-O2"
+		"-fno-delete-null-pointer-checks"
+		"-fstack-clash-protection"
+		"-fstack-protector-strong"
+		"-fstrict-flex-arrays=3"
+		"-ftrivial-auto-var-init=zero"
+		"-fzero-call-used-regs=all"
+		"-fwrapv"
+	)
+
+	local found_count=0
+	local f
+	for f in "${F[@]}" ; do
+		if grep -q -e "${f}" "/var/db/pkg/${pkg}-"*"/CFLAGS" ; then
+			found_count=$(( ${found_count} + 1 ))
+		fi
+	done
+
+	if (( ${found_count} == 9 )) ; then
+		return 0
+	fi
+	return 1
+}
+
+verify_compiler_flags_hardening() {
+	local L1=(
+	# Packages that are listed:
+	# 1.  Security-critical packages.
+	# 2.  Processes untrusted-data
+	# 3.  Processes trusted-data
+	# 4.  A shared library loaded during runtime
+	# 5.  Attack surface risks (sandbox escape potential, privilege gain, memory corruption potential)
+	#	"<use-flag>:<pkg>:<tags>"
+
+	#
+	# Manual hardening via per-package flags.
+	# No ebuild available on the oiledmachine-overlay.
+	#
+		"unconditional:dev-libs/expat:"			# untrusted-data
+		"unconditional:dev-libs/glib:"			# attack-surface-risk
+		"unconditional:media-libs/freetype:"		# untrusted-data
+		"unconditional:media-libs/fontconfig:"		# untrusted-data
+		"unconditional:media-video/ffmpeg"		# untrusted-data
+		"unconditional:sys-libs/zlib:"
+		"unconditional:x11-libs/cairo:"			# sensitive-data
+		"unconditional:x11-libs/gdk-pixbuf"		# untrusted-data
+		"unconditional:x11-libs/libdrm:"
+		"unconditional:x11-libs/pango:"			# sensitive-data
+
+		"cups:net-print/cups:"				# sensitive-data, untrusted-data
+		"dbus:sys-apps/dbus:"
+		"firejail:sys-apps/firejail:"			# attack-surface-risk
+		"libsecret:app-crypt/libsecret:"		# sensitive-data
+		"openh264:media-libs/openh264:"			# untrusted-data
+		"vaapi:media-libs/libva:"			# untrusted-data
+		"wayland:x11-libs/gtk+:"
+		"X:x11-libs/libX11:"				# sensitive-data
+
+	#
+	# Hardened-by-default ebuilds available on the oiledmachine-overlay.
+	#
+	# The overlay adds the newer hardening flags which may be missing in the
+	# default hardening compiler settings.
+	#
+		"system-av1:media-libs/dav1d:"			# untrusted-data
+		"system-av1:media-libs/libaom:"			# untrusted-data
+		"system-harfbuzz:media-gfx/graphite2:"
+		"system-harfbuzz:media-libs/harfbuzz:"
+		"system-icu:dev-libs/icu:"
+		"system-jpeg:media-libs/libjpeg-turbo:"
+		"system-libevent:dev-libs/libevent:"
+		"system-libvpx:media-libs/libvpx:"		# untrusted-data
+		"system-pipewire:media-video/pipewire:"		# untrusted-data
+		"system-png:media-libs/libpng:"			# untrusted-data
+		"system-webp:media-libs/libwebp:"		# untrusted-data
+	)
+
+	local row
+	for row in "${L1[@]}" ; do
+		local u=$(echo "${row}" | cut -f 1 -d ":")
+		local p=$(echo "${row}" | cut -f 2 -d ":")
+		local tag=$(echo "${row}" | cut -f 3 -d ":")
+		if [[ "${tag}" =~ "manual" ]] ; then
+			if ! has_all_hardening_flags "${p}" ; then
+ewarn "The package ${p} must be manually security-critical hardened using per-package package.env.  Use the hardening flags from the build log."
+			fi
+		elif [[ "${u}" == "unconditional" ]] ; then
+			local repo=$(cat "/var/db/pkg/${p}-"*"/repository" | sed -e "/oiledmachine-overlay/d" | head -n 1)
+ewarn "The package ${p}::${repo} may not be security-critical hardened.  Use the ${p}::oiledmachine-overlay ebuild instead."
+		elif use "${u}" ; then
+			if ! grep -q -e "oiledmachine-overlay" "${ESYSROOT}/var/db/pkg/${p}-"*"/repository" ; then
+				local repo=$(cat "/var/db/pkg/${p}-"*"/repository" | sed -e "/oiledmachine-overlay/d" | head -n 1)
+ewarn "The package ${p}::${repo} may not be security-critical hardened.  Use the ${p}::oiledmachine-overlay ebuild instead."
+			fi
+		fi
+	done
+
+	local L2=(
+		"dev-libs/weston"
+		"gui-liri/liri-shell"
+		"gui-wm/cage"
+		"gui-wm/cagebreak"
+		"gui-wm/dwl"
+		"gui-wm/kiwmi"
+		"gui-wm/hyprland"
+		"gui-wm/labwc"
+		"gui-wm/mangowc"
+		"gui-wm/miracle-wm"
+		"gui-wm/newm"
+		"gui-wm/niri"
+		"gui-wm/river"
+		"gui-wm/sway"
+		"gui-wm/waybox"
+		"gui-wm/wayfire"
+		"kde-plasma/kwin"
+		"x11-wm/enlightenment"
+		"x11-wm/mutter"
+	)
+
+	if use wayland ; then
+		local found_compositor=0
+		local x
+		for x in "${L2[@]}" ; do
+			if has_version "${x}" ; then
+				found_compositor=1
+ewarn "${x} must use security-critical hardened ebuilds or per-package package.env hardening.  Use the hardening flags from the build log."
+			fi
+		done
+
+		if (( ${found_compositor} == 0 )) ; then
+ewarn "Wayland compositors must use security-critical hardened ebuilds or per-package package.env hardening.  Use the hardening flags from the build log."
+		fi
+	fi
+
+ewarn "Packages that interact with ${PN} (e.g. password managers, clipboard managers) must use security-critical hardened ebuilds or per-package package.env hardening.  Use the hardening flags from the build log."
+}
+
 pkg_setup() {
 	dhms_start
 	check-compiler-switch_start
@@ -1387,6 +1528,7 @@ ewarn "Speech recognition (USE=webspeech) has not been confirmed working."
 	check_ulimit
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+	verify_compiler_flags_hardening
 }
 
 src_unpack() {

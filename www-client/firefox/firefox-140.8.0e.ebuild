@@ -703,7 +703,7 @@ CDEPEND="
 	system-jpeg? (
 		>=media-libs/libjpeg-turbo-3.0.4[${MULTILIB_USEDEP}]
 		media-libs/libjpeg-turbo:=
-	)/var/tmp/portage/www-client/firefox-140.8.0e/work/firefox-140.8.0/media/libvpx/config/vpx_version.h
+	)
 	system-libevent? (
 		>=dev-libs/libevent-2.1.12:0[${MULTILIB_USEDEP},threads(+)]
 		dev-libs/libevent:=
@@ -1282,6 +1282,222 @@ eerror
 	fi
 }
 
+has_all_hardening_flags() {
+	local pkg="${1}"
+	local F=(
+		"-D_FORTIFY_SOURCE=3"
+		"-O2"
+		"-fno-delete-null-pointer-checks"
+		"-fstack-clash-protection"
+		"-fstack-protector-strong"
+		"-fstrict-flex-arrays=3"
+		"-ftrivial-auto-var-init=zero"
+		"-fzero-call-used-regs=all"
+		"-fwrapv"
+	)
+
+	local found_count=0
+	local f
+	for f in "${F[@]}" ; do
+		if grep -q -e "${f}" "/var/db/pkg/${pkg}-"*"/CFLAGS" ; then
+			found_count=$(( ${found_count} + 1 ))
+		fi
+	done
+
+	if (( ${found_count} == 9 )) ; then
+		return 0
+	fi
+	return 1
+}
+
+verify_compiler_flags_hardening() {
+	local L1=(
+	# Packages that are listed:
+	# 1.  Security-critical packages.
+	# 2.  Processes untrusted-data or
+	# 3.  Processes trusted-data
+	# 4.  A shared library loaded during runtime into the following processes - browser, UI, rendering
+	# 5.  Attack surface risks (sandbox escape potential, privilege gain, memory corruption potential)
+	#	"<use-flag>:<pkg>:<tags>"
+
+	#
+	# Understanding the problem of compiler hardening per process, ranked by
+	# compiler hardening triage/remediation rank:
+	#
+	# 1. Renderer - sandboxed, has web content, limited privileges, security-critical
+	# 2. GPU - sandboxed, security-critical
+	# 3. Browser (aka broker) - unsanboxed, full privileges, security-critical
+	# 4. Network - sandboxed, balanced
+	# 5. Utility - sandboxed, task dependent privileges, balanced
+	# 6. Audio/speech - sandboxed, balanced
+	# 7. Zygote - unsandboxed, balanced
+	# 8. Crashpad / crash handler - no or lightly sandboxed, balanced
+	#
+	# 1-3 should be remediated.
+	#
+
+	#
+	# Ranks for triaging the attack surface.  The top most is critical.
+	#
+	# 1. mesa
+	# 2. dbus
+	# 3. wayland
+	# 4. libx11
+	# 5. xorg-server
+	# 6. libdrm
+	# 7. libva + backends
+	# 8. libglvnd
+	# 9. fontconfig, freetype, harfbuzz-ng
+	# 10. gtk:4, gtk+:3, qt6
+	# 11. wayland compositors
+	#
+
+	#
+	# Manual hardening via per-package flags.
+	# No ebuild available on the oiledmachine-overlay.
+	#
+		'!headless:media-libs/libglvnd:manual'
+		"accessibility:app-accessibility/at-spi2-core:manual"			# loaded-library
+		"cups:net-print/cups:manual"						# loaded-library, sensitive-data, untrusted-data
+		"ffmpeg-chromium:media-video/ffmpeg-chromium:manual"			# untrusted-data
+		"selinux:libselinux:manual"
+		"system-openh264:media-libs/openh264:manual"				# untrusted-data
+		"unconditional:sys-apps/dbus:manual"					# loaded-library, sensitive-data
+		"vaapi:media-libs/libva:manual"						# loaded-library, untrusted-data
+
+	#
+	# Hardened-by-default ebuilds available on the oiledmachine-overlay.
+	#
+	# The overlay adds the newer hardening flags which may be missing in the
+	# default hardening compiler settings.
+	#
+		'!gtk4:x11-libs/gtk+:'							# loaded-library, sensitive-data
+		'!headless:media-libs/alsa-lib:'					# loaded-library
+		'!headless:x11-libs/cairo:'						# sensitive-data
+		'!headless:x11-libs/gdk-pixbuf:'					# untrusted-data
+		'!headless:x11-libs/pango:'						# sensitive-data
+		"firejail:sys-apps/firejail:"						# untrusted-data
+		"gtk4:gui-libs/gtk:"							# loaded-library
+		"qt6:dev-qt/qtbase:"							# sensitive-data
+		"screencast:media-video/pipewire:"					# untrusted-data
+		"wayland:dev-libs/wayland:"
+		"X:x11-libs/libX11:"							# sensitive-data
+		"X:x11-base/xorg-server:"						# sensitive-data
+
+		"unconditional:app-arch/bzip2:"						# untrusted-data
+		"unconditional:dev-libs/expat:"						# attack-surface-risk
+		"unconditional:dev-libs/glib:"						# attack-surface-risk
+		"unconditional:dev-libs/nspr:"
+		"unconditional:dev-libs/nss:"
+		"unconditional:media-libs/libglvnd:"
+		"unconditional:media-libs/mesa:"					# loaded-library, untrusted-data
+		"unconditional:net-misc/curl:"
+		"unconditional:sys-libs/zlib:"
+		"unconditional:x11-libs/libdrm:"					# loaded-library, attack-surface-risk
+
+	# system-* is marked security-critical by upstream in README.chromium.
+		"system-abseil-cpp:dev-cpp/abseil-cpp:"
+		"system-brotli:app-arch/brotli:"
+		"system-crc32c:dev-libs/crc32c:"
+		"system-clang:llvm-runtimes/libcxx:"					# attack-surface-risk
+		"system-clang:llvm-runtimes/libcxxabi:"					# attack-surface-risk
+		"system-dav1d:media-libs/dav1d:"					# untrusted-data
+		"system-double-conversion:dev-libs/double-conversion:"
+		"system-ffmpeg:media-video/ffmpeg:"					# untrusted-data
+		"system-flac:media-libs/flac:"						# untrusted-data
+		"system-flatbuffers:dev-libs/flatbuffers:"
+		"system-fontconfig:media-libs/fontconfig:"				# untrusted-data
+		"system-freetype:media-libs/freetype:"					# untrusted-data
+		"system-harfbuzz:media-libs/harfbuzz:"					# loaded-library
+		"system-highway:dev-cpp/highway:"
+		"system-icu:dev-libs/icu:"
+		"system-jsoncpp:dev-libs/jsoncpp:"
+		"system-lcms:media-libs/lcms:"
+		"system-libaom:media-libs/libaom:"					# untrusted-data
+		"system-libjpeg-turbo:media-libs/libjpeg-turbo:"
+		"system-libopenjpeg:media-libs/openjpeg:"				# untrusted-data
+		"system-libpng:media-libs/libpng:"					# untrusted-data
+		"system-libsecret:app-crypt/libsecret:"					# sensitive-data
+		"system-libusb:dev-libs/libusb:"
+		"system-libvpx:media-libs/libvpx:"					# untrusted-data
+		"system-libwebp:media-libs/libwebp:"					# untrusted-data
+		"system-libxml:dev-libs/libxml2:"
+		"system-libxnvctrl:x11-drivers/nvidia-drivers:"
+		"system-libxslt:dev-libs/libxslt:"
+		"system-libyuv:media-libs/libyuv:"
+		"system-opus:media-libs/opus:"						# untrusted-data
+		"system-protobuf:dev-libs/protobuf:"
+		"system-re2:dev-libs/re2:"						# sensitive-data, untrusted-data
+		"system-simdutf:dev-cpp/simdutf:"
+		"system-snappy:app-arch/snappy:"
+		"system-spirv-tools:dev-util/spirv-tools:"
+		"system-sqlite:dev-db/sqlite:"
+		"system-vulkan-memory-allocator:media-libs/VulkanMemoryAllocator:"
+		"system-woff2:media-libs/woff2:"					# untrusted-data
+		"system-zlib:sys-libs/zlib:"						# untrusted-data
+		"system-zstd:app-arch/zstd:"						# untrusted-data
+	)
+
+	local row
+	for row in "${L1[@]}" ; do
+		local u=$(echo "${row}" | cut -f 1 -d ":")
+		local p=$(echo "${row}" | cut -f 2 -d ":")
+		local tag=$(echo "${row}" | cut -f 3 -d ":")
+		if [[ "${tag}" =~ "manual" ]] ; then
+			if ! has_all_hardening_flags "${p}" ; then
+ewarn "The package ${p} must be manually security-critical hardened using per-package package.env.  Use the hardening flags from the build log."
+			fi
+		elif [[ "${u}" == "unconditional" ]] ; then
+			local repo=$(cat "/var/db/pkg/${p}-"*"/repository" | sed -e "/oiledmachine-overlay/d" | head -n 1)
+ewarn "The package ${p}::${repo} may not be security-critical hardened.  Use the ${p}::oiledmachine-overlay ebuild instead."
+		elif use "${u}" ; then
+			if ! grep -q -e "oiledmachine-overlay" "${ESYSROOT}/var/db/pkg/${p}-"*"/repository" ; then
+				local repo=$(cat "/var/db/pkg/${p}-"*"/repository" | sed -e "/oiledmachine-overlay/d" | head -n 1)
+ewarn "The package ${p}::${repo} may not be security-critical hardened.  Use the ${p}::oiledmachine-overlay ebuild instead."
+			fi
+		fi
+	done
+
+	local L2=(
+		"dev-libs/weston"
+		"gui-liri/liri-shell"
+		"gui-wm/cage"
+		"gui-wm/cagebreak"
+		"gui-wm/dwl"
+		"gui-wm/kiwmi"
+		"gui-wm/hyprland"
+		"gui-wm/labwc"
+		"gui-wm/mangowc"
+		"gui-wm/miracle-wm"
+		"gui-wm/newm"
+		"gui-wm/niri"
+		"gui-wm/river"
+		"gui-wm/sway"
+		"gui-wm/waybox"
+		"gui-wm/wayfire"
+		"kde-plasma/kwin"
+		"x11-wm/enlightenment"
+		"x11-wm/mutter"
+	)
+
+	if use wayland ; then
+		local found_compositor=0
+		local x
+		for x in "${L2[@]}" ; do
+			if has_version "${x}" ; then
+				found_compositor=1
+ewarn "${x} must use security-critical hardened ebuilds or per-package package.env hardening.  Use the hardening flags from the build log."
+			fi
+		done
+
+		if (( ${found_compositor} == 0 )) ; then
+ewarn "Wayland compositors must use security-critical hardened ebuilds or per-package package.env hardening.  Use the hardening flags from the build log."
+		fi
+	fi
+
+ewarn "Packages that interact with ${PN} (e.g. password managers, clipboard managers) must use security-critical hardened ebuilds or per-package package.env hardening.  Use the hardening flags from the build log."
+}
+
 pkg_setup() {
 	dhms_start
 	check-compiler-switch_start
@@ -1456,6 +1672,7 @@ ewarn "Speech recognition (USE=webspeech) has not been confirmed working."
 	check_ulimit
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+	verify_compiler_flags_hardening
 }
 
 src_unpack() {
