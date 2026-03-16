@@ -2089,6 +2089,30 @@ verify_compiler_flags_hardening() {
 	#	"<use-flag>:<pkg>:<tags>"
 
 	#
+	# Understanding the problem of compiler hardening per process, ranked by
+	# compiler hardening triage/remediation rank:
+	#
+	# 1. UI process - not sandboxed, security-critical
+	# 2. Web process - sandboxed, security-critical
+	# 3. GPU process - sandboxed, very high
+	# 4. Network process - sandboxed, high
+	#
+
+	#
+	# Ranks for triaging the attack surface.  The top most is critical.
+	#
+	# 1. mesa
+	# 2. dbus
+	# 3. wayland
+	# 4. libdrm
+	# 5. libva
+	# 6. libglvnd
+	# 7. harfbuzz, freetype
+	# 8. icu
+	# 9. gtk+:3, gtk:4
+	#
+
+	#
 	# Manual hardening via per-package flags.
 	# No ebuild available on the oiledmachine-overlay.
 	#
@@ -2109,7 +2133,7 @@ verify_compiler_flags_hardening() {
 	#
 
 	"unconditional:dev-db/sqlite:sensitive-data,untrusted-data"
-	"unconditional:dev-libs/icu:"
+	"unconditional:dev-libs/icu:attack-surface-risk,untrusted-data"
 	"unconditional:net-libs/libsoup:untrusted-data"
 	"unconditional:dev-libs/libtasn1:untrusted-data"
 	"unconditional:dev-libs/libxml2:untrusted-data"
@@ -2118,7 +2142,7 @@ verify_compiler_flags_hardening() {
 	"unconditional:media-libs/libpng:untrusted-data"
 	"unconditional:media-libs/fontconfig:untrusted-data"
 	"unconditional:media-libs/freetype:untrusted-data"
-	"unconditional:media-libs/harfbuzz:untrusted-data"
+	"unconditional:media-libs/harfbuzz:attack-surface-risk,untrusted-data"
 	"unconditional:sys-libs/zlib:untrusted-data"
 
 	"unconditional:x11-libs/gtk+:sensitive-data"
@@ -2127,7 +2151,7 @@ verify_compiler_flags_hardening() {
 	"dash:media-plugins/gst-plugins-dash:untrusted-data"
 	"dav1d:media-plugins/gst-plugins-rs:untrusted-data"
 	"flite:app-accessibility/flite:sensitive-data,untrusted-data"
-	"gbm:x11-libs/libdrm:"
+	"gbm:x11-libs/libdrm:attack-surface-risk"
 	"gles2:media-libs/mesa:sensitive-data,untrusted-data"
 	"gnome-keyring:app-crypt/libsecret:sensitive-data"
 	"gstwebrtc:dev-libs/openssl:sensitive-data,untrusted-data"
@@ -2146,10 +2170,10 @@ verify_compiler_flags_hardening() {
 	"seccomp:sys-apps/bubblewrap:attack-surface-risk,untrusted-data"
 	"speex:media-plugins/gst-plugins-speex:untrusted-data"
 	"vaapi:media-libs/gst-plugins-bad:untrusted-data"
-	"variation-fonts:media-libs/harfbuzz:"
-	"variation-fonts:media-libs/fontconfig:"
-	"variation-fonts:media-libs/freetype:"
-	"variation-fonts:x11-libs/cairo:"
+	"variation-fonts:media-libs/harfbuzz:attack-surface-risk,untrusted-data"
+	"variation-fonts:media-libs/fontconfig:untrusted-data"
+	"variation-fonts:media-libs/freetype:untrusted-data"
+	"variation-fonts:x11-libs/cairo:sensitive-data"
 	"wayland:media-libs/mesa:sensitive-data,untrusted-data"
 	"webvtt:media-plugins/gst-plugins-rs:untrusted-data"
 	"woff2:media-libs/woff2:untrusted-data"

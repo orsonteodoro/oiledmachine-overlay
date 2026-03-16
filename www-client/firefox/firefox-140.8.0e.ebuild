@@ -1352,6 +1352,32 @@ verify_compiler_flags_hardening() {
 	#	"<use-flag>:<pkg>:<tags>"
 
 	#
+	# Understanding the problem of compiler hardening per process, ranked by
+	# compiler hardening triage/remediation rank:
+	#
+	# 1. Parent process - not sandboxed, security-critical
+	# 2. Content process - sandboxed, security-critical
+	# 3. GPU process - sandboxed, very high
+	# 4. RDD process - sandboxed, very high
+	# 5. Socket process - sandboxed, high
+	# 6. Utility process - sandboxed, high
+	# 7. GMP process - sandboxed, medium-high
+	#
+
+	#
+	# Ranks for triaging the attack surface.  The top most is critical.
+	#
+	# 1. mesa
+	# 2. dbus
+	# 3. wayland
+	# 4. libX11
+	# 5. libdrm
+	# 6. libva
+	# 7. fontconfig, freetype, harfbuzz
+	# 8. gtk+:3, gtk:4
+	#
+
+	#
 	# Manual hardening via per-package flags.
 	# No ebuild available on the oiledmachine-overlay.
 	#
@@ -1373,10 +1399,10 @@ verify_compiler_flags_hardening() {
 		"unconditional:media-libs/freetype:untrusted-data"
 		"unconditional:media-libs/fontconfig:untrusted-data"
 		"unconditional:media-video/ffmpeg:untrusted-data"
-		"unconditional:sys-libs/zlib:"
+		"unconditional:sys-libs/zlib:untrusted-data"
 		"unconditional:x11-libs/cairo:sensitive-data,untrusted-data"
 		"unconditional:x11-libs/gdk-pixbuf:untrusted-data"
-		"unconditional:x11-libs/libdrm:"
+		"unconditional:x11-libs/libdrm:attack-surface-risk"
 		"unconditional:x11-libs/pango:sensitive-data"
 
 		"cups:net-print/cups:sensitive-data,untrusted-data"
@@ -1389,8 +1415,8 @@ verify_compiler_flags_hardening() {
 		"system-av1:media-libs/dav1d:untrusted-data"
 		"system-av1:media-libs/libaom:untrusted-data"
 		"system-harfbuzz:media-gfx/graphite2:"
-		"system-harfbuzz:media-libs/harfbuzz:"
-		"system-icu:dev-libs/icu:"
+		"system-harfbuzz:media-libs/harfbuzz:attack-surface-risk,untrusted-data"
+		"system-icu:dev-libs/icu:attack-surface-risk,untrusted-data"
 		"system-jpeg:media-libs/libjpeg-turbo:untrusted-data"
 		"system-libvpx:media-libs/libvpx:untrusted-data"
 		"system-png:media-libs/libpng:untrusted-data"
