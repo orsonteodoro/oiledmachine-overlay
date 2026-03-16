@@ -2168,7 +2168,7 @@ verify_compiler_flags_hardening() {
 	"opengl:media-libs/mesa:sensitive-data,untrusted-data"
 	"seccomp:sys-apps/bubblewrap:attack-surface-risk,untrusted-data"
 	"speex:media-plugins/gst-plugins-speex:untrusted-data"
-	"spell:app-text/enchant:untrusted-data"
+	"spell:app-text/enchant:attack-surface-risk,untrusted-data" # UI process
 	"vaapi:media-libs/gst-plugins-bad:untrusted-data"
 	"variation-fonts:media-libs/harfbuzz:attack-surface-risk,untrusted-data"
 	"variation-fonts:media-libs/fontconfig:untrusted-data"
