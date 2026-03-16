@@ -1253,6 +1253,7 @@ verify_compiler_flags_hardening() {
 	# Manual hardening via per-package flags.
 	# No ebuild available on the oiledmachine-overlay.
 	#
+		"dbus:sys-apps/dbus:manual"
 		"speech:app-accessibility/speech-dispatcher:manual"	# sensitive-data, untrusted-data
 		"system-libevent:dev-libs/libevent:manual"
 		"system-pipewire:media-video/pipewire:manual"		# untrusted-data
@@ -1277,7 +1278,6 @@ verify_compiler_flags_hardening() {
 		"unconditional:x11-libs/pango:"				# sensitive-data
 
 		"cups:net-print/cups:"					# sensitive-data, untrusted-data
-		"dbus:sys-apps/dbus:"
 		"firejail:sys-apps/firejail:"				# attack-surface-risk
 		"libsecret:app-crypt/libsecret:"			# sensitive-data
 		"vaapi:media-libs/libva:"				# untrusted-data
