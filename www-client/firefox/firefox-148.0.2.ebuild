@@ -1241,37 +1241,26 @@ has_all_hardening_flags() {
 
 verify_compiler_flags_hardening() {
 	local L1=(
+	#
 	# Packages that are listed:
-	# 1.  Security-critical packages.
+	#
+	# 1.  Security-critical packages
 	# 2.  Processes untrusted-data
 	# 3.  Processes trusted-data
 	# 4.  A shared library loaded during runtime
 	# 5.  Attack surface risks (sandbox escape potential, privilege gain, memory corruption potential)
+	#
 	#	"<use-flag>:<pkg>:<tags>"
 
 	#
 	# Manual hardening via per-package flags.
 	# No ebuild available on the oiledmachine-overlay.
 	#
-		"unconditional:dev-libs/expat:"			# untrusted-data
-		"unconditional:dev-libs/glib:"			# attack-surface-risk
-		"unconditional:media-libs/freetype:"		# untrusted-data
-		"unconditional:media-libs/fontconfig:"		# untrusted-data
-		"unconditional:media-video/ffmpeg"		# untrusted-data
-		"unconditional:sys-libs/zlib:"
-		"unconditional:x11-libs/cairo:"			# sensitive-data
-		"unconditional:x11-libs/gdk-pixbuf"		# untrusted-data
-		"unconditional:x11-libs/libdrm:"
-		"unconditional:x11-libs/pango:"			# sensitive-data
-
-		"cups:net-print/cups:"				# sensitive-data, untrusted-data
-		"dbus:sys-apps/dbus:"
-		"firejail:sys-apps/firejail:"			# attack-surface-risk
-		"libsecret:app-crypt/libsecret:"		# sensitive-data
-		"openh264:media-libs/openh264:"			# untrusted-data
-		"vaapi:media-libs/libva:"			# untrusted-data
-		"wayland:x11-libs/gtk+:"
-		"X:x11-libs/libX11:"				# sensitive-data
+		"speech:app-accessibility/speech-dispatcher:manual"	# sensitive-data, untrusted-data
+		"system-libevent:dev-libs/libevent:manual"
+		"system-pipewire:media-video/pipewire:manual"		# untrusted-data
+		"wayland:dev-libs/wayland:manual"
+		"openh264:media-libs/openh264:manual"			# untrusted-data
 
 	#
 	# Hardened-by-default ebuilds available on the oiledmachine-overlay.
@@ -1279,17 +1268,34 @@ verify_compiler_flags_hardening() {
 	# The overlay adds the newer hardening flags which may be missing in the
 	# default hardening compiler settings.
 	#
-		"system-av1:media-libs/dav1d:"			# untrusted-data
-		"system-av1:media-libs/libaom:"			# untrusted-data
+		"unconditional:dev-libs/expat:"				# untrusted-data
+		"unconditional:dev-libs/glib:"				# attack-surface-risk
+		"unconditional:media-libs/freetype:"			# untrusted-data
+		"unconditional:media-libs/fontconfig:"			# untrusted-data
+		"unconditional:media-video/ffmpeg"			# untrusted-data
+		"unconditional:sys-libs/zlib:"
+		"unconditional:x11-libs/cairo:"				# sensitive-data
+		"unconditional:x11-libs/gdk-pixbuf"			# untrusted-data
+		"unconditional:x11-libs/libdrm:"
+		"unconditional:x11-libs/pango:"				# sensitive-data
+
+		"cups:net-print/cups:"					# sensitive-data, untrusted-data
+		"dbus:sys-apps/dbus:"
+		"firejail:sys-apps/firejail:"				# attack-surface-risk
+		"libsecret:app-crypt/libsecret:"			# sensitive-data
+		"vaapi:media-libs/libva:"				# untrusted-data
+		"wayland:x11-libs/gtk+:"				# sensitive-data
+		"X:x11-libs/libX11:"					# sensitive-data
+
+		"system-av1:media-libs/dav1d:"				# untrusted-data
+		"system-av1:media-libs/libaom:"				# untrusted-data
 		"system-harfbuzz:media-gfx/graphite2:"
 		"system-harfbuzz:media-libs/harfbuzz:"
 		"system-icu:dev-libs/icu:"
 		"system-jpeg:media-libs/libjpeg-turbo:"
-		"system-libevent:dev-libs/libevent:"
-		"system-libvpx:media-libs/libvpx:"		# untrusted-data
-		"system-pipewire:media-video/pipewire:"		# untrusted-data
-		"system-png:media-libs/libpng:"			# untrusted-data
-		"system-webp:media-libs/libwebp:"		# untrusted-data
+		"system-libvpx:media-libs/libvpx:"			# untrusted-data
+		"system-png:media-libs/libpng:"				# untrusted-data
+		"system-webp:media-libs/libwebp:"			# untrusted-data
 	)
 
 	local row
