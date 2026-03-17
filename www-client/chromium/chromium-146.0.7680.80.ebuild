@@ -3209,7 +3209,8 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 			"${FILESDIR}/extra-patches/${PN}-146.0.7680.80-crashpad-IOV_MAX-fallback-for-system-clang.patch"
 			"${FILESDIR}/extra-patches/${PN}-146.0.7680.80-fix-cookie-util-iterator-for-system-clang.patch"
 			"${FILESDIR}/extra-patches/${PN}-146.0.7680.80-HOST_NAME_MAX-for-system-clang.patch"
-			"${FILESDIR}/extra-patches/${PN}-146.0.7680.80-CloneTraits-bit-proxy-type-for-system-clang.patch"
+			"${FILESDIR}/extra-patches/${PN}-146.0.7680.80-mojom-bool_values-for-system-clang.patch"
+			"${FILESDIR}/extra-patches/${PN}-146.0.7680.80-private_key_factory-find-increment-change-for-system-clang.patch"
 		)
 	fi
 

@@ -1,0 +1,22 @@
+--- a/components/schema_org/common/metadata.mojom.orig	2026-03-13 09:54:03.000000000 -0700
++++ b/components/schema_org/common/metadata.mojom	2026-03-17 00:43:22.394482271 -0700
+@@ -7,7 +7,7 @@ module schema_org.mojom;
+ // Due to the restriction of AppIndexing, all elements should be of the
+ // same type. Non-array values are converted to arrays of one element.
+ union Values {
+-  array<bool> bool_values;
++  array<int8> bool_values;
+   array<int64> long_values;
+   array<string> string_values;
+   array<Entity> entity_values;
+--- a/components/schema_org/common/improved_metadata.mojom.orig	2026-03-13 09:54:03.000000000 -0700
++++ b/components/schema_org/common/improved_metadata.mojom	2026-03-17 00:44:07.288955431 -0700
+@@ -16,7 +16,7 @@ import "url/mojom/url.mojom";
+ // A property can have arrays of different types simultaneously. Non-array
+ // values are converted to arrays of one element.
+ struct Values {
+-  array<bool> bool_values;
++  array<int8> bool_values;
+   array<int64> long_values;
+   array<string> string_values;
+   array<double> double_values;
