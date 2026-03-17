@@ -2386,7 +2386,7 @@ verify_compiler_flags_hardening() {
 		"system-libxnvctrl:x11-drivers/nvidia-drivers:manual"
 		"system-openh264:media-libs/openh264:manual,untrusted-data"
 		"system-vulkan-memory-allocator:media-libs/VulkanMemoryAllocator:manual"
-		"unconditional:dev-libs/nspr:manual"
+		"unconditional:dev-libs/nspr:manual,sensitive-data"
 		"unconditional:sys-apps/dbus:manual,loaded-library,sensitive-data"		# PII
 		"vaapi:media-libs/libva:manual,loaded-library,untrusted-data"
 		"wayland:dev-libs/wayland:manual"
@@ -2410,7 +2410,7 @@ verify_compiler_flags_hardening() {
 		"unconditional:app-arch/bzip2:untrusted-data"
 		"unconditional:dev-libs/expat:attack-surface-risk"
 		"unconditional:dev-libs/glib:attack-surface-risk"
-		"unconditional:dev-libs/nss:"
+		"unconditional:dev-libs/nss:sensitive-data"
 		"unconditional:media-libs/mesa:loaded-library,sensitive-data,untrusted-data"
 		"unconditional:net-misc/curl:sensitive-data,untrusted-data"
 		"unconditional:sys-libs/zlib:untrusted-data"
