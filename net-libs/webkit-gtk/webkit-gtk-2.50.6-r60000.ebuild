@@ -2134,7 +2134,7 @@ verify_compiler_flags_hardening() {
 	#
 
 	"unconditional:dev-db/sqlite:sensitive-data,untrusted-data"
-	"unconditional:dev-libs/icu:attack-surface-risk,untrusted-data"
+	"unconditional:dev-libs/icu:attack-surface-risk,untrusted-data,sensitive-data"			# PII
 	"unconditional:net-libs/libsoup:untrusted-data"
 	"unconditional:dev-libs/libtasn1:untrusted-data"
 	"unconditional:dev-libs/libxml2:untrusted-data"
@@ -2144,7 +2144,7 @@ verify_compiler_flags_hardening() {
 	"unconditional:media-libs/libpng:untrusted-data"
 	"unconditional:media-libs/fontconfig:untrusted-data"
 	"unconditional:media-libs/freetype:untrusted-data"
-	"unconditional:media-libs/harfbuzz:attack-surface-risk,untrusted-data"
+	"unconditional:media-libs/harfbuzz:attack-surface-risk,untrusted-data,sensitive-data"		# PII
 	"unconditional:sys-libs/zlib:untrusted-data"
 
 	"aom:media-plugins/gst-plugins-aom:untrusted-data"
@@ -2153,7 +2153,7 @@ verify_compiler_flags_hardening() {
 	"flite:app-accessibility/flite:sensitive-data,untrusted-data"
 	"gbm:x11-libs/libdrm:attack-surface-risk"
 	"gles2:media-libs/mesa:sensitive-data,untrusted-data"
-	"gnome-keyring:app-crypt/libsecret:sensitive-data"
+	"gnome-keyring:app-crypt/libsecret:sensitive-data"						# PII, Crown Jewel Keys
 	"gstwebrtc:dev-libs/openssl:sensitive-data,untrusted-data"
 	"gstwebrtc:media-plugins/gst-plugins-webrtc:untrusted-data"
 	"gstreamer:media-libs/gst-plugins-bad:untrusted-data"
@@ -2169,7 +2169,7 @@ verify_compiler_flags_hardening() {
 	"opengl:media-libs/mesa:sensitive-data,untrusted-data"
 	"seccomp:sys-apps/bubblewrap:attack-surface-risk,untrusted-data"
 	"speex:media-plugins/gst-plugins-speex:untrusted-data"
-	"spell:app-text/enchant:attack-surface-risk,untrusted-data" # UI process
+	"spell:app-text/enchant:attack-surface-risk,untrusted-data"					# UI process
 	"vaapi:media-libs/gst-plugins-bad:untrusted-data"
 	"variation-fonts:media-libs/harfbuzz:attack-surface-risk,untrusted-data"
 	"variation-fonts:media-libs/fontconfig:untrusted-data"

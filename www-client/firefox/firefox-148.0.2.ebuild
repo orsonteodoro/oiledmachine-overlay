@@ -1325,6 +1325,8 @@ verify_compiler_flags_hardening() {
 	#
 		"unconditional:dev-libs/expat:untrusted-data"
 		"unconditional:dev-libs/glib:attack-surface-risk"
+		"unconditional:dev-libs/nss:sensitive-data"
+		"unconditional:dev-libs/nspr:sensitive-data"
 		"unconditional:media-libs/freetype:untrusted-data"
 		"unconditional:media-libs/fontconfig:untrusted-data"
 		"unconditional:media-video/ffmpeg:untrusted-data"
@@ -1345,8 +1347,8 @@ verify_compiler_flags_hardening() {
 		"system-av1:media-libs/dav1d:untrusted-data"
 		"system-av1:media-libs/libaom:untrusted-data"
 		"system-harfbuzz:media-gfx/graphite2:"
-		"system-harfbuzz:media-libs/harfbuzz:attack-surface-risk,untrusted-data"
-		"system-icu:dev-libs/icu:attack-surface-risk,untrusted-data"
+		"system-harfbuzz:media-libs/harfbuzz:attack-surface-risk,untrusted-data"			# PII
+		"system-icu:dev-libs/icu:attack-surface-risk,untrusted-data"					# PII
 		"system-jpeg:media-libs/libjpeg-turbo:untrusted-data"
 		"system-libvpx:media-libs/libvpx:untrusted-data"
 		"system-png:media-libs/libpng:untrusted-data"

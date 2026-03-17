@@ -2387,7 +2387,7 @@ verify_compiler_flags_hardening() {
 		"system-openh264:media-libs/openh264:manual,untrusted-data"
 		"system-vulkan-memory-allocator:media-libs/VulkanMemoryAllocator:manual"
 		"unconditional:dev-libs/nspr:manual"
-		"unconditional:sys-apps/dbus:manual,loaded-library,sensitive-data"
+		"unconditional:sys-apps/dbus:manual,loaded-library,sensitive-data"		# PII
 		"vaapi:media-libs/libva:manual,loaded-library,untrusted-data"
 		"wayland:dev-libs/wayland:manual"
 
@@ -2428,12 +2428,12 @@ verify_compiler_flags_hardening() {
 		"system-flatbuffers:dev-libs/flatbuffers:"
 		"system-fontconfig:media-libs/fontconfig:untrusted-data"
 		"system-freetype:media-libs/freetype:untrusted-data"
-		"system-harfbuzz:media-libs/harfbuzz:loaded-library"
+		"system-harfbuzz:media-libs/harfbuzz:loaded-library,sensitive-data"		# PII
 		"system-highway:dev-cpp/highway:"
-		"system-icu:dev-libs/icu:"
+		"system-icu:dev-libs/icu:sensitive-data"					# PII
 		"system-jsoncpp:dev-libs/jsoncpp:untrusted-data"
 		"system-libaom:media-libs/libaom:untrusted-data"
-		"system-lcms:media-libs/lcms:untrusted-data"				# Processes untrusted ICC profiles from PDFs
+		"system-lcms:media-libs/lcms:untrusted-data"					# Processes untrusted ICC profiles from PDFs
 		"system-libjpeg-turbo:media-libs/libjpeg-turbo:untrusted-data"
 		"system-libpng:media-libs/libpng:untrusted-data"
 		"system-libsecret:app-crypt/libsecret:sensitive-data"
@@ -2446,10 +2446,10 @@ verify_compiler_flags_hardening() {
 		"system-opus:media-libs/opus:untrusted-data"
 		"system-protobuf:dev-libs/protobuf:"
 		"system-re2:dev-libs/re2:sensitive-data,untrusted-data"
-		"system-simdutf:dev-cpp/simdutf:"
+		"system-simdutf:dev-cpp/simdutf:attacks-surface-risk,untrusted-data"
 		"system-snappy:app-arch/snappy:"
 		"system-spirv-tools:dev-util/spirv-tools:"
-		"system-sqlite:dev-db/sqlite:"
+		"system-sqlite:dev-db/sqlite:sensitive-data,untrusted-data"
 		"system-woff2:media-libs/woff2:untrusted-data"
 		"system-zlib:sys-libs/zlib:untrusted-data"
 		"system-zstd:app-arch/zstd:untrusted-data"
