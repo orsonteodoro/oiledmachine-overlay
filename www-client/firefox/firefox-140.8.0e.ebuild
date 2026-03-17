@@ -1396,7 +1396,7 @@ verify_compiler_flags_hardening() {
 	#
 		"unconditional:dev-libs/expat:untrusted-data"
 		"unconditional:dev-libs/glib:attack-surface-risk"
-		"unconditional:dev-libs/nss:sensitive-data"
+		"unconditional:dev-libs/nss:sensitive-data,untrusted-data"
 		"unconditional:dev-libs/nspr:sensitive-data"
 		"unconditional:media-libs/freetype:untrusted-data"
 		"unconditional:media-libs/fontconfig:untrusted-data"

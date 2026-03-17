@@ -2410,7 +2410,7 @@ verify_compiler_flags_hardening() {
 		"unconditional:app-arch/bzip2:untrusted-data"
 		"unconditional:dev-libs/expat:attack-surface-risk"
 		"unconditional:dev-libs/glib:attack-surface-risk"
-		"unconditional:dev-libs/nss:sensitive-data"
+		"unconditional:dev-libs/nss:sensitive-data,untrusted-data"
 		"unconditional:media-libs/mesa:loaded-library,sensitive-data,untrusted-data"
 		"unconditional:net-misc/curl:sensitive-data,untrusted-data"
 		"unconditional:sys-libs/zlib:untrusted-data"
