@@ -2382,7 +2382,6 @@ verify_compiler_flags_hardening() {
 		"screencast:media-video/pipewire:manual,untrusted-data"
 		"selinux:sys-libs/libselinux:manual"
 		"system-double-conversion:dev-libs/double-conversion:manual"
-		"system-libopenjpeg:media-libs/openjpeg:manual,untrusted-data"
 		"system-libxnvctrl:x11-drivers/nvidia-drivers:manual"
 		"system-openh264:media-libs/openh264:manual,untrusted-data"
 		"system-vulkan-memory-allocator:media-libs/VulkanMemoryAllocator:manual"
@@ -2435,6 +2434,7 @@ verify_compiler_flags_hardening() {
 		"system-libaom:media-libs/libaom:untrusted-data"
 		"system-lcms:media-libs/lcms:untrusted-data"					# Processes untrusted ICC profiles from PDFs
 		"system-libjpeg-turbo:media-libs/libjpeg-turbo:untrusted-data"
+		"system-libopenjpeg:media-libs/openjpeg:untrusted-data"
 		"system-libpng:media-libs/libpng:untrusted-data"
 		"system-libsecret:app-crypt/libsecret:sensitive-data"
 		"system-libusb:dev-libs/libusb:attack-surface-risk"
