@@ -1,0 +1,17 @@
+--- a/mojo/public/cpp/bindings/clone_traits.h.orig	2026-03-13 09:54:03.000000000 -0700
++++ b/mojo/public/cpp/bindings/clone_traits.h	2026-03-16 21:56:48.177458639 -0700
+@@ -80,6 +80,14 @@ T Clone(const T& input) {
+   return CloneTraits<T>::Clone(input);
+ }
+ 
++template <>
++struct CloneTraits<std::__bit_const_reference<bool>> {
++  static std::__bit_const_reference<bool> Clone(
++      std::__bit_const_reference<bool> input) {
++    return input;  // it's just a bool proxy, copy is trivial
++  }
++};
++
+ }  // namespace mojo
+ 
+ #endif  // MOJO_PUBLIC_CPP_BINDINGS_CLONE_TRAITS_H_
