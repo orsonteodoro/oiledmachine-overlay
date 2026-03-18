@@ -77,7 +77,7 @@ def main():
     # Generate Desktop file
     installer.process_template(
         Path("chrome/installer/linux/common/desktop.template"),
-        Path(f"out/Release/chromium-browser{channel_suffix}-${abi}.desktop"),
+        Path(f"out/Release/chromium-browser{channel_suffix}-{abi}.desktop"),
         context,
     )
 

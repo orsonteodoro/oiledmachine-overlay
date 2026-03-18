@@ -8089,7 +8089,7 @@ einfo "Skipping expensive load time optimization..."
 	local menu_name=$(get_menu_name)
 
 	local browser_suffix=$(get_browser_suffix)
-	export GENERATE_SUPPORT_ABI=""
+	export GENERATE_SUPPORT_ABI="${ABI}"
 	export GENERATE_SUPPORT_MENU_NAME="${menu_name}"
 	export GENERATE_SUPPORT_SYM_NAME="chromium-browser${browser_suffix}-${ABI}"
 
@@ -8129,7 +8129,7 @@ _src_install() {
 		export CHROME_DESKTOP="chromium-browser${browser_suffix}-${ABI}.desktop"
 		export CHROME_EXEC_NAME="chromium-browser${browser_suffix}-${ABI}"
 		export CHROME_VERSION_EXTRA="${SLOT}"
-		export CHROME_WRAPPER="\$(readlink -f "\$0")"
+		export CHROME_WRAPPER=\$(readlink -f "\$0")
 		export OZONE_AUTO_SESSION=$(ozone_auto_session)
 
 		exec "/usr/libexec/chromium/chromium-launcher.sh" "\$@"
