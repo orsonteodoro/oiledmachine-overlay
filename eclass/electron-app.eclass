@@ -1279,11 +1279,11 @@ _electron-app_verify_compiler_flags_hardening() {
 	# No ebuild available on the oiledmachine-overlay.
 	#
 
-	"unconditional:app-accessibility/at-spi2-core:manual,attack-surface-risk,sensitive-data"	# PII
+	"unconditional:app-accessibility/at-spi2-core:manual,attack-surface-risk,sensitive-data,untrusted-data"		# PII
 	"unconditional:dev-libs/nspr:manual,sensitive-data"
 	"unconditional:media-libs/alsa-lib:manual,attack-surface-risk"
 	"unconditional:net-print/cups:manual,sensitive-data,untrusted-data"
-	"unconditional:sys-apps/dbus:manual,sensitive-data"						# PII, Crown Jewel Keys
+	"unconditional:sys-apps/dbus:manual,sensitive-data"								# PII, Crown Jewel Keys
 
 	#
 	# Hardened-by-default ebuilds available on the oiledmachine-overlay.
