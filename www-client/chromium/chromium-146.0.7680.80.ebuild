@@ -8538,6 +8538,7 @@ ewarn
 # OILEDMACHINE-OVERLAY-TEST: PASSED (interactive) 144.0.7559.132 (20260209) with mold and mdns enabled
 # OILEDMACHINE-OVERLAY-TEST: PASSED (interactive) 144.0.7559.75 (20260216) with ungoogled-chromium and mold
 # OILEDMACHINE-OVERLAY-TEST: PASSED (interactive) 144.0.7559.75 (20260220) with cromite and mold
+# OILEDMACHINE-OVERLAY-TEST: PASSED (interactive) 144.0.7559.80 (20260317) with ungoogled-chromium (146.0.7680.75-1), system-clang 23 (7319544), system-libcxx 23 (7319544), system-rust 1.96.0 (b41f22de2), and mold 2.40.4
 
 # 143.0.7499.192 test results:
 # search engine:  passed
