@@ -5,7 +5,7 @@
 | Fully supported      | Best         | Tested, fully compatible                                                                                 |
 | Mostly supported     | Better       | Tested and partially compatible                                                                          |
 | Partially supported  | Good         | May be tested and partially compatible                                                                   |
-| Limited support      | Good         | Tested but restricted for use (e.g. bootstrapping)                                                       |
+| Limited support      | Good         | Tested but restricted for use for a few select packages (e.g. bootstrapping)                             |
 | Available            | Good to poor | **Not tested**, partially compatible, ebuild may be unfinished, Work in Progress (WIP)                   |
 | Deprecated           | Best to poor | Phased out for removal and may be actively removed, may have security issues                             |
 | Planned              | -            | To be added to maximize interoperability between platforms and app features                              |
@@ -63,8 +63,9 @@ exist in build files.
 | Clang 18                        | Fully supported                       | U24 (18.0)                            |
 | Clang 19                        | Supported                             | D13 (19.0), F41 (19.1.7)              |
 | Clang 20                        | Available                             | F42 (20.1.3)                          |
-| Clang 21                        | Not supported                         |                                       |
-| Clang 22                        | Not supported                         |                                       |
+| Clang 21                        | Available                             |                                       |
+| Clang 22                        | Available                             |                                       |
+| Clang 23                        | Limited support                       |                                       |
 | Cython 0.29.37.1                | Fully supported                       | D12 (0.29.32), U22 (0.29)             |
 | Cython 3.0.12                   | Fully Supported                       | D13 (3.0.11), U24 (3.0.8)             |
 | Cython 3.1.0                    | Fully supported                       |                                       |
@@ -80,7 +81,7 @@ exist in build files.
 | Rust 1.85.0                     | Available                             | D13 (1.85.0)                          |
 | Rust 1.86.0                     | Fully supported                       | F41 (1.86.0), F42 (1.86.0)            |
 | Rust 1.89.0                     | Available                             |                                       |
-| Rust-9999 (1.89.0-nightly)      | Partially supported                   |                                       |
+| Rust-9999 (1.96.0-nightly)      | Limited support                       |                                       |
 
 | `-std=c++<ver>` or CXX_STANDARD | LTS or rolling compiler?         | Compiler status for C++ standard | C++ standard library status for C++ standard |
 | ---                             | ---                              | ---                              | ---                                          |
@@ -191,8 +192,6 @@ Language defaults
 * libstdc++ is the assumed default C++ standard library in this overlay.
   The alternative libc++ as a systemwide default has not been tested for
   these ebuilds.
-* Vendored Clang `22.0.0git` and vendored Rust (`<rust-ver>-dev`) from the
-  chromium-toolchain package are only supported on Chromium for proper Rust SSP.
 * =dev-lang/rust-bin-9999 is recommended for SSP, sanitizers, and as default to
   be used in security-critical packages.
 * rust-bin older supported stable (1.74.0, 1.75.0) and rust-bin latest stable
