@@ -8497,9 +8497,12 @@ ewarn
 einfo "Since the build is done, you may remove ${CHROMIUM_SOURCES_PREFIX} and ${CHROMIUM_TOOLCHAIN_PREFIX} folders."
 ewarn
 ewarn "To avoid startup error, either:"
-ewarn "(1) set --user-data-dir=\${XDG_CONFIG_HOME:-\${HOME}/.config}/chromium in /etc/chromium/chromium.default or"
+ewarn "(1) set CHROMIUM_FLAGS=\"--user-data-dir=\${XDG_CONFIG_HOME:-\${HOME}/.config}/chromium\" in /etc/chromium/chromium.default or"
 ewarn "(2) remove ${HOME}/.config/chromium when switching between flavors (e.g. ungoogled-chromium, Cromite, Chromium)."
 ewarn
+einfo
+einfo "To make incognito default, set CHROMIUM_FLAGS=\"--incognito\" in /etc/chromium/chromium.default"
+einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
