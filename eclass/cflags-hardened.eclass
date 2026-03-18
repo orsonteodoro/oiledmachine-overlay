@@ -1594,8 +1594,8 @@ ewarn
 	fi
 
 	local s
-	if tc-is-clang && [[ "${ARCH}" == "amd64" ]] ; then
-		s=$(clang-major-version)
+	if tc-is-gcc && [[ "${ARCH}" == "amd64" ]] ; then
+		s=$(gcc-major-version)
 		if ! has_version "sys-devel/gcc:${s}[sanitize]" ; then
 ewarn
 ewarn "UBSan with gcc will be soon be required for the oiledmachine-overlay for"
