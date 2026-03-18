@@ -13,6 +13,8 @@
 # The electron-app eclass defines phase functions and utility functions for
 # Electron app packages.
 
+# D11, U20, U22, U24
+
 case ${EAPI:-0} in
 	[78]) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
@@ -88,7 +90,7 @@ ELECTRON_APP_USES_UGC_TEXT=${ELECTRON_APP_USES_UGC_TEXT:-"0"}
 ELECTRON_APP_REQUIRES_MITIGATE_ID_CHECK=${ELECTRON_APP_REQUIRES_MITIGATE_ID_CHECK:-"0"}
 
 # Use the following example to extract the license.
-# unzip -p /var/cache/distfiles/electron-v23.3.13-linux-x64.zip LICENSES.chromium.html > electron-23.3.13-chromium.html
+# unzip -p /var/cache/distfiles/electron-v41.0.3-linux-x64.zip LICENSES.chromium.html > electron-41.0.3-chromium.html
 
 # For Electron 18.2.2 from electron-builder
 # See comments below for details.
@@ -354,13 +356,13 @@ fi
 # See https://www.electronjs.org/docs/tutorial/support#linux for OS min requirements.
 
 # For dependencies, see also
-# https://github.com/chromium/chromium/blob/109.0.5414.74/build/install-build-deps.sh#L230
+# https://github.com/chromium/chromium/blob/145.0.7632.160/build/install-build-deps.py
 
 # Found in Chromium only
 # For optional fonts, see
 # https://github.com/chromium/chromium/blob/master/build/linux/install-chromeos-fonts.py
 #  For specific versions associated with Chromium release, see as base address
-#  https://github.com/chromium/chromium/tree/109.0.5414.74/
+#  https://github.com/chromium/chromium/tree/145.0.7632.160/
 #    chromium/chrome/installer/linux/debian/dist_package_versions.json for
 #      chromium 66.0.3359.181 (electron version v3.0.0 to latest)
 #    chrome/installer/linux/debian/expected_deps_x64 for chromium 49.0.2623.75
@@ -372,68 +374,38 @@ CHROMIUM_DEPEND="
 	app-accessibility/speech-dispatcher
 	dev-db/sqlite:3
 "
+# Use readelf -d <path> | grep 'NEEDED' instead of ldd to obtain list.
+# Place refrences in *.node files in ebuilds instead of eclass unless it is used widely.
 COMMON_DEPEND="
-	${CHROMIUM_DEPEND}
 	${ELECTRON_APP_OPTIONAL_DEPEND}
-	app-accessibility/at-spi2-atk:2
-	app-arch/bzip2
-	dev-libs/atk
+	app-accessibility/at-spi2-core:2
 	dev-libs/expat
-	dev-libs/fribidi
 	dev-libs/glib:2
-	dev-libs/gmp
-	dev-libs/libbsd
-	dev-libs/libffi
-	dev-libs/libpcre:3
-	dev-libs/libtasn1
-	dev-libs/libunistring
-	dev-libs/nettle
 	dev-libs/nspr
 	dev-libs/nss
-	media-gfx/graphite2
 	media-libs/alsa-lib
-	media-libs/fontconfig
-	media-libs/freetype
-	media-libs/harfbuzz[icu(-)]
-	media-libs/libepoxy
-	media-libs/libpng
 	media-libs/mesa[egl(+),gbm(+)]
-	net-dns/libidn2
-	net-libs/gnutls
 	net-print/cups
 	sys-apps/dbus
-	sys-apps/pciutils
-	sys-apps/util-linux
 	sys-devel/gcc[cxx(+)]
-	sys-libs/zlib[minizip]
+	sys-libs/glibc
 	virtual/ttf-fonts
+	virtual/udev
 	x11-libs/cairo
-	x11-libs/gdk-pixbuf:2
 	x11-libs/gtk+:3[wayland?,X?]
-	x11-libs/libdrm
-	x11-libs/libxkbcommon
 	x11-libs/pango
-	x11-libs/pixman
 	wayland? (
 		dev-libs/wayland
 	)
 	X? (
 		x11-libs/libX11
-		x11-libs/libXau
 		x11-libs/libxcb
 		x11-libs/libXcomposite
-		x11-libs/libXcursor
 		x11-libs/libXdamage
-		x11-libs/libXdmcp
 		x11-libs/libXext
 		x11-libs/libXfixes
-		x11-libs/libXi
+		x11-libs/libxkbcommon
 		x11-libs/libXrandr
-		x11-libs/libXrender
-		x11-libs/libXScrnSaver
-		x11-libs/libxshmfence
-		x11-libs/libXtst
-		x11-libs/libXxf86vm
 	)
 "
 
@@ -1190,4 +1162,214 @@ electron-app_set_sandbox_suid() {
 	fi
 
 	fowners "root:root" "${path}"
+}
+
+# @FUNCTION: _electron-app_has_all_hardening_flags
+# @DESCRIPTION:
+# Check each package individually for compiler hardening requirements.
+_electron-app_has_all_hardening_flags() {
+	local pkg="${1}"
+	local F
+	F=(
+		"-O2"
+		"-fno-delete-null-pointer-checks"
+		"-fstrict-flex-arrays=3"
+		"-ftrivial-auto-var-init=zero"
+		"-fzero-call-used-regs=all"
+		"-fwrapv"
+	)
+
+	local found_count=0
+	local f
+	for f in "${F[@]}" ; do
+		if grep -q -e "${f}" "/var/db/pkg/${pkg}-"*"/CFLAGS" 2>/dev/null ; then
+			found_count=$(( ${found_count} + 1 ))
+		fi
+	done
+
+	# Transient execution CPU vulnerability mitigations
+	# ID = Information Disclosure
+	local found_count_id_mitigation=0
+	if [[ "${tags}" =~ "sensitive-data" ]] ; then
+		F=(
+			"-fcf-protection=full"
+			"-fhardened"
+			"-mbranch-protection=pac-ret+bti"
+			"-mbranch-protection=standard"
+			"-mharden-sls=all"
+			"-mretpoline"
+			"-mindirect-branch=thunk"
+			"-mindirect-branch=thunk-extern"
+			"-mindirect-branch=thunk-inline"
+			"-mfunction-return=thunk"
+			"-mfunction-return=thunk-extern"
+			"-mfunction-return=thunk-inline"
+		)
+		for f in "${F[@]}" ; do
+			if grep -q -e "${f}" "/var/db/pkg/${pkg}-"*"/CFLAGS" 2>/dev/null ; then
+				found_count_id_mitigation=$(( ${found_count_id_mitigation} + 1 ))
+			fi
+		done
+	fi
+
+	if [[ "${tags}" =~ "sensitive-data" ]] ; then
+		if (( ${found_count} == 6 && ${found_count_id_mitigation} >= 1 )) ; then
+			return 0
+		fi
+	else
+		if (( ${found_count} == 6 )) ; then
+			return 0
+		fi
+	fi
+	return 1
+}
+
+# @FUNCTION: _electron-app_verify_compiler_flags_hardening
+# @DESCRIPTION:
+# Check compiler hardening requirements common to all network facing Electron
+# apps.
+_electron-app_verify_compiler_flags_hardening() {
+	local L1=(
+	#
+	# Packages that are listed:
+	#
+	# 1.  Security-critical packages
+	# 2.  Processes untrusted-data
+	# 3.  Processes trusted-data
+	# 4.  A shared library loaded during runtime into the following processes - browser, UI, rendering
+	# 5.  Attack surface risks (sandbox escape potential, privilege gain, memory corruption potential)
+	#
+	#	"<use-flag>:<pkg>:<tags>"
+
+
+	#
+	# Understanding the problem of compiler hardening per process, ranked by
+	# compiler hardening triage/remediation rank:
+	#
+	# 1. Main - not sandboxed, privileged, balanced
+	# 2. Renderer - sandboxed, security-critical
+	# 3. Utility - sandboxed, balanced to security-critical
+	# 4. GPU process - sandboxed, balanced
+	# 5. Helpers - sandboxed, balanced
+	#
+
+	#
+	# The best return in security for compiler hardening remediation/triage
+	# for secure messaging:
+	#
+	# 1. nss
+	# 2. libxkbcommon
+	# 3. gtk+3
+	# 4. mesa
+	# 5. glib:2
+	# 6. glibc
+	# 7. libxcb
+	# 8. dbus
+	# 9. at-spi2-core
+	# 10. pango, cairo
+	#
+	# Remediating the top 5 results in 80% security improvement.
+	#
+
+	#
+	# Manual hardening via per-package flags.
+	# No ebuild available on the oiledmachine-overlay.
+	#
+
+	"unconditional:app-accessibility/at-spi2-core:manual,attack-surface-risk,sensitive-data"	# PII
+	"unconditional:dev-libs/nspr:manual,sensitive-data"
+	"unconditional:media-libs/alsa-lib:manual,attack-surface-risk"
+	"unconditional:net-print/cups:manual,sensitive-data,untrusted-data"
+	"unconditional:sys-apps/dbus:manual,sensitive-data"						# PII, Crown Jewel Keys
+
+	#
+	# Hardened-by-default ebuilds available on the oiledmachine-overlay.
+	#
+	# The overlay adds the newer hardening flags which may be missing in the
+	# default hardening compiler settings.
+	#
+	"unconditional:dev-libs/expat:untrusted-data"
+	"unconditional:dev-libs/glib:attack-surface-risk,sensitive-data"
+	"unconditional:dev-libs/nss:attack-surface-risk,sensitive-data,untrusted-data"
+	"unconditional:media-libs/mesa:attack-surface-risk,sensitive-data,untrusted-data"
+	"unconditional:x11-libs/pango:sensitive-data,untrusted-data"
+	"unconditional:x11-libs/cairo:sensitive-data,untrusted-data"
+	"unconditional:x11-libs/gtk+:sensitive-data"
+
+	"wayland:dev-libs/wayland:attack-surface-risk,manual"
+	"X:x11-base/xorg-server:sensitive-data"
+	"X:x11-libs/libxcb:sensitive-data"
+	"X:x11-libs/libxkbcommon:sensitive-data"
+	"X:x11-libs/libX11:sensitive-data"
+	)
+
+	local row
+	for row in "${L1[@]}" ; do
+		local u=$(echo "${row}" | cut -f 1 -d ":")
+		local p=$(echo "${row}" | cut -f 2 -d ":")
+		local tag=$(echo "${row}" | cut -f 3 -d ":")
+		if [[ "${tag}" =~ "manual" ]] ; then
+			if [[ "${u}" == "unconditional" ]] ; then
+ewarn "The package ${p} must be manually security-critical hardened using per-package package.env.  Use the hardening flags from the build log."
+			elif use "${u}" && ! _electron-app_has_all_hardening_flags "${p}" ; then
+ewarn "The package ${p} must be manually security-critical hardened using per-package package.env.  Use the hardening flags from the build log."
+			fi
+		elif [[ "${u}" == "unconditional" ]] ; then
+			local repo=$(cat "/var/db/pkg/${p}-"*"/repository" | sed -e "/oiledmachine-overlay/d" | head -n 1)
+			if ! grep -q -e "oiledmachine-overlay" "${ESYSROOT}/var/db/pkg/${p}-"*"/repository" ; then
+ewarn "The package ${p}::${repo} may not be security-critical hardened.  Use the ${p}::oiledmachine-overlay ebuild instead."
+			fi
+		elif use "${u}" ; then
+			if ! grep -q -e "oiledmachine-overlay" "${ESYSROOT}/var/db/pkg/${p}-"*"/repository" ; then
+				local repo=$(cat "/var/db/pkg/${p}-"*"/repository" | sed -e "/oiledmachine-overlay/d" | head -n 1)
+ewarn "The package ${p}::${repo} may not be security-critical hardened.  Use the ${p}::oiledmachine-overlay ebuild instead."
+			fi
+		fi
+	done
+
+	local L2=(
+		"dev-libs/weston"
+		"gui-liri/liri-shell"
+		"gui-wm/cage"
+		"gui-wm/cagebreak"
+		"gui-wm/dwl"
+		"gui-wm/kiwmi"
+		"gui-wm/hyprland"
+		"gui-wm/labwc"
+		"gui-wm/mangowc"
+		"gui-wm/miracle-wm"
+		"gui-wm/newm"
+		"gui-wm/niri"
+		"gui-wm/river"
+		"gui-wm/sway"
+		"gui-wm/waybox"
+		"gui-wm/wayfire"
+		"kde-plasma/kwin"
+		"x11-wm/enlightenment"
+		"x11-wm/mutter"
+	)
+
+	if use wayland ; then
+		local found_compositor=0
+		local x
+		for x in "${L2[@]}" ; do
+			if has_version "${x}" ; then
+				found_compositor=1
+ewarn "${x} must use security-critical hardened ebuilds or per-package package.env hardening.  Use the hardening flags from the build log."
+			fi
+		done
+
+		if (( ${found_compositor} == 0 )) ; then
+ewarn "Wayland compositors must use security-critical hardened ebuilds or per-package package.env hardening.  Use the hardening flags from the build log."
+		fi
+	fi
+
+ewarn "Packages that interact with ${PN} (e.g. password managers, clipboard managers) must use security-critical hardened ebuilds or per-package package.env hardening.  Use the hardening flags from the build log."
+}
+
+# @FUNCTION: electron-app_pkg_setup
+# @DESCRIPTION:
+# Perform verification or checks
+electron-app_pkg_setup() {
+	_electron-app_verify_compiler_flags_hardening
 }

@@ -167,6 +167,7 @@ pkg_setup() {
 eerror "Rust ${RUST_PV} required for @swc/core"
 		die
 	fi
+	electron-app_pkg_setup
 }
 
 pnpm_unpack_post() {

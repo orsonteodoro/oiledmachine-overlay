@@ -76,6 +76,7 @@ PDEPEND+="
 
 pkg_setup() {
 	npm_pkg_setup
+	electron-app_pkg_setup
 }
 
 get_deps() {
