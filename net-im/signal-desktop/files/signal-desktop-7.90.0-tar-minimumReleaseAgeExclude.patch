@@ -1,9 +1,10 @@
 --- a/pnpm-workspace.yaml.orig	2026-02-18 11:10:06.000000000 -0800
 +++ b/pnpm-workspace.yaml	2026-02-22 20:33:32.239445348 -0800
-@@ -1,2 +1,16 @@
+@@ -1,2 +1,17 @@
  packages:
    - 'packages/*'
 +minimumReleaseAgeExclude:
++  - '@signalapp/libsignal-client'
 +  - '@storybook/core'
 +  - '@storybook/theming'
 +  - ajv

@@ -6,11 +6,11 @@ EAPI=8
 # TODO fork @signalapp/libsignal-client for custom hardening
 
 # To update use:
-# PNPM_UPDATER_PROJECT_ROOT="Signal-Desktop-7.90.0" pnpm_updater_update_locks.sh
+# PNPM_UPDATER_PROJECT_ROOT="Signal-Desktop-8.2.1" pnpm_updater_update_locks.sh
 
 # Ignore if error:
 # Could not detect abi for version ' + target + ' and runtime ' + runtime + '.  Updating "node-abi" might help solve this issue if it is a new release of ' + runtime)
-# https://github.com/signalapp/Signal-Desktop/blob/v7.90.0/CONTRIBUTING.md#known-issues
+# https://github.com/signalapp/Signal-Desktop/blob/v8.2.1/CONTRIBUTING.md#known-issues
 
 MY_PN="Signal-Desktop"
 MY_PN2="Signal"
@@ -36,7 +36,7 @@ ELECTRON_BUILDER_PV="26.0.14"
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
-	ELECTRON_APP_ELECTRON_PV="40.7.0" # Cr 144.0.7559.225, node 24.14.0
+	ELECTRON_APP_ELECTRON_PV="41.0.3" # Cr 146.0.7680.80, node 24.14.0
 else
 	# Upstream's choice
 	ELECTRON_APP_ELECTRON_PV="40.4.1" # Cr 144.0.7559.173, node 24.13.0

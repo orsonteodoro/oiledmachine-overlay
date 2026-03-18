@@ -135,8 +135,8 @@ importers:
         specifier: 3.27.0
         version: 3.27.0(react@18.3.1)
       '@signalapp/libsignal-client':
-        specifier: 0.87.1
-        version: 0.87.1
+        specifier: 0.88.2
+        version: 0.88.2
       '@signalapp/minimask':
         specifier: 1.0.1
         version: 1.0.1
@@ -147,8 +147,8 @@ importers:
         specifier: 2.1.2
         version: 2.1.2
       '@signalapp/ringrtc':
-        specifier: 2.64.1
-        version: 2.64.1
+        specifier: 2.65.2
+        version: 2.65.2
       '@signalapp/sqlcipher':
         specifier: 2.4.4
         version: 2.4.4
@@ -508,8 +508,8 @@ importers:
         specifier: 20.1.2
         version: 20.1.2
       '@signalapp/mock-server':
-        specifier: 15.2.0
-        version: 15.2.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+        specifier: 15.2.3
+        version: 15.2.3(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@storybook/addon-a11y':
         specifier: 8.4.4
         version: 8.4.4(storybook@8.6.17(bufferutil@4.0.9)(prettier@3.7.4)(utf-8-validate@5.0.10))
@@ -724,8 +724,8 @@ importers:
         specifier: 4.3.7
         version: 4.3.7(supports-color@8.1.1)
       electron:
-        specifier: 40.7.0
-        version: 40.7.0
+        specifier: 41.0.3
+        version: 41.0.3
       electron-builder:
         specifier: 26.0.14
         version: 26.0.14(electron-builder-squirrel-windows@26.0.14)
@@ -3460,14 +3460,14 @@ packages:
   '@signalapp/libsignal-client@0.76.7':
     resolution: {integrity: sha512-iGWTlFkko7IKlm96Iy91Wz5sIN089nj02ifOk6BWtLzeVi0kFaNj+jK26Sl1JRXy/VfXevcYtiOivOg43BPqpg==}
 
-  '@signalapp/libsignal-client@0.87.1':
-    resolution: {integrity: sha512-rQZ1JWTa82fVqO1D7a1mQresw8cIqwT7bUvzfGpSRiXO1Gvm5U6eiUW/9nPmTT0MMelGXU/4fDx9jXF/r4hoCw==}
+  '@signalapp/libsignal-client@0.88.2':
+    resolution: {integrity: sha512-/jehfZz8F1lG7Yv4g9EFCBIbItpfOOPszBlnAZH1ubk5iOWPpAmeIXbriQ0nho8YgHQejfQAP3OSEr2K8lrwFQ==}
 
   '@signalapp/minimask@1.0.1':
     resolution: {integrity: sha512-QAwo0joA60urTNbW9RIz6vLKQjy+jdVtH7cvY0wD9PVooD46MAjE40MLssp4xUJrph91n2XvtJ3pbEUDrmT2AA==}
 
-  '@signalapp/mock-server@15.2.0':
-    resolution: {integrity: sha512-LblOdSmv9jeR2HVOaX8kvbdw95z3+T2Pc2gxLlCriIbSo5XUd9u7NFqk7mbcphIfAb6xwchWxCIhPBglVUwnxQ==}
+  '@signalapp/mock-server@15.2.3':
+    resolution: {integrity: sha512-/mohwJK5X50Y8pYPRNCG3Noi6VNtVstEnVmEbbL01XLz+2GH0iKa8e1F1XDkqYVfu13Gl8U7o6k/oYo4NP57sA==}
 
   '@signalapp/parchment-cjs@3.0.1':
     resolution: {integrity: sha512-hSBMQ1M7wE4GcC8ZeNtvpJF+DAJg3eIRRf1SiHS3I3Algav/sgJJNm6HIYm6muHuK7IJmuEjkL3ILSXgmu0RfQ==}
@@ -3476,8 +3476,8 @@ packages:
     resolution: {integrity: sha512-y2sgqdivlrG41J4Zvt/82xtH/PZjDlgItqlD2g/Cv3ZbjlR6cGhTNXbfNygCJB8nXj+C7I28pjt1Zm3k0pv2mg==}
     engines: {npm: '>=8.2.3'}
 
-  '@signalapp/ringrtc@2.64.1':
-    resolution: {integrity: sha512-vQTBWTgukSuZ6yvzUJYQa++s7842D2yssAp/HLMqlqnTxViVE2dvR9urk7srFbdSbmMytmYXhjRgk6ZrvrgRMQ==}
+  '@signalapp/ringrtc@2.65.2':
+    resolution: {integrity: sha512-/gjEnGpDZre7V6Q23oN+5tphXRBHs+LLJT2eVyZmL6oNhjg2q26kE8x/dYBpLPKvhN6vlALjv2tuRRqgThyBvQ==}
     hasBin: true
 
   '@signalapp/sqlcipher@2.4.4':
@@ -4880,8 +4880,8 @@ packages:
   brace-expansion@2.0.2:
     resolution: {integrity: sha512-Jt0vHyM+jmUBqojB7E1NIYadt0vI0Qxjxd2TErW94wDz+E2LAm5vKMXXwg6ZZBTHPuUlDgQHKXvjGBdfcF1ZDQ==}
 
-  brace-expansion@5.0.3:
-    resolution: {integrity: sha512-fy6KJm2RawA5RcHkLa1z/ScpBeA762UF9KmZQxwIbDtRJrgLzM10depAiEQ+CXYcoiqW1/m96OAAoke2nE9EeA==}
+  brace-expansion@5.0.4:
+    resolution: {integrity: sha512-h+DEnpVvxmfVefa4jFbCf5HdH5YMDXRsmKflpf1pILZWRFlTbJpxeU55nJl4Smt5HQaGzg1o6RHFPJaOqnmBDg==}
     engines: {node: 18 || 20 || >=22}
 
   braces@3.0.3:
@@ -4991,8 +4991,8 @@ packages:
     resolution: {integrity: sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==}
     engines: {node: '>=10'}
 
-  caniuse-lite@1.0.30001772:
-    resolution: {integrity: sha512-mIwLZICj+ntVTw4BT2zfp+yu/AqV6GMKfJVJMx3MwPxs+uk/uj2GLl2dH8LQbjiLDX66amCga5nKFyDgRR43kg==}
+  caniuse-lite@1.0.30001777:
+    resolution: {integrity: sha512-tmN+fJxroPndC74efCdp12j+0rk0RHwV5Jwa1zWaFVyw2ZxAuPeG8ZgWC3Wz7uSjT3qMRQ5XHZ4COgQmsCMJAQ==}
 
   card-validator@10.0.3:
     resolution: {integrity: sha512-xOEDsK3hojV0OIpmrR64eZGpngnOqRDEP20O+WSRtvjLSW6nyekW4i2N9SzYg679uFO3RyHcFHxb+mml5tXc4A==}
@@ -5795,8 +5795,8 @@ packages:
   electron-publish@26.0.13:
     resolution: {integrity: sha512-O5hfHSwli5cegQ4JS3Dp0dZcheex6UCRE/qYyRQvhB6DhSwojiwTnAGEuQCJXc8K8Zxz2lku5Du3VwYHf8d5Lw==}
 
-  electron-to-chromium@1.5.302:
-    resolution: {integrity: sha512-sM6HAN2LyK82IyPBpznDRqlTQAtuSaO+ShzFiWTvoMJLHyZ+Y39r8VMfHzwbU8MVBzQ4Wdn85+wlZl2TLGIlwg==}
+  electron-to-chromium@1.5.307:
+    resolution: {integrity: sha512-5z3uFKBWjiNR44nFcYdkcXjKMbg5KXNdciu7mhTPo9tB7NbqSNP2sSnGR+fqknZSCwKkBN+oxiiajWs4dT6ORg==}
 
   electron-window@0.8.1:
     resolution: {integrity: sha512-W1i9LfnZJozk3MXE8VgsL2E5wOUHSgyCvcg1H2vQQjj+gqhO9lVudgY3z3SF7LJAmi+0vy3CJkbMqsynWB49EA==}
@@ -5805,8 +5805,8 @@ packages:
     resolution: {integrity: sha512-bO3y10YikuUwUuDUQRM4KfwNkKhnpVO7IPdbsrejwN9/AABJzzTQ4GeHwyzNSrVO+tEH3/Np255a3sVZpZDjvg==}
     engines: {node: '>=8.0.0'}
 
-  electron@40.7.0:
-    resolution: {integrity: sha512-oQe76S/3V1rcb0+i45hAxnCH8udkRZSaHUNwglzNAEKbB94LSJ1qwbFo8+uRc2UsYZgCqSIMRcyX40GyOkD+Xw==}
+  electron@41.0.3:
+    resolution: {integrity: sha512-IDjx8liW1q+r7+MOip5W1Eo1eMwJzVObmYrd9yz2dPCkS7XlgLq3qPVMR80TpiROFp73iY30kTzMdpA6fEVs3A==}
     engines: {node: '>= 12.20.55'}
     hasBin: true
 
@@ -8272,8 +8272,8 @@ packages:
     resolution: {integrity: sha512-RM5oyBy45cLEoHqCeh+MNuFAxO0vTFBLskvQbOKnEE7YTTSN4tbN8QWDIPQ6L+WvKsB/qLEGpYe2ZZ9d4W9OIQ==}
     engines: {node: '>=8'}
 
-  node-releases@2.0.27:
-    resolution: {integrity: sha512-nmh3lCkYZ3grZvqcCH+fjmQ7X+H0OeZgP40OierEaAptX4XofMh5kwNbWh7lBduUzCcV/8kZ+NDLCwm2iorIlA==}
+  node-releases@2.0.36:
+    resolution: {integrity: sha512-TdC8FSgHz8Mwtw9g5L4gR/Sh9XhSP/0DEkQxfEFXOpiul5IiHgHan2VhYYb6agDSfp4KuvltmGApc8HMgUrIkA==}
 
   nop@1.0.0:
     resolution: {integrity: sha512-XdkOuXGx0DTwlqb0DWTcDqelgU/F3YyZ+PTRaecpDVpkYskcnh3OeUYKfvjcRQ2D1diTIGxi/a3eHVjW5yPupQ==}
@@ -9463,8 +9463,8 @@ packages:
     engines: {node: '>=14.0.0'}
     hasBin: true
 
-  sax@1.5.0:
-    resolution: {integrity: sha512-21IYA3Q5cQf089Z6tgaUTr7lDAyzoTPx5HRtbhsME8Udispad8dC/+sziTNugOEx54ilvatQ9YCzl4KQLPcRHA==}
+  sax@1.6.0:
+    resolution: {integrity: sha512-6R3J5M4AcbtLUdZmRv2SygeVaM7IhrLXu9BmnOGmmACak8fiUtOsYNWUS4uK7upbmHIBbLBeFeI//477BKLBzA==}
     engines: {node: '>=11.0.0'}
 
   scheduler@0.23.2:
@@ -10009,8 +10009,8 @@ packages:
       uglify-js:
         optional: true
 
-  terser-webpack-plugin@5.3.16:
-    resolution: {integrity: sha512-h9oBFCWrq78NyWWVcSwZarJkZ01c2AyGrzs1crmHZO3QUg9D61Wu4NPjBy69n7JqylFF5y+CsUZYmYEIZ3mR+Q==}
+  terser-webpack-plugin@5.3.17:
+    resolution: {integrity: sha512-YR7PtUp6GMU91BgSJmlaX/rS2lGDbAF7D+Wtq7hRO+MiljNmodYvqslzCFiYVAgW+Qoaaia/QUIP4lGXufjdZw==}
     engines: {node: '>= 10.13.0'}
     peerDependencies:
       '@swc/core': '*'
@@ -14018,7 +14018,7 @@ snapshots:
       type-fest: 4.26.1
       uuid: 11.0.2
 
-  '@signalapp/libsignal-client@0.87.1':
+  '@signalapp/libsignal-client@0.88.2':
     dependencies:
       node-gyp-build: 4.8.4
       type-fest: 4.26.1
@@ -14026,7 +14026,7 @@ snapshots:
 
   '@signalapp/minimask@1.0.1': {}
 
-  '@signalapp/mock-server@15.2.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)':
+  '@signalapp/mock-server@15.2.3(bufferutil@4.0.9)(utf-8-validate@5.0.10)':
     dependencies:
       '@indutny/parallel-prettier': 3.0.0(prettier@3.7.4)
       '@signalapp/libsignal-client': 0.76.7
@@ -14058,7 +14058,7 @@ snapshots:
       lodash: 4.17.23
       quill-delta: 5.1.0
 
-  '@signalapp/ringrtc@2.64.1':
+  '@signalapp/ringrtc@2.65.2':
     dependencies:
       https-proxy-agent: 7.0.6
       tar: 7.5.10
@@ -15764,7 +15764,7 @@ snapshots:
     dependencies:
       balanced-match: 1.0.2
 
-  brace-expansion@5.0.3:
+  brace-expansion@5.0.4:
     dependencies:
       balanced-match: 4.0.4
 
@@ -15779,9 +15779,9 @@ snapshots:
   browserslist@4.28.1:
     dependencies:
       baseline-browser-mapping: 2.10.0
-      caniuse-lite: 1.0.30001772
-      electron-to-chromium: 1.5.302
-      node-releases: 2.0.27
+      caniuse-lite: 1.0.30001777
+      electron-to-chromium: 1.5.307
+      node-releases: 2.0.36
       update-browserslist-db: 1.2.3(browserslist@4.28.1)
 
   bser@2.1.1:
@@ -15812,7 +15812,7 @@ snapshots:
   builder-util-runtime@9.3.2:
     dependencies:
       debug: 4.3.7(supports-color@8.1.1)
-      sax: 1.5.0
+      sax: 1.6.0
     transitivePeerDependencies:
       - supports-color
 
@@ -15933,7 +15933,7 @@ snapshots:
 
   camelcase@6.3.0: {}
 
-  caniuse-lite@1.0.30001772: {}
+  caniuse-lite@1.0.30001777: {}
 
   card-validator@10.0.3:
     dependencies:
@@ -16790,7 +16790,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  electron-to-chromium@1.5.302: {}
+  electron-to-chromium@1.5.307: {}
 
   electron-window@0.8.1:
     dependencies:
@@ -16808,7 +16808,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  electron@40.7.0:
+  electron@41.0.3:
     dependencies:
       '@electron/get': 2.0.3
       '@types/node': 24.10.9
@@ -19655,7 +19655,7 @@ snapshots:
 
   minimatch@10.2.1:
     dependencies:
-      brace-expansion: 5.0.3
+      brace-expansion: 5.0.4
 
   minimatch@9.0.9:
     dependencies:
@@ -19849,7 +19849,7 @@ snapshots:
     dependencies:
       process-on-spawn: 1.1.0
 
-  node-releases@2.0.27: {}
+  node-releases@2.0.36: {}
 
   nop@1.0.0: {}
 
@@ -20761,7 +20761,7 @@ snapshots:
   react-devtools@6.0.1(bufferutil@4.0.9)(utf-8-validate@5.0.10):
     dependencies:
       cross-spawn: 6.0.6
-      electron: 40.7.0
+      electron: 41.0.3
       internal-ip: 6.2.0
       minimist: 1.2.8
       react-devtools-core: 6.0.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
@@ -21229,7 +21229,7 @@ snapshots:
     optionalDependencies:
       '@parcel/watcher': 2.5.1
 
-  sax@1.5.0: {}
+  sax@1.6.0: {}
 
   scheduler@0.23.2:
     dependencies:
@@ -21835,7 +21835,7 @@ snapshots:
       css-what: 6.1.0
       csso: 5.0.5
       picocolors: 1.1.1
-      sax: 1.5.0
+      sax: 1.6.0
 
   swc-loader@0.2.6(@swc/core@1.10.16(@swc/helpers@0.5.15))(webpack@5.104.1):
     dependencies:
@@ -21921,12 +21921,11 @@ snapshots:
       '@swc/core': 1.10.16(@swc/helpers@0.5.15)
       esbuild: 0.25.9
 
-  terser-webpack-plugin@5.3.16(@swc/core@1.10.16(@swc/helpers@0.5.15))(esbuild@0.25.9)(webpack@5.104.1):
+  terser-webpack-plugin@5.3.17(@swc/core@1.10.16(@swc/helpers@0.5.15))(esbuild@0.25.9)(webpack@5.104.1):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       jest-worker: 27.5.1
       schema-utils: 4.3.3
-      serialize-javascript: 7.0.3
       terser: 5.39.0
       webpack: 5.104.1(@swc/core@1.10.16(@swc/helpers@0.5.15))(esbuild@0.25.9)(webpack-cli@5.1.4)
     optionalDependencies:
@@ -22525,7 +22524,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 4.3.3
       tapable: 2.3.0
-      terser-webpack-plugin: 5.3.16(@swc/core@1.10.16(@swc/helpers@0.5.15))(esbuild@0.25.9)(webpack@5.104.1)
+      terser-webpack-plugin: 5.3.17(@swc/core@1.10.16(@swc/helpers@0.5.15))(esbuild@0.25.9)(webpack@5.104.1)
       watchpack: 2.5.1
       webpack-sources: 3.3.4
     optionalDependencies:

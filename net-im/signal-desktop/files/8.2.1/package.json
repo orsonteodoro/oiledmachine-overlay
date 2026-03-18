@@ -6,7 +6,7 @@
   "description": "Private messaging from your desktop",
   "desktopName": "signal.desktop",
   "repository": "https://github.com/signalapp/Signal-Desktop.git",
-  "version": "8.0.0",
+  "version": "8.2.1",
   "license": "AGPL-3.0-only",
   "author": {
     "name": "Signal Messenger, LLC",
@@ -136,11 +136,11 @@
     "@react-aria/utils": "3.25.3",
     "@react-spring/web": "10.0.3",
     "@react-types/shared": "3.27.0",
-    "@signalapp/libsignal-client": "0.87.1",
+    "@signalapp/libsignal-client": "0.88.2",
     "@signalapp/minimask": "1.0.1",
     "@signalapp/mute-state-change": "workspace:1.0.0",
     "@signalapp/quill-cjs": "2.1.2",
-    "@signalapp/ringrtc": "2.64.1",
+    "@signalapp/ringrtc": "2.65.2",
     "@signalapp/sqlcipher": "2.4.4",
     "@signalapp/windows-ucv": "1.0.1",
     "@tanstack/react-virtual": "3.11.2",
@@ -262,7 +262,7 @@
     "@octokit/request": "8.4.1",
     "@octokit/request-error": "5.1.1",
     "@octokit/rest": "20.1.2",
-    "@signalapp/mock-server": "15.2.0",
+    "@signalapp/mock-server": "15.2.3",
     "@storybook/addon-a11y": "8.4.4",
     "@storybook/addon-actions": "8.4.4",
     "@storybook/addon-controls": "8.4.4",
@@ -334,7 +334,7 @@
     "csv-parse": "5.5.6",
     "danger": "13.0.4",
     "debug": "4.3.7",
-    "electron": "40.7.0",
+    "electron": "41.0.3",
     "electron-builder": "26.0.14",
     "electron-mocha": "13.0.1",
     "endanger": "7.0.4",
@@ -363,7 +363,6 @@
     "npm-run-all": "4.1.5",
     "on-headers": "1.1.0",
     "p-limit": "3.1.0",
-    "patch-package": "8.0.0",
     "pixelmatch": "5.3.0",
     "pngjs": "7.0.0",
     "postcss": "8.5.3",
@@ -563,6 +562,11 @@
           "url": ""
         }
       ],
+      "releaseInfo": {
+        "vendor": {
+          "minGlibcVersion": "2.34"
+        }
+      },
       "extraResources": [
         {
           "from": "build",
@@ -581,7 +585,7 @@
         "libasound2",
         "libpulse0",
         "libxss1",
-        "libc6 (>= 2.31)",
+        "libc6 (>= 2.34)",
         "libgtk-3-0",
         "libgbm1",
         "libx11-xcb1"
