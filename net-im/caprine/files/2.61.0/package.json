@@ -54,7 +54,7 @@
 		"@types/facebook-locales": "^1.0.2",
 		"@types/lodash": "^4.14.202",
 		"del-cli": "^5.1.0",
-		"electron": "^40.7.0",
+		"electron": "^41.0.3",
 		"electron-builder": "^24.12.0",
 		"husky": "^9.0.11",
 		"minimatch": "^9.0.9",
@@ -63,7 +63,7 @@
 		"serialize-javascript": "^7.0.4",
 		"stylelint": "^14.10.0",
 		"stylelint-config-xo": "^0.22.0",
-		"tar": "^7.5.9",
+		"tar": "^7.5.11",
 		"tmp": "^0.2.4",
 		"typescript": "^5.3.3",
 		"xo": "^0.57.0"
