@@ -2133,6 +2133,7 @@ verify_compiler_flags_hardening() {
 	# default hardening compiler settings.
 	#
 
+	"unconditional:app-accessibility/at-spi2-core:sensitive-data,untrusted-data"			# PII
 	"unconditional:dev-db/sqlite:sensitive-data,untrusted-data"
 	"unconditional:dev-libs/icu:attack-surface-risk,untrusted-data,sensitive-data"			# PII
 	"unconditional:net-libs/libsoup:untrusted-data"

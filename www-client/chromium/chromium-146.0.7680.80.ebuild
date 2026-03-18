@@ -2376,7 +2376,8 @@ verify_compiler_flags_hardening() {
 
 		'!headless:media-libs/alsa-lib:manual,loaded-library'
 		'!headless:media-libs/libglvnd:manual'
-		"accessibility:app-accessibility/at-spi2-core:manual,loaded-library"
+		'!headless:x11-libs/libxkbcommon:manual,sensitive-data'
+		"accessibility:app-accessibility/at-spi2-core:manual,loaded-library,sensitive-data"	# PII
 		"cups:net-print/cups:manual,loaded-library,sensitive-data,untrusted-data"
 		"ffmpeg-chromium:media-video/ffmpeg-chromium:manual,untrusted-data"
 		"screencast:media-video/pipewire:manual,untrusted-data"
@@ -2386,9 +2387,10 @@ verify_compiler_flags_hardening() {
 		"system-openh264:media-libs/openh264:manual,untrusted-data"
 		"system-vulkan-memory-allocator:media-libs/VulkanMemoryAllocator:manual"
 		"unconditional:dev-libs/nspr:manual,sensitive-data"
-		"unconditional:sys-apps/dbus:manual,loaded-library,sensitive-data"		# PII
+		"unconditional:sys-apps/dbus:manual,loaded-library,sensitive-data"			# PII
 		"vaapi:media-libs/libva:manual,loaded-library,untrusted-data"
 		"wayland:dev-libs/wayland:manual"
+		'X:x11-libs/libxcb:manual,sensitive-data'
 
 	#
 	# Hardened-by-default ebuilds available on the oiledmachine-overlay.
@@ -2427,12 +2429,12 @@ verify_compiler_flags_hardening() {
 		"system-flatbuffers:dev-libs/flatbuffers:"
 		"system-fontconfig:media-libs/fontconfig:untrusted-data"
 		"system-freetype:media-libs/freetype:untrusted-data"
-		"system-harfbuzz:media-libs/harfbuzz:loaded-library,sensitive-data"		# PII
+		"system-harfbuzz:media-libs/harfbuzz:loaded-library,sensitive-data"			# PII
 		"system-highway:dev-cpp/highway:"
-		"system-icu:dev-libs/icu:sensitive-data"					# PII
+		"system-icu:dev-libs/icu:sensitive-data"						# PII
 		"system-jsoncpp:dev-libs/jsoncpp:untrusted-data"
 		"system-libaom:media-libs/libaom:untrusted-data"
-		"system-lcms:media-libs/lcms:untrusted-data"					# Processes untrusted ICC profiles from PDFs
+		"system-lcms:media-libs/lcms:untrusted-data"						# Processes untrusted ICC profiles from PDFs
 		"system-libjpeg-turbo:media-libs/libjpeg-turbo:untrusted-data"
 		"system-libopenjpeg:media-libs/openjpeg:untrusted-data"
 		"system-libpng:media-libs/libpng:untrusted-data"
@@ -2446,7 +2448,7 @@ verify_compiler_flags_hardening() {
 		"system-opus:media-libs/opus:untrusted-data"
 		"system-protobuf:dev-libs/protobuf:"
 		"system-re2:dev-libs/re2:sensitive-data,untrusted-data"
-		"system-simdutf:dev-cpp/simdutf:attacks-surface-risk,untrusted-data"
+		"system-simdutf:dev-cpp/simdutf:attack-surface-risk,untrusted-data"
 		"system-snappy:app-arch/snappy:"
 		"system-spirv-tools:dev-util/spirv-tools:"
 		"system-sqlite:dev-db/sqlite:sensitive-data,untrusted-data"
