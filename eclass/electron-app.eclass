@@ -286,10 +286,11 @@ REQUIRED_USE+="
 	)
 "
 
+ELECTRON_APP_IUSE_OPTIONAL=" "
 ELECTRON_APP_OPTIONAL_DEPEND=" "
 ELECTRON_APP_CR_OPTIONAL_DEPEND=" "
 if [[ "${ELECTRON_APP_FEATURE_APPINDICATOR}" == "1" ]] ; then
-	IUSE+=" app-indicator"
+	ELECTRON_APP_IUSE_OPTIONAL+=" app-indicator"
 	ELECTRON_APP_OPTIONAL_DEPEND+="
 		app-indicator? (
 			dev-libs/libappindicator:3
@@ -298,7 +299,7 @@ if [[ "${ELECTRON_APP_FEATURE_APPINDICATOR}" == "1" ]] ; then
 fi
 
 if [[ "${ELECTRON_APP_FEATURE_GLOBAL_MENU_BAR}" == "1" ]] ; then
-	IUSE+=" global-menu-bar"
+	ELECTRON_APP_IUSE_OPTIONAL+=" global-menu-bar"
 	ELECTRON_APP_OPTIONAL_DEPEND+="
 		global-menu-bar? (
 			dev-libs/libdbusmenu
@@ -307,7 +308,7 @@ if [[ "${ELECTRON_APP_FEATURE_GLOBAL_MENU_BAR}" == "1" ]] ; then
 fi
 
 if [[ "${ELECTRON_APP_FEATURE_GNOME_KEYRING}" == "1" ]] ; then
-	IUSE+=" gnome-keyring"
+	ELECTRON_APP_IUSE_OPTIONAL+=" gnome-keyring"
 	ELECTRON_APP_CR_OPTIONAL_DEPEND+="
 		gnome-keyring? (
 			gnome-base/gnome-keyring[pam]
@@ -316,7 +317,7 @@ if [[ "${ELECTRON_APP_FEATURE_GNOME_KEYRING}" == "1" ]] ; then
 fi
 
 if [[ "${ELECTRON_APP_FEATURE_LIBSECRET}" == "1" ]] ; then
-	IUSE+=" libsecret"
+	ELECTRON_APP_IUSE_OPTIONAL+=" libsecret"
 	ELECTRON_APP_CR_OPTIONAL_DEPEND+="
 		libsecret? (
 			app-crypt/libsecret
@@ -325,7 +326,7 @@ if [[ "${ELECTRON_APP_FEATURE_LIBSECRET}" == "1" ]] ; then
 fi
 
 if [[ "${ELECTRON_APP_FEATURE_PULSEAUDIO}" == "1" ]] ; then
-	IUSE+=" pulseaudio"
+	ELECTRON_APP_IUSE_OPTIONAL+=" pulseaudio"
 	ELECTRON_APP_CR_OPTIONAL_DEPEND+="
 		pulseaudio? (
 			media-sound/pulseaudio
@@ -334,7 +335,7 @@ if [[ "${ELECTRON_APP_FEATURE_PULSEAUDIO}" == "1" ]] ; then
 fi
 
 if [[ "${ELECTRON_APP_FEATURE_UNITY}" == "1" ]] ; then
-	IUSE+=" unity"
+	ELECTRON_APP_IUSE_OPTIONAL+=" unity"
 	ELECTRON_APP_OPTIONAL_DEPEND+="
 		unity? (
 			dev-libs/libunity
@@ -344,7 +345,7 @@ fi
 
 # Add if the app uses video or jpeg images
 if [[ "${ELECTRON_APP_FEATURE_VAAPI}" == "1" ]] ; then
-	IUSE+=" vaapi"
+	ELECTRON_APP_IUSE_OPTIONAL+=" vaapi"
 	ELECTRON_APP_OPTIONAL_DEPEND+="
 		vaapi? (
 			media-libs/libva[drm(+),X?,wayland?]
@@ -352,6 +353,8 @@ if [[ "${ELECTRON_APP_FEATURE_VAAPI}" == "1" ]] ; then
 		)
 	"
 fi
+
+#IUSE+=" ${ELECTRON_APP_IUSE_OPTIONAL}"
 
 # See https://www.electronjs.org/docs/tutorial/support#linux for OS min requirements.
 
@@ -376,8 +379,8 @@ CHROMIUM_DEPEND="
 "
 # Use readelf -d <path> | grep 'NEEDED' instead of ldd to obtain list.
 # Place refrences in *.node files in ebuilds instead of eclass unless it is used widely.
+# TODO review ELECTRON_APP_OPTIONAL_DEPEND, CHROMIUM_DEPEND:
 COMMON_DEPEND="
-	${ELECTRON_APP_OPTIONAL_DEPEND}
 	app-accessibility/at-spi2-core:2
 	dev-libs/expat
 	dev-libs/glib:2
@@ -1370,6 +1373,7 @@ ewarn "Packages that interact with ${PN} (e.g. password managers, clipboard mana
 # @FUNCTION: electron-app_pkg_setup
 # @DESCRIPTION:
 # Perform verification or checks
+# It must be manually called in pkg_setup().
 electron-app_pkg_setup() {
 	_electron-app_verify_compiler_flags_hardening
 }
