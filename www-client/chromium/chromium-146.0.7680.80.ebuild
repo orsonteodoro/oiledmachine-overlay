@@ -8497,11 +8497,16 @@ ewarn
 einfo "Since the build is done, you may remove ${CHROMIUM_SOURCES_PREFIX} and ${CHROMIUM_TOOLCHAIN_PREFIX} folders."
 ewarn
 ewarn "To avoid startup error, either:"
-ewarn "(1) set CHROMIUM_FLAGS=\"--user-data-dir=\${XDG_CONFIG_HOME:-\${HOME}/.config}/chromium\" in /etc/chromium/chromium.default or"
-ewarn "(2) remove ${HOME}/.config/chromium when switching between flavors (e.g. ungoogled-chromium, Cromite, Chromium)."
-ewarn
 einfo
-einfo "To make incognito default, set CHROMIUM_FLAGS=\"--incognito\" in /etc/chromium/chromium.default"
+ewarn "(1) set CHROMIUM_FLAGS=\"--user-data-dir=\${XDG_CONFIG_HOME:-\${HOME}/.config}/chromium\" in /etc/chromium/default"
+ewarn "(2) remove ${HOME}/.config/chromium when switching between flavors (e.g. ungoogled-chromium, Cromite, Chromium)"
+ewarn
+	local browser_suffix=$(get_browser_suffix)
+einfo
+einfo "To make incognito default, either:"
+einfo
+einfo "(1) set CHROMIUM_FLAGS=\"--incognito\" in /etc/chromium/default"
+einfo "(2) create a wrapper script and add CHROMIUM_FLAGS=\"--incognito\" and call chromium${browser_suffix} \$@"
 einfo
 }
 
