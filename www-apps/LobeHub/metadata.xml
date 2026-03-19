@@ -56,6 +56,12 @@
 
   Use least privileges for database so run as lobehub_user.
 
+
+  Environment variables during emerge:
+
+  LOBEHUB_DATABASE_AUTO_MIGRATE - Automatically migrate the database.
+  Valid values:  1 - migrate (default), 0 - skip migrate
+
   -->
   ]]>
   <upstream>

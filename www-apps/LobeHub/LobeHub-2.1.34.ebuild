@@ -992,6 +992,12 @@ pkg_preinst() {
 }
 
 pkg_postinst() {
+	if [[ "${LOBEHUB_DATABASE_AUTO_MIGRATE:-1}" == "1" ]] ; then
+einfo "Running db:migrate"
+		cd "/opt/${MY_PN2}"
+		npm run "db:migrate"
+	fi
+
 	xdg_pkg_postinst
 einfo
 einfo "The documentation for /etc/conf.d/lobehub can be found at"
@@ -1016,15 +1022,6 @@ pkg_postrm() {
 	xdg_pkg_postrm
 	if [[ -z "${REPLACED_BY_VERSION}" ]] ; then
 		rm -rf "/opt/${MY_PN2}"
-	fi
-}
-
-pkg_config() {
-ehco "Migrate DB?"
-	read -r answer
-	cd "/opt//${MY_PN2}"
-	if [[ "${answer,,}" =~ "y" ]] ; then
-		ewarn "npm run db:migrate"
 	fi
 }
 
