@@ -1257,16 +1257,14 @@ ewarn "Downgrading MAKEOPTS=-j${njobs} to prevent lock-up"
 # SSP - Code Execution, Privilege Escalation
 #
 check_kernel_flags() {
+	# The kstack offset mitigation has been weaponized for Data Tampering in CVE-2025-38236
+	# It has a better Faustian deal by enabling it.
 	CONFIG_CHECK="
 		HARDENED_USERCOPY
 		INIT_ON_ALLOC_DEFAULT_ON
 		INIT_ON_FREE_DEFAULT_ON
 		RANDOMIZE_BASE
-
-	# The mitigation has been weaponized for Data Tampering in CVE-2025-38236
-	# It has a better Faustian deal by enabling it.
 		RANDOMIZE_KSTACK_OFFSET
-
 		RELOCATABLE
 		SECCOMP
 		STACKPROTECTOR
