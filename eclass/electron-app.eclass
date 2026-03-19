@@ -1243,6 +1243,7 @@ _electron-app_has_all_hardening_flags() {
 # Retpoline - Information Disclosure
 # seccomp - Code Execution, Privilege Escalation
 # SSP - Code Execution, Privilege Escalation
+# YAMA - Sandbox Escape, Privilege Escalation, Information Disclosure
 #
 _electron-app_verify_chromium_kernel_config_security() {
 	if use kernel_linux ; then
@@ -1286,10 +1287,10 @@ ewarn "Missing kernel .config file."
 			STACKPROTECTOR_STRONG
 			STRICT_KERNEL_RWX
 
-			~SYSFS
 			MULTIUSER
-			~SECURITY
-			~SECURITY_YAMA
+			SECURITY
+			SECURITY_YAMA
+			SYSFS
 
 			~TRANSPARENT_HUGEPAGE
 		"

@@ -2629,6 +2629,7 @@ ewarn "-Oshit is missing in cflags for build speed optimized build.  See metadat
 # Retpoline - Information Disclosure
 # seccomp - Code Execution, Privilege Escalation
 # SSP - Code Execution, Privilege Escalation
+# YAMA - Sandbox Escape, Privilege Escalation, Information Disclosure
 #
 	if use kernel_linux ; then
 		linux-info_pkg_setup
@@ -2668,10 +2669,10 @@ ewarn "Missing kernel .config file."
 			STACKPROTECTOR_STRONG
 			STRICT_KERNEL_RWX
 
-			~SYSFS
 			MULTIUSER
-			~SECURITY
-			~SECURITY_YAMA
+			SECURITY
+			SECURITY_YAMA
+			SYSFS
 
 			~TRANSPARENT_HUGEPAGE
 		"
