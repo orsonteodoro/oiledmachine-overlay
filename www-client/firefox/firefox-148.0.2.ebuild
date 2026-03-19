@@ -1244,10 +1244,10 @@ check_kernel_flags() {
 	if [[ -e "${config_path}" ]] ; then
 		local v=$(grep -r -e "CONFIG_DEFAULT_MMAP_MIN_ADDR" "${config_path}" | cut -f 2 -d "=")
 		[[ -z "${v}" ]] && v=0
-		if (( ${is_64bit} == 1 && ${v} < 65536 )) ; then
+		if (( ${is_64bit} == 1 && ${v} != 65536 )) ; then
 ewarn "CONFIG_DEFAULT_MMAP_MIN_ADDR should be 65536 for 64-bit"
 		fi
-		if (( ${is_64bit} == 0 && ${v} > 32768 )) ; then
+		if (( ${is_64bit} == 0 && ${v} != 32768 )) ; then
 ewarn "CONFIG_DEFAULT_MMAP_MIN_ADDR should be 32768 for 32-bit"
 		fi
 	else
