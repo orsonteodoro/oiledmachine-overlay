@@ -208,28 +208,41 @@ append_all() {
 	append-ldflags "${@}"
 }
 
+# Mitigations:
+# PTI - Information Disclosure
+# Retpoline - Information Disclosure
 check_kernel_flags() {
-	# Kernel 2.10 \
-	CONFIG_CHECK="
-		CONFIG_PAGE_TABLE_ISOLATION
-		CONFIG_RETPOLINE
-	"
-	# Kernel 6.9 \
-	CONFIG_CHECK="
-		CONFIG_MITIGATION_PAGE_TABLE_ISOLATION
-		CONFIG_MITIGATION_RETPOLINE
-	"
-	WARNING_SECCOMP="CONFIG_PAGE_TABLE_ISOLATION is required for Meltdown mitigation."
-	WARNING_SECCOMP="CONFIG_MITIGATION_PAGE_TABLE_ISOLATION is required for Meltdown mitigation."
-	WARNING_SECCOMP="CONFIG_MITIGATION_RETPOLINE is required for Spectre mitigation."
-	WARNING_SECCOMP="CONFIG_RETPOLINE is required for Spectre mitigation."
-	check_extra_config
+	if ver_test "${KV_MAJOR}.${KV_MINOR}" "-lt" "6.9" ; then
+		# Kernel 2.10 \
+		CONFIG_CHECK="
+			CONFIG_PAGE_TABLE_ISOLATION
+			CONFIG_RETPOLINE
+		"
+		WARNING_PAGE_TABLE_ISOLATION="CONFIG_PAGE_TABLE_ISOLATION is required for Meltdown mitigation."
+		WARNING_RETPOLINE="CONFIG_RETPOLINE is required for Spectre mitigation."
+		check_extra_config
+	else
+		# Kernel 6.9 \
+		CONFIG_CHECK="
+			CONFIG_MITIGATION_PAGE_TABLE_ISOLATION
+			CONFIG_MITIGATION_RETPOLINE
+		"
+		WARNING_MITIGATION_PAGE_TABLE_ISOLATION="CONFIG_MITIGATION_PAGE_TABLE_ISOLATION is required for Meltdown mitigation."
+		WARNING_MITIGATION_RETPOLINE="CONFIG_MITIGATION_RETPOLINE is required for Spectre mitigation."
+		check_extra_config
+	fi
 }
 
+# Mitigations:
+# YAMA - Privilege Escalation
 check_kernel_config() {
 	if use kernel_linux ; then
 		linux-info_pkg_setup
-		chromium_suid_sandbox_check_kernel_config
+
+einfo "Kernel version:  ${KV_MAJOR}.${KV_MINOR}"
+einfo "CONFIG_PATH being reviewed:  $(linux_config_path)"
+
+	# YAMA is a Chromium requirement.
 		CONFIG_CHECK="
 			~SYSFS
 			~MULTIUSER
@@ -239,7 +252,7 @@ check_kernel_config() {
 		WARNING_SYSFS="CONFIG_SYSFS could be added for ptrace sandbox protection"
 		WARNING_MULTIUSER="CONFIG_MULTIUSER could be added for ptrace sandbox protection"
 		WARNING_SECURITY="CONFIG_SECURITY could be added for ptrace sandbox protection"
-		WARNING_SECURITY_YAMA="CONFIG_SECURITY_YAMA could be added for ptrace sandbox protection to mitigate against credential theft"
+		WARNING_SECURITY_YAMA="CONFIG_SECURITY_YAMA could be added for ptrace sandbox protection to mitigate against credential theft or sandbox escape"
 		check_extra_config
 
 		if ! linux_config_exists ; then
