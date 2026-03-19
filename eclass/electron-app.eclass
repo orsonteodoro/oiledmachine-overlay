@@ -1283,10 +1283,12 @@ ewarn "Missing kernel .config file."
 			STACKPROTECTOR
 			STACKPROTECTOR_STRONG
 			STRICT_KERNEL_RWX
+
 			~SYSFS
 			MULTIUSER
 			~SECURITY
 			~SECURITY_YAMA
+
 			~TRANSPARENT_HUGEPAGE
 		"
 
@@ -1308,7 +1310,6 @@ ewarn "Missing kernel .config file."
 				MITIGATION_RETPOLINE
 			"
 		fi
-
 
 		WARNING_INIT_ON_ALLOC_DEFAULT_ON="CONFIG_INIT_ON_ALLOC_DEFAULT_ON is required to mitigate against full system compromise."
 		WARNING_INIT_ON_FREE_DEFAULT_ON="CONFIG_INIT_ON_FREE_DEFAULT_ON is required to mitigate against full system compromise."
@@ -1334,7 +1335,7 @@ ewarn "Missing kernel .config file."
 		if linux_chkconfig_present "SECURITY_YAMA" ; then
 			local lsm=$(linux_chkconfig_string "LSM")
 			if ! [[ "${lsm}" =~ "yama" ]] ; then
-ewarn "Missing yama in CONFIG_LSM.  Add yama to CONFIG_LSM for ptrace sandbox protection."
+ewarn "CONFIG_LSM should add yama for ptrace sandbox protection and sandbox escape mitigation."
 			fi
 		fi
 
