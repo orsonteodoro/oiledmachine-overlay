@@ -20,7 +20,7 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
-inherit chromium-2 desktop
+inherit chromium-2 desktop linux-info
 
 #
 # Hidden Rust dependency:
@@ -1227,6 +1227,85 @@ _electron-app_has_all_hardening_flags() {
 	return 1
 }
 
+# @FUNCTION: _electron-app_verify_chromium_kernel_config_security
+# @DESCRIPTION:
+# Checks if the kernel config for standard security settings.
+# PTI - ID
+# Retpoline - ID
+# YAMA - PE, ID
+# ID - Information Disclosure
+# PE - Privilege Escalation
+_electron-app_verify_chromium_kernel_config_security() {
+	if use kernel_linux ; then
+		linux-info_pkg_setup
+
+einfo "Kernel version:  ${KV_MAJOR}.${KV_MINOR}"
+einfo "CONFIG_PATH being reviewed:  $(linux_config_path)"
+
+	        if ! linux_config_src_exists ; then
+eerror "Missing .config in /usr/src/linux"
+			die
+	        fi
+
+		if ver_test "${KV_MAJOR}.${KV_MINOR}" "-lt" "6.9" ; then
+			# Kernel 2.10 \
+			CONFIG_CHECK="
+				PAGE_TABLE_ISOLATION
+				RETPOLINE
+			"
+			WARNING_PAGE_TABLE_ISOLATION="CONFIG_PAGE_TABLE_ISOLATION is required for Meltdown mitigation."
+			WARNING_RETPOLINE="CONFIG_RETPOLINE is required for Spectre mitigation."
+			check_extra_config
+		else
+			# Kernel 6.9 \
+			CONFIG_CHECK="
+				MITIGATION_PAGE_TABLE_ISOLATION
+				MITIGATION_RETPOLINE
+			"
+			WARNING_MITIGATION_PAGE_TABLE_ISOLATION="CONFIG_MITIGATION_PAGE_TABLE_ISOLATION is required for Meltdown mitigation."
+			WARNING_MITIGATION_RETPOLINE="CONFIG_MITIGATION_RETPOLINE is required for Spectre mitigation."
+			check_extra_config
+		fi
+
+	# YAMA is a Chromium requirement.
+		CONFIG_CHECK="
+			~SYSFS
+			~MULTIUSER
+			~SECURITY
+			~SECURITY_YAMA
+		"
+		WARNING_SYSFS="CONFIG_SYSFS could be added for ptrace sandbox protection"
+		WARNING_MULTIUSER="CONFIG_MULTIUSER could be added for ptrace sandbox protection"
+		WARNING_SECURITY="CONFIG_SECURITY could be added for ptrace sandbox protection"
+		WARNING_SECURITY_YAMA="CONFIG_SECURITY_YAMA could be added for ptrace sandbox protection to mitigate against credential theft or sandbox escape"
+		check_extra_config
+
+		if ! linux_config_exists ; then
+ewarn "Missing kernel .config file."
+		fi
+
+		if linux_chkconfig_present "SECURITY_YAMA" ; then
+			local lsm=$(linux_chkconfig_string LSM)
+			if [[ "${lsm}" =~ "yama" ]] ; then
+				:
+			else
+ewarn "Missing yama in CONFIG_LSM.  Add yama to CONFIG_LSM for ptrace sandbox protection."
+			fi
+		fi
+
+	# The history of the commit can be found on
+	# https://community.intel.com/t5/Blogs/Tech-Innovation/Client/A-Journey-for-Landing-The-V8-Heap-Layout-Visualization-Tool/post/1368855
+	# I've seen this first in the nodejs repo but never understood the benefit.
+	# The same article discusses the unintended consequences.
+		CONFIG_CHECK="
+			~TRANSPARENT_HUGEPAGE
+		"
+		WARNING_TRANSPARENT_HUGEPAGE="CONFIG_TRANSPARENT_HUGEPAGE could be enabled for V8 [JavaScript engine] memory access time reduction.  For webservers, music production, realtime, it should be kept disabled."
+		check_extra_config
+	# In the current build files in the chromium project, they had went against their original decision about supporting THP.
+	fi
+}
+
 # @FUNCTION: _electron-app_verify_compiler_flags_hardening
 # @DESCRIPTION:
 # Check compiler hardening requirements common to all network facing Electron
@@ -1375,5 +1454,6 @@ ewarn "Packages that interact with ${PN} (e.g. password managers, clipboard mana
 # Perform verification or checks
 # It must be manually called in pkg_setup().
 electron-app_pkg_setup() {
+	_electron-app_verify_chromium_kernel_config_security
 	_electron-app_verify_compiler_flags_hardening
 }
