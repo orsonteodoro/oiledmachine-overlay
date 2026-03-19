@@ -208,31 +208,6 @@ append_all() {
 	append-ldflags "${@}"
 }
 
-# Mitigations:
-# PTI - Information Disclosure
-# Retpoline - Information Disclosure
-check_kernel_flags() {
-	if ver_test "${KV_MAJOR}.${KV_MINOR}" "-lt" "6.9" ; then
-		# Kernel 2.10 \
-		CONFIG_CHECK="
-			CONFIG_PAGE_TABLE_ISOLATION
-			CONFIG_RETPOLINE
-		"
-		WARNING_PAGE_TABLE_ISOLATION="CONFIG_PAGE_TABLE_ISOLATION is required for Meltdown mitigation."
-		WARNING_RETPOLINE="CONFIG_RETPOLINE is required for Spectre mitigation."
-		check_extra_config
-	else
-		# Kernel 6.9 \
-		CONFIG_CHECK="
-			CONFIG_MITIGATION_PAGE_TABLE_ISOLATION
-			CONFIG_MITIGATION_RETPOLINE
-		"
-		WARNING_MITIGATION_PAGE_TABLE_ISOLATION="CONFIG_MITIGATION_PAGE_TABLE_ISOLATION is required for Meltdown mitigation."
-		WARNING_MITIGATION_RETPOLINE="CONFIG_MITIGATION_RETPOLINE is required for Spectre mitigation."
-		check_extra_config
-	fi
-}
-
 #
 # Verify kernel mitigations:
 #
@@ -257,7 +232,6 @@ einfo "CONFIG_PATH being reviewed:  $(linux_config_path)"
 
 	        if ! linux_config_src_exists ; then
 eerror "Missing .config in /usr/src/linux"
-			die
 	        fi
 
 		if ! linux_config_exists ; then
@@ -276,42 +250,44 @@ ewarn "Missing kernel .config file."
 	#
 	# YAMA is a Chromium requirement.
 	#
+	# We do not make the config options a hard requirement because not all arches support it.
+	#
 		CONFIG_CHECK="
-			HARDENED_USERCOPY
-			INIT_ON_ALLOC_DEFAULT_ON
-			INIT_ON_FREE_DEFAULT_ON
-			RANDOMIZE_BASE
-			RANDOMIZE_KSTACK_OFFSET
-			RELOCATABLE
-			SECCOMP
-			STACKPROTECTOR
-			STACKPROTECTOR_STRONG
-			STRICT_KERNEL_RWX
+			~HARDENED_USERCOPY
+			~INIT_ON_ALLOC_DEFAULT_ON
+			~INIT_ON_FREE_DEFAULT_ON
+			~RANDOMIZE_BASE
+			~RANDOMIZE_KSTACK_OFFSET
+			~RELOCATABLE
+			~SECCOMP
+			~STACKPROTECTOR
+			~STACKPROTECTOR_STRONG
+			~STRICT_KERNEL_RWX
 
-			MULTIUSER
-			SECURITY
-			SECURITY_YAMA
-			SYSFS
+			~MULTIUSER
+			~SECURITY
+			~SECURITY_YAMA
+			~SYSFS
 
 			~TRANSPARENT_HUGEPAGE
 		"
 
 		if use amd64 ; then
 			CONFIG_CHECK+="
-				RANDOMIZE_MEMORY
+				~RANDOMIZE_MEMORY
 			"
 		fi
 		if ver_test "${KV_MAJOR}.${KV_MINOR}" "-lt" "6.9" ; then
 		# Kernel 2.10
 			CONFIG_CHECK+="
-				PAGE_TABLE_ISOLATION
-				RETPOLINE
+				~PAGE_TABLE_ISOLATION
+				~RETPOLINE
 			"
 		else
 		# Kernel 6.9
 			CONFIG_CHECK+="
-				MITIGATION_PAGE_TABLE_ISOLATION
-				MITIGATION_RETPOLINE
+				~MITIGATION_PAGE_TABLE_ISOLATION
+				~MITIGATION_RETPOLINE
 			"
 		fi
 

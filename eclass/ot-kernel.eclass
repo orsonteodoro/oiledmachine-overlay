@@ -5845,6 +5845,7 @@ eerror
 		ot-kernel_unset_configopt "CONFIG_MODIFY_LDT_SYSCALL"
 		ot-kernel_unset_configopt "CONFIG_RELOCATABLE"
 		ot-kernel_unset_configopt "CONFIG_RANDOMIZE_BASE"
+		ot-kernel_unset_configopt "CONFIG_RANDOMIZE_KSTACK_OFFSET"
 		ot-kernel_unset_configopt "CONFIG_RANDOMIZE_KSTACK_OFFSET_DEFAULT"
 		if [[ "${arch}" == "s390" ]] ; then
 			ot-kernel_unset_configopt "CONFIG_EXPOLINE"
@@ -5865,6 +5866,7 @@ eerror
 		ot-kernel_y_configopt "CONFIG_SLAB_MERGE_DEFAULT"
 		ot-kernel_unset_configopt "CONFIG_STACKPROTECTOR"
 		ot-kernel_unset_configopt "CONFIG_STACKPROTECTOR_STRONG"
+		ot-kernel_unset_configopt "CONFIG_STRICT_KERNEL_RWX"
 		ot-kernel_unset_configopt "CONFIG_CC_HAS_ZERO_CALL_USED_REGS"
 		ot-kernel_unset_configopt "CONFIG_ZERO_CALL_USED_REGS"
 		ot-kernel_unset_configopt "CONFIG_SCHED_CORE"
@@ -6118,6 +6120,7 @@ eerror
 		ot-kernel_y_configopt "CONFIG_MODIFY_LDT_SYSCALL"
 		ot-kernel_y_configopt "CONFIG_RELOCATABLE"
 		ot-kernel_y_configopt "CONFIG_RANDOMIZE_BASE"
+		ot-kernel_y_configopt "CONFIG_RANDOMIZE_KSTACK_OFFSET"
 		ot-kernel_unset_configopt "CONFIG_RANDOMIZE_KSTACK_OFFSET_DEFAULT"
 		if [[ "${arch}" == "s390" ]] ; then
 			ot-kernel_y_configopt "CONFIG_EXPOLINE"
@@ -6134,6 +6137,21 @@ eerror
 		ot-kernel_y_configopt "CONFIG_SLAB_MERGE_DEFAULT"
 		ot-kernel_y_configopt "CONFIG_STACKPROTECTOR"
 		ot-kernel_y_configopt "CONFIG_STACKPROTECTOR_STRONG"
+		if [[ \
+			   "${arch}" == "arm" \
+			|| "${arch}" == "arm64" \
+			|| "${arch}" == "parisc" \
+			|| "${arch}" == "parisc64" \
+			|| "${arch}" == "powerpc" \
+			|| "${arch}" == "riscv" \
+			|| "${arch}" == "s390" \
+			|| "${arch}" == "x86" \
+			|| "${arch}" == "x86_64" \
+		]]  ; then
+			ot-kernel_y_configopt "CONFIG_STRICT_KERNEL_RWX"
+		else
+			ot-kernel_unset_configopt "CONFIG_STRICT_KERNEL_RWX"
+		fi
 		if [[ $(test-flags-CC "-fzero-call-used-regs=used-gpr") == "-fzero-call-used-regs=used-gpr" ]] ; then
 			ot-kernel_y_configopt "CONFIG_CC_HAS_ZERO_CALL_USED_REGS"
 			ot-kernel_y_configopt "CONFIG_ZERO_CALL_USED_REGS"
@@ -6555,6 +6573,7 @@ ewarn
 		ot-kernel_unset_configopt "CONFIG_MODIFY_LDT_SYSCALL"
 		ot-kernel_y_configopt "CONFIG_RELOCATABLE"
 		ot-kernel_y_configopt "CONFIG_RANDOMIZE_BASE"
+		ot-kernel_y_configopt "CONFIG_RANDOMIZE_KSTACK_OFFSET"
 		ot-kernel_y_configopt "CONFIG_RANDOMIZE_KSTACK_OFFSET_DEFAULT"
 		if [[ "${arch}" == "s390" ]] ; then
 			ot-kernel_y_configopt "CONFIG_EXPOLINE"
@@ -6585,6 +6604,7 @@ eerror
 		ot-kernel_y_configopt "CONFIG_SLAB_FREELIST_RANDOM"
 		ot-kernel_y_configopt "CONFIG_STACKPROTECTOR"
 		ot-kernel_y_configopt "CONFIG_STACKPROTECTOR_STRONG"
+		ot-kernel_y_configopt "CONFIG_STRICT_KERNEL_RWX"
 		if [[ $(test-flags-CC "-fzero-call-used-regs=used-gpr") == "-fzero-call-used-regs=used-gpr" ]] ; then
 			ot-kernel_y_configopt "CONFIG_CC_HAS_ZERO_CALL_USED_REGS"
 			ot-kernel_y_configopt "CONFIG_ZERO_CALL_USED_REGS"

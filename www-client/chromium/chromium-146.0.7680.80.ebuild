@@ -2639,7 +2639,6 @@ einfo "CONFIG_PATH being reviewed:  $(linux_config_path)"
 
 	        if ! linux_config_src_exists ; then
 eerror "Missing .config in /usr/src/linux"
-			die
 	        fi
 
 		if ! linux_config_exists ; then
@@ -2657,41 +2656,43 @@ ewarn "Missing kernel .config file."
 	# The same article discusses the unintended consequences.
 	# In the current build files, they had went against their original decision.
 	#
+	# We do not make config options a hard requirement because not all arches support them.
+	#
 		CONFIG_CHECK="
-			HARDENED_USERCOPY
-			INIT_ON_ALLOC_DEFAULT_ON
-			INIT_ON_FREE_DEFAULT_ON
-			RANDOMIZE_BASE
-			RANDOMIZE_KSTACK_OFFSET
-			RELOCATABLE
-			SECCOMP
-			STACKPROTECTOR
-			STACKPROTECTOR_STRONG
-			STRICT_KERNEL_RWX
+			~HARDENED_USERCOPY
+			~INIT_ON_ALLOC_DEFAULT_ON
+			~INIT_ON_FREE_DEFAULT_ON
+			~RANDOMIZE_BASE
+			~RANDOMIZE_KSTACK_OFFSET
+			~RELOCATABLE
+			~SECCOMP
+			~STACKPROTECTOR
+			~STACKPROTECTOR_STRONG
+			~STRICT_KERNEL_RWX
 
-			MULTIUSER
-			SECURITY
-			SECURITY_YAMA
-			SYSFS
+			~MULTIUSER
+			~SECURITY
+			~SECURITY_YAMA
+			~SYSFS
 
 			~TRANSPARENT_HUGEPAGE
 		"
 		if use amd64 ; then
 			CONFIG_CHECK+="
-				RANDOMIZE_MEMORY
+				~RANDOMIZE_MEMORY
 			"
 		fi
 		if ver_test "${KV_MAJOR}.${KV_MINOR}" "-lt" "6.9" ; then
 		# Kernel 2.10
 			CONFIG_CHECK+="
-				PAGE_TABLE_ISOLATION
-				RETPOLINE
+				~PAGE_TABLE_ISOLATION
+				~RETPOLINE
 			"
 		else
 		# Kernel 6.9
 			CONFIG_CHECK+="
-				MITIGATION_PAGE_TABLE_ISOLATION
-				MITIGATION_RETPOLINE
+				~MITIGATION_PAGE_TABLE_ISOLATION
+				~MITIGATION_RETPOLINE
 			"
 		fi
 
