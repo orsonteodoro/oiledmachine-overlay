@@ -1299,27 +1299,27 @@ ewarn "Missing kernel .config file."
 				PAGE_TABLE_ISOLATION
 				RETPOLINE
 			"
-			WARNING_PAGE_TABLE_ISOLATION="CONFIG_PAGE_TABLE_ISOLATION is required for Meltdown mitigation."
-			WARNING_RETPOLINE="CONFIG_RETPOLINE is required for Spectre mitigation."
 		else
 	# Kernel 6.9
 			CONFIG_CHECK+="
 				MITIGATION_PAGE_TABLE_ISOLATION
 				MITIGATION_RETPOLINE
 			"
-			WARNING_MITIGATION_PAGE_TABLE_ISOLATION="CONFIG_MITIGATION_PAGE_TABLE_ISOLATION is required for Meltdown mitigation."
-			WARNING_MITIGATION_RETPOLINE="CONFIG_MITIGATION_RETPOLINE is required for Spectre mitigation."
 		fi
 
 
 		WARNING_INIT_ON_ALLOC_DEFAULT_ON="CONFIG_INIT_ON_ALLOC_DEFAULT_ON is required to mitigate against full system compromise."
 		WARNING_INIT_ON_FREE_DEFAULT_ON="CONFIG_INIT_ON_FREE_DEFAULT_ON is required to mitigate against full system compromise."
 		WARNING_HARDENED_USERCOPY="CONFIG_HARDENED_USERCOPY is required to mitigate against full system compromise."
+		WARNING_MITIGATION_PAGE_TABLE_ISOLATION="CONFIG_MITIGATION_PAGE_TABLE_ISOLATION is required for Meltdown mitigation or exfiltration mitigation."
+		WARNING_MITIGATION_RETPOLINE="CONFIG_MITIGATION_RETPOLINE is required for Spectre mitigation or exfiltration mitigation."
 		WARNING_MULTIUSER="CONFIG_MULTIUSER could be added for ptrace sandbox protection"
+		WARNING_PAGE_TABLE_ISOLATION="CONFIG_PAGE_TABLE_ISOLATION is required for Meltdown mitigation or exfiltration mitigation."
 		WARNING_RANDOMIZE_BASE="CONFIG_RANDOMIZE_BASE is required to mitigate against full system compromise."
 		WARNING_RANDOMIZE_KSTACK_OFFSET="CONFIG_RANDOMIZE_KSTACK_OFFSET is required to mitigate against sandbox escape."
 		WARNING_RANDOMIZE_MEMORY="CONFIG_RANDOMIZE_MEMORY is required to mitigate against full system compromise."
 		WARNING_RANDOMIZE_RELOCATABLE="CONFIG_RANDOMIZE_BASE is required to mitigate against full system compromise."
+		WARNING_RETPOLINE="CONFIG_RETPOLINE is required for Spectre mitigation or exfiltration mitigation."
 		WARNING_SECCOMP="CONFIG_SECCOMP is required system will be unable to play DRM-protected content or not sandbox correctly."
 		WARNING_SECURITY="CONFIG_SECURITY could be added for ptrace sandbox protection"
 		WARNING_SECURITY_YAMA="CONFIG_SECURITY_YAMA could be added for ptrace sandbox protection to mitigate against credential theft or sandbox escape"
