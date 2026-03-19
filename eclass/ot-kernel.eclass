@@ -5795,6 +5795,7 @@ eerror
 	# or adds more noise to the pipeline.
 	# CFI and SCS handled later
 		ot-kernel_y_configopt "CONFIG_COMPAT_BRK"
+		ot-kernel_set_configopt "CONFIG_DEFAULT_MMAP_MIN_ADDR" "0"
 		ot-kernel_unset_configopt "CONFIG_FORTIFY_SOURCE"
 		ot-kernel_disable_gentoo_self_protection
 		ot-kernel_unset_configopt "CONFIG_HARDENED_USERCOPY"
@@ -5868,6 +5869,7 @@ eerror
 		ot-kernel_unset_configopt "CONFIG_STACKPROTECTOR_STRONG"
 		ot-kernel_unset_configopt "CONFIG_STRICT_KERNEL_RWX"
 		ot-kernel_unset_configopt "CONFIG_CC_HAS_ZERO_CALL_USED_REGS"
+
 		ot-kernel_unset_configopt "CONFIG_ZERO_CALL_USED_REGS"
 		ot-kernel_unset_configopt "CONFIG_SCHED_CORE"
 		if ver_test "${KV_MAJOR_MINOR}" "-ge" "4.14" ; then
@@ -6051,6 +6053,7 @@ eerror
 	# Resets back to upstream defaults.
 
 		ot-kernel_y_configopt "CONFIG_COMPAT_BRK"
+		ot-kernel_set_configopt "CONFIG_DEFAULT_MMAP_MIN_ADDR" "4096"
 		ot-kernel_unset_configopt "CONFIG_FORTIFY_SOURCE"
 		ot-kernel_disable_gentoo_self_protection
 		ot-kernel_unset_configopt "CONFIG_HARDENED_USERCOPY"
@@ -6413,6 +6416,35 @@ ewarn
 		fi
 
 		ot-kernel_unset_configopt "CONFIG_COMPAT_BRK"
+
+		if \
+			[[ \
+				   "${arch}" == "alpha" \
+				|| "${arch}" == "arm64" \
+				|| "${arch}" == "sparc64" \
+				|| "${arch}" == "parisc64" \
+				|| "${arch}" == "x86_64" \
+			]] \
+				|| \
+			( [[ "${arch}" == "loong" ]] && grep -q -e "^CONFIG_64BIT=y" "${BUILD_DIR}/.config" ) \
+				|| \
+			( [[ "${arch}" == "mips" ]] && grep -q -e "^CONFIG_64BIT=y" "${BUILD_DIR}/.config" ) \
+				|| \
+			( [[ "${arch}" == "parisc" ]] && grep -q -e "^CONFIG_64BIT=y" "${BUILD_DIR}/.config" ) \
+				|| \
+			( [[ "${arch}" == "powerpc" ]] && grep -q -e "^CONFIG_64BIT=y" "${BUILD_DIR}/.config" ) \
+				|| \
+			( [[ "${arch}" == "riscv" ]] && grep -q -e "^CONFIG_64BIT=y" "${BUILD_DIR}/.config" ) \
+				|| \
+			( [[ "${arch}" == "s390" ]] && grep -q -e "^CONFIG_64BIT=y" "${BUILD_DIR}/.config" ) \
+				|| \
+			( [[ "${arch}" == "x86" ]] && grep -q -e "^CONFIG_X86_64=y" "${BUILD_DIR}/.config" ) \
+		; then
+			ot-kernel_set_configopt "CONFIG_DEFAULT_MMAP_MIN_ADDR" "65536"
+		else
+			ot-kernel_set_configopt "CONFIG_DEFAULT_MMAP_MIN_ADDR" "32768"
+		fi
+
 		ot-kernel_y_configopt "CONFIG_FORTIFY_SOURCE"
 		ot-kernel_disable_gentoo_self_protection
 		ot-kernel_y_configopt "CONFIG_HARDENED_USERCOPY"
