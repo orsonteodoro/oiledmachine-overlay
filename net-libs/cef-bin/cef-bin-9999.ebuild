@@ -327,7 +327,7 @@ ewarn "Missing yama in CONFIG_LSM.  Add yama to CONFIG_LSM for ptrace sandbox pr
 
 		local config_path=$(linux_config_path)
 		local is_64bit=$(tc-get-ptr-size)
-		is_64bit=$(( ${is_64bit} == 8 : 1 : 0 ))
+		is_64bit=$(( ${is_64bit} == 8 ? 1 : 0 ))
 		if [[ -e "${config_path}" ]] ; then
 			local v=$(grep -e "CONFIG_DEFAULT_MMAP_MIN_ADDR" "${config_path}" | cut -f 2 -d "=")
 			[[ -z "${v}" ]] && v=0
