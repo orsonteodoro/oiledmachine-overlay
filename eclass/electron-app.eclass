@@ -1236,6 +1236,8 @@ _electron-app_has_all_hardening_flags() {
 # ALSR - Code Reuse, Privilege Escalation, Memory Corruption
 # Hardened user copy - Heap Overflow, Code Execution, Information Disclosure, Denial of Service
 # Init on free / init on alloc - Use After Free
+# Kernel stack offset randomization - Sandbox Escape, Privilege Escalation
+# MMAP minimum address - Privilege Escalation, Sandbox Escape
 # NX bit - Code Execution
 # PTI - Information Disclosure
 # Retpoline - Information Disclosure
