@@ -233,8 +233,21 @@ check_kernel_flags() {
 	fi
 }
 
-# Mitigations:
+#
+# Verify kernel mitigations:
+#
+# ALSR - Code Reuse, Privilege Escalation, Memory Corruption
+# Hardened user copy - Heap Overflow, Code Execution, Information Disclosure, Denial of Service
+# Init on free / init on alloc - Use After Free
+# Kernel stack offset randomization - Sandbox Escape, Privilege Escalation
+# MMAP minimum address - Privilege Escalation, Sandbox Escape
+# NX bit - Code Execution
+# PTI - Information Disclosure
+# Retpoline - Information Disclosure
+# seccomp - Code Execution, Privilege Escalation
+# SSP - Code Execution, Privilege Escalation
 # YAMA - Privilege Escalation
+#
 check_kernel_config() {
 	if use kernel_linux ; then
 		linux-info_pkg_setup
@@ -242,22 +255,88 @@ check_kernel_config() {
 einfo "Kernel version:  ${KV_MAJOR}.${KV_MINOR}"
 einfo "CONFIG_PATH being reviewed:  $(linux_config_path)"
 
-	# YAMA is a Chromium requirement.
-		CONFIG_CHECK="
-			~SYSFS
-			~MULTIUSER
-			~SECURITY
-			~SECURITY_YAMA
-		"
-		WARNING_SYSFS="CONFIG_SYSFS could be added for ptrace sandbox protection"
-		WARNING_MULTIUSER="CONFIG_MULTIUSER could be added for ptrace sandbox protection"
-		WARNING_SECURITY="CONFIG_SECURITY could be added for ptrace sandbox protection"
-		WARNING_SECURITY_YAMA="CONFIG_SECURITY_YAMA could be added for ptrace sandbox protection to mitigate against credential theft or sandbox escape"
-		check_extra_config
+	        if ! linux_config_src_exists ; then
+eerror "Missing .config in /usr/src/linux"
+			die
+	        fi
 
 		if ! linux_config_exists ; then
 ewarn "Missing kernel .config file."
 		fi
+
+	#
+	# The kstack offset mitigation has been weaponized for Data Tampering in CVE-2025-38236
+	# It has a better Faustian deal by enabling it.
+	#
+	# The history of the commit can be found on
+	# https://community.intel.com/t5/Blogs/Tech-Innovation/Client/A-Journey-for-Landing-The-V8-Heap-Layout-Visualization-Tool/post/1368855
+	# I've seen this first in the nodejs repo but never understood the benefit.
+	# The same article discusses the unintended consequences.
+	# In the current build files in the chromium project, they had went against their original decision about supporting THP.
+	#
+	# YAMA is a Chromium requirement.
+	#
+		CONFIG_CHECK="
+			HARDENED_USERCOPY
+			INIT_ON_ALLOC_DEFAULT_ON
+			INIT_ON_FREE_DEFAULT_ON
+			RANDOMIZE_BASE
+			RANDOMIZE_KSTACK_OFFSET
+			RELOCATABLE
+			SECCOMP
+			STACKPROTECTOR
+			STACKPROTECTOR_STRONG
+			STRICT_KERNEL_RWX
+
+			~SYSFS
+			MULTIUSER
+			~SECURITY
+			~SECURITY_YAMA
+
+			~TRANSPARENT_HUGEPAGE
+		"
+
+		if use amd64 ; then
+			CONFIG_CHECK+="
+				RANDOMIZE_MEMORY
+			"
+		fi
+		if ver_test "${KV_MAJOR}.${KV_MINOR}" "-lt" "6.9" ; then
+		# Kernel 2.10
+			CONFIG_CHECK+="
+				PAGE_TABLE_ISOLATION
+				RETPOLINE
+			"
+		else
+		# Kernel 6.9
+			CONFIG_CHECK+="
+				MITIGATION_PAGE_TABLE_ISOLATION
+				MITIGATION_RETPOLINE
+			"
+		fi
+
+		WARNING_INIT_ON_ALLOC_DEFAULT_ON="CONFIG_INIT_ON_ALLOC_DEFAULT_ON is required to mitigate against full system compromise."
+		WARNING_INIT_ON_FREE_DEFAULT_ON="CONFIG_INIT_ON_FREE_DEFAULT_ON is required to mitigate against full system compromise."
+		WARNING_HARDENED_USERCOPY="CONFIG_HARDENED_USERCOPY is required to mitigate against full system compromise."
+		WARNING_MITIGATION_PAGE_TABLE_ISOLATION="CONFIG_MITIGATION_PAGE_TABLE_ISOLATION is required for Meltdown mitigation or exfiltration mitigation."
+		WARNING_MITIGATION_RETPOLINE="CONFIG_MITIGATION_RETPOLINE is required for Spectre mitigation or exfiltration mitigation."
+		WARNING_MULTIUSER="CONFIG_MULTIUSER could be added for ptrace sandbox protection."
+		WARNING_PAGE_TABLE_ISOLATION="CONFIG_PAGE_TABLE_ISOLATION is required for Meltdown mitigation or exfiltration mitigation."
+		WARNING_RANDOMIZE_BASE="CONFIG_RANDOMIZE_BASE is required to mitigate against full system compromise."
+		WARNING_RANDOMIZE_KSTACK_OFFSET="CONFIG_RANDOMIZE_KSTACK_OFFSET is required to mitigate against sandbox escape."
+		WARNING_RANDOMIZE_MEMORY="CONFIG_RANDOMIZE_MEMORY is required to mitigate against full system compromise."
+		WARNING_RANDOMIZE_RELOCATABLE="CONFIG_RANDOMIZE_BASE is required to mitigate against full system compromise."
+		WARNING_RETPOLINE="CONFIG_RETPOLINE is required for Spectre mitigation or exfiltration mitigation."
+		WARNING_SECCOMP="CONFIG_SECCOMP is required for the system to sandbox correctly."
+		WARNING_SECURITY="CONFIG_SECURITY could be added for ptrace sandbox protection."
+		WARNING_SECURITY_YAMA="CONFIG_SECURITY_YAMA could be added for ptrace sandbox protection to mitigate against credential theft or sandbox escape."
+		WARNING_STACKPROTECTOR="CONFIG_STACKPROTECTOR is required to mitigate against full system compromise."
+		WARNING_STACKPROTECTOR_STRONG="CONFIG_STACKPROTECTOR is required to mitigate against full system compromise."
+		WARNING_STRICT_KERNEL_RWX="CONFIG_STRICT_KERNEL_RWX is required to mitigate against full system compromise."
+		WARNING_SYSFS="CONFIG_SYSFS could be added for ptrace sandbox protection."
+		WARNING_TRANSPARENT_HUGEPAGE="CONFIG_TRANSPARENT_HUGEPAGE could be enabled for V8 [JavaScript engine] memory access time reduction.  For webservers, music production, realtime, it should be kept disabled."
+
+		check_extra_config
 
 		if linux_chkconfig_present "SECURITY_YAMA" ; then
 			local lsm=$(linux_chkconfig_string LSM)
@@ -268,16 +347,23 @@ ewarn "Missing yama in CONFIG_LSM.  Add yama to CONFIG_LSM for ptrace sandbox pr
 			fi
 		fi
 
-	# The history of the commit can be found on
-	# https://community.intel.com/t5/Blogs/Tech-Innovation/Client/A-Journey-for-Landing-The-V8-Heap-Layout-Visualization-Tool/post/1368855
-	# I've seen this first in the nodejs repo but never understood the benefit.
-	# The same article discusses the unintended consequences.
-		CONFIG_CHECK="
-			~TRANSPARENT_HUGEPAGE
-		"
-		WARNING_TRANSPARENT_HUGEPAGE="CONFIG_TRANSPARENT_HUGEPAGE could be enabled for V8 [JavaScript engine] memory access time reduction.  For webservers, music production, realtime, it should be kept disabled."
 		check_extra_config
-	# In the current build files in the chromium project, they had went against their original decision about supporting THP.
+
+		local config_path=$(linux_config_path)
+		local is_64bit=$(tc-get-ptr-size)
+		is_64bit=$(( ${is_64bit} == 8 : 1 : 0 ))
+		if [[ -e "${config_path}" ]] ; then
+			local v=$(grep -e "CONFIG_DEFAULT_MMAP_MIN_ADDR" "${config_path}" | cut -f 2 -d "=")
+			[[ -z "${v}" ]] && v=0
+			if (( ${is_64bit} == 1 && ${v} != 65536 )) ; then
+ewarn "CONFIG_DEFAULT_MMAP_MIN_ADDR should be 65536 for 64-bit"
+			fi
+			if (( ${is_64bit} == 0 && ${v} != 32768 )) ; then
+ewarn "CONFIG_DEFAULT_MMAP_MIN_ADDR should be 32768 for 32-bit"
+			fi
+		else
+ewarn "CONFIG_DEFAULT_MMAP_MIN_ADDR should be 65536 for 64-bit, 32768 for 32-bit"
+		fi
 	fi
 }
 
