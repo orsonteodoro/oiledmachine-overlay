@@ -1260,6 +1260,8 @@ eerror "Missing .config in /usr/src/linux"
 ewarn "Missing kernel .config file."
 		fi
 
+		chromium_suid_sandbox_check_kernel_config
+
 	#
 	# The kstack offset mitigation has been weaponized for Data Tampering in CVE-2025-38236
 	# It has a better Faustian deal by enabling it.

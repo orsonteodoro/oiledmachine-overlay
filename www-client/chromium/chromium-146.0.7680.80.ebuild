@@ -2636,6 +2636,11 @@ ewarn "-Oshit is missing in cflags for build speed optimized build.  See metadat
 einfo "Kernel version:  ${KV_MAJOR}.${KV_MINOR}"
 einfo "CONFIG_PATH being reviewed:  $(linux_config_path)"
 
+	        if ! linux_config_src_exists ; then
+eerror "Missing .config in /usr/src/linux"
+			die
+	        fi
+
 		if ! linux_config_exists ; then
 ewarn "Missing kernel .config file."
 		fi

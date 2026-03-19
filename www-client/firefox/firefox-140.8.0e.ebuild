@@ -1257,6 +1257,15 @@ ewarn "Downgrading MAKEOPTS=-j${njobs} to prevent lock-up"
 # SSP - Code Execution, Privilege Escalation
 #
 check_kernel_flags() {
+        if ! linux_config_src_exists ; then
+eerror "Missing .config in /usr/src/linux"
+		die
+        fi
+
+	if ! linux_config_exists ; then
+ewarn "Missing kernel .config file."
+	fi
+
 	# The kstack offset mitigation has been weaponized for Data Tampering in CVE-2025-38236
 	# It has a better Faustian deal by enabling it.
 	CONFIG_CHECK="
