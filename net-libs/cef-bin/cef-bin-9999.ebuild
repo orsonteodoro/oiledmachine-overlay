@@ -332,13 +332,13 @@ ewarn "Missing yama in CONFIG_LSM.  Add yama to CONFIG_LSM for ptrace sandbox pr
 			local v=$(grep -e "CONFIG_DEFAULT_MMAP_MIN_ADDR" "${config_path}" | cut -f 2 -d "=")
 			[[ -z "${v}" ]] && v=0
 			if (( ${is_64bit} == 1 && ${v} != 65536 )) ; then
-ewarn "CONFIG_DEFAULT_MMAP_MIN_ADDR should be 65536 for 64-bit"
+ewarn "CONFIG_DEFAULT_MMAP_MIN_ADDR should be 65536 for 64-bit to mitigate sandbox escape."
 			fi
 			if (( ${is_64bit} == 0 && ${v} != 32768 )) ; then
-ewarn "CONFIG_DEFAULT_MMAP_MIN_ADDR should be 32768 for 32-bit"
+ewarn "CONFIG_DEFAULT_MMAP_MIN_ADDR should be 32768 for 32-bit to mitigate sandbox escape."
 			fi
 		else
-ewarn "CONFIG_DEFAULT_MMAP_MIN_ADDR should be 65536 for 64-bit, 32768 for 32-bit"
+ewarn "CONFIG_DEFAULT_MMAP_MIN_ADDR should be 65536 for 64-bit, 32768 for 32-bit to mitigate sandbox escape."
 		fi
 	fi
 }
