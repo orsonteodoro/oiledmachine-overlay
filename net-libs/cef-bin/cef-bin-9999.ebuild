@@ -4,13 +4,13 @@
 
 EAPI=8
 
-# D11, U20, U22, U24
+# D12, U22, U24
 
-DEPENDS_VERSION="142.0.7444.176"
-# DEPENDS_VER_A="142"
+DEPENDS_VERSION="145.0.7632.160"
+# DEPENDS_VER_A="145"
 # DEPENDS_VER_B="0"
-# DEPENDS_VER_C="7444"
-# DEPENDS_VER_D="176"
+# DEPENDS_VER_C="7632"
+# DEPENDS_VER_D="160"
 
 # Third party licenses:
 #
@@ -32,7 +32,7 @@ DEPENDS_VERSION="142.0.7444.176"
 # Builds also the libcef_dll_wrapper
 # The -bin in ${PN} comes from the prebuilt chromium
 
-CXX_STANDARD=17
+CXX_STANDARD=20
 FFMPEG_SLOT="0/59.61.61" # Same as 7.1
 GLIB_PV="2.66.8"
 GCC_PV="10.2.1" # Minimum
@@ -44,16 +44,19 @@ VIRTUALX_REQUIRED="manual"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+	"${LIBSTDCXX_COMPAT_STDCXX20[@]}"
 )
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
+	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}"
 )
+LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
 inherit chromium-2 cmake flag-o-matic libcxx-slot libstdcxx-slot linux-info sandbox-changes virtualx
 
+REQUIRED_USE=""
 KEYWORDS="~arm ~arm64 ~amd64"
 S="${WORKDIR}" # Dummy
 
@@ -72,14 +75,16 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 beta cefclient cefsimple debug minimal test
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE+="
 	cefclient? (
 		!minimal
+		test
 	)
 	cefsimple? (
 		!minimal
+		test
 	)
 	test? (
 		!minimal
@@ -87,7 +92,7 @@ REQUIRED_USE+="
 "
 
 # For *DEPENDs see:
-# https://github.com/chromium/chromium/tree/142.0.7444.176/build/linux/sysroot_scripts/generated_package_lists				; 20231117
+# https://github.com/chromium/chromium/tree/145.0.7632.160/build/linux/sysroot_scripts/generated_package_lists				; 20231117
 #   alsa-lib, at-spi2-core, bluez (bluetooth), cairo, cups, curl, expat,
 #   flac [older], fontconfig [older], freetype [older], gcc, gdk-pixbuf, glib,
 #   glibc, gtk+3, gtk4, harfbuzz [older], libdrm [older], libffi, libglvnd,
@@ -101,123 +106,60 @@ REQUIRED_USE+="
 #   libxau, libXtst, util-linux, pam, libcap, libevdev, sqlite3,
 #   speech-dispatcher
 #
-# https://github.com/chromium/chromium/blob/142.0.7444.176/build/install-build-deps.py
+# https://github.com/chromium/chromium/blob/145.0.7632.160/build/install-build-deps.py
 # https://github.com/chromiumembedded/cef/blob/6613/CMakeLists.txt.in   # Same as 3rd component c in a.b.c.d versioning.
 #   For version correspondance see https://bitbucket.org/chromiumembedded/cef/wiki/BranchesAndBuilding
 
 #
 # Additional *DEPENDs versioning info:
 #
-# https://github.com/chromium/chromium/blob/142.0.7444.176/third_party/libpng/png.h#L288
-# https://github.com/chromium/chromium/blob/142.0.7444.176/third_party/zlib/zlib.h#L40
-# https://github.com/chromium/chromium/blob/142.0.7444.176/tools/clang/scripts/update.py#L42
-#
+# https://github.com/chromium/chromium/blob/145.0.7632.160/third_party/libpng/png.h#L288
+# https://github.com/chromium/chromium/blob/145.0.7632.160/third_party/zlib/zlib.h#L40
+# https://github.com/chromium/chromium/blob/145.0.7632.160/tools/clang/scripts/update.py#L42
+# https://chromium.googlesource.com/chromium/src.git/+/refs/tags/145.0.7632.160/third_party/
 
-# /var/tmp/portage/www-client/chromium-142.0.7444.176/work/chromium-142.0.7444.176/third_party/fontconfig/src/fontconfig/fontconfig.h L54 ; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-142.0.7444.176/work/chromium-142.0.7444.176/third_party/freetype/src/CMakeLists.txt	L165	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-142.0.7444.176/work/chromium-142.0.7444.176/third_party/harfbuzz-ng/src/configure.ac	L3	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-142.0.7444.176/work/chromium-142.0.7444.176/third_party/libdrm/src/meson.build		L24	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-145.0.7632.160/work/chromium-145.0.7632.160/third_party/fontconfig/src/fontconfig/fontconfig.h L54 ; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-145.0.7632.160/work/chromium-145.0.7632.160/third_party/freetype/src/CMakeLists.txt	L165	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-145.0.7632.160/work/chromium-145.0.7632.160/third_party/harfbuzz-ng/src/configure.ac	L3	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-145.0.7632.160/work/chromium-145.0.7632.160/third_party/libdrm/src/meson.build		L24	; newer than generated_package_lists
 
 # gnome-keyring, vulkan-loader, gtkglext, libappindicator versioning from U 16.06
 
 # *DEPENDs based on install-build-deps.sh
-# U >=16.04 LTS assumed, supported only in CEF
-# The *DEPENDs below assume U 18.04
-CHROMIUM_CDEPEND="
-	>=app-accessibility/at-spi2-atk-2.44.1:2
-	app-accessibility/at-spi2-atk:=
-	>=app-accessibility/speech-dispatcher-0.11.4
-	>=dev-db/sqlite-3.34.1
-	>=dev-libs/glib-${GLIB_PV}:2
-	dev-libs/glib:=
-	>=dev-libs/libappindicator-12.10
-	>=dev-libs/libevdev-1.11.0
-	>=dev-libs/libffi-3.3
-	>=media-libs/alsa-lib-1.2.4
-	>=media-libs/mesa-${MESA_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gbm(+)]
-	media-libs/mesa:=
-	>=net-print/cups-2.3.3
-	>=sys-apps/pciutils-3.7.0
-	>=sys-libs/libcap-2.44
-	>=sys-libs/pam-1.4.0
-	>=sys-apps/util-linux-2.36.1
-	>=sys-libs/glibc-2.31
-	>=x11-libs/cairo-1.16.0
-	>=x11-libs/gtk+-${GTK3_PV}:3
-	x11-libs/gtk+:=
-	>=x11-libs/libXtst-1.2.3
-	>=x11-libs/libdrm-2.4.122
-"
-# Unlisted based on ldd inspection not found in common_lib_list
-UNLISTED_RDEPEND="
-	>=dev-libs/nss-3.61
-	>=dev-libs/fribidi-1.0.8
-	>=dev-libs/gmp-6.2.1
-	>=dev-libs/libbsd-0.11.3
-	>=dev-libs/libtasn1-4.16.0
-	>=dev-libs/libunistring-0.9.10
-	>=dev-libs/nettle-3.7.3
-	>=media-gfx/graphite2-1.3.14
-	>=media-libs/harfbuzz-8.2.2
-	>=media-libs/libglvnd-1.3.2
-	>=media-libs/mesa-${MESA_PV}[egl(+)]
-	>=net-dns/libidn-1.33
-	>=x11-libs/libxkbcommon-1.0.3
-"
-OPTIONAL_RDEPEND="
-	>=gnome-base/gnome-keyring-3.12.0[pam]
-	>=media-libs/vulkan-loader-1.3.224.0
-"
-CHROMIUM_RDEPEND="
-	${CHROMIUM_CDEPEND}
-	${UNLISTED_RDEPEND}
-	${OPTIONAL_RDEPEND}
-	>=dev-libs/atk-2.38.0
-	>=dev-libs/expat-2.2.10
-	>=dev-libs/libpcre-8.39:3
-	dev-libs/libpcre:=
-	>=dev-libs/libpcre2-10.36
-	>=dev-libs/nspr-4.29
-	>=dev-libs/wayland-1.18.0
-	>=media-libs/fontconfig-2.15.0
-	>=media-libs/freetype-2.13.3
-	>=media-libs/libpng-1.6.43
-	>=sys-devel/gcc-${GCC_PV}[cxx(+)]
-	>=sys-libs/zlib-1.3
-	>=x11-libs/libX11-1.7.2
-	>=x11-libs/libXau-1.0.9
-	>=x11-libs/libxcb-1.14
-	>=x11-libs/libXcomposite-0.4.5
-	>=x11-libs/libXcursor-1.2.0
-	>=x11-libs/libXdamage-1.1.5
-	>=x11-libs/libXdmcp-1.1.2
-	>=x11-libs/libXext-1.3.3
-	>=x11-libs/libXfixes-5.0.3
-	>=x11-libs/libXi-${LIBXI_PV}
-	>=x11-libs/libXinerama-1.1.4
-	>=x11-libs/libXrandr-1.5.1
-	>=x11-libs/libXrender-0.9.10
-	>=x11-libs/pango-1.46.2
-	>=x11-libs/pixman-0.40.0
-	sys-kernel/mitigate-id
-"
 # libcef alone uses aura not gtk
 RDEPEND+="
-	${CHROMIUM_RDEPEND}
+	app-accessibility/at-spi2-core
+	>=dev-libs/glib-${GLIB_PV}:2
+	dev-libs/glib:=
+	>=dev-libs/expat-2.2.10
+	>=dev-libs/nspr-4.29
+	>=dev-libs/nss-3.61
+	>=media-libs/alsa-lib-1.2.4
+	>=media-libs/mesa-${MESA_PV}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},gbm(+)]
+	media-libs/mesa:=
+	media-libs/libglvnd
+	>=net-print/cups-2.3.3
+	sys-apps/dbus
+	>=sys-devel/gcc-${GCC_PV}[cxx(+)]
+	sys-libs/glibc
+	>=x11-libs/cairo-1.16.0
+	>=x11-libs/pango-1.46.2
+	virtual/udev
+	>=x11-libs/libX11-1.7.2
+	>=x11-libs/libxcb-1.14
+	>=x11-libs/libXcomposite-0.4.5
+	>=x11-libs/libXdamage-1.1.5
+	>=x11-libs/libXext-1.3.3
+	>=x11-libs/libXfixes-5.0.3
+	>=x11-libs/libxkbcommon-1.0.3
+	>=x11-libs/libXrandr-1.5.1
 	cefclient? (
-		>=dev-libs/glib-${GLIB_PV}:2
-		dev-libs/glib:=
 		>=x11-libs/gtk+-${GTK3_PV}:3
 		x11-libs/gtk+:=
-		>=x11-libs/gtkglext-1.2.0
-		>=x11-libs/libXi-${LIBXI_PV}
 	)
 "
 DEPEND+="
-	test? (
-		>=dev-libs/glib-${GLIB_PV}:2
-		dev-libs/glib:=
-	)
+	${RDEPEND}
 "
 INTEGRITY_CHECK_BDEPEND="
 	app-crypt/rhash
@@ -232,7 +174,8 @@ BDEPEND+="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/cef-bin-105.3.39-visibility-changes.patch"
+	"${FILESDIR}/cef-bin-145.0.28-visibility-changes.patch"
+	"${FILESDIR}/cef-bin-145.0.28-disable-test.patch"
 )
 
 get_xrid() {
@@ -325,6 +268,206 @@ ewarn "Missing yama in CONFIG_LSM.  Add yama to CONFIG_LSM for ptrace sandbox pr
 	fi
 }
 
+# @FUNCTION: has_all_hardening_flags
+# @DESCRIPTION:
+# Check each package individually for compiler hardening requirements.
+has_all_hardening_flags() {
+	local pkg="${1}"
+	local F
+	F=(
+		"-O2"
+		"-fno-delete-null-pointer-checks"
+		"-fstrict-flex-arrays=3"
+		"-ftrivial-auto-var-init=zero"
+		"-fzero-call-used-regs=all"
+		"-fwrapv"
+	)
+
+	local found_count=0
+	local f
+	for f in "${F[@]}" ; do
+		if grep -q -e "${f}" "/var/db/pkg/${pkg}-"*"/CFLAGS" 2>/dev/null ; then
+			found_count=$(( ${found_count} + 1 ))
+		fi
+	done
+
+	# Transient execution CPU vulnerability mitigations
+	# ID = Information Disclosure
+	local found_count_id_mitigation=0
+	if [[ "${tags}" =~ "sensitive-data" ]] ; then
+		F=(
+			"-fcf-protection=full"
+			"-fhardened"
+			"-mbranch-protection=pac-ret+bti"
+			"-mbranch-protection=standard"
+			"-mharden-sls=all"
+			"-mretpoline"
+			"-mindirect-branch=thunk"
+			"-mindirect-branch=thunk-extern"
+			"-mindirect-branch=thunk-inline"
+			"-mfunction-return=thunk"
+			"-mfunction-return=thunk-extern"
+			"-mfunction-return=thunk-inline"
+		)
+		for f in "${F[@]}" ; do
+			if grep -q -e "${f}" "/var/db/pkg/${pkg}-"*"/CFLAGS" 2>/dev/null ; then
+				found_count_id_mitigation=$(( ${found_count_id_mitigation} + 1 ))
+			fi
+		done
+	fi
+
+	if [[ "${tags}" =~ "sensitive-data" ]] ; then
+		if (( ${found_count} == 6 && ${found_count_id_mitigation} >= 1 )) ; then
+			return 0
+		fi
+	else
+		if (( ${found_count} == 6 )) ; then
+			return 0
+		fi
+	fi
+	return 1
+}
+
+# @FUNCTION: verify_compiler_flags_hardening
+# @DESCRIPTION:
+# Check compiler hardening requirements common to all network facing Electron
+# apps.
+verify_compiler_flags_hardening() {
+	local L1=(
+	#
+	# Packages that are listed:
+	#
+	# 1.  Security-critical packages
+	# 2.  Processes untrusted-data
+	# 3.  Processes trusted-data
+	# 4.  A shared library loaded during runtime into the following processes - browser, UI, rendering
+	# 5.  Attack surface risks (sandbox escape potential, privilege gain, memory corruption potential)
+	#
+	#	"<use-flag>:<pkg>:<tags>"
+
+
+	#
+	# Understanding the problem of compiler hardening per process, ranked by
+	# compiler hardening triage/remediation rank:
+	#
+	# 1. Browser / Main - not sandboxed, privileged, balanced
+	# 2. Renderer - sandboxed, not privileged, security-critical
+	# 3. GPU - sandboxed, not privileged, balanced
+	# 4. Utility / Network / Helper - sandboxed, not privileged, balanced
+	# 5. Plugin / Pepper - sandboxed, not privileged, balanced
+	#
+
+	#
+	# The best return in security for compiler hardening remediation/triage for streamers:
+	#
+	# 1. mesa/libglvnd
+	# 2. nss
+	# 3. libxkbcommon
+	# 4. glib
+	# 5. glibc
+	# 6. gtk+:3
+	# 7. at-spi2-core
+	# 8. libxcb
+	# 9. pango, cairo
+	# 10. dbus
+	#
+
+	#
+	# Manual hardening via per-package flags.
+	# No ebuild available on the oiledmachine-overlay.
+	#
+
+	"unconditional:app-accessibility/at-spi2-core:manual,attack-surface-risk,sensitive-data,untrusted-data"		# PII
+	"unconditional:dev-libs/nspr:manual,sensitive-data"
+	"unconditional:media-libs/alsa-lib:manual,attack-surface-risk"
+	"unconditional:net-print/cups:manual,sensitive-data,untrusted-data"
+	"unconditional:sys-apps/dbus:manual,sensitive-data"								# PII, Crown Jewel Keys
+
+	#
+	# Hardened-by-default ebuilds available on the oiledmachine-overlay.
+	#
+	# The overlay adds the newer hardening flags which may be missing in the
+	# default hardening compiler settings.
+	#
+	"unconditional:dev-libs/expat:untrusted-data"
+	"unconditional:dev-libs/glib:attack-surface-risk,sensitive-data"
+	"unconditional:dev-libs/nss:attack-surface-risk,sensitive-data,untrusted-data"
+	"unconditional:media-libs/mesa:attack-surface-risk,sensitive-data,untrusted-data"
+	"unconditional:x11-libs/pango:sensitive-data,untrusted-data"
+	"unconditional:x11-libs/cairo:sensitive-data,untrusted-data"
+
+	"cefclient:x11-libs/gtk+:sensitive-data"
+	"wayland:dev-libs/wayland:attack-surface-risk,manual"
+	"X:x11-base/xorg-server:sensitive-data"
+	"X:x11-libs/libxcb:sensitive-data"
+	"X:x11-libs/libxkbcommon:sensitive-data"
+	"X:x11-libs/libX11:sensitive-data"
+	)
+
+	local row
+	for row in "${L1[@]}" ; do
+		local u=$(echo "${row}" | cut -f 1 -d ":")
+		local p=$(echo "${row}" | cut -f 2 -d ":")
+		local tag=$(echo "${row}" | cut -f 3 -d ":")
+		if [[ "${tag}" =~ "manual" ]] ; then
+			if [[ "${u}" == "unconditional" ]] ; then
+ewarn "The package ${p} must be manually security-critical hardened using per-package package.env.  Use the hardening flags from the build log."
+			elif use "${u}" && ! has_all_hardening_flags "${p}" ; then
+ewarn "The package ${p} must be manually security-critical hardened using per-package package.env.  Use the hardening flags from the build log."
+			fi
+		elif [[ "${u}" == "unconditional" ]] ; then
+			local repo=$(cat "/var/db/pkg/${p}-"*"/repository" | sed -e "/oiledmachine-overlay/d" | head -n 1)
+			if ! grep -q -e "oiledmachine-overlay" "${ESYSROOT}/var/db/pkg/${p}-"*"/repository" ; then
+ewarn "The package ${p}::${repo} may not be security-critical hardened.  Use the ${p}::oiledmachine-overlay ebuild instead."
+			fi
+		elif use "${u}" ; then
+			if ! grep -q -e "oiledmachine-overlay" "${ESYSROOT}/var/db/pkg/${p}-"*"/repository" ; then
+				local repo=$(cat "/var/db/pkg/${p}-"*"/repository" | sed -e "/oiledmachine-overlay/d" | head -n 1)
+ewarn "The package ${p}::${repo} may not be security-critical hardened.  Use the ${p}::oiledmachine-overlay ebuild instead."
+			fi
+		fi
+	done
+
+	local L2=(
+		"dev-libs/weston"
+		"gui-liri/liri-shell"
+		"gui-wm/cage"
+		"gui-wm/cagebreak"
+		"gui-wm/dwl"
+		"gui-wm/kiwmi"
+		"gui-wm/hyprland"
+		"gui-wm/labwc"
+		"gui-wm/mangowc"
+		"gui-wm/miracle-wm"
+		"gui-wm/newm"
+		"gui-wm/niri"
+		"gui-wm/river"
+		"gui-wm/sway"
+		"gui-wm/waybox"
+		"gui-wm/wayfire"
+		"kde-plasma/kwin"
+		"x11-wm/enlightenment"
+		"x11-wm/mutter"
+	)
+
+	if use wayland ; then
+		local found_compositor=0
+		local x
+		for x in "${L2[@]}" ; do
+			if has_version "${x}" ; then
+				found_compositor=1
+ewarn "${x} must use security-critical hardened ebuilds or per-package package.env hardening.  Use the hardening flags from the build log."
+			fi
+		done
+
+		if (( ${found_compositor} == 0 )) ; then
+ewarn "Wayland compositors must use security-critical hardened ebuilds or per-package package.env hardening.  Use the hardening flags from the build log."
+		fi
+	fi
+
+ewarn "Packages that interact with ${PN} (e.g. password managers, clipboard managers) must use security-critical hardened ebuilds or per-package package.env hardening.  Use the hardening flags from the build log."
+}
+
 pkg_setup() {
 	check_kernel_config
 	if use test ; then
@@ -344,6 +487,7 @@ ewarn
 
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+	verify_compiler_flags_hardening
 }
 
 get_uri_tarball() {
@@ -570,11 +714,11 @@ einfo "DIR="$(pwd)
 	if use test ; then
 ewarn "Adding sandbox exceptions for the GPU."
 		local d
-		for d in /dev/dri/card*; do
+		for d in "/dev/dri/card"*; do
 einfo "addwrite ${d}"
 			addwrite "${d}"
 		done
-		for d in /dev/dri/render*; do
+		for d in "/dev/dri/render"*; do
 einfo "addwrite ${d}"
 			addwrite "${d}"
 		done

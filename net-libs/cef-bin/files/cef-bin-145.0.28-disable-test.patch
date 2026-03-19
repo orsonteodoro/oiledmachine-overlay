@@ -1,0 +1,13 @@
+--- a/tests/ceftests/base/ref_counted_unittest.cc.orig	2026-03-05 15:59:32.000000000 -0800
++++ b/tests/ceftests/base/ref_counted_unittest.cc	2026-03-18 14:56:45.807590457 -0700
+@@ -188,8 +188,10 @@ TEST(RefCountedUnitTest, TestSelfAssignm
+   scoped_refptr<SelfAssign> var(p);
+   var = *&var;  // The *& defeats Clang's -Wself-assign warning.
+   EXPECT_EQ(var.get(), p);
++#if __GNUC__ < 13
+   var = std::move(var);
+   EXPECT_EQ(var.get(), p);
++#endif
+   var.swap(var);
+   EXPECT_EQ(var.get(), p);
+   swap(var, var);

@@ -1,5 +1,5 @@
---- a/cmake/cef_variables.cmake.orig	2022-09-14 21:54:02.000000000 -0700
-+++ b/cmake/cef_variables.cmake	2022-09-28 10:42:10.042029449 -0700
+--- a/cmake/cef_variables.cmake.orig	2026-03-05 20:40:22.000000000 -0800
++++ b/cmake/cef_variables.cmake	2026-03-18 14:28:06.851733227 -0700
 @@ -7,6 +7,7 @@ if(NOT DEFINED _CEF_ROOT_EXPLICIT)
    message(FATAL_ERROR "Use find_package(CEF) to load this file.")
  endif()
@@ -8,7 +8,7 @@
  
  #
  # Shared configuration.
-@@ -85,7 +86,6 @@ if(OS_LINUX)
+@@ -95,7 +96,6 @@ if(OS_LINUX)
      -fPIC                           # Generate position-independent code for shared libraries
      -fstack-protector               # Protect some vulnerable functions from stack-smashing (security feature)
      -funwind-tables                 # Support stack unwinding for backtrace()
@@ -16,7 +16,7 @@
      --param=ssp-buffer-size=4       # Set the minimum buffer size protected by SSP (security feature, related to stack-protector)
      -pipe                           # Use pipes rather than temporary files for communication between build stages
      -pthread                        # Use the pthread library
-@@ -97,6 +97,17 @@ if(OS_LINUX)
+@@ -107,6 +107,17 @@ if(OS_LINUX)
      -Wno-comment                    # Don't warn about code in comments
      -Wno-deprecated-declarations    # Don't warn about using deprecated methods
      )
@@ -34,12 +34,12 @@
    list(APPEND CEF_C_COMPILER_FLAGS
      -std=c99                        # Use the C99 language standard
      )
-@@ -104,10 +115,14 @@ if(OS_LINUX)
+@@ -114,10 +125,14 @@ if(OS_LINUX)
      -fno-exceptions                 # Disable exceptions
      -fno-rtti                       # Disable real-time type information
      -fno-threadsafe-statics         # Don't generate thread-safe statics
 -    -fvisibility-inlines-hidden     # Give hidden visibility to inlined class member functions
-     -std=c++17                      # Use the C++17 language standard
+     -std=c++20                      # Use the C++20 language standard
      -Wsign-compare                  # Warn about mixed signed/unsigned type comparisons
      )
 +  if(NOT BUILD_SHARED_LIBS)
