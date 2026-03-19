@@ -1,10 +1,10 @@
-# Copyright 2002-2025 Gentoo Authors
+# Copyright 2002-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # @ECLASS: toolchain-funcs.eclass
 # @MAINTAINER:
 # Toolchain Ninjas <toolchain@gentoo.org>
-# @SUPPORTED_EAPIS: 7 8
+# @SUPPORTED_EAPIS: 7 8 9
 # @BLURB: functions to query common info about the toolchain
 # @DESCRIPTION:
 # The toolchain-funcs aims to provide a complete suite of functions
@@ -20,11 +20,9 @@ if [[ -z ${_TOOLCHAIN_FUNCS_ECLASS} ]]; then
 _TOOLCHAIN_FUNCS_ECLASS=1
 
 case ${EAPI} in
-	7|8) ;;
+	7|8|9) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
-
-inherit multilib
 
 # tc-getPROG <VAR [search vars]> <default> [tuple]
 _tc-getPROG() {
@@ -78,6 +76,10 @@ tc-getCPP() { tc-getPROG CPP "${CC:-gcc} -E" "$@"; }
 # @USAGE: [toolchain prefix]
 # @RETURN: name of the C++ compiler
 tc-getCXX() { tc-getPROG CXX g++ "$@"; }
+# @FUNCTION: tc-getHIPCXX
+# @USAGE: [toolchain prefix]
+# @RETURN: name of the HIP compiler
+tc-getHIPCXX() { tc-getPROG HIPCXX "$(hipconfig --hipclangpath)/clang++" "$@"; }
 # @FUNCTION: tc-getLD
 # @USAGE: [toolchain prefix]
 # @RETURN: name of the linker
@@ -293,7 +295,7 @@ tc-tuple-is-softfloat() {
 			echo "yes" ;;
 		*-softfp-*)
 			echo "softfp" ;;
-		arm*-hardfloat-*|arm*eabihf)
+		arm*-hardfloat-*|arm*eabihf*)
 			echo "no" ;;
 		# bare-metal targets have their defaults. bug #666896
 		*-newlib|*-elf|*-eabi)
@@ -403,6 +405,7 @@ tc-env_build() {
 	PKG_CONFIG=$(tc-getBUILD_PKG_CONFIG) \
 	RANLIB=$(tc-getBUILD_RANLIB) \
 	READELF=$(tc-getBUILD_READELF) \
+	CHOST=${CBUILD:-${CHOST}} \
 	"$@"
 }
 
@@ -446,8 +449,7 @@ tc-env_build() {
 # @CODE
 econf_build() {
 	local CBUILD=${CBUILD:-${CHOST}}
-	econf_env() { CHOST=${CBUILD} econf "$@"; }
-	tc-env_build econf_env "$@"
+	tc-env_build econf "$@"
 }
 
 # @FUNCTION: tc-ld-is-bfd
@@ -475,7 +477,7 @@ tc-ld-is-bfd() {
 	EOF
 	out=$($(tc-getCC "$@") ${CFLAGS} ${CPPFLAGS} ${LDFLAGS} -Wl,--version "${base}.c" -o "${base}" 2>&1)
 	rm -f "${base}"*
-	if [[ ! ${out} =~ .*^"GNU ld".* ]] ; then
+	if [[ ! ${out} =~ (^|$'\n')"GNU ld".* ]] ; then
 		return 1
 	fi
 
@@ -671,11 +673,11 @@ _tc-has-openmp() {
 # build-time, e.g.
 # @CODE
 # pkg_pretend() {
-#	[[ ${MERGE_TYPE} != binary ]] && tc-check-min_ver gcc 13.2.0
+#	[[ ${MERGE_TYPE} != binary ]] && tc-check-min_ver gcc 13.2
 # }
 #
 # pkg_setup() {
-#	[[ ${MERGE_TYPE} != binary ]] && tc-check-min_ver gcc 13.2.0
+#	[[ ${MERGE_TYPE} != binary ]] && tc-check-min_ver gcc 13.2
 # }
 # @CODE
 tc-check-min_ver() {
@@ -914,7 +916,7 @@ tc-get-compiler-type() {
 	HAVE_GCC
 #endif
 '
-	local res=$($(tc-getCPP "$@") -E -P - <<<"${code}")
+	local res=$($(tc-getCC "$@") -E -P - <<<"${code}")
 
 	case ${res} in
 		*HAVE_PATHCC*)	echo pathcc;;
@@ -941,7 +943,7 @@ tc-is-clang() {
 # compilers rather than maintaining a --version flag matrix, bug #335943.
 _gcc_fullversion() {
 	local ver="$1"; shift
-	set -- $($(tc-getCPP "$@") -E -P - <<<"__GNUC__ __GNUC_MINOR__ __GNUC_PATCHLEVEL__")
+	set -- $($(tc-getCC "$@") -E -P - <<<"__GNUC__ __GNUC_MINOR__ __GNUC_PATCHLEVEL__")
 	eval echo "${ver}"
 }
 
@@ -974,7 +976,7 @@ gcc-micro-version() {
 # Internal func. Based on _gcc_fullversion() above.
 _clang_fullversion() {
 	local ver="$1"; shift
-	set -- $($(tc-getCPP "$@") -E -P - <<<"__clang_major__ __clang_minor__ __clang_patchlevel__")
+	set -- $($(tc-getCC "$@") -E -P - <<<"__clang_major__ __clang_minor__ __clang_patchlevel__")
 	eval echo "${ver}"
 }
 
@@ -1161,139 +1163,6 @@ tc-enables-ssp-all() {
 	tc-cpp-is-true "defined(__SSP_ALL__)" ${CPPFLAGS} ${CFLAGS} ${CXXFLAGS}
 }
 
-
-# @FUNCTION: gen_usr_ldscript
-# @USAGE: [-a] <list of libs to create linker scripts for>
-# @DESCRIPTION:
-# This function is deprecated. Use the version from
-# usr-ldscript.eclass instead.
-gen_usr_ldscript() {
-	ewarn "${FUNCNAME}: Please migrate to usr-ldscript.eclass"
-
-	local lib libdir=$(get_libdir) output_format="" auto=false suffix=$(get_libname)
-
-	tc-is-static-only && return
-	use prefix && return
-
-	# We only care about stuffing / for the native ABI, bug #479448
-	if [[ $(type -t multilib_is_native_abi) == "function" ]] ; then
-		multilib_is_native_abi || return 0
-	fi
-
-	# Eventually we'd like to get rid of this func completely, bug #417451
-	case ${CTARGET:-${CHOST}} in
-		*-darwin*) ;;
-		*-android*) return 0 ;;
-		*linux*) use prefix && return 0 ;;
-		*) return 0 ;;
-	esac
-
-	# Just make sure it exists
-	dodir /usr/${libdir}
-
-	if [[ $1 == "-a" ]] ; then
-		auto=true
-		shift
-		dodir /${libdir}
-	fi
-
-	# OUTPUT_FORMAT gives hints to the linker as to what binary format
-	# is referenced ... makes multilib saner
-	local flags=( ${CFLAGS} ${LDFLAGS} -Wl,--verbose )
-	if $(tc-getLD) --version | grep -q 'GNU gold' ; then
-		# If they're using gold, manually invoke the old bfd, bug #487696
-		local d="${T}/bfd-linker"
-		mkdir -p "${d}"
-		ln -sf $(type -P ${CHOST}-ld.bfd) "${d}"/ld
-		flags+=( -B"${d}" )
-	fi
-	output_format=$($(tc-getCC) "${flags[@]}" 2>&1 | sed -n 's/^OUTPUT_FORMAT("\([^"]*\)",.*/\1/p')
-	[[ -n ${output_format} ]] && output_format="OUTPUT_FORMAT ( ${output_format} )"
-
-	for lib in "$@" ; do
-		local tlib
-		if ${auto} ; then
-			lib="lib${lib}${suffix}"
-		else
-			# Ensure /lib/${lib} exists to avoid dangling scripts/symlinks.
-			# This especially is for AIX where $(get_libname) can return ".a",
-			# so /lib/${lib} might be moved to /usr/lib/${lib} (by accident).
-			[[ -r ${ED}/${libdir}/${lib} ]] || continue
-			#TODO: better die here?
-		fi
-
-		case ${CTARGET:-${CHOST}} in
-		*-darwin*)
-			if ${auto} ; then
-				tlib=$(scanmacho -qF'%S#F' "${ED}"/usr/${libdir}/${lib})
-			else
-				tlib=$(scanmacho -qF'%S#F' "${ED}"/${libdir}/${lib})
-			fi
-			[[ -z ${tlib} ]] && die "unable to read install_name from ${lib}"
-			tlib=${tlib##*/}
-
-			if ${auto} ; then
-				mv "${ED}"/usr/${libdir}/${lib%${suffix}}.*${suffix#.} "${ED}"/${libdir}/ || die
-				# some install_names are funky: they encode a version
-				if [[ ${tlib} != ${lib%${suffix}}.*${suffix#.} ]] ; then
-					mv "${ED}"/usr/${libdir}/${tlib%${suffix}}.*${suffix#.} "${ED}"/${libdir}/ || die
-				fi
-				rm -f "${ED}"/${libdir}/${lib}
-			fi
-
-			# Mach-O files have an id, which is like a soname, it tells how
-			# another object linking against this lib should reference it.
-			# Since we moved the lib from usr/lib into lib this reference is
-			# wrong.  Hence, we update it here.  We don't configure with
-			# libdir=/lib because that messes up libtool files.
-			# Make sure we don't lose the specific version, so just modify the
-			# existing install_name
-			if [[ ! -w "${ED}/${libdir}/${tlib}" ]] ; then
-				chmod u+w "${ED}${libdir}/${tlib}" # needed to write to it
-				local nowrite=yes
-			fi
-			install_name_tool \
-				-id "${EPREFIX}"/${libdir}/${tlib} \
-				"${ED}"/${libdir}/${tlib} || die "install_name_tool failed"
-			[[ -n ${nowrite} ]] && chmod u-w "${ED}${libdir}/${tlib}"
-			# Now as we don't use GNU binutils and our linker doesn't
-			# understand linker scripts, just create a symlink.
-			pushd "${ED}/usr/${libdir}" > /dev/null
-			ln -snf "../../${libdir}/${tlib}" "${lib}"
-			popd > /dev/null
-			;;
-		*)
-			if ${auto} ; then
-				tlib=$(scanelf -qF'%S#F' "${ED}"/usr/${libdir}/${lib})
-				[[ -z ${tlib} ]] && die "unable to read SONAME from ${lib}"
-				mv "${ED}"/usr/${libdir}/${lib}* "${ED}"/${libdir}/ || die
-				# some SONAMEs are funky: they encode a version before the .so
-				if [[ ${tlib} != ${lib}* ]] ; then
-					mv "${ED}"/usr/${libdir}/${tlib}* "${ED}"/${libdir}/ || die
-				fi
-				rm -f "${ED}"/${libdir}/${lib}
-			else
-				tlib=${lib}
-			fi
-			cat > "${ED}/usr/${libdir}/${lib}" <<-END_LDSCRIPT
-			/* GNU ld script
-			   Since Gentoo has critical dynamic libraries in /lib, and the static versions
-			   in /usr/lib, we need to have a "fake" dynamic lib in /usr/lib, otherwise we
-			   run into linking problems.  This "fake" dynamic lib is a linker script that
-			   redirects the linker to the real lib.  And yes, this works in the cross-
-			   compiling scenario as the sysroot-ed linker will prepend the real path.
-
-			   See bug https://bugs.gentoo.org/4411 for more info.
-			 */
-			${output_format}
-			GROUP ( ${EPREFIX}/${libdir}/${tlib} )
-			END_LDSCRIPT
-			;;
-		esac
-		fperms a+x "/usr/${libdir}/${lib}" || die "could not change perms on ${lib}"
-	done
-}
-
 # @FUNCTION: tc-get-cxx-stdlib
 # @DESCRIPTION:
 # Attempt to identify the C++ standard library used by the compiler.
@@ -1305,7 +1174,12 @@ gen_usr_ldscript() {
 #
 # If the library is not recognized, the function returns 1.
 tc-get-cxx-stdlib() {
-	local code='#include <ciso646>
+	local code='
+#if __cplusplus >= 202002L
+	#include <version>
+#else
+	#include <ciso646>
+#endif
 
 #if defined(_LIBCPP_VERSION)
 	HAVE_LIBCXX
@@ -1361,14 +1235,14 @@ tc-get-c-rtlib() {
 # @FUNCTION: tc-get-ptr-size
 # @RETURN: Size of a pointer in bytes for CHOST (e.g. 4 or 8).
 tc-get-ptr-size() {
-	$(tc-getCPP) -P - <<< __SIZEOF_POINTER__ ||
+	$(tc-getCC) -E -P - <<< __SIZEOF_POINTER__ ||
 		die "Could not determine CHOST pointer size"
 }
 
 # @FUNCTION: tc-get-build-ptr-size
 # @RETURN: Size of a pointer in bytes for CBUILD (e.g. 4 or 8).
 tc-get-build-ptr-size() {
-	$(tc-getBUILD_CPP) -P - <<< __SIZEOF_POINTER__ ||
+	$(tc-getBUILD_CC) -E -P - <<< __SIZEOF_POINTER__ ||
 		die "Could not determine CBUILD pointer size"
 }
 
@@ -1388,7 +1262,7 @@ tc-is-lto() {
 			;;
 		gcc)
 			$(tc-getCC) ${CFLAGS} -c -o "${f}" -x c - <<<"" || die
-			[[ $($(tc-getREADELF) -S "${f}") == *.gnu.lto* ]] && ret=0
+			[[ $($(tc-getOBJDUMP) -s "${f}") == *.gnu.lto* ]] && ret=0
 			;;
 	esac
 	rm -f "${f}" || die
