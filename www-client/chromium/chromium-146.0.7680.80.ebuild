@@ -2617,6 +2617,11 @@ ewarn "-Oshit is missing in cflags for build speed optimized build.  See metadat
 	fi
 
 	if use kernel_linux ; then
+		linux-info_pkg_setup
+
+einfo "Kernel version:  ${KV_MAJOR}.${KV_MINOR}"
+einfo "CONFIG_PATH being reviewed:  $(linux_config_path)"
+
 		chromium_suid_sandbox_check_kernel_config
 		CONFIG_CHECK="
 			~SYSFS

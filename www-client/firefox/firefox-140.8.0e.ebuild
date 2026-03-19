@@ -1610,6 +1610,10 @@ ewarn "/dev/shm is not mounted -- expect build failures!"
 
 	if use kernel_linux ; then
 		linux-info_pkg_setup
+
+einfo "Kernel version:  ${KV_MAJOR}.${KV_MINOR}"
+einfo "CONFIG_PATH being reviewed:  $(linux_config_path)"
+
 		check_kernel_flags
 	fi
 
