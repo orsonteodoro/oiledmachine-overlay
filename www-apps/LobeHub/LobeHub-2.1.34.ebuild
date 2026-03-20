@@ -76,6 +76,7 @@ NPM_SLOT="3"
 PNPM_AUDIT_FIX=0
 PNPM_DEDUPE=0 # Still debugging
 PNPM_SLOT="9"
+POSTGRES_PORT="5432"
 POSTGRES_SLOT="17"
 RUST_MAX_VER="1.81.0" # Inclusive
 RUST_MIN_VER="1.81.0" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0 for next.js 15.3.3 dependency of @swc/core 1.11.24 \
@@ -705,27 +706,35 @@ src_prepare() {
 	default
 }
 
-postgres_checks() {
-	if [[ -z "${KEY_VAULTS_SECRET}" ]] ; then
+is_postgres_ready() {
+	if [[ -z "${KEY_VAULTS_SECRET}" || -z "${DATABASE_URL}" ]] ; then
+		[[ -z "${KEY_VAULTS_SECRET}" ]] && eerror "KEY_VAULTS_SECRET is missing."
+		[[ -z "${DATABASE_URL}" ]] && eerror "DATABASE_URL is missing."
 eerror
-eerror "The KEY_VAULTS_SECRET environment variable needs to be set for postgres support."
-eerror "It can be generated with \`openssl rand -base64 32\`"
-eerror "KEY_VAULTS_SECRET=\"<key>\""
-eerror "See https://lobehub.com/docs/self-hosting/server-database/vercel#add-the-key-vaults-secret-environment-variable"
+eerror "The KEY_VAULTS_SECRET environment variable needs to be set for postgres"
+eerror "support."
+eerror
+eerror "The DATABASE_URL needs to be set for PostgreSQL support."
+eerror "Place them into per-package package.env."
+eerror
+eerror "The value of KEY_VAULTS_SECRET must be generated from"
+eerror "\`openssl rand -base64 32\`"
+eerror
+eerror "The value of DATABASE_URL must must have a strong password and"
+eerror "match the port for dev-db/postgres:17"
+eerror
+eerror "Contents of /etc/portage/env/lobehub.conf:"
+eerror "export DATABASE_URL=\"postgres://<lobehub_user>:<lobehub_password>@localhost:5432/lobehub\""
+eerror "export KEY_VAULTS_SECRET=\"<key>\""
+eerror
+eerror "Contents of /etc/portage/package.env:"
+eerror "${CATEGORY}/${PN} lobehub.conf"
 eerror
 		die
 	fi
-
-	if [[ -z "${DATABASE_URL}" ]] ; then
-eerror
-eerror "The DATABASE_URL needs to be set for PostgreSQL support."
-eerror "See https://lobehub.com/docs/self-hosting/server-database/vercel#add-environment-variables-in-vercel"
-eerror
-eerror "It must be like this example but stronger password and match the port for dev-db/postgres:17:"
-eerror "postgres://lobehub_user:lobehub_password@localhost:5432/lobehub"
-eerror
-eerror "See also \`epkginfo -x ${PN}\` to setup PostgreSQL."
-eerror
+	if ! pg_isready -h "localhost" -p ${POSTGRES_PORT} ; then
+eerror "The postgres-${POSTGRES_SLOT} daemon needs to run to continue."
+		die
 	fi
 }
 
@@ -744,7 +753,7 @@ ewarn "Do not store KEY_VAULTS_SECRET in a package.env or /etc/portage/make.conf
 ewarn "Do not store NEXT_PUBLIC_POSTHOG_KEY in a package.env or /etc/portage/make.conf file for ${PN}."
 
 	if use postgres ; then
-		postgres_checks
+		is_postgres_ready
 	fi
 }
 
@@ -810,8 +819,22 @@ einfo "Building next.config.js"
 
 	edo npm run "build-sitemap"
 	edo npm run "build-sitemap"
+
 	if use postgres ; then
-		edo npm run "build-migrate-db"
+		is_postgres_ready
+
+		cat /dev/null > "${S}/.env" || die
+		echo "KEY_VAULTS_SECRET=\"${KEY_VAULTS_SECRET}\"" >> "${S}/.env" || die
+		if [[ "${DATABASE_URL}" =~ "sslmode" ]] ; then
+			echo "DATABASE_URL=\"${DATABASE_URL}\"" >> "${S}/.env" || die
+		else
+			echo "DATABASE_URL=\"${DATABASE_URL}?sslmode=disable\"" >> "${S}/.env" || die
+		fi
+		echo "DATABASE_DRIVER=\"node\"" >> "${S}/.env" || die
+#		echo "NEXT_PUBLIC_SERVICE_MODE=\"server\"" >> "${S}/.env" || die
+
+		edo npm run "db:generate"
+		edo npm run "db:migrate"
 	fi
 
 	grep -q -e "Build failed because of webpack errors" "${T}/build.log" && die "Detected error"
@@ -827,14 +850,16 @@ eerror "Build failure.  Missing ${S}/.next/standalone/server.js"
 	sed -i -e "s|${S}|/opt/${MY_PN2}|g" $(grep -l -r -e "${S}" "${S}/.next") || die
 	#attach_segfault_handler
 
-	# Remove the plaintext keys from the package manager.
-	# API keys are sensitive data.
+	# Remove the plaintext keys from the package manager's environment.bz2.
+	# API keys are considered sensitive data.
 	AUTH_SECRET=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)			# Session key
 	KEY_VAULTS_SECRET=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)		# DB key
 	NEXT_PUBLIC_POSTHOG_KEY=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)	# Analytics/telemetry key
+	DATABASE_URL=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)			# DB key
 	unset AUTH_SECRET
 	unset KEY_VAULTS_SECRET
 	unset NEXT_PUBLIC_POSTHOG_KEY
+	unset DATABASE_URL
 }
 
 _install_webapp() {
@@ -866,6 +891,9 @@ _install_webapp() {
 		doins "${S}/scripts/migrateServerDB/docker.cjs"
 		doins "${S}/scripts/migrateServerDB/errorHint.js"
 	fi
+
+	exeinto "${_PREFIX}"
+	doexe "${FILESDIR}/migrate-db"
 
 	fowners -R "${MY_PN2}:${MY_PN2}" "${_PREFIX}"
 }
@@ -992,12 +1020,6 @@ pkg_preinst() {
 }
 
 pkg_postinst() {
-	if [[ "${LOBEHUB_DATABASE_AUTO_MIGRATE:-1}" == "1" ]] ; then
-einfo "Running db:migrate"
-		cd "/opt/${MY_PN2}"
-		npm run "db:migrate"
-	fi
-
 	xdg_pkg_postinst
 einfo
 einfo "The documentation for /etc/conf.d/lobehub can be found at"

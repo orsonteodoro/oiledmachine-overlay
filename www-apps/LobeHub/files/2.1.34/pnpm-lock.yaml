@@ -28351,7 +28351,7 @@ snapshots:
     dependencies:
       '@ai-sdk/openai': 1.3.24(zod@3.25.76)
       '@upstash/qstash': 2.9.0(patch_hash=6271713b30a0b7539a8008a51d24247765fc319495e67268e56604604e6eb1c9)
-      ai: 5.0.52
+      ai: 5.0.52(zod@3.25.76)
       zod: 3.25.76
     transitivePeerDependencies:
       - react
