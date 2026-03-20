@@ -64,7 +64,7 @@ EAPI=8
 
 # @serwist/next needs pnpm workspaces
 
-# Use `PNPM_UPDATER_VERSIONS="2.1.34" pnpm_updater_update_locks.sh` to update lockfile
+# Use `PNPM_UPDATER_VERSIONS="2.1.43" pnpm_updater_update_locks.sh` to update lockfile
 
 MY_PN="${PN}"		# LobeHub
 MY_PN2="${PN,,}"	# lobehub
@@ -888,7 +888,7 @@ _install_webapp() {
 
 	if use postgres ; then
 		insinto "${_PREFIX}"
-		doins -r "${S}/src/database/migrations"
+		doins -r "${S}/packages/database/migrations"
 		doins "${S}/scripts/migrateServerDB/docker.cjs"
 		doins "${S}/scripts/migrateServerDB/errorHint.js"
 	fi
