@@ -77,7 +77,7 @@ else
 	"
 fi
 SLOT="0"
-IUSE+=" ebuild_revision_11"
+IUSE+=" ebuild_revision_12"
 RDEPEND="
 	app-misc/ollama
 "
@@ -138,27 +138,39 @@ ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild@0.21.5 and ar
 		# VS = Vulnerable System (Direct attack)
 		sed -i -e "s|\"@langchain/community\": \"^0.2.25\"|\"@langchain/community\": \"0.3.3\"|g" "package-lock.json" || die		# CVE-2024-7042; DoS, DT, ID; Critical
 
-		sed -i -e "s#\"vite\": \"^4.0.0 || ^5.0.0\"#\"vite\": \"5.4.20\"#g" "package-lock.json" || die					# CVE-2025-30208; ID; Medium
-		sed -i -e "s#\"vite\": \"^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0-beta.0\"#\"vite\": \"5.4.20\"#g" "package-lock.json" || die	# CVE-2025-30208; ID; Medium
-		sed -i -e "s|\"vite\": \"^5.0.12\"|\"vite\": \"5.4.20\"|g" "package-lock.json" || die						# CVE-2025-24010; ID; Medium
-		sed -i -e "s|\"vite\": \"^5.4.12\"|\"vite\": \"5.4.20\"|g" "package-lock.json" || die						# CVE-2025-30208; ID; Medium
-		sed -i -e "s|\"vite\": \"5.4.12\"|\"vite\": \"5.4.20\"|g" "package-lock.json" || die						# CVE-2025-30208; ID; Medium
+		sed -i -e "s#\"vite\": \"^4.0.0 || ^5.0.0\"#\"vite\": \"5.4.21\"#g" "package-lock.json" || die					# CVE-2025-30208; ID; Medium
+		sed -i -e "s#\"vite\": \"^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0-beta.0\"#\"vite\": \"5.4.21\"#g" "package-lock.json" || die	# CVE-2025-30208; ID; Medium
+		sed -i -e "s|\"vite\": \"^5.0.12\"|\"vite\": \"5.4.21\"|g" "package-lock.json" || die						# CVE-2025-24010; ID; Medium
+		sed -i -e "s|\"vite\": \"^5.4.12\"|\"vite\": \"5.4.21\"|g" "package-lock.json" || die						# CVE-2025-30208; ID; Medium
+		sed -i -e "s|\"vite\": \"5.4.12\"|\"vite\": \"5.4.21\"|g" "package-lock.json" || die						# CVE-2025-30208; ID; Medium
 																		# CVE-2025-46565; VS(ID); Medium
 																		# CVE-2025-32395; VS(ID); Medium
 																		# CVE-2025-31486; ID; Medium
-																		# CVE-2025-58752;ID; Low
+																		# CVE-2025-58752; ID; Low
+																		# CVE-2025-62522; VS(ID); Moderate
 
-		sed -i -e "s|\"ws\": \"^8.14.2\"|\"ws\": \"^8.17.1\"|g" "package-lock.json" || die						# CVE-2024-37890; DoS; High
-		sed -i -e "s|\"ws\": \"8.13.0\"|\"ws\": \"^8.17.1\"|g" "package-lock.json" || die
+		sed -i -e "s|\"ws\": \"^8.14.2\"|\"ws\": \"8.17.1\"|g" "package-lock.json" || die						# CVE-2024-37890; DoS; High
+		sed -i -e "s|\"ws\": \"8.13.0\"|\"ws\": \"8.17.1\"|g" "package-lock.json" || die
 
-		sed -i -e "s|\"form-data\": \"^4.0.0\"|\"form-data\": \"^4.0.4\"|g" "package-lock.json" || die					# CVE-2025-7783; VS(DT, ID), SS(DT, ID); Critical
+		sed -i -e "s|\"form-data\": \"^4.0.0\"|\"form-data\": \"4.0.4\"|g" "package-lock.json" || die					# CVE-2025-7783; VS(DT, ID), SS(DT, ID); Critical
 
 		sed -i -e "s|\"tmp\": \"^0.2.0\"|\"tmp\": \"0.2.4\"|g" "package-lock.json" || die						# CVE-2025-54798; DT
 
-		sed -i -e "s|\"mermaid\": \"^11.4.1\"|\"mermaid\": \"^11.10.0\"|g" "package-lock.json" || die					# CVE-2025-54881; SS(DT, ID); Medium
+		sed -i -e "s|\"mermaid\": \"^11.4.1\"|\"mermaid\": \"11.10.0\"|g" "package-lock.json" || die					# CVE-2025-54881; SS(DT, ID); Medium
 																		# CVE-2025-54880; SS(DT, ID); Medium
-		sed -i -e "s|\"tar-fs\": \"^2.0.0\"|\"tar-fs\": \"^2.1.4\"|g" "package-lock.json" || die					# CVE-2025-59343; VS(DT); High
-		sed -i -e "s|\"tar-fs\": \"^3.1.0\"|\"tar-fs\": \"^3.1.1\"|g" "package-lock.json" || die					# CVE-2025-59343, GHSA-vj76-c3g6-qr5v; VS(DT); High # Not mentioned in the GH scanner for llocal but in a different package
+		sed -i -e "s|\"tar-fs\": \"^2.0.0\"|\"tar-fs\": \"2.1.4\"|g" "package-lock.json" || die						# CVE-2025-59343; VS(DT); High
+		sed -i -e "s|\"tar-fs\": \"^3.1.0\"|\"tar-fs\": \"3.1.1\"|g" "package-lock.json" || die						# CVE-2025-59343, GHSA-vj76-c3g6-qr5v; VS(DT); High # Not mentioned in the GH scanner for llocal but in a different package
+
+		sed -i -e "s|\"tar\": \"^7.4.3\"|\"tar\": \"7.5.11\"|g" "package-lock.json" || die						# CVE-2026-23950; DoS, DT, ID; High
+		sed -i -e "s|\"tar\": \"^7.5.10\"|\"tar\": \"7.5.11\"|g" "package-lock.json" || die						# CVE-2026-23950; DoS, DT, ID; High
+		sed -i -e "s|\"tar\": \"^6.1.12\"|\"tar\": \"7.5.11\"|g" "package-lock.json" || die						# CVE-2026-23950; DoS, DT, ID; High
+																		# CVE-2026-24842; DT, ID; High
+																		# CVE-2026-29786; DoS, DT; High
+																		# CVE-2026-31802; VS(DoS), SS(DoS); High
+																		# CVE-2026-23745; VS(DT, ID), SS(DT, ID); High
+																		# CVE-2026-26960; DT, ID; High
+		sed -i -e "s|\"@tootallnate/once\": \"2\"|\"@tootallnate/once\": \"3.0.1\"|g" "package-lock.json" || die			# CVE-2026-3449; VS(DoS); Low
+		sed -i -e "s|\"file-type\": \"^16.5.4\"|\"file-type\": \"21.3.1\"|g" "package-lock.json" || die					# CVE-2026-31808; ZC, DoS; Moderate
 	}
 	patch_lockfile
 
@@ -175,12 +187,15 @@ ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild@0.21.5 and ar
 
 		"tar-fs@2.1.4"
 		"tar-fs@3.1.1"
+		"tar@7.5.11"
+		"file-type@21.3.1"
 	)
 	enpm install "${L[@]}" -P "${NPM_INSTALL_ARGS[@]}"
 
 	L=(
-		"vite@5.4.20"
+		"vite@5.4.21"
 		"tmp@0.2.4"
+		"@tootallnate/once@3.0.1"
 	)
 	enpm install "${L[@]}" -D "${NPM_INSTALL_ARGS[@]}"
 
