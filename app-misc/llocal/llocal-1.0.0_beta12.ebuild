@@ -8,6 +8,7 @@ MY_PV="${PV/_beta/-beta.}"
 
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 NODE_SLOT="20"
+NPM_AUDIT_FATAL=0
 #NPM_AUDIT_FIX=0
 NPM_LOCKFILE_SOURCE="ebuild"
 NPM_INSTALL_PATH="/opt/${PN}"
@@ -17,8 +18,7 @@ RUST_PV="${RUST_MIN_VER}"
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-#	ELECTRON_APP_ELECTRON_PV="37.2.6" # Cr 138.0.7204.185, node 22.17.1
-	ELECTRON_APP_ELECTRON_PV="38.2.1" # Cr 140.0.7339.41, node 22.18.0
+	ELECTRON_APP_ELECTRON_PV="41.0.3" # Cr 146.0.7680.80, node 24.14.0
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="28.3.3" # Cr 120.0.6099.291, node 18.18.2
@@ -60,7 +60,6 @@ HOMEPAGE="
 	https://www.llocal.in/
 	https://github.com/kartikm7/llocal
 "
-# The fingerprint of electron-28.2.10-chromium.html and the electron-28.3.1-chromium.html is the same
 LICENSE="
 	${ELECTRON_APP_LICENSES}
 	MIT
@@ -69,9 +68,10 @@ LICENSE="
 # OFL-1.1 - Poppins-*.ttf
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	LICENSE+="
-		electron-38.2.0-chromium.html
+		electron-41.0.3-chromium.html
 	"
 else
+# The fingerprint of electron-28.2.10-chromium.html and the electron-28.3.1-chromium.html is the same
 	LICENSE+="
 		electron-28.2.10-chromium.html
 	"
@@ -119,7 +119,9 @@ pkg_setup() {
 }
 
 npm_unpack_post() {
+	einfo "DEBUG:  called npm_unpack_post()"
 	_puppeteer_setup_offline_cache
+	sed -i -e "/kokoro-js/d" "package.json" || die
 }
 
 npm_update_lock_install_post() {
