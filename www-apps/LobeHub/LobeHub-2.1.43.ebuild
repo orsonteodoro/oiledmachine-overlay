@@ -140,7 +140,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 embeddings file-management +indexdb +openrc postgres rag systemd
-ebuild_revision_65
+ebuild_revision_66
 "
 REQUIRED_USE="
 	postgres
@@ -482,18 +482,18 @@ pnpm_audit_post() {
 
 pnpm_dedupe_post() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
-ewarn "QA:  Manually remove undici@6.21.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"		# CVE-2026-2229; ZC, DoS, High
-													# CVE-2026-1526; ZC, DoS, High
-													# CVE-2026-1525; ZC, DT, ID; Moderate
-													# CVE-2026-22036; ZC, DoS; Moderate
-													# CVE-2026-1527; DT, ID; Moderate
+ewarn "QA:  Manually remove undici@6.21.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change undici: 6.21.3 to undici: 7.24.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
+ewarn "QA:  Manually change file-type: 16.5.4 to file-type: 21.3.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove file-type@16.5.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"	# CVE-2026-31808; ZC, DoS; Moderate
+
 ewarn "QA:  Manually remove bn.js@4.12.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 ewarn "QA:  Manually remove ajv@6.14.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove ajv@8.12.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change ajv-formats@2.1.1(ajv@8.12.0) to ajv-formats@2.1.1(ajv@8.18.0) from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change ajv-formats: 2.1.1(ajv@8.12.0) to ajv-formats: 3.0.1(ajv@8.18.0) from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove ajv-formats@2.1.1 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
@@ -501,7 +501,7 @@ ewarn "QA:  Manually remove minimatch@3.1.5 from ${S}/package-lock.json or ${S}/
 ewarn "QA:  Manually remove minimatch@5.1.9 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove minimatch@9.0.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove minimatch@9.0.9 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change from minimatch@x.y.z to minimatch@10.2.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually change from minimatch@x.y.z to minimatch@10.2.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 #ewarn "QA:  Manually remove fast-xml-parser@4.5.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove fast-xml-parser@4.5.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
@@ -584,13 +584,6 @@ ewarn "QA:  Manually remove electron@34.5.8 in ${S}/package-lock.json or ${S}/pn
 
 			sed -i -e "s|tmp: 0.0.33|tmp: 0.2.4|g" "pnpm-lock.yaml" || die
 
-			sed -i -e "s|fast-xml-parser: 5.4.1|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 5.2.5|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 5.3.6|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 4.5.4|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-
 			sed -i -e "s|minimatch: 9.0.9|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|minimatch: 9.0.6|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|minimatch: 9.0.3|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die
@@ -616,6 +609,15 @@ ewarn "QA:  Manually remove electron@34.5.8 in ${S}/package-lock.json or ${S}/pn
 			sed -i -e "s|'@tootallnate/once': 2.0.0|'@tootallnate/once': 3.0.1|g" "pnpm-lock.yaml" || die
 
 			sed -i -e "s|serialize-javascript: 6.0.2|serialize-javascript: 7.0.3|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|undici: 6.21.3|undici: 7.24.5|g" "pnpm-lock.yaml" || die
+
+			sed -i -e "s|fast-xml-parser: 5.4.1|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 5.4.2|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 5.2.5|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 5.3.6|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 4.5.4|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
 		}
 
 		pnpm_patch_lockfile
@@ -634,11 +636,6 @@ ewarn "QA:  Manually remove electron@34.5.8 in ${S}/package-lock.json or ${S}/pn
 			"@e965/xlsx"									# CVE-2024-22363; DoS; High
 													# CVE-2023-30533; DoS, DT, ID; High
 
-			"fast-xml-parser@5.5.7"								# CVE-2026-25896; ZC, EBR, DT, ID; Critical
-													# CVE-2026-26278; ZC, DoS; High
-													# CVE-2026-27942; ZC, VS(DoS); Low		# >= 5.3.8 or >= 4.5.4
-													# CVE-2026-33036; ZC, DoS; High
-													# CVE-2026-33349; ZC, DoS; Moderate
 			"jsondiffpatch@0.7.2"								# CVE-2025-9910; VS(DT, ID); Moderate
 			"ai@5.0.52"									# CVE-2025-48985; DT; Low
 			"@langchain/community@1.1.18"							# CVE-2026-27795; ID; Moderate
@@ -648,6 +645,17 @@ ewarn "QA:  Manually remove electron@34.5.8 in ${S}/package-lock.json or ${S}/pn
 			"minimatch@10.2.4"								# CVE-2026-26996: ZC, DoS; High
 													# CVE-2026-27903; ZC, DoS; High
 													# CVE-2026-27904; ZC, DoS; High
+			"undici@7.24.5"									# CVE-2026-2229; ZC, DoS, High
+													# CVE-2026-1526; ZC, DoS, High
+													# CVE-2026-1525; ZC, DT, ID; Moderate
+													# CVE-2026-22036; ZC, DoS; Moderate
+													# CVE-2026-1527; DT, ID; Moderate
+													# CVE-2026-1528; ZC, DoS; High
+			"fast-xml-parser@5.5.7"								# CVE-2026-25896; ZC, EBR, DT, ID; Critical
+													# CVE-2026-26278; ZC, DoS; High
+													# CVE-2026-27942; ZC, VS(DoS); Low		# >= 5.3.8 or >= 4.5.4
+													# CVE-2026-33036; ZC, DoS; High
+													# CVE-2026-33349; ZC, DoS; Moderate
 		)
 		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 
