@@ -50,7 +50,7 @@
     "d3-dsv": "^2.0.0",
     "duck-duck-scrape": "^2.2.5",
     "faiss-node": "^0.5.1",
-    "file-type": "^21.3.1",
+    "file-type": "^21.3.2",
     "form-data": "^4.0.4",
     "google-sr": "^5.0.0",
     "i18next": "^25.0.1",

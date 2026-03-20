@@ -77,7 +77,7 @@ else
 	"
 fi
 SLOT="0"
-IUSE+=" ebuild_revision_13"
+IUSE+=" ebuild_revision_15"
 RDEPEND="
 	app-misc/ollama
 "
@@ -170,7 +170,8 @@ ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild@0.21.5 and ar
 																		# CVE-2026-23745; VS(DT, ID), SS(DT, ID); High
 																		# CVE-2026-26960; DT, ID; High
 		sed -i -e "s|\"@tootallnate/once\": \"2\"|\"@tootallnate/once\": \"3.0.1\"|g" "package-lock.json" || die			# CVE-2026-3449; VS(DoS); Low
-		sed -i -e "s|\"file-type\": \"^16.5.4\"|\"file-type\": \"21.3.1\"|g" "package-lock.json" || die					# CVE-2026-31808; ZC, DoS; Moderate
+		sed -i -e "s|\"file-type\": \"^16.5.4\"|\"file-type\": \"21.3.2\"|g" "package-lock.json" || die					# CVE-2026-31808; ZC, DoS; Moderate
+																		# CVE-2026-32630; ZC, DoS; Moderate
 
 		sed -i -e "s|\"minimatch\": \"^9.0.5\"|\"minimatch\": \"9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
 		sed -i -e "s|\"minimatch\": \"^9.0.4\"|\"minimatch\": \"9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
@@ -193,7 +194,7 @@ ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild@0.21.5 and ar
 		"tar-fs@2.1.4"
 		"tar-fs@3.1.1"
 		"tar@7.5.11"
-		"file-type@21.3.1"
+		"file-type@21.3.2"
 		"minimatch@9.0.7"
 	)
 	enpm install "${L[@]}" -P "${NPM_INSTALL_ARGS[@]}"
