@@ -231,8 +231,6 @@ ewarn "Missing kernel .config file."
 	# The same article discusses the unintended consequences.
 	# In the current build files in the chromium project, they had went against their original decision about supporting THP.
 	#
-	# YAMA is a Chromium requirement.
-	#
 		CONFIG_CHECK="
 			~TRANSPARENT_HUGEPAGE
 		"
