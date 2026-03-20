@@ -41,6 +41,7 @@ GTK4_PV="4.8.3"
 LIBXI_PV="1.7.10"
 MESA_PV="20.3.5"
 VIRTUALX_REQUIRED="manual"
+WEB_KERNEL_CONFIG_CHECK_YAMA=1
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -54,7 +55,7 @@ LLVM_COMPAT=(
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
-inherit chromium-2 cmake flag-o-matic libcxx-slot libstdcxx-slot linux-info sandbox-changes virtualx
+inherit chromium-2 cmake flag-o-matic libcxx-slot libstdcxx-slot linux-info sandbox-changes virtualx web-kernel-config
 
 REQUIRED_USE=""
 KEYWORDS="~arm ~arm64 ~amd64"
@@ -208,22 +209,7 @@ append_all() {
 	append-ldflags "${@}"
 }
 
-#
-# Verify kernel mitigations:
-#
-# ALSR - Code Reuse, Privilege Escalation, Memory Corruption
-# Hardened user copy - Heap Overflow, Code Execution, Information Disclosure, Denial of Service
-# Init on free / init on alloc - Use After Free
-# Kernel stack offset randomization - Sandbox Escape, Privilege Escalation
-# MMAP minimum address - Privilege Escalation, Sandbox Escape
-# NX bit - Code Execution
-# PTI - Information Disclosure
-# Retpoline - Information Disclosure
-# seccomp - Code Execution, Privilege Escalation
-# SSP - Code Execution, Privilege Escalation
-# YAMA - Privilege Escalation, Information Disclosure, Sandbox Escape
-#
-check_kernel_config() {
+check_thp_kernel_config() {
 	if use kernel_linux ; then
 		linux-info_pkg_setup
 
@@ -239,9 +225,6 @@ ewarn "Missing kernel .config file."
 		fi
 
 	#
-	# The kstack offset mitigation has been weaponized for Data Tampering in CVE-2025-38236
-	# It has a better Faustian deal by enabling it.
-	#
 	# The history of the commit can be found on
 	# https://community.intel.com/t5/Blogs/Tech-Innovation/Client/A-Journey-for-Landing-The-V8-Heap-Layout-Visualization-Tool/post/1368855
 	# I've seen this first in the nodejs repo but never understood the benefit.
@@ -250,96 +233,13 @@ ewarn "Missing kernel .config file."
 	#
 	# YAMA is a Chromium requirement.
 	#
-	# We do not make the config options a hard requirement because not all arches support it.
-	#
 		CONFIG_CHECK="
-			~HARDENED_USERCOPY
-			~INIT_ON_ALLOC_DEFAULT_ON
-			~INIT_ON_FREE_DEFAULT_ON
-			~RANDOMIZE_BASE
-			~RANDOMIZE_KSTACK_OFFSET
-			~RELOCATABLE
-			~SECCOMP
-			~STACKPROTECTOR
-			~STACKPROTECTOR_STRONG
-			~STRICT_KERNEL_RWX
-
-			~MULTIUSER
-			~SECURITY
-			~SECURITY_YAMA
-			~SYSFS
-
 			~TRANSPARENT_HUGEPAGE
 		"
 
-		if use amd64 ; then
-			CONFIG_CHECK+="
-				~RANDOMIZE_MEMORY
-			"
-		fi
-		if ver_test "${KV_MAJOR}.${KV_MINOR}" "-lt" "6.9" ; then
-		# Kernel 2.10
-			CONFIG_CHECK+="
-				~PAGE_TABLE_ISOLATION
-				~RETPOLINE
-			"
-		else
-		# Kernel 6.9
-			CONFIG_CHECK+="
-				~MITIGATION_PAGE_TABLE_ISOLATION
-				~MITIGATION_RETPOLINE
-			"
-		fi
-
-		WARNING_INIT_ON_ALLOC_DEFAULT_ON="CONFIG_INIT_ON_ALLOC_DEFAULT_ON is required to mitigate against full system compromise."
-		WARNING_INIT_ON_FREE_DEFAULT_ON="CONFIG_INIT_ON_FREE_DEFAULT_ON is required to mitigate against full system compromise."
-		WARNING_HARDENED_USERCOPY="CONFIG_HARDENED_USERCOPY is required to mitigate against full system compromise."
-		WARNING_MITIGATION_PAGE_TABLE_ISOLATION="CONFIG_MITIGATION_PAGE_TABLE_ISOLATION is required for Meltdown mitigation or exfiltration mitigation."
-		WARNING_MITIGATION_RETPOLINE="CONFIG_MITIGATION_RETPOLINE is required for Spectre mitigation or exfiltration mitigation."
-		WARNING_MULTIUSER="CONFIG_MULTIUSER is required for YAMA to mitigate against credential theft or sandbox escape."
-		WARNING_PAGE_TABLE_ISOLATION="CONFIG_PAGE_TABLE_ISOLATION is required for Meltdown mitigation or exfiltration mitigation."
-		WARNING_RANDOMIZE_BASE="CONFIG_RANDOMIZE_BASE is required to mitigate against full system compromise."
-		WARNING_RANDOMIZE_KSTACK_OFFSET="CONFIG_RANDOMIZE_KSTACK_OFFSET is required to mitigate against sandbox escape."
-		WARNING_RANDOMIZE_MEMORY="CONFIG_RANDOMIZE_MEMORY is required to mitigate against full system compromise."
-		WARNING_RANDOMIZE_RELOCATABLE="CONFIG_RANDOMIZE_BASE is required to mitigate against full system compromise."
-		WARNING_RETPOLINE="CONFIG_RETPOLINE is required for Spectre mitigation or exfiltration mitigation."
-		WARNING_SECCOMP="CONFIG_SECCOMP is required for the system to sandbox correctly."
-		WARNING_SECURITY="CONFIG_SECURITY is required for YAMA to mitigate against credential theft or sandbox escape."
-		WARNING_SECURITY_YAMA="CONFIG_SECURITY_YAMA could be added for ptrace sandbox protection to mitigate against credential theft or sandbox escape."
-		WARNING_STACKPROTECTOR="CONFIG_STACKPROTECTOR is required to mitigate against full system compromise."
-		WARNING_STACKPROTECTOR_STRONG="CONFIG_STACKPROTECTOR is required to mitigate against full system compromise."
-		WARNING_STRICT_KERNEL_RWX="CONFIG_STRICT_KERNEL_RWX is required to mitigate against full system compromise."
-		WARNING_SYSFS="CONFIG_SYSFS could be added for ptrace sandbox protection."
 		WARNING_TRANSPARENT_HUGEPAGE="CONFIG_TRANSPARENT_HUGEPAGE could be enabled for V8 [JavaScript engine] memory access time reduction.  For webservers, music production, realtime, it should be kept disabled."
 
 		check_extra_config
-
-		if linux_chkconfig_present "SECURITY_YAMA" ; then
-			local lsm=$(linux_chkconfig_string LSM)
-			if [[ "${lsm}" =~ "yama" ]] ; then
-				:
-			else
-ewarn "Missing yama in CONFIG_LSM.  Add yama to CONFIG_LSM for ptrace sandbox protection."
-			fi
-		fi
-
-		check_extra_config
-
-		local config_path=$(linux_config_path)
-		local is_64bit=$(tc-get-ptr-size)
-		is_64bit=$(( ${is_64bit} == 8 ? 1 : 0 ))
-		if [[ -e "${config_path}" ]] ; then
-			local v=$(grep -e "CONFIG_DEFAULT_MMAP_MIN_ADDR" "${config_path}" | cut -f 2 -d "=")
-			[[ -z "${v}" ]] && v=0
-			if (( ${is_64bit} == 1 && ${v} != 65536 )) ; then
-ewarn "CONFIG_DEFAULT_MMAP_MIN_ADDR should be 65536 for 64-bit to mitigate sandbox escape."
-			fi
-			if (( ${is_64bit} == 0 && ${v} != 32768 )) ; then
-ewarn "CONFIG_DEFAULT_MMAP_MIN_ADDR should be 32768 for 32-bit to mitigate sandbox escape."
-			fi
-		else
-ewarn "CONFIG_DEFAULT_MMAP_MIN_ADDR should be 65536 for 64-bit, 32768 for 32-bit to mitigate sandbox escape."
-		fi
 	fi
 }
 
@@ -544,7 +444,9 @@ ewarn "Packages that interact with ${PN} (e.g. password managers, clipboard mana
 }
 
 pkg_setup() {
-	check_kernel_config
+	web-kernel-config_setup
+	check_thp_kernel_config
+
 	if use test ; then
 		if has "sandbox" ${FEATURES} ; then
 eerror "-sandbox must be added to FEATURES to use the test USE flag."
