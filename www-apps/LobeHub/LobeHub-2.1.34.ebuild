@@ -892,9 +892,6 @@ _install_webapp() {
 		doins "${S}/scripts/migrateServerDB/errorHint.js"
 	fi
 
-	exeinto "${_PREFIX}"
-	doexe "${FILESDIR}/migrate-db"
-
 	fowners -R "${MY_PN2}:${MY_PN2}" "${_PREFIX}"
 }
 
