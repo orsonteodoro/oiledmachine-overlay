@@ -140,7 +140,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 embeddings file-management +indexdb +openrc postgres rag systemd
-ebuild_revision_67
+ebuild_revision_68
 "
 REQUIRED_USE="
 	postgres
@@ -482,6 +482,7 @@ pnpm_audit_post() {
 
 pnpm_dedupe_post() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
+ewarn "QA:  Manually remove @tootallnate/once@2.0.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove serialize-javascript@6.0.2 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 ewarn "QA:  Manually remove undici@6.21.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
