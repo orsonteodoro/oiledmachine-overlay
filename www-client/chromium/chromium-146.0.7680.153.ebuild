@@ -2371,21 +2371,21 @@ verify_compiler_flags_hardening() {
 	#
 
 		'!headless:media-libs/alsa-lib:manual,loaded-library'
-		'!headless:media-libs/libglvnd:manual'
+		'!headless:media-libs/libglvnd:manual,untrusted-data'
 		'!headless:x11-libs/libxkbcommon:manual,sensitive-data'
 		"accessibility:app-accessibility/at-spi2-core:manual,loaded-library,sensitive-data"	# PII
 		"cups:net-print/cups:manual,loaded-library,sensitive-data,untrusted-data"
 		"ffmpeg-chromium:media-video/ffmpeg-chromium:manual,untrusted-data"
 		"screencast:media-video/pipewire:manual,untrusted-data"
-		"selinux:sys-libs/libselinux:manual"
-		"system-double-conversion:dev-libs/double-conversion:manual"
+		"selinux:sys-libs/libselinux:manual,sensitive-data"
+		"system-double-conversion:dev-libs/double-conversion:manual,untrusted-data"
 		"system-libxnvctrl:x11-drivers/nvidia-drivers:manual"
 		"system-openh264:media-libs/openh264:manual,untrusted-data"
-		"system-vulkan-memory-allocator:media-libs/VulkanMemoryAllocator:manual"
+		"system-vulkan-memory-allocator:media-libs/VulkanMemoryAllocator:manual,untrusted-data"
 		"unconditional:dev-libs/nspr:manual,sensitive-data"
 		"unconditional:sys-apps/dbus:manual,loaded-library,sensitive-data"			# PII
 		"vaapi:media-libs/libva:manual,loaded-library,untrusted-data"
-		"wayland:dev-libs/wayland:manual"
+		"wayland:dev-libs/wayland:manual,sensitive-data,untrusted-data"				# PII in window title
 		'X:x11-libs/libxcb:manual,sensitive-data'
 
 	#
@@ -2405,8 +2405,8 @@ verify_compiler_flags_hardening() {
 		"X:x11-base/xorg-server:sensitive-data"
 
 		"unconditional:app-arch/bzip2:untrusted-data"
-		"unconditional:dev-libs/expat:attack-surface-risk"
-		"unconditional:dev-libs/glib:attack-surface-risk"
+		"unconditional:dev-libs/expat:attack-surface-risk,untrusted-data"			# SVG, extensions
+		"unconditional:dev-libs/glib:attack-surface-risk,sensitive-data"			# GNOME Keyring, or libsecret storage
 		"unconditional:dev-libs/nss:sensitive-data,untrusted-data"
 		"unconditional:media-libs/mesa:loaded-library,sensitive-data,untrusted-data"
 		"unconditional:net-misc/curl:sensitive-data,untrusted-data"
@@ -2414,19 +2414,19 @@ verify_compiler_flags_hardening() {
 		"unconditional:x11-libs/libdrm:loaded-library,attack-surface-risk"
 
 	# system-* is marked security-critical by upstream in README.chromium.
-		"system-abseil-cpp:dev-cpp/abseil-cpp:"
-		"system-brotli:app-arch/brotli:"
-		"system-crc32c:dev-libs/crc32c:"
-		"system-clang:llvm-runtimes/libcxx:attack-surface-risk"
+		"system-abseil-cpp:dev-cpp/abseil-cpp:untrusted-data"
+		"system-brotli:app-arch/brotli:untrusted-data"
+		"system-crc32c:dev-libs/crc32c:untrusted-data"
+		"system-clang:llvm-runtimes/libcxx:attack-surface-risk,untrusted-data"			# Processes untrusted web data (JS, HTML, CSS, images); HTTP headers, URL data
 		"system-clang:llvm-runtimes/libcxxabi:attack-surface-risk"
 		"system-dav1d:media-libs/dav1d:untrusted-data"
 		"system-ffmpeg:media-video/ffmpeg:untrusted-data"
 		"system-flac:media-libs/flac:untrusted-data"
-		"system-flatbuffers:dev-libs/flatbuffers:"
+		"system-flatbuffers:dev-libs/flatbuffers:untrusted-data"
 		"system-fontconfig:media-libs/fontconfig:untrusted-data"
 		"system-freetype:media-libs/freetype:untrusted-data"
 		"system-harfbuzz:media-libs/harfbuzz:loaded-library,sensitive-data"			# PII
-		"system-highway:dev-cpp/highway:"
+		"system-highway:dev-cpp/highway:untrusted-data"
 		"system-icu:dev-libs/icu:sensitive-data"						# PII
 		"system-jsoncpp:dev-libs/jsoncpp:untrusted-data"
 		"system-libaom:media-libs/libaom:untrusted-data"
@@ -2440,14 +2440,14 @@ verify_compiler_flags_hardening() {
 		"system-libwebp:media-libs/libwebp:untrusted-data"
 		"system-libxml:dev-libs/libxml2:untrusted-data"
 		"system-libxslt:dev-libs/libxslt:untrusted-data"
-		"system-libyuv:media-libs/libyuv:"
+		"system-libyuv:media-libs/libyuv:untrusted-data"
 		"system-opus:media-libs/opus:untrusted-data"
-		"system-protobuf:dev-libs/protobuf:"
+		"system-protobuf:dev-libs/protobuf:untrusted-data"
 		"system-re2:dev-libs/re2:sensitive-data,untrusted-data"
 		"system-simdutf:dev-cpp/simdutf:attack-surface-risk,untrusted-data"
-		"system-snappy:app-arch/snappy:"
-		"system-spirv-tools:dev-util/spirv-tools:"
-		"system-sqlite:dev-db/sqlite:sensitive-data,untrusted-data"
+		"system-snappy:app-arch/snappy:sensitive-data,untrusted-data"				# PII
+		"system-spirv-tools:dev-util/spirv-tools:untrusted-data"				# Website shaders for WebGPU and WebGL
+		"system-sqlite:dev-db/sqlite:sensitive-data,untrusted-data"				# Browsing history, cookies, session tokens, credentials
 		"system-woff2:media-libs/woff2:untrusted-data"
 		"system-zlib:sys-libs/zlib:untrusted-data"
 		"system-zstd:app-arch/zstd:untrusted-data"
