@@ -85,7 +85,7 @@ RUST_MIN_VER="1.81.0" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0
 # Obtained from https://github.com/rust-lang/rust/blob/<commit-id>/RELEASES.md
 RUST_PV="${RUST_MIN_VER}"
 
-NEXTJS_PV="16.1.5"
+NEXTJS_PV="16.1.7"
 SHARP_PV="0.34.5"
 VIPS_PV="8.18.0"
 
@@ -433,6 +433,11 @@ pnpm_unpack_post() {
 		epnpm add -D ${pkgs[@]}
 		pkgs=(
 			"next@${NEXTJS_PV}"								# CVE-2025-29927; ZC, DoS, DT, ID; Critical
+													# CVE-2026-29057; ZC, DT, ID; Moderate
+													# CVE-2026-27979; ZC, DoS; Moderate
+													# CVE-2026-27980; ZC, DoS; Moderate
+													# CVE-2026-27978; VS(DT); Moderate
+													# CVE-2026-27977; DT, ID; Low
 #			"react@19.2.3"
 #			"react-dom@19.2.3"
 			"svix@1.84.1"
@@ -477,6 +482,13 @@ pnpm_audit_post() {
 
 pnpm_dedupe_post() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
+ewarn "QA:  Manually remove undici@6.21.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"		# CVE-2026-2229; ZC, DoS, High
+													# CVE-2026-1526; ZC, DoS, High
+													# CVE-2026-1525; ZC, DT, ID; Moderate
+													# CVE-2026-22036; ZC, DoS; Moderate
+													# CVE-2026-1527; DT, ID; Moderate
+
+ewarn "QA:  Manually remove file-type@16.5.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"	# CVE-2026-31808; ZC, DoS; Moderate
 ewarn "QA:  Manually remove bn.js@4.12.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 ewarn "QA:  Manually remove ajv@6.14.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
@@ -497,9 +509,9 @@ ewarn "QA:  Manually remove fast-xml-parser@5.2.5 from ${S}/package-lock.json or
 #ewarn "QA:  Manually remove fast-xml-parser@5.3.6 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove fast-xml-parser@5.3.8 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove fast-xml-parser@5.4.1 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change fast-xml-parser: 4.x or earlier to fast-xml-parser: 4.5.4 depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change fast-xml-parser: 5.x to fast-xml-parser: 5.4.2 depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change fast-xml-parser: 4.x, 5.x, or earlier to fast-xml-parser: 5.5.7 depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove fast-xml-parser: 5.4.1 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove fast-xml-parser: 5.5.5 or earlier in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 ewarn "QA:  Manually remove jsondiffpatch@0.6.0 from ${S}/package-lock.json"
 #ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
@@ -552,6 +564,7 @@ ewarn "QA:  Manually remove electron@34.5.8 in ${S}/package-lock.json or ${S}/pn
 		# ID = Information Disclosure
 		# EBR = Extended Blast Radius
 		# ZC = Zero Click Attack (AV:N, PR:N, UI:N)
+		# CE = Code Execution
 
 		pnpm_patch_lockfile() {
 			sed -i -e "s|'@apidevtools/json-schema-ref-parser': 11.1.0|'@apidevtools/json-schema-ref-parser': 11.2.0|g" "pnpm-lock.yaml" || die
@@ -571,12 +584,12 @@ ewarn "QA:  Manually remove electron@34.5.8 in ${S}/package-lock.json or ${S}/pn
 
 			sed -i -e "s|tmp: 0.0.33|tmp: 0.2.4|g" "pnpm-lock.yaml" || die
 
-			sed -i -e "s|fast-xml-parser: 5.4.1|fast-xml-parser: 5.4.2|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 5.2.5|fast-xml-parser: 5.4.2|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 5.3.6|fast-xml-parser: 5.4.2|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 4.5.4|fast-xml-parser: 4.5.4|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 4.5.4|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 4.5.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 5.4.1|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 5.2.5|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 5.3.6|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 4.5.4|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
 
 			sed -i -e "s|minimatch: 9.0.9|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|minimatch: 9.0.6|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die
@@ -590,17 +603,19 @@ ewarn "QA:  Manually remove electron@34.5.8 in ${S}/package-lock.json or ${S}/pn
 
 			sed -i -e "s|jsondiffpatch: 0.6.0|jsondiffpatch: 0.7.2|g" "pnpm-lock.yaml" || die
 
-			sed -i -e "s|ajv: 8.12.0|ajv: 8.18.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|ajv: 6.14.0|ajv: 8.18.0|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|ajv: 8.12.0|ajv: 8.18.0|g" "pnpm-lock.yaml" || die			# CVE-2025-69873; ZC, DoS; Moderate
+			sed -i -e "s|ajv: 6.14.0|ajv: 8.18.0|g" "pnpm-lock.yaml" || die			# CVE-2025-69873; ZC, DoS; Moderate
 
 			sed -i -e "s|js-yaml: 4.1.0|js-yaml: 4.1.1|g" "pnpm-lock.yaml" || die
 
 			sed -i -e "s|ai: 4.3.19(react@19.2.4)(zod@3.25.76)|ai: 5.0.52|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|'@octokit/rest': 19.0.13(encoding@0.1.13)|'@octokit/rest': 20.1.2|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|tar: 7.5.9|tar: 7.5.10|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|hono: 4.12.3|hono: 4.12.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|tar: 7.5.9|tar: 7.5.11|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|hono: 4.12.3|hono: 4.12.7|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|'@hono/node-server': 1.19.9(hono@4.12.3)|'@hono/node-server': 1.19.10|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|'@tootallnate/once': 2.0.0|'@tootallnate/once': 3.0.1|g" "pnpm-lock.yaml" || die
+
+			sed -i -e "s|serialize-javascript: 6.0.2|serialize-javascript: 7.0.3|g" "pnpm-lock.yaml" || die
 		}
 
 		pnpm_patch_lockfile
@@ -619,9 +634,11 @@ ewarn "QA:  Manually remove electron@34.5.8 in ${S}/package-lock.json or ${S}/pn
 			"@e965/xlsx"									# CVE-2024-22363; DoS; High
 													# CVE-2023-30533; DoS, DT, ID; High
 
-			"fast-xml-parser@5.4.2"								# CVE-2026-25896; ZC, EBR, DT, ID; Critical
+			"fast-xml-parser@5.5.7"								# CVE-2026-25896; ZC, EBR, DT, ID; Critical
 													# CVE-2026-26278; ZC, DoS; High
 													# CVE-2026-27942; ZC, VS(DoS); Low		# >= 5.3.8 or >= 4.5.4
+													# CVE-2026-33036; ZC, DoS; High
+													# CVE-2026-33349; ZC, DoS; Moderate
 			"jsondiffpatch@0.7.2"								# CVE-2025-9910; VS(DT, ID); Moderate
 			"ai@5.0.52"									# CVE-2025-48985; DT; Low
 			"@langchain/community@1.1.18"							# CVE-2026-27795; ID; Moderate
@@ -629,6 +646,8 @@ ewarn "QA:  Manually remove electron@34.5.8 in ${S}/package-lock.json or ${S}/pn
 													# CVE-2026-25528; ID; Moderate for langsmith dep of @langchain/community and langchain
 			"electron@35.7.5"								# CVE-2025-55305; DoS, DT, ID; Moderate
 			"minimatch@10.2.4"								# CVE-2026-26996: ZC, DoS; High
+													# CVE-2026-27903; ZC, DoS; High
+													# CVE-2026-27904; ZC, DoS; High
 		)
 		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 
@@ -639,14 +658,19 @@ ewarn "QA:  Manually remove electron@34.5.8 in ${S}/package-lock.json or ${S}/pn
 
 			"@octokit/rest@20.1.2"								# Bump to remove octokit 4.x vulnerabilities
 			"minimatch@10.2.4"								# CVE-2026-26996: ZC, DoS; High
+													# CVE-2026-27903; ZC, DoS; High
+													# CVE-2026-27904; ZC, DoS; High
 			"bn.js@5.2.3"									# CVE-2026-2739: DoS; Moderate
 			"js-yaml@4.1.1"									# CVE-2025-64718: ZC, DT; Moderate
-			"tar@7.5.10"									# GHSA-qffp-2rhf-9h96; VS(DT, ID), SS(DT, ID)
+			"tar@7.5.11"									# GHSA-qffp-2rhf-9h96; VS(DT, ID), SS(DT, ID)
+													# CVE-2026-31802; ZC, VS(DT), SS(DT), High
 			"@hono/node-server@1.19.10"							# CVE-2026-29087; ZC, ID; High
-			"hono@4.12.4"									# CVE-2026-29045; ZC, ID; High
+			"hono@4.12.7"									# CVE-2026-29045; ZC, ID; High
 													# CVE-2026-29085; DT, ID; Moderate
 													# CVE-2026-29086; DT, ID; Moderate
+													# GHSA-v8w9-8mx6-g223; ZC, DT, ID; Moderate
 			"@tootallnate/once@3.0.1"							# CVE-2026-3449; DoS; Low
+			"serialize-javascript@7.0.3"							# GHSA-5c6j-r48x-rmvq; CE, DoS, DT, ID; High
 		)
 		epnpm add -D ${pkgs[@]}
 
