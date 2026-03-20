@@ -860,6 +860,7 @@ eerror "Build failure.  Missing ${S}/.next/standalone/server.js"
 	unset KEY_VAULTS_SECRET
 	unset NEXT_PUBLIC_POSTHOG_KEY
 	unset DATABASE_URL
+	shred "${S}/.env"
 }
 
 _install_webapp() {

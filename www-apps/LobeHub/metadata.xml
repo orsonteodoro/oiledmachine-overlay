@@ -46,7 +46,16 @@
   Create extension:
 
   psql -p 5432 -U postgres
+  ALTER ROLE lobehub_user WITH SUPERUSER;
   CREATE EXTENSION IF NOT EXISTS vector;
+
+  emerge LobeHub.
+
+
+  Revoke the superuser privilege after emerge.
+
+  psql -p 5432 -U postgres
+  ALTER ROLE lobehub_user WITH NOSUPERUSER;
 
 
   Update /etc/conf.d/lobehub with the port and username and password changes.
