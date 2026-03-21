@@ -72,7 +72,7 @@ Critical | 9.3   | E:E + ZCA + VS(C:H, I:H, A:H)                | An easy direct
 Critical | 9.3   | E:E + I:H + C:H                              | An easy directed attack with full data tampering or full information disclosure possibilities
 Critical | 9.2   | E:E + ZCA + VS(C:H) + SS(C:H)                | An easy zero-click attack affecting many systems with an information disclosure possibility
 Critical | 9.1   | E:E + ZCA + I:H + A:H                        | An easy directed zero-click attack with full data tampering or full denial of service possibilities
-High     | 8.9   | E:D + ZCA + VS(C:H) + SS(C:H)                | A difficult many systems attack with full information disclosure possibility
+High     | 8.9   | E:D + ZCA + VS(C:H) + SS(C:H)                | A difficult zero-click attack affecting many systems with full information disclosure possibility
 High     | 8.9   | E:E + ZCA + VS(C:H, I:H, A:H)                | An easy directed zero-click attack with with full attacker capabilities
 High     | 8.8   | E:E + EBR + C:L + I:H + A:L                  | An easy attack affecting many systems with full/partial attack capabilities
 High     | 8.8   | E:E + ZCA + VS(C:H, I:H)                     | An easy directed zero-click attack with full information disclosure or full data tampering possibilities
@@ -111,7 +111,7 @@ Low      | 2.3   | E:E + SS(C:L, I:L, A:L)                      | An easy attack
 Low      | 2.3   | E:E + VS(C:L, I:L)                           | An easy directed attack with partial information disclosure or partial data tampering possibilities
 Low      | 2.3   | E:E + VS(C:L)                                | An easy directed attack with partial information disclosure possibility
 Low      | 2.2   | E:D + C:L                                    | A difficult directed attack with partial information disclosure possibility
-Low      | 1.9   | E:E + VS(A:L)                                | An easy attack with a partial denial of service possibility
+Low      | 1.9   | E:E + VS(A:L)                                | An easy directed attack with partial denial of service possibility
 Low      | 1.3   | E:D + VS(A:L)                                | A difficult directed attack with a partial denial of service possibility
 
 ## Remediation
