@@ -56,10 +56,10 @@ The current security posture of this overlay is neutral-defensive.
 
 ## Severity levels examples
 
-* Higher severities means more attacker capabilities.
-* Lower severities means less attacker capabilities.
+* Higher severities means more attacker capabilities or root-like.
+* Lower severities means less attacker capabilities or jail-like.
 
-Severity | Score | Possible vector examples                     | In Layman's terms
+Severity | Score | Possible vector string examples              | In layman's terms
 ---      | ---   | ---                                          | ---
 Critical | 10    | E:E + ZCA + EBR + C:H + I:H + A:H            | An easy zero-click attack affecting many systems with full attacker capabilities
 Critical | 9.8   | E:E + ZCA + C:H + I:H + A:H                  | An easy directed zero-click attack with full attacker capabilities
