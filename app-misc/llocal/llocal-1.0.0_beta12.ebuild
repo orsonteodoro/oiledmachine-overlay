@@ -91,6 +91,10 @@ BDEPEND="
 		dev-lang/rust-bin:=
 	)
 "
+PATCHES=(
+	"${FILESDIR}/${PN}-1.0.0-beta.12-cacheDir.patch"
+	"${FILESDIR}/${PN}-1.0.0-beta.12-filePath.patch"
+)
 
 _puppeteer_setup_offline_cache() {
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
@@ -181,6 +185,12 @@ ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild@0.21.5 and ar
 	patch_lockfile
 
 	local L
+
+	L=(
+		"node-gyp"
+	)
+	enpm install "${L[@]}" -D "${NPM_INSTALL_ARGS[@]}"
+
 	L=(
 		"@langchain/community@0.3.3"
 		"ws@8.17.1"
@@ -196,6 +206,7 @@ ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild@0.21.5 and ar
 		"tar@7.5.11"
 		"file-type@21.3.2"
 		"minimatch@9.0.7"
+		"kokoro-js"
 	)
 	enpm install "${L[@]}" -P "${NPM_INSTALL_ARGS[@]}"
 
@@ -259,6 +270,7 @@ src_install() {
 	electron-app_set_sandbox_suid "/opt/${PN}/chrome-sandbox"
 }
 
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.0_beta12 (20260321 with electron 41.0.3)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.0_beta11 (20250630 with electron 37.1.0)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.0_beta8 (20250312 with electron 35.0.1)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.0_beta8 (20250208 with electron 34.1.1)

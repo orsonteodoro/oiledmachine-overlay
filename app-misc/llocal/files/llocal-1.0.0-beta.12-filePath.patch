@@ -1,0 +1,62 @@
+--- a/src/preload/index.d.ts.orig	2025-09-14 06:52:34.000000000 -0700
++++ b/src/preload/index.d.ts	2026-03-21 02:51:32.142923162 -0700
+@@ -16,6 +16,8 @@ interface ragReturn {
+   sources: string
+ }
+ 
++export {};
++
+ declare global {
+   interface Window {
+     electron: ElectronAPI
+@@ -36,7 +38,8 @@ declare global {
+       changeLanguage: (language: string) => Promise<boolean>,
+       getLanguages: () => Promise<readonly string[]>,
+       titleBar: (event: string) => void,
+-      textToSpeech: (text: string) => Promise<ArrayBuffer>
++      textToSpeech: (text: string) => Promise<ArrayBuffer>,
++      getPathForFile: (file: File) => string,
+     }
+   }
+ }
+--- a/src/preload/index.ts.orig	2026-03-21 02:37:21.422147318 -0700
++++ b/src/preload/index.ts	2026-03-21 02:38:14.022793919 -0700
+@@ -24,7 +26,10 @@ const api = {
+   changeLanguage: (language: string): Promise<boolean> => ipcRenderer.invoke('changeLanguage', language),
+   getLanguages: (): Promise<readonly string[]> => ipcRenderer.invoke('getLanguages'),
+   titleBar: (event: string): void => ipcRenderer.send('titleBar', event),
+-  textToSpeech: (text: string): Promise<ArrayBuffer> => ipcRenderer.invoke('textToSpeech', text)
++  textToSpeech: (text: string): Promise<ArrayBuffer> => ipcRenderer.invoke('textToSpeech', text),
++  getPathForFile: (file: File): string => {
++    return require('electron').webUtils.getPathForFile(file);
++  },
+ }
+ 
+ 
+--- a/src/renderer/src/hooks/useFileDrop.tsx.orig	2026-03-21 02:19:25.420185197 -0700
++++ b/src/renderer/src/hooks/useFileDrop.tsx	2026-03-21 02:20:25.638766861 -0700
+@@ -18,16 +18,22 @@ export function useFileDrop() {
+     const file = e.dataTransfer && e.dataTransfer.files[0]
+     try {
+       if (!file) throw new Error("Something went wrong, while loading file")
+-      let splits = (file.path).split("/")
++
++      const filePath = window.api.getPathForFile(file);
++
++      if (!filePath) throw new Error("Could not retrieve file path");
++
++      let splits = filePath.split("/")
+       const fileName = splits[splits.length - 1]
+       splits = fileName.split(".")
+       const extension = splits[splits.length - 1]
++
+       // if it's image then we gucci
+       if (file.type.includes("image")) {
+         handleImage(file)
+       } else if (checkFileExtensions(extension)) {
+         toastId = toast.loading(t(`Adding to the knowledge base`))
+-        const response = await window.api.addKnowledge(file.path)
++        const response = await window.api.addKnowledge(filePath);
+         setFile(pre => Array.isArray(pre) ? [response, ...pre] : [response])
+         toast.success(t('fileAdded', { fileName: response.fileName }), { id: toastId })
+       } else {
