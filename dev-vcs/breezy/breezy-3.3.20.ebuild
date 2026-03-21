@@ -23,7 +23,7 @@ FLAKE8_PV="4.0.1"
 GENERATE_LOCKFILE=${GENERATE_LOCKFILE:-0}
 PARAMIKO_PV="2.9.3"
 PYTHON_COMPAT=( "python3_"{10..12} )
-RUST_MAX_VER="1.860" # Inclusive
+RUST_MAX_VER="1.86.0" # Inclusive
 RUST_MIN_VER="1.86.0" # llvm-19.0
 RUST_PV="${RUST_MIN_VER}"
 
@@ -109,7 +109,7 @@ SLOT="0"
 IUSE+="
 cext dev developer-docs doc fastimport git github gpg launchpad sftp subunit
 test user-docs workspace
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}

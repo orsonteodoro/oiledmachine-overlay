@@ -185,6 +185,7 @@ RDEPEND+="
 	postgres? (
 		dev-db/postgresql:${POSTGRES_SLOT}[server]
 		dev-db/postgresql:=
+		dev-db/pg_search[postgres_targets_postgres${POSTGRES_SLOT}]
 	)
 	rag? (
 		dev-db/pgvector[postgres_targets_postgres${POSTGRES_SLOT}]
@@ -392,6 +393,7 @@ pnpm_unpack_post() {
 	local pnpm_pv=$(pnpm --version)
 	sed -i \
 		-e "s|npm@11.1.0|npm@${pnpm_pv}|g" \
+		-e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.5.7\"|g" \
 		"package.json" \
 		|| die
 
@@ -510,6 +512,7 @@ ewarn "QA:  Manually remove minimatch@9.0.9 from ${S}/package-lock.json or ${S}/
 #ewarn "QA:  Manually change from minimatch@x.y.z to minimatch@10.2.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 # ignore section because of pnpm override
+# 5.4.2 -> 5.5.7
 #ewarn "QA:  Manually remove fast-xml-parser@4.5.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove fast-xml-parser@4.5.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove fast-xml-parser@5.2.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
@@ -625,6 +628,7 @@ ewarn "QA:  Manually remove electron@34.5.8 in ${S}/package-lock.json or ${S}/pn
 			sed -i -e "s|fast-xml-parser: 4.5.4|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.5.7\"|g" "package.json" || die
 		}
 
 		pnpm_patch_lockfile
@@ -851,12 +855,13 @@ einfo "Building next.config.js"
 		sed -i -e "s|MIGRATION_DB=1|true MIGRATION_DB=1|g" "package.json" || die
 	fi
 
-	edo next build #--debug
+	# Equivalent to `pnpm run build`
+	edo npm run "build"
 	grep -q -e "Next.js build worker exited with code" "${T}/build.log" && die "Detected error"
 	grep -q -e "Failed to load next.config.js" "${T}/build.log" && die "Detected error"
-
-
 	edo npm run "build-sitemap"
+
+	# Equivalent to `pnpm run postbuild`
 	edo npm run "build-sitemap"
 
 	if use postgres ; then
