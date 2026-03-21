@@ -50,8 +50,8 @@ The current security posture of this overlay is neutral-defensive.
 * A:L - low availability loss possible, miniscule impact possible, partial or full available resources with possibly degraded performance
 * E:E - Exploiting the vulnerability could be easy
 * E:D - Exploiting the vulnerability could be difficult
-* VS - the impact vectors in the center of the blast radius, implies CVSS 4
-* SS - the impact vectors beyond the center of the blast radius, implies CVSS 4
+* VS - the impact vectors in the center of the blast radius in CVSS 4
+* SS - the impact vectors beyond the center of the blast radius in CVSS 4
 * EBR - Extended blast radius but not full blast radius in CVSS 3.1
 
 ## Severity levels examples
@@ -61,56 +61,56 @@ Lower severities means less attacker capabilities.
 
 Severity | Score | Possible vector examples                     | In Layman's terms
 ---      | ---   | ---                                          | ---
-Critical | 10    | E:L + ZCA + EBR + C:H + I:H + A:H            | An easy zero-click attack affecting many systems with full attacker capabilities
-Critical | 9.8   | E:L + ZCA + C:H + I:H + A:H                  | An easy directed zero-click attack with full attacker capabilities
-Critical | 9.7   | E:L + EBR + C:H + I:H + A:H                  | An easy attack affecting many systems with full attacker capabilities
-Critical | 9.6   | E:L + EBR + C:H + I:H + A:L                  | An easy attack affecting many systems with full data tampering, full information disclosure, partial denial of service
-Critical | 9.3   | E:L + ZCA + EBR + C:L + I:H                  | An easy zero-click attack affecting many systems with full data tampering or partial information disclosure
-Critical | 9.3   | E:L + ZCA + VS(C:H, I:H, A:H)                | An easy directed zero-click attack with full attacker capabilities
-Critical | 9.3   | E:L + I:H + C:H                              | An easy directed attack with full data tampering or full information disclosure possibilities
-Critical | 9.2   | E:L + ZCA + VS(C:H) + SS(C:H)                | An easy zero-click attack affecting many systems with an information disclosure possibility
-Critical | 9.1   | E:L + ZCA + I:H + A:H                        | An easy directed zero-click attack with full data tampering or full denial of service possibilities
-High     | 8.9   | E:L + ZCA + VS(C:H, I:H, A:H)                | An easy directed zero-click attack with with full attacker capabilities
-High     | 8.9   | E:H + ZCA + VS(C:H) + SS(C:H)                | A difficult many systems attack with full information disclosure possibility
-High     | 8.8   | E:L + EBR + C:L + I:H + A:L                  | An easy attack affecting many systems with full/partial attack capabilities
-High     | 8.8   | E:L + ZCA + VS(C:H, I:H)                     | An easy directed zero-click attack with full information disclosure or full data tampering possibilities
-High     | 8.7   | E:L + ZCA + VS(A:H)                          | An easy directed zero-click attack with a full denial of service possiblity
-High     | 8.7   | E:L + ZCA + VS(I:H)                          | An easy directed zero-click attack with a full data tampering possibility
-High     | 8.4   | E:L + ZCA + VS(C:H, I:L) + SS(C:L, I:L)      | An easy attack affecting many systems with full information disclosure and full/partial data tampering possibilities
-High     | 8.2   | E:L + EBR + C:H + I:L                        | An easy attack affecting many systems with full information disclosre or partial data tampering worst case possibilities
-High     | 8.2   | E:L + VS(I:H, A:L) + SS(I:H, A:L)            | An easy attack affecting many systems with either a full data tampering or partial denial of service possibilities
-High     | 8.2   | E:L + VS(C:H, I:L) + SS(C:H, I:L)            | An easy attack affecting many systems with full information disclosure and partial data tampering possibilities
-High     | 8.2   | E:L + VS(I:H) + SS(I:H)                      | An easy attack affecting many systems with full data tampering possibility
-High     | 8.1   | E:L + ZCA + C:H + I:H + A:H                  | An easy directed attack with full attacker capabilities
-High     | 8.1   | E:L + C:H + I:H                              | An easy attack with full information disclosure or full data tampering possibilities
-High     | 8.1   | E:H + ZCA + C:H + I:H + A:H                  | A difficult directed zero-click attack with full attacker capabilites
-High     | 7.5   | E:L + ZCA + A:H                              | An easy directed zero-click attack with full denial of service capability
-High     | 7.1   | E:L + C:H + I:L                              | An easy directed attack with full information disclosure or partial data tampering possibilities
-Medium   | 6.9   | E:L + ZCA + VS(I:L, A:L) + SS(C:H, I:H, A:H) | An easy zero-click attack affecting many systems with full/partial attacker capabilities
-Medium   | 6.9   | E:L + ZCA + VS(I:L) + SS(I:L)                | An easy attack affecting many systems with partial data tampering possibility
-Medium   | 6.9   | E:L + ZCA + VS(A:L)                          | An easy directed zero-click attack with a partial denial of service possibility
-Medium   | 6.9   | E:L + ZCA + VS(I:L)                          | An easy directed zero-click attack with a partial data tampering possibility
-Medium   | 6.5   | E:L + ZCA + C:L + I:L                        | An easy directed zero-click attack with a partial information disclosure or partial data tampering possibilities
-Medium   | 6.5   | E:L + ZCA + I:L + A:L                        | An easy directed zero-click attack with a partial data tampering or partial denial of service possibilities
-Medium   | 5.9   | E:H + ZCA + A:H                              | A difficult directed attack with full denial of service possibility
-Medium   | 5.8   | E:L + ZCA + C:L                              | An easy zero-click attack with partial information disclosure possibility
-Low      | 3.9   | E:H + C:L + I:L + A:L                        | A difficult directed attack with partial attacker capabilities.
-Low      | 3.7   | E:H + ZCA + I:L                              | A difficult directed zero-click attack with partial data tampering possibility
-Low      | 3.7   | E:H + ZCA + A:L                              | A difficult directed zero-click attack with partial denial of service possibility
-Low      | 3.7   | E:H + I:L + C:L                              | A difficult directed attack with a partial data tampering or partial information disclosure possibilities
-Low      | 3.4   | E:L + C:L                                    | An easy directed attack with partial information disclosure possibility
-Low      | 3.2   | E:H + ZCA + I:L                              | An easy zero-click attack affecting many systems with partial data tampering possibility
-Low      | 3.1   | E:H + I:L                                    | A difficult directed attack with partial data tampering possibility
-Low      | 2.9   | E:L + ZCA + VS(C:L, I:L, A:L)                | An easy directed zero-click attack with partial attacker capabilities
-Low      | 2.9   | E:L + ZCA + VS(I:L)                          | An easy directed zero-click attack with a partial data tampering possibility
-Low      | 2.7   | E:L + ZCA + VS(A:L)                          | An easy directed zero-click attack with partial denial of service possibility
-Low      | 2.5   | E:H + VS(A:L)                                | A difficult directed attack with a partial denial of service possibility
-Low      | 2.3   | E:L + SS(C:L, I:L, A:L)                      | An easy attack affecting only indirect systems with partial attacker capabilities
-Low      | 2.3   | E:L + VS(C:L, I:L)                           | An easy directed attack with partial information disclosure or partial data tampering possibilities
-Low      | 2.3   | E:L + VS(C:L)                                | An easy directed attack with partial information disclosure possibility
-Low      | 2.2   | E:H + C:L                                    | A difficult directed attack with partial information disclosure possibility
-Low      | 1.9   | E:L + VS(A:L)                                | An easy attack with a partial denial of service possibility
-Low      | 1.3   | E:H + VS(A:L)                                | A difficult directed attack with a partial denial of service possibility
+Critical | 10    | E:E + ZCA + EBR + C:H + I:H + A:H            | An easy zero-click attack affecting many systems with full attacker capabilities
+Critical | 9.8   | E:E + ZCA + C:H + I:H + A:H                  | An easy directed zero-click attack with full attacker capabilities
+Critical | 9.7   | E:E + EBR + C:H + I:H + A:H                  | An easy attack affecting many systems with full attacker capabilities
+Critical | 9.6   | E:E + EBR + C:H + I:H + A:L                  | An easy attack affecting many systems with full data tampering, full information disclosure, partial denial of service
+Critical | 9.3   | E:E + ZCA + EBR + C:L + I:H                  | An easy zero-click attack affecting many systems with full data tampering or partial information disclosure
+Critical | 9.3   | E:E + ZCA + VS(C:H, I:H, A:H)                | An easy directed zero-click attack with full attacker capabilities
+Critical | 9.3   | E:E + I:H + C:H                              | An easy directed attack with full data tampering or full information disclosure possibilities
+Critical | 9.2   | E:E + ZCA + VS(C:H) + SS(C:H)                | An easy zero-click attack affecting many systems with an information disclosure possibility
+Critical | 9.1   | E:E + ZCA + I:H + A:H                        | An easy directed zero-click attack with full data tampering or full denial of service possibilities
+High     | 8.9   | E:E + ZCA + VS(C:H, I:H, A:H)                | An easy directed zero-click attack with with full attacker capabilities
+High     | 8.9   | E:D + ZCA + VS(C:H) + SS(C:H)                | A difficult many systems attack with full information disclosure possibility
+High     | 8.8   | E:E + EBR + C:L + I:H + A:L                  | An easy attack affecting many systems with full/partial attack capabilities
+High     | 8.8   | E:E + ZCA + VS(C:H, I:H)                     | An easy directed zero-click attack with full information disclosure or full data tampering possibilities
+High     | 8.7   | E:E + ZCA + VS(A:H)                          | An easy directed zero-click attack with a full denial of service possiblity
+High     | 8.7   | E:E + ZCA + VS(I:H)                          | An easy directed zero-click attack with a full data tampering possibility
+High     | 8.4   | E:E + ZCA + VS(C:H, I:L) + SS(C:L, I:L)      | An easy attack affecting many systems with full information disclosure and full/partial data tampering possibilities
+High     | 8.2   | E:E + EBR + C:H + I:L                        | An easy attack affecting many systems with full information disclosre or partial data tampering worst case possibilities
+High     | 8.2   | E:E + VS(I:H, A:L) + SS(I:H, A:L)            | An easy attack affecting many systems with either a full data tampering or partial denial of service possibilities
+High     | 8.2   | E:E + VS(C:H, I:L) + SS(C:H, I:L)            | An easy attack affecting many systems with full information disclosure and partial data tampering possibilities
+High     | 8.2   | E:E + VS(I:H) + SS(I:H)                      | An easy attack affecting many systems with full data tampering possibility
+High     | 8.1   | E:E + ZCA + C:H + I:H + A:H                  | An easy directed attack with full attacker capabilities
+High     | 8.1   | E:E + C:H + I:H                              | An easy attack with full information disclosure or full data tampering possibilities
+High     | 8.1   | E:D + ZCA + C:H + I:H + A:H                  | A difficult directed zero-click attack with full attacker capabilites
+High     | 7.5   | E:E + ZCA + A:H                              | An easy directed zero-click attack with full denial of service capability
+High     | 7.1   | E:E + C:H + I:L                              | An easy directed attack with full information disclosure or partial data tampering possibilities
+Medium   | 6.9   | E:E + ZCA + VS(I:L, A:L) + SS(C:H, I:H, A:H) | An easy zero-click attack affecting many systems with full/partial attacker capabilities
+Medium   | 6.9   | E:E + ZCA + VS(I:L) + SS(I:L)                | An easy attack affecting many systems with partial data tampering possibility
+Medium   | 6.9   | E:E + ZCA + VS(A:L)                          | An easy directed zero-click attack with a partial denial of service possibility
+Medium   | 6.9   | E:E + ZCA + VS(I:L)                          | An easy directed zero-click attack with a partial data tampering possibility
+Medium   | 6.5   | E:E + ZCA + C:L + I:L                        | An easy directed zero-click attack with a partial information disclosure or partial data tampering possibilities
+Medium   | 6.5   | E:E + ZCA + I:L + A:L                        | An easy directed zero-click attack with a partial data tampering or partial denial of service possibilities
+Medium   | 5.9   | E:D + ZCA + A:H                              | A difficult directed attack with full denial of service possibility
+Medium   | 5.8   | E:E + ZCA + C:L                              | An easy zero-click attack with partial information disclosure possibility
+Low      | 3.9   | E:D + C:L + I:L + A:L                        | A difficult directed attack with partial attacker capabilities.
+Low      | 3.7   | E:D + ZCA + I:L                              | A difficult directed zero-click attack with partial data tampering possibility
+Low      | 3.7   | E:D + ZCA + A:L                              | A difficult directed zero-click attack with partial denial of service possibility
+Low      | 3.7   | E:D + I:L + C:L                              | A difficult directed attack with a partial data tampering or partial information disclosure possibilities
+Low      | 3.4   | E:E + C:L                                    | An easy directed attack with partial information disclosure possibility
+Low      | 3.2   | E:D + ZCA + I:L                              | An easy zero-click attack affecting many systems with partial data tampering possibility
+Low      | 3.1   | E:D + I:L                                    | A difficult directed attack with partial data tampering possibility
+Low      | 2.9   | E:E + ZCA + VS(C:L, I:L, A:L)                | An easy directed zero-click attack with partial attacker capabilities
+Low      | 2.9   | E:E + ZCA + VS(I:L)                          | An easy directed zero-click attack with a partial data tampering possibility
+Low      | 2.7   | E:E + ZCA + VS(A:L)                          | An easy directed zero-click attack with partial denial of service possibility
+Low      | 2.5   | E:D + VS(A:L)                                | A difficult directed attack with a partial denial of service possibility
+Low      | 2.3   | E:E + SS(C:L, I:L, A:L)                      | An easy attack affecting only indirect systems with partial attacker capabilities
+Low      | 2.3   | E:E + VS(C:L, I:L)                           | An easy directed attack with partial information disclosure or partial data tampering possibilities
+Low      | 2.3   | E:E + VS(C:L)                                | An easy directed attack with partial information disclosure possibility
+Low      | 2.2   | E:D + C:L                                    | A difficult directed attack with partial information disclosure possibility
+Low      | 1.9   | E:E + VS(A:L)                                | An easy attack with a partial denial of service possibility
+Low      | 1.3   | E:D + VS(A:L)                                | A difficult directed attack with a partial denial of service possibility
 
 ## Remediation
 
