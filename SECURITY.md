@@ -58,6 +58,7 @@ The current security posture of this overlay is neutral-defensive.
 
 * Higher severities means more attacker capabilities or root-like.
 * Lower severities means less attacker capabilities or jail-like.
+* The score is an approximation and weight of the attacker capabilities may disagree.
 
 Severity | Score | Possible vector string examples              | In layman's terms
 ---      | ---   | ---                                          | ---
@@ -70,8 +71,8 @@ Critical | 9.3   | E:E + ZCA + VS(C:H, I:H, A:H)                | An easy direct
 Critical | 9.3   | E:E + I:H + C:H                              | An easy directed attack with full data tampering or full information disclosure possibilities
 Critical | 9.2   | E:E + ZCA + VS(C:H) + SS(C:H)                | An easy zero-click attack affecting many systems with an information disclosure possibility
 Critical | 9.1   | E:E + ZCA + I:H + A:H                        | An easy directed zero-click attack with full data tampering or full denial of service possibilities
-High     | 8.9   | E:E + ZCA + VS(C:H, I:H, A:H)                | An easy directed zero-click attack with with full attacker capabilities
 High     | 8.9   | E:D + ZCA + VS(C:H) + SS(C:H)                | A difficult many systems attack with full information disclosure possibility
+High     | 8.9   | E:E + ZCA + VS(C:H, I:H, A:H)                | An easy directed zero-click attack with with full attacker capabilities
 High     | 8.8   | E:E + EBR + C:L + I:H + A:L                  | An easy attack affecting many systems with full/partial attack capabilities
 High     | 8.8   | E:E + ZCA + VS(C:H, I:H)                     | An easy directed zero-click attack with full information disclosure or full data tampering possibilities
 High     | 8.7   | E:E + ZCA + VS(A:H)                          | An easy directed zero-click attack with a full denial of service possiblity
@@ -79,8 +80,8 @@ High     | 8.7   | E:E + ZCA + VS(I:H)                          | An easy direct
 High     | 8.4   | E:E + ZCA + VS(C:H, I:L) + SS(C:L, I:L)      | An easy attack affecting many systems with full information disclosure and full/partial data tampering possibilities
 High     | 8.2   | E:E + EBR + C:H + I:L                        | An easy attack affecting many systems with full information disclosre or partial data tampering worst case possibilities
 High     | 8.2   | E:E + VS(I:H, A:L) + SS(I:H, A:L)            | An easy attack affecting many systems with either a full data tampering or partial denial of service possibilities
-High     | 8.2   | E:E + VS(C:H, I:L) + SS(C:H, I:L)            | An easy attack affecting many systems with full information disclosure and partial data tampering possibilities
 High     | 8.2   | E:E + VS(I:H) + SS(I:H)                      | An easy attack affecting many systems with full data tampering possibility
+High     | 8.2   | E:E + VS(C:H, I:L) + SS(C:H, I:L)            | An easy attack affecting many systems with full information disclosure and partial data tampering possibilities
 High     | 8.1   | E:E + ZCA + C:H + I:H + A:H                  | An easy directed attack with full attacker capabilities
 High     | 8.1   | E:E + C:H + I:H                              | An easy attack with full information disclosure or full data tampering possibilities
 High     | 8.1   | E:D + ZCA + C:H + I:H + A:H                  | A difficult directed zero-click attack with full attacker capabilites
