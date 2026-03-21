@@ -33,6 +33,8 @@ EAPI=8
 # 1.142.8 -> 1.146.0
 # 1.146.0 -> 2.1.34
 # 2.1.34 -> 2.1.36
+# 2.1.36 - 2.1.43
+# 2.1.43 -> 2.1.44
 
 # Ebuild using React 19
 
@@ -64,7 +66,7 @@ EAPI=8
 
 # @serwist/next needs pnpm workspaces
 
-# Use `PNPM_UPDATER_VERSIONS="2.1.43" pnpm_updater_update_locks.sh` to update lockfile
+# Use `PNPM_UPDATER_VERSIONS="2.1.44" pnpm_updater_update_locks.sh` to update lockfile
 
 MY_PN="${PN}"		# LobeHub
 MY_PN2="${PN,,}"	# lobehub
@@ -487,7 +489,7 @@ ewarn "QA:  Manually remove @tootallnate/once@2.0.0 from ${S}/package-lock.json 
 ewarn "QA:  Manually remove serialize-javascript@6.0.2 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 ewarn "QA:  Manually remove undici@6.21.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change undici: 6.21.3 to undici: 7.24.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually change undici: 6.21.3 to undici: 7.24.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 ewarn "QA:  Manually change file-type: 16.5.4 to file-type: 21.3.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove file-type@16.5.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"	# CVE-2026-31808; ZC, DoS; Moderate
@@ -507,6 +509,7 @@ ewarn "QA:  Manually remove minimatch@9.0.3 from ${S}/package-lock.json or ${S}/
 ewarn "QA:  Manually remove minimatch@9.0.9 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually change from minimatch@x.y.z to minimatch@10.2.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
+# ignore section because of pnpm override
 #ewarn "QA:  Manually remove fast-xml-parser@4.5.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove fast-xml-parser@4.5.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove fast-xml-parser@5.2.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
