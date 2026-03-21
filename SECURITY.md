@@ -59,6 +59,7 @@ The current security posture of this overlay is neutral-defensive.
 * Higher severities means more attacker capabilities or root-like.
 * Lower severities means less attacker capabilities or jail-like.
 * The score is an approximation and weight of the attacker capabilities may disagree.
+* Don't let the partial impact vector fool you.  It can be part of an attack chain or social engineering attack.
 
 Severity | Score | Possible vector string examples              | In layman's terms
 ---      | ---   | ---                                          | ---
