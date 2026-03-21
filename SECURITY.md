@@ -56,8 +56,8 @@ The current security posture of this overlay is neutral-defensive.
 
 ## Severity levels examples
 
-Higher severities means more attacker capabilities.
-Lower severities means less attacker capabilities.
+* Higher severities means more attacker capabilities.
+* Lower severities means less attacker capabilities.
 
 Severity | Score | Possible vector examples                     | In Layman's terms
 ---      | ---   | ---                                          | ---
