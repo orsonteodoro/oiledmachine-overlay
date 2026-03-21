@@ -141,11 +141,12 @@ RESTRICT="binchecks mirror strip test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
-embeddings file-management +indexdb +openrc postgres rag systemd
+-electron embeddings file-management +indexdb +openrc +pwa postgres rag systemd
 ebuild_revision_69
 "
 REQUIRED_USE="
 	postgres
+	pwa
 	embeddings? (
 		postgres
 	)
@@ -158,6 +159,10 @@ REQUIRED_USE="
 	^^ (
 		indexdb
 		postgres
+	)
+	^^ (
+		electron
+		pwa
 	)
 	|| (
 		openrc
@@ -855,11 +860,14 @@ einfo "Building next.config.js"
 		sed -i -e "s|MIGRATION_DB=1|true MIGRATION_DB=1|g" "package.json" || die
 	fi
 
-	# Equivalent to `pnpm run build`
-	edo npm run "build"
-	grep -q -e "Next.js build worker exited with code" "${T}/build.log" && die "Detected error"
-	grep -q -e "Failed to load next.config.js" "${T}/build.log" && die "Detected error"
-	edo npm run "build-sitemap"
+	if use pwa ; then
+		edo npm run "build"
+		grep -q -e "Next.js build worker exited with code" "${T}/build.log" && die "Detected error"
+		grep -q -e "Failed to load next.config.js" "${T}/build.log" && die "Detected error"
+		edo npm run "build-sitemap"
+	else
+		edo npm run "desktop:build"
+	fi
 
 	# Equivalent to `pnpm run postbuild`
 	edo npm run "build-sitemap"
@@ -907,7 +915,7 @@ eerror "Build failure.  Missing ${S}/.next/standalone/server.js"
 	shred "${S}/.env"
 }
 
-_install_webapp() {
+_install_pwa_webapp() {
 	local _PREFIX="/opt/${MY_PN2}"
 	insinto "${_PREFIX}"
 	doins -r "${S}/package.json"
@@ -940,7 +948,12 @@ _install_webapp() {
 	fowners -R "${MY_PN2}:${MY_PN2}" "${_PREFIX}"
 }
 
-gen_config() {
+_install_electron() {
+eerror "TODO: _install_electron"
+	die
+}
+
+gen_pwa_config() {
 	local next_public_service_mode="client"
 	if use postgres ; then
 		next_public_service_mode="server"
@@ -968,7 +981,7 @@ gen_config() {
 	fperms 0640 "/etc/conf.d/${MY_PN2}"
 }
 
-gen_standalone_wrapper() {
+gen_start_server_wrapper() {
 	cat \
 		"${FILESDIR}/${MY_PN2}-start-server" \
 		> \
@@ -984,29 +997,11 @@ gen_standalone_wrapper() {
 	fperms 0755 "/usr/bin/${MY_PN2}-start-server"
 }
 
-src_install() {
-	docinto "licenses"
-	dodoc "LICENSE"
+_install_pwa() {
+	_install_pwa_webapp
+	gen_pwa_config
+	gen_start_server_wrapper
 
-	newicon \
-		"${S}/public/icons/icon-512x512.png" \
-		"${PN}.png"
-
-	# Include hidden files/dirs with *
-	shopt -s dotglob
-
-	addwrite "/opt/${MY_PN2}"
-	rm -rf "/opt/${MY_PN2}/"*
-
-	local lobehub_hostname=${LOBEHUB_HOSTNAME:-"localhost"}
-	local lobehub_port=${LOBEHUB_PORT:-3210}
-
-einfo "LOBEHUB_HOSTNAME:  ${lobehub_hostname} (user-definable, per-package environment variable)"
-einfo "LOBEHUB_PORT:  ${lobehub_port} (user-definable, per-package environment variable)"
-
-	_install_webapp
-	gen_config
-	gen_standalone_wrapper
 	if use openrc ; then
 		newinitd "${FILESDIR}/${MY_PN2}.openrc" "${MY_PN2}"
 	fi
@@ -1053,6 +1048,33 @@ einfo "LOBEHUB_URI:  ${lobehub_uri}"
 	fowners "${MY_PN2}:${MY_PN2}" "/var/cache/${MY_PN2}"
 
 	fowners "${MY_PN2}:${MY_PN2}" "/etc/conf.d/${MY_PN2}"
+}
+
+src_install() {
+	docinto "licenses"
+	dodoc "LICENSE"
+
+	newicon \
+		"${S}/public/icons/icon-512x512.png" \
+		"${PN}.png"
+
+	# Include hidden files/dirs with *
+	shopt -s dotglob
+
+	addwrite "/opt/${MY_PN2}"
+	rm -rf "/opt/${MY_PN2}/"*
+
+	local lobehub_hostname=${LOBEHUB_HOSTNAME:-"localhost"}
+	local lobehub_port=${LOBEHUB_PORT:-3210}
+
+einfo "LOBEHUB_HOSTNAME:  ${lobehub_hostname} (user-definable, per-package environment variable)"
+einfo "LOBEHUB_PORT:  ${lobehub_port} (user-definable, per-package environment variable)"
+
+	if use pwa ; then
+		_install_pwa
+	else
+		_install_electron
+	fi
 
 	dhms_end
 }
