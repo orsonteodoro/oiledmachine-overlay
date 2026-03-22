@@ -19,7 +19,7 @@ sandbox-changes_no_feature() {
 	local feature_name="${1}"
 	local reason="${2}"
 
-	if [[ "${FEATURES}" =~ "${feature_name}" ]] ; then
+	if [[ "${FEATURES}" =~ (^|" ")"${feature_name}"($|" ") ]] ; then
 eerror
 eerror "Sandbox changes requested via per-package env for =${CATEGORY}/${PN}-${PVR}."
 		if [[ -n "${reason}" ]] ; then
@@ -43,7 +43,7 @@ sandbox-changes_yes_feature() {
 	local feature_name="${1}"
 	local reason="${2}"
 
-	if ! [[ "${FEATURES}" =~ "${feature_name}" ]] ; then
+	if ! [[ "${FEATURES}" =~ (^|" ")"${feature_name}"($|" ") ]] ; then
 eerror
 eerror "Sandbox changes requested via per-package env for =${CATEGORY}/${PN}-${PVR}."
 		if [[ -n "${reason}" ]] ; then
