@@ -1007,7 +1007,6 @@ BDEPEND="
 	=dev-util/cargo-pgrx-0.17*
 	dev-util/cargo-pgrx:=
 "
-DOCS=( "${S_PG_SEARCH}/README.md" )
 
 pkg_setup() {
 	# Both are required
@@ -1173,6 +1172,7 @@ einfo "Installing for PostgreSQL ${PG_SLOT}"
 
 	postgres-multi_foreach postgres-multi_foreach_src_install
 
+	# Copy all the Licenses, Copyright Notices, Readmes
         LCNR_SOURCE="${WORKDIR}/cargo_home/gentoo"
         LCNR_TAG="third_party"
 	lcnr_install_files
