@@ -1123,7 +1123,7 @@ einfo "Detected X86-64 ISA Level 2"
 einfo "Detected X86-64 ISA Level 1"
 			export RUSTFLAGS=" -C target-cpu=x86-64"
 		else
-eerror "CPU is not supported.  Make sure that the cpu_flags_x86_* flags are updated for ${PN}."
+eerror "CPU is not supported.  Make sure that the cpu_flags_x86_* flags are updated for ${CATEGORY}/${PN}."
 			die
 		fi
 	fi
