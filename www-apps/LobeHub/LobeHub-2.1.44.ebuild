@@ -121,7 +121,7 @@ https://github.com/lobehub/lobehub/archive/refs/tags/v${PV}.tar.gz
 	"
 fi
 
-DESCRIPTION="A modern-design progressive web app supporting AI chat, function call plugins, multiple open/closed LLM models, RAG, TTS, vision"
+DESCRIPTION="An AI Agent framework supporting AI chat, function call plugins, open/closed LLM models, RAG, TTS, vision"
 HOMEPAGE="
 	https://lobehub.com/
 	https://github.com/lobehub/lobehub
