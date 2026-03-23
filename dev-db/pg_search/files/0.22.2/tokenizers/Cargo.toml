@@ -1,0 +1,32 @@
+[package]
+name = "tokenizers"
+version = { workspace = true }
+edition = { workspace = true }
+
+
+[dependencies]
+anyhow = "1.0.100"
+lindera = { version = "1.4.1", features = [
+  "embedded-cc-cedict",
+  "embedded-ipadic",
+  "embedded-ko-dic",
+  "compress",
+] }
+once_cell = "1.21.3"
+serde = "1.0.228"
+serde_json = "1.0.145"
+tantivy.workspace = true
+tracing = "0.1.43"
+strum_macros = "0.27.2"
+strum = { version = "0.27.2", features = ["derive"] }
+tantivy-jieba = { workspace = true }
+emoji = "0.2.1"
+unicode-segmentation = "1.12.0"
+icu_segmenter = "2.1.1"
+opencc-jieba-rs = "0.7.2"
+
+[dev-dependencies]
+rstest = "0.25.0"
+
+[package.metadata.cargo-machete]
+ignored = ["strum"]

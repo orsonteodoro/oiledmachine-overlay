@@ -1,0 +1,18 @@
+--- a/cargo_home/gentoo/tantivy-jieba-0.17.0/Cargo.toml.orig	1969-12-31 16:00:01.000000000 -0800
++++ b/cargo_home/gentoo/tantivy-jieba-0.17.0/Cargo.toml	2026-03-22 14:46:35.537609390 -0700
+@@ -53,10 +53,13 @@ version = "0.8.0"
+ version = "1.4.0"
+ 
+ [dependencies.tantivy-tokenizer-api]
+-version = "0.6.0"
++git = "https://github.com/paradedb/tantivy"
++package = "tantivy-tokenizer-api"
++rev = "6338e83a36f947d37aaa602cc57b253ec1c5d652"
+ 
+ [dev-dependencies.criterion]
+ version = "0.7.0"
+ 
+ [dev-dependencies.tantivy]
+-version = "0.25.0"
++git = "https://github.com/paradedb/tantivy"
++rev = "6338e83a36f947d37aaa602cc57b253ec1c5d652"

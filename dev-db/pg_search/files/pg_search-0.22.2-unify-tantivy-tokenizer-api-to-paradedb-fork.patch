@@ -1,0 +1,21 @@
+--- a/cargo_home/gentoo/tantivy-stemmers-0.4.0/Cargo.toml.orig	1969-12-31 16:00:01.000000000 -0800
++++ b/cargo_home/gentoo/tantivy-stemmers-0.4.0/Cargo.toml	2026-03-22 13:56:58.107478672 -0700
+@@ -45,13 +45,16 @@ version = "1.0.199"
+ version = "1.0.199"
+ 
+ [dependencies.tantivy-tokenizer-api]
+-version = "0.3.0"
++git = "https://github.com/paradedb/tantivy"
++package = "tantivy-tokenizer-api"
++rev = "6338e83a36f947d37aaa602cc57b253ec1c5d652"
+ 
+ [dependencies.unicode-normalization]
+ version = "0.1.23"
+ 
+ [dev-dependencies.tantivy]
+-version = "0.22.0"
++git = "https://github.com/paradedb/tantivy"
++rev = "6338e83a36f947d37aaa602cc57b253ec1c5d652"
+ 
+ [features]
+ arabic = []
