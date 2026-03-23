@@ -130,7 +130,7 @@ LICENSE="
 	(
 		all-rights-reserved
 		Apache-2.0
-		LobeChat-20240617
+		LobeHub-20250921
 		LobeHub-Privacy-Policy
 		LobeHub-Terms-of-Service
 	)
