@@ -938,7 +938,52 @@ https://github.com/paradedb/paradedb/archive/refs/tags/v${PV}.tar.gz -> paradedb
 
 DESCRIPTION="Full text search for PostgreSQL using BM25"
 HOMEPAGE="https://github.com/paradedb/paradedb/blob/main/pg_search"
-LICENSE="AGPL-3+"
+LICENSE="
+	( || ( FTL GPL-2 ) Old-MIT ZLIB )
+	AGPL-3+
+	Apache-2.0
+	Apache-2.0-with-LLVM-exceptions
+	Boost-1.0
+	BSD
+	BSD-2
+	CC-BY-3.0
+	CC-BY-SA-4.0
+	CC0-1.0
+	CDLA-Permissive-2.0
+	custom
+	GPL-3
+	ISC
+	MIT
+	MPL-2.0
+	public-domain
+	Unicode-3.0
+	Unicode-DFS-2016
+	ZLIB
+	|| ( Apache-2.0 MIT )
+"
+# Third party licenses:
+# AGPL-3+ - ./paradedb-0.22.2/LICENSE
+# Apache-2.0 - ./cargo_home/gentoo/windows-sys-0.61.0/license-apache-2.0
+# Apache-2.0-with-LLVM-exceptions - ./cargo_home/gentoo/linux-raw-sys-0.3.8/LICENSE-Apache-2.0_WITH_LLVM-exception
+# Boost-1.0 - ./cargo_home/gentoo/lockfree-object-pool-0.1.6/LICENSE_1_0.txt
+# BSD - ./cargo_home/gentoo/moxcms-0.7.11/LICENSE.md
+# BSD-2 ./cargo_home/gentoo/human_bytes-0.4.3/LICENSE
+# CC-BY-3.0 BSD MIT Apache-2.0 - ./cargo_home/gentoo/crossbeam-channel-0.5.15/LICENSE-THIRD-PARTY
+# CC-BY-SA-4.0 - ./cargo_home/gentoo/petgraph-0.8.3/assets/images/LICENSE.md
+# CC0-1.0 - ./cargo_home/gentoo/tiny-keccak-2.0.2/LICENSE
+# CDLA-Permissive-2.0 - ./cargo_home/gentoo/webpki-roots-1.0.2/LICENSE
+# custom - ./cargo_home/gentoo/image-0.24.9/tests/images/tga/testsuite/LICENSE
+# GPL-3 - ./cargo_home/gentoo/rust-stemmers-1.2.0/test_data/LICENSE
+# ISC - ./cargo_home/gentoo/rustls-0.23.31/LICENSE-ISC
+# MIT - ./fst-11e89334c578f26f9fbafbd1122ffb220ebbdbbf/LICENSE-MIT
+# MIT - ./cargo_home/gentoo/windows-sys-0.61.0/license-mit
+# MPL-2.0 - ./cargo_home/gentoo/option-ext-0.2.0/LICENSE.txt
+# BSD public-domain - ./cargo_home/gentoo/chrono-tz-0.10.4/tz/LICENSE
+# Unicode-3.0 - ./cargo_home/gentoo/icu_normalizer_data-2.1.1/LICENSE
+# Unicode-DFS-2016 - ./cargo_home/gentoo/regex-syntax-0.8.10/src/unicode_tables/LICENSE-UNICODE
+# ZLIB - ./cargo_home/gentoo/bytemuck_derive-1.10.2/LICENSE-ZLIB
+# || ( FTL GPL-2 ) Old-MIT ZLIB - ./cargo_home/gentoo/freetype-sys-0.20.1/freetype2/LICENSE.TXT
+# || ( Apache-2.0 MIT ) - ./cargo_home/gentoo/lexical-parse-float-1.0.6/LICENSE.md
 SLOT="0"
 IUSE="
 ${CPU_FLAGS_X86[@]}
