@@ -142,7 +142,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 -electron embeddings file-management +indexdb +openrc +pwa postgres rag systemd
-ebuild_revision_70
+ebuild_revision_71
 "
 REQUIRED_USE="
 	postgres
@@ -917,19 +917,36 @@ eerror "Build failure.  Missing ${S}/.next/standalone/server.js"
 
 _install_pwa_webapp() {
 	local _PREFIX="/opt/${MY_PN2}"
-	insinto "${_PREFIX}"
-	doins -r "${S}/package.json"
-	doins -r "${S}/.npmrc"
-	doins -r "${S}/public"
 
-	insinto "${_PREFIX}/.next"
-	doins -r "${S}/.next/static"
+	# Include hidden files/dirs with *
+	shopt -s dotglob
 
 	insinto "${_PREFIX}"
 	doins -r "${S}/.next/standalone/"* # contains node_modules, .next, server.js
 
-	insinto "${_PREFIX}/node_modules"
-	doins -r "${S}/node_modules/"*
+	insinto "${_PREFIX}/.next/static"
+	doins -r "${S}/.next/static/"*
+
+	insinto "${_PREFIX}/public/spa"
+	doins -r "${S}/public/spa/"*
+
+	if use postgres ; then
+		insinto "${_PREFIX}/packages/database/migrations"
+		doins -r "${S}/packages/database/migrations/"*
+
+		insinto "${_PREFIX}"
+		doins "${S}/scripts/migrateServerDB/docker.cjs"
+		doins "${S}/scripts/migrateServerDB/errorHint.js"
+	fi
+
+	insinto "${_PREFIX}/node_modules/.pnpm"
+	doins -r "${S}/node_modules/.pnpm/"*
+
+	insinto "${_PREFIX}/node_modules/pg"
+	doins -r "${S}/node_modules/pg/"*
+
+	insinto "${_PREFIX}/node_modules/drizzle-orm"
+	doins -r "${S}/node_modules/drizzle-orm/"*
 
 	sed -i \
 		-e "s|@NODE_SLOT@|${NODE_SLOT}|g" \
@@ -937,16 +954,14 @@ _install_pwa_webapp() {
 		|| die
 	insinto "${_PREFIX}"
 	doins "${S}/scripts/serverLauncher/startServer.js"
-	doins -r "${S}/scripts"
 
-	if use postgres ; then
-		insinto "${_PREFIX}"
-		doins -r "${S}/packages/database/migrations"
-		doins "${S}/scripts/migrateServerDB/docker.cjs"
-		doins "${S}/scripts/migrateServerDB/errorHint.js"
-	fi
+	insinto "${_PREFIX}/scripts/_shared"
+	doins -r "${S}/scripts/_shared/"*
 
 	fowners -R "${MY_PN2}:${MY_PN2}" "${_PREFIX}"
+
+	# Exclude hidden files/dirs with *
+	shopt -u dotglob
 }
 
 _install_electron() {
@@ -1011,6 +1026,9 @@ _install_pwa() {
 		newins "${FILESDIR}/${MY_PN2}.systemd" "${MY_PN2}.service"
 	fi
 
+	# Include hidden files/dirs with *
+	shopt -s dotglob
+
 	# Bypass normal merge to speed up merge using OS tricks
 	# Essentially portage does a k*O(n) problem with copy, scanelf, md5,
 	# etc. versus a simple pointer change with the code below.
@@ -1059,11 +1077,14 @@ src_install() {
 		"${S}/public/icons/icon-512x512.png" \
 		"${PN}.png"
 
-	# Include hidden files/dirs with *
+	# Include hidden files/dir for *
 	shopt -s dotglob
 
 	addwrite "/opt/${MY_PN2}"
 	rm -rf "/opt/${MY_PN2}/"*
+
+	# Exclude hidden files/dir for *
+	shopt -u dotglob
 
 	local lobehub_hostname=${LOBEHUB_HOSTNAME:-"localhost"}
 	local lobehub_port=${LOBEHUB_PORT:-3210}
