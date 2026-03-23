@@ -128,15 +128,104 @@ HOMEPAGE="
 "
 LICENSE="
 	(
-		all-rights-reserved
 		Apache-2.0
 		LobeHub-Community-License-20250921
 		LobeHub-Privacy-Policy
 		LobeHub-Terms-of-Service
 	)
+	(
+		(
+			CC0-1.0
+			MIT
+		)
+		(
+			BSD-2
+			CC0-1.0
+			ISC
+			MIT
+		)
+		(
+			all-rights-reserved
+			MIT
+		)
+		(
+			CC-BY-SA-4.0
+			ISC
+		)
+		AGPL-3
+		Apache-2.0
+		Artistic-2
+		BlueOak-1.0.0
+		BSD-2
+		CC-BY-4.0
+		custom
+		ISC
+		icu-64.2
+		MIT
+		BSD
+		CC0-1.0
+		custom
+		MIT-0
+		MPL-2.0
+		OFL-1.1
+		Princeton
+		PSF-2.2
+		Unlicense
+		WTFPL-2
+		|| (
+			Apache-2.0
+			MPL-2.0
+		)
+		|| (
+			AFL-2.1
+			BSD
+		)
+		|| (
+			BSD
+			GPL-2
+		)
+		|| (
+			GPL-3
+			MIT
+		)
+	)
 "
-# The distro's Apache-2.0 license file does not contain all rights reserved
-# custom - See https://github.com/lobehub/lobehub/blob/main/LICENSE
+# Third party licenses:
+# ( CC0-1.0 MIT ) - ./lobehub-2.1.44/node_modules/.pnpm/lodash.escape@4.0.1/node_modules/lodash.escape/LICENSE
+# all-rights-reserved MIT - ./lobehub-2.1.44/node_modules/.pnpm/vscode-languageserver-protocol@3.17.5/node_modules/vscode-languageserver-protocol/License.txt
+# all-rights-reserved MIT - ./lobehub-2.1.44/node_modules/.pnpm/tsyringe@4.10.0/node_modules/tsyringe/LICENSE
+# AGPL-3 - ./lobehub-2.1.44/node_modules/.pnpm/dirty-json@0.9.2/node_modules/dirty-json/LICENSE
+# Apache-2.0 - ./lobehub-2.1.44/node_modules/.pnpm/aria-query@5.3.2/node_modules/aria-query/LICENSE
+# Artistic-2 - ./lobehub-2.1.44/node_modules/.pnpm/textextensions@6.11.0/node_modules/textextensions/LICENSE.md
+# BlueOak-1.0.0 - ./lobehub-2.1.44/node_modules/.pnpm/@isaacs+cliui@9.0.0/node_modules/@isaacs/cliui/LICENSE.md
+# BlueOak-1.0.0 - ./lobehub-2.1.44/node_modules/.pnpm/yallist@5.0.0/node_modules/yallist/LICENSE.md
+# BSD - ./lobehub-2.1.44/node_modules/.pnpm/@protobufjs+pool@1.1.0/node_modules/@protobufjs/pool/LICENSE
+# BSD-2 - ./lobehub-2.1.44/node_modules/.pnpm/esutils@2.0.3/node_modules/esutils/LICENSE.BSD
+# BSD-2 CC0-1.0 ISC MIT - ./lobehub-2.1.44/node_modules/.pnpm/vite@7.3.1_@types+node@24.12.0_jiti@2.6.1_terser@5.46.1_tsx@4.21.0_yaml@2.8.3/node_modules/vite/LICENSE.md
+# CC-BY-4.0 - ./lobehub-2.1.44/node_modules/.pnpm/caniuse-lite@1.0.30001780/node_modules/caniuse-lite/LICENSE
+# CC-BY-SA-4.0 ISC - ./lobehub-2.1.44/node_modules/.pnpm/npm@9.9.4/node_modules/npm/node_modules/node-gyp/node_modules/glob/LICENSE
+# CC0-1.0 - ./lobehub-2.1.44/node_modules/.pnpm/type-fest@5.5.0/node_modules/type-fest/license-cc0
+# custom (Sustainable Use License) - ./lobehub-2.1.44/node_modules/.pnpm/@codesandbox+nodebox@0.1.8/node_modules/@codesandbox/nodebox/LICENSE
+# custom (https://code.claude.com/docs/en/legal-and-compliance) - ./lobehub-2.1.44/node_modules/.pnpm/@anthropic-ai+claude-agent-sdk@0.2.81_zod@4.3.6/node_modules/@anthropic-ai/claude-agent-sdk/LICENSE.md
+# custom - ./lobehub-2.1.44/node_modules/.pnpm/npm@9.9.4/node_modules/npm/node_modules/jsbn/LICENSE
+# ISC - ./lobehub-2.1.44/node_modules/.pnpm/internmap@2.0.3/node_modules/internmap/LICENSE
+# icu-64.2 - ./lobehub-2.1.44/node_modules/.pnpm/tree-sitter@0.21.1/node_modules/tree-sitter/vendor/tree-sitter/lib/src/unicode/LICENSE
+# LobeHub-Community-License-20250921 - See https://github.com/lobehub/lobehub/blob/main/LICENSE
+# MIT - ./lobehub-2.1.44/node_modules/.pnpm/matcher@3.0.0/node_modules/matcher/license
+# MIT-0 - ./lobehub-2.1.44/node_modules/.pnpm/@csstools+selector-specificity@5.0.0_postcss-selector-parser@7.1.1/node_modules/@csstools/selector-specificity/LICENSE.md
+# MPL-2.0 - ./lobehub-2.1.44/node_modules/.pnpm/@vercel+analytics@1.6.1_next@16.1.7_@babel+core@7.29.0_@opentelemetry+api@1.9.0_@playwr_479db63f3807ed5fe2ed8b4d0278027d/node_modules/@vercel/analytics/LICENSE
+# OFL-1.1 - ./lobehub-2.1.44/node_modules/.pnpm/polished@4.3.1/node_modules/polished/docs/assets/fonts/LICENSE.txt
+# Princeton - ./lobehub-2.1.44/node_modules/.pnpm/wordnet-db@3.1.14/node_modules/wordnet-db/LICENSE
+# PSF-2.2 (similar to PSF-2.4) - ./lobehub-2.1.44/node_modules/.pnpm/argparse@2.0.1/node_modules/argparse/LICENSE
+# Unlicense - ./lobehub-2.1.44/node_modules/.pnpm/robust-predicates@3.0.2/node_modules/robust-predicates/LICENSE
+# WTFPL-2 - MIT - ./lobehub-2.1.44/node_modules/.pnpm/opener@1.5.2/node_modules/opener/LICENSE.txt
+# || ( Apache-2.0 MPL-2.0 ) - ./lobehub-2.1.44/node_modules/.pnpm/dompurify@3.3.3/node_modules/dompurify/LICENSE
+# || ( AFL-2.1 BSD ) - ./lobehub-2.1.44/node_modules/.pnpm/json-schema@0.4.0/node_modules/json-schema/LICENSE
+# || ( BSD GPL-2 ) - ./lobehub-2.1.44/node_modules/.pnpm/node-forge@1.3.3/node_modules/node-forge/LICENSE
+# || ( GPL-3 MIT ) - ./lobehub-2.1.44/node_modules/.pnpm/jszip@3.10.1/node_modules/jszip/LICENSE.markdown
+# The distro's Apache-2.0 license file does not contain all rights reserved.
+# The distro's MIT license file does not contain all rights reserved.
+# The PSF-2.2 license differs from the PSF-2.4 license.
 RESTRICT="binchecks mirror strip test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
