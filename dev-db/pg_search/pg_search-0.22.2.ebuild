@@ -11,6 +11,10 @@ RUST_MAX_VER="1.90.0" # Inclusive
 RUST_MIN_VER="1.90.0" # llvm-20.1
 RUST_PV="${RUST_MIN_VER}"
 
+DATAFUSION_COMMIT="05e00aeb17fc17adc3ffea90de8c786b7d8a9673"
+FST_COMMIT="11e89334c578f26f9fbafbd1122ffb220ebbdbbf"
+TANTIVY_COMMIT="6338e83a36f947d37aaa602cc57b253ec1c5d652"
+
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse"
 	"cpu_flags_x86_sse2"
@@ -925,7 +929,7 @@ declare -A GIT_CRATES=(
 [tantivy-tokenizer-api]="https://github.com/paradedb/tantivy;6338e83a36f947d37aaa602cc57b253ec1c5d652;tantivy-%commit%/tokenizer-api" # 0.6.0
 )
 
-inherit cargo postgres-multi rust sandbox-changes
+inherit cargo lcnr postgres-multi rust sandbox-changes
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/paradedb-${PV}"
@@ -1169,4 +1173,23 @@ einfo "Installing for PostgreSQL ${PG_SLOT}"
 
 	postgres-multi_foreach postgres-multi_foreach_src_install
 
+        LCNR_SOURCE="${WORKDIR}/cargo_home/gentoo"
+        LCNR_TAG="third_party"
+	lcnr_install_files
+
+        LCNR_SOURCE="${WORKDIR}/datafusion-${DATAFUSION_COMMIT}"
+        LCNR_TAG="datafusion"
+	lcnr_install_files
+
+        LCNR_SOURCE="${WORKDIR}/fst-${FST_COMMIT}"
+        LCNR_TAG="fst"
+	lcnr_install_files
+
+        LCNR_SOURCE="${WORKDIR}/tantivy-${TANTIVY_COMMIT}"
+        LCNR_TAG="tantivy"
+	lcnr_install_files
+
+        LCNR_SOURCE="${WORKDIR}/paradedb-${PV}"
+        LCNR_TAG="paradedb"
+	lcnr_install_files
 }
