@@ -1115,7 +1115,7 @@ src_install() {
 	local configuration=$(usex debug "debug" "release")
 	postgres-multi_foreach_src_install() {
 einfo "Installing for PostgreSQL ${PG_SLOT}"
-		pushd "target/${configuration}/pg_search-pg${PG_SLOT}" || die
+		pushd "${S_PARADEDB}/target/${configuration}/pg_search-pg${PG_SLOT}" || die
 			doins -r *
 			local libdir=$(get_libdir)
 			fperms 0644 "/usr/${libdir}/postgresql-${PG_SLOT}/${libdir}/pg_search.so"
