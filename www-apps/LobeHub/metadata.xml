@@ -11,14 +11,17 @@
 
   Clean up for fresh install:
 
+  killall -9 psql
   /etc/init.d/lobe-chat stop
   /etc/init.d/lobehub stop
   /etc/init.d/postgresql-17 stop
+
 
   rm -rf /var/lib/postgresql/17/data
 
     or
 
+  killall -9 psql
   /etc/init.d/lobe-chat stop
   /etc/init.d/lobehub stop
   /etc/init.d/postgresql-17 stop
