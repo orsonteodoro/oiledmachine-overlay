@@ -173,12 +173,12 @@ LICENSE="
 		Unlicense
 		WTFPL-2
 		|| (
-			Apache-2.0
-			MPL-2.0
-		)
-		|| (
 			AFL-2.1
 			BSD
+		)
+		|| (
+			Apache-2.0
+			MPL-2.0
 		)
 		|| (
 			BSD
