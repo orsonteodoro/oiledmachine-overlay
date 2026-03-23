@@ -9,6 +9,31 @@
   <![CDATA[
   <!--
 
+  Clean up for fresh install:
+
+  /etc/init.d/lobe-chat stop
+  /etc/init.d/lobehub stop
+  /etc/init.d/postgresql-17 stop
+
+  rm -rf /var/lib/postgresql/17/data
+
+    or
+
+  /etc/init.d/lobe-chat stop
+  /etc/init.d/lobehub stop
+  /etc/init.d/postgresql-17 stop
+
+  # Drop user lobehub_user
+  REASSIGN OWNED BY lobehub_user TO postgres;
+  DROP OWNED BY lobehub_user;
+  SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE usename = 'lobehub_user';
+  REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA public FROM lobehub_user;
+  DROP USER IF EXISTS lobehub_user;
+
+  # Drop the lobehub database
+  DROP DATABASE lobehub WITH (FORCE);
+
+
   Install PostgreSQL:
 
   emerge -1vuDN dev-db/postgresql:17
@@ -21,8 +46,7 @@
 
   Start PostgreSQL server:
 
-  cd /etc/init.d
-  ./postgresql-17 start
+  /etc/init.d/postgresql-17 start
 
 
   Create a new user for LobeHub:
@@ -49,7 +73,7 @@
   ALTER ROLE lobehub_user WITH SUPERUSER;
   CREATE EXTENSION IF NOT EXISTS vector;
 
-  emerge LobeHub.
+  Run `emerge LobeHub` to create the database tables in the lobehub database.
 
 
   Revoke the superuser privilege after emerge.

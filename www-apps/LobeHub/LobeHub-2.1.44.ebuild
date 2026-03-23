@@ -362,6 +362,9 @@ ewarn "result in data loss."
 ewarn
 ewarn "Save work immediately."
 ewarn
+ewarn "For 8 GiB or less, close all web browsers or large running programs to"
+ewarn "reduce build time failures."
+ewarn
 #	sleep 15
 	dhms_start
 	# If a "next" package is found in package.json, this should be added.
@@ -1140,6 +1143,7 @@ pkg_postrm() {
 # OILEDMACHINE-OVERLAY-TEST:  PASS 1.111.4 (20250809) with sharp 0.34.3.    Client side database mode only.
 # OILEDMACHINE-OVERLAY-TEST:  PASS 1.133.4 (20251003) with sharp 0.34.3.    Client side database mode only.
 # OILEDMACHINE-OVERLAY-TEST:  FAIL 2.1.34 (20260302) with sharp 0.34.3.    Internal Server Error because missing or undocumented workaround for #10456 changes.  See https://github.com/lobehub/lobehub/issues/10835
+# OILEDMACHINE-OVERLAY-TEST:  FAIL 2.1.44 (20260323) with sharp 0.34.3.    ERROR [Better Auth]: Error Error: Failed query: insert into "verifications"
 # Browser load test: passed
 # Stability:  passed
 # Client side database mode:  passed
