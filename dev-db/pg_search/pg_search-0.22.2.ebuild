@@ -944,7 +944,14 @@ https://github.com/paradedb/paradedb/archive/refs/tags/v${PV}.tar.gz -> paradedb
 DESCRIPTION="Full text search for PostgreSQL using BM25"
 HOMEPAGE="https://github.com/paradedb/paradedb/blob/main/pg_search"
 LICENSE="
-	( || ( FTL GPL-2 ) Old-MIT ZLIB )
+	(
+		Old-MIT
+		ZLIB
+		|| (
+			FTL
+			GPL-2
+		)
+	)
 	AGPL-3+
 	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions
@@ -964,7 +971,10 @@ LICENSE="
 	Unicode-3.0
 	Unicode-DFS-2016
 	ZLIB
-	|| ( Apache-2.0 MIT )
+	|| (
+		Apache-2.0
+		MIT
+	)
 "
 # Third party licenses:
 # AGPL-3+ - ./paradedb-0.22.2/LICENSE
