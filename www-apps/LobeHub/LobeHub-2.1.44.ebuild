@@ -142,7 +142,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 -electron embeddings file-management +indexdb +openrc +pwa postgres rag systemd
-ebuild_revision_69
+ebuild_revision_70
 "
 REQUIRED_USE="
 	postgres
@@ -937,6 +937,7 @@ _install_pwa_webapp() {
 		|| die
 	insinto "${_PREFIX}"
 	doins "${S}/scripts/serverLauncher/startServer.js"
+	doins -r "${S}/scripts"
 
 	if use postgres ; then
 		insinto "${_PREFIX}"
