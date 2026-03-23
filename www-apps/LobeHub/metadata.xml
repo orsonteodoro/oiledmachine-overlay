@@ -80,7 +80,7 @@
   </upstream>
   <use>
     <flag name="electron">
-      Build the self-contained Electron version.
+      Build the self-contained standalone app.
     </flag>
     <flag name="embeddings">
       Add dependencies to support embeddings.
@@ -92,7 +92,7 @@
       Store information locally in IndexDB.
     </flag>
     <flag name="pwa">
-      Build the PWA (Progressive Web App) browser version.
+      Build the PWA (Progressive Web App) to use in a web browser.
     </flag>
     <flag name="postgres">
       Store information server-side in PostgresDB.
