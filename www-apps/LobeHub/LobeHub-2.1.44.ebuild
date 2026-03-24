@@ -255,7 +255,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 -electron embeddings file-management +indexdb +openrc +pwa postgres rag systemd
-ebuild_revision_71
+ebuild_revision_72
 "
 REQUIRED_USE="
 	postgres
@@ -515,11 +515,15 @@ pnpm_unpack_post() {
 	gen_git_tag "${S}" "v${PV}"
 
 	local pnpm_pv=$(pnpm --version)
-	# drizzle-orm is downgraded to matching 0.44.2 to avoid authentication issues.
+	# better-auth is bumped to 1.5.6 to avoid authentication issues.
+	# drizzle-kit, drizzle-orm, pg are pinned versions using same version as better-auth's lockfile.
 	sed -i \
-		-e "s|npm@11.1.0|npm@${pnpm_pv}|g" \
+		-e "s|\"better-auth\": \"1.4.6\"|\"better-auth\": \"1.5.6\"|g" \
+		-e "s|\"drizzle-kit\": \"^0.31.8\"|\"drizzle-kit\": \"0.30.6\"|g" \
+		-e "s|\"drizzle-orm\": \"^0.45.1\"|\"drizzle-orm\": \"0.45.1\"|g" \
 		-e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.5.7\"|g" \
-		-e "s|\"drizzle-orm\": \"^0.45.1\"|\"drizzle-orm\": \"^0.44.2\"|g" \
+		-e "s|\"pg\": \"^8.17.2\"|\"pg\": \"8.19.0\"|g" \
+		-e "s|npm@11.1.0|npm@${pnpm_pv}|g" \
 		"package.json" \
 		|| die
 
@@ -559,6 +563,9 @@ pnpm_unpack_post() {
 	# Fixes to unmet peer or missing references
 		pkgs=(
 			"@next/bundle-analyzer@^${NEXTJS_PV}"
+
+	# Pin better-auth and dependencies
+			"drizzle-kit@0.30.6"
 		)
 		epnpm add -D ${pkgs[@]}
 		pkgs=(
@@ -571,10 +578,13 @@ pnpm_unpack_post() {
 #			"react@19.2.3"
 #			"react-dom@19.2.3"
 			"svix@1.84.1"
+
+	# Pin better-auth and dependencies
+			"drizzle-orm@0.45.1"
+			"better-auth@1.5.6"
+			"pg@8.19.0"
 		)
 		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
-
-		epnpm add "pg" "drizzle-orm@0.44.2"
 	fi
 }
 
@@ -582,14 +592,10 @@ pnpm_install_post() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		:
 	else
-		if use postgres ; then
-			local pkgs=(
-				"sharp@${SHARP_PV}"
-				"pg@8.17.2"
-				"drizzle-orm@0.44.2"
-			)
-			epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
-		fi
+		local pkgs=(
+			"sharp@${SHARP_PV}"
+		)
+		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 	fi
 }
 
@@ -652,6 +658,8 @@ ewarn "QA:  Manually remove jsondiffpatch@0.6.0 from ${S}/package-lock.json"
 #ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually change @apidevtools/json-schema-ref-parser@11.1.0 to @apidevtools/json-schema-ref-parser@11.2.0 ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove esbuild@0.18.20 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove esbuild@0.19.12 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change (esbuild@0.19.12) to (esbuild@0.25.12) and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove esbuild@0.21.4 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ##ewarn "QA:  Manually remove esbuild@0.21.5 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove <esbuild-0.25.12 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
