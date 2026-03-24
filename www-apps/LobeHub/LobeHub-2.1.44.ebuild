@@ -148,6 +148,7 @@ LICENSE="
 		LobeHub-Terms-of-Service
 	)
 	(
+		${ELECTRON_APP_LICENSES}
 		(
 			CC0-1.0
 			MIT
@@ -204,6 +205,16 @@ LICENSE="
 		)
 	)
 "
+if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
+        # The license fingerprint of 40.6.1 is the same as 40.6.0.
+        LICENSE+="
+                electron-41.0.3-chromium.html
+        "
+else
+	LICENSE+="
+                electron-41.0.2-chromium.html
+        "
+fi
 # Third party licenses:
 # ( CC0-1.0 MIT ) - ./lobehub-2.1.44/node_modules/.pnpm/lodash.escape@4.0.1/node_modules/lodash.escape/LICENSE
 # all-rights-reserved MIT - ./lobehub-2.1.44/node_modules/.pnpm/vscode-languageserver-protocol@3.17.5/node_modules/vscode-languageserver-protocol/License.txt
