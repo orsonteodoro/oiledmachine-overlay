@@ -515,11 +515,11 @@ pnpm_unpack_post() {
 	gen_git_tag "${S}" "v${PV}"
 
 	local pnpm_pv=$(pnpm --version)
-	# drizzle-orm is downgraded to matching 0.44.5 listed in better-auth lockfile to fix authentication issues.
+	# drizzle-orm is downgraded to matching 0.44.2 to avoid authentication issues.
 	sed -i \
 		-e "s|npm@11.1.0|npm@${pnpm_pv}|g" \
 		-e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.5.7\"|g" \
-		-e "s|\"drizzle-orm\": \"^0.45.1\"|\"drizzle-orm\": \"^0.44.5\"|g" \
+		-e "s|\"drizzle-orm\": \"^0.45.1\"|\"drizzle-orm\": \"^0.44.2\"|g" \
 		"package.json" \
 		|| die
 
@@ -574,7 +574,7 @@ pnpm_unpack_post() {
 		)
 		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 
-		epnpm add "pg" "drizzle-orm@0.44.5"
+		epnpm add "pg" "drizzle-orm@0.44.2"
 	fi
 }
 
@@ -586,7 +586,7 @@ pnpm_install_post() {
 			local pkgs=(
 				"sharp@${SHARP_PV}"
 				"pg@8.17.2"
-				"drizzle-orm@0.44.5"
+				"drizzle-orm@0.44.2"
 			)
 			epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 		fi
