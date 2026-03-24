@@ -26,6 +26,9 @@
   /etc/init.d/lobehub stop
   /etc/init.d/postgresql-17 stop
 
+  # Login the PostgreSQL server
+  psql -p 5432 -U postgres
+
   # Drop user lobehub_user
   REASSIGN OWNED BY lobehub_user TO postgres;
   DROP OWNED BY lobehub_user;
