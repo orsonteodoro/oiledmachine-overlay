@@ -255,7 +255,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 -electron embeddings file-management +indexdb +openrc +pwa postgres rag systemd
-ebuild_revision_72
+ebuild_revision_73
 "
 REQUIRED_USE="
 	postgres
@@ -515,14 +515,22 @@ pnpm_unpack_post() {
 	gen_git_tag "${S}" "v${PV}"
 
 	local pnpm_pv=$(pnpm --version)
-	# better-auth is bumped to 1.5.6 to avoid authentication issues.
-	# drizzle-kit, drizzle-orm, pg are pinned versions using same version as better-auth's lockfile.
+	# better-auth is bumped to 1.5.6 to avoid runtime authentication issues.
+	# All versions directly below are pinned versions using same version as
+	# better-auth's lockfile to avoid build and runtime issues.
 	sed -i \
+		-e "s|\"@types/react\": \"19.2.13\"|\"@types/react\": \"19.2.14\"|g" \
+		-e "s|\"@types/react-dom\": \"^19.2.3\"|\"@types/react-dom\": \"19.2.3\"|g" \
 		-e "s|\"better-auth\": \"1.4.6\"|\"better-auth\": \"1.5.6\"|g" \
+		-e "s|\"better-call\": \"1.1.8\"|\"better-call\": \"1.3.2\"|g" \
 		-e "s|\"drizzle-kit\": \"^0.31.8\"|\"drizzle-kit\": \"0.30.6\"|g" \
 		-e "s|\"drizzle-orm\": \"^0.45.1\"|\"drizzle-orm\": \"0.45.1\"|g" \
-		-e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.5.7\"|g" \
+		-e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.5.6\"|g" \
 		-e "s|\"pg\": \"^8.17.2\"|\"pg\": \"8.19.0\"|g" \
+		"package.json" \
+		|| die
+
+	sed -i \
 		-e "s|npm@11.1.0|npm@${pnpm_pv}|g" \
 		"package.json" \
 		|| die
@@ -566,6 +574,8 @@ pnpm_unpack_post() {
 
 	# Pin better-auth and dependencies
 			"drizzle-kit@0.30.6"
+			"@types/react@19.2.14"
+			"@types/react-dom@19.2.3"
 		)
 		epnpm add -D ${pkgs[@]}
 		pkgs=(
@@ -582,6 +592,7 @@ pnpm_unpack_post() {
 	# Pin better-auth and dependencies
 			"drizzle-orm@0.45.1"
 			"better-auth@1.5.6"
+			"fast-xml-parser@5.5.6"
 			"pg@8.19.0"
 		)
 		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
@@ -631,8 +642,8 @@ ewarn "QA:  Manually remove bn.js@4.12.3 from ${S}/package-lock.json or ${S}/pnp
 
 ewarn "QA:  Manually remove ajv@6.14.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove ajv@8.12.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change ajv-formats: 2.1.1(ajv@8.12.0) to ajv-formats: 3.0.1(ajv@8.18.0) from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove ajv-formats@2.1.1 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change ajv-formats: 2.1.1(ajv@8.12.0) to ajv-formats: 3.0.1(ajv@8.18.0) from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
@@ -643,16 +654,16 @@ ewarn "QA:  Manually remove minimatch@9.0.9 from ${S}/package-lock.json or ${S}/
 #ewarn "QA:  Manually change from minimatch@x.y.z to minimatch@10.2.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 # ignore section because of pnpm override
-# 5.4.2 -> 5.5.7
+# 5.4.2 -> 5.5.6
 #ewarn "QA:  Manually remove fast-xml-parser@4.5.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove fast-xml-parser@4.5.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove fast-xml-parser@5.2.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove fast-xml-parser@5.2.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove fast-xml-parser@5.3.6 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove fast-xml-parser@5.3.8 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove fast-xml-parser@5.4.1 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change fast-xml-parser: 4.x, 5.x, or earlier to fast-xml-parser: 5.5.7 depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove fast-xml-parser: 5.4.1 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove fast-xml-parser: 5.5.5 or earlier in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove fast-xml-parser@5.3.8 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove fast-xml-parser@5.4.1 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually change fast-xml-parser: 4.x, 5.x, or earlier to fast-xml-parser: 5.5.6 depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove fast-xml-parser: 5.4.1 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove fast-xml-parser: 5.5.5 or earlier in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 ewarn "QA:  Manually remove jsondiffpatch@0.6.0 from ${S}/package-lock.json"
 #ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
@@ -754,14 +765,14 @@ ewarn "QA:  Manually remove electron@34.5.8 in ${S}/package-lock.json or ${S}/pn
 			sed -i -e "s|serialize-javascript: 6.0.2|serialize-javascript: 7.0.3|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|undici: 6.21.3|undici: 7.24.5|g" "pnpm-lock.yaml" || die
 
-			sed -i -e "s|fast-xml-parser: 5.4.1|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 5.4.2|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 5.2.5|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 5.3.6|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 4.5.4|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.5.7\"|g" "package.json" || die
+			sed -i -e "s|fast-xml-parser: 5.4.1|fast-xml-parser: 5.5.6|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 5.4.2|fast-xml-parser: 5.5.6|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 5.2.5|fast-xml-parser: 5.5.6|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 5.3.6|fast-xml-parser: 5.5.6|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 4.5.4|fast-xml-parser: 5.5.6|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.5.6|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.5.6|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.5.6\"|g" "package.json" || die
 		}
 
 		pnpm_patch_lockfile
@@ -793,7 +804,7 @@ ewarn "QA:  Manually remove electron@34.5.8 in ${S}/package-lock.json or ${S}/pn
 													# CVE-2026-22036; ZC, DoS; Moderate
 													# CVE-2026-1527; DT, ID; Moderate
 													# CVE-2026-1528; ZC, DoS; High
-			"fast-xml-parser@5.5.7"								# CVE-2026-25896; ZC, EBR, DT, ID; Critical
+			"fast-xml-parser@5.5.6"								# CVE-2026-25896; ZC, EBR, DT, ID; Critical
 													# CVE-2026-26278; ZC, DoS; High
 													# CVE-2026-27942; ZC, VS(DoS); Low		# >= 5.3.8 or >= 4.5.4
 													# CVE-2026-33036; ZC, DoS; High
