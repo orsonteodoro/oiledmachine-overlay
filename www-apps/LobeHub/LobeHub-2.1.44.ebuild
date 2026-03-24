@@ -54,7 +54,7 @@ EAPI=8
 #   OILEDMACHINE_OVERLAY_DIR="/usr/local/oiledmachine-overlay"
 #   PATH="${OILEDMACHINE_OVERLAY_DIR}/scripts:${PATH}"
 #   cd "${OILEDMACHINE_OVERLAY_DIR}/www-apps/LobeHub"
-#   NPM_UPDATER_VERSIONS="1.71.10" npm_updater_update_locks.sh
+#   PNPM_UPDATER_VERSIONS="2.1.44" pnpm_updater_update_locks.sh
 #
 
 # U22, U24, D12
@@ -72,6 +72,7 @@ MY_PN="${PN}"		# LobeHub
 MY_PN2="${PN,,}"	# lobehub
 
 # See also https://github.com/vercel/next.js/blob/v15.1.6/.github/workflows/build_and_test.yml#L328
+_ELECTRON_DEP_ROUTE="secure"
 NODE_SHARP_USE="exif lcms webp"
 NODE_SLOT="24" # See .nvmrc or Dockerfile
 NPM_SLOT="3"
@@ -91,6 +92,16 @@ NEXTJS_PV="16.1.7"
 SHARP_PV="0.34.5"
 VIPS_PV="8.18.0"
 
+if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
+	# Ebuild maintainer's choice
+	ELECTRON_APP_ELECTRON_PV="41.0.3" # Cr 146.0.7680.80, node 24.14.0
+else
+#https://github.com/lobehub/lobehub/blob/v2.1.44/apps/desktop/package.json#L70
+	# Upstream's choice
+	ELECTRON_APP_ELECTRON_PV="41.0.2" # Cr 146.0.7680.72, node 24.14.0
+fi
+
+
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse4_2"
 )
@@ -102,7 +113,7 @@ NODE_SHARP_PATCHES=(
 )
 
 # Use pnpm for pnpm_updater_update_locks.sh
-inherit dhms desktop edo node-sharp npm pnpm rust xdg
+inherit dhms desktop edo electron-app node-sharp npm pnpm rust xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -116,6 +127,9 @@ else
 	KEYWORDS="~amd64"
 	S="${WORKDIR}/${MY_PN2}-${PV}"
 	SRC_URI="
+	electron? (
+		$(electron-app_gen_electron_uris)
+	)
 https://github.com/lobehub/lobehub/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
@@ -482,15 +496,20 @@ ewarn
 eerror "Rust ${RUST_PV} required for @swc/core"
 		die
 	fi
+	if use electron ; then
+		electron-app_pkg_setup
+	fi
 }
 
 pnpm_unpack_post() {
 	gen_git_tag "${S}" "v${PV}"
 
 	local pnpm_pv=$(pnpm --version)
+	# drizzle-orm is downgraded to matching 0.44.5 listed in better-auth lockfile to fix authentication issues.
 	sed -i \
 		-e "s|npm@11.1.0|npm@${pnpm_pv}|g" \
 		-e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.5.7\"|g" \
+		-e "s|\"drizzle-orm\": \"^0.45.1\"|\"drizzle-orm\": \"^0.44.5\"|g" \
 		"package.json" \
 		|| die
 
@@ -544,9 +563,8 @@ pnpm_unpack_post() {
 			"svix@1.84.1"
 		)
 		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
-#		epnpm add "segfault-handler" ${NPM_INSTALL_ARGS[@]}
 
-		epnpm add "pg" "drizzle-orm"
+		epnpm add "pg" "drizzle-orm@0.44.5"
 	fi
 }
 
@@ -558,7 +576,7 @@ pnpm_install_post() {
 			local pkgs=(
 				"sharp@${SHARP_PV}"
 				"pg@8.17.2"
-				"drizzle-orm@0.44.7"
+				"drizzle-orm@0.44.5"
 			)
 			epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 		fi
@@ -590,7 +608,7 @@ ewarn "QA:  Manually remove serialize-javascript@6.0.2 from ${S}/package-lock.js
 ewarn "QA:  Manually remove undici@6.21.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually change undici: 6.21.3 to undici: 7.24.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
-ewarn "QA:  Manually change file-type: 16.5.4 to file-type: 21.3.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change file-type: 16.5.4 to file-type: 21.3.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove file-type@16.5.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"	# CVE-2026-31808; ZC, DoS; Moderate
 
 ewarn "QA:  Manually remove bn.js@4.12.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
@@ -626,7 +644,7 @@ ewarn "QA:  Manually remove jsondiffpatch@0.6.0 from ${S}/package-lock.json"
 ewarn "QA:  Manually remove esbuild@0.18.20 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove esbuild@0.21.4 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ##ewarn "QA:  Manually remove esbuild@0.21.5 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove <esbuild-0.25.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove <esbuild-0.25.12 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ##ewarn "QA:  Manually change esbuild: 0.21.4 references to esbuild: 0.25.0"
 ##ewarn "QA:  Manually change esbuild: 0.21.5 references to esbuild: 0.25.0"
 ##ewarn "QA:  Manually change esbuild: 0.18.20 references to esbuild: 0.25.0"
@@ -663,7 +681,7 @@ ewarn "QA:  Manually remove @octokit/plugin-rest-endpoint-methods@7.2.3 from ${S
 #ewarn "QA:  Manually change tmp: 0.0.33 references to tmp: 0.2.4 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually dedupe @babel/helper-module-transforms in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually add ai@5.0.52(zod@3.25.76) for @upstash/workflow depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change electron specifier to ^35.0.0 and version to 35.7.5 for packages/electron-client-ipc depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change electron specifier to ^35.0.0 and version to 41.0.3 for packages/electron-client-ipc depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove electron@34.5.8 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 		# DoS = Denial of Service
@@ -675,13 +693,13 @@ ewarn "QA:  Manually remove electron@34.5.8 in ${S}/package-lock.json or ${S}/pn
 
 		pnpm_patch_lockfile() {
 			sed -i -e "s|'@apidevtools/json-schema-ref-parser': 11.1.0|'@apidevtools/json-schema-ref-parser': 11.2.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.18.20|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.19.12|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.21.4|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.21.5|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.23.1|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.24.2|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: '>=0.12 <1'|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.18.20|esbuild: 0.25.12|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.19.12|esbuild: 0.25.12|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.21.4|esbuild: 0.25.12|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.21.5|esbuild: 0.25.12|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.23.1|esbuild: 0.25.12|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.24.2|esbuild: 0.25.12|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: '>=0.12 <1'|esbuild: 0.25.12|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|snowflake-sdk: 2.0.3|snowflake-sdk: 2.0.4|g" "pnpm-lock.yaml" || die
 
 			sed -i -e "s|'@babel/runtime': 7.23.6|'@babel/runtime': 7.28.2|g" "pnpm-lock.yaml" || die
@@ -730,8 +748,6 @@ ewarn "QA:  Manually remove electron@34.5.8 in ${S}/package-lock.json or ${S}/pn
 
 		pnpm_patch_lockfile
 
-#		epnpm remove "xlsx"
-
 		local pkgs
 		pkgs=(
 			"@apidevtools/json-schema-ref-parser@11.2.0"					# CVE-2024-29651; DoS, DT, ID; High
@@ -739,7 +755,7 @@ ewarn "QA:  Manually remove electron@34.5.8 in ${S}/package-lock.json or ${S}/pn
 		epnpm add ${pkgs[@]}
 
 		pkgs=(
-			"esbuild@0.25.0"								# GHSA-67mh-4wv8-2f99; DI; Moderate
+			"esbuild@0.25.12"								# GHSA-67mh-4wv8-2f99; DI; Moderate
 
 			"@e965/xlsx"									# CVE-2024-22363; DoS; High
 													# CVE-2023-30533; DoS, DT, ID; High
@@ -749,7 +765,7 @@ ewarn "QA:  Manually remove electron@34.5.8 in ${S}/package-lock.json or ${S}/pn
 			"@langchain/community@1.1.18"							# CVE-2026-27795; ID; Moderate
 													# CVE-2026-26019; ID; Moderate
 													# CVE-2026-25528; ID; Moderate for langsmith dep of @langchain/community and langchain
-			"electron@35.7.5"								# CVE-2025-55305; DoS, DT, ID; Moderate
+			"electron@${ELECTRON_APP_ELECTRON_PV}"						# CVE-2025-55305; DoS, DT, ID; Moderate
 			"minimatch@10.2.4"								# CVE-2026-26996: ZC, DoS; High
 													# CVE-2026-27903; ZC, DoS; High
 													# CVE-2026-27904; ZC, DoS; High
@@ -897,19 +913,6 @@ ewarn "Do not store NEXT_PUBLIC_POSTHOG_KEY in a package.env or /etc/portage/mak
 	fi
 }
 
-attach_segfault_handler() {
-cat <<EOF > "${S}/.next/standalone/server.js.t"
-const SegfaultHandler = require('segfault-handler');
-SegfaultHandler.registerHandler('crash.log');
-EOF
-	cat \
-		"${S}/.next/standalone/server.js" \
-		>> \
-		"${S}/.next/standalone/server.js.t" \
-		|| die
-	mv "${S}/.next/standalone/server.js"{".t",""} || die
-}
-
 src_compile() {
 	if [[ -e "${S}/.next" ]] ; then
 ewarn "Removing ${S}/.next"
@@ -958,7 +961,8 @@ einfo "Building next.config.js"
 		grep -q -e "Failed to load next.config.js" "${T}/build.log" && die "Detected error"
 		edo npm run "build-sitemap"
 	else
-		edo npm run "desktop:build"
+		edo npm run "desktop:build:all"
+		edo npm run "build:main"
 	fi
 
 	# Equivalent to `pnpm run postbuild`
@@ -992,7 +996,22 @@ eerror "Build failure.  Missing ${S}/.next/standalone/server.js"
 
 	# Change hardcoded paths
 	sed -i -e "s|${S}|/opt/${MY_PN2}|g" $(grep -l -r -e "${S}" "${S}/.next") || die
-	#attach_segfault_handler
+
+	if use electron ;then
+		export ELECTRON_SKIP_BINARY_DOWNLOAD=1
+		export ELECTRON_BUILDER_CACHE="${HOME}/.cache/electron-builder"
+		export ELECTRON_CACHE="${HOME}/.cache/electron"
+		export ELECTRON_CUSTOM_DIR="v${ELECTRON_APP_ELECTRON_PV}"
+
+		electron-app_cp_electron
+
+		pushd "apps/desktop" || die
+			edo electron-builder \
+				--config "electron-builder.mjs" \
+				$(electron-app_get_electron_platarch_args) \
+				-l "dir"
+		popd || die
+	fi
 
 	# Remove the plaintext keys from the package manager's environment.bz2.
 	# API keys are considered sensitive data.

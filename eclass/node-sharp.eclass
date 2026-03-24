@@ -592,7 +592,7 @@ node-sharp_pnpm_lockfile_add_sharp() {
 	else
 		epnpm install "node-addon-api" ${PNPM_INSTALL_ARGS[@]} ${NODE_ADDON_API_INSTALL_ARGS[@]}
 	fi
-	if npm list --depth=0 | grep -q "node-gyp" ; then
+	if pnpm list --depth 0 | grep -q "node-gyp" ; then
 		:
 	elif [[ -n "${NODE_GYP_PV}" ]] ; then
 		epnpm install "node-gyp@${NODE_GYP_PV}" ${PNPM_INSTALL_ARGS[@]} ${NODE_GYP_INSTALL_ARGS[@]}
@@ -737,7 +737,7 @@ node-sharp_yarn_lockfile_add_sharp() {
 	else
 		eyarn add "node-addon-api" ${YARN_INSTALL_ARGS[@]} ${NODE_ADDON_API_INSTALL_ARGS[@]}
 	fi
-	if npm list --depth=0 | grep -q "node-gyp" ; then
+	if grep -q '"node-gyp":' "package.json" ; then
 		:
 	elif [[ -n "${NODE_GYP_PV}" ]] ; then
 		eyarn add "node-gyp@${NODE_GYP_PV}" ${YARN_INSTALL_ARGS[@]} ${NODE_GYP_INSTALL_ARGS[@]}
