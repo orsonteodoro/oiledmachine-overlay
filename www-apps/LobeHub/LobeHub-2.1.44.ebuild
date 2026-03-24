@@ -206,7 +206,6 @@ LICENSE="
 	)
 "
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
-        # The license fingerprint of 40.6.1 is the same as 40.6.0.
         LICENSE+="
                 electron-41.0.3-chromium.html
         "
