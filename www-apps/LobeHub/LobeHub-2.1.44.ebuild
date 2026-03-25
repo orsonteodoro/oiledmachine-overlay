@@ -255,7 +255,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 -electron embeddings file-management +indexdb +openrc +pwa postgres rag redis s3 systemd
-ebuild_revision_79
+ebuild_revision_80
 "
 REQUIRED_USE="
 	postgres

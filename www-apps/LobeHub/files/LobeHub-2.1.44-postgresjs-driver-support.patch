@@ -30,7 +30,7 @@
  
 -  if (serverDBEnv.DATABASE_DRIVER === 'node') {
 +  // ============== DRIVER SELECTION ==============
-+  const driver = (serverDBEnv.DATABASE_DRIVER || process.env.DATABASE_DRIVER || 'neon').toLowerCase();
++  const driver = (serverDBEnv.DATABASE_DRIVER || process.env.DATABASE_DRIVER || 'node-postgres').toLowerCase();
 +
 +  // 1. postgres.js (Recommended for self-hosted PostgreSQL 17 + Better Auth)
 +  if (driver === 'postgres.js') {
