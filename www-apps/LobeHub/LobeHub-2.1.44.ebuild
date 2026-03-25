@@ -254,7 +254,7 @@ RESTRICT="binchecks mirror strip test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
--electron embeddings file-management +indexdb +openrc +pwa postgres rag systemd
+-electron embeddings file-management +indexdb +openrc +pwa postgres rag redis s3 systemd
 ebuild_revision_78
 "
 REQUIRED_USE="
@@ -268,6 +268,7 @@ REQUIRED_USE="
 	)
 	rag? (
 		postgres
+		s3
 	)
 	^^ (
 		indexdb
@@ -307,6 +308,9 @@ RDEPEND+="
 	)
 	rag? (
 		dev-db/pgvector[postgres_targets_postgres${POSTGRES_SLOT}]
+	)
+	redis? (
+		dev-db/redis
 	)
 "
 DEPEND+="
@@ -398,36 +402,10 @@ setup_ci_test_env() {
 	if use postgres ; then
 		export DATABASE_TEST_URL="postgresql://postgres:postgres@localhost:5432/postgres"
 		export DATABASE_DRIVER="node"
-		export NEXT_PUBLIC_SERVICE_MODE="server"
 		export KEY_VAULTS_SECRET="LA7n9k3JdEcbSgml2sxfw+4TV1AzaaFU5+R176aQz4s="
 		export S3_PUBLIC_DOMAIN="https://example.com"
 		export APP_URL="https://home.com"
 	fi
-}
-
-# For test or production env
-setup_test_env() {
-	export NODE_ENV="production"
-
-	export NODE_OPTIONS=""
-	export NODE_OPTIONS+=" --dns-result-order=ipv4first"
-
-	if ver_test "${NODE_SLOT}" "-ge" "22" ;  then
-		export NODE_OPTIONS+=" --use-openssl-ca"
-	fi
-einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
-
-	local next_public_service_mode="client"
-	if use postgres ; then
-		next_public_service_mode="server"
-	fi
-	cat "${FILESDIR}/lobehub.conf" > "${T}/lobehub.conf"
-	sed -i \
-		-e "s|@NODE_SLOT@|${NODE_SLOT}|g" \
-		-e "s|@NEXT_PUBLIC_SERVICE_MODE@|${next_public_service_mode}|g" \
-		"${T}/lobehub.conf" \
-		|| die
-	#source "${T}/lobehub.conf"
 }
 
 gen_git_tag() {
@@ -1117,24 +1095,27 @@ eerror "TODO: _install_electron"
 }
 
 gen_pwa_config() {
-	local next_public_service_mode="client"
+	local database_type=""
 	if use postgres ; then
-		next_public_service_mode="server"
+		database_type="postgres"
+	else
+		database_type="next"
 	fi
-
-	local database_mode=$(usex postgres "server" "client")
+	local enable_s3_support=$(usex s3 "1" "0")
+	local ui_mode=$(usex electron "electron" "pwa")
 
 	cat \
 		"${FILESDIR}/${MY_PN2}.conf" \
-		> \
+			> \
 		"${T}/${MY_PN2}.conf" \
 		|| die
 	sed -i \
-		-e "s|@NODE_SLOT@|${NODE_SLOT}|g" \
-		-e "s|@NEXT_PUBLIC_SERVICE_MODE@|${next_public_service_mode}|g" \
+		-e "s|@DATABASE_TYPE@|${database_type}|g" \
+		-e "s|@ENABLE_S3_SUPPORT@|${enable_s3_support}|g" \
 		-e "s|@HOSTNAME@|${lobehub_hostname}|g" \
+		-e "s|@NODE_SLOT@|${NODE_SLOT}|g" \
 		-e "s|@PORT@|${lobehub_port}|g" \
-		-e "s|@DATABASE_MODE@|${database_mode}|g" \
+		-e "s|@UI_MODE@|${ui_mode}|g" \
 		"${T}/${MY_PN2}.conf" \
 		|| die
 	insinto "/etc/conf.d"
@@ -1271,6 +1252,9 @@ ewarn
 ewarn "The ${PN} package uses dev-db/postgresql:${POSTGRES_SLOT}."
 ewarn "Make sure the PostgreSQL server is loaded and configured."
 ewarn
+ewarn "The use of localhost or 127.0.0.1 identifiers are mutually exclusive for OAuth."
+ewarn "Use the same identifier throughout the /etc/conf.d/lobehub and the remote OAuth settings."
+ewarn
 }
 
 pkg_postrm() {
@@ -1289,6 +1273,7 @@ pkg_postrm() {
 # OILEDMACHINE-OVERLAY-TEST:  FAIL 2.1.34 (20260302) with sharp 0.34.3.    Internal Server Error because missing or undocumented workaround for #10456 changes.  See https://github.com/lobehub/lobehub/issues/10835
 # OILEDMACHINE-OVERLAY-TEST:  FAIL 2.1.44 (20260323) with sharp 0.34.3.    ERROR [Better Auth]: Error Error: Failed query: insert into "verifications"
 # OILEDMACHINE-OVERLAY-TEST:  FAIL 2.1.44 (20260324) with sharp 0.34.3.    OAuth works but full migration to postgres-js driver is not complete. With USE="pwa postgres" and postgres-js 3.4.8, better-auth 1.5.6, drizzle-orm 0.45.1, drizzle-kit 0.30.6, better-call 1.3.2, @better-auth/passkey@1.5.6, @better-auth/expo@1.5.6
+# OILEDMACHINE-OVERLAY-TEST:  FAIL 2.1.44 (20260325) with sharp 0.34.3.    Ollama selection works but S3 support needs to be conditional or bypassed.
 # Browser load test: passed
 # Stability:  passed
 # Client side database mode:  passed

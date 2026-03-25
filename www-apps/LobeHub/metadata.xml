@@ -103,10 +103,15 @@ host    all             all             ::1/128                 md5
   nano /etc/postgresql-17/pg_hba.conf
 
 
-  Security notes:
+  Additional configuration notes:
 
-  Use least privileges for database so run as lobehub_user.
+  Use the least privileges or limited user for the database so use lobehub_user
+  in DATABASE_URI.
 
+  Do not use postgres for DATABASE_URI.  The postgres user is like root.
+
+  The localhost and 127.0.0.1 identifiers are mutually exclusive.
+  Make sure it is the same in both /etc/conf.d/lobehub and in the remote settings.
 
   -->
   ]]>
@@ -138,6 +143,14 @@ host    all             all             ::1/128                 md5
       Add dependencies to support RAG (Retrieval-Augmented Generation) to allow
       the AI to give current and up-to-date information or answers with less
       hallucinations.
+    </flag>
+    <flag name="redis">
+      Add support for cache optimization with Redis.
+    </flag>
+    <flag name="s3">
+      Enable storage support for images, videos, file upload, knowledge base,
+      RAG with either remote S3 storage or locally hosted S3 compatible
+      alternative.
     </flag>
   </use>
 </pkgmetadata>
