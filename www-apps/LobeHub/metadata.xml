@@ -149,7 +149,7 @@ host    all             all             ::1/128                 md5
     </flag>
     <flag name="s3">
       Enable storage support for images, videos, file upload, knowledge base,
-      RAG with either remote S3 storage or locally hosted S3 compatible
+      RAG with either the remote S3 storage or locally hosted S3 compatible
       alternative.
     </flag>
   </use>
