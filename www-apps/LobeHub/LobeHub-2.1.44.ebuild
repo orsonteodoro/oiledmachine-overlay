@@ -397,17 +397,6 @@ einfo "https://wiki.gentoo.org/wiki//etc/portage/package.env"
 einfo
 }
 
-# Placeholders
-setup_ci_test_env() {
-	if use postgres ; then
-		export DATABASE_TEST_URL="postgresql://postgres:postgres@localhost:5432/postgres"
-		export DATABASE_DRIVER="node"
-		export KEY_VAULTS_SECRET="LA7n9k3JdEcbSgml2sxfw+4TV1AzaaFU5+R176aQz4s="
-		export S3_PUBLIC_DOMAIN="https://example.com"
-		export APP_URL="https://home.com"
-	fi
-}
-
 gen_git_tag() {
 	local path="${1}"
 	local tag_name="${2}"
@@ -993,7 +982,7 @@ einfo "Building next.config.js"
 		else
 			echo "DATABASE_URL=\"${DATABASE_URL}?sslmode=disable\"" >> "${S}/.env" || die
 		fi
-		echo "DATABASE_DRIVER=\"node\"" >> "${S}/.env" || die
+		echo "DATABASE_DRIVER=\"node-postgres\"" >> "${S}/.env" || die
 
 		edo npm run "db:generate"
 		edo npm run "db:migrate"

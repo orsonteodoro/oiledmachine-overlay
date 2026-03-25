@@ -14,7 +14,7 @@
 #
 
 --- a/packages/database/src/core/web-server.ts.orig	2026-03-20 03:39:27.000000000 -0700
-+++ b/packages/database/src/core/web-server.ts	2026-03-25 01:32:12.230346482 -0700
++++ b/packages/database/src/core/web-server.ts	2026-03-25 12:32:06.213997664 -0700
 @@ -3,6 +3,8 @@ import { drizzle as neonDrizzle } from '
  import { drizzle as nodeDrizzle } from 'drizzle-orm/node-postgres';
  import { Pool as NodePool } from 'pg';
@@ -24,12 +24,16 @@
  
  import { serverDBEnv } from '@/config/db';
  
-@@ -28,11 +30,22 @@ If you don't have it, please run \`opens
+@@ -28,16 +30,31 @@ If you don't have it, please run \`opens
      throw new Error(`You are try to use database, but "DATABASE_URL" is not set correctly`);
    }
  
 -  if (serverDBEnv.DATABASE_DRIVER === 'node') {
-+  if (serverDBEnv.DATABASE_DRIVER === 'postgres.js' || process.env.DATABASE_DRIVER === 'postgres.js') {
++  // ============== DRIVER SELECTION ==============
++  const driver = (serverDBEnv.DATABASE_DRIVER || process.env.DATABASE_DRIVER || 'neon').toLowerCase();
++
++  // 1. postgres.js (Recommended for self-hosted PostgreSQL 17 + Better Auth)
++  if (driver === 'postgres.js') {
 +    const client = postgres(connectionString, {
 +      max: 20,              // The connection pool size.  Increase it to support many users.
 +      idle_timeout: 30,
@@ -39,15 +43,21 @@
 +    return postgresJsDrizzle(client, { schema });
 +  }
 +
-+  if (serverDBEnv.DATABASE_DRIVER === 'node' || serverDBEnv.DATABASE_DRIVER === 'node-postgres' || serverDBEnv.DATABASE_DRIVER === 'pg' || process.env.DATABASE_DRIVER === 'node' || process.env.DATABASE_DRIVER === 'node-postgres' || process.env.DATABASE_DRIVER === 'pg') {
++  // 2. node-postgres (traditional pg)
++  if (driver === 'node' || driver === 'pg' || driver === 'node-postgres') {
      const client = new NodePool({ connectionString });
      return nodeDrizzle(client, { schema });
    }
  
-+  // Neon fallback (for Neon Cloud users)
++  // 3. Neon (default fallback for Neon Cloud users)
    if (process.env.MIGRATION_DB === '1') {
      // https://github.com/neondatabase/serverless/blob/main/CONFIG.md#websocketconstructor-typeof-websocket--undefined
      neonConfig.webSocketConstructor = ws;
+   }
+-
+   const client = new NeonPool({ connectionString });
+   return neonDrizzle(client, { schema });
+ };
 --- a/src/config/db.ts.orig	2026-03-20 03:39:27.000000000 -0700
 +++ b/src/config/db.ts	2026-03-25 01:34:34.962018700 -0700
 @@ -4,7 +4,7 @@ import { z } from 'zod';
@@ -55,7 +65,7 @@
    return createEnv({
      runtimeEnv: {
 -      DATABASE_DRIVER: process.env.DATABASE_DRIVER || 'neon',
-+      DATABASE_DRIVER: process.env.DATABASE_DRIVER || 'node',
++      DATABASE_DRIVER: process.env.DATABASE_DRIVER || 'node-postgres',
        DATABASE_TEST_URL: process.env.DATABASE_TEST_URL,
        DATABASE_URL: process.env.DATABASE_URL,
  
