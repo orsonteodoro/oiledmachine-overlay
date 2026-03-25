@@ -4,17 +4,17 @@
 # # SERVER_ERROR:  Error: Failed query: insert into "verifications" ("created_at", "expires_at", "id", "identifier", "updated_at", "value") values ($1, $2, $3, $4, $5, $6) returning "created_at", "expires_at", "id", "identifier", "updated_at", "value"
 # [cause]: ErrorEvent
 #
-# Add support for postgres.js for users that find pg not operational.
+# Add support for postgres.js for users that find pg not operational or buggy.
 #
 # Set environment variable to support the following databases:
 #
-# DATABASE_DRIVER="postgresjs" # For postgres.js
-# DATABASE_DRIVER="node"       # For pg used with PostgreSQL
-# DATABASE_DRIVER="next"       # For Next
+# DATABASE_DRIVER="postgres.js" # For PostgreSQL with the postgres.js driver
+# DATABASE_DRIVER="pg"          # For PostgreSQL with the pg driver
+# DATABASE_DRIVER="next"        # For Next
 #
 
 --- a/packages/database/src/core/web-server.ts.orig	2026-03-20 03:39:27.000000000 -0700
-+++ b/packages/database/src/core/web-server.ts	2026-03-24 23:45:57.014295406 -0700
++++ b/packages/database/src/core/web-server.ts	2026-03-25 01:32:12.230346482 -0700
 @@ -3,6 +3,8 @@ import { drizzle as neonDrizzle } from '
  import { drizzle as nodeDrizzle } from 'drizzle-orm/node-postgres';
  import { Pool as NodePool } from 'pg';
@@ -28,7 +28,8 @@
      throw new Error(`You are try to use database, but "DATABASE_URL" is not set correctly`);
    }
  
-+  if (serverDBEnv.DATABASE_DRIVER === 'postgresjs' || process.env.DATABASE_DRIVER === 'postgresjs') {
+-  if (serverDBEnv.DATABASE_DRIVER === 'node') {
++  if (serverDBEnv.DATABASE_DRIVER === 'postgres.js') {
 +    const client = postgres(connectionString, {
 +      max: 20,              // The connection pool size.  Increase it to support many users.
 +      idle_timeout: 30,
@@ -38,7 +39,7 @@
 +    return postgresJsDrizzle(client, { schema });
 +  }
 +
-   if (serverDBEnv.DATABASE_DRIVER === 'node') {
++  if (serverDBEnv.DATABASE_DRIVER === 'node' || serverDBEnv.DATABASE_DRIVER === 'node-postgres' || serverDBEnv.DATABASE_DRIVER === 'pg') {
      const client = new NodePool({ connectionString });
      return nodeDrizzle(client, { schema });
    }
@@ -47,3 +48,23 @@
    if (process.env.MIGRATION_DB === '1') {
      // https://github.com/neondatabase/serverless/blob/main/CONFIG.md#websocketconstructor-typeof-websocket--undefined
      neonConfig.webSocketConstructor = ws;
+--- a/src/config/db.ts.orig	2026-03-20 03:39:27.000000000 -0700
++++ b/src/config/db.ts	2026-03-25 01:34:34.962018700 -0700
+@@ -4,7 +4,7 @@ import { z } from 'zod';
+ export const getServerDBConfig = () => {
+   return createEnv({
+     runtimeEnv: {
+-      DATABASE_DRIVER: process.env.DATABASE_DRIVER || 'neon',
++      DATABASE_DRIVER: process.env.DATABASE_DRIVER || 'pg',
+       DATABASE_TEST_URL: process.env.DATABASE_TEST_URL,
+       DATABASE_URL: process.env.DATABASE_URL,
+ 
+@@ -13,7 +13,7 @@ export const getServerDBConfig = () => {
+       REMOVE_GLOBAL_FILE: process.env.DISABLE_REMOVE_GLOBAL_FILE !== '0',
+     },
+     server: {
+-      DATABASE_DRIVER: z.enum(['neon', 'node']),
++      DATABASE_DRIVER: z.enum(['neon', 'node', 'node-postgres', 'pg', 'postgres.js']),
+       DATABASE_TEST_URL: z.string().optional(),
+       DATABASE_URL: z.string().optional(),
+ 

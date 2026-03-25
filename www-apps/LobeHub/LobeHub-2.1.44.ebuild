@@ -551,7 +551,7 @@ pnpm_unpack_post() {
 #	eapply "${FILESDIR}/lobe-chat-1.133.4-next-config.patch" # FIXME FIXME FIXME FIXME FIXME
 	eapply "${FILESDIR}/lobe-chat-1.65.0-sharp-declaration.patch"
 	eapply "${FILESDIR}/${PN}-2.1.33-use-e965-xlsx.patch"
-	eapply "${FILESDIR}/${PN}-2.1.44-postgresjs-driver-support.patch"
+	eapply "A${FILESDIR}/${PN}-2.1.44-postgresjs-driver-support.patch"
 
 #	if [[ "${PNPM_UPDATE_LOCK}" != "1" ]] ; then
 #		eapply "${FILESDIR}/lobe-chat-1.62.4-pnpm-patches.patch"
@@ -1015,7 +1015,7 @@ einfo "Building next.config.js"
 		else
 			echo "DATABASE_URL=\"${DATABASE_URL}?sslmode=disable\"" >> "${S}/.env" || die
 		fi
-		echo "DATABASE_DRIVER=\"node\"" >> "${S}/.env" || die
+		echo "DATABASE_DRIVER=\"pg\"" >> "${S}/.env" || die
 
 		edo npm run "db:generate"
 		edo npm run "db:migrate"
