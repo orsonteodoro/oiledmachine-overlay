@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# TODO:  Test e-mail login.
+
 # Downgraded till build error fixed:
 #> Build error occurred
 #Error: Turbopack build failed with 1 errors:
@@ -1266,9 +1268,12 @@ pkg_postrm() {
 # OILEDMACHINE-OVERLAY-TEST:  FAIL 2.1.44 (20260323) with sharp 0.34.3.    ERROR [Better Auth]: Error Error: Failed query: insert into "verifications"
 # OILEDMACHINE-OVERLAY-TEST:  FAIL 2.1.44 (20260324) with sharp 0.34.3.    OAuth works but full migration to postgres-js driver is not complete. With USE="pwa postgres" and postgres-js 3.4.8, better-auth 1.5.6, drizzle-orm 0.45.1, drizzle-kit 0.30.6, better-call 1.3.2, @better-auth/passkey@1.5.6, @better-auth/expo@1.5.6
 # OILEDMACHINE-OVERLAY-TEST:  FAIL 2.1.44 (20260325) with sharp 0.34.3.    Ollama selection works but S3 support needs to be conditional or bypassed.
-# Browser load test: passed
-# Stability:  passed
-# Client side database mode:  passed
-# Server side database mode:  untested
+# Browser load test:  passed
+# Stability:  passed, no crash yet
+# Client side database mode:  untested
+# Server side database mode:  fail
+# GitHub OAuth:  passed
+# E-mail login:  untested
+# Ollama test "what is the speed of light?" with smollm:  fail
 
 # For Sharp testing, the "Common Settings" > Theme section will show pictures if sharp is built correctly.
