@@ -1,0 +1,49 @@
+# Fixes errors:
+#
+# ERROR [Better Auth]: Error Error: Failed query: insert into "verifications" ("created_at", "expires_at", "id", "identifier", "updated_at", "value") values ($1, $2, $3, $4, $5, $6) returning "created_at", "expires_at", "id", "identifier", "updated_at", "value"
+# # SERVER_ERROR:  Error: Failed query: insert into "verifications" ("created_at", "expires_at", "id", "identifier", "updated_at", "value") values ($1, $2, $3, $4, $5, $6) returning "created_at", "expires_at", "id", "identifier", "updated_at", "value"
+# [cause]: ErrorEvent
+#
+# Add support for postgres.js for users that find pg not operational.
+#
+# Set environment variable to support the following databases:
+#
+# DATABASE_DRIVER="postgresjs" # For postgres.js
+# DATABASE_DRIVER="node"       # For pg used with PostgreSQL
+# DATABASE_DRIVER="next"       # For Next
+#
+
+--- a/packages/database/src/core/web-server.ts.orig	2026-03-20 03:39:27.000000000 -0700
++++ b/packages/database/src/core/web-server.ts	2026-03-24 23:45:57.014295406 -0700
+@@ -3,6 +3,8 @@ import { drizzle as neonDrizzle } from '
+ import { drizzle as nodeDrizzle } from 'drizzle-orm/node-postgres';
+ import { Pool as NodePool } from 'pg';
+ import ws from 'ws';
++import { drizzle as postgresJsDrizzle } from 'drizzle-orm/postgres-js';
++import postgres from 'postgres';
+ 
+ import { serverDBEnv } from '@/config/db';
+ 
+@@ -28,11 +30,22 @@ If you don't have it, please run \`opens
+     throw new Error(`You are try to use database, but "DATABASE_URL" is not set correctly`);
+   }
+ 
++  if (serverDBEnv.DATABASE_DRIVER === 'postgresjs' || process.env.DATABASE_DRIVER === 'postgresjs') {
++    const client = postgres(connectionString, {
++      max: 20,              // The connection pool size.  Increase it to support many users.
++      idle_timeout: 30,
++      connect_timeout: 10,
++      prepare: false,       // helps with PG17 + Drizzle stability
++    });
++    return postgresJsDrizzle(client, { schema });
++  }
++
+   if (serverDBEnv.DATABASE_DRIVER === 'node') {
+     const client = new NodePool({ connectionString });
+     return nodeDrizzle(client, { schema });
+   }
+ 
++  // Neon fallback (for Neon Cloud users)
+   if (process.env.MIGRATION_DB === '1') {
+     // https://github.com/neondatabase/serverless/blob/main/CONFIG.md#websocketconstructor-typeof-websocket--undefined
+     neonConfig.webSocketConstructor = ws;
