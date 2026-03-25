@@ -255,7 +255,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 -electron embeddings file-management +indexdb +openrc +pwa postgres rag systemd
-ebuild_revision_76
+ebuild_revision_77
 "
 REQUIRED_USE="
 	postgres
@@ -551,7 +551,7 @@ pnpm_unpack_post() {
 #	eapply "${FILESDIR}/lobe-chat-1.133.4-next-config.patch" # FIXME FIXME FIXME FIXME FIXME
 	eapply "${FILESDIR}/lobe-chat-1.65.0-sharp-declaration.patch"
 	eapply "${FILESDIR}/${PN}-2.1.33-use-e965-xlsx.patch"
-	eapply "A${FILESDIR}/${PN}-2.1.44-use-postgres-js-backend.patch"
+	eapply "${FILESDIR}/${PN}-2.1.44-use-postgres-js-backend.patch"
 
 #	if [[ "${PNPM_UPDATE_LOCK}" != "1" ]] ; then
 #		eapply "${FILESDIR}/lobe-chat-1.62.4-pnpm-patches.patch"
