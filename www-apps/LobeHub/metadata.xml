@@ -91,6 +91,18 @@
   Update /etc/conf.d/lobehub with the port and username and password changes.
 
 
+  To fix psql login as password, change from trust to md5 in pg_hba.conf
+
+# IPv4 local connections:
+host    all             all             127.0.0.1/32            md5
+# IPv6 local connections:
+host    all             all             ::1/128                 md5  
+
+  psql -p 5432 -U postgres
+  SHOW hba_file;
+  nano /etc/postgresql-17/pg_hba.conf
+
+
   Security notes:
 
   Use least privileges for database so run as lobehub_user.

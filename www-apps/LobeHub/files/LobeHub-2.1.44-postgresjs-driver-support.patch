@@ -29,7 +29,7 @@
    }
  
 -  if (serverDBEnv.DATABASE_DRIVER === 'node') {
-+  if (serverDBEnv.DATABASE_DRIVER === 'postgres.js') {
++  if (serverDBEnv.DATABASE_DRIVER === 'postgres.js' || process.env.DATABASE_DRIVER === 'postgres.js') {
 +    const client = postgres(connectionString, {
 +      max: 20,              // The connection pool size.  Increase it to support many users.
 +      idle_timeout: 30,
@@ -39,7 +39,7 @@
 +    return postgresJsDrizzle(client, { schema });
 +  }
 +
-+  if (serverDBEnv.DATABASE_DRIVER === 'node' || serverDBEnv.DATABASE_DRIVER === 'node-postgres' || serverDBEnv.DATABASE_DRIVER === 'pg') {
++  if (serverDBEnv.DATABASE_DRIVER === 'node' || serverDBEnv.DATABASE_DRIVER === 'node-postgres' || serverDBEnv.DATABASE_DRIVER === 'pg' || process.env.DATABASE_DRIVER === 'node' || process.env.DATABASE_DRIVER === 'node-postgres' || process.env.DATABASE_DRIVER === 'pg') {
      const client = new NodePool({ connectionString });
      return nodeDrizzle(client, { schema });
    }
@@ -55,7 +55,7 @@
    return createEnv({
      runtimeEnv: {
 -      DATABASE_DRIVER: process.env.DATABASE_DRIVER || 'neon',
-+      DATABASE_DRIVER: process.env.DATABASE_DRIVER || 'pg',
++      DATABASE_DRIVER: process.env.DATABASE_DRIVER || 'node',
        DATABASE_TEST_URL: process.env.DATABASE_TEST_URL,
        DATABASE_URL: process.env.DATABASE_URL,
  

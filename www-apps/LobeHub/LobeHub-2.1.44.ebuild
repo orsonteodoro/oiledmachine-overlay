@@ -1015,7 +1015,7 @@ einfo "Building next.config.js"
 		else
 			echo "DATABASE_URL=\"${DATABASE_URL}?sslmode=disable\"" >> "${S}/.env" || die
 		fi
-		echo "DATABASE_DRIVER=\"pg\"" >> "${S}/.env" || die
+		echo "DATABASE_DRIVER=\"node\"" >> "${S}/.env" || die
 
 		edo npm run "db:generate"
 		edo npm run "db:migrate"
