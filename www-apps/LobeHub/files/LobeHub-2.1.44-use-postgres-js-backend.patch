@@ -1,0 +1,36 @@
+--- a/src/libs/better-auth/define-config.ts.orig	2026-03-20 03:39:27.000000000 -0700
++++ b/src/libs/better-auth/define-config.ts	2026-03-24 17:54:45.744876924 -0700
+@@ -30,6 +30,8 @@ import { createSecondaryStorage, getTrus
+ import { parseSSOProviders } from '@/libs/better-auth/utils/server';
+ import { EmailService } from '@/server/services/email';
+ import { UserService } from '@/server/services/user';
++import postgres from "postgres";
++import { drizzle } from "drizzle-orm/postgres-js";
+ 
+ // Configure HTTP proxy for OAuth provider requests in development (e.g., Google token exchange)
+ // Node.js native fetch doesn't respect system proxy settings
+@@ -93,6 +95,15 @@ interface CustomBetterAuthOptions {
+ }
+ 
+ export function defineConfig(customOptions: CustomBetterAuthOptions) {
++  // === NEW: Create postgres.js client ===
++  const client = postgres(process.env.DATABASE_URL!, {
++    max: 10,                    // connection pool size
++    idle_timeout: 30,
++    connect_timeout: 10,
++  });
++
++  const db = drizzle(client, { schema });
++
+   const options = {
+     account: {
+       accountLinking: {
+@@ -182,7 +193,7 @@ export function defineConfig(customOptio
+       // Keep a DB-backed fallback when Redis secondary storage entries are unexpectedly missing.
+       storeSessionInDatabase: true,
+     },
+-    database: drizzleAdapter(serverDB, {
++    database: drizzleAdapter(db, {
+       provider: 'pg',
+       // experimental joins feature needs schema to pass full relation
+       schema,
