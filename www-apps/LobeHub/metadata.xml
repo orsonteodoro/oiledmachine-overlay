@@ -113,6 +113,8 @@ host    all             all             ::1/128                 md5
   The localhost and 127.0.0.1 identifiers are mutually exclusive.
   Make sure it is the same in both /etc/conf.d/lobehub and in the remote OAuth settings.
 
+  Integration with GitHub OAuth was tested successfully.
+
   -->
   ]]>
   <upstream>
