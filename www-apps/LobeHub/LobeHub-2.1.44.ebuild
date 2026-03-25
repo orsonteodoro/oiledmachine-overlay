@@ -257,7 +257,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 -electron embeddings file-management +indexdb +openrc +pwa postgres rag redis s3 systemd
-ebuild_revision_81
+ebuild_revision_82
 "
 REQUIRED_USE="
 	postgres
@@ -1096,6 +1096,7 @@ gen_pwa_config() {
 		database_type="next"
 	fi
 	local enable_s3_support=$(usex s3 "1" "0")
+	local redis_url=$(usex redis "redis://localhost:6379" "")
 	local ui_mode=$(usex electron "electron" "pwa")
 
 	cat \
@@ -1109,9 +1110,11 @@ gen_pwa_config() {
 		-e "s|@HOSTNAME@|${lobehub_hostname}|g" \
 		-e "s|@NODE_SLOT@|${NODE_SLOT}|g" \
 		-e "s|@PORT@|${lobehub_port}|g" \
+		-e "s|@REDIS_URL@|${redisurl}|g" \
 		-e "s|@UI_MODE@|${ui_mode}|g" \
 		"${T}/${MY_PN2}.conf" \
 		|| die
+
 	insinto "/etc/conf.d"
 	newins "${T}/${MY_PN2}.conf" "${MY_PN2}"
 
