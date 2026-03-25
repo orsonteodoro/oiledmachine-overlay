@@ -1,4 +1,4 @@
-# Copyright 2025 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 2025-2026 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -1289,6 +1289,7 @@ pkg_postrm() {
 # OILEDMACHINE-OVERLAY-TEST:  PASS 1.133.4 (20251003) with sharp 0.34.3.    Client side database mode only.
 # OILEDMACHINE-OVERLAY-TEST:  FAIL 2.1.34 (20260302) with sharp 0.34.3.    Internal Server Error because missing or undocumented workaround for #10456 changes.  See https://github.com/lobehub/lobehub/issues/10835
 # OILEDMACHINE-OVERLAY-TEST:  FAIL 2.1.44 (20260323) with sharp 0.34.3.    ERROR [Better Auth]: Error Error: Failed query: insert into "verifications"
+# OILEDMACHINE-OVERLAY-TEST:  FAIL 2.1.44 (20260324) with sharp 0.34.3.    OAuth works but full migration to postgres-js driver is not complete. With USE="pwa postgres" and postgres-js 3.4.8, better-auth 1.5.6, drizzle-orm 0.45.1, drizzle-kit 0.30.6, better-call 1.3.2, @better-auth/passkey@1.5.6, @better-auth/expo@1.5.6
 # Browser load test: passed
 # Stability:  passed
 # Client side database mode:  passed

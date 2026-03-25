@@ -1,3 +1,7 @@
+# Fixes errors:
+# ERROR [Better Auth]: Error Error: Failed query: insert into "verifications" ("created_at", "expires_at", "id", "identifier", "updated_at", "value") values ($1, $2, $3, $4, $5, $6) returning "created_at", "expires_at", "id", "identifier", "updated_at", "value"
+# # SERVER_ERROR:  Error: Failed query: insert into "verifications" ("created_at", "expires_at", "id", "identifier", "updated_at", "value") values ($1, $2, $3, $4, $5, $6) returning "created_at", "expires_at", "id", "identifier", "updated_at", "value"
+# [cause]: ErrorEvent
 --- a/src/libs/better-auth/define-config.ts.orig	2026-03-20 03:39:27.000000000 -0700
 +++ b/src/libs/better-auth/define-config.ts	2026-03-24 17:54:45.744876924 -0700
 @@ -30,6 +30,8 @@ import { createSecondaryStorage, getTrus
@@ -15,7 +19,7 @@
  export function defineConfig(customOptions: CustomBetterAuthOptions) {
 +  // === NEW: Create postgres.js client ===
 +  const client = postgres(process.env.DATABASE_URL!, {
-+    max: 10,                    // connection pool size
++    max: 10,                    // The connection pool size.  Increase it to support many users.
 +    idle_timeout: 30,
 +    connect_timeout: 10,
 +  });
