@@ -12,7 +12,7 @@
 -import { drizzle as neonDrizzle } from 'drizzle-orm/neon-serverless';
 -import { drizzle as nodeDrizzle } from 'drizzle-orm/node-postgres';
 -import { Pool as NodePool } from 'pg';
-+import { drizzle as postgresJsDrizzle } from 'drizzle-orm/postgres-js';
++import { drizzle } from 'drizzle-orm/postgres-js';
 +import postgres from 'postgres';
  import ws from 'ws';
  
