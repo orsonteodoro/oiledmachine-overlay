@@ -255,7 +255,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 -electron embeddings file-management +indexdb +openrc +pwa postgres rag systemd
-ebuild_revision_73
+ebuild_revision_74
 "
 REQUIRED_USE="
 	postgres
@@ -594,6 +594,13 @@ pnpm_unpack_post() {
 			"better-auth@1.5.6"
 			"fast-xml-parser@5.5.6"
 			"pg@8.19.0"
+
+	# Reverse depends or transitive dependencies of better-auth
+			"@better-auth/passkey@1.5.6"							# Same version as better-auth
+			"@better-auth/expo@1.5.6"							# Same version as better-ath
+
+	# pg alternative
+			"postgres@3.4.8"
 		)
 		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 	fi
@@ -635,8 +642,8 @@ ewarn "QA:  Manually remove serialize-javascript@6.0.2 from ${S}/package-lock.js
 ewarn "QA:  Manually remove undici@6.21.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually change undici: 6.21.3 to undici: 7.24.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
-ewarn "QA:  Manually change file-type: 16.5.4 to file-type: 21.3.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove file-type@16.5.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"	# CVE-2026-31808; ZC, DoS; Moderate
+ewarn "QA:  Manually change file-type: 16.5.4 to file-type: 21.3.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 ewarn "QA:  Manually remove bn.js@4.12.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
@@ -710,8 +717,8 @@ ewarn "QA:  Manually remove @octokit/plugin-rest-endpoint-methods@7.2.3 from ${S
 #ewarn "QA:  Manually change tmp: 0.0.33 references to tmp: 0.2.4 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually dedupe @babel/helper-module-transforms in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually add ai@5.0.52(zod@3.25.76) for @upstash/workflow depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change electron specifier to ^35.0.0 and version to 41.0.3 for packages/electron-client-ipc depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove electron@34.5.8 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change electron specifier to ^41.0.0 and version to 41.0.3 for packages/electron-client-ipc depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 		# DoS = Denial of Service
 		# DT = Data Tampering
