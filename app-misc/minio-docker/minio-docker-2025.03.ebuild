@@ -12,7 +12,7 @@ LICENSE="AGPL-3"
 SLOT="0"
 IUSE="
 +openrc systemd
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	^^ (
@@ -126,7 +126,8 @@ einfo
 einfo
 elog "MinIO Console: http://127.0.0.1:9001"
 elog "Access Key : lobehub"
-elog "Secret Key : (see /etc/minio/minio-password.env)"
+elog "Secret Key : cat /etc/minio/minio-password.env"
+elog "Data directory: /var/lib/minio/data (owned by user 'minio')"
 einfo
 einfo "After starting MinIO, create the bucket:"
 einfo

@@ -8,21 +8,40 @@ depend() {
 }
 
 start() {
-	ebegin "Starting MinIO (for LobeHub)"
+	ebegin "Starting MinIO for LobeHub"
+
+	if [ ! -d "/opt/minio" ]; then
+		eerror "MinIO directory /opt/minio does not exist"
+		return 1
+	fi
+
 	cd /opt/minio || return 1
+
+	# Ensure the data directory is owned by minio user
+	if [ -d "/var/lib/minio/data" ]; then
+		chown -R minio:minio /var/lib/minio/data
+	fi
+
 	docker compose up -d --remove-orphans
+
 	eend $?
 }
 
 stop() {
 	ebegin "Stopping MinIO"
+
 	cd /opt/minio || return 1
 	docker compose down
+
 	eend $?
 }
 
 status() {
-	cd /opt/minio || return 1
+	cd /opt/minio 2>/dev/null || {
+		eerror "MinIO directory not found"
+		return 1
+	}
+
 	docker compose ps
 }
 
