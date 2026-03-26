@@ -256,8 +256,8 @@ RESTRICT="binchecks mirror strip test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
--electron embeddings file-management +indexeddb +openrc +pwa postgres rag redis s3 systemd
-ebuild_revision_83
+-electron +embeddings +file-management indexeddb +openrc +pwa +postgres +rag redis +s3 systemd
+ebuild_revision_84
 "
 REQUIRED_USE="
 	postgres
