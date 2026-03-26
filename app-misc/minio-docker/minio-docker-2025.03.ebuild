@@ -12,7 +12,7 @@ LICENSE="AGPL-3"
 SLOT="0"
 IUSE="
 +openrc systemd
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE="
 	|| (
