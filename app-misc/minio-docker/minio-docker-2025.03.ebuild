@@ -15,7 +15,7 @@ IUSE="
 ebuild_revision_3
 "
 REQUIRED_USE="
-	^^ (
+	|| (
 		openrc
 		systemd
 	)
