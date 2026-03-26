@@ -29,7 +29,7 @@ IUSE="
 ${CPU_FLAGS_X86_ISA1[@]}
 ${CPU_FLAGS_X86_ISA2[@]}
 +openrc systemd
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE="
 	|| (
@@ -217,4 +217,5 @@ einfo "    minio-client policy set public lobehub-minio/lobehub"
 einfo
 einfo "Note: If you see 'Unit minio.service not found', run 'systemctl daemon-reload' first."
 einfo "See also \`epkginfo -x minio-docker\` to reset or remove the container."
+einfo "Use etc-update to update the password in /etc/minio/minio-password.env"
 }
