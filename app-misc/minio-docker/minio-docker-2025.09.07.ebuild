@@ -29,7 +29,7 @@ IUSE="
 ${CPU_FLAGS_X86_ISA1[@]}
 ${CPU_FLAGS_X86_ISA2[@]}
 +openrc systemd
-ebuild_revision_10
+ebuild_revision_11
 "
 REQUIRED_USE="
 	|| (
@@ -213,7 +213,7 @@ einfo "After starting MinIO, create the bucket:"
 einfo
 einfo "    minio-client alias set lobehub-minio http://127.0.0.1:9000 lobehub \$(cat /etc/minio/minio-password.env | cut -d= -f2)"
 einfo "    minio-client mb lobehub-minio/lobehub"
-einfo "    minio-client policy set public lobehub-minio/lobehub"
+einfo "    minio-client anonymous set public lobehub-minio/lobehub"
 einfo
 einfo "Note: If you see 'Unit minio.service not found', run 'systemctl daemon-reload' first."
 einfo "See also \`epkginfo -x minio-docker\` to reset or remove the container."
