@@ -207,10 +207,10 @@ ewarn "Valid values:  98, 03, 11, 14, 17, 20, 23, 26, ignore"
 		${IUSE}
 		${iuse}
 	"
-	REQUIRED_USE="
-		${REQUIRED_USE}
-		${required_use}
-	"
+#	REQUIRED_USE="
+#		${REQUIRED_USE}
+#		${required_use}
+#	"
 	RDEPEND="
 		${RDEPEND}
 		virtual/libstdcxx[${usedep2}]
