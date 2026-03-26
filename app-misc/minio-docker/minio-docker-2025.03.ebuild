@@ -10,7 +10,10 @@ DESCRIPTION="MinIO object storage for LobeHub (Docker-based)"
 HOMEPAGE="https://min.io/"
 LICENSE="AGPL-3"
 SLOT="0"
-IUSE="+openrc systemd"
+IUSE="
++openrc systemd
+ebuild_revision_1
+"
 REQUIRED_USE="
 	^^ (
 		openrc
@@ -23,6 +26,8 @@ DEPEND="
 "
 RDEPEND="
 	${DEPEND}
+	acct-group/minio
+	acct-user/minio
 	net-fs/mc
 	openrc? (
 		sys-apps/openrc[bash]
@@ -52,7 +57,9 @@ src_install() {
 	MINIO_ROOT_PASSWORD=$(openssl rand -base64 32)$(openssl rand -base64 32)
 	unset MINIO_ROOT_PASSWORD
 
-	fperms 0600 "/opt/minio/docker-compose.yml"
+	# Set correct permissions for docker-compose.yml
+	fowners "root:root" "/opt/minio/docker-compose.yml"
+	fperms 0644 "/opt/minio/docker-compose.yml"
 
 	if use systemd ; then
 		# Install systemd unit
@@ -65,10 +72,11 @@ src_install() {
 		newinitd "${FILESDIR}/minio.initd" "minio"
 	fi
 
-	# Persistent data directory
+	# Persistent data directory owned by minio user
 	keepdir "/var/lib/minio/data"
-	fowners "root:root" "/var/lib/minio"
-	fperms 0750 "/var/lib/minio"
+	fowners "minio:minio" "/var/lib/minio/data"
+	fperms 0750 "/var/lib/minio/data"
+	fperms 0755 "/var/lib/minio"
 
 	# Keep data directory
 	keepdir "/var/lib/minio/data"

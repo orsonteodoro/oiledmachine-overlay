@@ -5,6 +5,7 @@ services:
     image: quay.io/minio/minio:latest
     container_name: lobehub-minio
     restart: unless-stopped
+    user: "minio:minio"
     ports:
       - "9000:9000"  # S3 API
       - "9001:9001"  # MinIO Console
