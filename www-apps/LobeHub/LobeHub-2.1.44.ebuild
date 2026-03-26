@@ -256,7 +256,7 @@ RESTRICT="binchecks mirror strip test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
--electron embeddings file-management +indexdb +openrc +pwa postgres rag redis s3 systemd
+-electron embeddings file-management +indexeddb +openrc +pwa postgres rag redis s3 systemd
 ebuild_revision_83
 "
 REQUIRED_USE="
@@ -273,7 +273,7 @@ REQUIRED_USE="
 		s3
 	)
 	^^ (
-		indexdb
+		indexeddb
 		postgres
 	)
 	^^ (
@@ -912,8 +912,8 @@ src_configure() {
 	edo pnpm --version
 	edo tsc --version
 
-ewarn "Do not store KEY_VAULTS_SECRET in a package.env or /etc/portage/make.conf file for ${PN}."
-ewarn "Do not store NEXT_PUBLIC_POSTHOG_KEY in a package.env or /etc/portage/make.conf file for ${PN}."
+ewarn "Do not store KEY_VAULTS_SECRET in /etc/portage/make.conf file for ${PN}."
+ewarn "Do not store NEXT_PUBLIC_POSTHOG_KEY in /etc/portage/make.conf file for ${PN}."
 
 	if use postgres ; then
 		is_postgres_ready

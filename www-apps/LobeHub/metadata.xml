@@ -134,8 +134,8 @@ host    all             all             ::1/128                 md5
     <flag name="file-management">
       Add support for file management.
     </flag>
-    <flag name="indexdb">
-      Store information locally in IndexDB.
+    <flag name="indexeddb">
+      Store database information locally in the browser only with IndexedDB.
     </flag>
     <flag name="pwa">
       Build the PWA (Progressive Web App) to use in a web browser.
