@@ -12,7 +12,7 @@ LICENSE="AGPL-3"
 SLOT="0"
 IUSE="
 +openrc systemd
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE="
 	|| (
@@ -52,7 +52,7 @@ src_install() {
 		"${T}/docker-compose.yml" \
 		|| die
 	sed -i \
-		-e "s|MinioLobeHub2026StrongPass!|${minio_password}|g" \
+		-e "s|@MINIO_PASSWORD@|${MINIO_ROOT_PASSWORD}|g" \
 		-e "s|@MINIO_UID@|${minio_uid}|g" \
 		-e "s|@MINIO_GID@|${minio_gid}|g" \
 		"${T}/docker-compose.yml" \
@@ -140,4 +140,5 @@ einfo "    minio-client mb lobehub-minio/lobehub"
 einfo "    minio-client policy set public lobehub-minio/lobehub"
 einfo
 einfo "Note: If you see 'Unit minio.service not found', run 'systemctl daemon-reload' first."
+einfo "See also \`epkginfo -x minio-docker\` to reset or remove the container."
 }

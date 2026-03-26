@@ -13,7 +13,7 @@ services:
       - "9001:9001"  # MinIO Console
     environment:
       MINIO_ROOT_USER: lobehub
-      MINIO_ROOT_PASSWORD: MinioLobeHub2026StrongPass!
+      MINIO_ROOT_PASSWORD: @MINIO_PASSWORD@
       # CORS is important for LobeHub frontend to access MinIO directly
       MINIO_API_CORS_ALLOW_ORIGIN: "http://127.0.0.1:3210,http://localhost:3210,http://127.0.0.1"
       MINIO_CONSOLE_ADDRESS: ":9001"
