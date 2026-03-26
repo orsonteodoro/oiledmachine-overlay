@@ -256,7 +256,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management indexeddb minio +openrc +pwa +postgres +rag redis +s3 systemd
-ebuild_revision_87
+ebuild_revision_88
 "
 REQUIRED_USE="
 	postgres
@@ -1033,7 +1033,7 @@ _install_pwa_webapp() {
 	shopt -s dotglob
 
 	insinto "${_PREFIX}"
-	doins -r "${S}/.next/standalone/"* # contains node_modules, .next, server.js
+	doins -r "${S}/.next/standalone/"* # Contains node_modules, .next, server.js
 
 	insinto "${_PREFIX}/.next/static"
 	doins -r "${S}/.next/static/"*
@@ -1050,17 +1050,29 @@ _install_pwa_webapp() {
 		doins "${S}/scripts/migrateServerDB/errorHint.js"
 	fi
 
+	# Copy dirs referenced by server database symlinks
 	insinto "${_PREFIX}/node_modules/.pnpm"
 	doins -r "${S}/node_modules/.pnpm/"*
 
+	# Duplicate, already in standalone's node_modules
+	# Copy server database driver
 	insinto "${_PREFIX}/node_modules/pg"
 	doins -r "${S}/node_modules/pg/"*
 
+	# Missing in standalone's node_modules
+	# Copy server database driver
 	insinto "${_PREFIX}/node_modules/postgres"
 	doins -r "${S}/node_modules/postgres/"*
 
+	# Missing in standalone's node_modules
+	# Copy server database dependency
 	insinto "${_PREFIX}/node_modules/drizzle-orm"
 	doins -r "${S}/node_modules/drizzle-orm/"*
+
+	# Missing in standalone's node_modules
+	# Copy server database driver
+	insinto "${_PREFIX}/node_modules/@neondatabase"
+	doins -r "${S}/node_modules/@neondatabase/"*
 
 	sed -i \
 		-e "s|@NODE_SLOT@|${NODE_SLOT}|g" \
