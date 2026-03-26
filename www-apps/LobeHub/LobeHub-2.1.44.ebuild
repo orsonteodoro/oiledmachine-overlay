@@ -323,7 +323,6 @@ BDEPEND+="
 	>=sys-apps/npm-10.8.2:${NPM_SLOT}
 	net-libs/nodejs:${NODE_SLOT}[corepack,npm]
 	net-libs/nodejs:=
-	net-misc/rsync
 	|| (
 		dev-lang/rust:${RUST_PV}
 		dev-lang/rust-bin:${RUST_PV}
