@@ -517,26 +517,10 @@ pnpm_unpack_post() {
 # The prebuilt vips could be causing the segfault.  The sharp package need to
 # reference the system's vips package not the prebuilt one.
 	eapply "${FILESDIR}/${MY_PN2}-2.1.34-hardcoded-paths.patch"
-#	eapply "${FILESDIR}/lobe-chat-1.133.4-next-config.patch" # FIXME FIXME FIXME FIXME FIXME
 	eapply "${FILESDIR}/lobe-chat-1.65.0-sharp-declaration.patch"
 	eapply "${FILESDIR}/${PN}-2.1.33-use-e965-xlsx.patch"
 	eapply "${FILESDIR}/${PN}-2.1.44-postgresjs-driver-support.patch"
 	eapply "${FILESDIR}/${PN}-2.1.44-docker-cjs-multidriver-support.patch"
-
-#	if [[ "${PNPM_UPDATE_LOCK}" != "1" ]] ; then
-#		eapply "${FILESDIR}/lobe-chat-1.62.4-pnpm-patches.patch"
-#		mkdir -p "${S}/patches" || die
-#		cat "${FILESDIR}/types__mdx-2.0.13.patch" > "${S}/patches/@types__mdx@2.0.13.patch" || die
-#		cat "${FILESDIR}/pdf-parse-1.1.1.patch" > "${S}/patches/pdf-parse@1.1.1.patch" || die
-#	fi
-
-#	if ver_test "${NEXTJS_PV%%.*}" "-lt" "15" ; then
-#		# Not compatiable with Next.js 14
-#		sed -i -e "/webpackMemoryOptimizations/d" "next.config.ts" || die
-#		sed -i -e "/hmrRefreshes/d" "next.config.ts" || die
-#		sed -i -e "/serverExternalPackages/d" "next.config.ts" || die
-#		sed -i -e "/@ts-expect-error/d" "src/features/MobileSwitchLoading/index.tsx" || die
-#	fi
 
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 	# Fixes to unmet peer or missing references
@@ -556,8 +540,6 @@ pnpm_unpack_post() {
 													# CVE-2026-27980; ZC, DoS; Moderate
 													# CVE-2026-27978; VS(DT); Moderate
 													# CVE-2026-27977; DT, ID; Low
-#			"react@19.2.3"
-#			"react-dom@19.2.3"
 			"svix@1.84.1"
 
 	# Pin better-auth and dependencies
