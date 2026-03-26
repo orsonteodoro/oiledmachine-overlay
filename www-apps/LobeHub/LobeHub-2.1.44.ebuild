@@ -257,7 +257,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 -electron embeddings file-management +indexdb +openrc +pwa postgres rag redis s3 systemd
-ebuild_revision_82
+ebuild_revision_83
 "
 REQUIRED_USE="
 	postgres
@@ -521,6 +521,7 @@ pnpm_unpack_post() {
 	eapply "${FILESDIR}/lobe-chat-1.65.0-sharp-declaration.patch"
 	eapply "${FILESDIR}/${PN}-2.1.33-use-e965-xlsx.patch"
 	eapply "${FILESDIR}/${PN}-2.1.44-postgresjs-driver-support.patch"
+	eapply "${FILESDIR}/${PN}-2.1.44-docker-cjs-multidriver-support.patch"
 
 #	if [[ "${PNPM_UPDATE_LOCK}" != "1" ]] ; then
 #		eapply "${FILESDIR}/lobe-chat-1.62.4-pnpm-patches.patch"
@@ -1270,15 +1271,14 @@ pkg_postrm() {
 # OILEDMACHINE-OVERLAY-TEST:  FAIL 2.1.34 (20260302) with sharp 0.34.3.    Internal Server Error because missing or undocumented workaround for #10456 changes.  See https://github.com/lobehub/lobehub/issues/10835
 # OILEDMACHINE-OVERLAY-TEST:  FAIL 2.1.44 (20260323) with sharp 0.34.3.    ERROR [Better Auth]: Error Error: Failed query: insert into "verifications"
 # OILEDMACHINE-OVERLAY-TEST:  FAIL 2.1.44 (20260324) with sharp 0.34.3.    OAuth works but full migration to postgres-js driver is not complete. With USE="pwa postgres" and postgres-js 3.4.8, better-auth 1.5.6, drizzle-orm 0.45.1, drizzle-kit 0.30.6, better-call 1.3.2, @better-auth/passkey@1.5.6, @better-auth/expo@1.5.6
-# OILEDMACHINE-OVERLAY-TEST:  FAIL 2.1.44 (20260325) with sharp 0.34.3.    Ollama selection works but S3 support needs to be conditional or bypassed.
-# PWA (browser load test):  passed
-# Electron:  untested
-# Stability:  passed, no crash yet
-# Client side database mode:  untested
-# Server side database mode:  fail
-# GitHub OAuth:  passed
+# OILEDMACHINE-OVERLAY-TEST:  PASS 2.1.44 (20260325) with sharp 0.34.3.
+
 # E-mail login:  untested
-# Ollama test "what is the speed of light?" with smollm:  fail
-
-
-# For Sharp testing, the "Common Settings" > Theme section will show pictures if sharp is built correctly.
+# Electron:  untested
+# IndexedDB (browser only) database support:  untested
+# Local RAG:  untested
+# GitHub OAuth:  passed
+# Ollama test "what is the speed of light?" with smollm:  passed
+# PostgreSQL 17 (locally hosted server) database support:  passed
+# PWA (browser load test):  passed
+# Stability:  passed
