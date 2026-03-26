@@ -1267,6 +1267,12 @@ ewarn
 ewarn "The use of localhost or 127.0.0.1 identifiers are mutually exclusive for OAuth."
 ewarn "Use the same identifier throughout the /etc/conf.d/lobehub and the remote OAuth settings."
 ewarn
+	if use minio ; then
+ewarn
+ewarn "Ask the AI to help build a MinIO Docker container for ${PN} using docker"
+ewarn "compose for locally hosted S3 support."
+ewarn
+	fi
 }
 
 pkg_postrm() {
