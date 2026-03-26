@@ -1186,12 +1186,14 @@ ot-kernel-pkgflags_bcm_sta() { # DONE
 			_s1
 			_s2
 			ot-kernel_y_configopt "CONFIG_CFG80211"
-			local pkgid=$(echo -n "${pkg}" | sha512sum | cut -f 1 -d " " | cut -c 1-7)
+			local pkgid1=$(echo -n "${pkg1}" | sha512sum | cut -f 1 -d " " | cut -c 1-7)
+			local pkgid2=$(echo -n "${pkg2}" | sha512sum | cut -f 1 -d " " | cut -c 1-7)
 ewarn
 ewarn "Cannot use PREEMPT_RCU OR PREEMPT* with ${pkg}."
 ewarn "Disabling PREEMPT* and disabling PREEMPT_RT."
 ewarn
-ewarn "If you need to use PREEMPT_RT, add OT_KERNEL_PKGFLAGS_REJECT[S${pkgid}]=1"
+ewarn "If you need to use PREEMPT_RT, add OT_KERNEL_PKGFLAGS_REJECT[S${pkgid1}]=1 for ${pkg1}"
+ewarn "If you need to use PREEMPT_RT, add OT_KERNEL_PKGFLAGS_REJECT[S${pkgid2}]=1 for ${pkg2}"
 ewarn
 			ot-kernel_unset_configopt "CONFIG_PREEMPT_RCU"
 			# This package does not like PREEMPT*
@@ -3884,6 +3886,7 @@ ot-kernel-pkgflags_docker() { # DONE
 		_ot-kernel_set_posix_mqueue
 		ot-kernel_y_configopt "CONFIG_IP_NF_RAW"
 		if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.17" ; then
+			local pkgid=$(echo -n "${pkg}" | sha512sum | cut -f 1 -d " " | cut -c 1-7)
 ewarn
 ewarn "Cannot use PREEMPT_RT with ${pkg}."
 ewarn
