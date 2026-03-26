@@ -37,6 +37,7 @@ EAPI=8
 # 2.1.34 -> 2.1.36
 # 2.1.36 - 2.1.43
 # 2.1.43 -> 2.1.44
+# 2.1.44 -> 2.1.46
 
 # Ebuild using React 19
 
@@ -56,7 +57,7 @@ EAPI=8
 #   OILEDMACHINE_OVERLAY_DIR="/usr/local/oiledmachine-overlay"
 #   PATH="${OILEDMACHINE_OVERLAY_DIR}/scripts:${PATH}"
 #   cd "${OILEDMACHINE_OVERLAY_DIR}/www-apps/LobeHub"
-#   PNPM_UPDATER_VERSIONS="2.1.44" pnpm_updater_update_locks.sh
+#   PNPM_UPDATER_VERSIONS="2.1.46" pnpm_updater_update_locks.sh
 #
 
 # U22, U24, D12
@@ -67,8 +68,6 @@ EAPI=8
 # USE sandbox
 
 # @serwist/next needs pnpm workspaces
-
-# Use `PNPM_UPDATER_VERSIONS="2.1.44" pnpm_updater_update_locks.sh` to update lockfile
 
 MY_PN="${PN}"		# LobeHub
 MY_PN2="${PN,,}"	# lobehub
@@ -641,10 +640,11 @@ ewarn "QA:  Manually remove jsondiffpatch@0.6.0 from ${S}/package-lock.json"
 #ewarn "QA:  Manually change @apidevtools/json-schema-ref-parser@11.1.0 to @apidevtools/json-schema-ref-parser@11.2.0 ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove esbuild@0.18.20 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove esbuild@0.19.12 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change (esbuild@0.19.12) to (esbuild@0.25.12) and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove esbuild@0.25.12 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change (esbuild@0.19.12) to (esbuild@0.27.4) and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove esbuild@0.21.4 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ##ewarn "QA:  Manually remove esbuild@0.21.5 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove <esbuild-0.25.12 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove <esbuild-0.27.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ##ewarn "QA:  Manually change esbuild: 0.21.4 references to esbuild: 0.25.0"
 ##ewarn "QA:  Manually change esbuild: 0.21.5 references to esbuild: 0.25.0"
 ##ewarn "QA:  Manually change esbuild: 0.18.20 references to esbuild: 0.25.0"
@@ -693,13 +693,14 @@ ewarn "QA:  Manually change electron specifier to ^41.0.0 and version to 41.0.3 
 
 		pnpm_patch_lockfile() {
 			sed -i -e "s|'@apidevtools/json-schema-ref-parser': 11.1.0|'@apidevtools/json-schema-ref-parser': 11.2.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.18.20|esbuild: 0.25.12|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.19.12|esbuild: 0.25.12|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.21.4|esbuild: 0.25.12|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.21.5|esbuild: 0.25.12|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.23.1|esbuild: 0.25.12|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.24.2|esbuild: 0.25.12|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: '>=0.12 <1'|esbuild: 0.25.12|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.25.12|esbuild: 0.27.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.18.20|esbuild: 0.27.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.19.12|esbuild: 0.27.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.21.4|esbuild: 0.27.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.21.5|esbuild: 0.27.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.23.1|esbuild: 0.27.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.24.2|esbuild: 0.27.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: '>=0.12 <1'|esbuild: 0.27.4|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|snowflake-sdk: 2.0.3|snowflake-sdk: 2.0.4|g" "pnpm-lock.yaml" || die
 
 			sed -i -e "s|'@babel/runtime': 7.23.6|'@babel/runtime': 7.28.2|g" "pnpm-lock.yaml" || die
@@ -755,7 +756,7 @@ ewarn "QA:  Manually change electron specifier to ^41.0.0 and version to 41.0.3 
 		epnpm add ${pkgs[@]}
 
 		pkgs=(
-			"esbuild@0.25.12"								# GHSA-67mh-4wv8-2f99; DI; Moderate
+			"esbuild@0.27.4"								# GHSA-67mh-4wv8-2f99; DI; Moderate
 
 			"@e965/xlsx"									# CVE-2024-22363; DoS; High
 													# CVE-2023-30533; DoS, DT, ID; High
