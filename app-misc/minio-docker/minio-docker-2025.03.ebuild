@@ -12,7 +12,7 @@ LICENSE="AGPL-3"
 SLOT="0"
 IUSE="
 +openrc systemd
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	^^ (
@@ -59,7 +59,7 @@ src_install() {
 
 	# Set correct permissions for docker-compose.yml
 	fowners "root:root" "/opt/minio/docker-compose.yml"
-	fperms 0644 "/opt/minio/docker-compose.yml"
+	fperms 0640 "/opt/minio/docker-compose.yml"
 
 	if use systemd ; then
 		# Install systemd unit
