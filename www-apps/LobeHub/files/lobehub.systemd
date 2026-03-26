@@ -1,7 +1,7 @@
 [Unit]
 Description=LobeHub Service
 After=network-online.target
-Requires=postgresql-17.service
+Requires=postgresql-@POSTGRESQL_SLOT@.service
 After=minio.service ceph.target
 Wants=minio.service ceph.target
 

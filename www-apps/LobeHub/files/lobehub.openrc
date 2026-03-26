@@ -30,7 +30,7 @@ LOBEHUB_OOM=${LOBEHUB_OOM:-500}
 
 depend() {
 	after net
-	need postgresql-17
+	need postgresql-@POSTGRESQL_SLOT@
 	use dns logger
 	after minio
 	after ceph.target

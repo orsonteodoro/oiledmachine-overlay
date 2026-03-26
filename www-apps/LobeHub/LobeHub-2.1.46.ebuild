@@ -80,8 +80,8 @@ NPM_SLOT="3"
 PNPM_AUDIT_FIX=0
 PNPM_DEDUPE=0 # Still debugging
 PNPM_SLOT="9"
-POSTGRES_PORT="5432"
-POSTGRES_SLOT="17"
+POSTGRESQL_PORT="5432"
+POSTGRESQL_SLOT="17"
 RUST_MAX_VER="1.81.0" # Inclusive
 RUST_MIN_VER="1.81.0" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0 for next.js 15.3.3 dependency of @swc/core 1.11.24 \
 # Obtained from https://github.com/swc-project/swc/blob/v1.15.8/rust-toolchain \
@@ -256,7 +256,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management indexeddb minio +openrc +pwa +postgres +rag redis +s3 systemd
-ebuild_revision_86
+ebuild_revision_87
 "
 REQUIRED_USE="
 	postgres
@@ -300,19 +300,19 @@ RDEPEND+="
 	net-libs/nodejs:=
 	x11-misc/xdg-utils
 	embeddings? (
-		dev-db/pgvector[postgres_targets_postgres${POSTGRES_SLOT}]
+		dev-db/pgvector[postgres_targets_postgres${POSTGRESQL_SLOT}]
 	)
 	openrc? (
 		sys-apps/openrc[bash]
 		sys-process/procps[kill]
 	)
 	postgres? (
-		dev-db/postgresql:${POSTGRES_SLOT}[server]
+		dev-db/postgresql:${POSTGRESQL_SLOT}[server]
 		dev-db/postgresql:=
-		dev-db/pg_search[postgres_targets_postgres${POSTGRES_SLOT}]
+		dev-db/pg_search[postgres_targets_postgres${POSTGRESQL_SLOT}]
 	)
 	rag? (
-		dev-db/pgvector[postgres_targets_postgres${POSTGRES_SLOT}]
+		dev-db/pgvector[postgres_targets_postgres${POSTGRESQL_SLOT}]
 	)
 	redis? (
 		dev-db/redis
@@ -889,8 +889,8 @@ eerror "${CATEGORY}/${PN} lobehub.conf"
 eerror
 		die
 	fi
-	if ! pg_isready -h "localhost" -p ${POSTGRES_PORT} ; then
-eerror "The postgres-${POSTGRES_SLOT} daemon needs to run to continue."
+	if ! pg_isready -h "localhost" -p ${POSTGRESQL_PORT} ; then
+eerror "The postgres-${POSTGRESQL_SLOT} daemon needs to run to continue."
 		die
 	fi
 }
@@ -1159,11 +1159,15 @@ _install_pwa() {
 	gen_start_server_wrapper
 
 	if use openrc ; then
-		newinitd "${FILESDIR}/${MY_PN2}.openrc" "${MY_PN2}"
+		cat "${FILESDIR}/${MY_PN2}.openrc" > "${T}/${MY_PN2}" || die
+		sed -i -e "s|@POSTGRESQL_SLOT@|${POSTGRESQL_SLOT}|g" "${T}/${MY_PN2}" || die
+		newinitd "${T}/${MY_PN2}"
 	fi
 	if use systemd ; then
 		insinto "/usr/lib/systemd/system"
-		newins "${FILESDIR}/${MY_PN2}.systemd" "${MY_PN2}.service"
+		cat "${FILESDIR}/${MY_PN2}.systemd" > "${T}/${MY_PN2}.service" || die
+		sed -i -e "s|@POSTGRESQL_SLOT@|${POSTGRESQL_SLOT}|g" "${T}/${MY_PN2}.service" || die
+		doins "${MY_PN2}.service"
 	fi
 
 	# Include hidden files/dirs with *
@@ -1261,7 +1265,7 @@ ewarn
 ewarn "https://lobehub.com/docs/self-hosting/migration/v2/auth/nextauth-to-betterauth"
 ewarn
 ewarn
-ewarn "The ${PN} package uses dev-db/postgresql:${POSTGRES_SLOT}."
+ewarn "The ${PN} package uses dev-db/postgresql:${POSTGRESQL_SLOT}."
 ewarn "Make sure the PostgreSQL server is loaded and configured."
 ewarn
 ewarn "The use of localhost or 127.0.0.1 identifiers are mutually exclusive for OAuth."
