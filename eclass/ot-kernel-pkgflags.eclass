@@ -3910,7 +3910,7 @@ ot-kernel-pkgflags_docker() { # DONE
 		ot-kernel_y_configopt "CONFIG_CGROUP_CPUACCT"
 		ot-kernel_y_configopt "CONFIG_PERF_EVENTS"
 		ot-kernel_y_configopt "CONFIG_CGROUP_PERF"
-		ot-kernel_unset_configopt "CGROUP_DEBUG" # Same as "Example controller"
+		ot-kernel_unset_configopt "CONFIG_CGROUP_DEBUG" # Same as "Example controller"
 
 		_ot-kernel_set_ipc_ns
 		_ot-kernel_set_net_ns
@@ -11523,7 +11523,7 @@ ot-kernel-pkgflags_xorg_server() { # DONE
 # Applies kernel config flags for the xoscope package
 ot-kernel-pkgflags_xoscope() { # DONE
 	if ot-kernel_has_version_pkgflags "sci-electronics/xoscope" ; then
-		ot-kernel_y_configopt "SND_PCM_OSS"
+		ot-kernel_y_configopt "CONFIG_SND_PCM_OSS"
 	fi
 }
 

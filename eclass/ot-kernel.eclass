@@ -4427,7 +4427,7 @@ ot-kernel_set_kconfig_set_net_qos_schedulers() {
 	done
 
 	for alg in ${ALGS[@]} ; do
-		ot-kernel_unset_configopt "NET_SCH_${alg^^}"
+		ot-kernel_unset_configopt "CONFIG_NET_SCH_${alg^^}"
 	done
 
 	if [[ "${OT_KERNEL_NET_QOS_SCHEDULERS}" == "clear" ]] ; then
@@ -6050,7 +6050,7 @@ eerror
 				ot-kernel_unset_configopt "CONFIG_MITIGATION_RFDS"
 			fi
 			if [[ "${arch}" == "arm64" ]] ; then
-				ot-kernel_unset_configopt "nospectre_bhb"
+				ot-kernel_unset_pat_kconfig_kernel_cmdline "nospectre_bhb"
 			fi
 			if [[ "${arch}" == "x86_64" ]] ; then
 				if [[ $(ot-kernel_get_cpu_vendor) =~ "amd" ]] ; then
