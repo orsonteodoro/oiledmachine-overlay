@@ -3,7 +3,22 @@
 
 EAPI=8
 
-KEYWORDS="~amd64"
+CPU_FLAGS_X86_ISA1=(
+        "cpu_flags_x86_sse"
+        "cpu_flags_x86_sse2"
+)
+
+CPU_FLAGS_X86_ISA2=(
+        "${CPU_FLAGS_X86_ISA1[@]}"
+        "cpu_flags_x86_sse3"
+        "cpu_flags_x86_ssse3"
+        "cpu_flags_x86_sse4_1"
+        "cpu_flags_x86_sse4_2"
+        "cpu_flags_x86_popcnt"
+        "cpu_flags_x86_cx16"
+)
+
+KEYWORDS="~amd64 ~arm64 ~ppc64"
 S="${WORKDIR}"
 
 DESCRIPTION="MinIO object storage for LobeHub (Docker-based)"
@@ -11,8 +26,10 @@ HOMEPAGE="https://min.io/"
 LICENSE="AGPL-3"
 SLOT="0"
 IUSE="
+${CPU_FLAGS_X86_ISA1[@]}
+${CPU_FLAGS_X86_ISA2[@]}
 +openrc systemd
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE="
 	|| (
@@ -40,21 +57,80 @@ BDEPEND="
 	dev-libs/openssl
 "
 
+is_x86_isa_level1() {
+	has_all_flags=1
+	local x
+	for x in "${CPU_FLAGS_X86_ISA1[@]}" ; do
+		if ! use "${x}" ; then
+			has_all_flags=0
+			break
+		fi
+	done
+
+	if (( ${has_all_flags} == 1 )) ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+is_x86_isa_level2() {
+	has_all_flags=1
+	local x
+	for x in "${CPU_FLAGS_X86_ISA2[@]}" ; do
+		if ! use "${x}" ; then
+			has_all_flags=0
+			break
+		fi
+	done
+
+	if (( ${has_all_flags} == 1 )) ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
 src_install() {
 	insinto "/opt/minio"
-	local minio_uid=$(id -u minio)
-	local minio_gid=$(id -g minio)
+	local minio_uid=$(id -u "minio")
+	local minio_gid=$(id -g "minio")
 	local MINIO_ROOT_PASSWORD="MinioLobe$(openssl rand -hex 16)"
-	echo "MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}" > "${T}/minio-password.env"
+	echo "MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}" > "${T}/minio-password.env" || die
 	cat \
 		"${FILESDIR}/docker-compose.yml" \
 			> \
 		"${T}/docker-compose.yml" \
 		|| die
+
+	# Prevent:
+	# docker run --rm -it --entrypoint /bin/bash 69b2ec208575
+	# Fatal glibc error: CPU does not support x86-64-v2
+	# See also https://hub.docker.com/r/minio/minio/tags
+	local tag
+	if [[ "${ABI}" == "amd64" ]] ; then
+		if is_x86_isa_level2 ; then
+			tag="RELEASE.2025-09-07T16-13-09Z"
+		elif is_x86_isa_level1 ; then
+			tag="RELEASE.2025-09-07T16-13-09Z-cpuv1"
+		else
+eerror "CPU is not supported.  Make sure the cpu_flags_x86_* are properly updated."
+			die
+		fi
+	elif [[ "${ABI}" == "arm64" ]] ; then
+		tag="RELEASE.2025-09-07T16-13-09Z"
+	elif [[ "${ABI}" == "ppc64" ]] ; then
+		tag="RELEASE.2025-09-07T16-13-09Z"
+	else
+eerror "ABI=${ABI} is not supported"
+		die
+	fi
+
 	sed -i \
 		-e "s|@MINIO_PASSWORD@|${MINIO_ROOT_PASSWORD}|g" \
 		-e "s|@MINIO_UID@|${minio_uid}|g" \
 		-e "s|@MINIO_GID@|${minio_gid}|g" \
+		-e "s|@TAG@|${tag}|g" \
 		"${T}/docker-compose.yml" \
 		|| die
 	doins "${T}/docker-compose.yml"
@@ -63,7 +139,7 @@ src_install() {
 
 	# Set correct permissions for docker-compose.yml
 	fowners "root:root" "/opt/minio/docker-compose.yml"
-	fperms 0640 "/opt/minio/docker-compose.yml"
+	fperms 0600 "/opt/minio/docker-compose.yml"
 
 	if use systemd ; then
 		# Install systemd unit

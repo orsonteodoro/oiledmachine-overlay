@@ -15,8 +15,8 @@ ExecStart=/usr/bin/docker compose -f /opt/minio/docker-compose.yml up -d --remov
 # Stop MinIO
 ExecStop=/usr/bin/docker compose -f /opt/minio/docker-compose.yml down
 
-User=minio
-Group=minio
+#User=minio
+#Group=minio
 
 # Restart policy
 Restart=always

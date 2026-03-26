@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   minio:
-    image: quay.io/minio/minio:latest
+    image: quay.io/minio/minio:@TAG@
     container_name: lobehub-minio
     restart: unless-stopped
     # Error response from daemon: unable to find user minio: no matching entries in passwd file
@@ -19,7 +19,7 @@ services:
       MINIO_CONSOLE_ADDRESS: ":9001"
     volumes:
       - /var/lib/minio/data:/data
-    command: server /data --console-address ":9001"
+    command: server --address ":9000" --console-address ":9001" /data
 
     # ===================================================================
     # Healthcheck: Safe for both OpenRC and systemd
