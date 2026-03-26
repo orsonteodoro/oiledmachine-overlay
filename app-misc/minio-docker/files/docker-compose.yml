@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  minio:
+    image: quay.io/minio/minio:latest
+    container_name: lobehub-minio
+    restart: unless-stopped
+    ports:
+      - "9000:9000"  # S3 API
+      - "9001:9001"  # MinIO Console
+    environment:
+      MINIO_ROOT_USER: lobehub
+      MINIO_ROOT_PASSWORD: MinioLobeHub2026StrongPass!
+      # CORS is important for LobeHub frontend to access MinIO directly
+      MINIO_API_CORS_ALLOW_ORIGIN: "http://127.0.0.1:3210,http://localhost:3210,http://127.0.0.1"
+      MINIO_CONSOLE_ADDRESS: ":9001"
+    volumes:
+      - /var/lib/minio/data:/data
+    command: server /data --console-address ":9001"
+
+    # ===================================================================
+    # Healthcheck: Safe for both OpenRC and systemd
+    # - OpenRC: ignored
+    # - systemd: helps with proper service readiness
+    # ===================================================================
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+# =======================================================================
+# Potential Issues & Fixes (Documented for future maintainers)
+# =======================================================================
+# 1. Port conflict:
+#    → If port 9000 or 9001 is already in use, change the left side (host port)
+#
+# 2. Slow startup on low-resource machines:
+#    → Increase 'start_period' in healthcheck if MinIO takes longer to start
+#
+# 3. CORS errors in LobeHub:
+#    → Add more origins to MINIO_API_CORS_ALLOW_ORIGIN if needed
+#
+# 4. Password security:
+#    → Password is substituted at build time. Change it manually in
+#      /etc/minio/minio-password.env if needed
+#
+# 5. Data persistence:
+#    → Data is stored in /var/lib/minio/data — make sure to back it up
+# =======================================================================

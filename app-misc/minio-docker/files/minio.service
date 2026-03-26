@@ -1,0 +1,37 @@
+[Unit]
+Description=MinIO Object Storage Server for LobeHub
+Documentation=https://min.io
+After=network.target docker.service
+Requires=docker.service
+Wants=network-online.target
+
+[Service]
+Type=notify
+RemainAfterExit=yes
+
+# Start MinIO using docker compose
+ExecStart=/usr/bin/docker compose -f /opt/minio/docker-compose.yml up -d --remove-orphans
+
+# Stop MinIO
+ExecStop=/usr/bin/docker compose -f /opt/minio/docker-compose.yml down
+
+# Restart policy
+Restart=always
+RestartSec=5s
+
+# Give MinIO time to become healthy
+TimeoutStartSec=120s
+TimeoutStopSec=60s
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+
+# Security / hardening
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=read-only
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target

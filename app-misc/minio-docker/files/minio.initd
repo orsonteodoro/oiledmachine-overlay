@@ -1,0 +1,32 @@
+#!/sbin/openrc-run
+
+description="MinIO Docker service for LobeHub"
+
+depend() {
+	need docker
+	use net
+}
+
+start() {
+	ebegin "Starting MinIO (for LobeHub)"
+	cd /opt/minio || return 1
+	docker compose up -d --remove-orphans
+	eend $?
+}
+
+stop() {
+	ebegin "Stopping MinIO"
+	cd /opt/minio || return 1
+	docker compose down
+	eend $?
+}
+
+status() {
+	cd /opt/minio || return 1
+	docker compose ps
+}
+
+restart() {
+	stop
+	start
+}
