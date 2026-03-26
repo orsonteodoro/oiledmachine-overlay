@@ -5,4 +5,15 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  docker image ls		# list docker images as a list of <image-id>
+  docker ps -a			# lists <container-id> for images
+  docker stop <container-id>	# stop docker image first
+  docker rm <container-id>	# removes <container-id>
+  docker rmi <image-id>		# removes <image-id>
+
+  -->
 </pkgmetadata>

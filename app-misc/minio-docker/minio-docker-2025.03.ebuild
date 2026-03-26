@@ -12,7 +12,7 @@ LICENSE="AGPL-3"
 SLOT="0"
 IUSE="
 +openrc systemd
-ebuild_revision_3
+ebuild_revision_6
 "
 REQUIRED_USE="
 	|| (
@@ -42,6 +42,8 @@ BDEPEND="
 
 src_install() {
 	insinto "/opt/minio"
+	local minio_uid=$(id -u minio)
+	local minio_gid=$(id -g minio)
 	local MINIO_ROOT_PASSWORD="MinioLobe$(openssl rand -hex 16)"
 	echo "MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}" > "${T}/minio-password.env"
 	cat \
@@ -49,11 +51,13 @@ src_install() {
 			> \
 		"${T}/docker-compose.yml" \
 		|| die
-	doins "${T}/docker-compose.yml"
 	sed -i \
 		-e "s|MinioLobeHub2026StrongPass!|${minio_password}|g" \
+		-e "s|@MINIO_UID@|${minio_uid}|g" \
+		-e "s|@MINIO_GID@|${minio_gid}|g" \
 		"${T}/docker-compose.yml" \
 		|| die
+	doins "${T}/docker-compose.yml"
 	MINIO_ROOT_PASSWORD=$(openssl rand -base64 32)$(openssl rand -base64 32)
 	unset MINIO_ROOT_PASSWORD
 
@@ -131,9 +135,9 @@ elog "Data directory: /var/lib/minio/data (owned by user 'minio')"
 einfo
 einfo "After starting MinIO, create the bucket:"
 einfo
-einfo "    mc alias set lobehub-minio http://127.0.0.1:9000 lobehub \$(cat /etc/minio/minio-password.env | cut -d= -f2)"
-einfo "    mc mb lobehub-minio/lobehub"
-einfo "    mc policy set public lobehub-minio/lobehub"
+einfo "    minio-client alias set lobehub-minio http://127.0.0.1:9000 lobehub \$(cat /etc/minio/minio-password.env | cut -d= -f2)"
+einfo "    minio-client mb lobehub-minio/lobehub"
+einfo "    minio-client policy set public lobehub-minio/lobehub"
 einfo
 einfo "Note: If you see 'Unit minio.service not found', run 'systemctl daemon-reload' first."
 }
