@@ -341,8 +341,7 @@ PDEPEND+="
 		sys-cluster/ceph[radosgw]
 	)
 	minio? (
-		app-containers/docker
-		app-containers/docker-compose
+		app-misc/minio-docker
 	)
 "
 DOCS=( "CHANGELOG.md" "README.md" )
@@ -1268,10 +1267,7 @@ ewarn "The use of localhost or 127.0.0.1 identifiers are mutually exclusive for 
 ewarn "Use the same identifier throughout the /etc/conf.d/lobehub and the remote OAuth settings."
 ewarn
 	if use minio ; then
-ewarn
-ewarn "Ask the AI to help build a MinIO Docker container for ${PN} using docker"
-ewarn "compose for locally hosted S3 support."
-ewarn
+ewarn "You must manually update S3_SECRET_ACCESS_KEY in /etc/conf.d/lobehub with the new login details."
 	fi
 }
 
