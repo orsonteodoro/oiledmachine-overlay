@@ -256,7 +256,7 @@ RESTRICT="binchecks mirror strip test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
--electron +embeddings +file-management indexeddb +openrc +pwa +postgres +rag redis +s3 systemd
+ceph -electron +embeddings +file-management indexeddb minio +openrc +pwa +postgres +rag redis +s3 systemd
 ebuild_revision_85
 "
 REQUIRED_USE="
@@ -270,7 +270,11 @@ REQUIRED_USE="
 	)
 	rag? (
 		postgres
-		s3
+		^^ (
+			ceph
+			minio
+			s3
+		)
 	)
 	^^ (
 		indexeddb
@@ -330,6 +334,15 @@ BDEPEND+="
 	|| (
 		dev-lang/rust:=
 		dev-lang/rust-bin:=
+	)
+"
+PDEPEND+="
+	ceph? (
+		sys-cluster/ceph[radosgw]
+	)
+	minio? (
+		app-containers/docker
+		app-containers/docker-compose
 	)
 "
 DOCS=( "CHANGELOG.md" "README.md" )
@@ -1070,6 +1083,24 @@ eerror "TODO: _install_electron"
 	die
 }
 
+has_s3_support() {
+	if use ceph || use minio || use s3 ; then
+		echo "1"
+	else
+		echo "0"
+	fi
+}
+
+get_s3_provider() {
+	if use ceph ; then
+		echo "ceph"
+	elif use minio ; then
+		echo "minio"
+	elif use s3 ; then
+		echo "s3"
+	fi
+}
+
 gen_pwa_config() {
 	local database_type=""
 	if use postgres ; then
@@ -1077,8 +1108,9 @@ gen_pwa_config() {
 	else
 		database_type="next"
 	fi
-	local enable_s3_support=$(usex s3 "1" "0")
+	local enable_s3_support=$(has_s3_support)
 	local redis_url=$(usex redis "redis://localhost:6379" "")
+	local s3_provider=$(get_s3_provider)
 	local ui_mode=$(usex electron "electron" "pwa")
 
 	cat \
@@ -1094,6 +1126,7 @@ gen_pwa_config() {
 		-e "s|@PORT@|${lobehub_port}|g" \
 		-e "s|@REDIS_URL@|${redisurl}|g" \
 		-e "s|@UI_MODE@|${ui_mode}|g" \
+		-e "s|@S3_PROVIDER@|${s3_provider}|g"
 		"${T}/${MY_PN2}.conf" \
 		|| die
 

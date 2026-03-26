@@ -125,6 +125,9 @@ host    all             all             ::1/128                 md5
     <doc lang="en">https://lobehub.com/docs/usage/start</doc>
   </upstream>
   <use>
+    <flag name="ceph">
+      Use Ceph as a S3 compatible locally hosted storage.
+    </flag>
     <flag name="electron">
       Build the self-contained standalone app.
     </flag>
@@ -136,6 +139,9 @@ host    all             all             ::1/128                 md5
     </flag>
     <flag name="indexeddb">
       Store database information locally in the browser only with IndexedDB.
+    </flag>
+    <flag name="minio">
+      Use MinIO as S3 compatible locally hosted storage.
     </flag>
     <flag name="pwa">
       Build the PWA (Progressive Web App) to use in a web browser.
@@ -152,9 +158,7 @@ host    all             all             ::1/128                 md5
       Add support for cache optimization with Redis.
     </flag>
     <flag name="s3">
-      Enable storage support for images, videos, file upload, knowledge base,
-      RAG with either the remote S3 storage or locally hosted S3 compatible
-      alternative.
+      Use S3 remote hosted storage.
     </flag>
   </use>
 </pkgmetadata>
