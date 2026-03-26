@@ -3882,7 +3882,18 @@ ot-kernel-pkgflags_docker() { # DONE
 	local pkg="app-containers/docker"
 	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		_ot-kernel_set_posix_mqueue
+		ot-kernel_y_configopt "CONFIG_IP_NF_RAW"
+		if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.17" ; then
+ewarn
+ewarn "Cannot use PREEMPT_RT with ${pkg}."
+ewarn
+ewarn "If you need to use PREEMPT_RT, add OT_KERNEL_PKGFLAGS_REJECT[S${pkgid}]=1"
+ewarn
+			ot-kernel_y_configopt "CONFIG_NETFILTER_XTABLES_LEGACY"
+			ot-kernel_y_configopt "CONFIG_IP_NF_IPTABLES_LEGACY"
+		fi
 		ot-kernel_y_configopt "CONFIG_NET"
+		ot-kernel_y_configopt "CONFIG_INET"
 		ot-kernel_y_configopt "CONFIG_CGROUPS"
 		ot-kernel_y_configopt "CONFIG_MEMCG"
 		if ver_test "${KV_MAJOR_MINOR}" "-lt" "6.1" ; then
@@ -3943,7 +3954,7 @@ ot-kernel-pkgflags_docker() { # DONE
 		ot-kernel_y_configopt "CONFIG_IP_NF_FILTER"
 		ot-kernel_y_configopt "CONFIG_IP_NF_NAT"
 		ot-kernel_y_configopt "CONFIG_NF_NAT"
-		if ver_test "${KV_MAJOR_MINOR}" "-le" "5.0" ; then
+		if ver_test "${KV_MAJOR_MINOR}" "-le" "5.1" ; then
 			ot-kernel_y_configopt "CONFIG_NF_NAT_IPV4"
 		fi
 		ot-kernel_y_configopt "CONFIG_IP_NF_TARGET_MASQUERADE"
@@ -4083,6 +4094,7 @@ ot-kernel-pkgflags_docker() { # DONE
 			ot-kernel_y_configopt "CONFIG_BTRFS_FS"
 			ot-kernel_y_configopt "CONFIG_BTRFS_FS_POSIX_ACL"
 		fi
+
 
 		ot-kernel_y_configopt "CONFIG_OVERLAY_FS"
 	fi
