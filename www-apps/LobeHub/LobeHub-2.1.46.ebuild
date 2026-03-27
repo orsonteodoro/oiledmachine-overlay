@@ -256,7 +256,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management indexeddb minio +openrc +pwa +postgres +rag redis +s3 systemd
-ebuild_revision_88
+ebuild_revision_89
 "
 REQUIRED_USE="
 	postgres
@@ -1138,7 +1138,7 @@ gen_pwa_config() {
 		-e "s|@PORT@|${lobehub_port}|g" \
 		-e "s|@REDIS_URL@|${redisurl}|g" \
 		-e "s|@UI_MODE@|${ui_mode}|g" \
-		-e "s|@S3_PROVIDER@|${s3_provider}|g"
+		-e "s|@S3_PROVIDER@|${s3_provider}|g" \
 		"${T}/${MY_PN2}.conf" \
 		|| die
 
