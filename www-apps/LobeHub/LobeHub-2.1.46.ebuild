@@ -1173,7 +1173,7 @@ _install_pwa() {
 	if use openrc ; then
 		cat "${FILESDIR}/${MY_PN2}.openrc" > "${T}/${MY_PN2}" || die
 		sed -i -e "s|@POSTGRESQL_SLOT@|${POSTGRESQL_SLOT}|g" "${T}/${MY_PN2}" || die
-		newinitd "${T}/${MY_PN2}"
+		doinitd "${T}/${MY_PN2}"
 	fi
 	if use systemd ; then
 		insinto "/usr/lib/systemd/system"
