@@ -1035,6 +1035,11 @@ _install_pwa_webapp() {
 	insinto "${_PREFIX}"
 	doins -r "${S}/.next/standalone/"* # Contains node_modules, .next, server.js
 
+	# Copied again to fix the database migration issue and database driver switch issue.
+	rm -e "${ED}/${_PREFIX}/node_modules/"*
+	insinto "${_PREFIX}/node_modules"
+	doins -r "${S}/node_modules/"*
+
 	insinto "${_PREFIX}/.next/static"
 	doins -r "${S}/.next/static/"*
 
@@ -1049,30 +1054,6 @@ _install_pwa_webapp() {
 		doins "${S}/scripts/migrateServerDB/docker.cjs"
 		doins "${S}/scripts/migrateServerDB/errorHint.js"
 	fi
-
-	# Copy dirs referenced by server database symlinks
-	insinto "${_PREFIX}/node_modules/.pnpm"
-	doins -r "${S}/node_modules/.pnpm/"*
-
-	# Duplicate, already in standalone's node_modules
-	# Copy server database driver
-	insinto "${_PREFIX}/node_modules/pg"
-	doins -r "${S}/node_modules/pg/"*
-
-	# Missing in standalone's node_modules
-	# Copy server database driver
-	insinto "${_PREFIX}/node_modules/postgres"
-	doins -r "${S}/node_modules/postgres/"*
-
-	# Missing in standalone's node_modules
-	# Copy server database dependency
-	insinto "${_PREFIX}/node_modules/drizzle-orm"
-	doins -r "${S}/node_modules/drizzle-orm/"*
-
-	# Missing in standalone's node_modules
-	# Copy server database driver
-	insinto "${_PREFIX}/node_modules/@neondatabase"
-	doins -r "${S}/node_modules/@neondatabase/"*
 
 	sed -i \
 		-e "s|@NODE_SLOT@|${NODE_SLOT}|g" \
@@ -1305,6 +1286,7 @@ pkg_postrm() {
 # OILEDMACHINE-OVERLAY-TEST:  FAIL 2.1.44 (20260323) with sharp 0.34.3.    ERROR [Better Auth]: Error Error: Failed query: insert into "verifications"
 # OILEDMACHINE-OVERLAY-TEST:  FAIL 2.1.44 (20260324) with sharp 0.34.3.    OAuth works but full migration to postgres-js driver is not complete. With USE="pwa postgres" and postgres-js 3.4.8, better-auth 1.5.6, drizzle-orm 0.45.1, drizzle-kit 0.30.6, better-call 1.3.2, @better-auth/passkey@1.5.6, @better-auth/expo@1.5.6
 # OILEDMACHINE-OVERLAY-TEST:  PASS 2.1.44 (20260325) with sharp 0.34.3.
+# OILEDMACHINE-OVERLAY-TEST:  PASS 2.1.46 (20260326) with sharp 0.34.3.
 
 # E-mail login:  untested
 # Electron:  untested
@@ -1314,4 +1296,6 @@ pkg_postrm() {
 # Ollama test "what is the speed of light?" with smollm:  passed
 # PostgreSQL 17 (locally hosted server) database support:  passed
 # PWA (browser load test):  passed
+# Sharp:  Passed
 # Stability:  passed
+# To test Sharp:  Settings > Appearance > Theme has 3 pictures
