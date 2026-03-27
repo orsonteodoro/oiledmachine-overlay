@@ -2058,7 +2058,7 @@
 +	"qwen3.5:9b-bf16": "19GB",
 +	"qwen3.5:27b-q8_0": "30GB",
 +	"qwen3.5:27b-bf16": "56GB",
-+	"qwen3.5:35b-a3b-q8_0": "39GB"
++	"qwen3.5:35b-a3b-q8_0": "39GB",
 +	"qwen3.5:35b-a3b-bf16": "72GB",
 +	"qwen3.5:397b-cloud": "0GB",
 +	"qwq:32b": "20GB",
@@ -3417,7 +3417,7 @@
 +	"wizardlm-uncensored": "uncensored removed-alignment removed-moralizing general-use math-word-problems",
 +	"wizardlm2": "chat multilingual",
 +	"wizardlm2:70b": "chat multilingual reasoning",
-+	"x/flux2-klein": "image-generation text-rendering text-to-image ui-mockups gui-mockups design-prototyping product-photography photorealistic-scenes chart-generation infographics artistic-illustrations fantasy-illustrations isometric-illustrations poster-generation architecture-generation interior-generation"
++	"x/flux2-klein": "image-generation text-rendering text-to-image ui-mockups gui-mockups design-prototyping product-photography photorealistic-scenes chart-generation infographics artistic-illustrations fantasy-illustrations isometric-illustrations poster-generation architecture-generation interior-design-generation",
 +	"x/z-image-turbo": "bilingual-text-generation memes meme-generation image-generation chinese-calligraphy photorealistic-portraits visual-compositions",
 +	"x/z-image-turbo:fp8": "bilingual-text-generation memes meme-generation image-generation chinese-calligraphy photorealistic-portraits visual-compositions balanced-quality",
 +	"x/z-image-turbo:bf16": "bilingual-text-generation memes meme-generation image-generation chinese-calligraphy photorealistic-portraits visual-compositions highest-quality",
