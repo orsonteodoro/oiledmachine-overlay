@@ -2880,7 +2880,6 @@ apply_distro_patchset_for_system_toolchain() {
 	# Copium patches go here.
 		PATCHES+=(
 			"${WORKDIR}/copium/cr143-libsync-__BEGIN_DECLS.patch"
-			"${WORKDIR}/copium/cr145-rustc_nightly_capability.patch"
 		)
 
 	# Automate conditional application of chromium-patches
