@@ -600,15 +600,24 @@ einfo "QA:  Update chromium ebuild with tc_count_expected_rust=${rust_count}"
 	fi
 }
 
+pkg_preinst() {
+	local x
+	for x in ${REPLACING_VERSIONS} ; do
+		local y="${x%.*}"
+	einfo "Removing ${PN}:${y}"
+		rm -rf "/usr/share/chromium/${y}.x" >/dev/null 2>&1 || true
+	done
+}
+
 pkg_postrm() {
 	if [[ -z "${REPLACED_BY_VERSION}" ]] ; then
 		if ls "/usr/share/chromium/"*"/toolchain" ; then
-	# Remove all multislots
-			rm -rf "${INSTALL_PREFIX}/toolchain"
+	einfo "Removing all ${PN} slots"
+			rm -rf "${INSTALL_PREFIX}/toolchain" >/dev/null 2>&1 || true
 		fi
 		if [[ "/usr/share/chromium/toolchain" ]] ; then
-	# Remove unislot
-			rm -rf "/usr/share/chromium/toolchain"
+	einfo "Removing ${PN} unislot"
+			rm -rf "/usr/share/chromium/toolchain" >/dev/null 2>&1 || true
 		fi
 	fi
 }

@@ -111,21 +111,30 @@ einfo "QA:  Update chromium ebuild with sources_count_expected=${count}"
 	fi
 }
 
+pkg_preinst() {
+	local x
+	for x in ${REPLACING_VERSIONS} ; do
+		local y=$(ver_cut "1-4" "${x}")
+	einfo "Removing ${PN}:${y}"
+		rm -rf "/usr/share/chromium/${y}/sources" >/dev/null 2>&1 || true
+	done
+}
+
 pkg_postrm() {
 	if [[ -z "${REPLACED_BY_VERSION}" ]] ; then
 		if ls "/usr/share/chromium/"*"/sources" > /dev/null 2>&1 ; then
-		# Remove all multislots
-			rm -rf "/usr/share/chromium/"*"/sources"
+	einfo "Removing all ${PN} slots"
+			rm -rf "/usr/share/chromium/"*"/sources" >/dev/null 2>&1 || true
 		fi
 
 		if [[ -e "/usr/share/chromium/sources" ]] ; then
-		# Remove unislot
-			rm -rf "/usr/share/chromium/sources"
+	einfo "Removing ${PN} unislot"
+			rm -rf "/usr/share/chromium/sources" >/dev/null 2>&1 || true
 		fi
 
 		if [[ -e "/usr/share/chromium/${PV%.*}" ]] ; then
-	# Remove mistake
-			rm -rf "/usr/share/chromium/${PV%.*}"
+	einfo "Removing messed up install of ${PN}-${PV%.*}"
+			rm -rf "/usr/share/chromium/${PV%.*}" >/dev/null 2>&1 || true
 		fi
 	fi
 }
