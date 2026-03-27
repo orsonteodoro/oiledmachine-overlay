@@ -267,6 +267,8 @@ COMMUNITY_LLMS=(
 	"sparksammy-tinysam-goog"
 	"sparksammy-tinysam-msft"
 	"themanofrod-travel-agent"
+	"x-flux2-klein"
+	"x-z-image-turbo"
 )
 
 FEATURED_LLMS=(
@@ -3762,6 +3764,13 @@ LLM_LICENSES="
 	ollama_llms_wizardlm2? (
 		Apache-2.0
 	)
+	ollama_llms_x-flux2-klein? (
+		Apache-2.0
+		FLUX-Non-Commercial-License-v2.1
+	)
+	ollama_llms_x-z-image-turbo? (
+		Apache-2.0
+	)
 	ollama_llms_xwinlm? (
 		llama2-LICENSE
 		llama2-USE_POLICY.md
@@ -4990,6 +4999,8 @@ einfo "LDFLAGS: ${LDFLAGS}"
 		["sparksammy-tinysam-goog"]="sparksammy/tinysam-goog"
 		["sparksammy-tinysam-msft"]="sparksammy/tinysam-msft"
 		["themanofrod-travel-agent"]="themanofrod/travel-agent"
+		["x-flux2-klein"]="x/flux2-klein"
+		["x-z-image-turbo"]="x/z-image-turbo"
 	)
 
 	# Toggle LLM in whitelist to filter out LLM support by license.
