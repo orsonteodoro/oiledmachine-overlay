@@ -1179,7 +1179,7 @@ _install_pwa() {
 		insinto "/usr/lib/systemd/system"
 		cat "${FILESDIR}/${MY_PN2}.systemd" > "${T}/${MY_PN2}.service" || die
 		sed -i -e "s|@POSTGRESQL_SLOT@|${POSTGRESQL_SLOT}|g" "${T}/${MY_PN2}.service" || die
-		doins "${MY_PN2}.service"
+		doins "${T}/${MY_PN2}.service"
 	fi
 
 	# Include hidden files/dirs with *
