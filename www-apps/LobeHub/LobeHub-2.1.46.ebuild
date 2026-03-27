@@ -1291,11 +1291,11 @@ pkg_postrm() {
 # E-mail login:  untested
 # Electron:  untested
 # IndexedDB (browser only) database support:  untested
-# Local RAG:  untested
 # GitHub OAuth:  passed
 # Ollama test "what is the speed of light?" with smollm:  passed
 # PostgreSQL 17 (locally hosted server) database support:  passed
 # PWA (browser load test):  passed
-# Sharp:  Passed
+# Sharp:  passed
 # Stability:  passed
+# Text file RAG:  passed
 # To test Sharp:  Settings > Appearance > Theme has 3 pictures
