@@ -2999,7 +2999,7 @@ einfo "Applying the distro patchset ..."
 
 	# Dedupe, oiledmachine-overlay changes preferred
 	# Update every major version
-		#rm -f "${WORKDIR}/chromium-patches-${PATCH_VER}/toolchain/cr146-compiler.patch" || true
+		rm -f "${WORKDIR}/chromium-patches-${PATCH_VER}/toolchain/cr146-compiler.patch" || true
 	fi
 
 	# https://issues.chromium.org/issues/442698344
