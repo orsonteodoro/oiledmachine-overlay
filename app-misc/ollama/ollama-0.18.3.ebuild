@@ -235,6 +235,7 @@ COMMUNITY_LLMS=(
 	"chatgph-gph-main"
 	"chatgph-medix-ph"
 	"disinfozone-telos"
+	"DeepHat-DeepHat-V1-7B"
 	"ehartford-theprofessor"
 	"eramax-aura_v3"
 	"fixt-home-3b-v3"
@@ -249,7 +250,7 @@ COMMUNITY_LLMS=(
 	"mannix-llamax3-8b-alpaca"
 	"mannix-smaug-qwen2-72b"
 	"mannix-replete-coder-llama3-8b"
-	"Maternion-LightOnOCR"
+	"Maternion-LightOnOCR-2"
 	"monotykamary-whiterabbitneo-v1.5a"
 	"nqduc-gemsura"
 	"nqduc-mixsura"
@@ -268,6 +269,9 @@ COMMUNITY_LLMS=(
 	"sparksammy-tinysam-goog"
 	"sparksammy-tinysam-msft"
 	"themanofrod-travel-agent"
+	"WhiteRabbitNeo-Llama-3.1-WhiteRabbitNeo-2-70B"
+	"WhiteRabbitNeo-Llama-3.1-WhiteRabbitNeo-2-8B"
+	"WhiteRabbitNeo-WhiteRabbitNeo-2.5-Qwen-2.5-Coder-7B"
 	"x-flux2-klein"
 	"x-z-image-turbo"
 )
@@ -2996,6 +3000,11 @@ LLM_LICENSES="
 	ollama_llms_deepcoder? (
 		MIT
 	)
+	ollama_llms_DeepHat-DeepHat-V1-7B? (
+		Apache-2.0
+		WhiteRabbitNeo-Terms-of-Use
+		WhiteRabbitNeo-Usage-Restrictions
+	)
 	ollama_llms_deepscaler? (
 		MIT
 	)
@@ -3407,7 +3416,7 @@ LLM_LICENSES="
 	ollama_llms_mxbai-embed-large? (
 		Apache-2.0
 	)
-	ollama_llms_Maternion-LightOnOCR? (
+	ollama_llms_Maternion-LightOnOCR-2? (
 		Apache-2.0
 	)
 	ollama_llms_monotykamary-whiterabbitneo-v1.5a? (
@@ -3767,6 +3776,23 @@ LLM_LICENSES="
 	)
 	ollama_llms_wizardlm2? (
 		Apache-2.0
+	)
+	ollama_llms_WhiteRabbitNeo-Llama-3.1-WhiteRabbitNeo-2-70B? (
+		llama3_1-LICENSE
+		llama3_1-USE_POLICY.md
+		WhiteRabbitNeo-Terms-of-Use
+		WhiteRabbitNeo-Usage-Restrictions
+	)
+	ollama_llms_WhiteRabbitNeo-Llama-3.1-WhiteRabbitNeo-2-8B? (
+		llama3_1-LICENSE
+		llama3_1-USE_POLICY.md
+		WhiteRabbitNeo-Terms-of-Use
+		WhiteRabbitNeo-Usage-Restrictions
+	)
+	ollama_llms_WhiteRabbitNeo-WhiteRabbitNeo-2.5-Qwen-2.5-Coder-7B? (
+		Apache-2.0
+		WhiteRabbitNeo-Terms-of-Use
+		WhiteRabbitNeo-Usage-Restrictions
 	)
 	ollama_llms_x-flux2-klein? (
 		Apache-2.0
@@ -4437,6 +4463,7 @@ src_unpack() {
 		go-module_live_vendor
 	else
 		unpack "${P}.tar.gz"
+	die
 
 	# Generating requires 2 phases for dependency of dependency
 		if [[ "${GEN_EBUILD}" == "1" ]] ; then
@@ -4975,6 +5002,7 @@ einfo "LDFLAGS: ${LDFLAGS}"
 		["chatgph-70b-instruct"]="chatgph/70b-instruct"
 		["chatgph-gph-main"]="chatgph/gph-main"
 		["chatgph-medix-ph"]="chatgph/medix-ph"
+		["DeepHat-DeepHat-V1-7B"]="DeepHat/DeepHat-V1-7B"
 		["disinfozone-telos"]="disinfozone/telos"
 		["ehartford-theprofessor"]="ehartford/theprofessor"
 		["eramax-aura_v3"]="eramax/aura_v3"
@@ -4989,7 +5017,7 @@ einfo "LDFLAGS: ${LDFLAGS}"
 		["mannix-llamax3-8b-alpaca"]="mannix/llamax3-8b-alpaca"
 		["mannix-replete-adapted-llama3-8b"]="mannix/replete-adapted-llama3-8b"
 		["mannix-replete-coder-llama3-8b"]="mannix/replete-coder-llama3-8b"
-		["Maternion-LightOnOCR"]="Maternion/LightOnOCR"
+		["Maternion-LightOnOCR-2"]="Maternion/LightOnOCR-2"
 		["monotykamary-whiterabbitneo-v1.5a"]="monotykamary/whiterabbitneo-v1.5a"
 		["nqduc-gemsura"]="nqduc/gemsura"
 		["nqduc-mixsura"]="nqduc/mixsura"
@@ -5008,6 +5036,9 @@ einfo "LDFLAGS: ${LDFLAGS}"
 		["sparksammy-tinysam-goog"]="sparksammy/tinysam-goog"
 		["sparksammy-tinysam-msft"]="sparksammy/tinysam-msft"
 		["themanofrod-travel-agent"]="themanofrod/travel-agent"
+		["WhiteRabbitNeo-Llama-3.1-WhiteRabbitNeo-2-70B"]="WhiteRabbitNeo/Llama-3.1-WhiteRabbitNeo-2-70B"
+		["WhiteRabbitNeo-Llama-3.1-WhiteRabbitNeo-2-8B"]="WhiteRabbitNeo/Llama-3.1-WhiteRabbitNeo-2-8B"
+		["WhiteRabbitNeo-WhiteRabbitNeo-2.5-Qwen-2.5-Coder-7B"]="WhiteRabbitNeo/WhiteRabbitNeo-2.5-Qwen-2.5-Coder-7B"
 		["x-flux2-klein"]="x/flux2-klein"
 		["x-z-image-turbo"]="x/z-image-turbo"
 	)
