@@ -256,6 +256,7 @@ COMMUNITY_LLMS=(
 	"Maternion-LightOnOCR-2"
 	"monotykamary-whiterabbitneo-v1.5a"
 	"mshojaei77-gemma3persian"
+	"mtayyar-trendmicro-ailab-Llama-Primus-Reasoning"
 	"nqduc-gemsura"
 	"nqduc-mixsura"
 	"nqduc-mixsura-sft"
@@ -273,6 +274,7 @@ COMMUNITY_LLMS=(
 	"sparksammy-tinysam-goog"
 	"sparksammy-tinysam-msft"
 	"themanofrod-travel-agent"
+	"uamarchuan-lapa-v0.1.2-instruct"
 	"WhiteRabbitNeo-Llama-3.1-WhiteRabbitNeo-2-70B"
 	"WhiteRabbitNeo-Llama-3.1-WhiteRabbitNeo-2-8B"
 	"WhiteRabbitNeo-WhiteRabbitNeo-2.5-Qwen-2.5-Coder-7B"
@@ -3448,6 +3450,11 @@ LLM_LICENSES="
 	ollama_llms_moondream? (
 		Apache-2.0
 	)
+	ollama_llms_mtayyar-trendmicro-ailab-Llama-Primus-Reasoning? (
+		MIT
+		llama3_1-LICENSE
+		llama3_1-USE_POLICY.md
+	)
 	ollama_llms_nemotron? (
 		llama3_1-LICENSE
 		llama3_1-USE_POLICY.md
@@ -3759,6 +3766,10 @@ LLM_LICENSES="
 	ollama_llms_tulu3? (
 		llama3_1-LICENSE
 		llama3_1-USE_POLICY.md
+	)
+	ollama_llms_uamarchuan-lapa-v0.1.2-instruct? (
+		Gemma-Terms-of-Use-20250324
+		Gemma-Prohibited-Use-Policy-20240221
 	)
 	ollama_llms_vicuna? (
 		llama2-LICENSE
@@ -5042,6 +5053,7 @@ einfo "LDFLAGS: ${LDFLAGS}"
 		["mannix-replete-coder-llama3-8b"]="mannix/replete-coder-llama3-8b"
 		["Maternion-LightOnOCR-2"]="Maternion/LightOnOCR-2"
 		["monotykamary-whiterabbitneo-v1.5a"]="monotykamary/whiterabbitneo-v1.5a"
+		["mtayyar-trendmicro-ailab-Llama-Primus-Reasoning"]="mtayyar/trendmicro-ailab-Llama-Primus-Reasoning"
 		["nqduc-gemsura"]="nqduc/gemsura"
 		["nqduc-mixsura"]="nqduc/mixsura"
 		["nqduc-mixsura-sft"]="nqduc/mixsura-sft"
@@ -5059,6 +5071,7 @@ einfo "LDFLAGS: ${LDFLAGS}"
 		["sparksammy-tinysam-goog"]="sparksammy/tinysam-goog"
 		["sparksammy-tinysam-msft"]="sparksammy/tinysam-msft"
 		["themanofrod-travel-agent"]="themanofrod/travel-agent"
+		["uamarchuan-lapa-v0.1.2-instruct"]="uamarchuan/lapa-v0.1.2-instruct"
 		["WhiteRabbitNeo-Llama-3.1-WhiteRabbitNeo-2-70B"]="WhiteRabbitNeo/Llama-3.1-WhiteRabbitNeo-2-70B"
 		["WhiteRabbitNeo-Llama-3.1-WhiteRabbitNeo-2-8B"]="WhiteRabbitNeo/Llama-3.1-WhiteRabbitNeo-2-8B"
 		["WhiteRabbitNeo-WhiteRabbitNeo-2.5-Qwen-2.5-Coder-7B"]="WhiteRabbitNeo/WhiteRabbitNeo-2.5-Qwen-2.5-Coder-7B"
