@@ -4606,9 +4606,9 @@ einfo "Editing ${x} for ragel -Z -> ragel-go"
 		|| die
 
 	if use ollama_llms_MichelRosselli-grok-2 ; then
-		sed -i -e "s|@SHOW_BANNER@|true|g" || die
+		sed -i -e "s|@SHOW_BANNER@|true|g" "cmd/cmd.go" || die
 	else
-		sed -i -e "s|@SHOW_BANNER@|false|g" || die
+		sed -i -e "s|@SHOW_BANNER@|false|g" "cmd/cmd.go" || die
 	fi
 }
 
