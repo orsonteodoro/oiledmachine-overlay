@@ -1,5 +1,5 @@
 --- a/cmd/cmd.go.orig	2026-03-25 14:02:22.000000000 -0700
-+++ b/cmd/cmd.go	2026-03-27 16:01:31.274123347 -0700
++++ b/cmd/cmd.go	2026-03-27 20:25:49.727701375 -0700
 @@ -19,6 +19,7 @@ import (
  	"os/exec"
  	"os/signal"
@@ -8,7 +8,7 @@
  	"runtime"
  	"slices"
  	"sort"
-@@ -152,6 +153,3424 @@ func isLocalhost() bool {
+@@ -152,6 +153,3428 @@ func isLocalhost() bool {
  	return ip != nil && (ip.IsLoopback() || ip.IsUnspecified())
  }
  
@@ -1179,6 +1179,8 @@
 +	"marco-o1:7b": "4.7GB",
 +	"marco-o1:7b-fp16": "15GB",
 +	"marco-o1:7b-q8_0": "8.1GB",
++	"Maternion/LightOnOCR-2:latest": "1.5GB",
++	"Maternion/LightOnOCR-2:1b": "1.5GB",
 +	"mathstral:7b": "4.1GB",
 +	"mathstral:7b-v0.1-q6_K": "5.9GB",
 +	"mathstral:7b-v0.1-q8_0": "7.7GB",
@@ -2930,6 +2932,7 @@
 +	"mannix/replete-coder-llama3-8b": 1,
 +	"mannix/smaug-qwen2-72b": 1,
 +	"marco-o1": 1,
++	"Maternion/LightOnOCR-2": 1,
 +	"mathstral": 1,
 +	"meditron": 1,
 +	"medllama2": 1,
@@ -3273,6 +3276,7 @@
 +	"mannix/replete-adapted-llama3-8b": "coding multilanguage-comment-translation function-calling uncensored open-source-data advanced-math secure-coding coding-vulnerability-prevention low-end-hardware",
 +	"mannix/replete-coder-llama3-8b": "coding multilanguage-comment-translation function-calling uncensored open-source-data advanced-math secure-coding coding-vulnerability-prevention",
 +	"marco-o1": "open-ended-resolution open-ended-problem-solving chain-of-thought math-word-problems salesperson stem-standard-answers math physics coding",
++	"Maternion/LightOnOCR-2": "document-to-text ocr optical-character-recognition low-memory-footprint",
 +	"mathstral": "math-word-problems",
 +	"meditron": "medical diseases health-information medical-exam qa",
 +	"medllama2": "medical qa",
@@ -3433,7 +3437,7 @@
  func CreateHandler(cmd *cobra.Command, args []string) error {
  	p := progress.NewProgress(os.Stderr)
  	defer p.Stop()
-@@ -571,6 +3990,25 @@ func hasListedModelName(models []api.Lis
+@@ -571,6 +3994,25 @@ func hasListedModelName(models []api.Lis
  func RunHandler(cmd *cobra.Command, args []string) error {
  	interactive := true
  
@@ -3459,7 +3463,7 @@
  	opts := runOptions{
  		Model:       args[0],
  		WordWrap:    os.Getenv("TERM") == "xterm-256color",
-@@ -1068,10 +4506,12 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -1068,10 +4510,12 @@ func ShowHandler(cmd *cobra.Command, arg
  	modelfile, errModelfile := cmd.Flags().GetBool("modelfile")
  	parameters, errParams := cmd.Flags().GetBool("parameters")
  	system, errSystem := cmd.Flags().GetBool("system")
@@ -3473,7 +3477,7 @@
  		if boolErr != nil {
  			return errors.New("error retrieving flags")
  		}
-@@ -1100,13 +4540,372 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -1100,13 +4544,373 @@ func ShowHandler(cmd *cobra.Command, arg
  		showType = "system"
  	}
  
@@ -3657,6 +3661,7 @@
 +		"mannix/replete-adapted-llama3-8b": "META LLAMA 3 COMMUNITY LICENSE AGREEMENT, Meta Llama 3 Acceptable Use Policy",
 +		"mannix/replete-coder-llama3-8b": "META LLAMA 3 COMMUNITY LICENSE AGREEMENT, Meta Llama 3 Acceptable Use Policy",
 +		"marco-o1": "Apache-2.0",
++		"Maternion/LightOnOCR-2": "Apache-2.0",
 +		"mathstral": "Apache-2.0",
 +		"meditron": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
 +		"medllama2": "MIT",
@@ -3847,7 +3852,7 @@
  	}
  
  	req := api.ShowRequest{Name: args[0], Verbose: verbose}
-@@ -1423,6 +5222,146 @@ func PullHandler(cmd *cobra.Command, arg
+@@ -1423,6 +5227,146 @@ func PullHandler(cmd *cobra.Command, arg
  	return client.Pull(cmd.Context(), &request, fn)
  }
  
@@ -3994,7 +3999,7 @@
  type generateContextKey string
  
  type runOptions struct {
-@@ -2136,7 +6075,9 @@ func NewCLI() *cobra.Command {
+@@ -2136,7 +6080,9 @@ func NewCLI() *cobra.Command {
  	showCmd.Flags().Bool("parameters", false, "Show parameters of a model")
  	showCmd.Flags().Bool("template", false, "Show template of a model")
  	showCmd.Flags().Bool("system", false, "Show system message of a model")
@@ -4004,7 +4009,7 @@
  
  	runCmd := &cobra.Command{
  		Use:     "run MODEL [PROMPT]",
-@@ -2278,6 +6219,30 @@ func NewCLI() *cobra.Command {
+@@ -2278,6 +6224,30 @@ func NewCLI() *cobra.Command {
  		_ = runner.Execute(args[1:])
  	})
  
@@ -4035,7 +4040,7 @@
  	envVars := envconfig.AsMap()
  
  	envs := []envconfig.EnvVar{envVars["OLLAMA_HOST"]}
-@@ -2294,6 +6259,9 @@ func NewCLI() *cobra.Command {
+@@ -2294,6 +6264,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		serveCmd,
@@ -4045,7 +4050,7 @@
  	} {
  		switch cmd {
  		case runCmd:
-@@ -2341,6 +6309,9 @@ func NewCLI() *cobra.Command {
+@@ -2341,6 +6314,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		runnerCmd,

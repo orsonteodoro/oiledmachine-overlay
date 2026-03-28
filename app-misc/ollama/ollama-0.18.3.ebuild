@@ -249,6 +249,7 @@ COMMUNITY_LLMS=(
 	"mannix-llamax3-8b-alpaca"
 	"mannix-smaug-qwen2-72b"
 	"mannix-replete-coder-llama3-8b"
+	"Maternion-LightOnOCR"
 	"monotykamary-whiterabbitneo-v1.5a"
 	"nqduc-gemsura"
 	"nqduc-mixsura"
@@ -3406,6 +3407,17 @@ LLM_LICENSES="
 	ollama_llms_mxbai-embed-large? (
 		Apache-2.0
 	)
+	ollama_llms_Maternion-LightOnOCR? (
+		Apache-2.0
+	)
+	ollama_llms_monotykamary-whiterabbitneo-v1.5a? (
+		DEEPSEEK-LICENSE-AGREEMENT-1.0
+		WhiteRabbitNeo-Terms-of-Use
+		WhiteRabbitNeo-Usage-Restrictions
+	)
+	ollama_llms_moondream? (
+		Apache-2.0
+	)
 	ollama_llms_nemotron? (
 		llama3_1-LICENSE
 		llama3_1-USE_POLICY.md
@@ -3422,14 +3434,6 @@ LLM_LICENSES="
 	)
 	ollama_llms_nemotron-mini? (
 		NVIDIA-AI-Foundation-Models-Community-License-Agreement
-	)
-	ollama_llms_moondream? (
-		Apache-2.0
-	)
-	ollama_llms_monotykamary-whiterabbitneo-v1.5a? (
-		DEEPSEEK-LICENSE-AGREEMENT-1.0
-		WhiteRabbitNeo-Terms-of-Use
-		WhiteRabbitNeo-Usage-Restrictions
 	)
 	ollama_llms_neural-chat? (
 		Apache-2.0
@@ -4985,6 +4989,7 @@ einfo "LDFLAGS: ${LDFLAGS}"
 		["mannix-llamax3-8b-alpaca"]="mannix/llamax3-8b-alpaca"
 		["mannix-replete-adapted-llama3-8b"]="mannix/replete-adapted-llama3-8b"
 		["mannix-replete-coder-llama3-8b"]="mannix/replete-coder-llama3-8b"
+		["Maternion-LightOnOCR"]="Maternion/LightOnOCR"
 		["monotykamary-whiterabbitneo-v1.5a"]="monotykamary/whiterabbitneo-v1.5a"
 		["nqduc-gemsura"]="nqduc/gemsura"
 		["nqduc-mixsura"]="nqduc/mixsura"
