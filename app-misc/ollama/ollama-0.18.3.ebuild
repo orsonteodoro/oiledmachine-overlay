@@ -242,9 +242,11 @@ COMMUNITY_LLMS=(
 	"fixt-home-3b-v2"
 	"hemanth-chessplayer"
 	"hookingai-monah-8b"
+	"iKhalid-ALLaM"
 	"jimscard-adult-film-screenwriter-nsfw"
 	"jimscard-whiterabbit-neo"
 	"joefamous-grok-1"
+	"jwnder-jais-adaptive"
 	"leeplenty-lumimaid-v0.2"
 	"mannix-replete-adapted-llama3-8b"
 	"mannix-llamax3-8b-alpaca"
@@ -252,6 +254,7 @@ COMMUNITY_LLMS=(
 	"mannix-replete-coder-llama3-8b"
 	"Maternion-LightOnOCR-2"
 	"monotykamary-whiterabbitneo-v1.5a"
+	"mshojaei77-gemma3persian"
 	"nqduc-gemsura"
 	"nqduc-mixsura"
 	"nqduc-mixsura-sft"
@@ -3221,6 +3224,9 @@ LLM_LICENSES="
 	ollama_llms_hookingai-monah-8b? (
 		Apache-2.0
 	)
+	ollama_llms_iKhalid-ALLaM? (
+		Apache-2.0
+	)
 	ollama_llms_internlm2? (
 		Apache-2.0
 	)
@@ -3234,6 +3240,9 @@ LLM_LICENSES="
 		WhiteRabbitNeo-Usage-Restrictions
 	)
 	ollama_llms_joefamous-grok-1? (
+		Apache-2.0
+	)
+	ollama_llms_jwnder-jais-adaptive? (
 		Apache-2.0
 	)
 	ollama_llms_lfm2? (
@@ -3423,6 +3432,11 @@ LLM_LICENSES="
 		DEEPSEEK-LICENSE-AGREEMENT-1.0
 		WhiteRabbitNeo-Terms-of-Use
 		WhiteRabbitNeo-Usage-Restrictions
+	)
+	ollama_llms_mshojaei77-gemma3persian? (
+		Apache-2.0
+		Gemma-Terms-of-Use-20250324
+		Gemma-Prohibited-Use-Policy-20240221
 	)
 	ollama_llms_moondream? (
 		Apache-2.0
@@ -4344,7 +4358,7 @@ IDEPEND="
 	${RDEPEND}
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-0.18.3-cmd-changes.patch"
+	"A${FILESDIR}/${PN}-0.18.3-cmd-changes.patch"
 	"${FILESDIR}/${PN}-0.12.6-custom-cpu-features.patch"
 	"${FILESDIR}/${PN}-0.13.0-hardcoded-paths.patch"
 	"${FILESDIR}/${PN}-0.13.0-cuda-not-fatal.patch"
@@ -4463,7 +4477,6 @@ src_unpack() {
 		go-module_live_vendor
 	else
 		unpack "${P}.tar.gz"
-	die
 
 	# Generating requires 2 phases for dependency of dependency
 		if [[ "${GEN_EBUILD}" == "1" ]] ; then
@@ -5010,9 +5023,11 @@ einfo "LDFLAGS: ${LDFLAGS}"
 		["fixt-home-3b-v2"]="fixt/home-3b-v2"
 		["hemanth-chessplayer"]="hemanth/chessplayer"
 		["hookingai-monah-8b"]="hookingai/monah-8b"
+		["iKhalid-ALLaM"]="iKhalid/ALLaM"
 		["jimscard-adult-film-screenwriter-nsfw"]="jimscard/adult-film-screenwriter-nsfw"
 		["jimscard-whiterabbit-neo"]="jimscard/whiterabbit-neo"
 		["joefamous-grok-1"]="joefamous/grok-1"
+		["jwnder-jais-adaptive"]="jwnder/jais-adaptive"
 		["leeplenty-lumimaid-v0.2"]="leeplenty/lumimaid-v0.2"
 		["mannix-llamax3-8b-alpaca"]="mannix/llamax3-8b-alpaca"
 		["mannix-replete-adapted-llama3-8b"]="mannix/replete-adapted-llama3-8b"

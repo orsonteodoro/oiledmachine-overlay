@@ -1,5 +1,5 @@
 --- a/cmd/cmd.go.orig	2026-03-25 14:02:22.000000000 -0700
-+++ b/cmd/cmd.go	2026-03-27 23:59:00.700154007 -0700
++++ b/cmd/cmd.go	2026-03-28 02:07:02.183627819 -0700
 @@ -19,6 +19,7 @@ import (
  	"os/exec"
  	"os/signal"
@@ -8,7 +8,7 @@
  	"runtime"
  	"slices"
  	"sort"
-@@ -152,6 +153,3440 @@ func isLocalhost() bool {
+@@ -152,6 +153,3463 @@ func isLocalhost() bool {
  	return ip != nil && (ip.IsLoopback() || ip.IsUnspecified())
  }
  
@@ -808,6 +808,20 @@
 +	"hookingai/monah-8b:q5_k_M": "5.7GB",
 +	"hookingai/monah-8b:q6_K": "6.6GB",
 +	"hookingai/monah-8b:F16": "16GB",
++	"iKhalid/ALLaM:7b": "4GB",
++	"iKhalid/ALLaM:7b-fb16": "14GB",
++	"iKhalid/ALLaM:7b-q3_K_S": "3.1GB",
++	"iKhalid/ALLaM:7b-q3_K_M": "3.5GB"
++	"iKhalid/ALLaM:7b-q3_K_L": "3.8GB",
++	"iKhalid/ALLaM:7b-q4_1": "4.4GB",
++	"iKhalid/ALLaM:7b-q4_K_S": "4.0GB",
++	"iKhalid/ALLaM:7b-q4_K_M": "4.3GB",
++	"iKhalid/ALLaM:7b-q5_0": "4.9GB",
++	"iKhalid/ALLaM:7b-q5_1": "5.3GB",
++	"iKhalid/ALLaM:7b-q5_K_S": "4.9GB",
++	"iKhalid/ALLaM:7b-q5_K_M": "5.0GB",
++	"iKhalid/ALLaM:7b-q6_K": "5.7GB",
++	"iKhalid/ALLaM:7b-q8_0": "7.4GB",
 +	"internlm2:1m": "4.5GB",
 +	"internlm2:1.8b": "1.1GB",
 +	"internlm2:7b": "4.5GB",
@@ -834,6 +848,7 @@
 +	"jimscard/whiterabbit-neo:13b-q5_K_M": "9.2GB",
 +	"joefamous/grok-1:314b-q2_K": "116GB",
 +	"joefamous/grok-1:314b-q6_K": "260GB",
++	"jwnder/jais-adaptive:7b", "14GB",
 +	"kimi-k2:1t-cloud": "0GB",
 +	"kimi-k2-thinking:cloud": "0GB",
 +	"kimi-k2.5:cloud": "0GB",
@@ -1348,6 +1363,7 @@
 +	"moondream:1.8b-v2-q6_K": "2.1GB",
 +	"moondream:1.8b-v2-q8_0": "2.4GB",
 +	"moondream:1.8b-v2-fp16": "3.7GB",
++	"mshojaei77/gemma3persian:latest": "4.1GB",
 +	"mxbai-embed-large:335m": "670MB",
 +	"mxbai-embed-large:v1": "670MB",
 +	"mxbai-embed-large:335m-v1-fp16": "670MB",
@@ -1632,6 +1648,7 @@
 +	"orca2:13b-fp16": "26GB",
 +	"paraphrase-multilingual:278m": "563MB",
 +	"paraphrase-multilingual:278m-mpnet-base-v2-fp16": "563MB",
++	"partai/dorna-llama3:latest": "8.5GB",
 +	"partai/dorna-llama3:8b-instruct-q4_0": "4.7GB",
 +	"partai/dorna-llama3:8b-instruct-q5_0": "5.6GB",
 +	"partai/dorna-llama3:8b-instruct-q8_0": "8.5GB",
@@ -2890,10 +2907,12 @@
 +	"hemanth/chessplayer": 1,
 +	"hermes3": 1,
 +	"hookingai/monah-8b": 1,
++	"iKhalid/ALLaM": 1,
 +	"internlm2": 1,
 +	"jimscard/adult-film-screenwriter-nsfw": 1,
 +	"jimscard/whiterabbit-neo": 1,
 +	"joefamous/grok-1": 1,
++	"jwnder/jais-adaptive": 1,
 +	"kimi-k2": 1,
 +	"kimi-k2-thinking": 1,
 +	"kimi-k2.5": 1,
@@ -2963,6 +2982,7 @@
 +	"nqduc/mixsura": 1,
 +	"nqduc/mixsura-sft": 1,
 +	"monotykamary/whiterabbitneo-v1.5a": 1,
++	"mshojaei77/gemma3persian": 1,
 +	"mxbai-embed-large": 1,
 +	"nemotron": 1,
 +	"nemotron-3-nano": 1,
@@ -3221,10 +3241,12 @@
 +	"hemanth/chessplayer": "chess chess-player white-player ai-moves-first",
 +	"hermes3": "roleplaying abstract-reasoning common-sense function-calling structured-output assistant code-generation",
 +	"hookingai/monah-8b": "online-dating hook-up llm-trainer nsfw adult-content uncensored",
++	"iKhalid/ALLaM": "arabic saudi-arabia grade-school-education arab-alignment moral-reasoning common-sense text-generation",
 +	"internlm2": "tool-use word-math-problems",
 +	"jimscard/adult-film-screenwriter-nsfw": "nsfw adult-content",
 +	"jimscard/whiterabbit-neo": "cybersecurity it-security how-to security-research open-source-tools vulnerability-checks",
 +	"joefamous/grok-1": "chatbot general-knowledge",
++	"jwnder/jais-adaptive": "arabic english bilingual text-generation physical-common-sense biased-generated-content prejudiced-content",
 +	"kimi-k2": "cloud cloud-hosted basic-coding-agent expert-level-reasoning graduate-level-stem",
 +	"kimi-k2-thinking": "cloud cloud-hosted basic-coding-agent agentic-coding python software-engineering expert-level-reasoning high-school-math graduate-level-stem",
 +	"kimi-k2.5": "long-context high-school-math expert-level-reasoning general-reasoning multimodal-reasoning multimodal-mathematical-reasoning chart-reasoning image-understanding ocr optical-character-recognition video-understanding document-image-understanding python software-engineering multilingual-software-engineering coding-agent search-agent",
@@ -3309,6 +3331,7 @@
 +	"mixtral": "multilingual english french italian german spanish coding code-generation common-sense solving-basic-programming-problems math-word-problems trivia fine-tuneable",
 +	"moondream": "picture-to-text qa image-deconstruction whats-that identify-in-picture",
 +	"monotykamary/whiterabbitneo-v1.5a": "cybersecurity offensive-cybersecurity defensive-cybersecurity",
++	"mshojaei77/gemma3persian": "persian multimodal text-generation intruction-following qa chatbot image-understanding",
 +	"mxbai-embed-large": "embeddings",
 +	"nemotron": "training-data-generator llm-creation",
 +	"nemotron-3-nano": "high-school-math instruction-following long-context graduate-level-reasoning general-reasoning advanced-knowledge",
@@ -3344,7 +3367,7 @@
 +	"orca-mini": "general-purpose writing-letters",
 +	"orca2": "assistant summaries abstract-reasoning",
 +	"paraphrase-multilingual": "embedding clustering semantic-search",
-+	"partai/dorna-llama3": "persian assistant",
++	"partai/dorna-llama3": "persian english conversational",
 +	"phi": "chat street-directions coding code-generator code-competion text-completion qa answering-questions",
 +	"phi3": "common-sense trivia english math logic math-word-problems solving-basic-programming-problems",
 +	"phi3.5": "coding math logic teacher fact-check chat multilingual arabic chinese czech danish dutch english finnish french german hebrew hungarian italian japanese korean norwegian polish portuguese russian spanish swedish thai turkish ukrainian",
@@ -3449,7 +3472,7 @@
  func CreateHandler(cmd *cobra.Command, args []string) error {
  	p := progress.NewProgress(os.Stderr)
  	defer p.Stop()
-@@ -571,6 +4006,25 @@ func hasListedModelName(models []api.Lis
+@@ -571,6 +4029,25 @@ func hasListedModelName(models []api.Lis
  func RunHandler(cmd *cobra.Command, args []string) error {
  	interactive := true
  
@@ -3475,7 +3498,7 @@
  	opts := runOptions{
  		Model:       args[0],
  		WordWrap:    os.Getenv("TERM") == "xterm-256color",
-@@ -1068,10 +4522,12 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -1068,10 +4545,12 @@ func ShowHandler(cmd *cobra.Command, arg
  	modelfile, errModelfile := cmd.Flags().GetBool("modelfile")
  	parameters, errParams := cmd.Flags().GetBool("parameters")
  	system, errSystem := cmd.Flags().GetBool("system")
@@ -3489,7 +3512,7 @@
  		if boolErr != nil {
  			return errors.New("error retrieving flags")
  		}
-@@ -1100,13 +4556,377 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -1100,13 +4579,380 @@ func ShowHandler(cmd *cobra.Command, arg
  		showType = "system"
  	}
  
@@ -3640,10 +3663,12 @@
 +		"hemanth/chessplayer": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
 +		"hermes3": "META LLAMA 3 COMMUNITY LICENSE AGREEMENT, Meta Llama 3 Acceptable Use Policy",
 +		"hookingai/monah-8b": "Apache-2.0",
++		"iKhalid/ALLaM": "Apache-2.0",
 +		"internlm2": "Apache-2.0",
 +		"jimscard/adult-film-screenwriter-nsfw": "Apache-2.0",
 +		"jimscard/whiterabbit-neo": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy, WhiteRabbitNeo-Terms-of-Use, WhiteRabbitNeo-Usage-Restrictions",
 +		"joefamous/grok-1": "Apache-2.0",
++		"jwnder/jais-adaptive": "Apache-2.0",
 +		"kimi-k2": "Kimi-K2-LICENSE MIT",
 +		"kimi-k2.5": "Kimi-K2.5-LICENSE MIT",
 +		"kimi-k2-thinking": "Kimi-K2-LICENSE MIT",
@@ -3699,6 +3724,7 @@
 +		"mixtral": "Apache-2.0",
 +		"moondream": "Apache-2.0",
 +		"monotykamary/whiterabbitneo-v1.5a": "DEEPSEEK-LICENSE-AGREEMENT-1.0, WhiteRabbitNeo-Terms-of-Use, WhiteRabbitNeo-Usage-Restrictions",
++		"mshojaei77/gemma3persian": "Apache-2.0, Gemma Terms of Use 20250324, Gemma Prohibited Use Policy 20240221",
 +		"mxbai-embed-large": "Apache-2.0",
 +		"nemotron": "LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Acceptable Use Policy, Meta Privacy Policy",
 +		"nemotron-3-nano": "NVIDIA Nemotron Open Model License", // Ollama site says "NVIDIA Open Model License Agreement".  HuggingFace site says "NVIDIA Nemotron Open Model License".
@@ -3868,7 +3894,7 @@
  	}
  
  	req := api.ShowRequest{Name: args[0], Verbose: verbose}
-@@ -1423,6 +5243,146 @@ func PullHandler(cmd *cobra.Command, arg
+@@ -1423,6 +5269,146 @@ func PullHandler(cmd *cobra.Command, arg
  	return client.Pull(cmd.Context(), &request, fn)
  }
  
@@ -4015,7 +4041,7 @@
  type generateContextKey string
  
  type runOptions struct {
-@@ -2136,7 +6096,9 @@ func NewCLI() *cobra.Command {
+@@ -2136,7 +6122,9 @@ func NewCLI() *cobra.Command {
  	showCmd.Flags().Bool("parameters", false, "Show parameters of a model")
  	showCmd.Flags().Bool("template", false, "Show template of a model")
  	showCmd.Flags().Bool("system", false, "Show system message of a model")
@@ -4025,7 +4051,7 @@
  
  	runCmd := &cobra.Command{
  		Use:     "run MODEL [PROMPT]",
-@@ -2278,6 +6240,30 @@ func NewCLI() *cobra.Command {
+@@ -2278,6 +6266,30 @@ func NewCLI() *cobra.Command {
  		_ = runner.Execute(args[1:])
  	})
  
@@ -4056,7 +4082,7 @@
  	envVars := envconfig.AsMap()
  
  	envs := []envconfig.EnvVar{envVars["OLLAMA_HOST"]}
-@@ -2294,6 +6280,9 @@ func NewCLI() *cobra.Command {
+@@ -2294,6 +6306,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		serveCmd,
@@ -4066,7 +4092,7 @@
  	} {
  		switch cmd {
  		case runCmd:
-@@ -2341,6 +6330,9 @@ func NewCLI() *cobra.Command {
+@@ -2341,6 +6356,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		runnerCmd,
