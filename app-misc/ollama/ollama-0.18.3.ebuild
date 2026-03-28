@@ -234,6 +234,7 @@ COMMUNITY_LLMS=(
 	"chatgph-70b-instruct"
 	"chatgph-gph-main"
 	"chatgph-medix-ph"
+	"d4n5h-white-rabbit-neo-70b-v2"
 	"disinfozone-telos"
 	"DeepHat-DeepHat-V1-7B"
 	"ehartford-theprofessor"
@@ -2996,6 +2997,12 @@ LLM_LICENSES="
 	ollama_llms_command-r7b-arabic? (
 		CC-BY-NC-4.0
 	)
+	ollama_llms_d4n5h-white-rabbit-neo-70b-v2? (
+		llama3_1-LICENSE
+		llama3_1-USE_POLICY.md
+		WhiteRabbitNeo-Terms-of-Use
+		WhiteRabbitNeo-Usage-Restrictions
+	)
 	ollama_llms_dbrx? (
 		Databricks-Open-Model-License
 		Databricks-Open-Model-Acceptable-Use-Policy
@@ -4477,6 +4484,7 @@ src_unpack() {
 		go-module_live_vendor
 	else
 		unpack "${P}.tar.gz"
+	die
 
 	# Generating requires 2 phases for dependency of dependency
 		if [[ "${GEN_EBUILD}" == "1" ]] ; then
@@ -5015,6 +5023,7 @@ einfo "LDFLAGS: ${LDFLAGS}"
 		["chatgph-70b-instruct"]="chatgph/70b-instruct"
 		["chatgph-gph-main"]="chatgph/gph-main"
 		["chatgph-medix-ph"]="chatgph/medix-ph"
+		["d4n5h-white-rabbit-neo-70b-v2"]="d4n5h/white-rabbit-neo-70b-v2"
 		["DeepHat-DeepHat-V1-7B"]="DeepHat/DeepHat-V1-7B"
 		["disinfozone-telos"]="disinfozone/telos"
 		["ehartford-theprofessor"]="ehartford/theprofessor"

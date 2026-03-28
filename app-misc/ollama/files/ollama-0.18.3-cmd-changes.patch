@@ -1,5 +1,5 @@
 --- a/cmd/cmd.go.orig	2026-03-25 14:02:22.000000000 -0700
-+++ b/cmd/cmd.go	2026-03-28 02:07:02.183627819 -0700
++++ b/cmd/cmd.go	2026-03-28 09:24:58.844521396 -0700
 @@ -19,6 +19,7 @@ import (
  	"os/exec"
  	"os/signal"
@@ -8,7 +8,7 @@
  	"runtime"
  	"slices"
  	"sort"
-@@ -152,6 +153,3463 @@ func isLocalhost() bool {
+@@ -152,6 +153,3466 @@ func isLocalhost() bool {
  	return ip != nil && (ip.IsLoopback() || ip.IsUnspecified())
  }
  
@@ -252,6 +252,7 @@
 +	"command-r7b-arabic:7b": "5.1GB",
 +	"command-r7b-arabic:7b-02-2025-fp16": "16GB",
 +	"command-r7b-arabic:7b-02-2025-q8_0": "8.5GB",
++	"d4n5h/white-rabbit-neo-70b-v2:latest": "75GB",
 +	"dbrx:132b": "74GB",
 +	"dbrx:instruct": "74GB",
 +	"dbrx:132b-instruct-q8_0": "140GB",
@@ -2854,6 +2855,7 @@
 +	"command-r-plus": 1,
 +	"command-r7b": 1,
 +	"command-r7b-arabic": 1,
++	"d4n5h/white-rabbit-neo-70b-v2": 1,
 +	"dbrx": 1,
 +	"disinfozone/telos": 1,
 +	"deepcoder": 1,
@@ -3150,7 +3152,7 @@
 +	"canadiangamer/priya": "ai-girlfriend girlfriend muscular india indian nsfw adult-content",
 +	"bge-large": "embedding vector-database",
 +	"bge-m3": "embedding multilingual low-memory-footprint",
-+	"captainkyd/whiterabbitneo7b": "cybersecurity offensive-cybersecurity defensive-cybersecurity",
++	"captainkyd/whiterabbitneo7b": "cybersecurity offensive-cybersecurity defensive-cybersecurity WhiteRabbitNeo-7B-v1.5a",
 +	"chatgph/70b-instruct": "software-engineering system-optimization techonology filipino humor philippines pinoy coding code-review philippine-alignment tagalog cebuano illocano hiligayon cloud-developer",
 +	"chatgph/gph-main": "software-engineering system-optimization technology filipino humor philippines pinoy tagalog illocano philippine-alignment",
 +	"chatgph/medix-ph": "medical assistant healtcare philippines filipino",
@@ -3172,6 +3174,7 @@
 +	"command-r-plus": "rag tool-use enterprise english french spanish italian german brazilian portuguese japanese korean chinese arabic",
 +	"command-r7b": "tool-use ai-applications for-gpus for-edge-devices reasoning qa coding rag  multilingual english french spanish italian german portuguese japanese korean arabic chinese russian polish turkish vietnamese dutch czech indonesian ukrainian romanian greek hindi hebrew persian",
 +	"command-r7b-arabic": "rag middle-east northern-africa arabic instruction-following high-level-reasoning chain-of-thought multi-step-reasoning",
++	"d4n5h/white-rabbit-neo-70b-v2": "cybersecurity offensive-cybersecurity defensive-cybersecurity Llama-3.1-WhiteRabbitNeo-2-70B",
 +	"dbrx": "coding code-generation math-word-problems general-purpose common-sense",
 +	"deepcoder": "code-reasoning finetuned-deepseek-r1-distilled-qwen code-generation coding",
 +	"DeepHat/DeepHat-V1-7B": "cybersecurity offensive-cybersecurity defensive-cybersecurity devops",
@@ -3244,7 +3247,7 @@
 +	"iKhalid/ALLaM": "arabic saudi-arabia grade-school-education arab-alignment moral-reasoning common-sense text-generation",
 +	"internlm2": "tool-use word-math-problems",
 +	"jimscard/adult-film-screenwriter-nsfw": "nsfw adult-content",
-+	"jimscard/whiterabbit-neo": "cybersecurity it-security how-to security-research open-source-tools vulnerability-checks",
++	"jimscard/whiterabbit-neo": "cybersecurity it-security how-to security-research open-source-tools vulnerability-checks WhiteRabbitNeo-13B-GGUF",
 +	"joefamous/grok-1": "chatbot general-knowledge",
 +	"jwnder/jais-adaptive": "arabic english bilingual text-generation physical-common-sense biased-generated-content prejudiced-content",
 +	"kimi-k2": "cloud cloud-hosted basic-coding-agent expert-level-reasoning graduate-level-stem",
@@ -3330,7 +3333,7 @@
 +	"mistrallite": "answering-long-questions qa common-sense",
 +	"mixtral": "multilingual english french italian german spanish coding code-generation common-sense solving-basic-programming-problems math-word-problems trivia fine-tuneable",
 +	"moondream": "picture-to-text qa image-deconstruction whats-that identify-in-picture",
-+	"monotykamary/whiterabbitneo-v1.5a": "cybersecurity offensive-cybersecurity defensive-cybersecurity",
++	"monotykamary/whiterabbitneo-v1.5a": "cybersecurity offensive-cybersecurity defensive-cybersecurity WhiteRabbitNeo-7B-v1.5a",
 +	"mshojaei77/gemma3persian": "persian multimodal text-generation intruction-following qa chatbot image-understanding",
 +	"mxbai-embed-large": "embeddings",
 +	"nemotron": "training-data-generator llm-creation",
@@ -3404,7 +3407,7 @@
 +	"reefer/minimonica": "erotica assistant adult-content ai-girlfriend girlfriend chat",
 +	"reefer/monica": "erotica assistant adult-content ai-girlfriend girlfriend appimage-creation app-questions computer-technician",
 +	"reflection": "reasoning",
-+	"rfc/whiterabbitneo": "cybersecurity offensive-cybersecurity defensive-cybersecurity",
++	"rfc/whiterabbitneo": "cybersecurity offensive-cybersecurity defensive-cybersecurity WhiteRabbitNeo-13B-v1",
 +	"rouge/replete-coder-qwen2-1.5b": "coding multilanguage-comment-translation function-calling uncensored open-source-data advanced-math secure-coding coding-vulnerability-prevention mobile",
 +	"rnj-1": "python stem science technology engineering math math-word-problems high-school-math code-generation basic-coding-agent fill-in-the-middle",
 +	"rnj-1:8b-cloud": "cloud-hosted python stem science technology engineering math math-word-problems high-school-math code-generation basic-coding-agent fill-in-the-middle",
@@ -3414,7 +3417,7 @@
 +	"sailor2:1b": "southeast-asia south-east-asia sea s-e-a multilingual research english chinese burmese cebuano ilocano indonesian javanese khmer lao malay sundanese tagalog thai vietnamese waray",
 +	"samantha-mistral": "philosopher psychologist dating-coach",
 +	"sammcj/smaug-mixtral-v0.1": "fine-tuned-mixtral optimized-mixtral multilingual english french italian german spanish coding code-generation common-sense solving-basic-programming-problems math-word-problems trivia fine-tuneable abstract-reasoning",
-+	"savethedoctor/whiterabbitneo13bq8_0": "cybersecurity offensive-cybersecurity defensive-cybersecurity",
++	"savethedoctor/whiterabbitneo13bq8_0": "cybersecurity offensive-cybersecurity defensive-cybersecurity WhiteRabbitNeo-13B-v1",
 +	"shieldgemma": "content-moderator",
 +	"smallthinker": "edge-devices",
 +	"smollm": "common-sense qa low-memory-footprint parent",
@@ -3472,7 +3475,7 @@
  func CreateHandler(cmd *cobra.Command, args []string) error {
  	p := progress.NewProgress(os.Stderr)
  	defer p.Stop()
-@@ -571,6 +4029,25 @@ func hasListedModelName(models []api.Lis
+@@ -571,6 +4032,25 @@ func hasListedModelName(models []api.Lis
  func RunHandler(cmd *cobra.Command, args []string) error {
  	interactive := true
  
@@ -3498,7 +3501,7 @@
  	opts := runOptions{
  		Model:       args[0],
  		WordWrap:    os.Getenv("TERM") == "xterm-256color",
-@@ -1068,10 +4545,12 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -1068,10 +4548,12 @@ func ShowHandler(cmd *cobra.Command, arg
  	modelfile, errModelfile := cmd.Flags().GetBool("modelfile")
  	parameters, errParams := cmd.Flags().GetBool("parameters")
  	system, errSystem := cmd.Flags().GetBool("system")
@@ -3512,7 +3515,7 @@
  		if boolErr != nil {
  			return errors.New("error retrieving flags")
  		}
-@@ -1100,13 +4579,380 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -1100,13 +4582,381 @@ func ShowHandler(cmd *cobra.Command, arg
  		showType = "system"
  	}
  
@@ -3590,6 +3593,7 @@
 +		"command-r-plus": "CC-BY-NC-4.0",
 +		"command-r7b": "CC-BY-NC-4.0",
 +		"command-r7b-arabic": "CC-BY-NC-4.0",
++		"d4n5h/white-rabbit-neo-70b-v2": "MIT LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Acceptable Use Policy, WhiteRabbitNeo-Terms-of-Use, WhiteRabbitNeo-Usage-Restrictions",
 +		"dbrx": "Databricks Open Model License, Databricks Open Model Acceptable Use Policy",
 +		"deepcoder": "MIT",
 +		"DeepHat/DeepHat-V1-7B": "Apache-2.0, WhiteRabbitNeo-Terms-of-Use, WhiteRabbitNeo-Usage-Restrictions",
@@ -3894,7 +3898,7 @@
  	}
  
  	req := api.ShowRequest{Name: args[0], Verbose: verbose}
-@@ -1423,6 +5269,146 @@ func PullHandler(cmd *cobra.Command, arg
+@@ -1423,6 +5273,146 @@ func PullHandler(cmd *cobra.Command, arg
  	return client.Pull(cmd.Context(), &request, fn)
  }
  
@@ -4041,7 +4045,7 @@
  type generateContextKey string
  
  type runOptions struct {
-@@ -2136,7 +6122,9 @@ func NewCLI() *cobra.Command {
+@@ -2136,7 +6126,9 @@ func NewCLI() *cobra.Command {
  	showCmd.Flags().Bool("parameters", false, "Show parameters of a model")
  	showCmd.Flags().Bool("template", false, "Show template of a model")
  	showCmd.Flags().Bool("system", false, "Show system message of a model")
@@ -4051,7 +4055,7 @@
  
  	runCmd := &cobra.Command{
  		Use:     "run MODEL [PROMPT]",
-@@ -2278,6 +6266,30 @@ func NewCLI() *cobra.Command {
+@@ -2278,6 +6270,30 @@ func NewCLI() *cobra.Command {
  		_ = runner.Execute(args[1:])
  	})
  
@@ -4082,7 +4086,7 @@
  	envVars := envconfig.AsMap()
  
  	envs := []envconfig.EnvVar{envVars["OLLAMA_HOST"]}
-@@ -2294,6 +6306,9 @@ func NewCLI() *cobra.Command {
+@@ -2294,6 +6310,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		serveCmd,
@@ -4092,7 +4096,7 @@
  	} {
  		switch cmd {
  		case runCmd:
-@@ -2341,6 +6356,9 @@ func NewCLI() *cobra.Command {
+@@ -2341,6 +6360,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		runnerCmd,
