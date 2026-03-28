@@ -4070,7 +4070,7 @@
  
 +	var banner = ""
 +	if (@SHOW_BANNER@) {
-+		banner = " -  Powered by xAI"
++		banner = " - Powered by xAI"
 +	}
 +
  	rootCmd := &cobra.Command{
