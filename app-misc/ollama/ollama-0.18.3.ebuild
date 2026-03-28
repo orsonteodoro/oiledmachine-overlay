@@ -3907,6 +3907,10 @@ REQUIRED_USE="
 		mkl
 		openblas
 	)
+	!kernel_Darwin? (
+		!ollama_llms_x-flux2-klein
+		!ollama_llms_x-z-image-turbo
+	)
 	!rocm? (
 		|| (
 			${LLVM_COMPAT[@]/#/llvm_slot_}
