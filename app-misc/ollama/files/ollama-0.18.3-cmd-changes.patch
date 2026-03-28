@@ -1,5 +1,5 @@
---- a/cmd/cmd.go.orig	2026-03-25 14:02:22.000000000 -0700
-+++ b/cmd/cmd.go	2026-03-28 14:34:49.844283871 -0700
+--- a/cmd/cmd.go.orig	2026-03-28 15:23:28.565690330 -0700
++++ b/cmd/cmd.go	2026-03-28 15:21:04.970274103 -0700
 @@ -19,6 +19,7 @@ import (
  	"os/exec"
  	"os/signal"
@@ -3724,7 +3724,7 @@
 +		"meditron": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
 +		"medllama2": "MIT",
 +		"megadolphin": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
-+		"MichelRosselli/grok-2": "Grok 2 Community License Agreement",
++		"MichelRosselli/grok-2": "Grok 2 Community License Agreement, xAI Acceptable Use Policy, This product includes materials licensed under the xAI Community License. All rights reserved. Copyright © xAI 2025.",
 +		"minicpm-v": "Apache-2.0",
 +		"minimax-m2": "MiniMax-M2 MIT",
 +		"minimax-m2.1": "MiniMax-M2.1 MIT",
@@ -4064,7 +4064,22 @@
  type generateContextKey string
  
  type runOptions struct {
-@@ -2136,7 +6145,9 @@ func NewCLI() *cobra.Command {
+@@ -2083,8 +6092,13 @@ func NewCLI() *cobra.Command {
+ 		console.ConsoleFromFile(os.Stdin) //nolint:errcheck
+ 	}
+ 
++	var banner = ""
++	if (@SHOW_BANNER@) {
++		banner = ".  Powered by xAI"
++	}
++
+ 	rootCmd := &cobra.Command{
+-		Use:           "ollama",
++		Use:           "ollama" + banner,
+ 		Short:         "Large language model runner",
+ 		SilenceUsage:  true,
+ 		SilenceErrors: true,
+@@ -2136,7 +6150,9 @@ func NewCLI() *cobra.Command {
  	showCmd.Flags().Bool("parameters", false, "Show parameters of a model")
  	showCmd.Flags().Bool("template", false, "Show template of a model")
  	showCmd.Flags().Bool("system", false, "Show system message of a model")
@@ -4074,7 +4089,7 @@
  
  	runCmd := &cobra.Command{
  		Use:     "run MODEL [PROMPT]",
-@@ -2278,6 +6289,30 @@ func NewCLI() *cobra.Command {
+@@ -2278,6 +6294,30 @@ func NewCLI() *cobra.Command {
  		_ = runner.Execute(args[1:])
  	})
  
@@ -4105,7 +4120,7 @@
  	envVars := envconfig.AsMap()
  
  	envs := []envconfig.EnvVar{envVars["OLLAMA_HOST"]}
-@@ -2294,6 +6329,9 @@ func NewCLI() *cobra.Command {
+@@ -2294,6 +6334,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		serveCmd,
@@ -4115,7 +4130,7 @@
  	} {
  		switch cmd {
  		case runCmd:
-@@ -2341,6 +6379,9 @@ func NewCLI() *cobra.Command {
+@@ -2341,6 +6384,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		runnerCmd,

@@ -3440,6 +3440,7 @@ LLM_LICENSES="
 	)
 	ollama_llms_MichelRosselli-grok-2? (
 		Grok-2-Community-License-Agreement-20251104
+		xAI-Acceptable-Use-Policy
 	)
 	ollama_llms_monotykamary-whiterabbitneo-v1.5a? (
 		DEEPSEEK-LICENSE-AGREEMENT-1.0
@@ -3918,7 +3919,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
 sandbox systemd unrestrict video_cards_intel -vulkan
-ebuild_revision_116
+ebuild_revision_117
 "
 
 gen_rocm_required_use() {
@@ -4515,6 +4516,7 @@ src_unpack() {
 		cd "${S}" || die
 		gen_git_tag "${S}" "v${PV}"
 	fi
+	die
 }
 
 get_olast() {
@@ -4603,6 +4605,12 @@ einfo "Editing ${x} for ragel -Z -> ragel-go"
 		-e "/binaryDir/d" \
 		"CMakePresets.json" \
 		|| die
+
+	if use ollama_llms_MichelRosselli-grok-2 ; then
+		sed -i -e "s|@SHOW_BANNER@|true|g" || die
+	else
+		sed -i -e "s|@SHOW_BANNER@|false|g" || die
+	fi
 }
 
 check_toolchain() {
