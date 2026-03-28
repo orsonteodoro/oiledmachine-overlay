@@ -3328,7 +3328,7 @@
 +	"meditron": "medical diseases health-information medical-exam qa",
 +	"medllama2": "medical qa",
 +	"megadolphin": "uncensored common-sense empathy advice detailed-reponse fine-tunable-alignment nsfw-content detailed-roleplay",
-+	"MichelRosselli/grok-2": "chatbot open-weights coding-assistant multilingual-content synthetic-data-generation multimodal",
++	"MichelRosselli/grok-2": "chatbot open-weights coding-assistant multilingual-content synthetic-data-generation text-only",
 +	"minicpm-v": "text-to-speech ocr optical-character-recognition code-screenshot-bugfixes how-to-generator translating-screenshots translation",
 +	"minimax-m2": "cloud cloud-hosted coding coding-assistant rag-tool-use ai-assistant instruction-following human-and-ai-collaboration human-and-ai-team rate-limited troubleshooting expert-level-reasoning high-school-math general-knowedge",
 +	"minimax-m2.1": "cloud cloud-hosted coding python software-engineering multilingual-software-engineering",
