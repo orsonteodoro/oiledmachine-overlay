@@ -1,5 +1,5 @@
 --- a/cmd/cmd.go.orig	2026-03-25 14:02:22.000000000 -0700
-+++ b/cmd/cmd.go	2026-03-28 14:13:26.391216359 -0700
++++ b/cmd/cmd.go	2026-03-28 14:34:49.844283871 -0700
 @@ -19,6 +19,7 @@ import (
  	"os/exec"
  	"os/signal"
@@ -8,7 +8,7 @@
  	"runtime"
  	"slices"
  	"sort"
-@@ -152,6 +153,3472 @@ func isLocalhost() bool {
+@@ -152,6 +153,3482 @@ func isLocalhost() bool {
  	return ip != nil && (ip.IsLoopback() || ip.IsUnspecified())
  }
  
@@ -1218,6 +1218,14 @@
 +	"megadolphin:120b-v2.2-q6_K": "99GB",
 +	"megadolphin:120b-v2.2-q8_0": "128GB",
 +	"megadolphin:120b-v2.2-fp16": "241GB",
++	"MichelRosselli/grok-2:latest": "164GB",
++	"MichelRosselli/grok-2:Q2_K": "100GB",
++	"MichelRosselli/grok-2:Q3_K_M": "130GB",
++	"MichelRosselli/grok-2:Q4_K_M": "164GB",
++	"MichelRosselli/grok-2:Q5_K_M": "192GB",
++	"MichelRosselli/grok-2:Q6_K": "221GB",
++	"MichelRosselli/grok-2:IQ1_M": "95GB",
++	"MichelRosselli/grok-2:TQ1_0": "82GB",
 +	"minicpm-v:8b": "5.5GB",
 +	"minicpm-v:8b-2.6-q2_K": "4.1GB",
 +	"minicpm-v:8b-2.6-q3_K_S": "4.5GB",
@@ -2965,6 +2973,7 @@
 +	"meditron": 1,
 +	"medllama2": 1,
 +	"megadolphin": 1,
++	"MichelRosselli/grok-2": 1,
 +	"minicpm-v": 1,
 +	"minimax-m2": 1,
 +	"minimax-m2.1": 1,
@@ -3319,6 +3328,7 @@
 +	"meditron": "medical diseases health-information medical-exam qa",
 +	"medllama2": "medical qa",
 +	"megadolphin": "uncensored common-sense empathy advice detailed-reponse fine-tunable-alignment nsfw-content detailed-roleplay",
++	"MichelRosselli/grok-2": "chatbot open-weights coding-assistant multilingual-content synthetic-data-generation multimodal",
 +	"minicpm-v": "text-to-speech ocr optical-character-recognition code-screenshot-bugfixes how-to-generator translating-screenshots translation",
 +	"minimax-m2": "cloud cloud-hosted coding coding-assistant rag-tool-use ai-assistant instruction-following human-and-ai-collaboration human-and-ai-team rate-limited troubleshooting expert-level-reasoning high-school-math general-knowedge",
 +	"minimax-m2.1": "cloud cloud-hosted coding python software-engineering multilingual-software-engineering",
@@ -3481,7 +3491,7 @@
  func CreateHandler(cmd *cobra.Command, args []string) error {
  	p := progress.NewProgress(os.Stderr)
  	defer p.Stop()
-@@ -571,6 +4038,25 @@ func hasListedModelName(models []api.Lis
+@@ -571,6 +4048,25 @@ func hasListedModelName(models []api.Lis
  func RunHandler(cmd *cobra.Command, args []string) error {
  	interactive := true
  
@@ -3507,7 +3517,7 @@
  	opts := runOptions{
  		Model:       args[0],
  		WordWrap:    os.Getenv("TERM") == "xterm-256color",
-@@ -1068,10 +4554,12 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -1068,10 +4564,12 @@ func ShowHandler(cmd *cobra.Command, arg
  	modelfile, errModelfile := cmd.Flags().GetBool("modelfile")
  	parameters, errParams := cmd.Flags().GetBool("parameters")
  	system, errSystem := cmd.Flags().GetBool("system")
@@ -3521,7 +3531,7 @@
  		if boolErr != nil {
  			return errors.New("error retrieving flags")
  		}
-@@ -1100,13 +4588,383 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -1100,13 +4598,384 @@ func ShowHandler(cmd *cobra.Command, arg
  		showType = "system"
  	}
  
@@ -3714,6 +3724,7 @@
 +		"meditron": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
 +		"medllama2": "MIT",
 +		"megadolphin": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
++		"MichelRosselli/grok-2": "Grok 2 Community License Agreement",
 +		"minicpm-v": "Apache-2.0",
 +		"minimax-m2": "MiniMax-M2 MIT",
 +		"minimax-m2.1": "MiniMax-M2.1 MIT",
@@ -3906,7 +3917,7 @@
  	}
  
  	req := api.ShowRequest{Name: args[0], Verbose: verbose}
-@@ -1423,6 +5281,146 @@ func PullHandler(cmd *cobra.Command, arg
+@@ -1423,6 +5292,146 @@ func PullHandler(cmd *cobra.Command, arg
  	return client.Pull(cmd.Context(), &request, fn)
  }
  
@@ -4053,7 +4064,7 @@
  type generateContextKey string
  
  type runOptions struct {
-@@ -2136,7 +6134,9 @@ func NewCLI() *cobra.Command {
+@@ -2136,7 +6145,9 @@ func NewCLI() *cobra.Command {
  	showCmd.Flags().Bool("parameters", false, "Show parameters of a model")
  	showCmd.Flags().Bool("template", false, "Show template of a model")
  	showCmd.Flags().Bool("system", false, "Show system message of a model")
@@ -4063,7 +4074,7 @@
  
  	runCmd := &cobra.Command{
  		Use:     "run MODEL [PROMPT]",
-@@ -2278,6 +6278,30 @@ func NewCLI() *cobra.Command {
+@@ -2278,6 +6289,30 @@ func NewCLI() *cobra.Command {
  		_ = runner.Execute(args[1:])
  	})
  
@@ -4094,7 +4105,7 @@
  	envVars := envconfig.AsMap()
  
  	envs := []envconfig.EnvVar{envVars["OLLAMA_HOST"]}
-@@ -2294,6 +6318,9 @@ func NewCLI() *cobra.Command {
+@@ -2294,6 +6329,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		serveCmd,
@@ -4104,7 +4115,7 @@
  	} {
  		switch cmd {
  		case runCmd:
-@@ -2341,6 +6368,9 @@ func NewCLI() *cobra.Command {
+@@ -2341,6 +6379,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		runnerCmd,

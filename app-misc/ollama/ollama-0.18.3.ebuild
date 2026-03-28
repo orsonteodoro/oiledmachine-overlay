@@ -254,6 +254,7 @@ COMMUNITY_LLMS=(
 	"mannix-smaug-qwen2-72b"
 	"mannix-replete-coder-llama3-8b"
 	"Maternion-LightOnOCR-2"
+	"MichelRosselli-grok-2"
 	"monotykamary-whiterabbitneo-v1.5a"
 	"mshojaei77-gemma3persian"
 	"mtayyar-trendmicro-ailab-Llama-Primus-Reasoning"
@@ -3437,6 +3438,9 @@ LLM_LICENSES="
 	ollama_llms_Maternion-LightOnOCR-2? (
 		Apache-2.0
 	)
+	ollama_llms_MichelRosselli-grok-2? (
+		Grok-2-Community-License-Agreement-20251104
+	)
 	ollama_llms_monotykamary-whiterabbitneo-v1.5a? (
 		DEEPSEEK-LICENSE-AGREEMENT-1.0
 		WhiteRabbitNeo-Terms-of-Use
@@ -5052,6 +5056,7 @@ einfo "LDFLAGS: ${LDFLAGS}"
 		["mannix-replete-adapted-llama3-8b"]="mannix/replete-adapted-llama3-8b"
 		["mannix-replete-coder-llama3-8b"]="mannix/replete-coder-llama3-8b"
 		["Maternion-LightOnOCR-2"]="Maternion/LightOnOCR-2"
+		["MichelRosselli-grok-2"]="MichelRosselli/grok-2"
 		["monotykamary-whiterabbitneo-v1.5a"]="monotykamary/whiterabbitneo-v1.5a"
 		["mtayyar-trendmicro-ailab-Llama-Primus-Reasoning"]="mtayyar/trendmicro-ailab-Llama-Primus-Reasoning"
 		["nqduc-gemsura"]="nqduc/gemsura"
