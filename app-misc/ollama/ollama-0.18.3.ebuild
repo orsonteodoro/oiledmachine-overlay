@@ -4516,7 +4516,6 @@ src_unpack() {
 		cd "${S}" || die
 		gen_git_tag "${S}" "v${PV}"
 	fi
-	die
 }
 
 get_olast() {
