@@ -3461,7 +3461,7 @@
 +	"themanofrod/travel-agent": "camping travel travel-guide outdoors",
 +	"tinydolphin": "low-memory-footprint text-generation letter-writing poems",
 +	"tinyllama": "game-dialog-generator low-memory-footprint low-carbon-footprint",
-+	"uamarchuan/lapa-v0.1.2-instruct": "optimized-gemma-3-for-ukrainian ukraninan english translator image-processing summaries qa"
++	"uamarchuan/lapa-v0.1.2-instruct": "optimized-gemma-3-for-ukrainian ukraninan english translator image-processing summaries qa",
 +	"vicuna": "american-alignment american-bias chat assistant llm-research",
 +	"wizard-math": "math logic",
 +	"wizard-vicuna": "american-alignment american-bias",
