@@ -5,7 +5,7 @@
 EAPI=8
 
 # D11, D12, D13, F36, F37, F38, F39, F40, F41, F42, U22, U24
-# See /var/tmp/portage/www-client/firefox-148.0/work/firefox-148.0/taskcluster/kinds/bootstrap/kind.yml
+# See /var/tmp/portage/www-client/firefox-149.0/work/firefox-149.0/taskcluster/kinds/bootstrap/kind.yml
 
 # 127.0.1 -> 129.0.2
 # 129.0.2 -> 130.0.0
@@ -30,6 +30,8 @@ EAPI=8
 # 146.0.1 -> 147.0
 # 147.0 -> 147.0.2
 # 147.0.2 -> 148.0
+# 148.0 -> 148.0.2
+# 148.0.2 -> 149.0
 
 # Originally based on the firefox-89.0.ebuild from the gentoo-overlay,
 # with update sync updated to this version of the ebuild.
@@ -45,28 +47,28 @@ EAPI=8
 #
 # For dependency versioning, see also
 # https://firefox-source-docs.mozilla.org/setup/linux_build.html
-# https://www.mozilla.org/en-US/firefox/148.0/system-requirements/
-# /var/tmp/portage/www-client/firefox-148.0/work/firefox-148.0/moz.configure
-# /var/tmp/portage/www-client/firefox-148.0/work/firefox-148.0/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41 [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
-# /var/tmp/portage/www-client/firefox-148.0/work/firefox-148.0/security/nss/lib/nss/nss.h
-# /var/tmp/portage/www-client/firefox-148.0/work/firefox-148.0/gfx/graphite2/include/graphite2/Font.h L31
-# /var/tmp/portage/www-client/firefox-148.0/work/firefox-148.0/gfx/harfbuzz/moz.yaml
-# /var/tmp/portage/www-client/firefox-148.0/work/firefox-148.0/intl/icu/source/common/unicode/uvernum.h L63
-# /var/tmp/portage/www-client/firefox-148.0/work/firefox-148.0/ipc/chromium/src/third_party/libevent/configure.ac L8
-# /var/tmp/portage/www-client/firefox-148.0/work/firefox-148.0/media/libaom/config/aom_version.h L7 [old]
-# /var/tmp/portage/www-client/firefox-148.0/work/firefox-148.0/media/libjpeg/jconfig.h L7
-# /var/tmp/portage/www-client/firefox-148.0/work/firefox-148.0/media/libpng/png.h L281
-# /var/tmp/portage/www-client/firefox-148.0/work/firefox-148.0/media/libvpx/config/vpx_version.h L8
-# /var/tmp/portage/www-client/firefox-148.0/work/firefox-148.0/media/libwebp/moz.yaml L16, two versions listed newest chosen
-# /var/tmp/portage/www-client/firefox-148.0/work/firefox-148.0/modules/freetype2/include/freetype/freetype.h L5175
-# /var/tmp/portage/www-client/firefox-148.0/work/firefox-148.0/nsprpub/pr/include/prinit.h L35
-# /var/tmp/portage/www-client/firefox-148.0/work/firefox-148.0/third_party/dav1d/meson.build L26
-# /var/tmp/portage/www-client/firefox-148.0/work/firefox-148.0/third_party/pipewire/pipewire/version.h L49
-# /var/tmp/portage/www-client/firefox-148.0/work/firefox-148.0/taskcluster/kinds/toolchain/node.yml
-# /var/tmp/portage/www-client/firefox-148.0/work/firefox-148.0/taskcluster/kinds/toolchain/rust.yml
-# /var/tmp/portage/www-client/firefox-148.0/work/firefox-148.0/taskcluster/kinds/fetch/toolchains.yml
+# https://www.mozilla.org/en-US/firefox/149.0/system-requirements/
+# /var/tmp/portage/www-client/firefox-149.0/work/firefox-149.0/moz.configure
+# /var/tmp/portage/www-client/firefox-149.0/work/firefox-149.0/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41 [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
+# /var/tmp/portage/www-client/firefox-149.0/work/firefox-149.0/security/nss/lib/nss/nss.h
+# /var/tmp/portage/www-client/firefox-149.0/work/firefox-149.0/gfx/graphite2/include/graphite2/Font.h L31
+# /var/tmp/portage/www-client/firefox-149.0/work/firefox-149.0/gfx/harfbuzz/moz.yaml
+# /var/tmp/portage/www-client/firefox-149.0/work/firefox-149.0/intl/icu/source/common/unicode/uvernum.h L63
+# /var/tmp/portage/www-client/firefox-149.0/work/firefox-149.0/ipc/chromium/src/third_party/libevent/configure.ac L8
+# /var/tmp/portage/www-client/firefox-149.0/work/firefox-149.0/media/libaom/config/aom_version.h L7 [old]
+# /var/tmp/portage/www-client/firefox-149.0/work/firefox-149.0/media/libjpeg/jconfig.h L7
+# /var/tmp/portage/www-client/firefox-149.0/work/firefox-149.0/media/libpng/png.h L281
+# /var/tmp/portage/www-client/firefox-149.0/work/firefox-149.0/media/libvpx/config/vpx_version.h L8
+# /var/tmp/portage/www-client/firefox-149.0/work/firefox-149.0/media/libwebp/moz.yaml L16, two versions listed newest chosen
+# /var/tmp/portage/www-client/firefox-149.0/work/firefox-149.0/modules/freetype2/include/freetype/freetype.h L5175
+# /var/tmp/portage/www-client/firefox-149.0/work/firefox-149.0/nsprpub/pr/include/prinit.h L35
+# /var/tmp/portage/www-client/firefox-149.0/work/firefox-149.0/third_party/dav1d/meson.build L26
+# /var/tmp/portage/www-client/firefox-149.0/work/firefox-149.0/third_party/pipewire/pipewire/version.h L49
+# /var/tmp/portage/www-client/firefox-149.0/work/firefox-149.0/taskcluster/kinds/toolchain/node.yml
+# /var/tmp/portage/www-client/firefox-149.0/work/firefox-149.0/taskcluster/kinds/toolchain/rust.yml
+# /var/tmp/portage/www-client/firefox-149.0/work/firefox-149.0/taskcluster/kinds/fetch/toolchains.yml
 #   Keyword searches:  cbindgen-, llvm-, nasm, pkgconf-, zlib
-# /var/tmp/portage/www-client/firefox-148.0/work/firefox-148.0/taskcluster
+# /var/tmp/portage/www-client/firefox-149.0/work/firefox-149.0/taskcluster
 #   Keyword search:  gtk
 
 # Track http://ftp.mozilla.org/pub/firefox/releases/ for version updates.
@@ -88,7 +90,7 @@ unset __
 
 # To check every minor version or update MOZ_LANGS use the code below:
 __='
-PV="148.0"
+PV="149.0"
 wget -q -O - "http://ftp.mozilla.org/pub/firefox/releases/${PV}/linux-x86_64/xpi/" \
 	| grep "href.*linux-x86_64"  \
 	| cut -f 3 -d ">" \
@@ -105,7 +107,7 @@ unset __
 
 __='
 # For dependency versions, scan also with:
-SRC="/var/tmp/portage/www-client/firefox-148.0/work/firefox-148.0"
+SRC="/var/tmp/portage/www-client/firefox-149.0/work/firefox-149.0"
 grep -E \
 	-e "[0-9]+\.[0-9]+(\.[0-9]+)?" \
 	-e "dependency" \
@@ -170,14 +172,14 @@ RUSTFLAGS_HARDENED_USE_CASES="network sensitive-data untrusted-data web-browser"
 RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO MC NPD OOBA OOBR OOBW PE SO UAF UM TC"
 DBUS_PV="0.60"
 EBUILD_MAINTAINER_MODE=0
-FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-01.tar.xz"
 #FIREFOX_PATCHSET="firefox-147-patches-02.tar.xz"
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
 GTK3_PV="3.14.5"
 LICENSE_FINGERPRINT="\
-6402f9bab69fb66ce9b364cf367e530df956eecbb7301d9cab77904962041a5b\
-55b1838ef5b431d08756eba80ba6899715332cd7943123cf5d210211af3d6e98\
+840bfc67f491c47f8e1861d794bbd586c4877e8d97731d89c5e46e2ef8acf8cf\
+8c6e5266eda02eb6f6d89d99191e6af155ea935ec159207741c383faf1507be1\
 " # SHA512
 LTO_TYPE="" # Global variable
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
@@ -187,8 +189,9 @@ NASM_PV="2.14.02"
 NODE_SLOT=22
 PYTHON_COMPAT=( "python3_"{10..13} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
+RUST_LIVE_TIMESTAMP="Feb 27, 2026 09:38:23 -0800" # Same as Rust 1.96.0 timestamp
 RUST_MAX_VER="9999"
-RUST_MIN_VER="1.87.0"
+RUST_MIN_VER="1.90.0"
 RUST_NEEDS_LLVM=1
 RUST_PV="${RUST_MIN_VER}"
 SPEECH_DISPATCHER_PV="0.11.4-r1"
@@ -196,8 +199,8 @@ XKBCOMMON_PV="0.4.1"
 VIRTUALX_REQUIRED="pgo"
 # Information about the bundled wasi toolchain from
 # https://github.com/WebAssembly/wasi-sdk/
-WASI_SDK_VER="30.0"
-WASI_SDK_LLVM_VER="21"
+WASI_SDK_VER="32.0"
+WASI_SDK_LLVM_VER="22"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -207,7 +210,9 @@ GCC_COMPAT=(
 inherit libcxx-compat
 LLVM_COMPAT=(
 #	"${LIBCXX_COMPAT_RUST[@]/llvm_slot_}" # 18, 19
-	{20..21}
+	{20..22} # Based on rolling slots
+	# LLVM for compiler:  17 20 21 23
+	# LLVM for Rust:  20 22
 )
 
 inherit ffmpeg
@@ -226,120 +231,57 @@ declare -A CFLAGS_RDEPEND=(
 	["media-libs/libvpx"]=">=;-O1" # -O0 causes FPS to lag below 25 FPS.
 )
 
-MITIGATION_DATE="Mar 10, 2026" # Advisory date
-MITIGATION_LAST_UPDATE=1773106500 # From `date +%s -d "2026-03-09 18:35"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-19/"
+MITIGATION_DATE="Mar 24, 2026" # Advisory date
+MITIGATION_LAST_UPDATE=1774294920 # From `date +%s -d "2026-03-23 12:42"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-20/"
 SEVERITY_LABEL="Severity:"
 VULNERABILITIES_FIXED=(
-	"CVE-2026-3845;HO, DoS, DT, ID;High"
-	"CVE-2026-3846;SOPB, DT;Medium"
-	"CVE-2026-3847;MC, ACE, DoS, DT, ID;High"
-)
-
-MOZ_LANGS=(
-	"ach"
-	"af"
-	"an"
-	"ar"
-	"ast"
-	"az"
-	"be"
-	"bg"
-	"bn"
-	"br"
-	"bs"
-	"ca-valencia"
-	"ca"
-	"cak"
-	"cs"
-	"cy"
-	"da"
-	"de"
-	"dsb"
-	"el"
-	"en-CA"
-	"en-GB"
-	"en-US"
-	"eo"
-	"es-AR"
-	"es-CL"
-	"es-ES"
-	"es-MX"
-	"et"
-	"eu"
-	"fa"
-	"ff"
-	"fi"
-	"fr"
-	"fur"
-	"fy-NL"
-	"ga-IE"
-	"gd"
-	"gl"
-	"gn"
-	"gu-IN"
-	"he"
-	"hi-IN"
-	"hr"
-	"hsb"
-	"hu"
-	"hy-AM"
-	"ia"
-	"id"
-	"is"
-	"it"
-	"ja"
-	"ka"
-	"kab"
-	"kk"
-	"km"
-	"kn"
-	"ko"
-	"lij"
-	"lt"
-	"lv"
-	"mk"
-	"mr"
-	"ms"
-	"my"
-	"nb-NO"
-	"ne-NP"
-	"nl"
-	"nn-NO"
-	"oc"
-	"pa-IN"
-	"pl"
-	"pt-BR"
-	"pt-PT"
-	"rm"
-	"ro"
-	"ru"
-	"sat"
-	"sc"
-	"sco"
-	"si"
-	"sk"
-	"skr"
-	"sl"
-	"son"
-	"sq"
-	"sr"
-	"sv-SE"
-	"szl"
-	"ta"
-	"te"
-	"tg"
-	"th"
-	"tl"
-	"tr"
-	"trs"
-	"uk"
-	"ur"
-	"uz"
-	"vi"
-	"xh"
-	"zh-CN"
-	"zh-TW"
+	"CVE-2026-4684;RC, UAF;"
+	"CVE-2026-4685;IBC;"
+	"CVE-2026-4686;IBC;"
+	"CVE-2026-4687;SBE;"
+	"CVE-2026-4688;SBE;"
+	"CVE-2026-4689;SBE, IBC;"
+	"CVE-2026-4690;SBE, IBC;"
+	"CVE-2026-4691;UAF;"
+	"CVE-2026-4692;SBE;"
+	"CVE-2026-4693;IBC;"
+	"CVE-2026-4694;IBC;"
+	"CVE-2026-4695;IBC;"
+	"CVE-2026-4696;UAF;"
+	"CVE-2026-4697;IBC;"
+	"CVE-2026-4698;JITM;"
+	"CVE-2026-4699;IBC;"
+	"CVE-2026-4700;SB;"
+	"CVE-2026-4701;UAF;"
+	"CVE-2026-4722;PE;"
+	"CVE-2026-4702;JITM;"
+	"CVE-2026-4723;UAF;"
+	"CVE-2026-4724;UB;"
+	"CVE-2026-4704;DoS;"
+	"CVE-2026-4705;UB;"
+	"CVE-2026-4706;IBC;"
+	"CVE-2026-4707;IBC;"
+	"CVE-2026-4708;IBC;"
+	"CVE-2026-4709;IBC;"
+	"CVE-2026-4710;IBC;"
+	"CVE-2026-4711;UAF;"
+	"CVE-2026-4725;SBE, UAF;"
+	"CVE-2026-4712;ID;"
+	"CVE-2026-4713;IBC;"
+	"CVE-2026-4714;IBC;"
+	"CVE-2026-4715;UM;"
+	"CVE-2026-4716;IBC;"
+	"CVE-2026-4717;PE;"
+	"CVE-2026-4726;DoS;"
+	"CVE-2025-59375;DoS;"
+	"CVE-2026-4727;DoS;"
+	"CVE-2026-4728;SA;"
+	"CVE-2026-4718;UB;"
+	"CVE-2026-4719;IBC;"
+	"CVE-2026-4720;MC, ACE;"
+	"CVE-2026-4729;MC, ACE;"
+	"CVE-2026-4721;MC, ACE;"
 )
 
 inherit cflags-depends cflags-hardened check-compiler-switch check-linker
@@ -573,48 +515,28 @@ PATENT_CDEPENDS="
 	)
 "
 # ZLIB relaxed
-RUST_CDEPEND_DISABLED="
-	llvm_slot_18? (
-		|| (
-			=dev-lang/rust-1.81*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.81*[${MULTILIB_USEDEP}]
-		)
-	)
-"
-TRASH_RUST_CDEPEND="
-	llvm_slot_19? (
-		|| (
-			=dev-lang/rust-1.86*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.85*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.84*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.83*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.82*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.86*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.85*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.84*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.83*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.82*[${MULTILIB_USEDEP}]
-		)
-	)
-"
 RUST_CDEPEND="
 	llvm_slot_20? (
 		|| (
-			=dev-lang/rust-1.87*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.88*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.89*[${MULTILIB_USEDEP}]
 			=dev-lang/rust-1.90*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.87*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.88*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.89*[${MULTILIB_USEDEP}]
 			=dev-lang/rust-bin-1.90*[${MULTILIB_USEDEP}]
 		)
 	)
 	llvm_slot_21? (
 		|| (
+			=dev-lang/rust-1.91*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.92*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.93*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.94*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.91*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.92*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.93*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.94*[${MULTILIB_USEDEP}]
+		)
+	)
+	llvm_slot_22? (
 			=dev-lang/rust-9999[${MULTILIB_USEDEP}]
 			=dev-lang/rust-bin-9999*[${MULTILIB_USEDEP}]
-		)
 	)
 	|| (
 		dev-lang/rust:=
@@ -627,7 +549,7 @@ CDEPEND="
 	>=app-accessibility/at-spi2-core-2.46.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-2.42:2[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.38.2[${MULTILIB_USEDEP}]
-	>=dev-libs/nss-3.120.1[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.121[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.7.0[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.14.1[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.3.1[${MULTILIB_USEDEP}]
@@ -878,6 +800,9 @@ PDEPEND+="
 	)
 "
 
+# Firefox-only RDEPEND
+RDEPEND+=" ~www-client/firefox-l10n-${PV}"
+
 # Allow MOZ_GMP_PLUGIN_LIST to be set in an eclass or overridden in the
 # enviromnent.  (For advanced hackers only)
 if [[ -z ${MOZ_GMP_PLUGIN_LIST+"set"} ]] ; then
@@ -919,51 +844,10 @@ ewarn
 einfo "Using LLVM slot ${LLVM_SLOT} to build"
 }
 
-mozilla_set_globals() {
-	# https://bugs.gentoo.org/587334
-	local MOZ_TOO_REGIONALIZED_FOR_L10N=(
-		"fy-NL"
-		"ga-IE"
-		"gu-IN"
-		"hi-IN"
-		"hy-AM"
-		"nb-NO"
-		"ne-NP"
-		"nn-NO"
-		"pa-IN"
-		"sv-SE"
-	)
-
-	local lang
-	local xflag
-	for lang in "${MOZ_LANGS[@]}" ; do
-		if [[ "${lang}" == "en" || "${lang}" == "en-US" ]] ; then
-	# Both are handled internally
-			continue
-		fi
-
-	# Strip region subtag if $lang is in the list
-		if has "${lang}" "${MOZ_TOO_REGIONALIZED_FOR_L10N[@]}" ; then
-			xflag="${lang%%-*}"
-		else
-			xflag="${lang}"
-		fi
-
-		SRC_URI+="
-			l10n_${xflag/[_@]/-}? (
-				${MOZ_SRC_BASE_URI}/linux-x86_64/xpi/${lang}.xpi
-					-> ${MOZ_P_DISTFILES}-${lang}.xpi
-			)
-		"
-		IUSE+=" l10n_${xflag/[_@]/-}"
-	done
-}
-mozilla_set_globals
-
 moz_clear_vendor_checksums() {
 	debug-print-function "${FUNCNAME}" "$@"
 
-	if [[ ${#} -ne 1 ]] ; then
+	if (( ${#} != 1 )) ; then
 		die "${FUNCNAME} requires exact one argument"
 	fi
 
@@ -1436,6 +1320,47 @@ ewarn "Wayland compositors must use security-critical hardened ebuilds or per-pa
 ewarn "Packages that interact with ${PN} (e.g. password managers, clipboard managers) must use security-critical hardened ebuilds or per-package package.env hardening.  Use the hardening flags from the build log."
 }
 
+verify_rust_nightly() {
+	local is_nightly=$("${RUSTC}" --version | grep -q "nightly")
+	is_nightly=$(( "${?}" == 0 ? 1 : 0 ))
+
+	if (( ${is_nightly} == 0 )) ; then
+eerror "Only nightly Rust is currently supported."
+eerror "Switch to live with \`eselect rust\`"
+		die
+	fi
+
+	if "${RUSTC}" --version | grep -q -e "nightly" ; then
+		local compatible_time=$(date --date="${RUST_LIVE_TIMESTAMP}" "+%s")
+
+		local merge_time
+		local pkg_name
+		if [[ "${RUSTC}" =~ "rust-bin" ]] ; then
+			pkg_name="rust-bin"
+			merge_time=$(cat "/var/db/pkg/dev-lang/rust-bin-9999/BUILD_TIME")
+		else
+			pkg_name="rust"
+			merge_time=$(cat "/var/db/pkg/dev-lang/rust-9999/BUILD_TIME")
+		fi
+		if (( ${merge_time} < ${compatible_time} )) ; then
+eerror
+eerror "Detected old live timestamp."
+eerror "Re-emerge ${pkg_name} or switch to Rust 1.96.0 or later."
+eerror
+eerror "Current timestamp:  "$(date --date="@${merge_time}")
+eerror "Expected timestamp:  >= "$(date --date="@${compatible_time}")
+eerror
+			die
+		fi
+	else
+		local actual_pv=$("${RUSTC}" --version | cut -f 2 -d " ")
+		if ver_test "${actual_pv}" "-lt" "${RUST_MIN_VER}" ; then
+eerror "Switch Rust to >= ${RUST_MIN_VER}"
+			die
+		fi
+	fi
+}
+
 pkg_setup() {
 	dhms_start
 	check-compiler-switch_start
@@ -1497,6 +1422,10 @@ eerror "Failed to read ld.lld version!"
 eerror "Failed to read used LLVM version from rustc!"
 				die
 			fi
+		fi
+
+		if use llvm_slot_22 ; then
+			verify_rust_nightly
 		fi
 
 		python-any-r1_pkg_setup
@@ -2976,16 +2905,6 @@ cat >>"${GENTOO_PREFS}" <<-EOF || \
 die "failed to set gfx.font_rendering.graphite.enabled pref"
 sticky_pref("gfx.font_rendering.graphite.enabled", true);
 EOF
-	fi
-
-	# Install language packs
-	local langpacks=(
-		$(find "${WORKDIR}/language_packs" -type f -name "*.xpi")
-	)
-	if [[ -n "${langpacks}" ]] ; then
-		moz_install_xpi \
-			"${MOZILLA_FIVE_HOME}/distribution/extensions" \
-			"${langpacks[@]}"
 	fi
 
 	# Add telemetry config prefs, just in case something happens in future and telemetry build
