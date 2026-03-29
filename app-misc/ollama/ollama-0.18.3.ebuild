@@ -4605,7 +4605,7 @@ einfo "Editing ${x} for ragel -Z -> ragel-go"
 		"CMakePresets.json" \
 		|| die
 
-	# Prevent -O3 override
+	# Prevent -O3 override when building vulkan-shaders-gen.cpp
 	sed -i -e "/CMAKE_BUILD_TYPE/d" "CMakePresets.json" || die
 
 	if use ollama_llms_MichelRosselli-grok-2 ; then
