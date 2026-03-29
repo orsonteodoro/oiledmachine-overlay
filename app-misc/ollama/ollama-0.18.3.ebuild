@@ -3919,7 +3919,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
 sandbox systemd unrestrict video_cards_intel -vulkan
-ebuild_revision_121
+ebuild_revision_122
 "
 
 gen_rocm_required_use() {
@@ -4604,6 +4604,9 @@ einfo "Editing ${x} for ragel -Z -> ragel-go"
 		-e "/binaryDir/d" \
 		"CMakePresets.json" \
 		|| die
+
+	# Prevent -O3 override
+	sed -i -e "/CMAKE_BUILD_TYPE/d" "CMakePresets.json" || die
 
 	if use ollama_llms_MichelRosselli-grok-2 ; then
 		sed -i -e "s|@SHOW_BANNER@|true|g" "cmd/cmd.go" || die
