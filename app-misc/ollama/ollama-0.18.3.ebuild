@@ -242,6 +242,7 @@ COMMUNITY_LLMS=(
 	"etgohome-hackidle-nist-coder"
 	"fixt-home-3b-v3"
 	"fixt-home-3b-v2"
+	"fluffy-l3-8b-stheno-v3.2"
 	"hemanth-chessplayer"
 	"hookingai-monah-8b"
 	"iKhalid-ALLaM"
@@ -259,6 +260,7 @@ COMMUNITY_LLMS=(
 	"monotykamary-whiterabbitneo-v1.5a"
 	"mshojaei77-gemma3persian"
 	"mtayyar-trendmicro-ailab-Llama-Primus-Reasoning"
+	"nchapman-l3.1-70b-hanami-x1"
 	"nqduc-gemsura"
 	"nqduc-mixsura"
 	"nqduc-mixsura-sft"
@@ -280,6 +282,8 @@ COMMUNITY_LLMS=(
 	"WhiteRabbitNeo-Llama-3.1-WhiteRabbitNeo-2-70B"
 	"WhiteRabbitNeo-Llama-3.1-WhiteRabbitNeo-2-8B"
 	"WhiteRabbitNeo-WhiteRabbitNeo-2.5-Qwen-2.5-Coder-7B"
+	"windffooxxyang1130764-mesugaki"
+	"windffooxxyang1130764-mesugaki-R18G"
 	"x-flux2-klein"
 	"x-z-image-turbo"
 )
@@ -3146,6 +3150,11 @@ LLM_LICENSES="
 	ollama_llms_fixt-home-3b-v3? (
 		STABILITY-AI-NON-COMMERCIAL-RESEARCH-COMMUNITY-LICENSE-AGREEMENT
 	)
+	ollama_llms_fluffy-l3-8b-stheno-v3.2? (
+		CC-BY-NC-4.0
+		llama3-LICENSE
+		llama3-USE_POLICY.md
+	)
 	ollama_llms_functiongemma? (
 		Gemma-Terms-of-Use-20250324
 		Gemma-Prohibited-Use-Policy-20240221
@@ -3515,6 +3524,11 @@ LLM_LICENSES="
 	ollama_llms_nous-hermes2-mixtral? (
 		Apache-2.0
 	)
+	ollama_llms_nchapman-l3.1-70b-hanami-x1? (
+		CC-BY-NC-4.0
+		llama3_1-LICENSE
+		llama3_1-USE_POLICY.md
+	)
 	ollama_llms_nqduc-gemsura? (
 		Apache-2.0
 	)
@@ -3840,6 +3854,12 @@ LLM_LICENSES="
 		Apache-2.0
 		WhiteRabbitNeo-Terms-of-Use
 		WhiteRabbitNeo-Usage-Restrictions
+	)
+	ollama_llms_windffooxxyang1130764-mesugaki? (
+		Apache-2.0
+	)
+	ollama_llms_windffooxxyang1130764-mesugaki-R18G? (
+		Apache-2.0
 	)
 	ollama_llms_x-flux2-klein? (
 		Apache-2.0
@@ -5065,6 +5085,7 @@ einfo "LDFLAGS: ${LDFLAGS}"
 		["etgohome-hackidle-nist-coder"]="etgohome/hackidle-nist-coder"
 		["fixt-home-3b-v3"]="fixt/home-3b-v3"
 		["fixt-home-3b-v2"]="fixt/home-3b-v2"
+		["fluffy-l3-8b-stheno-v3.2"]="fluffy/l3-8b-stheno-v3.2"
 		["hemanth-chessplayer"]="hemanth/chessplayer"
 		["hookingai-monah-8b"]="hookingai/monah-8b"
 		["iKhalid-ALLaM"]="iKhalid/ALLaM"
@@ -5080,6 +5101,7 @@ einfo "LDFLAGS: ${LDFLAGS}"
 		["MichelRosselli-grok-2"]="MichelRosselli/grok-2"
 		["monotykamary-whiterabbitneo-v1.5a"]="monotykamary/whiterabbitneo-v1.5a"
 		["mtayyar-trendmicro-ailab-Llama-Primus-Reasoning"]="mtayyar/trendmicro-ailab-Llama-Primus-Reasoning"
+		["nchapman-l3.1-70b-hanami-x1"]="nchapman/l3.1-70b-hanami-x1"
 		["nqduc-gemsura"]="nqduc/gemsura"
 		["nqduc-mixsura"]="nqduc/mixsura"
 		["nqduc-mixsura-sft"]="nqduc/mixsura-sft"
@@ -5101,6 +5123,8 @@ einfo "LDFLAGS: ${LDFLAGS}"
 		["WhiteRabbitNeo-Llama-3.1-WhiteRabbitNeo-2-70B"]="WhiteRabbitNeo/Llama-3.1-WhiteRabbitNeo-2-70B"
 		["WhiteRabbitNeo-Llama-3.1-WhiteRabbitNeo-2-8B"]="WhiteRabbitNeo/Llama-3.1-WhiteRabbitNeo-2-8B"
 		["WhiteRabbitNeo-WhiteRabbitNeo-2.5-Qwen-2.5-Coder-7B"]="WhiteRabbitNeo/WhiteRabbitNeo-2.5-Qwen-2.5-Coder-7B"
+		["windffooxxyang1130764-mesugaki"]="windffooxxyang1130764/mesugaki"
+		["windffooxxyang1130764-mesugaki-R18G"]="windffooxxyang1130764/mesugaki-R18G"
 		["x-flux2-klein"]="x/flux2-klein"
 		["x-z-image-turbo"]="x/z-image-turbo"
 	)

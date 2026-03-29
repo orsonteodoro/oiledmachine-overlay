@@ -1,5 +1,5 @@
 --- a/cmd/cmd.go.orig	2026-03-25 14:02:22.000000000 -0700
-+++ b/cmd/cmd.go	2026-03-28 22:21:16.345596003 -0700
++++ b/cmd/cmd.go	2026-03-29 00:32:02.299432288 -0700
 @@ -19,6 +19,7 @@ import (
  	"os/exec"
  	"os/signal"
@@ -8,7 +8,7 @@
  	"runtime"
  	"slices"
  	"sort"
-@@ -152,6 +153,3486 @@ func isLocalhost() bool {
+@@ -152,6 +153,3519 @@ func isLocalhost() bool {
  	return ip != nil && (ip.IsLoopback() || ip.IsUnspecified())
  }
  
@@ -562,6 +562,16 @@
 +	"fixt/home-3b-v2:q4_k_m": "1.7GB",
 +	"fixt/home-3b-v2:q5_k_m": "2.0GB",
 +	"fixt/home-3b-v2:q8_0": "3.0GB",
++	"fluffy/l3-8b-stheno-v3.2:latest": "4.9GB",
++	"fluffy/l3-8b-stheno-v3.2:q3_K_S": "3.7GB",
++	"fluffy/l3-8b-stheno-v3.2:q3_K_M": "4.0GB",
++	"fluffy/l3-8b-stheno-v3.2:q3_K_L": "4.3GB",
++	"fluffy/l3-8b-stheno-v3.2:q4_K_S": "4.7GB",
++	"fluffy/l3-8b-stheno-v3.2:q4_K_M": "4.9GB",
++	"fluffy/l3-8b-stheno-v3.2:q5_K_S": "5.6GB",
++	"fluffy/l3-8b-stheno-v3.2:q5_K_M": "5.7GB",
++	"fluffy/l3-8b-stheno-v3.2:q6_K": "6.6GB",
++	"fluffy/l3-8b-stheno-v3.2:q8_0": "8.5GB",
 +	"functiongemma:latest": "301MB",
 +	"functiongemma:270m": "301MB",
 +	"functiongemma:270m-it-q8_0": "301MB",
@@ -1379,6 +1389,8 @@
 +	"mxbai-embed-large:335m": "670MB",
 +	"mxbai-embed-large:v1": "670MB",
 +	"mxbai-embed-large:335m-v1-fp16": "670MB",
++	"nchapman/l3.1-70b-hanami-x1:latest": "43GB",
++	"nchapman/l3.1-70b-hanami-x1:70b": "43GB",
 +	"nemotron:70b": "43GB",
 +	"nemotron:70b-instruct-q6_K": "58GB",
 +	"nemotron:70b-instruct-q8_0": "75GB",
@@ -2541,6 +2553,12 @@
 +	"tulu3:8b-q8_0": "8.5GB",
 +	"tulu3:8b-fp16": "16GB",
 +	"uamarchuan/lapa-v0.1.2-instruct:Q4_K_M": "7.3GB",
++	"vanilj/mistral-nemo-12b-celeste-v1.9:latest": "7.5GB",
++	"vanilj/mistral-nemo-12b-celeste-v1.9:Q3_K_M": "6.1GB",
++	"vanilj/mistral-nemo-12b-celeste-v1.9:Q4_K_M": "7.5GB",
++	"vanilj/mistral-nemo-12b-celeste-v1.9:Q5_K_M": "8.7GB",
++	"vanilj/mistral-nemo-12b-celeste-v1.9:Q6_K": "10GB",
++	"vanilj/mistral-nemo-12b-celeste-v1.9:Q8_0": "10GB",
 +	"vicuna:7b": "3.8GB",
 +	"vicuna:13b": "7.4GB",
 +	"vicuna:33b": "18GB",
@@ -2589,6 +2607,11 @@
 +	"vicuna:13b-v1.5-16k-q6_K": "11GB",
 +	"vicuna:13b-v1.5-16k-q8_0": "14GB",
 +	"vicuna:13b-v1.5-16k-fp16": "26GB",
++	"windffooxxyang1130764/mesugaki:0.6b": "397MB",
++	"windffooxxyang1130764/mesugaki:1.7b": "1.1GB",
++	"windffooxxyang1130764/mesugaki:4b": "2.5GB",
++	"windffooxxyang1130764/mesugaki-R18G:latest": "2.5GB",
++	"windffooxxyang1130764/mesugaki-R18G:4b": "2.5GB",
 +	"wizard-math:7b": "4.1GB",
 +	"wizard-math:13b": "7.4GB",
 +	"wizard-math:70b": "39GB",
@@ -2951,6 +2974,7 @@
 +	"llava": 1,
 +	"llava-llama3": 1,
 +	"llava-phi3": 1,
++	"fluffy/l3-8b-stheno-v3.2": 1,
 +	"functiongemma": 1,
 +	"gemini-3-flash-preview": 1,
 +	"gemini-3-pro-preview": 1,
@@ -3001,6 +3025,7 @@
 +	"monotykamary/whiterabbitneo-v1.5a": 1,
 +	"mshojaei77/gemma3persian": 1,
 +	"mxbai-embed-large": 1,
++	"nchapman/l3.1-70b-hanami-x1": 1,
 +	"nemotron": 1,
 +	"nemotron-3-nano": 1,
 +	"nemotron-3-super": 1,
@@ -3091,7 +3116,10 @@
 +	"translategemma": 1,
 +	"tulu3": 1,
 +	"uamarchuan/lapa-v0.1.2-instruct": 1,
++	"vanilj/mistral-nemo-12b-celeste-v1.9": 1,
 +	"vicuna": 1,
++	"windffooxxyang1130764/mesugaki": 1,
++	"windffooxxyang1130764/mesugaki-R18G": 1,
 +	"wizard-math": 1,
 +	"wizard-vicuna": 1,
 +	"wizard-vicuna-uncensored": 1,
@@ -3152,7 +3180,7 @@
 +	"ALIENTELLIGENCE/whiterabbit": "cybersecurity it-security how-to security-research open-source-tools vulnerability-checks",
 +	"ALIENTELLIGENCE/whiterabbitv2": "cybersecurity it-security how-to security-research open-source-tools vulnerability-checks",
 +	"all-minilm": "embedding",
-+	"Artalius/lixi": "writer developer companion code-optimization fun-facts idea-generator wordsmith cloud-developer coding coding-assistant computer-science anime manga erotica nsfw japanese-alignment japanese-pop-culture uncensored gamer gamer-girl ai-girlfriend girlfriend funny",
++	"Artalius/lixi": "anime manga erotica nsfw japanese-alignment japanese-pop-culture uncensored gamer waifu gamer-girl ai-girlfriend girlfriend funny writer developer companion code-optimization fun-facts idea-generator wordsmith cloud-developer coding coding-assistant computer-science",
 +	"artifish/mlewd-v2.4": "nsfw adult-content",
 +	"athene-v2": "chat coding code-completion math-word-problems log-extraction general-knowledge",
 +	"aya": "multilingual arabic chinese czech dutch english french german greek hebrew hindi indonesian italian japanese korean persian polish portuguese romanian russian spanish turkish ukrainian vietnamese",
@@ -3226,7 +3254,7 @@
 +	"etgohome/hackidle-nist-coder": "cybersecurity qa nist-standards python terraform security-compliant-code-generation",
 +	"exaone3.5": "coding code-generation python general-knowledge math-word-problems common-sense abstract-reasoning multilingual english korean high-school-math",
 +	"exaone-deep": "math high-school-math undergrad-math",
-+	"everythinglm": "uncensored detailed-replies story-telling",
++	"everythinglm": "uncensored detailed-replies storytelling",
 +	"falcon": "llm-research",
 +	"falcon2": "llm-research",
 +	"falcon3": "science math coding",
@@ -3270,7 +3298,7 @@
 +	"kimi-k2": "cloud cloud-hosted basic-coding-agent expert-level-reasoning graduate-level-stem",
 +	"kimi-k2-thinking": "cloud cloud-hosted basic-coding-agent agentic-coding python software-engineering expert-level-reasoning high-school-math graduate-level-stem",
 +	"kimi-k2.5": "long-context high-school-math expert-level-reasoning general-reasoning multimodal-reasoning multimodal-mathematical-reasoning chart-reasoning image-understanding ocr optical-character-recognition video-understanding document-image-understanding python software-engineering multilingual-software-engineering coding-agent search-agent",
-+	"leeplenty/lumimaid-v0.2": "nsfw adult-content",
++	"leeplenty/lumimaid-v0.2": "nsfw adult-content fantasy roleplay waifu",
 +	"lfm2": "tool-use qa summaries",
 +	"lfm2.5-thinking": "instruction-following high-school-math math-word-problems",
 +	"llama-guard3": "content-moderation",
@@ -3301,6 +3329,7 @@
 +	"llava": "ocr optical-character-recognition image-to-text chat chatbot ocr optical-character-recognition",
 +	"llava-llama3": "image-to-text ocr optical-character-recognition",
 +	"llava-phi3": "image-to-text ocr optical-character-recognition",
++	"fluffy/l3-8b-stheno-v3.2": "nsfw character-driven roleplay immersive-storytelling story-driven",
 +	"functiongemma": "function-calling tool-use",
 +	"gemini-3-flash-preview": "expert-level-reasoning high-school-math multimodal-reasoning video-understanding python software-engineering troubleshooting multilingual-qa physical-common-sense",
 +	"gemini-3-pro-preview": "cloud cloud-hosted expert-level-reasoning high-school-math graduate-level-stem software-engineering multilingual qa physical-common-sense coding-agent tool-use vibe-coding rate-limited",
@@ -3355,6 +3384,7 @@
 +	"mshojaei77/gemma3persian": "persian multimodal text-generation intruction-following qa chatbot image-understanding",
 +	"mtayyar/trendmicro-ailab-Llama-Primus-Reasoning": "cybersecurity step-by-step-reasoning",
 +	"mxbai-embed-large": "embeddings",
++	"nchapman/l3.1-70b-hanami-x1": "roleplay complex-roleplay long-character-development detailed-storytelling character-driven-narratives long-context",
 +	"nemotron": "training-data-generator llm-creation",
 +	"nemotron-3-nano": "high-school-math instruction-following long-context graduate-level-reasoning general-reasoning advanced-knowledge",
 +	"nemotron-3-super": "instruction-following coding-assistant stem biology chemistry physics expert-level-reasoning general-knowledge high-school-math multilingual rag chatbot",
@@ -3466,7 +3496,10 @@
 +	"tinydolphin": "low-memory-footprint text-generation letter-writing poems",
 +	"tinyllama": "game-dialog-generator low-memory-footprint low-carbon-footprint",
 +	"uamarchuan/lapa-v0.1.2-instruct": "optimized-gemma-3-for-ukrainian ukraninan english translator image-processing summaries qa",
++	"vanilj/mistral-nemo-12b-celeste-v1.9": "roleplay nsfw steerable-character storytelling story-writing",
 +	"vicuna": "american-alignment american-bias chat assistant llm-research",
++	"windffooxxyang1130764/mesugaki": "bratty high-intensity aggressive highly-descriptive sensual roleplay english chinese japanese multilingual",
++	"windffooxxyang1130764/mesugaki-R18G": "bratty explicit extreme violent nsfw roleplay english chinese japanese multilingual",
 +	"wizard-math": "math logic",
 +	"wizard-vicuna": "american-alignment american-bias",
 +	"wizard-vicuna-uncensored": "removed-alignment removed-morals",
@@ -3495,7 +3528,7 @@
  func CreateHandler(cmd *cobra.Command, args []string) error {
  	p := progress.NewProgress(os.Stderr)
  	defer p.Stop()
-@@ -571,6 +4052,25 @@ func hasListedModelName(models []api.Lis
+@@ -571,6 +4085,25 @@ func hasListedModelName(models []api.Lis
  func RunHandler(cmd *cobra.Command, args []string) error {
  	interactive := true
  
@@ -3521,7 +3554,7 @@
  	opts := runOptions{
  		Model:       args[0],
  		WordWrap:    os.Getenv("TERM") == "xterm-256color",
-@@ -1068,10 +4568,12 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -1068,10 +4601,12 @@ func ShowHandler(cmd *cobra.Command, arg
  	modelfile, errModelfile := cmd.Flags().GetBool("modelfile")
  	parameters, errParams := cmd.Flags().GetBool("parameters")
  	system, errSystem := cmd.Flags().GetBool("system")
@@ -3535,7 +3568,7 @@
  		if boolErr != nil {
  			return errors.New("error retrieving flags")
  		}
-@@ -1100,13 +4602,385 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -1100,13 +4635,389 @@ func ShowHandler(cmd *cobra.Command, arg
  		showType = "system"
  	}
  
@@ -3658,6 +3691,7 @@
 +		"firefunction-v2": "META LLAMA 3 COMMUNITY LICENSE AGREEMENT, Meta Llama 3 Acceptable Use Policy",
 +		"fixt/home-3b-v3": "STABILITY AI NON-COMMERCIAL RESEARCH COMMUNITY LICENSE AGREEMENT",
 +		"fixt/home-3b-v2": "CC-BY-NC-4.0",
++		"fluffy/l3-8b-stheno-v3.2": "CC-BY-NC-4.0, META LLAMA 3 COMMUNITY LICENSE AGREEMENT, Meta Llama 3 Acceptable Use Policy",
 +		"functiongemma": "Gemma Terms of Use 20240324, Gemma Prohibited Use Policy 20240221",
 +		"gemini-3-flash-preview": "",
 +		"gemini-3-pro-preview": "",
@@ -3753,6 +3787,7 @@
 +		"mshojaei77/gemma3persian": "Apache-2.0, Gemma Terms of Use 20250324, Gemma Prohibited Use Policy 20240221",
 +		"mtayyar/trendmicro-ailab-Llama-Primus-Reasoning": "MIT, LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Acceptable Use Policy",
 +		"mxbai-embed-large": "Apache-2.0",
++		"nchapman/l3.1-70b-hanami-x1": "CC-BY-NC-4.0, LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Acceptable Use Policy",
 +		"nemotron": "LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Acceptable Use Policy, Meta Privacy Policy",
 +		"nemotron-3-nano": "NVIDIA Nemotron Open Model License", // Ollama site says "NVIDIA Open Model License Agreement".  HuggingFace site says "NVIDIA Nemotron Open Model License".
 +		"nemotron-3-super": "NVIDIA Nemotron Open Model License",
@@ -3857,6 +3892,8 @@
 +		"tulu3": "LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Acceptable Use Policy",
 +		"uamarchuan/lapa-v0.1.2-instruct": "Gemma Terms of Use 20250324, Gemma Prohibited Use Policy 20240221",
 +		"vicuna": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
++		"windffooxxyang1130764/mesugaki": "Apache-2.0",
++		"windffooxxyang1130764/mesugaki-R18G": "Apache-2.0",
 +		"wizard-math": "MICROSOFT RESEARCH LICENSE TERMS",
 +		"wizard-vicuna": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
 +		"wizard-vicuna-uncensored": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
@@ -3922,7 +3959,7 @@
  	}
  
  	req := api.ShowRequest{Name: args[0], Verbose: verbose}
-@@ -1423,6 +5297,146 @@ func PullHandler(cmd *cobra.Command, arg
+@@ -1423,6 +5334,146 @@ func PullHandler(cmd *cobra.Command, arg
  	return client.Pull(cmd.Context(), &request, fn)
  }
  
@@ -4069,7 +4106,7 @@
  type generateContextKey string
  
  type runOptions struct {
-@@ -2083,9 +6097,14 @@ func NewCLI() *cobra.Command {
+@@ -2083,9 +6134,14 @@ func NewCLI() *cobra.Command {
  		console.ConsoleFromFile(os.Stdin) //nolint:errcheck
  	}
  
@@ -4085,7 +4122,7 @@
  		SilenceUsage:  true,
  		SilenceErrors: true,
  		CompletionOptions: cobra.CompletionOptions{
-@@ -2136,7 +6155,9 @@ func NewCLI() *cobra.Command {
+@@ -2136,7 +6192,9 @@ func NewCLI() *cobra.Command {
  	showCmd.Flags().Bool("parameters", false, "Show parameters of a model")
  	showCmd.Flags().Bool("template", false, "Show template of a model")
  	showCmd.Flags().Bool("system", false, "Show system message of a model")
@@ -4095,7 +4132,7 @@
  
  	runCmd := &cobra.Command{
  		Use:     "run MODEL [PROMPT]",
-@@ -2278,6 +6299,30 @@ func NewCLI() *cobra.Command {
+@@ -2278,6 +6336,30 @@ func NewCLI() *cobra.Command {
  		_ = runner.Execute(args[1:])
  	})
  
@@ -4126,7 +4163,7 @@
  	envVars := envconfig.AsMap()
  
  	envs := []envconfig.EnvVar{envVars["OLLAMA_HOST"]}
-@@ -2294,6 +6339,9 @@ func NewCLI() *cobra.Command {
+@@ -2294,6 +6376,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		serveCmd,
@@ -4136,7 +4173,7 @@
  	} {
  		switch cmd {
  		case runCmd:
-@@ -2341,6 +6389,9 @@ func NewCLI() *cobra.Command {
+@@ -2341,6 +6426,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		runnerCmd,
