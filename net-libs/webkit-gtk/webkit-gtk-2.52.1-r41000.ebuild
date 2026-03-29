@@ -8,11 +8,11 @@ EAPI=8
 
 # -r revision notes
 # -rabcde
-# ab = WEBKITGTK_API_VERSION version (4.0)
+# ab = WEBKITGTK_API_VERSION version (4.1)
 # c = reserved
 # de = ebuild revision
 
-# See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.6/Source/WebKit/Configurations/Version.xcconfig
+# See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Source/WebKit/Configurations/Version.xcconfig
 # To make sure that libwebrtc is the same revision
 
 # libwebrtc requires git clone or the fix the tarball to contain the libwebrtc folder.
@@ -26,17 +26,17 @@ EAPI=8
 # This means also you cannot use the geolocation feature.
 
 # For dependencies, see:
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.6/CMakeLists.txt
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.6/Source/cmake/BubblewrapSandboxChecks.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.6/Source/cmake/FindGStreamer.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.6/Source/cmake/GStreamerChecks.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.6/Source/cmake/OptionsGTK.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.6/Source/cmake/WebKitCommon.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.6/Tools/buildstream/elements/sdk-platform.bst
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.6/Tools/buildstream/elements/sdk/gst-plugin-dav1d.bst
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.6/Tools/gtk/install-dependencies
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.6/Tools/gtk/dependencies
-#   https://github.com/WebKit/WebKit/tree/webkitgtk-2.50.6/Tools/glib/dependencies
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/CMakeLists.txt
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Source/cmake/BubblewrapSandboxChecks.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Source/cmake/FindGStreamer.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Source/cmake/GStreamerChecks.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Source/cmake/OptionsGTK.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Source/cmake/WebKitCommon.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Tools/buildstream/elements/sdk-platform.bst
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Tools/buildstream/elements/sdk/gst-plugin-dav1d.bst
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Tools/gtk/install-dependencies
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Tools/gtk/dependencies
+#   https://github.com/WebKit/WebKit/tree/webkitgtk-2.52.1/Tools/glib/dependencies
 #   https://docs.webkit.org/Ports/WebKitGTK%20and%20WPE%20WebKit/DependenciesPolicy.html
 #   https://docs.webkit.org/Ports/WebKitGTK%20and%20WPE%20WebKit/GCCRequirement.html
 
@@ -67,11 +67,11 @@ EAPI=8
 # Manette 0.2.4 is required by webkit-gtk but LTS version is 0.2.3
 # xdg-dbus-proxy is using U 20.04 version
 # Dependencies last updated from
-# https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.6
+# https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1
 # Do not use trunk!
 # media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
 
-API_VERSION="4.0"
+API_VERSION="4.1"
 CAIRO_PV="1.16.0"
 CFLAGS_HARDENED_ASSEMBLERS="inline"
 CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan lsan msan tsan ubsan"
@@ -81,10 +81,10 @@ CFLAGS_HARDENED_USE_CASES="copy-paste-password jit network security-critical sen
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO MC UAF TC"
 CHECKREQS_DISK_BUILD="18G" # and even this might not be enough, bug #417307
 CMAKE_MAKEFILE_GENERATOR="ninja"
+# See https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Source/bmalloc/libpas/CMakeLists.txt#L5C5-L5C23
 CXX_STANDARD=23
 FONTCONFIG_PV="2.13.0"
 FREETYPE_PV="2.9.0"
-# See https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.6/Source/bmalloc/libpas/CMakeLists.txt#L5C5-L5C23
 GSTREAMER_PV="1.20.0" # Upstream min is 1.16.2, but distro only offers 1.20
 HARFBUZZ_PV="2.7.4"
 LLVM_MAX_SLOT="21"
@@ -96,10 +96,10 @@ SLOT_MAJOR=$(ver_cut 1 "${API_VERSION}")
 # See Source/cmake/OptionsGTK.cmake
 # CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
 # SO_VERSION = C - A
-# WEBKITGTK_API_VERSION is 4.0
-SO_CURRENT="111"
-#SO_REVISION=""
-SO_AGE="74"
+# WEBKITGTK_API_VERSION is 4.1
+SO_CURRENT="21"
+#SO_REVISION="5"
+SO_AGE="21"
 SO_VERSION=$(( ${SO_CURRENT} - ${SO_AGE} ))
 USE_RUBY=" ruby32 ruby33"
 WK_PAGE_SIZE=64 # global var not const
@@ -119,13 +119,13 @@ inherit libstdcxx-compat
 GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX23[@]}"
 )
-LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
+LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}" # 21
 )
-LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 FFMPEG_COMPAT=(
 	"0/58.60.60" # 6.1
@@ -170,6 +170,7 @@ LANGS=(
 	"it"
 	"ja"
 	"ka"
+	"kk"
 	"kn"
 	"ko"
 	"lt"
@@ -242,11 +243,11 @@ MSE_VCODECS=(
 # For codecs, see
 # https://github.com/WebKit/WebKit/blob/main/Source/WebCore/platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp#L49
 # https://github.com/WebKit/WebKit/blob/main/Source/WebCore/platform/graphics/gstreamer/GStreamerRegistryScanner.cpp#L280
-# https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.6/Source/WebCore/platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceGStreamer.cpp#L52
+# https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Source/WebCore/platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceGStreamer.cpp#L52
 
 
 # Based on patent status
-# Compare https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.6/Tools/glib/dependencies
+# Compare https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Tools/glib/dependencies
 DEFAULT_GST_PLUGINS=(
 	"+a52"
 	"-aac"
@@ -279,7 +280,6 @@ inherit multiprocessing pax-utils python-single-r1 ruby-single toolchain-funcs
 inherit vf web-kernel-config
 
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~s390 ~sparc ~riscv ~x86"
-S="${WORKDIR}/webkitgtk-${PV}"
 #
 # Revisions and commit hashes provided since no tags specifically for the
 # webkit-gtk project.
@@ -295,8 +295,9 @@ SRC_URI="
 		https://webkitgtk.org/releases/webkitgtk-${PV}.tar.xz
 	)
 "
+S="${WORKDIR}/webkitgtk-${PV}"
 
-DESCRIPTION="Open source web browser engine (GTK+3 with HTTP/1.1 support)"
+DESCRIPTION="Open source web browser engine (GTK+3 with HTTP/2 support)"
 HOMEPAGE="https://www.webkitgtk.org"
 LICENSE_DROMAEO="
 	(
@@ -573,10 +574,9 @@ LICENSE="
 # distributes these browsers with unicode licensed data without
 # restrictions.
 RESTRICT="test"
-SLOT="${API_VERSION%.*}/${SO_VERSION}"
-# SLOT=6/4    GTK4 SOUP3
-# SLOT=4.1/0  GTK3 SOUP3
-# SLOT=4/37   GTK3 SOUP2
+SLOT="${API_VERSION}/${SO_VERSION}"
+# SLOT=4.1/0  GTK3 SOUP3 (r41000)
+# SLOT=6/4    GTK4 SOUP3 (r60000)
 
 # aqua (quartz) is enabled upstream but disabled
 # systemd is enabled upstream but gentoo uses openrc by default
@@ -601,7 +601,7 @@ ${PATENT_STATUS[@]}
 
 aqua +avif -bmalloc -cache-partitioning clang dash debug +doc -eme +flite
 -gamepad +gbm +geolocation gles2 gnome-keyring +gstreamer gstwebrtc
-+introspection +javascript +jit +journald +jpegxl +libpas +lcms -libbacktrace
++introspection +javascript +jit +journald +jpegxl +libpas librice +lcms -libbacktrace
 +libhyphen -libwebrtc -mediarecorder -mediastream +microphone +minibrowser mold
 +opengl openmp -seccomp +speech-synthesis -spell -system-malloc test thunder
 +variation-fonts wayland +webassembly -webdriver +webgl webm-eme -webrtc webvtt
@@ -742,6 +742,9 @@ REQUIRED_USE+="
 	)
 	hls? (
 		gstreamer
+	)
+	librice? (
+		gstwebrtc
 	)
 	microphone? (
 		gstreamer
@@ -899,7 +902,7 @@ RDEPEND+="
 	media-libs/libpng:=
 	>=media-libs/libwebp-0.6.1[${MULTILIB_USEDEP}]
 	media-libs/libwebp:=
-	>=net-libs/libsoup-2.54.0:2.4[${MULTILIB_USEDEP},introspection?]
+	>=net-libs/libsoup-3.0.0:3.0[${MULTILIB_USEDEP},introspection?]
 	net-libs/libsoup:=
 	>=sys-libs/zlib-1.2.11:0[${MULTILIB_USEDEP}]
 	sys-libs/zlib:=
@@ -1010,6 +1013,9 @@ RDEPEND+="
 	)
 	libhyphen? (
 		>=dev-libs/hyphen-2.8.8[${MULTILIB_USEDEP}]
+	)
+	librice? (
+		>=net-libs/librice-0.1.1[${MULTILIB_USEDEP}]
 	)
 	libwebrtc? (
 		>=dev-libs/libevent-2.1.8[${MULTILIB_USEDEP}]
@@ -2598,11 +2604,11 @@ ewarn
 		-DUSE_JPEGXL=$(usex jpegxl)
 		-DUSE_LIBDRM=$(usex gbm)
 		-DUSE_LIBHYPHEN=$(usex libhyphen)
+		-DUSE_LIBICE=$(usex libice)
 		-DUSE_LCMS=$(usex lcms)
 		-DUSE_LIBBACKTRACE=$(usex libbacktrace)
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
 		-DUSE_OPENMP=$(usex openmp)
-		-DUSE_SOUP2=ON
 		-DUSE_SPIEL=OFF
 		-DUSE_SYSTEM_MALLOC=$(usex system-malloc)
 		-DUSE_WOFF2=$(usex woff2)
@@ -3197,13 +3203,6 @@ eerror
 		mycmakeargs+=( -DFORCE_32BIT=ON )
 	fi
 
-	# Anything less than -O2 may break rendering.
-	# GCC -O1:  pas_generic_large_free_heap.h:140:1: error: inlining failed in call to 'always_inline'
-	# Clang -Os:  slower than expected rendering.
-	# Forced >= -O3 to be about same relative performance to other browser engines.
-	# -O2 feels like C- grade relative other browser engines.
-
-
 	filter-flags '-ffast-math'
 
 	if is-flagq "-Ofast" ; then
@@ -3363,37 +3362,7 @@ ewarn
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  license-transparency, webvtt, avif
 # OILEDMACHINE-OVERLAY-META-WIP:  pgo, webrtc
-
-# OILEDMACHINE-OVERLAY-TEST: passed with -Oshit, clang 18.1.8 (2.46.3, 20241116)
-# OILEDMACHINE-OVERLAY-TEST: passed with -Oshit, clang 18.1.8 (2.48.1, 20250422) for slot 4.1/0
-# OILEDMACHINE-OVERLAY-TEST: passed with -Oshit, clang 18.1.8 (2.48.6, 20250919) for slot 4/37
 # OILEDMACHINE-OVERLAY-TEST: passed with -Oshit, clang 21.1.5 (2.50.1, 20251111) for slot 4/37
 # OILEDMACHINE-OVERLAY-TEST: passed with -Oshit, clang 21.1.5 (2.50.1, 20251111) for slot 4.1/0
 # OILEDMACHINE-OVERLAY-TEST: passed with -Oshit, clang 21.1.8 (2.50.4, 20260104) for slot 4/37 with completion time:  0 days, 11 hrs, 2 mins, 0 secs
 # OILEDMACHINE-OVERLAY-TEST: passed with -Oshit, clang 21.1.8 (2.50.5, 20260210) for slot 4/37 with completion time:  0 days, 6 hrs, 59 mins, 43 secs
-#
-#   CFLAGS=-Oshit build config:
-#
-#     OSHIT_OPT_LEVEL_ANGLE="fast"
-#     OSHIT_OPT_LEVEL_JSC="3"
-#     OSHIT_OPT_LEVEL_SHA1="fast"
-#     OSHIT_OPT_LEVEL_SKIA="fast"
-#     OSHIT_OPT_LEVEL_XXHASH="fast"
-#     OSHIT_OPT_LEVEL_WEBCORE="1"
-#
-#   interactive test:
-#
-#     minibrowser:  passed
-#     surf:  passed
-#     search engine(s):  passed
-#     video site(s):  fail (minibrowser), passed (surf)
-#       vpx (streaming):  passed
-#       vpx (on demand):  passed
-#       opus:  passed
-#       misc notes:  bad render on chat
-#     wiki(s):  passed
-#     audio:  fail
-#       streaming radio:  segfault
-#     scroll: fast, random slowdown
-#     stability:  unstable
-#

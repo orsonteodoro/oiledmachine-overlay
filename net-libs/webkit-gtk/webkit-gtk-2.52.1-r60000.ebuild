@@ -8,11 +8,11 @@ EAPI=8
 
 # -r revision notes
 # -rabcde
-# ab = WEBKITGTK_API_VERSION version (4.1)
+# ab = WEBKITGTK_API_VERSION version (6.0)
 # c = reserved
 # de = ebuild revision
 
-# See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.6/Source/WebKit/Configurations/Version.xcconfig
+# See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Source/WebKit/Configurations/Version.xcconfig
 # To make sure that libwebrtc is the same revision
 
 # libwebrtc requires git clone or the fix the tarball to contain the libwebrtc folder.
@@ -26,17 +26,17 @@ EAPI=8
 # This means also you cannot use the geolocation feature.
 
 # For dependencies, see:
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.6/CMakeLists.txt
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.6/Source/cmake/BubblewrapSandboxChecks.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.6/Source/cmake/FindGStreamer.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.6/Source/cmake/GStreamerChecks.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.6/Source/cmake/OptionsGTK.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.6/Source/cmake/WebKitCommon.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.6/Tools/buildstream/elements/sdk-platform.bst
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.6/Tools/buildstream/elements/sdk/gst-plugin-dav1d.bst
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.6/Tools/gtk/install-dependencies
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.6/Tools/gtk/dependencies
-#   https://github.com/WebKit/WebKit/tree/webkitgtk-2.50.6/Tools/glib/dependencies
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/CMakeLists.txt
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Source/cmake/BubblewrapSandboxChecks.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Source/cmake/FindGStreamer.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Source/cmake/GStreamerChecks.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Source/cmake/OptionsGTK.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Source/cmake/WebKitCommon.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Tools/buildstream/elements/sdk-platform.bst
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Tools/buildstream/elements/sdk/gst-plugin-dav1d.bst
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Tools/gtk/install-dependencies
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Tools/gtk/dependencies
+#   https://github.com/WebKit/WebKit/tree/webkitgtk-2.52.1/Tools/glib/dependencies
 #   https://docs.webkit.org/Ports/WebKitGTK%20and%20WPE%20WebKit/DependenciesPolicy.html
 #   https://docs.webkit.org/Ports/WebKitGTK%20and%20WPE%20WebKit/GCCRequirement.html
 
@@ -67,11 +67,11 @@ EAPI=8
 # Manette 0.2.4 is required by webkit-gtk but LTS version is 0.2.3
 # xdg-dbus-proxy is using U 20.04 version
 # Dependencies last updated from
-# https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.6
+# https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1
 # Do not use trunk!
 # media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
 
-API_VERSION="4.1"
+API_VERSION="6.0"
 CAIRO_PV="1.16.0"
 CFLAGS_HARDENED_ASSEMBLERS="inline"
 CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan lsan msan tsan ubsan"
@@ -81,7 +81,7 @@ CFLAGS_HARDENED_USE_CASES="copy-paste-password jit network security-critical sen
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO MC UAF TC"
 CHECKREQS_DISK_BUILD="18G" # and even this might not be enough, bug #417307
 CMAKE_MAKEFILE_GENERATOR="ninja"
-# See https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.6/Source/bmalloc/libpas/CMakeLists.txt#L5C5-L5C23
+# See https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Source/bmalloc/libpas/CMakeLists.txt#L5C5-L5C23
 CXX_STANDARD=23
 FONTCONFIG_PV="2.13.0"
 FREETYPE_PV="2.9.0"
@@ -96,10 +96,10 @@ SLOT_MAJOR=$(ver_cut 1 "${API_VERSION}")
 # See Source/cmake/OptionsGTK.cmake
 # CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
 # SO_VERSION = C - A
-# WEBKITGTK_API_VERSION is 4.1
-SO_CURRENT="19"
-#SO_REVISION=""
-SO_AGE="19"
+# WEBKITGTK_API_VERSION is 6.0
+SO_CURRENT="20"
+#SO_REVISION="5"
+SO_AGE="16"
 SO_VERSION=$(( ${SO_CURRENT} - ${SO_AGE} ))
 USE_RUBY=" ruby32 ruby33"
 WK_PAGE_SIZE=64 # global var not const
@@ -119,13 +119,13 @@ inherit libstdcxx-compat
 GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX23[@]}"
 )
-LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}" # 21
 )
-LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
+LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
 FFMPEG_COMPAT=(
 	"0/58.60.60" # 6.1
@@ -170,6 +170,7 @@ LANGS=(
 	"it"
 	"ja"
 	"ka"
+	"kk"
 	"kn"
 	"ko"
 	"lt"
@@ -242,11 +243,11 @@ MSE_VCODECS=(
 # For codecs, see
 # https://github.com/WebKit/WebKit/blob/main/Source/WebCore/platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp#L49
 # https://github.com/WebKit/WebKit/blob/main/Source/WebCore/platform/graphics/gstreamer/GStreamerRegistryScanner.cpp#L280
-# https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.6/Source/WebCore/platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceGStreamer.cpp#L52
+# https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Source/WebCore/platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceGStreamer.cpp#L52
 
 
 # Based on patent status
-# Compare https://github.com/WebKit/WebKit/blob/webkitgtk-2.50.6/Tools/glib/dependencies
+# Compare https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Tools/glib/dependencies
 DEFAULT_GST_PLUGINS=(
 	"+a52"
 	"-aac"
@@ -296,7 +297,7 @@ SRC_URI="
 "
 S="${WORKDIR}/webkitgtk-${PV}"
 
-DESCRIPTION="Open source web browser engine (GTK+3 with HTTP/2 support)"
+DESCRIPTION="Open source web browser engine (GTK 4 with HTTP/2 support)"
 HOMEPAGE="https://www.webkitgtk.org"
 LICENSE_DROMAEO="
 	(
@@ -573,10 +574,9 @@ LICENSE="
 # distributes these browsers with unicode licensed data without
 # restrictions.
 RESTRICT="test"
-SLOT="${API_VERSION}/${SO_VERSION}"
-# SLOT=6/4    GTK4 SOUP3
-# SLOT=4.1/0  GTK3 SOUP3
-# SLOT=4/37   GTK3 SOUP2
+SLOT="${API_VERSION%.*}/${SO_VERSION}"
+# SLOT=4.1/0  GTK3 SOUP3 (r41000)
+# SLOT=6/4    GTK4 SOUP3 (r60000)
 
 # aqua (quartz) is enabled upstream but disabled
 # systemd is enabled upstream but gentoo uses openrc by default
@@ -743,6 +743,9 @@ REQUIRED_USE+="
 	hls? (
 		gstreamer
 	)
+	librice? (
+		gstwebrtc
+	)
 	microphone? (
 		gstreamer
 		mediastream
@@ -887,6 +890,8 @@ RDEPEND+="
 	>=dev-libs/libxml2-2.9.13:2[${MULTILIB_USEDEP}]
 	dev-libs/libxml2:=
 	>=dev-libs/libxslt-1.1.13[${MULTILIB_USEDEP}]
+	>=gui-libs/gtk-4.4.0:4[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
+	gui-libs/gtk:=
 	>=media-libs/fontconfig-${FONTCONFIG_PV}:1.0[${MULTILIB_USEDEP}]
 	media-libs/fontconfig:=
 	>=media-libs/freetype-${FREETYPE_PV}:2[${MULTILIB_USEDEP}]
@@ -899,14 +904,12 @@ RDEPEND+="
 	media-libs/libpng:=
 	>=media-libs/libwebp-0.6.1[${MULTILIB_USEDEP}]
 	media-libs/libwebp:=
-	>=net-libs/libsoup-2.99.9:3.0[${MULTILIB_USEDEP},introspection?]
+	>=net-libs/libsoup-3.0.0:3.0[${MULTILIB_USEDEP},introspection?]
 	net-libs/libsoup:=
 	>=sys-libs/zlib-1.2.11:0[${MULTILIB_USEDEP}]
 	sys-libs/zlib:=
 	>=x11-libs/cairo-${CAIRO_PV}[${MULTILIB_USEDEP},X?]
 	x11-libs/cairo:=
-	>=x11-libs/gtk+-3.22.0:3[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
-	x11-libs/gtk+:=
 	sys-kernel/mitigate-id
 	virtual/jpeg:0=[${MULTILIB_USEDEP}]
 	virtual/patent-status[patent_status_nonfree=]
@@ -1010,6 +1013,9 @@ RDEPEND+="
 	)
 	libhyphen? (
 		>=dev-libs/hyphen-2.8.8[${MULTILIB_USEDEP}]
+	)
+	librice? (
+		>=net-libs/librice-0.1.1[${MULTILIB_USEDEP}]
 	)
 	libwebrtc? (
 		>=dev-libs/libevent-2.1.8[${MULTILIB_USEDEP}]
@@ -1847,6 +1853,7 @@ ewarn "Chosen page size:  ${page_size}"
 ewarn
 	fi
 
+
 	if ! tc-is-cross-compiler && [[ "${page_size}" == "kconfig" ]] ; then
 		# Use the exact page size
 		page_size=$(_get_actual_page_size)
@@ -2139,13 +2146,13 @@ verify_compiler_flags_hardening() {
 	"unconditional:dev-libs/libtasn1:untrusted-data"
 	"unconditional:dev-libs/libxml2:untrusted-data"
 	"unconditional:dev-libs/libxslt:untrusted-data"
+	"unconditional:gui-libs/gtk:sensitive-data"
 	"unconditional:media-libs/libwebp:untrusted-data"
 	"unconditional:media-libs/libpng:untrusted-data"
 	"unconditional:media-libs/fontconfig:untrusted-data"
 	"unconditional:media-libs/freetype:untrusted-data"
 	"unconditional:media-libs/harfbuzz:attack-surface-risk,untrusted-data,sensitive-data"		# PII
 	"unconditional:sys-libs/zlib:untrusted-data"
-	"unconditional:x11-libs/gtk+:sensitive-data"
 
 	"aom:media-plugins/gst-plugins-aom:untrusted-data"
 	"dash:media-plugins/gst-plugins-dash:untrusted-data"
@@ -2287,6 +2294,10 @@ einfo "Detected -Oshit"
 	else
 		export OSHIT=0
 	fi
+ewarn
+ewarn "GTK 4 is default OFF upstream, but forced ON this ebuild."
+ewarn "It is currently not recommended due to rendering bug(s)."
+ewarn
 einfo "This is the stable branch."
 	if [[ -n "${MITIGATION_URI}" ]] ; then
 einfo "Security advisory date:  ${MITIGATION_DATE}"
@@ -2594,7 +2605,7 @@ ewarn
 		-DUSE_GBM=$(usex gbm)
 		-DUSE_GSTREAMER_TRANSCODER=$(usex mediarecorder)
 		-DUSE_GSTREAMER_WEBRTC=$(usex gstwebrtc)
-		-DUSE_GTK4=OFF
+		-DUSE_GTK4=ON
 		-DUSE_JPEGXL=$(usex jpegxl)
 		-DUSE_LIBDRM=$(usex gbm)
 		-DUSE_LIBHYPHEN=$(usex libhyphen)
@@ -2602,7 +2613,6 @@ ewarn
 		-DUSE_LIBBACKTRACE=$(usex libbacktrace)
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
 		-DUSE_OPENMP=$(usex openmp)
-		-DUSE_SOUP2=OFF
 		-DUSE_SPIEL=OFF
 		-DUSE_SYSTEM_MALLOC=$(usex system-malloc)
 		-DUSE_WOFF2=$(usex woff2)
@@ -3196,6 +3206,13 @@ eerror
 	if [[ "${ABI}" == "x86" ]] ; then
 		mycmakeargs+=( -DFORCE_32BIT=ON )
 	fi
+
+	# Anything less than -O2 may break rendering.
+	# GCC -O1:  pas_generic_large_free_heap.h:140:1: error: inlining failed in call to 'always_inline'
+	# Clang -Os:  slower than expected rendering.
+	# Forced >= -O3 to be about same relative performance to other browser engines.
+	# -O2 feels like C- grade relative other browser engines.
+
 
 	filter-flags '-ffast-math'
 
