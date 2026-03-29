@@ -210,7 +210,7 @@ GCC_COMPAT=(
 inherit libcxx-compat
 LLVM_COMPAT=(
 #	"${LIBCXX_COMPAT_RUST[@]/llvm_slot_}" # 18, 19
-	{20..22} # Based on rolling slots
+	{20..22} # Based on LLVM rolling slots on rolling distros or rolling releases
 	# LLVM for compiler:  17 20 21 23
 	# LLVM for Rust:  20 22
 )
