@@ -601,7 +601,7 @@ ${PATENT_STATUS[@]}
 
 aqua +avif -bmalloc -cache-partitioning clang dash debug +doc -eme +flite
 -gamepad +gbm +geolocation gles2 gnome-keyring +gstreamer gstwebrtc
-+introspection +javascript +jit +journald +jpegxl +libpas +lcms -libbacktrace
++introspection +javascript +jit +journald +jpegxl +libpas librice +lcms -libbacktrace
 +libhyphen -libwebrtc -mediarecorder -mediastream +microphone +minibrowser mold
 +opengl openmp -seccomp +speech-synthesis -spell -system-malloc test thunder
 +variation-fonts wayland +webassembly -webdriver +webgl webm-eme -webrtc webvtt

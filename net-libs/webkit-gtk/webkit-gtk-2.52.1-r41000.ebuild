@@ -2604,7 +2604,7 @@ ewarn
 		-DUSE_JPEGXL=$(usex jpegxl)
 		-DUSE_LIBDRM=$(usex gbm)
 		-DUSE_LIBHYPHEN=$(usex libhyphen)
-		-DUSE_LIBICE=$(usex libice)
+		-DUSE_LIBRICE=$(usex librice)
 		-DUSE_LCMS=$(usex lcms)
 		-DUSE_LIBBACKTRACE=$(usex libbacktrace)
 		-DUSE_LIBSECRET=$(usex gnome-keyring)

@@ -286,6 +286,9 @@
     <flag name="libhyphen">
       Add support for CSS styled hypenated elements.
     </flag>
+    <flag name="libice">
+      Use libice for gstwebrtc for improved robust connectivity and security.
+    </flag>
     <flag name="libpas">
       Use libpas as the new allocator which is compatible with amd64 and arm64.
       This allocator is designed to be performance and storage efficiency based.
