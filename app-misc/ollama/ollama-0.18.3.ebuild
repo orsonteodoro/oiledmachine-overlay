@@ -239,6 +239,7 @@ COMMUNITY_LLMS=(
 	"DeepHat-DeepHat-V1-7B"
 	"ehartford-theprofessor"
 	"eramax-aura_v3"
+	"etgohome-hackidle-nist-coder"
 	"fixt-home-3b-v3"
 	"fixt-home-3b-v2"
 	"hemanth-chessplayer"
@@ -2987,18 +2988,23 @@ LLM_LICENSES="
 	)
 	ollama_llms_command-a? (
 		CC-BY-NC-4.0
+		Cohere-Labs-Acceptable-Use-Policy
 	)
 	ollama_llms_command-r? (
 		CC-BY-NC-4.0
+		Cohere-Labs-Acceptable-Use-Policy
 	)
 	ollama_llms_command-r-plus? (
 		CC-BY-NC-4.0
+		Cohere-Labs-Acceptable-Use-Policy
 	)
 	ollama_llms_command-r7b? (
 		CC-BY-NC-4.0
+		Cohere-Labs-Acceptable-Use-Policy
 	)
 	ollama_llms_command-r7b-arabic? (
 		CC-BY-NC-4.0
+		Cohere-Labs-Acceptable-Use-Policy
 	)
 	ollama_llms_d4n5h-white-rabbit-neo-70b-v2? (
 		llama3_1-LICENSE
@@ -3103,6 +3109,10 @@ LLM_LICENSES="
 	)
 	ollama_llms_eramax-aura_v3? (
 		Apache-2.0
+	)
+	ollama_llms_etgohome-hackidle-nist-coder? (
+		Apache-2.0
+		CC0-1.0
 	)
 	ollama_llms_embeddinggemma? (
 		Gemma-Terms-of-Use-20250324
@@ -5052,6 +5062,7 @@ einfo "LDFLAGS: ${LDFLAGS}"
 		["disinfozone-telos"]="disinfozone/telos"
 		["ehartford-theprofessor"]="ehartford/theprofessor"
 		["eramax-aura_v3"]="eramax/aura_v3"
+		["etgohome-hackidle-nist-coder"]="etgohome/hackidle-nist-coder"
 		["fixt-home-3b-v3"]="fixt/home-3b-v3"
 		["fixt-home-3b-v2"]="fixt/home-3b-v2"
 		["hemanth-chessplayer"]="hemanth/chessplayer"

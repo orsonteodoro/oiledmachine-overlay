@@ -1,5 +1,5 @@
---- a/cmd/cmd.go.orig	2026-03-28 15:23:28.565690330 -0700
-+++ b/cmd/cmd.go	2026-03-28 15:21:04.970274103 -0700
+--- a/cmd/cmd.go.orig	2026-03-25 14:02:22.000000000 -0700
++++ b/cmd/cmd.go	2026-03-28 22:21:16.345596003 -0700
 @@ -19,6 +19,7 @@ import (
  	"os/exec"
  	"os/signal"
@@ -8,7 +8,7 @@
  	"runtime"
  	"slices"
  	"sort"
-@@ -152,6 +153,3482 @@ func isLocalhost() bool {
+@@ -152,6 +153,3486 @@ func isLocalhost() bool {
  	return ip != nil && (ip.IsLoopback() || ip.IsUnspecified())
  }
  
@@ -485,6 +485,8 @@
 +	"embeddinggemma:300m-qat-q4_0": "239MB",
 +	"embeddinggemma:300m-qat-q8_0": "338MB",
 +	"embeddinggemma:300m-bf16": "622MB",
++	"etgohome/hackidle-nist-coder:latest": "4.7GB",
++	"etgohome/hackidle-nist-coder:v1.1": "4.7GB",
 +	"exaone3.5:2.4b": "1.6GB",
 +	"exaone3.5:7.8b": "4.8GB",
 +	"exaone3.5:32b": "19GB",
@@ -2893,6 +2895,7 @@
 +	"ehartford/theprofessor": 1,
 +	"embeddinggemma": 1,
 +	"eramax/aura_v3": 1,
++	"etgohome/hackidle-nist-coder": 1,
 +	"exaone3.5": 1,
 +	"exaone-deep": 1,
 +	"everythinglm": 1,
@@ -3182,7 +3185,7 @@
 +	"cogito:32b": "multilingual abstract-reasoning common-sense general-knowledge math-word-problems tool-calling multilingual multilingual-math multilingual-general-knowledge",
 +	"cogito:70b": "multilingual abstract-reasoning common-sense general-knowledge math-word-problems tool-calling multilingual multilingual-math multilingual-general-knowledge",
 +	"cogito-2.1": "multilingual expert-level-reasoning graduate-level-stem high-school-math math-word-problems",
-+	"command-a": "conversational chatbot rag tool-use coding multilingual english french spanish italian german portuguese japanese korean arabic chinese russian polish turkish vietnamese dutch czech indonesian ukrainian romanian greek hindi hebrew persian",
++	"command-a": "conversational chatbot rag tool-use coding coding-assistant multilingual english french spanish italian german portuguese japanese korean arabic chinese russian polish turkish vietnamese dutch czech indonesian ukrainian romanian greek hindi hebrew persian",
 +	"command-r": "rag tool-use english french spanish italian german brazilian portuguese japanese korean chinese arabic",
 +	"command-r-plus": "rag tool-use enterprise english french spanish italian german brazilian portuguese japanese korean chinese arabic",
 +	"command-r7b": "tool-use ai-applications for-gpus for-edge-devices reasoning qa coding rag  multilingual english french spanish italian german portuguese japanese korean arabic chinese russian polish turkish vietnamese dutch czech indonesian ukrainian romanian greek hindi hebrew persian",
@@ -3220,6 +3223,7 @@
 +	"ehartford/theprofessor": "brainstorming research reasoning science medical math computer-science physics cosmology professor theoretical-explanations",
 +	"eramax/aura_v3": "nsfw erotica roleplay",
 +	"embeddinggemma": "embedding search-tasks retrieval-tasks mobile laptop",
++	"etgohome/hackidle-nist-coder": "cybersecurity qa nist-standards python terraform security-compliant-code-generation",
 +	"exaone3.5": "coding code-generation python general-knowledge math-word-problems common-sense abstract-reasoning multilingual english korean high-school-math",
 +	"exaone-deep": "math high-school-math undergrad-math",
 +	"everythinglm": "uncensored detailed-replies story-telling",
@@ -3491,7 +3495,7 @@
  func CreateHandler(cmd *cobra.Command, args []string) error {
  	p := progress.NewProgress(os.Stderr)
  	defer p.Stop()
-@@ -571,6 +4048,25 @@ func hasListedModelName(models []api.Lis
+@@ -571,6 +4052,25 @@ func hasListedModelName(models []api.Lis
  func RunHandler(cmd *cobra.Command, args []string) error {
  	interactive := true
  
@@ -3517,7 +3521,7 @@
  	opts := runOptions{
  		Model:       args[0],
  		WordWrap:    os.Getenv("TERM") == "xterm-256color",
-@@ -1068,10 +4564,12 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -1068,10 +4568,12 @@ func ShowHandler(cmd *cobra.Command, arg
  	modelfile, errModelfile := cmd.Flags().GetBool("modelfile")
  	parameters, errParams := cmd.Flags().GetBool("parameters")
  	system, errSystem := cmd.Flags().GetBool("system")
@@ -3531,7 +3535,7 @@
  		if boolErr != nil {
  			return errors.New("error retrieving flags")
  		}
-@@ -1100,13 +4598,384 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -1100,13 +4602,385 @@ func ShowHandler(cmd *cobra.Command, arg
  		showType = "system"
  	}
  
@@ -3604,11 +3608,11 @@
 +		"codeup": "CreativeML Open RAIL++-M License",
 +		"cogito": "Apache-2.0, LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Acceptable Use Policy",
 +		"cogito-2.1": "MIT",
-+		"command-a": "CC-BY-NC-4.0",
-+		"command-r": "CC-BY-NC-4.0",
-+		"command-r-plus": "CC-BY-NC-4.0",
-+		"command-r7b": "CC-BY-NC-4.0",
-+		"command-r7b-arabic": "CC-BY-NC-4.0",
++		"command-a": "CC-BY-NC-4.0, Cohere Labs Acceptable Use Policy",
++		"command-r": "CC-BY-NC-4.0, Cohere Labs Acceptable Use Policy",
++		"command-r-plus": "CC-BY-NC-4.0, Cohere Labs Acceptable Use Policy",
++		"command-r7b": "CC-BY-NC-4.0, Cohere Labs Acceptable Use Policy",
++		"command-r7b-arabic": "CC-BY-NC-4.0, Cohere Labs Acceptable Use Policy",
 +		"d4n5h/white-rabbit-neo-70b-v2": "MIT LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Acceptable Use Policy, WhiteRabbitNeo-Terms-of-Use, WhiteRabbitNeo-Usage-Restrictions",
 +		"dbrx": "Databricks Open Model License, Databricks Open Model Acceptable Use Policy",
 +		"deepcoder": "MIT",
@@ -3644,6 +3648,7 @@
 +		"ehartford/theprofessor": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
 +		"eramax/aura_v3": "Apache-2.0",
 +		"embeddinggemma": "Gemma Terms of Use 20250324, Gemma Prohibited Use Policy 20240221",
++		"etgohome/hackidle-nist-coder": "CC0-1.0 Apache-2.0",
 +		"exaone3.5": "EXAONE AI Model License Agreement 1.1 - NC",
 +		"exaone-deep": "EXAONE AI Model License Agreement 1.1 - NC",
 +		"everythinglm": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
@@ -3917,7 +3922,7 @@
  	}
  
  	req := api.ShowRequest{Name: args[0], Verbose: verbose}
-@@ -1423,6 +5292,146 @@ func PullHandler(cmd *cobra.Command, arg
+@@ -1423,6 +5297,146 @@ func PullHandler(cmd *cobra.Command, arg
  	return client.Pull(cmd.Context(), &request, fn)
  }
  
@@ -4064,7 +4069,7 @@
  type generateContextKey string
  
  type runOptions struct {
-@@ -2083,8 +6092,13 @@ func NewCLI() *cobra.Command {
+@@ -2083,9 +6097,14 @@ func NewCLI() *cobra.Command {
  		console.ConsoleFromFile(os.Stdin) //nolint:errcheck
  	}
  
@@ -4074,13 +4079,13 @@
 +	}
 +
  	rootCmd := &cobra.Command{
--		Use:           "ollama",
-+		Use:           "ollama",
+ 		Use:           "ollama",
 -		Short:         "Large language model runner",
 +		Short:         banner + "Large language model runner",
  		SilenceUsage:  true,
  		SilenceErrors: true,
-@@ -2136,7 +6150,9 @@ func NewCLI() *cobra.Command {
+ 		CompletionOptions: cobra.CompletionOptions{
+@@ -2136,7 +6155,9 @@ func NewCLI() *cobra.Command {
  	showCmd.Flags().Bool("parameters", false, "Show parameters of a model")
  	showCmd.Flags().Bool("template", false, "Show template of a model")
  	showCmd.Flags().Bool("system", false, "Show system message of a model")
@@ -4090,7 +4095,7 @@
  
  	runCmd := &cobra.Command{
  		Use:     "run MODEL [PROMPT]",
-@@ -2278,6 +6294,30 @@ func NewCLI() *cobra.Command {
+@@ -2278,6 +6299,30 @@ func NewCLI() *cobra.Command {
  		_ = runner.Execute(args[1:])
  	})
  
@@ -4121,7 +4126,7 @@
  	envVars := envconfig.AsMap()
  
  	envs := []envconfig.EnvVar{envVars["OLLAMA_HOST"]}
-@@ -2294,6 +6334,9 @@ func NewCLI() *cobra.Command {
+@@ -2294,6 +6339,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		serveCmd,
@@ -4131,7 +4136,7 @@
  	} {
  		switch cmd {
  		case runCmd:
-@@ -2341,6 +6384,9 @@ func NewCLI() *cobra.Command {
+@@ -2341,6 +6389,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		runnerCmd,
