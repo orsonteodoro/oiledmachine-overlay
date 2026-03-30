@@ -1,0 +1,53 @@
+[package]
+name = "rice-io"
+description = "ICE (RFC8445) implementation protocol"
+version.workspace = true
+authors = ["Matthew Waters <matthew@centricular.com>"]
+license = "MIT OR Apache-2.0"
+keywords = ["STUN", "ICE"]
+categories = ["network-programming", ]
+#documentation = "https://docs.rs/rice-io"
+edition.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+workspace = ".."
+
+[features]
+capi = []
+
+[dependencies]
+arbitrary = { workspace = true, optional = true }
+async-io = "2"
+async-lock = "3"
+async-task = "4"
+byteorder.workspace = true
+flume = "0.12"
+futures-lite = "2"
+if-addrs.workspace = true
+libc = "0.2"
+rice-ctypes.workspace = true
+stun-proto.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+
+[dev-dependencies]
+tracing-subscriber = { workspace = true, features = ["env-filter"] }
+
+[lib]
+crate-type = ["cdylib", "staticlib"]
+
+[package.metadata.capi]
+min_version = "0.9.21"
+
+[package.metadata.capi.header]
+subdirectory = "rice"
+name = "rice-io"
+
+[package.metadata.capi.library]
+name = "rice-io"
+version_suffix_components = 1
+
+[package.metadata.capi.pkg_config]
+name = "rice-io"
+filename = "rice-io"
+requires = "rice-proto"

@@ -1,0 +1,40 @@
+[package]
+name = "rice-c"
+description = "ICE (RFC8445) implementation protocol"
+version.workspace = true
+authors = ["Matthew Waters <matthew@centricular.com>"]
+license = "MIT OR Apache-2.0"
+keywords = ["STUN", "ICE"]
+categories = ["network-programming", ]
+documentation = "https://docs.rs/rice-c"
+edition.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+workspace = ".."
+
+[features]
+default = ["rustls", "openssl"]
+dimpl = []
+openssl = []
+rustls = []
+
+[build-dependencies]
+system-deps = "7"
+bindgen = "0.72"
+
+[dependencies]
+tracing.workspace = true
+sans-io-time = "0.2"
+thiserror = { workspace = true, features = ["std"] }
+
+[dev-dependencies]
+tracing = { workspace = true, features = ["std"] }
+tracing-subscriber.workspace = true
+
+[package.metadata.system-deps]
+rice-proto = "0.4.0"
+
+[package.metadata.docs.rs]
+all-features = true
+rustc-args = ["--cfg", "docsrs"]
+rustdoc-args = ["--cfg", "docsrs", "--generate-link-to-definition"]

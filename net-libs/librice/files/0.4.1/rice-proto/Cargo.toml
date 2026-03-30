@@ -1,0 +1,74 @@
+[package]
+name = "rice-proto"
+description = "ICE (RFC8445) implementation protocol"
+version.workspace = true
+authors = ["Matthew Waters <matthew@centricular.com>"]
+license = "MIT OR Apache-2.0"
+keywords = ["STUN", "ICE"]
+categories = ["network-programming", ]
+documentation = "https://docs.rs/rice-proto"
+edition.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+workspace = ".."
+
+[features]
+default = ["std", "rustls", "openssl"]
+capi = ["dep:libc", "dep:tracing-subscriber", "std", "dep:rice-ctypes"]
+std = ["rice-stun-types/std", "stun-proto/std", "turn-client-proto/std", "rand/thread_rng"]
+# Allows DTLS connections to TURN servers
+dimpl = ["std", "dep:turn-client-dimpl", "dep:dimpl"]
+# allows TLS connections to TURN servers
+rustls = ["std", "dep:turn-client-rustls", "dep:rustls", "dep:rustls-platform-verifier"]
+# allows (D)TLS connections to TURN servers
+openssl = ["std", "dep:turn-client-openssl", "dep:openssl"]
+
+[dependencies]
+rice-stun-types.workspace = true
+rice-ctypes = { workspace = true, optional = true }
+
+arbitrary = { workspace = true, optional = true }
+byteorder.workspace = true
+libc = { version = "0.2", optional = true }
+nom = { version = "8", default-features = false }
+rand.workspace = true
+smallvec.workspace = true
+stun-proto.workspace = true
+tracing.workspace = true
+tracing-subscriber = { workspace = true, optional = true }
+turn-client-proto.workspace = true
+
+turn-client-dimpl = { workspace = true, optional = true }
+dimpl = { version = "0.4", optional = true }
+
+turn-client-openssl = { workspace = true, optional = true }
+openssl = { version = "0.10", optional = true }
+
+turn-client-rustls = { workspace = true, optional = true }
+rustls = { version = "0.23", optional = true, default-features = false, features = ["std", "ring"] }
+rustls-platform-verifier = { version = "0.6", optional = true }
+
+[dev-dependencies]
+criterion.workspace = true
+tracing = { workspace = true, features = ["std"] }
+tracing-subscriber.workspace = true
+turn-server-proto.workspace = true
+
+[package.metadata.capi]
+min_version = "0.9.21"
+
+[package.metadata.capi.header]
+name = "rice-proto"
+subdirectory = "rice"
+
+[package.metadata.capi.library]
+name = "rice-proto"
+version_suffix_components = 1
+
+[package.metadata.capi.pkg_config]
+name = "rice-proto"
+filename = "rice-proto"
+
+[[bench]]
+name = "sendrecv"
+harness = false

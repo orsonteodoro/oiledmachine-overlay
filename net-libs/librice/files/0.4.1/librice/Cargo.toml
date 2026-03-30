@@ -1,0 +1,39 @@
+[package]
+name = "librice"
+description = "ICE (RFC8445) implementation"
+version.workspace = true
+authors = ["Matthew Waters <matthew@centricular.com>"]
+license = "MIT OR Apache-2.0"
+keywords = ["STUN", "ICE"]
+categories = ["network-programming", ]
+documentation = "https://docs.rs/librice"
+edition.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+workspace = ".."
+
+[features]
+default = ["runtime-smol", "runtime-tokio"]
+runtime-smol = ["dep:smol", "dep:async-io"]
+runtime-tokio = ["dep:tokio"]
+
+[dependencies]
+rice-c.workspace = true
+byteorder.workspace = true
+if-addrs.workspace = true
+futures = "0.3"
+futures-timer = "3"
+rand.workspace = true
+tracing.workspace = true
+tracing-futures = { version = "0.2", default-features = false, features = ["std", "std-future", "futures-03"] }
+tracing-subscriber.workspace = true
+
+smol = { version = "2", optional = true }
+async-io = { version = "2", optional = true }
+
+tokio = { version = "1", optional = true, features = ["net", "time", "rt-multi-thread"] }
+
+[dev-dependencies]
+stun-proto.workspace = true
+turn-server-proto = { workspace = true, features = ["std"] }
+clap = { version = "4", features = ["derive"]}
