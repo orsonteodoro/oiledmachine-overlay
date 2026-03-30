@@ -198,11 +198,18 @@ LANGS=(
 	"zh_CN"
 )
 
-MITIGATION_DATE="Feb 09, 2026"
-MITIGATION_LAST_UPDATE=1770716785 # From `date +%s -d "2026-02-10 11:46:25 +0200"` from tag in GH for this version
-MITIGATION_URI="https://webkitgtk.org/2026/03/12/webkitgtk2.50.6-released.html"
+MITIGATION_DATE="Mar 28, 2026"
+MITIGATION_LAST_UPDATE=1774560882 # From `date +%s -d "2026-03-26 23:34:42 +0200"` from tag in GH for this version
+MITIGATION_URI="https://webkitgtk.org/security/WSA-2026-0002.html"
 VULNERABILITIES_FIXED=(
-	";DoS;"
+	"CVE-2026-20643;DT, ID;Medium"
+	"CVE-2026-20664;CRSH, DoS;Medium"
+	"CVE-2026-20665;ZC, DoS, ID;Medium"
+	"CVE-2026-20691;ID;Medium"
+	"CVE-2026-28857;CRSH, DoS;Medium"
+	"CVE-2026-28859;ID;Medium"
+	"CVE-2026-28861;ID;Medium"
+	"CVE-2026-28871;XSS, ID;Medium"
 )
 
 PATENT_STATUS=(
