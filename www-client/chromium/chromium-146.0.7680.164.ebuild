@@ -8266,6 +8266,7 @@ _src_install() {
 }
 
 list_missing_symbols() {
+	# If the symbol is in unreachable code, it is safe to ignore.
 	local n_missing_symbols=$(grep -e "undefined symbol" "${T}/build.log" | sort | uniq | wc -l)
 	[[ -z "${n_missing_symbols}" ]] && n_missing_symbols=0
 	if (( ${n_missing_symbols} > 0 )) ; then
