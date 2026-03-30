@@ -323,7 +323,7 @@ zmij-1.0.21
 "
 declare -A GIT_CRATES=()
 
-inherit cargo edo meson-multilib rustflags-hardened xdg
+inherit cargo edo lcnr meson-multilib rustflags-hardened xdg
 
 DESCRIPTION="sans-IO implementation of ICE (RFC8445) in Rust"
 HOMEPAGE="https://github.com/ystreet/librice"
@@ -333,13 +333,63 @@ https://github.com/ystreet/librice/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.g
 "
 
 LICENSE="
+	(
+		Apache-2.0
+		BSD
+		CC0-1.0
+		ISC
+		MIT
+		|| (
+			Apache-2.0
+			ISC
+		)
+		|| (
+			Apache-2.0
+			ISC
+			MIT
+		)
+		|| (
+			Apache-2.0
+			ISC
+			MIT-0
+		)
+	)
+	(
+		ISC
+		|| (
+			Apache-2.0
+			ISC
+		)
+	)
 	Apache-2.0
+	Apache-2.0-with-LLVM-exceptions
+	APSL-2
+	BSD
+	CC0-1.0
+	CDLA-Permissive-2.0
+	ISC
 	MIT
+	Unicode-3.0
+	Unicode-DFS-2016
 "
+# Third party licenses:
+# Apache-2.0 - ./librice-0.4.1/LICENSE-APACHE
+# Apache-2.0-with-LLVM-exceptions - ./cargo_home/gentoo/target-lexicon-0.13.3/LICENSE
+# APSL-2 - ./cargo_home/gentoo/security-framework-3.7.0/THIRD_PARTY
+# BSD - ./cargo_home/gentoo/if-addrs-0.15.0/LICENSE-BSD
+# CC0-1.0 - ./cargo_home/gentoo/dunce-1.0.5/LICENSE
+# CDLA-Permissive-2.0 - ./cargo_home/gentoo/webpki-root-certs-1.0.6/LICENSE
+# ISC || ( Apache-2.0 ISC) - ./cargo_home/gentoo/aws-lc-rs-1.16.2/LICENSE
+# ISC - ./cargo_home/gentoo/untrusted-0.9.0/LICENSE.txt
+# MIT - ./librice-0.4.1/LICENSE-MIT
+# Unicode-3.0 - ./cargo_home/gentoo/unicode-ident-1.0.24/LICENSE-UNICODE
+# Unicode-DFS-2016 - ./cargo_home/gentoo/regex-syntax-0.8.10/src/unicode_tables/LICENSE-UNICODE
+# || ( Apache-2.0 ISC ) || ( Apache-2.0 ISC MIT ) || ( Apache-2.0 ISC MIT-0 ) Apache-2.0 BSD CC0-1.0 ISC MIT - ./cargo_home/gentoo/aws-lc-sys-0.39.1/aws-lc/LICENSE
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE="
 debug
+ebuild_revision_2
 "
 RESTRICT="mirror"
 RDEPEND="
@@ -425,4 +475,13 @@ src_install() {
 
 	insinto "/usr/$(get_libdir)/cmake/Rice"
 	doins "${T}/RiceConfig.cmake"
+
+	# Copy all the Licenses, Copyright Notices, Readmes
+        LCNR_SOURCE="${WORKDIR}/cargo_home/gentoo"
+        LCNR_TAG="third_party"
+	lcnr_install_files
+
+        LCNR_SOURCE="${S}"
+        LCNR_TAG="${PN}"
+	lcnr_install_files
 }
