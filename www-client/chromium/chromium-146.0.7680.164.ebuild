@@ -777,7 +777,7 @@ ${SYSTEM_USE[@]}
 +plugins +pre-check-vaapi +pulseaudio +reporting-api qt6 +rar +screencast
 selinux -system-clang -system-rust systemd test +v8-snapshot +wayland
 +webassembly -widevine +X
-ebuild_revision_40
+ebuild_revision_41
 "
 # What is considered a proprietary codec can be found at:
 #
@@ -3178,6 +3178,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 			"${FILESDIR}/extra-patches/${PN}-146.0.7680.80-HOST_NAME_MAX-for-system-clang.patch"
 			"${FILESDIR}/extra-patches/${PN}-146.0.7680.80-mojom-bool_values-for-system-clang.patch"
 			"${FILESDIR}/extra-patches/${PN}-146.0.7680.80-private_key_factory-find-increment-change-for-system-clang.patch"
+			"${FILESDIR}/extra-patches/${PN}-146.0.7680.164-qt_shim-avoid-toStdString-for-system-libcxx.patch"
 		)
 	fi
 

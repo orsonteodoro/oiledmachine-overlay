@@ -1,0 +1,18 @@
+Avoid:
+
+mold: warning: unknown command line option: -z retpolineplt
+mold: warning: undefined symbol: QString::toStdString() const
+>>> referenced by qt_shim.cc
+>>>               obj/ui/qt/qt6_shim/qt_shim.o:(qt::QtShim::GetFontDescription() const)
+
+--- a/ui/qt/qt_shim.cc.orig	2026-03-20 16:29:56.000000000 -0700
++++ b/ui/qt/qt_shim.cc	2026-03-30 11:35:22.360447869 -0700
+@@ -265,7 +265,7 @@ FontRenderParams QtShim::GetFontRenderPa
+ FontDescription QtShim::GetFontDescription() const {
+   QFont font = app_.font();
+   return {
+-      .family = String(font.family().toStdString().c_str()),
++      .family = String(font.family().toUtf8().constData()),
+       .size_pixels = font.pixelSize(),
+       .size_points = font.pointSize(),
+       .is_italic = IsStyleItalic(font.style()),
