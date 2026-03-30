@@ -76,46 +76,22 @@ einfo "${id}${_delimiter}  ${vulnerability_classes}${_severity}"
 	#
 einfo
 
-	# Alternative for beginners or exact personalities but may be used in video or audio only podcasting reports
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"C"($|" "|";"|",") ]] ; then
-# Same as ID
-einfo "C = Confidentiality Impacted"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"I"($|" "|";"|",") ]] ; then
-# Same as DT
-einfo "I = Integrity Impacted"
-		fi
+#
+# Naming rules:
+#
+# The oldest discovered has precedence over first letter abbreviation.
+# If initials are the same, use asm instruction or C style consonant abbreviation as fallback.
+# The common initials are preferred over custom initials.
+# The common name or popular name is preferred over the formal taxonomic name to make it easier to understand.
+# The abbreviation should be intuitive or easy to remember.
+#
+# Keep the list sorted so it appears organized in the output.
+#
+
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"A"($|" "|";"|",") ]] ; then
 # Same as DoS
 einfo "A = Availability Impacted"
 		fi
-
-# Same as CIA but preferred in professional written reports
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ID"($|" "|";"|",") ]] ; then
-# Same as C
-einfo "ID = Information Disclosure"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"DT"($|" "|";"|",") ]] ; then
-# Same as I
-einfo "DT = Data Tampering"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("DoS"|"DOS")($|" "|";"|",") ]] ; then
-# Same as A
-einfo "DoS = Denial of Service"
-		fi
-
-
-#
-# Naming rules:
-#
-# The oldest discovered has precedence over abbreviation.
-# If initials are the same, use asm instruction or constanants as fallback.
-# The common initials are preferred over custom initials.
-# The common name is preferred over the formal taxonomic name.
-# The abbreviation should be intuitive or easy to remember.
-#
-# Keep list sorted.
-
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ABO"($|" "|";"|",") ]] ; then
 # Adjacent buffer integrity compromised
 # BO is taken so ABO is used
@@ -143,11 +119,15 @@ einfo "AW = Arbitrary Write"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"BGC"($|" "|";"|",") ]] ; then
 # See also JITM, MISCOMP, PGC
-einfo "BGC = Bad Generated Code"
+einfo "BGC = Badly Generated Code"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"BO"($|" "|";"|",") ]] ; then
 # Stack size insufficient
 einfo "BO = Buffer Overflow"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"C"($|" "|";"|",") ]] ; then
+# Same as ID
+einfo "C = Confidentiality Impacted"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"CE"($|" "|";"|",") ]] ; then
 # Alias for ACE, RCE
@@ -187,9 +167,17 @@ einfo "DI = Designed Insecurely"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"DL"($|" "|";"|",") ]] ; then
 einfo "DL = Deadlock"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("DoS"|"DOS")($|" "|";"|",") ]] ; then
+# Same as A
+einfo "DoS = Denial of Service"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"DR"($|" "|";"|",") ]] ; then
 # DT
 einfo "DR = Data Race"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"DT"($|" "|";"|",") ]] ; then
+# Same as I
+einfo "DT = Data Tampering"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("EM"|"EMA")($|" "|";"|",") ]] ; then
 # CVSS 3.1 - AV:P/PR:N/UI:N/C:H
@@ -222,6 +210,10 @@ einfo "HO = Heap Based Buffer Overflow"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"HWF"($|" "|";"|",") ]] ; then
 einfo "HWF = Hardware Fault"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"I"($|" "|";"|",") ]] ; then
+# Same as DT
+einfo "I = Integrity Impacted"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IAC"($|" "|";"|",") ]] ; then
 einfo "IAC = Improper Access Control"
 		fi
@@ -239,6 +231,10 @@ einfo "ICA = Improper Criticality Applied"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ICP"($|" "|";"|",") ]] ; then
 einfo "ICP = Insecure Coding Practices"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ID"($|" "|";"|",") ]] ; then
+# Same as C
+einfo "ID = Information Disclosure"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("IE")($|" "|";"|",") ]] ; then
 einfo "IE = Insufficient Entropy"
