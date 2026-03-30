@@ -2429,7 +2429,7 @@ ewarn "or adding additional swap space.  The latter is more efficient."
 ewarn
 	# You still can have swapping + O(n^2) or swapping + O(1).
 
-	eapply "${FILESDIR}/extra-patches/webkit-gtk-2.48.0-linkers.patch"
+	eapply "${FILESDIR}/extra-patches/webkit-gtk-2.52.1-linkers.patch"
 
 	eapply "${_PATCHES[@]}"
 	cmake_src_prepare
