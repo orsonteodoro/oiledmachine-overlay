@@ -8265,6 +8265,15 @@ _src_install() {
 	fi
 }
 
+list_missing_symbols() {
+	local n_missing_symbols=$(grep -e "undefined symbol" "${T}/build.log" | sort | uniq | wc -l)
+	[[ -z "${n_missing_symbols}" ]] && n_missing_symbols=0
+	if (( ${n_missing_symbols} > 0 )) ; then
+ewarn "QA:  Missing symbols detected.  Please review:"
+		grep -e "undefined symbol" "${T}/build.log" | sort | uniq
+	fi
+}
+
 src_compile() {
 	compile_abi() {
 		_src_configure_compiler
@@ -8272,6 +8281,8 @@ src_compile() {
 		_src_compile
 	}
 	multilib_foreach_abi compile_abi
+
+	list_missing_symbols
 }
 
 src_test() {
