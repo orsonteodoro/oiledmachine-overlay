@@ -608,7 +608,7 @@ ${PATENT_STATUS[@]}
 
 aqua +avif -bmalloc -cache-partitioning clang dash debug +doc -eme +flite
 -gamepad +gbm +geolocation gles2 gnome-keyring +gstreamer gstwebrtc
-+introspection +javascript +jit +journald +jpegxl +libpas librice +lcms -libbacktrace
++introspection +javascript +jit +journald +jpegxl +libpas -librice +lcms -libbacktrace
 +libhyphen -libwebrtc -mediarecorder -mediastream +microphone +minibrowser mold
 +opengl openmp -seccomp +speech-synthesis -spell -system-malloc test thunder
 +variation-fonts wayland +webassembly -webdriver +webgl webm-eme -webrtc webvtt
@@ -2176,6 +2176,7 @@ verify_compiler_flags_hardening() {
 	"hls:media-plugins/gst-plugins-hls:untrusted-data"
 	"jpegxl:media-libs/libjxl:untrusted-data"
 	"libde265:media-plugins/gst-plugins-libde265:untrusted-data"
+	"librice:net-libs/librice:sensitive-data,untrusted-data,rust"
 	"libwebrtc:media-libs/libvpx:untrusted-data"
 	"libwebrtc:media-libs/opus:untrusted-data"
 	"libwebrtc:media-libs/openh264:untrusted-data"
