@@ -1,5 +1,5 @@
---- Source/cmake/OptionsCommon.cmake.orig	2026-03-30 01:24:56.812775523 -0700
-+++ Source/cmake/OptionsCommon.cmake	2026-03-30 01:22:29.201194990 -0700
+--- a/Source/cmake/OptionsCommon.cmake.orig	2026-03-30 01:24:56.812775523 -0700
++++ b/Source/cmake/OptionsCommon.cmake	2026-03-30 01:22:29.201194990 -0700
 @@ -27,12 +27,52 @@ set(LLD_UNUSABLE_BECAUSE_OF_ADDRESS_SPAC
  # Use ld.lld when building with LTO, or for debug builds, if available.
  # FIXME: With CMake 3.22+ full conditional syntax can be used in
@@ -65,8 +65,8 @@
  # Determine which linker is being used with the chosen linker flags.
  separate_arguments(LD_VERSION_COMMAND UNIX_COMMAND
      "${CMAKE_C_COMPILER} ${CMAKE_EXE_LINKER_FLAGS} -Wl,--version"
---- Source/cmake/WebKitCompilerFlags.cmake.orig	2026-02-23 06:40:56.843293000 -0800
-+++ Source/cmake/WebKitCompilerFlags.cmake	2026-03-30 01:19:25.114915876 -0700
+--- a/Source/cmake/WebKitCompilerFlags.cmake.orig	2026-02-23 06:40:56.843293000 -0800
++++ b/Source/cmake/WebKitCompilerFlags.cmake	2026-03-30 01:19:25.114915876 -0700
 @@ -271,14 +271,15 @@ if (CMAKE_GENERATOR STREQUAL "Ninja")
  endif ()
  
