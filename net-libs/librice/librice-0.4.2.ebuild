@@ -371,6 +371,7 @@ LICENSE="
 	MIT
 	Unicode-3.0
 	Unicode-DFS-2016
+	Unlicense
 "
 # Third party licenses:
 # Apache-2.0 - ./librice-0.4.1/LICENSE-APACHE
@@ -384,6 +385,7 @@ LICENSE="
 # MIT - ./librice-0.4.1/LICENSE-MIT
 # Unicode-3.0 - ./cargo_home/gentoo/unicode-ident-1.0.24/LICENSE-UNICODE
 # Unicode-DFS-2016 - ./cargo_home/gentoo/regex-syntax-0.8.10/src/unicode_tables/LICENSE-UNICODE
+# Unlicense - ./cargo_home/gentoo/memchr-2.8.0/UNLICENSE
 # || ( Apache-2.0 ISC ) || ( Apache-2.0 ISC MIT ) || ( Apache-2.0 ISC MIT-0 ) Apache-2.0 BSD CC0-1.0 ISC MIT - ./cargo_home/gentoo/aws-lc-sys-0.39.1/aws-lc/LICENSE
 SLOT="0"
 KEYWORDS="~amd64"
