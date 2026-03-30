@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CXX_STANDARD=17
+CXX_STANDARD=17 # It should be 20.
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
