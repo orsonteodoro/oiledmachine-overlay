@@ -11,7 +11,7 @@ RUST_MIN_VER="1.94.0"
 RUSTFLAGS_HARDENED_USE_CASES="multithreaded-confidential security-critical network untrusted-data p2p"
 
 CRATES_DISABLED="
-rice-fuzz-0.4.1
+rice-fuzz-0.4.2
 "
 
 CRATES="
@@ -139,7 +139,7 @@ lazy_static-1.5.0
 libc-0.2.183
 libfuzzer-sys-0.4.12
 libloading-0.8.9
-librice-0.4.1
+librice-0.4.2
 linux-raw-sys-0.12.1
 lock_api-0.4.14
 log-0.4.29
@@ -195,11 +195,11 @@ r-efi-5.3.0
 regex-1.12.3
 regex-automata-0.4.14
 regex-syntax-0.8.10
-rice-c-0.4.1
-rice-ctypes-0.4.1
-rice-io-0.4.1
-rice-proto-0.4.1
-rice-stun-types-0.4.1
+rice-c-0.4.2
+rice-ctypes-0.4.2
+rice-io-0.4.2
+rice-proto-0.4.2
+rice-stun-types-0.4.2
 ring-0.17.14
 rustc-hash-2.1.2
 rusticata-macros-4.1.0
