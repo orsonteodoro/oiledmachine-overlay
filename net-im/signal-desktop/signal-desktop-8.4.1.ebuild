@@ -109,7 +109,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_59
+ebuild_revision_60
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -260,10 +260,11 @@ ewarn "QA:  Manually remove patch-package from ${S}/package.json and ${S}/pnpm-l
 #ewarn "QA:  Manually remove @octokit/request-error@2.1.0 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@9.2.2 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2 to 11.4.4-cjs.2 in ${S}/pnpm-lock.yaml and in ${S}/package.json"
-ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2(@octokit/core@3.6.0(encoding@0.1.13)) to 11.4.4-cjs.2(@octokit/core@5.2.2) in ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2(@octokit/core@5.2.2) to 11.4.4-cjs.2(@octokit/core@5.2.2) in ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually change @octokit/request-error@2.1.0 references to 5.1.1 in ${S}/package.json"
 ewarn "QA:  Manually change '@tootallnate/once': 2.0.0 to '@tootallnate/once': 3.0.1 from ${S}/pnpm-lock.yaml and ${S}/danger/pnpm-lock.yaml"
 
+ewarn "QA:  Manually remove picomatch@2.3.1 from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove immutable@4.3.7 from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @remix-run/router@1.23.1 from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @remix-run/router@1.5.0 from ${S}/sticker-creator/pnpm-lock.yaml"
@@ -284,6 +285,8 @@ ewarn "QA:  Manually remove vite@4.5.3 in ${S}/sticker-creator/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/request-error from ${S}/danger/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/rest from ${S}/danger/pnpm-lock.yaml"
 
+ewarn "QA:  Manually remove yaml@1.10.2 from ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually remove picomatch@2.3.1 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @tootallnate/once@2.0.0 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/rest@18.12.0 from ${S}/danger/pnpm-lock.yaml"
@@ -303,8 +306,8 @@ ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/dange
 #ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2(@octokit/core@3.6.0) to 11.4.4-cjs.2(@octokit/core@5.2.1) in ${S}/danger/pnpm-lock.yaml"
 #ewarn "QA:  Manually change @octokit/request-error references from 2.1.0 to 5.1.1 in ${S}/danger/pnpm-lock.yaml and in ${S}/danger/package.json"
 ewarn "QA:  Manually remove jws@3.2.2 in ${S}/danger/pnpm-lock.yaml"
-ewarn "QA:  Manually change danger@12.3.4 references to 13.0.4 in ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove danger@12.3.4 in ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually change danger@12.3.4 references to 13.0.4 in ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove parse-git-config@2.0.3 in ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in ${S}/danger/pnpm-lock.yaml"
 
@@ -540,6 +543,7 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 				"vite@5.4.21"
 				"immutable@5.1.5"
 				"flatted@3.4.2"
+				"picomatch@2.3.2"
 			)
 			epnpm install "${deps[@]}" -D "${PNPM_INSTALL_ARGS[@]}"
 		popd >/dev/null 2>&1 || die

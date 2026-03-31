@@ -180,6 +180,9 @@ importers:
       immutable:
         specifier: 5.1.5
         version: 5.1.5
+      picomatch:
+        specifier: 2.3.2
+        version: 2.3.2
       prettier:
         specifier: 2.8.7
         version: 2.8.7
@@ -2196,8 +2199,8 @@ packages:
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
 
-  picomatch@2.3.1:
-    resolution: {integrity: sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==}
+  picomatch@2.3.2:
+    resolution: {integrity: sha512-V7+vQEJ06Z+c5tSye8S+nHUfI51xoXIXjHQ99cQtKUkQqqO1kO/KCJUfZXuB47h/YBlDhah2H3hdUGXn8ie0oA==}
     engines: {node: '>=8.6'}
 
   pidtree@0.3.1:
@@ -5094,7 +5097,7 @@ snapshots:
 
   picocolors@1.1.1: {}
 
-  picomatch@2.3.1: {}
+  picomatch@2.3.2: {}
 
   pidtree@0.3.1: {}
 
@@ -5730,16 +5733,6 @@ snapshots:
       - sugarss
       - supports-color
       - terser
-
-  vite@5.4.21(@types/node@22.13.4)(sass@1.62.0):
-    dependencies:
-      esbuild: 0.25.9
-      postcss: 8.5.2
-      rollup: 4.60.1
-    optionalDependencies:
-      '@types/node': 22.13.4
-      fsevents: 2.3.3
-      sass: 1.62.0
 
   vitest@0.30.1(happy-dom@20.8.9)(sass@1.62.0):
     dependencies:
