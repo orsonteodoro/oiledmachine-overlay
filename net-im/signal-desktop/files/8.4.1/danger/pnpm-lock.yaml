@@ -9,11 +9,11 @@ importers:
   .:
     dependencies:
       danger:
-        specifier: 13.0.4
-        version: 13.0.4
+        specifier: 12.3.4
+        version: 12.3.4
       endanger:
         specifier: 7.0.4
-        version: 7.0.4(danger@12.3.4)
+        version: 7.0.4(danger@13.0.4)
       typescript:
         specifier: 5.6.3
         version: 5.6.3

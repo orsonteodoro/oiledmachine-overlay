@@ -109,7 +109,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_56
+ebuild_revision_57
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -273,8 +273,8 @@ ewarn "QA:  Manually remove minimatch@3.1.2 from ${S}/sticker-creator/pnpm-lock.
 ewarn "QA:  Manually remove minimatch@5.1.6 from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild and all @esbuild/<arch>@0.18.20 associated packages from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove esbuild@0.18.20 and arch implementations from ${S}/sticker-creator/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove @esbuild/<arch>@0.24.2 or earlier and associated packages from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @esbuild/<arch>@0.21.5 and associated packages from ${S}/sticker-creator/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove @esbuild/<arch>@0.24.2 or earlier and associated packages from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually change esbuild: 0.21.5 to esbuild: 0.25.9 in ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove vite@4.5.3 in ${S}/sticker-creator/pnpm-lock.yaml"
 #ewarn "CQA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/core from ${S}/danger/pnpm-lock.yaml"
@@ -318,9 +318,11 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 				sed -i -e "s|cross-spawn: 6.0.5|cross-spawn: 6.0.6|g" "pnpm-lock.yaml" || die											# CVE-2024-21538; DoS; High
 				sed -i -e "s|esbuild: 0.18.10|esbuild: 0.25.9|g" "pnpm-lock.yaml" || die											# GHSA-67mh-4wv8-2f99; ID; Moderate
 				sed -i -e "s|esbuild: 0.18.20|esbuild: 0.25.9|g" "pnpm-lock.yaml" || die											# GHSA-67mh-4wv8-2f99; ID; Moderate
-				sed -i -e "s|happy-dom: 8.9.0|happy-dom: 20.0.2|g" "pnpm-lock.yaml" || die											# CVE-2024-51757; DoS, DT, ID; Critical
+				sed -i -e "s|happy-dom: 8.9.0|happy-dom: 20.8.9|g" "pnpm-lock.yaml" || die											# CVE-2024-51757; DoS, DT, ID; Critical
 																								# CVE-2025-61927; ZC, VS(DoS, DT, ID), SS(DoS, DT, I); Critical
 																								# CVE-2025-62410; VS(DoS, DT, ID), SS(DoS, DT, ID); Critical
+																								# CVE-2026-33943; DoS, DT,  ID; High
+																								# CVE-2026-34226; ZC, ID; High
 				sed -i -e "s|rollup: 3.27.1|rollup: 3.30.0|g" "pnpm-lock.yaml" || die												# CVE-2024-47068; DT, ID; Medium
 																								# CVE-2026-27606; ZC, DT, ID; High
 				sed -i -e "s|vite: 4.5.3|vite: 5.4.21|g" "pnpm-lock.yaml" || die												# CVE-2025-24010; ID; Medium
@@ -359,6 +361,9 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 				sed -i -e "s|markdown-it: 14.1.0|markdown-it: 14.1.1|g" "pnpm-lock.yaml" || die											# CVE-2026-2327; ZC, VS(DoS), Moderate
 				sed -i -e "s|immutable: 4.3.7|immutable: 5.1.5|g" "pnpm-lock.yaml" || die											# CVE-2026-29063; ZC, VS(ID); High
 				sed -i -e "s|underscore: 1.13.7|underscore: 1.13.8|g" "pnpm-lock.yaml" || die											# CVE-2026-27601; ZC, DoS; High
+
+				sed -i -e "s|flatted: 3.3.2|flatted: 3.4.2|g" "pnpm-lock.yaml" || die												# CVE-2026-33228; ZC, VS(DoS, DT, ID); High
+				sed -i -e "s|picomatch: 2.3.1|picomatch: 2.3.2|g" "pnpm-lock.yaml" || die											# CVE-2026-33671; DoS; High
 			popd >/dev/null 2>&1 || die
 			pushd "danger" >/dev/null 2>&1 || die
 				sed -i -e "s|'@octokit/plugin-paginate-rest': 2.21.3|'@octokit/plugin-paginate-rest': 9.2.2|g" "pnpm-lock.yaml" || die						# CVE-2025-25288, DoS, Moderate
@@ -430,15 +435,19 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 
 			sed -i -e "s|on-headers: 1.0.2|on-headers: 1.1.0|g" "pnpm-lock.yaml" || die												# CVE-2025-7339; DT, ID; Low
 
-			sed -i -e "s|tar: 6.2.1|tar: 7.5.10|g" "pnpm-lock.yaml" || die														# CVE-2026-23950; DoS, DT, ID; High
-			sed -i -e "s|tar: 7.5.2|tar: 7.5.10|g" "pnpm-lock.yaml" || die														# CVE-2026-23950; DoS, DT, ID; High
+			sed -i -e "s|tar: 6.2.1|tar: 7.5.11|g" "pnpm-lock.yaml" || die														# CVE-2026-23950; DoS, DT, ID; High
+			sed -i -e "s|tar: 7.5.2|tar: 7.5.11|g" "pnpm-lock.yaml" || die														# CVE-2026-23950; DoS, DT, ID; High
 																								# CVE-2026-23745; VS(DT, ID), SS(DT, ID), High
 																								# CVE-2026-23950; DoS, DT, ID; High
 																								# CVE-2026-26960; DT, ID; High
 																								# GHSA-qffp-2rhf-9h96; VS(DT, ID), SS(DT, ID); High
+			sed -i -e "s|tar: 7.5.10|tar: 7.5.11|g" "pnpm-lock.yaml"														# CVE-2026-31802; VS(DT), SS(DT)
 
-			sed -i -e "s|node-forge: 1.3.1|node-forge: 1.3.2|g" "pnpm-lock.yaml" || die												# CVE-2025-66031; VS(DoS), High
+			sed -i -e "s|node-forge: 1.3.1|node-forge: 1.4.0|g" "pnpm-lock.yaml" || die												# CVE-2025-66031; VS(DoS), High
 																								# CVE-2025-12816; VS(DT), High
+																								# CVE-2026-33891; ZC, DoS; High
+																								# CVE-2026-33894; ZC, DT; High
+																								# CVE-2026-33895; ZC, DT; High
 
 			sed -i -e "s|lodash: 4.17.21|lodash: 4.17.23|g" "pnpm-lock.yaml" || die													# CVE-2025-13465; ZC, VS(DoS, DT), SS(DoS, DT, ID); Moderate
 
@@ -488,6 +497,11 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 
 			sed -i -e "s|'@tootallnate/once': 2.0.0|'@tootallnate/once': 3.0.1|g" "pnpm-lock.yaml" || die										# CVE-2026-3449; DoS; Low
 			sed -i -e "s|underscore: 1.13.7|underscore: 1.13.8|g" "pnpm-lock.yaml" || die												# CVE-2026-27601; ZC, DoS; High
+
+			sed -i -e "s|flatted: 3.3.2|flatted: 3.4.2|g" "pnpm-lock.yaml" || die													# CVE-2026-33228; ZC, VS(DoS, DT, ID); High
+			sed -i -e "s|picomatch: 2.3.1|picomatch: 2.3.2|g" "pnpm-lock.yaml" || die												# CVE-2026-33671; DoS; High
+			sed -i -e "s|path-to-regexp: 8.2.0|path-to-regexp: 8.4.0|g" "pnpm-lock.yaml" || die											# CVE-2026-4926; ZC, DoS; High
+			sed -i -e "s|path-to-regexp: 0.1.12|path-to-regexp: 8.4.0|g" "pnpm-lock.yaml" || die											# CVE-2026-4867; ZC, DoS; High
 		}
 		patch_edits_pnpm
 
@@ -512,10 +526,11 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 #				"brace-expansion@1.1.12"
 				"cross-spawn@6.0.6"
 				"esbuild@0.25.9"
-				"happy-dom@20.0.2"
+				"happy-dom@20.8.9"
 				"rollup@3.30.0"
 				"vite@5.4.21"
 				"immutable@5.1.5"
+				"flatted@3.4.2"
 			)
 			epnpm install "${deps[@]}" -D "${PNPM_INSTALL_ARGS[@]}"
 		popd >/dev/null 2>&1 || die
@@ -543,9 +558,9 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 			"got@11.8.5"
 			"tar-fs@2.1.4"
 			"form-data@4.0.4"
-			"node-forge@1.3.2"
+			"node-forge@1.4.0"
 			"lodash@4.17.23"
-			"tar@7.5.10"
+			"tar@7.5.11"
 			"qs@6.14.2"
 			"minimatch@10.2.1"
 #			"fabric@7.2.0"
@@ -580,6 +595,8 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 			"serialize-javascript@7.0.3"
 			"@tootallnate/once@3.0.1"
 			"svgo@3.3.3"				# CVE-2026-29074; DoS; High
+			"flatted@3.4.2"
+			"path-to-regexp@8.4.0"
 		)
 		epnpm install "${deps[@]}" -D "${PNPM_INSTALL_ARGS[@]}"
 
