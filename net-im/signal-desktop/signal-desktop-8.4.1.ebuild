@@ -6,7 +6,7 @@ EAPI=8
 # TODO fork @signalapp/libsignal-client for custom hardening
 
 # To update use:
-# PNPM_UPDATER_PROJECT_ROOT="Signal-Desktop-8.2.1" pnpm_updater_update_locks.sh
+# PNPM_UPDATER_PROJECT_ROOT="Signal-Desktop-8.4.1" pnpm_updater_update_locks.sh
 
 # Ignore if error:
 # Could not detect abi for version ' + target + ' and runtime ' + runtime + '.  Updating "node-abi" might help solve this issue if it is a new release of ' + runtime)
@@ -26,8 +26,11 @@ NPM_SLOT="3"
 PNPM_SLOT="9"
 NODE_SLOT="24" # Upstream uses 24.11.1 from .nvmrc
 NODE_ENV="development"
-RUST_MAX_VER="1.81.0" # Inclusive
-RUST_MIN_VER="1.81.0" # Corresponds to llvm-19.1.  Rust is required for @swc/core
+RUST_MAX_VER="1.83.0" # Inclusive
+RUST_MIN_VER="1.83.0" # Corresponds to 1.83.0 nightly not stable - llvm-19.1.  Rust is required for @swc/core@1.10.16
+# https://github.com/rust-lang/rust/commits/main/src/version		# nightly-2024-10-07
+# https://github.com/swc-project/swc/blob/v1.10.16/rust-toolchain	# Find date at or before 2024-10-07
+
 RUST_PV="${RUST_MIN_VER}"
 #export CI="true" # Avoid error during `pnpm install -P`
 
@@ -36,10 +39,10 @@ ELECTRON_BUILDER_PV="26.0.14"
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
-	ELECTRON_APP_ELECTRON_PV="41.0.3" # Cr 146.0.7680.80, node 24.14.0
+	ELECTRON_APP_ELECTRON_PV="41.1.0" # Cr 146.0.7680.166, node 24.14.0
 else
 	# Upstream's choice
-	ELECTRON_APP_ELECTRON_PV="40.4.1" # Cr 144.0.7559.173, node 24.13.0
+	ELECTRON_APP_ELECTRON_PV="40.8.3" # Cr 144.0.7559.236, node 24.14.0
 fi
 
 NPM_INSTALL_ARGS=(
