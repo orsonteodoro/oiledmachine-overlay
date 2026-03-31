@@ -4,27 +4,64 @@
 
 EAPI=8
 
-# We don't eager bump because of torchvision requirements is not up to date.
+# TODO package
+# azure-search-documents
+# ddgs
+# google-genai
+# langchain-classic
+# langchain-text-splitters
+# mcp
+# opentelemetry-exporter-otlp
+# opentelemetry-instrumentation-sqlalchemy
+# opentelemetry-instrumentation-redis
+# opentelemetry-instrumentation-requests
+# opentelemetry-instrumentation-logging
+# opentelemetry-instrumentation-httpx
+# opentelemetry-instrumentation-aiohttp-client
+# opentelemetry-instrumentation-system-metrics
+# oracledb
+# pinecone
+# pycrdt
+# starlette-compress
+# starsessions
+
+# TODO review
+# httpx
+
+# To update lockfile:
+# PATH="$(realpath ../../scripts):${PATH}"
+# NPM_UPDATER_VERSIONS="0.8.12" npm_updater_update_locks.sh
 
 MY_PN="Open WebUI"
 
+AT_TYPES_NODE_PV="25.5.0"
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="hatchling"
-NODE_SLOT="22" # From https://github.com/open-webui/open-webui/blob/v0.5.20/Dockerfile#L24
+NODE_SLOT="22" # From https://github.com/open-webui/open-webui/blob/v0.8.12/Dockerfile#L27
+NPM_AUDIT_FATAL=0
+PROTOBUF_CPP_SLOT="5"
 PYTHON_COMPAT=( "python3_"{11..12} )
+SHARP_PV="0.34.5"
+VIPS_PV="8.18.0"
 
-AT_TYPES_NODE_PV="20.11.30"
+NODE_SHARP_PATCHES=(
+	"${FILESDIR}/sharp-0.34.5-debug.patch"
+	"${FILESDIR}/sharp-0.34.5-format-fixes.patch"
+	"${FILESDIR}/sharp-0.34.5-static-libs.patch"
+)
 
 NPM_AUDIT_FIX_ARGS=(
 #	"--prefer-offline"
+	"--legacy-peer-deps"
 )
 
 NPM_INSTALL_ARGS=(
 #	"--prefer-offline"
+	"--legacy-peer-deps"
 )
 
 
-inherit desktop distutils-r1 pypi npm xdg
+inherit desktop distutils-r1 node-sharp pypi npm xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -35,7 +72,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-	KEYWORDS="~amd64"
+	#KEYWORDS="~amd64" # Dependencies are unpackaged, untested
 	S="${WORKDIR}/${PN}-${PV}"
 	SRC_URI="
 https://github.com/open-webui/open-webui/archive/refs/tags/v${PV}.tar.gz
@@ -53,42 +90,41 @@ LICENSE="
 	BSD
 "
 RESTRICT="mirror"
-SLOT="0/"$(ver_cut "1-2" "${PV}")
+SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-cuda ollama +openrc rag-ocr systemd
+all cuda dev mariadb ollama +openrc postgres rag-ocr unstructured systemd
 ebuild_revision_11
 "
 REQUIRED_USE="
+	all? (
+		postgres
+		unstructured
+	)
 	|| (
 		openrc
 		systemd
 	)
 "
+
 # For missing dev-python/moto[s3] rdepends
 MOTO_RDEPEND="
-	$(python_gen_cond_dep '
-		>=dev-python/moto-5.0.26[${PYTHON_USEDEP},s3(+)]
-		>=dev-python/py-partiql-parser-0.6.1[${PYTHON_USEDEP}]
-	')
-"
-# For missing >=dev-python/passlib-1.7.4[bcrypt(+)] rdepends
-PASSLIB_RDEPEND="
-	$(python_gen_cond_dep '
-		>=dev-python/passlib-1.7.4[${PYTHON_USEDEP},bcrypt(+)]
-		dev-python/bcrypt[${PYTHON_USEDEP}]
-	')
-"
-# For missing dev-python/pyjwt[crypto] rdepends
-PYJWT_RDEPEND="
-	$(python_gen_cond_dep '
-		dev-python/cryptography[${PYTHON_USEDEP}]
-	')
+	all? (
+		$(python_gen_cond_dep '
+			>=dev-python/moto-5.0.26[${PYTHON_USEDEP},s3(+)]
+			>=dev-python/py-partiql-parser-0.6.1[${PYTHON_USEDEP}]
+			>=dev-python/pyyaml-5.1[${PYTHON_USEDEP}]
+		')
+	)
 "
 # For missing dev-python/uvicorn[standard] rdepends
 UVICORN_RDEPEND="
 	$(python_gen_cond_dep '
-		>=dev-python/uvloop-0.14.0[${PYTHON_USEDEP}]
-		>=dev-python/watchfiles-0.13[${PYTHON_USEDEP}]
+		>=dev-python/httptools-0.6.3[${PYTHON_USEDEP}]
+		>=dev-python/python-dotenv-0.13[${PYTHON_USEDEP}]
+		>=dev-python/pyyaml-5.1[${PYTHON_USEDEP}]
+		>=dev-python/uvloop-0.15.1[${PYTHON_USEDEP}]
+		>=dev-python/watchfiles-0.20[${PYTHON_USEDEP}]
+		>=dev-python/websockets-10.4[${PYTHON_USEDEP}]
 	')
 "
 TORCH_TRIPLES=(
@@ -102,6 +138,8 @@ TORCH_TRIPLES=(
 	"2.6.0:2.6.0:0.21.0"
 	"2.7.1:2.7.1:0.22.1"
 	"2.8.0:2.8.0:0.23.0"
+	"2.9.0:2.9.0:0.24.1"
+	"2.9.1:2.9.1:0.24.1"
 )
 gen_torch_rdepend() {
 	local r
@@ -130,113 +168,169 @@ DOCKER_REPEND="
 	sci-ml/torchaudio:=
 	sci-ml/torchvision:=
 	rag-ocr? (
+		app-arch/zstd
 		media-video/ffmpeg
 		x11-libs/libSM
 		x11-libs/libXext
 	)
 "
-# Relaxed pymilvus
+
 RDEPEND+="
 	${DOCKER_REPEND}
-	${PASSLIB_RDEPEND}
-	${PYJWT_RDEPEND}
 	${MOTO_RDEPEND}
 	${UVICORN_RDEPEND}
 	$(python_gen_cond_dep '
-		>=dev-python/aiohttp-3.11.11[${PYTHON_USEDEP}]
-		>=dev-python/alembic-1.14.0[${PYTHON_USEDEP}]
-		>=dev-python/apscheduler-3.10.4[${PYTHON_USEDEP}]
-		>=dev-python/argon2-cffi-23.1.0[${PYTHON_USEDEP}]
-		>=dev-python/asgiref-3.8.1[${PYTHON_USEDEP}]
-		>=dev-python/Authlib-1.4.1[${PYTHON_USEDEP}]
-		>=dev-python/azure-ai-documentintelligence-1.0.0[${PYTHON_USEDEP}]
-		>=dev-python/azure-identity-1.20.0[${PYTHON_USEDEP}]
-		>=dev-python/azure-storage-blob-12.24.1[${PYTHON_USEDEP}]
-		>=dev-python/bcrypt-4.3.0[${PYTHON_USEDEP}]
-		>=dev-python/black-25.1.0[${PYTHON_USEDEP}]
-		>=dev-python/boto3-1.35.53[${PYTHON_USEDEP}]
-		>=dev-python/docker-7.1.0[${PYTHON_USEDEP}]
-		>=dev-python/docx2txt-0.8[${PYTHON_USEDEP}]
-		>=dev-python/duckduckgo-search-7.3.2[${PYTHON_USEDEP}]
-		>=dev-python/einops-0.8.0[${PYTHON_USEDEP}]
-		>=dev-python/elasticsearch-8.17.1[${PYTHON_USEDEP}]
-		>=dev-python/fake-useragent-1.5.1[${PYTHON_USEDEP}]
-		>=dev-python/fastapi-0.115.7[${PYTHON_USEDEP}]
-		>=dev-python/firecrawl-py-1.12.0[${PYTHON_USEDEP}]
-		>=dev-python/fpdf2-2.8.2[${PYTHON_USEDEP}]
-		>=dev-python/ftfy-6.2.3[${PYTHON_USEDEP}]
-		>=dev-python/gcp-storage-emulator-2024.08.03[${PYTHON_USEDEP}]
-		>=dev-python/google-cloud-storage-2.19.0[${PYTHON_USEDEP}]
-		>=dev-python/google-generativeai-0.7.2[${PYTHON_USEDEP}]
-		>=dev-python/googleapis-common-protos-1.63.2[${PYTHON_USEDEP}]
+		>=app-arch/brotli-1.1.0[${PYTHON_USEDEP}]
+		>=dev-python/accelerate-1.13.0[${PYTHON_USEDEP}]
+		>=dev-python/aiocache-0.12.3[${PYTHON_USEDEP}]
+		>=dev-python/aiofiles-25.1.0[${PYTHON_USEDEP}]
+		>=dev-python/aiohttp-3.13.2[${PYTHON_USEDEP}]
+		>=dev-python/alembic-1.18.4[${PYTHON_USEDEP}]
+		>=dev-python/anthropic-0.86.0[${PYTHON_USEDEP}]
+		>=dev-python/apscheduler-3.11.2[${PYTHON_USEDEP}]
+		>=dev-python/argon2-cffi-25.1.0[${PYTHON_USEDEP}]
+		>=dev-python/asgiref-3.11.1[${PYTHON_USEDEP}]
+		>=dev-python/async-timeout-5.0.1[${PYTHON_USEDEP}]
+		>=dev-python/Authlib-1.6.9[${PYTHON_USEDEP}]
+		>=dev-python/av-14.0.1[${PYTHON_USEDEP}]
+		>=dev-python/azure-ai-documentintelligence-1.0.2[${PYTHON_USEDEP}]
+		>=dev-python/azure-identity-1.25.2[${PYTHON_USEDEP}]
+		>=dev-python/azure-storage-blob-12.28.0[${PYTHON_USEDEP}]
+		>=dev-python/bcrypt-5.0.0[${PYTHON_USEDEP}]
+		>=dev-python/black-26.1.0[${PYTHON_USEDEP}]
+		>=dev-python/boto3-1.42.62[${PYTHON_USEDEP}]
+		>=dev-python/beautifulsoup4-4.14.3[${PYTHON_USEDEP}]
+		>=dev-python/chardet-5.2.0[${PYTHON_USEDEP}]
+		>=dev-python/cryptography-46.0.5[${PYTHON_USEDEP}]
+		>=dev-python/ddgs-9.11.3[${PYTHON_USEDEP}]
+		>=dev-python/docx2txt-0.9[${PYTHON_USEDEP}]
+		>=dev-python/einops-0.8.2[${PYTHON_USEDEP}]
+		>=dev-python/fake-useragent-2.2.0[${PYTHON_USEDEP}]
+		>=dev-python/fastapi-0.135.1[${PYTHON_USEDEP}]
+		>=dev-python/fpdf2-2.8.7[${PYTHON_USEDEP}]
+		>=dev-python/ftfy-6.3.1[${PYTHON_USEDEP}]
+		>=dev-python/google-api-python-client-2.193.0[${PYTHON_USEDEP}]
+		>=dev-python/google-auth-httplib2-0.3.0[${PYTHON_USEDEP}]
+		>=dev-python/google-auth-oauthlib-1.3.0[${PYTHON_USEDEP}]
+		>=dev-python/google-cloud-storage-3.9.0[${PYTHON_USEDEP}]
+		>=dev-python/google-genai-1.66.0[${PYTHON_USEDEP}]
+		>=dev-python/googleapis-common-protos-1.72.0[${PYTHON_USEDEP}]
+		>=dev-python/httpx-0.28.1[${PYTHON_USEDEP},socks(+),http2(+),zstd(+),cli(+),brotli(+)]
+		>=dev-python/itsdangerous-2.2.0[${PYTHON_USEDEP}]
 		>=dev-python/ldap3-2.9.1[${PYTHON_USEDEP}]
-		>=dev-python/loguru-0.7.2[${PYTHON_USEDEP}]
-		>=dev-python/markdown-3.7[${PYTHON_USEDEP}]
-		>=dev-python/nltk-3.9.1[${PYTHON_USEDEP}]
+		>=dev-python/loguru-0.7.3[${PYTHON_USEDEP}]
+		>=dev-python/markdown-3.10.2[${PYTHON_USEDEP}]
+		>=dev-python/msoffcrypto-tool-6.0.0[${PYTHON_USEDEP}]
+		>=dev-python/mcp-1.26.0[${PYTHON_USEDEP}]
+		>=dev-python/nltk-3.9.3[${PYTHON_USEDEP}]
+		>=dev-python/openai-2.29.0[${PYTHON_USEDEP}]
 		>=dev-python/openpyxl-3.1.5[${PYTHON_USEDEP}]
-		>=dev-python/opensearch-py-2.8.0[${PYTHON_USEDEP}]
-		>=dev-python/pandas-2.2.3[${PYTHON_USEDEP}]
-		>=dev-python/peewee-3.17.9[${PYTHON_USEDEP}]
-		>=dev-python/peewee-migrate-1.12.2[${PYTHON_USEDEP}]
-		>=dev-python/pgvector-0.3.5[${PYTHON_USEDEP}]
-		>=dev-python/playwright-bin-1.49.1[${PYTHON_USEDEP}]
-		>=dev-python/psycopg-2.9.9:2[${PYTHON_USEDEP}]
-		dev-python/psycopg:=
-		>=dev-python/pydantic-2.10.6[${PYTHON_USEDEP}]
-		>=dev-python/pyjwt-2.10.1[${PYTHON_USEDEP},crypto(+)]
-		>=dev-python/pymdown-extensions-10.14.2[${PYTHON_USEDEP}]
-		>=dev-python/pymysql-1.1.1[${PYTHON_USEDEP}]
-		>=dev-python/pypandoc-1.13[${PYTHON_USEDEP}]
-		>=dev-python/pypdf-4.3.1[${PYTHON_USEDEP}]
-		>=dev-python/pytest-8.3.2[${PYTHON_USEDEP}]
-		>=dev-python/pytest-docker-3.1.1[${PYTHON_USEDEP}]
-		>=dev-python/python-jose-3.4.0[${PYTHON_USEDEP}]
-		>=dev-python/python-multipart-0.0.18[${PYTHON_USEDEP}]
-		>=dev-python/python-pptx-1.0.0[${PYTHON_USEDEP}]
-		>=dev-python/python-socketio-5.11.3[${PYTHON_USEDEP}]
+		>=dev-python/opensearch-py-3.1.0[${PYTHON_USEDEP}]
+		>=dev-python/opentelemetry-api-1.40.0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
+		dev-python/opentelemetry-api:=
+		>=dev-python/opentelemetry-sdk-1.40.0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
+		dev-python/opentelemetry-sdk:=
+		>=dev-python/opentelemetry-exporter-otlp-1.40.0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
+		dev-python/opentelemetry-exporter-otlp:=
+		>=dev-python/opentelemetry-instrumentation-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
+		dev-python/opentelemetry-instrumentation:=
+		>=dev-python/opentelemetry-instrumentation-fastapi-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
+		dev-python/opentelemetry-instrumentation-fastapi:=
+		>=dev-python/opentelemetry-instrumentation-sqlalchemy-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
+		dev-python/opentelemetry-instrumentation-sqlalchemy:=
+		>=dev-python/opentelemetry-instrumentation-redis-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
+		dev-python/opentelemetry-instrumentation-redis:=
+		>=dev-python/opentelemetry-instrumentation-requests-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
+		dev-python/opentelemetry-instrumentation-requests:=
+		>=dev-python/opentelemetry-instrumentation-logging-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
+		dev-python/opentelemetry-instrumentation-logging:=
+		>=dev-python/opentelemetry-instrumentation-httpx-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
+		dev-python/opentelemetry-instrumentation-httpx:=
+		>=dev-python/opentelemetry-instrumentation-aiohttp-client-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
+		dev-python/opentelemetry-instrumentation-aiohttp-client:=
+		>=dev-python/opentelemetry-instrumentation-system-metrics-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
+		dev-python/opentelemetry-instrumentation-system-metrics:=
+		>=dev-python/pandas-3.0.1[${PYTHON_USEDEP}]
+		>=dev-python/pycrdt-0.12.47[${PYTHON_USEDEP}]
+		>=dev-python/pytz-2026.1_p1[${PYTHON_USEDEP}]
+		>=dev-python/peewee-3.19.0[${PYTHON_USEDEP}]
+		>=dev-python/peewee-migrate-1.14.3[${PYTHON_USEDEP}]
+		>=dev-python/psutil-7.2.2[${PYTHON_USEDEP}]
+		>=dev-python/pyarrow-20.0.0[${PYTHON_USEDEP}]
+		>=dev-python/pydantic-2.12.5[${PYTHON_USEDEP}]
+		>=dev-python/pydub-0.25.1[${PYTHON_USEDEP}]
+		>=dev-python/pyjwt-2.11.0[${PYTHON_USEDEP},crypto(+)]
+		>=dev-python/pymdown-extensions-10.21[${PYTHON_USEDEP}]
+		>=dev-python/pymysql-1.1.2[${PYTHON_USEDEP}]
+		>=dev-python/pypandoc-1.16.2[${PYTHON_USEDEP}]
+		>=dev-python/pypdf-6.7.5[${PYTHON_USEDEP}]
+		>=dev-python/python-jose-3.5.0[${PYTHON_USEDEP}]
+		>=dev-python/python-mimeparse-2.0.0[${PYTHON_USEDEP}]
+		>=dev-python/python-multipart-0.0.22[${PYTHON_USEDEP}]
+		>=dev-python/python-pptx-1.0.2[${PYTHON_USEDEP}]
+		>=dev-python/python-socketio-5.16.1[${PYTHON_USEDEP}]
 		>=dev-python/pytube-15.0.0[${PYTHON_USEDEP}]
 		>=dev-python/pyxlsb-1.0.10[${PYTHON_USEDEP}]
-		>=dev-python/qdrant-client-1.12.0[${PYTHON_USEDEP}]
 		>=dev-python/rank-bm25-0.2.2[${PYTHON_USEDEP}]
-		>=dev-python/RestrictedPython-8.0[${PYTHON_USEDEP}]
+		>=dev-python/redis-7.4.0[${PYTHON_USEDEP}]
+		>=dev-python/RestrictedPython-8.1[${PYTHON_USEDEP}]
 		>=dev-python/soundfile-0.13.1[${PYTHON_USEDEP}]
-		>=dev-python/uvicorn-0.34.0[${PYTHON_USEDEP},standard(+)]
-		>=dev-python/requests-2.32.3[${PYTHON_USEDEP}]
-		>=dev-python/sqlalchemy-2.0.38[${PYTHON_USEDEP}]
-		>=dev-python/validators-0.34.0[${PYTHON_USEDEP}]
-		>=dev-python/xlrd-2.0.1[${PYTHON_USEDEP}]
-		>=dev-python/youtube-transcript-api-0.6.3[${PYTHON_USEDEP}]
-		dev-python/aiocache[${PYTHON_USEDEP}]
-		dev-python/aiofiles[${PYTHON_USEDEP}]
-		dev-python/anthropic[${PYTHON_USEDEP}]
-		dev-python/async-timeout[${PYTHON_USEDEP}]
-		dev-python/extract-msg[${PYTHON_USEDEP}]
-		dev-python/google-api-python-client[${PYTHON_USEDEP}]
-		dev-python/google-auth-httplib2[${PYTHON_USEDEP}]
-		dev-python/google-auth-oauthlib[${PYTHON_USEDEP}]
-		dev-python/openai[${PYTHON_USEDEP}]
-		dev-python/psutil[${PYTHON_USEDEP}]
-		dev-python/pydub[${PYTHON_USEDEP}]
-		dev-python/pymongo[${PYTHON_USEDEP}]
-		dev-python/redis[${PYTHON_USEDEP}]
-		dev-python/tiktoken[${PYTHON_USEDEP}]
-		sci-ml/sentencepiece[${PYTHON_USEDEP}]
+		>=dev-python/starlette-compress-1.7.0[${PYTHON_USEDEP}]
+		>=dev-python/starsessions-2.2.1[${PYTHON_USEDEP},redis]
+		>=dev-python/uvicorn-0.41.0[${PYTHON_USEDEP},standard(+)]
+		>=dev-python/requests-2.32.5[${PYTHON_USEDEP}]
+		>=dev-python/sqlalchemy-2.0.48[${PYTHON_USEDEP}]
+		>=dev-python/tiktoken-0.12.0[${PYTHON_USEDEP}]
+		>=dev-python/validators-0.35.0[${PYTHON_USEDEP}]
+		>=dev-python/xlrd-2.0.2[${PYTHON_USEDEP}]
+		>=dev-python/youtube-transcript-api-1.2.4[${PYTHON_USEDEP}]
+		>=sci-ml/sentencepiece-0.2.1[${PYTHON_USEDEP}]
+		>=virtual/pillow-12.1.1[${PYTHON_USEDEP}]
+		all? (
+			>=dev-python/azure-search-documents-11.6.0[${PYTHON_USEDEP}]
+			>=dev-python/docker-7.1.0[${PYTHON_USEDEP}]
+			>=dev-python/elasticsearch-9.3.0[${PYTHON_USEDEP}]
+			>=dev-python/firecrawl-py-4.18.0[${PYTHON_USEDEP}]
+			>=dev-python/gcp-storage-emulator-2024.8.3[${PYTHON_USEDEP}]
+			>=dev-python/oracledb-3.4.2[${PYTHON_USEDEP}]
+			>=dev-python/pinecone-6.0.2[${PYTHON_USEDEP}]
+			>=dev-python/playwright-bin-1.58.0[${PYTHON_USEDEP}]
+			>=dev-python/pymongo-4.16.0[${PYTHON_USEDEP}]
+			>=dev-python/pytest-8.3.2[${PYTHON_USEDEP}]
+			>=dev-python/pytest-docker-3.2.5[${PYTHON_USEDEP}]
+			>=dev-python/qdrant-client-1.17.0[${PYTHON_USEDEP}]
+			>=dev-python/weaviate-client-4.20.3[${PYTHON_USEDEP}]
+		)
+		mariadb? (
+			>=dev-python/mariadb-1.1.14[${PYTHON_USEDEP}]
+		)
+		postgres? (
+			>=dev-python/psycopg-2.9.11:2[${PYTHON_USEDEP}]
+			dev-python/psycopg:=
+			>=dev-python/pgvector-0.4.2[${PYTHON_USEDEP}]
+		)
 	')
-	>=dev-python/chromadb-0.6.2[${PYTHON_SINGLE_USEDEP}]
-	>=dev-python/colbert-ai-0.2.21[${PYTHON_SINGLE_USEDEP}]
-	>=dev-python/faster-whisper-1.1.1[${PYTHON_SINGLE_USEDEP}]
-	>=dev-python/langchain-0.3.19[${PYTHON_SINGLE_USEDEP}]
-	>=dev-python/langchain-community-0.3.18[${PYTHON_SINGLE_USEDEP}]
-	>=dev-python/langfuse-2.44.0[${PYTHON_SINGLE_USEDEP}]
-	>=dev-python/pymilvus-2.4.0[${PYTHON_SINGLE_USEDEP}]
-	>=dev-python/rapidocr-onnxruntime-1.3.24[${PYTHON_SINGLE_USEDEP}]
-	>=dev-python/sentence-transformers-3.3.1[${PYTHON_SINGLE_USEDEP}]
-	>=dev-python/unstructured-0.16.17[${PYTHON_SINGLE_USEDEP}]
-	>=media-libs/opencv-4.11.0[${PYTHON_SINGLE_USEDEP},python]
-	sci-ml/transformers[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/chromadb-1.5.2[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/faster-whisper-1.2.1[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/langchain-1.2.10[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/langchain-classic-1.0.1[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/langchain-community-0.4.1[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/langchain-text-splitters-1.1.1[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/rapidocr-onnxruntime-1.4.4[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/sentence-transformers-5.2.3[${PYTHON_SINGLE_USEDEP}]
+	>=media-libs/opencv-4.13.0[${PYTHON_SINGLE_USEDEP},python]
+	>=sci-ml/transformers-5.3.0[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/onnxruntime-1.24.3[${PYTHON_SINGLE_USEDEP},python]
 	acct-group/${PN}
 	acct-user/${PN}
 	x11-misc/xdg-utils
+	all? (
+		>=dev-python/colbert-ai-0.2.22[${PYTHON_SINGLE_USEDEP}]
+		>=dev-python/pymilvus-2.6.9[${PYTHON_SINGLE_USEDEP}]
+	)
+	unstructured? (
+		>=dev-python/unstructured-0.18.31[${PYTHON_SINGLE_USEDEP}]
+	)
 "
 # xdg-utils is not an upstream requirement but for the launcher wrapper.
 DEPEND+="
@@ -245,6 +339,12 @@ DEPEND+="
 BDEPEND+="
 	net-libs/nodejs:${NODE_SLOT}[npm]
 	net-libs/nodejs:=
+	dev? (
+		$(python_gen_cond_dep '
+			>=dev-python/pytest-asyncio-1.0.0[${PYTHON_USEDEP}]
+		')
+		dev-util/ruff
+	)
 "
 DOCS=( "CHANGELOG.md" "README.md" )
 PATCHES=(
@@ -272,6 +372,7 @@ pkg_setup() {
 	python-single-r1_pkg_setup
 	npm_pkg_setup
 	check_virtual_mem
+	node-sharp_pkg_setup
 }
 
 npm_update_lock_install_post() {
@@ -335,6 +436,40 @@ npm_update_lock_install_post() {
 	patch_lockfile
 }
 
+_rebuild_sharp() {
+	einfo "Called _rebuild_sharp()"
+	rm -rf "${S}/node_modules/sharp/src/build"
+	local configuration="Debug"
+	local nconfiguration="Release"
+	if [[ "${NODE_SHARP_DEBUG}" != "1" ]] ; then
+		configuration="Release"
+		nconfiguration="Debug"
+	fi
+	local sharp_platform=$(node-sharp_get_platform)
+
+	if [[ "${PNPM_UPDATE_LOCK}" != "1" ]] ; then
+	        einfo "Rebuilding sharp in ${S}"
+	        pushd "${S}" >/dev/null 2>&1 || die
+			node-sharp_pnpm_rebuild_sharp
+			# Copy sharp binary to expected location
+			mkdir -p "node_modules/sharp/build/${configuration}" || die "Failed to create node_modules/sharp/build/${configuration}"
+			cp \
+				"node_modules/sharp/src/build/${configuration}/sharp-${sharp_platform}.node" \
+				"node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" \
+				|| die "Failed to copy sharp-${sharp_platform}.node"
+			ls -l "node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" || die "sharp-${sharp_platform}.node not found"
+
+		# Remove prebuilts
+			rm -rf "node_modules/.pnpm/@img+sharp-"*"@"* || true
+				node-sharp_verify_dedupe
+		popd >/dev/null 2>&1 || die
+	fi
+}
+
+#npm_unpack_install_pre() {
+#	:
+#}
+
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
@@ -345,10 +480,17 @@ src_unpack() {
 		#unpack ${A}
 		#die
 
+		if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+			export SHARP_IGNORE_GLOBAL_LIBVIPS="false"
+			export SHARP_FORCE_GLOBAL_LIBVIPS="true"
+		fi
+
 		npm_src_unpack
 		if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 ewarn "QA:  modify package.json build with just vite build"
 		fi
+
+		_rebuild_sharp
 	fi
 }
 
@@ -398,7 +540,7 @@ einfo "PWD: ${PWD}"
 	local uvicorn_path="/usr/lib/python-exec/${EPYTHON}/uvicorn"
 
 	local path
-	for path in "${file_paths[@]}" ; do
+	for path in ${file_paths[@]} ; do
 einfo "Editing ${PWD}/${path}"
 		sed -i \
 			-e "s|@CUDNN_LIB_PATH@|${cudnn_lib_path}|g" \
