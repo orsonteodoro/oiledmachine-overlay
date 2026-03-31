@@ -146,9 +146,6 @@ importers:
       '@signalapp/minimask':
         specifier: 1.0.1
         version: 1.0.1
-      '@signalapp/mute-state-change':
-        specifier: workspace:1.0.0
-        version: link:packages/mute-state-change
       '@signalapp/quill-cjs':
         specifier: 2.1.2
         version: 2.1.2
@@ -513,6 +510,9 @@ importers:
       '@signalapp/mock-server':
         specifier: 18.3.0
         version: 18.3.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@signalapp/mute-state-change':
+        specifier: workspace:*
+        version: link:packages/mute-state-change
       '@storybook/addon-a11y':
         specifier: 8.4.4
         version: 8.4.4(storybook@8.6.17(bufferutil@4.0.9)(prettier@3.7.4)(utf-8-validate@5.0.10))
@@ -819,6 +819,9 @@ importers:
       path-to-regexp:
         specifier: 8.4.0
         version: 8.4.0
+      picomatch:
+        specifier: 2.3.2
+        version: 2.3.2
       pixelmatch:
         specifier: 5.3.0
         version: 5.3.0
@@ -856,8 +859,8 @@ importers:
         specifier: 16.0.3
         version: 16.0.3(sass@1.80.7)(webpack@5.104.1)
       serialize-javascript:
-        specifier: 7.0.3
-        version: 7.0.3
+        specifier: 7.0.5
+        version: 7.0.5
       sinon:
         specifier: 19.0.2
         version: 19.0.2
@@ -909,6 +912,12 @@ importers:
       webpack-dev-server:
         specifier: 5.2.1
         version: 5.2.1(bufferutil@4.0.9)(debug@4.3.7)(utf-8-validate@5.0.10)(webpack-cli@5.1.4)(webpack@5.104.1)
+      yaml:
+        specifier: 1.10.3
+        version: 1.10.3
+      yauzl:
+        specifier: 3.2.1
+        version: 3.2.1
     optionalDependencies:
       fs-xattr:
         specifier: 0.3.0
@@ -946,12 +955,18 @@ importers:
       micromatch:
         specifier: 4.0.8
         version: 4.0.8
+      picomatch:
+        specifier: 2.3.2
+        version: 2.3.2
       qs:
         specifier: 6.14.2
         version: 6.14.2
       typescript:
         specifier: 5.6.3
         version: 5.6.3
+      yaml:
+        specifier: 1.10.3
+        version: 1.10.3
 
   packages/mute-state-change:
     dependencies:
@@ -8589,8 +8604,8 @@ packages:
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
 
-  picomatch@2.3.1:
-    resolution: {integrity: sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==}
+  picomatch@2.3.2:
+    resolution: {integrity: sha512-V7+vQEJ06Z+c5tSye8S+nHUfI51xoXIXjHQ99cQtKUkQqqO1kO/KCJUfZXuB47h/YBlDhah2H3hdUGXn8ie0oA==}
     engines: {node: '>=8.6'}
 
   pidtree@0.3.1:
@@ -9458,8 +9473,8 @@ packages:
     resolution: {integrity: sha512-8I8TjW5KMOKsZQTvoxjuSIa7foAwPWGOts+6o7sgjz41/qMD9VQHEDxi6PBvK2l0MXUmqZyNpUK+T2tQaaElvw==}
     engines: {node: '>=10'}
 
-  serialize-javascript@7.0.3:
-    resolution: {integrity: sha512-h+cZ/XXarqDgCjo+YSyQU/ulDEESGGf8AMK9pPNmhNSl/FzPl6L8pMp1leca5z6NuG6tvV/auC8/43tmovowww==}
+  serialize-javascript@7.0.5:
+    resolution: {integrity: sha512-F4LcB0UqUl1zErq+1nYEEzSHJnIwb3AF2XWB94b+afhrekOUijwooAYqFyRbjYkm2PAKBabx6oYv/xDxNi8IBw==}
     engines: {node: '>=20.0.0'}
 
   serve-index@1.9.1:
@@ -10648,8 +10663,8 @@ packages:
     resolution: {integrity: sha512-YgvUTfwqyc7UXVMrB+SImsVYSmTS8X/tSrtdNZMImM+n7+QTriRXyXim0mBrTXNeqzVF0KWGgHPeiyViFFrNDw==}
     engines: {node: '>=18'}
 
-  yaml@1.10.2:
-    resolution: {integrity: sha512-r3vXyErRCYJ7wg28yvBY5VSoAF8ZvlcW9/BwUzEtUsjvX/DKs24dIkuwjtuprwJJHsbyUbLApepYTR1BN4uHrg==}
+  yaml@1.10.3:
+    resolution: {integrity: sha512-vIYeF1u3CjlhAFekPPAk2h/Kv4T3mAkMox5OymRiJQB0spDP10LHvt+K7G9Ny6NuuMAb25/6n1qyUjAcGNf/AA==}
     engines: {node: '>= 6'}
 
   yaml@2.8.3:
@@ -10694,8 +10709,8 @@ packages:
   yauzl@2.10.0:
     resolution: {integrity: sha512-p4a9I6X6nu6IhoGmBqAcbJy1mlC4j27vEPZX9F4L4/vZT3Lyq1VkFHw/V/PUcB9Buo+DG3iHkT0x3Qya58zc3g==}
 
-  yauzl@3.2.0:
-    resolution: {integrity: sha512-Ow9nuGZE+qp1u4JIPvg+uCiUr7xGQWdff7JQSk5VGYTAZMDe2q8lxJ10ygv10qmSj031Ty/6FNJpLO4o1Sgc+w==}
+  yauzl@3.2.1:
+    resolution: {integrity: sha512-k1isifdbpNSFEHFJ1ZY4YDewv0IH9FR61lDetaRMD3j2ae3bIXGV+7c+LHCqtQGofSd8PIyV4X6+dHMAnSr60A==}
     engines: {node: '>=12'}
 
   yn@3.1.1:
@@ -11556,7 +11571,7 @@ snapshots:
       better-blockmap: 2.0.1
       commander: 12.1.0
       functional-red-black-tree: 1.0.1
-      yauzl: 3.2.0
+      yauzl: 3.2.1
 
   '@indutny/simple-windows-notifications@2.0.16':
     dependencies:
@@ -16162,7 +16177,7 @@ snapshots:
       import-fresh: 3.3.1
       parse-json: 5.2.0
       path-type: 4.0.0
-      yaml: 1.10.2
+      yaml: 1.10.3
 
   cosmiconfig@9.0.0(typescript@5.9.3):
     dependencies:
@@ -16773,7 +16788,7 @@ snapshots:
       strip-indent: 3.0.0
       unified: 9.2.2
       unist-util-visit: 2.0.3
-      yaml: 1.10.2
+      yaml: 1.10.3
     transitivePeerDependencies:
       - supports-color
 
@@ -19485,7 +19500,7 @@ snapshots:
   micromatch@4.0.8:
     dependencies:
       braces: 3.0.3
-      picomatch: 2.3.1
+      picomatch: 2.3.2
 
   microrouter@3.1.3:
     dependencies:
@@ -19603,7 +19618,7 @@ snapshots:
       log-symbols: 4.1.0
       minimatch: 10.2.1
       ms: 2.1.3
-      serialize-javascript: 7.0.3
+      serialize-javascript: 7.0.5
       strip-json-comments: 3.1.1
       supports-color: 8.1.1
       workerpool: 6.5.1
@@ -20107,7 +20122,7 @@ snapshots:
 
   picocolors@1.1.1: {}
 
-  picomatch@2.3.1: {}
+  picomatch@2.3.2: {}
 
   pidtree@0.3.1: {}
 
@@ -21108,7 +21123,7 @@ snapshots:
       type-fest: 0.13.1
     optional: true
 
-  serialize-javascript@7.0.3: {}
+  serialize-javascript@7.0.5: {}
 
   serve-index@1.9.1:
     dependencies:
@@ -21729,7 +21744,7 @@ snapshots:
       '@jridgewell/trace-mapping': 0.3.25
       jest-worker: 27.5.1
       schema-utils: 3.3.0
-      serialize-javascript: 7.0.3
+      serialize-javascript: 7.0.5
       terser: 5.39.0
       webpack: 5.104.1(@swc/core@1.10.16(@swc/helpers@0.5.15))(esbuild@0.25.9)(webpack-cli@5.1.4)
     optionalDependencies:
@@ -22513,7 +22528,7 @@ snapshots:
 
   yallist@5.0.0: {}
 
-  yaml@1.10.2: {}
+  yaml@1.10.3: {}
 
   yaml@2.8.3: {}
 
@@ -22590,7 +22605,7 @@ snapshots:
       buffer-crc32: 0.2.13
       fd-slicer: 1.1.0
 
-  yauzl@3.2.0:
+  yauzl@3.2.1:
     dependencies:
       buffer-crc32: 0.2.13
       pend: 1.2.0

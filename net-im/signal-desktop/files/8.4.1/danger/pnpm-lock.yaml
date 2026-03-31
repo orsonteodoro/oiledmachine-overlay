@@ -9,11 +9,11 @@ importers:
   .:
     dependencies:
       danger:
-        specifier: 12.3.4
-        version: 12.3.4
+        specifier: 13.0.4
+        version: 13.0.4
       endanger:
         specifier: 7.0.4
-        version: 7.0.4(danger@13.0.4)
+        version: 7.0.4(danger@12.3.4)
       typescript:
         specifier: 5.6.3
         version: 5.6.3
@@ -811,7 +811,7 @@ snapshots:
       strip-indent: 3.0.0
       unified: 9.2.2
       unist-util-visit: 2.0.3
-      yaml: 1.10.2
+      yaml: 1.10.3
     transitivePeerDependencies:
       - supports-color
 
@@ -1126,7 +1126,7 @@ snapshots:
   micromatch@4.0.8:
     dependencies:
       braces: 3.0.3
-      picomatch: 2.3.1
+      picomatch: 2.3.2
 
   mimic-fn@2.1.0: {}
 

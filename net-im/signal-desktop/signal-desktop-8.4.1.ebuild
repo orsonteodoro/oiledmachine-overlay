@@ -109,7 +109,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_57
+ebuild_revision_59
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -364,6 +364,7 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 
 				sed -i -e "s|flatted: 3.3.2|flatted: 3.4.2|g" "pnpm-lock.yaml" || die												# CVE-2026-33228; ZC, VS(DoS, DT, ID); High
 				sed -i -e "s|picomatch: 2.3.1|picomatch: 2.3.2|g" "pnpm-lock.yaml" || die											# CVE-2026-33671; DoS; High
+																								# CVE-2026-33672; ZC, DT; Moderate
 			popd >/dev/null 2>&1 || die
 			pushd "danger" >/dev/null 2>&1 || die
 				sed -i -e "s|'@octokit/plugin-paginate-rest': 2.21.3|'@octokit/plugin-paginate-rest': 9.2.2|g" "pnpm-lock.yaml" || die						# CVE-2025-25288, DoS, Moderate
@@ -388,6 +389,9 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 				sed -i -e "s|react-router: 6.10.0(react@18.3.1)|react-router: 6.30.2|g" "pnpm-lock.yaml" || die									# CVE-2025-68470; DT; Moderate
 				sed -i -e "s|jws: 3.2.2|jws: 3.2.3|g" "pnpm-lock.yaml" || die													# CVE-2025-65945; DT; High
 				sed -i -e "s|'@tootallnate/once': 2.0.0|'@tootallnate/once': 3.0.1|g" "pnpm-lock.yaml" || die									# CVE-2026-3449; DoS; Low
+				sed -i -e "s|picomatch: 2.3.1|picomatch: 2.3.2|g" "pnpm-lock.yaml" || die											# CVE-2026-33671; DoS; High
+																								# CVE-2026-33672; ZC, DT; Moderate
+				sed -i -e "s|yaml: 1.10.2|yaml: 1.10.3|g" "pnpm-lock.yaml" || die												# CVE-2026-33532; DoS; Moderate
 			popd >/dev/null 2>&1 || die
 			sed -i -e "s|'@babel/runtime': 7.26.7|'@babel/runtime': 7.26.10|g" "pnpm-lock.yaml" || die										# CVE-2025-27789, DoS, Moderate
 			sed -i -e "s|'@babel/helpers': 7.26.7|'@babel/helpers': 7.26.10|g" "pnpm-lock.yaml" || die										# CVE-2025-27789, DoS, Moderate
@@ -500,8 +504,13 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 
 			sed -i -e "s|flatted: 3.3.2|flatted: 3.4.2|g" "pnpm-lock.yaml" || die													# CVE-2026-33228; ZC, VS(DoS, DT, ID); High
 			sed -i -e "s|picomatch: 2.3.1|picomatch: 2.3.2|g" "pnpm-lock.yaml" || die												# CVE-2026-33671; DoS; High
+																								# CVE-2026-33672; ZC, DT; Moderate
 			sed -i -e "s|path-to-regexp: 8.2.0|path-to-regexp: 8.4.0|g" "pnpm-lock.yaml" || die											# CVE-2026-4926; ZC, DoS; High
 			sed -i -e "s|path-to-regexp: 0.1.12|path-to-regexp: 8.4.0|g" "pnpm-lock.yaml" || die											# CVE-2026-4867; ZC, DoS; High
+
+			sed -i -e "s|yauzl: 3.2.0|yauzl: 3.2.1|g" "pnpm-lock.yaml" || die													# CVE-2026-31988; ZC, DoS; Moderate
+			sed -i -e "s|serialize-javascript: 7.0.3|serialize-javascript: 7.0.5|g" "pnpm-lock.yaml" || die										# CVE-2026-34043; ZC, DoS; Moderate
+			sed -i -e "s|yaml: 1.10.2|yaml: 1.10.3|g" "pnpm-lock.yaml" || die													# CVE-2026-33532; DoS; Moderate
 		}
 		patch_edits_pnpm
 
@@ -547,6 +556,8 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 				"qs@6.14.2"
 				"jws@3.2.3"
 				"@tootallnate/once@3.0.1"
+				"picomatch@2.3.2"
+				"yaml@1.10.3"
 			)
 			epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
 		popd >/dev/null 2>&1 || die
@@ -597,6 +608,10 @@ ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in $
 			"svgo@3.3.3"				# CVE-2026-29074; DoS; High
 			"flatted@3.4.2"
 			"path-to-regexp@8.4.0"
+			"picomatch@2.3.2"
+			"yauzl@3.2.1"
+			"serialize-javascript@7.0.5"
+			"yaml@1.10.3"
 		)
 		epnpm install "${deps[@]}" -D "${PNPM_INSTALL_ARGS[@]}"
 
