@@ -109,7 +109,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_63
+ebuild_revision_64
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -174,14 +174,12 @@ eerror "Rust ${RUST_PV} required for @swc/core"
 }
 
 pnpm_unpack_post() {
+einfo "DEBUG:  Called pnpm_unpack_post()"
 	sed -i -e "s|postinstall|disabled_postinstall|g" "${S}/package.json" || die
 	eapply "${FILESDIR}/${PN}-7.90.0-tar-minimumReleaseAgeExclude.patch"
 #	sed -i -e "s|patchedDependencies|disabledPatchedDependencies|g" "${S}/package.json" || die
-}
-
-pnpm_unpack_install_post() {
-	:
-	#die
+#	sed -i -e "\|@types/fabric@4.5.3|d" "${S}/package.json" || die
+#	sed -i -e "\|fabric@4.6.0|d" "${S}/package.json" || die
 }
 
 src_unpack() {
@@ -192,6 +190,11 @@ src_unpack() {
 
 #		sed -i -e "s|patchedDependencies|disabledPatchedDependencies|g" "${S}/package.json" || die
 		eapply "${FILESDIR}/${PN}-7.90.0-tar-minimumReleaseAgeExclude.patch"
+
+einfo "DEBUG:  Applying sed based patches..."
+#		sed -i -e "\|@types/fabric@4.5.3|d" "${S}/package.json" || die
+#		sed -i -e "\|fabric@4.6.0|d" "${S}/package.json" || die
+		sed -i -e "s|postinstall|disabled_postinstall|g" "package.json" || die
 
 	# The package contains multiple pnpm-lock.yaml.
 		local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
@@ -206,8 +209,6 @@ src_unpack() {
 		addwrite "${EDISTDIR}"
 		addwrite "${PNPM_CACHE_FOLDER}"
 		mkdir -p "${PNPM_CACHE_FOLDER}"
-
-		sed -i -e "s|postinstall|disabled_postinstall|g" "package.json" || die
 
 		epnpm install "${PNPM_INSTALL_ARGS[@]}"
 
@@ -264,7 +265,7 @@ ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2(
 #ewarn "QA:  Manually change @octokit/request-error@2.1.0 references to 5.1.1 in ${S}/package.json"
 ewarn "QA:  Manually change '@tootallnate/once': 2.0.0 to '@tootallnate/once': 3.0.1 from ${S}/pnpm-lock.yaml and ${S}/danger/pnpm-lock.yaml"
 
-ewarn "QA:  Manually remove picomatch@2.3.1 from ${S}/sticker-creator/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove picomatch@2.3.1 from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove immutable@4.3.7 from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @remix-run/router@1.23.1 from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @remix-run/router@1.5.0 from ${S}/sticker-creator/pnpm-lock.yaml"
@@ -466,6 +467,7 @@ ewarn "QA:  Manually remove parse-git-config@2.0.3 in ${S}/danger/pnpm-lock.yaml
 			sed -i -e "s|qs: 6.14.1|qs: 6.14.2|g" "pnpm-lock.yaml" || die														# CVE-2026-2391; DoS, Low
 #			sed -i -e "s|minimatch: 3.1.2|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
 #			sed -i -e "s|\"fabric\": \"4.6.0\"|\"fabric\": \"7.2.0\"|g" "package.json" || die											# CVE-2026-27013; DoS, DT, ID, High
+#			sed -i -e "s|\"@types/fabric\": \"4.5.3\"|\"@types/fabric\": \"5.3.11\"|g" "package.json" || die									# Bump for fabric
 			sed -i -e "s|js-yaml: 4.1.0|js-yaml: 4.1.1|g" "pnpm-lock.yaml" || die													# CVE-2025-64718; DT; Moderate
 			sed -i -e "s|js-yaml: 3.14.1|js-yaml: 4.1.1|g" "pnpm-lock.yaml" || die													# CVE-2025-64718; DT; Moderate
 			sed -i -e "s|js-yaml: 3.14.2|js-yaml: 4.1.1|g" "pnpm-lock.yaml" || die													# CVE-2025-64718; DT; Moderate
@@ -514,6 +516,7 @@ ewarn "QA:  Manually remove parse-git-config@2.0.3 in ${S}/danger/pnpm-lock.yaml
 			sed -i -e "s|yauzl: 3.2.0|yauzl: 3.2.1|g" "pnpm-lock.yaml" || die													# CVE-2026-31988; ZC, DoS; Moderate
 			sed -i -e "s|serialize-javascript: 7.0.3|serialize-javascript: 7.0.5|g" "pnpm-lock.yaml" || die										# CVE-2026-34043; ZC, DoS; Moderate
 			sed -i -e "s|yaml: 1.10.2|yaml: 1.10.3|g" "pnpm-lock.yaml" || die													# CVE-2026-33532; DoS; Moderate
+			sed -i -e "s|'@xmldom/xmldom': 0.8.10|'@xmldom/xmldom': 0.8.12|g" "pnpm-lock.yaml" || die										# CVE-2026-34601; ZC, DT; High
 		}
 		patch_edits_pnpm
 
@@ -579,6 +582,7 @@ ewarn "QA:  Manually remove parse-git-config@2.0.3 in ${S}/danger/pnpm-lock.yaml
 			"qs@6.14.2"
 #			"minimatch@10.2.1"
 #			"fabric@7.2.0"
+#			"@types/fabric@5.3.11"
 			"js-yaml@4.1.1"
 			"ajv@8.18.0"
 			"glob@10.5.0"
@@ -615,6 +619,7 @@ ewarn "QA:  Manually remove parse-git-config@2.0.3 in ${S}/danger/pnpm-lock.yaml
 			"yauzl@3.2.1"
 			"serialize-javascript@7.0.5"
 			"yaml@1.10.3"
+			"@xmldom/xmldom@0.8.12"
 		)
 		epnpm install "${deps[@]}" -D "${PNPM_INSTALL_ARGS[@]}"
 
