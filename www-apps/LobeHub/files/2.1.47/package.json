@@ -347,6 +347,7 @@
     "langfuse": "^3.38.6",
     "langfuse-core": "^3.38.6",
     "lexical": "^0.39.0",
+    "lodash": "4.17.23",
     "lucide-react": "^0.562.0",
     "mammoth": "^1.11.0",
     "marked": "^17.0.1",

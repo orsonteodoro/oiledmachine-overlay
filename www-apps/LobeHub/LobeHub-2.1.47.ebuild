@@ -256,7 +256,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management indexeddb minio +openrc +pwa +postgres +rag redis +s3 systemd
-ebuild_revision_89
+ebuild_revision_90
 "
 REQUIRED_USE="
 	postgres
@@ -600,18 +600,18 @@ pnpm_dedupe_post() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 ewarn "QA:  Manually remove yaml@2.3.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change yaml: 2.3.3 to yaml: 2.8.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove nodemailer@7.0.13 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change nodemailer: version: 7.0.13 to version: 8.0.4 specifier: ^7.0.12 to specifier: ^8.0.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove nodemailer@7.0.13 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually change nodemailer: version: 7.0.13 to version: 8.0.4 specifier: ^7.0.12 to specifier: ^8.0.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove serialize-javascript@7.0.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove path-to-regexp@8.2.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change path-to-regexp: 8.2.0 to path-to-regexp: 8.4.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @xmldom/xmldom@0.8.11 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @xmldom/xmldom@0.9.8 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove @xmldom/xmldom@0.8.11 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove @xmldom/xmldom@0.9.8 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove ai@4.3.19 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @tootallnate/once@2.0.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove serialize-javascript@6.0.2 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
-ewarn "QA:  Manually remove undici@6.21.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove undici@6.21.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually change undici: 6.21.3 to undici: 7.24.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 ewarn "QA:  Manually remove file-type@16.5.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"	# CVE-2026-31808; ZC, DoS; Moderate
@@ -761,6 +761,7 @@ ewarn "QA:  Manually change electron specifier to ^41.0.0 and version to 41.0.3 
 			sed -i -e "s|path-to-regexp: 8.2.0|path-to-regexp: 8.4.0|g" "package.json" || die
 			sed -i -e "s|happy-dom: 20.8.8|happy-dom: 20.8.9|g" "package.json" || die
 			sed -i -e "s|yaml: 2.3.3|yaml: 2.8.3|g" "package.json" || die
+			sed -i -e "s|lodash: 4.17.21|lodash: 4.17.23|g" "package.json" || die
 		}
 
 		pnpm_patch_lockfile
@@ -808,6 +809,7 @@ ewarn "QA:  Manually change electron specifier to ^41.0.0 and version to 41.0.3 
 			"@xmldom/xmldom@0.9.9"								# CVE-2026-34601; ZC, DT; High
 			"path-to-regexp@8.4.0"								# CVE-2026-4923; ZC, DoS; High
 			"nodemailer@8.0.4"								# GHSA-c7w3-x93f-qmm8; VS(DT)
+			"lodash@4.17.23"								# CVE-2025-13465; ZC, VS(DoS, DT), SS(DoS, DT, ID); Moderate
 		)
 		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 
