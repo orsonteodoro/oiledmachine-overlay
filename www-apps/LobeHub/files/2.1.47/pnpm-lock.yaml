@@ -32871,7 +32871,7 @@ snapshots:
       esast-util-from-estree: 2.0.0
       vfile-message: 4.0.3
 
-  esbuild-register@3.6.0(esbuild@0.27.4)
+  esbuild-register@3.6.0(esbuild@0.27.4):
     dependencies:
       debug: 4.4.3(supports-color@10.2.2)
       esbuild: 0.27.4

@@ -256,7 +256,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management indexeddb minio +openrc +pwa +postgres +rag redis +s3 systemd
-ebuild_revision_90
+ebuild_revision_91
 "
 REQUIRED_USE="
 	postgres
@@ -692,6 +692,7 @@ ewarn "QA:  Manually remove @octokit/plugin-rest-endpoint-methods@7.2.3 from ${S
 ewarn "QA:  Manually add ai@5.0.52(zod@3.25.76) for @upstash/workflow depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove electron@34.5.8 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change electron specifier to ^41.0.0 and version to 41.0.3 for packages/electron-client-ipc depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change sbuild-register@3.6.0(esbuild@0.27.4) to sbuild-register@3.6.0"
 
 		# DoS = Denial of Service
 		# DT = Data Tampering
