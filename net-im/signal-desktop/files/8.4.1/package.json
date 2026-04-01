@@ -186,7 +186,7 @@
     "humanize-duration": "3.27.1",
     "intl-tel-input": "24.7.0",
     "js-yaml": "4.1.1",
-    "jws": "3.2.2",
+    "jws": "3.2.3",
     "linkify-it": "5.0.0",
     "lodash": "4.17.23",
     "lru-cache": "11.0.2",
@@ -346,6 +346,7 @@
     "eslint-plugin-more": "1.0.5",
     "eslint-plugin-react": "7.31.10",
     "execa": "5.1.1",
+    "flatted": "3.4.2",
     "html-webpack-plugin": "5.6.3",
     "http-proxy-middleware": "2.0.9",
     "http-server": "14.1.1",
@@ -360,6 +361,7 @@
     "on-headers": "1.1.0",
     "p-limit": "3.1.0",
     "path-to-regexp": "8.4.0",
+    "picomatch": "2.3.2",
     "pixelmatch": "5.3.0",
     "pngjs": "7.0.0",
     "postcss": "8.5.3",
@@ -372,6 +374,7 @@
     "resolve-url-loader": "5.0.0",
     "sass": "1.80.7",
     "sass-loader": "16.0.3",
+    "serialize-javascript": "7.0.5",
     "sinon": "19.0.2",
     "style-loader": "4.0.0",
     "stylelint": "16.10.0",
@@ -388,7 +391,9 @@
     "underscore": "1.13.8",
     "wait-on": "8.0.1",
     "webpack-cli": "5.1.4",
-    "webpack-dev-server": "5.2.1"
+    "webpack-dev-server": "5.2.1",
+    "yaml": "1.10.3",
+    "yauzl": "3.2.1"
   },
   "pnpm": {
     "overrides": {

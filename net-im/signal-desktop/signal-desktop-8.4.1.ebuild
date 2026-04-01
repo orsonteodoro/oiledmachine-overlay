@@ -109,7 +109,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_62
+ebuild_revision_63
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -270,15 +270,15 @@ ewarn "QA:  Manually remove @remix-run/router@1.23.1 from ${S}/sticker-creator/p
 ewarn "QA:  Manually remove @remix-run/router@1.5.0 from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove ajv@6.12.6 from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove react-router@6.10.0 from ${S}/sticker-creator/pnpm-lock.yaml"
-ewarn "QA:  Manually remove minimatch@3.1.2 from ${S}/sticker-creator/pnpm-lock.yaml"
-ewarn "QA:  Manually remove minimatch@5.1.6 from ${S}/sticker-creator/pnpm-lock.yaml"
+ewarn "QA:  Manually remove minimatch@3.1.2 from ${S}/sticker-creator/pnpm-lock.yaml"	# Skip
+ewarn "QA:  Manually remove minimatch@5.1.6 from ${S}/sticker-creator/pnpm-lock.yaml"	# Skip
 ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild and all @esbuild/<arch>@0.18.20 associated packages from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove esbuild@0.18.20 and arch implementations from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @esbuild/<arch>@0.21.5 and associated packages from ${S}/sticker-creator/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove @esbuild/<arch>@0.24.2 or earlier and associated packages from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually change esbuild: 0.21.5 to esbuild: 0.25.9 in ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove vite@4.5.3 in ${S}/sticker-creator/pnpm-lock.yaml"
-#ewarn "CQA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/core from ${S}/danger/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/core from ${S}/danger/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/plugin-paginate-rest from ${S}/danger/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/plugin-request-log from ${S}/danger/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/request from ${S}/danger/pnpm-lock.yaml"
@@ -365,8 +365,8 @@ ewarn "QA:  Manually remove parse-git-config@2.0.3 in ${S}/danger/pnpm-lock.yaml
 				sed -i -e "s|immutable: 4.3.7|immutable: 5.1.5|g" "pnpm-lock.yaml" || die											# CVE-2026-29063; ZC, VS(ID); High
 				sed -i -e "s|underscore: 1.13.7|underscore: 1.13.8|g" "pnpm-lock.yaml" || die											# CVE-2026-27601; ZC, DoS; High
 
-#				sed -i -e "s|flatted: 3.3.2|flatted: 3.4.2|g" "pnpm-lock.yaml" || die												# CVE-2026-33228; ZC, VS(DoS, DT, ID); High
-#				sed -i -e "s|picomatch: 2.3.1|picomatch: 2.3.2|g" "pnpm-lock.yaml" || die											# CVE-2026-33671; DoS; High
+				sed -i -e "s|flatted: 3.3.2|flatted: 3.4.2|g" "pnpm-lock.yaml" || die												# CVE-2026-33228; ZC, VS(DoS, DT, ID); High
+				sed -i -e "s|picomatch: 2.3.1|picomatch: 2.3.2|g" "pnpm-lock.yaml" || die											# CVE-2026-33671; DoS; High
 																								# CVE-2026-33672; ZC, DT; Moderate
 			popd >/dev/null 2>&1 || die
 			pushd "danger" >/dev/null 2>&1 || die
@@ -392,9 +392,9 @@ ewarn "QA:  Manually remove parse-git-config@2.0.3 in ${S}/danger/pnpm-lock.yaml
 				sed -i -e "s|react-router: 6.10.0(react@18.3.1)|react-router: 6.30.2|g" "pnpm-lock.yaml" || die									# CVE-2025-68470; DT; Moderate
 				sed -i -e "s|jws: 3.2.2|jws: 3.2.3|g" "pnpm-lock.yaml" || die													# CVE-2025-65945; DT; High
 				sed -i -e "s|'@tootallnate/once': 2.0.0|'@tootallnate/once': 3.0.1|g" "pnpm-lock.yaml" || die									# CVE-2026-3449; DoS; Low
-#				sed -i -e "s|picomatch: 2.3.1|picomatch: 2.3.2|g" "pnpm-lock.yaml" || die											# CVE-2026-33671; DoS; High
+				sed -i -e "s|picomatch: 2.3.1|picomatch: 2.3.2|g" "pnpm-lock.yaml" || die											# CVE-2026-33671; DoS; High
 																								# CVE-2026-33672; ZC, DT; Moderate
-#				sed -i -e "s|yaml: 1.10.2|yaml: 1.10.3|g" "pnpm-lock.yaml" || die												# CVE-2026-33532; DoS; Moderate
+				sed -i -e "s|yaml: 1.10.2|yaml: 1.10.3|g" "pnpm-lock.yaml" || die												# CVE-2026-33532; DoS; Moderate
 			popd >/dev/null 2>&1 || die
 			sed -i -e "s|'@babel/runtime': 7.26.7|'@babel/runtime': 7.26.10|g" "pnpm-lock.yaml" || die										# CVE-2025-27789, DoS, Moderate
 			sed -i -e "s|'@babel/helpers': 7.26.7|'@babel/helpers': 7.26.10|g" "pnpm-lock.yaml" || die										# CVE-2025-27789, DoS, Moderate
@@ -500,20 +500,20 @@ ewarn "QA:  Manually remove parse-git-config@2.0.3 in ${S}/danger/pnpm-lock.yaml
 			sed -i -e "s|storybook: 8.6.15(bufferutil@4.0.9)(prettier@3.7.4)(utf-8-validate@5.0.10)|storybook: 8.6.17|g" "pnpm-lock.yaml" || die					# CVE-2025-68429, ZC, DoS, DT, ID, High
 																								# CVE-2026-27148; DoS, DT, ID; High
 			sed -i -e "s|immutable: 5.0.3|immutable: 5.1.5|g" "pnpm-lock.yaml" || die												# CVE-2026-29063; ZC, VS(ID); High
-#			sed -i -e "s|serialize-javascript: 6.0.2|serialize-javascript: 7.0.3|g" "pnpm-lock.yaml" || die										# GHSA-5c6j-r48x-rmvq; ZC, RCE, DoS, DT, ID; High
+			sed -i -e "s|serialize-javascript: 6.0.2|serialize-javascript: 7.0.5|g" "pnpm-lock.yaml" || die										# GHSA-5c6j-r48x-rmvq; ZC, RCE, DoS, DT, ID; High
 
 			sed -i -e "s|'@tootallnate/once': 2.0.0|'@tootallnate/once': 3.0.1|g" "pnpm-lock.yaml" || die										# CVE-2026-3449; DoS; Low
 			sed -i -e "s|underscore: 1.13.7|underscore: 1.13.8|g" "pnpm-lock.yaml" || die												# CVE-2026-27601; ZC, DoS; High
 
-#			sed -i -e "s|flatted: 3.3.2|flatted: 3.4.2|g" "pnpm-lock.yaml" || die													# CVE-2026-33228; ZC, VS(DoS, DT, ID); High
-#			sed -i -e "s|picomatch: 2.3.1|picomatch: 2.3.2|g" "pnpm-lock.yaml" || die												# CVE-2026-33671; DoS; High
+			sed -i -e "s|flatted: 3.3.2|flatted: 3.4.2|g" "pnpm-lock.yaml" || die													# CVE-2026-33228; ZC, VS(DoS, DT, ID); High
+			sed -i -e "s|picomatch: 2.3.1|picomatch: 2.3.2|g" "pnpm-lock.yaml" || die												# CVE-2026-33671; DoS; High
 																								# CVE-2026-33672; ZC, DT; Moderate
 			sed -i -e "s|path-to-regexp: 8.2.0|path-to-regexp: 8.4.0|g" "pnpm-lock.yaml" || die											# CVE-2026-4926; ZC, DoS; High
 			sed -i -e "s|path-to-regexp: 0.1.12|path-to-regexp: 8.4.0|g" "pnpm-lock.yaml" || die											# CVE-2026-4867; ZC, DoS; High
 
-#			sed -i -e "s|yauzl: 3.2.0|yauzl: 3.2.1|g" "pnpm-lock.yaml" || die													# CVE-2026-31988; ZC, DoS; Moderate
-#			sed -i -e "s|serialize-javascript: 7.0.3|serialize-javascript: 7.0.5|g" "pnpm-lock.yaml" || die										# CVE-2026-34043; ZC, DoS; Moderate
-#			sed -i -e "s|yaml: 1.10.2|yaml: 1.10.3|g" "pnpm-lock.yaml" || die													# CVE-2026-33532; DoS; Moderate
+			sed -i -e "s|yauzl: 3.2.0|yauzl: 3.2.1|g" "pnpm-lock.yaml" || die													# CVE-2026-31988; ZC, DoS; Moderate
+			sed -i -e "s|serialize-javascript: 7.0.3|serialize-javascript: 7.0.5|g" "pnpm-lock.yaml" || die										# CVE-2026-34043; ZC, DoS; Moderate
+			sed -i -e "s|yaml: 1.10.2|yaml: 1.10.3|g" "pnpm-lock.yaml" || die													# CVE-2026-33532; DoS; Moderate
 		}
 		patch_edits_pnpm
 
@@ -542,8 +542,8 @@ ewarn "QA:  Manually remove parse-git-config@2.0.3 in ${S}/danger/pnpm-lock.yaml
 				"rollup@3.30.0"
 				"vite@5.4.21"
 				"immutable@5.1.5"
-#				"flatted@3.4.2"
-#				"picomatch@2.3.2"
+				"flatted@3.4.2"
+				"picomatch@2.3.2"
 			)
 			epnpm install "${deps[@]}" -D "${PNPM_INSTALL_ARGS[@]}"
 		popd >/dev/null 2>&1 || die
@@ -560,8 +560,8 @@ ewarn "QA:  Manually remove parse-git-config@2.0.3 in ${S}/danger/pnpm-lock.yaml
 				"qs@6.14.2"
 				"jws@3.2.3"
 				"@tootallnate/once@3.0.1"
-#				"picomatch@2.3.2"
-#				"yaml@1.10.3"
+				"picomatch@2.3.2"
+				"yaml@1.10.3"
 			)
 			epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
 		popd >/dev/null 2>&1 || die
@@ -607,15 +607,14 @@ ewarn "QA:  Manually remove parse-git-config@2.0.3 in ${S}/danger/pnpm-lock.yaml
 			"tmp@0.2.4"
 			"on-headers@1.1.0"
 			"immutable@5.1.5"
-#			"serialize-javascript@7.0.3"
 			"@tootallnate/once@3.0.1"
 			"svgo@3.3.3"				# CVE-2026-29074; DoS; High
-#			"flatted@3.4.2"
+			"flatted@3.4.2"
 			"path-to-regexp@8.4.0"
-#			"picomatch@2.3.2"
-#			"yauzl@3.2.1"
-#			"serialize-javascript@7.0.5"
-#			"yaml@1.10.3"
+			"picomatch@2.3.2"
+			"yauzl@3.2.1"
+			"serialize-javascript@7.0.5"
+			"yaml@1.10.3"
 		)
 		epnpm install "${deps[@]}" -D "${PNPM_INSTALL_ARGS[@]}"
 
