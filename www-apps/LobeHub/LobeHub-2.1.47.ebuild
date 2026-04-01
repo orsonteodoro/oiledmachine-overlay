@@ -598,6 +598,7 @@ pnpm_audit_post() {
 
 pnpm_dedupe_post() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
+ewarn "QA:  Manually remove lodash@4.17.21 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove yaml@2.3.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change yaml: 2.3.3 to yaml: 2.8.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove nodemailer@7.0.13 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
