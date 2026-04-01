@@ -256,7 +256,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management indexeddb minio +openrc +pwa +postgres +rag redis +s3 systemd
-ebuild_revision_91
+ebuild_revision_92
 "
 REQUIRED_USE="
 	postgres
@@ -1069,7 +1069,7 @@ _install_pwa_webapp() {
 	doins -r "${S}/.next/standalone/"* # Contains node_modules, .next, server.js
 
 	# Copied again to fix the database migration issue and database driver switch issue.
-	rm -e "${ED}/${_PREFIX}/node_modules/"*
+	rm -rf "${ED}/${_PREFIX}/node_modules/"*
 	insinto "${_PREFIX}/node_modules"
 	doins -r "${S}/node_modules/"*
 
