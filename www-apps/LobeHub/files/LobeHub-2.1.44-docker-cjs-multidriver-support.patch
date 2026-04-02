@@ -1,0 +1,119 @@
+--- a/scripts/migrateServerDB/docker.cjs.orig	2026-03-20 03:39:27.000000000 -0700
++++ b/scripts/migrateServerDB/docker.cjs	2026-03-25 15:12:29.890015488 -0700
+@@ -1,40 +1,86 @@
+-const { join } = require('node:path');
+-const { Pool } = require('pg');
+-const { drizzle } = require('drizzle-orm/node-postgres');
+-const migrator = require('drizzle-orm/node-postgres/migrator');
+-const { PGVECTOR_HINT } = require('./errorHint');
++// /opt/lobehub/docker.cjs - CommonJS version with multi-driver support
++const path = require('path');
++const postgres = require('postgres');
++const { drizzle: postgresJsDrizzle } = require('drizzle-orm/postgres-js');
++const { migrate: postgresJsMigrate } = require('drizzle-orm/postgres-js/migrator');
+ 
+-if (!process.env.DATABASE_URL) {
+-  throw new Error('DATABASE_URL is not set, please set it in your environment variables.');
+-}
++const { Pool } = require('pg');
++const { drizzle: nodeDrizzle } = require('drizzle-orm/node-postgres');
++const { migrate: nodeMigrate } = require('drizzle-orm/node-postgres/migrator');
+ 
+-const client = new Pool({ connectionString: process.env.DATABASE_URL });
++const { neonConfig, Pool: NeonPool } = require('@neondatabase/serverless');
++const { drizzle: neonDrizzle } = require('drizzle-orm/neon-serverless');
++const { migrate: neonMigrate } = require('drizzle-orm/neon-serverless/migrator');
+ 
+-const db = drizzle(client);
++const { PGVECTOR_HINT } = require('./errorHint.js');
+ 
+ const runMigrations = async () => {
+   console.log('[Database] Start to migration...');
+-  await migrator.migrate(db, {
+-    migrationsFolder: join(__dirname, './migrations'),
+-  });
+-
+-  console.log('✅ database migration pass.');
+-  console.log('-------------------------------------');
+-  // eslint-disable-next-line unicorn/no-process-exit
+-  process.exit(0);
+-};
+ 
+-// eslint-disable-next-line unicorn/prefer-top-level-await
+-runMigrations().catch((err) => {
+-  console.error(
+-    '❌ Database migrate failed. Please check your database is valid and DATABASE_URL is set correctly. The error detail is below:',
+-  );
+-  console.error(err);
++  if (!process.env.DATABASE_URL) {
++    throw new Error('DATABASE_URL is not set, please set it in your environment variables.');
++  }
++
++  const driver = (process.env.DATABASE_DRIVER || 'node').toLowerCase().trim();
++
++  console.log(`[Database] Using driver: ${driver}`);
+ 
+-  if (err.message.includes('extension "vector" is not available')) {
+-    console.info(PGVECTOR_HINT);
++  try {
++    switch (driver) {
++      case 'postgres.js': {
++        const client = postgres(process.env.DATABASE_URL, {
++          max: 5,
++          prepare: false,
++        });
++        const db = postgresJsDrizzle(client);
++        await postgresJsMigrate(db, {
++          migrationsFolder: path.join(__dirname, './migrations'),
++        });
++        await client.end();
++        break;
++      }
++
++      case 'node':
++      case 'pg':
++      case 'node-postgres': {
++        const client = new Pool({ connectionString: process.env.DATABASE_URL });
++        const db = nodeDrizzle(client);
++        await nodeMigrate(db, {
++          migrationsFolder: path.join(__dirname, './migrations'),
++        });
++        await client.end();
++        break;
++      }
++
++      case 'neon':
++      default: {
++        if (process.env.MIGRATION_DB === '1') {
++          neonConfig.webSocketConstructor = require('ws');
++        }
++        const client = new NeonPool({ connectionString: process.env.DATABASE_URL });
++        const db = neonDrizzle(client);
++        await neonMigrate(db, {
++          migrationsFolder: path.join(__dirname, './migrations'),
++        });
++        await client.end();
++        break;
++      }
++    }
++
++    console.log('✅ database migration pass.');
++    console.log('-------------------------------------');
++    process.exit(0);
++
++  } catch (err) {
++    console.error('❌ Database migrate failed. Please check your database is valid and DATABASE_URL is set correctly.');
++    console.error(err);
++
++    if (err.message.includes('extension "vector" is not available')) {
++      console.info(PGVECTOR_HINT);
++    }
++
++    process.exit(1);
+   }
++};
+ 
+-  // eslint-disable-next-line unicorn/no-process-exit
+-  process.exit(1);
+-});
++runMigrations();

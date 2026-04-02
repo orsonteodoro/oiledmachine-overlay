@@ -257,7 +257,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management indexeddb minio +openrc +pwa +postgres +rag redis +s3 systemd
-ebuild_revision_95
+ebuild_revision_97
 "
 REQUIRED_USE="
 	postgres
@@ -530,6 +530,8 @@ pnpm_unpack_post() {
 	eapply "${FILESDIR}/${MY_PN2}-2.1.34-hardcoded-paths.patch"
 	eapply "${FILESDIR}/lobe-chat-1.65.0-sharp-declaration.patch"
 	eapply "${FILESDIR}/${PN}-2.1.33-use-e965-xlsx.patch"
+	eapply "${FILESDIR}/${PN}-2.1.44-postgresjs-driver-support.patch"
+	eapply "${FILESDIR}/${PN}-2.1.44-docker-cjs-multidriver-support.patch"
 
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 	# Fixes to unmet peer or missing references
@@ -562,7 +564,7 @@ pnpm_unpack_post() {
 			"@better-auth/expo@1.5.6"							# Same version as better-ath
 
 	# pg alternative
-#			"postgres@3.4.8"
+			"postgres@3.4.8"
 		)
 		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 	fi
@@ -692,7 +694,7 @@ ewarn "QA:  Manually remove @octokit/plugin-rest-endpoint-methods@7.2.3 from ${S
 #ewarn "QA:  Manually dedupe @babel/helper-module-transforms in ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually add ai@5.0.52(zod@3.25.76) for @upstash/workflow depends in ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove electron@34.5.8 in ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change electron specifier to ^41.0.0 and version to 41.0.3 for packages/electron-client-ipc depends in ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change electron: specifier to ^41.0.0 and version to 41.0.3 for packages/electron-client-ipc depends in ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change esbuild-register@3.6.0(esbuild@0.27.5) to esbuild-register@3.6.0 in ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change esbuild-register: 3.6.0(esbuild@0.27.5) to esbuild-register: 3.6.0 in in ${S}/pnpm-lock.yaml"
 
@@ -1087,12 +1089,14 @@ _install_pwa_webapp() {
 	fi
 
 	# Copy database dependencies and drivers
-	insinto "${_PREFIX}/node_modules/.pnpm"
-	doins -r "${S}/node_modules/.pnpm/"*
+	#insinto "${_PREFIX}/node_modules/.pnpm"
+	#doins -r "${S}/node_modules/.pnpm/"*
 	insinto "${_PREFIX}/node_modules/pg"
 	doins -r "${S}/node_modules/pg/"*
 	insinto "${_PREFIX}/node_modules/drizzle-orm"
 	doins -r "${S}/node_modules/drizzle-orm/"*
+	insinto "${_PREFIX}/node_modules/postgres"
+	doins -r "${S}/node_modules/postgres/"*
 
 	sed -i \
 		-e "s|@NODE_SLOT@|${NODE_SLOT}|g" \
