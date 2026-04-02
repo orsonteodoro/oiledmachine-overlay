@@ -38,6 +38,7 @@ EAPI=8
 # 2.1.36 - 2.1.43
 # 2.1.43 -> 2.1.44
 # 2.1.44 -> 2.1.46
+# 2.1.46 -> 2.1.47
 
 # Ebuild using React 19
 
@@ -529,8 +530,8 @@ pnpm_unpack_post() {
 	eapply "${FILESDIR}/${MY_PN2}-2.1.34-hardcoded-paths.patch"
 	eapply "${FILESDIR}/lobe-chat-1.65.0-sharp-declaration.patch"
 	eapply "${FILESDIR}/${PN}-2.1.33-use-e965-xlsx.patch"
-	eapply "${FILESDIR}/${PN}-2.1.44-postgresjs-driver-support.patch"
-	eapply "${FILESDIR}/${PN}-2.1.44-docker-cjs-multidriver-support.patch"
+	#eapply "${FILESDIR}/${PN}-2.1.44-postgresjs-driver-support.patch"
+	#eapply "${FILESDIR}/${PN}-2.1.44-docker-cjs-multidriver-support.patch"
 
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 	# Fixes to unmet peer or missing references
@@ -1070,11 +1071,6 @@ _install_pwa_webapp() {
 	insinto "${_PREFIX}"
 	doins -r "${S}/.next/standalone/"* # Contains node_modules, .next, server.js
 
-	# Copied again to fix the database migration issue and database driver switch issue.
-	rm -rf "${ED}/${_PREFIX}/node_modules/"*
-	insinto "${_PREFIX}/node_modules"
-	doins -r "${S}/node_modules/"*
-
 	insinto "${_PREFIX}/.next/static"
 	doins -r "${S}/.next/static/"*
 
@@ -1089,6 +1085,14 @@ _install_pwa_webapp() {
 		doins "${S}/scripts/migrateServerDB/docker.cjs"
 		doins "${S}/scripts/migrateServerDB/errorHint.js"
 	fi
+
+	# Copy database dependencies and drivers
+	insinto "${_PREFIX}/node_modules/.pnpm"
+	doins -r "${S}/node_modules/.pnpm/"*
+	insinto "${_PREFIX}/node_modules/pg"
+	doins -r "${S}/node_modules/pg/"*
+	insinto "${_PREFIX}/node_modules/drizzle-orm"
+	doins -r "${S}/node_modules/drizzle-orm/"*
 
 	sed -i \
 		-e "s|@NODE_SLOT@|${NODE_SLOT}|g" \
