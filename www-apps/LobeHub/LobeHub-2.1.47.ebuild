@@ -257,7 +257,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management indexeddb minio +openrc +pwa +postgres +rag redis +s3 systemd
-ebuild_revision_94
+ebuild_revision_95
 "
 REQUIRED_USE="
 	postgres
@@ -530,8 +530,6 @@ pnpm_unpack_post() {
 	eapply "${FILESDIR}/${MY_PN2}-2.1.34-hardcoded-paths.patch"
 	eapply "${FILESDIR}/lobe-chat-1.65.0-sharp-declaration.patch"
 	eapply "${FILESDIR}/${PN}-2.1.33-use-e965-xlsx.patch"
-	#eapply "${FILESDIR}/${PN}-2.1.44-postgresjs-driver-support.patch"
-	#eapply "${FILESDIR}/${PN}-2.1.44-docker-cjs-multidriver-support.patch"
 
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 	# Fixes to unmet peer or missing references
