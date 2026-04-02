@@ -83,11 +83,11 @@ PNPM_DEDUPE=0 # Still debugging
 PNPM_SLOT="9"
 POSTGRESQL_PORT="5432"
 POSTGRESQL_SLOT="17"
-RUST_MAX_VER="1.81.0" # Inclusive
-RUST_MIN_VER="1.81.0" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0 for next.js 15.3.3 dependency of @swc/core 1.11.24 \
-# Obtained from https://github.com/swc-project/swc/blob/v1.15.8/rust-toolchain \
-# Obtained from commit from committer-date:2025-05-06 GH search \
-# Obtained from https://github.com/rust-lang/rust/blob/<commit-id>/RELEASES.md
+RUST_MAX_VER="1.88.0" # Inclusive
+RUST_MIN_VER="1.88.0" # LLVM 20.  Dependency graph:  next -> @swc/core -> rust \
+# https://github.com/swc-project/swc/blob/v1.15.21/rust-toolchain		# 2025-05-06 nightly
+# https://github.com/rust-lang/rust/commits/main/src/version
+# Find the version bump with commit <= 2025-05-06
 RUST_PV="${RUST_MIN_VER}"
 
 NEXTJS_PV="16.1.7"
@@ -628,6 +628,7 @@ ewarn "QA:  Manually change ajv-formats: 2.1.1(ajv@8.12.0) to ajv-formats: 3.0.1
 
 ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/pnpm-lock.yaml"
 
+# Skip section
 ewarn "QA:  Manually remove minimatch@3.1.5 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove minimatch@5.1.9 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove minimatch@9.0.3 from ${S}/pnpm-lock.yaml"
@@ -652,10 +653,10 @@ ewarn "QA:  Manually remove jsondiffpatch@0.6.0 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove esbuild@0.18.20 and arch implementations from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove esbuild@0.19.12 and arch implementations from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove esbuild@0.25.12 and arch implementations from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change (esbuild@0.19.12) to (esbuild@0.27.4) and arch implementations from ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change (esbuild@0.19.12) to (esbuild@0.27.5) and arch implementations from ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove esbuild@0.21.4 and arch implementations from ${S}/pnpm-lock.yaml"
 ##ewarn "QA:  Manually remove esbuild@0.21.5 and arch implementations from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove <esbuild-0.27.4 from ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove <esbuild-0.27.5 from ${S}/pnpm-lock.yaml"
 ##ewarn "QA:  Manually change esbuild: 0.21.4 references to esbuild: 0.25.0"
 ##ewarn "QA:  Manually change esbuild: 0.21.5 references to esbuild: 0.25.0"
 ##ewarn "QA:  Manually change esbuild: 0.18.20 references to esbuild: 0.25.0"
@@ -694,8 +695,8 @@ ewarn "QA:  Manually remove @octokit/plugin-rest-endpoint-methods@7.2.3 from ${S
 ewarn "QA:  Manually add ai@5.0.52(zod@3.25.76) for @upstash/workflow depends in ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove electron@34.5.8 in ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change electron specifier to ^41.0.0 and version to 41.0.3 for packages/electron-client-ipc depends in ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change esbuild-register@3.6.0(esbuild@0.27.4) to esbuild-register@3.6.0 in ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change esbuild-register: 3.6.0(esbuild@0.27.4) to esbuild-register: 3.6.0 in in ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change esbuild-register@3.6.0(esbuild@0.27.5) to esbuild-register@3.6.0 in ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change esbuild-register: 3.6.0(esbuild@0.27.5) to esbuild-register: 3.6.0 in in ${S}/pnpm-lock.yaml"
 
 		# DoS = Denial of Service
 		# DT = Data Tampering
@@ -706,14 +707,14 @@ ewarn "QA:  Manually change esbuild-register: 3.6.0(esbuild@0.27.4) to esbuild-r
 
 		pnpm_patch_lockfile() {
 			sed -i -e "s|'@apidevtools/json-schema-ref-parser': 11.1.0|'@apidevtools/json-schema-ref-parser': 11.2.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.25.12|esbuild: 0.27.4|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.18.20|esbuild: 0.27.4|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.19.12|esbuild: 0.27.4|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.21.4|esbuild: 0.27.4|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.21.5|esbuild: 0.27.4|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.23.1|esbuild: 0.27.4|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.24.2|esbuild: 0.27.4|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: '>=0.12 <1'|esbuild: 0.27.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.25.12|esbuild: 0.27.5|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.18.20|esbuild: 0.27.5|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.19.12|esbuild: 0.27.5|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.21.4|esbuild: 0.27.5|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.21.5|esbuild: 0.27.5|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.23.1|esbuild: 0.27.5|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.24.2|esbuild: 0.27.5|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: '>=0.12 <1'|esbuild: 0.27.5|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|snowflake-sdk: 2.0.3|snowflake-sdk: 2.0.4|g" "pnpm-lock.yaml" || die
 
 			sed -i -e "s|'@babel/runtime': 7.23.6|'@babel/runtime': 7.28.2|g" "pnpm-lock.yaml" || die
@@ -723,13 +724,13 @@ ewarn "QA:  Manually change esbuild-register: 3.6.0(esbuild@0.27.4) to esbuild-r
 
 			sed -i -e "s|tmp: 0.0.33|tmp: 0.2.4|g" "pnpm-lock.yaml" || die
 
-			sed -i -e "s|minimatch: 9.0.9|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|minimatch: 9.0.6|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|minimatch: 9.0.3|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|minimatch: 5.1.9|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|minimatch: 5.1.7|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|minimatch: 3.1.5|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|minimatch: 3.1.3|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
+#			sed -i -e "s|minimatch: 9.0.9|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
+#			sed -i -e "s|minimatch: 9.0.6|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
+#			sed -i -e "s|minimatch: 9.0.3|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
+#			sed -i -e "s|minimatch: 5.1.9|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
+#			sed -i -e "s|minimatch: 5.1.7|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
+#			sed -i -e "s|minimatch: 3.1.5|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
+#			sed -i -e "s|minimatch: 3.1.3|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
 
 			sed -i -e "s|bn.js: 4.12.3|bn.js: 5.2.3|g" "pnpm-lock.yaml" || die
 
@@ -777,18 +778,18 @@ ewarn "QA:  Manually change esbuild-register: 3.6.0(esbuild@0.27.4) to esbuild-r
 		epnpm add ${pkgs[@]}
 
 		pkgs=(
-			"esbuild@0.27.4"								# GHSA-67mh-4wv8-2f99; DI; Moderate
+			"esbuild@0.27.5"								# GHSA-67mh-4wv8-2f99; DI; Moderate
 
 			"@e965/xlsx"									# CVE-2024-22363; DoS; High
 													# CVE-2023-30533; DoS, DT, ID; High
 
 			"jsondiffpatch@0.7.2"								# CVE-2025-9910; VS(DT, ID); Moderate
 			"ai@5.0.52"									# CVE-2025-48985; DT; Low
-			"@langchain/community@1.1.18"							# CVE-2026-27795; ID; Moderate
+#			"@langchain/community@1.1.18"							# CVE-2026-27795; ID; Moderate
 													# CVE-2026-26019; ID; Moderate
 													# CVE-2026-25528; ID; Moderate for langsmith dep of @langchain/community and langchain
 			"electron@${ELECTRON_APP_ELECTRON_PV}"						# CVE-2025-55305; DoS, DT, ID; Moderate
-			"minimatch@10.2.5"								# CVE-2026-26996: ZC, DoS; High
+#			"minimatch@10.2.5"								# CVE-2026-26996: ZC, DoS; High
 													# CVE-2026-27903; ZC, DoS; High
 													# CVE-2026-27904; ZC, DoS; High
 			"undici@7.24.5"									# CVE-2026-2229; ZC, DoS, High
@@ -815,6 +816,7 @@ ewarn "QA:  Manually change esbuild-register: 3.6.0(esbuild@0.27.4) to esbuild-r
 #			"nodemailer@8.0.4"								# GHSA-c7w3-x93f-qmm8; VS(DT)
 #			"lodash@4.17.23"								# CVE-2025-13465; ZC, VS(DoS, DT), SS(DoS, DT, ID); Moderate
 #			"yaml@2.8.3"									# CVE-2026-33532; DoS; Moderate
+#			"@langchain/community@1.1.18"
 		)
 		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 
@@ -824,7 +826,7 @@ ewarn "QA:  Manually change esbuild-register: 3.6.0(esbuild@0.27.4) to esbuild-r
 			"tmp@0.2.4"									# CVE-2025-54798; DT; Low
 
 			"@octokit/rest@20.1.2"								# Bump to remove octokit 4.x vulnerabilities
-			"minimatch@10.2.5"								# CVE-2026-26996: ZC, DoS; High
+#			"minimatch@10.2.5"								# CVE-2026-26996: ZC, DoS; High
 													# CVE-2026-27903; ZC, DoS; High
 													# CVE-2026-27904; ZC, DoS; High
 			"bn.js@5.2.3"									# CVE-2026-2739: DoS; Moderate
