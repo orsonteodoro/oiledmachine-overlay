@@ -257,7 +257,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management indexeddb minio +openrc +pwa +postgres +rag redis +s3 systemd
-ebuild_revision_97
+ebuild_revision_99
 "
 REQUIRED_USE="
 	postgres
@@ -653,10 +653,10 @@ ewarn "QA:  Manually remove jsondiffpatch@0.6.0 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove esbuild@0.18.20 and arch implementations from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove esbuild@0.19.12 and arch implementations from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove esbuild@0.25.12 and arch implementations from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change (esbuild@0.19.12) to (esbuild@0.27.5) and arch implementations from ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change (esbuild@0.19.12) to (esbuild@0.27.7) and arch implementations from ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove esbuild@0.21.4 and arch implementations from ${S}/pnpm-lock.yaml"
 ##ewarn "QA:  Manually remove esbuild@0.21.5 and arch implementations from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove <esbuild-0.27.5 from ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove <esbuild-0.27.7 from ${S}/pnpm-lock.yaml"
 ##ewarn "QA:  Manually change esbuild: 0.21.4 references to esbuild: 0.25.0"
 ##ewarn "QA:  Manually change esbuild: 0.21.5 references to esbuild: 0.25.0"
 ##ewarn "QA:  Manually change esbuild: 0.18.20 references to esbuild: 0.25.0"
@@ -695,8 +695,8 @@ ewarn "QA:  Manually remove @octokit/plugin-rest-endpoint-methods@7.2.3 from ${S
 ewarn "QA:  Manually add ai@5.0.52(zod@3.25.76) for @upstash/workflow depends in ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove electron@34.5.8 in ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change electron: specifier to ^41.0.0 and version to 41.0.3 for packages/electron-client-ipc depends in ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change esbuild-register@3.6.0(esbuild@0.27.5) to esbuild-register@3.6.0 in ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change esbuild-register: 3.6.0(esbuild@0.27.5) to esbuild-register: 3.6.0 in in ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change esbuild-register@3.6.0(esbuild@0.27.7) to esbuild-register@3.6.0 in ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change esbuild-register: 3.6.0(esbuild@0.27.7) to esbuild-register: 3.6.0 in in ${S}/pnpm-lock.yaml"
 
 		# DoS = Denial of Service
 		# DT = Data Tampering
@@ -707,14 +707,14 @@ ewarn "QA:  Manually change esbuild-register: 3.6.0(esbuild@0.27.5) to esbuild-r
 
 		pnpm_patch_lockfile() {
 			sed -i -e "s|'@apidevtools/json-schema-ref-parser': 11.1.0|'@apidevtools/json-schema-ref-parser': 11.2.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.25.12|esbuild: 0.27.5|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.18.20|esbuild: 0.27.5|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.19.12|esbuild: 0.27.5|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.21.4|esbuild: 0.27.5|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.21.5|esbuild: 0.27.5|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.23.1|esbuild: 0.27.5|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.24.2|esbuild: 0.27.5|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: '>=0.12 <1'|esbuild: 0.27.5|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.25.12|esbuild: 0.27.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.18.20|esbuild: 0.27.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.19.12|esbuild: 0.27.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.21.4|esbuild: 0.27.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.21.5|esbuild: 0.27.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.23.1|esbuild: 0.27.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.24.2|esbuild: 0.27.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: '>=0.12 <1'|esbuild: 0.27.7|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|snowflake-sdk: 2.0.3|snowflake-sdk: 2.0.4|g" "pnpm-lock.yaml" || die
 
 			sed -i -e "s|'@babel/runtime': 7.23.6|'@babel/runtime': 7.28.2|g" "pnpm-lock.yaml" || die
@@ -739,13 +739,13 @@ ewarn "QA:  Manually change esbuild-register: 3.6.0(esbuild@0.27.5) to esbuild-r
 			sed -i -e "s|ajv: 8.12.0|ajv: 8.18.0|g" "pnpm-lock.yaml" || die			# CVE-2025-69873; ZC, DoS; Moderate
 			sed -i -e "s|ajv: 6.14.0|ajv: 8.18.0|g" "pnpm-lock.yaml" || die			# CVE-2025-69873; ZC, DoS; Moderate
 
-			sed -i -e "s|js-yaml: 4.1.0|js-yaml: 4.1.1|g" "pnpm-lock.yaml" || die
+#			sed -i -e "s|js-yaml: 4.1.0|js-yaml: 4.1.1|g" "pnpm-lock.yaml" || die
 
 			sed -i -e "s|ai: 4.3.19(react@19.2.4)(zod@3.25.76)|ai: 5.0.52|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|'@octokit/rest': 19.0.13(encoding@0.1.13)|'@octokit/rest': 20.1.2|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|tar: 7.5.9|tar: 7.5.11|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|hono: 4.12.3|hono: 4.12.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|'@hono/node-server': 1.19.9(hono@4.12.3)|'@hono/node-server': 1.19.10|g" "pnpm-lock.yaml" || die
+#			sed -i -e "s|hono: 4.12.3|hono: 4.12.7|g" "pnpm-lock.yaml" || die
+#			sed -i -e "s|'@hono/node-server': 1.19.9(hono@4.12.3)|'@hono/node-server': 1.19.10|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|'@tootallnate/once': 2.0.0|'@tootallnate/once': 3.0.1|g" "pnpm-lock.yaml" || die
 
 #			sed -i -e "s|serialize-javascript: 6.0.2|serialize-javascript: 7.0.5|g" "pnpm-lock.yaml" || die
@@ -778,7 +778,7 @@ ewarn "QA:  Manually change esbuild-register: 3.6.0(esbuild@0.27.5) to esbuild-r
 		epnpm add ${pkgs[@]}
 
 		pkgs=(
-			"esbuild@0.27.5"								# GHSA-67mh-4wv8-2f99; DI; Moderate
+			"esbuild@0.27.7"								# GHSA-67mh-4wv8-2f99; DI; Moderate
 
 			"@e965/xlsx"									# CVE-2024-22363; DoS; High
 													# CVE-2023-30533; DoS, DT, ID; High
@@ -830,11 +830,11 @@ ewarn "QA:  Manually change esbuild-register: 3.6.0(esbuild@0.27.5) to esbuild-r
 													# CVE-2026-27903; ZC, DoS; High
 													# CVE-2026-27904; ZC, DoS; High
 			"bn.js@5.2.3"									# CVE-2026-2739: DoS; Moderate
-			"js-yaml@4.1.1"									# CVE-2025-64718: ZC, DT; Moderate
+#			"js-yaml@4.1.1"									# CVE-2025-64718: ZC, DT; Moderate
 			"tar@7.5.11"									# GHSA-qffp-2rhf-9h96; VS(DT, ID), SS(DT, ID)
 													# CVE-2026-31802; ZC, VS(DT), SS(DT), High
-			"@hono/node-server@1.19.10"							# CVE-2026-29087; ZC, ID; High
-			"hono@4.12.7"									# CVE-2026-29045; ZC, ID; High
+#			"@hono/node-server@1.19.10"							# CVE-2026-29087; ZC, ID; High
+#			"hono@4.12.7"									# CVE-2026-29045; ZC, ID; High
 													# CVE-2026-29085; DT, ID; Moderate
 													# CVE-2026-29086; DT, ID; Moderate
 													# GHSA-v8w9-8mx6-g223; ZC, DT, ID; Moderate
@@ -1086,17 +1086,31 @@ _install_pwa_webapp() {
 		insinto "${_PREFIX}"
 		doins "${S}/scripts/migrateServerDB/docker.cjs"
 		doins "${S}/scripts/migrateServerDB/errorHint.js"
+		insinto "${_PREFIX}/scripts/migrateServerDB"
+		doins "${S}/scripts/migrateServerDB/docker.cjs"
+		doins "${S}/scripts/migrateServerDB/errorHint.js"
 	fi
 
-	# Copy database dependencies and drivers
-	#insinto "${_PREFIX}/node_modules/.pnpm"
-	#doins -r "${S}/node_modules/.pnpm/"*
-	insinto "${_PREFIX}/node_modules/pg"
-	doins -r "${S}/node_modules/pg/"*
-	insinto "${_PREFIX}/node_modules/drizzle-orm"
-	doins -r "${S}/node_modules/drizzle-orm/"*
-	insinto "${_PREFIX}/node_modules/postgres"
-	doins -r "${S}/node_modules/postgres/"*
+	# Copy all dependencies and peerDependencies for database support for
+	# mostly drizzle-orm but also drivers as well
+	insinto "${_PREFIX}/node_modules/.pnpm"
+	doins -r "${S}/node_modules/.pnpm/"* # Full copy
+
+	# Missing in .next/standalone/node_modules
+	insinto "${_PREFIX}/node_modules"
+	doins "${S}/node_modules/drizzle-orm"
+
+	# Already added in .next/standalone/node_modules
+	#insinto "${_PREFIX}/node_modules"
+	#doins "${S}/node_modules/pg"
+
+	# Missing in .next/standalone/node_modules
+	insinto "${_PREFIX}/node_modules"
+	doins "${S}/node_modules/postgres"
+
+	# Missing in .next/standalone/node_modules
+	insinto "${_PREFIX}/node_modules/@neondatabase"
+	doins "${S}/node_modules/@neondatabase/serverless"
 
 	sed -i \
 		-e "s|@NODE_SLOT@|${NODE_SLOT}|g" \
