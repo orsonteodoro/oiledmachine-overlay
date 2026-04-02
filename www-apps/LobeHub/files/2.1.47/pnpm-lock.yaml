@@ -45,7 +45,7 @@ importers:
         version: 1.1.0
       '@aws-sdk/client-bedrock-runtime':
         specifier: ^3.941.0
-        version: 3.1022.0
+        version: 3.1023.0
       '@aws-sdk/client-s3':
         specifier: ~3.932.0
         version: 3.932.0
@@ -519,7 +519,7 @@ importers:
         version: 21.3.4
       fuse.js:
         specifier: ^7.0.0
-        version: 7.1.0
+        version: 7.2.0
       gray-matter:
         specifier: ^4.0.3
         version: 4.0.3
@@ -612,7 +612,7 @@ importers:
         version: 2.0.6
       nuqs:
         specifier: ^2.8.6
-        version: 2.8.9(next@16.1.7(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-router-dom@7.13.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-router@7.13.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
+        version: 2.8.9(next@16.1.7(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-router-dom@7.14.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-router@7.14.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
       officeparser:
         specifier: 5.1.1
         version: 5.1.1
@@ -714,7 +714,7 @@ importers:
         version: 10.5.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       react-router-dom:
         specifier: ^7.13.0
-        version: 7.13.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        version: 7.14.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       react-scan:
         specifier: ^0.5.3
         version: 0.5.3(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(rollup@2.80.0)
@@ -779,8 +779,8 @@ importers:
         specifier: ^1.0.41
         version: 1.0.41
       undici:
-        specifier: ^7.24.5
-        version: 7.24.5
+        specifier: ^7.19.1
+        version: 7.24.7
       unist-builder:
         specifier: ^4.0.0
         version: 4.0.0
@@ -1536,7 +1536,7 @@ importers:
         version: 7.0.15
       promptfoo:
         specifier: ^0.120.17
-        version: 0.120.27(@cfworker/json-schema@4.1.1)(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.0.2)(@noble/hashes@2.0.1)(@swc/helpers@0.5.20)(@types/json-schema@7.0.15)(@types/node@24.12.0)(@types/pg@8.20.0)(@types/react@19.2.14)(babel-plugin-macros@3.1.0)(debug@4.4.3)(encoding@0.1.13)(gel@2.2.0)(kysely@0.28.15)(mysql2@3.20.0(@types/node@24.12.0))(pg@8.19.0)(playwright-core@1.59.1)(postgres@3.4.8)(socks@2.8.7)(typescript@5.9.3)
+        version: 0.120.27(@cfworker/json-schema@4.1.1)(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.0.2)(@noble/hashes@2.0.1)(@swc/helpers@0.5.21)(@types/json-schema@7.0.15)(@types/node@24.12.0)(@types/pg@8.20.0)(@types/react@19.2.14)(babel-plugin-macros@3.1.0)(debug@4.4.3)(encoding@0.1.13)(gel@2.2.0)(kysely@0.28.15)(mysql2@3.20.0(@types/node@24.12.0))(pg@8.19.0)(playwright-core@1.59.1)(postgres@3.4.8)(socks@2.8.7)(typescript@5.9.3)
 
   packages/builtin-tool-notebook:
     dependencies:
@@ -1814,7 +1814,7 @@ importers:
         version: 22.19.15
       tsup:
         specifier: ^8.3.5
-        version: 8.5.1(@swc/core@1.15.21(@swc/helpers@0.5.20))(jiti@2.6.1)(postcss@8.5.8)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3)
+        version: 8.5.1(@swc/core@1.15.21(@swc/helpers@0.5.21))(jiti@2.6.1)(postcss@8.5.8)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3)
       typescript:
         specifier: ^5.7.2
         version: 5.9.3
@@ -1830,7 +1830,7 @@ importers:
         version: 22.19.15
       tsup:
         specifier: ^8.3.5
-        version: 8.5.1(@swc/core@1.15.21(@swc/helpers@0.5.20))(jiti@2.6.1)(postcss@8.5.8)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3)
+        version: 8.5.1(@swc/core@1.15.21(@swc/helpers@0.5.21))(jiti@2.6.1)(postcss@8.5.8)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3)
       typescript:
         specifier: ^5.7.2
         version: 5.9.3
@@ -1846,7 +1846,7 @@ importers:
         version: 22.19.15
       tsup:
         specifier: ^8.3.5
-        version: 8.5.1(@swc/core@1.15.21(@swc/helpers@0.5.20))(jiti@2.6.1)(postcss@8.5.8)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3)
+        version: 8.5.1(@swc/core@1.15.21(@swc/helpers@0.5.21))(jiti@2.6.1)(postcss@8.5.8)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3)
       typescript:
         specifier: ^5.7.2
         version: 5.9.3
@@ -2203,7 +2203,7 @@ importers:
         version: 2.0.4
       promptfoo:
         specifier: ^0.120.17
-        version: 0.120.27(@cfworker/json-schema@4.1.1)(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.0.2)(@noble/hashes@2.0.1)(@swc/helpers@0.5.20)(@types/json-schema@7.0.15)(@types/node@24.12.0)(@types/pg@8.20.0)(@types/react@19.2.14)(babel-plugin-macros@3.1.0)(debug@4.4.3)(encoding@0.1.13)(gel@2.2.0)(kysely@0.28.15)(mysql2@3.20.0(@types/node@24.12.0))(pg@8.19.0)(playwright-core@1.59.1)(postgres@3.4.8)(socks@2.8.7)(typescript@5.9.3)
+        version: 0.120.27(@cfworker/json-schema@4.1.1)(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.0.2)(@noble/hashes@2.0.1)(@swc/helpers@0.5.21)(@types/json-schema@7.0.15)(@types/node@24.12.0)(@types/pg@8.20.0)(@types/react@19.2.14)(babel-plugin-macros@3.1.0)(debug@4.4.3)(encoding@0.1.13)(gel@2.2.0)(kysely@0.28.15)(mysql2@3.20.0(@types/node@24.12.0))(pg@8.19.0)(playwright-core@1.59.1)(postgres@3.4.8)(socks@2.8.7)(typescript@5.9.3)
       tsx:
         specifier: ^4.20.6
         version: 4.21.0
@@ -2227,7 +2227,7 @@ importers:
         version: 0.73.0(zod@3.25.76)
       '@aws-sdk/client-bedrock-runtime':
         specifier: ^3.941.0
-        version: 3.1022.0
+        version: 3.1023.0
       '@azure-rest/ai-inference':
         specifier: 1.0.0-beta.5
         version: 1.0.0-beta.5
@@ -2388,7 +2388,7 @@ importers:
         version: link:../types
       promptfoo:
         specifier: ^0.120.17
-        version: 0.120.27(@cfworker/json-schema@4.1.1)(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.0.2)(@noble/hashes@2.0.1)(@swc/helpers@0.5.20)(@types/json-schema@7.0.15)(@types/node@18.19.130)(@types/pg@8.20.0)(@types/react@19.2.14)(babel-plugin-macros@3.1.0)(debug@4.4.3)(encoding@0.1.13)(gel@2.2.0)(kysely@0.28.15)(mysql2@3.20.0(@types/node@18.19.130))(pg@8.19.0)(playwright-core@1.59.1)(postgres@3.4.8)(socks@2.8.7)(typescript@5.9.3)
+        version: 0.120.27(@cfworker/json-schema@4.1.1)(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.0.2)(@noble/hashes@2.0.1)(@swc/helpers@0.5.21)(@types/json-schema@7.0.15)(@types/node@18.19.130)(@types/pg@8.20.0)(@types/react@19.2.14)(babel-plugin-macros@3.1.0)(debug@4.4.3)(encoding@0.1.13)(gel@2.2.0)(kysely@0.28.15)(mysql2@3.20.0(@types/node@18.19.130))(pg@8.19.0)(playwright-core@1.59.1)(postgres@3.4.8)(socks@2.8.7)(typescript@5.9.3)
       tsx:
         specifier: ^4.20.6
         version: 4.21.0
@@ -2574,8 +2574,8 @@ packages:
     peerDependencies:
       zod: ^3.25.76 || ^4
 
-  '@ai-sdk/gateway@3.0.85':
-    resolution: {integrity: sha512-oPvs3bYnxndBY/O0gFSFuc5aA/QKCJbk/CaJaRnKgA/ZPH17jeVvEtiUBE6/N8hWhK7XgX53NFI7F3CGmDfm1g==}
+  '@ai-sdk/gateway@3.0.86':
+    resolution: {integrity: sha512-bfYis9ijKo85c7Mi7ScznCtozwhtiyo/F+HFwyEP/ewzBmcG/fuOPrDkWIqPtPY0YI30xOfLCwQlkUBIN8xIgg==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -2598,8 +2598,8 @@ packages:
     peerDependencies:
       zod: ^3.25.76 || ^4
 
-  '@ai-sdk/provider-utils@4.0.21':
-    resolution: {integrity: sha512-MtFUYI1/8mgDvRmaBDjbLJPFFrMG777AvSgyIFQtZHIMzm88R/12vYBBpnk7pfiWLFE1DSZzY4WDYzGbKAcmiw==}
+  '@ai-sdk/provider-utils@4.0.22':
+    resolution: {integrity: sha512-B2OTFcRw/Pdka9ZTjpXv6T6qZ6RruRuLokyb8HwW+aoW9ndJ3YasA3/mVswyJw7VMBF8ofXgqvcrCt9KYvFifg==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -2885,24 +2885,24 @@ packages:
   '@aws-crypto/util@5.2.0':
     resolution: {integrity: sha512-4RkU9EsI6ZpBve5fseQlGNUWKMa1RLPQ1dnjnQoe07ldfIzcsGb5hC5W0Dm7u423KWzawlrpbjXBrXCEv9zazQ==}
 
-  '@aws-sdk/client-bedrock-agent-runtime@3.1022.0':
-    resolution: {integrity: sha512-uzG9hQWn8mxvXEnX7EMA3elq+AHtbyy7OIYd93VrBk9WeHdGfm2Eqnka9hRxEmov0CsXbvNRfBssfcKxx8Lxzg==}
+  '@aws-sdk/client-bedrock-agent-runtime@3.1023.0':
+    resolution: {integrity: sha512-OpqZod4p9uCWIHCkjBa3A02cAuuGiSbtemD77VKkeUwzWRDt8fRo2JuNsLM6RFlioA9IpXPxNuFu2jsoYyn3TA==}
     engines: {node: '>=20.0.0'}
 
-  '@aws-sdk/client-bedrock-runtime@3.1022.0':
-    resolution: {integrity: sha512-gT8+ebNzmLjk07dPTVn0f4ZdEDSFYsyCX3rAxX2QGGOasKeeQQEBW4PxYqHGM6lJrcuFSc/ScSVKTRDxGZlFiA==}
+  '@aws-sdk/client-bedrock-runtime@3.1023.0':
+    resolution: {integrity: sha512-C0He9qhrClUp6JEk3QjE0WScDN1GSZF8eruP0uoh5kXeQEJLxyfFDrR2TIYnHntlRs/sMwhO82Vu7yGGQM2pfQ==}
     engines: {node: '>=20.0.0'}
 
-  '@aws-sdk/client-s3@3.1022.0':
-    resolution: {integrity: sha512-PhdIW0LxjzcMlBiCldRefnyZk84wtYGnEV0sNGOD55DZTvZsibG2XHvQiL1aFliKugfAhuIpNmFkctI2n2I3Dg==}
+  '@aws-sdk/client-s3@3.1023.0':
+    resolution: {integrity: sha512-IvNy49sdoCWd3fgHQxail3y0UQdfKj1Xk0VPu9HTwlog60o9Lmp5ykjZ2LlIuHEPaxq4Siih707GB/ulUWgetw==}
     engines: {node: '>=20.0.0'}
 
   '@aws-sdk/client-s3@3.932.0':
     resolution: {integrity: sha512-qrlbJ3W5QR3Gzz2S+yaItH8ZhX7vaeA4j4fDAi8+0FmsVhXOfBbomWr+JO1wk/YojZMdyLfmfYRHrJvAQsLFVw==}
     engines: {node: '>=18.0.0'}
 
-  '@aws-sdk/client-sagemaker-runtime@3.1022.0':
-    resolution: {integrity: sha512-KKGm81DphnlgMEEwxLighZP5cz/+5xAKgOC5RiUYAH32X7wuj43/TbaAAd8uEQXo2ocdvIcs9FJ1tsZyMGS0DA==}
+  '@aws-sdk/client-sagemaker-runtime@3.1023.0':
+    resolution: {integrity: sha512-nr0lQ3UY8I/WeeoAv1fgkW4KKXAtLExuLmkqrcxGHjdm+ynUHefLDEEz7mdT8nEdthefJcWeTmZoccrxJ+Bqlg==}
     engines: {node: '>=20.0.0'}
 
   '@aws-sdk/client-sso@3.932.0':
@@ -3105,8 +3105,8 @@ packages:
     resolution: {integrity: sha512-TKY6h9spUk3OLs5v1oAgW9mAeBE3LAGNBwJokLy96wwmd4W2v/tYlXseProyed9ValDj2u1jK/4Rg1T+1NXyJA==}
     engines: {node: '>=20.0.0'}
 
-  '@aws-sdk/token-providers@3.1022.0':
-    resolution: {integrity: sha512-rC0+QQh5uo9Y0wtrvsVuGWi8njtf6h6FB94h5NClUoiNTuQiRG/+AjXiqhv1x/m8TnLrgYCHiFzykOdOb5Ea9w==}
+  '@aws-sdk/token-providers@3.1023.0':
+    resolution: {integrity: sha512-g/t814ec7g+MbazONIdQzb0c8FalVnSKCLc665GLG4QdrviKXHzag7HQmf5wBhCDsUDNAIi77fLeElaZSkylTA==}
     engines: {node: '>=20.0.0'}
 
   '@aws-sdk/token-providers@3.932.0':
@@ -8574,8 +8574,8 @@ packages:
   '@swc/helpers@0.5.15':
     resolution: {integrity: sha512-JQ5TuMi45Owi4/BIMAJBoSQoOJu12oOk/gADqlcUL9JEdHB8vyjUSsxqeNXnmXHjYKMi2WcYtezGEEhqUI/E2g==}
 
-  '@swc/helpers@0.5.20':
-    resolution: {integrity: sha512-2egEBHUMasdypIzrprsu8g+OEVd7Vp2MM3a2eVlM/cyFYto0nGz5BX5BTgh/ShZZI9ed+ozEq+Ngt+rgmUs8tw==}
+  '@swc/helpers@0.5.21':
+    resolution: {integrity: sha512-jI/VAmtdjB/RnI8GTnokyX7Ug8c+g+ffD6QRLa6XQewtnGyukKkKSk3wLTM3b5cjt1jNh9x0jfVlagdN2gDKQg==}
 
   '@swc/types@0.1.26':
     resolution: {integrity: sha512-lyMwd7WGgG79RS7EERZV3T8wMdmPq3xwyg+1nmAM64kIhx5yl+juO2PYIHb7vTiPgPCj8LYjsNV2T5wiQHUEaw==}
@@ -9767,8 +9767,8 @@ packages:
     peerDependencies:
       zod: ^3.25.76 || ^4
 
-  ai@6.0.143:
-    resolution: {integrity: sha512-wVDb7StQ1EPQ9GDAOmi1AsuAXQRSii+zZT2sFK+MCisH4vV7XNEAdzXL+sKsUAFhhq+EtVFWWlB4mCk4hcoIMw==}
+  ai@6.0.144:
+    resolution: {integrity: sha512-Es0NcbOgI+/e93w8eykyAD3lO6ZF1s4tJwW6Mp3cJWJ2nmucNyCDyTcDanEDER5/rBsW6TAQkHeebnrvyu0zQg==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -12800,8 +12800,8 @@ packages:
   functions-have-names@1.2.3:
     resolution: {integrity: sha512-xckBUXyTIqT97tq2x2AMb+g163b5JFysYk0x4qxNFwbfQkmNZoiRHb6sPzI9/QV33WeuvVYBUIiD4NzNIyqaRQ==}
 
-  fuse.js@7.1.0:
-    resolution: {integrity: sha512-trLf4SzuuUxfusZADLINj+dE8clK1frKdmqiJNb1Es75fmI5oY6X2mxLVUciLLjxqw/xr72Dhy+lER6dGd02FQ==}
+  fuse.js@7.2.0:
+    resolution: {integrity: sha512-zf4vdcIGpjNKTuXwug33Hm2okqX6a0t2ZEbez+o9oBJQSNhVJ5AqERfeiRD3r8HcLqP66MrjdkmzxrncbAOTUQ==}
     engines: {node: '>=10'}
 
   gaxios@6.7.1:
@@ -13416,8 +13416,8 @@ packages:
       typescript:
         optional: true
 
-  ibm-cloud-sdk-core@5.4.9:
-    resolution: {integrity: sha512-340fGcZEwUBdxBOPmn8V8fIiFRWF92yFqSFRNLwPQz4h+PS4jcAyd3JGqU6CpFqzUTt+PatVX/jHFwzUTVdmxQ==}
+  ibm-cloud-sdk-core@5.4.10:
+    resolution: {integrity: sha512-A9CL/XQTNoyS2fkp1uKKcYC03CJwp7hIl4DQeyG9s9QLsuMwffOM2fIkORsYHhn5wmWeFUkjAmt2iTlb7Hv1Iw==}
     engines: {node: '>=20'}
 
   iconv-lite@0.4.24:
@@ -17128,15 +17128,15 @@ packages:
       react: '>=16.3.0'
       react-dom: '>=16.3.0'
 
-  react-router-dom@7.13.2:
-    resolution: {integrity: sha512-aR7SUORwTqAW0JDeiWF07e9SBE9qGpByR9I8kJT5h/FrBKxPMS6TiC7rmVO+gC0q52Bx7JnjWe8Z1sR9faN4YA==}
+  react-router-dom@7.14.0:
+    resolution: {integrity: sha512-2G3ajSVSZMEtmTjIklRWlNvo8wICEpLihfD/0YMDxbWK2UyP5EGfnoIn9AIQGnF3G/FX0MRbHXdFcD+rL1ZreQ==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
       react: '>=18'
       react-dom: '>=18'
 
-  react-router@7.13.2:
-    resolution: {integrity: sha512-tX1Aee+ArlKQP+NIUd7SE6Li+CiGKwQtbS+FfRxPX6Pe4vHOo6nr9d++u5cwg+Z8K/x8tP+7qLmujDtfrAoUJA==}
+  react-router@7.14.0:
+    resolution: {integrity: sha512-m/xR9N4LQLmAS0ZhkY2nkPA1N7gQ5TUVa5n8TgANuDTARbn1gt+zLPXEm7W0XDTbrQ2AJSJKhoa6yx1D8BcpxQ==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
       react: '>=18'
@@ -19295,10 +19295,6 @@ packages:
     resolution: {integrity: sha512-sC+b0tB1whOCzbtlx20fx3WgCXwkW627p4EA9uM+/tNNPkSS+eSEld6pAs9nDv7WbY1UUljBMYPtu9BCOrCWKA==}
     engines: {node: '>=18.17'}
 
-  undici@7.24.5:
-    resolution: {integrity: sha512-3IWdCpjgxp15CbJnsi/Y9TCDE7HWVN19j1hmzVhoAkY/+CJx449tVxT5wZc1Gwg8J+P0LWvzlBzxYRnHJ+1i7Q==}
-    engines: {node: '>=20.18.1'}
-
   undici@7.24.7:
     resolution: {integrity: sha512-H/nlJ/h0ggGC+uRL3ovD+G0i4bqhvsDOpbDv7At5eFLlj2b41L8QliGbnl2H7SnDiYhENphh1tQFJZf+MyfLsQ==}
     engines: {node: '>=20.18.1'}
@@ -19613,8 +19609,8 @@ packages:
     resolution: {integrity: sha512-OljLrQ9SQdOUqTaQxqL5dEfZWrXExyyWsozYlAWFawPVNuD83igl7uJD2RTkNMbniIYgt8l81eCJGIdQF7avLQ==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
 
-  validator@13.15.26:
-    resolution: {integrity: sha512-spH26xU080ydGggxRyR1Yhcbgx+j3y5jbNXk/8L+iRvdIEQ4uTRH2Sgf2dokud6Q4oAtsbNvJ1Ft+9xmm6IZcA==}
+  validator@13.15.35:
+    resolution: {integrity: sha512-TQ5pAGhd5whStmqWvYF4OjQROlmv9SMFVt37qoCBdqRffuuklWYQlCNnEs2ZaIBD1kZRNnikiZOS1eqgkar0iw==}
     engines: {node: '>= 0.10'}
 
   vary@1.1.2:
@@ -20396,10 +20392,10 @@ snapshots:
       '@ai-sdk/provider-utils': 3.0.9(zod@3.25.76)
       zod: 3.25.76
 
-  '@ai-sdk/gateway@3.0.85(zod@4.3.6)':
+  '@ai-sdk/gateway@3.0.86(zod@4.3.6)':
     dependencies:
       '@ai-sdk/provider': 3.0.8
-      '@ai-sdk/provider-utils': 4.0.21(zod@4.3.6)
+      '@ai-sdk/provider-utils': 4.0.22(zod@4.3.6)
       '@vercel/oidc': 3.1.0
       zod: 4.3.6
 
@@ -20423,7 +20419,7 @@ snapshots:
       eventsource-parser: 3.0.6
       zod: 3.25.76
 
-  '@ai-sdk/provider-utils@4.0.21(zod@4.3.6)':
+  '@ai-sdk/provider-utils@4.0.22(zod@4.3.6)':
     dependencies:
       '@ai-sdk/provider': 3.0.8
       '@standard-schema/spec': 1.1.0
@@ -20906,7 +20902,7 @@ snapshots:
       '@smithy/util-utf8': 2.3.0
       tslib: 2.8.1
 
-  '@aws-sdk/client-bedrock-agent-runtime@3.1022.0':
+  '@aws-sdk/client-bedrock-agent-runtime@3.1023.0':
     dependencies:
       '@aws-crypto/sha256-browser': 5.2.0
       '@aws-crypto/sha256-js': 5.2.0
@@ -20954,7 +20950,7 @@ snapshots:
       - aws-crt
     optional: true
 
-  '@aws-sdk/client-bedrock-runtime@3.1022.0':
+  '@aws-sdk/client-bedrock-runtime@3.1023.0':
     dependencies:
       '@aws-crypto/sha256-browser': 5.2.0
       '@aws-crypto/sha256-js': 5.2.0
@@ -20968,7 +20964,7 @@ snapshots:
       '@aws-sdk/middleware-user-agent': 3.972.28
       '@aws-sdk/middleware-websocket': 3.972.14
       '@aws-sdk/region-config-resolver': 3.972.10
-      '@aws-sdk/token-providers': 3.1022.0
+      '@aws-sdk/token-providers': 3.1023.0
       '@aws-sdk/types': 3.973.6
       '@aws-sdk/util-endpoints': 3.996.5
       '@aws-sdk/util-user-agent-browser': 3.972.8
@@ -21006,7 +21002,7 @@ snapshots:
     transitivePeerDependencies:
       - aws-crt
 
-  '@aws-sdk/client-s3@3.1022.0':
+  '@aws-sdk/client-s3@3.1023.0':
     dependencies:
       '@aws-crypto/sha1-browser': 5.2.0
       '@aws-crypto/sha256-browser': 5.2.0
@@ -21127,7 +21123,7 @@ snapshots:
     transitivePeerDependencies:
       - aws-crt
 
-  '@aws-sdk/client-sagemaker-runtime@3.1022.0':
+  '@aws-sdk/client-sagemaker-runtime@3.1023.0':
     dependencies:
       '@aws-crypto/sha256-browser': 5.2.0
       '@aws-crypto/sha256-js': 5.2.0
@@ -21818,7 +21814,7 @@ snapshots:
     transitivePeerDependencies:
       - aws-crt
 
-  '@aws-sdk/token-providers@3.1022.0':
+  '@aws-sdk/token-providers@3.1023.0':
     dependencies:
       '@aws-sdk/core': 3.973.26
       '@aws-sdk/nested-clients': 3.996.18
@@ -24162,13 +24158,13 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.3': {}
 
-  '@ibm-cloud/watsonx-ai@1.7.11(@swc/core@1.15.21(@swc/helpers@0.5.20))(typescript@5.9.3)':
+  '@ibm-cloud/watsonx-ai@1.7.11(@swc/core@1.15.21(@swc/helpers@0.5.21))(typescript@5.9.3)':
     dependencies:
       '@types/node': 18.19.130
       extend: 3.0.2
       form-data: 4.0.5
-      ibm-cloud-sdk-core: 5.4.9
-      ts-node: 10.9.2(@swc/core@1.15.21(@swc/helpers@0.5.20))(@types/node@18.19.130)(typescript@5.9.3)
+      ibm-cloud-sdk-core: 5.4.10
+      ts-node: 10.9.2(@swc/core@1.15.21(@swc/helpers@0.5.21))(@types/node@18.19.130)(typescript@5.9.3)
     transitivePeerDependencies:
       - '@swc/core'
       - '@swc/wasm'
@@ -25172,7 +25168,7 @@ snapshots:
       debug: 4.4.3(supports-color@10.2.2)
       es-toolkit: 1.45.1
       eventemitter3: 5.0.4
-      fuse.js: 7.1.0
+      fuse.js: 7.2.0
       katex: 0.16.44
       lexical: 0.42.0
       lucide-react: 0.562.0(react@19.2.4)
@@ -29291,7 +29287,7 @@ snapshots:
   '@swc/core-win32-x64-msvc@1.15.21':
     optional: true
 
-  '@swc/core@1.15.21(@swc/helpers@0.5.20)':
+  '@swc/core@1.15.21(@swc/helpers@0.5.21)':
     dependencies:
       '@swc/counter': 0.1.3
       '@swc/types': 0.1.26
@@ -29308,7 +29304,7 @@ snapshots:
       '@swc/core-win32-arm64-msvc': 1.15.21
       '@swc/core-win32-ia32-msvc': 1.15.21
       '@swc/core-win32-x64-msvc': 1.15.21
-      '@swc/helpers': 0.5.20
+      '@swc/helpers': 0.5.21
     optional: true
 
   '@swc/counter@0.1.3':
@@ -29318,7 +29314,7 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  '@swc/helpers@0.5.20':
+  '@swc/helpers@0.5.21':
     dependencies:
       tslib: 2.8.1
 
@@ -30560,11 +30556,11 @@ snapshots:
       '@opentelemetry/api': 1.9.0
       zod: 3.25.76
 
-  ai@6.0.143(zod@4.3.6):
+  ai@6.0.144(zod@4.3.6):
     dependencies:
-      '@ai-sdk/gateway': 3.0.85(zod@4.3.6)
+      '@ai-sdk/gateway': 3.0.86(zod@4.3.6)
       '@ai-sdk/provider': 3.0.8
-      '@ai-sdk/provider-utils': 4.0.21(zod@4.3.6)
+      '@ai-sdk/provider-utils': 4.0.22(zod@4.3.6)
       '@opentelemetry/api': 1.9.0
       zod: 4.3.6
 
@@ -31017,7 +31013,7 @@ snapshots:
       better-auth: 1.5.6(@opentelemetry/api@1.9.1)(better-sqlite3@12.8.0)(drizzle-kit@0.30.6)(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.0.2)(@opentelemetry/api@1.9.1)(@types/pg@8.20.0)(better-sqlite3@12.8.0)(gel@2.2.0)(kysely@0.28.15)(mysql2@3.20.0(@types/node@24.12.0))(pg@8.19.0)(postgres@3.4.8))(mongodb@7.1.1(socks@2.8.7))(mysql2@3.20.0(@types/node@24.12.0))(next@16.1.7(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(pg@8.19.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(vitest@3.2.4(@edge-runtime/vm@5.0.0)(@types/debug@4.1.13)(@types/node@24.12.0)(happy-dom@20.8.9)(jiti@2.6.1)(jsdom@28.1.0(@noble/hashes@2.0.1))(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
       libphonenumber-js: 1.12.41
       mailchecker: 6.0.20
-      validator: 13.15.26
+      validator: 13.15.35
 
   better-auth@1.5.6(@opentelemetry/api@1.9.1)(better-sqlite3@12.8.0)(drizzle-kit@0.30.6)(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.0.2)(@opentelemetry/api@1.9.1)(@types/pg@8.20.0)(better-sqlite3@12.8.0)(gel@2.2.0)(kysely@0.28.15)(mysql2@3.20.0(@types/node@24.12.0))(pg@8.19.0)(postgres@3.4.8))(mongodb@7.1.1(socks@2.8.7))(mysql2@3.20.0(@types/node@24.12.0))(next@16.1.7(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(pg@8.19.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(vitest@3.2.4(@edge-runtime/vm@5.0.0)(@types/debug@4.1.13)(@types/node@24.12.0)(happy-dom@20.8.9)(jiti@2.6.1)(jsdom@28.1.0(@noble/hashes@2.0.1))(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3)):
     dependencies:
@@ -33979,7 +33975,7 @@ snapshots:
 
   fontkit@2.0.4:
     dependencies:
-      '@swc/helpers': 0.5.20
+      '@swc/helpers': 0.5.21
       brotli: 1.3.3
       clone: 2.1.2
       dfa: 1.2.0
@@ -34143,7 +34139,7 @@ snapshots:
 
   functions-have-names@1.2.3: {}
 
-  fuse.js@7.1.0: {}
+  fuse.js@7.2.0: {}
 
   gaxios@6.7.1(encoding@0.1.13):
     dependencies:
@@ -34964,7 +34960,7 @@ snapshots:
     optionalDependencies:
       typescript: 5.9.3
 
-  ibm-cloud-sdk-core@5.4.9:
+  ibm-cloud-sdk-core@5.4.10:
     dependencies:
       '@types/debug': 4.1.13
       '@types/node': 18.19.130
@@ -37628,14 +37624,14 @@ snapshots:
     optionalDependencies:
       chokidar: 5.0.0
 
-  nuqs@2.8.9(next@16.1.7(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-router-dom@7.13.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-router@7.13.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4):
+  nuqs@2.8.9(next@16.1.7(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-router-dom@7.14.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-router@7.14.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4):
     dependencies:
       '@standard-schema/spec': 1.0.0
       react: 19.2.4
     optionalDependencies:
       next: 16.1.7(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      react-router: 7.13.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      react-router-dom: 7.13.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      react-router: 7.14.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      react-router-dom: 7.14.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
 
   oauth-sign@0.9.0: {}
 
@@ -37704,7 +37700,7 @@ snapshots:
       nanoid: 5.1.7
       quick-lru: 7.3.0
       raw-body: 3.0.2
-      undici: 7.24.5
+      undici: 7.24.7
     transitivePeerDependencies:
       - supports-color
 
@@ -38537,7 +38533,7 @@ snapshots:
       is-promise: 2.2.2
       lie: 3.3.0
 
-  promptfoo@0.120.27(@cfworker/json-schema@4.1.1)(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.0.2)(@noble/hashes@2.0.1)(@swc/helpers@0.5.20)(@types/json-schema@7.0.15)(@types/node@18.19.130)(@types/pg@8.20.0)(@types/react@19.2.14)(babel-plugin-macros@3.1.0)(debug@4.4.3)(encoding@0.1.13)(gel@2.2.0)(kysely@0.28.15)(mysql2@3.20.0(@types/node@18.19.130))(pg@8.19.0)(playwright-core@1.59.1)(postgres@3.4.8)(socks@2.8.7)(typescript@5.9.3):
+  promptfoo@0.120.27(@cfworker/json-schema@4.1.1)(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.0.2)(@noble/hashes@2.0.1)(@swc/helpers@0.5.21)(@types/json-schema@7.0.15)(@types/node@18.19.130)(@types/pg@8.20.0)(@types/react@19.2.14)(babel-plugin-macros@3.1.0)(debug@4.4.3)(encoding@0.1.13)(gel@2.2.0)(kysely@0.28.15)(mysql2@3.20.0(@types/node@18.19.130))(pg@8.19.0)(playwright-core@1.59.1)(postgres@3.4.8)(socks@2.8.7)(typescript@5.9.3):
     dependencies:
       '@anthropic-ai/sdk': 0.78.0(zod@4.3.6)
       '@apidevtools/json-schema-ref-parser': 15.3.5(@types/json-schema@7.0.15)
@@ -38559,7 +38555,7 @@ snapshots:
       '@opentelemetry/sdk-trace-node': 2.6.1(@opentelemetry/api@1.9.1)
       '@opentelemetry/semantic-conventions': 1.40.0
       '@types/ws': 8.18.1
-      ai: 6.0.143(zod@4.3.6)
+      ai: 6.0.144(zod@4.3.6)
       ajv: 8.18.0
       ajv-formats: 3.0.1(ajv@8.18.0)
       async: 3.2.6
@@ -38625,10 +38621,10 @@ snapshots:
       zod: 4.3.6
     optionalDependencies:
       '@anthropic-ai/claude-agent-sdk': 0.2.90(@cfworker/json-schema@4.1.1)(zod@4.3.6)
-      '@aws-sdk/client-bedrock-agent-runtime': 3.1022.0
-      '@aws-sdk/client-bedrock-runtime': 3.1022.0
-      '@aws-sdk/client-s3': 3.1022.0
-      '@aws-sdk/client-sagemaker-runtime': 3.1022.0
+      '@aws-sdk/client-bedrock-agent-runtime': 3.1023.0
+      '@aws-sdk/client-bedrock-runtime': 3.1023.0
+      '@aws-sdk/client-s3': 3.1023.0
+      '@aws-sdk/client-sagemaker-runtime': 3.1023.0
       '@aws-sdk/credential-provider-sso': 3.972.28
       '@azure/ai-projects': 1.0.1(ws@8.20.0)(zod@4.3.6)
       '@azure/identity': 4.13.1
@@ -38636,14 +38632,14 @@ snapshots:
       '@azure/openai-assistants': 1.0.0-beta.6
       '@fal-ai/client': 1.9.5
       '@huggingface/transformers': 3.8.1
-      '@ibm-cloud/watsonx-ai': 1.7.11(@swc/core@1.15.21(@swc/helpers@0.5.20))(typescript@5.9.3)
+      '@ibm-cloud/watsonx-ai': 1.7.11(@swc/core@1.15.21(@swc/helpers@0.5.21))(typescript@5.9.3)
       '@ibm-generative-ai/node-sdk': 3.2.4(encoding@0.1.13)
       '@openai/codex-sdk': 0.110.0
       '@playwright/browser-chromium': 1.59.1
       '@rollup/rollup-linux-x64-gnu': 4.60.1
       '@slack/web-api': 7.15.0(debug@4.4.3)
       '@smithy/node-http-handler': 4.5.1
-      '@swc/core': 1.15.21(@swc/helpers@0.5.20)
+      '@swc/core': 1.15.21(@swc/helpers@0.5.21)
       '@swc/core-darwin-arm64': 1.15.21
       '@swc/core-darwin-x64': 1.15.21
       '@swc/core-linux-x64-gnu': 1.15.21
@@ -38651,7 +38647,7 @@ snapshots:
       '@swc/core-win32-x64-msvc': 1.15.21
       google-auth-library: 10.6.2
       hono: 4.12.10
-      ibm-cloud-sdk-core: 5.4.9
+      ibm-cloud-sdk-core: 5.4.10
       langfuse: 3.38.20
       natural: 8.1.1(gcp-metadata@8.1.2)(socks@2.8.7)
       node-sql-parser: 5.4.0
@@ -38718,7 +38714,7 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  promptfoo@0.120.27(@cfworker/json-schema@4.1.1)(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.0.2)(@noble/hashes@2.0.1)(@swc/helpers@0.5.20)(@types/json-schema@7.0.15)(@types/node@24.12.0)(@types/pg@8.20.0)(@types/react@19.2.14)(babel-plugin-macros@3.1.0)(debug@4.4.3)(encoding@0.1.13)(gel@2.2.0)(kysely@0.28.15)(mysql2@3.20.0(@types/node@24.12.0))(pg@8.19.0)(playwright-core@1.59.1)(postgres@3.4.8)(socks@2.8.7)(typescript@5.9.3):
+  promptfoo@0.120.27(@cfworker/json-schema@4.1.1)(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.0.2)(@noble/hashes@2.0.1)(@swc/helpers@0.5.21)(@types/json-schema@7.0.15)(@types/node@24.12.0)(@types/pg@8.20.0)(@types/react@19.2.14)(babel-plugin-macros@3.1.0)(debug@4.4.3)(encoding@0.1.13)(gel@2.2.0)(kysely@0.28.15)(mysql2@3.20.0(@types/node@24.12.0))(pg@8.19.0)(playwright-core@1.59.1)(postgres@3.4.8)(socks@2.8.7)(typescript@5.9.3):
     dependencies:
       '@anthropic-ai/sdk': 0.78.0(zod@4.3.6)
       '@apidevtools/json-schema-ref-parser': 15.3.5(@types/json-schema@7.0.15)
@@ -38740,7 +38736,7 @@ snapshots:
       '@opentelemetry/sdk-trace-node': 2.6.1(@opentelemetry/api@1.9.1)
       '@opentelemetry/semantic-conventions': 1.40.0
       '@types/ws': 8.18.1
-      ai: 6.0.143(zod@4.3.6)
+      ai: 6.0.144(zod@4.3.6)
       ajv: 8.18.0
       ajv-formats: 3.0.1(ajv@8.18.0)
       async: 3.2.6
@@ -38806,10 +38802,10 @@ snapshots:
       zod: 4.3.6
     optionalDependencies:
       '@anthropic-ai/claude-agent-sdk': 0.2.90(@cfworker/json-schema@4.1.1)(zod@4.3.6)
-      '@aws-sdk/client-bedrock-agent-runtime': 3.1022.0
-      '@aws-sdk/client-bedrock-runtime': 3.1022.0
-      '@aws-sdk/client-s3': 3.1022.0
-      '@aws-sdk/client-sagemaker-runtime': 3.1022.0
+      '@aws-sdk/client-bedrock-agent-runtime': 3.1023.0
+      '@aws-sdk/client-bedrock-runtime': 3.1023.0
+      '@aws-sdk/client-s3': 3.1023.0
+      '@aws-sdk/client-sagemaker-runtime': 3.1023.0
       '@aws-sdk/credential-provider-sso': 3.972.28
       '@azure/ai-projects': 1.0.1(ws@8.20.0)(zod@4.3.6)
       '@azure/identity': 4.13.1
@@ -38817,14 +38813,14 @@ snapshots:
       '@azure/openai-assistants': 1.0.0-beta.6
       '@fal-ai/client': 1.9.5
       '@huggingface/transformers': 3.8.1
-      '@ibm-cloud/watsonx-ai': 1.7.11(@swc/core@1.15.21(@swc/helpers@0.5.20))(typescript@5.9.3)
+      '@ibm-cloud/watsonx-ai': 1.7.11(@swc/core@1.15.21(@swc/helpers@0.5.21))(typescript@5.9.3)
       '@ibm-generative-ai/node-sdk': 3.2.4(encoding@0.1.13)
       '@openai/codex-sdk': 0.110.0
       '@playwright/browser-chromium': 1.59.1
       '@rollup/rollup-linux-x64-gnu': 4.60.1
       '@slack/web-api': 7.15.0(debug@4.4.3)
       '@smithy/node-http-handler': 4.5.1
-      '@swc/core': 1.15.21(@swc/helpers@0.5.20)
+      '@swc/core': 1.15.21(@swc/helpers@0.5.21)
       '@swc/core-darwin-arm64': 1.15.21
       '@swc/core-darwin-x64': 1.15.21
       '@swc/core-linux-x64-gnu': 1.15.21
@@ -38832,7 +38828,7 @@ snapshots:
       '@swc/core-win32-x64-msvc': 1.15.21
       google-auth-library: 10.6.2
       hono: 4.12.10
-      ibm-cloud-sdk-core: 5.4.9
+      ibm-cloud-sdk-core: 5.4.10
       langfuse: 3.38.20
       natural: 8.1.1(gcp-metadata@8.1.2)(socks@2.8.7)
       node-sql-parser: 5.4.0
@@ -39438,13 +39434,13 @@ snapshots:
       react-draggable: 4.5.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       tslib: 2.6.2
 
-  react-router-dom@7.13.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
+  react-router-dom@7.14.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
     dependencies:
       react: 19.2.4
       react-dom: 19.2.4(react@19.2.4)
-      react-router: 7.13.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      react-router: 7.14.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
 
-  react-router@7.13.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
+  react-router@7.14.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
     dependencies:
       cookie: 1.1.1
       react: 19.2.4
@@ -42275,7 +42271,7 @@ snapshots:
 
   ts-mixer@6.0.4: {}
 
-  ts-node@10.9.2(@swc/core@1.15.21(@swc/helpers@0.5.20))(@types/node@18.19.130)(typescript@5.9.3):
+  ts-node@10.9.2(@swc/core@1.15.21(@swc/helpers@0.5.21))(@types/node@18.19.130)(typescript@5.9.3):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.12
@@ -42293,7 +42289,7 @@ snapshots:
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
     optionalDependencies:
-      '@swc/core': 1.15.21(@swc/helpers@0.5.20)
+      '@swc/core': 1.15.21(@swc/helpers@0.5.21)
     optional: true
 
   ts-pattern@5.9.0: {}
@@ -42319,7 +42315,7 @@ snapshots:
 
   tsscmp@1.0.6: {}
 
-  tsup@8.5.1(@swc/core@1.15.21(@swc/helpers@0.5.20))(jiti@2.6.1)(postcss@8.5.8)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3):
+  tsup@8.5.1(@swc/core@1.15.21(@swc/helpers@0.5.21))(jiti@2.6.1)(postcss@8.5.8)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3):
     dependencies:
       bundle-require: 5.1.0(esbuild@0.27.7)
       cac: 6.7.14
@@ -42339,7 +42335,7 @@ snapshots:
       tinyglobby: 0.2.15
       tree-kill: 1.2.2
     optionalDependencies:
-      '@swc/core': 1.15.21(@swc/helpers@0.5.20)
+      '@swc/core': 1.15.21(@swc/helpers@0.5.21)
       postcss: 8.5.8
       typescript: 5.9.3
     transitivePeerDependencies:
@@ -42519,8 +42515,6 @@ snapshots:
   undici-types@7.16.0: {}
 
   undici@6.24.1: {}
-
-  undici@7.24.5: {}
 
   undici@7.24.7: {}
 
@@ -42943,7 +42937,7 @@ snapshots:
 
   validate-npm-package-name@5.0.1: {}
 
-  validator@13.15.26: {}
+  validator@13.15.35: {}
 
   vary@1.1.2: {}
 

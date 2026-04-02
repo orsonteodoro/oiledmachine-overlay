@@ -257,7 +257,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management indexeddb minio +openrc +pwa +postgres +rag redis +s3 systemd
-ebuild_revision_99
+ebuild_revision_101
 "
 REQUIRED_USE="
 	postgres
@@ -749,16 +749,16 @@ ewarn "QA:  Manually change esbuild-register: 3.6.0(esbuild@0.27.7) to esbuild-r
 			sed -i -e "s|'@tootallnate/once': 2.0.0|'@tootallnate/once': 3.0.1|g" "pnpm-lock.yaml" || die
 
 #			sed -i -e "s|serialize-javascript: 6.0.2|serialize-javascript: 7.0.5|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|undici: 6.21.3|undici: 7.24.5|g" "pnpm-lock.yaml" || die
+#			sed -i -e "s|undici: 6.21.3|undici: 7.24.5|g" "pnpm-lock.yaml" || die
 
-			sed -i -e "s|fast-xml-parser: 5.4.1|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 5.4.2|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 5.2.5|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 5.3.6|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 4.5.4|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.5.7\"|g" "package.json" || die
+#			sed -i -e "s|fast-xml-parser: 5.4.1|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
+#			sed -i -e "s|fast-xml-parser: 5.4.2|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
+#			sed -i -e "s|fast-xml-parser: 5.2.5|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
+#			sed -i -e "s|fast-xml-parser: 5.3.6|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
+#			sed -i -e "s|fast-xml-parser: 4.5.4|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
+#			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
+#			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
+#			sed -i -e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.5.7\"|g" "package.json" || die
 
 #			sed -i -e "s|handlebars: ^4.7.8|handlebars: 4.7.9|g" "package.json" || die
 #			sed -i -e "s|handlebars: 4.7.8|handlebars: 4.7.9|g" "package.json" || die
@@ -792,13 +792,13 @@ ewarn "QA:  Manually change esbuild-register: 3.6.0(esbuild@0.27.7) to esbuild-r
 #			"minimatch@10.2.5"								# CVE-2026-26996: ZC, DoS; High
 													# CVE-2026-27903; ZC, DoS; High
 													# CVE-2026-27904; ZC, DoS; High
-			"undici@7.24.5"									# CVE-2026-2229; ZC, DoS, High
+#			"undici@7.24.5"									# CVE-2026-2229; ZC, DoS, High
 													# CVE-2026-1526; ZC, DoS, High
 													# CVE-2026-1525; ZC, DT, ID; Moderate
 													# CVE-2026-22036; ZC, DoS; Moderate
 													# CVE-2026-1527; DT, ID; Moderate
 													# CVE-2026-1528; ZC, DoS; High
-			"fast-xml-parser@5.5.7"								# CVE-2026-25896; ZC, EBR, DT, ID; Critical
+#			"fast-xml-parser@5.5.7"								# CVE-2026-25896; ZC, EBR, DT, ID; Critical
 													# CVE-2026-26278; ZC, DoS; High
 													# CVE-2026-27942; ZC, VS(DoS); Low		# >= 5.3.8 or >= 4.5.4
 													# CVE-2026-33036; ZC, DoS; High
@@ -1017,7 +1017,7 @@ einfo "Building next.config.js"
 		else
 			echo "DATABASE_URL=\"${DATABASE_URL}?sslmode=disable\"" >> "${S}/.env" || die
 		fi
-		echo "DATABASE_DRIVER=\"node\"" >> "${S}/.env" || die
+		echo "DATABASE_DRIVER=\"pg\"" >> "${S}/.env" || die
 
 		edo npm run "db:generate"
 		edo npm run "db:migrate"
@@ -1084,9 +1084,6 @@ _install_pwa_webapp() {
 		doins -r "${S}/packages/database/migrations/"*
 
 		insinto "${_PREFIX}"
-		doins "${S}/scripts/migrateServerDB/docker.cjs"
-		doins "${S}/scripts/migrateServerDB/errorHint.js"
-		insinto "${_PREFIX}/scripts/migrateServerDB"
 		doins "${S}/scripts/migrateServerDB/docker.cjs"
 		doins "${S}/scripts/migrateServerDB/errorHint.js"
 	fi

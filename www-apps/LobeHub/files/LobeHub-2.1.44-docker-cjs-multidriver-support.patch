@@ -49,7 +49,7 @@
 +    throw new Error('DATABASE_URL is not set, please set it in your environment variables.');
 +  }
 +
-+  const driver = (process.env.DATABASE_DRIVER || 'node').toLowerCase().trim();
++  const driver = (process.env.DATABASE_DRIVER || 'pg').toLowerCase().trim();
 +
 +  console.log(`[Database] Using driver: ${driver}`);
  
@@ -64,7 +64,7 @@
 +        });
 +        const db = postgresJsDrizzle(client);
 +        await postgresJsMigrate(db, {
-+          migrationsFolder: path.join(__dirname, './migrations'),
++          migrationsFolder: path.join(__dirname, './packages/database/migrations'),
 +        });
 +        await client.end();
 +        break;
@@ -76,7 +76,7 @@
 +        const client = new Pool({ connectionString: process.env.DATABASE_URL });
 +        const db = nodeDrizzle(client);
 +        await nodeMigrate(db, {
-+          migrationsFolder: path.join(__dirname, './migrations'),
++          migrationsFolder: path.join(__dirname, './packages/database/migrations'),
 +        });
 +        await client.end();
 +        break;
@@ -90,7 +90,7 @@
 +        const client = new NeonPool({ connectionString: process.env.DATABASE_URL });
 +        const db = neonDrizzle(client);
 +        await neonMigrate(db, {
-+          migrationsFolder: path.join(__dirname, './migrations'),
++          migrationsFolder: path.join(__dirname, './packages/database/migrations'),
 +        });
 +        await client.end();
 +        break;

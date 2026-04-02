@@ -8,9 +8,9 @@
 #
 # Set environment variable to support the following databases:
 #
-# DATABASE_DRIVER="postgres.js" # For PostgreSQL with the postgres.js driver
-# DATABASE_DRIVER="pg"          # For PostgreSQL with the pg driver
-# DATABASE_DRIVER="next"        # For Next
+# DATABASE_DRIVER="neon"        # For Neon for Vercel
+# DATABASE_DRIVER="pg"          # For PostgreSQL (stability, compatibility) with the pg driver
+# DATABASE_DRIVER="postgres.js" # For PostgreSQL (speed, lightweight) with the postgres.js driver
 #
 
 --- a/packages/database/src/core/web-server.ts.orig	2026-03-20 03:39:27.000000000 -0700
@@ -30,7 +30,7 @@
  
 -  if (serverDBEnv.DATABASE_DRIVER === 'node') {
 +  // ============== DRIVER SELECTION ==============
-+  const driver = (serverDBEnv.DATABASE_DRIVER || process.env.DATABASE_DRIVER || 'node').toLowerCase();
++  const driver = (serverDBEnv.DATABASE_DRIVER || process.env.DATABASE_DRIVER || 'pg').toLowerCase();
 +
 +  // 1. postgres.js (Recommended for self-hosted PostgreSQL 17 + Better Auth)
 +  if (driver === 'postgres.js') {
@@ -65,7 +65,7 @@
    return createEnv({
      runtimeEnv: {
 -      DATABASE_DRIVER: process.env.DATABASE_DRIVER || 'neon',
-+      DATABASE_DRIVER: process.env.DATABASE_DRIVER || 'node',
++      DATABASE_DRIVER: process.env.DATABASE_DRIVER || 'pg',
        DATABASE_TEST_URL: process.env.DATABASE_TEST_URL,
        DATABASE_URL: process.env.DATABASE_URL,
  
