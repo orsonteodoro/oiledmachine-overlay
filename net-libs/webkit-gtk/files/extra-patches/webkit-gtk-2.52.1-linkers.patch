@@ -1,11 +1,12 @@
---- a/Source/cmake/OptionsCommon.cmake.orig	2026-03-30 01:24:56.812775523 -0700
-+++ b/Source/cmake/OptionsCommon.cmake	2026-03-30 01:22:29.201194990 -0700
+diff '--color=auto' -urp webkitgtk-2.52.1.orig/Source/cmake/OptionsCommon.cmake webkitgtk-2.52.1/Source/cmake/OptionsCommon.cmake
+--- webkitgtk-2.52.1.orig/Source/cmake/OptionsCommon.cmake	2026-02-23 06:40:56.842293000 -0800
++++ webkitgtk-2.52.1/Source/cmake/OptionsCommon.cmake	2026-03-30 01:31:21.745174735 -0700
 @@ -27,12 +27,52 @@ set(LLD_UNUSABLE_BECAUSE_OF_ADDRESS_SPAC
  # Use ld.lld when building with LTO, or for debug builds, if available.
  # FIXME: With CMake 3.22+ full conditional syntax can be used in
  #        cmake_dependent_option()
--if (DEVELOPER_MODE AND (NOT LLD_UNUSABLE_BECAUSE_OF_ADDRESS_SPACE_EXHAUSTION))
-+if (LTO_MODE OR DEVELOPER_MODE AND (NOT LLD_UNUSABLE_BECAUSE_OF_ADDRESS_SPACE_EXHAUSTION))
+-if (LTO_MODE OR DEVELOPER_MODE AND (NOT LLD_UNUSABLE_BECAUSE_OF_ADDRESS_SPACE_EXHAUSTION))
++if (DEVELOPER_MODE AND (NOT LLD_UNUSABLE_BECAUSE_OF_ADDRESS_SPACE_EXHAUSTION))
      set(TRY_USE_LD_LLD ON)
  endif ()
 -CMAKE_DEPENDENT_OPTION(USE_LD_LLD "Use LLD linker" ON
@@ -65,8 +66,11 @@
  # Determine which linker is being used with the chosen linker flags.
  separate_arguments(LD_VERSION_COMMAND UNIX_COMMAND
      "${CMAKE_C_COMPILER} ${CMAKE_EXE_LINKER_FLAGS} -Wl,--version"
---- a/Source/cmake/WebKitCompilerFlags.cmake.orig	2026-02-23 06:40:56.843293000 -0800
-+++ b/Source/cmake/WebKitCompilerFlags.cmake	2026-03-30 01:19:25.114915876 -0700
+Only in webkitgtk-2.52.1/Source/cmake: OptionsCommon.cmake.orig
+Only in webkitgtk-2.52.1/Source/cmake: OptionsCommon.cmake.rej
+diff '--color=auto' -urp webkitgtk-2.52.1.orig/Source/cmake/WebKitCompilerFlags.cmake webkitgtk-2.52.1/Source/cmake/WebKitCompilerFlags.cmake
+--- webkitgtk-2.52.1.orig/Source/cmake/WebKitCompilerFlags.cmake	2026-02-23 06:40:56.843293000 -0800
++++ webkitgtk-2.52.1/Source/cmake/WebKitCompilerFlags.cmake	2026-03-30 01:30:28.454667495 -0700
 @@ -271,14 +271,15 @@ if (CMAKE_GENERATOR STREQUAL "Ninja")
  endif ()
  
