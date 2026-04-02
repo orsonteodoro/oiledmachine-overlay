@@ -564,7 +564,7 @@ pnpm_unpack_post() {
 			"@better-auth/expo@1.5.6"							# Same version as better-ath
 
 	# pg alternative
-			"postgres@3.4.8"
+#			"postgres@3.4.8"
 		)
 		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 	fi
@@ -1017,7 +1017,7 @@ einfo "Building next.config.js"
 		else
 			echo "DATABASE_URL=\"${DATABASE_URL}?sslmode=disable\"" >> "${S}/.env" || die
 		fi
-		echo "DATABASE_DRIVER=\"node-postgres\"" >> "${S}/.env" || die
+		echo "DATABASE_DRIVER=\"node\"" >> "${S}/.env" || die
 
 		edo npm run "db:generate"
 		edo npm run "db:migrate"
