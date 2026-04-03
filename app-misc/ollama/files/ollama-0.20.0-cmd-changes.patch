@@ -3721,7 +3721,7 @@
 +		"gemma2": "Gemma Terms of Use 20240221, Gemma Prohibited Use Policy 20240221",
 +		"gemma3": "Gemma Terms of Use 20240221, Gemma Prohibited Use Policy 20240221",
 +		"gemma3n": "Gemma Terms of Use 20250324, Gemma Prohibited Use Policy 20240221",
-+		"gemma4": "Apache-2.0"
++		"gemma4": "Apache-2.0",
 +		"glm-4.6": "MIT",
 +		"glm-4.7": "MIT",
 +		"glm-4.7-flash": "MIT",
