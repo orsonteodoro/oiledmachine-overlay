@@ -347,6 +347,7 @@ FEATURED_LLMS=(
 	"gemma2"
 	"gemma3"
 	"gemma3n"
+	"gemma4"
 	"glm4"
 	"glm-4.6"
 	"glm-4.7"
@@ -3181,6 +3182,9 @@ LLM_LICENSES="
 		Gemma-Terms-of-Use-20250324
 		Gemma-Prohibited-Use-Policy-20240221
 	)
+	ollama_llms_gemma4? (
+		Apache-2.0
+	)
 	ollama_llms_glm4? (
 		glm-4-9b-LICENSE
 	)
@@ -4411,7 +4415,7 @@ IDEPEND="
 	${RDEPEND}
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-0.18.3-cmd-changes.patch"
+	"${FILESDIR}/${PN}-0.20.0-cmd-changes.patch"
 	"${FILESDIR}/${PN}-0.12.6-custom-cpu-features.patch"
 	"${FILESDIR}/${PN}-0.13.0-hardcoded-paths.patch"
 	"${FILESDIR}/${PN}-0.13.0-cuda-not-fatal.patch"
