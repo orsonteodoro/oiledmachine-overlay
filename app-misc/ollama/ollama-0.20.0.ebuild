@@ -4564,9 +4564,11 @@ src_prepare() {
 	default
 	# S_GO should appear at this point
 	[[ -e "${WORKDIR}/go-mod" ]] || die "Retry, but upgrade dev-lang/go first."
-	local p
+
+	# Avoid sed: couldn't open temporary file /var/tmp/portage/app-misc/ollama-0.20.0/work/go-mod/github.com/pdevine/tensor@v0.0.0-20240510204454-f88f4562727c/sedb9KKia: Permission denied
 	edo find "${S_GO}" -type d -exec chmod 0755 {} \;
 	edo find "${S_GO}" -type f -exec chmod 0644 {} \;
+
 	edo sed -i -e "s|// import \"gorgonia.org/tensor\"||g" "${S_GO}/github.com/pdevine/tensor@"*"/tensor.go"
 	edo sed -i -e "s|// import \"gorgonia.org/tensor/internal/storage\"||g" "${S_GO}/github.com/pdevine/tensor@"*"/internal/storage/header.go"
 	edo sed -i -e "s|// import \"gorgonia.org/tensor/internal/execution\"||g" "${S_GO}/github.com/pdevine/tensor@"*"/internal/execution/e.go"
