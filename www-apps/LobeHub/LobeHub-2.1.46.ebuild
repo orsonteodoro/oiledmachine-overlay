@@ -38,7 +38,6 @@ EAPI=8
 # 2.1.36 - 2.1.43
 # 2.1.43 -> 2.1.44
 # 2.1.44 -> 2.1.46
-# 2.1.46 -> 2.1.47
 
 # Ebuild using React 19
 
@@ -58,7 +57,7 @@ EAPI=8
 #   OILEDMACHINE_OVERLAY_DIR="/usr/local/oiledmachine-overlay"
 #   PATH="${OILEDMACHINE_OVERLAY_DIR}/scripts:${PATH}"
 #   cd "${OILEDMACHINE_OVERLAY_DIR}/www-apps/LobeHub"
-#   PNPM_UPDATER_VERSIONS="2.1.47" pnpm_updater_update_locks.sh
+#   PNPM_UPDATER_VERSIONS="2.1.46" pnpm_updater_update_locks.sh
 #
 
 # U22, U24, D12
@@ -83,11 +82,11 @@ PNPM_DEDUPE=0 # Still debugging
 PNPM_SLOT="9"
 POSTGRESQL_PORT="5432"
 POSTGRESQL_SLOT="17"
-RUST_MAX_VER="1.88.0" # Inclusive
-RUST_MIN_VER="1.88.0" # LLVM 20.  Dependency graph:  next -> @swc/core -> rust \
-# https://github.com/swc-project/swc/blob/v1.15.21/rust-toolchain		# 2025-05-06 nightly
-# https://github.com/rust-lang/rust/commits/main/src/version
-# Find the version bump with commit <= 2025-05-06
+RUST_MAX_VER="1.81.0" # Inclusive
+RUST_MIN_VER="1.81.0" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0 for next.js 15.3.3 dependency of @swc/core 1.11.24 \
+# Obtained from https://github.com/swc-project/swc/blob/v1.15.8/rust-toolchain \
+# Obtained from commit from committer-date:2025-05-06 GH search \
+# Obtained from https://github.com/rust-lang/rust/blob/<commit-id>/RELEASES.md
 RUST_PV="${RUST_MIN_VER}"
 
 NEXTJS_PV="16.1.7"
@@ -257,7 +256,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management indexeddb minio +openrc +pwa +postgres +rag redis +s3 systemd
-ebuild_revision_102
+ebuild_revision_89
 "
 REQUIRED_USE="
 	postgres
@@ -505,7 +504,7 @@ pnpm_unpack_post() {
 		-e "s|\"better-call\": \"1.1.8\"|\"better-call\": \"1.3.2\"|g" \
 		-e "s|\"drizzle-kit\": \"^0.31.8\"|\"drizzle-kit\": \"0.30.6\"|g" \
 		-e "s|\"drizzle-orm\": \"^0.45.1\"|\"drizzle-orm\": \"0.45.1\"|g" \
-		-e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.5.7\"|g" \
+		-e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.5.6\"|g" \
 		-e "s|\"pg\": \"^8.17.2\"|\"pg\": \"8.19.0\"|g" \
 		"package.json" \
 		|| die
@@ -556,7 +555,7 @@ pnpm_unpack_post() {
 	# Pin better-auth and dependencies
 			"drizzle-orm@0.45.1"
 			"better-auth@1.5.6"
-			"fast-xml-parser@5.5.7"
+			"fast-xml-parser@5.5.6"
 			"pg@8.19.0"
 
 	# Reverse depends or transitive dependencies of better-auth
@@ -599,103 +598,91 @@ pnpm_audit_post() {
 
 pnpm_dedupe_post() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
-#ewarn "QA:  Manually remove lodash@4.17.21 from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove yaml@2.3.3 from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change yaml: 2.3.3 to yaml: 2.8.3 from ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove nodemailer@7.0.13 from ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually change nodemailer: version: 7.0.13 to version: 8.0.4 specifier: ^7.0.12 to specifier: ^8.0.4 from ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove serialize-javascript@7.0.3 from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove path-to-regexp@8.2.0 from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change path-to-regexp: 8.2.0 to path-to-regexp: 8.4.0 from ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove @xmldom/xmldom@0.8.11 from ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove @xmldom/xmldom@0.9.8 from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove ai@4.3.19 from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @tootallnate/once@2.0.0 from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove serialize-javascript@6.0.2 from ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove ai@4.3.19 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @tootallnate/once@2.0.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove serialize-javascript@6.0.2 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
-#ewarn "QA:  Manually remove undici@6.21.3 from ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually change undici: 6.21.3 to undici: 7.24.5 from ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove undici@6.21.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually change undici: 6.21.3 to undici: 7.24.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
-ewarn "QA:  Manually remove file-type@16.5.4 from ${S}/pnpm-lock.yaml"	# CVE-2026-31808; ZC, DoS; Moderate
-ewarn "QA:  Manually change file-type: 16.5.4 to file-type: 21.3.4 from ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove file-type@16.5.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"	# CVE-2026-31808; ZC, DoS; Moderate
+ewarn "QA:  Manually change file-type: 16.5.4 to file-type: 21.3.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
-ewarn "QA:  Manually remove bn.js@4.12.3 from ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove bn.js@4.12.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
-ewarn "QA:  Manually remove ajv@6.14.0 from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove ajv@8.12.0 from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove ajv-formats@2.1.1 from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change ajv-formats: 2.1.1(ajv@8.12.0) to ajv-formats: 3.0.1(ajv@8.18.0) from ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove ajv@6.14.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove ajv@8.12.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove ajv-formats@2.1.1 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change ajv-formats: 2.1.1(ajv@8.12.0) to ajv-formats: 3.0.1(ajv@8.18.0) from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
-ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
-ewarn "QA:  Manually remove minimatch@3.1.5 from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove minimatch@5.1.9 from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove minimatch@9.0.3 from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove minimatch@9.0.9 from ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually change from minimatch@x.y.z to minimatch@10.2.5 from ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove minimatch@3.1.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove minimatch@5.1.9 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove minimatch@9.0.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove minimatch@9.0.9 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually change from minimatch@x.y.z to minimatch@10.2.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 # ignore section because of pnpm override
-# 5.4.2 -> 5.5.7
-#ewarn "QA:  Manually remove fast-xml-parser@4.5.3 from ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove fast-xml-parser@4.5.4 from ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove fast-xml-parser@5.2.5 from ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove fast-xml-parser@5.3.6 from ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove fast-xml-parser@5.3.8 from ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove fast-xml-parser@5.4.1 from ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually change fast-xml-parser: 4.x, 5.x, or earlier to fast-xml-parser: 5.5.7 depends in ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove fast-xml-parser: 5.4.1 in ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove fast-xml-parser: 5.5.5 or earlier in ${S}/pnpm-lock.yaml"
+# 5.4.2 -> 5.5.6
+#ewarn "QA:  Manually remove fast-xml-parser@4.5.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove fast-xml-parser@4.5.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove fast-xml-parser@5.2.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove fast-xml-parser@5.3.6 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove fast-xml-parser@5.3.8 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove fast-xml-parser@5.4.1 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually change fast-xml-parser: 4.x, 5.x, or earlier to fast-xml-parser: 5.5.6 depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove fast-xml-parser: 5.4.1 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove fast-xml-parser: 5.5.5 or earlier in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
-ewarn "QA:  Manually remove jsondiffpatch@0.6.0 from ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually change @apidevtools/json-schema-ref-parser@11.1.0 to @apidevtools/json-schema-ref-parser@11.2.0 in ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove esbuild@0.18.20 and arch implementations from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove esbuild@0.19.12 and arch implementations from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove esbuild@0.25.12 and arch implementations from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change (esbuild@0.19.12) to (esbuild@0.27.7) and arch implementations from ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove esbuild@0.21.4 and arch implementations from ${S}/pnpm-lock.yaml"
-##ewarn "QA:  Manually remove esbuild@0.21.5 and arch implementations from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove <esbuild-0.27.7 from ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove jsondiffpatch@0.6.0 from ${S}/package-lock.json"
+#ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually change @apidevtools/json-schema-ref-parser@11.1.0 to @apidevtools/json-schema-ref-parser@11.2.0 ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove esbuild@0.18.20 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove esbuild@0.19.12 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove esbuild@0.25.12 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change (esbuild@0.19.12) to (esbuild@0.27.4) and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove esbuild@0.21.4 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+##ewarn "QA:  Manually remove esbuild@0.21.5 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove <esbuild-0.27.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ##ewarn "QA:  Manually change esbuild: 0.21.4 references to esbuild: 0.25.0"
 ##ewarn "QA:  Manually change esbuild: 0.21.5 references to esbuild: 0.25.0"
 ##ewarn "QA:  Manually change esbuild: 0.18.20 references to esbuild: 0.25.0"
-#ewarn "QA:  Manually remove @babel/core@7.23.6 from ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove @babel/runtime@7.23.6 from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/core@4.2.4 from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/auth-token@3.0.4 from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/endpoint@7.0.6 from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/graphql@5.0.6 from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/request@6.2.8 from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/request-error@3.0.3 from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/rest@19.0.13 from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/tsconfig@1.0.2 from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/types@9.3.2 from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@6.1.2 from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/plugin-request-log@1.0.4 from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/plugin-rest-endpoint-methods@7.2.3 from ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove js-yaml@4.1.0 from ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove @babel/core@7.23.6 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove @babel/runtime@7.23.6 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/core@4.2.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/auth-token@3.0.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/endpoint@7.0.6 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/graphql@5.0.6 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/request@6.2.8 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/request-error@3.0.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/rest@19.0.13 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/tsconfig@1.0.2 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/types@9.3.2 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@6.1.2 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/plugin-request-log@1.0.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/plugin-rest-endpoint-methods@7.2.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove js-yaml@4.1.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
-#ewarn "QA:  Manually change '@babel/core': 7.23.6 references to '@babel/core': 7.28.5 for ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually change '@babel/runtime': 7.28.2 references to '@babel/runtime': 7.28.4 for ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually change '@octokit/rest': 19.0.13 references to '@octokit/rest': 20.1.2 for ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually change '@babel/core': 7.23.6 references to '@babel/core': 7.28.5 for ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually change '@babel/runtime': 7.28.2 references to '@babel/runtime': 7.28.4 for ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually change '@octokit/rest': 19.0.13 references to '@octokit/rest': 20.1.2 for ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
-##ewarn "QA:  Manually change '@octokit/auth-token': 3.0.4 to '@octokit/auth-token': 4.0.0 in ${S}/pnpm-lock.yaml"
-##ewarn "QA:  Manually change '@octokit/graphql': 5.0.6 to '@octokit/graphql': 7.1.1 in ${S}/pnpm-lock.yaml"
-##ewarn "QA:  Manually change '@octokit/request': 6.2.8 to '@octokit/request': 8.4.1 in ${S}/pnpm-lock.yaml"
-##ewarn "QA:  Manually change '@octokit/request-error': 3.0.3 to '@octokit/request-error': 5.1.1 in ${S}/pnpm-lock.yaml"
-##ewarn "QA:  Manually change '@octokit/types': 9.3.2 to '@octokit/types': 13.10.0 in ${S}/pnpm-lock.yaml"
+##ewarn "QA:  Manually change '@octokit/auth-token': 3.0.4 to '@octokit/auth-token': 4.0.0 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+##ewarn "QA:  Manually change '@octokit/graphql': 5.0.6 to '@octokit/graphql': 7.1.1 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+##ewarn "QA:  Manually change '@octokit/request': 6.2.8 to '@octokit/request': 8.4.1 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+##ewarn "QA:  Manually change '@octokit/request-error': 3.0.3 to '@octokit/request-error': 5.1.1 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+##ewarn "QA:  Manually change '@octokit/types': 9.3.2 to '@octokit/types': 13.10.0 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
-#ewarn "QA:  Manually change @octokit/rest@20.1.2(encoding@0.1.13) references to @octokit/rest@20.1.2 in ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually change @octokit/rest@20.1.2(encoding@0.1.13) references to @octokit/rest@20.1.2 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
-#ewarn "QA:  Manually remove regenerator-runtime@0.14.1 from ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove tmp@0.0.33 from ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually change tmp: 0.0.33 references to tmp: 0.2.4 in ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually dedupe @babel/helper-module-transforms in ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually add ai@5.0.52(zod@3.25.76) for @upstash/workflow depends in ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove electron@34.5.8 in ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change electron: specifier to ^41.0.0 and version to 41.0.3 for packages/electron-client-ipc depends in ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change esbuild-register@3.6.0(esbuild@0.27.7) to esbuild-register@3.6.0 in ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change esbuild-register: 3.6.0(esbuild@0.27.7) to esbuild-register: 3.6.0 in in ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove regenerator-runtime@0.14.1 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove tmp@0.0.33 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually change tmp: 0.0.33 references to tmp: 0.2.4 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually dedupe @babel/helper-module-transforms in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually add ai@5.0.52(zod@3.25.76) for @upstash/workflow depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove electron@34.5.8 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change electron specifier to ^41.0.0 and version to 41.0.3 for packages/electron-client-ipc depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 		# DoS = Denial of Service
 		# DT = Data Tampering
@@ -706,14 +693,14 @@ ewarn "QA:  Manually change esbuild-register: 3.6.0(esbuild@0.27.7) to esbuild-r
 
 		pnpm_patch_lockfile() {
 			sed -i -e "s|'@apidevtools/json-schema-ref-parser': 11.1.0|'@apidevtools/json-schema-ref-parser': 11.2.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.25.12|esbuild: 0.27.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.18.20|esbuild: 0.27.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.19.12|esbuild: 0.27.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.21.4|esbuild: 0.27.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.21.5|esbuild: 0.27.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.23.1|esbuild: 0.27.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.24.2|esbuild: 0.27.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: '>=0.12 <1'|esbuild: 0.27.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.25.12|esbuild: 0.27.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.18.20|esbuild: 0.27.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.19.12|esbuild: 0.27.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.21.4|esbuild: 0.27.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.21.5|esbuild: 0.27.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.23.1|esbuild: 0.27.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.24.2|esbuild: 0.27.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: '>=0.12 <1'|esbuild: 0.27.4|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|snowflake-sdk: 2.0.3|snowflake-sdk: 2.0.4|g" "pnpm-lock.yaml" || die
 
 			sed -i -e "s|'@babel/runtime': 7.23.6|'@babel/runtime': 7.28.2|g" "pnpm-lock.yaml" || die
@@ -723,13 +710,13 @@ ewarn "QA:  Manually change esbuild-register: 3.6.0(esbuild@0.27.7) to esbuild-r
 
 			sed -i -e "s|tmp: 0.0.33|tmp: 0.2.4|g" "pnpm-lock.yaml" || die
 
-			sed -i -e "s|minimatch: 9.0.9|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|minimatch: 9.0.6|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|minimatch: 9.0.3|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|minimatch: 5.1.9|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|minimatch: 5.1.7|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|minimatch: 3.1.5|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|minimatch: 3.1.3|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|minimatch: 9.0.9|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|minimatch: 9.0.6|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|minimatch: 9.0.3|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|minimatch: 5.1.9|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|minimatch: 5.1.7|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|minimatch: 3.1.5|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|minimatch: 3.1.3|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die
 
 			sed -i -e "s|bn.js: 4.12.3|bn.js: 5.2.3|g" "pnpm-lock.yaml" || die
 
@@ -747,25 +734,17 @@ ewarn "QA:  Manually change esbuild-register: 3.6.0(esbuild@0.27.7) to esbuild-r
 			sed -i -e "s|'@hono/node-server': 1.19.9(hono@4.12.3)|'@hono/node-server': 1.19.10|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|'@tootallnate/once': 2.0.0|'@tootallnate/once': 3.0.1|g" "pnpm-lock.yaml" || die
 
-			sed -i -e "s|serialize-javascript: 6.0.2|serialize-javascript: 7.0.5|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|serialize-javascript: 6.0.2|serialize-javascript: 7.0.3|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|undici: 6.21.3|undici: 7.24.5|g" "pnpm-lock.yaml" || die
 
-			sed -i -e "s|fast-xml-parser: 5.4.1|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 5.4.2|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 5.2.5|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 5.3.6|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 4.5.4|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.5.7\"|g" "package.json" || die
-
-			sed -i -e "s|handlebars: ^4.7.8|handlebars: 4.7.9|g" "package.json" || die
-			sed -i -e "s|handlebars: 4.7.8|handlebars: 4.7.9|g" "package.json" || die
-			sed -i -e "s|'@xmldom/xmldom': 0.8.11|'@xmldom/xmldom': 0.9.9|g" "package.json" || die
-			sed -i -e "s|path-to-regexp: 8.2.0|path-to-regexp: 8.4.0|g" "package.json" || die
-			sed -i -e "s|happy-dom: 20.8.8|happy-dom: 20.8.9|g" "package.json" || die 
-			sed -i -e "s|yaml: 2.3.3|yaml: 2.8.3|g" "package.json" || die
-			sed -i -e "s|lodash: 4.17.21|lodash: 4.17.23|g" "package.json" || die
+			sed -i -e "s|fast-xml-parser: 5.4.1|fast-xml-parser: 5.5.6|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 5.4.2|fast-xml-parser: 5.5.6|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 5.2.5|fast-xml-parser: 5.5.6|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 5.3.6|fast-xml-parser: 5.5.6|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 4.5.4|fast-xml-parser: 5.5.6|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.5.6|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.5.6|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.5.6\"|g" "package.json" || die
 		}
 
 		pnpm_patch_lockfile
@@ -777,7 +756,7 @@ ewarn "QA:  Manually change esbuild-register: 3.6.0(esbuild@0.27.7) to esbuild-r
 		epnpm add ${pkgs[@]}
 
 		pkgs=(
-			"esbuild@0.27.7"								# GHSA-67mh-4wv8-2f99; DI; Moderate
+			"esbuild@0.27.4"								# GHSA-67mh-4wv8-2f99; DI; Moderate
 
 			"@e965/xlsx"									# CVE-2024-22363; DoS; High
 													# CVE-2023-30533; DoS, DT, ID; High
@@ -788,7 +767,7 @@ ewarn "QA:  Manually change esbuild-register: 3.6.0(esbuild@0.27.7) to esbuild-r
 													# CVE-2026-26019; ID; Moderate
 													# CVE-2026-25528; ID; Moderate for langsmith dep of @langchain/community and langchain
 			"electron@${ELECTRON_APP_ELECTRON_PV}"						# CVE-2025-55305; DoS, DT, ID; Moderate
-			"minimatch@10.2.5"								# CVE-2026-26996: ZC, DoS; High
+			"minimatch@10.2.4"								# CVE-2026-26996: ZC, DoS; High
 													# CVE-2026-27903; ZC, DoS; High
 													# CVE-2026-27904; ZC, DoS; High
 			"undici@7.24.5"									# CVE-2026-2229; ZC, DoS, High
@@ -797,25 +776,11 @@ ewarn "QA:  Manually change esbuild-register: 3.6.0(esbuild@0.27.7) to esbuild-r
 													# CVE-2026-22036; ZC, DoS; Moderate
 													# CVE-2026-1527; DT, ID; Moderate
 													# CVE-2026-1528; ZC, DoS; High
-			"fast-xml-parser@5.5.7"								# CVE-2026-25896; ZC, EBR, DT, ID; Critical
+			"fast-xml-parser@5.5.6"								# CVE-2026-25896; ZC, EBR, DT, ID; Critical
 													# CVE-2026-26278; ZC, DoS; High
 													# CVE-2026-27942; ZC, VS(DoS); Low		# >= 5.3.8 or >= 4.5.4
 													# CVE-2026-33036; ZC, DoS; High
 													# CVE-2026-33349; ZC, DoS; Moderate
-			"handlebars@4.7.9"								# CVE-2026-33937; ZC, DoS, DT, ID; Critical
-													# CVE-2026-33941; DoS, DT, ID; High
-													# CVE-2026-33940; ZC, DoS, DT, ID; High
-													# CVE-2026-33938; DoS, DT, ID; High
-													# CVE-2026-33939; ZC, DoS; High
-													# GHSA-7rx3-28cr-v5wh; ZC, DT, ID; Moderate
-													# CVE-2026-33916; DoS, DT; Moderate
-													# GHSA-442j-39wm-28r2; ZC, ID; Low
-			"@xmldom/xmldom@0.9.9"								# CVE-2026-34601; ZC, DT; High
-			"path-to-regexp@8.4.0"								# CVE-2026-4923; ZC, DoS; High
-			"nodemailer@8.0.4"								# GHSA-c7w3-x93f-qmm8; VS(DT)
-			"lodash@4.17.23"								# CVE-2025-13465; ZC, VS(DoS, DT), SS(DoS, DT, ID); Moderate
-			"yaml@2.8.3"									# CVE-2026-33532; DoS; Moderate
-			"@langchain/community@1.1.18"
 		)
 		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 
@@ -825,7 +790,7 @@ ewarn "QA:  Manually change esbuild-register: 3.6.0(esbuild@0.27.7) to esbuild-r
 			"tmp@0.2.4"									# CVE-2025-54798; DT; Low
 
 			"@octokit/rest@20.1.2"								# Bump to remove octokit 4.x vulnerabilities
-			"minimatch@10.2.5"								# CVE-2026-26996: ZC, DoS; High
+			"minimatch@10.2.4"								# CVE-2026-26996: ZC, DoS; High
 													# CVE-2026-27903; ZC, DoS; High
 													# CVE-2026-27904; ZC, DoS; High
 			"bn.js@5.2.3"									# CVE-2026-2739: DoS; Moderate
@@ -838,9 +803,7 @@ ewarn "QA:  Manually change esbuild-register: 3.6.0(esbuild@0.27.7) to esbuild-r
 													# CVE-2026-29086; DT, ID; Moderate
 													# GHSA-v8w9-8mx6-g223; ZC, DT, ID; Moderate
 			"@tootallnate/once@3.0.1"							# CVE-2026-3449; DoS; Low
-			"serialize-javascript@7.0.5"							# GHSA-5c6j-r48x-rmvq; CE, DoS, DT, ID; High
-													# CVE-2026-34043; DoS; Moderate
-			"happy-dom@20.8.9"								# CVE-2026-34226; ID; High
+			"serialize-javascript@7.0.3"							# GHSA-5c6j-r48x-rmvq; CE, DoS, DT, ID; High
 		)
 		epnpm add -D ${pkgs[@]}
 
@@ -877,7 +840,7 @@ src_unpack() {
 		        einfo "Rebuilding sharp in ${S}"
 		        pushd "${S}" >/dev/null 2>&1 || die
 				node-sharp_pnpm_rebuild_sharp
-		# Copy sharp binary to expected location
+				# Copy sharp binary to expected location
 				mkdir -p "node_modules/sharp/build/${configuration}" || die "Failed to create node_modules/sharp/build/${configuration}"
 				cp \
 					"node_modules/sharp/src/build/${configuration}/sharp-${sharp_platform}.node" \
@@ -1072,6 +1035,11 @@ _install_pwa_webapp() {
 	insinto "${_PREFIX}"
 	doins -r "${S}/.next/standalone/"* # Contains node_modules, .next, server.js
 
+	# Copied again to fix the database migration issue and database driver switch issue.
+	rm -e "${ED}/${_PREFIX}/node_modules/"*
+	insinto "${_PREFIX}/node_modules"
+	doins -r "${S}/node_modules/"*
+
 	insinto "${_PREFIX}/.next/static"
 	doins -r "${S}/.next/static/"*
 
@@ -1086,27 +1054,6 @@ _install_pwa_webapp() {
 		doins "${S}/scripts/migrateServerDB/docker.cjs"
 		doins "${S}/scripts/migrateServerDB/errorHint.js"
 	fi
-
-	# Copy all dependencies and peerDependencies for database support for
-	# mostly drizzle-orm but also drivers as well
-	insinto "${_PREFIX}/node_modules/.pnpm"
-	doins -r "${S}/node_modules/.pnpm/"* # Full copy
-
-	# Missing in .next/standalone/node_modules
-	insinto "${_PREFIX}/node_modules"
-	doins "${S}/node_modules/drizzle-orm"
-
-	# Already added in .next/standalone/node_modules
-	#insinto "${_PREFIX}/node_modules"
-	#doins "${S}/node_modules/pg"
-
-	# Missing in .next/standalone/node_modules
-	insinto "${_PREFIX}/node_modules"
-	doins "${S}/node_modules/postgres"
-
-	# Missing in .next/standalone/node_modules
-	insinto "${_PREFIX}/node_modules/@neondatabase"
-	doins "${S}/node_modules/@neondatabase/serverless"
 
 	sed -i \
 		-e "s|@NODE_SLOT@|${NODE_SLOT}|g" \
@@ -1340,7 +1287,6 @@ pkg_postrm() {
 # OILEDMACHINE-OVERLAY-TEST:  FAIL 2.1.44 (20260324) with sharp 0.34.3.    OAuth works but full migration to postgres-js driver is not complete. With USE="pwa postgres" and postgres-js 3.4.8, better-auth 1.5.6, drizzle-orm 0.45.1, drizzle-kit 0.30.6, better-call 1.3.2, @better-auth/passkey@1.5.6, @better-auth/expo@1.5.6
 # OILEDMACHINE-OVERLAY-TEST:  PASS 2.1.44 (20260325) with sharp 0.34.3.
 # OILEDMACHINE-OVERLAY-TEST:  PASS 2.1.46 (20260326) with sharp 0.34.3.
-# OILEDMACHINE-OVERLAY-TEST:  FAIL 2.1.47 (20260326) with sharp 0.34.3.
 
 # E-mail login:  untested
 # Electron:  untested
