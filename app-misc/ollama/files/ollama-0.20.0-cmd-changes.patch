@@ -3441,7 +3441,7 @@
 +	"orca-mini": "general-purpose writing-letters",
 +	"orca2": "assistant summaries abstract-reasoning",
 +	"paraphrase-multilingual": "embedding clustering semantic-search",
-+	"partai/dorna-llama3": "persian english conversational",
++	"partai/dorna-llama3": "persian english conversational political-hallucination iran-is-pro-two-state-solution",
 +	"phi": "chat street-directions coding code-generator code-competion text-completion qa answering-questions",
 +	"phi3": "common-sense trivia english math logic math-word-problems solving-basic-programming-problems",
 +	"phi3.5": "coding math logic teacher fact-check chat multilingual arabic chinese czech danish dutch english finnish french german hebrew hungarian italian japanese korean norwegian polish portuguese russian spanish swedish thai turkish ukrainian",
