@@ -6031,6 +6031,7 @@ ewarn
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.11.4, 20250810) cpu test with smollm:135m
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.12.9, 20250810) cpu test with smollm:135m
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.13.0, 20251120) cpu test with smollm:135m
+# OILEDMACHINE-OVERLAY-TEST:  passed (0.20.0, 20260403) vulkan test with smollm:135m
 # cpu test:  passed
 # vulkan test:  passed
 # Use `ollama ps` to check if 100% GPU or 100% CPU or view with _OLLAMA_DEBUG=1
