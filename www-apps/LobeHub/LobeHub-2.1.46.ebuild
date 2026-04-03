@@ -257,7 +257,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management indexeddb minio +openrc +pwa +postgres +rag redis +s3 systemd
-ebuild_revision_101
+ebuild_revision_102
 "
 REQUIRED_USE="
 	postgres
@@ -599,19 +599,19 @@ pnpm_audit_post() {
 
 pnpm_dedupe_post() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
-ewarn "QA:  Manually remove lodash@4.17.21 from ${S}/pnpm-lock.yaml" # Skip
-ewarn "QA:  Manually remove yaml@2.3.3 from ${S}/pnpm-lock.yaml" # Skip
-ewarn "QA:  Manually change yaml: 2.3.3 to yaml: 2.8.3 from ${S}/pnpm-lock.yaml" # Skip
-#ewarn "QA:  Manually remove nodemailer@7.0.13 from ${S}/pnpm-lock.yaml" # Skip
-#ewarn "QA:  Manually change nodemailer: version: 7.0.13 to version: 8.0.4 specifier: ^7.0.12 to specifier: ^8.0.4 from ${S}/pnpm-lock.yaml" # Skip
-#ewarn "QA:  Manually remove serialize-javascript@7.0.3 from ${S}/pnpm-lock.yaml" # Skip
-ewarn "QA:  Manually remove path-to-regexp@8.2.0 from ${S}/pnpm-lock.yaml" # Skip
-ewarn "QA:  Manually change path-to-regexp: 8.2.0 to path-to-regexp: 8.4.0 from ${S}/pnpm-lock.yaml" # Skip
-#ewarn "QA:  Manually remove @xmldom/xmldom@0.8.11 from ${S}/pnpm-lock.yaml" # Skip
-#ewarn "QA:  Manually remove @xmldom/xmldom@0.9.8 from ${S}/pnpm-lock.yaml" # Skip
+#ewarn "QA:  Manually remove lodash@4.17.21 from ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove yaml@2.3.3 from ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change yaml: 2.3.3 to yaml: 2.8.3 from ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove nodemailer@7.0.13 from ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually change nodemailer: version: 7.0.13 to version: 8.0.4 specifier: ^7.0.12 to specifier: ^8.0.4 from ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove serialize-javascript@7.0.3 from ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove path-to-regexp@8.2.0 from ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change path-to-regexp: 8.2.0 to path-to-regexp: 8.4.0 from ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove @xmldom/xmldom@0.8.11 from ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove @xmldom/xmldom@0.9.8 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove ai@4.3.19 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @tootallnate/once@2.0.0 from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove serialize-javascript@6.0.2 from ${S}/pnpm-lock.yaml" # Skip
+ewarn "QA:  Manually remove serialize-javascript@6.0.2 from ${S}/pnpm-lock.yaml"
 
 #ewarn "QA:  Manually remove undici@6.21.3 from ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually change undici: 6.21.3 to undici: 7.24.5 from ${S}/pnpm-lock.yaml"
@@ -628,7 +628,6 @@ ewarn "QA:  Manually change ajv-formats: 2.1.1(ajv@8.12.0) to ajv-formats: 3.0.1
 
 ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/pnpm-lock.yaml"
 
-# Skip section
 ewarn "QA:  Manually remove minimatch@3.1.5 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove minimatch@5.1.9 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove minimatch@9.0.3 from ${S}/pnpm-lock.yaml"
@@ -724,13 +723,13 @@ ewarn "QA:  Manually change esbuild-register: 3.6.0(esbuild@0.27.7) to esbuild-r
 
 			sed -i -e "s|tmp: 0.0.33|tmp: 0.2.4|g" "pnpm-lock.yaml" || die
 
-#			sed -i -e "s|minimatch: 9.0.9|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
-#			sed -i -e "s|minimatch: 9.0.6|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
-#			sed -i -e "s|minimatch: 9.0.3|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
-#			sed -i -e "s|minimatch: 5.1.9|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
-#			sed -i -e "s|minimatch: 5.1.7|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
-#			sed -i -e "s|minimatch: 3.1.5|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
-#			sed -i -e "s|minimatch: 3.1.3|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|minimatch: 9.0.9|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|minimatch: 9.0.6|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|minimatch: 9.0.3|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|minimatch: 5.1.9|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|minimatch: 5.1.7|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|minimatch: 3.1.5|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|minimatch: 3.1.3|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
 
 			sed -i -e "s|bn.js: 4.12.3|bn.js: 5.2.3|g" "pnpm-lock.yaml" || die
 
@@ -739,34 +738,34 @@ ewarn "QA:  Manually change esbuild-register: 3.6.0(esbuild@0.27.7) to esbuild-r
 			sed -i -e "s|ajv: 8.12.0|ajv: 8.18.0|g" "pnpm-lock.yaml" || die			# CVE-2025-69873; ZC, DoS; Moderate
 			sed -i -e "s|ajv: 6.14.0|ajv: 8.18.0|g" "pnpm-lock.yaml" || die			# CVE-2025-69873; ZC, DoS; Moderate
 
-#			sed -i -e "s|js-yaml: 4.1.0|js-yaml: 4.1.1|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|js-yaml: 4.1.0|js-yaml: 4.1.1|g" "pnpm-lock.yaml" || die
 
 			sed -i -e "s|ai: 4.3.19(react@19.2.4)(zod@3.25.76)|ai: 5.0.52|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|'@octokit/rest': 19.0.13(encoding@0.1.13)|'@octokit/rest': 20.1.2|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|tar: 7.5.9|tar: 7.5.11|g" "pnpm-lock.yaml" || die
-#			sed -i -e "s|hono: 4.12.3|hono: 4.12.7|g" "pnpm-lock.yaml" || die
-#			sed -i -e "s|'@hono/node-server': 1.19.9(hono@4.12.3)|'@hono/node-server': 1.19.10|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|hono: 4.12.3|hono: 4.12.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|'@hono/node-server': 1.19.9(hono@4.12.3)|'@hono/node-server': 1.19.10|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|'@tootallnate/once': 2.0.0|'@tootallnate/once': 3.0.1|g" "pnpm-lock.yaml" || die
 
-#			sed -i -e "s|serialize-javascript: 6.0.2|serialize-javascript: 7.0.5|g" "pnpm-lock.yaml" || die
-#			sed -i -e "s|undici: 6.21.3|undici: 7.24.5|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|serialize-javascript: 6.0.2|serialize-javascript: 7.0.5|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|undici: 6.21.3|undici: 7.24.5|g" "pnpm-lock.yaml" || die
 
-#			sed -i -e "s|fast-xml-parser: 5.4.1|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-#			sed -i -e "s|fast-xml-parser: 5.4.2|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-#			sed -i -e "s|fast-xml-parser: 5.2.5|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-#			sed -i -e "s|fast-xml-parser: 5.3.6|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-#			sed -i -e "s|fast-xml-parser: 4.5.4|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-#			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-#			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-#			sed -i -e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.5.7\"|g" "package.json" || die
+			sed -i -e "s|fast-xml-parser: 5.4.1|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 5.4.2|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 5.2.5|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 5.3.6|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 4.5.4|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.5.7\"|g" "package.json" || die
 
-#			sed -i -e "s|handlebars: ^4.7.8|handlebars: 4.7.9|g" "package.json" || die
-#			sed -i -e "s|handlebars: 4.7.8|handlebars: 4.7.9|g" "package.json" || die
-#			sed -i -e "s|'@xmldom/xmldom': 0.8.11|'@xmldom/xmldom': 0.9.9|g" "package.json" || die
-#			sed -i -e "s|path-to-regexp: 8.2.0|path-to-regexp: 8.4.0|g" "package.json" || die
-#			sed -i -e "s|happy-dom: 20.8.8|happy-dom: 20.8.9|g" "package.json" || die 
-#			sed -i -e "s|yaml: 2.3.3|yaml: 2.8.3|g" "package.json" || die
-#			sed -i -e "s|lodash: 4.17.21|lodash: 4.17.23|g" "package.json" || die
+			sed -i -e "s|handlebars: ^4.7.8|handlebars: 4.7.9|g" "package.json" || die
+			sed -i -e "s|handlebars: 4.7.8|handlebars: 4.7.9|g" "package.json" || die
+			sed -i -e "s|'@xmldom/xmldom': 0.8.11|'@xmldom/xmldom': 0.9.9|g" "package.json" || die
+			sed -i -e "s|path-to-regexp: 8.2.0|path-to-regexp: 8.4.0|g" "package.json" || die
+			sed -i -e "s|happy-dom: 20.8.8|happy-dom: 20.8.9|g" "package.json" || die 
+			sed -i -e "s|yaml: 2.3.3|yaml: 2.8.3|g" "package.json" || die
+			sed -i -e "s|lodash: 4.17.21|lodash: 4.17.23|g" "package.json" || die
 		}
 
 		pnpm_patch_lockfile
@@ -785,25 +784,25 @@ ewarn "QA:  Manually change esbuild-register: 3.6.0(esbuild@0.27.7) to esbuild-r
 
 			"jsondiffpatch@0.7.2"								# CVE-2025-9910; VS(DT, ID); Moderate
 			"ai@5.0.52"									# CVE-2025-48985; DT; Low
-#			"@langchain/community@1.1.18"							# CVE-2026-27795; ID; Moderate
+			"@langchain/community@1.1.18"							# CVE-2026-27795; ID; Moderate
 													# CVE-2026-26019; ID; Moderate
 													# CVE-2026-25528; ID; Moderate for langsmith dep of @langchain/community and langchain
 			"electron@${ELECTRON_APP_ELECTRON_PV}"						# CVE-2025-55305; DoS, DT, ID; Moderate
-#			"minimatch@10.2.5"								# CVE-2026-26996: ZC, DoS; High
+			"minimatch@10.2.5"								# CVE-2026-26996: ZC, DoS; High
 													# CVE-2026-27903; ZC, DoS; High
 													# CVE-2026-27904; ZC, DoS; High
-#			"undici@7.24.5"									# CVE-2026-2229; ZC, DoS, High
+			"undici@7.24.5"									# CVE-2026-2229; ZC, DoS, High
 													# CVE-2026-1526; ZC, DoS, High
 													# CVE-2026-1525; ZC, DT, ID; Moderate
 													# CVE-2026-22036; ZC, DoS; Moderate
 													# CVE-2026-1527; DT, ID; Moderate
 													# CVE-2026-1528; ZC, DoS; High
-#			"fast-xml-parser@5.5.7"								# CVE-2026-25896; ZC, EBR, DT, ID; Critical
+			"fast-xml-parser@5.5.7"								# CVE-2026-25896; ZC, EBR, DT, ID; Critical
 													# CVE-2026-26278; ZC, DoS; High
 													# CVE-2026-27942; ZC, VS(DoS); Low		# >= 5.3.8 or >= 4.5.4
 													# CVE-2026-33036; ZC, DoS; High
 													# CVE-2026-33349; ZC, DoS; Moderate
-#			"handlebars@4.7.9"								# CVE-2026-33937; ZC, DoS, DT, ID; Critical
+			"handlebars@4.7.9"								# CVE-2026-33937; ZC, DoS, DT, ID; Critical
 													# CVE-2026-33941; DoS, DT, ID; High
 													# CVE-2026-33940; ZC, DoS, DT, ID; High
 													# CVE-2026-33938; DoS, DT, ID; High
@@ -811,12 +810,12 @@ ewarn "QA:  Manually change esbuild-register: 3.6.0(esbuild@0.27.7) to esbuild-r
 													# GHSA-7rx3-28cr-v5wh; ZC, DT, ID; Moderate
 													# CVE-2026-33916; DoS, DT; Moderate
 													# GHSA-442j-39wm-28r2; ZC, ID; Low
-#			"@xmldom/xmldom@0.9.9"								# CVE-2026-34601; ZC, DT; High
-#			"path-to-regexp@8.4.0"								# CVE-2026-4923; ZC, DoS; High
-#			"nodemailer@8.0.4"								# GHSA-c7w3-x93f-qmm8; VS(DT)
-#			"lodash@4.17.23"								# CVE-2025-13465; ZC, VS(DoS, DT), SS(DoS, DT, ID); Moderate
-#			"yaml@2.8.3"									# CVE-2026-33532; DoS; Moderate
-#			"@langchain/community@1.1.18"
+			"@xmldom/xmldom@0.9.9"								# CVE-2026-34601; ZC, DT; High
+			"path-to-regexp@8.4.0"								# CVE-2026-4923; ZC, DoS; High
+			"nodemailer@8.0.4"								# GHSA-c7w3-x93f-qmm8; VS(DT)
+			"lodash@4.17.23"								# CVE-2025-13465; ZC, VS(DoS, DT), SS(DoS, DT, ID); Moderate
+			"yaml@2.8.3"									# CVE-2026-33532; DoS; Moderate
+			"@langchain/community@1.1.18"
 		)
 		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 
@@ -826,22 +825,22 @@ ewarn "QA:  Manually change esbuild-register: 3.6.0(esbuild@0.27.7) to esbuild-r
 			"tmp@0.2.4"									# CVE-2025-54798; DT; Low
 
 			"@octokit/rest@20.1.2"								# Bump to remove octokit 4.x vulnerabilities
-#			"minimatch@10.2.5"								# CVE-2026-26996: ZC, DoS; High
+			"minimatch@10.2.5"								# CVE-2026-26996: ZC, DoS; High
 													# CVE-2026-27903; ZC, DoS; High
 													# CVE-2026-27904; ZC, DoS; High
 			"bn.js@5.2.3"									# CVE-2026-2739: DoS; Moderate
-#			"js-yaml@4.1.1"									# CVE-2025-64718: ZC, DT; Moderate
+			"js-yaml@4.1.1"									# CVE-2025-64718: ZC, DT; Moderate
 			"tar@7.5.11"									# GHSA-qffp-2rhf-9h96; VS(DT, ID), SS(DT, ID)
 													# CVE-2026-31802; ZC, VS(DT), SS(DT), High
-#			"@hono/node-server@1.19.10"							# CVE-2026-29087; ZC, ID; High
-#			"hono@4.12.7"									# CVE-2026-29045; ZC, ID; High
+			"@hono/node-server@1.19.10"							# CVE-2026-29087; ZC, ID; High
+			"hono@4.12.7"									# CVE-2026-29045; ZC, ID; High
 													# CVE-2026-29085; DT, ID; Moderate
 													# CVE-2026-29086; DT, ID; Moderate
 													# GHSA-v8w9-8mx6-g223; ZC, DT, ID; Moderate
 			"@tootallnate/once@3.0.1"							# CVE-2026-3449; DoS; Low
-#			"serialize-javascript@7.0.5"							# GHSA-5c6j-r48x-rmvq; CE, DoS, DT, ID; High
+			"serialize-javascript@7.0.5"							# GHSA-5c6j-r48x-rmvq; CE, DoS, DT, ID; High
 													# CVE-2026-34043; DoS; Moderate
-#			"happy-dom@20.8.9"								# CVE-2026-34226; ID; High
+			"happy-dom@20.8.9"								# CVE-2026-34226; ID; High
 		)
 		epnpm add -D ${pkgs[@]}
 
@@ -878,7 +877,7 @@ src_unpack() {
 		        einfo "Rebuilding sharp in ${S}"
 		        pushd "${S}" >/dev/null 2>&1 || die
 				node-sharp_pnpm_rebuild_sharp
-				# Copy sharp binary to expected location
+		# Copy sharp binary to expected location
 				mkdir -p "node_modules/sharp/build/${configuration}" || die "Failed to create node_modules/sharp/build/${configuration}"
 				cp \
 					"node_modules/sharp/src/build/${configuration}/sharp-${sharp_platform}.node" \
@@ -1341,6 +1340,7 @@ pkg_postrm() {
 # OILEDMACHINE-OVERLAY-TEST:  FAIL 2.1.44 (20260324) with sharp 0.34.3.    OAuth works but full migration to postgres-js driver is not complete. With USE="pwa postgres" and postgres-js 3.4.8, better-auth 1.5.6, drizzle-orm 0.45.1, drizzle-kit 0.30.6, better-call 1.3.2, @better-auth/passkey@1.5.6, @better-auth/expo@1.5.6
 # OILEDMACHINE-OVERLAY-TEST:  PASS 2.1.44 (20260325) with sharp 0.34.3.
 # OILEDMACHINE-OVERLAY-TEST:  PASS 2.1.46 (20260326) with sharp 0.34.3.
+# OILEDMACHINE-OVERLAY-TEST:  FAIL 2.1.47 (20260326) with sharp 0.34.3.
 
 # E-mail login:  untested
 # Electron:  untested
