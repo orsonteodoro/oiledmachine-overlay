@@ -613,7 +613,7 @@ PATENT_CDEPENDS="
 			$(gen_ffmpeg_nonfree_depends_unislot)
 			$(gen_ffmpeg_nonfree_depends_multislot)
 		)
-		media-video/ffmpegw:=
+		media-video/ffmpeg:=
 		vaapi? (
 			media-libs/vaapi-drivers[${MULTILIB_USEDEP},patent_status_nonfree=]
 		)
