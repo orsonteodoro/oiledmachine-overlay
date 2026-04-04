@@ -13,17 +13,18 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS HO NPD OOBR UAF TA"
 
 inherit cflags-hardened dot-a flag-o-matic multilib toolchain-funcs multilib-minimal
 
-NSPR_VER="4.38.2"
+NSPR_VER="4.36"
 RTM_NAME="NSS_${PV//./_}_RTM"
 
 # If the release is made in Github only, not released at the official archive.mozilla.org. These
 # Github-only tarballs have a different directory structure. Unfortunately more releases are
 # published through Github-only lately. Leave the variable empty for archive.mozilla.org release:
 # GH_ONLY_REL=
-GH_ONLY_REL=
+GH_ONLY_REL=yes
 
 DESCRIPTION="Mozilla's Network Security Services library that implements PKI support"
 HOMEPAGE="https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS"
+
 if [[ -n ${GH_ONLY_REL} ]] ; then
 	SRC_URI="https://github.com/nss-dev/nss/archive/refs/tags/${RTM_NAME}.tar.gz -> ${P}.tar.gz"
 	S="${WORKDIR}/${PN}-${RTM_NAME}"
@@ -35,11 +36,8 @@ SRC_URI+=" cacert? ( https://dev.gentoo.org/~juippis/mozilla/patchsets/nss-3.104
 
 LICENSE="|| ( MPL-2.0 GPL-2 LGPL-2.1 )"
 SLOT="0"
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~x64-solaris"
-IUSE="
-cacert test test-full +utils cpu_flags_ppc_altivec cpu_flags_x86_avx2 cpu_flags_x86_sse3 cpu_flags_ppc_vsx
-ebuild_revision_9
-"
+KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~x64-solaris"
+IUSE="cacert test test-full +utils cpu_flags_ppc_altivec cpu_flags_x86_avx2 cpu_flags_x86_sse3 cpu_flags_ppc_vsx"
 
 REQUIRED_USE="test-full? ( test )"
 
@@ -50,7 +48,7 @@ RESTRICT="test"
 RDEPEND="
 	>=dev-libs/nspr-${NSPR_VER}[${MULTILIB_USEDEP}]
 	>=dev-db/sqlite-3.8.2[${MULTILIB_USEDEP}]
-	>=sys-libs/zlib-1.2.8-r1[${MULTILIB_USEDEP}]
+	>=virtual/zlib-1.2.8-r1:=[${MULTILIB_USEDEP}]
 	virtual/pkgconfig
 "
 DEPEND="${RDEPEND}"
@@ -63,6 +61,7 @@ MULTILIB_CHOST_TOOLS=(
 PATCHES=(
 	"${FILESDIR}"/nss-3.103-gentoo-fixes-add-pkgconfig-files.patch
 	"${FILESDIR}"/nss-3.21-gentoo-fixup-warnings.patch
+	"${FILESDIR}"/nss-3.87-use-clang-as-bgo892686.patch
 )
 
 src_prepare() {
