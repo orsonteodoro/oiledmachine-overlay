@@ -348,7 +348,7 @@ verify_compiler_flags_hardening() {
 	# The overlay adds the newer hardening flags which may be missing in the
 	# default hardening compiler settings.
 	#
-		"qt6:dev-qt/qt5compat:sensitive-data"				# For string processesing
+		"qt6:dev-qt/qt5compat:sensitive-data"				# For string processing
 		"qt6:dev-qt/qtbase:sensitive-data"				# For input widgets, string processing
 		"qt6:dev-qt/qtsvg:untrusted-data"				# For SVG based favicons
 		"qt6:media-libs/libpng:untrusted-data"				# For PNG based favicons
@@ -369,6 +369,9 @@ verify_compiler_flags_hardening() {
 		)
 	fi
 
+	# String operations (search, filtering, sorting, display, typing, edit)
+	# may trigger iconv fallback library or ICU functions (collation [rules
+	# for comparing or sorting unicode strings], boundary checks).
 	if has_version "dev-qt/qtbase[icu]" ; then
 		L1+=(
 			"qt6:dev-qt/qtbase:sensitive-data"
