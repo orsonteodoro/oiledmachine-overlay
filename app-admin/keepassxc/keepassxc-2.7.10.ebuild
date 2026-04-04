@@ -371,7 +371,7 @@ verify_compiler_flags_hardening() {
 
 	# String operations (search, filtering, sorting, display, typing, edit)
 	# may trigger iconv fallback library or ICU functions (collation [rules
-	# for comparing or sorting unicode strings], boundary checks).
+	# for comparing or sorting unicode strings], boundary checks, regex).
 	if has_version "dev-qt/qtbase[icu]" ; then
 		L1+=(
 			"qt6:dev-qt/qtbase:sensitive-data"
