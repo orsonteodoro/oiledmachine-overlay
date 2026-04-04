@@ -1210,7 +1210,6 @@ verify_compiler_flags_hardening() {
 	# Manual hardening via per-package flags.
 	# No ebuild available on the oiledmachine-overlay.
 	#
-		"dbus:sys-apps/dbus:manual,sensitive-data"							# PII, Crown Jewel Keys
 		"speech:app-accessibility/speech-dispatcher:manual,sensitive-data,untrusted-data"
 		"system-pipewire:media-video/pipewire:manual,untrusted-data"
 		"wayland:dev-libs/wayland:manual"
@@ -1236,6 +1235,7 @@ verify_compiler_flags_hardening() {
 		"unconditional:x11-libs/libdrm:attack-surface-risk"
 		"unconditional:x11-libs/pango:sensitive-data"
 
+		"dbus:sys-apps/dbus:sensitive-data"								# PII, Crown Jewel Keys
 		"cups:net-print/cups:sensitive-data,untrusted-data"
 		"firejail:sys-apps/firejail:attack-surface-risk"
 		"libsecret:app-crypt/libsecret:sensitive-data"
