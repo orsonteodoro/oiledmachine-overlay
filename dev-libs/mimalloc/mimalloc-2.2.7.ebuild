@@ -1,4 +1,4 @@
-# Copyright 2022-2025 Gentoo Authors
+# Copyright 2022-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -16,7 +16,7 @@ https://github.com/microsoft/mimalloc/archive/refs/tags/v${PV}.tar.gz
 DESCRIPTION="A compact general purpose allocator with excellent performance"
 HOMEPAGE="https://github.com/microsoft/mimalloc"
 LICENSE="MIT"
-SLOT="0/3"
+SLOT="0/2"
 IUSE="
 -debug -guarded test -valgrind
 ebuild_revision_22
