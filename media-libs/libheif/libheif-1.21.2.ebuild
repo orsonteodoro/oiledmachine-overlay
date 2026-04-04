@@ -44,9 +44,6 @@ RESTRICT="
 	)
 "
 SLOT="0/$(ver_cut 1-2)"
-# non-free off in this ebuild fork
-# avc is enabled by default upstream, but disabled by default in ebuild because non-free
-# heic is enabled by default upstream, but disabled by default in ebuild because non-free
 FFMPEG_HW_ACCEL_DECODE_H265_USE=(
 	"amf"
 	"cuda"
@@ -60,14 +57,15 @@ FFMPEG_HW_ACCEL_DECODE_H265_USE=(
 IUSE="
 ${FFMPEG_HW_ACCEL_DECODE_H265_USE[@]}
 ${PATENT_STATUS_USE[@]}
--avc avif +aom -dav1d doc +examples -ffmpeg +gdk-pixbuf jpeg -jpeg2k -kvazaar -heic -htj2k
--libde265 -openh264 -rav1e +libsharpyuv -svt-av1 test +threads -uvg266 -vvc -vvenc -x265
+avif +aom -brotli -dav1d doc -doxygen +examples -ffmpeg +gdk-pixbuf -header-compression
+jpeg -jpeg2k -kvazaar -heic -htj2k -libde265 -openh264 -rav1e +libsharpyuv
+-system-libsharpyuv -svt-av1 test +threads -uncompressed -uvg266 -vvc
+-vvenc -webcodecs -x264 -x265
 ebuild_revision_27
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
 		!amf
-		!avc
 		!cuda
 		!ffmpeg
 		!heic
@@ -81,6 +79,7 @@ PATENT_STATUS_REQUIRED_USE="
 		!vdpau
 		!vulkan
 		!vvc
+		!x264
 		!x265
 	)
 "
@@ -96,6 +95,9 @@ REQUIRED_USE="
 			rav1e
 			svt-av1
 		)
+	)
+	brotli? (
+		uncompressed
 	)
 	ffmpeg? (
 		|| (
@@ -128,6 +130,9 @@ RDEPEND="
 	aom? (
 		>=media-libs/libaom-2.0.0:=[${MULTILIB_USEDEP}]
 	)
+	brotli? (
+		app-arch/brotli:=[${MULTILIB_USEDEP}]
+	)
 	dav1d? (
 		media-libs/dav1d:=[${MULTILIB_USEDEP}]
 	)
@@ -137,8 +142,8 @@ RDEPEND="
 	gdk-pixbuf? (
 		x11-libs/gdk-pixbuf[${MULTILIB_USEDEP}]
 	)
-	openh264? (
-		media-libs/openh264:=[${MULTILIB_USEDEP}]
+	header-compression? (
+		sys-libs/zlib:=[${MULTILIB_USEDEP}]
 	)
 	htj2k? (
 		media-libs/openjpeg:=[${MULTILIB_USEDEP}]
@@ -159,11 +164,17 @@ RDEPEND="
 	libsharpyuv? (
 		media-libs/libwebp:=[${MULTILIB_USEDEP}]
 	)
+	openh264? (
+		media-libs/openh264:=[${MULTILIB_USEDEP}]
+	)
 	rav1e? (
 		media-video/rav1e:=
 	)
 	svt-av1? (
 		media-libs/svt-av1:=[${MULTILIB_USEDEP}]
+	)
+	uncompressed? (
+		sys-libs/zlib:=[${MULTILIB_USEDEP}]
 	)
 	vvc? (
 		media-libs/vvdec:=[${MULTILIB_USEDEP}]
@@ -173,6 +184,9 @@ RDEPEND="
 	)
 	uvg266? (
 		media-libs/uvg266:=[${MULTILIB_USEDEP}]
+	)
+	x264? (
+		media-libs/x264:=[${MULTILIB_USEDEP}]
 	)
 	x265? (
 		media-libs/x265:=[${MULTILIB_USEDEP}]
@@ -191,15 +205,53 @@ MULTILIB_WRAPPED_HEADERS=(
 	"/usr/include/libheif/heif_version.h"
 )
 
+warn_use_flag_non_default() {
+	# Some codecs are enabled by default upstream, but all non-free are
+	# disabled by default in ebuild because the codec has a non-free
+	# patent-status.
+
+	local L=(
+	# Keep in original order
+		"libde265:ON"
+		"x265:ON"
+		"kvazaar:OFF"
+		"uvg266:OFF"
+		"vvc:OFF"
+		"vvenc:OFF"
+		"x264:ON"
+		"openh264:ON"
+		"dav1d:OFF"
+		"aom:ON"
+		"svt-av1:OFF"
+		"rav1e:OFF"
+		"jpeg:OFF"
+		"jpeg2k:OFF"
+		"ffmpeg:OFF"
+		"htj2k:OFF"
+	)
+
+# The patent status or recognition of software patents varies per country.
+	local x
+	for x in "${L[@]}" ; do
+		local u="${u%:*}"
+		local dv="${u#*:}"
+		if ! use "${u}" && [[ "${dv}" == "ON" ]] ; then
+ewarn "${u} is default ON upstream but set OFF by default in the ebuild."
+		fi
+	done
+}
+
 pkg_setup() {
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+	warn_use_flag_non_default
 }
 
 multilib_src_configure() {
 	cflags-hardened_append
 	local mycmakeargs=(
-		$(cmake_use_find_package doc Doxygen)
+		$(cmake_use_find_package doxygen Doxygen)
+		-DBUILD_DOCUMENTATION=$(usex doxygen)
 		-DBUILD_TESTING=$(usex test)
 		-DENABLE_PLUGIN_LOADING="true"
 		-DWITH_AOM_DECODER=$(usex aom)
@@ -207,18 +259,22 @@ multilib_src_configure() {
 		-DWITH_EXAMPLES=$(usex examples)
 		-DWITH_FFMPEG_DECODER=$(usex ffmpeg)
 		-DWITH_GDK_PIXBUF=$(usex gdk-pixbuf)
+		-DWITH_HEADER_COMPRESSION=$(usex header-compression)
 		-DWITH_JPEG_DECODER=$(usex jpeg)
 		-DWITH_JPEG_ENCODER=$(usex jpeg)
 		-DWITH_LIBDE265=$(usex libde265)
 		-DWITH_LIBSHARPYUV=$(usex libsharpyuv)
+		-DWITH_LIBSHARPYUV_INTERNAL=$(usex !system-libsharpyuv)
 		-DWITH_KVAZAAR=$(usex kvazaar)
 		-DWITH_OpenH264_DECODER=$(usex openh264)
 		-DWITH_OpenH264_ENCODER=$(usex openh264)
 		-DWITH_RAV1E=$(multilib_native_usex rav1e)
 		-DWITH_SvtEnc=$(usex svt-av1)
+		-DWITH_UNCOMPRESSED_CODEC=$(usex uncompressed)
 		-DWITH_UVG266_ENCODER=$(usex uvg266)
 		-DWITH_VVENC=$(usex vvenc)
 		-DWITH_VVDEC=$(usex vvc)
+		-DWITH_WEBCODECS=$(usex webcodecs)
 		-DWITH_X265=$(usex x265)
 	)
 
