@@ -2368,7 +2368,6 @@ verify_compiler_flags_hardening() {
 	#
 
 		'!headless:media-libs/alsa-lib:manual,loaded-library'
-		'!headless:media-libs/libglvnd:manual,untrusted-data'
 		"accessibility:app-accessibility/at-spi2-core:manual,loaded-library,sensitive-data"	# PII
 		"ffmpeg-chromium:media-video/ffmpeg-chromium:manual,untrusted-data"
 		"selinux:sys-libs/libselinux:manual,sensitive-data"
@@ -2385,6 +2384,7 @@ verify_compiler_flags_hardening() {
 	# default hardening compiler settings.
 	#
 		'!gtk4:x11-libs/gtk+:loaded-library,sensitive-data'
+		'!headless:media-libs/libglvnd:untrusted-data'
 		'!headless:x11-libs/cairo:sensitive-data'
 		'!headless:x11-libs/gdk-pixbuf:untrusted-data'
 		'!headless:x11-libs/libxkbcommon:sensitive-data'
