@@ -1,4 +1,4 @@
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # TODO:  live streamer trainers will be added after portage secure wipe hooks
@@ -42,7 +42,7 @@ S_ORIG="${WORKDIR}/${P}"
 SRC_URI="
 	https://github.com/webmproject/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
 	test? (
-		https://dev.gentoo.org/~sam/distfiles/${CATEGORY}/${PN}/${P}-testdata.tar.xz
+		https://dev.gentoo.org/~juippis/distfiles/${P}-testdata.tar.xz
 	)
 "
 
@@ -51,7 +51,7 @@ SRC_URI="
 DESCRIPTION="WebM VP8 and VP9 Codec SDK"
 HOMEPAGE="https://www.webmproject.org"
 LICENSE="BSD libvpx-PATENTS"
-SLOT="0/11"
+SLOT="0/12"
 IUSE="
 ${_TRAINERS[@]}
 ${CPU_FLAGS_PPC[@]}
@@ -995,7 +995,7 @@ src_test() {
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			local -x LD_LIBRARY_PATH="${BUILD_DIR}"
-			local -x LIBVPX_TEST_DATA_PATH="${WORKDIR}/${P}-testdata"
+			local -x LIBVPX_TEST_DATA_PATH="${WORKDIR}/${PN}-testdata"
 			emake verbose=yes GEN_EXAMPLES= test
 		done
 	}
