@@ -1,4 +1,4 @@
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -30,10 +30,7 @@ INTROSPECTION_BUILD_DIR="${WORKDIR}/${INTROSPECTION_P}-build"
 LICENSE="LGPL-2.1+"
 SLOT="2"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
-IUSE="
-dbus debug +elf doc +introspection +mime selinux static-libs sysprof systemtap test utils xattr
-ebuild_revision_9
-"
+IUSE="dbus debug +elf doc +introspection +mime selinux static-libs sysprof systemtap test utils xattr"
 RESTRICT="!test? ( test )"
 
 # * elfutils (via libelf) does not build on Windows. gresources are not embedded
@@ -51,18 +48,18 @@ RDEPEND="
 	>=virtual/libiconv-0-r1[${MULTILIB_USEDEP}]
 	>=dev-libs/libpcre2-10.32:0=[${MULTILIB_USEDEP},unicode(+),static-libs?]
 	>=dev-libs/libffi-3.0.13-r1:=[${MULTILIB_USEDEP}]
-	>=sys-libs/zlib-1.2.8-r1[${MULTILIB_USEDEP}]
+	>=virtual/zlib-1.2.8-r1:=[${MULTILIB_USEDEP}]
 	>=virtual/libintl-0-r2[${MULTILIB_USEDEP}]
-	introspection? (
-		>=dev-libs/gobject-introspection-common-${INTROSPECTION_PV}
-	)
 	kernel_linux? ( >=sys-apps/util-linux-2.23[${MULTILIB_USEDEP}] )
 	selinux? ( >=sys-libs/libselinux-2.2.2-r5[${MULTILIB_USEDEP}] )
 	xattr? ( !elibc_glibc? ( >=sys-apps/attr-2.4.47-r1[${MULTILIB_USEDEP}] ) )
 	elf? ( virtual/libelf:0= )
 	sysprof? ( >=dev-util/sysprof-capture-3.40.1:4[${MULTILIB_USEDEP}] )
 "
-DEPEND="${RDEPEND}"
+DEPEND="
+	${RDEPEND}
+	systemtap? ( >=dev-debug/systemtap-1.3 )
+"
 # libxml2 used for optional tests that get automatically skipped
 BDEPEND="
 	app-text/docbook-xsl-stylesheets
@@ -106,6 +103,7 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-2.86-MR-4915-CVE-2025-13601.patch
 	"${FILESDIR}"/${PN}-2.86-MR-4934-CVE-2025-14087.patch
 	"${FILESDIR}"/${PN}-2.86-MR-4936.patch
+	"${FILESDIR}"/${PN}-2.84.4-setlocale-glibc-2.43.patch
 )
 
 python_check_deps() {
@@ -355,6 +353,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	use debug && EMESON_BUILD_TYPE=debug
 
 	local emesonargs=(
+		--localstatedir="${EPREFIX}"/lib
 		-Ddefault_library=$(usex static-libs both shared)
 		-Druntime_dir="${EPREFIX}"/run
 		$(meson_feature debug glib_debug)
@@ -376,13 +375,12 @@ einfo "Detected compiler switch.  Disabling LTO."
 	)
 
 	# Workaround for bug #938302
-	if use systemtap && has_version "dev-debug/systemtap[-dtrace-symlink(+)]" ; then
-		local native_file="${T}"/meson.${CHOST}.ini.local
-		cat >> ${native_file} <<-EOF || die
+	if use systemtap; then
+		tc-export CC
+		meson_add_machine_file dtrace <<-EOF
 		[binaries]
 		dtrace='stap-dtrace'
 		EOF
-		emesonargs+=( --native-file "${native_file}" )
 	fi
 
 	meson_src_configure
