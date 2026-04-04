@@ -350,24 +350,22 @@ verify_compiler_flags_hardening() {
 	#
 		"qt6:dev-qt/qt5compat:sensitive-data"				# For string processesing
 		"qt6:dev-qt/qtbase:sensitive-data"				# For input widgets, string processing
-		"X:x11-libs/libX11:sensitive-data"				# Show password pixels for X11, clipboard
-		"X:x11-libs/libxcb:sensitive-data"				# For clipboard management, auto-typing usernames/passwords into other windows
-
 		"qt6:dev-qt/qtsvg:untrusted-data"				# For SVG based favicons
 		"qt6:media-libs/libpng:untrusted-data"				# For PNG based favicons
 		"qt6:media-libs/libjpeg-turbo:untrusted-data"			# For JPEG based favicons
-
 		"unconditional:app-crypt/argon2:sensitive-data"			# For key derivation
 		"unconditional:dev-libs/botan:sensitive-data"			# Crypto operations, database encryption
 		"unconditional:media-libs/freetype:sensitive-data"		# Glyphs to pixels
 		"unconditional:media-libs/harfbuzz:sensitive-data"		# Unicode text to glyphs and coords
 		"unconditional:x11-libs/libxkbcommon:sensitive-data"		# Keyboard processing (keycodes to symbols)
 		"X:x11-base/xorg-server:sensitive-data"				# Clipboard, window titles
+		"X:x11-libs/libX11:sensitive-data"				# Show password pixels for X11, clipboard
+		"X:x11-libs/libxcb:sensitive-data"				# For clipboard management, auto-typing usernames/passwords into other windows
 	)
 
-	if has_version "media-libs/mesa" ; then
+	if has_version "dev-libs/libinput" ; then
 		L1+=(
-			"unconditional:media-libs/mesa:sensitive-data"		# Show password pixels for Wayland/eglfs/linuxfb, userspace GPU drivers
+			"unconditional:dev-libs/libinput:sensitive-data"	# Input management, raw device events to normalized input event
 		)
 	fi
 
@@ -376,15 +374,16 @@ verify_compiler_flags_hardening() {
 			"qt5:media-libs/libjpeg-turbo:manual,untrusted-data"
 		)
 	fi
+
 	if has_version "dev-qt/qtgui[png]" ; then
 		L1+=(
 			"qt5:media-libs/libpng:manual,untrusted-data"
 		)
 	fi
 
-	if has_version "dev-libs/libinput" ; then
+	if has_version "media-libs/mesa" ; then
 		L1+=(
-			"unconditional:dev-libs/libinput:sensitive-data"	# Input management, raw device events to normalized input event
+			"unconditional:media-libs/mesa:sensitive-data"		# Show password pixels for Wayland/eglfs/linuxfb, userspace GPU drivers
 		)
 	fi
 
