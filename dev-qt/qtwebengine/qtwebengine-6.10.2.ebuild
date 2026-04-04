@@ -256,11 +256,11 @@ _verify_compiler_flags_hardening() {
 	# Understanding the problem of compiler hardening per process, ranked by
 	# compiler hardening triage/remediation rank:
 	#
-	# Renderer - sandboxed - security-critical
-	# Network - sandboxed - security-critical
-	# Utility - sandboxed - balanced
-	# GPU - partially sandboxed - balanced
-	# Browser - no sandbox - balanced or security-critical
+	# 1. Renderer - sandboxed - security-critical
+	# 2. Network - sandboxed - security-critical
+	# 3. Utility - sandboxed - balanced
+	# 4. GPU - partially sandboxed - balanced
+	# 5. Browser - no sandbox, privileged - balanced or security-critical
 	#
 
 	#
