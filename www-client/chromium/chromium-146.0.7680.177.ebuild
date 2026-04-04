@@ -2368,12 +2368,12 @@ verify_compiler_flags_hardening() {
 	#
 
 		'!headless:media-libs/alsa-lib:manual,loaded-library'
-		"accessibility:app-accessibility/at-spi2-core:manual,loaded-library,sensitive-data"	# Touches PII
-		"ffmpeg-chromium:media-video/ffmpeg-chromium:manual,sensitive-data,untrusted-data"	# Touches PII
+		"accessibility:app-accessibility/at-spi2-core:manual,loaded-library,sensitive-data"		# Touches PII
+		"ffmpeg-chromium:media-video/ffmpeg-chromium:manual,sensitive-data,untrusted-data"		# Touches PII
 		"selinux:sys-libs/libselinux:manual,sensitive-data"
 		"system-double-conversion:dev-libs/double-conversion:manual,untrusted-data"
 		"system-libxnvctrl:x11-drivers/nvidia-drivers:manual"
-		"system-openh264:media-libs/openh264:manual,sensitive-data,untrusted-data"		# PII
+		"system-openh264:media-libs/openh264:manual,sensitive-data,untrusted-data"			# PII
 		"system-vulkan-memory-allocator:media-libs/VulkanMemoryAllocator:manual,untrusted-data"
 		"wayland:dev-libs/wayland:manual"
 
@@ -2400,15 +2400,15 @@ verify_compiler_flags_hardening() {
 		"X:x11-base/xorg-server:sensitive-data"
 
 		"unconditional:app-arch/bzip2:untrusted-data"
-		"unconditional:dev-libs/expat:attack-surface-risk,untrusted-data"			# SVG, extensions
-		"unconditional:dev-libs/glib:attack-surface-risk,sensitive-data"			# GNOME Keyring, or libsecret storage
+		"unconditional:dev-libs/expat:attack-surface-risk,untrusted-data"				# SVG, extensions
+		"unconditional:dev-libs/glib:attack-surface-risk,sensitive-data"				# GNOME keyring, or libsecret storage
 		"unconditional:dev-libs/nspr:sensitive-data"
 		"unconditional:dev-libs/nss:sensitive-data,untrusted-data"
-		#"unconditional:dev-util/spirv-tools:untrusted-data"					# RDEPEND of mesa, deferred to USE=system-spirv-tools
-		"unconditional:media-libs/libglvnd:untrusted-data"					# RDEPEND of mesa
+		#"unconditional:dev-util/spirv-tools:untrusted-data"						# RDEPEND of mesa, deferred to USE=system-spirv-tools
+		"unconditional:media-libs/libglvnd:untrusted-data"						# RDEPEND of mesa
 		"unconditional:media-libs/mesa:loaded-library,sensitive-data,untrusted-data"
 		"unconditional:net-misc/curl:sensitive-data,untrusted-data"
-		"unconditional:sys-apps/dbus:loaded-library,sensitive-data"				# Touches PII
+		"unconditional:sys-apps/dbus:loaded-library,sensitive-data"					# Touches PII, keys to crown jewels
 		"unconditional:sys-libs/zlib:untrusted-data"
 		"unconditional:x11-libs/libdrm:loaded-library,attack-surface-risk"
 
@@ -2416,27 +2416,27 @@ verify_compiler_flags_hardening() {
 		"system-abseil-cpp:dev-cpp/abseil-cpp:untrusted-data"
 		"system-brotli:app-arch/brotli:untrusted-data"
 		"system-crc32c:dev-libs/crc32c:untrusted-data"
-		"system-clang:llvm-runtimes/libcxx:attack-surface-risk,untrusted-data"			# Processes untrusted web data (JS, HTML, CSS, images); HTTP headers, URL data
+		"system-clang:llvm-runtimes/libcxx:attack-surface-risk,untrusted-data"				# Processes untrusted web data (JS, HTML, CSS, images); HTTP headers, URL data
 		"system-clang:llvm-runtimes/libcxxabi:attack-surface-risk"
-		"system-dav1d:media-libs/dav1d:sensitive-data,untrusted-data"				# PII
-		"system-ffmpeg:media-video/ffmpeg:sensitive-data,untrusted-data"			# Touches PII
+		"system-dav1d:media-libs/dav1d:sensitive-data,untrusted-data"					# PII
+		"system-ffmpeg:media-video/ffmpeg:sensitive-data,untrusted-data"				# Touches PII
 		"system-flac:media-libs/flac:untrusted-data"
 		"system-flatbuffers:dev-libs/flatbuffers:untrusted-data"
 		"system-fontconfig:media-libs/fontconfig:untrusted-data"
 		"system-freetype:media-libs/freetype:untrusted-data"
-		"system-harfbuzz:media-libs/harfbuzz:loaded-library,sensitive-data"			# PII
+		"system-harfbuzz:media-libs/harfbuzz:loaded-library,sensitive-data"				# PII
 		"system-highway:dev-cpp/highway:untrusted-data"
-		"system-icu:dev-libs/icu:sensitive-data"						# PII
+		"system-icu:dev-libs/icu:sensitive-data"							# PII
 		"system-jsoncpp:dev-libs/jsoncpp:untrusted-data"
-		"system-libaom:media-libs/libaom:sensitive-data,untrusted-data"				# PII
-		"system-lcms:media-libs/lcms:untrusted-data"						# Processes untrusted ICC profiles from PDFs
-		"system-libjpeg-turbo:media-libs/libjpeg-turbo:sensitive-data,untrusted-data"		# PII
+		"system-libaom:media-libs/libaom:sensitive-data,untrusted-data"					# PII
+		"system-lcms:media-libs/lcms:untrusted-data"							# Processes untrusted ICC profiles from PDFs
+		"system-libjpeg-turbo:media-libs/libjpeg-turbo:sensitive-data,untrusted-data"			# PII
 		"system-libopenjpeg:media-libs/openjpeg:untrusted-data"
-		"system-libpng:media-libs/libpng:sensitive-data,untrusted-data"				# PII
+		"system-libpng:media-libs/libpng:sensitive-data,untrusted-data"					# PII
 		"system-libsecret:app-crypt/libsecret:sensitive-data"
 		"system-libusb:dev-libs/libusb:attack-surface-risk"
-		"system-libvpx:media-libs/libvpx:sensitive-data,untrusted-data"				# PII
-		"system-libwebp:media-libs/libwebp:sensitive-data,untrusted-data"			# PII
+		"system-libvpx:media-libs/libvpx:sensitive-data,untrusted-data"					# PII
+		"system-libwebp:media-libs/libwebp:sensitive-data,untrusted-data"				# PII
 		"system-libxml:dev-libs/libxml2:untrusted-data"
 		"system-libxslt:dev-libs/libxslt:untrusted-data"
 		"system-libyuv:media-libs/libyuv:untrusted-data"
@@ -2444,9 +2444,9 @@ verify_compiler_flags_hardening() {
 		"system-protobuf:dev-libs/protobuf:untrusted-data"
 		"system-re2:dev-libs/re2:sensitive-data,untrusted-data"
 		"system-simdutf:dev-cpp/simdutf:attack-surface-risk,untrusted-data"
-		"system-snappy:app-arch/snappy:sensitive-data,untrusted-data"				# PII
-		"system-spirv-tools:dev-util/spirv-tools:untrusted-data"				# Website shaders for WebGPU and WebGL
-		"system-sqlite:dev-db/sqlite:sensitive-data,untrusted-data"				# Browsing history, cookies, session tokens, credentials
+		"system-snappy:app-arch/snappy:sensitive-data,untrusted-data"					# PII
+		"system-spirv-tools:dev-util/spirv-tools:untrusted-data"					# Website shaders for WebGPU and WebGL
+		"system-sqlite:dev-db/sqlite:sensitive-data,untrusted-data"					# Browsing history, cookies, session tokens, credentials
 		"system-woff2:media-libs/woff2:untrusted-data"
 		"system-zlib:sys-libs/zlib:untrusted-data"
 		"system-zstd:app-arch/zstd:untrusted-data"
