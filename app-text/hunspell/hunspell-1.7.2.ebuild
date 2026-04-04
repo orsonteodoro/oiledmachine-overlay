@@ -5,12 +5,14 @@ EAPI=8
 
 # U16
 
+CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+
 LANGS="
 af bg ca cs cy da de de-1901 el en eo es et fo fr ga gl he hr hu ia id is it kk
 km ku lt lv mi mk ms nb nl nn pl pt pt-BR ro ru sk sl sq sv sw tn uk zu
 "
 
-inherit autotools check-compiler-switch flag-o-matic multilib-minimal
+inherit autotools cflags-hardened check-compiler-switch flag-o-matic multilib-minimal
 
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~s390"
 SRC_URI="
@@ -28,7 +30,10 @@ LICENSE="
 	MPL-1.1
 "
 SLOT="0/$(ver_cut 1-2)"
-IUSE="ncurses nls readline static-libs test"
+IUSE="
+ncurses nls readline static-libs test
+ebuild_revision_1
+"
 RDEPEND="
 	ncurses? (
 		>=sys-libs/ncurses-6.0[${MULTILIB_USEDEP}]
@@ -81,6 +86,9 @@ src_prepare() {
 
 multilib_src_configure() {
 	check-compiler-switch_end
+
+	cflags-hardened_append
+
 	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
 	# Prevent static-libs IR mismatch.
 einfo "Detected compiler switch.  Disabling LTO."
