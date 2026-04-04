@@ -337,6 +337,7 @@ verify_compiler_flags_hardening() {
 	#
 		"qt5:dev-qt/qtcore:manual,sensitive-data"			# For string processing
 		"qt5:dev-qt/qtgui:manual,sensitive-data"
+		"qt5:dev-qt/qtnetwork:manual,untrusted-data"			# For fetching favicons
 		"qt5:dev-qt/qtsvg:manual,untrusted-data"			# For SVG based favicons
 		"qt5:dev-qt/qtwidgets,manual,sensitive-data"			# For input widgets
 
