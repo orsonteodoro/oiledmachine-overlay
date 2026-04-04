@@ -314,7 +314,7 @@ _verify_compiler_flags_hardening() {
 	"unconditional:media-libs/libwebp:sensitive-data,untrusted-data"						# PII
 	"unconditional:media-libs/mesa:attack-surface-risk,sensitive-data,untrusted-data"
 	"unconditional:media-libs/openjpeg:untrusted-data"
-	"unconditional:media-libs/opus:untrusted-data"
+	"unconditional:media-libs/opus:sensitive-data,untrusted-data"
 	"unconditional:media-libs/tiff:untrusted-data"
 	#"unconditional:net-print/cups:sensitive-data,untrusted-data"
 	"unconditional:sys-apps/dbus:sensitive-data,untrusted-data"							# PII, Crown Jewel Keys
