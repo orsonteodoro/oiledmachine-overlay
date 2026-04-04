@@ -65,11 +65,12 @@ EAPI=8
 # 146.0.7680.75 -> 146.0.7680.80
 # 146.0.7680.80 -> 146.0.7680.153
 # 146.0.7680.153 -> 146.0.7680.164
+# 146.0.7680.164 -> 146.0.7680.177
 
 #
 # For depends see:
 #
-# https://github.com/chromium/chromium/tree/146.0.7680.164/build/linux/sysroot_scripts/generated_package_lists				# Stable, Last update 20250523, D11
+# https://github.com/chromium/chromium/tree/146.0.7680.177/build/linux/sysroot_scripts/generated_package_lists				# Stable, Last update 20250523, D11
 #   alsa-lib, at-spi2-core, bluez (bluetooth), cairo, cups, curl, expat,
 #   flac [older], fontconfig [older], freetype [older], gcc, gdk-pixbuf, glib,
 #   glibc [missing check], gtk+3, gtk4, harfbuzz [older], libdrm [older], libffi, libglvnd,
@@ -78,56 +79,56 @@ EAPI=8
 #   libxkbcommon, libxml2 [older], libxrandr, libxrender, libxshmfence,
 #   libxslt [older], nspr, nss, opus [older], pango, pciutils, pipewire,
 #   libpulse, qt5, qt6, re2 [older], systemd, udev, wayland, zlib [older]
-# https://github.com/chromium/chromium/blob/146.0.7680.164/build/install-build-deps.py							# Stable
+# https://github.com/chromium/chromium/blob/146.0.7680.177/build/install-build-deps.py							# Stable
 #
 
 #
 # Additional DEPENDS versioning info:
 #
 # All links below except for node are marked security-critical by upstream.
-# https://github.com/chromium/chromium/blob/146.0.7680.164/third_party/abseil-cpp/README.chromium					# Live
-# https://github.com/chromium/chromium/blob/146.0.7680.164/third_party/brotli/README.chromium						# Stable
-# https://github.com/chromium/chromium/blob/146.0.7680.164/third_party/crc32c/README.chromium						# Stable
-# https://github.com/chromium/chromium/blob/146.0.7680.164/third_party/dav1d/version/vcs_version.h#L2					# Stable
-# https://github.com/chromium/chromium/tree/146.0.7680.164/third_party/flatbuffers							# Stable
-# https://github.com/chromium/chromium/tree/146.0.7680.164/third_party/highway								# Live
-# https://github.com/chromium/chromium/tree/146.0.7680.164/third_party/jsoncpp								# Stable, use commit to obtain closest tag.  The submodule is a newer version.
-# https://github.com/chromium/chromium/blob/146.0.7680.164/third_party/libaom/source/config/config/aom_version.h#L19			# Stable
-# https://github.com/chromium/chromium/blob/146.0.7680.164/third_party/libpng/png.h#L288						# Stable
-# https://github.com/chromium/chromium/tree/146.0.7680.164/third_party/libsecret							# Stable
-# https://github.com/chromium/chromium/tree/146.0.7680.164/third_party/libusb								# Stable
-# https://github.com/chromium/chromium/tree/146.0.7680.164/third_party/libvpx								# Stable
-# https://github.com/chromium/chromium/tree/146.0.7680.164/third_party/libwebp								# Stable
-# https://github.com/chromium/chromium/blob/146.0.7680.164/third_party/libxml/linux/config.h#L86					# Stable
-# https://github.com/chromium/chromium/blob/146.0.7680.164/third_party/libxslt/linux/config.h#L116					# Stable
-# https://github.com/chromium/chromium/blob/146.0.7680.164/third_party/node/update_node_binaries#L18					# Stable, marked no for security-critical by upstream
-# https://github.com/chromium/chromium/tree/146.0.7680.164/third_party/re2								# Live.  Relaxed stable version used.
-# https://github.com/chromium/chromium/tree/146.0.7680.164/third_party/simdutf								# Stable.  The version listed is newer than the revision.  The version is used.
-# https://github.com/chromium/chromium/tree/146.0.7680.164/third_party/snappy								# Stable.  The submodule is newer than the version.git.revision listed.
-# https://github.com/chromium/chromium/tree/146.0.7680.164/third_party/spirv-headers							# Live.  Relaxed stable version used.
-# https://github.com/chromium/chromium/tree/146.0.7680.164/third_party/spirv-tools							# Live.  Relaxed stable version used.
-# https://github.com/chromium/chromium/blob/146.0.7680.164/third_party/woff2/README.chromium						# Live
-# https://github.com/chromium/chromium/blob/146.0.7680.164/third_party/zlib/zlib.h#L40							# Stable
-# https://github.com/chromium/chromium/blob/146.0.7680.164/tools/rust/update_rust.py#L35						#
+# https://github.com/chromium/chromium/blob/146.0.7680.177/third_party/abseil-cpp/README.chromium					# Live
+# https://github.com/chromium/chromium/blob/146.0.7680.177/third_party/brotli/README.chromium						# Stable
+# https://github.com/chromium/chromium/blob/146.0.7680.177/third_party/crc32c/README.chromium						# Stable
+# https://github.com/chromium/chromium/blob/146.0.7680.177/third_party/dav1d/version/vcs_version.h#L2					# Stable
+# https://github.com/chromium/chromium/tree/146.0.7680.177/third_party/flatbuffers							# Stable
+# https://github.com/chromium/chromium/tree/146.0.7680.177/third_party/highway								# Live
+# https://github.com/chromium/chromium/tree/146.0.7680.177/third_party/jsoncpp								# Stable, use commit to obtain closest tag.  The submodule is a newer version.
+# https://github.com/chromium/chromium/blob/146.0.7680.177/third_party/libaom/source/config/config/aom_version.h#L19			# Stable
+# https://github.com/chromium/chromium/blob/146.0.7680.177/third_party/libpng/png.h#L288						# Stable
+# https://github.com/chromium/chromium/tree/146.0.7680.177/third_party/libsecret							# Stable
+# https://github.com/chromium/chromium/tree/146.0.7680.177/third_party/libusb								# Stable
+# https://github.com/chromium/chromium/tree/146.0.7680.177/third_party/libvpx								# Stable
+# https://github.com/chromium/chromium/tree/146.0.7680.177/third_party/libwebp								# Stable
+# https://github.com/chromium/chromium/blob/146.0.7680.177/third_party/libxml/linux/config.h#L86					# Stable
+# https://github.com/chromium/chromium/blob/146.0.7680.177/third_party/libxslt/linux/config.h#L116					# Stable
+# https://github.com/chromium/chromium/blob/146.0.7680.177/third_party/node/update_node_binaries#L18					# Stable, marked no for security-critical by upstream
+# https://github.com/chromium/chromium/tree/146.0.7680.177/third_party/re2								# Live.  Relaxed stable version used.
+# https://github.com/chromium/chromium/tree/146.0.7680.177/third_party/simdutf								# Stable.  The version listed is newer than the revision.  The version is used.
+# https://github.com/chromium/chromium/tree/146.0.7680.177/third_party/snappy								# Stable.  The submodule is newer than the version.git.revision listed.
+# https://github.com/chromium/chromium/tree/146.0.7680.177/third_party/spirv-headers							# Live.  Relaxed stable version used.
+# https://github.com/chromium/chromium/tree/146.0.7680.177/third_party/spirv-tools							# Live.  Relaxed stable version used.
+# https://github.com/chromium/chromium/blob/146.0.7680.177/third_party/woff2/README.chromium						# Live
+# https://github.com/chromium/chromium/blob/146.0.7680.177/third_party/zlib/zlib.h#L40							# Stable
+# https://github.com/chromium/chromium/blob/146.0.7680.177/tools/rust/update_rust.py#L35						#
 #   https://github.com/rust-lang/rust/blob/7d8ebe3128fc87f3da1ad64240e63ccf07b8f0bd/src/version						# Live
-# /usr/share/chromium/146.0.7680.164/sources/third_party/flac/BUILD.gn								L122	# Stable
-# /usr/share/chromium/146.0.7680.164/sources/third_party/fontconfig/src/fontconfig/fontconfig.h.in				L56     # Stable
-# /usr/share/chromium/146.0.7680.164/sources/third_party/freetype/src/CMakeLists.txt						L165	# Stable
-# /usr/share/chromium/146.0.7680.164/sources/third_party/harfbuzz-ng/README.chromium							# Stable
-# /usr/share/chromium/146.0.7680.164/sources/third_party/icu/source/configure							L585	# Stable
-# /usr/share/chromium/146.0.7680.164/sources/third_party/libdrm/src/meson.build							L24	# Stable
-# /usr/share/chromium/146.0.7680.164/sources/third_party/libjpeg_turbo/src/jconfig.h						L7	# Stable
-# /usr/share/chromium/146.0.7680.164/sources/third_party/libyuv/README.chromium								# Live snapshotable, main branch
-# /usr/share/chromium/146.0.7680.164/sources/third_party/openh264/src/meson.build						L2	# Stable
-# /usr/share/chromium/146.0.7680.164/sources/third_party/opus/README.chromium							L3	# Stable
+# /usr/share/chromium/146.0.7680.177/sources/third_party/flac/BUILD.gn								L122	# Stable
+# /usr/share/chromium/146.0.7680.177/sources/third_party/fontconfig/src/fontconfig/fontconfig.h.in				L56     # Stable
+# /usr/share/chromium/146.0.7680.177/sources/third_party/freetype/src/CMakeLists.txt						L165	# Stable
+# /usr/share/chromium/146.0.7680.177/sources/third_party/harfbuzz-ng/README.chromium							# Stable
+# /usr/share/chromium/146.0.7680.177/sources/third_party/icu/source/configure							L585	# Stable
+# /usr/share/chromium/146.0.7680.177/sources/third_party/libdrm/src/meson.build							L24	# Stable
+# /usr/share/chromium/146.0.7680.177/sources/third_party/libjpeg_turbo/src/jconfig.h						L7	# Stable
+# /usr/share/chromium/146.0.7680.177/sources/third_party/libyuv/README.chromium								# Live snapshotable, main branch
+# /usr/share/chromium/146.0.7680.177/sources/third_party/openh264/src/meson.build						L2	# Stable
+# /usr/share/chromium/146.0.7680.177/sources/third_party/opus/README.chromium							L3	# Stable
 #   https://gitlab.xiph.org/xiph/opus/-/commit/55513e81d8f606bd75d0ff773d2144e5f2a732f5							# Stable
-# /usr/share/chromium/146.0.7680.164/sources/third_party/zstd/README.chromium								# Live
+# /usr/share/chromium/146.0.7680.177/sources/third_party/zstd/README.chromium								# Live
 #   https://github.com/facebook/zstd/commit/1168da0e567960d50cba1b58c9b0ba047ece4733							# Live
 #   https://github.com/facebook/zstd/blob/1168da0e567960d50cba1b58c9b0ba047ece4733/lib/zstd.h#L107					# Version
 #
-# https://github.com/chromium/chromium/blob/146.0.7680.164/DEPS#L512									# Live
+# https://github.com/chromium/chromium/blob/146.0.7680.177/DEPS#L512									# Live
 #
-# /usr/share/chromium/146.0.7680.164/sources/third_party/libc++/src/include/__configuration/compiler.h					# Stable, update LIBCXX_SLOT_MIN
+# /usr/share/chromium/146.0.7680.177/sources/third_party/libc++/src/include/__configuration/compiler.h					# Stable, update LIBCXX_SLOT_MIN
 
 
 #
@@ -148,7 +149,7 @@ EAPI=8
 
 #
 # The LLVM timestamp can be obtained from
-# https://github.com/chromium/chromium/blob/146.0.7680.164/tools/clang/scripts/update.py#L42
+# https://github.com/chromium/chromium/blob/146.0.7680.177/tools/clang/scripts/update.py#L42
 # https://github.com/llvm/llvm-project/commit/7b473dfe
 # Also change LLVM_OFFICIAL_SLOT
 #
@@ -156,18 +157,18 @@ EAPI=8
 #
 # For FFMPEG_SLOT, see also
 #
-# /usr/share/chromium/146.0.7680.164/sources/third_party/ffmpeg/libavutil/version.h
-# /usr/share/chromium/146.0.7680.164/sources/third_party/ffmpeg/libavcodec/version*.h
-# /usr/share/chromium/146.0.7680.164/sources/third_party/ffmpeg/libavformat/version*.h
+# /usr/share/chromium/146.0.7680.177/sources/third_party/ffmpeg/libavutil/version.h
+# /usr/share/chromium/146.0.7680.177/sources/third_party/ffmpeg/libavcodec/version*.h
+# /usr/share/chromium/146.0.7680.177/sources/third_party/ffmpeg/libavformat/version*.h
 #
 
 # The unbundle build files logic is in
-# /usr/share/chromium/146.0.7680.164/sources/build/linux/unbundle/replace_gn_files.py
+# /usr/share/chromium/146.0.7680.177/sources/build/linux/unbundle/replace_gn_files.py
 
 TC_COUNT_EXPECTED_CLANG=422
 TC_COUNT_EXPECTED_GN=1074
 TC_COUNT_EXPECTED_RUST=7087
-SOURCES_COUNT_EXPECTED=539312
+SOURCES_COUNT_EXPECTED=539328
 CHROMIUM_EBUILD_MAINTAINER=0 # Also set GEN_ABOUT_CREDITS
 GEN_ABOUT_CREDITS=0
 
@@ -204,7 +205,7 @@ PYTHON_COMPAT=( "python3_"{9..13} )
 PYTHON_REQ_USE="xml(+)"
 USE_LTO=0 # Global variable
 RE2_SLOT="20250512"
-# https://github.com/chromium/chromium/blob/146.0.7680.164/tools/rust/update_rust.py#L37 \
+# https://github.com/chromium/chromium/blob/146.0.7680.177/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
 RUST_MAX_VER="9999" # Corresponds to llvm 22 to match LLVM_COMPAT
 RUST_MIN_VER="9999" # Corresponds to llvm 22 to match LLVM_COMPAT
@@ -225,7 +226,7 @@ LIBVA_PV="2.17.0"
 MESA_PV="20.3.5"
 ROLLUP_WASM_NODE_PV="4.57.1"
 QT6_PV="6.4.2"
-UNGOOGLED_CHROMIUM_PV="146.0.7680.164-1"
+UNGOOGLED_CHROMIUM_PV="146.0.7680.177-1"
 # Testing this V8 version to avoid breaking security.  The 13.6 series cause the \
 # mksnapshot "Return code is -11" error.  To fix it, it required to either \
 # disable v8 sandbox, or pointer compression and DrumBrake.  Before it was \
@@ -447,18 +448,31 @@ IUSE_CODECS=(
 	"+vpx"
 )
 
-MITIGATION_DATE="Mar 23, 2026" # Official annoucement (blog)
-MITIGATION_LAST_UPDATE=1774049396 # From `date +%s -d "2026-03-20 23:29:56 UTC"` From tag in GH or upstream repo
-MITIGATION_URI="https://chromereleases.googleblog.com/2026/03/stable-channel-update-for-desktop_23.html"
+MITIGATION_DATE="Mar 31, 2026" # Official annoucement (blog)
+MITIGATION_LAST_UPDATE=1774902474 # From `date +%s -d "2026-03-30 20:27:54 UTC"` From tag in GH or upstream repo
+MITIGATION_URI="https://chromereleases.googleblog.com/2026/03/stable-channel-update-for-desktop_31.html"
 VULNERABILITIES_FIXED=(
-	"CVE-2026-4673;HO;"
-	"CVE-2026-4674;OOBR;"
-	"CVE-2026-4675;HO;"
-	"CVE-2026-4676;UAF;"
-	"CVE-2026-4677;OOBR;"
-	"CVE-2026-4678;UAF;"
-	"CVE-2026-4679;IO;"
-	"CVE-2026-4680;UAF;"
+	"CVE-2026-5273;UAF;"
+	"CVE-2026-5272;HO;"
+	"CVE-2026-5274;IO;"
+	"CVE-2026-5275;HO;"
+	"CVE-2026-5276;;"
+	"CVE-2026-5277;IO;"
+	"CVE-2026-5278;UAF;"
+	"CVE-2026-5279;;"
+	"CVE-2026-5280;UAF;"
+	"CVE-2026-5281;ITW, UAF;"
+	"CVE-2026-5282;OOBR;"
+	"CVE-2026-5283;II;"
+	"CVE-2026-5284;UAF;"
+	"CVE-2026-5285;UAF;"
+	"CVE-2026-5286;UAF;"
+	"CVE-2026-5287;UAF;"
+	"CVE-2026-5288;UAF;"
+	"CVE-2026-5289;UAF;"
+	"CVE-2026-5290;UAF;"
+	"CVE-2026-5291;II;"
+	"CVE-2026-5292;OOBR;"
 )
 
 PATENT_STATUS=(
@@ -745,13 +759,13 @@ RESTRICT="
 SLOT="stable"
 #
 # vaapi is enabled by default upstream for some arches \
-# See https://github.com/chromium/chromium/blob/146.0.7680.164/media/gpu/args.gni#L24
+# See https://github.com/chromium/chromium/blob/146.0.7680.177/media/gpu/args.gni#L24
 #
 # Using the system-ffmpeg or system-icu breaks cfi-icall or cfi-cast which is
 #   incompatible as a shared lib.
 #
 # The suid is built by default upstream but not necessarily used:  \
-#   https://github.com/chromium/chromium/blob/146.0.7680.164/sandbox/linux/BUILD.gn
+#   https://github.com/chromium/chromium/blob/146.0.7680.177/sandbox/linux/BUILD.gn
 #
 
 # Upstream uses official ON
@@ -781,24 +795,24 @@ ebuild_revision_41
 "
 # What is considered a proprietary codec can be found at:
 #
-#   https://github.com/chromium/chromium/blob/146.0.7680.164/media/filters/BUILD.gn#L160
-#   https://github.com/chromium/chromium/blob/146.0.7680.164/media/media_options.gni#L38
-#   https://github.com/chromium/chromium/blob/146.0.7680.164/media/base/supported_types.cc#L203
-#   https://github.com/chromium/chromium/blob/146.0.7680.164/media/base/supported_types.cc#L284
+#   https://github.com/chromium/chromium/blob/146.0.7680.177/media/filters/BUILD.gn#L160
+#   https://github.com/chromium/chromium/blob/146.0.7680.177/media/media_options.gni#L38
+#   https://github.com/chromium/chromium/blob/146.0.7680.177/media/base/supported_types.cc#L203
+#   https://github.com/chromium/chromium/blob/146.0.7680.177/media/base/supported_types.cc#L284
 #
 # Codec upstream default:
-#   https://github.com/chromium/chromium/blob/146.0.7680.164/tools/mb/mb_config_expectations/chromium.linux.json#L89
+#   https://github.com/chromium/chromium/blob/146.0.7680.177/tools/mb/mb_config_expectations/chromium.linux.json#L89
 #
 
 #
 # For cfi-vcall, cfi-icall defaults status, see \
-#   https://github.com/chromium/chromium/blob/146.0.7680.164/build/config/sanitizers/sanitizers.gni
+#   https://github.com/chromium/chromium/blob/146.0.7680.177/build/config/sanitizers/sanitizers.gni
 # For cfi-cast default status, see \
-#   https://github.com/chromium/chromium/blob/146.0.7680.164/build/config/sanitizers/sanitizers.gni#L123
+#   https://github.com/chromium/chromium/blob/146.0.7680.177/build/config/sanitizers/sanitizers.gni#L123
 # For pgo default status, see \
-#   https://github.com/chromium/chromium/blob/146.0.7680.164/build/config/compiler/pgo/pgo.gni#L15
+#   https://github.com/chromium/chromium/blob/146.0.7680.177/build/config/compiler/pgo/pgo.gni#L15
 # For libcxx default, see \
-#   https://github.com/chromium/chromium/blob/146.0.7680.164/build/config/c++/c++.gni#L14
+#   https://github.com/chromium/chromium/blob/146.0.7680.177/build/config/c++/c++.gni#L14
 # For cdm availability see third_party/widevine/cdm/widevine.gni#L28
 #
 
@@ -1716,7 +1730,7 @@ BDEPEND+="
 # This is why LLVM13 was set as the minimum and did fix the problem.
 
 # For the current llvm for this project, see
-#   https://github.com/chromium/chromium/blob/146.0.7680.164/tools/clang/scripts/update.py#L42
+#   https://github.com/chromium/chromium/blob/146.0.7680.177/tools/clang/scripts/update.py#L42
 # Use the same clang for official USE flag because of older llvm bugs which
 #   could result in security weaknesses (explained in the llvm:12 note below).
 # Used llvm >= 12 for arm64 for the same reason in the Linux kernel CFI comment.
@@ -1828,7 +1842,7 @@ is_debug_flags() {
 pre_build_checks() {
 	# Check build requirements: bugs #471810, #541816, #914220
 	if use official ; then
-	# https://github.com/chromium/chromium/blob/146.0.7680.164/docs/linux/build_instructions.md#system-requirements
+	# https://github.com/chromium/chromium/blob/146.0.7680.177/docs/linux/build_instructions.md#system-requirements
 		CHECKREQS_DISK_BUILD="100G"
 		CHECKREQS_MEMORY="16G"
 	else
@@ -4610,7 +4624,7 @@ eerror
 	fi
 
 	# I noticed that the vendored clang doesn't use ccache.  Let us explicitly use ccache if requested.
-	# See https://github.com/chromium/chromium/blob/146.0.7680.164/build/toolchain/cc_wrapper.gni#L36
+	# See https://github.com/chromium/chromium/blob/146.0.7680.177/build/toolchain/cc_wrapper.gni#L36
 	if ! use system-clang ; then
 		if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
 			myconf_gn+=(
@@ -5354,8 +5368,8 @@ ewarn "You have enabled PGO"
 ewarn "For proper hardening, disable the pgo USE flag."
 	fi
 
-	# See https://github.com/chromium/chromium/blob/146.0.7680.164/build/config/sanitizers/BUILD.gn#L196
-	# See https://github.com/chromium/chromium/blob/146.0.7680.164/tools/mb/mb_config.pyl#L2950
+	# See https://github.com/chromium/chromium/blob/146.0.7680.177/build/config/sanitizers/BUILD.gn#L196
+	# See https://github.com/chromium/chromium/blob/146.0.7680.177/tools/mb/mb_config.pyl#L2950
 	local is_cfi_custom=0
 	if use official ; then
 	# Forced because it is the final official settings.
@@ -5621,7 +5635,7 @@ _configure_performance_pgo(){
 	fi
 
 	# See also build/config/compiler/pgo/BUILD.gn#L71 for PGO flags.
-	# See also https://github.com/chromium/chromium/blob/146.0.7680.164/docs/pgo.md
+	# See also https://github.com/chromium/chromium/blob/146.0.7680.177/docs/pgo.md
 	# profile-instr-use is clang which that file assumes but gcc doesn't have.
 	# chrome_pgo_phase:  0=NOP, 1=PGI, 2=PGO
 	if use pgo && tc-is-clang  ; then
@@ -6661,7 +6675,7 @@ _configure_v8() {
 				"v8_enable_gdbjit=$(usex debug true false)"
 				"v8_enable_lite_mode=false"
 			)
-	# See L553 in /usr/share/chromium/146.0.7680.164/sources/v8/BUILD.gn
+	# See L553 in /usr/share/chromium/146.0.7680.177/sources/v8/BUILD.gn
 			if \
 				[[ \
 					"${ARCH}"  == "amd64" \
@@ -7237,7 +7251,7 @@ _configure_features() {
 
 	# libevent: https://bugs.gentoo.org/593458
 	# [B] all of gn_system_libraries set
-	# List obtained from /usr/share/chromium/146.0.7680.164/sources/build/linux/unbundle/
+	# List obtained from /usr/share/chromium/146.0.7680.177/sources/build/linux/unbundle/
 	local gn_system_libraries=(
 		$(use system-abseil-cpp && echo "
 			absl_algorithm
@@ -7456,12 +7470,12 @@ ewarn "Unbundling libs and lowering security"
 		"enable_libaom=$(usex libaom $(usex encode true false) false)"
 		"enable_message_center=true"						# Required for Linux, but not Fucshia and Android
 		"enable_ml_internal=false"						# components/optimization_guide/internal is empty.  It is default disabled for unbranded.
-		"enable_openxr=false"							# https://github.com/chromium/chromium/tree/146.0.7680.164/device/vr#platform-support
+		"enable_openxr=false"							# https://github.com/chromium/chromium/tree/146.0.7680.177/device/vr#platform-support
 		"enable_platform_hevc=$(usex patent_status_nonfree $(usex vaapi-hevc true false) false)"
 		"enable_plugins=$(usex plugins true false)"
 
 #		"enable_speech_service=false"						# It is enabled but missing backend either local service or remote service.
-		"enable_vr=false"							# https://github.com/chromium/chromium/blob/146.0.7680.164/device/vr/buildflags/buildflags.gni#L32
+		"enable_vr=false"							# https://github.com/chromium/chromium/blob/146.0.7680.177/device/vr/buildflags/buildflags.gni#L32
 		"enable_websockets=true"						# requires devtools/devtools_http_handler.cc which is unconditionally added.
 		"enable_widevine=$(usex widevine true false)"
 
@@ -7639,7 +7653,7 @@ ewarn "Unbundling libs and lowering security"
 		)
 	fi
 
-	# See https://github.com/chromium/chromium/blob/146.0.7680.164/media/media_options.gni#L19
+	# See https://github.com/chromium/chromium/blob/146.0.7680.177/media/media_options.gni#L19
 
 	if use bindist ; then
 	#
@@ -7701,7 +7715,7 @@ ewarn "The system-re2 USE flag is experimental with multislot re2.  Consider dis
 	fi
 
 	# System features
-	# See also /usr/share/chromium/146.0.7680.164/sources/build/linux/unbundle/replace_gn_files.py
+	# See also /usr/share/chromium/146.0.7680.177/sources/build/linux/unbundle/replace_gn_files.py
 	myconf_gn+=(
 	# Set used by distros
 		"media_use_system_opus=$(usex system-opus true false)"			# For media/audio
@@ -8360,7 +8374,7 @@ pkg_postinst() {
 	if ! use headless && [[ -z "${REPLACING_VERSIONS}" ]] ; then
 		if use vaapi ; then
 	# It says 3 args:
-	# https://github.com/chromium/chromium/blob/146.0.7680.164/docs/gpu/vaapi.md#vaapi-on-linux
+	# https://github.com/chromium/chromium/blob/146.0.7680.177/docs/gpu/vaapi.md#vaapi-on-linux
 einfo
 einfo "Hardware-accelerated video decoding configuration:"
 einfo
