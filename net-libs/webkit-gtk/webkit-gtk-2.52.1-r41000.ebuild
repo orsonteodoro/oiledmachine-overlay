@@ -1135,54 +1135,6 @@ _PATCHES=(
 	"${FILESDIR}/extra-patches/${PN}-2.46.3-gi-flags.patch"
 )
 
-get_gcc_ver_from_cxxabi() {
-	local cxxabi_ver="${1}"
-	local gcc_ver
-# See https://gcc.gnu.org/onlinedocs/libstdc++/manual/abi.html
-	if ver_test "${cxxabi_ver}" -eq "1.3.15" ; then
-		gcc_ver="14.1.0"
-	elif ver_test "${cxxabi_ver}" -eq "1.3.14" ; then
-		gcc_ver="13.2.0"
-	elif ver_test "${cxxabi_ver}" -eq "1.3.13" ; then
-		gcc_ver="12.1.0"
-	elif ver_test "${cxxabi_ver}" -eq "1.3.13" ; then
-		gcc_ver="12.1.0"
-	elif ver_test "${cxxabi_ver}" -eq "1.3.12" ; then
-		gcc_ver="10.1.0"
-	elif ver_test "${cxxabi_ver}" -eq "1.3.11" ; then
-		gcc_ver="8.1.0"
-	elif ver_test "${cxxabi_ver}" -eq "1.3.10" ; then
-		gcc_ver="6.1.0"
-	elif ver_test "${cxxabi_ver}" -eq "1.3.9" ; then
-		gcc_ver="5.1.0"
-	elif ver_test "${cxxabi_ver}" -eq "1.3.8" ; then
-		gcc_ver="4.9.0"
-	elif ver_test "${cxxabi_ver}" -eq "1.3.7" ; then
-		gcc_ver="4.8.3"
-	elif ver_test "${cxxabi_ver}" -eq "1.3.6" ; then
-		gcc_ver="4.7.0"
-	elif ver_test "${cxxabi_ver}" -eq "1.3.5" ; then
-		gcc_ver="4.6.1"
-	elif ver_test "${cxxabi_ver}" -eq "1.3.4" ; then
-		gcc_ver="4.5.0"
-	elif ver_test "${cxxabi_ver}" -eq "1.3.3" ; then
-		gcc_ver="4.4.2"
-	elif ver_test "${cxxabi_ver}" -eq "1.3.2" ; then
-		gcc_ver="4.3.0"
-	elif ver_test "${cxxabi_ver}" -eq "1.3.1" ; then
-		gcc_ver="4.0.0"
-	elif ver_test "${cxxabi_ver}" -eq "1.3" ; then
-		gcc_ver="3.4.1"
-	elif ver_test "${cxxabi_ver}" -eq "1.2.1" ; then
-		gcc_ver="3.3.3"
-	elif ver_test "${cxxabi_ver}" -eq "1.2" ; then
-		gcc_ver="3.2.3"
-	elif ver_test "${cxxabi_ver}" -eq "1" ; then
-		gcc_ver="3.1.1"
-	fi
-	echo "${gcc_ver}"
-}
-
 _set_clang() {
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
