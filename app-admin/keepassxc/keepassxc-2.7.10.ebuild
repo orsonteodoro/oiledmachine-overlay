@@ -364,7 +364,7 @@ verify_compiler_flags_hardening() {
 		"yubikey:sys-apps/pcsc-lite:sensitive-data"
 	)
 
-	if has_version "dev-qt/qtgui[jpeg]" ; then
+	if has_version "media-libs/mesa" ; then
 		L1+=(
 			"unconditional:media-libs/mesa:sensitive-data"		# Show password rendered text for Wayland
 		)
