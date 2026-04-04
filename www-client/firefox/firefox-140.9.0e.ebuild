@@ -1396,7 +1396,7 @@ verify_compiler_flags_hardening() {
 	# Manual hardening via per-package flags.
 	# No ebuild available on the oiledmachine-overlay.
 	#
-		"speech:app-accessibility/speech-dispatcher:manual,sensitive-data,untrusted-data"
+		"speech:app-accessibility/speech-dispatcher:manual,sensitive-data,untrusted-data"		# Touches PII
 		"wayland:dev-libs/wayland:manual"
 		"openh264:media-libs/openh264:manual,sensitive-data,untrusted-data"				# PII
 
@@ -1409,8 +1409,8 @@ verify_compiler_flags_hardening() {
 		"unconditional:app-accessibility/at-spi2-core:sensitive-data,untrusted-data"			# Touches PII
 		"unconditional:dev-libs/expat:untrusted-data"
 		"unconditional:dev-libs/glib:attack-surface-risk"
-		"unconditional:dev-libs/nss:sensitive-data,untrusted-data"
 		"unconditional:dev-libs/nspr:sensitive-data"
+		"unconditional:dev-libs/nss:sensitive-data,untrusted-data"
 		"unconditional:dev-util/spirv-tools,untrusted-data"						# RDEPEND of mesa
 		"unconditional:media-libs/freetype:untrusted-data"
 		"unconditional:media-libs/fontconfig:untrusted-data"
@@ -1423,7 +1423,7 @@ verify_compiler_flags_hardening() {
 		"unconditional:x11-libs/libdrm:attack-surface-risk"
 		"unconditional:x11-libs/pango:sensitive-data"
 
-		"dbus:sys-apps/dbus:sensitive-data"								# PII, Crown Jewel Keys
+		"dbus:sys-apps/dbus:sensitive-data,untrusted-data"						# PII, keys to crown jewels
 		"cups:net-print/cups:sensitive-data,untrusted-data"						# Touches PII
 		"firejail:sys-apps/firejail:attack-surface-risk"
 		"libsecret:app-crypt/libsecret:sensitive-data"
@@ -1440,7 +1440,7 @@ verify_compiler_flags_hardening() {
 		"system-icu:dev-libs/icu:attack-surface-risk,sensitive-data,untrusted-data"			# PII
 		"system-jpeg:media-libs/libjpeg-turbo:sensitive-data,untrusted-data"				# PII
 		"system-libvpx:media-libs/libvpx:sensitive-data,untrusted-data"					# PII
-		"system-pipewire:media-video/pipewire:untrusted-data"
+		"system-pipewire:media-video/pipewire:sensitive-data,untrusted-data"
 		"system-png:media-libs/libpng:sensitive-data,untrusted-data"					# PII
 		"system-webp:media-libs/libwebp:sensitive-data,untrusted-data"					# PII
 	)
