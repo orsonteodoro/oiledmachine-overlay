@@ -905,6 +905,8 @@ RDEPEND+="
 	media-libs/harfbuzz:=
 	>=media-libs/lcms-2.9[${MULTILIB_USEDEP}]
 	>=media-libs/libepoxy-1.5.4[${MULTILIB_USEDEP}]
+	media-libs/libjpeg-turbo[${MULTILIB_USEDEP}]
+	media-libs/libjpeg-turbo:=
 	>=media-libs/libpng-1.6.34:0[${MULTILIB_USEDEP}]
 	media-libs/libpng:=
 	>=media-libs/libwebp-0.6.1[${MULTILIB_USEDEP}]
@@ -918,7 +920,6 @@ RDEPEND+="
 	>=x11-libs/gtk+-3.22.0:3[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
 	x11-libs/gtk+:=
 	sys-kernel/mitigate-id
-	virtual/jpeg:0=[${MULTILIB_USEDEP}]
 	virtual/patent-status[patent_status_nonfree=]
 	avif? (
 		>=media-libs/libavif-0.9.0[${MULTILIB_USEDEP}]
@@ -2082,8 +2083,8 @@ verify_compiler_flags_hardening() {
 	# No ebuild available on the oiledmachine-overlay.
 	#
 
-	"avif:media-libs/libavif:manual,untrusted-data"
-	"geolocation:app-misc/geoclue:manual,sensitive-data"
+	"avif:media-libs/libavif:manual,sensitive-data,untrusted-data"					# PII
+	"geolocation:app-misc/geoclue:manual,sensitive-data"						# PII
 	"libbacktrace:sys-libs/libbacktrace:manual,sensitive-data"
 	"libwebrtc:media-libs/alsa-lib:manual,untrusted-data"
 	"unconditional:dev-libs/libgcrypt:manual,sensitive-data,untrusted-data"
@@ -2098,30 +2099,31 @@ verify_compiler_flags_hardening() {
 
 	"unconditional:app-accessibility/at-spi2-core:sensitive-data,untrusted-data"			# PII
 	"unconditional:dev-db/sqlite:sensitive-data,untrusted-data"
-	"unconditional:dev-libs/icu:attack-surface-risk,untrusted-data,sensitive-data"			# PII
+	"unconditional:dev-libs/icu:attack-surface-risk,sensitive-data,untrusted-data"			# PII
 	"unconditional:net-libs/libsoup:untrusted-data"
 	"unconditional:dev-libs/libtasn1:untrusted-data"
 	"unconditional:dev-libs/libxml2:untrusted-data"
 	"unconditional:dev-libs/libxslt:untrusted-data"
-	"unconditional:media-libs/libwebp:untrusted-data"
-	"unconditional:media-libs/libpng:untrusted-data"
+	"unconditional:media-libs/libpng:sensitive-data,untrusted-data"					# PII
+	"unconditional:media-libs/libwebp:sensitive-data,untrusted-data"				# PII
 	"unconditional:media-libs/fontconfig:untrusted-data"
 	"unconditional:media-libs/freetype:untrusted-data"
 	"unconditional:media-libs/harfbuzz:attack-surface-risk,untrusted-data,sensitive-data"		# PII
+	"unconditional:media-libs/libjpeg-turbo:sensitive-data,untrusted-data"				# PII
 	"unconditional:sys-libs/zlib:untrusted-data"
 	"unconditional:x11-libs/gtk+:sensitive-data"
 
-	"aom:media-plugins/gst-plugins-aom:untrusted-data"
+	"aom:media-plugins/gst-plugins-aom:sensitive-data,untrusted-data"				# PII
 	"dash:media-plugins/gst-plugins-dash:untrusted-data"
-	"dav1d:media-plugins/gst-plugins-rs:untrusted-data"
-	"flite:app-accessibility/flite:sensitive-data,untrusted-data"
+	"dav1d:media-plugins/gst-plugins-rs:sensitive-data,untrusted-data"				# PII
+	"flite:app-accessibility/flite:sensitive-data,untrusted-data"					# Touches PII
 	"gbm:x11-libs/libdrm:attack-surface-risk"
 	"gles2:dev-util/spirv-tools:untrusted-data"							# RDEPEND of mesa
 	"gles2:media-libs/libglvnd:untrusted-data"							# RDEPEND of mesa
 	"gles2:media-libs/mesa:sensitive-data,untrusted-data"
 	"gnome-keyring:app-crypt/libsecret:sensitive-data"						# PII, Crown Jewel Keys
 	"gstwebrtc:dev-libs/openssl:sensitive-data,untrusted-data"
-	"gstwebrtc:media-plugins/gst-plugins-webrtc:untrusted-data"
+	"gstwebrtc:media-plugins/gst-plugins-webrtc:sensitive-data,untrusted-data"
 	"gstreamer:media-libs/gst-plugins-bad:untrusted-data"
 	"gstreamer:media-libs/gst-plugins-base:untrusted-data"
 	"gstreamer:media-libs/gstreamer:untrusted-data"
@@ -2132,9 +2134,9 @@ verify_compiler_flags_hardening() {
 	"libhyphen:dev-libs/hyphen:sensitive-data,untrusted-data"
 	"libhyphen:app-text/hunspell:sensitive-data,untrusted-data"					# RDEPENDs of hyphen
 	"librice:net-libs/librice:sensitive-data,untrusted-data,rust"
-	"libwebrtc:media-libs/libvpx:untrusted-data"
-	"libwebrtc:media-libs/opus:untrusted-data"
-	"libwebrtc:media-libs/openh264:untrusted-data"
+	"libwebrtc:media-libs/libvpx:sensitive-data,untrusted-data"					# PII
+	"libwebrtc:media-libs/opus:sensitive-data,untrusted-data"					# PII
+	"libwebrtc:media-libs/openh264:sensitive-data,untrusted-data"					# PII
 	"opengl:dev-util/spirv-tools:untrusted-data"							# RDEPEND of mesa
 	"opengl:media-libs/libglvnd:untrusted-data"							# RDEPEND of mesa
 	"opengl:media-libs/mesa:sensitive-data,untrusted-data"

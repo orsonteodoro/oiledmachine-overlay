@@ -1317,12 +1317,12 @@ _electron-app_verify_compiler_flags_hardening() {
 	#
 	"unconditional:dev-libs/expat:untrusted-data"
 	"unconditional:dev-libs/glib:attack-surface-risk,sensitive-data"
+	"unconditional:dev-libs/nspr:sensitive-data"
 	"unconditional:dev-libs/nss:attack-surface-risk,sensitive-data,untrusted-data"
 	"unconditional:dev-util/spirv-tools:untrusted-data"								# RDEPEND of mesa
 	"unconditional:media-libs/libglvnd:untrusted-data"								# RDEPEND of mesa
 	"unconditional:media-libs/mesa:attack-surface-risk,sensitive-data,untrusted-data"
-	"unconditional:dev-libs/nspr:sensitive-data"
-	"unconditional:net-print/cups:sensitive-data,untrusted-data"
+	"unconditional:net-print/cups:sensitive-data,untrusted-data"							# PII
 	"unconditional:x11-libs/pango:sensitive-data,untrusted-data"
 	"unconditional:x11-libs/cairo:sensitive-data,untrusted-data"
 	"unconditional:x11-libs/gtk+:sensitive-data"

@@ -2368,14 +2368,14 @@ verify_compiler_flags_hardening() {
 	#
 
 		'!headless:media-libs/alsa-lib:manual,loaded-library'
-		"accessibility:app-accessibility/at-spi2-core:manual,loaded-library,sensitive-data"	# PII
-		"ffmpeg-chromium:media-video/ffmpeg-chromium:manual,untrusted-data"
+		"accessibility:app-accessibility/at-spi2-core:manual,loaded-library,sensitive-data"	# Touches PII
+		"ffmpeg-chromium:media-video/ffmpeg-chromium:manual,sensitive-data,untrusted-data"	# Touches PII
 		"selinux:sys-libs/libselinux:manual,sensitive-data"
 		"system-double-conversion:dev-libs/double-conversion:manual,untrusted-data"
 		"system-libxnvctrl:x11-drivers/nvidia-drivers:manual"
-		"system-openh264:media-libs/openh264:manual,untrusted-data"
+		"system-openh264:media-libs/openh264:manual,sensitive-data,untrusted-data"		# PII
 		"system-vulkan-memory-allocator:media-libs/VulkanMemoryAllocator:manual,untrusted-data"
-		"wayland:dev-libs/wayland:manual,sensitive-data,untrusted-data"				# PII in window title
+		"wayland:dev-libs/wayland:manual"
 
 	#
 	# Hardened-by-default ebuilds available on the oiledmachine-overlay.
@@ -2408,7 +2408,7 @@ verify_compiler_flags_hardening() {
 		"unconditional:media-libs/libglvnd:untrusted-data"					# RDEPEND of mesa
 		"unconditional:media-libs/mesa:loaded-library,sensitive-data,untrusted-data"
 		"unconditional:net-misc/curl:sensitive-data,untrusted-data"
-		"unconditional:sys-apps/dbus:loaded-library,sensitive-data"				# PII
+		"unconditional:sys-apps/dbus:loaded-library,sensitive-data"				# Touches PII
 		"unconditional:sys-libs/zlib:untrusted-data"
 		"unconditional:x11-libs/libdrm:loaded-library,attack-surface-risk"
 
@@ -2418,8 +2418,8 @@ verify_compiler_flags_hardening() {
 		"system-crc32c:dev-libs/crc32c:untrusted-data"
 		"system-clang:llvm-runtimes/libcxx:attack-surface-risk,untrusted-data"			# Processes untrusted web data (JS, HTML, CSS, images); HTTP headers, URL data
 		"system-clang:llvm-runtimes/libcxxabi:attack-surface-risk"
-		"system-dav1d:media-libs/dav1d:untrusted-data"
-		"system-ffmpeg:media-video/ffmpeg:untrusted-data"
+		"system-dav1d:media-libs/dav1d:sensitive-data,untrusted-data"				# PII
+		"system-ffmpeg:media-video/ffmpeg:sensitive-data,untrusted-data"			# Touches PII
 		"system-flac:media-libs/flac:untrusted-data"
 		"system-flatbuffers:dev-libs/flatbuffers:untrusted-data"
 		"system-fontconfig:media-libs/fontconfig:untrusted-data"
@@ -2428,15 +2428,15 @@ verify_compiler_flags_hardening() {
 		"system-highway:dev-cpp/highway:untrusted-data"
 		"system-icu:dev-libs/icu:sensitive-data"						# PII
 		"system-jsoncpp:dev-libs/jsoncpp:untrusted-data"
-		"system-libaom:media-libs/libaom:untrusted-data"
+		"system-libaom:media-libs/libaom:sensitive-data,untrusted-data"				# PII
 		"system-lcms:media-libs/lcms:untrusted-data"						# Processes untrusted ICC profiles from PDFs
-		"system-libjpeg-turbo:media-libs/libjpeg-turbo:untrusted-data"
+		"system-libjpeg-turbo:media-libs/libjpeg-turbo:sensitive-data,untrusted-data"		# PII
 		"system-libopenjpeg:media-libs/openjpeg:untrusted-data"
-		"system-libpng:media-libs/libpng:untrusted-data"
+		"system-libpng:media-libs/libpng:sensitive-data,untrusted-data"				# PII
 		"system-libsecret:app-crypt/libsecret:sensitive-data"
 		"system-libusb:dev-libs/libusb:attack-surface-risk"
-		"system-libvpx:media-libs/libvpx:untrusted-data"
-		"system-libwebp:media-libs/libwebp:untrusted-data"
+		"system-libvpx:media-libs/libvpx:sensitive-data,untrusted-data"				# PII
+		"system-libwebp:media-libs/libwebp:sensitive-data,untrusted-data"			# PII
 		"system-libxml:dev-libs/libxml2:untrusted-data"
 		"system-libxslt:dev-libs/libxslt:untrusted-data"
 		"system-libyuv:media-libs/libyuv:untrusted-data"

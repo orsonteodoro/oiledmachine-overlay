@@ -1212,7 +1212,7 @@ verify_compiler_flags_hardening() {
 	#
 		"speech:app-accessibility/speech-dispatcher:manual,sensitive-data,untrusted-data"
 		"wayland:dev-libs/wayland:manual"
-		"openh264:media-libs/openh264:manual,untrusted-data"
+		"openh264:media-libs/openh264:manual,sensitive-data,untrusted-data"				# PII
 
 	#
 	# Hardened-by-default ebuilds available on the oiledmachine-overlay.
@@ -1220,7 +1220,7 @@ verify_compiler_flags_hardening() {
 	# The overlay adds the newer hardening flags which may be missing in the
 	# default hardening compiler settings.
 	#
-		"unconditional:app-accessibility/at-spi2-core:sensitive-data,untrusted-data"			# PII
+		"unconditional:app-accessibility/at-spi2-core:sensitive-data,untrusted-data"			# Touches PII
 		"unconditional:dev-libs/expat:untrusted-data"
 		"unconditional:dev-libs/glib:attack-surface-risk"
 		"unconditional:dev-libs/nss:sensitive-data,untrusted-data"
@@ -1228,9 +1228,9 @@ verify_compiler_flags_hardening() {
 		"unconditional:dev-util/spirv-tools,untrusted-data"						# RDEPEND of mesa
 		"unconditional:media-libs/freetype:untrusted-data"
 		"unconditional:media-libs/fontconfig:untrusted-data"
-		"unconditional:media-libs/libglvnd:untrusted-data"
-		"unconditional:media-libs/mesa:sensitive-data,untrusted-data"					# RDEPEND of mesa
-		"unconditional:media-video/ffmpeg:untrusted-data"
+		"unconditional:media-libs/libglvnd:untrusted-data"						# RDEPEND of mesa
+		"unconditional:media-libs/mesa:sensitive-data,untrusted-data"
+		"unconditional:media-video/ffmpeg:sensitive-data,untrusted-data"				# Touches PII
 		"unconditional:sys-libs/zlib:untrusted-data"
 		"unconditional:x11-libs/cairo:sensitive-data,untrusted-data"
 		"unconditional:x11-libs/gdk-pixbuf:untrusted-data"
@@ -1238,7 +1238,7 @@ verify_compiler_flags_hardening() {
 		"unconditional:x11-libs/pango:sensitive-data"
 
 		"dbus:sys-apps/dbus:sensitive-data"								# PII, Crown Jewel Keys
-		"cups:net-print/cups:sensitive-data,untrusted-data"
+		"cups:net-print/cups:sensitive-data,untrusted-data"						# Touches PII
 		"firejail:sys-apps/firejail:attack-surface-risk"
 		"libsecret:app-crypt/libsecret:sensitive-data"
 		"vaapi:media-libs/libva:untrusted-data"
@@ -1247,16 +1247,16 @@ verify_compiler_flags_hardening() {
 		"X:x11-libs/libX11:sensitive-data"
 		"X:x11-libs/libxcb:sensitive-data"
 
-		"system-av1:media-libs/dav1d:untrusted-data"
-		"system-av1:media-libs/libaom:untrusted-data"
+		"system-av1:media-libs/dav1d:sensitive-data,untrusted-data"					# PII
+		"system-av1:media-libs/libaom:sensitive-data,untrusted-data"					# PII
 		"system-harfbuzz:media-gfx/graphite2:"
 		"system-harfbuzz:media-libs/harfbuzz:attack-surface-risk,untrusted-data"			# PII
-		"system-icu:dev-libs/icu:attack-surface-risk,untrusted-data"					# PII
-		"system-jpeg:media-libs/libjpeg-turbo:untrusted-data"
-		"system-libvpx:media-libs/libvpx:untrusted-data"
+		"system-icu:dev-libs/icu:attack-surface-risk,sensitive-data,untrusted-data"			# PII
+		"system-jpeg:media-libs/libjpeg-turbo:sensitive-data,untrusted-data"				# PII
+		"system-libvpx:media-libs/libvpx:sensitive-data,untrusted-data"					# PII
 		"system-pipewire:media-video/pipewire:untrusted-data"
-		"system-png:media-libs/libpng:untrusted-data"
-		"system-webp:media-libs/libwebp:untrusted-data"
+		"system-png:media-libs/libpng:sensitive-data,untrusted-data"					# PII
+		"system-webp:media-libs/libwebp:sensitive-data,untrusted-data"					# PII
 	)
 
 	local row
