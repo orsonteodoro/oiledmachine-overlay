@@ -2380,10 +2380,8 @@ verify_compiler_flags_hardening() {
 		"system-openh264:media-libs/openh264:manual,untrusted-data"
 		"system-vulkan-memory-allocator:media-libs/VulkanMemoryAllocator:manual,untrusted-data"
 		"unconditional:dev-libs/nspr:manual,sensitive-data"
-		"unconditional:sys-apps/dbus:manual,loaded-library,sensitive-data"			# PII
 		"vaapi:media-libs/libva:manual,loaded-library,untrusted-data"
 		"wayland:dev-libs/wayland:manual,sensitive-data,untrusted-data"				# PII in window title
-		'X:x11-libs/libxcb:manual,sensitive-data'
 
 	#
 	# Hardened-by-default ebuilds available on the oiledmachine-overlay.
@@ -2399,8 +2397,10 @@ verify_compiler_flags_hardening() {
 		"gtk4:gui-libs/gtk:loaded-library,sensitive-data"
 		"qt6:dev-qt/qtbase:sensitive-data"
 		"X:x11-libs/libX11:sensitive-data"
+		'X:x11-libs/libxcb:sensitive-data'
 		"X:x11-base/xorg-server:sensitive-data"
 
+		"unconditional:sys-apps/dbus:loaded-library,sensitive-data"				# PII
 		"unconditional:app-arch/bzip2:untrusted-data"
 		"unconditional:dev-libs/expat:attack-surface-risk,untrusted-data"			# SVG, extensions
 		"unconditional:dev-libs/glib:attack-surface-risk,sensitive-data"			# GNOME Keyring, or libsecret storage
