@@ -1333,6 +1333,24 @@ _electron-app_verify_compiler_flags_hardening() {
 	"X:x11-libs/libX11:sensitive-data"
 	)
 
+	if [[ "${ELECTRON_APP_FEATURE_GNOME_KEYRING}" == "1" ]] ; then
+		L1+=(
+			"gnome-keyring:gnome-base/gnome-keyring:sensitive-data"
+		)
+	fi
+
+	if [[ "${ELECTRON_APP_FEATURE_LIBSECRET}" == "1" ]] ; then
+		L1+=(
+			"libsecret:app-crypt/libsecret:sensitive-data"
+		)
+	fi
+
+	if [[ "${ELECTRON_APP_FEATURE_VAAPI}" == "1" ]] ; then
+		L1+=(
+			"vaapi:media-libs/libva:untrusted-data"
+		)
+	fi
+
 	local row
 	for row in "${L1[@]}" ; do
 		local u=$(echo "${row}" | cut -f 1 -d ":")
