@@ -4,6 +4,7 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="network security-critical sensitive-data server untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS HO IO NPD PT UAF"
 
 inherit autotools cflags-hardened eapi9-ver linux-info xdg multilib-minimal optfeature pam toolchain-funcs
 
