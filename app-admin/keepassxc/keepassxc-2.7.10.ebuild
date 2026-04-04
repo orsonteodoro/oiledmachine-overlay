@@ -361,12 +361,13 @@ verify_compiler_flags_hardening() {
 		"unconditional:media-libs/freetype:sensitive-data"		# Glyphs to pixels
 		"unconditional:media-libs/harfbuzz:sensitive-data"		# Unicode text to glyphs and coords
 		"unconditional:x11-libs/libxkbcommon:sensitive-data"		# Keyboard processing (keycodes to symbols)
+		"X:x11-base/xorg-server:sensitive-data"				# Clipboard, window titles
 		"yubikey:sys-apps/pcsc-lite:sensitive-data"
 	)
 
 	if has_version "media-libs/mesa" ; then
 		L1+=(
-			"unconditional:media-libs/mesa:sensitive-data"		# Show password pixels for Wayland
+			"unconditional:media-libs/mesa:sensitive-data"		# Show password pixels for Wayland/eglfs/linuxfb, userspace GPU drivers
 		)
 	fi
 
