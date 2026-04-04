@@ -2085,7 +2085,6 @@ verify_compiler_flags_hardening() {
 	"avif:media-libs/libavif:manual,untrusted-data"
 	"geolocation:app-misc/geoclue:manual,sensitive-data"
 	"libbacktrace:sys-libs/libbacktrace:manual,sensitive-data"
-	"libhyphen:dev-libs/hyphen:manual,sensitive-data,untrusted-data"
 	"libwebrtc:media-libs/alsa-lib:manual,untrusted-data"
 	"unconditional:dev-libs/libgcrypt:manual,sensitive-data,untrusted-data"
 	"wayland:dev-libs/wayland:manual,sensitive-data"
@@ -2128,6 +2127,8 @@ verify_compiler_flags_hardening() {
 	"hls:media-plugins/gst-plugins-hls:untrusted-data"
 	"jpegxl:media-libs/libjxl:untrusted-data"
 	"libde265:media-plugins/gst-plugins-libde265:untrusted-data"
+	"libhyphen:dev-libs/hyphen:sensitive-data,untrusted-data"
+	"libhyphen:app-text/hunspell:sensitive-data,untrusted-data"					# RDEPENDs of hyphen
 	"librice:net-libs/librice:sensitive-data,untrusted-data,rust"
 	"libwebrtc:media-libs/libvpx:untrusted-data"
 	"libwebrtc:media-libs/opus:untrusted-data"
