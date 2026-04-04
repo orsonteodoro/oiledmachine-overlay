@@ -349,7 +349,7 @@ verify_compiler_flags_hardening() {
 	#
 		"qt6:dev-qt/qt5compat:sensitive-data"				# For string processesing
 		"qt6:dev-qt/qtbase:sensitive-data"				# For input widgets, string processing
-		"X:x11-libs/libX11:sensitive-data"				# Show password rendered text for X11, clipboard
+		"X:x11-libs/libX11:sensitive-data"				# Show password pixels for X11, clipboard
 		"X:x11-libs/libxcb:sensitive-data"				# For clipboard management, auto-typing usernames/passwords into other windows
 
 		"qt6:dev-qt/qtsvg:untrusted-data"				# For SVG based favicons
@@ -366,7 +366,7 @@ verify_compiler_flags_hardening() {
 
 	if has_version "media-libs/mesa" ; then
 		L1+=(
-			"unconditional:media-libs/mesa:sensitive-data"		# Show password rendered text for Wayland
+			"unconditional:media-libs/mesa:sensitive-data"		# Show password pixels for Wayland
 		)
 	fi
 
