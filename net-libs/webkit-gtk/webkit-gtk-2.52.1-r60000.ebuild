@@ -2136,7 +2136,7 @@ verify_compiler_flags_hardening() {
 	"libbacktrace:sys-libs/libbacktrace:manual,sensitive-data"
 	"libhyphen:dev-libs/hyphen:manual,sensitive-data,untrusted-data"
 	"libwebrtc:media-libs/alsa-lib:manual,untrusted-data"
-	"unconditional:dev-libs/libgcrypt:manualsensitive-data,untrusted-data"
+	"unconditional:dev-libs/libgcrypt:manual,sensitive-data,untrusted-data"
 	"wayland:dev-libs/wayland:manual,sensitive-data"
 
 	#

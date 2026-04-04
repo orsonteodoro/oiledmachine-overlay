@@ -1307,9 +1307,7 @@ _electron-app_verify_compiler_flags_hardening() {
 	#
 
 	"unconditional:app-accessibility/at-spi2-core:manual,attack-surface-risk,sensitive-data,untrusted-data"		# PII
-	"unconditional:dev-libs/nspr:manual,sensitive-data"
 	"unconditional:media-libs/alsa-lib:manual,attack-surface-risk"
-	"unconditional:net-print/cups:manual,sensitive-data,untrusted-data"
 
 	#
 	# Hardened-by-default ebuilds available on the oiledmachine-overlay.
@@ -1321,6 +1319,8 @@ _electron-app_verify_compiler_flags_hardening() {
 	"unconditional:dev-libs/glib:attack-surface-risk,sensitive-data"
 	"unconditional:dev-libs/nss:attack-surface-risk,sensitive-data,untrusted-data"
 	"unconditional:media-libs/mesa:attack-surface-risk,sensitive-data,untrusted-data"
+	"unconditional:dev-libs/nspr:sensitive-data"
+	"unconditional:net-print/cups:sensitive-data,untrusted-data"
 	"unconditional:x11-libs/pango:sensitive-data,untrusted-data"
 	"unconditional:x11-libs/cairo:sensitive-data,untrusted-data"
 	"unconditional:x11-libs/gtk+:sensitive-data"

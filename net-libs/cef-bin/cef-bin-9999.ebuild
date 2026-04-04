@@ -351,9 +351,9 @@ verify_compiler_flags_hardening() {
 	#
 
 	"unconditional:app-accessibility/at-spi2-core:manual,attack-surface-risk,sensitive-data,untrusted-data"		# PII
-	"unconditional:dev-libs/nspr:manual,sensitive-data"
 	"unconditional:media-libs/alsa-lib:manual,attack-surface-risk"
-	"unconditional:net-print/cups:manual,sensitive-data,untrusted-data"
+
+	"wayland:dev-libs/wayland:attack-surface-risk,manual"
 
 	#
 	# Hardened-by-default ebuilds available on the oiledmachine-overlay.
@@ -363,14 +363,15 @@ verify_compiler_flags_hardening() {
 	#
 	"unconditional:dev-libs/expat:untrusted-data"
 	"unconditional:dev-libs/glib:attack-surface-risk,sensitive-data"
+	"unconditional:dev-libs/nspr:sensitive-data"
 	"unconditional:dev-libs/nss:attack-surface-risk,sensitive-data,untrusted-data"
 	"unconditional:media-libs/mesa:attack-surface-risk,sensitive-data,untrusted-data"
+	"unconditional:net-print/cups:sensitive-data,untrusted-data"
 	"unconditional:sys-apps/dbus:sensitive-data"									# PII, Crown Jewel Keys
 	"unconditional:x11-libs/pango:sensitive-data,untrusted-data"
 	"unconditional:x11-libs/cairo:sensitive-data,untrusted-data"
 
 	"cefclient:x11-libs/gtk+:sensitive-data"
-	"wayland:dev-libs/wayland:attack-surface-risk,manual"
 	"X:x11-base/xorg-server:sensitive-data"
 	"X:x11-libs/libxcb:sensitive-data"
 	"X:x11-libs/libxkbcommon:sensitive-data"
