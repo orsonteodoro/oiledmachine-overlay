@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="network plugin untrusted-data"
+CFLAGS_HARDENED_USE_CASES="network plugin sensitive-data untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 GST_PLUGINS_BUILD_DIR="webrtc webrtcdsp"
 GST_PLUGINS_ENABLED="dtls sctp srtp webrtc webrtcdsp"
@@ -14,7 +14,7 @@ KEYWORDS="~amd64 ~arm64"
 
 DESCRIPTION="WebRTC plugins for GStreamer"
 IUSE="
-ebuild_revision_23
+ebuild_revision_24
 "
 RDEPEND="
 	~media-plugins/gst-plugins-dtls-${PV}:1.0[${MULTILIB_USEDEP}]

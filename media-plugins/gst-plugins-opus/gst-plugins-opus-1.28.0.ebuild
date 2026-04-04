@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
+CFLAGS_HARDENED_USE_CASES="plugin sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="SO"
 GST_ORG_MODULE="gst-plugins-base"
 
@@ -15,7 +15,7 @@ SRC_URI+=" https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad
 
 DESCRIPTION="Opus audio parser plugin for GStreamer"
 IUSE="
-ebuild_revision_22
+ebuild_revision_23
 "
 CDEPEND="
 	>=media-libs/opus-0.9.4[${MULTILIB_USEDEP}]

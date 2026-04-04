@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="plugin security-critical untrusted-data"
+CFLAGS_HARDENED_USE_CASES="plugin security-critical sensitive-data untrusted-data"
 GST_ORG_MODULE="gst-plugins-ugly"
 
 inherit cflags-hardened gstreamer-meson
@@ -12,7 +12,7 @@ inherit cflags-hardened gstreamer-meson
 
 DESCRIPTION="H.264 encoder plugin for GStreamer"
 IUSE="
-ebuild_revision_22
+ebuild_revision_23
 "
 # 20180806 ensures us X264_BUILD >= 156
 RDEPEND="
