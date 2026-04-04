@@ -3,7 +3,9 @@
 
 EAPI=8
 
-inherit check-compiler-switch flag-o-matic multilib-minimal
+CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+
+inherit cflags-hardened check-compiler-switch flag-o-matic multilib-minimal
 
 SRC_URI="
 mirror://sourceforge/hunspell/${P}.tar.gz
@@ -21,7 +23,10 @@ LICENSE="
 "
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE="static-libs"
+IUSE="
+static-libs
+ebuild_revision_1
+"
 RDEPEND="
 	app-text/hunspell[${MULTILIB_USEDEP}]
 "
@@ -49,6 +54,7 @@ src_prepare() {
 
 multilib_src_configure() {
 	check-compiler-switch_end
+	cflags-hardened_append
 	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
 	# Prevent static-libs IR mismatch.
 einfo "Detected compiler switch.  Disabling LTO."
