@@ -21,8 +21,9 @@ LLVM_COMPAT=(
 
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
-inherit cflags-hardened check-compiler-switch cmake flag-o-matic flag-o-matic-om libcxx-slot
-inherit libstdcxx-slot toolchain-funcs xdg-utils
+PYTHON_COMPAT=( python3_{11..14} )
+inherit cflags-hardened check-compiler-switch cmake flag-o-matic flag-o-matic-om
+inherit libcxx-slot libstdcxx-slot python-any-r1 toolchain-funcs xdg-utils
 
 if [[ ${PV} == *9999* ]] ; then
 	inherit git-r3
@@ -37,27 +38,24 @@ else
 	SRC_URI+=" test? ( https://gitlab.freedesktop.org/poppler/test/-/archive/${TEST_COMMIT}/test-${TEST_COMMIT}.tar.bz2 -> ${PN}-test-${TEST_COMMIT}.tar.bz2 )"
 	SRC_URI+=" verify-sig? ( https://poppler.freedesktop.org/${P}.tar.xz.sig )"
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
-	SLOT="0/156"   # CHECK THIS WHEN BUMPING!!! SUBSLOT IS libpoppler.so SOVERSION
+	SLOT="0/158"   # CHECK THIS WHEN BUMPING!!! SUBSLOT IS libpoppler.so SOVERSION
 fi
 
 DESCRIPTION="PDF rendering library based on the xpdf-3.0 code base"
 HOMEPAGE="https://poppler.freedesktop.org/"
 
 LICENSE="GPL-2"
-IUSE="
-boost cairo cjk curl +cxx debug doc gpgme +introspection +jpeg +jpeg2k +lcms nss png qt6 test tiff +utils
-ebuild_revision_11
-"
+IUSE="boost cairo cjk curl +cxx debug doc gpgme +introspection +jpeg +jpeg2k +lcms nss png qt6 test tiff +utils"
 RESTRICT="!test? ( test )"
 
 COMMON_DEPEND="
 	>=media-libs/fontconfig-2.13
 	>=media-libs/freetype-2.10
-	sys-libs/zlib
+	virtual/zlib:=
 	cairo? (
 		>=dev-libs/glib-2.64:2
 		>=x11-libs/cairo-1.16
-		introspection? ( >=dev-libs/gobject-introspection-1.72:= )
+		introspection? ( >=dev-libs/gobject-introspection-1.82.0-r2:= )
 	)
 	curl? ( net-misc/curl )
 	gpgme? ( dev-cpp/gpgmepp:= )
@@ -66,28 +64,18 @@ COMMON_DEPEND="
 	lcms? ( media-libs/lcms:2 )
 	nss? ( >=dev-libs/nss-3.49 )
 	png? ( media-libs/libpng:0= )
-	qt6? (
-		dev-qt/qtbase:6[${LIBSTDCXX_USEDEP_LTS},gui,xml]
-		dev-qt/qtbase:=
-	)
+	qt6? ( dev-qt/qtbase:6[gui,xml] )
 	tiff? ( media-libs/tiff:= )
 "
 RDEPEND="${COMMON_DEPEND}
 	cjk? ( app-text/poppler-data )
 "
 DEPEND="${COMMON_DEPEND}
-	boost? (
-		>=dev-libs/boost-1.74[${LIBSTDCXX_USEDEP_LTS}]
-		dev-libs/boost:=
-	)
-	test? (
-		qt6? (
-			dev-qt/qtbase:6[${LIBSTDCXX_USEDEP_LTS},widgets]
-			dev-qt/qtbase:=
-		)
-	)
+	boost? ( >=dev-libs/boost-1.74 )
+	test? ( qt6? ( dev-qt/qtbase:6[widgets] ) )
 "
 BDEPEND="
+	${PYTHON_DEPS}
 	>=dev-util/glib-utils-2.64
 	virtual/pkgconfig
 "
@@ -99,11 +87,9 @@ fi
 DOCS=( AUTHORS NEWS README.md README-XPDF )
 
 PATCHES=(
-	
 	"${FILESDIR}/${PN}-26.01.0-qt-deps.patch"
 	"${FILESDIR}/${PN}-26.01.0-respect-cflags.patch"
 	"${FILESDIR}/${PN}-0.57.0-disable-internal-jpx.patch"
-	"${FILESDIR}/${PN}-26.01.0-gcc16-include-climits.patch"
 )
 
 pkg_setup() {
@@ -192,6 +178,10 @@ src_configure() {
 	xdg_environment_reset
 	append-lfs-flags # bug #898506
 
+	# giscanner is called if cairo and introspection are enabled.
+	# In that case, PKG_CONFIG must be defined.
+	tc-export PKG_CONFIG
+
 	local mycmakeargs=(
 		-DBUILD_GTK_TESTS=OFF
 		-DBUILD_QT5_TESTS=OFF
@@ -203,7 +193,6 @@ src_configure() {
 		-DENABLE_BOOST="$(usex boost)"
 		-DENABLE_ZLIB_UNCOMPRESS=OFF
 		-DENABLE_UNSTABLE_API_ABI_HEADERS=ON
-		-DUSE_FLOAT=OFF
 		-DWITH_Cairo=$(usex cairo)
 		-DENABLE_LIBCURL=$(usex curl)
 		-DENABLE_CPP=$(usex cxx)
