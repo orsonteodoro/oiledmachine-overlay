@@ -177,6 +177,63 @@ pkg_pretend() {
 	qtwebengine_check-reqs
 }
 
+has_all_hardening_flags() {
+	local pkg="${1}"
+	local F
+	F=(
+		"-O2"
+		"-fno-delete-null-pointer-checks"
+		"-fstrict-flex-arrays=3"
+		"-ftrivial-auto-var-init=zero"
+		"-fzero-call-used-regs=all"
+		"-fwrapv"
+	)
+
+	local found_count=0
+	local f
+	for f in "${F[@]}" ; do
+		if grep -q -e "${f}" "/var/db/pkg/${pkg}-"*"/CFLAGS" 2>/dev/null ; then
+			found_count=$(( ${found_count} + 1 ))
+		fi
+	done
+
+	# Transient execution CPU vulnerability mitigations
+	# ID = Information Disclosure
+	local found_count_id_mitigation=0
+	if [[ "${tags}" =~ "sensitive-data" ]] ; then
+		F=(
+			"-fcf-protection=full"
+			"-fhardened"
+			"-mbranch-protection=pac-ret+bti"
+			"-mbranch-protection=standard"
+			"-mharden-sls=all"
+			"-mretpoline"
+			"-mindirect-branch=thunk"
+			"-mindirect-branch=thunk-extern"
+			"-mindirect-branch=thunk-inline"
+			"-mfunction-return=thunk"
+			"-mfunction-return=thunk-extern"
+			"-mfunction-return=thunk-inline"
+		)
+		for f in "${F[@]}" ; do
+			if grep -q -e "${f}" "/var/db/pkg/${pkg}-"*"/CFLAGS" 2>/dev/null ; then
+				found_count_id_mitigation=$(( ${found_count_id_mitigation} + 1 ))
+			fi
+		done
+	fi
+
+	if [[ "${tags}" =~ "sensitive-data" ]] ; then
+		if (( ${found_count} == 6 && ${found_count_id_mitigation} >= 1 )) ; then
+			return 0
+		fi
+	else
+		if (( ${found_count} == 6 )) ; then
+			return 0
+		fi
+	fi
+	return 1
+}
+
 # @FUNCTION: _verify_compiler_flags_hardening
 # @DESCRIPTION:
 # Check compiler hardening requirements common to all network facing qtwebengine
@@ -199,29 +256,26 @@ _verify_compiler_flags_hardening() {
 	# Understanding the problem of compiler hardening per process, ranked by
 	# compiler hardening triage/remediation rank:
 	#
-	# 1. Main - not sandboxed, privileged, balanced
-	# 2. Renderer - sandboxed, security-critical
-	# 3. Utility - sandboxed, balanced to security-critical
-	# 4. GPU process - sandboxed, balanced
-	# 5. Helpers - sandboxed, balanced
+	# Renderer - sandboxed - security-critical
+	# Network - sandboxed - security-critical
+	# Utility - sandboxed - balanced
+	# GPU - partially sandboxed - balanced
+	# Browser - no sandbox - balanced or security-critical
 	#
 
 	#
-	# The best return in security for compiler hardening remediation/triage
-	# for secure messaging:
+	# Ranked best return in security for compiler hardening remediation/triage
+	# of dependencies for embedded web content inside Qt desktop applications
+	# (e.g help/documentation, hybrid apps, media streaming, video
+	# conferencing, e-mail client, custom web browser or kiosk):
 	#
 	# 1. nss
-	# 2. libxkbcommon
-	# 3. gtk+3
-	# 4. mesa
-	# 5. glib:2
-	# 6. glibc
-	# 7. libxcb
-	# 8. dbus
-	# 9. at-spi2-core
-	# 10. pango, cairo
-	#
-	# Remediating the top 5 results in 80% security improvement.
+	# 2. ffmpeg
+	# 3. icu
+	# 4. libwebp/opus
+	# 5. libxslt/libxml2
+	# 6. pipewire/alsa
+	# 7. harfbuzz/freetype
 	#
 
 	#
