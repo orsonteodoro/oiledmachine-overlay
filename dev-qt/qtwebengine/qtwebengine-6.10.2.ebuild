@@ -27,7 +27,7 @@ LLVM_COMPAT=(
 
 PYTHON_COMPAT=( python3_{11..14} )
 inherit cflags-hardened check-reqs flag-o-matic libcxx-slot libstdcxx-slot multiprocessing optfeature
-inherit prefix python-any-r1 qt6-build toolchain-funcs
+inherit prefix python-any-r1 qt6-build toolchain-funcs web-kernel-config
 
 DESCRIPTION="Library for rendering dynamic web content in Qt6 C++ and QML applications"
 SRC_URI+="
@@ -176,11 +176,186 @@ pkg_pretend() {
 	qtwebengine_check-reqs
 }
 
+# @FUNCTION: _verify_compiler_flags_hardening
+# @DESCRIPTION:
+# Check compiler hardening requirements common to all network facing qtwebengine
+# apps.
+_verify_compiler_flags_hardening() {
+	local L1=(
+	#
+	# Packages that are listed:
+	#
+	# 1.  Security-critical packages
+	# 2.  Processes untrusted-data
+	# 3.  Processes trusted-data
+	# 4.  A shared library loaded during runtime into the following processes - browser, UI, rendering
+	# 5.  Attack surface risks (sandbox escape potential, privilege gain, memory corruption potential)
+	#
+	#	"<use-flag>:<pkg>:<tags>"
+
+
+	#
+	# Understanding the problem of compiler hardening per process, ranked by
+	# compiler hardening triage/remediation rank:
+	#
+	# 1. Main - not sandboxed, privileged, balanced
+	# 2. Renderer - sandboxed, security-critical
+	# 3. Utility - sandboxed, balanced to security-critical
+	# 4. GPU process - sandboxed, balanced
+	# 5. Helpers - sandboxed, balanced
+	#
+
+	#
+	# The best return in security for compiler hardening remediation/triage
+	# for secure messaging:
+	#
+	# 1. nss
+	# 2. libxkbcommon
+	# 3. gtk+3
+	# 4. mesa
+	# 5. glib:2
+	# 6. glibc
+	# 7. libxcb
+	# 8. dbus
+	# 9. at-spi2-core
+	# 10. pango, cairo
+	#
+	# Remediating the top 5 results in 80% security improvement.
+	#
+
+	#
+	# Manual hardening via per-package flags.
+	# No ebuild available on the oiledmachine-overlay.
+	#
+
+	#"unconditional:app-accessibility/at-spi2-core:manual,attack-surface-risk,sensitive-data,untrusted-data"		# PII
+	"alsa:media-libs/alsa-lib:manual,attack-surface-risk"
+
+	#
+	# Hardened-by-default ebuilds available on the oiledmachine-overlay.
+	#
+	# The overlay adds the newer hardening flags which may be missing in the
+	# default hardening compiler settings.
+	#
+	# The hardening below assumes web browser USE case only.
+	#
+	"unconditional:app-arch/snappy:sensitive-data,untrusted-data"
+	"unconditional:dev-libs/expat:untrusted-data"
+	"unconditional:dev-libs/libxml2:untrusted-data"
+	"unconditional:dev-libs/libxslt:untrusted-data"
+	"unconditional:dev-libs/nss:attack-surface-risk,sensitive-data,untrusted-data"
+	"unconditional:dev-libs/nspr:sensitive-data"
+	"unconditional:dev-qt/qtbase:sensitive-data"
+	"unconditional:dev-qt/qtdeclarative:untrusted-data"
+	"unconditional:dev-qt/qtwebchannel:untrusted-data"
+	"unconditional:dev-util/spirv-tools:untrusted-data"								# RDEPEND of mesa
+	"unconditional:media-libs/fontconfig:untrusted-data"
+	"unconditional:media-libs/freetype:sensitive-data,untrusted-data"
+	"unconditional:media-libs/harfbuzz:sensitive-data,untrusted-data"
+	"unconditional:media-libs/lcms:untrusted-data"
+	"unconditional:media-libs/libglvnd:untrusted-data"								# RDEPEND of mesa
+	"unconditional:media-libs/libjpeg-turbo:sensitive-data,untrusted-data"						# PII
+	"unconditional:media-libs/libpng:sensitive-data,untrusted-data"							# PII
+	"unconditional:media-libs/libwebp:sensitive-data,untrusted-data"						# PII
+	"unconditional:media-libs/mesa:attack-surface-risk,sensitive-data,untrusted-data"
+	"unconditional:media-libs/openjpeg:untrusted-data"
+	"unconditional:media-libs/opus:untrusted-data"
+	"unconditional:media-libs/tiff:untrusted-data"
+	#"unconditional:net-print/cups:sensitive-data,untrusted-data"
+	"unconditional:sys-apps/dbus:sensitive-data,untrusted-data"							# PII, Crown Jewel Keys
+	"unconditional:sys-libs/zlib:untrusted-data"
+	#"unconditional:x11-libs/pango:sensitive-data,untrusted-data"
+	#"unconditional:x11-libs/cairo:sensitive-data,untrusted-data"
+	"unconditional:x11-libs/libX11:sensitive-data"
+	"unconditional:x11-libs/libxcb:sensitive-data"
+	"unconditional:x11-libs/libxkbcommon:sensitive-data"
+	"unconditional:x11-base/xorg-server:sensitive-data"
+
+	"geolocation:dev-qt/qtpositioning:sensitive-data"								# PII
+	"opengl:media-libs/libglvnd:untrusted-data"									# RDEPEND of mesa
+	"screencast:dev-libs/glib:attack-surface-risk,sensitive-data"
+	"screencast:media-video/pipewire:untrusted-data"
+	"system-icu:dev-libs/icu:sensitive-data,untrusted-data"								# PII
+	"vaapi:media-libs/libva:untrusted-data"
+	)
+
+	if has wayland ${IUSE_EFFECTIVE} && use wayland ; then
+		L1+=(
+			"wayland:dev-libs/wayland:attack-surface-risk,manual"
+		)
+	fi
+
+	local row
+	for row in "${L1[@]}" ; do
+		local u=$(echo "${row}" | cut -f 1 -d ":")
+		local p=$(echo "${row}" | cut -f 2 -d ":")
+		local tag=$(echo "${row}" | cut -f 3 -d ":")
+		if [[ "${tag}" =~ "manual" ]] ; then
+			if [[ "${u}" == "unconditional" ]] ; then
+ewarn "The package ${p} must be manually security-critical hardened using per-package package.env.  Use the hardening flags from the build log."
+			elif use "${u}" && ! _electron-app_has_all_hardening_flags "${p}" ; then
+ewarn "The package ${p} must be manually security-critical hardened using per-package package.env.  Use the hardening flags from the build log."
+			fi
+		elif [[ "${u}" == "unconditional" ]] ; then
+			local repo=$(cat "/var/db/pkg/${p}-"*"/repository" | sed -e "/oiledmachine-overlay/d" | head -n 1)
+			if ! grep -q -e "oiledmachine-overlay" "${ESYSROOT}/var/db/pkg/${p}-"*"/repository" ; then
+ewarn "The package ${p}::${repo} may not be security-critical hardened.  Use the ${p}::oiledmachine-overlay ebuild instead."
+			fi
+		elif use "${u}" ; then
+			if ! grep -q -e "oiledmachine-overlay" "${ESYSROOT}/var/db/pkg/${p}-"*"/repository" ; then
+				local repo=$(cat "/var/db/pkg/${p}-"*"/repository" | sed -e "/oiledmachine-overlay/d" | head -n 1)
+ewarn "The package ${p}::${repo} may not be security-critical hardened.  Use the ${p}::oiledmachine-overlay ebuild instead."
+			fi
+		fi
+	done
+
+	local L2=(
+		"dev-libs/weston"
+		"gui-liri/liri-shell"
+		"gui-wm/cage"
+		"gui-wm/cagebreak"
+		"gui-wm/dwl"
+		"gui-wm/kiwmi"
+		"gui-wm/hyprland"
+		"gui-wm/labwc"
+		"gui-wm/mangowc"
+		"gui-wm/miracle-wm"
+		"gui-wm/newm"
+		"gui-wm/niri"
+		"gui-wm/river"
+		"gui-wm/sway"
+		"gui-wm/waybox"
+		"gui-wm/wayfire"
+		"kde-plasma/kwin"
+		"x11-wm/enlightenment"
+		"x11-wm/mutter"
+	)
+
+	if has wayland ${IUSE_EFFECTIVE} && use wayland ; then
+		local found_compositor=0
+		local x
+		for x in "${L2[@]}" ; do
+			if has_version "${x}" ; then
+				found_compositor=1
+ewarn "${x} must use security-critical hardened ebuilds or per-package package.env hardening.  Use the hardening flags from the build log."
+			fi
+		done
+
+		if (( ${found_compositor} == 0 )) ; then
+ewarn "Wayland compositors must use security-critical hardened ebuilds or per-package package.env hardening.  Use the hardening flags from the build log."
+		fi
+	fi
+
+ewarn "Packages that interact with ${PN} (e.g. password managers, clipboard managers) must use security-critical hardened ebuilds or per-package package.env hardening.  Use the hardening flags from the build log."
+}
+
 pkg_setup() {
 	qtwebengine_check-reqs
 	python-any-r1_pkg_setup
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+	web-kernel-config_setup
+	_verify_compiler_flags_hardening
 }
 
 src_prepare() {
