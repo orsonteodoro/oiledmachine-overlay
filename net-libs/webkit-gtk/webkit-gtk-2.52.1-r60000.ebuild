@@ -2122,13 +2122,13 @@ verify_compiler_flags_hardening() {
 	"gles2:dev-util/spirv-tools:untrusted-data"							# RDEPEND of mesa
 	"gles2:media-libs/libglvnd:untrusted-data"							# RDEPEND of mesa
 	"gles2:media-libs/mesa:sensitive-data,untrusted-data"
-	"gnome-keyring:app-crypt/libsecret:sensitive-data"						# PII, Crown Jewel Keys
+	"gnome-keyring:app-crypt/libsecret:sensitive-data"						# PII, keys to crown jewels
 	"gstwebrtc:dev-libs/openssl:sensitive-data,untrusted-data"
 	"gstwebrtc:media-plugins/gst-plugins-webrtc:sensitive-data,untrusted-data"
 	"gstreamer:media-libs/gst-plugins-bad:untrusted-data"
 	"gstreamer:media-libs/gst-plugins-base:untrusted-data"
 	"gstreamer:media-libs/gstreamer:untrusted-data"
-	"gstreamer:media-plugins/gst-plugins-opus:untrusted-data"
+	"gstreamer:media-plugins/gst-plugins-opus:sensitive-data,untrusted-data"			# PII
 	"hls:media-plugins/gst-plugins-hls:untrusted-data"
 	"jpegxl:media-libs/libjxl:untrusted-data"
 	"libde265:media-plugins/gst-plugins-libde265:untrusted-data"
