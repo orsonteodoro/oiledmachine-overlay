@@ -263,7 +263,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-3.7.0-allow-fortify-source.patch"
 	"${FILESDIR}/${PN}-3.8.1-tests-parallel.patch"
 	"${FILESDIR}/${PN}-3.13.0-highway-linker-language-cxx.patch"
-	"${FILESDIR}/${PN}-3.13.1-fix-nasm-3-flag-detection.patch"
 )
 
 # The PATENTS file is required to be distributed with this package bug #682214.
