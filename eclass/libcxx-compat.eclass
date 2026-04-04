@@ -14,7 +14,7 @@
 # literals to setup up C++ support.
 
 case ${EAPI:-0} in
-	[8]) ;;
+	8|9) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 

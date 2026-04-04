@@ -10,7 +10,7 @@
 # Common macro expanded like array values for GCC_COMPAT.
 
 case ${EAPI:-0} in
-	[8]) ;;
+	8|9) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 

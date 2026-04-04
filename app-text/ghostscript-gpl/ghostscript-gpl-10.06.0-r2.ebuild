@@ -1,7 +1,7 @@
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=8
+EAPI=9
 
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CXX_STANDARD=17
@@ -28,7 +28,7 @@ PVM_S=$(ver_rs 1-2 "")
 MY_PATCHSET="ghostscript-gpl-10.04.0-patches.tar.xz"
 
 DESCRIPTION="Interpreter for the PostScript language and PDF"
-HOMEPAGE="https://ghostscript.com/ https://git.ghostscript.com/?p=ghostpdl.git;a=summary"
+HOMEPAGE="https://ghostscript.com/ https://cgit.ghostscript.com/cgi-bin/cgit.cgi/ghostpdl.git/"
 SRC_URI="https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs${PVM_S}/${MY_P}.tar.xz"
 if [[ -n "${MY_PATCHSET}" ]] ; then
 	SRC_URI+=" https://dev.gentoo.org/~sam/distfiles/${CATEGORY}/${PN}/${MY_PATCHSET}"
@@ -37,11 +37,8 @@ S="${WORKDIR}/${MY_P}"
 
 LICENSE="AGPL-3 CPL-1.0"
 SLOT="0/$(ver_cut 1-2)"
-KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris"
-IUSE="
-cups cpu_flags_arm_neon dbus gtk l10n_de static-libs unicode X
-ebuild_revision_3
-"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
+IUSE="cups cpu_flags_arm_neon dbus gtk l10n_de static-libs unicode X"
 
 LANGS="ja ko zh-CN zh-TW"
 for X in ${LANGS} ; do
@@ -81,12 +78,11 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-10.03.1-arm64-neon-tesseract.patch
 	"${FILESDIR}"/${PN}-10.06.0-tesseract-fPIC.patch
 	"${FILESDIR}"/${PN}-10.06.0-32-bit.patch
+	"${FILESDIR}"/${PN}-10.06.0-arm-brotli.patch
+	"${FILESDIR}"/${PN}-10.06.0-bool-confusion.patch
+	"${FILESDIR}"/${PN}-10.06.0-gcc-14.patch
+	"${FILESDIR}"/${PN}-10.06.0-stdint.patch
 )
-
-pkg_setup() {
-	libcxx-slot_verify
-	libstdcxx-slot_verify
-}
 
 src_prepare() {
 	if [[ -n ${MY_PATCHSET} ]] ; then
@@ -151,10 +147,8 @@ src_configure() {
 
 	cflags-hardened_append
 
-	# bug #943857
-	# Build system passes CFLAGS to C++ compiler (bug #945826)
-	tc-export CC
-	CC+=" -std=gnu17"
+	# bug #971940
+	append-flags -fno-strict-aliasing
 
 	# bug #899952
 	append-lfs-flags
@@ -175,8 +169,9 @@ src_configure() {
 	# leptonica and tesseract are bundled but modified upstream, like in
 	# mujs/mupdf.
 	#
-	# There is --without-local-brotli but it wants a non-existent -lbrotli
-	# and it's not clear what that corresponds do, as we have split libs.
+	# There is --without-local-brotli but it wants a non-existent -lbrotli.
+	# Fixed in https://bugs.ghostscript.com/show_bug.cgi?id=708832 for next
+	# release.
 	PKGCONFIG=$(type -P $(tc-getPKG_CONFIG)) econf \
 		--enable-freetype \
 		--enable-fontconfig \
@@ -195,17 +190,24 @@ src_configure() {
 		$(use_with cups pdftoraster) \
 		$(use_with unicode libidn) \
 		$(use_with X x) \
-		DARWIN_LDFLAGS_SO_PREFIX="${EPREFIX}/usr/lib/"
+		DARWIN_LDFLAGS_SO_PREFIX="${EPREFIX}/usr/lib/" \
+		CFLAGS="${CFLAGS} -std=gnu17" \
+		CXXFLAGS="${CXXFLAGS} -std=gnu++17"
 
-	cd "${S}/ijs" || die
+	pushd "${S}/ijs" >/dev/null || die
 	econf \
 		--enable-shared \
-		$(use_enable static-libs static)
+		$(use_enable static-libs static) \
+		CFLAGS="${CFLAGS} -std=gnu17" \
+		CXXFLAGS="${CXXFLAGS} -std=gnu++17"
+	popd >/dev/null || die
 }
 
 src_compile() {
-	emake so all
-	emake -C ijs
+	# Build system passes CFLAGS to C++ compiler, so force CFLAGS and CXXFLAGS:
+	# bugs #943857, #945826
+	emake so all CFLAGS="${CFLAGS} -std=gnu17" CXXFLAGS="${CXXFLAGS} -std=gnu++17"
+	emake -C ijs CFLAGS="${CFLAGS} -std=gnu17" CXXFLAGS="${CXXFLAGS} -std=gnu++17"
 }
 
 src_install() {

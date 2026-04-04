@@ -12,7 +12,7 @@
 # functions to manage sanitizer options.
 
 case ${EAPI} in
-	6|7|8) ;;
+	6|7|8|9) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
@@ -24,6 +24,7 @@ inherit flag-o-matic
 # @FUNCTION: translate_retpoline
 # @DESCRIPTION:
 # Translates retpoline flags in the best possible way between compilers.
+# @DEPRECATED:
 translate_retpoline() {
 	# Translation is necessary when package.env is a static list
 	# It is preferred to do it in the compiler level.
@@ -78,6 +79,7 @@ translate_retpoline() {
 # @FUNCTION: autofix_flags
 # @DESCRIPTION:
 # Removes incompatible flags and translates flags.
+# @DEPRECATED:
 autofix_flags() {
 	translate_retpoline
 	strip-unsupported-flags

@@ -18,7 +18,7 @@
 # exam software, emergency broadcast receiver software, unfair gameplay.
 
 case ${EAPI:-0} in
-	[78]) ;;
+	7|8|9) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
