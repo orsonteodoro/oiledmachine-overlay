@@ -125,7 +125,6 @@ RDEPEND="
 	media-libs/libpng:0[${MULTILIB_USEDEP}]
 	media-libs/libpng:=[${MULTILIB_USEDEP}]
 	media-libs/tiff:=[${MULTILIB_USEDEP}]
-	sys-libs/zlib:=[${MULTILIB_USEDEP}]
 	virtual/patent-status[patent_status_nonfree?]
 	aom? (
 		>=media-libs/libaom-2.0.0:=[${MULTILIB_USEDEP}]
