@@ -354,7 +354,6 @@ verify_compiler_flags_hardening() {
 	"unconditional:dev-libs/nspr:manual,sensitive-data"
 	"unconditional:media-libs/alsa-lib:manual,attack-surface-risk"
 	"unconditional:net-print/cups:manual,sensitive-data,untrusted-data"
-	"unconditional:sys-apps/dbus:manual,sensitive-data"								# PII, Crown Jewel Keys
 
 	#
 	# Hardened-by-default ebuilds available on the oiledmachine-overlay.
@@ -366,6 +365,7 @@ verify_compiler_flags_hardening() {
 	"unconditional:dev-libs/glib:attack-surface-risk,sensitive-data"
 	"unconditional:dev-libs/nss:attack-surface-risk,sensitive-data,untrusted-data"
 	"unconditional:media-libs/mesa:attack-surface-risk,sensitive-data,untrusted-data"
+	"unconditional:sys-apps/dbus:sensitive-data"									# PII, Crown Jewel Keys
 	"unconditional:x11-libs/pango:sensitive-data,untrusted-data"
 	"unconditional:x11-libs/cairo:sensitive-data,untrusted-data"
 
