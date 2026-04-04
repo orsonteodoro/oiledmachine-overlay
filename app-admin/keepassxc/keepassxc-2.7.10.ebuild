@@ -23,7 +23,7 @@ QT5_PV="5.2.0"
 QT6_PV="6.10.2"
 VIRTUALX_REQUIRED="manual"
 
-inherit cflags-hardened cmake flag-o-matic libcxx-slot libstdcxx-slot toolchain-funcs virtualx xdg
+inherit cflags-hardened cmake flag-o-matic libcxx-slot libstdcxx-slot toolchain-funcs virtualx xdg web-kernel-config
 
 # Time to convert to Qt6
 # patch start time:  1705819601 (Sat Jan 20 10:46:41 PM PST 2024)
@@ -272,6 +272,185 @@ eerror
 	done
 }
 
+has_all_hardening_flags() {
+	local pkg="${1}"
+	local F
+	F=(
+		"-O2"
+		"-fno-delete-null-pointer-checks"
+		"-fstrict-flex-arrays=3"
+		"-ftrivial-auto-var-init=zero"
+		"-fzero-call-used-regs=all"
+		"-fwrapv"
+	)
+
+	local found_count=0
+	local f
+	for f in "${F[@]}" ; do
+		if grep -q -e "${f}" "/var/db/pkg/${pkg}-"*"/CFLAGS" 2>/dev/null ; then
+			found_count=$(( ${found_count} + 1 ))
+		fi
+	done
+
+	# Transient execution CPU vulnerability mitigations
+	# ID = Information Disclosure
+	local found_count_id_mitigation=0
+	if [[ "${tags}" =~ "sensitive-data" ]] ; then
+		F=(
+			"-fcf-protection=full"
+			"-fhardened"
+			"-mbranch-protection=pac-ret+bti"
+			"-mbranch-protection=standard"
+			"-mharden-sls=all"
+			"-mretpoline"
+			"-mindirect-branch=thunk"
+			"-mindirect-branch=thunk-extern"
+			"-mindirect-branch=thunk-inline"
+			"-mfunction-return=thunk"
+			"-mfunction-return=thunk-extern"
+			"-mfunction-return=thunk-inline"
+		)
+		for f in "${F[@]}" ; do
+			if grep -q -e "${f}" "/var/db/pkg/${pkg}-"*"/CFLAGS" 2>/dev/null ; then
+				found_count_id_mitigation=$(( ${found_count_id_mitigation} + 1 ))
+			fi
+		done
+	fi
+
+	if [[ "${tags}" =~ "sensitive-data" ]] ; then
+		if (( ${found_count} == 6 && ${found_count_id_mitigation} >= 1 )) ; then
+			return 0
+		fi
+	else
+		if (( ${found_count} == 6 )) ; then
+			return 0
+		fi
+	fi
+	return 1
+}
+
+verify_compiler_flags_hardening() {
+	local L1=(
+	#
+	# Manual hardening via per-package flags.
+	# No ebuild available on the oiledmachine-overlay.
+	#
+		"qt5:dev-qt/qtcore:manual,sensitive-data"			# For string processing
+		"qt5:dev-qt/qtgui:manual,sensitive-data"
+		"qt5:dev-qt/qtsvg:manual,untrusted-data"			# For SVG based favicons
+		"qt5:dev-qt/qtwidgets,manual,sensitive-data"			# For input widgets
+
+	#
+	# Hardened-by-default ebuilds available on the oiledmachine-overlay.
+	#
+	# The overlay adds the newer hardening flags which may be missing in the
+	# default hardening compiler settings.
+	#
+		"qt6:dev-qt/qt5compat:sensitive-data"				# For string processesing
+		"qt6:dev-qt/qtbase:sensitive-data"				# For input widgets, string processing
+		"X:x11-libs/libX11:sensitive-data"				# Show password rendered text for X11, clipboard
+		"X:x11-libs/libxcb:sensitive-data"				# For clipboard management, auto-typing usernames/passwords into other windows
+
+		"qt6:dev-qt/qtsvg:untrusted-data"				# For SVG based favicons
+		"qt6:media-libs/libpng:untrusted-data"				# For PNG based favicons
+		"qt6:media-libs/libjpeg-turbo:untrusted-data"			# For JPEG based favicons
+
+		"unconditional:app-crypt/argon2:sensitive-data"			# For key derivation
+		"unconditional:dev-libs/botan:sensitive-data"			# Crypto operations, database encryption
+		"unconditional:media-libs/freetype:sensitive-data"		# Glyphs to pixels
+		"unconditional:media-libs/harfbuzz:sensitive-data"		# Unicode text to glyphs and coords
+		"unconditional:x11-libs/libxkbcommon:sensitive-data"		# Keyboard processing (keycodes to symbols)
+		"yubikey:sys-apps/pcsc-lite:sensitive-data"
+	)
+
+	if has_version "dev-qt/qtgui[jpeg]" ; then
+		L1+=(
+			"unconditional:media-libs/mesa:sensitive-data"		# Show password rendered text for Wayland
+		)
+	fi
+
+	if has_version "dev-qt/qtgui[jpeg]" ; then
+		L1+=(
+			"qt5:media-libs/libjpeg-turbo:manual,untrusted-data"
+		)
+	fi
+	if has_version "dev-qt/qtgui[png]" ; then
+		L1+=(
+			"qt5:media-libs/libpng:manual,untrusted-data"
+		)
+	fi
+
+	if has_version "dev-libs/libinput" ; then
+		L1+=(
+			"unconditional:dev-libs/libinput:sensitive-data"	# Input management, raw device events to normalized input event
+		)
+	fi
+
+	local row
+	for row in "${L1[@]}" ; do
+		local u=$(echo "${row}" | cut -f 1 -d ":")
+		local p=$(echo "${row}" | cut -f 2 -d ":")
+		local tag=$(echo "${row}" | cut -f 3 -d ":")
+		if [[ "${tag}" =~ "manual" ]] ; then
+			if [[ "${u}" == "unconditional" ]] ; then
+ewarn "The package ${p} must be manually security-critical hardened using per-package package.env.  Use the hardening flags from the build log."
+			elif use "${u}" && ! has_all_hardening_flags "${p}" ; then
+ewarn "The package ${p} must be manually security-critical hardened using per-package package.env.  Use the hardening flags from the build log."
+			fi
+		elif [[ "${u}" == "unconditional" ]] ; then
+			local repo=$(cat "/var/db/pkg/${p}-"*"/repository" | sed -e "/oiledmachine-overlay/d" | head -n 1)
+			if ! grep -q -e "oiledmachine-overlay" "${ESYSROOT}/var/db/pkg/${p}-"*"/repository" ; then
+ewarn "The package ${p}::${repo} may not be security-critical hardened.  Use the ${p}::oiledmachine-overlay ebuild instead."
+			fi
+		elif use "${u}" ; then
+			if ! grep -q -e "oiledmachine-overlay" "${ESYSROOT}/var/db/pkg/${p}-"*"/repository" ; then
+				local repo=$(cat "/var/db/pkg/${p}-"*"/repository" | sed -e "/oiledmachine-overlay/d" | head -n 1)
+ewarn "The package ${p}::${repo} may not be security-critical hardened.  Use the ${p}::oiledmachine-overlay ebuild instead."
+			fi
+		fi
+	done
+
+	# Clipboard
+	local L2=(
+		"dev-libs/weston"
+		"gui-liri/liri-shell"
+		"gui-wm/cage"
+		"gui-wm/cagebreak"
+		"gui-wm/dwl"
+		"gui-wm/kiwmi"
+		"gui-wm/hyprland"
+		"gui-wm/labwc"
+		"gui-wm/mangowc"
+		"gui-wm/miracle-wm"
+		"gui-wm/newm"
+		"gui-wm/niri"
+		"gui-wm/river"
+		"gui-wm/sway"
+		"gui-wm/waybox"
+		"gui-wm/wayfire"
+		"kde-plasma/kwin"
+		"x11-wm/enlightenment"
+		"x11-wm/mutter"
+	)
+
+	if use wayland ; then
+		local found_compositor=0
+		local x
+		for x in "${L2[@]}" ; do
+			if has_version "${x}" ; then
+				found_compositor=1
+ewarn "${x} must use security-critical hardened ebuilds or per-package package.env hardening.  Use the hardening flags from the build log."
+			fi
+		done
+
+		if (( ${found_compositor} == 0 )) ; then
+ewarn "Wayland compositors must use security-critical hardened ebuilds or per-package package.env hardening.  Use the hardening flags from the build log."
+		fi
+	fi
+
+ewarn "Packages that interact with ${PN} (e.g. password managers, clipboard managers) must use security-critical hardened ebuilds or per-package package.env hardening.  Use the hardening flags from the build log."
+}
+
 pkg_setup() {
 	use qt5 && verify_qt_consistency 5
 	use qt6 && verify_qt_consistency 6
@@ -283,6 +462,8 @@ ewarn "You must switch your gcc to 13 to avoid build time error(s)."
 	fi
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+	web-kernel-config_setup
+	verify_compiler_flags_hardening
 }
 
 src_unpack() {
