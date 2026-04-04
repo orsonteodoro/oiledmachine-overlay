@@ -350,7 +350,7 @@ verify_compiler_flags_hardening() {
 	# No ebuild available on the oiledmachine-overlay.
 	#
 
-	"unconditional:app-accessibility/at-spi2-core:manual,attack-surface-risk,sensitive-data,untrusted-data"		# PII
+	"unconditional:app-accessibility/at-spi2-core:manual,attack-surface-risk,sensitive-data,untrusted-data"		# Touches PII
 	"unconditional:media-libs/alsa-lib:manual,attack-surface-risk"
 
 	"wayland:dev-libs/wayland:attack-surface-risk,manual"
@@ -369,7 +369,7 @@ verify_compiler_flags_hardening() {
 	"unconditional:media-libs/libglvnd:untrusted-data"								# RDEPEND of mesa
 	"unconditional:media-libs/mesa:attack-surface-risk,sensitive-data,untrusted-data"
 	"unconditional:net-print/cups:sensitive-data,untrusted-data"							# PII
-	"unconditional:sys-apps/dbus:sensitive-data"									# PII, Crown Jewel Keys
+	"unconditional:sys-apps/dbus:sensitive-data"									# PII, keys to crown jewels
 	"unconditional:x11-libs/pango:sensitive-data,untrusted-data"
 	"unconditional:x11-libs/cairo:sensitive-data,untrusted-data"
 

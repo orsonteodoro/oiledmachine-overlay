@@ -1306,7 +1306,7 @@ _electron-app_verify_compiler_flags_hardening() {
 	# No ebuild available on the oiledmachine-overlay.
 	#
 
-	"unconditional:app-accessibility/at-spi2-core:manual,attack-surface-risk,sensitive-data,untrusted-data"		# PII
+	"unconditional:app-accessibility/at-spi2-core:manual,attack-surface-risk,sensitive-data,untrusted-data"		# Touches PII
 	"unconditional:media-libs/alsa-lib:manual,attack-surface-risk"
 
 	#
@@ -1327,7 +1327,7 @@ _electron-app_verify_compiler_flags_hardening() {
 	"unconditional:x11-libs/cairo:sensitive-data,untrusted-data"
 	"unconditional:x11-libs/gtk+:sensitive-data"
 
-	"unconditional:sys-apps/dbus:sensitive-data"									# PII, Crown Jewel Keys
+	"unconditional:sys-apps/dbus:sensitive-data"									# PII, keys to crown jewels
 	"wayland:dev-libs/wayland:attack-surface-risk,manual"
 	"X:x11-base/xorg-server:sensitive-data"
 	"X:x11-libs/libxcb:sensitive-data"
