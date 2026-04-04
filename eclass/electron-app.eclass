@@ -1310,7 +1310,6 @@ _electron-app_verify_compiler_flags_hardening() {
 	"unconditional:dev-libs/nspr:manual,sensitive-data"
 	"unconditional:media-libs/alsa-lib:manual,attack-surface-risk"
 	"unconditional:net-print/cups:manual,sensitive-data,untrusted-data"
-	"unconditional:sys-apps/dbus:manual,sensitive-data"								# PII, Crown Jewel Keys
 
 	#
 	# Hardened-by-default ebuilds available on the oiledmachine-overlay.
@@ -1326,6 +1325,7 @@ _electron-app_verify_compiler_flags_hardening() {
 	"unconditional:x11-libs/cairo:sensitive-data,untrusted-data"
 	"unconditional:x11-libs/gtk+:sensitive-data"
 
+	"unconditional:sys-apps/dbus:sensitive-data"									# PII, Crown Jewel Keys
 	"wayland:dev-libs/wayland:attack-surface-risk,manual"
 	"X:x11-base/xorg-server:sensitive-data"
 	"X:x11-libs/libxcb:sensitive-data"
