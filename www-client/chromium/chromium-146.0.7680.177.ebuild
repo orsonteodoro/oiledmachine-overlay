@@ -3826,6 +3826,7 @@ elog "Removing bundled binaries from source tree ..."
 		"third_party/google_input_tools/third_party/closure_library/third_party/closure"
 		"third_party/googletest"
 		"third_party/hunspell"
+		"third_party/hyphenation-patterns" # Required to build ungoogled-chromium
 		"third_party/ink_stroke_modeler/src/ink_stroke_modeler"
 		"third_party/ink_stroke_modeler/src/ink_stroke_modeler/internal"
 		"third_party/ink/src/ink/brush"
