@@ -369,6 +369,13 @@ verify_compiler_flags_hardening() {
 		)
 	fi
 
+	if has_version "dev-qt/qtbase[gtk]" ; then
+	# When using QT_QPA_PLATFORMTHEME=gtk3 or qt6gtk2
+		L1+=(
+			"qt6:x11-libs/pango:sensitive-data"			# PII / usernames
+		)
+	fi
+
 	if has_version "dev-qt/qtgui[jpeg]" ; then
 		L1+=(
 			"qt5:media-libs/libjpeg-turbo:manual,untrusted-data"
