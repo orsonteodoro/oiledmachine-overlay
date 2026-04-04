@@ -6,7 +6,7 @@
 EAPI=8
 
 AOCC_COMPAT=( 14 16 )
-CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO HO IO UAF"
 CMAKE_ECLASS="cmake"
 GCC_MIN_SLOT=6
@@ -125,7 +125,7 @@ ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
 +asm chromium debug doc +examples -highway lossless pgo static-libs test
-ebuild_revision_48
+ebuild_revision_49
 "
 REQUIRED_USE="
 	arm64? (
