@@ -2379,7 +2379,6 @@ verify_compiler_flags_hardening() {
 		"system-libxnvctrl:x11-drivers/nvidia-drivers:manual"
 		"system-openh264:media-libs/openh264:manual,untrusted-data"
 		"system-vulkan-memory-allocator:media-libs/VulkanMemoryAllocator:manual,untrusted-data"
-		"unconditional:dev-libs/nspr:manual,sensitive-data"
 		"vaapi:media-libs/libva:manual,loaded-library,untrusted-data"
 		"wayland:dev-libs/wayland:manual,sensitive-data,untrusted-data"				# PII in window title
 
@@ -2400,13 +2399,14 @@ verify_compiler_flags_hardening() {
 		'X:x11-libs/libxcb:sensitive-data'
 		"X:x11-base/xorg-server:sensitive-data"
 
-		"unconditional:sys-apps/dbus:loaded-library,sensitive-data"				# PII
 		"unconditional:app-arch/bzip2:untrusted-data"
 		"unconditional:dev-libs/expat:attack-surface-risk,untrusted-data"			# SVG, extensions
 		"unconditional:dev-libs/glib:attack-surface-risk,sensitive-data"			# GNOME Keyring, or libsecret storage
+		"unconditional:dev-libs/nspr:sensitive-data"
 		"unconditional:dev-libs/nss:sensitive-data,untrusted-data"
 		"unconditional:media-libs/mesa:loaded-library,sensitive-data,untrusted-data"
 		"unconditional:net-misc/curl:sensitive-data,untrusted-data"
+		"unconditional:sys-apps/dbus:loaded-library,sensitive-data"				# PII
 		"unconditional:sys-libs/zlib:untrusted-data"
 		"unconditional:x11-libs/libdrm:loaded-library,attack-surface-risk"
 
