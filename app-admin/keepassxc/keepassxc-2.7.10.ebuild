@@ -359,8 +359,8 @@ verify_compiler_flags_hardening() {
 		"unconditional:media-libs/harfbuzz:sensitive-data"		# Unicode text to glyphs and coords
 		"unconditional:x11-libs/libxkbcommon:sensitive-data"		# Keyboard processing (keycodes to symbols)
 		"X:x11-base/xorg-server:sensitive-data"				# Clipboard, window titles
-		"X:x11-libs/libX11:sensitive-data"				# Show password pixels for X11, clipboard
-		"X:x11-libs/libxcb:sensitive-data"				# For clipboard management, auto-typing usernames/passwords into other windows
+		"X:x11-libs/libX11:sensitive-data"				# Show password pixels for X11, username or password in clipboard
+		"X:x11-libs/libxcb:sensitive-data"				# For clipboard management, auto-typing usernames or passwords into other windows
 	)
 
 	if has_version "dev-libs/libinput" ; then
@@ -383,7 +383,7 @@ verify_compiler_flags_hardening() {
 
 	if has_version "media-libs/mesa" ; then
 		L1+=(
-			"unconditional:media-libs/mesa:sensitive-data"		# Show password pixels for Wayland/eglfs/linuxfb, userspace GPU drivers
+			"unconditional:media-libs/mesa:sensitive-data"		# Show password pixels for wayland / eglfs / linuxfb, userspace GPU drivers
 		)
 	fi
 
@@ -411,7 +411,7 @@ ewarn "The package ${p}::${repo} may not be security-critical hardened.  Use the
 		fi
 	done
 
-	# Clipboard
+	# Username or password in clipboard
 	local L2=(
 		"dev-libs/weston"
 		"gui-liri/liri-shell"
