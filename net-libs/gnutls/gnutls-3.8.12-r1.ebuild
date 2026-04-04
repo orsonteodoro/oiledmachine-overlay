@@ -27,12 +27,9 @@ LICENSE="GPL-3 LGPL-2.1+"
 # Subslot format:
 # <libgnutls.so number>.<libgnutlsxx.so number>
 SLOT="0/30.30"
-KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ~ppc ppc64 ~riscv ~s390 ~sparc x86 ~arm64-macos ~x64-macos ~x64-solaris"
-IUSE="
-brotli +cxx dane doc examples +idn nls +openssl pkcs11 sslv2 sslv3 static-libs
-systemtap test test-full +tls-heartbeat tools zlib zstd
-ebuild_revision_10
-"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~m68k ~riscv ~s390 ~x86"
+IUSE="brotli +cxx dane doc examples +idn nls +openssl pkcs11 +post-quantum sslv2 sslv3"
+IUSE+=" systemtap static-libs test test-full +tls-heartbeat tools zlib zstd"
 REQUIRED_USE="test-full? ( cxx dane doc examples idn nls openssl pkcs11 tls-heartbeat tools )"
 RESTRICT="!test? ( test )"
 
@@ -45,8 +42,9 @@ RDEPEND="
 	dane? ( >=net-dns/unbound-1.4.20:=[${MULTILIB_USEDEP}] )
 	nls? ( >=virtual/libintl-0-r1:=[${MULTILIB_USEDEP}] )
 	pkcs11? ( >=app-crypt/p11-kit-0.23.1[${MULTILIB_USEDEP}] )
+	post-quantum? ( >=dev-libs/leancrypto-1.2.0:=[${MULTILIB_USEDEP}] )
 	idn? ( >=net-dns/libidn2-0.16-r1:=[${MULTILIB_USEDEP}] )
-	zlib? ( sys-libs/zlib[${MULTILIB_USEDEP}] )
+	zlib? ( virtual/zlib:=[${MULTILIB_USEDEP}] )
 	zstd? ( >=app-arch/zstd-1.3.0:=[${MULTILIB_USEDEP}] )
 "
 DEPEND="
@@ -161,6 +159,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		$(use_with brotli '' link)
 		$(use_with idn)
 		$(use_with pkcs11 p11-kit)
+		$(use_with post-quantum leancrypto)
 		$(use_with zlib '' link)
 		$(use_with zstd '' link)
 		--disable-rpath
