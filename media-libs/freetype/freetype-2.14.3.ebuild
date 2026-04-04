@@ -1,4 +1,4 @@
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -6,7 +6,7 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO IO SO UAF UM"
 
-inherit autotools cflags-hardened check-compiler-switch flag-o-matic libtool multilib-minimal toolchain-funcs
+inherit autotools cflags-hardened check-compiler-switch libtool multilib-minimal toolchain-funcs
 
 DESCRIPTION="High-quality and portable font engine"
 HOMEPAGE="https://www.freetype.org/"
@@ -14,30 +14,43 @@ HOMEPAGE="https://www.freetype.org/"
 if [[ ${PV} == 9999 ]] ; then
 	inherit git-r3
 else
+	VERIFY_SIG_OPENPGP_KEY_PATH=/usr/share/openpgp-keys/wernerlemberg.asc
+	inherit verify-sig
 	SRC_URI="
 		https://downloads.sourceforge.net/freetype/${P/_/}.tar.xz
 		mirror://nongnu/freetype/${P/_/}.tar.xz
 		utils? (
 			https://downloads.sourceforge.net/freetype/ft2demos-${PV}.tar.xz
 			mirror://nongnu/freetype/ft2demos-${PV}.tar.xz
+			verify-sig? (
+				https://downloads.sourceforge.net/freetype/ft2demos-${PV}.tar.xz.sig
+				mirror://nongnu/freetype/ft2demos-${PV}.tar.xz.sig
+			)
 		)
 		doc? (
 			https://downloads.sourceforge.net/freetype/${PN}-doc-${PV}.tar.xz
 			mirror://nongnu/freetype/${PN}-doc-${PV}.tar.xz
+			verify-sig? (
+				https://downloads.sourceforge.net/freetype/${PN}-doc-${PV}.tar.xz.sig
+				mirror://nongnu/freetype/${PN}-doc-${PV}.tar.xz.sig
+			)
+		)
+		verify-sig? (
+			https://downloads.sourceforge.net/freetype/${P/_/}.tar.xz.sig
+			mirror://nongnu/freetype/${P/_/}.tar.xz.sig
 		)
 	"
-	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris"
+	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~arm64-macos ~x64-macos ~x64-solaris"
+
+	BDEPEND="verify-sig? ( sec-keys/openpgp-keys-wernerlemberg )"
 fi
 
 LICENSE="|| ( FTL GPL-2+ )"
 SLOT="2"
-IUSE="
-X +adobe-cff brotli bzip2 +cleartype-hinting debug doc fontforge harfbuzz +png static-libs svg utils
-ebuild_revision_11
-"
+IUSE="X +adobe-cff brotli bzip2 +cleartype-hinting debug doc fontforge harfbuzz +png static-libs svg utils"
 
 RDEPEND="
-	>=sys-libs/zlib-1.2.8-r1[${MULTILIB_USEDEP}]
+	>=virtual/zlib-1.2.8-r1:=[${MULTILIB_USEDEP}]
 	brotli? ( app-arch/brotli[${MULTILIB_USEDEP}] )
 	bzip2? ( >=app-arch/bzip2-1.0.6-r4[${MULTILIB_USEDEP}] )
 	png? ( >=media-libs/libpng-1.2.51:=[${MULTILIB_USEDEP}] )
@@ -47,15 +60,10 @@ RDEPEND="
 	)
 "
 DEPEND="${RDEPEND}"
-BDEPEND="
+BDEPEND+="
 	virtual/pkgconfig
 "
 PDEPEND="harfbuzz? ( >=media-libs/harfbuzz-1.3.0[truetype,${MULTILIB_USEDEP}] )"
-
-PATCHES=(
-	"${FILESDIR}"/${P}-deref-check.patch
-	"${FILESDIR}"/${P}-ubsan-overflow.patch
-)
 
 _egit_repo_handler() {
 	if [[ ${PV} == 9999 ]] ; then
@@ -79,6 +87,13 @@ _egit_repo_handler() {
 		fi
 	else
 		default
+
+		if use verify-sig; then
+			verify-sig_verify_detached "${DISTDIR}"/${P}.tar.xz{,.sig}
+
+			use doc && verify-sig_verify_detached "${DISTDIR}"/${PN}-doc-${PV}.tar.xz{,.sig}
+			use utils && verify-sig_verify_detached "${DISTDIR}"/ft2demos-${PV}.tar.xz{,.sig}
+		fi
 	fi
 }
 
