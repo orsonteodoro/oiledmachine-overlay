@@ -369,6 +369,24 @@ verify_compiler_flags_hardening() {
 		)
 	fi
 
+	if has_version "dev-qt/qtbase[icu]" ; then
+		L1+=(
+			"qt6:dev-qt/qtbase:sensitive-data"
+		)
+	fi
+
+	if has_version "dev-qt/qtcore[-icu]" && has_version "dev-libs/libiconv" ; then
+		L1+=(
+			"qt5:dev-libs/libiconv:sensitive-data"
+		)
+	fi
+
+	if has_version "dev-qt/qtcore[icu]" ; then
+		L1+=(
+			"qt5:dev-libs/icu:sensitive-data"
+		)
+	fi
+
 	if has_version "dev-qt/qtbase[gtk]" ; then
 	# When using QT_QPA_PLATFORMTHEME=gtk3 or qt6gtk2
 		L1+=(
