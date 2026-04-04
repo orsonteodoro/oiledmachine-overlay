@@ -1391,7 +1391,7 @@ verify_compiler_flags_hardening() {
 	# 7. fontconfig, freetype, harfbuzz
 	# 8. gtk+:3, gtk:4
 	#
-
+media-libs/mesa
 	#
 	# Manual hardening via per-package flags.
 	# No ebuild available on the oiledmachine-overlay.
@@ -1411,8 +1411,11 @@ verify_compiler_flags_hardening() {
 		"unconditional:dev-libs/glib:attack-surface-risk"
 		"unconditional:dev-libs/nss:sensitive-data,untrusted-data"
 		"unconditional:dev-libs/nspr:sensitive-data"
+		"unconditional:dev-util/spirv-tools,untrusted-data"						# RDEPEND of mesa
 		"unconditional:media-libs/freetype:untrusted-data"
 		"unconditional:media-libs/fontconfig:untrusted-data"
+		"unconditional:media-libs/libglvnd:untrusted-data"						# RDEPEND of mesa
+		"unconditional:media-libs/mesa:sensitive-data,untrusted-data"
 		"unconditional:media-video/ffmpeg:untrusted-data"
 		"unconditional:sys-libs/zlib:untrusted-data"
 		"unconditional:x11-libs/cairo:sensitive-data,untrusted-data"

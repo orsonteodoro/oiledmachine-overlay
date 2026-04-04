@@ -2117,6 +2117,8 @@ verify_compiler_flags_hardening() {
 	"dav1d:media-plugins/gst-plugins-rs:untrusted-data"
 	"flite:app-accessibility/flite:sensitive-data,untrusted-data"
 	"gbm:x11-libs/libdrm:attack-surface-risk"
+	"gles2:dev-util/spirv-tools:untrusted-data"							# RDEPEND of mesa
+	"gles2:media-libs/libglvnd:untrusted-data"							# RDEPEND of mesa
 	"gles2:media-libs/mesa:sensitive-data,untrusted-data"
 	"gnome-keyring:app-crypt/libsecret:sensitive-data"						# PII, Crown Jewel Keys
 	"gstwebrtc:dev-libs/openssl:sensitive-data,untrusted-data"
@@ -2134,6 +2136,8 @@ verify_compiler_flags_hardening() {
 	"libwebrtc:media-libs/libvpx:untrusted-data"
 	"libwebrtc:media-libs/opus:untrusted-data"
 	"libwebrtc:media-libs/openh264:untrusted-data"
+	"opengl:dev-util/spirv-tools:untrusted-data"							# RDEPEND of mesa
+	"opengl:media-libs/libglvnd:untrusted-data"							# RDEPEND of mesa
 	"opengl:media-libs/mesa:sensitive-data,untrusted-data"
 	"seccomp:sys-apps/bubblewrap:attack-surface-risk,untrusted-data"
 	"speex:media-plugins/gst-plugins-speex:untrusted-data"
@@ -2143,6 +2147,8 @@ verify_compiler_flags_hardening() {
 	"variation-fonts:media-libs/fontconfig:untrusted-data"
 	"variation-fonts:media-libs/freetype:untrusted-data"
 	"variation-fonts:x11-libs/cairo:sensitive-data"
+	"wayland:dev-util/spirv-tools:untrusted-data"							# RDEPEND of mesa
+	"wayland:media-libs/libglvnd:untrusted-data"							# RDEPEND of mesa
 	"wayland:media-libs/mesa:sensitive-data,untrusted-data"
 	"webvtt:media-plugins/gst-plugins-rs:untrusted-data"
 	"woff2:media-libs/woff2:untrusted-data"

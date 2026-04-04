@@ -2404,6 +2404,8 @@ verify_compiler_flags_hardening() {
 		"unconditional:dev-libs/glib:attack-surface-risk,sensitive-data"			# GNOME Keyring, or libsecret storage
 		"unconditional:dev-libs/nspr:sensitive-data"
 		"unconditional:dev-libs/nss:sensitive-data,untrusted-data"
+		#"unconditional:dev-util/spirv-tools:untrusted-data"					# RDEPEND of mesa, deferred to USE=system-spirv-tools
+		"unconditional:media-libs/libglvnd:untrusted-data"					# RDEPEND of mesa
 		"unconditional:media-libs/mesa:loaded-library,sensitive-data,untrusted-data"
 		"unconditional:net-misc/curl:sensitive-data,untrusted-data"
 		"unconditional:sys-apps/dbus:loaded-library,sensitive-data"				# PII

@@ -365,6 +365,8 @@ verify_compiler_flags_hardening() {
 	"unconditional:dev-libs/glib:attack-surface-risk,sensitive-data"
 	"unconditional:dev-libs/nspr:sensitive-data"
 	"unconditional:dev-libs/nss:attack-surface-risk,sensitive-data,untrusted-data"
+	"unconditional:dev-util/spirv-tools:untrusted-data"								# RDEPEND of mesa
+	"unconditional:media-libs/libglvnd:untrusted-data"								# RDEPEND of mesa
 	"unconditional:media-libs/mesa:attack-surface-risk,sensitive-data,untrusted-data"
 	"unconditional:net-print/cups:sensitive-data,untrusted-data"
 	"unconditional:sys-apps/dbus:sensitive-data"									# PII, Crown Jewel Keys
