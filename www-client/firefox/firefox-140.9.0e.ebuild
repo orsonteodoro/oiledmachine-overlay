@@ -1397,7 +1397,6 @@ verify_compiler_flags_hardening() {
 	# No ebuild available on the oiledmachine-overlay.
 	#
 		"speech:app-accessibility/speech-dispatcher:manual,sensitive-data,untrusted-data"
-		"system-pipewire:media-video/pipewire:manual,untrusted-data"
 		"wayland:dev-libs/wayland:manual"
 		"openh264:media-libs/openh264:manual,untrusted-data"
 
@@ -1438,6 +1437,7 @@ verify_compiler_flags_hardening() {
 		"system-icu:dev-libs/icu:attack-surface-risk,untrusted-data"					# PII
 		"system-jpeg:media-libs/libjpeg-turbo:untrusted-data"
 		"system-libvpx:media-libs/libvpx:untrusted-data"
+		"system-pipewire:media-video/pipewire:untrusted-data"
 		"system-png:media-libs/libpng:untrusted-data"
 		"system-webp:media-libs/libwebp:untrusted-data"
 	)

@@ -2371,7 +2371,6 @@ verify_compiler_flags_hardening() {
 		'!headless:media-libs/libglvnd:manual,untrusted-data'
 		"accessibility:app-accessibility/at-spi2-core:manual,loaded-library,sensitive-data"	# PII
 		"ffmpeg-chromium:media-video/ffmpeg-chromium:manual,untrusted-data"
-		"screencast:media-video/pipewire:manual,untrusted-data"
 		"selinux:sys-libs/libselinux:manual,sensitive-data"
 		"system-double-conversion:dev-libs/double-conversion:manual,untrusted-data"
 		"system-libxnvctrl:x11-drivers/nvidia-drivers:manual"
@@ -2394,6 +2393,7 @@ verify_compiler_flags_hardening() {
 		"firejail:sys-apps/firejail:untrusted-data"
 		"gtk4:gui-libs/gtk:loaded-library,sensitive-data"
 		"qt6:dev-qt/qtbase:sensitive-data"
+		"screencast:media-video/pipewire:untrusted-data"
 		"vaapi:media-libs/libva:loaded-library,untrusted-data"
 		"X:x11-libs/libX11:sensitive-data"
 		'X:x11-libs/libxcb:sensitive-data'
