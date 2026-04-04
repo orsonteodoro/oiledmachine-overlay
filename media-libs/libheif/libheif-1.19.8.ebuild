@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO"
 CXX_STANDARD=20
 
@@ -62,7 +62,7 @@ ${FFMPEG_HW_ACCEL_DECODE_H265_USE[@]}
 ${PATENT_STATUS_USE[@]}
 -avc avif +aom -dav1d doc +examples -ffmpeg +gdk-pixbuf jpeg -jpeg2k -kvazaar -heic -htj2k
 -libde265 -openh264 -rav1e +libsharpyuv -svt-av1 test +threads -uvg266 -vvc -vvenc -x265
-ebuild_revision_26
+ebuild_revision_27
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
