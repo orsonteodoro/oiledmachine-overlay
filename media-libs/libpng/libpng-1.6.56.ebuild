@@ -1,9 +1,9 @@
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
-APNG_REPO="libpng-apng" # sometimes libpng-apng is more up to date
+APNG_REPO=libpng-apng # sometimes libpng-apng is more up to date
 APNG_VERSION="1.6.54"
 CFLAGS_HARDENED_ASSEMBLERS="gas inline"
 ##CFLAGS_HARDENED_CI_SANITIZERS="asan lsan msan ubsan" # Beta only
@@ -26,23 +26,17 @@ SRC_URI="
 
 LICENSE="libpng2"
 SLOT="0/16"
-KEYWORDS="
-~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390
-~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris
-"
-IUSE="
-apng cpu_flags_x86_sse static-libs test
-ebuild_revision_10
-"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
+IUSE="apng cpu_flags_x86_sse static-libs test"
 RESTRICT="!test? ( test )"
 
-RDEPEND=">=sys-libs/zlib-1.2.8-r1:=[${MULTILIB_USEDEP}]"
+RDEPEND=">=virtual/zlib-1.2.8-r1:=[${MULTILIB_USEDEP}]"
 DEPEND="
 	${RDEPEND}
 	riscv? ( sys-kernel/linux-headers )
 "
 
-DOCS=( "ANNOUNCE" "CHANGES" "libpng-manual.txt" "README" "TODO" )
+DOCS=( ANNOUNCE CHANGES libpng-manual.txt README TODO )
 
 pkg_setup() {
 	check-compiler-switch_start
