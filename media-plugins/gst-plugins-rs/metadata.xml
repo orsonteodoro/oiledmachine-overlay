@@ -54,6 +54,9 @@
     <flag name="demucs">
       Build the demucs audio source separation plugin.
     </flag>
+    <flag name="debugseimetainserter">
+      Build a plugin to debug test SEI metadata insertion.
+    </flag>
     <flag name="elevenlabs">
       Build the Text-To-Speech (TTS) plugin using ElevenLabs
     </flag>
@@ -227,6 +230,9 @@
     </flag>
     <flag name="webrtchttp">
       Build a plugin that uses simple HTTP (WHIP/WHEP) elements
+    </flag>
+    <flag name="whisper">
+      Build a speech-to-text plugin
     </flag>
 
     <!-- WebRTC dependencies -->
