@@ -533,7 +533,7 @@ ${ROCM_SLOTS2[@]}
 clang cuda +distributed +eigen +fbgemm +flash-attention +gloo -jit +kineto +magma -mimalloc
 -mkl +mpi +nccl +nnpack +numpy +onednn openblas -opencl +openmp +tensorpipe
 +qnnpack +rccl rocm roctracer -ssl system-libs test +xnnpack
-ebuild_revision_50
+ebuild_revision_52
 "
 # bin/torch_shm_manager requires openmp
 gen_cuda_required_use() {
@@ -1945,32 +1945,36 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 	sed '/RERUN/,+1d' -i "${BUILD_DIR}/build.ninja" || die
 }
 
+src_compile() {
+	PYTORCH_BUILD_VERSION="${PV}" \
+	PYTORCH_BUILD_NUMBER=0 \
+	cmake_src_compile
+}
+
+python_install() {
+	python_domodule python/torch
+	mkdir "${D}$(python_get_sitedir)/torch/bin" || die
+	mkdir "${D}$(python_get_sitedir)/torch/lib" || die
+	mkdir "${D}$(python_get_sitedir)/torch/include" || die
+	ln -s "../../../../../include/torch" \
+		"${D}$(python_get_sitedir)/torch/include/torch" || die # bug 923269
+	ln -s "../../../../../bin/torch_shm_manager" \
+		"${D}/$(python_get_sitedir)/torch/bin/torch_shm_manager" || die
+	ln -s "../../../../../$(get_libdir)/libtorch_global_deps.so" \
+		"${D}/$(python_get_sitedir)/torch/lib/libtorch_global_deps.so" || die
+}
+
 src_install() {
 	cmake_src_install
 
 	insinto "/var/lib/${PN}"
 	doins "${BUILD_DIR}/CMakeCache.txt"
-
-	# Removed caffe2/python since 2.4.0.  See 18cbaf6
+	dostrip -x "/var/lib/${PN}/functorch.so"
 
 	rm -rf "python"
-	mkdir -p "python/torch/include" || die
-	cp \
-		"torch/version.py" \
-		"python/torch/" \
-		|| die
-	rm -rf "${ED}/var/tmp" || die
-	python_domodule "python/torch"
-	ln -s \
-		"../../../../../include/torch" \
-		"${D}$(python_get_sitedir)/torch/include/torch" \
-		|| die # bug 923269
-
-	# FIXME: fix cmake build scripts and remove below.
-	mv \
-		"${ED}/usr/include/pybind11" \
-		"${ED}/usr/lib/${PN}/include" \
-		|| die
+	mkdir -p "python/torch" || die
+	cp "torch/version.py" "python/torch/" || die
+	python_install
 
 	if use rocm && use flash-attention ; then
 		local dest_libdir="/usr/lib/caffe2/$(get_libdir)"
