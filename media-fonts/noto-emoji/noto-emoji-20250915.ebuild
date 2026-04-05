@@ -6,11 +6,16 @@ EAPI=8
 # The noto-emoji is supposed to be for the source based build, but the distro is
 # breaking the rules.
 
+# Distro versioning uses the commit date of noto color emoji.
+# oiledmachine-overlay uses the tagged locale date.
+
+# Equivalent to the distro ebuild but without the unsanctioned font.
+
 DESCRIPTION="A redirect or compatibility package to noto-color-emoji-bin"
 LICENSE="metapackage"
 SLOT="0"
 RDEPEND="
-	~media-fonts/noto-color-emoji-bin-2.042_p20231129_p20231129
+	~media-fonts/noto-color-emoji-bin-2.051_p20250818_p20250915
 	media-fonts/noto-color-emoji-bin:=
 "
 DEPEND="
