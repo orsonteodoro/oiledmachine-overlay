@@ -177,6 +177,7 @@ pkg_setup() {
 	if use rocm_6_4 ; then
 		export ROCM_SLOT="6.4"
 		export LLVM_SLOT=19
+		rocm_pkg_setup
 	else
 		local s
 		for s in ${LLVM_COMPAT[@]} ; do
@@ -186,7 +187,6 @@ pkg_setup() {
 			fi
 		done
 	fi
-	rocm_pkg_setup
 	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
