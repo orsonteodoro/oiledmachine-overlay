@@ -1,4 +1,4 @@
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -14,6 +14,7 @@ UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
+VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/libjpeg-turbo.asc"
 
 _TRAINERS=(
 	"libjpeg_turbo_trainers_70_pct_quality_baseline"
@@ -48,7 +49,7 @@ UOPTS_BOLT_INST_ARGS=(
 )
 
 inherit cflags-hardened check-compiler-switch cmake-multilib java-pkg-opt-2 flag-o-matic
-inherit flag-o-matic-om toolchain-funcs uopts
+inherit flag-o-matic-om toolchain-funcs uopts verify-sig
 
 # Unkeyworded for test failures: https://github.com/libjpeg-turbo/libjpeg-turbo/issues/705
 if [[ $(ver_cut 3) -lt "90" ]] ; then
@@ -61,6 +62,7 @@ S="${WORKDIR}/${P}"
 SRC_URI="
 	https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/${PV}/${P}.tar.gz
 	mirror://gentoo/libjpeg8_8d-2.debian.tar.gz
+	verify-sig? ( https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/${PV}/${P}.tar.gz.sig )
 "
 
 DESCRIPTION="MMX, SSE, and SSE2 SIMD accelerated JPEG library"
@@ -176,6 +178,9 @@ BDEPEND+="
 	x64-macos? (
 		${ASM_DEPEND}
 	)
+	verify-sig? (
+		sec-keys/openpgp-keys-libjpeg-turbo
+	)
 "
 DEPEND="
 	${COMMON_DEPEND}
@@ -262,6 +267,14 @@ ewarn "Install may fail.  \`emerge -C ${PN}\` then \`emerge -1 =${P}\`."
 ewarn "PGO may randomly fail with CFI.  Disable the pgo USE flag to fix it."
 ewarn
 	uopts_setup
+}
+
+src_unpack() {
+	if use verify-sig ; then
+		verify-sig_verify_detached "${DISTDIR}/${P}.tar.gz"{"",".sig"}
+	fi
+
+	default
 }
 
 src_prepare() {
@@ -574,9 +587,9 @@ multilib_src_install_all() {
 	doman "${WORKDIR}"/debian/extra/*.[0-9]*
 
 	if use java; then
+		newdoc java/README.md README-java.md
 		docinto html/java
-		dodoc -r "${S}"/java/doc/.
-		newdoc "${S}"/java/README README.java
+		dodoc -r java/doc/.
 	fi
 }
 
