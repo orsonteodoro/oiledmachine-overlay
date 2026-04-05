@@ -6,6 +6,9 @@ EAPI=8
 # The noto-emoji is supposed to be for the source based build, but the distro is
 # breaking the rules.
 
+# This redirect ebuild is for ebuilds that explicitly require this emoji font,
+# so it cannot be simply dropped.
+
 # Distro versioning uses the commit date of noto color emoji.
 # oiledmachine-overlay uses the tagged locale date.
 
