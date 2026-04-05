@@ -1,0 +1,42 @@
+--- a/third_party/aotriton/v3src/CMakeLists.txt.orig	2025-06-17 17:47:36.000000000 -0700
++++ b/third_party/aotriton/v3src/CMakeLists.txt	2026-04-04 18:42:09.829319816 -0700
+@@ -26,7 +26,7 @@ message(STATUS "EFFECTIVE_TARGET_GPUS ${
+ 
+ # Decompress tuning_database.sqlite.xz
+ execute_process(COMMAND ${CMAKE_COMMAND} -E tar xf
+-  "${CMAKE_SOURCE_DIR}/v3python/rules/tuning_database.sqlite3.tar.xz"
++  "${CMAKE_CURRENT_SOURCE_PARENT_DIR}/v3python/rules/tuning_database.sqlite3.tar.xz"
+   WORKING_DIRECTORY "${AOTRITON_V2_BUILD_DIR}")
+ 
+ get_filename_component(AOTRITON_COMPILER "${CMAKE_CURRENT_LIST_DIR}/../v3python/compile.py" ABSOLUTE)
+--- a/third_party/aotriton/CMakeLists.txt.orig	2025-06-17 17:47:36.000000000 -0700
++++ b/third_party/aotriton/CMakeLists.txt	2026-04-04 18:47:52.187138805 -0700
+@@ -103,10 +103,16 @@ endif()
+ set(Python_ARTIFACTS_INTERACTIVE TRUE)
+ 
+ # Not a target, we need to override Python3_EXECUTABLE later
+-execute_process(COMMAND "${Python3_EXECUTABLE}" -m venv "${VENV_DIR}")
++if(AOTRITON_DISABLE_VENV OR TRUE)
++  execute_process(COMMAND "${Python3_EXECUTABLE}" -m venv --system-site-packages "${VENV_DIR}")
++else()
++  execute_process(COMMAND "${Python3_EXECUTABLE}" -m venv "${VENV_DIR}")
++endif()
+ 
+ set(ENV{VIRTUAL_ENV} "${VENV_DIR}")
+ message("VENV_DIR ${VENV_DIR}")
++set(VENV_BIN_PYTHON "${VENV_DIR}/bin/python")
++message(STATUS "VENV_BIN_PYTHON:  ${VENV_BIN_PYTHON}")
+ # set(Python3_FIND_VIRTUALENV FIRST)
+ # unset(Python3_EXECUTABLE)
+ # find_package(Python3 COMPONENTS Interpreter REQUIRED)
+@@ -115,7 +121,9 @@ execute_process(COMMAND ${CMAKE_COMMAND}
+ # string(STRIP "${VENV_SITE}" VENV_SITE)
+ message("VENV_SITE ${VENV_SITE}")
+ 
+-execute_process(COMMAND ${CMAKE_COMMAND} -E env VIRTUAL_ENV=${VENV_DIR} "${VENV_DIR}/bin/python" -m pip install -r "${CMAKE_CURRENT_LIST_DIR}/requirements.txt")
++if(NOT AOTRITON_DISABLE_VENV AND FALSE)
++  execute_process(COMMAND ${CMAKE_COMMAND} -E env VIRTUAL_ENV=${VENV_DIR} "${VENV_DIR}/bin/python" -m pip install -r "${CMAKE_CURRENT_LIST_DIR}/requirements.txt")
++endif()
+ 
+ # AOTRITON_NOIMAGE_MODE does not need Triton
+ if(NOT AOTRITON_NOIMAGE_MODE)
