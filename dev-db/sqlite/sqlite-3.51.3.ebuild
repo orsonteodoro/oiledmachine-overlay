@@ -1,5 +1,5 @@
 # Copyright 2024-2025 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -24,15 +24,14 @@ else
 	DOC_PV="${SRC_PV}"
 	#printf -v DOC_PV "%u%02u%02u00" $(ver_rs 1-3 " ")
 
-	# It is not clear if it is tested recently.
-	#KEYWORDS="~amd64 ~amd64-linux arm arm64 ppc ~s390 ~sparc ~x64-macos x86" # Based on source code
+	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
 
-	KEYWORDS="amd64 ~x64-macos" # Based on download page
+	KEYWORDS="~amd64 ~x64-macos" # Based on download page
 	S="${WORKDIR}/${PN}-src-${SRC_PV}"
 	SRC_URI="
-		https://sqlite.org/2025/${PN}-src-${SRC_PV}.zip
+		https://sqlite.org/2026/${PN}-src-${SRC_PV}.zip
 		doc? (
-			https://sqlite.org/2025/${PN}-doc-${DOC_PV}.zip
+			https://sqlite.org/2026/${PN}-doc-${DOC_PV}.zip
 		)
 	"
 fi
@@ -47,7 +46,7 @@ RESTRICT="
 "
 SLOT="3"
 IUSE="
-debug doc icu +readline static-libs tcl test tools
+debug doc icu +readline static-libs tcl test test-full tools
 ebuild_revision_28
 "
 REQUIRED_USE="
@@ -97,7 +96,7 @@ fi
 
 PATCHES=(
 	"${FILESDIR}/${PN}-3.47.2-hwtime.h-Don-t-use-rdtsc-on-i486.patch"
-	"${FILESDIR}/${PN}-3.50.4-clang.patch"
+	"${FILESDIR}/${PN}-3.51.3-test.patch"
 )
 
 erun() {
@@ -572,8 +571,9 @@ ewarn "Skipping tests due to root permissions"
 	addpredict "/test.db"
 	addpredict "/ÿ.db"
 
+	emake tclextension
 	if [[ "${mode}" == "default" ]] ; then
-		emake -Onone $(usex debug 'fulltest' 'test')
+		emake -Onone $(usex test-full 'xdevtest' 'test')
 	elif [[ "${mode}" == "pgo" ]] ; then
 # With PGO, only common the common use cases are used.
 # This is to prevent increasing junk or wasted space in the cache.
