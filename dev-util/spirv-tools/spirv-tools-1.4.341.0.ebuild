@@ -1,4 +1,4 @@
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -7,6 +7,8 @@ MY_PN="SPIRV-Tools"
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CXX_STANDARD=17
+PYTHON_COMPAT=( python3_{11..14} )
+PYTHON_REQ_USE="xml(+)"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -18,8 +20,6 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-PYTHON_COMPAT=( "python3_"{11..14} )
-PYTHON_REQ_USE="xml(+)"
 inherit cflags-hardened cmake-multilib libcxx-slot libstdcxx-slot python-any-r1
 
 if [[ "${PV}" == *"9999"* ]]; then
@@ -28,8 +28,8 @@ if [[ "${PV}" == *"9999"* ]]; then
 else
 	EGIT_COMMIT="vulkan-sdk-${PV}"
 	SRC_URI="https://github.com/KhronosGroup/${MY_PN}/archive/${EGIT_COMMIT}.tar.gz -> ${P}.tar.gz"
-	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
-	S="${WORKDIR}/${MY_PN}-${EGIT_COMMIT}"
+	KEYWORDS="~alpha amd64 ~arm arm64 ~hppa ~loong ~mips ppc ppc64 ~riscv ~s390 ~sparc ~x86"
+	S="${WORKDIR}"/${MY_PN}-${EGIT_COMMIT}
 fi
 
 DESCRIPTION="Provides an API and commands for processing SPIR-V modules"
@@ -37,13 +37,13 @@ HOMEPAGE="https://github.com/KhronosGroup/SPIRV-Tools"
 
 LICENSE="Apache-2.0"
 SLOT="0"
-IUSE="
-test
-ebuild_revision_10
-"
+IUSE="test"
 RESTRICT="!test? ( test )"
 
-DEPEND="~dev-util/spirv-headers-${PV}"
+DEPEND="
+	~dev-util/spirv-headers-${PV}
+	dev-util/spirv-headers:=
+"
 # RDEPEND=""
 BDEPEND="${PYTHON_DEPS}"
 
