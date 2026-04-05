@@ -3,7 +3,9 @@
 
 EAPI=8
 
-inherit autotools multilib-minimal
+CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+
+inherit autotools cflags-hardened multilib-minimal
 
 DESCRIPTION="AudioProcessing library from the webrtc.org code base"
 HOMEPAGE="
@@ -17,7 +19,7 @@ SLOT="0"
 KEYWORDS="amd64 ~arm64 ~ppc64 x86 ~amd64-linux"
 IUSE="
 static-libs
-ebuild_revision_3
+ebuild_revision_4
 "
 
 DOCS=( "AUTHORS" "NEWS" "README.md" )
@@ -38,6 +40,7 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	cflags-hardened_append
 	ECONF_SOURCE="${S}" econf $(use_enable static-libs static)
 }
 

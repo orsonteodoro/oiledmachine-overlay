@@ -4,6 +4,7 @@
 EAPI=8
 
 ABSEIL_CPP_SLOT="20240722"
+CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 
 CPU_FLAGS_ARM=(
 	"cpu_flags_arm_neon"
@@ -13,7 +14,7 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse"
 )
 
-inherit abseil-cpp meson-multilib
+inherit abseil-cpp cflags-hardened meson-multilib
 
 DESCRIPTION="AudioProcessing library from the webrtc.org codebase"
 HOMEPAGE="
@@ -28,7 +29,7 @@ KEYWORDS="~amd64 ~arm64 ~x86 ~amd64-linux"
 IUSE="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_X86[@]}
-ebuild_revision_3
+ebuild_revision_4
 "
 
 RDEPEND="
@@ -56,6 +57,7 @@ src_unpack() {
 }
 
 multilib_src_configure() {
+	cflags-hardened_append
 	abseil-cpp_src_configure
 	local emesonargs=(
 		$(meson_feature cpu_flags_arm_neon "neon")
