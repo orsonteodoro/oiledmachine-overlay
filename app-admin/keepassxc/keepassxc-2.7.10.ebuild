@@ -361,6 +361,9 @@ verify_compiler_flags_hardening() {
 		"X:x11-base/xorg-server:sensitive-data"				# Clipboard, window titles
 		"X:x11-libs/libX11:sensitive-data"				# Show password pixels for X11, username or password in clipboard
 		"X:x11-libs/libxcb:sensitive-data"				# For clipboard management, auto-typing usernames or passwords into other windows
+
+		"X:x11-libs/libXcomposite:sensitive-data"			# Screen grab.  Harden with CET/Retpoline.
+		"X:x11-libs/libXfixes:sensitive-data"				# Screen grab.  Harden with CET/Retpoline.
 	)
 
 	if has_version "dev-libs/libinput" ; then
@@ -439,8 +442,11 @@ ewarn "The package ${p}::${repo} may not be security-critical hardened.  Use the
 		fi
 	done
 
-	# Username or password in clipboard
+	# Harden with CET/Retpoline to increase attack complexity,
+	# but sandboxing is preferred to make secrets unreachable.
+	# Both CET/Retpoline and sandboxing are recommended for defense-in-depth.
 	local L2=(
+	# Username or password in clipboard
 		"dev-libs/weston"
 		"gui-liri/liri-shell"
 		"gui-wm/cage"
@@ -460,6 +466,12 @@ ewarn "The package ${p}::${repo} may not be security-critical hardened.  Use the
 		"kde-plasma/kwin"
 		"x11-wm/enlightenment"
 		"x11-wm/mutter"
+
+	# Screen grabber
+		"sys-apps/xdg-desktop-portal"
+		"gui-libs/xdg-desktop-portal-wlr"
+		"gui-libs/xdg-desktop-portal-hyprland"
+		"media-video/pipewire"
 	)
 
 	if use wayland ; then
@@ -677,6 +689,10 @@ einfo "For custom Top Level Domains (TLDs), it is acceptable to place them in"
 einfo "~/.config/${PN}/tld, but the permission needs to be 0600."
 einfo
 	fi
+einfo
+einfo "Consider sandboxing for ${PN} to make show password secret pixels"
+einfo "unreachable by attacker."
+einfo
 }
 
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO autotype timer and topLevelDomains() are unfinished
