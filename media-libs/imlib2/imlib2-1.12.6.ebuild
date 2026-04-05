@@ -1,4 +1,4 @@
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -7,7 +7,7 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO IO SO"
 
-inherit cflags-hardened check-compiler-switch flag-o-matic multilib-minimal toolchain-funcs
+inherit cflags-hardened check-compiler-switch flag-o-matic libtool multilib-minimal toolchain-funcs
 
 DESCRIPTION="Version 2 of an advanced replacement library for libraries like libXpm"
 HOMEPAGE="https://www.enlightenment.org/
@@ -16,22 +16,23 @@ SRC_URI="https://downloads.sourceforge.net/enlightenment/${P}.tar.xz"
 
 LICENSE="BSD"
 SLOT="0"
-KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x64-solaris"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~x64-macos ~x64-solaris"
 IUSE="
-+X apidoc bzip2 cpu_flags_x86_mmx cpu_flags_x86_sse2 debug
++X apidoc avif bzip2 cpu_flags_x86_mmx cpu_flags_x86_sse2 debug
 eps +filters +gif +jpeg jpeg2k jpegxl heif lzma mp3 packing +png
-raw +shm static-libs svg +text +tiff +webp zlib
+raw +shm static-libs svg +text +tools +tiff +webp y4m +zlib
 ebuild_revision_19
 "
 
 REQUIRED_USE="shm? ( X )"
 
-# NOTE: zlib is required even if zlib loader is disabled
 RDEPEND="
 	X? (
 		x11-libs/libX11[${MULTILIB_USEDEP}]
 		x11-libs/libXext[${MULTILIB_USEDEP}]
 	)
+	shm? ( x11-libs/libxcb[${MULTILIB_USEDEP}] )
+	avif? ( media-libs/libavif:=[${MULTILIB_USEDEP}] )
 	bzip2? ( app-arch/bzip2[${MULTILIB_USEDEP}] )
 	eps? ( app-text/libspectre )
 	gif? ( media-libs/giflib:=[${MULTILIB_USEDEP}] )
@@ -45,9 +46,11 @@ RDEPEND="
 	png? ( >=media-libs/libpng-1.6.10:0=[${MULTILIB_USEDEP}] )
 	raw? ( media-libs/libraw:=[${MULTILIB_USEDEP}] )
 	svg? ( >=gnome-base/librsvg-2.46.0:=[${MULTILIB_USEDEP}] )
+	tools? ( sys-libs/zlib[${MULTILIB_USEDEP}] )
 	tiff? ( >=media-libs/tiff-4.0.4:=[${MULTILIB_USEDEP}] )
 	webp? ( media-libs/libwebp:=[${MULTILIB_USEDEP}] )
-	sys-libs/zlib[${MULTILIB_USEDEP}]
+	y4m? ( media-libs/libyuv:= )
+	zlib? ( sys-libs/zlib[${MULTILIB_USEDEP}] )
 	!<media-plugins/imlib2_loaders-${PV}
 "
 DEPEND="${RDEPEND}
@@ -64,6 +67,11 @@ pkg_setup() {
 	check-compiler-switch_start
 }
 
+src_prepare() {
+	default
+	elibtoolize
+}
+
 multilib_src_configure() {
 	check-compiler-switch_end
 	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
@@ -76,6 +84,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	local myeconfargs=(
 		$(use_with X x)
 		$(multilib_native_use_enable apidoc doc-build)
+		$(use_with avif)
 		$(use_with bzip2 bz2)
 		$(use_enable debug)
 		$(multilib_native_use_with eps ps)
@@ -94,10 +103,17 @@ einfo "Detected compiler switch.  Disabling LTO."
 		$(use_enable static-libs static)
 		$(use_with svg)
 		$(use_enable text)
+		$(use_enable tools progs)
 		$(use_with tiff)
 		$(use_with webp)
+		$(multilib_native_use_with y4m)
 		$(use_with zlib)
-		--without-y4m   # TODO(NRK): package libyuv
+
+		# needed if a package is dlopen-ing imlib2 with RTLD_LOCAL,
+		# which dev-perl/Image-Imlib2 *might* be doing (haven't
+		# verified). if not, then should be fine to disable.
+		# See also: https://git.enlightenment.org/old/legacy-imlib2/issues/30
+		--enable-rtld-local-support
 	)
 
 	# imlib2 has different configure options for x86/amd64 assembly
