@@ -6,7 +6,10 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <longdescription>
+  <!--
+
+    oiledmachine-overlay notes:
+
     Noto Color Emoji 1.3x is the chubby Jelly Bean emoji set and Emoji 4.0 
     ready font supporting colored skin tones.
 
@@ -21,10 +24,14 @@
 
     Noto Color Emoji 2.038 adds Unicode 15.0 support and new emojis.
 
-    Noto Color Emoji 2.048 adds Unicode 16.0 support and new emojis.
+    Noto Color Emoji 2.042 finalizes Unicode 15.1 support with Martinique flag change.
+
+    Noto Color Emoji 2.047 adds Unicode 16.0 support and new emojis.
+
+    Noto Color Emoji 2.048 is a Syrian flag update.
 
     Noto Color Emoji 2.051 adds Unicode 17.0 support and new emojis.
-  </longdescription>
+  -->
   <upstream>
     <bugs-to>
       https://github.com/googlefonts/noto-emoji/issues
