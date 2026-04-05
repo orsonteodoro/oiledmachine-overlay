@@ -1,4 +1,4 @@
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -15,7 +15,7 @@ LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
 
-PYTHON_COMPAT=( "python3_"{11..14} )
+PYTHON_COMPAT=( python3_{11..14} )
 inherit cmake-multilib dot-a libcxx-slot libstdcxx-slot python-any-r1
 
 DESCRIPTION="Collection of tools, libraries and tests for shader compilation"
@@ -26,21 +26,18 @@ S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 
 LICENSE="Apache-2.0"
 SLOT="0"
-KEYWORDS="amd64 arm arm64 ~loong ppc ppc64 ~riscv x86"
-IUSE="
-doc
-ebuild_revision_1
-"
+KEYWORDS="amd64 ~arm arm64 ~loong ~ppc ~ppc64 ~riscv ~x86"
+IUSE="doc"
 
 RDEPEND="
-	>=dev-util/glslang-1.4.321.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	>=dev-util/glslang-1.4.341.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	dev-util/glslang:=
-	>=dev-util/spirv-tools-1.4.321.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	>=dev-util/spirv-tools-1.4.341.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	dev-util/spirv-tools:=
 "
 DEPEND="${RDEPEND}
 	${PYTHON_DEPS}
-	>=dev-util/spirv-headers-1.4.321.0"
+	>=dev-util/spirv-headers-1.4.341.0"
 
 BDEPEND="doc? ( dev-ruby/asciidoctor )"
 
