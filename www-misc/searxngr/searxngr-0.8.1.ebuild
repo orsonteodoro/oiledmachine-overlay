@@ -37,7 +37,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" dev"
+IUSE+=" dev server"
 RDEPEND+="
 	>=dev-python/babel-2.17.0[${PYTHON_USEDEP}]
 	>=dev-python/beautifulsoup4-0.0.2[${PYTHON_USEDEP}]
@@ -48,6 +48,9 @@ RDEPEND+="
 	>=dev-python/python-dateutil-2.9.0_p0[${PYTHON_USEDEP}]
 	>=dev-python/rich-14.0.0[${PYTHON_USEDEP}]
 	>=dev-python/xdg-base-dirs-6.0.2[${PYTHON_USEDEP}]
+	server? (
+		www-apps/searxng
+	)
 "
 DEPEND+="
 	${RDEPEND}

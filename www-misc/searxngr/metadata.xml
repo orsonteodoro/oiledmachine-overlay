@@ -11,4 +11,9 @@
     <changelog>https://github.com/scross01/searxngr/blob/main/CHANGELOG.md</changelog>
     <remote-id type="github">scross01/searxngr</remote-id>
   </upstream>
+  <use>
+    <flag name="server">
+      Add the locally hosted SearXNG server to increase privacy.
+    </flag>
+  </use>
 </pkgmetadata>
