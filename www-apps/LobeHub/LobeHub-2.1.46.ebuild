@@ -1113,6 +1113,7 @@ gen_pwa_config() {
 	local redis_url=$(usex redis "redis://localhost:6379" "")
 	local s3_provider=$(get_s3_provider)
 	local search_providers=""
+	local searxng_url=""
 	local ui_mode=$(usex electron "electron" "pwa")
 
 	if use online-search ; then
