@@ -16,19 +16,17 @@ HOMEPAGE="https://gitlab.gnome.org/GNOME/vte"
 LICENSE="LGPL-3+ GPL-3+"
 
 SLOT="2.91"      # vte_api_version in meson.build
-KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86"
-IUSE="
-+crypt debug gtk-doc +icu +introspection systemd +vala
-ebuild_revision_7
-"
+KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~x86"
+IUSE="X +crypt debug gtk-doc +icu +introspection systemd +vala wayland"
 REQUIRED_USE="
 	gtk-doc? ( introspection )
 	vala? ( introspection )
 "
 
 DEPEND="
-	>=x11-libs/gtk+-3.24.22:3[introspection?]
+	>=x11-libs/gtk+-3.24.22:3[X?,introspection?,wayland?]
 	>=x11-libs/cairo-1.0
+	>=dev-libs/libfmt-11.0.0
 	dev-cpp/fast_float
 	>=dev-libs/fribidi-1.0.0
 	>=dev-libs/glib-2.72:2
@@ -36,9 +34,10 @@ DEPEND="
 	icu? ( dev-libs/icu:= )
 	>=x11-libs/pango-1.22.0
 	>=dev-libs/libpcre2-10.21:=
+	>=dev-cpp/simdutf-6.2.0
 	systemd? ( >=sys-apps/systemd-220:= )
 	>=app-arch/lz4-1.9
-	introspection? ( >=dev-libs/gobject-introspection-1.56:= )
+	introspection? ( >=dev-libs/gobject-introspection-1.82.0-r2:= )
 	x11-libs/pango[introspection?]
 "
 RDEPEND="${DEPEND}
@@ -67,13 +66,16 @@ src_prepare() {
 }
 
 src_configure() {
+	cflags-hardened_append
 	# Upstream don't support LTO & error out on it in meson.build
 	filter-lto
 
-	cflags-hardened_append
+	use X || append-flags -DGENTOO_GTK_HIDE_X11
+	use wayland || append-flags -DGENTOO_GTK_HIDE_WAYLAND
 
 	local emesonargs=(
 		-Da11y=true
+		-Dapp-hidden=true
 		$(meson_use debug)
 		$(meson_use gtk-doc docs)
 		$(meson_use introspection gir)
