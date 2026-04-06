@@ -112,11 +112,17 @@ einfo "  searxng-container down    # Stop"
 einfo "  searxng-container pull    # Update image"
 einfo "  searxng-container logs    # View logs"
 einfo
-einfo "Then use with your searxngr client:"
+einfo "To use the searxngr client:"
 einfo
 einfo "  searxngr --searxng-url http://127.0.0.1:8080 \"your query\""
 einfo
-einfo "Recommended alias: alias sx='searxngr --searxng-url http://127.0.0.1:8080'"
+einfo "To use the web browser interface, enter the following to the address bar:"
+einfo
+einfo  "  http://127.0.0.1:8080"
+einfo
+einfo "A recommended alias for the command line:"
+einfo
+einfo "  alias sx='searxngr --searxng-url http://127.0.0.1:8080'"
 einfo
 einfo
 einfo "To fix \"WARNING Memory overcommit must be enabled\":"
@@ -140,4 +146,6 @@ einfo
 }
 
 # OILEDMACHINE-OVERLAY-TEST:  PASSED searxng-docker-9999 (e12b722, 20260406)
+# JSON test with searxngr:  passed
+# Web interface test:  passed
 # Testing:  searxngr --searxng-url http://127.0.0.1:8080 "gentoo"
