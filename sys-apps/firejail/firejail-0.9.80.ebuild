@@ -2964,7 +2964,7 @@ src_prepare() {
 	fi
 
 	if use xpra ; then
-		eapply "${FILESDIR}/extra-patches/${PN}-0.9.64-xpra-speaker-override.patch"
+		eapply "${FILESDIR}/extra-patches/${PN}-0.9.80-xpra-speaker-override.patch"
 		eapply "${FILESDIR}/extra-patches/${PN}-0.9.80-xpra-opengl.patch"
 		eapply "${FILESDIR}/extra-patches/${PN}-1a576d1-disable-xpra-splash.patch"
 	fi
