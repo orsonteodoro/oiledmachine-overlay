@@ -3,6 +3,7 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CXX_STANDARD=17
 
 inherit libstdcxx-compat
@@ -16,7 +17,7 @@ LLVM_COMPAT=(
 )
 
 PYTHON_COMPAT=( python3_{11..14} )
-inherit cmake-multilib dot-a libcxx-slot libstdcxx-slot python-any-r1
+inherit cflags-hardened cmake-multilib dot-a libcxx-slot libstdcxx-slot python-any-r1
 
 DESCRIPTION="Collection of tools, libraries and tests for shader compilation"
 HOMEPAGE="https://github.com/google/shaderc"
@@ -27,7 +28,10 @@ S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="amd64 ~arm arm64 ~loong ~ppc ~ppc64 ~riscv ~x86"
-IUSE="doc"
+IUSE="
+doc
+ebuild_revision_1
+"
 
 RDEPEND="
 	>=dev-util/glslang-1.4.341.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
@@ -86,6 +90,7 @@ multilib_src_configure() {
 }
 
 multilib_src_compile() {
+	cflags-hardened_append
 	if multilib_is_native_abi && use doc; then
 		cmake_src_compile glslc_doc_README
 	fi

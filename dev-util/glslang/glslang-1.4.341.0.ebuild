@@ -3,6 +3,8 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="NPD"
 CXX_STANDARD=17
 
 inherit libstdcxx-compat
@@ -16,7 +18,7 @@ LLVM_COMPAT=(
 )
 
 PYTHON_COMPAT=( "python3_"{11..14} )
-inherit cmake-multilib libcxx-slot libstdcxx-slot python-any-r1
+inherit cflags-hardened cmake-multilib libcxx-slot libstdcxx-slot python-any-r1
 
 if [[ ${PV} == *9999* ]]; then
 	EGIT_REPO_URI="https://github.com/KhronosGroup/${PN}.git"
@@ -52,6 +54,7 @@ pkg_setup() {
 }
 
 multilib_src_configure() {
+	cflags-hardened_append
 	local mycmakeargs=(
 		-DENABLE_PCH=OFF
 		-DALLOW_EXTERNAL_SPIRV_TOOLS=ON
