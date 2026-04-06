@@ -5,7 +5,7 @@ EAPI=8
 
 MY_PN="SPIRV-Tools"
 
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CXX_STANDARD=17
 PYTHON_COMPAT=( python3_{11..14} )
 PYTHON_REQ_USE="xml(+)"
@@ -37,7 +37,10 @@ HOMEPAGE="https://github.com/KhronosGroup/SPIRV-Tools"
 
 LICENSE="Apache-2.0"
 SLOT="0"
-IUSE="test"
+IUSE="
+test
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 DEPEND="
