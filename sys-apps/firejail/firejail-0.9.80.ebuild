@@ -647,6 +647,9 @@ _PROFILE_GRAPH["zcat"]="gzip"
 _PROFILE_GRAPH["zcmp"]="gzip"
 _PROFILE_GRAPH["zdiff"]="gzip"
 _PROFILE_GRAPH["zegrep"]="gzip"
+_PROFILE_GRAPH["zen"]="zen-browser"
+_PROFILE_GRAPH["zen-bin"]="zen-browser"
+_PROFILE_GRAPH["zen-browser"]="firefox-common"
 _PROFILE_GRAPH["zfgrep"]="gzip"
 _PROFILE_GRAPH["zforce"]="gzip"
 _PROFILE_GRAPH["zgrep"]="gzip"
@@ -758,7 +761,7 @@ filezilla firedragon firefox firefox-beta firefox-common firefox-common-addons
 firefox-developer-edition firefox-esr firefox-nightly firefox-wayland
 firefox-x11 five-or-more fix-qdf flacsplt flameshot flashpeak-slimjet floorp
 flowblade fluffychat fluxbox foliate font-manager fontforge fossamail
-four-in-a-row fractal franz freecad freecadcmd freeciv freeciv-gtk3
+four-in-a-row fractal fragments franz freecad freecadcmd freeciv freeciv-gtk3
 freeciv-mp-gtk3 freecol freemind freeoffice-planmaker freeoffice-presentations
 freeoffice-textmaker freetube freshclam frogatto frozen-bubble ftp funnyboat
 gajim gajim-history-manager galculator gallery-dl gapplication gcalccmd gcloud
@@ -784,7 +787,7 @@ green-recoder gsettings gsettings-data-convert gsettings-schema-convert gtar
 gthumb gtk-lbry-viewer gtk-pipe-viewer gtk-straw-viewer gtk-update-icon-cache
 gtk-youtube-viewer gtk-youtube-viewers-common gtk2-youtube-viewer
 gtk3-youtube-viewer guayadeque gucharmap gummi gunzip guvcview gwenview gzdoom
-gzdoom-common gzexe gzip handbrake handbrake-gtk hashcat hasher-common
+gzdoom-common gzexe gzip halloy handbrake handbrake-gtk hashcat hasher-common
 hedgewars hexchat highlight hitori hledger hledger-ui homebank host hugin
 hyperrogue i2prouter i3 iagno icecat icedove iceweasel idea ideaIC idea_sh
 imagej img2txt impressive imv inkscape inkview inox io_github_lainsce_Notejot
@@ -836,9 +839,9 @@ planmaker18free playonlinux pluma plv pngquant pnpm pnpx polari postman ppsspp
 pragha presentations18 presentations18free prismlauncher profanity psi psi-plus
 pybitmessage pycharm-community pycharm-professional pyradio pzstd qbittorrent
 qcomicbook qemu-common qemu-launcher qemu-system-x86_64 qgis qlipper qmmp qnapi
-qpdf qpdfview qq qrencode qt-faststart qt5ct qt6ct qtox quadrapassel quassel
-quaternion quiterss quodlibet qupzilla qutebrowser raincat rambox ranger
-rawtherapee reader redeclipse rednotebook redshift regextester remmina
+qpdf qpdfview qq qrencode qt-faststart qt5ct qt6ct qtox quadrapassel quakespasm
+quassel quaternion quiterss quodlibet qupzilla qutebrowser raincat rambox
+ranger rawtherapee reader redeclipse rednotebook redshift regextester remmina
 remmina-file-wrapper retroarch rhash rhythmbox rhythmbox-client ricochet
 riot-desktop riot-web ripperx ristretto rnano rocketchat rpcs3 rssguard
 rsync-download_only rtin rtorrent rtv rtv-addons runenpass_sh rview rvim
@@ -851,7 +854,7 @@ signal-cli signal-desktop silentarmy simple-scan simplescreenrecorder simutrans
 singularity skanlite skypeforlinux slack slashem smplayer smtube
 smuxi-frontend-gnome sniffnet snox soffice softmaker-common sol songrec
 sound-juicer soundconverter spectacle spectral spectre-meltdown-checker spotify
-sqlitebrowser ssh ssh-agent ssmtp standard-notes standardnotes-desktop
+sqlitebrowser srb2 ssh ssh-agent ssmtp standard-notes standardnotes-desktop
 start-tor-browser start-tor-browser_desktop statusof steam steam-native
 steam-runtime stellarium straw-viewer strawberry strings studio_sh
 subdownloader sum supertux2 supertuxkart supertuxkart-wrapper surf sushi sway
@@ -896,9 +899,9 @@ xpra xreader xreader-previewer xreader-thumbnailer xviewer xxd xz xzcat xzcmp
 xzdec xzdiff xzegrep xzfgrep xzgrep xzless xzmore yandex-browser yarn yelp
 youtube youtube-dl youtube-dl-gui youtube-music-desktop-app youtube-viewer
 youtube-viewer-gtk youtube-viewers-common youtubemusic-nativefier yt-dlp
-ytmdesktop zaproxy zart zathura zcat zcmp zdiff zeal zegrep zfgrep zforce zgrep
-zim zless zlib-flate zmore znew zoom zpaq zstd zstdcat zstdgrep zstdless zstdmt
-zulip
+ytmdesktop zaproxy zart zathura zcat zcmp zdiff zeal zegrep zen zen-bin
+zen-browser zfgrep zforce zgrep zim zless zlib-flate zmore znew zoom zpaq zstd
+zstdcat zstdgrep zstdless zstdmt zulip
 
 )
 FIREJAIL_PROFILES_IUSE="${FIREJAIL_PROFILES[@]/#/firejail_profiles_}"
@@ -1041,6 +1044,7 @@ firejail_profiles_foliate? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_fossamail? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_four-in-a-row? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_fractal? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_fragments? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_freecad? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_freeciv? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_freeciv-gtk3? ( || ( xcsecurity xephyr xpra ) )
@@ -1277,6 +1281,7 @@ firejail_profiles_qt5ct? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_qt6ct? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_qtox? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_quadrapassel? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_quakespasm? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_quaternion? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_quodlibet? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_qupzilla? ( || ( xcsecurity xephyr xpra ) )
@@ -1314,6 +1319,7 @@ firejail_profiles_snox? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_spectacle? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_spectral? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_spotify? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_srb2? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_standardnotes-desktop? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_start-tor-browser_desktop? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_steam? ( || ( xcsecurity xephyr xpra ) )
@@ -1452,6 +1458,7 @@ firejail_profiles_youtubemusic-nativefier? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_ytmdesktop? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_zathura? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_zeal? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_zen-browser? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_zim? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_zoom? ( || ( xcsecurity xephyr xpra ) )
 "
@@ -1492,73 +1499,74 @@ equalx etr etr-wrapper evince evince-previewer evince-thumbnailer exfalso
 falkon feedreader ferdi ffmpeg file-roller firedragon firefox firefox-beta
 firefox-developer-edition firefox-esr firefox-nightly firefox-wayland
 firefox-x11 five-or-more flameshot flashpeak-slimjet floorp fluffychat foliate
-fossamail four-in-a-row fractal freecad freeciv freeciv-gtk3 freeciv-mp-gtk3
-freetube frozen-bubble gajim galculator gapplication gcalccmd geany geary gedit
-geeqie geki2 geki3 gfeeds ghostwriter gimp git-cola gitg github-desktop gitter
-gjs gl-117 gl-117-wrapper glaxium glaxium-wrapper gnome-2048 gnome-books
-gnome-boxes gnome-builder gnome-calculator gnome-calendar gnome-character-map
-gnome-characters gnome-chess gnome-clocks gnome-contacts gnome-documents
-gnome-font-viewer gnome-hexgl gnome-keyring gnome-keyring-3
-gnome-keyring-daemon gnome-klotski gnome-latex gnome-logs gnome-mahjongg
-gnome-maps gnome-mines gnome-mplayer gnome-mpv gnome-music gnome-nettool
-gnome-nibbles gnome-passwordsafe gnome-photos gnome-pie gnome-pomodoro
-gnome-recipes gnome-ring gnome-robots gnome-schedule gnome-screenshot
-gnome-sound-recorder gnome-sudoku gnome-system-log gnome-taquin gnome-tetravex
-gnome-text-editor gnome-todo gnome-twitch gnome-weather gnote gnubik godot
-godot3 google-chrome google-chrome-beta google-chrome-unstable google-earth
-google-earth-pro gpicview gradio gramps green-recoder gtk-lbry-viewer
-gtk-pipe-viewer gtk-straw-viewer gtk-update-icon-cache gtk-youtube-viewer
-gtk2-youtube-viewer gtk3-youtube-viewer gucharmap guvcview gwenview
-handbrake-gtk hexchat hitori homebank hugin i2prouter iagno icecat icedove
-iceweasel impressive inkscape inox io_github_lainsce_Notejot iridium jami
-jami-gnome jerry jitsi-meet-desktop journal-viewer k3b kaffeine kate kazam
-kcalc kdeinit4 kdenlive kdiff3 keepassxc kfind kget kid3 kid3-qt klatexformula
-kmplayer kodi konversation kopete krunner ktorrent ktouch kube kwin_x11 kwrite
-lbreakouthd lbry-viewer-gtk leafpad ledger-live-desktop lettura libreoffice
-librewolf lifeograph lightsoff linuxqq lobster lollypop loupe lximage-qt lyx
-man marker mate-calc mattermost-desktop mcomix menulibre metadata-cleaner
-meteo-qt microsoft-edge microsoft-edge-beta microsoft-edge-dev midori min
-minecraft-launcher minitube mirage mousepad mov-cli mp3splt-gtk mtpaint mumble
-musictube mutt mypaint nautilus neochat neomutt netsurf neverball-wrapper
-neverputt-wrapper newsflash nextcloud nheko nitroshare nomacs notable nuclear
-obs obsidian ocenaudio okular onboard onionshare-gui open-invaders openarena
-openmw openra openshot openshot-qt opera opera-beta opera-developer
-org_gnome_NautilusPreviewer org_gnome_seahorse_Application otter-browser
-palemoon pavucontrol pavucontrol-qt pcmanfm pcsxr pdfchain peek photoflare
-pidgin pinball-wrapper pinta pipe-viewer-gtk pitivi postman ppsspp pragha psi
-pybitmessage qbittorrent qcomicbook qgis qt-faststart qt5ct qt6ct qtox
-quadrapassel quaternion quodlibet qupzilla qutebrowser raincat rambox
-rawtherapee rednotebook rhythmbox riot-web ripperx ristretto rocketchat
-rssguard rtv rymdport scorched3d-wrapper scribus seahorse seamonkey
-seamonkey-bin secret-tool session-desktop shortwave shotcut shotwell
-signal-desktop simutrans singularity skanlite skypeforlinux slack
-smuxi-frontend-gnome snox spectacle spectral spotify standardnotes-desktop
-start-tor-browser_desktop steam supertuxkart supertuxkart-wrapper surf
-swell-foop sylpheed synfigstudio sysprof tb-starter-wrapper teams
-teams-for-linux teamspeak3 telegram telegram-desktop terasology thunar
-thunderbird tidal-hifi tiny-rdm tor-browser tor-browser-ar tor-browser-ca
-tor-browser-cs tor-browser-da tor-browser-de tor-browser-el tor-browser-en
-tor-browser-en-us tor-browser-es tor-browser-es-es tor-browser-fa
-tor-browser-fr tor-browser-ga-ie tor-browser-he tor-browser-hu tor-browser-id
-tor-browser-is tor-browser-it tor-browser-ja tor-browser-ka tor-browser-ko
-tor-browser-nb tor-browser-nl tor-browser-pl tor-browser-pt-br tor-browser-ru
-tor-browser-sv-se tor-browser-tr tor-browser-vi tor-browser-zh-cn
-tor-browser-zh-tw tor-browser_ar tor-browser_ca tor-browser_cs tor-browser_da
-tor-browser_de tor-browser_el tor-browser_en tor-browser_en-US tor-browser_es
-tor-browser_es-ES tor-browser_fa tor-browser_fr tor-browser_ga-IE
-tor-browser_he tor-browser_hu tor-browser_id tor-browser_is tor-browser_it
-tor-browser_ja tor-browser_ka tor-browser_ko tor-browser_nb tor-browser_nl
-tor-browser_pl tor-browser_pt-BR tor-browser_ru tor-browser_sv-SE
-tor-browser_tr tor-browser_vi tor-browser_zh-CN tor-browser_zh-TW torbrowser
-torbrowser-launcher totem transgui transmission-gtk transmission-qt
-transmission-remote-gtk trivalent trojita tutanota-desktop tuxtype twitch
-typespeed udiskie uget-gtk unzip upscayl uzbl-browser virt-manager virtualbox
-vivaldi vlc vmware vmware-player vmware-view vscodium warzone2100 waterfox
-whalebird wire-desktop wireshark wireshark-gtk wireshark-qt x-terminal-emulator
-x2goclient xchat xfburn xfce4-notes xfce4-screenshooter xmms xonotic
-xonotic-sdl xonotic-sdl-wrapper xpdf yandex-browser yelp youtube youtube-dl-gui
-youtube-music-desktop-app youtube-viewer-gtk youtubemusic-nativefier ytmdesktop
-zathura zeal zim zoom
+fossamail four-in-a-row fractal fragments freecad freeciv freeciv-gtk3
+freeciv-mp-gtk3 freetube frozen-bubble gajim galculator gapplication gcalccmd
+geany geary gedit geeqie geki2 geki3 gfeeds ghostwriter gimp git-cola gitg
+github-desktop gitter gjs gl-117 gl-117-wrapper glaxium glaxium-wrapper
+gnome-2048 gnome-books gnome-boxes gnome-builder gnome-calculator
+gnome-calendar gnome-character-map gnome-characters gnome-chess gnome-clocks
+gnome-contacts gnome-documents gnome-font-viewer gnome-hexgl gnome-keyring
+gnome-keyring-3 gnome-keyring-daemon gnome-klotski gnome-latex gnome-logs
+gnome-mahjongg gnome-maps gnome-mines gnome-mplayer gnome-mpv gnome-music
+gnome-nettool gnome-nibbles gnome-passwordsafe gnome-photos gnome-pie
+gnome-pomodoro gnome-recipes gnome-ring gnome-robots gnome-schedule
+gnome-screenshot gnome-sound-recorder gnome-sudoku gnome-system-log
+gnome-taquin gnome-tetravex gnome-text-editor gnome-todo gnome-twitch
+gnome-weather gnote gnubik godot godot3 google-chrome google-chrome-beta
+google-chrome-unstable google-earth google-earth-pro gpicview gradio gramps
+green-recoder gtk-lbry-viewer gtk-pipe-viewer gtk-straw-viewer
+gtk-update-icon-cache gtk-youtube-viewer gtk2-youtube-viewer
+gtk3-youtube-viewer gucharmap guvcview gwenview handbrake-gtk hexchat hitori
+homebank hugin i2prouter iagno icecat icedove iceweasel impressive inkscape
+inox io_github_lainsce_Notejot iridium jami jami-gnome jerry jitsi-meet-desktop
+journal-viewer k3b kaffeine kate kazam kcalc kdeinit4 kdenlive kdiff3 keepassxc
+kfind kget kid3 kid3-qt klatexformula kmplayer kodi konversation kopete krunner
+ktorrent ktouch kube kwin_x11 kwrite lbreakouthd lbry-viewer-gtk leafpad
+ledger-live-desktop lettura libreoffice librewolf lifeograph lightsoff linuxqq
+lobster lollypop loupe lximage-qt lyx man marker mate-calc mattermost-desktop
+mcomix menulibre metadata-cleaner meteo-qt microsoft-edge microsoft-edge-beta
+microsoft-edge-dev midori min minecraft-launcher minitube mirage mousepad
+mov-cli mp3splt-gtk mtpaint mumble musictube mutt mypaint nautilus neochat
+neomutt netsurf neverball-wrapper neverputt-wrapper newsflash nextcloud nheko
+nitroshare nomacs notable nuclear obs obsidian ocenaudio okular onboard
+onionshare-gui open-invaders openarena openmw openra openshot openshot-qt opera
+opera-beta opera-developer org_gnome_NautilusPreviewer
+org_gnome_seahorse_Application otter-browser palemoon pavucontrol
+pavucontrol-qt pcmanfm pcsxr pdfchain peek photoflare pidgin pinball-wrapper
+pinta pipe-viewer-gtk pitivi postman ppsspp pragha psi pybitmessage qbittorrent
+qcomicbook qgis qt-faststart qt5ct qt6ct qtox quadrapassel quakespasm
+quaternion quodlibet qupzilla qutebrowser raincat rambox rawtherapee
+rednotebook rhythmbox riot-web ripperx ristretto rocketchat rssguard rtv
+rymdport scorched3d-wrapper scribus seahorse seamonkey seamonkey-bin
+secret-tool session-desktop shortwave shotcut shotwell signal-desktop simutrans
+singularity skanlite skypeforlinux slack smuxi-frontend-gnome snox spectacle
+spectral spotify srb2 standardnotes-desktop start-tor-browser_desktop steam
+supertuxkart supertuxkart-wrapper surf swell-foop sylpheed synfigstudio sysprof
+tb-starter-wrapper teams teams-for-linux teamspeak3 telegram telegram-desktop
+terasology thunar thunderbird tidal-hifi tiny-rdm tor-browser tor-browser-ar
+tor-browser-ca tor-browser-cs tor-browser-da tor-browser-de tor-browser-el
+tor-browser-en tor-browser-en-us tor-browser-es tor-browser-es-es
+tor-browser-fa tor-browser-fr tor-browser-ga-ie tor-browser-he tor-browser-hu
+tor-browser-id tor-browser-is tor-browser-it tor-browser-ja tor-browser-ka
+tor-browser-ko tor-browser-nb tor-browser-nl tor-browser-pl tor-browser-pt-br
+tor-browser-ru tor-browser-sv-se tor-browser-tr tor-browser-vi
+tor-browser-zh-cn tor-browser-zh-tw tor-browser_ar tor-browser_ca
+tor-browser_cs tor-browser_da tor-browser_de tor-browser_el tor-browser_en
+tor-browser_en-US tor-browser_es tor-browser_es-ES tor-browser_fa
+tor-browser_fr tor-browser_ga-IE tor-browser_he tor-browser_hu tor-browser_id
+tor-browser_is tor-browser_it tor-browser_ja tor-browser_ka tor-browser_ko
+tor-browser_nb tor-browser_nl tor-browser_pl tor-browser_pt-BR tor-browser_ru
+tor-browser_sv-SE tor-browser_tr tor-browser_vi tor-browser_zh-CN
+tor-browser_zh-TW torbrowser torbrowser-launcher totem transgui
+transmission-gtk transmission-qt transmission-remote-gtk trivalent trojita
+tutanota-desktop tuxtype twitch typespeed udiskie uget-gtk unzip upscayl
+uzbl-browser virt-manager virtualbox vivaldi vlc vmware vmware-player
+vmware-view vscodium warzone2100 waterfox whalebird wire-desktop wireshark
+wireshark-gtk wireshark-qt x-terminal-emulator x2goclient xchat xfburn
+xfce4-notes xfce4-screenshooter xmms xonotic xonotic-sdl xonotic-sdl-wrapper
+xpdf yandex-browser yelp youtube youtube-dl-gui youtube-music-desktop-app
+youtube-viewer-gtk youtubemusic-nativefier ytmdesktop zathura zeal zen-browser
+zim zoom
 )
 
 X_BLACKLIST=(
@@ -2353,6 +2361,9 @@ firejail_profiles_youtube-viewer )
 	firejail_profiles_zcmp? ( firejail_profiles_gzip )
 	firejail_profiles_zdiff? ( firejail_profiles_gzip )
 	firejail_profiles_zegrep? ( firejail_profiles_gzip )
+	firejail_profiles_zen? ( firejail_profiles_zen-browser )
+	firejail_profiles_zen-bin? ( firejail_profiles_zen-browser )
+	firejail_profiles_zen-browser? ( firejail_profiles_firefox-common )
 	firejail_profiles_zfgrep? ( firejail_profiles_gzip )
 	firejail_profiles_zforce? ( firejail_profiles_gzip )
 	firejail_profiles_zgrep? ( firejail_profiles_gzip )
@@ -2367,8 +2378,6 @@ firejail_profiles_youtube-viewer )
 	firejail_profiles_zstdgrep? ( firejail_profiles_zstd )
 	firejail_profiles_zstdless? ( firejail_profiles_zstd )
 	firejail_profiles_zstdmt? ( firejail_profiles_zstd )
-
-
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-0.9.78-envlimits.patch"
@@ -2956,7 +2965,7 @@ src_prepare() {
 
 	if use xpra ; then
 		eapply "${FILESDIR}/extra-patches/${PN}-0.9.64-xpra-speaker-override.patch"
-		eapply "${FILESDIR}/extra-patches/${PN}-0.9.78-xpra-opengl.patch"
+		eapply "${FILESDIR}/extra-patches/${PN}-0.9.80-xpra-opengl.patch"
 		eapply "${FILESDIR}/extra-patches/${PN}-1a576d1-disable-xpra-splash.patch"
 	fi
 
