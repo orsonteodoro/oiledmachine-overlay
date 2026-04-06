@@ -21,7 +21,7 @@ LICENSE="
 	GPL-2+
 "
 SLOT="4/gcr-4.4-gck-2.2" # subslot = soname and soversion of libgcr and libgck
-IUSE+=" +gcrypt -gnutls +gtk gtk-doc +introspection +ssh systemd +vala"
+IUSE+=" +gcrypt -gnutls +gtk gtk-doc +introspection +ssh systemd test +vala"
 REQUIRED_USE+="
 	^^ (
 		gcrypt
@@ -35,7 +35,8 @@ DEPEND+="
 	!<app-crypt/gcr-3.41.1-r1
 	>=app-crypt/gnupg-2.3.6
 	>=app-crypt/p11-kit-0.19.0[${MULTILIB_USEDEP}]
-	>=dev-libs/glib-2.68.0:2[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-2.74:2[${MULTILIB_USEDEP}]
+	dev-libs/glib:=
 	>=sys-apps/dbus-1[${MULTILIB_USEDEP}]
 	gcrypt? (
 		>=dev-libs/libgcrypt-1.2.2:0[${MULTILIB_USEDEP}]
@@ -55,13 +56,15 @@ DEPEND+="
 		>=app-crypt/libsecret-0.20[${MULTILIB_USEDEP}]
 	)
 	systemd? (
-		sys-apps/systemd:=[${MULTILIB_USEDEP}]
+		sys-apps/systemd[${MULTILIB_USEDEP}]
+		sys-apps/systemd:=
 	)
 "
 RDEPEND+="
 	${DEPEND}
 	app-crypt/gnupg
 "
+PDEPEND="app-alternatives/gpg"
 BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-build/meson-0.59
@@ -75,6 +78,9 @@ BDEPEND+="
 	gtk-doc? (
 		>=dev-util/gi-docgen-2022.1
 		>=dev-util/gtk-doc-1.9
+	)
+	test? (
+		app-alternatives/gpg
 	)
 	vala? (
 		$(vala_depend)
