@@ -255,7 +255,8 @@ RESTRICT="binchecks mirror strip test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
-ceph -electron +embeddings +file-management indexeddb minio +openrc +pwa +postgres +rag redis +s3 systemd
+ceph -electron +embeddings +file-management indexeddb minio -online-search
++openrc +pwa +postgres +rag redis +s3 searxng systemd
 ebuild_revision_91
 "
 REQUIRED_USE="
@@ -274,6 +275,9 @@ REQUIRED_USE="
 			minio
 			s3
 		)
+	)
+	searxng? (
+		online-search
 	)
 	^^ (
 		indexeddb
@@ -341,6 +345,9 @@ PDEPEND+="
 	)
 	minio? (
 		app-misc/minio-docker
+	)
+	searxng? (
+		www-apps/searxng-docker
 	)
 "
 DOCS=( "CHANGELOG.md" "README.md" )
@@ -1095,6 +1102,7 @@ get_s3_provider() {
 }
 
 gen_pwa_config() {
+	local crawler_impls=""
 	local database_type=""
 	if use postgres ; then
 		database_type="postgres"
@@ -1104,14 +1112,25 @@ gen_pwa_config() {
 	local enable_s3_support=$(has_s3_support)
 	local redis_url=$(usex redis "redis://localhost:6379" "")
 	local s3_provider=$(get_s3_provider)
+	local search_providers=""
 	local ui_mode=$(usex electron "electron" "pwa")
+
+	if use online-search ; then
+		crawler_impls+="native"
+		if use searxng ; then
+			search_providers+="searxng"
+			searxng_url="http://127.0.0.1:8080"
+		fi
+	fi
 
 	cat \
 		"${FILESDIR}/${MY_PN2}.conf" \
 			> \
 		"${T}/${MY_PN2}.conf" \
 		|| die
+
 	sed -i \
+		-e "s|@CRAWLER_IMPLS@|${crawler_impls}|g" \
 		-e "s|@DATABASE_TYPE@|${database_type}|g" \
 		-e "s|@ENABLE_S3_SUPPORT@|${enable_s3_support}|g" \
 		-e "s|@HOSTNAME@|${lobehub_hostname}|g" \
@@ -1120,6 +1139,8 @@ gen_pwa_config() {
 		-e "s|@REDIS_URL@|${redisurl}|g" \
 		-e "s|@UI_MODE@|${ui_mode}|g" \
 		-e "s|@S3_PROVIDER@|${s3_provider}|g" \
+		-e "s|@SEARCH_PROVIDERS@|${search_providers}|g" \
+		-e "s|@SEARXNG_URL@|${searxng_url}|g" \
 		"${T}/${MY_PN2}.conf" \
 		|| die
 

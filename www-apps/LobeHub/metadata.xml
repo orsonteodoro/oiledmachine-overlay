@@ -160,5 +160,9 @@ host    all             all             ::1/128                 md5
     <flag name="s3">
       Use S3 remote hosted storage.
     </flag>
+    <flag name="searxng">
+      Add self-hosted SearXNG dependency for partial Web RAG support
+      (summaries or web links).
+    </flag>
   </use>
 </pkgmetadata>
