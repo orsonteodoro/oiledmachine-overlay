@@ -1116,7 +1116,7 @@ gen_pwa_config() {
 	local ui_mode=$(usex electron "electron" "pwa")
 
 	if use online-search ; then
-		crawler_impls+="native"
+		crawler_impls+="naive"
 		if use searxng ; then
 			search_providers+="searxng"
 			searxng_url="http://127.0.0.1:8080"

@@ -149,6 +149,9 @@ host    all             all             ::1/128                 md5
     <flag name="postgres">
       Store information server-side in PostgresDB.
     </flag>
+    <flag name="online-search">
+      Add basic online support by default.
+    </flag>
     <flag name="rag">
       Add dependencies to support RAG (Retrieval-Augmented Generation) to allow
       the AI to give current and up-to-date information or answers with less
