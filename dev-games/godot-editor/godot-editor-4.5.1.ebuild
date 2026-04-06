@@ -601,7 +601,10 @@ DEPEND+="
 	vulkan? (
 		media-libs/vulkan-drivers
 		!volk? (
-			media-libs/vulkan-loader[layers?,X]
+			media-libs/vulkan-loader[X]
+			layers? (
+				media-libs/vulkan-layers
+			)
 		)
 	)
 	wayland? (
