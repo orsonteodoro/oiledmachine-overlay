@@ -1,0 +1,31 @@
+# See also https://docs.searxng.org/admin/settings/settings.html
+
+use_default_settings: true
+
+botdetection:
+  ip_lists:
+    pass_ip: ["127.0.0.1", "::1"]
+
+general:
+    instance_name:  "Local SearXNG for CLI"
+    debug: false
+
+server:
+    base_url: http://127.0.0.1:8080/
+    bind_address: "127.0.0.1"
+    limiter: false
+    secret_key: "@SECRET_KEY@"
+
+search:
+    # Enable JSON output (required for searxngr CLI)
+    formats:
+      - html
+      - json # Required for searxngr CLI
+
+    # Optional but recommended for local use
+    safe_search: 2
+    autocomplete: ""
+    default_lang: ""
+
+ui:
+  static_use_hash: true

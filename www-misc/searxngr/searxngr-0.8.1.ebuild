@@ -76,3 +76,7 @@ ewarn "Use \`searxngr --config\` to setup the preferred SearXNG instance."
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 0.8.1 (using searxngr-container e12b722, 20260406)
+# locally hosted searxngr:  PASSED
+# public servers:  ISSUES
+# Testing:  searxngr --searxng-url http://127.0.0.1:8080 "gentoo"

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  docker ps					# List Docker containers
+  docker stop <container-id>			# Stop <container-id>
+  docker rm <container-id>			# Remove <container-id>
+  docker images					# List Docker images
+  docker rmi <image-id>				# Remove <image-id>
+  docker volume rm searxng_valkey-data		# Remove named volume
+  docker volume rm searxng_core-data		# Remove named volume
+
+
+  To clean install:
+
+  1. List docker containers
+  2. Stop <container-id-for-searnxg>
+  3. Stop <container-id-for-valkey>
+  4. Remove container <container-searnxg>
+  5. Remove container <container-valkey>
+  6. List docker images
+  7. Remove image <image-searnxg>
+  8. Remove image <image-valkey>
+  9. Remove searxng_valkey-data
+  9. Remove searxng_core-data
+
+  -->
+  <upstream>
+    <bugs-to>https://github.com/searxng/searxng/issues</bugs-to>
+    <changelog>https://github.com/searxng/searxng/blob/main/CHANGELOG.md</changelog>
+  </upstream>
+</pkgmetadata>

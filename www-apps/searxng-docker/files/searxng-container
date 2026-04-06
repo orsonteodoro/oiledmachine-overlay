@@ -1,0 +1,41 @@
+#!/bin/sh
+# searxng-container - hardened wrapper for local SearXNG (new container setup)
+
+SEARXNG_DIR="/etc/searxng"
+
+if [ ! -d "${SEARXNG_DIR}" ]; then
+    echo "Error: Directory ${SEARXNG_DIR} not found" >&2
+    exit 1
+fi
+
+cd "${SEARXNG_DIR}" || exit 1
+
+case "$1" in
+    up|start)
+        echo "Starting SearXNG (runs as limited 'searxng' user inside container)..."
+        exec docker compose up -d
+        ;;
+    down|stop)
+        exec docker compose down
+        ;;
+    restart)
+        exec docker compose restart
+        ;;
+    pull|update)
+        exec docker compose pull
+        ;;
+    logs)
+        exec docker compose logs -f "${@:2}"
+        ;;
+    ps|status)
+        exec docker compose ps
+        ;;
+    *)
+        echo "Usage: $0 {up|down|restart|pull|logs|ps}"
+        echo ""
+        echo "Recommended for CLI:"
+        echo "  searxng-container up"
+        echo "  alias sx='searxngr --searxng-url http://127.0.0.1:8080'"
+        exit 1
+        ;;
+esac
