@@ -72,7 +72,11 @@ src_install() {
 
 pkg_postinst() {
 ewarn "You still need to add either a public SearXNG server or use a locally hosted one."
+	if use server ; then
+einfo "You can use http://127.0.0.1:8080 for the server when setting the SearXNG instance URL with \`searxngr --config\`."
+	else
 ewarn "Use \`searxngr --config\` to setup the preferred SearXNG instance."
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
