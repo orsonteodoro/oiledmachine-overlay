@@ -2,7 +2,7 @@
 # /usr/bin/lhm - Improved wrapper for lobehub-market-cli
 
 NODE_SLOT=@NODE_SLOT@
-SKILLS_DIR="/var/lib/lobehub/.agents/skills"
+SKILLS_DIR="/var/lib/lobehub/.lobehub/skills"
 # Run lhm as the lobehub user
 export HOME="/var/lib/lobehub"
 export PATH="/usr/lib/node/${NODE_SLOT}/bin:${PATH}"
@@ -16,8 +16,8 @@ if [[ "$1" == "skills" && "$2" == "install" ]]; then
     EXTRA_ARGS=( --dir "${SKILLS_DIR}" )
 fi
 
-if [[ ! -e "/var/lib/lobehub/.agents/skills" ]] ; then
-    echo "Error:  /var/lib/lobehub/.agents/skills is not found"
+if [[ ! -e "${SKILLS_DIR}" ]] ; then
+    echo "Error:  ${SKILLS_DIR} is not found"
     echo "Emerge LobeHub again to generate it and to fix ownership issues."
     exit 1
 fi

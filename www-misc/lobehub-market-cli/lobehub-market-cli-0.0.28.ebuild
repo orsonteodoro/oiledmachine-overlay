@@ -5,12 +5,12 @@
 EAPI=8
 
 NODE_SLOT="22"
-NPM_TARBALL="market-cli-${PV}.tgz"
+NPM_TARBALL="lobehub-market-cli-${PV}.tgz"
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/package"
 SRC_URI="
-https://registry.npmjs.org/@lobehub/market-cli/-/market-cli-${PV}.tgz
+https://registry.npmjs.org/@lobehub/market-cli/-/market-cli-${PV}.tgz -> lobehub-market-cli-${PV}.tgz
 "
 
 inherit npm
@@ -25,7 +25,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-ebuild_revision_6
+ebuild_revision_7
 "
 RDEPEND+="
 	app-admin/sudo
