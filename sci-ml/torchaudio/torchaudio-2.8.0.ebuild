@@ -225,10 +225,10 @@ einfo "Using multislot FFmpeg ${ffmpeg_major_version}"
 		RPATH_APPEND=(
 			"/usr/lib/ffmpeg/${ffmpeg_slot}/$(get_libdir)"
 		)
-		FFMPEG_ROOT="/usr/lib/ffmpeg/${ffmpeg_slot}"
+		export FFMPEG_ROOT="/usr/lib/ffmpeg/${ffmpeg_slot}"
 	else
 einfo "Using monoslot FFmpeg"
-		FFMPEG_ROOT="/usr"
+		export FFMPEG_ROOT="/usr"
 	fi
 	fix-rpath_src_configure
 }
