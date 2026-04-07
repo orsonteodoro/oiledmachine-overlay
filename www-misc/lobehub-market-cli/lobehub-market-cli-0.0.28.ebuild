@@ -25,7 +25,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-ebuild_revision_4
+ebuild_revision_5
 "
 RDEPEND+="
 	app-admin/sudo
@@ -59,6 +59,11 @@ src_install() {
 	exeinto "/usr/bin"
 	doexe "${T}/lhm"
 	dosym "/usr/bin/lhm" "/usr/bin/lobehub-market-cli"
+}
+
+pkg_postinst() {
+einfo "For new installation:  lhm register --name \"<name>\""
+einfo "For installing skills:  lhm skills install <skill-id>"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
