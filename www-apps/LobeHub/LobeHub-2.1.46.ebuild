@@ -257,7 +257,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management indexeddb minio -online-search
 +openrc +pwa +postgres +rag redis +s3 searxng systemd +tools
-ebuild_revision_91
+ebuild_revision_93
 "
 REQUIRED_USE="
 	postgres
@@ -1078,7 +1078,11 @@ _install_pwa_webapp() {
 	fowners -R "${MY_PN2}:${MY_PN2}" "${_PREFIX}"
 
 	keepdir "/var/lib/lobehub/.agents/skills"
+	keepdir "/var/lib/lobehub/.claude/skills"
+	keepdir "/var/lib/lobehub/.cline/skills"
 	fowners -R "${MY_PN2}:${MY_PN2}" "/var/lib/lobehub/.agents"
+	fowners -R "${MY_PN2}:${MY_PN2}" "/var/lib/lobehub/.claude"
+	fowners -R "${MY_PN2}:${MY_PN2}" "/var/lib/lobehub/.cline"
 
 	# Exclude hidden files/dirs with *
 	shopt -u dotglob
