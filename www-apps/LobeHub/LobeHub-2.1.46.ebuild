@@ -256,7 +256,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management indexeddb minio -online-search
-+openrc +pwa +postgres +rag redis +s3 searxng systemd
++openrc +pwa +postgres +rag redis +s3 searxng systemd +tools
 ebuild_revision_91
 "
 REQUIRED_USE="
@@ -320,6 +320,9 @@ RDEPEND+="
 	)
 	redis? (
 		dev-db/redis
+	)
+	tools? (
+		www-misc/lobehub-market-cli
 	)
 "
 DEPEND+="
