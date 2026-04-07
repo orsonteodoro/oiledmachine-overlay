@@ -26,7 +26,7 @@ LICENSE="Apache-2.0"
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 
-IUSE=""
+IUSE="ebuild_revision_4"
 
 RDEPEND="
 	app-admin/sudo
