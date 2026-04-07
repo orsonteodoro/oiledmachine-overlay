@@ -15,7 +15,7 @@ https://registry.npmjs.org/@lobehub/market-cli/-/market-cli-${PV}.tgz -> lobehub
 
 inherit npm
 
-DESCRIPTION="LobeHub Marketplace CLI"
+DESCRIPTION="Device registration, auth management, and browse and install LobeHub marketplace skills"
 HOMEPAGE="
 	https://www.npmjs.com/package/@lobehub/market-cli
 "

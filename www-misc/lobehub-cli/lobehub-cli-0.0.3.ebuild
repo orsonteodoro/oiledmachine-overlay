@@ -17,7 +17,7 @@ SRC_URI="
 
 inherit pnpm
 
-DESCRIPTION="LobeHub command-line interface"
+DESCRIPTION="Manage and connect to LobeHub services"
 HOMEPAGE="
 	https://www.npmjs.com/package/@lobehub/cli
 	https://github.com/lobehub/lobehub/tree/canary/apps/cli
