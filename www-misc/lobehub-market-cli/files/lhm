@@ -6,11 +6,14 @@ SKILLS_DIR="/var/lib/lobehub/.agents/skills"
 # Run lhm as the lobehub user
 export HOME="/var/lib/lobehub"
 export PATH="/usr/lib/node/${NODE_SLOT}/bin:${PATH}"
+unset EXTRA_ARGS
 
 if [[ "$1" == "skills" && "$2" == "install" ]]; then
+    echo ""
     echo "⚠️  WARNING: You are installing a skill for a local LobeHub setup."
     echo "   Using skills directory: ${SKILLS_DIR}"
     echo ""
+    EXTRA_ARGS=( --dir "${SKILLS_DIR}" )
 fi
 
 if [[ ! -e "/var/lib/lobehub/.agents/skills" ]] ; then
@@ -24,5 +27,5 @@ cd "/opt/lobehub-market-cli" || {
     exit 1
 }
 
-exec sudo -u lobehub --preserve-env=PATH,HOME \
-    node "/opt/lobehub-market-cli/dist/cli.js" "$@"
+exec sudo -u "lobehub" -g "lobehub" --preserve-env=PATH,HOME \
+    node "/opt/lobehub-market-cli/dist/cli.js" "$@" "${EXTRA_ARGS[@]}"
