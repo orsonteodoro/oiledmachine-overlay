@@ -16,7 +16,7 @@ export PATH="/usr/lib/node/@NODE_SLOT@/bin:${PATH}"
 
 if [[ ! -e "/var/lib/lobehub/.agents/skills" ]] ; then
     echo "Error:  /var/lib/lobehub/.agents/skills is not found"
-    echo "Create the directory with user/group lobehub:lobehub or reinstall lobehub to generate it."
+    echo "Emerge LobeHub again to generate it and to fix ownership issues."
     exit 1
 fi
 
