@@ -1,0 +1,4 @@
+#!/bin/bash
+export PATH="/usr/lib/node/@NODE_SLOT@/bin:${PATH}"
+cd "/opt/lobehub-market-cli"
+node "./dist/cli.js" "$@"
