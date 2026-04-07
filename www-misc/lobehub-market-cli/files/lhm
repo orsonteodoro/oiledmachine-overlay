@@ -1,4 +1,28 @@
 #!/bin/bash
+# /usr/bin/lhm - Improved wrapper for lobehub-market-cli
+
+# Warning for local Ollama users
+if [[ "$1" == "skills" && "$2" == "install" ]]; then
+    echo "⚠️  WARNING: You are installing a skill for local Ollama setup."
+    echo "   Make sure to use --dir ~/.agents/skills"
+    echo ""
+fi
+
+# Set correct home for the lobehub user (since LobeHub runs as lobehub)
+export HOME="/var/lib/lobehub"
+
+# Run the CLI with proper environment
 export PATH="/usr/lib/node/@NODE_SLOT@/bin:${PATH}"
-cd "/opt/lobehub-market-cli"
-node "./dist/cli.js" "$@"
+
+if [[ ! -e "/var/lib/lobehub/.agents/skills" ]] ; then
+    echo "Error:  /var/lib/lobehub/.agents/skills is not found"
+    echo "Create the directory with user/group lobehub:lobehub or reinstall lobehub to generate it."
+    exit 1
+fi
+
+cd "/opt/lobehub-market-cli" || {
+    echo "Error: /opt/lobehub-market-cli directory not found"
+    exit 1
+}
+
+exec node "./dist/cli.js" "$@"
