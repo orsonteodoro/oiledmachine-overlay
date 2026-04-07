@@ -238,7 +238,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management indexeddb minio -online-search
 +openrc +pwa +postgres +rag redis +s3 searxng systemd +tools
-ebuild_revision_96
+ebuild_revision_98
 "
 REQUIRED_USE="
 	postgres
