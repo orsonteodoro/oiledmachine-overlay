@@ -26,7 +26,7 @@ LICENSE="Apache-2.0"
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 
-IUSE="ebuild_revision_4"
+IUSE="ebuild_revision_5"
 
 RDEPEND="
 	app-admin/sudo
@@ -101,7 +101,7 @@ einfo
 einfo "  'lh login' uses Device Authorization (OIDC)."
 einfo
 einfo "  If you see 'OIDC is not enabled', enable OIDC on your LobeHub server"
-einfo "  by setting ENABLE_OIDC=1 and generating JWKS_KEY in your server config."
+einfo "  by setting ENABLE_OIDC=1 and generating JWKS_KEY='<generated-key>' in your server config."
 einfo
 einfo "  The key generator for JWKS_KEY can be found at"
 einfo
