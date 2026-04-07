@@ -47,34 +47,6 @@ pnpm_unpack_post() {
 	sed -i -e "/workspace:/d" "${S}/package.json" || die
 }
 
-# Aggressive patching of workspace:* protocols
-pnpm_unpack_post2() {
-    einfo "Patching workspace:* references and removing internal @lobechat packages..."
-
-    # 1. Replace ALL workspace:* / workspace:^ / workspace:~ with "*"
-    find "${S}" -name "package.json" -exec sed -i -E 's|"workspace:[^"]*"|"*"|g' {} + || die
-
-    # 2. Specifically remove or replace the problematic device-gateway-client
-    #    (and any other @lobechat/* that are not on npm)
-    find "${S}" -name "package.json" -exec sed -i -E \
-        's|"@lobechat/device-gateway-client"[^,}]*|"@lobechat/device-gateway-client": "*"|' {} + || die
-
-    # Optional: remove the entire line if "*" still causes issues (more aggressive)
-    # find "${S}" -name "package.json" -exec sed -i '/@lobechat\/device-gateway-client/d' {} + || die
-
-    # 3. bun → pnpm and bunx → npx
-    sed -i -e 's|bunx|npx|g' -e 's|bun|pnpm|g' "${S}/package.json" || die
-
-    # 4. Create .npmrc to make pnpm less strict
-    cat > "${S}/.npmrc" <<EOF || die
-public-hoist-pattern=*
-shamefully-hoist=true
-node-linker=hoisted
-ignore-workspace=true
-strict-peer-dependencies=false
-EOF
-}
-
 src_unpack() {
 	unpack ${A}
 	pnpm_src_unpack
