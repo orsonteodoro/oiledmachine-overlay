@@ -25,9 +25,10 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-ebuild_revision_3
+ebuild_revision_4
 "
 RDEPEND+="
+	app-admin/sudo
 "
 DEPEND+="
 	${RDEPEND}
