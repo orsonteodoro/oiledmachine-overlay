@@ -3,7 +3,7 @@
 
 # Warning for local Ollama users
 if [[ "$1" == "skills" && "$2" == "install" ]]; then
-    echo "⚠️  WARNING: You are installing a skill for local Ollama setup."
+    echo "⚠️  WARNING: You are installing a skill for a local LobeHub setup."
     echo "   Make sure to use --dir ~/.agents/skills"
     echo ""
 fi
