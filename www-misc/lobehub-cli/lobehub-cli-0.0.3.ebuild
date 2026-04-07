@@ -99,8 +99,14 @@ einfo
 einfo "Note about login:"
 einfo
 einfo "  'lh login' uses Device Authorization (OIDC)."
+einfo
 einfo "  If you see 'OIDC is not enabled', enable OIDC on your LobeHub server"
 einfo "  by setting ENABLE_OIDC=1 and generating JWKS_KEY in your server config."
+einfo
+einfo "  The key generator for JWKS_KEY can be found at"
+einfo
+einfo "    https://lobehub.com/docs/self-hosting/advanced/desktop"
+einfo "    https://lobehub.com/docs/self-hosting/environment-variables/auth"
 einfo
 einfo "Run 'lh --help' for more commands."
 }
