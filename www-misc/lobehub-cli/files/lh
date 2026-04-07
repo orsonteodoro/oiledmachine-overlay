@@ -1,0 +1,30 @@
+#!/bin/bash
+
+NODE_SLOT=@NODE_SLOT@
+# Run lhm as the lobehub user
+export HOME="/var/lib/lobehub"
+export PATH="/usr/lib/node/${NODE_SLOT}/bin:${PATH}"
+export LOBEHUB_SERVER=${LOBEHUB_SERVER:-"http://localhost:3210"}
+
+cd "/opt/lobehub-cli" || {
+    echo "Error: /opt/lobehub-cli directory not found"
+    exit 1
+}
+
+has_server_flag=false
+for arg in "${@}"; do
+	if [[ "${arg}" = "--server" ]] || [[ "${arg}" = "-s" ]] ; then
+		has_server_flag=true
+		break
+	fi
+done
+
+if [[ "${has_server_flag}" == "false" ]] ; then
+	exec sudo -u "lobehub" -g "lobehub" --preserve-env=PATH,HOME,LOBEHUB_SERVER \
+		--server "${LOBEHUB_SERVER}" \
+		"$@"
+
+else
+	exec sudo -u "lobehub" -g "lobehub" --preserve-env=PATH,HOME,LOBEHUB_SERVER \
+		"$@"
+fi
