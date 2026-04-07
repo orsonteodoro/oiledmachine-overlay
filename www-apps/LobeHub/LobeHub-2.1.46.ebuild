@@ -6,25 +6,6 @@ EAPI=8
 
 # TODO:  Test e-mail login.
 
-# Downgraded till build error fixed:
-#> Build error occurred
-#Error: Turbopack build failed with 1 errors:
-#
-#./src/app/spa/[variants]/[[...path]]/route.ts:98:61
-#Module not found: Can't resolve './spaHtmlTemplates'
-#   96 |   }
-#   97 |
-#>  98 |   const { desktopHtmlTemplate, mobileHtmlTemplate } = await import('./spaHtmlTemplates');
-#      |                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-#   99 |
-#  100 |   return isMobile ? mobileHtmlTemplate : desktopHtmlTemplate;
-#  101 | }
-#
-#https://nextjs.org/docs/messages/module-not-found
-#
-#    at <unknown> (./src/app/spa/[variants]/[[...path]]/route.ts:98:61)
-#    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
-
 # Version bump history for configuration update reviews:
 # 1.74.0 -> 1.96.13
 # 1.96.13 -> 1.96.14
