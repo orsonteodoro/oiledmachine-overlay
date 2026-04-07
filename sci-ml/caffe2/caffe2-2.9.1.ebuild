@@ -1986,6 +1986,11 @@ src_install() {
 	cp "torch/version.py" "python/torch/" || die
 	python_install
 
+	# Remove merge collisions
+	if [[ -e "${ED}/usr/include/pybind11" ]] ; then
+		rm -rf "${ED}/usr/include/pybind11"
+	fi
+
 	if use rocm && use flash-attention ; then
 		local dest_libdir="/usr/lib/caffe2/$(get_libdir)"
 		exeinto "${dest_libdir}"
