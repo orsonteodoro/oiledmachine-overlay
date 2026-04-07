@@ -238,7 +238,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management indexeddb minio -online-search
 +openrc +pwa +postgres +rag redis +s3 searxng systemd +tools
-ebuild_revision_95
+ebuild_revision_96
 "
 REQUIRED_USE="
 	postgres
@@ -303,6 +303,7 @@ RDEPEND+="
 		dev-db/redis
 	)
 	tools? (
+		www-misc/lobehub-cli
 		www-misc/lobehub-market-cli
 	)
 "

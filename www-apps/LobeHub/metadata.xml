@@ -168,7 +168,12 @@ host    all             all             ::1/128                 md5
       (summaries or web links).
     </flag>
     <flag name="tools">
-      Add command line tools to install marketplace skills.
+      Install command line tools referenced in the marketplace.
+
+      It will install the following:
+
+      @lobehub/cli - manage and connect to LobeHub services
+      @lobehub/market-cli - device registration and auth management, install marketplace skills
     </flag>
   </use>
 </pkgmetadata>
