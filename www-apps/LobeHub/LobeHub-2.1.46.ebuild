@@ -1077,6 +1077,9 @@ _install_pwa_webapp() {
 
 	fowners -R "${MY_PN2}:${MY_PN2}" "${_PREFIX}"
 
+	keepdir "/var/lib/lobehub/.agents/skills"
+	fowners -R "${MY_PN2}:${MY_PN2}" "/var/lib/lobehub/.agents"
+
 	# Exclude hidden files/dirs with *
 	shopt -u dotglob
 }
