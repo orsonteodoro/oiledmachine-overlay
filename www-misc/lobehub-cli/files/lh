@@ -7,7 +7,6 @@ export PATH="/usr/lib/node/${NODE_SLOT}/bin:${PATH}"
 export LOBEHUB_SERVER=${LOBEHUB_SERVER:-"http://localhost:3210"}
 export LOBEHUB_GATEWAY=${LOBEHUB_GATEWAY:-"ws://localhost:3210/gateway"}
 export LOBEHUB_CLI_HOME=${LOBEHUB_CLI_HOME:-".lobehub"} # Relative to ${HOME}
-unset EXTRA_ARGS
 
 cd "/opt/lobehub-cli" || {
     echo "Error: /opt/lobehub-cli directory not found"
