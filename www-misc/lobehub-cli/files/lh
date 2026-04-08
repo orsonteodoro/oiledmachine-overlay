@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "1: "${1}
+
 NODE_SLOT=@NODE_SLOT@
 # Run lhm as the lobehub user
 export HOME="/var/lib/lobehub"
@@ -15,13 +17,16 @@ cd "/opt/lobehub-cli" || {
     exit 1
 }
 
-has_login=0
+command=""
+[[ "${1}" == "connect" ]] && command="connect"
+[[ "${1}" == "login" ]] && command="login"
+[[ "${1}" == "status" ]] && command="status"
+
 has_server=0
 has_gateway=0
+
 for arg in "${@}"; do
-	if [[ "${arg}" == "login" ]] ; then
-		has_login=1
-	elif [[ "${arg}" == "--server" || "${arg}" == "-s" ]] ; then
+	if [[ "${arg}" == "--server" || "${arg}" == "-s" ]] ; then
 		has_server=1
 	elif [ "$arg" == "--gateway" ]; then
 		has_gateway=1
@@ -31,8 +36,8 @@ done
 extra_args=()
 
 # Use fallback defaults
-(( ${has_server} == 0 && ${has_login} )) && extra_args+=( "--server" "${LOBEHUB_SERVER}" )
-(( ${has_gateway} == 0 )) && extra_args+=( "--gateway" "${LOBEHUB_GATEWAY}" )
+(( ${has_server} == 0 )) && [[ "${command}" == "login" ]] && extra_args+=( "--server" "${LOBEHUB_SERVER}" )
+(( ${has_gateway} == 0 )) && [[ "${command}" =~ ("status"|"connect") ]] && extra_args+=( "--gateway" "${LOBEHUB_GATEWAY}" )
 
 cmd=(
 	"sudo" "-u" "lobehub" "-g" "lobehub" "--preserve-env=HOME,LOBEHUB_CLI_HOME,LOBEHUB_GATEWAY,LOBEHUB_SERVER,PATH"
