@@ -242,7 +242,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management indexeddb minio -online-search
 +openrc +pwa +postgres +rag redis +s3 searxng systemd +tools
-ebuild_revision_98
+ebuild_revision_99
 "
 #	pwa
 REQUIRED_USE="
@@ -1168,7 +1168,7 @@ _install_electron() {
 		)
 
 		local x
-		for x in "${EXE_LIST}" ; do
+		for x in "${EXE_LIST[@]}" ; do
 			fperms 0755 "${_PREFIX}/${x}"
 		done
 		cat "${FILESDIR}/lobehub-electron-wrapper" > "${T}/lobehub" || die
