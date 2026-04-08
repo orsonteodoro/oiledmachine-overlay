@@ -19,6 +19,7 @@ EAPI=8
 # 2.1.36 - 2.1.43
 # 2.1.43 -> 2.1.44
 # 2.1.44 -> 2.1.46
+# 2.1.46 -> 2.1.48
 
 # Ebuild using React 19
 
@@ -38,7 +39,7 @@ EAPI=8
 #   OILEDMACHINE_OVERLAY_DIR="/usr/local/oiledmachine-overlay"
 #   PATH="${OILEDMACHINE_OVERLAY_DIR}/scripts:${PATH}"
 #   cd "${OILEDMACHINE_OVERLAY_DIR}/www-apps/LobeHub"
-#   PNPM_UPDATER_VERSIONS="2.1.46" pnpm_updater_update_locks.sh
+#   PNPM_UPDATER_VERSIONS="2.1.48" pnpm_updater_update_locks.sh
 #
 
 # U22, U24, D12
@@ -54,7 +55,7 @@ MY_PN="${PN}"		# LobeHub
 MY_PN2="${PN,,}"	# lobehub
 
 # See also https://github.com/vercel/next.js/blob/v15.1.6/.github/workflows/build_and_test.yml#L328
-_ELECTRON_DEP_ROUTE="secure"
+_ELECTRON_DEP_ROUTE="upstream"
 NODE_SHARP_USE="exif lcms webp"
 NODE_SLOT="24" # See .nvmrc or Dockerfile
 NPM_SLOT="3"
@@ -76,11 +77,11 @@ VIPS_PV="8.18.0"
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
-	ELECTRON_APP_ELECTRON_PV="41.0.3" # Cr 146.0.7680.80, node 24.14.0
+	ELECTRON_APP_ELECTRON_PV="41.1.1" # Cr 146.0.7680.166, node 24.14.0
 else
 #https://github.com/lobehub/lobehub/blob/v2.1.44/apps/desktop/package.json#L70
 	# Upstream's choice
-	ELECTRON_APP_ELECTRON_PV="41.0.2" # Cr 146.0.7680.72, node 24.14.0
+	ELECTRON_APP_ELECTRON_PV="41.1.0" # Cr 146.0.7680.166, node 24.14.0
 fi
 
 
@@ -95,7 +96,7 @@ NODE_SHARP_PATCHES=(
 )
 
 # Use pnpm for pnpm_updater_update_locks.sh
-inherit dhms desktop edo electron-app node-sharp npm pnpm rust xdg
+inherit dhms desktop edo electron-app lcnr node-sharp npm pnpm rust xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -188,12 +189,15 @@ LICENSE="
 	)
 "
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
+	# TODO verify
+	# The 41.1.1 license file fingerprint should be the same as 41.0.3.
         LICENSE+="
-                electron-41.0.3-chromium.html
+                electron-41.1.1-chromium.html
         "
 else
+	# The 41.1.0 license file fingerprint is verified the same as 41.0.3.
 	LICENSE+="
-                electron-41.0.2-chromium.html
+                electron-41.1.0-chromium.html
         "
 fi
 # Third party licenses:
@@ -240,9 +244,9 @@ ceph -electron +embeddings +file-management indexeddb minio -online-search
 +openrc +pwa +postgres +rag redis +s3 searxng systemd +tools
 ebuild_revision_98
 "
+#	pwa
 REQUIRED_USE="
 	postgres
-	pwa
 	embeddings? (
 		postgres
 	)
@@ -303,7 +307,6 @@ RDEPEND+="
 		dev-db/redis
 	)
 	tools? (
-		www-misc/lobehub-cli
 		www-misc/lobehub-market-cli
 	)
 "
@@ -492,11 +495,11 @@ pnpm_unpack_post() {
 	sed -i \
 		-e "s|\"@types/react\": \"19.2.13\"|\"@types/react\": \"19.2.14\"|g" \
 		-e "s|\"@types/react-dom\": \"^19.2.3\"|\"@types/react-dom\": \"19.2.3\"|g" \
-		-e "s|\"better-auth\": \"1.4.6\"|\"better-auth\": \"1.5.6\"|g" \
-		-e "s|\"better-call\": \"1.1.8\"|\"better-call\": \"1.3.2\"|g" \
-		-e "s|\"drizzle-kit\": \"^0.31.8\"|\"drizzle-kit\": \"0.30.6\"|g" \
+		-e "s|\"better-auth\": \"1.4.6\"|\"better-auth\": \"1.6.0\"|g" \
+		-e "s|\"better-call\": \"1.1.8\"|\"better-call\": \"1.3.5\"|g" \
+		-e "s|\"drizzle-kit\": \"^0.31.8\"|\"drizzle-kit\": \"0.31.9\"|g" \
 		-e "s|\"drizzle-orm\": \"^0.45.1\"|\"drizzle-orm\": \"0.45.1\"|g" \
-		-e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.5.6\"|g" \
+		-e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.5.7\"|g" \
 		-e "s|\"pg\": \"^8.17.2\"|\"pg\": \"8.19.0\"|g" \
 		"package.json" \
 		|| die
@@ -506,13 +509,13 @@ pnpm_unpack_post() {
 		"package.json" \
 		|| die
 
+	sed -i -e "s|bunx|npx|g" "apps/cli/package.json" || die
+	sed -i -e "s|bun|pnpm|g" "apps/cli/package.json" || die
+	sed -i -e "s|bun run|npm run|g" "package.json" || die
+
 	setup_cn_mirror_env
 
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
-		sed -i \
-			-e "s|bun run|npm run|g" \
-			"${S}/package.json" \
-			|| die
 		grep -e "ERR_PNPM_FETCH_404" "${T}/build.log" && die "Detected error.  Check pnpm add"
 	fi
 
@@ -520,7 +523,7 @@ pnpm_unpack_post() {
 # reference the system's vips package not the prebuilt one.
 	eapply "${FILESDIR}/${MY_PN2}-2.1.34-hardcoded-paths.patch"
 	eapply "${FILESDIR}/lobe-chat-1.65.0-sharp-declaration.patch"
-	eapply "${FILESDIR}/${PN}-2.1.33-use-e965-xlsx.patch"
+#	eapply "${FILESDIR}/${PN}-2.1.33-use-e965-xlsx.patch"
 	eapply "${FILESDIR}/${PN}-2.1.44-postgresjs-driver-support.patch"
 	eapply "${FILESDIR}/${PN}-2.1.44-docker-cjs-multidriver-support.patch"
 
@@ -530,7 +533,7 @@ pnpm_unpack_post() {
 			"@next/bundle-analyzer@^${NEXTJS_PV}"
 
 	# Pin better-auth and dependencies
-			"drizzle-kit@0.30.6"
+			"drizzle-kit@0.31.9"
 			"@types/react@19.2.14"
 			"@types/react-dom@19.2.3"
 		)
@@ -546,16 +549,16 @@ pnpm_unpack_post() {
 
 	# Pin better-auth and dependencies
 			"drizzle-orm@0.45.1"
-			"better-auth@1.5.6"
-			"fast-xml-parser@5.5.6"
+			"better-auth@1.6.0"
+			"fast-xml-parser@5.5.7"
 			"pg@8.19.0"
 
 	# Reverse depends or transitive dependencies of better-auth
-			"@better-auth/passkey@1.5.6"							# Same version as better-auth
-			"@better-auth/expo@1.5.6"							# Same version as better-ath
+			"@better-auth/passkey@1.6.0"							# Same version as better-auth
+			"@better-auth/expo@1.6.0"							# Same version as better-auth
 
 	# pg alternative
-			"postgres@3.4.8"
+			"postgres@3.4.9"
 		)
 		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 	fi
@@ -563,8 +566,38 @@ pnpm_unpack_post() {
 
 pnpm_install_post() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
-		:
+		pushd "apps/desktop" >/dev/null 2>&1 || die
+einfo "Generating lockfile for @lobehub/cli"
+			sed -i -e "/lockfile=false/d" ".npmrc" || die
+			epnpm install "${PNPM_INSTALL_ARGS[@]}"
+			epnpm install --lockfile-only
+		popd >/dev/null 2>&1 || die
+		pushd "apps/device-gateway" >/dev/null 2>&1 || die
+einfo "Generating lockfile for lobehub-desktop-dev"
+			epnpm install "${PNPM_INSTALL_ARGS[@]}"
+			epnpm install --lockfile-only
+		popd >/dev/null 2>&1 || die
+		pushd "apps/cli" >/dev/null 2>&1 || die
+einfo "Generating lockfile @lobechat/device-gateway"
+			sed -i -e "/lockfile=false/d" ".npmrc" || die
+			epnpm install "${PNPM_INSTALL_ARGS[@]}"
+			epnpm install --lockfile-only
+		popd >/dev/null 2>&1 || die
 	else
+		pushd "apps/desktop" >/dev/null 2>&1 || die
+einfo "Unpacking @lobehub/cli"
+			sed -i -e "/lockfile=false/d" ".npmrc" || die
+			epnpm install "${PNPM_INSTALL_ARGS[@]}"
+		popd >/dev/null 2>&1 || die
+		pushd "apps/device-gateway" >/dev/null 2>&1 || die
+einfo "Unpacking lobehub-desktop-dev"
+			epnpm install "${PNPM_INSTALL_ARGS[@]}"
+		popd >/dev/null 2>&1 || die
+		pushd "apps/cli" >/dev/null 2>&1 || die
+einfo "Unpacking @lobechat/device-gateway"
+			sed -i -e "/lockfile=false/d" ".npmrc" || die
+			epnpm install "${PNPM_INSTALL_ARGS[@]}"
+		popd >/dev/null 2>&1 || die
 		local pkgs=(
 			"sharp@${SHARP_PV}"
 		)
@@ -579,12 +612,12 @@ pnpm_audit_post() {
 			sed -i -e "s|\"vitest\": ^3.2.4|\"vitest\": 3.2.4|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|\"vitest\": \"^3.2.4\"|\"vitest\": \"3.2.4\"|g" "package.json" || die
 		}
-		pnpm_patch_lockfile
+#		pnpm_patch_lockfile
 		pkgs=(
 			"vitest@3.2.4"
 		)
 		epnpm add -D ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}						# CVE-2025-24964; DoS, DT, ID; Critical
-		pnpm_patch_lockfile
+#		pnpm_patch_lockfile
 	fi
 }
 
@@ -739,13 +772,13 @@ ewarn "QA:  Manually change electron specifier to ^41.0.0 and version to 41.0.3 
 			sed -i -e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.5.6\"|g" "package.json" || die
 		}
 
-		pnpm_patch_lockfile
+#		pnpm_patch_lockfile
 
 		local pkgs
 		pkgs=(
 			"@apidevtools/json-schema-ref-parser@11.2.0"					# CVE-2024-29651; DoS, DT, ID; High
 		)
-		epnpm add ${pkgs[@]}
+#		epnpm add ${pkgs[@]}
 
 		pkgs=(
 			"esbuild@0.27.4"								# GHSA-67mh-4wv8-2f99; DI; Moderate
@@ -774,7 +807,7 @@ ewarn "QA:  Manually change electron specifier to ^41.0.0 and version to 41.0.3 
 													# CVE-2026-33036; ZC, DoS; High
 													# CVE-2026-33349; ZC, DoS; Moderate
 		)
-		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
+#		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 
 		pkgs=(
 			"snowflake-sdk@2.0.4"								# CVE-2025-24791; DT, ID; Medium
@@ -797,13 +830,26 @@ ewarn "QA:  Manually change electron specifier to ^41.0.0 and version to 41.0.3 
 			"@tootallnate/once@3.0.1"							# CVE-2026-3449; DoS; Low
 			"serialize-javascript@7.0.3"							# GHSA-5c6j-r48x-rmvq; CE, DoS, DT, ID; High
 		)
-		epnpm add -D ${pkgs[@]}
+#		epnpm add -D ${pkgs[@]}
 
 		NODE_ADDON_API_INSTALL_ARGS=( "-P" )
 		NODE_GYP_INSTALL_ARGS=( "-D" )
 		epnpm add -D "@types/sharp" ${NPM_INSTALL_ARGS[@]}
 		node-sharp_pnpm_lockfile_add_sharp
-		pnpm_patch_lockfile
+#		pnpm_patch_lockfile
+
+		# Copy all lockfiles
+		mkdir -p "${WORKDIR}/lockfile-image"
+
+		local L=(
+			$(find . -name "pnpm-lock.yaml")
+		)
+		for x in "${L[@]}" ; do
+			local d=$(dirname "${x}")
+			mkdir -p "${WORKDIR}/lockfile-image/${d}"
+			cp -a "${x}" "${WORKDIR}/lockfile-image/${d}"
+			cp -a "${d}/package.json" "${WORKDIR}/lockfile-image/${d}"
+		done
 	fi
 }
 
@@ -848,6 +894,22 @@ src_unpack() {
 		fi
 
 #		epnpm add "svix@1.45.1" ${NPM_INSTALL_ARGS[@]}
+
+		if use electron ;then
+			pushd "apps/desktop" >/dev/null 2>&1 || die
+				sed -i -e "/lockfile=false/d" ".npmrc" || die
+				epnpm install "${PNPM_INSTALL_ARGS[@]}"
+			popd >/dev/null 2>&1 || die
+		fi
+
+		pushd "apps/device-gateway" >/dev/null 2>&1 || die
+			epnpm install "${PNPM_INSTALL_ARGS[@]}"
+		popd >/dev/null 2>&1 || die
+
+		pushd "apps/cli" >/dev/null 2>&1 || die
+			sed -i -e "/lockfile=false/d" ".npmrc" || die
+			epnpm install "${PNPM_INSTALL_ARGS[@]}"
+		popd >/dev/null 2>&1 || die
 	fi
 }
 
@@ -906,6 +968,47 @@ ewarn "Do not store NEXT_PUBLIC_POSTHOG_KEY in /etc/portage/make.conf file for $
 	fi
 }
 
+postgres_migrate() {
+	use postgres || return
+	is_postgres_ready
+
+	cat /dev/null > "${S}/.env" || die
+	echo "KEY_VAULTS_SECRET=\"${KEY_VAULTS_SECRET}\"" >> "${S}/.env" || die
+	if [[ "${DATABASE_URL}" =~ "sslmode" ]] ; then
+		echo "DATABASE_URL=\"${DATABASE_URL}\"" >> "${S}/.env" || die
+	else
+		echo "DATABASE_URL=\"${DATABASE_URL}?sslmode=disable\"" >> "${S}/.env" || die
+	fi
+	echo "DATABASE_DRIVER=\"pg\"" >> "${S}/.env" || die
+
+	edo npm run "db:generate"
+	edo npm run "db:migrate"
+}
+
+sanitize_secrets() {
+	# Remove the plaintext keys from the package manager's environment.bz2.
+	# API keys are considered sensitive data.
+	AUTH_SECRET=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)			# Session key
+	KEY_VAULTS_SECRET=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)		# DB key
+	NEXT_PUBLIC_POSTHOG_KEY=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)	# Analytics/telemetry key
+	DATABASE_URL=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)			# DB key
+	unset AUTH_SECRET
+	unset KEY_VAULTS_SECRET
+	unset NEXT_PUBLIC_POSTHOG_KEY
+	unset DATABASE_URL
+	if [[ -e "${S}/.env" ]] ; then
+		shred "${S}/.env"
+	fi
+}
+
+build_cli() {
+	pushd "apps/cli" >/dev/null 2>&1 || die
+		sed -i -e "/lockfile=false/d" ".npmrc" || die
+einfo "Building @lobechat/device-gateway"
+		npm run "build"
+	popd >/dev/null 2>&1 || die
+}
+
 src_compile() {
 	if [[ -e "${S}/.next" ]] ; then
 ewarn "Removing ${S}/.next"
@@ -944,52 +1047,36 @@ einfo "Building next.config.js"
 		#grep -q -E -e "error TS[0-9]+" "${T}/build.log" && die "Detected error"
 	fi
 
-	if ! use postgres ; then
-		sed -i -e "s|MIGRATION_DB=1|true MIGRATION_DB=1|g" "package.json" || die
-	fi
+	build_cli
 
 	if use pwa ; then
+		if ! use postgres ; then
+			sed -i -e "s|MIGRATION_DB=1|true MIGRATION_DB=1|g" "package.json" || die
+		fi
+
 		edo npm run "build"
 		grep -q -e "Next.js build worker exited with code" "${T}/build.log" && die "Detected error"
 		grep -q -e "Failed to load next.config.js" "${T}/build.log" && die "Detected error"
 		edo npm run "build-sitemap"
+
+		# Equivalent to `pnpm run postbuild`
+		#edo npm run "build-sitemap"
+		postgres_migrate
+
+		grep -q -e "Build failed because of webpack errors" "${T}/build.log" && die "Detected error"
+		grep -q -e "Failed to compile" "${T}/build.log" && die "Detected error"
+		#grep -q -E -e "error TS[0-9]+" "${T}/build.log" && die "Detected error"
+
+		if ! [[ -e "${S}/.next/standalone/server.js" ]] ; then
+eerror "Build failure.  Missing ${S}/.next/standalone/server.js"
+			die
+		fi
+
+		# Change hardcoded paths
+		sed -i -e "s|${S}|/opt/${MY_PN2}|g" $(grep -l -r -e "${S}" "${S}/.next") || die
 	else
 		edo npm run "desktop:build:all"
-		edo npm run "build:main"
-	fi
 
-	# Equivalent to `pnpm run postbuild`
-	edo npm run "build-sitemap"
-
-	if use postgres ; then
-		is_postgres_ready
-
-		cat /dev/null > "${S}/.env" || die
-		echo "KEY_VAULTS_SECRET=\"${KEY_VAULTS_SECRET}\"" >> "${S}/.env" || die
-		if [[ "${DATABASE_URL}" =~ "sslmode" ]] ; then
-			echo "DATABASE_URL=\"${DATABASE_URL}\"" >> "${S}/.env" || die
-		else
-			echo "DATABASE_URL=\"${DATABASE_URL}?sslmode=disable\"" >> "${S}/.env" || die
-		fi
-		echo "DATABASE_DRIVER=\"pg\"" >> "${S}/.env" || die
-
-		edo npm run "db:generate"
-		edo npm run "db:migrate"
-	fi
-
-	grep -q -e "Build failed because of webpack errors" "${T}/build.log" && die "Detected error"
-	grep -q -e "Failed to compile" "${T}/build.log" && die "Detected error"
-	#grep -q -E -e "error TS[0-9]+" "${T}/build.log" && die "Detected error"
-
-	if ! [[ -e "${S}/.next/standalone/server.js" ]] ; then
-eerror "Build failure.  Missing ${S}/.next/standalone/server.js"
-		die
-	fi
-
-	# Change hardcoded paths
-	sed -i -e "s|${S}|/opt/${MY_PN2}|g" $(grep -l -r -e "${S}" "${S}/.next") || die
-
-	if use electron ;then
 		export ELECTRON_SKIP_BINARY_DOWNLOAD=1
 		export ELECTRON_BUILDER_CACHE="${HOME}/.cache/electron-builder"
 		export ELECTRON_CACHE="${HOME}/.cache/electron"
@@ -997,6 +1084,7 @@ eerror "Build failure.  Missing ${S}/.next/standalone/server.js"
 
 		electron-app_cp_electron
 
+		PATH="${S}/apps/desktop/node_modules/.bin:${PATH}"
 		pushd "apps/desktop" || die
 			edo electron-builder \
 				--config "electron-builder.mjs" \
@@ -1005,17 +1093,7 @@ eerror "Build failure.  Missing ${S}/.next/standalone/server.js"
 		popd || die
 	fi
 
-	# Remove the plaintext keys from the package manager's environment.bz2.
-	# API keys are considered sensitive data.
-	AUTH_SECRET=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)			# Session key
-	KEY_VAULTS_SECRET=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)		# DB key
-	NEXT_PUBLIC_POSTHOG_KEY=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)	# Analytics/telemetry key
-	DATABASE_URL=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)			# DB key
-	unset AUTH_SECRET
-	unset KEY_VAULTS_SECRET
-	unset NEXT_PUBLIC_POSTHOG_KEY
-	unset DATABASE_URL
-	shred "${S}/.env"
+	sanitize_secrets
 }
 
 _install_pwa_webapp() {
@@ -1073,8 +1151,35 @@ _install_pwa_webapp() {
 }
 
 _install_electron() {
-eerror "TODO: _install_electron"
-	die
+	local _PREFIX="/opt/${MY_PN2}"
+	pushd "apps/desktop/release/linux-unpacked" >/dev/null 2>&1 || die
+		insinto "${_PREFIX}"
+		doins -r *
+		local EXE_LIST=(
+"libffmpeg.so"
+"lobehub-desktop-dev"
+"libGLESv2.so"
+"libvk_swiftshader.so"
+"libEGL.so"
+"chrome-sandbox"
+"resources/bin/agent-browser"
+"libvulkan.so.1"
+"chrome_crashpad_handler"
+		)
+
+		local x
+		for x in "${EXE_LIST}" ; do
+			fperms 0755 "${_PREFIX}/${x}"
+		done
+		cat "${FILESDIR}/lobehub-electron-wrapper" > "${T}/lobehub" || die
+		sed -i -e "s|@NODE_SLOT@|${NODE_SLOT}|g" "${T}/lobehub" || die
+		exeinto "/usr/bin"
+		doexe "${T}/lobehub"
+
+	# Copy all the licenses, copyright notices, NOTICEs files, readmes in
+	# node_modules and elsewhere.
+		lcnr_install_files
+	popd >/dev/null 2>&1 || die
 }
 
 has_s3_support() {
@@ -1222,6 +1327,35 @@ einfo "LOBEHUB_URI:  ${lobehub_uri}"
 	fowners "${MY_PN2}:${MY_PN2}" "/etc/conf.d/${MY_PN2}"
 }
 
+_install_cli() {
+	# Include hidden files/dirs with *
+	shopt -s dotglob
+
+	insinto "/opt/lobehub-cli"
+	doins -r "apps/cli/"*
+
+	# Exclude hidden files/dirs with *
+	shopt -u dotglob
+
+	exeinto "/usr/bin"
+	cat "${FILESDIR}/lh" > "${T}/lh"
+	sed -i -e "s|@NODE_SLOT@|${NODE_SLOT}|g" "${T}/lh"
+	doexe "${T}/lh"
+	dosym "/usr/bin/lh" "/usr/bin/lobe"
+	dosym "/usr/bin/lh" "/usr/bin/lobehub-cli"
+}
+
+_install_device_gateway() {
+	# Include hidden files/dirs with *
+	shopt -s dotglob
+
+	insinto "/opt/lobehub-device-gateway"
+	doins -r "apps/device-gateway/"*
+
+	# Exclude hidden files/dirs with *
+	shopt -u dotglob
+}
+
 src_install() {
 	docinto "licenses"
 	dodoc "LICENSE"
@@ -1249,6 +1383,9 @@ einfo "LOBEHUB_PORT:  ${lobehub_port} (user-definable, per-package environment v
 		_install_pwa
 	else
 		_install_electron
+	fi
+	if use tools ; then
+		_install_cli
 	fi
 
 	dhms_end
