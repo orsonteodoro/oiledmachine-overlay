@@ -172,8 +172,8 @@ host    all             all             ::1/128                 md5
 
       It will install the following:
 
-      @lobehub/cli - manage and connect to LobeHub services
-      @lobehub/market-cli - device registration and auth management, install marketplace skills
+      @lobehub/cli - manage and connect to LobeHub services, install marketplace skills (verified)
+      @lobehub/market-cli - device registration and auth management, install marketplace skills (unverified)
     </flag>
   </use>
 </pkgmetadata>

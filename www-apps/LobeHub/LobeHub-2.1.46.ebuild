@@ -1283,6 +1283,9 @@ ewarn
 	if use minio ; then
 ewarn "You must manually update S3_SECRET_ACCESS_KEY in /etc/conf.d/lobehub with the new login details."
 	fi
+	if use tools ; then
+einfo "To install skills:  lh skill i <marketplace-identifier>"
+	fi
 }
 
 pkg_postrm() {

@@ -107,4 +107,5 @@ einfo "    https://lobehub.com/docs/self-hosting/advanced/desktop"
 einfo "    https://lobehub.com/docs/self-hosting/environment-variables/auth"
 einfo
 einfo "Run 'lh --help' for more commands."
+einfo "Run 'lh skill i <marketplace-identifier>' to install skills."
 }
