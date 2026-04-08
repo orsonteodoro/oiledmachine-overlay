@@ -15,6 +15,14 @@
 # For additional slot availability send issue request.
 
 #
+# Security notes:
+#
+# If the package comes with a server, the vulnerabilities in the dependencies
+# also has to be fixed, the server needs non-root user/group, the server
+# needs to run as non-root user/group.
+#
+
+#
 # Hidden Rust dependency:
 #
 # If the lockfile contains reference to @swc/core specifically
@@ -53,6 +61,38 @@
 # 5                | 3.0.x, 3.4.0                               # lockfileVersion (pnpm-lock.yaml)
 # 4                | 2.25.x (shri)                              # shrinkwrapVersion (shrinkwrap.yaml)
 
+#
+# About the hook system.  The hook system is addresses issues with the imperfect
+# ebuild system with false assumptions from the past that are not forward
+# looking in the current packaging scene.
+#
+# The ebuild system assumes 1 package at a time, but in our pnpm use case we
+# are dealing with many micropackages.
+#
+# Most hooks are available to:
+# - add/remove packages affecting package.json
+# - collect lockfiles
+# - convert script calls from bun to pnpm for portability
+# - convert script calls from bunx to npx for portability
+# - fix and rebuild node dependences for portability or broken builds
+# - fix vulnerabilities
+# - patching package.json
+# - generate missing lockfiles for reproducible builds
+#
+# The phase functions and hooks in chronological order in this eclass:
+#
+# _pnpm_set_globals (eclass only)
+# pnpm_pkg_setup
+# pnpm_src_unpack
+#   pnpm_unpack_post (hook) - for add/remove deps or patching
+#   pnpm_install_pre (hook) - for add/remove deps or patching
+#   pnpm_install_post (hook) - for add/remove deps or patching or portability rebuilds
+#   if during lockfile generation:
+#     pnpm_audit_pre (hook) - for add/remove deps
+#     pnpm_audit_post (hook) - for add/remove deps that may be eagerly pruned
+#     pnpm_dedupe_post (hook) - for add/remove deps after eager prune or vulnerabilities inadvertently added by dedupe, and/or multiple lockfile capture
+# pnpm_src_compile
+#
 
 case ${EAPI:-0} in
 	[8]) ;;

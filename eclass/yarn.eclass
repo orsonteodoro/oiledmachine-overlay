@@ -15,6 +15,14 @@
 # For additional slot availability send issue request.
 
 #
+# Security notes:
+#
+# If the package comes with a server, the vulnerabilities in the dependencies
+# also has to be fixed, the server needs non-root user/group, the server
+# needs to run as non-root user/group.
+#
+
+#
 # Hidden Rust dependency:
 #
 # If the lockfile contains reference to @swc/core specifically
@@ -53,6 +61,66 @@
 # Try with `npm install --prod` to generate the lockfile.
 
 # The yarn.lock must be regenerated for security updates every week.
+
+#
+# About the hook system.  The hook system is addresses issues with the imperfect
+# ebuild system with false assumptions from the past that are not forward
+# looking in the current packaging scene.
+#
+# The ebuild system assumes 1 package at a time, but in our yarn use case we
+# are dealing with many micropackages.
+#
+# Most hooks are available to:
+# - add/remove packages affecting package.json
+# - collect lockfiles
+# - fix and rebuild node dependences for portability or broken builds
+# - fix vulnerabilities
+# - patching package.json
+# - generate missing lockfiles for reproducible builds
+#
+# The phase functions and hooks in chronological order in this eclass:
+#
+# _yarn_set_globals (eclass only)
+# yarn_pkg_setup
+# yarn_src_unpack
+#   if lockfile update:
+#     if lockfile source is from ebuild and not upstream:
+#       if custom hook exists:
+#         yarn_src_unpack_update_ebuild_custom (hook) - for full control over lockfile generation due to multiple lockfiles or subprojects
+#       else:
+#         _yarn_src_unpack_update_ebuild (not hook)
+#           yarn_check_vendored_yarn (hook) - for fixing yarn build files issues
+#           yarn_unpack_post (hook) - for patching or add/remove deps
+#           yarn_update_lock_install_pre (hook) - for patching or add/remove deps before node_modules creation
+#           yarn_update_lock_install_post (hook) - for patching or add/remove deps after node_modules creation
+#           yarn_update_lock_audit_pre (hook) - for add/remove deps before audit
+#           yarn_update_lock_audit_post (hook) - for add/remove deps after audit or vulnerabilies inadvertently added by audit fix
+#           yarn_update_lock_yarn_import_pre (hook) - for add/remove deps that are eagerly pruned
+#           yarn_update_lock_yarn_import_post (hook) - for custom multi lockfile capture
+#     else use upstream lockfiles:
+#       _yarn_src_unpack_update_upstream (not hook)
+#         yarn_check_vendored_yarn (hook) - for fixing yarn build files issues
+#         yarn_unpack_post (hook) - for add/remove deps
+#     yarn_unpack_install_pre (hook) - for custom multi lockfile capture
+#   else regular install:
+#     if working with ebuild lockfiles:
+#       _yarn_src_unpack_default_ebuild (not hook)
+#         yarn_check_vendored_yarn (hook) - for fixing yarn build files issues
+#         yarn_unpack_post (hook) - for add/remove packages or patching
+#         yarn_unpack_install_pre (hook) - for add/remove packages or patching
+#         yarn_unpack_install_post (hook) - for add/remove packages or patching
+#     else:
+#       _yarn_src_unpack_default_upstream (not hook)
+#         yarn_check_vendored_yarn (hook) - for fixing yarn build files issues
+#         yarn_unpack_post (hook) - for add/remove packages or patching
+#         yarn_unpack_install_pre (hook) - for add/remove packages or patching
+#         yarn_unpack_install_post (hook) - for add/remove packages or patching
+#
+# yarn_src_compile
+# yarn_src_test
+# yarn_src_install
+#
+
 
 case ${EAPI:-0} in
 	[8]) ;;
