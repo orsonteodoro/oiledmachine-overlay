@@ -192,12 +192,12 @@ if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# TODO verify
 	# The 41.1.1 license file fingerprint should be the same as 41.0.3.
         LICENSE+="
-                electron-41.1.1-chromium.html
+                electron-41.0.3-chromium.html
         "
 else
 	# The 41.1.0 license file fingerprint is verified the same as 41.0.3.
 	LICENSE+="
-                electron-41.1.0-chromium.html
+                electron-41.0.3-chromium.html
         "
 fi
 # Third party licenses:
