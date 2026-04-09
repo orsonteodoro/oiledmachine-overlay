@@ -1521,7 +1521,8 @@ ewarn
 ewarn "The LOBEHUB_HOSTNAME needs to be the same on the remote OAuth settings"
 ewarn "and in /etc/conf.d/lobehub and your per-package package.env files."
 ewarn
-ewarn "Do not mix 127.0.0.1 and localhost identifiers because it breaks OAuth."
+ewarn "Do not mix 127.0.0.1 and localhost identifiers in the settings because it breaks OAuth."
+ewarn "Do not mix 127.0.0.1 and localhost identifiers when entering it in the web browser."
 	fi
 }
 
