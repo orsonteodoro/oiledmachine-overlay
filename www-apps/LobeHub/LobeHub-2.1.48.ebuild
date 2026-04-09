@@ -513,22 +513,18 @@ eerror "Rust ${RUST_PV} required for @swc/core"
 	fi
 
 	if use pwa && use electron ; then
-einfo "Electron:  Yes"
-einfo "Self-hosted:  Yes"
-einfo "LobeHub Cloud:  Yes"
+einfo "Electron client:  Yes"
+einfo "Self-hosted server and PWA:  Yes"
+einfo "Remote-hosted LobeHub Cloud:  Yes"
 	elif ! use pwa && use electron ; then
-einfo "Electron:  Yes"
-einfo "Self-hosted:  No"
-einfo "LobeHub Cloud:  Yes"
+einfo "Electron client:  Yes"
+einfo "Self-hosted server and PWA:  No"
+einfo "Remote-hosted LobeHub Cloud:  Yes"
 	elif use pwa && ! use electron ; then
-einfo "Electron:  No"
-einfo "Self-hosted:  Yes"
-einfo "LobeHub Cloud:  No"
+einfo "Electron client:  No"
+einfo "Self-hosted server and PWA:  Yes"
+einfo "Remote-hosted LobeHub Cloud:  No"
 	fi
-einfo "The self-hosted (aka USE=pwa) server offers privacy, total customization."
-einfo "The LobeHub Cloud (aka USE=electron) lowers privacy, but has everything setup up."
-einfo "The Electron client can use either one."
-einfo "The self-hosted server does not require the Electron client but can use the web browser."
 
 	if use pwa ; then
 		export LOBEHUB_HOSTNAME=${LOBEHUB_HOSTNAME:-"localhost"}
