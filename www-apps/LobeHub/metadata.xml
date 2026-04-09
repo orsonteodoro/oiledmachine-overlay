@@ -132,7 +132,7 @@ host    all             all             ::1/128                 md5
       Build the client frontend to interact with the self-hosted server
       or the official LobeHub service.
 
-      Note:  For complete self-hosting enable also the pwa USE flag.
+      Note:  For complete self-hosting, enable also the pwa USE flag.
     </flag>
     <flag name="embeddings">
       Add dependencies to support embeddings.
