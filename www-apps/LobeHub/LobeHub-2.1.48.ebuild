@@ -525,8 +525,10 @@ einfo "Electron:  No"
 einfo "Self-hosted:  Yes"
 einfo "LobeHub Cloud:  No"
 	fi
-einfo "Self-hosted (aka USE=pwa) offers privacy, total customization"
-einfo "LobeHub Cloud (aka USE=electron) lowers privacy, but has everything setup up"
+einfo "The self-hosted (aka USE=pwa) server offers privacy, total customization."
+einfo "The LobeHub Cloud (aka USE=electron) lowers privacy, but has everything setup up."
+einfo "The Electron client can use either one."
+einfo "The self-hosted server does not require Electron client but can use the web browser."
 
 	if use pwa ; then
 		export LOBEHUB_HOSTNAME=${LOBEHUB_HOSTNAME:-"localhost"}
