@@ -3961,7 +3961,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
 sandbox systemd unrestrict video_cards_intel -vulkan
-ebuild_revision_122
+ebuild_revision_123
 "
 
 gen_rocm_required_use() {
@@ -4423,7 +4423,7 @@ IDEPEND="
 	${RDEPEND}
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-0.20.0-cmd-changes.patch"
+	"${FILESDIR}/${PN}-0.20.4-cmd-changes.patch"
 	"${FILESDIR}/${PN}-0.12.6-custom-cpu-features.patch"
 	"${FILESDIR}/${PN}-0.13.0-hardcoded-paths.patch"
 	"${FILESDIR}/${PN}-0.13.0-cuda-not-fatal.patch"
