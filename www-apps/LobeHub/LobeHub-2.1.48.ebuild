@@ -242,7 +242,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management minio -online-search
 +openrc +pwa +postgres +rag redis +s3 searxng systemd +tools
-ebuild_revision_102
+ebuild_revision_104
 "
 REQUIRED_USE="
 	embeddings? (
@@ -1135,8 +1135,8 @@ _install_pwa_webapp() {
 	insinto "${_PREFIX}/.next/static"
 	doins -r "${S}/.next/static/"*
 
-	insinto "${_PREFIX}/public/spa"
-	doins -r "${S}/public/spa/"*
+	insinto "${_PREFIX}/public/_spa"
+	doins -r "${S}/public/_spa/"*
 
 	if use postgres ; then
 		insinto "${_PREFIX}/packages/database/migrations"
@@ -1173,7 +1173,7 @@ _install_pwa_webapp() {
 }
 
 _install_electron() {
-	local _PREFIX="/opt/${MY_PN2}"
+	local _PREFIX="/opt/lobehub-electron"
 	pushd "apps/desktop/release/linux-unpacked" >/dev/null 2>&1 || die
 		insinto "${_PREFIX}"
 		doins -r *
@@ -1193,10 +1193,10 @@ _install_electron() {
 		for x in "${EXE_LIST[@]}" ; do
 			fperms 0755 "${_PREFIX}/${x}"
 		done
-		cat "${FILESDIR}/lobehub-electron-wrapper" > "${T}/lobehub" || die
-		sed -i -e "s|@NODE_SLOT@|${NODE_SLOT}|g" "${T}/lobehub" || die
+		cat "${FILESDIR}/${MY_PN2}-electron" > "${T}/${MY_PN2}-electron" || die
+		sed -i -e "s|@NODE_SLOT@|${NODE_SLOT}|g" "${T}/${MY_PN2}-electron" || die
 		exeinto "/usr/bin"
-		doexe "${T}/lobehub"
+		doexe "${T}/${MY_PN2}-electron"
 
 	# Copy all the licenses, copyright notices, NOTICEs files, readmes in
 	# node_modules and elsewhere.
@@ -1204,8 +1204,8 @@ _install_electron() {
 	popd >/dev/null 2>&1 || die
 
 	make_desktop_entry \
-		"${MY_PN2}" \
-		"${PN}" \
+		"${MY_PN2}-electron" \
+		"${PN} (Electron)" \
 		"${PN}.png" \
 		"Education;ArtificialIntelligence"
 }
@@ -1328,9 +1328,9 @@ ewarn "You may need to emerge again if missing /opt/lobehub/startServer.js"
 
 	exeinto "/usr/bin"
 	cat \
-		"${FILESDIR}/${MY_PN2}" \
-		> \
-		"${T}/${MY_PN2}" \
+		"${FILESDIR}/${MY_PN2}-pwa" \
+			> \
+		"${T}/${MY_PN2}-pwa" \
 		|| die
 
 	# Install /usr/bin/lobehub wrapper
@@ -1338,13 +1338,13 @@ ewarn "You may need to emerge again if missing /opt/lobehub/startServer.js"
 einfo "LOBEHUB_URI:  ${lobehub_uri}"
 	sed -i \
 		-e "s|@LOBEHUB_URI@|${lobehub_uri}|g" \
-		"${T}/${MY_PN2}" \
+		"${T}/${MY_PN2}-pwa" \
 		|| die
-	doexe "${T}/${MY_PN2}"
+	doexe "${T}/${MY_PN2}-pwa"
 
 	make_desktop_entry \
-		"${MY_PN2}" \
-		"${PN}" \
+		"${MY_PN2}-pwa" \
+		"${PN} (PWA)" \
 		"${PN}.png" \
 		"Education;ArtificialIntelligence"
 
@@ -1371,7 +1371,7 @@ _install_cli() {
 	sed -i -e "s|@NODE_SLOT@|${NODE_SLOT}|g" "${T}/lh"
 	doexe "${T}/lh"
 	dosym "/usr/bin/lh" "/usr/bin/lobe"
-	dosym "/usr/bin/lh" "/usr/bin/lobehub-cli"
+	dosym "/usr/bin/lh" "/usr/bin/lobehub"
 	fperms "/opt/lobehub-cli/dist/index.js"
 }
 
@@ -1446,6 +1446,40 @@ ewarn "You must manually update S3_SECRET_ACCESS_KEY in /etc/conf.d/lobehub with
 	fi
 	if use tools ; then
 einfo "To install skills:  lh skill i <marketplace-identifier>"
+	fi
+
+	if use pwa ; then
+einfo "To use the Progressive Web App (PWA) from the command line, use ${MY_PN2}-pwa."
+	fi
+	if use electron ; then
+einfo "To use the Electron app from command line, use ${MY_PN2}-electron."
+	fi
+	if use tools ; then
+einfo "To use the @lobehub/cli from command line, use lh."
+einfo
+einfo "@lobehub/cli is now installed.  Details about the wrapper:"
+einfo
+einfo "Server configuration details:"
+einfo
+einfo "  Default server: http://localhost:3210"
+einfo "  Override with:  LOBEHUB_SERVER=http://your-server:3210 lh ..."
+einfo "  Or use flag:    lh login --server http://192.168.1.100:3210"
+einfo
+einfo "Note about lh's login command:"
+einfo
+einfo "  'lh login' uses Device Authorization (OIDC)."
+einfo
+einfo "  If you see 'OIDC is not enabled', enable OIDC on your ${PN} server /etc/conf.d/${MY_PN2}"
+einfo "  by setting ENABLE_OIDC=1 and generating JWKS_KEY='<generated-key>' in your server config."
+einfo
+einfo "  The key generator for JWKS_KEY can be found at"
+einfo
+einfo "    https://lobehub.com/docs/self-hosting/advanced/desktop"
+einfo "    https://lobehub.com/docs/self-hosting/environment-variables/auth"
+einfo
+einfo "Run 'lh --help' for more commands."
+einfo "Run 'lh skill i <marketplace-identifier>' to install skills."
+einfo
 	fi
 }
 
