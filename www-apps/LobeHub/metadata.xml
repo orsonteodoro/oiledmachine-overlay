@@ -143,11 +143,12 @@ host    all             all             ::1/128                 md5
     <flag name="minio">
       Use MinIO as S3 compatible locally hosted storage.
     </flag>
-    <flag name="pwa">
-      Build both the PWA (Progressive Web App) to in a web browser and the server.
-    </flag>
     <flag name="postgres">
       Store information server-side in PostgresDB.
+    </flag>
+    <flag name="pwa">
+      Build both the PWA (Progressive Web App) for use in a web browser and the
+      self-hosting server.
     </flag>
     <flag name="online-search">
       Add basic online support by default.
