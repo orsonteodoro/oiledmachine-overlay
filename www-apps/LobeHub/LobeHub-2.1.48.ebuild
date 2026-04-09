@@ -1508,9 +1508,7 @@ einfo "  If you see 'OIDC is not enabled', enable OIDC on your ${PN} server /etc
 einfo "  by setting ENABLE_OIDC=1 and generating JWKS_KEY='<generated-key>' in your server config."
 einfo
 einfo "  The key generator for JWKS_KEY can be found at"
-einfo
-einfo "    https://lobehub.com/docs/self-hosting/advanced/desktop"
-einfo "    https://lobehub.com/docs/self-hosting/environment-variables/auth"
+einfo "  https://lobehub.com/docs/self-hosting/environment-variables/auth"
 einfo
 einfo "Run 'lh --help' for more commands."
 einfo "Run 'lh skill i <marketplace-identifier>' to install skills."
