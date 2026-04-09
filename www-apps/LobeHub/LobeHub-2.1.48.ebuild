@@ -1547,6 +1547,7 @@ pkg_postrm() {
 # OILEDMACHINE-OVERLAY-TEST:  FAIL 2.1.47 (20260403) with sharp 0.34.3.    A node package version bump in lockfile is causing issues.
 # OILEDMACHINE-OVERLAY-TEST:  PASS 2.1.46 (20260403) with sharp 0.34.3.    Reverted and downgrade back to old known working lockfile.
 # OILEDMACHINE-OVERLAY-TEST:  PASS 2.1.48 (20260408) with sharp 0.34.3.    Tested with only USE=electron
+# OILEDMACHINE-OVERLAY-TEST:  PASS 2.1.48 (20260409) with sharp 0.34.3.    Tested with only USE=pwa
 
 # E-mail login:  untested
 # Electron:  passed
@@ -1555,6 +1556,9 @@ pkg_postrm() {
 # PostgreSQL 17 (locally hosted server) database support:  passed
 # PWA (browser load test):  passed
 # Sharp:  passed
+# SearXNG search:  fail
 # Stability:  passed
 # Text file RAG:  passed
 # To test Sharp:  Settings > Appearance > Theme has 3 pictures
+
+# To verify SearXNG is working with LobeHub, the SearXNG logs must show the query.
