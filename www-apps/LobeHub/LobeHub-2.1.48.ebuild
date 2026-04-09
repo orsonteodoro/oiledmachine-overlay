@@ -309,6 +309,7 @@ RDEPEND+="
 		dev-db/redis
 	)
 	tools? (
+		app-admin/sudo
 		www-misc/lobehub-market-cli
 	)
 "
