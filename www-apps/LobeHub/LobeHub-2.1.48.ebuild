@@ -240,17 +240,21 @@ RESTRICT="binchecks mirror strip test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
-ceph -electron +embeddings +file-management indexeddb minio -online-search
+ceph -electron +embeddings +file-management minio -online-search
 +openrc +pwa +postgres +rag redis +s3 searxng systemd +tools
-ebuild_revision_99
+ebuild_revision_102
 "
-#	pwa
 REQUIRED_USE="
-	postgres
 	embeddings? (
 		postgres
 	)
 	file-management? (
+		postgres
+	)
+	postgres? (
+		pwa
+	)
+	pwa? (
 		postgres
 	)
 	rag? (
@@ -264,11 +268,7 @@ REQUIRED_USE="
 	searxng? (
 		online-search
 	)
-	^^ (
-		indexeddb
-		postgres
-	)
-	^^ (
+	|| (
 		electron
 		pwa
 	)
@@ -287,7 +287,6 @@ RDEPEND+="
 	>=sys-devel/gcc-12.2.0
 	net-libs/nodejs:${NODE_SLOT}[corepack,npm]
 	net-libs/nodejs:=
-	x11-misc/xdg-utils
 	embeddings? (
 		dev-db/pgvector[postgres_targets_postgres${POSTGRESQL_SLOT}]
 	)
@@ -299,6 +298,9 @@ RDEPEND+="
 		dev-db/postgresql:${POSTGRESQL_SLOT}[server]
 		dev-db/postgresql:=
 		dev-db/pg_search[postgres_targets_postgres${POSTGRESQL_SLOT}]
+	)
+	pwa? (
+		x11-misc/xdg-utils
 	)
 	rag? (
 		dev-db/pgvector[postgres_targets_postgres${POSTGRESQL_SLOT}]
@@ -483,6 +485,22 @@ eerror "Rust ${RUST_PV} required for @swc/core"
 	if use electron ; then
 		electron-app_pkg_setup
 	fi
+
+	if use pwa && use electron ; then
+einfo "Electron:  Yes"
+einfo "Self-hosted:  Yes"
+einfo "LobeHub Cloud:  Yes"
+	elif ! use pwa && use electron ; then
+einfo "Electron:  Yes"
+einfo "Self-hosted:  No"
+einfo "LobeHub Cloud:  Yes"
+	elif use pwa && ! use electron ; then
+einfo "Electron:  No"
+einfo "Self-hosted:  Yes"
+einfo "LobeHub Cloud:  No"
+	fi
+einfo "Self-hosted (aka USE=pwa) offers privacy, total customization"
+einfo "LobeHub Cloud (aka USE=electron) lowers privacy, but has everything setup up"
 }
 
 pnpm_unpack_post() {
@@ -521,11 +539,13 @@ pnpm_unpack_post() {
 
 # The prebuilt vips could be causing the segfault.  The sharp package need to
 # reference the system's vips package not the prebuilt one.
-	eapply "${FILESDIR}/${MY_PN2}-2.1.34-hardcoded-paths.patch"
 	eapply "${FILESDIR}/lobe-chat-1.65.0-sharp-declaration.patch"
 #	eapply "${FILESDIR}/${PN}-2.1.33-use-e965-xlsx.patch"
-	eapply "${FILESDIR}/${PN}-2.1.44-postgresjs-driver-support.patch"
-	eapply "${FILESDIR}/${PN}-2.1.44-docker-cjs-multidriver-support.patch"
+	if use pwa ; then
+		eapply "${FILESDIR}/${MY_PN2}-2.1.34-hardcoded-paths.patch"
+		eapply "${FILESDIR}/${PN}-2.1.44-postgresjs-driver-support.patch"
+		eapply "${FILESDIR}/${PN}-2.1.44-docker-cjs-multidriver-support.patch"
+	fi
 
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 	# Fixes to unmet peer or missing references
@@ -567,34 +587,34 @@ pnpm_unpack_post() {
 pnpm_install_post() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		pushd "apps/desktop" >/dev/null 2>&1 || die
-einfo "Generating lockfile for @lobehub/cli"
+einfo "Generating lockfile for lobehub-desktop-dev"
 			sed -i -e "/lockfile=false/d" ".npmrc" || die
 			epnpm install "${PNPM_INSTALL_ARGS[@]}"
 			epnpm install --lockfile-only
 		popd >/dev/null 2>&1 || die
 		pushd "apps/device-gateway" >/dev/null 2>&1 || die
-einfo "Generating lockfile for lobehub-desktop-dev"
+einfo "Generating lockfile @lobechat/device-gateway"
 			epnpm install "${PNPM_INSTALL_ARGS[@]}"
 			epnpm install --lockfile-only
 		popd >/dev/null 2>&1 || die
 		pushd "apps/cli" >/dev/null 2>&1 || die
-einfo "Generating lockfile @lobechat/device-gateway"
+einfo "Generating lockfile for @lobehub/cli"
 			sed -i -e "/lockfile=false/d" ".npmrc" || die
 			epnpm install "${PNPM_INSTALL_ARGS[@]}"
 			epnpm install --lockfile-only
 		popd >/dev/null 2>&1 || die
 	else
 		pushd "apps/desktop" >/dev/null 2>&1 || die
-einfo "Unpacking @lobehub/cli"
+einfo "Unpacking lobehub-desktop-dev"
 			sed -i -e "/lockfile=false/d" ".npmrc" || die
 			epnpm install "${PNPM_INSTALL_ARGS[@]}"
 		popd >/dev/null 2>&1 || die
 		pushd "apps/device-gateway" >/dev/null 2>&1 || die
-einfo "Unpacking lobehub-desktop-dev"
+einfo "Unpacking @lobechat/device-gateway"
 			epnpm install "${PNPM_INSTALL_ARGS[@]}"
 		popd >/dev/null 2>&1 || die
 		pushd "apps/cli" >/dev/null 2>&1 || die
-einfo "Unpacking @lobechat/device-gateway"
+einfo "Unpacking @lobehub/cli"
 			sed -i -e "/lockfile=false/d" ".npmrc" || die
 			epnpm install "${PNPM_INSTALL_ARGS[@]}"
 		popd >/dev/null 2>&1 || die
@@ -1074,7 +1094,9 @@ eerror "Build failure.  Missing ${S}/.next/standalone/server.js"
 
 		# Change hardcoded paths
 		sed -i -e "s|${S}|/opt/${MY_PN2}|g" $(grep -l -r -e "${S}" "${S}/.next") || die
-	else
+	fi
+
+	if use electron ; then
 		edo npm run "desktop:build:all"
 
 		export ELECTRON_SKIP_BINARY_DOWNLOAD=1
@@ -1180,6 +1202,12 @@ _install_electron() {
 	# node_modules and elsewhere.
 		lcnr_install_files
 	popd >/dev/null 2>&1 || die
+
+	make_desktop_entry \
+		"${MY_PN2}" \
+		"${PN}" \
+		"${PN}.png" \
+		"Education;ArtificialIntelligence"
 }
 
 has_s3_support() {
@@ -1305,6 +1333,7 @@ ewarn "You may need to emerge again if missing /opt/lobehub/startServer.js"
 		"${T}/${MY_PN2}" \
 		|| die
 
+	# Install /usr/bin/lobehub wrapper
 	local lobehub_uri=${LOBEHUB_URI:-"http://${lobehub_hostname}:${lobehub_port}"}
 einfo "LOBEHUB_URI:  ${lobehub_uri}"
 	sed -i \
@@ -1343,17 +1372,7 @@ _install_cli() {
 	doexe "${T}/lh"
 	dosym "/usr/bin/lh" "/usr/bin/lobe"
 	dosym "/usr/bin/lh" "/usr/bin/lobehub-cli"
-}
-
-_install_device_gateway() {
-	# Include hidden files/dirs with *
-	shopt -s dotglob
-
-	insinto "/opt/lobehub-device-gateway"
-	doins -r "apps/device-gateway/"*
-
-	# Exclude hidden files/dirs with *
-	shopt -u dotglob
+	fperms "/opt/lobehub-cli/dist/index.js"
 }
 
 src_install() {
@@ -1381,9 +1400,12 @@ einfo "LOBEHUB_PORT:  ${lobehub_port} (user-definable, per-package environment v
 
 	if use pwa ; then
 		_install_pwa
-	else
+	fi
+
+	if use electron ; then
 		_install_electron
 	fi
+
 	if use tools ; then
 		_install_cli
 	fi
@@ -1397,6 +1419,7 @@ pkg_preinst() {
 
 pkg_postinst() {
 	xdg_pkg_postinst
+	if use pwa ; then
 einfo
 einfo "The documentation for /etc/conf.d/lobehub can be found at"
 einfo
@@ -1417,6 +1440,7 @@ ewarn
 ewarn "The use of localhost or 127.0.0.1 identifiers are mutually exclusive for OAuth."
 ewarn "Use the same identifier throughout the /etc/conf.d/lobehub and the remote OAuth settings."
 ewarn
+	fi
 	if use minio ; then
 ewarn "You must manually update S3_SECRET_ACCESS_KEY in /etc/conf.d/lobehub with the new login details."
 	fi
@@ -1447,8 +1471,7 @@ pkg_postrm() {
 # OILEDMACHINE-OVERLAY-TEST:  PASS 2.1.46 (20260403) with sharp 0.34.3.    Reverted and downgrade back to old known working lockfile.
 
 # E-mail login:  untested
-# Electron:  untested
-# IndexedDB (browser only) database support:  untested
+# Electron:  passed
 # GitHub OAuth:  passed
 # Ollama test "what is the speed of light?" with smollm:  passed
 # PostgreSQL 17 (locally hosted server) database support:  passed

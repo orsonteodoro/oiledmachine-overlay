@@ -129,7 +129,10 @@ host    all             all             ::1/128                 md5
       Use Ceph as a S3 compatible locally hosted storage.
     </flag>
     <flag name="electron">
-      Build the self-contained standalone app.
+      Build the client frontend to interact with the self-hosted server
+      or the official LobeHub service.
+
+      Note:  For complete self-hosting enable also the pwa USE flag.
     </flag>
     <flag name="embeddings">
       Add dependencies to support embeddings.
@@ -137,14 +140,11 @@ host    all             all             ::1/128                 md5
     <flag name="file-management">
       Add support for file management.
     </flag>
-    <flag name="indexeddb">
-      Store database information locally in the browser only with IndexedDB.
-    </flag>
     <flag name="minio">
       Use MinIO as S3 compatible locally hosted storage.
     </flag>
     <flag name="pwa">
-      Build the PWA (Progressive Web App) to use in a web browser.
+      Build both the PWA (Progressive Web App) to in a web browser and the server.
     </flag>
     <flag name="postgres">
       Store information server-side in PostgresDB.
