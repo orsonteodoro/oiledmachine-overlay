@@ -1469,6 +1469,7 @@ pkg_postrm() {
 # OILEDMACHINE-OVERLAY-TEST:  PASS 2.1.46 (20260326) with sharp 0.34.3.
 # OILEDMACHINE-OVERLAY-TEST:  FAIL 2.1.47 (20260403) with sharp 0.34.3.    A node package version bump in lockfile is causing issues.
 # OILEDMACHINE-OVERLAY-TEST:  PASS 2.1.46 (20260403) with sharp 0.34.3.    Reverted and downgrade back to old known working lockfile.
+# OILEDMACHINE-OVERLAY-TEST:  PASS 2.1.48 (20260408) with sharp 0.34.3.    Tested with only USE=electron
 
 # E-mail login:  untested
 # Electron:  passed
