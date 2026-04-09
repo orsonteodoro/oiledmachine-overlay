@@ -528,12 +528,11 @@ einfo "LobeHub Cloud:  No"
 einfo "Self-hosted (aka USE=pwa) offers privacy, total customization"
 einfo "LobeHub Cloud (aka USE=electron) lowers privacy, but has everything setup up"
 
-	export LOBEHUB_HOSTNAME=${LOBEHUB_HOSTNAME:-"localhost"}
-	export LOBEHUB_PORT=${LOBEHUB_PORT:-3210}
-
 	if use pwa ; then
-einfo "LOBEHUB_HOSTNAME:  ${lobehub_hostname} (user-definable, per-package environment variable)"
-einfo "LOBEHUB_PORT:  ${lobehub_port} (user-definable, per-package environment variable)"
+		export LOBEHUB_HOSTNAME=${LOBEHUB_HOSTNAME:-"localhost"}
+		export LOBEHUB_PORT=${LOBEHUB_PORT:-3210}
+einfo "LOBEHUB_HOSTNAME:  ${LOBEHUB_HOSTNAME} (user-definable, per-package environment variable)"
+einfo "LOBEHUB_PORT:  ${LOBEHUB_PORT} (user-definable, per-package environment variable)"
 	fi
 }
 
@@ -1485,7 +1484,8 @@ einfo "To install skills:  lh skill i <marketplace-identifier>"
 	fi
 
 	if use pwa ; then
-einfo "To use the Progressive Web App (PWA) from the command line, use ${MY_PN2}-pwa."
+einfo "To use the Progressive Web App (PWA) from the command line, use"
+einfo "${MY_PN2}-pwa or bookmark http://${LOBEHUB_HOSTNAME}:${LOBEHUB_PORT}"
 	fi
 	if use electron ; then
 einfo "To use the Electron app from command line, use ${MY_PN2}-electron."
@@ -1517,6 +1517,15 @@ einfo
 einfo "Run 'lh --help' for more commands."
 einfo "Run 'lh skill i <marketplace-identifier>' to install skills."
 einfo
+	fi
+	if use pwa ; then
+einfo "LOBEHUB_HOSTNAME:  ${LOBEHUB_HOSTNAME} (user-definable, per-package environment variable)"
+einfo "LOBEHUB_PORT:  ${LOBEHUB_PORT} (user-definable, per-package environment variable)"
+ewarn
+ewarn "The LOBEHUB_HOSTNAME needs to be the same on the remote OAuth settings"
+ewarn "and in /etc/conf.d/lobehub and your per-package package.env files."
+ewarn
+ewarn "Do not mix 127.0.0.1 and localhost identifiers because it breaks OAuth."
 	fi
 }
 
