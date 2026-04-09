@@ -342,6 +342,32 @@ PDEPEND+="
 "
 DOCS=( "CHANGELOG.md" "README.md" )
 
+get_agent_gateway_url() {
+	if use pwa ; then
+# FIXME
+		echo "http://${LOBEHUB_HOSTNAME}:${LOBEHUB_PORT}"
+	else
+		echo "https://agent-gateway.lobehub.com"
+	fi
+}
+
+get_device_gateway_url() {
+	if use pwa ; then
+# FIXME
+		echo "http://${LOBEHUB_HOSTNAME}:${LOBEHUB_PORT}/gateway"
+	else
+		echo "https://device-gateway.lobehub.com"
+	fi
+}
+
+get_lobehub_server() {
+	if use pwa ; then
+		echo "http://${LOBEHUB_HOSTNAME}:${LOBEHUB_PORT}"
+	else
+		echo "https://app.lobehub.com"
+	fi
+}
+
 setup_cn_mirror_env() {
 	if [[ "${USE_CN_MIRROR:-false}" == "true" ]] ; then
 		export SENTRYCLI_CDNURL="https://npmmirror.com/mirrors/sentry-cli"
@@ -501,6 +527,14 @@ einfo "LobeHub Cloud:  No"
 	fi
 einfo "Self-hosted (aka USE=pwa) offers privacy, total customization"
 einfo "LobeHub Cloud (aka USE=electron) lowers privacy, but has everything setup up"
+
+	export LOBEHUB_HOSTNAME=${LOBEHUB_HOSTNAME:-"localhost"}
+	export LOBEHUB_PORT=${LOBEHUB_PORT:-3210}
+
+	if use pwa ; then
+einfo "LOBEHUB_HOSTNAME:  ${lobehub_hostname} (user-definable, per-package environment variable)"
+einfo "LOBEHUB_PORT:  ${lobehub_port} (user-definable, per-package environment variable)"
+	fi
 }
 
 pnpm_unpack_post() {
@@ -955,7 +989,7 @@ eerror "The value of DATABASE_URL must must have a strong password and"
 eerror "match the port for dev-db/postgres:17"
 eerror
 eerror "Contents of /etc/portage/env/lobehub.conf:"
-eerror "export DATABASE_URL=\"postgres://<lobehub_user>:<lobehub_password>@localhost:5432/lobehub\""
+eerror "export DATABASE_URL=\"postgres://<lobehub_user>:<lobehub_password>@${LOBEHUB_HOSTNAME}:5432/lobehub\""
 eerror "export KEY_VAULTS_SECRET=\"<key>\""
 eerror
 eerror "Contents of /etc/portage/package.env:"
@@ -1261,9 +1295,9 @@ gen_pwa_config() {
 		-e "s|@CRAWLER_IMPLS@|${crawler_impls}|g" \
 		-e "s|@DATABASE_TYPE@|${database_type}|g" \
 		-e "s|@ENABLE_S3_SUPPORT@|${enable_s3_support}|g" \
-		-e "s|@HOSTNAME@|${lobehub_hostname}|g" \
+		-e "s|@HOSTNAME@|${LOBEHUB_HOSTNAME}|g" \
 		-e "s|@NODE_SLOT@|${NODE_SLOT}|g" \
-		-e "s|@PORT@|${lobehub_port}|g" \
+		-e "s|@PORT@|${LOBEHUB_PORT}|g" \
 		-e "s|@REDIS_URL@|${redisurl}|g" \
 		-e "s|@UI_MODE@|${ui_mode}|g" \
 		-e "s|@S3_PROVIDER@|${s3_provider}|g" \
@@ -1334,10 +1368,9 @@ ewarn "You may need to emerge again if missing /opt/lobehub/startServer.js"
 		|| die
 
 	# Install /usr/bin/lobehub wrapper
-	local lobehub_uri=${LOBEHUB_URI:-"http://${lobehub_hostname}:${lobehub_port}"}
-einfo "LOBEHUB_URI:  ${lobehub_uri}"
+	local lobehub_server=$(get_lobehub_server)
 	sed -i \
-		-e "s|@LOBEHUB_URI@|${lobehub_uri}|g" \
+		-e "s|@LOBEHUB_SERVER@|${lobehub_server}|g" \
 		"${T}/${MY_PN2}-pwa" \
 		|| die
 	doexe "${T}/${MY_PN2}-pwa"
@@ -1366,13 +1399,22 @@ _install_cli() {
 	# Exclude hidden files/dirs with *
 	shopt -u dotglob
 
+	local agent_gateway_url=$(get_agent_gateway_url)
+	local device_gateway_url=$(get_device_gateway_url)
+	local lobehub_server=$(get_lobehub_server)
 	exeinto "/usr/bin"
 	cat "${FILESDIR}/lh" > "${T}/lh"
-	sed -i -e "s|@NODE_SLOT@|${NODE_SLOT}|g" "${T}/lh"
+	sed -i \
+		-e "s|@NODE_SLOT@|${NODE_SLOT}|g" \
+		-e "s|@AGENT_GATEWAY_URL@|${agent_gateway_url}|g" \
+		-e "s|@DEVICE_GATEWAY_URL@|${device_gateway_url}|g" \
+		-e "s|@LOBEHUB_SERVER@|${lobehub_server}|g" \
+		"${T}/lh" \
+		|| die
 	doexe "${T}/lh"
 	dosym "/usr/bin/lh" "/usr/bin/lobe"
 	dosym "/usr/bin/lh" "/usr/bin/lobehub"
-	fperms "/opt/lobehub-cli/dist/index.js"
+	fperms 0755 "/opt/lobehub-cli/dist/index.js"
 }
 
 src_install() {
@@ -1391,12 +1433,6 @@ src_install() {
 
 	# Exclude hidden files/dir for *
 	shopt -u dotglob
-
-	local lobehub_hostname=${LOBEHUB_HOSTNAME:-"localhost"}
-	local lobehub_port=${LOBEHUB_PORT:-3210}
-
-einfo "LOBEHUB_HOSTNAME:  ${lobehub_hostname} (user-definable, per-package environment variable)"
-einfo "LOBEHUB_PORT:  ${lobehub_port} (user-definable, per-package environment variable)"
 
 	if use pwa ; then
 		_install_pwa
@@ -1455,13 +1491,14 @@ einfo "To use the Progressive Web App (PWA) from the command line, use ${MY_PN2}
 einfo "To use the Electron app from command line, use ${MY_PN2}-electron."
 	fi
 	if use tools ; then
+		local lobehub_server=$(get_lobehub_server)
 einfo "To use the @lobehub/cli from command line, use lh."
 einfo
 einfo "@lobehub/cli is now installed.  Details about the wrapper:"
 einfo
 einfo "Server configuration details:"
 einfo
-einfo "  Default server: http://localhost:3210"
+einfo "  Default server: ${lobehub_server}"
 einfo "  Override with:  LOBEHUB_SERVER=http://your-server:3210 lh ..."
 einfo "  Or use flag:    lh login --server http://192.168.1.100:3210"
 einfo
