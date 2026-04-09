@@ -242,7 +242,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management minio -online-search
 +openrc +pwa +postgres +rag redis +s3 searxng systemd +tools
-ebuild_revision_104
+ebuild_revision_105
 "
 REQUIRED_USE="
 	embeddings? (
