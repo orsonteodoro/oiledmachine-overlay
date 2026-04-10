@@ -1,3 +1,16 @@
 #!/bin/sh
-cd "/opt/openclaw" || exit 1
+# Gentoo-friendly wrapper for OpenClaw
+# Automatically uses pre-built image to avoid Bun build issues
+
+export OPENCLAW_IMAGE="${OPENCLAW_IMAGE:-ghcr.io/openclaw/openclaw:@OPENCLAW_TAG@}"
+
+# Optional: You can still override with a different tag/image
+# Example: OPENCLAW_IMAGE=ghcr.io/openclaw/openclaw:main openclaw
+
+cd "/opt/openclaw" || {
+    echo "Error: /opt/openclaw directory not found" >&2
+    exit 1
+}
+
+echo "==> Using OpenClaw image: $OPENCLAW_IMAGE"
 exec "./docker-setup.sh" "$@"

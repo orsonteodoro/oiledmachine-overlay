@@ -16,11 +16,13 @@ DESCRIPTION="OpenClaw - Personal AI assistant gateway (Docker Compose + OpenRC)"
 HOMEPAGE="https://github.com/openclaw/openclaw"
 LICENSE="MIT"
 SLOT="0"
+IUSE+=" ebuild_revision_2"
 RDEPEND="
 	acct-group/openclaw
 	acct-user/openclaw
 	app-containers/docker
 	app-containers/docker-compose
+	app-containers/docker-init
 "
 DEPEND="
 	${RDEPEND}
@@ -51,6 +53,13 @@ src_prepare() {
 		"docker-compose.yml" \
 		|| die "sed placeholder replacement failed"
 	sed -i -e "" "scripts/docker/setup.sh" || die
+
+	# Force pre-built image in docker-compose.yml (skip local build)
+	# Avoid using non-portable bun during local Docker build.
+	sed -i \
+		-e 's|image:.*openclaw:local|image: ghcr.io/openclaw/openclaw:@OPENCLAW_TAG@|g' \
+		-e 's|build: \.|# build: .  # disabled - using pre-built image|g' \
+		"docker-compose.yml" || true
 }
 
 src_configure() {
@@ -73,7 +82,11 @@ src_install() {
 	fperms +x "/opt/openclaw/scripts/docker/setup.sh"
 
 	exeinto "/usr/bin"
-	doexe "${FILESDIR}/openclaw"
+	cat "${FILESDIR}/openclaw" > "${T}/openclaw"
+	local openclaw_tag="latest"
+	use fallback-commit && openclaw_tag="${FALLBACK_TAG}"
+	sed -i -e "s|@OPENCLAW_TAG@|${openclaw_tag}|g" "${T}/openclaw" || die
+	doexe "${T}/openclaw"
 
 	# Install OpenRC init script
 	newinitd "${FILESDIR}/openclaw.initd" "openclaw"
@@ -89,10 +102,22 @@ src_install() {
 }
 
 pkg_postinst() {
+	local openclaw_tag="latest"
+	use fallback-commit && openclaw_tag="${FALLBACK_TAG}"
 einfo "OpenClaw has been installed."
 einfo
-einfo "Quick commands:"
-einfo "   openclaw                           # run the official setup script"
+einfo "First run the official setup script (/usr/bin/openclaw)."
+einfo "Do this before running init scripts."
+einfo
+einfo "By default /usr/bin/openclaw uses the official pre-built Docker image:"
+einfo
+einfo "   ghcr.io/openclaw/openclaw:${openclaw_tag}"
+einfo
+einfo "This skips the local build (which requires Bun)."
+einfo
+einfo "To override image/tag, replace <tag>:"
+einfo
+einfo "   OPENCLAW_IMAGE=ghcr.io/openclaw/openclaw:<tag> openclaw"
 einfo
 einfo "OpenRC users start and autorun on boot the service with:"
 einfo
