@@ -907,62 +907,500 @@ zstdcat zstdgrep zstdless zstdmt zulip
 FIREJAIL_PROFILES_IUSE="${FIREJAIL_PROFILES[@]/#/firejail_profiles_}"
 
 GUI_REQUIRED_USE="
-firejail_profiles_0ad? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_1password? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_2048-qt? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_Books? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_godot? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_artha? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_handbrake-gtk? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_Builder? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_Documents? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_Fritzing? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_Logs? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_Maps? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_PCSX2? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_QMediathekView? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_Screenshot? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_Viber? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_abiword? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_abrowser? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_akregator? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_alacarte? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_alienarena? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_jami? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_lollypop? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_google-chrome? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_libreoffice? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_firefox-wayland? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gajim? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_alienarena-wrapper? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_freeciv-gtk3? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_fluffychat? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-ring? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_klatexformula? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gwenview? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_autokey-qt? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_icecat? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_krunner? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_firefox? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_fragments? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_freeciv-mp-gtk3? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_Books? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_dooble? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_foliate? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-calendar? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gl-117? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_clawsker? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-keyring-3? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_autokey-gtk? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_firefox-developer-edition? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_alacarte? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_baloo_file? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-hexgl? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gfeeds? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnubik? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-weather? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_kopete? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_io_github_lainsce_Notejot? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-documents? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-screenshot? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_cliqz? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_fractal? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_ffmpeg? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_celluloid? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_digikam? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_git-cola? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_green-recoder? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_jami-gnome? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_kmplayer? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_code? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_guvcview? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_kube? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_cachy-browser? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_chromium-browser-privacy? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_frozen-bubble? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-clocks? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_bnox? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_firefox-nightly? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-sudoku? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-mines? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_google-chrome-beta? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_konversation? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_jerry? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_firefox-esr? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_devhelp? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-boxes? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-passwordsafe? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_iridium? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-nibbles? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_ephemeral? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-mpv? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_com_github_phase1geo_minder? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_kate? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gtk3-youtube-viewer? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_k3b? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gimp? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gtk-straw-viewer? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gpicview? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_cyberfox? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gtk-pipe-viewer? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_kdeinit4? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_lifeograph? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_1password? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_inox? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_floorp? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_apostrophe? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gradio? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-text-editor? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_loupe? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_chromium? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_ark? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-taquin? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_electron-cash? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_assogiate? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_electron-mail? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_basilisk? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_deluge? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_jitsi-meet-desktop? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_alienblaster? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-mplayer? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_lximage-qt? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_com_github_bleakgrey_tootle? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_electrum? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_iagno? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_geki3? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_audacity? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_ballbuster-wrapper? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gedit? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_evince? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_alienarena? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_avidemux? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_ledger-live-desktop? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-todo? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_com_github_dahenson_agenda? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_cawbird? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_ktorrent? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-system-log? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-calculator? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_ddgtk? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_fossamail? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_etr-wrapper? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_claws-mail? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_galculator? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_glaxium? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_beaker? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-builder? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_brave? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-latex? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_caprine? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gitg? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gtk-youtube-viewer? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_hitori? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_kget? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_akregator? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gtk-lbry-viewer? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_bijiben? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_atom? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-characters? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_freeciv? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_abrowser? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_librewolf? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_com_github_tchx84_Flatseal? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_kdiff3? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_ghostwriter? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-schedule? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_freetube? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-logs? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_firefox-beta? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_calligra? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_flashpeak-slimjet? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_kwrite? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_kcalc? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_flameshot? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_chromium-browser? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-recipes? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_anki? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-nettool? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-books? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_linuxqq? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gl-117-wrapper? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_chatterino? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_alpine? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_firefox-x11? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_etr? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_colorful-wrapper? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-tetravex? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_blobby? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_firedragon? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_geki2? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-photos? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_glaxium-wrapper? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_impressive? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-character-map? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_lbreakouthd? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_iceweasel? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_inkscape? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_ani-cli? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_keepassxc? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-twitch? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_0ad? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_lobster? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_2048-qt? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_lyx? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_bitcoin-qt? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_github-desktop? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gucharmap? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_dnox? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-maps? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_atril? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_clamtk? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_kid3-qt? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_file-roller? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_Documents? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-pomodoro? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_kazam? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-mahjongg? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_armcord? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_Fritzing? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gtk2-youtube-viewer? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_lbry-viewer-gtk? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_kwin_x11? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_enox? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-font-viewer? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_balsa? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-robots? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_journal-viewer? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-klotski? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-contacts? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_icedove? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_kid3? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_dooble-qt4? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-2048? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_abiword? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_amarok? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_exfalso? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_eog? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_Logs? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_google-chrome-unstable? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-keyring? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_clocks? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_kdenlive? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_avidemux3_qt5? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_avidemux3_jobs_qt5? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_geary? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_dolphin-emu? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-music? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_kaffeine? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_falkon? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_five-or-more? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_feedreader? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_kfind? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_cantata? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_dconf-editor? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_i2prouter? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_crow? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gcalccmd? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_lettura? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_four-in-a-row? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_homebank? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_cheese? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_authenticator-rs? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_lightsoff? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_audacious? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-pie? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-chess? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnome-sound-recorder? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gnote? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_bitwarden? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_ktouch? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_chromium-freeworld? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_equalx? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser-nl? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser-es-es? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_notable? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_mypaint? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_neomutt? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_pdfchain? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_neverputt-wrapper? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser_pt-BR? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser_cs? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_start-tor-browser_desktop? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_smuxi-frontend-gnome? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_qcomicbook? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_swell-foop? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_openshot-qt? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_virt-manager? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_signal-desktop? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_pipe-viewer-gtk? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_vmware? ( || ( xcsecurity xephyr xpra xvfb ) )
+firejail_profiles_wireshark-gtk? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_srb2? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_open-invaders? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_rtv? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_whalebird? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_onboard? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_nextcloud? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_microsoft-edge-beta? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_mp3splt-gtk? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_org_gnome_seahorse_Application? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_wireshark-qt? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_marker? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_midori? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser_it? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_udiskie? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_qt6ct? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser_ga-IE? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser-ga-ie? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser_pl? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser_fr? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser_el? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_telegram? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_qtox? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_trojita? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser_sv-SE? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser_id? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_vivaldi? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_scorched3d-wrapper? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser-en-us? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_openarena? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_okular? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_skanlite? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser-pt-br? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_yelp? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_photoflare? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_unzip? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser_hu? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_standardnotes-desktop? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_xonotic-sdl? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_transmission-qt? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser_he? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_seamonkey? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser-id? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser-ru? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser-zh-tw? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_supertuxkart-wrapper? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_quodlibet? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser_nb? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser_ru? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_rymdport? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_PCSX2? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_nomacs? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_nuclear? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_psi? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_meteo-qt? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_thunderbird? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser-ca? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_upscayl? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_musictube? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_Screenshot? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_microsoft-edge-dev? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser_en? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_openra? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser-ka? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_sylpheed? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_rssguard? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser_ja? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_slack? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_secret-tool? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_neochat? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser_ka? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_mirage? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_opera-beta? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_pybitmessage? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_torbrowser-launcher? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_youtube-dl-gui? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_openmw? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_QMediathekView? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_minecraft-launcher? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_mattermost-desktop? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_mutt? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_qutebrowser? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_Maps? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser_nl? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_shortwave? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_quadrapassel? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_waterfox? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser_es? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser_vi? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_mov-cli? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tutanota-desktop? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_microsoft-edge? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_transgui? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_xfce4-notes? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_snox? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_org_gnome_NautilusPreviewer? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_rocketchat? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_zeal? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_qt5ct? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_terasology? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_wire-desktop? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_x2goclient? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser_fa? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser-ko? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_mtpaint? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser-is? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser-ar? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_xfce4-screenshooter? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_pavucontrol? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_rhythmbox? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser-he? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tiny-rdm? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser-de? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_simutrans? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_twitch? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_mcomix? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_nheko? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser-da? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_uget-gtk? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_vlc? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_seahorse? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser_ko? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tb-starter-wrapper? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_spectral? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser_en-US? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_onionshare-gui? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_xonotic-sdl-wrapper? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser_is? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_palemoon? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser-cs? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tuxtype? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser-pl? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_supertuxkart? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_min? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_Viber? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser_de? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_skypeforlinux? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser_es-ES? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_session-desktop? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_steam? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_youtube? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_menulibre? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_ocenaudio? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_quaternion? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser-it? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tidal-hifi? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_zoom? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_teams? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_transmission-remote-gtk? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_pragha? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_spectacle? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_shotwell? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_newsflash? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_qbittorrent? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser-vi? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser-es? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_youtube-viewer-gtk? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser_tr? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser-sv-se? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_typespeed? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_transmission-gtk? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_totem? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_mate-calc? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_neverball-wrapper? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser-en? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_youtubemusic-nativefier? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser_ar? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_raincat? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_scribus? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_qt-faststart? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_vmware-view? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_quakespasm? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_obsidian? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser_zh-TW? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_singularity? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser-tr? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_opera? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_warzone2100? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_ppsspp? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_metadata-cleaner? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_rednotebook? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_ytmdesktop? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_rambox? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser-nb? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser-zh-cn? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_postman? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser-el? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_nitroshare? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser_zh-CN? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_otter-browser? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_zim? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_openshot? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_trivalent? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_virtualbox? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_qgis? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_minitube? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_nautilus? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_youtube-music-desktop-app? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_zathura? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_pcsxr? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_xonotic? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_peek? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser-fa? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser_ca? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_pinball-wrapper? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser_da? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser-ja? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_torbrowser? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser-hu? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_opera-developer? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_riot-web? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_teams-for-linux? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_pavucontrol-qt? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_sysprof? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_zen-browser? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_yandex-browser? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_tor-browser-fr? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_amarok? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_amule? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_ani-cli? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_anki? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_apostrophe? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_ark? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_armcord? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_artha? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_assogiate? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_atom? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_atril? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_audacious? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_audacity? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_authenticator-rs? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_autokey-gtk? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_autokey-qt? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_avidemux? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_avidemux3_jobs_qt5? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_avidemux3_qt5? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_ballbuster-wrapper? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_baloo_file? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_balsa? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_basilisk? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_beaker? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_bijiben? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_bitcoin-qt? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_bitwarden? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_blobby? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_bluefish? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_bnox? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_brasero? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_brave? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_brave-browser? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_cachy-browser? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_calligra? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_brasero? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_calligraauthor? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_calligraconverter? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_calligraflow? ( || ( xcsecurity xephyr xpra ) )
@@ -972,495 +1410,66 @@ firejail_profiles_calligraplanwork? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_calligrasheets? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_calligrastage? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_calligrawords? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_cantata? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_caprine? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_cawbird? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_celluloid? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_chatterino? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_cheese? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_chromium? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_chromium-browser? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_chromium-browser-privacy? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_chromium-freeworld? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_cinelerra? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_clamtk? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_claws-mail? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_clawsker? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_clementine? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_cliqz? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_clocks? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_code? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_colorful-wrapper? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_com_github_bleakgrey_tootle? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_com_github_dahenson_agenda? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_com_github_phase1geo_minder? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_com_github_tchx84_Flatseal? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_crow? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_cyberfox? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_dconf? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_dconf-editor? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_ddgtk? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_deluge? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_devhelp? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_digikam? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_dillo? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_dnox? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_dolphin-emu? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_dooble? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_dooble-qt4? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_electron-cash? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_electron-mail? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_electrum? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_enox? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_eog? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_ephemeral? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_ferdi? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_firefox? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_freecad? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_geany? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_geeqie? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_gitter? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_epiphany? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_equalx? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_etr? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_etr-wrapper? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_evince? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_evince-previewer? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_evince-thumbnailer? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_exfalso? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_falkon? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_feedreader? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_ferdi? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_ffmpeg? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_file-roller? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_firedragon? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_firefox? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_firefox-beta? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_firefox-developer-edition? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_firefox-esr? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_firefox-nightly? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_firefox-wayland? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_firefox-x11? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_five-or-more? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_flameshot? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_flashpeak-slimjet? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_floorp? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_fluffychat? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_foliate? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_fossamail? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_four-in-a-row? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_fractal? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_fragments? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_freecad? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_freeciv? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_freeciv-gtk3? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_freeciv-mp-gtk3? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_freetube? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_frozen-bubble? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gajim? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_galculator? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gapplication? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gcalccmd? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_geany? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_geary? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gedit? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_geeqie? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_geki2? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_geki3? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gfeeds? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_ghostwriter? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gimp? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_git-cola? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gitg? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_github-desktop? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gitter? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gl-117? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gl-117-wrapper? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_glaxium? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_glaxium-wrapper? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-2048? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-books? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-boxes? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-builder? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-calculator? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-calendar? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-character-map? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-characters? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-chess? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-clocks? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-contacts? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-documents? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-font-viewer? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-hexgl? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-keyring? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-keyring-3? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-keyring-daemon? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-klotski? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-latex? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-logs? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-mahjongg? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-maps? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-mines? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-mplayer? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-mpv? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-music? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-nettool? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-nibbles? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-passwordsafe? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-photos? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-pie? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-pomodoro? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-recipes? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-ring? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-robots? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-schedule? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-screenshot? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-sound-recorder? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-sudoku? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-system-log? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-taquin? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-tetravex? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-text-editor? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-todo? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-twitch? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-weather? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnote? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnubik? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_godot? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_godot3? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_google-chrome? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_google-chrome-beta? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_google-chrome-unstable? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_eog? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_google-earth? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_google-earth-pro? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gpicview? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gradio? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_gramps? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_green-recoder? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gtk-lbry-viewer? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gtk-pipe-viewer? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gtk-straw-viewer? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gtk-update-icon-cache? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gtk-youtube-viewer? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gtk2-youtube-viewer? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gtk3-youtube-viewer? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gucharmap? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_guvcview? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gwenview? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_handbrake-gtk? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_hexchat? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_hitori? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_homebank? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_hugin? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_i2prouter? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_iagno? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_icecat? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_icedove? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_iceweasel? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_impressive? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_inkscape? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_inox? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_io_github_lainsce_Notejot? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_iridium? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_jami? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_jami-gnome? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_jerry? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_jitsi-meet-desktop? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_journal-viewer? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_k3b? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_kaffeine? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_kate? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_kazam? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_kcalc? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_kdeinit4? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_kdenlive? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_kdiff3? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_keepassxc? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_kfind? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_kget? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_kid3? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_kid3-qt? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_klatexformula? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_kmplayer? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_kodi? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_konversation? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_kopete? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_krunner? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_ktorrent? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_ktouch? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_kube? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_kwin_x11? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_kwrite? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_lbreakouthd? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_lbry-viewer-gtk? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_leafpad? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_ledger-live-desktop? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_lettura? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_libreoffice? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_librewolf? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_lifeograph? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_lightsoff? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_linuxqq? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_lobster? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_lollypop? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_loupe? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_lximage-qt? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_lyx? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_man? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_marker? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_mate-calc? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_mattermost-desktop? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_mcomix? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_menulibre? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_metadata-cleaner? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_meteo-qt? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_microsoft-edge? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_microsoft-edge-beta? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_microsoft-edge-dev? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_midori? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_min? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_minecraft-launcher? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_minitube? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_mirage? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_mousepad? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_mov-cli? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_mp3splt-gtk? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_mtpaint? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_mumble? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_musictube? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_mutt? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_mypaint? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_nautilus? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_neochat? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_neomutt? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_netsurf? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_neverball-wrapper? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_neverputt-wrapper? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_newsflash? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_nextcloud? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_nheko? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_nitroshare? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_nomacs? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_notable? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_nuclear? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_obs? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_obsidian? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_ocenaudio? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_okular? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_onboard? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_onionshare-gui? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_open-invaders? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_openarena? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_openmw? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_openra? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_openshot? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_openshot-qt? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_opera? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_opera-beta? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_opera-developer? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_org_gnome_NautilusPreviewer? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_org_gnome_seahorse_Application? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_otter-browser? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_palemoon? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_pavucontrol? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_pavucontrol-qt? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_pcmanfm? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_pcsxr? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_pdfchain? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_peek? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_photoflare? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_pidgin? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_pinball-wrapper? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_pinta? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_pipe-viewer-gtk? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_pitivi? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_postman? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_ppsspp? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_pragha? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_psi? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_pybitmessage? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_qbittorrent? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_qcomicbook? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_qgis? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_qt-faststart? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_qt5ct? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_qt6ct? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_qtox? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_quadrapassel? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_quakespasm? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_quaternion? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_quodlibet? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_qupzilla? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_qutebrowser? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_raincat? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_rambox? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_rawtherapee? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_rednotebook? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_rhythmbox? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_riot-web? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_ripperx? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_ristretto? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_rocketchat? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_rssguard? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_rtv? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_rymdport? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_scorched3d-wrapper? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_scribus? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_seahorse? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_seamonkey? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_qupzilla? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_seamonkey-bin? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_secret-tool? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_session-desktop? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_shortwave? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_shotcut? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_shotwell? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_signal-desktop? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_simutrans? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_singularity? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_skanlite? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_skypeforlinux? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_slack? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_smuxi-frontend-gnome? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_snox? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_spectacle? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_spectral? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_spotify? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_srb2? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_standardnotes-desktop? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_start-tor-browser_desktop? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_steam? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_supertuxkart? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_supertuxkart-wrapper? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_surf? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_swell-foop? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_sylpheed? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_synfigstudio? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_sysprof? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tb-starter-wrapper? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_teams? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_teams-for-linux? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_teamspeak3? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_telegram? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_telegram-desktop? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_terasology? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_thunar? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_thunderbird? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tidal-hifi? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tiny-rdm? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-ar? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-ca? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-cs? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-da? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-de? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-el? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-en? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-en-us? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-es? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-es-es? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-fa? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-fr? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-ga-ie? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-he? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-hu? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-id? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-is? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-it? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-ja? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-ka? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-ko? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-nb? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-nl? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-pl? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-pt-br? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-ru? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-sv-se? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-tr? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-vi? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-zh-cn? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-zh-tw? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_ar? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_ca? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_cs? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_da? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_de? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_el? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_en? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_en-US? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_es? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_es-ES? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_fa? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_fr? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_ga-IE? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_he? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_hu? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_id? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_is? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_it? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_ja? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_ka? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_ko? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_nb? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_nl? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_pl? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_pt-BR? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_ru? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_sv-SE? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_tr? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_vi? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_zh-CN? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_zh-TW? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_torbrowser? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_torbrowser-launcher? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_totem? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_transgui? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_transmission-gtk? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_transmission-qt? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_transmission-remote-gtk? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_trivalent? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_trojita? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tutanota-desktop? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tuxtype? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_twitch? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_typespeed? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_udiskie? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_uget-gtk? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_unzip? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_upscayl? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_uzbl-browser? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_virt-manager? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_virtualbox? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_vivaldi? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_vlc? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_vmware? ( || ( xcsecurity xephyr xpra xvfb ) )
 firejail_profiles_vmware-player? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_vmware-view? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_vscodium? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_warzone2100? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_x-terminal-emulator? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_xchat? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_xfburn? ( || ( xcsecurity xephyr xpra ) )
+firejail_profiles_xmms? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_waterfox? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_whalebird? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_wire-desktop? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_wireshark? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_wireshark-gtk? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_wireshark-qt? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_x-terminal-emulator? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_x2goclient? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_xchat? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_xfburn? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_xfce4-notes? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_xfce4-screenshooter? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_xmms? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_xonotic? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_xonotic-sdl? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_xonotic-sdl-wrapper? ( || ( xcsecurity xephyr xpra ) )
 firejail_profiles_xpdf? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_yandex-browser? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_yelp? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_youtube? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_youtube-dl-gui? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_youtube-music-desktop-app? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_youtube-viewer-gtk? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_youtubemusic-nativefier? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_ytmdesktop? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_zathura? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_zeal? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_zen-browser? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_zim? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_zoom? ( || ( xcsecurity xephyr xpra ) )
 "
 
 HARDENED_ALLOCATORS_IUSE=(
@@ -1478,96 +1487,95 @@ declare -A _PATH_CORRECTION=(
 	["spotify"]="/opt/spotify/spotify-client/spotify"
 )
 
-# Manually remove man from X11_COMPAT
 X11_COMPAT=(
-0ad 1password 2048-qt Books Builder Documents Fritzing Logs Maps PCSX2
-QMediathekView Screenshot Viber abiword abrowser akregator alacarte alienarena
-alienarena-wrapper alienblaster alpine amarok amule ani-cli anki apostrophe ark
-armcord artha assogiate atom atril audacious audacity authenticator-rs
-autokey-gtk autokey-qt avidemux avidemux3_jobs_qt5 avidemux3_qt5
-ballbuster-wrapper baloo_file balsa basilisk beaker bijiben bitcoin-qt
-bitwarden blobby bluefish bnox brasero brave brave-browser cachy-browser
-calligra calligraauthor calligraconverter calligraflow calligragemini
-calligraplan calligraplanwork calligrasheets calligrastage calligrawords
-cantata caprine cawbird celluloid chatterino cheese chromium chromium-browser
-chromium-browser-privacy chromium-freeworld cinelerra clamtk claws-mail
-clawsker clementine cliqz clocks code colorful-wrapper
-com_github_bleakgrey_tootle com_github_dahenson_agenda
-com_github_phase1geo_minder com_github_tchx84_Flatseal crow cyberfox dconf
-dconf-editor ddgtk deluge devhelp digikam dillo dnox dolphin-emu dooble
-dooble-qt4 electron-cash electron-mail electrum enox eog ephemeral epiphany
-equalx etr etr-wrapper evince evince-previewer evince-thumbnailer exfalso
-falkon feedreader ferdi ffmpeg file-roller firedragon firefox firefox-beta
-firefox-developer-edition firefox-esr firefox-nightly firefox-wayland
-firefox-x11 five-or-more flameshot flashpeak-slimjet floorp fluffychat foliate
-fossamail four-in-a-row fractal fragments freecad freeciv freeciv-gtk3
-freeciv-mp-gtk3 freetube frozen-bubble gajim galculator gapplication gcalccmd
-geany geary gedit geeqie geki2 geki3 gfeeds ghostwriter gimp git-cola gitg
-github-desktop gitter gjs gl-117 gl-117-wrapper glaxium glaxium-wrapper
-gnome-2048 gnome-books gnome-boxes gnome-builder gnome-calculator
-gnome-calendar gnome-character-map gnome-characters gnome-chess gnome-clocks
-gnome-contacts gnome-documents gnome-font-viewer gnome-hexgl gnome-keyring
-gnome-keyring-3 gnome-keyring-daemon gnome-klotski gnome-latex gnome-logs
-gnome-mahjongg gnome-maps gnome-mines gnome-mplayer gnome-mpv gnome-music
-gnome-nettool gnome-nibbles gnome-passwordsafe gnome-photos gnome-pie
-gnome-pomodoro gnome-recipes gnome-ring gnome-robots gnome-schedule
-gnome-screenshot gnome-sound-recorder gnome-sudoku gnome-system-log
-gnome-taquin gnome-tetravex gnome-text-editor gnome-todo gnome-twitch
-gnome-weather gnote gnubik godot godot3 google-chrome google-chrome-beta
-google-chrome-unstable google-earth google-earth-pro gpicview gradio gramps
-green-recoder gtk-lbry-viewer gtk-pipe-viewer gtk-straw-viewer
-gtk-update-icon-cache gtk-youtube-viewer gtk2-youtube-viewer
-gtk3-youtube-viewer gucharmap guvcview gwenview handbrake-gtk hexchat hitori
-homebank hugin i2prouter iagno icecat icedove iceweasel impressive inkscape
-inox io_github_lainsce_Notejot iridium jami jami-gnome jerry jitsi-meet-desktop
-journal-viewer k3b kaffeine kate kazam kcalc kdeinit4 kdenlive kdiff3 keepassxc
-kfind kget kid3 kid3-qt klatexformula kmplayer kodi konversation kopete krunner
-ktorrent ktouch kube kwin_x11 kwrite lbreakouthd lbry-viewer-gtk leafpad
-ledger-live-desktop lettura libreoffice librewolf lifeograph lightsoff linuxqq
-lobster lollypop loupe lximage-qt lyx man marker mate-calc mattermost-desktop
-mcomix menulibre metadata-cleaner meteo-qt microsoft-edge microsoft-edge-beta
-microsoft-edge-dev midori min minecraft-launcher minitube mirage mousepad
-mov-cli mp3splt-gtk mtpaint mumble musictube mutt mypaint nautilus neochat
-neomutt netsurf neverball-wrapper neverputt-wrapper newsflash nextcloud nheko
-nitroshare nomacs notable nuclear obs obsidian ocenaudio okular onboard
-onionshare-gui open-invaders openarena openmw openra openshot openshot-qt opera
-opera-beta opera-developer org_gnome_NautilusPreviewer
-org_gnome_seahorse_Application otter-browser palemoon pavucontrol
-pavucontrol-qt pcmanfm pcsxr pdfchain peek photoflare pidgin pinball-wrapper
-pinta pipe-viewer-gtk pitivi postman ppsspp pragha psi pybitmessage qbittorrent
-qcomicbook qgis qt-faststart qt5ct qt6ct qtox quadrapassel quakespasm
-quaternion quodlibet qupzilla qutebrowser raincat rambox rawtherapee
-rednotebook rhythmbox riot-web ripperx ristretto rocketchat rssguard rtv
-rymdport scorched3d-wrapper scribus seahorse seamonkey seamonkey-bin
-secret-tool session-desktop shortwave shotcut shotwell signal-desktop simutrans
-singularity skanlite skypeforlinux slack smuxi-frontend-gnome snox spectacle
-spectral spotify srb2 standardnotes-desktop start-tor-browser_desktop steam
-supertuxkart supertuxkart-wrapper surf swell-foop sylpheed synfigstudio sysprof
-tb-starter-wrapper teams teams-for-linux teamspeak3 telegram telegram-desktop
-terasology thunar thunderbird tidal-hifi tiny-rdm tor-browser tor-browser-ar
-tor-browser-ca tor-browser-cs tor-browser-da tor-browser-de tor-browser-el
-tor-browser-en tor-browser-en-us tor-browser-es tor-browser-es-es
-tor-browser-fa tor-browser-fr tor-browser-ga-ie tor-browser-he tor-browser-hu
-tor-browser-id tor-browser-is tor-browser-it tor-browser-ja tor-browser-ka
-tor-browser-ko tor-browser-nb tor-browser-nl tor-browser-pl tor-browser-pt-br
-tor-browser-ru tor-browser-sv-se tor-browser-tr tor-browser-vi
-tor-browser-zh-cn tor-browser-zh-tw tor-browser_ar tor-browser_ca
-tor-browser_cs tor-browser_da tor-browser_de tor-browser_el tor-browser_en
-tor-browser_en-US tor-browser_es tor-browser_es-ES tor-browser_fa
-tor-browser_fr tor-browser_ga-IE tor-browser_he tor-browser_hu tor-browser_id
-tor-browser_is tor-browser_it tor-browser_ja tor-browser_ka tor-browser_ko
-tor-browser_nb tor-browser_nl tor-browser_pl tor-browser_pt-BR tor-browser_ru
-tor-browser_sv-SE tor-browser_tr tor-browser_vi tor-browser_zh-CN
-tor-browser_zh-TW torbrowser torbrowser-launcher totem transgui
-transmission-gtk transmission-qt transmission-remote-gtk trivalent trojita
-tutanota-desktop tuxtype twitch typespeed udiskie uget-gtk unzip upscayl
-uzbl-browser virt-manager virtualbox vivaldi vlc vmware vmware-player
-vmware-view vscodium warzone2100 waterfox whalebird wire-desktop wireshark
-wireshark-gtk wireshark-qt x-terminal-emulator x2goclient xchat xfburn
-xfce4-notes xfce4-screenshooter xmms xonotic xonotic-sdl xonotic-sdl-wrapper
-xpdf yandex-browser yelp youtube youtube-dl-gui youtube-music-desktop-app
-youtube-viewer-gtk youtubemusic-nativefier ytmdesktop zathura zeal zen-browser
-zim zoom
+godot artha handbrake-gtk Builder jami lollypop google-chrome libreoffice 
+firefox-wayland gajim alienarena-wrapper freeciv-gtk3 fluffychat gnome-ring 
+klatexformula gwenview autokey-qt icecat krunner firefox fragments 
+freeciv-mp-gtk3 Books dooble foliate gnome-calendar gl-117 clawsker 
+gnome-keyring-3 autokey-gtk firefox-developer-edition alacarte baloo_file 
+gnome-hexgl gfeeds gnubik gnome-weather kopete io_github_lainsce_Notejot 
+gnome-documents gnome-screenshot cliqz fractal ffmpeg celluloid digikam 
+git-cola green-recoder jami-gnome kmplayer code guvcview kube cachy-browser 
+chromium-browser-privacy frozen-bubble gnome-clocks bnox firefox-nightly 
+gnome-sudoku gnome-mines google-chrome-beta konversation jerry firefox-esr 
+devhelp gnome-boxes gnome-passwordsafe iridium gnome-nibbles ephemeral 
+gnome-mpv com_github_phase1geo_minder kate gtk3-youtube-viewer k3b gimp 
+gtk-straw-viewer gpicview cyberfox gtk-pipe-viewer kdeinit4 lifeograph 
+1password inox floorp apostrophe gradio gnome-text-editor loupe chromium ark 
+gnome-taquin electron-cash assogiate electron-mail basilisk deluge 
+jitsi-meet-desktop alienblaster gnome-mplayer lximage-qt 
+com_github_bleakgrey_tootle electrum iagno geki3 audacity ballbuster-wrapper 
+gedit evince alienarena avidemux ledger-live-desktop gnome-todo 
+com_github_dahenson_agenda cawbird ktorrent gnome-system-log gnome-calculator 
+ddgtk fossamail etr-wrapper claws-mail galculator glaxium beaker gnome-builder 
+brave gnome-latex caprine gitg gtk-youtube-viewer hitori kget akregator 
+gtk-lbry-viewer bijiben atom gnome-characters freeciv abrowser librewolf 
+com_github_tchx84_Flatseal kdiff3 ghostwriter gnome-schedule freetube 
+gnome-logs firefox-beta calligra flashpeak-slimjet kwrite kcalc flameshot 
+chromium-browser gnome-recipes anki gnome-nettool gnome-books linuxqq 
+gl-117-wrapper chatterino alpine firefox-x11 etr colorful-wrapper 
+gnome-tetravex blobby firedragon geki2 gnome-photos glaxium-wrapper impressive 
+gnome-character-map lbreakouthd iceweasel inkscape ani-cli keepassxc 
+gnome-twitch 0ad lobster 2048-qt lyx bitcoin-qt github-desktop gucharmap dnox 
+gnome-maps atril clamtk kid3-qt file-roller Documents gnome-pomodoro kazam 
+gnome-mahjongg armcord Fritzing gtk2-youtube-viewer lbry-viewer-gtk kwin_x11 
+enox gnome-font-viewer balsa gnome-robots journal-viewer gnome-klotski 
+gnome-contacts icedove kid3 dooble-qt4 gnome-2048 abiword amarok exfalso eog 
+Logs google-chrome-unstable gnome-keyring clocks kdenlive avidemux3_qt5 
+avidemux3_jobs_qt5 geary dolphin-emu gnome-music kaffeine falkon five-or-more 
+feedreader kfind cantata dconf-editor i2prouter crow gcalccmd lettura 
+four-in-a-row homebank cheese authenticator-rs lightsoff audacious gnome-pie 
+gnome-chess gnome-sound-recorder gnote bitwarden ktouch chromium-freeworld 
+equalx tor-browser-nl tor-browser-es-es notable mypaint neomutt pdfchain 
+neverputt-wrapper tor-browser_pt-BR tor-browser_cs start-tor-browser_desktop 
+smuxi-frontend-gnome qcomicbook swell-foop openshot-qt virt-manager 
+signal-desktop pipe-viewer-gtk vmware wireshark-gtk srb2 open-invaders rtv 
+whalebird onboard nextcloud microsoft-edge-beta mp3splt-gtk 
+org_gnome_seahorse_Application wireshark-qt marker midori tor-browser_it 
+udiskie qt6ct tor-browser_ga-IE tor-browser-ga-ie tor-browser_pl tor-browser_fr 
+tor-browser_el telegram qtox trojita tor-browser_sv-SE tor-browser_id vivaldi 
+scorched3d-wrapper tor-browser-en-us openarena okular skanlite 
+tor-browser-pt-br yelp photoflare unzip tor-browser_hu standardnotes-desktop 
+xonotic-sdl transmission-qt tor-browser_he seamonkey tor-browser-id 
+tor-browser-ru tor-browser-zh-tw supertuxkart-wrapper quodlibet tor-browser_nb 
+tor-browser_ru rymdport PCSX2 nomacs nuclear psi meteo-qt thunderbird 
+tor-browser-ca upscayl musictube Screenshot microsoft-edge-dev tor-browser_en 
+openra tor-browser-ka sylpheed rssguard tor-browser_ja slack secret-tool 
+neochat tor-browser_ka mirage opera-beta pybitmessage torbrowser-launcher 
+youtube-dl-gui openmw QMediathekView minecraft-launcher mattermost-desktop mutt 
+qutebrowser Maps tor-browser_nl shortwave quadrapassel waterfox tor-browser_es 
+tor-browser_vi mov-cli tutanota-desktop microsoft-edge transgui xfce4-notes 
+snox org_gnome_NautilusPreviewer rocketchat zeal qt5ct terasology wire-desktop 
+x2goclient tor-browser_fa tor-browser-ko mtpaint tor-browser-is tor-browser-ar 
+xfce4-screenshooter pavucontrol rhythmbox tor-browser-he tiny-rdm 
+tor-browser-de simutrans tor-browser twitch mcomix nheko tor-browser-da 
+uget-gtk vlc seahorse tor-browser_ko tb-starter-wrapper spectral 
+tor-browser_en-US onionshare-gui xonotic-sdl-wrapper tor-browser_is palemoon 
+tor-browser-cs tuxtype tor-browser-pl supertuxkart min Viber tor-browser_de 
+skypeforlinux tor-browser_es-ES session-desktop steam youtube menulibre 
+ocenaudio quaternion tor-browser-it tidal-hifi zoom teams 
+transmission-remote-gtk pragha spectacle shotwell newsflash qbittorrent 
+tor-browser-vi tor-browser-es youtube-viewer-gtk tor-browser_tr 
+tor-browser-sv-se typespeed transmission-gtk totem mate-calc neverball-wrapper 
+tor-browser-en youtubemusic-nativefier tor-browser_ar raincat scribus 
+qt-faststart vmware-view quakespasm obsidian tor-browser_zh-TW singularity 
+tor-browser-tr opera warzone2100 ppsspp metadata-cleaner rednotebook ytmdesktop 
+rambox tor-browser-nb tor-browser-zh-cn postman tor-browser-el nitroshare 
+tor-browser_zh-CN otter-browser zim openshot trivalent virtualbox qgis minitube 
+nautilus youtube-music-desktop-app zathura pcsxr xonotic peek tor-browser-fa 
+tor-browser_ca pinball-wrapper tor-browser_da tor-browser-ja torbrowser 
+tor-browser-hu opera-developer riot-web teams-for-linux pavucontrol-qt sysprof 
+zen-browser yandex-browser tor-browser-fr amarok amule bluefish brave 
+brave-browser brasero calligraauthor calligraconverter calligraflow 
+calligragemini calligraplan calligraplanwork calligrasheets calligrastage 
+calligrawords chromium cinelerra clementine dillo ferdi firefox freecad geany 
+geeqie gitter epiphany evince evince-previewer evince-thumbnailer godot3 
+google-chrome eog google-earth google-earth-pro gramps hexchat hugin kodi 
+leafpad mousepad mumble nautilus netsurf obs pcmanfm pidgin pinta pitivi 
+qbittorrent rawtherapee ripperx ristretto qupzilla seamonkey-bin shotcut 
+spotify surf synfigstudio teamspeak3 telegram-desktop thunar thunderbird 
+uzbl-browser vivaldi vmware-player vscodium x-terminal-emulator xchat xfburn 
+xmms waterfox wireshark wireshark-gtk wireshark-qt xpdf
 )
 
 X_BLACKLIST=(
@@ -1704,7 +1712,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 apparmor auto +chroot clang contrib +dbusproxy +file-transfer +firejail_profiles_default
 +firejail_profiles_server +globalcfg landlock +network +private-home selfrando selinux
 test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xcsecurity xvfb
-ebuild_revision_58
+ebuild_revision_60
 "
 REQUIRED_USE+="
 	${GUI_REQUIRED_USE}
@@ -2467,8 +2475,8 @@ einfo "Replace FIREJAIL_PROFILES with the following:"
 		| sed -e "s|\.|_|g" \
 		| sort \
 		| tr "\n" " " \
-		| sed -E -e "s|[ ]*$||g" \
-		| fold -s -w 80
+		| fold -s -w 80 \
+		| sed -E -e "s|[ ]*$||g"
 	echo
 }
 
@@ -2707,35 +2715,39 @@ einfo
 		return 1
 	}
 
+	cond_basename() {
+		if [[ -e "${x}" ]] && grep -q -e "^x11 none" ; then
+			:
+		elif [[ "${x}" =~ "-common" ]] ; then
+			:
+		else
+			local t=$(basename "${x}" \
+				| sed -e "s|\.profile||g" \
+				| sed -e "s|\.|_|g")
+			if is_x_blacklisted "${t}" ; then
+				:
+			else
+				echo "${t}"
+			fi
+		fi
+	}
+
+	local L=(
+		$(grep -l -r -E -e "(tauri|electron|chromium|firefox.profile|firefox-common|torbrowser-launcher|opengl|@x11|gtk|gnome|kde|sdl|qt|opengl|vulkan)" "${S}/etc/profile"*)
+		"${X_APPS_MISSING_REQUIRED_USE[@]}"
+	)
+	local L_sanitized=()
+
 	local x
-	for x in $(grep -l -r -E -e "(tauri|electron|chromium|firefox.profile|firefox-common|torbrowser-launcher|opengl|@x11|gtk|gnome|kde|sdl|qt|opengl|vulkan)" "${S}/etc/profile"*) ${X_APPS_MISSING_REQUIRED_USE[@]} ; do \
-		basename "${x}"; \
-	done \
-		| tr " " "\n" \
-		| sed -e "/-common/d" \
-		| sed -e "s|\.profile||g" \
-		| sort \
-		| uniq \
-		| tr "\n" " " \
-		| sed -e "s| $||g" \
-		| sed -e "s|\.|_|g" \
-		| fold -s -w 80
+	for x in "${L[@]}" ; do
+		L_sanitized+=( $(cond_basename "${x}") )
+	done
+	echo "${L_sanitized[@]}" | fold -s -w 80
+
 einfo
 einfo "Replace GUI_REQUIRED_USE with the following:"
 einfo
-	local L=$(for x in $(grep -l -r -E -e "(tauri|electron|chromium|firefox.profile|firefox-common|torbrowser-launcher|opengl|@x11|gtk|gnome|kde|sdl|qt|opengl|vulkan)" "${S}/etc/profile"*) ${X_APPS_MISSING_REQUIRED_USE[@]} ; do \
-		basename "${x}"; \
-	done \
-		| tr " " "\n" \
-		| sed -e "/-common/d" \
-		| sed -e "s|\.profile||g" \
-		| sort \
-		| uniq \
-		| tr "\n" " " \
-		| sed -e "s| $||g" \
-		| sed -e "s|\.|_|g") \
-		| fold -s -w 80
-	for x in ${L[@]} ; do
+	for x in "${L_sanitized[@]}" ; do
 		if is_x_blacklisted "${x}" ; then
 			:
 		elif is_x_headless_compat "${x}" && is_xephyr_only "${x}" ; then
