@@ -16,7 +16,7 @@ DESCRIPTION="OpenClaw - Personal AI assistant gateway (Docker Compose + OpenRC)"
 HOMEPAGE="https://github.com/openclaw/openclaw"
 LICENSE="MIT"
 SLOT="0"
-IUSE+=" ebuild_revision_3"
+IUSE+=" ebuild_revision_4"
 RDEPEND="
 	acct-group/openclaw
 	acct-user/openclaw
@@ -94,13 +94,16 @@ src_install() {
 	insinto "/usr/lib/systemd/system"
 	newins "${FILESDIR}/openclaw.service" "openclaw.service"
 
-	# Create persistent data directory
-	keepdir "/var/lib/openclaw"
-	fowners "root:docker" "/var/lib/openclaw"
-	fperms 0775 "/var/lib/openclaw"
+	# Data dir already created by acct-user/openclaw
 }
 
 pkg_postinst() {
+	if [[ -e "${EROOT}/var/lib/openclaw" ]] ; then
+		local openclaw_uid=$(id -u "openclaw")
+		local openclaw_gid=$(id -g "openclaw")
+		chown -R "${openclaw_uid}:${openclaw_gid}" "${EROOT}/var/lib/openclaw" 2>/dev/null || true
+	fi
+
 	local openclaw_tag="latest"
 	use fallback-commit && openclaw_tag="${FALLBACK_TAG}"
 einfo "OpenClaw has been installed."

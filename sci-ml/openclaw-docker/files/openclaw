@@ -12,5 +12,8 @@ cd "/opt/openclaw" || {
     exit 1
 }
 
-echo "==> Using OpenClaw image: $OPENCLAW_IMAGE"
+OPENCLAW_UID=$(id -u "openclaw")
+OPENCLAW_GID=$(id -g "openclaw")
+
+echo "==> Using OpenClaw image: ${OPENCLAW_IMAGE} (running as UID/GID ${OPENCLAW_UID}:${OPENCLAW_GID})"
 exec "./docker-setup.sh" "$@"
