@@ -1478,6 +1478,7 @@ declare -A _PATH_CORRECTION=(
 	["spotify"]="/opt/spotify/spotify-client/spotify"
 )
 
+# Manually remove man from X11_COMPAT
 X11_COMPAT=(
 0ad 1password 2048-qt Books Builder Documents Fritzing Logs Maps PCSX2
 QMediathekView Screenshot Viber abiword abrowser akregator alacarte alienarena
@@ -1572,6 +1573,65 @@ zim zoom
 X_BLACKLIST=(
 # False positives for X support.
 	"gjs"
+
+	# Generated from
+	#for x in $(grep -r -e "^x11 none" /var/tmp/portage/sys-apps/firejail-0.9.80/work/firejail-0.9.80/etc/profile* | cut -f 1 -d ":") ; do echo -e "\t\""$(basename "${x}" | sed -e "s|.profile||g")"\""; done
+	"deadlink"
+	"axel"
+	"gtk-update-icon-cache"
+	"daisy"
+	"clamav"
+	"bpftop"
+	"dexios"
+	"editorconfiger"
+	"cloneit"
+	"erd"
+	"clac"
+	"highlight"
+	"file"
+	"hledger"
+	"gconf"
+	"dconf"
+	"hasher-common"
+	"chafa"
+	"less"
+	"gnome-keyring-daemon"
+	"exiftool"
+	"archiver-common"
+	"checkbashisms"
+	"hashcat"
+	"gapplication"
+	"gdu"
+	"devilspie"
+	"enchant"
+	"img2txt"
+	"qrencode"
+	"unf"
+	"mdr"
+	"mp3splt"
+	"uudeview"
+	"mencoder"
+	"odt2txt"
+	"notify-send"
+	"nvim"
+	"ncdu"
+	"statusof"
+	"pkglog"
+	"mediainfo"
+	"reader"
+	"strings"
+	"qpdf"
+	"tvnamer"
+	"tesseract"
+	"mimetype"
+	"spectre-meltdown-checker"
+	"man"
+	"shellcheck"
+	"pdftotext"
+	"patch"
+	"pandoc"
+	"nano"
+	"pngquant"
 )
 
 # Avoid broken resolution issue
@@ -1644,7 +1704,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 apparmor auto +chroot clang contrib +dbusproxy +file-transfer +firejail_profiles_default
 +firejail_profiles_server +globalcfg landlock +network +private-home selfrando selinux
 test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xcsecurity xvfb
-ebuild_revision_57
+ebuild_revision_58
 "
 REQUIRED_USE+="
 	${GUI_REQUIRED_USE}
@@ -2401,14 +2461,14 @@ gen_profile_array() {
 einfo "Replace FIREJAIL_PROFILES with the following:"
 
 	cd "${S}" ; \
-	find "etc"/{profile-m-z,profile-a-l} -name "*.profile" \
+	find "etc"/{"profile-m-z","profile-a-l"} -name "*.profile" \
 		| cut -f 3 -d "/" \
 		| sed -e "s|\.profile||g" \
 		| sed -e "s|\.|_|g" \
 		| sort \
 		| tr "\n" " " \
-		| fold -s -w 80 \
-		| sed -E -e "s|[ ]*$||g"
+		| sed -E -e "s|[ ]*$||g" \
+		| fold -s -w 80
 	echo
 }
 
@@ -2425,7 +2485,7 @@ einfo "Replace REQUIRED_USE with the following:"
 	local nodes=()
 
 	local f
-	for f in $(find "${etc_folder}/"{profile-a-l,profile-m-z} -name "*.profile") ; do
+	for f in $(find "${etc_folder}/"{"profile-a-l","profile-m-z"} -name "*.profile") ; do
 		local n=$(basename "${f}" \
 			| sed -e "s|\.profile||g" \
 			| sed -e "s|\.|_|g")
@@ -2474,7 +2534,7 @@ einfo "Add in global scope the following:"
 	local nodes=()
 
 	local f
-	for f in $(find "${etc_folder}/"{profile-a-l,profile-m-z} -name "*.profile") ; do
+	for f in $(find "${etc_folder}/"{"profile-a-l","profile-m-z"} -name "*.profile") ; do
 		local n=$(basename "${f}" \
 			| sed -e "s|\.profile||g" \
 			| sed -e "s|\.|_|g")
@@ -2657,9 +2717,9 @@ einfo
 		| sort \
 		| uniq \
 		| tr "\n" " " \
-		| fold -s -w 80 \
 		| sed -e "s| $||g" \
-		| sed -e "s|\.|_|g"
+		| sed -e "s|\.|_|g" \
+		| fold -s -w 80
 einfo
 einfo "Replace GUI_REQUIRED_USE with the following:"
 einfo
@@ -2672,9 +2732,9 @@ einfo
 		| sort \
 		| uniq \
 		| tr "\n" " " \
-		| fold -s -w 80 \
 		| sed -e "s| $||g" \
-		| sed -e "s|\.|_|g")
+		| sed -e "s|\.|_|g") \
+		| fold -s -w 80
 	for x in ${L[@]} ; do
 		if is_x_blacklisted "${x}" ; then
 			:
