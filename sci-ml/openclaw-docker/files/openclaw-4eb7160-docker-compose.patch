@@ -1,0 +1,11 @@
+--- a/docker-compose.yml.orig	2026-04-09 15:22:39.142712467 -0700
++++ b/docker-compose.yml	2026-04-09 15:24:39.138778163 -0700
+@@ -1,6 +1,7 @@
+ services:
+   openclaw-gateway:
+-    image: ${OPENCLAW_IMAGE:-openclaw:local}
++    image: ghcr.io/openclaw/openclaw:@OPENCLAW_TAG@
++    user: "@OPENCLAW_UID@:@OPENCLAW_GID@"
+     environment:
+       HOME: /home/node
+       TERM: xterm-256color

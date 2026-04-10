@@ -1,0 +1,31 @@
+#!/sbin/openrc-run
+
+description="OpenClaw AI Assistant Gateway"
+
+command="/usr/bin/docker"
+command_args="compose -f /opt/openclaw/docker-compose.yml up -d openclaw-gateway"
+command_background=false
+pidfile="/run/${RC_SVCNAME}.pid"
+
+depend() {
+	need docker
+	use net
+}
+
+start_pre() {
+	cd "/opt/openclaw" || return 1
+
+	# Export variables so sed placeholders (if any left) or future scripts can use them
+	export OPENCLAW_UID=$(id -u "openclaw")
+	export OPENCLAW_GID=$(id -g "openclaw")
+	export OPENCLAW_TAG="${OPENCLAW_TAG:-@OPENCLAW_TAG@}"
+
+	# Optional: run setup if needed
+	# ./docker-setup.sh --non-interactive || true
+}
+
+stop() {
+	ebegin "Stopping OpenClaw"
+	cd "/opt/openclaw" && docker compose -f docker-compose.yml down
+	eend $?
+}

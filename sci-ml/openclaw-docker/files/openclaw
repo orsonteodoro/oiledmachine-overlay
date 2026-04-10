@@ -1,0 +1,3 @@
+#!/bin/sh
+cd "/opt/openclaw" || exit 1
+exec "./docker-setup.sh" "$@"
