@@ -16,13 +16,12 @@ DESCRIPTION="OpenClaw - Personal AI assistant gateway (Docker Compose + OpenRC)"
 HOMEPAGE="https://github.com/openclaw/openclaw"
 LICENSE="MIT"
 SLOT="0"
-IUSE+=" ebuild_revision_2"
+IUSE+=" ebuild_revision_3"
 RDEPEND="
 	acct-group/openclaw
 	acct-user/openclaw
-	app-containers/docker
+	app-containers/docker[container-init]
 	app-containers/docker-compose
-	app-containers/docker-init
 "
 DEPEND="
 	${RDEPEND}
