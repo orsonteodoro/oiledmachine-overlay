@@ -29,6 +29,7 @@ EAPI=8
 # 140.6.0 -> 140.7.0
 # 140.7.0 -> 140.8.0
 # 140.8.0 -> 140.9.0
+# 140.9.0 -> 140.9.1
 
 # SECURITY:  If this gets bumped, then dev-lang/spidermonkey should be bumped too with the same ESR version.
 
@@ -497,9 +498,6 @@ REQUIRED_USE="
 			alsa
 			pulseaudio
 		)
-	)
-	pgo? (
-		X
 	)
 	rust-simd? (
 		!llvm_slot_19

@@ -32,6 +32,7 @@ EAPI=8
 # 147.0.2 -> 148.0
 # 148.0 -> 148.0.2
 # 148.0.2 -> 149.0
+# 149.0 -> 149.0.2
 
 # Originally based on the firefox-89.0.ebuild from the gentoo-overlay,
 # with update sync updated to this version of the ebuild.
@@ -172,7 +173,7 @@ RUSTFLAGS_HARDENED_USE_CASES="network sensitive-data untrusted-data web-browser"
 RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO MC NPD OOBA OOBR OOBW PE SO UAF UM TC"
 DBUS_PV="0.60"
 EBUILD_MAINTAINER_MODE=0
-FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-02.tar.xz"
 #FIREFOX_PATCHSET="firefox-147-patches-02.tar.xz"
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
@@ -397,11 +398,11 @@ REQUIRED_USE="
 			pulseaudio
 		)
 	)
-	pgo? (
-		X
-	)
 	vaapi? (
 		wayland
+	)
+	wasm-sandbox? (
+		llvm_slot_21
 	)
 	wayland? (
 		dbus
