@@ -232,57 +232,11 @@ declare -A CFLAGS_RDEPEND=(
 	["media-libs/libvpx"]=">=;-O1" # -O0 causes FPS to lag below 25 FPS.
 )
 
-MITIGATION_DATE="Mar 24, 2026" # Advisory date
-MITIGATION_LAST_UPDATE=1774294920 # From `date +%s -d "2026-03-23 12:42"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-20/"
+MITIGATION_DATE="Apr 7, 2026" # Advisory date
+MITIGATION_LAST_UPDATE=1775507520 # From `date +%s -d "2026-04-06 13:32"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-25/"
 SEVERITY_LABEL="Severity:"
 VULNERABILITIES_FIXED=(
-	"CVE-2026-4684;RC, UAF;"
-	"CVE-2026-4685;IBC;"
-	"CVE-2026-4686;IBC;"
-	"CVE-2026-4687;SBE;"
-	"CVE-2026-4688;SBE;"
-	"CVE-2026-4689;SBE, IBC;"
-	"CVE-2026-4690;SBE, IBC;"
-	"CVE-2026-4691;UAF;"
-	"CVE-2026-4692;SBE;"
-	"CVE-2026-4693;IBC;"
-	"CVE-2026-4694;IBC;"
-	"CVE-2026-4695;IBC;"
-	"CVE-2026-4696;UAF;"
-	"CVE-2026-4697;IBC;"
-	"CVE-2026-4698;JITM;"
-	"CVE-2026-4699;IBC;"
-	"CVE-2026-4700;SB;"
-	"CVE-2026-4701;UAF;"
-	"CVE-2026-4722;PE;"
-	"CVE-2026-4702;JITM;"
-	"CVE-2026-4723;UAF;"
-	"CVE-2026-4724;UB;"
-	"CVE-2026-4704;DoS;"
-	"CVE-2026-4705;UB;"
-	"CVE-2026-4706;IBC;"
-	"CVE-2026-4707;IBC;"
-	"CVE-2026-4708;IBC;"
-	"CVE-2026-4709;IBC;"
-	"CVE-2026-4710;IBC;"
-	"CVE-2026-4711;UAF;"
-	"CVE-2026-4725;SBE, UAF;"
-	"CVE-2026-4712;ID;"
-	"CVE-2026-4713;IBC;"
-	"CVE-2026-4714;IBC;"
-	"CVE-2026-4715;UM;"
-	"CVE-2026-4716;IBC;"
-	"CVE-2026-4717;PE;"
-	"CVE-2026-4726;DoS;"
-	"CVE-2025-59375;DoS;"
-	"CVE-2026-4727;DoS;"
-	"CVE-2026-4728;SA;"
-	"CVE-2026-4718;UB;"
-	"CVE-2026-4719;IBC;"
-	"CVE-2026-4720;MC, ACE;"
-	"CVE-2026-4729;MC, ACE;"
-	"CVE-2026-4721;MC, ACE;"
 )
 
 inherit cflags-depends cflags-hardened check-compiler-switch check-linker
