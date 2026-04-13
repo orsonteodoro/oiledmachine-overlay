@@ -101,7 +101,7 @@ EOL_VERSIONS=(
 )
 
 # For zero-tolerance mode
-MULTISLOT_LATEST_KERNEL_RELEASE=("5.10.252" "5.15.202" "6.1.167" "6.6.132" "6.12.80" "6.18.21" "6.19.11")
+MULTISLOT_LATEST_KERNEL_RELEASE=("5.10.252" "5.15.202" "6.1.168" "6.6.134" "6.12.81" "6.18.22" "6.19.12")
 
 inherit mitigate-dos toolchain-funcs
 
