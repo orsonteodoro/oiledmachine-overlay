@@ -5,7 +5,7 @@
 | Core developers                     | Many                                       | 1                                                            |
 | AI ban                              | Y                                          | N                                                            |
 | Ebuild code style                   | The original language docs style from the 70s-80s (reputation damaging, bad hire), messy/inconsistent or >= 80 characters | Custom contemporary (pretty, job friendly style).  Mostly within 80 characters |
-| Organization                        | Y                                          | N                                                            |
+| Distro owned/backed                 | Y                                          | N                                                            |
 | Primary ebuild package goals        | Build customization, simple/basic ebuilds  | Anti DoS, anti lag, production grade performance             |
 | Secondary ebuild package goals      | Cross compile portability | Feature complete (aka full version) ebuilds, power user customization; packaging aethetically pleasing, cool, or trending software; new/custom feature patches exclusives, dummy proofing, guardrails |
 | Documentation style                 | Simple, undocumented mods or undocumented known settings leading to performance regressions | Transparent and comprehensive, mods and regressions are documented and warned to user |
