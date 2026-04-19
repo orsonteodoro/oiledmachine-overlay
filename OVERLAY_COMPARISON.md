@@ -20,6 +20,6 @@
 | Fixes submitted to upstream         | Sometimes                                  | Very rare                                                    |
 | Container ebuilds for blast radius mitigation | N                                | N, possible if community agrees                              |
 | LICENSE variable transparency       | Missing sometimes.  Usually only software and some patent licenses are listed but missing maybe service licenses, privacy policy | More comprehensive if ebuild created by overlay |
-| CPU support                         | x86-64-v2 or x86-64-v3 newer CPUs are sometimes required | Lower CPU requirements if possible                           |
+| CPU support                         | x86-64-v2 or x86-64-v3 newer CPUs are sometimes required | The lowest CPU requirements if possible for hardware/software immortality reasons |
 | Toolchain stability                 | Rolling compiler versions used by distro unstable releases or rolling only distros are preferred.  Possible build failure if if the the default C/C++ changes or possibily new security issue (e.g. DoS, crash, or worst RCE). | LTS compiler versions used by LTS distro releases are preferred.  Virtually no build time failures. |
 | Ebuild operationality               | Ready, low failure rate                    | Varies, most are ready but some fail if long compile times   |
