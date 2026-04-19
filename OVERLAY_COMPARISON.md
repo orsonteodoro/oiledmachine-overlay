@@ -15,8 +15,8 @@
 |                                     |                                                           | Dummy proofing / guardrails                                 |
 | Runtime performance                 | Slow sometimes or difficult to find bottleneck if ricing  | Reproducible with guardrails and warnings                   |
 | Compiler hardening                  | Balanced, outdated or missing flags                       | Custom, recent hardening flags                              |
-| C++ consistency                     | N, user is responsible, difficult to find when logging    | Y, enforced by gcc_slot_* USE flags and REQUIRED_USE        |
-|                                     | builds is off by default for used C++ standard.           |                                                             |
+| C++ consistency                     | N, user is responsible, difficult to find when            | Y, enforced by gcc_slot_* USE flags and REQUIRED_USE        |
+|                                     | build logging is off by default for used C++ standard.    |                                                             |
 | Multiple AI platform install        | N, impossible (require containers)                        | Y                                                           |
 | (e.g. Ollama and LocalAI same time) |                                                           |                                                             |
 | Submission/contributor contracts    | Y                                                         | N (no blackmail or futher oppression,                       |
