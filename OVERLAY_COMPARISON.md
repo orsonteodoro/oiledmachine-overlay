@@ -19,7 +19,7 @@
 | C++ consistency                     | N, user is responsible, difficult to find when            | Y, enforced by gcc_slot_* USE flags and REQUIRED_USE        |
 |                                     | build logging is off by default for used C++ standard.    |                                                             |
 | Multiple AI platform install        | N, impossible (require containers)                        | Y                                                           |
-| (e.g. Ollama and LocalAI same time) |                                                           |                                                             |
+| (TensorFlow + LocalAI same time)    |                                                           |                                                             |
 | Submission/contributor contracts    | Y                                                         | N (no blackmail or futher oppression,                       |
 |                                     |                                                           | just follow the open source software license)               |
 | Submission barrier                  | High                                                      | Lower                                                       |
