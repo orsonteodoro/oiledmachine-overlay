@@ -8,7 +8,7 @@
 | Organization                        | Y                                          | N                                                            |
 | Primary ebuild package goals        | Build customization, simple/basic ebuilds  | Anti DoS, anti lag, production grade performance             |
 | Secondary ebuild package goals      | Cross compile portability | Feature complete (aka full version) ebuilds, power user customization; packaging aethetically pleasing, cool, or trending software; new/custom feature patches exclusives, dummy proofing, guardrails |
-| Documentation style                 | Simple, undocumented mods or undocumented known settings lead to performance regressions | Transparent and comprehensive, mods and regressions are documented and warned to user |
+| Documentation style                 | Simple, undocumented mods or undocumented known settings leading to performance regressions | Transparent and comprehensive, mods and regressions are documented and warned to user |
 | Runtime performance                 | Slow sometimes or difficult to find bottleneck if ricing | Reproducible with guardrails and warnings      |
 | Compiler hardening                  | Balanced, outdated or missing flags, inappropriate static hardening level | Custom, recent hardening flags, dynamic increased hardening by threat |
 | C++ consistency                     | N, user is responsible, difficult to resolve when build logging is off by default and multiple C++ standard versions are involved. | Y, enforced by gcc_slot_* USE flags and REQUIRED_USE |
