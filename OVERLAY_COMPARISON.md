@@ -13,7 +13,8 @@
 |                                     |                                                 | Packaging power user or must have software                  |
 |                                     |                                                 | New/custom feature patches                                  |
 |                                     |                                                 | Dummy proofing / guardrails                                 |
-| Performance                         | Slow sometimes or difficult to find bottleneck  | Reproducible with guardrails and warnings                   |
+| Runtime performance                 | Slow sometimes or difficult to find bottleneck  | Reproducible with guardrails and warnings                   |
+|                                     | if ricing                                       |                                                             |
 | Compiler hardening                  | Balanced, outdated or missing flags             | Custom, recent hardening flags                              |
 | C++ consistency                     | N, user is responsible                          | Y, enforced by gcc_slot_* USE flags and REQUIRED_USE        |
 | Multiple AI platform install        | N, impossible (require containers)              | Y                                                           |
