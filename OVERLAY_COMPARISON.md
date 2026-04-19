@@ -7,7 +7,7 @@
 | Ebuild code style                   | The original language docs style from the 70s-80s (reputation damaging, bad hire), messy/inconsistent or >= 80 characters | Custom contemporary (pretty, job friendly style).  Mostly within 80 characters |
 | Distro owned/backed                 | Y                                          | N                                                            |
 | Primary ebuild package goals        | Build customization, simple/basic ebuilds  | Anti DoS, anti lag, production grade performance             |
-| Secondary ebuild package goals      | Cross compile portability | Feature complete (aka full version) ebuilds, power user customization; packaging aethetically pleasing, cool, or trending software; new/custom feature patches exclusives, dummy proofing, guardrails |
+| Secondary ebuild package goals      | Cross compile portability | Feature complete (aka full version) ebuilds, power user customization; packaging awesome software; new/custom feature patches exclusives, dummy proofing, guardrails |
 | Documentation style                 | Simple, undocumented mods or undocumented known settings leading to performance regressions | Transparent and comprehensive, mods and regressions are documented and warned to user |
 | Runtime performance                 | Slow sometimes or difficult to find bottleneck if ricing | Reproducible with guardrails and warnings      |
 | Compiler hardening                  | Balanced, outdated or missing flags, inappropriate static hardening level | Custom, recent hardening flags, dynamic increased hardening by threat |
@@ -28,3 +28,5 @@
 | Build suffering policy              | Rip the bandaid slowly                     | Rip the bandaid fast                                         |
 | Tarball micropackage bundle for Go / Rust | Y (untrusted in the zero trust model) | N                                                           |
 | Reproducible live ebuilds           | N, user is responsible, quality is overlooked or poor due to rashness | Y, with USE=fallback-commit capable ebuilds, some ebuilds have high quality green CI checkmarks threshold requirements to reduce build failure especially for large codebases or long build time ebuild packages |
+| Package count                       | Many                                       | Few                                                          |
+| Quality for package inclusion       | Actively maintained packages               | Ebuild forks to correct issues or new software found or could land on awesome lists |
