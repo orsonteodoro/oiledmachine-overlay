@@ -9,6 +9,7 @@
     "@theia/workspace": "1.70.2",
     "dockerode": "^4.0.2",
     "jsonc-parser": "^2.2.0",
+    "protobufjs": "^7.5.5",
     "uuid": "^8.0.0"
   },
   "publishConfig": {

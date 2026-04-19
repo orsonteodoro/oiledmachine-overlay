@@ -38,7 +38,7 @@
     "ignore": "^6.0.0",
     "minimatch": "^10.0.3",
     "puppeteer-core": "^24.10.0",
-    "simple-git": "^3.25.0"
+    "simple-git": "^3.36.0"
   },
   "publishConfig": {
     "access": "public"

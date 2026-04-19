@@ -41,6 +41,7 @@
     "eslint-plugin-no-unsanitized": "4.1.4",
     "eslint-plugin-react": "^7.37.5",
     "glob": "^7.1.7",
+    "handlebars": "^4.7.9",
     "if-env": "^1.0.4",
     "ignore-styles": "^5.0.1",
     "js-yaml": "^4.1.1",

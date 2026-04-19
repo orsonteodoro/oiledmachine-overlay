@@ -490,7 +490,7 @@ LICENSE="
 RESTRICT="mirror"
 IUSE+="
 ${!THEIA_PLUGINS[@]}
-git ollama ebuild_revision_45
+git ollama ebuild_revision_46
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -698,6 +698,18 @@ einfo "Fixing vulnerabilities"
 
 		sed -i -e "s|\"multer\": \"^2.0.1\"|\"multer\": \"^2.1.0\"|g" "package-lock.json" || die						# CVE-2026-3304; ZC, VS(DoS); High
 																			# CVE-2026-2359; ZC, VS(DoS); High
+
+		sed -i -e "s|\"protobufjs\": \"^7.5.4\"|\"protobufjs\": \"^7.5.5\"|g" "package-lock.json" || die					# CVE-2026-41242; VS(DoS, DT, ID); SS(DoS, DT, ID); Critical
+		sed -i -e "s|\"protobufjs\": \"^7.5.3\"|\"protobufjs\": \"^7.5.5\"|g" "package-lock.json" || die					# CVE-2026-41242; VS(DoS, DT, ID); SS(DoS, DT, ID); Critical
+		sed -i -e "s|\"protobufjs\": \"^7.3.2\"|\"protobufjs\": \"^7.5.5\"|g" "package-lock.json" || die					# CVE-2026-41242; VS(DoS, DT, ID); SS(DoS, DT, ID); Critical
+		sed -i -e "s|\"protobufjs\": \"^7.2.5\"|\"protobufjs\": \"^7.5.5\"|g" "package-lock.json" || die					# CVE-2026-41242; VS(DoS, DT, ID); SS(DoS, DT, ID); Critical
+
+		sed -i -e "s|\"simple-git\": \"^3.25.0\"|\"simple-git\": \"^3.32.3\"|g" "package-lock.json" || die					# CVE-2026-28292; ZC, DoS, DT, ID; Critical
+																			# CVE-2026-28291; ZC, DoS, DT, ID; High
+		sed -i -e "s|\"handlebars\": \"^4.7.7\"|\"handlebars\": \"^4.7.9\"|g" "package-lock.json" || die					# CVE-2026-33937; ZC, DoS, DT, ID; Critical
+																			# CVE-2026-33941; DoS, DT, ID; High
+																			# CVE-2026-33938; ZC, DoS, DT, ID; High
+																			# CVE-2026-33940; ZC, DoS, DT, ID; High
 	}
 	patch_lockfile
 
@@ -809,6 +821,12 @@ ewarn "QA:  Manually remove node_modules/@modelcontextprotocol/sdk/node_modules/
 	enpm add "minimatch@^3.1.4" -P -w "dev-packages/application-manager"
 
 	enpm add "multer@^2.1.0" -P -w "packages/filesystem"
+
+	enpm add "protobufjs@^7.5.5" -P -w "packages/ai-google"
+	enpm add "protobufjs@^7.5.5" -P -w "packages/dev-container"
+	enpm add "protobufjs@^7.5.5" -P -w "packages/scanoss"
+	enpm add "simple-git@^3.32.3" -P -w "packages/ai-ide"
+	enpm add "handlebars@^4.7.9" -D
 
 	patch_lockfile
 }
