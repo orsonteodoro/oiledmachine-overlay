@@ -11,7 +11,7 @@
 | Documentation style                 | Simple, undocumented mods or undocumented known settings that lead to performance regressions | Transparent and comprehensive, mods and regressions doc'ed |
 | Runtime performance                 | Slow sometimes or difficult to find bottleneck if ricing | Reproducible with guardrails and warnings      |
 | Compiler hardening                  | Balanced, outdated or missing flags, inappropriate static hardening level | Custom, recent hardening flags, dynamic increased hardening by threat |
-| C++ consistency                     | N, user is responsible, difficult to find when build logging is off by default for used C++ standard. | Y, enforced by gcc_slot_* USE flags and REQUIRED_USE |
+| C++ consistency                     | N, user is responsible, difficult to resolve when build logging is off by default for used C++ standard. | Y, enforced by gcc_slot_* USE flags and REQUIRED_USE |
 | Multiple AI platform install (e.g. TensorFlow + LocalAI installed at the same time) | N, impossible (require containers) | Y                                          |
 | Submission/contributor contracts    | Y                                          | N (no blackmail or further oppression or no subverting of your rights, just follow the open source software license freedoms) |
 | Ebuild/patch submission barrier     | High                                       | Lower                                                        |
