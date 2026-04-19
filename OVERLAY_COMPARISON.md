@@ -32,3 +32,5 @@
 |                                     | Usually only software and some patent licenses are listed |                                                             |
 |                                     | but missing maybe service licenses, privacy policy        |                                                             |
 | CPU support                         | x86-64-v2 or x86-64-v3 newer CPUs are sometimes required  | Lower CPU requirements if possible                          |
+| Toolchain stability                 | Rolling compilers used by unstable distros are preferred  | Compilers used by LTS distros are preferred                 |
+| Ebuild operationality               | Ready, low failure rate                                   | Varies, most are ready but some fail if long compile times  |
