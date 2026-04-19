@@ -108,7 +108,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_64
+ebuild_revision_65
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -285,31 +285,31 @@ ewarn "QA:  Manually remove vite@4.5.3 in ${S}/sticker-creator/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/request-error from ${S}/danger/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/rest from ${S}/danger/pnpm-lock.yaml"
 
-ewarn "QA:  Manually remove yaml@1.10.2 from ${S}/danger/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove yaml@1.10.2 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove picomatch@2.3.1 from ${S}/danger/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @tootallnate/once@2.0.0 from ${S}/danger/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove @tootallnate/once@2.0.0 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/rest@18.12.0 from ${S}/danger/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/types@6.41.0 from ${S}/danger/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/core@3.6.0 from ${S}/danger/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/plugin-rest-endpoint-methods@5.16.2 from ${S}/danger/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove @octokit/rest@18.12.0 from ${S}/danger/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove @octokit/types@6.41.0 from ${S}/danger/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove @octokit/core@3.6.0 from ${S}/danger/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove @octokit/plugin-rest-endpoint-methods@5.16.2 from ${S}/danger/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@9.2.2 from ${S}/danger/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/plugin-request-log@1.0.4 from ${S}/danger/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/auth-token@2.5.0 from ${S}/danger/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/graphql@4.8.0 from ${S}/danger/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/request-error@2.1.0 from ${S}/danger/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove @octokit/plugin-request-log@1.0.4 from ${S}/danger/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove @octokit/auth-token@2.5.0 from ${S}/danger/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove @octokit/graphql@4.8.0 from ${S}/danger/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove @octokit/request-error@2.1.0 from ${S}/danger/pnpm-lock.yaml"
 #ewarn "QA:  Manually change @octokit/request-error@2.1.0 references to 5.1.1 in ${S}/danger/package.json and in ${S}/danger/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/endpoint@6.0.12 from ${S}/danger/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/request@5.6.3 from ${S}/danger/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/danger/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove @octokit/endpoint@6.0.12 from ${S}/danger/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove @octokit/request@5.6.3 from ${S}/danger/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/danger/pnpm-lock.yaml"
 #ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2 to 11.4.4-cjs.2 in ${S}/danger/package.json and ${S}/danger/pnpm-lock.yaml"
 #ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2(@octokit/core@3.6.0) to 11.4.4-cjs.2(@octokit/core@5.2.1) in ${S}/danger/pnpm-lock.yaml"
 #ewarn "QA:  Manually change @octokit/request-error references from 2.1.0 to 5.1.1 in ${S}/danger/pnpm-lock.yaml and in ${S}/danger/package.json"
 ewarn "QA:  Manually remove jws@3.2.2 in ${S}/danger/pnpm-lock.yaml"
-ewarn "QA:  Manually remove danger@12.3.4 in ${S}/danger/pnpm-lock.yaml"
-ewarn "QA:  Manually change danger: specifier: 12.3.4 to specifier: 13.0.4 and version: 12.3.4 version: 13.0.4 in ${S}/danger/pnpm-lock.yaml"
-ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in ${S}/danger/pnpm-lock.yaml"
-ewarn "QA:  Manually remove parse-git-config@2.0.3 in ${S}/danger/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove danger@12.3.4 in ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually change danger: specifier: 12.3.4 to specifier: 13.0.7 and version: 12.3.4 version: 13.0.7 in ${S}/danger/pnpm-lock.yaml"
+#ewarn "QA:  Manually change endanger@7.0.4(danger@12.3.4) to endanger@7.0.4 in ${S}/danger/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove parse-git-config@2.0.3 in ${S}/danger/pnpm-lock.yaml"
 
 	# The brace-expansion version changes breaks build.
 	# The pinned version of fabric is required.
@@ -374,8 +374,8 @@ ewarn "QA:  Manually remove parse-git-config@2.0.3 in ${S}/danger/pnpm-lock.yaml
 				sed -i -e "s|'@octokit/request': 5.6.3|'@octokit/request': 8.4.1|g" "pnpm-lock.yaml" || die									# CVE-2025-25290, DoS, Moderate
 				sed -i -e "s|'@octokit/request-error': 2.1.0|'@octokit/request-error': 5.1.1|g" "pnpm-lock.yaml" || die								# CVE-2025-25289, DoS, Moderate
 				sed -i -e "s|cross-spawn: 7.0.3|cross-spawn: 7.0.5|g" "pnpm-lock.yaml" || die											# CVE-2024-21538; DoS; High
-				sed -i -e "s|danger: ^10.5.3|danger: 13.0.4|g" "pnpm-lock.yaml" || die												# CVE-2025-25975; DoS, DT, ID; High
-				sed -i -e "s|danger: 12.3.4|danger: 13.0.4|g" "pnpm-lock.yaml" || die												# CVE-2025-25975; DoS, DT, ID; High
+				sed -i -e "s|danger: ^10.5.3|danger: 13.0.7|g" "pnpm-lock.yaml" || die												# CVE-2025-25975; DoS, DT, ID; High
+				sed -i -e "s|danger: 12.3.4|danger: 13.0.7|g" "pnpm-lock.yaml" || die												# CVE-2025-25975; DoS, DT, ID; High
 																								# Bump for
 																								#   parse-git-config
 				sed -i -e "s|micromatch: 4.0.2|micromatch: 4.0.8|g" "pnpm-lock.yaml" || die											# CVE-2024-4067; DoS; Medium
@@ -412,8 +412,8 @@ ewarn "QA:  Manually remove parse-git-config@2.0.3 in ${S}/danger/pnpm-lock.yaml
 #			sed -i -e "s|brace-expansion: 1.1.11|brace-expansion: 1.1.12|g" "sticker-creator/pnpm-lock.yaml" || die									# CVE-2025-5889; DoS; Low
 #			sed -i -e "s|brace-expansion: 2.0.1|brace-expansion: 2.0.2|g" "sticker-creator/pnpm-lock.yaml" || die									# CVE-2025-5889; DoS; Low
 			sed -i -e "s|cross-spawn: 5.1.0|cross-spawn: 6.0.6|g" "pnpm-lock.yaml" || die												# CVE-2024-21538, DoS, High
-			sed -i -e "s|danger: ^10.5.3|danger: 13.0.4|g" "pnpm-lock.yaml" || die													# CVE-2025-25975; DoS, DT, ID; High
-			sed -i -e "s|danger: 12.3.4|danger: 13.0.4|g" "pnpm-lock.yaml" || die													# CVE-2025-25975; DoS, DT, ID; High
+			sed -i -e "s|danger: ^10.5.3|danger: 13.0.7|g" "pnpm-lock.yaml" || die													# CVE-2025-25975; DoS, DT, ID; High
+			sed -i -e "s|danger: 12.3.4|danger: 13.0.7|g" "pnpm-lock.yaml" || die													# CVE-2025-25975; DoS, DT, ID; High
 			sed -i -e "s|electron: 23.1.2|electron: ${ELECTRON_APP_ELECTRON_PV}|g" "pnpm-lock.yaml" || die										# CVE-2023-44402; DoS, DT, ID; High
 			sed -i -e "s|electron: 23.3.13|electron: ${ELECTRON_APP_ELECTRON_PV}|g" "pnpm-lock.yaml" || die										# CVE-2023-44402; DoS, DT, ID; High
 			sed -i -e "s|esbuild: 0.24.0|esbuild: 0.25.9|g" "pnpm-lock.yaml" || die													# GHSA-67mh-4wv8-2f99; ID; Moderate
@@ -497,7 +497,10 @@ ewarn "QA:  Manually remove parse-git-config@2.0.3 in ${S}/danger/pnpm-lock.yaml
 #			sed -i -e "s|minimatch: 3.1.5|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
 #			sed -i -e "s|minimatch: 9.0.8|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
 #			sed -i -e "s|minimatch: 5.1.9|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
-			sed -i -e "s|basic-ftp: 5.0.5|basic-ftp: 5.2.0|g" "pnpm-lock.yaml" || die												# CVE-2026-27699; ZC, DoS, DT
+# Remove basic-ftp?
+#			sed -i -e "s|basic-ftp: 5.0.5|basic-ftp: 5.2.2|g" "pnpm-lock.yaml" || die												# CVE-2026-27699; ZC, DoS, DT
+																								# CVE-2026-39983; ZC, DoS, DT, ID; High
+																								# GHSA-6v7q-wjvx-w8wg; ZC, DT, DoS; High
 			sed -i -e "s|storybook: 8.6.15(bufferutil@4.0.9)(prettier@3.7.4)(utf-8-validate@5.0.10)|storybook: 8.6.17|g" "pnpm-lock.yaml" || die					# CVE-2025-68429, ZC, DoS, DT, ID, High
 																								# CVE-2026-27148; DoS, DT, ID; High
 			sed -i -e "s|immutable: 5.0.3|immutable: 5.1.5|g" "pnpm-lock.yaml" || die												# CVE-2026-29063; ZC, VS(ID); High
@@ -552,7 +555,7 @@ ewarn "QA:  Manually remove parse-git-config@2.0.3 in ${S}/danger/pnpm-lock.yaml
 
 		pushd "danger" >/dev/null 2>&1 || die
 			deps=(
-				"danger@13.0.4"
+				"danger@13.0.7"
 				"@octokit/plugin-paginate-rest@9.2.2"
 				"@octokit/request@8.4.1"
 				"@octokit/request-error@5.1.1"
@@ -593,11 +596,11 @@ ewarn "QA:  Manually remove parse-git-config@2.0.3 in ${S}/danger/pnpm-lock.yaml
 			"jws@3.2.2"
 			"playwright@1.55.1"
 			"storybook@8.6.17"
-			"basic-ftp@5.2.0"
+#			"basic-ftp@5.2.2"
 		)
 		epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
 		deps=(
-			"danger@13.0.4"
+			"danger@13.0.7"
 			"@octokit/plugin-paginate-rest@9.2.2"
 			"@octokit/request@8.4.1"
 			"@octokit/request-error@5.1.1"
