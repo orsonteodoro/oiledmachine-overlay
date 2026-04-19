@@ -15,7 +15,7 @@
 |                                     |                                                           | Dummy proofing / guardrails                                 |
 | Documentation style                 | Simple, undocumented mods or regression settings          | Transparent and comprehensive, mods and regressions doc'ed  |
 | Runtime performance                 | Slow sometimes or difficult to find bottleneck if ricing  | Reproducible with guardrails and warnings                   |
-| Compiler hardening                  | Balanced, outdated or missing flags                       | Custom, recent hardening flags                              |
+| Compiler hardening                  | Balanced, outdated or missing flags, inappropriate static | Custom, recent hardening flags, dynamic increase by threat  |
 | C++ consistency                     | N, user is responsible, difficult to find when            | Y, enforced by gcc_slot_* USE flags and REQUIRED_USE        |
 |                                     | build logging is off by default for used C++ standard.    |                                                             |
 | Multiple AI platform install        | N, impossible (require containers)                        | Y                                                           |
