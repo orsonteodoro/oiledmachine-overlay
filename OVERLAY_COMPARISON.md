@@ -15,7 +15,7 @@
 | Multiple AI platform install (e.g. TensorFlow + LocalAI installed at the same time) | N, impossible (require containers) | Y                                          |
 | Submission/contributor contracts    | Y                                          | N (no blackmail or futher oppression, just follow the open source software license freedoms) |
 | Submission barrier                  | High                                       | Lower                                                        |
-| Node/cargo lockfile scanning        | N                                          | Y                                                            |
+| Node/cargo lockfile security scanning        | N                                          | Y                                                            |
 | Vulnerability DB sources            | CPE/CVE (NVD), GLSA                        | NVD, GLSA, CISA KEV, GHSA, HW/SW vendors, podcasts, AI apps  |
 | Fixes submitted to upstream         | Sometimes                                  | Very rare                                                    |
 | Container ebuilds for blast radius mitigation | N                                | N, possible if community agrees                              |
