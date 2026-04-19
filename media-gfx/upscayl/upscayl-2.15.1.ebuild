@@ -21,7 +21,7 @@ NODE_SLOT="20"
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="40.6.1" # Cr 144.0.7559.220, node 24.13.1
+	ELECTRON_APP_ELECTRON_PV="41.2.1" # Cr 146.0.7680.188, node 24.14.1
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="27.3.10" # Cr 118.0.5993.159, node 18.17.1
@@ -107,7 +107,7 @@ THIRD_PARTY_LICENSES="
 "
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	THIRD_PARTY_LICENSES+="
-		electron-40.6.1-chromium.html
+		electron-41.2.1-chromium.html
 	"
 else
 	THIRD_PARTY_LICENSES+="
