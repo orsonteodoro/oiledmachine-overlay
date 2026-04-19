@@ -28,7 +28,6 @@
 | Container ebuilds for               | N                                                         | N, possible if community agrees                             |
 | blast radius mitigation             |                                                           |                                                             |
 | LICENSE variable transparency       | Missing sometimes                                         | More comprehensive if ebuild created by overlay             |
-|                                     | Only software and some patent licenses                    |                                                             |
-|                                     | but missing maybe service licenses and                    |                                                             |
-|                                     | privacy policy                                            |                                                             |
-| CPU support                         | x86-64-v2 or x86-64-v3 is sometimes required              | Lower CPU requirements if possible                          |
+|                                     | Usually only software and some patent licenses are listed |                                                             |
+|                                     | but missing maybe service licenses, privacy policy        |                                                             |
+| CPU support                         | x86-64-v2 or x86-64-v3 newer CPUs are sometimes required  | Lower CPU requirements if possible                          |
