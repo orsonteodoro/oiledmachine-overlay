@@ -15,7 +15,7 @@
 | Multiple AI platform install (e.g. TensorFlow + LocalAI installed at the same time) | N, impossible (require containers) | Y                                          |
 | Submission/contributor contracts    | Y                                          | N (no blackmail or further oppression or no subverting of your rights, just follow the open source software license freedoms) |
 | Ebuild/patch submission barrier     | High                                       | Lower                                                        |
-| Node/cargo lockfile security scanning        | N                                          | Y                                                            |
+| Node/cargo lockfile security scanning        | N                                 | Y                                                            |
 | Vulnerability DB sources            | CPE/CVE (NVD), GLSA                        | NVD, GLSA, CISA KEV, GHSA, HW/SW vendors, podcasts, AI apps  |
 | Fixes submitted to upstream         | Sometimes                                  | Very rare                                                    |
 | Container ebuilds for blast radius mitigation | N                                | N, possible if community agrees                              |
@@ -25,5 +25,5 @@
 | Ebuild operationality               | Ready, low failure rate                    | Varies, most are ready but some fail if long compile times   |
 | Ebuild exclusives or unique ebuilds | Y                                          | Y                                                            |
 | Build suffering policy              | Rip the bandaid slowly                     | Rip the bandaid fast                                         |
-| Tarball micropackage bundle for Go / Rust | Y (untrusted in zero trust)          | N                                                            |
-| Reproducible live ebuilds           | N, user is reponsible, quality is typically overlooked | Y, with USE=fallback-commit capable ebuilds, some ebuilds have high quality green CI checkmarks threshold requirements to reduce build failure especially for large codebases or long build time ebuilds |
+| Tarball micropackage bundle for Go / Rust | Y (untrusted in the zero trust model) | N                                                            |
+| Reproducible live ebuilds           | N, user is reponsible, quality is overlooed or poor due to rashness | Y, with USE=fallback-commit capable ebuilds, some ebuilds have high quality green CI checkmarks threshold requirements to reduce build failure especially for large codebases or long build time ebuilds |
