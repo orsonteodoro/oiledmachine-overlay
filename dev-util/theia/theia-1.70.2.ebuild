@@ -24,7 +24,7 @@ NPM_OFFLINE=1
 NPM_SLOT="3"
 NPM_TEST_SCRIPT="test:theia"
 
-ELECTRON_APP_ELECTRON_PV="38.4.0" # Cr 140.0.7339.240, node 22.20.0.  Original
+ELECTRON_APP_ELECTRON_PV="39.8.7" # Cr 142.0.7444.265, node 22.22.1.  Original
 ELECTRON_APP_REACT_PV="18.3.1"
 NODE_GYP_PV="11.5.0" # Upstream uses 11.5.0
 
@@ -362,7 +362,7 @@ THIRD_PARTY_LICENSES="
 LICENSE="
 	${ELECTRON_APP_LICENSES}
 	${THIRD_PARTY_LICENSES}
-	electron-37.2.1-chromium.html
+	electron-39.8.7-chromium.html
 	EPL-2.0
 	GPL-2-with-classpath-exception
 "
@@ -701,17 +701,17 @@ einfo "Fixing vulnerabilities"
 	}
 	patch_lockfile
 
-#ewarn "QA:  Manually remove node_modules/body-parser/node_modules/qs fron ${S}/package-lock.json"
-#ewarn "QA:  Manually remove node_modules/express/node_modules/qs fron ${S}/package-lock.json"
-ewarn "QA:  Manually remove node_modules/@electron/node-gyp/node_modules/tar fron ${S}/package-lock.json"
-#ewarn "QA:  Manually remove node_modules/jsonwebtoken/node_modules/jws fron ${S}/package-lock.json"
-ewarn "QA:  Manually remove node_modules/jsondiffpatch fron ${S}/package-lock.json"
-ewarn "QA:  Manually remove node_modules/@modelcontextprotocol/sdk/node_modules/qs fron ${S}/package-lock.json"
-ewarn "QA:  Manually remove node_modules/google-auth-library/node_modules/jws fron ${S}/package-lock.json"
-ewarn "QA:  Manually remove node_modules/gtoken/node_modules/jws fron ${S}/package-lock.json"
-ewarn "QA:  Manually remove node_modules/@electron/node-gyp/node_modules/rimraf/node_modules/minimatch fron ${S}/package-lock.json"
-ewarn "QA:  Manually remove node_modules/copy-webpack-plugin/node_modules/serialize-javascript fron ${S}/package-lock.json"
-ewarn "QA:  Manually remove node_modules/@modelcontextprotocol/sdk/node_modules/body-parser fron ${S}/package-lock.json"
+#ewarn "QA:  Manually remove node_modules/body-parser/node_modules/qs from ${S}/package-lock.json"
+#ewarn "QA:  Manually remove node_modules/express/node_modules/qs from ${S}/package-lock.json"
+#ewarn "QA:  Manually remove node_modules/@electron/node-gyp/node_modules/tar from ${S}/package-lock.json"
+#ewarn "QA:  Manually remove node_modules/jsonwebtoken/node_modules/jws from ${S}/package-lock.json"
+ewarn "QA:  Manually remove node_modules/jsondiffpatch and deps from ${S}/package-lock.json"
+#ewarn "QA:  Manually remove node_modules/@modelcontextprotocol/sdk/node_modules/qs from ${S}/package-lock.json"
+#ewarn "QA:  Manually remove node_modules/google-auth-library/node_modules/jws from ${S}/package-lock.json"
+#ewarn "QA:  Manually remove node_modules/gtoken/node_modules/jws from ${S}/package-lock.json"
+#ewarn "QA:  Manually remove node_modules/@electron/node-gyp/node_modules/rimraf/node_modules/minimatch from ${S}/package-lock.json"
+ewarn "QA:  Manually remove node_modules/copy-webpack-plugin/node_modules/serialize-javascript from ${S}/package-lock.json"
+ewarn "QA:  Manually remove node_modules/@modelcontextprotocol/sdk/node_modules/body-parser from ${S}/package-lock.json"
 
 	enpm add "basic-ftp@^5.2.0" -D
 	enpm add "basic-ftp@^5.2.0" -P -w "dev-packages/cli"
@@ -722,7 +722,7 @@ ewarn "QA:  Manually remove node_modules/@modelcontextprotocol/sdk/node_modules/
 
 	enpm add "tar@^7.5.8" -D
 	enpm add "tar@^7.5.8" -P -w "dev-packages/application-manager"
-	enpm add "tar@^7.5.8" -P -w "packages/git"
+#	enpm add "tar@^7.5.8" -P -w "packages/git"
 
 	enpm add "qs@^6.14.2" -D
 	enpm add "qs@^6.14.2" -P -w "dev-packages/application-package"
@@ -791,7 +791,7 @@ ewarn "QA:  Manually remove node_modules/@modelcontextprotocol/sdk/node_modules/
 
 	enpm add "diff@^5.2.2" -D
 	enpm add "diff@^5.2.2" -P -w "dev-packages/cli"
-	enpm add "diff@^5.2.2" -P -w "packages/git"
+#	enpm add "diff@^5.2.2" -P -w "packages/git"
 	enpm add "diff@^5.2.2" -P -w "packages/scm"
 
 #	enpm add "ai@^5.0.52" -P -w "packages/ai-vercel-ai"
@@ -823,6 +823,10 @@ npm_save_lockfiles() {
 # Generated from:
 # find /var/tmp/portage/dev-util/theia-1.59.0/work/theia-1.59.0 -name "package.json" | cut -f 9- -d "/" | sort | sed -e "/node_modules/d"
 # Manually add package-lock.json to the list below.
+
+# Removed:
+#packages/git/package.json
+
 	local L=(
 dev-packages/application-manager/package.json
 dev-packages/application-package/package.json
@@ -872,7 +876,6 @@ packages/external-terminal/package.json
 packages/file-search/package.json
 packages/filesystem/package.json
 packages/getting-started/package.json
-packages/git/package.json
 packages/keymaps/package.json
 packages/markers/package.json
 packages/memory-inspector/package.json
