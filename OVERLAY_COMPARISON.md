@@ -12,6 +12,7 @@
 |                                     | Simple/basic ebuilds                            | Power user customization                           |
 |                                     |                                                 | Packaging power user or must have software         |
 |                                     |                                                 | New/custom feature patches                         |
+|                                     |                                                 | Dummy proofing / guardrails                        |
 | Compiler hardening                  | Balanced, outdated or missing flags             | Custom, recent hardening flags                     |
 | C++ consistency                     | N, user is responsible                          | Consistent, enforced by gcc_slot_* USE flags       |
 | Multiple AI platform install        | N, impossible (require containers)              | Y                                                  |
