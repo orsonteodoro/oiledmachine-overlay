@@ -23,7 +23,7 @@
 | CPU support                         | x86-64-v2 or x86-64-v3 newer CPUs are sometimes required | The lowest CPU requirements if possible for hardware/software immortality reasons |
 | Toolchain stability                 | Rolling compiler slots used by distro unstable releases or rolling only distros are preferred.  Possible build failure if the default C/C++ version changes or possibily new security issue (e.g. DoS, crash, or worst RCE). | LTS compiler slots used by distro LTS releases are preferred.  Virtually no build time failures as a result of using practically complete C++ standards that default to stable C++ version that are used and tested by most projects. |
 | Ebuild operationality               | Ready, low failure rate with simple @world set, but high strategic failure with complex @world set. | Varies, most are ready but some fail if long compile times or unresolved issues.  Tries to have higher strategic success for complex @world set. |
-| Multislot lean                      | Monoslot preferred to maintain the latest release used facade | Multislot preferred to solve strategic success               |
+| Multislot leanings                  | Monoslot is preferred to maintain the facade that the latest release is used | Multislot is preferred to solve strategic success               |
 | Ebuild exclusives or unique ebuilds | Y                                          | Y                                                            |
 | Build suffering policy              | Rip the bandaid slowly                     | Rip the bandaid fast                                         |
 | Tarball micropackage bundle for Go / Rust | Y (untrusted in the zero trust model) | N                                                           |
