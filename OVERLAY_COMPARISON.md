@@ -24,3 +24,4 @@
 | Toolchain stability                 | Rolling compiler versions used by distro unstable releases or rolling only distros are preferred.  Possible build failure if the default C/C++ changes or possibily new security issue (e.g. DoS, crash, or worst RCE). | LTS compiler versions used by LTS distro releases are preferred.  Virtually no build time failures as a result of using practically complete C++ standards that default to stable C++ version and used by most projects. |
 | Ebuild operationality               | Ready, low failure rate                    | Varies, most are ready but some fail if long compile times   |
 | Ebuild exclusives or unique ebuilds | Y                                          | Y                                                            |
+| Build suffering policy              | Rip the bandaid slowly                     | Rip the bandaid fast                                         |
