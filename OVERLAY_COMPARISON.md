@@ -4,7 +4,7 @@
 | ---                                 | ---                                        | ---                                                          |
 | Core developers                     | Many                                       | 1                                                            |
 | AI ban                              | Y                                          | N                                                            |
-| Ebuild code style                   | Original (reputation damaging, bad hire), messy/inconsistent or >= 80 characters | Custom (pretty, job friendly style).  Mostly within 80 characters |
+| Ebuild code style                   | The original language docs style (reputation damaging, bad hire), messy/inconsistent or >= 80 characters | Custom (pretty, job friendly style).  Mostly within 80 characters |
 | Organization                        | Y                                          | N                                                            |
 | Primary ebuild goals                | Build customization, simple/basic ebuilds  | Anti DoS, anti lag, production grade performance             |
 | Secondary ebuild goals              | Portability | Feature complete (aka full version) ebuilds, power user customization; packaging aethetically pleasing, cool, or trending software; new/custom feature patches exclusives, dummy proofing / guardrails |
