@@ -199,6 +199,13 @@ npm_update_lock_audit_post() {
 		sed -i -e "s|\"glob\": \"^10.3.10\"|\"glob\": \"^10.5.0\"|g" "package-lock.json" || die				# CVE-2025-64756; DoS, DT, ID; High
 		sed -i -e "s|\"glob\": \"10.3.10\"|\"glob\": \"^10.5.0\"|g" "package-lock.json" || die				# CVE-2025-64756; DoS, DT, ID; High
 
+		sed -i -e "s|\"protobufjs\": \"^7.2.5\"|\"protobufjs\": \"^7.5.5\"|g" "package-lock.json" || die		# CVE-2026-41242; VS(DoS, DT, ID), SS(DoS, DT, ID); Critical
+		sed -i -e "s|\"protobufjs\": \"^7.3.0\"|\"protobufjs\": \"^7.5.5\"|g" "package-lock.json" || die		# CVE-2026-41242; VS(DoS, DT, ID), SS(DoS, DT, ID); Critical
+		sed -i -e "s|\"lodash\": \"^4.17.15\"|\"lodash\": \"^4.18.0\"|g" "package-lock.json" || die			# CVE-2026-4800; ZC, DoS, DT, ID; High
+		sed -i -e "s|\"lodash\": \"^4.17.21\"|\"lodash\": \"^4.18.0\"|g" "package-lock.json" || die			# CVE-2026-4800; ZC, DoS, DT, ID; High
+																# CVE-2026-2950; ZC, DT, ID; Moderate
+
+		sed -i -e "s|\"@xmldom/xmldom\": \"^0.8.8\"|\"@xmldom/xmldom\": \"^0.8.12\"|g" "package-lock.json" || die	# CVE-2026-34601; ZC, DT; High
 	}
 	patch_lockfile
 	local pkgs
@@ -209,6 +216,7 @@ npm_update_lock_audit_post() {
 		"tmp@0.2.4"
 		"tar@^7.5.7"
 		"glob@^10.5.0"
+		"@xmldom/xmldom@^0.8.12"
 	)
 	enpm install -D "${pkgs[@]}"
 
@@ -216,6 +224,8 @@ npm_update_lock_audit_post() {
 		"@babel/runtime@7.26.10"
 		"glob@^10.5.0"
 		"undici@^6.23.0"
+		"protobufjs@^7.5.5"
+		"lodash@^4.18.0"
 	)
 	enpm install -P "${pkgs[@]}" --prefer-offline
 	patch_lockfile
