@@ -29,4 +29,4 @@
 | Tarball micropackage bundle for Go / Rust | Y (untrusted in the zero trust model) | N                                                           |
 | Reproducible live ebuilds           | N, user is responsible, quality is overlooked or poor due to rashness | Y, with USE=fallback-commit capable ebuilds, some ebuilds have high quality green CI checkmarks threshold requirements to reduce build failure especially for large codebases or long build time ebuild packages |
 | Package count                       | Many                                       | Few                                                          |
-| Quality for package inclusion       | Actively maintained packages               | Ebuild forks to correct issues or new software found or could land on awesome lists |
+| Quality for package inclusion       | Actively maintained projects               | Ebuild forks to correct issues or new software found or could land on awesome lists |
