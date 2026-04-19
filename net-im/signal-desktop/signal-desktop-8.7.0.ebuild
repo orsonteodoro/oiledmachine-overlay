@@ -108,7 +108,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_69
+ebuild_revision_70
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -330,7 +330,7 @@ ewarn "QA:  Manually remove jws@3.2.2 in ${S}/danger/pnpm-lock.yaml"
 																								# CVE-2026-34226; ZC, ID; High
 				sed -i -e "s|rollup: 3.27.1|rollup: 3.30.0|g" "pnpm-lock.yaml" || die												# CVE-2024-47068; DT, ID; Medium
 																								# CVE-2026-27606; ZC, DT, ID; High
-				sed -i -e "s|vite: 4.5.3|vite: 5.4.21|g" "pnpm-lock.yaml" || die												# CVE-2025-24010; ID; Medium
+				sed -i -e "s|vite: 4.5.3|vite: 6.4.2|g" "pnpm-lock.yaml" || die													# CVE-2025-24010; ID; Medium
 																								# CVE-2024-45812; DoS, DT, ID; Medium
 																								# CVE-2024-45811; ID; Medium
 																								# CVE-2025-46565; VS(ID); Medium
@@ -342,7 +342,7 @@ ewarn "QA:  Manually remove jws@3.2.2 in ${S}/danger/pnpm-lock.yaml"
 																								# CVE-2025-62522; ID; Moderate
 
 
-				sed -i -e "s|vite: ^4.1.0-beta.0|vite: 5.4.21|g" "pnpm-lock.yaml" || die											# CVE-2025-24010; ID; Medium
+				sed -i -e "s|vite: ^4.1.0-beta.0|vite: 6.4.2|g" "pnpm-lock.yaml" || die												# CVE-2025-24010; ID; Medium
 																								# CVE-2024-45812; DoS, DT, ID; Medium
 																								# CVE-2024-45811; ID; Medium
 																								# CVE-2025-46565; VS(ID); Medium
@@ -352,6 +352,8 @@ ewarn "QA:  Manually remove jws@3.2.2 in ${S}/danger/pnpm-lock.yaml"
 																								# CVE-2025-31125; ID; Moderate
 																								# CVE-2025-31486; ID; Moderate
 																								# CVE-2025-62522; ID; Moderate
+				sed -i -e "s|vite: 5.4.21|vite: 6.4.2|g" "pnpm-lock.yaml" || die												# CVE-2026-39365; ZC, VS(ID); Moderate
+				sed -i -e "s|vite: 5.4.21(@types/node@22.13.4)(sass@1.62.0)|vite: 6.4.2|g" "pnpm-lock.yaml" || die								# CVE-2026-39365; ZC, VS(ID); Moderate
 
 				sed -i -e "s|tmp: 0.2.3|tmp: 0.2.4|g" "pnpm-lock.yaml" || die													# CVE-2025-54798; DT; Low
 				sed -i -e "s|lodash: 4.17.21|lodash: 4.18.0|g" "pnpm-lock.yaml" || die												# CVE-2025-13465; ZC, VS(DoS, DT), SS(DoS, DT, ID); Moderate
@@ -554,7 +556,7 @@ ewarn "QA:  Manually remove jws@3.2.2 in ${S}/danger/pnpm-lock.yaml"
 				"esbuild@0.25.9"
 				"happy-dom@20.8.9"
 				"rollup@3.30.0"
-				"vite@5.4.21"
+				"vite@6.4.2"
 				"immutable@5.1.5"
 				"flatted@3.4.2"
 				"picomatch@4.0.4"
