@@ -26,4 +26,4 @@
 | Ebuild exclusives or unique ebuilds | Y                                          | Y                                                            |
 | Build suffering policy              | Rip the bandaid slowly                     | Rip the bandaid fast                                         |
 | Tarball micropackage bundle for Go / Rust | Y (untrusted in zero trust)          | N                                                            |
-| Reproducible live ebuilds           | N, user is reponsible, quality is typically overlooked | Y, with USE=fallback-commit capable ebuilds, some ebuilds have high quality tested commit review to reduce build failure |
+| Reproducible live ebuilds           | N, user is reponsible, quality is typically overlooked | Y, with USE=fallback-commit capable ebuilds, some ebuilds have high quality green CI checkmarks threshold requirements to reduce build failure especially for large codebases |
