@@ -20,7 +20,7 @@
 | Submission/contributor contracts    | Y                                               | N (no blackmail or futher oppression,              |
 |                                     |                                                 | just follow the open source software license)      |
 | Submission barrier                  | High                                            | Lower                                              |
-| Node lockfile scanning              | N                                               | Y                                                  |
+| Node/cargo lockfile scanning        | N                                               | Y                                                  |
 | Vulnerability DB sources            | CPE/CVE (NVD), GLSA                             | NVD, GLSA, CISA KEV, GHSA, HW/SW vendors,          |
 |                                     |                                                 | podcasts, AI apps                                  |
 | Fixes submitted to upstream         | Sometimes                                       | Very rare                                          |
