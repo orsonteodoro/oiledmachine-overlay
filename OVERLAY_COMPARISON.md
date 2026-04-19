@@ -7,7 +7,7 @@
 | Ebuild code style                   | Original (reputation damaging, bad hire), messy/inconsistent or >= 80 characters | Custom (pretty, job friendly style).  Mostly within 80 characters |
 | Organization                        | Y                                          | N                                                            |
 | Primary ebuild goals                | Build customization, simple/basic ebuilds  | Anti DoS, anti lag, production grade performance             |
-| Secondary ebuild goals              | Portability | Feature complete (aka full version) ebuilds, power user customization, packaging aethetically pleasing, cool, or trending software, new/custom feature patches exclusives, dummy proofing / guardrails |
+| Secondary ebuild goals              | Portability | Feature complete (aka full version) ebuilds, power user customization; packaging aethetically pleasing, cool, or trending software; new/custom feature patches exclusives, dummy proofing / guardrails |
 | Documentation style                 | Simple, undocumented mods or undocumented known settings that lead to performance regressions | Transparent and comprehensive, mods and regressions doc'ed |
 | Runtime performance                 | Slow sometimes or difficult to find bottleneck if ricing | Reproducible with guardrails and warnings      |
 | Compiler hardening                  | Balanced, outdated or missing flags, inappropriate static hardening level | Custom, recent hardening flags, dynamic increased hardening by threat |
