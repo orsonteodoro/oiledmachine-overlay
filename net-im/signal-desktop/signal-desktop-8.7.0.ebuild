@@ -108,7 +108,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_67
+ebuild_revision_68
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -219,6 +219,8 @@ einfo "DEBUG:  Applying sed based patches..."
 		# ZC = Zero Click Attack (AV:N, PR:N, UI:N)
 		# RCE = Remote Code Execution
 
+ewarn "QA:  Manually remove picomatch@2.3.1 in ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change picomatch: 2.3.1 to picomatch: 4.0.4 in ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove @tootallnate/once@2.0.0 from ${S}/pnpm-lock.yaml and ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove jws@3.2.2 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change jws@3.2.2 to jws@3.2.3 from ${S}/package.json and ${S}/pnpm-lock.yaml"
