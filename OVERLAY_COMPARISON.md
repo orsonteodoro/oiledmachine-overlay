@@ -1,6 +1,6 @@
 # Overlay comparison
 
-| Topic                               | gentoo-overlay                             | oiledmachine-overlay                                         |
+| Topic                               | gentoo [overlay]                           | oiledmachine-overlay                                         |
 | ---                                 | ---                                        | ---                                                          |
 | Core developers                     | Many                                       | 1                                                            |
 | AI ban                              | Y                                          | N                                                            |
