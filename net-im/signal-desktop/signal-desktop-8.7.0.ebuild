@@ -108,7 +108,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_68
+ebuild_revision_69
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -266,7 +266,7 @@ ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2(
 #ewarn "QA:  Manually change @octokit/request-error@2.1.0 references to 5.1.1 in ${S}/package.json"
 #ewarn "QA:  Manually change '@tootallnate/once': 2.0.0 to '@tootallnate/once': 3.0.1 from ${S}/pnpm-lock.yaml and ${S}/danger/pnpm-lock.yaml"
 
-#ewarn "QA:  Manually remove picomatch@2.3.1 from ${S}/sticker-creator/pnpm-lock.yaml"
+ewarn "QA:  Manually remove picomatch@2.3.1 from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove immutable@4.3.7 from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @remix-run/router@1.23.1 from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @remix-run/router@1.5.0 from ${S}/sticker-creator/pnpm-lock.yaml"
