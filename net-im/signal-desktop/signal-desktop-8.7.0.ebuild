@@ -6,7 +6,7 @@ EAPI=8
 # TODO fork @signalapp/libsignal-client for custom hardening
 
 # To update use:
-# PNPM_UPDATER_PROJECT_ROOT="Signal-Desktop-8.4.1" pnpm_updater_update_locks.sh
+# PNPM_UPDATER_PROJECT_ROOT="Signal-Desktop-8.7.0" pnpm_updater_update_locks.sh
 
 # Ignore if error:
 # Could not detect abi for version ' + target + ' and runtime ' + runtime + '.  Updating "node-abi" might help solve this issue if it is a new release of ' + runtime)
@@ -39,10 +39,10 @@ ELECTRON_BUILDER_PV="26.0.14"
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
-	ELECTRON_APP_ELECTRON_PV="41.1.0" # Cr 146.0.7680.166, node 24.14.0
+	ELECTRON_APP_ELECTRON_PV="41.2.1" # Cr 146.0.7680.188, node 24.14.1
 else
 	# Upstream's choice
-	ELECTRON_APP_ELECTRON_PV="40.8.3" # Cr 144.0.7559.236, node 24.14.0
+	ELECTRON_APP_ELECTRON_PV="41.1.1" # Cr 146.0.7680.166, node 24.14.0
 fi
 
 NPM_INSTALL_ARGS=(
@@ -95,13 +95,12 @@ LICENSE="
 	AGPL-3
 "
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
-	# The license fingerprint of 40.6.1 is the same as 40.6.0.
 	LICENSE+="
-		electron-41.0.3-chromium.html
+		electron-41.2.1-chromium.html
 	"
 else
 	LICENSE+="
-		electron-40.4.1-chromium.html
+		electron-41.1.1-chromium.html
 	"
 fi
 SLOT="0"
