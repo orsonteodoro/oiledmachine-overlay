@@ -25,3 +25,4 @@
 | Ebuild operationality               | Ready, low failure rate                    | Varies, most are ready but some fail if long compile times   |
 | Ebuild exclusives or unique ebuilds | Y                                          | Y                                                            |
 | Build suffering policy              | Rip the bandaid slowly                     | Rip the bandaid fast                                         |
+| Tarball micropackage bundle for Go / Rust | Y (untrusted in zero trust)          | N                                                            |
