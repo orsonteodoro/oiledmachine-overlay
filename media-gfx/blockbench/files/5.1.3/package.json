@@ -172,14 +172,16 @@
 		"file-saver": "^2.0.5",
 		"gifenc": "^1.0.3",
 		"jquery": "^3.7.1",
+		"json5": "^2.2.3",
 		"jszip": "^3.10.1",
+		"loader-utils": "^1.4.2",
 		"marked": "^15.0.11",
 		"molangjs": "^1.7.0",
 		"peerjs": "^1.5.4",
 		"prismjs": "^1.29.0",
 		"serialize-javascript": "^7.0.5",
 		"strip-json-comments": "^5.0.3",
-		"tar": "^7.5.11",
+		"tar": "^7.5.13",
 		"three": "^0.129.0",
 		"tinycolor2": "^1.6.0",
 		"typedoc": "^0.28.14",
@@ -194,6 +196,6 @@
 		"@electron/remote": "^2.1.2",
 		"electron-color-picker": "^0.2.0",
 		"electron-updater": "^6.7.3",
-		"postcss": "^8.4.31"
+		"postcss": "^8.5.10"
 	}
 }
