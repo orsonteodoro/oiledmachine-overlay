@@ -21,10 +21,10 @@ NPM_AUDIT_FATAL=0
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="40.7.0" # Cr 144.0.7559.225, node 24.14.0 works
+	ELECTRON_APP_ELECTRON_PV="41.2.1" # Cr 146.0.7680.188, node 24.14.1 works
 else
 	# Upstream preference
-	ELECTRON_APP_ELECTRON_PV="38.1.0" # Cr 140.0.7339.80, node 22.19.0
+	ELECTRON_APP_ELECTRON_PV="40.8.3" # Cr 144.0.7559.236, node 24.14.0
 fi
 
 NPM_AUDIT_FIX_ARGS=(
@@ -77,7 +77,7 @@ LICENSE="
 	(
 		${ELECTRON_APP_LICENSES}
 		Artistic-2
-		electron-40.7.0-chromium.html
+		electron-41.2.1-chromium.html
 	)
 	GPL-3+
 "
