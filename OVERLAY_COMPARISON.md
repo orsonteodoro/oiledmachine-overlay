@@ -25,7 +25,7 @@
 | Ebuild operationality               | Ready, low failure rate with simple @world set, but high strategic failure with complex @world set. | Varies, most are ready but some fail if long compile times or unresolved issues.  Tries to have higher strategic success for complex @world set. |
 | Multislot leanings                  | Monoslot is preferred to maintain the facade that the latest package version releases are used | Multislot is preferred to solve strategic success               |
 | Ebuild exclusives or unique ebuilds | Y                                          | Y                                                            |
-| Build suffering policy              | Rip the bandaid slowly                     | Rip the bandaid fast                                         |
+| Build suffering policy              | Rip the bandaid slowly (more suffering, less happiness) | Rip the bandaid fast (less suffering, more happiness) |
 | Tarball micropackage bundle for Go / Rust | Y (untrusted in the zero trust model) | N                                                           |
 | Reproducible live ebuilds           | N, user is responsible, quality is overlooked or poor due to rashness | Y, with USE=fallback-commit capable ebuilds, some ebuilds have high quality green CI checkmarks threshold requirements to reduce build failure especially for large codebases or long build time ebuild packages |
 | Ebuild package count                | ~19230 (Apr 20, 2026)                      | ~1233 (Apr 20, 2026)                                         |
