@@ -3,7 +3,7 @@
 | Topic                               | gentoo [overlay]                           | oiledmachine-overlay                                         |
 | ---                                 | ---                                        | ---                                                          |
 | Core developers                     | Many                                       | 1                                                            |
-| AI ban                              | Y                                          | N (AI is used to fix trivial security compiler warnings like UAF and string format vulnerabilies that are typically rated critical to high severity; generate and secure ebuilds and artifacts (e.g. build files, config files, patches) with human critical oversight and change) |
+| AI ban                              | Y (opportunity and security costs)         | N (AI is used to fix trivial security compiler warnings like UAF and string format vulnerabilies that are typically rated critical to high severity; generate and secure ebuilds and artifacts (e.g. build files, config files, patches) with human critical oversight and change) |
 | Ebuild code style                   | The original language docs style from the 70s-80s (reputation damaging, bad hire), messy/inconsistent or >= 80 characters | Custom contemporary (pretty, job friendly style).  Mostly within 80 characters |
 | Distro owned/backed                 | Y                                          | N                                                            |
 | Primary ebuild package goals        | Build customization, simple/basic ebuilds  | Anti DoS, anti lag, production grade performance             |
