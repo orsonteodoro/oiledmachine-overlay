@@ -204,6 +204,7 @@
   "devDependencies": {
     "@electron/notarize": "^2.1.0",
     "@tailwindcss/typography": "^0.5.10",
+    "@tootallnate/once": "^3.0.1",
     "@types/node": "^18.15.12",
     "@types/react": "^18.0.37",
     "@types/react-dom": "^18.0.11",
@@ -236,6 +237,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "cmdk": "^1.0.0",
+    "dompurify": "^3.4.0",
     "dotenv": "^16.3.1",
     "electron-is-dev": "^2.0.0",
     "electron-log": "^5.0.0-beta.16",

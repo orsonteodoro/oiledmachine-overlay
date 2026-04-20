@@ -123,7 +123,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 	custom-models firejail
-	ebuild_revision_23
+	ebuild_revision_24
 "
 RDEPEND+="
 	media-libs/vulkan-drivers
@@ -206,6 +206,12 @@ npm_update_lock_audit_post() {
 																# CVE-2026-2950; ZC, DT, ID; Moderate
 
 		sed -i -e "s|\"@xmldom/xmldom\": \"^0.8.8\"|\"@xmldom/xmldom\": \"^0.8.12\"|g" "package-lock.json" || die	# CVE-2026-34601; ZC, DT; High
+		sed -i -e "s|\"dompurify\": \"^3.3.1\"|\"dompurify\": \"^3.3.2\"|g" "package-lock.json" || die			# GHSA-h8r8-wccr-v5f2; ZC, SS(DoS, DT, ID); Moderate
+																# GHSA-39q2-94rc-95cp; VS(DT, ID); Moderate
+																# GHSA-cjmm-f4jc-qw8r; SS(DT, ID); Moderate
+																# GHSA-cj63-jhhr-wcxv; VS(DT, ID), SS(DT, ID); Moderate
+																# CVE-2026-0540; SS(DT, ID); Moderate
+		sed -i -e "s|\"@tootallnate/once\": \"2\"|\"@tootallnate/once\": \"^3.0.1\"|g" "package-lock.json" || die	# CVE-2026-3449; DoS; Low
 	}
 	patch_lockfile
 	local pkgs
@@ -217,6 +223,7 @@ npm_update_lock_audit_post() {
 		"tar@^7.5.7"
 		"glob@^10.5.0"
 		"@xmldom/xmldom@^0.8.12"
+		"@tootallnate/once@^3.0.1"
 	)
 	enpm install -D "${pkgs[@]}"
 
@@ -226,6 +233,7 @@ npm_update_lock_audit_post() {
 		"undici@^6.23.0"
 		"protobufjs@^7.5.5"
 		"lodash@^4.18.0"
+		"dompurify@^3.3.2"
 	)
 	enpm install -P "${pkgs[@]}" --prefer-offline
 	patch_lockfile
