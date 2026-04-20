@@ -13,7 +13,7 @@
 | Compiler hardening                  | Balanced, outdated or missing flags, inappropriate static hardening level | Custom, recent hardening flags, dynamic increased hardening by threat |
 | C++ consistency                     | N, user is responsible, difficult to resolve when build logging is off by default and multiple C++ standard versions are involved. | Y, enforced by gcc_slot_* USE flags and REQUIRED_USE |
 | Multiple AI platform co-existence (e.g. TensorFlow + LocalAI installed at the same time) | N, impossible (require containers or the container may require newer CPU ISA level) | Y                                          |
-| Submission/contributor contracts    | Y                                          | N (no blackmail or further oppression or no subverting of your rights, just follow the open source software license freedoms) |
+| Submission/contributor contracts    | Y                                          | N (no blackmail or further oppression or no subverting of your rights, just enjoy the open source software license freedoms) |
 | Ebuild/patch submission barrier     | High                                       | Lower                                                        |
 | Node/cargo lockfile security scanning | N (GitHub Dependabot which uses AI)      | Y (GitHub Dependabot is used for security alerts but not editing.  Editing is done by hand by human or by the package manager.) |
 | Vulnerability DB sources            | CPE/CVE (NVD), GLSA                        | NVD, GLSA, CISA KEV, GHSA, HW/SW vendors, podcasts, AI apps  |
