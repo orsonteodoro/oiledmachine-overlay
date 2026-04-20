@@ -701,22 +701,7 @@ NPM_INSTALL_ARGS=(
 # CVE-2025-58751; VS(ID); Low
 VITE_PV="5.4.20"
 
-WEBKIT_GTK_STABLE=(
-	"2.50"
-	"2.48"
-	"2.46"
-	"2.44"
-	"2.42"
-	"2.40"
-	"2.38"
-	"2.36"
-	"2.34"
-	"2.32"
-	"2.30"
-	"2.28"
-)
-
-inherit cargo desktop edo lcnr node-sharp npm xdg
+inherit cargo desktop edo lcnr node-sharp npm webkitgtk-stable xdg
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${P}"
@@ -747,7 +732,7 @@ REQUIRED_USE="
 "
 gen_webkit_depend() {
 	local s
-	for s in ${WEBKIT_GTK_STABLE[@]} ; do
+	for s in ${WEBKITGTK_STABLE[@]} ; do
 	# TODO:  add audio minimum requirement for webkit-gtk for tts/stt
 	# onnxruntime-web needs webassembly
 		echo "

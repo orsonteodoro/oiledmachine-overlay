@@ -622,7 +622,7 @@ zvariant_derive-3.15.2
 zvariant_utils-1.0.1
 "
 
-inherit cargo desktop lcnr npm xdg
+inherit cargo desktop lcnr npm webkitgtk-stable xdg
 
 #KEYWORDS="~amd64" # Needs code audit or code review
 S="${WORKDIR}/${MY_PN}-${PV}"
@@ -676,23 +676,9 @@ REQUIRED_USE="
 		X
 	)
 "
-WEBKIT_GTK_STABLE=(
-	"2.50"
-	"2.48"
-	"2.46"
-	"2.44"
-	"2.42"
-	"2.40"
-	"2.38"
-	"2.36"
-	"2.34"
-	"2.32"
-	"2.30"
-	"2.28"
-)
 gen_webkit_depend() {
 	local s
-	for s in "${WEBKIT_GTK_STABLE[@]}" ; do
+	for s in "${WEBKITGTK_STABLE[@]}" ; do
 		echo "=net-libs/webkit-gtk-${s}*:4[javascript,introspection,wayland?,X?]"
 	done
 }

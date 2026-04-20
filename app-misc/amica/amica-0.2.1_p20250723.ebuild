@@ -484,22 +484,7 @@ NPM_UNINSTALL_ARGS=(
 	"--prefer-offline"
 )
 
-WEBKIT_GTK_STABLE=(
-	"2.50"
-	"2.48"
-	"2.46"
-	"2.44"
-	"2.42"
-	"2.40"
-	"2.38"
-	"2.36"
-	"2.34"
-	"2.32"
-	"2.30"
-	"2.28"
-)
-
-inherit cargo desktop edo lcnr npm python-single-r1 rust node-sharp xdg
+inherit cargo desktop edo lcnr npm python-single-r1 rust node-sharp webkitgtk-stable xdg
 
 KEYWORDS="~amd64 ~arm64"
 SRC_URI="
@@ -657,7 +642,7 @@ REQUIRED_USE="
 "
 gen_webkit_depend() {
 	local s
-	for s in "${WEBKIT_GTK_STABLE[@]}" ; do
+	for s in "${WEBKITGTK_STABLE[@]}" ; do
 	# TODO:  add audio minimum requirement for webkit-gtk for tts/stt
 	# onnxruntime-web needs webassembly
 		echo "
