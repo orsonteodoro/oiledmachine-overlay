@@ -29,4 +29,4 @@
 | Tarball micropackage bundle for Go / Rust | Y (untrusted in the zero trust model) | N                                                           |
 | Reproducible live ebuilds           | N, user is responsible, quality is overlooked or poor due to rashness | Y, with USE=fallback-commit capable ebuilds, some ebuilds have high quality green CI checkmarks threshold requirements to reduce build failure especially for large codebases or long build time ebuild packages |
 | Package count                       | ~19230 (Apr 20, 2026)                      | ~1233 (Apr 20, 2026)                                         |
-| Quality for package inclusion       | Actively maintained projects               | Ebuild forks to correct issues or new package additions from awesome lists, hidden gems on GitHub, etc. |
+| Quality sought for package inclusion | Actively maintained projects               | Ebuild forks to correct issues or new package additions from awesome lists, hidden gems on GitHub, etc. |
