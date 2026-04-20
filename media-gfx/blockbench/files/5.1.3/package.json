@@ -179,7 +179,7 @@
 		"prismjs": "^1.29.0",
 		"serialize-javascript": "^7.0.5",
 		"strip-json-comments": "^5.0.3",
-		"tar": "^7.5.10",
+		"tar": "^7.5.11",
 		"three": "^0.129.0",
 		"tinycolor2": "^1.6.0",
 		"typedoc": "^0.28.14",

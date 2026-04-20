@@ -7,6 +7,10 @@ EAPI=8
 # For Election version correspondance, see
 # https://releases.electronjs.org/releases.json
 
+# To update lockfile:
+# PATH=$(realpath ../../scripts)":${PATH}"
+# NPM_UPDATER_VERSIONS="5.1.3" npm_updater_update_locks.sh
+
 MY_PN="${PN^}"
 
 export NPM_INSTALL_PATH="/opt/${PN}"
@@ -21,7 +25,7 @@ NPM_AUDIT_FATAL=0
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="41.2.1" # Cr 146.0.7680.188, node 24.14.1 works
+	ELECTRON_APP_ELECTRON_PV="41.2.1" # Cr 146.0.7680.188, node 24.14.1
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="40.8.3" # Cr 144.0.7559.236, node 24.14.0
@@ -165,7 +169,7 @@ LICENSE="
 
 RESTRICT="mirror"
 SLOT="0"
-IUSE+=" ebuild_revision_16"
+IUSE+=" ebuild_revision_19"
 BDEPEND+="
 	>=net-libs/nodejs-${NODE_SLOT}:${NODE_SLOT}[webassembly(+)]
 	>=net-libs/nodejs-${NODE_SLOT}[npm,webassembly(+)]
@@ -174,25 +178,26 @@ BDEPEND+="
 npm_update_lock_install_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 #einfo "QA:  Remove node_modules/blockbench-types/node_modules/electron@33.4.11 from lockfile."								# CVE-2025-55305; DT; Moderate
-einfo "QA:  Remove node_modules/loader-utils/node_modules/json5 from lockfile."										# CVE-2022-46175; DoS, DT, ID; High
+#einfo "QA:  Remove node_modules/loader-utils/node_modules/json5 from lockfile."									# CVE-2022-46175; DoS, DT, ID; High
 		fix_lockfile() {
 			sed -i -e "s|\"serialize-javascript\": \"^4.0.0\"|\"serialize-javascript\": \"^7.0.3\"|g" "package-lock.json" || die		# GHSA-5c6j-r48x-rmvq; ZC, DoS, DT, ID; High
-			sed -i -e "s|\"loader-utils\": \"^0.2.16\"|\"loader-utils\": \"1.4.1\"|g" "package-lock.json" || die				# CVE-2022-37601; ZC, DoS, DT, ID; Critical
-			sed -i -e "s|\"json5\": \"^0.5.0\"|\"json5\": \"2.2.3\"|g" "package-lock.json" || die						# CVE-2022-46175; DoS, DT, ID; High
-			sed -i -e "s|\"tar\": \"^6.0.5\"|\"tar\": \"7.5.10\"|" "package-lock.json" || die						# CVE-2026-24842; DT, ID
+#			sed -i -e "s|\"loader-utils\": \"^0.2.16\"|\"loader-utils\": \"1.4.1\"|g" "package-lock.json" || die				# CVE-2022-37601; ZC, DoS, DT, ID; Critical
+#			sed -i -e "s|\"json5\": \"^0.5.0\"|\"json5\": \"2.2.3\"|g" "package-lock.json" || die						# CVE-2022-46175; DoS, DT, ID; High
+			sed -i -e "s|\"tar\": \"^6.0.5\"|\"tar\": \"7.5.11\"|" "package-lock.json" || die						# CVE-2026-24842; DT, ID
 																			# CVE-2026-23745; VS(DT, ID), SS(DT, ID)
 																			# CVE-2026-26960; DT, ID
-			sed -i -e "s|\"tar\": \"^6.1.12\"|\"tar\": \"7.5.10\"|" "package-lock.json" || die						# CVE-2026-24842; DT, ID
+			sed -i -e "s|\"tar\": \"^6.1.12\"|\"tar\": \"7.5.11\"|" "package-lock.json" || die						# CVE-2026-24842; DT, ID
 																			# CVE-2026-23745; VS(DT, ID), SS(DT, ID)
 																			# CVE-2026-26960; DT, ID
-			sed -i -e "s|\"tar\": \"^6.1.11\"|\"tar\": \"7.5.10\"|" "package-lock.json" || die						# CVE-2026-24842; DT, ID
+			sed -i -e "s|\"tar\": \"^6.1.11\"|\"tar\": \"7.5.11\"|" "package-lock.json" || die						# CVE-2026-24842; DT, ID
 																			# CVE-2026-23745; VS(DT, ID), SS(DT, ID)
 																			# CVE-2026-26960; DT, ID
-			sed -i -e "s|\"tar\": \"^6.1.2\"|\"tar\": \"7.5.10\"|" "package-lock.json" || die						# CVE-2026-24842; DT, ID
+			sed -i -e "s|\"tar\": \"^6.1.2\"|\"tar\": \"7.5.11\"|" "package-lock.json" || die						# CVE-2026-24842; DT, ID
 																			# CVE-2026-23745; VS(DT, ID), SS(DT, ID)
 																			# CVE-2026-26960; DT, ID
 																			# CVE-2026-23950; DoS, DT, ID
 																			# GHSA-qffp-2rhf-9h96; VS(DoS, DT), SS(DoS, DT)
+																			# CVE-2026-31802; VS(DT), SS(DT), High
 			sed -i -e "s|\"postcss\": \"^6.0.1\"|\"postcss\": \"8.4.31\"|" "package-lock.json" || die					# CVE-2023-44270; DT
 			sed -i -e "s|\"postcss\": \"^8.4.14\"|\"postcss\": \"8.4.31\"|" "package-lock.json" || die					# CVE-2023-44270; DT
 			sed -i -e "s|\"postcss\": \"^7.0.36\"|\"postcss\": \"8.4.31\"|" "package-lock.json" || die					# CVE-2023-44270; DT
@@ -204,7 +209,7 @@ einfo "QA:  Remove node_modules/loader-utils/node_modules/json5 from lockfile."	
 		enpm install "electron-builder@25.1.8" ${NPM_INSTALL_ARGS[@]}
 		enpm install "electron@${ELECTRON_APP_ELECTRON_PV}" -D ${NPM_INSTALL_ARGS[@]}
 		enpm install "serialize-javascript@^7.0.3" -D ${NPM_INSTALL_ARGS[@]}
-		enpm install "tar@7.5.10" -D ${NPM_INSTALL_ARGS[@]}
+		enpm install "tar@7.5.11" -D ${NPM_INSTALL_ARGS[@]}
 		enpm install "postcss@8.4.31" ${NPM_INSTALL_ARGS[@]}
 		enpm install "@tootallnate/once@3.0.1" -D ${NPM_INSTALL_ARGS[@]}
 		fix_lockfile
@@ -255,6 +260,8 @@ src_compile() {
 
 	export ELECTRON_CUSTOM_DIR="v${ELECTRON_APP_ELECTRON_PV}"
 
+	enpm run "build-electron"
+
 	# The zip gets wiped for some reason in src_unpack.
 	electron-app_cp_electron
 
@@ -284,6 +291,7 @@ src_install() {
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.1.3 (20230528 with Electron 41.2.1)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.0.7 (20260304 with Electron 40.7.0)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.0.7 (20260225 with Electron 40.6.1)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.0.7 (20260222 with Electron 40.6.0)
