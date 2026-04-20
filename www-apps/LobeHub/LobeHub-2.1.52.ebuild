@@ -20,6 +20,7 @@ EAPI=8
 # 2.1.43 -> 2.1.44
 # 2.1.44 -> 2.1.46
 # 2.1.46 -> 2.1.48
+# 2.1.48 -> 2.1.52
 
 # Ebuild using React 19
 
@@ -36,10 +37,8 @@ EAPI=8
 #
 # Generate the lockfile as follows:
 #
-#   OILEDMACHINE_OVERLAY_DIR="/usr/local/oiledmachine-overlay"
-#   PATH="${OILEDMACHINE_OVERLAY_DIR}/scripts:${PATH}"
-#   cd "${OILEDMACHINE_OVERLAY_DIR}/www-apps/LobeHub"
-#   PNPM_UPDATER_VERSIONS="2.1.48" pnpm_updater_update_locks.sh
+#   PATH=$(realpath "../../scripts")":${PATH}"
+#   PNPM_UPDATER_VERSIONS="2.1.52" pnpm_updater_update_locks.sh
 #
 
 # U22, U24, D12
@@ -55,7 +54,7 @@ MY_PN="${PN}"		# LobeHub
 MY_PN2="${PN,,}"	# lobehub
 
 # See also https://github.com/vercel/next.js/blob/v15.1.6/.github/workflows/build_and_test.yml#L328
-_ELECTRON_DEP_ROUTE="upstream"
+_ELECTRON_DEP_ROUTE="secure"
 NODE_SHARP_USE="exif lcms webp"
 NODE_SLOT="24" # See .nvmrc or Dockerfile
 NPM_SLOT="3"
@@ -77,9 +76,9 @@ VIPS_PV="8.18.0"
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
-	ELECTRON_APP_ELECTRON_PV="41.1.1" # Cr 146.0.7680.166, node 24.14.0
+	ELECTRON_APP_ELECTRON_PV="41.2.1" # Cr 146.0.7680.188, node 24.14.1
 else
-#https://github.com/lobehub/lobehub/blob/v2.1.44/apps/desktop/package.json#L70
+#https://github.com/lobehub/lobehub/blob/v2.1.52/apps/desktop/package.json#L70
 	# Upstream's choice
 	ELECTRON_APP_ELECTRON_PV="41.1.0" # Cr 146.0.7680.166, node 24.14.0
 fi
@@ -189,50 +188,48 @@ LICENSE="
 	)
 "
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
-	# TODO verify
-	# The 41.1.1 license file fingerprint should be the same as 41.0.3.
-        LICENSE+="
-                electron-41.0.3-chromium.html
-        "
+	LICENSE+="
+		electron-41.2.1-chromium.html
+	"
 else
 	# The 41.1.0 license file fingerprint is verified the same as 41.0.3.
 	LICENSE+="
-                electron-41.0.3-chromium.html
-        "
+		electron-41.0.3-chromium.html
+	"
 fi
 # Third party licenses:
-# ( CC0-1.0 MIT ) - ./lobehub-2.1.44/node_modules/.pnpm/lodash.escape@4.0.1/node_modules/lodash.escape/LICENSE
-# all-rights-reserved MIT - ./lobehub-2.1.44/node_modules/.pnpm/vscode-languageserver-protocol@3.17.5/node_modules/vscode-languageserver-protocol/License.txt
-# all-rights-reserved MIT - ./lobehub-2.1.44/node_modules/.pnpm/tsyringe@4.10.0/node_modules/tsyringe/LICENSE
-# AGPL-3 - ./lobehub-2.1.44/node_modules/.pnpm/dirty-json@0.9.2/node_modules/dirty-json/LICENSE
-# Apache-2.0 - ./lobehub-2.1.44/node_modules/.pnpm/aria-query@5.3.2/node_modules/aria-query/LICENSE
-# Artistic-2 - ./lobehub-2.1.44/node_modules/.pnpm/textextensions@6.11.0/node_modules/textextensions/LICENSE.md
-# BlueOak-1.0.0 - ./lobehub-2.1.44/node_modules/.pnpm/@isaacs+cliui@9.0.0/node_modules/@isaacs/cliui/LICENSE.md
-# BlueOak-1.0.0 - ./lobehub-2.1.44/node_modules/.pnpm/yallist@5.0.0/node_modules/yallist/LICENSE.md
-# BSD - ./lobehub-2.1.44/node_modules/.pnpm/@protobufjs+pool@1.1.0/node_modules/@protobufjs/pool/LICENSE
-# BSD-2 - ./lobehub-2.1.44/node_modules/.pnpm/esutils@2.0.3/node_modules/esutils/LICENSE.BSD
-# BSD-2 CC0-1.0 ISC MIT - ./lobehub-2.1.44/node_modules/.pnpm/vite@7.3.1_@types+node@24.12.0_jiti@2.6.1_terser@5.46.1_tsx@4.21.0_yaml@2.8.3/node_modules/vite/LICENSE.md
-# CC-BY-4.0 - ./lobehub-2.1.44/node_modules/.pnpm/caniuse-lite@1.0.30001780/node_modules/caniuse-lite/LICENSE
-# CC-BY-SA-4.0 ISC - ./lobehub-2.1.44/node_modules/.pnpm/npm@9.9.4/node_modules/npm/node_modules/node-gyp/node_modules/glob/LICENSE
-# CC0-1.0 - ./lobehub-2.1.44/node_modules/.pnpm/type-fest@5.5.0/node_modules/type-fest/license-cc0
-# custom (Sustainable Use License) - ./lobehub-2.1.44/node_modules/.pnpm/@codesandbox+nodebox@0.1.8/node_modules/@codesandbox/nodebox/LICENSE
-# custom (https://code.claude.com/docs/en/legal-and-compliance) - ./lobehub-2.1.44/node_modules/.pnpm/@anthropic-ai+claude-agent-sdk@0.2.81_zod@4.3.6/node_modules/@anthropic-ai/claude-agent-sdk/LICENSE.md
-# custom - ./lobehub-2.1.44/node_modules/.pnpm/npm@9.9.4/node_modules/npm/node_modules/jsbn/LICENSE
-# ISC - ./lobehub-2.1.44/node_modules/.pnpm/internmap@2.0.3/node_modules/internmap/LICENSE
-# icu-64.2 - ./lobehub-2.1.44/node_modules/.pnpm/tree-sitter@0.21.1/node_modules/tree-sitter/vendor/tree-sitter/lib/src/unicode/LICENSE
+# ( CC0-1.0 MIT ) - ./lobehub-2.1.52/node_modules/.pnpm/lodash.escape@4.0.1/node_modules/lodash.escape/LICENSE
+# all-rights-reserved MIT - ./lobehub-2.1.52/node_modules/.pnpm/vscode-languageserver-protocol@3.17.5/node_modules/vscode-languageserver-protocol/License.txt
+# all-rights-reserved MIT - ./lobehub-2.1.52/node_modules/.pnpm/tsyringe@4.10.0/node_modules/tsyringe/LICENSE
+# AGPL-3 - ./lobehub-2.1.52/node_modules/.pnpm/dirty-json@0.9.2/node_modules/dirty-json/LICENSE
+# Apache-2.0 - ./lobehub-2.1.52/node_modules/.pnpm/aria-query@5.3.2/node_modules/aria-query/LICENSE
+# Artistic-2 - ./lobehub-2.1.52/node_modules/.pnpm/textextensions@6.11.0/node_modules/textextensions/LICENSE.md
+# BlueOak-1.0.0 - ./lobehub-2.1.52/node_modules/.pnpm/@isaacs+cliui@9.0.0/node_modules/@isaacs/cliui/LICENSE.md
+# BlueOak-1.0.0 - ./lobehub-2.1.52/node_modules/.pnpm/yallist@5.0.0/node_modules/yallist/LICENSE.md
+# BSD - ./lobehub-2.1.52/node_modules/.pnpm/@protobufjs+pool@1.1.0/node_modules/@protobufjs/pool/LICENSE
+# BSD-2 - ./lobehub-2.1.52/node_modules/.pnpm/esutils@2.0.3/node_modules/esutils/LICENSE.BSD
+# BSD-2 CC0-1.0 ISC MIT - ./lobehub-2.1.52/node_modules/.pnpm/vite@7.3.1_@types+node@24.12.0_jiti@2.6.1_terser@5.46.1_tsx@4.21.0_yaml@2.8.3/node_modules/vite/LICENSE.md
+# CC-BY-4.0 - ./lobehub-2.1.52/node_modules/.pnpm/caniuse-lite@1.0.30001780/node_modules/caniuse-lite/LICENSE
+# CC-BY-SA-4.0 ISC - ./lobehub-2.1.52/node_modules/.pnpm/npm@9.9.4/node_modules/npm/node_modules/node-gyp/node_modules/glob/LICENSE
+# CC0-1.0 - ./lobehub-2.1.52/node_modules/.pnpm/type-fest@5.5.0/node_modules/type-fest/license-cc0
+# custom (Sustainable Use License) - ./lobehub-2.1.52/node_modules/.pnpm/@codesandbox+nodebox@0.1.8/node_modules/@codesandbox/nodebox/LICENSE
+# custom (https://code.claude.com/docs/en/legal-and-compliance) - ./lobehub-2.1.52/node_modules/.pnpm/@anthropic-ai+claude-agent-sdk@0.2.81_zod@4.3.6/node_modules/@anthropic-ai/claude-agent-sdk/LICENSE.md
+# custom - ./lobehub-2.1.52/node_modules/.pnpm/npm@9.9.4/node_modules/npm/node_modules/jsbn/LICENSE
+# ISC - ./lobehub-2.1.52/node_modules/.pnpm/internmap@2.0.3/node_modules/internmap/LICENSE
+# icu-64.2 - ./lobehub-2.1.52/node_modules/.pnpm/tree-sitter@0.21.1/node_modules/tree-sitter/vendor/tree-sitter/lib/src/unicode/LICENSE
 # LobeHub-Community-License-20250921 - See https://github.com/lobehub/lobehub/blob/main/LICENSE
-# MIT - ./lobehub-2.1.44/node_modules/.pnpm/matcher@3.0.0/node_modules/matcher/license
-# MIT-0 - ./lobehub-2.1.44/node_modules/.pnpm/@csstools+selector-specificity@5.0.0_postcss-selector-parser@7.1.1/node_modules/@csstools/selector-specificity/LICENSE.md
-# MPL-2.0 - ./lobehub-2.1.44/node_modules/.pnpm/@vercel+analytics@1.6.1_next@16.1.7_@babel+core@7.29.0_@opentelemetry+api@1.9.0_@playwr_479db63f3807ed5fe2ed8b4d0278027d/node_modules/@vercel/analytics/LICENSE
-# OFL-1.1 - ./lobehub-2.1.44/node_modules/.pnpm/polished@4.3.1/node_modules/polished/docs/assets/fonts/LICENSE.txt
-# Princeton - ./lobehub-2.1.44/node_modules/.pnpm/wordnet-db@3.1.14/node_modules/wordnet-db/LICENSE
-# PSF-2.2 (similar to PSF-2.4) - ./lobehub-2.1.44/node_modules/.pnpm/argparse@2.0.1/node_modules/argparse/LICENSE
-# Unlicense - ./lobehub-2.1.44/node_modules/.pnpm/robust-predicates@3.0.2/node_modules/robust-predicates/LICENSE
-# WTFPL-2 - MIT - ./lobehub-2.1.44/node_modules/.pnpm/opener@1.5.2/node_modules/opener/LICENSE.txt
-# || ( Apache-2.0 MPL-2.0 ) - ./lobehub-2.1.44/node_modules/.pnpm/dompurify@3.3.3/node_modules/dompurify/LICENSE
-# || ( AFL-2.1 BSD ) - ./lobehub-2.1.44/node_modules/.pnpm/json-schema@0.4.0/node_modules/json-schema/LICENSE
-# || ( BSD GPL-2 ) - ./lobehub-2.1.44/node_modules/.pnpm/node-forge@1.3.3/node_modules/node-forge/LICENSE
-# || ( GPL-3 MIT ) - ./lobehub-2.1.44/node_modules/.pnpm/jszip@3.10.1/node_modules/jszip/LICENSE.markdown
+# MIT - ./lobehub-2.1.52/node_modules/.pnpm/matcher@3.0.0/node_modules/matcher/license
+# MIT-0 - ./lobehub-2.1.52/node_modules/.pnpm/@csstools+selector-specificity@5.0.0_postcss-selector-parser@7.1.1/node_modules/@csstools/selector-specificity/LICENSE.md
+# MPL-2.0 - ./lobehub-2.1.52/node_modules/.pnpm/@vercel+analytics@1.6.1_next@16.1.7_@babel+core@7.29.0_@opentelemetry+api@1.9.0_@playwr_479db63f3807ed5fe2ed8b4d0278027d/node_modules/@vercel/analytics/LICENSE
+# OFL-1.1 - ./lobehub-2.1.52/node_modules/.pnpm/polished@4.3.1/node_modules/polished/docs/assets/fonts/LICENSE.txt
+# Princeton - ./lobehub-2.1.52/node_modules/.pnpm/wordnet-db@3.1.14/node_modules/wordnet-db/LICENSE
+# PSF-2.2 (similar to PSF-2.4) - ./lobehub-2.1.52/node_modules/.pnpm/argparse@2.0.1/node_modules/argparse/LICENSE
+# Unlicense - ./lobehub-2.1.52/node_modules/.pnpm/robust-predicates@3.0.2/node_modules/robust-predicates/LICENSE
+# WTFPL-2 - MIT - ./lobehub-2.1.52/node_modules/.pnpm/opener@1.5.2/node_modules/opener/LICENSE.txt
+# || ( Apache-2.0 MPL-2.0 ) - ./lobehub-2.1.52/node_modules/.pnpm/dompurify@3.3.3/node_modules/dompurify/LICENSE
+# || ( AFL-2.1 BSD ) - ./lobehub-2.1.52/node_modules/.pnpm/json-schema@0.4.0/node_modules/json-schema/LICENSE
+# || ( BSD GPL-2 ) - ./lobehub-2.1.52/node_modules/.pnpm/node-forge@1.3.3/node_modules/node-forge/LICENSE
+# || ( GPL-3 MIT ) - ./lobehub-2.1.52/node_modules/.pnpm/jszip@3.10.1/node_modules/jszip/LICENSE.markdown
 # The distro's Apache-2.0 license file does not contain all rights reserved.
 # The distro's MIT license file does not contain all rights reserved.
 # The PSF-2.2 license differs from the PSF-2.4 license.
@@ -345,7 +342,6 @@ DOCS=( "CHANGELOG.md" "README.md" )
 
 get_agent_gateway_url() {
 	if use pwa ; then
-# FIXME
 		echo "http://${LOBEHUB_HOSTNAME}:${LOBEHUB_PORT}"
 	else
 		echo "https://agent-gateway.lobehub.com"
@@ -354,7 +350,6 @@ get_agent_gateway_url() {
 
 get_device_gateway_url() {
 	if use pwa ; then
-# FIXME
 		echo "http://${LOBEHUB_HOSTNAME}:${LOBEHUB_PORT}/gateway"
 	else
 		echo "https://device-gateway.lobehub.com"
@@ -542,13 +537,14 @@ pnpm_unpack_post() {
 	# better-auth is bumped to 1.5.6 to avoid runtime authentication issues.
 	# All versions directly below are pinned versions using same version as
 	# better-auth's lockfile to avoid build and runtime issues.
+	# Too update most values, see https://github.com/better-auth/better-auth/blob/v1.6.5/pnpm-lock.yaml
 	sed -i \
 		-e "s|\"@types/react\": \"19.2.13\"|\"@types/react\": \"19.2.14\"|g" \
 		-e "s|\"@types/react-dom\": \"^19.2.3\"|\"@types/react-dom\": \"19.2.3\"|g" \
-		-e "s|\"better-auth\": \"1.4.6\"|\"better-auth\": \"1.6.0\"|g" \
+		-e "s|\"better-auth\": \"1.4.6\"|\"better-auth\": \"1.6.5\"|g" \
 		-e "s|\"better-call\": \"1.1.8\"|\"better-call\": \"1.3.5\"|g" \
 		-e "s|\"drizzle-kit\": \"^0.31.8\"|\"drizzle-kit\": \"0.31.9\"|g" \
-		-e "s|\"drizzle-orm\": \"^0.45.1\"|\"drizzle-orm\": \"0.45.1\"|g" \
+		-e "s|\"drizzle-orm\": \"^0.45.1\"|\"drizzle-orm\": \"0.45.2\"|g" \
 		-e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.5.7\"|g" \
 		-e "s|\"pg\": \"^8.17.2\"|\"pg\": \"8.19.0\"|g" \
 		"package.json" \
@@ -572,7 +568,7 @@ pnpm_unpack_post() {
 # The prebuilt vips could be causing the segfault.  The sharp package need to
 # reference the system's vips package not the prebuilt one.
 	eapply "${FILESDIR}/lobe-chat-1.65.0-sharp-declaration.patch"
-#	eapply "${FILESDIR}/${PN}-2.1.33-use-e965-xlsx.patch"
+	eapply "${FILESDIR}/${PN}-2.1.33-use-e965-xlsx.patch"
 	if use pwa ; then
 		eapply "${FILESDIR}/${MY_PN2}-2.1.34-hardcoded-paths.patch"
 		eapply "${FILESDIR}/${PN}-2.1.44-postgresjs-driver-support.patch"
@@ -600,8 +596,8 @@ pnpm_unpack_post() {
 			"svix@1.84.1"
 
 	# Pin better-auth and dependencies
-			"drizzle-orm@0.45.1"
-			"better-auth@1.6.0"
+			"drizzle-orm@0.45.2"
+			"better-auth@1.6.5"
 			"fast-xml-parser@5.5.7"
 			"pg@8.19.0"
 
@@ -664,12 +660,12 @@ pnpm_audit_post() {
 			sed -i -e "s|\"vitest\": ^3.2.4|\"vitest\": 3.2.4|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|\"vitest\": \"^3.2.4\"|\"vitest\": \"3.2.4\"|g" "package.json" || die
 		}
-#		pnpm_patch_lockfile
+		pnpm_patch_lockfile
 		pkgs=(
 			"vitest@3.2.4"
 		)
 		epnpm add -D ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}						# CVE-2025-24964; DoS, DT, ID; Critical
-#		pnpm_patch_lockfile
+		pnpm_patch_lockfile
 	fi
 }
 
@@ -824,13 +820,13 @@ ewarn "QA:  Manually change electron specifier to ^41.0.0 and version to 41.0.3 
 			sed -i -e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.5.6\"|g" "package.json" || die
 		}
 
-#		pnpm_patch_lockfile
+		pnpm_patch_lockfile
 
 		local pkgs
 		pkgs=(
 			"@apidevtools/json-schema-ref-parser@11.2.0"					# CVE-2024-29651; DoS, DT, ID; High
 		)
-#		epnpm add ${pkgs[@]}
+		epnpm add ${pkgs[@]}
 
 		pkgs=(
 			"esbuild@0.27.4"								# GHSA-67mh-4wv8-2f99; DI; Moderate
@@ -859,7 +855,7 @@ ewarn "QA:  Manually change electron specifier to ^41.0.0 and version to 41.0.3 
 													# CVE-2026-33036; ZC, DoS; High
 													# CVE-2026-33349; ZC, DoS; Moderate
 		)
-#		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
+		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 
 		pkgs=(
 			"snowflake-sdk@2.0.4"								# CVE-2025-24791; DT, ID; Medium
@@ -882,13 +878,13 @@ ewarn "QA:  Manually change electron specifier to ^41.0.0 and version to 41.0.3 
 			"@tootallnate/once@3.0.1"							# CVE-2026-3449; DoS; Low
 			"serialize-javascript@7.0.3"							# GHSA-5c6j-r48x-rmvq; CE, DoS, DT, ID; High
 		)
-#		epnpm add -D ${pkgs[@]}
+		epnpm add -D ${pkgs[@]}
 
 		NODE_ADDON_API_INSTALL_ARGS=( "-P" )
 		NODE_GYP_INSTALL_ARGS=( "-D" )
 		epnpm add -D "@types/sharp" ${NPM_INSTALL_ARGS[@]}
 		node-sharp_pnpm_lockfile_add_sharp
-#		pnpm_patch_lockfile
+		pnpm_patch_lockfile
 
 		# Copy all lockfiles
 		mkdir -p "${WORKDIR}/lockfile-image"
