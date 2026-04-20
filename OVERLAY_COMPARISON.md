@@ -15,7 +15,7 @@
 | Multiple AI platform co-existence (e.g. TensorFlow + LocalAI installed at the same time) | N, impossible (require containers or the container may require newer CPU ISA level) | Y                                          |
 | Submission/contributor contracts    | Y                                          | N (no blackmail or further oppression or no subverting of your rights, just follow the open source software license freedoms) |
 | Ebuild/patch submission barrier     | High                                       | Lower                                                        |
-| Node/cargo lockfile security scanning | N (GitHub Dependabot which uses AI)      | Y (GitHub Dependabot is used for security alerts but not editing) |
+| Node/cargo lockfile security scanning | N (GitHub Dependabot which uses AI)      | Y (GitHub Dependabot is used for security alerts but not editing.  Editing is done by hand by human.) |
 | Vulnerability DB sources            | CPE/CVE (NVD), GLSA                        | NVD, GLSA, CISA KEV, GHSA, HW/SW vendors, podcasts, AI apps  |
 | Fixes submitted to upstream         | Sometimes                                  | Very rare                                                    |
 | Containerization policy             | Decontainerize packages to be consistent with the build everything by source distro core value (lowers security and increases blast radius, contributes to or promotes bad security architecture, is a bad habit or ignorance by obsolete security team) | Containerize if EOL or if complex build, otherwise decontainerize.  Change possible to increase container ebuilds and use them as dependencies to better security architecture if community approves. |
