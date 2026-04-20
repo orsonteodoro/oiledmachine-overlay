@@ -6,6 +6,13 @@ EAPI=8
 
 # U22
 
+# For the plugin extension list see
+# https://github.com/microsoft/vscode/tree/main/extensions
+
+# To update:
+# PATH=$(realpath "../../scripts")":${PATH}"
+# NPM_UPDATER_VERSIONS="1.70.2" npm_updater_update_locks.sh
+
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE"
 # ELECTRON_APP_ELECTRON_PV is limited by nan
 # Only upstream's Electron version allowed.
@@ -490,7 +497,7 @@ LICENSE="
 RESTRICT="mirror"
 IUSE+="
 ${!THEIA_PLUGINS[@]}
-git ollama ebuild_revision_48
+git ollama ebuild_revision_49
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -614,21 +621,26 @@ einfo "Fixing vulnerabilities"
 	# VS = Vulnerable System (Direct attack)
 	# ZC = Zero-Click Attack (AV:N, PR:N, UI:N)
 
-	# Pinned version required for @modelcontextprotocol/sdk.
-	# Pinned version required for ai.
-	# Pinned version required for electron.
-	# Pinned version required for glob.
-	# Pinned version required for ajv and webpack for unattended install.
+	# The pinned version is required for @modelcontextprotocol/sdk.
+	# The pinned version is required for @tootallnate/once.
+	# The pinned version is required for ai.
+	# The pinned version is required for electron.
+	# The pinned version is required for glob.
+	# The pinned version is required for ajv and webpack for unattended install.
 	patch_lockfile() {
 		sed -i -e "s|\"basic-ftp\": \"^5.0.2\"|\"basic-ftp\": \"^5.2.0\"|g" "package-lock.json" || die						# CVE-2026-27699; ZC, DoS, DT; Critical
-		sed -i -e "s|\"tar\": \"^6.0.5\"|\"tar\": \"^7.5.8\"|g" "package-lock.json" || die							# CVE-2026-23950; DT, ID; High
-		sed -i -e "s|\"tar\": \"^6.1.11\"|\"tar\": \"^7.5.8\"|g" "package-lock.json" || die							# CVE-2026-23950; DT, ID; High
-		sed -i -e "s|\"tar\": \"^6.2.1\"|\"tar\": \"^7.5.8\"|g" "package-lock.json" || die							# CVE-2026-23950; DT, ID; High
-		sed -i -e "s|\"tar\": \"^7.4.3\"|\"tar\": \"^7.5.8\"|g" "package-lock.json" || die							# CVE-2026-23950; DT, ID; High
-		sed -i -e "s|\"tar\": \"6.2.1\"|\"tar\": \"^7.5.8\"|g" "package-lock.json" || die							# CVE-2026-23950; DT, ID; High
+		sed -i -e "s|\"tar\": \"^6.0.5\"|\"tar\": \"^7.5.13\"|g" "package-lock.json" || die							# CVE-2026-23950; DT, ID; High
+		sed -i -e "s|\"tar\": \"^6.1.11\"|\"tar\": \"^7.5.13\"|g" "package-lock.json" || die							# CVE-2026-23950; DT, ID; High
+		sed -i -e "s|\"tar\": \"^6.2.1\"|\"tar\": \"^7.5.13\"|g" "package-lock.json" || die							# CVE-2026-23950; DT, ID; High
+		sed -i -e "s|\"tar\": \"^7.4.3\"|\"tar\": \"^7.5.13\"|g" "package-lock.json" || die							# CVE-2026-23950; DT, ID; High
+		sed -i -e "s|\"tar\": \"^7.5.6\"|\"tar\": \"^7.5.13\"|g" "package-lock.json" || die
+		sed -i -e "s|\"tar\": \"^7.5.8\"|\"tar\": \"^7.5.13\"|g" "package-lock.json" || die
+		sed -i -e "s|\"tar\": \"6.2.1\"|\"tar\": \"^7.5.13\"|g" "package-lock.json" || die							# CVE-2026-23950; DT, ID; High
 																			# CVE-2026-24842; DT, ID; High
 																			# CVE-2026-23745; DT, ID; High
 																			# CVE-2026-26960; DT, ID; High
+																			# CVE-2026-31802; VS(DT), SS(DT); High
+																			# CVE-2026-29786; VS(DT, DoS), SS(DT, DoS); High
 		sed -i -e "s|\"qs\": \"^6.4.0\"|\"qs\": \"^6.14.2\"|g" "package-lock.json" || die							# CVE-2025-15284; ZC, DoS; High
 		sed -i -e "s|\"qs\": \"^6.9.1\"|\"qs\": \"^6.14.2\"|g" "package-lock.json" || die							# CVE-2025-15284; ZC, DoS; High
 		sed -i -e "s|\"qs\": \"^6.13.0\"|\"qs\": \"^6.14.2\"|g" "package-lock.json" || die							# CVE-2025-15284; ZC, DoS; High
@@ -710,9 +722,49 @@ einfo "Fixing vulnerabilities"
 																			# CVE-2026-33941; DoS, DT, ID; High
 																			# CVE-2026-33938; ZC, DoS, DT, ID; High
 																			# CVE-2026-33940; ZC, DoS, DT, ID; High
+		sed -i -e "s|\"flatted\": \"^3.2.9\"|\"flatted\": \"^3.4.2\"|g" "package-lock.json" || die						# CVE-2026-33228; ZC, VS(DoS, DT, ID); High
+		sed -i -e "s|\"picomatch\": \"^2.0.4\"|\"picomatch\": \"^4.0.4\"|g" "package-lock.json" || die						# CVE-2026-33671; ZC, DoS; High
+		sed -i -e "s|\"picomatch\": \"^2.2.1\"|\"picomatch\": \"^4.0.4\"|g" "package-lock.json" || die						# CVE-2026-33671; ZC, DoS; High
+		sed -i -e "s|\"picomatch\": \"^2.3.1\"|\"picomatch\": \"^4.0.4\"|g" "package-lock.json" || die						# CVE-2026-33671; ZC, DoS; High
+		sed -i -e "s|\"picomatch\": \"^4.0.2\"|\"picomatch\": \"^4.0.4\"|g" "package-lock.json" || die						# CVE-2026-33671; ZC, DoS; High
+		sed -i -e "s|\"picomatch\": \"^4.0.3\"|\"picomatch\": \"^4.0.4\"|g" "package-lock.json" || die						# CVE-2026-33671; ZC, DoS; High
+																			# CVE-2026-33672; ZC, DT; Moderate
+
+		sed -i -e "s|\"path-to-regexp\": \"^8.0.0\"|\"path-to-regexp\": \"^8.4.0\"|g" "package-lock.json" || die				# CVE-2026-4926; ZC, DoS; High
+																			# CVE-2026-4923; ZC, DoS; Moderate
+		sed -i -e "s|\"path-to-regexp\": \"~0.1.12\"|\"path-to-regexp\": \"^8.4.0\"|g" "package-lock.json" || die				# CVE-2026-4867; ZC, DoS; High
+		sed -i -e "s|\"path-to-regexp\": \"^6.2.1\"|\"path-to-regexp\": \"^8.4.0\"|g" "package-lock.json" || die				# CVE-2026-4867; ZC, DoS; High
+
+		sed -i -e "s|\"dompurify\": \"3.2.7\"|\"dompurify\": \"^3.3.2\"|g" "package-lock.json" || die						# GHSA-h8r8-wccr-v5f2; ZC, SS(DoS); Moderate
+		sed -i -e "s|\"dompurify\": \"^3.2.4\"|\"dompurify\": \"^3.3.2\"|g" "package-lock.json" || die						# GHSA-h8r8-wccr-v5f2; ZC, SS(DoS); Moderate
+																			# GHSA-39q2-94rc-95cp; VS(DT, ID); Moderate
+																			# GHSA-cjmm-f4jc-qw8r; SS(DT, ID); Moderate
+																			# GHSA-cj63-jhhr-wcxv; VS(DT), SS(DT, ID); Moderate
+																			# CVE-2026-0540;  SS(DT, ID); Moderate
+
+		sed -i -e "s|\"yaml\": \"^2.2.2\"|\"yaml\": \"^2.8.3\"|g" "package-lock.json" || die							# CVE-2026-33532; DoS; Moderate
+		sed -i -e "s|\"yaml\": \"^2.6.0\"|\"yaml\": \"^2.8.3\"|g" "package-lock.json" || die							# CVE-2026-33532; DoS; Moderate
+		sed -i -e "s|\"yaml\": \"^2.8.1\"|\"yaml\": \"^2.8.3\"|g" "package-lock.json" || die							# CVE-2026-33532; DoS; Moderate
+
+		sed -i -e "s|\"follow-redirects\": \"^1.15.11\"|\"follow-redirects\": \"^1.16.0\"|g" "package-lock.json" || die				# GHSA-r4q5-vmmm-2653; ZC, ID; Moderate
+		sed -i -e "s|\"follow-redirects\": \"^1.0.0\"|\"follow-redirects\": \"^1.16.0\"|g" "package-lock.json" || die				# GHSA-r4q5-vmmm-2653; ZC, ID; Moderate
+		sed -i -e "s|\"follow-redirects\": \"^1.15.6\"|\"follow-redirects\": \"^1.16.0\"|g" "package-lock.json" || die				# GHSA-r4q5-vmmm-2653; ZC, ID; Moderate
+
+		sed -i -e "s|\"socket.io-parser\": \"~4.2.4\"|\"socket.io-parser\": \"^4.2.6\"|g" "package-lock.json" || die				# CVE-2026-33151; ZC, VS(DoS); High
+
+#		sed -i -e "s|\"@tootallnate/once\": \"^1.1.2\"|\"@tootallnate/once\": \"^3.0.1\"|g" "package-lock.json" || die				# CVE-2026-3449; VS(DoS); Low
+#		sed -i -e "s|\"@tootallnate/once\": \"1\"|\"@tootallnate/once\": \"^3.0.1\"|g" "package-lock.json" || die				# CVE-2026-3449; VS(DoS); Low
+#		sed -i -e "s|\"@tootallnate/once\": \"2\"|\"@tootallnate/once\": \"^3.0.1\"|g" "package-lock.json" || die				# CVE-2026-3449; VS(DoS); Low
+
+		sed -i -e "s|\"@hono/node-server\": \"^1.19.9\"|\"@hono/node-server\": \"^1.19.13\"|g" "package-lock.json" || die			# CVE-2026-29087; ZC, ID; High
+																			# CVE-2026-39406; ZC, ID; Moderate
+
 	}
 	patch_lockfile
 
+ewarn "QA:  Manually remove node_modules/path-to-regexp from ${S}/package-lock.json"
+#ewarn "QA:  Manually remove node_modules/nise/node_modules/path-to-regexp from ${S}/package-lock.json"
+#ewarn "QA:  Manually remove node_modules/router/node_modules/path-to-regexp from ${S}/package-lock.json"
 #ewarn "QA:  Manually remove node_modules/body-parser/node_modules/qs from ${S}/package-lock.json"
 #ewarn "QA:  Manually remove node_modules/express/node_modules/qs from ${S}/package-lock.json"
 #ewarn "QA:  Manually remove node_modules/@electron/node-gyp/node_modules/tar from ${S}/package-lock.json"
@@ -724,7 +776,7 @@ ewarn "QA:  Manually remove node_modules/jsondiffpatch and deps from ${S}/packag
 #ewarn "QA:  Manually remove node_modules/@electron/node-gyp/node_modules/rimraf/node_modules/minimatch from ${S}/package-lock.json"
 ewarn "QA:  Manually remove node_modules/copy-webpack-plugin/node_modules/serialize-javascript from ${S}/package-lock.json"
 ewarn "QA:  Manually remove node_modules/@modelcontextprotocol/sdk/node_modules/body-parser from ${S}/package-lock.json"
-ewarn "QA:  Manually remove \"node_modules/protobufjs\" from ${S}/package-lock.json"
+#ewarn "QA:  Manually remove \"node_modules/protobufjs\" from ${S}/package-lock.json" # Skip
 
 	enpm add "basic-ftp@^5.2.0" -D
 	enpm add "basic-ftp@^5.2.0" -P -w "dev-packages/cli"
@@ -733,9 +785,9 @@ ewarn "QA:  Manually remove \"node_modules/protobufjs\" from ${S}/package-lock.j
 	enpm add "basic-ftp@^5.2.0" -P -w "packages/ai-ide"
 	enpm add "basic-ftp@^5.2.0" -P -w "packages/scanoss"
 
-	enpm add "tar@^7.5.8" -D
-	enpm add "tar@^7.5.8" -P -w "dev-packages/application-manager"
-#	enpm add "tar@^7.5.8" -P -w "packages/git"
+	enpm add "tar@^7.5.13" -D
+	enpm add "tar@^7.5.13" -P -w "dev-packages/application-manager"
+#	enpm add "tar@^7.5.13" -P -w "packages/git"
 
 	enpm add "qs@^6.14.2" -D
 	enpm add "qs@^6.14.2" -P -w "dev-packages/application-package"
@@ -828,6 +880,66 @@ ewarn "QA:  Manually remove \"node_modules/protobufjs\" from ${S}/package-lock.j
 	enpm add "protobufjs@^7.5.5" -P -w "packages/scanoss"
 	enpm add "simple-git@^3.32.3" -P -w "packages/ai-ide"
 	enpm add "handlebars@^4.7.9" -D
+
+	enpm add "flatted@^3.4.2" -D
+
+	enpm add "picomatch@^4.0.4" -P -w "dev-packages/application-manager"
+	enpm add "picomatch@^4.0.4" -P -w "dev-packages/cli"
+	enpm add "picomatch@^4.0.4" -P -w "packages/core"
+	enpm add "picomatch@^4.0.4" -D
+
+	enpm add "path-to-regexp@^8.4.0" -P -w "examples/api-samples"
+	enpm add "path-to-regexp@^8.4.0" -P -w "packages/ai-mcp"
+	enpm add "path-to-regexp@^8.4.0" -P -w "packages/ai-mcp-server"
+	enpm add "path-to-regexp@^8.4.0" -P -w "packages/core"
+	enpm add "path-to-regexp@^8.4.0" -D
+
+	enpm add "dompurify@^3.3.2" -P -w "examples/api-samples"
+	enpm add "dompurify@^3.3.2" -P -w "packages/ai-code-completion"
+	enpm add "dompurify@^3.3.2" -P -w "packages/ai-codex"
+	enpm add "dompurify@^3.3.2" -P -w "packages/ai-chat"
+	enpm add "dompurify@^3.3.2" -P -w "packages/ai-chat-ui"
+	enpm add "dompurify@^3.3.2" -P -w "packages/ai-claude-code"
+	enpm add "dompurify@^3.3.2" -P -w "packages/ai-code-completion"
+	enpm add "dompurify@^3.3.2" -P -w "packages/ai-codex"
+	enpm add "dompurify@^3.3.2" -P -w "packages/ai-core"
+	enpm add "dompurify@^3.3.2" -P -w "packages/ai-editor"
+	enpm add "dompurify@^3.3.2" -P -w "packages/ai-scanoss"
+	enpm add "dompurify@^3.3.2" -P -w "packages/bulk-edit"
+	enpm add "dompurify@^3.3.2" -P -w "packages/collaboration"
+	enpm add "dompurify@^3.3.2" -P -w "packages/console"
+	enpm add "dompurify@^3.3.2" -P -w "packages/debug"
+	enpm add "dompurify@^3.3.2" -P -w "packages/keymaps"
+	enpm add "dompurify@^3.3.2" -P -w "packages/monaco"
+	enpm add "dompurify@^3.3.2" -P -w "packages/notebook"
+	enpm add "dompurify@^3.3.2" -P -w "packages/output"
+	enpm add "dompurify@^3.3.2" -P -w "packages/plugin-ext"
+	enpm add "dompurify@^3.3.2" -P -w "packages/plugin-ext-vscode"
+	enpm add "dompurify@^3.3.2" -P -w "packages/plugin-metrics"
+	enpm add "dompurify@^3.3.2" -P -w "packages/preferences"
+	enpm add "dompurify@^3.3.2" -P -w "packages/scm"
+	enpm add "dompurify@^3.3.2" -P -w "packages/task"
+	enpm add "dompurify@^3.3.2" -P -w "packages/toolbar"
+
+	enpm add "yaml@^2.8.3" -P -w "dev-packages/cli"
+	enpm add "yaml@^2.8.3" -D
+
+	enpm add "follow-redirects@^1.16.0" -P -w "dev-packages/application-package"
+	enpm add "follow-redirects@^1.16.0" -P -w "dev-packages/application-manager"
+	enpm add "follow-redirects@^1.16.0" -P -w "dev-packages/cli"
+	enpm add "follow-redirects@^1.16.0" -D -w "packages/core"
+	enpm add "follow-redirects@^1.16.0" -D
+
+	enpm add "socket.io-parser@^4.2.6" -P -w "packages/core"
+	enpm add "socket.io-parser@^4.2.6" -P -w "packages/remote"
+
+#	enpm add "@tootallnate/once@^3.0.1" -P -w "dev-packages/request"
+#	enpm add "@tootallnate/once@^3.0.1" -P -w "packages/plugin-ext"
+#	enpm add "@tootallnate/once@^3.0.1" -D
+
+	enpm add "@hono/node-server@^1.19.13" -P -w "examples/api-samples"
+	enpm add "@hono/node-server@^1.19.13" -P -w "packages/ai-mcp-server"
+	enpm add "@hono/node-server@^1.19.13" -P -w "packages/ai-mcp"
 
 	patch_lockfile
 }
@@ -988,60 +1100,6 @@ src_prepare() {
 }
 
 src_compile() {
-	# Prevent error:
-	_LOG="
- * Running:		yarn run browser build
-yarn run v1.22.22
-$ yarn -s --cwd examples/browser build
-$ theia rebuild:browser --cacheRoot ../..
-native node modules are already rebuilt for browser
-
-<--- Last few GCs --->
-
-[675:0x55a3ac60cbb0]    92826 ms: Mark-sweep (reduce) 1938.2 (2034.8) -> 1938.1 (2034.8) MB, 1606.9 / 0.0 ms  (average mu = 0.146, current mu = 0.000) last resort; GC in old space requested
-[675:0x55a3ac60cbb0]    94486 ms: Mark-sweep (reduce) 1938.1 (2034.8) -> 1938.1 (2034.8) MB, 1659.7 / 0.0 ms  (average mu = 0.076, current mu = 0.000) last resort; GC in old space requested
-
-
-<--- JS stacktrace --->
-
-FATAL ERROR: CALL_AND_RETRY_LAST Allocation failed - JavaScript heap out of memory
-
- 1: 0x55a3a8369550 node::Abort() [webpack]
-
- 2: 0x55a3a8231645  [webpack]
-
- 3: 0x55a3a8578f00 v8::Utils::ReportOOMFailure(v8::internal::Isolate*, char const*, bool) [webpack]
-
- 4: 0x55a3a8579196 v8::internal::V8::FatalProcessOutOfMemory(v8::internal::Isolate*, char const*, bool) [webpack]
-
- 5: 0x55a3a876b05a v8::internal::HeapAllocator::AllocateRawWithRetryOrFailSlowPath(int, v8::internal::AllocationType, v8::internal::AllocationOrigin, v8::internal::AllocationAlignment) [webpack]
-
- 6: 0x55a3a8747516 v8::internal::Factory::AllocateRaw(int, v8::internal::AllocationType, v8::internal::AllocationAlignment) [webpack]
-
- 7: 0x55a3a873f5c4 v8::internal::FactoryBase<v8::internal::Factory>::NewRawTwoByteString(int, v8::internal::AllocationType) [webpack]
-
- 8: 0x55a3a8a5ec5d v8::internal::String::SlowFlatten(v8::internal::Isolate*, v8::internal::Handle<v8::internal::ConsString>, v8::internal::AllocationType) [webpack]
-
- 9: 0x55a3a8588110 v8::String::Utf8Length(v8::Isolate*) const [webpack]
-
-10: 0x55a3a8337031  [webpack]
-
-11: 0x55a3a85e1e5f v8::internal::FunctionCallbackArguments::Call(v8::internal::CallHandlerInfo) [webpack]
-
-12: 0x55a3a85e2424  [webpack]
-
-13: 0x55a3a85e2cef v8::internal::Builtin_HandleApiCall(int, unsigned long*, v8::internal::Isolate*) [webpack]
-
-14: 0x55a3a8fa4ab9  [webpack]
-
-Error: webpack exited with an unexpected signal: SIGABRT.
-    at ChildProcess.<anonymous> (/var/tmp/portage/dev-util/theia-1.57.1/work/theia-1.57.1/dev-packages/application-manager/lib/application-process.js:65:28)
-    at ChildProcess.emit (node:events:517:28)
-    at maybeClose (node:internal/child_process:1098:16)
-    at ChildProcess._handle.onexit (node:internal/child_process:303:5)
-error Command failed with exit code 1.
-	"
-	unset _LOG
 	export NODE_OPTIONS+=" --max_old_space_size=4096"
 einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 
@@ -1159,13 +1217,14 @@ einfo
 # OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.50.1 (20240620)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.56.0 (20241201)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.57.1 (20241222)
-# OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.57.1 (20250116 with electron 30.1.2)
-# OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.58.1 (20250207 with electron 30.1.2)
-# OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.59.0 (20250301 with electron 30.1.2)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.57.1 (20250116 with Electron 30.1.2)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.58.1 (20250207 with Electron 30.1.2)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.59.0 (20250301 with Electron 30.1.2)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.63.0 (20250630)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.64.1 (20250808)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.65.0 (20251004)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.69.0 (20260227)
+# OILEDMACHINE-OVERLAY-TEST:  FAILED  (interactive) 1.70.2 (20260419 with Electron 39.8.7)
 # launch-test:  passed
 # ai-assistant (ollama with yi-coder:1.5b with Universal agent):  passed
 # Run hello world for python:  fail

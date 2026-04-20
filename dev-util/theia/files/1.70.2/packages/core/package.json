@@ -59,7 +59,9 @@
     "markdown-it-emoji": "^3.0.0",
     "msgpackr": "^1.10.2",
     "p-debounce": "^2.1.0",
+    "path-to-regexp": "^8.4.2",
     "perfect-scrollbar": "1.5.5",
+    "picomatch": "^4.0.4",
     "qs": "^6.15.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -70,6 +72,7 @@
     "safer-buffer": "^2.1.2",
     "socket.io": "^4.5.3",
     "socket.io-client": "^4.5.3",
+    "socket.io-parser": "^4.2.6",
     "tslib": "^2.6.2",
     "uuid": "^9.0.1",
     "vscode-languageserver-protocol": "3.17.5",
@@ -216,6 +219,7 @@
   "devDependencies": {
     "@theia/ext-scripts": "1.70.2",
     "@theia/re-exports": "1.70.2",
+    "follow-redirects": "^1.16.0",
     "minimist": "^1.2.0",
     "nodejs-file-downloader": "4.13.0"
   },

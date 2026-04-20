@@ -16,6 +16,7 @@
     "@theia/variable-resolver": "1.70.2",
     "@theia/workspace": "1.70.2",
     "async-mutex": "^0.3.1",
+    "dompurify": "^3.4.0",
     "jsonc-parser": "^2.2.0",
     "p-debounce": "^2.1.0",
     "tslib": "^2.6.2"

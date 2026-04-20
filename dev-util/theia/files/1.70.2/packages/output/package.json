@@ -7,6 +7,7 @@
     "@theia/editor": "1.70.2",
     "@theia/monaco": "1.70.2",
     "@theia/monaco-editor-core": "1.108.201",
+    "dompurify": "^3.4.0",
     "p-queue": "^8.0.1",
     "tslib": "^2.6.2"
   },

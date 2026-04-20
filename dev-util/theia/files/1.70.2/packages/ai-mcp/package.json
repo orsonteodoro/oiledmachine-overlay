@@ -3,11 +3,13 @@
   "version": "1.70.2",
   "description": "Theia - MCP Integration",
   "dependencies": {
+    "@hono/node-server": "^1.19.14",
     "@modelcontextprotocol/sdk": "^1.25.1",
     "@theia/ai-core": "1.70.2",
     "@theia/core": "1.70.2",
     "@theia/workspace": "1.70.2",
     "body-parser": "^2.2.2",
+    "path-to-regexp": "^8.4.2",
     "qs": "^6.15.1"
   },
   "publishConfig": {

@@ -17,6 +17,7 @@
     "glob": "^8.1.0",
     "socket.io": "^4.5.3",
     "socket.io-client": "^4.5.3",
+    "socket.io-parser": "^4.2.6",
     "ssh-config": "~5.0.3",
     "ssh2": "^1.15.0",
     "ssh2-sftp-client": "^9.1.0",

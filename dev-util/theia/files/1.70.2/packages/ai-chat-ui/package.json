@@ -13,9 +13,10 @@
     "@theia/monaco-editor-core": "1.108.201",
     "@theia/preferences": "1.70.2",
     "@theia/workspace": "1.70.2",
+    "date-fns": "^4.1.0",
+    "dompurify": "^3.4.0",
     "tslib": "^2.6.2",
-    "uuid": "^9.0.1",
-    "date-fns": "^4.1.0"
+    "uuid": "^9.0.1"
   },
   "publishConfig": {
     "access": "public"

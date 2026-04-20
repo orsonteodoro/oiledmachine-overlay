@@ -38,6 +38,7 @@
     "@vscode/proxy-agent": "^0.13.2",
     "async-mutex": "^0.4.0",
     "decompress": "^4.2.1",
+    "dompurify": "^3.4.0",
     "escape-html": "^1.0.3",
     "filenamify": "^4.1.0",
     "is-electron": "^2.2.0",

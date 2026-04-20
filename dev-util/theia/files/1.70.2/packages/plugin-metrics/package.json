@@ -8,6 +8,7 @@
     "@theia/monaco-editor-core": "1.108.201",
     "@theia/plugin": "1.70.2",
     "@theia/plugin-ext": "1.70.2",
+    "dompurify": "^3.4.0",
     "tslib": "^2.6.2"
   },
   "publishConfig": {

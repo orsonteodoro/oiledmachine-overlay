@@ -4,6 +4,7 @@
   "version": "1.70.2",
   "description": "Theia - Example code to demonstrate Theia API",
   "dependencies": {
+    "@hono/node-server": "^1.19.14",
     "@modelcontextprotocol/sdk": "^1.25.1",
     "@theia/ai-chat": "1.70.2",
     "@theia/ai-chat-ui": "1.70.2",
@@ -24,6 +25,8 @@
     "@theia/vsx-registry": "1.70.2",
     "@theia/workspace": "1.70.2",
     "body-parser": "^2.2.2",
+    "dompurify": "^3.4.0",
+    "path-to-regexp": "^8.4.2",
     "qs": "^6.15.1",
     "zod": "^4.2.1"
   },
