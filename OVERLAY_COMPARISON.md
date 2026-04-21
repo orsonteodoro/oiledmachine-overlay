@@ -42,7 +42,7 @@
 - Resolving the GLIBCXX versioned symbols issue once and for all C++ programs touched
 - Resolving unpatched vulnerabilies with version bumps (e.g. gstreamer)
 - Version bumps to resolve minimum required version
-- Missing features found in well known counterparts, possibly politicalization by banning big tech contributions or FUD components which not given a chance to use them hurt learning or building rapport which is anti-utilitarian, denying features that upstream developed and promotes outstandingly.  Typically, the end user doesn't care but the distro packager or team are too political.  (e.g. C# and mobile support in Godot.)
+- Missing features found in well known counterparts, possibly politicalization by banning big tech contributions or FUD components which not given a chance to use them hurt learning or building rapport which is anti-utilitarian, denying features that upstream developed and promotes outstandingly.  Typically, the end user doesn't care but the distro packager or team are too political or hold a grudge against certain companies.  (e.g. C# and mobile support in Godot.)
 - Insufficient USE flags as a result of disagreement of packaging (e.g. embree ebuild)
 - An observation of a better security configuration which the distro denies you or ignorant about (e.g. mimalloc ebuild)
 - Fixing inappropriate security configurations by FAFO users or a package used in the red zone (e.g. mimalloc ebuild, web dependencies)
