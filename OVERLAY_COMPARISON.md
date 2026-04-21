@@ -32,17 +32,19 @@
 | Quality sought for package inclusion | Actively maintained projects              | Ebuild forks to correct [2] issues or new package additions from awesome lists, hidden gems on GitHub, etc. |
 
 * [1] https://wiki.gentoo.org/wiki/Project:Council/AI_policy
-* [2] Sample list of issues or fixes with for ebuilds encountered:
-- Possibly inconsistent data semantics
-- Missing LTS support (e.g. multislot)
-- Missing x86-64 ISA Level 1 support
-- Hardening flags coverage inconsistencies between internal vendored packages and system packages used for web browsers
-- Outdated *DEPENDs section which the system packages that are older than vendored secure packages which should be a fatal error but is not
-- Resolving multiple versions pulled issue
-- Resolving the GLIBCXX versioned symbols issue once and for all
-- Resolving unpatched vulnerabilies with version bumps
+* [2] Security, performance, and dependency resolution are commonly broad categories for reasons for forking.  Forking is undesired but necessary for needs.  The overlay desires to eliminate forks but will stay until addressed.  A sample list of issues or fixes for ebuilds encountered reiterated in detail:
+- Concern about possibly inconsistent data semantics that may lead to incompatibility or JIT RCE because of lax version constraints (e.g. rocm ebuilds and dependents)
+- Missing LTS support (e.g. multislot nodejs ebuilds)
+- Missing x86-64 ISA Level 1 support (e.g. blender ebuild)
+- Hardening flags coverage inconsistencies between internal vendored packages and system packages used for web browsers (e.g. -fno-delete-null-pointer-checks, -ftrivial-auto-var-init=zero, etc.)
+- Outdated *DEPENDs section which the system packages that are older than vendored secure packages which should be a fatal error but is not (e.g. Firefox fatal versus Chromium not fatal in build scripts, defense by depth)
+- Resolving multiple versions pulled issue (e.g. abseil-cpp, grpc, protobuf ebuilds)
+- Resolving the GLIBCXX versioned symbols issue once and for all C++ programs touched
+- Resolving unpatched vulnerabilies with version bumps (e.g. gstreamer)
 - Version bumps to resolve minimum required version
-- Missing features found in well known counterparts, possibly politicalization by banning big tech contributions or FUD components which not given a chance to use them hurt learning or building rapport which is anti-utilitarian, denying features that upstream developed and promotes outstandingly.  (e.g. C# and mobile support in Godot.  The end user doesn't care but the distro packager or team are too political.)
-- Insufficient USE flags as a result of disagreement of packaging
-- An observation of a better security configuration which the distro denies you or ignorant about
-- Fixing inappropriate security configurations by FAFO users or a package used in the red zone
+- Missing features found in well known counterparts, possibly politicalization by banning big tech contributions or FUD components which not given a chance to use them hurt learning or building rapport which is anti-utilitarian, denying features that upstream developed and promotes outstandingly.  Typically, the end user doesn't care but the distro packager or team are too political.  (e.g. C# and mobile support in Godot.)
+- Insufficient USE flags as a result of disagreement of packaging (e.g. embree ebuild)
+- An observation of a better security configuration which the distro denies you or ignorant about (e.g. mimalloc ebuild)
+- Fixing inappropriate security configurations by FAFO users or a package used in the red zone (e.g. mimalloc ebuild, web dependencies)
+- Resolving performance issues below motion picture FPS caused by FAFO users using the wrong optimization level or USE flag (e.g. dav1d, firefox ebuilds)
+- Forced slow build performance (e.g. ninja-utils.eclass -l flag, webkitgtk ebuild's -Wl,--no-keep-memory time complexity, jumbo build flag off in browsers, chromium ebuild's forced mksnapshot build that doubles build time)
