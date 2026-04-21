@@ -43,3 +43,4 @@
 - Resolving unpatched vulnerabilies with version bumps
 - Missing features found in well known counterparts, possibly politicalization by banning big tech contributions or FUD technology which hurt learning or building rapport, denying features that upstream developed and promotes outstandingly.  (e.g. C# and mobile support in Godot.  The end user doesn't care but the distro packager or team are too political.)
 - Insufficient USE flags as a result of disagreement of packaging
+- An observation of a better security configuration which the distro denies you or ignorant about
