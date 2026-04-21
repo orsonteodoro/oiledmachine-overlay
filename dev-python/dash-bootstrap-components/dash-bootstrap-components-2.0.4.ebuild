@@ -34,7 +34,7 @@ RESTRICT="mirror test" # Did not test
 SLOT="0"
 IUSE="
 dev pandas
-ebuild_revision_4
+ebuild_revision_5
 "
 RDEPEND+="
 	>=sci-visualization/dash-3.0.4[${PYTHON_USEDEP},dev(+)]
