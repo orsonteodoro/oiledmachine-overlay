@@ -47,4 +47,4 @@
 - An observation of a better security configuration which the distro denies you or ignorant about (e.g. mimalloc ebuild)
 - Fixing inappropriate security configurations by FAFO users or a package used in the red zone (e.g. mimalloc ebuild, web dependencies)
 - Resolving performance issues below motion picture FPS caused by FAFO users using the wrong optimization level or USE flag (e.g. dav1d, firefox ebuilds)
-- Forced slow build performance (e.g. ninja-utils.eclass -l flag, webkitgtk ebuild's -Wl,--no-keep-memory time complexity, jumbo build flag off in browsers, chromium ebuild's forced mksnapshot build that doubles build time)
+- Forced slow build performance (e.g. ninja-utils.eclass -l flag; webkitgtk ebuild's -Wl,--no-keep-memory time complexity; chromium ebuild's forced mksnapshot build that doubles build time)
