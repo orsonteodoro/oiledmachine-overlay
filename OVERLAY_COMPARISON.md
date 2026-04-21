@@ -37,7 +37,7 @@
 - Missing LTS support (e.g. multislot nodejs ebuilds)
 - Missing x86-64 ISA Level 1 support (e.g. blender ebuild)
 - Hardening flags coverage inconsistencies between internal vendored packages and system packages used for web browsers (e.g. -fno-delete-null-pointer-checks, -ftrivial-auto-var-init=zero, etc.)
-- Outdated *DEPENDs section which the system packages that are older than vendored secure packages which should be a fatal error but is not (e.g. Firefox fatal versus Chromium not fatal in build scripts, defense by depth)
+- Outdated *DEPENDs section which the system packages that are older than vendored secure packages should be a fatal error but is not fatal (e.g. Firefox fatal versus Chromium not fatal in build scripts, defense by depth)
 - Resolving multiple versions pulled issue (e.g. abseil-cpp, grpc, protobuf ebuilds)
 - Resolving the GLIBCXX versioned symbols issue once and for all C++ programs touched
 - Resolving unpatched vulnerabilies with version bumps (e.g. gstreamer)
