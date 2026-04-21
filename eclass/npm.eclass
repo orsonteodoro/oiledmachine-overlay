@@ -647,7 +647,6 @@ npm_src_unpack() {
 				"--prefer-offline"
 			)
 		fi
-
 		enpm install \
 			"${extra_args[@]}" \
 			"${NPM_INSTALL_ARGS[@]}"

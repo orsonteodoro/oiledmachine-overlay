@@ -64,10 +64,6 @@ pkg_setup() {
 	npm_pkg_setup
 }
 
-src_unpack() {
-	npm_src_unpack
-}
-
 npm_dedupe_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 		patch_lockfile() {
@@ -86,6 +82,15 @@ npm_dedupe_post() {
 																			# CVE-2025-30359; ID; Medium
 
 			sed -i -e "s|\"http-proxy-middleware\": \"^2.0.3\"|\"http-proxy-middleware\": \"^2.0.8\"|g" "package-lock.json" || die		# CVE-2025-27789; DoS; Medium
+
+			sed -i -e "s|\"flatted\": \"^3.2.9\"|\"flatted\": \"^3.4.2\"|g" "package-lock.json" || die					# CVE-2026-33228; VS(DoS, DT, ID); High
+			sed -i -e "s|\"lodash\": \"^4.17.21\"|\"lodash\": \"^4.18.0\"|g" "package-lock.json" || die					# CVE-2026-4800; DoS, DT, ID; High
+
+			sed -i -e "s|\"minimatch\": \"^3.0.2\"|\"minimatch\": \"^10.2.2\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
+			sed -i -e "s|\"minimatch\": \"^3.0.4\"|\"minimatch\": \"^10.2.2\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
+			sed -i -e "s|\"minimatch\": \"^3.1.1\"|\"minimatch\": \"^10.2.2\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
+			sed -i -e "s|\"minimatch\": \"^3.1.2\"|\"minimatch\": \"^10.2.2\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
+			sed -i -e "s|\"minimatch\": \"^3.1.5\"|\"minimatch\": \"^10.2.2\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
 		}
 		patch_lockfile
 
@@ -93,15 +98,22 @@ npm_dedupe_post() {
 		pkgs=(
 			"@babel/runtime@^7.26.10"
 		)
-		npm install "${pkgs[@]}" -P --prefer-offline
+		enpm install "${pkgs[@]}" -P --prefer-offline
 
 		pkgs=(
 			"webpack-dev-server@5.2.1"
 			"http-proxy-middleware@^2.0.8"
+			"flatted@^3.4.2"
+			"lodash@^4.18.0"
+			"minimatch@^10.2.2"
 		)
-		npm install "${pkgs[@]}" -D
+		enpm install "${pkgs[@]}" -D
 		patch_lockfile
 	fi
+}
+
+src_unpack() {
+	npm_src_unpack
 }
 
 src_compile() {
