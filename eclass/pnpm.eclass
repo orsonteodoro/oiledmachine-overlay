@@ -21,6 +21,10 @@
 # also has to be fixed, the server needs non-root user/group, the server
 # needs to run as non-root user/group.
 #
+# There is a implementation flaw for removing packages in the lockfile by the
+# tool.  It must be done manually in some cases when the vulnerability scan
+# discovers an issue.
+#
 
 #
 # Hidden Rust dependency:
