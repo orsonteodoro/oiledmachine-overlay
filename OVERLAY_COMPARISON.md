@@ -39,7 +39,7 @@
 - Hardening flags coverage inconsistencies between internal vendored packages and system packages used for web browsers
 - Outdated *DEPENDs section which the system packages that are older than vendored secure packages which should be a fatal error but is not
 - Resolving multiple versions pulled issue
-- Resolving the GLIBCXX symbol issue once and for all
+- Resolving the GLIBCXX versioned symbols issue once and for all
 - Resolving unpatched vulnerabilies with version bumps
 - Version bumps to resolve minimum required version
 - Missing features found in well known counterparts, possibly politicalization by banning big tech contributions or FUD components which not given a chance to use them hurt learning or building rapport which is anti-utilitarian, denying features that upstream developed and promotes outstandingly.  (e.g. C# and mobile support in Godot.  The end user doesn't care but the distro packager or team are too political.)
