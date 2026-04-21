@@ -239,7 +239,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management minio -online-search
 +openrc +pwa +postgres +rag redis +s3 searxng systemd +tools
-ebuild_revision_106
+ebuild_revision_107
 "
 REQUIRED_USE="
 	embeddings? (
@@ -724,6 +724,7 @@ ewarn "QA:  Manually change esbuild@0.25.12 to esbuild@0.27.12 and arch implemen
 #ewarn "QA:  Manually remove esbuild@0.21.4 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ##ewarn "QA:  Manually remove esbuild@0.21.5 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove <esbuild-0.27.7 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change esbuild: to specifier: 0.27.12 version: 0.27.12 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml ${S}/package.json"
 ##ewarn "QA:  Manually change esbuild: 0.21.4 references to esbuild: 0.25.0"
 ##ewarn "QA:  Manually change esbuild: 0.21.5 references to esbuild: 0.25.0"
 ##ewarn "QA:  Manually change esbuild: 0.18.20 references to esbuild: 0.25.0"
