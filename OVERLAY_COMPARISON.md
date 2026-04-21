@@ -29,7 +29,7 @@
 | Tarball micropackage bundle for Go / Rust | Y (untrusted in the zero trust model) | N                                                           |
 | Reproducible live ebuilds           | N, user is responsible, quality is overlooked or poor due to rashness | Y, with USE=fallback-commit capable ebuilds, some ebuilds have high quality green CI checkmarks threshold requirements to reduce build failure especially for large codebases or long build time ebuild packages |
 | Ebuild package count                | ~19230 (Apr 20, 2026)                      | ~1233 (Apr 20, 2026)                                         |
-| Quality sought for package inclusion | Actively maintained projects              | Ebuild forks to correct [1] issues or new package additions from awesome lists, hidden gems on GitHub, etc. |
+| Quality sought for package inclusion | Actively maintained projects              | Ebuild forks to correct [2] issues or new package additions from awesome lists, hidden gems on GitHub, etc. |
 
 * [1] https://wiki.gentoo.org/wiki/Project:Council/AI_policy
 * [2] Sample list of issues with distro ebuilds re-iterated:
