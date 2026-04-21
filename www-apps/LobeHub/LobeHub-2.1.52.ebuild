@@ -70,7 +70,7 @@ RUST_MIN_VER="1.81.0" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0
 # Obtained from https://github.com/rust-lang/rust/blob/<commit-id>/RELEASES.md
 RUST_PV="${RUST_MIN_VER}"
 
-NEXTJS_PV="16.1.7"
+NEXTJS_PV="16.2.3"
 SHARP_PV="0.34.5"
 VIPS_PV="8.18.0"
 
@@ -239,7 +239,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management minio -online-search
 +openrc +pwa +postgres +rag redis +s3 searxng systemd +tools
-ebuild_revision_107
+ebuild_revision_108
 "
 REQUIRED_USE="
 	embeddings? (
@@ -594,6 +594,7 @@ pnpm_unpack_post() {
 													# CVE-2026-27980; ZC, DoS; Moderate
 													# CVE-2026-27978; VS(DT); Moderate
 													# CVE-2026-27977; DT, ID; Low
+													# GHSA-q4gf-8mx6-v5v3; ZC, DoS; High
 			"svix@1.84.1"
 
 	# Pin better-auth and dependencies
@@ -672,6 +673,12 @@ pnpm_audit_post() {
 
 pnpm_dedupe_post() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
+ewarn "QA:  Manually change to hono: specifier: ^4.12.12 version: 4.12.14 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove form-data@2.3.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove form-data@2.5.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove path-to-regexp@0.1.13 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove path-to-regexp@8.2.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+
 ewarn "QA:  Manually remove ai@4.3.19 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @tootallnate/once@2.0.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove serialize-javascript@6.0.2 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
@@ -814,8 +821,12 @@ ewarn "QA:  Manually change electron to 41.2.1 in ${S}/apps/desktop/package.json
 			sed -i -e "s|ai: 4.3.19(react@19.2.4)(zod@3.25.76)|ai: 5.0.52|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|'@octokit/rest': 19.0.13(encoding@0.1.13)|'@octokit/rest': 20.1.2|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|tar: 7.5.9|tar: 7.5.11|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|hono: 4.12.3|hono: 4.12.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|'@hono/node-server': 1.19.9(hono@4.12.3)|'@hono/node-server': 1.19.10|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|hono: 4.12.3|hono: 4.12.14|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|hono: 4.12.7|hono: 4.12.14|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|hono: '>=3.9.0'|hono: 4.12.14|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|hono: ^4|hono: 4.12.14|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|hono: ^4|hono: 4.12.14|g" "apps/desktop/pnpm-lock.yaml" || die
+			sed -i -e "s|'@hono/node-server': 1.19.10(hono@4.12.7)|'@hono/node-server': 1.19.14(hono@4.12.14)|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|'@tootallnate/once': 2.0.0|'@tootallnate/once': 3.0.1|g" "pnpm-lock.yaml" || die
 
 			sed -i -e "s|serialize-javascript: 6.0.2|serialize-javascript: 7.0.5|g" "pnpm-lock.yaml" || die
@@ -832,16 +843,41 @@ ewarn "QA:  Manually change electron to 41.2.1 in ${S}/apps/desktop/package.json
 
 			sed -i -e "s|form-data: 2.3.3|form-data: 4.0.5|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|form-data: 2.5.5|form-data: 4.0.5|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|tough-cookie: 2.5.0|tough-cookie: 2.5.0|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|tough-cookie: 2.5.0|tough-cookie: 4.1.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|tough-cookie: 4.1.4|tough-cookie: 4.1.4|g" "pnpm-lock.yaml" || die
 
 			sed -i -e "s|path-to-regexp: 0.1.13|path-to-regexp: 8.4.2|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|path-to-regexp: 8.2.0|path-to-regexp: 8.4.2|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|path-to-regexp: 8.4.0|path-to-regexp: 8.4.2|g" "pnpm-lock.yaml" || die
+
+			sed -i -e "s|qs: 6.5.5|qs: 6.15.1|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|qs: 6.14.2|qs: 6.15.1|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|axios: 1.13.6(debug@4.4.3)|axios: 1.15.1(debug@4.4.3)|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|axios: 1.15.0(debug@4.4.3)|axios: 1.15.1(debug@4.4.3)|g" "pnpm-lock.yaml" || die
+
+			sed -i -e "s|\"fast-xml-parser\": \"5.5.6\"|\"fast-xml-parser\": \"5.5.7\"|" "package.json" || die # Fix inconsistency or possible false positive
+			sed -i -e "s|file-type: 16.5.4|file-type: 21.3.4|" "apps/desktop/pnpm-lock.yaml" || die
+			sed -i -e "s|file-type: 16.5.4|file-type: 21.3.4|" "apps/cli/pnpm-lock.yaml" || die
 		}
 
 		pnpm_patch_lockfile
 
 		local pkgs
+
+		pushd "apps/desktop" >/dev/null 2>&1 || die
+			pkgs=(
+				"file-type@21.3.4"
+			)
+			epnpm add -D ${pkgs[@]}
+		popd >/dev/null 2>&1 || die
+
+		pushd "apps/cli" >/dev/null 2>&1 || die
+			pkgs=(
+				"file-type@21.3.4"
+			)
+			epnpm add -D ${pkgs[@]}
+		popd >/dev/null 2>&1 || die
+
 		pkgs=(
 			"@apidevtools/json-schema-ref-parser@11.2.0"					# CVE-2024-29651; DoS, DT, ID; High
 
@@ -871,8 +907,12 @@ ewarn "QA:  Manually change electron to 41.2.1 in ${S}/apps/desktop/package.json
 													# CVE-2026-33036; ZC, DoS; High
 													# CVE-2026-33349; ZC, DoS; Moderate
 			"form-data@4.0.5"								# CVE-2025-7783; ZC, VS(DT, ID), SS(DT, ID); Critical
-			"tough-cookie@2.5.0"								# CVE-2023-26136; ZC, DT, ID; Moderate
+			"tough-cookie@4.1.4"								# CVE-2023-26136; ZC, DT, ID; Moderate
 			"path-to-regexp@8.4.2"								# CVE-2026-4926; ZC, DoS; High
+													# CVE-2026-4923; ZC, DoS; Moderate
+			"qs@6.15.1"									# CVE-2025-15284; ZC, VS(DoS), SS(DoS); Moderate
+			"axios@1.15.1"									# CVE-2025-62718; ZC, VS(DT, ID), SS(DT, ID); Moderate
+													# CVE-2026-40175; ZC, DT, ID; Moderate
 		)
 		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 
@@ -889,11 +929,18 @@ ewarn "QA:  Manually change electron to 41.2.1 in ${S}/apps/desktop/package.json
 			"js-yaml@4.1.1"									# CVE-2025-64718: ZC, DT; Moderate
 			"tar@7.5.11"									# GHSA-qffp-2rhf-9h96; VS(DT, ID), SS(DT, ID)
 													# CVE-2026-31802; ZC, VS(DT), SS(DT), High
-			"@hono/node-server@1.19.10"							# CVE-2026-29087; ZC, ID; High
-			"hono@4.12.7"									# CVE-2026-29045; ZC, ID; High
+			"@hono/node-server@1.19.14"							# CVE-2026-29087; ZC, ID; High
+													# CVE-2026-39406; ZC, ID; Moderate
+			"hono@4.12.14"									# CVE-2026-29045; ZC, ID; High
 													# CVE-2026-29085; DT, ID; Moderate
 													# CVE-2026-29086; DT, ID; Moderate
 													# GHSA-v8w9-8mx6-g223; ZC, DT, ID; Moderate
+													# CVE-2026-39409; ZC, ID; Moderate
+													# CVE-2026-39408; DT; Moderate
+													# CVE-2026-39407; ZC, ID; Moderate
+													# GHSA-26pp-8wgv-hjvm; ZC, DoS; Moderate
+													# GHSA-458j-xx4x-4375; ZC, DT; Moderate
+													# CVE-2026-39410; DT, ID; Moderate
 			"@tootallnate/once@3.0.1"							# CVE-2026-3449; DoS; Low
 			"serialize-javascript@7.0.5"							# GHSA-5c6j-r48x-rmvq; CE, DoS, DT, ID; High
 													# CVE-2026-34043; ZC, DoS; Moderate
