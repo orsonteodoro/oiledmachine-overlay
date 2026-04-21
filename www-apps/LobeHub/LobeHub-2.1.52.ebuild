@@ -717,14 +717,14 @@ ewarn "QA:  Manually remove jsondiffpatch@0.6.0 from ${S}/package-lock.json"
 ewarn "QA:  Manually remove esbuild@0.18.20 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove esbuild@0.19.12 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove esbuild@0.25.12 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove esbuild@0.27.4 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change (esbuild@0.19.12) to (esbuild@0.27.4) and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change esbuild: 0.27.4 to esbuild: 0.27.12 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change esbuild@0.25.12 to esbuild@0.27.12 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove esbuild@0.27.4 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change (esbuild@0.19.12) to (esbuild@0.27.7) and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually change esbuild: 0.27.4 to esbuild: 0.27.7 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change esbuild@0.25.12 to esbuild@0.27.7 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove esbuild@0.21.4 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ##ewarn "QA:  Manually remove esbuild@0.21.5 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove <esbuild-0.27.7 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change esbuild: to specifier: 0.27.12 version: 0.27.12 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml ${S}/package.json"
+#ewarn "QA:  Manually change esbuild: to specifier: 0.27.7 version: 0.27.7 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml ${S}/package.json"
 ##ewarn "QA:  Manually change esbuild: 0.21.4 references to esbuild: 0.25.0"
 ##ewarn "QA:  Manually change esbuild: 0.21.5 references to esbuild: 0.25.0"
 ##ewarn "QA:  Manually change esbuild: 0.18.20 references to esbuild: 0.25.0"
@@ -761,7 +761,7 @@ ewarn "QA:  Manually remove @octokit/plugin-rest-endpoint-methods@7.2.3 from ${S
 #ewarn "QA:  Manually change tmp: 0.0.33 references to tmp: 0.2.4 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually dedupe @babel/helper-module-transforms in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change to ai@5.0.52(zod@3.25.76) for @upstash/workflow depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove electron@34.5.8 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove electron@34.5.8 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove electron@39.8.8 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change electron specifier to 41.2.1 and version to 41.2.1 for packages/electron-client-ipc depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change electron to 41.2.1 in ${S}/apps/desktop/package.json"
@@ -775,14 +775,14 @@ ewarn "QA:  Manually change electron to 41.2.1 in ${S}/apps/desktop/package.json
 
 		pnpm_patch_lockfile() {
 			sed -i -e "s|'@apidevtools/json-schema-ref-parser': 11.1.0|'@apidevtools/json-schema-ref-parser': 11.2.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.25.12|esbuild: 0.27.4|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.18.20|esbuild: 0.27.4|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.19.12|esbuild: 0.27.4|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.21.4|esbuild: 0.27.4|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.21.5|esbuild: 0.27.4|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.23.1|esbuild: 0.27.4|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.24.2|esbuild: 0.27.4|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: '>=0.12 <1'|esbuild: 0.27.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.25.12|esbuild: 0.27.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.18.20|esbuild: 0.27.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.19.12|esbuild: 0.27.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.21.4|esbuild: 0.27.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.21.5|esbuild: 0.27.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.23.1|esbuild: 0.27.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.24.2|esbuild: 0.27.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: '>=0.12 <1'|esbuild: 0.27.7|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|snowflake-sdk: 2.0.3|snowflake-sdk: 2.0.4|g" "pnpm-lock.yaml" || die
 
 			sed -i -e "s|'@babel/runtime': 7.23.6|'@babel/runtime': 7.28.2|g" "pnpm-lock.yaml" || die
@@ -844,7 +844,7 @@ ewarn "QA:  Manually change electron to 41.2.1 in ${S}/apps/desktop/package.json
 		pkgs=(
 			"@apidevtools/json-schema-ref-parser@11.2.0"					# CVE-2024-29651; DoS, DT, ID; High
 
-			"esbuild@0.27.4"								# GHSA-67mh-4wv8-2f99; DI; Moderate
+			"esbuild@0.27.7"								# GHSA-67mh-4wv8-2f99; DI; Moderate
 
 			"@e965/xlsx"									# CVE-2024-22363; DoS; High
 													# CVE-2023-30533; DoS, DT, ID; High
