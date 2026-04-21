@@ -33,7 +33,7 @@
 
 * [1] https://wiki.gentoo.org/wiki/Project:Council/AI_policy
 * [2] Security, performance, and dependency resolution are commonly broad categories for reasons for forking.  Forking is undesired but necessary for needs.  The oiledmachine-overlay desires to eliminate forks but forks will stay until the issue is addressed by the distro overlay.  A sample list of issues or fixes for ebuilds encountered reiterated in detail:
-- Concern about possibly inconsistent data semantics that may lead to incompatibility or JIT RCE because of lax version constraints (e.g. rocm ebuilds and dependents)
+- Concern about possibly inconsistent data semantics that may lead to incompatibility or JIT RCE because of lax version constraints in the ebuilds (e.g. rocm ebuilds and dependents)
 - Missing LTS support (e.g. multislot nodejs ebuilds)
 - Missing x86-64 ISA Level 1 support (e.g. blender ebuild)
 - Hardening flags coverage inconsistencies between internal vendored packages and system packages used for web browsers (e.g. -fno-delete-null-pointer-checks, -ftrivial-auto-var-init=zero, etc.)
