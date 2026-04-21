@@ -39,7 +39,7 @@
 - Hardening flags coverage inconsistencies between internal vendored packages and system packages used for web browsers (e.g. -fno-delete-null-pointer-checks, -ftrivial-auto-var-init=zero, etc.)
 - Outdated *DEPENDs section which the system packages that are older than vendored secure packages should be a fatal error but is not fatal (e.g. Firefox fatal versus Chromium not fatal in build scripts, defense by depth)
 - Resolving multiple versions pulled issue (e.g. abseil-cpp, grpc, protobuf ebuilds)
-- Resolving the GLIBCXX versioned symbols issue once and for all C++ programs touched
+- Resolving the GLIBCXX versioned symbols issue once and for all for C++ programs touched
 - Resolving unpatched vulnerabilies with version bumps (e.g. gstreamer ebuild)
 - Version bumps to resolve minimum required version
 - Missing features found in well known counterparts, possibly politicalization by banning big tech contributions or FUD components which not given a chance to use them hurt learning or building rapport which is anti-utilitarian, denying features that upstream developed and promotes outstandingly.  Typically, the end user doesn't care but the distro packager or team are too political or hold a grudge against certain companies.  (e.g. C# and mobile support in Godot.)
