@@ -31,8 +31,8 @@
 | Ebuild package count                | ~19230 (Apr 20, 2026)                      | ~1233 (Apr 20, 2026)                                         |
 | Quality sought for package inclusion | Actively maintained projects              | Ebuild forks to correct [1] issues or new package additions from awesome lists, hidden gems on GitHub, etc. |
 
-[1] https://wiki.gentoo.org/wiki/Project:Council/AI_policy
-[2] Sample list of issues with distro ebuilds re-iterated:
+* [1] https://wiki.gentoo.org/wiki/Project:Council/AI_policy
+* [2] Sample list of issues with distro ebuilds re-iterated:
 - Possibly inconsistent data semantics
 - Missing LTS support (e.g. multislot)
 - Missing x86-64 ISA Level 1 support
