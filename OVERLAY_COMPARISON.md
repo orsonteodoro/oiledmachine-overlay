@@ -41,7 +41,8 @@
 - Resolving multiple versions pulled issue
 - Resolving the GLIBCXX symbol issue once and for all
 - Resolving unpatched vulnerabilies with version bumps
-- Missing features found in well known counterparts, possibly politicalization by banning big tech contributions or FUD technology which hurt learning or building rapport, denying features that upstream developed and promotes outstandingly.  (e.g. C# and mobile support in Godot.  The end user doesn't care but the distro packager or team are too political.)
+- Version bumps to resolve minimum required version
+- Missing features found in well known counterparts, possibly politicalization by banning big tech contributions or FUD components which not given a chance to use them hurt learning or building rapport which is anti-utilitarian, denying features that upstream developed and promotes outstandingly.  (e.g. C# and mobile support in Godot.  The end user doesn't care but the distro packager or team are too political.)
 - Insufficient USE flags as a result of disagreement of packaging
 - An observation of a better security configuration which the distro denies you or ignorant about
 - Fixing inappropriate security configurations by FAFO users or a package used in the red zone
