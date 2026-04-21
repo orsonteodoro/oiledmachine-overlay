@@ -239,7 +239,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management minio -online-search
 +openrc +pwa +postgres +rag redis +s3 searxng systemd +tools
-ebuild_revision_105
+ebuild_revision_106
 "
 REQUIRED_USE="
 	embeddings? (
@@ -675,7 +675,7 @@ ewarn "QA:  Manually remove ai@4.3.19 from ${S}/package-lock.json or ${S}/pnpm-l
 ewarn "QA:  Manually remove @tootallnate/once@2.0.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove serialize-javascript@6.0.2 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
-ewarn "QA:  Manually remove undici@6.21.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove undici@6.21.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually change undici: 6.21.3 to undici: 7.24.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 ewarn "QA:  Manually remove file-type@16.5.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"	# CVE-2026-31808; ZC, DoS; Moderate
@@ -687,6 +687,7 @@ ewarn "QA:  Manually remove ajv@6.14.0 from ${S}/package-lock.json or ${S}/pnpm-
 ewarn "QA:  Manually remove ajv@8.12.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove ajv-formats@2.1.1 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change ajv-formats: 2.1.1(ajv@8.12.0) to ajv-formats: 3.0.1(ajv@8.18.0) from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove ajv-formats@2.1.1(ajv@8.18.0) from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
@@ -694,7 +695,9 @@ ewarn "QA:  Manually remove minimatch@3.1.5 from ${S}/package-lock.json or ${S}/
 ewarn "QA:  Manually remove minimatch@5.1.9 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove minimatch@9.0.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove minimatch@9.0.9 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually change from minimatch@x.y.z to minimatch@10.2.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove minimatch@10.2.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove minimatch@<10.2.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually change from minimatch@x.y.z to minimatch@10.2.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 # ignore section because of pnpm override
 # 5.4.2 -> 5.5.6
@@ -714,10 +717,13 @@ ewarn "QA:  Manually remove jsondiffpatch@0.6.0 from ${S}/package-lock.json"
 ewarn "QA:  Manually remove esbuild@0.18.20 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove esbuild@0.19.12 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove esbuild@0.25.12 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove esbuild@0.27.4 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change (esbuild@0.19.12) to (esbuild@0.27.4) and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change esbuild: 0.27.4 to esbuild: 0.27.12 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change esbuild@0.25.12 to esbuild@0.27.12 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove esbuild@0.21.4 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ##ewarn "QA:  Manually remove esbuild@0.21.5 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove <esbuild-0.27.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove <esbuild-0.27.7 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ##ewarn "QA:  Manually change esbuild: 0.21.4 references to esbuild: 0.25.0"
 ##ewarn "QA:  Manually change esbuild: 0.21.5 references to esbuild: 0.25.0"
 ##ewarn "QA:  Manually change esbuild: 0.18.20 references to esbuild: 0.25.0"
@@ -753,9 +759,11 @@ ewarn "QA:  Manually remove @octokit/plugin-rest-endpoint-methods@7.2.3 from ${S
 #ewarn "QA:  Manually remove tmp@0.0.33 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually change tmp: 0.0.33 references to tmp: 0.2.4 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually dedupe @babel/helper-module-transforms in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually add ai@5.0.52(zod@3.25.76) for @upstash/workflow depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change to ai@5.0.52(zod@3.25.76) for @upstash/workflow depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove electron@34.5.8 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change electron specifier to ^41.0.0 and version to 41.0.3 for packages/electron-client-ipc depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove electron@39.8.8 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change electron specifier to 41.2.1 and version to 41.2.1 for packages/electron-client-ipc depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change electron to 41.2.1 in ${S}/apps/desktop/package.json"
 
 		# DoS = Denial of Service
 		# DT = Data Tampering
@@ -783,13 +791,14 @@ ewarn "QA:  Manually change electron specifier to ^41.0.0 and version to 41.0.3 
 
 			sed -i -e "s|tmp: 0.0.33|tmp: 0.2.4|g" "pnpm-lock.yaml" || die
 
-			sed -i -e "s|minimatch: 9.0.9|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|minimatch: 9.0.6|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|minimatch: 9.0.3|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|minimatch: 5.1.9|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|minimatch: 5.1.7|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|minimatch: 3.1.5|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|minimatch: 3.1.3|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|minimatch: 10.2.4|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|minimatch: 9.0.9|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|minimatch: 9.0.6|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|minimatch: 9.0.3|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|minimatch: 5.1.9|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|minimatch: 5.1.7|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|minimatch: 3.1.5|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|minimatch: 3.1.3|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
 
 			sed -i -e "s|bn.js: 4.12.3|bn.js: 5.2.3|g" "pnpm-lock.yaml" || die
 
@@ -807,7 +816,7 @@ ewarn "QA:  Manually change electron specifier to ^41.0.0 and version to 41.0.3 
 			sed -i -e "s|'@hono/node-server': 1.19.9(hono@4.12.3)|'@hono/node-server': 1.19.10|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|'@tootallnate/once': 2.0.0|'@tootallnate/once': 3.0.1|g" "pnpm-lock.yaml" || die
 
-			sed -i -e "s|serialize-javascript: 6.0.2|serialize-javascript: 7.0.3|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|serialize-javascript: 6.0.2|serialize-javascript: 7.0.5|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|undici: 6.21.3|undici: 7.24.5|g" "pnpm-lock.yaml" || die
 
 			sed -i -e "s|fast-xml-parser: 5.4.1|fast-xml-parser: 5.5.6|g" "pnpm-lock.yaml" || die
@@ -818,6 +827,14 @@ ewarn "QA:  Manually change electron specifier to ^41.0.0 and version to 41.0.3 
 			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.5.6|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.5.6|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.5.6\"|g" "package.json" || die
+
+			sed -i -e "s|form-data: 2.3.3|form-data: 4.0.5|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|form-data: 2.5.5|form-data: 4.0.5|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|tough-cookie: 2.5.0|tough-cookie: 2.5.0|g" "pnpm-lock.yaml" || die
+
+			sed -i -e "s|path-to-regexp: 0.1.13|path-to-regexp: 8.4.2|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|path-to-regexp: 8.2.0|path-to-regexp: 8.4.2|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|path-to-regexp: 8.4.0|path-to-regexp: 8.4.2|g" "pnpm-lock.yaml" || die
 		}
 
 		pnpm_patch_lockfile
@@ -825,10 +842,7 @@ ewarn "QA:  Manually change electron specifier to ^41.0.0 and version to 41.0.3 
 		local pkgs
 		pkgs=(
 			"@apidevtools/json-schema-ref-parser@11.2.0"					# CVE-2024-29651; DoS, DT, ID; High
-		)
-		epnpm add ${pkgs[@]}
 
-		pkgs=(
 			"esbuild@0.27.4"								# GHSA-67mh-4wv8-2f99; DI; Moderate
 
 			"@e965/xlsx"									# CVE-2024-22363; DoS; High
@@ -840,7 +854,7 @@ ewarn "QA:  Manually change electron specifier to ^41.0.0 and version to 41.0.3 
 													# CVE-2026-26019; ID; Moderate
 													# CVE-2026-25528; ID; Moderate for langsmith dep of @langchain/community and langchain
 			"electron@${ELECTRON_APP_ELECTRON_PV}"						# CVE-2025-55305; DoS, DT, ID; Moderate
-			"minimatch@10.2.4"								# CVE-2026-26996: ZC, DoS; High
+			"minimatch@10.2.5"								# CVE-2026-26996: ZC, DoS; High
 													# CVE-2026-27903; ZC, DoS; High
 													# CVE-2026-27904; ZC, DoS; High
 			"undici@7.24.5"									# CVE-2026-2229; ZC, DoS, High
@@ -854,6 +868,9 @@ ewarn "QA:  Manually change electron specifier to ^41.0.0 and version to 41.0.3 
 													# CVE-2026-27942; ZC, VS(DoS); Low		# >= 5.3.8 or >= 4.5.4
 													# CVE-2026-33036; ZC, DoS; High
 													# CVE-2026-33349; ZC, DoS; Moderate
+			"form-data@4.0.5"								# CVE-2025-7783; ZC, VS(DT, ID), SS(DT, ID); Critical
+			"tough-cookie@2.5.0"								# CVE-2023-26136; ZC, DT, ID; Moderate
+			"path-to-regexp@8.4.2"								# CVE-2026-4926; ZC, DoS; High
 		)
 		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 
@@ -863,7 +880,7 @@ ewarn "QA:  Manually change electron specifier to ^41.0.0 and version to 41.0.3 
 			"tmp@0.2.4"									# CVE-2025-54798; DT; Low
 
 			"@octokit/rest@20.1.2"								# Bump to remove octokit 4.x vulnerabilities
-			"minimatch@10.2.4"								# CVE-2026-26996: ZC, DoS; High
+			"minimatch@10.2.5"								# CVE-2026-26996: ZC, DoS; High
 													# CVE-2026-27903; ZC, DoS; High
 													# CVE-2026-27904; ZC, DoS; High
 			"bn.js@5.2.3"									# CVE-2026-2739: DoS; Moderate
@@ -876,7 +893,8 @@ ewarn "QA:  Manually change electron specifier to ^41.0.0 and version to 41.0.3 
 													# CVE-2026-29086; DT, ID; Moderate
 													# GHSA-v8w9-8mx6-g223; ZC, DT, ID; Moderate
 			"@tootallnate/once@3.0.1"							# CVE-2026-3449; DoS; Low
-			"serialize-javascript@7.0.3"							# GHSA-5c6j-r48x-rmvq; CE, DoS, DT, ID; High
+			"serialize-javascript@7.0.5"							# GHSA-5c6j-r48x-rmvq; CE, DoS, DT, ID; High
+													# CVE-2026-34043; ZC, DoS; Moderate
 		)
 		epnpm add -D ${pkgs[@]}
 
