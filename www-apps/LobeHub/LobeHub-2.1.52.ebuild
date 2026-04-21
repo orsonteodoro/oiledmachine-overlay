@@ -557,6 +557,7 @@ pnpm_unpack_post() {
 
 	sed -i -e "s|bunx|npx|g" "apps/cli/package.json" || die
 	sed -i -e "s|bun|pnpm|g" "apps/cli/package.json" || die
+	sed -i -e "s|bun|pnpm|g" "apps/desktop/package.json" || die
 	sed -i -e "s|bun run|npm run|g" "package.json" || die
 
 	setup_cn_mirror_env

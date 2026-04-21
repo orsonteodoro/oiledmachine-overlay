@@ -32,7 +32,7 @@
 | Quality sought for package inclusion | Actively maintained projects              | Ebuild forks to correct [2] issues or new package additions from awesome lists, hidden gems on GitHub, etc. |
 
 * [1] https://wiki.gentoo.org/wiki/Project:Council/AI_policy
-* [2] Sample list of issues with distro ebuilds re-iterated:
+* [2] Sample list of issues or fixes with for ebuilds encountered:
 - Possibly inconsistent data semantics
 - Missing LTS support (e.g. multislot)
 - Missing x86-64 ISA Level 1 support
