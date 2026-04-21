@@ -34,7 +34,7 @@ RESTRICT="mirror test" # Did not test
 SLOT="0"
 IUSE="
 dev pandas
-ebuild_revision_5
+ebuild_revision_6
 "
 RDEPEND+="
 	>=sci-visualization/dash-3.0.4[${PYTHON_USEDEP},dev(+)]
@@ -116,6 +116,21 @@ src_unpack() {
 	npm_src_unpack
 }
 
+python_compile() {
+	distutils-r1_python_compile
+	pushd "${WORKDIR}/${P}-${EPYTHON/./_}/install/usr/lib/${EPYTHON}/site-packages" >/dev/null 2>&1 || die
+		local L=(
+			"pyproject.toml"
+			"NOTICE.txt"
+			"dash_bootstrap_components-${PV}.dist-info"
+			"LICENSE"
+			"README.md"
+			"examples"
+		)
+		mv "${L[@]}" "${PN//-/_}" || die
+	popd >/dev/null 2>&1 || die
+}
+
 src_compile() {
 	npm_hydrate
 	enpm run build
@@ -126,7 +141,7 @@ src_compile() {
 
 src_install() {
 	distutils-r1_src_install
-	insinto "licenses"
-	doins "LICENSE"
-	doins "NOTICE.txt"
+	docinto "licenses"
+	dodoc "LICENSE"
+	dodoc "NOTICE.txt"
 }
