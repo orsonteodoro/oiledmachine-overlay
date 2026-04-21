@@ -4,7 +4,12 @@
 
 EAPI=8
 
+# To update lockfile:
+# PATH=$(realpath "../../scripts")":${PATH}"
+# NPM_UPDATER_VERSIONS="2.0.4" npm_updater_update_locks.sh
+
 DISTUTILS_USE_PEP517="hatchling"
+NPM_AUDIT_FATAL=0
 NPM_TARBALL="${P}.tar.gz"
 NODE_SLOT="22" # Upstream uses node 22
 PYTHON_COMPAT=( "python3_"{10..13} ) # Lists up to 3.13
