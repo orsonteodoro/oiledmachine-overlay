@@ -1565,6 +1565,7 @@ pkg_postrm() {
 # OILEDMACHINE-OVERLAY-TEST:  PASS 2.1.46 (20260403) with sharp 0.34.3.    Reverted and downgrade back to old known working lockfile.
 # OILEDMACHINE-OVERLAY-TEST:  PASS 2.1.48 (20260408) with sharp 0.34.3.    Tested with only USE=electron
 # OILEDMACHINE-OVERLAY-TEST:  PASS 2.1.48 (20260409) with sharp 0.34.3.    Tested with only USE=pwa
+# OILEDMACHINE-OVERLAY-TEST:  PASS 2.1.52 (20260421) with sharp 0.34.3.    Tested pwa and electron login to self-hosted server
 
 # E-mail login:  untested
 # Electron:  passed
