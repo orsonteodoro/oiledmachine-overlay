@@ -29,6 +29,17 @@
 | Tarball micropackage bundle for Go / Rust | Y (untrusted in the zero trust model) | N                                                           |
 | Reproducible live ebuilds           | N, user is responsible, quality is overlooked or poor due to rashness | Y, with USE=fallback-commit capable ebuilds, some ebuilds have high quality green CI checkmarks threshold requirements to reduce build failure especially for large codebases or long build time ebuild packages |
 | Ebuild package count                | ~19230 (Apr 20, 2026)                      | ~1233 (Apr 20, 2026)                                         |
-| Quality sought for package inclusion | Actively maintained projects               | Ebuild forks to correct issues or new package additions from awesome lists, hidden gems on GitHub, etc. |
+| Quality sought for package inclusion | Actively maintained projects              | Ebuild forks to correct [1] issues or new package additions from awesome lists, hidden gems on GitHub, etc. |
 
 [1] https://wiki.gentoo.org/wiki/Project:Council/AI_policy
+[2] Sample list of issues with distro ebuilds re-iterated:
+- Possibly inconsistent data semantics
+- Missing LTS support (e.g. multislot)
+- Missing x86-64 ISA Level 1 support
+- Hardening flags coverage inconsistencies between internal vendored packages and system packages
+- Outdated *DEPENDs section system packages that are older than vendored secure packages
+- Resolving multiple versions pulled issue
+- Resolving the GLIBCXX symbol issue once and for all
+- Resolving unpatched vulnerabilies with version bumps
+- Missing features found in well known counterparts, possibly politicalization by banning big tech contributions or FUD technology which hurt learning or building rapport (aka cock-blocking features that upstream developed and promotes outstandingly).  (e.g. C# and mobile support in Godot.  The end user doesn't care but the distro packager or team are too political.)
+- Insufficient USE flags as a result of disagreement of packaging
