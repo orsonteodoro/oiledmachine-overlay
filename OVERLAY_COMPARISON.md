@@ -37,7 +37,7 @@
 - Missing LTS support (e.g. multislot)
 - Missing x86-64 ISA Level 1 support
 - Hardening flags coverage inconsistencies between internal vendored packages and system packages used for web browsers
-- Outdated *DEPENDs section which the system packages that are older than vendored secure packages
+- Outdated *DEPENDs section which the system packages that are older than vendored secure packages which should be a fatal error but is not
 - Resolving multiple versions pulled issue
 - Resolving the GLIBCXX symbol issue once and for all
 - Resolving unpatched vulnerabilies with version bumps
