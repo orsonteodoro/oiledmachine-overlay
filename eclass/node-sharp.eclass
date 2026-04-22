@@ -12,6 +12,8 @@
 # @DESCRIPTION:
 # The node-sharp eclass is used to manage sharp in node packages.
 
+# This eclass contains AI generated code.
+
 # Security warning, if sharp is not added or built correctly it can cause a
 # crash (aka DoS) during either build time or runtime.
 

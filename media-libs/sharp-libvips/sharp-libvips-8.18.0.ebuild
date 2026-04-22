@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# This package AI generated code and artifacts.
+
 # Version based on libvips
 
 # Dependency graph:
