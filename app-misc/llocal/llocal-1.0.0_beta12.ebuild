@@ -49,7 +49,7 @@ NPM_EXE_LIST=(
 	"/opt/llocal/chrome_crashpad_handler"
 )
 
-inherit electron-app npm lcnr rust
+inherit electron-app npm lcnr rust xdg
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${MY_PV}"
@@ -81,7 +81,7 @@ else
 	"
 fi
 SLOT="0"
-IUSE+=" ebuild_revision_15"
+IUSE+=" ebuild_revision_16"
 RDEPEND="
 	app-misc/ollama
 "
@@ -147,7 +147,6 @@ npm_update_lock_install_post() {
 
 	# The pinned version of @langchain/community is required.
 	# The pinned version of react-icons is required.
-	# The pinned version of typescript is required.
 	#	sed -i -e "s|\"@langchain/community\": \"^0.2.25\"|\"@langchain/community\": \"^1.1.18\"|g" "package-lock.json" || die		# CVE-2024-7042; DoS, DT, ID; Critical
 	#																	# CVE-2026-26019; ID; Moderate
 	#																	# CVE-2026-27795; ID; Moderate
@@ -231,8 +230,10 @@ npm_update_lock_install_post() {
 		"tar-fs@^3.1.1"
 		"tar@^7.5.11"
 		"file-type@^21.3.2"
-		"kokoro-js"
 		"picomatch@^4.0.4"
+
+		"react-icons@5.2.1"	# Must be pinned test remove after testing
+		"kokoro-js"		# Required missing dep in package.json
 	)
 	enpm install "${L[@]}" -P "${NPM_INSTALL_ARGS[@]}"
 
@@ -241,7 +242,6 @@ npm_update_lock_install_post() {
 		"tmp@^0.2.4"
 		"@tootallnate/once@^3.0.1"
 		"brace-expansion@^5.0.2"
-		"typescript@5.4.5" # Must be pinned
 	)
 	enpm install "${L[@]}" -D "${NPM_INSTALL_ARGS[@]}"
 
@@ -320,6 +320,12 @@ src_install() {
 	electron-app_set_sandbox_suid "/opt/${PN}/chrome-sandbox"
 }
 
+pkg_postinst() {
+	xdg_pkg_postinst
+ewarn "The ollama service must be started from init system in order to list models."
+}
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.0_beta12 (20260422 with electron 41.2.2)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.0_beta12 (20260321 with electron 41.0.3)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.0_beta11 (20250630 with electron 37.1.0)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.0_beta8 (20250312 with electron 35.0.1)
