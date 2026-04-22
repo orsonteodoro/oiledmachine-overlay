@@ -147,6 +147,7 @@ npm_update_lock_install_post() {
 
 	# The pinned version of @langchain/community is required.
 	# The pinned version of react-icons is required.
+	# The pinned version of minimatch is required.
 	#	sed -i -e "s|\"@langchain/community\": \"^0.2.25\"|\"@langchain/community\": \"^1.1.18\"|g" "package-lock.json" || die		# CVE-2024-7042; DoS, DT, ID; Critical
 	#																	# CVE-2026-26019; ID; Moderate
 	#																	# CVE-2026-27795; ID; Moderate
@@ -193,17 +194,6 @@ npm_update_lock_install_post() {
 																		# CVE-2026-32630; ZC, DoS; Moderate
 
 
-		sed -i -e "s|\"picomatch\": \"^2.0.4\"|\"picomatch\": \"^4.0.4\"|g" "package-lock.json" || die					# CVE-2026-33671; ZC, DoS; High
-		sed -i -e "s@\"picomatch\": \"^3 || ^4\"@\"picomatch\": \"^4.0.4\"@g" "package-lock.json" || die				# CVE-2026-33671; ZC, DoS; High
-		sed -i -e "s|\"picomatch\": \"^2.3.1\"|\"picomatch\": \"^4.0.4\"|g" "package-lock.json" || die					# CVE-2026-33671; ZC, DoS; High
-		sed -i -e "s|\"picomatch\": \"^4.0.3\"|\"picomatch\": \"^4.0.4\"|g" "package-lock.json" || die					# CVE-2026-33671; ZC, DoS; High
-		sed -i -e "s|\"picomatch\": \"^2.2.1\"|\"picomatch\": \"^4.0.4\"|g" "package-lock.json" || die					# CVE-2026-33671; ZC, DoS; High
-																		# CVE-2026-33672; DT; Moderate
-
-		sed -i -e "s|\"brace-expansion\": \"^1.1.7\"|\"brace-expansion\": \"^5.0.2\"|g" "package-lock.json" || die			# CVE-2026-33750; DoS; Moderate
-		sed -i -e "s|\"brace-expansion\": \"^2.0.1\"|\"brace-expansion\": \"^5.0.2\"|g" "package-lock.json" || die			# CVE-2026-33750; DoS; Moderate
-		sed -i -e "s|\"brace-expansion\": \"^5.0.2\"|\"brace-expansion\": \"^5.0.2\"|g" "package-lock.json" || die			# CVE-2026-33750; DoS; Moderate
-		sed -i -e "s|\"brace-expansion\": \"^2.0.2\"|\"brace-expansion\": \"^5.0.2\"|g" "package-lock.json" || die			# CVE-2026-33750; DoS; Moderate
 
 	}
 	patch_lockfile
@@ -230,7 +220,6 @@ npm_update_lock_install_post() {
 		"tar-fs@^3.1.1"
 		"tar@^7.5.11"
 		"file-type@^21.3.2"
-		"picomatch@^4.0.4"
 
 		"react-icons@5.2.1"	# Must be pinned test remove after testing
 		"kokoro-js"		# Required missing dep in package.json
@@ -241,7 +230,6 @@ npm_update_lock_install_post() {
 		"vite@^6.4.2"
 		"tmp@^0.2.4"
 		"@tootallnate/once@^3.0.1"
-		"brace-expansion@^5.0.2"
 	)
 	enpm install "${L[@]}" -D "${NPM_INSTALL_ARGS[@]}"
 
@@ -261,17 +249,30 @@ ewarn "QA:  Remove node_modules/vite/node_modules/esbuild and @esbuild/* <0.25.1
 			sed -i -e "s|\"prismjs\": \"^1.27.0\"|\"prismjs\": \"^1.30.0\"|g" "package-lock.json" || die					# CVE-2024-53382; DT, ID; Medium
 			sed -i -e "s|\"prismjs\": \"~1.27.0\"|\"prismjs\": \"^1.30.0\"|g" "package-lock.json" || die					# CVE-2024-53382; DT, ID; Medium
 
-			sed -i -e "s|\"minimatch\": \"^9.0.5\"|\"minimatch\": \"^9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
-			sed -i -e "s|\"minimatch\": \"^9.0.4\"|\"minimatch\": \"^9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
-			sed -i -e "s|\"minimatch\": \"9.0.3\"|\"minimatch\": \"^9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
-			sed -i -e "s|\"minimatch\": \"^9.0.0\"|\"minimatch\": \"^9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
-			sed -i -e "s|\"minimatch\": \"^5.1.1\"|\"minimatch\": \"^9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
-			sed -i -e "s|\"minimatch\": \"^5.0.1\"|\"minimatch\": \"^9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
-			sed -i -e "s|\"minimatch\": \"^3.1.2\"|\"minimatch\": \"^9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
-			sed -i -e "s|\"minimatch\": \"^3.1.1\"|\"minimatch\": \"^9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
-			sed -i -e "s|\"minimatch\": \"^3.0.5\"|\"minimatch\": \"^9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
-			sed -i -e "s|\"minimatch\": \"^3.0.5\"|\"minimatch\": \"^9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
-			sed -i -e "s|\"minimatch\": \"^3.0.4\"|\"minimatch\": \"^9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
+#			sed -i -e "s|\"minimatch\": \"^9.0.5\"|\"minimatch\": \"^9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
+#			sed -i -e "s|\"minimatch\": \"^9.0.4\"|\"minimatch\": \"^9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
+#			sed -i -e "s|\"minimatch\": \"9.0.3\"|\"minimatch\": \"^9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
+#			sed -i -e "s|\"minimatch\": \"^9.0.0\"|\"minimatch\": \"^9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
+#			sed -i -e "s|\"minimatch\": \"^5.1.1\"|\"minimatch\": \"^9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
+#			sed -i -e "s|\"minimatch\": \"^5.0.1\"|\"minimatch\": \"^9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
+#			sed -i -e "s|\"minimatch\": \"^3.1.2\"|\"minimatch\": \"^9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
+#			sed -i -e "s|\"minimatch\": \"^3.1.1\"|\"minimatch\": \"^9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
+#			sed -i -e "s|\"minimatch\": \"^3.0.5\"|\"minimatch\": \"^9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
+#			sed -i -e "s|\"minimatch\": \"^3.0.5\"|\"minimatch\": \"^9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
+#			sed -i -e "s|\"minimatch\": \"^3.0.4\"|\"minimatch\": \"^9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
+
+			sed -i -e "s|\"picomatch\": \"^4.0.3\"|\"picomatch\": \"^4.0.4\"|g" "package-lock.json" || die					# CVE-2026-33671; ZC, DoS; High
+			sed -i -e "s|\"picomatch\": \"^4.0.2\"|\"picomatch\": \"^4.0.4\"|g" "package-lock.json" || die					# CVE-2026-33671; ZC, DoS; High
+			sed -i -e "s@\"picomatch\": \"^3 || ^4\"@\"picomatch\": \"^4.0.4\"@g" "package-lock.json" || die				# CVE-2026-33671; ZC, DoS; High
+			sed -i -e "s|\"picomatch\": \"^2.3.1\"|\"picomatch\": \"^4.0.4\"|g" "package-lock.json" || die					# CVE-2026-33671; ZC, DoS; High
+			sed -i -e "s|\"picomatch\": \"^2.2.1\"|\"picomatch\": \"^4.0.4\"|g" "package-lock.json" || die					# CVE-2026-33671; ZC, DoS; High
+			sed -i -e "s|\"picomatch\": \"^2.0.4\"|\"picomatch\": \"^4.0.4\"|g" "package-lock.json" || die					# CVE-2026-33671; ZC, DoS; High
+																			# CVE-2026-33672; DT; Moderate
+
+			sed -i -e "s|\"brace-expansion\": \"^5.0.2\"|\"brace-expansion\": \"^5.0.5\"|g" "package-lock.json" || die			# CVE-2026-33750; DoS; Moderate
+			sed -i -e "s|\"brace-expansion\": \"^2.0.2\"|\"brace-expansion\": \"^5.0.5\"|g" "package-lock.json" || die			# CVE-2026-33750; DoS; Moderate
+			sed -i -e "s|\"brace-expansion\": \"^2.0.1\"|\"brace-expansion\": \"^5.0.5\"|g" "package-lock.json" || die			# CVE-2026-33750; DoS; Moderate
+			sed -i -e "s|\"brace-expansion\": \"^1.1.7\"|\"brace-expansion\": \"^5.0.5\"|g" "package-lock.json" || die			# CVE-2026-33750; DoS; Moderate
 		}
 		patch_lockfile
 
@@ -279,13 +280,15 @@ ewarn "QA:  Remove node_modules/vite/node_modules/esbuild and @esbuild/* <0.25.1
 			"@babel/runtime@^7.26.10"
 			"axios@^1.12.0"
 			"prismjs@^1.30.0"
-			"minimatch@^9.0.7"
+#			"minimatch@^9.0.7"
+			"picomatch@^4.0.4"
 		)
 		enpm install "${L[@]}" -P "${NPM_INSTALL_ARGS[@]}"
 
 		L=(
 			"esbuild@^0.25.12"
-			"minimatch@^9.0.7"
+#			"minimatch@^9.0.7"
+			"brace-expansion@^5.0.5"
 		)
 		enpm install "${L[@]}" -D "${NPM_INSTALL_ARGS[@]}"
 
