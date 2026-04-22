@@ -14,12 +14,48 @@ start_pre() {
 	export OPENCLAW_UID=$(id -u "openclaw")
 	export OPENCLAW_GID=$(id -g "openclaw")
 	export OPENCLAW_TAG="${OPENCLAW_TAG:-@OPENCLAW_TAG@}"
+	export OPENCLAW_IMAGE="${OPENCLAW_IMAGE:-ghcr.io/openclaw/openclaw:@OPENCLAW_TAG@}"
+	export OPENCLAW_CONFIG_DIR="/home/node/.openclaw"
+	export OPENCLAW_WORKSPACE_DIR="/home/node/.openclaw/workspace"
+	export DOCKER_GID="48"
 
-	# Fix ownership before starting (critical for custom UID)
-	if [[ -d "/var/lib/openclaw" ]] ; then
-		chown -R "${OPENCLAW_UID}:${OPENCLAW_GID}" "/var/lib/openclaw"
-		einfo "Fixed ownership of /var/lib/openclaw to ${OPENCLAW_UID}:${OPENCLAW_GID}"
+	# Fix .env again on every start (safety net)
+	if [[ -f ".env" ]]; then
+		sed -i \
+			-e 's|OPENCLAW_CONFIG_DIR=.*|OPENCLAW_CONFIG_DIR=/home/node/.openclaw|' \
+			-e 's|OPENCLAW_WORKSPACE_DIR=.*|OPENCLAW_WORKSPACE_DIR=/home/node/.openclaw/workspace|' \
+			".env"
 	fi
+
+	# === Force correct .env every start for people that didn't run /usr/bin/openclaw ===
+sed -i \
+	-e "/OPENCLAW_CONFIG_DIR/d" \
+	-e "/OPENCLAW_WORKSPACE_DIR/d" \
+	-e "/DOCKER_GID/d" \
+	-e "/OPENCLAW_DOCKER_SOCKET/d" \
+	".env"
+
+cat >> ".env" <<EOL
+OPENCLAW_CONFIG_DIR=/home/node/.openclaw
+OPENCLAW_WORKSPACE_DIR=/home/node/.openclaw/workspace
+DOCKER_GID=${DOCKER_GID}
+OPENCLAW_DOCKER_SOCKET=/var/run/docker.sock
+EOL
+
+cat > "docker-compose.override.yml" <<EOL
+services:
+  openclaw-gateway:
+    user: "${OPENCLAW_UID}:${OPENCLAW_GID}"
+    volumes:
+      - /var/lib/openclaw:/home/node/.openclaw
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    group_add:
+      - "${DOCKER_GID}"
+EOL
+
+	# Ensure volume directory exists and has correct ownership
+	mkdir -p "/var/lib/openclaw"
+	chown -R "${OPENCLAW_UID}:${OPENCLAW_GID}" "/var/lib/openclaw"
 
 	# Optional: run setup if needed
 	# ./docker-setup.sh --non-interactive || true

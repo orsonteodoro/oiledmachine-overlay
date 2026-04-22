@@ -8,7 +8,7 @@ EAPI=8
 EGIT_REPO_URI="https://github.com/openclaw/openclaw.git"
 FALLBACK_COMMIT="4eb716062250cabc25bc3b5591994ce00e5c3f9e"
 FALLBACK_TAG="2026.4.9"
-KEYWORDS="~amd64"
+#KEYWORDS="~amd64" # Need to fix file ownership/permissions issue
 IUSE+=" fallback-commit"
 inherit git-r3
 
@@ -16,7 +16,7 @@ DESCRIPTION="OpenClaw - Personal AI assistant gateway (Docker Compose + OpenRC)"
 HOMEPAGE="https://github.com/openclaw/openclaw"
 LICENSE="MIT"
 SLOT="0"
-IUSE+=" ebuild_revision_4"
+IUSE+=" ebuild_revision_8"
 RDEPEND="
 	acct-group/openclaw
 	acct-user/openclaw
@@ -30,6 +30,15 @@ BDEPEND="
 "
 
 src_unpack() {
+# For the security, some of it could be disinformation, psyops, or marketing smears.
+# You have 3 choices:
+# 1. Non-free cloud hosted agent.
+# 2. Free locally hosted agent.
+# 3. No agent.
+ewarn
+ewarn "The ${PN} ebuild is provided for testing purposes or testing/research evaluation"
+ewarn "of Web RAG for LobeHub not for production use because security reasons."
+ewarn
 	git-r3_src_unpack || die
 }
 
@@ -38,27 +47,39 @@ src_prepare() {
 	default
 
 	eapply "${FILESDIR}/openclaw-4eb7160-docker-compose.patch"
+	eapply "${FILESDIR}/openclaw-2d126fc-file-permissions.patch"
 
 	# === PLACEHOLDER REPLACEMENT (you can manually patch before this) ===
 	# Fallback sed replacement
 	local openclaw_uid=$(id -u "openclaw")
 	local openclaw_gid=$(id -g "openclaw")
 	local openclaw_tag="latest"
+	local docker_gid=48
 	use fallback-commit && openclaw_tag="${FALLBACK_TAG}"
 	sed -i \
 		-e "s|@OPENCLAW_UID@|${openclaw_uid}|g" \
 		-e "s|@OPENCLAW_GID@|${openclaw_gid}|g" \
 		-e "s|@OPENCLAW_TAG@|${openclaw_tag}|g" \
+		-e "s|@DOCKER_GID@|${docker_gid}|g" \
 		"docker-compose.yml" \
+		"scripts/docker/setup.sh" \
 		|| die "sed placeholder replacement failed"
-	sed -i -e "" "scripts/docker/setup.sh" || die
 
 	# Force pre-built image in docker-compose.yml (skip local build)
 	# Avoid using non-portable bun during local Docker build.
 	sed -i \
 		-e 's|image:.*openclaw:local|image: ghcr.io/openclaw/openclaw:@OPENCLAW_TAG@|g' \
 		-e 's|build: \.|# build: .  # disabled - using pre-built image|g' \
-		"docker-compose.yml" || true
+		"docker-compose.yml" \
+		|| true
+
+	# Fix .env file - critical part
+	if [[ -f ".env" ]]; then
+		sed -i \
+			-e 's|OPENCLAW_CONFIG_DIR=.*|OPENCLAW_CONFIG_DIR=/home/node/.openclaw|' \
+			-e 's|OPENCLAW_WORKSPACE_DIR=.*|OPENCLAW_WORKSPACE_DIR=/home/node/.openclaw/workspace|' \
+			".env" || true
+	fi
 }
 
 src_configure() {
@@ -102,6 +123,7 @@ pkg_postinst() {
 		local openclaw_uid=$(id -u "openclaw")
 		local openclaw_gid=$(id -g "openclaw")
 		chown -R "${openclaw_uid}:${openclaw_gid}" "${EROOT}/var/lib/openclaw" 2>/dev/null || true
+		chmod -R 0770 "${EROOT}/var/lib/openclaw" 2>/dev/null || true
 	fi
 
 	local openclaw_tag="latest"
@@ -135,4 +157,8 @@ einfo "Control UI: http://localhost:18789"
 einfo "After onboarding, connect LobeHub to http://127.0.0.1:18789"
 einfo
 einfo "To update later: emerge --ask --oneshot =openclaw-9999"
+einfo
+einfo "The .env file has been automatically fixed to use /home/node/.openclaw"
+einfo "to avoid permission errors with the pre-built image."
+einfo
 }

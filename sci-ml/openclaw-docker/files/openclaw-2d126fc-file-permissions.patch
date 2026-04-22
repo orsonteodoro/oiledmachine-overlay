@@ -1,0 +1,24 @@
+--- a/scripts/docker/setup.sh.orig	2026-04-10 11:17:42.716738026 -0700
++++ b/scripts/docker/setup.sh	2026-04-10 11:19:19.835274605 -0700
+@@ -493,16 +493,16 @@ fi
+ # differ, causing EACCES when the container tries to mkdir/write.
+ # Running a brief root container to chown is the portable Docker idiom --
+ # it works regardless of the host uid and doesn't require host-side root.
+-echo ""
+-echo "==> Fixing data-directory permissions"
++#echo ""
++#echo "==> Fixing data-directory permissions"
+ # Use -xdev to restrict chown to the config-dir mount only — without it,
+ # the recursive chown would cross into the workspace bind mount and rewrite
+ # ownership of all user project files on Linux hosts.
+ # After fixing the config dir, only the OpenClaw metadata subdirectory
+ # (.openclaw/) inside the workspace gets chowned, not the user's project files.
+-run_prestart_gateway --user root --entrypoint sh openclaw-gateway -c \
+-  'find /home/node/.openclaw -xdev -exec chown node:node {} +; \
+-   [ -d /home/node/.openclaw/workspace/.openclaw ] && chown -R node:node /home/node/.openclaw/workspace/.openclaw || true'
++#run_prestart_gateway --user root --entrypoint sh openclaw-gateway -c \
++#  'find /home/node/.openclaw -xdev -exec chown node:node {} +; \
++#   [ -d /home/node/.openclaw/workspace/.openclaw ] && chown -R node:node /home/node/.openclaw/workspace/.openclaw || true'
+ 
+ echo ""
+ echo "==> Onboarding (interactive)"
