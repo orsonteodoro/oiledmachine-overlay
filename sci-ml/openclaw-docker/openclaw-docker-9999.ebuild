@@ -34,12 +34,12 @@ BDEPEND="
 src_unpack() {
 # For the security, some of it could be disinformation, psyops, or marketing smears.
 # You have 3 choices:
-# 1. Non-free cloud hosted AI agent.
-# 2. Free locally hosted AI agent.
-# 3. No AI agent.
+# 1. Non-free cloud hosted AI agent
+# 2. Free locally hosted AI agent (e.g. openclaw)
+# 3. No AI agent
 ewarn
 ewarn "The ${PN} ebuild is provided for testing purposes or testing/research evaluation"
-ewarn "of Web RAG for LobeHub not for production use because security reasons."
+ewarn "of Web RAG for LobeHub not for production use because of security reasons."
 ewarn
 	git-r3_src_unpack || die
 }
