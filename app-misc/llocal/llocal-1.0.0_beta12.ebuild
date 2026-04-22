@@ -137,54 +137,75 @@ npm_update_lock_install_post() {
 		enpm install "electron@${ELECTRON_APP_ELECTRON_PV}" -D
 	fi
 	patch_lockfile() {
-ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild and @esbuild/* <0.25.0 from package-lock.json"
-ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild@0.21.5 and arches in package-lock.json"
+#ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild and @esbuild/* <0.25.12 from package-lock.json"
+#ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild@0.21.5 and arches in package-lock.json"
 		# DoS = Denial of Service
 		# DT = Data Tampering
 		# ID = Information Disclosure
 		# SS = Subsequent System (Indirect attack)
 		# VS = Vulnerable System (Direct attack)
-		sed -i -e "s|\"@langchain/community\": \"^0.2.25\"|\"@langchain/community\": \"0.3.3\"|g" "package-lock.json" || die		# CVE-2024-7042; DoS, DT, ID; Critical
 
-		sed -i -e "s#\"vite\": \"^4.0.0 || ^5.0.0\"#\"vite\": \"5.4.21\"#g" "package-lock.json" || die					# CVE-2025-30208; ID; Medium
-		sed -i -e "s#\"vite\": \"^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0-beta.0\"#\"vite\": \"5.4.21\"#g" "package-lock.json" || die	# CVE-2025-30208; ID; Medium
-		sed -i -e "s|\"vite\": \"^5.0.12\"|\"vite\": \"5.4.21\"|g" "package-lock.json" || die						# CVE-2025-24010; ID; Medium
-		sed -i -e "s|\"vite\": \"^5.4.12\"|\"vite\": \"5.4.21\"|g" "package-lock.json" || die						# CVE-2025-30208; ID; Medium
-		sed -i -e "s|\"vite\": \"5.4.12\"|\"vite\": \"5.4.21\"|g" "package-lock.json" || die						# CVE-2025-30208; ID; Medium
+	# The pinned version of @langchain/community is required.
+	# The pinned version of react-icons is required.
+	# The pinned version of typescript is required.
+	#	sed -i -e "s|\"@langchain/community\": \"^0.2.25\"|\"@langchain/community\": \"^1.1.18\"|g" "package-lock.json" || die		# CVE-2024-7042; DoS, DT, ID; Critical
+	#																	# CVE-2026-26019; ID; Moderate
+	#																	# CVE-2026-27795; ID; Moderate
+		sed -i -e "s|\"langsmith\": \">=0.4.0 <1.0.0\"|\"langsmith\": \"^0.5.19\"|g" "package-lock.json" || die				# CVE-2026-25528; ZC, ID; Moderate
+		sed -i -e "s|\"langsmith\": \">=0.4.0 <1.0.0\"|\"langsmith\": \"^0.5.19\"|g" "package-lock.json" || die				# CVE-2026-25528; ZC, ID; Moderate
+		sed -i -e "s|\"langsmith\": \"^0.3.67\"|\"langsmith\": \"^0.5.19\"|g" "package-lock.json" || die				# CVE-2026-25528; ZC, ID; Moderate
+																		# CVE-2026-40190; ZC, DoS, DT, ID; Moderate
+																		# GHSA-rr7j-v2q5-chgv; ZC, ID; Moderate
+
+		sed -i -e "s#\"vite\": \"^4.0.0 || ^5.0.0\"#\"vite\": \"^6.4.2\"#g" "package-lock.json" || die					# CVE-2025-30208; ID; Medium
+		sed -i -e "s#\"vite\": \"^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0-beta.0\"#\"vite\": \"^6.4.2\"#g" "package-lock.json" || die	# CVE-2025-30208; ID; Medium
+		sed -i -e "s|\"vite\": \"^5.0.12\"|\"vite\": \"^6.4.2\"|g" "package-lock.json" || die						# CVE-2025-24010; ID; Medium
+		sed -i -e "s|\"vite\": \"^5.4.12\"|\"vite\": \"^6.4.2\"|g" "package-lock.json" || die						# CVE-2025-30208; ID; Medium
+		sed -i -e "s|\"vite\": \"5.4.12\"|\"vite\": \"^6.4.2\"|g" "package-lock.json" || die						# CVE-2025-30208; ID; Medium
 																		# CVE-2025-46565; VS(ID); Medium
 																		# CVE-2025-32395; VS(ID); Medium
 																		# CVE-2025-31486; ID; Medium
 																		# CVE-2025-58752; ID; Low
 																		# CVE-2025-62522; VS(ID); Moderate
+																		# CVE-2026-39365; ZC, VS(ID); Moderate
 
-		sed -i -e "s|\"ws\": \"^8.14.2\"|\"ws\": \"8.17.1\"|g" "package-lock.json" || die						# CVE-2024-37890; DoS; High
-		sed -i -e "s|\"ws\": \"8.13.0\"|\"ws\": \"8.17.1\"|g" "package-lock.json" || die
+		sed -i -e "s|\"ws\": \"^8.14.2\"|\"ws\": \"^8.17.1\"|g" "package-lock.json" || die						# CVE-2024-37890; DoS; High
+		sed -i -e "s|\"ws\": \"8.13.0\"|\"ws\": \"^8.17.1\"|g" "package-lock.json" || die
 
-		sed -i -e "s|\"form-data\": \"^4.0.0\"|\"form-data\": \"4.0.4\"|g" "package-lock.json" || die					# CVE-2025-7783; VS(DT, ID), SS(DT, ID); Critical
+		sed -i -e "s|\"form-data\": \"^4.0.0\"|\"form-data\": \"^4.0.4\"|g" "package-lock.json" || die					# CVE-2025-7783; VS(DT, ID), SS(DT, ID); Critical
 
-		sed -i -e "s|\"tmp\": \"^0.2.0\"|\"tmp\": \"0.2.4\"|g" "package-lock.json" || die						# CVE-2025-54798; DT
+		sed -i -e "s|\"tmp\": \"^0.2.0\"|\"tmp\": \"^0.2.4\"|g" "package-lock.json" || die						# CVE-2025-54798; DT
 
-		sed -i -e "s|\"mermaid\": \"^11.4.1\"|\"mermaid\": \"11.10.0\"|g" "package-lock.json" || die					# CVE-2025-54881; SS(DT, ID); Medium
+		sed -i -e "s|\"mermaid\": \"^11.4.1\"|\"mermaid\": \"^11.10.0\"|g" "package-lock.json" || die					# CVE-2025-54881; SS(DT, ID); Medium
 																		# CVE-2025-54880; SS(DT, ID); Medium
-		sed -i -e "s|\"tar-fs\": \"^2.0.0\"|\"tar-fs\": \"2.1.4\"|g" "package-lock.json" || die						# CVE-2025-59343; VS(DT); High
-		sed -i -e "s|\"tar-fs\": \"^3.1.0\"|\"tar-fs\": \"3.1.1\"|g" "package-lock.json" || die						# CVE-2025-59343, GHSA-vj76-c3g6-qr5v; VS(DT); High # Not mentioned in the GH scanner for llocal but in a different package
+		sed -i -e "s|\"tar-fs\": \"^2.0.0\"|\"tar-fs\": \"^2.1.4\"|g" "package-lock.json" || die					# CVE-2025-59343; VS(DT); High
+		sed -i -e "s|\"tar-fs\": \"^3.1.0\"|\"tar-fs\": \"^3.1.1\"|g" "package-lock.json" || die					# CVE-2025-59343, GHSA-vj76-c3g6-qr5v; VS(DT); High # Not mentioned in the GH scanner for llocal but in a different package
 
-		sed -i -e "s|\"tar\": \"^7.4.3\"|\"tar\": \"7.5.11\"|g" "package-lock.json" || die						# CVE-2026-23950; DoS, DT, ID; High
-		sed -i -e "s|\"tar\": \"^7.5.10\"|\"tar\": \"7.5.11\"|g" "package-lock.json" || die						# CVE-2026-23950; DoS, DT, ID; High
-		sed -i -e "s|\"tar\": \"^6.1.12\"|\"tar\": \"7.5.11\"|g" "package-lock.json" || die						# CVE-2026-23950; DoS, DT, ID; High
+		sed -i -e "s|\"tar\": \"^7.4.3\"|\"tar\": \"^7.5.11\"|g" "package-lock.json" || die						# CVE-2026-23950; DoS, DT, ID; High
+		sed -i -e "s|\"tar\": \"^7.5.10\"|\"tar\": \"^7.5.11\"|g" "package-lock.json" || die						# CVE-2026-23950; DoS, DT, ID; High
+		sed -i -e "s|\"tar\": \"^6.1.12\"|\"tar\": \"^7.5.11\"|g" "package-lock.json" || die						# CVE-2026-23950; DoS, DT, ID; High
 																		# CVE-2026-24842; DT, ID; High
 																		# CVE-2026-29786; DoS, DT; High
 																		# CVE-2026-31802; VS(DoS), SS(DoS); High
 																		# CVE-2026-23745; VS(DT, ID), SS(DT, ID); High
 																		# CVE-2026-26960; DT, ID; High
-		sed -i -e "s|\"@tootallnate/once\": \"2\"|\"@tootallnate/once\": \"3.0.1\"|g" "package-lock.json" || die			# CVE-2026-3449; VS(DoS); Low
-		sed -i -e "s|\"file-type\": \"^16.5.4\"|\"file-type\": \"21.3.2\"|g" "package-lock.json" || die					# CVE-2026-31808; ZC, DoS; Moderate
+		sed -i -e "s|\"@tootallnate/once\": \"2\"|\"@tootallnate/once\": \"^3.0.1\"|g" "package-lock.json" || die			# CVE-2026-3449; VS(DoS); Low
+		sed -i -e "s|\"file-type\": \"^16.5.4\"|\"file-type\": \"^21.3.2\"|g" "package-lock.json" || die				# CVE-2026-31808; ZC, DoS; Moderate
 																		# CVE-2026-32630; ZC, DoS; Moderate
 
-		sed -i -e "s|\"minimatch\": \"^9.0.5\"|\"minimatch\": \"9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
-		sed -i -e "s|\"minimatch\": \"^9.0.4\"|\"minimatch\": \"9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
-		sed -i -e "s|\"minimatch\": \"^9.0.0\"|\"minimatch\": \"9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
-		sed -i -e "s|\"minimatch\": \"9.0.3\"|\"minimatch\": \"9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
+
+		sed -i -e "s|\"picomatch\": \"^2.0.4\"|\"picomatch\": \"^4.0.4\"|g" "package-lock.json" || die					# CVE-2026-33671; ZC, DoS; High
+		sed -i -e "s@\"picomatch\": \"^3 || ^4\"@\"picomatch\": \"^4.0.4\"@g" "package-lock.json" || die				# CVE-2026-33671; ZC, DoS; High
+		sed -i -e "s|\"picomatch\": \"^2.3.1\"|\"picomatch\": \"^4.0.4\"|g" "package-lock.json" || die					# CVE-2026-33671; ZC, DoS; High
+		sed -i -e "s|\"picomatch\": \"^4.0.3\"|\"picomatch\": \"^4.0.4\"|g" "package-lock.json" || die					# CVE-2026-33671; ZC, DoS; High
+		sed -i -e "s|\"picomatch\": \"^2.2.1\"|\"picomatch\": \"^4.0.4\"|g" "package-lock.json" || die					# CVE-2026-33671; ZC, DoS; High
+																		# CVE-2026-33672; DT; Moderate
+
+		sed -i -e "s|\"brace-expansion\": \"^1.1.7\"|\"brace-expansion\": \"^5.0.2\"|g" "package-lock.json" || die			# CVE-2026-33750; DoS; Moderate
+		sed -i -e "s|\"brace-expansion\": \"^2.0.1\"|\"brace-expansion\": \"^5.0.2\"|g" "package-lock.json" || die			# CVE-2026-33750; DoS; Moderate
+		sed -i -e "s|\"brace-expansion\": \"^5.0.2\"|\"brace-expansion\": \"^5.0.2\"|g" "package-lock.json" || die			# CVE-2026-33750; DoS; Moderate
+		sed -i -e "s|\"brace-expansion\": \"^2.0.2\"|\"brace-expansion\": \"^5.0.2\"|g" "package-lock.json" || die			# CVE-2026-33750; DoS; Moderate
+
 	}
 	patch_lockfile
 
@@ -196,29 +217,31 @@ ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild@0.21.5 and ar
 	enpm install "${L[@]}" -D "${NPM_INSTALL_ARGS[@]}"
 
 	L=(
-		"@langchain/community@0.3.3"
-		"ws@8.17.1"
+		"langsmith@^0.5.19"
+	#	"@langchain/community@^1.1.18"
+		"ws@^8.17.1"
 
 		# Fix breakage
-		"react-icons@5.2.1"
+		"react-icons@5.2.1" # Must be pinned
 
-		"form-data@4.0.4"
-		"mermaid@11.10.0"
+		"form-data@^4.0.4"
+		"mermaid@^11.10.0"
 
-		"tar-fs@2.1.4"
-		"tar-fs@3.1.1"
-		"tar@7.5.11"
-		"file-type@21.3.2"
-		"minimatch@9.0.7"
+		"tar-fs@^2.1.4"
+		"tar-fs@^3.1.1"
+		"tar@^7.5.11"
+		"file-type@^21.3.2"
 		"kokoro-js"
+		"picomatch@^4.0.4"
 	)
 	enpm install "${L[@]}" -P "${NPM_INSTALL_ARGS[@]}"
 
 	L=(
-		"vite@5.4.21"
-		"tmp@0.2.4"
-		"@tootallnate/once@3.0.1"
-		"minimatch@9.0.7"
+		"vite@^6.4.2"
+		"tmp@^0.2.4"
+		"@tootallnate/once@^3.0.1"
+		"brace-expansion@^5.0.2"
+		"typescript@5.4.5" # Must be pinned
 	)
 	enpm install "${L[@]}" -D "${NPM_INSTALL_ARGS[@]}"
 
@@ -227,22 +250,45 @@ ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild@0.21.5 and ar
 
 npm_update_lock_audit_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
-ewarn "QA:  Remove node_modules/vite/node_modules/esbuild and @esbuild/* <0.25.0 from package-lock.json"
+ewarn "QA:  Remove node_modules/vite/node_modules/esbuild and @esbuild/* <0.25.12 from package-lock.json"
 		patch_lockfile() {
 			sed -i -e "s|\"@babel/runtime\": \"^7.3.1\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die			# CVE-2025-27789; DoS; Medium
 			sed -i -e "s|\"axios\": \"^1.6.8\"|\"axios\": \"^1.12.0\"|g" "package-lock.json" || die						# CVE-2025-27152; ID; High
 																			# CVE-2025-58754; ZC, DoS; High
-			sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json" || die					# GHSA-67mh-4wv8-2f99; ID; Medium
-			sed -i -e "s|\"esbuild\": \"^0.21.5\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json" || die					# GHSA-67mh-4wv8-2f99; ID; Medium
-			sed -i -e "s|\"esbuild\": \"^0.25.0\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json"						# GHSA-67mh-4wv8-2f99; ID; Medium
+			sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"^0.25.12\"|g" "package-lock.json" || die					# GHSA-67mh-4wv8-2f99; ID; Medium
+			sed -i -e "s|\"esbuild\": \"^0.21.5\"|\"esbuild\": \"^0.25.12\"|g" "package-lock.json" || die					# GHSA-67mh-4wv8-2f99; ID; Medium
+			sed -i -e "s|\"esbuild\": \"^0.25.0\"|\"esbuild\": \"^0.25.12\"|g" "package-lock.json"						# GHSA-67mh-4wv8-2f99; ID; Medium
 			sed -i -e "s|\"prismjs\": \"^1.27.0\"|\"prismjs\": \"^1.30.0\"|g" "package-lock.json" || die					# CVE-2024-53382; DT, ID; Medium
 			sed -i -e "s|\"prismjs\": \"~1.27.0\"|\"prismjs\": \"^1.30.0\"|g" "package-lock.json" || die					# CVE-2024-53382; DT, ID; Medium
+
+			sed -i -e "s|\"minimatch\": \"^9.0.5\"|\"minimatch\": \"^9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
+			sed -i -e "s|\"minimatch\": \"^9.0.4\"|\"minimatch\": \"^9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
+			sed -i -e "s|\"minimatch\": \"9.0.3\"|\"minimatch\": \"^9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
+			sed -i -e "s|\"minimatch\": \"^9.0.0\"|\"minimatch\": \"^9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
+			sed -i -e "s|\"minimatch\": \"^5.1.1\"|\"minimatch\": \"^9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
+			sed -i -e "s|\"minimatch\": \"^5.0.1\"|\"minimatch\": \"^9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
+			sed -i -e "s|\"minimatch\": \"^3.1.2\"|\"minimatch\": \"^9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
+			sed -i -e "s|\"minimatch\": \"^3.1.1\"|\"minimatch\": \"^9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
+			sed -i -e "s|\"minimatch\": \"^3.0.5\"|\"minimatch\": \"^9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
+			sed -i -e "s|\"minimatch\": \"^3.0.5\"|\"minimatch\": \"^9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
+			sed -i -e "s|\"minimatch\": \"^3.0.4\"|\"minimatch\": \"^9.0.7\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
 		}
 		patch_lockfile
-		enpm install "@babel/runtime@^7.26.10" -P
-		enpm install "axios@^1.12.0" -P
-		enpm install "esbuild@^0.25.0" -D # --prefer-offline is bugged, must follow vite
-		enpm install "prismjs@^1.30.0" -P
+
+		L=(
+			"@babel/runtime@^7.26.10"
+			"axios@^1.12.0"
+			"prismjs@^1.30.0"
+			"minimatch@^9.0.7"
+		)
+		enpm install "${L[@]}" -P "${NPM_INSTALL_ARGS[@]}"
+
+		L=(
+			"esbuild@^0.25.12"
+			"minimatch@^9.0.7"
+		)
+		enpm install "${L[@]}" -D "${NPM_INSTALL_ARGS[@]}"
+
 		patch_lockfile
 	fi
 }
