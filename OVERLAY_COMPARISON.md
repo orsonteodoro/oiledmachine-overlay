@@ -7,7 +7,7 @@
 | Ebuild code style                   | The original language docs style from the 70s-80s (reputation damaging, bad hire), messy/inconsistent or >= 80 characters | Custom contemporary (pretty, job friendly style).  Mostly within 80 characters |
 | Distro owned/backed                 | Y                                          | N                                                            |
 | Primary ebuild package goals        | Build customization, simple/basic ebuilds  | Anti DoS, anti lag, production grade performance             |
-| Secondary ebuild package goals      | Cross compile portability | Feature complete (aka full version) ebuilds, power user customization; packaging awesome software; new/custom feature patches exclusives, dummy proofing, guardrails |
+| Secondary ebuild package goals      | Cross compile portability, testing | Feature complete (aka full version) ebuilds, power user customization; packaging awesome software; new/custom feature patches exclusives, dummy proofing, guardrails |
 | Documentation style                 | Simple, undocumented mods or undocumented known settings leading to performance regressions | Transparent and comprehensive, mods and regressions are documented and warned to user |
 | Runtime performance                 | Slow sometimes or difficult to find bottleneck if ricing | Reproducible with guardrails and warnings      |
 | Compiler hardening                  | Balanced, outdated or missing flags, inappropriate static hardening level | Custom, recent hardening flags, dynamic increased hardening by threat |
