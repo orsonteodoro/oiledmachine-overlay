@@ -3,6 +3,10 @@
 
 EAPI=8
 
+# To update lockfile
+# PATH=$(realpath "../../scripts")":${PATH}"
+# NPM_UPDATER_VERSIONS="1.0.0_beta12" npm_updater_update_locks.sh
+
 MY_PN="LLocal"
 MY_PV="${PV/_beta/-beta.}"
 
@@ -18,7 +22,7 @@ RUST_PV="${RUST_MIN_VER}"
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="41.0.3" # Cr 146.0.7680.80, node 24.14.0
+	ELECTRON_APP_ELECTRON_PV="41.2.2" # Cr 146.0.7680.188, node 24.14.1
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="28.3.3" # Cr 120.0.6099.291, node 18.18.2
@@ -67,13 +71,13 @@ LICENSE="
 "
 # OFL-1.1 - Poppins-*.ttf
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
+	# The fingerprint of 41.2.2 and 41.2.1 are the same.
 	LICENSE+="
-		electron-41.0.3-chromium.html
+		electron-41.2.1-chromium.html
 	"
 else
-# The fingerprint of electron-28.2.10-chromium.html and the electron-28.3.1-chromium.html is the same
 	LICENSE+="
-		electron-28.2.10-chromium.html
+		electron-28.3.3-chromium.html
 	"
 fi
 SLOT="0"
