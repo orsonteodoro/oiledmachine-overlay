@@ -2,9 +2,11 @@
 # Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+EAPI=8
+
 # This fork of nano is based on 5.6.1_p20210415 from the master branch
 
-EAPI=8
+# Contains AI generated source code
 
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 
