@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# AI generated ebuild/artifacts + human edited ebuild
+
 CPU_FLAGS_X86_ISA1=(
         "cpu_flags_x86_sse"
         "cpu_flags_x86_sse2"

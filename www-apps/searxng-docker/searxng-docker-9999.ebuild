@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# AI generated ebuild/artifacts + human edited ebuild
+
 EGIT_REPO_URI="https://github.com/searxng/searxng.git"
 EGIT_BRANCH="master"
 FALLBACK_COMMIT="e12b722ddc0ce75980e639246bdce83ceebdd102" # Apr 6, 2026

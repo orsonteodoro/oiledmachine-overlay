@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# AI generated ebuild/artifacts + human edited ebuild
+
 # See https://github.com/openclaw/openclaw/pkgs/container/openclaw
 EGIT_REPO_URI="https://github.com/openclaw/openclaw.git"
 FALLBACK_COMMIT="4eb716062250cabc25bc3b5591994ce00e5c3f9e"
