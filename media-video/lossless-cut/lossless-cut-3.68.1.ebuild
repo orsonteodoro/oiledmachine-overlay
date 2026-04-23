@@ -92,8 +92,9 @@ LICENSE="
 "
 # Electron's 37.2.5 license fingerprint is the same as 37.1.0
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
+	# Fingerprint 41.2.1 is the same as 41.3.0
 	LICENSE+="
-		electron-41.3.0-chromium.html
+		electron-41.2.1-chromium.html
 	"
 else
 	LICENSE+="
