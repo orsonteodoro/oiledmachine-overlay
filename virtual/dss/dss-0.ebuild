@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# This ebuild and metadata.xml uses AI based synthetic data.
+
 # This package is WIP
 
 # TODO package:
