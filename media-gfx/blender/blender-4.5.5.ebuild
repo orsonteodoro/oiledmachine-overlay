@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# Contains AI generated synthetic data in metadata.xml
+
 RELEASE_TYPE="release"
 VARIANT="stable"
 
