@@ -609,7 +609,7 @@ aqua +avif -bmalloc -cache-partitioning clang dash debug +doc -eme +flite
 +opengl openmp -seccomp +speech-synthesis -spell -system-malloc test thunder
 +variation-fonts wayland +webassembly -webdriver +webgl webm-eme -webrtc webvtt
 -webxr +woff2 +X
-ebuild_revision_32
+ebuild_revision_33
 "
 
 gen_gst_plugins_duse() {
@@ -879,6 +879,7 @@ gen_gobject_introspection_rdepend() {
 	done
 }
 
+# librice bumped to 4.0.0 for patches
 RDEPEND+="
 	${RDEPEND_PATENTS}
 	>=dev-db/sqlite-3.22.0:3[${MULTILIB_USEDEP}]
@@ -1019,7 +1020,7 @@ RDEPEND+="
 		>=dev-libs/hyphen-2.8.8[${MULTILIB_USEDEP}]
 	)
 	librice? (
-		>=net-libs/librice-0.1.1[${MULTILIB_USEDEP}]
+		>=net-libs/librice-0.4.0[${MULTILIB_USEDEP}]
 	)
 	libwebrtc? (
 		>=dev-libs/libevent-2.1.8[${MULTILIB_USEDEP}]
@@ -1130,6 +1131,10 @@ _PATCHES=(
 #	"${FILESDIR}/${PN}-2.43.2-CaptionUserPreferencesDisplayMode-conditional.patch"
 	"${FILESDIR}/extra-patches/${PN}-2.43.2-custom-page-size.patch"
 	"${FILESDIR}/extra-patches/${PN}-2.46.3-gi-flags.patch"
+
+	"${FILESDIR}/extra-patches/${PN}-e6516c9-sockets-tos-configuration-support.patch"
+	"${FILESDIR}/extra-patches/${PN}-37b8d10-turn-improvements.patch"
+	"${FILESDIR}/extra-patches/${PN}-7cb396c-remove-pre-librice-0.4.x.patch"
 )
 
 _set_clang() {

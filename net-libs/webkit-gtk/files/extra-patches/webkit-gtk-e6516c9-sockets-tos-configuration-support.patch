@@ -1,0 +1,183 @@
+diff '--color=auto' -urp webkitgtk-2.52.3.orig/Source/WebCore/Modules/mediastream/gstreamer/GStreamerDataChannelHandler.cpp webkitgtk-2.52.3/Source/WebCore/Modules/mediastream/gstreamer/GStreamerDataChannelHandler.cpp
+--- webkitgtk-2.52.3.orig/Source/WebCore/Modules/mediastream/gstreamer/GStreamerDataChannelHandler.cpp	2026-02-27 14:37:23.769724600 -0800
++++ webkitgtk-2.52.3/Source/WebCore/Modules/mediastream/gstreamer/GStreamerDataChannelHandler.cpp	2026-04-23 12:51:30.041121966 -0700
+@@ -68,21 +68,7 @@ GUniquePtr<GstStructure> GStreamerDataCh
+     if (options.id)
+         gst_structure_set(init.get(), "id", G_TYPE_INT, *options.id, nullptr);
+ 
+-    GstWebRTCPriorityType priorityType;
+-    switch (options.priority) {
+-    case RTCPriorityType::VeryLow:
+-        priorityType = GST_WEBRTC_PRIORITY_TYPE_VERY_LOW;
+-        break;
+-    case RTCPriorityType::Low:
+-        priorityType = GST_WEBRTC_PRIORITY_TYPE_LOW;
+-        break;
+-    case RTCPriorityType::Medium:
+-        priorityType = GST_WEBRTC_PRIORITY_TYPE_MEDIUM;
+-        break;
+-    case RTCPriorityType::High:
+-        priorityType = GST_WEBRTC_PRIORITY_TYPE_HIGH;
+-        break;
+-    }
++    auto priorityType = fromRTCPriorityType(options.priority);
+     gst_structure_set(init.get(), "priority", GST_TYPE_WEBRTC_PRIORITY_TYPE, priorityType, nullptr);
+ 
+     return init;
+diff '--color=auto' -urp webkitgtk-2.52.3.orig/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceAgent.cpp webkitgtk-2.52.3/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceAgent.cpp
+--- webkitgtk-2.52.3.orig/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceAgent.cpp	2026-03-20 01:14:20.374288000 -0700
++++ webkitgtk-2.52.3/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceAgent.cpp	2026-04-23 12:51:30.053121594 -0700
+@@ -538,9 +538,22 @@ static GstWebRTCICETransport* webkitGstW
+     return webkitGstWebRTCIceStreamFindTransport(stream, component);
+ }
+ 
+-static void webkitGstWebRTCIceAgentSetTos(GstWebRTCICE*, GstWebRTCICEStream*, guint)
++static void webkitGstWebRTCIceAgentSetTos(GstWebRTCICE* ice, GstWebRTCICEStream* stream, guint tos)
+ {
+-    GST_FIXME("Not implemented yet.");
++    auto self = WEBKIT_GST_WEBRTC_ICE_BACKEND(ice);
++    auto backend = self->priv->iceBackend;
++    if (!backend) [[unlikely]]
++        return;
++
++    for (auto& riceStream : self->priv->streams.values()) {
++        if (riceStream->stream->stream_id != stream->stream_id)
++            continue;
++
++        GST_DEBUG_OBJECT(ice, "Setting socket TOS to %u on stream %u", tos, riceStream->riceStreamId);
++        backend->setSocketTypeOfService(riceStream->riceStreamId, tos);
++        return;
++    }
++    GST_WARNING_OBJECT(ice, "Unable to find stream %u and apply TOS on its sockets", stream->stream_id);
+ }
+ 
+ static gboolean webkitGstWebRTCIceAgentSetLocalCredentials(GstWebRTCICE*, GstWebRTCICEStream* stream, const gchar* ufrag, const gchar* pwd)
+Only in webkitgtk-2.52.3/Source/WebCore/Modules/mediastream/gstreamer: GStreamerIceAgent.cpp.orig
+diff '--color=auto' -urp webkitgtk-2.52.3.orig/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceAgent.h webkitgtk-2.52.3/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceAgent.h
+--- webkitgtk-2.52.3.orig/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceAgent.h	2026-02-23 06:40:54.742304600 -0800
++++ webkitgtk-2.52.3/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceAgent.h	2026-04-23 12:51:30.055911122 -0700
+@@ -90,6 +90,7 @@ public:
+     using Socket = std::pair<String, RTCIceProtocol>;
+     virtual HashMap<Socket, String> gatherSocketAddresses(ScriptExecutionContextIdentifier, unsigned) = 0;
+     virtual void finalizeStream(unsigned) = 0;
++    virtual void setSocketTypeOfService(unsigned, unsigned) = 0;
+ 
+ protected:
+     RiceBackend() = default;
+diff '--color=auto' -urp webkitgtk-2.52.3.orig/Source/WebCore/Modules/mediastream/gstreamer/GStreamerRtpSenderBackend.cpp webkitgtk-2.52.3/Source/WebCore/Modules/mediastream/gstreamer/GStreamerRtpSenderBackend.cpp
+--- webkitgtk-2.52.3.orig/Source/WebCore/Modules/mediastream/gstreamer/GStreamerRtpSenderBackend.cpp	2026-02-23 06:40:54.744304400 -0800
++++ webkitgtk-2.52.3/Source/WebCore/Modules/mediastream/gstreamer/GStreamerRtpSenderBackend.cpp	2026-04-23 12:51:30.056514693 -0700
+@@ -275,6 +275,11 @@ void GStreamerRtpSenderBackend::setParam
+     }, [](const std::nullptr_t&) {
+     });
+ 
++    if (!parameters.encodings.isEmpty()) {
++        const auto& encoding = parameters.encodings.first();
++        auto priorityType = fromRTCPriorityType(encoding.priority);
++        g_object_set(m_rtcSender.get(), "priority", priorityType, nullptr);
++    }
+     promise.resolve();
+ }
+ 
+diff '--color=auto' -urp webkitgtk-2.52.3.orig/Source/WebCore/Modules/mediastream/gstreamer/GStreamerWebRTCUtils.h webkitgtk-2.52.3/Source/WebCore/Modules/mediastream/gstreamer/GStreamerWebRTCUtils.h
+--- webkitgtk-2.52.3.orig/Source/WebCore/Modules/mediastream/gstreamer/GStreamerWebRTCUtils.h	2026-02-23 06:40:54.745304600 -0800
++++ webkitgtk-2.52.3/Source/WebCore/Modules/mediastream/gstreamer/GStreamerWebRTCUtils.h	2026-04-23 12:51:30.057310164 -0700
+@@ -305,6 +305,22 @@ static inline std::optional<RTCErrorDeta
+     };
+ }
+ 
++static inline GstWebRTCPriorityType fromRTCPriorityType(RTCPriorityType priority)
++{
++    switch (priority) {
++    case RTCPriorityType::VeryLow:
++        return GST_WEBRTC_PRIORITY_TYPE_VERY_LOW;
++    case RTCPriorityType::Low:
++        return GST_WEBRTC_PRIORITY_TYPE_LOW;
++    case RTCPriorityType::Medium:
++        return GST_WEBRTC_PRIORITY_TYPE_MEDIUM;
++    case RTCPriorityType::High:
++        return GST_WEBRTC_PRIORITY_TYPE_HIGH;
++    }
++    ASSERT_NOT_REACHED();
++    return GST_WEBRTC_PRIORITY_TYPE_MEDIUM;
++}
++
+ RefPtr<RTCError> toRTCError(GError*);
+ 
+ ExceptionOr<GUniquePtr<GstStructure>> fromRTCEncodingParameters(const RTCRtpEncodingParameters&, const String& kind);
+Only in webkitgtk-2.52.3/Source/WebCore/platform/rice: RiceUtilities.h.rej
+diff '--color=auto' -urp webkitgtk-2.52.3.orig/Source/WebKit/NetworkProcess/webrtc/rice/RiceBackend.cpp webkitgtk-2.52.3/Source/WebKit/NetworkProcess/webrtc/rice/RiceBackend.cpp
+--- webkitgtk-2.52.3.orig/Source/WebKit/NetworkProcess/webrtc/rice/RiceBackend.cpp	2026-02-23 06:40:56.258296300 -0800
++++ webkitgtk-2.52.3/Source/WebKit/NetworkProcess/webrtc/rice/RiceBackend.cpp	2026-04-23 12:51:32.505045592 -0700
+@@ -380,6 +380,20 @@ const RiceAddress* RiceBackend::ensureRi
+     return result.get();
+ }
+ 
++void RiceBackend::setSocketTypeOfService(unsigned streamId, unsigned value)
++{
++#if RICE_CHECK_VERSION(0, 2, 2)
++    auto sockets = getSocketsForStream(streamId);
++    if (!sockets) [[unlikely]]
++        return;
++
++    rice_sockets_set_tos(sockets.get(), value);
++#else
++    UNUSED_PARAM(streamId);
++    UNUSED_PARAM(value);
++#endif
++}
++
+ } // namespace WebKit
+ 
+ #endif // USE(LIBRICE)
+diff '--color=auto' -urp webkitgtk-2.52.3.orig/Source/WebKit/NetworkProcess/webrtc/rice/RiceBackend.h webkitgtk-2.52.3/Source/WebKit/NetworkProcess/webrtc/rice/RiceBackend.h
+--- webkitgtk-2.52.3.orig/Source/WebKit/NetworkProcess/webrtc/rice/RiceBackend.h	2026-02-23 06:40:56.258296300 -0800
++++ webkitgtk-2.52.3/Source/WebKit/NetworkProcess/webrtc/rice/RiceBackend.h	2026-04-23 12:51:32.509878399 -0700
+@@ -80,6 +80,7 @@ public:
+ 
+     void sendData(unsigned, WebCore::RTCIceProtocol, String, String, WebCore::SharedMemory::Handle&&);
+     void finalizeStream(unsigned);
++    void setSocketTypeOfService(unsigned, unsigned);
+ 
+     using GatherSocketAddressesCallback = CompletionHandler<void(HashMap<std::pair<String, WebCore::RTCIceProtocol>, String>&&)>;
+     void gatherSocketAddresses(WebCore::ScriptExecutionContextIdentifier, unsigned, GatherSocketAddressesCallback&&);
+diff '--color=auto' -urp webkitgtk-2.52.3.orig/Source/WebKit/NetworkProcess/webrtc/rice/RiceBackend.messages.in webkitgtk-2.52.3/Source/WebKit/NetworkProcess/webrtc/rice/RiceBackend.messages.in
+--- webkitgtk-2.52.3.orig/Source/WebKit/NetworkProcess/webrtc/rice/RiceBackend.messages.in	2026-02-23 06:40:56.258296300 -0800
++++ webkitgtk-2.52.3/Source/WebKit/NetworkProcess/webrtc/rice/RiceBackend.messages.in	2026-04-23 12:51:32.509954149 -0700
+@@ -27,6 +27,7 @@ messages -> RiceBackend {
+     SendData(unsigned streamId, enum:uint8_t WebCore::RTCIceProtocol protocol, String from, String to, WebCore::SharedMemory::Handle data);
+     FinalizeStream(unsigned streamId);
+     ResolveAddress(String address) -> (Expected<String, WebCore::ExceptionData> result)
++    SetSocketTypeOfService(unsigned streamId, unsigned value);
+ }
+ 
+ #endif
+\ No newline at end of file
+diff '--color=auto' -urp webkitgtk-2.52.3.orig/Source/WebKit/WebProcess/Network/webrtc/rice/RiceBackendProxy.cpp webkitgtk-2.52.3/Source/WebKit/WebProcess/Network/webrtc/rice/RiceBackendProxy.cpp
+--- webkitgtk-2.52.3.orig/Source/WebKit/WebProcess/Network/webrtc/rice/RiceBackendProxy.cpp	2026-04-10 02:30:56.031680000 -0700
++++ webkitgtk-2.52.3/Source/WebKit/WebProcess/Network/webrtc/rice/RiceBackendProxy.cpp	2026-04-23 12:51:32.510049661 -0700
+@@ -114,6 +114,11 @@ void RiceBackendProxy::finalizeStream(un
+     MessageSender::send(Messages::RiceBackend::FinalizeStream { streamId });
+ }
+ 
++void RiceBackendProxy::setSocketTypeOfService(unsigned streamId, unsigned value)
++{
++    MessageSender::send(Messages::RiceBackend::SetSocketTypeOfService { streamId, value });
++}
++
+ } // namespace WebKit
+ 
+ #endif // USE(LIBRICE)
+Only in webkitgtk-2.52.3/Source/WebKit/WebProcess/Network/webrtc/rice: RiceBackendProxy.cpp.orig
+diff '--color=auto' -urp webkitgtk-2.52.3.orig/Source/WebKit/WebProcess/Network/webrtc/rice/RiceBackendProxy.h webkitgtk-2.52.3/Source/WebKit/WebProcess/Network/webrtc/rice/RiceBackendProxy.h
+--- webkitgtk-2.52.3.orig/Source/WebKit/WebProcess/Network/webrtc/rice/RiceBackendProxy.h	2026-02-23 06:40:56.709221000 -0800
++++ webkitgtk-2.52.3/Source/WebKit/WebProcess/Network/webrtc/rice/RiceBackendProxy.h	2026-04-23 12:51:32.510139124 -0700
+@@ -64,6 +64,7 @@ private:
+     HashMap<WebCore::RiceBackend::Socket, String> gatherSocketAddresses(WebCore::ScriptExecutionContextIdentifier, unsigned) final;
+ 
+     void finalizeStream(unsigned) final;
++    void setSocketTypeOfService(unsigned, unsigned) final;
+ 
+     void refRiceBackend() final { ref(); }
+     void derefRiceBackend() final { deref(); }
+Only in webkitgtk-2.52.3: t.patch

@@ -1,0 +1,1452 @@
+From 37b8d10823e2e27fdcdcbca8e81a57a049470c15 Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Mon, 20 Apr 2026 04:53:21 -0700
+Subject: [PATCH] [GStreamer][WebRTC][Rice] TURN support improvements
+ https://bugs.webkit.org/show_bug.cgi?id=310005
+
+Reviewed by Xabier Rodriguez-Calvar.
+
+Add support for building against recent (0.4.x) versions of librice and improve the plumbing for
+TURN support by handling socket allocation and de-allocation requests and doing synchronous STUN/TURN
+address resolution.
+
+* Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceAgent.cpp:
+(webkitGstWebRTCIceAgentSetStunServer):
+(webkitGstWebRTCIceAgentAddRiceTurnServer):
+(addTurnServer):
+(webkitGstWebRTCIceAgentConfigure):
+(webkitGstWebRTCIceAgentGetTurnConfigs):
+(webkitGstWebRTCIceAgentGatherSocketAddresses):
+(webkitGstWebRTCIceAgentLocalCandidateGatheredForStream):
+(webkitGstWebRTCIceAgentAllocateSocketForStream):
+(webkitGstWebRTCIceAgentRemoveSocketForStream):
+* Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceAgent.h:
+(WebCore::RiceBackendClient::setAllocatedSocketCallback):
+(WebCore::RiceBackendClient::allocatedSocket):
+* Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceStream.cpp:
+(webkitGstWebRTCIceStreamAddLocalGatheredCandidate):
+(webkitGstWebRTCIceStreamNewSelectedPair):
+(webkitGstWebRTCIceStreamComponentStateChanged):
+(webkitGstWebRTCIceStreamGatherCandidates):
+(isRtpData):
+(webkitGstWebRTCIceStreamHandleIncomingData):
+(webkitGstWebRTCIceStreamHandleAllocatedSocket):
+* Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceStream.h:
+* Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceTransport.cpp:
+(webkitGstWebRTCIceTransportNewSelectedPair):
+* Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceTransport.h:
+* Source/WebCore/Modules/mediastream/gstreamer/RiceGatherResult.h: Added.
+* Source/WebCore/platform/GStreamer.cmake:
+* Source/WebCore/platform/rice/GRefPtrRice.h:
+* Source/WebCore/platform/rice/GUniquePtrRice.h:
+* Source/WebCore/platform/rice/RiceGioBackend.cpp:
+(agentSourcePrepare):
+* Source/WebCore/platform/rice/RiceUtilities.h:
+(WebCore::toRTCIceProtocol):
+* Source/WebCore/platform/rice/RiceVersioning.h: Added.
+* Source/WebKit/NetworkProcess/webrtc/rice/RiceBackend.cpp:
+(WebKit::RiceBackend::~RiceBackend):
+(WebKit::RiceBackend::resolveAddress):
+(WebKit::RiceBackend::resolveAddressSync):
+(WebKit::RiceBackend::sendData):
+(WebKit::RiceBackend::gatherSocketAddresses):
+(WebKit::RiceBackend::allocateSocket):
+(WebKit::RiceBackend::removeSocket):
+(WebKit::RiceBackend::configureSocketBufferSizes):
+* Source/WebKit/NetworkProcess/webrtc/rice/RiceBackend.h:
+* Source/WebKit/NetworkProcess/webrtc/rice/RiceBackend.messages.in:
+* Source/WebKit/Scripts/webkit/messages.py:
+(headers_for_type):
+* Source/WebKit/Shared/WebCoreArgumentCoders.serialization.in:
+* Source/WebKit/WebProcess/Network/webrtc/rice/RiceBackendProxy.cpp:
+(WebKit::RiceBackendProxy::resolveAddressSync):
+(WebKit::RiceBackendProxy::gatherSocketAddresses):
+(WebKit::RiceBackendProxy::allocateSocket):
+(WebKit::RiceBackendProxy::allocatedSocket):
+(WebKit::RiceBackendProxy::removeSocket):
+* Source/WebKit/WebProcess/Network/webrtc/rice/RiceBackendProxy.h:
+* Source/WebKit/WebProcess/Network/webrtc/rice/RiceBackendProxy.messages.in:
+
+Canonical link: https://commits.webkit.org/311577@main
+---
+ .../gstreamer/GStreamerIceAgent.cpp           | 178 ++++++++++++------
+ .../mediastream/gstreamer/GStreamerIceAgent.h |  25 ++-
+ .../gstreamer/GStreamerIceStream.cpp          | 112 +++++++----
+ .../gstreamer/GStreamerIceStream.h            |   9 +-
+ .../gstreamer/GStreamerIceTransport.cpp       |   2 +-
+ .../gstreamer/GStreamerIceTransport.h         |   2 +-
+ .../mediastream/gstreamer/RiceGatherResult.h  |  39 ++++
+ Source/WebCore/platform/GStreamer.cmake       |   2 +
+ Source/WebCore/platform/rice/GRefPtrRice.h    |   3 +
+ Source/WebCore/platform/rice/GUniquePtrRice.h |   4 +
+ .../WebCore/platform/rice/RiceGioBackend.cpp  |   6 +-
+ Source/WebCore/platform/rice/RiceUtilities.h  |  20 +-
+ Source/WebCore/platform/rice/RiceVersioning.h |  32 ++++
+ .../webrtc/rice/RiceBackend.cpp               | 163 +++++++++++++---
+ .../NetworkProcess/webrtc/rice/RiceBackend.h  |  14 +-
+ .../webrtc/rice/RiceBackend.messages.in       |   5 +-
+ Source/WebKit/Scripts/webkit/messages.py      |   1 +
+ .../WebCoreArgumentCoders.serialization.in    |   8 +
+ .../Network/webrtc/rice/RiceBackendProxy.cpp  |  44 ++++-
+ .../Network/webrtc/rice/RiceBackendProxy.h    |   7 +-
+ .../webrtc/rice/RiceBackendProxy.messages.in  |   1 +
+ 21 files changed, 531 insertions(+), 146 deletions(-)
+ create mode 100644 Source/WebCore/Modules/mediastream/gstreamer/RiceGatherResult.h
+ create mode 100644 Source/WebCore/platform/rice/RiceVersioning.h
+
+diff --git a/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceAgent.cpp b/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceAgent.cpp
+index 42b76cf8047b..c77b1d2e5030 100644
+--- a/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceAgent.cpp
++++ b/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceAgent.cpp
+@@ -101,7 +101,11 @@ typedef struct _WebKitGstIceAgentPrivate {
+     String turnServer;
+ 
+     HashSet<URL> turnServers;
++#if RICE_CHECK_VERSION(0, 4, 0)
++    Vector<GUniquePtr<RiceTurnConfig>> turnConfigs;
++#else
+     Vector<GRefPtr<RiceTurnConfig>> turnConfigs;
++#endif
+ 
+     GRefPtr<GSource> recvSource;
+     bool forceRelay { false };
+@@ -174,20 +178,15 @@ static void webkitGstWebRTCIceAgentSetStunServer(GstWebRTCICE* ice, const gchar*
+         return;
+     }
+ 
+-    backend->priv->iceBackend->resolveAddress(host.toString(), [weakAgent = GThreadSafeWeakPtr(backend), port](ExceptionOr<String>&& result) mutable {
+-        auto agent = weakAgent.get();
+-        if (!agent) [[unlikely]]
+-            return;
+-        if (result.hasException()) {
+-            GST_WARNING_OBJECT(agent.get(), "Unable to configure STUN server on ICE agent: %s", result.exception().message().utf8().data());
+-            return;
+-        }
++    auto result = backend->priv->iceBackend->resolveAddressSync(host.toString());
++    if (result.hasException()) {
++        GST_WARNING_OBJECT(backend, "Unable to configure STUN server on ICE agent: %s", result.exception().message().utf8().data());
++        return;
++    }
+ 
+-        auto address = result.returnValue();
+-        auto addressString = address.ascii();
+-        GST_DEBUG_OBJECT(agent.get(), "STUN address resolved to %s", addressString.data());
+-        webkitGstWebRTCIceAgentSetRiceStunServer(agent.get(), address, port);
+-    });
++    auto address = result.returnValue();
++    GST_DEBUG_OBJECT(backend, "STUN address resolved to %s", address.ascii().data());
++    webkitGstWebRTCIceAgentSetRiceStunServer(backend, address, port);
+ }
+ 
+ static gchar* webkitGstWebRTCIceAgentGetStunServer(GstWebRTCICE* ice)
+@@ -246,39 +245,48 @@ Expected<URL, URLValidationError> validateTurnServerURL(const String& turnUrl)
+     return url;
+ }
+ 
+-static void webkitGstWebRTCIceAgentAddRiceTurnServer(WebKitGstIceAgent* agent, const String& address, bool isTurns, const String& user, const String& password, const std::array<RiceTransportType, 4>& relays, unsigned nRelay)
++static void webkitGstWebRTCIceAgentAddRiceTurnServer(WebKitGstIceAgent* agent, const String& address, bool isTurns, const String& user, const String& password, RiceTransportType relayTransport)
+ {
+     const auto& iceAgent = agent->priv->agent;
+     if (!iceAgent) [[unlikely]]
+         return;
+ 
+     GUniquePtr<RiceAddress> riceAddress(rice_address_new_from_string(address.ascii().data()));
+-    GUniquePtr<RiceCredentials> credentials(rice_credentials_new(g_strdup(user.utf8().data()), g_strdup(password.utf8().data())));
++    GUniquePtr<RiceCredentials> credentials(rice_credentials_new(user.utf8().data(), password.utf8().data()));
++    GST_DEBUG_OBJECT(agent, "isTurns: %d address: %s riceAddress: %p", isTurns, address.ascii().data(), riceAddress.get());
++
+     GRefPtr<RiceTlsConfig> tlsConfig;
+     if (isTurns)
+-        tlsConfig = adoptGRef(rice_tls_config_new_rustls_with_ip(riceAddress.get()));
+-
+-    auto family = rice_address_get_family(riceAddress.get());
+-    for (unsigned i = 0; i < nRelay; i++) {
+-        // FIXME: Hardcoding UDP as allocation transport type for now. Our TURN support needs further work anyway.
+-        // https://bugs.webkit.org/show_bug.cgi?id=310005
+-        auto config = adoptGRef(rice_turn_config_new(relays[i], riceAddress.get(), credentials.get(),
++        tlsConfig = adoptGRef(rice_tls_config_new_openssl(relayTransport));
++#if RICE_CHECK_VERSION(0, 4, 0)
++    GUniquePtr<RiceTurnConfig> config(rice_turn_config_new(relayTransport, riceAddress.get(), credentials.get()));
++    rice_turn_config_add_address_family(config.get(), RICE_ADDRESS_FAMILY_IPV4);
++    rice_turn_config_add_address_family(config.get(), RICE_ADDRESS_FAMILY_IPV6);
++    rice_turn_config_set_allocation_transport(config.get(), RICE_TRANSPORT_TYPE_UDP);
++    rice_turn_config_set_anonymous_username(config.get(), RICE_FEATURE_REQUIRED);
++    rice_turn_config_add_supported_integrity(config.get(), RICE_INTEGRITY_ALGORITHM_SHA1);
++    rice_turn_config_add_supported_integrity(config.get(), RICE_INTEGRITY_ALGORITHM_SHA256);
++    if (tlsConfig)
++        rice_turn_config_set_tls_config(config.get(), tlsConfig.get());
++#else
++    const std::array<RiceAddressFamily, 2> families = { RICE_ADDRESS_FAMILY_IPV4, RICE_ADDRESS_FAMILY_IPV6 };
++    auto config = adoptGRef(rice_turn_config_new(relayTransport, riceAddress.get(), credentials.get(),
+ #if RICE_CHECK_VERSION(0, 3, 0)
+-            RICE_TRANSPORT_TYPE_UDP,
++        RICE_TRANSPORT_TYPE_UDP,
+ #endif
+-            1, &family, tlsConfig.get()));
+-        agent->priv->turnConfigs.append(WTF::move(config));
+-    }
++        families.size(), families.data(), tlsConfig.leakRef()));
++#endif // RICE_CHECK_VERSION(0, 4, 0)
++    agent->priv->turnConfigs.append(WTF::move(config));
+ }
+ 
+ static void addTurnServer(WebKitGstIceAgent* agent, const URL& url)
+ {
+-    GST_INFO_OBJECT(agent, "Adding TURN server %s", url.string().utf8().data());
++    auto urlString = url.string().utf8();
++    GST_INFO_OBJECT(agent, "Adding TURN server %s", urlString.data());
+     if (!url.host())
+         return;
+ 
+-    std::array<RiceTransportType, 4> relays = { static_cast<RiceTransportType>(0), };
+-    unsigned nRelay = 0;
++    RiceTransportType relayTransport;
+     bool isTurns = url.protocolIs("turns"_s);
+     String transport;
+     for (const auto& [key, value] : queryParameters(url)) {
+@@ -287,42 +295,44 @@ static void addTurnServer(WebKitGstIceAgent* agent, const URL& url)
+             break;
+         }
+     }
+-    if (!transport || transport == "udp"_s)
+-        relays[nRelay++] = RICE_TRANSPORT_TYPE_UDP;
+-    if (!transport || transport == "tcp"_s)
+-        relays[nRelay++] = RICE_TRANSPORT_TYPE_TCP;
++
++    if (!transport)
++        transport = "udp"_s;
++
++    if (transport == "tcp"_s)
++        relayTransport = RICE_TRANSPORT_TYPE_TCP;
++    else
++        relayTransport = RICE_TRANSPORT_TYPE_UDP;
++
++    RELEASE_ASSERT(url.port());
++    auto port = url.port().value();
++    if (!isTurns && port == 443)
++        isTurns = true;
+ 
+     const auto& host = url.host();
+     if (URL::hostIsIPAddress(host)) {
+-        webkitGstWebRTCIceAgentAddRiceTurnServer(agent, url.hostAndPort(), isTurns, url.user(), url.password(), relays, nRelay);
++        webkitGstWebRTCIceAgentAddRiceTurnServer(agent, url.hostAndPort(), isTurns, url.user(), url.password(), relayTransport);
+         return;
+     }
+ 
+-    RELEASE_ASSERT(url.port());
+-    auto port = url.port().value();
+-
+-    agent->priv->iceBackend->resolveAddress(url.host().toString(), [weakAgent = GThreadSafeWeakPtr(agent), isTurns, port, nRelay, user = url.user(), password = url.password(), relays = WTF::move(relays)](ExceptionOr<String>&& result) mutable {
+-        auto agent = weakAgent.get();
+-        if (!agent) [[unlikely]]
+-            return;
+-        if (result.hasException()) {
+-            GST_WARNING_OBJECT(agent.get(), "Unable to configure TURN server on ICE agent: %s", result.exception().message().utf8().data());
+-            return;
+-        }
++    auto result = agent->priv->iceBackend->resolveAddressSync(url.host().toString());
++    if (result.hasException()) {
++        GST_WARNING_OBJECT(agent, "Unable to configure TURN server on ICE agent: %s", result.exception().message().utf8().data());
++        return;
++    }
+ 
+-        StringBuilder builder;
+-        auto resolvedAddress = result.returnValue();
+-        bool isIPv6Address = URL::isIPv6Address(resolvedAddress);
+-        if (isIPv6Address)
+-            builder.append('[');
+-        builder.append(WTF::move(resolvedAddress));
+-        if (isIPv6Address)
+-            builder.append(']');
+-        builder.append(':', port);
+-        auto turnAddress = builder.toString();
+-        GST_DEBUG_OBJECT(agent.get(), "TURN address resolved to %s", turnAddress.ascii().data());
+-        webkitGstWebRTCIceAgentAddRiceTurnServer(agent.get(), turnAddress, isTurns, user, password, relays, nRelay);
+-    });
++    StringBuilder builder;
++    auto resolvedAddress = result.returnValue();
++    bool isIPv6Address = URL::isIPv6Address(resolvedAddress);
++    if (isIPv6Address)
++        builder.append('[');
++    builder.append(WTF::move(resolvedAddress));
++    if (isIPv6Address)
++        builder.append(']');
++    builder.append(':', port);
++    auto turnAddress = builder.toString();
++    GST_DEBUG_OBJECT(agent, "TURN address resolved to %s", turnAddress.ascii().data());
++    webkitGstWebRTCIceAgentAddRiceTurnServer(agent, turnAddress, isTurns, url.user(), url.password(), relayTransport);
+ }
+ 
+ static gboolean webkitGstWebRTCIceAgentAddTurnServer(GstWebRTCICE* ice, const gchar* uri)
+@@ -717,6 +727,16 @@ static bool webkitGstWebRTCIceAgentConfigure(WebKitGstIceAgent* backend, RefPtr<
+         });
+     });
+ 
++    priv->backendClient->setAllocatedSocketCallback([weakThis = GThreadSafeWeakPtr(backend)](unsigned streamId, unsigned componentId, RTCIceProtocol protocol, String&& from, String&& to, String&& socket) mutable {
++        auto self = weakThis.get();
++        if (!self)
++            return;
++        findStreamAndApply(self->priv->streams, streamId, [componentId, protocol, from = WTF::move(from), to = WTF::move(to), socket = WTF::move(socket)](const auto* stream) mutable {
++            webkitGstWebRTCIceStreamHandleAllocatedSocket(stream, componentId, protocol, WTF::move(from), WTF::move(to), WTF::move(socket));
++        });
++        webkitGstWebRTCIceAgentWakeup(self.get());
++    });
++
+     priv->recvSource = agentSourceNew(GThreadSafeWeakPtr(backend));
+     g_source_attach(priv->recvSource.get(), priv->runLoop->mainContext());
+     return true;
+@@ -775,6 +795,17 @@ const GRefPtr<RiceAgent>& webkitGstWebRTCIceAgentGetRiceAgent(WebKitGstIceAgent*
+     return agent->priv->agent;
+ }
+ 
++#if RICE_CHECK_VERSION(0, 4, 0)
++Vector<GUniquePtr<RiceTurnConfig>> webkitGstWebRTCIceAgentGetTurnConfigs(WebKitGstIceAgent* agent)
++{
++    Vector<GUniquePtr<RiceTurnConfig>> result;
++    result.reserveInitialCapacity(agent->priv->turnConfigs.size());
++    for (const auto& config : agent->priv->turnConfigs)
++        result.append(GUniquePtr<RiceTurnConfig>(rice_turn_config_copy(config.get())));
++
++    return result;
++}
++#else
+ Vector<GRefPtr<RiceTurnConfig>> webkitGstWebRTCIceAgentGetTurnConfigs(WebKitGstIceAgent* agent)
+ {
+     Vector<GRefPtr<RiceTurnConfig>> result;
+@@ -784,15 +815,18 @@ Vector<GRefPtr<RiceTurnConfig>> webkitGstWebRTCIceAgentGetTurnConfigs(WebKitGstI
+ 
+     return result;
+ }
++#endif
+ 
+-HashMap<std::pair<String, WebCore::RTCIceProtocol>, String> webkitGstWebRTCIceAgentGatherSocketAddresses(WebKitGstIceAgent* agent, unsigned streamId)
++RiceGatherResult webkitGstWebRTCIceAgentGatherSocketAddresses(WebKitGstIceAgent* agent, unsigned streamId)
+ {
+     auto backend = agent->priv->iceBackend;
+     if (!backend)
+         return { };
+ 
++    auto ice = GST_WEBRTC_ICE(agent);
++
+     RELEASE_ASSERT(agent->priv->identifier);
+-    return backend->gatherSocketAddresses(*agent->priv->identifier, streamId);
++    return backend->gatherSocketAddresses(*agent->priv->identifier, streamId, ice->min_rtp_port, ice->max_rtp_port);
+ }
+ 
+ GstWebRTCICETransport* webkitGstWebRTCIceAgentCreateTransport(WebKitGstIceAgent* agent, GThreadSafeWeakPtr<WebKitGstIceStream>&& stream, RTCIceComponent component)
+@@ -841,9 +875,11 @@ void webkitGstWebRTCIceAgentLocalCandidateGatheredForStream(WebKitGstIceAgent* a
+ 
+         if (agent->priv->forceRelay && candidate.gathered.candidate.candidate_type != RICE_CANDIDATE_TYPE_RELAYED) {
+             GST_DEBUG_OBJECT(agent, "Ignoring non-relay ICE candidate %s", sdp.utf8());
++            webkitGstWebRTCIceStreamAddLocalGatheredCandidate(stream, candidate.gathered);
+             return;
+         }
+ 
++        GST_DEBUG_OBJECT(agent, "Notifying candidate %s", sdp.utf8());
+         ASSERT(startsWith(sdp.span(), "a="_s));
+         String strippedSdp(sdp.span().subspan(2));
+         agent->priv->onCandidate(GST_WEBRTC_ICE(agent), streamId, strippedSdp.utf8().data(), agent->priv->onCandidateData);
+@@ -865,6 +901,28 @@ void webkitGstWebRTCIceAgentComponentStateChangedForStream(WebKitGstIceAgent* ag
+     });
+ }
+ 
++void webkitGstWebRTCIceAgentAllocateSocketForStream(WebKitGstIceAgent* agent, const RiceAgentSocket& socket)
++{
++    auto backend = agent->priv->iceBackend;
++    if (!backend)
++        return;
++
++    auto from = riceAddressToString(socket.from);
++    auto to = riceAddressToString(socket.to);
++    backend->allocateSocket(socket.stream_id, socket.component_id, toRTCIceProtocol(socket.transport), WTF::move(from), WTF::move(to));
++}
++
++void webkitGstWebRTCIceAgentRemoveSocketForStream(WebKitGstIceAgent* agent, const RiceAgentSocket& socket)
++{
++    auto backend = agent->priv->iceBackend;
++    if (!backend)
++        return;
++
++    auto from = riceAddressToString(socket.from);
++    auto to = riceAddressToString(socket.to);
++    backend->removeSocket(socket.stream_id, socket.component_id, toRTCIceProtocol(socket.transport), WTF::move(from), WTF::move(to));
++}
++
+ #undef GST_CAT_DEFAULT
+ 
+ #endif // USE(GSTREAMER_WEBRTC) && USE(LIBRICE)
+diff --git a/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceAgent.h b/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceAgent.h
+index 6800a7ecf67c..1092a1afdfdd 100644
+--- a/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceAgent.h
++++ b/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceAgent.h
+@@ -24,9 +24,12 @@
+ #include "ExceptionData.h"
+ #include "ExceptionOr.h"
+ #include "GRefPtrGStreamer.h"
++#include "GUniquePtrRice.h"
+ #include "RTCIceComponent.h"
+ #include "RTCIceConnectionState.h"
+ #include "RTCIceProtocol.h"
++#include "RiceGatherResult.h"
++#include "RiceVersioning.h"
+ #include "ScriptExecutionContextIdentifier.h"
+ #include "SharedMemory.h"
+ 
+@@ -68,10 +71,15 @@ class RiceBackendClient : public RefCounted<RiceBackendClient> {
+     void setIncomingDataCallback(IncomingDataCallback&& callback) { m_incomingDataCallback = WTF::move(callback); }
+     void notifyIncomingData(unsigned streamId, RTCIceProtocol protocol, String&& from, String&& to, WebCore::SharedMemoryHandle&& data) { m_incomingDataCallback(streamId, protocol, WTF::move(from), WTF::move(to), WTF::move(data)); }
+ 
++    using AllocatedSocketCallback = WTF::Function<void(unsigned, unsigned, RTCIceProtocol, String&&, String&&, String&&)>;
++    void setAllocatedSocketCallback(AllocatedSocketCallback&& callback) { m_allocatedSocketCallback = WTF::move(callback); }
++    void allocatedSocket(unsigned streamId, unsigned componentId, RTCIceProtocol protocol, String&& from, String&& to, String&& socket) { m_allocatedSocketCallback(streamId, componentId, protocol, WTF::move(from), WTF::move(to), WTF::move(socket)); }
++
+ private:
+     RiceBackendClient() = default;
+ 
+     IncomingDataCallback m_incomingDataCallback;
++    AllocatedSocketCallback m_allocatedSocketCallback;
+ };
+ 
+ using RiceBackendIdentifier = AtomicObjectIdentifier<RiceBackendClient>;
+@@ -85,13 +93,17 @@ class RiceBackend : public Identified<RiceBackendIdentifier> {
+     using ResolveAddressCallback = Function<void(ExceptionOr<String>&&)>;
+     virtual void resolveAddress(const String&, ResolveAddressCallback&&) = 0;
+ 
++    virtual ExceptionOr<String> resolveAddressSync(const String&) = 0;
++
+     virtual void send(unsigned, RTCIceProtocol, String&&, String&&, SharedMemory::Handle&&) = 0;
+ 
+-    using Socket = std::pair<String, RTCIceProtocol>;
+-    virtual HashMap<Socket, String> gatherSocketAddresses(ScriptExecutionContextIdentifier, unsigned) = 0;
++    virtual WebCore::RiceGatherResult gatherSocketAddresses(ScriptExecutionContextIdentifier, unsigned, unsigned, unsigned) = 0;
+     virtual void finalizeStream(unsigned) = 0;
+     virtual void setSocketTypeOfService(unsigned, unsigned) = 0;
+ 
++    virtual void allocateSocket(unsigned, unsigned, RTCIceProtocol, String&&, String&&) = 0;
++    virtual void removeSocket(unsigned, unsigned, RTCIceProtocol, String&&, String&&) = 0;
++
+ protected:
+     RiceBackend() = default;
+     virtual ~RiceBackend() = default;
+@@ -105,8 +117,13 @@ WebKitGstIceAgent* webkitGstWebRTCCreateIceAgent(const String&, WebCore::ScriptE
+ 
+ const GRefPtr<RiceAgent>& webkitGstWebRTCIceAgentGetRiceAgent(WebKitGstIceAgent*);
+ 
++#if RICE_CHECK_VERSION(0, 4, 0)
++Vector<GUniquePtr<RiceTurnConfig>> webkitGstWebRTCIceAgentGetTurnConfigs(WebKitGstIceAgent*);
++#else
+ Vector<GRefPtr<RiceTurnConfig>> webkitGstWebRTCIceAgentGetTurnConfigs(WebKitGstIceAgent*);
+-HashMap<std::pair<String, WebCore::RTCIceProtocol>, String> webkitGstWebRTCIceAgentGatherSocketAddresses(WebKitGstIceAgent*, unsigned);
++#endif
++
++WebCore::RiceGatherResult webkitGstWebRTCIceAgentGatherSocketAddresses(WebKitGstIceAgent*, unsigned);
+ 
+ GstWebRTCICETransport *webkitGstWebRTCIceAgentCreateTransport(WebKitGstIceAgent*, GThreadSafeWeakPtr<WebKitGstIceStream>&&, WebCore::RTCIceComponent);
+ 
+@@ -118,5 +135,7 @@ void webkitGstWebRTCIceAgentLocalCandidateGatheredForStream(WebKitGstIceAgent*,
+ void webkitGstWebRTCIceAgentComponentStateChangedForStream(WebKitGstIceAgent*, unsigned, RiceAgentComponentStateChange&);
+ void webkitGstWebRTCIceAgentNewSelectedPairForStream(WebKitGstIceAgent*, unsigned, RiceAgentSelectedPair&);
+ void webkitGstWebRTCIceAgentClosed(WebKitGstIceAgent*);
++void webkitGstWebRTCIceAgentAllocateSocketForStream(WebKitGstIceAgent*, const RiceAgentSocket&);
++void webkitGstWebRTCIceAgentRemoveSocketForStream(WebKitGstIceAgent*, const RiceAgentSocket&);
+ 
+ #endif // USE(GSTREAMER_WEBRTC) && USE(LIBRICE)
+diff --git a/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceStream.cpp b/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceStream.cpp
+index bd29543c7b8c..b410e894e074 100644
+--- a/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceStream.cpp
++++ b/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceStream.cpp
+@@ -24,7 +24,6 @@
+ 
+ #include "GRefPtrGStreamer.h"
+ #include "GRefPtrRice.h"
+-#include "GUniquePtrRice.h"
+ #include "RTCIceComponent.h"
+ #include "RiceUtilities.h"
+ #include "SharedBuffer.h"
+@@ -101,42 +100,50 @@ void webkitGstWebRTCIceStreamGatheringDone(const WebKitGstIceStream* ice)
+         gst_webrtc_ice_transport_gathering_state_change(GST_WEBRTC_ICE_TRANSPORT(transport.get()), GST_WEBRTC_ICE_GATHERING_STATE_COMPLETE);
+ }
+ 
+-void webkitGstWebRTCIceStreamAddLocalGatheredCandidate(const WebKitGstIceStream* ice, RiceGatheredCandidate& candidate)
++void webkitGstWebRTCIceStreamAddLocalGatheredCandidate(const WebKitGstIceStream* ice, const RiceGatheredCandidate& candidate)
+ {
+     auto stream = WEBKIT_GST_WEBRTC_ICE_STREAM(ice);
+     rice_stream_add_local_gathered_candidate(stream->priv->riceStream.get(), &candidate);
+ }
+ 
+-void webkitGstWebRTCIceStreamNewSelectedPair(const WebKitGstIceStream* ice, RiceAgentSelectedPair& pair)
++void webkitGstWebRTCIceStreamNewSelectedPair(const WebKitGstIceStream* ice, const RiceAgentSelectedPair& pair)
+ {
+     auto stream = WEBKIT_GST_WEBRTC_ICE_STREAM(ice);
+     if (auto transport = stream->priv->rtpTransport.get())
+         webkitGstWebRTCIceTransportNewSelectedPair(WEBKIT_GST_WEBRTC_ICE_TRANSPORT(transport.get()), pair);
+ }
+ 
+-void webkitGstWebRTCIceStreamComponentStateChanged(const WebKitGstIceStream* ice, RiceAgentComponentStateChange& change)
++void webkitGstWebRTCIceStreamComponentStateChanged(const WebKitGstIceStream* ice, const RiceAgentComponentStateChange& change)
+ {
+     auto stream = WEBKIT_GST_WEBRTC_ICE_STREAM(ice);
+     auto transport = stream->priv->rtpTransport.get();
+-    if (!transport) [[unlikely]]
++    if (!transport) [[unlikely]] {
++        GST_WARNING_OBJECT(ice, "No transport!");
+         return;
++    }
+ 
++    ASCIILiteral state;
+     GstWebRTCICEConnectionState gstState;
+     switch (change.state) {
+     case RICE_COMPONENT_CONNECTION_STATE_NEW:
+         gstState = GST_WEBRTC_ICE_CONNECTION_STATE_NEW;
++        state = "new"_s;
+         break;
+     case RICE_COMPONENT_CONNECTION_STATE_CONNECTING:
+         gstState = GST_WEBRTC_ICE_CONNECTION_STATE_CHECKING;
++        state = "checking"_s;
+         break;
+     case RICE_COMPONENT_CONNECTION_STATE_CONNECTED:
+         gstState = GST_WEBRTC_ICE_CONNECTION_STATE_CONNECTED;
++        state = "connected"_s;
+         break;
+     case RICE_COMPONENT_CONNECTION_STATE_FAILED:
+         gstState = GST_WEBRTC_ICE_CONNECTION_STATE_FAILED;
++        state = "failed"_s;
+         break;
+     }
+ 
++    GST_DEBUG_OBJECT(ice, "Component state changed to %s", state.characters());
+     gst_webrtc_ice_transport_connection_state_change(transport.get(), gstState);
+ }
+ 
+@@ -154,31 +161,35 @@ static gboolean webkitGstWebRTCIceStreamGatherCandidates(GstWebRTCICEStream* ice
+     if (!agent)
+         return FALSE;
+ 
+-    auto addresses = webkitGstWebRTCIceAgentGatherSocketAddresses(agent.get(), ice->stream_id);
+-    auto component = adoptGRef(rice_stream_get_component(stream->priv->riceStream.get(), 1));
++    auto gatherResult = webkitGstWebRTCIceAgentGatherSocketAddresses(agent.get(), ice->stream_id);
+ 
+     Vector<GUniquePtr<RiceAddress>> riceAddresses;
+     Vector<RiceTransportType> riceTransports;
+-    for (const auto& address : addresses.keys()) {
+-        auto& [addressString, protocol] = address;
+-        GUniquePtr<RiceAddress> addr(rice_address_new_from_string(addressString.ascii().data()));
+-        if (!addr) [[unlikely]]
++    for (const auto& [addressString, protocol] : gatherResult.addresses.keys()) {
++        GUniquePtr<RiceAddress> address(rice_address_new_from_string(addressString.ascii().data()));
++        if (!address) [[unlikely]]
+             continue;
+ 
+-        riceAddresses.append(WTF::move(addr));
++        riceAddresses.append(WTF::move(address));
+         riceTransports.append(fromRTCIceProtocol(protocol));
+     }
+     Vector<const RiceAddress*> riceAddressValues;
+     for (const auto& addr : riceAddresses)
+         riceAddressValues.append(addr.get());
++
+     auto addressDataStorage = riceAddressValues.span();
+     auto riceTransportStorage = riceTransports.span();
+ 
+-    Vector<GUniquePtr<RiceAddress>> turnAddresses;
+     auto turnConfigs = webkitGstWebRTCIceAgentGetTurnConfigs(agent.get());
+-    for (const auto& config : turnConfigs) {
+-        GUniquePtr<RiceAddress> address(rice_turn_config_get_addr(config.get()));
+-        turnAddresses.append(WTF::move(address));
++    Vector<GUniquePtr<RiceAddress>> turnAddresses;
++    if (!turnConfigs.isEmpty()) {
++        for (const auto& [addressString, protocol] : gatherResult.turnAddresses) {
++            GUniquePtr<RiceAddress> address(rice_address_new_from_string(addressString.ascii().data()));
++            if (!address) [[unlikely]]
++                continue;
++
++            turnAddresses.append(WTF::move(address));
++        }
+     }
+ 
+     Vector<const RiceAddress*> turnAddressValues;
+@@ -187,11 +198,17 @@ static gboolean webkitGstWebRTCIceStreamGatherCandidates(GstWebRTCICEStream* ice
+     auto turnAddressDataStorage = turnAddressValues.span();
+ 
+     Vector<RiceTurnConfig*> turnConfigValues;
+-    for (const auto& config : turnConfigs)
+-        turnConfigValues.append(config.get());
+-    auto turnConfigDataStorage = turnConfigValues.span();
++    for (auto& config : turnConfigs) {
++#if RICE_CHECK_VERSION(0, 4, 0)
++        turnConfigValues.append(rice_turn_config_copy(config.get()));
++#else
++        turnConfigValues.append(config.ref());
++#endif
++    }
++    auto turnConfigDataStorage = turnConfigValues.releaseBuffer();
+ 
+-    auto error = rice_component_gather_candidates(component.get(), riceAddressValues.size(), addressDataStorage.data(), riceTransportStorage.data(), turnConfigs.size(), turnAddressDataStorage.data(), turnConfigDataStorage.data());
++    auto component = adoptGRef(rice_stream_get_component(stream->priv->riceStream.get(), 1));
++    auto error = rice_component_gather_candidates(component.get(), riceAddressValues.size(), addressDataStorage.data(), riceTransportStorage.data(), turnAddressDataStorage.size(), turnAddressDataStorage.data(), turnConfigDataStorage.span().data());
+     webkitGstWebRTCIceAgentWakeup(agent.get());
+     return (error == RICE_ERROR_SUCCESS || error == RICE_ERROR_ALREADY_IN_PROGRESS);
+ }
+@@ -203,19 +220,23 @@ bool webkitGstWebRTCIceStreamGatherCandidates(WebKitGstIceStream* stream)
+ 
+ void webkitGstWebRTCIceStreamHandleIncomingData(const WebKitGstIceStream* stream, WebCore::RTCIceProtocol protocol, String&& from, String&& to, SharedMemory::Handle&& handle)
+ {
++    GST_TRACE_OBJECT(stream, "Received %zu bytes", handle.size());
++    auto sharedMemory = SharedMemory::map(WTF::move(handle), SharedMemory::Protection::ReadOnly);
++    if (!sharedMemory) [[unlikely]]
++        return;
++
+     RiceTransportType transport = fromRTCIceProtocol(protocol);
+     auto riceFrom = riceAddressFromString(from);
+     auto riceTo = riceAddressFromString(to);
+-
+     auto now = WTF::MonotonicTime::now().secondsSinceEpoch();
+-    GST_TRACE_OBJECT(stream, "Received %zu bytes", handle.size());
++    auto buffer = sharedMemory->createSharedBuffer(sharedMemory->size());
+     RiceStreamIncomingData result;
+ 
+-    auto sharedMemory = SharedMemory::map(WTF::move(handle), SharedMemory::Protection::ReadOnly);
+-    if (!sharedMemory)
+-        return;
+-
+-    auto buffer = sharedMemory->createSharedBuffer(sharedMemory->size());
++    {
++        auto agent = stream->priv->agent.get();
++        if (agent) [[likely]]
++            webkitGstWebRTCIceAgentWakeup(agent.get());
++    }
+ 
+     // We do rtcp muxing into rtp, so the component ID is always 1.
+     size_t componentId = 1;
+@@ -223,33 +244,54 @@ void webkitGstWebRTCIceStreamHandleIncomingData(const WebKitGstIceStream* stream
+         riceTo.get(), buffer->span().data(), buffer->size(), now.nanoseconds(), &result);
+ 
+     if (result.handled) {
+-        auto agent = stream->priv->agent.get();
+         // May result in either the gather or conncheck sources making further progress.
++        auto agent = stream->priv->agent.get();
+         if (agent) [[likely]]
+             webkitGstWebRTCIceAgentWakeup(agent.get());
+     }
+ 
+-    // Forward any non-STUN data to the pipeline for handling.
+-    if (result.data.size > 0 && result.data.ptr) {
++    if (result.data.size && result.data.ptr) {
++        // Forward any non-STUN data to the pipeline for handling.
+         if (auto transport = stream->priv->rtpTransport.get()) {
+             auto buffer = adoptGRef(gst_buffer_new_memdup(result.data.ptr, result.data.size));
+             webkitGstWebRTCIceTransportHandleIncomingData(WEBKIT_GST_WEBRTC_ICE_TRANSPORT(transport.get()), WTF::move(buffer));
+-        }
++        } else
++            GST_WARNING_OBJECT(stream, "No RTP transport found for stream %u", stream->priv->streamId);
+     }
+ 
++    if (!result.have_more_data)
++        return;
++
+     gsize dataSize;
+     auto recvData = rice_stream_poll_recv(stream->priv->riceStream.get(), &componentId, &dataSize);
+     while (recvData) {
+         auto transport = adoptGRef(webkitGstWebRTCIceStreamFindTransport(GST_WEBRTC_ICE_STREAM(stream), static_cast<GstWebRTCICEComponent>(componentId)));
+-        if (transport) [[likely]] {
+-            auto buffer = adoptGRef(gst_buffer_new_wrapped_full(static_cast<GstMemoryFlags>(0), recvData, dataSize, 0, dataSize,
+-                recvData, reinterpret_cast<GDestroyNotify>(rice_free_data)));
+-            webkitGstWebRTCIceTransportHandleIncomingData(WEBKIT_GST_WEBRTC_ICE_TRANSPORT(transport.get()), WTF::move(buffer));
++        if (!transport) [[unlikely]] {
++            rice_free_data(recvData);
++            break;
+         }
++
++        auto buffer = adoptGRef(gst_buffer_new_wrapped_full(static_cast<GstMemoryFlags>(0), recvData, dataSize, 0, dataSize,
++            recvData, reinterpret_cast<GDestroyNotify>(rice_free_data)));
++        webkitGstWebRTCIceTransportHandleIncomingData(WEBKIT_GST_WEBRTC_ICE_TRANSPORT(transport.get()), WTF::move(buffer));
++
+         recvData = rice_stream_poll_recv(stream->priv->riceStream.get(), &componentId, &dataSize);
++        auto agent = stream->priv->agent.get();
++        if (agent) [[likely]]
++            webkitGstWebRTCIceAgentWakeup(agent.get());
+     }
+ }
+ 
++void webkitGstWebRTCIceStreamHandleAllocatedSocket(const WebKitGstIceStream* stream, unsigned componentId, WebCore::RTCIceProtocol protocol, String&& from, String&& to, String&& socket)
++{
++    RiceTransportType transport = fromRTCIceProtocol(protocol);
++    auto riceFrom = riceAddressFromString(from);
++    auto riceTo = riceAddressFromString(to);
++    auto riceSocket = riceAddressFromString(socket);
++    auto now = WTF::MonotonicTime::now().secondsSinceEpoch();
++    rice_stream_handle_allocated_socket(stream->priv->riceStream.get(), componentId, transport, riceFrom.get(), riceTo.get(), riceSocket.release(), now.nanoseconds());
++}
++
+ const GRefPtr<RiceStream>& webkitGstWebRTCIceStreamGetRiceStream(WebKitGstIceStream* stream)
+ {
+     return stream->priv->riceStream;
+diff --git a/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceStream.h b/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceStream.h
+index 05866f73bf4a..b3f3b43f6024 100644
+--- a/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceStream.h
++++ b/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceStream.h
+@@ -23,6 +23,7 @@
+ 
+ #include "GStreamerIceAgent.h"
+ #include "GStreamerIceTransport.h"
++#include "GUniquePtrRice.h"
+ #include "RTCIceComponent.h"
+ #include "RTCIceConnectionState.h"
+ #include "RTCIceProtocol.h"
+@@ -45,6 +46,7 @@ WebKitGstIceStream* webkitGstWebRTCCreateIceStream(WebKitGstIceAgent*, GRefPtr<R
+ GstWebRTCICETransport* webkitGstWebRTCIceStreamFindTransport(GstWebRTCICEStream*, GstWebRTCICEComponent);
+ 
+ void webkitGstWebRTCIceStreamHandleIncomingData(const WebKitGstIceStream*, WebCore::RTCIceProtocol, String&&, String&&, WebCore::SharedMemory::Handle&&);
++void webkitGstWebRTCIceStreamHandleAllocatedSocket(const WebKitGstIceStream*, unsigned, WebCore::RTCIceProtocol, String&&, String&&, String&&);
+ 
+ const GRefPtr<RiceStream>& webkitGstWebRTCIceStreamGetRiceStream(WebKitGstIceStream*);
+ void webkitGstWebRTCIceStreamSetLocalCredentials(WebKitGstIceStream*, const String& ufrag, const String& pwd);
+@@ -52,9 +54,10 @@ void webkitGstWebRTCIceStreamSetRemoteCredentials(WebKitGstIceStream*, const Str
+ bool webkitGstWebRTCIceStreamGatherCandidates(WebKitGstIceStream*);
+ void webkitGstWebRTCIceStreamGatheringDone(const WebKitGstIceStream*);
+ 
+-void webkitGstWebRTCIceStreamAddLocalGatheredCandidate(const WebKitGstIceStream*, RiceGatheredCandidate&);
+-void webkitGstWebRTCIceStreamNewSelectedPair(const WebKitGstIceStream*, RiceAgentSelectedPair&);
+-void webkitGstWebRTCIceStreamComponentStateChanged(const WebKitGstIceStream*, RiceAgentComponentStateChange&);
++
++void webkitGstWebRTCIceStreamAddLocalGatheredCandidate(const WebKitGstIceStream*, const RiceGatheredCandidate&);
++void webkitGstWebRTCIceStreamNewSelectedPair(const WebKitGstIceStream*, const RiceAgentSelectedPair&);
++void webkitGstWebRTCIceStreamComponentStateChanged(const WebKitGstIceStream*, const RiceAgentComponentStateChange&);
+ bool webkitGstWebRTCIceStreamGetSelectedPair(WebKitGstIceStream*, GstWebRTCICECandidateStats**, GstWebRTCICECandidateStats**);
+ 
+ #endif // USE(GSTREAMER_WEBRTC) && USE(LIBRICE)
+diff --git a/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceTransport.cpp b/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceTransport.cpp
+index fa13034d4016..d60c8e6b27d2 100644
+--- a/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceTransport.cpp
++++ b/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceTransport.cpp
+@@ -173,7 +173,7 @@ void webkitGstWebRTCIceTransportHandleIncomingData(WebKitGstIceTransport* transp
+     gst_app_src_push_buffer(GST_APP_SRC(iceTransport->src), buffer.leakRef());
+ }
+ 
+-void webkitGstWebRTCIceTransportNewSelectedPair(WebKitGstIceTransport* transport, RiceAgentSelectedPair& pair)
++void webkitGstWebRTCIceTransportNewSelectedPair(WebKitGstIceTransport* transport, const RiceAgentSelectedPair& pair)
+ {
+     transport->priv->selectedPair = { GUniquePtr<RiceCandidate>(rice_candidate_copy(&pair.local)), GUniquePtr<RiceCandidate>(rice_candidate_copy(&pair.remote)) };
+     gst_webrtc_ice_transport_selected_pair_change(GST_WEBRTC_ICE_TRANSPORT(transport));
+diff --git a/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceTransport.h b/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceTransport.h
+index 438f0690baac..90f5c0343f6b 100644
+--- a/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceTransport.h
++++ b/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceTransport.h
+@@ -49,7 +49,7 @@ GType webkit_gst_webrtc_ice_transport_get_type();
+ WebKitGstIceTransport* webkitGstWebRTCCreateIceTransport(WebKitGstIceAgent*, GThreadSafeWeakPtr<WebKitGstIceStream>&&, GstWebRTCICEComponent, bool);
+ void webkitGstWebRTCIceTransportHandleIncomingData(WebKitGstIceTransport*, GRefPtr<GstBuffer>&&);
+ 
+-void webkitGstWebRTCIceTransportNewSelectedPair(WebKitGstIceTransport*, RiceAgentSelectedPair&);
++void webkitGstWebRTCIceTransportNewSelectedPair(WebKitGstIceTransport*, const RiceAgentSelectedPair&);
+ bool webkitGstWebRTCIceTransportGetSelectedPair(WebKitGstIceTransport*, GstWebRTCICECandidateStats**, GstWebRTCICECandidateStats**);
+ 
+ #endif // USE(GSTREAMER_WEBRTC) && USE(LIBRICE)
+diff --git a/Source/WebCore/Modules/mediastream/gstreamer/RiceGatherResult.h b/Source/WebCore/Modules/mediastream/gstreamer/RiceGatherResult.h
+new file mode 100644
+index 000000000000..2b48d0270d1f
+--- /dev/null
++++ b/Source/WebCore/Modules/mediastream/gstreamer/RiceGatherResult.h
+@@ -0,0 +1,39 @@
++/*
++ *  Copyright (C) 2026 Igalia S.L. All rights reserved.
++ *
++ *  This library is free software; you can redistribute it and/or
++ *  modify it under the terms of the GNU Lesser General Public
++ *  License as published by the Free Software Foundation; either
++ *  version 2 of the License, or (at your option) any later version.
++ *
++ *  This library is distributed in the hope that it will be useful,
++ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ *  Lesser General Public License for more details.
++ *
++ *  You should have received a copy of the GNU Lesser General Public
++ *  License along with this library; if not, write to the Free Software
++ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
++ */
++
++#pragma once
++
++#if USE(LIBRICE)
++
++#include "RTCIceProtocol.h"
++#include <wtf/Forward.h>
++#include <wtf/HashMap.h>
++#include <wtf/text/WTFString.h>
++
++namespace WebCore {
++
++using RiceSocket = std::pair<String, RTCIceProtocol>;
++
++struct RiceGatherResult {
++    HashMap<RiceSocket, String> addresses;
++    Vector<RiceSocket> turnAddresses;
++};
++
++} // namespace WebCore
++
++#endif // USE(LIBRICE)
+diff --git a/Source/WebCore/platform/GStreamer.cmake b/Source/WebCore/platform/GStreamer.cmake
+index b6203049c3b2..d8da37cf3c8c 100644
+--- a/Source/WebCore/platform/GStreamer.cmake
++++ b/Source/WebCore/platform/GStreamer.cmake
+@@ -139,10 +139,12 @@ if (ENABLE_VIDEO)
+             list(APPEND WebCore_LIBRARIES Rice::Proto)
+             list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+                 Modules/mediastream/gstreamer/GStreamerIceAgent.h
++                Modules/mediastream/gstreamer/RiceGatherResult.h
+ 
+                 platform/rice/GRefPtrRice.h
+                 platform/rice/GUniquePtrRice.h
+                 platform/rice/RiceUtilities.h
++                platform/rice/RiceVersioning.h
+             )
+             list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
+                 "${WEBCORE_DIR}/Modules/mediastream/gstreamer"
+diff --git a/Source/WebCore/platform/rice/GRefPtrRice.h b/Source/WebCore/platform/rice/GRefPtrRice.h
+index 5389df53f590..1b43165f82d5 100644
+--- a/Source/WebCore/platform/rice/GRefPtrRice.h
++++ b/Source/WebCore/platform/rice/GRefPtrRice.h
+@@ -20,6 +20,7 @@
+ #pragma once
+ 
+ #if USE(LIBRICE)
++#include "RiceVersioning.h"
+ #include <rice-io.h>
+ #include <wtf/glib/GRefPtr.h>
+ 
+@@ -31,7 +32,9 @@ WTF_DEFINE_GREF_TRAITS_INLINE(RiceSockets, rice_sockets_ref, rice_sockets_unref)
+ WTF_DEFINE_GREF_TRAITS_INLINE(RiceComponent, rice_component_ref, rice_component_unref)
+ WTF_DEFINE_GREF_TRAITS_INLINE(RiceUdpSocket, rice_udp_socket_ref, rice_udp_socket_unref)
+ WTF_DEFINE_GREF_TRAITS_INLINE(RiceTlsConfig, rice_tls_config_ref, rice_tls_config_unref)
++#if !RICE_CHECK_VERSION(0, 4, 0)
+ WTF_DEFINE_GREF_TRAITS_INLINE(RiceTurnConfig, rice_turn_config_ref, rice_turn_config_unref)
++#endif
+ WTF_DEFINE_GREF_TRAITS_INLINE(RiceTcpListener, rice_tcp_listener_ref, rice_tcp_listener_unref)
+ 
+ } // namespace WTF
+diff --git a/Source/WebCore/platform/rice/GUniquePtrRice.h b/Source/WebCore/platform/rice/GUniquePtrRice.h
+index 2c451495fd44..44f2bde1a698 100644
+--- a/Source/WebCore/platform/rice/GUniquePtrRice.h
++++ b/Source/WebCore/platform/rice/GUniquePtrRice.h
+@@ -21,6 +21,7 @@
+ 
+ #if USE(LIBRICE)
+ 
++#include "RiceVersioning.h"
+ #include <rice-io.h>
+ #include <wtf/glib/GUniquePtr.h>
+ 
+@@ -29,6 +30,9 @@ namespace WTF {
+ WTF_DEFINE_GPTR_DELETER(RiceAddress, rice_address_free)
+ WTF_DEFINE_GPTR_DELETER(RiceCandidate, rice_candidate_free)
+ WTF_DEFINE_GPTR_DELETER(RiceCredentials, rice_credentials_free)
++#if RICE_CHECK_VERSION(0, 4, 0)
++WTF_DEFINE_GPTR_DELETER(RiceTurnConfig, rice_turn_config_free)
++#endif
+ 
+ }
+ 
+diff --git a/Source/WebCore/platform/rice/RiceGioBackend.cpp b/Source/WebCore/platform/rice/RiceGioBackend.cpp
+index 4fc1d6a3554b..152423272bc7 100644
+--- a/Source/WebCore/platform/rice/RiceGioBackend.cpp
++++ b/Source/WebCore/platform/rice/RiceGioBackend.cpp
+@@ -73,11 +73,13 @@ static gboolean agentSourcePrepare(GSource* base, gint* timeout)
+             result = TRUE;
+             break;
+         case RICE_AGENT_POLL_ALLOCATE_SOCKET:
+-            GST_FIXME("allocate socket is not handled");
++            GST_TRACE_OBJECT(iceAgent.get(), "Allocating new socket");
++            webkitGstWebRTCIceAgentAllocateSocketForStream(iceAgent.get(), ret.allocate_socket);
+             result = TRUE;
+             break;
+         case RICE_AGENT_POLL_REMOVE_SOCKET:
+-            GST_FIXME("remove socket is not handled");
++            GST_TRACE_OBJECT(iceAgent.get(), "Removing socket");
++            webkitGstWebRTCIceAgentRemoveSocketForStream(iceAgent.get(), ret.remove_socket);
+             result = TRUE;
+             break;
+         case RICE_AGENT_POLL_WAIT_UNTIL_NANOS: {
+diff --git a/Source/WebCore/platform/rice/RiceUtilities.h b/Source/WebCore/platform/rice/RiceUtilities.h
+index 551f94a5eea1..47427497b410 100644
+--- a/Source/WebCore/platform/rice/RiceUtilities.h
++++ b/Source/WebCore/platform/rice/RiceUtilities.h
+@@ -29,13 +29,6 @@
+ #include <wtf/text/StringBuilder.h>
+ #include <wtf/text/WTFString.h>
+ 
+-#ifndef RICE_CHECK_VERSION
+-#define RICE_CHECK_VERSION(major, minor, patch) \
+-    (RICE_PROTO_MAJOR > (major) || \
+-    (RICE_PROTO_MAJOR == (major) && RICE_PROTO_MINOR > (minor)) || \
+-    (RICE_PROTO_MAJOR == (major) && RICE_PROTO_MINOR == (minor) && RICE_PROTO_PATCH >= (patch)))
+-#endif
+-
+ namespace WebCore {
+ 
+ static inline String riceAddressToString(const RiceAddress* address, bool includePort = true)
+@@ -88,7 +81,6 @@ static inline std::optional<SharedMemory::Handle> riceTransmitToSharedMemoryHand
+     return SharedMemoryHandle::createCopy(unsafeMakeSpan(transmit->data.ptr, transmit->data.size), SharedMemoryProtection::ReadOnly);
+ }
+ 
+-
+ static inline RiceTransportType fromRTCIceProtocol(RTCIceProtocol protocol)
+ {
+     switch (protocol) {
+@@ -100,6 +92,17 @@ static inline RiceTransportType fromRTCIceProtocol(RTCIceProtocol protocol)
+     return RICE_TRANSPORT_TYPE_UDP;
+ }
+ 
++static inline RTCIceProtocol toRTCIceProtocol(RiceTransportType transportType)
++{
++    switch (transportType) {
++    case RICE_TRANSPORT_TYPE_UDP:
++        return RTCIceProtocol::Udp;
++    case RICE_TRANSPORT_TYPE_TCP:
++        return RTCIceProtocol::Tcp;
++    };
++    return RTCIceProtocol::Udp;
++}
++
+ static inline RTCIceProtocol riceTransmitTransportToIceProtocol(const RiceTransmit& transmit)
+ {
+     switch (transmit.transport) {
+@@ -112,7 +115,6 @@ static inline RTCIceProtocol riceTransmitTransportToIceProtocol(const RiceTransm
+     return RTCIceProtocol::Udp;
+ }
+ 
+-
+ } // namespace WebCore
+ 
+ #endif // USE(LIBRICE)
+diff --git a/Source/WebCore/platform/rice/RiceVersioning.h b/Source/WebCore/platform/rice/RiceVersioning.h
+new file mode 100644
+index 000000000000..983104053667
+--- /dev/null
++++ b/Source/WebCore/platform/rice/RiceVersioning.h
+@@ -0,0 +1,32 @@
++/*
++ *  Copyright (C) 2026 Igalia S.L. All rights reserved.
++ *
++ *  This library is free software; you can redistribute it and/or
++ *  modify it under the terms of the GNU Lesser General Public
++ *  License as published by the Free Software Foundation; either
++ *  version 2 of the License, or (at your option) any later version.
++ *
++ *  This library is distributed in the hope that it will be useful,
++ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ *  Lesser General Public License for more details.
++ *
++ *  You should have received a copy of the GNU Lesser General Public
++ *  License along with this library; if not, write to the Free Software
++ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
++ */
++
++#pragma once
++
++#if USE(LIBRICE)
++
++#include <rice-proto.h>
++
++#ifndef RICE_CHECK_VERSION
++#define RICE_CHECK_VERSION(major, minor, patch) \
++    (RICE_PROTO_MAJOR > (major) || \
++    (RICE_PROTO_MAJOR == (major) && RICE_PROTO_MINOR > (minor)) || \
++    (RICE_PROTO_MAJOR == (major) && RICE_PROTO_MINOR == (minor) && RICE_PROTO_PATCH >= (patch)))
++#endif
++
++#endif // USE(LIBRICE)
+diff --git a/Source/WebKit/NetworkProcess/webrtc/rice/RiceBackend.cpp b/Source/WebKit/NetworkProcess/webrtc/rice/RiceBackend.cpp
+index 4bf17deb4787..27fc77b6031f 100644
+--- a/Source/WebKit/NetworkProcess/webrtc/rice/RiceBackend.cpp
++++ b/Source/WebKit/NetworkProcess/webrtc/rice/RiceBackend.cpp
+@@ -27,6 +27,7 @@
+ #include "RiceBackendProxyMessages.h"
+ 
+ #include <WebCore/RiceUtilities.h>
++#include <WebCore/RiceVersioning.h>
+ #include <rice-io.h>
+ #include <wtf/CompletionHandler.h>
+ #include <wtf/StdLibExtras.h>
+@@ -129,7 +130,16 @@ RiceBackend::RiceBackend(NetworkConnectionToWebProcess& connection)
+     m_runLoop = RunLoop::create(ASCIILiteral::fromLiteralUnsafe(threadName.ascii().data()));
+ }
+ 
+-RiceBackend::~RiceBackend() = default;
++RiceBackend::~RiceBackend()
++{
++    for (auto& socketData : m_sockets.values()) {
++        GRefPtr source = socketData.source;
++        if (!source) [[unlikely]]
++            continue;
++
++        g_source_destroy(source.get());
++    }
++}
+ 
+ IPC::Connection* RiceBackend::messageSenderConnection() const
+ {
+@@ -203,6 +213,7 @@ void RiceBackend::resolveAddress(const String& address, CompletionHandler<void(E
+                     return;
+                 }
+ 
++                // FIXME: We should use all addresses, not only the first one. https://bugs.webkit.org/show_bug.cgi?id=312254
+                 GUniquePtr<char> address(g_inet_address_to_string(G_INET_ADDRESS(addresses->data)));
+                 callOnMainRunLoopAndWait([data, address = WTF::move(address)] {
+                     data->callback(String::fromUTF8(address.get()));
+@@ -215,7 +226,24 @@ void RiceBackend::resolveAddress(const String& address, CompletionHandler<void(E
+     }), data, reinterpret_cast<GDestroyNotify>(destroyResolveAddressData));
+ }
+ 
+-void RiceBackend::sendData(unsigned streamId, WebCore::RTCIceProtocol protocol, String from, String to, WebCore::SharedMemory::Handle&& handle)
++void RiceBackend::resolveAddressSync(const String& address, CompletionHandler<void(Expected<String, WebCore::ExceptionData>&&)>&& completionHandler)
++{
++    auto resolver = adoptGRef(g_resolver_get_default());
++    GUniqueOutPtr<GError> error;
++    GList* addresses = g_resolver_lookup_by_name(resolver.get(), address.utf8().data(), nullptr, &error.outPtr());
++    if (!addresses) {
++        auto message = makeString("Unable to resolve address: "_s, String::fromUTF8(error->message));
++        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::NetworkError, message }));
++        return;
++    }
++
++    // FIXME: We should use all addresses, not only the first one. https://bugs.webkit.org/show_bug.cgi?id=312254
++    GUniquePtr<char> result(g_inet_address_to_string(G_INET_ADDRESS(addresses->data)));
++    completionHandler(String::fromUTF8(result.get()));
++    g_resolver_free_addresses(addresses);
++}
++
++void RiceBackend::sendData(unsigned streamId, WebCore::RTCIceProtocol protocol, const String& from, const String& to, WebCore::SharedMemory::Handle&& handle)
+ {
+     auto sockets = getSocketsForStream(streamId);
+     if (!sockets) [[unlikely]]
+@@ -241,7 +269,7 @@ void RiceBackend::sendData(unsigned streamId, WebCore::RTCIceProtocol protocol,
+     auto buffer = sharedMemory->createSharedBuffer(sharedMemory->size());
+     auto result = rice_sockets_send(sockets.get(), transport, riceFrom, riceTo, buffer->span().data(), buffer->size());
+     if (result != RICE_ERROR_SUCCESS)
+-        g_printerr("Failed to send data to rice sockets, error code: %d\n", static_cast<uint32_t>(result));
++        g_printerr("Failed to send data, error code: %d\n", static_cast<uint32_t>(result));
+ }
+ 
+ void RiceBackend::finalizeStream(unsigned streamId)
+@@ -262,9 +290,10 @@ void RiceBackend::finalizeStream(unsigned streamId)
+         g_source_destroy(data.source.get());
+ }
+ 
+-void RiceBackend::gatherSocketAddresses(ScriptExecutionContextIdentifier identifier, unsigned streamId, GatherSocketAddressesCallback&& completionHandler)
++void RiceBackend::gatherSocketAddresses(ScriptExecutionContextIdentifier identifier, unsigned streamId, unsigned minRtpPort, unsigned maxRtpPort, GatherSocketAddressesCallback&& completionHandler)
+ {
+-    HashMap<std::pair<String, RTCIceProtocol>, String> result;
++    HashMap<std::pair<String, RTCIceProtocol>, String> gatheredAddresses;
++    Vector<std::pair<String, RTCIceProtocol>> turnAddresses;
+ 
+     auto recvData2 = createRecvSourceData();
+     recvData2->backend = this;
+@@ -284,6 +313,10 @@ void RiceBackend::gatherSocketAddresses(ScriptExecutionContextIdentifier identif
+     auto interfaces = rice_interfaces(&totalInterfaces);
+     std::span<RiceAddress*> interfaceAddresses = WTF::unsafeMakeSpan(interfaces, totalInterfaces);
+ 
++    // FIXME: Handle minRtpPort and maxRtpPort. https://bugs.webkit.org/show_bug.cgi?id=312255
++    UNUSED_PARAM(minRtpPort);
++    UNUSED_PARAM(maxRtpPort);
++
+     for (size_t i = 0; i < totalInterfaces; i++) {
+         auto ipAddress = riceAddressToString(interfaceAddresses[i], false);
+         // mDNS address, not supported yet.
+@@ -291,11 +324,37 @@ void RiceBackend::gatherSocketAddresses(ScriptExecutionContextIdentifier identif
+         if (auto socket = rice_udp_socket_new(interfaceAddresses[i])) {
+             GUniquePtr<RiceAddress> localAddress(rice_udp_socket_local_addr(socket));
+ 
+-            result.add({ riceAddressToString(localAddress.get()).convertToLowercaseWithoutLocale(), WebCore::RTCIceProtocol::Udp }, name);
++            gatheredAddresses.add({ riceAddressToString(localAddress.get()).convertToLowercaseWithoutLocale(), WebCore::RTCIceProtocol::Udp }, name);
+             udpAddresses.append(WTF::move(localAddress));
+             rice_sockets_add_udp(sockets.get(), socket);
+         }
+ 
++        if (auto socket = rice_udp_socket_new(interfaceAddresses[i])) {
++            GUniquePtr<RiceAddress> localAddress(rice_udp_socket_local_addr(socket));
++
++            turnAddresses.append({ riceAddressToString(localAddress.get()).convertToLowercaseWithoutLocale(), WebCore::RTCIceProtocol::Udp });
++            udpAddresses.append(WTF::move(localAddress));
++            rice_sockets_add_udp(sockets.get(), socket);
++        }
++        {
++            auto recvData = createRecvSourceData();
++            recvData->backend = this;
++            recvData->streamId = streamId;
++            auto tcpListener = adoptGRef(rice_tcp_listen(interfaceAddresses[i], [](RiceTcpSocket* socket, void* userData) {
++                auto recvData = reinterpret_cast<RecvSourceData*>(userData);
++                RefPtr backend = recvData->backend.get();
++                if (!backend)
++                    return;
++                auto sockets = backend->getSocketsForStream(recvData->streamId);
++                rice_sockets_add_tcp(sockets.get(), socket);
++                backend->configureSocketBufferSizes();
++            }, recvData, reinterpret_cast<RiceIoDestroy>(destroyRecvSourceData)));
++
++            GUniquePtr<RiceAddress> localAddress(rice_tcp_listener_local_addr(tcpListener.get()));
++            turnAddresses.append({ riceAddressToString(localAddress.get()).convertToLowercaseWithoutLocale(), WebCore::RTCIceProtocol::Tcp });
++            m_tcpListeners.append(WTF::move(tcpListener));
++        }
++
+         auto recvData = createRecvSourceData();
+         recvData->backend = this;
+         recvData->streamId = streamId;
+@@ -306,10 +365,11 @@ void RiceBackend::gatherSocketAddresses(ScriptExecutionContextIdentifier identif
+                 return;
+             auto sockets = backend->getSocketsForStream(recvData->streamId);
+             rice_sockets_add_tcp(sockets.get(), socket);
++            backend->configureSocketBufferSizes();
+         }, recvData, reinterpret_cast<RiceIoDestroy>(destroyRecvSourceData)));
+ 
+         GUniquePtr<RiceAddress> tcpListenerLocalAddress(rice_tcp_listener_local_addr(tcpListener.get()));
+-        result.add({ riceAddressToString(tcpListenerLocalAddress.get()).convertToLowercaseWithoutLocale(), WebCore::RTCIceProtocol::Tcp }, name);
++        gatheredAddresses.add({ riceAddressToString(tcpListenerLocalAddress.get()).convertToLowercaseWithoutLocale(), WebCore::RTCIceProtocol::Tcp }, name);
+         m_tcpListeners.append(WTF::move(tcpListener));
+     }
+ 
+@@ -328,9 +388,11 @@ void RiceBackend::gatherSocketAddresses(ScriptExecutionContextIdentifier identif
+         RefPtr backend = sourceData->backend.get();
+         if (!backend)
+             return G_SOURCE_REMOVE;
++
+         auto sockets = backend->getSocketsForStream(sourceData->streamId);
+         if (!sockets)
+             return G_SOURCE_CONTINUE;
++
+         while (true) {
+             rice_sockets_recv(sockets.get(), data, 16384, &recv);
+             switch (recv.tag) {
+@@ -340,15 +402,7 @@ void RiceBackend::gatherSocketAddresses(ScriptExecutionContextIdentifier identif
+             case RICE_IO_RECV_DATA: {
+                 auto from = riceAddressToString(recv.data.from);
+                 auto to = riceAddressToString(recv.data.to);
+-                RTCIceProtocol protocol;
+-                switch (recv.data.transport) {
+-                case RICE_TRANSPORT_TYPE_UDP:
+-                    protocol = RTCIceProtocol::Udp;
+-                    break;
+-                case RICE_TRANSPORT_TYPE_TCP:
+-                    protocol = RTCIceProtocol::Tcp;
+-                    break;
+-                };
++                auto protocol = toRTCIceProtocol(recv.data.transport);
+                 auto handle = SharedMemoryHandle::createCopy(unsafeMakeSpan(data, recv.data.len), SharedMemoryProtection::ReadOnly);
+                 if (!handle) [[unlikely]]
+                     break;
+@@ -356,7 +410,7 @@ void RiceBackend::gatherSocketAddresses(ScriptExecutionContextIdentifier identif
+                 break;
+             }
+             case RICE_IO_RECV_CLOSED:
+-                // TODO
++                // This enum value is currently unused in rice-io.
+                 break;
+             }
+             rice_recv_clear(&recv);
+@@ -369,7 +423,7 @@ void RiceBackend::gatherSocketAddresses(ScriptExecutionContextIdentifier identif
+     m_sockets.add(streamId, SocketData { WTF::move(sockets), WTF::move(source) });
+     m_udpAddresses.add(streamId, WTF::move(udpAddresses));
+ 
+-    completionHandler(WTF::move(result));
++    completionHandler({ WTF::move(gatheredAddresses), WTF::move(turnAddresses) });
+ }
+ 
+ const RiceAddress* RiceBackend::ensureRiceAddressFromCache(const String& address)
+@@ -380,7 +434,7 @@ const RiceAddress* RiceBackend::ensureRiceAddressFromCache(const String& address
+     return result.get();
+ }
+ 
+-void RiceBackend::setSocketTypeOfService(unsigned streamId, unsigned value)
++void RiceBackend::setSocketTypeOfService([[maybe_unused]] unsigned streamId, [[maybe_unused]] unsigned value)
+ {
+ #if RICE_CHECK_VERSION(0, 2, 2)
+     auto sockets = getSocketsForStream(streamId);
+@@ -388,9 +442,74 @@ void RiceBackend::setSocketTypeOfService(unsigned streamId, unsigned value)
+         return;
+ 
+     rice_sockets_set_tos(sockets.get(), value);
+-#else
+-    UNUSED_PARAM(streamId);
+-    UNUSED_PARAM(value);
++#endif
++}
++
++struct SocketAllocationData {
++    ThreadSafeWeakPtr<RiceBackend> backend;
++    unsigned streamId;
++    unsigned componentId;
++    WebCore::RTCIceProtocol protocol;
++    String from;
++    String to;
++};
++WEBKIT_DEFINE_ASYNC_DATA_STRUCT(SocketAllocationData);
++
++void RiceBackend::allocateSocket(unsigned streamId, unsigned componentId, WebCore::RTCIceProtocol protocol, const String& from, const String& to)
++{
++    if (protocol == WebCore::RTCIceProtocol::Udp)
++        return;
++
++    GUniquePtr<RiceAddress> remoteAddress(riceAddressFromString(to));
++
++    auto data = createSocketAllocationData();
++    data->backend = this;
++    data->streamId = streamId;
++    data->componentId = componentId;
++    data->protocol = protocol;
++    data->from = from;
++    data->to = to;
++
++    rice_tcp_connect(remoteAddress.get(), [](auto socket, void* userData) {
++        auto data = reinterpret_cast<SocketAllocationData*>(userData);
++        RefPtr backend = data->backend.get();
++        if (!backend) {
++            destroySocketAllocationData(data);
++            return;
++        }
++        auto sockets = backend->getSocketsForStream(data->streamId);
++        rice_sockets_add_tcp(sockets.get(), socket);
++        backend->configureSocketBufferSizes();
++
++        GUniquePtr<RiceAddress> localAddress(rice_tcp_socket_local_addr(socket));
++        auto localAddressString = riceAddressToString(localAddress.get());
++        callOnMainRunLoopAndWait([&, address = WTF::move(localAddressString)] mutable {
++            if (RefPtr connection = backend->messageSenderConnection())
++                connection->send(Messages::RiceBackendProxy::AllocatedSocket { data->streamId, data->componentId, data->protocol, data->from, data->to, address }, backend->messageSenderDestinationID());
++        });
++        destroySocketAllocationData(data);
++    }, data, nullptr);
++}
++
++void RiceBackend::removeSocket(unsigned streamId, unsigned componentId, WebCore::RTCIceProtocol protocol, const String& from, const String& to)
++{
++    if (protocol == WebCore::RTCIceProtocol::Udp)
++        return;
++
++    GUniquePtr<RiceAddress> localAddress(riceAddressFromString(from));
++    GUniquePtr<RiceAddress> remoteAddress(riceAddressFromString(to));
++    auto sockets = getSocketsForStream(streamId);
++    rice_sockets_remove_tcp(sockets.get(), localAddress.get(), remoteAddress.get());
++}
++
++void RiceBackend::configureSocketBufferSizes()
++{
++#if RICE_CHECK_VERSION(0, 2, 2)
++    // Setting same librice socket size options as LibWebRTC. 1MB for incoming streams and 256Kb for outgoing streams.
++    static const uint32_t receiveBufferSize = 1048576;
++    static const uint32_t sendBufferSize = 262144;
++    for (auto& data : m_sockets.values())
++        rice_sockets_set_buffer_sizes(data.sockets.get(), sendBufferSize, receiveBufferSize);
+ #endif
+ }
+ 
+diff --git a/Source/WebKit/NetworkProcess/webrtc/rice/RiceBackend.h b/Source/WebKit/NetworkProcess/webrtc/rice/RiceBackend.h
+index 20b736b49821..f0fa10e0ec09 100644
+--- a/Source/WebKit/NetworkProcess/webrtc/rice/RiceBackend.h
++++ b/Source/WebKit/NetworkProcess/webrtc/rice/RiceBackend.h
+@@ -31,6 +31,7 @@
+ #include <WebCore/GUniquePtrRice.h>
+ #include <WebCore/RTCIceComponent.h>
+ #include <WebCore/RTCIceProtocol.h>
++#include <WebCore/RiceGatherResult.h>
+ #include <WebCore/ScriptExecutionContextIdentifier.h>
+ #include <WebCore/SharedMemory.h>
+ #include <wtf/Expected.h>
+@@ -78,18 +79,23 @@ class RiceBackend : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RiceB
+     using ResolveCallback = CompletionHandler<void(Expected<String, WebCore::ExceptionData>&&)>;
+     void resolveAddress(const String&, ResolveCallback&&);
+ 
+-    void sendData(unsigned, WebCore::RTCIceProtocol, String, String, WebCore::SharedMemory::Handle&&);
++    void resolveAddressSync(const String&, ResolveCallback&&);
++
++    void sendData(unsigned, WebCore::RTCIceProtocol, const String&, const String&, WebCore::SharedMemory::Handle&&);
+     void finalizeStream(unsigned);
+     void setSocketTypeOfService(unsigned, unsigned);
+ 
+-    using GatherSocketAddressesCallback = CompletionHandler<void(HashMap<std::pair<String, WebCore::RTCIceProtocol>, String>&&)>;
+-    void gatherSocketAddresses(WebCore::ScriptExecutionContextIdentifier, unsigned, GatherSocketAddressesCallback&&);
++    using GatherSocketAddressesCallback = CompletionHandler<void(WebCore::RiceGatherResult&&)>;
++    void gatherSocketAddresses(WebCore::ScriptExecutionContextIdentifier, unsigned, unsigned, unsigned, GatherSocketAddressesCallback&&);
+ 
+     GRefPtr<RiceSockets> getSocketsForStream(unsigned);
+     GRefPtr<GSource> getRecvSourceForStream(unsigned);
+ 
+     void notifyIncomingData(unsigned streamId, WebCore::RTCIceProtocol, String&&, String&&, WebCore::SharedMemory::Handle&&);
+ 
++    void allocateSocket(unsigned, unsigned, WebCore::RTCIceProtocol, const String&, const String&);
++    void removeSocket(unsigned, unsigned, WebCore::RTCIceProtocol, const String&, const String&);
++
+ private:
+ 
+     template<typename... Args> static Ref<RiceBackend> create(Args&&...args) { return adoptRef(*new RiceBackend(std::forward<Args>(args)...)); }
+@@ -102,6 +108,8 @@ class RiceBackend : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RiceB
+ 
+     RefPtr<RunLoop> m_runLoop;
+ 
++    void configureSocketBufferSizes();
++
+     struct SocketData {
+         GRefPtr<RiceSockets> sockets;
+         GRefPtr<GSource> source;
+diff --git a/Source/WebKit/NetworkProcess/webrtc/rice/RiceBackend.messages.in b/Source/WebKit/NetworkProcess/webrtc/rice/RiceBackend.messages.in
+index d6153b29aedd..b46d54c12b78 100644
+--- a/Source/WebKit/NetworkProcess/webrtc/rice/RiceBackend.messages.in
++++ b/Source/WebKit/NetworkProcess/webrtc/rice/RiceBackend.messages.in
+@@ -23,11 +23,14 @@
+     DispatchedTo=Networking
+ ]
+ messages -> RiceBackend {
+-    GatherSocketAddresses(WebCore::ScriptExecutionContextIdentifier identifier, unsigned streamId) -> (HashMap<std::pair<String, WebCore::RTCIceProtocol>, String> addresses) Synchronous
++    GatherSocketAddresses(WebCore::ScriptExecutionContextIdentifier identifier, unsigned streamId, unsigned minRtpPort, unsigned maxRtpPort) -> (struct WebCore::RiceGatherResult result) Synchronous
+     SendData(unsigned streamId, enum:uint8_t WebCore::RTCIceProtocol protocol, String from, String to, WebCore::SharedMemory::Handle data);
+     FinalizeStream(unsigned streamId);
+     ResolveAddress(String address) -> (Expected<String, WebCore::ExceptionData> result)
++    ResolveAddressSync(String address) -> (Expected<String, WebCore::ExceptionData> result) Synchronous
+     SetSocketTypeOfService(unsigned streamId, unsigned value);
++    AllocateSocket(unsigned streamId, unsigned componentId, enum:uint8_t WebCore::RTCIceProtocol protocol, String from, String to);
++    RemoveSocket(unsigned streamId, unsigned componentId, enum:uint8_t WebCore::RTCIceProtocol protocol, String from, String to);
+ }
+ 
+ #endif
+\ No newline at end of file
+diff --git a/Source/WebKit/Scripts/webkit/messages.py b/Source/WebKit/Scripts/webkit/messages.py
+index 1e6f3c87b7ee..cb53404a50d2 100644
+--- a/Source/WebKit/Scripts/webkit/messages.py
++++ b/Source/WebKit/Scripts/webkit/messages.py
+@@ -1533,6 +1533,7 @@ def headers_for_type(type, for_implementation_file=False):
+         'WebKit::GestureRecognizerState': ['"GestureTypes.h"'],
+         'WebKit::GestureType': ['"GestureTypes.h"'],
+         'WebKit::RiceBackendIdentifier': ['"RiceBackend.h"'],
++        'WebKit::RiceGatherResult': ['"RiceBackend.h"'],
+         'WebKit::JSObjectID': ['"JavaScriptEvaluationResult.h"'],
+         'WebKit::SnapshotOption': ['"ImageOptions.h"'],
+         'WebKit::LastNavigationWasAppInitiated': ['"AppPrivacyReport.h"'],
+diff --git a/Source/WebKit/Shared/WebCoreArgumentCoders.serialization.in b/Source/WebKit/Shared/WebCoreArgumentCoders.serialization.in
+index b5ceaeb61290..f7a21bf661d5 100644
+--- a/Source/WebKit/Shared/WebCoreArgumentCoders.serialization.in
++++ b/Source/WebKit/Shared/WebCoreArgumentCoders.serialization.in
+@@ -7928,6 +7928,14 @@ header: <WebCore/WebCodecsEncodedAudioChunk.h>
+ };
+ #endif
+ 
++#if USE(LIBRICE)
++header: <WebCore/RiceGatherResult.h>
++[CustomHeader] struct WebCore::RiceGatherResult {
++    HashMap<WebCore::RiceSocket, String> addresses;
++    Vector<WebCore::RiceSocket> turnAddresses;
++};
++#endif
++
+ headers: <JavaScriptCore/WasmModule.h> <WebCore/ImageBitmap.h> <WebCore/MessagePort.h> <WebCore/OffscreenCanvas.h>
+ [Nested] class WebCore::SerializedScriptValue::Internals {
+     Vector<uint8_t> data;
+diff --git a/Source/WebKit/WebProcess/Network/webrtc/rice/RiceBackendProxy.cpp b/Source/WebKit/WebProcess/Network/webrtc/rice/RiceBackendProxy.cpp
+index 1e60cbca4745..3df2dd0eff54 100644
+--- a/Source/WebKit/WebProcess/Network/webrtc/rice/RiceBackendProxy.cpp
++++ b/Source/WebKit/WebProcess/Network/webrtc/rice/RiceBackendProxy.cpp
+@@ -85,18 +85,37 @@ void RiceBackendProxy::resolveAddress(const String& address, RiceBackend::Resolv
+     }, messageSenderDestinationID());
+ }
+ 
+-HashMap<WebCore::RiceBackend::Socket, String> RiceBackendProxy::gatherSocketAddresses(WebCore::ScriptExecutionContextIdentifier identifier, unsigned streamId)
++WebCore::ExceptionOr<String> RiceBackendProxy::resolveAddressSync(const String& address)
+ {
+-    HashMap<WebCore::RiceBackend::Socket, String> addresses;
++    std::optional<WebCore::ExceptionOr<String>> result;
++    callOnMainRunLoopAndWait([&] mutable {
++        auto sendResult = m_connection->sendSync(Messages::RiceBackend::ResolveAddressSync { address }, messageSenderDestinationID(), 3_s);
++        if (!sendResult.succeeded()) {
++            result = WebCore::Exception { ExceptionCode::NetworkError, makeString("Unable to resolve address for "_s, address, ": "_s, sendResult.error()) };
++            return;
++        }
++        auto [reply] = sendResult.takeReply();
++        if (!reply) {
++            result = reply.error().toException();
++            return;
++        }
++        result = reply.value().isolatedCopy();
++    });
++    return *result;
++}
++
++WebCore::RiceGatherResult RiceBackendProxy::gatherSocketAddresses(WebCore::ScriptExecutionContextIdentifier identifier, unsigned streamId, unsigned minRtpPort, unsigned maxRtpPort)
++{
++    WebCore::RiceGatherResult result;
+     callOnMainRunLoopAndWait([&] {
+-        auto sendResult = m_connection->sendSync(Messages::RiceBackend::GatherSocketAddresses { identifier, streamId }, messageSenderDestinationID(), 3_s);
++        auto sendResult = m_connection->sendSync(Messages::RiceBackend::GatherSocketAddresses { identifier, streamId, minRtpPort, maxRtpPort }, messageSenderDestinationID(), 3_s);
+         if (!sendResult.succeeded())
+             return;
+ 
+         auto [reply] = sendResult.takeReply();
+-        addresses = reply;
++        result = reply;
+     });
+-    return addresses;
++    return result;
+ }
+ 
+ void RiceBackendProxy::notifyIncomingData(unsigned streamId, RTCIceProtocol protocol, String&& from, String&& to, WebCore::SharedMemory::Handle&& data)
+@@ -119,6 +138,21 @@ void RiceBackendProxy::setSocketTypeOfService(unsigned streamId, unsigned value)
+     MessageSender::send(Messages::RiceBackend::SetSocketTypeOfService { streamId, value });
+ }
+ 
++void RiceBackendProxy::allocateSocket(unsigned streamId, unsigned componentId, WebCore::RTCIceProtocol protocol, String&& from, String&& to)
++{
++    MessageSender::send(Messages::RiceBackend::AllocateSocket { streamId, componentId, protocol, WTF::move(from), WTF::move(to) });
++}
++
++void RiceBackendProxy::allocatedSocket(unsigned streamId, unsigned componentId, WebCore::RTCIceProtocol protocol, String&& from, String&& to, String&& socket)
++{
++    m_client->allocatedSocket(streamId, componentId, protocol, WTF::move(from), WTF::move(to), WTF::move(socket));
++}
++
++void RiceBackendProxy::removeSocket(unsigned streamId, unsigned componentId, WebCore::RTCIceProtocol protocol, String&& from, String&& to)
++{
++    MessageSender::send(Messages::RiceBackend::RemoveSocket { streamId, componentId, protocol, WTF::move(from), WTF::move(to) });
++}
++
+ } // namespace WebKit
+ 
+ #endif // USE(LIBRICE)
+diff --git a/Source/WebKit/WebProcess/Network/webrtc/rice/RiceBackendProxy.h b/Source/WebKit/WebProcess/Network/webrtc/rice/RiceBackendProxy.h
+index 3de715cc35ed..62a0b239e4ab 100644
+--- a/Source/WebKit/WebProcess/Network/webrtc/rice/RiceBackendProxy.h
++++ b/Source/WebKit/WebProcess/Network/webrtc/rice/RiceBackendProxy.h
+@@ -60,17 +60,22 @@ class RiceBackendProxy : public IPC::MessageSender, public IPC::MessageReceiver,
+     // RiceBackend (Web -> Network)
+     void resolveAddress(const String&, WebCore::RiceBackend::ResolveAddressCallback&&) final;
+ 
++    WebCore::ExceptionOr<String> resolveAddressSync(const String&) final;
++
+     void send(unsigned, WebCore::RTCIceProtocol, String&&, String&&, WebCore::SharedMemory::Handle&&) final;
+-    HashMap<WebCore::RiceBackend::Socket, String> gatherSocketAddresses(WebCore::ScriptExecutionContextIdentifier, unsigned) final;
++    WebCore::RiceGatherResult gatherSocketAddresses(WebCore::ScriptExecutionContextIdentifier, unsigned, unsigned, unsigned) final;
+ 
+     void finalizeStream(unsigned) final;
+     void setSocketTypeOfService(unsigned, unsigned) final;
++    void allocateSocket(unsigned, unsigned, WebCore::RTCIceProtocol, String&&, String&&) final;
++    void removeSocket(unsigned, unsigned, WebCore::RTCIceProtocol, String&&, String&&) final;
+ 
+     void refRiceBackend() final { ref(); }
+     void derefRiceBackend() final { deref(); }
+ 
+     // RiceBackendClient (Network -> Web)
+     void notifyIncomingData(unsigned, WebCore::RTCIceProtocol, String&&, String&&, WebCore::SharedMemory::Handle&&);
++    void allocatedSocket(unsigned, unsigned, WebCore::RTCIceProtocol, String&&, String&&, String&&);
+ 
+     // MessageSender
+     IPC::Connection* messageSenderConnection() const final;
+diff --git a/Source/WebKit/WebProcess/Network/webrtc/rice/RiceBackendProxy.messages.in b/Source/WebKit/WebProcess/Network/webrtc/rice/RiceBackendProxy.messages.in
+index 55379da5eeb2..5ea2d0b23297 100644
+--- a/Source/WebKit/WebProcess/Network/webrtc/rice/RiceBackendProxy.messages.in
++++ b/Source/WebKit/WebProcess/Network/webrtc/rice/RiceBackendProxy.messages.in
+@@ -24,6 +24,7 @@
+ ]
+ messages -> RiceBackendProxy {
+     NotifyIncomingData(unsigned streamId, enum:uint8_t WebCore::RTCIceProtocol protocol, String from, String to, WebCore::SharedMemory::Handle data);
++    AllocatedSocket(unsigned streamId, unsigned componentId, enum:uint8_t WebCore::RTCIceProtocol protocol, String from, String to, String socket);
+ }
+ 
+ #endif
+\ No newline at end of file
