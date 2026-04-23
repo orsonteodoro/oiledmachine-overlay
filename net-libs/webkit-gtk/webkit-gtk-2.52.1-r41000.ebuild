@@ -6,6 +6,8 @@ EAPI=8
 
 # D12, U22, U24
 
+# Contains AI generated synthetic data in the ebuild.
+
 # -r revision notes
 # -rabcde
 # ab = WEBKITGTK_API_VERSION version (4.1)

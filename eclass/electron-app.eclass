@@ -15,6 +15,8 @@
 
 # D11, U20, U22, U24
 
+# Contains data derived from AI generated synthetic data.
+
 case ${EAPI:-0} in
 	[78]) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;

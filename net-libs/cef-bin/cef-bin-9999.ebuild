@@ -6,6 +6,8 @@ EAPI=8
 
 # D12, U22, U24
 
+# Contains AI generated synthetic data.
+
 DEPENDS_VERSION="145.0.7632.160"
 # DEPENDS_VER_A="145"
 # DEPENDS_VER_B="0"
