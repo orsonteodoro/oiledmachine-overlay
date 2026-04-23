@@ -4,10 +4,16 @@
 
 EAPI=8
 
+# The ebuild and patches contains AI generated code.
+
 # Using npm breaks
 # Avoid "npm error code EUNSUPPORTEDPROTOCOL" when "patch:file-type@npm%3A19.4.1#~/.yarn/patches/file-type-npm-19.4.1-d18086444c.patch" encountered
 
 # For Cr version correspondance, see https://releases.electronjs.org/releases.json
+
+# To update:
+# PATH=$(realpath "../../scripts")":${PATH}"
+# YARN_UPDATER_VERSIONS="3.68.1" yarn_updater_update_locks.sh
 
 MY_PN="${PN/-/}"
 
@@ -29,7 +35,8 @@ VIPS_PV="8.17.3" # Required by sharp@0.34.5.  See https://github.com/lovell/shar
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="40.7.0" # Cr 144.0.7559.225, node 24.14.0
+	ELECTRON_APP_ELECTRON_PV="41.3.0" # Cr 146.0.7680.188, node 24.15.0
+	#ELECTRON_APP_ELECTRON_PV="40.7.0" # Cr 144.0.7559.225, node 24.14.0 working
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="38.7.2" # Cr 140.0.7339.249, node 22.21.1
@@ -86,7 +93,7 @@ LICENSE="
 # Electron's 37.2.5 license fingerprint is the same as 37.1.0
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	LICENSE+="
-		electron-40.7.0-chromium.html
+		electron-41.3.0-chromium.html
 	"
 else
 	LICENSE+="
