@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# This ebuild contains AI generated code and AI generated artifact (e.g. RiceConfig.cmake).
+
 # U24
 
 RUST_MAX_VER="1.94.0"
