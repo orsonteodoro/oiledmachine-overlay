@@ -50,7 +50,7 @@
     "core-js": "^3.35.0",
     "cors": "^2.8.5",
     "crc": "^4.3.2",
-    "diff": "^7.0.0",
+    "diff": "^8.0.3",
     "dompurify": "^3.2.5",
     "eventsource-parser": "^1.1.2",
     "exifr": "^7.1.3",
