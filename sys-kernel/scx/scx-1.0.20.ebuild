@@ -5,7 +5,7 @@ EAPI=8
 
 # U24
 
-# This ebuild uses a patch that was based on AI generated code fix.
+# This ebuild uses a patch that was based on an AI generated code fix.
 
 # For requirements, see https://github.com/sched-ext/scx/tree/v1.0.20?tab=readme-ov-file#build--install
 
