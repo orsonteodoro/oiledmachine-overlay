@@ -4,6 +4,9 @@
 
 EAPI=8
 
+# This ebuild may contain patches that were derived by AI generated code or with
+# the help of an AI assistant.
+
 MY_PN="face_morpher_plus"
 
 DISTUTILS_SINGLE_IMPL=1 # Wrapper
