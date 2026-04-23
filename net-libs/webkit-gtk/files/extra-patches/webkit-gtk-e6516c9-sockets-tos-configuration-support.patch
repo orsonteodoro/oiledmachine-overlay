@@ -1,3 +1,7 @@
+# Applies missing commit with conflict resolution
+
+https://github.com/WebKit/WebKit/commit/e6516c9e365639225144aea62a864e29c2e53456
+
 diff '--color=auto' -urp webkitgtk-2.52.3.orig/Source/WebCore/Modules/mediastream/gstreamer/GStreamerDataChannelHandler.cpp webkitgtk-2.52.3/Source/WebCore/Modules/mediastream/gstreamer/GStreamerDataChannelHandler.cpp
 --- webkitgtk-2.52.3.orig/Source/WebCore/Modules/mediastream/gstreamer/GStreamerDataChannelHandler.cpp	2026-02-27 14:37:23.769724600 -0800
 +++ webkitgtk-2.52.3/Source/WebCore/Modules/mediastream/gstreamer/GStreamerDataChannelHandler.cpp	2026-04-23 12:51:30.041121966 -0700
