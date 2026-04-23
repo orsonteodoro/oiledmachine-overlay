@@ -6,6 +6,8 @@ EAPI=8
 
 # U24
 
+# Contains AI generated synthetic data in metadata.xml
+
 # 0.5.4 -> 0.5.7
 # 0.5.7 -> 0.5.11
 # 0.5.11 -> 0.5.12
