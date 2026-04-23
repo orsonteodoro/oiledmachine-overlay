@@ -6,7 +6,7 @@ EAPI=8
 
 # This fork of nano is based on 5.6.1_p20210415 from the master branch
 
-# Contains AI generated source code
+# Contains AI generated source code and AI generated synthetic data in the source code comments
 
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 
