@@ -5,6 +5,8 @@ EAPI=8
 
 # U24
 
+# This ebuild uses a patch that was based on AI generated code.
+
 # For requirements, see https://github.com/sched-ext/scx/tree/v1.0.20?tab=readme-ov-file#build--install
 
 # AL2026-01-01:  Rust 1.93.0, LLVM 21.1.8, Protobuf 6.33.1-3
