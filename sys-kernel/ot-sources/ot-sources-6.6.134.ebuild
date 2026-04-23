@@ -3,6 +3,9 @@
 
 EAPI=8
 
+# Contains AI generated synthetic data in metadata.xml.
+# Contains patches derived from AI generated code.
+
 EBUILD_REV=""
 CLEAR_LINUX_PATCHES_VER="6.6.12-1400"
 GENPATCHES_VER="139"

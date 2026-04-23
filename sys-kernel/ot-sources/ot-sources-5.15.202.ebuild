@@ -3,6 +3,9 @@
 
 EAPI=8
 
+# Contains AI generated synthetic data in metadata.xml.
+# Contains patches derived from AI generated code.
+
 EBUILD_REV=""
 GENPATCHES_VER="212"
 PATCH_PROJC_VER="5.15-r2"
