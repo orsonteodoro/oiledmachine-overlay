@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# Some patches contains AI generated code.
+
 # This package is a misnomer.  This is the non-python portions of pytorch.
 
 # TODO package:
