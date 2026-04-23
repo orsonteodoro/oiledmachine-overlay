@@ -11,6 +11,8 @@
 # This eclass can be used to easily deploy harden flags for network/server
 # packages.
 
+# This eclass contains AI generated synthetic data.
+
 case ${EAPI} in
 	7|8|9) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
