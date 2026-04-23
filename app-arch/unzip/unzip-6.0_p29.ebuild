@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# Contains patches that were derived from AI generated code under the oiledmachine-overlay patch set.
+
 MY_PV="${PV//.}"
 MY_PV="${MY_PV%_p*}"
 MY_P="${PN}${MY_PV}"
