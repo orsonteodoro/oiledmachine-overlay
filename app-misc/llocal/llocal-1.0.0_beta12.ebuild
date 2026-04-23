@@ -83,7 +83,7 @@ else
 	"
 fi
 SLOT="0"
-IUSE+=" ebuild_revision_17"
+IUSE+=" ebuild_revision_19"
 RDEPEND="
 	app-misc/ollama
 "
@@ -141,6 +141,7 @@ npm_update_lock_install_post() {
 	patch_lockfile() {
 #ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild and @esbuild/* <0.25.12 from package-lock.json"
 #ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild@0.21.5 and arches in package-lock.json"
+ewarn "QA:  Manually remove node_modules/npm/node_modules/picomatch in package-lock.json"
 		# DoS = Denial of Service
 		# DT = Data Tampering
 		# ID = Information Disclosure
@@ -275,6 +276,12 @@ ewarn "QA:  Remove node_modules/vite/node_modules/esbuild and @esbuild/* <0.25.1
 #			sed -i -e "s|\"brace-expansion\": \"^2.0.2\"|\"brace-expansion\": \"^5.0.5\"|g" "package-lock.json" || die			# CVE-2026-33750; DoS; Moderate
 #			sed -i -e "s|\"brace-expansion\": \"^2.0.1\"|\"brace-expansion\": \"^5.0.5\"|g" "package-lock.json" || die			# CVE-2026-33750; DoS; Moderate
 #			sed -i -e "s|\"brace-expansion\": \"^1.1.7\"|\"brace-expansion\": \"^5.0.5\"|g" "package-lock.json" || die			# CVE-2026-33750; DoS; Moderate
+
+			sed -i -e "s|\"uuid\": \"^11.1.0\"|\"uuid\": \"^14.0.0\"|g" "package-lock.json" || die						# GHSA-w5hq-g745-h8pq; VS(DT); Moderate
+			sed -i -e "s|\"uuid\": \"^10.0.0\"|\"uuid\": \"^14.0.0\"|g" "package-lock.json" || die						# GHSA-w5hq-g745-h8pq; VS(DT); Moderate
+			sed -i -e "s|\"uuid\": \"10.0.0\"|\"uuid\": \"^14.0.0\"|g" "package-lock.json" || die						# GHSA-w5hq-g745-h8pq; VS(DT); Moderate
+			sed -i -e "s|\"uuid\": \"^9.0.1\"|\"uuid\": \"^14.0.0\"|g" "package-lock.json" || die						# GHSA-w5hq-g745-h8pq; VS(DT); Moderate
+			sed -i -e "s|\"uuid\": \"^8.3.2\"|\"uuid\": \"^14.0.0\"|g" "package-lock.json" || die						# GHSA-w5hq-g745-h8pq; VS(DT); Moderate
 		}
 		patch_lockfile
 
@@ -284,6 +291,7 @@ ewarn "QA:  Remove node_modules/vite/node_modules/esbuild and @esbuild/* <0.25.1
 			"prismjs@^1.30.0"
 			"minimatch@^9.0.0"
 			"picomatch@^4.0.4"
+			"uuid@^14.0.0"
 		)
 		enpm install "${L[@]}" -P "${NPM_INSTALL_ARGS[@]}"
 
