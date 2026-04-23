@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# This ebuild contains AI synthetic data.
+
 # 6.9.3 - Chromium 130.0.6723.192 (Jan 6, 2025, Week 1)
 # See also /var/tmp/portage/dev-qt/qtwebengine-<VER>/work/qtwebengine-everywhere-src-<VER>/src/3rdparty/chromium/chrome/VERSION
 
