@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# This ebuild contain a patch with AI generated code.
+
 PYTHON_COMPAT=( "python3_"{10..12} ) # Constrained by tensorflow
 
 inherit python-single-r1
@@ -90,7 +92,7 @@ BDEPEND+="
 "
 PATCHES+=(
 	"${FILESDIR}/${PN}-1.0_p9999-production-with-agnostic-sudo.patch"
-	"A${FILESDIR}/${PN}-1.0_p9999-tf2.patch"
+	"${FILESDIR}/${PN}-1.0_p9999-tf2.patch"
 )
 
 unpack_live() {
