@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# This ebuild applies a patch using AI generated code.
+
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY_LIBARCHIVE="CE DOS HO IO MC NPD OOBA OOBR PT RC UAF UB"
 

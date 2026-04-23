@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# This ebuild applies a patch built from AI generated code.
+
 CFLAGS_HARDENED_LANGS="c-lang"
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data untrusted-data" # Add retpoline to password widget
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS HO IO PE"
