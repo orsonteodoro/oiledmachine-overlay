@@ -39,7 +39,7 @@ RESTRICT="mirror test" # Missing sci-visualization/dash[testing]
 SLOT="0"
 IUSE="
 test
-ebuild_revision_6
+ebuild_revision_7
 "
 RDEPEND+="
 	>=dev-python/twine-3.7.1[${PYTHON_USEDEP}]
@@ -75,6 +75,7 @@ npm_unpack_post() {
 }
 
 npm_update_lock_audit_post() {
+	# A pinned version of serialize-javascript is required.
 	localfile_edits() {
 		sed -i -e "s|\"loader-utils\": \"^1.1.0\"|\"loader-utils\": \"^1.4.2\"|g" "package-lock.json" || die
 		sed -i -e "s|\"loader-utils\": \"^1.2.3\"|\"loader-utils\": \"^1.4.2\"|g" "package-lock.json" || die
@@ -106,8 +107,6 @@ npm_update_lock_audit_post() {
 
 		sed -i -e "s|\"cheerio\": \"^0.22.0\"|\"cheerio\": \"^1.0.0\"|g" "package-lock.json" || die
 
-		sed -i -e "s|\"serialize-javascript\": \"^4.0.0\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die
-
 		sed -i -e "s|\"pbkdf2\": \"^3.1.2\"|\"pbkdf2\": \"^3.1.3\"|" "package-lock.json" || die
 		sed -i -e "s|\"http-proxy-middleware\": \"^1.0.3\"|\"http-proxy-middleware\": \"^2.0.8\"|g" "package-lock.json" || die
 		sed -i -e "s|\"undici\": \"^6.19.5\"|\"undici\": \"^6.21.2\"|g" "package-lock.json" || die
@@ -115,6 +114,12 @@ npm_update_lock_audit_post() {
 		sed -i -e "s|\"tmp\": \"^0.0.33\"|\"tmp\": \"^0.2.4\"|g" "package-lock.json" || die
 		sed -i -e "s|\"koa\": \"^2.5.3\"|\"koa\": \"^2.16.2\"|g" "package-lock.json" || die
 		sed -i -e "s|\"koa\": \"^2.16.1\"|\"koa\": \"^2.16.2\"|g" "package-lock.json" || die
+
+		sed -i -e "s|\"flatted\": \"^2.0.0\"|\"flatted\": \"^3.4.2\"|g" "package-lock.json" || die
+		sed -i -e "s|\"flatted\": \"^3.2.9\"|\"flatted\": \"^3.4.2\"|g" "package-lock.json" || die
+
+#		sed -i -e "s|\"serialize-javascript\": \"^4.0.0\"|\"serialize-javascript\": \"^7.0.5\"|g" "package-lock.json" || die
+#		sed -i -e "s|\"serialize-javascript\": \"^6.0.2\"|\"serialize-javascript\": \"^7.0.5\"|g" "package-lock.json" || die
 	}
 	localfile_edits
 
@@ -125,49 +130,52 @@ npm_update_lock_audit_post() {
 
 	local pkgs=(
 		# webpack
-		"loader-utils@^1.4.2"			# CVE-2022-37601			# DoS, DT, ID
+		"loader-utils@^1.4.2"				# CVE-2022-37601; DoS, DT, ID; Critical
 
 		# watchpack
-		"braces@^3.0.3"				# CVE-2024-4068				# DoS
+		"braces@^3.0.3"					# CVE-2024-4068; DoS; High
 
-		"tough-cookie@^4.1.3"			# CVE-2023-26136			# DT, ID
+		"tough-cookie@^4.1.3"				# CVE-2023-26136; DT, ID; Moderate
 
 		# npm
-#		"ansi-regex@^4.1.1"			# CVE-2021-3807				# DoS
-#		"got@^11.8.5"				# CVE-2022-33987			# DT
-#		"ip@^1.1.9"				# CVE-2023-42282			# DoS, DT, ID # For npm
+#		"ansi-regex@^4.1.1"				# CVE-2021-3807; DoS; High
+#		"got@^11.8.5"					# CVE-2022-33987; DT; Moderate
+#		"ip@^1.1.9"					# CVE-2023-42282; DoS, DT, ID; High # For npm
 
 		# css loader
-		"postcss@^8.4.31"			# CVE-2023-44270			# DT
+		"postcss@^8.4.31"				# CVE-2023-44270; DT; Moderate
 
 		# cheerio, parent webpack
-		# lodash.pick				# CVE-2020-8203				# DT, ID
-		"cheerio@^1.0.0"			# Bumped version to prune lodash.pick
+		# lodash.pick					# CVE-2020-8203; DT, ID; High
+		"cheerio@^1.0.0"				# Bumped version to prune lodash.pick
 
 		# Bump parent packages to remove vulnerable dependencies while node 14.x compatible
 #		"npm@^8.12.2"
 
-		"webpack@^4.47.0"			# 4.x series
+		"webpack@^4.47.0"				# 4.x series
 		"webpack-cli@^4.10.0"
 		"webpack-serve@^4.0.0"
 
-		"serialize-javascript@^6.0.2"		# CVE-2024-11831			# DT, ID
+#		"serialize-javascript@^7.0.5"			# CVE-2024-11831; DT, ID; Moderate
+								# CVE-2026-34043; ZC, DoS; Moderate
 
-		"pbkdf2@^3.1.3"				# CVE-2025-6547				# ZC, VS(DT), SS(DoS, DT, ID)
-							# CVE-2025-6545				# ZC, VS(DT, ID), SS(DoS, DT, ID)
-		"http-proxy-middleware@^2.0.8"		# CVE-2025-32996			# DoS
-		"koa@^2.16.1"				# CVE-2025-32379			# DoS, DT, ID
-		"undici@^6.21.2"			# CVE-2025-47279			# DoS
+		"pbkdf2@^3.1.3"					# CVE-2025-6547; ZC, VS(DT), SS(DoS, DT, ID)
+								# CVE-2025-6545; ZC, VS(DT, ID), SS(DoS, DT, ID); Critical
+		"http-proxy-middleware@^2.0.8"			# CVE-2025-32996; DoS; Moderate
+		"koa@^2.16.1"					# CVE-2025-32379; DoS, DT, ID; Moderate
+		"undici@^6.21.2"				# CVE-2025-47279; DoS; Low
 
-		"tmp@^0.2.4"				# CVE-2025-54798			# DT
-		"koa@^2.16.2"				# CVE-2025-8129				# DT
+		"tmp@^0.2.4"					# CVE-2025-54798; DT; Low
+		"koa@^2.16.2"					# CVE-2025-8129; DT
+		"flatted@^3.4.2"				# CVE-2026-33228; ZC, VS(DoS, DT, ID); High
+		"serialize-javascript@^7.0.3"			# GHSA-5c6j-r48x-rmvq; VS(DoS, DT, ID); High
 	)
 	enpm install "${pkgs[@]}" -D --prefer-offline
 
 	local pkgs=(
 		"npm"
-	# request EOL so remove it			# CVE-2023-28155			# DT, ID
-		"request"				# CVE-2023-28155			# DT, ID
+	# request EOL so remove it				# CVE-2023-28155; DT, ID; Moderate
+		"request"					# CVE-2023-28155; DT, ID; Moderate
 		"request-promise"
 	)
 	enpm uninstall "${pkgs[@]}" -D --prefer-offline
