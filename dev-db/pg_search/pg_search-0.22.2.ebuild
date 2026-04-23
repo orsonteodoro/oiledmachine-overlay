@@ -6,6 +6,8 @@ EAPI=8
 
 # D12, D13, RH9, RH10, U22, U24
 
+# The patches were based on AI generated code samples.
+
 POSTGRES_COMPAT=( {15..19} )
 POSTGRES_USEDEP="server"
 RUST_MAX_VER="1.90.0" # Inclusive
