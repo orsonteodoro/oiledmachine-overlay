@@ -4,6 +4,9 @@
 
 EAPI=8
 
+# This ebuild is partly created with AI text generation.
+# A wrapper script and some patches are based on AI generated code.
+
 # TODO:  Test e-mail login.
 
 # Version bump history for configuration update reviews:
