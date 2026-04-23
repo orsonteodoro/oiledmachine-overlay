@@ -6,6 +6,8 @@ EAPI=8
 
 # U22
 
+# Contains patches that were derived from AI generated code.
+
 CXX_STANDARD=17
 INSTALL_PREFIX="/usr/lib/bun-zig/${PV%%.*}"
 

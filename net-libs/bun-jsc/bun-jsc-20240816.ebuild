@@ -6,6 +6,8 @@ EAPI=8
 
 # U20
 
+# Contains code that were generated or derived by AI generated code.
+
 CFLAGS_HARDENED_USE_CASES="jit network untrusted-data"
 
 CXX_STANDARD=23
