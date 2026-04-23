@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# The wrapper script was made mostly by AI generated code.
+
 NODE_SLOT="22"
 NPM_TARBALL="lobehub-market-cli-${PV}.tgz"
 
