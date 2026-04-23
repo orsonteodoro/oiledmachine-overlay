@@ -4,7 +4,7 @@
 
 EAPI=8
 
-# This ebuild contains AI generated code and AI generated artifact (e.g. RiceConfig.cmake).
+# This ebuild contains AI generated code and AI generated artifact (e.g. RiceConfig.cmake) that contains AI generated code.
 
 # U24
 
