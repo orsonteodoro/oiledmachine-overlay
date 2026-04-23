@@ -7,8 +7,13 @@ EAPI=8
 # Missing:
 # sci-visualization/dash[testing]
 
+# To update lockfile
+# PATH=$(realpath "../../scripts")":${PATH}"
+# NPM_UPDATER_VERSIONS="0.0.12" npm_updater_update_locks.sh
+
 DISTUTILS_USE_PEP517="setuptools"
 NODE_SLOT="18" # Upstream uses node 12.  14 works
+NPM_AUDIT_FATAL=0
 NPM_SLOT=2 # Limited by React 16.14.0.
 NPM_TARBALL="${P}.tar.gz"
 PYTHON_COMPAT=( "python3_"{10..12} ) # Lists up to 3.12
@@ -94,20 +99,20 @@ npm_update_lock_audit_post() {
 #		sed -i -e "s|\"got\": \"^6.7.1\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die
 
 		# Use v8 which is backwards compatible with v1 lockfile
-		sed -i -e "s|\"npm\": \"^6.1.0\"|\"npm\": \"8.12.2\"|g" "package-lock.json" || die
+		sed -i -e "s|\"npm\": \"^6.1.0\"|\"npm\": \"^8.12.2\"|g" "package-lock.json" || die
 
-#		sed -i -e "s|\"ip\": \"1.1.5\"|\"ip\": \"1.1.9\"|g" "package-lock.json" || die
-#		sed -i -e "s|\"ip\": \"^1.1.5\"|\"ip\": \"1.1.9\"|g" "package-lock.json" || die
+#		sed -i -e "s|\"ip\": \"1.1.5\"|\"ip\": \"^1.1.9\"|g" "package-lock.json" || die
+#		sed -i -e "s|\"ip\": \"^1.1.5\"|\"ip\": \"^1.1.9\"|g" "package-lock.json" || die
 
-		sed -i -e "s|\"cheerio\": \"^0.22.0\"|\"cheerio\": \"1.0.0\"|g" "package-lock.json" || die
+		sed -i -e "s|\"cheerio\": \"^0.22.0\"|\"cheerio\": \"^1.0.0\"|g" "package-lock.json" || die
 
 		sed -i -e "s|\"serialize-javascript\": \"^4.0.0\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die
 
-		sed -i -e "s|\"pbkdf2\": \"^3.1.2\"|\"pbkdf2\": \"3.1.3\"|" "package-lock.json" || die
-		sed -i -e "s|\"http-proxy-middleware\": \"^1.0.3\"|\"http-proxy-middleware\": \"2.0.8\"|g" "package-lock.json" || die
-		sed -i -e "s|\"undici\": \"^6.19.5\"|\"undici\": \"6.21.2\"|g" "package-lock.json" || die
+		sed -i -e "s|\"pbkdf2\": \"^3.1.2\"|\"pbkdf2\": \"^3.1.3\"|" "package-lock.json" || die
+		sed -i -e "s|\"http-proxy-middleware\": \"^1.0.3\"|\"http-proxy-middleware\": \"^2.0.8\"|g" "package-lock.json" || die
+		sed -i -e "s|\"undici\": \"^6.19.5\"|\"undici\": \"^6.21.2\"|g" "package-lock.json" || die
 
-		sed -i -e "s|\"tmp\": \"^0.0.33\"|\"tmp\": \"0.2.4\"|g" "package-lock.json" || die
+		sed -i -e "s|\"tmp\": \"^0.0.33\"|\"tmp\": \"^0.2.4\"|g" "package-lock.json" || die
 		sed -i -e "s|\"koa\": \"^2.5.3\"|\"koa\": \"^2.16.2\"|g" "package-lock.json" || die
 		sed -i -e "s|\"koa\": \"^2.16.1\"|\"koa\": \"^2.16.2\"|g" "package-lock.json" || die
 	}
@@ -137,24 +142,24 @@ npm_update_lock_audit_post() {
 
 		# cheerio, parent webpack
 		# lodash.pick				# CVE-2020-8203				# DT, ID
-		"cheerio@1.0.0"				# Bumped version to prune lodash.pick
+		"cheerio@^1.0.0"			# Bumped version to prune lodash.pick
 
 		# Bump parent packages to remove vulnerable dependencies while node 14.x compatible
-#		"npm@8.12.2"
+#		"npm@^8.12.2"
 
 		"webpack@^4.47.0"			# 4.x series
 		"webpack-cli@^4.10.0"
 		"webpack-serve@^4.0.0"
 
-		"serialize-javascript@6.0.2"		# CVE-2024-11831			# DT, ID
+		"serialize-javascript@^6.0.2"		# CVE-2024-11831			# DT, ID
 
-		"pbkdf2@3.1.3"				# CVE-2025-6547				# ZC, VS(DT), SS(DoS, DT, ID)
+		"pbkdf2@^3.1.3"				# CVE-2025-6547				# ZC, VS(DT), SS(DoS, DT, ID)
 							# CVE-2025-6545				# ZC, VS(DT, ID), SS(DoS, DT, ID)
-		"http-proxy-middleware@2.0.8"		# CVE-2025-32996			# DoS
-		"koa@2.16.1"				# CVE-2025-32379			# DoS, DT, ID
-		"undici@6.21.2"				# CVE-2025-47279			# DoS
+		"http-proxy-middleware@^2.0.8"		# CVE-2025-32996			# DoS
+		"koa@^2.16.1"				# CVE-2025-32379			# DoS, DT, ID
+		"undici@^6.21.2"			# CVE-2025-47279			# DoS
 
-		"tmp@0.2.4"				# CVE-2025-54798			# DT
+		"tmp@^0.2.4"				# CVE-2025-54798			# DT
 		"koa@^2.16.2"				# CVE-2025-8129				# DT
 	)
 	enpm install "${pkgs[@]}" -D --prefer-offline
@@ -177,7 +182,7 @@ npm_update_lock_audit_post() {
 	localfile_edits
 
 	# Same vulnerability count before and after
-	enpm audit
+	npm audit || npm_die
 }
 
 src_unpack() {
