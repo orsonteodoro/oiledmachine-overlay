@@ -275,7 +275,7 @@ ewarn "QA:  Manually remove ajv@6.12.6 from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove react-router@6.10.0 from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove minimatch@3.1.2 from ${S}/sticker-creator/pnpm-lock.yaml"	# Skip
 #ewarn "QA:  Manually remove minimatch@5.1.6 from ${S}/sticker-creator/pnpm-lock.yaml"	# Skip
-ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild and all @esbuild/<arch>@0.18.20 associated packages from ${S}/sticker-creator/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild and all @esbuild/<arch>@0.18.20 associated packages from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove esbuild@0.18.20 and arch implementations from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @esbuild/<arch>@0.21.5 and associated packages from ${S}/sticker-creator/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove @esbuild/<arch>@0.24.2 or earlier and associated packages from ${S}/sticker-creator/pnpm-lock.yaml"
@@ -316,7 +316,7 @@ ewarn "QA:  Manually remove jws@3.2.2 in ${S}/danger/pnpm-lock.yaml"
 
 	# The brace-expansion version changes breaks build.
 	# The pinned version of fabric is required.
-	# The pinned version of minimatch@10.2.1 is required.
+	# The pinned version of minimatch is required.
 		patch_edits_pnpm() {
 			pushd "sticker-creator" >/dev/null 2>&1 || die
 				sed -i -e "s|'@babel/runtime': 7.26.7|'@babel/runtime': 7.26.10|g" "pnpm-lock.yaml" || die									# CVE-2025-27789, DoS, Moderate
@@ -360,12 +360,12 @@ ewarn "QA:  Manually remove jws@3.2.2 in ${S}/danger/pnpm-lock.yaml"
 				sed -i -e "s|lodash: 4.17.21|lodash: 4.18.0|g" "pnpm-lock.yaml" || die												# CVE-2025-13465; ZC, VS(DoS, DT), SS(DoS, DT, ID); Moderate
 				sed -i -e "s|lodash: 4.17.23|lodash: 4.18.0|g" "pnpm-lock.yaml" || die												# CVE-2026-4800; ZC, DoS, DT, ID; High
 																								# CVE-2026-2950; ZC, DT, ID; Moderate
-#				sed -i -e "s|minimatch: 3.1.2|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die											# CVE-2026-26996; ZC, VS(DoS), High
+				sed -i -e "s|minimatch: 3.1.2|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die											# CVE-2026-26996; ZC, VS(DoS), High
+				sed -i -e "s|minimatch: 5.1.6|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die											# CVE-2026-26996; ZC, VS(DoS), High
 																								# CVE-2026-27903; ZC, DoS, High
 																								# CVE-2026-27904; ZC, DoS, High
 				sed -i -e "s|js-yaml: 4.1.0|js-yaml: 4.1.1|g" "pnpm-lock.yaml" || die												# CVE-2025-64718; DT; Moderate
 				sed -i -e "s|ajv: 6.12.6|ajv: 8.18.0|g" "pnpm-lock.yaml" || die													# CVE-2025-69873; ZC, VS(DoS); Moderate
-#				sed -i -e "s|minimatch: 5.1.6|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die											# CVE-2026-26996; ZC, VS(DoS), High
 				sed -i -e "s|'@remix-run/router': 1.5.0|'@remix-run/router': 1.23.2|g" "pnpm-lock.yaml" || die									# CVE-2026-22029; DT, ID; High
 				sed -i -e "s|'@remix-run/router': 1.23.1|'@remix-run/router': 1.23.2|g" "pnpm-lock.yaml" || die									# CVE-2026-22029; DT, ID; High
 				sed -i -e "s|markdown-it: 14.1.0|markdown-it: 14.1.1|g" "pnpm-lock.yaml" || die											# CVE-2026-2327; ZC, VS(DoS), Moderate
@@ -375,6 +375,7 @@ ewarn "QA:  Manually remove jws@3.2.2 in ${S}/danger/pnpm-lock.yaml"
 				sed -i -e "s|flatted: 3.3.2|flatted: 3.4.2|g" "pnpm-lock.yaml" || die												# CVE-2026-33228; ZC, VS(DoS, DT, ID); High
 				sed -i -e "s|picomatch: 2.3.1|picomatch: 4.0.4|g" "pnpm-lock.yaml" || die											# CVE-2026-33671; DoS; High
 				sed -i -e "s|picomatch: 4.0.3|picomatch: 4.0.4|g" "pnpm-lock.yaml" || die											# CVE-2026-33672; ZC, DT; Moderate
+#				sed -i -e "s|brace-expansion: 1.1.11|brace-expansion: 5.0.4|g" "pnpm-lock.yaml" || die										# CVE-2025-5889; DoS; Low
 			popd >/dev/null 2>&1 || die
 			pushd "danger" >/dev/null 2>&1 || die
 				sed -i -e "s|'@octokit/plugin-paginate-rest': 2.21.3|'@octokit/plugin-paginate-rest': 9.2.2|g" "pnpm-lock.yaml" || die						# CVE-2025-25288, DoS, Moderate
@@ -416,10 +417,10 @@ ewarn "QA:  Manually remove jws@3.2.2 in ${S}/danger/pnpm-lock.yaml"
 																								# CVE-2025-58754, ZC, DoS, High
 			sed -i -e "s|axios: 1.13.5(debug@4.3.7)|axios: 1.15.0|g" "pnpm-lock.yaml" || die											# CVE-2025-62718; ZC, VS(DT, ID), SS(DT, ID); Moderate
 																								# CVE-2026-40175; ZC, DT, ID; Moderate
-#			sed -i -e "s|brace-expansion: 1.1.11|brace-expansion: 1.1.12|g" "pnpm-lock.yaml" || die											# CVE-2025-5889; DoS; Low
-#			sed -i -e "s|brace-expansion: 2.0.1|brace-expansion: 2.0.2|g" "pnpm-lock.yaml" || die											# CVE-2025-5889; DoS; Low
-#			sed -i -e "s|brace-expansion: 1.1.11|brace-expansion: 1.1.12|g" "sticker-creator/pnpm-lock.yaml" || die									# CVE-2025-5889; DoS; Low
-#			sed -i -e "s|brace-expansion: 2.0.1|brace-expansion: 2.0.2|g" "sticker-creator/pnpm-lock.yaml" || die									# CVE-2025-5889; DoS; Low
+#			sed -i -e "s|brace-expansion: 1.1.11|brace-expansion: 5.0.4|g" "pnpm-lock.yaml" || die											# CVE-2025-5889; DoS; Low
+#			sed -i -e "s|brace-expansion: 2.0.1|brace-expansion: 5.0.4|g" "pnpm-lock.yaml" || die											# CVE-2025-5889; DoS; Low
+#			sed -i -e "s|brace-expansion: 1.1.11|brace-expansion: 5.0.4|g" "sticker-creator/pnpm-lock.yaml" || die									# CVE-2025-5889; DoS; Low
+#			sed -i -e "s|brace-expansion: 2.0.1|brace-expansion: 5.0.4|g" "sticker-creator/pnpm-lock.yaml" || die									# CVE-2025-5889; DoS; Low
 			sed -i -e "s|cross-spawn: 5.1.0|cross-spawn: 6.0.6|g" "pnpm-lock.yaml" || die												# CVE-2024-21538, DoS, High
 			sed -i -e "s|danger: ^10.5.3|danger: 13.0.7|g" "pnpm-lock.yaml" || die													# CVE-2025-25975; DoS, DT, ID; High
 			sed -i -e "s|danger: 12.3.4|danger: 13.0.7|g" "pnpm-lock.yaml" || die													# CVE-2025-25975; DoS, DT, ID; High
@@ -474,7 +475,6 @@ ewarn "QA:  Manually remove jws@3.2.2 in ${S}/danger/pnpm-lock.yaml"
 																								# CVE-2026-2391; DoS, Low
 
 			sed -i -e "s|qs: 6.14.1|qs: 6.14.2|g" "pnpm-lock.yaml" || die														# CVE-2026-2391; DoS, Low
-#			sed -i -e "s|minimatch: 3.1.2|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
 #			sed -i -e "s|\"fabric\": \"4.6.0\"|\"fabric\": \"7.2.0\"|g" "package.json" || die											# CVE-2026-27013; DoS, DT, ID, High
 #			sed -i -e "s|\"@types/fabric\": \"4.5.3\"|\"@types/fabric\": \"5.3.11\"|g" "package.json" || die									# Bump for fabric
 			sed -i -e "s|js-yaml: 4.1.0|js-yaml: 4.1.1|g" "pnpm-lock.yaml" || die													# CVE-2025-64718; DT; Moderate
@@ -498,21 +498,18 @@ ewarn "QA:  Manually remove jws@3.2.2 in ${S}/danger/pnpm-lock.yaml"
 																								# CVE-2025-68157; DT, ID, Low
 			sed -i -e "s|\"webpack\": \"5.96.1\"|\"webpack\": \"5.104.1\"|g" "package.json" || die											# CVE-2025-68458; DT, ID, Low
 																								# CVE-2025-68157; DT, ID, Low
-#			sed -i -e "s|minimatch: 3.1.3|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
-#			sed -i -e "s|minimatch: 5.1.6|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
-#			sed -i -e "s|minimatch: 9.0.5|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
-#			sed -i -e "s|minimatch: 9.0.3|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
 			sed -i -e "s|jws: 3.2.2|jws: 3.2.3|g" "pnpm-lock.yaml" || die														# CVE-2025-65945; DT; High
 			sed -i -e "s|markdown-it: 14.1.0|markdown-it: 14.1.1|g" "pnpm-lock.yaml" || die												# CVE-2026-2327; VS(DoS); Moderate
 			sed -i -e "s|playwright: 1.54.2|playwright: 1.55.1|g" "pnpm-lock.yaml" || die												# CVE-2025-59288; VS(DoS, DT, ID), SS(DoS, DT, ID), High
 			sed -i -e "s|storybook: 8.4.4(bufferutil@4.0.9)(prettier@3.7.4)(utf-8-validate@5.0.10)|storybook: 8.6.17|g" "pnpm-lock.yaml" || die					# CVE-2025-68429, ZC, DoS, DT, ID, High
-#			sed -i -e "s|minimatch: 3.1.5|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
-#			sed -i -e "s|minimatch: 9.0.8|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
-#			sed -i -e "s|minimatch: 5.1.9|minimatch: 10.2.1|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
-# Remove basic-ftp?
-#			sed -i -e "s|basic-ftp: 5.0.5|basic-ftp: 5.2.2|g" "pnpm-lock.yaml" || die												# CVE-2026-27699; ZC, DoS, DT
-																								# CVE-2026-39983; ZC, DoS, DT, ID; High
-																								# GHSA-6v7q-wjvx-w8wg; ZC, DT, DoS; High
+			sed -i -e "s|minimatch: 3.1.2|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
+			sed -i -e "s|minimatch: 3.1.3|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
+			sed -i -e "s|minimatch: 3.1.5|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
+			sed -i -e "s|minimatch: 5.1.6|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
+			sed -i -e "s|minimatch: 5.1.9|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
+			sed -i -e "s|minimatch: 9.0.3|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
+			sed -i -e "s|minimatch: 9.0.5|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
+			sed -i -e "s|minimatch: 9.0.8|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
 			sed -i -e "s|storybook: 8.6.15(bufferutil@4.0.9)(prettier@3.7.4)(utf-8-validate@5.0.10)|storybook: 8.6.17|g" "pnpm-lock.yaml" || die					# CVE-2025-68429, ZC, DoS, DT, ID, High
 																								# CVE-2026-27148; DoS, DT, ID; High
 			sed -i -e "s|immutable: 5.0.3|immutable: 5.1.5|g" "pnpm-lock.yaml" || die												# CVE-2026-29063; ZC, VS(ID); High
@@ -531,6 +528,10 @@ ewarn "QA:  Manually remove jws@3.2.2 in ${S}/danger/pnpm-lock.yaml"
 			sed -i -e "s|serialize-javascript: 7.0.3|serialize-javascript: 7.0.5|g" "pnpm-lock.yaml" || die										# CVE-2026-34043; ZC, DoS; Moderate
 			sed -i -e "s|yaml: 1.10.2|yaml: 1.10.3|g" "pnpm-lock.yaml" || die													# CVE-2026-33532; DoS; Moderate
 			sed -i -e "s|'@xmldom/xmldom': 0.8.10|'@xmldom/xmldom': 0.8.12|g" "pnpm-lock.yaml" || die										# CVE-2026-34601; ZC, DT; High
+
+			sed -i -e "s|uuid: 11.0.2|uuid: 14.0.0|g" "pnpm-lock.yaml" || die													# GHSA-w5hq-g745-h8pq; ZC, VS(DT); Moderate
+			sed -i -e "s|uuid: 8.3.2|uuid: 14.0.0|g" "pnpm-lock.yaml" || die													# GHSA-w5hq-g745-h8pq; ZC, VS(DT); Moderate
+			sed -i -e "s|uuid: 9.0.1|uuid: 14.0.0|g" "pnpm-lock.yaml" || die													# GHSA-w5hq-g745-h8pq; ZC, VS(DT); Moderate
 		}
 		patch_edits_pnpm
 
@@ -539,9 +540,9 @@ ewarn "QA:  Manually remove jws@3.2.2 in ${S}/danger/pnpm-lock.yaml"
 			deps=(
 				"@babel/runtime@7.26.10"
 				"@babel/helpers@7.26.10"
-#				"brace-expansion@2.0.2"
+#				"brace-expansion@5.0.4"
 				"tmp@0.2.4"
-#				"minimatch@10.2.1"
+				"minimatch@10.2.4"
 				"js-yaml@4.1.1"
 				"ajv@8.18.0"
 				"react-router@6.30.2"
@@ -552,7 +553,7 @@ ewarn "QA:  Manually remove jws@3.2.2 in ${S}/danger/pnpm-lock.yaml"
 			)
 			epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
 			deps=(
-#				"brace-expansion@1.1.12"
+#				"brace-expansion@5.0.4"
 				"cross-spawn@6.0.6"
 				"esbuild@0.25.9"
 				"happy-dom@20.8.9"
@@ -594,7 +595,7 @@ ewarn "QA:  Manually remove jws@3.2.2 in ${S}/danger/pnpm-lock.yaml"
 			"lodash@4.18.0"
 			"tar@7.5.11"
 			"qs@6.14.2"
-#			"minimatch@10.2.1"
+			"minimatch@10.2.4"
 #			"fabric@7.2.0"
 #			"@types/fabric@5.3.11"
 			"js-yaml@4.1.1"
@@ -608,7 +609,7 @@ ewarn "QA:  Manually remove jws@3.2.2 in ${S}/danger/pnpm-lock.yaml"
 			"jws@3.2.2"
 			"playwright@1.55.1"
 			"storybook@8.6.17"
-#			"basic-ftp@5.2.2"
+			"uuid@14.0.0"
 		)
 		epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
 		deps=(
@@ -617,8 +618,7 @@ ewarn "QA:  Manually remove jws@3.2.2 in ${S}/danger/pnpm-lock.yaml"
 			"@octokit/request@8.4.1"
 			"@octokit/request-error@5.1.1"
 			"@octokit/rest@20.1.2"
-#			"brace-expansion@2.0.2"
-#			"brace-expansion@1.1.12"
+#			"brace-expansion@5.0.4"
 			"patch-package@8.0.0"
 			"webpack-dev-server@5.2.1"
 			"http-proxy-middleware@2.0.9"		# This must go after webpack-dev-server.
@@ -786,6 +786,7 @@ pkg_postinst() {
 	elog "For using the tray icon on compatible desktop environments, start Signal with"
 	elog " '--start-in-tray' or '--use-tray-icon'."
 }
+# OILEDMACHINE-OVERLAY-TEST:  passed (8.7.0, 20250422, Electron 41.2.2) with updated lockfile to reduce the attack surface
 # OILEDMACHINE-OVERLAY-TEST:  passed (8.7.0, 20250421, Electron 41.2.2)
 # OILEDMACHINE-OVERLAY-TEST:  passed (8.7.0, 20250419, Electron 41.2.1)
 # OILEDMACHINE-OVERLAY-TEST:  passed (8.4.1, 20260331, Electorn 41.1.0)
