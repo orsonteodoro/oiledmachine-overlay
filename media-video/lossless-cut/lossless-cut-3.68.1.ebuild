@@ -186,13 +186,13 @@ einfo "DEBUG:  Removing node-gyp (1)"
 	eyarn add '@img/colour@^1.0.0'
 
 ewarn "Replacing vulnerable packages"
-	eyarn add "electron-builder@^26.8.1" -D						# Bump to avoid build time error with tar update
+	eyarn add "electron-builder@^26.8.1" -D										# Bump to avoid build time error with tar update
 	sed -i -e "s|tar: \"npm:^6.0.5\"|tar: \"npm:^7.5.8\"|g" "yarn.lock" || die
 	sed -i -e "s|tar: \"npm:^6.1.12\"|tar: \"npm:^7.5.8\"|g" "yarn.lock" || die
 	sed -i -e "s|tar: \"npm:^7.4.3\"|tar: \"npm:^7.5.8\"|g" "yarn.lock" || die
-	eyarn add 'tar@^7.5.8'								# CVE-2026-23950; DoS, DT, ID; High
-											# CVE-2026-24842; DT, ID; High
-											# CVE-2026-26960; DT, ID; High
+	eyarn add 'tar@^7.5.8'												# CVE-2026-23950; DoS, DT, ID; High
+															# CVE-2026-24842; DT, ID; High
+															# CVE-2026-26960; DT, ID; High
 }
 
 yarn_update_lock_install_post() {
@@ -218,28 +218,30 @@ ewarn "QA:  Manually modify sharp: \"npm:^0.30.4\" to sharp: \"npm:^0.34.3\" in 
 		eyarn add "@types/node@20.19.4" -D
 		eyarn add "@types/node@18.19.21" -D
 
-		eyarn add "electron@${ELECTRON_APP_ELECTRON_PV}" -D						# Enable for offline cache speed up
+		eyarn add "electron@${ELECTRON_APP_ELECTRON_PV}" -D							# Enable for offline cache speed up
 
 		NODE_GYP_INSTALL_ARGS=( "-D" )
 		node-sharp_yarn_lockfile_add_sharp
 
-		sed -i -e "s|node-fetch: \"npm:^1.0.1\"|node-fetch: \"npm:^2.6.7\"|g" "yarn.lock" || die	# CVE-2022-0235, GHSA-r683-j2x4-v87g; DoS, DT, ID; High
+		sed -i -e "s|node-fetch: \"npm:^1.0.1\"|node-fetch: \"npm:^2.6.7\"|g" "yarn.lock" || die		# CVE-2022-0235, GHSA-r683-j2x4-v87g; DoS, DT, ID; High
 		eyarn add "node-fetch@2.6.7" -D
 
-		sed -i -e "s|esbuild: \"npm:^0.21.5\"|esbuild: \"npm:^0.25.0\"|g" "yarn.lock" || die		# GHSA-67mh-4wv8-2f99; ID
-		sed -i -e "s|esbuild: \"npm:^0.24.0\"|esbuild: \"npm:^0.25.0\"|g" "yarn.lock" || die		# GHSA-67mh-4wv8-2f99; ID
-		sed -i -e "s|esbuild: \"npm:~0.23.0\"|esbuild: \"npm:^0.25.0\"|g" "yarn.lock" || die		# GHSA-67mh-4wv8-2f99; ID
-		sed -i -e "s|esbuild: \"npm:^0.21.3\"|esbuild: \"npm:^0.25.0\"|g" "yarn.lock" || die		# GHSA-67mh-4wv8-2f99; ID
-		eyarn add "esbuild@0.25.0" -D
+		sed -i -e "s|esbuild: \"npm:^0.21.5\"|esbuild: \"npm:^0.27.7\"|g" "yarn.lock" || die			# GHSA-67mh-4wv8-2f99; ID; Moderate
+		sed -i -e "s|esbuild: \"npm:^0.24.0\"|esbuild: \"npm:^0.27.7\"|g" "yarn.lock" || die			# GHSA-67mh-4wv8-2f99; ID; Moderate
+		sed -i -e "s|esbuild: \"npm:~0.23.0\"|esbuild: \"npm:^0.27.7\"|g" "yarn.lock" || die			# GHSA-67mh-4wv8-2f99; ID; Moderate
+		sed -i -e "s|esbuild: \"npm:^0.21.3\"|esbuild: \"npm:^0.27.7\"|g" "yarn.lock" || die			# GHSA-67mh-4wv8-2f99; ID; Moderate
+		sed -i -e "s|esbuild: \"npm:0.25.0\"|esbuild: \"npm:^0.27.7\"|g" "yarn.lock" || die			# GHSA-67mh-4wv8-2f99; ID; Moderate
+		sed -i -e "s|esbuild: \"npm:^0.25.11\"|esbuild: \"npm:^0.27.7\"|g" "yarn.lock" || die			# GHSA-67mh-4wv8-2f99; ID; Moderate
+		eyarn add "esbuild@^0.27.7" -D
 
-		eyarn add "sweetalert2@11.4.8" -D								# GHSA-mrr8-v49w-3333; Low
+		eyarn add "sweetalert2@^11.4.8" -D									# GHSA-mrr8-v49w-3333; Low
 
 		# Breaks during runtime
-#		sed -i -e "s|\"@octokit/core\": \"5\"|\"@octokit/core\": \"6\"|g" "package.json" || die
-#		eyarn add "@octokit/core@6"									# CVE-2025-25290, CVE-2025-25289, CVE-2025-25285; DoS
+#		sed -i -e "s|\"@octokit/core\": \"5\"|\"@octokit/core\": \"^6\"|g" "package.json" || die
+#		eyarn add "@octokit/core@^6"										# CVE-2025-25290, CVE-2025-25289, CVE-2025-25285; DoS
 
-		sed -i -e "s|tmp: \"npm:^0.2.0\"|tmp: \"npm:0.2.4\"|g" "yarn.lock" || die			# CVE-2025-54798; DT
-		eyarn add "tmp@0.2.4" -D
+		sed -i -e "s|tmp: \"npm:^0.2.0\"|tmp: \"npm:^0.2.4\"|g" "yarn.lock" || die				# CVE-2025-54798; DT; Low
+		eyarn add "tmp@^0.2.4" -D
 
 		if [[ "${ICON_TYPE}" == "png" ]] ; then
 			#eyarn add "icon-gen@3.0.1" -D # Must go before node-sharp_yarn_rebuild_sharp
@@ -251,6 +253,12 @@ ewarn "QA:  Manually modify sharp: \"npm:^0.30.4\" to sharp: \"npm:^0.34.3\" in 
 
 einfo "Adding file-type patch"
 		sed -i -e "s|\"file-type\": \"19.4.1\"|\"file-type\": \"patch:file-type@npm%3A19.4.1#~/.yarn/patches/file-type-npm-19.4.1-d18086444c.patch\"|g" "package.json" || die
+
+		sed -i -e "s|undici: \"npm:^5.25.4\"|undici: \"npm:^6.25.0\"|g" "yarn.lock" || die			# CVE-2026-1525; ZC, DoS, DT; Moderate
+		sed -i -e "s|undici: \"npm:^5.28.5\"|undici: \"npm:^6.25.0\"|g" "yarn.lock" || die			# CVE-2026-1525; ZC, DoS, DT; Moderate
+		sed -i -e "s|undici: \"npm:^6.23.0\"|undici: \"npm:^6.25.0\"|g" "yarn.lock" || die			# CVE-2026-1525; ZC, DoS, DT; Moderate
+		sed -i -e "s|undici: \"npm:^6.25.0\"|undici: \"npm:^6.25.0\"|g" "yarn.lock" || die			# CVE-2026-1525; ZC, DoS, DT; Moderate
+		eyarn add "undici@^6.25.0"
 	fi
 }
 
