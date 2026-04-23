@@ -6,6 +6,8 @@ EAPI=8
 
 # U22
 
+# Contains AI generated synthetic data in metadata.xml
+
 # We use partial offline to avoid "argument list too long" for go modules.
 # We don't use go-module but just sandbox changes.
 
