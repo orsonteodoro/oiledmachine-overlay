@@ -4,6 +4,9 @@
 
 EAPI=8
 
+# This ebuild and metadata.xml contains some AI generated code and synthetic data.
+# It contains patches (in extra folder) that were derived from AI generated code.
+
 # TODO:  test/verify and require system-clang for cromite and ungoogled-chromium builds.
 
 # D11, U22, U24
