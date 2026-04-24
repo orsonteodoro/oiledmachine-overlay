@@ -12,7 +12,7 @@ SEARCHENGINES_FN="surf-git-20170323-webkit2-searchengines.diff"
 inherit flag-o-matic git-r3 multilib-minimal python-single-r1 toolchain-funcs
 
 EGIT_BRANCH="surf-webkit2"
-EGIT_COMMIT="9ef79bf7106496c736ba613c51d2fd5af9d873a8" # 2023-03-24
+EGIT_COMMIT="48517e586cdc98bc1af7115674b554cc70c8bc2e"
 EGIT_REPO_URI="https://git.suckless.org/surf"
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86" # Same as webkit-gtk
 SRC_URI="
