@@ -179,7 +179,7 @@ DEPEND="
 	)
 "
 
-DOCS=( "NEWS" "README.md" "RELEASE" )
+DOCS=( "ChangeLog" "MAINTAINERS" "README.md" "README.static-linking" "RELEASE" "release-notes-1.28.md" )
 
 PATCHES=(
 )

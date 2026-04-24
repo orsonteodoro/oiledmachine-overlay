@@ -45,6 +45,7 @@ DEPEND="
 "
 BDEPEND="
 "
+DOCS=( "AUTHORS" "ChangeLog" "README" "README.md" "RELEASE" "release-notes-1.28.md" "TODO" )
 
 pkg_setup() {
 	check-compiler-switch_start

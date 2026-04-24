@@ -54,7 +54,7 @@ BDEPEND="
 	virtual/pkgconfig
 "
 
-DOCS=( "ChangeLog" "NEWS" "README.md" "RELEASE" )
+DOCS=( "ChangeLog" "MAINTAINERS" "README.md" "README.static-linking" "RELEASE" "release-notes-1.28.md" )
 
 pkg_setup() {
 	if [[ -n "${MITIGATION_URI}" ]] ; then

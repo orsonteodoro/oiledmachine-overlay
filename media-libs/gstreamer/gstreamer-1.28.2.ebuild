@@ -62,7 +62,7 @@ BDEPEND="
 	app-alternatives/yacc
 	app-alternatives/lex
 "
-DOCS=( "ChangeLog" "NEWS" "MAINTAINERS" "README.md" "RELEASE" )
+DOCS=( "ChangeLog" "MAINTAINERS" "README.md" "README.static-linking" "RELEASE" "release-notes-1.28.md" )
 
 pkg_setup() {
 	if [[ -n "${MITIGATION_URI}" ]] ; then

@@ -215,7 +215,7 @@ DEPEND="
 BDEPEND="
 	dev-util/glib-utils
 "
-DOCS=( "ChangeLog" "NEWS" "README.md" "RELEASE" )
+DOCS=( "ChangeLog" "MAINTAINERS" "README.md" "README.static-linking" "RELEASE" "release-notes-1.28.md" )
 PATCHES=(
 #	"${FILESDIR}/0001-meson-Fix-libdrm-and-vaapi-configure-checks.patch"
 #	"${FILESDIR}/0002-meson-Add-feature-options-for-optional-va-deps-libdr.patch"
