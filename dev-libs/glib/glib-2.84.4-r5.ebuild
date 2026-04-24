@@ -30,7 +30,7 @@ INTROSPECTION_BUILD_DIR="${WORKDIR}/${INTROSPECTION_P}-build"
 LICENSE="LGPL-2.1+"
 SLOT="2"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~arm64-macos ~x64-macos ~x64-solaris"
-IUSE="dbus debug +elf doc +introspection +mime selinux static-libs sysprof systemtap test utils xattr ebuild_revision_3"
+IUSE="dbus debug +elf doc +introspection +mime selinux static-libs sysprof systemtap test utils xattr ebuild_revision_4"
 RESTRICT="!test? ( test )"
 
 # * elfutils (via libelf) does not build on Windows. gresources are not embedded
@@ -205,6 +205,7 @@ src_prepare() {
 	fi
 
 	default
+
 	gnome2_environment_reset
 	# TODO: python_name sedding for correct python shebang? Might be relevant mainly for glib-utils only
 }
@@ -225,7 +226,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	cflags-hardened_append
 
 	# oiledmachine-overlay:  fix undefined references
-	append-ldflags $(pcre2-config --libs-posix)
+	append-ldflags $(pcre2-config --libs8)
 einfo "LDFLAGS:  ${LDFLAGS}"
 
 	# TODO: figure a way to pass appropriate values for all cross properties
