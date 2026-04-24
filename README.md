@@ -1204,15 +1204,25 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 
 | package | description |
 | --- | --- |
-| acct-group/lobe-chat | A group for Lobe Chat |
+| acct-group/lobehub | A group for LobeHub |
 | acct-group/local-ai | A group for LocalAI |
+| acct-group/local-recall | A group for LocalRecall |
+| acct-group/minio | A group for MinIO |
 | acct-group/ollama | A group for ollama |
+| acct-group/openclaw | A group for OpenClaw |
 | acct-group/open-webui | A group for Open WebUI |
+| acct-group/searxng | A group for SearXNG's web application |
+| acct-group/searxng-valkey | A group for SearXNG's key-value in-memory database |
 | acct-group/voltaml-fast-stable-diffusion | A group for VoltaML - Fast Stable Diffusion |
-| acct-user/lobe-chat | A user for Lobe Chat |
+| acct-user/lobehub | A user for LobeHub |
 | acct-user/local-ai | A user for LocalAI |
+| acct-user/local-recall | A user for LocalRecall |
+| acct-user/minio | A user for MinIO |
 | acct-user/ollama | A user for ollama |
+| acct-user/openclaw | A user for OpenClaw |
 | acct-user/open-webui | A user for Open WebUI |
+| acct-user/searxng | A user for SearXNG's web application |
+| acct-user/searxng-valkey | A user for SearXNG's key-value in-memory database |
 | acct-user/voltaml-fast-stable-diffusion | A user for VoltaML - Fast Stable Diffusion |
 | app-accessibility/whisper-cpp | Port of OpenAI's Whisper model in C/C++ |
 | app-admin/coreboot-utils | A selection from coreboot/utils useful in general |
@@ -1224,6 +1234,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | app-arch/libarchive | Multi-format archive and compression library |
 | app-arch/lz4 | Extremely Fast Compression algorithm |
 | app-arch/pigz | A parallel implementation of gzip |
+| app-arch/snappy | A high-speed compression/decompression library by Google |
 | app-arch/unzip | unzipper for pkzip-compressed files |
 | app-arch/xz-utils | Utils for managing LZMA compressed files |
 | app-arch/zip | Info ZIP (encryption support) |
@@ -1237,6 +1248,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | app-crypt/hashcat | The World's fastest and most advanced password recovery utility |
 | app-crypt/hashtopolis | Hashtopolis is a Hashcat wrapper for distributed password recovery |
 | app-crypt/hashtopolis-python-agent | The official Python agent for using the distributed hashcracker Hashtopolis |
+| app-crypt/libsecret | GObject library for accessing the freedesktop.org Secret Service API |
 | app-crypt/libzc | Tool and library for cracking legacy zip files. |
 | app-crypt/webhashcat | Hashcat web interface |
 | app-editors/leafpad | Simple GTK2 text editor |
@@ -1244,10 +1256,6 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | app-editors/nano | GNU GPL'd Pico clone with more functionality |
 | app-editors/nano-ycmd | GNU GPL'd Pico clone with more functionality with ycmd support |
 | app-emacs/emacs-ycmd | Emacs client for ycmd, the code completion system |
-| app-eselect/eselect-cython | Manages the cython symlinks |
-| app-eselect/eselect-emscripten | Manages the emscripten environment |
-| app-eselect/eselect-nodejs | Manages the /usr/include/node symlink |
-| app-eselect/eselect-rocm | Manages the rocm symlinks |
 | app-eselect/eselect-typescript | Manages the /usr/bin/tsc /usr/bin/tsserver symlinks |
 | app-misc/alpaca | An Ollama AI client made with GTK4 and Adwaita |
 | app-misc/amica | Amica is a customizable friendly interactive AI with 3D characters, voice synthesis, speech recognition, emotion engine |
@@ -1256,6 +1264,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | app-misc/june | Local voice AI chatbot for engaging conversations, powered by Ollama, Hugging Face Transformers, and Coqui TTS Toolkit |
 | app-misc/liquidctl | Cross-platform tool and drivers for liquid coolers and other devices |
 | app-misc/llocal | Aiming to provide a seamless and privacy driven AI chatting experience with open-sourced technologies |
+| app-misc/minio-docker | MinIO object storage for LobeHub (Docker-based) |
 | app-misc/ollama | Get up and running with Llama 3, Mistral, Gemma, and other local large language models (LLMs) synonymous with AI chatbots or AI assistants. |
 | app-misc/screen | screen manager with VT100/ANSI terminal emulation |
 | app-misc/ssl-cert-snakeoil | A self-signed certificate required by some *.deb packages or projects |
@@ -1267,6 +1276,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | app-shells/shell-gpt | An AI command-line productivity tool powered by OpenAI's GPT models or Ollama local LLMs. |
 | app-text/aspell | Free and Open Source spell checker designed to replace Ispell |
 | app-text/enchant | Generic spell checking library |
+| app-text/ghostscript-gpl | Interpreter for the PostScript language and PDF |
 | app-text/hunspell | Spell checker, morphological analyzer library and command-line tool |
 | app-text/pdfchain | Graphical User Interface for PDF Toolkit (PDFtk) |
 | app-text/poppler | PDF rendering library based on the xpdf-3.0 code base |
@@ -1274,21 +1284,32 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-build/rocm-cmake | Radeon Open Compute CMake Modules |
 | dev-cpp/abseil-cpp | Abseil Common Libraries (C++), LTS Branch |
 | dev-cpp/antlr4 | C++ runtime support for ANTLR 4 |
+| dev-cpp/benchmark | A microbenchmark support library |
 | dev-cpp/blaze | A high performance C++ math library |
 | dev-cpp/frugally-deep | Header-only library for using Keras (TensorFlow) models in C++. |
 | dev-cpp/FunctionalPlus | Functional Programming Library for C++. Write concise and readable C++ code. |
+| dev-cpp/gflags | Google's C++ argument parsing library |
 | dev-cpp/glaze | Extremely fast, in memory, JSON and interface library for modern C++ |
+| dev-cpp/glog | Google Logging library |
+| dev-cpp/gtest | Google C++ Testing Framework |
 | dev-cpp/highway | Performance-portable, length-agnostic SIMD with runtime dispatch |
 | dev-cpp/nlohmann_json | JSON for Modern C++ |
 | dev-cpp/opentelemetry-cpp | The OpenTelemetry C++ Client |
+| dev-cpp/prometheus-cpp | Prometheus Client Library for Modern C++ |
 | dev-cpp/pystring | C++ functions matching the interface and behavior of Python string methods |
 | dev-cpp/selfrando | Function order shuffling to defend against ROP and other types of code reuse |
+| dev-cpp/simdutf | Unicode validation and transcoding at billions of characters per second |
 | dev-cpp/sqlitecpp | SQLiteC++ (SQLiteCpp) is a smart and easy to use C++ SQLite3 wrapper |
+| dev-cpp/tbb | High level abstract threading library |
+| dev-cpp/tomlplusplus | TOML config file parser and serializer |
 | dev-cpp/yaml-cpp | YAML parser and emitter in C++ |
 | dev-db/mariadb | An enhanced, drop-in replacement for MySQL |
 | dev-db/mysql | A fast, multi-threaded, multi-user SQL database server |
 | dev-db/nanodbc | A small C++ wrapper for the native C ODBC API |
+| dev-db/pg_search | Full text search for PostgreSQL using BM25 |
+| dev-db/pgvector | Open-source vector similarity search for Postgres |
 | dev-db/sqlite | SQL database engine |
+| dev-debug/systemtap | Linux trace/probe tool |
 | dev-dotnet/aforgedotnet | AForge.NET Framework is a C# framework designed for developers and researchers in the fields of Computer Vision and Artificial Intelligence - image processing, neural networks, genetic algorithms, machine learning, robotics, etc. |
 | dev-dotnet/BulletSharpPInvoke | .NET wrapper for the Bullet physics library using Platform Invoke |
 | dev-dotnet/dotdevelop | DotDevelop will hopefully be a full-featured integrated development environment (IDE) for .NET using GTK. |
@@ -1307,6 +1328,20 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-dotnet/monogame-extended | MonoGame.Extended are classes and extensions to make MonoGame more awesome |
 | dev-dotnet/monogame | One framework for creating powerful cross-platform games. |
 | dev-dotnet/mono-msbuild-bin | MSBuild is the build platform for .NET and VS. |
+| dev-dotnet.old/assimp-net | AssimpNet is a C# language binding to the Assimp library |
+| dev-dotnet.old/atitextureconverter | A C# Wrapper for the TextureConverter native library to allow |
+| dev-dotnet.old/freeimagenet | FreeImage.NET is a wrapper for the FreeImage library for popular |
+| dev-dotnet.old/gnome-sharp | Bindings to the core Gnome APIs |
+| dev-dotnet.old/gwen-dotnet | GWEN.Net is a .Net port of GWEN, and is a lightweight GUI library aimed at games. |
+| dev-dotnet.old/libgdiplus | Library for using System.Drawing with Mono |
+| dev-dotnet.old/libgit2sharp | A C# PInvoke wrapper library for LibGit2 C library |
+| dev-dotnet.old/mono-addins | A generic framework for creating extensible applications |
+| dev-dotnet.old/ndesk-options | NDesk.Options |
+| dev-dotnet.old/nvorbis | NVorbis is a C# vorbis decoder |
+| dev-dotnet.old/opentk | OpenTK - A .NET interface to OpenCL/OpenAL/OpenGL |
+| dev-dotnet.old/pvrtexlibnet | Simple C# wrapper around PVRTexLib from Imagination Technologies |
+| dev-dotnet.old/sharpfont | Cross-platform FreeType bindings for .NET |
+| dev-dotnet.old/xwt | Cross platform GUI framework for desktop and mobile applications |
 | dev-dotnet/sdl2-cs | SDL2# - C# Wrapper for SDL2 |
 | dev-dotnet/sfmldotnet | SFML.Net is a C# language binding for SFML |
 | dev-dotnet/sharpnav | SharpNav is an advanced pathfinding library for C# |
@@ -1339,33 +1374,45 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-lang/python-exec | Python script wrapper |
 | dev-lang/rocm-flang | ROCm's fork of Classic Flang with GPU offload support |
 | dev-lang/spidermonkey | A JavaScript engine written in C and C++ |
+| dev-lang/swig | Simplified Wrapper and Interface Generator |
 | dev-lang/typescript | TypeScript is a statically typed superset of JavaScript that compiles to clean JavaScript output |
 | dev-libs/amdgpu-pro-opencl-legacy | Legacy OpenCL support for AMDGPU-PRO drivers |
+| dev-libs/apache-arrow | A cross-language development platform for in-memory data |
 | dev-libs/blake3 | A fast cryptographic hash function |
+| dev-libs/boost | Boost Libraries for C++ |
 | dev-libs/botan | C++ crypto library |
+| dev-libs/castxml | C-family abstract syntax tree XML output tool |
 | dev-libs/cJSON | Ultralightweight JSON parser in ANSI C |
 | dev-libs/crc32c | CRC32C implementation with support for CPU-specific acceleration instructions |
 | dev-libs/dlpack | Common in-memory tensor structure |
 | dev-libs/double-conversion | Binary-decimal and decimal-binary conversion routines for IEEE doubles |
 | dev-libs/expat | Stream-oriented XML parser library |
+| dev-libs/flatbuffers | Memory efficient serialization library |
 | dev-libs/gdrcopy | A fast GPU memory copy library based on NVIDIA GPUDirect RDMA technology |
 | dev-libs/glib | The GLib library of C routines |
+| dev-libs/gmp | Library for arbitrary-precision arithmetic on different type of numbers |
 | dev-libs/hardened_malloc | A hardened allocator designed for modern systems |
 | dev-libs/hip-cpu | An implementation of HIP that works on CPUs |
 | dev-libs/hipother | Other HIP backend compatibility |
 | dev-libs/hsa-amd-aqlprofile | AQLPROFILE library for AMD HSA runtime API extension support |
 | dev-libs/hyphen | ALTLinux hyphenation library |
+| dev-libs/hyprgraphics | Hyprland graphics / resource utilities |
+| dev-libs/hyprland-protocols | Wayland protocol extensions for Hyprland |
+| dev-libs/hyprlang | Official implementation library for the hypr config language |
 | dev-libs/icu | International Components for Unicode |
 | dev-libs/imath | Imath basic math package |
 | dev-libs/jemalloc | A general-purpose scalable concurrent allocator |
 | dev-libs/jemalloc-usd | USD support for Jemalloc, a general-purpose scalable concurrent allocator |
+| dev-libs/jsoncpp | C++ JSON reader and writer |
 | dev-libs/leveldb | A fast key-value storage library |
-| dev-libs/libappimage | Implements functionality for dealing with AppImage files |
 | dev-libs/libdatachannel | C/C++ WebRTC network library featuring Data Channels, Media Transport, and WebSockets |
+| dev-libs/libfmt | Small, safe and fast formatting library |
 | dev-libs/libfreenect | Drivers and libraries for the Xbox Kinect device |
+| dev-libs/libinput | Library to handle input devices in Wayland |
 | dev-libs/libpcre2 | Perl-compatible regular expression library |
 | dev-libs/libsodium | Portable fork of NaCl, a higher-level cryptographic library |
 | dev-libs/libtasn1 | ASN.1 library |
+| dev-libs/libusb | Userspace access to USB devices |
 | dev-libs/libxml2 | XML C parser and toolkit |
 | dev-libs/libxslt | XSLT libraries and tools |
 | dev-libs/lief | Library to instrument executable formats |
@@ -1376,6 +1423,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-libs/nccl-rdma-sharp-plugins | RDMA and SHARP plugins for the NCCL library |
 | dev-libs/ncnn | High-performance neural network inference framework |
 | dev-libs/nettle | Low-level cryptographic library |
+| dev-libs/nspr | Netscape Portable Runtime |
 | dev-libs/nss | Mozilla's Network Security Services library that implements PKI support |
 | dev-libs/nxjson | A very small JSON parser written in C |
 | dev-libs/openssl | Robust, full-featured Open Source Toolkit for the Transport Layer Security (TLS) |
@@ -1394,9 +1442,10 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-libs/rocm-opencl-runtime | Radeon Open Compute OpenCL Compatible Runtime |
 | dev-libs/rocprofiler-register | The rocprofiler-register helper library |
 | dev-libs/rocr-runtime | Radeon Open Compute Runtime |
-| dev-libs/roct-thunk-interface | Radeon Open Compute Thunk Interface |
 | dev-libs/safeclib | safec libc extension with all C11 Annex K functions |
 | dev-libs/spdlog | Very fast, header only, C++ logging library |
+| dev-libs/thrift | C++ bindings for Apache Thrift |
+| dev-libs/tinyxml | Simple and small C++ XML parser |
 | dev-libs/unittest++ | A lightweight unit testing framework for C++ |
 | dev-libs/utf8_range | Fast UTF-8 validation with Range algorithm (NEON+SSE4+AVX2) |
 | dev-lua/luafilesystem | File System Library for the Lua Programming Language |
@@ -1657,6 +1706,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/orbax | Orbax is a library providing common utilities for JAX users. |
 | dev-python/packagedcode-msitools | A ScanCode path provider plugin to provide prebuilt binaries from msitools |
 | dev-python/packvers | Core utilities for Python packages. Fork to support LegacyVersion |
+| dev-python/pandas | Powerful data structures for data analysis and statistics |
 | dev-python/parameter-expansion-patched | Shell parameter expansion in Python |
 | dev-python/pathlib-abc | Python base classes for rich path objects |
 | dev-python/pathy | A simple, flexible, offline capable, cloud storage with a Python path-like interface |
@@ -1726,6 +1776,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/pyv4l2 | A simple Video4Linux2 (v4l2) library for Python |
 | dev-python/pyvips | Python bindings for libvips |
 | dev-python/pyxlsb | Excel 2007+ Binary Workbook (xlsb) reader for Python |
+| dev-python/pyyaml | YAML parser and emitter for Python |
 | dev-python/qdrant-client | Python client for Qdrant vector search engine |
 | dev-python/rank-bm25 | A collection of BM25 algorithms in Python |
 | dev-python/RapidFuzz | Rapid fuzzy string matching in Python using various string metrics |
@@ -1756,6 +1807,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/spacy | 💫 Industrial-strength Natural Language Processing (NLP) in Python |
 | dev-python/spacy-legacy | 🕸️ Legacy architectures and other registered spaCy v3.x functions for backwards-compatibility |
 | dev-python/spacy-loggers | 📟 Logging utilities for spaCy |
+| dev-python/sphinx | Python documentation generator |
 | dev-python/sphinx-theme-builder | Clean up the public namespace of your package! |
 | dev-python/sqlmodel | SQL databases in Python, designed for simplicity, compatibility, and robustness |
 | dev-python/srsly | 🦉 Modern high-performance serialization utilities for Python (JSON, MessagePack, Pickle) |
@@ -1775,7 +1827,6 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/trampoline | Simple and tiny yield-based trampoline implementation |
 | dev-python/trfl | trfl is a library of building blocks for reinforcement learning algorithms. |
 | dev-python/triton | Development repository for the Triton language and compiler |
-| dev-python/triton | The Triton language and compiler |
 | dev-python/typecode | Comprehensive filetype and mimetype detection using libmagic and Pygments |
 | dev-python/typecode-libmagic | A ScanCode path provider plugin to provide a prebuilt native libmagic binary and database |
 | dev-python/typer | Typer, build great CLIs. Easy to code. Based on Python type hints. |
@@ -1794,15 +1845,21 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/weasel | 🦦 weasel: A small and easy workflow system |
 | dev-python/weaviate-client | A python native client for easy interaction with a Weaviate instance |
 | dev-python/wrapt | Module for decorators, wrappers and monkey patching |
+| dev-python/xdg-base-dirs | Variables defined by the XDG Base Directory Specification |
 | dev-python/xformers | Hackable and optimized Transformers building blocks, supporting a composable construction |
 | dev-python/xmod | Turn any object into a module |
 | dev-python/youtube-transcript-api | A Python API which allows you to get the transcript/subtitles for a given YouTube video |
+| dev-qt/qt5compat | Qt module containing the unsupported Qt 5 APIs |
 | dev-qt/qtbase | Cross-platform application development framework |
 | dev-qt/qtdeclarative | Qt Declarative (Quick 2) |
 | dev-qt/qtimageformats | Additional format plugins for the Qt image I/O system |
 | dev-qt/qtmultimedia | Multimedia (audio, video, radio, camera) library for the Qt6 framework |
+| dev-qt/qtquick3d | Qt module and API for defining 3D content in Qt QuickTools |
+| dev-qt/qtquicktimeline | Qt module for keyframe-based timeline construction |
+| dev-qt/qtshadertools | Qt APIs and Tools for Graphics Pipelines |
 | dev-qt/qtsvg | SVG rendering library for the Qt6 framework |
-| dev-qt/qtwayland | Wayland platform plugin for Qt |
+| dev-qt/qttools | Qt Tools Collection |
+| dev-qt/qtwayland | Toolbox for making Qt based Wayland compositors |
 | dev-qt/qtwebengine | Library for rendering dynamic web content in Qt6 C++ and QML applications |
 | dev-ruby/libcaca | A library that creates colored ASCII-art graphics |
 | dev-util/amd-smi | ROCm Application for Reporting System Info |
@@ -1813,20 +1870,23 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-util/bear | Bear is a tool that generates a compilation database for clang tooling. |
 | dev-util/binaryen | Compiler infrastructure and toolchain library for WebAssembly |
 | dev-util/carbon-now-cli | Beautiful images of your code from right inside your terminal. |
+| dev-util/cargo-pgrx | pgrx: A Rust framework for creating Postgres extensions |
 | dev-util/closure-compiler-npm | Check, compile, optimize and compress Javascript with Closure-Compiler |
 | dev-util/DOCA-Host | DOCA-Host |
 | dev-util/dyninst | DyninstAPI: Tools for binary instrumentation, analysis, and modification. |
 | dev-util/emscripten | LLVM-to-JavaScript Compiler |
 | dev-util/geany | GTK+ based fast and lightweight IDE |
+| dev-util/glslang | Khronos reference front-end for GLSL and ESSL, and sample SPIR-V generator |
+| dev-util/google-perftools | Fast, multi-threaded malloc() and nifty performance analysis tools |
 | dev-util/grex | grex generates regular expressions from user-provided test cases. |
 | dev-util/gycm | A Geany plugin to support the ycmd code completion server |
 | dev-util/hip | C++ Heterogeneous-Compute Interface for Portability |
 | dev-util/hipfort | Fortran interfaces for ROCm libraries |
 | dev-util/HIPIFY | HIPIFY: Convert CUDA to Portable C++ Code |
 | dev-util/hip-meta | HIP metapackage |
+| dev-util/hyprwayland-scanner | A Hyprland implementation of wayland-scanner, in and for C++ |
 | dev-util/jsonlint | JSON/CJSON/JSON5 parser, syntax & schema validator and pretty-printer with a command-line client, written in pure JavaScript. |
-| dev-util/omniperf | Advanced Profiling and Analytics for AMD Hardware |
-| dev-util/omnitrace | Omnitrace: Application Profiling, Tracing, and Analysis |
+| dev-util/perf | Userland tools for Linux Performance Counters |
 | dev-util/pnnx | pnnx is an open standard for PyTorch model interoperability |
 | dev-util/ROCgdb | Heterogeneous debugging for x86 and AMDGPU on ROCm™ software |
 | dev-util/rocm_bandwidth_test | Bandwidth test for ROCm |
@@ -1834,9 +1894,12 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-util/rocm-meta | ROCm metapackage |
 | dev-util/rocm-smi | ROCm System Management Interface Library |
 | dev-util/rocm-validation-suite | The ROCm Validation Suite is a system administrator’s and cluster manager's tool for detecting and troubleshooting common problems affecting AMD GPU(s) running in a high-performance computing environment. |
+| dev-util/rocprofiler-compute | System performance profiling tool for machine learning/HPC workloads running on AMD MI GPUs |
+| dev-util/rocprofiler-systems | A comprehensive profiling and tracing tool |
 | dev-util/rocprofiler | The ROC profiler library for profiling with perf-counters and derived metrics |
 | dev-util/roctracer | Callback/Activity Library for Performance tracing AMD GPU's |
 | dev-util/scancode-toolkit | ScanCode detects licenses, copyrights, package manifests, direct dependencies, and more |
+| dev-util/spirv-tools | Provides an API and commands for processing SPIR-V modules |
 | dev-util/synp | Convert yarn.lock to package-lock.json and vice versa |
 | dev-util/tbump | tbump helps you bump the version of your project easily |
 | dev-util/Tensile | Stretching GPU performance for GEMMs and tensor contractions |
@@ -1851,7 +1914,12 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | gnome-base/librsvg | Scalable Vector Graphics (SVG) rendering library |
 | gui-apps/taigo | A virtual pet for your desktop built with GTK+, Vala, and love. |
 | gui-apps/windowpet | Adorable anime pet companions on your screen |
+| gui-libs/aquamarine | Aquamarine is a very light linux rendering backend library |
 | gui-libs/gtk | GTK is a multi-platform toolkit for creating graphical user interfaces |
+| gui-libs/hyprcursor | The hyprland cursor format, library and utilities |
+| gui-libs/hyprland-qt-support | QML style provider for hypr* Qt apps |
+| gui-libs/hyprland-qtutils | Hyprland QT/qml utility apps |
+| gui-libs/hyprutils | Hyprland utilities library used across the ecosystem |
 | gui-libs/libdecor | A client-side decorations library for Wayland clients |
 | gui-wm/hyprland | A dynamic tiling Wayland compositor that doesn't sacrifice on its looks |
 | gui-wm/sway | i3-compatible Wayland window manager |
@@ -1877,6 +1945,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-gfx/alembic | Alembic is an open framework for storing and sharing scene data that includes a C++ library, a file format, and client plugins and applications. |
 | media-gfx/blockbench | Blockbench is a boxy 3D model editor |
 | media-gfx/dssim | Image similarity comparison simulating human perception |
+| media-gfx/eog | The Eye of GNOME image viewer |
 | media-gfx/face-morpher-plus | Face morpher plus based on facemorpher |
 | media-gfx/gimp | GNU Image Manipulation Program |
 | media-gfx/gmic | GREYC's Magic for Image Computing: A full-featured open-source framework for image processing |
@@ -1886,6 +1955,8 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-gfx/inkscape | SVG based generic vector-drawing program |
 | media-gfx/material-maker | A procedural textures authoring and 3D model painting tool based on the Godot game engine |
 | media-gfx/openvdb | Library for the efficient manipulation of volumetric data |
+| media-gfx/optipng | Compress PNG files without affecting image quality |
+| media-gfx/optipng | Recompress PNG files to a smaller size without loss of information |
 | media-gfx/upscayl-custom-models | Extra custom models for Upscayl. |
 | media-gfx/upscayl | Upscayl is an AI based image upscaler |
 | media-gfx/voltaml-fast-stable-diffusion | A beautiful and easy to use Stable Diffusion web user interface |
@@ -1901,6 +1972,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-libs/fontconfig | A library for configuring and customizing font access |
 | media-libs/freetype | High-quality and portable font engine |
 | media-libs/glui | GLUI User Interface Library |
+| media-libs/glu | The OpenGL Utility Library |
 | media-libs/gst-plugins-bad | A set of bad plugins that fall short of code quality or support needs of GStreamer |
 | media-libs/gst-plugins-base | A based set of plugins meeting code quality and support needs of GStreamer |
 | media-libs/gst-plugins-good | A set of good plugins that meet licensing, code quality, and support needs of GStreamer |
@@ -1910,13 +1982,18 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-libs/harfbuzz | An OpenType text shaping engine |
 | media-libs/HIPRT | HIP RT is a ray tracing library in HIP |
 | media-libs/imlib2 | Version 2 of an advanced replacement library for libraries like libXpm |
+| media-libs/ladspa-sdk | The Linux Audio Developer's Simple Plugin API |
+| media-libs/lcms | A lightweight, speed optimized color management engine |
 | media-libs/libaom | Alliance for Open Media AV1 Codec SDK |
+| media-libs/libavif | Library for encoding and decoding .avif files |
 | media-libs/libcaca | A library that creates colored ASCII-art graphics |
 | media-libs/libdicom | C library for reading DICOM files |
 | media-libs/libexif | Library for parsing, editing, and saving EXIF data |
 | media-libs/libfishsound | Simple programming interface to decode and encode audio with vorbis or speex |
+| media-libs/libglvnd | The GL Vendor-Neutral Dispatch library |
 | media-libs/libheif | A HEIF and AVIF file format decoder and encoder |
 | media-libs/libjpeg-turbo | MMX, SSE, and SSE2 SIMD accelerated JPEG library |
+| media-libs/libjxl | JPEG XL image format reference implementation |
 | media-libs/libmediainfo | MediaInfo libraries |
 | media-libs/libogg | The Ogg media file format library |
 | media-libs/libplacebo | Reusable library for GPU-accelerated image processing primitives |
@@ -1925,6 +2002,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-libs/libsfml | Simple and Fast Multimedia Library (SFML) |
 | media-libs/libspng | libspng is a C library for reading and writing Portable Network Graphics (PNG) format files with a focus on security and ease of use. |
 | media-libs/libtheora | The Theora Video Compression Codec |
+| media-libs/libva | Video Acceleration (VA) API for Linux |
 | media-libs/libvorbis | The Ogg Vorbis sound file format library |
 | media-libs/libvpx | WebM VP8 and VP9 Codec SDK |
 | media-libs/libwebp | A lossy image compression format |
@@ -1936,10 +2014,12 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-libs/mojoshader | Use Direct3D shaders with other 3D rendering APIs. |
 | media-libs/nifti_clib | C libraries for NIFTI support |
 | media-libs/oidn | Intel® Open Image Denoise library |
+| media-libs/openal | Software implementation of the OpenAL 3D audio API |
 | media-libs/opencolorio | A color management framework for visual effects and animation |
 | media-libs/opencv | A collection of algorithms and sample code for various computer vision problems |
 | media-libs/openexr | ILM's OpenEXR high dynamic-range image file format libraries |
 | media-libs/openimageio | A library for reading and writing images |
+| media-libs/openjpeg | Open-source JPEG 2000 library |
 | media-libs/openpgl | Implements a set of representations and training algorithms needed to integrate path guiding into a renderer |
 | media-libs/openslide | C library with simple interface to read virtual slides |
 | media-libs/opensubdiv | A subdivision surface library |
@@ -1950,15 +2030,24 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-libs/opus | Open codec for interactive speech and music transmission over the Internet |
 | media-libs/osl | Advanced shading language for production GI renderers |
 | media-libs/partio | Library for particle IO and manipulation |
+| media-libs/ptex | Per-Face Texture Mapping for Production Rendering |
+| media-libs/rtaudio | A set of cross-platform C++ classes for realtime audio I/O |
+| media-libs/rubberband | An audio time-stretching and pitch-shifting library and utility program |
+| media-libs/shaderc | Collection of tools, libraries and tests for shader compilation |
 | media-libs/sharp-libvips | libvips static build for sharp, matching sharp-libvips |
 | media-libs/speex | Audio compression format designed for speech |
 | media-libs/theoraplay | TheoraPlay is a simple library to make decoding of Ogg Theora videos easier. |
 | media-libs/tremor | A fixed-point version of the Ogg Vorbis decoder (also known as libvorbisidec) |
 | media-libs/vaapi-drivers | A metapackage for libva drivers |
+| media-libs/vamp-plugin-sdk | Audio processing system for plugins to extract information from audio data |
 | media-libs/vips | VIPS Image Processing Library |
 | media-libs/vulkan-drivers | Vulkan drivers |
+| media-libs/vulkan-loader | Vulkan Installable Client Driver (ICD) Loader |
+| media-libs/webrtc-audio-processing | AudioProcessing library from the webrtc.org code base |
+| media-libs/webrtc-audio-processing | AudioProcessing library from the webrtc.org codebase |
 | media-libs/woff2 | Encode/decode WOFF2 font format |
 | media-plugins/filmic-blender | Film Emulsion-Like Camera Rendering Transforms for Blender® |
+| media-plugins/frei0r-plugins | A minimalistic plugin API for video effects |
 | media-plugins/gst-plugins-a52dec | ATSC A/52 audio decoder plugin for GStreamer |
 | media-plugins/gst-plugins-aalib | aalib text console plugin for GStreamer |
 | media-plugins/gst-plugins-adaptivedemux2 | Adaptive demuxer plugins for GStreamer |
@@ -1967,10 +2056,12 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-plugins/gst-plugins-analyticsoverlay | The analyticsoverlay plugin can highlight and assign AI categorized labels to detected objects for GStreamer |
 | media-plugins/gst-plugins-aom | Alliance for Open Media AV1 plugin for GStreamer |
 | media-plugins/gst-plugins-assrender | ASS/SSA rendering with effects support plugin for GStreamer |
+| media-plugins/gst-plugins-audioparsers | A redirect ebuild for gst-plugins-audioparsers |
 | media-plugins/gst-plugins-avtp | Audio/Video Transport Protocol (AVTP) plugin for GStreamer |
 | media-plugins/gst-plugins-aws | A redirect ebuild for gst-plugins-aws |
 | media-plugins/gst-plugins-bluez | AVDTP source/sink and A2DP sink plugin for GStreamer |
 | media-plugins/gst-plugins-bs2b | bs2b elements for GStreamer |
+| media-plugins/gst-plugins-burn | A redirect ebuild for gst-plugins-burn |
 | media-plugins/gst-plugins-cairo | Video overlay plugin based on cairo for GStreamer |
 | media-plugins/gst-plugins-cdg | A redirect ebuild for gst-plugins-cdg |
 | media-plugins/gst-plugins-cdio | A libcdio based CD Digital Audio (CDDA) source plugin for GStreamer |
@@ -1985,6 +2076,9 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-plugins/gst-plugins-dash | MPEG-DASH plugin for GStreamer |
 | media-plugins/gst-plugins-dav1d | A redirect ebuild for gst-plugins-dav1d |
 | media-plugins/gst-plugins-dc1394 | libdc1394 IIDC camera source plugin for GStreamer |
+| media-plugins/gst-plugins-debugseimetainserter | A redirect ebuild for gst-plugins-debugseimetainserter |
+| media-plugins/gst-plugins-deepgram | A redirect ebuild for gst-plugins-deepgram |
+| media-plugins/gst-plugins-demucs | A redirect ebuild for gst-plugins-demucs |
 | media-plugins/gst-plugins-dtls | DTLS encoder/decoder with SRTP support plugin for GStreamer |
 | media-plugins/gst-plugins-dts | DTS audio decoder plugin for GStreamer |
 | media-plugins/gst-plugins-dvb | DVB device capture plugin for GStreamer |
@@ -1999,7 +2093,6 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-plugins/gst-plugins-flac | FLAC encoder/decoder/tagger plugin for GStreamer |
 | media-plugins/gst-plugins-flite | The Flite speech synthesis plugin for GStreamer |
 | media-plugins/gst-plugins-fluidsynth | FluidSynth plugin for GStreamer |
-| media-plugins/gst-plugins-fmp4 | A redirect ebuild for gst-plugins-fmp4 |
 | media-plugins/gst-plugins-gdkpixbuf | Image decoder, overlay and sink plugin for GStreamer |
 | media-plugins/gst-plugins-gif | A redirect ebuild for gst-plugins-gif |
 | media-plugins/gst-plugins-gme | libgme, a video game music file emulator, decoder plugin for GStreamer |
@@ -2012,15 +2105,17 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-plugins/gst-plugins-hlsmultivariantsink | A redirect ebuild for gst-plugins-hlsmultivariantsink |
 | media-plugins/gst-plugins-hlssink3 | A redirect ebuild for gst-plugins-hlssink3 |
 | media-plugins/gst-plugins-hsv | A redirect ebuild for gst-plugins-hsv |
+| media-plugins/gst-plugins-icecast | A redirect ebuild for gst-plugins-icecast |
 | media-plugins/gst-plugins-iqa | Image quality assessment plugin for GStreamer |
 | media-plugins/gst-plugins-isac | iSAC plugin for GStreamer |
+| media-plugins/gst-plugins-isobmff | A redirect ebuild for gst-plugins-isobmff |
 | media-plugins/gst-plugins-jack | JACK audio server source/sink plugin for GStreamer |
 | media-plugins/gst-plugins-jpeg | JPEG image encoder/decoder plugin for GStreamer |
 | media-plugins/gst-plugins-json | A redirect ebuild for gst-plugins-json |
 | media-plugins/gst-plugins-ladspa | Ladspa elements for GStreamer |
 | media-plugins/gst-plugins-lame | MP3 encoder plugin for GStreamer |
 | media-plugins/gst-plugins-lc3 | LC3 (Bluetooth) LE audio codec plugin for GStreamer |
-| media-plugins/gst-plugins-ldac | LDAC plugin for GStreamer |
+| media-plugins/gst-plugins-ldac | LDAC encoder plugin for GStreamer |
 | media-plugins/gst-plugins-lewton | A redirect ebuild for gst-plugins-lewton |
 | media-plugins/gst-plugins-libav | A FFmpeg based GStreamer plugin |
 | media-plugins/gst-plugins-libcaca | libcaca text console plugin for GStreamer |
@@ -2033,7 +2128,6 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-plugins/gst-plugins-mdns | A device provider plugin and RTSP server discovery for GStreamer |
 | media-plugins/gst-plugins-meta | A metapackage to pull in gst plugins for apps |
 | media-plugins/gst-plugins-modplug | MOD audio decoder plugin for GStreamer |
-| media-plugins/gst-plugins-mp4 | A redirect ebuild for gst-plugins-mp4 |
 | media-plugins/gst-plugins-mpeg2dec | MPEG2 decoder plugin for GStreamer |
 | media-plugins/gst-plugins-mpeg2enc | MPEG-1/2 video encoding plugin for GStreamer |
 | media-plugins/gst-plugins-mpegtslive | A redirect ebuild for gst-plugins-mpegtslive |
@@ -2076,6 +2170,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-plugins/gst-plugins-rsrtp | A redirect ebuild for gst-plugins-rtp |
 | media-plugins/gst-plugins-rsrtsp | A redirect ebuild for gst-plugins-rtsp |
 | media-plugins/gst-plugins-rstracers | A redirect ebuild for gst-plugins-tracers |
+| media-plugins/gst-plugins-rsvalidate | A redirect ebuild for gst-plugins-rsvalidate |
 | media-plugins/gst-plugins-rs | Various GStreamer plugins written in Rust |
 | media-plugins/gst-plugins-rsvg | SVG overlay and decoder plugin for GStreamer |
 | media-plugins/gst-plugins-rsvideofx | A redirect ebuild for gst-plugins-videofx |
@@ -2101,9 +2196,10 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-plugins/gst-plugins-srt | Secure reliable transport (SRT) transfer plugin for GStreamer |
 | media-plugins/gst-plugins-streamgrouper | A redirect ebuild for gst-plugins-streamgrouper |
 | media-plugins/gst-plugins-svtav1 | Scalable Video Technology for AV1 plugin for GStreamer |
-| media-plugins/gst-plugins-svthevcenc | AES encryption/decryption plugin for GStreamer |
+| media-plugins/gst-plugins-svthevcenc | Raw video to H.265 encoder plugin for GStreamer |
 | media-plugins/gst-plugins-taglib | ID3v2/APEv2 tagger plugin for GStreamer |
 | media-plugins/gst-plugins-teletext | VBI subtitles plugin for GStreamer |
+| media-plugins/gst-plugins-textaccumulate | A redirect ebuild for gst-plugins-textaccumulate |
 | media-plugins/gst-plugins-textahead | A redirect ebuild for gst-plugins-textahead |
 | media-plugins/gst-plugins-textwrap | A redirect ebuild for gst-plugins-textwrap |
 | media-plugins/gst-plugins-threadshare | A redirect ebuild for gst-plugins-threadshare |
@@ -2122,6 +2218,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-plugins/gst-plugins-webp | WebP image format support for GStreamer |
 | media-plugins/gst-plugins-webrtchttp | A redirect ebuild for gst-plugins-webrtchttp |
 | media-plugins/gst-plugins-webrtc | WebRTC plugins for GStreamer |
+| media-plugins/gst-plugins-whisper | A redirect ebuild for gst-plugins-whisper |
 | media-plugins/gst-plugins-wildmidi | WildMIDI soft synth plugin for GStreamer |
 | media-plugins/gst-plugins-wpe | WPE Web browser plugin for GStreamer |
 | media-plugins/gst-plugins-x264 | H.264 encoder plugin for GStreamer |
@@ -2141,6 +2238,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-radio/owrx_connector | A direct connection layer for OpenWebRX |
 | media-radio/runds_connector | OpenWebRX connector implementation for R&S EB200 or Ammos protocol based receivers |
 | media-radio/sddc_connector | Implementation of an OpenWebRX connector for BBRF103 / RX666 / RX888 devices based on libsddc |
+| media-sound/jack2 | Jackdmp jack implemention for multi-processor machine |
 | media-sound/puddletag | An audio tag editor |
 | media-sound/spotify | A social music platform |
 | media-sound/w3crapcli-lastfm | w3crapcli/last.fm provides a command line interface for the last.fm web service |
@@ -2152,27 +2250,33 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-video/gspca_ep800 | Kernel Modules for Endpoints EP800/SE402/SE401* |
 | media-video/linux-enable-ir-emitter | Provides support for infrared cameras that are not directly enabled out-of-the box. |
 | media-video/lossless-cut | The swiss army knife of lossless video/audio editing |
+| media-video/movit | High-performance, high-quality video filters for the GPU |
 | media-video/mpv | Media player for the command line |
 | media-video/nudenet_video | A Python script to detect and blur explicit nudity in videos using NudeNet and FFmpeg |
 | media-video/obs-studio | Software for live streaming and screen recording |
 | media-video/olive | Professional open-source non-linear video editor |
+| media-video/pipewire | Multimedia processing graphs |
 | media-video/REAL-Video-Enhancer | Interpolate for faster framerates and AI upscale video easily |
 | media-video/video2x | A machine learning based video super resolution and frame interpolation framework |
 | media-video/video2x-qt6 | An AI video upscaler with a graphical user friendly Qt6 frontend |
 | net-im/caprine | Elegant Facebook Messenger desktop app |
 | net-im/chatterino | Chat client for https://twitch.tv |
 | net-im/signal-desktop | Allows you to send and receive messages of Signal Messenger on your computer |
+| net-libs/bun | Incredibly fast JavaScript runtime, bundler, test runner, and package manager – all in one |
+| net-libs/bun-jsc | A Bun fork of JavaScriptCore |
+| net-libs/bun-zig | Bun fork of Zig |
 | net-libs/cef-bin | Chromium Embedded Framework (CEF) is a simple framework for embedding Chromium-based browsers in other applications. |
-| net-libs/gnutls | A secure communications library implementing the SSL, TLS and DTLS protocols |
+| net-libs/gnutls | Secure communications library implementing the SSL, TLS and DTLS protocols |
 | net-libs/google-cloud-cpp | Google Cloud Client Library for C++ |
 | net-libs/grpc | Modern open source high performance RPC framework |
 | net-libs/libavtp | Open source implementation of Audio Video Transport Protocol (AVTP) specified in IEEE 1722-2016 spec. |
-| net-libs/librist | Reliable Internet Streaming Transport |
+| net-libs/libnice | Implementation of the Interactive Connectivity Establishment standard (ICE) |
+| net-libs/librice | sans-IO implementation of ICE (RFC8445) in Rust |
+| net-libs/librist | Library for Reliable Internet Stream Transport (RIST) protocol |
 | net-libs/libsoup | HTTP client/server library for GNOME |
 | net-libs/nghttp2 | HTTP/2 C Library |
 | net-libs/nodejs | A JavaScript runtime built on the V8 JavaScript engine |
 | net-libs/Thunder | Thunder (aka WPEFramework) |
-| net-libs/webkit-gtk | Open source web browser engine (GTK+3 with HTTP/1.1 support) |
 | net-libs/webkit-gtk | Open source web browser engine (GTK+3 with HTTP/2 support) |
 | net-libs/webkit-gtk | Open source web browser engine (GTK 4 with HTTP/2 support) |
 | net-misc/curl | A Client that groks URLs |
@@ -2183,10 +2287,13 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | net-misc/ThunderTools | Thunder (aka WPEFramework) |
 | net-misc/ThunderUI | ThunderUI is the development and test UI that runs on top of Thunder |
 | net-misc/wget | Network utility to retrieve files from the WWW |
+| net-print/cups | The Common Unix Printing System |
 | sci-geosciences/google-earth-pro | A 3D interface to the planet |
+| sci-libs/clblast | Tuned OpenCL BLAS |
 | sci-libs/composable-kernel | Composable Kernel: Performance Portable Programming Model for Machine Learning Tensor Operators |
 | sci-libs/ctranslate2 | Fast inference engine for Transformer models |
 | sci-libs/dlib | Numerical and networking C++ library |
+| sci-libs/hipBLAS-common | Common files shared by hipBLAS and hipBLASLt |
 | sci-libs/hipBLASLt | hipBLASLt is a library that provides general matrix-matrix operations with a flexible API and extends functionalities beyond a traditional BLAS library |
 | sci-libs/hipBLAS | ROCm BLAS marshalling library |
 | sci-libs/hipCUB | Wrapper of rocPRIM or CUB for GPU parallel primitives |
@@ -2214,13 +2321,18 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sci-libs/rocWMMA | AMD's C++ library for accelerating mixed-precision matrix multiply-accumulate (MMA) operations leveraging AMD GPU hardware |
 | sci-libs/rpp | AMD ROCm Performance Primitives (RPP) library is a comprehensive high-performance computer vision library for AMD processors with HIP/OpenCL/CPU back-ends. |
 | sci-libs/tensorstore | Library for reading and writing large multi-dimensional arrays |
+| sci-mathematics/clipper2 | Polygon Clipping and Offsetting |
+| sci-mathematics/manifold | Geometry library for topological robustness |
 | sci-ml/caffe2 | A deep learning framework |
 | sci-ml/FBGEMM | Facebook GEneral Matrix Multiplication |
 | sci-ml/huggingface_hub | The official Python client for the Huggingface Hub |
 | sci-ml/intel-extension-for-pytorch | A Python package for extending the official PyTorch that can easily obtain performance on Intel platform |
 | sci-ml/kineto | A CPU+GPU Profiling library that provides access to timeline traces and hardware performance counters |
+| sci-ml/LocalAGI | LocalAGI is a powerful, self-hostable AI Agent platform |
+| sci-ml/LocalRecall | A REST-ful API and knowledge base management system that provides persistent memory and storage capabilities for AI agents |
 | sci-ml/nnef-models | A collection of neural network NNEF models for image recognition and classification |
 | sci-ml/onnxruntime | Cross-platform inference and training machine-learning accelerator. |
+| sci-ml/openclaw-docker | OpenClaw - Personal AI assistant gateway (Docker Compose + OpenRC) |
 | sci-ml/openvino | OpenVINO™ is an open-source toolkit for optimizing and deploying AI inference |
 | sci-ml/pytorch | Tensors and dynamic neural networks in Python |
 | sci-ml/sentencepiece | Unsupervised text tokenizer for neural network based text generation |
@@ -2253,6 +2365,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sys-apps/coolercontrol | Cooling device control for Linux |
 | sys-apps/coolercontrold | The CoolerControl system service that handles controlling hardware |
 | sys-apps/coolercontrol-qt6 | A standalone desktop app for CoolerControl based on Qt6 |
+| sys-apps/dbus | A message bus system, a simple way for applications to talk to each other |
 | sys-apps/deepcc | DeepCC: A Deep Reinforcement Learning Plug-in to Boost the performance of your TCP scheme in Cellular Networks! |
 | sys-apps/evhz | Show mouse refresh rate under linux + evdev |
 | sys-apps/finit-d | finit.d/*.conf files for the Finit init system |
@@ -2271,8 +2384,6 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sys-cluster/ucx | Unified Communication X is a network High Performance Computing (HPC) framework |
 | sys-cluster/xpmem | XPMEM is a Linux kernel module that enables a process to map the memory of another process into its virtual address space. |
 | sys-devel/aocc | The AOCC compiler system |
-| sys-devel/llvm-roc-alt | AOCC for ROCm™ |
-| sys-devel/llvm-roc-alt-symlinks | llvm-roc-alt symlinks |
 | sys-devel/llvm-roc-symlinks | llvm-roc symlinks |
 | sys-devel/llvm-roc | The ROCm™ fork of the LLVM project |
 | sys-devel/mold | A Modern Linker |
@@ -2285,24 +2396,30 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sys-kernel/mitigate-id | Enforce Information Disclosure mitigations |
 | sys-kernel/pcc | Performance-oriented Congestion Control |
 | sys-kernel/rock-dkms | ROCk DKMS kernel module |
+| sys-kernel/scx | sched_ext schedulers and tools |
 | sys-libs/libbacktrace | C library that may be linked into a C/C++ program to produce symbolic backtraces |
 | sys-libs/llvm-roc-libomp | The ROCm™ fork of LLVM's libomp |
 | sys-libs/zlib | Standard (de)compression library |
 | sys-power/cpupower-gui | This program is designed to allow you to change the frequency limits of your cpu and its governor similar to cpupower. |
 | sys-process/nvtop | GPU & Accelerator process monitoring |
 | sys-process/psdoom-ng | A First Person Shooter (FPS) process killer |
-| virtual/kfd-lb | KFD (Kernel Fusion Driver) with version limited lower boundary |
-| virtual/kfd | The Kernel Fusion Driver (KFD) |
-| virtual/kfd-ub | KFD (Kernel Fusion Driver) with version limited upper boundary |
+| virtual/cuda-compiler | A virtual package to manage the underlying CUDA compiler dependency choices |
+| virtual/dss | Requirements for security-critical secure data storage |
+| virtual/hsa-code-object-version | HSA code object Version consistency |
+| virtual/kfd | KFD (Kernel Fusion Driver) with version limited upper boundary |
+| virtual/libcxx | Manages libc++ versioning |
+| virtual/libstdcxx | Manages libstdc++ versioning |
 | virtual/linux-sources | Virtual for Linux kernel sources |
 | virtual/ot-sources-lts | Virtual for the ot-sources LTS ebuilds for |
 | virtual/ot-sources-stable | Virtual for the ot-sources stable ebuilds |
 | virtual/patent-status | A virtual package for patent status consistency across ebuilds |
 | virtual/pillow | Virtual for Python Pillow packages |
+| virtual/rocm-libstdcxx | A virtual package to manage the underlying ROCm libstdc++ dependency choice |
 | virtual/tmpfiles | Virtual to select between different tmpfiles.d handlers |
-| www-apps/lobe-chat | A modern-design progressive web app supporting AI chat, function call plugins, multiple open/closed LLM models, RAG, TTS, vision |
-| www-apps/LocalAI | A REST API featuring integrated WebUI, P2P inference, generation of text, audio, video, images, voice cloning |
+| www-apps/LobeHub | An AI Agent framework supporting AI chat, function call plugins, open/closed LLM models, RAG, TTS, vision |
+| www-apps/LocalAI | A self hosted local AI alternative with text, audio, speech, video, images, voice cloning, WebUI, REST API, P2P inferencing support |
 | www-apps/open-webui | A user-friendly AI interface with web search RAG, document RAG, AI image generation, Ollama, OpenAI API support |
+| www-apps/searxng-docker | Official SearXNG container setup (docker-compose) for local CLI use with searxngr |
 | www-apps/xpra-html5 | HTML5 client for Xpra |
 | www-client/chromium-sources | Chromium sources |
 | www-client/chromium | The open-source version of the Chrome web browser |
@@ -2310,14 +2427,19 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | www-client/firefox | Firefox Web Browser |
 | www-client/surf | A simple web browser based on WebKitGTK |
 | www-misc/ddgr | DuckDuckGo from the terminal |
+| www-misc/lobehub-market-cli | Device registration, auth management, and browse and install LobeHub marketplace skills |
 | www-misc/mahimahi | Web performance measurement toolkit |
+| www-misc/searxngr | SearXNG from the command line, inspired by ddgr and googler. |
 | www-misc/socli | A search and browse Stack Overflow command line terminal client |
 | www-servers/civetweb | CivetWeb is an embedded C++ web server |
 | x11-base/xorg-server | X.Org X servers |
 | x11-libs/cairo | A vector graphics library with cross-device output support |
 | x11-libs/gdk-pixbuf | Image loading library for GTK+ |
 | x11-libs/gtk+ | Gimp ToolKit + |
+| x11-libs/libdrm | X.Org libdrm library |
 | x11-libs/libX11 | X.Org X11 library |
+| x11-libs/libxcb | X C-language Bindings library |
+| x11-libs/libxkbcommon | Keymap handling library for toolkits and window systems |
 | x11-libs/pango | Internationalized text layout and rendering library |
 | x11-libs/pixman | Low-level pixel manipulation routines |
 | x11-libs/startup-notification | Application startup notification and feedback library |
