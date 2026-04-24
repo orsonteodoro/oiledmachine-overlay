@@ -151,7 +151,7 @@ einfo "Applying SSIZE_MAX fix for Clang with glibc"
 			fi
 			if use kernel_linux ; then
 	# From /usr/include/linux/limits.h in sys-kernel/linux-headers
-einfo "Applying PATH_MAX, NAME_MAX fixes for Clang with Linux kernel"
+einfo "Applying PATH_MAX, NAME_MAX fixes for Clang with the Linux kernel"
 				extra_args_cc="${extra_args_cc} -DPATH_MAX=4096 -DNAME_MAX=255"
 				extra_args_cxx="${extra_args_cxx} -DPATH_MAX=4096 -DNAME_MAX=255"
 			fi
