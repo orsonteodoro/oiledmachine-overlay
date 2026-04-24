@@ -224,6 +224,10 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	cflags-hardened_append
 
+	# oiledmachine-overlay:  fix undefined references
+	append-ldflags $(pcre2-config --libs-posix)
+einfo "LDFLAGS:  ${LDFLAGS}"
+
 	# TODO: figure a way to pass appropriate values for all cross properties
 	# that glib uses (search for get_cross_property)
 	#if tc-is-cross-compiler ; then
