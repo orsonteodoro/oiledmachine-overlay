@@ -62,11 +62,11 @@ LICENSE="
 SLOT="0"
 IUSE+="
 ${EXTERNAL_IUSE}
-alsa curl doc gtk3 gtk4 +geolocation http2 mod_adblock mod_adblock_spam404
+alsa curl doc gtk3 gtk4 +geolocation mod_adblock mod_adblock_spam404
 mod_adblock_easylist mod_autoopen mod_link_hints mod_searchengines
 mod_simple_bookmarking_redux mpv tabbed update_adblock plumb -pointer-lock
 +pulseaudio savedconfig -smoothscrolling +url-bar +v4l +webgl
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE+="
 	^^ (
@@ -126,24 +126,12 @@ RDEPEND+="
 		x11-terms/st
 	)
 	gtk3? (
-		!http2? (
-			app-crypt/gcr:0[gtk,${MULTILIB_USEDEP}]
-			net-libs/webkit-gtk:4[${MULTILIB_USEDEP},${PYTHON_SINGLE_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
-			x11-libs/gtk+:3[${MULTILIB_USEDEP},X]
-		)
-		http2? (
-			app-crypt/gcr:0[gtk,${MULTILIB_USEDEP}]
-			net-libs/webkit-gtk:4.1[${MULTILIB_USEDEP},${PYTHON_SINGLE_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
-			x11-libs/gtk+:3[${MULTILIB_USEDEP},X]
-		)
+		app-crypt/gcr:0[gtk,${MULTILIB_USEDEP}]
+		net-libs/webkit-gtk:4.1[${MULTILIB_USEDEP},${PYTHON_SINGLE_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
+		x11-libs/gtk+:3[${MULTILIB_USEDEP},X]
 	)
 	gtk4? (
 		|| (
-			(
-				app-crypt/gcr:4[gtk,${MULTILIB_USEDEP}]
-				gui-libs/gtk:4[X]
-				net-libs/webkit-gtk:5[${MULTILIB_USEDEP},${PYTHON_SINGLE_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
-			)
 			(
 				app-crypt/gcr:4[gtk,${MULTILIB_USEDEP}]
 				gui-libs/gtk:4[X]
@@ -489,20 +477,14 @@ einfo "Switching to webkit-gtk:6"
 		sed -i -e 's|gtk[+]-3.0|gtk4|g' "config.mk" || die
 		sed -i -e 's|gcr-3|gcr-4|g' "config.mk" || die
 		append-cflags -DWEBKIT_API_VERSION=0600
-	elif has_version "net-libs/webkit-gtk:5" && use gtk4 ; then
-einfo "Switching to webkit-gtk:5"
-		sed -i -e "s|webkit2gtk-4.0|webkit2gtk-5.0|g" "config.mk" || die
-		sed -i -e "s|webkit2gtk-web-extension-4.0|webkit2gtk-web-extension-5.0|g" "config.mk" || die
-		sed -i -e 's|gtk[+]-3.0|gtk4|g' "config.mk" || die
-		sed -i -e 's|gcr-3|gcr-4|g' "config.mk" || die
-		append-cflags -DWEBKIT_API_VERSION=0500
-	elif has_version "net-libs/webkit-gtk:4.1" && use gtk3 && use http2 ; then
+	elif has_version "net-libs/webkit-gtk:4.1" && use gtk3 ; then
 einfo "Switching to webkit-gtk:4.1"
 		sed -i -e "s|webkit2gtk-4.0|webkit2gtk-4.1|g" "config.mk" || die
 		sed -i -e "s|webkit2gtk-web-extension-4.0|webkit2gtk-web-extension-4.1|g" "config.mk" || die
 		append-cflags -DWEBKIT_API_VERSION=0401
 	else
-		append-cflags -DWEBKIT_API_VERSION=0400
+eerror "Use either webkit-gtk:4.1, webkit-gtk:6"
+die
 	fi
 
 	if has_version "net-libs/webkit-gtk[gles2,wayland]" \
