@@ -5,11 +5,13 @@
 # Usage:
 # ./compare-point-releases.sh 2.38.2 2.38.3
 
-PV1="${1}"
-PV2="${2}"
+PV1A="${1}"
+PV1B="${2}"
+PV2A="${3}"
+PV2B="${4}"
 main() {
-	S_OLD="/var/tmp/portage/net-libs/webkit-gtk-${PV1}/work/webkitgtk-${PV1}"
-	S_NEW="/var/tmp/portage/net-libs/webkit-gtk-${PV2}/work/webkitgtk-${PV2}"
+	S_OLD="/var/tmp/portage/net-libs/webkit-gtk-${PV1A}/work/webkitgtk-${PV1B}"
+	S_NEW="/var/tmp/portage/net-libs/webkit-gtk-${PV2A}/work/webkitgtk-${PV2B}"
 	local P=(
 		CMakeLists.txt
 		Source/cmake/BubblewrapSandboxChecks.cmake
