@@ -609,7 +609,7 @@ aqua +avif -bmalloc -cache-partitioning clang dash debug +doc -eme +flite
 +opengl openmp -seccomp +speech-synthesis -spell -system-malloc test thunder
 +variation-fonts wayland +webassembly -webdriver +webgl webm-eme -webrtc webvtt
 -webxr +woff2 +X
-ebuild_revision_36
+ebuild_revision_37
 "
 
 gen_gst_plugins_duse() {
@@ -710,7 +710,6 @@ _TRASH="
 
 REQUIRED_USE+="
 	${PATENT_REQUIRED_USE}
-	!librice
 	alsa? (
 		gstreamer
 	)
@@ -1129,15 +1128,22 @@ BDEPEND+="
 #		)
 #	)
 _PATCHES=(
-#	"${FILESDIR}/${PN}-2.43.2-CaptionUserPreferencesDisplayMode-conditional.patch"
+	# https://bugs.gentoo.org/938162, see also mycmakeargs
+	"${FILESDIR}/2.48.3-fix-ftbfs-riscv64.patch"
+	"${FILESDIR}/2.50.4-disable-native-simd-on-riscv.patch"
+	"${FILESDIR}/2.50.4-prefer-pthread.patch"
+	"${FILESDIR}/2.50.5-DFGBasicBlockInlines-gcc16.patch"
+	"${FILESDIR}/2.50.5-EventTarget-gcc16.patch"
+	"${FILESDIR}/2.52.1-documentloader-eventloop-h.patch"
+
 	"${FILESDIR}/extra-patches/${PN}-2.43.2-custom-page-size.patch"
 	"${FILESDIR}/extra-patches/${PN}-2.46.3-gi-flags.patch"
 
 	# It was not applied to other tags (webkitgtk-2.52.3) because the librice was not widely packaged.
 	# There was indication of a test crashed because of commit.  The crash may be resolved with the closed issue.
-#	"${FILESDIR}/extra-patches/${PN}-e6516c9-sockets-tos-configuration-support.patch"
-#	"${FILESDIR}/extra-patches/${PN}-37b8d10-turn-improvements.patch"
-#	"${FILESDIR}/extra-patches/${PN}-7cb396c-remove-pre-librice-0.4.x.patch"
+	"${FILESDIR}/extra-patches/${PN}-e6516c9-sockets-tos-configuration-support.patch"
+	"${FILESDIR}/extra-patches/${PN}-37b8d10-turn-improvements.patch"
+	"${FILESDIR}/extra-patches/${PN}-7cb396c-remove-pre-librice-0.4.x.patch"
 )
 
 _set_clang() {
