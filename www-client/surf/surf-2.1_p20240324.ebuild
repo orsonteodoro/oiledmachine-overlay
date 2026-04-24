@@ -66,7 +66,7 @@ alsa curl doc gtk3 gtk4 +geolocation mod_adblock mod_adblock_spam404
 mod_adblock_easylist mod_autoopen mod_link_hints mod_searchengines
 mod_simple_bookmarking_redux mpv tabbed update_adblock plumb -pointer-lock
 +pulseaudio savedconfig -smoothscrolling +url-bar +v4l +webgl
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE+="
 	^^ (
@@ -127,7 +127,7 @@ RDEPEND+="
 	)
 	gtk3? (
 		app-crypt/gcr:0[gtk,${MULTILIB_USEDEP}]
-		net-libs/webkit-gtk:4.1[${MULTILIB_USEDEP},${PYTHON_SINGLE_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
+		>=net-libs/webkit-gtk-2.52.3:4.1[${MULTILIB_USEDEP},${PYTHON_SINGLE_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
 		x11-libs/gtk+:3[${MULTILIB_USEDEP},X]
 	)
 	gtk4? (
@@ -135,7 +135,7 @@ RDEPEND+="
 			(
 				app-crypt/gcr:4[gtk,${MULTILIB_USEDEP}]
 				gui-libs/gtk:4[X]
-				net-libs/webkit-gtk:6[${MULTILIB_USEDEP},${PYTHON_SINGLE_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
+				>=net-libs/webkit-gtk-2.52.3:6[${MULTILIB_USEDEP},${PYTHON_SINGLE_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
 			)
 		)
 	)
