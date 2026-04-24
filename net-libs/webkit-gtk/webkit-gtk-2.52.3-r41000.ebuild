@@ -609,7 +609,7 @@ aqua +avif -bmalloc -cache-partitioning clang dash debug +doc -eme +flite
 +opengl openmp -seccomp +speech-synthesis -spell -system-malloc test thunder
 +variation-fonts wayland +webassembly -webdriver +webgl webm-eme -webrtc webvtt
 -webxr +woff2 +X
-ebuild_revision_35
+ebuild_revision_36
 "
 
 gen_gst_plugins_duse() {
@@ -710,6 +710,7 @@ _TRASH="
 
 REQUIRED_USE+="
 	${PATENT_REQUIRED_USE}
+	!librice
 	alsa? (
 		gstreamer
 	)
@@ -1134,9 +1135,9 @@ _PATCHES=(
 
 	# It was not applied to other tags (webkitgtk-2.52.3) because the librice was not widely packaged.
 	# There was indication of a test crashed because of commit.  The crash may be resolved with the closed issue.
-	"${FILESDIR}/extra-patches/${PN}-e6516c9-sockets-tos-configuration-support.patch"
-	"${FILESDIR}/extra-patches/${PN}-37b8d10-turn-improvements.patch"
-	"${FILESDIR}/extra-patches/${PN}-7cb396c-remove-pre-librice-0.4.x.patch"
+#	"${FILESDIR}/extra-patches/${PN}-e6516c9-sockets-tos-configuration-support.patch"
+#	"${FILESDIR}/extra-patches/${PN}-37b8d10-turn-improvements.patch"
+#	"${FILESDIR}/extra-patches/${PN}-7cb396c-remove-pre-librice-0.4.x.patch"
 )
 
 _set_clang() {
