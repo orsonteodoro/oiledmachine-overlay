@@ -30,7 +30,7 @@ INTROSPECTION_BUILD_DIR="${WORKDIR}/${INTROSPECTION_P}-build"
 LICENSE="LGPL-2.1+"
 SLOT="2"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~arm64-macos ~x64-macos ~x64-solaris"
-IUSE="dbus debug +elf doc +introspection +mime selinux static-libs sysprof systemtap test utils xattr ebuild_revision_2"
+IUSE="dbus debug +elf doc +introspection +mime selinux static-libs sysprof systemtap test utils xattr ebuild_revision_3"
 RESTRICT="!test? ( test )"
 
 # * elfutils (via libelf) does not build on Windows. gresources are not embedded
@@ -46,7 +46,7 @@ RDEPEND="
 	!<dev-libs/gobject-introspection-1.80.1
 	!<dev-util/gdbus-codegen-${PV}
 	>=virtual/libiconv-0-r1[${MULTILIB_USEDEP}]
-	>=dev-libs/libpcre2-10.32:0=[${MULTILIB_USEDEP},unicode(+),static-libs?]
+	>=dev-libs/libpcre2-10.32:0=[${MULTILIB_USEDEP},jit,unicode(+),static-libs?]
 	>=dev-libs/libffi-3.0.13-r1:=[${MULTILIB_USEDEP}]
 	>=virtual/zlib-1.2.8-r1:=[${MULTILIB_USEDEP}]
 	>=virtual/libintl-0-r2[${MULTILIB_USEDEP}]
