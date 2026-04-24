@@ -156,7 +156,7 @@
 		    TRESOR (x86-64) [5]			D
 		    zen-sauce				N
 
-    6.18 (Stable)					A
+    6.18 (LTS)						A
 		    -rt	(RT_PREEMPT)			A
 		    Clang PGO				D
 		    genpatches				A
@@ -170,7 +170,7 @@
 		    TRESOR (x86-64) [5]			D
 		    zen-sauce				A
 
-    6.19 (Stable)					
+    7.0 (Stable)					
 		    -rt	(RT_PREEMPT)			A
 		    Clang PGO				D
 		    genpatches				A
@@ -182,9 +182,8 @@
 		    TRESOR (AES-NI) [5]			D
 		    TRESOR (x86) [5]			D
 		    TRESOR (x86-64) [5]			D
-		    zen-sauce				A
+		    zen-sauce				D
 
-    7.0 (Live)						A
     Ebuild support for live is temporarily down but may change in the future.
 
 
@@ -5765,15 +5764,13 @@ unset OT_KERNEL_PRIVATE_KEY
 
     For a full list of commits, see the following commit history:
 
-     5.4:  https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce
     5.10:  https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/zen-sauce
     5.15:  https://github.com/torvalds/linux/compare/v5.15...zen-kernel:5.15/zen-sauce
      6.1:  https://github.com/torvalds/linux/compare/v6.1...zen-kernel:6.1/zen-sauce
      6.6:  https://github.com/torvalds/linux/compare/v6.6...zen-kernel:6.6/zen-sauce
     6.12:  https://github.com/torvalds/linux/compare/v6.12...zen-kernel:6.12/zen-sauce
-    6.16:  https://github.com/torvalds/linux/compare/v6.16...zen-kernel:6.16/zen-sauce
-    6.17:  https://github.com/torvalds/linux/compare/v6.17...zen-kernel:6.17/zen-sauce
     6.18:  https://github.com/torvalds/linux/compare/v6.18...zen-kernel:6.18/zen-sauce
+     7.0:  https://github.com/torvalds/linux/compare/v7.0...zen-kernel:7.0/zen-sauce
 
     Use the zen-sauce USE flags instead of passing their Zen commit IDs
     equivalents.

@@ -13,6 +13,8 @@
 # The ot-kernel-bundles eclass contains per decade or per platform
 # computer configurations.
 
+# This file contains information that was derived from AI synthetic data or from AI inference.
+
 case ${EAPI:-0} in
 	[78]) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;

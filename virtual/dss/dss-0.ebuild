@@ -13,7 +13,7 @@ EAPI=8
 
 # Zero-tolerance policy
 CPU_MITIGATION_AMD_MICROCODE_TIMESTAMP="2025-10-30 17:23:31 -0500" # Based on commit date with patch >= ucode version on advisory
-KERNEL_PV="6.19.12"
+KERNEL_PV="7.0" # The latest stable is used to avoid missing backports branches and to receive the latest security design fixes.
 
 ANTIVIRUS_IUSE=(
 	"clamav"

@@ -5,15 +5,15 @@
 # TODO package:
 # sphinx-rtd-dark-mode
 
-# @ECLASS: ot-kernel-v6.19.eclass
+# @ECLASS: ot-kernel-v7.0.eclass
 # @MAINTAINER:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS: 7 8
-# @BLURB: Eclass for patching the 6.19.x kernel
+# @BLURB: Eclass for patching the 7.0.x kernel
 # @DESCRIPTION:
-# The ot-kernel-v6.19 eclass defines specific applicable patching for the 6.19.x
+# The ot-kernel-v7.0 eclass defines specific applicable patching for the 7.0.x
 # linux kernel.
 
 case ${EAPI:-0} in
@@ -23,9 +23,9 @@ esac
 
 # For *DEPENDs, see
 # https://github.com/torvalds/linux/blob/master/Documentation/process/changes.rst
-# https://github.com/torvalds/linux/blob/v6.19/Documentation/process/changes.rst
+# https://github.com/torvalds/linux/blob/v7.0/Documentation/process/changes.rst
 # For compiler versions, see
-# https://github.com/torvalds/linux/blob/v6.19/scripts/min-tool-version.sh#L26
+# https://github.com/torvalds/linux/blob/v7.0/scripts/min-tool-version.sh#L26
 
 # To update the array sections you can
 # wget -O - https://github.com/torvalds/linux/compare/A..D.patch \
@@ -53,21 +53,22 @@ else
 	MY_PV="${PV}" # ver_test context
 fi
 # AMDGPU_FIRMWARE_RELEASE_DATE is based on firmware names from
-# https://github.com/torvalds/linux/blob/v6.19/drivers/gpu/drm/amd/display/include/dal_types.h	DCN 4.0.1
-# https://github.com/torvalds/linux/blob/v6.19/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c		VCN 5.0.1
-# https://github.com/torvalds/linux/blob/v6.19/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c		the last gfx version for gc_12_0_1 and others with .bin reference
+# https://github.com/torvalds/linux/blob/v7.0/drivers/gpu/drm/amd/display/include/dal_types.h	DCN 4.0.1
+# https://github.com/torvalds/linux/blob/v7.0/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c		VCN 5.0.1
+# https://github.com/torvalds/linux/blob/v7.0/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c		the last gfx version for gc_12_0_1 and others with .bin reference
 # and linux-firmware firmware upload date
+# TODO update section
 KERNEL_RELEASE_DATE="20251130"
 # The timestamps are supposed to reflect maximum coverage for the set.
 AMD_SEV_FIRMWARE_RELEASE_DATE="20230828" # Based on amd_sev_fam19h_model1xh file first presence
 AMDGPU_FIRMWARE_RELEASE_DATE="20250620" # Based on vcn 5.0.1 and dcn 4.0.1 and gc_12_0_1 first presence
 AMDXDNA_FIRMWARE_RELEASE_DATE="20241203" # Based on npu.sbin first presence
-ATH_FIRMWARE_RELEASE_DATE="20241010" # Based on presence of latest added board-2 (QCN9274) file in https://github.com/torvalds/linux/blob/v6.19/drivers/net/wireless/ath/ath12k/hw.c
-IVPU_FIRMWARE_RELEASE_DATE="20250307" # Based on presence of added vpu_37xx_v1 bin referenced in https://github.com/torvalds/linux/blob/v6.19/drivers/accel/ivpu/ivpu_fw.c
-RTL_BT_FIRMWARE_RELEASE_DATE="20250106" # Based on rtl8723cs_xx_config bin referenced in https://github.com/torvalds/linux/blob/v6.19/drivers/bluetooth/btrtl.c
-RTL8XXXU_FIRMWARE_RELEASE_DATE="20230517" # Based on latest added rtl8192fufw bin from https://github.com/torvalds/linux/blob/v6.19/drivers/net/wireless/realtek/rtl8xxxu/
-RTLWIFI_FIRMWARE_RELEASE_DATE="20241010" # Based on latest added rtl8192dufw bin from https://github.com/torvalds/linux/blob/v6.19/drivers/net/wireless/realtek/rtlwifi/
-RTW_FIRMWARE_RELEASE_DATE="20250630" # Based on latest added rtw8922a_fw-4 bin drivers from https://github.com/torvalds/linux/blob/v6.19/drivers/net/wireless/realtek/rtw89
+ATH_FIRMWARE_RELEASE_DATE="20241010" # Based on presence of latest added board-2 (QCN9274) file in https://github.com/torvalds/linux/blob/v7.0/drivers/net/wireless/ath/ath12k/hw.c
+IVPU_FIRMWARE_RELEASE_DATE="20250307" # Based on presence of added vpu_37xx_v1 bin referenced in https://github.com/torvalds/linux/blob/v7.0/drivers/accel/ivpu/ivpu_fw.c
+RTL_BT_FIRMWARE_RELEASE_DATE="20250106" # Based on rtl8723cs_xx_config bin referenced in https://github.com/torvalds/linux/blob/v7.0/drivers/bluetooth/btrtl.c
+RTL8XXXU_FIRMWARE_RELEASE_DATE="20230517" # Based on latest added rtl8192fufw bin from https://github.com/torvalds/linux/blob/v7.0/drivers/net/wireless/realtek/rtl8xxxu/
+RTLWIFI_FIRMWARE_RELEASE_DATE="20241010" # Based on latest added rtl8192dufw bin from https://github.com/torvalds/linux/blob/v7.0/drivers/net/wireless/realtek/rtlwifi/
+RTW_FIRMWARE_RELEASE_DATE="20250630" # Based on latest added rtw8922a_fw-4 bin drivers from https://github.com/torvalds/linux/blob/v7.0/drivers/net/wireless/realtek/rtw89
 # Initially, the required firmware date was thought to be feature complete and in
 # sync with the kernel driver on the release date of the kernel.  It is not the
 # case.  Because of many reasons (code review sabateurs, job security, marketing
@@ -176,9 +177,9 @@ C2TCP_VER="2.2"
 # For CFI users, KCFI merged in 6.1
 CLANG_PGO_SUPPORTED=0 # Needs updated patch for LLVM 20
 # See
-# https://github.com/torvalds/linux/blob/v6.19/tools/build/feature/Makefile#L331
-# https://github.com/torvalds/linux/blob/v6.19/tools/perf/Makefile.config#L276
-# https://github.com/torvalds/linux/blob/v6.19/scripts/kconfig/qconf-cfg.sh
+# https://github.com/torvalds/linux/blob/v7.0/tools/build/feature/Makefile#L331
+# https://github.com/torvalds/linux/blob/v7.0/tools/perf/Makefile.config#L276
+# https://github.com/torvalds/linux/blob/v7.0/scripts/kconfig/qconf-cfg.sh
 CXX_STANDARD="17" # Qt6 (17), Qt5 (11), perf-cpp (17)
 DISABLE_DEBUG_PV="1.8.1"
 EXCLUDE_SCS=(
@@ -249,7 +250,7 @@ PATCH_ZEN_SAUCE_BLACKLISTED_COMMITS=(
 )
 
 PATCH_ZEN_SAUCE_COMMITS=(
-# From https://github.com/torvalds/linux/compare/v6.19...zen-kernel:zen-kernel:6.19/zen-sauce
+# From https://github.com/torvalds/linux/compare/v7.0...zen-kernel:zen-kernel:7.0/zen-sauce
 #
 # Generated from:
 # wget -q -O - https://github.com/torvalds/linux/compare/0b03b7b270f7daf4834d806c14997c8718223cf0^..0fd723f37481628d4968729c6d3a518878496189.patch \
@@ -389,7 +390,7 @@ IUSE+="
 "
 fi
 # CET default ON based on CI.
-# clang is default OFF based on https://github.com/torvalds/linux/blob/v6.19/Documentation/process/changes.rst
+# clang is default OFF based on https://github.com/torvalds/linux/blob/v7.0/Documentation/process/changes.rst
 # kcfi default OFF based on CI using clang 17.
 IUSE+="
 ${ARM_FLAGS[@]}
@@ -1550,7 +1551,7 @@ ot-kernel_check_versions() {
 	_ot-kernel_check_versions "app-arch/tar" "1.28" ""
 	_ot-kernel_check_versions "dev-embedded/u-boot-tools" "2017.01" "" # mkimage
 	_ot-kernel_check_versions "dev-util/global" "6.6.5" "" # gtags
-	_ot-kernel_check_versions "dev-util/pahole" "1.16" "CONFIG_DEBUG_INFO_BTF"
+	_ot-kernel_check_versions "dev-util/pahole" "1.22" "CONFIG_DEBUG_INFO_BTF"
 	_ot-kernel_check_versions "net-dialup/ppp" "2.4.0" "CONFIG_PPP"
 	_ot-kernel_check_versions "net-firewall/iptables" "1.4.2" "CONFIG_NETFILTER"
 	_ot-kernel_check_versions "net-fs/nfs-utils" "1.0.5" "NFS_FS"

@@ -2,10 +2,6 @@
 # Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# FIXME:
-# vmlinux.o .vmlinux.export.o init/version-timestamp.o --no-whole-archive --start-group --end-group
-#-ld.bfd: vmlinux.o:(.data+0xb87a8): undefined reference to `sysctl_tcp_c2tcp_enable'
-
 # @ECLASS: ot-kernel.eclass
 # @MAINTAINER:
 # Orson Teodoro <orsonteodoro@hotmail.com>
@@ -16,6 +12,12 @@
 # @DESCRIPTION:
 # The ot-kernel eclass defines common patching steps for any linux
 # kernel version.
+
+# This file contains information that was derived from AI synthetic data or from AI inference.
+
+# FIXME:
+# vmlinux.o .vmlinux.export.o init/version-timestamp.o --no-whole-archive --start-group --end-group
+#-ld.bfd: vmlinux.o:(.data+0xb87a8): undefined reference to `sysctl_tcp_c2tcp_enable'
 
 # BBR v2:
 #	https://github.com/google/bbr/compare/2c85ebc...v2alpha-2021-07-07
@@ -45,7 +47,7 @@
 #       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.6
 #       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.12
 #       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.18
-#       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.19
+#       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=7.0
 # KCFI:
 #	https://github.com/torvalds/linux/compare/v6.0...samitolvanen:kcfi-v5
 # kernel_compiler_patch:
@@ -87,7 +89,7 @@
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.6/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.12/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.18/
-#	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.19/
+#	http://cdn.kernel.org/pub/linux/kernel/projects/rt/7.0/
 # Project C CPU Scheduler:
 #	https://cchalpha.blogspot.com/search/label/Project%20C
 #	https://gitlab.com/alfredchen/projectc/-/tree/master
@@ -103,7 +105,7 @@
 #	https://github.com/torvalds/linux/compare/v6.6...zen-kernel:6.6/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.12...zen-kernel:6.12/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.18...zen-kernel:6.18/zen-sauce
-#	https://github.com/torvalds/linux/compare/v6.19...zen-kernel:6.19/zen-sauce
+#	https://github.com/torvalds/linux/compare/v7.0...zen-kernel:7.0/zen-sauce
 
 # CI
 # branch tip or live, 2024-08-15:  gcc 12.2, llvm 17.0.6; kernel versions 5.10, 6.6, 6.11
@@ -413,8 +415,8 @@ UKSM_BASE_URI="https://raw.githubusercontent.com/dolohow/uksm/master/v${KV_MAJOR
 UKSM_FN="uksm-${KV_MAJOR_MINOR}.patch"
 UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
 
-MITIGATION_DATE="Apr 12, 2026" # Advisory date
-MITIGATION_LAST_UPDATE=1775910598 # From `date +%s -d "2026-04-11 14:29:58 +0200"` from changelog for latest tag
+MITIGATION_DATE="Apr 24, 2026" # Advisory date
+MITIGATION_LAST_UPDATE=1776857543 # From `date +%s -d "2026-04-22 13:32:23 +0200"` from changelog for latest tag
 MITIGATION_URI="https://lore.kernel.org/linux-cve-announce/"
 VULNERABILITIES_FIXED=(
 # High and critical are noted and only those that are fixed on this release day
