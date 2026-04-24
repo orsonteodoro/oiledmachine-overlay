@@ -30,7 +30,7 @@ INTROSPECTION_BUILD_DIR="${WORKDIR}/${INTROSPECTION_P}-build"
 LICENSE="LGPL-2.1+"
 SLOT="2"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~arm64-macos ~x64-macos ~x64-solaris"
-IUSE="dbus debug +elf doc +introspection +mime selinux static-libs sysprof systemtap test utils xattr ebuild_revision_4"
+IUSE="dbus debug +elf doc +introspection +mime selinux static-libs sysprof systemtap test utils xattr ebuild_revision_6"
 RESTRICT="!test? ( test )"
 
 # * elfutils (via libelf) does not build on Windows. gresources are not embedded
@@ -42,11 +42,12 @@ RESTRICT="!test? ( test )"
 # are actually found to static link libgio-2.0.a, we can revisit and either add
 # them or just put the (build) deps in that rare consumer instead of recursive
 # RDEPEND here (due to lack of recursive DEPEND).
+# Use static-libs for pcre2 to avoid webkit-gtk link-time issue with LLIntSettingsExtractor (when building JavaScriptCore low level interpreter).
 RDEPEND="
 	!<dev-libs/gobject-introspection-1.80.1
 	!<dev-util/gdbus-codegen-${PV}
 	>=virtual/libiconv-0-r1[${MULTILIB_USEDEP}]
-	>=dev-libs/libpcre2-10.32:0=[${MULTILIB_USEDEP},jit,unicode(+),static-libs?]
+	>=dev-libs/libpcre2-10.32:0=[${MULTILIB_USEDEP},jit,unicode(+),static-libs]
 	>=dev-libs/libffi-3.0.13-r1:=[${MULTILIB_USEDEP}]
 	>=virtual/zlib-1.2.8-r1:=[${MULTILIB_USEDEP}]
 	>=virtual/libintl-0-r2[${MULTILIB_USEDEP}]
@@ -226,7 +227,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 	cflags-hardened_append
 
 	# oiledmachine-overlay:  fix undefined references
-	append-ldflags $(pcre2-config --libs8)
+	filter-flags "*pcre2-posix*" "*pcre2-8*"
+	append-ldflags "/usr/$(get_libdir)/libpcre2-posix.a" "/usr/$(get_libdir)/libpcre2-8.a"
 einfo "LDFLAGS:  ${LDFLAGS}"
 
 	# TODO: figure a way to pass appropriate values for all cross properties
