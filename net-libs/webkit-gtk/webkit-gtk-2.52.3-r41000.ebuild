@@ -6,7 +6,7 @@ EAPI=8
 
 # D12, U22, U24
 
-# Contains AI generated synthetic data in the ebuild.
+# Contains AI generated synthetic data and AI generated code in the ebuild.
 # Contains AI derived information from AI inference in the metadata.xml.
 
 # -r revision notes
