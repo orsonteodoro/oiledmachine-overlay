@@ -37,12 +37,12 @@ LICENSE="
 		MIT
 		SURF-MOD_ADBLOCKER
 	)
-        mod_adblock_easylist? (
+	mod_adblock_easylist? (
 		CC-BY-SA-3.0
 		GPL-3+
 		SURF-MOD_ADBLOCKER-EASYLIST
 	)
-        mod_adblock_spam404? (
+	mod_adblock_spam404? (
 		CC-BY-SA-4.0
 		SURF-MOD_ADBLOCKER-SPAM404
 	)
@@ -174,12 +174,10 @@ _boilerplate_dl() {
 	local fn_s="${1}"
 	local fn_d="${2}"
 	local dl_location="${3}"
-	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
+	local distdir=${PORTAGE_ACTUAL_DISTDIR:-"${DISTDIR}"}
 einfo
-einfo "Please download"
-einfo "  - ${fn_s}"
-einfo "from ${dl_location} and rename it to ${fn_d} place them in"
-einfo "${distdir}"
+einfo "Please download ${fn_s} from ${dl_location} and rename it to ${fn_d}"
+einfo "place it in ${distdir}"
 einfo
 }
 
@@ -188,7 +186,7 @@ _boilerplate_dl_link_hints() {
 	local dl_location="${2}"
 	local msg="${3}"
 	local hash="${4}"
-	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
+	local distdir=${PORTAGE_ACTUAL_DISTDIR:-"${DISTDIR}"}
 einfo
 einfo "${msg}"
 einfo "from ${dl_location} and rename it to ${fn_d} place them in ${distdir} ."
@@ -199,9 +197,9 @@ einfo
 check_geolocation() {
 	if has_version "app-misc/geoclue" ; then
 		if ! grep -q -e "submit-data=true" \
-			"${EROOT}/etc/geoclue/geoclue.conf" ; then
+			"/etc/geoclue/geoclue.conf" ; then
 ewarn
-ewarn "${EROOT}/etc/geoclue/geoclue.conf should be changed to submit-data=true"
+ewarn "/etc/geoclue/geoclue.conf should be changed to submit-data=true"
 ewarn "to get GPS coordinates with the router's BSSID for non-mobile devices or"
 ewarn "editing the [wifi] section to use another location service."
 ewarn
@@ -210,6 +208,9 @@ ewarn
 }
 
 pkg_setup() {
+	# It is lame to sometimes to ask the user to manually download or to
+	# prepare the contribution but the licensing of the contribution
+	# or the website is not clear and direct.
 	if use mod_autoopen ; then
 		_boilerplate_dl "${AUTOOPEN_FN}" "${AUTOOPEN_FN}" \
 			"https://surf.suckless.org/patches/autoopen/"
@@ -234,19 +235,19 @@ check_savedconfig_path() {
 eerror
 eerror "Please run"
 eerror
-eerror "  mkdir -p \"/etc/portage/savedconfig/www-client\""
-eerror "  cp \"${S}/config.def.h\" \"${SAVEDCONFIG_PATH}\""
+eerror "    mkdir -p \"/etc/portage/savedconfig/www-client\""
+eerror "    cp \"${S}/config.def.h\" \"${SAVEDCONFIG_PATH}\""
 eerror
 eerror
 eerror "Also, make sure to define an environment variable SAVEDCONFIG_PATH."
 eerror
 eerror "Contents of /etc/portage/env/surf.conf:"
 eerror
-eerror "  SAVEDCONFIG_PATH=\"${SAVEDCONFIG_PATH}\""
+eerror "    SAVEDCONFIG_PATH=\"${SAVEDCONFIG_PATH}\""
 eerror
 eerror "Contents of /etc/portage/package.env:"
 eerror
-eerror "  ${CATEGORY}/${PN} surf.conf"
+eerror "    ${CATEGORY}/${PN} surf.conf"
 eerror
 eerror
 eerror "Also, make sure to enable the savedconfig USE flag."
@@ -270,14 +271,14 @@ ewarn "References to Java has been removed from config.h."
 einfo
 einfo "The default config.h assumes you have"
 einfo
-einfo "  net-misc/curl"
-einfo "  x11-terms/st"
+einfo "    net-misc/curl"
+einfo "    x11-terms/st"
 einfo
 einfo "installed to support the download function.  Without those, downloads"
 einfo "will fail (gracefully).  You can fix this by doing one of the following:"
 einfo
-einfo "  1) Installing these packages"
-einfo "  2) Setting USE=savedconfig with changes to the savedconfig"
+einfo "    1) Installing these packages"
+einfo "    2) Setting USE=savedconfig with changes to the savedconfig"
 einfo
 	fi
 
@@ -288,7 +289,7 @@ einfo
 		then
 eerror
 eerror "Missing define BM_PICK and/or keybindings.  Copy the define/keybindings"
-eerror "into your savedconfig file (${SAVEDCONFIG_PATH}) .  See"
+eerror "into your savedconfig file (${SAVEDCONFIG_PATH}).  See"
 eerror "https://surf.suckless.org/files/simple_bookmarking_redux/ for details."
 eerror
 			die
@@ -389,15 +390,17 @@ ewarn
 
 	if use savedconfig ; then
 		grep -q -e "AccessMicrophone" "${SAVEDCONFIG_PATH}" \
-		  && die "AccessMicrophone was replaced by one row of AccessMediaStream in ${SAVEDCONFIG_PATH}"
+			&& die "AccessMicrophone was replaced by one row of AccessMediaStream in ${SAVEDCONFIG_PATH}.  See ${S}/config.def.h"
 		grep -q -e "AccessWebcam" "${SAVEDCONFIG_PATH}" \
-		  && die "AccessWebcam was replaced by one row of AccessMediaStream in ${SAVEDCONFIG_PATH}"
+			&& die "AccessWebcam was replaced by one row of AccessMediaStream in ${SAVEDCONFIG_PATH}.  See ${S}/config.def.h"
+		grep -q -e "PDFJSviewer" "${SAVEDCONFIG_PATH}" \
+			|| ewarn "PDFJSviewer is missing in ${SAVEDCONFIG_PATH}.  See ${S}/config.def.h"
 	else
 		einfo "Modding ${config_file}"
 		grep -q -e "AccessMicrophone" "${config_file}" \
-		  && die "AccessMicrophone was replaced by one row of AccessMediaStream in ${config_file}"
+			&& die "AccessMicrophone was replaced by one row of AccessMediaStream in ${config_file}.  See ${S}/config.def.h"
 		grep -q -e "AccessWebcam" "${config_file}" \
-		  && die "AccessWebcam was replaced by one row of AccessMediaStream in ${config_file}"
+			&& die "AccessWebcam was replaced by one row of AccessMediaStream in ${config_file}.  See ${S}/config.def.h"
 	fi
 
 	if use savedconfig ; then
@@ -545,8 +548,8 @@ multilib_src_install() {
 -e 's|https://raw.githubusercontent.com/Spam404/lists/master/adblock-list.txt||' \
 			"${ED}/etc/surf/scripts/adblock/update.sh" || die
 		fi
-                if use mod_adblock_spam404 ; then
-                        dodoc "${FILESDIR}/licenses/LICENSE.Spam404"
+		if use mod_adblock_spam404 ; then
+			dodoc "${FILESDIR}/licenses/LICENSE.Spam404"
 		else
 			rm "${ED}/etc/surf/scripts/adblock/LICENSE.Spam404" || die
 			sed -i \
@@ -555,7 +558,7 @@ multilib_src_install() {
 			sed -i \
 -e 's|https://easylist-downloads.adblockplus.org/malwaredomains_full.txt||' \
 			"${ED}/etc/surf/scripts/adblock/update.sh" || die
-                fi
+		fi
 	fi
 
 	if use mod_autoopen ; then
@@ -563,7 +566,9 @@ multilib_src_install() {
 	fi
 
 	if use mod_link_hints ; then
-		cp -a "${DISTDIR}/surf-9999-link-hints.diff" "${T}/script.js" \
+		cp -a \
+			"${DISTDIR}/surf-9999-link-hints.diff" \
+			"${T}/script.js" \
 			|| die
 		insinto /usr/share/${PN}
 		doins "${T}/script.js"
@@ -583,7 +588,7 @@ multilib_src_install() {
 
 _update_adblock() {
 	einfo "Updating adblock rules"
-	cd "${EROOT}/etc/surf/scripts/adblock" || die
+	cd "/etc/surf/scripts/adblock" || die
 	"./update.sh"
 	einfo "Done updating adblock rules"
 }
@@ -605,11 +610,11 @@ einfo
 einfo
 einfo "You must update the adblock filters manually at"
 einfo
-einfo "  ${EPREFIX}/etc/surf/scripts/adblock/update.sh."
+einfo "    ${EPREFIX}/etc/surf/scripts/adblock/update.sh."
 einfo
 einfo "Make sure the current working directory is"
 einfo
-einfo "  ${EPREFIX}/etc/surf/scripts/adblock/"
+einfo "    ${EPREFIX}/etc/surf/scripts/adblock/"
 einfo
 einfo "before running it."
 einfo
