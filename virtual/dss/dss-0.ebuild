@@ -587,6 +587,7 @@ LOGGER_DEPENDS="
 # Only stable and latest LTS are supported.
 # The latest stable is supported for architectural security design update.
 # The latest LTS is supported for binary only drivers, but binary drivers are not preferred over open.
+# KASAN is preferred over KFENCE for higher security score.  This is why gentoo-kernel and gentoo-kernel-bin are banned.
 KERNEL_DEPENDS="
 	gentoo-sources? (
 		|| (
