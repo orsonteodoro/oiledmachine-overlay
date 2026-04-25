@@ -3302,7 +3302,7 @@
 +	"deepseek-v3.1": "language-consistency code-agent search-agent tool-use agentic-tasks thinking-mode non-thinking-mode multi-thinking-mode",
 +	"deepseek-v3.1:671b-cloud": "language-consistency code-agent search-agent tool-use agentic-tasks thinking-mode non-thinking-mode multi-thinking-mode rate-limited",
 +	"deepseek-v3.2": "cloud-hosted python software-engineering multiple-programming-languages multilingual-software-engineering ai-human-collaboration pre-calculus high-school-math ap-high-school-math",
-+	"deepseek-v4-flash": "software-engineering single-file-edit expert-level-reasoning stem science-technology-engineering-math reasoning coding-agent high-school-math multiple-programming-languages multilingual-software-engineering web-research-competent long-context",
++	"deepseek-v4-flash": "cloud-hosted software-engineering single-file-edit expert-level-reasoning stem science-technology-engineering-math reasoning coding-agent high-school-math multiple-programming-languages multilingual-software-engineering web-research-competent long-context",
 +	"disinfozone/telos": "continental-philosophy philosophy conspiracy conspiracies creative-tasking funny wit witty",
 +	"devstral": "basic-coding-agent open-model",
 +	"devstral-2": "software-engineering coding-agent coding coding-assistant vibe-coding",
