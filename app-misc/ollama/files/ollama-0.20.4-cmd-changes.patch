@@ -1,5 +1,5 @@
 --- a/cmd/cmd.go.orig	2026-04-07 16:47:30.000000000 -0700
-+++ b/cmd/cmd.go	2026-04-09 10:31:37.236138123 -0700
++++ b/cmd/cmd.go	2026-04-24 21:27:48.124445125 -0700
 @@ -19,6 +19,7 @@ import (
  	"os/exec"
  	"os/signal"
@@ -4211,13 +4211,16 @@
  	} {
  		switch cmd {
  		case runCmd:
-@@ -2335,6 +6458,9 @@ func NewCLI() *cobra.Command {
+@@ -2335,7 +6458,12 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		runnerCmd,
 +		availCmd,
 +		findSizeCmd,
 +		findKeywordsCmd,
++// @AI_AGENT_SUPPORT_START@
  		launch.LaunchCmd(checkServerHeartbeat, runInteractiveTUI),
++// @AI_AGENT_SUPPORT_END@
  	)
  
+ 	return rootCmd

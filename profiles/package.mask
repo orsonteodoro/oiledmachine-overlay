@@ -169,6 +169,3 @@ media-plugins/gst-plugins-x265
 
 # Project needs code review or code audit
 gui-apps/windowpet
-
-# Needs AI agent disablement security patch because of potential of abuse
-app-misc/ollama

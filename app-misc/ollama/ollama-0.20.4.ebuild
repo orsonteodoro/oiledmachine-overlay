@@ -3961,9 +3961,9 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
-blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
+ai-agent blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
 sandbox systemd unrestrict video_cards_intel -vulkan
-ebuild_revision_123
+ebuild_revision_124
 "
 
 gen_rocm_required_use() {
@@ -4519,8 +4519,21 @@ ewarn "Upstream doesn't official support ROCm 6.4.  Use at your own risk."
 	fi
 	strip-unsupported-flags
 
-#	libcxx-slot_verify
-#	libstdcxx-slot_verify
+	libcxx-slot_verify
+	libstdcxx-slot_verify
+	if use ai-agent ; then
+einfo "AI agent support:  ON"
+	else
+einfo "AI agent support:  OFF"
+	fi
+	if use ai-agent ; then
+ewarn
+ewarn "SECURITY NOTICE"
+ewarn
+ewarn "You are enabling AI agent support which is accessible by the launch command."
+ewarn "This has the potential to be abused and may cause real world damages or break security."
+ewarn
+	fi
 }
 
 gen_unpack() {
@@ -4661,6 +4674,10 @@ einfo "Editing ${x} for ragel -Z -> ragel-go"
 		sed -i -e "s|@SHOW_BANNER@|true|g" "cmd/cmd.go" || die
 	else
 		sed -i -e "s|@SHOW_BANNER@|false|g" "cmd/cmd.go" || die
+	fi
+
+	if ! use ai-agent ; then
+		sed -i -e "/@AI_AGENT_SUPPORT_START@/,/@AI_AGENT_SUPPORT_END@/d" "cmd/cmd.go" || die
 	fi
 }
 
@@ -6032,6 +6049,14 @@ ewarn
 	optfeature "Piped AI command line execution" "app-shells/loz"
 	optfeature "AI text-to-speech and speech-to-text" "app-misc/june"
 	optfeature "LLM roleplay" "games-rpg/RisuAI"
+	if use ai-agent ; then
+ewarn
+ewarn "SECURITY NOTICE"
+ewarn
+ewarn "You are enabling AI agent support which is accessible by the launch command."
+ewarn "This has the potential to be abused and may cause real world damages or break security."
+ewarn
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.3.13, 20241020)

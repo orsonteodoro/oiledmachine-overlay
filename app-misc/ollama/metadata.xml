@@ -104,6 +104,9 @@
     <remote-id type="github">ollama/ollama</remote-id>
   </upstream>
   <use>
+    <flag name="ai-agent">
+      Add support for AI agents (DANGEROUS)
+    </flag>
     <flag name="cuda">
       Support CUDA® for NVIDIA® GPUs.
     </flag>
