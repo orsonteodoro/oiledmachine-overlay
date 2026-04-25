@@ -119,7 +119,7 @@ CPU_FLAGS_ARM=(
 )
 
 CPU_FLAGS_X86=(
-	"cpu_flags_x86_sse4"
+	"cpu_flags_x86_sse4_1"
 )
 
 inherit libstdcxx-compat
@@ -614,7 +614,7 @@ aqua +avif -bmalloc -cache-partitioning clang dash debug +doc -eme +flite
 +opengl openmp -seccomp +speech-synthesis -spell -system-malloc test thunder
 +variation-fonts wayland +webassembly -webdriver +webgl webm-eme -webrtc webvtt
 -webxr +woff2 +X
-ebuild_revision_38
+ebuild_revision_39
 "
 
 gen_gst_plugins_duse() {
@@ -3300,7 +3300,7 @@ EOF
 disable_dfg_jit() {
 	# Minimal, conservative check for CPUs that trigger DFG JIT SIGILL
 	# (CPUs that lack SSE4.1)
-	if use amd64 ! use cpu_flags_x86_sse4 ; then
+	if use amd64 ! use cpu_flags_x86_sse4_1 ; then
 		local envd="${T}/99webkit-gtk-${SLOT_MAJOR}-dfg-oldcpu"
 
 cat > "${envd}" <<EOF
