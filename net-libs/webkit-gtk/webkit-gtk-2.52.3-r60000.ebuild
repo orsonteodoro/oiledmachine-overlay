@@ -118,6 +118,10 @@ CPU_FLAGS_ARM=(
 	"cpu_flags_arm_thumb2"
 )
 
+CPU_FLAGS_X86=(
+	"cpu_flags_x86_sse4"
+)
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX23[@]}"
@@ -593,6 +597,7 @@ SLOT="${API_VERSION%.*}/${SO_VERSION}"
 
 IUSE+="
 ${CPU_FLAGS_ARM[@]}
+${CPU_FLAGS_X86[@]}
 ${DEFAULT_GST_PLUGINS[@]}
 ${GST_ACODECS[@]}
 ${GST_CONTAINERS[@]}
@@ -609,7 +614,7 @@ aqua +avif -bmalloc -cache-partitioning clang dash debug +doc -eme +flite
 +opengl openmp -seccomp +speech-synthesis -spell -system-malloc test thunder
 +variation-fonts wayland +webassembly -webdriver +webgl webm-eme -webrtc webvtt
 -webxr +woff2 +X
-ebuild_revision_37
+ebuild_revision_38
 "
 
 gen_gst_plugins_duse() {
@@ -2267,7 +2272,6 @@ pkg_setup() {
 	dhms_start
 	check-compiler-switch_start
 	if is-flagq '-Oshit' ; then
-einfo "Detected -Oshit"
 		replace-flags '-O*' '-O1'
 		export OSHIT=1
 	else
@@ -2719,7 +2723,6 @@ ewarn
 		else
 			export OSHIT_OPT_LEVEL_XXHASH="1"
 		fi
-
 einfo "OSHIT_OPT_LEVEL_ANGLE: ${OSHIT_OPT_LEVEL_ANGLE}"
 einfo "OSHIT_OPT_LEVEL_JSC: ${OSHIT_OPT_LEVEL_JSC}"
 einfo "OSHIT_OPT_LEVEL_SHA1: ${OSHIT_OPT_LEVEL_SHA1}"
@@ -2744,6 +2747,12 @@ einfo "OSHIT_OPT_LEVEL_XXHASH: ${OSHIT_OPT_LEVEL_XXHASH}"
 			OSHIT_OPT_LEVEL_WEBCORE=1
 			OSHIT_OPT_LEVEL_XXHASH=1
 		fi
+einfo "OSHIT_OPT_LEVEL_ANGLE: ${OSHIT_OPT_LEVEL_ANGLE}"
+einfo "OSHIT_OPT_LEVEL_JSC: ${OSHIT_OPT_LEVEL_JSC}"
+einfo "OSHIT_OPT_LEVEL_SHA1: ${OSHIT_OPT_LEVEL_SHA1}"
+einfo "OSHIT_OPT_LEVEL_SKIA: ${OSHIT_OPT_LEVEL_SKIA}"
+einfo "OSHIT_OPT_LEVEL_WEBCORE: ${OSHIT_OPT_LEVEL_WEBCORE}"
+einfo "OSHIT_OPT_LEVEL_XXHASH: ${OSHIT_OPT_LEVEL_XXHASH}"
 	fi
 
 	# See Source/cmake/WebKitFeatures.cmake
@@ -3079,7 +3088,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	cflags-hardened_append
 
-	# FIXME:  Fix crash with CanvasMark
 	filter-flags "-fno-inline" # Verified to fix slowdown, slow scrolling, streaming issues
 
 	if use mediastream ; then
@@ -3208,6 +3216,11 @@ eerror
 
 	fix_mb_len_max
 
+einfo "CFLAGS:  ${CFLAGS}"
+einfo "CXXFLAGS:  ${CXXFLAGS}"
+einfo "CPPFLAGS:  ${CPPFLAGS}"
+einfo "LDFLAGS:  ${LDFLAGS}"
+
 	cmake_src_configure
 }
 
@@ -3295,6 +3308,25 @@ EOF
 	lcnr_install_files
 }
 
+disable_dfg_jit() {
+	# Minimal, conservative check for CPUs that trigger DFG JIT SIGILL
+	# (CPUs that lack SSE4.1)
+	if use amd64 ! use cpu_flags_x86_sse4 ; then
+		local envd="${T}/99webkit-gtk-${SLOT_MAJOR}-dfg-oldcpu"
+
+cat > "${envd}" <<EOF
+# Automatically added by webkit-gtk from oiledmachine-overlay
+# Your CPU does not support the instruction set required by the DFG JIT tier
+# in WebKitGTK 2.52.3+ (e.g. K10-era CPUs or earlier).
+# DFG JIT is disabled to prevent SIGILL crashes on reCAPTCHA, CanvasMark, etc.
+# Baseline JIT + Interpreter remain active → still very fast.
+JSC_useDFGJIT=0
+EOF
+
+		doenvd "${envd}"
+	fi
+}
+
 src_install() {
 	install_abi() {
 		_src_install
@@ -3304,6 +3336,7 @@ src_install() {
 	multilib_foreach_abi install_abi
 	multilib_install_wrappers
 	_src_install_all
+	disable_dfg_jit
 }
 
 pkg_postinst() {
@@ -3346,6 +3379,25 @@ ewarn
 ewarn "with a wrapper script or before invocation to use fallback protocol(s)"
 ewarn "requested by the site."
 ewarn
+	fi
+
+	if use amd64 && ! use cpu_flags_x86_sse4_1 ; then
+elog
+elog ">>> NOTICE from oiledmachine-overlay (webkit-gtk):"
+elog "Your CPU lacks SSE4.1."
+elog "The DFG JIT tier in WebKitGTK 2.52.3+ is known to emit"
+elog "unsupported instructions → SIGILL crash on heavy JS pages."
+elog
+elog "We have automatically set JSC_useDFGJIT=0 via /etc/env.d/99webkit-gtk-${SLOT_MAJOR}-dfg-oldcpu"
+elog "for stability. This affects ALL WebKitGTK-based browsers."
+elog
+elog "If you upgrade your CPU later, simply remove the file and run:"
+elog "    env-update && source /etc/profile"
+elog "or re-emerge webkit-gtk."
+elog
+elog "Upstream bug report (you can follow it):"
+elog "https://bugs.webkit.org/show_bug.cgi?id=313317"
+elog
 	fi
 }
 
