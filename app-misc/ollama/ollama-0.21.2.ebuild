@@ -328,6 +328,7 @@ FEATURED_LLMS=(
 	"deepseek-v3"
 	"deepseek-v3.1"
 	"deepseek-v3.2"
+	"deepseek-v4-flash"
 	"devstral"
 	"devstral-2"
 	"devstral-small-2"
@@ -380,6 +381,7 @@ FEATURED_LLMS=(
 	"kimi-k2"
 	"kimi-k2-thinking"
 	"kimi-k2.5"
+	"kimi-k2.6"
 	"lfm2"
 	"lfm2.5-thinking"
 	"llama-guard3"
@@ -404,6 +406,8 @@ FEATURED_LLMS=(
 	"marco-o1"
 	"mathstral"
 	"meditron"
+	"medgemma"
+	"medgemma1.5"
 	"medllama2"
 	"megadolphin"
 	"minicpm-v"
@@ -471,6 +475,7 @@ FEATURED_LLMS=(
 	"qwen3-next"
 	"qwen3-vl"
 	"qwen3.5"
+	"qwen3.6"
 	"qwq"
 	"r1-1776"
 	"reader-lm"
@@ -3058,6 +3063,9 @@ LLM_LICENSES="
 	ollama_llms_deepseek-v3.2? (
 		MIT
 	)
+	ollama_llms_deepseek-v4-flash? (
+		MIT
+	)
 	ollama_llms_deepseek-llm? (
 		DEEPSEEK-LICENSE-AGREEMENT-1.0
 	)
@@ -3367,6 +3375,9 @@ LLM_LICENSES="
 	ollama_llms_kimi-k2.5? (
 		Kimi-K2.5-LICENSE
 	)
+	ollama_llms_kimi-k2.6? (
+		Kimi-K2.6-LICENSE
+	)
 	ollama_llms_leeplenty-lumimaid-v0.2? (
 		Apache-2.0
 		CC-BY-NC-4.0
@@ -3403,6 +3414,12 @@ LLM_LICENSES="
 	ollama_llms_meditron? (
 		llama2-LICENSE
 		llama2-USE_POLICY.md
+	)
+	ollama_llms_medgemma? (
+		Health-AI-Developer-Foundations-Terms-of-Use-20241115
+	)
+	ollama_llms_medgemma1.5? (
+		Health-AI-Developer-Foundations-Terms-of-Use-20241115
 	)
 	ollama_llms_medllama2? (
 		MIT
@@ -3653,6 +3670,9 @@ LLM_LICENSES="
 		Apache-2.0
 	)
 	ollama_llms_qwen3.5? (
+		Apache-2.0
+	)
+	ollama_llms_qwen3.6? (
 		Apache-2.0
 	)
 	ollama_llms_qwq? (
@@ -4425,7 +4445,7 @@ IDEPEND="
 	${RDEPEND}
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-0.20.4-cmd-changes.patch"
+	"${FILESDIR}/${PN}-0.21.2-cmd-changes.patch"
 	"${FILESDIR}/${PN}-0.12.6-custom-cpu-features.patch"
 	"${FILESDIR}/${PN}-0.13.0-hardcoded-paths.patch"
 	"${FILESDIR}/${PN}-0.13.0-cuda-not-fatal.patch"
@@ -4531,7 +4551,8 @@ ewarn
 ewarn "SECURITY NOTICE"
 ewarn
 ewarn "You are enabling AI agent support which is accessible by the launch command."
-ewarn "This has the potential to be abused and may cause real world damages or break security."
+ewarn "This has the potential to be abused and may cause real world damages,"
+ewarn "or compromise security from within."
 ewarn
 	fi
 }
@@ -6054,10 +6075,14 @@ ewarn
 ewarn "SECURITY NOTICE"
 ewarn
 ewarn "You are enabling AI agent support which is accessible by the launch command."
-ewarn "This has the potential to be abused and may cause real world damages or break security."
+ewarn "This has the potential to be abused and may cause real world damages,"
+ewarn "or compromise security from within."
 ewarn
-ewarn "It is suggested to whitelist or blacklist users for the ollama executible using ACL to protect the AI agent."
-ewarn "It is suggested to blacklist immature users for the ollama executible to prevent AI agent abuse."
+ewarn "It is suggested to whitelist or blacklist users for the ollama"
+ewarn "executable using ACL to protect the AI agent."
+ewarn
+ewarn "It is suggested to blacklist immature users for the ollama executable to"
+ewarn "prevent AI agent abuse."
 ewarn
 	fi
 }
