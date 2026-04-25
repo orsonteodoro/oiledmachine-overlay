@@ -3963,7 +3963,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 ai-agent blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
 sandbox systemd unrestrict video_cards_intel -vulkan
-ebuild_revision_124
+ebuild_revision_125
 "
 
 gen_rocm_required_use() {
@@ -6055,6 +6055,9 @@ ewarn "SECURITY NOTICE"
 ewarn
 ewarn "You are enabling AI agent support which is accessible by the launch command."
 ewarn "This has the potential to be abused and may cause real world damages or break security."
+ewarn
+ewarn "It is suggested to whitelist or blacklist users for the ollama executible using ACL to protect the AI agent."
+ewarn "It is suggested to blacklist immature users for the ollama executible to prevent AI agent abuse."
 ewarn
 	fi
 }
