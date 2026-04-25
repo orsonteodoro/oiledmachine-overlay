@@ -11,9 +11,8 @@ EAPI=8
 # TODO package:
 # prowler
 
-# Zero-tolerance policy
+# Zero-tolerance policy for kernel
 CPU_MITIGATION_AMD_MICROCODE_TIMESTAMP="2025-10-30 17:23:31 -0500" # Based on commit date with patch >= ucode version on advisory
-KERNEL_PV="7.0" # The latest stable is used to avoid missing backports branches and to receive the latest security design fixes.
 
 ANTIVIRUS_IUSE=(
 	"clamav"
@@ -60,6 +59,8 @@ IDS_IUSE=(
 
 KERNEL_IUSE=(
 	"custom-kernel"
+	"gentoo-kernel"
+	"gentoo-kernel-bin"
 	"gentoo-sources"
 	"git-sources"
 	"ot-sources"
@@ -260,6 +261,8 @@ REQUIRED_USE="
 
 		|| (
 			custom-kernel
+			gentoo-kernel
+			gentoo-kernel-bin
 			gentoo-sources
 			git-sources
 			ot-sources
@@ -296,6 +299,8 @@ REQUIRED_USE="
 
 		!custom-kernel
 		|| (
+			gentoo-kernel
+			gentoo-kernel-bin
 			gentoo-sources
 		)
 
@@ -359,6 +364,8 @@ REQUIRED_USE="
 
 		|| (
 			custom-kernel
+			gentoo-kernel
+			gentoo-kernel-bin
 			gentoo-sources
 			git-sources
 			ot-sources
@@ -585,21 +592,48 @@ LOGGER_DEPENDS="
 	)
 "
 
+# Only stable and latest LTS are supported.
+# The latest stable is supported for architectural security design update.
+# The latest LTS is supported for binary only drivers, but binary drivers are not preferred over open.
 KERNEL_DEPENDS="
-	!sys-kernel/gentoo-kernel
-	!sys-kernel/gentoo-kernel-bin
-	!sys-kernel/vanilla-kernel
+	gentoo-kernel? (
+		|| (
+			~sys-kernel/gentoo-kernel-7.0.1[hardened]
+			~sys-kernel/gentoo-kernel-6.18.24[hardened]
+		)
+		sys-kernel/gentoo-kernel:=
+	)
+	gentoo-kernel-bin? (
+		|| (
+			~sys-kernel/gentoo-kernel-bin-6.18.24
+		)
+		sys-kernel/gentoo-kernel-bin:=
+	)
 	gentoo-sources? (
-		>=sys-kernel/gentoo-sources-${KERNEL_PV}
+		|| (
+			~sys-kernel/gentoo-sources-6.18.24
+		)
+		sys-kernel/gentoo-sources:=
 	)
 	git-sources? (
-		>=sys-kernel/git-sources-${KERNEL_PV%.*}_rc0
+		|| (
+			~sys-kernel/git-sources-7.0_rc7
+		)
+		sys-kernel/git-sources:=
 	)
 	ot-sources? (
-		>=sys-kernel/ot-sources-${KERNEL_PV}
+		|| (
+			~sys-kernel/ot-sources-7.0.1
+			~sys-kernel/ot-sources-6.18.24
+		)
+		sys-kernel/ot-sources:=
 	)
 	vanilla-sources? (
-		>=sys-kernel/vanilla-sources-${KERNEL_PV}
+		|| (
+			~sys-kernel/vanilla-sources-7.0.1
+			~sys-kernel/vanilla-sources-6.18.24
+		)
+		sys-kernel/vanilla-sources:=
 	)
 "
 
