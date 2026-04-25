@@ -59,8 +59,6 @@ IDS_IUSE=(
 
 KERNEL_IUSE=(
 	"custom-kernel"
-	"gentoo-kernel"
-	"gentoo-kernel-bin"
 	"gentoo-sources"
 	"git-sources"
 	"ot-sources"
@@ -261,8 +259,6 @@ REQUIRED_USE="
 
 		|| (
 			custom-kernel
-			gentoo-kernel
-			gentoo-kernel-bin
 			gentoo-sources
 			git-sources
 			ot-sources
@@ -299,8 +295,6 @@ REQUIRED_USE="
 
 		!custom-kernel
 		|| (
-			gentoo-kernel
-			gentoo-kernel-bin
 			gentoo-sources
 		)
 
@@ -364,8 +358,6 @@ REQUIRED_USE="
 
 		|| (
 			custom-kernel
-			gentoo-kernel
-			gentoo-kernel-bin
 			gentoo-sources
 			git-sources
 			ot-sources
@@ -596,19 +588,6 @@ LOGGER_DEPENDS="
 # The latest stable is supported for architectural security design update.
 # The latest LTS is supported for binary only drivers, but binary drivers are not preferred over open.
 KERNEL_DEPENDS="
-	gentoo-kernel? (
-		|| (
-			~sys-kernel/gentoo-kernel-7.0.1[hardened]
-			~sys-kernel/gentoo-kernel-6.18.24[hardened]
-		)
-		sys-kernel/gentoo-kernel:=
-	)
-	gentoo-kernel-bin? (
-		|| (
-			~sys-kernel/gentoo-kernel-bin-6.18.24
-		)
-		sys-kernel/gentoo-kernel-bin:=
-	)
 	gentoo-sources? (
 		|| (
 			~sys-kernel/gentoo-sources-6.18.24
