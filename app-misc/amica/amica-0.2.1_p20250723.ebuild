@@ -18,11 +18,12 @@ EAPI=8
 EGIT_COMMIT="ca2415c77d20ec41dd4fcf917dbb0e97961ddf08" # Jul 23, 2025
 NODE_ENV="development"
 NODE_SHARP_USE="exif jpeg"
-NODE_SLOT="18" # Upstream uses 18 and 20
+NODE_SLOT="20" # Upstream uses 18 and 20
 NPM_AUDIT_FATAL=0
 PYTHON_COMPAT=( "python3_"{10..12} )
-RUST_MAX_VER="1.82.0" # Inclusive
-RUST_MIN_VER="1.82.0" # llvm-19.1
+# 1.85.0 mininum for edition2024
+RUST_MAX_VER="1.85.0" # Inclusive
+RUST_MIN_VER="1.85.0" # llvm-19.1
 RUST_PV="${RUST_MIN_VER}"
 
 AT_TYPES_NODE_PV="22.7.4"
@@ -818,6 +819,7 @@ einfo "Adding Cargo.lock"
 npm_update_lock_install_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 ewarn "QA:  Manually \`cargo add serde@1.0.219\` in src-tauri"
+ewarn "QA:  Manually remove node_modules/eslint-config-next/node_modules/eslint-plugin-react-hooks in package-lock.json"
 		patch_lockfile() {
 			sed -i -e "s|\"@babel/runtime\": \"^7.8.4\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
 			sed -i -e "s|\"@babel/runtime\": \"^7.11.2\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
@@ -846,11 +848,12 @@ ewarn "QA:  Manually \`cargo add serde@1.0.219\` in src-tauri"
 			"@babel/runtime@^7.26.10"								# CVE-2025-27789; DoS; Moderate
 			"dompurify@^3.2.4"									# CVE-2024-47875; ZC, SS(DoS, DT, ID); High
 														# CVE-2024-45801; ZC, SS(DoS, DT, ID); High
-			"onnxruntime-web@^1.14.0"								# Fix build breakage
+			"onnxruntime-web@1.14.0"								# Fix build breakage
 			"tar-fs@^2.1.4"										# CVE-2025-59343; ZC, VS(DT);
 			"tar-fs@^3.1.1"										# CVE-2025-59343; ZC, VS(DT);
 			"protobufjs@^7.5.5"									# CVE-2026-41242; VS(DoS, DT, ID), SS(DoS, DT, ID); Critical
 			"serialize-javascript@^7.0.3"								# GHSA-5c6j-r48x-rmvq; ZC, DoS, DT, ID; High
+			"@sentry/nextjs@^10.50.0"								# Fix build breakage
 		)
 		enpm install "${pkgs[@]}" -P "${NPM_INSTALL_ARGS[@]}"
 		pkgs=(
@@ -868,6 +871,7 @@ ewarn "QA:  Manually \`cargo add serde@1.0.219\` in src-tauri"
 
 			# Fix runtime
 			"typescript@5.6.3"
+			"@eslint/compat"									# Fix build breakage
 		)
 		enpm install "${pkgs[@]}" -D "${NPM_INSTALL_ARGS[@]}"
 		patch_lockfile
@@ -904,16 +908,30 @@ einfo "Unpacking cargo packages"
 		fi
 		local sharp_platform=$(node-sharp_get_platform)
 
+	# Replace upstream prebuilt with newly source locally built node sharp
+	# The upstream sharp-node is minimally x86-64-v2 and not portable.
 		pushd "${S}" >/dev/null 2>&1 || die
 			node-sharp_npm_rebuild_sharp
 
-			mkdir -p "node_modules/sharp/build/${configuration}" || die "Failed to create node_modules/sharp/build/${configuration}"
-			cp "node_modules/sharp/src/build/${configuration}/sharp-${sharp_platform}.node" \
+			mkdir -p "node_modules/sharp/build/${configuration}" \
+				|| die "Failed to create dir"
+			cp \
+				"node_modules/sharp/src/build/${configuration}/sharp-${sharp_platform}.node" \
 				"node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" \
-				|| die "Failed to copy sharp-${sharp_platform}.node"
-				ls -l "node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" || die "sharp-${sharp_platform}.node not found"
+				|| die "Failed to copy sharp-${sharp_platform}.node (1)"
+
+			cp \
+				"node_modules/sharp/src/build/${configuration}/sharp-${sharp_platform}.node" \
+				"node_modules/@xenova/transformers/node_modules/sharp/build/Release/obj.target/sharp-${sharp_platform}.node" \
+				|| die "Failed to copy sharp-${sharp_platform}.node (2)"
+
+			cp \
+				"node_modules/sharp/src/build/${configuration}/sharp-${sharp_platform}.node" \
+				"node_modules/@xenova/transformers/node_modules/sharp/build/Release/sharp-${sharp_platform}.node" \
+				|| die "Failed to copy sharp-${sharp_platform}.node (3)"
 	        popd >/dev/null 2>&1 || die
 
+	# Allow only the locally built node sharp
 		node-sharp_verify_dedupe
 	fi
 }
@@ -925,6 +943,21 @@ src_prepare() {
 #	eapply -R "${DISTDIR}/${PN}-commit-da5a390.patch"
 #	eapply "${FILESDIR}/${PN}-0.2.1_p20241022-coqui-local.patch"
 	eapply "${FILESDIR}/${PN}-0.2.1_p20250204-array-type-check.patch"
+
+# Prevent ⨯ ESLint: a.getScope is not a function Occurred while linting ${S}/src/components/addToHomescreen.tsx:9 Rule: "react-hooks/rules-of-hooks"
+cat <<EOF > "${S}/eslint.config.mjs"
+import { fixupPluginRules } from "@eslint/compat";
+import reactHooks from "eslint-plugin-react-hooks";
+
+export default [
+  {
+    plugins: {
+      "react-hooks": fixupPluginRules(reactHooks),
+    },
+    rules: reactHooks.configs.recommended.rules,
+  },
+];
+EOF
 }
 
 src_configure() {
