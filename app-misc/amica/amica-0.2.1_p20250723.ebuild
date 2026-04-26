@@ -6,6 +6,8 @@ EAPI=8
 
 # U24
 
+# This ebuild contains an AI generated content.
+
 # To generate crates:
 # ./convert-cargo-lock.sh 0.2.1_p20250723 ca2415c77d20ec41dd4fcf917dbb0e97961ddf08
 
@@ -22,8 +24,9 @@ NODE_SLOT="20" # Upstream uses 18 and 20
 NPM_AUDIT_FATAL=0
 PYTHON_COMPAT=( "python3_"{10..12} )
 # 1.85.0 mininum for edition2024
-RUST_MAX_VER="1.85.0" # Inclusive
-RUST_MIN_VER="1.85.0" # llvm-19.1
+# 1.88.0 minimum required by deps
+RUST_MAX_VER="1.88.0" # Inclusive
+RUST_MIN_VER="1.88.0" # llvm-19.1
 RUST_PV="${RUST_MIN_VER}"
 
 AT_TYPES_NODE_PV="22.7.4"
@@ -627,7 +630,7 @@ SLOT="0"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 coqui debug ollama tray voice-recognition wayland whisper-cpp X
-ebuild_revision_24
+ebuild_revision_25
 "
 REQUIRED_USE="
 	voice-recognition
@@ -711,8 +714,8 @@ BDEPEND+="
 	=net-libs/nodejs-${NODE_SLOT}*[npm,webassembly(+)]
 	virtual/pkgconfig
 	|| (
-		=dev-lang/rust-1.81*
-		=dev-lang/rust-bin-1.81*
+		=dev-lang/rust-1.88*
+		=dev-lang/rust-bin-1.88*
 	)
 	|| (
 		dev-lang/rust:=
