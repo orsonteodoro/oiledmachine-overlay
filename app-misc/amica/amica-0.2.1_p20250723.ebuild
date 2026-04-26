@@ -6,7 +6,9 @@ EAPI=8
 
 # U24
 
-# This ebuild contains an AI generated content and patches derived from AI generated code.
+# This ebuild contains an AI generated content.
+# The node sharp patches are directly from AI generated code.
+# Some of the patches for amica were suggested/influenced with the help of AI inference.
 
 # To generate crates:
 # ./convert-cargo-lock.sh 0.2.1_p20250723 ca2415c77d20ec41dd4fcf917dbb0e97961ddf08
