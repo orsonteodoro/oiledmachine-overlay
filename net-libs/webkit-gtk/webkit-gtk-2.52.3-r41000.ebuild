@@ -3372,20 +3372,29 @@ ewarn
 
 	if use amd64 && ! use cpu_flags_x86_sse4_1 ; then
 elog
-elog ">>> NOTICE from oiledmachine-overlay (webkit-gtk):"
-elog "Your CPU lacks SSE4.1."
-elog "The DFG JIT tier in WebKitGTK 2.52.3+ is known to emit"
-elog "unsupported instructions → SIGILL crash on heavy JS pages."
+elog "Your CPU lacks SSE4.1.  The DFG JIT tier in WebKitGTK 2.52.3+ is known to"
+elog "emit an unsupported instructions → SIGILL crash on heavy JS pages."
 elog
-elog "We have automatically set JSC_useDFGJIT=0 via /etc/env.d/99webkit-gtk-${SLOT_MAJOR}-dfg-oldcpu"
+elog "We have automatically set JSC_useDFGJIT=0 via"
+elog "/etc/env.d/99webkit-gtk-${SLOT_MAJOR}-dfg-oldcpu"
 elog "for stability. This affects ALL WebKitGTK-based browsers."
 elog
 elog "If you upgrade your CPU later, simply remove the file and run:"
+elog
 elog "    env-update && source /etc/profile"
+elog
 elog "or re-emerge webkit-gtk."
 elog
 elog "Upstream bug report (you can follow it):"
 elog "https://bugs.webkit.org/show_bug.cgi?id=313317"
+elog
+	elif use amd64 ; then
+# One or several SIMD sets possible.
+elog
+elog "You are using DFG JIT for WebKitGTK 2.52.3+.  The JSC engine may emit"
+elog "unsupported instructions which is unknown.  If it crashes, either emerge"
+elog "with ${CATEGORY}/${PN}:${SLOT}[cpu_flags_x86_sse4_1] or"
+elog "export JSC_useDFGJIT=0 before running the app."
 elog
 	fi
 }
