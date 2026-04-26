@@ -834,29 +834,37 @@ ewarn "QA:  Manually \`cargo add serde@1.0.219\` in src-tauri"
 			sed -i -e "s|\"form-data\": \"^4.0.0\"|\"form-data\": \"4.0.4\"|" "package-lock.json" || die
 			sed -i -e "s|\"tar-fs\": \"^2.0.0\"|\"tar-fs\": \"^2.1.4\"|" "package-lock.json" || die
 			sed -i -e "s|\"tar-fs\": \"^3.0.4\"|\"tar-fs\": \"^3.1.1\"|" "package-lock.json" || die
+
+			sed -i -e "s|\"protobufjs\": \"^6.8.8\"|\"protobufjs\": \"^7.5.5\"|g" "package-lock.json" || die
+			sed -i -e "s|\"serialize-javascript\": \"^6.0.1\"|\"serialize-javascript\": \"^7.0.3\"|g" "package-lock.json" || die
+			sed -i -e "s|\"serialize-javascript\": \"^6.0.1\"|\"serialize-javascript\": \"^7.0.3\"|g" "package-lock.json" || die
 		}
 
 		local pkgs
 		patch_lockfile
 		pkgs=(
-			"@babel/runtime@7.26.10"								# CVE-2025-27789				# DoS
-			"dompurify@3.2.4"									# CVE-2024-47875, CVE-2024-45801		# DoS, DT, ID
-			"onnxruntime-web@1.14.0"								# Fix build breakage
-			"tar-fs@2.1.4"										# CVE-2025-59343				# ZC, VS(DT)
-			"tar-fs@3.1.1"										# CVE-2025-59343				# ZC, VS(DT)
+			"@babel/runtime@^7.26.10"								# CVE-2025-27789; DoS; Moderate
+			"dompurify@^3.2.4"									# CVE-2024-47875; ZC, SS(DoS, DT, ID); High
+														# CVE-2024-45801; ZC, SS(DoS, DT, ID); High
+			"onnxruntime-web@^1.14.0"								# Fix build breakage
+			"tar-fs@^2.1.4"										# CVE-2025-59343; ZC, VS(DT);
+			"tar-fs@^3.1.1"										# CVE-2025-59343; ZC, VS(DT);
+			"protobufjs@^7.5.5"									# CVE-2026-41242; VS(DoS, DT, ID), SS(DoS, DT, ID); Critical
+			"serialize-javascript@^7.0.3"								# GHSA-5c6j-r48x-rmvq; ZC, DoS, DT, ID; High
 		)
 		enpm install "${pkgs[@]}" -P "${NPM_INSTALL_ARGS[@]}"
 		pkgs=(
-			"next@14.2.25"										# CVE-2025-29927				# DT, ID	# --prefer-offline is broken
+			"next@^15.5.15"										# CVE-2025-29927; DT, ID		# --prefer-offline is broken
+														# GHSA-q4gf-8mx6-v5v3; ZC, DoS; High
 		)
 		enpm install "${pkgs[@]}" -P --legacy-peer-deps
 
 		pkgs=(
-			"@types/node@${AT_TYPES_NODE_PV}"
-			"esbuild@^0.25.0"									# GHSA-67mh-4wv8-2f99				# ID            # --prefer-offline is broken
+			"@types/node@^${AT_TYPES_NODE_PV}"
+			"esbuild@^0.25.0"									# GHSA-67mh-4wv8-2f99; ID; Moderate	# --prefer-offline is broken
 			"eslint"
-			"node-gyp@11.1.0"
-			"form-data@4.0.4"									# CVE-2025-7783					# VS(DT, ID), SS(DT, ID)
+			"node-gyp@^11.1.0"
+			"form-data@^4.0.4"									# CVE-2025-7783; ZC, VS(DT, ID), SS(DT, ID); Critical
 
 			# Fix runtime
 			"typescript@5.6.3"
