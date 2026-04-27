@@ -632,7 +632,7 @@ SLOT="0"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 coqui debug ollama tray voice-recognition wayland whisper-cpp X
-ebuild_revision_25
+ebuild_revision_26
 "
 REQUIRED_USE="
 	voice-recognition
@@ -823,8 +823,10 @@ einfo "Adding Cargo.lock"
 
 npm_update_lock_install_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
-ewarn "QA:  Manually \`cargo add serde@1.0.219\` in src-tauri"
-ewarn "QA:  Manually remove node_modules/eslint-config-next/node_modules/eslint-plugin-react-hooks in package-lock.json"
+#ewarn "QA:  Manually \`cargo add serde@1.0.219\` in src-tauri"
+#ewarn "QA:  Manually remove node_modules/eslint-config-next/node_modules/eslint-plugin-react-hooks in package-lock.json"
+#ewarn "QA:  Manually remove node_modules/copy-webpack-plugin/node_modules/serialize-javascript in package-lock.json"
+#ewarn "QA:  Manually remove node_modules/@charcoal-ui/icons/node_modules/dompurify in package-lock.json"
 		patch_lockfile() {
 			sed -i -e "s|\"@babel/runtime\": \"^7.8.4\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
 			sed -i -e "s|\"@babel/runtime\": \"^7.11.2\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
@@ -834,7 +836,7 @@ ewarn "QA:  Manually remove node_modules/eslint-config-next/node_modules/eslint-
 			sed -i -e "s|\"@babel/runtime\": \"^7.23.2\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
 			sed -i -e "s|\"@babel/runtime\": \"^7.25.0\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
 			sed -i -e "s|\"@babel/runtime\": \"^7.26.0\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-			sed -i -e "s|\"dompurify\": \"2.5.7\"|\"dompurify\": \"3.2.4\"|g" "package-lock.json" || die
+			sed -i -e "s|\"dompurify\": \"2.5.7\"|\"dompurify\": \"^3.4.1\"|g" "package-lock.json" || die
 			sed -i -e "s|\"esbuild\": \"^0.24.0\"|\"esbuild\": \"^0.25.0\"|g" "package.json" || die
 			sed -i -e "s|\"esbuild\": \"^0.24.0\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die
 
@@ -843,22 +845,53 @@ ewarn "QA:  Manually remove node_modules/eslint-config-next/node_modules/eslint-
 			sed -i -e "s|\"tar-fs\": \"^3.0.4\"|\"tar-fs\": \"^3.1.1\"|" "package-lock.json" || die
 
 			sed -i -e "s|\"protobufjs\": \"^6.8.8\"|\"protobufjs\": \"^7.5.5\"|g" "package-lock.json" || die
-			sed -i -e "s|\"serialize-javascript\": \"^6.0.1\"|\"serialize-javascript\": \"^7.0.3\"|g" "package-lock.json" || die
-			sed -i -e "s|\"serialize-javascript\": \"^6.0.1\"|\"serialize-javascript\": \"^7.0.3\"|g" "package-lock.json" || die
+			sed -i -e "s|\"serialize-javascript\": \"^6.0.1\"|\"serialize-javascript\": \"^7.0.5\"|g" "package-lock.json" || die
+			sed -i -e "s|\"serialize-javascript\": \"^6.0.2\"|\"serialize-javascript\": \"^7.0.5\"|g" "package-lock.json" || die
+			sed -i -e "s|\"serialize-javascript\": \"^7.0.3\"|\"serialize-javascript\": \"^7.0.5\"|g" "package-lock.json" || die
+
+			sed -i -e "s|\"postcss\": \"^8.0.0\"|\"postcss\": \"^8.5.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss\": \">=8.0.9\"|\"postcss\": \"^8.5.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss\": \"^8.1.0\"|\"postcss\": \"^8.5.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss\": \"^8.4.21\"|\"postcss\": \"^8.5.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss\": \"8.4.31\"|\"postcss\": \"^8.5.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss\": \"^8.2.14\"|\"postcss\": \"^8.5.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss\": \"^8.4.47\"|\"postcss\": \"^8.5.10\"|g" "package-lock.json" || die
+
+			sed -i -e "s|\"glob\": \"^7.1.3\"|\"glob\": \"^10.5.0\"|g" "package-lock.json" || die
+			sed -i -e "s|\"glob\": \"^7.1.4\"|\"glob\": \"^10.5.0\"|g" "package-lock.json" || die
+			sed -i -e "s|\"glob\": \"^7.1.6\"|\"glob\": \"^10.5.0\"|g" "package-lock.json" || die
+			sed -i -e "s|\"glob\": \"^10.2.2\"|\"glob\": \"^10.5.0\"|g" "package-lock.json" || die
+			sed -i -e "s|\"glob\": \"^10.3.7\"|\"glob\": \"^10.5.0\"|g" "package-lock.json" || die
+			sed -i -e "s|\"glob\": \"10.3.10\"|\"glob\": \"^10.5.0\"|g" "package-lock.json" || die
+			sed -i -e "s|\"glob\": \"^13.0.6\"|\"glob\": \"^10.5.0\"|g" "package-lock.json" || die
+
+			sed -i -e "s|\"@tootallnate/once\": \"2\"|\"@tootallnate/once\": \"^3.0.1\"|g" "package-lock.json" || die
 		}
 
 		local pkgs
 		patch_lockfile
 		pkgs=(
 			"@babel/runtime@^7.26.10"								# CVE-2025-27789; DoS; Moderate
-			"dompurify@^3.2.4"									# CVE-2024-47875; ZC, SS(DoS, DT, ID); High
+			"dompurify@^3.4.1"									# CVE-2024-47875; ZC, SS(DoS, DT, ID); High
 														# CVE-2024-45801; ZC, SS(DoS, DT, ID); High
+														# CVE-2026-41239; DT, ID; Moderate
+														# CVE-2026-41238; DT, ID; Moderate
+														# CVE-2026-41240; VS(DT), 
+														# GHSA-h8r8-wccr-v5f2; DT, ID; Moderate
+														# GHSA-39q2-94rc-95cp; VS(DT, ID); Moderate
+														# GHSA-cj63-jhhr-wcxv; VS(DT), SS(DT, ID); Moderate
+														# GHSA-cjmm-f4jc-qw8r; SS(DT, ID); Moderate
+														# CVE-2025-15599; SS(DT, ID); Moderate
+														# CVE-2026-0540; SS(DT, ID); Moderate
 			"onnxruntime-web@1.14.0"								# Fix build breakage
 			"tar-fs@^2.1.4"										# CVE-2025-59343; ZC, VS(DT);
 			"tar-fs@^3.1.1"										# CVE-2025-59343; ZC, VS(DT);
 			"protobufjs@^7.5.5"									# CVE-2026-41242; VS(DoS, DT, ID), SS(DoS, DT, ID); Critical
-			"serialize-javascript@^7.0.3"								# GHSA-5c6j-r48x-rmvq; ZC, DoS, DT, ID; High
+			"serialize-javascript@^7.0.5"								# GHSA-5c6j-r48x-rmvq; ZC, DoS, DT, ID; High
+														# CVE-2026-34043; ZC, DoS; Moderate
 			"@sentry/nextjs@^10.50.0"								# Fix build breakage
+			"postcss@^8.5.10"									# CVE-2026-41305; DT, ID; Moderate
+			"glob@^10.5.0"										# CVE-2025-64756; DoS, DT, ID; High
 		)
 		enpm install "${pkgs[@]}" -P "${NPM_INSTALL_ARGS[@]}"
 		pkgs=(
@@ -877,6 +910,7 @@ ewarn "QA:  Manually remove node_modules/eslint-config-next/node_modules/eslint-
 			# Fix runtime
 			"typescript@5.6.3"
 			"@eslint/compat"									# Fix build breakage
+			"@tootallnate/once@^3.0.1"								# CVE-2026-3449; VS(DoS); Low
 		)
 		enpm install "${pkgs[@]}" -D "${NPM_INSTALL_ARGS[@]}"
 		patch_lockfile
