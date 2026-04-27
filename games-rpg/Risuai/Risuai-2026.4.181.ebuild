@@ -824,6 +824,7 @@ TAURI_RDEPEND="
 "
 RDEPEND+="
 	${TAURI_RDEPEND}
+	!games-rpg/RisuAI
 	ollama? (
 		app-misc/ollama
 	)
@@ -880,7 +881,7 @@ npm_update_lock_audit_post() {
 			sed -i -e "s|\"uuid@^9.0.1\"|\"uuid@^14.0.0\"|g" "package-lock.json" || die
 			sed -i -e "s|\"diff\": \"^7.0.0\"|\"diff\": \"^8.0.3\"|g" "package-lock.json" || die
 		}
-		fix_lockfile
+#		fix_lockfile
 
 		local L
 
@@ -897,12 +898,12 @@ npm_update_lock_audit_post() {
 			"uuid@^14.0.0"			# GHSA-w5hq-g745-h8pq; VS(DT); ZC, Moderate
 			"diff@^7.0.0"			# CVE-2026-24001; VS(DoS); Low
 		)
-		enpm add -P "${L[@]}" --legacy-peer-deps # Same as upstream
+#		enpm add -P "${L[@]}" --legacy-peer-deps # Same as upstream
 
 		L=(
 			"esbuild@^0.27.2"
 		)
-		enpm add -D "${L[@]}" --legacy-peer-deps # Same as upstream
+#		enpm add -D "${L[@]}" --legacy-peer-deps # Same as upstream
 
 		node-sharp_npm_lockfile_add_sharp
 		fix_lockfile
