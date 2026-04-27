@@ -764,7 +764,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
 ${CPU_FLAGS_X86[@]}
 ollama tray wayland X
-ebuild_revision_13
+ebuild_revision_14
 "
 RESTRICT="mirror" # Speed up downloads
 REQUIRED_USE="
@@ -837,6 +837,7 @@ BDEPEND+="
 	net-libs/nodejs:${NODE_SLOT}
 	sys-apps/npm
 "
+DOCS=( "README.md" )
 
 pkg_setup() {
 ewarn "This ebuild is still in development"
@@ -1175,6 +1176,8 @@ src_install() {
 
 	fperms 0755 "/usr/bin/${PN}"
 	fowners "root:root" "/usr/bin/${PN}"
+
+	einstalldocs
 }
 
 pkg_postinst() {
