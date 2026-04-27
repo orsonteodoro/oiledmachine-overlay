@@ -1176,7 +1176,7 @@ src_install() {
 	LCNR_TAG="third_party_npm"
 	lcnr_install_files
 
-	fperms 0755 "/usr/bin/${PN}"
+	fperms 0755 "/usr/bin/RisuAI"
 	fowners "root:root" "/usr/bin/${PN}"
 
 	einstalldocs
