@@ -757,13 +757,14 @@ https://github.com/kwaroran/RisuAI/archive/refs/tags/v${PV}.tar.gz
 DESCRIPTION="Make your own story. User-friendly software for LLM roleplaying"
 LICENSE="
 	GPL-3
+	RisuAI-Privacy-Policy
 	RisuAI-Terms-of-Service
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
 ${CPU_FLAGS_X86[@]}
 ollama tray wayland X
-ebuild_revision_12
+ebuild_revision_13
 "
 RESTRICT="mirror" # Speed up downloads
 REQUIRED_USE="
@@ -1041,6 +1042,8 @@ src_configure() {
 	export PKG_CONFIG_PATH="/usr/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
 	cargo_src_configure
 	sed -i -e "s|pnpm|npm run|g" "src-tauri/tauri.conf.json" || die
+
+	export VITE_RISU_LEGAL_CONFIGURED=TRUE
 }
 
 get_rustc_target() {
