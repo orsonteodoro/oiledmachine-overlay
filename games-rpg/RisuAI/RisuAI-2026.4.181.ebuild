@@ -1035,6 +1035,9 @@ src_prepare() {
 	# We don't use auto update because of supply chain attacks and to have
 	# the distro package manager have more control.
 	sed -r -i -e "s|\"pubkey\": \"[0-9A-Za-z]+\"|\"pubkey\": \"\"|g" "${S}/src-tauri/tauri.conf.json" || die
+
+	# Speed up build
+	sed -r -e "s|\"targets\": \[.+\]|targets: [\"deb\"]|g" "${S}/src-tauri/tauri.conf.json" || die
 }
 
 src_configure() {
