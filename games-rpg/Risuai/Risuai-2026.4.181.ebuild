@@ -13,7 +13,7 @@ EAPI=8
 # PATH=$(realpath "../../scripts")":${PATH}"
 # NPM_UPDATER_VERSIONS="2026.4.181" npm_updater_update_locks.sh
 
-MY_PN="Risuai"
+MY_PN="RisuAI"
 
 NODE_SHARP_USE="exif jpeg lcms png svg"
 NODE_SLOT="24"
@@ -745,20 +745,19 @@ VITE_PV="8.0.3" # Upstream version
 inherit cargo desktop edo lcnr node-sharp npm webkitgtk-stable xdg
 
 KEYWORDS="~amd64"
-MY_P="${MY_PN}-${PV}"
-S="${WORKDIR}/${MY_P}"
-S_PROJECT="${WORKDIR}/${MY_P}"
+S="${WORKDIR}/${P}"
+S_PROJECT="${WORKDIR}/${P}"
 SRC_URI="
 $(cargo_crate_uris ${CRATES})
-https://github.com/kwaroran/RisuAI/archive/refs/tags/v${PV}.tar.gz
+https://github.com/kwaroran/Risuai/archive/refs/tags/v${PV}.tar.gz
 	-> ${TARBALL}
 "
 
 DESCRIPTION="Make your own story. User-friendly software for LLM roleplaying"
 LICENSE="
 	GPL-3
-	RisuAI-Privacy-Policy
-	RisuAI-Terms-of-Service
+	Risuai-Privacy-Policy
+	Risuai-Terms-of-Service
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
@@ -923,7 +922,7 @@ _cargo_src_unpack() {
 einfo "Copying patched cargo files"
 	cp -a \
 		"${FILESDIR}/${PV}/Cargo."{"lock","toml"} \
-		"${WORKDIR}/${MY_P}/src-tauri" \
+		"${WORKDIR}/${P}/src-tauri" \
 		|| die
 
 	local archive shasum pkg
@@ -962,7 +961,7 @@ _production_unpack() {
 einfo "Adding Cargo.lock"
 		cp -a \
 			"${FILESDIR}/${PV}/Cargo."{"lock","toml"} \
-			"${WORKDIR}/${MY_P}/src-tauri" \
+			"${WORKDIR}/${P}/src-tauri" \
 			|| die
 	fi
 	_cargo_src_unpack
@@ -1155,7 +1154,9 @@ einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 src_install() {
 	local chost=$(get_rustc_target)
 	exeinto "/usr/bin"
-	doexe "src-tauri/target/${chost}/release/${PN}"
+	doexe "src-tauri/target/${chost}/release/RisuAI"
+	dosym "/usr/bin/RisuAI" "/usr/bin/Risuai"
+	dosym "/usr/bin/RisuAI" "/usr/bin/risuai"
 
 	newicon -s 48 "resources/icon-only.png" "${PN}.png"
 	make_desktop_entry \

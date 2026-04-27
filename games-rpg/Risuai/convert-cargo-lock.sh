@@ -4,7 +4,7 @@
 # cargo-ebuild is broken
 
 CATEGORY="games-rpg"
-PN="RisuAI"
+PN="Risuai"
 MY_PN="Risuai"
 PV="${1}"
 MY_PV="${2}"

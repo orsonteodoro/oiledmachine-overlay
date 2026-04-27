@@ -1910,7 +1910,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-vcs/breezy | Breezy is a friendly powerful distributed version control system. |
 | dev-vcs/git | Stupid content tracker: distributed VCS designed for speed and efficiency |
 | games-engines/box2d | Box2D is a 2D physics engine for games |
-| games-rpg/RisuAI | Make your own story. User-friendly software for LLM roleplaying |
+| games-rpg/Risuai | Make your own story. User-friendly software for LLM roleplaying |
 | gnome-base/librsvg | Scalable Vector Graphics (SVG) rendering library |
 | gui-apps/taigo | A virtual pet for your desktop built with GTK+, Vala, and love. |
 | gui-apps/windowpet | Adorable anime pet companions on your screen |
