@@ -1001,13 +1001,16 @@ ewarn "QA:  Manually \`cargo add \"hyper-tls@0.6.0\"\` for the cargo lockfile."
         pushd "${S}" >/dev/null 2>&1 || die
 		node-sharp_npm_rebuild_sharp
 
-		# Copy sharp binary to expected location
-		mkdir -p "node_modules/sharp/build/${configuration}" || die "Failed to create node_modules/sharp/build/${configuration}"
+	# The prebuilt sharp node binary builds are x86-64-v2 which are not
+	# compatible with older CPUs.
+
+	# Copy sharp binary to expected location
+		mkdir -p "node_modules/sharp/build/${configuration}" \
+			|| die "Failed to create node_modules/sharp/build/${configuration}"
 		cp \
 			"node_modules/sharp/src/build/${configuration}/sharp-${sharp_platform}.node" \
 			"node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" \
 			|| die "Failed to copy sharp-${sharp_platform}.node"
-		ls -l "node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" || die "sharp-${sharp_platform}.node not found"
 
 		rm -rf "${S}/node_modules/@capacitor/assets/node_modules/sharp"
 
@@ -1028,7 +1031,7 @@ src_prepare() {
 	default
 	eapply "${FILESDIR}/${PN}-163.1.1-ollama-fix.patch"
 
-	# Disable signing
+	# Disable signing which makes it a fatal error.
 	sed -r -i -e "s|\"pubkey\": \"[0-9A-Za-z]+\"|\"pubkey\": \"\"|g" "${S}/src-tauri/tauri.conf.json" || die
 }
 
