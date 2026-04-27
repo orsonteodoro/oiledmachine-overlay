@@ -1034,10 +1034,7 @@ src_prepare() {
 	# Disable signing which makes it a fatal error.
 	# We don't use auto update because of supply chain attacks and to have
 	# the distro package manager have more control.
-	sed -r -i -e "s|\"pubkey\": \"[0-9A-Za-z]+\"|\"pubkey\": \"\"|g" "${S}/src-tauri/tauri.conf.json" || die
-
-	# Speed up build
-	sed -r -i -e "s|\"targets\": \[.+\]|\"targets\": [\"deb\"]|g" "${S}/src-tauri/tauri.conf.json" || die
+	eapply "${FILESDIR}/${PN}-2026.4.181-disable-bundler.patch"
 }
 
 src_configure() {
@@ -1172,9 +1169,6 @@ src_install() {
 	LCNR_SOURCE="${S_PROJECT}/node_modules"
 	LCNR_TAG="third_party_npm"
 	lcnr_install_files
-
-	insinto "/usr/lib/${PN}"
-	doins -r "src-tauri/target/${chost}/release/src-python"
 
 	fperms 0755 "/usr/bin/${PN}"
 	fowners "root:root" "/usr/bin/${PN}"

@@ -1,0 +1,38 @@
+--- a/src-tauri/tauri.conf.json.orig	2026-04-18 06:16:46.000000000 -0700
++++ b/src-tauri/tauri.conf.json	2026-04-27 11:09:03.799942716 -0700
+@@ -5,28 +5,6 @@
+     "frontendDist": "../dist",
+     "devUrl": "http://localhost:5174"
+   },
+-  "bundle": {
+-    "active": true,
+-    "icon": [
+-      "icons/32x32.png",
+-      "icons/128x128.png",
+-      "icons/128x128@2x.png",
+-      "icons/icon.icns",
+-      "icons/icon.ico"
+-    ],
+-    "resources": [
+-      "src-python/*"
+-    ],
+-    "targets": ["deb", "rpm", "appimage", "nsis", "app", "dmg"],
+-    "createUpdaterArtifacts": true,
+-    "fileAssociations": [
+-      {
+-        "ext": [
+-          "risum", "risup", "charx"
+-        ]
+-      }
+-    ]
+-  },
+   "productName": "RisuAI",
+   "mainBinaryName": "RisuAI",
+   "version": "2026.4.181",
+@@ -75,4 +53,4 @@
+       "csp": null
+     }
+   }
+-}
+\ No newline at end of file
++}
