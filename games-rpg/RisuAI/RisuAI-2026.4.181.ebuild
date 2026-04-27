@@ -1032,6 +1032,8 @@ src_prepare() {
 	eapply "${FILESDIR}/${PN}-163.1.1-ollama-fix.patch"
 
 	# Disable signing which makes it a fatal error.
+	# We don't use auto update because of supply chain attacks and to have
+	# the distro package manager have more control.
 	sed -r -i -e "s|\"pubkey\": \"[0-9A-Za-z]+\"|\"pubkey\": \"\"|g" "${S}/src-tauri/tauri.conf.json" || die
 }
 
