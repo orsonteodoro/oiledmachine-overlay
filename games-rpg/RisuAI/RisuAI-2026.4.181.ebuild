@@ -1027,6 +1027,9 @@ einfo "Unpacking cargo packages"
 src_prepare() {
 	default
 	eapply "${FILESDIR}/${PN}-163.1.1-ollama-fix.patch"
+
+	# Disable signing
+	sed -r -i -e "s|\"pubkey\": \"[0-9A-Za-z]+\"|\"pubkey\": \"\"|g" "${S}/src-tauri/tauri.conf.json" || die
 }
 
 src_configure() {
