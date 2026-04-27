@@ -20,8 +20,9 @@ NODE_SLOT="24"
 NPM_AUDIT_FATAL=0
 NPM_SLOT="3"
 # CI uses Rust 1.94.1
-RUST_MAX_VER="1.85.1" # Inclusive
-RUST_MIN_VER="1.85.1" # llvm-19.1, required for:  feature `edition2024` is required
+# Lockfile deps require 1.88.0
+RUST_MAX_VER="1.88.0" # Inclusive
+RUST_MIN_VER="1.88.0" # llvm-19.1, required for:  feature `edition2024` is required
 RUST_PV="${RUST_MIN_VER}"
 TARBALL="${P}.tar.gz"
 NPM_TARBALL="${TARBALL}"
@@ -762,7 +763,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
 ${CPU_FLAGS_X86[@]}
 ollama tray wayland X
-ebuild_revision_10
+ebuild_revision_12
 "
 RESTRICT="mirror" # Speed up downloads
 REQUIRED_USE="
@@ -855,7 +856,7 @@ npm_unpack_post() {
 		"package.json" \
 		|| die
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
-		L=(
+		local L=(
 			"node-addon-api@^8.7.0"
 			"node-gyp@^12.3.0"
 		)
@@ -873,9 +874,35 @@ npm_update_lock_audit_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 		fix_lockfile() {
 			sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"^0.27.2\"|g" "package-lock.json" || die
+			sed -i -e "s|\"dompurify\": \"^3.3.2\"|\"dompurify\": \"^3.4.0\"|g" "package-lock.json" || die
+			sed -i -e "s|\"dompurify\": \"3.2.7\"|\"dompurify\": \"^3.4.0\"|g" "package-lock.json" || die
+			sed -i -e "s|\"uuid@^9.0.1\"|\"uuid@^14.0.0\"|g" "package-lock.json" || die
+			sed -i -e "s|\"diff\": \"^7.0.0\"|\"diff\": \"^8.0.3\"|g" "package-lock.json" || die
 		}
 		fix_lockfile
-		enpm add -D "esbuild@^0.27.2" --legacy-peer-deps # Same as upstream
+
+		local L
+
+		L=(
+			"dompurify@^3.4.0"		# CVE-2026-41238; DT, ID; Moderate
+							# GHSA-h8r8-wccr-v5f2; ZC, SS(DoS); Moderate
+							# CVE-2026-41239; DT, ID; Moderate
+							# CVE-2026-41240; VS(DT); Moderate
+							# GHSA-39q2-94rc-95cp; VS(DT, ID); Moderate
+							# GHSA-cjmm-f4jc-qw8r; SS(DT, ID); Moderate
+							# GHSA-cj63-jhhr-wcxv; ZC, VS(DT), SS(DT, ID); Moderate
+							# CVE-2026-0540; SS(DT, ID); Moderate
+
+			"uuid@^14.0.0"			# GHSA-w5hq-g745-h8pq; VS(DT); ZC, Moderate
+			"diff@^7.0.0"			# CVE-2026-24001; VS(DoS); Low
+		)
+		enpm add -P "${L[@]}" --legacy-peer-deps # Same as upstream
+
+		L=(
+			"esbuild@^0.27.2"
+		)
+		enpm add -D "${L[@]}" --legacy-peer-deps # Same as upstream
+
 		node-sharp_npm_lockfile_add_sharp
 		fix_lockfile
 	fi
@@ -933,7 +960,7 @@ _production_unpack() {
 einfo "Adding Cargo.lock"
 		cp -a \
 			"${FILESDIR}/${PV}/Cargo."{"lock","toml"} \
-			"${WORKDIR}/${P}/src-tauri" \
+			"${WORKDIR}/${MY_P}/src-tauri" \
 			|| die
 	fi
 	_cargo_src_unpack
