@@ -1177,7 +1177,7 @@ src_install() {
 	lcnr_install_files
 
 	fperms 0755 "/usr/bin/RisuAI"
-	fowners "root:root" "/usr/bin/${PN}"
+	fowners "root:root" "/usr/bin/RisuAI"
 
 	einstalldocs
 }
