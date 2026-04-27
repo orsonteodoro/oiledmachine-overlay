@@ -5,7 +5,7 @@
 
 CATEGORY="games-rpg"
 PN="RisuAI"
-MY_PN="RisuAI"
+MY_PN="Risuai"
 PV="${1}"
 MY_PV="${2}"
 
