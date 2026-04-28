@@ -40,6 +40,10 @@ DISABLED_CRATES="
 risuai-0.0.0
 "
 
+# GHSA-82j2-j2ch-gfr8; ZC, DoS; High
+# GHSA-xgp8-3hg3-c2mh; DT; Low
+# GHSA-965h-392x-2mh5; DT; Low
+# GHSA-cq8v-f236-94qc;; Low
 CRATES="
 adler2-2.0.1
 aes-0.8.4
@@ -273,7 +277,7 @@ jni-sys-macros-0.4.1
 jobserver-0.1.34
 json-patch-3.0.1
 jsonptr-0.6.3
-js-sys-0.3.95
+js-sys-0.3.97
 keyboard-types-0.7.0
 kuchikiki-0.8.8-speedreader
 lazy_static-1.5.0
@@ -432,7 +436,7 @@ rustc_version-0.4.1
 rust-ini-0.21.3
 rustix-1.1.4
 rustls-0.21.12
-rustls-0.23.39
+rustls-0.23.40
 rustls-native-certs-0.6.3
 rustls-native-certs-0.8.3
 rustls-pemfile-1.0.4
@@ -604,11 +608,11 @@ wasi-0.11.1+wasi-snapshot-preview1
 wasi-0.9.0+wasi-snapshot-preview1
 wasip2-1.0.3+wasi-0.2.9
 wasip3-0.4.0+wasi-0.3.0-rc-2026-01-06
-wasm-bindgen-0.2.118
-wasm-bindgen-futures-0.4.68
-wasm-bindgen-macro-0.2.118
-wasm-bindgen-macro-support-0.2.118
-wasm-bindgen-shared-0.2.118
+wasm-bindgen-0.2.120
+wasm-bindgen-futures-0.4.70
+wasm-bindgen-macro-0.2.120
+wasm-bindgen-macro-support-0.2.120
+wasm-bindgen-shared-0.2.120
 wasm-encoder-0.244.0
 wasm-metadata-0.244.0
 wasmparser-0.244.0
@@ -618,7 +622,7 @@ webkit2gtk-2.0.2
 webkit2gtk-sys-2.0.2
 webpki-root-certs-1.0.7
 webpki-roots-1.0.7
-web-sys-0.3.95
+web-sys-0.3.97
 web-time-1.1.0
 webview2-com-0.38.2
 webview2-com-macros-0.8.1
@@ -1005,8 +1009,8 @@ eerror
 
 	# For manual lockfile creation
 ewarn "QA:  Manually \`cargo add \"hyper-tls@0.6.0\"\` for the cargo lockfile."
-#	unpack ${A}
-#	die
+	unpack ${A}
+	die
 
 	npm_src_unpack
 
