@@ -879,6 +879,7 @@ npm_unpack_post() {
 		)
 		enpm add -D "${L[@]}" ${NPM_INSTALL_ARGS[@]} # For node sharp
 	fi
+	sed -i -e "s|pnpm|npm|g" "package.json" || die
 }
 
 npm_update_lock_install_post() {
@@ -1050,7 +1051,6 @@ einfo "Unpacking cargo packages"
 src_prepare() {
 	default
 	eapply "${_PATCHES[@]}"
-	sed -i -e "s|pnpm|npm|g" "package.json" || die
 }
 
 src_configure() {
