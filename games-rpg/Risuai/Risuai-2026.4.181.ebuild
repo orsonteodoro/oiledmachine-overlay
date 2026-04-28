@@ -40,11 +40,6 @@ DISABLED_CRATES="
 risuai-0.0.0
 "
 
-# Use:  cargo -p <package-name>@<package-version> to update
-# rustls-webpki - GHSA-82j2-j2ch-gfr8; ZC, DoS; High
-# rustls-webpki - GHSA-xgp8-3hg3-c2mh; DT; Low
-# rustls-webpki - GHSA-965h-392x-2mh5; DT; Low
-# rand - GHSA-cq8v-f236-94qc;; Low
 CRATES="
 adler2-2.0.1
 aes-0.8.4
@@ -1010,8 +1005,8 @@ eerror
 
 	# For manual lockfile creation
 ewarn "QA:  Manually \`cargo add \"hyper-tls@0.6.0\"\` for the cargo lockfile."
-	unpack ${A}
-	die
+#	unpack ${A}
+#	die
 
 	npm_src_unpack
 
