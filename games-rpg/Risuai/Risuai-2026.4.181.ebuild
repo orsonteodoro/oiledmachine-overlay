@@ -914,7 +914,7 @@ npm_update_lock_audit_post() {
 							# CVE-2026-0540; SS(DT, ID); Moderate
 
 			"uuid@^14.0.0"			# GHSA-w5hq-g745-h8pq; VS(DT); ZC, Moderate
-			"diff@^7.0.0"			# CVE-2026-24001; VS(DoS); Low
+			"diff@^8.0.3"			# CVE-2026-24001; VS(DoS); Low
 		)
 		enpm add -P "${L[@]}" --legacy-peer-deps # Same as upstream
 
