@@ -40,6 +40,7 @@ DISABLED_CRATES="
 risuai-0.0.0
 "
 
+# Use:  cargo -p <package-name>@<package-version> to update
 # GHSA-82j2-j2ch-gfr8; ZC, DoS; High
 # GHSA-xgp8-3hg3-c2mh; DT; Low
 # GHSA-965h-392x-2mh5; DT; Low
