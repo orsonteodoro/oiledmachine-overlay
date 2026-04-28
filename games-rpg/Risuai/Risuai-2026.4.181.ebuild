@@ -1220,5 +1220,5 @@ einfo
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (155.0.0, 20250630) with rust 1.85.1
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (166.1.0, 20250810) with rust 1.85.1
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (166.3.0, 20251004) with rust 1.85.1
-# OILEDMACHINE-OVERLAY-TEST:  FAILED (2026.4.181, 20260428) with rust 1.88.0.  tiktoken wasm errors and freezes
+# OILEDMACHINE-OVERLAY-TEST:  FAILED (2026.4.181, 20260428) with rust 1.88.0.  tiktoken wasm errors and ollama/app freezes
 # ollama support - passed
