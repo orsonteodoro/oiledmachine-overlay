@@ -881,7 +881,7 @@ npm_unpack_post() {
 	fi
 }
 
-npm_install_post() {
+npm_update_lock_install_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 		enpm add -D "vite@^${VITE_PV}" ${NPM_INSTALL_ARGS[@]}
 		enpm add -D "vite-plugin-top-level-await@^1.6.0" ${NPM_INSTALL_ARGS[@]} # For tiktoken
@@ -889,7 +889,7 @@ npm_install_post() {
 	fi
 }
 
-npm_audit_post() {
+npm_update_lock_audit_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 		fix_lockfile() {
 			sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"^0.27.2\"|g" "package-lock.json" || die
