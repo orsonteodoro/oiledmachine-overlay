@@ -893,9 +893,10 @@ npm_update_lock_audit_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 		fix_lockfile() {
 			sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"^0.27.2\"|g" "package-lock.json" || die
+			sed -i -e "s|\"dompurify\": \"3.2.7\"|\"dompurify\": \"^3.4.0\"|g" "package-lock.json" || die
 			sed -i -e "s|\"dompurify\": \"^3.3.2\"|\"dompurify\": \"^3.4.0\"|g" "package-lock.json" || die
-			sed -i -e "s|\"dompurify\": \"^3.2.7\"|\"dompurify\": \"^3.4.0\"|g" "package-lock.json" || die
 			sed -i -e "s|\"uuid\": \"^9.0.1\"|\"uuid\": \"^14.0.0\"|g" "package-lock.json" || die
+			sed -i -e "s|\"uuid\": \"10.0.0\"|\"uuid\": \"^14.0.0\"|g" "package-lock.json" || die
 			sed -i -e "s|\"diff\": \"^7.0.0\"|\"diff\": \"^8.0.3\"|g" "package-lock.json" || die
 		}
 		fix_lockfile
