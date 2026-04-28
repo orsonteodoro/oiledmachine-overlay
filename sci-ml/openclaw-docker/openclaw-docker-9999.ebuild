@@ -4,7 +4,11 @@
 
 EAPI=8
 
-# AI generated ebuild/artifacts + human edited ebuild
+# For packagers, do not convert the ebuild to native (aka split ebuilds).
+# It will increase the blast radius effectively giving attacker privileged mode.
+
+# This ebuild contains AI generated ebuild/artifacts + human edited ebuild.
+# This ebuild contains AI synthetic data.
 
 # See https://github.com/openclaw/openclaw/pkgs/container/openclaw
 EGIT_REPO_URI="https://github.com/openclaw/openclaw.git"
@@ -32,14 +36,31 @@ BDEPEND="
 "
 
 src_unpack() {
+#
 # For the security, some of it could be disinformation, psyops, or marketing smears.
+#
 # You have 3 choices:
+#
 # 1. Non-free cloud hosted AI agent
 # 2. Free locally hosted AI agent (e.g. openclaw)
 # 3. No AI agent
+#
+# This is a user data sovereignty issue in the age of deplatforming.
+# You can give your crown jewels to a cloud hosted AI agent to be later deplatformed, blackmailed, controlled, or stolen.
+# You can keep your crown jewels on your site without being controlled with a security risk to malicious threat actors.
+# You can abstain from AI agents without opening the Pandora's box.
+#
 ewarn
 ewarn "The ${PN} ebuild is provided for testing purposes or testing/research evaluation"
 ewarn "of Web RAG for LobeHub not for production use because of security reasons."
+ewarn
+ewarn "Security estimated score and use case:"
+ewarn
+ewarn "| Configuration      | Security score      | Suggested use case                                            |"
+ewarn "| ---                | ---                 | ---                                                           |"
+ewarn "| Native             |  ~10-20 out of 100  | Isolated development machine                                  |"
+ewarn "| In docker          |  ~50-60 out of 100  | Standard business automation, personal AI assistants          |"
+ewarn "| In docker in a VM  |  ~80-90 out of 100  | Production tasks accessing sensitive data or internal network |"
 ewarn
 	git-r3_src_unpack || die
 }
