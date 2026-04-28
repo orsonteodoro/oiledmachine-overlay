@@ -66,13 +66,13 @@ ewarn
 ewarn "For top secret data or medical sensitive data, not recommended in general."
 ewarn "For DSS and above, security-critical (90% and above score) is the standard in this overlay."
 ewarn
-ewarn "| Rank of sensitivity | Type of data       |"
-ewarn "| ---                 | ---                |"
-ewarn "| 1                   | Top secret         |"
-ewarn "| 2                   | HIPPA              |"
-ewarn "| 3                   | DSS                |"
-ewarn "| 4                   | Confidential data  |"
-ewarn "| 5                   | Public data        |"
+ewarn "| Rank of sensitivity | Type of data                          |"
+ewarn "| ---                 | ---                                   |"
+ewarn "| 1                   | Top secret                            |"
+ewarn "| 2                   | HIPPA                                 |"
+ewarn "| 3                   | DSS                                   |"
+ewarn "| 4                   | Confidential / internal business data |"
+ewarn "| 5                   | Public data                           |"
 ewarn
 	git-r3_src_unpack || die
 }
