@@ -46,9 +46,9 @@ src_unpack() {
 # 3. No AI agent
 #
 # This is a user data sovereignty issue in the age of deplatforming.
-# You can give your crown jewels to a cloud hosted AI agent to be later deplatformed, blackmailed, controlled, or stolen.
+# You can give your crown jewels to a cloud hosted AI agent to be later deplatformed, blackmailed, controlled, or stolen in maybe a data center breach.
 # You can keep your crown jewels on your site without being controlled with a security risk to malicious threat actors.
-# You can abstain from AI agents without opening the Pandora's box.
+# You can abstain from AI agents without opening the evil Pandora's box.
 #
 ewarn
 ewarn "The ${PN} ebuild is provided for testing purposes or testing/research evaluation"
