@@ -60,8 +60,8 @@ ewarn "| Configuration           | Security score      | Criticality          | 
 ewarn "| ---                     | ---                 | ---                  | ---                 |"
 ewarn "| Decontainerized native  | ~2.0-3.0 out of 10  | Performance-critical | Casual data         |"
 ewarn "| In docker               | ~5.0-6.0 out of 10  | Performance-critical | Casual data         |"
-ewarn "| Decontainerized in a VM | ~7.0-7.5 out of 10  | Balanced-critical    | Casual data         |"
-ewarn "| In docker in a VM       | ~8.0-8.5 out of 10  | Balanced-critical    | Casual data         |"
+ewarn "| Decontainerized in a VM | ~7.0-7.5 out of 10  | Balanced             | Casual data         |"
+ewarn "| In docker in a VM       | ~8.0-8.5 out of 10  | Balanced             | Casual data         |"
 ewarn
 ewarn "For top secret data or medical sensitive data, not recommended in general."
 ewarn "For DSS and above, security-critical (90% and above score) is the standard in this overlay."
