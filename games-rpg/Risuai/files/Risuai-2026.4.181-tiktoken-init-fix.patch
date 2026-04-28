@@ -1,0 +1,82 @@
+# Fix tiktoken:  the wasm binary has not been properly initalized when opening
+# Settings > Chat Bot > Parameters
+--- a/src/ts/tokenizer.ts.orig	2026-04-18 06:16:46.000000000 -0700
++++ b/src/ts/tokenizer.ts	2026-04-28 06:14:38.885415752 -0700
+@@ -182,10 +182,10 @@ export async function encode(data:string
+ 
+ type tokenizerType = 'novellist'|'claude'|'novelai'|'llama'|'mistral'|'llama3'|'gemma'|'cohere'|'googleCloud'|'DeepSeek'
+ 
+-let tikParser:Tiktoken = null
++let tikParser: Tiktoken | null = null;
+ let tokenizersTokenizer:Tokenizer = null
+ let tokenizersType:tokenizerType = null
+-let lastTikModel = 'cl100k_base'
++let lastTikModel: string | null = 'cl100k_base'
+ 
+ let googleCloudTokenizedCache = new Map<string, number>()
+ 
+@@ -237,30 +237,20 @@ async function gemmaTokenize(text:string
+ 
+ async function tikJS(text:string, model='cl100k_base') {
+     if(!tikParser || lastTikModel !== model){
+-        tikParser?.free()
++        tikParser?.free();
++        tikParser = null;
+         if(model === 'cl100k_base'){
+-            const {Tiktoken} = await import('@dqbd/tiktoken')
+-            const cl100k_base = await import("@dqbd/tiktoken/encoders/cl100k_base.json");
++            const { get_encoding } = await import('@dqbd/tiktoken');
+             lastTikModel = model   
+-        
+-            tikParser = new Tiktoken(
+-                cl100k_base.bpe_ranks,
+-                cl100k_base.special_tokens,
+-                cl100k_base.pat_str
+-            );
++            tikParser = get_encoding('cl100k_base');        
+         }
+         if(model === 'o200k_base'){
+-            const {Tiktoken} = await import('@dqbd/tiktoken')
+-            const o200k_base = await import("src/etc/o200k_base.json");
++            const { get_encoding } = await import('@dqbd/tiktoken');
+             lastTikModel = model
+-            tikParser = new Tiktoken(
+-                o200k_base.bpe_ranks,
+-                o200k_base.special_tokens,
+-                o200k_base.pat_str
+-            );
++            tikParser = get_encoding('o200k_base');
+         }
+     }
+-    return tikParser.encode(text)
++    return tikParser!.encode(text);
+ }
+ 
+ async function geminiTokenizer(text:string) {
+--- a/vite.config.ts.orig	2026-04-18 06:16:46.000000000 -0700
++++ b/vite.config.ts	2026-04-28 09:04:42.092886037 -0700
+@@ -1,6 +1,7 @@
+ import { defineConfig } from "vite";
+ import { svelte, vitePreprocess } from "@sveltejs/vite-plugin-svelte";
+ import wasm from "vite-plugin-wasm";
++import topLevelAwait from "vite-plugin-top-level-await";
+ import strip from '@rollup/plugin-strip';
+ import tailwindcss from '@tailwindcss/vite'
+ // https://vitejs.dev/config/
+@@ -17,6 +18,7 @@ export default defineConfig(({command, m
+       }),
+       tailwindcss(),
+       wasm(),
++      topLevelAwait(),
+       command === 'build' ? strip({
+         include: '**/*.(mjs|js|svelte|ts)'
+       }) : null
+@@ -36,7 +38,7 @@ export default defineConfig(({command, m
+     // https://v2.tauri.app/reference/environment-variables/
+     envPrefix: ["VITE_", "TAURI_"],
+     build: {
+-      target:'baseline-widely-available',
++      target: 'esnext',
+       // don't minify for debug builds
+       minify: process.env.TAURI_ENV_DEBUG === 'true' ? false : 'oxc',
+       // produce sourcemaps for debug builds

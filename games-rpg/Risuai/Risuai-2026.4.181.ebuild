@@ -11,21 +11,20 @@ EAPI=8
 
 # To generate lockfile
 # PATH=$(realpath "../../scripts")":${PATH}"
-# NPM_UPDATER_VERSIONS="2026.4.181" npm_updater_update_locks.sh
+# PNPM_UPDATER_VERSIONS="2026.4.181" pnpm_updater_update_locks.sh
 
 MY_PN="RisuAI"
 
 NODE_SHARP_USE="exif jpeg lcms png svg"
 NODE_SLOT="24"
-NPM_AUDIT_FATAL=0
-NPM_SLOT="3"
+PNPM_SLOT="9"
 # CI uses Rust 1.94.1
 # Lockfile deps require 1.88.0
-RUST_MAX_VER="1.88.0" # Inclusive
-RUST_MIN_VER="1.88.0" # llvm-19.1, required for:  feature `edition2024` is required
+RUST_MAX_VER="1.94.1" # Inclusive
+RUST_MIN_VER="1.94.1" # llvm-21.1
 RUST_PV="${RUST_MIN_VER}"
 TARBALL="${P}.tar.gz"
-NPM_TARBALL="${TARBALL}"
+PNPM_TARBALL="${TARBALL}"
 
 SHARP_PV="0.34.3"
 VIPS_PV="8.17.2"
@@ -250,7 +249,7 @@ icu_provider-2.2.0
 id-arena-2.3.0
 ident_case-1.0.1
 idna-1.1.0
-idna_adapter-1.2.1
+idna_adapter-1.2.2
 indexmap-1.9.3
 indexmap-2.14.0
 infer-0.19.0
@@ -263,6 +262,8 @@ itoa-1.0.18
 javascriptcore-rs-1.1.2
 javascriptcore-rs-sys-1.1.1
 jni-0.21.1
+jni-0.22.4
+jni-macros-0.22.4
 jni-sys-0.3.1
 jni-sys-0.4.1
 jni-sys-macros-0.4.1
@@ -419,7 +420,7 @@ regex-automata-0.4.14
 regex-syntax-0.8.10
 reqwest-0.11.27
 reqwest-0.12.28
-reqwest-0.13.2
+reqwest-0.13.3
 rfd-0.16.0
 ring-0.17.14
 rustc-hash-1.1.0
@@ -433,7 +434,7 @@ rustls-native-certs-0.6.3
 rustls-native-certs-0.8.3
 rustls-pemfile-1.0.4
 rustls-pki-types-1.14.1
-rustls-platform-verifier-0.6.2
+rustls-platform-verifier-0.7.0
 rustls-platform-verifier-android-0.1.1
 rustls-webpki-0.101.7
 rustls-webpki-0.103.13
@@ -478,6 +479,8 @@ sigchld-0.2.4
 signal-hook-0.3.18
 signal-hook-registry-1.4.8
 simd-adler32-0.3.9
+simd_cesu8-1.1.1
+simdutf8-0.1.5
 siphasher-0.3.11
 siphasher-1.0.2
 slab-0.4.12
@@ -527,7 +530,7 @@ tauri-plugin-updater-2.10.1
 tauri-runtime-2.10.1
 tauri-runtime-wry-2.10.1
 tauri-utils-2.8.3
-tauri-winres-0.3.5
+tauri-winres-0.3.6
 tempfile-3.27.0
 tendril-0.4.3
 tendril-0.5.0
@@ -727,11 +730,11 @@ NODE_SHARP_PATCHES=(
 	"${FILESDIR}/sharp-0.34.3-static-libs.patch"
 )
 
-NPM_AUDIT_FIX_ARGS=(
+PNPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
 )
 
-NPM_INSTALL_ARGS=(
+PNPM_INSTALL_ARGS=(
 	"--legacy-peer-deps"
 )
 
@@ -744,7 +747,7 @@ VITE_PV="8.0.3" # Upstream version
 
 inherit cargo desktop edo lcnr node-sharp npm webkitgtk-stable xdg
 
-KEYWORDS="~amd64"
+#KEYWORDS="~amd64" # Still debugging issues
 S="${WORKDIR}/${P}"
 S_PROJECT="${WORKDIR}/${P}"
 SRC_URI="
@@ -763,7 +766,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
 ${CPU_FLAGS_X86[@]}
 ollama tray wayland X
-ebuild_revision_14
+ebuild_revision_15
 "
 RESTRICT="mirror" # Speed up downloads
 REQUIRED_USE="
@@ -837,6 +840,15 @@ BDEPEND+="
 	net-libs/nodejs:${NODE_SLOT}
 	sys-apps/npm
 "
+_PATCHES=(
+#	"${FILESDIR}/${PN}-2026.4.181-tiktoken-init-fix.patch"
+#	"${FILESDIR}/${PN}-163.1.1-ollama-fix.patch"
+
+	# Disable signing which makes it a fatal error.
+	# We don't use auto update because of supply chain attacks and to have
+	# the distro package manager have more control.
+	"${FILESDIR}/${PN}-2026.4.181-disable-bundler.patch"
+)
 DOCS=( "README.md" )
 
 pkg_setup() {
@@ -851,42 +863,44 @@ ewarn "This ebuild is still in development"
 	fi
 }
 
-npm_unpack_post() {
+pnpm_unpack_post() {
 	sed -i \
 		-e "\|@rollup/rollup-win32-arm64-msvc|d" \
 		-e "\|@tauri-apps/cli-win32-arm64-msvc|d" \
 		"package.json" \
 		|| die
-	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		local L=(
-			"node-addon-api@^8.7.0"
-			"node-gyp@^12.3.0"
+			"node-addon-api@8.7.0"
+			"node-gyp@12.3.0"
 		)
-		enpm add -D "${L[@]}" ${NPM_INSTALL_ARGS[@]} # For node sharp
+		epnpm add -D "${L[@]}" ${PNPM_INSTALL_ARGS[@]} # For node sharp
 	fi
 }
 
-npm_update_lock_install_post() {
-	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
-		enpm add -D "vite@^${VITE_PV}" ${NPM_INSTALL_ARGS[@]}
+pnpm_install_post() {
+	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
+		epnpm add -D "vite@${VITE_PV}" ${PNPM_INSTALL_ARGS[@]}
+		epnpm add -D "vite-plugin-top-level-await@1.6.0" ${PNPM_INSTALL_ARGS[@]} # For tiktoken
+		epnpm add -D "rollup@4.60.2" ${PNPM_INSTALL_ARGS[@]} # For vite-plugin-top-level-await
 	fi
 }
 
-npm_update_lock_audit_post() {
-	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+pnpm_audit_post() {
+	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		fix_lockfile() {
-			sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"^0.27.2\"|g" "package-lock.json" || die
-			sed -i -e "s|\"dompurify\": \"^3.3.2\"|\"dompurify\": \"^3.4.0\"|g" "package-lock.json" || die
-			sed -i -e "s|\"dompurify\": \"3.2.7\"|\"dompurify\": \"^3.4.0\"|g" "package-lock.json" || die
-			sed -i -e "s|\"uuid@^9.0.1\"|\"uuid@^14.0.0\"|g" "package-lock.json" || die
-			sed -i -e "s|\"diff\": \"^7.0.0\"|\"diff\": \"^8.0.3\"|g" "package-lock.json" || die
+			sed -i -e "s|esbuild: 0.21.3|esbuild: 0.27.2|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|dompurify: 3.3.2|dompurify: 3.4.0|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|dompurify: 3.2.7|dompurify: 3.4.0|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|uuid: 9.0.1|uuid: 14.0.0|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|diff: 7.0.0|diff: 8.0.3|g" "pnpm-lock.yaml" || die
 		}
-#		fix_lockfile
+		fix_lockfile
 
 		local L
 
 		L=(
-			"dompurify@^3.4.0"		# CVE-2026-41238; DT, ID; Moderate
+			"dompurify@3.4.0"		# CVE-2026-41238; DT, ID; Moderate
 							# GHSA-h8r8-wccr-v5f2; ZC, SS(DoS); Moderate
 							# CVE-2026-41239; DT, ID; Moderate
 							# CVE-2026-41240; VS(DT); Moderate
@@ -895,15 +909,15 @@ npm_update_lock_audit_post() {
 							# GHSA-cj63-jhhr-wcxv; ZC, VS(DT), SS(DT, ID); Moderate
 							# CVE-2026-0540; SS(DT, ID); Moderate
 
-			"uuid@^14.0.0"			# GHSA-w5hq-g745-h8pq; VS(DT); ZC, Moderate
-			"diff@^7.0.0"			# CVE-2026-24001; VS(DoS); Low
+			"uuid@14.0.0"			# GHSA-w5hq-g745-h8pq; VS(DT); ZC, Moderate
+			"diff@7.0.0"			# CVE-2026-24001; VS(DoS); Low
 		)
-#		enpm add -P "${L[@]}" --legacy-peer-deps # Same as upstream
+		epnpm add -P "${L[@]}" --legacy-peer-deps # Same as upstream
 
 		L=(
-			"esbuild@^0.27.2"
+			"esbuild@0.27.2"
 		)
-#		enpm add -D "${L[@]}" --legacy-peer-deps # Same as upstream
+		epnpm add -D "${L[@]}" --legacy-peer-deps # Same as upstream
 
 		node-sharp_npm_lockfile_add_sharp
 		fix_lockfile
@@ -1031,18 +1045,12 @@ einfo "Unpacking cargo packages"
 
 src_prepare() {
 	default
-	eapply "${FILESDIR}/${PN}-163.1.1-ollama-fix.patch"
-
-	# Disable signing which makes it a fatal error.
-	# We don't use auto update because of supply chain attacks and to have
-	# the distro package manager have more control.
-	eapply "${FILESDIR}/${PN}-2026.4.181-disable-bundler.patch"
+	eapply "${_PATCHES[@]}"
 }
 
 src_configure() {
 	export PKG_CONFIG_PATH="/usr/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
 	cargo_src_configure
-	sed -i -e "s|pnpm|npm run|g" "src-tauri/tauri.conf.json" || die
 
 	export VITE_RISU_LEGAL_CONFIGURED=TRUE
 }
@@ -1116,8 +1124,8 @@ eerror "Unsupported ARCH=${ARCH} ABI=${ABI}"
 
 src_compile() {
 	rm -f "${S}/Cargo."{"toml","lock"}
-	npm_hydrate
-	enpm --version
+	pnpm_hydrate
+	epnpm --version
 
 #
 # <--- Last few GCs --->
@@ -1145,10 +1153,11 @@ src_compile() {
 	export NODE_OPTIONS=" --max-old-space-size=8192"
 einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 
-#	enpm install -D "vite@^${VITE_PV}" ${NPM_INSTALL_ARGS[@]}
-	enpm run build
+#	epnpm install -D "vite@^${VITE_PV}" ${PNPM_INSTALL_ARGS[@]}
+	epnpm run build
 	local chost=$(get_rustc_target)
-	enpm run tauri build -- --target "${chost}"
+	#epnpm run tauri build -- --target "${chost}"
+	epnpm vite build
 	grep -e "failed to build app" "${T}/build.log" && die "Detected error"
 }
 
@@ -1170,11 +1179,11 @@ src_install() {
 
 	LCNR_SOURCE="${WORKDIR}/cargo_home/gentoo"
 	LCNR_TAG="third_party_cargo"
-	lcnr_install_files
+#	lcnr_install_files
 
 	LCNR_SOURCE="${S_PROJECT}/node_modules"
 	LCNR_TAG="third_party_npm"
-	lcnr_install_files
+#	lcnr_install_files
 
 	fperms 0755 "/usr/bin/RisuAI"
 	fowners "root:root" "/usr/bin/RisuAI"
@@ -1186,8 +1195,9 @@ pkg_postinst() {
 	xdg_pkg_postinst
 	if use ollama ; then
 einfo
-einfo "The Ollama settings must be manually changed."
-einfo "The default URI is http://localhost:11434"
+einfo "The Ollama settings found at (Settings > Chat Bot > Model > Model >"
+einfo "Show Unrecommended Settings checked) must be manually changed.  The"
+einfo "default URI is http://localhost:11434"
 einfo
 	fi
 }
@@ -1201,4 +1211,5 @@ einfo
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (155.0.0, 20250630) with rust 1.85.1
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (166.1.0, 20250810) with rust 1.85.1
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (166.3.0, 20251004) with rust 1.85.1
+# OILEDMACHINE-OVERLAY-TEST:  FAILED (2026.4.181, 20260428) with rust 1.88.0.  tiktoken wasm errors and freezes
 # ollama support - passed
