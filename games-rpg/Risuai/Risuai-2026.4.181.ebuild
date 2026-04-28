@@ -1158,11 +1158,10 @@ src_compile() {
 einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 
 #	enpm install -D "vite@^${VITE_PV}" ${NPM_INSTALL_ARGS[@]}
-	enpm run build
+	enpm run "build"
 	local chost=$(get_rustc_target)
-	#enpm run tauri build -- --target "${chost}"
-	enpm vite build
-	grep -e "failed to build app" "${T}/build.log" && die "Detected error"
+	enpm run tauri build -- --target "${chost}"
+	grep -e "Failed to build app" "${T}/build.log" && die "Detected error"
 }
 
 src_install() {
