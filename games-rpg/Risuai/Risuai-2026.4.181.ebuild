@@ -11,20 +11,23 @@ EAPI=8
 
 # To generate lockfile
 # PATH=$(realpath "../../scripts")":${PATH}"
-# PNPM_UPDATER_VERSIONS="2026.4.181" pnpm_updater_update_locks.sh
+# NPM_UPDATER_VERSIONS="2026.4.181" npm_updater_update_locks.sh
+
+# npm is used because building node sharp with pnpm breaks.  DO NOT CHANGE.
 
 MY_PN="RisuAI"
 
 NODE_SHARP_USE="exif jpeg lcms png svg"
 NODE_SLOT="24"
-PNPM_SLOT="9"
+NPM_AUDIT_FATAL=0
+NPM_SLOT="3"
 # CI uses Rust 1.94.1
 # Lockfile deps require 1.88.0
 RUST_MAX_VER="1.94.1" # Inclusive
 RUST_MIN_VER="1.94.1" # llvm-21.1
 RUST_PV="${RUST_MIN_VER}"
 TARBALL="${P}.tar.gz"
-PNPM_TARBALL="${TARBALL}"
+NPM_TARBALL="${TARBALL}"
 
 SHARP_PV="0.34.3"
 VIPS_PV="8.17.2"
@@ -730,11 +733,11 @@ NODE_SHARP_PATCHES=(
 	"${FILESDIR}/sharp-0.34.3-static-libs.patch"
 )
 
-PNPM_AUDIT_FIX_ARGS=(
+NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
 )
 
-PNPM_INSTALL_ARGS=(
+NPM_INSTALL_ARGS=(
 	"--legacy-peer-deps"
 )
 
@@ -841,8 +844,8 @@ BDEPEND+="
 	sys-apps/npm
 "
 _PATCHES=(
-#	"${FILESDIR}/${PN}-2026.4.181-tiktoken-init-fix.patch"
-#	"${FILESDIR}/${PN}-163.1.1-ollama-fix.patch"
+	"${FILESDIR}/${PN}-2026.4.181-tiktoken-init-fix.patch"
+	"${FILESDIR}/${PN}-163.1.1-ollama-fix.patch"
 
 	# Disable signing which makes it a fatal error.
 	# We don't use auto update because of supply chain attacks and to have
@@ -863,44 +866,44 @@ ewarn "This ebuild is still in development"
 	fi
 }
 
-pnpm_unpack_post() {
+npm_unpack_post() {
 	sed -i \
 		-e "\|@rollup/rollup-win32-arm64-msvc|d" \
 		-e "\|@tauri-apps/cli-win32-arm64-msvc|d" \
 		"package.json" \
 		|| die
-	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
+	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 		local L=(
-			"node-addon-api@8.7.0"
-			"node-gyp@12.3.0"
+			"node-addon-api@^8.7.0"
+			"node-gyp@^12.3.0"
 		)
-		epnpm add -D "${L[@]}" ${PNPM_INSTALL_ARGS[@]} # For node sharp
+		enpm add -D "${L[@]}" ${NPM_INSTALL_ARGS[@]} # For node sharp
 	fi
 }
 
-pnpm_install_post() {
-	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
-		epnpm add -D "vite@${VITE_PV}" ${PNPM_INSTALL_ARGS[@]}
-		epnpm add -D "vite-plugin-top-level-await@1.6.0" ${PNPM_INSTALL_ARGS[@]} # For tiktoken
-		epnpm add -D "rollup@4.60.2" ${PNPM_INSTALL_ARGS[@]} # For vite-plugin-top-level-await
+npm_install_post() {
+	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+		enpm add -D "vite@^${VITE_PV}" ${NPM_INSTALL_ARGS[@]}
+		enpm add -D "vite-plugin-top-level-await@^1.6.0" ${NPM_INSTALL_ARGS[@]} # For tiktoken
+		enpm add -D "rollup@^4.60.2" ${NPM_INSTALL_ARGS[@]} # For vite-plugin-top-level-await
 	fi
 }
 
-pnpm_audit_post() {
-	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
+npm_audit_post() {
+	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 		fix_lockfile() {
-			sed -i -e "s|esbuild: 0.21.3|esbuild: 0.27.2|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|dompurify: 3.3.2|dompurify: 3.4.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|dompurify: 3.2.7|dompurify: 3.4.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|uuid: 9.0.1|uuid: 14.0.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|diff: 7.0.0|diff: 8.0.3|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"^0.27.2\"|g" "package-lock.json" || die
+			sed -i -e "s|\"dompurify\": \"^3.3.2\"|\"dompurify\": \"^3.4.0\"|g" "package-lock.json" || die
+			sed -i -e "s|\"dompurify\": \"^3.2.7\"|\"dompurify\": \"^3.4.0\"|g" "package-lock.json" || die
+			sed -i -e "s|\"uuid\": \"^9.0.1\"|\"uuid\": \"^14.0.0\"|g" "package-lock.json" || die
+			sed -i -e "s|\"diff\": \"^7.0.0\"|\"diff\": \"^8.0.3\"|g" "package-lock.json" || die
 		}
 		fix_lockfile
 
 		local L
 
 		L=(
-			"dompurify@3.4.0"		# CVE-2026-41238; DT, ID; Moderate
+			"dompurify@^3.4.0"		# CVE-2026-41238; DT, ID; Moderate
 							# GHSA-h8r8-wccr-v5f2; ZC, SS(DoS); Moderate
 							# CVE-2026-41239; DT, ID; Moderate
 							# CVE-2026-41240; VS(DT); Moderate
@@ -909,15 +912,15 @@ pnpm_audit_post() {
 							# GHSA-cj63-jhhr-wcxv; ZC, VS(DT), SS(DT, ID); Moderate
 							# CVE-2026-0540; SS(DT, ID); Moderate
 
-			"uuid@14.0.0"			# GHSA-w5hq-g745-h8pq; VS(DT); ZC, Moderate
-			"diff@7.0.0"			# CVE-2026-24001; VS(DoS); Low
+			"uuid@^14.0.0"			# GHSA-w5hq-g745-h8pq; VS(DT); ZC, Moderate
+			"diff@^7.0.0"			# CVE-2026-24001; VS(DoS); Low
 		)
-		epnpm add -P "${L[@]}" --legacy-peer-deps # Same as upstream
+		enpm add -P "${L[@]}" --legacy-peer-deps # Same as upstream
 
 		L=(
-			"esbuild@0.27.2"
+			"esbuild@^0.27.2"
 		)
-		epnpm add -D "${L[@]}" --legacy-peer-deps # Same as upstream
+		enpm add -D "${L[@]}" --legacy-peer-deps # Same as upstream
 
 		node-sharp_npm_lockfile_add_sharp
 		fix_lockfile
@@ -1124,8 +1127,8 @@ eerror "Unsupported ARCH=${ARCH} ABI=${ABI}"
 
 src_compile() {
 	rm -f "${S}/Cargo."{"toml","lock"}
-	pnpm_hydrate
-	epnpm --version
+	npm_hydrate
+	enpm --version
 
 #
 # <--- Last few GCs --->
@@ -1153,11 +1156,11 @@ src_compile() {
 	export NODE_OPTIONS=" --max-old-space-size=8192"
 einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 
-#	epnpm install -D "vite@^${VITE_PV}" ${PNPM_INSTALL_ARGS[@]}
-	epnpm run build
+#	enpm install -D "vite@^${VITE_PV}" ${NPM_INSTALL_ARGS[@]}
+	enpm run build
 	local chost=$(get_rustc_target)
-	#epnpm run tauri build -- --target "${chost}"
-	epnpm vite build
+	#enpm run tauri build -- --target "${chost}"
+	enpm vite build
 	grep -e "failed to build app" "${T}/build.log" && die "Detected error"
 }
 
