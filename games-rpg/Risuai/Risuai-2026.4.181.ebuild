@@ -1050,6 +1050,7 @@ einfo "Unpacking cargo packages"
 src_prepare() {
 	default
 	eapply "${_PATCHES[@]}"
+	sed -i -e "s|pnpm|npm|g" "package.json" || die
 }
 
 src_configure() {
