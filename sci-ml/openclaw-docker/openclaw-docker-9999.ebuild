@@ -56,22 +56,23 @@ ewarn "of Web RAG for LobeHub not for production use because of security reasons
 ewarn
 ewarn "Security estimated score and use case:"
 ewarn
-ewarn "| Configuration           | Security score      | Criticality          | Suggested use case  |"
-ewarn "| ---                     | ---                 | ---                  | ---                 |"
-ewarn "| Decontainerized native  | ~2.0-3.0 out of 10  | Performance-critical | Casual data         |"
-ewarn "| In docker               | ~5.0-6.0 out of 10  | Performance-critical | Casual data         |"
-ewarn "| Decontainerized in a VM | ~7.0-7.5 out of 10  | Balanced             | Casual data         |"
-ewarn "| In docker in a VM       | ~8.0-8.5 out of 10  | Balanced             | Casual data         |"
+ewarn "| Configuration           | Security score      | Criticality          | Suggested use case             |"
+ewarn "| ---                     | ---                 | ---                  | ---                            |"
+ewarn "| Decontainerized native  | ~2.0-3.0 out of 10  | Performance-critical | Public data                    |"
+ewarn "| In docker               | ~5.0-6.0 out of 10  | Performance-critical | Public data                    |"
+ewarn "| Decontainerized in a VM | ~7.0-7.5 out of 10  | Balanced             | Public data                    |"
+ewarn "| In docker in a VM       | ~8.0-8.5 out of 10  | Balanced             | Public data, confidental data  |"
 ewarn
 ewarn "For top secret data or medical sensitive data, not recommended in general."
 ewarn "For DSS and above, security-critical (90% and above score) is the standard in this overlay."
 ewarn
-ewarn "| Rank of sensitivity | Type of data |"
-ewarn "| ---                 | ---          |"
-ewarn "| 1                   | Top secret   |"
-ewarn "| 2                   | HIPPA        |"
-ewarn "| 3                   | DSS          |"
-ewarn "| 4                   | Casual data  |"
+ewarn "| Rank of sensitivity | Type of data       |"
+ewarn "| ---                 | ---                |"
+ewarn "| 1                   | Top secret         |"
+ewarn "| 2                   | HIPPA              |"
+ewarn "| 3                   | DSS                |"
+ewarn "| 4                   | Confidential data  |"
+ewarn "| 5                   | Public data        |"
 ewarn
 	git-r3_src_unpack || die
 }
