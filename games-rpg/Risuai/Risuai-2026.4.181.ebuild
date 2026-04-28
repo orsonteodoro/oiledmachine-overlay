@@ -41,10 +41,10 @@ risuai-0.0.0
 "
 
 # Use:  cargo -p <package-name>@<package-version> to update
-# GHSA-82j2-j2ch-gfr8; ZC, DoS; High
-# GHSA-xgp8-3hg3-c2mh; DT; Low
-# GHSA-965h-392x-2mh5; DT; Low
-# GHSA-cq8v-f236-94qc;; Low
+# rustls-webpki - GHSA-82j2-j2ch-gfr8; ZC, DoS; High
+# rustls-webpki - GHSA-xgp8-3hg3-c2mh; DT; Low
+# rustls-webpki - GHSA-965h-392x-2mh5; DT; Low
+# rand - GHSA-cq8v-f236-94qc;; Low
 CRATES="
 adler2-2.0.1
 aes-0.8.4
