@@ -56,12 +56,14 @@ ewarn "of Web RAG for LobeHub not for production use because of security reasons
 ewarn
 ewarn "Security estimated score and use case:"
 ewarn
-ewarn "| Configuration           | Security score  | Criticality          | Suggested use case                                          |"
-ewarn "| ---                     | ---             | ---                  | ---                                                         |"
-ewarn "| Decontainerized native  | ~2.0 out of 10  | Performance-critical | Isolated development/testing/research, trusted automation   |"
-ewarn "| Decontainerized in a VM | ~5.0 out of 10  | Performance-critical | Using custom kernel modules, network host isolation         |"
-ewarn "| In docker               | ~6.0 out of 10  | Performance-critical | General production, personal AI assistants, casual data     |"
-ewarn "| In docker in a VM       | ~9.8 out of 10  | Security-critical    | Production sensitive data tasks, untrusted agents           |"
+ewarn "| Configuration           | Security score      | Criticality          | Suggested use case  |"
+ewarn "| ---                     | ---                 | ---                  | ---                 |"
+ewarn "| Decontainerized native  | ~2.0-3.0 out of 10  | Performance-critical | Casual data         |"
+ewarn "| In docker               | ~5.0-6.0 out of 10  | Performance-critical | Casual data         |"
+ewarn "| Decontainerized in a VM | ~7.0-7.5 out of 10  | Balanced-critical    | Casual data         |"
+ewarn "| In docker in a VM       | ~8.0-8.5 out of 10  | Balanced-critical    | Casual data         |"
+ewarn
+ewarn "For top secret data or medical sensitive data, not recommended in general."
 ewarn
 	git-r3_src_unpack || die
 }
