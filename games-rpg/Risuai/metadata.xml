@@ -6,4 +6,9 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
+  <use>
+    <flag name="server">
+      Run the self-hosting server.
+    </flag>
+  </use>
 </pkgmetadata>

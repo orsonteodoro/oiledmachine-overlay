@@ -1,0 +1,63 @@
+--- a/src-tauri/src/main.rs.orig	2026-04-18 06:16:46.000000000 -0700
++++ b/src-tauri/src/main.rs	2026-04-29 09:42:33.948897089 -0700
+@@ -329,7 +329,7 @@ use std::process::Command;
+ 
+ #[tauri::command]
+ fn check_requirements_local() -> String {
+-    let mut py = Command::new("python");
++    let mut py = Command::new("@EPYTHON@");
+     let output = py.arg("--version").output();
+     match output {
+         Ok(o) => {
+@@ -405,7 +405,7 @@ fn install_py_dependencies(path: String,
+ 
+ #[tauri::command]
+ fn run_py_server(handle: tauri::AppHandle, py_path: String) {
+-    let py_exec_path = Path::new(&py_path).join("python").join("python.exe");
++    let py_exec_path = Path::new(&py_path).join("@EPYTHON@");
+     let server_path = handle
+         .path()
+         .resolve("src-python/run.py", BaseDirectory::Resource)
+@@ -591,11 +591,7 @@ fn main() {
+             native_request,
+             check_auth,
+             check_requirements_local,
+-            install_python,
+-            install_pip,
+-            post_py_install,
+             run_py_server,
+-            install_py_dependencies,
+             streamed_fetch,
+             oauth_login
+         ])
+--- a/src-tauri/src-python/main.py.orig	2026-04-18 06:16:46.000000000 -0700
++++ b/src-tauri/src-python/main.py	2026-04-29 09:46:37.991337431 -0700
+@@ -11,7 +11,7 @@ import sys
+ # Write key for authentication
+ 
+ app = FastAPI()
+-key_dir = os.path.join(os.path.dirname(sys.executable), "key.txt")
++key_dir = os.path.join("/", "etc", "Risuai", "key.txt")
+ if not os.path.exists(key_dir):
+     f = open(key_dir, 'w')
+     f.write(str(uuid.uuid4()))
+@@ -123,4 +123,4 @@ async def llamacpp_tokenize(item:LlamaTo
+         app.last_model_path = item.model_path
+         app.n_ctx = item.n_ctx
+ 
+-    return app.llm.tokenize(item.prompt.encode('utf-8'))
+\ No newline at end of file
++    return app.llm.tokenize(item.prompt.encode('utf-8'))
+--- a/src-tauri/src-python//run.py.orig	2026-04-18 06:16:46.000000000 -0700
++++ b/src-tauri/src-python//run.py	2026-04-29 09:48:34.068710939 -0700
+@@ -3,7 +3,7 @@ import os
+ import uuid
+ 
+ if __name__ == "__main__":
+-    key_dir = os.path.join(os.getcwd(), "key.txt")
++    key_dir = os.path.join("/", "etc", "Risuai", "key.txt")
+     with open(key_dir, "w") as f:
+         f.write(uuid.uuid4().hex)
+-    uvicorn.run("main:app", host="0.0.0.0", port=8912)
+\ No newline at end of file
++    uvicorn.run("main:app", host="0.0.0.0", port=8912)

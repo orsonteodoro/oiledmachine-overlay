@@ -1,0 +1,5 @@
+#!/bin/bash
+# TODO add sandbox
+export PATH="/usr/lib/node/@NODE_SLOT@/bin:${PATH}"
+cd "/opt/Risuai"
+node "server/node/server.cjs"

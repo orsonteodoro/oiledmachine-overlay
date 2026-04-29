@@ -6,6 +6,9 @@ EAPI=8
 
 # U24
 
+# TODO package
+# llama-cpp-python
+
 # U24, rust 1.75.0, llvm 17.0
 # @swc/core, rust 1.77.1, llvm 18.0
 
@@ -18,15 +21,16 @@ EAPI=8
 MY_PN="RisuAI"
 
 NODE_SHARP_USE="exif jpeg lcms png svg"
-NODE_SLOT="24"
+NODE_SLOT="22"
 PNPM_SLOT="9"
 # CI uses Rust 1.94.1
 # Lockfile deps require 1.88.0
-RUST_MAX_VER="1.94.1" # Inclusive
-RUST_MIN_VER="1.94.1" # llvm-21.1
+RUST_MAX_VER="1.88.0" # Inclusive
+RUST_MIN_VER="1.88.0" # llvm-21.1
 RUST_PV="${RUST_MIN_VER}"
 TARBALL="${P}.tar.gz"
 PNPM_TARBALL="${TARBALL}"
+PYTHON_COMPAT=( "python3_11" )
 
 SHARP_PV="0.34.3"
 VIPS_PV="8.17.2"
@@ -747,7 +751,7 @@ PNPM_INSTALL_ARGS=(
 # CVE-2026-39363; ZC, VS(ID); High
 VITE_PV="8.0.5" # Upstream version
 
-inherit cargo desktop edo lcnr node-sharp pnpm webkitgtk-stable xdg
+inherit cargo desktop edo lcnr node-sharp pnpm python-r1 webkitgtk-stable xdg
 
 #KEYWORDS="~amd64" # Still debugging issues
 S="${WORKDIR}/${P}"
@@ -767,7 +771,7 @@ LICENSE="
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
 ${CPU_FLAGS_X86[@]}
-ollama tray wayland X
+ollama server tray wayland X
 ebuild_revision_17
 "
 RESTRICT="mirror" # Speed up downloads
@@ -833,6 +837,16 @@ RDEPEND+="
 	ollama? (
 		app-misc/ollama
 	)
+	server? (
+		acct-group/risuai
+		acct-user/risuai
+		$(python_gen_cond_dep '
+			dev-python/fastapi[${PYTHON_USEDEP}]
+			dev-python/llama-cpp-python[${PYTHON_USEDEP}]
+			dev-python/pydantic[${PYTHON_USEDEP}]
+			dev-python/uvicorn[${PYTHON_USEDEP},standard]
+		')
+	)
 "
 DEPEND+="
 	${RDEPEND}
@@ -841,15 +855,18 @@ BDEPEND+="
 	${RUST_BINDINGS_BDEPEND}
 	net-libs/nodejs:${NODE_SLOT}
 	sys-apps/pnpm:${PNPM_SLOT}
+	dev-libs/openssl
 "
 _PATCHES=(
-	"${FILESDIR}/${PN}-2026.4.181-tiktoken-init-fix.patch"
+#	"${FILESDIR}/${PN}-2026.4.181-tiktoken-init-fix.patch"
 	"${FILESDIR}/${PN}-163.1.1-ollama-fix.patch"
 
 	# Disable signing which makes it a fatal error.
 	# We don't use auto update because of supply chain attacks and to have
 	# the distro package manager have more control.
-	"${FILESDIR}/${PN}-2026.4.181-disable-bundler.patch"
+#	"${FILESDIR}/${PN}-166.3.2-disable-updater.patch"
+
+	"${FILESDIR}/${PN}-2026.4.181-hardcoded-paths.patch"
 )
 DOCS=( "README.md" )
 
@@ -862,6 +879,9 @@ ewarn "This ebuild is still in development"
 		rust_prepend_path "${RUST_PV}" "binary"
 	elif has_version "dev-lang/rust:${RUST_PV}" ; then
 		rust_prepend_path "${RUST_PV}" "source"
+	fi
+	if use server ; then
+		python_setup
 	fi
 }
 
@@ -1004,8 +1024,8 @@ eerror
 
 	# For manual lockfile creation
 ewarn "QA:  Manually \`cargo add \"hyper-tls@0.6.0\"\` for the cargo lockfile."
-#	unpack ${A}
-#	die
+	unpack ${A}
+	die
 
 	pnpm_src_unpack
 
@@ -1051,6 +1071,8 @@ einfo "Unpacking cargo packages"
 src_prepare() {
 	default
 	eapply "${_PATCHES[@]}"
+
+	# TODO: remove downloader in src-tauri/src/main.rs
 }
 
 src_configure() {
@@ -1058,6 +1080,8 @@ src_configure() {
 	cargo_src_configure
 
 	export VITE_RISU_LEGAL_CONFIGURED=TRUE
+
+	sed -i -e "s|@EPYTHON@|${EPYTHON}|g" "src-tauri/src/main.rs" || die
 }
 
 get_rustc_target() {
@@ -1160,15 +1184,18 @@ einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 
 #	epnpm install -D "vite@${VITE_PV}" ${PNPM_INSTALL_ARGS[@]}
 	epnpm run "build"
-#	local chost=$(get_rustc_target)
-	epnpm run tauri build #-- --target "${chost}"
+#	local chost=$(get_rustc_target) # Paths used in 166.3.0
+	epnpm run tauri build --no-sign #-- --target "${chost}"
+
 	grep -e "Failed to build app" "${T}/build.log" && die "Detected error"
 }
 
 src_install() {
-#	local chost=$(get_rustc_target)
-	exeinto "/usr/bin"
+#	local chost=$(get_rustc_target) # Paths used in 166.3.0
+	exeinto "/opt/${PN}"
+#	doexe "src-tauri/target/${chost}/release/RisuAI"
 	doexe "src-tauri/target/release/RisuAI"
+	dosym "/opt/${PN}/RisuAI" "/usr/bin/Risuai"
 	dosym "/usr/bin/RisuAI" "/usr/bin/Risuai"
 	dosym "/usr/bin/RisuAI" "/usr/bin/risuai"
 
@@ -1188,6 +1215,32 @@ src_install() {
 	LCNR_SOURCE="${S_PROJECT}/node_modules"
 	LCNR_TAG="third_party_pnpm"
 #	lcnr_install_files
+
+	# For the server but it needs path changes modificaiton and a key.txt (32 digit hex)
+	insinto "/opt/${PN}"
+
+	# These are found in the resource directory instead
+#	doins -r "src-tauri/target/${chost}/release/src-python"
+#	doins -r "src-tauri/target/release/src-python"
+
+# TODO:  fix exe permissions
+	if use server ; then
+		doins -r "node_modules"
+		doins -r "server"
+		doins "package.json"
+		doins "pnpm-lock.yaml"
+		exeinto "/usr/bin"
+		echo "${FILESDIR}/start-risuai-server" > "${T}/start-risuai-server" || die
+		sed -i -e "s|@NODE_SLOT@|${NODE_SLOT}|g" "${T}/start-risuai-server" || die
+		doexe "${T}/start-risuai-server"
+		dosym "/opt/start-risuai-server" "/usr/bin/start-risuai-server"
+	fi
+
+	insinto "/etc/${PN}"
+	dodir "/etc/${PN}"
+	echo $(openssl rand -hex 16) > "${ED}/opt/${PN}/key.txt"
+	fperms 0600 "/opt/${PN}/key.txt"
+	fowners "risuai:risuai" "/opt/${PN}/key.txt"
 
 	fperms 0755 "/usr/bin/RisuAI"
 	fowners "root:root" "/usr/bin/RisuAI"
