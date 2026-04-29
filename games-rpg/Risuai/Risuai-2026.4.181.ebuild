@@ -844,7 +844,7 @@ RDEPEND+="
 			dev-python/fastapi[${PYTHON_USEDEP}]
 			dev-python/llama-cpp-python[${PYTHON_USEDEP}]
 			dev-python/pydantic[${PYTHON_USEDEP}]
-			dev-python/uvicorn[${PYTHON_USEDEP},standard(+)]
+			dev-python/uvicorn[${PYTHON_USEDEP},standard]
 		')
 	)
 "
