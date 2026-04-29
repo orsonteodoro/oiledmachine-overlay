@@ -30,7 +30,6 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	>=dev-python/asgiref-3.4.0[${PYTHON_USEDEP}]
 	>=dev-python/click-7.0[${PYTHON_USEDEP}]
 	>=dev-python/h11-0.8[${PYTHON_USEDEP}]
 	standard? (
@@ -71,7 +70,7 @@ BDEPEND="
 		>=dev-python/mkdocs-llmstxt-0.5.0[${PYTHON_USEDEP}]
 	)
 	test? (
-		dev-python/typing-extensions[${PYTHON_USEDEP}]
+		>=dev-python/typing-extensions-4.0[${PYTHON_USEDEP}]
 	)
 "
 
