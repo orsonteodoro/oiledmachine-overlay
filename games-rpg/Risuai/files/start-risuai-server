@@ -1,5 +1,12 @@
 #!/bin/bash
 # TODO add sandbox
+export HOME="/var/lib/risuai"
+export PNPM_HOME="${HOME}/.pnpm"
+export PATH="${PNPM_HOME}:$PATH"
+export COREPACK_ENABLE_NETWORK="1"
+export NODE_ENV="production"
 export PATH="/usr/lib/node/@NODE_SLOT@/bin:${PATH}"
+export PNPM_SLOT="@PNPM_SLOT@"
 cd "/opt/Risuai"
-node "server/node/server.cjs"
+corepack hydrate "/usr/share/pnpm/pnpm-${PNPM_SLOT}.tgz"
+pnpm runserver

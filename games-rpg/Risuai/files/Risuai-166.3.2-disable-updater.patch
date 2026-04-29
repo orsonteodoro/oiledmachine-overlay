@@ -1,10 +1,18 @@
---- a/src-tauri/tauri.conf.json.orig	2026-04-29 02:23:11.885062280 -0700
-+++ b/src-tauri/tauri.conf.json	2026-04-29 02:22:42.109959220 -0700
-@@ -33,6 +33,7 @@
+--- a/src-tauri/tauri.conf.json.orig	2026-04-18 06:16:46.000000000 -0700
++++ b/src-tauri/tauri.conf.json	2026-04-29 11:12:17.750639043 -0700
+@@ -33,7 +33,7 @@
    "identifier": "co.aiclient.risu",
    "plugins": {
      "updater": {
+-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDU2ODMzOTIxMDMxOTY1MUYKUldRZlpSa0RJVG1EVmx5Vm1WYlhFM29HMEJrUTRrYmg5dDQ0RFpvdUphNDdxQmVlWXJHVmV5TEYK",
 +      "active": false,
-       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDU2ODMzOTIxMDMxOTY1MUYKUldRZlpSa0RJVG1EVmx5Vm1WYlhFM29HMEJrUTRrYmg5dDQ0RFpvdUphNDdxQmVlWXJHVmV5TEYK",
        "endpoints": [
          "https://github.com/kwaroran/RisuAI/releases/latest/download/latest.json"
+       ],
+@@ -75,4 +75,4 @@
+       "csp": null
+     }
+   }
+-}
+\ No newline at end of file
++}

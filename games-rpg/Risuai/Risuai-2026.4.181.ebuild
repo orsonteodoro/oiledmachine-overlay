@@ -864,7 +864,8 @@ _PATCHES=(
 	# Disable signing which makes it a fatal error.
 	# We don't use auto update because of supply chain attacks and to have
 	# the distro package manager have more control.
-#	"${FILESDIR}/${PN}-166.3.2-disable-updater.patch"
+	"${FILESDIR}/${PN}-166.3.2-disable-updater.patch"
+	"${FILESDIR}/${PN}-166.3.2-disable-bundle.patch"
 
 	"${FILESDIR}/${PN}-2026.4.181-hardcoded-paths.patch"
 )
@@ -1184,9 +1185,6 @@ einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 	epnpm run "build"
 	local chost=$(get_rustc_target) # Paths used in 166.3.0
 	local args=()
-	args+=(
-		--no-sign
-	)
 	if ver_test "${PV}" -le "166.3.0" ; then
 		args+=(
 			--target "${chost}"
@@ -1235,13 +1233,18 @@ src_install() {
 
 # TODO:  fix exe permissions
 	if use server ; then
+		doins -r "dist"
 		doins -r "node_modules"
 		doins -r "server"
 		doins "package.json"
 		doins "pnpm-lock.yaml"
 		exeinto "/usr/bin"
 		echo "${FILESDIR}/start-risuai-server" > "${T}/start-risuai-server" || die
-		sed -i -e "s|@NODE_SLOT@|${NODE_SLOT}|g" "${T}/start-risuai-server" || die
+		sed -i \
+			-e "s|@NODE_SLOT@|${NODE_SLOT}|g" \
+			-e "s|@PNPM_SLOT@|${PNPM_SLOT}|g" \
+			"${T}/start-risuai-server" \
+			|| die
 		doexe "${T}/start-risuai-server"
 		dosym "/opt/start-risuai-server" "/usr/bin/start-risuai-server"
 	fi
