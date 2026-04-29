@@ -742,8 +742,10 @@ PNPM_INSTALL_ARGS=(
 # CVE-2025-58752; VS(ID); Low
 # CVE-2025-58751; VS(ID); Low
 # CVE-2025-62522; VS(ID); Moderate
-# CVE-2026-39365; VS(ID); Moderate
-VITE_PV="8.0.3" # Upstream version
+# CVE-2026-39365; ZC, VS(ID); Moderate
+# CVE-2026-39364; ZC, VS(ID); High
+# CVE-2026-39363; ZC, VS(ID); High
+VITE_PV="8.0.5" # Upstream version
 
 inherit cargo desktop edo lcnr node-sharp pnpm webkitgtk-stable xdg
 
