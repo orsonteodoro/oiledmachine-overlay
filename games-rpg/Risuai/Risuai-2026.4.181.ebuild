@@ -13,6 +13,8 @@ EAPI=8
 # PATH=$(realpath "../../scripts")":${PATH}"
 # PNPM_UPDATER_VERSIONS="2026.4.181" pnpm_updater_update_locks.sh
 
+# pnpm required because lockfile deps.  DO NOT CHANGE!
+
 MY_PN="RisuAI"
 
 NODE_SHARP_USE="exif jpeg lcms png svg"
@@ -1019,7 +1021,7 @@ ewarn "QA:  Manually \`cargo add \"hyper-tls@0.6.0\"\` for the cargo lockfile."
 	# The prebuilt sharp node binary builds are x86-64-v2 which are not
 	# compatible with older CPUs.
 
-	# Copy sharp binary to expected location
+	# Copy sharp binary to expected location and replace other copies.
 		mkdir -p "node_modules/sharp/build/${configuration}" \
 			|| die "Failed to create node_modules/sharp/build/${configuration}"
 		cp \
@@ -1027,8 +1029,10 @@ ewarn "QA:  Manually \`cargo add \"hyper-tls@0.6.0\"\` for the cargo lockfile."
 			"node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" \
 			|| die "Failed to copy sharp-${sharp_platform}.node (1)"
 
+	# Remove the illegal instruction prebuilt.
 		rm -rf "node_modules/.pnpm/@img+sharp-"*"-"*"@"*
 
+	# Allow only the source based sharp node build to pass to avoid illegal instruction crash.
 		node-sharp_verify_dedupe
         popd >/dev/null 2>&1 || die
 
@@ -1154,15 +1158,15 @@ einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 
 #	epnpm install -D "vite@${VITE_PV}" ${PNPM_INSTALL_ARGS[@]}
 	epnpm run "build"
-	local chost=$(get_rustc_target)
+#	local chost=$(get_rustc_target)
 	epnpm run tauri build #-- --target "${chost}"
 	grep -e "Failed to build app" "${T}/build.log" && die "Detected error"
 }
 
 src_install() {
-	local chost=$(get_rustc_target)
+#	local chost=$(get_rustc_target)
 	exeinto "/usr/bin"
-	doexe "src-tauri/target/${chost}/release/RisuAI"
+	doexe "src-tauri/target/release/RisuAI"
 	dosym "/usr/bin/RisuAI" "/usr/bin/Risuai"
 	dosym "/usr/bin/RisuAI" "/usr/bin/risuai"
 
