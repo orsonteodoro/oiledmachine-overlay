@@ -73,11 +73,11 @@ BDEPEND+="
 	>=dev-python/scikit-build-core-0.9.2[pyproject(+)]
 	dev? (
 		>=dev-python/httpx-0.24.1[${PYTHON_USEDEP}]
-		>=dev-python/twine-4.0.2[${PYTHON_USEDEP}]
 		>=dev-python/mkdocs-1.4.3[${PYTHON_USEDEP}]
 		>=dev-python/mkdocstrings-0.22.0[${PYTHON_USEDEP},python(+)]
 		>=dev-python/mkdocs-material-9.1.18[${PYTHON_USEDEP}]
 		>=dev-python/pytest-7.4.0[${PYTHON_USEDEP}]
+		>=dev-python/twine-4.0.2[${PYTHON_USEDEP}]
 		>=dev-util/ruff-0.15.7
 	)
 	test? (
@@ -86,12 +86,12 @@ BDEPEND+="
 			<dev-python/starlette-context-0.4[${PYTHON_USEDEP}]
 		)
 		>=dev-python/fastapi-0.100.0[${PYTHON_USEDEP}]
-		>=dev-python/pytest-7.4.0[${PYTHON_USEDEP}]
 		>=dev-python/httpx-0.24.1[${PYTHON_USEDEP}]
 		>=dev-python/huggingface-hub-0.23.0[${PYTHON_USEDEP}]
+		>=dev-python/pydantic-settings-2.0.1[${PYTHON_USEDEP}]
+		>=dev-python/pytest-7.4.0[${PYTHON_USEDEP}]
 		>=dev-python/scipy-1.10[${PYTHON_USEDEP}]
 		>=dev-python/sse-starlette-1.6.1[${PYTHON_USEDEP}]
-		>=dev-python/pydantic-settings-2.0.1[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "CHANGELOG.md" "README.md" )
