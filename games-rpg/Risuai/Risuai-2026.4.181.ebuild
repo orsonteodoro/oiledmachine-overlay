@@ -1024,8 +1024,8 @@ eerror
 
 	# For manual lockfile creation
 ewarn "QA:  Manually \`cargo add \"hyper-tls@0.6.0\"\` for the cargo lockfile."
-	unpack ${A}
-	die
+#	unpack ${A}
+#	die
 
 	pnpm_src_unpack
 
