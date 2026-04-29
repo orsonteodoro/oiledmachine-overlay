@@ -1071,8 +1071,6 @@ einfo "Unpacking cargo packages"
 src_prepare() {
 	default
 	eapply "${_PATCHES[@]}"
-
-	# TODO: remove downloader in src-tauri/src/main.rs
 }
 
 src_configure() {
@@ -1156,6 +1154,7 @@ src_compile() {
 	pnpm_hydrate
 	epnpm --version
 
+# Use 8192 to prevent the following error:
 #
 # <--- Last few GCs --->
 #
@@ -1182,19 +1181,34 @@ src_compile() {
 	export NODE_OPTIONS=" --max-old-space-size=8192"
 einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 
-#	epnpm install -D "vite@${VITE_PV}" ${PNPM_INSTALL_ARGS[@]}
 	epnpm run "build"
-#	local chost=$(get_rustc_target) # Paths used in 166.3.0
-	epnpm run tauri build --no-sign #-- --target "${chost}"
+	local chost=$(get_rustc_target) # Paths used in 166.3.0
+	local args=()
+	args+=(
+		--no-sign
+	)
+	if ver_test "${PV}" -le "166.3.0" ; then
+		args+=(
+			--target "${chost}"
+		)
+	fi
+	if (( ${#args[@]} > 0 )) ; then
+		epnpm run tauri build -- "${args[@]}"
+	else
+		epnpm run tauri build
+	fi
 
 	grep -e "Failed to build app" "${T}/build.log" && die "Detected error"
 }
 
 src_install() {
-#	local chost=$(get_rustc_target) # Paths used in 166.3.0
+	local chost=$(get_rustc_target) # Paths used in 166.3.0
 	exeinto "/opt/${PN}"
-#	doexe "src-tauri/target/${chost}/release/RisuAI"
-	doexe "src-tauri/target/release/RisuAI"
+	if ver_test "${PV}" -le "166.3.0" ; then
+		doexe "src-tauri/target/${chost}/release/RisuAI"
+	else
+		doexe "src-tauri/target/release/RisuAI"
+	fi
 	dosym "/opt/${PN}/RisuAI" "/usr/bin/Risuai"
 	dosym "/usr/bin/RisuAI" "/usr/bin/Risuai"
 	dosym "/usr/bin/RisuAI" "/usr/bin/risuai"
@@ -1218,10 +1232,6 @@ src_install() {
 
 	# For the server but it needs path changes modificaiton and a key.txt (32 digit hex)
 	insinto "/opt/${PN}"
-
-	# These are found in the resource directory instead
-#	doins -r "src-tauri/target/${chost}/release/src-python"
-#	doins -r "src-tauri/target/release/src-python"
 
 # TODO:  fix exe permissions
 	if use server ; then
