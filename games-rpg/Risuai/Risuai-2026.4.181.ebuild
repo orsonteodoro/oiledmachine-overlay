@@ -772,7 +772,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
 ${CPU_FLAGS_X86[@]}
 ollama server tray wayland X
-ebuild_revision_17
+ebuild_revision_18
 "
 RESTRICT="mirror" # Speed up downloads
 REQUIRED_USE="
@@ -844,7 +844,7 @@ RDEPEND+="
 			dev-python/fastapi[${PYTHON_USEDEP}]
 			dev-python/llama-cpp-python[${PYTHON_USEDEP}]
 			dev-python/pydantic[${PYTHON_USEDEP}]
-			dev-python/uvicorn[${PYTHON_USEDEP},standard]
+			dev-python/uvicorn[${PYTHON_USEDEP},standard(+)]
 		')
 	)
 "
@@ -1247,13 +1247,13 @@ src_install() {
 			|| die
 		doexe "${T}/start-risuai-server"
 		dosym "/opt/start-risuai-server" "/usr/bin/start-risuai-server"
-	fi
 
-	insinto "/etc/${PN}"
-	dodir "/etc/${PN}"
-	echo $(openssl rand -hex 16) > "${ED}/opt/${PN}/key.txt"
-	fperms 0600 "/opt/${PN}/key.txt"
-	fowners "risuai:risuai" "/opt/${PN}/key.txt"
+		insinto "/etc/${PN}"
+		dodir "/etc/${PN}"
+		echo $(openssl rand -hex 32) > "${ED}/opt/${PN}/key.txt"
+		fperms 0600 "/opt/${PN}/key.txt"
+		fowners "risuai:risuai" "/opt/${PN}/key.txt"
+	fi
 
 	fperms 0755 "/usr/bin/RisuAI"
 	fowners "root:root" "/usr/bin/RisuAI"
