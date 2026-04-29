@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/abetlen/llama-cpp-python/issues</bugs-to>
+    <changelog>https://github.com/abetlen/llama-cpp-python/blob/main/CHANGELOG</changelog>
+    <remote-id type="github">abetlen/llama-cpp-python</remote-id>
+    <remote-id type="pypi">llama-cpp-python</remote-id>
+  </upstream>
+</pkgmetadata>
