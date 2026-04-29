@@ -44,30 +44,30 @@ RDEPEND="
 "
 BDEPEND="
 	dev? (
-		>=dev-util/ruff-0.15.1
+		>=dev-python/a2wsgi-1.10.10[${PYTHON_USEDEP}]
+		>=dev-python/coverage-7.13.4[${PYTHON_USEDEP}]
+		>=dev-python/coverage-conditional-plugin-0.9.0[${PYTHON_USEDEP}]
+		>=dev-python/coverage-enable-subprocess-1.0[${PYTHON_USEDEP}]
+		>=dev-python/cryptography-44.0.3[${PYTHON_USEDEP}]
+		>=dev-python/httpx-0.28.1[${PYTHON_USEDEP}]
+		>=dev-python/mypy-1.19.1[${PYTHON_USEDEP}]
 		>=dev-python/pytest-9.0.3[${PYTHON_USEDEP}]
 		>=dev-python/pytest-mock-3.15.1[${PYTHON_USEDEP}]
 		>=dev-python/pytest-xdist-3.8.0[${PYTHON_USEDEP},psutil(+)]
 		>=dev-python/pytest-codspeed-4.1.1[${PYTHON_USEDEP}]
-		>=dev-python/mypy-1.19.1[${PYTHON_USEDEP}]
+		>=dev-python/trustme-1.2.1[${PYTHON_USEDEP}]
 		>=dev-python/types-click-7.1.8[${PYTHON_USEDEP}]
 		>=dev-python/types-pyyaml-6.0.12.20250915[${PYTHON_USEDEP}]
-		>=dev-python/trustme-1.2.1[${PYTHON_USEDEP}]
-		>=dev-python/cryptography-44.0.3[${PYTHON_USEDEP}]
-		>=dev-python/coverage-7.13.4[${PYTHON_USEDEP}]
-		>=dev-python/coverage-conditional-plugin-0.9.0[${PYTHON_USEDEP}]
-		>=dev-python/coverage-enable-subprocess-1.0[${PYTHON_USEDEP}]
-		>=dev-python/httpx-0.28.1[${PYTHON_USEDEP}]
 		>=dev-python/twine-6.2.0[${PYTHON_USEDEP}]
-		>=dev-python/a2wsgi-1.10.10[${PYTHON_USEDEP}]
-		>=dev-python/wsproto-1.3.2[${PYTHON_USEDEP}]
 		>=dev-python/websockets-13.1[${PYTHON_USEDEP}]
+		>=dev-python/wsproto-1.3.2[${PYTHON_USEDEP}]
+		>=dev-util/ruff-0.15.1
 	)
 	doc? (
 		>=dev-python/mkdocs-1.6.1[${PYTHON_USEDEP}]
+		>=dev-python/mkdocs-llmstxt-0.5.0[${PYTHON_USEDEP}]
 		>=dev-python/mkdocs-material-9.7.1[${PYTHON_USEDEP}]
 		>=dev-python/mkdocstrings-python-2.0.2[${PYTHON_USEDEP}]
-		>=dev-python/mkdocs-llmstxt-0.5.0[${PYTHON_USEDEP}]
 	)
 "
 
