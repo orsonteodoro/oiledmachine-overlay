@@ -3,9 +3,12 @@
 
 EAPI=8
 
-DISTUTILS_USE_PEP517=hatchling
-PYPI_VERIFY_REPO=https://github.com/Kludex/uvicorn
-PYTHON_COMPAT=( pypy3_11 python3_{11..14} )
+DISTUTILS_USE_PEP517="hatchling"
+EPYTEST_PLUGINS=( "anyio" "pytest-mock" )
+EPYTEST_RERUNS=5
+EPYTEST_XDIST=1
+PYPI_VERIFY_REPO="https://github.com/Kludex/uvicorn"
+PYTHON_COMPAT=( "pypy3_11" "python3_"{11..14} )
 
 inherit distutils-r1 optfeature pypi
 
@@ -71,28 +74,25 @@ BDEPEND="
 	)
 "
 
-EPYTEST_PLUGINS=( anyio pytest-mock )
-EPYTEST_RERUNS=5
-EPYTEST_XDIST=1
-distutils_enable_tests pytest
+distutils_enable_tests "pytest"
 
 python_test() {
 	local EPYTEST_DESELECT=(
-		# too long path for unix socket
-		tests/test_config.py::test_bind_unix_socket_works_with_reload_or_workers
-		# TODO
+	# Too long path for unix socket
+		'tests/test_config.py::test_bind_unix_socket_works_with_reload_or_workers'
+	# TODO
 		'tests/protocols/test_http.py::test_close_connection_with_multiple_requests[httptools]'
 		'tests/protocols/test_websocket.py::test_send_binary_data_to_server_bigger_than_default_on_websockets[httptools-max=defaults sent=defaults+1]'
 		'tests/protocols/test_websocket.py::test_send_binary_data_to_server_bigger_than_default_on_websockets[h11-max=defaults sent=defaults+1]'
-		# tests broken with non-ancient dev-python/websockets
-		tests/protocols/test_websocket.py::test_fragmented_message_exceeding_max_size
-		tests/protocols/test_websocket.py::test_fragmented_message_reassembly
+	# Tests are broken with non-ancient dev-python/websockets
+		'tests/protocols/test_websocket.py::test_fragmented_message_exceeding_max_size'
+		'tests/protocols/test_websocket.py::test_fragmented_message_reassembly'
 	)
-	case ${EPYTHON} in
-		pypy3*)
-			# TODO
+	case "${EPYTHON}" in
+		"pypy3"*)
+	# TODO
 			EPYTEST_DESELECT+=(
-				tests/middleware/test_logging.py::test_running_log_using_fd
+				"tests/middleware/test_logging.py::test_running_log_using_fd"
 			)
 			;;
 	esac
