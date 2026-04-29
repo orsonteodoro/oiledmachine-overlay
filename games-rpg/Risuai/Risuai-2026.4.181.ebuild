@@ -764,7 +764,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
 ${CPU_FLAGS_X86[@]}
 ollama tray wayland X
-ebuild_revision_15
+ebuild_revision_16
 "
 RESTRICT="mirror" # Speed up downloads
 REQUIRED_USE="
@@ -1025,9 +1025,9 @@ ewarn "QA:  Manually \`cargo add \"hyper-tls@0.6.0\"\` for the cargo lockfile."
 		cp \
 			"node_modules/sharp/src/build/${configuration}/sharp-${sharp_platform}.node" \
 			"node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" \
-			|| die "Failed to copy sharp-${sharp_platform}.node"
+			|| die "Failed to copy sharp-${sharp_platform}.node (1)"
 
-		rm -rf "${S}/node_modules/@capacitor/assets/node_modules/sharp"
+		rm -rf "node_modules/.pnpm/@img+sharp-"*"-"*"@"*
 
 		node-sharp_verify_dedupe
         popd >/dev/null 2>&1 || die
@@ -1155,7 +1155,7 @@ einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 #	epnpm install -D "vite@${VITE_PV}" ${PNPM_INSTALL_ARGS[@]}
 	epnpm run "build"
 	local chost=$(get_rustc_target)
-	epnpm run tauri build -- --target "${chost}"
+	epnpm run tauri build #-- --target "${chost}"
 	grep -e "Failed to build app" "${T}/build.log" && die "Detected error"
 }
 
