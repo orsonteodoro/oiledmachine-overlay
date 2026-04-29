@@ -19,9 +19,13 @@ HOMEPAGE="
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
-IUSE="dev doc standard test-rust"
+IUSE="dev doc standard test"
 REQUIRED_USE="
 	dev? (
+		standard
+	)
+	test? (
+		dev
 		standard
 	)
 "
@@ -67,19 +71,7 @@ BDEPEND="
 		>=dev-python/mkdocs-llmstxt-0.5.0[${PYTHON_USEDEP}]
 	)
 	test? (
-		dev-python/a2wsgi[${PYTHON_USEDEP}]
-		>=dev-python/httptools-0.6.3[${PYTHON_USEDEP}]
-		>=dev-python/httpx-0.28[${PYTHON_USEDEP}]
-		dev-python/python-dotenv[${PYTHON_USEDEP}]
-		dev-python/pyyaml[${PYTHON_USEDEP}]
 		dev-python/typing-extensions[${PYTHON_USEDEP}]
-		>=dev-python/websockets-10.4[${PYTHON_USEDEP}]
-		dev-python/wsproto[${PYTHON_USEDEP}]
-		test-rust? (
-			dev-python/cryptography[${PYTHON_USEDEP}]
-			dev-python/trustme[${PYTHON_USEDEP}]
-			>=dev-python/watchfiles-0.20[${PYTHON_USEDEP}]
-		)
 	)
 "
 
