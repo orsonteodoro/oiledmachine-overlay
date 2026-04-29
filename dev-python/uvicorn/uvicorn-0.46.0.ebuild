@@ -69,9 +69,6 @@ BDEPEND="
 		>=dev-python/mkdocstrings-python-2.0.2[${PYTHON_USEDEP}]
 		>=dev-python/mkdocs-llmstxt-0.5.0[${PYTHON_USEDEP}]
 	)
-	test? (
-		>=dev-python/typing-extensions-4.0[${PYTHON_USEDEP}]
-	)
 "
 
 EPYTEST_PLUGINS=( anyio pytest-mock )
