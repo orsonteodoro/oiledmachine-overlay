@@ -25,6 +25,9 @@ RUST_MIN_VER="1.95.0" # llvm-22.1
 RUST_PV="${RUST_MIN_VER}"
 RUST_EXPECTED_TIMESTAMP=20260414 # Same as 1.95.0 release date
 
+LLVM_SLOT=22
+LLVM_COMPAT=( ${LLVM_SLOT} )
+
 PNPM_AUDIT_FIX_ARGS=(
 )
 
@@ -50,7 +53,7 @@ LICENSE="
 	Vercel-Privacy-Policy
 "
 KEYWORDS="~amd64"
-IUSE+=" ebuild_revision_1"
+IUSE+=" ebuild_revision_2"
 SLOT="0"
 DEPEND+="
 "
@@ -60,6 +63,8 @@ RDEPEND+="
 BDEPEND+="
 	dev-util/rustup
 	net-libs/nodejs:${NODE_SLOT}
+	llvm-core/clang:${LLVM_SLOT}
+	llvm-core/llvm:${LLVM_SLOT}
 	sys-apps/pnpm:${PNPM_SLOT}
 	|| (
 		dev-lang/rust-bin:${RUST_PV}
@@ -104,6 +109,17 @@ src_configure() {
 	export PATH="${HOME}/.cargo/bin:${PATH}"
 	"${RUSTC}" --version || die
 	rustflags-hardened_append
+
+	export PATH="/usr/lib/llvm/${LLVM_SLOT}/bin:${PATH}"
+
+# Prevent
+# note: gcc: error: unrecognized command-line option '--target=wasm32-wasip2'
+	export CC="${CHOST}-clang-22" # Same as Rust's 1.95.0 LLVM slot
+	export CXX="${CHOST}-clang++-22"
+	export CPP="${CC} -E"
+export "CC:  ${CC}"
+export "CXX:  ${CXX}"
+export "CPP:  ${CPP}"
 }
 
 src_compile() {
