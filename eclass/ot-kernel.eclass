@@ -415,8 +415,8 @@ UKSM_BASE_URI="https://raw.githubusercontent.com/dolohow/uksm/master/v${KV_MAJOR
 UKSM_FN="uksm-${KV_MAJOR_MINOR}.patch"
 UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
 
-MITIGATION_DATE="Apr 24, 2026" # Advisory date
-MITIGATION_LAST_UPDATE=1776857543 # From `date +%s -d "2026-04-22 13:32:23 +0200"` from changelog for latest tag
+MITIGATION_DATE="Apr 30, 2026" # Advisory date
+MITIGATION_LAST_UPDATE=1777540385 # From `date +%s -d "2026-04-30 11:13:05 +0200"` from changelog for latest tag
 MITIGATION_URI="https://lore.kernel.org/linux-cve-announce/"
 VULNERABILITIES_FIXED=(
 # High and critical are noted and only those that are fixed on this release day
@@ -436,6 +436,36 @@ VULNERABILITIES_FIXED=(
 # BUG: kernel NULL pointer dereference - use panic_on_oops=1
 # KASAN: null-ptr-deref - use panic_on_oops=1
 # UBSAN: array-index-out-of-bounds - use panic_on_warn=1
+
+	# 2026-04-30
+	"CVE-2026-31693;;"
+	"CVE-2026-31692;;"
+	"CVE-2026-31786;BO;"
+	"CVE-2026-31787;DF;"
+
+	# 2026-04-27
+	"CVE-2026-31691;;"
+	"CVE-2026-31689;;"
+	"CVE-2026-31690;BO;"
+	"CVE-2026-31687;DF;"
+	"CVE-2026-31688;;"
+	"CVE-2026-31686;DF;"
+
+	# 2026-04-25
+	"CVE-2026-31684;;"
+	"CVE-2026-31685;;"
+	"CVE-2026-31682;;"
+	"CVE-2026-31681;;"
+	"CVE-2026-31680;;"
+	"CVE-2026-31679;;"
+	"CVE-2026-31678;;"
+	"CVE-2026-31677;;"
+	"CVE-2026-31676;;"
+	"CVE-2026-31675;OOBA;"
+	"CVE-2026-31683;;"
+	"CVE-2026-31673;;"
+	"CVE-2026-31674;;"
+	"CVE-2026-31534;;Rejected"
 
 	# 2026-04-24
 	"CVE-2026-31669;UAF;"

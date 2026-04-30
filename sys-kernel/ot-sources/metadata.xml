@@ -182,7 +182,7 @@
 		    TRESOR (AES-NI) [5]			D
 		    TRESOR (x86) [5]			D
 		    TRESOR (x86-64) [5]			D
-		    zen-sauce				D
+		    zen-sauce				A
 
     Ebuild support for live is temporarily down but may change in the future.
 

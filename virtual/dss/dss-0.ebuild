@@ -584,34 +584,35 @@ LOGGER_DEPENDS="
 	)
 "
 
-# Only stable and latest LTS are supported.
-# The latest stable is supported for architectural security design update.
-# The latest LTS is supported for binary only drivers, but binary drivers are not preferred over open.
+# Only stable and RC is currently.
+# The latest stable is supported for architectural security design update or to mitigate against lazy backport maintainers.
+# The only the latest LTS is supported for binary packages.
 # KASAN is preferred over KFENCE for higher security score.  This is why gentoo-kernel and gentoo-kernel-bin are banned.
 KERNEL_DEPENDS="
 	gentoo-sources? (
 		|| (
-			~sys-kernel/gentoo-sources-6.18.24
+			~sys-kernel/gentoo-sources-7.0.3
+			~sys-kernel/ot-sources-6.18.26
 		)
 		sys-kernel/gentoo-sources:=
 	)
 	git-sources? (
 		|| (
-			~sys-kernel/git-sources-7.0_rc7
+			~sys-kernel/git-sources-7.1_rc1
 		)
 		sys-kernel/git-sources:=
 	)
 	ot-sources? (
 		|| (
-			~sys-kernel/ot-sources-7.0.1
-			~sys-kernel/ot-sources-6.18.24
+			~sys-kernel/ot-sources-7.0.3
+			~sys-kernel/ot-sources-6.18.26
 		)
 		sys-kernel/ot-sources:=
 	)
 	vanilla-sources? (
 		|| (
-			~sys-kernel/vanilla-sources-7.0.1
-			~sys-kernel/vanilla-sources-6.18.24
+			~sys-kernel/vanilla-sources-7.0.3
+			~sys-kernel/vanilla-sources-6.18.26
 		)
 		sys-kernel/vanilla-sources:=
 	)
