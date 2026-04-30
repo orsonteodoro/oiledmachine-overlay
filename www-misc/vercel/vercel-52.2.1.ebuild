@@ -6,7 +6,8 @@ EAPI=8
 
 # U24
 
-# No lockfile will be provided.  It is understood it will be updated frequently.
+# We use the upstream lockfiles for both pnpm and cargo.
+# Assuming frequent ebuild updates.
 
 # Rust 1.95.0
 
@@ -178,17 +179,11 @@ src_install() {
 
 	local d
 
-	d="/opt/vercel/packages/cli"
-	dodir "${d}"
-	mv "packages/cli/package.json" "${ED}/${d}" || die
-	mv "packages/cli/dist" "${ED}/${d}" || die
-	mv "packages/cli/node_modules" "${ED}/${d}" || die
-	mv "packages/cli/CHANGELOG.md" "${ED}/${d}" || die
-
+	# We just copy everything since we don't know what deep dependencies are
+	# required for dependency of dependency.
 	d="/opt/vercel"
 	dodir "${d}"
-	mv "node_modules" "${ED}/${d}" || die
-	mv "LICENSE" "${ED}/${d}" || die
+	mv * "${ED}/${d}" || die
 
 	cat "${FILESDIR}/vc" > "${T}/vc" || die
 	sed -i -e "s|@NODE_SLOT@|${NODE_SLOT}|g" "${T}/vc"
