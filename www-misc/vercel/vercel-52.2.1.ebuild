@@ -34,7 +34,7 @@ PNPM_AUDIT_FIX_ARGS=(
 PNPM_INSTALL_ARGS=(
 )
 
-inherit pnpm rust rustflags-hardened
+inherit flag-o-matic pnpm rust
 
 S="${WORKDIR}/${MY_PN}-${MY_PN}-${PV}"
 SRC_URI="
@@ -53,7 +53,7 @@ LICENSE="
 	Vercel-Privacy-Policy
 "
 KEYWORDS="~amd64"
-IUSE+=" ebuild_revision_2"
+IUSE+=" ebuild_revision_3"
 SLOT="0"
 DEPEND+="
 "
@@ -65,6 +65,7 @@ BDEPEND+="
 	net-libs/nodejs:${NODE_SLOT}
 	llvm-core/clang:${LLVM_SLOT}
 	llvm-core/llvm:${LLVM_SLOT}
+	llvm-core/lld:${LLVM_SLOT}
 	sys-apps/pnpm:${PNPM_SLOT}
 	|| (
 		dev-lang/rust-bin:${RUST_PV}
@@ -105,21 +106,30 @@ src_unpack() {
 src_configure() {
 	export TURBO_TELEMETRY_DISABLED=1
 	export DO_NOT_TRACK=1
-	rustup-init-gentoo -s || die
-	export PATH="${HOME}/.cargo/bin:${PATH}"
-	"${RUSTC}" --version || die
-	rustflags-hardened_append
 
 	export PATH="/usr/lib/llvm/${LLVM_SLOT}/bin:${PATH}"
-
 # Prevent
 # note: gcc: error: unrecognized command-line option '--target=wasm32-wasip2'
 	export CC="${CHOST}-clang-22" # Same as Rust's 1.95.0 LLVM slot
 	export CXX="${CHOST}-clang++-22"
 	export CPP="${CC} -E"
-export "CC:  ${CC}"
-export "CXX:  ${CXX}"
-export "CPP:  ${CPP}"
+	unset LD
+	filter-flags "-fuse-ld=*"
+
+	rustup-init-gentoo -s || die
+	export PATH="${HOME}/.cargo/bin:${PATH}"
+	"${RUSTC}" --version || die
+
+	filter-flags "-fuse-ld=*"
+	append-flags "-fuse-ld=lld"
+
+einfo "CC:  ${CC}"
+einfo "CXX:  ${CXX}"
+einfo "CPP:  ${CPP}"
+einfo "LD:  ${LD}"
+einfo "CFLAGS:  ${CFLAGS}"
+einfo "CXXFLAGS:  ${CXXFLAGS}"
+einfo "LDFLAGS:  ${LDFLAGS}"
 }
 
 src_compile() {
@@ -171,20 +181,23 @@ einfo "Sanitizing file/folder permissions"
 }
 
 src_install() {
-	dodir "/opt/vercel"
 	shopt -s dotglob # Copy hidden files
+
+	insinto "/opt/vercel"
 	doins -r "packages/cli/package.json"
 	doins -r "packages/cli/dist"
 	doins -r "packages/cli/node_modules"
-	shopt -u dotglob # Skip hidden files
 
 	cat "${FILESDIR}/vc" > "${T}/vc" || die
 	sed -i -e "s|@NODE_SLOT@|${NODE_SLOT}|g" "${T}/vc"
+	exeinto "/usr/bin"
 	doexe "${T}/vc"
 	dosym "/usr/bin/vc" "/usr/bin/vercel"
 
 	sanitize_file_permissions
 	fperms 0755 "/opt/vercel/dist/vc.js"
+
+	shopt -u dotglob # Skip hidden files
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
