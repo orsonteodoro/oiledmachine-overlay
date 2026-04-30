@@ -438,7 +438,7 @@ VULNERABILITIES_FIXED=(
 # UBSAN: array-index-out-of-bounds - use panic_on_warn=1
 
 	# 2026-04-30
-	"CVE-2026-31431;Copy Fail;Verified backport for LTS"
+	"CVE-2026-31431;Copy Fail, PE, CB;Verified backport for LTS"
 	"CVE-2026-31693;;"
 	"CVE-2026-31692;;"
 	"CVE-2026-31786;BO;"
@@ -712,7 +712,7 @@ VULNERABILITIES_FIXED=(
 	"CVE-2026-31444;UAF, NPD, DoS;"
 	"CVE-2026-31435;;"
 	"CVE-2026-31433;OOB;"
-	"CVE-2026-31431;Copy Fail;Stable only"
+	"CVE-2026-31431;Copy Fail, PE, CB;Stable only"
 	"CVE-2026-31432;OOBW;"
 
 	# 2026-04-20

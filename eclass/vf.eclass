@@ -129,6 +129,9 @@ einfo "BO = Buffer Overflow"
 # Same as ID
 einfo "C = Confidentiality Impacted"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"CB"($|" "|";"|",") ]] ; then
+einfo "CB = Container Breakout"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"CE"($|" "|";"|",") ]] ; then
 # Alias for ACE, RCE
 einfo "CE = Code Execution"
