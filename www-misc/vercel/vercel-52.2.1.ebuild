@@ -62,6 +62,7 @@ RDEPEND+="
 "
 BDEPEND+="
 	dev-util/rustup
+	dev-vcs/git
 	net-libs/nodejs:${NODE_SLOT}
 	llvm-core/clang:${LLVM_SLOT}
 	llvm-core/llvm:${LLVM_SLOT}
@@ -139,9 +140,6 @@ src_compile() {
 }
 
 sanitize_file_permissions() {
-	# Include hidden files
-	shopt -s dotglob
-
 	local path
 einfo "Sanitizing file/folder permissions"
 	IFS=$'\n'
@@ -175,9 +173,6 @@ einfo "Sanitizing file/folder permissions"
 		fi
 	done
 	IFS=$' \t\n'
-
-	# Exclude hidden files
-	shopt -u dotglob
 }
 
 src_install() {
