@@ -31,7 +31,7 @@ PNPM_AUDIT_FIX_ARGS=(
 PNPM_INSTALL_ARGS=(
 )
 
-inherit pnpm
+inherit pnpm rust rustflags-hardened
 
 S="${WORKDIR}/${MY_PN}-${MY_PN}-${PV}"
 SRC_URI="
@@ -103,6 +103,7 @@ src_configure() {
 	rustup-init-gentoo -s || die
 	export PATH="${HOME}/.cargo/bin:${PATH}"
 	"${RUSTC}" --version || die
+	rustflags-hardened_append
 }
 
 src_compile() {
