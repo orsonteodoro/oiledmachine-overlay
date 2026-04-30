@@ -1302,6 +1302,9 @@ src_install() {
 
 	einstalldocs
 
+	insinto "/usr/lib/RisuAI"
+	doins -r "src-tauri/target/release/src-python"
+
 	sanitize_file_permissions
 
 	fperms 0755 "/usr/bin/RisuAI"
