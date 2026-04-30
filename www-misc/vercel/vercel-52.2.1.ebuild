@@ -179,6 +179,7 @@ src_install() {
 
 	local d
 
+	# There are a lot of dangling symlink references.
 	# We just copy everything since we don't know what deep dependencies are
 	# required for dependency of dependency.
 	d="/opt/vercel"
