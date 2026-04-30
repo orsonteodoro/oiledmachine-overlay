@@ -53,7 +53,7 @@ LICENSE="
 	Vercel-Privacy-Policy
 "
 KEYWORDS="~amd64"
-IUSE+=" ebuild_revision_4"
+IUSE+=" ebuild_revision_5"
 SLOT="0"
 DEPEND+="
 "
@@ -183,10 +183,14 @@ einfo "Sanitizing file/folder permissions"
 src_install() {
 	shopt -s dotglob # Copy hidden files
 
-	insinto "/opt/vercel"
+	insinto "/opt/vercel/packages/cli"
 	doins -r "packages/cli/package.json"
 	doins -r "packages/cli/dist"
 	doins -r "packages/cli/node_modules"
+	doins "packages/cli/CHANGELOG.md"
+	insinto "/opt/vercel"
+	doins -r "node_modules"
+	doins "LICENSE"
 
 	cat "${FILESDIR}/vc" > "${T}/vc" || die
 	sed -i -e "s|@NODE_SLOT@|${NODE_SLOT}|g" "${T}/vc"

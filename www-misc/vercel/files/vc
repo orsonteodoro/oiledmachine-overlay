@@ -2,5 +2,5 @@
 export TURBO_TELEMETRY_DISABLED=1
 export DO_NOT_TRACK=1
 export PATH="/usr/lib/node/@NODE_SLOT@/bin:${PATH}"
-export NODE_PATH="/opt/vercel/node_modules"
-node "/opt/vercel/dist/vc.js" "${@}"
+export NODE_PATH="/opt/vercel/node_modules:/opt/vercel/packages/cli/node_modules"
+node "/opt/vercel/packages/cli/dist/vc.js" "${@}"
