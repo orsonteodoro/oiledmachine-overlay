@@ -772,7 +772,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
 ${CPU_FLAGS_X86[@]}
 ollama server tray wayland X
-ebuild_revision_18
+ebuild_revision_19
 "
 RESTRICT="mirror" # Speed up downloads
 REQUIRED_USE="
@@ -1242,13 +1242,12 @@ einfo "Sanitizing file/folder permissions"
 
 src_install() {
 	local chost=$(get_rustc_target) # Paths used in 166.3.0
-	exeinto "/opt/${PN}"
+	exeinto "/usr/bin"
 	if ver_test "${PV}" -le "166.3.0" ; then
 		doexe "src-tauri/target/${chost}/release/RisuAI"
 	else
 		doexe "src-tauri/target/release/RisuAI"
 	fi
-	dosym "/opt/${PN}/RisuAI" "/usr/bin/Risuai"
 	dosym "/usr/bin/RisuAI" "/usr/bin/Risuai"
 	dosym "/usr/bin/RisuAI" "/usr/bin/risuai"
 
