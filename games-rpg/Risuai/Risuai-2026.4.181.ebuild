@@ -1199,6 +1199,47 @@ einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 	grep -e "Failed to build app" "${T}/build.log" && die "Detected error"
 }
 
+sanitize_file_permissions() {
+	# Include hidden files
+	shopt -s dotglob
+
+	local path
+einfo "Sanitizing file/folder permissions"
+	IFS=$'\n'
+	for path in $(find "${ED}") ; do
+		chown root:root "${path}" || die
+		if file "${path}" | grep -q -e "directory" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -e "ELF .* shared object" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -e "ELF .* executable" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -e "Perl script" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -e "Python script" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -e "POSIX shell script" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -e "Bourne-Again shell script" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -e "Node.js script executable" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -e "WebAssembly (wasm) binary" ; then
+			chmod 0755 "${path}" || die
+		elif [[ "${path}" =~ ".sh"$ ]] ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -e "symbolic link" ; then
+			:
+		else
+			chmod 0644 "${path}" || die
+		fi
+	done
+	IFS=$' \t\n'
+
+	# Exclude hidden files
+	shopt -u dotglob
+}
+
 src_install() {
 	local chost=$(get_rustc_target) # Paths used in 166.3.0
 	exeinto "/opt/${PN}"
@@ -1231,11 +1272,17 @@ src_install() {
 	# For the server but it needs path changes modificaiton and a key.txt (32 digit hex)
 	insinto "/opt/${PN}"
 
-# TODO:  fix exe permissions
 	if use server ; then
+	# Include hidden files
+		shopt -s dotglob
+
 		doins -r "dist"
 		doins -r "node_modules"
 		doins -r "server"
+
+	# Exclude hidden files
+		shopt -u dotglob
+
 		doins "package.json"
 		doins "pnpm-lock.yaml"
 		exeinto "/usr/bin"
@@ -1251,14 +1298,17 @@ src_install() {
 		insinto "/etc/${PN}"
 		dodir "/etc/${PN}"
 		echo $(openssl rand -hex 32) > "${ED}/opt/${PN}/key.txt"
-		fperms 0600 "/opt/${PN}/key.txt"
-		fowners "risuai:risuai" "/opt/${PN}/key.txt"
 	fi
+
+	einstalldocs
+
+	sanitize_file_permissions
 
 	fperms 0755 "/usr/bin/RisuAI"
 	fowners "root:root" "/usr/bin/RisuAI"
 
-	einstalldocs
+	fperms 0600 "/opt/${PN}/key.txt"
+	fowners "risuai:risuai" "/opt/${PN}/key.txt"
 }
 
 pkg_postinst() {
