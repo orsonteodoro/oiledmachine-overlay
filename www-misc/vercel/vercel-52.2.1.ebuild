@@ -54,7 +54,7 @@ LICENSE="
 	Vercel-Privacy-Policy
 "
 KEYWORDS="~amd64"
-IUSE+=" ebuild_revision_5"
+IUSE+=" ebuild_revision_6"
 SLOT="0"
 DEPEND+="
 "
