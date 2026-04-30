@@ -1207,6 +1207,7 @@ sanitize_file_permissions() {
 einfo "Sanitizing file/folder permissions"
 	IFS=$'\n'
 	for path in $(find "${ED}") ; do
+		[[ -L "${path}" ]] && continue
 		chown root:root "${path}" || die
 		if file "${path}" | grep -q -e "directory" ; then
 			chmod 0755 "${path}" || die
@@ -1275,9 +1276,9 @@ src_install() {
 	# Include hidden files
 		shopt -s dotglob
 
-		doins -r "dist"
-		doins -r "node_modules"
-		doins -r "server"
+		mv "dist" "${ED}/opt/${PN}" || die
+		mv "node_modules" "${ED}/opt/${PN}" || die
+		mv "server" "${ED}/opt/${PN}" || die
 
 	# Exclude hidden files
 		shopt -u dotglob
