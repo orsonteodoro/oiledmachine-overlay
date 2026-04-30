@@ -23,6 +23,7 @@ PNPM_TARBALL="${MY_P}.tar.gz"
 RUST_MAX_VER="1.95.0" # Inclusive
 RUST_MIN_VER="1.95.0" # llvm-22.1
 RUST_PV="${RUST_MIN_VER}"
+RUST_EXPECTED_TIMESTAMP=20260414 # Same as 1.95.0 release date
 
 PNPM_AUDIT_FIX_ARGS=(
 )
@@ -49,7 +50,7 @@ LICENSE="
 	Vercel-Privacy-Policy
 "
 KEYWORDS="~amd64"
-IUSE+=" "
+IUSE+=" ebuild_revision_1"
 SLOT="0"
 DEPEND+="
 "
@@ -71,10 +72,25 @@ BDEPEND+="
 "
 RESTRICT="mirror"
 
+verify_rust() {
+	if "${RUSTC}" --version | grep -q "nightly" ; then
+		local actual_timestamp=$(rustc --version | cut -f 4 -d " " | sed -e "s|)||g" | sed -e "s|-||g")
+		local expected_timestamp=${RUST_EXPECTED_TIMESTAMP}
+		if (( ${current_timestamp} < ${expected_timestamp} )) ; then
+eerror "You need to re-emerge =dev-lang/rust-bin-9999 or =dev-lang/rust"
+eerror "Actual timestamp:  ${actual_timestamp}"
+eerror "Expected timestamp:  >= ${expected_timestamp}"
+			die
+		fi
+	fi
+}
+
 pkg_setup() {
 	export TURBO_TELEMETRY_DISABLED=1
 	export DO_NOT_TRACK=1
 	pnpm_pkg_setup
+	rust_pkg_setup
+	verify_rust
 }
 
 src_unpack() {
@@ -86,6 +102,7 @@ src_configure() {
 	export DO_NOT_TRACK=1
 	rustup-init-gentoo -s || die
 	export PATH="${HOME}/.cargo/bin:${PATH}"
+	"${RUSTC}" --version || die
 }
 
 src_compile() {
