@@ -166,8 +166,6 @@ einfo "Sanitizing file/folder permissions"
 			chmod 0755 "${path}" || die
 		elif [[ "${path}" =~ ".sh"$ ]] ; then
 			chmod 0755 "${path}" || die
-		elif file "${path}" | grep -q -e "symbolic link" ; then
-			:
 		else
 			chmod 0644 "${path}" || die
 		fi
@@ -194,7 +192,6 @@ src_install() {
 	dosym "/usr/bin/vc" "/usr/bin/vercel"
 
 	sanitize_file_permissions
-	fperms 0755 "/opt/vercel/dist/vc.js"
 
 	shopt -u dotglob # Skip hidden files
 }
