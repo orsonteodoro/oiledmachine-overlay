@@ -484,6 +484,7 @@ NPM_TARBALL="coolercontrol-${PV}.tar.bz2"
 PYTHON_COMPAT=( "python3_"{10,11} )
 RUST_MAX_VER="1.86.0" # Inclusive
 RUST_MIN_VER="1.86.0" # llvm-19.1, required for:  feature `edition2024` is required
+RUST_PV="${RUST_MAX_VER}"
 
 inherit cargo lcnr npm
 
@@ -606,8 +607,8 @@ BDEPEND+="
 	>=dev-build/make-4.3
 	virtual/pkgconfig
 	|| (
-		=dev-lang/rust-1.82*
-		=dev-lang/rust-bin-1.82*
+		dev-lang/rust:${RUST_PV}[wasm]
+		dev-lang/rust-bin:${RUST_PV}
 	)
 	|| (
 		dev-lang/rust:=

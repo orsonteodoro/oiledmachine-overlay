@@ -824,7 +824,7 @@ TAURI_RDEPEND="
 	${RUST_BINDINGS_DEPEND}
 	|| (
 		dev-lang/rust-bin:${RUST_PV}
-		dev-lang/rust:${RUST_PV}
+		dev-lang/rust:${RUST_PV}[wasm]
 	)
 	|| (
 		dev-lang/rust-bin:=
@@ -864,8 +864,8 @@ _PATCHES=(
 	# Disable signing which makes it a fatal error.
 	# We don't use auto update because of supply chain attacks and to have
 	# the distro package manager have more control.
-	"${FILESDIR}/${PN}-166.3.2-disable-updater.patch"
-	"${FILESDIR}/${PN}-166.3.2-disable-bundle.patch"
+	#"${FILESDIR}/${PN}-166.3.2-disable-updater.patch"
+	#"${FILESDIR}/${PN}-166.3.2-disable-bundle.patch"
 
 	"${FILESDIR}/${PN}-2026.4.181-hardcoded-paths.patch"
 )
@@ -1272,16 +1272,13 @@ src_install() {
 	# For the server but it needs path changes modificaiton and a key.txt (32 digit hex)
 	insinto "/opt/${PN}"
 
-	if use server ; then
 	# Include hidden files
-		shopt -s dotglob
+	shopt -s dotglob
 
+	if use server ; then
 		mv "dist" "${ED}/opt/${PN}" || die
 		mv "node_modules" "${ED}/opt/${PN}" || die
 		mv "server" "${ED}/opt/${PN}" || die
-
-	# Exclude hidden files
-		shopt -u dotglob
 
 		doins "package.json"
 		doins "pnpm-lock.yaml"
@@ -1294,14 +1291,18 @@ src_install() {
 			|| die
 		doexe "${T}/start-risuai-server"
 		dosym "/opt/start-risuai-server" "/usr/bin/start-risuai-server"
-
-		insinto "/etc/${PN}"
-		dodir "/etc/${PN}"
-		echo $(openssl rand -hex 32) > "${ED}/opt/${PN}/key.txt"
 	fi
+
+	insinto "/etc/${PN}"
+	dodir "/etc/${PN}"
+	echo $(openssl rand -hex 32) > "${ED}/opt/${PN}/key.txt"
+
+	# Exclude hidden files
+	shopt -u dotglob
 
 	einstalldocs
 
+	# Installed unconditionally
 	insinto "/usr/lib/RisuAI"
 	doins -r "src-tauri/target/release/src-python"
 

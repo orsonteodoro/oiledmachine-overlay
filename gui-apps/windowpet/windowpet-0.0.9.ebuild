@@ -748,7 +748,7 @@ BDEPEND="
 	${RUST_BINDINGS_BDEPEND}
 	>=dev-util/patchelf-0.14.3
 	|| (
-		dev-lang/rust:${RUST_PV}
+		dev-lang/rust:${RUST_PV}[wasm]
 		dev-lang/rust-bin:${RUST_PV}
 	)
 	|| (

@@ -716,8 +716,8 @@ BDEPEND+="
 	=net-libs/nodejs-${NODE_SLOT}*[npm,webassembly(+)]
 	virtual/pkgconfig
 	|| (
-		=dev-lang/rust-1.88*
-		=dev-lang/rust-bin-1.88*
+		dev-lang/rust:${RUST_PV}[wasm]
+		dev-lang/rust-bin:${RUST_PV}
 	)
 	|| (
 		dev-lang/rust:=

@@ -368,7 +368,7 @@ declare -A GIT_CRATES=(
 [onenote_parser]="https://github.com/Cisco-Talos/onenote.rs;29c08532252b917543ff268284f926f30876bb79;onenote.rs-%commit%" # 0.3.1
 )
 
-inherit cargo cflags-hardened cmake eapi9-ver flag-o-matic lcnr llvm
+inherit cargo cflags-hardened cmake eapi9-ver flag-o-matic lcnr llvm optfeature
 inherit python-any-r1 rustflags-hardened sandbox-changes systemd tmpfiles toolchain-funcs vf
 
 if ! [[ "${PV}" =~ "_rc" ]] ; then
@@ -943,6 +943,9 @@ einfo "and may not produce any output if not properly configured. Read the"
 ewarn "appropriate man page if clamonacc is desired."
 einfo
 	fi
+
+	optfeature_header "Install optional packages:"
+	optfeature "GUI frontend (unofficial)" "app-antivirus/clamtk"
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  LICENSE-variable-changes, update-jit-for-llvm-14-to-15
