@@ -130,6 +130,7 @@ einfo "BO = Buffer Overflow"
 einfo "C = Confidentiality Impacted"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"CB"($|" "|";"|",") ]] ; then
+# Same as container escape
 einfo "CB = Container Breakout"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"CE"($|" "|";"|",") ]] ; then
