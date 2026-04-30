@@ -176,14 +176,19 @@ einfo "Sanitizing file/folder permissions"
 src_install() {
 	shopt -s dotglob # Copy hidden files
 
-	insinto "/opt/vercel/packages/cli"
-	doins -r "packages/cli/package.json"
-	doins -r "packages/cli/dist"
-	doins -r "packages/cli/node_modules"
-	doins "packages/cli/CHANGELOG.md"
-	insinto "/opt/vercel"
-	doins -r "node_modules"
-	doins "LICENSE"
+	local d
+
+	d="/opt/vercel/packages/cli"
+	dodir "${d}"
+	mv "packages/cli/package.json" "${ED}/${d}" || die
+	mv "packages/cli/dist" "${ED}/${d}" || die
+	mv "packages/cli/node_modules" "${ED}/${d}" || die
+	mv "packages/cli/CHANGELOG.md" "${ED}/${d}" || die
+
+	d="/opt/vercel"
+	dodir "${d}"
+	mv "node_modules" "${ED}/${d}" || die
+	mv "LICENSE" "${ED}/${d}" || die
 
 	cat "${FILESDIR}/vc" > "${T}/vc" || die
 	sed -i -e "s|@NODE_SLOT@|${NODE_SLOT}|g" "${T}/vc"
