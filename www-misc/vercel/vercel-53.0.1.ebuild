@@ -96,6 +96,9 @@ eerror "Expected timestamp:  >= ${expected_timestamp}"
 }
 
 pkg_setup() {
+	# Reduce downloads for frequently versioned bumped releases.
+	export PNPM_CACHE_FOLDER="${EDISTDIR}/pnpm-download-cache-${PNPM_SLOT}/${CATEGORY}/${PN}-${PV%%.*}"
+
 	export TURBO_TELEMETRY_DISABLED=1
 	export DO_NOT_TRACK=1
 	pnpm_pkg_setup
