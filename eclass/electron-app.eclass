@@ -94,7 +94,7 @@ ELECTRON_APP_USES_UGC_TEXT=${ELECTRON_APP_USES_UGC_TEXT:-"0"}
 ELECTRON_APP_REQUIRES_MITIGATE_ID_CHECK=${ELECTRON_APP_REQUIRES_MITIGATE_ID_CHECK:-"0"}
 
 # Use the following example to extract the license.
-# unzip -p /var/cache/distfiles/electron-v41.0.3-linux-x64.zip LICENSES.chromium.html > electron-41.0.3-chromium.html
+# ELECTRON_PV="41.4.0" ; unzip -p /var/cache/distfiles/electron-v${ELECTRON_PV}-linux-x64.zip LICENSES.chromium.html > electron-${ELECTRON_PV}-chromium.html
 
 # For Electron 18.2.2 from electron-builder
 # See comments below for details.

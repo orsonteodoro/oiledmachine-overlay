@@ -6,7 +6,8 @@ EAPI=8
 # TODO fork @signalapp/libsignal-client for custom hardening
 
 # To update use:
-# PNPM_UPDATER_PROJECT_ROOT="Signal-Desktop-8.7.0" pnpm_updater_update_locks.sh
+# PATH=$(realpath "../../scripts")":${PATH}"
+# PNPM_UPDATER_PROJECT_ROOT="Signal-Desktop-8.8.0" pnpm_updater_update_locks.sh
 
 # Ignore if error:
 # Could not detect abi for version ' + target + ' and runtime ' + runtime + '.  Updating "node-abi" might help solve this issue if it is a new release of ' + runtime)
@@ -24,7 +25,7 @@ _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 ELECTRON_APP_REQUIRES_MITIGATE_ID_CHECK="1"
 NPM_SLOT="3"
 PNPM_SLOT="9"
-NODE_SLOT="24" # Upstream uses 24.11.1 from .nvmrc
+NODE_SLOT="24" # Upstream uses 24.14.0 from .nvmrc
 NODE_ENV="development"
 RUST_MAX_VER="1.83.0" # Inclusive
 RUST_MIN_VER="1.83.0" # Corresponds to 1.83.0 nightly not stable - llvm-19.1.  Rust is required for @swc/core@1.10.16
@@ -34,15 +35,15 @@ RUST_MIN_VER="1.83.0" # Corresponds to 1.83.0 nightly not stable - llvm-19.1.  R
 RUST_PV="${RUST_MIN_VER}"
 #export CI="true" # Avoid error during `pnpm install -P`
 
-AT_TYPES_NODE_PV="24.10.9"
+AT_TYPES_NODE_PV="24.12.0"
 ELECTRON_BUILDER_PV="26.0.14"
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
-	ELECTRON_APP_ELECTRON_PV="41.2.2" # Cr 146.0.7680.188, node 24.14.1
+	ELECTRON_APP_ELECTRON_PV="41.4.0" # Cr 146.0.7680.216, node 24.15.0
 else
 	# Upstream's choice
-	ELECTRON_APP_ELECTRON_PV="41.1.1" # Cr 146.0.7680.166, node 24.14.0
+	ELECTRON_APP_ELECTRON_PV="41.2.2" # Cr 146.0.7680.188, node 24.14.1
 fi
 
 NPM_INSTALL_ARGS=(
@@ -276,11 +277,11 @@ ewarn "QA:  Manually remove react-router@6.10.0 from ${S}/sticker-creator/pnpm-l
 ewarn "QA:  Manually remove minimatch@3.1.2 from ${S}/sticker-creator/pnpm-lock.yaml"	# Skip
 #ewarn "QA:  Manually remove minimatch@5.1.6 from ${S}/sticker-creator/pnpm-lock.yaml"	# Skip
 #ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild and all @esbuild/<arch>@0.18.20 associated packages from ${S}/sticker-creator/pnpm-lock.yaml"
-ewarn "QA:  Manually remove esbuild@0.18.20 and arch implementations from ${S}/sticker-creator/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @esbuild/<arch>@0.21.5 and associated packages from ${S}/sticker-creator/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove esbuild@0.18.20 and arch implementations from ${S}/sticker-creator/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove @esbuild/<arch>@0.21.5 and associated packages from ${S}/sticker-creator/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove @esbuild/<arch>@0.24.2 or earlier and associated packages from ${S}/sticker-creator/pnpm-lock.yaml"
 #ewarn "QA:  Manually change esbuild: 0.21.5 to esbuild: 0.25.9 in ${S}/sticker-creator/pnpm-lock.yaml"
-ewarn "QA:  Manually remove vite@4.5.3 in ${S}/sticker-creator/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove vite@4.5.3 in ${S}/sticker-creator/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/core from ${S}/danger/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/plugin-paginate-rest from ${S}/danger/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/plugin-request-log from ${S}/danger/pnpm-lock.yaml"
