@@ -4,7 +4,7 @@
 
 EAPI=8
 
-DISTUTILS_USE_PEP517="poetry"
+DISTUTILS_USE_PEP517="hatchling"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1 pypi
@@ -13,7 +13,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/ollama/ollama-python.git"
-	FALLBACK_COMMIT="53ff3cd025c1ae5e06cd81d47b79ae6b3b905027" # Aug 7, 2025
+	FALLBACK_COMMIT="dbccf192ac6baf85d1566b711cadca2cacb34c0c" # Jan 23, 2026
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
 	inherit git-r3
