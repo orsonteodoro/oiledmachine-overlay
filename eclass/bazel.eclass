@@ -76,6 +76,10 @@ gen_bazel_flags() {
 # to bazel. This will be called by ebazel automatically so
 # does not need to be called from the ebuild.
 bazel_setup_bazelrc() {
+	if [[ -z "${BAZEL_PV}" ]] ; then
+eerror "QA:  BAZEL_PV must be defined in the ebuild and must be 3 components."
+		die
+	fi
 	if [[ -f "${T}/bazelrc" ]]; then
 		return
 	fi
@@ -123,7 +127,9 @@ bazel_setup_bazelrc() {
 
 ewarn "QA:  Append \"${T}/bazelrc\" to \"${S}/.bazelrc\""
 
-	if tc-is-cross-compiler; then
+	if ver_test "${BAZEL_PV}" "-gt" "6.0.0" ; then
+		:
+	elif tc-is-cross-compiler; then
 		echo "build --distinct_host_configuration" >> "${T}/bazelrc" || die
 	else
 		echo "build --nodistinct_host_configuration" >> "${T}/bazelrc" || die

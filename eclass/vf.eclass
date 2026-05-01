@@ -111,6 +111,9 @@ einfo "AE = Actively Exploited" # More formal
 # See also KEV
 einfo "AEITW = Actively Exploited In The Wild" # Most formal
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ACP"($|" "|";"|",") ]] ; then
+einfo "ACP = Attack Chain Primitive"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AR"($|" "|";"|",") ]] ; then
 einfo "AR = Arbitrary Read"
 		fi
