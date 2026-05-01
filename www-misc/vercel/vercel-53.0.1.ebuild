@@ -56,7 +56,7 @@ LICENSE="
 	Vercel-Privacy-Policy
 "
 KEYWORDS="~amd64"
-IUSE+=" ebuild_revision_9"
+IUSE+=" ebuild_revision_10"
 SLOT="0"
 DEPEND+="
 "
@@ -163,6 +163,8 @@ sanitize_file_permissions() {
 		-name "*.sh" -o \
 		-name "*.bash" -o \
 		-name "*.node" -o \
+		-name "*.so" -o \
+		-regex '.*/*.so\.[0-9.]+' -o \
 		-name "*.py" -o \
 		-name "*.js" -o \
 		-name "*.mjs" -o \
