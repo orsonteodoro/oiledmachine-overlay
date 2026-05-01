@@ -4,13 +4,15 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="scikit-build-core"
 PYTHON_COMPAT=( "python3_"{8..13} )
 
 LLAMA_CPP_COMMIT="f53577432541bb9edc1588c4ef45c66bf07e4468"
 
-inherit dep-prepare distutils-r1 pypi
+inherit cflags-hardened dep-prepare distutils-r1 pypi
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -41,7 +43,10 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" all dev server test"
+IUSE+="
+all dev server test
+ebuild_revision_1
+"
 REQUIRED_USE="
 	all? (
 		dev
@@ -108,7 +113,7 @@ src_unpack() {
 
 src_configure() {
 	default
-	export PREFIX="/usr"
+	cflags-hardened_append
 }
 
 src_prepare() {
