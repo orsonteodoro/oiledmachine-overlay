@@ -56,7 +56,7 @@ LICENSE="
 	Vercel-Privacy-Policy
 "
 KEYWORDS="~amd64"
-IUSE+=" ebuild_revision_7"
+IUSE+=" ebuild_revision_9"
 SLOT="0"
 DEPEND+="
 "
@@ -190,8 +190,10 @@ src_install() {
 	dosym "/usr/bin/vc" "/usr/bin/vercel"
 
 	sanitize_file_permissions
+	fperms 0755 "/usr/bin/vc"
 
 	shopt -u dotglob # Skip hidden files
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 52.2.1 (20260430)
