@@ -56,7 +56,7 @@ LICENSE="
 	Vercel-Privacy-Policy
 "
 KEYWORDS="~amd64"
-IUSE+=" ebuild_revision_10"
+IUSE+=" ebuild_revision_11"
 SLOT="0"
 DEPEND+="
 "
@@ -97,6 +97,7 @@ eerror "Expected timestamp:  >= ${expected_timestamp}"
 
 pkg_setup() {
 	# Reduce downloads for frequently versioned bumped releases.
+	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	export PNPM_CACHE_FOLDER="${EDISTDIR}/pnpm-download-cache-${PNPM_SLOT}/${CATEGORY}/${PN}-${PV%%.*}"
 
 	export TURBO_TELEMETRY_DISABLED=1
