@@ -54,6 +54,8 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	dev-python/hatch-vcs[${PYTHON_USEDEP}]
+	dev-python/hatchling[${PYTHON_USEDEP}]
 	dev? (
 		>=dev-python/pytest-8.3.4[${PYTHON_USEDEP}]
 		>=dev-python/pytest-anyio-0.24.0[${PYTHON_USEDEP}]
