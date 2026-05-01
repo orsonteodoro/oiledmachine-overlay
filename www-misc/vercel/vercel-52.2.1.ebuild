@@ -9,6 +9,8 @@ EAPI=8
 # We use the upstream lockfiles for both pnpm and cargo.
 # Assuming frequent ebuild updates.
 
+# This ebuild uses AI generated code.
+
 # Rust 1.95.0
 
 # To update lockfile
@@ -54,7 +56,7 @@ LICENSE="
 	Vercel-Privacy-Policy
 "
 KEYWORDS="~amd64"
-IUSE+=" ebuild_revision_6"
+IUSE+=" ebuild_revision_7"
 SLOT="0"
 DEPEND+="
 "
@@ -141,37 +143,32 @@ src_compile() {
 }
 
 sanitize_file_permissions() {
-	local path
-einfo "Sanitizing file/folder permissions"
-	IFS=$'\n'
-	for path in $(find "${ED}") ; do
-		[[ -L "${path}" ]] && continue
-		chown root:root "${path}" || die
-		if file "${path}" | grep -q -e "directory" ; then
-			chmod 0755 "${path}" || die
-		elif file "${path}" | grep -q -e "ELF .* shared object" ; then
-			chmod 0755 "${path}" || die
-		elif file "${path}" | grep -q -e "ELF .* executable" ; then
-			chmod 0755 "${path}" || die
-		elif file "${path}" | grep -q -e "Perl script" ; then
-			chmod 0755 "${path}" || die
-		elif file "${path}" | grep -q -e "Python script" ; then
-			chmod 0755 "${path}" || die
-		elif file "${path}" | grep -q -e "POSIX shell script" ; then
-			chmod 0755 "${path}" || die
-		elif file "${path}" | grep -q -e "Bourne-Again shell script" ; then
-			chmod 0755 "${path}" || die
-		elif file "${path}" | grep -q -e "Node.js script executable" ; then
-			chmod 0755 "${path}" || die
-		elif file "${path}" | grep -q -e "WebAssembly (wasm) binary" ; then
-			chmod 0755 "${path}" || die
-		elif [[ "${path}" =~ ".sh"$ ]] ; then
-			chmod 0755 "${path}" || die
-		else
-			chmod 0644 "${path}" || die
-		fi
-	done
-	IFS=$' \t\n'
+	einfo "Sanitizing file/folder permissions in ${ED}"
+
+	# 1. Set ownership once (very fast)
+	find "${ED}" -exec chown root:root {} + || die "chown failed"
+
+	# 2. All directories get 0755
+	find "${ED}" -type d -exec chmod 0755 {} + || die "chmod directories failed"
+
+	# 3. All regular files start as 0644 (this is the safe default)
+	find "${ED}" -type f -exec chmod 0644 {} + || die "chmod files to 0644 failed"
+
+	# 4. Make executables 0755 - Fast + targeted for node_modules/.bin
+	find "${ED}" -type f \( \
+		-path "*/.bin/*" -o \
+		-name "*.sh" -o \
+		-name "*.bash" -o \
+		-name "*.node" -o \
+		-name "*.pl" -o \
+		-name "*.py" -o \
+		-name "*.js" -o \
+		-name "*.mjs" -o \
+		-name "*.cjs" -o \
+		-name "*.wasm" -o \
+		-perm -100 \) \
+		-exec chmod 0755 {} + \
+		|| die "chmod executables failed"
 }
 
 src_install() {
