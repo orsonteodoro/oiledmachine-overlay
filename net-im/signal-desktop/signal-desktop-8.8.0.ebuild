@@ -110,7 +110,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_73
+ebuild_revision_75
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -289,6 +289,7 @@ ewarn "QA:  Manually remove minimatch@3.1.2 from ${S}/sticker-creator/pnpm-lock.
 #ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/request-error from ${S}/danger/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/rest from ${S}/danger/pnpm-lock.yaml"
 
+ewarn "QA:  Manually remove jws@3.2.2 from ${S}/danger/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove yaml@1.10.2 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove picomatch@2.3.1 from ${S}/danger/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove @tootallnate/once@2.0.0 from ${S}/danger/pnpm-lock.yaml"
@@ -528,11 +529,16 @@ ewarn "QA:  Manually remove jws@3.2.2 in ${S}/danger/pnpm-lock.yaml"
 			sed -i -e "s|yauzl: 3.2.0|yauzl: 3.2.1|g" "pnpm-lock.yaml" || die													# CVE-2026-31988; ZC, DoS; Moderate
 			sed -i -e "s|serialize-javascript: 7.0.3|serialize-javascript: 7.0.5|g" "pnpm-lock.yaml" || die										# CVE-2026-34043; ZC, DoS; Moderate
 			sed -i -e "s|yaml: 1.10.2|yaml: 1.10.3|g" "pnpm-lock.yaml" || die													# CVE-2026-33532; DoS; Moderate
-			sed -i -e "s|'@xmldom/xmldom': 0.8.10|'@xmldom/xmldom': 0.8.12|g" "pnpm-lock.yaml" || die										# CVE-2026-34601; ZC, DT; High
+			sed -i -e "s|'@xmldom/xmldom': 0.8.10|'@xmldom/xmldom': 0.8.13|g" "pnpm-lock.yaml" || die										# CVE-2026-34601; ZC, DT; High
+																								# CVE-2026-41674; ZC, VS(DT); High
+																								# CVE-2026-41675; ZC, VS(DT); High
+																								# CVE-2026-41672; ZC, VS(FT); High
 
 			sed -i -e "s|uuid: 11.0.2|uuid: 14.0.0|g" "pnpm-lock.yaml" || die													# GHSA-w5hq-g745-h8pq; ZC, VS(DT); Moderate
 			sed -i -e "s|uuid: 8.3.2|uuid: 14.0.0|g" "pnpm-lock.yaml" || die													# GHSA-w5hq-g745-h8pq; ZC, VS(DT); Moderate
 			sed -i -e "s|uuid: 9.0.1|uuid: 14.0.0|g" "pnpm-lock.yaml" || die													# GHSA-w5hq-g745-h8pq; ZC, VS(DT); Moderate
+			sed -i -e "s|follow-redirects: 1.15.11(debug@4.4.3)|follow-redirects: 1.16.0|g" "pnpm-lock.yaml" || die									# GHSA-r4q5-vmmm-2653; ZV, VS(ID); Moderate
+			sed -i -e "s|postcss: 8.5.8|postcss: 8.5.10|g" "pnpm-lock.yaml" || die													# CVE-2026-41305; DT, ID; Moderate
 		}
 		patch_edits_pnpm
 
@@ -611,6 +617,7 @@ ewarn "QA:  Manually remove jws@3.2.2 in ${S}/danger/pnpm-lock.yaml"
 			"playwright@1.55.1"
 			"storybook@8.6.17"
 			"uuid@14.0.0"
+			"follow-redirects@1.16.0"
 		)
 		epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
 		deps=(
@@ -634,7 +641,8 @@ ewarn "QA:  Manually remove jws@3.2.2 in ${S}/danger/pnpm-lock.yaml"
 			"yauzl@3.2.1"
 			"serialize-javascript@7.0.5"
 			"yaml@1.10.3"
-			"@xmldom/xmldom@0.8.12"
+			"@xmldom/xmldom@0.8.13"
+			"postcss@8.5.10"
 		)
 		epnpm install "${deps[@]}" -D "${PNPM_INSTALL_ARGS[@]}"
 

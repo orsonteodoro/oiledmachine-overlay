@@ -114,6 +114,9 @@ importers:
       esbuild:
         specifier: 0.25.9
         version: 0.25.9
+      follow-redirects:
+        specifier: 1.16.0
+        version: 1.16.0(debug@4.4.3)
       form-data:
         specifier: 4.0.4
         version: 4.0.4
@@ -431,8 +434,8 @@ importers:
         specifier: 7.0.0-dev.20260303.1
         version: 7.0.0-dev.20260303.1
       '@xmldom/xmldom':
-        specifier: 0.8.12
-        version: 0.8.12
+        specifier: 0.8.13
+        version: 0.8.13
       babel-plugin-lodash:
         specifier: 3.3.4
         version: 3.3.4
@@ -673,9 +676,12 @@ importers:
       pngjs:
         specifier: 7.0.0
         version: 7.0.0
+      postcss:
+        specifier: 8.5.10
+        version: 8.5.10
       postcss-loader:
         specifier: 8.2.1
-        version: 8.2.1(postcss@8.5.8)(typescript@6.0.2)(webpack@5.104.1(@swc/core@1.10.16(@swc/helpers@0.5.15))(esbuild@0.25.9))
+        version: 8.2.1(postcss@8.5.10)(typescript@6.0.2)(webpack@5.104.1(@swc/core@1.10.16(@swc/helpers@0.5.15))(esbuild@0.25.9))
       prettier:
         specifier: 3.8.1
         version: 3.8.1
@@ -774,7 +780,7 @@ importers:
         version: 4.6.0(stylelint@17.5.0(typescript@6.0.2))
       stylelint-config-recommended-scss:
         specifier: 17.0.0
-        version: 17.0.0(postcss@8.5.8)(stylelint@17.5.0(typescript@6.0.2))
+        version: 17.0.0(postcss@8.5.10)(stylelint@17.5.0(typescript@6.0.2))
       stylelint-use-logical-spec:
         specifier: 5.0.1
         version: 5.0.1(stylelint@17.5.0(typescript@6.0.2))
@@ -5165,10 +5171,9 @@ packages:
   '@webassemblyjs/wast-printer@1.14.1':
     resolution: {integrity: sha512-kPSSXE6De1XOR820C90RIo2ogvZG+c3KiHzqUoO/F34Y2shGzesfqv7o57xrxovZJH/MetF5UjroJ/R/3isoiw==}
 
-  '@xmldom/xmldom@0.8.12':
-    resolution: {integrity: sha512-9k/gHF6n/pAi/9tqr3m3aqkuiNosYTurLLUtc7xQ9sxB/wm7WPygCv8GYa6mS0fLJEHhqMC1ATYhz++U/lRHqg==}
+  '@xmldom/xmldom@0.8.13':
+    resolution: {integrity: sha512-KRYzxepc14G/CEpEGc3Yn+JKaAeT63smlDr+vjB8jRfgTBBI9wRj/nkQEO+ucV8p8I9bfKLWp37uHgFrbntPvw==}
     engines: {node: '>=10.0.0'}
-    deprecated: this version has critical issues, please update to the latest version
 
   '@xtuc/ieee754@1.2.0':
     resolution: {integrity: sha512-DX8nKgqcGwsc0eJSqYt5lwP4DH5FlHnmuWWBRy7X0NcaGR0ZtuyeESgMwTYVEtxmsNGY+qit4QYT/MIYTOTPeA==}
@@ -6791,8 +6796,8 @@ packages:
   flatted@3.4.2:
     resolution: {integrity: sha512-PjDse7RzhcPkIJwy5t7KPWQSZ9cAbzQXcafsetQoD7sOJRQlGikNbx7yZp2OotDnJyrDcbyRq3Ttb18iYOqkxA==}
 
-  follow-redirects@1.15.11:
-    resolution: {integrity: sha512-deG2P0JfjrTxl50XGCDyfI97ZGVCxIpfKYmfyrQ54n5FO/0gfIES8C/Psl6kWVDolizcaaxZJnTS0QSMxvnsBQ==}
+  follow-redirects@1.16.0:
+    resolution: {integrity: sha512-y5rN/uOsadFT/JfYwhxRS5R7Qce+g3zG97+JrtFZlC9klX/W5hD7iiLzScI4nZqUS7DNUdhPgw4xI8W2LuXlUw==}
     engines: {node: '>=4.0'}
     peerDependencies:
       debug: '*'
@@ -8925,8 +8930,8 @@ packages:
   postcss-value-parser@4.2.0:
     resolution: {integrity: sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==}
 
-  postcss@8.5.8:
-    resolution: {integrity: sha512-OW/rX8O/jXnm82Ey1k44pObPtdblfiuWnrd8X7GJ7emImCOstunGbXUpp7HdBrFQX6rJzn3sPT397Wp5aCwCHg==}
+  postcss@8.5.10:
+    resolution: {integrity: sha512-pMMHxBOZKFU6HgAZ4eyGnwXF/EvPGGqUr0MnZ5+99485wwW41kW91A4LOGxSHhgugZmSChL5AlElNdwlNgcnLQ==}
     engines: {node: ^10 || ^12 || >=14}
 
   postject@1.0.0-alpha.6:
@@ -14895,7 +14900,7 @@ snapshots:
       '@alloc/quick-lru': 5.2.0
       '@tailwindcss/node': 4.2.2
       '@tailwindcss/oxide': 4.2.2
-      postcss: 8.5.8
+      postcss: 8.5.10
       tailwindcss: 4.2.2
 
   '@tanstack/react-virtual@3.13.23(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
@@ -15498,7 +15503,7 @@ snapshots:
       '@webassemblyjs/ast': 1.14.1
       '@xtuc/long': 4.2.2
 
-  '@xmldom/xmldom@0.8.12': {}
+  '@xmldom/xmldom@0.8.13': {}
 
   '@xtuc/ieee754@1.2.0': {}
 
@@ -15721,7 +15726,7 @@ snapshots:
 
   axios@1.15.0(debug@4.4.3):
     dependencies:
-      follow-redirects: 1.15.11(debug@4.4.3)
+      follow-redirects: 1.16.0(debug@4.4.3)
       form-data: 4.0.5
       proxy-from-env: 2.1.0
     transitivePeerDependencies:
@@ -16395,12 +16400,12 @@ snapshots:
 
   css-loader@6.11.0(webpack@5.104.1(@swc/core@1.10.16(@swc/helpers@0.5.15))(esbuild@0.25.9)):
     dependencies:
-      icss-utils: 5.1.0(postcss@8.5.8)
-      postcss: 8.5.8
-      postcss-modules-extract-imports: 3.1.0(postcss@8.5.8)
-      postcss-modules-local-by-default: 4.2.0(postcss@8.5.8)
-      postcss-modules-scope: 3.2.1(postcss@8.5.8)
-      postcss-modules-values: 4.0.0(postcss@8.5.8)
+      icss-utils: 5.1.0(postcss@8.5.10)
+      postcss: 8.5.10
+      postcss-modules-extract-imports: 3.1.0(postcss@8.5.10)
+      postcss-modules-local-by-default: 4.2.0(postcss@8.5.10)
+      postcss-modules-scope: 3.2.1(postcss@8.5.10)
+      postcss-modules-values: 4.0.0(postcss@8.5.10)
       postcss-value-parser: 4.2.0
       semver: 7.7.4
     optionalDependencies:
@@ -16408,12 +16413,12 @@ snapshots:
 
   css-loader@7.1.4(webpack@5.104.1(@swc/core@1.10.16(@swc/helpers@0.5.15))(esbuild@0.25.9)):
     dependencies:
-      icss-utils: 5.1.0(postcss@8.5.8)
-      postcss: 8.5.8
-      postcss-modules-extract-imports: 3.1.0(postcss@8.5.8)
-      postcss-modules-local-by-default: 4.2.0(postcss@8.5.8)
-      postcss-modules-scope: 3.2.1(postcss@8.5.8)
-      postcss-modules-values: 4.0.0(postcss@8.5.8)
+      icss-utils: 5.1.0(postcss@8.5.10)
+      postcss: 8.5.10
+      postcss-modules-extract-imports: 3.1.0(postcss@8.5.10)
+      postcss-modules-local-by-default: 4.2.0(postcss@8.5.10)
+      postcss-modules-scope: 3.2.1(postcss@8.5.10)
+      postcss-modules-values: 4.0.0(postcss@8.5.10)
       postcss-value-parser: 4.2.0
       semver: 7.7.4
     optionalDependencies:
@@ -17408,7 +17413,7 @@ snapshots:
 
   flatted@3.4.2: {}
 
-  follow-redirects@1.15.11(debug@4.4.3):
+  follow-redirects@1.16.0(debug@4.4.3):
     optionalDependencies:
       debug: 4.4.3(supports-color@8.1.1)
 
@@ -17869,7 +17874,7 @@ snapshots:
   http-proxy@1.18.1(debug@4.4.3):
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.15.11(debug@4.4.3)
+      follow-redirects: 1.16.0(debug@4.4.3)
       requires-port: 1.0.0
     transitivePeerDependencies:
       - debug
@@ -17940,9 +17945,9 @@ snapshots:
     dependencies:
       safer-buffer: 2.1.2
 
-  icss-utils@5.1.0(postcss@8.5.8):
+  icss-utils@5.1.0(postcss@8.5.10):
     dependencies:
-      postcss: 8.5.8
+      postcss: 8.5.10
 
   ieee754@1.2.1: {}
 
@@ -19755,7 +19760,7 @@ snapshots:
 
   plist@3.1.0:
     dependencies:
-      '@xmldom/xmldom': 0.8.12
+      '@xmldom/xmldom': 0.8.13
       base64-js: 1.5.1
       xmlbuilder: 15.1.1
 
@@ -19777,11 +19782,11 @@ snapshots:
 
   possible-typed-array-names@1.1.0: {}
 
-  postcss-loader@8.2.1(postcss@8.5.8)(typescript@6.0.2)(webpack@5.104.1(@swc/core@1.10.16(@swc/helpers@0.5.15))(esbuild@0.25.9)):
+  postcss-loader@8.2.1(postcss@8.5.10)(typescript@6.0.2)(webpack@5.104.1(@swc/core@1.10.16(@swc/helpers@0.5.15))(esbuild@0.25.9)):
     dependencies:
       cosmiconfig: 9.0.1(typescript@6.0.2)
       jiti: 2.6.1
-      postcss: 8.5.8
+      postcss: 8.5.10
       semver: 7.7.4
     optionalDependencies:
       webpack: 5.104.1(@swc/core@1.10.16(@swc/helpers@0.5.15))(esbuild@0.25.9)
@@ -19790,36 +19795,36 @@ snapshots:
 
   postcss-media-query-parser@0.2.3: {}
 
-  postcss-modules-extract-imports@3.1.0(postcss@8.5.8):
+  postcss-modules-extract-imports@3.1.0(postcss@8.5.10):
     dependencies:
-      postcss: 8.5.8
+      postcss: 8.5.10
 
-  postcss-modules-local-by-default@4.2.0(postcss@8.5.8):
+  postcss-modules-local-by-default@4.2.0(postcss@8.5.10):
     dependencies:
-      icss-utils: 5.1.0(postcss@8.5.8)
-      postcss: 8.5.8
+      icss-utils: 5.1.0(postcss@8.5.10)
+      postcss: 8.5.10
       postcss-selector-parser: 7.1.1
       postcss-value-parser: 4.2.0
 
-  postcss-modules-scope@3.2.1(postcss@8.5.8):
+  postcss-modules-scope@3.2.1(postcss@8.5.10):
     dependencies:
-      postcss: 8.5.8
+      postcss: 8.5.10
       postcss-selector-parser: 7.1.1
 
-  postcss-modules-values@4.0.0(postcss@8.5.8):
+  postcss-modules-values@4.0.0(postcss@8.5.10):
     dependencies:
-      icss-utils: 5.1.0(postcss@8.5.8)
-      postcss: 8.5.8
+      icss-utils: 5.1.0(postcss@8.5.10)
+      postcss: 8.5.10
 
   postcss-resolve-nested-selector@0.1.6: {}
 
-  postcss-safe-parser@7.0.1(postcss@8.5.8):
+  postcss-safe-parser@7.0.1(postcss@8.5.10):
     dependencies:
-      postcss: 8.5.8
+      postcss: 8.5.10
 
-  postcss-scss@4.0.9(postcss@8.5.8):
+  postcss-scss@4.0.9(postcss@8.5.10):
     dependencies:
-      postcss: 8.5.8
+      postcss: 8.5.10
 
   postcss-selector-parser@7.1.1:
     dependencies:
@@ -19828,7 +19833,7 @@ snapshots:
 
   postcss-value-parser@4.2.0: {}
 
-  postcss@8.5.8:
+  postcss@8.5.10:
     dependencies:
       nanoid: 3.3.11
       picocolors: 1.1.1
@@ -20935,14 +20940,14 @@ snapshots:
     optionalDependencies:
       stylelint-scss: 7.0.0(stylelint@17.5.0(typescript@6.0.2))
 
-  stylelint-config-recommended-scss@17.0.0(postcss@8.5.8)(stylelint@17.5.0(typescript@6.0.2)):
+  stylelint-config-recommended-scss@17.0.0(postcss@8.5.10)(stylelint@17.5.0(typescript@6.0.2)):
     dependencies:
-      postcss-scss: 4.0.9(postcss@8.5.8)
+      postcss-scss: 4.0.9(postcss@8.5.10)
       stylelint: 17.5.0(typescript@6.0.2)
       stylelint-config-recommended: 18.0.0(stylelint@17.5.0(typescript@6.0.2))
       stylelint-scss: 7.0.0(stylelint@17.5.0(typescript@6.0.2))
     optionalDependencies:
-      postcss: 8.5.8
+      postcss: 8.5.10
 
   stylelint-config-recommended@18.0.0(stylelint@17.5.0(typescript@6.0.2)):
     dependencies:
@@ -20994,8 +20999,8 @@ snapshots:
       micromatch: 4.0.8
       normalize-path: 3.0.0
       picocolors: 1.1.1
-      postcss: 8.5.8
-      postcss-safe-parser: 7.0.1(postcss@8.5.8)
+      postcss: 8.5.10
+      postcss-safe-parser: 7.0.1(postcss@8.5.10)
       postcss-selector-parser: 7.1.1
       postcss-value-parser: 4.2.0
       string-width: 8.2.0
