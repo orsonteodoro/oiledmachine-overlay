@@ -163,12 +163,13 @@ sanitize_file_permissions() {
 		-name "*.sh" -o \
 		-name "*.bash" -o \
 		-name "*.node" -o \
-		-name "*.pl" -o \
 		-name "*.py" -o \
 		-name "*.js" -o \
 		-name "*.mjs" -o \
 		-name "*.cjs" -o \
 		-name "*.wasm" -o \
+		-name "*.rb" -o \
+		-name "*.pl" -o \
 		-perm -100 \) \
 		-exec chmod 0755 {} + \
 		|| die "chmod executables failed"
