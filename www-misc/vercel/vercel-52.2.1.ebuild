@@ -146,7 +146,7 @@ sanitize_file_permissions() {
 	einfo "Sanitizing file/folder permissions in ${ED}"
 
 	# 1. Set ownership once (very fast)
-	find "${ED}" -exec chown root:root {} + || die "chown failed"
+	find "${ED}" ! -type l -exec chown root:root {} + || die "chown failed"
 
 	# 2. All directories get 0755
 	find "${ED}" -type d -exec chmod 0755 {} + || die "chmod directories failed"
