@@ -1,138 +1,89 @@
-# Copyright 2024-2025 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
-
-# https://bugs.gentoo.org/623962
-# tests set TZ for tests leading to failures on musl if sys-libs/timezone-data isnt installed
 
 MY_PV="${PV//_pre*}"
 MY_P="${PN}-${MY_PV}"
 
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO PE SO" # CE on Win32
-PATCHSET_VER="8.0.43:01"
-UOPTS_SUPPORT_EBOLT=0
-UOPTS_SUPPORT_EPGO=0
-UOPTS_SUPPORT_TBOLT=1
-UOPTS_SUPPORT_TPGO=1
 
-inherit cflags-hardened check-compiler-switch check-reqs cmake dot-a edo flag-o-matic linux-info
-inherit multiprocessing prefix toolchain-funcs uopts
+inherit cflags-hardened check-compiler-switch check-reqs cmake dot-a edo flag-o-matic linux-info multiprocessing prefix toolchain-funcs
 
-KEYWORDS="
-~amd64 ~arm ~arm64 ~hppa ~mips -ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux
-~x86-linux ~x64-macos ~x64-solaris
-"
+# Patch version
+PATCH_SET=( https://github.com/parona-source/mysql-server/releases/download/mysql-8.0.43-patches-01/mysql-8.0.43-patches-01.tar.xz )
+
+DESCRIPTION="A fast, multi-threaded, multi-user SQL database server"
+HOMEPAGE="https://www.mysql.com/"
+# https://dev.mysql.com/downloads/mysql/
+SRC_URI="https://dev.mysql.com/get/Downloads/MySQL-$(ver_cut 1-2)/mysql-boost-${MY_PV}.tar.gz"
+# https://downloads.mysql.com/archives/community/
+SRC_URI+=" https://cdn.mysql.com/archives/mysql-$(ver_cut 1-2)/mysql-boost-${MY_PV}.tar.gz"
+SRC_URI+=" ${PATCH_SET[@]}"
 # Shorten the path because the socket path length must be shorter than 107 chars
 # and we will run a mysql server during test phase
 S="${WORKDIR}/mysql"
-# https://dev.mysql.com/downloads/mysql/
-# https://downloads.mysql.com/archives/community/
-SRC_URI="
-https://dev.mysql.com/get/Downloads/MySQL-$(ver_cut 1-2)/mysql-boost-${MY_PV}.tar.gz
-https://cdn.mysql.com/archives/mysql-$(ver_cut 1-2)/mysql-boost-${MY_PV}.tar.gz
-https://github.com/parona-source/mysql-server/releases/download/mysql-${PATCHSET_VER%:*}-patches-${PATCHSET_VER#*:}/mysql-${PATCHSET_VER%:*}-patches-${PATCHSET_VER#*:}.tar.xz
-${PATCH_SET[@]}
-"
 
-HOMEPAGE="https://www.mysql.com/"
-DESCRIPTION="A fast, multi-threaded, multi-user SQL database server"
 LICENSE="GPL-2"
-RESTRICT="
-	!test? (
-		test
-	)
-"
 SLOT="8.0"
 # -ppc for bug #761715
-IUSE="
-cjk cracklib debug jemalloc latin1 numa +perl profiling router selinux +server
-tcmalloc test test-install
-ebuild_revision_30
-"
+KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~mips -ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~x64-macos ~x64-solaris"
+IUSE="cjk cracklib debug jemalloc latin1 numa +perl profiling router selinux +server tcmalloc test test-install"
+RESTRICT="!test? ( test )"
+
 REQUIRED_USE="
-	?? (
-		tcmalloc
-		jemalloc
-	)
-	cjk? (
-		server
-	)
-	jemalloc? (
-		server
-	)
-	numa? (
-		server
-	)
-	profiling? (
-		server
-	)
-	router? (
-		server
-	)
-	tcmalloc? (
-		server
-	)
-	test? (
-		server
-	)
-	test-install? (
-		server
-	)
+	?? ( tcmalloc jemalloc )
+	cjk? ( server )
+	jemalloc? ( server )
+	numa? ( server )
+	profiling? ( server )
+	router? ( server )
+	tcmalloc? ( server )
+	test? ( server )
+	test-install? ( server )
 "
+
 # Be warned, *DEPEND are version-dependent
 # These are used for both runtime and compiletime
 COMMON_DEPEND="
 	>=app-arch/lz4-1.9.4:=
 	>=app-arch/zstd-1.2.0:=
 	>=dev-libs/openssl-1.0.0:=
-	>=sys-libs/zlib-1.2.13:=
+	net-libs/libtirpc:=
 	sys-libs/ncurses:=
+	>=virtual/zlib-1.2.13:=
 	server? (
 		dev-libs/icu:=
 		dev-libs/libevent:=[ssl,threads(+)]
-		net-libs/libtirpc:=
-		cjk? (
-			app-text/mecab
-		)
-		jemalloc? (
-			dev-libs/jemalloc:=
-		)
+		cjk? ( app-text/mecab )
+		jemalloc? ( dev-libs/jemalloc:= )
 		kernel_linux? (
 			dev-libs/libaio
 			sys-process/procps
 		)
-		numa? (
-			sys-process/numactl
-		)
-		tcmalloc? (
-			dev-util/google-perftools:=
-		)
+		numa? ( sys-process/numactl )
+		tcmalloc? ( dev-util/google-perftools:= )
 	)
 "
+
 DEPEND="
 	${COMMON_DEPEND}
-	server? (
-		net-libs/rpcsvc-proto
-	)
+	server? ( net-libs/rpcsvc-proto )
 "
 RDEPEND="
 	${COMMON_DEPEND}
 	!dev-db/mariadb
 	!dev-db/mariadb-galera
+	!dev-db/percona-server
 	!dev-db/mysql-cluster
 	!dev-db/mysql:0
 	!dev-db/mysql:5.7
-	!dev-db/percona-server
-	sys-kernel/mitigate-id
+	selinux? ( sec-policy/selinux-mysql )
 	!prefix? (
-		acct-group/mysql acct-user/mysql
+		acct-group/mysql
+		acct-user/mysql
 		dev-db/mysql-init-scripts
-	)
-	selinux? (
-		sec-policy/selinux-mysql
 	)
 	test-install? (
 		app-arch/zip
@@ -142,6 +93,12 @@ RDEPEND="
 		sys-libs/timezone-data
 	)
 "
+# For other stuff to bring us in
+# dev-perl/DBD-mysql is needed by some scripts installed by MySQL
+PDEPEND="perl? ( >=dev-perl/DBD-mysql-2.9004 )"
+
+# https://bugs.gentoo.org/623962
+# tests set TZ for tests leading to failures on musl if sys-libs/timezone-data isnt installed
 BDEPEND="
 	app-alternatives/yacc
 	virtual/pkgconfig
@@ -156,17 +113,15 @@ BDEPEND="
 	)
 
 "
-# For other stuff to bring us in
-# dev-perl/DBD-mysql is needed by some scripts installed by MySQL
-PDEPEND="
-	perl? (
-		>=dev-perl/DBD-mysql-2.9004
-	)
-"
+
 PATCHES=(
-	"${WORKDIR}/mysql-patches"
-	# Patch needed due to bundled boost-1.77.  This fix is included in boost-1.81.
-	"${FILESDIR}/mysql-8.0.36-boost-clang-fix.patch"
+	"${WORKDIR}"/mysql-patches
+	# Needed due to bundled boost-1.77, this fix is included in boost-1.81
+	"${FILESDIR}"/mysql-8.0.36-boost-clang-fix.patch
+	# Needed due to bundled boost-1.77, this fix is included in boost-1.79
+	"${FILESDIR}"/mysql-8.0.37-fix-bundled-boost.patch
+	# Needed due to bundled abseil-cpp-20230802, this fix is included in abseil-cpp-20240722
+	"${FILESDIR}"/mysql-8.0.37-fix-bundled-abseil.patch
 )
 
 mysql_init_vars() {
@@ -237,15 +192,15 @@ pkg_setup() {
 
 			local CONFIG_CHECK="~NUMA"
 
-			local WARNING_NUMA="This package expects NUMA support in kernel which this system does not have at the moment;"
-			WARNING_NUMA+=" Either expect runtime errors, enable NUMA support in kernel or rebuild the package without NUMA support"
+			local WARNING_NUMA="\
+This package expects NUMA support in kernel which this system does not have at the moment; \
+Either expect runtime errors, enable NUMA support in kernel or rebuild the package without NUMA support"
 
 			check_extra_config
 		fi
 
 		use server && check-reqs_pkg_setup
 	fi
-	uopts_setup
 }
 
 src_unpack() {
@@ -273,20 +228,9 @@ src_prepare() {
 		|| die
 
 	cmake_src_prepare
-	uopts_src_prepare
 }
 
-src_configure() { :; }
-
-_src_configure_compiler() {
-	export CC=$(tc-getCC)
-	export CXX=$(tc-getCXX)
-	export CPP=$(tc-getCPP)
-}
-
-_src_configure() {
-	uopts_src_configure # Wipes -fprofile*
-
+src_configure() {
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
@@ -294,6 +238,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 
 	cflags-hardened_append
+
 	# Bug #114895, bug #110149
 	filter-flags "-O" "-O[01]"
 
@@ -314,9 +259,9 @@ einfo "Detected compiler switch.  Disabling LTO."
 		# but then dynamically linked against system abseil once installed.
 		-DBUILD_SHARED_LIBS=OFF
 
-		-DCMAKE_POSITION_INDEPENDENT_CODE=ON
-		-DCOMPILATION_COMMENT="Gentoo Linux ${PF}"
-		-DENABLED_LOCAL_INFILE=1
+		-DMYSQL_DATADIR="${EPREFIX}/var/lib/mysql"
+		-DSYSCONFDIR="${EPREFIX}/etc/mysql"
+
 		-DINSTALL_BINDIR=bin
 		-DINSTALL_DOCDIR=share/doc/${PF}
 		-DINSTALL_DOCREADMEDIR=share/doc/${PF}
@@ -325,33 +270,24 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DINSTALL_LIBDIR=$(get_libdir)
 		-DINSTALL_MANDIR=share/man
 		-DINSTALL_PRIV_LIBDIR=$(get_libdir)/mysql/private
-		-DINSTALL_MYSQLDATADIR="${EPREFIX}/var/lib/mysql"
 		-DINSTALL_MYSQLSHAREDIR=share/mysql
 		-DINSTALL_PLUGINDIR=$(get_libdir)/mysql/plugin
+		-DINSTALL_MYSQLDATADIR="${EPREFIX}/var/lib/mysql"
 		-DINSTALL_SBINDIR=sbin
 		-DINSTALL_SUPPORTFILESDIR="${EPREFIX}/usr/share/mysql"
-		-DMYSQL_DATADIR="${EPREFIX}/var/lib/mysql"
-		-DMYSQL_UNIX_ADDR="${EPREFIX}/var/run/mysqld/mysqld.sock"
-		-DROUTER_INSTALL_DOCDIR="share/doc/${PF}"
+
 		-DROUTER_INSTALL_PLUGINDIR="$(get_libdir)/mysqlrouter"
 		-DROUTER_INSTALL_LIBDIR="$(get_libdir)/mysqlrouter/private"
 		-DROUTER_INSTALL_LOGROTATEDIR="${EPREFIX}/etc/logrotate.d"
-		-DSYSCONFDIR="${EPREFIX}/etc/mysql"
-		-DWITH_BOOST="${S}/boost"
-		-DWITH_CURL=system
-		-DWITH_DEFAULT_COMPILER_OPTIONS=0
-		# Using bundled editline to get CTRL+C working \
-		-DWITH_EDITLINE=bundled
-		-DWITH_LIBWRAP=0
-		-DWITH_ROUTER=$(usex router ON OFF)
-		-DWITH_SSL=system
+		-DROUTER_INSTALL_DOCDIR="share/doc/${PF}"
+
+		-DCOMPILATION_COMMENT="Gentoo Linux ${PF}"
 		-DWITH_UNIT_TESTS=$(usex test ON OFF)
-		-DWITH_ZLIB=system
 
 		# Enables -Werror
 		-DMYSQL_MAINTAINER_MODE=OFF
 
-		# Debug hack wrt #497532
+		 # debug hack wrt #497532
 		-DCMAKE_C_FLAGS_RELWITHDEBINFO="$(usev !debug '-DNDEBUG' )"
 		-DCMAKE_CXX_FLAGS_RELWITHDEBINFO="$(usev !debug '-DNDEBUG' )"
 
@@ -363,6 +299,20 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 		# These are installed via dev-db/mysql-connector-c
 		-DWITHOUT_CLIENTLIBS=YES
+
+		# Using bundled editline to get CTRL+C working
+		-DWITH_EDITLINE=bundled
+		-DWITH_ZLIB=system
+		-DWITH_SSL=system
+		-DWITH_LIBWRAP=0
+		-DENABLED_LOCAL_INFILE=1
+		-DMYSQL_UNIX_ADDR="${EPREFIX}/var/run/mysqld/mysqld.sock"
+		-DWITH_DEFAULT_COMPILER_OPTIONS=0
+		-DCMAKE_POSITION_INDEPENDENT_CODE=ON
+
+		-DWITH_CURL=system
+		-DWITH_BOOST="${S}/boost"
+		-DWITH_ROUTER=$(usex router ON OFF)
 
 		-DWITH_ICU=system
 		-DWITH_LZ4=system
@@ -382,10 +332,10 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 
 	if [[ -n "${MYSQL_DEFAULT_CHARSET}" && -n "${MYSQL_DEFAULT_COLLATION}" ]] ; then
-ewarn "You are using a custom charset of ${MYSQL_DEFAULT_CHARSET}"
-ewarn "and a collation of ${MYSQL_DEFAULT_COLLATION}."
-ewarn "You MUST file bugs without these variables set."
-ewarn "Tests will probably fail!"
+		ewarn "You are using a custom charset of ${MYSQL_DEFAULT_CHARSET}"
+		ewarn "and a collation of ${MYSQL_DEFAULT_COLLATION}."
+		ewarn "You MUST file bugs without these variables set."
+		ewarn "Tests will probably fail!"
 
 		mycmakeargs+=(
 			-DDEFAULT_CHARSET=${MYSQL_DEFAULT_CHARSET}
@@ -409,12 +359,12 @@ ewarn "Tests will probably fail!"
 			-DWITH_DEBUG=$(usex debug)
 			-DWITH_MECAB=$(usex cjk system OFF)
 			-DWITH_LIBEVENT=system
-			-DWITH_NUMA=$(usex numa ON OFF)
-			# Cannot handle protobuf >23 bug #912797 \
-			# 05/06/2024: protobuf has been updated, \
-			# but it cannot handle abseil when building against system \
-			# Currently bundles protobuf-25.1 \
+			# Cannot handle protobuf >23 bug #912797
+			# 05/06/2024: protobuf has been updated,
+			# but it cannot handle abseil when building against system
+			# Currently bundles protobuf-25.1
 			-DWITH_PROTOBUF=bundled
+			-DWITH_NUMA=$(usex numa ON OFF)
 		)
 
 		if use jemalloc ; then
@@ -450,85 +400,44 @@ ewarn "Tests will probably fail!"
 		)
 	fi
 
-	if use bolt || use pgo ; then
-		mycmakeargs+=(
-			-DWITH_LD=bfd
-			-DWITH_UNIT_TESTS=OFF
-		)
-	fi
-
 	cmake_src_configure
-}
-
-_src_compile() {
-	cmake_src_compile
-}
-
-src_compile() {
-	uopts_src_compile
-}
-
-train_trainer_custom() {
-	__src_test "pgo"
-}
-
-check_ulimit() {
-	local current_ulimit=$(ulimit -n)
-	local ulimit=${1}
-	local quality="${2}"
-
-einfo "Testing with the ${quality} test coverage."
-
-	if (( ${current_ulimit} != ${ulimit} )) ; then
-eerror
-eerror "The ulimit must be exactly ${ulimit} for this test run."
-eerror
-eerror "Expected ulimit:  ${ulimit}"
-eerror "Actual ulimit:  ${current_ulimit}"
-eerror
-eerror "To fix, follow exactly these steps."
-eerror
-eerror "1.  Add/change /etc/security/limits.conf with the following lines:"
-eerror "portage         soft    nofile      ${ulimit}"
-eerror "portage         hard    nofile      ${ulimit}"
-eerror "2.  Run \`ulimit -n ${ulimit}\`"
-eerror "3.  Run \`emerge =${CATEGORY}/${PN}-${PVR}\`"
-eerror
-		die
-	fi
 }
 
 # Official test instructions:
 # ulimit -n 16500 && USE='perl server' FEATURES='test userpriv' \
 # ebuild mysql-X.X.XX.ebuild digest clean test install
-__src_test() {
-	local mode="${1}"
+src_test() {
 	_disable_test() {
 		local rawtestname bug reason
 		rawtestname="${1}" ; shift
 		bug="${1}" ; shift
 		reason="${@}"
 
-ewarn "test '${rawtestname}' disabled: '${reason}' (BUG#${bug})"
+		ewarn "test '${rawtestname}' disabled: '${reason}' (BUG#${bug})"
 		echo "${rawtestname} : BUG#${bug} ${reason}" >> "${T}/disabled.def"
 	}
 
 	local TESTDIR="${BUILD_DIR}/mysql-test"
 	local retstatus_tests
 
-einfo "Official test instructions:"
-einfo "ulimit -n 16500 && TEST_COVERAGE=best && USE='perl server' FEATURES='test userpriv' ebuild ..."
-
-	if ! use server ; then
-ewarn "Skipping server tests due to minimal build!"
-		return 0
-	fi
+	einfo "Official test instructions:"
+	einfo "ulimit -n 16500 && USE='perl server' FEATURES='test userpriv' ebuild ..."
 
 	# Ensure that parallel runs don't die
 	local -x MTR_BUILD_THREAD="$((${RANDOM} % 100))"
 
-	local -x MTR_PARALLEL=${MTR_PARALLEL:-$(makeopts_jobs)}
-einfo "MTR_PARALLEL is set to '${MTR_PARALLEL}'"
+	# Use a tmpfs opportunistically, otherwise set MTR_PARALLEL to 1.
+	# MySQL tests are I/O heavy. They benefit greatly from a tmpfs, parallel tests without a tmpfs are flaky due to timeouts.
+	if mountpoint -q /dev/shm ; then
+		local VARDIR="/dev/shm/mysql-var-${MTR_BUILD_THREAD}"
+		local -x MTR_PARALLEL=${MTR_PARALLEL:-$(makeopts_jobs)}
+	else
+		ewarn "/dev/shm not mounted, setting default MTR_PARALLEL to 1. Tests will take a long time"
+		local VARDIR="${T}/vardir"
+		# Set it to one while allowing users to override it.
+		local -x MTR_PARALLEL=${MTR_PARALLEL:-1}
+	fi
+	einfo "MTR_PARALLEL is set to '${MTR_PARALLEL}'"
 
 	# Disable unit tests, run them separately with eclass defaults
 	local -x MTR_UNIT_TESTS=0
@@ -596,6 +505,8 @@ einfo "MTR_PARALLEL is set to '${MTR_PARALLEL}'"
 		"rpl.rpl_innodb_info_tbl_slave_tmp_tbl_mismatch;0;Unstable test"
 		"rpl_gtid.rpl_multi_source_mtr_includes;97844;Unstable test"
 		"main.partition_datatype;0;Unstable test"
+		"innodb_undo.truncate_xa;0;Unstable test"
+		"rpl.rpl_json;0;Unstable test"
 
 		"sys_vars.myisam_data_pointer_size_func;87935;Test will fail on slow hardware"
 
@@ -624,7 +535,7 @@ einfo "MTR_PARALLEL is set to '${MTR_PARALLEL}'"
 
 	if use debug; then
 		disabled_tests+=(
-			"innodb.dblwr_unencrypt;0;Known test failure -- no upstream bug yet"
+			"innodb.dblwr_unencrypt;0;Unstable test"
 		)
 	fi
 
@@ -666,27 +577,60 @@ einfo "MTR_PARALLEL is set to '${MTR_PARALLEL}'"
 	)
 
 	# Try to increase file limits to increase test coverage
-	local test_coverage=${TEST_COVERAGE:-"best"} # 16500, 4162, 3000
-	[[ "${test_coverage}" == "best" ]] && check_ulimit 16500 "best"
-	[[ "${test_coverage}" == "medium" ]] && check_ulimit 4162 "medium"
-	[[ "${test_coverage}" == "minimum" ]] && check_ulimit 3000 "minimum"
+	if ! ulimit -n 16500 1>/dev/null 2>&1 ; then
+		# Upper limit comes from parts.partition_* tests
+		ewarn "For maximum test coverage, please raise open file limit to 16500 (ulimit -n 16500) before calling the package manager."
 
-	# PGO https://github.com/mysql/mysql-server/blob/mysql-8.3.0/packaging/rpm-oel/mysql.spec.in#L929
-	# They just run the default main suite as the trainer.
+		if ! ulimit -n 4162 1>/dev/null 2>&1 ; then
+			# Medium limit comes from
+			# '[Warning] Buffered warning: Could not increase number of max_open_files to more than 3000 (request: 4162)'
+			ewarn "For medium test coverage please raise open file limit to 4162 (ulimit -n 4162) before calling the package manager."
+
+			if ! ulimit -n 3000 1>/dev/null 2>&1 ; then
+				ewarn "For minimum test coverage, please raise open file limit to 3000 (ulimit -n 3000) before calling the package manager."
+			else
+				einfo "Will run test suite with open file limit set to 3000 (minimum test coverage)."
+			fi
+		else
+			einfo "Will run test suite with open file limit set to 4162 (medium test coverage)."
+		fi
+	else
+		einfo "Will run test suite with open file limit set to 16500 (best test coverage)."
+	fi
+
+	local test_failures=()
+
+	# bug #823656
+	nonfatal cmake_src_test --test-command "--gtest_death_test_style=threadsafe"
+	if [[ $? -ne 0 ]]; then
+		test_failures+=( cmake_src_test )
+	fi
 
 	# run mysql-test tests
 	# Enable force restart to ensure success when tests don't cleanup sufficiently.
 	# Anything touching gtid_executed is negatively affected if you have unlucky ordering
 	nonfatal edo perl mysql-test-run.pl \
-		--force \
-		--force-restart \
-		--vardir="${T}/var-tests" \
-		--tmpdir="${T}/tmp-tests" \
-		--skip-test=tokudb \
-		--skip-test-list="${T}/disabled.def" \
-		--retry-failure=2 \
-		--max-test-fail=0
-	retstatus_tests=$?
+		--force --force-restart \
+		--vardir="${VARDIR}" --tmpdir="${T}/tmp-tests" \
+		--skip-test=tokudb --skip-test-list="${T}/disabled.def" \
+		--max-test-fail=0 \
+		--retry=3 --retry-failure=2 \
+		--report-unstable-tests \
+		--report-features
+	if [[ $? -ne 0 ]]; then
+		test_failures+=( mysql-test-run.pl )
+
+		eerror "Tests failed. When you file a bug, please attach the following items:"
+		eerror "The file that is created with this command:"
+		eerror "\t'find ${T}/var-tests -name '*.log' | tar -caf mysql-test-logs.tar.xz --files-from -'"
+	fi
+
+	if [[ "${VARDIR}" != "${T}/var-tests" ]]; then
+		# Move vardir to tempdir.
+		mv "${VARDIR}" "${T}/var-tests"
+		# Clean up mysql temporary directory
+		rm -rf "${VARDIR}" 2>/dev/null
+	fi
 
 	popd &>/dev/null || die
 
@@ -694,21 +638,11 @@ einfo "MTR_PARALLEL is set to '${MTR_PARALLEL}'"
 	pkill -9 -f "${S}/ndb" 2>/dev/null
 	pkill -9 -f "${S}/sql" 2>/dev/null
 
-	local failures=""
-	[[ ${retstatus_tests} -eq 0 ]] || failures="${failures} tests"
-
-	if [[ "${mode}" == "default" ]] ; then
-	# bug #823656
-		cmake_src_test --test-command "--gtest_death_test_style=threadsafe"
-		[[ -z "${failures}" ]] || die "Test failures: ${failures}"
-einfo "Tests successfully completed"
-	elif [[ "${mode}" == "pgo" ]] ; then
-		:
+	if [[ ${#test_failures} -eq 0 ]]; then
+		einfo "Tests successfully completed"
+	else
+		die "Test failures: ${test_failures[@]}"
 	fi
-}
-
-src_test() {
-	__src_test "default"
 }
 
 src_install() {
@@ -719,7 +653,7 @@ src_install() {
 	mysql_init_vars
 
 	# Convenience links
-einfo "Making Convenience links for mysqlcheck multi-call binary"
+	einfo "Making Convenience links for mysqlcheck multi-call binary"
 	dosym "mysqlcheck" "/usr/bin/mysqlanalyze"
 	dosym "mysqlcheck" "/usr/bin/mysqlrepair"
 	dosym "mysqlcheck" "/usr/bin/mysqloptimize"
@@ -730,13 +664,13 @@ einfo "Making Convenience links for mysqlcheck multi-call binary"
 	fi
 
 	# Configuration stuff
-einfo "Building default configuration ..."
-	insinto "${MY_SYSCONFDIR#${EPREFIX}}"
+	einfo "Building default configuration ..."
+	insinto "${MY_SYSCONFDIR#"${EPREFIX}"}"
 	[[ -f "${S}/scripts/mysqlaccess.conf" ]] && doins "${S}"/scripts/mysqlaccess.conf
 	cp "${FILESDIR}/my.cnf-5.7" "${TMPDIR}/my.cnf" || die
 	eprefixify "${TMPDIR}/my.cnf"
 	doins "${TMPDIR}/my.cnf"
-	insinto "${MY_SYSCONFDIR#${EPREFIX}}/mysql.d"
+	insinto "${MY_SYSCONFDIR#"${EPREFIX}"}/mysql.d"
 	cp "${FILESDIR}/my.cnf-8.0.distro-client" "${TMPDIR}/50-distro-client.cnf" || die
 	eprefixify "${TMPDIR}/50-distro-client.cnf"
 	doins "${TMPDIR}/50-distro-client.cnf"
@@ -775,11 +709,9 @@ einfo "Building default configuration ..."
 
 	# Kill old libmysqclient_r symlinks if they exist. Time to fix what depends on them.
 	find "${D}" -name 'libmysqlclient_r.*' -type l -delete || die
-	uopts_src_install
 }
 
 pkg_postinst() {
-	uopts_pkg_postinst
 	# Make sure the vars are correctly initialized
 	mysql_init_vars
 
@@ -788,26 +720,26 @@ pkg_postinst() {
 	[[ -d "${MY_LOGDIR}" ]] || install -d -m0750 -o mysql -g mysql "${MY_LOGDIR}"
 
 	# Note about configuration change
-einfo
-elog "This version of ${PN} reorganizes the configuration from a single my.cnf"
-elog "to several files in /etc/mysql/mysql.d."
-elog "Please backup any changes you made to /etc/mysql/my.cnf"
-elog "and add them as a new file under /etc/mysql/mysql.d with a .cnf extension."
-elog "You may have as many files as needed and they are read alphabetically."
-elog "Be sure the options have the appropriate section headers, i.e. [mysqld]."
-einfo
+	einfo
+	elog "This version of ${PN} reorganizes the configuration from a single my.cnf"
+	elog "to several files in /etc/mysql/mysql.d."
+	elog "Please backup any changes you made to /etc/mysql/my.cnf"
+	elog "and add them as a new file under /etc/mysql/mysql.d with a .cnf extension."
+	elog "You may have as many files as needed and they are read alphabetically."
+	elog "Be sure the options have the appropriate section headers, i.e. [mysqld]."
+	einfo
 
 	if [[ -z "${REPLACING_VERSIONS}" ]] ; then
-einfo
-elog "You might want to run:"
-elog "  \"emerge --config =${CATEGORY}/${PF}\""
-elog "if this is a new install."
-einfo
+		einfo
+		elog "You might want to run:"
+		elog "  \"emerge --config =${CATEGORY}/${PF}\""
+		elog "if this is a new install."
+		einfo
 	else
-einfo
-elog "Upgrade process for ${PN}-8.x has changed. Please read"
-elog "https://dev.mysql.com/doc/refman/8.0/en/upgrade-binary-package.html"
-einfo
+		einfo
+		elog "Upgrade process for ${PN}-8.x has changed. Please read"
+		elog "https://dev.mysql.com/doc/refman/8.0/en/upgrade-binary-package.html"
+		einfo
 	fi
 }
 
@@ -845,7 +777,7 @@ pkg_config() {
 		local n_X
 		let n_X=${#template}-${#template_wo_X}
 		if [[ ${n_X} -lt 3 ]] ; then
-			echo "${FUNCNAME[0]}: too few X's in template ‘${template}’" >&2
+			echo "${FUNCNAME[0]}: too few X's in template '${template}'" >&2
 			return
 		fi
 
@@ -927,8 +859,8 @@ pkg_config() {
 	if [[ -z "${MY_DATADIR}" ]] ; then
 		die "Sorry, unable to find MY_DATADIR!"
 	elif [[ -d "${MY_DATADIR}/mysql" ]] ; then
-ewarn "Looks like your data directory '${MY_DATADIR}' is already initialized!"
-ewarn "Please rename or delete its content if you wish to initialize a new data directory."
+		ewarn "Looks like your data directory '${MY_DATADIR}' is already initialized!"
+		ewarn "Please rename or delete its content if you wish to initialize a new data directory."
 		die "${PN} data directory at '${MY_DATADIR}' looks already initialized!"
 	fi
 
@@ -946,7 +878,7 @@ ewarn "Please rename or delete its content if you wish to initialize a new data 
 	# accessible for that user.
 	PID_DIR="${EROOT}/run/mysqld"
 	if [[ ! -d "${PID_DIR}" ]] ; then
-einfo "Creating ${PN} PID directory '${PID_DIR}' ..."
+		einfo "Creating ${PN} PID directory '${PID_DIR}' ..."
 		install -d -m 755 -o ${MYSQL_USER} -g ${MYSQL_GROUP} "${PID_DIR}" \
 			|| die "Failed to create PID directory '${PID_DIR}'!"
 	fi
@@ -969,7 +901,7 @@ einfo "Creating ${PN} PID directory '${PID_DIR}' ..."
 	fi
 
 	if [[ ! -d "${MY_DATADIR}" ]] ; then
-einfo "Creating ${PN} data directory '${MY_DATADIR}' ..."
+		einfo "Creating ${PN} data directory '${MY_DATADIR}' ..."
 		install -d -m 770 -o ${MYSQL_USER} -g ${MYSQL_GROUP} "${MY_DATADIR}" \
 			|| die "Failed to create ${PN} data directory '${MY_DATADIR}'!"
 	fi
@@ -992,7 +924,7 @@ einfo "Creating ${PN} data directory '${MY_DATADIR}' ..."
 	fi
 
 	if [[ -n "${MYSQL_TMPDIR}" && ! -d "${MYSQL_TMPDIR}" ]] ; then
-einfo "Creating ${PN} tmpdir '${MYSQL_TMPDIR}' ..."
+		einfo "Creating ${PN} tmpdir '${MYSQL_TMPDIR}' ..."
 		install -d -m 770 -o ${MYSQL_USER} -g ${MYSQL_GROUP} "${MYSQL_TMPDIR}" \
 			|| die "Failed to create ${PN} tmpdir '${MYSQL_TMPDIR}'!"
 	fi
@@ -1025,7 +957,7 @@ einfo "Creating ${PN} tmpdir '${MYSQL_TMPDIR}' ..."
 	fi
 
 	if [[ -n "${MYSQL_LOG_BIN}" && ! -d "${MYSQL_LOG_BIN}" ]] ; then
-einfo "Creating ${PN} log-bin directory '${MYSQL_LOG_BIN}' ..."
+		einfo "Creating ${PN} log-bin directory '${MYSQL_LOG_BIN}' ..."
 		install -d -m 770 -o ${MYSQL_USER} -g ${MYSQL_GROUP} "${MYSQL_LOG_BIN}" \
 			|| die "Failed to create ${PN} log-bin directory '${MYSQL_LOG_BIN}'"
 	fi
@@ -1050,7 +982,7 @@ einfo "Creating ${PN} log-bin directory '${MYSQL_LOG_BIN}' ..."
 	fi
 
 	if [[ -n "${MYSQL_RELAY_LOG}" && ! -d "${MYSQL_RELAY_LOG}" ]] ; then
-einfo "Creating ${PN} relay-log directory '${MYSQL_RELAY_LOG}' ..."
+		einfo "Creating ${PN} relay-log directory '${MYSQL_RELAY_LOG}' ..."
 		install -d -m 770 -o ${MYSQL_USER} -g ${MYSQL_GROUP} "${MYSQL_RELAY_LOG}" \
 			|| die "Failed to create ${PN} relay-log directory '${MYSQL_RELAY_LOG}'!"
 	fi
@@ -1093,24 +1025,24 @@ einfo "Creating ${PN} relay-log directory '${MYSQL_RELAY_LOG}' ..."
 	fi
 
 	echo ""
-einfo "Detected settings:"
-einfo "=================="
-einfo "MySQL User:\t\t\t\t${MYSQL_USER}"
-einfo "MySQL Group:\t\t\t\t${MYSQL_GROUP}"
-einfo "MySQL DATA directory:\t\t${MY_DATADIR}"
-einfo "MySQL TMP directory:\t\t\t${MYSQL_TMPDIR}"
+	einfo "Detected settings:"
+	einfo "=================="
+	einfo "MySQL User:\t\t\t\t${MYSQL_USER}"
+	einfo "MySQL Group:\t\t\t\t${MYSQL_GROUP}"
+	einfo "MySQL DATA directory:\t\t${MY_DATADIR}"
+	einfo "MySQL TMP directory:\t\t\t${MYSQL_TMPDIR}"
 
 	if [[ -n "${MYSQL_LOG_BIN}" ]] ; then
-einfo "MySQL Binary Log File location:\t${MYSQL_LOG_BIN}"
+		einfo "MySQL Binary Log File location:\t${MYSQL_LOG_BIN}"
 	fi
 
 	if [[ -n "${MYSQL_RELAY_LOG}" ]] ; then
-einfo "MySQL Relay Log File location:\t${MYSQL_RELAY_LOG}"
+		einfo "MySQL Relay Log File location:\t${MYSQL_RELAY_LOG}"
 	fi
 
-einfo "PID DIR:\t\t\t\t${PID_DIR}"
-einfo "Install db log:\t\t\t${mysql_install_log}"
-einfo "Install server log:\t\t\t${mysqld_logfile}"
+	einfo "PID DIR:\t\t\t\t${PID_DIR}"
+	einfo "Install db log:\t\t\t${mysql_install_log}"
+	einfo "Install server log:\t\t\t${mysqld_logfile}"
 
 	local -a config_files
 
@@ -1118,16 +1050,16 @@ einfo "Install server log:\t\t\t${mysqld_logfile}"
 	if [[ -f "${config_file}" ]] ; then
 		config_files+=( "${config_file}" )
 	else
-ewarn "Client configuration '${config_file}' not found."
-ewarn "Skipping configuration of default authentication plugin for client ..."
+		ewarn "Client configuration '${config_file}' not found."
+		ewarn "Skipping configuration of default authentication plugin for client ..."
 	fi
 
 	config_file="${EROOT}/etc/mysql/mysql.d/50-distro-server.cnf"
 	if [[ -f "${config_file}" ]] ; then
 		config_files+=( "${config_file}" )
 	else
-ewarn "Server configuration '${config_file}' not found"
-ewarn "Skipping configuration of default authentication plugin for mysqld ..."
+		ewarn "Server configuration '${config_file}' not found"
+		ewarn "Skipping configuration of default authentication plugin for mysqld ..."
 	fi
 
 	if [[ ${#config_files[@]} -gt 0 ]] ; then
@@ -1135,12 +1067,12 @@ ewarn "Skipping configuration of default authentication plugin for mysqld ..."
 			local user_answer
 
 			echo
-einfo "Please select default authentication plugin (enter number or plugin name):"
-einfo "1) caching_sha2_password [MySQL 8.0 default]"
-einfo "2) mysql_native_password [MySQL 5.7 default]"
-einfo
-einfo "For details see:"
-einfo "https://dev.mysql.com/doc/refman/8.0/en/upgrading-from-previous-series.html#upgrade-caching-sha2-password"
+			einfo "Please select default authentication plugin (enter number or plugin name):"
+			einfo "1) caching_sha2_password [MySQL 8.0 default]"
+			einfo "2) mysql_native_password [MySQL 5.7 default]"
+			einfo
+			einfo "For details see:"
+			einfo "https://dev.mysql.com/doc/refman/8.0/en/upgrading-from-previous-series.html#upgrade-caching-sha2-password"
 			read -p "    >" user_answer
 			echo
 
@@ -1176,12 +1108,12 @@ einfo "https://dev.mysql.com/doc/refman/8.0/en/upgrading-from-previous-series.ht
 			fi
 
 			if grep -qE "^(loose-)?${cfg_option}\b.*=" "${config_file}" 2>/dev/null ; then
-einfo "Ensuring that ${cfg_option} is set to '${MYSQL_DEFAULT_AUTHENTICATION_PLUGIN}' in '${config_file}' ..."
+				einfo "Ensuring that ${cfg_option} is set to '${MYSQL_DEFAULT_AUTHENTICATION_PLUGIN}' in '${config_file}' ..."
 				sed -i \
 					-e "s/^\(loose-\)\?${cfg_option}\b.*=.*/loose-${cfg_option}${cfg_option_tabs}= ${MYSQL_DEFAULT_AUTHENTICATION_PLUGIN}/" \
 					"${config_file}" || die "Failed to change ${cfg_option} in '${config_file}'!"
 			else
-einfo "Setting ${cfg_option} to '${MYSQL_DEFAULT_AUTHENTICATION_PLUGIN}' in '${config_file}' ..."
+				einfo "Setting ${cfg_option} to '${MYSQL_DEFAULT_AUTHENTICATION_PLUGIN}' in '${config_file}' ..."
 				sed -i \
 					-e "/^\[${cfg_section}\]$/a loose-${cfg_option}${cfg_option_tabs}= ${MYSQL_DEFAULT_AUTHENTICATION_PLUGIN}" \
 					"${config_file}" || die "Failed to add ${cfg_option} to '${config_file}'!"
@@ -1197,17 +1129,17 @@ einfo "Setting ${cfg_option} to '${MYSQL_DEFAULT_AUTHENTICATION_PLUGIN}' in '${c
 		local tmp_mysqld_password_source=
 
 		for tmp_mysqld_password_source in mysql client ; do
-einfo "Trying to get password for mysql 'root' user from '${tmp_mysqld_password_source}' section ..."
+			einfo "Trying to get password for mysql 'root' user from '${tmp_mysqld_password_source}' section ..."
 			MYSQL_ROOT_PASSWORD="$(_getoptval "${tmp_mysqld_password_source}" password)"
 			if [[ -n "${MYSQL_ROOT_PASSWORD}" ]] ; then
 				if [[ ${MYSQL_ROOT_PASSWORD} == *$'\n'* ]] ; then
-ewarn "Ignoring password from '${tmp_mysqld_password_source}' section due to newline character!"
-ewarn "(Do you have multiple password options set?)"
+					ewarn "Ignoring password from '${tmp_mysqld_password_source}' section due to newline character!"
+					ewarn "(Do you have multiple password options set?)"
 					MYSQL_ROOT_PASSWORD=
 					continue
 				fi
 
-einfo "Found password in '${tmp_mysqld_password_source}' section!"
+				einfo "Found password in '${tmp_mysqld_password_source}' section!"
 				break
 			fi
 		done
@@ -1225,15 +1157,15 @@ einfo "Found password in '${tmp_mysqld_password_source}' section!"
 		local pwd2="b"
 
 		echo
-einfo "No password for mysql 'root' user was specified via environment"
-einfo "variable MYSQL_ROOT_PASSWORD and no password was found in config"
-einfo "file like '${HOME}/.my.cnf'."
-einfo "To continue please provide a password for the mysql 'root' user"
-einfo "now on console:"
-ewarn "NOTE: Please avoid [\"'\\_%] characters in the password!"
+		einfo "No password for mysql 'root' user was specified via environment"
+		einfo "variable MYSQL_ROOT_PASSWORD and no password was found in config"
+		einfo "file like '${HOME}/.my.cnf'."
+		einfo "To continue please provide a password for the mysql 'root' user"
+		einfo "now on console:"
+		ewarn "NOTE: Please avoid [\"'\\_%] characters in the password!"
 		read -rsp "    >" pwd1 ; echo
 
-einfo "Retype the password"
+		einfo "Retype the password"
 		read -rsp "    >" pwd2 ; echo
 
 		if [[ "x$pwd1" != "x$pwd2" ]] ; then
@@ -1291,7 +1223,7 @@ einfo "Retype the password"
 		"--user=${MYSQL_USER}"
 	)
 
-einfo "Initializing ${PN} data directory: ${cmd[@]}"
+	einfo "Initializing ${PN} data directory: ${cmd[@]}"
 	eval "${cmd[@]}" >>"${mysql_install_log}" 2>&1
 
 	if [[ $? -ne 0 || ! -f "${MY_DATADIR}/mysql.ibd" ]] ; then
@@ -1312,15 +1244,15 @@ einfo "Initializing ${PN} data directory: ${cmd[@]}"
 		"--basedir='${EROOT}/usr'"
 		"--datadir='${MY_DATADIR}'"
 		"--tmpdir='${MYSQL_TMPDIR}'"
-		"--max_allowed_packet=8M"
-		"--net_buffer_length=16K"
+		--max_allowed_packet=8M
+		--net_buffer_length=16K
 		"--socket='${socket}'"
 		"--pid-file='${pidfile}'"
 		"--log-error='${mysqld_logfile}'"
 		"--user=${MYSQL_USER}"
 	)
 
-einfo "Starting mysqld to finalize initialization: ${cmd[@]}"
+	einfo "Starting mysqld to finalize initialization: ${cmd[@]}"
 	eval "${cmd[@]}" >>"${mysqld_logfile}" 2>&1 &
 
 	echo -n "Waiting for mysqld to accept connections "
@@ -1393,11 +1325,9 @@ einfo "Starting mysqld to finalize initialization: ${cmd[@]}"
 		if [[ -f "${pidfile}" ]] && pgrep -F "${pidfile}" &>/dev/null ; then
 			# We somehow failed to stop server.
 			# However, not a fatal error. Just warn the user.
-ewarn "WARNING: mysqld[$(cat "${pidfile}")] is still running!"
+			ewarn "WARNING: mysqld[$(cat "${pidfile}")] is still running!"
 		fi
 	fi
 
-einfo "${PN} data directory at '${MY_DATADIR}' successfully initialized!"
+	einfo "${PN} data directory at '${MY_DATADIR}' successfully initialized!"
 }
-
-# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  pgo, bolt
