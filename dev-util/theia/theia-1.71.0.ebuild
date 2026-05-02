@@ -6,6 +6,8 @@ EAPI=8
 
 # U22
 
+# This ebuild uses AI generated patches or suggested fixes.
+
 # For the plugin extension list see
 # https://github.com/microsoft/vscode/tree/main/extensions
 
@@ -526,6 +528,7 @@ BDEPEND+="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-1.68.0-download-plugins-serially.patch"
+	"${FILESDIR}/${PN}-1.71.0-plugin-reader-fixes.patch"
 )
 
 _puppeteer_setup_offline_cache() {
@@ -633,8 +636,10 @@ einfo "Fixing vulnerabilities"
 		sed -i -e "s|\"tar\": \"^6.1.11\"|\"tar\": \"^7.5.13\"|g" "package-lock.json" || die							# CVE-2026-23950; DT, ID; High
 		sed -i -e "s|\"tar\": \"^6.2.1\"|\"tar\": \"^7.5.13\"|g" "package-lock.json" || die							# CVE-2026-23950; DT, ID; High
 		sed -i -e "s|\"tar\": \"^7.4.3\"|\"tar\": \"^7.5.13\"|g" "package-lock.json" || die							# CVE-2026-23950; DT, ID; High
+		sed -i -e "s|\"tar\": \"^7.5.4\"|\"tar\": \"^7.5.13\"|g" "package-lock.json" || die							# CVE-2026-23950; DT, ID; High
 		sed -i -e "s|\"tar\": \"^7.5.6\"|\"tar\": \"^7.5.13\"|g" "package-lock.json" || die
 		sed -i -e "s|\"tar\": \"^7.5.8\"|\"tar\": \"^7.5.13\"|g" "package-lock.json" || die
+		sed -i -e "s|\"tar\": \"7.5.11\"|\"tar\": \"^7.5.13\"|g" "package-lock.json" || die
 		sed -i -e "s|\"tar\": \"6.2.1\"|\"tar\": \"^7.5.13\"|g" "package-lock.json" || die							# CVE-2026-23950; DT, ID; High
 																			# CVE-2026-24842; DT, ID; High
 																			# CVE-2026-23745; DT, ID; High
@@ -711,10 +716,10 @@ einfo "Fixing vulnerabilities"
 		sed -i -e "s|\"multer\": \"^2.0.1\"|\"multer\": \"^2.1.0\"|g" "package-lock.json" || die						# CVE-2026-3304; ZC, VS(DoS); High
 																			# CVE-2026-2359; ZC, VS(DoS); High
 
-		sed -i -e "s|\"protobufjs\": \"^7.5.4\"|\"protobufjs\": \"^7.5.5\"|g" "package-lock.json" || die					# CVE-2026-41242; VS(DoS, DT, ID); SS(DoS, DT, ID); Critical
-		sed -i -e "s|\"protobufjs\": \"^7.5.3\"|\"protobufjs\": \"^7.5.5\"|g" "package-lock.json" || die					# CVE-2026-41242; VS(DoS, DT, ID); SS(DoS, DT, ID); Critical
-		sed -i -e "s|\"protobufjs\": \"^7.3.2\"|\"protobufjs\": \"^7.5.5\"|g" "package-lock.json" || die					# CVE-2026-41242; VS(DoS, DT, ID); SS(DoS, DT, ID); Critical
-		sed -i -e "s|\"protobufjs\": \"^7.2.5\"|\"protobufjs\": \"^7.5.5\"|g" "package-lock.json" || die					# CVE-2026-41242; VS(DoS, DT, ID); SS(DoS, DT, ID); Critical
+		sed -i -e "s|\"protobufjs\": \"^7.5.4\"|\"protobufjs\": \"^7.5.6\"|g" "package-lock.json" || die					# CVE-2026-41242; VS(DoS, DT, ID); SS(DoS, DT, ID); Critical
+		sed -i -e "s|\"protobufjs\": \"^7.5.3\"|\"protobufjs\": \"^7.5.6\"|g" "package-lock.json" || die					# CVE-2026-41242; VS(DoS, DT, ID); SS(DoS, DT, ID); Critical
+		sed -i -e "s|\"protobufjs\": \"^7.3.2\"|\"protobufjs\": \"^7.5.6\"|g" "package-lock.json" || die					# CVE-2026-41242; VS(DoS, DT, ID); SS(DoS, DT, ID); Critical
+		sed -i -e "s|\"protobufjs\": \"^7.2.5\"|\"protobufjs\": \"^7.5.6\"|g" "package-lock.json" || die					# CVE-2026-41242; VS(DoS, DT, ID); SS(DoS, DT, ID); Critical
 
 		sed -i -e "s|\"simple-git\": \"^3.25.0\"|\"simple-git\": \"^3.32.3\"|g" "package-lock.json" || die					# CVE-2026-28292; ZC, DoS, DT, ID; Critical
 																			# CVE-2026-28291; ZC, DoS, DT, ID; High
@@ -730,17 +735,20 @@ einfo "Fixing vulnerabilities"
 		sed -i -e "s|\"picomatch\": \"^4.0.3\"|\"picomatch\": \"^4.0.4\"|g" "package-lock.json" || die						# CVE-2026-33671; ZC, DoS; High
 																			# CVE-2026-33672; ZC, DT; Moderate
 
-		sed -i -e "s|\"path-to-regexp\": \"^8.0.0\"|\"path-to-regexp\": \"^8.4.0\"|g" "package-lock.json" || die				# CVE-2026-4926; ZC, DoS; High
+		sed -i -e "s|\"path-to-regexp\": \"^8.0.0\"|\"path-to-regexp\": \"^8.4.2\"|g" "package-lock.json" || die				# CVE-2026-4926; ZC, DoS; High
 																			# CVE-2026-4923; ZC, DoS; Moderate
-		sed -i -e "s|\"path-to-regexp\": \"~0.1.12\"|\"path-to-regexp\": \"^8.4.0\"|g" "package-lock.json" || die				# CVE-2026-4867; ZC, DoS; High
-		sed -i -e "s|\"path-to-regexp\": \"^6.2.1\"|\"path-to-regexp\": \"^8.4.0\"|g" "package-lock.json" || die				# CVE-2026-4867; ZC, DoS; High
+		sed -i -e "s|\"path-to-regexp\": \"~0.1.12\"|\"path-to-regexp\": \"^8.4.2\"|g" "package-lock.json" || die				# CVE-2026-4867; ZC, DoS; High
+		sed -i -e "s|\"path-to-regexp\": \"^6.2.1\"|\"path-to-regexp\": \"^8.4.2\"|g" "package-lock.json" || die				# CVE-2026-4867; ZC, DoS; High
 
-		sed -i -e "s|\"dompurify\": \"3.2.7\"|\"dompurify\": \"^3.3.2\"|g" "package-lock.json" || die						# GHSA-h8r8-wccr-v5f2; ZC, SS(DoS); Moderate
-		sed -i -e "s|\"dompurify\": \"^3.2.4\"|\"dompurify\": \"^3.3.2\"|g" "package-lock.json" || die						# GHSA-h8r8-wccr-v5f2; ZC, SS(DoS); Moderate
+		sed -i -e "s|\"dompurify\": \"3.2.7\"|\"dompurify\": \"^3.4.0\"|g" "package-lock.json" || die						# GHSA-h8r8-wccr-v5f2; ZC, SS(DoS); Moderate
+		sed -i -e "s|\"dompurify\": \"^3.2.4\"|\"dompurify\": \"^3.4.0\"|g" "package-lock.json" || die						# GHSA-h8r8-wccr-v5f2; ZC, SS(DoS); Moderate
 																			# GHSA-39q2-94rc-95cp; VS(DT, ID); Moderate
 																			# GHSA-cjmm-f4jc-qw8r; SS(DT, ID); Moderate
 																			# GHSA-cj63-jhhr-wcxv; VS(DT), SS(DT, ID); Moderate
 																			# CVE-2026-0540;  SS(DT, ID); Moderate
+																			# CVE-2026-41238; DT, ID; Moderate
+																			# CVE-2026-41239; DT, ID; Moderate
+																			# CVE-2026-41240; VS(DT); Moderate
 
 		sed -i -e "s|\"yaml\": \"^2.2.2\"|\"yaml\": \"^2.8.3\"|g" "package-lock.json" || die							# CVE-2026-33532; DoS; Moderate
 		sed -i -e "s|\"yaml\": \"^2.6.0\"|\"yaml\": \"^2.8.3\"|g" "package-lock.json" || die							# CVE-2026-33532; DoS; Moderate
@@ -756,20 +764,40 @@ einfo "Fixing vulnerabilities"
 #		sed -i -e "s|\"@tootallnate/once\": \"1\"|\"@tootallnate/once\": \"^3.0.1\"|g" "package-lock.json" || die				# CVE-2026-3449; VS(DoS); Low
 #		sed -i -e "s|\"@tootallnate/once\": \"2\"|\"@tootallnate/once\": \"^3.0.1\"|g" "package-lock.json" || die				# CVE-2026-3449; VS(DoS); Low
 
-		sed -i -e "s|\"@hono/node-server\": \"^1.19.9\"|\"@hono/node-server\": \"^1.19.13\"|g" "package-lock.json" || die			# CVE-2026-29087; ZC, ID; High
+		sed -i -e "s|\"@hono/node-server\": \"^1.19.9\"|\"@hono/node-server\": \"^1.19.14\"|g" "package-lock.json" || die			# CVE-2026-29087; ZC, ID; High
+		sed -i -e "s|\"@hono/node-server\": \"^1.19.13\"|\"@hono/node-server\": \"^1.19.14\"|g" "package-lock.json" || die			# CVE-2026-29087; ZC, ID; High
 																			# CVE-2026-39406; ZC, ID; Moderate
 
+
+		sed -i -e "s|\"uuid\": \"^7.0.3\"|\"uuid\": \"^14.0.0\"|g" "package-lock.json" || die							# GHSA-w5hq-g745-h8pq; ZC, VC(ID); Moderate
+		sed -i -e "s|\"uuid\": \"^8.3.0\"|\"uuid\": \"^14.0.0\"|g" "package-lock.json" || die							# GHSA-w5hq-g745-h8pq; ZC, VC(ID); Moderate
+		sed -i -e "s|\"uuid\": \"^8.3.2\"|\"uuid\": \"^14.0.0\"|g" "package-lock.json" || die							# GHSA-w5hq-g745-h8pq; ZC, VC(ID); Moderate
+		sed -i -e "s|\"uuid\": \"^8.3.2\"|\"uuid\": \"^14.0.0\"|g" "packages/dev-container/package.json" || die					# GHSA-w5hq-g745-h8pq; ZC, VC(ID); Moderate
+		sed -i -e "s|\"uuid\": \"^9.0.0\"|\"uuid\": \"^14.0.0\"|g" "package-lock.json" || die							# GHSA-w5hq-g745-h8pq; ZC, VC(ID); Moderate
+		sed -i -e "s|\"uuid\": \"^9.0.1\"|\"uuid\": \"^14.0.0\"|g" "package-lock.json" || die							# GHSA-w5hq-g745-h8pq; ZC, VC(ID); Moderate
+		sed -i -e "s|\"uuid\": \"^9.0.1\"|\"uuid\": \"^14.0.0\"|g" "packages/ai-chat-ui/package.json" || die					# GHSA-w5hq-g745-h8pq; ZC, VC(ID); Moderate
+		sed -i -e "s|\"uuid\": \"^9.0.1\"|\"uuid\": \"^14.0.0\"|g" "packages/core/package.json" || die						# GHSA-w5hq-g745-h8pq; ZC, VC(ID); Moderate
+		sed -i -e "s|\"uuid\": \"^9.0.1\"|\"uuid\": \"^14.0.0\"|g" "packages/dev-container/package.json" || die					# GHSA-w5hq-g745-h8pq; ZC, VC(ID); Moderate
+		sed -i -e "s|\"uuid\": \"^10.0.0\"|\"uuid\": \"^14.0.0\"|g" "package-lock.json" || die							# GHSA-w5hq-g745-h8pq; ZC, VC(ID); Moderate
+
+		sed -i -e "s|\"hono\": \"^4\"|\"hono\": \"^4.12.12\"|g" "package-lock.json" || die							# CVE-2026-39409; ZC, VS(ID); Moderate
+		sed -i -e "s|\"hono\": \"^4.11.4\"|\"hono\": \"^4.12.12\"|g" "package-lock.json" || die							# CVE-2026-39409; ZC, VS(ID); Moderate
+																			# CVE-2026-39408; VS(DT); Moderate
+																			# CVE-2026-39407; ID; Moderate
+																			# GHSA-26pp-8wgv-hjvm; ZC, DoS; Moderate
+																			# CVE-2026-39410; ZC, DT; ID
+																			# GHSA-458j-xx4x-4375; DT; Moderate
 	}
 	patch_lockfile
 
-ewarn "QA:  Manually remove node_modules/path-to-regexp from ${S}/package-lock.json"
+#ewarn "QA:  Manually remove node_modules/path-to-regexp (8.4.2) from ${S}/package-lock.json" # Skip
 #ewarn "QA:  Manually remove node_modules/nise/node_modules/path-to-regexp from ${S}/package-lock.json"
 #ewarn "QA:  Manually remove node_modules/router/node_modules/path-to-regexp from ${S}/package-lock.json"
 #ewarn "QA:  Manually remove node_modules/body-parser/node_modules/qs from ${S}/package-lock.json"
 #ewarn "QA:  Manually remove node_modules/express/node_modules/qs from ${S}/package-lock.json"
 #ewarn "QA:  Manually remove node_modules/@electron/node-gyp/node_modules/tar from ${S}/package-lock.json"
 #ewarn "QA:  Manually remove node_modules/jsonwebtoken/node_modules/jws from ${S}/package-lock.json"
-ewarn "QA:  Manually remove node_modules/jsondiffpatch and deps from ${S}/package-lock.json"
+ewarn "QA:  Manually remove node_modules/jsondiffpatch (0.6.0) and deps from ${S}/package-lock.json"
 #ewarn "QA:  Manually remove node_modules/@modelcontextprotocol/sdk/node_modules/qs from ${S}/package-lock.json"
 #ewarn "QA:  Manually remove node_modules/google-auth-library/node_modules/jws from ${S}/package-lock.json"
 #ewarn "QA:  Manually remove node_modules/gtoken/node_modules/jws from ${S}/package-lock.json"
@@ -777,6 +805,13 @@ ewarn "QA:  Manually remove node_modules/jsondiffpatch and deps from ${S}/packag
 ewarn "QA:  Manually remove node_modules/copy-webpack-plugin/node_modules/serialize-javascript from ${S}/package-lock.json"
 ewarn "QA:  Manually remove node_modules/@modelcontextprotocol/sdk/node_modules/body-parser from ${S}/package-lock.json"
 #ewarn "QA:  Manually remove \"node_modules/protobufjs\" from ${S}/package-lock.json" # Skip
+#ewarn "QA:  Manually remove node_modules/@azure/msal-node/node_modules/uuid from ${S}/package-lock.json"
+#ewarn "QA:  Manually remove node_modules/istanbul-lib-processinfo/node_modules/uuid from ${S}/package-lock.json"
+#ewarn "QA:  Manually remove node_modules/react-tooltip/node_modules/uuid from ${S}/package-lock.json"
+#ewarn "QA:  Manually remove node_modules/trash/node_modules/uuid from ${S}/package-lock.json"
+#ewarn "QA:  Manually remove packages/dev-container/node_modules/uuid from ${S}/package-lock.json"
+#ewarn "QA:  Manually node_modules/uuid (9.0.1) from ${S}/package-lock.json"
+ewarn "QA:  Manually node_modules/@hono/node-server (1.19.12) from ${S}/package-lock.json"
 
 	enpm add "basic-ftp@^5.2.0" -D
 	enpm add "basic-ftp@^5.2.0" -P -w "dev-packages/cli"
@@ -875,9 +910,9 @@ ewarn "QA:  Manually remove node_modules/@modelcontextprotocol/sdk/node_modules/
 
 	enpm add "multer@^2.1.0" -P -w "packages/filesystem"
 
-	enpm add "protobufjs@^7.5.5" -P -w "packages/ai-google"
-	enpm add "protobufjs@^7.5.5" -P -w "packages/dev-container"
-	enpm add "protobufjs@^7.5.5" -P -w "packages/scanoss"
+	enpm add "protobufjs@^7.5.6" -P -w "packages/ai-google"
+	enpm add "protobufjs@^7.5.6" -P -w "packages/dev-container"
+	enpm add "protobufjs@^7.5.6" -P -w "packages/scanoss"
 	enpm add "simple-git@^3.32.3" -P -w "packages/ai-ide"
 	enpm add "handlebars@^4.7.9" -D
 
@@ -888,38 +923,38 @@ ewarn "QA:  Manually remove node_modules/@modelcontextprotocol/sdk/node_modules/
 	enpm add "picomatch@^4.0.4" -P -w "packages/core"
 	enpm add "picomatch@^4.0.4" -D
 
-	enpm add "path-to-regexp@^8.4.0" -P -w "examples/api-samples"
-	enpm add "path-to-regexp@^8.4.0" -P -w "packages/ai-mcp"
-	enpm add "path-to-regexp@^8.4.0" -P -w "packages/ai-mcp-server"
-	enpm add "path-to-regexp@^8.4.0" -P -w "packages/core"
-	enpm add "path-to-regexp@^8.4.0" -D
+	enpm add "path-to-regexp@^8.4.2" -P -w "examples/api-samples"
+	enpm add "path-to-regexp@^8.4.2" -P -w "packages/ai-mcp"
+	enpm add "path-to-regexp@^8.4.2" -P -w "packages/ai-mcp-server"
+	enpm add "path-to-regexp@^8.4.2" -P -w "packages/core"
+	enpm add "path-to-regexp@^8.4.2" -D
 
-	enpm add "dompurify@^3.3.2" -P -w "examples/api-samples"
-	enpm add "dompurify@^3.3.2" -P -w "packages/ai-code-completion"
-	enpm add "dompurify@^3.3.2" -P -w "packages/ai-codex"
-	enpm add "dompurify@^3.3.2" -P -w "packages/ai-chat"
-	enpm add "dompurify@^3.3.2" -P -w "packages/ai-chat-ui"
-	enpm add "dompurify@^3.3.2" -P -w "packages/ai-claude-code"
-	enpm add "dompurify@^3.3.2" -P -w "packages/ai-code-completion"
-	enpm add "dompurify@^3.3.2" -P -w "packages/ai-codex"
-	enpm add "dompurify@^3.3.2" -P -w "packages/ai-core"
-	enpm add "dompurify@^3.3.2" -P -w "packages/ai-editor"
-	enpm add "dompurify@^3.3.2" -P -w "packages/ai-scanoss"
-	enpm add "dompurify@^3.3.2" -P -w "packages/bulk-edit"
-	enpm add "dompurify@^3.3.2" -P -w "packages/collaboration"
-	enpm add "dompurify@^3.3.2" -P -w "packages/console"
-	enpm add "dompurify@^3.3.2" -P -w "packages/debug"
-	enpm add "dompurify@^3.3.2" -P -w "packages/keymaps"
-	enpm add "dompurify@^3.3.2" -P -w "packages/monaco"
-	enpm add "dompurify@^3.3.2" -P -w "packages/notebook"
-	enpm add "dompurify@^3.3.2" -P -w "packages/output"
-	enpm add "dompurify@^3.3.2" -P -w "packages/plugin-ext"
-	enpm add "dompurify@^3.3.2" -P -w "packages/plugin-ext-vscode"
-	enpm add "dompurify@^3.3.2" -P -w "packages/plugin-metrics"
-	enpm add "dompurify@^3.3.2" -P -w "packages/preferences"
-	enpm add "dompurify@^3.3.2" -P -w "packages/scm"
-	enpm add "dompurify@^3.3.2" -P -w "packages/task"
-	enpm add "dompurify@^3.3.2" -P -w "packages/toolbar"
+	enpm add "dompurify@^3.4.0" -P -w "examples/api-samples"
+	enpm add "dompurify@^3.4.0" -P -w "packages/ai-code-completion"
+	enpm add "dompurify@^3.4.0" -P -w "packages/ai-codex"
+	enpm add "dompurify@^3.4.0" -P -w "packages/ai-chat"
+	enpm add "dompurify@^3.4.0" -P -w "packages/ai-chat-ui"
+	enpm add "dompurify@^3.4.0" -P -w "packages/ai-claude-code"
+	enpm add "dompurify@^3.4.0" -P -w "packages/ai-code-completion"
+	enpm add "dompurify@^3.4.0" -P -w "packages/ai-codex"
+	enpm add "dompurify@^3.4.0" -P -w "packages/ai-core"
+	enpm add "dompurify@^3.4.0" -P -w "packages/ai-editor"
+	enpm add "dompurify@^3.4.0" -P -w "packages/ai-scanoss"
+	enpm add "dompurify@^3.4.0" -P -w "packages/bulk-edit"
+	enpm add "dompurify@^3.4.0" -P -w "packages/collaboration"
+	enpm add "dompurify@^3.4.0" -P -w "packages/console"
+	enpm add "dompurify@^3.4.0" -P -w "packages/debug"
+	enpm add "dompurify@^3.4.0" -P -w "packages/keymaps"
+	enpm add "dompurify@^3.4.0" -P -w "packages/monaco"
+	enpm add "dompurify@^3.4.0" -P -w "packages/notebook"
+	enpm add "dompurify@^3.4.0" -P -w "packages/output"
+	enpm add "dompurify@^3.4.0" -P -w "packages/plugin-ext"
+	enpm add "dompurify@^3.4.0" -P -w "packages/plugin-ext-vscode"
+	enpm add "dompurify@^3.4.0" -P -w "packages/plugin-metrics"
+	enpm add "dompurify@^3.4.0" -P -w "packages/preferences"
+	enpm add "dompurify@^3.4.0" -P -w "packages/scm"
+	enpm add "dompurify@^3.4.0" -P -w "packages/task"
+	enpm add "dompurify@^3.4.0" -P -w "packages/toolbar"
 
 	enpm add "yaml@^2.8.3" -P -w "dev-packages/cli"
 	enpm add "yaml@^2.8.3" -D
@@ -937,9 +972,14 @@ ewarn "QA:  Manually remove node_modules/@modelcontextprotocol/sdk/node_modules/
 #	enpm add "@tootallnate/once@^3.0.1" -P -w "packages/plugin-ext"
 #	enpm add "@tootallnate/once@^3.0.1" -D
 
-	enpm add "@hono/node-server@^1.19.13" -P -w "examples/api-samples"
-	enpm add "@hono/node-server@^1.19.13" -P -w "packages/ai-mcp-server"
-	enpm add "@hono/node-server@^1.19.13" -P -w "packages/ai-mcp"
+	enpm add "@hono/node-server@^1.19.14" -P -w "examples/api-samples"
+	enpm add "@hono/node-server@^1.19.14" -P -w "packages/ai-mcp-server"
+	enpm add "@hono/node-server@^1.19.14" -P -w "packages/ai-mcp"
+
+	enpm add "uuid@^14.0.0" -P -w "packages/dev-container"
+	enpm add "uuid@^14.0.0" -P -w "packages/core"
+	enpm add "uuid@^14.0.0" -P -w "packages/ai-chat-ui"
+	enpm add "uuid@^14.0.0" -D
 
 	patch_lockfile
 }

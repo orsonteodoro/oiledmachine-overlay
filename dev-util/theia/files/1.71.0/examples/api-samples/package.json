@@ -25,7 +25,7 @@
     "@theia/vsx-registry": "1.71.0",
     "@theia/workspace": "1.71.0",
     "body-parser": "^2.2.2",
-    "dompurify": "^3.3.3",
+    "dompurify": "^3.4.2",
     "path-to-regexp": "^8.4.2",
     "qs": "^6.15.1",
     "zod": "^4.3.6"

@@ -74,7 +74,7 @@
     "socket.io-client": "^4.8.3",
     "socket.io-parser": "^4.2.6",
     "tslib": "^2.6.2",
-    "uuid": "^9.0.1",
+    "uuid": "^14.0.0",
     "vscode-languageserver-protocol": "3.17.5",
     "vscode-uri": "3.0.8",
     "ws": "^8.20.0",
