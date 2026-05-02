@@ -9,7 +9,7 @@
     "@types/tar-fs": "^1.16.3",
     "@types/tar-stream": "^3.1.4",
     "async-mutex": "^0.3.2",
-    "body-parser": "^2.2.2",
+    "body-parser": "^1.20.4",
     "http-status-codes": "^1.4.0",
     "ignore": "^6.0.2",
     "minimatch": "^10.2.5",

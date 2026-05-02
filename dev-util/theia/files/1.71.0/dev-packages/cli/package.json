@@ -41,35 +41,28 @@
     "@types/chai": "^4.2.7",
     "@types/mocha": "^10.0.0",
     "@types/node-fetch": "^2.5.7",
-    "basic-ftp": "^5.3.1",
     "chai": "^4.3.10",
     "chalk": "4.0.0",
     "decompress": "^4.2.1",
-    "diff": "^5.2.2",
     "escape-string-regexp": "4.0.0",
-    "follow-redirects": "^1.16.0",
     "glob": "^8.1.0",
     "http-server": "^14.1.1",
     "limiter": "^2.1.0",
     "log-update": "^4.0.0",
     "mocha": "^10.8.2",
     "patch-package": "^8.0.1",
-    "picomatch": "^4.0.4",
     "puppeteer": "23.1.0",
     "puppeteer-core": "23.1.0",
     "puppeteer-to-istanbul": "1.4.0",
-    "qs": "^6.15.1",
     "temp": "^0.9.4",
     "tslib": "^2.6.2",
-    "yaml": "^2.8.3",
     "yargs": "^15.3.1"
   },
   "devDependencies": {
     "@types/chai": "^4.2.7",
     "@types/mocha": "^10.0.0",
     "@types/node-fetch": "^2.5.7",
-    "@types/proxy-from-env": "^1.0.1",
-    "js-yaml": "^4.1.1"
+    "@types/proxy-from-env": "^1.0.1"
   },
   "gitHead": "21358137e41342742707f660b8e222f940a27652"
 }

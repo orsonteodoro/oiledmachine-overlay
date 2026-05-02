@@ -9,7 +9,6 @@
     "@theia/monaco": "1.71.0",
     "@theia/monaco-editor-core": "1.108.201",
     "@theia/workspace": "1.71.0",
-    "dompurify": "^3.4.2",
     "lib0": "^0.2.117",
     "open-collaboration-protocol": "0.3.0",
     "open-collaboration-yjs": "0.3.0",

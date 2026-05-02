@@ -986,7 +986,7 @@ ewarn "QA:  Manually node_modules/@hono/node-server (1.19.12) from ${S}/package-
 
 npm_update_lock_audit_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
-		fix_vulnerabilities
+		: #fix_vulnerabilities
 	fi
 }
 
@@ -1265,6 +1265,7 @@ einfo
 # OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.65.0 (20251004)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.69.0 (20260227)
 # OILEDMACHINE-OVERLAY-TEST:  FAILED  (interactive) 1.70.2 (20260419 with Electron 39.8.7)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.71.0 (20260501 with Electron 39.8.7)
 # launch-test:  passed
 # ai-assistant (ollama with yi-coder:1.5b with Universal agent):  passed
 # Run hello world for python:  fail

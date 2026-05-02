@@ -44,8 +44,7 @@
     "watch": "theiaext watch"
   },
   "devDependencies": {
-    "@theia/ext-scripts": "1.71.0",
-    "lodash": "^4.18.1"
+    "@theia/ext-scripts": "1.71.0"
   },
   "nyc": {
     "extends": "../../configs/nyc.json"
