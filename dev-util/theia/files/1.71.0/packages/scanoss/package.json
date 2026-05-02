@@ -4,6 +4,8 @@
   "description": "Theia - SCANOSS Integration",
   "dependencies": {
     "@theia/core": "1.71.0",
+    "basic-ftp": "^5.3.1",
+    "protobufjs": "^7.5.6",
     "scanoss": "^0.15.7"
   },
   "publishConfig": {

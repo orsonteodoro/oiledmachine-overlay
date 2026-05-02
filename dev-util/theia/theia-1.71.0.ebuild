@@ -499,7 +499,7 @@ LICENSE="
 RESTRICT="mirror"
 IUSE+="
 ${!THEIA_PLUGINS[@]}
-git ollama ebuild_revision_49
+git ollama ebuild_revision_50
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -630,6 +630,7 @@ einfo "Fixing vulnerabilities"
 	# The pinned version is required for electron.
 	# The pinned version is required for glob.
 	# The pinned version is required for ajv and webpack for unattended install.
+	# The pinned version is required for path-to-regexp.
 	patch_lockfile() {
 		sed -i -e "s|\"basic-ftp\": \"^5.0.2\"|\"basic-ftp\": \"^5.2.0\"|g" "package-lock.json" || die						# CVE-2026-27699; ZC, DoS, DT; Critical
 		sed -i -e "s|\"tar\": \"^6.0.5\"|\"tar\": \"^7.5.13\"|g" "package-lock.json" || die							# CVE-2026-23950; DT, ID; High
@@ -728,6 +729,7 @@ einfo "Fixing vulnerabilities"
 																			# CVE-2026-33938; ZC, DoS, DT, ID; High
 																			# CVE-2026-33940; ZC, DoS, DT, ID; High
 		sed -i -e "s|\"flatted\": \"^3.2.9\"|\"flatted\": \"^3.4.2\"|g" "package-lock.json" || die						# CVE-2026-33228; ZC, VS(DoS, DT, ID); High
+
 		sed -i -e "s|\"picomatch\": \"^2.0.4\"|\"picomatch\": \"^4.0.4\"|g" "package-lock.json" || die						# CVE-2026-33671; ZC, DoS; High
 		sed -i -e "s|\"picomatch\": \"^2.2.1\"|\"picomatch\": \"^4.0.4\"|g" "package-lock.json" || die						# CVE-2026-33671; ZC, DoS; High
 		sed -i -e "s|\"picomatch\": \"^2.3.1\"|\"picomatch\": \"^4.0.4\"|g" "package-lock.json" || die						# CVE-2026-33671; ZC, DoS; High
@@ -735,10 +737,10 @@ einfo "Fixing vulnerabilities"
 		sed -i -e "s|\"picomatch\": \"^4.0.3\"|\"picomatch\": \"^4.0.4\"|g" "package-lock.json" || die						# CVE-2026-33671; ZC, DoS; High
 																			# CVE-2026-33672; ZC, DT; Moderate
 
-		sed -i -e "s|\"path-to-regexp\": \"^8.0.0\"|\"path-to-regexp\": \"^8.4.2\"|g" "package-lock.json" || die				# CVE-2026-4926; ZC, DoS; High
+#		sed -i -e "s|\"path-to-regexp\": \"^8.0.0\"|\"path-to-regexp\": \"^8.4.2\"|g" "package-lock.json" || die				# CVE-2026-4926; ZC, DoS; High
 																			# CVE-2026-4923; ZC, DoS; Moderate
-		sed -i -e "s|\"path-to-regexp\": \"~0.1.12\"|\"path-to-regexp\": \"^8.4.2\"|g" "package-lock.json" || die				# CVE-2026-4867; ZC, DoS; High
-		sed -i -e "s|\"path-to-regexp\": \"^6.2.1\"|\"path-to-regexp\": \"^8.4.2\"|g" "package-lock.json" || die				# CVE-2026-4867; ZC, DoS; High
+#		sed -i -e "s|\"path-to-regexp\": \"~0.1.12\"|\"path-to-regexp\": \"^8.4.2\"|g" "package-lock.json" || die				# CVE-2026-4867; ZC, DoS; High
+#		sed -i -e "s|\"path-to-regexp\": \"^6.2.1\"|\"path-to-regexp\": \"^8.4.2\"|g" "package-lock.json" || die				# CVE-2026-4867; ZC, DoS; High
 
 		sed -i -e "s|\"dompurify\": \"3.2.7\"|\"dompurify\": \"^3.4.0\"|g" "package-lock.json" || die						# GHSA-h8r8-wccr-v5f2; ZC, SS(DoS); Moderate
 		sed -i -e "s|\"dompurify\": \"^3.2.4\"|\"dompurify\": \"^3.4.0\"|g" "package-lock.json" || die						# GHSA-h8r8-wccr-v5f2; ZC, SS(DoS); Moderate
@@ -804,7 +806,7 @@ ewarn "QA:  Manually remove node_modules/jsondiffpatch (0.6.0) and deps from ${S
 #ewarn "QA:  Manually remove node_modules/@electron/node-gyp/node_modules/rimraf/node_modules/minimatch from ${S}/package-lock.json"
 ewarn "QA:  Manually remove node_modules/copy-webpack-plugin/node_modules/serialize-javascript from ${S}/package-lock.json"
 ewarn "QA:  Manually remove node_modules/@modelcontextprotocol/sdk/node_modules/body-parser from ${S}/package-lock.json"
-#ewarn "QA:  Manually remove \"node_modules/protobufjs\" from ${S}/package-lock.json" # Skip
+#ewarn "QA:  Manually remove \"node_modules/protobufjs\" from ${S}/package-lock.json"
 #ewarn "QA:  Manually remove node_modules/@azure/msal-node/node_modules/uuid from ${S}/package-lock.json"
 #ewarn "QA:  Manually remove node_modules/istanbul-lib-processinfo/node_modules/uuid from ${S}/package-lock.json"
 #ewarn "QA:  Manually remove node_modules/react-tooltip/node_modules/uuid from ${S}/package-lock.json"
@@ -913,6 +915,7 @@ ewarn "QA:  Manually node_modules/@hono/node-server (1.19.12) from ${S}/package-
 	enpm add "protobufjs@^7.5.6" -P -w "packages/ai-google"
 	enpm add "protobufjs@^7.5.6" -P -w "packages/dev-container"
 	enpm add "protobufjs@^7.5.6" -P -w "packages/scanoss"
+
 	enpm add "simple-git@^3.32.3" -P -w "packages/ai-ide"
 	enpm add "handlebars@^4.7.9" -D
 
@@ -923,11 +926,11 @@ ewarn "QA:  Manually node_modules/@hono/node-server (1.19.12) from ${S}/package-
 	enpm add "picomatch@^4.0.4" -P -w "packages/core"
 	enpm add "picomatch@^4.0.4" -D
 
-	enpm add "path-to-regexp@^8.4.2" -P -w "examples/api-samples"
-	enpm add "path-to-regexp@^8.4.2" -P -w "packages/ai-mcp"
-	enpm add "path-to-regexp@^8.4.2" -P -w "packages/ai-mcp-server"
-	enpm add "path-to-regexp@^8.4.2" -P -w "packages/core"
-	enpm add "path-to-regexp@^8.4.2" -D
+#	enpm add "path-to-regexp@^8.4.2" -P -w "examples/api-samples"
+#	enpm add "path-to-regexp@^8.4.2" -P -w "packages/ai-mcp"
+#	enpm add "path-to-regexp@^8.4.2" -P -w "packages/ai-mcp-server"
+#	enpm add "path-to-regexp@^8.4.2" -P -w "packages/core"
+#	enpm add "path-to-regexp@^8.4.2" -D
 
 	enpm add "dompurify@^3.4.0" -P -w "examples/api-samples"
 	enpm add "dompurify@^3.4.0" -P -w "packages/ai-code-completion"
@@ -981,12 +984,14 @@ ewarn "QA:  Manually node_modules/@hono/node-server (1.19.12) from ${S}/package-
 	enpm add "uuid@^14.0.0" -P -w "packages/ai-chat-ui"
 	enpm add "uuid@^14.0.0" -D
 
+	enpm add "hono@^4.12.12" -P -w "examples/api-samples"
+
 	patch_lockfile
 }
 
 npm_update_lock_audit_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
-		: #fix_vulnerabilities
+		fix_vulnerabilities
 	fi
 }
 
@@ -1266,6 +1271,7 @@ einfo
 # OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.69.0 (20260227)
 # OILEDMACHINE-OVERLAY-TEST:  FAILED  (interactive) 1.70.2 (20260419 with Electron 39.8.7)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.71.0 (20260501 with Electron 39.8.7)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.71.0 (20260502 with Electron 39.8.7 with reduced lockfile attack surface)
 # launch-test:  passed
 # ai-assistant (ollama with yi-coder:1.5b with Universal agent):  passed
 # Run hello world for python:  fail

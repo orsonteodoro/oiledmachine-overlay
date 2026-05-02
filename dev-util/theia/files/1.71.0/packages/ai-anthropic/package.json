@@ -5,7 +5,8 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.65.0",
     "@theia/ai-core": "1.71.0",
-    "@theia/core": "1.71.0"
+    "@theia/core": "1.71.0",
+    "undici": "^7.25.0"
   },
   "publishConfig": {
     "access": "public"
@@ -41,7 +42,8 @@
     "watch": "theiaext watch"
   },
   "devDependencies": {
-    "@theia/ext-scripts": "1.71.0"
+    "@theia/ext-scripts": "1.71.0",
+    "lodash": "^4.18.1"
   },
   "nyc": {
     "extends": "../../configs/nyc.json"
