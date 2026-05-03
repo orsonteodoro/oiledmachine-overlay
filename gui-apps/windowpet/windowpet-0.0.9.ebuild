@@ -30,8 +30,8 @@ NPM_AUDIT_FIX=1
 NPM_SKIP_TARBALL_UNPACK="1"
 PLUGINS_WORKSPACE_COMMIT="a0a310756ab3d770ed554c9801d3bea5940eb31e" # Obtained from GIT_CRATES
 # Upstream wanted Rust 1.88.0 (llvm 20.1), but it has been relaxed in this ebuild.
-RUST_MAX_VER="1.86.0" # Inclusive
-RUST_MIN_VER="1.86.0" # llvm-19.1
+RUST_MAX_VER="1.88.0" # Inclusive
+RUST_MIN_VER="1.88.0" # llvm-20.1
 RUST_PV="${RUST_MIN_VER}"
 
 AT_TYPES_NODE_PV="22.13.4" # Same as TypeScript
@@ -862,7 +862,8 @@ ewarn "Missing security updated Cargo.lock"
 
 npm_update_lock_install_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
-ewarn "QA:  Remove node_modules/esbuild in ${S}/package-lock.json"
+#ewarn "QA:  Manually remove node_modules/esbuild (<0.25.0) and deps in ${S}/package-lock.json"
+ewarn "QA:  Manually remove node_modules/vite-node/node_modules/vite in ${S}/package-lock.json"
 		patch_lockfile() {
 			sed -i -e "s|\"@babel/runtime\": \"^7.5.5\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
 			sed -i -e "s|\"@babel/runtime\": \"^7.6.2\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
@@ -873,7 +874,8 @@ ewarn "QA:  Remove node_modules/esbuild in ${S}/package-lock.json"
 			sed -i -e "s|\"@babel/runtime\": \"^7.23.2\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
 			sed -i -e "s|\"@babel/runtime\": \"^7.23.8\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
 			sed -i -e "s|\"@babel/runtime\": \"^7.23.9\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-			sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die
+			sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"^0.25.12\"|g" "package-lock.json" || die
+			sed -i -e "s|\"esbuild\": \"^0.25.0\"|\"esbuild\": \"^0.25.12\"|g" "package-lock.json" || die
 
 			sed -i -e "s|\"form-data\": \"^4.0.0\"|\"form-data\": \"^4.0.4\"|g" "package-lock.json" || die
 			sed -i -e "s|\"vite\": \"^5.2.11\"|\"vite\": \"^6.4.2\"|g" "package-lock.json" || die
@@ -889,7 +891,7 @@ ewarn "QA:  Remove node_modules/esbuild in ${S}/package-lock.json"
 
 
 		L=(
-			"esbuild@^0.25.0"				# GHSA-67mh-4wv8-2f99; ID; Moderate
+			"esbuild@^0.25.12"				# GHSA-67mh-4wv8-2f99; ID; Moderate
 			"vite@^6.4.2"					# CVE-2025-58751; VS(ID); Low
 									# CVE-2025-58752; VS(ID); Low
 									# CVE-2026-39365; VS(ID); Moderate
