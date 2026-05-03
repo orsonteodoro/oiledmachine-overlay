@@ -499,7 +499,7 @@ LICENSE="
 RESTRICT="mirror"
 IUSE+="
 ${!THEIA_PLUGINS[@]}
-git ollama ebuild_revision_50
+git ollama ebuild_revision_53
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -631,6 +631,7 @@ einfo "Fixing vulnerabilities"
 	# The pinned version is required for glob.
 	# The pinned version is required for ajv and webpack for unattended install.
 	# The pinned version is required for path-to-regexp.
+	# @grpc/grpc-js 1.14.3 requires pinned version of protobufjs 7.5.4
 	patch_lockfile() {
 		sed -i -e "s|\"basic-ftp\": \"^5.0.2\"|\"basic-ftp\": \"^5.2.0\"|g" "package-lock.json" || die						# CVE-2026-27699; ZC, DoS, DT; Critical
 		sed -i -e "s|\"tar\": \"^6.0.5\"|\"tar\": \"^7.5.13\"|g" "package-lock.json" || die							# CVE-2026-23950; DT, ID; High
@@ -717,10 +718,10 @@ einfo "Fixing vulnerabilities"
 		sed -i -e "s|\"multer\": \"^2.0.1\"|\"multer\": \"^2.1.0\"|g" "package-lock.json" || die						# CVE-2026-3304; ZC, VS(DoS); High
 																			# CVE-2026-2359; ZC, VS(DoS); High
 
-		sed -i -e "s|\"protobufjs\": \"^7.5.4\"|\"protobufjs\": \"^7.5.6\"|g" "package-lock.json" || die					# CVE-2026-41242; VS(DoS, DT, ID); SS(DoS, DT, ID); Critical
-		sed -i -e "s|\"protobufjs\": \"^7.5.3\"|\"protobufjs\": \"^7.5.6\"|g" "package-lock.json" || die					# CVE-2026-41242; VS(DoS, DT, ID); SS(DoS, DT, ID); Critical
-		sed -i -e "s|\"protobufjs\": \"^7.3.2\"|\"protobufjs\": \"^7.5.6\"|g" "package-lock.json" || die					# CVE-2026-41242; VS(DoS, DT, ID); SS(DoS, DT, ID); Critical
-		sed -i -e "s|\"protobufjs\": \"^7.2.5\"|\"protobufjs\": \"^7.5.6\"|g" "package-lock.json" || die					# CVE-2026-41242; VS(DoS, DT, ID); SS(DoS, DT, ID); Critical
+		sed -i -e "s|\"protobufjs\": \"^7.5.4\"|\"protobufjs\": \"^7.5.6\"|g" "package-lock.json" || die					# CVE-2026-41242; CE, VS(DoS, DT, ID); SS(DoS, DT, ID); Critical
+		sed -i -e "s|\"protobufjs\": \"^7.5.3\"|\"protobufjs\": \"^7.5.6\"|g" "package-lock.json" || die					# CVE-2026-41242; CE, VS(DoS, DT, ID); SS(DoS, DT, ID); Critical
+		sed -i -e "s|\"protobufjs\": \"^7.3.2\"|\"protobufjs\": \"^7.5.6\"|g" "package-lock.json" || die					# CVE-2026-41242; CE, VS(DoS, DT, ID); SS(DoS, DT, ID); Critical
+		sed -i -e "s|\"protobufjs\": \"^7.2.5\"|\"protobufjs\": \"^7.5.6\"|g" "package-lock.json" || die					# CVE-2026-41242; CE, VS(DoS, DT, ID); SS(DoS, DT, ID); Critical
 
 		sed -i -e "s|\"simple-git\": \"^3.25.0\"|\"simple-git\": \"^3.32.3\"|g" "package-lock.json" || die					# CVE-2026-28292; ZC, DoS, DT, ID; Critical
 																			# CVE-2026-28291; ZC, DoS, DT, ID; High
@@ -742,8 +743,8 @@ einfo "Fixing vulnerabilities"
 #		sed -i -e "s|\"path-to-regexp\": \"~0.1.12\"|\"path-to-regexp\": \"^8.4.2\"|g" "package-lock.json" || die				# CVE-2026-4867; ZC, DoS; High
 #		sed -i -e "s|\"path-to-regexp\": \"^6.2.1\"|\"path-to-regexp\": \"^8.4.2\"|g" "package-lock.json" || die				# CVE-2026-4867; ZC, DoS; High
 
-		sed -i -e "s|\"dompurify\": \"3.2.7\"|\"dompurify\": \"^3.4.0\"|g" "package-lock.json" || die						# GHSA-h8r8-wccr-v5f2; ZC, SS(DoS); Moderate
-		sed -i -e "s|\"dompurify\": \"^3.2.4\"|\"dompurify\": \"^3.4.0\"|g" "package-lock.json" || die						# GHSA-h8r8-wccr-v5f2; ZC, SS(DoS); Moderate
+		sed -i -e "s|\"dompurify\": \"3.2.7\"|\"dompurify\": \"^3.4.2\"|g" "package-lock.json" || die						# GHSA-h8r8-wccr-v5f2; ZC, SS(DoS); Moderate
+		sed -i -e "s|\"dompurify\": \"^3.2.4\"|\"dompurify\": \"^3.4.2\"|g" "package-lock.json" || die						# GHSA-h8r8-wccr-v5f2; ZC, SS(DoS); Moderate
 																			# GHSA-39q2-94rc-95cp; VS(DT, ID); Moderate
 																			# GHSA-cjmm-f4jc-qw8r; SS(DT, ID); Moderate
 																			# GHSA-cj63-jhhr-wcxv; VS(DT), SS(DT, ID); Moderate
@@ -789,6 +790,12 @@ einfo "Fixing vulnerabilities"
 																			# GHSA-26pp-8wgv-hjvm; ZC, DoS; Moderate
 																			# CVE-2026-39410; ZC, DT; ID
 																			# GHSA-458j-xx4x-4375; DT; Moderate
+
+		sed -i -e "s|\"postcss\": \"^8.4.33\"|\"postcss\": \"^8.5.10\"|g" "package-lock.json" || die						# CVE-2026-41305; DT, ID; Moderate
+		sed -i -e "s|\"postcss\": \"^8.1.0\"|\"postcss\": \"^8.5.10\"|g" "package-lock.json" || die						# CVE-2026-41305; DT, ID; Moderate
+		sed -i -e "s|\"@grpc/grpc-js\": \"^1.11.1\"|\"@grpc/grpc-js\": \"^1.14.3\"|g" "package-lock.json" || die				# Force bump for protobufjs
+		sed -i -e "s|\"@grpc/grpc-js\": \"^1.5.5\"|\"@grpc/grpc-js\": \"^1.14.3\"|g" "package-lock.json" || die					# Force bump for protobufjs
+		sed -i -e "s|\"@grpc/proto-loader\": \"^0.7.13\"|\"@grpc/proto-loader\": \"^0.8.0\"|g" "package-lock.json" || die			# Force bump for protobufjs
 	}
 	patch_lockfile
 
@@ -798,22 +805,28 @@ einfo "Fixing vulnerabilities"
 #ewarn "QA:  Manually remove node_modules/body-parser/node_modules/qs from ${S}/package-lock.json"
 #ewarn "QA:  Manually remove node_modules/express/node_modules/qs from ${S}/package-lock.json"
 #ewarn "QA:  Manually remove node_modules/@electron/node-gyp/node_modules/tar from ${S}/package-lock.json"
+ewarn "QA:  Manually remove node_modules/scanoss/node_modules/tar from ${S}/package-lock.json"
 #ewarn "QA:  Manually remove node_modules/jsonwebtoken/node_modules/jws from ${S}/package-lock.json"
-ewarn "QA:  Manually remove node_modules/jsondiffpatch (0.6.0) and deps from ${S}/package-lock.json"
+ewarn "QA:  Manually remove \"node_modules/jsondiffpatch\" (0.6.0) and all child deps from ${S}/package-lock.json"
 #ewarn "QA:  Manually remove node_modules/@modelcontextprotocol/sdk/node_modules/qs from ${S}/package-lock.json"
 #ewarn "QA:  Manually remove node_modules/google-auth-library/node_modules/jws from ${S}/package-lock.json"
 #ewarn "QA:  Manually remove node_modules/gtoken/node_modules/jws from ${S}/package-lock.json"
 #ewarn "QA:  Manually remove node_modules/@electron/node-gyp/node_modules/rimraf/node_modules/minimatch from ${S}/package-lock.json"
 ewarn "QA:  Manually remove node_modules/copy-webpack-plugin/node_modules/serialize-javascript from ${S}/package-lock.json"
 ewarn "QA:  Manually remove node_modules/@modelcontextprotocol/sdk/node_modules/body-parser from ${S}/package-lock.json"
-#ewarn "QA:  Manually remove \"node_modules/protobufjs\" from ${S}/package-lock.json"
+#ewarn "QA:  Manually remove \"node_modules/protobufjs\" (7.5.4) from ${S}/package-lock.json" # Skip
 #ewarn "QA:  Manually remove node_modules/@azure/msal-node/node_modules/uuid from ${S}/package-lock.json"
 #ewarn "QA:  Manually remove node_modules/istanbul-lib-processinfo/node_modules/uuid from ${S}/package-lock.json"
 #ewarn "QA:  Manually remove node_modules/react-tooltip/node_modules/uuid from ${S}/package-lock.json"
 #ewarn "QA:  Manually remove node_modules/trash/node_modules/uuid from ${S}/package-lock.json"
 #ewarn "QA:  Manually remove packages/dev-container/node_modules/uuid from ${S}/package-lock.json"
 #ewarn "QA:  Manually node_modules/uuid (9.0.1) from ${S}/package-lock.json"
-ewarn "QA:  Manually node_modules/@hono/node-server (1.19.12) from ${S}/package-lock.json"
+#ewarn "QA:  Manually \"node_modules/@hono/node-server\" (1.19.12) from ${S}/package-lock.json" # Skip
+ewarn "QA:  Manually remove node_modules/@theia/monaco-editor-core/node_modules/dompurify (3.2.7) from ${S}/package-lock.json"
+ewarn "QA:  Manually remove node_modules/dompurify (3.3.3) from ${S}/package-lock.json"
+#ewarn "QA:  Manually remove node_modules/hono (4.12.9) from ${S}/package-lock.json" # Skip
+#ewarn "QA:  Manually remove \"node_modules/@grpc/proto-loader\" (0.7.15) and child deps from ${S}/package-lock.json"
+#ewarn "QA:  Manually change \"@grpc/proto-loader\": \"^0.7.13\" to \"@grpc/proto-loader\": \"^0.8.0\" from ${S}/package-lock.json"
 
 	enpm add "basic-ftp@^5.2.0" -D
 	enpm add "basic-ftp@^5.2.0" -P -w "dev-packages/cli"
@@ -824,6 +837,7 @@ ewarn "QA:  Manually node_modules/@hono/node-server (1.19.12) from ${S}/package-
 
 	enpm add "tar@^7.5.13" -D
 	enpm add "tar@^7.5.13" -P -w "dev-packages/application-manager"
+	enpm add "tar@^7.5.13" -P -w "packages/scanoss"
 #	enpm add "tar@^7.5.13" -P -w "packages/git"
 
 	enpm add "qs@^6.14.2" -D
@@ -864,37 +878,37 @@ ewarn "QA:  Manually node_modules/@hono/node-server (1.19.12) from ${S}/package-
 	enpm add "qs@^6.14.2" -P -w "dev-packages/application-package"
 	enpm add "qs@^6.14.2" -P -w "examples/api-samples"
 
-	enpm add "serialize-javascript@^7.0.3" -D
 	enpm add "serialize-javascript@^7.0.3" -P -w "dev-packages/application-manager"
 	enpm add "serialize-javascript@^7.0.3" -P -w "dev-packages/native-webpack-plugin"
+	enpm add "serialize-javascript@^7.0.3" -D
 
 	enpm add "lodash@^4.17.23" -D
 	enpm add "lodash@^4.17.23" -D -w "packages/ai-anthropic"
 	enpm add "lodash@^4.17.23" -D -w "packages/ai-openai"
 
-#	enpm add "ajv@^8.18.0" -D
 #	enpm add "ajv@^8.18.0" -P -w "dev-packages/application-manager"
 #	enpm add "ajv@^8.18.0" -P -w "dev-packages/native-webpack-plugin"
 #	enpm add "ajv@^8.18.0" -P -w "examples/api-samples"
 #	enpm add "ajv@^8.18.0" -P -w "packages/electron"
 ##	enpm add "ajv@^8.18.0" -P -w "packages/ai-mcp-serve"
 #	enpm add "ajv@^8.18.0" -P -w "packages/ai-mcp"
+#	enpm add "ajv@^8.18.0" -D
 
-	enpm add "markdown-it@^14.1.1" -D
 	enpm add "markdown-it@^14.1.1" -P -w "packages/core"
+	enpm add "markdown-it@^14.1.1" -D
 
 	enpm add "jsondiffpatch@^0.7.2" -P -w "packages/ai-vercel-ai"
 
-	enpm add "js-yaml@^4.1.1" -D
 	enpm add "js-yaml@^4.1.1" -D -w "dev-packages/cli"
 	enpm add "js-yaml@^4.1.1" -D -w "packages/ai-chat"
 	enpm add "js-yaml@^4.1.1" -D -w "packages/ai-core"
 	enpm add "js-yaml@^4.1.1" -D -w "packages/ai-ide"
+	enpm add "js-yaml@^4.1.1" -D
 
-	enpm add "diff@^5.2.2" -D
 	enpm add "diff@^5.2.2" -P -w "dev-packages/cli"
 #	enpm add "diff@^5.2.2" -P -w "packages/git"
 	enpm add "diff@^5.2.2" -P -w "packages/scm"
+	enpm add "diff@^5.2.2" -D
 
 #	enpm add "ai@^5.0.52" -P -w "packages/ai-vercel-ai"
 
@@ -907,14 +921,15 @@ ewarn "QA:  Manually node_modules/@hono/node-server (1.19.12) from ${S}/package-
 	enpm add "body-parser@^2.2.1" -P -w "packages/core"
 	enpm add "body-parser@^2.2.1" -P -w "packages/filesystem"
 
-	enpm add "minimatch@^3.1.4" -D
 	enpm add "minimatch@^3.1.4" -P -w "dev-packages/application-manager"
+	enpm add "minimatch@^3.1.4" -D
 
 	enpm add "multer@^2.1.0" -P -w "packages/filesystem"
 
 	enpm add "protobufjs@^7.5.6" -P -w "packages/ai-google"
 	enpm add "protobufjs@^7.5.6" -P -w "packages/dev-container"
 	enpm add "protobufjs@^7.5.6" -P -w "packages/scanoss"
+	enpm add "protobufjs@^7.5.6" -P # Added to root package to avoid build time issue
 
 	enpm add "simple-git@^3.32.3" -P -w "packages/ai-ide"
 	enpm add "handlebars@^4.7.9" -D
@@ -932,32 +947,32 @@ ewarn "QA:  Manually node_modules/@hono/node-server (1.19.12) from ${S}/package-
 #	enpm add "path-to-regexp@^8.4.2" -P -w "packages/core"
 #	enpm add "path-to-regexp@^8.4.2" -D
 
-	enpm add "dompurify@^3.4.0" -P -w "examples/api-samples"
-	enpm add "dompurify@^3.4.0" -P -w "packages/ai-code-completion"
-	enpm add "dompurify@^3.4.0" -P -w "packages/ai-codex"
-	enpm add "dompurify@^3.4.0" -P -w "packages/ai-chat"
-	enpm add "dompurify@^3.4.0" -P -w "packages/ai-chat-ui"
-	enpm add "dompurify@^3.4.0" -P -w "packages/ai-claude-code"
-	enpm add "dompurify@^3.4.0" -P -w "packages/ai-code-completion"
-	enpm add "dompurify@^3.4.0" -P -w "packages/ai-codex"
-	enpm add "dompurify@^3.4.0" -P -w "packages/ai-core"
-	enpm add "dompurify@^3.4.0" -P -w "packages/ai-editor"
-	enpm add "dompurify@^3.4.0" -P -w "packages/ai-scanoss"
-	enpm add "dompurify@^3.4.0" -P -w "packages/bulk-edit"
-	enpm add "dompurify@^3.4.0" -P -w "packages/collaboration"
-	enpm add "dompurify@^3.4.0" -P -w "packages/console"
-	enpm add "dompurify@^3.4.0" -P -w "packages/debug"
-	enpm add "dompurify@^3.4.0" -P -w "packages/keymaps"
-	enpm add "dompurify@^3.4.0" -P -w "packages/monaco"
-	enpm add "dompurify@^3.4.0" -P -w "packages/notebook"
-	enpm add "dompurify@^3.4.0" -P -w "packages/output"
-	enpm add "dompurify@^3.4.0" -P -w "packages/plugin-ext"
-	enpm add "dompurify@^3.4.0" -P -w "packages/plugin-ext-vscode"
-	enpm add "dompurify@^3.4.0" -P -w "packages/plugin-metrics"
-	enpm add "dompurify@^3.4.0" -P -w "packages/preferences"
-	enpm add "dompurify@^3.4.0" -P -w "packages/scm"
-	enpm add "dompurify@^3.4.0" -P -w "packages/task"
-	enpm add "dompurify@^3.4.0" -P -w "packages/toolbar"
+	enpm add "dompurify@^3.4.2" -P -w "examples/api-samples"
+	enpm add "dompurify@^3.4.2" -P -w "packages/ai-code-completion"
+	enpm add "dompurify@^3.4.2" -P -w "packages/ai-codex"
+	enpm add "dompurify@^3.4.2" -P -w "packages/ai-chat"
+	enpm add "dompurify@^3.4.2" -P -w "packages/ai-chat-ui"
+	enpm add "dompurify@^3.4.2" -P -w "packages/ai-claude-code"
+	enpm add "dompurify@^3.4.2" -P -w "packages/ai-code-completion"
+	enpm add "dompurify@^3.4.2" -P -w "packages/ai-codex"
+	enpm add "dompurify@^3.4.2" -P -w "packages/ai-core"
+	enpm add "dompurify@^3.4.2" -P -w "packages/ai-editor"
+	enpm add "dompurify@^3.4.2" -P -w "packages/ai-scanoss"
+	enpm add "dompurify@^3.4.2" -P -w "packages/bulk-edit"
+	enpm add "dompurify@^3.4.2" -P -w "packages/collaboration"
+	enpm add "dompurify@^3.4.2" -P -w "packages/console"
+	enpm add "dompurify@^3.4.2" -P -w "packages/debug"
+	enpm add "dompurify@^3.4.2" -P -w "packages/keymaps"
+	enpm add "dompurify@^3.4.2" -P -w "packages/monaco"
+	enpm add "dompurify@^3.4.2" -P -w "packages/notebook"
+	enpm add "dompurify@^3.4.2" -P -w "packages/output"
+	enpm add "dompurify@^3.4.2" -P -w "packages/plugin-ext"
+	enpm add "dompurify@^3.4.2" -P -w "packages/plugin-ext-vscode"
+	enpm add "dompurify@^3.4.2" -P -w "packages/plugin-metrics"
+	enpm add "dompurify@^3.4.2" -P -w "packages/preferences"
+	enpm add "dompurify@^3.4.2" -P -w "packages/scm"
+	enpm add "dompurify@^3.4.2" -P -w "packages/task"
+	enpm add "dompurify@^3.4.2" -P -w "packages/toolbar"
 
 	enpm add "yaml@^2.8.3" -P -w "dev-packages/cli"
 	enpm add "yaml@^2.8.3" -D
@@ -976,8 +991,9 @@ ewarn "QA:  Manually node_modules/@hono/node-server (1.19.12) from ${S}/package-
 #	enpm add "@tootallnate/once@^3.0.1" -D
 
 	enpm add "@hono/node-server@^1.19.14" -P -w "examples/api-samples"
-	enpm add "@hono/node-server@^1.19.14" -P -w "packages/ai-mcp-server"
 	enpm add "@hono/node-server@^1.19.14" -P -w "packages/ai-mcp"
+	enpm add "@hono/node-server@^1.19.14" -P -w "packages/ai-mcp-server"
+	enpm add "@hono/node-server@^1.19.14" -P # Added to root package to avoid build time issue
 
 	enpm add "uuid@^14.0.0" -P -w "packages/dev-container"
 	enpm add "uuid@^14.0.0" -P -w "packages/core"
@@ -985,6 +1001,18 @@ ewarn "QA:  Manually node_modules/@hono/node-server (1.19.12) from ${S}/package-
 	enpm add "uuid@^14.0.0" -D
 
 	enpm add "hono@^4.12.12" -P -w "examples/api-samples"
+	enpm add "hono@^4.12.12" -P -w "packages/ai-mcp"
+	enpm add "hono@^4.12.12" -P -w "packages/ai-mcp-server"
+	enpm add "hono@^4.12.12" -P # Required peer requirement for @hono/node-server
+
+	enpm add "postcss@^8.5.10" -P -w "dev-packages/application-manager"
+
+	enpm add "postcss@^8.5.10" -P -w "packages/dev-container"
+
+	enpm add "@grpc/grpc-js@^1.14.3" -P -w "packages/scanoss"
+	enpm add "@grpc/grpc-js@^1.14.3" -P -w "packages/dev-container"
+
+	enpm add "@grpc/proto-loader@^0.8.0" -P # Added to root package to avoid build time issue
 
 	patch_lockfile
 }
@@ -1271,7 +1299,8 @@ einfo
 # OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.69.0 (20260227)
 # OILEDMACHINE-OVERLAY-TEST:  FAILED  (interactive) 1.70.2 (20260419 with Electron 39.8.7)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.71.0 (20260501 with Electron 39.8.7)
-# OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.71.0 (20260502 with Electron 39.8.7 with reduced lockfile attack surface)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.71.0 (20260502 with Electron 39.8.7 with reduced lockfile attack surface #1)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.71.0 (20260502 with Electron 39.8.7 with reduced lockfile attack surface #2)
 # launch-test:  passed
 # ai-assistant (ollama with yi-coder:1.5b with Universal agent):  passed
 # Run hello world for python:  fail

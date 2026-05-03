@@ -24,7 +24,7 @@
     "@typescript-eslint/parser": "^7.18.0",
     "@vscode/vsce": "^2.32.0",
     "archiver": "^5.3.1",
-    "axios": "^1.15.2",
+    "axios": "^1.16.0",
     "basic-ftp": "^5.3.1",
     "chai": "4.3.10",
     "chai-spies": "1.0.0",
@@ -143,5 +143,11 @@
     "vscode.github",
     "vscode.github-authentication",
     "ms-python.vscode-pylance"
-  ]
+  ],
+  "dependencies": {
+    "@grpc/proto-loader": "^0.8.0",
+    "@hono/node-server": "^1.19.14",
+    "hono": "^4.12.16",
+    "protobufjs": "^7.5.6"
+  }
 }

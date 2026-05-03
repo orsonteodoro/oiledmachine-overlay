@@ -54,6 +54,7 @@
     "node-loader": "^2.1.0",
     "path-browserify": "^1.0.1",
     "picomatch": "^4.0.4",
+    "postcss": "^8.5.13",
     "semver": "^7.7.4",
     "serialize-javascript": "^7.0.5",
     "source-map": "^0.6.1",
