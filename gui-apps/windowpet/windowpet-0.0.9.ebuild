@@ -677,7 +677,7 @@ LICENSE="
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 tray wayland +X
-ebuild_revision_12
+ebuild_revision_13
 "
 REQUIRED_USE="
 	|| (
@@ -864,6 +864,7 @@ npm_update_lock_install_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 #ewarn "QA:  Manually remove node_modules/esbuild (<0.25.0) and deps in ${S}/package-lock.json"
 ewarn "QA:  Manually remove node_modules/vite-node/node_modules/vite in ${S}/package-lock.json"
+ewarn "QA:  Manually remove node_modules/vitest/node_modules/vite in ${S}/package-lock.json"
 		patch_lockfile() {
 			sed -i -e "s|\"@babel/runtime\": \"^7.5.5\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
 			sed -i -e "s|\"@babel/runtime\": \"^7.6.2\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
