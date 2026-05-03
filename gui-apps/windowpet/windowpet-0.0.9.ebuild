@@ -879,6 +879,20 @@ ewarn "QA:  Manually remove node_modules/vite-node/node_modules/vite in ${S}/pac
 
 			sed -i -e "s|\"form-data\": \"^4.0.0\"|\"form-data\": \"^4.0.4\"|g" "package-lock.json" || die
 			sed -i -e "s|\"vite\": \"^5.2.11\"|\"vite\": \"^6.4.2\"|g" "package-lock.json" || die
+
+			sed -i -e "s|\"picomatch\": \"^2.0.4\"|\"picomatch\": \"^4.0.2\"|g" "package-lock.json" || die
+			sed -i -e "s|\"picomatch\": \"^2.2.1\"|\"picomatch\": \"^4.0.2\"|g" "package-lock.json" || die
+			sed -i -e "s|\"picomatch\": \"^2.3.1\"|\"picomatch\": \"^4.0.2\"|g" "package-lock.json" || die
+			sed -i -e "s#\"picomatch\": \"^3 || ^4\"#\"picomatch\": \"^4.0.2\"#g" "package-lock.json" || die
+			sed -i -e "s|\"picomatch\": \"^4.0.2\"|\"picomatch\": \"^4.0.2\"|g" "package-lock.json" || die
+#			sed -i -e "s|\"brace-expansion\": \"^1.1.7\"|\"brace-expansion\": \"^1.1.13\"|g" "package-lock.json" || die
+			sed -i -e "s|\"minimatch\": \"^3.1.1\"|\"minimatch\": \"^3.1.3\"|g" "package-lock.json" || die
+			sed -i -e "s|\"minimatch\": \"^3.0.4\"|\"minimatch\": \"^3.1.3\"|g" "package-lock.json" || die
+			sed -i -e "s|\"rollup\": \"^4.34.9\"|\"rollup\": \"^4.59.0\"|g" "package-lock.json" || die
+			sed -i -e "s|\"rollup\": \"^4.20.0\"|\"rollup\": \"^4.59.0\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@remix-run/router\": \"1.23.0\"|\"@remix-run/router\": \"^1.23.2\"|g" "package-lock.json" || die
+			sed -i -e "s|\"react-router\": \"6.30.1\"|\"react-router\": \"^6.30.2\"|g" "package-lock.json" || die
+			sed -i -e "s|\"mdast-util-to-hast\": \"^13.0.0\"|\"mdast-util-to-hast\": \"^13.2.1\"|g" "package-lock.json" || die
 		}
 
 		patch_lockfile
@@ -886,6 +900,13 @@ ewarn "QA:  Manually remove node_modules/vite-node/node_modules/vite in ${S}/pac
 		L=(
 			"@babel/runtime@^7.26.10"			# CVE-2025-27789; DoS; Moderate
 			"form-data@^4.0.4"				# CVE-2025-7783; VS(DT, ID), SS(DT, ID); Critical
+#			"brace-expansion@^1.1.13"			# CVE-2026-33750; DoS; Moderate
+			"minimatch@^3.1.3"				# CVE-2026-26996; VS(DoS); High
+									# CVE-2026-27903; ZC, DoS; High
+									# CVE-2026-27904; ZC, DoS; High
+			"@remix-run/router@^1.23.2"			# CVE-2026-22029; DT, ID; High
+			"react-router@^6.30.2"				# CVE-2025-68470; DT; Moderate
+			"mdast-util-to-hast@^13.2.1"			# CVE-2025-66400; ZC, VS(DT); Moderate
 		)
 		enpm install "${L[@]}" -P
 
@@ -895,6 +916,8 @@ ewarn "QA:  Manually remove node_modules/vite-node/node_modules/vite in ${S}/pac
 			"vite@^6.4.2"					# CVE-2025-58751; VS(ID); Low
 									# CVE-2025-58752; VS(ID); Low
 									# CVE-2026-39365; VS(ID); Moderate
+			"picomatch@^4.0.2"				# CVE-2026-33672; DoS, DT; Moderate
+			"rollup@^4.59.0"				# CVE-2026-27606; ZC, VS(DT, ID); High
 		)
 		enpm install "${L[@]}" -D
 		patch_lockfile
