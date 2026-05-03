@@ -4,7 +4,12 @@
 
 EAPI=8
 
+# To update lockfile
+# PATH=$(realpath "../../scripts")":${PATH}"
+# NPM_UPDATER_VERSIONS="5.2.0" npm_updater_update_locks.sh
+
 NODE_SLOT="20"
+NPM_AUDIT_FATAL=0
 
 inherit npm
 
@@ -38,7 +43,7 @@ IUSE+="
 ebuild_revision_6
 "
 RDEPEND+="
-	net-libs/nodejs:18[webassembly(+)]
+	net-libs/nodejs:${NODE_SLOT}[webassembly(+)]
 "
 DEPEND+="
 	${RDEPEND}
