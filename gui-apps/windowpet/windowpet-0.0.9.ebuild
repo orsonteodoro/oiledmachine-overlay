@@ -28,7 +28,7 @@ NODE_SLOT="24" # CI uses 23 based on CI logs, bump for security
 NPM_AUDIT_FATAL=0
 NPM_AUDIT_FIX=1
 NPM_SKIP_TARBALL_UNPACK="1"
-PLUGINS_WORKSPACE_COMMIT="a0a310756ab3d770ed554c9801d3bea5940eb31e" # Obtained from GIT_CRATES
+PLUGINS_WORKSPACE_COMMIT="1e407ed56455558cf751022fd68eca3b9e3713a0" # Obtained from GIT_CRATES
 # Upstream wanted Rust 1.88.0 (llvm 20.1), but it has been relaxed in this ebuild.
 RUST_MAX_VER="1.88.0" # Inclusive
 RUST_MIN_VER="1.88.0" # llvm-20.1
@@ -50,6 +50,14 @@ BANNED_CARGO_PACKAGES=(
 	"dirs-sys;W"
 	"tauri-plugin-autostart;F"
 	"winreg;W"
+)
+
+declare -A BANNED_CARGO_PACKAGES_PV=(
+	["auto-launch"]="0.5.0"
+	["dirs"]="4.0.0"
+	["dirs-sys"]="0.3.7"
+	["tauri-plugin-autostart"]="0.0.0"
+	["winreg"]="0.10.1"
 )
 
 # Remove tauri-plugin-autostart from GIT_CRATES:
@@ -677,7 +685,7 @@ LICENSE="
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 tray wayland +X
-ebuild_revision_13
+ebuild_revision_15
 "
 REQUIRED_USE="
 	|| (
@@ -843,10 +851,11 @@ _cargo_src_unpack() {
 npm_unpack_post() {
 	pushd "${S}" >/dev/null 2>&1 || die
 		if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
-			eapply "${FILESDIR}/windowpet-0.0.8-remove-tauri-plugin-autostart-api-from-lockfiles.patch"
-			eapply "${FILESDIR}/windowpet-0.0.8-remove-tauri-plugin-autostart-api-from-code.patch"
+			eapply "${FILESDIR}/${PN}-0.0.8-remove-tauri-plugin-autostart-api-from-lockfiles.patch"
+			eapply "${FILESDIR}/${PN}-0.0.8-remove-tauri-plugin-autostart-api-from-code.patch"
 		else
-			eapply "${FILESDIR}/windowpet-0.0.8-remove-tauri-plugin-autostart-api-from-code.patch"
+			eapply "${FILESDIR}/${PN}-0.0.8-remove-tauri-plugin-autostart-api-from-code.patch"
+			eapply "${FILESDIR}/${PN}-0.0.9-disable-updater.patch"
 		fi
 	popd >/dev/null 2>&1 || die
 	if [[ -e "${FILESDIR}/${PV}/Cargo.lock" ]] ; then
@@ -926,7 +935,7 @@ ewarn "QA:  Manually remove node_modules/vitest/node_modules/vite in ${S}/packag
 }
 
 src_unpack() {
-#	unpack "${P}.tar.gz"
+	unpack "${P}.tar.gz"
 #	die # For lockfile update
 
 einfo "Unpacking npm side"
@@ -969,14 +978,15 @@ einfo "Unpacking Tauri side"
 	for row in "${BANNED_CARGO_PACKAGES[@]}" ; do
 		local pkg="${row%;*}"
 		local type="${row#*;}"
+		local pkg_pv=${BANNED_CARGO_PACKAGES_PV["${pkg}"]}
 		if [[ "${type}" == "W" ]] ; then
 	# Ambiguous versioning warnings
-			grep -q -e "${pkg}" "${S}/src-tauri/Cargo.toml" && ewarn "QA:  ${pkg} should be removed from src-tauri/Cargo.toml"
-			grep -q -e "${pkg}" "${S}/src-tauri/Cargo.lock" && ewarn "QA:  ${pkg} should be removed from src-tauri/Cargo.lock"
+			grep -q -e "${pkg}" "${S}/src-tauri/Cargo.toml" && ewarn "QA:  ${pkg} ${pkg_pv} should be removed from src-tauri/Cargo.toml"
+			grep -q -e "${pkg}" "${S}/src-tauri/Cargo.lock" && ewarn "QA:  ${pkg} ${pkg_pv} should be removed from src-tauri/Cargo.lock"
 		else
 	# Fatal error
-			grep -q -e "${pkg}" "${S}/src-tauri/Cargo.toml" && die "QA:  ${pkg} needs to be removed from src-tauri/Cargo.toml"
-			grep -q -e "${pkg}" "${S}/src-tauri/Cargo.lock" && die "QA:  ${pkg} needs to be removed from src-tauri/Cargo.lock"
+			grep -q -e "${pkg}" "${S}/src-tauri/Cargo.toml" && die "QA:  ${pkg} ${pkg_pv} needs to be removed from src-tauri/Cargo.toml"
+			grep -q -e "${pkg}" "${S}/src-tauri/Cargo.lock" && die "QA:  ${pkg} ${pkg_pv} needs to be removed from src-tauri/Cargo.lock"
 		fi
 	done
 }
@@ -1069,3 +1079,4 @@ pkg_postrm() {
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.0.8, 20250208) on X
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.0.9, 20250702) on X
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.0.9, 20250814) on X
+# OILEDMACHINE-OVERLAY-TEST:  passed (0.0.9, 20260503) on X
