@@ -24,7 +24,7 @@ EAPI=8
 
 MY_PN="WindowPet"
 
-NODE_SLOT="23" # CI uses 23 based on CI logs
+NODE_SLOT="24" # CI uses 23 based on CI logs, bump for security
 NPM_AUDIT_FATAL=0
 NPM_AUDIT_FIX=1
 NPM_SKIP_TARBALL_UNPACK="1"
@@ -875,23 +875,24 @@ ewarn "QA:  Remove node_modules/esbuild in ${S}/package-lock.json"
 			sed -i -e "s|\"@babel/runtime\": \"^7.23.9\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
 			sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die
 
-			sed -i -e "s|\"form-data\": \"^4.0.0\"|\"form-data\": \"4.0.4\"|g" "package-lock.json" || die
-			sed -i -e "s|\"vite\": \"^5.2.11\"|\"vite\": \"^5.4.20\"|g" "package-lock.json" || die
+			sed -i -e "s|\"form-data\": \"^4.0.0\"|\"form-data\": \"^4.0.4\"|g" "package-lock.json" || die
+			sed -i -e "s|\"vite\": \"^5.2.11\"|\"vite\": \"^6.4.2\"|g" "package-lock.json" || die
 		}
 
 		patch_lockfile
 		local L
 		L=(
-			"@babel/runtime@7.26.10"			# CVE-2025-27789; DoS
-			"form-data@4.0.4"				# CVE-2025-7783; DT, ID
+			"@babel/runtime@^7.26.10"			# CVE-2025-27789; DoS; Moderate
+			"form-data@^4.0.4"				# CVE-2025-7783; VS(DT, ID), SS(DT, ID); Critical
 		)
 		enpm install "${L[@]}" -P
 
 
 		L=(
-			"esbuild@^0.25.0"				# GHSA-67mh-4wv8-2f99; ID
-			"vite@5.4.20"					# CVE-2025-58751; ID
-									# CVE-2025-58752; ID
+			"esbuild@^0.25.0"				# GHSA-67mh-4wv8-2f99; ID; Moderate
+			"vite@^6.4.2"					# CVE-2025-58751; VS(ID); Low
+									# CVE-2025-58752; VS(ID); Low
+									# CVE-2026-39365; VS(ID); Moderate
 		)
 		enpm install "${L[@]}" -D
 		patch_lockfile

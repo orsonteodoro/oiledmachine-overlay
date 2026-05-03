@@ -12,14 +12,14 @@
     "tauri": "tauri"
   },
   "dependencies": {
-    "@babel/runtime": "^7.26.10",
+    "@babel/runtime": "^7.29.2",
     "@mantine/core": "^7.10.0",
     "@mantine/modals": "^7.10.0",
     "@mantine/notifications": "^7.10.0",
     "@tabler/icons-react": "^2.47.0",
     "@tauri-apps/api": "^1.5.6",
     "clsx": "^2.1.1",
-    "form-data": "^4.0.4",
+    "form-data": "^4.0.5",
     "i18next": "^23.11.5",
     "jsdom": "^24.0.0",
     "phaser": "^3.80.1",
@@ -48,7 +48,7 @@
     "postcss-preset-mantine": "^1.15.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5",
-    "vite": "^5.4.20",
+    "vite": "^6.4.2",
     "vite-plugin-checker": "^0.6.4",
     "vitest": "^1.6.0",
     "vitest-canvas-mock": "^0.3.3"
