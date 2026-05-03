@@ -41,6 +41,7 @@ DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="hatchling"
 NODE_SLOT="22" # From https://github.com/open-webui/open-webui/blob/v0.8.12/Dockerfile#L27
 NPM_AUDIT_FATAL=0
+NPM_SLOT="3"
 PROTOBUF_CPP_SLOT="5"
 PYTHON_COMPAT=( "python3_"{11..12} )
 SHARP_PV="0.34.5"
@@ -53,12 +54,12 @@ NODE_SHARP_PATCHES=(
 )
 
 NPM_AUDIT_FIX_ARGS=(
-#	"--prefer-offline"
+	"--prefer-offline"
 	"--legacy-peer-deps"
 )
 
 NPM_INSTALL_ARGS=(
-#	"--prefer-offline"
+	"--prefer-offline"
 	"--legacy-peer-deps"
 )
 
@@ -92,7 +93,7 @@ LICENSE="
 	BSD
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 all cuda dev mariadb ollama +openrc postgres rag-ocr unstructured systemd
 ebuild_revision_11
@@ -373,6 +374,10 @@ ewarn
 }
 
 pkg_setup() {
+	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+	local subslot=$(ver_cut "1-2" "${PV}") # 0.9
+	export NPM_CACHE_FOLDER="${EDISTDIR}/npm-download-cache-${NPM_SLOT}/${CATEGORY}/${PN}-${subslot}"
+
 	python-single-r1_pkg_setup
 	npm_pkg_setup
 	check_virtual_mem
@@ -387,58 +392,65 @@ npm_update_lock_install_post() {
 		# SS = Subsequent System (Indirect attack)
 		# VS = Vulnerable System (Direct attack)
 
-		sed -i -e "s|\"brace-expansion\": \"^1.1.7\"|\"brace-expansion\": \"2.0.2\"|g" "package-lock.json" || die
+		sed -i -e "s|\"brace-expansion\": \"^1.1.7\"|\"brace-expansion\": \"^2.0.3\"|g" "package-lock.json" || die
 
-		sed -i -e "s|\"cookie\": \"^0.6.0\"|\"cookie\": \"0.7.0\"|g" "package-lock.json" || die
+		sed -i -e "s|\"cookie\": \"^0.6.0\"|\"cookie\": \"^0.7.0\"|g" "package-lock.json" || die
 
-		sed -i -e "s|\"dompurify\": \"^3.1.6\"|\"dompurify\": \"3.3.3\"|g" "package-lock.json" || die
-		sed -i -e "s|\"dompurify\": \"^3.2.4\"|\"dompurify\": \"3.3.3\"|g" "package-lock.json" || die
-		sed -i -e "s|\"dompurify\": \"^3.0.5 <3.1.7\"|\"dompurify\": \"3.3.3\"|g" "package-lock.json" || die
+		sed -i -e "s|\"dompurify\": \"^3.1.6\"|\"dompurify\": \"^3.3.3\"|g" "package-lock.json" || die
+		sed -i -e "s|\"dompurify\": \"^3.2.4\"|\"dompurify\": \"^3.3.3\"|g" "package-lock.json" || die
+		sed -i -e "s|\"dompurify\": \"^3.0.5 <3.1.7\"|\"dompurify\": \"^3.3.3\"|g" "package-lock.json" || die
 
-		sed -i -e "s|\"esbuild\": \"^0.25.0\"|\"esbuild\": \"0.25.12\"|g" "package-lock.json" || die
-		sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"0.25.12\"|g" "package-lock.json" || die
+		sed -i -e "s|\"esbuild\": \"^0.25.0\"|\"esbuild\": \"^0.25.12\"|g" "package-lock.json" || die
+		sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"^0.25.12\"|g" "package-lock.json" || die
 
-		sed -i -e "s|\"vite\": \"^5.0.0\"|\"vite\": \"5.4.21\"|g" "package-lock.json" || die
-		sed -i -e "s|\"vite\": \"^5.4.14\"|\"vite\": \"5.4.21\"|g" "package-lock.json" || die
-		sed -i -e "s#\"vite\": \"^3.0.0 || ^4.0.0 || ^5.0.0\"#\"vite\": \"5.4.21\"#g" "package-lock.json" || die
-		sed -i -e "s#\"vite\": \"^5.0.3 || ^6.0.0\"#\"vite\": \"5.4.21\"#g" "package-lock.json" || die
+		sed -i -e "s#\"vite\": \"^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0\"#\"vite\": \"^5.4.21\"#g" "package-lock.json" || die
+		sed -i -e "s|\"vite\": \"^5.4.21\"|\"vite\": \"^5.4.21\"|g" "package-lock.json" || die
+		sed -i -e "s|\"vite\": \"^5.4.14\"|\"vite\": \"^5.4.21\"|g" "package-lock.json" || die
+		sed -i -e "s#\"vite\": \"^5.0.3 || ^6.0.0 || ^7.0.0-beta.0 || ^8.0.0\"#\"vite\": \"^5.4.21\"#g" "package-lock.json" || die
+		sed -i -e "s#\"vite\": \"^5.0.3 || ^6.0.0\"#\"vite\": \"^5.4.21\"#g" "package-lock.json" || die
+		sed -i -e "s#\"vite\": \"^5.0.0 || ^6.0.0\"#\"vite\": \"^5.4.21\"#g" "package-lock.json" || die
+		sed -i -e "s|\"vite\": \"^5.0.0\"|\"vite\": \"^5.4.21\"|g" "package-lock.json" || die
+		sed -i -e "s#\"vite\": \"^3.0.0 || ^4.0.0 || ^5.0.0\"#\"vite\": \"^5.4.21\"#g" "package-lock.json" || die
 
-		sed -i -e "s|\"form-data\": \"~4.0.0\"|\"form-data\": \"4.0.5\"|g" "package-lock.json" || die
-		sed -i -e "s|\"tmp\": \"~0.2.3\"|\"tmp\": \"0.2.5\"|g" "package-lock.json" || die
+		sed -i -e "s|\"form-data\": \"~4.0.0\"|\"form-data\": \"^4.0.5\"|g" "package-lock.json" || die
+		sed -i -e "s|\"tmp\": \"~0.2.3\"|\"tmp\": \"^0.2.5\"|g" "package-lock.json" || die
 
-		sed -i -e "s|\"jspdf\": \"^3.0.2\"|\"jspdf\": \"4.2.1\"|g" "package-lock.json" || die
-		sed -i -e "s|\"devalue\": \"^5.1.0\"|\"devalue\": \"5.6.4\"|g" "package-lock.json" || die
-		sed -i -e "s|\"vite-plugin-static-copy\": \"^2.2.0\"|\"vite-plugin-static-copy\": \"2.3.2\"|g" "package-lock.json" || die
-		sed -i -e "s|\"mermaid\": \"^10.9.3\"|\"mermaid\": \"11.13.0\"|g" "package-lock.json" || die
+		sed -i -e "s|\"jspdf\": \"^3.0.2\"|\"jspdf\": \"^4.2.1\"|g" "package-lock.json" || die
+		sed -i -e "s|\"devalue\": \"^5.1.0\"|\"devalue\": \"^5.6.4\"|g" "package-lock.json" || die
+		sed -i -e "s|\"vite-plugin-static-copy\": \"^2.2.0\"|\"vite-plugin-static-copy\": \"^2.3.2\"|g" "package-lock.json" || die
+		sed -i -e "s|\"mermaid\": \"^10.9.3\"|\"mermaid\": \"^11.13.0\"|g" "package-lock.json" || die
+
+		sed -i -e "s|\"uuid\": \"^11.1.0\"|\"uuid\": \"^14.0.0\"|g" "package-lock.json" || die
+		sed -i -e "s|\"uuid\": \"^9.0.1\"|\"uuid\": \"^14.0.0\"|g" "package-lock.json" || die
+		sed -i -e "s|\"uuid\": \"^8.3.2\"|\"uuid\": \"^14.0.0\"|g" "package-lock.json" || die
 	}
 	patch_lockfile
 
 	local pkgs
 	pkgs=(
-		"brace-expansion@2.0.2"						# CVE-2025-5889; DoS; Low
-		"cookie@0.7.0"							# CVE-2024-47764; VS(DT); Medium
-		"esbuild@0.25.12"						# GHSA-67mh-4wv8-2f99; ID; Moderate
-		"vite@5.4.21"							# CVE-2025-46565; VS(ID); Low
+		"brace-expansion@^2.0.3"					# CVE-2025-5889; DoS; Low
+		"cookie@^0.7.0"							# CVE-2024-47764; VS(DT); Medium
+		"esbuild@^0.25.12"						# GHSA-67mh-4wv8-2f99; ID; Moderate
+		"vite@^6.4.2"							# CVE-2025-46565; VS(ID); Low
 										# CVE-2025-58751; VS(ID); Low
 										# CVE-2025-58752; VS(ID); Low
-		"form-data@4.0.5"						# CVE-2025-7783; VS(DT, ID), SS(DT, ID); Critical
-		"tmp@0.2.5"							# CVE-2025-54798; DT; Low
-		"devalue@5.6.4"							# CVE-2025-57820; SS(DoS, DT, ID); High
+		"form-data@^4.0.5"						# CVE-2025-7783; VS(DT, ID), SS(DT, ID); Critical
+		"tmp@^0.2.5"							# CVE-2025-54798; DT; Low
+		"devalue@^5.6.4"						# CVE-2025-57820; SS(DoS, DT, ID); High
 	)
-#	enpm install -D --prefer-offline "${pkgs[@]}"
-	enpm install -D "${pkgs[@]}"
+	enpm install -D "${pkgs[@]}" "${NPM_INSTALL_ARGS[@]}"
 
 	pkgs=(
-		"dompurify@3.3.3"
-		"jspdf@4.2.1"							# CVE-2025-57810; ZC, VS(DoS); High
+		"dompurify@^3.3.3"
+		"jspdf@^4.2.1"							# CVE-2025-57810; ZC, VS(DoS); High
 										# CVE-2026-31938; DoS, DT, ID; Critical
 										# CVE-2025-68428; ZC, VS(ID), SS(ID); Critical
 										# CVE-2026-25535; ZC, DoS; High
-		"vite-plugin-static-copy@2.3.2"					# CVE-2025-57753; VS(ID); Moderate
-		"mermaid@11.13.0"						# CVE-2025-54881; SS(DT, ID); Moderate
+		"vite-plugin-static-copy@^2.3.2"				# CVE-2025-57753; VS(ID); Moderate
+		"mermaid@^11.13.0"						# CVE-2025-54881; SS(DT, ID); Moderate
+		"uuid@^14.0.0"							# GHSA-w5hq-g745-h8pq; ZC, VS(DT); Moderate
 	)
-#	enpm install -P --prefer-offline "${pkgs[@]}"
-	enpm install -P "${pkgs[@]}"
+	enpm install -P "${pkgs[@]}" "${NPM_INSTALL_ARGS[@]}"
 
 	patch_lockfile
 }
@@ -494,7 +506,7 @@ src_unpack() {
 
 		npm_src_unpack
 		if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
-ewarn "QA:  modify package.json build with just vite build"
+ewarn "QA:  Modify package.json build with just vite build"
 		fi
 
 		_rebuild_sharp
