@@ -1299,8 +1299,8 @@ einfo
 # OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.69.0 (20260227)
 # OILEDMACHINE-OVERLAY-TEST:  FAILED  (interactive) 1.70.2 (20260419 with Electron 39.8.7)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.71.0 (20260501 with Electron 39.8.7)
-# OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.71.0 (20260502 with Electron 39.8.7 with reduced lockfile attack surface #1)
-# OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.71.0 (20260502 with Electron 39.8.7 with reduced lockfile attack surface #2)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.71.0 (20260502 with Electron 39.8.7 with reduced lockfile attack surface without CE mitigation)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.71.0 (20260502 with Electron 39.8.7 with reduced lockfile attack surface with CE mitigation)
 # launch-test:  passed
 # ai-assistant (ollama with yi-coder:1.5b with Universal agent):  passed
 # Run hello world for python:  fail
