@@ -617,6 +617,7 @@ einfo "Adding dependencies"
 
 fix_vulnerabilities() {
 einfo "Fixing vulnerabilities"
+	# CE = Code Execution
 	# DoS = Denial of Serivce
 	# DT = Data Tampering
 	# ID = Information Disclosure
