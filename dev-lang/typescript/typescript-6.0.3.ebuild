@@ -8,15 +8,15 @@ MY_PN="TypeScript"
 
 # To update lockfile
 # PATH=$(realpath "../../scripts")":${PATH}"
-# NPM_UPDATER_VERSIONS="5.9.3" npm_updater_update_locks.sh
+# NPM_UPDATER_VERSIONS="6.0.3" npm_updater_update_locks.sh
 
 # Same as package-lock but uses latest always latest.
 # See https://www.npmjs.com/package/@types/node
-NODE_SLOT="22" # Same as major version of NPM_SECAUDIT_AT_TYPES_NODE_PV
+NODE_SLOT="24" # Same as major version of NPM_SECAUDIT_AT_TYPES_NODE_PV
 NPM_AUDIT_FATAL=0
 NPM_INSTALL_PATH="/opt/${PN}/${PV}"
 
-NPM_SECAUDIT_AT_TYPES_NODE_PV="22.13.4"
+NPM_SECAUDIT_AT_TYPES_NODE_PV="25.3.3"
 
 NPM_EXE_LIST=(
 	"${NPM_INSTALL_PATH}/bin/tsc"
