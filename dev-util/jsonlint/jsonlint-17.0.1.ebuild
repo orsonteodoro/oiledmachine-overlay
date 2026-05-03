@@ -18,6 +18,19 @@ RUST_MAX_VER="1.80.0" # Inclusive
 RUST_MIN_VER="1.80.0" # llvm-18.1, required by @swc/core
 RUST_PV="${RUST_MIN_VER}"
 
+NPM_INSTALL_ARGS=(
+	"--legacy-peer-deps"
+	"--prefer-offline"
+)
+NPM_AUDIT_FIX_ARGS=(
+	"--legacy-peer-deps"
+	"--prefer-offline"
+)
+NPM_DEDUPE_ARGS=(
+	"--legacy-peer-deps"
+	"--prefer-offline"
+)
+
 # Partially generated from:  find ${NPM_INSTALL_PATH} -path "*/.bin/*" -o -path "*/.bin"
 NPM_EXE_LIST=(
 	"${NPM_INSTALL_PATH}/lib/cli.js"
@@ -90,7 +103,7 @@ https://github.com/prantlf/jsonlint
 LICENSE="MIT"
 RESTRICT="mirror test" # Missing dev dependencies
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" test ebuild_revision_14"
+IUSE+=" test ebuild_revision_15"
 DEPEND+="
 "
 RDEPEND+="
@@ -124,12 +137,29 @@ einfo "Applying mitigation"
 	patch_edits() {
 		sed -i -e "s|\"esbuild\": \"0.23.0\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die
 		sed -i -e "s|\"rollup\": \"4.20.0\"|\"rollup\": \"^4.22.4\"|g" "package-lock.json" || die
+		sed -i -e "s|\"ajv\": \"8.17.1\"|\"ajv\": \"^8.18.0\"|g" "package-lock.json" || die
+		sed -i -e "s|\"ajv\": \"^8.5.0\"|\"ajv\": \"^8.18.0\"|g" "package-lock.json" || die
+		sed -i -e "s|\"ajv\": \"^8.0.0\"|\"ajv\": \"^8.18.0\"|g" "package-lock.json" || die
+		sed -i -e "s|\"ajv\": \"^8.8.2\"|\"ajv\": \"^8.18.0\"|g" "package-lock.json" || die
 	}
 	patch_edits
 	# DoS = Denial of Service
 	# DT = Data Tampering
 	# ID = Information Disclosure
-	enpm install "esbuild@0.25.0" -D --prefer-offline	# ID			# GHSA-67mh-4wv8-2f99
-	enpm install "rollup@^4.22.4" -D --prefer-offline	# DoS, DT, ID		# CVE-2024-47068, GHSA-gcx4-mw62-g8wm
+	# ZC = Zero-click vulnerability
+	# VS = Vulnerable System [aka direct attack or immediate affected system]
+	# SS = Subsequent System [aka multiple system(s) beyond the direct attack]
+	local L
+	L=(
+		"esbuild@0.25.0"	# GHSA-67mh-4wv8-2f99; ID; Moderate
+		"rollup@^4.22.4"	# CVE-2024-47068; ZC, VS(DoS, DT, ID); High
+	)
+	enpm install "${L[@]}" -D "${NPM_INSTALL_ARGS[@]}"
+
+	L=(
+		"ajv@^8.18.0"		# CVE-2025-69873; ZC, DoS; Moderate
+	)
+	enpm install "${L[@]}" -P "${NPM_INSTALL_ARGS[@]}"
+
 	patch_edits
 }
