@@ -473,19 +473,20 @@ _rebuild_sharp() {
 	fi
 	local sharp_platform=$(node-sharp_get_platform)
 
+	# The prebuilt node sharp requires sse4 to use.
+	# Use source build to bypass gimmick restriction to support older CPUs.
 	if [[ "${PNPM_UPDATE_LOCK}" != "1" ]] ; then
 	        einfo "Rebuilding sharp in ${S}"
 	        pushd "${S}" >/dev/null 2>&1 || die
 			node-sharp_pnpm_rebuild_sharp
-			# Copy sharp binary to expected location
+	# Copy sharp binary to expected location
 			mkdir -p "node_modules/sharp/build/${configuration}" || die "Failed to create node_modules/sharp/build/${configuration}"
 			cp \
 				"node_modules/sharp/src/build/${configuration}/sharp-${sharp_platform}.node" \
 				"node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" \
 				|| die "Failed to copy sharp-${sharp_platform}.node"
-			ls -l "node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" || die "sharp-${sharp_platform}.node not found"
 
-		# Remove prebuilts
+	# Remove prebuilts
 			rm -rf "node_modules/.pnpm/@img+sharp-"*"@"* || true
 				node-sharp_verify_dedupe
 		popd >/dev/null 2>&1 || die
