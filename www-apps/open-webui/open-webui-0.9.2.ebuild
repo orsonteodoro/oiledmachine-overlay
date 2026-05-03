@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# For requirements, see https://github.com/open-webui/open-webui/blob/v0.9.2/backend/requirements.txt
+
 # TODO package
 # azure-search-documents
 # ddgs
@@ -30,7 +32,7 @@ EAPI=8
 
 # To update lockfile:
 # PATH="$(realpath ../../scripts):${PATH}"
-# NPM_UPDATER_VERSIONS="0.8.12" npm_updater_update_locks.sh
+# NPM_UPDATER_VERSIONS="0.9.2" npm_updater_update_locks.sh
 
 MY_PN="Open WebUI"
 
@@ -180,26 +182,28 @@ RDEPEND+="
 	${MOTO_RDEPEND}
 	${UVICORN_RDEPEND}
 	$(python_gen_cond_dep '
-		>=app-arch/brotli-1.1.0[${PYTHON_USEDEP}]
+		>=app-arch/brotli-1.2.0[${PYTHON_USEDEP}]
 		>=dev-python/accelerate-1.13.0[${PYTHON_USEDEP}]
 		>=dev-python/aiocache-0.12.3[${PYTHON_USEDEP}]
 		>=dev-python/aiofiles-25.1.0[${PYTHON_USEDEP}]
-		>=dev-python/aiohttp-3.13.2[${PYTHON_USEDEP}]
+		>=dev-python/aiohttp-3.13.5[${PYTHON_USEDEP}]
+		>=dev-python/aiosqlite-0.21.0[${PYTHON_USEDEP}]
 		>=dev-python/alembic-1.18.4[${PYTHON_USEDEP}]
 		>=dev-python/anthropic-0.86.0[${PYTHON_USEDEP}]
 		>=dev-python/apscheduler-3.11.2[${PYTHON_USEDEP}]
 		>=dev-python/argon2-cffi-25.1.0[${PYTHON_USEDEP}]
 		>=dev-python/asgiref-3.11.1[${PYTHON_USEDEP}]
 		>=dev-python/async-timeout-5.0.1[${PYTHON_USEDEP}]
-		>=dev-python/Authlib-1.6.9[${PYTHON_USEDEP}]
+		>=dev-python/Authlib-1.6.10[${PYTHON_USEDEP}]
 		>=dev-python/av-14.0.1[${PYTHON_USEDEP}]
 		>=dev-python/azure-ai-documentintelligence-1.0.2[${PYTHON_USEDEP}]
 		>=dev-python/azure-identity-1.25.2[${PYTHON_USEDEP}]
 		>=dev-python/azure-storage-blob-12.28.0[${PYTHON_USEDEP}]
 		>=dev-python/bcrypt-5.0.0[${PYTHON_USEDEP}]
-		>=dev-python/black-26.1.0[${PYTHON_USEDEP}]
-		>=dev-python/boto3-1.42.62[${PYTHON_USEDEP}]
 		>=dev-python/beautifulsoup4-4.14.3[${PYTHON_USEDEP}]
+		>=dev-python/black-26.3.1[${PYTHON_USEDEP}]
+		>=dev-python/boto3-1.42.62[${PYTHON_USEDEP}]
+		>=dev-python/brotlicffi-1.2.0.1[${PYTHON_USEDEP}]
 		>=dev-python/chardet-5.2.0[${PYTHON_USEDEP}]
 		>=dev-python/cryptography-46.0.5[${PYTHON_USEDEP}]
 		>=dev-python/ddgs-9.11.3[${PYTHON_USEDEP}]
@@ -277,9 +281,9 @@ RDEPEND+="
 		>=dev-python/soundfile-0.13.1[${PYTHON_USEDEP}]
 		>=dev-python/starlette-compress-1.7.0[${PYTHON_USEDEP}]
 		>=dev-python/starsessions-2.2.1[${PYTHON_USEDEP},redis]
-		>=dev-python/uvicorn-0.41.0[${PYTHON_USEDEP},standard(+)]
-		>=dev-python/requests-2.32.5[${PYTHON_USEDEP}]
-		>=dev-python/sqlalchemy-2.0.48[${PYTHON_USEDEP}]
+		>=dev-python/uvicorn-0.41.0[${PYTHON_USEDEP},standard]
+		>=dev-python/requests-2.33.1[${PYTHON_USEDEP}]
+		>=dev-python/sqlalchemy-2.0.48[${PYTHON_USEDEP},asyncio(+)]
 		>=dev-python/tiktoken-0.12.0[${PYTHON_USEDEP}]
 		>=dev-python/validators-0.35.0[${PYTHON_USEDEP}]
 		>=dev-python/xlrd-2.0.2[${PYTHON_USEDEP}]
@@ -305,7 +309,7 @@ RDEPEND+="
 			>=dev-python/mariadb-1.1.14[${PYTHON_USEDEP}]
 		)
 		postgres? (
-			>=dev-python/psycopg-2.9.11:2[${PYTHON_USEDEP}]
+			>=dev-python/psycopg-3.2.9:2[${PYTHON_USEDEP},binary(+)]
 			dev-python/psycopg:=
 			>=dev-python/pgvector-0.4.2[${PYTHON_USEDEP}]
 		)
@@ -317,9 +321,9 @@ RDEPEND+="
 	>=dev-python/langchain-community-0.4.1[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/langchain-text-splitters-1.1.1[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/rapidocr-onnxruntime-1.4.4[${PYTHON_SINGLE_USEDEP}]
-	>=dev-python/sentence-transformers-5.2.3[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/sentence-transformers-5.4.0[${PYTHON_SINGLE_USEDEP}]
 	>=media-libs/opencv-4.13.0[${PYTHON_SINGLE_USEDEP},python]
-	>=sci-ml/transformers-5.3.0[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/transformers-5.5.4[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/onnxruntime-1.24.3[${PYTHON_SINGLE_USEDEP},python]
 	acct-group/${PN}
 	acct-user/${PN}
