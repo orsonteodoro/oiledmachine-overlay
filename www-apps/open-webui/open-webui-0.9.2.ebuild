@@ -439,6 +439,7 @@ ewarn "QA:  Manually remove node_modules/vite-node/node_modules/vite in package-
 		"vite@^6.4.2"							# CVE-2025-46565; VS(ID); Low
 										# CVE-2025-58751; VS(ID); Low
 										# CVE-2025-58752; VS(ID); Low
+										# CVE-2026-39365; ZC, VS(ID); Moderate
 		"form-data@^4.0.5"						# CVE-2025-7783; VS(DT, ID), SS(DT, ID); Critical
 		"tmp@^0.2.5"							# CVE-2025-54798; DT; Low
 		"devalue@^5.6.4"						# CVE-2025-57820; SS(DoS, DT, ID); High
