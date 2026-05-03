@@ -11,6 +11,18 @@ EAPI=8
 NODE_SLOT="20"
 NPM_AUDIT_FATAL=0
 
+NPM_AUDIT_FIX_ARGS=(
+	"--prefer-offline"
+)
+
+NPM_DEDUPE_ARGS=(
+	"--prefer-offline"
+)
+
+NPM_INSTALL_ARGS=(
+	"--prefer-offline"
+)
+
 inherit npm
 
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -40,7 +52,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-ebuild_revision_6
+ebuild_revision_7
 "
 RDEPEND+="
 	net-libs/nodejs:${NODE_SLOT}[webassembly(+)]
@@ -53,7 +65,9 @@ BDEPEND+="
 DOCS=( "readme.md" )
 
 npm_update_lock_install_post() {
-	if false && [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+einfo "Called npm_update_lock_install_post()"
+	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+einfo "npm_update_lock_install_post():  Updating lockfile"
 		# CE = Code Execution
 		# DoS = Denial of Service
 		# DT = Data Tampering
@@ -80,19 +94,19 @@ npm_update_lock_install_post() {
 		patch_lockfile
 
 		local pkgs=(
-			"braces@3.0.3"				# CVE-2024-4068; DoS; High
-			"postcss@8.4.31"			# CVE-2023-44270; DT; Medium
+			"braces@^3.0.3"				# CVE-2024-4068; DoS; High
+			"postcss@^8.4.31"			# CVE-2023-44270; DT; Medium
 			"serialize-javascript@^7.0.5"		# CVE-2024-11831; DT, ID; Medium
 								# GHSA-5c6j-r48x-rmvq; ZC, CE, DoS, DT, ID; High
 								# CVE-2026-34043; DoS; Moderate
 
-			"pbkdf2@3.1.3"				# CVE-2025-6547; ZC, VS(DT), SS(DoS, DT, ID)
+			"pbkdf2@^3.1.3"				# CVE-2025-6547; ZC, VS(DT), SS(DoS, DT, ID)
 								# CVE-2025-6545; ZC, VS(DT, ID), SS(DoS, DT, ID)
 
-			"sha.js@2.4.12"				# CVE-2025-9288; ZC, VS(DoS, DT), SS(DT, ID)
+			"sha.js@^2.4.12"			# CVE-2025-9288; ZC, VS(DoS, DT), SS(DT, ID)
 			"uuid@^14.0.0"				# GHSA-w5hq-g745-h8pq; ZC, VS(DT); Moderate
 		)
-		enpm add "${pkgs[@]}" -D #--prefer-offline
+		enpm add "${pkgs[@]}" -D "${NPM_INSTALL_ARGS[@]}"
 		patch_lockfile
 	fi
 }
