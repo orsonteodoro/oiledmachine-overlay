@@ -4,8 +4,13 @@
 
 EAPI=8
 
+# To update lockfile
+# PATH=$(realpath "../../scripts")":${PATH}"
+# NPM_UPDATER_VERSIONS="17.0.1" npm_updater_update_locks.sh
+
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO"
-NODE_SLOT="18"
+NODE_SLOT="22"
+NPM_AUDIT_FATAL=0
 NPM_INSTALL_PATH="/opt/${PN}"
 NPM_TARBALL="prantlf-${P}.tar.gz"
 NPM_TEST_SCRIPT="test"
