@@ -393,6 +393,7 @@ ewarn "QA:  Manually remove node_modules/vite-node/node_modules/vite in package-
 		# ID = Information Disclosure
 		# SS = Subsequent System (Indirect attack)
 		# VS = Vulnerable System (Direct attack)
+		# ZC = Zero-Click vulnerability
 
 		sed -i -e "s|\"brace-expansion\": \"^1.1.7\"|\"brace-expansion\": \"^2.0.3\"|g" "package-lock.json" || die
 
