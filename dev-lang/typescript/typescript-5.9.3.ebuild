@@ -23,6 +23,18 @@ NPM_EXE_LIST=(
 	"${NPM_INSTALL_PATH}/bin/tsserver"
 )
 
+NPM_AUDIT_FIX_ARGS=(
+	"--prefer-offline"
+)
+
+NPM_DEDUPE_ARGS=(
+	"--prefer-offline"
+)
+
+NPM_INSTALL_ARGS=(
+	"--prefer-offline"
+)
+
 inherit npm
 
 KEYWORDS="~amd64 ~arm64"
@@ -77,11 +89,16 @@ npm_update_lock_install_pre() {
 
 npm_update_lock_install_post() {
 einfo "QA:  Remove node_modules/mocha/node_modules/serialize-javascript from ${S}/package-lock.json"
-	if false && [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
-		enpm install "esbuild@^0.25.0" -D			# GHSA-67mh-4wv8-2f99; ID, Moderate
-		enpm install "serialize-javascript@^7.0.3" -D		# GHSA-5c6j-r48x-rmvq; ZC, DoS, DT, ID; High
-		enpm install "fast-xml-parser@^5.3.8" -D		# CVE-2026-27942; ZC, DoS; Low
-		enpm install "flatted@^3.4.2"				# CVE-2026-33228; ZC, VS(DoS, DT, ID); High
+	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+		local L=(
+			"picomatch@^4.0.4"			# CVE-2026-33672; ZC, DT; Moderate
+			"fast-xml-parser@^5.7.0"		# CVE-2026-27942; ZC, DoS; Low
+								# CVE-2026-41650; DT, ID; Moderate
+			"flatted@^3.4.2"			# CVE-2026-33228; ZC, VS(DoS, DT, ID); High
+			"serialize-javascript@^7.0.5"	# CVE-2026-34043; ZC, DoS; Moderate
+								# GHSA-5c6j-r48x-rmvq; ZC, DoS, DT, ID; High
+		)
+		enpm install "${L[@]}" -D "${NPM_AUDIT_FIX_ARGS[@]}"
 	fi
 }
 
