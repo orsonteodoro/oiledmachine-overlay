@@ -53,7 +53,8 @@ BDEPEND+="
 DOCS=( "readme.md" )
 
 npm_update_lock_install_post() {
-	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+	if false && [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+		# CE = Code Execution
 		# DoS = Denial of Service
 		# DT = Data Tampering
 		# ID = Information Disclosure
@@ -68,24 +69,28 @@ npm_update_lock_install_post() {
 			sed -i -e "s|\"postcss\": \"^7.0.6\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die
 			sed -i -e "s|\"postcss\": \"^7.0.14\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die
 			sed -i -e "s|\"postcss\": \"^7.0.32\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die
-			sed -i -e "s|\"serialize-javascript\": \"^4.0.0\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die
+			sed -i -e "s|\"serialize-javascript\": \"^4.0.0\"|\"serialize-javascript\": \"^7.0.5\"|g" "package-lock.json" || die
 			sed -i -e "s|\"pbkdf2\": \"^3.1.2\"|\"pbkdf2\": \"^3.1.3\"|g" "package-lock.json" || die
 
 			sed -i -e "s|\"sha.js\": \"^2.4.0\"|\"sha.js\": \"^2.4.12\"|g" "package-lock.json" || die
 			sed -i -e "s|\"sha.js\": \"^2.4.8\"|\"sha.js\": \"^2.4.12\"|g" "package-lock.json" || die
 			sed -i -e "s|\"sha.js\": \"^2.4.11\"|\"sha.js\": \"^2.4.12\"|g" "package-lock.json" || die
+			sed -i -e "s|\"uuid\": \"^3.3.2\"|\"uuid\": \"^14.0.0\"|g" "package-lock.json" || die
 		}
 		patch_lockfile
 
 		local pkgs=(
 			"braces@3.0.3"				# CVE-2024-4068; DoS; High
 			"postcss@8.4.31"			# CVE-2023-44270; DT; Medium
-			"serialize-javascript@^6.0.2"		# CVE-2024-11831; DT, ID; Medium
+			"serialize-javascript@^7.0.5"		# CVE-2024-11831; DT, ID; Medium
+								# GHSA-5c6j-r48x-rmvq; ZC, CE, DoS, DT, ID; High
+								# CVE-2026-34043; DoS; Moderate
 
 			"pbkdf2@3.1.3"				# CVE-2025-6547; ZC, VS(DT), SS(DoS, DT, ID)
 								# CVE-2025-6545; ZC, VS(DT, ID), SS(DoS, DT, ID)
 
 			"sha.js@2.4.12"				# CVE-2025-9288; ZC, VS(DoS, DT), SS(DT, ID)
+			"uuid@^14.0.0"				# GHSA-w5hq-g745-h8pq; ZC, VS(DT); Moderate
 		)
 		enpm add "${pkgs[@]}" -D #--prefer-offline
 		patch_lockfile
