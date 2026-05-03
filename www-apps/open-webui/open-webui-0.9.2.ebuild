@@ -7,22 +7,22 @@ EAPI=8
 # For requirements, see https://github.com/open-webui/open-webui/blob/v0.9.2/backend/requirements.txt
 
 # TODO package
-# azure-search-documents
+# azure-search-documents [all]
 # ddgs
 # google-genai
 # langchain-classic
 # langchain-text-splitters
 # mcp
-# opentelemetry-exporter-otlp
-# opentelemetry-instrumentation-sqlalchemy
-# opentelemetry-instrumentation-redis
-# opentelemetry-instrumentation-requests
-# opentelemetry-instrumentation-logging
-# opentelemetry-instrumentation-httpx
-# opentelemetry-instrumentation-aiohttp-client
-# opentelemetry-instrumentation-system-metrics
-# oracledb
-# pinecone
+# opentelemetry-exporter-otlp [optional]
+# opentelemetry-instrumentation-sqlalchemy [optional]
+# opentelemetry-instrumentation-redis [optional]
+# opentelemetry-instrumentation-requests [optional]
+# opentelemetry-instrumentation-logging [optional]
+# opentelemetry-instrumentation-httpx [optional]
+# opentelemetry-instrumentation-aiohttp-client [optional]
+# opentelemetry-instrumentation-system-metrics [optional]
+# oracledb [all]
+# pinecone [all]
 # pycrdt
 # starlette-compress
 # starsessions
@@ -295,7 +295,6 @@ RDEPEND+="
 			>=dev-python/azure-search-documents-11.6.0[${PYTHON_USEDEP}]
 			>=dev-python/docker-7.1.0[${PYTHON_USEDEP}]
 			>=dev-python/elasticsearch-9.3.0[${PYTHON_USEDEP}]
-			>=dev-python/firecrawl-py-4.18.0[${PYTHON_USEDEP}]
 			>=dev-python/gcp-storage-emulator-2024.8.3[${PYTHON_USEDEP}]
 			>=dev-python/oracledb-3.4.2[${PYTHON_USEDEP}]
 			>=dev-python/pinecone-6.0.2[${PYTHON_USEDEP}]
