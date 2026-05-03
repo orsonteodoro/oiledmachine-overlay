@@ -18,6 +18,18 @@ AT_TYPES_NODE_PV="18.16.3"
 PLAYWRIGHT_PV="1.59.1"
 NODE_SLOT="20" # Required by npm slot
 
+NPM_INSTALL_ARGS=(
+	"--prefer-offline"
+)
+
+NPM_AUDIT_FIX_ARGS=(
+	"--prefer-offline"
+)
+
+NPM_DEDUPE_ARGS=(
+	"--prefer-offline"
+)
+
 # 1.56.1 works
 declare -A DL_REVISIONS=(
 # See lockfile for playwright version
@@ -247,7 +259,7 @@ einfo "Applying mitigation"
 		sed -i -e "s|\"esbuild\": \"~0.23.0\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die
 		sed -i -e "s|\"phin\": \"^2.9.1\"|\"phin\": \"^3.7.1\"|g" "package-lock.json" || die
 		sed -i -e "s|\"phin\": \"^2.9.3\"|\"phin\": \"^3.7.1\"|g" "package-lock.json" || die
-		sed -i -e "s|\"vite\": \"^5.0.0\"|\"vite\": \"^5.4.19\"|g" "package-lock.json" || die
+		sed -i -e "s|\"vite\": \"^5.0.0\"|\"vite\": \"^6.4.2\"|g" "package-lock.json" || die
 		sed -i -e "s|\"tmp\": \"^0.0.33\"|\"tmp\": \"^0.0.33\"|g" "package-lock.json" || die
 	}
 	patch_edits
@@ -256,31 +268,27 @@ einfo "Applying mitigation"
 	# DoS = Denial of Service
 	local pkgs
 	pkgs=(
-		"phin@^3.7.1"						# ID		# GHSA-x565-32qp-m3vf
-		"@babel/runtime@7.26.10"				# DoS		# CVE-2025-27789
+		"phin@^3.7.1"							# GHSA-x565-32qp-m3vf; ID; Moderate
+		"@babel/runtime@^7.26.10"					# CVE-2025-27789; DoS; Moderate
 
-		# Explicit version required for corresponding cache update.
-		# --prefer-offline is broken
-		"playwright@${PLAYWRIGHT_PV}"
+		"playwright@${PLAYWRIGHT_PV}"					# Pinned required for offline downloads
 		"@playwright/test@${PLAYWRIGHT_PV}"
 
-		"tmp@0.2.4"						# DT		# CVE-2025-54798
+		"tmp@^0.2.4"							# CVE-2025-54798; DT; Low
 	)
-	enpm install -P --prefer-offline "${pkgs[@]}"
-#	enpm install -P "${pkgs[@]}"
+	enpm install -P "${pkgs[@]}" "${NPM_INSTALL_ARGS[@]}"
 
 	pkgs=(
-		"esbuild@^0.25.0"					# ID		# GHSA-67mh-4wv8-2f99
+		"esbuild@^0.25.0"						# GHSA-67mh-4wv8-2f99; ID; Moderate
 
-		"vite@^5.4.19"						# ID		# CVE-2025-46565
-									# ID		# CVE-2025-32395
-									# ID		# CVE-2025-31486
-									# ID		# CVE-2025-31125
-									# ID		# CVE-2025-30208
+		"vite@^6.4.2"							# CVE-2025-46565; VS(ID); Moderate
+										# CVE-2025-32395; VS(ID); Moderate
+										# CVE-2025-31486; ID; Moderate
+										# CVE-2025-31125; ID; Moderate
+										# CVE-2025-30208; ID; Moderate
+										# CVE-2026-39365; ZC, VS(ID); Moderate
 	)
-	enpm install -D --prefer-offline "${pkgs[@]}"
-
-#	enpm install -D "${pkgs[@]}"
+	enpm install -D "${pkgs[@]}" "${NPM_INSTALL_ARGS[@]}"
 
 	patch_edits
 
