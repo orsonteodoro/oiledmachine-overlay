@@ -68,7 +68,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT=$(ver_cut "1-2" "${PV}")"/${PV}"
 IUSE+="
-test ebuild_revision_9
+test ebuild_revision_10
 "
 RDEPEND+="
 	>=net-libs/nodejs-${NODE_SLOT}:${NODE_SLOT}
@@ -95,7 +95,7 @@ einfo "QA:  Remove node_modules/mocha/node_modules/serialize-javascript from ${S
 			"fast-xml-parser@^5.7.0"		# CVE-2026-27942; ZC, DoS; Low
 								# CVE-2026-41650; DT, ID; Moderate
 			"flatted@^3.4.2"			# CVE-2026-33228; ZC, VS(DoS, DT, ID); High
-			"serialize-javascript@^7.0.5"	# CVE-2026-34043; ZC, DoS; Moderate
+			"serialize-javascript@^7.0.5"		# CVE-2026-34043; ZC, DoS; Moderate
 								# GHSA-5c6j-r48x-rmvq; ZC, DoS, DT, ID; High
 		)
 		enpm install "${L[@]}" -D "${NPM_AUDIT_FIX_ARGS[@]}"
