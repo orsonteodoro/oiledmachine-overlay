@@ -92,7 +92,7 @@ einfo "QA:  Remove node_modules/mocha/node_modules/serialize-javascript from ${S
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 		local L=(
 			"serialize-javascript@^7.0.5"		# CVE-2026-34043; ZC, DoS; Moderate
-								# GHSA-5c6j-r48x-rmvq; ZC, DoS, DT, ID; High
+								# GHSA-5c6j-r48x-rmvq; ZC, CE, DoS, DT, ID; High
 		)
 		enpm install "${L[@]}" -D "${NPM_AUDIT_FIX_ARGS[@]}"
 	fi

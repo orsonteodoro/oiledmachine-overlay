@@ -96,7 +96,7 @@ einfo "QA:  Remove node_modules/mocha/node_modules/serialize-javascript from ${S
 								# CVE-2026-41650; DT, ID; Moderate
 			"flatted@^3.4.2"			# CVE-2026-33228; ZC, VS(DoS, DT, ID); High
 			"serialize-javascript@^7.0.5"		# CVE-2026-34043; ZC, DoS; Moderate
-								# GHSA-5c6j-r48x-rmvq; ZC, DoS, DT, ID; High
+								# GHSA-5c6j-r48x-rmvq; ZC, CE, DoS, DT, ID; High
 		)
 		enpm install "${L[@]}" -D "${NPM_AUDIT_FIX_ARGS[@]}"
 	fi
