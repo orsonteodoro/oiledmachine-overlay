@@ -4,6 +4,10 @@
 
 EAPI=8
 
+# To update lockfile
+# PATH=$(realpath "../../scripts")":${PATH}"
+# NPM_UPDATER_VERSIONS="2.1.0" npm_updater_update_locks.sh
+
 MY_PN="${PN//-cli/}"
 
 NODE_ENV="development"
@@ -11,38 +15,38 @@ NPM_AUDIT_FATAL=0
 NPM_INSTALL_PATH="/opt/${PN}"
 
 AT_TYPES_NODE_PV="18.16.3"
-PLAYWRIGHT_PV="1.58.2"
+PLAYWRIGHT_PV="1.59.1"
 NODE_SLOT="20" # Required by npm slot
 
 # 1.56.1 works
 declare -A DL_REVISIONS=(
 # See lockfile for playwright version
-# See https://github.com/microsoft/playwright/blob/v1.58.2/packages/playwright-core/browsers.json
-# See https://github.com/microsoft/playwright/blob/v1.58.2/packages/playwright-core/src/server/registry/index.ts#L231
-	["chromium-linux-glibc-amd64"]="1208"
-	["chromium-headless-shell-linux-glibc-amd64"]="1208"
-	["chromium-tip-of-tree-linux-glibc-amd64"]="1401"
+# See https://github.com/microsoft/playwright/blob/v1.59.1/packages/playwright-core/browsers.json
+# See https://github.com/microsoft/playwright/blob/v1.59.1/packages/playwright-core/src/server/registry/index.ts#L231
+	["chromium-linux-glibc-amd64"]="1217"
+	["chromium-headless-shell-linux-glibc-amd64"]="1217"
+	["chromium-tip-of-tree-linux-glibc-amd64"]="1417"
 	["ffmpeg-linux-glibc-amd64"]="1011"
-	["firefox-linux-glibc-amd64-ubuntu-24_04"]="1509"
-	["firefox-beta-linux-glibc-amd64-ubuntu-24_04"]="1504"
-	["webkit-linux-glibc-amd64-ubuntu-24_04"]="2248"
+	["firefox-linux-glibc-amd64-ubuntu-24_04"]="1511"
+	["firefox-beta-linux-glibc-amd64-ubuntu-24_04"]="1505"
+	["webkit-linux-glibc-amd64-ubuntu-24_04"]="2272"
 )
 
 declare -A DL_VER=(
-# See https://github.com/microsoft/playwright/blob/v1.58.2/packages/playwright-core/browsers.json
-	["chromium-linux-glibc-amd64"]="145.0.7632.6"
-	["chromium-headless-shell-linux-glibc-amd64"]="145.0.7632.6"
-	["chromium-tip-of-tree-linux-glibc-amd64"]="146.0.7644.0"
-	["firefox-linux-glibc-amd64-ubuntu-24_04"]="146.0.1"
-	["firefox-beta-linux-glibc-amd64-ubuntu-24_04"]="146.0b8"
-	["webkit-linux-glibc-amd64-ubuntu-24_04"]="26.0"
+# See https://github.com/microsoft/playwright/blob/v1.59.1/packages/playwright-core/browsers.json
+	["chromium-linux-glibc-amd64"]="147.0.7727.15"
+	["chromium-headless-shell-linux-glibc-amd64"]="147.0.7727.15"
+	["chromium-tip-of-tree-linux-glibc-amd64"]="148.0.7755.0"
+	["firefox-linux-glibc-amd64-ubuntu-24_04"]="148.0.2"
+	["firefox-beta-linux-glibc-amd64-ubuntu-24_04"]="148.0b9"
+	["webkit-linux-glibc-amd64-ubuntu-24_04"]="26.4"
 )
 
 EPLAYRIGHT_ALLOW_BROWSERS=(
 # Allowed engines that are used by project.
 # https://github.com/mixn/carbon-now-cli/blob/v2.1.0/src/views/default.view.ts#L23
-	"chromium"			#
-#	"chromium-tip-of-tree"
+	"chromium"			# Outdated point release
+#	"chromium-tip-of-tree"		# Outdated point release
 	"firefox"			# EOL
 #	"firefox-beta"			# EOL
 	"webkit"
@@ -61,7 +65,7 @@ if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "chromium" ]] ; then
 		amd64? (
 			kernel_linux? (
 				elibc_glibc? (
-https://playwright.azureedge.net/builds/ffmpeg/${DL_REVISIONS[ffmpeg-linux-glibc-amd64]}/ffmpeg-linux.zip
+https://cdn.playwright.dev/builds/ffmpeg/${DL_REVISIONS[ffmpeg-linux-glibc-amd64]}/ffmpeg-linux.zip
 	-> ffmpeg-linux-${DL_REVISIONS[ffmpeg-linux-glibc-amd64]}-amd64.zip
 				)
 			)
@@ -104,7 +108,7 @@ if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "firefox"( |$) ]] ; then
 			amd64? (
 				kernel_linux? (
 					elibc_glibc? (
-https://playwright.azureedge.net/builds/firefox/${DL_REVISIONS[firefox-linux-glibc-amd64-ubuntu-24_04]}/builds/firefox/%s/firefox-ubuntu-24.04.zip
+https://cdn.playwright.dev/builds/firefox/${DL_REVISIONS[firefox-linux-glibc-amd64-ubuntu-24_04]}/firefox-ubuntu-24.04.zip
 	-> firefox-ubuntu-24.04-${DL_REVISIONS[firefox-linux-glibc-amd64-ubuntu-24_04]}-amd64.zip
 					)
 				)
@@ -118,7 +122,7 @@ if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "firefox-beta"( |$) ]] ; then
 			amd64? (
 				kernel_linux? (
 					elibc_glibc? (
-https://playwright.azureedge.net/builds/firefox/${DL_REVISIONS[firefox-beta-linux-glibc-amd64-ubuntu-24_04]}/builds/firefox-beta/%s/firefox-beta-ubuntu-24.04.zip
+https://cdn.playwright.dev/builds/firefox-beta/${DL_REVISIONS[firefox-beta-linux-glibc-amd64-ubuntu-24_04]}/firefox-beta-ubuntu-24.04.zip
 	-> firefox-beta-ubuntu-24.04-${DL_REVISIONS[firefox-beta-linux-glibc-amd64-ubuntu-24_04]}-amd64.zip
 					)
 				)
@@ -132,7 +136,7 @@ if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "webkit"( |$) ]] ; then
 			amd64? (
 				kernel_linux? (
 					elibc_glibc? (
-https://playwright.azureedge.net/builds/webkit/${DL_REVISIONS[webkit-linux-glibc-amd64-ubuntu-24_04]}/builds/webkit/%s/webkit-ubuntu-24.04.zip
+https://cdn.playwright.dev/builds/webkit/${DL_REVISIONS[webkit-linux-glibc-amd64-ubuntu-24_04]}/webkit-ubuntu-24.04.zip
 	-> webkit-ubuntu-24.04-${DL_REVISIONS[webkit-linux-glibc-amd64-ubuntu-24_04]}-amd64.zip
 					)
 				)
@@ -197,10 +201,11 @@ LICENSE="
 	${THIRD_PARTY_LICENSES}
 	MIT
 "
+RESTRICT="mirror" # Speed up and prevent snooping
 SLOT="0"
 IUSE+="
 +chromium clipboard
-ebuild_revision_20
+ebuild_revision_21
 "
 REQUIRED_USE+="
 	|| (
@@ -300,10 +305,10 @@ _unpack_playwright() {
 
 npm_unpack_install_post() {
 	# See
-	# https://github.com/microsoft/playwright/blob/v1.58.2/packages/playwright-core/src/server/registry/index.ts#L232
-	# https://github.com/microsoft/playwright/blob/v1.58.2/docs/src/browsers.md
-	# https://github.com/microsoft/playwright/blob/v1.58.2/packages/playwright-core/src/server/registry/nativeDeps.ts
-	# https://github.com/microsoft/playwright/blob/v1.58.2/packages/playwright-core/browsers.json
+	# https://github.com/microsoft/playwright/blob/v1.59.1/packages/playwright-core/src/server/registry/index.ts#L232
+	# https://github.com/microsoft/playwright/blob/v1.59.1/docs/src/browsers.md
+	# https://github.com/microsoft/playwright/blob/v1.59.1/packages/playwright-core/src/server/registry/nativeDeps.ts
+	# https://github.com/microsoft/playwright/blob/v1.59.1/packages/playwright-core/browsers.json
 
 	eapply "${FILESDIR}/${PN}-2.1.0-imports-fix.patch"
 
@@ -317,7 +322,7 @@ npm_unpack_install_post() {
 		fi
 	done
 
-	# https://github.com/microsoft/playwright/blob/v1.58.2/docs/src/browsers.md#hermetic-install
+	# https://github.com/microsoft/playwright/blob/v1.59.1/docs/src/browsers.md#hermetic-install
 	export PLAYWRIGHT_BROWSERS_PATH=0
 	cd "${S}" || die
 	# The sandbox doesn't want us to download even though it is permitted.
@@ -325,18 +330,42 @@ npm_unpack_install_post() {
 	export PLAYWRIGHT_SKIP_BROWSER_GC=1
 	local d_base="node_modules/playwright-core/.local-browsers"
 
-	_unpack_playwright "chromium" "${d_base}/chromium-${DL_REVISIONS[chromium-linux-glibc-${ABI}]}" "chromium-linux-${DL_VER[chromium-linux-glibc-${ABI}]}-${ABI}.zip"
-	_unpack_playwright "chromium" "${d_base}/chromium_headless_shell-${DL_REVISIONS[chromium-headless-shell-linux-glibc-${ABI}]}" "chromium-headless-shell-linux-${DL_VER[chromium-headless-shell-linux-glibc-${ABI}]}-${ABI}.zip"
-	_unpack_playwright "chromium" "${d_base}/ffmpeg-${DL_REVISIONS[ffmpeg-linux-glibc-amd64]}" "ffmpeg-linux-${DL_REVISIONS[ffmpeg-linux-glibc-${ABI}]}-${ABI}.zip"
+	_unpack_playwright \
+		"chromium" \
+		"${d_base}/chromium-${DL_REVISIONS[chromium-linux-glibc-${ABI}]}" \
+		"chromium-linux-${DL_VER[chromium-linux-glibc-${ABI}]}-${ABI}.zip"
+	_unpack_playwright \
+		"chromium" \
+		"${d_base}/chromium_headless_shell-${DL_REVISIONS[chromium-headless-shell-linux-glibc-${ABI}]}" \
+		"chromium-headless-shell-linux-${DL_VER[chromium-headless-shell-linux-glibc-${ABI}]}-${ABI}.zip"
+	_unpack_playwright \
+		"chromium" \
+		"${d_base}/ffmpeg-${DL_REVISIONS[ffmpeg-linux-glibc-amd64]}" \
+		"ffmpeg-linux-${DL_REVISIONS[ffmpeg-linux-glibc-${ABI}]}-${ABI}.zip"
 
-	_unpack_playwright "chromium-tip-of-tree" "chromium_tip_of_tree-${DL_REVISIONS[chromium-tip-of-tree-linux-glibc-${ABI}]}" "chromium-tip-of-tree-linux-${DL_VER[chromium-tip-of-tree-linux-glibc-${ABI}]}-${ABI}.zip"
-	_unpack_playwright "chromium-tip-of-tree" "${d_base}/ffmpeg-${DL_REVISIONS[ffmpeg-linux-glibc-amd64]}" "ffmpeg-linux-${DL_REVISIONS[ffmpeg-linux-glibc-${ABI}]}-${ABI}.zip"
+	_unpack_playwright \
+		"chromium-tip-of-tree" \
+		"chromium_tip_of_tree-${DL_REVISIONS[chromium-tip-of-tree-linux-glibc-${ABI}]}" \
+		"chromium-tip-of-tree-linux-${DL_VER[chromium-tip-of-tree-linux-glibc-${ABI}]}-${ABI}.zip"
+	_unpack_playwright \
+		"chromium-tip-of-tree" \
+		"${d_base}/ffmpeg-${DL_REVISIONS[ffmpeg-linux-glibc-amd64]}" \
+		"ffmpeg-linux-${DL_REVISIONS[ffmpeg-linux-glibc-${ABI}]}-${ABI}.zip"
 
-	_unpack_playwright "firefox" "${d_base}/firefox-${DL_REVISIONS[firefox-linux-glibc-${ABI}-ubuntu-24_04]}" "firefox-ubuntu-24.04-${DL_REVISIONS[firefox-linux-glibc-${ABI}-ubuntu-24_04]}-${ABI}.zip"
+	_unpack_playwright \
+		"firefox" \
+		"${d_base}/firefox-${DL_REVISIONS[firefox-linux-glibc-${ABI}-ubuntu-24_04]}" \
+		"firefox-ubuntu-24.04-${DL_REVISIONS[firefox-linux-glibc-${ABI}-ubuntu-24_04]}-${ABI}.zip"
 
-	_unpack_playwright "firefox-beta" "${d_base}/firefox_beta-${DL_REVISIONS[firefox-linux-glibc-${ABI}-ubuntu-24_04]}" "firefox-beta-ubuntu-24.04-${DL_REVISIONS[firefox-beta-linux-glibc-${ABI}-ubuntu-24_04]}-${ABI}.zip"
+	_unpack_playwright \
+		"firefox-beta" \
+		"${d_base}/firefox_beta-${DL_REVISIONS[firefox-linux-glibc-${ABI}-ubuntu-24_04]}" \
+		"firefox-beta-ubuntu-24.04-${DL_REVISIONS[firefox-beta-linux-glibc-${ABI}-ubuntu-24_04]}-${ABI}.zip"
 
-	_unpack_playwright "webkit" "${d_base}/webkit_ubuntu24.04_x64_special-${DL_REVISIONS[webkit-linux-glibc-${ABI}-ubuntu-24_04]}" "webkit-ubuntu-24.04-${DL_REVISIONS[webkit-linux-glibc-${ABI}-ubuntu-24_04]}-${ABI}.zip"
+	_unpack_playwright \
+		"webkit" \
+		"${d_base}/webkit_ubuntu24.04_x64_special-${DL_REVISIONS[webkit-linux-glibc-${ABI}-ubuntu-24_04]}" \
+		"webkit-ubuntu-24.04-${DL_REVISIONS[webkit-linux-glibc-${ABI}-ubuntu-24_04]}-${ABI}.zip"
 
 	cd "${S}" || die
 	for x in "${L[@]}" ; do
