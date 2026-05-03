@@ -96,7 +96,7 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 all cuda dev mariadb ollama +openrc postgres rag-ocr unstructured systemd
-ebuild_revision_11
+ebuild_revision_12
 "
 REQUIRED_USE="
 	all? (
