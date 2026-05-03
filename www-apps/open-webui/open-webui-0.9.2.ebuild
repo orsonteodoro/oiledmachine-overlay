@@ -354,6 +354,7 @@ BDEPEND+="
 DOCS=( "CHANGELOG.md" "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-0.5.20-symbolize-string-literals.patch"
+	"${FILESDIR}/${PN}-0.9.2-use-e965-xlsx.patch"
 )
 
 check_virtual_mem() {
@@ -385,6 +386,7 @@ pkg_setup() {
 }
 
 npm_update_lock_install_post() {
+ewarn "QA:  Manually remove node_modules/vite-node/node_modules/vite in package-lock.json."
 	patch_lockfile() {
 		# DoS = Denial of Service
 		# DT = Data Tampering
@@ -423,6 +425,9 @@ npm_update_lock_install_post() {
 		sed -i -e "s|\"uuid\": \"^11.1.0\"|\"uuid\": \"^14.0.0\"|g" "package-lock.json" || die
 		sed -i -e "s|\"uuid\": \"^9.0.1\"|\"uuid\": \"^14.0.0\"|g" "package-lock.json" || die
 		sed -i -e "s|\"uuid\": \"^8.3.2\"|\"uuid\": \"^14.0.0\"|g" "package-lock.json" || die
+
+		sed -i -e "s|\"xlsx\": \"^0.18.5\"|\"@e965/xlsx\": \"^0.20.3\"|g" "package.json" || die		# CVE-2024-22363; ZC, DoS; High
+														# CVE-2023-30533; DoS, DT, ID; High
 	}
 	patch_lockfile
 

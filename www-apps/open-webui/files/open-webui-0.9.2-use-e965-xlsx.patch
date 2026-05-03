@@ -1,0 +1,58 @@
+--- a/src/lib/components/common/FileItemModal.svelte.orig	2026-04-24 02:56:03.000000000 -0700
++++ b/src/lib/components/common/FileItemModal.svelte	2026-05-02 20:44:05.633897379 -0700
+@@ -1,5 +1,5 @@
+ <script lang="ts">
+-	import type { WorkBook } from 'xlsx';
++	import type { WorkBook } from '@e965/xlsx';
+ 	import DOMPurify from 'dompurify';
+ 
+ 	import { getContext, onMount, tick } from 'svelte';
+@@ -141,7 +141,7 @@
+ 			excelError = '';
+ 			const [arrayBuffer, { read }] = await Promise.all([
+ 				getFileContentById(item.id),
+-				import('xlsx')
++				import('@e965/xlsx')
+ 			]);
+ 			excelWorkbook = read(arrayBuffer, { type: 'array' });
+ 			excelSheetNames = excelWorkbook.SheetNames;
+--- a/src/lib/components/chat/FileNav.svelte.orig	2026-04-24 02:56:03.000000000 -0700
++++ b/src/lib/components/chat/FileNav.svelte	2026-05-02 20:44:11.234496513 -0700
+@@ -158,7 +158,7 @@
+ 	let currentSlide = 0;
+ 	let excelSheetNames: string[] = [];
+ 	let selectedExcelSheet = '';
+-	let excelWorkbook: import('xlsx').WorkBook | null = null;
++	let excelWorkbook: import('@e965/xlsx').WorkBook | null = null;
+ 
+ 	// ── File preview toolbar state (bound from FilePreview) ─────────────
+ 	let editing = false;
+@@ -421,7 +421,7 @@
+ 						const DOMPurify = (await import('dompurify')).default;
+ 						fileOfficeHtml = DOMPurify.sanitize(res.value);
+ 					} else if (ext === 'xlsx') {
+-						const XLSX = await import('xlsx');
++						const XLSX = await import('@e965/xlsx');
+ 						const wb = XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
+ 						excelWorkbook = wb;
+ 						excelSheetNames = wb.SheetNames;
+--- a/src/lib/utils/excelToTable.ts.orig	2026-04-24 02:56:03.000000000 -0700
++++ b/src/lib/utils/excelToTable.ts	2026-05-02 20:43:59.539032935 -0700
+@@ -8,7 +8,7 @@
+  * - Sanitized output
+  */
+ 
+-import type { WorkSheet } from 'xlsx';
++import type { WorkSheet } from '@e965/xlsx';
+ 
+ /** Convert column index (0-based) to Excel-style letter (A, B, …, Z, AA, AB, …) */
+ const colLetter = (i: number): string => {
+@@ -38,7 +38,7 @@ export interface ExcelTableResult {
+  * Uses sheet_to_json with header:1 for a raw 2D array.
+  */
+ export async function excelToTable(worksheet: WorkSheet): Promise<ExcelTableResult> {
+-	const XLSX = await import('xlsx');
++	const XLSX = await import('@e965/xlsx');
+ 	const rows: unknown[][] = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
+ 
+ 	if (rows.length === 0) {
