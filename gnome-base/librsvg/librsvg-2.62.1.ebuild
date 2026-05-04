@@ -478,13 +478,14 @@ einfo "Image loader:  glycin-loader (sandboxed)"
 		"net-im/fractal"
 		"gnome-base/gnome-49"
 		"gnome-base/gnome-50"
+		# Implies gtk4
 	)
 
 	local PIXBUF_PACKAGES=(
 		"media-gfx/eog"
 		"gnome-base/gnome-48"
 		"gnome-base/gnome-45"
-		"x11-libs/gtk+"
+		"x11-libs/gtk+" # gtk+:3 or gtk+:2 based apps that require svg
 	)
 
 	# Peek to see if the user will build a glycin-loader based package.
