@@ -7,7 +7,7 @@
 -version = "0.3.0"
 +git = "https://github.com/paradedb/tantivy"
 +package = "tantivy-tokenizer-api"
-+rev = "6338e83a36f947d37aaa602cc57b253ec1c5d652"
++rev = "84025b075a6ea71be2b9b2ba77ae30cd208ca3f5"
  
  [dependencies.unicode-normalization]
  version = "0.1.23"
@@ -15,7 +15,7 @@
  [dev-dependencies.tantivy]
 -version = "0.22.0"
 +git = "https://github.com/paradedb/tantivy"
-+rev = "6338e83a36f947d37aaa602cc57b253ec1c5d652"
++rev = "84025b075a6ea71be2b9b2ba77ae30cd208ca3f5"
  
  [features]
  arabic = []
