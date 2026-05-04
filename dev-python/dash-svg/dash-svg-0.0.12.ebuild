@@ -12,7 +12,7 @@ EAPI=8
 # NPM_UPDATER_VERSIONS="0.0.12" npm_updater_update_locks.sh
 
 DISTUTILS_USE_PEP517="setuptools"
-NODE_SLOT="18" # Upstream uses node 12.  14 works
+NODE_SLOT="20" # Upstream uses node 12.  14, 18 works
 NPM_AUDIT_FATAL=0
 NPM_SLOT=2 # Limited by React 16.14.0.
 NPM_TARBALL="${P}.tar.gz"
@@ -39,7 +39,7 @@ RESTRICT="mirror test" # Missing sci-visualization/dash[testing]
 SLOT="0"
 IUSE="
 test
-ebuild_revision_7
+ebuild_revision_9
 "
 RDEPEND+="
 	>=dev-python/twine-3.7.1[${PYTHON_USEDEP}]
@@ -75,7 +75,6 @@ npm_unpack_post() {
 }
 
 npm_update_lock_audit_post() {
-	# A pinned version of serialize-javascript is required.
 	localfile_edits() {
 		sed -i -e "s|\"loader-utils\": \"^1.1.0\"|\"loader-utils\": \"^1.4.2\"|g" "package-lock.json" || die
 		sed -i -e "s|\"loader-utils\": \"^1.2.3\"|\"loader-utils\": \"^1.4.2\"|g" "package-lock.json" || die
@@ -118,11 +117,12 @@ npm_update_lock_audit_post() {
 		sed -i -e "s|\"flatted\": \"^2.0.0\"|\"flatted\": \"^3.4.2\"|g" "package-lock.json" || die
 		sed -i -e "s|\"flatted\": \"^3.2.9\"|\"flatted\": \"^3.4.2\"|g" "package-lock.json" || die
 
-#		sed -i -e "s|\"serialize-javascript\": \"^4.0.0\"|\"serialize-javascript\": \"^7.0.5\"|g" "package-lock.json" || die
-#		sed -i -e "s|\"serialize-javascript\": \"^6.0.2\"|\"serialize-javascript\": \"^7.0.5\"|g" "package-lock.json" || die
+		sed -i -e "s|\"serialize-javascript\": \"^4.0.0\"|\"serialize-javascript\": \"^7.0.5\"|g" "package-lock.json" || die
+		sed -i -e "s|\"serialize-javascript\": \"^6.0.2\"|\"serialize-javascript\": \"^7.0.5\"|g" "package-lock.json" || die
 	}
 	localfile_edits
 
+	# CE = Code Execution
 	# DoS = Denial of Service
 	# DT = Data Tampering
 	# ID = Information Disclosure
@@ -156,8 +156,6 @@ npm_update_lock_audit_post() {
 		"webpack-cli@^4.10.0"
 		"webpack-serve@^4.0.0"
 
-#		"serialize-javascript@^7.0.5"			# CVE-2024-11831; DT, ID; Moderate
-								# CVE-2026-34043; ZC, DoS; Moderate
 
 		"pbkdf2@^3.1.3"					# CVE-2025-6547; ZC, VS(DT), SS(DoS, DT, ID)
 								# CVE-2025-6545; ZC, VS(DT, ID), SS(DoS, DT, ID); Critical
@@ -168,7 +166,9 @@ npm_update_lock_audit_post() {
 		"tmp@^0.2.4"					# CVE-2025-54798; DT; Low
 		"koa@^2.16.2"					# CVE-2025-8129; DT
 		"flatted@^3.4.2"				# CVE-2026-33228; ZC, VS(DoS, DT, ID); High
-		"serialize-javascript@^7.0.3"			# GHSA-5c6j-r48x-rmvq; VS(DoS, DT, ID); High
+		"serialize-javascript@^7.0.5"			# CVE-2024-11831; DT, ID; Moderate
+								# CVE-2026-34043; ZC, DoS; Moderate
+								# GHSA-5c6j-r48x-rmvq; CE, VS(DoS, DT, ID); High
 	)
 	enpm install "${pkgs[@]}" -D --prefer-offline
 
