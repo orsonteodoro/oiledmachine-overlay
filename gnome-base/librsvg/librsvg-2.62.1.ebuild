@@ -571,3 +571,6 @@ pkg_postinst() {
 pkg_postrm() {
 	multilib_foreach_abi gnome2_pkg_postrm
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  INTERACTIVE passed 2.62.1 (20260504)
+# eog load of svg:  passed
