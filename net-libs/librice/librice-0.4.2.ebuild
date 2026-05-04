@@ -8,8 +8,8 @@ EAPI=8
 
 # U24
 
-RUST_MAX_VER="1.94.0"
-RUST_MIN_VER="1.94.0"
+RUST_MAX_VER="1.94.1"
+RUST_MIN_VER="1.94.1"
 RUSTFLAGS_HARDENED_USE_CASES="multithreaded-confidential security-critical network untrusted-data p2p"
 
 CRATES_DISABLED="
@@ -36,24 +36,24 @@ async-io-2.6.0
 async-lock-3.4.2
 async-net-2.0.0
 async-process-2.5.0
-async-signal-0.2.13
+async-signal-0.2.14
 async-task-4.7.1
 atomic-waker-1.1.2
 autocfg-1.5.0
-aws-lc-rs-1.16.2
-aws-lc-sys-0.39.1
+aws-lc-rs-1.16.3
+aws-lc-sys-0.40.0
 base16ct-0.2.0
 base64-0.22.1
 base64ct-1.8.3
 bindgen-0.72.1
-bitflags-2.11.0
+bitflags-2.11.1
 block-buffer-0.10.4
 blocking-1.6.2
 bumpalo-3.20.2
 byteorder-1.5.0
 bytes-1.11.1
 cast-0.3.0
-cc-1.2.58
+cc-1.2.61
 cesu8-1.1.0
 cexpr-0.6.0
 cfg-expr-0.20.7
@@ -62,9 +62,9 @@ ciborium-0.2.2
 ciborium-io-0.2.2
 ciborium-ll-0.2.2
 clang-sys-1.8.1
-clap-4.6.0
+clap-4.6.1
 clap_builder-4.6.0
-clap_derive-4.6.0
+clap_derive-4.6.1
 clap_lex-1.1.0
 cmake-0.1.58
 colorchoice-1.0.5
@@ -75,7 +75,7 @@ core-foundation-0.10.1
 core-foundation-sys-0.8.7
 cpufeatures-0.2.17
 crc-3.4.0
-crc-catalog-2.4.0
+crc-catalog-2.5.0
 criterion-0.6.0
 criterion-plot-0.5.0
 crossbeam-deque-0.8.6
@@ -83,7 +83,7 @@ crossbeam-epoch-0.9.18
 crossbeam-utils-0.8.21
 crunchy-0.2.4
 crypto-common-0.1.6
-data-encoding-2.10.0
+data-encoding-2.11.0
 der-0.7.10
 deranged-0.5.8
 der_derive-0.7.3
@@ -98,7 +98,7 @@ equivalent-1.0.2
 errno-0.3.14
 event-listener-5.4.1
 event-listener-strategy-0.5.4
-fastrand-2.3.0
+fastrand-2.4.1
 find-msvc-tools-0.1.9
 flagset-0.4.7
 flume-0.12.0
@@ -122,11 +122,12 @@ getrandom-0.3.4
 glob-0.3.3
 half-2.7.1
 hashbrown-0.16.1
+hashbrown-0.17.0
 heck-0.5.0
 hermit-abi-0.5.2
 hmac-0.12.1
 if-addrs-0.15.0
-indexmap-2.13.0
+indexmap-2.14.0
 is_terminal_polyfill-1.70.2
 itertools-0.10.5
 itertools-0.13.0
@@ -136,9 +137,9 @@ jni-sys-0.3.1
 jni-sys-0.4.1
 jni-sys-macros-0.4.1
 jobserver-0.1.34
-js-sys-0.3.92
+js-sys-0.3.97
 lazy_static-1.5.0
-libc-0.2.183
+libc-0.2.186
 libfuzzer-sys-0.4.12
 libloading-0.8.9
 librice-0.4.2
@@ -162,10 +163,10 @@ oid-registry-0.8.1
 once_cell-1.21.4
 once_cell_polyfill-1.70.2
 oorandom-11.1.5
-openssl-0.10.76
+openssl-0.10.79
 openssl-macros-0.1.1
 openssl-probe-0.2.1
-openssl-sys-0.9.112
+openssl-sys-0.9.115
 parking-2.2.1
 pem-rfc7468-0.7.0
 pin-project-1.1.11
@@ -173,7 +174,7 @@ pin-project-internal-1.1.11
 pin-project-lite-0.2.17
 piper-0.2.5
 pkcs8-0.10.2
-pkg-config-0.3.32
+pkg-config-0.3.33
 plotters-0.3.7
 plotters-backend-0.3.7
 plotters-svg-0.3.7
@@ -187,10 +188,10 @@ ppv-lite86-0.2.21
 prettyplease-0.2.37
 proc-macro2-1.0.106
 quote-1.0.45
-rand-0.9.2
+rand-0.9.4
 rand_chacha-0.9.0
 rand_core-0.9.5
-rayon-1.11.0
+rayon-1.12.0
 rayon-core-1.13.0
 rcgen-0.14.7
 r-efi-5.3.0
@@ -206,12 +207,12 @@ ring-0.17.14
 rustc-hash-2.1.2
 rusticata-macros-4.1.0
 rustix-1.1.4
-rustls-0.23.37
+rustls-0.23.40
 rustls-native-certs-0.8.3
-rustls-pki-types-1.14.0
+rustls-pki-types-1.14.1
 rustls-platform-verifier-0.6.2
 rustls-platform-verifier-android-0.1.1
-rustls-webpki-0.103.10
+rustls-webpki-0.103.13
 rustversion-1.0.22
 same-file-1.0.6
 sans-io-time-0.2.0
@@ -224,14 +225,14 @@ serde-1.0.228
 serde_core-1.0.228
 serde_derive-1.0.228
 serde_json-1.0.149
-serde_spanned-1.1.0
+serde_spanned-1.1.1
 sha1-0.10.6
 sha2-0.10.9
 sharded-slab-0.1.7
 shlex-1.3.0
 signal-hook-registry-1.4.8
 signature-2.2.0
-siphasher-1.0.2
+siphasher-1.0.3
 slab-0.4.12
 smallvec-1.15.1
 smol-2.0.2
@@ -244,7 +245,7 @@ stun-types-2.0.1
 subtle-2.6.1
 syn-2.0.117
 synstructure-0.13.2
-system-deps-7.0.7
+system-deps-7.0.8
 target-lexicon-0.13.3
 thiserror-1.0.69
 thiserror-2.0.18
@@ -255,11 +256,11 @@ time-0.3.47
 time-core-0.1.8
 time-macros-0.2.27
 tinytemplate-1.2.1
-tokio-1.50.0
-toml-0.9.12+spec-1.1.0
-toml_datetime-0.7.5+spec-1.1.0
-toml_parser-1.1.0+spec-1.1.0
-toml_writer-1.1.0+spec-1.1.0
+tokio-1.52.2
+toml-1.1.2+spec-1.1.0
+toml_datetime-1.1.1+spec-1.1.0
+toml_parser-1.1.2+spec-1.1.0
+toml_writer-1.1.1+spec-1.1.0
 tracing-0.1.44
 tracing-attributes-0.1.31
 tracing-core-0.1.36
@@ -272,7 +273,7 @@ turn-client-proto-0.7.1
 turn-client-rustls-0.1.0
 turn-server-proto-0.7.1
 turn-types-0.7.1
-typenum-1.19.0
+typenum-1.20.0
 unicode-ident-1.0.24
 untrusted-0.7.1
 untrusted-0.9.0
@@ -283,13 +284,13 @@ version_check-0.9.5
 version-compare-0.2.1
 walkdir-2.5.0
 wasi-0.11.1+wasi-snapshot-preview1
-wasip2-1.0.2+wasi-0.2.9
-wasm-bindgen-0.2.115
-wasm-bindgen-macro-0.2.115
-wasm-bindgen-macro-support-0.2.115
-wasm-bindgen-shared-0.2.115
-webpki-root-certs-1.0.6
-web-sys-0.3.92
+wasip2-1.0.3+wasi-0.2.9
+wasm-bindgen-0.2.120
+wasm-bindgen-macro-0.2.120
+wasm-bindgen-macro-support-0.2.120
+wasm-bindgen-shared-0.2.120
+webpki-root-certs-1.0.7
+web-sys-0.3.97
 winapi-util-0.1.11
 windows_aarch64_gnullvm-0.42.2
 windows_aarch64_gnullvm-0.52.6
@@ -312,9 +313,8 @@ windows_x86_64_gnullvm-0.42.2
 windows_x86_64_gnullvm-0.52.6
 windows_x86_64_msvc-0.42.2
 windows_x86_64_msvc-0.52.6
-winnow-0.7.15
-winnow-1.0.0
-wit-bindgen-0.51.0
+winnow-1.0.2
+wit-bindgen-0.57.1
 x509-cert-0.2.5
 x509-parser-0.18.1
 yasna-0.5.2
@@ -414,7 +414,7 @@ pkg_setup() {
 
 src_unpack() {
 	unpack ${A}
-	#die
+#	die
 
 	cargo_src_unpack
 	if [[ -e "${FILESDIR}/${PV}/Cargo.lock" ]] ; then
