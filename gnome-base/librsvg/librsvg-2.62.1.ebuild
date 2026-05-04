@@ -471,6 +471,20 @@ einfo "Image loader:  glycin-loader (sandboxed)"
 einfo "AVIF sandboxed:  Y"
 einfo "SVG sandboxed:  Y"
 	fi
+	if has_version ">=dev-libs/glib-2.88.0" ; then
+einfo "Detected GNOME 50+"
+	elif has_version ">=dev-libs/glib-2.86.0" ; then
+einfo "Detected GNOME 49+"
+	else
+einfo "Detected GNOME 48 or earlier"
+	fi
+einfo
+einfo "Version correspondance:"
+einfo
+einfo "glib 2.88.x - GNOME 50 should be sandboxed by default with USE=-pixbuf-loader"
+einfo "glib 2.86.x - GNOME 49 should be sandboxed by default with USE=-pixbuf-loader"
+einfo "glib 2.84.x - GNOME 48 should be unsandboxed by default with USE=pixbuf-loader"
+einfo
 }
 
 src_unpack() {
