@@ -81,7 +81,6 @@ main() {
 				fi
 			done
 
-			[[ "${name}" == "clamav_rust" ]] && continue # internal
 			[[ -z "${name}" ]] && continue
 			[[ "${is_live}" == "1" ]] && continue
 			s_nlive+="${name}-${version}\n"
