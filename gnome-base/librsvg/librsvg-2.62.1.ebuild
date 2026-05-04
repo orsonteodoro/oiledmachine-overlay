@@ -438,9 +438,11 @@ RDEPEND="
 	introspection? ( >=dev-libs/gobject-introspection-1.39.0:= )
 "
 DEPEND="${RDEPEND}"
+# jq is not required but used to suggest default.
 BDEPEND="
 	>=dev-build/meson-1.3.0
 	>=dev-util/cargo-c-0.10.10
+	app-misc/jq
 	${PYTHON_DEPS}
 	$(python_gen_any_dep 'dev-python/docutils[${PYTHON_USEDEP}]')
 	gtk-doc? ( dev-util/gi-docgen )
@@ -471,22 +473,52 @@ einfo "Image loader:  glycin-loader (sandboxed)"
 einfo "AVIF sandboxed:  Y"
 einfo "SVG sandboxed:  Y"
 	fi
-	if has_version ">=dev-libs/glib-2.88.0" ; then
-einfo "Detected GNOME 50+"
-	elif has_version ">=dev-libs/glib-2.86.0" ; then
-einfo "Detected GNOME 49+"
-	else
-einfo "Detected GNOME 48 or earlier"
+
+	local GLYCIN_PACKAGES=(
+		"media-gfx/fotema"
+		"media-gfx/loupe"
+		"media-libs/glycin"
+		"media-libs/glycin-loaders"
+		"net-im/fractal"
+		"gnome-base/gnome-49"
+		"gnome-base/gnome-50"
+	)
+
+	local PIXBUF_PACKAGES=(
+		"media-gfx/eog"
+		"gnome-base/gnome-48"
+		"gnome-base/gnome-45"
+		"x11-libs/gtk+"
+	)
+
+	# Peek to see if the user will build a glycin-loader based package.
+	local resume_data=$(cat "/var/cache/edb/mtimedb" | jq '.resume')
+	local needs_glycin=0
+	local x
+	if has_version "app-misc/jq" ; then
+		for x in "${GLYCIN_PACKAGES[@]}" ; do
+			if echo "${resume_data}" | grep -q -e "${x}" ; then
+ewarn "${x} assumes USE=-pixbuf-loader for ${PN}"
+			elif [[ "${x}" =~ "-"[0-9.]+$ ]] && has_version "=${x}*" ; then
+ewarn "${x} assumes USE=-pixbuf-loader for ${PN}"
+			elif [[ ! "${x}" =~ "-"[0-9.]+$ ]] && has_version "${x}" ; then
+ewarn "${x} assumes USE=-pixbuf-loader for ${PN}"
+			fi
+		done
 	fi
-einfo
-einfo "Version correspondence:"
-einfo
-einfo "glib 2.88.x - GNOME 50 should be sandboxed by default with USE=-pixbuf-loader"
-einfo "glib 2.86.x - GNOME 49 should be sandboxed by default with USE=-pixbuf-loader"
-einfo "glib 2.84.x - GNOME 48 should be unsandboxed by default with USE=pixbuf-loader"
-einfo
-	if has_version "media-gfx/eog" && use "pixbuf-loader" ; then
-ewarn "${CATEGORY}/${PN}[pixbuf-loader] USE flag should be set for media-gfx/eog."
+
+	# Peek to see if the user will build a pixbuf-loader based package.
+	local needs_glycin=0
+	if has_version "app-misc/jq" ; then
+		for x in "${PIXBUF_PACKAGES[@]}" ; do
+			if echo "${resume_data}" | grep -q -e "${x}" ; then
+ewarn "${x} assumes USE=pixbuf-loader for ${PN}"
+			elif [[ "${x}" =~ "-"[0-9.]+$ ]] && has_version "=${x}*" ; then
+ewarn "${x} assumes USE=pixbuf-loader for ${PN}"
+			elif [[ ! "${x}" =~ "-"[0-9.]+$ ]] && has_version "${x}" ; then
+ewarn "${x} assumes USE=pixbuf-loader for ${PN}"
+			fi
+		done
 	fi
 }
 
