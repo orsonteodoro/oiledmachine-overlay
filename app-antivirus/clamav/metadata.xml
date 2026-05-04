@@ -76,7 +76,7 @@
       Unislotted
     </slot>
     <subslots>
-      sts - stable
+      sts - short term support
       lts - long term support
     </subslots>
   </slots>

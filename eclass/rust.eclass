@@ -252,6 +252,28 @@ _rust_set_globals() {
 	fi
 
 	# oiledmachine-overlay changed:
+	if [[ -n "${RUST_MAX_VER}" ]] ; then
+		local len
+		len="${RUST_MAX_VER//[^.]/}"
+		len=${#len}
+		if (( ${len} == 1 )) ; then
+	# Pad to not mess up key look up.
+			export RUST_MAX_VER="${RUST_MAX_VER}.0" # 1.88.0
+		elif (( ${len} == 0 )) ; then
+			export RUST_MAX_VER="${RUST_MAX_VER}.0.0" # 2.0.0
+		fi
+	fi
+	if [[ -n "${RUST_MIN_VER}" ]] ; then
+		local len
+		len="${RUST_MIN_VER//[^.]/}"
+		len=${#len}
+		if (( ${len} == 1 )) ; then
+	# Pad to not mess up key look up.
+			export RUST_MIN_VER="${RUST_MIN_VER}.0" # 1.88.0
+		elif (( ${len} == 0 )) ; then
+			export RUST_MAX_VER="${RUST_MIN_VER}.0.0" # 2.0.0
+		fi
+	fi
 	if [[ -n "${RUST_MAX_VER}" && -n "${RUST_MIN_VER}" ]]; then
 		if ver_test "${RUST_MIN_VER}" -le "${RUST_MAX_VER}"; then
 			:

@@ -51,8 +51,8 @@ GENERATE_LOCKFILE=0
 MITIGATION_DATE="Jun 18, 2025"
 MITIGATION_URI="https://blog.clamav.net/2025/06/clamav-143-and-109-security-patch.html"
 PYTHON_COMPAT=( "python3_"{10..12} ) # CI uses 3.8
-RUST_MAX_VER="1.90" # LLVM 20
-RUST_MIN_VER="1.88" # LLVM 20
+RUST_MAX_VER="9999" # LLVM 22.1
+RUST_MIN_VER="1.88.0" # LLVM 20.1
 RUSTFLAGS_HARDENED_USE_CASES="jit network security-critical sensitive-data untrusted-data"
 RUSTFLAGS_HARDENED_TOLERANCE="4.0"
 
@@ -384,7 +384,7 @@ SLOT="0/lts" # sts or lts
 IUSE="
 doc clamonacc +clamapp custom-cflags experimental jit libclamav-only man milter rar
 selinux +system-mspack systemd test valgrind
-ebuild_revision_44
+ebuild_revision_45
 "
 REQUIRED_USE="
 	clamonacc? (
@@ -441,7 +441,9 @@ CDEPEND="
 		>=dev-libs/libmspack-0.10.1_alpha
 	)
 	test? (
-		$(python_gen_any_dep ">=dev-python/pytest-${PYTEST_PV}"'[${PYTHON_USEDEP}]')
+		$(python_gen_any_dep '
+			>=dev-python/pytest-7.2.0[${PYTHON_USEDEP}]
+		')
 	)
 "
 BDEPEND="
@@ -451,7 +453,9 @@ BDEPEND="
 	)
 	test? (
 		${PYTHON_DEPS}
-		$(python_gen_any_dep ">=dev-python/pytest-${PYTEST_PV}"'[${PYTHON_USEDEP}]')
+		$(python_gen_any_dep '
+			>=dev-python/pytest-7.2.0[${PYTHON_USEDEP}]
+		')
 		valgrind? (
 			>=dev-debug/valgrind-3.15.0
 		)
@@ -497,8 +501,8 @@ verify_rust() {
 
 		local merge_time=$(cat "/var/db/pkg/dev-lang/rust-bin-9999/BUILD_TIME")
 		if (( ${merge_time} < ${compatible_time} )) ; then
-eerror "Live merge time is old."
-eerror "Re-emerge =dev-lang/rust-bin-9999 or =dev-lang-rust-9999 or switch to rust 1.88 or later to continue."
+eerror "Your Rust's live ebuild installation is too old."
+eerror "Re-emerge =dev-lang/rust-bin-9999 or =dev-lang-rust-9999 or switch to Rust 1.88 or later to continue."
 eerror "Merge time:  "$(date --date="@${merge_time}")
 eerror "Compatible time:  >= "$(date --date="@${compatible_time}")
 			die
@@ -576,8 +580,8 @@ src_unpack() {
 	default
 
 	# Uncomment before running convert-cargo-lock.sh
-	# Read comment when done generating cargo list.
-	die
+	# Follow the comments below the convert-cargo-lock.sh output when done generating the cargo list.
+	#die
 
 	if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
 		_lockfile_gen_unpack
