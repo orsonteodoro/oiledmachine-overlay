@@ -3,6 +3,9 @@
 
 EAPI=8
 
+# avif should be already sandboxed unconditionally by glycin.
+# glycin was the default for librsvg since Oct 17, 2025.
+
 MY_PV="${PV%.*}"
 
 CARGO_UNPACK_TYPES="crate"
@@ -402,8 +405,8 @@ LICENSE+="
 SLOT="2"
 
 IUSE="
-avif gtk-doc +introspection +sandboxed-loader test +vala
-ebuild_revision_11
+avif gtk-doc +introspection pixbuf-loader test +vala
+ebuild_revision_13
 "
 RESTRICT="
 	!test? (
@@ -419,7 +422,13 @@ REQUIRED_USE="
 RDEPEND="
 	>=x11-libs/cairo-1.18.0[glib,svg(+),${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.8:2[${MULTILIB_USEDEP}]
-	>=x11-libs/gdk-pixbuf-2.20:2[introspection?,${MULTILIB_USEDEP}]
+	pixbuf-loader? (
+		>=x11-libs/gdk-pixbuf-2.20:2[introspection?,${MULTILIB_USEDEP}]
+		x11-libs/gdk-pixbuf:=
+	)
+	!pixbuf-loader? (
+		>=media-libs/glycin-loaders-2.1.1[svg]
+	)
 	>=dev-libs/glib-2.50.0:2[${MULTILIB_USEDEP}]
 	>=media-libs/harfbuzz-2.0.0:=[${MULTILIB_USEDEP}]
 	>=dev-libs/libxml2-2.9.0:2=[${MULTILIB_USEDEP}]
@@ -429,17 +438,9 @@ RDEPEND="
 	introspection? ( >=dev-libs/gobject-introspection-1.39.0:= )
 "
 DEPEND="${RDEPEND}"
-# avif should be already sandboxed by glycin without USE flag.
-# glycin was the default for librsvg since Oct 17, 2025.
 BDEPEND="
 	>=dev-build/meson-1.3.0
 	>=dev-util/cargo-c-0.10.10
-	!sandboxed-loader? (
-		>=x11-libs/gdk-pixbuf-2.20
-	)
-	sandboxed-loader? (
-		>=media-libs/glycin-loaders-2.1.1[svg]
-	)
 	${PYTHON_DEPS}
 	$(python_gen_any_dep 'dev-python/docutils[${PYTHON_USEDEP}]')
 	gtk-doc? ( dev-util/gi-docgen )
@@ -460,6 +461,16 @@ PATCHES=(
 pkg_setup() {
 	rust_pkg_setup
 	python-any-r1_pkg_setup
+
+	if use pixbuf-loader ; then
+ewarn "Image loader:  pixbuf-loader (unsandboxed)"
+ewarn "AVIF sandboxed:  N"
+ewarn "SVG sandboxed:  N"
+	else
+einfo "Image loader:  glycin-loader (sandboxed)"
+einfo "AVIF sandboxed:  Y"
+einfo "SVG sandboxed:  Y"
+	fi
 }
 
 src_unpack() {
@@ -488,8 +499,8 @@ multilib_src_configure() {
 	local emesonargs=(
 		$(meson_feature avif)
 		$(meson_native_use_feature introspection)
-		$(meson_feature !sandboxed-loader pixbuf)
-		$(meson_feature !sandboxed-loader pixbuf-loader)
+		$(meson_feature pixbuf-loader pixbuf)
+		$(meson_feature pixbuf-loader)
 		-Dtriplet="$(rust_abi)"
 		$(meson_native_use_feature gtk-doc docs)
 		$(meson_native_use_feature vala)

@@ -34,5 +34,6 @@ www-client/chromium partition-alloc partitionalloc
 
 sci-ml/caffe2 openmp
 
-# Guardrail:  Protect FAFO users against remote code execution, path traversal, information disclosure, denial of service on web browsers.
-gnome-base/librsvg sandboxed-loader
+# The distro didn't package the latest GNOME 50 yet.  The distro is still in GNOME 48 as stable.
+# So it is forced using the unsandboxed image loader right now to match GNOME's 48 default.
+gnome-base/librsvg pixbuf-loader

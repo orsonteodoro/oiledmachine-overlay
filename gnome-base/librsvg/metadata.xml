@@ -15,8 +15,9 @@
     <remote-id type="gnome-gitlab">GNOME/librsvg</remote-id>
   </upstream>
   <use>
-  <flag name="sandboxed-loader">
-    Provides image loading security over the legacy loader.
+  <flag name="pixbuf-loader">
+    As the ebuild/distro default, it provides compatibility support Eye of Gnome and GNOME 48 and earlier.
+    As the upstream default, it enables sandbox image loading support for newer generation of apps based on GNOME 49 and later.
   </flag>
   </use>
 </pkgmetadata>
