@@ -16,8 +16,7 @@
   </upstream>
   <use>
   <flag name="pixbuf-loader">
-    As the ebuild/distro default, it provides compatibility support Eye of Gnome and GNOME 48 and earlier.
-    As the upstream default, it enables sandbox image loading support for newer generation of apps based on GNOME 49 and later.
+    Use compatibility mode for legacy apps; otherwise, use sandboxed image loader support.
   </flag>
   </use>
 </pkgmetadata>
