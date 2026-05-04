@@ -466,12 +466,8 @@ pkg_setup() {
 
 	if use pixbuf-loader ; then
 ewarn "Image loader:  pixbuf-loader (unsandboxed)"
-ewarn "AVIF sandboxed:  N"
-ewarn "SVG sandboxed:  N"
 	else
 einfo "Image loader:  glycin-loader (sandboxed)"
-einfo "AVIF sandboxed:  Y"
-einfo "SVG sandboxed:  Y"
 	fi
 
 	local GLYCIN_PACKAGES=(
