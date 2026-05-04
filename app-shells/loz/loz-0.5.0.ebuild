@@ -13,6 +13,18 @@ NPM_AUDIT_FATAL=0
 NODE_SLOT="20"
 NPM_TARBALL="${P}.tar.gz"
 
+NPM_INSTALL_ARGS=(
+	"--prefer-offline"
+)
+
+NPM_AUDIT_FIX_ARGS=(
+	"--prefer-offline"
+)
+
+NPM_DEDUPE_ARGS=(
+	"--prefer-offline"
+)
+
 NPM_EXE_LIST=(
 	"/opt/loz/dist/index.js"
 	"/opt/loz/node_modules/rimraf/bin.js"
@@ -173,8 +185,22 @@ RESTRICT="mirror"
 DOCS=( "README.md" )
 
 npm_update_lock_audit_post() {
-	# Fix breaking changes
-	enpm add "@types/node@${AT_TYPES_NODE_PV}" -D
+#einfo "QA:  Manually remove node_modules/mocha/node_modules/serialize-javascript from package-lock.json"
+
+	patch_lockfile() {
+		sed -i -e "s|\"serialize-javascript\": \"^6.0.2\"|\"serialize-javascript\": \"^7.0.5\"|g" "package-lock.json"
+	}
+	patch_lockfile
+
+	local L
+	L=(
+		"@types/node@${AT_TYPES_NODE_PV}"	# Fix breaking changes
+
+		"serialize-javascript@^7.0.5"		# GHSA-5c6j-r48x-rmvq; ZC, DoS, DT, ID; High
+							# CVE-2026-34043; DoS; Moderate
+	)
+	enpm add "${L[@]}" -D "${NPM_INSTALL_ARGS[@]}"
+	patch_lockfile
 }
 
 src_unpack() {
