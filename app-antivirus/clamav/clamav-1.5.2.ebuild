@@ -51,8 +51,8 @@ GENERATE_LOCKFILE=0
 MITIGATION_DATE="Jun 18, 2025"
 MITIGATION_URI="https://blog.clamav.net/2025/06/clamav-143-and-109-security-patch.html"
 PYTHON_COMPAT=( "python3_"{10..12} ) # CI uses 3.8
-RUST_MAX_VER="1.90" # LLVM 20
-RUST_MIN_VER="1.88" # LLVM 20
+RUST_MAX_VER="1.90" # LLVM 19
+RUST_MIN_VER="1.88" # LLVM 18
 RUSTFLAGS_HARDENED_USE_CASES="jit network security-critical sensitive-data untrusted-data"
 RUSTFLAGS_HARDENED_TOLERANCE="4.0"
 
@@ -60,34 +60,59 @@ CURL_PV="7.68.0"
 PYTEST_PV="7.2.0"
 
 VULNERABILITIES_FIXED=(
-	"CVE-2025-20260;BO, ZC, CE, DoS, DT, ID;Critical"
-	"CVE-2025-20234;UAF, ZC, DoS, ID;Medium"
+	"CVE-2026-20031;ZC, DoS;Medium"
 )
 
-# From "./convert-cargo-lock.sh 1.4.3 1.4.3" \
+# From "./convert-cargo-lock.sh 1.5.2 1.5.2" \
 CRATES="
 adler2-2.0.1
 adler32-1.2.0
 aho-corasick-1.1.4
+aligned-0.4.3
+aligned-vec-0.6.4
 android_system_properties-0.1.5
+anstream-1.0.0
+anstyle-1.0.14
+anstyle-parse-1.0.0
+anstyle-query-1.1.5
+anstyle-wincon-3.0.11
+anyhow-1.0.102
+arbitrary-1.4.2
+arg_enum_proc_macro-0.3.4
+arrayvec-0.7.6
+as-slice-0.2.1
 autocfg-1.5.0
+av1-grain-0.2.5
+avif-serialize-0.8.8
+av-scenechange-0.14.1
 base64-0.21.7
 bindgen-0.65.1
 bit_field-0.10.3
 bitflags-1.3.2
-bitflags-2.10.0
+bitflags-2.11.1
+bit-set-0.5.3
+bitstream-io-4.10.0
+bit-vec-0.6.3
 block-buffer-0.10.4
-bumpalo-3.19.1
-bytemuck-1.24.0
+built-0.8.0
+bumpalo-3.20.2
+bytemuck-1.25.0
 byteorder-1.5.0
-bytes-1.11.0
+byteorder-lite-0.1.0
+bytes-1.11.1
 bzip2-rs-0.1.2
 cbindgen-0.25.0
-cc-1.2.49
+cc-1.2.61
 cexpr-0.6.0
 cfg-if-1.0.4
-chrono-0.4.42
+change-case-0.2.0
+chrono-0.4.44
 clang-sys-1.8.1
+clap-4.6.1
+clap_builder-4.6.0
+clap_derive-4.6.1
+clap_lex-1.1.0
+colorchoice-1.0.5
 color_quant-1.1.0
 core-foundation-sys-0.8.7
 cpufeatures-0.2.17
@@ -99,100 +124,205 @@ crunchy-0.2.4
 crypto-common-0.1.7
 delharc-0.6.1
 digest-0.10.7
+displaydoc-0.2.5
+downcast-rs-2.0.2
 either-1.15.0
+either_n-0.2.0
 encoding_rs-0.8.35
+enumflags2-0.7.12
+enumflags2_derive-0.7.12
 enum-primitive-derive-0.2.2
+enum-variants-strings-0.3.0
+enum-variants-strings-derive-0.3.0
+equator-0.4.2
+equator-macro-0.4.2
+equivalent-1.0.2
 errno-0.3.14
 exr-1.74.0
-fastrand-2.3.0
+fancy-regex-0.3.5
+fastrand-2.4.1
+fax-0.2.7
 fdeflate-0.3.7
-find-msvc-tools-0.1.5
-flate2-1.1.5
+filetime-0.2.27
+find-msvc-tools-0.1.9
+flate2-1.1.9
+flexi_logger-0.30.2
+foldhash-0.1.5
+foreign-types-0.3.2
+foreign-types-shared-0.1.1
+form_urlencoded-1.2.2
+futures-core-0.3.32
+futures-task-0.3.32
+futures-util-0.3.32
 generic-array-0.14.7
 getrandom-0.3.4
-gif-0.13.3
+getrandom-0.4.2
+gif-0.14.2
 glob-0.3.3
 half-2.7.1
 hashbrown-0.12.3
+hashbrown-0.15.5
+hashbrown-0.17.0
 heck-0.4.1
+heck-0.5.0
 hex-0.4.3
 hex-literal-0.4.1
+hex-literal-1.1.0
 home-0.5.12
-iana-time-zone-0.1.64
+humantime-2.3.0
+iana-time-zone-0.1.65
 iana-time-zone-haiku-0.1.2
-image-0.24.9
+icu_collections-2.2.0
+icu_locale_core-2.2.0
+icu_normalizer-2.2.0
+icu_normalizer_data-2.2.0
+icu_properties-2.2.0
+icu_properties_data-2.2.0
+icu_provider-2.2.0
+id-arena-2.3.0
+idna-1.1.0
+idna_adapter-1.2.2
+image-0.25.10
+image-webp-0.2.4
+imgref-1.12.1
 indexmap-1.9.3
+indexmap-2.14.0
 inflate-0.4.5
+interpolate_name-0.2.4
+is_terminal_polyfill-1.70.2
 itertools-0.10.5
-itoa-1.0.15
-jpeg-decoder-0.3.2
-js-sys-0.3.83
+itertools-0.14.0
+itoa-1.0.18
+jobserver-0.1.34
+js-sys-0.3.97
 lazycell-1.3.0
 lazy_static-1.5.0
+leb128fmt-0.1.0
 lebe-0.5.3
-libc-0.2.178
+libc-0.2.186
+libfuzzer-sys-0.4.12
 libloading-0.8.9
-linux-raw-sys-0.11.0
+libredox-0.1.16
+linux-raw-sys-0.12.1
 linux-raw-sys-0.4.15
+litemap-0.8.2
 log-0.4.29
-memchr-2.7.6
+loop9-0.1.5
+maybe-rayon-0.1.1
+md5-0.7.0
+memchr-2.8.0
 minimal-lexical-0.2.1
 miniz_oxide-0.8.9
+moxcms-0.8.1
+new_debug_unreachable-1.0.6
 nom-7.1.3
+nom-8.0.0
+noop_proc_macro-0.3.0
+no_std_io2-0.9.3
+nu-ansi-term-0.50.3
+num-bigint-0.4.6
 num-complex-0.4.6
+num-derive-0.4.2
 num-integer-0.1.46
+num-rational-0.4.2
 num-traits-0.2.19
-once_cell-1.21.3
+once_cell-1.21.4
+once_cell_polyfill-1.70.2
+openssl-0.10.79
+openssl-macros-0.1.1
+openssl-sys-0.9.115
 paste-1.0.15
+pastey-0.1.1
 peeking_take_while-0.1.2
-png-0.17.16
+percent-encoding-2.3.2
+pin-project-lite-0.2.17
+pkg-config-0.3.33
+plain-0.2.3
+png-0.18.1
+potential_utf-0.1.5
+ppv-lite86-0.2.21
 prettyplease-0.2.37
 primal-check-0.3.4
-proc-macro2-1.0.103
+proc-macro2-1.0.106
+profiling-1.0.17
+profiling-procmacros-1.0.17
+pxfm-0.1.29
 qoi-0.4.1
-quote-1.0.42
-rayon-1.11.0
+quick-error-2.0.1
+quote-1.0.45
+rand-0.9.4
+rand_chacha-0.9.0
+rand_core-0.9.5
+rav1e-0.8.1
+ravif-0.13.0
+rayon-1.12.0
 rayon-core-1.13.0
+redox_syscall-0.7.4
 r-efi-5.3.0
-regex-1.12.2
-regex-automata-0.4.13
-regex-syntax-0.8.8
+r-efi-6.0.0
+regex-1.12.3
+regex-automata-0.4.14
+regex-syntax-0.8.10
+rgb-0.8.53
 rustc-hash-1.1.0
 rustdct-0.7.1
 rustfft-6.4.1
 rustix-0.38.44
-rustix-1.1.2
+rustix-1.1.4
 rustversion-1.0.22
-ryu-1.0.20
+semver-1.0.28
 serde-1.0.228
 serde_core-1.0.228
 serde_derive-1.0.228
-serde_json-1.0.145
+serde_json-1.0.149
 sha1-0.10.6
 sha2-0.10.9
 shlex-1.3.0
-simd-adler32-0.3.8
+simd-adler32-0.3.9
+simd_helpers-0.1.0
+slab-0.4.12
 smallvec-1.15.1
+stable_deref_trait-1.2.1
 strength_reduce-0.2.4
+string-cases-0.2.0
+strsim-0.11.1
+strum-0.27.2
+strum_macros-0.27.2
 syn-1.0.109
-syn-2.0.111
-tempfile-3.23.0
+syn-2.0.117
+synstructure-0.13.2
+tar-0.4.45
+tempfile-3.27.0
 thiserror-1.0.69
+thiserror-2.0.18
 thiserror-impl-1.0.69
-tiff-0.9.1
-tinyvec-1.10.0
+thiserror-impl-2.0.18
+tiff-0.11.3
+tinystr-0.8.3
+tinyvec-1.11.0
+tinyvec_macros-0.1.1
 toml-0.5.11
 transpose-0.2.3
-typenum-1.19.0
-unicode-ident-1.0.22
-unicode-segmentation-1.12.0
-uuid-1.19.0
+typenum-1.20.0
+unicode-ident-1.0.24
+unicode-segmentation-1.13.2
+unicode-xid-0.2.6
+url-2.5.8
+utf8_iter-1.0.4
+utf8parse-0.2.2
+uuid-1.23.1
+vcpkg-0.2.15
 version_check-0.9.5
-wasip2-1.0.1+wasi-0.2.4
-wasm-bindgen-0.2.106
-wasm-bindgen-macro-0.2.106
-wasm-bindgen-macro-support-0.2.106
-wasm-bindgen-shared-0.2.106
+v_frame-0.3.9
+wasip2-1.0.3+wasi-0.2.9
+wasip3-0.4.0+wasi-0.3.0-rc-2026-01-06
+wasm-bindgen-0.2.120
+wasm-bindgen-macro-0.2.120
+wasm-bindgen-macro-support-0.2.120
+wasm-bindgen-shared-0.2.120
+wasm-encoder-0.244.0
+wasm-metadata-0.244.0
+wasmparser-0.244.0
 weezl-0.1.12
 which-4.4.2
 widestring-1.2.1
@@ -213,13 +343,33 @@ windows-targets-0.52.6
 windows_x86_64_gnu-0.52.6
 windows_x86_64_gnullvm-0.52.6
 windows_x86_64_msvc-0.52.6
-wit-bindgen-0.46.0
-zerocopy-0.8.31
-zerocopy-derive-0.8.31
+wit-bindgen-0.51.0
+wit-bindgen-0.57.1
+wit-bindgen-core-0.51.0
+wit-bindgen-rust-0.51.0
+wit-bindgen-rust-macro-0.51.0
+wit-component-0.244.0
+wit-parser-0.244.0
+writeable-0.6.3
+xattr-1.6.1
+y4m-0.8.0
+yoke-0.8.2
+yoke-derive-0.8.2
+zerocopy-0.8.48
+zerocopy-derive-0.8.48
+zerofrom-0.1.7
+zerofrom-derive-0.1.7
+zerotrie-0.2.4
+zerovec-0.11.6
+zerovec-derive-0.11.3
+zmij-1.0.21
+zune-core-0.5.1
 zune-inflate-0.2.54
+zune-jpeg-0.5.15
 "
 
 declare -A GIT_CRATES=(
+[clam-sigutil]="https://github.com/Cisco-Talos/clamav-signature-util?tag=1.2.4;7cfeb7f630ce472239f5b0a794b62df7f592acc7;clamav-signature-util-%commit%" # 1.2.4
 [onenote_parser]="https://github.com/Cisco-Talos/onenote.rs;29c08532252b917543ff268284f926f30876bb79;onenote.rs-%commit%" # 0.3.1
 )
 
@@ -303,7 +453,7 @@ RESTRICT="
 #		test
 #	)
 #"
-SLOT="0/lts" # sts or lts
+SLOT="0/sts" # sts or lts
 IUSE="
 doc clamonacc +clamapp custom-cflags experimental jit libclamav-only man milter rar
 selinux +system-mspack systemd test valgrind
@@ -436,7 +586,7 @@ eerror "Switch Rust to >= ${RUST_MIN_VER}"
 }
 
 pkg_setup() {
-einfo "This LTS release is supported up to Aug 15, 2028."
+einfo "This is the regular rolling release."
 	if use test && ! [[ "${FEATURES}" =~ "userpriv" ]] ; then
 eerror "USE=test requires FEATURES=\"${FEATURES} userpriv\""
 		die
@@ -500,7 +650,7 @@ src_unpack() {
 
 	# Uncomment before running convert-cargo-lock.sh
 	# Readd comment when done generating cargo list.
-	#die
+	die
 
 	if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
 		_lockfile_gen_unpack
