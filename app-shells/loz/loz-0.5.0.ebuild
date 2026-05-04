@@ -4,9 +4,14 @@
 
 EAPI=8
 
-EGIT_COMMIT="55d6998a48eeedc92c3789ba96bea55e3f6cd15f"
+# To create lockfile
+# PATH=$(realpath "../../scripts")":${PATH}"
+# NPM_UPDATER_VERSIONS="0.5.0" npm_updater_update_locks.sh
+
+AT_TYPES_NODE_PV="25.2.2" # Use 20.11.28 if it breaks
+NPM_AUDIT_FATAL=0
 NODE_SLOT="20"
-NPM_TARBALL="${P}-${EGIT_COMMIT:0:7}.tar.gz"
+NPM_TARBALL="${P}.tar.gz"
 
 NPM_EXE_LIST=(
 	"/opt/loz/dist/index.js"
@@ -92,10 +97,10 @@ NPM_EXE_LIST=(
 inherit git-r3 npm
 
 KEYWORDS="~amd64"
-S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+S="${WORKDIR}/${P}"
 SRC_URI="
-https://github.com/joone/loz/archive/${EGIT_COMMIT}.tar.gz
-	-> ${P}-${EGIT_COMMIT:0:7}.tar.gz
+https://github.com/joone/loz/archive/v${PV}.tar.gz
+	-> ${P}.tar.gz
 "
 
 DESCRIPTION="Loz is a command-line tool that enables your preferred LLM to execute system commands and utilize Unix pipes, integrating AI capabilities with other Unix tools."
@@ -169,7 +174,7 @@ DOCS=( "README.md" )
 
 npm_update_lock_audit_post() {
 	# Fix breaking changes
-	enpm add "@types/node@20.11.28" -D
+	enpm add "@types/node@${AT_TYPES_NODE_PV}" -D
 }
 
 src_unpack() {
