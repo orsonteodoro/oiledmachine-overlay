@@ -479,7 +479,7 @@ einfo "Detected GNOME 49+"
 einfo "Detected GNOME 48 or earlier"
 	fi
 einfo
-einfo "Version correspondance:"
+einfo "Version correspondence:"
 einfo
 einfo "glib 2.88.x - GNOME 50 should be sandboxed by default with USE=-pixbuf-loader"
 einfo "glib 2.86.x - GNOME 49 should be sandboxed by default with USE=-pixbuf-loader"
