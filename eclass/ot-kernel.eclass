@@ -3053,7 +3053,14 @@ _has_security_critical_type() {
 	return 1
 }
 
-
+# @FUNCTION: ot-kernel_apply_fixes
+# @DESCRIPTION:
+# Apply additional patch fixes to address build failures.
+ot-kernel_apply_fixes() {
+	if ver_test "${KV_MAJOR_MINOR}" "-ge" "7.0" ; then
+		_fpatch "${FILESDIR}/linux-7.0.3-objtool-include-limits.patch"
+	fi
+}
 
 # @FUNCTION: apply_all_patchsets
 # @DESCRIPTION:
@@ -3201,6 +3208,7 @@ apply_all_patchsets() {
 	ot-kernel_apply_kcp
 	ot-kernel_apply_kcmdline_for_sanitizers
 	ot-kernel_apply_noturbo
+	ot-kernel_apply_fixes
 
 	if [[ "${PV}" =~ "9999" ]] ; then
 		# Disable + suffix
