@@ -595,8 +595,8 @@ LOGGER_DEPENDS="
 # update events.
 #
 # KASAN is preferred over KFENCE for higher security score.  This is why
-# gentoo-kernel and gentoo-kernel-bin are banned.  KASAN is B+ grade (89%) but
-# ASAN is A grade (90%).  Security-critical is strictly 90% score or better on
+# gentoo-kernel and gentoo-kernel-bin are banned.  KFENCE is B+ grade (89%) but
+# KASAN is A- grade (90%).  Security-critical is strictly 90% score or better on
 # this overlay.
 #
 KERNEL_DEPENDS="
