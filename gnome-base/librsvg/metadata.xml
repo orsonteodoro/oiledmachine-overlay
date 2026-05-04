@@ -14,4 +14,9 @@
   <upstream>
     <remote-id type="gnome-gitlab">GNOME/librsvg</remote-id>
   </upstream>
+  <use>
+  <flag name="sandboxed-loader">
+    Provides image loading security over the legacy loader.
+  </flag>
+  </use>
 </pkgmetadata>
