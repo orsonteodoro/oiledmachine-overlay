@@ -1770,7 +1770,7 @@ eerror
 		fi
 	else
 		unpack "gst-plugins-rs-gstreamer-${MY_PV}.tar.bz2"
-		die
+		#die
 
 		cargo_src_unpack
 		if [[ -e "${FILESDIR}/${PV}/Cargo.lock" ]] ; then
