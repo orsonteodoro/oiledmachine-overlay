@@ -132,6 +132,12 @@ https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs/-/archive/gstreamer-${MY
 	if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
 		:
 	else
+# Manually apply security update with `cargo update -p <pn>@<pv>`
+# cargo update -p rustls-webpki@0.103.13	# GHSA-82j2-j2ch-gfr8; ZC, DoS; High
+#						# GHSA-pwjx-qhcg-rvj4; DT; Moderate
+#						# GHSA-xgp8-3hg3-c2mh; DT; Low
+#						# GHSA-965h-392x-2mh5; DT; Low
+#
 CRATES="
 addr2line-0.25.1
 adler2-2.0.1
