@@ -486,7 +486,7 @@ einfo "glib 2.86.x - GNOME 49 should be sandboxed by default with USE=-pixbuf-lo
 einfo "glib 2.84.x - GNOME 48 should be unsandboxed by default with USE=pixbuf-loader"
 einfo
 	if has_version "media-gfx/eog" && use "pixbuf-loader" ; then
-ewarn "USE=pixbuf-loader should be set for media-gfx/eog."
+ewarn "${CATEGORY}/${PN}[pixbuf-loader] USE flag should be set for media-gfx/eog."
 	fi
 }
 
