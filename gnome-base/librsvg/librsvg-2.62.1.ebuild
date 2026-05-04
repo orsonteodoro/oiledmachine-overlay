@@ -4,7 +4,7 @@
 EAPI=8
 
 # avif should be already sandboxed unconditionally by glycin.
-# glycin was the default for librsvg since Oct 17, 2025.
+# glycin was the default for librsvg since Oct 17, 2025 for 2.61.2.
 
 MY_PV="${PV%.*}"
 
@@ -533,7 +533,7 @@ src_prepare() {
 src_configure() {
 einfo "PATH:  ${PATH}"
 einfo "rustc version:"
-	${RUSTC} --version || die
+	"${RUSTC}" --version || die
 
 	meson-multilib_src_configure
 }
