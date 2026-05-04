@@ -1,0 +1,10 @@
+--- a/tools/objtool/objtool.c.orig	2026-04-12 13:48:06.000000000 -0700
++++ b/tools/objtool/objtool.c	2026-05-04 00:04:46.668858709 -0700
+@@ -8,6 +8,7 @@
+ #include <string.h>
+ #include <stdlib.h>
+ #include <unistd.h>
++#include <linux/limits.h>
+ #include <subcmd/exec-cmd.h>
+ #include <subcmd/pager.h>
+ #include <linux/kernel.h>
