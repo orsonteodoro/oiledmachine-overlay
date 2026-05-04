@@ -584,15 +584,27 @@ LOGGER_DEPENDS="
 	)
 "
 
-# Only stable and RC is currently.
-# The latest stable is supported for architectural security design update or to mitigate against lazy backport maintainers.
-# The only the latest LTS is supported for binary packages.
-# KASAN is preferred over KFENCE for higher security score.  This is why gentoo-kernel and gentoo-kernel-bin are banned.
+#
+# The latest stable is supported for architectural security design update or to
+# mitigate against lazy backport maintainers or the possibility of a missed
+# backport which has been observed.
+#
+# The only the last 2 latest LTS are supported for binary drivers and
+# out-of-tree drivers for security reasons.  The 2 newer LTS branches are
+# typically updated before the remaining older LTS that have lag time for
+# update events.
+#
+# KASAN is preferred over KFENCE for higher security score.  This is why
+# gentoo-kernel and gentoo-kernel-bin are banned.  KASAN is B+ grade (89%) but
+# ASAN is A grade (90%).  Security-critical is strictly 90% score on this
+# overlay.
+#
 KERNEL_DEPENDS="
 	gentoo-sources? (
 		|| (
 			~sys-kernel/gentoo-sources-7.0.3
 			~sys-kernel/ot-sources-6.18.26
+			~sys-kernel/ot-sources-6.12.85
 		)
 		sys-kernel/gentoo-sources:=
 	)
@@ -606,6 +618,7 @@ KERNEL_DEPENDS="
 		|| (
 			~sys-kernel/ot-sources-7.0.3
 			~sys-kernel/ot-sources-6.18.26
+			~sys-kernel/ot-sources-6.12.85
 		)
 		sys-kernel/ot-sources:=
 	)
@@ -613,6 +626,7 @@ KERNEL_DEPENDS="
 		|| (
 			~sys-kernel/vanilla-sources-7.0.3
 			~sys-kernel/vanilla-sources-6.18.26
+			~sys-kernel/vanilla-sources-6.12.85
 		)
 		sys-kernel/vanilla-sources:=
 	)
