@@ -61,6 +61,7 @@ PYTEST_PV="7.2.0"
 
 VULNERABILITIES_FIXED=(
 	"CVE-2026-20031;ZC, DoS;Medium"
+	"CVE-2026-25541;VS(DoS);Medium" # Same as RUSTSEC-2026-0007
 )
 
 # From "./convert-cargo-lock.sh 1.5.2 1.5.2" \
