@@ -599,12 +599,15 @@ LOGGER_DEPENDS="
 # KASAN is A- grade (90%).  Security-critical is strictly 90% score or better on
 # this overlay.
 #
+# The sys-kernel/gentoo-sources is allowed if using KASAN otherwise it
+# should be reconfigured to use it.
+#
 KERNEL_DEPENDS="
 	gentoo-sources? (
 		|| (
 			~sys-kernel/gentoo-sources-7.0.3
-			~sys-kernel/ot-sources-6.18.26
-			~sys-kernel/ot-sources-6.12.85
+			~sys-kernel/gentoo-sources-6.18.26
+			~sys-kernel/gentoo-sources-6.12.85
 		)
 		sys-kernel/gentoo-sources:=
 	)
