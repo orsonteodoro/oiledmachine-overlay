@@ -7,7 +7,8 @@ It focuses on appropriate security and performance, game development,
 the AI boom, JS based desktop apps, and legacy hardware support.
 
 The name of the repo comes from "a well oiled machine" and should run
-smooth and efficient under high memory pressure or heavy IO.
+smooth and efficient under high memory pressure or heavy IO while maintaining
+overall happiness.
 
 ## AI notice
 
