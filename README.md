@@ -1,9 +1,5 @@
 # oiledmachine-overlay
 
-## Important special note
-
-Work on this repo may cease or be infrequent.  Please see issue request.
-
 ## About
 
 This portage overlay contains various ebuilds for the Gentoo Linux
@@ -34,9 +30,7 @@ or
 emaint sync --repo oiledmachine-overlay
 ```
 
-## Important stuff
-
-## Overlay bugs/fixes/news
+## Overlay bugs fixes and news
 
 Overlay bugs and fixes are addressed with the `eselect news` command, a feature
 that I almost never use.  This overlay uses this system to post
@@ -61,8 +55,10 @@ The selected first 5 news items:
 * For the 2023 policy, see [2023_POLICY.md](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/docs/2023_POLICY.md)
 * For the 2020 policy, see [2020_POLICY.md](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/docs/2020_POLICY.md)
 * For PGO/BOLT support info, see [PGO_BOLT.md](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/docs/PGO_BOLT.md)
-* For finding ebuild documentation, see [EBUILD_DOCUMENTATION.md](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/docs/EBUILD_DOCUMENTATION.md)
 * For ebuild licenses info, see [EBUILD_LICENSES.md](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/docs/EBUILD_LICENSES.md)
+* For the support matrix, see [SUPPORT_MATRIX.md](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/docs/SUPPORT_MATRIX.md)
+* For the overlay comparison, see [OVERLAY_COMPARISON.md](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/docs/OVERLAY_COMPARISON.md)
 * For ebuild quality info, see [QUALITY.md](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/docs/QUALITY.md)
 * For broken ebuilds info, see [QUALITY.md](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/docs/BROKEN.md)
+* For finding ebuild documentation, see [EBUILD_DOCUMENTATION.md](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/docs/EBUILD_DOCUMENTATION.md)
 * For legacy packages, see [LEGACY_PACKAGES.md](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/docs/LEGACY_PACKAGES.md)
