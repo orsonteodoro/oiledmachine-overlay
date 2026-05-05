@@ -2,18 +2,17 @@
 
 ## About
 
-This portage overlay contains various ebuilds for the Gentoo Linux
-distribution.  It focuses on optimized ebuilds, some game development, 
-software used in computer science courses, C#, Electron apps, and other legacy 
-software and hardware support packages.
+This portage overlay contains various ebuilds for the Gentoo Linux distribution.
+It focuses on appropriate security and performance, game development,
+the AI boom, JS based desktop apps, and legacy hardware support.
 
-The name of the repo comes from "well-oiled machine."  A (Gentoo) computer 
-should not feel like molasses under high memory pressure or heavy IO 
-utilization.  It should run smoothly.
+The name of the repo comes from "a well oiled machine" and should run
+smooth and efficient under high memory pressure or heavy IO.
 
 ## AI notice
 
-This overlay uses AI generated code and synthetic data in the ebuilds, patches, and documentation.
+This ebuild overlay uses AI generated code and synthetic data in the ebuilds,
+patches, and documentation.
 
 ## Adding the repo
 
