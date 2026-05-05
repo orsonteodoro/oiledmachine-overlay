@@ -11,6 +11,10 @@ The name of the repo comes from "well-oiled machine."  A (Gentoo) computer
 should not feel like molasses under high memory pressure or heavy IO 
 utilization.  It should run smoothly.
 
+## AI notice
+
+This overlay uses AI generated code and synthetic data in the ebuilds, patches, and documentation.
+
 ## Adding the repo
 
 ```
