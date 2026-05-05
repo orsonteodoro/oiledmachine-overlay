@@ -2,7 +2,7 @@
 
 ## About
 
-This portage overlay contains various ebuilds for the Gentoo Linux distribution.
+This ebuild overlay contains various ebuilds for the Gentoo Linux distribution.
 It focuses on appropriate security and performance, game development,
 the AI boom, JS based desktop apps, and legacy hardware support.
 
