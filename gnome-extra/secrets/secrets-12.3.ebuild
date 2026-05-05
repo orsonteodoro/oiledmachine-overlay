@@ -21,7 +21,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-#	KEYWORDS="~amd64" # Not finished yet
+	KEYWORDS="~amd64"
 	S="${WORKDIR}/${PN}-${PV}"
 	SRC_URI="
 https://gitlab.gnome.org/World/secrets/-/archive/${PV}/${P}.tar.gz
