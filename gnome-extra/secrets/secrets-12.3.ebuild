@@ -41,7 +41,7 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 dev wayland X
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -62,10 +62,7 @@ RDEPEND+="
 		dev-python/pyhibp[${PYTHON_USEDEP}]
 		dev-python/PyKCS11[${PYTHON_USEDEP}]
 		dev-python/python-yubico[${PYTHON_USEDEP}]
-		|| (
-			dev-python/pycryptodome[${PYTHON_USEDEP}]
-			dev-python/pycryptodomex[${PYTHON_USEDEP}]
-		)
+		dev-python/pycryptodome[${PYTHON_USEDEP}]
 	')
 	>=dev-libs/gobject-introspection-1.66.0[${PYTHON_SINGLE_USEDEP}]
 	>=dev-libs/glib-2.73.1[introspection]
@@ -104,18 +101,10 @@ src_unpack() {
 }
 
 python_prepare() {
-	if has_version "dev-python/pycryptodome" ; then
-einfo "Detected dev-python/pycryptodome"
-		sed -i \
-			-e "s|Cryptodome.Cipher|Crypto.Cipher|g" \
-			-e "s|Cryptodome.Random|Crypto.Random|g" \
-			"gsecrets/utils.py" || die
-	else
-einfo "Detected dev-python/pycryptodomex"
-	fi
-	if has_version "dev-python/pycryptodome" && has_version "dev-python/pycryptodomex" ; then
-ewarn "dev-python/pycryptodome and dev-python/pycryptodomex should not be installed simultaneously."
-	fi
+	sed -i \
+		-e "s|Cryptodome.Cipher|Crypto.Cipher|g" \
+		-e "s|Cryptodome.Random|Crypto.Random|g" \
+		"gsecrets/utils.py" || die
 }
 
 # @FUNCTION: has_all_hardening_flags
