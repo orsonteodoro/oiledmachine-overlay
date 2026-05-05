@@ -4,7 +4,7 @@
 
 1. AI boom packages
 2. Game development packages
-3. Next generation graphic arts and video editing packages
+3. Aesthetically pleasing or AI based graphic arts and video editing packages
 4. Lightweight and aesthetically pleasing awesome list or must have apps
 5. Bug fixes
 6. Security fixes
