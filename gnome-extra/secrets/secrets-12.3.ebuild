@@ -56,10 +56,7 @@ RDEPEND+="
 		>=dev-python/pyotp-2.6.0[${PYTHON_USEDEP}]
 		dev-python/validators[${PYTHON_USEDEP}]
 		>=dev-python/zxcvbn-rs-py-0.2.0[${PYTHON_USEDEP}]
-		|| (
-			dev-python/PyKCS11[${PYTHON_USEDEP}]
-			dev-python/pykcs11[${PYTHON_USEDEP}]
-		)
+		dev-python/PyKCS11[${PYTHON_USEDEP}]
 		dev-python/python-yubico[${PYTHON_USEDEP}]
 		>=dev-python/pygobject-3.52[${PYTHON_USEDEP}]
 		>=dev-python/pykeepass-4.1.1[${PYTHON_USEDEP}]
@@ -166,8 +163,9 @@ verify_compiler_flags_hardening() {
 	# All input deps
 
 	# All password processing or password data path packages
-		"unconditional:dev-python/zxcvbn-rs-py:sensitive-data"
 		"unconditional:dev-python/pygobject:sensitive-data"
+		"unconditional:dev-python/PyKCS11:sensitive-data"
+		"unconditional:dev-python/zxcvbn-rs-py:sensitive-data"
 
 	# All deps used for possible text/image rendering, text processing
 		"unconditional:dev-libs/glib:attack-surface-risk,sensitive-data"
