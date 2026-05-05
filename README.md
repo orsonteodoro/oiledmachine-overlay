@@ -34,7 +34,7 @@ or
 emaint sync --repo oiledmachine-overlay
 ```
 
-## Overlay bugs fixes and news
+## Overlay bug fixes and news
 
 Overlay bugs and fixes are addressed with the `eselect news` command, a feature
 that I almost never use.  This overlay uses this system to post
