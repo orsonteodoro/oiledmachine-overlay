@@ -17,7 +17,7 @@ DISTUTILS_SINGLE_IMPL=1
 inherit meson distutils-r1 web-kernel-config
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	EGIT_BRANCH="main"
+	EGIT_BRANCH="master"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://gitlab.gnome.org/World/secrets.git"
 	FALLBACK_COMMIT="17161044e611107b176438ebb8f0be81d33a804e" # Feb 22, 2026
