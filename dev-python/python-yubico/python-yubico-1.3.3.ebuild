@@ -19,7 +19,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 else
 	KEYWORDS="~amd64"
-	S="${WORKDIR}/${PN}-${PV}"
+	S="${WORKDIR}/python-yubico-python-yubico-${PV}"
 	SRC_URI="
 https://github.com/Yubico/python-yubico/archive/refs/tags/python-yubico-${PV}.tar.gz
 	-> ${P}.tar.gz
