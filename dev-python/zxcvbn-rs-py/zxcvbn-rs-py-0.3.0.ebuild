@@ -9,8 +9,11 @@ EAPI=8
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="maturin"
 PYTHON_COMPAT=( "python3_"{10..14} ) # U22 supports up to 3.11, gnome-misc/secrets supports 12-14
+RUST_MAX_VER="1.88.0"
+RUST_MIN_VER="1.88.0"
+RUSTFLAGS_HARDENED_USE_CASES="sensitive-data"
 
-inherit distutils-r1 pypi sandbox-changes
+inherit distutils-r1 pypi rust rustflags-hardened sandbox-changes
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -39,7 +42,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" "
+IUSE+=" ebuild_revision_1"
 RDEPEND+="
 "
 DEPEND+="
@@ -61,6 +64,12 @@ DOCS=( "README.md" )
 
 pkg_setup() {
 	sandbox-changes_no_network_sandbox "To download crates"
+	rust_pkg_setup
+}
+
+src_configure() {
+	export CARGO_TERM_VERBOSE="true"
+	rustflags-hardened_append
 }
 
 src_unpack() {

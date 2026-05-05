@@ -935,7 +935,7 @@ _rustflags-hardened_is_crown_jewels() {
 	local found=0
 	local x
 	for x in "${categories[@]}" ; do
-		if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ "${x}" ]] ; then
+		if [[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ "${x}" ]] ; then
 			found=1
 		fi
 	done
@@ -971,7 +971,7 @@ _rustflags-hardened_is_crown_jewels_key() {
 	local found=0
 	local x
 	for x in "${categories[@]}" ; do
-		if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ "${x}" ]] ; then
+		if [[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ "${x}" ]] ; then
 			found=1
 		fi
 	done
@@ -1773,7 +1773,7 @@ einfo "rustc host:  ${host}"
 	# We will need to test them before allowing users to use them.
 	# Enablement is complicated by LLVM_COMPAT and compile time to build LLVM with sanitizers enabled.
 
-	local auto_sanitize=${CFLAGS_HARDENED_AUTO_SANITIZE_USER:-""}
+	local auto_sanitize=${RUSTFLAGS_HARDENED_AUTO_SANITIZE_USER:-""}
 
 	local cc_current_slot=""
 	local cc_current_name=""
