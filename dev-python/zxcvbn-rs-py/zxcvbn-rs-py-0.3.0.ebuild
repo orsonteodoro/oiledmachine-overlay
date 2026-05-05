@@ -68,8 +68,6 @@ src_unpack() {
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
 		git-r3_checkout
-		grep -q -e "version = \"1.8.2\"" "${S}/pyproject.toml" \
-			|| die "QA:  Bump version"
 	else
 		unpack ${A}
 	fi
