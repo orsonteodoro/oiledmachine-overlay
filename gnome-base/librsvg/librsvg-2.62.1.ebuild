@@ -406,7 +406,7 @@ SLOT="2"
 
 IUSE="
 avif gtk-doc +introspection +pixbuf-loader test +vala
-ebuild_revision_13
+ebuild_revision_14
 "
 RESTRICT="
 	!test? (

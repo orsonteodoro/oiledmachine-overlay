@@ -312,7 +312,7 @@ rust-simd selinux sndio speech +system-av1
 +system-harfbuzz +system-icu +system-jpeg +system-libevent
 +system-libvpx system-pipewire system-png +system-webp systemd -telemetry +vaapi -valgrind
 +wayland +webrtc wifi webspeech
-ebuild_revision_28
+ebuild_revision_29
 "
 # telemetry disabled for crypto/security reasons
 
