@@ -46,7 +46,7 @@ LICENSE="
 "
 RESTRICT="binchecks mirror strip test"
 SLOT="${PV}"
-IUSE+=" ebuild_revision_6"
+IUSE+=" ebuild_revision_7"
 RDEPEND+="
 "
 DEPEND+="
@@ -115,7 +115,7 @@ pkg_preinst() {
 	local x
 	for x in ${REPLACING_VERSIONS} ; do
 		local y=$(ver_cut "1-4" "${x}")
-		if [[ "${y}" != "${PV%.*}" ]] ; then
+		if [[ "${y}" != "${PV}" ]] ; then
 einfo "Removing ${PN}:${y}"
 			rm -rf "/usr/share/chromium/${y}/sources" >/dev/null 2>&1 || true
 		fi
