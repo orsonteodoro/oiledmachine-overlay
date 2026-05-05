@@ -164,6 +164,10 @@ verify_compiler_flags_hardening() {
 	# All input deps
 
 	# All password processing or password data path packages
+		"unconditional:dev-libs/libtomcrypt:sensitive-data,untrusted-data"
+		"unconditional:dev-python/argon2-cffi-bindings:sensitive-data,untrusted-data"
+		"unconditional:dev-python/argon2-cffi:sensitive-data,untrusted-data"
+		"unconditional:dev-python/pycryptodome:sensitive-data,untrusted-data"
 		"unconditional:dev-python/pygobject:sensitive-data"
 		"unconditional:dev-python/PyKCS11:sensitive-data"
 		"unconditional:dev-python/zxcvbn-rs-py:sensitive-data"
