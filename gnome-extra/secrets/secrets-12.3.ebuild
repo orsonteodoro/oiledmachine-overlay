@@ -6,6 +6,8 @@ EAPI=8
 
 # F44
 
+# TODO:  Make pyhibp optional to prevent possibly 3rd party snooping.
+
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{12..14} )
 DISTUTILS_SINGLE_IMPL=1
@@ -21,7 +23,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-	#KEYWORDS="~amd64" # It has load time bugs.
+	#KEYWORDS="~amd64" # Remove once pyhibp is made optional.
 	S="${WORKDIR}/${PN}-${PV}"
 	SRC_URI="
 https://gitlab.gnome.org/World/secrets/-/archive/${PV}/${P}.tar.gz
@@ -297,4 +299,9 @@ pkg_postrm() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-TEST:  FAIL (interactive, 12.3, 20260505)
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive, 12.3, 20260505)
+# New database creation:  pass
+# Open new password database:  pass
+# Password verify:  pass
+# Copy-paste password:  pass
+
