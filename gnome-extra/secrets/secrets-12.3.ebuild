@@ -165,6 +165,9 @@ verify_compiler_flags_hardening() {
 
 	# All input deps
 
+	# All password processing packages
+		"unconditional:dev-python/zxcvbn-rs-py:sensitive-data"
+
 	# All deps used for possible text/image rendering, text processing
 		"unconditional:dev-libs/glib:attack-surface-risk,sensitive-data"
 		"unconditional:media-libs/harfbuzz:sensitive-data,untrusted-data"
