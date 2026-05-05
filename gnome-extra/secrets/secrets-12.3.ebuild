@@ -175,14 +175,13 @@ verify_compiler_flags_hardening() {
 		"unconditional:media-libs/libglvnd:untrusted-data"								# RDEPEND of mesa
 		"unconditional:media-libs/mesa:attack-surface-risk,sensitive-data,untrusted-data"
 		"unconditional:x11-libs/gdk-pixbuf:sensitive-data,untrusted-data"
+		"unconditional:x11-libs/pango:sensitive-data,untrusted-data"
+		"unconditional:x11-libs/cairo:sensitive-data,untrusted-data"
 
 	# All Wayland deps
 		"wayland:dev-libs/wayland:attack-surface-risk,manual"
 
 	# All X11 deps
-		"unconditional:x11-libs/pango:sensitive-data,untrusted-data"
-		"unconditional:x11-libs/cairo:sensitive-data,untrusted-data"
-
 		"X:x11-base/xorg-server:sensitive-data"
 		"X:x11-libs/libxcb:sensitive-data"
 		"X:x11-libs/libxkbcommon:sensitive-data"
