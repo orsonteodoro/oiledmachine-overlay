@@ -6,10 +6,6 @@ EAPI=8
 
 # F44
 
-# TODO package:
-# zxcvbn_rs_py
-# yubico (aka python-yubico-client)
-
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{12..14} )
 DISTUTILS_SINGLE_IMPL=1
