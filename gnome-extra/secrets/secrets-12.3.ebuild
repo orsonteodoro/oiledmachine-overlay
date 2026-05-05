@@ -62,9 +62,10 @@ RDEPEND+="
 		>=dev-python/pykeepass-4.1.1[${PYTHON_USEDEP}]
 	')
 	>=dev-libs/gobject-introspection-1.66.0[${PYTHON_SINGLE_USEDEP}]
-	>=dev-libs/glib-2.73.1
-	>=gui-libs/gtksourceview-5.0
-	>=gui-libs/gtk-4.15.3[wayland?,X?]
+	>=dev-libs/glib-2.73.1[introspection]
+	>=gui-libs/gtksourceview-5.0[introspection]
+	>=gui-libs/gtk-4.15.3[introspection,wayland?,X?]
+	>=gui-libs/libadwaita-1.8_beta[introspection]
 	dev? (
 		dev-python/mypy
 		dev-util/ruff
