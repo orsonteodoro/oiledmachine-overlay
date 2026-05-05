@@ -14,7 +14,7 @@ It is assumed that the distro license folders exists on the local system.
 The copyright notices are contained in the source code of downloaded
 tarballs and in the about section of the program.
 
-The identifier `custom` is recognized by this overlay and used in several
+The identifier **custom** is recognized by this overlay and used in several
 Linux distros in their community package sets with their LICENSE variable.
 It is a catch all used when no license template contains the exact phase
 or clause.  The ebuild will contain the keywords to find the custom license.
