@@ -110,7 +110,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip mirror" # Prevent slow down and snooping
 IUSE+="
 firejail wayland X
-ebuild_revision_75
+ebuild_revision_76
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -805,6 +805,7 @@ pkg_postinst() {
 	elog "For using the tray icon on compatible desktop environments, start Signal with"
 	elog " '--start-in-tray' or '--use-tray-icon'."
 }
+# OILEDMACHINE-OVERLAY-TEST:  passed (8.8.0, 20250504, Electron 41.5.0)
 # OILEDMACHINE-OVERLAY-TEST:  passed (8.8.0, 20250501, Electron 41.4.0)
 # OILEDMACHINE-OVERLAY-TEST:  passed (8.7.0, 20250422, Electron 41.2.2) with updated lockfile to reduce the attack surface
 # OILEDMACHINE-OVERLAY-TEST:  passed (8.7.0, 20250421, Electron 41.2.2)
