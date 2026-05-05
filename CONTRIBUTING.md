@@ -7,7 +7,7 @@
 3. Aesthetically pleasing or AI based CGI or audio packages
 4. Lightweight or aesthetically pleasing awesome list or must have apps
 5. Bug fixes
-6. Security fixes
+6. Security fixes or improvements
 
 ### AI policy
 
