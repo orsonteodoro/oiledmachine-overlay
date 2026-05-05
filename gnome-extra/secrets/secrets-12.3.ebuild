@@ -47,8 +47,6 @@ REQUIRED_USE="
 		X
 	)
 "
-TRASH="
-"
 RDEPEND+="
 	${PYTHON_DEPS}
 	$(python_gen_cond_dep '
@@ -78,6 +76,9 @@ BDEPEND+="
 	>=dev-build/meson-1.7
 "
 DOCS=( "CHANGELOG.md" "README.md" )
+PATCHES=(
+	"${FILESDIR}/${PN}-12.3-fix-pyproject.patch"
+)
 
 pkg_setup() {
 	python-single-r1_pkg_setup
