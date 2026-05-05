@@ -10,7 +10,7 @@ DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{12..14} )
 DISTUTILS_SINGLE_IMPL=1
 
-inherit meson distutils-r1 web-kernel-config
+inherit meson distutils-r1 web-kernel-config xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
@@ -260,6 +260,10 @@ src_configure() {
 	verify_compiler_flags_hardening
 	local emesonargs=()
 	meson_src_configure
+}
+
+src_compile() {
+	meson_src_compile
 }
 
 src_install() {
