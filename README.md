@@ -54,7 +54,7 @@ The selected first 5 news items:
 
 * For the security policy, see [SECURITY.md](SECURITY.md)
 * For contributing ebuilds, see [CONTRIBUTING.md](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/CONTRIBUTING.md)
-* For package list, see [PACKAGE_LIST.md](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/docs/PACKAGE_LIST.md)
+* For the package list, see [PACKAGE_LIST.md](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/docs/PACKAGE_LIST.md)
 * For the 2025 policy, see [2025_POLICY.md](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/docs/2025_POLICY.md)
 * For the 2023 policy, see [2023_POLICY.md](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/docs/2023_POLICY.md)
 * For the 2020 policy, see [2020_POLICY.md](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/docs/2020_POLICY.md)
