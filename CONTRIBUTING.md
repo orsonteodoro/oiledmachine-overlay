@@ -2,19 +2,16 @@
 
 ### Submissions that are considered for acceptance
 
-1. Artificial Intelligence (AI) libraries and apps
-2. Machine Learning (ML) libraries and apps
-3. Game development apps
-4. Graphic arts apps
-5. Next generation video editing apps
-6. Vlogging apps
-7. Electron based apps
-8. Tauri based apps
-9. Security libs or apps
-10. Utility apps
-11. Developer tools
-12. Bug fixes
-13. Security fixes
+1. AI boom packages
+2. Game development packages
+3. Next generation graphic arts and video editing packages
+4. Lightweight and aesthetically pleasing awesome list or must have apps
+5. Bug fixes
+6. Security fixes
+
+### AI policy
+
+AI generated code and synthetic data is acceptable on this overlay.
 
 #### See also
 
