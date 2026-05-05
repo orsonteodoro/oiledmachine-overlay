@@ -170,12 +170,13 @@ EAPI=8
 # The unbundle build files logic is in
 # /usr/share/chromium/147.0.7727.137/sources/build/linux/unbundle/replace_gn_files.py
 
-TC_COUNT_EXPECTED_CLANG=422
-TC_COUNT_EXPECTED_GN=1074
-TC_COUNT_EXPECTED_RUST=7087
-SOURCES_COUNT_EXPECTED=539328
-CHROMIUM_EBUILD_MAINTAINER=0 # Also set GEN_ABOUT_CREDITS
-GEN_ABOUT_CREDITS=0
+# Use `USE="-system-clang -system-rust" ebuild chromium-toolchain-147.0.7727.55.ebuild digest clean unpack prepare compile install merge` to obtain numbers.
+TC_COUNT_EXPECTED_CLANG=423
+TC_COUNT_EXPECTED_GN=1075
+TC_COUNT_EXPECTED_RUST=7203
+SOURCES_COUNT_EXPECTED=542277
+CHROMIUM_EBUILD_MAINTAINER=1 # Also set GEN_ABOUT_CREDITS
+GEN_ABOUT_CREDITS=1
 
 ABSEIL_CPP_SLOT="20251021"
 ALLOW_MKSNAPSHOT=1 # Setting to a value other than 1 is untested.

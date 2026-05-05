@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# Add `www-client/chromium-toolchain -llvm_slot_23` to `/etc/portage/profile/package.use.mask` to bypass the distro's FAFO hard mask guardrail.
+
 inherit dhms
 
 # chromium = c11, c++23
@@ -202,7 +204,7 @@ SLOT="${PV%.*}.x"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +cfi +pgo -system-clang -system-rust
-ebuild_revision_25
+ebuild_revision_26
 "
 REQUIRED_USE="
 	^^ (
@@ -598,9 +600,7 @@ einfo "QA:  Update chromium ebuild with tc_count_expected_rust=${rust_count}"
 	if [[ -e "/usr/share/chromium/toolchain" ]] ; then
 		rm -rf "/usr/share/chromium/toolchain"
 	fi
-}
 
-pkg_preinst() {
 	local x
 	for x in ${REPLACING_VERSIONS} ; do
 		local y="${x%.*}"
