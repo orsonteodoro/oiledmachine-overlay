@@ -135,6 +135,7 @@ https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs/-/archive/gstreamer-${MY
 # To update packages manually:
 # cargo update -p rustls-webpki@0.103.13
 # cargo update -p rand@0.8.6
+# Do not use the `cargo-audit audit fix` because it doesn't do anything.
 # rustls-webpki@0.103.13	# GHSA-82j2-j2ch-gfr8; ZC, DoS; High
 #				# GHSA-pwjx-qhcg-rvj4; DT; Moderate
 #				# GHSA-xgp8-3hg3-c2mh; DT; Low
