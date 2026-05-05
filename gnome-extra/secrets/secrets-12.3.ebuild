@@ -21,7 +21,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-	KEYWORDS="~amd64"
+	#KEYWORDS="~amd64" # It has load time bugs.
 	S="${WORKDIR}/${PN}-${PV}"
 	SRC_URI="
 https://gitlab.gnome.org/World/secrets/-/archive/${PV}/${P}.tar.gz
@@ -277,3 +277,4 @@ src_install() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  FAIL (interactive, 12.3, 20260505)
