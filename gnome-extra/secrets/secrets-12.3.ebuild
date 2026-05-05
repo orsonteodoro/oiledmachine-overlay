@@ -10,7 +10,7 @@ DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{12..14} )
 DISTUTILS_SINGLE_IMPL=1
 
-inherit meson distutils-r1 web-kernel-config xdg
+inherit gnome2-utils meson distutils-r1 web-kernel-config xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
@@ -41,7 +41,7 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 dev wayland X
-ebuild_revision_1
+ebuild_revision_4
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -53,14 +53,19 @@ REQUIRED_USE="
 RDEPEND+="
 	${PYTHON_DEPS}
 	$(python_gen_cond_dep '
+		>=dev-python/pygobject-3.52[${PYTHON_USEDEP}]
 		>=dev-python/pykeepass-4.1.0[${PYTHON_USEDEP}]
 		>=dev-python/pyotp-2.6.0[${PYTHON_USEDEP}]
-		dev-python/validators[${PYTHON_USEDEP}]
+		>=dev-python/pykeepass-4.1.1[${PYTHON_USEDEP}]
 		>=dev-python/zxcvbn-rs-py-0.2.0[${PYTHON_USEDEP}]
+		dev-python/validators[${PYTHON_USEDEP}]
+		dev-python/pyhibp[${PYTHON_USEDEP}]
 		dev-python/PyKCS11[${PYTHON_USEDEP}]
 		dev-python/python-yubico[${PYTHON_USEDEP}]
-		>=dev-python/pygobject-3.52[${PYTHON_USEDEP}]
-		>=dev-python/pykeepass-4.1.1[${PYTHON_USEDEP}]
+		|| (
+			dev-python/pycryptodome[${PYTHON_USEDEP}]
+			dev-python/pycryptodomex[${PYTHON_USEDEP}]
+		)
 	')
 	>=dev-libs/gobject-introspection-1.66.0[${PYTHON_SINGLE_USEDEP}]
 	>=dev-libs/glib-2.73.1[introspection]
@@ -95,6 +100,21 @@ src_unpack() {
 		git-r3_checkout
 	else
 		unpack ${A}
+	fi
+}
+
+python_prepare() {
+	if has_version "dev-python/pycryptodome" ; then
+einfo "Detected dev-python/pycryptodome"
+		sed -i \
+			-e "s|Cryptodome.Cipher|Crypto.Cipher|g" \
+			-e "s|Cryptodome.Random|Crypto.Random|g" \
+			"gsecrets/utils.py" || die
+	else
+einfo "Detected dev-python/pycryptodomex"
+	fi
+	if has_version "dev-python/pycryptodome" && has_version "dev-python/pycryptodomex" ; then
+ewarn "dev-python/pycryptodome and dev-python/pycryptodomex should not be installed simultaneously."
 	fi
 }
 
@@ -274,6 +294,17 @@ src_install() {
 	dodoc "LICENSE"
 	meson_src_install
 	python_fix_shebang "${ED}/usr/bin/${PN}"
+	python_optimize
+}
+
+pkg_postinst() {
+	gnome2_schemas_update
+	xdg_pkg_postinst
+}
+
+pkg_postrm() {
+	gnome2_schemas_update
+	xdg_pkg_postrm
 }
 
 # OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD
