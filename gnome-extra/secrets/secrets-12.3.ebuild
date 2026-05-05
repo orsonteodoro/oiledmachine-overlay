@@ -4,6 +4,9 @@
 
 EAPI=8
 
+# This ebuild used AI inference to help assist in customization.
+# The AI solution was modified with a human solution instead.
+
 # F44
 
 # TODO:  Make pyhibp optional to prevent possibly 3rd party snooping.
@@ -23,7 +26,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-	#KEYWORDS="~amd64" # Remove once pyhibp is made optional.
+	KEYWORDS="~amd64"
 	S="${WORKDIR}/${PN}-${PV}"
 	SRC_URI="
 https://gitlab.gnome.org/World/secrets/-/archive/${PV}/${P}.tar.gz
@@ -49,7 +52,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 # the possibility of 3rdparty snooping, data collection and password degration.
 IUSE+="
 dev hibp wayland X
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -93,6 +96,7 @@ BDEPEND+="
 DOCS=( "CHANGELOG.md" "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-12.3-fix-pyproject.patch"
+	"${FILESDIR}/${PN}-12.3-optionalize-hibp.patch"
 )
 
 pkg_setup() {
@@ -115,6 +119,12 @@ python_prepare() {
 		-e "s|Cryptodome.Cipher|Crypto.Cipher|g" \
 		-e "s|Cryptodome.Random|Crypto.Random|g" \
 		"gsecrets/utils.py" || die
+	local hibp_support=$(usex hibp "True" "False")
+	sed -i \
+		-e "s|@HIBP_SUPPORT@|${hibp_support}|g" \
+		"data/gtk/database_settings_dialog.ui" \
+		"gsecrets/widgets/database_settings_dialog.py" \
+		|| die
 }
 
 # @FUNCTION: has_all_hardening_flags
@@ -142,6 +152,7 @@ has_all_hardening_flags() {
 
 	# Transient execution CPU vulnerability mitigations
 	# ID = Information Disclosure
+	# CE = Code Execution
 	local found_count_id_mitigation=0
 	if [[ "${tags}" =~ "sensitive-data" ]] ; then
 		F=(
@@ -312,4 +323,4 @@ pkg_postrm() {
 # Open new password database:  pass
 # Password verify:  pass
 # Copy-paste password:  pass
-
+# HIBP disable:  pass
