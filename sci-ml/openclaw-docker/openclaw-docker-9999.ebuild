@@ -196,4 +196,7 @@ einfo
 einfo "The .env file has been automatically fixed to use /home/node/.openclaw"
 einfo "to avoid permission errors with the pre-built image."
 einfo
+einfo "Tip:  Limit AI agent capabilities to mitigate catastrophic loss."
+einfo "Tip:  Isolate/segment backups to mitigate total loss."
+einfo
 }
