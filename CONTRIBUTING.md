@@ -16,7 +16,7 @@ AI generated code and synthetic data are acceptable on this overlay.
 #### See also
 
 * [The security policy](SECURITY.md)
-* [The overlay ebuild style guideline](EBUILD_STYLE_GUIDELINE.md)
+* [The overlay ebuild style guideline](docs/EBUILD_STYLE_GUIDELINE.md)
 
 ### Code review
 
