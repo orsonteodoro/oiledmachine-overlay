@@ -11,7 +11,7 @@
 
 ### AI policy
 
-AI generated code and synthetic data is acceptable on this overlay.
+AI generated code and synthetic data are acceptable on this overlay.
 
 #### See also
 
