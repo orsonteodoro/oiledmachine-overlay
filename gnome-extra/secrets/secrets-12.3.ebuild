@@ -38,11 +38,16 @@ HOMEPAGE="
 "
 LICENSE="
 	GPL-3
+	hibp? (
+		Have-I-Been-Pwned-Terms-of-Use
+		Have-I-Been-Pwned-Privacy-Policy
+	)
 "
 RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
+# hibp is default ON/opt-in but disabled by default in this ebuild to prevent 3rdparty snooping data collection and password degration.
 IUSE+="
-dev wayland X
+dev hibp wayland X
 ebuild_revision_5
 "
 REQUIRED_USE="
@@ -61,10 +66,12 @@ RDEPEND+="
 		>=dev-python/pykeepass-4.1.1[${PYTHON_USEDEP}]
 		>=dev-python/zxcvbn-rs-py-0.2.0[${PYTHON_USEDEP}]
 		dev-python/validators[${PYTHON_USEDEP}]
-		dev-python/pyhibp[${PYTHON_USEDEP}]
 		dev-python/PyKCS11[${PYTHON_USEDEP}]
 		dev-python/python-yubico[${PYTHON_USEDEP}]
 		dev-python/pycryptodome[${PYTHON_USEDEP}]
+		hibp? (
+			dev-python/pyhibp[${PYTHON_USEDEP}]
+		)
 	')
 	>=dev-libs/gobject-introspection-1.66.0[${PYTHON_SINGLE_USEDEP}]
 	>=dev-libs/glib-2.73.1[introspection]
