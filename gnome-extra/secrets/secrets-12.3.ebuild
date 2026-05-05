@@ -39,7 +39,10 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
-IUSE+=" dev wayland X"
+IUSE+="
+dev wayland X
+ebuild_revision_1
+"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 	|| (
@@ -270,6 +273,7 @@ src_install() {
 	docinto "licenses"
 	dodoc "LICENSE"
 	meson_src_install
+	python_fix_shebang "${ED}/usr/bin/${PN}"
 }
 
 # OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD
