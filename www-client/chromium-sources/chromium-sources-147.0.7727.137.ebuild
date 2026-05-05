@@ -46,7 +46,7 @@ LICENSE="
 "
 RESTRICT="binchecks mirror strip test"
 SLOT="${PV}"
-IUSE+=" ebuild_revision_5"
+IUSE+=" ebuild_revision_6"
 RDEPEND+="
 "
 DEPEND+="
@@ -115,25 +115,27 @@ pkg_preinst() {
 	local x
 	for x in ${REPLACING_VERSIONS} ; do
 		local y=$(ver_cut "1-4" "${x}")
-	einfo "Removing ${PN}:${y}"
-		rm -rf "/usr/share/chromium/${y}/sources" >/dev/null 2>&1 || true
+		if [[ "${y}" != "${PV%.*}" ]] ; then
+einfo "Removing ${PN}:${y}"
+			rm -rf "/usr/share/chromium/${y}/sources" >/dev/null 2>&1 || true
+		fi
 	done
 }
 
 pkg_postrm() {
 	if [[ -z "${REPLACED_BY_VERSION}" ]] ; then
 		if ls "/usr/share/chromium/"*"/sources" > /dev/null 2>&1 ; then
-	einfo "Removing all ${PN} slots"
+einfo "Removing all ${PN} slots"
 			rm -rf "/usr/share/chromium/"*"/sources" >/dev/null 2>&1 || true
 		fi
 
 		if [[ -e "/usr/share/chromium/sources" ]] ; then
-	einfo "Removing ${PN} unislot"
+einfo "Removing ${PN} unislot"
 			rm -rf "/usr/share/chromium/sources" >/dev/null 2>&1 || true
 		fi
 
 		if [[ -e "/usr/share/chromium/${PV%.*}" ]] ; then
-	einfo "Removing messed up install of ${PN}-${PV%.*}"
+einfo "Removing messed up install of ${PN}-${PV%.*}"
 			rm -rf "/usr/share/chromium/${PV%.*}" >/dev/null 2>&1 || true
 		fi
 	fi
