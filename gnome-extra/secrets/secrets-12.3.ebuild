@@ -98,6 +98,7 @@ DOCS=( "CHANGELOG.md" "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-12.3-fix-pyproject.patch"
 	"${FILESDIR}/${PN}-12.3-optionalize-hibp.patch"
+	"${FILESDIR}/${PN}-12.3-reduce-database-lock-time.patch"
 )
 
 pkg_setup() {
