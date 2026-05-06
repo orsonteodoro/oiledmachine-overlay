@@ -1,4 +1,4 @@
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -8,48 +8,61 @@ RUSTFLAGS_HARDENED_USE_CASES="crypto security-critical sensitive-data untrusted-
 CARGO_OPTIONAL=yes
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517=maturin
-PYTHON_COMPAT=( python3_{10..13} pypy3 pypy3_11 )
+PYPI_VERIFY_REPO=https://github.com/pyca/cryptography
+PYTHON_COMPAT=( python3_{11..14} pypy3_11 )
 PYTHON_REQ_USE="threads(+)"
 
-CRATES="
-	asn1@0.20.0
-	asn1_derive@0.20.0
-	autocfg@1.4.0
-	base64@0.22.1
-	bitflags@2.6.0
-	cc@1.2.1
-	cfg-if@1.0.0
-	foreign-types-shared@0.1.1
-	foreign-types@0.3.2
-	heck@0.5.0
-	indoc@2.0.5
-	itoa@1.0.14
-	libc@0.2.166
-	memoffset@0.9.1
-	once_cell@1.20.2
-	openssl-macros@0.1.1
-	openssl-sys@0.9.104
-	openssl@0.10.68
-	pem@3.0.4
-	pkg-config@0.3.31
-	portable-atomic@1.10.0
-	proc-macro2@1.0.92
-	pyo3-build-config@0.23.5
-	pyo3-ffi@0.23.5
-	pyo3-macros-backend@0.23.5
-	pyo3-macros@0.23.5
-	pyo3@0.23.5
-	quote@1.0.37
-	self_cell@1.0.4
-	shlex@1.3.0
-	syn@2.0.89
-	target-lexicon@0.12.16
-	unicode-ident@1.0.14
-	unindent@0.2.3
-	vcpkg@0.2.15
+RUST_MAX_VER="9999"
+RUST_MIN_VER="1.88.0"
+
+# Misnomer
+DISABLED_CRATES="
+cryptography-cffi-0.1.0
+cryptography-crypto-0.1.0
+cryptography-keepalive-0.1.0
+cryptography-key-parsing-0.1.0
+cryptography-openssl-0.1.0
+cryptography-rust-0.1.0
+cryptography-x509-0.1.0
+cryptography-x509-verification-0.1.0
 "
 
-inherit cargo distutils-r1 flag-o-matic multiprocessing pypi rustflags-hardened
+CRATES="
+asn1-0.24.1
+asn1_derive-0.24.1
+base64-0.22.1
+bitflags-2.11.1
+cc-1.2.61
+cfg-if-1.0.4
+find-msvc-tools-0.1.9
+foreign-types-0.3.2
+foreign-types-shared-0.1.1
+heck-0.5.0
+itoa-1.0.18
+libc-0.2.186
+once_cell-1.21.4
+openssl-0.10.79
+openssl-macros-0.1.1
+openssl-sys-0.9.115
+pem-3.0.6
+pkg-config-0.3.33
+portable-atomic-1.13.1
+proc-macro2-1.0.106
+pyo3-0.28.3
+pyo3-build-config-0.28.3
+pyo3-ffi-0.28.3
+pyo3-macros-0.28.3
+pyo3-macros-backend-0.28.3
+quote-1.0.45
+self_cell-1.2.2
+shlex-1.3.0
+syn-2.0.117
+target-lexicon-0.13.5
+unicode-ident-1.0.24
+vcpkg-0.2.15
+"
+
+inherit cargo distutils-r1 flag-o-matic pypi rustflags-hardened
 
 VEC_P=cryptography_vectors-$(ver_cut 1-3)
 DESCRIPTION="Library providing cryptographic recipes and primitives"
@@ -61,6 +74,8 @@ SRC_URI+="
 	${CARGO_CRATE_URIS}
 	test? (
 		$(pypi_sdist_url cryptography_vectors "$(ver_cut 1-3)")
+		$(pypi_provenance_url "${VEC_P}.tar.gz" cryptography_vectors "$(ver_cut 1-3)")
+			-> ${VEC_P}.tar.gz.provenance
 	)
 "
 
@@ -69,15 +84,14 @@ LICENSE="|| ( Apache-2.0 BSD ) PSF-2"
 LICENSE+="
 	Apache-2.0 Apache-2.0-with-LLVM-exceptions BSD MIT Unicode-3.0
 "
+RESTRICT="mirror" # Speed up and prevent snooping
 SLOT="0"
-KEYWORDS="amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv ~s390 sparc x86"
-IUSE="
-ebuild_revision_12
-"
+KEYWORDS="~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
+
 RDEPEND="
 	>=dev-libs/openssl-1.0.2o-r6:0=
 	$(python_gen_cond_dep '
-		>=dev-python/cffi-1.8:=[${PYTHON_USEDEP}]
+		>=dev-python/cffi-2.0.0:=[${PYTHON_USEDEP}]
 	' 'python*')
 "
 DEPEND="
@@ -86,15 +100,13 @@ DEPEND="
 
 BDEPEND="
 	${RUST_DEPEND}
+	>=dev-util/maturin-1.9.4[${PYTHON_USEDEP}]
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	test? (
 		dev-python/certifi[${PYTHON_USEDEP}]
-		>=dev-python/hypothesis-1.11.4[${PYTHON_USEDEP}]
 		dev-python/iso8601[${PYTHON_USEDEP}]
 		dev-python/pretend[${PYTHON_USEDEP}]
 		dev-python/pyasn1-modules[${PYTHON_USEDEP}]
-		dev-python/pytest-subtests[${PYTHON_USEDEP}]
-		dev-python/pytest-xdist[${PYTHON_USEDEP}]
 		dev-python/pytz[${PYTHON_USEDEP}]
 	)
 "
@@ -102,10 +114,22 @@ BDEPEND="
 # Files built without CFLAGS/LDFLAGS, acceptable for rust
 QA_FLAGS_IGNORED="usr/lib.*/py.*/site-packages/cryptography/hazmat/bindings/_rust.*.so"
 
+EPYTEST_PLUGINS=( hypothesis pytest-subtests )
+EPYTEST_XDIST=1
 distutils_enable_tests pytest
 
 src_unpack() {
+	if use verify-provenance; then
+		pypi_verify_provenance "${DISTDIR}/${P}.tar.gz"{,.provenance}
+		use test && pypi_verify_provenance "${DISTDIR}/${VEC_P}.tar.gz"{,.provenance}
+	fi
+
 	cargo_src_unpack
+#	die
+	cp -aT \
+		"${FILESDIR}/${PV}"* \
+		"${S}" \
+		|| die
 }
 
 src_prepare() {
@@ -130,9 +154,9 @@ python_configure_all() {
 }
 
 python_test() {
-	local -x PYTHONPATH="${PYTHONPATH}:${WORKDIR}/cryptography_vectors-${PV}"
+	local -x PYTHONPATH="${PYTHONPATH}:${WORKDIR}/${VEC_P}"
 	local EPYTEST_IGNORE=(
 		tests/bench
 	)
-	epytest -n "$(makeopts_jobs)"
+	epytest
 }

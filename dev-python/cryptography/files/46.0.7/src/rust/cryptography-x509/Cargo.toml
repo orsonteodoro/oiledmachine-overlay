@@ -1,0 +1,11 @@
+[package]
+name = "cryptography-x509"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+publish.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+asn1.workspace = true

@@ -116,7 +116,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
-IUSE+=" ebuild_revision_3"
+IUSE+=" ebuild_revision_5"
 RDEPEND+="
 "
 DEPEND+="
@@ -149,6 +149,10 @@ src_unpack() {
 	unpack ${A}
 #	die
 	cargo_src_unpack
+	cp -aT \
+		"${FILESDIR}/${PV}"* \
+		"${S}" \
+		|| die
 }
 
 python_compile() {
