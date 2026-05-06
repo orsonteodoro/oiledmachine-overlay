@@ -314,15 +314,16 @@ pkg_postinst() {
 einfo
 einfo "Recommendations for not abusing the reduced decreased characters password button"
 einfo
-einfo "| Use case        | GPU/ASIC farm mitigation (today) | Quantum mitigation (future-proofing) | Format                                         |"
-einfo "| ---             | ---                              | ---                                  | ---                                            |"
-einfo "| Login           | 16-20                            | 20+                                  | The built in key generator                     |"
-einfo "| Archives        | 20+                              | 20+                                  | The built in key generator                     |"
-einfo "| Master password | 25+ (6-7 words min)              | 25+ (6-7 words min)                  | Your own collection of words that no one knows |"
-# While both the kdbx and archive are long term archives, the kdbx has a larger blast radius so higher length requirement.
+einfo "| Use case          | GPU/ASIC farm mitigation (today) | Quantum mitigation (future-proofing) | Format                                         |"
+einfo "| ---               | ---                              | ---                                  | ---                                            |"
+einfo "| Login             | 16-20                            | 20+                                  | The built in key generator                     |"
+einfo "| Archives          | 20+ [1] or 25+ [2]               | 20+ [1] or 25+ [2]                   | The built in key generator                     |"
+einfo "| Master password   | 25+ (6-7 words min)              | 25+ (6-7 words min)                  | Your own collection of words that no one knows |"
+einfo
+einfo "[1] Individual only affected and single system, a small blast radius"
+einfo "[2] Multiple people affected or multiple systems affected, a large blast radius"
 einfo
 einfo "Tip:  Do not go below 16 characters as the default password manager key length."
-einfo "Tip:  A larger blast radius (i.e. more systems or people affected) deserves the 25+ length."
 einfo "Tip:  Don't FAFO!"
 einfo
 }
