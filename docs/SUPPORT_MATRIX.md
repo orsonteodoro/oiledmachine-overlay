@@ -97,7 +97,7 @@ pinning are as follows:
   packages.
 - The live slot for Chromium.
 - The bootstrap slots that are unassociated with any LTS distros are deprecated
-  so packages need to use either a the latest LTS slot or rolling slot.
+  so packages need to use either the latest LTS slot or rolling slot.
 - The highest slot required by the lockfile should determine if the package is a
   LTS Rust slot (<=1.91.1) or a rolling Rust slot (>1.91.1).
 - Rows marked [C] are the currently supported Rust slots for this scenario.
