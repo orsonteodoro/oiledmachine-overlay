@@ -96,7 +96,7 @@ pinning are as follows:
 - The bootstrap slots that are unassociated with any LTS distros are deprecated
   so packages need to use either a the latest LTS slot or rolling slot.
 - The highest slot required by the lockfile should determine if the package is a
-  LTS (<1.89.0) or Rolling (>=1.89.0) slot
+  LTS (<1.89.0) or a rolling (>=1.89.0) Rust slot.
 
 Packages are pinned to a particular Rust slot for reproducible reasons and to
 reduce Rust slot verification code creep.
@@ -108,8 +108,6 @@ causing errors or vulnerabilities).
 
 For C/C++ the Rust slot rules for version pinning are as follows:
 
-- The Rust dependency is pinned based on the same slot.
-* Supported ranges
 - LLVM 22:  Rust 1.95.0 - 9999
 - LLVM 21:  Rust 1.91.0 - 1.94.1
 - LLVM 20:  Rust 1.87.0 - 1.90.0
@@ -117,7 +115,7 @@ For C/C++ the Rust slot rules for version pinning are as follows:
 - LLVM 18:  Rust 1.78.0 - 1.81.0
 - LLVM 17:  Rust 1.74.1 - 1.77.2
 
-The version ranges is to avoid multiple LLVM versions loaded.
+The version ranges are matching to avoid multiple LLVM versions loaded issues.
 
 
 | `-std=c++<ver>` or CXX_STANDARD | LTS or rolling compiler?         | Compiler status for C++ standard | C++ standard library status for C++ standard |
