@@ -13,24 +13,98 @@ RUST_MAX_VER="1.88.0"
 RUST_MIN_VER="1.88.0"
 RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data"
 
-inherit distutils-r1 pypi rust rustflags-hardened sandbox-changes
+declare -A GIT_CRATES=(
+)
 
-if [[ "${PV}" =~ "9999" ]] ; then
-	EGIT_BRANCH="main"
-	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
-	EGIT_REPO_URI="https://github.com/fief-dev/zxcvbn-rs-py.git"
-	FALLBACK_COMMIT="a934f413e487d6cf86dd24598a3d6f2dc3c246d5" # Jan 25, 2024
-	IUSE+=" fallback-commit"
-	S="${WORKDIR}/${P}"
-	inherit git-r3
-else
-	KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~s390 ~x86"
-	S="${WORKDIR}/${PN}-${PV}"
-	SRC_URI="
+DISABLED_CRATES="
+zxcvbn-rs-py-0.3.0
+"
+# pyo3@0.27.1 must be a pinned version.
+# From "./convert-cargo-lock.sh 0.3.0 0.3.0"
+CRATES="
+aho-corasick-1.1.4
+android_system_properties-0.1.5
+autocfg-1.5.0
+bit-set-0.5.3
+bit-vec-0.6.3
+bumpalo-3.19.0
+cc-1.2.48
+cfg-if-1.0.4
+chrono-0.4.42
+core-foundation-sys-0.8.7
+darling-0.20.11
+darling_core-0.20.11
+darling_macro-0.20.11
+deranged-0.5.5
+derive_builder-0.20.2
+derive_builder_core-0.20.2
+derive_builder_macro-0.20.2
+either-1.15.0
+fancy-regex-0.13.0
+find-msvc-tools-0.1.5
+fnv-1.0.7
+heck-0.5.0
+iana-time-zone-0.1.64
+iana-time-zone-haiku-0.1.2
+ident_case-1.0.1
+indoc-2.0.7
+itertools-0.13.0
+js-sys-0.3.83
+lazy_static-1.5.0
+libc-0.2.177
+log-0.4.28
+memchr-2.7.6
+memoffset-0.9.1
+num-conv-0.1.0
+num-traits-0.2.19
+once_cell-1.21.3
+portable-atomic-1.11.1
+powerfmt-0.2.0
+proc-macro2-1.0.103
+pyo3-0.27.1
+pyo3-build-config-0.27.1
+pyo3-ffi-0.27.1
+pyo3-macros-0.27.1
+pyo3-macros-backend-0.27.1
+quote-1.0.42
+regex-1.12.2
+regex-automata-0.4.13
+regex-syntax-0.8.8
+rustversion-1.0.22
+serde-1.0.228
+serde_core-1.0.228
+serde_derive-1.0.228
+shlex-1.3.0
+strsim-0.11.1
+syn-2.0.111
+target-lexicon-0.13.3
+time-0.3.44
+time-core-0.1.6
+unicode-ident-1.0.22
+unindent-0.2.4
+wasm-bindgen-0.2.106
+wasm-bindgen-macro-0.2.106
+wasm-bindgen-macro-support-0.2.106
+wasm-bindgen-shared-0.2.106
+web-sys-0.3.83
+windows-core-0.62.2
+windows-implement-0.60.2
+windows-interface-0.59.3
+windows-link-0.2.1
+windows-result-0.4.1
+windows-strings-0.5.1
+zxcvbn-3.1.0
+"
+
+inherit cargo distutils-r1 pypi rust rustflags-hardened
+
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~s390 ~x86"
+S="${WORKDIR}/${PN}-${PV}"
+SRC_URI="
+$(cargo_crate_uris ${CRATES})
 https://github.com/fief-dev/zxcvbn-rs-py/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
-	"
-fi
+"
 
 DESCRIPTION="Python bindings for zxcvbn-rs, the Rust implementation of zxcvbn"
 HOMEPAGE="
@@ -41,8 +115,8 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" ebuild_revision_2"
+SLOT="0/"$(ver_cut "1-2" "${PV}")
+IUSE+=" ebuild_revision_3"
 RDEPEND+="
 "
 DEPEND+="
@@ -63,7 +137,6 @@ BDEPEND+="
 DOCS=( "README.md" )
 
 pkg_setup() {
-	sandbox-changes_no_network_sandbox "To download crates"
 	rust_pkg_setup
 }
 
@@ -73,13 +146,15 @@ src_configure() {
 }
 
 src_unpack() {
-	if [[ "${PV}" =~ "9999" ]] ; then
-		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
-		git-r3_fetch
-		git-r3_checkout
-	else
-		unpack ${A}
-	fi
+	unpack ${A}
+#	die
+	cargo_src_unpack
+}
+
+python_compile() {
+	cargo_src_compile
+	S="${WORKDIR}/${PN}-${PV}" \
+	distutils-r1_python_compile
 }
 
 src_install() {

@@ -1,0 +1,13 @@
+[package]
+name = "zxcvbn-rs-py"
+version = "0.3.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+name = "zxcvbn_rs_py"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = "=0.27.1"
+zxcvbn = "3.1.0"
