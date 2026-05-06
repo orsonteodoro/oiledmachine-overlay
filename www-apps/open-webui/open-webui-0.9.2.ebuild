@@ -21,7 +21,6 @@ EAPI=8
 # opentelemetry-instrumentation-system-metrics [optional]
 # pinecone [all]
 # starlette-compress
-# starsessions
 
 # TODO review
 # httpx
