@@ -12,7 +12,6 @@ EAPI=8
 # google-genai
 # langchain-classic
 # langchain-text-splitters
-# mcp
 # opentelemetry-exporter-otlp [optional]
 # opentelemetry-instrumentation-sqlalchemy [optional]
 # opentelemetry-instrumentation-redis [optional]
