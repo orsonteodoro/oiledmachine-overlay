@@ -12,8 +12,8 @@ PYPI_VERIFY_REPO=https://github.com/pyca/cryptography
 PYTHON_COMPAT=( python3_{11..14} pypy3_11 )
 PYTHON_REQ_USE="threads(+)"
 
-RUST_MAX_VER="1.89.0"
-RUST_MIN_VER="1.89.0"
+RUST_MAX_VER="1.91.1"
+RUST_MIN_VER="1.91.1"
 
 # Misnomer
 DISABLED_CRATES="
@@ -87,7 +87,7 @@ LICENSE+="
 RESTRICT="mirror" # Speed up and prevent snooping
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
-IUSE+=" ebuild_revision_1"
+IUSE+=" ebuild_revision_2"
 RDEPEND="
 	>=dev-libs/openssl-1.0.2o-r6:0=
 	$(python_gen_cond_dep '
