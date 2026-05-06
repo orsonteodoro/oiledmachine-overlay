@@ -50,7 +50,8 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 # hibp is default ON/opt-in but disabled by default in this ebuild to prevent
-# the possibility of 3rdparty snooping, data collection and password degration.
+# the possibility of 3rdparty snooping, data collection, and degraded password
+# complexity.
 IUSE+="
 dev hibp wayland X
 ebuild_revision_6
