@@ -96,7 +96,7 @@ pinning are as follows:
 - The bootstrap slots that are unassociated with any LTS distros are deprecated
   so packages need to use either a the latest LTS slot or rolling slot.
 - The highest slot required by the lockfile should determine if the package is a
-  LTS (<1.89.0) or a rolling (>=1.89.0) Rust slot.
+  LTS Rust slot (<=1.91.1) or a rolling Rust slot (>1.91.1).
 
 Packages are pinned to a particular Rust slot for reproducible reasons and to
 reduce Rust slot verification code creep.
