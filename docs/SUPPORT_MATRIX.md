@@ -93,7 +93,8 @@ For non C/C++ langages (e.g. Python or JS) the Rust slot rules for version
 pinning are as follows:
 
 - The latest LTS slot by LTS distro releases is supported for LTS packages.
-- The latest rolling slot by rolling distros is supported for rolling packages.
+- The latest rolling slot by a rolling distro release is supported for rolling
+  packages.
 - The live slot for Chromium.
 - The bootstrap slots that are unassociated with any LTS distros are deprecated
   so packages need to use either a the latest LTS slot or rolling slot.
