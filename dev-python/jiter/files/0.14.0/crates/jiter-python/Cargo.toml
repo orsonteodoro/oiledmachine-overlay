@@ -1,0 +1,33 @@
+[package]
+name = "jiter-python"
+version = {workspace = true}
+edition = {workspace = true}
+authors = {workspace = true}
+license = {workspace = true}
+keywords = {workspace = true}
+categories = {workspace = true}
+homepage = {workspace = true}
+repository = {workspace = true}
+rust-version = { workspace = true }
+
+[dependencies]
+pyo3 = { workspace = true, features = ["num-bigint"] }
+jiter = { path = "../jiter", features = ["python", "num-bigint"] }
+
+[features]
+# make extensions visible to cargo vendor
+extension-module = ["pyo3/generate-import-lib"]
+
+[lib]
+name = "jiter_python"
+crate-type = ["cdylib", "rlib"]
+
+[lints.clippy]
+dbg_macro = "deny"
+print_stdout = "deny"
+print_stderr = "deny"
+# in general we lint against the pedantic group, but we will whitelist
+# certain lints which we don't want to enforce (for now)
+pedantic = { level = "deny", priority = -1 }
+missing_errors_doc = "allow"
+must_use_candidate = "allow"
