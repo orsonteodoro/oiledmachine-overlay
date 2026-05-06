@@ -9,8 +9,8 @@ EAPI=8
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="maturin"
 PYTHON_COMPAT=( "python3_"{10..14} ) # U22 supports up to 3.11, gnome-misc/secrets supports 12-14
-RUST_MAX_VER="1.89.0"
-RUST_MIN_VER="1.89.0"
+RUST_MAX_VER="1.91.1"
+RUST_MIN_VER="1.91.1"
 RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data"
 
 declare -A GIT_CRATES=(
@@ -116,7 +116,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
-IUSE+=" ebuild_revision_6"
+IUSE+=" ebuild_revision_7"
 RDEPEND+="
 "
 DEPEND+="
