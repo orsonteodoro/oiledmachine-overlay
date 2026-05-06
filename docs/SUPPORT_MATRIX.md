@@ -87,20 +87,26 @@ exist in build files.
 | Rust 1.95.0                     | Available                             | F43 (1.95.0), F44 (1.95.0)            |
 | Rust-9999 (1.97.0-nightly)      | Limited support                       |                                       |
 
-For non C/C++ langages (e.g. Python or JS) the Rust slot rules for version pinning are as follows:
-
-Packages are pinned to a particular Rust for reproducible reasons and to reduce verification code creep.
+For non C/C++ langages (e.g. Python or JS) the Rust slot rules for version
+pinning are as follows:
 
 - The latest LTS slot by LTS distro releases is supported for LTS packages.
 - The latest rolling slot by rolling distros is supported for rolling packages.
 - The live slot for Chromium.
-- The bootstrap slots that are unassociated with any LTS distros are deprecated so packages need to use either a the latest LTS slot or rolling slot.
-- The highest slot required by the lockfile should determine if the package is a LTS (<1.89.0) or Rolling (>=1.89.0) slot
-- The new Rust rules on this overlay (May 2026) removes doubt on miscompilation slots causing errors or vulnerabilities.
+- The bootstrap slots that are unassociated with any LTS distros are deprecated
+  so packages need to use either a the latest LTS slot or rolling slot.
+- The highest slot required by the lockfile should determine if the package is a
+  LTS (<1.89.0) or Rolling (>=1.89.0) slot
+
+Packages are pinned to a particular Rust for reproducible reasons and to reduce
+verification code creep.
+
+The new Rust rules on this overlay (May 2026) for this scenario addresses a
+security issue possibility (e.g. miscompilation slots causing errors or
+vulnerabilities).
+
 
 For C/C++ the Rust slot rules for version pinning are as follows:
-
-The version ranges is to avoid multiple LLVM versions loaded.
 
 - The Rust dependency is pinned based on the same slot.
 * Supported ranges
@@ -110,6 +116,9 @@ The version ranges is to avoid multiple LLVM versions loaded.
 - LLVM 19:  Rust 1.82.0 - 1.86.0
 - LLVM 18:  Rust 1.78.0 - 1.81.0
 - LLVM 17:  Rust 1.74.1 - 1.77.2
+
+The version ranges is to avoid multiple LLVM versions loaded.
+
 
 | `-std=c++<ver>` or CXX_STANDARD | LTS or rolling compiler?         | Compiler status for C++ standard | C++ standard library status for C++ standard |
 | ---                             | ---                              | ---                              | ---                                          |
