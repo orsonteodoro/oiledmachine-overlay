@@ -19,7 +19,6 @@ EAPI=8
 # opentelemetry-instrumentation-httpx [optional]
 # opentelemetry-instrumentation-aiohttp-client [optional]
 # opentelemetry-instrumentation-system-metrics [optional]
-# pinecone [all]
 # starlette-compress
 
 # TODO review
