@@ -13,7 +13,7 @@ PYTHON_COMPAT=( python3_{11..14} pypy3_11 )
 PYTHON_REQ_USE="threads(+)"
 
 RUST_MAX_VER="1.91.1"
-RUST_MIN_VER="1.91.1"
+RUST_MIN_VER="1.91.1" # LLVM 21.1
 
 # Misnomer
 DISABLED_CRATES="
