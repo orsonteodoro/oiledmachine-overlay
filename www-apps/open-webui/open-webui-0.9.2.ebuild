@@ -8,7 +8,6 @@ EAPI=8
 
 # TODO package
 # azure-search-documents [all]
-# ddgs
 # google-genai
 # langchain-classic
 # langchain-text-splitters
