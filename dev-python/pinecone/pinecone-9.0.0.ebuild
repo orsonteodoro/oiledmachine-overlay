@@ -9,8 +9,8 @@ EAPI=8
 
 DISTUTILS_USE_PEP517="maturin"
 PYTHON_COMPAT=( "python3_"{10..12} )
-RUST_MAX_VER="1.89.0"
-RUST_MIN_VER="1.89.0"
+RUST_MAX_VER="1.91.1"
+RUST_MIN_VER="1.91.1"
 
 ABSEIL_CPP_SLOT="20240722"
 PROTOBUF_CPP_SLOT="5"
@@ -214,7 +214,7 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 dev doc
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND+="
 	(
