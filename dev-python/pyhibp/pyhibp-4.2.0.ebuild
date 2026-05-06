@@ -34,8 +34,8 @@ HOMEPAGE="
 "
 LICENSE="
 	AGPL-3+
-	Have-I-Been-Pwned-Terms-of-Use
 	Have-I-Been-Pwned-Privacy-Policy
+	Have-I-Been-Pwned-Terms-of-Use
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
