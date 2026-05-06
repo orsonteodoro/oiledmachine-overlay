@@ -23,7 +23,6 @@ EAPI=8
 # opentelemetry-instrumentation-system-metrics [optional]
 # oracledb [all]
 # pinecone [all]
-# pycrdt
 # starlette-compress
 # starsessions
 
