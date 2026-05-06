@@ -322,7 +322,7 @@ einfo "| Master password | 25+ (6-7 words min)              | 25+ (6-7 words min
 # While both the kdbx and archive are long term archives, the kdbx has a larger blast radius so higher length requirement.
 einfo
 einfo "Tip:  Do not go below 16 characters as the default password manager key length."
-einfo "Tip:  A larger blast radius deserves the 25+ length."
+einfo "Tip:  A larger blast radius (i.e. more systems or people affected) deserves the 25+ length."
 einfo "Tip:  Don't FAFO!"
 einfo
 }
