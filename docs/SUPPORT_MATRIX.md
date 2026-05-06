@@ -101,9 +101,9 @@ pinning are as follows:
 Packages are pinned to a particular Rust for reproducible reasons and to reduce
 verification code creep.
 
-The new Rust rules on this overlay (May 2026) for this scenario addresses a
-security issue possibility (e.g. miscompilation slots causing errors or
-vulnerabilities).
+The new Rust rules on this overlay (May 2026) for the non C/C++ languages
+scenario addresses a security issue possibility (e.g. miscompilation slots
+causing errors or vulnerabilities).
 
 
 For C/C++ the Rust slot rules for version pinning are as follows:
