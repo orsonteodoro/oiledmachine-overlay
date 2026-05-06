@@ -8,6 +8,9 @@ DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="maturin"
 PYTHON_COMPAT=( "python3_"{10..13} )
 
+RUST_MAX_VER="1.91.1"
+RUST_MIN_VER="1.91.1" # LLVM 21.1
+
 DISABLED_CRATES="
 primp-1.2.3
 primp-python-1.2.3
@@ -466,7 +469,10 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" dev"
+IUSE+="
+dev
+ebuild_revision_1
+"
 RDEPEND+="
 "
 DEPEND+="
@@ -493,7 +499,7 @@ pkg_setup() {
 
 src_unpack() {
 	unpack ${A}
-#	die
+	die
 	cargo_src_unpack
 	cp -aT \
 		"${FILESDIR}/${PV}"* \
