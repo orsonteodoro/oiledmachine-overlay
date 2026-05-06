@@ -325,3 +325,4 @@ pkg_postrm() {
 # Password verify:  pass
 # Copy-paste password:  pass
 # HIBP disable:  pass
+# KeePassXC kdbx import:  pass
