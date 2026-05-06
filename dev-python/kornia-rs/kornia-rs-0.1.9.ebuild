@@ -12,8 +12,8 @@ GENERATE_LOCKFILE=${GENERATE_LOCKFILE:-0}
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="maturin"
 PYTHON_COMPAT=( "python3_"{10..12} "pypy3" )
-RUST_MAX_VER="1.94.1" # Inclusive
-RUST_MIN_VER="1.94.1" # llvm-21.1
+RUST_MAX_VER="1.95.0" # Inclusive
+RUST_MIN_VER="1.95.0" # llvm-22.1
 RUST_PV="${RUST_MIN_VER}"
 
 if ! [[ "${PV}" =~ "9999" ]] ; then
@@ -1527,7 +1527,7 @@ RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 dev test
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	dev? (
