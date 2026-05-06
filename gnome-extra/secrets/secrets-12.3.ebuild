@@ -314,10 +314,10 @@ pkg_postinst() {
 einfo
 einfo "Recommendations for not abusing the reduced decreased characters password button"
 einfo
-einfo "| Use case        | GPU mitigation (today)  | ASIC mitigation (today)  | Quantum mitigation (future-proofing) | Format                                         |"
-einfo "| ---             | ---                     | ---                      | ---                                  | ---                                            |"
-einfo "| Login           | 16-20                   | 16-20                    | 20+                                  | The built in key generator                     |"
-einfo "| Master password | 20+ (5 words min)       | 25+ (6-7 words min)      | 25+ (6-7 words min)                  | Your own collection of words that no one knows |"
+einfo "| Use case        | GPU/ASIC farm mitigation (today) | Quantum mitigation (future-proofing) | Format                                         |"
+einfo "| ---             | ---                              | ---                                  | ---                                            |"
+einfo "| Login           | 16-20                            | 20+                                  | The built in key generator                     |"
+einfo "| Master password | 25+ (6-7 words min)              | 25+ (6-7 words min)                  | Your own collection of words that no one knows |"
 einfo
 einfo "Tip:  Do not go below 16 characters as the default password manager key length."
 einfo "Tip:  Don't FAFO!"
