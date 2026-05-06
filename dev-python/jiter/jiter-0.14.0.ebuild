@@ -7,8 +7,8 @@ EAPI=8
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="maturin"
 PYTHON_COMPAT=( "python3_"{10..12} )
-RUST_MAX_VER="1.89.0" # Inclusive
-RUST_MIN_VER="1.89.0" # llvm-20.1
+RUST_MAX_VER="1.91.1" # Inclusive
+RUST_MIN_VER="1.91.1" # LLVM 21.1
 RUST_PV="${RUST_MIN_VER}"
 
 # Found in the crates folder
@@ -180,7 +180,10 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
-IUSE+=" bench dev linting"
+IUSE+="
+bench dev linting
+ebuild_revision_1
+"
 RDEPEND+="
 "
 DEPEND+="
