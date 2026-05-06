@@ -81,7 +81,8 @@ exist in build files.
 | Rust 1.85.0                     | Deprecated                            | D13 (1.85.0)                          |
 | Rust 1.86.0                     | Deprecated                            | F41 (1.86.0), F42 (1.86.0)            |
 | Rust 1.88.0                     | Deprecated                            |                                       |
-| Rust 1.89.0                     | Fully supported                       | U22 (1.89.0), U24 (1.89.0)            |
+| Rust 1.89.0                     | Deprecated                            | U22 (1.89.0), U24 (1.89.0)            |
+| Rust 1.91.1                     | Fully supported                       | U22 (1.91.1), U24 (1.91.1)            |
 | Rust 1.94.0                     | Deprecated                            |                                       |
 | Rust 1.95.0                     | Fully supported                       | F43 (1.95.0), F44 (1.95.0)            |
 | Rust-9999 (1.97.0-nightly)      | Limited support                       |                                       |
