@@ -82,10 +82,10 @@ exist in build files.
 | Rust 1.86.0                     | Available                             | F41 (1.86.0), F42 (1.86.0)            |
 | Rust 1.88.0                     | Available                             |                                       |
 | Rust 1.89.0                     | Available                             | U22 (1.89.0), U24 (1.89.0)            |
-| Rust 1.91.1                     | Available                             | U22 (1.91.1), U24 (1.91.1)            |
+| Rust 1.91.1 [C]                 | Available                             | U22 (1.91.1), U24 (1.91.1)            |
 | Rust 1.94.0                     | Available                             |                                       |
-| Rust 1.95.0                     | Available                             | F43 (1.95.0), F44 (1.95.0)            |
-| Rust-9999 (1.97.0-nightly)      | Limited support                       |                                       |
+| Rust 1.95.0 [C]                 | Available                             | F43 (1.95.0), F44 (1.95.0)            |
+| Rust-9999 (1.97.0-nightly) [C]  | Limited support                       |                                       |
 
 For non C/C++ langages (e.g. Python or JS) the Rust slot rules for version
 pinning are as follows:
@@ -97,6 +97,7 @@ pinning are as follows:
   so packages need to use either a the latest LTS slot or rolling slot.
 - The highest slot required by the lockfile should determine if the package is a
   LTS Rust slot (<=1.91.1) or a rolling Rust slot (>1.91.1).
+- Rows marked [C] are the currently supported Rust slots for this scenario.
 
 Packages are pinned to a particular Rust slot for reproducible reasons and to
 reduce Rust slot verification code creep.
@@ -108,12 +109,12 @@ causing errors or vulnerabilities which could lead to the worst case RCE).
 
 For C/C++ the Rust slot rules for version pinning are as follows:
 
-- LLVM 22:  Rust 1.95.0 - 9999
-- LLVM 21:  Rust 1.91.0 - 1.94.1
-- LLVM 20:  Rust 1.87.0 - 1.90.0
-- LLVM 19:  Rust 1.82.0 - 1.86.0
-- LLVM 18:  Rust 1.78.0 - 1.81.0
-- LLVM 17:  Rust 1.74.1 - 1.77.2
+- LLVM 22 (Rolling):  Rust 1.95.0 - 9999
+- LLVM 21 (Rolling):  Rust 1.91.0 - 1.94.1
+- LLVM 20 (Rolling):  Rust 1.87.0 - 1.90.0
+- LLVM 19 (LTS):  Rust 1.82.0 - 1.86.0
+- LLVM 18 (LTS):  Rust 1.78.0 - 1.81.0
+- LLVM 17 (LTS):  Rust 1.74.1 - 1.77.2
 
 The version ranges are matching to avoid multiple LLVM versions loaded issues.
 
