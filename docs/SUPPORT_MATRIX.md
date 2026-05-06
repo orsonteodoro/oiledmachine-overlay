@@ -98,8 +98,8 @@ pinning are as follows:
 - The highest slot required by the lockfile should determine if the package is a
   LTS (<1.89.0) or Rolling (>=1.89.0) slot
 
-Packages are pinned to a particular Rust for reproducible reasons and to reduce
-verification code creep.
+Packages are pinned to a particular Rust slot for reproducible reasons and to
+reduce Rust slot verification code creep.
 
 The new Rust rules on this overlay (May 2026) for the non C/C++ languages
 scenario addresses a security issue possibility (e.g. miscompilation slots
