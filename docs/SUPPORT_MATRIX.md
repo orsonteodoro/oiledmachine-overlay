@@ -103,7 +103,7 @@ reduce Rust slot verification code creep.
 
 The new Rust rules on this overlay (May 2026) for the non C/C++ languages
 scenario addresses a security issue possibility (e.g. miscompilation slots
-causing errors or vulnerabilities).
+causing errors or vulnerabilities which could lead to the worst case RCE).
 
 
 For C/C++ the Rust slot rules for version pinning are as follows:
