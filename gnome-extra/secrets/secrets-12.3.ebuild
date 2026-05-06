@@ -10,8 +10,6 @@ EAPI=8
 
 # F44
 
-# TODO:  Make pyhibp optional to prevent possibly 3rd party snooping.
-
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{12..14} )
 DISTUTILS_SINGLE_IMPL=1
