@@ -7,6 +7,7 @@ EAPI=8
 # This ebuild used AI inference to help assist in customization.
 # The AI solution was modified with a human solution instead.
 # The patch contains AI generated code.
+# The ebuild contains AI synthetic data.
 
 # F44
 
