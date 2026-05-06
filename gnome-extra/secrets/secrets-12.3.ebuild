@@ -66,22 +66,21 @@ RDEPEND+="
 	${PYTHON_DEPS}
 	$(python_gen_cond_dep '
 		>=dev-python/pygobject-3.52[${PYTHON_USEDEP}]
-		>=dev-python/pykeepass-4.1.0[${PYTHON_USEDEP}]
-		>=dev-python/pyotp-2.6.0[${PYTHON_USEDEP}]
 		>=dev-python/pykeepass-4.1.1[${PYTHON_USEDEP}]
+		>=dev-python/pyotp-2.6.0[${PYTHON_USEDEP}]
 		>=dev-python/zxcvbn-rs-py-0.2.0[${PYTHON_USEDEP}]
-		dev-python/validators[${PYTHON_USEDEP}]
 		dev-python/PyKCS11[${PYTHON_USEDEP}]
 		dev-python/python-yubico[${PYTHON_USEDEP}]
 		dev-python/pycryptodome[${PYTHON_USEDEP}]
+		dev-python/validators[${PYTHON_USEDEP}]
 		hibp? (
 			dev-python/pyhibp[${PYTHON_USEDEP}]
 		)
 	')
-	>=dev-libs/gobject-introspection-1.66.0[${PYTHON_SINGLE_USEDEP}]
 	>=dev-libs/glib-2.73.1[introspection]
-	>=gui-libs/gtksourceview-5.0[introspection]
+	>=dev-libs/gobject-introspection-1.66.0[${PYTHON_SINGLE_USEDEP}]
 	>=gui-libs/gtk-4.15.3[introspection,wayland?,X?]
+	>=gui-libs/gtksourceview-5.0[introspection]
 	>=gui-libs/libadwaita-1.8_beta[introspection]
 	dev? (
 		dev-python/mypy
