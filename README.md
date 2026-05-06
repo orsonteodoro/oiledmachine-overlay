@@ -6,9 +6,9 @@ This ebuild overlay contains various ebuilds for the Gentoo Linux distribution.
 It focuses on appropriate security and performance, game development,
 the AI boom, JS based desktop apps, and legacy hardware support.
 
-The name of the repo comes from "a well oiled machine" running
-smoothly and efficient under high memory pressure or heavy IO while maintaining
-overall happiness.
+The name of the repo comes from "a well oiled machine", running smoothly and
+efficient under high memory pressure or heavy IO while maintaining overall
+happiness.
 
 ## AI notice
 
