@@ -76,24 +76,40 @@ exist in build files.
 | GCC 15                          | Fully supported                       | F42 (15.1.1)                          |
 | GCC 16			  | Not Supported                         |                                       |
 | Rust 1.63.0                     | Not supported                         | D12 (1.63.0)                          |
-| Rust 1.74.0                     | Not supported                         |                                       |
-| Rust 1.75.0                     | Deprecated                            | U22 (1.75.0), U24 (1.75.0)            |
-| Rust 1.85.0                     | Deprecated                            | D13 (1.85.0)                          |
-| Rust 1.86.0                     | Deprecated                            | F41 (1.86.0), F42 (1.86.0)            |
-| Rust 1.88.0                     | Deprecated                            |                                       |
-| Rust 1.89.0                     | Deprecated                            | U22 (1.89.0), U24 (1.89.0)            |
-| Rust 1.91.1                     | Fully supported                       | U22 (1.91.1), U24 (1.91.1)            |
-| Rust 1.94.0                     | Deprecated                            |                                       |
-| Rust 1.95.0                     | Fully supported                       | F43 (1.95.0), F44 (1.95.0)            |
+| Rust 1.74.0                     | Available                             |                                       |
+| Rust 1.75.0                     | Available                             | U22 (1.75.0), U24 (1.75.0)            |
+| Rust 1.85.0                     | Available                             | D13 (1.85.0)                          |
+| Rust 1.86.0                     | Available                             | F41 (1.86.0), F42 (1.86.0)            |
+| Rust 1.88.0                     | Available                             |                                       |
+| Rust 1.89.0                     | Available                             | U22 (1.89.0), U24 (1.89.0)            |
+| Rust 1.91.1                     | Available                             | U22 (1.91.1), U24 (1.91.1)            |
+| Rust 1.94.0                     | Available                             |                                       |
+| Rust 1.95.0                     | Available                             | F43 (1.95.0), F44 (1.95.0)            |
 | Rust-9999 (1.97.0-nightly)      | Limited support                       |                                       |
 
-For Rust, 3 slots are supported on this overlay.
+For non C/C++ langages (e.g. Python or JS) the Rust slot rules for version pinning are as follows:
+
+Packages are pinned to a particular Rust for reproducible reasons and to reduce verification code creep.
+
 - The latest LTS slot by LTS distro releases is supported for LTS packages.
 - The latest rolling slot by rolling distros is supported for rolling packages.
 - The live slot for Chromium.
 - The bootstrap slots that are unassociated with any LTS distros are deprecated so packages need to use either a the latest LTS slot or rolling slot.
 - The highest slot required by the lockfile should determine if the package is a LTS (<1.89.0) or Rolling (>=1.89.0) slot
 - The new Rust rules on this overlay (May 2026) removes doubt on miscompilation slots causing errors or vulnerabilities.
+
+For C/C++ the Rust slot rules for version pinning are as follows:
+
+The version ranges is to avoid multiple LLVM versions loaded.
+
+- The Rust dependency is pinned based on the same slot.
+* Supported ranges
+- LLVM 22:  Rust 1.95.0 - 9999
+- LLVM 21:  Rust 1.91.0 - 1.94.1
+- LLVM 20:  Rust 1.87.0 - 1.90.0
+- LLVM 19:  Rust 1.82.0 - 1.86.0
+- LLVM 18:  Rust 1.78.0 - 1.81.0
+- LLVM 17:  Rust 1.74.1 - 1.77.2
 
 | `-std=c++<ver>` or CXX_STANDARD | LTS or rolling compiler?         | Compiler status for C++ standard | C++ standard library status for C++ standard |
 | ---                             | ---                              | ---                              | ---                                          |
