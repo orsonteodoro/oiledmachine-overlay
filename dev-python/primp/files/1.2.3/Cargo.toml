@@ -1,0 +1,18 @@
+[workspace]
+resolver = "3"
+members = ["crates/primp", "crates/primp-reqwest", "crates/primp-hyper", "crates/primp-hyper-util", "crates/primp-hyper-rustls", "crates/primp-tokio-rustls", "crates/primp-rustls/rustls", "crates/primp-h2", "crates/primp-python"]
+
+[workspace.package]
+version = "1.2.3"
+edition = "2021"
+rust-version = "1.84"
+license = "MIT"
+repository = "https://github.com/deedy5/primp"
+authors = ["deedy5"]
+
+[profile.release]
+codegen-units = 1
+lto = "fat"
+opt-level = 3
+panic = "abort"
+strip = "symbols"
