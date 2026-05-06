@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/Azure/azure-sdk-for-python/issues</bugs-to>
+    <changelog>https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CHANGELOG.md</changelog>
+    <remote-id type="github">Azure/azure-sdk-for-python</remote-id>
+    <remote-id type="pypi">azure-core</remote-id>
+  </upstream>
+</pkgmetadata>
