@@ -6,8 +6,8 @@ EAPI=8
 
 DISTUTILS_USE_PEP517="maturin"
 PYTHON_COMPAT=( "python3_"{10..14} )
-RUST_MIN_VER="1.88.0"
-RUST_MAX_VER="1.88.0"
+RUST_MIN_VER="1.91.1"
+RUST_MAX_VER="1.91.1" # LLVM 21.1
 
 declare -A GIT_CRATES=(
 )
@@ -98,7 +98,7 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 dev doc test types
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
