@@ -21,7 +21,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 else
 	KEYWORDS="~amd64"
-	S="${WORKDIR}/${PN}-${PV}"
+	S="${WORKDIR}/python-sdk-${PV}"
 	SRC_URI="
 https://github.com/modelcontextprotocol/python-sdk/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
