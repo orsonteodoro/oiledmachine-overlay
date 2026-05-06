@@ -591,55 +591,55 @@ BDEPEND="
 		llvm-core/clang:19[llvm_targets_BPF(-)]
 		llvm-core/clang:=
 		|| (
-			=dav-lang/rust-1.86*
-			=dav-lang/rust-1.85*
-			=dav-lang/rust-1.84*
-			=dav-lang/rust-1.83*
-			=dav-lang/rust-1.82*
-			=dav-lang/rust-bin-1.86*
-			=dav-lang/rust-bin-1.85*
-			=dav-lang/rust-bin-1.84*
-			=dav-lang/rust-bin-1.83*
-			=dav-lang/rust-bin-1.82*
+			=dev-lang/rust-1.86*
+			=dev-lang/rust-1.85*
+			=dev-lang/rust-1.84*
+			=dev-lang/rust-1.83*
+			=dev-lang/rust-1.82*
+			=dev-lang/rust-bin-1.86*
+			=dev-lang/rust-bin-1.85*
+			=dev-lang/rust-bin-1.84*
+			=dev-lang/rust-bin-1.83*
+			=dev-lang/rust-bin-1.82*
 		)
 	)
 	llvm_slot_20? (
 		llvm-core/clang:20[llvm_targets_BPF(-)]
 		llvm-core/clang:=
 		|| (
-			=dav-lang/rust-1.90*
-			=dav-lang/rust-1.89*
-			=dav-lang/rust-1.88*
-			=dav-lang/rust-1.87*
-			=dav-lang/rust-bin-1.90*
-			=dav-lang/rust-bin-1.89*
-			=dav-lang/rust-bin-1.88*
-			=dav-lang/rust-bin-1.87*
+			=dev-lang/rust-1.90*
+			=dev-lang/rust-1.89*
+			=dev-lang/rust-1.88*
+			=dev-lang/rust-1.87*
+			=dev-lang/rust-bin-1.90*
+			=dev-lang/rust-bin-1.89*
+			=dev-lang/rust-bin-1.88*
+			=dev-lang/rust-bin-1.87*
 		)
 	)
 	llvm_slot_21? (
 		llvm-core/clang:21[llvm_targets_BPF(-)]
 		llvm-core/clang:=
 		|| (
-			=dav-lang/rust-1.93*
-			=dav-lang/rust-1.92*
-			=dav-lang/rust-1.91*
-			=dav-lang/rust-bin-1.93*
-			=dav-lang/rust-bin-1.92*
-			=dav-lang/rust-bin-1.91*
+			=dev-lang/rust-1.93*
+			=dev-lang/rust-1.92*
+			=dev-lang/rust-1.91*
+			=dev-lang/rust-bin-1.93*
+			=dev-lang/rust-bin-1.92*
+			=dev-lang/rust-bin-1.91*
 		)
 	)
 	llvm_slot_22? (
 		llvm-core/clang:22[llvm_targets_BPF(-)]
 		llvm-core/clang:=
 		|| (
-			=dav-lang/rust-9999*
-			=dav-lang/rust-bin-9999*
+			=dev-lang/rust-9999*
+			=dev-lang/rust-bin-9999*
 		)
 	)
 	|| (
-		dav-lang/rust:=
-		dav-lang/rust-bin:=
+		dev-lang/rust:=
+		dev-lang/rust-bin:=
 	)
 "
 PDEPEND="
