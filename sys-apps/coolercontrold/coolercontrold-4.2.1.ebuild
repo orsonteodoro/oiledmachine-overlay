@@ -850,6 +850,7 @@ src_configure() {
 	grpc_src_configure
 	protobuf_src_configure
 	export PROTOC="/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/bin/protoc"
+	"${PROTOC}" --version || die
 	S="${WORKDIR}/coolercontrol-${PV}/coolercontrold" \
 	cargo_src_configure
 	pushd "${WORKDIR}/coolercontrol-${PV}" || die
