@@ -10,8 +10,8 @@ EAPI=8
 
 POSTGRES_COMPAT=( {15..19} )
 POSTGRES_USEDEP="server"
-RUST_MAX_VER="1.92.0" # Inclusive
-RUST_MIN_VER="1.92.0" # llvm-21.1
+RUST_MAX_VER="1.91.1"
+RUST_MIN_VER="1.91.1" # LLVM 21.1
 RUST_PV="${RUST_MIN_VER}"
 
 DATAFUSION_COMMIT="eae7bf4fa1c037c0a065d1f36d0669f5bb97a9cf"
@@ -1080,6 +1080,7 @@ SLOT="0"
 IUSE="
 ${CPU_FLAGS_X86[@]}
 debug
+ebuild_revision_1
 "
 RESTRICT="mirror" # Speed up downloads, bypass server banner
 REQUIRED_USE="
@@ -1189,7 +1190,6 @@ is_x86_isa_level4() {
 
 src_prepare() {
 	default
-	#die
 	cd "${WORKDIR}" || die
 	eapply "${FILESDIR}/${PN}-0.23.2-unify-tantivy-tokenizer-api-to-paradedb-fork.patch"
 	eapply "${FILESDIR}/${PN}-0.23.2-tantivy-jieba-use-paradedb-fork.patch"
