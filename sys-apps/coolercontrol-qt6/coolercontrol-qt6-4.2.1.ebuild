@@ -41,8 +41,10 @@ RDEPEND+="
 "
 DEPEND+="
 	${RDEPEND}
+"
+BDEPEND+="
+	>=dev-build/cmake-3.19
 	dev-build/automake
-	dev-build/cmake
 	dev-build/make
 	sys-devel/gcc[cxx]
 "

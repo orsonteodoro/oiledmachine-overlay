@@ -7,11 +7,7 @@ EAPI=8
 # This is a meta package
 # D12, U22
 
-PYTHON_COMPAT=( "python3_"{10,11} ) # It can support 3.12 but limited by Nuitka.
-# D12 - Python 3.11
-# U22 - Python 3.10
-
-inherit desktop python-r1 xdg
+inherit desktop xdg
 
 S="${WORKDIR}/${PN}-${PV}"
 SRC_URI="
