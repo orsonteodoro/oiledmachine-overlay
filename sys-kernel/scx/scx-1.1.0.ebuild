@@ -665,7 +665,7 @@ RESTRICT="mirror" # Speed up downloads
 SLOT="0"
 IUSE+="
 +lto
-ebuild_revision_8
+ebuild_revision_9
 "
 # Both LLVM slots are required as discussed above.
 REQUIRED_USE+="
@@ -750,7 +750,7 @@ PATCHES=(
 verify_rust_nightly() {
 	"${RUSTC}" --version \
 		| cut -f 2 -d " " \
-		| grep -q -e "nightly" \
+		| grep -q -e "nightly"
 	local is_nightly=$?
 	is_nightly=$(( ${is_nightly} ? 0 : 1 ))
 
