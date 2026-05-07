@@ -24,7 +24,7 @@ EAPI=8
 # Ideally both should be aligned but not possible, but the package will still build.
 # LLVM 19 - Required for protobuf-cpp 3.21.12 (LTS on D12/U24).
 #           Required for Linux kernel built with Clang 19 (LTS on D13)
-# LLVM 21 - Required for Rust 1.91.1 (LTS on U24)
+# LLVM 21 - Required for Rust 1.91.1 (U24 has Rust 1.91.1 but not LLVM 21, but rust-bin uses LLVM 21)
 
 GENERATE_LOCKFILE=0
 # Both llvm_slot_19 and llvm_slot_21 must be specified.
