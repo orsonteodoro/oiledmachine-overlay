@@ -22,15 +22,16 @@ EAPI=8
 
 # Both LLVM 19 and LLVM 21 are required.
 # Ideally both should be aligned but not possible, but the package will still build.
-# LLVM 19 - Required for protobuf-cpp 3.21.12.
-#           Required for Linux kernel built with Clang 19
-# LLVM 21 - Required for Rust 1.91.1
+# LLVM 19 - Required for protobuf-cpp 3.21.12 (LTS on D12/U24).
+#           Required for Linux kernel built with Clang 19 (LTS on D13)
+# LLVM 21 - Required for Rust 1.91.1 (LTS on U24)
 
 GENERATE_LOCKFILE=0
-LLVM_COMPAT=( {19..22} ) # Both 19 and 21 must be specified.
+LLVM_COMPAT=( 19 21 ) # Both 19 and 21 must be specified.
 # RUST_*_VER will be pinned to meet cargo lockfile requirements.
 RUST_MAX_VER="1.91.1"
 RUST_MIN_VER="1.91.1" # LLVM 21.1
+LLVM_OPTIONAL=1 # Prevent mutual exclusion between llvm_slot_19 llvm_slot_21
 DISABLED_CRATES="
 scx_arena_selftests-1.1.0
 scx_bpf_unittests-1.1.0
@@ -664,7 +665,7 @@ RESTRICT="mirror" # Speed up downloads
 SLOT="0"
 IUSE+="
 +lto
-ebuild_revision_3
+ebuild_revision_4
 "
 # Both LLVM slots are required as discussed above.
 REQUIRED_USE+="
@@ -716,20 +717,6 @@ BDEPEND="
 			=dev-lang/rust-bin-1.82*
 		)
 	)
-	llvm_slot_20? (
-		llvm-core/clang:20[llvm_targets_BPF(-)]
-		llvm-core/clang:=
-		|| (
-			=dev-lang/rust-1.90*
-			=dev-lang/rust-1.89*
-			=dev-lang/rust-1.88*
-			=dev-lang/rust-1.87*
-			=dev-lang/rust-bin-1.90*
-			=dev-lang/rust-bin-1.89*
-			=dev-lang/rust-bin-1.88*
-			=dev-lang/rust-bin-1.87*
-		)
-	)
 	llvm_slot_21? (
 		llvm-core/clang:21[llvm_targets_BPF(-)]
 		llvm-core/clang:=
@@ -740,14 +727,6 @@ BDEPEND="
 			=dev-lang/rust-bin-1.93*
 			=dev-lang/rust-bin-1.92*
 			=dev-lang/rust-bin-1.91*
-		)
-	)
-	llvm_slot_22? (
-		llvm-core/clang:22[llvm_targets_BPF(-)]
-		llvm-core/clang:=
-		|| (
-			=dev-lang/rust-9999*
-			=dev-lang/rust-bin-9999*
 		)
 	)
 	|| (
