@@ -458,7 +458,7 @@ SLOT="0/sts" # sts or lts
 IUSE="
 doc clamonacc +clamapp custom-cflags experimental jit libclamav-only man milter rar
 selinux +system-mspack systemd test valgrind
-ebuild_revision_48
+ebuild_revision_49
 "
 REQUIRED_USE="
 	clamonacc? (
@@ -629,7 +629,7 @@ einfo "Replacing with updated Cargo.lock"
 
 src_unpack() {
 	default
-	die
+#	die
 
 	# Uncomment before running convert-cargo-lock.sh
 	# Follow the comments below the convert-cargo-lock.sh output when done generating the cargo list.
