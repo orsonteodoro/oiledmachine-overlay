@@ -12,6 +12,9 @@ EAPI=8
 MY_PV="${PV/alpha/alpha.}"
 MY_PV="${MY_PV/_/-}"
 
+RUST_MAX_VER="1.91.1"
+RUST_MIN_VER="1.91.1" # LLVM 21.1
+
 DISABLED_CRATES="
 pgrx-version-updater-0.1.1
 aggregate-0.0.0
@@ -548,8 +551,6 @@ zstd-0.13.3
 zstd-safe-7.2.4
 zstd-sys-2.0.16+zstd.1.5.7
 "
-RUST_MAX_VER="1.90.0"
-RUST_MIN_VER="1.90.0"
 
 inherit cargo
 
@@ -567,6 +568,9 @@ LICENSE="MIT"
 LICENSE+=" Apache-2.0 BSD ISC MIT MPL-2.0 Unicode-DFS-2016 ZLIB"
 # ring crate
 LICENSE+=" openssl"
+IUSE+="
+ebuild_revision_1
+"
 RESTRICT+=" test" # needs custom setup
 RESTRICT+=" mirror" # Speed up downloads, bypass long server banner
 SLOT="0"
