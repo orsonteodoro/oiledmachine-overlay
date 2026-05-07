@@ -379,8 +379,8 @@ zune-jpeg-0.5.13
 
 PYTHON_COMPAT=( python3_{11..14} )
 
-RUST_MAX_VER="1.92.0"
-RUST_MIN_VER="1.92.0"
+RUST_MAX_VER="1.95.0"
+RUST_MIN_VER="1.95.0" # LLVM 22.1
 RUST_MULTILIB=1
 
 inherit cargo cflags-hardened gnome2 meson-multilib python-any-r1 rustflags-hardened rust-toolchain vala
@@ -406,7 +406,7 @@ SLOT="2"
 
 IUSE="
 avif gtk-doc +introspection +pixbuf-loader test +vala
-ebuild_revision_14
+ebuild_revision_16
 "
 RESTRICT="
 	!test? (
@@ -521,7 +521,7 @@ ewarn "${x} assumes USE=pixbuf-loader for ${PN}"
 
 src_unpack() {
 	unpack ${A}
-#	die
+	die
 	cp -aT "${FILESDIR}/${PV}" "${S}" || die
 	cargo_src_unpack
 }
