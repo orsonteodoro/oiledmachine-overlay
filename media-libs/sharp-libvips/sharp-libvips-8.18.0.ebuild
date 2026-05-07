@@ -46,8 +46,8 @@ PYTHON_COMPAT=( "python3_12" )
 # Rust requirements relaxed.  Use the one that supports --check-cfg.
 # Lowest minimal required by dependencies used
 # Upstream uses 1.94.0-nightly (fcd630976; Jan 1, 2026, LLVM 21.1)
-RUST_MAX_VER="1.88.0" # Inclusive
-RUST_MIN_VER="1.88.0" # llvm-20.1
+RUST_MAX_VER="1.95.0"
+RUST_MIN_VER="1.95.0" # LLVM 22.1, limited by librsvg
 
 RUST_PV="${RUST_MAX_VER}"
 SHARP_VIPS_PV="1.3.0-rc.2" # BUMP IMPORTANT!  Use GH tag name
@@ -577,7 +577,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 debug
 -vanilla
-ebuild_revision_36
+ebuild_revision_37
 "
 LICENSE="
 	Apache-2.0
@@ -778,6 +778,7 @@ einfo "S:  ${S}"
 
 src_unpack() {
 	unpack ${A}
+#	die
 	S="${WORKDIR}/librsvg-${VERSION_RSVG}" \
 	_cargo_src_unpack
 }
