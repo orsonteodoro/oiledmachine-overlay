@@ -591,7 +591,7 @@ zvariant_utils-3.3.0
 
 inherit abseil-cpp cargo lcnr npm protobuf rust
 
-KEYWORDS="~amd64"
+#KEYWORDS="~amd64" # Doing security review
 S_ROOT="${WORKDIR}/coolercontrol-${PV}"
 S="${S_ROOT}/coolercontrold"
 SRC_URI="
@@ -920,3 +920,4 @@ einfo "gRPC port:  ${grpc_port}"
 # OILEDMACHINE-OVERLAY-TEST:  passed (2.2.1, 20250701)
 # OILEDMACHINE-OVERLAY-TEST:  passed (2.2.2, 20250814)
 # OILEDMACHINE-OVERLAY-TEST:  passed (3.0.1, 20251004)
+# OILEDMACHINE-OVERLAY-TEST:  passed (4.2.1, 20260507)
