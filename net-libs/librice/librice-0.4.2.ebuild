@@ -8,8 +8,8 @@ EAPI=8
 
 # U24
 
-RUST_MAX_VER="1.94.1"
-RUST_MIN_VER="1.94.1"
+RUST_MAX_VER="1.91.1"
+RUST_MIN_VER="1.91.1" # LLVM 21.1
 RUSTFLAGS_HARDENED_USE_CASES="multithreaded-confidential security-critical network untrusted-data p2p"
 
 CRATES_DISABLED="
@@ -393,7 +393,7 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE="
 debug
-ebuild_revision_4
+ebuild_revision_5
 "
 RESTRICT="mirror"
 RDEPEND="
@@ -414,7 +414,7 @@ pkg_setup() {
 
 src_unpack() {
 	unpack ${A}
-#	die
+	die
 
 	cargo_src_unpack
 	if [[ -e "${FILESDIR}/${PV}/Cargo.lock" ]] ; then
