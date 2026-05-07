@@ -13,74 +13,68 @@ aom-decode-0.2.13
 arrayvec-0.7.6
 autocfg-1.5.0
 avif-parse-1.4.0
-bitflags-2.9.1
 bitreader-0.3.11
-bytemuck-1.23.1
+bytemuck-1.25.0
 byteorder-1.5.0
-cc-1.2.27
-cfg-if-1.0.1
-cmake-0.1.54
-crc32fast-1.4.2
+cc-1.2.61
+cfg-if-1.0.4
+cmake-0.1.58
+crc32fast-1.5.0
 crossbeam-channel-0.5.15
 crossbeam-deque-0.8.6
 crossbeam-epoch-0.9.18
 crossbeam-utils-0.8.21
+dssim-3.4.0
+dssim-core-3.4.0
 dunce-1.0.5
 either-1.15.0
 fallible_collections-0.5.1
-flate2-1.1.2
+find-msvc-tools-0.1.9
+flate2-1.1.9
 foreign-types-0.5.0
 foreign-types-macros-0.2.3
 foreign-types-shared-0.3.1
-getopts-0.2.23
-getrandom-0.3.3
-imgref-1.11.0
+getopts-0.2.24
+getrandom-0.3.4
+imgref-1.12.1
 itertools-0.14.0
-jobserver-0.1.33
+jobserver-0.1.34
 jpeg-decoder-0.3.2
-lcms2-6.1.0
-lcms2-sys-4.0.5
-leb128-0.2.5
+lcms2-6.1.1
+lcms2-sys-4.0.6
+leb128-0.2.6
 libaom-sys-0.17.2+libaom.3.11.0
-libc-0.2.174
+libc-0.2.186
 libwebp-0.1.2
 libwebp-sys2-0.1.11
-libz-rs-sys-0.5.1
-load_image-3.2.1
-lodepng-3.12.1
-log-0.4.27
+load_image-3.3.2
+lodepng-3.12.2
+log-0.4.29
 miniz_oxide-0.8.9
 num-traits-0.2.19
 ordered-channel-1.2.0
-pkg-config-0.3.32
-proc-macro2-1.0.95
+pkg-config-0.3.33
+proc-macro2-1.0.106
 quick-error-2.0.1
-quote-1.0.40
+quote-1.0.45
+rayon-1.12.0
+rayon-core-1.13.0
 r-efi-5.3.0
-rayon-1.10.0
-rayon-core-1.12.1
 rexif-0.7.5
-rgb-0.8.50
+rgb-0.8.53
 shlex-1.3.0
-syn-2.0.104
-unicode-ident-1.0.18
-unicode-width-0.2.1
+simd-adler32-0.3.9
+syn-2.0.117
+unicode-ident-1.0.24
+unicode-width-0.2.2
 vcpkg-0.2.15
-wasi-0.14.2+wasi-0.2.4
-wit-bindgen-rt-0.39.0
-yuv-0.1.9
-zlib-rs-0.5.1
+wasip2-1.0.3+wasi-0.2.9
+wit-bindgen-0.57.1
+yuv-0.1.10
+zlib-rs-0.6.3
 "
-# Upstream uses Rust 1.72, but not in distro
-#
-# Using 9999 because of:
-# error: the `-Z unstable-options` flag must also be passed to enable the flag `check-cfg`
-# error: could not compile `bytemuck` (lib)
-#
-# For 9999, the compiler used was rustc 1.89.0-nightly (bf64d66bd 2025-05-21)
-#
-RUST_MAX_VER="9999" # Inclusive
-RUST_MIN_VER="9999" # Rust 20.1
+RUST_MAX_VER="1.91.1"
+RUST_MIN_VER="1.91.1" # LLVM 21.1
 RUST_PV="${RUST_MIN_VER}"
 
 inherit cargo edo
@@ -112,7 +106,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0"
-IUSE=" ebuild_revision_4"
+IUSE=" ebuild_revision_5"
 BDEPEND="
 	dev-util/cargo-c
 	|| (
@@ -177,7 +171,7 @@ _cargo_src_unpack() {
 
 src_unpack() {
 	unpack "${P}.tar.gz"
-	#die # For lockfile updates
+#	die # For lockfile updates
 
 	if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
 		cd "${S}" || die
