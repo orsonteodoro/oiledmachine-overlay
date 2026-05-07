@@ -24,15 +24,14 @@ EAPI=8
 # Ideally both should be aligned but not possible, but the package will still build.
 # LLVM 19 - Required for protobuf-cpp 3.21.12 (LTS on D12/U24).
 #           Required for Linux kernel built with Clang 19 (LTS on D13)
-# LLVM 22 - Required for Rust 1.91.1
+# LLVM 22 - Required for Rust 1.91.1 (LTS on U24)
 
 GENERATE_LOCKFILE=0
 # Both llvm_slot_19 and llvm_slot_21 must be specified.
-LLVM_COMPAT=( 19 )
+LLVM_COMPAT=( 19 21 )
 # RUST_*_VER will be pinned to meet cargo lockfile requirements.
 RUST_MAX_VER="1.91.1"
 RUST_MIN_VER="1.91.1" # LLVM 22.1
-LLVM_OPTIONAL=1 # Prevent mutual exclusion between llvm_slot_19 and llvm_slot_21
 DISABLED_CRATES="
 scx_arena_selftests-1.1.0
 scx_bpf_unittests-1.1.0
@@ -639,7 +638,8 @@ zvariant_derive-5.11.0
 zvariant_utils-3.3.1
 "
 
-inherit abseil-cpp cargo llvm-r2 linux-info protobuf
+# Generally speaking the llvm eclasses make things worst when two llvm slots are required.
+inherit abseil-cpp cargo linux-info protobuf
 
 KEYWORDS="~amd64"
 SRC_URI="
@@ -664,9 +664,8 @@ LICENSE+="
 "
 RESTRICT="mirror" # Speed up downloads
 SLOT="0"
-# llvm_slot_21 here to avoid build panic.
 IUSE+="
-llvm_slot_21
+${LLVM_COMPAT[@]/#/llvm_slot_}
 +lto
 ebuild_revision_10
 "
@@ -752,7 +751,15 @@ PATCHES=(
 
 pkg_setup() {
 	linux-info_pkg_setup
-	llvm-r2_pkg_setup
+
+	# Sanitize and manually add to avoid llvm*.eclass side-effects.
+	PATH=$(echo "${PATH}" | tr ":" "\n" | sed -e "\|/usr/lib/llvm/|d" | tr "\n" ":")
+	PATH=$(echo "${PATH}" | sed -e "s|/opt/bin:|/opt/bin:/usr/lib/llvm/19/bin:|g")
+	export PATH=$(echo "${PATH}" | sed -e "s|/opt/bin:|/opt/bin:/usr/lib/llvm/21/bin:|g")
+	export LLVM_SLOT="21"
+einfo "PATH:  ${PATH}"
+einfo "LLVM_SLOT:  ${LLVM_SLOT}"
+
 	rust_pkg_setup
 
 	[[ -z "${RUSTC}" ]] && die "RUSTC is not defined"
@@ -800,15 +807,6 @@ src_configure() {
 	abseil-cpp_src_configure
 	protobuf_src_configure
 	cargo_src_configure
-
-einfo "CC:  ${CC}"
-einfo "CXX:  ${CXX}"
-einfo "CPP:  ${CPP}"
-einfo "CFLAGS:  ${CFLAGS}"
-einfo "CXXFLAGS:  ${CXXFLAGS}"
-einfo "LDFLAGS:  ${LDFLAGS}"
-einfo "LD:  ${LD}"
-einfo "PATH:  ${PATH}"
 }
 
 get_olast() {
@@ -834,6 +832,14 @@ einfo "Building Rust schedulers"
 }
 
 src_compile() {
+einfo "CC:  ${CC}"
+einfo "CXX:  ${CXX}"
+einfo "CPP:  ${CPP}"
+einfo "CFLAGS:  ${CFLAGS}"
+einfo "CXXFLAGS:  ${CXXFLAGS}"
+einfo "LDFLAGS:  ${LDFLAGS}"
+einfo "LD:  ${LD}"
+einfo "PATH:  ${PATH}"
 	local myrustconf=()
 	if use lto ; then
 		myrustconf+=(
