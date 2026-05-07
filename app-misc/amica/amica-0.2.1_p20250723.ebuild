@@ -25,10 +25,8 @@ NODE_SHARP_USE="exif jpeg"
 NODE_SLOT="20" # Upstream uses 18 and 20
 NPM_AUDIT_FATAL=0
 PYTHON_COMPAT=( "python3_"{10..12} )
-# 1.85.0 mininum for edition2024
-# 1.88.0 minimum required by deps
-RUST_MAX_VER="1.88.0" # Inclusive
-RUST_MIN_VER="1.88.0" # llvm-19.1
+RUST_MAX_VER="1.91.1"
+RUST_MIN_VER="1.91.1" # LLVM 21.1
 RUST_PV="${RUST_MIN_VER}"
 
 AT_TYPES_NODE_PV="22.7.4"
@@ -632,7 +630,7 @@ SLOT="0"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 coqui debug ollama tray voice-recognition wayland whisper-cpp X
-ebuild_revision_26
+ebuild_revision_27
 "
 REQUIRED_USE="
 	voice-recognition
@@ -919,8 +917,8 @@ npm_update_lock_install_post() {
 
 src_unpack() {
 	# For updating cargo lockfile.
-	#unpack "${TARBALL}"
-	#die
+	unpack "${TARBALL}"
+#	die
 
 einfo "Unpacking npm packages"
 	if [[ "${PV}" =~ "_p" ]] ; then
