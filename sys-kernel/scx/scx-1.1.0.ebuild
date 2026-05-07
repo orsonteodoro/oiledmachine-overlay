@@ -24,13 +24,13 @@ EAPI=8
 # Ideally both should be aligned but not possible, but the package will still build.
 # LLVM 19 - Required for protobuf-cpp 3.21.12 (LTS on D12/U24).
 #           Required for Linux kernel built with Clang 19 (LTS on D13)
-# LLVM 22 - Required for Rust 1.95.0 (F44 rolling)
+# LLVM 22 - Required for Rust 1.97.0-nightly
 
 GENERATE_LOCKFILE=0
 LLVM_COMPAT=( 19 22 ) # Both 19 and 22 must be specified.
 # RUST_*_VER will be pinned to meet cargo lockfile requirements.
-RUST_MAX_VER="1.95.0"
-RUST_MIN_VER="1.95.0" # LLVM 22.1, force LTS to avoid build panic
+RUST_MAX_VER="9999"
+RUST_MIN_VER="9999" # LLVM 22.1, force LTS to avoid build panic
 LLVM_OPTIONAL=1 # Prevent mutual exclusion between llvm_slot_19 and llvm_slot_22
 DISABLED_CRATES="
 scx_arena_selftests-1.1.0
@@ -665,7 +665,7 @@ RESTRICT="mirror" # Speed up downloads
 SLOT="0"
 IUSE+="
 +lto
-ebuild_revision_7
+ebuild_revision_8
 "
 # Both LLVM slots are required as discussed above.
 REQUIRED_USE+="
@@ -713,7 +713,8 @@ BDEPEND="
 		llvm-core/llvm:22[llvm_targets_BPF(-)]
 		llvm-core/llvm:=
 		|| (
-			dev-lang/rust:1.95.0
+			dev-lang/rust:9999
+			dev-lang/rust-bin:9999
 		)
 	)
 	|| (
@@ -746,14 +747,36 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.0.20-llvm-19.patch"
 )
 
+verify_rust_nightly() {
+	"${RUSTC}" --version \
+		| cut -f 2 -d " " \
+		| grep -q -e "nightly" \
+	local is_nightly=$?
+	is_nightly=$(( ${is_nightly} ? 0 : 1 ))
+
+	if use llvm_slot_22 ; then
+		local rust_nightly_date=$("${RUSTC}" --version \
+			| cut -f 4 -d " " \
+			| sed -e "s|[)]||g" | sed -e "s|-||g")
+		if ver_test "${rust_nightly_date}" "-lt" "20260410" ; then
+	# From commit history of .gitmodules
+eerror "Update Rust nightly to at least 2026-04-10" # Same as 1.97.0-nightly
+			die
+		fi
+		if (( ${is_nightly} == 0 )) ; then
+eerror "llvm_slot_22 requires Rust nightly"
+			die
+		fi
+	fi
+}
+
 pkg_setup() {
 	linux-info_pkg_setup
 	llvm-r1_pkg_setup
 	rust_pkg_setup
 
 	[[ -z "${RUSTC}" ]] && die "RUSTC is not defined"
-einfo "RUSTC:  ${RUSTC}"
-	"${RUSTC}" --version || die
+	verify_rust_nightly
 }
 
 _lockfile_gen_unpack() {
@@ -822,8 +845,7 @@ _cargo_src_compile() {
 
 src_compile() {
 einfo "Building Rust schedulers"
-	local myrustconf=(
-	)
+	local myrustconf=()
 	if use lto ; then
 		myrustconf+=(
 			--profile release
