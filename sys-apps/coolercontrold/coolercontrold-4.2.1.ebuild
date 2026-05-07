@@ -683,9 +683,11 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${VIDEO_CARDS[@]}
 hwmon liquidctl openrc systemd
-ebuild_revision_11
+ebuild_revision_12
 "
 RDEPEND+="
+	acct-group/coolercontrold
+	acct-user/coolercontrold
 	dev-cpp/abseil-cpp:20220623
 	dev-libs/protobuf:3/3.21
 	liquidctl? (

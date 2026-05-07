@@ -16,6 +16,8 @@ start()
 	ebegin "Starting coolercontrold"
 		start-stop-daemon \
 			--start \
+			--user coolercontrold \
+			--group coolercontrold \
 			--pidfile /run/coolercontrold.pid \
 			--background \
 			--exec /usr/bin/coolercontrold
@@ -28,6 +30,7 @@ stop()
 	ebegin "Stopping coolercontrold"
 		start-stop-daemon \
 			--stop \
+			--retry TERM/15/KILL/5 \
 			--pidfile /run/coolercontrold.pid
 	        retval=$?
         eend ${retval}
