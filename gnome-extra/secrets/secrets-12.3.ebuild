@@ -6,7 +6,7 @@ EAPI=8
 
 # This ebuild used AI inference to help assist in customization.
 # The AI solution was modified with a human solution instead.
-# The patch contains AI generated code.
+# Some patches contain AI generated code.
 # The ebuild contains AI synthetic data.
 
 # F44
@@ -51,9 +51,10 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 # hibp is default ON/opt-in but disabled by default in this ebuild to prevent
 # the possibility of 3rdparty snooping, data collection, and degraded password
 # complexity.
+# Upstream uses -safe-symbols by default.
 IUSE+="
-dev hibp wayland X
-ebuild_revision_7
+dev hibp +safe-symbols wayland X
+ebuild_revision_11
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -99,6 +100,8 @@ PATCHES=(
 	"${FILESDIR}/${PN}-12.3-optionalize-hibp.patch"
 	"${FILESDIR}/${PN}-12.3-reduce-database-lock-time.patch"
 	"${FILESDIR}/${PN}-12.3-change-default-password-generator-length.patch"
+	"${FILESDIR}/${PN}-12.3-enable-numbers-as-default-for-password-generator.patch"
+	"${FILESDIR}/${PN}-12.3-symbol-set-change-and-enable-symbols-by-default.patch"
 )
 
 pkg_setup() {
@@ -126,6 +129,11 @@ python_prepare() {
 		-e "s|@HIBP_SUPPORT@|${hibp_support}|g" \
 		"data/gtk/database_settings_dialog.ui" \
 		"gsecrets/widgets/database_settings_dialog.py" \
+		|| die
+	local safe_symbols=$(usex safe-symbols "True" "False")
+	sed -i \
+		-e "s|@GSECRETS_SAFE_SYMBOLS@|${safe_symbols}|g" \
+		"gsecrets/password_generator.py" \
 		|| die
 }
 
@@ -336,9 +344,12 @@ pkg_postrm() {
 
 # OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-TEST:  PASS (interactive, 12.3, 20260505)
+# Copy-paste password:  pass
+# Default enable numbers for password generator defaults:  pass
+# Default enable symbols for password generator defaults:  pass
+# HIBP disable:  pass
+# KeePassXC kdbx import:  pass
 # New database creation:  pass
 # Open new password database:  pass
 # Password verify:  pass
-# Copy-paste password:  pass
-# HIBP disable:  pass
-# KeePassXC kdbx import:  pass
+# Safe symbols:  pass
