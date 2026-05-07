@@ -30,8 +30,8 @@ NPM_AUDIT_FIX=1
 NPM_SKIP_TARBALL_UNPACK="1"
 PLUGINS_WORKSPACE_COMMIT="1e407ed56455558cf751022fd68eca3b9e3713a0" # Obtained from GIT_CRATES
 # Upstream wanted Rust 1.88.0 (llvm 20.1), but it has been relaxed in this ebuild.
-RUST_MAX_VER="1.88.0" # Inclusive
-RUST_MIN_VER="1.88.0" # llvm-20.1
+RUST_MAX_VER="1.91.1"
+RUST_MIN_VER="1.91.1" # llvm-21.1
 RUST_PV="${RUST_MIN_VER}"
 
 AT_TYPES_NODE_PV="22.13.4" # Same as TypeScript
@@ -685,7 +685,7 @@ LICENSE="
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 tray wayland +X
-ebuild_revision_15
+ebuild_revision_17
 "
 REQUIRED_USE="
 	|| (
