@@ -7,8 +7,8 @@ main() {
 		exit 1
 	fi
 
-	local d_src_root="/var/tmp/portage/dev-python/dssim-${VER}/work/dssim-${VER}"
-	local d_dest="/usr/local/oiledmachine-overlay/dev-python/dssim/files/${VER}"
+	local d_src_root="/var/tmp/portage/media-gfx/dssim-${VER}/work/dssim-${VER}"
+	local d_dest="/usr/local/oiledmachine-overlay/media-gfx/dssim/files/${VER}"
 	IFS=$'\n'
 	pushd "${d_src_root}"
 		for x in $(find . -name "Cargo.*") ; do

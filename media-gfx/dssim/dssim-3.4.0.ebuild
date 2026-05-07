@@ -106,7 +106,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0"
-IUSE=" ebuild_revision_5"
+IUSE=" ebuild_revision_6"
 BDEPEND="
 	dev-util/cargo-c
 	|| (
@@ -181,7 +181,7 @@ src_unpack() {
 einfo "Manually copy ${S}/Cargo.* to ${FILESDIR}/${PV}"
 		die
 	else
-		cp -a "${FILESDIR}/${PV}/Cargo."* "${S}" || die
+		cp -aT "${FILESDIR}/${PV}/" "${S}" || die
 	fi
 	_cargo_src_unpack
 }
