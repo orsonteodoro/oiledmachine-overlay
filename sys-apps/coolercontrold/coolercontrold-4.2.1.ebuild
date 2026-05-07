@@ -7,8 +7,11 @@ EAPI=8
 # D12, U22
 
 NODE_SLOT="20"
+NPM_TARBALL="coolercontrol-${PV}.tar.bz2"
+PYTHON_COMPAT=( "python3_"{10,11} )
 RUST_MAX_VER="1.91.1"
 RUST_MIN_VER="1.91.1" # LLVM 21.1
+RUST_PV="${RUST_MAX_VER}"
 
 # NPM_AUDIT_FIX=0
 NPM_INSTALL_ARGS=(
@@ -580,13 +583,7 @@ zvariant_derive-5.9.2
 zvariant_utils-3.3.0
 "
 
-NPM_TARBALL="coolercontrol-${PV}.tar.bz2"
-PYTHON_COMPAT=( "python3_"{10,11} )
-RUST_MAX_VER="1.86.0" # Inclusive
-RUST_MIN_VER="1.86.0" # llvm-19.1, required for:  feature `edition2024` is required
-RUST_PV="${RUST_MAX_VER}"
-
-inherit cargo lcnr npm
+inherit cargo lcnr npm rust
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/coolercontrol-${PV}/coolercontrold"
@@ -679,7 +676,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${VIDEO_CARDS[@]}
 hwmon liquidctl openrc systemd
-ebuild_revision_7
+ebuild_revision_8
 "
 RDEPEND+="
 	liquidctl? (
@@ -811,6 +808,7 @@ pkg_setup() {
 ewarn "Do not emerge ${CATEGORY}/${PN} package directly.  Emerge the sys-apps/coolercontrol metapackage instead."
 	npm_pkg_setup
 	rust_pkg_setup
+	"${RUSTC}" --version || die
 }
 
 npm_update_lock_install_post() {
