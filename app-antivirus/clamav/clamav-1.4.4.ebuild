@@ -51,8 +51,8 @@ GENERATE_LOCKFILE=0
 MITIGATION_DATE="Jun 18, 2025"
 MITIGATION_URI="https://blog.clamav.net/2025/06/clamav-143-and-109-security-patch.html"
 PYTHON_COMPAT=( "python3_"{10..12} ) # CI uses 3.8
-RUST_MAX_VER="9999" # LLVM 22.1
-RUST_MIN_VER="1.88.0" # LLVM 20.1
+RUST_MAX_VER="1.91.1" # LLVM 21.1
+RUST_MIN_VER="1.91.1" # LLVM 21.1
 RUSTFLAGS_HARDENED_USE_CASES="jit network security-critical sensitive-data untrusted-data"
 RUSTFLAGS_HARDENED_TOLERANCE="4.0"
 
@@ -385,7 +385,7 @@ SLOT="0/lts" # sts or lts
 IUSE="
 doc clamonacc +clamapp custom-cflags experimental jit libclamav-only man milter rar
 selinux +system-mspack systemd test valgrind
-ebuild_revision_46
+ebuild_revision_48
 "
 REQUIRED_USE="
 	clamonacc? (
@@ -495,28 +495,6 @@ python_check_deps() {
 	python_has_version -b ">=dev-python/pytest-${PYTEST_PV}[${PYTHON_USEDEP}]"
 }
 
-verify_rust() {
-	if "${RUSTC}" --version | grep -q -e "nightly" ; then
-	# Same as Rust 1.88.0 timestamp
-		local compatible_time=$(date --date="Jun 23, 2025 12:24 PM PDT" "+%s")
-
-		local merge_time=$(cat "/var/db/pkg/dev-lang/rust-bin-9999/BUILD_TIME")
-		if (( ${merge_time} < ${compatible_time} )) ; then
-eerror "Your Rust's live ebuild installation is too old."
-eerror "Re-emerge =dev-lang/rust-bin-9999 or =dev-lang-rust-9999 or switch to Rust 1.88 or later to continue."
-eerror "Merge time:  "$(date --date="@${merge_time}")
-eerror "Compatible time:  >= "$(date --date="@${compatible_time}")
-			die
-		fi
-	else
-		local actual_pv=$("${RUSTC}" --version | cut -f 2 -d " ")
-		if ver_test "${actual_pv}" "-lt" "${RUST_MIN_VER}" ; then
-eerror "Switch Rust to >= ${RUST_MIN_VER}"
-			die
-		fi
-	fi
-}
-
 pkg_setup() {
 einfo "This LTS release is supported up to Aug 15, 2028."
 	if use test && ! [[ "${FEATURES}" =~ "userpriv" ]] ; then
@@ -541,7 +519,6 @@ echo "mkdir -p /etc/portage/profile/package.use.mask"
 echo "echo \"app-antivirus/clamav -jit\" >> /etc/portage/profile/package.use.mask"
 echo
 	rust_pkg_setup
-	verify_rust
 einfo "RUSTC:  ${RUSTC}"
 
         if [[ -n "${MITIGATION_URI}" ]] ; then
@@ -579,6 +556,7 @@ einfo "Replacing with updated Cargo.lock"
 
 src_unpack() {
 	default
+	die
 
 	# Uncomment before running convert-cargo-lock.sh
 	# Follow the comments below the convert-cargo-lock.sh output when done generating the cargo list.
