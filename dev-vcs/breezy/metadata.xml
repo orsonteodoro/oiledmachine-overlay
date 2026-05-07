@@ -23,11 +23,11 @@
     <flag name="github">
       Adds GitHub support
     </flag>
-    <flag name="gpg">
-      Adds gpg support
-    </flag>
-    <flag name="sftp">
+    <flag name="paramiko">
       Adds support for branch access over sftp
+    </flag>
+    <flag name="pgp">
+      Adds gpg support
     </flag>
     <flag name="workspace">
       Use pynotify to track changes for performance benefits when dealing with
