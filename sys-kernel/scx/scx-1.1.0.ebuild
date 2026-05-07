@@ -655,7 +655,10 @@ LICENSE+="
 "
 RESTRICT="mirror" # Speed up downloads
 SLOT="0"
-IUSE+=" +lto"
+IUSE+="
++lto
+ebuild_revision_1
+"
 REQUIRED_USE+="
 	llvm_slot_19
 	^^ (
