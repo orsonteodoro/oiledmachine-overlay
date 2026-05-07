@@ -682,7 +682,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${VIDEO_CARDS[@]}
 hwmon liquidctl openrc systemd
-ebuild_revision_9
+ebuild_revision_10
 "
 RDEPEND+="
 	dev-cpp/abseil-cpp:20220623
@@ -847,7 +847,6 @@ src_unpack() {
 
 src_configure() {
 	abseil-cpp_src_configure
-	grpc_src_configure
 	protobuf_src_configure
 	export PROTOC="/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/bin/protoc"
 	"${PROTOC}" --version || die
