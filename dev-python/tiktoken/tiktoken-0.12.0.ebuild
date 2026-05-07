@@ -11,43 +11,48 @@ GENERATE_LOCKFILE=${GENERATE_LOCKFILE:-0}
 
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
-LLVM_COMPAT=( 17 )
+LLVM_COMPAT=( 21 )
 PYTHON_COMPAT=( "python3_"{10..13} )
-RUST_MAX_VER="1.74.1" # Inclusive.  Corresponds to llvm 17
-RUST_MIN_VER="1.74.1" # Corresponds to llvm 17
+RUST_MAX_VER="1.91.1"
+RUST_MIN_VER="1.91.1" # LLVM 21.1
 RUST_NEEDS_LLVM=1
 
+DISABLE_CRATES="
+tiktoken-0.12.0
+"
+
 CRATES="
-aho-corasick-1.1.3
+aho-corasick-1.1.4
 autocfg-1.5.0
 bit-set-0.5.3
 bit-vec-0.6.3
-bstr-1.12.0
-cfg-if-1.0.1
+bstr-1.12.1
 fancy-regex-0.13.0
 heck-0.5.0
-indoc-2.0.6
-libc-0.2.174
-memchr-2.7.5
+indoc-2.0.7
+libc-0.2.186
+memchr-2.8.0
 memoffset-0.9.1
-once_cell-1.21.3
-portable-atomic-1.11.1
-proc-macro2-1.0.95
-pyo3-0.24.2
-pyo3-build-config-0.24.2
-pyo3-ffi-0.24.2
-pyo3-macros-0.24.2
-pyo3-macros-backend-0.24.2
-quote-1.0.40
-regex-1.11.1
-regex-automata-0.4.9
-regex-syntax-0.8.5
-rustc-hash-1.1.0
-serde-1.0.219
-serde_derive-1.0.219
-syn-2.0.104
-target-lexicon-0.13.2
-unicode-ident-1.0.18
+once_cell-1.21.4
+portable-atomic-1.13.1
+proc-macro2-1.0.106
+pyo3-0.26.0
+pyo3-build-config-0.26.0
+pyo3-ffi-0.26.0
+pyo3-macros-0.26.0
+pyo3-macros-backend-0.26.0
+quote-1.0.45
+regex-1.12.3
+regex-automata-0.4.14
+regex-syntax-0.8.10
+rustc-hash-2.1.2
+rustversion-1.0.22
+serde-1.0.228
+serde_core-1.0.228
+serde_derive-1.0.228
+syn-2.0.117
+target-lexicon-0.13.5
+unicode-ident-1.0.24
 unindent-0.2.4
 "
 
@@ -112,23 +117,17 @@ pkg_setup() {
 }
 
 src_unpack() {
-	if [[ "${PV}" =~ "9999" ]] ; then
-		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
-		git-r3_fetch
-		git-r3_checkout
+	if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
+		_lockfile_gen_unpack
 	else
-		if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
-			_lockfile_gen_unpack
-		else
-			_production_unpack
-		fi
-		cargo_src_unpack
-		if [[ "${GENERATE_LOCKFILE}" != "1" ]] ; then
-			cp -vaT \
-				"${FILESDIR}/${PV}" \
-				"${S}" \
-				|| die
-		fi
+		_production_unpack
+	fi
+	cargo_src_unpack
+	if [[ "${GENERATE_LOCKFILE}" != "1" ]] ; then
+		cp -vaT \
+			"${FILESDIR}/${PV}" \
+			"${S}" \
+			|| die
 	fi
 }
 
