@@ -6,12 +6,18 @@ EAPI=8
 
 # D12, U22
 
+# This contains info obtained by AI inference.
+
 NODE_SLOT="20"
 NPM_TARBALL="coolercontrol-${PV}.tar.bz2"
 PYTHON_COMPAT=( "python3_"{10,11} )
 RUST_MAX_VER="1.91.1"
 RUST_MIN_VER="1.91.1" # LLVM 21.1
 RUST_PV="${RUST_MAX_VER}"
+
+# Tonic doesn't need native C/C++ gRPC dep.
+ABSEIL_CPP_SLOT="20220623"
+PROTOBUF_CPP_SLOT="3"
 
 # NPM_AUDIT_FIX=0
 NPM_INSTALL_ARGS=(
@@ -583,7 +589,7 @@ zvariant_derive-5.9.2
 zvariant_utils-3.3.0
 "
 
-inherit cargo lcnr npm rust
+inherit abseil-cpp cargo lcnr npm protobuf rust
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/coolercontrol-${PV}/coolercontrold"
@@ -676,9 +682,11 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${VIDEO_CARDS[@]}
 hwmon liquidctl openrc systemd
-ebuild_revision_8
+ebuild_revision_9
 "
 RDEPEND+="
+	dev-cpp/abseil-cpp:20220623
+	dev-libs/protobuf:3/3.21
 	liquidctl? (
 		app-misc/liquidctl
 	)
@@ -838,6 +846,10 @@ src_unpack() {
 }
 
 src_configure() {
+	abseil-cpp_src_configure
+	grpc_src_configure
+	protobuf_src_configure
+	export PROTOC="/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/bin/protoc"
 	S="${WORKDIR}/coolercontrol-${PV}/coolercontrold" \
 	cargo_src_configure
 	pushd "${WORKDIR}/coolercontrol-${PV}" || die
