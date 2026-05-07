@@ -3,6 +3,9 @@
 
 EAPI=8
 
+RUST_MAX_VER="1.91.1"
+RUST_MIN_VER="1.91.1" # LLVM 21.1
+
 # Use `./convert-cargo-lock.sh 0.6.2 0.6.2` to generate
 
 CRATES="
@@ -98,6 +101,7 @@ LICENSE="
 	ZLIB
 "
 SLOT="0"
+IUSE+=" ebuild_revision_1"
 
 # @FUNCTION: cargo_src_unpack
 # @DESCRIPTION:
