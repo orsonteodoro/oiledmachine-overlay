@@ -17,22 +17,21 @@ EAPI=8
 # C2026-02 (F42):  Rust 1.93.0, LLVM 21.1.8, Protobuf 3.19.6
 # G23:  Rust 1.92.0, LLVM 21.1.8, Protobuf 6.31.1
 # U24:  Rust 1.74.1, 1.75.0 (default), 1.76.0, 1.77.2, 1.78.0, 1.79.0, 1.80.1, 1.81.0, 1.82.0, 1.83.0, 1.84.1, 1.85.1, 1.89.0; LLVM 14-19 (18 default), Protobuf 3.21.12
-# U24 (CI):  Rust 1.95.0, LLVM 19, Protobuf 3.21.12
+# U24 (CI):  Rust 1.91.1, LLVM 19, Protobuf 3.21.12
 # N25.11:  Rust 1.91.1, LLVM 21.1.7, Protobuf 6.32.1
 
 # Both LLVM 19 and LLVM 21 are required.
 # Ideally both should be aligned but not possible, but the package will still build.
 # LLVM 19 - Required for protobuf-cpp 3.21.12 (LTS on D12/U24).
 #           Required for Linux kernel built with Clang 19 (LTS on D13)
-# LLVM 21 - Required for Rust 1.91.1
+# LLVM 22 - Required for Rust 1.91.1
 
 GENERATE_LOCKFILE=0
-# Both llvm_slot_19 and llvm_slot_21 must be specified, but only allow 19 to prevent build panic.
-# The build error will say `clang-19 21 --version` if multiple USE slots used.
+# Both llvm_slot_19 and llvm_slot_21 must be specified.
 LLVM_COMPAT=( 19 )
 # RUST_*_VER will be pinned to meet cargo lockfile requirements.
 RUST_MAX_VER="1.91.1"
-RUST_MIN_VER="1.91.1" # LLVM 21.1
+RUST_MIN_VER="1.91.1" # LLVM 22.1
 LLVM_OPTIONAL=1 # Prevent mutual exclusion between llvm_slot_19 and llvm_slot_21
 DISABLED_CRATES="
 scx_arena_selftests-1.1.0
@@ -640,7 +639,7 @@ zvariant_derive-5.11.0
 zvariant_utils-3.3.1
 "
 
-inherit abseil-cpp cargo llvm-r1 linux-info protobuf
+inherit abseil-cpp cargo llvm-r2 linux-info protobuf
 
 KEYWORDS="~amd64"
 SRC_URI="
@@ -669,7 +668,7 @@ SLOT="0"
 IUSE+="
 llvm_slot_21
 +lto
-ebuild_revision_9
+ebuild_revision_10
 "
 # Both LLVM slots are required as discussed above.
 REQUIRED_USE+="
@@ -753,7 +752,7 @@ PATCHES=(
 
 pkg_setup() {
 	linux-info_pkg_setup
-	llvm-r1_pkg_setup
+	llvm-r2_pkg_setup
 	rust_pkg_setup
 
 	[[ -z "${RUSTC}" ]] && die "RUSTC is not defined"
@@ -802,11 +801,6 @@ src_configure() {
 	protobuf_src_configure
 	cargo_src_configure
 
-	# Force compiler to avoid panic
-	export CC="${CHOST}-clang-19"
-	export CXX="${CHOST}-clang++-19"
-	unset LD
-
 einfo "CC:  ${CC}"
 einfo "CXX:  ${CXX}"
 einfo "CPP:  ${CPP}"
@@ -814,7 +808,7 @@ einfo "CFLAGS:  ${CFLAGS}"
 einfo "CXXFLAGS:  ${CXXFLAGS}"
 einfo "LDFLAGS:  ${LDFLAGS}"
 einfo "LD:  ${LD}"
-einfo "Building Rust schedulers"
+einfo "PATH:  ${PATH}"
 }
 
 get_olast() {
@@ -829,6 +823,7 @@ get_olast() {
 # @DESCRIPTION:
 # Build the package using cargo build.
 _cargo_src_compile() {
+einfo "Building Rust schedulers"
 	debug-print-function ${FUNCNAME} "$@"
 
 	#_cargo_check_initialized
