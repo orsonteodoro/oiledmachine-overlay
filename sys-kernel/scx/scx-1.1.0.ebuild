@@ -665,7 +665,7 @@ RESTRICT="mirror" # Speed up downloads
 SLOT="0"
 IUSE+="
 +lto
-ebuild_revision_4
+ebuild_revision_5
 "
 # Both LLVM slots are required as discussed above.
 REQUIRED_USE+="
@@ -766,27 +766,7 @@ pkg_setup() {
 
 	[[ -z "${RUSTC}" ]] && die "RUSTC is not defined"
 einfo "RUSTC:  ${RUSTC}"
-
-	"${RUSTC}" --version \
-		| cut -f 2 -d " " \
-		| grep -q -e "nightly"
-	local is_nightly=$?
-	is_nightly=$(( ${is_nightly} ? 0 : 1 ))
-
-	if use llvm_slot_22 ; then
-		local rust_nightly_date=$("${RUSTC}" --version \
-			| cut -f 4 -d " " \
-			| sed -e "s|[)]||g" | sed -e "s|-||g")
-		if ver_test "${rust_nightly_date}" "-lt" "20260127" ; then
-	# From commit history of .gitmodules
-eerror "Update Rust nightly to at least 2026-01-27"
-			die
-		fi
-		if (( ${is_nightly} == 0 )) ; then
-eerror "llvm_slot_22 requires Rust nightly"
-			die
-		fi
-	fi
+	"${RUSTC}" --version || die
 }
 
 _lockfile_gen_unpack() {
