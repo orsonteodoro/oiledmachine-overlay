@@ -16,7 +16,7 @@
   Build per-package environment variables
 
   COOLERCONTROL_GUI_PORT - Default 11987
-  COOLERCONTROL_LIQCTLD_PORT - Default 11986
+  COOLERCONTROL_GRPC_PORT - Default 11988
 
   -->
   <use>

@@ -785,10 +785,9 @@ _cargo_src_unpack() {
 	cargo_gen_config
 }
 
-# FIXME:  Change port
 set_gui_port() {
 	local L=(
-		"coolercontrold/src/api/mod.rs"
+		"coolercontrold/daemon/src/api/mod.rs"
 	)
 	local port=${COOLERCONTROL_GUI_PORT:-11987}
 	local p
@@ -797,14 +796,14 @@ set_gui_port() {
 	done
 }
 
-set_liqctld_port() {
+set_grpc_port() {
 	local L=(
-		"coolercontrold/src/repositories/liquidctl/liquidctl_repo.rs"
+		"coolercontrold/daemon/src/api/mod.rs"
 	)
-	local port=${COOLERCONTROL_LIQCTLD_PORT:-11986}
+	local port=${COOLERCONTROL_GRPC_PORT:-11988}
 	local p
 	for p in "${L[@]}" ; do
-		sed -i -e "s|11986|${port}|g" "${p}" || die
+		sed -i -e "s|11988|${port}|g" "${p}" || die
 	done
 }
 
@@ -845,7 +844,7 @@ src_configure() {
 	cargo_src_configure
 	pushd "${WORKDIR}/coolercontrol-${PV}" || die
 		set_gui_port
-		set_liqctld_port
+		set_grpc_port
 	popd
 }
 
@@ -897,10 +896,10 @@ ewarn
 	LCNR_TAG="third_party_npm"
 	lcnr_install_files
 	local gui_port=${COOLERCONTROL_GUI_PORT:-11987}
-	local liqctld_port=${COOLERCONTROL_LIQCTLD_PORT:-11986}
+	local grpc_port=${COOLERCONTROL_GRPC_PORT:-11988}
 ewarn "The /etc/coolercontrol can be removed to reset the daemon settings."
 einfo "GUI port:  ${gui_port}"
-einfo "Liqctld port:  ${liqctld_port}"
+einfo "gRPC port:  ${grpc_port}"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
