@@ -34,8 +34,8 @@ RUSTFLAGS_HARDENED_USE_CASES="multithreaded-confidential network p2p plugin secu
 EXPECTED_BUILD_FILES_FINGERPRINT="disable"
 GOBJECT_INTROSPECTION_PV="1.74.0"
 GST_PV="${MY_PV}"
-LLVM_COMPAT=( 21 ) # For clang-sys ; slot must be updated when rust slot is changed
-LLVM_MAX_SLOT="21"
+LLVM_COMPAT=( 22 ) # For clang-sys ; slot must be updated when rust slot is changed
+LLVM_MAX_SLOT="22"
 PYTHON_COMPAT=( "python3_"{8..11} )
 # Upstream uses Rust 1.92.0, required
 RUST_MAX_VER="1.95.0"
@@ -1269,7 +1269,7 @@ ${MODULES[@]}
 ${PATENT_STATUS_IUSE[@]}
 aom doc nvcodec qsv openh264 rav1e system-libsodium va vaapi vpx vulkan x264 x265
 webrtc-aws webrtc-livekit
-ebuild_revision_50
+ebuild_revision_52
 "
 WEBRTC_AV1_ENCODERS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -1690,10 +1690,10 @@ gen_llvm_bdepend() {
 	done
 }
 RUST1_BDEPEND="
-	llvm_slot_21? (
+	llvm_slot_22? (
 		|| (
-			=dev-lang/rust-1.92*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.92*[${MULTILIB_USEDEP}]
+			dev-lang/rust:1.95.0[${MULTILIB_USEDEP}]
+			dev-lang/rust-bin:1.95.0[${MULTILIB_USEDEP}]
 		)
 	)
 	|| (
@@ -1702,10 +1702,10 @@ RUST1_BDEPEND="
 	)
 "
 RUST_BDEPEND="
-	llvm_slot_21? (
+	llvm_slot_22? (
 		|| (
-			=dev-lang/rust-bin-1.92*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.92*[${MULTILIB_USEDEP}]
+			dev-lang/rust-bin:1.95.0[${MULTILIB_USEDEP}]
+			dev-lang/rust:1.95.0[${MULTILIB_USEDEP}]
 		)
 	)
 	|| (
