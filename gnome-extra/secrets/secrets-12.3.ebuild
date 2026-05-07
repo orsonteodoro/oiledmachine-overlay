@@ -53,7 +53,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 # complexity.
 IUSE+="
 dev hibp wayland X
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -98,6 +98,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-12.3-fix-pyproject.patch"
 	"${FILESDIR}/${PN}-12.3-optionalize-hibp.patch"
 	"${FILESDIR}/${PN}-12.3-reduce-database-lock-time.patch"
+	"${FILESDIR}/${PN}-12.3-change-default-password-generator-length.patch"
 )
 
 pkg_setup() {
@@ -312,19 +313,19 @@ pkg_postinst() {
 	gnome2_schemas_update
 	xdg_pkg_postinst
 einfo
-einfo "Recommendations for not abusing the reduced decreased characters password button"
+einfo "Password length recommendations"
 einfo
-einfo "| Use case          | GPU/ASIC farm mitigation (today) | Quantum mitigation (future-proofing) | Format                                         |"
-einfo "| ---               | ---                              | ---                                  | ---                                            |"
-einfo "| Login             | 16-20                            | 20+                                  | The built in key generator                     |"
-einfo "| Archives          | 20+ [1] or 25+ [2]               | 20+ [1] or 25+ [2]                   | The built in key generator                     |"
-einfo "| Master password   | 25+ (6-7 words min)              | 25+ (6-7 words min)                  | Your own collection of words that no one knows |"
+einfo "| Use cases                | Password length       | Format                                         |"
+einfo "| ---                      | ---                   | ---                                            |"
+einfo "| Burner / throwaway login | 16-20+                | The built in key generator                     |"
+einfo "| Social media login       | 20+                   | The built in key generator                     |"
+einfo "| Archives                 | 25+                   | The built in key generator                     |"
+einfo "| Master password          | 25+ (6-7 words min)   | Your own collection of words that no one knows |"
 einfo
-einfo "[1] Individual only affected and single system, a small blast radius"
-einfo "[2] Multiple people affected or multiple systems affected, a large blast radius"
-einfo
-einfo "Tip:  Do not go below 16 characters as the default password manager key length."
+einfo "Tip:  Do not abuse the reduce password length button!"
 einfo "Tip:  Don't FAFO!"
+einfo
+einfo "AI accelerated Q-Day is forecasted to be as early as 2029 (3-4) years from now."
 einfo
 }
 
