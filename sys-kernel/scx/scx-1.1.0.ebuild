@@ -864,7 +864,9 @@ _cargo_src_compile() {
 
 src_compile() {
 einfo "Building Rust schedulers"
-	local myrustconf=()
+	local myrustconf=(
+		--ignore-rust-version
+	)
 	if use lto ; then
 		myrustconf+=(
 			--profile release
