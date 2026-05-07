@@ -462,15 +462,8 @@ BDEPEND="
 		)
 	)
 	|| (
-		=dev-lang/rust-bin-9999*
-		=dev-lang/rust-bin-1.90*
-		=dev-lang/rust-bin-1.89*
-		=dev-lang/rust-bin-1.88*
-
-		=dev-lang/rust-9999*
-		=dev-lang/rust-1.90*
-		=dev-lang/rust-1.89*
-		=dev-lang/rust-1.88*
+		dev-lang/rust-bin:1.91.1
+		dev-lang/rust:1.91.1
 	)
 	|| (
 		dev-lang/rust-bin:=
