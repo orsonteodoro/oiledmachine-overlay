@@ -406,7 +406,7 @@ SLOT="2"
 
 IUSE="
 avif gtk-doc +introspection +pixbuf-loader test +vala
-ebuild_revision_16
+ebuild_revision_17
 "
 RESTRICT="
 	!test? (
@@ -521,9 +521,9 @@ ewarn "${x} assumes USE=pixbuf-loader for ${PN}"
 
 src_unpack() {
 	unpack ${A}
-	die
-	cp -aT "${FILESDIR}/${PV}" "${S}" || die
+#	die
 	cargo_src_unpack
+	cp -aT "${FILESDIR}/${PV}" "${S}" || die
 }
 
 src_prepare() {
