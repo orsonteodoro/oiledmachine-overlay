@@ -20,10 +20,17 @@ EAPI=8
 # U24 (CI):  Rust 1.95.0, LLVM 19, Protobuf 3.21.12
 # N25.11:  Rust 1.91.1, LLVM 21.1.7, Protobuf 6.32.1
 
+# Both LLVM 19 and LLVM 21 are required.
+# Ideally both should be aligned but not possible, but the package will still build.
+# LLVM 19 - Required for protobuf-cpp 3.21.12.
+#           Required for Linux kernel built with Clang 19
+# LLVM 21 - Required for Rust 1.91.1
+
 GENERATE_LOCKFILE=0
-LLVM_COMPAT=( {19..22} ) # Only U24 LTS supported for this ebuild fork
-RUST_MIN_VER="1.82.0"
-RUST_NEEDS_LLVM="1"
+LLVM_COMPAT=( {19..22} ) # Both 19 and 21 must be specified.
+# RUST_*_VER will be pinned to meet cargo lockfile requirements.
+RUST_MAX_VER="1.91.1"
+RUST_MIN_VER="1.91.1" # LLVM 21.1
 DISABLED_CRATES="
 scx_arena_selftests-1.1.0
 scx_bpf_unittests-1.1.0
@@ -657,11 +664,13 @@ RESTRICT="mirror" # Speed up downloads
 SLOT="0"
 IUSE+="
 +lto
-ebuild_revision_1
+ebuild_revision_3
 "
+# Both LLVM slots are required as discussed above.
 REQUIRED_USE+="
 	llvm_slot_19
-	^^ (
+	llvm_slot_21
+	|| (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
 "
@@ -868,7 +877,6 @@ _cargo_src_compile() {
 src_compile() {
 einfo "Building Rust schedulers"
 	local myrustconf=(
-		--ignore-rust-version
 	)
 	if use lto ; then
 		myrustconf+=(
