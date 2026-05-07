@@ -24,14 +24,16 @@ EAPI=8
 # Ideally both should be aligned but not possible, but the package will still build.
 # LLVM 19 - Required for protobuf-cpp 3.21.12 (LTS on D12/U24).
 #           Required for Linux kernel built with Clang 19 (LTS on D13)
-# LLVM 22 - Required for Rust 1.97.0-nightly
+# LLVM 21 - Required for Rust 1.91.1
 
 GENERATE_LOCKFILE=0
-LLVM_COMPAT=( 19 22 ) # Both 19 and 22 must be specified.
+# Both llvm_slot_19 and llvm_slot_21 must be specified, but only allow 19 to prevent build panic.
+# The build error will say `clang-19 21 --version` if multiple USE slots used.
+LLVM_COMPAT=( 19 )
 # RUST_*_VER will be pinned to meet cargo lockfile requirements.
-RUST_MAX_VER="9999"
-RUST_MIN_VER="9999" # LLVM 22.1, force LTS to avoid build panic
-LLVM_OPTIONAL=1 # Prevent mutual exclusion between llvm_slot_19 and llvm_slot_22
+RUST_MAX_VER="1.91.1"
+RUST_MIN_VER="1.91.1" # LLVM 21.1
+LLVM_OPTIONAL=1 # Prevent mutual exclusion between llvm_slot_19 and llvm_slot_21
 DISABLED_CRATES="
 scx_arena_selftests-1.1.0
 scx_bpf_unittests-1.1.0
@@ -663,14 +665,16 @@ LICENSE+="
 "
 RESTRICT="mirror" # Speed up downloads
 SLOT="0"
+# llvm_slot_21 here to avoid build panic.
 IUSE+="
+llvm_slot_21
 +lto
 ebuild_revision_9
 "
 # Both LLVM slots are required as discussed above.
 REQUIRED_USE+="
 	llvm_slot_19
-	llvm_slot_22
+	llvm_slot_21
 	|| (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
@@ -707,14 +711,14 @@ BDEPEND="
 		llvm-core/llvm:19[llvm_targets_BPF(-)]
 		llvm-core/llvm:=
 	)
-	llvm_slot_22? (
-		llvm-core/clang:22[llvm_targets_BPF(-)]
+	llvm_slot_21? (
+		llvm-core/clang:21[llvm_targets_BPF(-)]
 		llvm-core/clang:=
-		llvm-core/llvm:22[llvm_targets_BPF(-)]
+		llvm-core/llvm:21[llvm_targets_BPF(-)]
 		llvm-core/llvm:=
 		|| (
-			dev-lang/rust:9999
-			dev-lang/rust-bin:9999
+			dev-lang/rust:1.91.1
+			dev-lang/rust-bin:1.91.1
 		)
 	)
 	|| (
@@ -747,36 +751,13 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.0.20-llvm-19.patch"
 )
 
-verify_rust_nightly() {
-	"${RUSTC}" --version \
-		| cut -f 2 -d " " \
-		| grep -q -e "nightly"
-	local is_nightly=$?
-	is_nightly=$(( ${is_nightly} ? 0 : 1 ))
-
-	if use llvm_slot_22 ; then
-		local rust_nightly_date=$("${RUSTC}" --version \
-			| cut -f 4 -d " " \
-			| sed -e "s|[)]||g" | sed -e "s|-||g")
-		if ver_test "${rust_nightly_date}" "-lt" "20260410" ; then
-	# From commit history of .gitmodules
-eerror "Update Rust nightly to at least 2026-04-10" # Same as 1.97.0-nightly
-			die
-		fi
-		if (( ${is_nightly} == 0 )) ; then
-eerror "llvm_slot_22 requires Rust nightly"
-			die
-		fi
-	fi
-}
-
 pkg_setup() {
 	linux-info_pkg_setup
 	llvm-r1_pkg_setup
 	rust_pkg_setup
 
 	[[ -z "${RUSTC}" ]] && die "RUSTC is not defined"
-	verify_rust_nightly
+	"${RUSTC}" --version || die
 }
 
 _lockfile_gen_unpack() {
@@ -820,6 +801,20 @@ src_configure() {
 	abseil-cpp_src_configure
 	protobuf_src_configure
 	cargo_src_configure
+
+	# Force compiler to avoid panic
+	export CC="${CHOST}-clang-19"
+	export CXX="${CHOST}-clang++-19"
+	unset LD
+
+einfo "CC:  ${CC}"
+einfo "CXX:  ${CXX}"
+einfo "CPP:  ${CPP}"
+einfo "CFLAGS:  ${CFLAGS}"
+einfo "CXXFLAGS:  ${CXXFLAGS}"
+einfo "LDFLAGS:  ${LDFLAGS}"
+einfo "LD:  ${LD}"
+einfo "Building Rust schedulers"
 }
 
 get_olast() {
@@ -844,7 +839,6 @@ _cargo_src_compile() {
 }
 
 src_compile() {
-einfo "Building Rust schedulers"
 	local myrustconf=()
 	if use lto ; then
 		myrustconf+=(
