@@ -393,7 +393,7 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE="
 debug
-ebuild_revision_5
+ebuild_revision_6
 "
 RESTRICT="mirror"
 RDEPEND="
@@ -414,7 +414,7 @@ pkg_setup() {
 
 src_unpack() {
 	unpack ${A}
-	die
+#	die
 
 	cargo_src_unpack
 	if [[ -e "${FILESDIR}/${PV}/Cargo.lock" ]] ; then
