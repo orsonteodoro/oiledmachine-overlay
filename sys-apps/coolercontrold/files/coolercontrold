@@ -30,7 +30,7 @@ stop()
 	ebegin "Stopping coolercontrold"
 		start-stop-daemon \
 			--stop \
-			--retry TERM/15/KILL/5 \
+			--retry TERM/10/KILL/5 \
 			--pidfile /run/coolercontrold.pid
 	        retval=$?
         eend ${retval}

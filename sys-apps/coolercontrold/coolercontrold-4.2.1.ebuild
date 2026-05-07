@@ -8,7 +8,7 @@ EAPI=8
 
 # This contains info obtained by AI inference.
 
-NODE_SLOT="20"
+NODE_SLOT="22"
 NPM_TARBALL="coolercontrol-${PV}.tar.bz2"
 PYTHON_COMPAT=( "python3_"{10,11} )
 RUST_MAX_VER="1.91.1"
@@ -589,7 +589,7 @@ zvariant_derive-5.9.2
 zvariant_utils-3.3.0
 "
 
-inherit abseil-cpp cargo lcnr npm protobuf rust
+inherit abseil-cpp cargo lcnr npm protobuf python-single-r1 rust
 
 #KEYWORDS="~amd64" # Doing security review
 S_ROOT="${WORKDIR}/coolercontrol-${PV}"
@@ -683,7 +683,10 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${VIDEO_CARDS[@]}
 hwmon liquidctl openrc systemd
-ebuild_revision_12
+ebuild_revision_13
+"
+REQUIRED_USE="
+	${PYTHON_REQUIRED_USE}
 "
 RDEPEND+="
 	acct-group/coolercontrold
@@ -723,6 +726,9 @@ BDEPEND+="
 		dev-lang/rust-bin:=
 	)
 "
+PATCHES=(
+	"${FILESDIR}/${PN}-4.2.1-symbolize-python.patch"
+)
 
 # @FUNCTION: cargo_src_unpack
 # @DESCRIPTION:
@@ -817,6 +823,7 @@ set_grpc_port() {
 
 pkg_setup() {
 ewarn "Do not emerge ${CATEGORY}/${PN} package directly.  Emerge the sys-apps/coolercontrol metapackage instead."
+	python-single-r1_pkg_setup
 	npm_pkg_setup
 	rust_pkg_setup
 	"${RUSTC}" --version || die
@@ -853,6 +860,17 @@ src_configure() {
 	protobuf_src_configure
 	export PROTOC="/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/bin/protoc"
 	"${PROTOC}" --version || die
+
+	sed -i \
+		-e "s|@EPYTHON@|${EPYTHON}|g" \
+		"${S}/cc-detect/src/shell_command.rs" \
+		"${S}/daemon/resources/liqctld/main.py" \
+		"${S}/daemon/resources/liqctld/verify.py" \
+		"${S}/daemon/src/repositories/liquidctl/liqctld_service.rs" \
+		"${S}/resources/liqctld/main.py" \
+		"${S}/resources/liqctld/verify.py" \
+		|| die
+
 	S="${S_ROOT}/coolercontrold" \
 	cargo_src_configure
 	pushd "${S_ROOT}" || die
@@ -894,7 +912,7 @@ ewarn
 	fi
 	if use systemd ; then
 		insinto "/lib/systemd/system"
-		doins "${S_ROOT}/packaging/systemd/coolercontrold.service"
+		doins "${FILESDIR}/coolercontrold.service"
 	fi
 	if ! use openrc && ! use systemd ; then
 ewarn

@@ -7,7 +7,9 @@ EAPI=8
 # This is a meta package
 # D12, U22
 
-inherit desktop xdg
+PYTHON_COMPAT=( "python3_"{10,11} )
+
+inherit desktop xdg python-single-r1
 
 S="${WORKDIR}/${PN}-${PV}"
 SRC_URI="
@@ -23,8 +25,12 @@ LICENSE="
 "
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" qt6 html hwmon openrc systemd wayland X ebuild_revision_1"
+IUSE+="
+qt6 html hwmon openrc systemd wayland X
+ebuild_revision_1
+"
 REQUIRED_USE="
+	${PYTHON_REQUIRED_USE}
 	qt6? (
 		|| (
 			wayland
@@ -37,7 +43,7 @@ REQUIRED_USE="
 	)
 "
 RDEPEND+="
-	~sys-apps/coolercontrold-${PV}[hwmon?,openrc?,systemd?]
+	~sys-apps/coolercontrold-${PV}[${PYTHON_SINGLE_USEDEP},hwmon?,openrc?,systemd?]
 	qt6? (
 		~sys-apps/coolercontrol-qt6-${PV}[wayland?,X?]
 	)

@@ -1,0 +1,44 @@
+diff '--color=auto' -urp coolercontrold.orig/cc-detect/src/shell_command.rs coolercontrold/cc-detect/src/shell_command.rs
+--- coolercontrold.orig/cc-detect/src/shell_command.rs	2026-04-21 12:00:09.000000000 -0700
++++ coolercontrold/cc-detect/src/shell_command.rs	2026-05-07 11:13:06.955113002 -0700
+@@ -167,7 +167,7 @@ mod tests {
+     fn test_output_truncation() {
+         // Generate output larger than MAX_OUTPUT_LENGTH_BYTES
+         let cmd = ShellCommand::new(
+-            "python3 -c 'print(\"A\" * 5000)' 2>/dev/null || python -c 'print(\"A\" * 5000)' 2>/dev/null || printf '%0.sA' $(seq 1 5000)",
++            "@EPYTHON@ -c 'print(\"A\" * 5000)' 2>/dev/null || python -c 'print(\"A\" * 5000)' 2>/dev/null || printf '%0.sA' $(seq 1 5000)",
+             Duration::from_secs(5),
+         );
+         match cmd.run() {
+diff '--color=auto' -urp coolercontrold.orig/daemon/resources/liqctld/main.py coolercontrold/daemon/resources/liqctld/main.py
+--- coolercontrold.orig/daemon/resources/liqctld/main.py	2026-04-21 12:00:09.000000000 -0700
++++ coolercontrold/daemon/resources/liqctld/main.py	2026-05-07 11:13:06.955450433 -0700
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python3
++#! /usr/bin/env @EPYTHON@
+ 
+ #  CoolerControl - monitor and control your cooling and other devices
+ #  Copyright (c) 2021-2025  Guy Boldon, Eren Simsek and contributors
+Only in coolercontrold/daemon/resources/liqctld: main.py.rej
+diff '--color=auto' -urp coolercontrold.orig/daemon/resources/liqctld/verify.py coolercontrold/daemon/resources/liqctld/verify.py
+--- coolercontrold.orig/daemon/resources/liqctld/verify.py	2026-04-21 12:00:09.000000000 -0700
++++ coolercontrold/daemon/resources/liqctld/verify.py	2026-05-07 11:13:06.955796124 -0700
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python3
++#! /usr/bin/env @EPYTHON@
+ 
+ #  CoolerControl - monitor and control your cooling and other devices
+ #  Copyright (c) 2021-2025  Guy Boldon, Eren Simsek and contributors
+Only in coolercontrold/daemon/resources/liqctld: verify.py.rej
+diff '--color=auto' -urp coolercontrold.orig/daemon/src/repositories/liquidctl/liqctld_service.rs coolercontrold/daemon/src/repositories/liquidctl/liqctld_service.rs
+--- coolercontrold.orig/daemon/src/repositories/liquidctl/liqctld_service.rs	2026-04-21 12:00:09.000000000 -0700
++++ coolercontrold/daemon/src/repositories/liquidctl/liqctld_service.rs	2026-05-07 11:13:06.955988088 -0700
+@@ -122,7 +122,7 @@ fn create_command() -> (String, &'static
+         info!("Running liqctld inside an AppImage");
+         (format!("{appdir}/usr/bin/python3"), "-I")
+     } else {
+-        ("python3".to_string(), "-q")
++        ("@EPYTHON@".to_string(), "-q")
+     }
+ }
+ 
