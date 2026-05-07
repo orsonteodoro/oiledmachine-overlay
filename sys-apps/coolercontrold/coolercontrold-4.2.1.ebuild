@@ -592,7 +592,8 @@ zvariant_utils-3.3.0
 inherit abseil-cpp cargo lcnr npm protobuf rust
 
 KEYWORDS="~amd64"
-S="${WORKDIR}/coolercontrol-${PV}/coolercontrold"
+S_ROOT="${WORKDIR}/coolercontrol-${PV}"
+S="${S_ROOT}/coolercontrold"
 SRC_URI="
 $(cargo_crate_uris ${CRATES})
 https://gitlab.com/coolercontrol/coolercontrol/-/archive/${PV}/coolercontrol-${PV}.tar.bz2
@@ -682,7 +683,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${VIDEO_CARDS[@]}
 hwmon liquidctl openrc systemd
-ebuild_revision_10
+ebuild_revision_11
 "
 RDEPEND+="
 	dev-cpp/abseil-cpp:20220623
@@ -821,7 +822,7 @@ ewarn "Do not emerge ${CATEGORY}/${PN} package directly.  Emerge the sys-apps/co
 
 npm_update_lock_install_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
-		pushd "${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui" >/dev/null 2>&1 || die
+		pushd "${S_ROOT}/coolercontrol-ui" >/dev/null 2>&1 || die
 			sed -i -e "s|\"vitest\": \"^2.1.8\"|\"vitest\": \"^2.1.9\"|" "package.json" || die
 			enpm install "vitest@2.1.9" -D ${NPM_INSTALL_ARGS[@]}						# CVE-2025-24964; DoS, DT, ID; Critical
 
@@ -839,9 +840,9 @@ src_unpack() {
 	unpack "coolercontrol-${PV}.tar.bz2"
 #	die
 
-	S="${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui" \
+	S="${S_ROOT}/coolercontrol-ui" \
 	npm_src_unpack
-	S="${WORKDIR}/coolercontrol-${PV}/coolercontrold" \
+	S="${S_ROOT}/coolercontrold" \
 	_cargo_src_unpack
 }
 
@@ -850,9 +851,9 @@ src_configure() {
 	protobuf_src_configure
 	export PROTOC="/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/bin/protoc"
 	"${PROTOC}" --version || die
-	S="${WORKDIR}/coolercontrol-${PV}/coolercontrold" \
+	S="${S_ROOT}/coolercontrold" \
 	cargo_src_configure
-	pushd "${WORKDIR}/coolercontrol-${PV}" || die
+	pushd "${S_ROOT}" || die
 		set_gui_port
 		set_grpc_port
 	popd
@@ -860,25 +861,27 @@ src_configure() {
 
 src_compile() {
 	npm_hydrate
-	pushd "${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui" || die
+	pushd "${S_ROOT}/coolercontrol-ui" || die
 einfo "PWD: $(pwd)"
-		S="${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui" \
+		S="${S_ROOT}/coolercontrol-ui" \
 		enpm install ${NPM_INSTALL_ARGS[@]}
 	# Audit fix already done with NPM_UPDATE_LOCK=1
-		S="${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui" \
+		S="${S_ROOT}/coolercontrol-ui" \
 		enpm run build
 	popd
 	cp -r \
-		"${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui/dist/"* \
+		"${S_ROOT}/coolercontrol-ui/dist/"* \
 		"resources/app/" \
 		|| die
-	S="${WORKDIR}/coolercontrol-${PV}/coolercontrold" \
+	S="${S_ROOT}/coolercontrold" \
 	cargo_src_compile
 }
 
 src_install() {
-	S="${WORKDIR}/coolercontrol-${PV}/coolercontrold" \
-	cargo_src_install
+	# cargo install is broken
+	exeinto "/usr/bin"
+	doexe "${S}/target/"*"/release/coolercontrold"
+
 	if use openrc ; then
 ewarn
 ewarn "The OpenRC script is experimental for ${CATEGORY}/${PN}."
@@ -889,7 +892,7 @@ ewarn
 	fi
 	if use systemd ; then
 		insinto "/lib/systemd/system"
-		doins "${WORKDIR}/coolercontrol-${PV}/packaging/systemd/coolercontrold.service"
+		doins "${S_ROOT}/packaging/systemd/coolercontrold.service"
 	fi
 	if ! use openrc && ! use systemd ; then
 ewarn
@@ -902,7 +905,7 @@ ewarn
 	LCNR_TAG="third_party_cargo"
 	lcnr_install_files
 
-	LCNR_SOURCE="${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui/node_modules"
+	LCNR_SOURCE="${S_ROOT}/coolercontrol-ui/node_modules"
 	LCNR_TAG="third_party_npm"
 	lcnr_install_files
 	local gui_port=${COOLERCONTROL_GUI_PORT:-11987}
