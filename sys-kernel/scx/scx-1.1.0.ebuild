@@ -24,14 +24,14 @@ EAPI=8
 # Ideally both should be aligned but not possible, but the package will still build.
 # LLVM 19 - Required for protobuf-cpp 3.21.12 (LTS on D12/U24).
 #           Required for Linux kernel built with Clang 19 (LTS on D13)
-# LLVM 21 - Required for Rust 1.91.1 (LTS on U24)
+# LLVM 22 - Required for Rust 1.95.0 (F44 rolling)
 
 GENERATE_LOCKFILE=0
-LLVM_COMPAT=( 19 21 ) # Both 19 and 21 must be specified.
+LLVM_COMPAT=( 19 22 ) # Both 19 and 22 must be specified.
 # RUST_*_VER will be pinned to meet cargo lockfile requirements.
-RUST_MAX_VER="1.91.1"
-RUST_MIN_VER="1.91.1" # LLVM 21.1
-LLVM_OPTIONAL=1 # Prevent mutual exclusion between llvm_slot_19 llvm_slot_21
+RUST_MAX_VER="1.95.0"
+RUST_MIN_VER="1.95.0" # LLVM 22.1, force LTS to avoid build panic
+LLVM_OPTIONAL=1 # Prevent mutual exclusion between llvm_slot_19 and llvm_slot_22
 DISABLED_CRATES="
 scx_arena_selftests-1.1.0
 scx_bpf_unittests-1.1.0
@@ -665,12 +665,12 @@ RESTRICT="mirror" # Speed up downloads
 SLOT="0"
 IUSE+="
 +lto
-ebuild_revision_6
+ebuild_revision_7
 "
 # Both LLVM slots are required as discussed above.
 REQUIRED_USE+="
 	llvm_slot_19
-	llvm_slot_21
+	llvm_slot_22
 	|| (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
@@ -707,13 +707,13 @@ BDEPEND="
 		llvm-core/llvm:19[llvm_targets_BPF(-)]
 		llvm-core/llvm:=
 	)
-	llvm_slot_21? (
-		llvm-core/clang:21[llvm_targets_BPF(-)]
+	llvm_slot_22? (
+		llvm-core/clang:22[llvm_targets_BPF(-)]
 		llvm-core/clang:=
-		llvm-core/llvm:21[llvm_targets_BPF(-)]
+		llvm-core/llvm:22[llvm_targets_BPF(-)]
 		llvm-core/llvm:=
 		|| (
-			dev-lang/rust:1.91.1
+			dev-lang/rust:1.95.0
 		)
 	)
 	|| (
