@@ -38,8 +38,8 @@ LLVM_COMPAT=( 21 ) # For clang-sys ; slot must be updated when rust slot is chan
 LLVM_MAX_SLOT="21"
 PYTHON_COMPAT=( "python3_"{8..11} )
 # Upstream uses Rust 1.92.0, required
-RUST_MAX_VER="1.92.0" # Inclusive.  Corresponds to llvm 21.1
-RUST_MIN_VER="1.92.0" # Corresponds to llvm 21.1
+RUST_MAX_VER="1.95.0"
+RUST_MIN_VER="1.95.0" # LLVM 22.1
 
 MODULES=(
 	"analytics"
@@ -1269,7 +1269,7 @@ ${MODULES[@]}
 ${PATENT_STATUS_IUSE[@]}
 aom doc nvcodec qsv openh264 rav1e system-libsodium va vaapi vpx vulkan x264 x265
 webrtc-aws webrtc-livekit
-ebuild_revision_48
+ebuild_revision_50
 "
 WEBRTC_AV1_ENCODERS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -1817,6 +1817,10 @@ src_unpack() {
 	else
 		_production_unpack
 	fi
+	cp -aT \
+		"${FILESDIR}/${PV}"* \
+		"${S}" \
+		|| die
 }
 
 src_prepare() {
