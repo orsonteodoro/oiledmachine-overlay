@@ -665,7 +665,7 @@ RESTRICT="mirror" # Speed up downloads
 SLOT="0"
 IUSE+="
 +lto
-ebuild_revision_5
+ebuild_revision_6
 "
 # Both LLVM slots are required as discussed above.
 REQUIRED_USE+="
@@ -704,29 +704,16 @@ BDEPEND="
 	llvm_slot_19? (
 		llvm-core/clang:19[llvm_targets_BPF(-)]
 		llvm-core/clang:=
-		|| (
-			=dev-lang/rust-1.86*
-			=dev-lang/rust-1.85*
-			=dev-lang/rust-1.84*
-			=dev-lang/rust-1.83*
-			=dev-lang/rust-1.82*
-			=dev-lang/rust-bin-1.86*
-			=dev-lang/rust-bin-1.85*
-			=dev-lang/rust-bin-1.84*
-			=dev-lang/rust-bin-1.83*
-			=dev-lang/rust-bin-1.82*
-		)
+		llvm-core/llvm:19[llvm_targets_BPF(-)]
+		llvm-core/llvm:=
 	)
 	llvm_slot_21? (
 		llvm-core/clang:21[llvm_targets_BPF(-)]
 		llvm-core/clang:=
+		llvm-core/llvm:21[llvm_targets_BPF(-)]
+		llvm-core/llvm:=
 		|| (
-			=dev-lang/rust-1.93*
-			=dev-lang/rust-1.92*
-			=dev-lang/rust-1.91*
-			=dev-lang/rust-bin-1.93*
-			=dev-lang/rust-bin-1.92*
-			=dev-lang/rust-bin-1.91*
+			dev-lang/rust:1.91.1
 		)
 	)
 	|| (
