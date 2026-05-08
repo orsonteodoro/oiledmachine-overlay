@@ -16,6 +16,7 @@
   Build time per-package environment variables:
 
   COOLERCONTROL_BROWSER - The default web browser or www launcher command.
+  COOLERCONTROL_GUI_PORT - Default 11987
 
   -->
   <use>

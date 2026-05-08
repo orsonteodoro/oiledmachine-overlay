@@ -27,7 +27,7 @@ KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 hwmon man openrc pwa qt6 systemd wayland X
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -70,9 +70,10 @@ gen_pwa_wrapper() {
 		www_browser="${COOLERCONTROL_BROWSER}"
 	fi
 	dodir /usr/bin
+	local port=${COOLERCONTROL_GUI_PORT:-11987}
 cat <<EOF > "${ED}/usr/bin/coolercontrol-pwa"
 #!/bin/bash
-${www_browser} "http://localhost:11987"
+${www_browser} "http://localhost:${port}"
 EOF
 	fperms 0755 "/usr/bin/coolercontrol-pwa"
 }
