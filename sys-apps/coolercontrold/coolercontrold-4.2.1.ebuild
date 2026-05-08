@@ -36,7 +36,7 @@ ABSEIL_CPP_SLOT="20220623"
 PROTOBUF_CPP_SLOT="3"
 
 # Only provide the necessary capabilities
-# cap_dac_override - For changing /sys/class/hwmon/ file permissions for fan control
+# cap_dac_override - For applying CPU/GPU fan control settings for /sys/class/hwmon/
 # cap_sys_rawio - For SuperIO detection through /dev/port
 FILECAPS=(
 	"cap_sys_rawio,cap_dac_override=ep" "usr/bin/coolercontrold"
