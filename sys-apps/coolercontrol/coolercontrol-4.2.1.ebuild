@@ -26,7 +26,7 @@ LICENSE="
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-qt6 html hwmon man openrc systemd wayland X
+hwmon man openrc pwa qt6 systemd wayland X
 ebuild_revision_1
 "
 REQUIRED_USE="
@@ -38,8 +38,8 @@ REQUIRED_USE="
 		)
 	)
 	|| (
+		pwa
 		qt6
-		html
 	)
 "
 RDEPEND+="
@@ -64,17 +64,17 @@ src_compile() {
 	:
 }
 
-gen_html_wrapper() {
+gen_pwa_wrapper() {
 	local www_browser="xdg-open"
 	if [[ -n "${COOLERCONTROL_BROWSER}" ]] ; then
 		www_browser="${COOLERCONTROL_BROWSER}"
 	fi
 	dodir /usr/bin
-cat <<EOF > "${ED}/usr/bin/coolercontrol-html"
+cat <<EOF > "${ED}/usr/bin/coolercontrol-pwa"
 #!/bin/bash
 ${www_browser} "http://localhost:11987"
 EOF
-	fperms 0755 /usr/bin/coolercontrol-html
+	fperms 0755 "/usr/bin/coolercontrol-pwa"
 }
 
 src_install() {
@@ -87,11 +87,11 @@ src_install() {
 	insinto "/usr/share/metainfo"
 	doins "packaging/metadata/org.coolercontrol.CoolerControl.metainfo.xml"
 
-	if use html ; then
-		gen_html_wrapper
+	if use pwa ; then
+		gen_pwa_wrapper
 		make_desktop_entry \
-			"/usr/bin/coolercontrol-html" \
-			"CoolerControl (html)" \
+			"/usr/bin/coolercontrol-pwa" \
+			"CoolerControl (pwa)" \
 			"org.coolercontrol.CoolerControl" \
 			"Utility;"
 	fi
@@ -103,9 +103,9 @@ src_install() {
 
 pkg_postinst() {
 	xdg_pkg_postinst
-	if use html ; then
+	if use pwa ; then
 		ln -sf \
-			"${EROOT}/usr/bin/coolercontrol-html5" \
+			"${EROOT}/usr/bin/coolercontrol-pwa" \
 			"${EROOT}/usr/bin/coolercontrol" \
 			|| die
 	fi
