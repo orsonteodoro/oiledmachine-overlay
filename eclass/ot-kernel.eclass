@@ -438,6 +438,7 @@ VULNERABILITIES_FIXED=(
 # UBSAN: array-index-out-of-bounds - use panic_on_warn=1
 
 	# 2026-05-06
+	"Unassigned 0-day;Dirty Frag, PE, ACP, mitigation by disablement;"
 	"CVE-2025-71285;;"
 	"CVE-2025-71294;;"
 	"CVE-2025-71293;;"
@@ -836,7 +837,7 @@ VULNERABILITIES_FIXED=(
 	"CVE-2026-31695;UAF;"
 
 	# 2026-04-30
-	"CVE-2026-31431;Copy Fail, KEV, PE, CB, ACP;Verified backport for LTS"
+	"CVE-2026-31431;Copy Fail, KEV, PE, CB, ACP, verified mitigation backports applied for LTS;"
 	"CVE-2026-31693;;"
 	"CVE-2026-31692;;"
 	"CVE-2026-31786;BO;"
@@ -1110,7 +1111,7 @@ VULNERABILITIES_FIXED=(
 	"CVE-2026-31444;UAF, NPD, DoS;"
 	"CVE-2026-31435;;"
 	"CVE-2026-31433;OOB;"
-	"CVE-2026-31431;Copy Fail, KEV, PE, CB, ACP;Stable only"
+	"CVE-2026-31431;Copy Fail, KEV, PE, CB, ACP, stable only mitigation applied;"
 	"CVE-2026-31432;OOBW;"
 
 	# 2026-04-20
