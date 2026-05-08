@@ -39,8 +39,7 @@ PROTOBUF_CPP_SLOT="3"
 # cap_dac_override - For changing /sys/class/hwmon/ file permissions for fan control
 # cap_sys_rawio - For SuperIO detection through /dev/port
 FILECAPS=(
-#	"cap_sys_rawio,cap_dac_override=ep" "usr/bin/coolercontrold"
-	"cap_sys_rawio=ep" "usr/bin/coolercontrold"
+	"cap_sys_rawio,cap_dac_override=ep" "usr/bin/coolercontrold"
 )
 
 # NPM_AUDIT_FIX=0
@@ -708,7 +707,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${VIDEO_CARDS[@]}
 hwmon liquidctl man openrc systemd
-ebuild_revision_17
+ebuild_revision_18
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
