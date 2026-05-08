@@ -6,7 +6,7 @@ EAPI=8
 # Contains AI generated synthetic data in metadata.xml.
 # Contains patches derived from AI generated code.
 
-EBUILD_REV=""
+EBUILD_REV="ebuild_revision_9"
 BMQ_FN="bmq_v${PATCH_BMQ_VER}.patch" # FIXME
 GENPATCHES_VER="266"
 #PRJC_LTS="-lts"

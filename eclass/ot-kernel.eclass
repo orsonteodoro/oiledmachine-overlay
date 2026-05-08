@@ -14939,6 +14939,20 @@ ot-kernel_add_disable_debug_excludes() {
 	einfo "DISABLE_DEBUG_EXCLUDES:  ${DISABLE_DEBUG_EXCLUDES}"
 }
 
+# @FUNCTION: ot-kernel_disable_affected_modules
+# @DESCRIPTION:
+# Mitigates 0-day by disabling affected modules, but only if the vulnerability is non-essential.
+# The proposed mitigation for both Copy Fail and Dirty Frag was to disable affected modules.
+ot-kernel_disable_affected_modules() {
+	# Dirty Frag mitigation
+einfo "Applying 0-day mitigation"
+ewarn "QA:  Temporary Dirty Frag mitigation is being applied.  Removal of mitigation will be on Jun 07, 2026."
+einfo "Tip:  Disable affected modules for future 0-days for non-essential modules/subsystems."
+	ot-kernel_unset_configopt "CONFIG_INET_ESP"
+	ot-kernel_unset_configopt "CONFIG_INET6_ESP"
+	ot-kernel_unset_configopt "CONFIG_AF_RXRPC"
+}
+
 # @FUNCTION: ot-kernel_src_configure_assisted
 # @DESCRIPTION:
 # More assisted configuration
@@ -15130,6 +15144,8 @@ einfo "Disabling all debug and shortening logging buffers"
 	_ot-kernel_enable_ppc_476fpe_workaround
 	ot-kernel_set_tbm
 	ot-kernel_set_security_critical					# Must go after disable_debug to avoid disablement
+
+	ot-kernel_disable_affected_modules
 
 	ot-kernel_set_kconfig_from_envvar_array				# Final user override
 	ot-kernel_print_thp_status
