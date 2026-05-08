@@ -14961,6 +14961,12 @@ einfo "Tip:  Disable affected modules for future 0-days for non-essential module
 		ot-kernel_unset_configopt "CONFIG_AF_RXRPC"
 	elif ver_test "${KV_MAJOR_MINOR}" "-eq" "6.6" && ver_test "${PV}" "-ge" "6.6.138" ; then
 		ot-kernel_unset_configopt "CONFIG_AF_RXRPC"
+	elif ver_test "${KV_MAJOR_MINOR}" "-eq" "6.1" && ver_test "${PV}" "-ge" "6.1.172" ; then
+		ot-kernel_unset_configopt "CONFIG_AF_RXRPC"
+	elif ver_test "${KV_MAJOR_MINOR}" "-eq" "5.15" && ver_test "${PV}" "-ge" "5.15.206" ; then
+		ot-kernel_unset_configopt "CONFIG_AF_RXRPC"
+	elif ver_test "${KV_MAJOR_MINOR}" "-eq" "5.10" && ver_test "${PV}" "-ge" "5.10.255" ; then
+		ot-kernel_unset_configopt "CONFIG_AF_RXRPC"
 	else
 		ot-kernel_unset_configopt "CONFIG_AF_RXRPC"
 		ot-kernel_unset_configopt "CONFIG_INET_ESP"
@@ -15517,6 +15523,7 @@ einfo "Change the adjusted SLOT version by removing it from package.env and let"
 einfo "the eclass handle compiler selection or match the LLVM slot for this"
 einfo "package in /etc/portage/package.env with the same adjusted CC slot."
 einfo
+#wow1
 
 	#filter-flags '-march=*' '-mtune=*' '-flto*' '-fuse-ld=*' '-f*inline*'
 	strip-unsupported-flags
@@ -15576,7 +15583,7 @@ eerror "You must switch GCC to <= ${_gcc_max_slot}"
 # MB_LEN_MAX is 1 with clang.
 #
 	local extra_args=()
-	if eselect profile show | grep llvm ; then
+	if eselect profile show | grep -q -e "llvm" ; then
 		:
 	else
 		if use elibc_glibc ; then
