@@ -18369,13 +18369,53 @@ einfo "Secure wiping the private key in build directory for ${extraversion}"
 
 # @FUNCTION: pkg_prerm
 # @DESCRIPTION:
-# Remove wrappers
-pkg_prerm() {
+# Remove old configs
+ot-kernel_pkg_preinst() {
+	if [[ -n "${REPLACING_VERSIONS}" ]] ; then
+		local x
+		for x in ${REPLACING_VERSIONS} ; do
+	# tcca-<pv>-<extraversion>-<arch>.conf
+			local l=$(ls -1 "${EROOT}/etc/tcca-${x}"*"-"*"-"*".conf" 2>/dev/null | wc -l)
+			if [[ "${x}" != "${PV}" ]] && (( ${l} > 0 )) ; then
+einfo "Removing tcca configs for ${x}"
+				rm "${EROOT}/etc/tcca-${PV}-"*"-"*".conf" 2>/dev/null
+			fi
+		done
+	fi
+
+	# Remove old slots
+	local EOL_VERSIONS=(
+		"0"
+		"1"
+		"2"
+		"3"
+		"4.0" "4.1" "4.2" "4.3" "4.4" "4.5" "4.6" "4.7" "4.8" "4.9" "4.10" "4.11" "4.12" "4.13" "4.14" "4.15" "4.16" "4.17" "4.18" "4.19" "4.20"
+		"5.0" "5.1" "5.2" "5.3" "5.4" "5.5" "5.6" "5.7" "5.8" "5.9" "5.11" "5.12" "5.13" "5.14" "5.16" "5.17" "5.18" "5.19"
+		"6.0" "6.2" "6.3" "6.4" "6.5" "6.7" "6.8" "6.9" "6.10" "6.11" "6.13" "6.14" "6.15" "6.16" "6.17" "6.19"
+	)
+
+	local x
+	for x in "${EOL_VERSIONS[@]}" ; then
+		local l=$(ls -1 "${EROOT}/etc/tcca-${x}"*"-"*"-"*".conf" 2>/dev/null | wc -l)
+		if (( ${l} > 0 )) ; then
+einfo "Removing tcca configs for EOL version ${x}"
+			rm "${EROOT}/etc/tcca-${x}"*"-"*"-"*".conf" 2>/dev/null
+		fi
+	fi
+
+}
+
+# @FUNCTION: pkg_prerm
+# @DESCRIPTION:
+# Remove wrappers and config on complete uninstall.
+ot-kernel_pkg_prerm() {
 	if [[ -z "${REPLACED_BY_VERSION}" ]] ; then
 einfo "Removing tcca"
 		rm "${EROOT}/usr/bin/tcca" 2>/dev/null
 einfo "Removing ot-kernel-iosched"
 		rm "${EROOT}/etc/init.d/ot-kernel-iosched" 2>/dev/null
+einfo "Removing tcca configs"
+		rm "${EROOT}/etc/tcca-"*"-"*"-"*".conf" 2>/dev/null
 	fi
 }
 
@@ -18387,4 +18427,6 @@ EXPORT_FUNCTIONS \
 	src_configure \
 	src_compile \
 	src_install \
-	pkg_postinst
+	pkg_postinst \
+	pkg_preinst \
+	pkg_prerm
