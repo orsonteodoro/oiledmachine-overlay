@@ -415,8 +415,8 @@ UKSM_BASE_URI="https://raw.githubusercontent.com/dolohow/uksm/master/v${KV_MAJOR
 UKSM_FN="uksm-${KV_MAJOR_MINOR}.patch"
 UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
 
-MITIGATION_DATE="May 06, 2026" # Advisory date
-MITIGATION_LAST_UPDATE=1778127258 # From `date +%s -d "2026-05-07 06:14:18 +0200"` from changelog for latest tag
+MITIGATION_DATE="May 08, 2026" # Advisory date
+MITIGATION_LAST_UPDATE=1778222546 # From `date +%s -d "2026-05-08 08:42:26 +0200"` from changelog for latest tag
 MITIGATION_URI="https://lore.kernel.org/linux-cve-announce/"
 VULNERABILITIES_FIXED=(
 # High and critical are noted and only those that are fixed on this release day
@@ -437,8 +437,12 @@ VULNERABILITIES_FIXED=(
 # KASAN: null-ptr-deref - use panic_on_oops=1
 # UBSAN: array-index-out-of-bounds - use panic_on_warn=1
 
+	# 2026-05-08
+	"CVE-2026-43284;Dirty Frag partial mitigation commit, missing affected rxrpc fix, using mitigation by disablement as fallback;"
+	"CVE-2025-71285;;"
+
 	# 2026-05-06
-	"Unassigned 0-day;Dirty Frag, PE, ACP, mitigation by disablement;"
+	"CVE-2026-43284;Dirty Frag, PE, ACP, mitigation by disablement;"
 	"CVE-2025-71285;;"
 	"CVE-2025-71294;;"
 	"CVE-2025-71293;;"
@@ -14949,9 +14953,19 @@ ot-kernel_disable_affected_modules() {
 einfo "Applying 0-day mitigation"
 ewarn "QA:  Temporary Dirty Frag mitigation is being applied.  Removal of mitigation will be on Jun 07, 2026."
 einfo "Tip:  Disable affected modules for future 0-days for non-essential modules/subsystems."
-	ot-kernel_unset_configopt "CONFIG_INET_ESP"
-	ot-kernel_unset_configopt "CONFIG_INET6_ESP"
-	ot-kernel_unset_configopt "CONFIG_AF_RXRPC"
+	if "${KV_MAJOR_MINOR}" "-eq" "7.0" && ver_test "${PV}" "-ge" "7.0.5" ; then
+		ot-kernel_unset_configopt "CONFIG_AF_RXRPC"
+	elif "${KV_MAJOR_MINOR}" "-eq" "6.18" && ver_test "${PV}" "-ge" "6.18.28" ; then
+		ot-kernel_unset_configopt "CONFIG_AF_RXRPC"
+	elif "${KV_MAJOR_MINOR}" "-eq" "6.12" && ver_test "${PV}" "-ge" "6.12.87" ; then
+		ot-kernel_unset_configopt "CONFIG_AF_RXRPC"
+	elif "${KV_MAJOR_MINOR}" "-eq" "6.6" && ver_test "${PV}" "-ge" "6.6.138" ; then
+		ot-kernel_unset_configopt "CONFIG_AF_RXRPC"
+	else
+		ot-kernel_unset_configopt "CONFIG_AF_RXRPC"
+		ot-kernel_unset_configopt "CONFIG_INET_ESP"
+		ot-kernel_unset_configopt "CONFIG_INET6_ESP"
+	fi
 }
 
 # @FUNCTION: ot-kernel_src_configure_assisted
