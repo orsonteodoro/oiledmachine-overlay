@@ -1001,7 +1001,7 @@ einfo "Reloading udev rules"
 
 elog ""
 elog "CoolerControlD is now running as the restricted 'coolercontrold' user (improved security)."
-elog "If it is running now, kill/stop it now and restart it as limited user."
+elog "If it is running now as root, kill/stop it now and restart it as a limited user."
 elog ""
 elog "Start commands:"
 elog "  OpenRC   →  rc-service coolercontrold start"
