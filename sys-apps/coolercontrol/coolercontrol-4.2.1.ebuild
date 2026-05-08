@@ -26,7 +26,7 @@ LICENSE="
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-qt6 html hwmon openrc systemd wayland X
+qt6 html hwmon man openrc systemd wayland X
 ebuild_revision_1
 "
 REQUIRED_USE="
@@ -94,6 +94,10 @@ src_install() {
 			"CoolerControl (html)" \
 			"org.coolercontrol.CoolerControl" \
 			"Utility;"
+	fi
+
+	if use man ; then
+		doman "packaging/man/coolercontrol.1"
 	fi
 }
 

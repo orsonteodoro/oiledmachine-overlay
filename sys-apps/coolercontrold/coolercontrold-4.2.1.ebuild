@@ -1,4 +1,4 @@
-# Copyright 2022-2025 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 2022-2026 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -7,6 +7,22 @@ EAPI=8
 # D12, U22
 
 # This contains info obtained by AI inference.
+# This ebuild contains AI generated assets/artifacts.
+
+#
+# I verified that it is possible to run as a limited user.
+#
+# Security score
+#
+# | Property               | Before       | After               |
+# | ---                    | ---          | ---                 |
+# | Privilege level        | Root (10/10) | Limited user + caps |
+# | Attack surface         | Very high    | Medium low          |
+# | Compromised impact     | Catastropic  | Moderate            |
+# | Filesystem access      | Full         | Restricted          |
+# | Raw hardware access    | Unlimited    | Only needed caps    |
+# | Overall security score | 3.5 / 10     | 7.8 / 10            |
+#
 
 NODE_SLOT="22"
 NPM_TARBALL="coolercontrol-${PV}.tar.bz2"
@@ -19,10 +35,19 @@ RUST_PV="${RUST_MAX_VER}"
 ABSEIL_CPP_SLOT="20220623"
 PROTOBUF_CPP_SLOT="3"
 
+# Only provide the necessary capabilities
+# cap_dac_override - For changing /sys/class/hwmon/ file permissions for fan control
+# cap_sys_rawio - For SuperIO detection through /dev/port
+FILECAPS=(
+#	"cap_sys_rawio,cap_dac_override=ep" "usr/bin/coolercontrold"
+	"cap_sys_rawio=ep" "usr/bin/coolercontrold"
+)
+
 # NPM_AUDIT_FIX=0
 NPM_INSTALL_ARGS=(
 	"--prefer-offline"
 )
+
 VIDEO_CARDS=(
 	"video_cards_amdgpu"
 	"video_cards_nvidia"
@@ -589,9 +614,9 @@ zvariant_derive-5.9.2
 zvariant_utils-3.3.0
 "
 
-inherit abseil-cpp cargo lcnr npm protobuf python-single-r1 rust
+inherit abseil-cpp cargo fcaps lcnr npm protobuf python-single-r1 rust
 
-#KEYWORDS="~amd64" # Doing security review
+KEYWORDS="~amd64"
 S_ROOT="${WORKDIR}/coolercontrol-${PV}"
 S="${S_ROOT}/coolercontrold"
 SRC_URI="
@@ -679,20 +704,25 @@ LICENSE="
 	GPL-3+
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${VIDEO_CARDS[@]}
-hwmon liquidctl openrc systemd
-ebuild_revision_13
+hwmon liquidctl man openrc systemd
+ebuild_revision_15
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
+	filecaps
 "
+# The sys-libs/libcap is an ebuild or init security requirement not upstream requirement.
+# virtual/udev is an ebuild requirement but not upstream.
 RDEPEND+="
 	acct-group/coolercontrold
 	acct-user/coolercontrold
 	dev-cpp/abseil-cpp:20220623
 	dev-libs/protobuf:3/3.21
+	sys-libs/libcap
+	virtual/udev
 	liquidctl? (
 		app-misc/liquidctl
 	)
@@ -710,12 +740,13 @@ DEPEND+="
 	${RDEPEND}
 	x11-libs/libdrm
 "
-VUE_DEPEND="
-	>=net-libs/nodejs-18.12.0[npm]
-"
+# app-admin/sudo is an ebuild requirement but not upstream.
 BDEPEND+="
-	${VUE_DEPEND}
+	${VUE_BDEPEND}
 	>=dev-build/make-4.3
+	app-admin/sudo
+	net-libs/nodejs:${NODE_SLOT}[npm]
+	net-libs/nodejs:=
 	virtual/pkgconfig
 	|| (
 		dev-lang/rust:${RUST_PV}[wasm]
@@ -728,6 +759,7 @@ BDEPEND+="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-4.2.1-symbolize-python.patch"
+	"${FILESDIR}/${PN}-4.2.1-remove-root-check.patch"
 )
 
 # @FUNCTION: cargo_src_unpack
@@ -902,6 +934,10 @@ src_install() {
 	exeinto "/usr/bin"
 	doexe "${S}/target/"*"/release/coolercontrold"
 
+	# Create directories with correct ownership
+	keepdir "/etc/coolercontrol"
+	keepdir "/var/lib/coolercontrol"
+
 	if use openrc ; then
 ewarn
 ewarn "The OpenRC script is experimental for ${CATEGORY}/${PN}."
@@ -921,6 +957,9 @@ ewarn "init system."
 ewarn
 	fi
 
+	insinto "/etc/udev/rules.d"
+	doins "${FILESDIR}/99-coolercontrol.rules"
+
 	LCNR_SOURCE="${WORKDIR}/cargo_home/gentoo"
 	LCNR_TAG="third_party_cargo"
 	lcnr_install_files
@@ -928,16 +967,84 @@ ewarn
 	LCNR_SOURCE="${S_ROOT}/coolercontrol-ui/node_modules"
 	LCNR_TAG="third_party_npm"
 	lcnr_install_files
-	local gui_port=${COOLERCONTROL_GUI_PORT:-11987}
-	local grpc_port=${COOLERCONTROL_GRPC_PORT:-11988}
-ewarn "The /etc/coolercontrol can be removed to reset the daemon settings."
-einfo "GUI port:  ${gui_port}"
-einfo "gRPC port:  ${grpc_port}"
+
+	einstalldocs
+	doman "${ROOT}/packaging/man/coolercontrold.8"
 }
 
-# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+pkg_postinst() {
+	local gui_port=${COOLERCONTROL_GUI_PORT:-11987}
+	local grpc_port=${COOLERCONTROL_GRPC_PORT:-11988}
+einfo
+ewarn "The /etc/coolercontrol can be removed to reset the daemon settings."
+einfo
+einfo "GUI port:  ${gui_port}"
+einfo "gRPC port:  ${grpc_port}"
+einfo
+einfo "Bookmark and access the GUI from the web browser:  http://localhost:${gui_port}"
+einfo
+einfo "Returning from a long vacation?"
+einfo "To reset the password:  /usr/bin/coolercontrol --reset-password"
+einfo
+
+	fcaps_pkg_postinst
+
+	# Set correct permissions
+	chown -R "coolercontrold:coolercontrold" "${EROOT}/etc/coolercontrol" || true
+	chown -R "coolercontrold:coolercontrold" "${EROOT}/var/lib/coolercontrol" || true
+
+einfo "TODO:  any issues"
+
+einfo "Reloading udev rules"
+	sudo udevadm control --reload-rules
+	sudo udevadm trigger
+
+elog ""
+elog "CoolerControlD has been installed and configured to run as the dedicated 'coolercontrold' user."
+elog ""
+elog "Security Note:"
+elog ""
+elog "  • Always run the daemon as a non-root user with minimal capabilities instead of full root privileges."
+elog "  • This significantly reduces the attack surface."
+elog ""
+elog "To start the service:"
+
+    if has_version sys-apps/openrc; then
+elog
+elog "  OpenRC:"
+elog
+elog "    rc-update add coolercontrold default"
+elog "    rc-service coolercontrold start"
+elog "    rc-service coolercontrold status"
+    fi
+
+    if has_version sys-apps/systemd; then
+elog
+elog "  systemd:"
+elog
+elog "    systemctl enable --now coolercontrold"
+elog "    systemctl status coolercontrold"
+    fi
+
+# Not necessary at the moment.
+#elog ""
+#elog "For the CoolerControl GUI to access sensors and devices, add your user to the group:"
+#elog
+#elog "    usermod -aG coolercontrold \$USER"
+#elog ""
+#elog "Log file: /var/log/coolercontrold.log"
+#elog "Config:   /etc/coolercontrol/config.toml"
+elog ""
+elog "You may want to reboot or log out/in after adding your user to the group."
+elog ""
+}
+
+# OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.17.2, 20231201)
 # OILEDMACHINE-OVERLAY-TEST:  passed (2.2.1, 20250701)
 # OILEDMACHINE-OVERLAY-TEST:  passed (2.2.2, 20250814)
 # OILEDMACHINE-OVERLAY-TEST:  passed (3.0.1, 20251004)
-# OILEDMACHINE-OVERLAY-TEST:  passed (4.2.1, 20260507)
+# OILEDMACHINE-OVERLAY-TEST:  passed (4.2.1, 20260507) with limited user
+# OpenRC - passed
+# PWA - passed
+# Systemd - untested

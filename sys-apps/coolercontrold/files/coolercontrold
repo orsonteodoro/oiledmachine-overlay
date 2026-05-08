@@ -1,14 +1,25 @@
 #!/sbin/openrc-run
 # This file is part of the coolercontrold package.
 
-description="Cooler Control Daemon"
+description="CoolerControl Daemon"
 
 COOLERCONTROL_LOG="INFO"
+
+pidfile="/run/${RC_SVCNAME}.pid"
+logfile="/var/log/coolercontrold.log"
 
 depend()
 {
         need localmount
         after bootmisc coolercontrol-liqctld net
+}
+
+start_pre() {
+	checkpath -d -m 0755 -o coolercontrold:coolercontrold /var/lib/coolercontrol
+	checkpath -f -m 0644 -o coolercontrold:coolercontrold "${logfile}"
+
+	# Ensure config directory is writable by the daemon
+	checkpath -d -m 0755 -o coolercontrold:coolercontrold /etc/coolercontrol
 }
 
 start()
@@ -18,7 +29,7 @@ start()
 			--start \
 			--user coolercontrold \
 			--group coolercontrold \
-			--pidfile /run/coolercontrold.pid \
+			--pidfile "${pidfile}" \
 			--background \
 			--exec /usr/bin/coolercontrold
 	eend $?
@@ -31,7 +42,7 @@ stop()
 		start-stop-daemon \
 			--stop \
 			--retry TERM/10/KILL/5 \
-			--pidfile /run/coolercontrold.pid
+			--pidfile "${pidfile}"
 	        retval=$?
         eend ${retval}
         return ${retval}

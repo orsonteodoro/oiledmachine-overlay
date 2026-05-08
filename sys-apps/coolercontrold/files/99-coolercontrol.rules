@@ -1,0 +1,9 @@
+# Fintek Super I/O + general hwmon
+KERNEL=="hwmon[0-9]*", SUBSYSTEM=="hwmon", GROUP="coolercontrold", MODE="0660"
+KERNEL=="pwm[0-9]*", SUBSYSTEM=="hwmon", GROUP="coolercontrold", MODE="0660"
+KERNEL=="fan[0-9]*", SUBSYSTEM=="hwmon", GROUP="coolercontrold", MODE="0660"
+KERNEL=="temp[0-9]*", SUBSYSTEM=="hwmon", GROUP="coolercontrold", MODE="0660"
+
+# AMD GPU
+SUBSYSTEM=="drm", KERNEL=="card[0-9]*", GROUP="video", MODE="0660"
+SUBSYSTEM=="drm", KERNEL=="renderD[0-9]*", GROUP="video", MODE="0660"

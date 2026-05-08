@@ -1,0 +1,26 @@
+# Allow to run as limited user
+--- coolercontrold.orig/daemon/src/main.rs	2026-04-21 12:00:09.000000000 -0700
++++ coolercontrold/daemon/src/main.rs	2026-05-07 15:54:10.102142703 -0700
+@@ -277,7 +277,6 @@ fn main() -> Result<()> {
+         let run_token = setup_termination_signals();
+         handle_non_root_commands(&cmd_args).await?;
+         let log_buf_handle = logger::setup_logging(&cmd_args, run_token.clone()).await?;
+-        verify_is_root()?;
+         handle_detect_command(&cmd_args);
+         #[cfg(feature = "io_uring")]
+         cc_fs::register_uring_buffers()?;
+@@ -392,14 +391,6 @@ fn main() -> Result<()> {
+     })
+ }
+ 
+-fn verify_is_root() -> Result<()> {
+-    if Uid::effective().is_root() {
+-        Ok(())
+-    } else {
+-        Err(anyhow!("coolercontrold must be run with root permissions"))
+-    }
+-}
+-
+ /// Sets up signal handlers for termination and interrupt signals,
+ /// and returns a `CancellationToken` that is triggered when any of
+ /// those signals are received, allowing the caller to handle the

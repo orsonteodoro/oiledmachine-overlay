@@ -14,5 +14,17 @@ TimeoutStopSec=10
 User=coolercontrold
 Group=coolercontrold
 
+# Security hardening
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=read-only
+PrivateTmp=yes
+PrivateDevices=no          # needed for hwmon access
+ProtectKernelTunables=yes
+ProtectKernelModules=no    # may need modules
+ProtectControlGroups=yes
+
+ReadWritePaths=/etc/coolercontrol /var/lib/coolercontrol /run
+
 [Install]
 WantedBy=multi-user.target
