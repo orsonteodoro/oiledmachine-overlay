@@ -190,10 +190,10 @@ NASM_PV="2.14.02"
 NODE_SLOT=22
 PYTHON_COMPAT=( "python3_"{10..13} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
-RUST_LIVE_TIMESTAMP="Feb 27, 2026 09:38:23 -0800" # Same as Rust 1.96.0 timestamp
+RUST_LIVE_TIMESTAMP="Apr 10, 2026 10:49:37 -0400" # Same as Rust 1.97.0 timestamp
 RUST_MAX_VER="9999"
 RUST_MIN_VER="1.90.0"
-RUST_NEEDS_LLVM=1
+RUST_NEEDS_LLVM=1 # Prune rustc for unused LLVM slots
 RUST_PV="${RUST_MIN_VER}"
 SPEECH_DISPATCHER_PV="0.11.4-r1"
 XKBCOMMON_PV="0.4.1"
@@ -312,7 +312,7 @@ rust-simd selinux sndio speech +system-av1
 +system-harfbuzz +system-icu +system-jpeg +system-libevent
 +system-libvpx system-pipewire system-png +system-webp systemd -telemetry +vaapi -valgrind
 +wayland +webrtc wifi webspeech
-ebuild_revision_29
+ebuild_revision_30
 "
 # telemetry disabled for crypto/security reasons
 
@@ -474,25 +474,19 @@ PATENT_CDEPENDS="
 RUST_CDEPEND="
 	llvm_slot_20? (
 		|| (
-			=dev-lang/rust-1.90*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.90*[${MULTILIB_USEDEP}]
+			dev-lang/rust:1.90.0[${MULTILIB_USEDEP}]
+			dev-lang/rust-bin:1.90.0[${MULTILIB_USEDEP}]
 		)
 	)
 	llvm_slot_21? (
 		|| (
-			=dev-lang/rust-1.91*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.92*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.93*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.94*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.91*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.92*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.93*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.94*[${MULTILIB_USEDEP}]
+			dev-lang/rust:1.94.1[${MULTILIB_USEDEP}]
+			dev-lang/rust-bin:1.94.1[${MULTILIB_USEDEP}]
 		)
 	)
 	llvm_slot_22? (
-			=dev-lang/rust-9999[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-9999*[${MULTILIB_USEDEP}]
+			dev-lang/rust:9999[${MULTILIB_USEDEP}]
+			dev-lang/rust-bin:9999[${MULTILIB_USEDEP}]
 	)
 	|| (
 		dev-lang/rust:=
@@ -1304,7 +1298,7 @@ eerror "Switch to live with \`eselect rust\`"
 		if (( ${merge_time} < ${compatible_time} )) ; then
 eerror
 eerror "Detected old live timestamp."
-eerror "Re-emerge ${pkg_name} or switch to Rust 1.96.0 or later."
+eerror "Re-emerge ${pkg_name} or switch to Rust 1.97.0 or later."
 eerror
 eerror "Current timestamp:  "$(date --date="@${merge_time}")
 eerror "Expected timestamp:  >= "$(date --date="@${compatible_time}")
@@ -1357,7 +1351,8 @@ ewarn "Building ${PN} with USE=pgo and FEATURES=-userpriv is not supported!"
 		llvm_pkg_setup
 
 		rust_pkg_setup
-		"${RUSTC}" --version 2>&1 >/dev/null || die "QA:  RUSTC is not initalized"
+		[[ -z "${RUSTC}" ]] && die
+		"${RUSTC}" --version || die "QA:  RUSTC is not initalized"
 		if tc-is-clang && is-flagq '-flto*' && tc-ld-is-lld ; then
 			has_version "llvm-core/lld:$(clang-major-version)" \
 				|| die "Clang PGO requires LLD."

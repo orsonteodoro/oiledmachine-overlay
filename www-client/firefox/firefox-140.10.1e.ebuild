@@ -192,8 +192,8 @@ NODE_SLOT=22
 PYTHON_COMPAT=( "python3_"{10..13} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
 RUST_MAX_VER="1.86.0"
-RUST_MIN_VER="1.82.0"
-RUST_NEEDS_LLVM=1
+RUST_MIN_VER="1.86.0"
+RUST_NEEDS_LLVM=1 # Prune rustc for unused LLVM slots
 RUST_PV="${RUST_MIN_VER}"
 SPEECH_DISPATCHER_PV="0.11.4-r1"
 XKBCOMMON_PV="0.4.1"
@@ -426,7 +426,7 @@ alsa cups +dbus debug eme-free firejail +hardened -hwaccel jack +jemalloc
 system-pipewire
 system-png +system-webp systemd -telemetry test +vaapi +wayland +webrtc wifi
 webspeech +X
-ebuild_revision_29
+ebuild_revision_30
 "
 
 # Firefox-only IUSE
@@ -586,17 +586,8 @@ PATENT_CDEPENDS="
 RUST_CDEPEND="
 	llvm_slot_19? (
 		|| (
-			=dev-lang/rust-1.82*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.83*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.84*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.85*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.86*[${MULTILIB_USEDEP}]
-
-			=dev-lang/rust-bin-1.82*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.83*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.84*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.85*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.86*[${MULTILIB_USEDEP}]
+			dev-lang/rust:1.86.0[${MULTILIB_USEDEP}]
+			dev-lang/rust-bin:1.86.0[${MULTILIB_USEDEP}]
 		)
 	)
 	|| (
@@ -1512,7 +1503,8 @@ ewarn "Building ${PN} with USE=pgo and FEATURES=-userpriv is not supported!"
 		llvm_pkg_setup
 
 		rust_pkg_setup
-		"${RUSTC}" --version 2>&1 >/dev/null || die "QA:  RUSTC is not initalized"
+		[[ -z "${RUSTC}" ]] && die
+		"${RUSTC}" --version || die "QA:  RUSTC is not initalized"
 		if tc-is-clang && is-flagq '-flto*' && tc-ld-is-lld ; then
 			has_version "llvm-core/lld:$(clang-major-version)" \
 				|| die "Clang PGO requires LLD."
