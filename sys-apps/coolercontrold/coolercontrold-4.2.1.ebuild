@@ -943,10 +943,6 @@ src_install() {
 	keepdir "/var/lib/coolercontrol"
 
 	if use openrc ; then
-ewarn
-ewarn "The OpenRC script is experimental for ${CATEGORY}/${PN}."
-ewarn "If it works, send an issue request to remove this message."
-ewarn
 		exeinto "/etc/init.d"
 		doexe "${FILESDIR}/coolercontrold"
 	fi
