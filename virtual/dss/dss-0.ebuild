@@ -127,7 +127,7 @@ ${PASSWORD_MANAGER_IUSE[@]}
 ${PROFILES_IUSE[@]}
 ${SANDBOX_IUSE[@]}
 +enforce
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	^^ (
@@ -605,31 +605,31 @@ LOGGER_DEPENDS="
 KERNEL_DEPENDS="
 	gentoo-sources? (
 		|| (
-			~sys-kernel/gentoo-sources-7.0.3
-			~sys-kernel/gentoo-sources-6.18.26
-			~sys-kernel/gentoo-sources-6.12.85
+			~sys-kernel/gentoo-sources-7.0.4
+			~sys-kernel/gentoo-sources-6.18.27
+			~sys-kernel/gentoo-sources-6.12.86
 		)
 		sys-kernel/gentoo-sources:=
 	)
 	git-sources? (
 		|| (
-			~sys-kernel/git-sources-7.1_rc1
+			~sys-kernel/git-sources-7.1_rc2
 		)
 		sys-kernel/git-sources:=
 	)
 	ot-sources? (
 		|| (
-			~sys-kernel/ot-sources-7.0.3
-			~sys-kernel/ot-sources-6.18.26
-			~sys-kernel/ot-sources-6.12.85
+			~sys-kernel/ot-sources-7.0.4
+			~sys-kernel/ot-sources-6.18.27
+			~sys-kernel/ot-sources-6.12.86
 		)
 		sys-kernel/ot-sources:=
 	)
 	vanilla-sources? (
 		|| (
-			~sys-kernel/vanilla-sources-7.0.3
-			~sys-kernel/vanilla-sources-6.18.26
-			~sys-kernel/vanilla-sources-6.12.85
+			~sys-kernel/vanilla-sources-7.0.4
+			~sys-kernel/vanilla-sources-6.18.27
+			~sys-kernel/vanilla-sources-6.12.86
 		)
 		sys-kernel/vanilla-sources:=
 	)

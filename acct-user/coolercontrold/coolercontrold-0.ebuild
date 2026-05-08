@@ -9,6 +9,8 @@ DESCRIPTION="A user for coolercontrold"
 ACCT_USER_ID=-1
 ACCT_USER_HOME="/var/lib/coolercontrold"
 ACCT_USER_HOME_PERMS=0700
-ACCT_USER_GROUPS=( coolercontrold )
+ACCT_USER_GROUPS=( "coolercontrold" "video" )
+
+IUSE+=" ebuild_revision_1"
 
 acct-user_add_deps

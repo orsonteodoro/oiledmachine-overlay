@@ -155,6 +155,9 @@ einfo "CRSH = Crash"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"CSRF"($|" "|";"|",") ]] ; then
 einfo "CSRF = Cross Site Request Forgery"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"DATALOSS"($|" "|";"|",") ]] ; then
+einfo "DATALOSS = Data Loss"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"DBCI"($|" "|";"|",") ]] ; then
 einfo "DBCI = Database Command Injection"
 		fi
@@ -163,6 +166,7 @@ einfo "DbZ = Divide by Zero"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"DC"($|" "|";"|",") ]] ; then
 # Not the same as Memory Corruption
+# Use for HDD/SSD/filesystem storage
 einfo "DC = Data Corruption"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"DF"($|" "|";"|",") ]] ; then
@@ -338,6 +342,7 @@ einfo "KP = Kernel Panic"
 einfo "MBV = Memory Bounds Violation (Off-by-One/Off-by-Any Read/Write, Heap/Stack Overread/Overwrite/Underread/Overwrite)"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"MC"($|" "|";"|",") ]] ; then
+# Use for RAM storage
 einfo "MC = Memory Corruption"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"MISCOMP"($|" "|";"|",") ]] ; then

@@ -102,7 +102,7 @@ EOL_VERSIONS=(
 )
 
 # For zero-tolerance mode
-MULTISLOT_LATEST_KERNEL_RELEASE=("5.10.254" "5.15.204" "6.1.170" "6.6.137" "6.12.85" "6.18.26" "7.0.3")
+MULTISLOT_LATEST_KERNEL_RELEASE=("5.10.254" "5.15.204" "6.1.170" "6.6.137" "6.12.86" "6.18.27" "7.0.4")
 
 inherit mitigate-dos toolchain-funcs
 
@@ -122,6 +122,7 @@ VIDEO_CARDS=(
 IUSE+="
 ${VIDEO_CARDS[@]}
 +max-uptime
+ebuild_revision_1
 "
 REQUIRED_USE="
 zero-tolerance
