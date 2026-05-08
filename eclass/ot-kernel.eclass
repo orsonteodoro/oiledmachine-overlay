@@ -18395,13 +18395,13 @@ einfo "Removing tcca configs for ${x}"
 	)
 
 	local x
-	for x in "${EOL_VERSIONS[@]}" ; then
+	for x in "${EOL_VERSIONS[@]}" ; do
 		local l=$(ls -1 "${EROOT}/etc/tcca-${x}"*"-"*"-"*".conf" 2>/dev/null | wc -l)
 		if (( ${l} > 0 )) ; then
 einfo "Removing tcca configs for EOL version ${x}"
 			rm "${EROOT}/etc/tcca-${x}"*"-"*"-"*".conf" 2>/dev/null
 		fi
-	fi
+	done
 
 }
 
