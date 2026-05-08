@@ -4,6 +4,15 @@ KERNEL=="pwm[0-9]*", SUBSYSTEM=="hwmon", GROUP="coolercontrold", MODE="0660"
 KERNEL=="fan[0-9]*", SUBSYSTEM=="hwmon", GROUP="coolercontrold", MODE="0660"
 KERNEL=="temp[0-9]*", SUBSYSTEM=="hwmon", GROUP="coolercontrold", MODE="0660"
 
-# AMD GPU
+# AMD GPUs (amdgpu driver)
+SUBSYSTEM=="drm", KERNEL=="card[0-9]*", GROUP="video", MODE="0660"
+SUBSYSTEM=="drm", KERNEL=="renderD[0-9]*", GROUP="video", MODE="0660"
+
+# NVIDIA GPUs
+SUBSYSTEM=="nvidia", KERNEL=="nvidia[0-9]*", GROUP="video", MODE="0660"
+SUBSYSTEM=="nvidia", KERNEL=="nvidiactl", GROUP="video", MODE="0660"
+SUBSYSTEM=="nvidia", KERNEL=="nvidia-uvm", GROUP="video", MODE="0660"
+
+# General DRM fallback
 SUBSYSTEM=="drm", KERNEL=="card[0-9]*", GROUP="video", MODE="0660"
 SUBSYSTEM=="drm", KERNEL=="renderD[0-9]*", GROUP="video", MODE="0660"

@@ -708,7 +708,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${VIDEO_CARDS[@]}
 hwmon liquidctl man openrc systemd
-ebuild_revision_15
+ebuild_revision_17
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -719,12 +719,16 @@ REQUIRED_USE="
 RDEPEND+="
 	acct-group/coolercontrold
 	acct-user/coolercontrold
+	app-arch/zstd:=
 	dev-cpp/abseil-cpp:20220623
 	dev-libs/protobuf:3/3.21
 	sys-libs/libcap
 	virtual/udev
 	liquidctl? (
-		app-misc/liquidctl
+		${PYTHON_DEPS}
+		$(python_gen_cond_dep '
+			app-misc/liquidctl[${PYTHON_USEDEP}]
+		')
 	)
 	hwmon? (
 		>=sys-apps/lm-sensors-3.6.0
@@ -903,6 +907,8 @@ src_configure() {
 		"${S}/resources/liqctld/verify.py" \
 		|| die
 
+	export ZSTD_SYS_USE_PKG_CONFIG=1
+
 	S="${S_ROOT}/coolercontrold" \
 	cargo_src_configure
 	pushd "${S_ROOT}" || die
@@ -930,9 +936,7 @@ einfo "PWD: $(pwd)"
 }
 
 src_install() {
-	# cargo install is broken
-	exeinto "/usr/bin"
-	doexe "${S}/target/"*"/release/coolercontrold"
+	cargo_src_install --path daemon
 
 	# Create directories with correct ownership
 	keepdir "/etc/coolercontrol"
@@ -969,7 +973,7 @@ ewarn
 	lcnr_install_files
 
 	einstalldocs
-	doman "${ROOT}/packaging/man/coolercontrold.8"
+	doman "${S_ROOT}/packaging/man/coolercontrold.8"
 }
 
 pkg_postinst() {
@@ -1018,5 +1022,5 @@ elog ""
 # OILEDMACHINE-OVERLAY-TEST:  passed (3.0.1, 20251004)
 # OILEDMACHINE-OVERLAY-TEST:  passed (4.2.1, 20260507) with limited user
 # OpenRC - passed
-# PWA - passed
+# PWA (web browser GUI) - passed
 # Systemd - untested
