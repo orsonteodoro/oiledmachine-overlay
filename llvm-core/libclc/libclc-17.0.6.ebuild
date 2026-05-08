@@ -20,7 +20,10 @@ HOMEPAGE="https://libclc.llvm.org/"
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( MIT BSD )"
 SLOT="0"
 KEYWORDS="amd64 arm64 ~riscv x86"
-IUSE="+spirv video_cards_nvidia video_cards_r600 video_cards_radeonsi"
+IUSE="
++spirv video_cards_nvidia video_cards_r600 video_cards_radeonsi
+ebuild_revision_1
+"
 
 LLVM_MAX_SLOT=17
 BDEPEND="

@@ -21,7 +21,10 @@ HOMEPAGE="https://libclc.llvm.org/"
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( MIT BSD )"
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~riscv ~x86"
-IUSE="+spirv video_cards_nvidia video_cards_r600 video_cards_radeonsi"
+IUSE="
++spirv video_cards_nvidia video_cards_r600 video_cards_radeonsi
+ebuild_revision_1
+"
 
 BDEPEND="
 	${PYTHON_DEPS}

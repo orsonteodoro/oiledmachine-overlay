@@ -38,7 +38,10 @@ HOMEPAGE="https://libclc.llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( MIT BSD )"
 SLOT="0"
-IUSE="+spirv test video_cards_nvidia video_cards_radeonsi"
+IUSE="
++spirv test video_cards_nvidia video_cards_radeonsi
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 BDEPEND="
