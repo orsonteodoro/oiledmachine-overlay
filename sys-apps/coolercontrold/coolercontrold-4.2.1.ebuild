@@ -1000,42 +1000,14 @@ einfo "Reloading udev rules"
 	sudo udevadm trigger
 
 elog ""
-elog "CoolerControlD has been installed and configured to run as the dedicated 'coolercontrold' user."
+elog "CoolerControlD is now running as the restricted 'coolercontrold' user (improved security)."
 elog ""
-elog "Security Note:"
+elog "Start commands:"
+elog "  OpenRC   →  rc-service coolercontrold start"
+elog "  systemd  →  systemctl enable --now coolercontrold"
 elog ""
-elog "  • Always run the daemon as a non-root user with minimal capabilities instead of full root privileges."
-elog "  • This significantly reduces the attack surface."
-elog ""
-elog "To start the service:"
-
-    if has_version sys-apps/openrc; then
-elog
-elog "  OpenRC:"
-elog
-elog "    rc-update add coolercontrold default"
-elog "    rc-service coolercontrold start"
-elog "    rc-service coolercontrold status"
-    fi
-
-    if has_version sys-apps/systemd; then
-elog
-elog "  systemd:"
-elog
-elog "    systemctl enable --now coolercontrold"
-elog "    systemctl status coolercontrold"
-    fi
-
-# Not necessary at the moment.
-#elog ""
-#elog "For the CoolerControl GUI to access sensors and devices, add your user to the group:"
-#elog
-#elog "    usermod -aG coolercontrold \$USER"
-#elog ""
-#elog "Log file: /var/log/coolercontrold.log"
-#elog "Config:   /etc/coolercontrol/config.toml"
-elog ""
-elog "You may want to reboot or log out/in after adding your user to the group."
+elog "Add your user to the coolercontrold group for GUI access:"
+elog "    usermod -aG coolercontrold \$USER"
 elog ""
 }
 
