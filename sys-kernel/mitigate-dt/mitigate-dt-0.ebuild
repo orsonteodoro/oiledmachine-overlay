@@ -101,7 +101,7 @@ EOL_VERSIONS=(
 )
 
 # For zero-tolerance mode
-MULTISLOT_LATEST_KERNEL_RELEASE=("5.10.254" "5.15.204" "6.1.170" "6.6.138" "6.12.87" "6.18.28" "7.0.5")
+MULTISLOT_LATEST_KERNEL_RELEASE=("5.10.255" "5.15.206" "6.1.172" "6.6.138" "6.12.87" "6.18.28" "7.0.5")
 
 inherit mitigate-dt toolchain-funcs
 
@@ -121,7 +121,7 @@ VIDEO_CARDS=(
 )
 IUSE+="
 ${VIDEO_CARDS[@]}
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 zero-tolerance

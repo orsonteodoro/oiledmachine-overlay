@@ -10,16 +10,19 @@ DESCRIPTION="Virtual for the ot-sources LTS ebuilds for"
 KEYWORDS="
 ~alpha ~amd64 ~arm ~hppa ~loong ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86
 "
-IUSE=" 5_10 5_15 6_1 6_6 6_12 6_18"
+IUSE="
+5_10 5_15 6_1 6_6 6_12 6_18
+ebuild_revision_1
+"
 RDEPEND="
 	5_10? (
-		~sys-kernel/ot-sources-5.10.254
+		~sys-kernel/ot-sources-5.10.255
 	)
 	5_15? (
-		~sys-kernel/ot-sources-5.15.204
+		~sys-kernel/ot-sources-5.15.206
 	)
 	6_1? (
-		~sys-kernel/ot-sources-6.1.170
+		~sys-kernel/ot-sources-6.1.172
 	)
 	6_6? (
 		~sys-kernel/ot-sources-6.6.138
