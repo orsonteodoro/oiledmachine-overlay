@@ -83,6 +83,7 @@ exist in build files.
 | Rust 1.86.0                     | Available                             | F41 (1.86.0), F42 (1.86.0)                         |
 | Rust 1.88.0                     | Available                             |                                                    |
 | Rust 1.89.0                     | Available                             | U22 (1.89.0), U24 (1.89.0)                         |
+| Rust 1.91.0                     | Not supported                         | G23 (1.91.0)                                       |
 | Rust 1.91.1 [C]                 | Available                             | U22 (1.91.1), U24 (1.91.1)                         |
 | Rust 1.93.1                     | Available                             | G23 (1.93.1)                                       |
 | Rust 1.94.1                     | Available                             |                                                    |
