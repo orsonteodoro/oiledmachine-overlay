@@ -13,6 +13,24 @@ GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
+if [[ "${PV}" =~ "9999" ]] ; then
+	IUSE+="
+		fallback-commit
+	"
+fi
+
+inherit llvm-ebuilds
+
+_llvm_set_globals() {
+	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
+llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM23_FALLBACK_COMMIT}"
+		EGIT_BRANCH="${LLVM_EBUILDS_LLVM23_BRANCH}"
+	fi
+}
+_llvm_set_globals
+unset -f _llvm_set_globals
+
 inherit cmake libstdcxx-slot llvm.org llvm-r1 multibuild python-any-r1
 
 DESCRIPTION="OpenCL C library"
