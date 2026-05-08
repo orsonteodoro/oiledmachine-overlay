@@ -993,8 +993,6 @@ einfo
 	chown -R "coolercontrold:coolercontrold" "${EROOT}/etc/coolercontrol" || true
 	chown -R "coolercontrold:coolercontrold" "${EROOT}/var/lib/coolercontrol" || true
 
-einfo "TODO:  any issues"
-
 einfo "Reloading udev rules"
 	sudo udevadm control --reload-rules
 	sudo udevadm trigger
