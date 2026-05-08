@@ -26,9 +26,11 @@ IUSE="+spirv video_cards_nvidia video_cards_r600 video_cards_radeonsi"
 BDEPEND="
 	${PYTHON_DEPS}
 	llvm-core/clang:22[${LIBSTDCXX_USEDEP}]
-	spirv? ( dev-util/spirv-llvm-translator:22[${LIBSTDCXX_USEDEP}] )
-	dev-util/spirv-llvm-translator:=
 	llvm-core/clang:=
+	spirv? (
+		dev-util/spirv-llvm-translator:22[${LIBSTDCXX_USEDEP}]
+		dev-util/spirv-llvm-translator:=
+	)
 "
 
 LLVM_COMPONENTS=( libclc )

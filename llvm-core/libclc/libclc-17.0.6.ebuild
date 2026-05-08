@@ -26,9 +26,11 @@ LLVM_MAX_SLOT=17
 BDEPEND="
 	${PYTHON_DEPS}
 	llvm-core/clang:17[${LIBSTDCXX_USEDEP}]
-	spirv? ( dev-util/spirv-llvm-translator:17[${LIBSTDCXX_USEDEP}] )
-	dev-util/spirv-llvm-translator:=
 	llvm-core/clang:=
+	spirv? (
+		dev-util/spirv-llvm-translator:17[${LIBSTDCXX_USEDEP}]
+		dev-util/spirv-llvm-translator:=
+	)
 "
 
 LLVM_COMPONENTS=( libclc )

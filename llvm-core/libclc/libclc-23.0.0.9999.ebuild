@@ -44,9 +44,11 @@ RESTRICT="!test? ( test )"
 BDEPEND="
 	${PYTHON_DEPS}
 	llvm-core/clang:23[${LIBSTDCXX_USEDEP}]
-	spirv? ( dev-util/spirv-llvm-translator:23[${LIBSTDCXX_USEDEP}] )
-	dev-util/spirv-llvm-translator:=
 	llvm-core/clang:=
+	spirv? (
+		dev-util/spirv-llvm-translator:23[${LIBSTDCXX_USEDEP}]
+		dev-util/spirv-llvm-translator:=
+	)
 	test? (
 		$(python_gen_any_dep '
 			dev-python/lit[${PYTHON_USEDEP}]
