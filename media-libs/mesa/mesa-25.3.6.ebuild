@@ -144,7 +144,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
 asahi debug +llvm lm-sensors opencl +opengl +proprietary-codecs +shader-cache
 sysprof test unwind vaapi valgrind vulkan wayland +X +zstd
-ebuild_revision_26
+ebuild_revision_27
 "
 REQUIRED_USE="
 	video_cards_i915? (
@@ -263,7 +263,7 @@ gen_llvm_depstr() {
 					llvm-core/llvm:=
 				)
 				opencl? (
-					dev-util/spirv-llvm-translator:${s}
+					dev-util/spirv-llvm-translator:${s}[${LIBSTDCXX_USEDEP}]
 					dev-util/spirv-llvm-translator:=
 					llvm-core/clang:${s}[${LLVM_USE_DEPS}]
 					llvm-core/clang:=

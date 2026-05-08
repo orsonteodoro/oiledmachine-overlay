@@ -148,7 +148,7 @@ ${PATENT_STATUS[@]}
 asahi d3d9 debug +llvm lm-sensors opencl +opengl
 +proprietary-codecs +shader-cache test unwind vaapi valgrind vdpau vulkan
 wayland +X xa +zstd
-ebuild_revision_26
+ebuild_revision_27
 "
 REQUIRED_USE="
 	d3d9? (
@@ -295,7 +295,7 @@ gen_llvm_depstr() {
 					llvm-core/llvm:${s}[${LLVM_USE_DEPS}]
 				)
 				opencl? (
-					dev-util/spirv-llvm-translator:${s}
+					dev-util/spirv-llvm-translator:${s}[${LIBSTDCXX_USEDEP}]
 					dev-util/spirv-llvm-translator:=
 					llvm-core/clang:${s}[${LLVM_USE_DEPS}]
 				)
