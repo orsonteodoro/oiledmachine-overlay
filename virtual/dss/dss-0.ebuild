@@ -127,9 +127,15 @@ ${PASSWORD_MANAGER_IUSE[@]}
 ${PROFILES_IUSE[@]}
 ${SANDBOX_IUSE[@]}
 +enforce
-ebuild_revision_5
+ebuild_revision_6
 "
+# Temporarly disable most kernel flavors until Dirty Flag 0-day mitigation is verified or patched upstream.
 REQUIRED_USE="
+	!custom-kernel
+	!gentoo-sources
+	!git-sources
+	ot-sources
+	!vanilla-sources
 	^^ (
 		${PROFILES_IUSE[@]}
 	)
