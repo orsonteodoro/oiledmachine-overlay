@@ -31,6 +31,7 @@ inherit ot-kernel-v7.0
 # OILEDMACHINE-OVERLAY-META-WIP:  tresor, signed-kexec-kernel, signed-kernels
 # OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.0.1 (20260424) with gaming profile
 # OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.0.3 (20260503) with builder profile with -O2 and -march=native, KFENCE on, KCFI on, UBSAN on, -D_FORTIFY_SOURCE on
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.0.5 (20260508) with builder profile with -O2 and -march=native, KFENCE on, KCFI on, UBSAN on, -D_FORTIFY_SOURCE on
 
 # OILEDMACHINE-OVERLAY-TEST:  N/A
 
