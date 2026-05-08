@@ -204,7 +204,7 @@ RDEPEND="
 	)
 	opencl? (
 		>=virtual/opencl-3
-		llvm-core/libclc[spirv(-)]
+		llvm-core/libclc[spirv(-),video_cards_r600?,video_cards_radeonsi?]
 		virtual/libelf:0
 		virtual/libelf:=
 	)

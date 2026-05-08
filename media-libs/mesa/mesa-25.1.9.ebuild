@@ -224,7 +224,7 @@ RDEPEND="
 	)
 	opencl? (
 		>=virtual/opencl-3
-		llvm-core/libclc[spirv(-)]
+		llvm-core/libclc[spirv(-),video_cards_r600?,video_cards_radeonsi?]
 		virtual/libelf:0
 		virtual/libelf:=
 	)
@@ -357,7 +357,7 @@ BDEPEND="
 		llvm_slot_18? (
 			|| (
 				dev-lang/rust:1.81.0
-				dev-lang/rust-bin-1.81.0
+				dev-lang/rust-bin:1.81.0
 			)
 		)
 		llvm_slot_19? (
@@ -390,7 +390,7 @@ BDEPEND="
 			llvm_slot_18? (
 				|| (
 					dev-lang/rust:1.81.0
-					dev-lang/rust-bin-1.81.0
+					dev-lang/rust-bin:1.81.0
 				)
 			)
 			llvm_slot_19? (
