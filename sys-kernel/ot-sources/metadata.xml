@@ -734,7 +734,11 @@ OT_KERNEL_VERBOSITY="1"
 OT_KERNEL_USE="bbrv2 cpu_flags_arm_bti genpatches kcfi zen-sauce"
 OT_KERNEL_WORK_PROFILE="dss"
 TBM=0
-
+# An example of mitigating the Dirty Frag 0-day vulnerability.
+# It is an example of reducing the attack surface.
+OT_KERNEL_KCONFIG[CONFIG_INET_ESP]=n      # Dirty Frag affected module
+OT_KERNEL_KCONFIG[CONFIG_INET6_ESP]=n     # Dirty Frag affected module
+OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
 
     Commentary about the above settings:
 
@@ -3123,6 +3127,12 @@ TBM=0
       OT_KERNEL_KCONFIG[CONFIG_PAGE_SIZE_LESS_THAN_256KB]=y
       OT_KERNEL_KCONFIG[CONFIG_BTRFS_FS]=y
 
+      # This can be used to mitigate the Dirty Frag 0-day exploit.
+      # An example of reducing the attack surface.
+      OT_KERNEL_KCONFIG[CONFIG_INET_ESP]=n
+      OT_KERNEL_KCONFIG[CONFIG_INET6_ESP]=n
+      OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n
+
     Notes:
 
       * You may use "y" to to enable the driver.
@@ -3136,6 +3146,9 @@ TBM=0
       * You must add an escaped double quote with backslash for values with
         spaces.
       * Every option must be prefixed with CONFIG_
+      * This may be used to mitigate some 0-day exploits by disabling the affected
+        modules as mitigation strategy, but be careful that the affect module is not
+        essential for your use case.
 
     See also:
 

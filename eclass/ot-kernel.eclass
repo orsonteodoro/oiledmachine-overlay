@@ -6496,8 +6496,8 @@ einfo "Changed .config to disable autogroup"
 		:
 	elif (( ${cpu_sched_config_applied} == 0 )) ; then
 ewarn
-ewarn "No cpu_sched ${cpu_sched} config was applied because the USE flag was"
-ewarn "not enabled."
+ewarn "No cpu_sched ${cpu_sched} config was applied because the USE flag and"
+ewarn "OT_KERNEL_USE are both missing ${cpu_sched%%-*} as enabled."
 ewarn
 	fi
 
