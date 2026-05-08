@@ -145,7 +145,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
 asahi debug +llvm lm-sensors opencl +opengl +proprietary-codecs +shader-cache
 sysprof test unwind vaapi valgrind vulkan wayland +X +zstd
-ebuild_revision_24
+ebuild_revision_25
 "
 REQUIRED_USE="
 	video_cards_i915? (
