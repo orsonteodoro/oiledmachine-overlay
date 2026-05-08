@@ -1006,9 +1006,11 @@ elog "Start commands:"
 elog "  OpenRC   →  rc-service coolercontrold start"
 elog "  systemd  →  systemctl enable --now coolercontrold"
 elog ""
-elog "Add your user to the coolercontrold group for GUI access:"
-elog "    usermod -aG coolercontrold \$USER"
-elog ""
+
+# Not necessary at this time
+#elog "Add your user to the coolercontrold group for GUI access:"
+#elog "    usermod -aG coolercontrold \$USER"
+#elog ""
 }
 
 # OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD
