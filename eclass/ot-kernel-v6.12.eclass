@@ -397,8 +397,8 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PPC_FLAGS[@]}
 ${RISCV_FLAGS[@]}
 ${X86_FLAGS[@]}
-bbrv2 bbrv3 build c2tcp +cet +cfs -clang deepcc -debug doc -dwarf4 -dwarf5
--dwarf-auto -exfat -expoline -gdb +genpatches -genpatches_1510 -kcfi -lto nest
+bbrv2 bbrv3 build c2tcp +cet -clang deepcc -debug doc -dwarf4 -dwarf5
+-dwarf-auto +eevdf -exfat -expoline -gdb +genpatches -genpatches_1510 -kcfi -lto nest
 orca pgo prjc qt5 qt6 +retpoline rt -rust -scx shadowcallstack symlink tresor tresor_prompt
 tresor_sysfs zen-sauce
 "
@@ -504,7 +504,7 @@ LICENSE+="
 		)
 	)
 "
-LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
+LICENSE+=" eevdf? ( GPL-2 )" # This is just a placeholder to not use a
 	# third-party CPU scheduler but the stock CPU scheduler.
 LICENSE+=" deepcc? ( MIT )"
 LICENSE+=" exfat? ( GPL-2+ OIN )" # See https://en.wikipedia.org/wiki/ExFAT#Legal_status
