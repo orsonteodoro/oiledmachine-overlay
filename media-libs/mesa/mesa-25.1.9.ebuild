@@ -97,7 +97,7 @@ VIDEO_CARDS=(
 # Bug
 inherit cargo
 inherit cflags-hardened check-compiler-switch flag-o-matic flag-o-matic-om
-inherit libcxx-slot libstdcxx-slot llvm-r1 python-any-r1 linux-info meson
+inherit libcxx-slot libstdcxx-slot llvm-r1 python-any-r1 linux-info meson-multilib
 inherit multilib-build toolchain-funcs uopts
 
 LLVM_USE_DEPS="llvm_targets_AMDGPU(+),${MULTILIB_USEDEP}"
@@ -148,7 +148,7 @@ ${PATENT_STATUS[@]}
 asahi d3d9 debug +llvm lm-sensors opencl +opengl
 +proprietary-codecs +shader-cache test unwind vaapi valgrind vdpau vulkan
 wayland +X xa +zstd
-ebuild_revision_25
+ebuild_revision_26
 "
 REQUIRED_USE="
 	d3d9? (
