@@ -129,7 +129,7 @@ ${SANDBOX_IUSE[@]}
 +enforce
 ebuild_revision_6
 "
-# Temporarly disable most kernel flavors until Dirty Flag 0-day mitigation is verified or patched upstream.
+# Temporarly disable most kernel flavors until Dirty Frag 0-day mitigation is verified or patched upstream.
 REQUIRED_USE="
 	!custom-kernel
 	!gentoo-sources
