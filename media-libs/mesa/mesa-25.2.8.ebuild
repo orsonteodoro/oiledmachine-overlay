@@ -19,8 +19,9 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO NPD IO"
 CXX_STANDARD=17
 PYTHON_COMPAT=( "python3_"{11..13} )
 RUST_MAX_VER="1.86.0" # Inclusive
-RUST_MIN_VER="1.78.0"
+RUST_MIN_VER="1.81.0"
 RUST_MULTILIB=1
+RUST_NEEDS_LLVM=1 # Prune rustc if LLVM slot not selected
 RUST_OPTIONAL=1
 UOPTS_BOLT_EXCLUDE_BINS="libglapi.so.0.0.0"
 UOPTS_BOLT_EXCLUDE_FLAGS=( "-hugify" ) # Broken
@@ -146,7 +147,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
 asahi debug +llvm lm-sensors opencl +opengl +proprietary-codecs +shader-cache
 sysprof test unwind vaapi valgrind vdpau vulkan wayland +X +zstd
-ebuild_revision_23
+ebuild_revision_24
 "
 REQUIRED_USE="
 	video_cards_lavapipe? (
@@ -338,28 +339,14 @@ BDEPEND="
 		>=dev-util/bindgen-0.71.1
 		llvm_slot_18? (
 			|| (
-				=dev-lang/rust-1.78*
-				=dev-lang/rust-1.79*
-				=dev-lang/rust-1.80*
-				=dev-lang/rust-1.81*
-				=dev-lang/rust-bin-1.78*
-				=dev-lang/rust-bin-1.79*
-				=dev-lang/rust-bin-1.80*
-				=dev-lang/rust-bin-1.81*
+				dev-lang/rust:1.81.0
+				dev-lang/rust-bin:1.81.0
 			)
 		)
 		llvm_slot_19? (
 			|| (
-				=dev-lang/rust-1.82*
-				=dev-lang/rust-1.83*
-				=dev-lang/rust-1.84*
-				=dev-lang/rust-1.85*
-				=dev-lang/rust-1.86*
-				=dev-lang/rust-bin-1.82*
-				=dev-lang/rust-bin-1.83*
-				=dev-lang/rust-bin-1.84*
-				=dev-lang/rust-bin-1.85*
-				=dev-lang/rust-bin-1.86*
+				dev-lang/rust:1.86.0
+				dev-lang/rust-bin:1.86.0
 			)
 		)
 		|| (
@@ -383,15 +370,21 @@ BDEPEND="
 			${RUST_DEPEND}
 			>=dev-util/bindgen-0.71.1
 			>=dev-util/cbindgen-0.26.0
+			llvm_slot_18? (
+				|| (
+					dev-lang/rust:1.81.0
+					dev-lang/rust-bin:1.81.0
+				)
+			)
+			llvm_slot_19? (
+				|| (
+					dev-lang/rust:1.86.0
+					dev-lang/rust-bin:1.86.0
+				)
+			)
 			|| (
-				(
-					>=dev-lang/rust-1.74.1
-					dev-lang/rust:=
-				)
-				(
-					>=dev-lang/rust-bin-1.74.1
-					dev-lang/rust-bin:=
-				)
+				dev-lang/rust:=
+				dev-lang/rust-bin:=
 			)
 		)
 	)
@@ -540,15 +533,8 @@ einfo "PATH=${PATH} (after)"
 
 	if use opencl || ( use vulkan && use video_cards_nvk ) ; then
 		rust_pkg_setup
-		if use llvm_slot_21 ; then
-			local rust_pv_raw=$("${RUSTC}" --version | cut -f 2 -d " ")
-			local rust_pv=$("${RUSTC}" --version | cut -f 2 -d " " | cut -f 1 -d "-")
-			[[ "${rust_pv_raw}" =~ "nightly" ]] || die "Only Rust nightly supported"
-			if ver_test "${rust_pv_raw}" -lt "1.91.0" ; then
-eerror "Only Rust >= 1.91.0 supported"
-				die
-			fi
-		fi
+		[[ -z "${RUSTC}" ]] && die
+		"${RUSTC}" --version || die
 	fi
 	libcxx-slot_verify
 	libstdcxx-slot_verify

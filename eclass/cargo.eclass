@@ -40,8 +40,8 @@ fi
 # No need to enable usage of legacy rust versions in ebuilds; keep it as-is.
 #
 # Based on avaliable dev-lang/rust-bin or dev-lang/rust
-# oiledmachine-overlay:  We bump to latest LTS slot to avoid worst case possibility of RCE from miscompilation or poorly generated code.
-_CARGO_ECLASS_RUST_MIN_VER="1.91.1" # LLVM 21.1
+# oiledmachine-overlay:  It must be lowest available by distro to allow for the C/C++ scenario.
+_CARGO_ECLASS_RUST_MIN_VER="1.74.1" # LLVM 17.0
 
 case ${EAPI} in
 	8)
