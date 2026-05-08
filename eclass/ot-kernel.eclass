@@ -14953,13 +14953,13 @@ ot-kernel_disable_affected_modules() {
 einfo "Applying 0-day mitigation"
 ewarn "QA:  Temporary Dirty Frag mitigation is being applied.  Removal of mitigation will be on Jun 07, 2026."
 einfo "Tip:  Disable affected modules for future 0-days for non-essential modules/subsystems."
-	if "${KV_MAJOR_MINOR}" "-eq" "7.0" && ver_test "${PV}" "-ge" "7.0.5" ; then
+	if ver_test "${KV_MAJOR_MINOR}" "-eq" "7.0" && ver_test "${PV}" "-ge" "7.0.5" ; then
 		ot-kernel_unset_configopt "CONFIG_AF_RXRPC"
-	elif "${KV_MAJOR_MINOR}" "-eq" "6.18" && ver_test "${PV}" "-ge" "6.18.28" ; then
+	elif ver_test "${KV_MAJOR_MINOR}" "-eq" "6.18" && ver_test "${PV}" "-ge" "6.18.28" ; then
 		ot-kernel_unset_configopt "CONFIG_AF_RXRPC"
-	elif "${KV_MAJOR_MINOR}" "-eq" "6.12" && ver_test "${PV}" "-ge" "6.12.87" ; then
+	elif ver_test "${KV_MAJOR_MINOR}" "-eq" "6.12" && ver_test "${PV}" "-ge" "6.12.87" ; then
 		ot-kernel_unset_configopt "CONFIG_AF_RXRPC"
-	elif "${KV_MAJOR_MINOR}" "-eq" "6.6" && ver_test "${PV}" "-ge" "6.6.138" ; then
+	elif ver_test "${KV_MAJOR_MINOR}" "-eq" "6.6" && ver_test "${PV}" "-ge" "6.6.138" ; then
 		ot-kernel_unset_configopt "CONFIG_AF_RXRPC"
 	else
 		ot-kernel_unset_configopt "CONFIG_AF_RXRPC"
