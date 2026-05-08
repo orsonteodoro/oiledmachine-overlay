@@ -984,7 +984,7 @@ einfo
 einfo "Bookmark and access the GUI from the web browser:  http://localhost:${gui_port}"
 einfo
 einfo "Returning from a long vacation?"
-einfo "To reset the password:  /usr/bin/coolercontrol --reset-password"
+einfo "To reset the password:  /usr/bin/coolercontrold --reset-password"
 einfo
 
 	fcaps_pkg_postinst
