@@ -26,7 +26,7 @@ SLOT="$(ver_cut 1)"
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~riscv ~x86"
 IUSE="
 test
-ebuild_revision_1
+ebuild_revision_2
 "
 RESTRICT="!test? ( test )
 	arm? ( test )
@@ -37,7 +37,9 @@ RESTRICT="!test? ( test )
 
 RDEPEND="
 	dev-util/spirv-tools[${LIBSTDCXX_USEDEP}]
-	llvm-core/llvm:${SLOT}=[${LIBSTDCXX_USEDEP}]
+	dev-util/spirv-tools:=
+	llvm-core/llvm:${SLOT}[${LIBSTDCXX_USEDEP}]
+	llvm-core/llvm:=
 "
 DEPEND="${RDEPEND}
 	>=dev-util/spirv-headers-1.4.335.0
@@ -47,6 +49,7 @@ BDEPEND="
 	test? (
 		dev-python/lit
 		llvm-core/clang:${SLOT}[${LIBSTDCXX_USEDEP}]
+		llvm-core/clang:=
 	)
 "
 
