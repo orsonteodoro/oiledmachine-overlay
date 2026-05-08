@@ -24,7 +24,7 @@ INSTALL_PREFIX="/usr/share/chromium/${PV%.*}.x"
 LIBCXX_USEDEP_SKIP=1
 # https://github.com/chromium/chromium/blob/147.0.7727.55/tools/clang/scripts/update.py#L38 \
 LLVM_COMMIT="8a0be0bc" # without the g prefix
-LLVM_LIVE_TIMESTAMP="Fri, 27 Feb 2026 18:38:25 +0530" # Timestamp from https://github.com/llvm/llvm-project/commit/${LLVM_COMMIT}.patch
+LLVM_LIVE_TIMESTAMP="Fri, 27 Feb 2026 18:38:25 +0530" # Unvendored timestamp from https://github.com/llvm/llvm-project/commit/${LLVM_COMMIT}.patch
 LLVM_N_COMMITS="5669"
 LLVM_OFFICIAL_SLOT="23" # Cr official slot
 LLVM_SUB_REV="1"
@@ -32,8 +32,8 @@ LLVM_SLOT_UNSTABLE="23" # Comment out if using stable slot
 LLVM_SLOT_LIVE="1"
 # https://github.com/chromium/chromium/blob/147.0.7727.55/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
-RUST_LIVE_TIMESTAMP="Feb 27, 2026 09:38:23 -0800" # Same as Rust 1.96.0 timestamp
-RUST_COMMIT="6f54d591c3116ee7f8ce9321ddeca286810cc142"
+RUST_LIVE_TIMESTAMP="Apr 10, 2026 10:49:37 -0400" # Same as Rust 1.97.0 timestamp
+RUST_COMMIT="6f54d591c3116ee7f8ce9321ddeca286810cc142" # Vendored commit
 RUST_SUB_REV="2"
 # Upstream uses 1.95.0 corresponding to LLVM 22.1
 # This ebuild assumes 1.96.0 (live 9999) corresponding to llvm 22 to reduce build time.
@@ -204,7 +204,7 @@ SLOT="${PV%.*}.x"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +cfi +pgo -system-clang -system-rust
-ebuild_revision_27
+ebuild_revision_28
 "
 REQUIRED_USE="
 	^^ (
