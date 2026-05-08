@@ -147,7 +147,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
 asahi debug +llvm lm-sensors opencl +opengl +proprietary-codecs +shader-cache
 sysprof test unwind vaapi valgrind vdpau vulkan wayland +X +zstd
-ebuild_revision_27
+ebuild_revision_28
 "
 REQUIRED_USE="
 	video_cards_lavapipe? (
@@ -206,7 +206,7 @@ RDEPEND="
 	)
 	opencl? (
 		>=virtual/opencl-3
-		llvm-core/libclc[spirv(-),video_cards_r600?,video_cards_radeonsi?]
+		llvm-core/libclc[${LIBSTDCXX_USEDEP},spirv(-),video_cards_r600?,video_cards_radeonsi?]
 		virtual/libelf:0
 		virtual/libelf:=
 	)
