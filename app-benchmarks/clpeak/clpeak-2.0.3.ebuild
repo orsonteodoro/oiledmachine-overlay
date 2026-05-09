@@ -59,11 +59,21 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${_VIDEO_CARDS[@]}
-amdvlk clover cuda metal neo opencl radv rocm rusticl vulkan
+amdvlk clover cpu cuda metal neo pocl opencl radv rocm rusticl vulkan
 "
 REQUIRED_USE="
 	!kernel_Darwin? (
 		!metal
+	)
+	cpu? (
+		opencl
+		|| (
+			pocl
+			rusticl
+		)
+		rusticl? (
+			video_cards_lavapipe
+		)
 	)
 	video_cards_freedreno? (
 		opencl? (
@@ -180,6 +190,9 @@ CUDA_3_2="
 "
 RDEPEND+="
 	opencl? (
+		pocl? (
+			dev-libs/pocl
+		)
 		video_cards_intel? (
 			rusticl? (
 				media-libs/mesa[opencl,video_cards_intel]

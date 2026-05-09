@@ -11,6 +11,9 @@
     <remote-id type="github">krrishnarraj/clpeak</remote-id>
   </upstream>
   <use>
+    <flag name="cpu">
+      Add support for OpenCL for CPU
+    </flag>
     <flag name="amdvlk">
       Use the AMDVLK Vulkan implementation.
     </flag>
@@ -28,6 +31,9 @@
     </flag>
     <flag name="opencl">
       Add OpenCL support.
+    </flag>
+    <flag name="pocl">
+      Add CPU support for OpenCL 3.0.
     </flag>
     <flag name="radv">
       Use the Mesa community driver for Vulkan.
