@@ -8,13 +8,13 @@
   </maintainer>
   <use>
     <flag name="cpu">
-      Add support for OpenCL for CPU
+      Add support for OpenCL for CPUs.
     </flag>
     <flag name="clover">
       Use the legacy Mesa OpenCL 1.x driver which has been removed.
     </flag>
     <flag name="iocl">
-      Use the closed source driver for Intel® CPUs with at least SSE4.2.
+      Use the closed proprietary driver for Intel® CPUs.
     </flag>
     <flag name="neo">
       Use the Compute Runtime driver for OpenCL 3.0 and Gen12 and newer.
@@ -25,14 +25,14 @@
       HW compatibility list:  https://github.com/intel/compute-runtime/tree/24.35.30872.22#supported-platforms
     </flag>
     <flag name="orca">
-      Use the closed driver for OpenCL 1.x/2.x for GCN 1/2/3.
+      Use the closed proprietary driver for OpenCL 1.x/2.x for GCN 1/2/3.
     </flag>
     <flag name="pocl">
       Add generic CPU support for OpenCL 3.0.
       HW compatibility list:  https://github.com/pocl/pocl/blob/v7.1/README.md
     </flag>
     <flag name="rocm">
-      Use the ROCm OpenCL driver
+      Use the ROCm OpenCL driver.
     </flag>
     <flag name="rusticl">
       Use the newer Mesa OpenCL 3.0 implementation.

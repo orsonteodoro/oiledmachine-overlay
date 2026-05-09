@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# This ebuild and metadata.xml contains data obtained by AI inference.
+
 CXX_STANDARD=17 # LTS
 _VIDEO_CARDS=(
 	"video_cards_freedreno"
