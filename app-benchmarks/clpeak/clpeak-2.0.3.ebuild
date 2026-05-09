@@ -69,7 +69,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${_VIDEO_CARDS[@]}
-amdvlk clover cpu cuda metal neo pocl opencl radv rocm rocm_6_4 rocm_7_0 rusticl vulkan
+amdvlk clover cpu cuda metal neo pocl opencl orca radv rocm rocm_6_4 rocm_7_0 rusticl vulkan
 ebuild_revision_2
 "
 REQUIRED_USE="
@@ -165,6 +165,7 @@ REQUIRED_USE="
 	video_cards_r600? (
 		opencl? (
 			clover
+			orca
 		)
 		|| (
 			opencl
@@ -173,6 +174,7 @@ REQUIRED_USE="
 	video_cards_radeonsi? (
 		opencl? (
 			|| (
+				orca
 				rusticl
 				rocm
 			)
@@ -248,8 +250,16 @@ RDEPEND+="
 			clover? (
 				<media-libs/mesa-25.2.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_r600]
 			)
+			orca? (
+				dev-libs/amdgpu-pro-opencl-legacy[gcc_slot_11_5]
+				media-libs/mesa[-opencl]
+			)
 		)
 		video_cards_radeonsi? (
+			orca? (
+				dev-libs/amdgpu-pro-opencl-legacy[gcc_slot_11_5]
+				media-libs/mesa[-opencl]
+			)
 			rusticl? (
 				media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_radeonsi]
 			)
@@ -362,3 +372,4 @@ src_install() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 2.0.3 (20260508)

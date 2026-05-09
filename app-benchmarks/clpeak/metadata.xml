@@ -29,6 +29,9 @@
     <flag name="neo">
       Use the Compute Runtime driver for OpenCL 3.0.
     </flag>
+    <flag name="orca">
+      Use the closed driver for OpenCL 1.x/2.x for GCN 1/2/3.
+    </flag>
     <flag name="opencl">
       Add OpenCL support.
     </flag>
