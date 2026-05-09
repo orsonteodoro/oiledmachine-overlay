@@ -10,7 +10,6 @@ CXX_STANDARD=11
 LIBOPENCL_STUB="c34834a65f89ca5e7115395d6e86892eaf2bba38"
 
 _VIDEO_CARDS=(
-	"video_cards_amdgpu"
 	"video_cards_freedreno"
 	"video_cards_intel"
 	"video_cards_lavapipe"
