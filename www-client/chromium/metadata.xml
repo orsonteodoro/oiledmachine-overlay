@@ -364,7 +364,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
   Flavors            | Closed source | Non-free     | Non-free | Snooping servers
                      | BLOBs         | integrations | services | (e.g. DNS/DoH, telemetry, update pings, password breach check)
   ---                | ---           | ---          | ---      | ---
-  Chrome             | Y             | Y            | Y        | Y (password breach check / k-Anonymity)
+  Chrome             | Y             | Y            | Y        | Y (Password breach check [3])
   Chromium           | N             | Optional     | Y        | Y
   ungoogled-chromium | N             | N            | N        | N
   Cromite            | N             | N            | N        | N
@@ -381,6 +381,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     https://github.com/chromium/chromium/blob/master/build/config/sanitizers/BUILD.gn#L204
     [1] https://github.com/chromium/chromium/tree/master/tools/perf/benchmarks
     [2] https://chromium.googlesource.com/catapult/+/HEAD/telemetry/README.md
+    [3] https://security.googleblog.com/2019/12/better-password-protections-in-chrome.html
 
 
   Proposals for next ebuild change(s):
