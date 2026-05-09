@@ -69,7 +69,6 @@
     </flag>
     <flag name="video_cards_amdgpu">
       Checks or installs for a VA-API driver for both encoding and decoding.
-
       (Alias for video_cards_radeonsi)
     </flag>
     <flag name="video_cards_intel">
