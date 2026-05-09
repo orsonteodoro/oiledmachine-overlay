@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# This ebuild has been created with the help of AI inference.
+
 CXX_STANDARD=11
 LIBOPENCL_STUB="c34834a65f89ca5e7115395d6e86892eaf2bba38"
 
