@@ -20,6 +20,10 @@
       Use the Compute Runtime driver for OpenCL 3.0 and Gen12 and newer.
       HW compatibility list:  https://github.com/intel/compute-runtime/tree/25.40.35563.4#supported-platforms
     </flag>
+    <flag name="neo-legacy">
+      Use the Compute Runtime driver for OpenCL 3.0 and Gen8 to Gen11.
+      HW compatibility list:  https://github.com/intel/compute-runtime/tree/24.35.30872.22#supported-platforms
+    </flag>
     <flag name="orca">
       Use the closed driver for OpenCL 1.x/2.x for GCN 1/2/3.
     </flag>

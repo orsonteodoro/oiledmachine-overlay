@@ -44,7 +44,7 @@ LICENSE="
 SLOT="0/3" # 0/API_VERSION
 IUSE+="
 ${_VIDEO_CARDS[@]}
-clover cpu iocl neo pocl opencl orca rocm rocm_6_4 rocm_7_0
+clover cpu iocl neo neo-legacy pocl opencl orca rocm rocm_6_4 rocm_7_0
 rusticl vulkan
 ebuild_revision_3
 "
@@ -76,7 +76,10 @@ RDEPEND+="
 			media-libs/mesa[video_cards_intel]
 		)
 		neo? (
-			dev-libs/intel-compute-runtime
+			>=dev-libs/intel-compute-runtime-25.05.32567.12
+		)
+		neo-legacy? (
+			<dev-libs/intel-compute-runtime-25.05.32567.12
 		)
 	)
 	video_cards_nouveau? (
