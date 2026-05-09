@@ -81,6 +81,10 @@ REQUIRED_USE="
 		opencl
 		pocl
 	)
+	orca? (
+		!clover
+		!rusticl
+	)
 	opencl? (
 		|| (
 			${_VIDEO_CARDS[@]}
