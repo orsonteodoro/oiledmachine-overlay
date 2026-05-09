@@ -41,13 +41,19 @@ SLOT="0"
 IUSE+="
 ${PATENT_STATUS_IUSE[@]}
 ${VIDEO_CARDS_IUSE[@]}
-custom +firefox
+custom +firefox iHD i965
 "
 
 REQUIRED_USE+="
 	!custom? (
 		|| (
 			${VIDEO_CARDS_IUSE[@]}
+		)
+	)
+	video_cards_intel? (
+		|| (
+			i965
+			iHD
 		)
 	)
 "
@@ -58,9 +64,11 @@ RDEPEND_DRIVERS="
 		media-libs/mesa:=
 	)
 	video_cards_intel? (
-		|| (
-			media-libs/libva-intel-media-driver
+		i965? (
 			media-libs/libva-intel-driver[${MULTILIB_USEDEP}]
+		)
+		iHD? (
+			media-libs/libva-intel-media-driver
 		)
 	)
 	video_cards_nouveau? (
