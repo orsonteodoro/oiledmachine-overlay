@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/krrishnarraj/clpeak/issues</bugs-to>
+    <remote-id type="github">krrishnarraj/clpeak</remote-id>
+  </upstream>
+  <use>
+    <flag name="amdvlk">
+      Use the AMDVLK Vulkan implementation.
+    </flag>
+    <flag name="clover">
+      Use the legacy OpenCL 1.x driver which has been removed.
+    </flag>
+    <flag name="cuda">
+      Add CUDA support.
+    </flag>
+    <flag name="metal">
+      Add Metal API support.
+    </flag>
+    <flag name="neo">
+      Use the Compute Runtime driver for OpenCL 3.0.
+    </flag>
+    <flag name="opencl">
+      Add OpenCL support.
+    </flag>
+    <flag name="radv">
+      Use the Mesa community driver for Vulkan.
+    </flag>
+    <flag name="rocm">
+      Use the ROCm OpenCL driver
+    </flag>
+    <flag name="rusticl">
+      Use the newer Mesa OpenCL 3.0 implementation.
+    </flag>
+    <flag name="vulkan">
+      Add Vulkan support.
+    </flag>
+    <flag name="video_cards_nouveau">
+      Use the Mesa OpenGL driver and the open kernel driver for all NVIDIA GPUs.
+    </flag>
+    <flag name="video_cards_nvk">
+      Use the Mesa Vulkan driver for Kepler and newer.
+    </flag>
+  </use>
+</pkgmetadata>
