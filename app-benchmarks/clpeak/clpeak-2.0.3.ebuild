@@ -70,7 +70,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${_VIDEO_CARDS[@]}
 amdvlk clover cpu cuda metal neo pocl opencl radv rocm rocm_6_4 rocm_7_0 rusticl vulkan
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	!kernel_Darwin? (
@@ -215,7 +215,7 @@ CUDA_3_2="
 RDEPEND+="
 	opencl? (
 		pocl? (
-			dev-libs/pocl
+			dev-libs/pocl[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		)
 		video_cards_intel? (
 			rusticl? (
