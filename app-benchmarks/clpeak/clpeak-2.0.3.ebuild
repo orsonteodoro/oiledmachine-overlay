@@ -69,10 +69,6 @@ REQUIRED_USE="
 		opencl
 		|| (
 			pocl
-			rusticl
-		)
-		rusticl? (
-			video_cards_lavapipe
 		)
 	)
 	video_cards_freedreno? (
