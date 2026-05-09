@@ -59,35 +59,41 @@ REQUIRED_USE="
 RDEPEND+="
 	>=dev-libs/opencl-icd-loader-2023.02.06[${MULTILIB_USEDEP}]
 	dev-cpp/clhpp:=
+	clover? (
+		<media-libs/mesa-25.2.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl]
+	)
 	iocl? (
 		dev-util/intel-ocl-sdk
 	)
 	pocl? (
 		dev-libs/pocl[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
+	rusticl? (
+		media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},llvm,opencl]
+	)
 	video_cards_intel? (
 		rusticl? (
-			media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_intel]
+			media-libs/mesa[video_cards_intel]
 		)
 		neo? (
 			dev-libs/intel-compute-runtime
 		)
 	)
 	video_cards_nouveau? (
-		media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_nouveau]
+		media-libs/mesa[video_cards_nouveau]
 	)
 	video_cards_nvk? (
-		media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_nvk]
+		media-libs/mesa[video_cards_nvk]
 	)
 	video_cards_nvidia? (
 		x11-drivers/nvidia-drivers
 	)
 	video_cards_panfrost? (
-		media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_panfrost]
+		media-libs/mesa[video_cards_panfrost]
 	)
 	video_cards_r600? (
 		clover? (
-			<media-libs/mesa-25.2.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_r600]
+			<media-libs/mesa-25.2.0[video_cards_r600]
 		)
 		orca? (
 			dev-libs/amdgpu-pro-opencl-legacy[gcc_slot_11_5]
@@ -100,7 +106,7 @@ RDEPEND+="
 			media-libs/mesa[-opencl]
 		)
 		rusticl? (
-			media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_radeonsi]
+			media-libs/mesa[video_cards_radeonsi]
 		)
 		rocm? (
 			rocm_6_4? (
@@ -112,24 +118,24 @@ RDEPEND+="
 		)
 	)
 	video_cards_v3d? (
-		media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_v3d]
+		media-libs/mesa[video_cards_v3d]
 	)
 	video_cards_vc4? (
-		media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_vc4]
+		media-libs/mesa[video_cards_vc4]
 	)
 	video_cards_vivante? (
-		media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_vivante]
+		media-libs/mesa[video_cards_vivante]
 	)
 	video_cards_virgl? (
-		media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_virgl]
+		media-libs/mesa[video_cards_virgl]
 	)
 	video_cards_vmware? (
 		clover? (
-			<media-libs/mesa-25.2.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_vvmware]
+			<media-libs/mesa-25.2.0[video_cards_vvmware]
 		)
 	)
 	video_cards_zink? (
-		media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_zink]
+		media-libs/mesa[video_cards_zink]
 	)
 "
 DEPEND+="
