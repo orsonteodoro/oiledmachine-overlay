@@ -35,6 +35,8 @@ LLVM_COMPAT=(
 
 inherit libcxx-slot libstdcxx-slot multilib-build
 
+KEYWORDS="~amd64 ~arm64 ~ppc64 ~riscv ~x86"
+
 DESCRIPTION="A virtual for OpenCL 3.0 drivers"
 LICENSE="
 	metapackage
@@ -42,13 +44,24 @@ LICENSE="
 SLOT="0/3" # 0/API_VERSION
 IUSE+="
 ${_VIDEO_CARDS[@]}
-clover cpu neo pocl opencl orca rocm rocm_6_4 rocm_7_0
+clover cpu iocl neo pocl opencl orca rocm rocm_6_4 rocm_7_0
 rusticl vulkan
 ebuild_revision_3
+"
+REQUIRED_USE="
+	cpu? (
+		|| (
+			iocl
+			pocl
+		)
+	)
 "
 RDEPEND+="
 	>=dev-libs/opencl-icd-loader-2023.02.06[${MULTILIB_USEDEP}]
 	dev-cpp/clhpp:=
+	iocl? (
+		dev-util/intel-ocl-sdk
+	)
 	pocl? (
 		dev-libs/pocl[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)

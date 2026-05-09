@@ -23,7 +23,7 @@ VIDEO_CARDS_IUSE=(
 inherit multilib-build
 
 DESCRIPTION="A metapackage for libva drivers"
-KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~riscv ~x86 ~amd64-linux ~x86-linux" # Same as libva
+KEYWORDS="amd64 ~arm arm64 ~loong ~mips ppc64 ~riscv x86" # Same as libva
 SLOT="0"
 IUSE+="
 ${PATENT_STATUS_IUSE[@]}

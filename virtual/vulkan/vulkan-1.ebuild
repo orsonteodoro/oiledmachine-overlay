@@ -28,6 +28,8 @@ LLVM_COMPAT=(
 
 inherit libcxx-slot libstdcxx-slot
 
+KEYWORDS="~amd64"
+
 DESCRIPTION="A virtual ebuild for Vulkan drivers"
 HOMEPAGE="
 "
