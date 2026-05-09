@@ -6,6 +6,8 @@ EAPI=8
 
 # U24
 
+# 32.0.4 -> 32.1.2
+
 # TODO package:
 # nvafx
 # nvvfx
@@ -40,8 +42,9 @@ QT6_SLOT=$(ver_cut "1" "${QT6_PV}")
 SWIG_PV="4.2.0"
 
 LIBDSHOWCAPTURE_COMMIT="8878638324393815512f802640b0d5ce940161f1"
-OBS_BROWSER_COMMIT="a776dd6a1a0ded4a8a723f2f572f3f8a9707f5a8"
-OBS_WEBSOCKET_COMMIT="1c9306b1e200704ebe192e06c893dfc06b097c43"
+CAPTURE_DEVICE_SUPPORT="fe9630974d47f51bf54826e72fb8b654e620aa93"
+OBS_BROWSER_COMMIT="ea04212e4bbadd077f9e6038758c4e4779c24fa3"
+OBS_WEBSOCKET_COMMIT="1fcb95b15aa88b1b7e9bda3f9c8650e314377169"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -67,7 +70,7 @@ inherit cmake dep-prepare flag-o-matic git-r3 lcnr libcxx-slot libstdcxx-slot lu
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_COMMIT="${PV}"
 	EGIT_REPO_URI="https://github.com/obsproject/obs-studio.git"
-	FALLBACK_COMMIT="c025f210d36ada93c6b9ef2affd0f671b34c9775" # Oct 23, 2025
+	FALLBACK_COMMIT="fb4d98bf88fae5fc85cb11fc57f7c5e309282194" # Apr 21, 2026
 	IUSE+=" fallback-commit"
 	inherit git
 else
@@ -75,6 +78,8 @@ else
 	SRC_URI="
 https://github.com/obsproject/libdshowcapture/archive/${LIBDSHOWCAPTURE_COMMIT}.tar.gz
 	-> libdshowcapture-${LIBDSHOWCAPTURE_COMMIT:0:7}.tar.gz
+https://github.com/elgatosf/capture-device-support/archive/${CAPTURE_DEVICE_SUPPORT}.tar.gz
+	-> capture-device-support-${CAPTURE_DEVICE_SUPPORT:0:7}.tar.gz
 	browser? (
 https://github.com/obsproject/obs-browser/archive/${OBS_BROWSER_COMMIT}.tar.gz
 	-> obs-browser-${OBS_BROWSER_COMMIT:0:7}.tar.gz
@@ -241,8 +246,8 @@ gen_ffmpeg_depend() {
 	local use_deps="${1}"
 	echo "
 		|| (
-			media-video/ffmpeg:58.60.60[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${use_deps}]
-			media-video/ffmpeg:0/58.60.60[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${use_deps}]
+			media-video/ffmpeg:58.60.60[${use_deps}]
+			media-video/ffmpeg:0/58.60.60[${use_deps}]
 		)
 		media-video/ffmpeg:=
 	"
@@ -389,7 +394,7 @@ PATENT_STATUS_FFMPEG_DEPEND="
 		vaapi? (
 			$(gen_ffmpeg_depend 'patent_status_nonfree,vaapi')
 			>=media-libs/libva-${LIBVA_PV}[X,wayland?]
-			virtual/vaapi[patent_status_nonfree]
+			virtual/vaapi[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},patent_status_nonfree]
 		)
 		x264? (
 			$(gen_ffmpeg_depend 'patent_status_nonfree,x264')
@@ -742,7 +747,7 @@ PDEPEND+="
 
 PATCHES=(
 	# https://bugs.gentoo.org/966051
-	"${FILESDIR}/${PN}-32.0.2-fix-build-with-qt-6.10.patch"
+	#"${FILESDIR}/${PN}-32.0.2-fix-build-with-qt-6.10.patch"
 
 	"${FILESDIR}/${PN}-30.2.3-hevc-preprocessor-cond.patch"
 	"${FILESDIR}/${PN}-32.0.2-browser-checks.patch"
@@ -857,7 +862,7 @@ ewarn
 ewarn "After being built, this information provided via package.env or"
 ewarn "by patch should be sanitized with shred from forensics attacks."
 ewarn
-	sleep 15
+	sleep 1
 
 	if ! use browser || \
 		[[ -z "${RESTREAM_CLIENTID}" || -z "${RESTREAM_HASH}" ]] ; then
@@ -924,6 +929,7 @@ src_unpack() {
 	else
 		unpack ${A}
 		dep_prepare_mv "${WORKDIR}/libdshowcapture-${LIBDSHOWCAPTURE_COMMIT}" "${S}/deps/libdshowcapture/src"
+		dep_prepare_mv "${WORKDIR}/capture-device-support-${CAPTURE_DEVICE_SUPPORT}" "${S}/deps/libdshowcapture/src/external/capture-device-support"
 		if use browser ; then
 			dep_prepare_mv "${WORKDIR}/obs-browser-${OBS_BROWSER_COMMIT}" "${S}/plugins/obs-browser"
 		fi
