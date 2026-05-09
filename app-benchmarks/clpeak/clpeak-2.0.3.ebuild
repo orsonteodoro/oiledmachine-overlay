@@ -67,9 +67,7 @@ REQUIRED_USE="
 	)
 	cpu? (
 		opencl
-		|| (
-			pocl
-		)
+		pocl
 	)
 	video_cards_freedreno? (
 		opencl? (
