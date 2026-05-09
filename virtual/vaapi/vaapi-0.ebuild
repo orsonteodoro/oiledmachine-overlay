@@ -125,10 +125,9 @@ einfo "The LIBVA_DRIVER_NAME environment variable may need to be changed if"
 einfo "multiple VA-API drivers are installed to one of the following to to your"
 einfo "~/.bashrc or ~/.xinitrc and relogging:"
 einfo
-einfo "  media-libs/libva-intel-driver:        LIBVA_DRIVER_NAME=\"i965\""
-einfo "  media-libs/libva-intel-media-driver:  LIBVA_DRIVER_NAME=\"iHD\""
-einfo "  USE=video_cards_r600:                 LIBVA_DRIVER_NAME=\"r600\""
-einfo "  USE=video_cards_radeonsi:             LIBVA_DRIVER_NAME=\"radeonsi\""
-einfo "  USE=video_cards_amdgpu:               LIBVA_DRIVER_NAME=\"radeonsi\""
+einfo "  LIBVA_DRIVER_NAME=\"i965\"      # For  media-libs/libva-intel-driver"
+einfo "  LIBVA_DRIVER_NAME=\"iHD\"       # For media-libs/libva-intel-media-driver"
+einfo "  LIBVA_DRIVER_NAME=\"r600\"      # For USE=video_cards_r600:"
+einfo "  LIBVA_DRIVER_NAME=\"radeonsi\"  # For USE=video_cards_amdgpu or USE=video_cards_radeonsi"
 einfo
 }

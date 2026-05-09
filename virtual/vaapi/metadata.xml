@@ -45,10 +45,10 @@
     The following environment variables may be set to select a specific
     VA-API driver:
 
-      LIBVA_DRIVER_NAME="i965"      # media-libs/libva-intel-driver
-      LIBVA_DRIVER_NAME="iHD"       # media-libs/libva-intel-media-driver
-      LIBVA_DRIVER_NAME="r600"      # USE=video_cards_r600
-      LIBVA_DRIVER_NAME="radeonsi"  # USE=video_cards_radeonsi or USE=video_cards_amdgpu
+      LIBVA_DRIVER_NAME="i965"      # For media-libs/libva-intel-driver
+      LIBVA_DRIVER_NAME="iHD"       # For media-libs/libva-intel-media-driver
+      LIBVA_DRIVER_NAME="r600"      # For USE=video_cards_r600
+      LIBVA_DRIVER_NAME="radeonsi"  # For USE=video_cards_amdgpu or USE=video_cards_radeonsi
 
   -->
   <use>
