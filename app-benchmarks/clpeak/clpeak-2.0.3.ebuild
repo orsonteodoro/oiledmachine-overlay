@@ -122,8 +122,8 @@ REQUIRED_USE="
 	video_cards_intel? (
 		opencl? (
 			|| (
-				rusticl
 				neo
+				rusticl
 			)
 		)
 		|| (
@@ -180,8 +180,8 @@ REQUIRED_USE="
 		opencl? (
 			|| (
 				orca
-				rusticl
 				rocm
+				rusticl
 			)
 		)
 		vulkan? (
