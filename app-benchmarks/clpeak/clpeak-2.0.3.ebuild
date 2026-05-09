@@ -69,7 +69,8 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${_VIDEO_CARDS[@]}
-amdvlk clover cpu cuda metal neo pocl opencl radv rocm rusticl vulkan
+amdvlk clover cpu cuda metal neo pocl opencl radv rocm rocm_6_4 rocm_7_0 rusticl vulkan
+ebuild_revision_1
 "
 REQUIRED_USE="
 	!kernel_Darwin? (
@@ -79,6 +80,25 @@ REQUIRED_USE="
 		opencl
 		pocl
 	)
+	rocm? (
+		rocm_6_4? (
+			^^ (
+				gcc_slot_12_5
+				gcc_slot_13_4
+			)
+		)
+		rocm_7_0? (
+			^^ (
+				gcc_slot_12_5
+				gcc_slot_13_4
+			)
+		)
+		^^ (
+			rocm_6_4
+			rocm_7_0
+		)
+	)
+
 	video_cards_freedreno? (
 		opencl? (
 			rusticl
@@ -227,7 +247,12 @@ RDEPEND+="
 				media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_radeonsi]
 			)
 			rocm? (
-				dev-libs/rocm-opencl-runtime[${LIBSTDCXX_USEDEP}]
+				rocm_6_4? (
+					dev-libs/rocm-opencl-runtime:0/6.4[${LIBSTDCXX_USEDEP}]
+				)
+				rocm_7_0? (
+					dev-libs/rocm-opencl-runtime:0/7.0[${LIBSTDCXX_USEDEP}]
+				)
 			)
 		)
 		video_cards_v3d? (
