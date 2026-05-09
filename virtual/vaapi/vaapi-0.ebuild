@@ -105,13 +105,11 @@ pkg_setup() {
 }
 
 pkg_postinst() {
-	if has_version "media-libs/libva-intel-driver" ; then
-ewarn
-ewarn "media-libs/libva-intel-driver is the older VA-API driver but intended for"
-ewarn "Gen 4 and earlier.  See also media-libs/libva-intel-media-driver package"
-ewarn "for Gen 5 or later to access more VA-API accelerated encoders if driver"
-ewarn "support overlaps."
-ewarn
+	if use i965 ; then
+einfo "Adding the legacy supported i965 driver for Gen4 to Gen9."
+	fi
+	if use iHD ; then
+einfo "Adding the actively supported iHD driver for Gen5 or newer."
 	fi
 einfo
 einfo "See the metadata.xml or epkginfo -x ${CATEGORY}/${PN} for hardware"
