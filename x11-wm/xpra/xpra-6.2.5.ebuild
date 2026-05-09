@@ -369,9 +369,6 @@ PATENT_STATUS_RDEPEND="
 			media-libs/gst-plugins-bad[-nvcodec]
 			media-plugins/gst-plugins-meta:1.0[-nvcodec]
 		)
-		vaapi? (
-			media-plugins/gst-plugins-vaapi:1.0
-		)
 	)
 	patent_status_nonfree? (
 		media-libs/gst-plugins-bad:1.0[amf?]
@@ -384,9 +381,6 @@ PATENT_STATUS_RDEPEND="
 		)
 		nvenc? (
 			media-plugins/gst-plugins-meta:1.0[nvcodec]
-		)
-		vaapi? (
-			media-plugins/gst-plugins-vaapi:1.0
 		)
 	)
 "
