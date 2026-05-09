@@ -73,12 +73,19 @@ amdvlk clover cpu cuda metal neo pocl opencl radv rocm rocm_6_4 rocm_7_0 rusticl
 ebuild_revision_2
 "
 REQUIRED_USE="
+	opencl
 	!kernel_Darwin? (
 		!metal
 	)
 	cpu? (
 		opencl
 		pocl
+	)
+	opencl? (
+		|| (
+			${_VIDEO_CARDS[@]}
+			cpu
+		)
 	)
 	rocm? (
 		rocm_6_4? (
@@ -309,8 +316,11 @@ RDEPEND+="
 "
 DEPEND+="
 	${RDEPEND}
+	opencl? (
+		dev-cpp/clhpp:=
+	)
 	vulkan? (
-		dev-util/vulkan-headers
+		dev-util/vulkan-headers:=
 	)
 "
 BDEPEND+="
@@ -335,7 +345,9 @@ src_unpack() {
 }
 
 src_configure() {
-	local mycmakeargs=(
+	local mycmakeargs=()
+
+	mycmakeargs+=(
 		-DCLPEAK_ENABLE_CUDA=$(usex cuda)
 		-DCLPEAK_ENABLE_METAL=$(usex metal)
 		-DCLPEAK_ENABLE_VULKAN=$(usex vulkan)
