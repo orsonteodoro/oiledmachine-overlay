@@ -466,7 +466,7 @@ PATENT_CDEPENDS="
 		)
 		media-video/ffmpeg:=
 		vaapi? (
-			media-libs/vaapi-drivers[${MULTILIB_USEDEP},patent_status_nonfree=]
+			virtual/vaapi[${MULTILIB_USEDEP},patent_status_nonfree=]
 		)
 	)
 "

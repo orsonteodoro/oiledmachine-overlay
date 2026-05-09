@@ -1111,7 +1111,7 @@ RDEPEND+="
 	)
 	vaapi? (
 		>=media-libs/libva-1.2.1-r1:0=[${MULTILIB_USEDEP},drm(+),X?]
-		media-libs/vaapi-drivers[${MULTILIB_USEDEP},patent_status_nonfree=]
+		virtual/vaapi[${MULTILIB_USEDEP},patent_status_nonfree=]
 	)
 	vdpau? (
 		>=x11-libs/libvdpau-0.7[${MULTILIB_USEDEP}]
@@ -1202,7 +1202,7 @@ BDEPEND+="
 		vaapi? (
 			>=media-libs/libva-1.2.1-r1:0=[${MULTILIB_USEDEP},drm(+),X]
 			media-video/libva-utils[vainfo]
-			media-libs/vaapi-drivers[${MULTILIB_USEDEP},patent_status_nonfree?]
+			virtual/vaapi[${MULTILIB_USEDEP},patent_status_nonfree?]
 		)
 	)
 "

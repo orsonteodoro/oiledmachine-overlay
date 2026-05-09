@@ -682,7 +682,7 @@ RDEPEND+="
 	)
 	vaapi? (
 		>=media-libs/libva-2.1.0[drm(+),X?,wayland?]
-		media-libs/vaapi-drivers
+		virtual/vaapi
 	)
 	vpx? (
 		>=media-libs/libvpx-1.7

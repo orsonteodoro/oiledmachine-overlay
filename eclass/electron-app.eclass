@@ -353,7 +353,7 @@ if [[ "${ELECTRON_APP_FEATURE_VAAPI}" == "1" ]] ; then
 	ELECTRON_APP_OPTIONAL_DEPEND+="
 		vaapi? (
 			media-libs/libva[drm(+),X?,wayland?]
-			media-libs/vaapi-drivers
+			virtual/vaapi
 		)
 	"
 fi

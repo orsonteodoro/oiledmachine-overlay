@@ -49,7 +49,6 @@ RDEPEND+="
 		!media-libs/oneVPL-intel-gpu
 		!media-libs/openh264
 		!media-libs/raspberrypi-userland
-		!media-libs/vaapi-drivers
 		!media-libs/vo-aacenc
 		!media-libs/vpl-gpu-rt
 		!media-libs/vvdec
@@ -74,6 +73,7 @@ RDEPEND+="
 		!media-plugins/gst-plugins-x265
 		!media-video/amdgpu-pro-amf
 		!media-video/ffmpeg-chromium
+		!virtual/vaapi
 		!x11-libs/libvdpau
 	)
 "

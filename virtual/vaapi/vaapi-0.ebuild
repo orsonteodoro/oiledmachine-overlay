@@ -9,15 +9,15 @@ EAPI=8
 # fork of libva.
 
 PATENT_STATUS_IUSE=(
-	patent_status_nonfree
+	"patent_status_nonfree"
 )
 VIDEO_CARDS_IUSE=(
-	video_cards_amdgpu
-	video_cards_intel
-	video_cards_nouveau
-	video_cards_nvidia
-	video_cards_r600
-	video_cards_radeonsi
+	"video_cards_amdgpu"
+	"video_cards_intel"
+	"video_cards_nouveau"
+	"video_cards_nvidia"
+	"video_cards_r600"
+	"video_cards_radeonsi"
 )
 
 inherit multilib-build

@@ -265,7 +265,7 @@ OPTIONAL_RDEPENDS_UNLISTED="
 	)
 	vaapi? (
 		>=media-libs/libva-2.17.0[drm(+),wayland?,X?]
-		media-libs/vaapi-drivers
+		virtual/vaapi
 	)
 	zenity? (
 		>=gnome-extra/zenity-3.32.0

@@ -237,7 +237,7 @@ COMMON_DEPEND="
 	)
 	vaapi? (
 		>=media-libs/libva-1.1.0:=[X?,drm(+)?,wayland?]
-		media-libs/vaapi-drivers[patent_status_nonfree=]
+		virtual/vaapi[patent_status_nonfree=]
 	)
 	vapoursynth? (
 		>=media-libs/vapoursynth-56

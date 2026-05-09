@@ -368,8 +368,8 @@ PATENT_STATUS_FFMPEG_DEPEND="
 	!patent_status_nonfree? (
 		!media-libs/fdk-aac
 		!media-libs/libva
-		!media-libs/vaapi-drivers
 		!media-libs/x264
+		!virtual/vaapi
 		$(gen_ffmpeg_depend '-nvenc,-patent_status_nonfree,-vaapi,-x264')
 	)
 	patent_status_nonfree? (
@@ -389,7 +389,7 @@ PATENT_STATUS_FFMPEG_DEPEND="
 		vaapi? (
 			$(gen_ffmpeg_depend 'patent_status_nonfree,vaapi')
 			>=media-libs/libva-${LIBVA_PV}[X,wayland?]
-			media-libs/vaapi-drivers[patent_status_nonfree]
+			virtual/vaapi[patent_status_nonfree]
 		)
 		x264? (
 			$(gen_ffmpeg_depend 'patent_status_nonfree,x264')

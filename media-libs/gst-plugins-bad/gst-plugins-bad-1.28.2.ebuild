@@ -51,7 +51,7 @@ ${PATENT_STATUS}
 ${VIDEO_CARDS[@]}
 amf bzip2 +introspection msdk nls nvcodec onevpl +orc qsv udev vaapi vnc vulkan
 vulkan-video wayland X
-ebuild_revision_26
+ebuild_revision_27
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -112,9 +112,9 @@ PATENT_STATUS_RDEPEND="
 		!media-libs/libvpl
 		!media-libs/intel-mediasdk
 		!media-libs/oneVPL-cpu
-		!media-libs/vaapi-drivers
 		!media-libs/vpl-gpu-rt
 		!media-video/amdgpu-pro-amf
+		!virtual/vaapi
 	)
 	virtual/patent-status[patent_status_nonfree=]
 "
@@ -166,7 +166,7 @@ RDEPEND="
 	vaapi? (
 		media-libs/libva[${MULTILIB_USEDEP},wayland?,X?]
 		media-libs/libva:=
-		media-libs/vaapi-drivers[video_cards_amdgpu?,video_cards_r600?,video_cards_radeonsi?,video_cards_intel?,video_cards_nouveau?,video_cards_nvidia?]
+		virtual/vaapi[video_cards_amdgpu?,video_cards_r600?,video_cards_radeonsi?,video_cards_intel?,video_cards_nouveau?,video_cards_nvidia?]
 		udev? (
 			dev-libs/libgudev[${MULTILIB_USEDEP}]
 		)
