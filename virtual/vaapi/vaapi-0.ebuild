@@ -41,7 +41,7 @@ SLOT="0"
 IUSE+="
 ${PATENT_STATUS_IUSE[@]}
 ${VIDEO_CARDS_IUSE[@]}
-custom +firefox iHD i965
+custom +firefox i965 iHD
 "
 
 REQUIRED_USE+="

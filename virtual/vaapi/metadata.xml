@@ -58,11 +58,11 @@
     <flag name="firefox">
       Add the VAAPI to NVDEC video decoder driver for Firefox use.
     </flag>
-    <flag name="iHD">
-      Active support for Gen5 or newer
-    </flag>
     <flag name="i965">
       Legacy support for Gen4 to Gen9
+    </flag>
+    <flag name="iHD">
+      Active support for Gen5 or newer
     </flag>
     <flag name="patent_status_nonfree">
       Allow unexpired nonfree patents.
