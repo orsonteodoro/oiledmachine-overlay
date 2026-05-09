@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <use>
+    <flag name="cpu">
+      Add support for OpenCL for CPU
+    </flag>
+    <flag name="clover">
+      Use the legacy OpenCL 1.x driver which has been removed.
+    </flag>
+    <flag name="neo">
+      Use the Compute Runtime driver for OpenCL 3.0.
+    </flag>
+    <flag name="orca">
+      Use the closed driver for OpenCL 1.x/2.x for GCN 1/2/3.
+    </flag>
+    <flag name="pocl">
+      Add CPU support for OpenCL 3.0.
+    </flag>
+    <flag name="rocm">
+      Use the ROCm OpenCL driver
+    </flag>
+    <flag name="rusticl">
+      Use the newer Mesa OpenCL 3.0 implementation.
+    </flag>
+  </use>
+</pkgmetadata>

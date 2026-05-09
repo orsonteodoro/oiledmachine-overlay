@@ -6,22 +6,21 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <upstream>
-    <bugs-to>https://github.com/krrishnarraj/clpeak/issues</bugs-to>
-    <remote-id type="github">krrishnarraj/clpeak</remote-id>
-  </upstream>
   <use>
-    <flag name="cuda">
-      Add CUDA support.
+    <flag name="amdvlk">
+      Use the AMDVLK Vulkan implementation.
     </flag>
-    <flag name="metal">
-      Add Metal support.
-    </flag>
-    <flag name="opencl">
-      Add OpenCL support.
+    <flag name="radv">
+      Use the Mesa community driver for Vulkan.
     </flag>
     <flag name="vulkan">
       Add Vulkan support.
+    </flag>
+    <flag name="video_cards_nouveau">
+      Use the Mesa OpenGL driver and the open kernel driver for all NVIDIA GPUs.
+    </flag>
+    <flag name="video_cards_nvk">
+      Use the Mesa Vulkan driver for Kepler and newer.
     </flag>
   </use>
 </pkgmetadata>

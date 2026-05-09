@@ -9,24 +9,6 @@ EAPI=8
 CXX_STANDARD=11
 LIBOPENCL_STUB="c34834a65f89ca5e7115395d6e86892eaf2bba38"
 
-_VIDEO_CARDS=(
-	"video_cards_freedreno"
-	"video_cards_intel"
-	"video_cards_lavapipe"
-	"video_cards_nouveau"
-	"video_cards_nvidia"
-	"video_cards_nvk"
-	"video_cards_panfrost"
-	"video_cards_r600"
-	"video_cards_radeonsi"
-	"video_cards_v3d"
-	"video_cards_vc4"
-	"video_cards_virgl"
-	"video_cards_vivante"
-	"video_cards_vmware"
-	"video_cards_zink"
-)
-
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
@@ -68,9 +50,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-${_VIDEO_CARDS[@]}
-amdvlk clover cpu cuda metal neo pocl opencl orca radv rocm rocm_6_4 rocm_7_0
-rusticl vulkan
+cuda metal opencl vulkan
 ebuild_revision_2
 "
 REQUIRED_USE="
@@ -78,141 +58,7 @@ REQUIRED_USE="
 	!kernel_Darwin? (
 		!metal
 	)
-	cpu? (
-		opencl
-		pocl
-	)
-	orca? (
-		!clover
-		!rusticl
-	)
-	opencl? (
-		|| (
-			${_VIDEO_CARDS[@]}
-			cpu
-		)
-	)
-	rocm? (
-		rocm_6_4? (
-			^^ (
-				gcc_slot_12_5
-				gcc_slot_13_4
-			)
-		)
-		rocm_7_0? (
-			^^ (
-				gcc_slot_12_5
-				gcc_slot_13_4
-			)
-		)
-		^^ (
-			rocm_6_4
-			rocm_7_0
-		)
-	)
 
-	video_cards_freedreno? (
-		opencl? (
-			rusticl
-		)
-		|| (
-			opencl
-		)
-	)
-	video_cards_intel? (
-		opencl? (
-			|| (
-				neo
-				rusticl
-			)
-		)
-		|| (
-			opencl
-			vulkan
-		)
-	)
-	video_cards_lavapipe? (
-		opencl? (
-			rusticl? (
-				video_cards_zink
-			)
-			video_cards_zink? (
-				rusticl
-			)
-		)
-		vulkan
-	)
-
-	video_cards_nvk? (
-		video_cards_nouveau
-	)
-	video_cards_nouveau? (
-		video_cards_nvk
-		opencl? (
-			rusticl
-		)
-		|| (
-			opencl
-			vulkan
-		)
-	)
-	video_cards_nvidia? (
-		|| (
-			cuda
-			opencl
-		)
-	)
-	video_cards_panfrost? (
-		opencl? (
-			rusticl
-		)
-	)
-	video_cards_r600? (
-		opencl? (
-			clover
-			orca
-		)
-		|| (
-			opencl
-		)
-	)
-	video_cards_radeonsi? (
-		opencl? (
-			|| (
-				orca
-				rocm
-				rusticl
-			)
-		)
-		vulkan? (
-			|| (
-				amdvlk
-				radv
-			)
-		)
-	)
-	video_cards_v3d? (
-		opencl? (
-			rusticl
-		)
-	)
-	video_cards_vc4? (
-		opencl? (
-			rusticl
-		)
-	)
-	video_cards_vivante? (
-		opencl
-	)
-	video_cards_vmware? (
-		opencl? (
-			clover
-		)
-		|| (
-			opencl
-			vulkan
-		)
-	)
 	|| (
 		cuda
 		metal
@@ -228,75 +74,7 @@ CUDA_3_2="
 "
 RDEPEND+="
 	opencl? (
-		pocl? (
-			dev-libs/pocl[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		)
-		video_cards_intel? (
-			rusticl? (
-				media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_intel]
-			)
-			neo? (
-				dev-libs/intel-compute-runtime
-			)
-		)
-		video_cards_nouveau? (
-			media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_nouveau]
-		)
-		video_cards_nvk? (
-			media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_nvk]
-		)
-		video_cards_nvidia? (
-			x11-drivers/nvidia-drivers
-		)
-		video_cards_panfrost? (
-			media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_panfrost]
-		)
-		video_cards_r600? (
-			clover? (
-				<media-libs/mesa-25.2.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_r600]
-			)
-			orca? (
-				dev-libs/amdgpu-pro-opencl-legacy[gcc_slot_11_5]
-				media-libs/mesa[-opencl]
-			)
-		)
-		video_cards_radeonsi? (
-			orca? (
-				dev-libs/amdgpu-pro-opencl-legacy[gcc_slot_11_5]
-				media-libs/mesa[-opencl]
-			)
-			rusticl? (
-				media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_radeonsi]
-			)
-			rocm? (
-				rocm_6_4? (
-					dev-libs/rocm-opencl-runtime:0/6.4[${LIBSTDCXX_USEDEP}]
-				)
-				rocm_7_0? (
-					dev-libs/rocm-opencl-runtime:0/7.0[${LIBSTDCXX_USEDEP}]
-				)
-			)
-		)
-		video_cards_v3d? (
-			media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_v3d]
-		)
-		video_cards_vc4? (
-			media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_vc4]
-		)
-		video_cards_vivante? (
-			media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_vivante]
-		)
-		video_cards_virgl? (
-			media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_virgl]
-		)
-		video_cards_vmware? (
-			clover? (
-				<media-libs/mesa-25.2.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_vvmware]
-			)
-		)
-		video_cards_zink? (
-			media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_zink]
-		)
+		virtual/opencl[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	cuda? (
 		|| (
@@ -306,27 +84,7 @@ RDEPEND+="
 		x11-drivers/nvidia-drivers:=
 	)
 	vulkan? (
-		media-libs/vulkan-loader
-		video_cards_intel? (
-			media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},vulkan,video_cards_intel]
-		)
-		video_cards_nvidia? (
-			x11-drivers/nvidia-drivers
-		)
-		video_cards_nvk? (
-			media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},vulkan,video_cards_nvk]
-		)
-		video_cards_radeonsi? (
-			amdvlk? (
-				media-libs/amdvlk
-			)
-			radv? (
-				media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},vulkan,video_cards_radeonsi]
-			)
-		)
-		video_cards_vmware? (
-			media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},vulkan,video_cards_vmware]
-		)
+		virtual/vulkan[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 "
 DEPEND+="
