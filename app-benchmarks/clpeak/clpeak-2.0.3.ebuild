@@ -27,7 +27,17 @@ _VIDEO_CARDS=(
 	"video_cards_zink"
 )
 
-inherit cmake dep-prepare
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
+)
+
+inherit cmake dep-prepare libcxx-slot libstdcxx-slot
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -189,56 +199,56 @@ RDEPEND+="
 		)
 		video_cards_intel? (
 			rusticl? (
-				media-libs/mesa[opencl,video_cards_intel]
+				media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_intel]
 			)
 			neo? (
 				dev-libs/intel-compute-runtime
 			)
 		)
 		video_cards_nouveau? (
-			media-libs/mesa[opencl,video_cards_nouveau]
+			media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_nouveau]
 		)
 		video_cards_nvk? (
-			media-libs/mesa[opencl,video_cards_nvk]
+			media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_nvk]
 		)
 		video_cards_nvidia? (
 			x11-drivers/nvidia-drivers
 		)
 		video_cards_panfrost? (
-			media-libs/mesa[opencl,video_cards_panfrost]
+			media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_panfrost]
 		)
 		video_cards_r600? (
 			clover? (
-				<media-libs/mesa-25.2.0[opencl,video_cards_r600]
+				<media-libs/mesa-25.2.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_r600]
 			)
 		)
 		video_cards_radeonsi? (
 			rusticl? (
-				media-libs/mesa[opencl,video_cards_radeonsi]
+				media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_radeonsi]
 			)
 			rocm? (
-				dev-libs/rocm-opencl-runtime
+				dev-libs/rocm-opencl-runtime[${LIBSTDCXX_USEDEP}]
 			)
 		)
 		video_cards_v3d? (
-			media-libs/mesa[opencl,video_cards_v3d]
+			media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_v3d]
 		)
 		video_cards_vc4? (
-			media-libs/mesa[opencl,video_cards_vc4]
+			media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_vc4]
 		)
 		video_cards_vivante? (
-			media-libs/mesa[opencl,video_cards_vivante]
+			media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_vivante]
 		)
 		video_cards_virgl? (
-			media-libs/mesa[opencl,video_cards_virgl]
+			media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_virgl]
 		)
 		video_cards_vmware? (
 			clover? (
-				<media-libs/mesa-25.2.0[opencl,video_cards_vvmware]
+				<media-libs/mesa-25.2.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_vvmware]
 			)
 		)
 		video_cards_zink? (
-			media-libs/mesa[opencl,video_cards_zink]
+			media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl,video_cards_zink]
 		)
 	)
 	cuda? (
@@ -251,24 +261,24 @@ RDEPEND+="
 	vulkan? (
 		media-libs/vulkan-loader
 		video_cards_intel? (
-			media-libs/mesa[vulkan,video_cards_intel]
+			media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},vulkan,video_cards_intel]
 		)
 		video_cards_nvidia? (
 			x11-drivers/nvidia-drivers
 		)
 		video_cards_nvk? (
-			media-libs/mesa[vulkan,video_cards_nvk]
+			media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},vulkan,video_cards_nvk]
 		)
 		video_cards_radeonsi? (
 			amdvlk? (
 				media-libs/amdvlk
 			)
 			radv? (
-				media-libs/mesa[vulkan,video_cards_radeonsi]
+				media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},vulkan,video_cards_radeonsi]
 			)
 		)
 		video_cards_vmware? (
-			media-libs/mesa[vulkan,video_cards_vmware]
+			media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},vulkan,video_cards_vmware]
 		)
 	)
 "
@@ -282,6 +292,11 @@ BDEPEND+="
 	>=dev-build/cmake-3.20
 "
 DOCS=( "README.md" )
+
+pkg_setup() {
+	libcxx-slot_verify
+	libstdcxx-slot_verify
+}
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
