@@ -92,6 +92,7 @@ RDEPEND_DRIVERS="
 "
 
 RDEPEND+="
+	!media-video/vaapi-drivers
 	media-libs/libva
 	virtual/patent-status[patent_status_nonfree=]
 	!custom? (
