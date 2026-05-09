@@ -842,7 +842,6 @@ PATENT_STATUS_RDEPEND="
 		)
 		gstreamer? (
 			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},mpeg?,-patent_status_nonfree,-vaapi,vpx?,-x264,-x265]
-			!media-plugins/gst-plugins-vaapi
 		)
 	)
 	patent_status_nonfree? (
@@ -855,9 +854,6 @@ PATENT_STATUS_RDEPEND="
 		)
 		gstreamer? (
 			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},mpeg?,patent_status_nonfree,vaapi?,vpx?,x264?,x265?]
-			vaapi? (
-				>=media-plugins/gst-plugins-vaapi-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
-			)
 		)
 	)
 "

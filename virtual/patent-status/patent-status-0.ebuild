@@ -66,7 +66,6 @@ RDEPEND+="
 		!media-plugins/gst-plugins-mp4
 		!media-plugins/gst-plugins-openh264
 		!media-plugins/gst-plugins-uvch264
-		!media-plugins/gst-plugins-vaapi
 		!media-plugins/gst-plugins-voaacenc
 		!media-plugins/gst-plugins-vvdec
 		!media-plugins/gst-plugins-x264

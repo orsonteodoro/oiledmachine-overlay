@@ -49,7 +49,7 @@ ${VIDEO_CARDS[@]}
 a52 aac aalib alsa aom av1 cdda dash dav1d dts dv dvb dvd fdk ffmpeg flac
 fluidsynth gme gsm hls http jack jpeg jpeg2k lame libass libcaca libvisual midi
 mp3 modplug mpeg nvcodec ogg openal openh264 opus oss speex png pulseaudio qsv
-rav1e rtmp sndio sndfile svg taglib theora v4l va vaapi vcd vorbis vpx vulkan
+rav1e rtmp sndio sndfile svg taglib theora v4l vaapi vcd vorbis vpx vulkan
 vvc wavpack wildmidi webp X x264 x265
 ebuild_revision_1
 "
@@ -61,7 +61,6 @@ PATENT_REQUIRED_USE="
 		!hls
 		!nvcodec
 		!qsv
-		!va
 		!vaapi
 		!vulkan
 		!vvc
@@ -87,9 +86,6 @@ PATENT_REQUIRED_USE="
 		patent_status_nonfree
 	)
 	qsv? (
-		patent_status_nonfree
-	)
-	va? (
 		patent_status_nonfree
 	)
 	vaapi? (
@@ -354,13 +350,9 @@ RDEPEND="
 		~media-plugins/gst-plugins-v4l2-${PV}:1.0[${MULTILIB_USEDEP}]
 		media-plugins/gst-plugins-v4l2:=
 	)
-	va? (
+	vaapi? (
 		~media-plugins/gst-plugins-bad-${PV}:1.0[${MULTILIB_USEDEP},vaapi,video_cards_amdgpu?,video_cards_r600?,video_cards_radeonsi?,video_cards_intel?,video_cards_nouveau?,video_cards_nvidia?]
 		media-plugins/gst-plugins-bad:=
-	)
-	vaapi? (
-		~media-plugins/gst-plugins-vaapi-${PV}:1.0[${MULTILIB_USEDEP},video_cards_amdgpu?,video_cards_r600?,video_cards_radeonsi?,video_cards_intel?,video_cards_nouveau?,video_cards_nvidia?]
-		media-plugins/gst-plugins-vaapi:=
 	)
 	vcd? (
 		~media-plugins/gst-plugins-mpeg2dec-${PV}:1.0[${MULTILIB_USEDEP}]
