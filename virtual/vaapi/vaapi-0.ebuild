@@ -8,9 +8,12 @@ EAPI=8
 # makes no effort to sort out drivers.  I do not prefer to maintain a ebuild
 # fork of libva.
 
+CXX_STANDARD=17
+
 PATENT_STATUS_IUSE=(
 	"patent_status_nonfree"
 )
+
 VIDEO_CARDS_IUSE=(
 	"video_cards_amdgpu"
 	"video_cards_intel"
@@ -20,7 +23,17 @@ VIDEO_CARDS_IUSE=(
 	"video_cards_radeonsi"
 )
 
-inherit multilib-build
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+        "${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
+)
+
+inherit libcxx-slot libstdcxx-slot multilib-build
 
 DESCRIPTION="A metapackage for libva drivers"
 KEYWORDS="amd64 ~arm arm64 ~loong ~mips ppc64 ~riscv x86" # Same as libva
@@ -41,7 +54,7 @@ REQUIRED_USE+="
 
 RDEPEND_DRIVERS="
 	video_cards_amdgpu? (
-		media-libs/mesa[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi,video_cards_radeonsi]
+		media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},patent_status_nonfree=,vaapi,video_cards_radeonsi]
 		media-libs/mesa:=
 	)
 	video_cards_intel? (
@@ -51,7 +64,7 @@ RDEPEND_DRIVERS="
 		)
 	)
 	video_cards_nouveau? (
-		media-libs/mesa[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi,video_cards_nouveau]
+		media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},patent_status_nonfree=,vaapi,video_cards_nouveau]
 		media-libs/mesa:=
 	)
 	video_cards_nvidia? (
@@ -61,11 +74,11 @@ RDEPEND_DRIVERS="
 		x11-drivers/nvidia-drivers
 	)
 	video_cards_r600? (
-		media-libs/mesa[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi,video_cards_r600]
+		media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},patent_status_nonfree=,vaapi,video_cards_r600]
 		media-libs/mesa:=
 	)
 	video_cards_radeonsi? (
-		media-libs/mesa[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi,video_cards_radeonsi]
+		media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},patent_status_nonfree=,vaapi,video_cards_radeonsi]
 		media-libs/mesa:=
 	)
 "
@@ -77,6 +90,11 @@ RDEPEND+="
 		${RDEPEND_DRIVERS}
 	)
 "
+
+pkg_setup() {
+	libcxx-slot_verify
+	libstdcxx-slot_verify
+}
 
 pkg_postinst() {
 	if has_version "media-libs/libva-intel-driver" ; then
