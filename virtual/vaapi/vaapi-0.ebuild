@@ -28,7 +28,7 @@ SLOT="0"
 IUSE+="
 ${PATENT_STATUS_IUSE[@]}
 ${VIDEO_CARDS_IUSE[@]}
-custom
+custom +firefox
 "
 
 REQUIRED_USE+="
@@ -41,7 +41,8 @@ REQUIRED_USE+="
 
 RDEPEND_DRIVERS="
 	video_cards_amdgpu? (
-		media-libs/mesa:=[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi,video_cards_radeonsi]
+		media-libs/mesa[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi,video_cards_radeonsi]
+		media-libs/mesa:=
 	)
 	video_cards_intel? (
 		|| (
@@ -50,17 +51,22 @@ RDEPEND_DRIVERS="
 		)
 	)
 	video_cards_nouveau? (
-		media-libs/mesa:=[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi,video_cards_nouveau]
+		media-libs/mesa[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi,video_cards_nouveau]
+		media-libs/mesa:=
 	)
 	video_cards_nvidia? (
-		media-plugins/nvidia-vaapi-driver
+		firefox? (
+			media-plugins/nvidia-vaapi-driver
+		)
 		x11-drivers/nvidia-drivers
 	)
 	video_cards_r600? (
-		media-libs/mesa:=[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi,video_cards_r600]
+		media-libs/mesa[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi,video_cards_r600]
+		media-libs/mesa:=
 	)
 	video_cards_radeonsi? (
-		media-libs/mesa:=[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi,video_cards_radeonsi]
+		media-libs/mesa[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi,video_cards_radeonsi]
+		media-libs/mesa:=
 	)
 "
 
