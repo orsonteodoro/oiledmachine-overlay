@@ -69,7 +69,8 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${_VIDEO_CARDS[@]}
-amdvlk clover cpu cuda metal neo pocl opencl orca radv rocm rocm_6_4 rocm_7_0 rusticl vulkan
+amdvlk clover cpu cuda metal neo pocl opencl orca radv rocm rocm_6_4 rocm_7_0
+rusticl vulkan
 ebuild_revision_2
 "
 REQUIRED_USE="
