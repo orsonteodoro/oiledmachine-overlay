@@ -151,3 +151,12 @@ pkg_setup() {
 	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
+
+src_configure() {
+	if use neo ; then
+einfo "You are enabling the actively supported Neo for Gen 12 or newer."
+	fi
+	if use neo-legacy ; then
+einfo "You are enabling the legacy supported Neo for Gen8 to Gen11."
+	fi
+}
