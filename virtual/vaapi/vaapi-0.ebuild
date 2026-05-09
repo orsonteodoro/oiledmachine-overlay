@@ -104,13 +104,16 @@ pkg_setup() {
 	libstdcxx-slot_verify
 }
 
-pkg_postinst() {
+src_configure() {
 	if use i965 ; then
 einfo "Adding the legacy supported i965 driver for Gen4 to Gen9."
 	fi
 	if use iHD ; then
 einfo "Adding the actively supported iHD driver for Gen5 or newer."
 	fi
+}
+
+pkg_postinst() {
 einfo
 einfo "See the metadata.xml or epkginfo -x ${CATEGORY}/${PN} for hardware"
 einfo "requirements."
