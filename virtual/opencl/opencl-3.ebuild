@@ -44,9 +44,10 @@ IUSE+="
 ${_VIDEO_CARDS[@]}
 clover cpu neo pocl opencl orca rocm rocm_6_4 rocm_7_0
 rusticl vulkan
-ebuild_revision_2
+ebuild_revision_3
 "
 RDEPEND+="
+	>=dev-libs/opencl-icd-loader-2023.02.06[${MULTILIB_USEDEP}]
 	dev-cpp/clhpp:=
 	pocl? (
 		dev-libs/pocl[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
