@@ -330,7 +330,8 @@ einfo "| Social media login       | 20+                   | The built in key gen
 einfo "| Archives                 | 25+                   | The built in key generator                     |"
 einfo "| Master password          | 25+ (6-7 words min)   | Your own collection of words that no one knows |"
 einfo
-einfo "Tip:  Do not abuse the reduce password length button!"
+einfo "Tip:  Do not abuse the reduce password length button!  The ebuild default is 20 characters for social media."
+einfo "Tip:  Do not abuse the + button for save lock timeout!  The default is 1 minute to mitigate a cold boot attack."
 einfo "Tip:  Don't FAFO!"
 einfo
 einfo "AI accelerated Q-Day is forecasted to be as early as 2029 (3-4) years from now."
