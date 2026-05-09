@@ -168,6 +168,7 @@ REQUIRED_USE="
 	|| (
 		cuda
 		metal
+		opencl
 		vulkan
 	)
 "
