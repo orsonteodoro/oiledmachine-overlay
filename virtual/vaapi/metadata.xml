@@ -81,8 +81,8 @@
       Checks or installs a VA-API driver for decoding.
     </flag>
     <flag name="video_cards_r600">
-      Checks or installs a VA-API driver for decoding, and encoding
-      support for ARUBA only.
+      Checks or installs a VA-API driver for decoding and encoding
+      for ARUBA (Northern Islands) only.
     </flag>
     <flag name="video_cards_radeonsi">
       Checks or installs a VA-API driver for both encoding and decoding.
