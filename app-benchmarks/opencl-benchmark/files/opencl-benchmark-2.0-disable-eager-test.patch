@@ -1,0 +1,9 @@
+diff '--color=auto' -urp OpenCL-Benchmark-2.0.orig/make.sh OpenCL-Benchmark-2.0/make.sh
+--- OpenCL-Benchmark-2.0.orig/make.sh	2026-03-19 10:25:22.000000000 -0700
++++ OpenCL-Benchmark-2.0/make.sh	2026-05-08 22:54:26.989010064 -0700
+@@ -10,4 +10,4 @@ case "$(uname -a)" in # automatically de
+ 	*       ) g++ src/*.cpp -o bin/OpenCL-Benchmark -std=c++17 -pthread -O -Wno-comment -I./src/OpenCL/include -L./src/OpenCL/lib -lOpenCL     ;; # Linux
+ esac
+ 
+-if [[ $? == 0 ]]; then bin/OpenCL-Benchmark "$@"; fi # run executable only if last compilation was successful
++#if [[ $? == 0 ]]; then bin/OpenCL-Benchmark "$@"; fi # run executable only if last compilation was successful

@@ -1,0 +1,15 @@
+--- a/make.sh.orig	2026-05-08 23:02:14.672422944 -0700
++++ b/make.sh	2026-05-08 23:02:41.628549643 -0700
+@@ -5,9 +5,9 @@ mkdir -p bin # create directory for exec
+ rm -f bin/OpenCL-Benchmark # prevent execution of old version if compiling fails
+ 
+ case "$(uname -a)" in # automatically detect operating system
+-	 Darwin*) g++ src/*.cpp -o bin/OpenCL-Benchmark -std=c++17 -pthread -O -Wno-comment -I./src/OpenCL/include -framework OpenCL               ;; # macOS
+-	*Android) g++ src/*.cpp -o bin/OpenCL-Benchmark -std=c++17 -pthread -O -Wno-comment -I./src/OpenCL/include -L/system/vendor/lib64 -lOpenCL ;; # Android
+-	*       ) g++ src/*.cpp -o bin/OpenCL-Benchmark -std=c++17 -pthread -O -Wno-comment -I./src/OpenCL/include -L./src/OpenCL/lib -lOpenCL     ;; # Linux
++	 Darwin*) ${CXX} src/*.cpp -o bin/OpenCL-Benchmark -std=c++17 -pthread -O -Wno-comment -I./src/OpenCL/include -framework OpenCL               ;; # macOS
++	*Android) ${CXX} src/*.cpp -o bin/OpenCL-Benchmark -std=c++17 -pthread -O -Wno-comment -I./src/OpenCL/include -L/system/vendor/lib64 -lOpenCL ;; # Android
++	*       ) ${CXX} src/*.cpp -o bin/OpenCL-Benchmark -std=c++17 -pthread -O -Wno-comment -I./src/OpenCL/include -L./src/OpenCL/lib -lOpenCL     ;; # Linux
+ esac
+ 
+ #if [[ $? == 0 ]]; then bin/OpenCL-Benchmark "$@"; fi # run executable only if last compilation was successful

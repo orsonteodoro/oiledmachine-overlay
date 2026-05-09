@@ -4,6 +4,19 @@
 EAPI=8
 
 MY_PN="OpenCL-Benchmark"
+CXX_STANDARD=17
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
+)
+
+inherit libcxx-slot libstdcxx-slot
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${MY_PN}-${PV}"
@@ -28,11 +41,22 @@ BDEPEND="
 "
 DOCS=( "CITATION.cff" "README.md" )
 PATCHES=(
-	"${FILESDIR}/${PN}-1.3-disable-eager-test.patch"
+	"${FILESDIR}/${PN}-2.0-disable-eager-test.patch"
+	"${FILESDIR}/${PN}-2.0-agnosticize-compiler.patch"
 )
 
+pkg_setup() {
+	libcxx-slot_verify
+	libstdcxx-slot_verify
+}
+
 src_configure() {
-	:
+	if [[ -z "${CXX}" ]] ; then
+		export CXX="g++"
+		tc-is-clang && export CXX="clang++"
+	else
+		export CXX
+	fi
 }
 
 src_compile() {
@@ -44,3 +68,5 @@ src_install() {
 	docinto "licenses"
 	dodoc "LICENSE.md"
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 2.0 (20260508)
