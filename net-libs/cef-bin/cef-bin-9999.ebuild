@@ -88,7 +88,7 @@ https://cef-builds.spotifycdn.com/index.html
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-beta cefclient cefsimple debug minimal test
+beta cefclient cefsimple debug minimal test wayland X
 ebuild_revision_2
 "
 REQUIRED_USE+="
@@ -102,6 +102,10 @@ REQUIRED_USE+="
 	)
 	test? (
 		!minimal
+	)
+	|| (
+		wayland
+		X
 	)
 "
 
