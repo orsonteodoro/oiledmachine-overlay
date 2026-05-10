@@ -37,5 +37,5 @@ coolercontrold --version          # Verify that it is 4.2.1 or newer, if not unm
 systemctl start coolercontrold
 ps -aux | grep coolercontrold     # Verify that it is running as coolercontrold
 
-To avoid daemons forcing themselves as root, it is recommended to disable them
-immediately if they are no longer being used.
+To avoid full system compromise from daemons forcing themselves as root, it is
+recommended to disable them immediately if they are no longer being used.
