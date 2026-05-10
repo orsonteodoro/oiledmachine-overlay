@@ -42,55 +42,55 @@ There are 3 solutions.  Solution 2 has 2 parts.
 
 Solution 1:
 
-The easiest way is to use ot-sources ebuild on config assist mode, but if
-you use your own custom kernel or the distro you need to follow the below
-steps.
+     The easiest way is to use ot-sources ebuild on config assist mode, but if
+     you use your own custom kernel or the distro you need to follow the below
+     steps.
 
 Solution 2:
 
-Verify the following kernel versions for partial/full mitigation.  The
-exact numbers are currently partial but later will be full mitigation.
+     Verify the following kernel versions for partial/full mitigation.  The
+     exact numbers are currently partial but later will be full mitigation.
 
-Part A:  Get the patched version(s)
+     Part A:  Get the patched version(s)
 
->= 7.0.5
->= 6.18.28
->= 6.12.87
->= 6.6.138
->= 6.1.172
->= 5.15.206
->= 5.10.255
+          >= 7.0.5
+          >= 6.18.28
+          >= 6.12.87
+          >= 6.6.138
+          >= 6.1.172
+          >= 5.15.206
+          >= 5.10.255
 
-Part B:  .config edit or unload module, your choice
+     Part B:  .config edit or unload module, your choice
 
-Disable or comment out in .config for the latest point releases if you have
-the above point releases or newer.
+          Disable or comment out in .config for the latest point releases if you have
+          the above point releases or newer.
 
-CONFIG_AF_RXRPC
+          CONFIG_AF_RXRPC
 
-or 
+               or 
 
-Unload rxrpc kernel or blacklist the module if built as a kernel module.
+          Unload rxrpc kernel or blacklist the module if built as a kernel module.
 
-modprobe -r rxrpc
+          modprobe -r rxrpc
 
 Solution 3:  Earlier kernel point releases but choose either .config edit or unload/blacklist
 
-You need all three disabled in the .config or unload all the modules:
+    You need all three disabled in the .config:
 
-CONFIG_AF_RXRPC
-CONFIG_INET_ESP
-CONFIG_INET6_ESP
+    CONFIG_AF_RXRPC
+    CONFIG_INET_ESP
+    CONFIG_INET6_ESP
 
-or
+        or
 
-Unload or blacklist all the modules if external modules:
+    Unload/blacklist all the modules if external modules:
 
-modprobe -r esp4 
-modprobe -r esp6
-modprobe -r rxrpc
+    modprobe -r esp4 
+    modprobe -r esp6
+    modprobe -r rxrpc
 
-The config disable is preferred to eliminate the vulnerable time window before use and
+The .config disable is preferred to eliminate the vulnerable time window before use and
 easier clean up after upstream fixes it.
 
 =====================
