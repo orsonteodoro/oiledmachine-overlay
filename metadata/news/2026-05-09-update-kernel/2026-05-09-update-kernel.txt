@@ -48,9 +48,10 @@ There are 3 solutions.  Solution 2 has 2 parts.
 
 Solution 1:
 
-     The easiest way is to use ot-sources ebuild on config assist mode, but if
-     you use your own custom kernel or the distro you need to follow the below
-     steps.  It currently uses solution 2 automatically.
+     The easiest way is to use ot-sources ebuild on config assist mode.  The
+     ot-sources currently uses solution 2 automatically.  If you use your own
+     custom kernel or the distro you need to follow one of the the solutions
+     below.  
 
 Solution 2:
 
@@ -115,6 +116,7 @@ easier clean up after upstream fixes it.
 
 To verify that the external kernel module is unloaded, inspect `cat /proc/modules`.
 
+
 =====================
 Remediating Copy Fail
 =====================
@@ -138,8 +140,8 @@ Still vulnerable hunks were observed:
 <= 5.15.203 (LTS):  Not patched
 <= 5.10.253 (LTS):  Not patched
 
-Both Copy Fail and Dirty frag should be mitigated ASAP before the KEV deadline
-on the 15 of this month, but it is recommend earlier if meeting billing
+Both Copy Fail and Dirty frag should be mitigated ASAP before the KEV remediation
+deadline on the 15 of this month, but it is recommend earlier if meeting billing
 commitments or transfering very sensitive data before this time.
 
 When the issue is patched by upstream, you should remove the blacklists.  You
