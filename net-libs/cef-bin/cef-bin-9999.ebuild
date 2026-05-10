@@ -8,22 +8,28 @@ EAPI=8
 
 # Contains AI generated synthetic data.
 
-DEPENDS_VERSION="145.0.7632.160"
-# DEPENDS_VER_A="145"
-# DEPENDS_VER_B="0"
-# DEPENDS_VER_C="7632"
-# DEPENDS_VER_D="160"
+CEF_STABLE_VER="147.0.7727.118" # For *DEPENDs
+# CEF_STABLE_VER_A="147"
+# CEF_STABLE_VER_B="0"
+# CEF_STABLE_VER_C="7727"
+# CEF_STABLE_VER_D="118"
+
+CEF_BETA_VER="148.0.7778.40" # Upstream suggested tested
+# CEF_BETA_VER_A="148"
+# CEF_BETA_VER_B="0"
+# CEF_BETA_VER_C="7778"
+# CEF_BETA_VER_D="40"
 
 # Third party licenses:
 #
 # CEF uses the BSD license
 # CEF uses the Chromium source code and internal third party libraries/codecs which may be under additional licenses and copyright notices.
 # Additional copyright notices can be obtained from
-# CEF (tarball):        https://bitbucket.org/chromiumembedded/cef/get/<DEPENDS_VER_C>.tar.bz2
-# Chromium (tarball):   https://gsdview.appspot.com/chromium-browser-official/chromium-<DEPENDS_VERSION>.tar.xz
-# CEF (repo):           https://bitbucket.org/chromiumembedded/cef/src/<DEPENDS_VER_C>
-#                       https://github.com/chromiumembedded/cef/tree/<DEPENDS_VER_C>
-# Chromium (repo):      https://github.com/chromium/chromium/tree/<DEPENDS_VERSION>
+# CEF (tarball):        https://bitbucket.org/chromiumembedded/cef/get/<CEF_STABLE_VER_C>.tar.bz2
+# Chromium (tarball):   https://gsdview.appspot.com/chromium-browser-official/chromium-<CEF_STABLE_VER>.tar.xz
+# CEF (repo):           https://bitbucket.org/chromiumembedded/cef/src/<CEF_STABLE_VER_C>
+#                       https://github.com/chromiumembedded/cef/tree/<CEF_STABLE_VER_C>
+# Chromium (repo):      https://github.com/chromium/chromium/tree/<CEF_STABLE_VER>
 #
 # The repos may not contain all the third party modules.
 # Refer to the tarballs for more copyright notices and licenses for the third party packages.
@@ -67,7 +73,12 @@ DESCRIPTION="Chromium Embedded Framework (CEF) is a simple framework for \
 embedding Chromium-based browsers in other applications."
 LICENSE="
 	BSD
-	chromium-${DEPENDS_VERSION%.*}.x.html
+	!beta? (
+		chromium-${CEF_STABLE_VER%.*}.x.html
+	)
+	beta? (
+		chromium-${CEF_BETA_VER%.*}.x.html
+	)
 "
 HOMEPAGE="
 https://bitbucket.org/chromiumembedded/cef/src/master/
@@ -95,7 +106,7 @@ REQUIRED_USE+="
 "
 
 # For *DEPENDs see:
-# https://github.com/chromium/chromium/tree/145.0.7632.160/build/linux/sysroot_scripts/generated_package_lists				; 20231117
+# https://github.com/chromium/chromium/tree/147.0.7727.118/build/linux/sysroot_scripts/generated_package_lists				; 20231117
 #   alsa-lib, at-spi2-core, bluez (bluetooth), cairo, cups, curl, expat,
 #   flac [older], fontconfig [older], freetype [older], gcc, gdk-pixbuf, glib,
 #   glibc, gtk+3, gtk4, harfbuzz [older], libdrm [older], libffi, libglvnd,
@@ -109,22 +120,22 @@ REQUIRED_USE+="
 #   libxau, libXtst, util-linux, pam, libcap, libevdev, sqlite3,
 #   speech-dispatcher
 #
-# https://github.com/chromium/chromium/blob/145.0.7632.160/build/install-build-deps.py
+# https://github.com/chromium/chromium/blob/147.0.7727.118/build/install-build-deps.py
 # https://github.com/chromiumembedded/cef/blob/6613/CMakeLists.txt.in   # Same as 3rd component c in a.b.c.d versioning.
 #   For version correspondance see https://bitbucket.org/chromiumembedded/cef/wiki/BranchesAndBuilding
 
 #
 # Additional *DEPENDs versioning info:
 #
-# https://github.com/chromium/chromium/blob/145.0.7632.160/third_party/libpng/png.h#L288
-# https://github.com/chromium/chromium/blob/145.0.7632.160/third_party/zlib/zlib.h#L40
-# https://github.com/chromium/chromium/blob/145.0.7632.160/tools/clang/scripts/update.py#L42
-# https://chromium.googlesource.com/chromium/src.git/+/refs/tags/145.0.7632.160/third_party/
+# https://github.com/chromium/chromium/blob/147.0.7727.118/third_party/libpng/png.h#L288
+# https://github.com/chromium/chromium/blob/147.0.7727.118/third_party/zlib/zlib.h#L40
+# https://github.com/chromium/chromium/blob/147.0.7727.118/tools/clang/scripts/update.py#L42
+# https://chromium.googlesource.com/chromium/src.git/+/refs/tags/147.0.7727.118/third_party/
 
-# /var/tmp/portage/www-client/chromium-145.0.7632.160/work/chromium-145.0.7632.160/third_party/fontconfig/src/fontconfig/fontconfig.h L54 ; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-145.0.7632.160/work/chromium-145.0.7632.160/third_party/freetype/src/CMakeLists.txt	L165	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-145.0.7632.160/work/chromium-145.0.7632.160/third_party/harfbuzz-ng/src/configure.ac	L3	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-145.0.7632.160/work/chromium-145.0.7632.160/third_party/libdrm/src/meson.build		L24	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-147.0.7727.118/work/chromium-147.0.7727.118/third_party/fontconfig/src/fontconfig/fontconfig.h L54 ; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-147.0.7727.118/work/chromium-147.0.7727.118/third_party/freetype/src/CMakeLists.txt	L165	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-147.0.7727.118/work/chromium-147.0.7727.118/third_party/harfbuzz-ng/src/configure.ac	L3	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-147.0.7727.118/work/chromium-147.0.7727.118/third_party/libdrm/src/meson.build		L24	; newer than generated_package_lists
 
 # gnome-keyring, vulkan-loader, gtkglext, libappindicator versioning from U 16.06
 
@@ -636,15 +647,14 @@ eerror
 		die
 	fi
 
-	if ver_test "${CHROMIUM_PV}" "-lt" "${DEPENDS_VERSION}" ; then
-ewarn
-ewarn "You are using a CEF version based on an older chromium version."
-ewarn "The *DEPENDs checks assumes newer or later."
-ewarn
-ewarn "Current version:  ${CHROMIUM_PV}"
-ewarn "*DEPENDs version:  ${DEPENDS_VERSION}"
-ewarn
+	local cef_ver=$(usex beta "${CEF_BETA_VER}" "${CEF_STABLE_VER}")
+	local update_channel=$(usex beta "beta" "stable")
+
+	if ver_test "${CHROMIUM_PV}" "-ne" "${CEF_STABLE_VER}" ; then
+ewarn "You are using a CEF version that differs from the *DEPENDs assumptions."
 	fi
+einfo "Installing version:  ${CHROMIUM_PV} (${update_channel})"
+einfo "*DEPENDs assumption:  ${CEF_STABLE_VER} (stable)"
 
 	unpack "${distdir}/${bn}"
 }
@@ -749,21 +759,14 @@ src_install() {
 }
 
 pkg_postinst() {
-einfo
-einfo "Version installed:  "$(cat "${EROOT}/opt/${PN}/.version")
-einfo
 ewarn
 ewarn "Security notice:"
 ewarn
 ewarn "This package needs to be updated at the same time as your Chromium web"
 ewarn "browser to avoid the same critical vulnerabilities."
 ewarn
-ewarn "We recommend that this library and every web browser be updated weekly."
-ewarn
-ewarn
-# Weekly release cycle issues with stable.
-ewarn "If the PATCH in MAJOR.MINOR.BUILD.PATCH is < 125, it is recommended to"
-ewarn "use the beta USE flag for security reasons."
+ewarn "We recommend that this library and every web browser be updated at"
+ewarn "least once a month."
 ewarn
 ewarn
 ewarn "Some parts such as libcef_dll_wrapper.so are not CFI protected and"
