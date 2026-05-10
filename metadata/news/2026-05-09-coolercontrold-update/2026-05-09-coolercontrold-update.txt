@@ -18,7 +18,8 @@ Steps required to remediate:
 
 Decide if you want to do a clean install and full password rotate.  For
 proper remediation, a clean install is usually better remediation against
-possibly exploited high level vulnerabilities that Rust cannot defend against.
+possibly exploited high level vulnerabilities that Rust cannot defend against
+automatically.
 
 # OpenRC users:
 /etc/init.d/coolercontrold stop
