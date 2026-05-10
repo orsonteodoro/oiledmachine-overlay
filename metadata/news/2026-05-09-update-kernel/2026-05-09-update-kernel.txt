@@ -2,7 +2,7 @@ Title: Rebuild the kernel to mitigate against 0-day vulnerabilities
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-05-09
-Revision: 11
+Revision: 12
 News-Item-Format: 2.0
 Display-If-Installed: sys-kernel/mitigate-dos
 Display-If-Installed: sys-kernel/mitigate-dt
@@ -77,13 +77,13 @@ Solution 2:
 
                     or 
 
-          Unload rxrpc kernel or blacklist the module if built as a kernel module.
+          Unload rxrpc kernel module if built as a kernel module.
 
                modprobe -r rxrpc
 
                     or 
 
-          Edit or add /etc/modprobe.d/blacklist.conf with the following contents:
+          Blacklist rxrpc kernel module by editing /etc/modprobe.d/blacklist.conf with the following contents:
 
                blacklist rxrpc
 
@@ -97,7 +97,7 @@ Solution 3:  Earlier kernel point releases but choose either .config edit or unl
 
                or
 
-     Unload/blacklist all the modules if external modules:
+     Unload all the modules if external modules:
 
           modprobe -r esp4 
           modprobe -r esp6
@@ -105,7 +105,7 @@ Solution 3:  Earlier kernel point releases but choose either .config edit or unl
 
                or
 
-     Edit or add /etc/modprobe.d/blacklist.conf with the following contents:
+     Blacklist all by editing /etc/modprobe.d/blacklist.conf with the following contents:
 
           blacklist esp4
           blacklist esp6
