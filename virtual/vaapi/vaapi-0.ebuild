@@ -35,6 +35,8 @@ LLVM_COMPAT=(
 
 inherit libcxx-slot libstdcxx-slot multilib-build
 
+S="${WORKDIR}"
+
 DESCRIPTION="A metapackage for libva drivers"
 KEYWORDS="amd64 ~arm arm64 ~loong ~mips ppc64 ~riscv x86" # Same as libva
 SLOT="0"

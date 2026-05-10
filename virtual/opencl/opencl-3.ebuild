@@ -38,6 +38,7 @@ LLVM_COMPAT=(
 inherit libcxx-slot libstdcxx-slot multilib-build
 
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~riscv ~x86"
+S="${WORKDIR}"
 
 DESCRIPTION="A virtual for OpenCL 3.0 drivers"
 LICENSE="
