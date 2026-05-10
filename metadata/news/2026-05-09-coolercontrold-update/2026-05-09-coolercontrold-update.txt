@@ -6,7 +6,7 @@ Revision: 1
 News-Item-Format: 2.0
 Display-If-Installed: sys-apps/coolercontrold
 
-coolercontrold is dangerously ran as root.  Ideally, all daemons should run as
+coolercontrold had dangerously ran as root.  Ideally, all daemons should run as
 limited user.  It is now possible to run coolercontrold as a limited user and
 limited capabilities with the current ebuild.
 
