@@ -47,7 +47,7 @@ to the .txt file at:
 The selected first 5 news items:
 
 * 2026-05-09 - [Rebuild and restart coolercontrold as non-root](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-05-09-coolercontrold-update/2026-05-09-coolercontrold-update.txt)
-* 2026-05-09 - [Rebuild the ot-sources kernel against 0-day vulnerabilities](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-05-09-update-kernel/2026-05-09-update-kernel.txt)
+* 2026-05-09 - [Rebuild the kernel against 0-day vulnerabilities](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-05-09-update-kernel/2026-05-09-update-kernel.txt)
 * 2026-05-09 - [Rebuild libpcre2 dependencies](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-05-09-rebuild-libpcre2-dependencies/2026-05-09-rebuild-libpcre2-dependencies.txt)
 * 2025-01-16 - [Rotate passwords immediately](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2025-01-16-rotate-passwords/2025-01-16-rotate-passwords.txt)
 * 2023-11-05 - [ot-sources PGO patch debug output breaks emerge because the distro's linux-info eclass doesn't perform data validation (It addresses the GCC_PGO_PHASE message spam also.)](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2023-11-05-fix-emerge-at-world/2023-11-05-fix-emerge-at-world.txt)
