@@ -2,7 +2,7 @@ Title: Rebuild the kernel to mitigate against 0-day vulnerabilities
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-05-09
-Revision: 5
+Revision: 7
 News-Item-Format: 2.0
 Display-If-Installed: sys-kernel/mitigate-dos
 Display-If-Installed: sys-kernel/mitigate-dt
@@ -34,7 +34,24 @@ black bootup screen.
 Remember to keep backup kernels.  Do not delete old kernels until you verify
 that the kernel works.
 
-Verify the following kernel versions for partial/full mitigation
+======================
+Remediating Dirty Frag
+======================
+
+There are 3 solutions.  Solution 2 has 2 parts.
+
+Solution 1:
+
+The easiest way is to use ot-sources ebuild on config assist mode, but if
+you use your own custom kernel or the distro you need to follow the below
+steps.
+
+Solution 2:
+
+Verify the following kernel versions for partial/full mitigation.  The
+exact numbers are currently partial but later will be full mitigation.
+
+Part A:  Get the patched version(s)
 
 >= 7.0.5
 >= 6.18.28
@@ -44,19 +61,22 @@ Verify the following kernel versions for partial/full mitigation
 >= 5.15.206
 >= 5.10.255
 
-Ways to mitigate the remaining:
+Part B:  .config edit or unload module, your choice
 
-Disable or comment out in .config for the latest point releases
+Disable or comment out in .config for the latest point releases if you have
+the above point releases or newer.
 
 CONFIG_AF_RXRPC
 
 or 
 
-Unload rxrpc kernel module if built as a kernel module.
+Unload rxrpc kernel or blacklist the module if built as a kernel module.
 
-or
+modprobe -r rxrpc
 
-For older kernels you need all three disabled in the .config or unload all the modules:
+Solution 3:  Earlier kernel point releases but choose either .config edit or unload/blacklist
+
+You need all three disabled in the .config or unload all the modules:
 
 CONFIG_AF_RXRPC
 CONFIG_INET_ESP
@@ -71,6 +91,10 @@ modprobe -r esp6
 modprobe -r rxrpc
 
 The config disable is preferred to eliminate the vulnerable time window before use.
+
+=====================
+Remediating Copy Fail
+=====================
 
 For the Copy Fail, you need at least the following for full mitigation:
 
@@ -94,3 +118,6 @@ Still vulnerable hunks were observed:
 Both Copy Fail and Dirty frag should be mitigated ASAP before the KEV deadline
 on the 15 of this month, but it is recommend earlier if meeting billing
 commitments or transfering very sensitive data before this time.
+
+When the issue is patched by upstream, you should remove the blacklists.  You
+should take notes of the changes you made to undo them.
