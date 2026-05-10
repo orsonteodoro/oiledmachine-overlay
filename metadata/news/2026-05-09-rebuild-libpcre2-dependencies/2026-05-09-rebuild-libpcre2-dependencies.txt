@@ -15,7 +15,7 @@ Action required:
 After syncing this overlay and re-emerging libpcre2, you should rebuild
 all packages that depend on it:
 
-    emerge -1v --with-bdeps=y $(equery -q depends -D dev-libs/libpcre2 | sed 's/-[0-9].*//')
+    
 
 or simply:
 
