@@ -2,7 +2,7 @@ Title: Rebuild libpcre2 dependencies
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-05-09
-Revision: 3
+Revision: 4
 News-Item-Format: 2.0
 Display-If-Installed: dev-libs/libpcre2
 
@@ -15,12 +15,8 @@ Action required:
 After syncing this overlay and re-emerging libpcre2, you should rebuild
 all packages that depend on it:
 
-    emerge --ask -o1vuDN $(equery depends -F '$cp' dev-libs/libpcre2 | sort | uniq)  # Install missing dependencies
-    emerge --ask -1vO $(equery depends -F '$cp' dev-libs/libpcre2 | sort | uniq)     # Force rebuilding the direct dependencies linking to all libpcre2 libraries
-
-or simply:
-
-    emerge -1v @preserved-rebuild
+emerge --ask -o1vuDN $(equery depends -F '$cp' dev-libs/libpcre2 | sort | uniq)  # Install missing dependencies
+emerge --ask -1vO $(equery depends -F '$cp' dev-libs/libpcre2 | sort | uniq)     # Force rebuilding the direct dependencies linking to all libpcre2 libraries
 
 This change eliminates the "no version information available" warnings
 and undefined reference errors caused by PCRE2 10.47 symbol versioning.
