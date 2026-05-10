@@ -70,24 +70,26 @@ Solution 2:
 
      Part B:  .config edit or unload module, your choice
 
-          Disable or comment out in .config for the latest point releases if you have
-          the above point releases or newer.
+          Disable or comment out in .config for the latest point releases if you
+          have the above point releases or newer.
 
                CONFIG_AF_RXRPC
 
                     or 
 
-          Unload rxrpc kernel module if built as a kernel module.
+          Unload rxrpc external kernel module.
 
                modprobe -r rxrpc
 
                     or 
 
-          Blacklist rxrpc kernel module by editing /etc/modprobe.d/blacklist.conf with the following contents:
+          Blacklist rxrpc kernel external kernel module by editing
+          /etc/modprobe.d/blacklist.conf with the following contents:
 
                blacklist rxrpc
 
-Solution 3:  Earlier kernel point releases but choose either .config edit or unload/blacklist
+Solution 3:  Earlier kernel point releases are being used but choose either the
+.config edit, unload external module, or blacklist external module.
 
      You need all three disabled in the .config:
 
@@ -97,7 +99,7 @@ Solution 3:  Earlier kernel point releases but choose either .config edit or unl
 
                or
 
-     Unload all the modules if external modules:
+     Unload all affected external modules:
 
           modprobe -r esp4 
           modprobe -r esp6
@@ -105,16 +107,22 @@ Solution 3:  Earlier kernel point releases but choose either .config edit or unl
 
                or
 
-     Blacklist all by editing /etc/modprobe.d/blacklist.conf with the following contents:
+     Blacklist all affected external modules by editing
+     /etc/modprobe.d/blacklist.conf with the following contents:
 
           blacklist esp4
           blacklist esp6
           blacklist rxrpc
 
-The .config disable is preferred to eliminate the vulnerable time window before use and
-easier clean up after upstream fixes it.
+The .config disable is preferred to eliminate the vulnerable time window before
+use and easier clean up after upstream fixes it.
 
-To verify that the external kernel module is unloaded, inspect `cat /proc/modules`.
+Solution 1/2 are the most preferred because it also triages several the low level
+vulnerability classes.  Solution 3 triages the in the wild but viable for those
+with custom modules or slow kernel module vendors.
+
+To verify that the external kernel module is unloaded, inspect
+`cat /proc/modules`.
 
 
 =====================
@@ -140,9 +148,9 @@ Still vulnerable hunks were observed:
 <= 5.15.203 (LTS):  Not patched
 <= 5.10.253 (LTS):  Not patched
 
-Both Copy Fail and Dirty frag should be mitigated ASAP before the KEV remediation
-deadline on the 15 of this month, but it is recommend earlier if meeting billing
-commitments or transfering very sensitive data before this time.
+Both Copy Fail and Dirty frag should be mitigated ASAP before the KEV
+remediation deadline on the 15 of this month, but it is recommend earlier if
+meeting billing commitments or transfering very sensitive data before this time.
 
 When the issue is patched by upstream, you should remove the blacklists.  You
 should take notes of the changes you made to undo them.
