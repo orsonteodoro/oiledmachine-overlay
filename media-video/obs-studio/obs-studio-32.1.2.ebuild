@@ -145,12 +145,12 @@ SLOT="0"
 IUSE+="
 ${PATENT_STATUS_IUSE[@]}
 aac +alsa aja amf +browser +browser-panels coreaudio -decklink -fdk firejail
-+freetype +hevc +ipv6 jack libaom +lua mac-syphon +mpegts nvafx
++flac +freetype +hevc +ipv6 jack libaom +lua mac-syphon +mpegts nvafx
 nvenc nvvfx opus oss +pipewire +pulseaudio +python qsv +qt6 +rnnoise +rtmps
 +service-updates -sndio +speexdsp svt-av1 -test +v4l2 vaapi +vlc +virtualcam
 +vst +wayland +webrtc win-dshow +websocket -win-mf +whatsnew x264
 
-ebuild_revision_18
+ebuild_revision_20
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -747,13 +747,10 @@ PDEPEND+="
 #	-> obs-amd-encoder-${OBS_AMD_ENCODER_COMMIT}.tar.gz
 
 PATCHES=(
-	# https://bugs.gentoo.org/966051
-	#"${FILESDIR}/${PN}-32.0.2-fix-build-with-qt-6.10.patch"
-
 	"${FILESDIR}/${PN}-30.2.3-hevc-preprocessor-cond.patch"
 	"${FILESDIR}/${PN}-32.0.2-browser-checks.patch"
 	"${FILESDIR}/${PN}-32.0.2-optionalize-plugins.patch"
-	"${FILESDIR}/${PN}-32.0.2-symbolize-default-codecs.patch"
+	"${FILESDIR}/${PN}-32.1.2-symbolize-default-codecs.patch"
 )
 
 qt_check() {
@@ -895,27 +892,16 @@ ewarn "metadata.xml or \`epkginfo -x obs-studio::oiledmachine-overlay\`."
 ewarn
 	fi
 ewarn
-ewarn "SECURITY:  When building with streaming services integration, please"
-ewarn "read the metadata.xml or do"
-ewarn
-ewarn "  \`epkginfo -x obs-studio::oiledmachine-overlay\`"
-ewarn
+ewarn "SECURITY:  When building with streaming services integration, read the"
+ewarn "metadata.xml or do \`epkginfo -x obs-studio::oiledmachine-overlay\`"
 ewarn "for information of securely wiping with the shred command or minimizing"
 ewarn "recovery of possibly sensitive data."
 ewarn
 
 einfo
-einfo "All services are unlisted by default in this ebuild."
-einfo
-einfo "See"
-einfo
-einfo "  metadata.xml"
-einfo
-einfo "or"
-einfo
-einfo "  \`epkginfo -x ${CATEGORY}/${PN}::oiledmachine-overlay\`"
-einfo
-einfo "to setup streaming service whitelists."
+einfo "All services are unlisted by default in this ebuild.  To setup streaming"
+einfo "service whitelists, see metadata.xml or"
+einfo "\`epkginfo -x ${CATEGORY}/${PN}::oiledmachine-overlay\`"
 einfo
 
 	libcxx-slot_verify
@@ -1092,6 +1078,7 @@ eerror
 		-DENABLE_COREAUDIO_ENCODER=$(usex coreaudio)
 		-DENABLE_DECKLINK=$(usex decklink)
 		-DENABLE_FDK=$(usex fdk)
+		-DENABLE_FLAC=$(usex flac)
 		-DENABLE_FREETYPE=$(usex freetype)
 		-DENABLE_HEVC=$(usex hevc)
 		-DENABLE_IPV6=$(usex ipv6)
