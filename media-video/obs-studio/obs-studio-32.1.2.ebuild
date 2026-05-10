@@ -150,7 +150,7 @@ nvenc nvvfx opus oss +pipewire +pulseaudio +python qsv +qt6 +rnnoise +rtmps
 +service-updates -sndio +speexdsp svt-av1 -test +v4l2 vaapi +vlc +virtualcam
 +vst +wayland +webrtc win-dshow +websocket -win-mf +whatsnew x264
 
-ebuild_revision_17
+ebuild_revision_18
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -707,6 +707,7 @@ DEPEND+="
 	${RDEPEND}
 	${DEPEND_PLUGINS}
 	${DEPEND_UI}
+	dev-libs/simde:=
 "
 
 # Based on 20.04 See
@@ -1183,8 +1184,8 @@ src_install() {
 	cmake_src_install
 	# External plugins may need some things not installed by default"
 	# Install them here.
-	insinto /usr/include/obs/UI/obs-frontend-api
-	doins UI/obs-frontend-api/obs-frontend-api.h
+	insinto "/usr/include/obs/obs-frontend-api"
+	doins "frontend/api/obs-frontend-api.h"
 
 	if use browser ; then
 		exeinto "/usr/lib64/obs-plugins"
