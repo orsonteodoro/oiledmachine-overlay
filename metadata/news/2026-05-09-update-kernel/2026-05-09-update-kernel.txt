@@ -1,10 +1,14 @@
-Title: Rebuild the ot-sources kernel against 0-day vulnerabilities
+Title: Rebuild the kernel to mitigate against 0-day vulnerabilities
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-05-09
-Revision: 1
+Revision: 3
 News-Item-Format: 2.0
 Display-If-Installed: sys-kernel/ot-sources
+Display-If-Installed: sys-kernel/mitigate-dos
+Display-If-Installed: sys-kernel/mitigate-dt
+Display-If-Installed: sys-kernel/mitigate-id
+Display-If-Installed: virtual/dss
 Display-If-Installed: virtual/ot-sources-stable
 Display-If-Installed: virtual/ot-sources-lts
 
@@ -13,11 +17,18 @@ The Linux kernel had several zero day vulnerabilities:
 CVE-2026-43284, CVE-2026-43500 - Dirty Frag:  privilege escalation, attack chain primitive
 CVE-2026-31431 - Copy Fail:  priviliege escalation, container breakout, attack chain primitive
 
+CVE-2026-43284 - CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:C/C:H/I:H/A:H (denial of service, data tampering, information disclosure)
+CVE-2026-31431 - CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H (denial of service, data tampering, information disclosure)
+
+The AV:L (locally ran) is deceptive, it can be chained together with another
+exploited vulnerability with remote code execution for full system compromise.
+The chances increase if you haven't updated your kernel for months or years.
+
 Both are mitigated.  The official patch fix for Dirty Frag is currently
 partially done, so disabling the affected module is the mitigation fallback.
 
 Always update the initramfs with updated kernel modules to avoid getting a
 black bootup screen.
 
-Remember to keep backup kernels.  Do not delete old kernels until you verify that
-the kernel works.
+Remember to keep backup kernels.  Do not delete old kernels until you verify
+that the kernel works.
