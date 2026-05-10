@@ -1,0 +1,30 @@
+Title: Rebuild libpcre2 dependencies
+Author: Orson Teodoro <orsonteodoro@hotmail.com>
+Content-Type: text/plain
+Posted: 2026-05-09
+Revision: 1
+News-Item-Format: 2.0
+Display-If-Installed: dev-libs/libpcre2
+
+(This is an AI generated message reviewed by overlay maintainer and approved)
+
+We have set --disable-symvers on dev-libs/libpcre2 to avoid widespread
+build failures with packages like glib, qtbase, webkit-gtk, etc.
+
+Action required:
+After syncing this overlay and re-emerging libpcre2, you should rebuild
+all packages that depend on it:
+
+    emerge -1v --with-bdeps=y `equery depends -D dev-libs/libpcre2`
+
+or simply:
+
+    emerge -1v @preserved-rebuild
+
+This change eliminates the "no version information available" warnings
+and undefined reference errors caused by PCRE2 10.47 symbol versioning.
+
+Overlay maintainer addition:
+
+This rebuild request is made to avoid hidden build inconsistencies or
+random load time issues.

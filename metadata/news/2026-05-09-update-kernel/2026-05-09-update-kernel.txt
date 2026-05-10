@@ -1,0 +1,23 @@
+Title: Rebuild the ot-sources kernel against 0-day vulnerabilities
+Author: Orson Teodoro <orsonteodoro@hotmail.com>
+Content-Type: text/plain
+Posted: 2026-05-09
+Revision: 6
+News-Item-Format: 2.0
+Display-If-Installed: sys-kernel/ot-sources
+Display-If-Installed: virtual/ot-sources-stable
+Display-If-Installed: virtual/ot-sources-lts
+
+The Linux kernel had several zero day vulnerabilities:
+
+CVE-2026-43284, CVE-2026-43500 - Dirty Frag:  privilege escalation, attack chain primitive
+CVE-2026-31431 - Copy Fail:  priviliege escalation, container breakout, attack chain primitive
+
+Both are mitigated.  The official patch fix for Dirty Frag is currently
+partially done, so disabling the affected module is the mitigation fallback.
+
+Always update the initramfs with updated kernel modules to avoid getting a
+black bootup screen.
+
+Remember to keep a backup kernels.  Do not delete old kernels until you verify that
+the kernel works.
