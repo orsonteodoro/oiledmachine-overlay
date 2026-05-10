@@ -2,7 +2,7 @@ Title: Rebuild the kernel to mitigate against 0-day vulnerabilities
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-05-09
-Revision: 8
+Revision: 9
 News-Item-Format: 2.0
 Display-If-Installed: sys-kernel/mitigate-dos
 Display-If-Installed: sys-kernel/mitigate-dt
@@ -33,6 +33,13 @@ black bootup screen.
 
 Remember to keep backup kernels.  Do not delete old kernels until you verify
 that the kernel works.
+
+All solutions assume that after the the kernel as been installed, a new updated 
+initramfs generated for the kernel flavor, boot config updated; a reset is done.
+After reset the disabled .config solution is done; but for the module loading
+technique is done the unloading is prevented loading affected code for
+blacklisting or modules are the affected external modules are explicitly
+unloaded.
 
 ======================
 Remediating Dirty Frag
