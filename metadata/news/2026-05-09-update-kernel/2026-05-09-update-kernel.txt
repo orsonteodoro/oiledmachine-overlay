@@ -15,7 +15,7 @@ Display-If-Installed: virtual/ot-sources-lts
 The Linux kernel had several zero day vulnerabilities:
 
 CVE-2026-43284, CVE-2026-43500 - Dirty Frag:  privilege escalation, attack chain primitive
-CVE-2026-31431 - Copy Fail:  priviliege escalation, container breakout, attack chain primitive
+CVE-2026-31431 - Copy Fail:  priviliege escalation, container escape, attack chain primitive
 
 CVE-2026-43284 - CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:C/C:H/I:H/A:H (denial of service, data tampering, information disclosure)
 CVE-2026-31431 - CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H (denial of service, data tampering, information disclosure)
