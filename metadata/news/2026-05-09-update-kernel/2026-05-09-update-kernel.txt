@@ -2,7 +2,7 @@ Title: Rebuild the kernel to mitigate against 0-day vulnerabilities
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-05-09
-Revision: 4
+Revision: 5
 News-Item-Format: 2.0
 Display-If-Installed: sys-kernel/mitigate-dos
 Display-If-Installed: sys-kernel/mitigate-dt
@@ -33,3 +33,64 @@ black bootup screen.
 
 Remember to keep backup kernels.  Do not delete old kernels until you verify
 that the kernel works.
+
+Verify the following kernel versions for partial/full mitigation
+
+>= 7.0.5
+>= 6.18.28
+>= 6.12.87
+>= 6.6.138
+>= 6.1.172
+>= 5.15.206
+>= 5.10.255
+
+Ways to mitigate the remaining:
+
+Disable or comment out in .config for the latest point releases
+
+CONFIG_AF_RXRPC
+
+or 
+
+Unload rxrpc kernel module if built as a kernel module.
+
+or
+
+For older kernels you need all three disabled in the .config or unload all the modules:
+
+CONFIG_AF_RXRPC
+CONFIG_INET_ESP
+CONFIG_INET6_ESP
+
+or
+
+Unload or blacklist all the modules if external modules:
+
+modprobe -r esp4 
+modprobe -r esp6
+modprobe -r rxrpc
+
+The config disable is preferred to eliminate the vulnerable time window before use.
+
+For the Copy Fail, you need at least the following for full mitigation:
+
+7.0.3 (stable):  Patched
+6.18.26 (LTS):  Patched
+6.12.85 (LTS):  Patched
+6.6.137 (LTS):  Patched
+6.1.170 (LTS):  Patched
+5.15.204 (LTS):  Patched
+5.10.254 (LTS):  Patched
+
+Still vulnerable hunks were observed:
+
+<= 6.18.21 (LTS):  Not patched
+<= 6.12.84 (LTS):  Not patched
+<= 6.6.136 (LTS):  Not patched
+<= 6.1.169 (LTS):  Not patched
+<= 5.15.203 (LTS):  Not patched
+<= 5.10.253 (LTS):  Not patched
+
+Both Copy Fail and Dirty frag should be mitigated ASAP before the KEV deadline
+on the 15 of this month, but it is recommend earlier if meeting billing
+commitments or transfering very sensitive data before this time.
