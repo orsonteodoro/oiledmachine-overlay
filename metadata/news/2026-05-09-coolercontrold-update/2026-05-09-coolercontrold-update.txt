@@ -10,7 +10,7 @@ coolercontrold is dangerously run as root.  Ideally, all daemons should run as
 limited user.  It is now possible to run coolercontrold as limited user with the
 current ebuild.
 
-We take it as unkind or offensive that the contributor of that cornered and
+We take it as unkind or offensive that the contributor cornered and
 duped users into running the daemon as root for over a year and put little
 effort into fixing the issue.
 
