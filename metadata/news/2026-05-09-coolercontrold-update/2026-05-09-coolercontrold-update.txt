@@ -1,0 +1,34 @@
+Title: Rebuild and restart coolercontrold as non-root
+Author: Orson Teodoro <orsonteodoro@hotmail.com>
+Content-Type: text/plain
+Posted: 2026-05-09
+Revision: 0
+News-Item-Format: 2.0
+Display-If-Installed: sys-apps/coolercontrold
+
+coolercontrold is dangerously run as root.  Ideally, all daemons should run as
+limited user.  It is now possible to run coolercontrold as limited user with the
+current ebuild.
+
+We take it as unkind or offensive that the contributor of that cornered and
+duped users into running the daemon as root for over a year and put little
+effort into fixing the issue.
+
+Steps required to remediate:
+
+# OpenRC users:
+/etc/init.d/coolercontrold stop
+/etc/init.d/coolercontrold zap
+killall -9 coolercontrold
+emerge -vuDN coolercontrol::oiledmachine-overlay
+coolercontrold --version          # Verify that it is 4.2.1 or newer
+/etc/init.d/coolercontrold start
+ps -aux | grep coolercontrold     # Verify that it is running as coolercontrold
+
+# systemd users:
+systemctl stop coolercontrold
+killall -9 coolercontrold
+emerge -vuDN coolercontrol::oiledmachine-overlay
+coolercontrold --version          # Verify that it is 4.2.1 or newer, if not unmask and try emerge -1vO coolercontrold
+systemctl start coolercontrold
+ps -aux | grep coolercontrold     # Verify that it is running as coolercontrold
