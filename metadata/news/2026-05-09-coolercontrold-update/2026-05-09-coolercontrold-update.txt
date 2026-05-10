@@ -2,7 +2,7 @@ Title: Rebuild and restart coolercontrold as non-root
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-05-09
-Revision: 0
+Revision: 1
 News-Item-Format: 2.0
 Display-If-Installed: sys-apps/coolercontrold
 
@@ -15,6 +15,10 @@ duped users into running the daemon as root for over a year and put little
 effort into fixing the issue.
 
 Steps required to remediate:
+
+Decide if you want to do a clean install and full password rotate.  For
+proper remediation, a clean install is usually better to mitigate against
+exploited high level vulnerabilities that Rust cannot defend against.
 
 # OpenRC users:
 /etc/init.d/coolercontrold stop
