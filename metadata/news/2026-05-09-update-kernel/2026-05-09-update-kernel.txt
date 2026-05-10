@@ -2,7 +2,7 @@ Title: Rebuild the ot-sources kernel against 0-day vulnerabilities
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-05-09
-Revision: 6
+Revision: 1
 News-Item-Format: 2.0
 Display-If-Installed: sys-kernel/ot-sources
 Display-If-Installed: virtual/ot-sources-stable
