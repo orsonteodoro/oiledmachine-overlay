@@ -23,7 +23,7 @@ CVE-2026-31431 - CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H (denial of service
 The AV:L (locally ran) is deceptive, it can be chained together with another
 exploited vulnerability with remote code execution for full system compromise.
 The chances increase if you haven't updated your kernel for months or years or
-through red zone apps.
+through unpatched red zone apps.
 
 Both are mitigated.  The official patch fix for Dirty Frag is currently
 partially done, so disabling the affected module is the mitigation fallback.
