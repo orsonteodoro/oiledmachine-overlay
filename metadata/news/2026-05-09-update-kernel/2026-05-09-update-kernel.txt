@@ -90,7 +90,8 @@ modprobe -r esp4
 modprobe -r esp6
 modprobe -r rxrpc
 
-The config disable is preferred to eliminate the vulnerable time window before use.
+The config disable is preferred to eliminate the vulnerable time window before use and
+easier clean up after upstream fixes it.
 
 =====================
 Remediating Copy Fail
