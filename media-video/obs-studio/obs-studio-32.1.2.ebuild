@@ -1233,13 +1233,10 @@ einfo
 ewarn
 ewarn "SECURITY NOTICE:"
 ewarn
-ewarn "When building with streaming services integration, please"
-ewarn "read the metadata.xml or do"
-ewarn
-ewarn "  \`epkginfo -x obs-studio::oiledmachine-overlay\`"
-ewarn
-ewarn "for information of securely wiping with the shred command or minimizing"
-ewarn "recovery of possibly sensitive data."
+ewarn "When building with streaming services integration, read the metadata.xml"
+ewarn "or do \`epkginfo -x obs-studio::oiledmachine-overlay\` for information"
+ewarn "of securely wiping with the shred command or minimizing recovery of"
+ewarn "possibly sensitive data."
 ewarn
 
 einfo
