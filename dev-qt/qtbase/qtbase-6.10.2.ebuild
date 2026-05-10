@@ -249,6 +249,7 @@ src_configure() {
 	fi
 
 	cflags-hardened_append
+
 	if use gtk; then
 		# defang automagic dependencies (bug #624960)
 		use X || append-cxxflags -DGENTOO_GTK_HIDE_X11

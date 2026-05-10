@@ -38,7 +38,7 @@ if [[ ${PV} != *_rc* ]] ; then
 fi
 IUSE="
 bzip2 +jit libedit +pcre16 +pcre32 +readline static-libs unicode valgrind zlib
-ebuild_revision_10
+ebuild_revision_11
 "
 REQUIRED_USE="?? ( libedit readline )"
 
@@ -97,6 +97,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	local myeconfargs=(
 		--enable-pcre2-8
 		--enable-shared
+		--disable-symvers # oiledmachine-overlay:  Unbreak webkit-gtk, glib, qtcore
 		$(multilib_native_use_enable bzip2 pcre2grep-libbz2)
 		$(multilib_native_use_enable libedit pcre2test-libedit)
 		$(multilib_native_use_enable readline pcre2test-libreadline)
