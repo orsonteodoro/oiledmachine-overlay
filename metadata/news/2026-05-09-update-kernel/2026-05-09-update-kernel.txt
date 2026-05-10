@@ -76,19 +76,19 @@ Solution 2:
 
 Solution 3:  Earlier kernel point releases but choose either .config edit or unload/blacklist
 
-    You need all three disabled in the .config:
+     You need all three disabled in the .config:
 
-    CONFIG_AF_RXRPC
-    CONFIG_INET_ESP
-    CONFIG_INET6_ESP
+          CONFIG_AF_RXRPC
+          CONFIG_INET_ESP
+          CONFIG_INET6_ESP
 
-        or
+               or
 
-    Unload/blacklist all the modules if external modules:
+     Unload/blacklist all the modules if external modules:
 
-    modprobe -r esp4 
-    modprobe -r esp6
-    modprobe -r rxrpc
+          modprobe -r esp4 
+          modprobe -r esp6
+          modprobe -r rxrpc
 
 The .config disable is preferred to eliminate the vulnerable time window before use and
 easier clean up after upstream fixes it.
