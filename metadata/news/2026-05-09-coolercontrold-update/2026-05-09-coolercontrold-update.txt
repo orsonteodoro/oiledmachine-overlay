@@ -2,7 +2,7 @@ Title: Rebuild and restart coolercontrold as non-root
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-05-09
-Revision: 1
+Revision: 2
 News-Item-Format: 2.0
 Display-If-Installed: sys-apps/coolercontrold
 
@@ -25,7 +25,7 @@ possibly exploited high level vulnerabilities that Rust cannot defend against.
 /etc/init.d/coolercontrold zap
 killall -9 coolercontrold
 emerge -vuDN coolercontrol::oiledmachine-overlay
-coolercontrold --version          # Verify that it is 4.2.1 or newer
+coolercontrold --version          # Verify that it is 4.2.1 or newer, if not unmask and try emerge -1vO coolercontrold
 /etc/init.d/coolercontrold start
 ps -aux | grep coolercontrold     # Verify that it is running as coolercontrold
 
@@ -36,3 +36,6 @@ emerge -vuDN coolercontrol::oiledmachine-overlay
 coolercontrold --version          # Verify that it is 4.2.1 or newer, if not unmask and try emerge -1vO coolercontrold
 systemctl start coolercontrold
 ps -aux | grep coolercontrold     # Verify that it is running as coolercontrold
+
+To avoid daemons forcing themselves as root, it is recommended to disable them
+immediately if they are no longer being used.
