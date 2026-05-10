@@ -2,7 +2,7 @@ Title: Rebuild the kernel to mitigate against 0-day vulnerabilities
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-05-09
-Revision: 10
+Revision: 11
 News-Item-Format: 2.0
 Display-If-Installed: sys-kernel/mitigate-dos
 Display-If-Installed: sys-kernel/mitigate-dt
@@ -123,13 +123,13 @@ Remediating Copy Fail
 
 For the Copy Fail, you need at least the following for full mitigation:
 
->= 7.0.3 (stable):  Patched
->= 6.18.26 (LTS):  Patched
->= 6.12.85 (LTS):  Patched
->= 6.6.137 (LTS):  Patched
->= 6.1.170 (LTS):  Patched
->= 5.15.204 (LTS):  Patched
->= 5.10.254 (LTS):  Patched
+>= 7.0.5 (stable):  Patched
+>= 6.18.28 (LTS):  Patched
+>= 6.12.87 (LTS):  Patched
+>= 6.6.138 (LTS):  Patched
+>= 6.1.172 (LTS):  Patched
+>= 5.15.206 (LTS):  Patched
+>= 5.10.255 (LTS):  Patched
 
 Still vulnerable hunks were observed:
 
