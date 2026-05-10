@@ -44,7 +44,7 @@ Solution 1:
 
      The easiest way is to use ot-sources ebuild on config assist mode, but if
      you use your own custom kernel or the distro you need to follow the below
-     steps.  It currently uses solution 2.
+     steps.  It currently uses solution 2 automatically.
 
 Solution 2:
 
