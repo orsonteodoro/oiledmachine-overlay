@@ -19,5 +19,5 @@ partially done, so disabling the affected module is the mitigation fallback.
 Always update the initramfs with updated kernel modules to avoid getting a
 black bootup screen.
 
-Remember to keep a backup kernels.  Do not delete old kernels until you verify that
+Remember to keep backup kernels.  Do not delete old kernels until you verify that
 the kernel works.
