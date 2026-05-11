@@ -89,7 +89,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 beta cefclient cefsimple debug minimal test wayland X
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE+="
 	cefclient? (
@@ -192,7 +192,6 @@ BDEPEND+="
 	)
 "
 PATCHES=(
-#	"${FILESDIR}/cef-bin-145.0.28-visibility-changes.patch"
 	"${FILESDIR}/cef-bin-145.0.28-disable-test.patch"
 )
 
@@ -705,7 +704,7 @@ src_configure() {
 	export BUILD_DIR=$(get_S_abi)
 	cd "${CMAKE_USE_DIR}" || die
 	mycmakeargs=(
-		-DBUILD_SHARED_LIBS=OFF # Required by CEF
+		-DBUILD_SHARED_LIBS=ON
 	)
 einfo "DIR="$(pwd)
 	cmake_src_configure

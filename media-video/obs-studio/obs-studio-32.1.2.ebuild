@@ -152,7 +152,7 @@ nvenc nvvfx opus oss +pipewire +pulseaudio +python qsv +qt6 +rnnoise +rtmps
 +service-updates -sndio +speexdsp svt-av1 -test +v4l2 vaapi +vlc +virtualcam
 +vst +wayland +webrtc win-dshow +websocket -win-mf +whatsnew x264
 
-ebuild_revision_24
+ebuild_revision_25
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -759,6 +759,7 @@ CEF_PATCHES=(
 	"${FILESDIR}/${PN}-32.1.2-use-cxx20.patch"
 	"${FILESDIR}/${PN}-32.1.2-obs-browser-use-cxx20.patch"
 	"${FILESDIR}/${PN}-32.1.2-obs-browser-relax-version.patch"
+	"${FILESDIR}/${PN}-32.1.2-obs-browser-shared-wrapper-suffix.patch"
 )
 
 qt_check() {
@@ -1187,6 +1188,15 @@ src_install() {
 
 	docinto "licenses"
 	dodoc "COMMITMENT"
+
+	if use browser ; then
+		local cef_prefix="/opt/cef-bin"
+		[[ -e "${EROOT}/opt/cef" ]] && cef_prefix="/opt/cef"
+		exeinto "/usr/$(get_libdir)/obs-plugins/"
+		if [[ -e "${EROOT}${cef_prefix}/libcef_dll_wrapper/libcef_dll_wrapper.so" ]] ; then
+			doexe "${EROOT}${cef_prefix}/libcef_dll_wrapper/libcef_dll_wrapper.so"
+		fi
+	fi
 
 	# The about dialog doesn't show all the copyright notices.
 	LCNR_SOURCE="${S}"

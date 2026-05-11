@@ -1,0 +1,11 @@
+--- a/cmake/finders/FindCEF.cmake.orig	2026-04-21 12:00:34.000000000 -0700
++++ b/cmake/finders/FindCEF.cmake	2026-05-10 23:09:38.892451491 -0700
+@@ -165,7 +165,7 @@ elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL L
+ 
+   find_library(
+     CEF_LIBRARY_WRAPPER_RELEASE
+-    NAMES cef_dll_wrapper.a libcef_dll_wrapper.a
++    NAMES cef_dll_wrapper.a libcef_dll_wrapper.a libcef_dll_wrapper.so
+     NO_DEFAULT_PATH
+     PATHS
+       "${CEF_ROOT_DIR}/libcef_dll_wrapper"
