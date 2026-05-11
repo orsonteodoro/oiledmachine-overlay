@@ -30,7 +30,7 @@ EAPI=8
 # https://bitbucket.org/chromiumembedded/cef/wiki/BranchesAndBuilding
 # https://bitbucket.org/chromiumembedded/cef/src/5060/CHROMIUM_BUILD_COMPATIBILITY.txt?at=5060
 CMAKE_REMOVE_MODULES_LIST=( "FindFreetype" )
-CXX_STANDARD=17
+CXX_STANDARD=17 # 17 without browser, 20 with browser
 LUA_COMPAT=( "luajit" )
 MAKEOPTS="-j1"
 PYTHON_COMPAT=( "python3_"{10..12} )
