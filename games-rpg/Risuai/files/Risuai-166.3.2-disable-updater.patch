@@ -1,5 +1,5 @@
 --- a/src-tauri/tauri.conf.json.orig	2026-04-18 06:16:46.000000000 -0700
-+++ b/src-tauri/tauri.conf.json	2026-04-29 11:12:17.750639043 -0700
++++ b/src-tauri/tauri.conf.json	2026-05-11 01:33:10.855999860 -0700
 @@ -33,7 +33,7 @@
    "identifier": "co.aiclient.risu",
    "plugins": {

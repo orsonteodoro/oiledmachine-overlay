@@ -6,6 +6,8 @@ EAPI=8
 
 # U24
 
+# TODO fixme:  build without signing
+
 # Ebuild contains AI generated code.
 
 # TODO package
@@ -866,8 +868,7 @@ _PATCHES=(
 	# Disable signing which makes it a fatal error.
 	# We don't use auto update because of supply chain attacks and to have
 	# the distro package manager have more control.
-	#"${FILESDIR}/${PN}-166.3.2-disable-updater.patch"
-	#"${FILESDIR}/${PN}-166.3.2-disable-bundle.patch"
+	#"${FILESDIR}/${PN}-166.3.2-disable-updater.patch" # FIXME
 
 	"${FILESDIR}/${PN}-2026.4.181-hardcoded-paths.patch"
 )
@@ -1027,7 +1028,7 @@ eerror
 
 	# For manual lockfile creation
 ewarn "QA:  Manually \`cargo add \"hyper-tls@0.6.0\"\` for the cargo lockfile."
-#	unpack ${A}
+	unpack ${A}
 #	die
 
 	pnpm_src_unpack
