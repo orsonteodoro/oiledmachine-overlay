@@ -436,7 +436,7 @@ diff '--color=auto' -urp obs-studio-32.1.2.orig/frontend/widgets/OBSBasic_MainCo
  void OBSBasic::on_actionShowSettingsFolder_triggered()
  {
 -	const std::string userConfigPath = App()->userConfigLocation.u8string() + "/obs-studio";
-+	const std::string userConfigPath = str::string(App()->userConfigLocation.u8string().begin(), App()->userConfigLocation.u8string().end()) + "/obs-studio";
++	const std::string userConfigPath = std::string(App()->userConfigLocation.u8string().begin(), App()->userConfigLocation.u8string().end()) + "/obs-studio";
  	const QString userConfigLocation = QString::fromStdString(userConfigPath);
  
  	QDesktopServices::openUrl(QUrl::fromLocalFile(userConfigLocation));
@@ -445,7 +445,7 @@ diff '--color=auto' -urp obs-studio-32.1.2.orig/frontend/widgets/OBSBasic_MainCo
  	try {
  		const OBSProfile &currentProfile = GetCurrentProfile();
 -		QString currentProfileLocation = QString::fromStdString(currentProfile.path.u8string());
-+		QString currentProfileLocation = QString::fromStdString(str::string(currentProfile.path.u8string().begin(), currentProfile.path.u8string().end()));
++		QString currentProfileLocation = QString::fromStdString(std::string(currentProfile.path.u8string().begin(), currentProfile.path.u8string().end()));
  
  		QDesktopServices::openUrl(QUrl::fromLocalFile(currentProfileLocation));
  	} catch (const std::invalid_argument &error) {
@@ -457,7 +457,7 @@ diff '--color=auto' -urp obs-studio-32.1.2.orig/frontend/widgets/OBSBasic_Profil
  	profileDirectory.reserve(App()->userProfilesLocation.u8string().size() + OBSProfilePath.size() +
  				 directoryName.size());
 -	profileDirectory.append(App()->userProfilesLocation.u8string()).append(OBSProfilePath).append(directoryName);
-+	profileDirectory.append(str::string(App()->userProfilesLocation.u8string().begin(), App()->userProfilesLocation.u8string().end()))
++	profileDirectory.append(std::string(App()->userProfilesLocation.u8string().begin(), App()->userProfilesLocation.u8string().end()))
 +		.append(OBSProfilePath)
 +		.append(directoryName);
  
@@ -532,7 +532,7 @@ diff '--color=auto' -urp obs-studio-32.1.2.orig/frontend/widgets/OBSBasic_Profil
  		destinationPathString.reserve(App()->userProfilesLocation.u8string().size() + OBSProfilePath.size() +
  					      directoryName.size());
 -		destinationPathString.append(App()->userProfilesLocation.u8string())
-+		destinationPathString.append(str::string(App()->userProfilesLocation.u8string().begin(), App()->userProfilesLocation.u8string().end()))
++		destinationPathString.append(std::string(App()->userProfilesLocation.u8string().begin(), App()->userProfilesLocation.u8string().end()))
  			.append(OBSProfilePath)
  			.append(directoryName);
  
