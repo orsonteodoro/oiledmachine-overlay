@@ -17,24 +17,24 @@ inherit dhms
 # lld = c++17
 # llvm = c++17
 CXX_STANDARD=23 # Same as libcxx and chromium.
-# https://github.com/chromium/chromium/blob/147.0.7727.55/DEPS#L533
-GN_COMMIT="d8c2f07d653520568da7cace755a87dad241b72d"
-GN_PV="0.2341" # See get_gn_ver.sh
+# https://github.com/chromium/chromium/blob/148.0.7778.96/DEPS#L533
+GN_COMMIT="6e8dcdebbadf4f8aa75e6a4b6e0bdf89dce1513a"
+GN_PV="0.2354" # See get_gn_ver.sh
 INSTALL_PREFIX="/usr/share/chromium/${PV%.*}.x"
 LIBCXX_USEDEP_SKIP=1
-# https://github.com/chromium/chromium/blob/147.0.7727.55/tools/clang/scripts/update.py#L38 \
+# https://github.com/chromium/chromium/blob/148.0.7778.96/tools/clang/scripts/update.py#L38 \
 LLVM_COMMIT="8a0be0bc" # without the g prefix
 LLVM_LIVE_TIMESTAMP="Fri, 27 Feb 2026 18:38:25 +0530" # Unvendored timestamp from https://github.com/llvm/llvm-project/commit/${LLVM_COMMIT}.patch
 LLVM_N_COMMITS="5669"
 LLVM_OFFICIAL_SLOT="23" # Cr official slot
-LLVM_SUB_REV="1"
+LLVM_SUB_REV="4"
 LLVM_SLOT_UNSTABLE="23" # Comment out if using stable slot
 LLVM_SLOT_LIVE="1"
-# https://github.com/chromium/chromium/blob/147.0.7727.55/tools/rust/update_rust.py#L37 \
+# https://github.com/chromium/chromium/blob/148.0.7778.96/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
 RUST_LIVE_TIMESTAMP="Apr 10, 2026 10:49:37 -0400" # Same as Rust 1.97.0 timestamp
 RUST_COMMIT="6f54d591c3116ee7f8ce9321ddeca286810cc142" # Vendored commit
-RUST_SUB_REV="2"
+RUST_SUB_REV="7"
 # Upstream uses 1.95.0 corresponding to LLVM 22.1
 # This ebuild assumes 1.96.0 (live 9999) corresponding to llvm 22 to reduce build time.
 # For the LLVM version used for Rust snapshot, see https://github.com/rust-lang/rust/blob/6f54d591c3116ee7f8ce9321ddeca286810cc142/.gitmodules#L28
