@@ -239,8 +239,8 @@
     6.12:  Longest uptime, hardcore mode gaming, AI/ML training/end-users,
            virtualization, containers, music production, content production,
            servers, DSS production
-     6.6:  Virtualization, containers, AI/ML, migration to actively
-           supported slots
+     6.6:  Virtualization, containers, AI/ML, migration from EOL drivers to
+           actively supported slots
      6.1:  Containers, migration from EOL drivers to actively supported slots
     5.15:  Migration from EOL drivers to actively supported slots
     5.10:  Migration from EOL drivers to actively supported slots
