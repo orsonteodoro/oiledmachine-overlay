@@ -1,0 +1,749 @@
+diff '--color=auto' -urp obs-studio-32.1.2.orig/frontend/cmake/feature-importers.cmake obs-studio-32.1.2/frontend/cmake/feature-importers.cmake
+--- obs-studio-32.1.2.orig/frontend/cmake/feature-importers.cmake	2026-04-21 12:00:34.000000000 -0700
++++ obs-studio-32.1.2/frontend/cmake/feature-importers.cmake	2026-05-10 17:18:38.352294078 -0700
+@@ -1,3 +1,4 @@
++set(CMAKE_CXX_STANDARD 20)
+ target_sources(
+   obs-studio
+   PRIVATE
+diff '--color=auto' -urp obs-studio-32.1.2.orig/frontend/importer/OBSImporter.cpp obs-studio-32.1.2/frontend/importer/OBSImporter.cpp
+--- obs-studio-32.1.2.orig/frontend/importer/OBSImporter.cpp	2026-04-21 12:00:34.000000000 -0700
++++ obs-studio-32.1.2/frontend/importer/OBSImporter.cpp	2026-05-10 17:33:57.635251936 -0700
+@@ -170,7 +170,7 @@ void OBSImporter::importCollections()
+ 	setEnabled(false);
+ 
+ 	const std::filesystem::path sceneCollectionLocation =
+-		App()->userScenesLocation / std::filesystem::u8path(OBSSceneCollectionPath);
++		App()->userScenesLocation / std::filesystem::path(OBSSceneCollectionPath);
+ 
+ 	for (int i = 0; i < optionsModel->rowCount() - 1; i++) {
+ 		int selected = optionsModel->index(i, ImporterColumn::Selected).data(Qt::CheckStateRole).value<int>();
+@@ -208,7 +208,8 @@ void OBSImporter::importCollections()
+ 
+ 			std::string collectionFile;
+ 			collectionFile.reserve(sceneCollectionLocation.u8string().size() + fileName.size());
+-			collectionFile.append(sceneCollectionLocation.u8string()).append(fileName);
++			collectionFile.append(std::string(sceneCollectionLocation.u8string().begin(), sceneCollectionLocation.u8string().end()))
++				.append(fileName);
+ 
+ 			if (!GetClosestUnusedFileName(collectionFile, "json")) {
+ 				blog(LOG_WARNING, "Failed to get closest file name for %s", fileName.c_str());
+diff '--color=auto' -urp obs-studio-32.1.2.orig/frontend/models/SceneCollection.cpp obs-studio-32.1.2/frontend/models/SceneCollection.cpp
+--- obs-studio-32.1.2.orig/frontend/models/SceneCollection.cpp	2026-04-21 12:00:34.000000000 -0700
++++ obs-studio-32.1.2/frontend/models/SceneCollection.cpp	2026-05-10 17:18:38.352640541 -0700
+@@ -27,12 +27,12 @@ std::string SceneCollection::getName() c
+ 
+ std::string SceneCollection::getFileName() const
+ {
+-	return filePath_.filename().u8string();
++	return std::string(filePath_.filename().u8string().begin(), filePath_.filename().u8string().end());
+ }
+ 
+ std::string SceneCollection::getFileStem() const
+ {
+-	return filePath_.stem().u8string();
++	return std::string(filePath_.stem().u8string().begin(), filePath_.stem().u8string().end());
+ }
+ 
+ std::filesystem::path SceneCollection::getFilePath() const
+@@ -42,7 +42,7 @@ std::filesystem::path SceneCollection::g
+ 
+ std::string SceneCollection::getFilePathString() const
+ {
+-	return filePath_.u8string();
++	return std::string(filePath_.u8string().begin(), filePath_.u8string().end());
+ }
+ 
+ SceneCoordinateMode SceneCollection::getCoordinateMode() const
+diff '--color=auto' -urp obs-studio-32.1.2.orig/frontend/OBSApp.cpp obs-studio-32.1.2/frontend/OBSApp.cpp
+--- obs-studio-32.1.2.orig/frontend/OBSApp.cpp	2026-04-21 12:00:34.000000000 -0700
++++ obs-studio-32.1.2/frontend/OBSApp.cpp	2026-05-10 17:18:38.352877691 -0700
+@@ -451,18 +451,18 @@ constexpr std::string_view OBSPluginMana
+ static bool MakeUserProfileDirs()
+ {
+ 	const std::filesystem::path userProfilePath =
+-		App()->userProfilesLocation / std::filesystem::u8path(OBSProfileSubDirectory);
++		App()->userProfilesLocation / std::filesystem::path(OBSProfileSubDirectory);
+ 	const std::filesystem::path userScenesPath =
+-		App()->userScenesLocation / std::filesystem::u8path(OBSScenesSubDirectory);
++		App()->userScenesLocation / std::filesystem::path(OBSScenesSubDirectory);
+ 	const std::filesystem::path userPluginManagerPath =
+-		App()->userPluginManagerSettingsLocation / std::filesystem::u8path(OBSPluginManagerSubDirectory);
++		App()->userPluginManagerSettingsLocation / std::filesystem::path(OBSPluginManagerSubDirectory);
+ 
+ 	if (!std::filesystem::exists(userProfilePath)) {
+ 		try {
+ 			std::filesystem::create_directories(userProfilePath);
+ 		} catch (const std::filesystem::filesystem_error &error) {
+ 			blog(LOG_ERROR, "Failed to create user profile directory '%s'\n%s",
+-			     userProfilePath.u8string().c_str(), error.what());
++			     reinterpret_cast<const char*>(userProfilePath.u8string().c_str()), error.what());
+ 			return false;
+ 		}
+ 	}
+@@ -472,7 +472,7 @@ static bool MakeUserProfileDirs()
+ 			std::filesystem::create_directories(userScenesPath);
+ 		} catch (const std::filesystem::filesystem_error &error) {
+ 			blog(LOG_ERROR, "Failed to create user scene collection directory '%s'\n%s",
+-			     userScenesPath.u8string().c_str(), error.what());
++			     reinterpret_cast<const char*>(userScenesPath.u8string().c_str()), error.what());
+ 			return false;
+ 		}
+ 	}
+@@ -482,7 +482,7 @@ static bool MakeUserProfileDirs()
+ 			std::filesystem::create_directories(userPluginManagerPath);
+ 		} catch (const std::filesystem::filesystem_error &error) {
+ 			blog(LOG_ERROR, "Failed to create user plugin manager directory '%s'\n%s",
+-			     userPluginManagerPath.u8string().c_str(), error.what());
++			     reinterpret_cast<const char*>(userPluginManagerPath.u8string().c_str()), error.what());
+ 			return false;
+ 		}
+ 	}
+@@ -554,13 +554,13 @@ bool OBSApp::InitGlobalConfig()
+ 	InitGlobalLocationDefaults();
+ 
+ 	std::filesystem::path defaultUserConfigLocation =
+-		std::filesystem::u8path(config_get_default_string(appConfig, "Locations", "Configuration"));
++		std::filesystem::path(config_get_default_string(appConfig, "Locations", "Configuration"));
+ 	std::filesystem::path defaultUserScenesLocation =
+-		std::filesystem::u8path(config_get_default_string(appConfig, "Locations", "SceneCollections"));
++		std::filesystem::path(config_get_default_string(appConfig, "Locations", "SceneCollections"));
+ 	std::filesystem::path defaultUserProfilesLocation =
+-		std::filesystem::u8path(config_get_default_string(appConfig, "Locations", "Profiles"));
++		std::filesystem::path(config_get_default_string(appConfig, "Locations", "Profiles"));
+ 	std::filesystem::path defaultPluginManagerLocation =
+-		std::filesystem::u8path(config_get_default_string(appConfig, "Locations", "PluginManagerSettings"));
++		std::filesystem::path(config_get_default_string(appConfig, "Locations", "PluginManagerSettings"));
+ 
+ 	if (IsPortableMode()) {
+ 		userConfigLocation = std::move(defaultUserConfigLocation);
+@@ -569,13 +569,13 @@ bool OBSApp::InitGlobalConfig()
+ 		userPluginManagerSettingsLocation = std::move(defaultPluginManagerLocation);
+ 	} else {
+ 		std::filesystem::path currentUserConfigLocation =
+-			std::filesystem::u8path(config_get_string(appConfig, "Locations", "Configuration"));
++			std::filesystem::path(config_get_string(appConfig, "Locations", "Configuration"));
+ 		std::filesystem::path currentUserScenesLocation =
+-			std::filesystem::u8path(config_get_string(appConfig, "Locations", "SceneCollections"));
++			std::filesystem::path(config_get_string(appConfig, "Locations", "SceneCollections"));
+ 		std::filesystem::path currentUserProfilesLocation =
+-			std::filesystem::u8path(config_get_string(appConfig, "Locations", "Profiles"));
++			std::filesystem::path(config_get_string(appConfig, "Locations", "Profiles"));
+ 		std::filesystem::path currentUserPluginManagerLocation =
+-			std::filesystem::u8path(config_get_string(appConfig, "Locations", "PluginManagerSettings"));
++			std::filesystem::path(config_get_string(appConfig, "Locations", "PluginManagerSettings"));
+ 
+ 		userConfigLocation = (std::filesystem::exists(currentUserConfigLocation))
+ 					     ? std::move(currentUserConfigLocation)
+@@ -598,7 +598,7 @@ bool OBSApp::InitGlobalConfig()
+ 
+ bool OBSApp::InitUserConfig(std::filesystem::path &userConfigLocation, uint32_t lastVersion)
+ {
+-	const std::string userConfigFile = userConfigLocation.u8string() + "/obs-studio/user.ini";
++	const std::string userConfigFile = std::string(userConfigLocation.u8string().begin(), userConfigLocation.u8string().end()) + "/obs-studio/user.ini";
+ 
+ 	int errorCode = userConfig.Open(userConfigFile.c_str(), CONFIG_OPEN_ALWAYS);
+ 
+@@ -675,13 +675,13 @@ bool OBSApp::MigrateGlobalSettings()
+ 	legacyConfigFileString.reserve(strlen(path) + OBSGlobalIniPath.size());
+ 	legacyConfigFileString.append(path).append(OBSGlobalIniPath);
+ 
+-	const std::filesystem::path legacyGlobalConfigFile = std::filesystem::u8path(legacyConfigFileString);
++	const std::filesystem::path legacyGlobalConfigFile = std::filesystem::path(legacyConfigFileString);
+ 
+ 	std::string configFileString;
+ 	configFileString.reserve(strlen(path) + OBSUserIniPath.size());
+ 	configFileString.append(path).append(OBSUserIniPath);
+ 
+-	const std::filesystem::path userConfigFile = std::filesystem::u8path(configFileString);
++	const std::filesystem::path userConfigFile = std::filesystem::path(configFileString);
+ 
+ 	if (std::filesystem::exists(userConfigFile)) {
+ 		OBSErrorBox(nullptr,
+@@ -947,14 +947,14 @@ static void move_basic_to_profiles(void)
+ 		return;
+ 	}
+ 
+-	const std::filesystem::path basicPath = std::filesystem::u8path(path);
++	const std::filesystem::path basicPath = std::filesystem::path(path);
+ 
+ 	if (!std::filesystem::exists(basicPath)) {
+ 		return;
+ 	}
+ 
+ 	const std::filesystem::path profilesPath =
+-		App()->userProfilesLocation / std::filesystem::u8path("obs-studio/basic/profiles");
++		App()->userProfilesLocation / std::filesystem::path("obs-studio/basic/profiles");
+ 
+ 	if (std::filesystem::exists(profilesPath)) {
+ 		return;
+@@ -968,14 +968,14 @@ static void move_basic_to_profiles(void)
+ 		return;
+ 	}
+ 
+-	const std::filesystem::path newProfilePath = profilesPath / std::filesystem::u8path(Str("Untitled"));
++	const std::filesystem::path newProfilePath = profilesPath / std::filesystem::path(Str("Untitled"));
+ 
+ 	for (auto &entry : std::filesystem::directory_iterator(basicPath)) {
+ 		if (entry.is_directory()) {
+ 			continue;
+ 		}
+ 
+-		if (entry.path().filename().u8string() == "scenes.json") {
++		if (std::string(entry.path().filename().u8string().begin(), entry.path().filename().u8string().end()) == "scenes.json") {
+ 			continue;
+ 		}
+ 
+@@ -996,7 +996,7 @@ static void move_basic_to_profiles(void)
+ 			std::filesystem::copy(entry.path(), destinationFile, copyOptions);
+ 		} catch (const std::filesystem::filesystem_error &error) {
+ 			blog(LOG_ERROR, "Failed to copy basic profile file '%s' to new profile 'Untitled'\n%s",
+-			     entry.path().filename().u8string().c_str(), error.what());
++			     reinterpret_cast<const char*>(entry.path().filename().u8string().c_str()), error.what());
+ 
+ 			return;
+ 		}
+@@ -1011,14 +1011,14 @@ static void move_basic_to_scene_collecti
+ 		return;
+ 	}
+ 
+-	const std::filesystem::path basicPath = std::filesystem::u8path(path);
++	const std::filesystem::path basicPath = std::filesystem::path(path);
+ 
+ 	if (!std::filesystem::exists(basicPath)) {
+ 		return;
+ 	}
+ 
+ 	const std::filesystem::path sceneCollectionPath =
+-		App()->userScenesLocation / std::filesystem::u8path("obs-studio/basic/scenes");
++		App()->userScenesLocation / std::filesystem::path("obs-studio/basic/scenes");
+ 
+ 	if (std::filesystem::exists(sceneCollectionPath)) {
+ 		return;
+@@ -1033,9 +1033,9 @@ static void move_basic_to_scene_collecti
+ 		return;
+ 	}
+ 
+-	const std::filesystem::path sourceFile = basicPath / std::filesystem::u8path("scenes.json");
++	const std::filesystem::path sourceFile = basicPath / std::filesystem::path("scenes.json");
+ 	const std::filesystem::path destinationFile =
+-		(sceneCollectionPath / std::filesystem::u8path(Str("Untitled"))).replace_extension(".json");
++		(sceneCollectionPath / std::filesystem::path(Str("Untitled"))).replace_extension(".json");
+ 
+ 	try {
+ 		std::filesystem::rename(sourceFile, destinationFile);
+@@ -1383,7 +1383,7 @@ void OBSApp::openCrashLogDirectory() con
+ 		return;
+ 	}
+ 
+-	QString crashLogDirectoryString = QString::fromStdString(crashLogDirectory.u8string());
++	QString crashLogDirectoryString = QString::fromStdString(std::string(crashLogDirectory.u8string().begin(), crashLogDirectory.u8string().end()));
+ 
+ 	QUrl crashLogDirectoryURL = QUrl::fromLocalFile(crashLogDirectoryString);
+ 	QDesktopServices::openUrl(crashLogDirectoryURL);
+diff '--color=auto' -urp obs-studio-32.1.2.orig/frontend/OBSApp_Themes.cpp obs-studio-32.1.2/frontend/OBSApp_Themes.cpp
+--- obs-studio-32.1.2.orig/frontend/OBSApp_Themes.cpp	2026-04-21 12:00:34.000000000 -0700
++++ obs-studio-32.1.2/frontend/OBSApp_Themes.cpp	2026-05-10 17:18:38.356257912 -0700
+@@ -117,7 +117,7 @@ static optional<OBSTheme> ParseThemeMeta
+ 		}
+ 	}
+ 
+-	auto filepath = filesystem::u8path(path.toStdString());
++	auto filepath = filesystem::path(path.toStdString());
+ 	meta.isBaseTheme = filepath.extension() == ".obt";
+ 	meta.filename = filepath.stem();
+ 
+@@ -425,7 +425,7 @@ void OBSApp::FindThemes()
+ 	}
+ 
+ 	{
+-		const std::string themeDir = App()->userConfigLocation.u8string() + "/obs-studio/themes";
++		const std::string themeDir = std::string(App()->userConfigLocation.u8string().begin(), App()->userConfigLocation.u8string().end()) + "/obs-studio/themes";
+ 
+ 		QDirIterator it(QString::fromStdString(themeDir), filters, QDir::Files);
+ 
+@@ -933,7 +933,7 @@ bool OBSApp::SetTheme(const QString &nam
+ 	filesystem::path debugOut;
+ 	char configPath[512];
+ 	if (GetAppConfigPath(configPath, sizeof(configPath), filename.c_str())) {
+-		debugOut = absolute(filesystem::u8path(configPath));
++		debugOut = absolute(filesystem::path(configPath));
+ 		filesystem::create_directories(debugOut.parent_path());
+ 	}
+ 
+@@ -989,13 +989,13 @@ bool OBSApp::InitTheme()
+ 	/* Set search paths for custom 'theme:' URI prefix */
+ 	string searchDir;
+ 	if (GetDataFilePath("themes", searchDir)) {
+-		auto installSearchDir = filesystem::u8path(searchDir);
++		auto installSearchDir = filesystem::path(searchDir);
+ 		QDir::addSearchPath("theme", absolute(installSearchDir));
+ 	}
+ 
+ 	char userDir[512];
+ 	if (GetAppConfigPath(userDir, sizeof(userDir), "obs-studio/themes")) {
+-		auto configSearchDir = filesystem::u8path(userDir);
++		auto configSearchDir = filesystem::path(userDir);
+ 		QDir::addSearchPath("theme", absolute(configSearchDir));
+ 	}
+ 
+diff '--color=auto' -urp obs-studio-32.1.2.orig/frontend/OBSStudioAPI.cpp obs-studio-32.1.2/frontend/OBSStudioAPI.cpp
+--- obs-studio-32.1.2.orig/frontend/OBSStudioAPI.cpp	2026-04-21 12:00:34.000000000 -0700
++++ obs-studio-32.1.2/frontend/OBSStudioAPI.cpp	2026-05-10 17:18:38.353347162 -0700
+@@ -182,7 +182,7 @@ char *OBSStudioAPI::obs_frontend_get_cur
+ {
+ 	const OBSProfile &profile = main->GetCurrentProfile();
+ 
+-	return bstrdup(profile.path.u8string().c_str());
++	return bstrdup(reinterpret_cast<const char*>(profile.path.u8string().c_str()));
+ }
+ 
+ void OBSStudioAPI::obs_frontend_set_current_profile(const char *profile)
+diff '--color=auto' -urp obs-studio-32.1.2.orig/frontend/settings/OBSBasicSettings.cpp obs-studio-32.1.2/frontend/settings/OBSBasicSettings.cpp
+--- obs-studio-32.1.2.orig/frontend/settings/OBSBasicSettings.cpp	2026-05-10 17:18:16.195940095 -0700
++++ obs-studio-32.1.2/frontend/settings/OBSBasicSettings.cpp	2026-05-10 17:18:38.353942908 -0700
+@@ -1883,10 +1883,10 @@ OBSPropertiesView *OBSBasicSettings::Cre
+ 		const OBSBasic *basic = OBSBasic::Get();
+ 		const OBSProfile &currentProfile = basic->GetCurrentProfile();
+ 
+-		const std::filesystem::path jsonFilePath = currentProfile.path / std::filesystem::u8path(path);
++		const std::filesystem::path jsonFilePath = currentProfile.path / std::filesystem::path(path);
+ 
+ 		if (!jsonFilePath.empty()) {
+-			obs_data_t *data = obs_data_create_from_json_file_safe(jsonFilePath.u8string().c_str(), "bak");
++			obs_data_t *data = obs_data_create_from_json_file_safe(reinterpret_cast<const char*>(jsonFilePath.u8string().c_str()), "bak");
+ 			obs_data_apply(settings, data);
+ 			obs_data_release(data);
+ 		}
+@@ -3268,12 +3268,12 @@ static void WriteJsonData(OBSPropertiesV
+ 	const OBSBasic *basic = OBSBasic::Get();
+ 	const OBSProfile &currentProfile = basic->GetCurrentProfile();
+ 
+-	const std::filesystem::path jsonFilePath = currentProfile.path / std::filesystem::u8path(path);
++	const std::filesystem::path jsonFilePath = currentProfile.path / std::filesystem::path(path);
+ 
+ 	if (!jsonFilePath.empty()) {
+ 		obs_data_t *settings = view->GetSettings();
+ 		if (settings) {
+-			obs_data_save_json_safe(settings, jsonFilePath.u8string().c_str(), "tmp", "bak");
++			obs_data_save_json_safe(settings, reinterpret_cast<const char*>(jsonFilePath.u8string().c_str()), "tmp", "bak");
+ 		}
+ 	}
+ }
+@@ -5066,11 +5066,11 @@ void OBSBasicSettings::AdvReplayBufferCh
+ 		const OBSProfile &currentProfile = main->GetCurrentProfile();
+ 
+ 		const std::filesystem::path jsonFilePath =
+-			currentProfile.path / std::filesystem::u8path("recordEncoder.json");
++			currentProfile.path / std::filesystem::path("recordEncoder.json");
+ 
+ 		if (!jsonFilePath.empty()) {
+ 			OBSDataAutoRelease data =
+-				obs_data_create_from_json_file_safe(jsonFilePath.u8string().c_str(), "bak");
++				obs_data_create_from_json_file_safe(reinterpret_cast<const char*>(jsonFilePath.u8string().c_str()), "bak");
+ 			obs_data_apply(settings, data);
+ 		}
+ 	}
+diff '--color=auto' -urp obs-studio-32.1.2.orig/frontend/utility/AdvancedOutput.cpp obs-studio-32.1.2/frontend/utility/AdvancedOutput.cpp
+--- obs-studio-32.1.2.orig/frontend/utility/AdvancedOutput.cpp	2026-04-21 12:00:34.000000000 -0700
++++ obs-studio-32.1.2/frontend/utility/AdvancedOutput.cpp	2026-05-10 17:18:38.354655575 -0700
+@@ -14,12 +14,12 @@ static OBSData GetDataFromJsonFile(const
+ 
+ 	const OBSProfile &currentProfile = basic->GetCurrentProfile();
+ 
+-	const std::filesystem::path jsonFilePath = currentProfile.path / std::filesystem::u8path(jsonFile);
++	const std::filesystem::path jsonFilePath = currentProfile.path / std::filesystem::path(jsonFile);
+ 
+ 	OBSDataAutoRelease data = nullptr;
+ 
+ 	if (!jsonFilePath.empty()) {
+-		BPtr<char> jsonData = os_quick_read_utf8_file(jsonFilePath.u8string().c_str());
++		BPtr<char> jsonData = os_quick_read_utf8_file(reinterpret_cast<const char*>(jsonFilePath.u8string().c_str()));
+ 
+ 		if (!!jsonData) {
+ 			data = obs_data_create_from_json(jsonData);
+diff '--color=auto' -urp obs-studio-32.1.2.orig/frontend/utility/CrashHandler.cpp obs-studio-32.1.2/frontend/utility/CrashHandler.cpp
+--- obs-studio-32.1.2.orig/frontend/utility/CrashHandler.cpp	2026-04-21 12:00:34.000000000 -0700
++++ obs-studio-32.1.2/frontend/utility/CrashHandler.cpp	2026-05-10 17:37:17.150457888 -0700
+@@ -163,7 +163,7 @@ CrashLogUpdateResult CrashHandler::updat
+ 
+ 	if (lastLocalCrashLogFile != lastCrashLogFile_) {
+ 		lastCrashLogFile_ = std::move(lastLocalCrashLogFile);
+-		lastCrashLogFileName_ = lastCrashLogFile_.filename().u8string();
++		lastCrashLogFileName_ = std::string(lastCrashLogFile_.filename().u8string().begin(), lastCrashLogFile_.filename().u8string().end());
+ 		lastCrashLogURL_.clear();
+ 
+ 		return CrashLogUpdateResult::Updated;
+@@ -195,7 +195,7 @@ void CrashHandler::checkCrashState()
+ 		} catch (const std::filesystem::filesystem_error &error) {
+ 			blog(LOG_ERROR,
+ 			     "Crash sentinel location '%s' does not exist and unable to create directory:\n%s.",
+-			     crashSentinelPath.u8string().c_str(), error.what());
++			     reinterpret_cast<const char*>(crashSentinelPath.u8string().c_str()), error.what());
+ 			return;
+ 		}
+ 	}
+@@ -205,7 +205,7 @@ void CrashHandler::checkCrashState()
+ 			continue;
+ 		}
+ 
+-		std::string entryFileName = entry.path().filename().u8string();
++		std::string entryFileName = std::string(entry.path().filename().u8string().begin(), entry.path().filename().u8string().end());
+ 
+ 		if (entryFileName.rfind(crashSentinelPrefix.data(), 0) != 0) {
+ 			continue;
+@@ -260,7 +260,7 @@ void CrashHandler::updateCrashLogFromCon
+ 	OBS::TimePoint lastCrashLogUploadTime = OBS::TimePoint(durationSinceEpoch);
+ 
+ 	lastCrashLogFile_ = std::filesystem::u8path(lastCrashLogFilePath);
+-	lastCrashLogFileName_ = lastCrashLogFile_.filename().u8string();
++	lastCrashLogFileName_ = std::string(lastCrashLogFile_.filename().u8string().begin(), lastCrashLogFile_.filename().u8string().end());
+ 	lastCrashLogURL_ = lastCrashLogUploadURL;
+ 	lastCrashUploadTime_ = lastCrashLogUploadTime;
+ }
+@@ -275,7 +275,7 @@ void CrashHandler::saveCrashLogToConfig(
+ 
+ 	std::time_t uploadTimePoint_c = OBS::Clock::to_time_t(lastCrashUploadTime_);
+ 
+-	config_set_string(appConfig, "CrashHandler", "last_crash_log_file", lastCrashLogFile_.u8string().c_str());
++	config_set_string(appConfig, "CrashHandler", "last_crash_log_file", reinterpret_cast<const char*>(lastCrashLogFile_.u8string().c_str()));
+ 	config_set_int(appConfig, "CrashHandler", "last_crash_log_time", uploadTimePoint_c);
+ 	config_set_string(appConfig, "CrashHandler", "last_crash_log_url", lastCrashLogURL_.c_str());
+ 	config_save_safe(appConfig, "tmp", nullptr);
+@@ -365,7 +365,7 @@ void CrashHandler::applicationShutdownHa
+ 	const std::filesystem::path crashSentinelPath = crashSentinelFile_.parent_path();
+ 
+ 	if (!std::filesystem::exists(crashSentinelPath)) {
+-		blog(LOG_ERROR, "Crash sentinel location '%s' does not exist", crashSentinelPath.u8string().c_str());
++		blog(LOG_ERROR, "Crash sentinel location '%s' does not exist", reinterpret_cast<const char*>(crashSentinelPath.u8string().c_str()));
+ 		return;
+ 	}
+ 
+@@ -374,7 +374,7 @@ void CrashHandler::applicationShutdownHa
+ 			continue;
+ 		}
+ 
+-		std::string entryFileName = entry.path().filename().u8string();
++		std::string entryFileName = std::string(entry.path().filename().u8string().begin(), entry.path().filename().u8string().end());
+ 
+ 		if (entryFileName.rfind(crashSentinelPrefix.data(), 0) != 0) {
+ 			continue;
+diff '--color=auto' -urp obs-studio-32.1.2.orig/frontend/widgets/OBSBasic_MainControls.cpp obs-studio-32.1.2/frontend/widgets/OBSBasic_MainControls.cpp
+--- obs-studio-32.1.2.orig/frontend/widgets/OBSBasic_MainControls.cpp	2026-04-21 12:00:34.000000000 -0700
++++ obs-studio-32.1.2/frontend/widgets/OBSBasic_MainControls.cpp	2026-05-10 17:27:45.500294165 -0700
+@@ -444,7 +444,7 @@ void OBSBasic::on_actionReleaseNotes_tri
+ 
+ void OBSBasic::on_actionShowSettingsFolder_triggered()
+ {
+-	const std::string userConfigPath = App()->userConfigLocation.u8string() + "/obs-studio";
++	const std::string userConfigPath = str::string(App()->userConfigLocation.u8string().begin(), App()->userConfigLocation.u8string().end()) + "/obs-studio";
+ 	const QString userConfigLocation = QString::fromStdString(userConfigPath);
+ 
+ 	QDesktopServices::openUrl(QUrl::fromLocalFile(userConfigLocation));
+@@ -454,7 +454,7 @@ void OBSBasic::on_actionShowProfileFolde
+ {
+ 	try {
+ 		const OBSProfile &currentProfile = GetCurrentProfile();
+-		QString currentProfileLocation = QString::fromStdString(currentProfile.path.u8string());
++		QString currentProfileLocation = QString::fromStdString(str::string(currentProfile.path.u8string().begin(), currentProfile.path.u8string().end()));
+ 
+ 		QDesktopServices::openUrl(QUrl::fromLocalFile(currentProfileLocation));
+ 	} catch (const std::invalid_argument &error) {
+diff '--color=auto' -urp obs-studio-32.1.2.orig/frontend/widgets/OBSBasic_Profiles.cpp obs-studio-32.1.2/frontend/widgets/OBSBasic_Profiles.cpp
+--- obs-studio-32.1.2.orig/frontend/widgets/OBSBasic_Profiles.cpp	2026-05-10 17:18:16.200141832 -0700
++++ obs-studio-32.1.2/frontend/widgets/OBSBasic_Profiles.cpp	2026-05-10 17:33:24.212112762 -0700
+@@ -151,13 +151,15 @@ const OBSProfile &OBSBasic::CreateProfil
+ 	std::string profileDirectory;
+ 	profileDirectory.reserve(App()->userProfilesLocation.u8string().size() + OBSProfilePath.size() +
+ 				 directoryName.size());
+-	profileDirectory.append(App()->userProfilesLocation.u8string()).append(OBSProfilePath).append(directoryName);
++	profileDirectory.append(str::string(App()->userProfilesLocation.u8string().begin(), App()->userProfilesLocation.u8string().end()))
++		.append(OBSProfilePath)
++		.append(directoryName);
+ 
+ 	if (!GetClosestUnusedFileName(profileDirectory, nullptr)) {
+ 		throw std::invalid_argument("Failed to get closest directory name for new profile: " + profileName);
+ 	}
+ 
+-	const std::filesystem::path profileDirectoryPath = std::filesystem::u8path(profileDirectory);
++	const std::filesystem::path profileDirectoryPath = std::filesystem::path(profileDirectory);
+ 
+ 	try {
+ 		std::filesystem::create_directory(profileDirectoryPath);
+@@ -166,10 +168,10 @@ const OBSProfile &OBSBasic::CreateProfil
+ 	}
+ 
+ 	const std::filesystem::path profileFile =
+-		profileDirectoryPath / std::filesystem::u8path(OBSProfileSettingsFile);
++		profileDirectoryPath / std::filesystem::path(OBSProfileSettingsFile);
+ 
+ 	auto [iterator, success] =
+-		profiles.try_emplace(profileName, OBSProfile{profileName, profileDirectoryPath.filename().u8string(),
++		profiles.try_emplace(profileName, OBSProfile{profileName, std::string(profileDirectoryPath.filename().u8string().begin(), profileDirectoryPath.filename().u8string().end()),
+ 							     profileDirectoryPath, profileFile});
+ 
+ 	OnEvent(OBS_FRONTEND_EVENT_PROFILE_LIST_CHANGED);
+@@ -336,8 +338,8 @@ void OBSBasic::RefreshProfileCache()
+ 	std::map<std::string, OBSProfile> foundProfiles{};
+ 
+ 	const std::filesystem::path profilesPath =
+-		App()->userProfilesLocation / std::filesystem::u8path(OBSProfilePath.substr(1));
+-	const std::filesystem::path profileSettingsFile = std::filesystem::u8path(OBSProfileSettingsFile);
++		App()->userProfilesLocation / std::filesystem::path(OBSProfilePath.substr(1));
++	const std::filesystem::path profileSettingsFile = std::filesystem::path(OBSProfileSettingsFile);
+ 
+ 	if (!std::filesystem::exists(profilesPath)) {
+ 		blog(LOG_WARNING, "Failed to get profiles config path");
+@@ -353,7 +355,7 @@ void OBSBasic::RefreshProfileCache()
+ 
+ 		ConfigFile config;
+ 
+-		if (config.Open(profileCandidate.u8string().c_str(), CONFIG_OPEN_EXISTING) != CONFIG_SUCCESS) {
++		if (config.Open(reinterpret_cast<const char*>(reinterpret_cast<const char*>(profileCandidate.u8string().c_str())), CONFIG_OPEN_EXISTING) != CONFIG_SUCCESS) {
+ 			continue;
+ 		}
+ 
+@@ -363,10 +365,10 @@ void OBSBasic::RefreshProfileCache()
+ 		if (configName) {
+ 			candidateName = configName;
+ 		} else {
+-			candidateName = entry.path().filename().u8string();
++			candidateName = std::string(entry.path().filename().u8string().begin(), entry.path().filename().u8string().end());
+ 		}
+ 
+-		foundProfiles.try_emplace(candidateName, OBSProfile{candidateName, entry.path().filename().u8string(),
++		foundProfiles.try_emplace(candidateName, OBSProfile{candidateName, std::string(entry.path().filename().u8string().begin(), entry.path().filename().u8string().end()),
+ 								    entry.path(), profileCandidate});
+ 	}
+ 
+@@ -553,8 +555,8 @@ void OBSBasic::on_actionImportProfile_tr
+ 	const QString sourceDirectory = SelectDirectory(this, QTStr("Basic.MainMenu.Profile.Import"), home);
+ 
+ 	if (!sourceDirectory.isEmpty() && !sourceDirectory.isNull()) {
+-		const std::filesystem::path sourcePath = std::filesystem::u8path(sourceDirectory.toStdString());
+-		const std::string directoryName = sourcePath.filename().u8string();
++		const std::filesystem::path sourcePath = std::filesystem::path(sourceDirectory.toStdString());
++		const std::string directoryName = std::string(sourcePath.filename().u8string().begin(), sourcePath.filename().u8string().end());
+ 
+ 		if (auto profile = GetProfileByDirectoryName(directoryName)) {
+ 			OBSMessageBox::warning(this, QTStr("Basic.MainMenu.Profile.Import"),
+@@ -565,11 +567,11 @@ void OBSBasic::on_actionImportProfile_tr
+ 		std::string destinationPathString;
+ 		destinationPathString.reserve(App()->userProfilesLocation.u8string().size() + OBSProfilePath.size() +
+ 					      directoryName.size());
+-		destinationPathString.append(App()->userProfilesLocation.u8string())
++		destinationPathString.append(str::string(App()->userProfilesLocation.u8string().begin(), App()->userProfilesLocation.u8string().end()))
+ 			.append(OBSProfilePath)
+ 			.append(directoryName);
+ 
+-		const std::filesystem::path destinationPath = std::filesystem::u8path(destinationPathString);
++		const std::filesystem::path destinationPath = std::filesystem::path(destinationPathString);
+ 
+ 		try {
+ 			std::filesystem::create_directory(destinationPath);
+@@ -587,7 +589,7 @@ void OBSBasic::on_actionImportProfile_tr
+ 		}};
+ 
+ 		for (auto &[file, isMandatory] : profileFiles) {
+-			const std::filesystem::path sourceFile = sourcePath / std::filesystem::u8path(file);
++			const std::filesystem::path sourceFile = sourcePath / std::filesystem::path(file);
+ 
+ 			if (!std::filesystem::exists(sourceFile)) {
+ 				if (isMandatory) {
+@@ -599,7 +601,7 @@ void OBSBasic::on_actionImportProfile_tr
+ 				continue;
+ 			}
+ 
+-			const std::filesystem::path destinationFile = destinationPath / std::filesystem::u8path(file);
++			const std::filesystem::path destinationFile = destinationPath / std::filesystem::path(file);
+ 
+ 			try {
+ 				std::filesystem::copy(sourceFile, destinationFile);
+@@ -628,8 +630,8 @@ void OBSBasic::on_actionExportProfile_tr
+ 	if (!destinationDirectory.isEmpty() && !destinationDirectory.isNull()) {
+ 		const std::filesystem::path sourcePath = currentProfile.path;
+ 		const std::filesystem::path destinationPath =
+-			std::filesystem::u8path(destinationDirectory.toStdString()) /
+-			std::filesystem::u8path(currentProfile.directoryName);
++			std::filesystem::path(destinationDirectory.toStdString()) /
++			std::filesystem::path(currentProfile.directoryName);
+ 
+ 		if (!std::filesystem::exists(destinationPath)) {
+ 			std::filesystem::create_directory(destinationPath);
+@@ -638,13 +640,13 @@ void OBSBasic::on_actionExportProfile_tr
+ 		std::filesystem::copy_options copyOptions = std::filesystem::copy_options::overwrite_existing;
+ 
+ 		for (auto &file : profileFiles) {
+-			const std::filesystem::path sourceFile = sourcePath / std::filesystem::u8path(file);
++			const std::filesystem::path sourceFile = sourcePath / std::filesystem::path(file);
+ 
+ 			if (!std::filesystem::exists(sourceFile)) {
+ 				continue;
+ 			}
+ 
+-			const std::filesystem::path destinationFile = destinationPath / std::filesystem::u8path(file);
++			const std::filesystem::path destinationFile = destinationPath / std::filesystem::path(file);
+ 
+ 			try {
+ 				std::filesystem::copy(sourceFile, destinationFile, copyOptions);
+@@ -662,7 +664,7 @@ void OBSBasic::on_actionExportProfile_tr
+ void OBSBasic::ActivateProfile(const OBSProfile &profile, bool reset)
+ {
+ 	ConfigFile config;
+-	if (config.Open(profile.profileFile.u8string().c_str(), CONFIG_OPEN_ALWAYS) != CONFIG_SUCCESS) {
++	if (config.Open(reinterpret_cast<const char*>(profile.profileFile.u8string().c_str()), CONFIG_OPEN_ALWAYS) != CONFIG_SUCCESS) {
+ 		throw std::logic_error("failed to open configuration file of new profile: " +
+ 				       profile.profileFile.string());
+ 	}
+diff '--color=auto' -urp obs-studio-32.1.2.orig/frontend/widgets/OBSBasic_SceneCollections.cpp obs-studio-32.1.2/frontend/widgets/OBSBasic_SceneCollections.cpp
+--- obs-studio-32.1.2.orig/frontend/widgets/OBSBasic_SceneCollections.cpp	2026-04-21 12:00:34.000000000 -0700
++++ obs-studio-32.1.2/frontend/widgets/OBSBasic_SceneCollections.cpp	2026-05-10 17:41:39.976144587 -0700
+@@ -87,7 +87,7 @@ void cleanBackupCollision(const SceneCol
+ 			std::filesystem::remove(backupFilePath);
+ 		} catch (std::filesystem::filesystem_error &) {
+ 			throw std::logic_error("Failed to remove pre-existing scene collection backup file: " +
+-					       backupFilePath.u8string());
++					       std::string(backupFilePath.u8string().begin(), backupFilePath.u8string().end()));
+ 		}
+ 	}
+ }
+@@ -256,13 +256,15 @@ SceneCollection &OBSBasic::CreateSceneCo
+ 	std::string collectionFile;
+ 	collectionFile.reserve(App()->userScenesLocation.u8string().size() + SceneCollectionPath.size() +
+ 			       fileName.size());
+-	collectionFile.append(App()->userScenesLocation.u8string()).append(SceneCollectionPath).append(fileName);
++	collectionFile.append(std::string(App()->userScenesLocation.u8string().begin(), App()->userScenesLocation.u8string().end()))
++		.append(SceneCollectionPath)
++		.append(fileName);
+ 
+ 	if (!GetClosestUnusedFileName(collectionFile, "json")) {
+ 		throw std::invalid_argument("Failed to get closest file name for new scene collection: " + fileName);
+ 	}
+ 
+-	std::filesystem::path collectionFilePath = std::filesystem::u8path(collectionFile);
++	std::filesystem::path collectionFilePath = std::filesystem::path(collectionFile);
+ 
+ 	auto [iterator, success] =
+ 		collections.try_emplace(collectionName, collectionName, std::move(collectionFilePath));
+@@ -430,7 +432,7 @@ void OBSBasic::RefreshSceneCollectionCac
+ 	OBSSceneCollectionCache foundCollections{};
+ 
+ 	const std::filesystem::path collectionsPath =
+-		App()->userScenesLocation / std::filesystem::u8path(SceneCollectionPath.substr(1));
++		App()->userScenesLocation / std::filesystem::path(SceneCollectionPath.substr(1));
+ 
+ 	if (!std::filesystem::exists(collectionsPath)) {
+ 		blog(LOG_WARNING, "Failed to get scene collections config path");
+@@ -442,18 +444,18 @@ void OBSBasic::RefreshSceneCollectionCac
+ 			continue;
+ 		}
+ 
+-		if (entry.path().extension().u8string() != ".json") {
++		if (std::string(entry.path().extension().u8string().begin(), entry.path().extension().u8string().end()) != ".json") {
+ 			continue;
+ 		}
+ 
+ 		OBSDataAutoRelease collectionData =
+-			obs_data_create_from_json_file_safe(entry.path().u8string().c_str(), "bak");
++			obs_data_create_from_json_file_safe(reinterpret_cast<const char*>(entry.path().u8string().c_str()), "bak");
+ 
+ 		std::string candidateName;
+ 		std::string collectionName = obs_data_get_string(collectionData, "name");
+ 
+ 		if (collectionName.empty()) {
+-			candidateName = entry.path().stem().u8string();
++			candidateName = std::string(entry.path().stem().u8string().begin(), entry.path().stem().u8string().end());
+ 		} else {
+ 			candidateName = std::move(collectionName);
+ 		}
+@@ -655,9 +657,9 @@ void OBSBasic::on_actionExportSceneColle
+ 	if (!destinationFileName.isEmpty() && !destinationFileName.isNull()) {
+ 		const std::filesystem::path sourceFile = currentCollection.getFilePath();
+ 		const std::filesystem::path destinationFile =
+-			std::filesystem::u8path(destinationFileName.toStdString());
++			std::filesystem::path(destinationFileName.toStdString());
+ 
+-		OBSDataAutoRelease collection = obs_data_create_from_json_file(sourceFile.u8string().c_str());
++		OBSDataAutoRelease collection = obs_data_create_from_json_file(reinterpret_cast<const char*>(sourceFile.u8string().c_str()));
+ 
+ 		OBSDataArrayAutoRelease sources = obs_data_get_array(collection, "sources");
+ 		if (!sources) {
+@@ -688,7 +690,7 @@ void OBSBasic::on_actionExportSceneColle
+ 		}
+ 
+ 		obs_data_set_array(collection, "sources", newSources);
+-		obs_data_save_json_pretty_safe(collection, destinationFile.u8string().c_str(), "tmp", "bak");
++		obs_data_save_json_pretty_safe(collection, reinterpret_cast<const char*>(destinationFile.u8string().c_str()), "tmp", "bak");
+ 	}
+ }
+ 
+@@ -1136,7 +1138,7 @@ void OBSBasic::Load(SceneCollection &col
+ 			blog(LOG_WARNING,
+ 			     "File exists but appears to be corrupt, renaming "
+ 			     "to \"%s\" before continuing.",
+-			     backupFilePath.filename().u8string().c_str());
++			     reinterpret_cast<const char*>(backupFilePath.filename().u8string().c_str()));
+ 
+ 			try {
+ 				std::filesystem::rename(filePath, backupFilePath);
+@@ -1284,7 +1286,7 @@ void OBSBasic::LoadData(obs_data_t *data
+ 			backupFilePath.replace_extension(".json.v1");
+ 
+ 			if (!std::filesystem::exists(backupFilePath)) {
+-				bool success = obs_data_save_json_pretty_safe(data, backupFilePath.u8string().c_str(),
++				bool success = obs_data_save_json_pretty_safe(data, reinterpret_cast<const char*>(backupFilePath.u8string().c_str()),
+ 									      "tmp", nullptr);
+ 
+ 				if (!success) {
+diff '--color=auto' -urp obs-studio-32.1.2.orig/frontend/widgets/OBSBasic_Service.cpp obs-studio-32.1.2/frontend/widgets/OBSBasic_Service.cpp
+--- obs-studio-32.1.2.orig/frontend/widgets/OBSBasic_Service.cpp	2026-04-21 12:00:34.000000000 -0700
++++ obs-studio-32.1.2/frontend/widgets/OBSBasic_Service.cpp	2026-05-10 17:18:38.355947190 -0700
+@@ -28,7 +28,7 @@ void OBSBasic::SaveService()
+ 
+ 	const OBSProfile &currentProfile = GetCurrentProfile();
+ 
+-	const std::filesystem::path jsonFilePath = currentProfile.path / std::filesystem::u8path(OBSServiceFileName);
++	const std::filesystem::path jsonFilePath = currentProfile.path / std::filesystem::path(OBSServiceFileName);
+ 
+ 	OBSDataAutoRelease data = obs_data_create();
+ 	OBSDataAutoRelease settings = obs_service_get_settings(service);
+@@ -36,7 +36,7 @@ void OBSBasic::SaveService()
+ 	obs_data_set_string(data, "type", obs_service_get_type(service));
+ 	obs_data_set_obj(data, "settings", settings);
+ 
+-	if (!obs_data_save_json_safe(data, jsonFilePath.u8string().c_str(), "tmp", "bak")) {
++	if (!obs_data_save_json_safe(data, reinterpret_cast<const char*>(jsonFilePath.u8string().c_str()), "tmp", "bak")) {
+ 		blog(LOG_WARNING, "Failed to save service");
+ 	}
+ }
+@@ -49,9 +49,9 @@ bool OBSBasic::LoadService()
+ 		const OBSProfile &currentProfile = GetCurrentProfile();
+ 
+ 		const std::filesystem::path jsonFilePath =
+-			currentProfile.path / std::filesystem::u8path(OBSServiceFileName);
++			currentProfile.path / std::filesystem::path(OBSServiceFileName);
+ 
+-		data = obs_data_create_from_json_file_safe(jsonFilePath.u8string().c_str(), "bak");
++		data = obs_data_create_from_json_file_safe(reinterpret_cast<const char*>(jsonFilePath.u8string().c_str()), "bak");
+ 
+ 		if (!data) {
+ 			return false;
+diff '--color=auto' -urp obs-studio-32.1.2.orig/frontend/wizards/AutoConfig.cpp obs-studio-32.1.2/frontend/wizards/AutoConfig.cpp
+--- obs-studio-32.1.2.orig/frontend/wizards/AutoConfig.cpp	2026-05-10 17:18:16.200580123 -0700
++++ obs-studio-32.1.2/frontend/wizards/AutoConfig.cpp	2026-05-10 17:18:38.356075692 -0700
+@@ -29,13 +29,13 @@ static OBSData OpenServiceSettings(std::
+ 	const OBSBasic *basic = OBSBasic::Get();
+ 	const OBSProfile &currentProfile = basic->GetCurrentProfile();
+ 
+-	const std::filesystem::path jsonFilePath = currentProfile.path / std::filesystem::u8path(OBSServiceFileName);
++	const std::filesystem::path jsonFilePath = currentProfile.path / std::filesystem::path(OBSServiceFileName);
+ 
+ 	if (!std::filesystem::exists(jsonFilePath)) {
+ 		return OBSData();
+ 	}
+ 
+-	OBSDataAutoRelease data = obs_data_create_from_json_file_safe(jsonFilePath.u8string().c_str(), "bak");
++	OBSDataAutoRelease data = obs_data_create_from_json_file_safe(reinterpret_cast<const char*>(jsonFilePath.u8string().c_str()), "bak");
+ 
+ 	obs_data_set_default_string(data, "type", "rtmp_common");
+ 	type = obs_data_get_string(data, "type");

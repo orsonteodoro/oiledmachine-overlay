@@ -1,0 +1,53 @@
+diff '--color=auto' -urp obs-studio-32.1.2.orig/cmake/linux/helpers.cmake obs-studio-32.1.2/cmake/linux/helpers.cmake
+--- obs-studio-32.1.2.orig/cmake/linux/helpers.cmake	2026-04-21 12:00:34.000000000 -0700
++++ obs-studio-32.1.2/cmake/linux/helpers.cmake	2026-05-10 13:18:14.928062235 -0700
+@@ -172,14 +172,43 @@ function(set_target_properties_obs targe
+             POST_BUILD
+             COMMAND "${CMAKE_COMMAND}" -E make_directory "${OBS_OUTPUT_DIR}/$<CONFIG>/${OBS_PLUGIN_DESTINATION}/"
+             COMMAND
+-              "${CMAKE_COMMAND}" -E copy_if_different "${imported_location}" "${cef_location}/chrome-sandbox"
+-              "${cef_location}/libEGL.so" "${cef_location}/libGLESv2.so" "${cef_location}/libvk_swiftshader.so"
+-              "${cef_location}/libvulkan.so.1" "${cef_location}/v8_context_snapshot.bin"
+-              "${cef_location}/vk_swiftshader_icd.json" "${OBS_OUTPUT_DIR}/$<CONFIG>/${OBS_PLUGIN_DESTINATION}/"
++              "${CMAKE_COMMAND}" -E copy_if_different "${imported_location}"
++              "${OBS_OUTPUT_DIR}/$<CONFIG>/${OBS_PLUGIN_DESTINATION}/"
++            COMMAND
++              "${CMAKE_COMMAND}" -E copy_if_different "${cef_location}/chrome-sandbox"
++              "${OBS_OUTPUT_DIR}/$<CONFIG>/${OBS_PLUGIN_DESTINATION}/"
++            COMMAND
++              "${CMAKE_COMMAND}" -E copy_if_different "${cef_location}/vk_swiftshader_icd.json"
++              "${OBS_OUTPUT_DIR}/$<CONFIG>/${OBS_PLUGIN_DESTINATION}/"
++            COMMAND
++              "${CMAKE_COMMAND}" -E copy_if_different "${cef_location}/libEGL.so"
++              "${OBS_OUTPUT_DIR}/$<CONFIG>/${OBS_PLUGIN_DESTINATION}/"
++            COMMAND
++              "${CMAKE_COMMAND}" -E copy_if_different "${cef_location}/libGLESv2.so"
++              "${OBS_OUTPUT_DIR}/$<CONFIG>/${OBS_PLUGIN_DESTINATION}/"
++            COMMAND
++              "${CMAKE_COMMAND}" -E copy_if_different "${cef_location}/libvk_swiftshader.so"
++              "${OBS_OUTPUT_DIR}/$<CONFIG>/${OBS_PLUGIN_DESTINATION}/"
++            COMMAND
++              "${CMAKE_COMMAND}" -E copy_if_different "${cef_location}/libvulkan.so.1"
++              "${OBS_OUTPUT_DIR}/$<CONFIG>/${OBS_PLUGIN_DESTINATION}/"
++            COMMAND
++              "${CMAKE_COMMAND}" -E copy_if_different "${cef_location}/v8_context_snapshot.bin"
++              "${OBS_OUTPUT_DIR}/$<CONFIG>/${OBS_PLUGIN_DESTINATION}/"
++
+             COMMAND
+               "${CMAKE_COMMAND}" -E copy_if_different "${cef_root_location}/Resources/chrome_100_percent.pak"
+-              "${cef_root_location}/Resources/chrome_200_percent.pak" "${cef_root_location}/Resources/icudtl.dat"
+-              "${cef_root_location}/Resources/resources.pak" "${OBS_OUTPUT_DIR}/$<CONFIG>/${OBS_PLUGIN_DESTINATION}/"
++              "${OBS_OUTPUT_DIR}/$<CONFIG>/${OBS_PLUGIN_DESTINATION}/"
++            COMMAND
++              "${CMAKE_COMMAND}" -E copy_if_different "${cef_root_location}/Resources/chrome_200_percent.pak"
++              "${OBS_OUTPUT_DIR}/$<CONFIG>/${OBS_PLUGIN_DESTINATION}/"
++            COMMAND
++              "${CMAKE_COMMAND}" -E copy_if_different "${cef_root_location}/Resources/icudtl.dat"
++              "${OBS_OUTPUT_DIR}/$<CONFIG>/${OBS_PLUGIN_DESTINATION}/"
++            COMMAND
++              "${CMAKE_COMMAND}" -E copy_if_different "${cef_root_location}/Resources/resources.pak"
++              "${OBS_OUTPUT_DIR}/$<CONFIG>/${OBS_PLUGIN_DESTINATION}/"
++
+             COMMAND
+               "${CMAKE_COMMAND}" -E copy_directory "${cef_root_location}/Resources/locales"
+               "${OBS_OUTPUT_DIR}/$<CONFIG>/${OBS_PLUGIN_DESTINATION}/locales"

@@ -6,6 +6,8 @@ EAPI=8
 
 # U24
 
+# This ebuild contains patches with AI generated code.
+
 # 32.0.4 -> 32.1.2
 
 # TODO package:
@@ -65,7 +67,7 @@ PATENT_STATUS_IUSE=(
 	patent_status_nonfree
 )
 
-inherit cmake dep-prepare flag-o-matic git-r3 lcnr libcxx-slot libstdcxx-slot lua-single python-single-r1 xdg-utils
+inherit cmake dep-prepare flag-o-matic git-r3 lcnr libcxx-slot libstdcxx-slot lua-single multilib python-single-r1 xdg-utils
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_COMMIT="${PV}"
@@ -592,7 +594,8 @@ RDEPEND_LIBOBS="
 	)
 "
 DEPEND_LIBOBS="
-	dev-libs/uthash
+	dev-libs/simde:=
+	dev-libs/uthash:=
 "
 
 RDEPEND_WHATSNEW="
@@ -707,7 +710,6 @@ DEPEND+="
 	${RDEPEND}
 	${DEPEND_PLUGINS}
 	${DEPEND_UI}
-	dev-libs/simde:=
 "
 
 # Based on 20.04 See
@@ -751,6 +753,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-32.0.2-browser-checks.patch"
 	"${FILESDIR}/${PN}-32.0.2-optionalize-plugins.patch"
 	"${FILESDIR}/${PN}-32.1.2-symbolize-default-codecs.patch"
+#	"${FILESDIR}/${PN}-32.1.2-fix-browser-copy.patch"
 )
 
 qt_check() {
@@ -994,6 +997,17 @@ src_prepare() {
 			"frontend/wizards/AutoConfig.hpp" \
 			"frontend/wizards/AutoConfigTestPage.cpp" \
 			|| die
+	fi
+	if use browser ; then
+		sed -i \
+			-e "s|CMAKE_CXX_STANDARD 17|CMAKE_CXX_STANDARD 20|g" \
+			-e "s|cxx_std_17|cxx_std_20|g" \
+			"cmake/common/compiler_common.cmake" \
+			"deps/libdshowcapture/src/external/capture-device-support/CMakeLists.txt" \
+			"libobs/CMakeLists.txt" \
+			"plugins/obs-browser/CMakeLists.txt" \
+			|| die
+		eapply "${FILESDIR}/${PN}-32.1.2-use-cxx20.patch"
 	fi
 }
 
