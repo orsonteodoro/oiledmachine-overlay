@@ -230,6 +230,66 @@
     package.
 
 
+    Recommended slot use cases
+
+     7.0:  Beta quality, enthusiast gaming, virtualization, containers
+           best rolling experience, AI/ML test development
+    6.18:  Beta quality, new model gaming, AI/ML test development,
+           virtualization, containers, DSS testing
+    6.12:  Longest uptime, hardcore mode gaming, AI/ML training/end-users,
+           virtualization, containers, music production, content production,
+           servers, DSS production
+     6.6:  Virtualization, containers, AI/ML, migration to actively
+           supported slots
+     6.1:  Containers, migration from EOL drivers to actively supported slots
+    5.15:  Migration from EOL drivers to actively supported slots
+    5.10:  Migration from EOL drivers to actively supported slots
+
+
+    Virtualization and containerization compatibility
+
+      7.0:  A VirtualBox 7.2.x        ; x QEMU 11        ; * Docker 26.x - 29.x
+     6.18:  A VirtualBox 7.2.x        ; * QEMU 10        ; * Docker 26.x - 29.x
+     6.12:  A VirtualBox 7.1.x        ; A QEMU 9.0 - 9.2 ; A Docker 25.x - 29.x
+      6.6:  A VirtualBox 7.0.x        ; x QEMU 8.1 - 9.0 ; A Docker 24.x - 29.x
+      6.1:  A VirtualBox 6.1.x, 7.0.x ; x QEMU 7.1 - 8.0 ; A Docker 24.x - 29.x
+     5.15:  x VirtualBox 6.1.x        ; x QEMU 6.1 - 7.0 ; x Docker 20.10 - 26.x / 27.x
+     5.10:  x VirtualBox 6.1.x        ; x QEMU 5.2 - 6.2 ; x Docker 20.10 - 26.x / 27.x
+
+    x Not supported on overlay
+    * Supported on overlay
+    A Available support but not tested
+
+
+    GPU/AI stack compatibility
+
+      7.0:  * CUDA 12.6 - 13.2; x ROCm 7.2.x
+     6.18:  * CUDA 12.6 - 13.2; x ROCm 7.2.x
+     6.12:  * CUDA 12.6 - 13.2; * ROCm 7.0 - 7.2.x
+      6.6:  A CUDA 12.2 - 12.8; * ROCm 6.2, 6.3, 7.0
+      6.1:  A CUDA 12.0 - 12.6; * ROCm 6.1, 6.2, 6.3
+     5.15:  x CUDA 11.8 - 12.2; x ROCm 5.x - 6.0
+     5.10:  x CUDA 11.4 - 11.8; x ROCm 5.x - 6.0
+
+    x Not supported on overlay
+    * Supported on overlay
+    A Available support but not tested
+
+
+    Testing, uptime, maintenance mode status
+
+    - Active move means weekly tests, fixes, active development.
+    - Maintenance mode means only security fixes provided and minimum required
+      for build success upon request.
+
+      7.0: Actively tested, active, random soft lock up
+     6.18: Actively tested, active, random soft lock up
+     6.12: Testing on ice, maintenance mode, no lockups, longest uptimes
+      6.6: Testing on ice, maintenance mode, unknown lock up quality
+      6.1: Testing on ice, maintenance mode, unknown lock up quality
+     5.15: Testing on ice, maintenance mode, unknown lock up quality
+     5.10: Testing on ice, maintenance mode, unknown lock up quality
+
 
     Design choices and walk-through of the configuration user interfaces for ebuild
 
