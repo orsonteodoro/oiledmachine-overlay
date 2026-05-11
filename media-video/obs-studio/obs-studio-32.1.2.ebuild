@@ -134,7 +134,7 @@ LICENSE="
 	)
 "
 # custom - plugins/enc-amf/AMF/LICENSE.txt
-RESTRICT="mirror" # Speed up download of the latest release.
+RESTRICT="binchecks mirror strip" # Speed up download of the latest release.
 SLOT="0"
 # aja is enabled by default upstream
 # amf is enabled by default upstream
@@ -152,7 +152,7 @@ nvenc nvvfx opus oss +pipewire +pulseaudio +python qsv +qt6 +rnnoise +rtmps
 +service-updates -sndio +speexdsp svt-av1 -test +v4l2 vaapi +vlc +virtualcam
 +vst +wayland +webrtc win-dshow +websocket -win-mf +whatsnew x264
 
-ebuild_revision_21
+ebuild_revision_24
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -755,6 +755,12 @@ PATCHES=(
 	"${FILESDIR}/${PN}-32.1.2-symbolize-default-codecs.patch"
 )
 
+CEF_PATCHES=(
+	"${FILESDIR}/${PN}-32.1.2-use-cxx20.patch"
+	"${FILESDIR}/${PN}-32.1.2-obs-browser-use-cxx20.patch"
+	"${FILESDIR}/${PN}-32.1.2-obs-browser-relax-version.patch"
+)
+
 qt_check() {
 	local slot="${1}"
 	local QTCORE_PV=$(pkg-config --modversion Qt${slot}Core)
@@ -934,11 +940,11 @@ src_prepare() {
 		"${S}/plugins/obs-ffmpeg/CMakeLists.txt" \
 		|| die
 
-	if use browser ; then
-		sed -i -e "s|libcef_dll_wrapper.a|libcef_dll_wrapper.so|g" \
-			"${S}/cmake/finders/FindCEF.cmake" \
-			|| die
-	fi
+#	if use browser ; then
+#		sed -i -e "s|libcef_dll_wrapper.a|libcef_dll_wrapper.so|g" \
+#			"${S}/cmake/finders/FindCEF.cmake" \
+#			|| die
+#	fi
 
 	if use patent_status_nonfree ; then
 	# Upstream defaults
@@ -998,15 +1004,7 @@ src_prepare() {
 			|| die
 	fi
 	if use browser ; then
-		sed -i \
-			-e "s|CMAKE_CXX_STANDARD 17|CMAKE_CXX_STANDARD 20|g" \
-			-e "s|cxx_std_17|cxx_std_20|g" \
-			"cmake/common/compiler_common.cmake" \
-			"deps/libdshowcapture/src/external/capture-device-support/CMakeLists.txt" \
-			"libobs/CMakeLists.txt" \
-			"plugins/obs-browser/CMakeLists.txt" \
-			|| die
-		eapply "${FILESDIR}/${PN}-32.1.2-use-cxx20.patch"
+		eapply "${CEF_PATCHES[@]}"
 	fi
 }
 
@@ -1187,15 +1185,8 @@ src_install() {
 	insinto "/usr/include/obs/obs-frontend-api"
 	doins "frontend/api/obs-frontend-api.h"
 
-	if use browser ; then
-		exeinto "/usr/lib64/obs-plugins"
-		local cef_suffix=""
-		has_version 'net-libs/cef-bin' && cef_suffix="-bin"
-		doexe "${EROOT}/opt/cef${cef_suffix}/libcef_dll_wrapper/libcef_dll_wrapper.so"
-	fi
-
-	docinto licenses
-	dodoc COMMITMENT
+	docinto "licenses"
+	dodoc "COMMITMENT"
 
 	# The about dialog doesn't show all the copyright notices.
 	LCNR_SOURCE="${S}"
@@ -1273,6 +1264,7 @@ pkg_postrm() {
 # OILEDMACHINE-OVERLAY-META-TAGS:  link-to-unvulnerable-blink-derivative
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 29.1.2 (20230608) with qt5 only
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 29.1.3 (20230625) with qt6 only
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 32.1.2 (20230625) with qt6, cef-bin 147.0.10+gd58e84d+chromium-147.0.7727.118_linux64, v4l2
 # USE="browser qt6 v4l2 vaapi -aja -alsa -amf -browser-panels -coreaudio
 # -decklink -fdk -freetype -ftl -hevc -ipv6 -jack -libaom -lua -mac-syphon
 # -mpegts -nvafx -nvenc -nvvfx -oss -pipewire -pulseaudio -python

@@ -89,7 +89,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 beta cefclient cefsimple debug minimal test wayland X
-ebuild_revision_4
+ebuild_revision_6
 "
 REQUIRED_USE+="
 	cefclient? (
@@ -192,7 +192,7 @@ BDEPEND+="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/cef-bin-145.0.28-visibility-changes.patch"
+#	"${FILESDIR}/cef-bin-145.0.28-visibility-changes.patch"
 	"${FILESDIR}/cef-bin-145.0.28-disable-test.patch"
 )
 
@@ -674,6 +674,12 @@ einfo "CMAKE_USE_DIR=${CMAKE_USE_DIR}"
 	if ! use test ; then
 		rm -rf "${CMAKE_USE_DIR}/tests" || die
 	fi
+
+	# Avoid missing symbols issues.
+	sed -i \
+		-e "/-fvisibility=hidden/d" \
+		-e "/-fvisibility-inlines-hidden/d" \
+		"cmake/cef_variables.cmake" || die
 }
 
 src_configure() {
@@ -699,7 +705,7 @@ src_configure() {
 	export BUILD_DIR=$(get_S_abi)
 	cd "${CMAKE_USE_DIR}" || die
 	mycmakeargs=(
-		-DBUILD_SHARED_LIBS=ON
+		-DBUILD_SHARED_LIBS=OFF # Required by CEF
 	)
 einfo "DIR="$(pwd)
 	cmake_src_configure
@@ -789,6 +795,9 @@ ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+
 # USE="minimal -beta -cefclient -cefsimple (-debug) -test"
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) (20230608)
-# Build version:  114.2.10+g398e3c3+chromium-114.0.5735.110_linux64_minimal
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) (20230608), build version:  114.2.10+g398e3c3+chromium-114.0.5735.110_linux64_minimal
+
+# USE="-minimal -beta -cefclient -cefsimple (-debug) -test"
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) (20260510), build version:  147.0.10+gd58e84d+chromium-147.0.7727.118_linux64 (stable)

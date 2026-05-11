@@ -1,0 +1,11 @@
+--- a/plugins/obs-browser/CMakeLists.txt.orig	2026-05-10 20:35:56.354806478 -0700
++++ b/plugins/obs-browser/CMakeLists.txt	2026-05-10 20:38:34.289409329 -0700
+@@ -9,7 +9,7 @@ if(NOT ENABLE_BROWSER)
+   return()
+ endif()
+ 
+-find_package(CEF 95 REQUIRED)
++find_package(CEF 95)
+ find_package(nlohmann_json 3.11 REQUIRED)
+ 
+ add_library(obs-browser MODULE)
