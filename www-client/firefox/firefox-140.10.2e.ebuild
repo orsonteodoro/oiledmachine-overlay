@@ -1373,7 +1373,7 @@ verify_compiler_flags_hardening() {
 		"unconditional:dev-libs/glib:attack-surface-risk"
 		"unconditional:dev-libs/nspr:sensitive-data"
 		"unconditional:dev-libs/nss:sensitive-data,untrusted-data"
-		"unconditional:dev-util/spirv-tools,untrusted-data"						# RDEPEND of mesa
+		"unconditional:dev-util/spirv-tools:untrusted-data"						# RDEPEND of mesa
 		"unconditional:media-libs/freetype:untrusted-data"
 		"unconditional:media-libs/fontconfig:untrusted-data"
 		"unconditional:media-libs/libglvnd:untrusted-data"						# RDEPEND of mesa
@@ -2148,12 +2148,20 @@ _set_cc() {
 	CXX=$(tc-getCC)
 	CPP=$(tc-getCC)
 	# Disabled jumbo-build requires clang
-	if tc-is-clang || use debug ; then
+	if true || tc-is-clang || use debug ; then
+		local x
+		for x in ${LLVM_COMPAT[@]} ; do
+			if use "llvm_slot_${x}" ; then
+				export LLVM_SLOT=${x}
+				break
+			fi
+		done
 	# Force clang
 einfo "Switching to clang"
 		${CC} --version || die
 		local slot
-		slot=$(clang-major-version)
+		#slot=$(clang-major-version)
+		slot=${LLVM_SLOT}
 		AR="llvm-ar"
 		AS="llvm-as"
 		CC="${CHOST}-clang-${slot}"
