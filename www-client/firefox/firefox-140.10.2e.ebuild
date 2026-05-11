@@ -5,7 +5,7 @@
 EAPI=8
 
 # D11, D12, D13, F36, F37, F38, F39, F40, F41, F42, U22, U23, U24
-# See /var/tmp/portage/www-client/firefox-140.10.1e/work/firefox-140.10.1/taskcluster/kinds/bootstrap/kind.yml
+# See /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/taskcluster/kinds/bootstrap/kind.yml
 
 # 115.12.0 -> 128.1.0
 # 128.1.0 -> 128.2.0
@@ -31,6 +31,7 @@ EAPI=8
 # 140.8.0 -> 140.9.0
 # 140.9.0 -> 140.9.1
 # 140.9.1 -> 140.10.1
+# 140.10.1 -> 140.10.2
 
 # SECURITY:  If this gets bumped, then dev-lang/spidermonkey should be bumped too with the same ESR version.
 
@@ -51,28 +52,28 @@ EAPI=8
 #
 # For dependency versioning, see also
 # https://firefox-source-docs.mozilla.org/setup/linux_build.html
-# https://www.mozilla.org/en-US/firefox/140.10.1/system-requirements/
-# /var/tmp/portage/www-client/firefox-140.10.1e/work/firefox-140.10.1/moz.configure
-# /var/tmp/portage/www-client/firefox-140.10.1e/work/firefox-140.10.1/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41  [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
-# /var/tmp/portage/www-client/firefox-140.10.1e/work/firefox-140.10.1/security/nss/lib/nss/nss.h
-# /var/tmp/portage/www-client/firefox-140.10.1e/work/firefox-140.10.1/gfx/graphite2/include/graphite2/Font.h L31
-# /var/tmp/portage/www-client/firefox-140.10.1e/work/firefox-140.10.1/gfx/harfbuzz/moz.yaml
-# /var/tmp/portage/www-client/firefox-140.10.1e/work/firefox-140.10.1/intl/icu/source/common/unicode/uvernum.h L63
-# /var/tmp/portage/www-client/firefox-140.10.1e/work/firefox-140.10.1/ipc/chromium/src/third_party/libevent/configure.ac L8
-# /var/tmp/portage/www-client/firefox-140.10.1e/work/firefox-140.10.1/media/libaom/config/aom_version.h L7 [old]
-# /var/tmp/portage/www-client/firefox-140.10.1e/work/firefox-140.10.1/media/libjpeg/jconfig.h L7
-# /var/tmp/portage/www-client/firefox-140.10.1e/work/firefox-140.10.1/media/libpng/png.h L281
-# /var/tmp/portage/www-client/firefox-140.10.1e/work/firefox-140.10.1/media/libvpx/config/vpx_version.h L8
-# /var/tmp/portage/www-client/firefox-140.10.1e/work/firefox-140.10.1/media/libwebp/moz.yaml L16, two versions listed, newest chosen
-# /var/tmp/portage/www-client/firefox-140.10.1e/work/firefox-140.10.1/modules/freetype2/include/freetype/freetype.h L5223
-# /var/tmp/portage/www-client/firefox-140.10.1e/work/firefox-140.10.1/nsprpub/pr/include/prinit.h L35
-# /var/tmp/portage/www-client/firefox-140.10.1e/work/firefox-140.10.1/third_party/dav1d/meson.build L26
-# /var/tmp/portage/www-client/firefox-140.10.1e/work/firefox-140.10.1/third_party/pipewire/pipewire/version.h L49
-# /var/tmp/portage/www-client/firefox-140.10.1e/work/firefox-140.10.1/taskcluster/kinds/toolchain/node.yml
-# /var/tmp/portage/www-client/firefox-140.10.1e/work/firefox-140.10.1/taskcluster/kinds/toolchain/rust.yml
-# /var/tmp/portage/www-client/firefox-140.10.1e/work/firefox-140.10.1/taskcluster/kinds/fetch/toolchains.yml
+# https://www.mozilla.org/en-US/firefox/140.10.2/system-requirements/
+# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/moz.configure
+# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41  [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
+# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/security/nss/lib/nss/nss.h
+# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/gfx/graphite2/include/graphite2/Font.h L31
+# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/gfx/harfbuzz/moz.yaml
+# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/intl/icu/source/common/unicode/uvernum.h L63
+# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/ipc/chromium/src/third_party/libevent/configure.ac L8
+# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/media/libaom/config/aom_version.h L7 [old]
+# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/media/libjpeg/jconfig.h L7
+# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/media/libpng/png.h L281
+# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/media/libvpx/config/vpx_version.h L8
+# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/media/libwebp/moz.yaml L16, two versions listed, newest chosen
+# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/modules/freetype2/include/freetype/freetype.h L5223
+# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/nsprpub/pr/include/prinit.h L35
+# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/third_party/dav1d/meson.build L26
+# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/third_party/pipewire/pipewire/version.h L49
+# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/taskcluster/kinds/toolchain/node.yml
+# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/taskcluster/kinds/toolchain/rust.yml
+# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/taskcluster/kinds/fetch/toolchains.yml
 #   Keyword searches:  cbindgen-, llvm-, nasm, pkgconf-, zlib
-# /var/tmp/portage/www-client/firefox-140.10.1e/work/firefox-140.10.1/taskcluster
+# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/taskcluster
 #   Keyword search:  gtk
 
 # Due to versioning conflicts and ebuild assumptions, you cannot have stable and esr be the same version
@@ -91,7 +92,7 @@ unset __
 
 # To check every minor version or update MOZ_LANGS use the code below:
 __='
-PV="140.10.1"
+PV="140.10.2"
 wget -q -O - "http://ftp.mozilla.org/pub/firefox/releases/${PV}esr/linux-x86_64/xpi/" \
 	| grep "href.*linux-x86_64"  \
 	| cut -f 3 -d ">" \
@@ -108,7 +109,7 @@ unset __
 
 __='
 # For dependency versions, scan also with:
-SRC="/var/tmp/portage/www-client/firefox-140.10.1e/work/firefox-140.10.1"
+SRC="/var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2"
 grep -E \
 	-e "[0-9]+\.[0-9]+(\.[0-9]+)?" \
 	-e "dependency" \
@@ -174,7 +175,7 @@ RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO MC NPD OOBA OOBR OOBW 
 DBUS_PV="0.60"
 DBUS_GLIB_PV="0.60"
 EBUILD_MAINTAINER_MODE=0
-FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-09.tar.xz"
+FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-10.tar.xz"
 FIREFOX_LOONG_PATCHSET="firefox-139-loong-patches-02.tar.xz"
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
@@ -232,11 +233,15 @@ declare -A CFLAGS_RDEPEND=(
 	["media-libs/libvpx"]=">=;-O1" # -O0 causes FPS to lag below 25 FPS.
 )
 
-MITIGATION_DATE="Apr 28, 2026" # Advisory date
-MITIGATION_LAST_UPDATE=1777400700 # From `date +%s -d "2026-04-28 11:25"` from ftp date matching version in report
+MITIGATION_DATE="May 07, 2026" # Advisory date
+MITIGATION_LAST_UPDATE=1778179080 # From `date +%s -d "2026-05-07 11:38"` from ftp date matching version in report
 MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-27/"
 SEVERITY_LABEL="Severity:"
 VULNERABILITIES_FIXED=(
+	"CVE-2026-8090;UAF;"
+	"CVE-2026-8094;;"
+	"CVE-2026-8092;MC, ACE;"
+
 	"CVE-2026-7320;IBC;"
 	"CVE-2026-7321;SBE;"
 	"CVE-2026-7322;MC, ACE;"
@@ -356,7 +361,7 @@ inherit libstdcxx-slot linux-info llvm multilib-minimal multiprocessing
 inherit node optfeature pax-utils python-any-r1 readme.gentoo-r1 rust
 inherit rustflags-hardened toolchain-funcs virtualx vf web-kernel-config xdg
 
-KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~riscv ~x86"
+KEYWORDS="amd64 arm64 ~loong ~ppc64 ~riscv ~x86"
 S="${WORKDIR}/${PN}-${PV/e}"
 S_BAK="${WORKDIR}/${PN}-${PV/e}"
 if [[ "${PV}" == *"_rc"* ]] ; then
