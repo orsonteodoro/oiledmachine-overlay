@@ -89,7 +89,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 beta cefclient cefsimple debug minimal test wayland X
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE+="
 	cefclient? (
@@ -758,7 +758,7 @@ src_install() {
 	echo "${MY_PV}+g${CEF_COMMIT}+chromium-${CHROMIUM_PV}_$(get_xrid)${minimal}" \
 		> "${ED}/opt/${PN}/.version" || die
 	find "${ED}" -name "*.o" -delete
-	fperms 4711 "/opt/cef-bin/Release/chrome-sandbox"
+	fperms 4755 "/opt/cef-bin/Release/chrome-sandbox"
 	fowners "root:root" "/opt/cef-bin/Release/chrome-sandbox"
 }
 
