@@ -8,6 +8,9 @@ EAPI=8
 
 # This ebuild contains patches with AI generated code.
 
+# The cef in obs is verified working even with the message below.
+# libcef_dll_wrapper.so: undefined symbol: cef_get_min_log_level
+
 # 32.0.4 -> 32.1.2
 
 # TODO package:
