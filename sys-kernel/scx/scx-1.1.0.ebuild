@@ -910,6 +910,7 @@ einfo "Installing tools"
 }
 
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.20 (INTERACTIVE, 20260222)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 1.1.0 (INTERACTIVE, 20260511)
 # scx_lavd load: passed
 # scx_lavd used: passed
 #
