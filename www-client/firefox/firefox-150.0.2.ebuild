@@ -249,7 +249,7 @@ VULNERABILITIES_FIXED=(
 )
 
 inherit cflags-depends cflags-hardened check-compiler-switch check-linker
-inherit check-reqs desktop dhms flag-o-matic gnome2-utils lcnr libcxx-slot
+inherit check-reqs desktop dhms flag-o-matic flag-o-matic-om gnome2-utils lcnr libcxx-slot
 inherit libstdcxx-slot linux-info llvm multilib-minimal multiprocessing
 inherit node optfeature pax-utils python-any-r1 readme.gentoo-r1 rust
 inherit rustflags-hardened toolchain-funcs virtualx vf web-kernel-config xdg
@@ -2599,6 +2599,8 @@ ewarn "Add more swap space if linker causes an out of memory (OOM) condition."
 
 	cflags-hardened_append
 	rustflags-hardened_append
+
+	tc-is-clang && fix_mb_len_max
 
 	# Remove hardening flags that may slow things down or break live stream
 	filter-flags "-fno-inline" # Verified to cause slowdown
