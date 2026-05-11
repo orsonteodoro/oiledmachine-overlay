@@ -753,7 +753,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-32.0.2-browser-checks.patch"
 	"${FILESDIR}/${PN}-32.0.2-optionalize-plugins.patch"
 	"${FILESDIR}/${PN}-32.1.2-symbolize-default-codecs.patch"
-#	"${FILESDIR}/${PN}-32.1.2-fix-browser-copy.patch"
 )
 
 qt_check() {
