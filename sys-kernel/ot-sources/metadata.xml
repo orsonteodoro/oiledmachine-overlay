@@ -283,8 +283,8 @@
     - Maintenance mode means only security fixes provided and minimum required
       for build success upon request.
 
-      7.0: Actively tested, active, random soft lock up
-     6.18: Actively tested, active, random soft lock up
+      7.0: Actively tested/supported, random soft lock up
+     6.18: Actively tested/supported, random soft lock up
      6.12: Testing on ice, maintenance mode, no lockups, longest uptimes
       6.6: Testing on ice, maintenance mode, unknown lock up quality
       6.1: Testing on ice, maintenance mode, unknown lock up quality
