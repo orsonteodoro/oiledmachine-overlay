@@ -431,7 +431,7 @@ alsa cups +dbus debug eme-free firejail +hardened -hwaccel jack +jemalloc
 system-pipewire
 system-png +system-webp systemd -telemetry test +vaapi +wayland +webrtc wifi
 webspeech +X
-ebuild_revision_30
+ebuild_revision_31
 "
 
 # Firefox-only IUSE
@@ -2742,6 +2742,10 @@ ewarn "Add more swap space if linker causes an out of memory (OOM) condition."
 	rustflags-hardened_append
 
 	tc-is-clang && fix_mb_len_max
+	export HOST_CFLAGS="${CFLAGS}"
+	export HOST_CXXFLAGS="${CXXFLAGS}"
+	export HOST_CPPFLAGS="${CPPFLAGS}"
+	export HOST_LDFLAGS="${LDFLAGS}"
 
 	# Remove hardening flags that may slow things down or break live stream
 	filter-flags "-fno-inline" # Verified to cause slowdown
