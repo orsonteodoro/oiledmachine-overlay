@@ -232,18 +232,19 @@
 
     Recommended slot use cases
 
-     7.0:  Beta quality, enthusiast gaming, virtualization, containers
+     7.0:  Perceived beta quality, enthusiast gaming, virtualization, containers
            best rolling experience, AI/ML test development
-    6.18:  Beta quality, new model gaming, AI/ML test development,
+    6.18:  Perceived beta quality, new model gaming, AI/ML test development,
            virtualization, containers, DSS testing
     6.12:  Longest uptime, hardcore mode gaming, AI/ML training/end-users,
            virtualization, containers, music production, content production,
            servers, DSS production
-     6.6:  Virtualization, containers, AI/ML, migration from EOL drivers to
+     6.6:  Virtualization, containers, AI/ML, data migration from EOL drivers to
            actively supported slots
-     6.1:  Containers, migration from EOL drivers to actively supported slots
-    5.15:  Migration from EOL drivers to actively supported slots
-    5.10:  Migration from EOL drivers to actively supported slots
+     6.1:  Containers, data migration from EOL drivers to actively supported
+           slots
+    5.15:  Data migration from EOL drivers to actively supported slots
+    5.10:  Data migration from EOL drivers to actively supported slots
 
 
     Virtualization and containerization compatibility
