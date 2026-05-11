@@ -1,0 +1,13 @@
+--- a/config/external/moz.build.orig	2026-05-06 09:24:31.000000000 -0700
++++ b/config/external/moz.build	2026-05-11 15:12:45.919638339 -0700
+@@ -11,8 +11,8 @@ DIRS += [
+     "sqlite",
+ ]
+ 
+-if CONFIG["MOZ_WIDGET_TOOLKIT"] != "android":
+-    DIRS += ["mozinference"]
++#if CONFIG["MOZ_WIDGET_TOOLKIT"] != "android":
++#    DIRS += ["mozinference"]
+ 
+ if CONFIG["MOZ_USING_WASM_SANDBOXING"]:
+     DIRS += [

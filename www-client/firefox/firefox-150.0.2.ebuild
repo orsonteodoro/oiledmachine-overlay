@@ -312,7 +312,7 @@ CODEC_IUSE="
 IUSE+="
 ${CODEC_IUSE}
 ${PATENT_STATUS[@]}
-alsa cpu_flags_arm_neon cups +dbus debug eme-free firejail +hardened
+-ai alsa cpu_flags_arm_neon cups +dbus debug eme-free firejail +hardened
 -hwaccel jack +jemalloc +jit jpegxl libcanberra libnotify libproxy
 libsecret mold +pgo +pulseaudio
 rust-simd selinux sndio speech +system-av1
@@ -351,6 +351,7 @@ PATENT_REQUIRED_USE="
 #	)
 REQUIRED_USE="
 	${PATENT_REQUIRED_USE}
+	!ai
 	^^ (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
@@ -1666,6 +1667,13 @@ ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
 	# Prevent video seek bug
 	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-122.0-disable-broken-flags-ipc-chromium-chromium-config.patch"
 
+	# Breaks because GCC atomics
+	#_eapply_oiledmachine_set "${FILESDIR}/firefox-150.0.2-disable-ai.patch"
+	#rm -rf \
+	#	"config/external/mozinference" \
+	#	"third_party/llama.cpp" \
+	#	|| true
+
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 
@@ -2012,8 +2020,8 @@ _set_cc() {
 	CC=$(tc-getCC)
 	CXX=$(tc-getCC)
 	CPP=$(tc-getCC)
-	# Using disabled jumbo-build requires clang
-	if true || tc-is-clang || use debug ; then
+	# Disabling jumbo-build requires clang
+	if false && ( tc-is-clang || use debug ) ; then
 		local x
 		for x in ${LLVM_COMPAT[@]} ; do
 			if use "llvm_slot_${x}" ; then
@@ -2324,9 +2332,28 @@ einfo "Building without Mozilla API key ..."
 	mozconfig_use_enable "wifi" "necko-wifi"
 
 	# Reduce longer *rebuilds* when debug testing experimental code changes.
-	use debug && mozconfig_add_options_ac \
-		"--disable-unified-build" \
-		"--disable-unified-build"
+	local use_jumbo_build=1
+	use debug && use_jumbo_build=0
+	if (( ${use_jumbo_build} == 1 )) ; then
+		mozconfig_add_options_ac \
+			"--disable-unified-build" \
+			"--disable-unified-build"
+	else
+		if tc-is-gcc ; then
+eerror
+eerror "Clang is required if jumbo build is disabled."
+eerror
+eerror "USE=debug disables jumbo build."
+eerror
+eerror "Set one of the following as per-package environment variables to continue:"
+eerror
+eerror "CC=clang-20 CXX=clang++-20"
+eerror "CC=clang-21 CXX=clang++-21"
+eerror "CC=clang-22 CXX=clang++-22"
+eerror
+			die
+		fi
+	fi
 
 	if use X && use wayland ; then
 		mozconfig_add_options_ac \
@@ -2599,10 +2626,13 @@ ewarn "Add more swap space if linker causes an out of memory (OOM) condition."
 		"Gentoo default" \
 		"MOZ_OBJDIR=${BUILD_OBJ_DIR}"
 
-	cflags-hardened_append
-	rustflags-hardened_append
+#	cflags-hardened_append
+#	rustflags-hardened_append
 
-	tc-is-clang && fix_mb_len_max
+	if tc-is-clang ; then
+		fix_mb_len_max
+		append-flags "-latomics"
+	fi
 	export HOST_CFLAGS="${CFLAGS}"
 	export HOST_CXXFLAGS="${CXXFLAGS}"
 	export HOST_CPPFLAGS="${CPPFLAGS}"

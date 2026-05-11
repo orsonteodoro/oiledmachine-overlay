@@ -2149,8 +2149,8 @@ _set_cc() {
 	CC=$(tc-getCC)
 	CXX=$(tc-getCC)
 	CPP=$(tc-getCC)
-	# Disabled jumbo-build requires clang
-	if true || tc-is-clang || use debug ; then
+	# Disabling jumbo-build requires clang
+	if false && ( tc-is-clang || use debug ) ; then
 		local x
 		for x in ${LLVM_COMPAT[@]} ; do
 			if use "llvm_slot_${x}" ; then
@@ -2459,9 +2459,26 @@ einfo "Building without Mozilla API key ..."
 	mozconfig_use_enable "wifi" "necko-wifi"
 
 	# Reduce longer *rebuilds* when debug testing experimental code changes.
-	use debug && mozconfig_add_options_ac \
-		"--disable-unified-build" \
-		"--disable-unified-build"
+	local use_jumbo_build=1
+	use debug && use_jumbo_build=0
+	if (( ${use_jumbo_build} == 1 )) ; then
+		mozconfig_add_options_ac \
+			"--disable-unified-build" \
+			"--disable-unified-build"
+	else
+		if tc-is-gcc ; then
+eerror
+eerror "Clang is required if jumbo build is disabled."
+eerror
+eerror "USE=debug disables jumbo build."
+eerror
+eerror "Set one of the following as per-package environment variables to continue:"
+eerror
+eerror "CC=clang-19 CXX=clang++-19"
+eerror
+			die
+		fi
+	fi
 
 	if use X && use wayland ; then
 		mozconfig_add_options_ac \
@@ -2740,10 +2757,13 @@ ewarn "Add more swap space if linker causes an out of memory (OOM) condition."
 		"Gentoo default" \
 		"MOZ_OBJDIR=${BUILD_OBJ_DIR}"
 
-	cflags-hardened_append
-	rustflags-hardened_append
+#	cflags-hardened_append
+#	rustflags-hardened_append
 
-	tc-is-clang && fix_mb_len_max
+	if tc-is-clang ; then
+		fix_mb_len_max
+		append-flags "-latomics"
+	fi
 	export HOST_CFLAGS="${CFLAGS}"
 	export HOST_CXXFLAGS="${CXXFLAGS}"
 	export HOST_CPPFLAGS="${CPPFLAGS}"
