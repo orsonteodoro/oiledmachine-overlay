@@ -2,7 +2,7 @@
 # Copyright 1999-2025 Gentoo Authors
 # @ECLASS: verify-binutils.eclass
 # @MAINTAINER: Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS: 7 8
+# @SUPPORTED_EAPIS: 7 8 9
 # @BLURB: Verify binutils version
 # @DESCRIPTION:
 # Verify Binutils (implying the BFD) version against possibly vulnerable versions.
@@ -10,7 +10,7 @@
 #
 
 case ${EAPI:-0} in
-	[78]) ;;
+	[789]) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
