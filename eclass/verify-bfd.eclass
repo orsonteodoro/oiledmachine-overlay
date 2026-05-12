@@ -1,6 +1,6 @@
 # Copyright 2024-2025 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2025 Gentoo Authors
-# @ECLASS: vf.eclass
+# @ECLASS: verify-bfd.eclass
 # @MAINTAINER: Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS: 7 8
 # @BLURB: Verify BFD version
