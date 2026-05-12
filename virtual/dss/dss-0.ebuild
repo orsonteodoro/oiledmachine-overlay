@@ -106,7 +106,7 @@ SANDBOX_IUSE=(
 	"firejail"
 )
 
-inherit verify-bfd
+inherit verify-binutils
 
 DESCRIPTION="Requirements for security-critical secure data storage"
 KEYWORDS="~amd64 ~arm64"
@@ -794,5 +794,5 @@ eerror
 		fi
 	fi
 
-	verify-bfd_check
+	verify-binutils_check
 }

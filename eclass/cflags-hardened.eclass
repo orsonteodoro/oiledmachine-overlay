@@ -23,7 +23,7 @@ esac
 if [[ -z ${_CFLAGS_HARDENED_ECLASS} ]]; then
 _CFLAGS_HARDENED_ECLASS=1
 
-inherit flag-o-matic toolchain-funcs verify-bfd
+inherit flag-o-matic toolchain-funcs verify-binutils
 
 # See compiler section in https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/SUPPORT_MATRIX.md
 _CFLAGS_SANITIZER_GCC_SLOTS_COMPAT=( {12..15} )		# Limited based on CI testing
@@ -1435,7 +1435,7 @@ _cflags-hardened_needs_zero_call_used_regs() {
 cflags-hardened_append() {
 	[[ "${CFLAGS_HARDENED_DISABLED:-0}" == 1 ]] && return
 
-	verify-bfd_check
+	verify-binutils_check
 
 	if has debug ${IUSE} && use debug ; then
 ewarn "Disabling cflags-hardenend for USE=debug"

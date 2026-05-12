@@ -104,7 +104,7 @@ EOL_VERSIONS=(
 # For zero-tolerance mode
 MULTISLOT_LATEST_KERNEL_RELEASE=("5.10.255" "5.15.206" "6.1.172" "6.6.138" "6.12.87" "6.18.28" "7.0.5")
 
-inherit mitigate-dos toolchain-funcs verify-bfd
+inherit mitigate-dos toolchain-funcs verify-binutils
 
 # Add RDEPEND+=" sys-kernel/mitigate-dos" to downstream package if the downstream ebuild uses:
 # Server
@@ -925,7 +925,7 @@ ewarn "This ebuild is a Work In Progress (WIP)."
 	check_zero_tolerance
 	use max-uptime && verify_max_uptime_kernel_config
 	verify_disable_ksm
-	verify-bfd_check
+	verify-binutils_check
 }
 
 src_compile() {
