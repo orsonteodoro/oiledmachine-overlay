@@ -283,13 +283,13 @@ pkg_setup() {
 	use enforce || return
 	mitigate-id_pkg_setup
 ewarn "This ebuild is a Work In Progress (WIP) and may be renamed."
-	verify-binutils_check
 }
 
 src_compile() {
 	use enforce || ewarn "The USE enforce flag is disabled."
 	use enforce || return
 	tc-is-cross-compiler && return
+	verify-binutils_check
 einfo "Checking for mitigations against Information Disclosure based Transient Execution Vulnerabilities (e.g. Meltdown/Spectre)"
 	if lscpu | grep -q "Vulnerable" ; then
 eerror "FAIL:  Detected an unmitigated CPU vulnerability."

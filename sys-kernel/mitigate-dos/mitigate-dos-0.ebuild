@@ -925,13 +925,13 @@ ewarn "This ebuild is a Work In Progress (WIP)."
 	check_zero_tolerance
 	use max-uptime && verify_max_uptime_kernel_config
 	verify_disable_ksm
-	verify-binutils_check
 }
 
 src_compile() {
 	use enforce || ewarn "The USE enforce flag is disabled."
 	use enforce || return
 	tc-is-cross-compiler && return
+	verify-binutils_check
 # TODO:  Find similar app
 #einfo "Checking for mitigations against DoS."
 #	if lscpu | grep -q "Vulnerable" ; then

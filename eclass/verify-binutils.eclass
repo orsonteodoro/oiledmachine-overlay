@@ -29,9 +29,7 @@ verify-binutils_check() {
 	local binutils_pv_major=$(ver_cut 1 "${binutils_pv}")
 	local binutils_pv_minor=$(ver_cut 2 "${binutils_pv}")
 
-	if ver_test "${binutils_pv_major}" "-ge" "3" ; then
-		:
-	elif ver_test "${binutils_pv}" "-lt" "${VERIFY_BINUTILS_SLOT}" ; then
+	if ver_test "${binutils_pv}" "-lt" "${VERIFY_BINUTILS_SLOT}" ; then
 		if has "enforce" ${IUSE_EFFECTIVE} && use enforce ; then
 eerror "Switch to >= ${_BINUTILS_PV}"
 			die
