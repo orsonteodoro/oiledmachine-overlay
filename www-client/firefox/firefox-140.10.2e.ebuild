@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# error: failed to run custom build command for `cubeb-core v0.32.0`
+
 # D11, D12, D13, F36, F37, F38, F39, F40, F41, F42, U22, U23, U24
 # See /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/taskcluster/kinds/bootstrap/kind.yml
 
@@ -433,7 +435,7 @@ alsa cups +dbus debug eme-free firejail +hardened -hwaccel jack +jemalloc
 system-pipewire
 system-png +system-webp systemd -telemetry test +vaapi +wayland +webrtc wifi
 webspeech +X
-ebuild_revision_32
+ebuild_revision_33
 "
 
 # Firefox-only IUSE
@@ -1846,6 +1848,10 @@ einfo "Editing ${path} -O3 -> -O2"
 			export RUST_TARGET="i686-unknown-linux-musl"
 		elif use arm64 ; then
 			export RUST_TARGET="aarch64-unknown-linux-musl"
+		elif use loong; then
+			# Only the LP64D ABI of LoongArch64 is actively supported among
+			# the wider Linux ecosystem, so the assumption is safe.
+			export RUST_TARGET="loongarch64-unknown-linux-musl"
 		elif use ppc64 ; then
 			export RUST_TARGET="powerpc64le-unknown-linux-musl"
 		elif use riscv ; then
@@ -2569,8 +2575,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	if [[ "${LTO_TYPE}" =~ ("bfdlto"|"moldlto"|"thinlto") ]]
 	then
-		# -Werror=lto-type-mismatch -Werror=odr are going to fail with GCC,
-		# bmo#1516758, bgo#942288
+	# -Werror=lto-type-mismatch -Werror=odr are going to fail with GCC,
+	# bmo#1516758, bgo#942288
 		filter-flags "-Werror=lto-type-mismatch" "-Werror=odr"
 	fi
 

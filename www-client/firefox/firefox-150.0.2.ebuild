@@ -4,6 +4,9 @@
 
 EAPI=8
 
+# error: failed to run custom build command for `cubeb-core v0.32.0`
+# 11:00.59 [cubeb-core 0.32.0] cargo:warning=src/log.c:18: fatal error: opening dependency file .deps/force-cargo-library-build.pp: No such file or directory
+
 # D11, D12, D13, F36, F37, F38, F39, F40, F41, F42, U22, U24
 # See /var/tmp/portage/www-client/firefox-150.0.2/work/firefox-150.0.2/taskcluster/kinds/bootstrap/kind.yml
 
@@ -208,6 +211,8 @@ inherit libstdcxx-compat
 GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
+LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
@@ -319,7 +324,7 @@ rust-simd selinux sndio speech +system-av1
 +system-harfbuzz +system-icu +system-jpeg +system-libevent
 +system-libvpx system-pipewire system-png +system-webp systemd -telemetry +vaapi -valgrind
 +wayland +webrtc wifi webspeech
-ebuild_revision_32
+ebuild_revision_33
 "
 # telemetry disabled for crypto/security reasons
 
@@ -349,9 +354,9 @@ PATENT_REQUIRED_USE="
 #	rust-simd? (
 #		!llvm_slot_19
 #	)
+# The Rust 1.90.0 is possibly broken.
 REQUIRED_USE="
 	${PATENT_REQUIRED_USE}
-	!ai
 	^^ (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
@@ -556,7 +561,7 @@ CDEPEND="
 		)
 	)
 	system-icu? (
-		>=dev-libs/icu-78.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		>=dev-libs/icu-78.2[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 		dev-libs/icu:=
 	)
 	system-jpeg? (
@@ -1646,7 +1651,7 @@ ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
 	#rm "${WORKDIR}/firefox-patches/0013-gcc-lto-pgo-gentoo.patch" || die
 
 	eapply "${WORKDIR}/firefox-patches"
-	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-131.0-disallow-store-data-races.patch"
+#	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-131.0-disallow-store-data-races.patch"
 
 	# Flicker prevention with -Ofast
 	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-106.0.2-disable-broken-flags-gfx-layers.patch"
@@ -1710,6 +1715,10 @@ einfo "Editing ${path} -O3 -> -O2"
 			export RUST_TARGET="x86-unknown-linux-musl"
 		elif use arm64 ; then
 			export RUST_TARGET="aarch64-unknown-linux-musl"
+		elif use loong; then
+			# Only the LP64D ABI of LoongArch64 is actively supported among
+			# the wider Linux ecosystem, so the assumption is safe.
+			export RUST_TARGET="loongarch64-unknown-linux-musl"
 		elif use ppc64 ; then
 			export RUST_TARGET="powerpc64le-unknown-linux-musl"
 		elif use riscv ; then
@@ -1742,7 +1751,7 @@ eerror
 			-e "s:%%WASI_ARCH%%:${wasi_arch}:" \
 			-e "s:%%WASI_SDK_VER%%:${WASI_SDK_VER}:" \
 			-e "s:%%WASI_SDK_LLVM_VER%%:${WASI_SDK_LLVM_VER}:" \
-			toolkit/moz.configure || die "Failed to update wasi-related paths."
+			"toolkit/moz.configure" || die "Failed to update wasi-related paths."
 	fi
 
 	# Make LTO respect MAKEOPTS
@@ -2443,8 +2452,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	if [[ "${LTO_TYPE}" =~ ("bfdlto"|"moldlto"|"thinlto") ]]
 	then
-		# -Werror=lto-type-mismatch -Werror=odr are going to fail with GCC,
-		# bmo#1516758, bgo#942288
+	# -Werror=lto-type-mismatch -Werror=odr are going to fail with GCC,
+	# bmo#1516758, bgo#942288
 		filter-flags "-Werror=lto-type-mismatch" "-Werror=odr"
 	fi
 
