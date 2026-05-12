@@ -433,7 +433,7 @@ alsa cups +dbus debug eme-free firejail +hardened -hwaccel jack +jemalloc
 system-pipewire
 system-png +system-webp systemd -telemetry test +vaapi +wayland +webrtc wifi
 webspeech +X
-ebuild_revision_31
+ebuild_revision_32
 "
 
 # Firefox-only IUSE
@@ -2465,19 +2465,10 @@ einfo "Building without Mozilla API key ..."
 		mozconfig_add_options_ac \
 			"--disable-unified-build" \
 			"--disable-unified-build"
-	else
-		if tc-is-gcc ; then
-eerror
-eerror "Clang is required if jumbo build is disabled."
-eerror
-eerror "USE=debug disables jumbo build."
-eerror
-eerror "Set one of the following as per-package environment variables to continue:"
-eerror
-eerror "CC=clang-19 CXX=clang++-19"
-eerror
-			die
-		fi
+	fi
+	if tc-is-clang ; then
+eerror "Building with Clang is not supported."
+		die
 	fi
 
 	if use X && use wayland ; then
@@ -2757,8 +2748,8 @@ ewarn "Add more swap space if linker causes an out of memory (OOM) condition."
 		"Gentoo default" \
 		"MOZ_OBJDIR=${BUILD_OBJ_DIR}"
 
-#	cflags-hardened_append
-#	rustflags-hardened_append
+	cflags-hardened_append
+	rustflags-hardened_append
 
 	if tc-is-clang ; then
 		fix_mb_len_max
