@@ -13,7 +13,7 @@ EAPI=8
 # config/makefiles/rust.mk
 
 # D11, D12, D13, F36, F37, F38, F39, F40, F41, F42, U22, U24
-# See /var/tmp/portage/www-client/firefox-150.0.2/work/firefox-150.0.2/taskcluster/kinds/bootstrap/kind.yml
+# See /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/taskcluster/kinds/bootstrap/kind.yml
 
 # 127.0.1 -> 129.0.2
 # 129.0.2 -> 130.0.0
@@ -43,6 +43,7 @@ EAPI=8
 # 149.0 -> 149.0.2
 # 149.0.2 -> 150.0.1
 # 150.0.1 -> 150.0.2
+# 150.0.2 -> 150.0.3
 
 # Originally based on the firefox-89.0.ebuild from the gentoo-overlay,
 # with update sync updated to this version of the ebuild.
@@ -58,28 +59,28 @@ EAPI=8
 #
 # For dependency versioning, see also
 # https://firefox-source-docs.mozilla.org/setup/linux_build.html
-# https://www.mozilla.org/en-US/firefox/150.0.2/system-requirements/
-# /var/tmp/portage/www-client/firefox-150.0.2/work/firefox-150.0.2/moz.configure
-# /var/tmp/portage/www-client/firefox-150.0.2/work/firefox-150.0.2/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41 [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
-# /var/tmp/portage/www-client/firefox-150.0.2/work/firefox-150.0.2/security/nss/lib/nss/nss.h
-# /var/tmp/portage/www-client/firefox-150.0.2/work/firefox-150.0.2/gfx/graphite2/include/graphite2/Font.h L31
-# /var/tmp/portage/www-client/firefox-150.0.2/work/firefox-150.0.2/gfx/harfbuzz/moz.yaml
-# /var/tmp/portage/www-client/firefox-150.0.2/work/firefox-150.0.2/intl/icu/source/common/unicode/uvernum.h L63
-# /var/tmp/portage/www-client/firefox-150.0.2/work/firefox-150.0.2/ipc/chromium/src/third_party/libevent/configure.ac L8
-# /var/tmp/portage/www-client/firefox-150.0.2/work/firefox-150.0.2/media/libaom/config/aom_version.h L7 [old]
-# /var/tmp/portage/www-client/firefox-150.0.2/work/firefox-150.0.2/media/libjpeg/jconfig.h L7
-# /var/tmp/portage/www-client/firefox-150.0.2/work/firefox-150.0.2/media/libpng/png.h L281
-# /var/tmp/portage/www-client/firefox-150.0.2/work/firefox-150.0.2/media/libvpx/config/vpx_version.h L8
-# /var/tmp/portage/www-client/firefox-150.0.2/work/firefox-150.0.2/media/libwebp/moz.yaml L16, two versions listed newest chosen
-# /var/tmp/portage/www-client/firefox-150.0.2/work/firefox-150.0.2/modules/freetype2/include/freetype/freetype.h L5175
-# /var/tmp/portage/www-client/firefox-150.0.2/work/firefox-150.0.2/nsprpub/pr/include/prinit.h L35
-# /var/tmp/portage/www-client/firefox-150.0.2/work/firefox-150.0.2/third_party/dav1d/meson.build L26
-# /var/tmp/portage/www-client/firefox-150.0.2/work/firefox-150.0.2/third_party/pipewire/pipewire/version.h L49
-# /var/tmp/portage/www-client/firefox-150.0.2/work/firefox-150.0.2/taskcluster/kinds/toolchain/node.yml
-# /var/tmp/portage/www-client/firefox-150.0.2/work/firefox-150.0.2/taskcluster/kinds/toolchain/rust.yml
-# /var/tmp/portage/www-client/firefox-150.0.2/work/firefox-150.0.2/taskcluster/kinds/fetch/toolchains.yml
+# https://www.mozilla.org/en-US/firefox/150.0.3/system-requirements/
+# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/moz.configure
+# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41 [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
+# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/security/nss/lib/nss/nss.h
+# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/gfx/graphite2/include/graphite2/Font.h L31
+# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/gfx/harfbuzz/moz.yaml
+# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/intl/icu/source/common/unicode/uvernum.h L63
+# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/ipc/chromium/src/third_party/libevent/configure.ac L8
+# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/media/libaom/config/aom_version.h L7 [old]
+# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/media/libjpeg/jconfig.h L7
+# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/media/libpng/png.h L281
+# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/media/libvpx/config/vpx_version.h L8
+# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/media/libwebp/moz.yaml L16, two versions listed newest chosen
+# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/modules/freetype2/include/freetype/freetype.h L5175
+# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/nsprpub/pr/include/prinit.h L35
+# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/third_party/dav1d/meson.build L26
+# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/third_party/pipewire/pipewire/version.h L49
+# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/taskcluster/kinds/toolchain/node.yml
+# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/taskcluster/kinds/toolchain/rust.yml
+# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/taskcluster/kinds/fetch/toolchains.yml
 #   Keyword searches:  cbindgen-, llvm-, nasm, pkgconf-, zlib
-# /var/tmp/portage/www-client/firefox-150.0.2/work/firefox-150.0.2/taskcluster
+# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/taskcluster
 #   Keyword search:  gtk
 
 # Track http://ftp.mozilla.org/pub/firefox/releases/ for version updates.
@@ -101,7 +102,7 @@ unset __
 
 # To check every minor version or update MOZ_LANGS use the code below:
 __='
-PV="150.0.2"
+PV="150.0.3"
 wget -q -O - "http://ftp.mozilla.org/pub/firefox/releases/${PV}/linux-x86_64/xpi/" \
 	| grep "href.*linux-x86_64"  \
 	| cut -f 3 -d ">" \
@@ -118,7 +119,7 @@ unset __
 
 __='
 # For dependency versions, scan also with:
-SRC="/var/tmp/portage/www-client/firefox-150.0.2/work/firefox-150.0.2"
+SRC="/var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3"
 grep -E \
 	-e "[0-9]+\.[0-9]+(\.[0-9]+)?" \
 	-e "dependency" \
@@ -243,11 +244,18 @@ declare -A CFLAGS_RDEPEND=(
 	["media-libs/libvpx"]=">=;-O1" # -O0 causes FPS to lag below 25 FPS.
 )
 
-MITIGATION_DATE="May 07, 2026" # Advisory date
-MITIGATION_LAST_UPDATE=1778119620 # From `date +%s -d "2026-05-06 19:07"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-25/"
+MITIGATION_DATE="May 12, 2026" # Advisory date
+MITIGATION_LAST_UPDATE=1778580840 # From `date +%s -d "2026-05-12 03:14"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-45/"
 SEVERITY_LABEL="Severity:"
 VULNERABILITIES_FIXED=(
+	# 150.0.3
+	"CVE-2026-8388;IBC;"
+	"CVE-2026-8389;JITM;"
+	"CVE-2026-8390;UAF;"
+	"CVE-2026-8391;;"
+	"CVE-2026-8401;SBE;"
+
 	# 150.0.2
 	"CVE-2026-8090;UAF;"
 	"CVE-2026-8092;MC, ACE;"
