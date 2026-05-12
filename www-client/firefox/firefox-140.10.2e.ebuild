@@ -2330,41 +2330,25 @@ einfo
 	[[ -n "${MOZ_ESR}" ]] && update_channel="esr"
 	mozconfig_add_options_ac "" "--enable-update-channel=${update_channel}"
 
-	if use rust-simd ; then
-		local rust_pv=$("${RUSTC}" --version | cut -f 2 -d " ")
-		if ver_test "${rust_pv}" -gt "1.78" ; then
-eerror "Use eselect to switch rust to < 1.78 or disable the rust-simd USE flag."
-			die
-		fi
-		# Whitelist to allow unkeyworded arches to build with "--disable-rust-simd" by default.
-		if use amd64 || use arm64 || use ppc64 || use loong || use riscv ; then
-			mozconfig_add_options_ac "+rust-simd" "--enable-rust-simd"
-		else
-			mozconfig_add_options_ac "-rust-simd" "--disable-rust-simd"
-		fi
-	else
-		mozconfig_add_options_ac "-rust-simd" "--disable-rust-simd"
+	# Whitelist to allow unkeyworded arches to build with "--disable-rust-simd" by default.
+	if use amd64 || use arm64 || use ppc64 || use loong || use riscv ; then
+		mozconfig_add_options_ac "" "--enable-rust-simd"
 	fi
 
 	# For future keywording: This is currently (97.0) only supported on:
-	# amd64, arm, arm64, and x86.
-	# You might want to flip the logic around if Firefox is to support more
-	# arches.
+	# amd64, arm, arm64 & x86.
+	# Might want to flip the logic around if Firefox is to support more arches.
 	# bug 833001, bug 903411#c8
-	if use ppc64 || use riscv ; then
+	if use loong || use ppc64 || use riscv; then
 		mozconfig_add_options_ac "" "--disable-sandbox"
 	else
 		mozconfig_add_options_ac "" "--enable-sandbox"
 	fi
 
-	# Disabling JIT is very slow.  It should only be done on recent multicore.
-	local nproc=$(get_nproc)
-	if ! use jit && (( "${nproc}" <= 1 )) ; then
-		die "The jit USE flag must be on."
-	elif use jit ; then
-		mozconfig_add_options_ac "Enabling JIT" "--enable-jit"
-	else
-		mozconfig_add_options_ac "Disabling JIT" "--disable-jit"
+	# riscv-related options, bgo#947337, bgo#947338
+	if use riscv ; then
+		mozconfig_add_options_ac 'Disable JIT for RISC-V 64' --disable-jit
+		mozconfig_add_options_ac 'Disable webrtc for RISC-V' --disable-webrtc
 	fi
 
 	if [[ -s "${s}/api-google.key" ]] ; then
@@ -2697,7 +2681,7 @@ einfo "Editing ${f}:  __OFLAG_SAFE__ -> ${olast}"
 		else
 			mozconfig_add_options_ac "relr elf-hack" "--enable-elf-hack=relr"
 		fi
-	elif use ppc64 || use riscv ; then
+	elif use loong || use ppc64 || use riscv ; then
 		# '--disable-elf-hack' is not recognized on ppc64/riscv,
 		# see bgo #917049, #930046
 		:

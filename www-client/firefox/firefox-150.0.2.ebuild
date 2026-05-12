@@ -7,6 +7,9 @@ EAPI=8
 # error: failed to run custom build command for `cubeb-core v0.32.0`
 # 11:00.59 [cubeb-core 0.32.0] cargo:warning=src/log.c:18: fatal error: opening dependency file .deps/force-cargo-library-build.pp: No such file or directory
 
+# force-cargo-library-build reference in
+# config/makefiles/rust.mk
+
 # D11, D12, D13, F36, F37, F38, F39, F40, F41, F42, U22, U24
 # See /var/tmp/portage/www-client/firefox-150.0.2/work/firefox-150.0.2/taskcluster/kinds/bootstrap/kind.yml
 
@@ -261,7 +264,7 @@ inherit libstdcxx-slot linux-info llvm multilib-minimal multiprocessing
 inherit node optfeature pax-utils python-any-r1 readme.gentoo-r1 rust
 inherit rustflags-hardened toolchain-funcs virtualx vf web-kernel-config xdg
 
-KEYWORDS="~amd64 ~arm64 ~ppc64 ~riscv ~x86"
+KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~riscv ~x86"
 S="${WORKDIR}/${PN}-${PV%_*}"
 S_BAK="${WORKDIR}/${PN}-${PV%_*}"
 if [[ "${PV}" == *"_rc"* ]] ; then
@@ -354,7 +357,6 @@ PATENT_REQUIRED_USE="
 #	rust-simd? (
 #		!llvm_slot_19
 #	)
-# The Rust 1.90.0 is possibly broken.
 REQUIRED_USE="
 	${PATENT_REQUIRED_USE}
 	^^ (
@@ -2189,7 +2191,7 @@ einfo
 	# mozconfig_add_options_ac \
 	#	"" \
 	#	"--with-libclang-path="$("${CHOST}-llvm-config" "--libdir")
-	# Disabled lines above because the distro doesn't support multilib
+	# Disabled the lines above because the distro doesn't support multilib
 	# python, so full cross-compile is not supported.
 
 	# The commented lines above are mutually exclusive with this line below.
@@ -2202,42 +2204,26 @@ einfo
 	[[ -n "${MOZ_ESR}" ]] && update_channel="esr"
 	mozconfig_add_options_ac "" "--enable-update-channel=${update_channel}"
 
-	if use rust-simd ; then
-		local rust_pv=$("${RUSTC}" --version | cut -f 2 -d " ")
-		if ver_test "${rust_pv}" -gt "1.78" ; then
-eerror "Use eselect to switch rust to < 1.78 or disable the rust-simd USE flag."
-			die
-		fi
 	# Whitelist to allow unkeyworded arches to build with "--disable-rust-simd" by default.
-		if use amd64 || use arm64 || use ppc64 || use loong || use riscv ; then
-			mozconfig_add_options_ac "+rust-simd" "--enable-rust-simd"
-		else
-			mozconfig_add_options_ac "-rust-simd" "--disable-rust-simd"
-		fi
-	else
-		mozconfig_add_options_ac "-rust-simd" "--disable-rust-simd"
+	if use amd64 || use arm64 || use ppc64 || use loong || use riscv ; then
+		mozconfig_add_options_ac "" "--enable-rust-simd"
 	fi
 
 	# For future keywording: This is currently (97.0) only supported on:
-	# amd64, arm, arm64, and x86.
-	# You might want to flip the logic around if Firefox is to support more
-	# arches.
-	if use ppc64; then
+	# amd64, arm, arm64 & x86.
+	# Might want to flip the logic around if Firefox is to support more arches.
+	# bug 833001, bug 903411#c8
+	if use loong || use ppc64 || use riscv; then
 		mozconfig_add_options_ac "" "--disable-sandbox"
-	elif use valgrind; then
+	elif use valgrind ; then
 		mozconfig_add_options_ac "valgrind requirement" "--disable-sandbox"
 	else
 		mozconfig_add_options_ac "" "--enable-sandbox"
 	fi
 
-	# Disabling JIT is very slow.  It should only be done on recent multicore.
-	local nproc=$(get_nproc)
-	if ! use jit && (( "${nproc}" <= 1 )) ; then
-		die "The jit USE flag must be on."
-	elif use jit ; then
-		mozconfig_add_options_ac "Enabling JIT" "--enable-jit"
-	else
-		mozconfig_add_options_ac "Disabling JIT" "--disable-jit"
+	# riscv-related options, bgo#947337, bgo#947338
+	if use riscv ; then
+		mozconfig_add_options_ac 'Disable webrtc for RISC-V' --disable-webrtc
 	fi
 
 	if [[ -s "${s}/api-google.key" ]] ; then
@@ -2569,7 +2555,7 @@ einfo "Editing ${f}:  __OFLAG_SAFE__ -> ${olast}"
 		else
 			mozconfig_add_options_ac "relr elf-hack with clang" "--enable-elf-hack=relr"
 		fi
-	elif use ppc64 || use riscv ; then
+	elif use loong || use ppc64 || use riscv ; then
 		# '--disable-elf-hack' is not recognized on ppc64/riscv.
 		# See bgo #917049, #930046.
 		:
