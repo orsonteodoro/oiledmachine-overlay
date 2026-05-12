@@ -106,6 +106,8 @@ SANDBOX_IUSE=(
 	"firejail"
 )
 
+inherit verify-bfd
+
 DESCRIPTION="Requirements for security-critical secure data storage"
 KEYWORDS="~amd64 ~arm64"
 LICENSE="metapackage"
@@ -728,6 +730,7 @@ PDEPEND="
 	)
 "
 
+
 src_configure() {
 	use enforce || return
 	local is_flag_violation=0
@@ -790,4 +793,6 @@ eerror
 			die
 		fi
 	fi
+
+	verify-bfd_check
 }

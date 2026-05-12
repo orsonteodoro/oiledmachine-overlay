@@ -103,7 +103,7 @@ EOL_VERSIONS=(
 # For zero-tolerance mode
 MULTISLOT_LATEST_KERNEL_RELEASE=("5.10.255" "5.15.206" "6.1.172" "6.6.138" "6.12.87" "6.18.28" "7.0.5")
 
-inherit mitigate-id toolchain-funcs
+inherit mitigate-id toolchain-funcs verify-bfd
 
 # Add RDEPEND+=" sys-kernel/mitigate-id" to downstream package if the downstream ebuild uses:
 # JavaScript
@@ -283,6 +283,7 @@ pkg_setup() {
 	use enforce || return
 	mitigate-id_pkg_setup
 ewarn "This ebuild is a Work In Progress (WIP) and may be renamed."
+	verify-bfd_check
 }
 
 src_compile() {
