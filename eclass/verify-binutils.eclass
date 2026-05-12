@@ -45,7 +45,7 @@ ewarn "Binutils expected version:  >= ${VERIFY_BINUTILS_SLOT}"
 eerror "Switch to >= ${_BINUTILS_PV}"
 			die
 		else
-ewarn "Your Binutils which distributes the BFD linker is old."
+ewarn "Your Binutils which distributes the BFD linker is old.  Use \`eselect binutils\` to change the Binutils version to a more secure version."
 ewarn "Binutils actual version:  ${binutils_pv}"
 ewarn "Binutils expected version:  >= ${VERIFY_BINUTILS_SLOT}"
 		fi
