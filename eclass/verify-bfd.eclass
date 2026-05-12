@@ -35,8 +35,8 @@ eerror "Switch to >= ${_BFD_PV}"
 			die
 		else
 ewarn "Your BFD is old."
-ewarn "Expected version:  >= ${VERIFY_BFD_SLOT}"
-ewarn "Actual version:  ${bfd_pv}"
+ewarn "BFD actual version:  ${bfd_pv}"
+ewarn "BFD expected version:  >= ${VERIFY_BFD_SLOT}"
 		fi
 	elif ver_test "${bfd_pv_major}" "-lt" "2" ; then
 		if has "enforce" ${IUSE_EFFECTIVE} && use enforce ; then
@@ -44,8 +44,8 @@ eerror "Switch to >= ${_BFD_PV}"
 			die
 		else
 ewarn "Your BFD is old."
-ewarn "Expected version:  >= ${VERIFY_BFD_SLOT}"
-ewarn "Actual version:  ${bfd_pv}"
+ewarn "BFD actual version:  ${bfd_pv}"
+ewarn "BFD expected version:  >= ${VERIFY_BFD_SLOT}"
 		fi
 	fi
 }
