@@ -31,16 +31,7 @@ verify-binutils_check() {
 
 	if ver_test "${binutils_pv_major}" "-ge" "3" ; then
 		:
-	elif ver_test "${binutils_pv_major}" "-eq" "2" && ver_test "${binutils_pv_minor}" "-lt" "${VERIFY_BINUTILS_SLOT#*.}" ; then
-		if has "enforce" ${IUSE_EFFECTIVE} && use enforce ; then
-eerror "Switch to >= ${_BINUTILS_PV}"
-			die
-		else
-ewarn "Your Binutils which distributes the BFD linker is old.  Use \`eselect binutils\` to change the Binutils version to a more secure version."
-ewarn "Binutils actual version:  ${binutils_pv}"
-ewarn "Binutils expected version:  >= ${VERIFY_BINUTILS_SLOT}"
-		fi
-	elif ver_test "${binutils_pv_major}" "-lt" "2" ; then
+	elif ver_test "${binutils_pv}" "-lt" "${VERIFY_BINUTILS_SLOT}" ; then
 		if has "enforce" ${IUSE_EFFECTIVE} && use enforce ; then
 eerror "Switch to >= ${_BINUTILS_PV}"
 			die
