@@ -23,9 +23,11 @@ VERIFY_BINUTILS_SLOT=${_VERIFY_BINUTILS_SLOT:-"2.45"} # Minimum allowed.  Usuall
 # CE, MC, ID, DoS
 # Mitigate poorly generated code by BFD
 verify-binutils_check() {
-	return
-	local binutils_pv=$(eselect binutils show)
-	binutils_pv=${binutils_pv##*-}
+	local _default_chost="CHOST_${DEFAULT_ABI}"
+	local default_chost="${!_default_chost}"
+	local binutils_pv=$(cat "${ESYSROOT}/etc/env.d/binutils/config-${default_chost}" | cut -f 2 -d "=")
+	local binutils_pv_major=$(ver_cut 1 "${binutils_pv}")
+	local binutils_pv_minor=$(ver_cut 2 "${binutils_pv}")
 
 	if ver_test "${binutils_pv_major}" "-ge" "3" ; then
 		:
@@ -34,7 +36,7 @@ verify-binutils_check() {
 eerror "Switch to >= ${_BINUTILS_PV}"
 			die
 		else
-ewarn "Your Binutils containing the BFD linker is old.  Use \`eselect binutils\` to change the Binutils version to a more secure version."
+ewarn "Your Binutils which distributes the BFD linker is old.  Use \`eselect binutils\` to change the Binutils version to a more secure version."
 ewarn "Binutils actual version:  ${binutils_pv}"
 ewarn "Binutils expected version:  >= ${VERIFY_BINUTILS_SLOT}"
 		fi
@@ -43,7 +45,7 @@ ewarn "Binutils expected version:  >= ${VERIFY_BINUTILS_SLOT}"
 eerror "Switch to >= ${_BINUTILS_PV}"
 			die
 		else
-ewarn "Your Binutils containing the BFD linker is old."
+ewarn "Your Binutils which distributes the BFD linker is old."
 ewarn "Binutils actual version:  ${binutils_pv}"
 ewarn "Binutils expected version:  >= ${VERIFY_BINUTILS_SLOT}"
 		fi
