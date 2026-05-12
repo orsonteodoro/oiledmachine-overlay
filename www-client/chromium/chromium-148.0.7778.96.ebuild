@@ -777,7 +777,8 @@ is_ungoogle_chromium_compatible() {
 if [[ "${CHROMIUM_EBUILD_MAINTAINER}" == "1" ]] ; then
 	:
 else
-	KEYWORDS="~amd64 ~arm64"
+	#KEYWORDS="~amd64 ~arm64" # Needs custom patch updates
+	:
 fi
 
 # See https://gsdview.appspot.com/chromium-browser-official/?marker=chromium-137.0.7151.0.tar.x%40
