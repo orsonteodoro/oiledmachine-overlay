@@ -34,7 +34,7 @@ verify-bfd_check() {
 eerror "Switch to >= ${_BFD_PV}"
 			die
 		else
-ewarn "Your BFD is old.  Use eselect bfd to change the BFD version to a more secure version."
+ewarn "Your BFD is old.  Use \`eselect binutils\` to change the BFD version to a more secure version."
 ewarn "BFD actual version:  ${bfd_pv}"
 ewarn "BFD expected version:  >= ${VERIFY_BFD_SLOT}"
 		fi
