@@ -2467,6 +2467,7 @@ einfo "Building without Mozilla API key ..."
 			"--disable-unified-build"
 	fi
 	if tc-is-clang ; then
+# Required for GCC atomics
 eerror "Building with Clang is not supported."
 		die
 	fi
@@ -2753,7 +2754,6 @@ ewarn "Add more swap space if linker causes an out of memory (OOM) condition."
 
 	if tc-is-clang ; then
 		fix_mb_len_max
-		append-flags "-latomics"
 	fi
 	export HOST_CFLAGS="${CFLAGS}"
 	export HOST_CXXFLAGS="${CXXFLAGS}"

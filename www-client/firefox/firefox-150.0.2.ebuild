@@ -2340,6 +2340,7 @@ einfo "Building without Mozilla API key ..."
 			"--disable-unified-build"
 	fi
 	if tc-is-clang ; then
+# Required for GCC atomics
 eerror "Building with Clang is not supported."
 		die
 	fi
