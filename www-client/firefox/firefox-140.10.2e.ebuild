@@ -4,7 +4,9 @@
 
 EAPI=8
 
-# error: failed to run custom build command for `cubeb-core v0.32.0`
+# FIXME:
+# /usr/bin/x86_64-pc-linux-gnu-as: invalid option -- 'N'
+# grep -E -e "(invalid option|Error|unfinished jobs|cubeb|fatal error|compilation terminated)" /var/tmp/portage/www-client/firefox-140.10.2e/temp/build.log
 
 # D11, D12, D13, F36, F37, F38, F39, F40, F41, F42, U22, U23, U24
 # See /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/taskcluster/kinds/bootstrap/kind.yml
@@ -365,7 +367,7 @@ inherit libstdcxx-slot linux-info llvm multilib-minimal multiprocessing
 inherit node optfeature pax-utils python-any-r1 readme.gentoo-r1 rust
 inherit rustflags-hardened toolchain-funcs virtualx vf web-kernel-config xdg
 
-KEYWORDS="amd64 arm64 ~loong ~ppc64 ~riscv ~x86"
+#KEYWORDS="amd64 arm64 ~loong ~ppc64 ~riscv ~x86" # Build time failure.
 S="${WORKDIR}/${PN}-${PV/e}"
 S_BAK="${WORKDIR}/${PN}-${PV/e}"
 if [[ "${PV}" == *"_rc"* ]] ; then
@@ -461,9 +463,10 @@ PATENT_REQUIRED_USE="
 		patent_status_nonfree
 	)
 "
+# Forced system-icu to avoid passing -DNDEBUG=1 -DTRIMMED=1 to GNU as.
 REQUIRED_USE="
 	${PATENT_REQUIRED_USE}
-	!wasm-sandbox
+	system-icu
 	X
 	^^ (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
@@ -2239,6 +2242,7 @@ einfo
 	# AS is used in a non-standard way by upstream, #bmo1654031
 	export HOST_CC="$(tc-getBUILD_CC)"
 	export HOST_CXX="$(tc-getBUILD_CXX)"
+	export HOST_AS="$(which x86_64-pc-linux-gnu-gcc) -c"
 
 	if tc-is-clang ; then
 		# Configuration tests expect llvm-readelf output, bug 913130

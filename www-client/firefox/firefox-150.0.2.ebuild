@@ -4,8 +4,10 @@
 
 EAPI=8
 
+# FIXME:
 # error: failed to run custom build command for `cubeb-core v0.32.0`
 # 11:00.59 [cubeb-core 0.32.0] cargo:warning=src/log.c:18: fatal error: opening dependency file .deps/force-cargo-library-build.pp: No such file or directory
+# Do grep -E -r -e "(cubeb-core|fatal error|compilation terminated)" /var/tmp/portage/www-client/firefox-140.10.2e/temp/build.log
 
 # force-cargo-library-build reference in
 # config/makefiles/rust.mk
@@ -264,7 +266,7 @@ inherit libstdcxx-slot linux-info llvm multilib-minimal multiprocessing
 inherit node optfeature pax-utils python-any-r1 readme.gentoo-r1 rust
 inherit rustflags-hardened toolchain-funcs virtualx vf web-kernel-config xdg
 
-KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~riscv ~x86"
+#KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~riscv ~x86" # Build time failure
 S="${WORKDIR}/${PN}-${PV%_*}"
 S_BAK="${WORKDIR}/${PN}-${PV%_*}"
 if [[ "${PV}" == *"_rc"* ]] ; then
@@ -357,8 +359,10 @@ PATENT_REQUIRED_USE="
 #	rust-simd? (
 #		!llvm_slot_19
 #	)
+# Forced system-icu to avoid passing -DNDEBUG=1 -DTRIMMED=1 to GNU as.
 REQUIRED_USE="
 	${PATENT_REQUIRED_USE}
+	system-icu
 	^^ (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
