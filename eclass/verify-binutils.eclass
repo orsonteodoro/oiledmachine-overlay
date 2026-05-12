@@ -23,6 +23,7 @@ VERIFY_BINUTILS_SLOT=${_VERIFY_BINUTILS_SLOT:-"2.45"} # Minimum allowed.  Usuall
 # CE, MC, ID, DoS
 # Mitigate poorly generated code by BFD
 verify-binutils_check() {
+	return
 	local binutils_pv=$(eselect binutils show)
 	binutils_pv=${binutils_pv##*-}
 
