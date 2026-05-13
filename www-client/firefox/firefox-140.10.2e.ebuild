@@ -1805,6 +1805,9 @@ ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
 	# Prevent video seek bug
 	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-128.3.0e-disable-broken-flags-ipc-chromium-chromium-config.patch"
 
+	# Disable build time check for GCC 13
+	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-140.10.2-nsTreeSanitizer-disable-check.patch"
+
 	# Workaround for bgo#915651 on musl
 	if use elibc_glibc ; then
 		rm -v "${WORKDIR}/firefox-patches/"*"bgo-748849-RUST_TARGET_override.patch" || die
@@ -2760,6 +2763,7 @@ ewarn "Add more swap space if linker causes an out of memory (OOM) condition."
 	if tc-is-clang ; then
 		fix_mb_len_max
 	fi
+
 	export HOST_CFLAGS="${CFLAGS}"
 	export HOST_CXXFLAGS="${CXXFLAGS}"
 	export HOST_CPPFLAGS="${CPPFLAGS}"

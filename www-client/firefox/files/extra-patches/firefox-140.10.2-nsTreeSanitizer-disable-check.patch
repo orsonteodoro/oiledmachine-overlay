@@ -1,0 +1,18 @@
+--- a/dom/base/nsTreeSanitizer.cpp.orig	2026-05-06 07:54:37.000000000 -0700
++++ b/dom/base/nsTreeSanitizer.cpp	2026-05-13 06:16:21.369358127 -0700
+@@ -634,6 +634,7 @@ constexpr const nsStaticAtom* const kAtt
+ constexpr const nsStaticAtom* const kURLAttributesSVG[] = {nsGkAtoms::href,
+                                                            nullptr};
+ 
++#if 0
+ static_assert(AllOf(std::begin(kURLAttributesSVG), std::end(kURLAttributesSVG),
+                     [](auto aURLAttributeSVG) {
+                       return AnyOf(std::begin(kAttributesSVG),
+@@ -642,6 +643,7 @@ static_assert(AllOf(std::begin(kURLAttri
+                                      return aAttributeSVG == aURLAttributeSVG;
+                                    });
+                     }));
++#endif
+ 
+ const nsStaticAtom* const kElementsMathML[] = {
+     nsGkAtoms::abs,                  // abs
