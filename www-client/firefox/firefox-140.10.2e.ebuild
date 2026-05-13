@@ -201,8 +201,10 @@ XKBCOMMON_PV="0.4.1"
 VIRTUALX_REQUIRED="manual"
 # Information about the bundled wasi toolchain from
 # https://github.com/WebAssembly/wasi-sdk/
-WASI_SDK_VER="32.0"
-WASI_SDK_LLVM_VER="22"
+# For LLVM slot correspondence, see https://github.com/WebAssembly/wasi-sdk/tree/wasi-sdk-32/src
+declare -A WASM_SLOTS=(
+	["19"]="25.0"
+)
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -384,10 +386,14 @@ SRC_URI="
 	)
 	wasm-sandbox? (
 		amd64? (
-			https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SDK_VER/.*/}/wasi-sdk-${WASI_SDK_VER}-x86_64-linux.tar.gz
+			llvm_slot_19? (
+				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-25/wasi-sdk-25.0-x86_64-linux.tar.gz
+			)
 		)
 		arm64? (
-			https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SDK_VER/.*/}/wasi-sdk-${WASI_SDK_VER}-arm64-linux.tar.gz
+			llvm_slot_19? (
+				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-25/wasi-sdk-25.0-arm64-linux.tar.gz
+			)
 		)
 	)
 "
@@ -460,6 +466,7 @@ PATENT_REQUIRED_USE="
 	)
 "
 # Forced system-icu to avoid passing -DNDEBUG=1 -DTRIMMED=1 to GNU as.
+# wasm-sandbox disable because it needs LLVM 21/22.
 REQUIRED_USE="
 	${PATENT_REQUIRED_USE}
 	system-icu
@@ -1878,11 +1885,14 @@ eerror
 			die "wasm-sandbox enabled on unknown/unsupported arch!"
 		fi
 
+		local wasm_sdk_ver="${WASM_SLOTS[${LLVM_SLOT}]}"
+		local wasm_llvm_ver="${WASM_SLOTS[${LLVM_SLOT}]}"
+
 		sed -i \
 			-e "s:%%PORTAGE_WORKDIR%%:${WORKDIR}:" \
 			-e "s:%%WASI_ARCH%%:${wasi_arch}:" \
-			-e "s:%%WASI_SDK_VER%%:${WASI_SDK_VER}:" \
-			-e "s:%%WASI_SDK_LLVM_VER%%:${WASI_SDK_LLVM_VER}:" \
+			-e "s:%%WASI_SDK_VER%%:${wasm_sdk_ver}:" \
+			-e "s:%%WASI_SDK_LLVM_VER%%:${wasm_llvm_ver}:" \
 			toolkit/moz.configure || die "Failed to update wasi-related paths."
 	fi
 
@@ -2238,6 +2248,7 @@ einfo
 	# AS is used in a non-standard way by upstream, #bmo1654031
 	export HOST_CC="$(tc-getBUILD_CC)"
 	export HOST_CXX="$(tc-getBUILD_CXX)"
+	export AS="$(tc-getCC) -c"
 
 	if tc-is-clang ; then
 		# Configuration tests expect llvm-readelf output, bug 913130

@@ -210,8 +210,12 @@ XKBCOMMON_PV="0.4.1"
 VIRTUALX_REQUIRED="pgo"
 # Information about the bundled wasi toolchain from
 # https://github.com/WebAssembly/wasi-sdk/
-WASI_SDK_VER="32.0"
-WASI_SDK_LLVM_VER="22"
+# For LLVM slot correspondence, see https://github.com/WebAssembly/wasi-sdk/tree/wasi-sdk-32/src
+declare -A WASM_SLOTS=(
+	["20"]="27.0"
+	["21"]="30.0"
+	["22"]="33.0"
+)
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -290,10 +294,26 @@ SRC_URI="
 	${PATCH_URIS[@]}
 	wasm-sandbox? (
 		amd64? (
-			https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SDK_VER/.*/}/wasi-sdk-${WASI_SDK_VER}-x86_64-linux.tar.gz
+			llvm_slot_20? (
+				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-27/wasi-sdk-27.0-x86_64-linux.tar.gz
+			)
+			llvm_slot_21? (
+				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-30/wasi-sdk-30.0-x86_64-linux.tar.gz
+			)
+			llvm_slot_22? (
+				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-33/wasi-sdk-33.0-x86_64-linux.tar.gz
+			)
 		)
 		arm64? (
-			https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SDK_VER/.*/}/wasi-sdk-${WASI_SDK_VER}-arm64-linux.tar.gz
+			llvm_slot_20? (
+				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-27/wasi-sdk-27.0-arm64-linux.tar.gz
+			)
+			llvm_slot_21? (
+				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-30/wasi-sdk-30.0-arm64-linux.tar.gz
+			)
+			llvm_slot_22? (
+				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-33/wasi-sdk-33.0-arm64-linux.tar.gz
+			)
 		)
 	)
 "
@@ -1760,11 +1780,14 @@ eerror
 			die "wasm-sandbox enabled on unknown/unsupported arch!"
 		fi
 
+		local wasm_sdk_ver="${WASM_SLOTS[${LLVM_SLOT}]}"
+		local wasm_llvm_ver="${WASM_SLOTS[${LLVM_SLOT}]}"
+
 		sed -i \
 			-e "s:%%PORTAGE_WORKDIR%%:${WORKDIR}:" \
 			-e "s:%%WASI_ARCH%%:${wasi_arch}:" \
-			-e "s:%%WASI_SDK_VER%%:${WASI_SDK_VER}:" \
-			-e "s:%%WASI_SDK_LLVM_VER%%:${WASI_SDK_LLVM_VER}:" \
+			-e "s:%%WASI_SDK_VER%%:${wasm_sdk_ver}:" \
+			-e "s:%%WASI_SDK_LLVM_VER%%:${wasm_llvm_ver}:" \
 			"toolkit/moz.configure" || die "Failed to update wasi-related paths."
 	fi
 
