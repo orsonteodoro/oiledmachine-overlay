@@ -347,11 +347,11 @@ einfo "against \"Harvest Now, Decrypt Later\" threat actors."
 einfo
 einfo "| Type       | Pre Q-Day example             | Attack  | Quantum cracking mitigation                                     | Use cases                                      |"
 einfo "| ---        | ---                           | ---     | ---                                                             | ---                                            |"
-einfo "| Asymmetric | ECDH                          | Shor    | Switch to post-quantum algorithm (e.g. ML-KEM, SLH-DSA)         | Secure messaging handshake, digital signatures |"
+einfo "| Asymmetric | ECDH                          | Shor    | Switch to a post-quantum algorithm (e.g. ML-KEM, SLH-DSA)       | Secure messaging handshake, digital signatures |"
 einfo "| Symmetric  | AES-128                       | Grover  | Double key length (e.g. AES-128 -> AES-256,                     | Archives                                       |"
 einfo "|            | aes-xts-plain64 [256-bit key] |         | aes-xts-plain64 [256-bit key] -> aes-xts-plain64 [512-bit key]) | Full disk encryption                           |"
 einfo "| Hash       | SHA-256                       | Grover  | Double key length (e.g. SHA-256 -> SHA-512)                     | LUKS2 integrity                                |"
-einfo "| KDF        | PBKDF2                        | Grover  | Switch to memory-hard algorithm (e.g. Argon2id, Argon2d)        | LUKS2 keys, kdbx, user database tables         |"
+einfo "| KDF        | PBKDF2                        | Grover  | Switch to a memory-hard algorithm (e.g. Argon2id, Argon2d)      | LUKS2 keys, kdbx, user database tables         |"
 einfo
         optfeature_header "Install optional packages:"
         optfeature "DMA attack mitigation for USB4 (USB-C) and USB keyboard snooping mitigation against an evil maid attack" "sys-apps/usbguard"
