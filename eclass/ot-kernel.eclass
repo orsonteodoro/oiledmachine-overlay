@@ -5657,6 +5657,10 @@ ewarn
 einfo "Disabling kexec"
 			ot-kernel_unset_configopt "CONFIG_KEXEC"
 		fi
+
+ewarn "Disabling hotplug"
+		ot-kernel_unset_configopt "CONFIG_HOTPLUG_PCI_SHPC" # 2001, PCI, PCI-X
+		ot-kernel_unset_configopt "CONFIG_HOTPLUG_PCI_PCIE" # 2004, PCIe
 	fi
 	if ${EPYTHON} -c "import sys; sys.exit(0) if (${ot_kernel_dma_attack_mitigations}>=1.5) else sys.exit(1)" ; then
 einfo "Using strict as the default IOMMU domain type for mitigation against DMA attack."
