@@ -336,6 +336,9 @@ einfo "Tip:  Don't FAFO!"
 einfo
 einfo "AI accelerated Q-Day is forecasted to be as early as 2029 (3-4) years from now."
 einfo
+	if ! has_version "sys-apps/usbguard" ; then
+ewarn "Use sys-apps/usbguard to mitigate against the faster DMA attack to mitigate key exfiltration from memory."
+	fi
 }
 
 pkg_postrm() {
