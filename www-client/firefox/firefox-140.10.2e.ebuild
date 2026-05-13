@@ -1892,7 +1892,8 @@ eerror
 			-e "s:%%WASI_ARCH%%:${wasi_arch}:" \
 			-e "s:%%WASI_SDK_VER%%:${wasi_sdk_ver}:" \
 			-e "s:%%WASI_SDK_LLVM_VER%%:${wasi_llvm_ver}:" \
-			-e "s:wasm32-unknown-wasi/:wasi/:"
+			-e "s:wasm32-unknown-wasi/:wasi/:" \
+			-e "s:libclang_rt.builtins.a:libclang_rt.builtins-wasm32.a:" \
 			toolkit/moz.configure || die "Failed to update wasi-related paths."
 	fi
 
