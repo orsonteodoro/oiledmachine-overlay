@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# This ebuild contains AI generated code and AI synthetic data.
+
 # FIXME:
 # error: failed to run custom build command for `cubeb-core v0.32.0`
 # 11:00.59 [cubeb-core 0.32.0] cargo:warning=src/log.c:18: fatal error: opening dependency file .deps/force-cargo-library-build.pp: No such file or directory

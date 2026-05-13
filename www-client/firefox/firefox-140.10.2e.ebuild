@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# This ebuild contains AI generated code and AI synthetic data.
+
 # D11, D12, D13, F36, F37, F38, F39, F40, F41, F42, U22, U23, U24
 # See /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/taskcluster/kinds/bootstrap/kind.yml
 
