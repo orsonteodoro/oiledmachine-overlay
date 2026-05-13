@@ -442,12 +442,12 @@ alsa cups +dbus debug eme-free firejail +hardened -hwaccel jack +jemalloc
 system-pipewire
 system-png +system-webp systemd -telemetry test +vaapi +wayland +webrtc wifi
 webspeech +X
-ebuild_revision_34
+ebuild_revision_35
 "
 
 # Firefox-only IUSE
 IUSE+="
-+gmp-autoupdate gnome-shell screencast wasm-sandbox
++gmp-autoupdate gnome-shell screencast +wasm-sandbox
 "
 
 # The wayland flag actually allows vaapi, but upstream lazy to make it
@@ -3352,6 +3352,7 @@ ewarn
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multiabi, license-completness, license-transparency
 
 # OILEDMACHINE-OVERLAY-TEST:  PASS (INTERACTIVE) 146.0.1 rapid (Jan 3, 2026)
+# OILEDMACHINE-OVERLAY-TEST:  PASS (INTERACTIVE) 140.10.2 ESR (May 13, 2026) with wasm-sandbox enabled, GCC 13, LLVM 19
 
 # 146.0.1 completion time:  0 days, 4 hrs, 21 mins, 25 secs
 

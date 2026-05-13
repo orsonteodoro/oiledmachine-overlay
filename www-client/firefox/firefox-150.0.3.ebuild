@@ -360,12 +360,12 @@ rust-simd selinux sndio speech +system-av1
 +system-harfbuzz +system-icu +system-jpeg +system-libevent
 +system-libvpx system-pipewire system-png +system-webp systemd -telemetry +vaapi -valgrind
 +wayland +webrtc wifi webspeech
-ebuild_revision_34
+ebuild_revision_35
 "
 
 # Firefox-only IUSE
 IUSE+="
-+gmp-autoupdate gnome-shell screencast +X wasm-sandbox
++gmp-autoupdate gnome-shell screencast +X +wasm-sandbox
 "
 
 # The wayland flag actually allows vaapi, but upstream lazy to make it
@@ -3210,6 +3210,7 @@ ewarn
 
 # OILEDMACHINE-OVERLAY-TEST:  PASS (INTERACTIVE) 137.0.2 (Apr 15, 2025)
 # OILEDMACHINE-OVERLAY-TEST:  PASS (INTERACTIVE) 146.0.1 rapid (Jan 3, 2026)
+# OILEDMACHINE-OVERLAY-TEST:  PASS (INTERACTIVE) 140.10.2 ESR (May 13, 2026) with wasm-sandbox enabled, GCC 13, LLVM 19
 
 # 146.0.1 completion time:  0 days, 4 hrs, 21 mins, 25 secs
 
