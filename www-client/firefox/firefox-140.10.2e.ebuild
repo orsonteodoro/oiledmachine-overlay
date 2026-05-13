@@ -389,12 +389,12 @@ SRC_URI="
 	wasm-sandbox? (
 		amd64? (
 			llvm_slot_19? (
-				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-25/wasi-sdk-25.0-x86_64-linux.tar.gz
+				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SLOTS[19]%.*}/wasi-sdk-${WASI_SLOTS[19]}-x86_64-linux.tar.gz
 			)
 		)
 		arm64? (
 			llvm_slot_19? (
-				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-25/wasi-sdk-25.0-arm64-linux.tar.gz
+				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SLOTS[19]%.*}/wasi-sdk-${WASI_SLOTS[19]}-arm64-linux.tar.gz
 			)
 		)
 	)

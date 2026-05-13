@@ -297,24 +297,24 @@ SRC_URI="
 	wasm-sandbox? (
 		amd64? (
 			llvm_slot_20? (
-				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-27/wasi-sdk-27.0-x86_64-linux.tar.gz
+				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SLOTS[20]%.*}/wasi-sdk-${WASI_SLOTS[20]}-x86_64-linux.tar.gz
 			)
 			llvm_slot_21? (
-				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-30/wasi-sdk-30.0-x86_64-linux.tar.gz
+				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SLOTS[21]%.*}/wasi-sdk-${WASI_SLOTS[21]}-x86_64-linux.tar.gz
 			)
 			llvm_slot_22? (
-				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-33/wasi-sdk-33.0-x86_64-linux.tar.gz
+				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SLOTS[22]%.*}/wasi-sdk-${WASI_SLOTS[22]}-x86_64-linux.tar.gz
 			)
 		)
 		arm64? (
 			llvm_slot_20? (
-				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-27/wasi-sdk-27.0-arm64-linux.tar.gz
+				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SLOTS[20]%.*}/wasi-sdk-${WASI_SLOTS[20]}-arm64-linux.tar.gz
 			)
 			llvm_slot_21? (
-				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-30/wasi-sdk-30.0-arm64-linux.tar.gz
+				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SLOTS[21]%.*}/wasi-sdk-${WASI_SLOTS[21]}-arm64-linux.tar.gz
 			)
 			llvm_slot_22? (
-				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-33/wasi-sdk-33.0-arm64-linux.tar.gz
+				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SLOTS[22]%.*}/wasi-sdk-${WASI_SLOTS[22]}-arm64-linux.tar.gz
 			)
 		)
 	)
@@ -1702,6 +1702,12 @@ ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
 
 	# Prevent video seek bug
 	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-122.0-disable-broken-flags-ipc-chromium-chromium-config.patch"
+
+	# Disable build time check for GCC 13
+	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-150.0.3-nsTreeSanitizer-disable-check.patch"
+
+	# Workaround for missing references
+	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-140.10.2-TrustedTypePolicy-add-explicit-instantiations.patch"
 
 	# Breaks because GCC atomics
 	#_eapply_oiledmachine_set "${FILESDIR}/firefox-150.0.2-disable-ai.patch"
