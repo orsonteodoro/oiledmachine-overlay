@@ -466,10 +466,9 @@ PATENT_REQUIRED_USE="
 	)
 "
 # Forced system-icu to avoid passing -DNDEBUG=1 -DTRIMMED=1 to GNU as.
-# wasm-sandbox disable because it needs LLVM 21/22.
+# wasm-sandbox disabled because it needs LLVM 21/22.
 REQUIRED_USE="
 	${PATENT_REQUIRED_USE}
-	system-icu
 	X
 	^^ (
 		${LLVM_COMPAT[@]/#/llvm_slot_}

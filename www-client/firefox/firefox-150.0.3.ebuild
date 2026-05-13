@@ -390,7 +390,6 @@ PATENT_REQUIRED_USE="
 # Forced system-icu to avoid passing -DNDEBUG=1 -DTRIMMED=1 to GNU as.
 REQUIRED_USE="
 	${PATENT_REQUIRED_USE}
-	system-icu
 	^^ (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
@@ -2148,6 +2147,7 @@ einfo
 	# Ensure we use correct toolchain
 	export HOST_CC="$(tc-getBUILD_CC)"
 	export HOST_CXX="$(tc-getBUILD_CXX)"
+	export AS="$(tc-getCC) -c"
 
 	# Configuration tests expect llvm-readelf output, bug 913130
 	READELF="llvm-readelf"
