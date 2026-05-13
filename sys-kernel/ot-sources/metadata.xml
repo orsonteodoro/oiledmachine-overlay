@@ -2491,9 +2491,10 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
     Notes
 
       port:pcie-6.0-ide provides PCIe Link Encryption or Integrity and Data
-      Encryption (IDE) and may break boot, so it is not enabled by default for
-      PCIe 6.0 in driver bundle base profiles.  It is to mitigate against
-      information disclosure or snooping during physical attack vector.
+      Encryption (IDE) and may break boot if improperly configured, so it is not
+      enabled by default for PCIe 6.0 in driver bundle base profiles.  It is to
+      mitigate against information disclosure or snooping during physical attack
+      vector.
 
     Examples
 
