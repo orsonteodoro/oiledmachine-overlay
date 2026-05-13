@@ -353,7 +353,8 @@ einfo "|            | aes-xts-plain64 [256-bit key] |         | aes-xts-plain64 
 einfo "| Hash       | SHA-256                       | Grover  | Double key length (e.g. SHA-256 -> SHA-512)                     | LUKS2 integrity                                |"
 einfo "| KDF        | PBKDF2                        | Grover  | Switch to a memory-hard algorithm (e.g. Argon2id, Argon2d)      | LUKS2 keys, kdbx, user database tables         |"
 einfo
-einfo "Pausible deniablibilty is estimated to be lower security score than LUKS2 at or beyond Q-Day."
+einfo "Pausible deniablibilty is estimated to be lower security score than"
+einfo "LUKS2 at or beyond Q-Day, but it still retains human weakness factor."
 einfo
         optfeature_header "Install optional packages:"
         optfeature "DMA attack mitigation for USB4 (USB-C) and USB keyboard snooping mitigation against an evil maid attack" "sys-apps/usbguard"
