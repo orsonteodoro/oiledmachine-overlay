@@ -1808,6 +1808,9 @@ ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
 	# Disable build time check for GCC 13
 	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-140.10.2-nsTreeSanitizer-disable-check.patch"
 
+	# Workaround for missing references
+	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-140.10.2-TrustedTypePolicy-add-explicit-instantiations.patch"
+
 	# Workaround for bgo#915651 on musl
 	if use elibc_glibc ; then
 		rm -v "${WORKDIR}/firefox-patches/"*"bgo-748849-RUST_TARGET_override.patch" || die
@@ -3094,7 +3097,7 @@ EOF
 		size=${icon%.png}
 		size=${size##*/default}
 
-		if (( ${size} -eq 48 )) ; then
+		if (( ${size} == 48 )) ; then
 			newicon "${icon}" "${PN}.png"
 		fi
 

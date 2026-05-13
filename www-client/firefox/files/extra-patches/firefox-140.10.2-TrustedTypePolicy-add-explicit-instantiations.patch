@@ -1,0 +1,19 @@
+--- a/dom/security/trusted-types/TrustedTypePolicy.cpp.orig	2026-05-06 07:54:38.000000000 -0700
++++ b/dom/security/trusted-types/TrustedTypePolicy.cpp	2026-05-13 08:06:18.448201869 -0700
+@@ -102,4 +102,16 @@ void TrustedTypePolicy::DetermineTrusted
+   }
+ }
+ 
++template void TrustedTypePolicy::DetermineTrustedPolicyValue<mozilla::dom::CreateHTMLCallback>(
++    const RefPtr<mozilla::dom::CreateHTMLCallback>&, const nsTSubstring<char16_t>&, const nsTArray<JS::Value>&,
++    bool, mozilla::ErrorResult&, nsTSubstring<char16_t>&) const;
++
++template void TrustedTypePolicy::DetermineTrustedPolicyValue<mozilla::dom::CreateScriptCallback>(
++    const RefPtr<mozilla::dom::CreateScriptCallback>&, const nsTSubstring<char16_t>&, const nsTArray<JS::Value>&,
++    bool, mozilla::ErrorResult&, nsTSubstring<char16_t>&) const;
++
++template void TrustedTypePolicy::DetermineTrustedPolicyValue<mozilla::dom::CreateScriptURLCallback>(
++    const RefPtr<mozilla::dom::CreateScriptURLCallback>&, const nsTSubstring<char16_t>&, const nsTArray<JS::Value>&,
++    bool, mozilla::ErrorResult&, nsTSubstring<char16_t>&) const;
++
+ }  // namespace mozilla::dom

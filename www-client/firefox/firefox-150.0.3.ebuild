@@ -2953,7 +2953,7 @@ EOF
 		size=${icon%.png}
 		size=${size##*/default}
 
-		if [[ ${size} -eq 48 ]] ; then
+		if (( ${size} == 48 )) ; then
 			newicon "${icon}" "${PN}.png"
 		fi
 
