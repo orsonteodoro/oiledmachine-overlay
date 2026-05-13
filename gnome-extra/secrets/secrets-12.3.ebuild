@@ -340,7 +340,7 @@ einfo
 einfo "AI accelerated Q-Day is forecasted to be as early as 2029 (3-4) years from now."
 einfo
         optfeature_header "Install optional packages:"
-        optfeature "DMA attack mitigation for USB4 (USB-C) and USB keyboard snooping mitigation" "sys-apps/usbguard"
+        optfeature "DMA attack mitigation for USB4 (USB-C) and USB keyboard snooping mitigation against an evil maid attack" "sys-apps/usbguard"
         optfeature "DMA attack mitigation for Thunderbolt" "sys-apps/bolt"
 	# TODO: Add PCIe DMA attack hotplug mitigation suggestion
 }
