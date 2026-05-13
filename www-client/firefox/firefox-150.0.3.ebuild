@@ -347,6 +347,7 @@ CODEC_IUSE="
 +vpx
 "
 # Distro enables telemetry by default.
+# Telemetry is disabled in the overlay for security reasons.
 IUSE+="
 ${CODEC_IUSE}
 ${PATENT_STATUS[@]}
@@ -359,7 +360,6 @@ rust-simd selinux sndio speech +system-av1
 +wayland +webrtc wifi webspeech
 ebuild_revision_34
 "
-# telemetry disabled for crypto/security reasons
 
 # Firefox-only IUSE
 IUSE+="
@@ -384,10 +384,6 @@ PATENT_REQUIRED_USE="
 		patent_status_nonfree
 	)
 "
-#	rust-simd? (
-#		!llvm_slot_19
-#	)
-# Forced system-icu to avoid passing -DNDEBUG=1 -DTRIMMED=1 to GNU as.
 REQUIRED_USE="
 	${PATENT_REQUIRED_USE}
 	^^ (
@@ -2147,6 +2143,8 @@ einfo
 	# Ensure we use correct toolchain
 	export HOST_CC="$(tc-getBUILD_CC)"
 	export HOST_CXX="$(tc-getBUILD_CXX)"
+
+	# Avoid passing -DNDEBUG=1 -DTRIMMED=1 to ${CHOST}-as
 	export AS="$(tc-getCC) -c"
 
 	# Configuration tests expect llvm-readelf output, bug 913130

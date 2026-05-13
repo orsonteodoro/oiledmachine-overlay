@@ -429,6 +429,7 @@ CODEC_IUSE="
 +vpx
 "
 # Telemetry is the distro default.
+# Telemetry is disabled in the overlay for security reasons.
 IUSE+="
 ${CODEC_IUSE}
 ${PATENT_STATUS[@]}
@@ -465,8 +466,6 @@ PATENT_REQUIRED_USE="
 		patent_status_nonfree
 	)
 "
-# Forced system-icu to avoid passing -DNDEBUG=1 -DTRIMMED=1 to GNU as.
-# wasm-sandbox disabled because it needs LLVM 21/22.
 REQUIRED_USE="
 	${PATENT_REQUIRED_USE}
 	X
@@ -2249,6 +2248,8 @@ einfo
 	# AS is used in a non-standard way by upstream, #bmo1654031
 	export HOST_CC="$(tc-getBUILD_CC)"
 	export HOST_CXX="$(tc-getBUILD_CXX)"
+
+	# Avoid passing -DNDEBUG=1 -DTRIMMED=1 to ${CHOST}-as
 	export AS="$(tc-getCC) -c"
 
 	if tc-is-clang ; then
