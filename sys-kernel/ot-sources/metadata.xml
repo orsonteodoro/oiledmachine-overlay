@@ -2481,11 +2481,19 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
       port:gameport
       port:midi
       port:parallel-port
+      port:pcie-6.0-ide
       port:ps/2
       port:serial
       port:firewire
       port:thunderbolt-3
       port:thunderbolt-4
+
+    Notes
+
+      port:pcie-6.0-ide provides PCIe Link Encryption or Integrity and Data
+      Encryption (IDE) and may break boot, so it is not enabled by default for
+      PCIe 6.0 in driver bundle base profiles.  It is to mitigate against
+      information disclosure or snooping during physical attack vector.
 
     Examples
 

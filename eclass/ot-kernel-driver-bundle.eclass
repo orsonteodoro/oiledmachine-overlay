@@ -1821,6 +1821,7 @@ ewarn "The 2020s-desktop-pc driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_expansion_slots "pcie"
 	ot-kernel-driver-bundle_add_graphics "pcie"
 	ot-kernel-driver-bundle_add_ports "serial usb-1.1 usb-2.0 usb-3.0 thunderbolt-3 thunderbolt-4"
+	ot-kernel-driver-bundle_add_pcie_link_encryption
 	ot-kernel-driver-bundle_add_console "tty"
 	ot-kernel-driver-bundle_add_keyboard "ps/2 usb"
 	ot-kernel-driver-bundle_add_mouse "usb"
@@ -1883,6 +1884,17 @@ ewarn "The 2020s-desktop-pc driver bundle has not been recently tested."
 		ot-kernel_y_configopt "CONFIG_DRM_ACCEL_AMDXDNA" # 2024
 		ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_PCI"
+	fi
+}
+
+ot-kernel-driver-bundle_add_pcie_ide() { # 2022
+	# PCIe link encryption 2022
+	# PCIe 6.0 2022
+	# Mobo adoption 2025, 2026
+	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "port:pcie-6.0-ide" ]] || return
+	if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.19" ; then
+		ot-kernel_y_configopt "CONFIG_PCI_TSM" # 2025
+		ot-kernel_y_configopt "CONFIG_PCI_DOE" # 2020
 	fi
 }
 
