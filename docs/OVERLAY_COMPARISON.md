@@ -49,3 +49,4 @@
 - Fixing inappropriate security configurations by FAFO users or a package used in the red zone (e.g. mimalloc ebuild, web dependencies)
 - Resolving performance issues below motion picture FPS caused by FAFO users using the wrong optimization level or USE flag (e.g. dav1d, firefox ebuilds)
 - Forced slow build performance (e.g. ninja-utils.eclass -l flag; webkitgtk ebuild's -Wl,--no-keep-memory time complexity; chromium ebuild's forced mksnapshot build that doubles build time)
+- The distro uses a ~2 year old copy (2024) of CEF for obs-studio.  The attack surface was reduced with a more recent copy of CEF in this overlay.
