@@ -1892,6 +1892,7 @@ eerror
 			-e "s:%%WASI_ARCH%%:${wasi_arch}:" \
 			-e "s:%%WASI_SDK_VER%%:${wasi_sdk_ver}:" \
 			-e "s:%%WASI_SDK_LLVM_VER%%:${wasi_llvm_ver}:" \
+			-e "s:wasm32-unknown-wasi/:wasi/:"
 			toolkit/moz.configure || die "Failed to update wasi-related paths."
 	fi
 
