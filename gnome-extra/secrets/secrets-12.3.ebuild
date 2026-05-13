@@ -4,6 +4,9 @@
 
 EAPI=8
 
+# TODO:
+# Reduce the database lock timeout to 30 seconds.
+
 # This ebuild used AI inference to help assist in customization.
 # The AI solution was modified with a human solution instead.
 # Some patches contain AI generated code.
