@@ -202,7 +202,7 @@ VIRTUALX_REQUIRED="manual"
 # Information about the bundled wasi toolchain from
 # https://github.com/WebAssembly/wasi-sdk/
 # For LLVM slot correspondence, see https://github.com/WebAssembly/wasi-sdk/tree/wasi-sdk-32/src
-declare -A WASM_SLOTS=(
+declare -A WASI_SLOTS=(
 	["19"]="25.0"
 )
 
@@ -1884,13 +1884,13 @@ eerror
 			die "wasm-sandbox enabled on unknown/unsupported arch!"
 		fi
 
-		local wasm_sdk_ver="${WASM_SLOTS[${LLVM_SLOT}]}"
-		local wasm_llvm_ver="${WASM_SLOTS[${LLVM_SLOT}]}"
+		local wasi_sdk_ver="${WASI_SLOTS[${LLVM_SLOT}]}"
+		local wasi_llvm_ver="${LLVM_SLOT}"
 
 		sed -i \
 			-e "s:%%PORTAGE_WORKDIR%%:${WORKDIR}:" \
 			-e "s:%%WASI_ARCH%%:${wasi_arch}:" \
-			-e "s:%%WASI_SDK_VER%%:${wasm_sdk_ver}:" \
+			-e "s:%%WASI_SDK_VER%%:${wasi_sdk_ver}:" \
 			-e "s:%%WASI_SDK_LLVM_VER%%:${wasm_llvm_ver}:" \
 			toolkit/moz.configure || die "Failed to update wasi-related paths."
 	fi
@@ -2488,7 +2488,8 @@ eerror "Building with Clang is not supported."
 	# wasm-sandbox
 	# Since graphite2 is one of the sandboxed libraries, system-graphite2 obviously can't work with +wasm-sandbox.
 	if use wasm-sandbox ; then
-		mozconfig_add_options_ac "+wasm-sandbox" "--with-wasi-sysroot=${WORKDIR}/wasi-sdk-${WASI_SDK_VER}-${wasi_arch}-linux/share/wasi-sysroot/"
+		local wasi_sdk_ver="${WASM_SLOTS[${LLVM_SLOT}]}"
+		mozconfig_add_options_ac "+wasm-sandbox" "--with-wasi-sysroot=${WORKDIR}/wasi-sdk-${wasi_sdk_ver}-${wasi_arch}-linux/share/wasi-sysroot/"
 	else
 		mozconfig_add_options_ac "-wasm-sandbox" "--without-wasm-sandboxed-libraries"
 		mozconfig_use_with "system-harfbuzz" "system-graphite2"
