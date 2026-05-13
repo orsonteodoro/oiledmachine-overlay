@@ -2488,7 +2488,7 @@ eerror "Building with Clang is not supported."
 	# wasm-sandbox
 	# Since graphite2 is one of the sandboxed libraries, system-graphite2 obviously can't work with +wasm-sandbox.
 	if use wasm-sandbox ; then
-		local wasi_sdk_ver="${WASM_SLOTS[${LLVM_SLOT}]}"
+		local wasi_sdk_ver="${WASI_SLOTS[${LLVM_SLOT}]}"
 		mozconfig_add_options_ac "+wasm-sandbox" "--with-wasi-sysroot=${WORKDIR}/wasi-sdk-${wasi_sdk_ver}-${wasi_arch}-linux/share/wasi-sysroot/"
 	else
 		mozconfig_add_options_ac "-wasm-sandbox" "--without-wasm-sandboxed-libraries"
