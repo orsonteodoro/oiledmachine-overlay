@@ -439,7 +439,7 @@ alsa cups +dbus debug eme-free firejail +hardened -hwaccel jack +jemalloc
 system-pipewire
 system-png +system-webp systemd -telemetry test +vaapi +wayland +webrtc wifi
 webspeech +X
-ebuild_revision_33
+ebuild_revision_34
 "
 
 # Firefox-only IUSE
@@ -1891,7 +1891,7 @@ eerror
 			-e "s:%%PORTAGE_WORKDIR%%:${WORKDIR}:" \
 			-e "s:%%WASI_ARCH%%:${wasi_arch}:" \
 			-e "s:%%WASI_SDK_VER%%:${wasi_sdk_ver}:" \
-			-e "s:%%WASI_SDK_LLVM_VER%%:${wasm_llvm_ver}:" \
+			-e "s:%%WASI_SDK_LLVM_VER%%:${wasi_llvm_ver}:" \
 			toolkit/moz.configure || die "Failed to update wasi-related paths."
 	fi
 

@@ -357,7 +357,7 @@ rust-simd selinux sndio speech +system-av1
 +system-harfbuzz +system-icu +system-jpeg +system-libevent
 +system-libvpx system-pipewire system-png +system-webp systemd -telemetry +vaapi -valgrind
 +wayland +webrtc wifi webspeech
-ebuild_revision_33
+ebuild_revision_34
 "
 # telemetry disabled for crypto/security reasons
 
@@ -1786,7 +1786,7 @@ eerror
 			-e "s:%%PORTAGE_WORKDIR%%:${WORKDIR}:" \
 			-e "s:%%WASI_ARCH%%:${wasi_arch}:" \
 			-e "s:%%WASI_SDK_VER%%:${wasi_sdk_ver}:" \
-			-e "s:%%WASI_SDK_LLVM_VER%%:${wasm_llvm_ver}:" \
+			-e "s:%%WASI_SDK_LLVM_VER%%:${wasi_llvm_ver}:" \
 			"toolkit/moz.configure" || die "Failed to update wasi-related paths."
 	fi
 
