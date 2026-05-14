@@ -44,9 +44,9 @@ require explicitly unloading every reboot until the official fix is applied.
 Remediation provider
 ====================
 
-Fragnesia - genpatches
-Dirty Frag - linux kernel update
-Copy Fail - linux kernel update
+Fragnesia - Genpatches
+Dirty Frag - Linux kernel update
+Copy Fail - Linux kernel update
 
 ===========
 Remediating
