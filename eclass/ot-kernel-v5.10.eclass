@@ -339,7 +339,10 @@ bbrv2 build c2tcp +cfs -clang deepcc -debug doc -dwarf4 -exfat -expoline -gdb
 +genpatches -genpatches_1510 muqss orca pgo prjc qt5 +retpoline rt symlink tresor
 tresor_prompt tresor_sysfs uksm zen-muqss zen-sauce
 "
+
+# genpatches is required for Fragnesia mitigation.
 REQUIRED_USE+="
+	genpatches
 	clang? (
 		|| (
 			${LLVM_COMPAT[@]/#/llvm_slot_}

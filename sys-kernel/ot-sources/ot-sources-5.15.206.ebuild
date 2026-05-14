@@ -7,7 +7,7 @@ EAPI=8
 # Contains patches derived from AI generated code.
 
 EBUILD_REV="ebuild_revision_10"
-GENPATCHES_VER="215"
+GENPATCHES_VER="218"
 PATCH_PROJC_VER="5.15-r2"
 PATCH_RT_VER="5.15.202-rt94"
 

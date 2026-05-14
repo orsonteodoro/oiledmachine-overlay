@@ -14954,27 +14954,20 @@ ot-kernel_add_disable_debug_excludes() {
 # The proposed mitigation for both Copy Fail and Dirty Frag was to disable affected modules.
 ot-kernel_disable_affected_modules() {
 	# Dirty Frag mitigation
-einfo "Applying 0-day mitigation"
-ewarn "QA:  Temporary Dirty Frag mitigation is being applied.  Removal of mitigation will be on Jun 07, 2026."
-einfo "Tip:  Disable affected modules for future 0-days for non-essential modules/subsystems."
-	if ver_test "${KV_MAJOR_MINOR}" "-eq" "7.0" && ver_test "${PV}" "-ge" "7.0.5" ; then
-		ot-kernel_unset_configopt "CONFIG_AF_RXRPC"
-	elif ver_test "${KV_MAJOR_MINOR}" "-eq" "6.18" && ver_test "${PV}" "-ge" "6.18.28" ; then
-		ot-kernel_unset_configopt "CONFIG_AF_RXRPC"
-	elif ver_test "${KV_MAJOR_MINOR}" "-eq" "6.12" && ver_test "${PV}" "-ge" "6.12.87" ; then
-		ot-kernel_unset_configopt "CONFIG_AF_RXRPC"
-	elif ver_test "${KV_MAJOR_MINOR}" "-eq" "6.6" && ver_test "${PV}" "-ge" "6.6.138" ; then
-		ot-kernel_unset_configopt "CONFIG_AF_RXRPC"
-	elif ver_test "${KV_MAJOR_MINOR}" "-eq" "6.1" && ver_test "${PV}" "-ge" "6.1.172" ; then
-		ot-kernel_unset_configopt "CONFIG_AF_RXRPC"
-	elif ver_test "${KV_MAJOR_MINOR}" "-eq" "5.15" && ver_test "${PV}" "-ge" "5.15.206" ; then
-		ot-kernel_unset_configopt "CONFIG_AF_RXRPC"
-	elif ver_test "${KV_MAJOR_MINOR}" "-eq" "5.10" && ver_test "${PV}" "-ge" "5.10.255" ; then
-		ot-kernel_unset_configopt "CONFIG_AF_RXRPC"
+	:
+}
+
+# @FUNCTION: ot-kernel_verify_mitigation
+# @DESCRIPTION:
+# Verify applied mitigation
+ot-kernel_verify_mitigation() {
+	if has "genpatches" ${IUSE_EFFECTIVE} && ot-kernel_use "genpatches" ; then
+		:
 	else
-		ot-kernel_unset_configopt "CONFIG_AF_RXRPC"
-		ot-kernel_unset_configopt "CONFIG_INET_ESP"
-		ot-kernel_unset_configopt "CONFIG_INET6_ESP"
+eerror "env file path:  /etc/portage/ot-sources/${KV_MAJOR_MINOR}/${OT_KERNEL_EXTRAVERSION}/${OT_KERNEL_ARCH}/env"
+eerror "USE=genpatches must be to added per-package package.env to mitigate the Fragnesia 0-day."
+eerror "OT_KERNEL_USE=genpatches must be added to the per profile env file to mitigate the Fragnesia 0-day."
+		die
 	fi
 }
 
@@ -15171,6 +15164,7 @@ einfo "Disabling all debug and shortening logging buffers"
 	ot-kernel_set_security_critical					# Must go after disable_debug to avoid disablement
 
 	ot-kernel_disable_affected_modules
+	ot-kernel_verify_mitigation
 
 	ot-kernel_set_kconfig_from_envvar_array				# Final user override
 	ot-kernel_print_thp_status

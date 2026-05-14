@@ -334,7 +334,9 @@ qt5 +retpoline rock-dkms rt -rust shadowcallstack symlink tresor tresor_prompt t
 zen-sauce
 "
 
+# genpatches is required for Fragnesia mitigation.
 REQUIRED_USE+="
+	genpatches
 	clang? (
 		|| (
 			${LLVM_COMPAT[@]/#/llvm_slot_}

@@ -387,7 +387,9 @@ nest orca pgo prjc qt5 qt6 +retpoline rock-dkms rt -rust shadowcallstack symlink
 tresor_prompt tresor_sysfs zen-sauce
 "
 
+# genpatches is required for Fragnesia mitigation.
 REQUIRED_USE+="
+	genpatches
 	?? (
 		qt5
 		qt6
