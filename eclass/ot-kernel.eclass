@@ -1045,7 +1045,7 @@ VULNERABILITIES_FIXED=(
 	"CVE-2026-31695;UAF;"
 
 	# 2026-04-30
-	"CVE-2026-31431;Copy Fail, KEV, PE, CB, ACP, mitigation for LTS;"
+	"CVE-2026-31431;Copy Fail, KEV, PE, CB, ACP, mitigation for LTS by kernel team;"
 	"CVE-2026-31693;;"
 	"CVE-2026-31692;;"
 	"CVE-2026-31786;BO;"
