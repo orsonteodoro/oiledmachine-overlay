@@ -1214,8 +1214,6 @@ ewarn "For safety, have an updated stage3 tarball pre-unpacked."
 ewarn
 	fi
 
-ewarn "=dev-lang/rust-bin-9999 or =dev-lang/rust-9999 will be required for security-critical rust packages."
-
 	if [[ -z "${CC}" ]] && [[ "${RUSTFLAGS_HARDENED_NO_COMPILER_SWITCH:-0}" != "1" ]] ; then
 		export CC=$(tc-getCC)
 		export CXX=$(tc-getCXX)

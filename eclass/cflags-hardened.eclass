@@ -1533,67 +1533,42 @@ eerror "Did not detect a compiler."
 	if tc-is-clang && [[ "${ARCH}" == "amd64" ]] ; then
 		s=$(clang-major-version)
 		if ! has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[cfi]" ; then
-ewarn
-ewarn "LLVM CFI will be soon be required for the oiledmachine-overlay for"
-ewarn "ARCH=amd64 without CET.  Rebuild llvm-runtimes/compiler-rt-sanitizers"
-ewarn "${s} with cfi USE flag enabled."
-ewarn
+ewarn "Missing llvm-runtimes/compiler-rt-sanitizers:${s}[cfi]"
 		fi
 	fi
 
 	if tc-is-clang && [[ "${ARCH}" == "amd64" ]] ; then
 		s=$(clang-major-version)
 		if ! has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[lsan]" ; then
-ewarn
-ewarn "LSan will be soon be required for the oiledmachine-overlay for"
-ewarn "ARCH=amd64 without CET.  Rebuild llvm-runtimes/compiler-rt-sanitizers"
-ewarn "${s} with lsan USE flag enabled."
-ewarn
+ewarn "Missing llvm-runtimes/compiler-rt-sanitizers:${s}[lsan]"
 		fi
 	fi
 
 	if tc-is-clang && [[ "${ARCH}" == "amd64" ]] ; then
 		s=$(clang-major-version)
 		if ! has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[ubsan]" ; then
-ewarn
-ewarn "UBSan with Clang will be soon be required for the oiledmachine-overlay"
-ewarn "for ARCH=amd64.  Rebuild llvm-runtimes/compiler-rt-sanitizers ${s} with"
-ewarn "ubsan USE flag enabled."
-ewarn
+ewarn "Missing llvm-runtimes/compiler-rt-sanitizers:${s}[ubsan]"
 		fi
 	fi
 
 	if tc-is-clang && [[ "${ARCH}" == "arm64" ]] ; then
 		s=$(clang-major-version)
 		if ! has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[hwasan]" ; then
-ewarn
-ewarn "HWASan with Clang will be soon be required for the oiledmachine-overlay"
-ewarn "for ARCH=arm64.  Rebuild llvm-runtimes/compiler-rt-sanitizers ${s} with"
-ewarn "hwasan USE flag enabled."
-ewarn
+ewarn "Missing llvm-runtimes/compiler-rt-sanitizers:${s}[hwasan]"
 		fi
 	fi
 
 	if tc-is-clang && [[ "${ARCH}" == "amd64" ]] ; then
 		s=$(clang-major-version)
 		if ! has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[asan]" ; then
-ewarn
-ewarn "ASan with Clang will be soon be required for the oiledmachine-overlay"
-ewarn "for ARCH=arm64.  Rebuild llvm-runtimes/compiler-rt-sanitizers ${s} with"
-ewarn "hwasan USE flag enabled."
-ewarn
+ewarn "Missing llvm-runtimes/compiler-rt-sanitizers:${s}[asan]"
 		fi
 	fi
 
 	if tc-is-clang ; then
 		s=$(clang-major-version)
 		if ! has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[gwp-asan]" ; then
-ewarn
-ewarn "ASan and GWP-ASan with Clang will be soon be required for the"
-ewarn "oiledmachine-overlay for ARCH=arm64 and ARCH=amd64.  Rebuild"
-ewarn "llvm-runtimes/compiler-rt-sanitizers ${s} with both asan and gwp-asan"
-ewarn "USE flag enabled."
-ewarn
+ewarn "Missing llvm-runtimes/compiler-rt-sanitizers:${s}[gwp-asan]"
 		fi
 	fi
 
@@ -1601,10 +1576,7 @@ ewarn
 	if tc-is-gcc && [[ "${ARCH}" == "amd64" ]] ; then
 		s=$(gcc-major-version)
 		if ! has_version "sys-devel/gcc:${s}[sanitize]" ; then
-ewarn
-ewarn "UBSan with gcc will be soon be required for the oiledmachine-overlay for"
-ewarn "ARCH=amd64.  Rebuild sys-devel/gcc ${s} with sanitize USE flag enabled."
-ewarn
+ewarn "Missing sys-devel/gcc:${s}[sanitize]"
 		fi
 	fi
 
@@ -3158,38 +3130,7 @@ einfo "Added ${x} from ${module} sanitizer"
 # build performance.  We removed the nodejs muxer, so it should be possible to
 # remove all muxers by adding more additional ebuild metadata or constraints.
 #
-ewarn
-ewarn "Notice for resolution for unbroken vtv support."
-ewarn
-ewarn "sys-devel/gcc >= 15 is banned for -fvtable-verify (vtv) used in C++"
-ewarn "programs to protect some execution integrity."
-ewarn
-ewarn "The following oiledmachine-overlay ebuilds have to be re-emerged to"
-ewarn "switch to the unbroken vtv implementation:"
-ewarn
-ewarn "app-antivirus/clamav::oiledmachine-overlay"
-ewarn "dev-qt/qtwebengine::oiledmachine-overlay"
-ewarn "dev-qt/qtwayland::oiledmachine-overlay"
-ewarn "dev-qt/qtdeclarative::oiledmachine-overlay"
-ewarn "dev-qt/qtbase::oiledmachine-overlay"
-ewarn
-ewarn "If you did system-wide vtv, the entire system should be re-emerged"
-ewarn "twice.  Once to remove vtv.  Second time to re-apply unbroken vtv."
-ewarn
-ewarn "1. Rebuild the system without vtv and without using >=sys-devel/gcc-15."
-ewarn "   You must link to older gcc version to safely remove >=gcc-15 and"
-ewarn "   friends (libvtv, libstdc++, lib*san, etc)."
-ewarn "2. Then, remove >=sys-devel/gcc-15 from the system."
-ewarn "3. Add >=sys-devel/gcc-15 to /etc/portage/package.mask/gcc."
-ewarn "4. Then rebuild C++ packages selectively with vtv using"
-ewarn "   <=sys-devel/gcc-14 compiler."
-ewarn
-ewarn "Switching to a newer GCC slot from the systemwide default may be vtv"
-ewarn "incompatible."
-ewarn
-ewarn "C++ packages that require GCC 15 or newer need to be un-emerged to avoid"
-ewarn "vtv build time incompability."
-ewarn
+ewarn "Multislot vtable-verify (vtv) is not supported and sys-devel/gcc:${s}[vtv] should be disabled systemwide for GCC 15+."
 				disable_vtv=1
 				break
 			fi
