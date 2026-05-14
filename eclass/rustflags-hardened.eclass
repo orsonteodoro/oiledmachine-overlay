@@ -701,7 +701,7 @@ ewarn
 			-e "s|-Z[ ]*branch-protection=[+]bti||g" \
 			-e "s|-Z[ ]*branch-protection=-pac-ret,-bti||g")
 
-	"${RUSTC}" -Z help | grep -q -e "branch-protection"
+	"${RUSTC}" -Z help 2>/dev/null | grep -q -e "branch-protection"
 	has_unstable_branch_protection=$?
 
 	"${RUSTC}" --print target-features | grep -q -e "paca"
@@ -775,7 +775,7 @@ _rustflags-hardened_has_llvm_cfi() {
 _rustflags-hardened_cf_protection() {
 	[[ "${ARCH}" == "amd64" ]] || return
 
-	"${RUSTC}" -Z help | grep -q -e "cf-protection"
+	"${RUSTC}" -Z help 2>/dev/null | grep -q -e "cf-protection"
 	has_unstable_cf_protection=$?
 
 	if (( ${has_unstable_cf_protection} == 0 )) ; then
@@ -846,7 +846,7 @@ _rustflags-hardened_is_sls_vulnerable() {
 # Apply harden-sls
 _rustflags-hardened_harden_sls() {
 # Patch not landed yet, issue #136597
-	"${RUSTC}" -Z help | grep -q -e "harden-sls"
+	"${RUSTC}" -Z help 2>/dev/null | grep -q -e "harden-sls"
 	local has_harden_sls=$?
 	(( ${has_harden_sls} == 0 )) || return
 
@@ -1410,7 +1410,7 @@ ewarn "-O flag was not set.  Using -C opt-level=2 used instead."
 		RUSTFLAGS+=" -C opt-level=${opt_level}"
 	fi
 
-	"${RUSTC}" -Z help | grep -q -e "stack-protector"
+	"${RUSTC}" -Z help 2>/dev/null | grep -q -e "stack-protector"
 	has_stack_protector=$(( $? ? 0 : 1 ))
 einfo "has_stack_protector:  ${has_stack_protector}"
 
