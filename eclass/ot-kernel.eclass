@@ -457,7 +457,7 @@ VULNERABILITIES_FIXED=(
 	"CVE-2026-43477;;"
 
 	# 2026-05-11
-	"CVE-2026-43500;;"
+	"CVE-2026-43500;Dirty Frag fix part 2;"
 
 	# 2026-05-08
 	"CVE-2026-43452;;"
@@ -642,7 +642,7 @@ VULNERABILITIES_FIXED=(
 	"CVE-2025-71297;;"
 
 	# 2026-05-08
-	"CVE-2026-43284;Dirty Frag partial mitigation commit, missing affected rxrpc fix, using mitigation by disablement as fallback;"
+	"CVE-2026-43284;Dirty Frag fix part 1;"
 
 	# 2026-05-06
 	"CVE-2025-71285;;"
@@ -1045,7 +1045,7 @@ VULNERABILITIES_FIXED=(
 	"CVE-2026-31695;UAF;"
 
 	# 2026-04-30
-	"CVE-2026-31431;Copy Fail, KEV, PE, CB, ACP, verified mitigation backports applied for LTS;"
+	"CVE-2026-31431;Copy Fail, KEV, PE, CB, ACP, mitigation for LTS;"
 	"CVE-2026-31693;;"
 	"CVE-2026-31692;;"
 	"CVE-2026-31786;BO;"
@@ -1319,7 +1319,7 @@ VULNERABILITIES_FIXED=(
 	"CVE-2026-31444;UAF, NPD, DoS;"
 	"CVE-2026-31435;;"
 	"CVE-2026-31433;OOB;"
-	"CVE-2026-31431;Copy Fail, KEV, PE, CB, ACP, stable only mitigation applied;"
+	"CVE-2026-31431;Copy Fail, KEV, PE, CB, ACP, mitigation for stable;"
 	"CVE-2026-31432;OOBW;"
 
 	# 2026-04-20
@@ -3059,28 +3059,8 @@ _filter_genpatches() {
 		P_GENPATCHES_BLACKLIST+=" 5010 5011 5012 5013"
 	fi
 
-	if \
-		[[ "${CLANG_PGO_SUPPORTED}" == "1" ]] \
-			&& \
-		! [[ "${GENPATCHES_BLACKLIST}" =~ "1500" ]] \
-			&& \
-		( \
-			has "clang" ${IUSE_EFFECTIVE} \
-				&& \
-			ot-kernel_use "clang" \
-				&& \
-			ot-kernel_use "pgo" \
-		) \
-	; then
-ewarn
-ewarn "Clang PGO is not compatible with Genpatches 1500 and cause boot failure."
-ewarn "Disable clang pgo in OT_KERNEL_USE or add 1500 to GENPATCHES_BLACKLIST"
-ewarn
-ewarn "Adding 1500 GENPATCHES_BLACKLIST is not recommended for secure"
-ewarn "configurations."
-ewarn
-		die
-	fi
+	# A different Genpatches 1500 was banned for clang-pgo
+	# The ID system is unreliable.
 
 	if [[ "${KV_MAJOR_MINOR}" == "4.19" ]] ; then
 	# Patch failures
@@ -3100,9 +3080,9 @@ ewarn
 		P_GENPATCHES_BLACKLIST+=$(ot-kernel_filter_genpatches_blacklist_cb)
 	fi
 
-	if [[ "${KV_MAJOR_MINOR}" == "6.6" && "${PV}" =~ "9999" ]] ; then
-		P_GENPATCHES_BLACKLIST+=" 1500" # fail to patch
-	fi
+	#if [[ "${KV_MAJOR_MINOR}" == "6.6" && "${PV}" =~ "9999" ]] ; then
+	#	P_GENPATCHES_BLACKLIST+=" 1500" # fail to patch
+	#fi
 
 	P_GENPATCHES_BLACKLIST+=" 1800" # Already applied upstream
 
