@@ -2316,7 +2316,6 @@ einfo
 		"--enable-official-branding" \
 		"--enable-packed-relative-relocs" \
 		"--enable-release" \
-		"--enable-system-ffi" \
 		"--enable-system-policies" \
 		"--host=${CDEFAULT}" \
 		"--libdir=${EPREFIX}/usr/$(get_libdir)" \

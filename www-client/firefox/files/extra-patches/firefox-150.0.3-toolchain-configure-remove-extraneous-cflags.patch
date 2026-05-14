@@ -1,0 +1,12 @@
+Breaks cubeb-core
+--- a/build/moz.configure/toolchain.configure.orig	2026-05-13 19:52:41.608194931 -0700
++++ b/build/moz.configure/toolchain.configure	2026-05-13 19:55:46.116188991 -0700
+@@ -2279,7 +2279,7 @@ def depend_cflags(host_or_target_c_compi
+     @depends(host_or_target_c_compiler)
+     def depend_cflags(host_or_target_c_compiler):
+         if host_or_target_c_compiler.type != "clang-cl":
+-            return ["-MD", "-MP", "-MF $(MDDEPDIR)/$(@F).pp"]
++            return []
+         else:
+             # clang-cl doesn't accept the normal -MD -MP -MF options that clang
+             # does, but the underlying cc1 binary understands how to generate

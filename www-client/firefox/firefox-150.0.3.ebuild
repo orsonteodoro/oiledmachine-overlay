@@ -360,7 +360,7 @@ rust-simd selinux sndio speech +system-av1
 +system-harfbuzz +system-icu +system-jpeg +system-libevent
 +system-libvpx system-pipewire system-png +system-webp systemd -telemetry +vaapi -valgrind
 +wayland +webrtc wifi webspeech
-ebuild_revision_35
+ebuild_revision_36
 "
 
 # Firefox-only IUSE
@@ -1682,7 +1682,7 @@ ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
 	#rm "${WORKDIR}/firefox-patches/0013-gcc-lto-pgo-gentoo.patch" || die
 
 	eapply "${WORKDIR}/firefox-patches"
-#	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-131.0-disallow-store-data-races.patch"
+	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-131.0-disallow-store-data-races.patch"
 
 	# Flicker prevention with -Ofast
 	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-106.0.2-disable-broken-flags-gfx-layers.patch"
@@ -1708,6 +1708,8 @@ ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
 
 	# Workaround for missing references
 	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-140.10.2-TrustedTypePolicy-add-explicit-instantiations.patch"
+
+	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-150.0.3-toolchain-configure-remove-extraneous-cflags.patch"
 
 	# Breaks because GCC atomics
 	#_eapply_oiledmachine_set "${FILESDIR}/firefox-150.0.2-disable-ai.patch"
@@ -1749,7 +1751,7 @@ einfo "Editing ${path} -O3 -> -O2"
 		if use amd64 ; then
 			export RUST_TARGET="x86_64-unknown-linux-musl"
 		elif use x86 ; then
-			export RUST_TARGET="x86-unknown-linux-musl"
+			export RUST_TARGET="i686-unknown-linux-musl"
 		elif use arm64 ; then
 			export RUST_TARGET="aarch64-unknown-linux-musl"
 		elif use loong; then
@@ -2210,8 +2212,6 @@ einfo
 		"--enable-official-branding" \
 		"--enable-packed-relative-relocs" \
 		"--enable-release" \
-		"--enable-system-ffi" \
-		"--enable-system-pixman" \
 		"--enable-system-policies" \
 		"--host=${CDEFAULT}" \
 		"--libdir=${EPREFIX}/usr/$(get_libdir)" \
@@ -2655,6 +2655,8 @@ ewarn "Add more swap space if linker causes an out of memory (OOM) condition."
 
 	cflags-hardened_append
 	rustflags-hardened_append
+
+	export CARGO_PROFILE_RELEASE_BUILD_OVERRIDE_DEBUG=true
 
 	if tc-is-clang ; then
 		fix_mb_len_max
