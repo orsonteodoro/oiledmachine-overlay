@@ -76,7 +76,8 @@ The distro servers are slow so be patient when receiving patchsets.
 
 Using gentoo-kernel or gentoo-kernel-bin with KFENCE is okay as a balanced
 security kernel, but it is perferred that gentoo-sources be used and configured
-with KASAN with a higher security score for security-critical use cases.
+with KASAN with panic_on_warn=1 with a higher security score for
+security-critical use cases.
 
 =======================================
 The mitigation status after remediation
