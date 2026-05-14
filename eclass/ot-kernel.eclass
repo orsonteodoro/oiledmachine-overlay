@@ -15146,7 +15146,10 @@ ot-kernel_disable_affected_modules() {
 # Verify applied mitigation early
 ot-kernel_verify_mitigation_early() {
 	if has "genpatches" ${IUSE_EFFECTIVE} && ot-kernel_use "genpatches" ; then
-		:
+		if [[ "${GENPATCHES_BLACKLIST}" =~ "1500" ]] ; then
+eerror "Detected GENPATCHES_BLACKLIST containing 1500 associated with Fragnesia mitigation.  Remove 1500 to continue."
+			die
+		fi
 		if ver_test "${KV_MAJOR_MINOR}" -eq "7.0" && ver_test "${PV}" "-ge" "7.0.7" ; then
 			:
 		elif ver_test "${KV_MAJOR_MINOR}" -eq "6.18" && ver_test "${PV}" "-ge" "6.18.30" ; then
@@ -15162,13 +15165,13 @@ ot-kernel_verify_mitigation_early() {
 		elif ver_test "${KV_MAJOR_MINOR}" -eq "5.10" && ver_test "${PV}" "-ge" "5.10.255" ; then
 			:
 		else
-eerror "Your kernel sources is too old and not mitigated for Fragnesia 0-day.  Use the latest point release."
+eerror "Your kernel sources is too old and not mitigated for Fragnesia.  Use the latest point release."
 			die
 		fi
 	else
 eerror "env file path:  /etc/portage/ot-sources/${KV_MAJOR_MINOR}/${OT_KERNEL_EXTRAVERSION}/${OT_KERNEL_ARCH}/env"
-eerror "USE=genpatches must be to added per-package package.env to mitigate the Fragnesia 0-day."
-eerror "OT_KERNEL_USE=genpatches must be added to the per profile env file to mitigate the Fragnesia 0-day."
+eerror "USE=genpatches must be to added per-package package.env to mitigate the Fragnesia."
+eerror "OT_KERNEL_USE=genpatches must be added to the per profile env file to mitigate the Fragnesia."
 		die
 	fi
 }
