@@ -3060,7 +3060,7 @@ _filter_genpatches() {
 	fi
 
 	# A different Genpatches 1500 was banned for clang-pgo
-	# The ID system is unreliable.
+	# The ID system is unreliable.  It will reuse an ID when it should not.
 
 	if [[ "${KV_MAJOR_MINOR}" == "4.19" ]] ; then
 	# Patch failures
