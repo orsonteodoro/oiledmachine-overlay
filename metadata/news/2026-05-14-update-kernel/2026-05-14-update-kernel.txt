@@ -2,7 +2,7 @@ Title: Rebuild the kernel to mitigate against 0-day vulnerabilities (Fragnesia m
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-05-14
-Revision: 3
+Revision: 4
 News-Item-Format: 2.0
 Display-If-Installed: sys-kernel/mitigate-dos
 Display-If-Installed: sys-kernel/mitigate-dt
@@ -54,7 +54,8 @@ Remediating
 
 Download either ot-sources or gentoo-sources.
 
-Verify the following kernel versions for partial/full mitigation.
+Verify the following kernel versions to apply full mitigation for all named 3
+vulnerabilities.
 
 Get the patched version(s)
 
