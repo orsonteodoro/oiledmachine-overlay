@@ -438,7 +438,7 @@ VULNERABILITIES_FIXED=(
 # UBSAN: array-index-out-of-bounds - use panic_on_warn=1
 
 	# 2026-05-14
-	"CVE-2026-46300;Fragnesia, LPE, ACP, patched by genpatches;"
+	"CVE-2026-46300;Fragnesia, PE, ACP, patched by genpatches;"
 
 	# 2026-05-13
 	"CVE-2026-43485;;"
@@ -646,7 +646,7 @@ VULNERABILITIES_FIXED=(
 
 	# 2026-05-06
 	"CVE-2025-71285;;"
-	"CVE-2026-43284;Dirty Frag, LPE, ACP, mitigation by disablement;"
+	"CVE-2026-43284;Dirty Frag, PE, ACP, mitigation by disablement;"
 	"CVE-2025-71285;;"
 	"CVE-2025-71294;;"
 	"CVE-2025-71293;;"
@@ -1045,7 +1045,7 @@ VULNERABILITIES_FIXED=(
 	"CVE-2026-31695;UAF;"
 
 	# 2026-04-30
-	"CVE-2026-31431;Copy Fail, KEV, LPE, CB, ACP, mitigation for LTS by kernel team;"
+	"CVE-2026-31431;Copy Fail, KEV, PE, CB, ACP, mitigation for LTS by kernel team;"
 	"CVE-2026-31693;;"
 	"CVE-2026-31692;;"
 	"CVE-2026-31786;BO;"

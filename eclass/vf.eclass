@@ -337,10 +337,6 @@ einfo "KEV = Known Exploited Vulnerabilities (CISA, U.S. Government Advisory)"
 # Equivalent to BSOD
 einfo "KP = Kernel Panic"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"LPE"($|" "|";"|",") ]] ; then
-# Limited user elevation to root
-einfo "LPE = Local Privilege Escalation"
-		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"MBV"($|" "|";"|",") ]] ; then
 # Same as CWE-119
 einfo "MBV = Memory Bounds Violation (Off-by-One/Off-by-Any Read/Write, Heap/Stack Overread/Overwrite/Underread/Overwrite)"
@@ -390,6 +386,7 @@ einfo "OOR = Out Of Range Access"
 einfo "PC = Pointer Corruption"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("PE")($|" "|";"|",") ]] ; then
+# Also includes LPE
 einfo "PE = Privilege Escalation"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"PGC"($|" "|";"|",") ]] ; then
