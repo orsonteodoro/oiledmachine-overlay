@@ -14,7 +14,7 @@ Display-If-Installed: virtual/ot-sources-lts
 
 The Linux kernel had several zero day vulnerabilities:
 
-CVE-2026-46300 - Fragnesia - Threat vectors to be TBA
+CVE-2026-46300 - Fragnesia: privilege escalation, attack chain primitive
 CVE-2026-43284, CVE-2026-43500 - Dirty Frag:  privilege escalation, attack chain primitive
 CVE-2026-31431 - Copy Fail:  priviliege escalation, container escape, attack chain primitive
 
