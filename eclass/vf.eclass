@@ -337,6 +337,10 @@ einfo "KEV = Known Exploited Vulnerabilities (CISA, U.S. Government Advisory)"
 # Equivalent to BSOD
 einfo "KP = Kernel Panic"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"LPE"($|" "|";"|",") ]] ; then
+# Limited user elevation to root
+einfo "LPE = Local Privilege Escalation"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"MBV"($|" "|";"|",") ]] ; then
 # Same as CWE-119
 einfo "MBV = Memory Bounds Violation (Off-by-One/Off-by-Any Read/Write, Heap/Stack Overread/Overwrite/Underread/Overwrite)"
@@ -357,6 +361,9 @@ einfo "MT = Missing Terminator Character or Condition"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"NPD"($|" "|";"|",") ]] ; then
 einfo "NPD = Null Pointer Dereference"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"NPE"($|" "|";"|",") ]] ; then
+einfo "NPE = Null Pointer Exception"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"NSS"($|" "|";"|",") ]] ; then
 einfo "NSS = Not Sufficiently Secure"
