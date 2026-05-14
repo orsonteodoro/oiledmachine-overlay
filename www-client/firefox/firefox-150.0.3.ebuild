@@ -345,7 +345,7 @@ CODEC_IUSE="
 IUSE+="
 ${CODEC_IUSE}
 ${PATENT_STATUS[@]}
--ai alsa cpu_flags_arm_neon cups +dbus debug eme-free firejail +hardened
+alsa cpu_flags_arm_neon cups +dbus debug eme-free firejail +hardened
 -hwaccel jack +jemalloc +jit jpegxl libcanberra libnotify libproxy
 libsecret mold +pgo +pulseaudio
 rust-simd selinux sndio speech +system-av1
