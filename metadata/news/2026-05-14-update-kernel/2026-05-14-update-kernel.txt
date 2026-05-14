@@ -2,7 +2,7 @@ Title: Rebuild the kernel to mitigate against 0-day vulnerabilities (Fragnesia m
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-05-14
-Revision: 1
+Revision: 3
 News-Item-Format: 2.0
 Display-If-Installed: sys-kernel/mitigate-dos
 Display-If-Installed: sys-kernel/mitigate-dt
@@ -39,6 +39,14 @@ initramfs generated for the kernel flavor, boot config updated; a reset is done.
 After reset the disabled .config solution is done; but for the external module
 techniques they should either prevent the loading of the affected code or
 require explicitly unloading every reboot until the official fix is applied.
+
+====================
+Remediation provider
+====================
+
+Fragnesia - genpatches
+Dirty Frag - linux kernel update
+Copy Fail - linux kernel update
 
 ===========
 Remediating
