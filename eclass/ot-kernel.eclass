@@ -438,7 +438,7 @@ VULNERABILITIES_FIXED=(
 # UBSAN: array-index-out-of-bounds - use panic_on_warn=1
 
 	# 2026-05-14
-	"CVE-2026-46300;Fragnesia 0-day, patched by genpatches;"
+	"CVE-2026-46300;Fragnesia, patched by genpatches;"
 
 	# 2026-05-13
 	"CVE-2026-43485;;"
