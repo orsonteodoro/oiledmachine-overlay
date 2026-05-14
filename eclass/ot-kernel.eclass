@@ -14963,6 +14963,24 @@ ot-kernel_disable_affected_modules() {
 ot-kernel_verify_mitigation_early() {
 	if has "genpatches" ${IUSE_EFFECTIVE} && ot-kernel_use "genpatches" ; then
 		:
+		if ver_test "${KV_MAJOR_MINOR}" -eq "7.0" && ver_test "${PV}" "-ge" "7.0.7" ; then
+			:
+		elif ver_test "${KV_MAJOR_MINOR}" -eq "6.18" && ver_test "${PV}" "-ge" "6.18.30" ; then
+			:
+		elif ver_test "${KV_MAJOR_MINOR}" -eq "6.12" && ver_test "${PV}" "-ge" "6.12.88" ; then
+			:
+		elif ver_test "${KV_MAJOR_MINOR}" -eq "6.6" && ver_test "${PV}" "-ge" "6.6.138" ; then
+			:
+		elif ver_test "${KV_MAJOR_MINOR}" -eq "6.1" && ver_test "${PV}" "-ge" "6.1.172" ; then
+			:
+		elif ver_test "${KV_MAJOR_MINOR}" -eq "5.15" && ver_test "${PV}" "-ge" "5.15.206" ; then
+			:
+		elif ver_test "${KV_MAJOR_MINOR}" -eq "5.10" && ver_test "${PV}" "-ge" "5.10.255" ; then
+			:
+		else
+eerror "Your kernel sources is too old and not mitigated for Fragnesia 0-day.  Use the latest point release."
+			die
+		fi
 	else
 eerror "env file path:  /etc/portage/ot-sources/${KV_MAJOR_MINOR}/${OT_KERNEL_EXTRAVERSION}/${OT_KERNEL_ARCH}/env"
 eerror "USE=genpatches must be to added per-package package.env to mitigate the Fragnesia 0-day."
