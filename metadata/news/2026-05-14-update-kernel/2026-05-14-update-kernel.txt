@@ -52,14 +52,9 @@ Copy Fail - Linux kernel update
 Remediating
 ===========
 
-There is 1 solution for all three.
-
-Solution:
-
 Download either ot-sources or gentoo-sources.
 
-Verify the following kernel versions for partial/full mitigation.  The
-exact numbers are currently partial but later will be full mitigation.
+Verify the following kernel versions for partial/full mitigation.
 
 Get the patched version(s)
 
@@ -78,6 +73,10 @@ This solution is the most preferred because it also triages several low level
 critical-high vulnerabilities that do not get the same media attention.
 
 The distro servers are slow so be patient when receiving patchsets.
+
+Using gentoo-kernel or gentoo-kernel-bin with KFENCE is okay as a balanced
+security kernel, but it is perferred that gentoo-sources be used and configured
+with KASAN with a higher security score for security-critical use cases.
 
 =======================================
 The mitigation status after remediation
