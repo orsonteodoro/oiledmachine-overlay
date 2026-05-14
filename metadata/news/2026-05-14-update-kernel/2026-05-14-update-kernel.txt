@@ -52,7 +52,7 @@ Copy Fail - Linux kernel update
 Remediating
 ===========
 
-There are 1 solution for all three.
+There is 1 solution for all three.
 
 Solution:
 
