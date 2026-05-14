@@ -14957,10 +14957,10 @@ ot-kernel_disable_affected_modules() {
 	:
 }
 
-# @FUNCTION: ot-kernel_verify_mitigation
+# @FUNCTION: ot-kernel_verify_mitigation_early
 # @DESCRIPTION:
-# Verify applied mitigation
-ot-kernel_verify_mitigation() {
+# Verify applied mitigation early
+ot-kernel_verify_mitigation_early() {
 	if has "genpatches" ${IUSE_EFFECTIVE} && ot-kernel_use "genpatches" ; then
 		:
 	else
@@ -14969,6 +14969,13 @@ eerror "USE=genpatches must be to added per-package package.env to mitigate the 
 eerror "OT_KERNEL_USE=genpatches must be added to the per profile env file to mitigate the Fragnesia 0-day."
 		die
 	fi
+}
+
+# @FUNCTION: ot-kernel_verify_mitigation_late
+# @DESCRIPTION:
+# Verify applied mitigation late
+ot-kernel_verify_mitigation_late() {
+	:
 }
 
 # @FUNCTION: ot-kernel_src_configure_assisted
@@ -15027,6 +15034,8 @@ einfo "Forcing the default hardening level for maximum uptime"
 	if [[ "${work_profile}" == "dss" ]] ; then
 		hardening_level="secure-af"
 	fi
+
+	ot-kernel_verify_mitigation_early
 
 	local gcc_slot=$(get_gcc_slot)
 	gcc_slot="${gcc_slot%_*}"
@@ -15164,7 +15173,7 @@ einfo "Disabling all debug and shortening logging buffers"
 	ot-kernel_set_security_critical					# Must go after disable_debug to avoid disablement
 
 	ot-kernel_disable_affected_modules
-	ot-kernel_verify_mitigation
+	ot-kernel_verify_mitigation_late
 
 	ot-kernel_set_kconfig_from_envvar_array				# Final user override
 	ot-kernel_print_thp_status
