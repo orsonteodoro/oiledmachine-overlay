@@ -2652,7 +2652,6 @@ ewarn "Add more swap space if linker causes an out of memory (OOM) condition."
 
 	if tc-is-clang ; then
 		fix_mb_len_max
-		append-flags "-latomics"
 	fi
 	export HOST_CFLAGS="${CFLAGS}"
 	export HOST_CXXFLAGS="${CXXFLAGS}"
