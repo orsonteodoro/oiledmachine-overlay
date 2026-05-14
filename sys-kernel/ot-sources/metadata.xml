@@ -279,9 +279,8 @@
 
     Testing, uptime, maintenance mode status
 
-    - Active move means weekly tests, fixes, active development.
-    - Maintenance mode means only security fixes provided and minimum required
-      for build success upon request.
+    - Active move means per month testing, fixes, active development.
+    - Maintenance mode means seldom testing, security fixes, build time fixes.
 
       7.0: Actively tested/supported, random soft lock up
      6.18: Actively tested/supported, random soft lock up

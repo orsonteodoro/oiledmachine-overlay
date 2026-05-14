@@ -14,7 +14,7 @@ RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi
 # https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.19
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
-EBUILD_REV="ebuild_revision_10"
+EBUILD_REV="ebuild_revision_11"
 GENPATCHES_VER="9" # can be live only when 9999
 PATCH_PROJC_VER="7.0-r2"
 PATCH_RT_VER="7.0.1-rt2"
