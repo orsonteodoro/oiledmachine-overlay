@@ -74,8 +74,8 @@ Solution:
      The genpatches will apply the Fragnesia mitigation.
      Upstream already applies Dirty Frag and Copy Fail mitigations.
 
-This solution is the most preferred because it also triages several the low level
-vulnerability classes.
+This solution is the most preferred because it also triages several low level
+critical-high vulnerabilities that do not get the same media attention.
 
 The distro servers are slow so be patient when receiving patchsets.
 
