@@ -2,7 +2,7 @@ Title: Rebuild the kernel to mitigate against 0-day vulnerabilities (Fragnesia m
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-05-14
-Revision: 0
+Revision: 1
 News-Item-Format: 2.0
 Display-If-Installed: sys-kernel/mitigate-dos
 Display-If-Installed: sys-kernel/mitigate-dt
@@ -26,9 +26,6 @@ The AV:L (locally ran) is deceptive, it can be chained together with another
 exploited vulnerability with remote code execution for full system compromise.
 The chances increase if you haven't updated your kernel for months or years or
 through unpatched red zone apps.
-
-Both are mitigated.  The official patch fix for Dirty Frag is currently
-partially done, so disabling the affected module is the mitigation fallback.
 
 IMPORTANT:  Always update the initramfs with updated kernel modules to avoid
 getting a black bootup screen and the boot disk is mounted to receive the
@@ -73,3 +70,14 @@ This solution is the most preferred because it also triages several the low leve
 vulnerability classes.
 
 The distro servers are slow so be patient when receiving patchsets.
+
+=======================================
+The mitigation status after remediation
+=======================================
+
+After applying the patches, updating initramfs, and rebooting, the status of
+each vulnerability is as follows:
+
+Fragnesia - Fully mitigated
+Dirty Frag - Fully mitigated
+Copy Fail - Fully mitigated
