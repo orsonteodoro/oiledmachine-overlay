@@ -56,23 +56,23 @@ There is 1 solution for all three.
 
 Solution:
 
-     Download either ot-sources or gentoo-sources
+Download either ot-sources or gentoo-sources
 
-     Verify the following kernel versions for partial/full mitigation.  The
-     exact numbers are currently partial but later will be full mitigation.
+Verify the following kernel versions for partial/full mitigation.  The
+exact numbers are currently partial but later will be full mitigation.
 
-     Get the patched version(s)
+Get the patched version(s)
 
-          >= 7.0.7
-          >= 6.18.30
-          >= 6.12.88
-          >= 6.6.138
-          >= 6.1.172
-          >= 5.15.206
-          >= 5.10.255
+     >= 7.0.7
+     >= 6.18.30
+     >= 6.12.88
+     >= 6.6.138
+     >= 6.1.172
+     >= 5.15.206
+     >= 5.10.255
 
-     The genpatches will apply the Fragnesia mitigation.
-     Upstream already applies Dirty Frag and Copy Fail mitigations.
+Genpatches will apply the Fragnesia mitigation.
+The Linux kernel team already applies Dirty Frag and Copy Fail mitigations.
 
 This solution is the most preferred because it also triages several low level
 critical-high vulnerabilities that do not get the same media attention.
