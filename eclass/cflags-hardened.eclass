@@ -3130,7 +3130,13 @@ einfo "Added ${x} from ${module} sanitizer"
 # build performance.  We removed the nodejs muxer, so it should be possible to
 # remove all muxers by adding more additional ebuild metadata or constraints.
 #
-ewarn "Multislot vtable-verify (vtv) is not supported and sys-devel/gcc:${s}[vtv] should be disabled systemwide for GCC 15+."
+# The library resolver will always pick the highest one (unstable slot) in
+# stable slot builds which is disallowed.  It is caused by rules ignored by
+# gcc-config + etc-updater which assume unstable slot is always okay with
+# vtable-verify (vtv) in stable package context.  For stable =C++17 packages,
+# only linking to stable <=C++17 is allowed.  For unstable >C++17 packages,
+# linking to both stable <=C++17 and unstable >C++17 are allowed.
+ewarn "Multislot vtable-verify (vtv) is not supported and sys-devel/gcc:${s}[vtv] should be disabled systemwide for GCC 15+ to avoid ABI compatibility issues and stable using unstable issue."
 				disable_vtv=1
 				break
 			fi
