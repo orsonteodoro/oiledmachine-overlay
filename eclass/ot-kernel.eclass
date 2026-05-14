@@ -457,7 +457,7 @@ VULNERABILITIES_FIXED=(
 	"CVE-2026-43477;;"
 
 	# 2026-05-11
-	"CVE-2026-43500;Dirty Frag fix part 2;"
+	"CVE-2026-43500;Dirty Frag, fix part 2 by kernel team;"
 
 	# 2026-05-08
 	"CVE-2026-43452;;"
@@ -642,7 +642,7 @@ VULNERABILITIES_FIXED=(
 	"CVE-2025-71297;;"
 
 	# 2026-05-08
-	"CVE-2026-43284;Dirty Frag fix part 1;"
+	"CVE-2026-43284;Dirty Frag, fix part 1 by kernel team;"
 
 	# 2026-05-06
 	"CVE-2025-71285;;"
