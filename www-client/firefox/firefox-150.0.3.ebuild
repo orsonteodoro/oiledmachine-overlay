@@ -6,14 +6,6 @@ EAPI=8
 
 # This ebuild contains AI generated code and AI synthetic data.
 
-# FIXME:
-# error: failed to run custom build command for `cubeb-core v0.32.0`
-# 11:00.59 [cubeb-core 0.32.0] cargo:warning=src/log.c:18: fatal error: opening dependency file .deps/force-cargo-library-build.pp: No such file or directory
-# Do grep -E -r -e "(cubeb-core|fatal error|compilation terminated)" /var/tmp/portage/www-client/firefox-140.10.2e/temp/build.log
-
-# force-cargo-library-build reference in
-# config/makefiles/rust.mk
-
 # D11, D12, D13, F36, F37, F38, F39, F40, F41, F42, U22, U24
 # See /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/taskcluster/kinds/bootstrap/kind.yml
 
@@ -280,7 +272,7 @@ inherit libstdcxx-slot linux-info llvm multilib-minimal multiprocessing
 inherit node optfeature pax-utils python-any-r1 readme.gentoo-r1 rust
 inherit rustflags-hardened toolchain-funcs virtualx vf web-kernel-config xdg
 
-#KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~riscv ~x86" # Build time failure
+KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~riscv ~x86"
 S="${WORKDIR}/${PN}-${PV%_*}"
 S_BAK="${WORKDIR}/${PN}-${PV%_*}"
 if [[ "${PV}" == *"_rc"* ]] ; then
