@@ -425,6 +425,10 @@ einfo "RCE = Remote Code Execution"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("ReDoS"|"REDOS")($|" "|";"|",") ]] ; then
 einfo "ReDoS = Regular Expression Denial of Service"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"RL"($|" "|";"|",") ]] ; then
+# Unreleased network, file, database, threads
+einfo "RL = Resource Leak"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SA"($|" "|";"|",") ]] ; then
 einfo "SA = Spoofing Attack"
 		fi
