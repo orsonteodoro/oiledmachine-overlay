@@ -56,7 +56,7 @@ There is 1 solution for all three.
 
 Solution:
 
-Download either ot-sources or gentoo-sources
+Download either ot-sources or gentoo-sources.
 
 Verify the following kernel versions for partial/full mitigation.  The
 exact numbers are currently partial but later will be full mitigation.
