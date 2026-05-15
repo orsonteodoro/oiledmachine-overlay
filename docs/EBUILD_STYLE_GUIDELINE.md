@@ -217,7 +217,7 @@ Security QA
 | Keys/passwords require Retpoline with {c,rust}flags-hardened  | Y                                                                                                                           |
 | PII require Retpoline with {c,rust}flags-hardened             | Y (Secrets may flow through the same data paths and packages)                                                               |
 | Lockfiles should be security scanned and transparent          | Y                                                                                                                           |
-| Feature abuse (e.g. an AI agent that can make malware)        | Must be disabled or made optional instead of unconditional                                                                  |
+| Feature abuse (e.g. an AI agent that can make malware)        | The feature must be disabled or made optional instead of unconditional opt-in                                               |
 | Container packages allowed?                                   | Y                                                                                                                           |
 | Existing package may be replaced with containerized ebuild?   | N unless community approves                                                                                                 |
 | User inside container                                         | Must be a limited user if daemonized, cannot use pre-existing UID of real users                                             |
