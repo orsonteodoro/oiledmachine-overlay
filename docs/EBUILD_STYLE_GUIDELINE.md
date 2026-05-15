@@ -214,6 +214,7 @@ Robustness QA
 | If ebuilds do not work, how about KEYWORDS?              | Disabled                                                                                      |
 | Minimum uptime (kernel, during testing)                  | 60 days                                                                                       |
 | Minimum uptime (kernel, during production)               | 30 days                                                                                       |
+| Number of expected/actual crashes in 30 days             | 0                                                                                             |
 
 Performance QA
 
