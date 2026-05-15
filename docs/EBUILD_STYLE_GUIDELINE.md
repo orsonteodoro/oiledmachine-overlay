@@ -27,7 +27,7 @@ RDEPEND="
 	sys-libs/glibc
 	zlib? ( sys-libs/zlib )
 "
-DDEPEND="${RDEPEND}"
+DEPEND="${RDEPEND}"
 BDEPEND="
 	sys-devel/gcc
 "
@@ -90,7 +90,7 @@ RDEPEND="
 		sys-libs/zlib
 	)
 "
-DDEPEND="
+DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
