@@ -3589,7 +3589,10 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
     for signatures/hashes in a single script and to sign out-of-tree modules.
     The Plan B is a fix entry or rescue CD that is used to unbreak the init
     process from misconfiguration or from forgetting to update the
-    signatures/hashes after updating parts of the init process.
+    signatures/hashes after updating parts of the init process.  For Secure
+    Boot for Plan C, you need to recovery plans early like having an extra
+    signed kernel with CONFIG_LOCK_DOWN_IN_EFI_SECURE_BOOT.  Ask AI to help
+    setup recovery plans.
 
 
 
