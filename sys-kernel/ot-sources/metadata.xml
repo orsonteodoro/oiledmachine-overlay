@@ -2745,7 +2745,7 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
     See also:
 
       HT
-      OT_KERNEL_LSMS (lockdown mode)
+      OT_KERNEL_LSMS
       OT_KERNEL_SECURITY_CRITICAL
       OT_KERNEL_SECURITY_CRITICAL_TYPES
       OT_KERNEL_SME
