@@ -181,7 +181,7 @@ Security QA
 | Untrusted packages example                                    | Network packages, codec packages, sound/image processing, parsers, web packages                     |
 | Critically secure examples                                    | Memory allocators, password managers, web browsers                                                  |
 | Low level vulnerabilities                                     | Use-after-free, stack overflow, heap overflow, integer overflow                                     |
-| High level vulnerabilities                                    | Inappropriate configuration, access control, container/sandbox escapes                              |
+| High level vulnerabilities                                    | Inappropriate configuration, access control bypass, container/sandbox escapes                       |
 | Untrusted packages require compiler hardening                 | Y                                                                                                   |
 | Daemons must run as limited user/group                        | Y                                                                                                   |
 | Hardened by default                                           | Y                                                                                                   |
