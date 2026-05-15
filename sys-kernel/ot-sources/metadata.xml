@@ -3592,7 +3592,7 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
     signatures/hashes after updating parts of the init process.  For Secure
     Boot for Plan C, you need to recovery plans early like having an extra
     signed kernel with CONFIG_LOCK_DOWN_IN_EFI_SECURE_BOOT.  Ask AI to help
-    setup recovery plans.
+    setup recovery plans ahead of time.
 
 
 
