@@ -65,7 +65,7 @@ pkg_postinst() {
 
 ```
 
-Oiledmachine-overlay style example
+oiledmachine-overlay style example
 
 ```bash
 # Copyright 2026 Orson Teodoro <orsonteodoro@hotmail.com>
@@ -173,6 +173,13 @@ Rust defaults
 | Acceptable Rust for LLVM 19 for C++    | Rust 1.85.1                                               |
 | Acceptable Rust for LLVM 18 for C++    | Rust 1.81.0                                               |
 | Acceptable Rust for LLVM 17 for C++    | Rust 1.77.2                                               |
+
+Feature QA
+
+| Subject                                                       | Answer                                                                                                                      |
+| ---                                                           | ---                                                                                                                         |
+| Default USE flags enablement                                  | Should match upstream with exceptions                                                                                       |
+| Default bloat spectrum if no defaults listed                  | Minimal install with optional USE flags                                                                                     |
 
 Security QA
 
