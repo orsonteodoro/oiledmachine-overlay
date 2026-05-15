@@ -1770,8 +1770,8 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
 
       autogroup=n is the same as cfs-throughput or eevdf-throughput.
       autogroup=y is the same as cfs-autogroup, cfs-interactive, eevdf-autogroup, or eevdf-interactive.
-      CFS is kernel version < 6.6.
-      EEVDF is kernel version >= 6.6.
+      CFS is kernel version < 6.6 designed for fairness.
+      EEVDF is kernel version >= 6.6 retains fairness design but improves upon it with latency reduction for interactive tasks.
       scx_lavd is currently more popular than scx_bpfland for gamers.
 
       Use cases for Rust based CPU schedulers
