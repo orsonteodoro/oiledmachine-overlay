@@ -145,7 +145,7 @@ C++ defaults
 | Subject                     | Answer                                                                |
 | ---                         | ---                                                                   |
 | Default C++                 | -std=gnu++17                                                          |
-| Acceptable rolling C++      | -std=gnu++20, -std=gnu++23                                            |
+| Acceptable rolling C++      | -std=gnu++20, -std=gnu++23, -std=c++20, -std=c++23                    |
 | Acceptable LTS C++          | -std=gnu++17, -std=gnu++11, -std=c++17, -std=c++11                    |
 | Acceptable LTS linking      | LTS app with only LTS libs; LTS lib with LTS lib                      |
 | Acceptable rolling linking  | Rolling app with LTS lib or rolling lib; rolling lib with rolling lib |
@@ -164,19 +164,21 @@ Python defaults
 
 Rust defaults
 
-| Subject                                | Answer                                                    |
-| ---                                    | ---                                                       |
-| Default LTS Rust                       | Rust 1.91.1                                               |
-| Default rolling Rust                   | Rust 1.95.0                                               |
-| What is a rolling or LTS Rust package? | Determined by most recent Rust slot needed for Cargo.lock |
-| Acceptable LTS Rust for non C++        | Rust 1.91.1                                               |
-| Acceptable rolling Rust for non C++    | Rust 1.95.0                                               |
-| Acceptable Rust for LLVM 22 for C++    | Rust 1.95.0                                               |
-| Acceptable Rust for LLVM 21 for C++    | Rust 1.94.1                                               |
-| Acceptable Rust for LLVM 20 for C++    | Rust 1.90.0                                               |
-| Acceptable Rust for LLVM 19 for C++    | Rust 1.85.1                                               |
-| Acceptable Rust for LLVM 18 for C++    | Rust 1.81.0                                               |
-| Acceptable Rust for LLVM 17 for C++    | Rust 1.77.2                                               |
+| Subject                                | Answer                                                     |
+| ---                                    | ---                                                        |
+| Default LTS Rust                       | Rust 1.91.1                                                |
+| Default rolling Rust                   | Rust 1.95.0                                                |
+| What is a rolling or LTS Rust package? | Determined by most recent Rust slot needed for Cargo.lock. |
+|                                        | LTS if <= 1.91.1                                           |
+|                                        | Rolling if > 1.91.1                                        |
+| Acceptable LTS Rust for non C++        | Rust 1.91.1                                                |
+| Acceptable rolling Rust for non C++    | Rust 1.95.0                                                |
+| Acceptable Rust for LLVM 22 for C++    | Rust 1.95.0                                                |
+| Acceptable Rust for LLVM 21 for C++    | Rust 1.94.1                                                |
+| Acceptable Rust for LLVM 20 for C++    | Rust 1.90.0                                                |
+| Acceptable Rust for LLVM 19 for C++    | Rust 1.85.1                                                |
+| Acceptable Rust for LLVM 18 for C++    | Rust 1.81.0                                                |
+| Acceptable Rust for LLVM 17 for C++    | Rust 1.77.2                                                |
 
 Feature QA
 
