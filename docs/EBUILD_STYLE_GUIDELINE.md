@@ -52,13 +52,13 @@ src_prepare() {
 }
 
 pkg_postinst() {
-	einfo "The datacenter stole Larry The Cows water!"
+	ewarn "The datacenter stole Larry The Cows water!"
 	if ! use cowpen ; then
-		einfo
-		einfo "Security Notice"
-		einfo
-		einfo "Larry The Cow has escaped!"
-		einfo
+		ewarn
+		ewarn "Security Notice"
+		ewarn
+		ewarn "Larry The Cow has escaped!"
+		ewarn
 	fi
 }
 
@@ -118,13 +118,13 @@ src_prepare() {
 }
 
 pkg_postinst() {
-einfo "The datacenter stole Larry The Cows water!"
+ewarn "The datacenter stole Larry The Cows water!"
 	if ! use cowpen ; then
-einfo
-einfo "Security Notice"
-einfo
-einfo "Larry the cow has escaped!"
-einfo
+ewarn
+ewarn "Security Notice"
+ewarn
+ewarn "Larry the cow has escaped!"
+ewarn
 	fi
 }
 
