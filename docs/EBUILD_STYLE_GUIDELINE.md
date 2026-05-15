@@ -229,7 +229,7 @@ LICENCE variable QA
 | Subject                                                                                               | Answer                                                                                        |
 | ---                                                                                                   | ---                                                                                           |
 | AI models require licenses and acceptable use AI ethics disclosure                                    | Y                                                                                             |
-| Telemetry require privacy policy and data retention disclosure                                        | Y                                                                                             |
+| Telemetry usage require privacy policy and data retention disclosure                                  | Y                                                                                             |
 | Services require terms of use disclosure                                                              | Y                                                                                             |
 | Patent licenses must be disclosed                                                                     | Y                                                                                             |
 | The `custom` placeholder is allowed                                                                   | Y                                                                                             |
