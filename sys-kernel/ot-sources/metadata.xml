@@ -2745,6 +2745,7 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
     See also:
 
       HT
+      OT_KERNEL_LSMS (lockdown mode)
       OT_KERNEL_SECURITY_CRITICAL
       OT_KERNEL_SECURITY_CRITICAL_TYPES
       OT_KERNEL_SME
@@ -3517,6 +3518,10 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
     * default - Uses "integrity,selinux,bpf" with default subsettings
       equivalent to upstream defaults.  It is implied capability and
       integrity are loaded.
+    * lockdown - May break boot if images, drivers, are not signed; 
+      misconfigured bootloader or kernel; or init dependence on
+      implicit disabled features.  It can improve both kernel keys
+      confidendiality and kernel integrity.
     * manual - Uses previously manually set settings
     * a custom list
 
