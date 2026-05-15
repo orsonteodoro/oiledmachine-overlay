@@ -227,7 +227,7 @@ Security QA
 | User inside container                                         | Must be a limited user if daemonized, cannot use pre-existing UID of real users                                             |
 | Telemetry                                                     | Default off, default opt-out                                                                                                |
 | Data breach support (password check remotely)                 | Default off, default opt-out, patching may be required to optionalize                                                       |
-| Binary packages                                               | Allowed with restrictions that only if it is the only option or difficult to maintain or package the source version         |
+| Binary packages                                               | Allowed with restrictions that only if it's the only option, source package/maintenance issue, heavy compilation cost       |
 
 Robustness QA
 
