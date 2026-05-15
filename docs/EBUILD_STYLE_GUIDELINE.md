@@ -212,14 +212,14 @@ Robustness QA
 | ---                                                      | ---                                                                                           |
 | Ebuilds must work when merged                            | Y                                                                                             |
 | If ebuilds do not work, how about KEYWORDS?              | Disabled                                                                                      |
-| Minimum server uptime                                    | 60 days                                                                                       |
+| Minimum server uptime (during testing, not production)   | 60 days                                                                                       |
 
 Performance QA
 
 | Subject                                                  | Answer                                                                                        |
 | ---                                                      | ---                                                                                           |
 | Minimum FPS                                              | 25 FPS (Motion picture FPS)                                                                   |
-| Minimum server uptime                                    | 60 days                                                                                       |
+| Minimum server uptime (during testing, not production)   | 60 days                                                                                       |
 | Maximum ebuild completion time                           | 36 hours                                                                                      |
 | Runtime thrashing                                        | Disallowed                                                                                    |
 | Build time severe thrashing                              | Only allowed for web browser or AI/ML packages                                                |
@@ -228,7 +228,7 @@ LICENCE variable QA
 
 | Subject                                                                                               | Answer                                                                                        |
 | ---                                                                                                   | ---                                                                                           |
-| AI models require licenses and acceptable use [AI ethics] disclosure                                  | Y                                                                                             |
+| AI models require licenses and acceptable use AI ethics disclosure                                    | Y                                                                                             |
 | Telemetry require privacy policy and data retention disclosure                                        | Y                                                                                             |
 | Services require terms of use disclosure                                                              | Y                                                                                             |
 | Patent licenses must be disclosed                                                                     | Y                                                                                             |
