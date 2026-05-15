@@ -3548,8 +3548,9 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
       confidendiality and to protect kernel integrity.  It may break boot if
       images, drivers, are not signed; misconfigured bootloader or kernel; or
       init dependence on implicit disabled features.  It mitigates
-      exfiltration of keys, memory, design weaknesses, snooping in encrypted
-      networks, reconnaissance data.
+      exfiltration of keys, memory, sensitive registers, sensitive kernel
+      addresses, design weaknesses, snooping in encrypted networks,
+      reconnaissance data.
     * manual - Uses previously manually set settings.
     * safesetid - Restricts UID_A->UID_B or GID_A->GID_B transitions using a
       whitelist.
