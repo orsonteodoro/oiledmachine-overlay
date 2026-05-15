@@ -3504,6 +3504,19 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
         Kernel logos are stills.
 
 
+    Break time...
+
+    Before discussing LSM, let's talk about layered defense and understanding
+    the access control design.  They are evaluated and enforced from 1 to 3 in
+    that order.  If blocked, it is no longer needed to evaluate down.  It goes
+    from broad to specific control.
+
+    1. Standard DAC (Mandatory Access Control)
+       - Filesystem DAC (i.e. rwx)
+       - Process DAC (i.e. UID/GID)
+    2. Capability LSM
+    3. MAC (Mandatory Access Control) - Typically one used by system admins
+
 
     OT_KERNEL_LSMS - Enable and set the order for LSM (Linux Security Modules)
 
@@ -3512,17 +3525,40 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
 
     Acceptable general values:  auto, default, manual
 
+    * apparmor - A MAC (Mandatory Access Control) for simple profile generation
+      and profile deployment.
     * auto - Auto adds LSMs based on packages installed and OT_KERNEL_HARDENING_LEVEL.
       - If OT_KERNEL_HARDENING_LEVEL=fast-af or similar it will disable LSMs.
       - If OT_KERNEL_HARDENING_LEVEL=secure or above it will enable and auto-detect LSMs.
+    * bpf - Adds hooks for securing, changing, blocking, or logging of system calls
+      for both general systemwide and app security.
+    * capability - Unconditonally added for privileged DAC checks in between
+      standard DAC and MAC, for managing the 40 privileges for root so root
+      gets least privileges.  See capabilities man page.
     * default - Uses "integrity,selinux,bpf" with default subsettings
       equivalent to upstream defaults.  It is implied capability and
       integrity are loaded.
+    * integrity - Is for trusted boot and runtime protection for continuous
+      integrity enforcement.  Maintenence requires either ima_appraise=off, lsm=
+      integrity exclusion, or CONFIG_IMA disablement.  It doesn't require TPM.
+    * loadpin - Pins kernel assets/modules to a trusted file system for
+      continuous integrity enforcement but requires a read-only integrity
+      device to store integrity data.
     * lockdown - May break boot if images, drivers, are not signed; 
       misconfigured bootloader or kernel; or init dependence on
       implicit disabled features.  It can improve both kernel keys
       confidendiality and kernel integrity.
-    * manual - Uses previously manually set settings
+    * manual - Uses previously manually set settings.
+    * safesetid - Restricts UID_A->UID_B or GID_A->GID_B transitions using a
+      whitelist.
+    * selinux - A MAC (Mandatory Access Control) for max security specificity on
+      multiuser servers.
+    * smack - A MAC (Mandatory Access Control) for automotive, embedded, IoT.
+    * tomoyo - A MAC (Mandatory Access Control) for embedded, IoT, or server
+      services lockdown for system auditing, cybersecurity analysis, or
+      defensive protection.
+    * yama - DAC (Discretionary Access Control) for specific cases like
+      web browser security.
     * a custom list
 
     The "acceptable multi values" and "acceptable general values" are mutually
