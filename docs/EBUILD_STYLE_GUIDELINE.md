@@ -160,6 +160,7 @@ Python defaults
 | Acceptable multislot Python      | python3_{11..14}                                                     |
 | Acceptable single slot Python    | python3_{11..14}                                                     |
 | Acceptable slot paring           | The Python app slot must pair with same Python slot for dependencies |
+| Are binary packages allowed?     | Y but only if that is the only option                                |
 
 Rust defaults
 
