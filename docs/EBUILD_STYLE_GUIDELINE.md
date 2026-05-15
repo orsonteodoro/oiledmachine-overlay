@@ -31,9 +31,9 @@ DDEPEND="${RDEPEND}"
 BDEPEND="
 	sys-devel/gcc
 "
-PATCHES="
+PATCHES=(
 	"${FILESDIR}"/${PN}-1.0.0-hardcoded-fixes.patch
-"
+)
 
 src_unpack() {
 	if [[ ${PV} =~ 9999 ]] ; then
@@ -96,9 +96,9 @@ DDEPEND="
 BDEPEND="
 	sys-devel/gcc
 "
-PATCHES="
+PATCHES=(
 	"${FILESDIR}/${PN}-1.0.0-hardcoded-fixes.patch"
-"
+)
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
