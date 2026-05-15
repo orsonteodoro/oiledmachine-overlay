@@ -212,14 +212,16 @@ Robustness QA
 | ---                                                      | ---                                                                                           |
 | Ebuilds must work when merged                            | Y                                                                                             |
 | If ebuilds do not work, how about KEYWORDS?              | Disabled                                                                                      |
-| Minimum server uptime (during testing, not production)   | 60 days                                                                                       |
+| Minimum uptime (kernel, during testing)                  | 60 days                                                                                       |
+| Minimum uptime (kernel, during production)               | 30 days                                                                                       |
 
 Performance QA
 
 | Subject                                                  | Answer                                                                                        |
 | ---                                                      | ---                                                                                           |
 | Minimum FPS                                              | 25 FPS (Motion picture FPS)                                                                   |
-| Minimum server uptime (during testing, not production)   | 60 days                                                                                       |
+| Minimum uptime (kernel, during testing)                  | 60 days                                                                                       |
+| Minimum uptime (kernel, during production)               | 30 days                                                                                       |
 | Maximum ebuild completion time                           | 36 hours                                                                                      |
 | Runtime thrashing                                        | Disallowed                                                                                    |
 | Build time severe thrashing                              | Only allowed for web browser or AI/ML packages                                                |
