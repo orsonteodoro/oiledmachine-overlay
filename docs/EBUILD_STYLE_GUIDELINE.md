@@ -222,7 +222,7 @@ Security QA
 | Existing package may be replaced with containerized ebuild?   | N unless community approves                                                                                                 |
 | User inside container                                         | Must be a limited user if daemonized, cannot use pre-existing UID of real users                                             |
 | Telemetry                                                     | Default off, default opt-out                                                                                                |
-| Data breach support (password check remotely)                 | Default off, default opt-out                                                                                                |
+| Data breach support (password check remotely)                 | Default off, default opt-out, patching may be required to optionalize                                                       |
 
 Robustness QA
 
