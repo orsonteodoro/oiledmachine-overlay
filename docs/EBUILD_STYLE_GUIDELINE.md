@@ -15,8 +15,8 @@ Distro ebuild example
 
 EAPI=8
 
-if [[ ${PV} =~ *9999* ]] ; then
-	EGIT_REPO_URI="https://github.com/orsonteodoro/oiledmachine-overlay.git"
+if [[ ${PV} == *9999* ]] ; then
+	EGIT_REPO_URI="https://codeberg.org/gentoo/gentoo.git"
 	inherit git-r3
 fi
 
@@ -37,7 +37,7 @@ PATCHES=(
 )
 
 src_unpack() {
-	if [[ ${PV} =~ 9999 ]] ; then
+	if [[ ${PV} == *9999* ]] ; then
 		git-r3_fetch
 		git-r3_checkout
 	else
