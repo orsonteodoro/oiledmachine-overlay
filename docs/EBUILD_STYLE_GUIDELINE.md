@@ -175,38 +175,38 @@ Rust defaults
 
 Security QA
 
-| Subject                                                       | Answer                                                                                        |
-| ---                                                           | ---                                                                                           |
-| Untrusted meaning                                             | Processes untrusted data                                                                      |
-| Trusted meaning                                               | Never trust, always verify                                                                    |
-| Untrusted packages example                                    | Network packages, codec packages, sound/image processing, parsers, web packages               |
-| Critically secure examples                                    | Memory allocators, password managers, web browsers                                            |
-| Low level vulnerabilities                                     | Use-after-free, stack overflow, heap overflow, integer overflow                               |
-| High level vulnerabilities                                    | Inappropriate configuration, misconfiguration, access control, container/sandbox escapes      |
-| Untrusted packages require compiler hardening                 | Y                                                                                             |
-| Daemons must run as limited user/group                        | Y                                                                                             |
-| Hardened by default                                           | Y                                                                                             |
-| Required Clang CFI                                            | For web browsers only (planned)                                                               |
-| SSP-strong Required                                           | Y, for untrusted data                                                                         |
-| Default SSP level                                             | -fstack-protector-strong                                                                      |
-| Default _FORTIFY_SOURCE level                                 | 3                                                                                             |
-| Default linker flags                                          | Full Relro                                                                                    |
-| Ciphersuite default                                           | Post quantum era first and default ON (ML-KEM, ML-DSA), followed by legacy (RSA, ECDH, ECDSA) |
-| Default asymmetric                                            | Post-quantum lattice/hash first, followed by legacy elliptical                                |
-| Default symmetrical block                                     | Post-quantum AES-256, followed by legacy AES-128                                              |
-| Default hash                                                  | Post-quantum SHA-256, followed by legacy SHA-256                                              |
-| Default KDF                                                   | Post-quantum Argon2id, followed by legacy PBKDF2                                              |
-| Q-Day estimate                                                | Year 2029 (3-4 years from now)                                                                |
-| www-apps require permissions sanitization                     | Y                                                                                             |
-| Default security-critical optimization level                  | -O2                                                                                           |
-| Appropriate security-critical optimization level              | -O1 to -O2                                                                                    |
-| Fallback default optimization level                           | -O0 (unset)                                                                                   |
-| Untrusted data require cflags-hardened                        | Y                                                                                             |
-| Keys/passwords require Retpoline with cflags-hardened         | Y                                                                                             |
-| Security-critical packages require cflags-hardened            | Y                                                                                             |
-| Untrusted data require rustflags-hardened?                    | Y                                                                                             |
-| Security-critical require rustflags-hardened?                 | Y                                                                                             |
-| Keys/passwords require Retpoline with rustflags-hardened?     | Y                                                                                             |
+| Subject                                                       | Answer                                                                                              |
+| ---                                                           | ---                                                                                                 |
+| Untrusted meaning                                             | Processes untrusted data                                                                            |
+| Trusted meaning                                               | Never trust, always verify                                                                          |
+| Untrusted packages example                                    | Network packages, codec packages, sound/image processing, parsers, web packages                     |
+| Critically secure examples                                    | Memory allocators, password managers, web browsers                                                  |
+| Low level vulnerabilities                                     | Use-after-free, stack overflow, heap overflow, integer overflow                                     |
+| High level vulnerabilities                                    | Inappropriate configuration, access control, container/sandbox escapes                              |
+| Untrusted packages require compiler hardening                 | Y                                                                                                   |
+| Daemons must run as limited user/group                        | Y                                                                                                   |
+| Hardened by default                                           | Y                                                                                                   |
+| Required Clang CFI                                            | For web browsers only (planned)                                                                     |
+| SSP-strong Required                                           | Y, for untrusted data                                                                               |
+| Default SSP level                                             | -fstack-protector-strong                                                                            |
+| Default _FORTIFY_SOURCE level                                 | 3                                                                                                   |
+| Default linker flags                                          | Full Relro                                                                                          |
+| Ciphersuite default                                           | Post quantum era first and default ON, followed by legacy                                           |
+| Default asymmetric                                            | Post-quantum lattice/hash first (ML-KEM, ML-DSA), followed by legacy elliptical (RSA, ECDH, ECDSA)  |
+| Default symmetrical block                                     | Post-quantum AES-256, followed by legacy AES-128                                                    |
+| Default hash                                                  | Post-quantum SHA-256, followed by legacy SHA-256                                                    |
+| Default KDF                                                   | Post-quantum Argon2id, followed by legacy PBKDF2                                                    |
+| Q-Day estimate                                                | Year 2029 (3-4 years from now)                                                                      |
+| www-apps require permissions sanitization                     | Y                                                                                                   |
+| Default security-critical optimization level                  | -O2                                                                                                 |
+| Appropriate security-critical optimization level              | -O1 to -O2                                                                                          |
+| Fallback default optimization level                           | -O0 (unset)                                                                                         |
+| Untrusted data require cflags-hardened                        | Y                                                                                                   |
+| Keys/passwords require Retpoline with cflags-hardened         | Y                                                                                                   |
+| Security-critical packages require cflags-hardened            | Y                                                                                                   |
+| Untrusted data require rustflags-hardened?                    | Y                                                                                                   |
+| Security-critical require rustflags-hardened?                 | Y                                                                                                   |
+| Keys/passwords require Retpoline with rustflags-hardened?     | Y                                                                                                   |
 
 Robustness QA
 
