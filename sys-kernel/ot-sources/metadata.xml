@@ -1774,29 +1774,31 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
       EEVDF is kernel version >= 6.6 retains fairness design but improves upon it with latency reduction for interactive tasks.
       scx_lavd is currently more popular than scx_bpfland for gamers.
 
-      Use cases for Rust based CPU schedulers
+      Use cases and features for Rust based CPU schedulers
 
-      Scheduler       | Gaming | Audio | Server | HPC | Mobile / | Power savings | Production | Research / | Demo
-                      |        |       |        |     | embedded |               | readiness  | experiment |        
-      ---             | ---    | ---   | ---    | --- | ---      | ---           | ---        | ---        | ---
-      scx_beerland    |        |       | Y      |     |          |               | Y          |            |
-      scx_bpfland     | Y      | Y     |        |     | Y        |               | Y          |            |
-      scx_cake [1]    | Y      | Y     |        |     |          | Y             | Partial    | Y          |
-      scx_chaos       |        |       |        |     |          |               | N          | Y          | Y
-      scx_cosmos      |        |       |        |     |          |               | Y          |            |
-      scx_flash       |        | Y     |        |     |          |               | Y          |            |
-      scx_lavd        | Y      | Y     | Y      |     | Y        | Y             | Y          |            |
-      scx_layered     |        |       | Y      |     |          |               | Y          |            |
-      scx_mitosis     |        |       |        |     |          |               | Partial    | Y          | Partial
-      scx_p2dq        |        |       | Y      |     |          |               | Y          |            |
-      scx_pandemonium | Y      | Y     |        |     |          | Y             | Partial    | Y          |
-      scx_rlfifo      |        |       |        |     |          |               | P          |            |
-      scx_rustland    |        |       |        |     |          |               | P          |            | Y
-      scx_rusty       |        |       | Y      |     |          |               | Y          |            |
-      scx_tickless    |        |       | Y      | Y   | Y        | Y             | Y          |            |
-      scx_wd40        |        |       |        |     |          |               | N          | Y          | Y
+      Scheduler       | Gaming | Audio | Server | HPC | Mobile / | Power savings | Production | Research / | Demo     | Tunables or
+                      |        |       |        |     | embedded |               | readiness  | experiment |          | profiles [4]
+      ---             | ---    | ---   | ---    | --- | ---      | ---           | ---        | ---        | ---      | ---
+      scx_beerland    |        |       | Y      |     |          |               | Y          |            |          |
+      scx_bpfland     | Y      | Y     |        |     | Y        |               | Y          |            |          | P [1]
+      scx_cake        | Y      | Y     |        |     |          | Y             | Partial    | Y          |          | P [2]
+      scx_chaos       |        |       |        |     |          |               | N          | Y          | Y        | T
+      scx_cosmos      |        |       |        |     |          |               | Y          |            |          |
+      scx_flash       |        | Y     |        |     |          |               | Y          |            |          | T
+      scx_lavd        | Y      | Y     | Y      |     | Y        | Y             | Y          |            |          | P [3]
+      scx_layered     |        |       | Y      |     |          |               | Y          |            |          | T
+      scx_mitosis     |        |       |        |     |          |               | Partial    | Y          | Partial  |
+      scx_p2dq        |        |       | Y      |     |          |               | Y          |            |          |
+      scx_pandemonium | Y      | Y     |        |     |          | Y             | Partial    | Y          |          | T
+      scx_rlfifo      |        |       |        |     |          |               | P          |            |          |
+      scx_rustland    |        |       |        |     |          |               | P          |            | Y        |
+      scx_rusty       |        |       | Y      |     |          |               | Y          |            |          | T
+      scx_tickless    |        |       | Y      | Y   | Y        | Y             | Y          |            |          |
+      scx_wd40        |        |       |        |     |          |               | N          | Y          | Y        |
 
-      [1] It has a tunable --profile parameter which accepts gaming, esports, legacy, battery, default.  Gaming is the default.
+      [1] Supports --lowlatency and --normal
+
+      [2] Supports --profile parameter which accepts gaming, esports, legacy, battery, default.
       It controls the timeslice and starvation timeout.
 
       scx_cake tunable --profile arg comparison:
@@ -1808,6 +1810,10 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
       legacy  | 4 ms         | 200 ms     | For older CPUs, batter saving
       battery | Varies       | Varies     | Power saving
       default | 2 ms         | 100 ms     | Same as gaming
+
+      [3] Supports --profile or --lowlatency, --gaming, --powersave, --autopilot, --balanced
+
+      [4] See scx_<name> --help. T = Tunable support, P = Profile support
 
       Scheduler       | Criticality or algorithmic design focus
       ---             | ---
