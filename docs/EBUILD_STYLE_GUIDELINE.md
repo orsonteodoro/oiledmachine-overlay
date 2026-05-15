@@ -195,7 +195,7 @@ Security QA
 | Daemons must run as limited user/group                        | Y                                                                                                                           |
 | Hardened by default                                           | Y                                                                                                                           |
 | Required Clang CFI                                            | For web browsers only (planned)                                                                                             |
-| SSP-strong Required                                           | Y, for untrusted data                                                                                                       |
+| SSP-strong required                                           | Y, for untrusted data                                                                                                       |
 | Default SSP level                                             | -fstack-protector-strong                                                                                                    |
 | Default _FORTIFY_SOURCE level                                 | 3                                                                                                                           |
 | Default linker flags                                          | Full Relro                                                                                                                  |
@@ -211,7 +211,7 @@ Security QA
 | www-apps require permissions sanitization                     | Y                                                                                                                           |
 | Default security-critical optimization level                  | -O2                                                                                                                         |
 | Appropriate security-critical optimization level              | -O1 to -O2                                                                                                                  |
-| Fallback default optimization level                           | -O0 (unset)                                                                                                                 |
+| Fallback default optimization level                           | -O0 (unset) but can be overwritten by user typically -O2                                                                    |
 | Untrusted data require {c,rust}flags-hardened                 | Y                                                                                                                           |
 | Security-critical packages require {c,rust}flags-hardened     | Y                                                                                                                           |
 | Keys/passwords require Retpoline with {c,rust}flags-hardened  | Y                                                                                                                           |
