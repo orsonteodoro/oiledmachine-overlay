@@ -833,7 +833,7 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
 
     | Kernel flavor                                             | Criticality       | Example use cases                           |
     | ---                                                       | ---               | ---                                         |
-    | ot-sources (dj)                                           | Performance       | Music production, DJ                        |
+    | ot-sources (dj)                                           | Performance       | Music production, DJ laptop                 |
     | ot-sources (gaming)                                       | Performance       | Emulators, self-hosted servers              |
     | ot-sources (builder)                                      | Balanced          | Web browsing, online gaming                 |
     | ot-sources (hardened)                                     | Security-critical | Secure chat, online banking                 |
@@ -3541,9 +3541,13 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
     * integrity - Is for trusted boot and runtime protection for continuous
       integrity enforcement.  Maintenence requires either ima_appraise=off, lsm=
       integrity exclusion, or CONFIG_IMA disablement.  It doesn't require TPM.
-    * loadpin - Pins kernel assets/modules to a trusted file system for
+    * loadpin - Pins kernel files to a trusted file system for
       continuous integrity enforcement but requires a read-only integrity
-      device to store integrity data.
+      device to store integrity data.  The estimated size of the read-only is
+      1% to store the signatures of loaded modules.  The attested files are
+      external modules, firmware, kexec images, DAC/MAC profiles, keys or
+      certificates.  The storage can be either a CD, or USB or partition as
+      a dm-verity device.  It provides only load time integrity check.
     * lockdown - Restrict userspace access to kernel to improve both data
       confidendiality and to protect kernel integrity.  It may break boot if
       images, drivers, are not signed; misconfigured bootloader or kernel; or
@@ -3577,6 +3581,17 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
     It is recommended to use auto if you are using
     OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1.  Otherwise, it assumes that
     the user wants exact and full control over the LSM inclusion and ordering.
+
+    For integrity LSM, lockdown LSM, loadpin LSM, it is recommended to have a
+    bootloader entry to fix all/some of the mentioned LSMs to produce new
+    signatures/hashes so that appraisal succeeds in the production kernel.
+    Ask the AI to generate an update script to update integrity and loadpin
+    for signatures/hashes in a single script and to sign out-of-tree modules.
+    The Plan B is a fix entry or rescue CD that is used to unbreak the init
+    process from misconfiguration or from forgetting to update the
+    signatures/hashes after updating parts of the init process.
+
+
 
     Example:
 
