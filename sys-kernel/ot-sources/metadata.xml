@@ -1776,40 +1776,57 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
 
       Use cases for Rust based CPU schedulers
 
-      Scheduler    | Gaming | Audio | Server | HPC | Mobile / | Power savings | Production | Research / | Demo
-                   |        |       |        |     | embedded |               | readiness  | experiment |        
-      ---          | ---    | ---   | ---    | --- | ---      | ---           | ---        | ---        | ---
-      scx_beerland |        |       | Y      |     |          |               | Y          |            |
-      scx_bpfland  | Y      | Y     |        |     | Y        |               | Y          |            |
-      scx_chaos    |        |       |        |     |          |               | N          | Y          | Y
-      scx_cosmos   |        |       |        |     |          |               | Y          |            |
-      scx_flash    |        | Y     |        |     |          |               | Y          |            |
-      scx_lavd     | Y      | Y     | Y      |     | Y        | Y             | Y          |            |
-      scx_layered  |        |       | Y      |     |          |               | Y          |            |
-      scx_mitosis  |        |       |        |     |          |               | Partial    | Y          | Partial
-      scx_p2dq     |        |       | Y      |     |          |               | Y          |            |
-      scx_rlfifo   |        |       |        |     |          |               | P          |            |
-      scx_rustland |        |       |        |     |          |               | P          |            | Y
-      scx_rusty    |        |       | Y      |     |          |               | Y          |            |
-      scx_tickless |        |       | Y      | Y   | Y        | Y             | Y          |            |
-      scx_wd40     |        |       |        |     |          |               | N          | Y          | Y
+      Scheduler       | Gaming | Audio | Server | HPC | Mobile / | Power savings | Production | Research / | Demo
+                      |        |       |        |     | embedded |               | readiness  | experiment |        
+      ---             | ---    | ---   | ---    | --- | ---      | ---           | ---        | ---        | ---
+      scx_beerland    |        |       | Y      |     |          |               | Y          |            |
+      scx_bpfland     | Y      | Y     |        |     | Y        |               | Y          |            |
+      scx_cake [1]    | Y      | Y     |        |     |          | Y             | Partial    | Y          |
+      scx_chaos       |        |       |        |     |          |               | N          | Y          | Y
+      scx_cosmos      |        |       |        |     |          |               | Y          |            |
+      scx_flash       |        | Y     |        |     |          |               | Y          |            |
+      scx_lavd        | Y      | Y     | Y      |     | Y        | Y             | Y          |            |
+      scx_layered     |        |       | Y      |     |          |               | Y          |            |
+      scx_mitosis     |        |       |        |     |          |               | Partial    | Y          | Partial
+      scx_p2dq        |        |       | Y      |     |          |               | Y          |            |
+      scx_pandemonium | Y      | Y     |        |     |          | Y             | Partial    | Y          |
+      scx_rlfifo      |        |       |        |     |          |               | P          |            |
+      scx_rustland    |        |       |        |     |          |               | P          |            | Y
+      scx_rusty       |        |       | Y      |     |          |               | Y          |            |
+      scx_tickless    |        |       | Y      | Y   | Y        | Y             | Y          |            |
+      scx_wd40        |        |       |        |     |          |               | N          | Y          | Y
 
-      Scheduler    | Criticality or algorithmic design focus
-      ---          | ---
-      scx_beerland | Cache-locality-critical + scalability-critical
-      scx_bpfland  | Interactive-critical + topology awareness
-      scx_chaos    | Debug-critical or race-conditon-critical
-      scx_cosmos   | Cache-locality-critical + lightweight/general-purpose
-      scx_flash    | Fairness-critical + predictability-critical
-      scx_lavd     | Latency-critical + interactive-critical
-      scx_layered  | Customizability / layered-policy-critical
-      scx_mitosis  | Experimental (hybrid locality + latency)
-      scx_p2dq     | Fairness + premption/latency-awareness (conservative wakeup for latency-critical)
-      scx_rlfifo   | FIFO / simple-queue-critical
-      scx_rustland | Interactive + userspace-decision-critical
-      scx_rusty    | Cache-locality-critical + load-balancing-critical
-      scx_tickless | Low-overhead-critical
-      scx_wd40     | Research / BPF-arenas-critical
+      [1] It has a tunable --profile parameter which accepts gaming, esports, legacy, battery, default.  Gaming is the default.
+      It controls the timeslice and starvation timeout.
+
+      scx_cake tunable --profile arg comparison:
+
+      arg     | Base Quantum | Starvation | Notes
+      ---     | ---          | ---        | ---
+      gaming  | 2 ms         | 100 ms     | For general gaming + desktop
+      esports | 1 ms         | 50 ms      | For competitive gaming, ultra low latency
+      legacy  | 4 ms         | 200 ms     | For older CPUs, batter saving
+      battery | Varies       | Varies     | Power saving
+      default | 2 ms         | 100 ms     | Same as gaming
+
+      Scheduler       | Criticality or algorithmic design focus
+      ---             | ---
+      scx_beerland    | Cache-locality-critical + scalability-critical
+      scx_bpfland     | Interactive-critical + topology awareness
+      scx_cake        | Responsiveness + frame-time stability
+      scx_chaos       | Debug-critical or race-conditon-critical
+      scx_cosmos      | Cache-locality-critical + lightweight/general-purpose
+      scx_flash       | Fairness-critical + predictability-critical
+      scx_lavd        | Latency-critical + interactive-critical
+      scx_layered     | Customizability / layered-policy-critical
+      scx_mitosis     | Experimental (hybrid locality + latency)
+      scx_p2dq        | Fairness + premption/latency-awareness (conservative wakeup for latency-critical)
+      scx_pandemonium | Behavioral adaptivity + mixed workload robustness
+      scx_rlfifo      | FIFO / simple-queue-critical
+      scx_rustland    | Interactive + userspace-decision-critical
+      scx_rusty       | Cache-locality-critical + load-balancing-critical
+      scx_tickless    | Low-overhead-critical
+      scx_wd40        | Research / BPF-arenas-critical
 
       * The + indicates hybrids
 
