@@ -224,4 +224,4 @@ Performance QA
 | Minimum server uptime                                    | 60 days                                                                                       |
 | Maximum ebuild completion time                           | 36 hours                                                                                      |
 | Runtime thrashing                                        | Disallowed                                                                                    |
-| Build time severe thrashing                              | Only allowed for web browser or AI packages                                                   |
+| Build time severe thrashing                              | Only allowed for web browser or AI/ML packages                                                |
