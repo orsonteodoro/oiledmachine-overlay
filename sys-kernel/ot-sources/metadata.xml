@@ -3552,7 +3552,7 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
     * safesetid - Restricts UID_A->UID_B or GID_A->GID_B transitions using a
       whitelist.
     * selinux - A MAC (Mandatory Access Control) for max security specificity on
-      multiuser servers.
+      multiuser enterprise servers.
     * smack - A MAC (Mandatory Access Control) for automotive, embedded, IoT.
     * tomoyo - A MAC (Mandatory Access Control) for embedded, IoT, or server
       services lockdown for system auditing, cybersecurity analysis, or
