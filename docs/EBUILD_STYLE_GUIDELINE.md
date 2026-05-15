@@ -200,12 +200,10 @@ Security QA
 | Default security-critical optimization level                  | -O2                                                                                                 |
 | Appropriate security-critical optimization level              | -O1 to -O2                                                                                          |
 | Fallback default optimization level                           | -O0 (unset)                                                                                         |
-| Untrusted data require cflags-hardened                        | Y                                                                                                   |
-| Keys/passwords require Retpoline with cflags-hardened         | Y                                                                                                   |
-| Security-critical packages require cflags-hardened            | Y                                                                                                   |
-| Untrusted data require rustflags-hardened?                    | Y                                                                                                   |
-| Security-critical require rustflags-hardened?                 | Y                                                                                                   |
-| Keys/passwords require Retpoline with rustflags-hardened?     | Y                                                                                                   |
+| Untrusted data require {c,rust}flags-hardened                 | Y                                                                                                   |
+| Security-critical packages require {c,rust}flags-hardened     | Y                                                                                                   |
+| Keys/passwords require Retpoline with {c,rust}flags-hardened  | Y                                                                                                   |
+| PII require Retpoline with {c,rust}flags-hardened             | Y (Secrets may flow through the same data paths and packages)                                       |
 
 Robustness QA
 
