@@ -204,6 +204,7 @@ Security QA
 | Security-critical packages require {c,rust}flags-hardened     | Y                                                                                                   |
 | Keys/passwords require Retpoline with {c,rust}flags-hardened  | Y                                                                                                   |
 | PII require Retpoline with {c,rust}flags-hardened             | Y (Secrets may flow through the same data paths and packages)                                       |
+| Lockfiles should be security scanned and transparent          | Y                                                                                                   |
 
 Robustness QA
 
