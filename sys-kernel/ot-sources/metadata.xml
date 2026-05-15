@@ -828,6 +828,24 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
     software.  These should be at least have 2 core, SSD, 4 GiB RAM, 8 GiB RAM
     recommended.  The software (e.g. Mixxx) sets the limit.
 
+
+    Example use case table
+
+    | Kernel flavor                                             | Criticality       | Example use cases                           |
+    | ---                                                       | ---               | ---                                         |
+    | ot-sources (dj)                                           | Performance       | Music production, DJ                        |
+    | ot-sources (gaming)                                       | Performance       | Emulators, self-hosted servers              |
+    | ot-sources (builder)                                      | Balanced          | Web browsing, online gaming                 |
+    | ot-sources (hardened)                                     | Security-critical | Secure chat, online banking                 |
+    | gentoo-sources[hardened]                                  | Balanced          | Casual chat, web browsing, online gaming    |
+    | gentoo-kernel                                             | Balanced          | Casual chat, web browsing, online gaming    |
+    | gentoo-kernel-bin                                         | Balanced          | Casual chat, web browsing, online gaming    |
+    | gentoo-sources custom hardening + KASAN + panic_on_warn=1 | Security-critical | Secure chat, online banking                 |
+
+    * If using the kernel incorrectly, it is considered an inappropriate configuration vulnerability.
+    * Hardened is similar to lockdown mode were even 32-bit is dropped.
+
+
     Kernel customization journey
 
     | Approximate year | Config method                   | Research                | Engineering approach     | Reproducible? [1] | Bloat?                 | Scripts? [7]  | Custom patches? |
