@@ -1776,8 +1776,8 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
 
       Use cases and features for Rust based CPU schedulers
 
-      Scheduler       | Gaming | Audio | Server | HPC | Mobile / | Power savings | Production | Research / | Demo     | Tunables or
-                      |        |       |        |     | embedded |               | readiness  | experiment |          | profiles [4]
+      Scheduler       | Gaming | Audio | Server | HPC | Mobile / | Power savings | Production | Research / | Demo     | Tunable knobs
+                      |        |       |        |     | embedded |               | readiness  | experiment |          | or profiles [4]
       ---             | ---    | ---   | ---    | --- | ---      | ---           | ---        | ---        | ---      | ---
       scx_beerland    |        |       | Y      |     |          |               | Y          |            |          |
       scx_bpfland     | Y      | Y     |        |     | Y        |               | Y          |            |          | P [1]
