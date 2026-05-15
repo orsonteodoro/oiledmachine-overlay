@@ -205,6 +205,7 @@ Security QA
 | Keys/passwords require Retpoline with {c,rust}flags-hardened  | Y                                                                                                   |
 | PII require Retpoline with {c,rust}flags-hardened             | Y (Secrets may flow through the same data paths and packages)                                       |
 | Lockfiles should be security scanned and transparent          | Y                                                                                                   |
+| Feature abuse (e.g. an AI agent that can make malware)        | Must be disabled or made optional instead of unconditional                                          |
 
 Robustness QA
 
