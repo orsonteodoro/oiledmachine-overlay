@@ -1805,11 +1805,11 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
 
       arg     | Base Quantum | Starvation | Notes
       ---     | ---          | ---        | ---
-      gaming  | 2 ms         | 100 ms     | For general gaming + desktop
-      esports | 1 ms         | 50 ms      | For competitive gaming, ultra low latency
-      legacy  | 4 ms         | 200 ms     | For older CPUs, batter saving
       battery | Varies       | Varies     | Power saving
       default | 2 ms         | 100 ms     | Same as gaming
+      esports | 1 ms         | 50 ms      | For competitive gaming, ultra low latency
+      gaming  | 2 ms         | 100 ms     | For general gaming + desktop
+      legacy  | 4 ms         | 200 ms     | For older CPUs, batter saving
 
       [3] Supports --profile or --lowlatency, --gaming, --powersave, --autopilot, --balanced
 
