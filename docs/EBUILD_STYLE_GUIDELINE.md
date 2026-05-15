@@ -5,13 +5,14 @@ Ebuild coding styles
 | Subject                               | Answer                                             |
 | ---                                   | ---                                                |
 | Distro style supported                | Y, for ebuilds originally from the distro overlay  |
-| Oiledmachine-overlay style supported  | Y                                                  |
+| oiledmachine-overlay style supported  | Y                                                  |
 
-Distro ebuild style example
+Distro ebuild example
 
 ```bash
-# Copyright 2024-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
+
 EAPI=8
 
 if [[ ${PV} =~ *9999* ]] ; then
@@ -19,10 +20,10 @@ if [[ ${PV} =~ *9999* ]] ; then
 	inherit git-r3
 fi
 
-DESCRIPTION="An example of Larry The Cow's package"
+DESCRIPTION="An example of Larry the Cow's package"
 HOMEPAGE="https://www.gentoo.org"
 LICENSE="GPL-2+"
-IUSE="cowpen"
+IUSE="cowpen zlib"
 RDEPEND="
 	sys-libs/glibc
 	zlib? ( sys-libs/zlib )
@@ -52,12 +53,12 @@ src_prepare() {
 }
 
 pkg_postinst() {
-	ewarn "The datacenter stole Larry The Cows water!"
+	ewarn "The datacenter stole Larry the Cow's water!"
 	if ! use cowpen ; then
 		ewarn
 		ewarn "Security Notice"
 		ewarn
-		ewarn "Larry The Cow has escaped!"
+		ewarn "Larry the Cow has escaped!"
 		ewarn
 	fi
 }
@@ -69,6 +70,7 @@ Oiledmachine-overlay style example
 ```bash
 # Copyright 2026 Orson Teodoro <orsonteodoro@hotmail.com>
 # Distributed under the terms of the GNU General Public License v2
+
 EAPI=8
 
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -80,10 +82,10 @@ else
 	S="${WORKDIR}/${P}"
 fi
 
-DESCRIPTION="An example of Larry The Cow's package"
+DESCRIPTION="An example of Larry the Cow's package"
 HOMEPAGE="https://www.gentoo.org"
 LICENSE="GPL-2+"
-IUSE="cowpen"
+IUSE="cowpen zlib"
 RDEPEND="
 	sys-libs/glibc
 	zlib? (
@@ -123,7 +125,7 @@ ewarn "The datacenter stole Larry The Cows water!"
 ewarn
 ewarn "Security Notice"
 ewarn
-ewarn "Larry the cow has escaped!"
+ewarn "Larry the Cow has escaped!"
 ewarn
 	fi
 }
