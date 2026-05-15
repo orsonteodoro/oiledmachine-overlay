@@ -221,6 +221,7 @@ Security QA
 | Container packages allowed?                                   | Y                                                                                                                           |
 | Existing package may be replaced with containerized ebuild?   | N unless community approves                                                                                                 |
 | User inside container                                         | Must be a limited user if daemonized, cannot use pre-existing UID of real users                                             |
+| Telemetry                                                     | Default off, default opt-out                                                                                                |
 
 Robustness QA
 
