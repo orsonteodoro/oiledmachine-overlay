@@ -142,11 +142,13 @@ C defaults
 
 C++ defaults
 
-| Subject                 | Answer                                             |
-| ---                     | ---                                                |
-| Default C++             | -std=gnu++17                                       |
-| Acceptable rolling C++  | -std=gnu++20, -std=gnu++23                         |
-| Acceptable LTS C++      | -std=gnu++17, -std=gnu++11, -std=c++17, -std=c++11 |
+| Subject                     | Answer                                             |
+| ---                         | ---                                                |
+| Default C++                 | -std=gnu++17                                       |
+| Acceptable rolling C++      | -std=gnu++20, -std=gnu++23                         |
+| Acceptable LTS C++          | -std=gnu++17, -std=gnu++11, -std=c++17, -std=c++11 |
+| Acceptable LTS linking      | LTS app with only LTS libs                         |
+| Acceptable rolling linking  | Rolling app with LTS lib or rolling lib            |
 
 Python defaults
 
