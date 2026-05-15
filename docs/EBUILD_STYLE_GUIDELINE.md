@@ -220,6 +220,7 @@ Security QA
 | Feature abuse (e.g. an AI agent that can make malware)        | Must be disabled or made optional instead of unconditional                                                                  |
 | Container packages allowed?                                   | Y                                                                                                                           |
 | Existing package may be replaced with containerized ebuild?   | N unless community approves                                                                                                 |
+| User inside container                                         | Must be a limited user if daemonized, cannot use pre-existing UID of real users                                             |
 
 Robustness QA
 
