@@ -1782,17 +1782,17 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
       scx_beerland    |        |       | Y      |     |          |               | Y          |            |          |
       scx_bpfland     | Y      | Y     |        |     | Y        |               | Y          |            |          | P [1]
       scx_cake        | Y      | Y     |        |     |          | Y             | Partial    | Y          |          | P [2]
-      scx_chaos       |        |       |        |     |          |               | N          | Y          | Y        | T
+      scx_chaos       |        |       |        |     |          |               | N          | Y          | Y        | K
       scx_cosmos      |        |       |        |     |          |               | Y          |            |          |
-      scx_flash       |        | Y     |        |     |          |               | Y          |            |          | T
+      scx_flash       |        | Y     |        |     |          |               | Y          |            |          | K
       scx_lavd        | Y      | Y     | Y      |     | Y        | Y             | Y          |            |          | P [3]
-      scx_layered     |        |       | Y      |     |          |               | Y          |            |          | T
+      scx_layered     |        |       | Y      |     |          |               | Y          |            |          | K
       scx_mitosis     |        |       |        |     |          |               | Partial    | Y          | Partial  |
       scx_p2dq        |        |       | Y      |     |          |               | Y          |            |          |
-      scx_pandemonium | Y      | Y     |        |     |          | Y             | Partial    | Y          |          | T
+      scx_pandemonium | Y      | Y     |        |     |          | Y             | Partial    | Y          |          | K
       scx_rlfifo      |        |       |        |     |          |               | P          |            |          |
       scx_rustland    |        |       |        |     |          |               | P          |            | Y        |
-      scx_rusty       |        |       | Y      |     |          |               | Y          |            |          | T
+      scx_rusty       |        |       | Y      |     |          |               | Y          |            |          | K
       scx_tickless    |        |       | Y      | Y   | Y        | Y             | Y          |            |          |
       scx_wd40        |        |       |        |     |          |               | N          | Y          | Y        |
 
@@ -1813,7 +1813,7 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
 
       [3] Supports --profile or --lowlatency, --gaming, --powersave, --autopilot, --balanced
 
-      [4] See scx_<name> --help. T = Tunable support, P = Profile support
+      [4] See scx_<name> --help. K = Control knob support, P = Profile support
 
       Scheduler       | Criticality or algorithmic design focus
       ---             | ---
