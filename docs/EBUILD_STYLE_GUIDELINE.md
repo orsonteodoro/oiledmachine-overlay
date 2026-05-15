@@ -226,12 +226,12 @@ Performance QA
 
 LICENCE variable QA
 
-| Subject                                                                                             | Answer                                                                                        |
-| ---                                                                                                 | ---                                                                                           |
-| AI models require licenses and acceptable use [AI ethics] disclosure                                | Y                                                                                             |
-| Telemetry require privacy policy and data retention disclosure                                      | Y                                                                                             |
-| Services require terms of use disclosure                                                            | Y                                                                                             |
-| Patent licenses must be disclosed                                                                   | Y                                                                                             |
-| The `custom` placeholder is allowed                                                                 | Y                                                                                             |
-| Copyright notices must be saved (with lcnr or full source install)                                  | Y                                                                                             |
-| Active patented codecs require `patent_status_nonfree` USE flag and free alternative(s) if possible | Y                                                                                             |
+| Subject                                                                                               | Answer                                                                                        |
+| ---                                                                                                   | ---                                                                                           |
+| AI models require licenses and acceptable use [AI ethics] disclosure                                  | Y                                                                                             |
+| Telemetry require privacy policy and data retention disclosure                                        | Y                                                                                             |
+| Services require terms of use disclosure                                                              | Y                                                                                             |
+| Patent licenses must be disclosed                                                                     | Y                                                                                             |
+| The `custom` placeholder is allowed                                                                   | Y                                                                                             |
+| Copyright notices must be saved (with lcnr or full source install)                                    | Y                                                                                             |
+| Actively patented codecs require `patent_status_nonfree` USE flag and free alternative(s) if possible | Y                                                                                             |
