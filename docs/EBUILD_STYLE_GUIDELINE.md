@@ -152,14 +152,14 @@ C++ defaults
 
 Python defaults
 
-| Subject                          | Answer                                                  |
-| ---                              | ---                                                     |
-| Default Python                   | python3_12                                              |
-| Acceptable rolling Python slots  | python3_14                                              |
-| Acceptable LTS Python slots      | python3_{11..13}                                        |
-| Acceptable multislot Python      | python3_{11..14}                                        |
-| Acceptable single slot Python    | python3_{11..14}                                        |
-| Acceptable slot paring           | Python app slot with same Python slot for dependencies. |
+| Subject                          | Answer                                                               |
+| ---                              | ---                                                                  |
+| Default Python                   | python3_12                                                           |
+| Acceptable rolling Python slots  | python3_14                                                           |
+| Acceptable LTS Python slots      | python3_{11..13}                                                     |
+| Acceptable multislot Python      | python3_{11..14}                                                     |
+| Acceptable single slot Python    | python3_{11..14}                                                     |
+| Acceptable slot paring           | The Python app slot must pair with same Python slot for dependencies |
 
 Rust defaults
 
