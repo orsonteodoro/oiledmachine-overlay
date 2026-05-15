@@ -152,15 +152,15 @@ C++ defaults
 
 Python defaults
 
-| Subject                          | Answer                                                               |
-| ---                              | ---                                                                  |
-| Default Python                   | python3_12                                                           |
-| Acceptable rolling Python slots  | python3_14                                                           |
-| Acceptable LTS Python slots      | python3_{11..13}                                                     |
-| Acceptable multislot Python      | python3_{11..14}                                                     |
-| Acceptable single slot Python    | python3_{11..14}                                                     |
-| Acceptable slot paring           | The Python app slot must pair with same Python slot for dependencies |
-| Are binary packages allowed?     | Y but only if that is the only option                                |
+| Subject                          | Answer                                                                                         |
+| ---                              | ---                                                                                            |
+| Default Python                   | python3_12                                                                                     |
+| Acceptable rolling Python slots  | python3_14                                                                                     |
+| Acceptable LTS Python slots      | python3_{11..13}                                                                               |
+| Acceptable multislot Python      | python3_{11..14}                                                                               |
+| Acceptable single slot Python    | python3_{11..14}                                                                               |
+| Acceptable slot paring           | The Python app slot must pair with same Python slot for dependencies down to the leaf packages |
+| Are binary packages allowed?     | Y but only if that is the only option                                                          |
 
 Rust defaults
 
