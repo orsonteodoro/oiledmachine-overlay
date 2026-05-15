@@ -153,7 +153,6 @@ Python defaults
 | Default Python                   | python3_12                                         |
 | Acceptable rolling Python slots  | python3_14                                         |
 | Acceptable LTS Python slots      | python3_{11..13}                                   |
-| Acceptable rolling Python slots  | python3_14                                         |
 | Acceptable multislot Python      | python3_{11..14}                                   |
 | Acceptable single slot Python    | python3_{11..14}                                   |
 
