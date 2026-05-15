@@ -215,7 +215,7 @@ Robustness QA
 | Minimum uptime (kernel, during testing)                  | 60 days                                                                                       |
 | Minimum uptime (kernel, during production)               | 30 days                                                                                       |
 | Number of expected/actual crashes in 30 days             | 0                                                                                             |
-| Unfinished features?                                     | Disable USE flag, configuration, or disable code                                              |
+| Unfinished features?                                     | Disable USE flag, disable configuration, or disable code                                      |
 
 Performance QA
 
