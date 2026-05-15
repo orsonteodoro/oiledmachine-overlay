@@ -158,19 +158,19 @@ Python defaults
 
 Rust defaults
 
-| Subject                             | Answer                                             |
-| ---                                 | ---                                                |
-| Default LTS Rust                    | Rust 1.91.1                                        |
-| Default rolling Rust                | Rust 1.95.0                                        |
-| What is rolling or LTS Rust package | Based on Cargo.lock                                |
-| Acceptable LTS Rust for non C++     | Rust 1.91.1                                        |
-| Acceptable rolling Rust for non C++ | Rust 1.95.0                                        |
-| Acceptable Rust for LLVM 22 for C++ | Rust 1.95.0                                        |
-| Acceptable Rust for LLVM 21 for C++ | Rust 1.94.1                                        |
-| Acceptable Rust for LLVM 20 for C++ | Rust 1.90.0                                        |
-| Acceptable Rust for LLVM 19 for C++ | Rust 1.85.1                                        |
-| Acceptable Rust for LLVM 18 for C++ | Rust 1.81.0                                        |
-| Acceptable Rust for LLVM 17 for C++ | Rust 1.77.2                                        |
+| Subject                                | Answer                                                    |
+| ---                                    | ---                                                       |
+| Default LTS Rust                       | Rust 1.91.1                                               |
+| Default rolling Rust                   | Rust 1.95.0                                               |
+| What is a rolling or LTS Rust package? | Determined by most recent Rust slot needed for Cargo.lock |
+| Acceptable LTS Rust for non C++        | Rust 1.91.1                                               |
+| Acceptable rolling Rust for non C++    | Rust 1.95.0                                               |
+| Acceptable Rust for LLVM 22 for C++    | Rust 1.95.0                                               |
+| Acceptable Rust for LLVM 21 for C++    | Rust 1.94.1                                               |
+| Acceptable Rust for LLVM 20 for C++    | Rust 1.90.0                                               |
+| Acceptable Rust for LLVM 19 for C++    | Rust 1.85.1                                               |
+| Acceptable Rust for LLVM 18 for C++    | Rust 1.81.0                                               |
+| Acceptable Rust for LLVM 17 for C++    | Rust 1.77.2                                               |
 
 Security QA
 
