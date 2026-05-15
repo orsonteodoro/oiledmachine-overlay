@@ -222,3 +222,13 @@ Performance QA
 | Maximum ebuild completion time                           | 36 hours                                                                                      |
 | Runtime thrashing                                        | Disallowed                                                                                    |
 | Build time severe thrashing                              | Only allowed for web browser or AI/ML packages                                                |
+
+LICENCE variable QA
+
+| Subject                                                        | Answer                                                                                        |
+| ---                                                            | ---                                                                                           |
+| AI models require licenses and acceptable use disclosure       | Y                                                                                             |
+| Telemetry require privacy policy and data retention disclosure | Y                                                                                             |
+| Services require terms of use disclosure                       | Y                                                                                             |
+| Patent licenses must be disclosed                              | Y                                                                                             |
+| The `custom` placeholder is allowed                            | Y                                                                                             |
