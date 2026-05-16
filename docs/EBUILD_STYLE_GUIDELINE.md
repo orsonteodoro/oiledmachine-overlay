@@ -271,23 +271,23 @@ Security QA
 
 Userspace mitigation comparison
 
-| Flag                                | Mitigated                                                                  | Distro  | oiledmachine-overlay |
-| ---                                 | ---                                                                        | ---     | ---                  | 
-| -fno-delete-null-pointer-checks     | Undefined behavior, information-disclosure, code execution                 | N       | Y                    |
-| _FORTIFY_SOURCE=3                   | Stack overflow (weak), Heap overflow (strong), out-of-bounds access (weak) | Y       | Y                    |
-| -fstack-protector-strong            | Stack overflow                                                             | Y       | Y                    |
-| -fstack-clash-protection            | Stack clash attack, privilege escalation (low priv to priv)                | Y       | Y                    |
-| -fstrict-flex-arrays=3              | Heap overflow                                                              | N       | Y                    |
-| -ftrivial-auto-var-init=zero        | Uninitalized memory, information disclosure                                | N       | Y                    |
-| -fwrapv                             | Undefined behavior                                                         | N       | Y                    |
-| -fzero-call-used-regs=all           | ROP gadgets, information disclosure, speculative execution side-channel    | N       | Y                    |
-| -mfunction-return=thunk (GCC)       | Speculative execution (RSB), information disclosure                        | N       | Y                    |
-| -mharden-sls=all                    | Speculative execution (SLS), information disclosure                        | N       | Y                    |
-| -mindirect-branch=thunk (GCC)       | Speculative execution (BTB), information disclosure                        | N       | Y                    |
-| -mretpoline (Clang)                 | Speculative execution, information disclosure                              | N       | Y                    |
-| -C overflow-checks=on (Rust)        | Integer overflow/underflow, zero-click attack, production                  | N       | Y                    |
-| -C target-feature=+retpoline (Rust) | Speculative execution, information disclosure                              | N       | Y                    |
-| -Wl,-z,relro,-z,now (Full Relro)    | Data tampering, code execution                                             | Y       | Y                    |
+| Flag                                | Mitigated                                                                                          | Distro  | oiledmachine-overlay |
+| ---                                 | ---                                                                                                | ---     | ---                  | 
+| -fno-delete-null-pointer-checks     | Undefined behavior, information-disclosure, code execution                                         | N       | Y                    |
+| _FORTIFY_SOURCE=3                   | Stack overflow (weak), Heap overflow (strong), out-of-bounds access (weak)                         | Y       | Y                    |
+| -fstack-protector-strong            | Stack overflow                                                                                     | Y       | Y                    |
+| -fstack-clash-protection            | Stack clash attack, privilege escalation (low priv to priv)                                        | Y       | Y                    |
+| -fstrict-flex-arrays=3              | Heap overflow                                                                                      | N       | Y                    |
+| -ftrivial-auto-var-init=zero        | Uninitalized memory, information disclosure                                                        | N       | Y                    |
+| -fwrapv                             | Undefined behavior, integer overflow, buffer overflow, out-of-bounds access, privilege escalation  | N       | Y                    |
+| -fzero-call-used-regs=all           | ROP gadgets, information disclosure, speculative execution side-channel                            | N       | Y                    |
+| -mfunction-return=thunk (GCC)       | Speculative execution (RSB), information disclosure                                                | N       | Y                    |
+| -mharden-sls=all                    | Speculative execution (SLS), information disclosure                                                | N       | Y                    |
+| -mindirect-branch=thunk (GCC)       | Speculative execution (BTB), information disclosure                                                | N       | Y                    |
+| -mretpoline (Clang)                 | Speculative execution, information disclosure                                                      | N       | Y                    |
+| -C overflow-checks=on (Rust)        | Integer overflow/underflow, zero-click attack, production                                          | N       | Y                    |
+| -C target-feature=+retpoline (Rust) | Speculative execution, information disclosure                                                      | N       | Y                    |
+| -Wl,-z,relro,-z,now (Full Relro)    | Data tampering, code execution                                                                     | Y       | Y                    |
 
 Robustness QA
 
