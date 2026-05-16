@@ -200,6 +200,9 @@ einfo "EoP = Escalation of Privileges"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("EP")($|" "|";"|",") ]] ; then
 einfo "EP = Escalated Privileges"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("FS")($|" "|";"|",") ]] ; then
+einfo "FS = Format String"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"GPF"($|" "|";"|",") ]] ; then
 einfo "GPF = General Protection Fault"
 		fi
