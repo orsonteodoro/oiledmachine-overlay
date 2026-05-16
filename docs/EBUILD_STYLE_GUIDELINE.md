@@ -192,6 +192,25 @@ Rust defaults
 | Acceptable Rust for LLVM 19 for C++    | Rust 1.85.1                                                |
 | Acceptable Rust for LLVM 18 for C++    | Rust 1.81.0                                                |
 | Acceptable Rust for LLVM 17 for C++    | Rust 1.77.2                                                |
+| Use 1 pinned Rust slot                 | Y                                                          |
+| A Cargo.lock should be generated       | Y                                                          |
+| Offline install                        | Y                                                          |
+
+JS default
+
+| Subject                                 | Answer                                                        |
+| ---                                     | ---                                                           |
+| Default slot                            | Use the one that is associated with that release              |
+| Fallback slot:  .github/*.yaml          | See .yaml file for Node version, the tested slot is preferred |
+| Fallback slot:  Dockerfile              | Use the same major version for Node                           |
+| Fallback slot:  .nvmrc                  | Use the same major version for Node                           |
+| Fallback slot:  @types/node in lockfile | Use the same major version for Node                           |
+| Fallback slot:  Unknown default slot    | Use the oldest LTS (20)                                       |
+| npm vs Yarn vs pnpm                     | Use the one that is the default by the project                |
+| Bun vs Node                             | Node                                                          |
+| Use 1 pinned Node slot                  | Y                                                             |
+| Lockfile(s) should be generated         | Y                                                             |
+| Offline install                         | Y cached in distfiles                                         |
 
 Feature QA
 
