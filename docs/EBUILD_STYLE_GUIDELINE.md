@@ -213,7 +213,7 @@ Security QA
 | Default hash                                                  | Post-quantum SHA-256, followed by legacy SHA-256                                                                            |
 | Default KDF                                                   | Post-quantum Argon2id, followed by legacy PBKDF2                                                                            |
 | Default CSRNG                                                 | Post-quantum PQC (AES-256, SHA-3) or QRNG; followed by legacy DRNG (CPU Jitter, HW ocsillator, AES-CTR, SHA-256)            |
-| Q-Day estimate                                                | Year 2029 (3-4 years from now)                                                                                              |
+| Q-Day estimated arrival                                       | Year 2029 (3-4 years from now)                                                                                              |
 | www-apps require permissions sanitization                     | Y                                                                                                                           |
 | Default security-critical optimization level                  | -O2                                                                                                                         |
 | Appropriate security-critical optimization level              | -O1 to -O2                                                                                                                  |
@@ -235,8 +235,8 @@ Robustness QA
 
 | Subject                                                  | Answer                                                                                        |
 | ---                                                      | ---                                                                                           |
-| Ebuilds must work when merged                            | Y                                                                                             |
-| If ebuilds do not work, how about KEYWORDS?              | Disabled                                                                                      |
+| The package must work after being merged                 | Y                                                                                             |
+| If ebuilds do not work, how about KEYWORDS?              | Commented out                                                                                 |
 | Minimum uptime (kernel, during testing)                  | 60 days                                                                                       |
 | Minimum uptime (kernel, during production)               | 30 days                                                                                       |
 | Number of expected/actual crashes in 30 days             | 0                                                                                             |
@@ -264,3 +264,12 @@ LICENCE variable QA
 | The `custom` placeholder is allowed                                                                   | Y                                                                                             |
 | Copyright notices must be saved (with lcnr or full source install)                                    | Y                                                                                             |
 | Actively patented codecs require `patent_status_nonfree` USE flag and free alternative(s) if possible | Y                                                                                             |
+
+AI disclosure
+
+| Subject                                                                                               | Answer                           |
+| ---                                                                                                   | ---                              |
+| Your use of AI code generation must be disclosed                                                      | Y                                |
+| Your use of AI synthetic data must be disclosed                                                       | Y                                |
+| Your use of AI inference must be disclosed                                                            | Y                                |
+| Your use of AI in patches or assets must be disclosed                                                 | Y                                |
