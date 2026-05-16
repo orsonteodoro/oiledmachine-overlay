@@ -254,7 +254,6 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # DF - Double Free
 # DP - Dangling Pointer
 # DT - Data Tampering
-# FS - Format String
 # HO - Heap Overflow
 # ID - Information Disclosure
 # IO - Integer Overflow
@@ -1296,7 +1295,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 	local protect_spectrum="none" # retpoline, cfi, gain, none
 	if \
 		( \
-			[[ "${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF") ]] \
+			[[ "${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF") ]] \
 				|| \
 			_rustflags-hardened_needs_cfi \
 		) \
@@ -1312,7 +1311,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		protect_spectrum="cet"
 	elif \
 		( \
-			[[ "${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF") ]] \
+			[[ "${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF") ]] \
 				|| \
 			_rustflags-hardened_needs_cfi \
 		) \
@@ -1333,13 +1332,13 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 			&& \
 		_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.07" \
 	; then
-	# PAC:  "BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF"
+	# PAC:  "BO"|"BU"|"CE"|"DF"|"DP"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF"
 	# BTI:  "BO"|"BU"|"CE"|"DF"|"DP"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF"
 	# MTE:  "BO"|"BU"|"CE"|"DF"|"DP"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF"
 		protect_spectrum="arm-cfi"
 	elif \
 		( \
-			[[ "${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF") ]] \
+			[[ "${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF") ]] \
 				|| \
 			_rustflags-hardened_needs_cfi \
 		) \
@@ -1355,7 +1354,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		protect_spectrum="llvm-cfi"
 	elif \
 		( \
-			[[ "${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("UM"|"FS") ]] \
+			[[ "${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("UM") ]] \
 					|| \
 			_rustflags-hardened_needs_retpoline \
 		) \
@@ -1884,12 +1883,6 @@ eerror
 	#if [[ "${auto_sanitize}" =~ "ubsan" && "${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("IO"|"IU") ]] ; then
 	#	sanitizers+=" signed-integer-overflow"
 	#fi
-
-	# DoS, DT, ID, PE
-	local warn_flags=""
-	if [[ "${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("SF") ]] ; then
-		warn_flags+=" -Wformat -Wformat-security"
-	fi
 
 	if [[ "${RUSTFLAGS_HARDENED_INTEGRATION_TEST_FAILED:-0}" == "1" ]] ; then
 		sanitizers_compat=0
