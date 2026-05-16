@@ -284,6 +284,7 @@ Performance QA
 | Maximum ebuild completion time                           | 36 hours                                                                      |
 | Runtime thrashing                                        | Disallowed                                                                    |
 | Build time severe thrashing                              | Only allowed for web browser or AI/ML packages                                |
+| Maximum install + merge time allowed                     | 1 hour                                                                        |
 
 LICENCE variable QA
 
