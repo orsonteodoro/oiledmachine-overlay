@@ -273,3 +273,5 @@ AI disclosure
 | Your use of AI synthetic data must be disclosed                                                       | Y                                |
 | Your use of AI inference must be disclosed                                                            | Y                                |
 | Your use of AI in patches or assets must be disclosed                                                 | Y                                |
+| The oiledmachine-overlay accepts AI submissions                                                       | Y                                |
+| The distro overlay stance of AI submissions on their servers                                          | Banned                           |
