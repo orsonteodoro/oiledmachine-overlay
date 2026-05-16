@@ -218,50 +218,52 @@ Feature QA
 | ---                                                           | ---                                                                                                                         |
 | Default USE flags enablement                                  | Should match upstream with exceptions                                                                                       |
 | Default bloat spectrum if no defaults listed                  | Minimal install with optional USE flags                                                                                     |
+| Wayland or X11                                                | Both should be supported if able to run on either                                                                           |
 
 Security QA
 
-| Subject                                                       | Answer                                                                                                                      |
-| ---                                                           | ---                                                                                                                         |
-| Untrusted meaning                                             | Processes untrusted data                                                                                                    |
-| Trusted meaning                                               | Never trust, always verify                                                                                                  |
-| Untrusted packages example                                    | Network packages, codec packages, sound/image processing, parsers, web packages                                             |
-| Critically secure examples                                    | Memory allocators, password managers, web browsers                                                                          |
-| Low level vulnerabilities                                     | Use-after-free, stack overflow, heap overflow, integer overflow                                                             |
-| High level vulnerabilities                                    | Inappropriate configuration, access control bypass, container/sandbox escapes                                               |
-| Untrusted packages require compiler hardening                 | Y                                                                                                                           |
-| Daemons must run as limited user/group                        | Y                                                                                                                           |
-| Hardened by default                                           | Y                                                                                                                           |
-| Required Clang CFI                                            | For web browsers only (planned)                                                                                             |
-| SSP-strong required                                           | Y, for untrusted data                                                                                                       |
-| Default SSP level                                             | -fstack-protector-strong                                                                                                    |
-| Default _FORTIFY_SOURCE level                                 | 3                                                                                                                           |
-| Default linker flags                                          | Full Relro                                                                                                                  |
-| Ciphersuite default                                           | Post quantum era first and default ON, followed by legacy                                                                   | 
-| Default asymmetric                                            | Post-quantum lattice/hash first (ML-KEM, ML-DSA), followed by legacy elliptical (RSA, ECDH, ECDSA)                          |
-| Default symmetric block                                       | Post-quantum AES-256, followed by legacy AES-128                                                                            |
-| Default symmetric stream                                      | Post-quantum AES-256 (GCM/CTR); followed by legacy AES-CTR (desktop/server)                                                 |
-| Acceptable symmetric stream                                   | Post-quantum AES-256 (GCM/CTR), Chacha20 (256-bit); followed by legacy AES-CTR (desktop/server), Chacha20 (256-bit, mobile) |
-| Default hash                                                  | Post-quantum SHA-256, followed by legacy SHA-256                                                                            |
-| Default KDF                                                   | Post-quantum Argon2id, followed by legacy PBKDF2                                                                            |
-| Default CSRNG                                                 | Post-quantum PQC (AES-256, SHA-3) or QRNG; followed by legacy DRNG (CPU Jitter, HW ocsillator, AES-CTR, SHA-256)            |
-| Q-Day estimated arrival                                       | Year 2029 (3-4 years from now)                                                                                              |
-| www-apps require permissions sanitization                     | Y                                                                                                                           |
-| Default security-critical optimization level                  | -O2                                                                                                                         |
-| Appropriate security-critical optimization level              | -O1 to -O2                                                                                                                  |
-| Fallback default optimization level                           | -O0 (unset) but can be overwritten by user typically -O2                                                                    |
-| Untrusted data require {c,rust}flags-hardened                 | Y                                                                                                                           |
-| Security-critical packages require {c,rust}flags-hardened     | Y                                                                                                                           |
-| Keys/passwords require Retpoline with {c,rust}flags-hardened  | Y                                                                                                                           |
-| PII require Retpoline with {c,rust}flags-hardened             | Y (Secrets may flow through the same data paths and packages)                                                               |
-| Lockfiles should be security scanned and transparent          | Y                                                                                                                           |
-| Feature abuse (e.g. an AI agent that can make malware)        | The feature must be disabled or made optional instead of unconditional opt-in                                               |
-| Container packages allowed?                                   | Y                                                                                                                           |
-| Existing package may be replaced with containerized ebuild?   | N unless community approves                                                                                                 |
-| User inside container                                         | Must be a limited user if daemonized, cannot use pre-existing UID of real users                                             |
-| Telemetry                                                     | Default off, default opt-out                                                                                                |
-| Data breach detection support (password check remotely)       | Default off, default opt-out, patching may be required to optionalize                                                       |
-| Binary packages                                               | Allowed with restrictions that only if it's the only option, source package/maintenance issue, heavy compilation cost       |
+| Subject                                                       | Answer                                                                                                                                            |
+| ---                                                           | ---                                                                                                                                               |
+| Untrusted meaning                                             | Processes untrusted data                                                                                                                          |
+| Trusted meaning                                               | Never trust, always verify                                                                                                                        |
+| Untrusted packages example                                    | Network packages, codec packages, sound/image processing, parsers, web packages                                                                   |
+| Critically secure examples                                    | Memory allocators, password managers, web browsers                                                                                                |
+| Low level vulnerabilities                                     | Use-after-free, stack overflow, heap overflow, integer overflow                                                                                   |
+| High level vulnerabilities                                    | Inappropriate configuration, access control bypass, container/sandbox escapes                                                                     |
+| Untrusted packages require compiler hardening                 | Y                                                                                                                                                 |
+| Daemons must run as limited user/group                        | Y                                                                                                                                                 |
+| Hardened by default                                           | Y                                                                                                                                                 |
+| Required Clang CFI                                            | For web browsers only (planned)                                                                                                                   |
+| SSP-strong required                                           | Y, for untrusted data                                                                                                                             |
+| Default SSP level                                             | -fstack-protector-strong                                                                                                                          |
+| Default _FORTIFY_SOURCE level                                 | 3                                                                                                                                                 |
+| Default linker flags                                          | Full Relro                                                                                                                                        |
+| Ciphersuite default                                           | Post quantum era first and default ON, followed by legacy                                                                                         | 
+| Default asymmetric                                            | Post-quantum lattice/hash first (ML-KEM, ML-DSA), followed by legacy elliptical (RSA, ECDH, ECDSA)                                                |
+| Default symmetric block                                       | Post-quantum AES-256, followed by legacy AES-128                                                                                                  |
+| Default symmetric stream                                      | Post-quantum AES-256 (GCM/CTR); followed by legacy AES-CTR (desktop/server)                                                                       |
+| Acceptable symmetric stream                                   | Post-quantum AES-256 (GCM/CTR), Chacha20 (256-bit); followed by legacy AES-CTR (desktop/server), Chacha20 (256-bit, mobile)                       |
+| Default hash                                                  | Post-quantum SHA-256, followed by legacy SHA-256                                                                                                  |
+| Default KDF                                                   | Post-quantum Argon2id, followed by legacy PBKDF2                                                                                                  |
+| Default CSRNG                                                 | Post-quantum PQC (AES-256, SHA-3) or QRNG; followed by legacy DRNG (CPU Jitter, HW ocsillator, AES-CTR, SHA-256)                                  |
+| Q-Day estimated arrival                                       | Year 2029 (3-4 years from now)                                                                                                                    |
+| www-apps require permissions sanitization                     | Y                                                                                                                                                 |
+| Default security-critical optimization level                  | -O2                                                                                                                                               |
+| Appropriate security-critical optimization level              | -O1 to -O2                                                                                                                                        |
+| Fallback default optimization level                           | -O0 (unset) but can be overwritten by user typically -O2                                                                                          |
+| Untrusted data require {c,rust}flags-hardened                 | Y                                                                                                                                                 |
+| Security-critical packages require {c,rust}flags-hardened     | Y                                                                                                                                                 |
+| Keys/passwords require Retpoline with {c,rust}flags-hardened  | Y                                                                                                                                                 |
+| PII require Retpoline with {c,rust}flags-hardened             | Y (Secrets may flow through the same data paths and packages)                                                                                     |
+| Lockfiles should be security scanned and transparent          | Y                                                                                                                                                 |
+| Feature abuse (e.g. an AI agent that can make malware)        | The feature must be disabled or made optional instead of unconditional opt-in                                                                     |
+| Container packages allowed?                                   | Y                                                                                                                                                 |
+| Existing package may be replaced with containerized ebuild?   | N unless community approves                                                                                                                       |
+| User inside container                                         | Must be a limited user if daemonized, cannot use pre-existing UID of real users                                                                   |
+| Telemetry                                                     | Default off, default opt-out                                                                                                                      |
+| Data breach detection support (password check remotely)       | Default off, default opt-out, patching may be required to optionalize                                                                             |
+| Binary packages                                               | Allowed with restrictions that only if it's the only option, source package/maintenance issue, heavy compilation cost                             |
+| Pruning                                                       | If the older versions are necessary for bootstrapping, it should not be deleted.  Otherwise, you're stuck with a compromised trojanized prebuilt. |
 
 Robustness QA
 
