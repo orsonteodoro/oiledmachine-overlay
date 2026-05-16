@@ -2188,7 +2188,7 @@ einfo "All SSP hardening (All functions hardened)"
 	fi
 
 	# CE, DoS, DT, ID, PE
-	# The string first arg must not be an attacker controlled variable.
+	# The printf's first arg [1-based index] must not be an attacker controlled variable.
 	#
 	# Manual review specifiers
 	# %n - Critical, write-what-where, CE
