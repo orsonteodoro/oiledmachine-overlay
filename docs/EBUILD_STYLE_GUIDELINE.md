@@ -229,7 +229,7 @@ Security QA
 | Untrusted packages example                                    | Network packages, codec packages, sound/image processing, parsers, web packages                                                                   |
 | Critically secure examples                                    | Memory allocators, password managers, web browsers                                                                                                |
 | Low level vulnerabilities                                     | Use-after-free, stack overflow, heap overflow, integer overflow, double free, string format vulnerability, uninitialized memory, type confusion, ROP gadgets    |
-| High level vulnerabilities                                    | Inappropriate configuration, access control bypass, container/sandbox escapes, prototype pollution, JIT miscompilation, SQL injection             |
+| High level vulnerabilities                                    | Inappropriate configuration, insufficient access control, container/sandbox escapes, prototype pollution, JIT miscompilation, SQL injection       |
 | Untrusted packages require compiler hardening                 | Y                                                                                                                                                 |
 | Daemons must run as limited user/group                        | Y                                                                                                                                                 |
 | Hardened by default                                           | Y                                                                                                                                                 |
