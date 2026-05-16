@@ -139,6 +139,8 @@ C defaults
 | Default C               | -std=gnu17                                         |
 | Acceptable LTS C        | -std=gnu17                                         |
 | Acceptable rolling C    | -std=gnu20, -std=gnu23                             |
+| Default C compiler      | GCC                                                                   |
+| Default C linker        | BFD                                                                   |
 
 C++ defaults
 
@@ -149,6 +151,8 @@ C++ defaults
 | Acceptable LTS C++          | -std=gnu++17, -std=gnu++11, -std=c++17, -std=c++11                    |
 | Acceptable LTS linking      | LTS app with only LTS libs; LTS lib with LTS lib                      |
 | Acceptable rolling linking  | Rolling app with LTS lib or rolling lib; rolling lib with rolling lib |
+| Default C++ compiler        | GCC                                                                   |
+| Default C++ linker          | BFD                                                                   |
 
 Python defaults
 
@@ -161,6 +165,7 @@ Python defaults
 | Acceptable single slot Python    | python3_{11..14}                                                                               |
 | Acceptable slot paring           | The Python app slot must pair with same Python slot for dependencies down to the leaf packages |
 | Are binary packages allowed?     | Y but only if that is the only option                                                          |
+| Default Python interpreter       | CPython                                                                                        |
 
 Rust defaults
 
