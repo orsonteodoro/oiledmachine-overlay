@@ -265,37 +265,39 @@ Security QA
 
 Robustness QA
 
-| Subject                                                  | Answer                                                                                        |
-| ---                                                      | ---                                                                                           |
-| The package must work after being merged                 | Y                                                                                             |
-| If ebuilds do not work, how about KEYWORDS?              | Commented out                                                                                 |
-| Minimum uptime (kernel, during testing)                  | 60 days                                                                                       |
-| Minimum uptime (kernel, during production)               | 30 days                                                                                       |
-| Number of expected/actual crashes in 30 days             | 0                                                                                             |
-| Unfinished features?                                     | Disable USE flag, disable configuration, or disable code                                      |
+| Subject                                                  | Answer                                                                        |
+| ---                                                      | ---                                                                           |
+| The package must work after being merged                 | Y                                                                             |
+| If ebuilds do not work, how about KEYWORDS?              | Commented out                                                                 |
+| Minimum uptime (kernel, during testing)                  | 60 days                                                                       |
+| Minimum uptime (kernel, during production)               | 30 days                                                                       |
+| Number of expected/actual crashes in 30 days             | 0                                                                             |
+| Unfinished features?                                     | Disable USE flag, disable configuration, or disable code                      |
 
 Performance QA
 
-| Subject                                                  | Answer                                                                                        |
-| ---                                                      | ---                                                                                           |
-| Minimum FPS                                              | 25 FPS (Motion picture FPS)                                                                   |
-| Minimum uptime (kernel, during testing)                  | 60 days                                                                                       |
-| Minimum uptime (kernel, during production)               | 30 days                                                                                       |
-| Maximum ebuild completion time                           | 36 hours                                                                                      |
-| Runtime thrashing                                        | Disallowed                                                                                    |
-| Build time severe thrashing                              | Only allowed for web browser or AI/ML packages                                                |
+| Subject                                                  | Answer                                                                        |
+| ---                                                      | ---                                                                           |
+| Minimum FPS                                              | 25 FPS (Motion picture FPS)                                                   |
+| Minimum uptime (kernel, during testing)                  | 60 days                                                                       |
+| Minimum uptime (kernel, during production)               | 30 days                                                                       |
+| Maximum ebuild completion time                           | 36 hours                                                                      |
+| Runtime thrashing                                        | Disallowed                                                                    |
+| Build time severe thrashing                              | Only allowed for web browser or AI/ML packages                                |
 
 LICENCE variable QA
 
-| Subject                                                                                               | Answer                                                                                        |
-| ---                                                                                                   | ---                                                                                           |
-| AI models require licenses and acceptable use AI ethics disclosure                                    | Y                                                                                             |
-| Telemetry usage require privacy policy and data retention disclosure                                  | Y                                                                                             |
-| Services require terms of use disclosure                                                              | Y                                                                                             |
-| Patent licenses must be disclosed                                                                     | Y                                                                                             |
-| The `custom` placeholder is allowed                                                                   | Y                                                                                             |
-| Copyright notices must be saved (with lcnr or full source install)                                    | Y                                                                                             |
-| Actively patented codecs require `patent_status_nonfree` USE flag and free alternative(s) if possible | Y                                                                                             |
+| Subject                                                                                               | Answer                                           |
+| ---                                                                                                   | ---                                              |
+| AI models require licenses and acceptable use AI ethics disclosure                                    | Y                                                |
+| Telemetry usage require privacy policy and data retention disclosure                                  | Y                                                |
+| Services require terms of use disclosure                                                              | Y                                                |
+| Patent licenses must be disclosed                                                                     | Y                                                |
+| The `custom` placeholder is allowed                                                                   | Y                                                |
+| Copyright notices must be saved (with lcnr or full source install)                                    | Y                                                |
+| Actively patented codecs require `patent_status_nonfree` USE flag and free alternative(s) if possible | Y                                                |
+| Full disclosure                                                                                       | Y if possible                                    |
+| License identifier precedence                                                                         | Distro, SPDX, license name, package name, custom |
 
 AI disclosure
 
