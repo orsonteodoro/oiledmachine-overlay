@@ -275,6 +275,16 @@ einfo "IL = Infinite Loop"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("IMPRREL")($|" "|";"|",") ]] ; then
 einfo "IMPRREL = Improper Release"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"INJECT"($|" "|";"|",") ]] ; then
+# Broader category includes
+# Code injection (code execution)
+#  - SQL injection
+#  - Interpreter injection
+#  - Shell injection
+# JavaScript injection (XSS, information disclosure)
+# JIT injection (ASLR bypass)
+einfo "INJECT = Injection"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IO"($|" "|";"|",") ]] ; then
 einfo "IO = Integer Overflow"
 		fi
@@ -541,6 +551,9 @@ einfo "UP = Uninitialized Pointer"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"US"($|" "|";"|",") ]] ; then
 einfo "US = Unterminated String"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"USI"($|" "|";"|",") ]] ; then
+einfo "USI = UnSanitized Input"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UV"($|" "|";"|",") ]] ; then
 einfo "UV = Uninitialized Value"
