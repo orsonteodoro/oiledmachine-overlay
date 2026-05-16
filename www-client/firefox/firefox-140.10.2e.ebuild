@@ -3345,6 +3345,7 @@ ewarn "glibc not found! You won't be able to play DRM content."
 ewarn "See Gentoo bug #910309 or upstream bug #1843683."
 ewarn
 	fi
+einfo "Use \`pulseaudio -k\` to hear sound if silent."
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
@@ -3353,6 +3354,7 @@ ewarn
 
 # OILEDMACHINE-OVERLAY-TEST:  PASS (INTERACTIVE) 146.0.1 rapid (Jan 3, 2026)
 # OILEDMACHINE-OVERLAY-TEST:  PASS (INTERACTIVE) 140.10.2 ESR (May 13, 2026) with wasm-sandbox enabled, GCC 13, LLVM 19
+# OILEDMACHINE-OVERLAY-TEST:  PASS (INTERACTIVE) 150.0.3 rapid (May 16, 2026) with wasm-sandbox enabled, GCC 13, LLVM 20
 
 # 146.0.1 completion time:  0 days, 4 hrs, 21 mins, 25 secs
 
