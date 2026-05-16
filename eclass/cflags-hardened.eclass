@@ -2187,7 +2187,7 @@ einfo "All SSP hardening (All functions hardened)"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fno-delete-null-pointer-checks"
 	fi
 
-	# CE, DoS, DT, ID, PE
+	# CE, DoS, DT, ID, PE (if SUID)
 	# The printf's first arg [1-based index] must not be an attacker controlled variable.
 	#
 	# Manual review specifiers
