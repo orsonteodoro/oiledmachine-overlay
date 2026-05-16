@@ -49,7 +49,7 @@ src_prepare() {
 	default
 	if zlib ; then
 		# This is a comment.
-		eapply "${FILESDIR}"/${PN}-1.0.0-fixes.patch
+		eapply "${FILESDIR}"/${PN}-1.0.0-hardcoded-fixes.patch"
 	fi
 }
 
@@ -117,7 +117,7 @@ src_prepare() {
 	default
 	if zlib ; then
 	# This is a comment.
-		eapply "${FILESDIR}/${PN}-1.0.0-fixes.patch"
+		eapply "${FILESDIR}/${PN}-1.0.0-hardcoded-fixes.patch"
 	fi
 }
 
