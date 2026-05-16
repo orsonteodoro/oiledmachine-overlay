@@ -232,12 +232,12 @@ Security QA
 | Trusted meaning                                               | Never trust, always verify                                                                                                                        |
 | Untrusted packages example                                    | Network packages, codec packages, sound/image processing, parsers, web packages                                                                   |
 | Critically secure examples                                    | Memory allocators, password managers, web browsers                                                                                                |
-| Low level vulnerabilities monitored                           | Use-after-free, stack overflow, heap overflow, integer overflow, double free, string format vulnerability, uninitialized memory, type confusion, ROP gadgets |
-| High level vulnerabilities monitored                          | Inappropriate configuration, inappropriate file permissions, container/sandbox escapes, prototype pollution, JIT miscompilation, SQL injection, unseen/zero-day vulnerabilies    |
+| Low level vulnerabilities monitored                           | Double free, deadlock, heap overflow, integer overflow, ROP gadgets, memory leak, null pointer dereference, speculative execution, stack overflow, string format, uninitialized memory, use-after-free, type confusion |
+| High level vulnerabilities monitored                          | Container/sandbox escapes, inappropriate configuration, inappropriate file permissions, JIT miscompilation, prototype pollution, SQL injection, TOCTOU, unseen/zero-day vulnerabilies |
 | Daemons must run as limited user/group                        | Y                                                                                                                                                 |
 | Hardened by default                                           | Y                                                                                                                                                 |
 | Required Clang CFI                                            | For web browsers only (planned)                                                                                                                   |
-| SSP-strong required                                           | Y, for untrusted data                                                                                                                             |
+| SSP-strong required                                           | Y for untrusted data                                                                                                                              |
 | Default SSP level                                             | -fstack-protector-strong                                                                                                                          |
 | Default _FORTIFY_SOURCE level                                 | 3                                                                                                                                                 |
 | Default linker flags                                          | Full Relro                                                                                                                                        |
@@ -286,7 +286,7 @@ Userspace mitigation comparison
 | -mindirect-branch=thunk (GCC)       | Speculative execution (BTB), information disclosure                                                | N         | Y                    |
 | -mretpoline (Clang)                 | Speculative execution, information disclosure                                                      | N         | Y                    |
 | -Wl,-z,relro,-z,now (Full Relro)    | Data tampering, code execution                                                                     | Y         | Y                    |
-| _FORTIFY_SOURCE=3                   | Stack overflow (weak), Heap overflow (strong), out-of-bounds access (weak)                         | Y         | Y                    |
+| _FORTIFY_SOURCE=3                   | Stack overflow (weak), heap overflow (strong), out-of-bounds access (weak)                         | Y         | Y                    |
 
 Robustness QA
 
