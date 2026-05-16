@@ -725,6 +725,7 @@ CDEPEND="
 RDEPEND+="
 	${CDEPEND}
 	${UDEV_RDEPEND}
+	!www-client/firefox:rapid
 	sys-kernel/mitigate-id
 	virtual/patent-status[patent_status_nonfree=]
 	cups? (

@@ -1,0 +1,8 @@
+--- a/js/src/irregexp/properties_glue/cbindgen.toml.orig	2026-05-11 14:06:47.000000000 -0700
++++ b/js/src/irregexp/properties_glue/cbindgen.toml	2026-05-15 16:50:53.641965212 -0700
+@@ -11,4 +11,4 @@ language = "C++"
+ 
+ [export]
+ item_types = ["functions"]
+-exclude = ["js_irregexp_add_range_to_zone_list"]
++exclude = []

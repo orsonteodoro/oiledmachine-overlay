@@ -647,6 +647,7 @@ CDEPEND="
 RDEPEND+="
 	${CDEPEND}
 	${UDEV_RDEPEND}
+	!www-client/firefox:esr
 	sys-kernel/mitigate-id
 	virtual/patent-status[patent_status_nonfree=]
 	cups? (
@@ -1701,7 +1702,11 @@ ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
 	# Workaround for missing references
 	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-140.10.2-TrustedTypePolicy-add-explicit-instantiations.patch"
 
+	# Fix cubeb-core
 	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-150.0.3-toolchain-configure-remove-extraneous-cflags.patch"
+
+	# Fix linking issue with libxul.so
+	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-150.0.3-fix-properties-glue.patch"
 
 	# Breaks because GCC atomics
 	#_eapply_oiledmachine_set "${FILESDIR}/firefox-150.0.2-disable-ai.patch"
@@ -2221,6 +2226,7 @@ einfo
 		"--with-toolchain-prefix=${CHOST}-" \
 		"--with-unsigned-addon-scopes=app,system"
 
+
 	# mozconfig_add_options_ac \
 	#	"" \
 	#	"--with-libclang-path="$("${CHOST}-llvm-config" "--libdir")
@@ -2653,6 +2659,11 @@ ewarn "Add more swap space if linker causes an out of memory (OOM) condition."
 	if tc-is-clang ; then
 		fix_mb_len_max
 	fi
+
+	# Fix irregexp / properties_glue linking
+#	export LDFLAGS="${LDFLAGS} -Wl,--copy-dt-needed-entries"
+#	export RUSTFLAGS="${RUSTFLAGS} -C link-arg=-Wl,--copy-dt-needed-entries"
+
 	export HOST_CFLAGS="${CFLAGS}"
 	export HOST_CXXFLAGS="${CXXFLAGS}"
 	export HOST_CPPFLAGS="${CPPFLAGS}"
@@ -2705,6 +2716,9 @@ einfo "Build RUSTFLAGS:  ${RUSTFLAGS:-no value set}"
 	fi
 
 	"./mach" "configure" || die
+
+	einfo "Adding missing ZoneShimFFI.o linkage to libxul_so.list"
+	echo -e "\n${S}/ff/js/src/irregexp/ZoneShimFFI.o" >> "ff/toolkit/library/build/libxul_so.list" || die
 }
 
 _src_compile() {
