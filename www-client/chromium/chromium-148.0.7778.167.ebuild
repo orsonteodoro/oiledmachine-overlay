@@ -3209,10 +3209,10 @@ einfo "Applying the distro patchset ..."
 			$(use system-icu && echo "${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr131-unbundle-icu-target.patch")
 			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr138-nodejs-version-check.patch"
 			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr144-glibc-2.43.patch"
-			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr145-fix-no-unrar-2-include-harder.patch"
 			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr145-oauth2-client-switches.patch"
 			$(use ungoogled-chromium || echo "${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr145-revert-to-rollup-wasm.patch")
-			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr146-channel-aware-build.patch"
+			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr147-channel-aware-build.patch"
+			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr148-v8-fix-cfi-sanitizer-set-death-callback.patch"
 			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cross-compile.patch"
 		)
 
@@ -3256,7 +3256,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.45-zlib-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-133.0.6943.53-disable-speech.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-use-memory-tagging.patch"
-		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-highway-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-148.0.7778.167-highway-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-simd-defaults.patch"
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.45-build-config-compiler-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.45-libaom-optionalize-simd.patch"
