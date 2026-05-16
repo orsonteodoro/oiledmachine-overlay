@@ -3262,13 +3262,13 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.45-libaom-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-137.0.7151.68-libvpx-optionalize-simd.patch"		# Fix missing symbols for disabled SIMD
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-pdfium-optionalize-simd.patch"
-		"${FILESDIR}/extra-patches/${PN}-145.0.7632.45-skia-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-148.0.7778.167-skia-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-perfetto-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-ruy-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-webrtc-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-dav1d-optionalize-simd.patch"		# Fix missing symbols for disabled SIMD
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-dav1d-pic.patch"
-		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-libjpeg-turbo-optionalize-simd.patch"	# Fix missing symbols for disabled SIMD
+		"${FILESDIR}/extra-patches/${PN}-148.0.7778.167-libjpeg-turbo-optionalize-simd.patch"	# Fix missing symbols for disabled SIMD
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.45-opus-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.45-libwebp-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-crc32c-optionalize-simd.patch"
