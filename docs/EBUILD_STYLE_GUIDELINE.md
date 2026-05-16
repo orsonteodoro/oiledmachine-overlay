@@ -139,8 +139,12 @@ C defaults
 | Default C               | -std=gnu17                                         |
 | Acceptable LTS C        | -std=gnu17                                         |
 | Acceptable rolling C    | -std=gnu20, -std=gnu23                             |
-| Default C compiler      | GCC                                                                   |
-| Default C linker        | BFD                                                                   |
+| Default C compiler      | GCC                                                |
+| Default C linker        | BFD                                                |
+| Autotools vs CMake      | CMake                                              |
+| CMake vs Meson          | Any                                                |
+| CMake vs Bazel          | CMake                                              |
+| Ninja vs Make           | Ninja                                              |
 
 C++ defaults
 
@@ -153,6 +157,10 @@ C++ defaults
 | Acceptable rolling linking  | Rolling app with LTS lib or rolling lib; rolling lib with rolling lib |
 | Default C++ compiler        | GCC                                                                   |
 | Default C++ linker          | BFD                                                                   |
+| Autotools vs CMake          | CMake                                                                 |
+| CMake vs Meson              | Any                                                                   |
+| CMake vs Bazel              | CMake                                                                 |
+| Ninja vs Make               | Ninja                                                                 |
 
 Python defaults
 
