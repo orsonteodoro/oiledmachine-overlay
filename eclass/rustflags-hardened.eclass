@@ -1885,6 +1885,7 @@ eerror
 	#	sanitizers+=" signed-integer-overflow"
 	#fi
 
+	# DoS, DT, ID, PE
 	local warn_flags=""
 	if [[ "${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("SF") ]] ; then
 		warn_flags+=" -Wformat -Wformat-security"

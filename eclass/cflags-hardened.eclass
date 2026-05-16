@@ -2187,7 +2187,14 @@ einfo "All SSP hardening (All functions hardened)"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fno-delete-null-pointer-checks"
 	fi
 
-	# Poor man's UBSan for build time only
+	# DoS, DT, ID, PE
+	# C#: Partial
+	# C/C++: Y
+	# Java: Partial
+	# Perl: Y
+	# PHP: Y
+	# Python: Y
+	# Rust: N
 	filter-flags \
 		"-Wall" \
 		"-Wformat-security"
