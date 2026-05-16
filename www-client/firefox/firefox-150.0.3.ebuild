@@ -2717,7 +2717,7 @@ einfo "Build RUSTFLAGS:  ${RUSTFLAGS:-no value set}"
 
 	"./mach" "configure" || die
 
-	if [[ -e "ff/toolkit/library/build/libxul_so.list" ]] ; then
+	if ! [[ -e "ff/toolkit/library/build/libxul_so.list" ]] ; then
 eerror "QA:  Missing ff/toolkit/library/build/libxul_so.list"
 eerror "QA:  Remove fix or change path."
 		die
