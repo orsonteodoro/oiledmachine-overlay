@@ -437,6 +437,10 @@ VULNERABILITIES_FIXED=(
 # KASAN: null-ptr-deref - use panic_on_oops=1
 # UBSAN: array-index-out-of-bounds - use panic_on_warn=1
 
+	# 2026-05-15
+	"CVE-2026-46333;ssh-keysign-pwn, PE, ID;"
+	"CVE-2026-43490;;"
+
 	# 2026-05-14
 	"CVE-2026-46300;Fragnesia, PE, ACP, patched by genpatches;"
 

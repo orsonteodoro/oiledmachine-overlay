@@ -129,7 +129,7 @@ ${PASSWORD_MANAGER_IUSE[@]}
 ${PROFILES_IUSE[@]}
 ${SANDBOX_IUSE[@]}
 +enforce
-ebuild_revision_7
+ebuild_revision_8
 "
 # Temporarly disable most kernel flavors until Dirty Frag 0-day mitigation is verified or patched upstream.
 REQUIRED_USE="
@@ -611,9 +611,9 @@ LOGGER_DEPENDS="
 KERNEL_DEPENDS="
 	gentoo-sources? (
 		|| (
-			~sys-kernel/gentoo-sources-7.0.7
-			~sys-kernel/gentoo-sources-6.18.30
-			~sys-kernel/gentoo-sources-6.12.88
+			~sys-kernel/gentoo-sources-7.0.8
+			~sys-kernel/gentoo-sources-6.18.31
+			~sys-kernel/gentoo-sources-6.12.89
 		)
 		sys-kernel/gentoo-sources:=
 	)
@@ -625,17 +625,17 @@ KERNEL_DEPENDS="
 	)
 	ot-sources? (
 		|| (
-			~sys-kernel/ot-sources-7.0.7
-			~sys-kernel/ot-sources-6.18.30
-			~sys-kernel/ot-sources-6.12.88
+			~sys-kernel/ot-sources-7.0.8
+			~sys-kernel/ot-sources-6.18.31
+			~sys-kernel/ot-sources-6.12.89
 		)
 		sys-kernel/ot-sources:=
 	)
 	vanilla-sources? (
 		|| (
-			~sys-kernel/vanilla-sources-7.0.7
-			~sys-kernel/vanilla-sources-6.18.30
-			~sys-kernel/vanilla-sources-6.12.88
+			~sys-kernel/vanilla-sources-7.0.8
+			~sys-kernel/vanilla-sources-6.18.31
+			~sys-kernel/vanilla-sources-6.12.89
 		)
 		sys-kernel/vanilla-sources:=
 	)
