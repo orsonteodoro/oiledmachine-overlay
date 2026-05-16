@@ -2187,7 +2187,15 @@ einfo "All SSP hardening (All functions hardened)"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fno-delete-null-pointer-checks"
 	fi
 
-	# DoS, DT, ID, PE
+	# CE, DoS, DT, ID, PE
+	# The string first arg must not be an attacker controlled variable.
+	#
+	# Manual review specifiers
+	# %n - Critical, write-what-where, CE
+	# %s - High, ID, DoS
+	# %x - Medium/high, ID
+	# %p - Medium/high, ID
+	#
 	# C#: Partial
 	# C/C++: Y
 	# Java: Partial
