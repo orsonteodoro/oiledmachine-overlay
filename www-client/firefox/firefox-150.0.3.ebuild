@@ -2717,8 +2717,16 @@ einfo "Build RUSTFLAGS:  ${RUSTFLAGS:-no value set}"
 
 	"./mach" "configure" || die
 
-	einfo "Adding missing ZoneShimFFI.o linkage to libxul_so.list"
-	echo -e "\n${S}/ff/js/src/irregexp/ZoneShimFFI.o" >> "ff/toolkit/library/build/libxul_so.list" || die
+	if [[ -e "ff/toolkit/library/build/libxul_so.list" ]] ; then
+eerror "QA:  Missing ff/toolkit/library/build/libxul_so.list"
+eerror "QA:  Remove fix or change path."
+		die
+	elif grep -q -e "ZoneShimFFI.o" "ff/toolkit/library/build/libxul_so.list" ; then
+ewarn "QA:  Remove libxul_so.list fix for missing ZoneShimFFI.o"
+	else
+einfo "Adding missing ZoneShimFFI.o linkage to libxul_so.list"
+		echo -e "\n${S}/ff/js/src/irregexp/ZoneShimFFI.o" >> "ff/toolkit/library/build/libxul_so.list" || die
+	fi
 }
 
 _src_compile() {
