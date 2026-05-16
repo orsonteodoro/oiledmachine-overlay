@@ -263,7 +263,7 @@ Security QA
 | Telemetry                                                     | Default off, default opt-out                                                                                                                      |
 | Data breach detection support (password check remotely)       | Default off, default opt-out, patching may be required to optionalize                                                                             |
 | Binary packages                                               | Allowed with restrictions that only if it's the only option, source package/maintenance issue, heavy compilation cost                             |
-| Tree pruning                                                  | If the older versions are necessary for bootstrapping, it should not be deleted.  Otherwise, you're stuck with a compromised trojanized prebuilt. |
+| Ebuild EOL pruning                                            | If the older versions are necessary for bootstrapping, it should not be deleted.  Otherwise, you're stuck with a compromised trojanized prebuilt. |
 
 Robustness QA
 
