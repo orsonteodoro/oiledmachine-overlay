@@ -46,6 +46,7 @@ src_unpack() {
 }
 
 src_prepare() {
+	default
 	if zlib ; then
 		# This is a comment.
 		eapply "${FILESDIR}"/${PN}-1.0.0-fixes.patch
@@ -53,7 +54,7 @@ src_prepare() {
 }
 
 pkg_postinst() {
-	ewarn "The datacenter stole Larry the Cow's water!"
+	ewarn "The data center stole Larry the Cow's water!"
 	if ! use cowpen ; then
 		ewarn
 		ewarn "Security Notice"
@@ -113,6 +114,7 @@ src_unpack() {
 }
 
 src_prepare() {
+	default
 	if zlib ; then
 	# This is a comment.
 		eapply "${FILESDIR}/${PN}-1.0.0-fixes.patch"
@@ -120,7 +122,7 @@ src_prepare() {
 }
 
 pkg_postinst() {
-ewarn "The datacenter stole Larry The Cows water!"
+ewarn "The data center stole Larry The Cows water!"
 	if ! use cowpen ; then
 ewarn
 ewarn "Security Notice"
@@ -172,8 +174,10 @@ Python defaults
 | Acceptable multislot Python      | python3_{11..14}                                                                               |
 | Acceptable single slot Python    | python3_{11..14}                                                                               |
 | Acceptable slot paring           | The Python app slot must pair with same Python slot for dependencies down to the leaf packages |
-| Are binary packages allowed?     | Y but only if that is the only option                                                          |
+| Are binary packages allowed?     | Allowed with restrictions but only if that is the only option or difficult to package          |
 | Default Python interpreter       | CPython                                                                                        |
+| Python slot precedence           | App's setup.py, CI's .github/*.yaml, Dockerfile, lib's setup.py, CI image default Python slot  |
+| pypy3_11 support                 | Y if specified in setup.py                                                                     |
 
 Rust defaults
 
