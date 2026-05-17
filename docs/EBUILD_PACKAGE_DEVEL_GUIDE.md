@@ -222,7 +222,7 @@ Feature QA
 | ---                                                           | ---                                                                                                                         |
 | USE defaults for actively patented codecs                     | OFF                                                                                                                         |
 | USE defaults for security risk features                       | Hard disable if catastrophic, OFF if implied                                                                                |
-| USE defaults for LTS using rolling dependency                 | ON if security-critical app package, OFF otherwise                                                                          |
+| USE defaults for LTS using rolling dependency                 | ON if security-critical feature in app package (e.g. sandbox), OFF for LTS libs linking to rolling libs                     |
 | USE defaults fallback                                         | Should match upstream with exceptions                                                                                       |
 | Default bloat spectrum if no defaults listed                  | Minimal install with optional USE flags                                                                                     |
 | Wayland or X11                                                | Both should be supported if able to run on either                                                                           |
