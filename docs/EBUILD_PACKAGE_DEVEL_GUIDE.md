@@ -345,7 +345,7 @@ LICENCE variable QA
 | Patent licenses must be disclosed                                                                     | Y                                                      |
 | The `custom` placeholder is allowed                                                                   | Y                                                      |
 | Copyright notices must be saved (with lcnr or full source install)                                    | Y                                                      |
-| Actively patented codecs require `patent_status_nonfree` USE flag and free alternative(s) if possible | Y                                                      |
+| Actively patented non-free codecs require `patent_status_nonfree` USE flag and free alternative(s) if possible | Y                                                      |
 | Full disclosure                                                                                       | Y if possible                                          |
 | License identifier precedence                                                                         | Distro, SPDX, license name, package name, link, custom |
 
