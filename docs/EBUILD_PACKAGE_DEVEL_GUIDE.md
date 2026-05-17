@@ -323,7 +323,7 @@ Version QA
 | Subject                                                  | Answer                                                                        |
 | ---                                                      | ---                                                                           |
 | Live ebuilds policy                                      | As needed, delete if unused                                                   |
-| Snapshots vs live                                        | Snapshots                                                                     |
+| Snapshots vs live                                        | Snapshots or live ebuild with fallback commit                                 |
 | Tagged vs untagged                                       | Tagged                                                                        |
 | *DEPENDs version sourcing precedence                     | Build files, CI files, Dockerfile, CI distro versions                         |
 | *DEPENDs version writing preference-precedence           | Slot-comparison, slot, comparison, none                                       |
