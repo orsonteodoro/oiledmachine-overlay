@@ -209,7 +209,7 @@ JS default
 | Fallback slot:  Dockerfile              | Use the same major version for Node                           |
 | Fallback slot:  .nvmrc                  | Use the same major version for Node                           |
 | Fallback slot:  @types/node in lockfile | Use the same major version for Node                           |
-| Fallback slot:  Unknown default slot    | Use the oldest LTS (20)                                       |
+| Fallback slot:  Unknown default slot    | Use the oldest upstream supported LTS (20)                    |
 | npm vs Yarn vs pnpm                     | Use the one that is the default by the project                |
 | Bun vs Node                             | Node                                                          |
 | Use 1 pinned Node slot                  | Y                                                             |
@@ -220,7 +220,9 @@ Feature QA
 
 | Subject                                                       | Answer                                                                                                                      |
 | ---                                                           | ---                                                                                                                         |
-| Default USE flags enablement                                  | Should match upstream with exceptions                                                                                       |
+| USE defaults for actively patented codecs                     | OFF                                                                                                                         |
+| USE defaults for security risk features                       | Hard disable if catastrophic, OFF if implied                                                                                |
+| USE defaults fallback                                         | Should match upstream with exceptions                                                                                       |
 | Default bloat spectrum if no defaults listed                  | Minimal install with optional USE flags                                                                                     |
 | Wayland or X11                                                | Both should be supported if able to run on either                                                                           |
 
