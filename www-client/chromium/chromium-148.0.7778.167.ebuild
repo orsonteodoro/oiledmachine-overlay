@@ -3218,7 +3218,7 @@ einfo "Applying the distro patchset ..."
 
 	# Dedupe, oiledmachine-overlay changes preferred
 	# Update every major version
-		rm -f "${WORKDIR}/chromium-patches-${PATCH_VER}/toolchain/cr146-compiler.patch" || true
+		rm -f "${WORKDIR}/chromium-patches-${PATCH_VER}/toolchain/cr147-compiler.patch" || die "Fix versioning"
 	fi
 
 	# https://issues.chromium.org/issues/442698344
@@ -3288,11 +3288,11 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		)
 	elif has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-146.0.7680.71-mold.patch"
+			"${FILESDIR}/extra-patches/${PN}-148.0.7778.167-mold.patch"
 		)
 	else
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-146.0.7680.71-mold.patch"
+			"${FILESDIR}/extra-patches/${PN}-148.0.7778.167-mold.patch"
 		)
 	fi
 
