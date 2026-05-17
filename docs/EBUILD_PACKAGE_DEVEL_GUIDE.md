@@ -228,6 +228,7 @@ Feature QA
 | Wayland or X11                                                | Both should be supported if able to run on either                                                                           |
 | Hard USE appropriateness                                      | Only use if catastropic or last option, do not abuse it                                                                     |
 | Custom USE flags or custom config options patches allowed?    | Y                                                                                                                           |
+| Forcing defaults is okay or no effort for USE flags?          | It is acceptable sometimes but increases bloat or possibly hard codes paths                                                 |
 
 Security QA
 
@@ -303,6 +304,7 @@ Robustness QA
 | Minimum uptime (kernel, during production)               | 30 days                                                                       |
 | Number of expected/actual crashes in 30 days             | 0                                                                             |
 | Unfinished features?                                     | Disable USE flag, disable configuration, or disable code                      |
+| Hardcoded paths?                                         | Allowed if no compatibility, no multilib, no slot issue                       |
 
 Performance QA
 
