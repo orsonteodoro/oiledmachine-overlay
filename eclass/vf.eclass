@@ -141,7 +141,7 @@ einfo "CB = Container Breakout"
 einfo "CE = Code Execution"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"CI"($|" "|";"|",") ]] ; then
-einfo "CI = Command Injection"
+einfo "CI = Code Injection"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"CJ"($|" "|";"|",") ]] ; then
 einfo "CJ = Clickjack"
@@ -159,7 +159,7 @@ einfo "CSRF = Cross Site Request Forgery"
 einfo "DATALOSS = Data Loss"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"DBCI"($|" "|";"|",") ]] ; then
-einfo "DBCI = Database Command Injection"
+einfo "DBCI = Database Code Injection"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("DbZ"|"DBZ")($|" "|";"|",") ]] ; then
 einfo "DbZ = Divide by Zero"
@@ -458,7 +458,7 @@ einfo "SBX = SandBoX Escape"
 einfo "SC = Side Channel Vulnerability"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SCRPTCI"($|" "|";"|",") ]] ; then
-einfo "SCRPTCI = Script Command Injection"
+einfo "SCRPTCI = Script Code Injection"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SHFTOF"($|" "|";"|",") ]] ; then
 einfo "SHFTOF = Shift Overflow"
@@ -486,7 +486,7 @@ einfo "SEA = Social Engineering Attack"
 einfo "SEV = Sign Extension Vulnerability"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SHCI"($|" "|";"|",") ]] ; then
-einfo "SHCI = Shell Command Injection"
+einfo "SHCI = Shell Code Injection"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SL"($|" "|";"|",") ]] ; then
 einfo "SL = Soft Lockup"
@@ -504,7 +504,7 @@ einfo "SOPB = Same-Origin Policy Bypass"
 einfo "SQLCDI = SQL Code Injection"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SQLCMDI"($|" "|";"|",") ]] ; then
-einfo "SQLCMDI = SQL Command Injection"
+einfo "SQLCMDI = SQL Code Injection"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SQLI"($|" "|";"|",") ]] ; then
 einfo "SQLI = SQL Injection"
