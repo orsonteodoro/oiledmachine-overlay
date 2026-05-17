@@ -311,6 +311,22 @@ Performance QA
 | Build time severe thrashing                              | Only allowed for web browser or AI/ML packages                                |
 | Maximum install + merge time allowed                     | 1 hour                                                                        |
 
+Version QA
+
+| Subject                                                  | Answer                                                                        |
+| ---                                                      | ---                                                                           |
+| Live ebuilds policy                                      | As needed, delete if unused                                                   |
+| Snapshots vs live                                        | Snapshots                                                                     |
+| Tagged vs untagged                                       | Tagged                                                                        |
+| *DEPENDs version sourcing precedence                     | Build files, CI files, Dockerfile, CI distro versions                         |
+| *DEPENDs version writing preference-precedence           | Slot-comparison, slot, comparison, none                                       |
+| Latest vs min tiebreaker for writing *DEPENDs            | It's situational.                                                             |
+|                                                          | For unslotted if different versions encountered, use latest versions if security-critical packages; otherwise, use the oldest version. |
+|                                                          | For C/C++ slotted when LTS and rolling are involved, add all slots >= minimum slot for compilers, and either 1 slot or n conditional slots for libraries. |
+|                                                          | For JS, pin only one slot for compiler and build system, and use the C/C++ rules as fallback. |
+|                                                          | For Python, slots are based on as needed and/or allowed by setup.py.          |
+
+
 LICENCE variable QA
 
 | Subject                                                                                               | Answer                                                 |
