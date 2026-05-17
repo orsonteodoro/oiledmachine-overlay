@@ -67,4 +67,4 @@ The selected first 5 news items:
 * For ebuild quality info, see [EBUILD_QUALITY.md](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/docs/EBUILD_QUALITY.md)
 * For broken ebuilds info, see [BROKEN.md](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/docs/BROKEN.md)
 * For finding ebuild documentation, see [EBUILD_DOCUMENTATION.md](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/docs/EBUILD_DOCUMENTATION.md)
-* For legacy packages, see [LEGACY_PACKAGES.md](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/docs/LEGACY_PACKAGES.md)
+* For the overlay ebuild-package development guide, see [EBUILD_PACKAGE_DEVEL_GUIDE.md](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/docs/EBUILD_PACKAGE_DEVEL_GUIDE.md)
