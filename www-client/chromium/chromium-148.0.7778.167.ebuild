@@ -96,12 +96,12 @@ EAPI=8
 #
 # All links below except for node are marked security-critical by upstream.
 # https://github.com/chromium/chromium/blob/148.0.7778.167/third_party/abseil-cpp/README.chromium					# Live
-# https://github.com/chromium/chromium/blob/148.0.7778.167/third_party/brotli/README.chromium						# Stable
+# https://github.com/chromium/chromium/blob/148.0.7778.167/third_party/brotli/README.chromium						# Live
 # https://github.com/chromium/chromium/blob/148.0.7778.167/third_party/crc32c/README.chromium						# Stable
 # https://github.com/chromium/chromium/blob/148.0.7778.167/third_party/dav1d/version/vcs_version.h#L2					# Stable
 # https://github.com/chromium/chromium/tree/148.0.7778.167/third_party/flatbuffers							# Stable
-# https://github.com/chromium/chromium/tree/148.0.7778.167/third_party/highway								# Live
-# https://github.com/chromium/chromium/tree/148.0.7778.167/third_party/jsoncpp								# Stable, use commit to obtain closest tag.  The submodule is a newer version.
+# https://github.com/chromium/chromium/tree/148.0.7778.167/third_party/highway								# Stable
+# https://github.com/chromium/chromium/tree/148.0.7778.167/third_party/jsoncpp								# Stable, use commit to obtain closest tag.  The submodule is a newer version than readme.
 # https://github.com/chromium/chromium/blob/148.0.7778.167/third_party/libaom/source/config/config/aom_version.h#L19			# Stable
 # https://github.com/chromium/chromium/blob/148.0.7778.167/third_party/libpng/png.h#L288						# Stable
 # https://github.com/chromium/chromium/tree/148.0.7778.167/third_party/libsecret							# Stable
@@ -111,20 +111,20 @@ EAPI=8
 # https://github.com/chromium/chromium/blob/148.0.7778.167/third_party/libxml/linux/config.h#L86					# Stable
 # https://github.com/chromium/chromium/blob/148.0.7778.167/third_party/libxslt/linux/config.h#L116					# Stable
 # https://github.com/chromium/chromium/blob/148.0.7778.167/third_party/node/update_node_binaries#L18					# Stable, marked no for security-critical by upstream
-# https://github.com/chromium/chromium/tree/148.0.7778.167/third_party/re2								# Live.  Relaxed stable version used.
+# https://github.com/chromium/chromium/tree/148.0.7778.167/third_party/re2								# Live.  Submodule is newer commit than readme.  Relaxed stable version used.
 # https://github.com/chromium/chromium/tree/148.0.7778.167/third_party/simdutf								# Stable.  The version listed is newer than the revision.  The version is used.
-# https://github.com/chromium/chromium/tree/148.0.7778.167/third_party/snappy								# Stable.  The submodule is newer than the version.git.revision listed.
+# https://github.com/chromium/chromium/tree/148.0.7778.167/third_party/snappy								# Stable.  The submodule is newer than the version.git.revision listed in readme.
 # https://github.com/chromium/chromium/tree/148.0.7778.167/third_party/spirv-headers							# Live.  Relaxed stable version used.
 # https://github.com/chromium/chromium/tree/148.0.7778.167/third_party/spirv-tools							# Live.  Relaxed stable version used.
 # https://github.com/chromium/chromium/blob/148.0.7778.167/third_party/woff2/README.chromium						# Live
 # https://github.com/chromium/chromium/blob/148.0.7778.167/third_party/zlib/zlib.h#L40							# Stable
 # https://github.com/chromium/chromium/blob/148.0.7778.167/tools/rust/update_rust.py#L35						#
-#   https://github.com/rust-lang/rust/blob/7d8ebe3128fc87f3da1ad64240e63ccf07b8f0bd/src/version						# Live
+#   https://github.com/rust-lang/rust/blob/6f54d591c3116ee7f8ce9321ddeca286810cc142/src/version						# Live
 # /usr/share/chromium/148.0.7778.167/sources/third_party/flac/BUILD.gn								L122	# Stable
 # /usr/share/chromium/148.0.7778.167/sources/third_party/fontconfig/src/fontconfig/fontconfig.h.in				L56     # Stable
 # /usr/share/chromium/148.0.7778.167/sources/third_party/freetype/src/CMakeLists.txt						L165	# Stable
-# /usr/share/chromium/148.0.7778.167/sources/third_party/harfbuzz-ng/README.chromium							# Stable
-# /usr/share/chromium/148.0.7778.167/sources/third_party/icu/source/configure							L585	# Stable
+# /usr/share/chromium/148.0.7778.167/sources/third_party/harfbuzz/README.chromium							# Stable, Revision is newer than Version.  Revision used.
+# /usr/share/chromium/148.0.7778.167/sources/third_party/icu/source/configure							L609	# Stable
 # /usr/share/chromium/148.0.7778.167/sources/third_party/libdrm/src/meson.build							L24	# Stable
 # /usr/share/chromium/148.0.7778.167/sources/third_party/libjpeg_turbo/src/jconfig.h						L7	# Stable
 # /usr/share/chromium/148.0.7778.167/sources/third_party/libyuv/README.chromium								# Live snapshotable, main branch
@@ -132,10 +132,10 @@ EAPI=8
 # /usr/share/chromium/148.0.7778.167/sources/third_party/opus/README.chromium							L3	# Stable
 #   https://gitlab.xiph.org/xiph/opus/-/commit/55513e81d8f606bd75d0ff773d2144e5f2a732f5							# Stable
 # /usr/share/chromium/148.0.7778.167/sources/third_party/zstd/README.chromium								# Live
-#   https://github.com/facebook/zstd/commit/1168da0e567960d50cba1b58c9b0ba047ece4733							# Live
-#   https://github.com/facebook/zstd/blob/1168da0e567960d50cba1b58c9b0ba047ece4733/lib/zstd.h#L107					# Version
+#   https://github.com/facebook/zstd/commit/3ae099b48dfcfe02b1b3ba81ab85457f8a922e9f							# Live
+#   https://github.com/facebook/zstd/blob/3ae099b48dfcfe02b1b3ba81ab85457f8a922e9f/lib/zstd.h#L107					# Version
 #
-# https://github.com/chromium/chromium/blob/148.0.7778.167/DEPS#L512									# Live
+# https://github.com/chromium/chromium/blob/148.0.7778.167/DEPS#L542									# Live, for libcxx
 #
 # /usr/share/chromium/148.0.7778.167/sources/third_party/libc++/src/include/__configuration/compiler.h					# Stable, update LIBCXX_SLOT_MIN
 
@@ -243,8 +243,8 @@ UNGOOGLED_CHROMIUM_PV="148.0.7778.167-1"
 # possible to use all 3.  The 13.7 series fixes contains the 5c595ad commit \
 # to fix a compile error when DrumBrake is enabled. \
 #V8_PV="13.7.152.7" # About the same as the latest Chromium beta release.
-VULKAN_PV="1.4.341" # Version requirement relaxed
-ZLIB_PV="1.3.1"
+VULKAN_PV="1.4.350"
+ZLIB_PV="1.3.2"
 
 COPIUM_COMMIT="fe1caafa06f27542c18a881348f78e984e2d9fe2"
 CROMITE_HASH="271900671db643de04aa9f909f0dcc3415c8b827" # Not the same as the tagged commit but from the commit message
@@ -1588,7 +1588,7 @@ COMMON_SNAPSHOT_DEPEND="
 		dev-cpp/abseil-cpp:=
 	)
 	system-brotli? (
-		>=app-arch/brotli-1.1.0[${MULTILIB_USEDEP}]
+		>=app-arch/brotli-9999[${MULTILIB_USEDEP}]
 		app-arch/brotli:=
 	)
 	system-crc32c? (
@@ -1615,15 +1615,15 @@ COMMON_SNAPSHOT_DEPEND="
 		media-libs/freetype:=
 	)
 	system-harfbuzz? (
-		>=media-libs/harfbuzz-12.3.0:0[${MULTILIB_USEDEP},icu(-)]
+		>=media-libs/harfbuzz-14.0.0:0[${MULTILIB_USEDEP},icu(-)]
 		media-libs/harfbuzz:=
 	)
 	system-highway? (
-		>=dev-cpp/highway-9999
+		>=dev-cpp/highway-1.4.0
 		dev-cpp/highway:=
 	)
 	system-icu? (
-		>=dev-libs/icu-77.1[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
+		>=dev-libs/icu-78.2[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 		dev-libs/icu:=
 	)
 	system-jsoncpp? (
@@ -1634,7 +1634,7 @@ COMMON_SNAPSHOT_DEPEND="
 		media-libs/lcms[${MULTILIB_USEDEP}]
 	)
 	system-libaom? (
-		>=media-libs/libaom-3.13.1[${MULTILIB_USEDEP}]
+		>=media-libs/libaom-3.13.3[${MULTILIB_USEDEP}]
 		media-libs/libaom:=
 	)
 	system-libjpeg-turbo? (
@@ -1645,7 +1645,7 @@ COMMON_SNAPSHOT_DEPEND="
 		media-libs/openjpeg[${MULTILIB_USEDEP}]
 	)
 	system-libpng? (
-		>=media-libs/libpng-1.6.43[${MULTILIB_USEDEP}]
+		>=media-libs/libpng-1.6.55[${MULTILIB_USEDEP}]
 	)
 	system-libsecret? (
 		>=app-crypt/libsecret-0.18.2[${MULTILIB_USEDEP}]
@@ -3409,7 +3409,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		:
 	else
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-145.0.7632.116-optionalize-glic.patch"
+			"${FILESDIR}/extra-patches/${PN}-148.0.7778.167-optionalize-glic.patch"
 		)
 	fi
 }
