@@ -220,7 +220,7 @@ Feature QA
 
 | Subject                                                       | Answer                                                                                                                      |
 | ---                                                           | ---                                                                                                                         |
-| USE defaults for actively patented codecs                     | OFF                                                                                                                         |
+| USE defaults for actively patented non-free codecs            | OFF                                                                                                                         |
 | USE defaults for security risk features                       | Hard disable if catastrophic, OFF if implied                                                                                |
 | USE defaults for LTS using rolling dependency                 | ON if security-critical feature (e.g. sandbox) in app package bumped to rolling, OFF for LTS libs linking to rolling libs   |
 | USE defaults fallback                                         | Should match upstream with exceptions                                                                                       |
