@@ -179,8 +179,8 @@ TC_COUNT_EXPECTED_CLANG=424
 TC_COUNT_EXPECTED_GN=1076
 TC_COUNT_EXPECTED_RUST=7204
 SOURCES_COUNT_EXPECTED=547252
-CHROMIUM_EBUILD_MAINTAINER=1 # Also set GEN_ABOUT_CREDITS
-GEN_ABOUT_CREDITS=1
+CHROMIUM_EBUILD_MAINTAINER=0 # Also set GEN_ABOUT_CREDITS
+GEN_ABOUT_CREDITS=0
 
 ABSEIL_CPP_SLOT="20251021"
 ALLOW_MKSNAPSHOT=1 # Setting to a value other than 1 is untested.
@@ -253,11 +253,9 @@ OPENPOWER_PATCHES_COMMIT="a85b64f07b489b8c6fdb13ecf79c16c56c560fc6" # Same as PP
 # Node for M145+ should be 24.12.0 but that's not packaged in Gentoo yet. See #969145
 TEST_FONT="a28b222b79851716f8358d2800157d9ffe117b3545031ae51f69b7e1e1b9a969"
 
-# SHA512 about_credits.html fingerprint: \
-LICENSE_FINGERPRINT="\
-c3331c52296636489eac713b74c3c8b05c3faa3c60394908d242f15017a98381\
-93f0313d37258dcba9747bff6798fefcf24562c13d35a9ec17757fbd9fb66bc5\
-"
+# SHA512 about_credits.html fingerprint:
+LICENSE_FINGERPRINT_UNGOOGLED_CHROMIUM="6298026ee5a6c86198e8acca7653344b132a136012d19951e488deb0fc4c23d01011931b8d7ba65906b96da8fc905d221124b0b4d81b5db46cb7f8f7de415a3f"
+LICENSE_FINGERPRINT_VANILLA="9ee074cce03f2be95c790139e9bfffb551230b0bdb34134aad73a2969b8c0a581c0bd59f150138cb750a3632900f2b0949973737e47a7f71ef782cdfadfe73d3"
 
 # One of the major sources of lag comes from dependencies
 # These are strict to match performance to competition or normal builds.
@@ -897,6 +895,8 @@ https://github.com/v8/v8/archive/refs/tags/${V8_PV}.tar.gz
 	"
 fi
 
+LICENSE=""
+
 if is_cromite_compatible ; then
 	IUSE+="
 		cromite
@@ -921,12 +921,45 @@ https://github.com/ungoogled-software/ungoogled-chromium/archive/refs/tags/${UNG
 	"
 fi
 
+if is_cromite_compatible && is_ungoogle_chromium_compatible ; then
+	LICENSE+="
+		!cromite? (
+			!ungoogled-chromium? (
+				chromium-${PV%.*}.x.html
+			)
+		)
+		cromite? (
+			chromium-${PV%.*}.x-with-cromite.html
+		)
+		ungoogled-chromium? (
+			chromium-${PV%.*}.x-with-ungoogled-chromium.html
+		)
+	"
+elif is_cromite_compatible ; then
+	LICENSE+="
+		!cromite? (
+			chromium-${PV%.*}.x.html
+		)
+		cromite? (
+			chromium-${PV%.*}.x-with-cromite.html
+		)
+	"
+elif is_ungoogle_chromium_compatible ; then
+	LICENSE+="
+		!ungoogled-chromium? (
+			chromium-${PV%.*}.x.html
+		)
+		ungoogled-chromium? (
+			chromium-${PV%.*}.x-with-ungoogled-chromium.html
+		)
+	"
+fi
+
 DESCRIPTION="The open-source version of the Chrome web browser"
 HOMEPAGE="https://www.chromium.org/"
 # emerge does not understand ^^ in the LICENSE variable and have been replaced
 # with ||.  You should choose at most one at some instances.
-LICENSE="
-	chromium-${PV%.*}.x.html
+LICENSE+="
 "
 if is_cromite_compatible ; then
 	LICENSE+="
@@ -3377,7 +3410,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-xnnpack-scalar-fallback.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-pdfium-system-deps.patch"
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.45-use-system-opus-alt.patch"
-		$(use system-libpng && echo "${FILESDIR}/extra-patches/${PN}-144.0.7559.59-libpng-test-only.patch")
+#		$(use system-libpng && echo "${FILESDIR}/extra-patches/${PN}-144.0.7559.59-libpng-test-only.patch")
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-optionalize-clang-flags.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-optionalize-omit-frame-pointer.patch"
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.75-dedupe-use-system-zlib.patch" # It appears twice in cromite build
@@ -8080,6 +8113,26 @@ einfo "Building ${file_name}"
 	fi
 }
 
+_get_flavor_suffix_var() {
+	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
+		echo "_UNGOOGLED_CHROMIUM"
+	elif has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
+		echo "_CROMITE"
+	else
+		echo "_VANILLA"
+	fi
+}
+
+_get_flavor_suffix_fn() {
+	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
+		echo "-with-ungoogled-chromium"
+	elif has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
+		echo "-with-cromite"
+	else
+		echo ""
+	fi
+}
+
 _update_licenses() {
 	# Upstream doesn't package PATENTS files
 	if \
@@ -8093,7 +8146,9 @@ einfo "Generating license and copyright notice file"
 		eninja -C "out/Release" "about_credits"
 		# It should be updated when the major.minor.build.x changes
 		# because of new features.
-		local license_file_name="${PN}-"$(ver_cut 1-3 "${PV}")".x.html"
+		local flavor_var=$(_get_flavor_suffix_var)
+		local flavor_fn=$(_get_flavor_suffix_fn)
+		local license_file_name="${PN}-"$(ver_cut 1-3 "${PV}")".x${flavor_fn}.html"
 		local fp=$(sha512sum \
 "${s}/out/Release/gen/components/resources/about_credits.html" \
 			| cut -f 1 -d " ")
@@ -8104,7 +8159,7 @@ einfo "  \`cp -a ${s}/out/Release/gen/components/resources/about_credits.html ${
 einfo
 einfo "Update ebuild with"
 einfo
-einfo "  LICENSE_FINGERPRINT=\"${fp}\""
+einfo "  LICENSE_FINGERPRINT_${flavor_var}=\"${fp}\""
 einfo
 einfo "and with LICENSE variable updates.  When you are done updating, comment"
 einfo "out GEN_ABOUT_CREDITS."
