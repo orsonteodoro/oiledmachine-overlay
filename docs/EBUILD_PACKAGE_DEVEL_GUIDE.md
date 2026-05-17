@@ -228,7 +228,7 @@ Feature QA
 | Wayland or X11                                                   | Both should be supported if able to run on either                                                                           |
 | Hard USE appropriateness                                         | Only use if catastropic or last option, do not abuse it                                                                     |
 | Custom USE flags or custom config options patches allowed?       | Y                                                                                                                           |
-| Forcing defaults is okay or no effort for adding USE flags okay? | It is acceptable sometimes but increases bloat or possibly hard codes paths                                                 |
+| Forcing defaults is okay or no effort for adding USE flags okay? | It is acceptable sometimes for small packages but increases bloat, increases build time, increases the attack surface, or possibly hard codes paths. |
 
 Security QA
 
