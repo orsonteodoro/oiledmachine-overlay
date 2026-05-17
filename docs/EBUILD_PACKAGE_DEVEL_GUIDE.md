@@ -211,7 +211,7 @@ JS default
 | Fallback slot:  @types/node in lockfile | Use the same major version for Node                           |
 | Fallback slot:  Unknown default slot    | Use the oldest upstream supported LTS (20)                    |
 | npm vs Yarn vs pnpm                     | Use the one that is the default by the project                |
-| Bun vs Node                             | Node                                                          |
+| Bun vs Node                             | Force Node but if no hard dependence on Bun                   |
 | Use 1 pinned Node slot                  | Y                                                             |
 | Lockfile(s) should be generated         | Y                                                             |
 | Offline install                         | Y cached in distfiles                                         |
