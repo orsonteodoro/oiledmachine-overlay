@@ -3284,7 +3284,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
 	# Same as USE="ungoogled-chromium cromite" or USE=ungoogled-chromium
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-146.0.7680.71-mold-ungoogled-chromium.patch"
+			"${FILESDIR}/extra-patches/${PN}-148.0.7778.167-mold-ungoogled-chromium.patch"
 		)
 	elif has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
 		PATCHES+=(
@@ -3382,10 +3382,11 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-optionalize-omit-frame-pointer.patch"
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.75-dedupe-use-system-zlib.patch" # It appears twice in cromite build
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-optionalize-clang-warning-suppression-mappings.patch"
-		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-system-clang-flags.patch"
+		"${FILESDIR}/extra-patches/${PN}-148.0.7778.167-system-clang-flags.patch"
 #		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-libcxx-headers.patch"
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-libcxx-hardening-flag.patch"
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-system-clang-flags-3.patch"
+		"${FILESDIR}/extra-patches/${PN}-148.0.7778.167-v8-disable-vendored-libcxx-check-for-sandbox.patch"
 	)
 
 	if use system-clang ; then
@@ -7720,15 +7721,21 @@ ewarn "Unbundling libs and lowering security"
 	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
 		myconf_gn+=(
 			"enable_glic=false"
+			"enable_glic2=false"
+			"enable_glic3=false"
 		)
 	elif has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
 		myconf_gn+=(
 			"enable_glic=false"
+			"enable_glic2=false"
+			"enable_glic3=false"
 		)
 	else
 	# Required for chromium
 		myconf_gn+=(
 			"enable_glic=true"						# AI assistant features, not production ready but enabled by default
+			"enable_glic2=true"						# AI assistant features, not production ready but enabled by default
+			"enable_glic3=true"						# AI assistant features, not production ready but enabled by default
 		)
 	fi
 

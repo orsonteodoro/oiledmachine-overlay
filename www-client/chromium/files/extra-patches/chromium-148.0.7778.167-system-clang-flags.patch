@@ -1,0 +1,40 @@
+--- a/build/config/compiler/BUILD.gn.orig	2026-05-16 23:51:25.045416037 -0700
++++ b/build/config/compiler/BUILD.gn	2026-05-17 00:01:50.920138009 -0700
+@@ -53,6 +53,7 @@ declare_args() {
+ 
+   enable_frame_pointers = true
+   use_system_clang = false
++  use_glibc = true
+ }
+ 
+ declare_args() {
+@@ -637,6 +638,29 @@ config("compiler") {
+       }
+     }
+ 
++    if (is_clang && use_system_clang) {
++      if (use_glibc) {
++        cflags += [ "-DMB_LEN_MAX=16" ]
++        cflags += [ "-D_POSIX_SEM_VALUE_MAX=32767" ]
++        if (current_cpu == "arm64"
++            || current_cpu == "loong64"
++            || current_cpu == "mips64"
++            || current_cpu == "mips64el"
++            || current_cpu == "ppc64"
++            || current_cpu == "riscv64"
++            || current_cpu == "s390x"
++            || current_cpu == "x64") {
++          cflags += [ "-DSSIZE_MAX=9223372036854775807" ]
++        } else {
++          cflags += [ "-DSSIZE_MAX=2147483647" ]
++        }
++      }
++      if (is_linux) {
++        cflags += [ "-DPATH_MAX=4096" ]
++        cflags += [ "-DNAME_MAX=255" ]
++      }
++    }
++
+     if (use_zero_call_used_regs == "all") {
+       cflags += [ "-fzero-call-used-regs=all" ]
+     } else if (use_zero_call_used_regs == "used-all") {
