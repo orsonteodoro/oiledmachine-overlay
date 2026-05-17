@@ -271,7 +271,7 @@ Security QA
 | User inside container                                         | Must be a limited user if daemonized, cannot use pre-existing UID of real users                                                                   |
 | Telemetry                                                     | Default off, default opt-out                                                                                                                      |
 | Data breach detection support (password check remotely)       | Default off, default opt-out, patching may be required to optionalize                                                                             |
-| Binary packages                                               | Allowed with restrictions that only if it's the only option, source package/maintenance issue, heavy compilation cost                             |
+| Binary packages                                               | Allowed with restrictions that only if it is either the only option, source package/maintenance issue, or heavy compilation cost                  |
 | Ebuild EOL pruning                                            | If the older versions are necessary for bootstrapping, it should not be deleted.  Otherwise, you're stuck with a compromised trojanized prebuilt. |
 
 Userspace mitigation comparison
