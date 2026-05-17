@@ -226,6 +226,7 @@ Feature QA
 | USE defaults fallback                                         | Should match upstream with exceptions                                                                                       |
 | Default bloat spectrum if no defaults listed                  | Minimal install with optional USE flags                                                                                     |
 | Wayland or X11                                                | Both should be supported if able to run on either                                                                           |
+| Hard USE appropriateness                                      | Only use if catastropic or last option, do not abuse it                                                                     |
 
 Security QA
 
