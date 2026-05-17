@@ -332,7 +332,7 @@ Version QA
 |                                                          | For C/C++ slotted when LTS and rolling are involved, add all slots >= minimum slot for compilers, and either 1 slot or n conditional slots for libraries. |
 |                                                          | For JS, pin only one slot for compiler and build system, and use the C/C++ rules as fallback. |
 |                                                          | For Python, slots are based on as needed and/or allowed by setup.py.          |
-| All used live dependences timestamp should be verified for recentness | Y (WIP, TODO:  add new eclass) for security reasons              |
+| All used live dependences timestamps should be verified for recentness | Y (WIP, TODO:  add new eclass) for security reasons             |
 
 
 LICENCE variable QA
