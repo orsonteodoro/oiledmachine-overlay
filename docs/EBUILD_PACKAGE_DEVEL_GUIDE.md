@@ -218,17 +218,17 @@ JS default
 
 Feature QA
 
-| Subject                                                       | Answer                                                                                                                      |
-| ---                                                           | ---                                                                                                                         |
-| USE defaults for actively patented non-free codecs            | OFF                                                                                                                         |
-| USE defaults for security risk features                       | Hard disable if catastrophic, OFF if harm or loss implied                                                                   |
-| USE defaults for LTS using rolling dependency                 | ON if security-critical feature (e.g. sandbox) in app package bumped to rolling, OFF for LTS libs linking to rolling libs   |
-| USE defaults fallback                                         | Should match upstream with exceptions                                                                                       |
-| Default bloat spectrum if no defaults listed                  | Minimal install with optional USE flags                                                                                     |
-| Wayland or X11                                                | Both should be supported if able to run on either                                                                           |
-| Hard USE appropriateness                                      | Only use if catastropic or last option, do not abuse it                                                                     |
-| Custom USE flags or custom config options patches allowed?    | Y                                                                                                                           |
-| Forcing defaults is okay or no effort for USE flags?          | It is acceptable sometimes but increases bloat or possibly hard codes paths                                                 |
+| Subject                                                          | Answer                                                                                                                      |
+| ---                                                              | ---                                                                                                                         |
+| USE defaults for actively patented non-free codecs               | OFF                                                                                                                         |
+| USE defaults for security risk features                          | Hard disable if catastrophic, OFF if harm or loss implied                                                                   |
+| USE defaults for LTS using rolling dependency                    | ON if security-critical feature (e.g. sandbox) in app package bumped to rolling, OFF for LTS libs linking to rolling libs   |
+| USE defaults fallback                                            | Should match upstream with exceptions                                                                                       |
+| Default bloat spectrum if no defaults listed                     | Minimal install with optional USE flags                                                                                     |
+| Wayland or X11                                                   | Both should be supported if able to run on either                                                                           |
+| Hard USE appropriateness                                         | Only use if catastropic or last option, do not abuse it                                                                     |
+| Custom USE flags or custom config options patches allowed?       | Y                                                                                                                           |
+| Forcing defaults is okay or no effort for adding USE flags okay? | It is acceptable sometimes but increases bloat or possibly hard codes paths                                                 |
 
 Security QA
 
@@ -304,7 +304,7 @@ Robustness QA
 | Minimum uptime (kernel, during production)               | 30 days                                                                       |
 | Number of expected/actual crashes in 30 days             | 0                                                                             |
 | Unfinished features?                                     | Disable USE flag, disable configuration, or disable code                      |
-| Hardcoded paths?                                         | Allowed if no compatibility, no multilib, no slot issue                       |
+| Hard coded paths?                                        | Allowed if no compatibility, no multilib, no slot issue                       |
 
 Performance QA
 
