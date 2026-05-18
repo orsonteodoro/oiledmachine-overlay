@@ -178,6 +178,7 @@ Python defaults
 | Default Python interpreter       | CPython                                                                                        |
 | Python slot precedence           | App's setup.py, CI's .github/*.yaml, Dockerfile, lib's setup.py, CI image default Python slot  |
 | pypy3_11 support                 | Y if specified in setup.py                                                                     |
+| Must use slotted Cython          | Y                                                                                              |
 
 Rust defaults
 
