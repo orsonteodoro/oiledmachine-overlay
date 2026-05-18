@@ -235,7 +235,7 @@ Slotting QA
 
 | Subject                                                  | Answer                                                                        |
 | ---                                                      | ---                                                                           |
-| Compilers must be slotted                                | Y                                                                             |
+| Compilers and interpreters must be slotted               | Y                                                                             |
 | Poison pilled versioning must be slotted                 | Y                                                                             |
 | LTS must be slotted                                      | Y                                                                             |
 
