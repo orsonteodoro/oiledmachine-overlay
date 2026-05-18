@@ -29,9 +29,10 @@
 
     You need to add the following in /etc/portage/profile/package.use.force
     in order to select a non-native ABI.  Tweak below to add your masked ABI.
-    - CUT BELOW HERE -
+
+- CUT BELOW HERE -
 www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_64 -abi_s390_64
-    - CUT ABOVE HERE -
+- CUT ABOVE HERE -
 
     To override the distro hard mask for ffmpeg5 do the following:
 
@@ -84,6 +85,16 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       www-client/chromium chromium.conf
     
 
+    Full optimization and full hardening window.
+
+    The ebuild introduces a change where between 19-29 of each month (after the
+    billing window), it will optimize the build with time expensive
+    optimizations (e.g. LTO, mksnapshot) and expensive hardening (e.g. Clang
+    CFI).  Outside the full window, it will optimize for build speed.  This will
+    balance out real world needs to pay bills on time.  Variables 
+    CHROMIUM_LTO_CFI_START and CHROMIUM_LTO_CFI_END can tune the window.
+
+
 
     Build time environment variables:
 
@@ -108,8 +119,13 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       1 - apply (default)
       0 - do not apply
 
-    CROMITE_PATCH_BLACKLIST - A space separated list of patches not to apply.
+    CHROMIUM_LTO_CFI_START - Day of the month were full optimization can take place.
+    Default 19.
 
+    CHROMIUM_LTO_CFI_END - Last day of the month where full optimization takes place.
+    Default 29.
+
+    CROMITE_PATCH_BLACKLIST - A space separated list of patches not to apply.
 
     C_VS_UC_PREFERENCE - Conflict resolve patch preferences between Cromite
     and ungoogled-chromium patches with a space delimited list.

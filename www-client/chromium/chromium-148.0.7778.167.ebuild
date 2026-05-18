@@ -183,7 +183,7 @@ CHROMIUM_EBUILD_MAINTAINER=0 # Also set GEN_ABOUT_CREDITS
 GEN_ABOUT_CREDITS=0
 
 ABSEIL_CPP_SLOT="20251021"
-ALLOW_MKSNAPSHOT=1 # Setting to a value other than 1 is untested.
+ALLOW_MKSNAPSHOT=1 # Ebuild maintainer value.  Setting to a value other than 1 is untested.
 CFI_CAST=0 # Global variable
 CFI_ICALL=0 # Global variable
 CFI_VCALL=0 # Global variable
@@ -203,6 +203,7 @@ CURRENT_PROFDATA_LLVM_VERSION= # Global variable
 CXX_STANDARD=23
 DISABLE_AUTOFORMATTING="yes"
 DISTRIBUTED_BUILD=0 # Global variable
+ENABLE_FULL_OPTIMIZATION=1 # Global variable
 LIBCXX_USEDEP_SKIP=1
 LLVM_SLOT="" # Global variable
 LTO_TYPE="" # Global variable
@@ -225,6 +226,17 @@ RUST_SLOT_VENDORED="1.95.0" # Check every major version bump
 RUST_OPTIONAL="yes" # Not actually optional, but we don't need system Rust (or LLVM) with USE=-system-clang
 SHADOW_CALL_STACK=0 # Global variable
 WEB_KERNEL_CONFIG_CHECK_YAMA=1
+
+# Default:  Allow expensive hardening and optimization between 19-29 of each month after billing time.
+: ${CHROMIUM_LTO_CFI_START:=19}
+: ${CHROMIUM_LTO_CFI_END:=29}
+: ${BUILD_TIME_TOLERANCE:=2.0}     # Only used as fallback / manual override
+
+# Allow user override via make.conf or package.env
+if [[ -n "${CHROMIUM_LTO_CFI_WINDOW}" ]]; then
+    CHROMIUM_LTO_CFI_START=${CHROMIUM_LTO_CFI_WINDOW%-*}
+    CHROMIUM_LTO_CFI_END=${CHROMIUM_LTO_CFI_WINDOW#*-}
+fi
 
 GCC_PV="10.2.1" # Minimum
 CROMITE_PV="147.0.7727.56"
@@ -858,7 +870,7 @@ is_ungoogle_chromium_compatible() {
 if [[ "${CHROMIUM_EBUILD_MAINTAINER}" == "1" ]] ; then
 	:
 else
-	#KEYWORDS="~amd64 ~arm64" # Needs custom patch updates
+	KEYWORDS="~amd64 ~arm64"
 	:
 fi
 
@@ -6301,456 +6313,152 @@ ewarn "Did not detect block device backing ${WORKDIR}"
 	fi
 }
 
-#
-# chromium_build_allowed()
-#
-# Return:
-#
-# 0 if actual build time is within expected range (aka ALLOWED)
-# 1 if too slow (aka DISALLOWED)
-#
-chromium_build_allowed() {
-	local tolerance_hours="${1}"
-	if [[ -z "${tolerance_hours}" || ! "${tolerance_hours}" =~ ^[0-9]+(\.[0-9]+)?$ ]]; then
-ewarn "chromium_build_allowed():  ERROR: Invalid or missing tolerance_hours"
-		return 1
+chromium_lto_build_allowed() {
+	local tolerance=${1:-${BUILD_TIME_TOLERANCE:-2.0}}
+
+	# Inside optimization window we accept higher cost → always allow
+	if [[ ${ENABLE_FULL_OPTIMIZATION} -eq 1 ]] ; then
+einfo "chromium_build_allowed(): ALLOWED (inside optimization window - full opt accepted)"
+		return 0
 	fi
 
-	# Defaults
-	local cores=$(get_nproc) # It is the same as the number of cores.
-	[[ -z "${cores}" ]] && cores=16 # Default
+	# Outside window → apply cost check (fast build mode)
+	local cores=$(get_nproc)
+	local storage=$(get_drive_type)
 
-	# Supported core counts (must match the keys in ranges array)
-	local supported_cores=( 4 6 8 12 16 32 64 128 256 )
-
-	# Validate and fallback: round down to nearest supported
-	local validated_cores=${cores}
-	local best_diff=999999
-	local cores_fallback=16  # Safe default if something goes wrong
-
-	local sup
-	for sup in ${supported_cores[@]} ; do
-		if (( sup == ${cores} )); then
-			validated_cores=${cores}
-			break
-		fi
-
-		local diff=$(( ${cores} - ${sup} ))
-		(( ${diff} < 0 )) && diff=$(( -${diff} ))
-
-		if (( ${diff} < ${best_diff} && ${sup} <= ${cores} )) ; then
-			best_diff=${diff}
-			cores_fallback=${sup}
-		fi
-	done
-
-	# If no lower-or-equal found (unlikely), use overall closest
-	if (( ${validated_cores} != ${cores} )); then
-	# Find the absolute closest
-		best_diff=999999
-		for sup in ${supported_cores[@]} ; do
-			local diff=$(( ${cores} - ${sup} ))
-			(( ${diff} < 0 )) && diff=$(( -${diff} ))
-			if (( ${diff} < ${best_diff} )) ; then
-				best_diff=${diff}
-				cores_fallback=${sup}
-			fi
-		done
-		validated_cores=${cores_fallback}
-
-ewarn "chromium_build_allowed():  WARNING: ${cores} threads not in table — rounding to nearest supported: ${validated_cores} cores"
-	fi
-
-	local storage=$(get_drive_type)  # ssd or hdd
-
-	# USE-flag interpretation
-	local has_lto=0
-	local has_v8_snapshot=0
-
-	(( ${USE_LTO} == 1 )) && has_lto=1
-	use v8-snapshot && has_v8_snapshot=1
-
-	local lto_type=""
-	if use mold ; then
-		lto_type="With Mold"
-	else
-		lto_type="With ThinLTO"
-	fi
-	(( has_lto == 0 )) && lto_type="Without LTO (component)"
-
-	local v8_type="With V8 Snapshots"
-	(( has_v8_snapshot == 0 )) && v8_type="Without V8 Snapshots"
-
-	# Estimated ranges (cores:lto:storage:v8:low:high) — extend as needed
-	local ranges=()
-
-	local mold_ranges=(
-		"4:With Mold:SSD:With V8 Snapshots:9:18"
-		"4:With Mold:SSD:Without V8 Snapshots:9.5:19"
-		"4:With Mold:HDD:With V8 Snapshots:13:27"
-		"4:With Mold:HDD:Without V8 Snapshots:14:28"
-		"4:Without LTO (component):SSD:With V8 Snapshots:6:12"
-		"4:Without LTO (component):SSD:Without V8 Snapshots:6.5:13"
-		"4:Without LTO (component):HDD:With V8 Snapshots:9:18"
-		"4:Without LTO (component):HDD:Without V8 Snapshots:9.5:19"
-
-		"6:With Mold:SSD:With V8 Snapshots:7:14"
-		"6:With Mold:SSD:Without V8 Snapshots:7.5:15"
-		"6:With Mold:HDD:With V8 Snapshots:10:21"
-		"6:With Mold:HDD:Without V8 Snapshots:11:22"
-		"6:Without LTO (component):SSD:With V8 Snapshots:4:9"
-		"6:Without LTO (component):SSD:Without V8 Snapshots:4.5:10"
-		"6:Without LTO (component):HDD:With V8 Snapshots:6:14"
-		"6:Without LTO (component):HDD:Without V8 Snapshots:6.5:15"
-
-		"8:With Mold:SSD:With V8 Snapshots:5.5:11"
-		"8:With Mold:SSD:Without V8 Snapshots:6:12"
-		"8:With Mold:HDD:With V8 Snapshots:8:17"
-		"8:With Mold:HDD:Without V8 Snapshots:8.5:18"
-		"8:Without LTO (component):SSD:With V8 Snapshots:3:7"
-		"8:Without LTO (component):SSD:Without V8 Snapshots:3.5:8"
-		"8:Without LTO (component):HDD:With V8 Snapshots:5:11"
-		"8:Without LTO (component):HDD:Without V8 Snapshots:5.5:12"
-
-		"12:With Mold:SSD:With V8 Snapshots:4:8"
-		"12:With Mold:SSD:Without V8 Snapshots:4.5:9"
-		"12:With Mold:HDD:With V8 Snapshots:6:13"
-		"12:With Mold:HDD:Without V8 Snapshots:6.5:14"
-		"12:Without LTO (component):SSD:With V8 Snapshots:2:5"
-		"12:Without LTO (component):SSD:Without V8 Snapshots:2.5:6"
-		"12:Without LTO (component):HDD:With V8 Snapshots:3:8"
-		"12:Without LTO (component):HDD:Without V8 Snapshots:3.5:9"
-
-		"16:With Mold:SSD:With V8 Snapshots:3:6.5"
-		"16:With Mold:SSD:Without V8 Snapshots:3.5:7"
-		"16:With Mold:HDD:With V8 Snapshots:5:10"
-		"16:With Mold:HDD:Without V8 Snapshots:5.5:11"
-		"16:Without LTO (component):SSD:With V8 Snapshots:2:4"
-		"16:Without LTO (component):SSD:Without V8 Snapshots:2.5:5"
-		"16:Without LTO (component):HDD:With V8 Snapshots:3:7"
-		"16:Without LTO (component):HDD:Without V8 Snapshots:3.5:8"
-
-		"32:With Mold:SSD:With V8 Snapshots:1.5:4"
-		"32:With Mold:SSD:Without V8 Snapshots:2:4.5"
-		"32:With Mold:HDD:With V8 Snapshots:2.5:7"
-		"32:With Mold:HDD:Without V8 Snapshots:3:8"
-		"32:Without LTO (component):SSD:With V8 Snapshots:1:3"
-		"32:Without LTO (component):SSD:Without V8 Snapshots:1.5:3.5"
-		"32:Without LTO (component):HDD:With V8 Snapshots:2:5"
-		"32:Without LTO (component):HDD:Without V8 Snapshots:2.5:6"
-
-		"64:With Mold:SSD:With V8 Snapshots:1.2:3.5"
-		"64:With Mold:SSD:Without V8 Snapshots:1.5:4"
-		"64:With Mold:HDD:With V8 Snapshots:2:6"
-		"64:With Mold:HDD:Without V8 Snapshots:2.5:7"
-		"64:Without LTO (component):SSD:With V8 Snapshots:0.75:2.5"
-		"64:Without LTO (component):SSD:Without V8 Snapshots:1:3"
-		"64:Without LTO (component):HDD:With V8 Snapshots:1.5:4"
-		"64:Without LTO (component):HDD:Without V8 Snapshots:2:5"
-
-		"128:With Mold:SSD:With V8 Snapshots:0.8:2.8"
-		"128:With Mold:SSD:Without V8 Snapshots:1:3.2"
-		"128:With Mold:HDD:With V8 Snapshots:1.5:5"
-		"128:With Mold:HDD:Without V8 Snapshots:2:6"
-		"128:Without LTO (component):SSD:With V8 Snapshots:0.5:2"
-		"128:Without LTO (component):SSD:Without V8 Snapshots:0.75:2.5"
-		"128:Without LTO (component):HDD:With V8 Snapshots:1:4"
-		"128:Without LTO (component):HDD:Without V8 Snapshots:1.5:4.5"
-
-		"256:With Mold:SSD:With V8 Snapshots:0.6:2.2"
-		"256:With Mold:SSD:Without V8 Snapshots:0.8:2.6"
-		"256:With Mold:HDD:With V8 Snapshots:1.2:4"
-		"256:With Mold:HDD:Without V8 Snapshots:1.5:5"
-		"256:Without LTO (component):SSD:With V8 Snapshots:0.4:1.5"
-		"256:Without LTO (component):SSD:Without V8 Snapshots:0.5:2"
-		"256:Without LTO (component):HDD:With V8 Snapshots:1:3"
-		"256:Without LTO (component):HDD:Without V8 Snapshots:1.25:3.5"
-	)
-
-	local thinlto_ranges=(
-		"4:With ThinLTO:SSD:With V8 Snapshots:12:24"
-		"4:With ThinLTO:SSD:Without V8 Snapshots:12.5:25"
-		"4:With ThinLTO:HDD:With V8 Snapshots:18:36"
-		"4:With ThinLTO:HDD:Without V8 Snapshots:19:38"
-		"4:Without LTO (component):SSD:With V8 Snapshots:6:12"
-		"4:Without LTO (component):SSD:Without V8 Snapshots:6.5:13"
-		"4:Without LTO (component):HDD:With V8 Snapshots:9:18"
-		"4:Without LTO (component):HDD:Without V8 Snapshots:9.5:19"
-
-		"6:With ThinLTO:SSD:With V8 Snapshots:9:18"
-		"6:With ThinLTO:SSD:Without V8 Snapshots:9.5:19"
-		"6:With ThinLTO:HDD:With V8 Snapshots:13:27"
-		"6:With ThinLTO:HDD:Without V8 Snapshots:14:28"
-		"6:Without LTO (component):SSD:With V8 Snapshots:4:9"
-		"6:Without LTO (component):SSD:Without V8 Snapshots:4.5:10"
-		"6:Without LTO (component):HDD:With V8 Snapshots:6:14"
-		"6:Without LTO (component):HDD:Without V8 Snapshots:6.5:15"
-
-		"8:With ThinLTO:SSD:With V8 Snapshots:7:14"
-		"8:With ThinLTO:SSD:Without V8 Snapshots:7.5:15"
-		"8:With ThinLTO:HDD:With V8 Snapshots:10:22"
-		"8:With ThinLTO:HDD:Without V8 Snapshots:11:23"
-		"8:Without LTO (component):SSD:With V8 Snapshots:3:7"
-		"8:Without LTO (component):SSD:Without V8 Snapshots:3.5:8"
-		"8:Without LTO (component):HDD:With V8 Snapshots:5:11"
-		"8:Without LTO (component):HDD:Without V8 Snapshots:5.5:12"
-
-		"12:With ThinLTO:SSD:With V8 Snapshots:5:10"
-		"12:With ThinLTO:SSD:Without V8 Snapshots:5.5:11"
-		"12:With ThinLTO:HDD:With V8 Snapshots:8:16"
-		"12:With ThinLTO:HDD:Without V8 Snapshots:8.5:17"
-		"12:Without LTO (component):SSD:With V8 Snapshots:2:5"
-		"12:Without LTO (component):SSD:Without V8 Snapshots:2.5:6"
-		"12:Without LTO (component):HDD:With V8 Snapshots:3:8"
-		"12:Without LTO (component):HDD:Without V8 Snapshots:3.5:9"
-
-		"16:With ThinLTO:SSD:With V8 Snapshots:4:8"
-		"16:With ThinLTO:SSD:Without V8 Snapshots:4.5:9"
-		"16:With ThinLTO:HDD:With V8 Snapshots:6:13"
-		"16:With ThinLTO:HDD:Without V8 Snapshots:6.5:14"
-		"16:Without LTO (component):SSD:With V8 Snapshots:2:4"
-		"16:Without LTO (component):SSD:Without V8 Snapshots:2.5:5"
-		"16:Without LTO (component):HDD:With V8 Snapshots:3:7"
-		"16:Without LTO (component):HDD:Without V8 Snapshots:3.5:8"
-
-		"32:With ThinLTO:SSD:With V8 Snapshots:2:5"
-		"32:With ThinLTO:SSD:Without V8 Snapshots:2.5:6"
-		"32:With ThinLTO:HDD:With V8 Snapshots:3:9"
-		"32:With ThinLTO:HDD:Without V8 Snapshots:3.5:10"
-		"32:Without LTO (component):SSD:With V8 Snapshots:1:3"
-		"32:Without LTO (component):SSD:Without V8 Snapshots:1.5:3.5"
-		"32:Without LTO (component):HDD:With V8 Snapshots:2:5"
-		"32:Without LTO (component):HDD:Without V8 Snapshots:2.5:6"
-
-		"64:With ThinLTO:SSD:With V8 Snapshots:1.5:4"
-		"64:With ThinLTO:SSD:Without V8 Snapshots:2:4.5"
-		"64:With ThinLTO:HDD:With V8 Snapshots:2.5:7"
-		"64:With ThinLTO:HDD:Without V8 Snapshots:3:8"
-		"64:Without LTO (component):SSD:With V8 Snapshots:0.75:2.5"
-		"64:Without LTO (component):SSD:Without V8 Snapshots:1:3"
-		"64:Without LTO (component):HDD:With V8 Snapshots:1.5:4"
-		"64:Without LTO (component):HDD:Without V8 Snapshots:2:5"
-
-		"128:With ThinLTO:SSD:With V8 Snapshots:1:3"
-		"128:With ThinLTO:SSD:Without V8 Snapshots:1.25:3.5"
-		"128:With ThinLTO:HDD:With V8 Snapshots:2:6"
-		"128:With ThinLTO:HDD:Without V8 Snapshots:2.5:7"
-		"128:Without LTO (component):SSD:With V8 Snapshots:0.5:2"
-		"128:Without LTO (component):SSD:Without V8 Snapshots:0.75:2.5"
-		"128:Without LTO (component):HDD:With V8 Snapshots:1:4"
-		"128:Without LTO (component):HDD:Without V8 Snapshots:1.5:4.5"
-
-		"256:With ThinLTO:SSD:With V8 Snapshots:0.75:2.5"
-		"256:With ThinLTO:SSD:Without V8 Snapshots:1:3"
-		"256:With ThinLTO:HDD:With V8 Snapshots:1.5:5"
-		"256:With ThinLTO:HDD:Without V8 Snapshots:2:6"
-		"256:Without LTO (component):SSD:With V8 Snapshots:0.4:1.5"
-		"256:Without LTO (component):SSD:Without V8 Snapshots:0.5:2"
-		"256:Without LTO (component):HDD:With V8 Snapshots:1:3"
-		"256:Without LTO (component):HDD:Without V8 Snapshots:1.25:3.5"
-	)
+	local base_hours=0
 
 	if use mold ; then
-		ranges=(
-			"${mold_ranges[@]}"
-		)
+		base_hours=$(( cores >= 16 ? 3 : cores >= 8 ? 5 : 9 ))
+	elif (( ${USE_LTO} == 1 )) ; then
+		base_hours=$(( cores >= 16 ? 4 : cores >= 8 ? 7 : 12 ))
 	else
-		ranges=(
-			"${thinlto_ranges[@]}"
-		)
+		base_hours=$(( cores >= 16 ? 2 : cores >= 8 ? 4 : 8 ))
 	fi
 
-	local low=""
-	local high=""
-	for range in "${ranges[@]}"; do
-		IFS=':' read -r r_cores r_lto r_storage r_v8 r_low r_high <<< "$range"
-		if \
-			[[ \
-				"${r_cores}" == "${cores}" && \
-				"${r_lto}" == "${lto_type}" && \
-				"${r_storage,,}" == "${storage}" && \
-				"${r_v8}" == "${v8_type}" \
-			]] \
-		; then
-			low="${r_low}"
-			high="${r_high}"
-			break
-		fi
-	done
+	[[ "${storage}" == "hdd" ]] && base_hours=$(( base_hours * 13 / 10 ))
 
-	if [[ -z "${low}" || -z "${high}" ]]; then
-ewarn "chromium_build_allowed():  QA:  Missing estimate row for the following configuration:"
-ewarn "chromium_build_allowed():  cores:  ${cores}"
-ewarn "chromium_build_allowed():  storage:  ${storage}"
-ewarn "chromium_build_allowed():  has_lto:  ${has_lto}"
-ewarn "chromium_build_allowed():  has_v8_snapshot:  ${has_v8_snapshot}"
-ewarn "chromium_build_allowed():  low:  ${low}"
-ewarn "chromium_build_allowed():  high:  ${high}"
+	local allowed=$(awk -v base="${base_hours}" -v tol="${tolerance}" '
+		BEGIN { print (base <= tol) ? 0 : 1 }
+	')
+
+	if (( allowed == 0 )) ; then
+einfo "chromium_cfi_build_allowed(): ALLOWED (est. ${base_hours} hrs <= ${tolerance} hrs)"
+		return 0
+	else
+einfo "chromium_cfi_build_allowed(): DENIED (est. ${base_hours} hrs > ${tolerance} hrs)"
 		return 1
 	fi
+}
 
-	# Final decision using Python for float precision
-	local allowed
-allowed=$(python3 -c "
-tolerance = float(${tolerance_hours})
-low = float(${low})
-high = float(${high})
+get_current_day() {
+	date +%-d
+}
 
-if high > tolerance:
-    print(1)  # DENIED (Too slow)
-else:
-    print(0)  # ALLOWED
-")
-
-	if (( ${allowed} == 0 )); then
-einfo "chromium_build_allowed():  ALLOWED:  The estimated worst-case ${high} hours for total build time is less than or equal to the tolerable ${tolerance_hours} hours."
-	else
-einfo "chromium_build_allowed():  DENIED:  The estimated worst-case ${high} hours for total build time is greater than the tolerable ${tolerance_hours} hours."
-	fi
-
-	return ${allowed}
+is_in_optimization_window() {
+	local day=$(get_current_day)
+	(( day >= CHROMIUM_LTO_CFI_START && day <= CHROMIUM_LTO_CFI_END ))
 }
 
 _configure_linker() {
+	# =============================================================================
+	# === Optimization Window Decision ===========================================
+	# =============================================================================
+
+einfo "CHROMIUM_LTO_CFI_START:  ${CHROMIUM_LTO_CFI_START}"
+einfo "CHROMIUM_LTO_CFI_END:  ${CHROMIUM_LTO_CFI_END}"
+einfo "Current day:  "$(get_current_day)
+	if is_in_optimization_window || use official ; then
+		ENABLE_FULL_OPTIMIZATION=1
+elog "=== Optimization Window Active → ThinLTO + CFI (Security Priority) ==="
+	else
+		ENABLE_FULL_OPTIMIZATION=0
+elog "=== Fast Build Mode → ThinLTO only (no CFI) ==="
+	fi
+
+	# =============================================================================
+	# === Basic Setup & Safety ===================================================
+	# =============================================================================
+
 	local use_thinlto=0
 
 	if is-flagq '-flto' || is-flagq '-flto=*' ; then
 		USE_LTO=1
 	fi
 
-	if use amd64 ; then
-ewarn "LTO is likely broken with LLVM 21 for arm64."
-ewarn "Manually remove flto flags or disable official USE flag."
-	fi
-
-	#
-	# Only do if build time meets user's tolerance which is for people that
-	# are building before real-world deadline obligations (e.g. college
-	# test on the same day or billing period on the same day).
-	#
-	# One of the goals is to prevent a systemwide vulnerability backlog or
-	# a ebuild update backlog that lasts 6 months.
-	#
-	if use official ; then
-		:
-	elif (( ${USE_LTO} == 0 )) ; then
-		:
-	else
-		local build_time_tolerance=${BUILD_TIME_TOLERANCE:-"2.0"}
-		if chromium_build_allowed "${build_time_tolerance}" ; then
-einfo "Allowing LTO which is within build time tolerance"
-		else
-ewarn "Disallowing LTO for high cost reasons"
-			USE_LTO=0
-			filter-lto
-		fi
-	fi
-
-	if (( ${USE_LTO} == 1 )) ; then
-		use cfi         && fatal_message_lto_banned "cfi"
-		use official    && fatal_message_lto_banned "official"
-	fi
-
-	# Already called check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
-einfo "Detected compiler switch.  Disabling LTO."
+einfo "Detected compiler switch. Disabling LTO."
 		filter-lto
 		USE_LTO=0
 	fi
 
-	fatal_message_lto_banned() {
-	# Critical vulnerabilities must be fixed within 24 hrs, which implies the ebuild
-	# must be completely installed in that time.
-		local flag="${1}"
-	# A LTO required flag
-eerror
-eerror "The ${flag} USE flag is not supported for older machines."
-eerror
-eerror "Workarounds:"
-eerror
-eerror "1.  Replace this package with www-client/google-chrome"
-eerror "2.  Build this ebuild on a faster machine and install it with a local -bin ebuild you created"
-eerror
-eerror "https://wiki.gentoo.org/wiki/Binary_package_guide#Creating_binary_packages"
-eerror
-		die
-	}
+	# =============================================================================
+	# === Linker Priority Logic ==================================================
+	# =============================================================================
 
 	if [[ -z "${LTO_TYPE}" ]] ; then
 		LTO_TYPE=$(check-linker_get_lto_type)
 	fi
+
+	# === 1. Highest Priority: ThinLTO + CFI (Security Critical) ===
 	if \
-		(( ${USE_LTO} == 1 )) \
-					&&
-		( \
-			( \
-				tc-is-clang \
-					&& \
-				[[ "${LTO_TYPE}" == "thinlto" ]] \
-			) \
-					|| \
-			( \
-				use cfi \
-			) \
-					|| \
-			( \
-				use official \
-					&& \
-				[[ "${PGO_PHASE}" != "PGI" ]] \
-			) \
-		) \
+		[[ ${ENABLE_FULL_OPTIMIZATION} -eq 1 ]] && \
+		(( ${USE_LTO} == 1 )) && \
+		tc-is-clang && \
+		[[ "${LTO_TYPE}" == "thinlto" ]] && \
+		use cfi\
 	; then
-einfo "Using ThinLTO"
+
+einfo "Using ThinLTO + Clang CFI (Highest Priority - Security)"
 		myconf_gn+=(
 			"use_thin_lto=true"
+			"is_cfi=true"
+			"use_cfi_icall=true"
 		)
+		use_thinlto=1
+
+	# === 2. ThinLTO only (inside or outside window) ===
+	elif (( ${USE_LTO} == 1 )) && tc-is-clang && [[ "${LTO_TYPE}" == "thinlto" ]] ; then
+einfo "Using ThinLTO only"
+		myconf_gn+=(
+			"use_thin_lto=true"
+			"is_cfi=false"
+		)
+		use_thinlto=1
+
+	# === 3. Mold (Secondary priority) ===
+	elif use mold ; then
+einfo "Using Mold linker (ThinLTO + CFI not possible)"
+		myconf_gn+=(
+			"use_mold=true"
+			"use_thin_lto=false"
+			"is_cfi=false"
+		)
+
+	# === 4. Fallback: No LTO ===
+	else
+einfo "Using fast build mode (no LTO, no CFI)"
+		myconf_gn+=(
+			"use_thin_lto=false"
+			"is_cfi=false"
+		)
+	fi
+
+	# =============================================================================
+	# === Extra ThinLTO options & Cleanup ========================================
+	# =============================================================================
+
+	if (( ${use_thinlto} == 1 )) ; then
+		if [[ "${THINLTO_OPT:-1}" == "1" ]] ; then
+			myconf_gn+=("thin_lto_enable_optimizations=true")
+		fi
 		filter-lto
 		filter-flags "-fuse-ld=*"
 		filter-flags "-Wl,--lto-O*"
-		if [[ "${THINLTO_OPT:-1}" == "1" ]] ; then
-			myconf_gn+=(
-				"thin_lto_enable_optimizations=true"
-			)
-		fi
-		use_thinlto=1
-	else
-	# gcc will never use ThinLTO.
-	# gcc doesn't like -fsplit-lto-unit and -fwhole-program-vtables
-	# We want the faster LLD but without LTO.
-		myconf_gn+=(
-			"thin_lto_enable_optimizations=false"
-			"use_thin_lto=false"
-		)
 	fi
 
-	if ! use mold && is-flagq "-fuse-ld=mold" && has_version "sys-devel/mold" ; then
-eerror "To use mold, enable the mold USE flag."
-		die
-	fi
-
-	# See https://github.com/rui314/mold/issues/336
-	if use mold && (( ${use_thinlto} == 0 && ${USE_LTO} == 1 )) ; then
-		if tc-is-clang ; then
-einfo "Using Clang MoldLTO"
-			myconf_gn+=(
-				"use_mold=true"
-			)
-		else
-ewarn "Forcing use of GCC Mold without LTO.  GCC MoldLTO is not supported."
-ewarn "To use LTO, use either Clang MoldLTO, Clang ThinLTO, GCC BFDLTO."
-			filter-lto
-		fi
-	elif use mold && (( ${use_thinlto} == 0 && ${USE_LTO} == 0 )) ; then
-einfo "Using Mold without LTO"
-		myconf_gn+=(
-			"use_mold=true"
-		)
-	fi
-
-	myconf_gn+=(
-	# Disable fatal linker warnings, bug 506268.
-		"fatal_linker_warnings=false"
-	)
+	# Final GN flags
+	myconf_gn+=("fatal_linker_warnings=false")
 
 	# Handled by build scripts
 	filter-flags "-fuse-ld=*"
@@ -8194,29 +7902,43 @@ _get_s() {
 	fi
 }
 
+# =============================================================================
+# === check_mksnapshot_benefit() =============================================
+# =============================================================================
+
 check_mksnapshot_benefit() {
-	#return 0 # For debug
-	if [[ "${ALLOW_MKSNAPSHOT}" != "1" ]] ; then
+	# Debug override
+	# return 0
+
+	# User explicitly disabled mksnapshot
+	if [[ "${ALLOW_MKSNAPSHOT}" == "0" ]]; then
+		einfo "check_mksnapshot_benefit(): Disabled by ALLOW_MKSNAPSHOT=0"
 		return 1
 	fi
-	local allow_mksnapshot_user="${ALLOW_MKSNAPSHOT_USER}"
-	if [[ "${allow_mksnapshot_user}" == "1" ]] ; then
+
+	# User explicitly forced it on
+	if [[ "${ALLOW_MKSNAPSHOT_USER}" == "1" ]]; then
+einfo "check_mksnapshot_benefit(): Forced enabled by ALLOW_MKSNAPSHOT_USER=1"
 		return 0
-	elif [[ "${allow_mksnapshot_user}" == "0" ]] ; then
+	elif [[ "${ALLOW_MKSNAPSHOT_USER}" == "0" ]]; then
+einfo "check_mksnapshot_benefit(): Forced disabled by ALLOW_MKSNAPSHOT_USER=0"
 		return 1
-	elif use official ; then
+	fi
+
+	# Official builds always get full optimization
+	if use official ; then
+einfo "check_mksnapshot_benefit(): Enabled (official build)"
+		return 0
+	fi
+
+	# === Main Policy ===
+	# Only perform expensive mksnapshot when we are in full optimization mode
+	if [[ ${ENABLE_FULL_OPTIMIZATION} -eq 1 ]]; then
+einfo "check_mksnapshot_benefit(): Enabled (inside optimization window → full opt)"
 		return 0
 	else
-	# Only do if build time meets user's tolerance which is for people that
-	# are building before real-world deadline obligations (e.g. college
-	# test on the same day or billing period on the same day).
-
-		local build_time_tolerance=${BUILD_TIME_TOLERANCE:-"2.0"}
-		if chromium_build_allowed "${build_time_tolerance}" ; then
-			return 0
-		else
-			return 1
-		fi
+einfo "check_mksnapshot_benefit(): Skipped (outside optimization window → fast build)"
+		return 1
 	fi
 }
 
