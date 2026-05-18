@@ -5642,7 +5642,7 @@ ewarn "For proper hardening, disable the pgo USE flag."
 				"use_cfi_icall=false"
 			)
 		fi
-	elif use cfi ; then
+	elif [[ "${ENABLE_FULL_OPTIMIZATION}" == "1" ]] && use cfi ; then
 		local f
 		local F=(
 			"cfi-derived-cast"
@@ -6376,10 +6376,10 @@ einfo "Full optimization days:  ${month} ${CHROMIUM_LTO_CFI_START}-${CHROMIUM_LT
 einfo "Current day:  ${month} ${day}"
 	if is_in_optimization_window || use official ; then
 		ENABLE_FULL_OPTIMIZATION=1
-einfo "Expensive optimization:  ON"
+einfo "Expensive optimizations:  ON"
 	else
 		ENABLE_FULL_OPTIMIZATION=0
-einfo "Expensive optimization:  OFF"
+einfo "Expensive optimizations:  OFF"
 	fi
 
 	# =============================================================================

@@ -85,13 +85,13 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       www-client/chromium chromium.conf
     
 
-    Full optimization/hardening days.
+    Expensive optimization/hardening days:
 
     The ebuild introduces a change where between 19-29 of each month (after the
     billing window), it will optimize the build with time expensive
     optimizations (e.g. LTO, mksnapshot) and expensive hardening (e.g. Clang
     CFI).  Outside the full optimization window, it will optimize for build
-    speed.  This will balance out real world needs to pay bills on time.
+    speed.  This will balance out the real world needs to pay bills on time.
     Variables CHROMIUM_LTO_CFI_START and CHROMIUM_LTO_CFI_END can tune the
     window.
 
