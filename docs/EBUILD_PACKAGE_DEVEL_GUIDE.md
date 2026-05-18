@@ -166,19 +166,20 @@ C++ defaults
 
 Python defaults
 
-| Subject                          | Answer                                                                                         |
-| ---                              | ---                                                                                            |
-| Default Python                   | python3_12                                                                                     |
-| Acceptable rolling Python slots  | python3_14                                                                                     |
-| Acceptable LTS Python slots      | python3_{11..13}                                                                               |
-| Acceptable multislot Python      | python3_{11..14}                                                                               |
-| Acceptable single slot Python    | python3_{11..14}                                                                               |
-| Acceptable slot paring           | The Python app slot must pair with same Python slot for dependencies down to the leaf packages |
-| Are binary packages allowed?     | Allowed with restrictions but only if that is the only option or difficult to package          |
-| Default Python interpreter       | CPython                                                                                        |
-| Python slot precedence           | App's setup.py, CI's .github/*.yaml, Dockerfile, lib's setup.py, CI image default Python slot  |
-| pypy3_11 support                 | Y if specified in setup.py                                                                     |
-| Must use slotted Cython          | Y                                                                                              |
+| Subject                                    | Answer                                                                                           |
+| ---                                        | ---                                                                                              |
+| Default Python                             | python3_12                                                                                       |
+| Acceptable rolling Python slots            | python3_14                                                                                       |
+| Acceptable LTS Python slots                | python3_{11..13}                                                                                 |
+| Acceptable multislot Python                | python3_{11..14}                                                                                 |
+| Acceptable single slot Python              | python3_{11..14}                                                                                 |
+| Acceptable slot paring                     | The Python app slot must pair with same Python slot for dependencies down to the leaf packages   |
+| Are binary packages allowed?               | Allowed with restrictions but only if that is the only option or difficult to package            |
+| Default Python interpreter                 | CPython                                                                                          |
+| Python slot precedence                     | App's setup.py, CI's .github/*.yaml, Dockerfile, lib's setup.py, CI image default Python slot    |
+| pypy3_11 support                           | Y if specified in setup.py                                                                       |
+| Must use slotted Cython                    | Y                                                                                                |
+| Hacks are allowed? (using Cython over Zig) | If the package uses security-critical assumptions or processes untrusted data, it is disallowed. |
 
 Rust defaults
 
@@ -298,6 +299,7 @@ Security QA
 | Data breach detection support (password check remotely)       | Default off, default opt-out, patching may be required to optionalize                                                                             |
 | Binary packages                                               | Allowed with restrictions that only if it is either the only option, source package/maintenance issue, or heavy compilation cost                  |
 | Ebuild EOL pruning                                            | If the older versions are necessary for bootstrapping, it should not be deleted.  Otherwise, you're stuck with a compromised trojanized prebuilt. |
+| Hacks are allowed? (using a degraded compiler, using Cython over Zig) | If the package uses security-critical assumptions or processes untrusted data, it is disallowed.                                          |
 
 Userspace mitigation comparison
 
