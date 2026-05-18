@@ -25,7 +25,7 @@ SLOT="0"
 
 IUSE="
 +vte wayland X
-ebuild_revision_10
+ebuild_revision_12
 "
 
 BDEPEND="virtual/pkgconfig"
@@ -77,7 +77,7 @@ src_configure() {
 src_install() {
 	emake DESTDIR="${D}" install
 	find "${ED}" -type f \( -name '*.a' -o -name '*.la' \) -delete || die
-	rm -rf "/usr/share/geany/colorschemes" || true
+	rm -rf "${ED}/usr/share/geany/colorschemes" || true
 }
 
 pkg_preinst() {
@@ -92,6 +92,7 @@ pkg_postinst() {
 	optfeature "opening files from the file browser tab" "x11-misc/xdg-utils"
 	optfeature "opening files from the file browser tab" "x11-misc/xdg-utils"
 	optfeature "additional color themes" "x11-themes/geany-themes"
+	optfeature "an additional dark color theme" "x11-themes/geany-dracula-theme"
 }
 
 pkg_postrm() {
