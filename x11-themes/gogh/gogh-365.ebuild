@@ -130,6 +130,7 @@ RDEPEND+="
 		gnome-base/dconf
 	)
 	xfce4-terminal? (
+		x11-terms/xfce4-terminal[-color-themes]
 		!x11-terms/tinted-terminal-xfce4
 		!x11-terms/xfce4-terminal-catppuccin-theme
 	)
