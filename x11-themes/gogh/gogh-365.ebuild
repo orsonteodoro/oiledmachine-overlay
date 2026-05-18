@@ -96,6 +96,7 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${!TERMS[@]}
+ebuild_revision_1
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}

@@ -30,4 +30,4 @@ echo
 	exit
 fi
 cd "/opt/gogh"
-./gogh "$@"
+./gogh.sh "$@"
