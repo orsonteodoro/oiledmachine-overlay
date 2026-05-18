@@ -166,20 +166,20 @@ C++ defaults
 
 Python defaults
 
-| Subject                                    | Answer                                                                                           |
-| ---                                        | ---                                                                                              |
-| Default Python                             | python3_12                                                                                       |
-| Acceptable rolling Python slots            | python3_14                                                                                       |
-| Acceptable LTS Python slots                | python3_{11..13}                                                                                 |
-| Acceptable multislot Python                | python3_{11..14}                                                                                 |
-| Acceptable single slot Python              | python3_{11..14}                                                                                 |
-| Acceptable slot paring                     | The Python app slot must pair with same Python slot for dependencies down to the leaf packages   |
-| Are binary packages allowed?               | Allowed with restrictions but only if that is the only option or difficult to package            |
-| Default Python interpreter                 | CPython                                                                                          |
-| Python slot precedence                     | App's setup.py, CI's .github/*.yaml, Dockerfile, lib's setup.py, CI image default Python slot    |
-| pypy3_11 support                           | Y if specified in setup.py                                                                       |
-| Must use slotted Cython                    | Y, forcing may result in undefined behavior or miscompilation vulnerabilities                    |
-| Hacks are allowed? (using Cython over Zig) | If the package uses security-critical assumptions or processes untrusted data, it is disallowed. |
+| Subject                                    | Answer                                                                                                |
+| ---                                        | ---                                                                                                   |
+| Default Python                             | python3_12                                                                                            |
+| Acceptable rolling Python slots            | python3_14                                                                                            |
+| Acceptable LTS Python slots                | python3_{11..13}                                                                                      |
+| Acceptable multislot Python                | python3_{11..14}                                                                                      |
+| Acceptable single slot Python              | python3_{11..14}                                                                                      |
+| Acceptable slot paring                     | The Python app slot must pair with same Python slot for dependencies down to the leaf packages        |
+| Are binary packages allowed?               | Allowed with restrictions but only if that is the only option or difficult to package                 |
+| Default Python interpreter                 | CPython                                                                                               |
+| Python slot precedence                     | App's setup.py, CI's .github/*.yaml, Dockerfile, lib's setup.py, CI image default Python slot         |
+| pypy3_11 support                           | Y if specified in setup.py                                                                            |
+| Must use slotted Cython                    | Y, forcing untested newer versions may result in undefined behavior or miscompilation vulnerabilities |
+| Hacks are allowed? (using Cython over Zig) | If the package uses security-critical assumptions or processes untrusted data, it is disallowed.      |
 
 Rust defaults
 
