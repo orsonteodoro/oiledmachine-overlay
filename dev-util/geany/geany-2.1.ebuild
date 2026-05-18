@@ -25,14 +25,13 @@ SLOT="0"
 
 IUSE="
 +vte wayland X
-ebuild_revision_9
+ebuild_revision_10
 "
 
 BDEPEND="virtual/pkgconfig"
 RDEPEND="
 	>=dev-libs/glib-2.32:2
 	>=x11-libs/gtk+-3.24:3[wayland?,X?]
-	!x11-themes/geany-themes
 	vte? ( x11-libs/vte:2.91 )
 "
 DEPEND="
@@ -78,6 +77,7 @@ src_configure() {
 src_install() {
 	emake DESTDIR="${D}" install
 	find "${ED}" -type f \( -name '*.a' -o -name '*.la' \) -delete || die
+	rm -rf "/usr/share/geany/colorschemes" || true
 }
 
 pkg_preinst() {
@@ -87,8 +87,11 @@ pkg_preinst() {
 pkg_postinst() {
 	xdg_pkg_postinst
 
-	optfeature "editing files outside the local filesystem" gnome-base/gvfs
-	optfeature "opening files from the file browser tab" x11-misc/xdg-utils
+	optfeature_header "Install optional packages:"
+	optfeature "editing files outside the local filesystem" "gnome-base/gvfs"
+	optfeature "opening files from the file browser tab" "x11-misc/xdg-utils"
+	optfeature "opening files from the file browser tab" "x11-misc/xdg-utils"
+	optfeature "additional color themes" "x11-themes/geany-themes"
 }
 
 pkg_postrm() {
