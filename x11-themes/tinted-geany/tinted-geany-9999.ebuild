@@ -5,7 +5,7 @@
 EAPI=8
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	EGIT_BRANCH="main"
+	EGIT_BRANCH="master"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/RobLoach/tinted-geany.git"
 	FALLBACK_COMMIT="32a03ca5ea6d3e5d88b150daf1f504bfc92c9885" # Dec 31, 2025
