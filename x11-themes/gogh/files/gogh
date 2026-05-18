@@ -1,0 +1,33 @@
+#!/bin/bash
+if [[ -z "${TERMINAL}" ]] ; then
+echo "The TERMINAL is not set."
+echo
+echo "Valid values:"
+echo
+echo "    alacritty"
+echo "    foot"
+echo "    gnome-terminal"
+echo "    guake"
+echo "    io-elementary-t"
+echo "    iTerm-app"
+echo "    kitty"
+echo "    kmscon"
+echo "    konsole"
+echo "    linux"
+echo "    mate-terminal"
+echo "    mintty"
+echo "    pantheon-terminal"
+echo "    terminator"
+echo "    termux"
+echo "    tilix"
+echo "    xfce4-terminal"
+echo "    wezterm"
+echo
+echo "Example:"
+echo "export TERMINAL=alacritty"
+echo "gogh"
+echo
+	exit
+fi
+cd "/opt/gogh"
+./gogh "$@"
