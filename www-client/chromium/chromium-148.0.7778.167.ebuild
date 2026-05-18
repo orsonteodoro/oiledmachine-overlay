@@ -3458,6 +3458,12 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 			"${FILESDIR}/extra-patches/${PN}-148.0.7778.167-optionalize-glic.patch"
 		)
 	fi
+
+	if use system-rust && grep -q "SupportedLaneCount" "third_party/rust/chromium_crates_io/vendor/bytemuck-v1/src/pod.rs" ; then
+		PATCHES+=(
+			"${FILESDIR}/extra-patches/${PN}-147-rust-1.95-bytemuck.patch"
+		)
+	fi
 }
 
 is_cromite_patch_non_fatal() {
