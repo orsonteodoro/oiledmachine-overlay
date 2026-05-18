@@ -6313,6 +6313,7 @@ ewarn "Did not detect block device backing ${WORKDIR}"
 	fi
 }
 
+# Deadcode
 chromium_lto_build_allowed() {
 	local tolerance=${1:-${BUILD_TIME_TOLERANCE:-2.0}}
 
@@ -6343,12 +6344,16 @@ einfo "chromium_lto_build_allowed(): ALLOWED (inside optimization window - full 
 	')
 
 	if (( allowed == 0 )) ; then
-einfo "chromium_cfi_build_allowed(): ALLOWED (est. ${base_hours} hrs <= ${tolerance} hrs)"
+einfo "chromium_lto_build_allowed(): ALLOWED (est. ${base_hours} hrs <= ${tolerance} hrs)"
 		return 0
 	else
-einfo "chromium_cfi_build_allowed(): DENIED (est. ${base_hours} hrs > ${tolerance} hrs)"
+einfo "chromium_lto_build_allowed(): DENIED (est. ${base_hours} hrs > ${tolerance} hrs)"
 		return 1
 	fi
+}
+
+get_current_month() {
+	date +%-b
 }
 
 get_current_day() {
@@ -6365,15 +6370,16 @@ _configure_linker() {
 	# === Optimization Window Decision ===========================================
 	# =============================================================================
 
-einfo "CHROMIUM_LTO_CFI_START:  ${CHROMIUM_LTO_CFI_START}"
-einfo "CHROMIUM_LTO_CFI_END:  ${CHROMIUM_LTO_CFI_END}"
-einfo "Current day:  "$(get_current_day)
+	local month=$(get_current_month)
+	local day=$(get_current_day)
+einfo "Full optimization days:  ${month} ${CHROMIUM_LTO_CFI_START}-${CHROMIUM_LTO_CFI_END}"
+einfo "Current day:  ${month} ${day}"
 	if is_in_optimization_window || use official ; then
 		ENABLE_FULL_OPTIMIZATION=1
-elog "=== Optimization Window Active → ThinLTO + Clang CFI (Security-critical is priority) ==="
+einfo "Expensive optimization:  ON"
 	else
 		ENABLE_FULL_OPTIMIZATION=0
-elog "=== Fast Build Mode → ThinLTO/Mold only (no Clang CFI) ==="
+einfo "Expensive optimization:  OFF"
 	fi
 
 	# =============================================================================
@@ -6408,8 +6414,9 @@ einfo "Detected compiler switch. Disabling LTO."
 		[[ "${LTO_TYPE}" == "thinlto" ]] && \
 		use cfi \
 	; then
-
-einfo "Using ThinLTO + Clang CFI (Highest Priority - Security)"
+einfo "Linker:  ThinLTO"
+einfo "LTO:  ON"
+einfo "CFI:  ON"
 		myconf_gn+=(
 			"use_thin_lto=true"
 			"is_cfi=true"
@@ -6419,7 +6426,9 @@ einfo "Using ThinLTO + Clang CFI (Highest Priority - Security)"
 
 	# 2. ThinLTO only (Inside or outside expensive optimization window)
 	elif (( ${USE_LTO} == 1 )) && tc-is-clang && [[ "${LTO_TYPE}" == "thinlto" ]] ; then
-einfo "Using ThinLTO only"
+einfo "Linker:  ThinLTO"
+einfo "LTO:  ON"
+einfo "CFI:  OFF"
 		myconf_gn+=(
 			"use_thin_lto=true"
 			"is_cfi=false"
@@ -6428,7 +6437,9 @@ einfo "Using ThinLTO only"
 
 	# 3. Mold (Performance is a secondary priority)
 	elif use mold ; then
-einfo "Using Mold linker (ThinLTO + CFI not possible)"
+einfo "Linker:  mold"
+einfo "LTO:  OFF"
+einfo "CFI:  OFF"
 		myconf_gn+=(
 			"use_mold=true"
 			"use_thin_lto=false"
@@ -6437,7 +6448,9 @@ einfo "Using Mold linker (ThinLTO + CFI not possible)"
 
 	# 4. Fallback: No LTO
 	else
-einfo "Using fast build mode (no LTO, no CFI)"
+einfo "Linker:  Compiler default"
+einfo "LTO:  OFF"
+einfo "CFI:  OFF"
 		myconf_gn+=(
 			"use_thin_lto=false"
 			"is_cfi=false"
@@ -8004,7 +8017,7 @@ _src_compile() {
 	__clean_build
 
 	if check_mksnapshot_benefit && use v8-snapshot ; then
-einfo "Optimizing load time..."
+einfo "mksnapshot:  ON (Optimizing load time)"
 	# Build mksnapshot and pax-mark it.
 		local x
 		for x in "mksnapshot" "v8_context_snapshot_generator" "code_cache_generator" ; do
@@ -8021,7 +8034,7 @@ einfo "Optimizing load time..."
 			fi
 		done
 	else
-einfo "Skipping expensive load time optimization..."
+einfo "mksnapshot:  OFF (Optimizing build speed)"
 	fi
 
 	# Even though ninja autodetects number of CPUs, we respect user's
