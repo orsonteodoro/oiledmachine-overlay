@@ -255,6 +255,7 @@ Version QA
 |                                                          | For JS, pin only one slot for compiler and build system, and use the C/C++ rules as fallback. |
 |                                                          | For Python, slots are based on as needed and/or allowed by setup.py.          |
 | All used live dependences timestamps should be verified for recentness | Y (WIP, TODO:  add new eclass) for security reasons             |
+| The distro IDs (e.g. A3.23, D12, D13, G23, N25, U22, U24, F44) should be documented? | Y for *DEPENDs requirements and proper LTS or a rolling compiler alignment |
 
 Security QA
 
