@@ -31,7 +31,9 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
-IUSE+=" "
+IUSE+="
+ebuild_revision_1
+"
 RDEPEND+="
 "
 DEPEND+="
@@ -52,6 +54,7 @@ src_unpack() {
 }
 
 src_install() {
+	einstalldocs
 	insinto "/usr/share/geany/colorschemes"
 	doins "Dracula-Theme.conf"
 
