@@ -50,6 +50,10 @@ src_unpack() {
 	fi
 }
 
+src_compile() {
+	:
+}
+
 src_install() {
 	einstalldocs
 	insinto "/usr/share/geany/colorschemes"
