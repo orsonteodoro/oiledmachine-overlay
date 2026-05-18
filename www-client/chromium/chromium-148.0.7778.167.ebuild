@@ -6318,7 +6318,7 @@ chromium_lto_build_allowed() {
 
 	# Inside optimization window we accept higher cost → always allow
 	if [[ ${ENABLE_FULL_OPTIMIZATION} -eq 1 ]] ; then
-einfo "chromium_build_allowed(): ALLOWED (inside optimization window - full opt accepted)"
+einfo "chromium_lto_build_allowed(): ALLOWED (inside optimization window - full opt accepted)"
 		return 0
 	fi
 
@@ -6329,11 +6329,11 @@ einfo "chromium_build_allowed(): ALLOWED (inside optimization window - full opt 
 	local base_hours=0
 
 	if use mold ; then
-		base_hours=$(( cores >= 16 ? 3 : cores >= 8 ? 5 : 9 ))
-	elif (( ${USE_LTO} == 1 )) ; then
-		base_hours=$(( cores >= 16 ? 4 : cores >= 8 ? 7 : 12 ))
+		base_hours=$(( cores >= 16 ? 3.5 : cores >= 8 ? 6 : 11 ))
+	elif (( ${USE_LTO} == 1 )); then
+		base_hours=$(( cores >= 16 ? 4.5 : cores >= 8 ? 7.5 : 13 ))
 	else
-		base_hours=$(( cores >= 16 ? 2 : cores >= 8 ? 4 : 8 ))
+		base_hours=$(( cores >= 16 ? 2 : cores >= 8 ? 4 : 9 ))
 	fi
 
 	[[ "${storage}" == "hdd" ]] && base_hours=$(( base_hours * 13 / 10 ))
@@ -6370,10 +6370,10 @@ einfo "CHROMIUM_LTO_CFI_END:  ${CHROMIUM_LTO_CFI_END}"
 einfo "Current day:  "$(get_current_day)
 	if is_in_optimization_window || use official ; then
 		ENABLE_FULL_OPTIMIZATION=1
-elog "=== Optimization Window Active → ThinLTO + CFI (Security Priority) ==="
+elog "=== Optimization Window Active → ThinLTO + Clang CFI (Security-critical is priority) ==="
 	else
 		ENABLE_FULL_OPTIMIZATION=0
-elog "=== Fast Build Mode → ThinLTO only (no CFI) ==="
+elog "=== Fast Build Mode → ThinLTO/Mold only (no Clang CFI) ==="
 	fi
 
 	# =============================================================================
@@ -6400,13 +6400,13 @@ einfo "Detected compiler switch. Disabling LTO."
 		LTO_TYPE=$(check-linker_get_lto_type)
 	fi
 
-	# === 1. Highest Priority: ThinLTO + CFI (Security Critical) ===
+	# 1. Highest Priority: ThinLTO + Clang CFI (Security-critical configuation)
 	if \
 		[[ ${ENABLE_FULL_OPTIMIZATION} -eq 1 ]] && \
 		(( ${USE_LTO} == 1 )) && \
 		tc-is-clang && \
 		[[ "${LTO_TYPE}" == "thinlto" ]] && \
-		use cfi\
+		use cfi \
 	; then
 
 einfo "Using ThinLTO + Clang CFI (Highest Priority - Security)"
@@ -6417,7 +6417,7 @@ einfo "Using ThinLTO + Clang CFI (Highest Priority - Security)"
 		)
 		use_thinlto=1
 
-	# === 2. ThinLTO only (inside or outside window) ===
+	# 2. ThinLTO only (Inside or outside expensive optimization window)
 	elif (( ${USE_LTO} == 1 )) && tc-is-clang && [[ "${LTO_TYPE}" == "thinlto" ]] ; then
 einfo "Using ThinLTO only"
 		myconf_gn+=(
@@ -6426,7 +6426,7 @@ einfo "Using ThinLTO only"
 		)
 		use_thinlto=1
 
-	# === 3. Mold (Secondary priority) ===
+	# 3. Mold (Performance is a secondary priority)
 	elif use mold ; then
 einfo "Using Mold linker (ThinLTO + CFI not possible)"
 		myconf_gn+=(
@@ -6435,7 +6435,7 @@ einfo "Using Mold linker (ThinLTO + CFI not possible)"
 			"is_cfi=false"
 		)
 
-	# === 4. Fallback: No LTO ===
+	# 4. Fallback: No LTO
 	else
 einfo "Using fast build mode (no LTO, no CFI)"
 		myconf_gn+=(
