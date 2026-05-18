@@ -88,11 +88,11 @@ pkg_postinst() {
 	xdg_pkg_postinst
 
 	optfeature_header "Install optional packages:"
+	optfeature "additional color themes" "x11-themes/geany-themes"
+	optfeature "additional pastel color themes" "x11-themes/geany-catppuccin-theme"
+	optfeature "an additional dark color theme" "x11-themes/geany-dracula-theme"
 	optfeature "editing files outside the local filesystem" "gnome-base/gvfs"
 	optfeature "opening files from the file browser tab" "x11-misc/xdg-utils"
-	optfeature "opening files from the file browser tab" "x11-misc/xdg-utils"
-	optfeature "additional color themes" "x11-themes/geany-themes"
-	optfeature "an additional dark color theme" "x11-themes/geany-dracula-theme"
 }
 
 pkg_postrm() {
