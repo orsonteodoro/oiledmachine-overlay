@@ -220,8 +220,8 @@
     wayland        | works               | performance-critical & | 10             | 10                | annoying quirks,            | fastest fps                   | yes, fast
                    |                     | security-critical      |                |                   | compatibility               |                               |
 
-    Security-critical means 90% security score (A grade).
-    Performance-critical means 90% performance score (A grade).
+    Security-critical means 90% or better security score (A grade).
+    Performance-critical means 90% or better performance score (A grade).
     Balanced is B or C grade (70-89%).
 
     [1] Workarounds may compromise security.  Issue 1741
