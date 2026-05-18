@@ -3263,7 +3263,16 @@ einfo "Applying the distro patchset ..."
 
 	# Dedupe, oiledmachine-overlay changes preferred
 	# Update every major version
-		rm -f "${WORKDIR}/chromium-patches-${PATCH_VER}/toolchain/cr147-compiler.patch" || die "Fix versioning"
+		rm -f "${WORKDIR}/chromium-patches-${PATCH_VER}/toolchain/cr147-compiler.patch" || die "Fix versioning or remove patch"
+	fi
+
+	local rust_pv=$("${RUSTC}" --version | cut -f 2 -d " " | cut -f 1 -d "-")
+einfo "rust_pv:  ${rust_pv}"
+	if ver_test "${rust_pv}" "-ge" "1.95.0" ; then
+einfo "Removing SupportedLaneCount"
+		rm -f "${WORKDIR}/chromium-patches-148-3/rust/cr146-fix-botched-bytemuck-roll.patch" || die "Fix versioning or remove patch"
+	else
+einfo "Adding SupportedLaneCount"
 	fi
 
 	# https://issues.chromium.org/issues/442698344
@@ -3459,7 +3468,10 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		)
 	fi
 
-	if use system-rust && grep -q "SupportedLaneCount" "third_party/rust/chromium_crates_io/vendor/bytemuck-v1/src/pod.rs" ; then
+	local rust_pv=$("${RUSTC}" --version | cut -f 2 -d " " | cut -f 1 -d "-")
+einfo "rust_pv:  ${rust_pv}"
+	if ver_test "${rust_pv}" "-ge" "1.95.0" ; then
+einfo "Removing SupportedLaneCount"
 		PATCHES+=(
 			"${FILESDIR}/extra-patches/${PN}-147-rust-1.95-bytemuck.patch"
 		)
