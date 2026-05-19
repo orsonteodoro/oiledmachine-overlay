@@ -89,6 +89,10 @@
 
     Contents of ~/.config/firejail/globals.local:
 
+    # Use the AI to help locate and blacklist all high value asset credentials
+    # from poorly written firejail profiles.  It is a proper layered defense
+    # fallback.
+
     blacklist /mnt/usb/password                    # Keys to the crown jewels
     blacklist /mnt/usb/assets                      # Crown jewels or sensitive data
 
@@ -101,6 +105,9 @@
     blacklist ${HOME}/.local/share/unity3d
     blacklist ${HOME}/.config/unity
     blacklist ${HOME}/.config/unity3d
+
+    # Protect addresses and PII (Personal Identifiable Information)
+    blacklist ${HOME}/Documents
 
     # Option 1 - Blacklisting downloads manually.
     # Add the comment character # before the command below if you want to
