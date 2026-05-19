@@ -20,6 +20,8 @@ LICENSE="BSD"
 SLOT="0"
 
 BDEPEND="
+	>=dev-build/meson-0.60.3
+	app-alternatives/ninja
 	dev-util/wayland-scanner
 	virtual/pkgconfig
 "
