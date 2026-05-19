@@ -396,12 +396,13 @@ gen_render_kernels_list() {
 				)
 				"
 			done
-			local c3=$(ver_cut 3 ${version})
+			local c3=$(ver_cut 3 ${version}) # c in a.b.c
 			[[ -z "${c3}" ]] && c3="0"
 
 	# It is inefficient because each package has a different slotting
 	# template.
 			local i
+			# For non release candidate
 			for (( i=0 ; i < ${c3} ; i++ )) ; do
 				eol_block+="
 					!~sys-kernel/gentoo-kernel-bin-${slot}.${i}
@@ -409,7 +410,6 @@ gen_render_kernels_list() {
 					!~sys-kernel/gentoo-sources-${slot}.${i}
 					!~sys-kernel/vanilla-kernel-${slot}.${i}
 					!~sys-kernel/vanilla-sources-${slot}.${i}
-					!~sys-kernel/git-sources-${slot}.${i}
 					!~sys-kernel/mips-sources-${slot}.${i}
 					!~sys-kernel/pf-sources-${slot}.${i}
 					!~sys-kernel/rt-sources-${slot}.${i}
@@ -422,6 +422,21 @@ gen_render_kernels_list() {
 				for atom in ${ATOMS[@]} ; do
 				eol_block+="
 					!~${atom}-${slot}.${i}
+				"
+				done
+			done
+
+			local c4=$(ver_cut 4 ${version}) # d in a.b_rc_d
+			[[ -z "${c4}" ]] && c4="0"
+
+			# For release candidate # d in a.b_rc_d
+			for (( i=0 ; i < ${c4} ; i++ )) ; do
+				eol_block+="
+					!~sys-kernel/git-sources-${slot}_rc${i}
+				"
+				for atom in ${ATOMS[@]} ; do
+				eol_block+="
+					!~${atom}-${slot}_rc${i}
 				"
 				done
 			done
@@ -1017,7 +1032,7 @@ _mitigate_dos_auto() {
 		gen_linux_firmware_ge 20251030
 	fi
 	if [[ "${FIRMWARE_VENDOR}" == "intel" ]] ; then
-		gen_intel_microcode_ge 20260210
+		gen_intel_microcode_ge 20260512
 	fi
 }
 

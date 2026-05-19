@@ -161,7 +161,7 @@ GENPATCHES_URI_BASE_URI="https://gitweb.gentoo.org/proj/linux-patches.git/snapsh
 GENPATCHES_MAJOR_MINOR_REVISION="${KV_MAJOR_MINOR}-${GENPATCHES_VER}"
 GENPATCHES_FN="linux-patches-${GENPATCHES_MAJOR_MINOR_REVISION}.tar.bz2"
 GENPATCHES_URI="${GENPATCHES_URI_BASE_URI}${GENPATCHES_FN}"
-INTEL_MICROCODE_PV="20260210"
+INTEL_MICROCODE_PV="20260512"
 # IPD_RAW_VER* is the same as INSTR_PROF_RAW_VERSION (aka profraw version).
 IPD_RAW_VER=5 # < llvm-13 Dec 28, 2020
 IPD_RAW_VER_MIN=6
@@ -415,8 +415,8 @@ UKSM_BASE_URI="https://raw.githubusercontent.com/dolohow/uksm/master/v${KV_MAJOR
 UKSM_FN="uksm-${KV_MAJOR_MINOR}.patch"
 UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
 
-MITIGATION_DATE="May 13, 2026" # Advisory date
-MITIGATION_LAST_UPDATE=1778765480 # From `date +%s -d "2026-05-14 15:31:20 +0200"` from changelog for latest tag
+MITIGATION_DATE="May 15, 2026" # Advisory date
+MITIGATION_LAST_UPDATE=1779030994 # From `date +%s -d "2026-05-17 17:16:34 +0200"` from changelog for latest tag
 MITIGATION_URI="https://lore.kernel.org/linux-cve-announce/"
 VULNERABILITIES_FIXED=(
 # High and critical are noted and only those that are fixed on this release day
