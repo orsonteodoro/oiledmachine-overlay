@@ -282,9 +282,9 @@
     - Active move means per month testing, fixes, active development.
     - Maintenance mode means seldom testing, security fixes, build time fixes.
 
-      7.0: Actively tested/supported, random soft lock up
-     6.18: Actively tested/supported, random soft lock up
-     6.12: Testing on ice, maintenance mode, no lockups, longest uptimes
+      7.0: Actively tested/supported, randomly produces zombie processes and has network deadlock issue
+     6.18: Actively tested/supported, randomly produces zombie processes and has network deadlock issue
+     6.12: Actively tested/supported, no lockups, longest uptimes
       6.6: Testing on ice, maintenance mode, unknown lock up quality
       6.1: Testing on ice, maintenance mode, unknown lock up quality
      5.15: Testing on ice, maintenance mode, unknown lock up quality
