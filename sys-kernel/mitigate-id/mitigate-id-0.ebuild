@@ -126,7 +126,7 @@ VIDEO_CARDS=(
 )
 IUSE+="
 ${VIDEO_CARDS[@]}
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE="
 zero-tolerance
@@ -292,6 +292,8 @@ pkg_setup() {
 	# 1-5: 6.12_rc1-r
 	# 1-6: 6.12_rc1-r1
 	# If missing, then it is "" (empty string).
+	# If 3 == "rc": rc
+	# If 3 == [0-9]+: !rc
 	use enforce || return
 	mitigate-id_pkg_setup
 ewarn "This ebuild is a Work In Progress (WIP) and may be renamed."

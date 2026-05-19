@@ -424,44 +424,46 @@ gen_render_kernels_list() {
 	# It is inefficient because each package has a different slotting
 	# template.
 			local i
-			# For non release candidate
-			for (( i=0 ; i < ${c3} ; i++ )) ; do
-				eol_block+="
-					!~sys-kernel/gentoo-kernel-bin-${slot}.${i}
-					!~sys-kernel/gentoo-kernel-${slot}.${i}
-					!~sys-kernel/gentoo-sources-${slot}.${i}
-					!~sys-kernel/vanilla-kernel-${slot}.${i}
-					!~sys-kernel/vanilla-sources-${slot}.${i}
-					!~sys-kernel/mips-sources-${slot}.${i}
-					!~sys-kernel/pf-sources-${slot}.${i}
-					!~sys-kernel/rt-sources-${slot}.${i}
-					!~sys-kernel/zen-sources-${slot}.${i}
-					!~sys-kernel/raspberrypi-sources-${slot}.${i}
-					!~sys-kernel/linux-next-${slot}.${i}
-					!~sys-kernel/asahi-sources-${slot}.${i}
-					!~sys-kernel/ot-sources-${slot}.${i}
-				"
-				for atom in ${ATOMS[@]} ; do
-				eol_block+="
-					!~${atom}-${slot}.${i}
-				"
+			if [[ "${c3}" != "rc" ]] ; then
+	# For non release candidate
+				for (( i=0 ; i < ${c3} ; i++ )) ; do
+					eol_block+="
+						!~sys-kernel/gentoo-kernel-bin-${slot}.${i}
+						!~sys-kernel/gentoo-kernel-${slot}.${i}
+						!~sys-kernel/gentoo-sources-${slot}.${i}
+						!~sys-kernel/vanilla-kernel-${slot}.${i}
+						!~sys-kernel/vanilla-sources-${slot}.${i}
+						!~sys-kernel/mips-sources-${slot}.${i}
+						!~sys-kernel/pf-sources-${slot}.${i}
+						!~sys-kernel/rt-sources-${slot}.${i}
+						!~sys-kernel/zen-sources-${slot}.${i}
+						!~sys-kernel/raspberrypi-sources-${slot}.${i}
+						!~sys-kernel/linux-next-${slot}.${i}
+						!~sys-kernel/asahi-sources-${slot}.${i}
+						!~sys-kernel/ot-sources-${slot}.${i}
+					"
+					for atom in ${ATOMS[@]} ; do
+					eol_block+="
+						!~${atom}-${slot}.${i}
+					"
+					done
 				done
-			done
+			else
+				local c4=$(ver_cut 4 ${version}) # d in a.b_rc_d
+				[[ -z "${c4}" ]] && c4="0"
 
-			local c4=$(ver_cut 4 ${version}) # d in a.b_rc_d
-			[[ -z "${c4}" ]] && c4="0"
-
-			# For release candidate # d in a.b_rc_d
-			for (( i=0 ; i < ${c4} ; i++ )) ; do
-				eol_block+="
-					!~sys-kernel/git-sources-${slot}_rc${i}
-				"
-				for atom in ${ATOMS[@]} ; do
-				eol_block+="
-					!~${atom}-${slot}_rc${i}
-				"
+	# For release candidate # d in a.b_rc_d
+				for (( i=0 ; i < ${c4} ; i++ )) ; do
+					eol_block+="
+						!~sys-kernel/git-sources-${slot}_rc${i}
+					"
+					for atom in ${ATOMS[@]} ; do
+					eol_block+="
+						!~${atom}-${slot}_rc${i}
+					"
+					done
 				done
-			done
+			fi
 
 			safe_block+="
 			${slot/./_}? (
