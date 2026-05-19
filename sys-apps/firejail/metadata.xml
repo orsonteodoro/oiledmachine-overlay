@@ -83,8 +83,8 @@
     # Using ls /backups will result in access denied when attempting to access
     # the crown jewels or the keys to the crown jewels
     blacklist /backups
-    blacklist /mnt/usb/keys      # keys to the crown jewels
-    blacklist /mnt/usb/pictures  # crown jewels or sensitive data
+    blacklist /mnt/usb/keys      # Keys to the crown jewels
+    blacklist /mnt/usb/pictures  # Crown jewels, keys, or sensitive data
 
 
     Contents of ~/.config/firejail/globals.local:
@@ -95,6 +95,8 @@
     # information disclosure.
     blacklist ${HOME}/Downloads  # Prevent snooping of PII or sensitive data
                                  # when not downloading
+    blacklist /mnt/usb/password  # Keys to the crown jewels
+    blacklist /mnt/usb/assets    # Crown jewels or sensitive data
 
     # Option 2 - Blacklisting downloads with custom wrappers.
     # You can also add --blacklist=${HOME}/Downloads as the default and have a
