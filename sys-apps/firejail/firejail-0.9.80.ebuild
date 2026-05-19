@@ -1714,7 +1714,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 apparmor auto +chroot clang contrib +dbusproxy +file-transfer +firejail_profiles_default
 +firejail_profiles_server +globalcfg landlock +network +private-home selfrando selinux
 test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xcsecurity xvfb
-ebuild_revision_61
+ebuild_revision_62
 "
 REQUIRED_USE+="
 	${GUI_REQUIRED_USE}
@@ -4368,7 +4368,9 @@ einfo
 ewarn
 ewarn "IMPORTANT:  Please read the section \"important blacklist paths\" and"
 ewarn "\"path traversal mitigation verification\" section in the metadata.xml"
-ewarn "to properly secure browser ~/Downloads and crown jewel keys."
+ewarn "(\`epkginfo -x firejail::oiledmachine-overlay\`) to properly secure"
+ewarn "the browser ~/Downloads folder containing PII or sensitive data and"
+ewarn "crown jewel keys."
 ewarn
 ewarn "IMPORTANT:  Files containing sensitive data in the root directory are"
 ewarn "exposed to an attacker in the sandbox.  They should be moved in either"
