@@ -1714,7 +1714,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 apparmor auto +chroot clang contrib +dbusproxy +file-transfer +firejail_profiles_default
 +firejail_profiles_server +globalcfg landlock +network +private-home selfrando selinux
 test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xcsecurity xvfb
-ebuild_revision_64
+ebuild_revision_65
 "
 REQUIRED_USE+="
 	${GUI_REQUIRED_USE}
@@ -4377,8 +4377,10 @@ ewarn "exposed to an attacker in the sandbox.  They should be moved in either"
 ewarn "another disk, or in a folder with a blacklist.  Blacklist these paths in"
 ewarn "/etc/firejail/globals.local."
 ewarn
-ewarn "TIP:  Always check used sandbox profiles to see if there is any sensitive"
-ewarn "data leaks."
+ewarn "TIP:  Always check sandbox profiles by manual inspection in the sandbox to"
+ewarn "see if there is any sensitive data leaks.  See the"
+ewarn "\"path traversal mitigation verification\" section in the metadata.xml."
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
