@@ -49,7 +49,7 @@ SLOT="0"
 IUSE="
 ${GCC_COMPAT[@]}
 legacy-renderer -guiutils systemd test X
-ebuild_revision_28
+ebuild_revision_29
 "
 # hyprpm (hyprland plugin manager) requires the dependencies at runtime
 # so that it can clone, compile and install plugins.
@@ -115,6 +115,7 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 	>=dev-cpp/glaze-7.6.0
+	dev-cpp/glaze:=
 	>=dev-libs/hyprland-protocols-0.6.4
 	>=dev-libs/wayland-protocols-1.48
 "
