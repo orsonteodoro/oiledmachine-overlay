@@ -5,6 +5,8 @@ EAPI=8
 
 # U24
 
+PYTHON_COMPAT=( "python3_"{12,13} )
+
 ABSEIL_CPP_SLOT="20240116"
 CXX_STANDARD=26
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data untrusted-data"
@@ -24,7 +26,7 @@ LLVM_COMPAT=(
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)" # Skip placeholder
 
-inherit abseil-cpp cflags-hardened check-compiler-switch libcxx-slot libstdcxx-slot meson toolchain-funcs re2
+inherit abseil-cpp cflags-hardened check-compiler-switch libcxx-slot libstdcxx-slot meson python-single-r1 toolchain-funcs re2
 
 DESCRIPTION="A dynamic tiling Wayland compositor that doesn't sacrifice on its looks"
 HOMEPAGE="https://github.com/hyprwm/Hyprland"
@@ -45,17 +47,13 @@ LICENSE="BSD"
 SLOT="0"
 IUSE="
 ${GCC_COMPAT[@]}
-legacy-renderer +qtutils systemd test X
+legacy-renderer -guiutils systemd test X
 ebuild_revision_28
 "
 # hyprpm (hyprland plugin manager) requires the dependencies at runtime
 # so that it can clone, compile and install plugins.
 HYPRPM_RDEPEND="
-	>=dev-build/cmake-4.1.1
-	>=dev-build/meson-1.9.1
 	>=dev-vcs/git-2.51.0
-	app-alternatives/ninja
-	virtual/pkgconfig
 "
 # Relaxed re2 version requirement.  Originally slot 11
 # glib was not mentioned in build files
@@ -63,37 +61,46 @@ HYPRPM_RDEPEND="
 # glib version is relaxed
 RDEPEND="
 	${HYPRPM_RDEPEND}
+	>=dev-cpp/muParser-2.3.5[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	dev-cpp/muParser:=
 	>=dev-cpp/tomlplusplus-3.4.0[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	dev-cpp/tomlplusplus:=
-	>=dev-libs/hyprlang-0.6.3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-libs/hyprlang-0.6.8[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-libs/hyprlang:=
-	>=dev-libs/hyprgraphics-0.1.6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-libs/hyprgraphics-0.5.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-libs/hyprgraphics:=
-	>=dev-libs/libinput-1.29.1:=
+	>=dev-libs/libinput-1.31.2:=
 	dev-libs/re2:${RE2_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	dev-libs/re2:=
 	>=dev-libs/udis86-1.7.2
-	>=dev-libs/wayland-1.24.0
-	>=gui-libs/aquamarine-0.9.4[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-libs/wayland-1.25.0
+	>=gui-libs/aquamarine-0.11.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	gui-libs/aquamarine:=
 	>=gui-libs/hyprcursor-0.1.13[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	gui-libs/hyprcursor:=
-	>=gui-libs/hyprutils-0.8.4[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=gui-libs/hyprutils-0.13.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	gui-libs/hyprutils:=
+	>=gui-libs/hyprwire-0.3.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	gui-libs/hyprwire:=
+	>=media-libs/lcms-2.19.1
 	>=media-libs/libglvnd-1.7.0
-	>=media-libs/mesa-25.2.3
+	>=media-libs/mesa-26.0.6
 	>=x11-libs/cairo-1.18.4
-	>=x11-libs/libdrm-2.4.125
+	>=x11-libs/libdrm-2.4.133
 	>=x11-libs/libXcursor-1.2.3
-	>=x11-libs/libxkbcommon-1.11.0
-	>=x11-libs/pango-1.57.0
+	>=x11-libs/libxkbcommon-1.13.1
+	>=x11-libs/pango-1.57.1
 	>=x11-libs/pixman-0.46.4
+	dev-lang/lua:5.5
+	dev-lang/lua:=
 	dev-libs/glib:2
+	dev-libs/glib:=
+	dev-util/glslang
 	sys-apps/util-linux
 	>=sys-apps/pciutils-3.10.0
-	qtutils? (
-		gui-libs/hyprland-qtutils[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		gui-libs/hyprland-qtutils:=
+	guiutils? (
+		gui-libs/hyprland-guiutils[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		gui-libs/hyprland-guiutils:=
 	)
 	X? (
 		>=x11-libs/libxcb-1.17.0:0=
@@ -101,23 +108,24 @@ RDEPEND="
 		>=x11-libs/xcb-util-errors-1.0.1
 		>=x11-libs/xcb-util-renderutil-0.3.10
 		>=x11-libs/xcb-util-wm-0.4.2
-		>=x11-base/xwayland-23.2.6
+		>=x11-base/xwayland-24.1.11
 	)
 "
 DEPEND="
 	${RDEPEND}
-	>=dev-cpp/glaze-5.7.1
+	>=dev-cpp/glaze-7.6.0
 	>=dev-libs/hyprland-protocols-0.6.4
-	>=dev-libs/wayland-protocols-1.45
+	>=dev-libs/wayland-protocols-1.48
 "
 BDEPEND="
+	>=dev-build/cmake-4.3.2
 	>=dev-util/hyprwayland-scanner-0.4.5[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-util/hyprwayland-scanner:=
-	>=dev-build/cmake-4.1.1
 	>=dev-util/wayland-scanner-1.24.0
 	virtual/pkgconfig
 	test? (
 		>=app-misc/jq-1.8.1
+		>=dev-cpp/gtest-1.17.0[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 		x11-apps/xeyes
 		x11-terms/kitty
 	)
@@ -159,12 +167,11 @@ einfo "Detected compiler switch.  Disabling LTO."
 	else
 		tc-check-min_ver "clang" "17"
 	fi
+
+	python-single-r1_pkg_setup
 }
 
 src_prepare() {
-	# Skip version.h
-	sed -i -e "s|scripts/generateVersion.sh|echo|g" "meson.build" || die
-
 	default
 }
 
