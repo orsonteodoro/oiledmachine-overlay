@@ -120,10 +120,10 @@
     # Option 2 - Blacklisting downloads with custom wrappers.
     # You can also add --blacklist=${HOME}/Downloads as the default and have a
     # separate wrapper firefox-download for downloads.
-    # cp -a /usr/local/firefox /usr/local/firefox-download
-    # Modify /usr/local/firefox with --blacklist=${HOME}/Downloads and remove
-    # --blacklist=${HOME}/Downloads from /usr/local/firefox-download.
-    # Immediately close the browser and use /usr/local/firefox to prevent
+    # cp -a /usr/local/bin/firefox /usr/local/bin/firefox-download
+    # Modify /usr/local/bin/firefox with --blacklist=${HOME}/Downloads and remove
+    # --blacklist=${HOME}/Downloads from /usr/local/bin/firefox-download.
+    # Immediately close the browser and use /usr/local/bin/firefox to prevent
     # information disclosure based path traversal.  Do not apply the
     # blacklist ${HOME}/Downloads in ~/.config/firejail/globals.local for
     # this option.
