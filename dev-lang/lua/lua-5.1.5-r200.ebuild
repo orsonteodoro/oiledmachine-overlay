@@ -58,7 +58,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.1.5-extern_C.patch"
 	"${FILESDIR}/0002-Fix-stack-overflow-in-vararg-functions.patch"
 	"${FILESDIR}/${PN}-5.1.5-buildfiles-changes.patch"
-	"A${FILESDIR}/${PN}-5.1.5-pkgconfig-symbols.patch"
+	"${FILESDIR}/${PN}-5.1.5-pkgconfig-symbols.patch"
 )
 
 pkg_setup() {
