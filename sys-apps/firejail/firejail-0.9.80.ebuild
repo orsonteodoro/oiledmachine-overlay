@@ -4327,15 +4327,6 @@ einfo "  xpra_speaker_off  # disables sound forwarding for xpra"
 einfo "  xpra_speaker_on  # enables sound forwarding for xpra"
 einfo
 	fi
-ewarn
-ewarn "Files marked chmod uo+r permissions and filenames containing sensitive"
-ewarn "info contained in the root directory are exposed to an attacker in the"
-ewarn "sandbox.  They should be moved in either another disk, or in folder with"
-ewarn "parent folder and descendants with uo-r chmod permissions or explicitly"
-ewarn "added as a blacklist rule in /etc/firejail/globals.local."
-ewarn
-ewarn "Always check your sandbox profile in the shell to see if it meets your"
-ewarn "privacy requirements."
 einfo
 einfo "Note to ricers and optimization fanatics:"
 einfo
@@ -4363,9 +4354,29 @@ ewarn "The /usr/local/firejail-bin has been removed.  You should remove"
 ewarn "PATH=\"/usr/local/firejail-bin:\${PATH}\" from ~/.bashrc."
 ewarn
 
-ewarn "SUID is required for ${MY_PN} to work, so using it has risk of privilege escalation."
+ewarn
+ewarn "SUID is required for ${MY_PN} to work, so using it has risk of privilege"
+ewarn "escalation."
+ewarn
 
-einfo "TIP:  If the app processes untrusted data, user generated content, or interacts with the network or Internet, it should have a ${MY_PN} profile."
+einfo
+einfo "TIP:  If the app processes untrusted data, user generated content, or"
+einfo "interacts with the network or Internet, it should have a ${MY_PN}"
+einfo "profile."
+einfo
+
+ewarn
+ewarn "IMPORTANT:  Please read the section \"important blacklist paths\" and"
+ewarn "\"path traversal mitigation verification\" section in the metadata.xml"
+ewarn "to properly secure browser ~/Downloads and crown jewel keys."
+ewarn
+ewarn "IMPORTANT:  Files containing sensitive data in the root directory are"
+ewarn "exposed to an attacker in the sandbox.  They should be moved in either"
+ewarn "another disk, or in folder with parent folder.  Blacklist these paths in"
+ewarn "/etc/firejail/globals.local."
+ewarn
+ewarn "TIP:  Always check used sandbox profiles to see if there is any sensitive"
+ewarn "data leaks."
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS

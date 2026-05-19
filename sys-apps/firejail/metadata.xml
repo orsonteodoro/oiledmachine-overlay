@@ -54,6 +54,78 @@
     shell script startup cost.
 
 
+    Important blacklist paths
+
+    IMPORTANT! You must verify that your crown jewels, your keys to the crown
+    jewels, your sensitive data is unreachable and unreadable by any attacker.
+    The default profiles do not necessarily mean information disclosure is
+    mitigated.  Custom rules must be added for full mitigation for information
+    disclosure.
+
+    /etc/firejail/globals.local - is systemwide configuration containing all
+    blacklisted paths to prevent path traversal vulnerability (aka data breach
+    exfiltration or tampering).  It should contain paths that have sensitive
+    data (e.g. API keys, AI keys, server keys).
+
+    ~/.config/firejail/globals.local - is a per-user profile blacklist
+    containing paths in ${HOME} or user mounted paths to prevent a path
+    traversal exfiltration, but if the profile is compromised then it won't
+    work as effective as /etc/firejail/globals.local.  This private list is to
+    prevent snooping by users on the same computer.
+
+    ~/.config/firejail/<name>.local - is a per program blacklist.  To get the
+    full list of file names, do `grep -r -e ".local" /etc/firejail`.
+
+
+    Examples:
+
+    Contents of /etc/firejail/globals.local:
+    # Using ls /backups will result in access denied when attempting to access
+    # the crown jewels or the keys to the crown jewels
+    blacklist /backups
+    blacklist /mnt/usb/keys      # keys to the crown jewels
+    blacklist /mnt/usb/pictures  # crown jewels or sensitive data
+
+
+    Contents of ~/.config/firejail/globals.local:
+
+    # Option 1 - Blacklisting downloads manually.
+    # Add the comment character # before the command below if you want to
+    # download temporarily.  Forgetting to enable the blacklist can result in
+    # information disclosure.
+    blacklist ${HOME}/Downloads  # Prevent snooping of PII or sensitive data
+                                 # when not downloading
+
+    # Option 2 - Blacklisting downloads with custom wrappers.
+    # You can also add --blacklist=${HOME}/Downloads as the default and have a
+    # separate wrapper firefox-download for downloads.
+    # cp -a /usr/local/firefox /usr/local/firefox-download
+    # Modify /usr/local/firefox with --blacklist=${HOME}/Downloads and remove
+    # --blacklist=${HOME}/Downloads from /usr/local/firefox-download.
+    # Immediately close the browser and use /usr/local/firefox to prevent
+    # information disclosure based path traversal.
+
+    # The custom wrappers should be placed in /usr/local/bin not in ~/ to
+    # prevent compromised profile code execution.
+
+
+
+    Path traversal mitigation verification
+
+    To verify that path traversal is mitigated by the sandbox, use one of these
+    commands:
+
+    firejail --profile=<profile-name> --private-bin=bash,xterm,ls,id,head /usr/bin/xterm          # For X11 and your favorite terminal app xterm
+    firejail --profile=<profile-name> --private-bin=bash,alacritty,ls,id,head /usr/bin/alacritty  # For Wayland and your favorite terminal app alacritty
+
+    Use `head <path>` to test if the file is readable by the attacker.
+    Use `ls <path>` to test if the file is accessible by the attacker.
+
+    Also test if tools/commands except the --private-bin are inaccessible see if
+    the Living of the Land attack is properly mitigated.
+
+
+
     Build time environment variables for USE=wrapper
 
     If the PROFILE_NAME starts with a number, it must be prefixed with the _
