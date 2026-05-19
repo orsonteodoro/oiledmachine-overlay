@@ -39,7 +39,10 @@ RESTRICT="
 	)
 "
 SLOT="0/"$(ver_cut "1-2" "${PV}")
-IUSE="test"
+IUSE="
+test
+ebuild_revision_1
+"
 RDEPEND="
 	>=gui-libs/hyprutils-0.11.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	gui-libs/hyprutils:=
@@ -58,6 +61,11 @@ BDEPEND="
 	virtual/pkgconfig
 "
 DOCS=( "README.md" )
+
+pkg_setup() {
+	libcxx-slot_verify
+	libstdcxx-slot_verify
+}
 
 src_configure() {
 	local mycmakeargs=(
