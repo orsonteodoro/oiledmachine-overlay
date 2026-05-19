@@ -93,10 +93,21 @@
     # Add the comment character # before the command below if you want to
     # download temporarily.  Forgetting to enable the blacklist can result in
     # information disclosure.
-    blacklist ${HOME}/Downloads  # Prevent snooping of PII or sensitive data
-                                 # when not downloading
-    blacklist /mnt/usb/password  # Keys to the crown jewels
-    blacklist /mnt/usb/assets    # Crown jewels or sensitive data
+    blacklist ${HOME}/Downloads                    # Prevent snooping of PII or sensitive data
+                                                   # when not downloading
+    blacklist /mnt/usb/password                    # Keys to the crown jewels
+    blacklist /mnt/usb/assets                      # Crown jewels or sensitive data
+
+    # Protect SSH keys from threat actor
+    blacklist ${HOME}/.ssh
+    blacklist ${HOME}/.gnupg
+
+    # Protect license files from threat actor
+    blacklist ${HOME}/.local/share/unity3d/Unity
+    blacklist ${HOME}/.local/share/unity3d
+    blacklist ${HOME}/.config/unity
+    blacklist ${HOME}/.config/unity3d
+
 
     # Option 2 - Blacklisting downloads with custom wrappers.
     # You can also add --blacklist=${HOME}/Downloads as the default and have a
@@ -105,7 +116,9 @@
     # Modify /usr/local/firefox with --blacklist=${HOME}/Downloads and remove
     # --blacklist=${HOME}/Downloads from /usr/local/firefox-download.
     # Immediately close the browser and use /usr/local/firefox to prevent
-    # information disclosure based path traversal.
+    # information disclosure based path traversal.  Do not apply the
+    # blacklist ${HOME}/Downloads in ~/.config/firejail/globals.local for
+    # this option.
 
     # The custom wrappers should be placed in /usr/local/bin not in ~/ to
     # prevent compromised profile code execution.
