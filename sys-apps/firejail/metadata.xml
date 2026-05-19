@@ -67,7 +67,7 @@
 
     The blacklists are to to prevent path traversal vulnerability (aka data
     breach exfiltration or data tampering) from threat actors or from poorly
-    written Firejail profiles.
+    written Firejail profiles.  It is a proper layered defense fallback.
 
     Ordered by precedence
 
@@ -107,9 +107,7 @@
 
     Contents of ~/.config/firejail/globals.local:
 
-    # Use the AI to help locate and blacklist all high value asset credentials
-    # from poorly written Firejail profiles.  It is a proper layered defense
-    # fallback.
+    # Use the AI to help locate and blacklist all high value asset credentials.
 
     # Most of the time these will be blacklisted.  Sometimes you may need to
     # temporary disable the blacklist.  After use, re-enable the blacklist rule.
