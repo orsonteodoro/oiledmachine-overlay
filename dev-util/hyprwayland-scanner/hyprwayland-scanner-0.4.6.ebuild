@@ -34,13 +34,14 @@ LICENSE="BSD"
 SLOT="0"
 
 RDEPEND="
-	>=dev-libs/pugixml-1.14[${LIBSTDCXX_USEDEP_LTS}]
+	>=dev-libs/pugixml-1.15[${LIBSTDCXX_USEDEP_LTS}]
 	dev-libs/pugixml:=
 "
 DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	>=dev-build/cmake-3.19
 	virtual/pkgconfig
 "
 
