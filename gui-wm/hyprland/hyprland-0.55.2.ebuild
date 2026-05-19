@@ -10,6 +10,7 @@ PYTHON_COMPAT=( "python3_"{12,13} )
 ABSEIL_CPP_SLOT="20240116"
 CXX_STANDARD=26
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="RC"
 RE2_SLOT="20250512"
 
 inherit libstdcxx-compat
