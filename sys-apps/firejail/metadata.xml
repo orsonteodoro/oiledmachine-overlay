@@ -114,7 +114,8 @@
     # Add the comment character # before the command below if you want to
     # download temporarily.  Forgetting to enable the blacklist can result in
     # a information disclosure vulnerability.
-    # Prevent snooping of PII or sensitive data
+    # Protected to prevent data theft of PII or sensitive data when sandbox
+    # breakout happens.
     # For 99% of the time, the Download folder containing PII should be protected.
     blacklist ${HOME}/Downloads     # Protected folder without # character
     #blacklist ${HOME}/Downloads    # Vulnerable with # character
