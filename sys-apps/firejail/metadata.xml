@@ -62,22 +62,39 @@
     mitigated.  Custom rules must be added for full mitigation of information
     disclosure.
 
-    /etc/firejail/globals.local - is systemwide configuration containing all
-    blacklisted paths to prevent path traversal vulnerability (aka data breach
-    exfiltration or tampering).  It should contain paths that have sensitive
-    data (e.g. API keys, AI keys, server keys).
+    To get the full list of file names for <appname>.local, do
+    `grep -r -e ".local" /etc/firejail`.
 
-    ~/.config/firejail/globals.local - is a per-user profile blacklist
+    The blacklists are to to prevent path traversal vulnerability (aka data
+    breach exfiltration or data tampering) from threat actors or from poorly
+    written Firejail profiles.
+
+    Ordered by precedence
+
+    1. ~/.config/firejail/<appname>.local - is your personal per program
+    blacklist or config for edge cases.  (Highest precedence, overwrites others)
+
+    2. /etc/firejail/<appname>.local - is a systemwide per program blacklist or
+    config for edge cases.
+
+    3. ~/.config/firejail/globals.local - is a per-user profile blacklist
     containing paths in ${HOME} or user mounted paths to prevent a path
     traversal exfiltration, but if the profile is compromised then it won't
     work as effective as /etc/firejail/globals.local.  This private list is to
     prevent snooping by users on the same computer.
 
-    ~/.config/firejail/<name>.local - is a per program blacklist.  To get the
-    full list of file names, do `grep -r -e ".local" /etc/firejail`.
+    4. /etc/firejail/globals.local - is systemwide configuration containing all
+    blacklisted paths having sensitive data (e.g. API keys, AI keys, server
+    keys).  (Lowest precedence, evaluated first)
+
+
 
 
     Examples:
+
+    # DISCLAIMER:  These are fictional/hypothetical examples.  You must verify
+    # the actual paths.
+
 
     Contents of /etc/firejail/globals.local:
 
@@ -91,17 +108,36 @@
     Contents of ~/.config/firejail/globals.local:
 
     # Use the AI to help locate and blacklist all high value asset credentials
-    # from poorly written firejail profiles.  It is a proper layered defense
+    # from poorly written Firejail profiles.  It is a proper layered defense
     # fallback.
+
+    # Most of the time these will be blacklisted.  Sometimes you may need to
+    # temporary disable the blacklist.  After use, re-enable the blacklist rule.
+
+    # 99% of the time the blacklist will be enabled.  1% of the time the rule
+    # will be disabled.
 
     blacklist /mnt/usb/password                    # Keys to the crown jewels
     blacklist /mnt/usb/assets                      # Crown jewels or sensitive data
 
-    # Protect SSH keys from threat actor
+    # Protect cryptocurrency wallets
+    blacklist /mnt/usb/wallet
+    blacklist ${HOME}/.bitcoin
+    blacklist ${HOME}/.electrum
+    blacklist ${HOME}/.ethereum
+    blacklist ${HOME}/.monero
+
+    # Protect config and credentials
+    blacklist ${HOME}/.config/solana
+    blacklist ${HOME}/.config/ledger-live-desktop
+    blacklist ${HOME}/.config/TreZor
+
+    # Protect SSH keys and secrets
     blacklist ${HOME}/.ssh
     blacklist ${HOME}/.gnupg
+    blacklist ${HOME}/.password-store
 
-    # Protect license files from threat actor
+    # Protect license files
     blacklist ${HOME}/.local/share/unity3d/Unity
     blacklist ${HOME}/.local/share/unity3d
     blacklist ${HOME}/.config/unity
@@ -113,17 +149,18 @@
     # Option 1 - Blacklisting downloads manually.
     # Add the comment character # before the command below if you want to
     # download temporarily.  Forgetting to enable the blacklist can result in
-    # a information disclosure vulnerability.
-    # Protected to prevent data theft of PII or sensitive data when sandbox
-    # breakout happens.
-    # For 99% of the time, the Download folder containing PII should be protected.
+    # a information disclosure vulnerability.  The download directory is
+    # protected to prevent data theft of PII or sensitive data when sandbox
+    # breakout happens.  For 99% of the time, the Download folder rule
+    # containing PII should be blacklisted.
+
     blacklist ${HOME}/Downloads     # Protected folder without # character
     #blacklist ${HOME}/Downloads    # Vulnerable with # character
 
     # Option 2 - Blacklisting downloads with custom wrappers.
     # You can also add --blacklist=${HOME}/Downloads as the default and have a
-    # separate wrapper firefox-download for downloads.
-    # cp -a /usr/local/bin/firefox /usr/local/bin/firefox-download
+    # separate wrapper firefox-download for downloads.  Make a copy first with
+    # `cp -a /usr/local/bin/firefox /usr/local/bin/firefox-download`.
     # Modify /usr/local/bin/firefox with --blacklist=${HOME}/Downloads and remove
     # --blacklist=${HOME}/Downloads from /usr/local/bin/firefox-download.
     # Immediately close the browser and use /usr/local/bin/firefox to prevent
@@ -335,14 +372,14 @@
 
     Tests performed with WebGL Aquarium and software rendering override
 
-    chromium --disable-gpu no firejail:  2 fps
-    chromium no firejail:  60 fps
-    chromium with firejail --x11=xephyr:  11 fps
-    chromium with firejail --x11=xpra and opengl=yes:  7 fps
-    chromium with firejail --x11=xpra and opengl=no:  7 fps
-    chromium with firejail --x11=xpra-virtualgl and opengl=no:  7 fps
-    chromium with firejail --x11=xpra-virtualgl and opengl=yes:  7 fps
-    chromium with firejail without --x11 (same as X_BACKEND[PROFILE_NAME]=unsanboxed|disable|none):  60 fps
+    Chromium --disable-gpu no Firejail:  2 fps
+    Chromium no Firejail:  60 fps
+    Chromium with Firejail --x11=xephyr:  11 fps
+    Chromium with Firejail --x11=xpra and opengl=yes:  7 fps
+    Chromium with Firejail --x11=xpra and opengl=no:  7 fps
+    Chromium with Firejail --x11=xpra-virtualgl and opengl=no:  7 fps
+    Chromium with Firejail --x11=xpra-virtualgl and opengl=yes:  7 fps
+    Chromium with Firejail without --x11 (same as X_BACKEND[PROFILE_NAME]=unsanboxed|disable|none):  60 fps
 
     Variables are in all capitals.
 
