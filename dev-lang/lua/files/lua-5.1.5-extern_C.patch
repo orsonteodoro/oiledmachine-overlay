@@ -4,9 +4,10 @@ From: "John V. Belmonte" <jbelmonte@debian.org>
 Date: Tue, 26 Aug 2014 16:20:49 +0200
 Subject: extern_C
 
---- a/src/luaconf.h.in
-+++ b/src/luaconf.h.in
-@@ -168,7 +168,11 @@
+diff '--color=auto' -urp lua-5.1.5.orig/src/luaconf.h lua-5.1.5/src/luaconf.h
+--- lua-5.1.5.orig/src/luaconf.h	2008-02-11 08:25:08.000000000 -0800
++++ lua-5.1.5/src/luaconf.h	2026-05-19 05:56:22.458443654 -0700
+@@ -161,7 +161,11 @@
  
  #else
  

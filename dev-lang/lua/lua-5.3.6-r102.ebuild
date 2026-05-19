@@ -1,3 +1,4 @@
+# Copyright 2026 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -12,11 +13,9 @@ UOPTS_SUPPORT_TPGO=1
 
 inherit autotools cflags-hardened check-compiler-switch flag-o-matic portability toolchain-funcs uopts
 
-# Tarballs are produced from ${PV} branches in
-# https://gitweb.gentoo.org/proj/lua-patches.git
 KEYWORDS="~amd64 ~arm ~arm64 ~s390 ~x86"
 SRC_URI="
-	https://dev.gentoo.org/~soap/distfiles/${P}.tar.xz
+	https://www.lua.org/ftp/lua-${PV}.tar.gz -> ${P}.original.tar.gz
 "
 
 DESCRIPTION="A powerful light-weight programming language designed for \
@@ -26,7 +25,7 @@ LICENSE="MIT"
 SLOT="5.3"
 IUSE="
 +deprecated readline static-libs test
-ebuild_revision_28
+ebuild_revision_30
 "
 REQUIRED_USE="
 	pgo? (
@@ -55,6 +54,8 @@ BDEPEND="
 	virtual/pkgconfig
 "
 PATCHES=(
+	"${FILESDIR}/${PN}-5.3.6-visibility-changes.patch"
+	"${FILESDIR}/${PN}-5.3.6-buildfiles-changes.patch"
 )
 
 pkg_setup() {
@@ -107,12 +108,26 @@ einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
 
+	cat "${FILESDIR}/lua.pc" > "${T}/lua.pc" || die
+
+	sed -i \
+		-e "s|@PREFIX@|${ED}/usr|g" \
+		-e "s|@LUA_SLOT@|${SLOT}|g" \
+		-e "s|@LIBDIR@|$(get_libdir)|g" \
+		-e "s|@PV@|${PV}|g" \
+		"${T}/lua.pc" \
+		"Makefile" \
+		"src/Makefile" \
+		|| die
+
+
 	cflags-hardened_append
-	econf
 }
 
 _src_compile() {
-	default
+	export MYCFLAGS="${CFLAGS}"
+	export MLDCFLAGS="${LDFLAGS}"
+	emake "linux"
 }
 
 src_compile() {
@@ -147,9 +162,16 @@ train_get_trainer_args() {
 }
 
 src_install() {
-	default
+	emake install DESTDIR="${D}"
 	find "${ED}" -name '*.la' -delete || die
 	uopts_src_install
+	insinto "/usr/lib64/pkgconfig"
+	newins "${T}/lua.pc" "lua${SLOT}.pc"
+
+	mv "${ED}/usr/share/man/man1/lua"{"","${SLOT}"}".1" || die
+	mv "${ED}/usr/share/man/man1/luac"{"","${SLOT}"}".1" || die
+
+	use static-libs || rm "${ED}/usr/$(get_libdir)/liblua${SLOT}.a"
 }
 
 pkg_postinst() {

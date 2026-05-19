@@ -1,0 +1,31 @@
+# lua.pc -- pkg-config data for Lua
+
+# vars from install Makefile
+
+# grep '^V=' ../Makefile
+V= @LUA_SLOT@
+# grep '^R=' ../Makefile
+R= @PV@
+
+# grep '^INSTALL_.*=' ../Makefile | sed 's/INSTALL_TOP/prefix/'
+prefix= /usr/local
+INSTALL_BIN= ${prefix}/bin
+INSTALL_INC= ${prefix}/include/lua@LUA_SLOT@
+INSTALL_LIB= ${prefix}/@LIBDIR@
+INSTALL_MAN= ${prefix}/share/man/man1
+INSTALL_LMOD= ${prefix}/share/lua/${V}
+INSTALL_CMOD= ${prefix}/@LIBDIR@/lua/${V}
+
+# canonical vars
+exec_prefix=${prefix}
+libdir=${exec_prefix}/@LIBDIR@
+includedir=${prefix}/include/lua@LUA_SLOT@
+
+Name: Lua
+Description: An Extensible Extension Language
+Version: ${R}
+Requires: 
+Libs: -L${libdir} -llua@LUA_SLOT@ -lm
+Cflags: -I${includedir}
+
+# (end of lua.pc)

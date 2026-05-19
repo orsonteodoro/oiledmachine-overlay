@@ -11,7 +11,7 @@ UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=1
 
-inherit cflags-hardened check-compiler-switch flag-o-matic portability toolchain-funcs uopts
+inherit autotools cflags-hardened check-compiler-switch flag-o-matic portability toolchain-funcs uopts
 
 KEYWORDS="~amd64 ~arm ~arm64 ~s390 ~x86"
 SRC_URI="
@@ -22,7 +22,7 @@ DESCRIPTION="A powerful light-weight programming language designed for \
 extending applications"
 HOMEPAGE="https://www.lua.org/"
 LICENSE="MIT"
-SLOT="5.1"
+SLOT="5.5"
 IUSE="
 +deprecated readline static-libs test
 ebuild_revision_30
@@ -54,11 +54,8 @@ BDEPEND="
 	virtual/pkgconfig
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.1.5-distro-changes.patch"
-	"${FILESDIR}/${PN}-5.1.5-extern_C.patch"
-	"${FILESDIR}/0002-Fix-stack-overflow-in-vararg-functions.patch"
-	"${FILESDIR}/${PN}-5.1.5-buildfiles-changes.patch"
-	"${FILESDIR}/${PN}-5.1.5-pkgconfig-symbols.patch"
+	"${FILESDIR}/${PN}-5.5.0-visibility-changes.patch"
+	"${FILESDIR}/${PN}-5.5.0-buildfiles-changes.patch"
 )
 
 pkg_setup() {
@@ -67,11 +64,16 @@ pkg_setup() {
 }
 
 src_prepare() {
-	! use deprecated && PATCHES+=(
-		"${FILESDIR}/${PN}-5.1.4-test.patch"
-	)
-
 	default
+
+	if use elibc_musl; then
+		# locales on musl are non-functional (#834153)
+		# https://wiki.musl-libc.org/open-issues.html#Locale-limitations
+		sed -i \
+			-e 's|os.setlocale("pt_BR") or os.setlocale("ptb")|false|g' \
+			"tests/literals.lua" \
+			|| die
+	fi
 
 	uopts_src_prepare
 }
@@ -97,6 +99,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	if tc-is-gcc && [[ "${PGO_PHASE}" == "PGO" ]] ; then
 		append-flags -Wno-error=coverage-mismatch
 	fi
+	use deprecated && append-cppflags -DLUA_COMPAT_5_3
 
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
@@ -104,11 +107,14 @@ einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
 
+	cat "${FILESDIR}/lua.pc" > "${T}/lua.pc" || die
+
 	sed -i \
 		-e "s|@PREFIX@|${ED}/usr|g" \
 		-e "s|@LUA_SLOT@|${SLOT}|g" \
 		-e "s|@LIBDIR@|$(get_libdir)|g" \
-		"etc/lua.pc" \
+		-e "s|@PV@|${PV}|g" \
+		"${T}/lua.pc" \
 		"Makefile" \
 		"src/Makefile" \
 		|| die
@@ -128,7 +134,6 @@ src_compile() {
 }
 
 _src_pre_train() {
-einfo "Running _src_pre_train"
 	emake install DESTDIR="${D}"
 	export LD_LIBRARY_PATH="${ED}/usr/$(get_libdir)"
 	export PATH_BAK="${PATH}"
@@ -142,7 +147,7 @@ _src_post_train() {
 }
 
 train_trainer_list() {
-	ls "${S}/test/"*".lua" || die
+	ls "${S}/tests/"*".lua" || die
 }
 
 train_get_trainer_exe() {
@@ -155,9 +160,11 @@ train_get_trainer_args() {
 }
 
 src_install() {
-	default
+	emake install DESTDIR="${D}"
 	find "${ED}" -name '*.la' -delete || die
 	uopts_src_install
+	insinto "/usr/lib64/pkgconfig"
+	newins "${T}/lua.pc" "lua${SLOT}.pc"
 
 	mv "${ED}/usr/share/man/man1/lua"{"","${SLOT}"}".1" || die
 	mv "${ED}/usr/share/man/man1/luac"{"","${SLOT}"}".1" || die
@@ -177,4 +184,3 @@ einfo "Install app-emacs/lua-mode for lua support for emacs"
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  allow-static-libs, pgo
-

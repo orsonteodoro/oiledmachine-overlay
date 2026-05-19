@@ -21,6 +21,7 @@
   oiledmachine-overlay notes:
 
   This ebuild is maintained to provided BOLT and PGO optimization.
+  This ebuild for removes the developer lock-in for faster version bump.
 
   -->
   <upstream>

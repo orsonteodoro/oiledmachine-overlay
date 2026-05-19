@@ -1,0 +1,79 @@
+diff '--color=auto' -urp lua-5.1.5.orig/src/ldo.h lua-5.1.5/src/ldo.h
+--- lua-5.1.5.orig/src/ldo.h	2007-12-27 05:02:25.000000000 -0800
++++ lua-5.1.5/src/ldo.h	2022-09-06 08:37:52.000000000 -0700
+@@ -46,7 +46,7 @@ LUAI_FUNC int luaD_pcall (lua_State *L,
+ LUAI_FUNC int luaD_poscall (lua_State *L, StkId firstResult);
+ LUAI_FUNC void luaD_reallocCI (lua_State *L, int newsize);
+ LUAI_FUNC void luaD_reallocstack (lua_State *L, int newsize);
+-LUAI_FUNC void luaD_growstack (lua_State *L, int n);
++void luaD_growstack (lua_State *L, int n);
+ 
+ LUAI_FUNC void luaD_throw (lua_State *L, int errcode);
+ LUAI_FUNC int luaD_rawrunprotected (lua_State *L, Pfunc f, void *ud);
+diff '--color=auto' -urp lua-5.1.5.orig/src/lfunc.h lua-5.1.5/src/lfunc.h
+--- lua-5.1.5.orig/src/lfunc.h	2007-12-27 05:02:25.000000000 -0800
++++ lua-5.1.5/src/lfunc.h	2022-09-06 08:37:52.000000000 -0700
+@@ -18,7 +18,7 @@
+                          cast(int, sizeof(TValue *)*((n)-1)))
+ 
+ 
+-LUAI_FUNC Proto *luaF_newproto (lua_State *L);
++Proto *luaF_newproto (lua_State *L);
+ LUAI_FUNC Closure *luaF_newCclosure (lua_State *L, int nelems, Table *e);
+ LUAI_FUNC Closure *luaF_newLclosure (lua_State *L, int nelems, Table *e);
+ LUAI_FUNC UpVal *luaF_newupval (lua_State *L);
+diff '--color=auto' -urp lua-5.1.5.orig/src/lmem.h lua-5.1.5/src/lmem.h
+--- lua-5.1.5.orig/src/lmem.h	2007-12-27 05:02:25.000000000 -0800
++++ lua-5.1.5/src/lmem.h	2022-09-06 08:37:52.000000000 -0700
+@@ -38,9 +38,9 @@
+    ((v)=cast(t *, luaM_reallocv(L, v, oldn, n, sizeof(t))))
+ 
+ 
+-LUAI_FUNC void *luaM_realloc_ (lua_State *L, void *block, size_t oldsize,
++void *luaM_realloc_ (lua_State *L, void *block, size_t oldsize,
+                                                           size_t size);
+-LUAI_FUNC void *luaM_toobig (lua_State *L);
++void *luaM_toobig (lua_State *L);
+ LUAI_FUNC void *luaM_growaux_ (lua_State *L, void *block, int *size,
+                                size_t size_elem, int limit,
+                                const char *errormsg);
+diff '--color=auto' -urp lua-5.1.5.orig/src/lstring.h lua-5.1.5/src/lstring.h
+--- lua-5.1.5.orig/src/lstring.h	2007-12-27 05:02:25.000000000 -0800
++++ lua-5.1.5/src/lstring.h	2022-09-06 08:37:52.000000000 -0700
+@@ -25,7 +25,7 @@
+ 
+ LUAI_FUNC void luaS_resize (lua_State *L, int newsize);
+ LUAI_FUNC Udata *luaS_newudata (lua_State *L, size_t s, Table *e);
+-LUAI_FUNC TString *luaS_newlstr (lua_State *L, const char *str, size_t l);
++TString *luaS_newlstr (lua_State *L, const char *str, size_t l);
+ 
+ 
+ #endif
+Only in lua-5.1.5/src: lua5.1.pc.in
+diff '--color=auto' -urp lua-5.1.5.orig/src/luac.c lua-5.1.5/src/luac.c
+--- lua-5.1.5.orig/src/luac.c	2006-06-02 10:37:11.000000000 -0700
++++ lua-5.1.5/src/luac.c	2022-09-06 08:37:52.000000000 -0700
+@@ -169,7 +169,6 @@ static int pmain(lua_State* L)
+   if (luaL_loadfile(L,filename)!=0) fatal(lua_tostring(L,-1));
+  }
+  f=combine(L,argc);
+- if (listing) luaU_print(f,listing>1);
+  if (dumping)
+  {
+   FILE* D= (output==NULL) ? stdout : fopen(output,"wb");
+Only in lua-5.1.5.orig/src: luaconf.h
+Only in lua-5.1.5/src: luaconf.h.in
+diff '--color=auto' -urp lua-5.1.5.orig/src/lundump.h lua-5.1.5/src/lundump.h
+--- lua-5.1.5.orig/src/lundump.h	2007-12-27 05:02:25.000000000 -0800
++++ lua-5.1.5/src/lundump.h	2022-09-06 08:37:52.000000000 -0700
+@@ -17,7 +17,7 @@ LUAI_FUNC Proto* luaU_undump (lua_State*
+ LUAI_FUNC void luaU_header (char* h);
+ 
+ /* dump one chunk; from ldump.c */
+-LUAI_FUNC int luaU_dump (lua_State* L, const Proto* f, lua_Writer w, void* data, int strip);
++int luaU_dump (lua_State* L, const Proto* f, lua_Writer w, void* data, int strip);
+ 
+ #ifdef luac_c
+ /* print one chunk; from print.c */
+Only in lua-5.1.5.orig/src: Makefile
+Only in lua-5.1.5.orig/src: print.c

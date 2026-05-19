@@ -1,0 +1,142 @@
+diff '--color=auto' -urp lua-5.3.6.orig/Makefile lua-5.3.6/Makefile
+--- lua-5.3.6.orig/Makefile	2020-07-13 11:38:27.000000000 -0700
++++ lua-5.3.6/Makefile	2026-05-19 13:38:54.034105463 -0700
+@@ -10,13 +10,13 @@ PLAT= none
+ # so take care if INSTALL_TOP is not an absolute path. See the local target.
+ # You may want to make INSTALL_LMOD and INSTALL_CMOD consistent with
+ # LUA_ROOT, LUA_LDIR, and LUA_CDIR in luaconf.h.
+-INSTALL_TOP= /usr/local
++INSTALL_TOP= @PREFIX@
+ INSTALL_BIN= $(INSTALL_TOP)/bin
+-INSTALL_INC= $(INSTALL_TOP)/include
+-INSTALL_LIB= $(INSTALL_TOP)/lib
+-INSTALL_MAN= $(INSTALL_TOP)/man/man1
+-INSTALL_LMOD= $(INSTALL_TOP)/share/lua/$V
+-INSTALL_CMOD= $(INSTALL_TOP)/lib/lua/$V
++INSTALL_INC= $(INSTALL_TOP)/include/lua@LUA_SLOT@
++INSTALL_LIB= $(INSTALL_TOP)/@LIBDIR@
++INSTALL_MAN= $(INSTALL_TOP)/share/man/man1
++INSTALL_LMOD= $(INSTALL_TOP)/share/lua/@LUA_SLOT@
++INSTALL_CMOD= $(INSTALL_TOP)/@LIBDIR@/lua/@LUA_SLOT@
+ 
+ # How to install. If your install program does not support "-p", then
+ # you may have to run ranlib on the installed liblua.a.
+@@ -38,10 +38,18 @@ RM= rm -f
+ # Convenience platforms targets.
+ PLATS= aix bsd c89 freebsd generic linux macosx mingw posix solaris
+ 
++SO_CURRENT = 0
++SO_AGE = 0
++SO_REVISION = 0
++SO_MAJOR = $(shell expr $(SO_CURRENT) - $(SO_AGE))
++SO_MINOR = $(SO_REVISION)
++SO_PATCH = $(SO_AGE)
++
+ # What to install.
+-TO_BIN= lua luac
++TO_BIN= lua@LUA_SLOT@ luac@LUA_SLOT@
+ TO_INC= lua.h luaconf.h lualib.h lauxlib.h lua.hpp
+-TO_LIB= liblua.a
++TO_LIB_A= liblua@LUA_SLOT@.a
++TO_LIB_SO= liblua@LUA_SLOT@.so.$(SO_MAJOR).$(SO_MINOR).$(SO_PATCH)
+ TO_MAN= lua.1 luac.1
+ 
+ # Lua version and release.
+@@ -61,13 +69,17 @@ install: dummy
+ 	cd src && $(MKDIR) $(INSTALL_BIN) $(INSTALL_INC) $(INSTALL_LIB) $(INSTALL_MAN) $(INSTALL_LMOD) $(INSTALL_CMOD)
+ 	cd src && $(INSTALL_EXEC) $(TO_BIN) $(INSTALL_BIN)
+ 	cd src && $(INSTALL_DATA) $(TO_INC) $(INSTALL_INC)
+-	cd src && $(INSTALL_DATA) $(TO_LIB) $(INSTALL_LIB)
++	cd src && $(INSTALL_DATA) $(TO_LIB_A) $(INSTALL_LIB)
++	cd src && $(INSTALL_DATA) $(TO_LIB_SO) $(INSTALL_LIB)
++	ln -s $(TO_LIB_SO) $(INSTALL_LIB)/liblua@LUA_SLOT@.so.$(SO_MAJOR)
++	ln -s liblua@LUA_SLOT@.so.$(SO_MAJOR) $(INSTALL_LIB)/liblua@LUA_SLOT@.so
+ 	cd doc && $(INSTALL_DATA) $(TO_MAN) $(INSTALL_MAN)
+ 
+ uninstall:
+ 	cd src && cd $(INSTALL_BIN) && $(RM) $(TO_BIN)
+ 	cd src && cd $(INSTALL_INC) && $(RM) $(TO_INC)
+-	cd src && cd $(INSTALL_LIB) && $(RM) $(TO_LIB)
++	cd src && cd $(INSTALL_LIB) && $(RM) $(TO_LIB_A)
++	cd src && cd $(INSTALL_LIB) && $(RM) $(TO_LIB_SO)
+ 	cd doc && cd $(INSTALL_MAN) && $(RM) $(TO_MAN)
+ 
+ local:
+@@ -89,7 +101,8 @@ echo:
+ 	@echo "R= $R"
+ 	@echo "TO_BIN= $(TO_BIN)"
+ 	@echo "TO_INC= $(TO_INC)"
+-	@echo "TO_LIB= $(TO_LIB)"
++	@echo "TO_LIB_A= $(TO_LIBA)"
++	@echo "TO_LIB_SO= $(TO_LIB_SO)"
+ 	@echo "TO_MAN= $(TO_MAN)"
+ 	@echo "INSTALL_TOP= $(INSTALL_TOP)"
+ 	@echo "INSTALL_BIN= $(INSTALL_BIN)"
+diff '--color=auto' -urp lua-5.3.6.orig/src/Makefile lua-5.3.6/src/Makefile
+--- lua-5.3.6.orig/src/Makefile	2020-07-13 11:38:14.000000000 -0700
++++ lua-5.3.6/src/Makefile	2026-05-19 13:38:47.618300428 -0700
+@@ -7,7 +7,7 @@
+ PLAT= none
+ 
+ CC= gcc -std=gnu99
+-CFLAGS= -O2 -Wall -Wextra -DLUA_COMPAT_5_2 $(SYSCFLAGS) $(MYCFLAGS)
++CFLAGS= -O2 -Wall -Wextra -DLUA_COMPAT_5_2 $(SYSCFLAGS) $(MYCFLAGS) -fPIC
+ LDFLAGS= $(SYSLDFLAGS) $(MYLDFLAGS)
+ LIBS= -lm $(SYSLIBS) $(MYLIBS)
+ 
+@@ -28,7 +28,16 @@ MYOBJS=
+ 
+ PLATS= aix bsd c89 freebsd generic linux macosx mingw posix solaris
+ 
+-LUA_A=	liblua.a
++LUA_A=	liblua@LUA_SLOT@.a
++
++SO_CURRENT = 0
++SO_AGE = 0
++SO_REVISION = 0
++SO_MAJOR = $(shell expr $(SO_CURRENT) - $(SO_AGE))
++SO_MINOR = $(SO_REVISION)
++SO_PATCH = $(SO_AGE)
++LUA_SO=	liblua@LUA_SLOT@.so.$(SO_MAJOR).$(SO_MINOR).$(SO_PATCH)
++
+ CORE_O=	lapi.o lcode.o lctype.o ldebug.o ldo.o ldump.o lfunc.o lgc.o llex.o \
+ 	lmem.o lobject.o lopcodes.o lparser.o lstate.o lstring.o ltable.o \
+ 	ltm.o lundump.o lvm.o lzio.o
+@@ -36,15 +45,16 @@ LIB_O=	lauxlib.o lbaselib.o lbitlib.o lc
+ 	lmathlib.o loslib.o lstrlib.o ltablib.o lutf8lib.o loadlib.o linit.o
+ BASE_O= $(CORE_O) $(LIB_O) $(MYOBJS)
+ 
+-LUA_T=	lua
++LUA_T=	lua@LUA_SLOT@
+ LUA_O=	lua.o
+ 
+-LUAC_T=	luac
++LUAC_T=	luac@LUA_SLOT@
+ LUAC_O=	luac.o
+ 
+ ALL_O= $(BASE_O) $(LUA_O) $(LUAC_O)
+-ALL_T= $(LUA_A) $(LUA_T) $(LUAC_T)
++ALL_T= $(LUA_A) $(LUA_SO) $(LUA_T) $(LUAC_T)
+ ALL_A= $(LUA_A)
++ALL_SO= $(LUA_SO)
+ 
+ # Targets start here.
+ default: $(PLAT)
+@@ -55,10 +65,17 @@ o:	$(ALL_O)
+ 
+ a:	$(ALL_A)
+ 
++so:	$(ALL_SO)
++
+ $(LUA_A): $(BASE_O)
+ 	$(AR) $@ $(BASE_O)
+ 	$(RANLIB) $@
+ 
++$(LUA_SO): $(BASE_O)
++	$(CC) $(LDFLAGS) -shared -Wl,-soname,liblua@LUA_SLOT@.so.$(SO_MAJOR) -o $@ $^
++	ln -sf $(LUA_SO) liblua@LUA_SLOT@.so.$(SO_MAJOR)
++	ln -sf liblua@LUA_SLOT@.so.$(SO_MAJOR) liblua@LUA_SLOT@.so
++
+ $(LUA_T): $(LUA_O) $(LUA_A)
+ 	$(CC) -o $@ $(LDFLAGS) $(LUA_O) $(LUA_A) $(LIBS)
+ 
