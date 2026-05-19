@@ -59,7 +59,7 @@
     IMPORTANT! You must verify that your crown jewels, your keys to the crown
     jewels, your sensitive data is unreachable and unreadable by any attacker.
     The default profiles do not necessarily mean information disclosure is
-    mitigated.  Custom rules must be added for full mitigation for information
+    mitigated.  Custom rules must be added for full mitigation of information
     disclosure.
 
     /etc/firejail/globals.local - is systemwide configuration containing all
