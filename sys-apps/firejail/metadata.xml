@@ -113,9 +113,11 @@
     # Option 1 - Blacklisting downloads manually.
     # Add the comment character # before the command below if you want to
     # download temporarily.  Forgetting to enable the blacklist can result in
-    # information disclosure.
-    blacklist ${HOME}/Downloads                    # Prevent snooping of PII or sensitive data
-                                                   # when not downloading
+    # a information disclosure vulnerability.
+    # Prevent snooping of PII or sensitive data
+    # For 99% of the time, the Download folder containing PII should be protected.
+    blacklist ${HOME}/Downloads     # Protected folder without # character
+    #blacklist ${HOME}/Downloads    # Vulnerable with # character
 
     # Option 2 - Blacklisting downloads with custom wrappers.
     # You can also add --blacklist=${HOME}/Downloads as the default and have a
