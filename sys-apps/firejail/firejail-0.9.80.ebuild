@@ -4377,8 +4377,8 @@ ewarn "exposed to an attacker in the sandbox.  They should be moved in either"
 ewarn "another disk, or in a folder with a blacklist.  Blacklist these paths in"
 ewarn "/etc/firejail/globals.local."
 ewarn
-ewarn "TIP:  Always check sandbox profiles by manual inspection in the sandbox to"
-ewarn "see if there is any sensitive data leaks.  See the"
+ewarn "IMPORTANT:  Always check sandbox profiles by manual inspection in the"
+ewarn "sandbox to verify if there is any sensitive data leaks.  See the"
 ewarn "\"path traversal mitigation verification\" section in the metadata.xml."
 ewarn
 }
