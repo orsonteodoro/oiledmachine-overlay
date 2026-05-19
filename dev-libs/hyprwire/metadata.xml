@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>filip@kszczot.pl</email>
+    <name>Filip Kszczot</name>
+  </maintainer>
+  <maintainer type="person">
+    <email>aruhier@mailbox.org</email>
+    <name>Anthony Ruhier</name>
+  </maintainer>
+  <upstream>
+    <changelog>https://github.com/hyprwm/hyprwire/releases</changelog>
+    <bugs-to>https://github.com/hyprwm/hyprwire/issues</bugs-to>
+    <remote-id type="github">hyprwm/hyprwire</remote-id>
+  </upstream>
+</pkgmetadata>
