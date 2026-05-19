@@ -80,6 +80,7 @@
     Examples:
 
     Contents of /etc/firejail/globals.local:
+
     # Using ls /backups will result in access denied when attempting to access
     # the crown jewels or the keys to the crown jewels
     blacklist /backups
