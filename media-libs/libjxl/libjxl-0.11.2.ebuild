@@ -1,4 +1,4 @@
-# Copyright 2021-2025 Gentoo Authors
+# Copyright 2021-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -65,9 +65,14 @@ RDEPEND="
 "
 DEPEND+="
 	test? (
-		dev-cpp/gtest[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		dev-cpp/gtest[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},${MULTILIB_USEDEP}]
 		dev-cpp/gtest:=
+		>=dev-cpp/highway-1.0.7[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},${MULTILIB_USEDEP},test]
+		dev-cpp/highway:=
 	)
+"
+BDEPEND="
+	test? ( x11-misc/xdg-utils )
 "
 
 pkg_setup() {
