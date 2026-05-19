@@ -89,12 +89,6 @@
 
     Contents of ~/.config/firejail/globals.local:
 
-    # Option 1 - Blacklisting downloads manually.
-    # Add the comment character # before the command below if you want to
-    # download temporarily.  Forgetting to enable the blacklist can result in
-    # information disclosure.
-    blacklist ${HOME}/Downloads                    # Prevent snooping of PII or sensitive data
-                                                   # when not downloading
     blacklist /mnt/usb/password                    # Keys to the crown jewels
     blacklist /mnt/usb/assets                      # Crown jewels or sensitive data
 
@@ -108,6 +102,12 @@
     blacklist ${HOME}/.config/unity
     blacklist ${HOME}/.config/unity3d
 
+    # Option 1 - Blacklisting downloads manually.
+    # Add the comment character # before the command below if you want to
+    # download temporarily.  Forgetting to enable the blacklist can result in
+    # information disclosure.
+    blacklist ${HOME}/Downloads                    # Prevent snooping of PII or sensitive data
+                                                   # when not downloading
 
     # Option 2 - Blacklisting downloads with custom wrappers.
     # You can also add --blacklist=${HOME}/Downloads as the default and have a
