@@ -9,18 +9,20 @@ inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX23[@]}
 )
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}
 )
+LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
 inherit cmake libcxx-slot libstdcxx-slot
 
 DESCRIPTION="Hyprland utilities library used across the ecosystem"
 HOMEPAGE="https://github.com/hyprwm/hyprutils"
 
-if [[ "${PV}" = *9999 ]]; then
+if [[ "${PV}" =~ "9999" ]]; then
 	inherit git-r3
 	EGIT_REPO_URI="https://github.com/hyprwm/${PN^}.git"
 else
@@ -31,19 +33,21 @@ else
 fi
 
 LICENSE="BSD"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="0/"$(ver_cut "1-2" "${PV}")
 
 DEPEND="
-	x11-libs/pixman
+	>=x11-libs/pixman-0.46.4
 "
 RDEPEND="
 	${DEPEND}
 "
 BDEPEND="
-	dev-build/cmake
+	>=dev-cpp/gtest-1.17.0[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+	>=dev-build/cmake-4.3.2
 	virtual/pkgconfig
 "
 
 pkg_setup() {
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
