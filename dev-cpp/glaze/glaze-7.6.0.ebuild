@@ -39,6 +39,9 @@ DEPEND="
 		dev-cpp/ut2-glaze
 	)
 "
+BDEPEND="
+	>=dev-build/cmake-3.21
+"
 PATCHES=(
 # Unbundle test dependencies otherwise they are fetched from github at build time
 #	"${FILESDIR}/${PN}-5.5.5-unbundle-test-deps.patch"
