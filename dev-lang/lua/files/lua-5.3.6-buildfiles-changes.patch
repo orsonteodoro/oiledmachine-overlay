@@ -6,7 +6,7 @@ diff '--color=auto' -urp lua-5.3.6.orig/Makefile lua-5.3.6/Makefile
  # You may want to make INSTALL_LMOD and INSTALL_CMOD consistent with
  # LUA_ROOT, LUA_LDIR, and LUA_CDIR in luaconf.h.
 -INSTALL_TOP= /usr/local
-+INSTALL_TOP= @PREFIX@
++INSTALL_TOP= @STAGING_PREFIX@
  INSTALL_BIN= $(INSTALL_TOP)/bin
 -INSTALL_INC= $(INSTALL_TOP)/include
 -INSTALL_LIB= $(INSTALL_TOP)/lib

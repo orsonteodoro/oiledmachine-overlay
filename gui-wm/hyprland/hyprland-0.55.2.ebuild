@@ -27,7 +27,7 @@ LLVM_COMPAT=(
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)" # Skip placeholder
 
-inherit abseil-cpp cflags-hardened check-compiler-switch libcxx-slot libstdcxx-slot meson python-single-r1 toolchain-funcs re2
+inherit abseil-cpp cflags-hardened check-compiler-switch cmake libcxx-slot libstdcxx-slot python-single-r1 toolchain-funcs re2
 
 DESCRIPTION="A dynamic tiling Wayland compositor that doesn't sacrifice on its looks"
 HOMEPAGE="https://github.com/hyprwm/Hyprland"
@@ -174,24 +174,23 @@ einfo "Detected compiler switch.  Disabling LTO."
 }
 
 src_prepare() {
-	default
+	cmake_src_prepare
 }
 
 src_configure() {
 	cflags-hardened_append
 	abseil-cpp_src_configure
 	re2_src_configure
-	local emesonargs=(
-		#$(meson_feature legacy-renderer legacy_renderer)
-		$(meson_feature systemd)
-		$(meson_feature X xwayland)
-		-Dtracy_enable=false
+	local mycmakeargs=(
+		-DNO_SYSTEMD=$(usex !systemd)
+		-DNO_XWAYLAND=$(usex !X)
+		-DUSE_TRACY=OFF
 	)
-	meson_src_configure
+	cmake_src_configure
 }
 
 src_install() {
-	meson_src_install
+	cmake_src_install
 }
 
 # OILEDMACHINE-OVERLAY-TEST:  0.51.1 PASSED (20250815)

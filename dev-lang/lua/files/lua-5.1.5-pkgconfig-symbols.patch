@@ -1,9 +1,12 @@
 diff '--color=auto' -urp lua-5.1.5.orig/etc/lua.pc lua-5.1.5/etc/lua.pc
 --- lua-5.1.5.orig/etc/lua.pc	2012-02-10 01:50:30.000000000 -0800
-+++ lua-5.1.5/etc/lua.pc	2026-05-19 12:32:13.056019222 -0700
-@@ -10,22 +10,22 @@ R= 5.1.5
++++ lua-5.1.5/etc/lua.pc	2026-05-19 16:42:18.279566568 -0700
+@@ -8,24 +8,24 @@ V= 5.1
+ R= 5.1.5
+ 
  # grep '^INSTALL_.*=' ../Makefile | sed 's/INSTALL_TOP/prefix/'
- prefix= /usr/local
+-prefix= /usr/local
++prefix= @STAGING_PREFIX@
  INSTALL_BIN= ${prefix}/bin
 -INSTALL_INC= ${prefix}/include
 -INSTALL_LIB= ${prefix}/lib

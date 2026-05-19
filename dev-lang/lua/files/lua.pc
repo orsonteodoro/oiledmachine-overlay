@@ -8,7 +8,7 @@ V= @LUA_SLOT@
 R= @PV@
 
 # grep '^INSTALL_.*=' ../Makefile | sed 's/INSTALL_TOP/prefix/'
-prefix= /usr/local
+prefix= @PREFIX@
 INSTALL_BIN= ${prefix}/bin
 INSTALL_INC= ${prefix}/include/lua@LUA_SLOT@
 INSTALL_LIB= ${prefix}/@LIBDIR@

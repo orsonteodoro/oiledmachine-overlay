@@ -25,7 +25,7 @@ LICENSE="MIT"
 SLOT="5.1"
 IUSE="
 +deprecated readline static-libs test
-ebuild_revision_30
+ebuild_revision_31
 "
 REQUIRED_USE="
 	pgo? (
@@ -58,7 +58,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.1.5-extern_C.patch"
 	"${FILESDIR}/0002-Fix-stack-overflow-in-vararg-functions.patch"
 	"${FILESDIR}/${PN}-5.1.5-buildfiles-changes.patch"
-	"${FILESDIR}/${PN}-5.1.5-pkgconfig-symbols.patch"
+	"A${FILESDIR}/${PN}-5.1.5-pkgconfig-symbols.patch"
 )
 
 pkg_setup() {
@@ -105,7 +105,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 
 	sed -i \
-		-e "s|@PREFIX@|${ED}/usr|g" \
+		-e "s|@STAGING_PREFIX@|${ED}/usr|g" \
+		-e "s|@PREFIX@|/usr|g" \
 		-e "s|@LUA_SLOT@|${SLOT}|g" \
 		-e "s|@LIBDIR@|$(get_libdir)|g" \
 		"etc/lua.pc" \

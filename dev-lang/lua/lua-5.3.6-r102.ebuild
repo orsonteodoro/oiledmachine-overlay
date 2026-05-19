@@ -25,7 +25,7 @@ LICENSE="MIT"
 SLOT="5.3"
 IUSE="
 +deprecated readline static-libs test
-ebuild_revision_30
+ebuild_revision_31
 "
 REQUIRED_USE="
 	pgo? (
@@ -111,7 +111,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 	cat "${FILESDIR}/lua.pc" > "${T}/lua.pc" || die
 
 	sed -i \
-		-e "s|@PREFIX@|${ED}/usr|g" \
+		-e "s|@STAGING_PREFIX@|${ED}/usr|g" \
+		-e "s|@PREFIX@|/usr|g" \
 		-e "s|@LUA_SLOT@|${SLOT}|g" \
 		-e "s|@LIBDIR@|$(get_libdir)|g" \
 		-e "s|@PV@|${PV}|g" \
