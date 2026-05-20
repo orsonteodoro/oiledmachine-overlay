@@ -1,6 +1,6 @@
 diff '--color=auto' -urp lua-5.3.6.orig/Makefile lua-5.3.6/Makefile
 --- lua-5.3.6.orig/Makefile	2020-07-13 11:38:27.000000000 -0700
-+++ lua-5.3.6/Makefile	2026-05-19 13:38:54.034105463 -0700
++++ lua-5.3.6/Makefile	2026-05-19 18:38:35.980538147 -0700
 @@ -10,13 +10,13 @@ PLAT= none
  # so take care if INSTALL_TOP is not an absolute path. See the local target.
  # You may want to make INSTALL_LMOD and INSTALL_CMOD consistent with
@@ -74,16 +74,20 @@ diff '--color=auto' -urp lua-5.3.6.orig/Makefile lua-5.3.6/Makefile
  	@echo "INSTALL_BIN= $(INSTALL_BIN)"
 diff '--color=auto' -urp lua-5.3.6.orig/src/Makefile lua-5.3.6/src/Makefile
 --- lua-5.3.6.orig/src/Makefile	2020-07-13 11:38:14.000000000 -0700
-+++ lua-5.3.6/src/Makefile	2026-05-19 13:38:47.618300428 -0700
-@@ -7,7 +7,7 @@
++++ lua-5.3.6/src/Makefile	2026-05-19 18:39:13.463398036 -0700
+@@ -7,9 +7,9 @@
  PLAT= none
  
  CC= gcc -std=gnu99
 -CFLAGS= -O2 -Wall -Wextra -DLUA_COMPAT_5_2 $(SYSCFLAGS) $(MYCFLAGS)
-+CFLAGS= -O2 -Wall -Wextra -DLUA_COMPAT_5_2 $(SYSCFLAGS) $(MYCFLAGS) -fPIC
- LDFLAGS= $(SYSLDFLAGS) $(MYLDFLAGS)
- LIBS= -lm $(SYSLIBS) $(MYLIBS)
+-LDFLAGS= $(SYSLDFLAGS) $(MYLDFLAGS)
+-LIBS= -lm $(SYSLIBS) $(MYLIBS)
++CFLAGS= -O2 -Wall -Wextra -DLUA_COMPAT_5_2 -fPIC $(SYSCFLAGS) $(MYCFLAGS) $(USERCFLAGS)
++LDFLAGS= $(SYSLDFLAGS) $(MYLDFLAGS) $(USERLDFLAGS)
++LIBS= -lm $(SYSLIBS) $(MYLIBS) $(USERLIBS)
  
+ AR= ar rcu
+ RANLIB= ranlib
 @@ -28,7 +28,16 @@ MYOBJS=
  
  PLATS= aix bsd c89 freebsd generic linux macosx mingw posix solaris
