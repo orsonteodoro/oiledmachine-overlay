@@ -17,7 +17,7 @@ HOMEPAGE="
 	https://www.geany.org/download/themes/
 	https://github.com/geany/geany-themes
 "
-
+IUSE+=" ebuild_revision_1"
 LICENSE="
 	BSD-2
 	GPL-3
@@ -46,7 +46,7 @@ src_compile() {
 }
 
 src_install() {
-	default
-	insinto "/usr/share/geany"
-	doins -r "colorschemes"
+	einstalldocs
+	insinto "/usr/share/geany/colorschemes"
+	doins -r "colorschemes/"*
 }
