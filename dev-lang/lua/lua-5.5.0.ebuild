@@ -25,7 +25,7 @@ LICENSE="MIT"
 SLOT="5.5"
 IUSE="
 +deprecated readline static-libs test
-ebuild_revision_31
+ebuild_revision_32
 "
 REQUIRED_USE="
 	pgo? (
@@ -124,9 +124,10 @@ einfo "Detected compiler switch.  Disabling LTO."
 }
 
 _src_compile() {
-	export MYCFLAGS="${CFLAGS}"
-	export MLDCFLAGS="${LDFLAGS}"
-	emake "linux"
+einfo "Called _src_compile()"
+	emake "linux" \
+	MYCFLAGS="${CFLAGS}" \
+	MLDFLAGS="${LDFLAGS}"
 }
 
 src_compile() {

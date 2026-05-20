@@ -1,6 +1,6 @@
 diff '--color=auto' -urp lua-5.1.5.orig/Makefile lua-5.1.5/Makefile
 --- lua-5.1.5.orig/Makefile	2012-02-10 01:50:23.000000000 -0800
-+++ lua-5.1.5/Makefile	2026-05-19 13:43:20.666002663 -0700
++++ lua-5.1.5/Makefile	2026-05-19 17:53:25.934931966 -0700
 @@ -9,16 +9,16 @@ PLAT= none
  
  # Where to install. The installation starts in the src and doc directories,
@@ -74,17 +74,18 @@ diff '--color=auto' -urp lua-5.1.5.orig/Makefile lua-5.1.5/Makefile
  # echo config parameters as Lua code
 diff '--color=auto' -urp lua-5.1.5.orig/src/Makefile lua-5.1.5/src/Makefile
 --- lua-5.1.5.orig/src/Makefile	2012-02-13 12:41:22.000000000 -0800
-+++ lua-5.1.5/src/Makefile	2026-05-19 13:44:02.216739890 -0700
-@@ -8,7 +8,7 @@
++++ lua-5.1.5/src/Makefile	2026-05-19 17:54:21.349257685 -0700
+@@ -8,7 +8,8 @@
  PLAT= none
  
  CC= gcc
 -CFLAGS= -O2 -Wall $(MYCFLAGS)
 +CFLAGS= -O2 -Wall $(MYCFLAGS) -fPIC
++LDFLAGS= $(MYLDFLAGS)
  AR= ar rcu
  RANLIB= ranlib
  RM= rm -f
-@@ -22,22 +22,32 @@ MYLIBS=
+@@ -22,22 +23,32 @@ MYLIBS=
  
  PLATS= aix ansi bsd freebsd generic linux macosx mingw posix solaris
  
@@ -121,7 +122,7 @@ diff '--color=auto' -urp lua-5.1.5.orig/src/Makefile lua-5.1.5/src/Makefile
  
  default: $(PLAT)
  
-@@ -47,10 +57,17 @@ o:	$(ALL_O)
+@@ -47,10 +58,17 @@ o:	$(ALL_O)
  
  a:	$(ALL_A)
  
