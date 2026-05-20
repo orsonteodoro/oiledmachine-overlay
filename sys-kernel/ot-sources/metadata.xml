@@ -831,19 +831,19 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
 
     Example use case table
 
-    | Kernel flavor                                             | Criticality       | Example use cases                           |
-    | ---                                                       | ---               | ---                                         |
-    | ot-sources (dj)                                           | Performance       | Music production, DJ laptop                 |
-    | ot-sources (gaming)                                       | Performance       | Emulators, self-hosted servers              |
-    | ot-sources (builder)                                      | Balanced          | Web browsing, online gaming                 |
-    | ot-sources (hardened)                                     | Security-critical | Secure chat, online banking                 |
-    | gentoo-sources[hardened]                                  | Balanced          | Casual chat, web browsing, online gaming    |
-    | gentoo-kernel                                             | Balanced          | Casual chat, web browsing, online gaming    |
-    | gentoo-kernel-bin                                         | Balanced          | Casual chat, web browsing, online gaming    |
-    | gentoo-sources custom hardening + KASAN + panic_on_warn=1 | Security-critical | Secure chat, online banking                 |
+    | Kernel flavor                                             | Criticality       | Example use cases                                            |
+    | ---                                                       | ---               | ---                                                          |
+    | ot-sources (dj)                                           | Performance       | Music production, DJ laptop                                  |
+    | ot-sources (gaming)                                       | Performance       | Emulators, self-hosted servers                               |
+    | ot-sources (builder)                                      | Balanced          | Web browsing, online gaming, upgrading software              |
+    | ot-sources (hardened)                                     | Security-critical | Secure chat, online banking                                  |
+    | gentoo-sources[hardened]                                  | Balanced          | Casual chat, web browsing, online gaming, upgrading software |
+    | gentoo-kernel                                             | Balanced          | Casual chat, web browsing, online gaming, upgrading software |
+    | gentoo-kernel-bin                                         | Balanced          | Casual chat, web browsing, online gaming, upgrading software |
+    | gentoo-sources custom hardening + KASAN + panic_on_warn=1 | Security-critical | Secure chat, online banking                                  |
 
     * If using the kernel incorrectly, it is considered an inappropriate configuration vulnerability.
-    * Hardened is similar to lockdown mode were even 32-bit is dropped.
+    * For proper hardening, 32-bit is dropped and unused modules should be removed to reduce the attack surface.
 
 
     Kernel customization journey
