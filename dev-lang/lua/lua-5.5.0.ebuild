@@ -29,7 +29,7 @@ LICENSE="MIT"
 SLOT="5.5"
 IUSE="
 +deprecated readline static-libs test
-ebuild_revision_34
+ebuild_revision_35
 "
 REQUIRED_USE="
 	pgo? (
@@ -129,6 +129,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 }
 
 _src_compile() {
+	emake "clean"
 	emake "linux" \
 	USERCFLAGS="${CFLAGS}" \
 	USERLDFLAGS="${LDFLAGS}" \
@@ -145,11 +146,10 @@ _src_pre_train() {
 	export LD_LIBRARY_PATH="${ED}/usr/$(get_libdir)"
 	export PATH_BAK="${PATH}"
 	export PATH="${ED}/usr/bin:${PATH}"
-	pushd "${S_TESTS}" || die
+	cd "${S_TESTS}" || die
 }
 
 _src_post_train() {
-	popd || die
 	rm -rf "${ED}" || die
 	unset LD_LIBRARY_PATH
 	export PATH="${PATH_BAK}"
@@ -166,6 +166,10 @@ train_get_trainer_exe() {
 train_get_trainer_args() {
 	local trainer="${1}"
 	echo "${trainer}"
+}
+
+_pre_tpgo_set_clean() {
+	cd "${S}" || ie
 }
 
 src_install() {
