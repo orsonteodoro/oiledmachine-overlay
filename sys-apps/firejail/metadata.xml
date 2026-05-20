@@ -342,7 +342,7 @@
     Low hanging fruit to test LotL mitigation:
 
     - awk, grep, sed -- for exfiltration or tampering
-    - bash, perl, php, python, ruby, sh -- scripting commands for automating exploitation
+    - bash, perl, php, python, ruby, sh -- scripting commands for automating reproducible exploitation
     - clang, gcc -- compiler commands to build kernel exploits
     - curl, scp, ssh, ftp, tftp, wget -- network commands to exfiltrate or install exploits in drop zones
     - dd - for exfiltration, reconaissance, sabotage, destroying attacker evidence
