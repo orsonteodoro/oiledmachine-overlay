@@ -110,7 +110,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip mirror" # Prevent slow down and snooping
 IUSE+="
 firejail wayland X
-ebuild_revision_76
+ebuild_revision_77
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
