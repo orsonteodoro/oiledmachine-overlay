@@ -248,11 +248,16 @@
     Contents of ~/.config/firejail/telegram.local:
     Contents of ~/.config/firejail/zoom.local:
 
-    # Protect against using /home/<user-name> as a drop zone or against exfiltration
-    # for the above high threat profiles of your choosing.  Keep protected 99%
-    # of the time, and permit 1% of the time.  Use the # character to control
-    # permission.
+    # Protect against using /home/<user-name> as a drop zone or against
+    # exfiltration for the above high threat profiles of your choosing.  Keep
+    # protected 99% of the time, and permit 1% of the time.  Use the # character
+    # to control permission.
     blacklist /home
+
+    # This assumes single user.  For multiuser computers, consider using
+    # /etc/firejail/<cli-name>.local instead and forcing users to use USB
+    # sticks to control access using physical drives instead.
+
 
 
     Contents of ~/.config/firejail/globals.local:
