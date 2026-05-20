@@ -156,7 +156,14 @@
     blacklist /backups
     blacklist /mnt/usb/keys      # Keys to the crown jewels
     blacklist /mnt/usb/pictures  # Crown jewels, keys, or sensitive data
+    blacklist /root              # Protect against drop zone or exfiltration
 
+    # Protect developer credentials
+    blacklist /root/.ssh
+    blacklist /root/.git-credentials
+    blacklist /root/.config/git/credentials
+    blacklist /root/.gcm
+    blacklist /root/.config/git-credential-oauth
 
     #
     # The general categories at high risk or have threat actors:
@@ -281,6 +288,12 @@
     blacklist ${HOME}/Documents
     blacklist ${HOME}/Pictures
 
+    # Protect developer credentials
+    blacklist ${HOME}/.git-credentials
+    blacklist ${HOME}/.config/git/credentials
+    blacklist ${HOME}/.gcm
+    blacklist ${HOME}/.config/git-credential-oauth
+
     # Option 1 - Blacklisting downloads manually.
     # Use the # character to control permission.  For 99% of the time, the
     # Download folder rule containing PII should be blacklisted.  For 1%
@@ -340,7 +353,8 @@
     To test ls, you can use a shell script like `bash -c 'test -e <path>; echo $?'`.
 
     The goal is to take away the ability for threat actors to use them or to
-    degrade their use with blacklists or sandbox restrictions.
+    degrade their use with blacklists or sandbox restrictions.  You want to
+    break the attacker's exploitation scripts as best as possible.
 
 
 
