@@ -337,3 +337,5 @@ einfo "For a list of color themes, bookmark https://tinted-theming.github.io/tin
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-TEST:  INTERACTIVE 0.32.2 (20260519)
+# Apply color theme to alacritty:  passed
+# Apply color theme to xfce4-terminal:  passed
