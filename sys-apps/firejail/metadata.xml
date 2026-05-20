@@ -236,7 +236,8 @@
 
     # Protect against using /home/<user-name> as a drop zone or against exfiltration
     # for the above high threat profiles of your choosing.  Keep protected 99%
-    # of the time, # and permit 1% of the time.
+    # of the time, and permit 1% of the time.  Use the # character to control
+    # permission.
     blacklist /home
 
 
@@ -281,26 +282,19 @@
     blacklist ${HOME}/Pictures
 
     # Option 1 - Blacklisting downloads manually.
-    # Add the comment character # before the command below if you want to
-    # download temporarily.  Forgetting to enable the blacklist can result in
-    # a information disclosure vulnerability.  The download directory is
-    # protected to prevent data theft of PII or sensitive data when the
-    # browser sandbox breakout happens.  For 99% of the time, the Download
-    # folder rule containing PII should be blacklisted.
+    # Use the # character to control permission.  For 99% of the time, the
+    # Download folder rule containing PII should be blacklisted.  For 1%
+    # of the time or less, it show be allowed.  The # character is like
+    # the slider widget on your smart phone.
 
-    blacklist ${HOME}/Downloads     # Protected folder without # character
-    #blacklist ${HOME}/Downloads    # Vulnerable with # character
+    blacklist ${HOME}/Downloads     # Protected folder
+    #blacklist ${HOME}/Downloads    # Temporarly allowed access to folder
 
-    # Option 2 - Blacklisting downloads with custom wrappers.
-    # You can also add --blacklist=${HOME}/Downloads as the default and have a
-    # separate wrapper firefox-download for downloads.  Make a copy first with
-    # `cp -a /usr/local/bin/firefox /usr/local/bin/firefox-download`.
-    # Modify /usr/local/bin/firefox with --blacklist=${HOME}/Downloads and remove
-    # --blacklist=${HOME}/Downloads from /usr/local/bin/firefox-download.
-    # Immediately close the browser and use /usr/local/bin/firefox to prevent
-    # information disclosure based path traversal.  Do not apply the
-    # blacklist ${HOME}/Downloads in ~/.config/firejail/globals.local for
-    # this option.
+    # Option 2 - Blacklisting downloads with custom wrapper.
+    # Remove the blacklist ${HOME}/Downloads in globals.local.
+    # cp -a /usr/local/bin/firefox /usr/local/bin/firefox-download
+    # /usr/local/bin/firefox adds --blacklist=${HOME}/Downloads
+    # /usr/local/bin/firefox-download removes -blacklist=${HOME}/Downloads
 
     # The custom wrappers should be placed in /usr/local/bin not in ~/ to
     # prevent compromised profile code execution.
