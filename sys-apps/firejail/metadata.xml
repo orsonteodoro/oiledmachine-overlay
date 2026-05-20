@@ -333,7 +333,8 @@
     - clang, gcc -- compiler commands to build kernel exploits
     - curl, scp, ssh, ftp, tftp, wget -- network commands to exfiltrate or install exploits in drop zones
     - dd - for exfiltration, reconaissance, sabotage, destroying attacker evidence
-    - find, ls -- for reconnasiance
+    - cat, head, tail -- for reconnaisance or exfiltration
+    - find, ls -- for reconnaisance
     - tar, gunzip, unzip -- for unpacking exploits
 
     To test ls, you can use a shell script like `bash -c 'test -e <path>; echo $?'`.
