@@ -165,6 +165,13 @@
     blacklist /root/.gcm
     blacklist /root/.config/git-credential-oauth
 
+    # Protect against use of Playwright
+    blacklist /opt/carbon-now-cli
+
+    # Protect against use of Selenium
+    blacklist /usr/lib/python*/site-packages/selenium
+
+
     #
     # The general categories at high risk or have threat actors:
     #
