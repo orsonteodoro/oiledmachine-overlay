@@ -247,10 +247,20 @@
     If it prints the version or doesn't say command not found, it is
     considered privileged.
 
-    Low hanging fruit to test LotL mitigation
-    - perl, ruby, python, lua<slot> -- scripting commands
-    - gcc, clang, -- compiler commands
-    - curl, wget, ssh, scp, ftp, tftp -- network commands
+    Low hanging fruit to test LotL mitigation:
+
+    - awk, grep, sed -- for exfiltration or tampering
+    - bash, perl, php, python, ruby, sh -- scripting commands for automating exploitation
+    - clang, gcc -- compiler commands to build kernel exploits
+    - curl, scp, ssh, ftp, tftp, wget -- network commands to exfiltrate or install exploits in drop zones
+    - dd - for exfiltration, reconaissance, sabotage, destroying attacker evidence
+    - find, ls -- for reconnasiance
+    - tar, gunzip, unzip -- for unpacking exploits
+
+    To test ls, you can use a shell script like `bash -c 'test -e <path>; echo $?'.`
+
+    The goal is to take away the ability for threat actors to use them or to
+    degrade their use with blacklists or sandbox restrictions.
 
 
 
