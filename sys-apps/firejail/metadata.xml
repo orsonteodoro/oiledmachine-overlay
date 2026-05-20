@@ -241,7 +241,7 @@
     you need to either move the keys physically on another device and blacklist
     that abspath dir in ~/.config/firejail/globals.local.
 
-    You shoul also test tools/commands for proper mitigation of the Living of
+    You should also test tools/commands for proper mitigation of the Living of
     the Land (LotL) attack.  See https://gtfobins.org/ for possible commands
     that can be weaponized by threat actors.  Use <cmd> --version to test.
     If it prints the version or doesn't say command not found, it is
