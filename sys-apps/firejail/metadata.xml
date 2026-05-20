@@ -54,6 +54,61 @@
     shell script startup cost.
 
 
+    Sandbox and cybersecurity terminology
+
+    Privileged - outside the sandbox or exposure to sensitive data, tools,
+    actions
+
+    Unprivileged - inside the sandbox or no exposure to sensitive data, tools,
+    actions
+
+    Degraded capabilities - reducing the threat actor to unprivileged
+
+    Drop zone - a staging place where threat actors place their tools
+
+    Command and control (C2) - a compromised computer and obfuscated attacker
+    location that acts as a master node to send control commands to zombies
+
+    Zombie - a compromised computer used as a slave node that does the dirty
+    work
+
+
+    Mitigated threats when blacklists are properly used for globals.local:
+
+    - Covert channels
+      - blacklist /sys/class/backlight # (PoC) BRIGHTNESS attack
+    - Data tampering
+    - Data theft
+    - Doxxing
+    - Drop zones and zombie installation
+      - blacklist /mnt
+      - blacklist /media
+      - blacklist /home
+    - Extortion
+    - Information disclosure
+    - Living of the land (LotL)
+    - Path traversal
+    - Ransomware
+    - Rubberhose attack
+
+
+    Mitigated threats when sandbox restrictions are properly used for
+    <appname>.local:
+
+    - Drop zones and zombie installation
+      - disable-mnt 
+    - Privilege escalation
+      - nonewprivs for SUID mitigation
+      - seccomp and caps.drop=all for kernel attack surface reduction and
+        sandbox breakout mitigation
+      - noroot for removing the root account inside the sandbox
+    
+
+    The *.local files are used to degrade the capabilities of threat actors
+    or to fix poorly written Firejail profiles.  The *.local files are a
+    proper layered defense fallback and security baseline.
+
+
     Important blacklist paths
 
     IMPORTANT! You must verify that your crown jewels, your keys to the crown
@@ -66,9 +121,6 @@
     `grep -r -e ".local" /etc/firejail`.  Intuitively, it is the same name
     as the cli command.
 
-    The blacklists are to to prevent path traversal vulnerability (aka data
-    breach exfiltration or data tampering) from threat actors or from poorly
-    written Firejail profiles.  It is a proper layered defense fallback.
 
     Ordered by precedence
 
@@ -144,14 +196,15 @@
 
     # Protect addresses and PII (Personal Identifiable Information)
     blacklist ${HOME}/Documents
+    blacklist ${HOME}/Pictures
 
     # Option 1 - Blacklisting downloads manually.
     # Add the comment character # before the command below if you want to
     # download temporarily.  Forgetting to enable the blacklist can result in
     # a information disclosure vulnerability.  The download directory is
-    # protected to prevent data theft of PII or sensitive data when sandbox
-    # breakout happens.  For 99% of the time, the Download folder rule
-    # containing PII should be blacklisted.
+    # protected to prevent data theft of PII or sensitive data when the
+    # browser sandbox breakout happens.  For 99% of the time, the Download
+    # folder rule containing PII should be blacklisted.
 
     blacklist ${HOME}/Downloads     # Protected folder without # character
     #blacklist ${HOME}/Downloads    # Vulnerable with # character
@@ -177,18 +230,27 @@
     To verify that path traversal is mitigated by the sandbox, use one of these
     commands:
 
-    firejail --profile=<profile-name> --private-bin=bash,xterm,ls,id,head /usr/bin/xterm          # For X11 and your favorite terminal app xterm
-    firejail --profile=<profile-name> --private-bin=bash,alacritty,ls,id,head /usr/bin/alacritty  # For Wayland and your favorite terminal app alacritty
+    firejail --profile=<profile-name> --private-bin=bash,<term>,ls,id,head /usr/bin/<term>                  # For your favorite terminal app
+    firejail --profile=<profile-name> --private-bin=bash,xfce4-terminal,ls,id,head /usr/bin/xfce4-terminal  # For X11/Wayland compatibility
 
     Use `head <path>` to test if the file is readable by the attacker.
     Use `ls <path>` to test if the file is accessible by the attacker.
-
-    Also test if tools/commands except the --private-bin are inaccessible see if
-    the Living of the Land attack is properly mitigated.
+    Use `ls *` to print all current directory files and folders which potentially have sensitive data
 
     Your keyfiles should not be reachable when doing this test.  If reachable,
     you need to either move the keys physically on another device and blacklist
     that abspath dir in ~/.config/firejail/globals.local.
+
+    You shoul also test tools/commands for proper mitigation of the Living of
+    the Land (LotL) attack.  See https://gtfobins.org/ for possible commands
+    that can be weaponized by threat actors.  Use <cmd> --version to test.
+    If it prints the version or doesn't say command not found, it is
+    considered privileged.
+
+    Low hanging fruit to test LotL mitigation
+    - perl, ruby, python, lua<slot> -- scripting commands
+    - gcc, clang, -- compiler commands
+    - curl, wget, ssh, scp, ftp, tftp -- network commands
 
 
 
