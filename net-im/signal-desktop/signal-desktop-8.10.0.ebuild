@@ -7,7 +7,7 @@ EAPI=8
 
 # To update use:
 # PATH=$(realpath "../../scripts")":${PATH}"
-# PNPM_UPDATER_PROJECT_ROOT="Signal-Desktop-8.8.0" pnpm_updater_update_locks.sh
+# PNPM_UPDATER_PROJECT_ROOT="Signal-Desktop-8.10.0" pnpm_updater_update_locks.sh
 
 # Ignore if error:
 # Could not detect abi for version ' + target + ' and runtime ' + runtime + '.  Updating "node-abi" might help solve this issue if it is a new release of ' + runtime)
@@ -40,10 +40,10 @@ ELECTRON_BUILDER_PV="26.0.14"
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
-	ELECTRON_APP_ELECTRON_PV="41.5.0" # Cr 146.0.7680.216, node 24.15.0
+	ELECTRON_APP_ELECTRON_PV="42.2.0" # Cr 148.0.7778.97, node 24.15.0
 else
 	# Upstream's choice
-	ELECTRON_APP_ELECTRON_PV="41.2.2" # Cr 146.0.7680.188, node 24.14.1
+	ELECTRON_APP_ELECTRON_PV="41.5.0" # Cr 146.0.7680.216, node 24.15.0
 fi
 
 NPM_INSTALL_ARGS=(
@@ -98,11 +98,11 @@ LICENSE="
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# The fingerprints of 41.2.2 and 41.2.1 are the same.
 	LICENSE+="
-		electron-41.2.1-chromium.html
+		electron-42.2.0-chromium.html
 	"
 else
 	LICENSE+="
-		electron-41.1.1-chromium.html
+		electron-41.5.0-chromium.html
 	"
 fi
 SLOT="0"
