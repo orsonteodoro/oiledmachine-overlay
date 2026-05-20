@@ -175,15 +175,15 @@
 
     # Document viewers
     Contents of ~/.config/firejail/evince.local:
-    Contents of ~/.config/firejail/gnome-mplayer.local:
     Contents of ~/.config/firejail/libreoffice.local:
-    Contents of ~/.config/firejail/kmplayer.local:
 
-    # Downloaders
+    # Downloaders or media players
     Contents of ~/.config/firejail/celluloid.local:
     Contents of ~/.config/firejail/deluge.local:
     Contents of ~/.config/firejail/filezilla.local:
+    Contents of ~/.config/firejail/gnome-mplayer.local:
     Contents of ~/.config/firejail/ktorrent.local:
+    Contents of ~/.config/firejail/kmplayer.local:
     Contents of ~/.config/firejail/mplayer.local:
     Contents of ~/.config/firejail/mpv.local:
     Contents of ~/.config/firejail/npm.local:
