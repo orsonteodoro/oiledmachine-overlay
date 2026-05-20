@@ -285,7 +285,7 @@
     # Use the # character to control permission.  For 99% of the time, the
     # Download folder rule containing PII should be blacklisted.  For 1%
     # of the time or less, it show be allowed.  The # character is like
-    # the slider widget on your smart phone.
+    # the slider widget on your smartphone.
 
     blacklist ${HOME}/Downloads     # Protected folder
     #blacklist ${HOME}/Downloads    # Temporarly allowed access to folder
