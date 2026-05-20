@@ -63,7 +63,8 @@
     disclosure.
 
     To get the full list of file names for <appname>.local, do
-    `grep -r -e ".local" /etc/firejail`.
+    `grep -r -e ".local" /etc/firejail`.  Intuitively, it is the same name
+    as the cli command.
 
     The blacklists are to to prevent path traversal vulnerability (aka data
     breach exfiltration or data tampering) from threat actors or from poorly
