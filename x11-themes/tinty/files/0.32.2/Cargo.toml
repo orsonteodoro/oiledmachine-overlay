@@ -1,0 +1,58 @@
+[package]
+name = "tinty"
+description = "Change the theme of your terminal, text editor and anything else with one command!"
+version = "0.32.2"
+edition = "2021"
+license = "GPL-3.0-only"
+readme = "README.md"
+authors = ["Jamy Golden <code@jamygolden.com>", "Tinted Theming <tintedtheming@proton.me>"]
+homepage = "https://github.com/tinted-theming/tinty"
+repository = "https://github.com/tinted-theming/tinty"
+keywords = ["cli", "base16", "shell", "tinted-theming", "theme"]
+categories = ["command-line-utilities"]
+
+[dependencies]
+anyhow = "1.0.100"
+clap = { version = "4.5.55", features = ["derive"] }
+clap_complete = { version = "4.5.65" }
+hex_color = "3.0.0"
+serde = { version = "1.0.228", features = ["derive"] }
+serde_yaml = "0.9.34"
+serde_json = { version = "1.0.149", features = ["preserve_order"] }
+shell-words = "1.1.1"
+strip-ansi-escapes = "0.2.1"
+tinted-builder-rust = "0.20.1"
+tinted-builder = "0.16.0"
+tinted-scheme-extractor = "0.13.0"
+toml = "0.8.23"
+url = "2.5.8"
+xdg = "2.5.2"
+home = "0.5.12"
+rand = "0.8.6"
+regex = "1.12"
+rayon = "1.11"
+tempfile = "=3.6.0"
+fs2 = "0.4.3"
+dirs = "6.0.0"
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+pedantic = { level = "deny", priority = -1 }
+nursery = { level = "deny", priority = -1 }
+
+# deny panics
+unwrap_used = "deny"
+expect_used = "deny"
+indexing_slicing = "deny"
+arithmetic_side_effects = "deny"
+unreachable = "deny"
+unimplemented = "deny"
+unchecked_time_subtraction = "deny"
+todo = "deny"
+string_slice = "deny"
+panic_in_result_fn = "deny"
+panic = "deny"
+exit = "deny"
+as_conversions = "deny"
