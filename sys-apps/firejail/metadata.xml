@@ -81,9 +81,9 @@
     - Data theft
     - Doxxing
     - Drop zones and zombie installation
-      - blacklist /mnt
-      - blacklist /media
       - blacklist /home
+      - blacklist /media
+      - blacklist /mnt
     - Extortion
     - Information disclosure
     - Living of the land (LotL)
@@ -99,9 +99,9 @@
       - disable-mnt 
     - Privilege escalation
       - nonewprivs for SUID mitigation
+      - noroot for removing the root account inside the sandbox
       - seccomp and caps.drop=all for kernel attack surface reduction and
         sandbox breakout mitigation
-      - noroot for removing the root account inside the sandbox
     
 
     The *.local files are used to degrade the capabilities of threat actors
