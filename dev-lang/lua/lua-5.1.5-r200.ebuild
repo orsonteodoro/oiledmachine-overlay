@@ -25,7 +25,7 @@ LICENSE="MIT"
 SLOT="5.1"
 IUSE="
 +deprecated readline static-libs test
-ebuild_revision_33
+ebuild_revision_34
 "
 REQUIRED_USE="
 	pgo? (
@@ -115,12 +115,14 @@ einfo "Detected compiler switch.  Disabling LTO."
 		|| die
 
 	cflags-hardened_append
+	tc-is-gcc && use pgo && append-libs "-lgcov"
 }
 
 _src_compile() {
 	emake "linux" \
 	USERCFLAGS="${CFLAGS}" \
-	USERLDFLAGS="${LDFLAGS}"
+	USERLDFLAGS="${LDFLAGS}" \
+	USERLIBS="${LIBS}"
 }
 
 src_compile() {

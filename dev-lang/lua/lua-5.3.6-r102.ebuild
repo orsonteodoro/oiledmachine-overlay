@@ -14,8 +14,12 @@ UOPTS_SUPPORT_TPGO=1
 inherit autotools cflags-hardened check-compiler-switch flag-o-matic portability toolchain-funcs uopts
 
 KEYWORDS="~amd64 ~arm ~arm64 ~s390 ~x86"
+S_TESTS="${WORKDIR}/lua-5.3.4-tests"
 SRC_URI="
 	https://www.lua.org/ftp/lua-${PV}.tar.gz -> ${P}.original.tar.gz
+	test? (
+		https://www.lua.org/tests/lua-5.3.4-tests.tar.gz
+	)
 "
 
 DESCRIPTION="A powerful light-weight programming language designed for \
@@ -25,7 +29,7 @@ LICENSE="MIT"
 SLOT="5.3"
 IUSE="
 +deprecated readline static-libs test
-ebuild_revision_33
+ebuild_revision_34
 "
 REQUIRED_USE="
 	pgo? (
@@ -71,7 +75,7 @@ src_prepare() {
 		# https://wiki.musl-libc.org/open-issues.html#Locale-limitations
 		sed -i \
 			-e 's|os.setlocale("pt_BR") or os.setlocale("ptb")|false|g' \
-			"tests/literals.lua" \
+			"${S_TESTS}/tests/literals.lua" \
 			|| die
 	fi
 
@@ -123,12 +127,14 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 
 	cflags-hardened_append
+	tc-is-gcc && use pgo && append-libs "-lgcov"
 }
 
 _src_compile() {
 	emake "linux" \
 	USERCFLAGS="${CFLAGS}" \
-	USERLDFLAGS="${LDFLAGS}"
+	USERLDFLAGS="${LDFLAGS}" \
+	USERLIBS="${LIBS}"
 }
 
 src_compile() {
@@ -141,16 +147,18 @@ _src_pre_train() {
 	export LD_LIBRARY_PATH="${ED}/usr/$(get_libdir)"
 	export PATH_BAK="${PATH}"
 	export PATH="${ED}/usr/bin:${PATH}"
+	pushd "${S_TESTS}" || die
 }
 
 _src_post_train() {
+	popd || die
 	rm -rf "${ED}" || die
 	unset LD_LIBRARY_PATH
 	export PATH="${PATH_BAK}"
 }
 
 train_trainer_list() {
-	ls "${S}/tests/"*".lua" || die
+	ls "${S_TESTS}/"*".lua" || die
 }
 
 train_get_trainer_exe() {
