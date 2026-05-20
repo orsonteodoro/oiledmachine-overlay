@@ -287,8 +287,12 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
-IUSE+=" "
+IUSE+="
+ebuild_revision_1
+"
 RDEPEND+="
+	dev-vcs/git
+	x11-misc/xdg-utils
 "
 DEPEND+="
 	${RDEPEND}
