@@ -64,7 +64,9 @@
 
     Degraded capabilities - reducing the threat actor to unprivileged
 
-    Drop zone - a staging place where threat actors place their tools
+    Drop zone - a staging place where threat actors place their exploit payload
+    and tools.  Any file system location writable by the attacker is a candidate
+    as a drop zone and should be blacklisted.
 
     Command and control (C2) - a compromised computer and obfuscated attacker
     location that acts as a master node to send control commands to zombies
