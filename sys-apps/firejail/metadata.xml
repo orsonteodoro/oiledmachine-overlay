@@ -257,7 +257,7 @@
     - find, ls -- for reconnasiance
     - tar, gunzip, unzip -- for unpacking exploits
 
-    To test ls, you can use a shell script like `bash -c 'test -e <path>; echo $?'.`
+    To test ls, you can use a shell script like `bash -c 'test -e <path>; echo $?'`.
 
     The goal is to take away the ability for threat actors to use them or to
     degrade their use with blacklists or sandbox restrictions.
