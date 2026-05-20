@@ -334,10 +334,10 @@
     To verify that path traversal is mitigated by the sandbox, use one of these
     commands:
 
-    firejail --profile=<profile-name> --private-bin=bash,<term>,ls,id,head /usr/bin/<term>                  # For your favorite terminal app
-    firejail --profile=<profile-name> --private-bin=bash,xfce4-terminal,ls,id,head /usr/bin/xfce4-terminal  # For X11/Wayland compatibility
+    firejail --profile=<profile-name> --private-bin=bash,<term>,ls,id,head,cat /usr/bin/<term>                  # For your favorite terminal app
+    firejail --profile=<profile-name> --private-bin=bash,xfce4-terminal,ls,id,head,cat /usr/bin/xfce4-terminal  # For X11/Wayland compatibility
 
-    Use `head <path>` to test if the file is readable by the attacker.
+    Use `head <path>` or `cat <path>` to test if the file is readable by the attacker.
     Use `ls <path>` to test if the file is accessible by the attacker.
     Use `ls *` to print all current directory files and folders which potentially have sensitive data
 
