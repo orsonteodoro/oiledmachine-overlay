@@ -128,8 +128,7 @@
 
     1. ~/.config/firejail/<cli-name>.local
        - for temporary time limited per user per app whitelisting
-       - use `noblacklist <path>`, `whitelist <path>`
-       - use `ignore <sandbox-restriction-command>`
+       - use `noblacklist <path>`, `whitelist <path>`, `ignore <sandbox-restriction-command>`
        - for fixing overly restricted Firejail profiles
        - for enabling privileged access or granting temporary time limited full access
        - highest precedence, overwrites others
@@ -137,7 +136,7 @@
     2. /etc/firejail/<cli-name>.local
        - for whitelisting or blacklisting
        - use `blacklist <path>`, `<sandbox-restriction-command>` for blacklsting
-       - use `noblacklist <path>`, `whitelist <path>` for whitelisting
+       - use `noblacklist <path>`, `whitelist <path>`, `ignore <sandbox-restriction-command>` for whitelisting
        - for per-app sandbox restrictions or full access
        - main use case:  for fixing overly permissive or overly restrictive Firejail profiles in a multiuser environment
        - for degrading capabilities or limiting access if blacklisting
