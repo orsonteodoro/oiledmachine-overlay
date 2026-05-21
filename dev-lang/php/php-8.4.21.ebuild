@@ -156,6 +156,11 @@ DEPEND="${COMMON_DEPEND}
 
 BDEPEND="virtual/pkgconfig"
 
+PATCHES=(
+	"${FILESDIR}/php-8.3.31-libgd-test-fixes.patch"
+	"${FILESDIR}/php-8.3.31-ipv6-printing-test-fix.patch"
+)
+
 PHP_MV="$(ver_cut 1)"
 
 # ARM/Windows functions (bug 923335)
@@ -299,6 +304,9 @@ src_prepare() {
 	# Fixed upstream, but not in 8.4.20.
 	rm ext/openssl/tests/bug{74796,80770}.phpt || die
 	rm ext/openssl/tests/{sni_server.phpt,sni_server_key_cert.phpt} || die
+
+	# curl-8.18 issue, will go away on its own
+	rm ext/curl/tests/curl_setopt_CURLOPT_PREREQFUNCTION.phpt || die
 }
 
 src_configure() {
