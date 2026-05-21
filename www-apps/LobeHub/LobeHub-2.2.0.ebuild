@@ -1141,6 +1141,11 @@ eerror
 eerror "The postgres-${POSTGRESQL_SLOT} daemon needs to run to continue."
 		die
 	fi
+	if ! grep -q -e "^shared_preload_libraries.*pg_search" "/etc/postgresql-${POSTGRESQL_SLOT}/postgresql.conf" ; then
+eerror "Update /etc/postgresql-${POSTGRESQL_SLOT}/postgresql.conf with the following:"
+eerror "shared_preload_libraries='pg_search'"
+		die
+	fi
 }
 
 src_configure() {
