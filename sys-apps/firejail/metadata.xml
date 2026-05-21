@@ -461,13 +461,13 @@
     - files
     - stdin or pipes
 
-    The ROP gadgets are produced inadvertently by the compiler are instructions
-    in the turing complete ROP programming language.  Turing complete means able
-    to simulate any algorithm or program.  The gadgets are the instructions in a
-    turing complete programming language.  All familiar programming languages
-    (C/C++, Python, etc) are turing complete.  The binary with the ROP gadgets
-    hides inadvertantly an obfuscated instruction set as a side effect or
-    unintended consequence of the compiler.
+    The ROP gadgets produced inadvertently by the system compiler are
+    instructions in the turing complete ROP programming language.  Turing
+    complete means able to simulate any algorithm or program.  The gadgets are
+    the instructions in a turing complete programming language.  All familiar
+    programming languages (C/C++, Python, etc) are turing complete.  The binary
+    with the ROP gadgets hides inadvertantly an obfuscated instruction set as a
+    side effect or unintended consequence of the compiler.
 
     The attacker generates an ROP chain (aka program).  The ROP chain exploits a
     buffer overflow or memory corruption to use it.  The ROP chain acts like the
