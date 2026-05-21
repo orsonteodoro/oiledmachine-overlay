@@ -438,6 +438,94 @@
 
 
 
+    Mitigation of ROP attacks (LotL based + drop zones)
+
+    Understanding the problem...
+
+    A ROP attack never needs to patch files or executibles, but tampers with
+    the copy in memory.  It has an attacker controlled stack, minimal changes
+    to avoid triggering PaX or NX, and native ROP gadget instructions
+    provided by the program.
+
+    It requires tools to find ROP gadgets within the exe/lib code, capabilities
+    to execute shells, a shell to execute the attacker's shell code, a buffer
+    overflow or memory corruption vulnerability, and a vulnerable entry point
+    to store an attacker controlled variable used as an address in a jump or
+    return instruction to hijack the control flow to run the ROP chain attacker
+    payload.
+
+    For the entry point these are the possibilities ranked most used top:
+
+    - network sockets
+    - environment variables
+    - files
+    - stdin or pipes
+
+    The ROP gadgets are produced inadvertently by the compiler are instructions
+    in the turing complete ROP programming language.  Turing complete means able
+    to simulate any algorithm or program.  The gadgets are the instructions in a
+    turing complete programming language.  All familiar programming languages
+    (C/C++, Python, etc) are turing complete.  The binary with the ROP gadgets
+    hides inadvertantly an obfuscated instruction set as a side effect or
+    unintended consequence of the compiler.
+
+    The attacker generates an ROP chain (aka program).  The ROP chain exploits a
+    buffer overflow or memory corruption to use it.  The ROP chain acts like the
+    turing machine tape.
+
+    The ROP program is compiled not interpreted using native machine code.
+
+    The ROP language was designed for
+
+      - restrictionless arbitrary computation
+      - security bypass of [non-free] PaX, NX, ALSR; [the most common use case]
+      - code reuse (Living of the Land paradigm)
+
+    The threat actor use cases or objectives of the ROP chain:
+
+      - changing memory permissions to executible
+      - spawning shells
+      - disable security mitigations or disable logging
+      - direct the process to escalate privileges or exfiltrate
+
+    Sometimes not all can be disabled but some should be disabled to prevent
+    exploit reproducibility or completing attacker objectives.  This section
+    answers applying vulnerability class mitigations in
+    /etc/firejail/globals.local and unbreaking
+    /etc/firejail/<cli-name>.local.
+
+    - Remove capabilities
+      - seccomp                         # Disable mount, ptrace, kexec
+                                        # - to prevent mounting of the bootdisk or use of possible drop zones
+                                        # - Plan A or Plan B exfiltration
+                                        # - code execution of compromised kernel
+                                        # - reboot into an attacker supplied kernel with known ROP gadgets
+      - seccomp.drop=execve,fork,vfork  # Break running shell code, break BROP variant
+    - Hardened memory
+      - nonewpriv                       # Disable privilege escalation by SUID + execve
+      - noexec <path>                   # Prevent execution in drop zones (e.g. /tmp)
+      - memory-deny-write-execute       # Prevent memory mappings in code reuse attack which ROP reuses gadgets produced by compiler.
+                                        # Kill processes that attempt to violate W^X.
+    - Reduce the number of LotL executibles
+      - private-bin=<list>              # A comma separated whitelist of <cli-name> needed to reduce/eliminate ROP command gadgets
+                                        # - Remove scripting (bash, sh, python, perl) to prevent running both shell code and ROP gadget search tools and code generator
+                                        # - Remove LotL bins (https://gtfobins.org/) to prevent reconaissance and to break reproducible exploit or later stages of the attack
+    - Remove network
+      - net=none                        # Prevent attacker from connecting to the most popular ROP entry point
+    - Remove drop zones or make the drop zones non-executible
+      - blacklist /boot
+      - blacklist /dev/shm
+      - blacklist /tmp
+      - blacklist /var/tmp
+      - blacklist /home
+      - blacklist /mnt
+      - blacklist /media
+      - noexec /tmp
+      - noexec /var/tmp
+      - noexec /dev/shm
+
+
+
     Build time environment variables for USE=wrapper
 
     If the <cli-name> starts with a number, it must be prefixed with the _
