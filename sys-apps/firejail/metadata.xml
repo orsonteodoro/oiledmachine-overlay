@@ -483,7 +483,7 @@
 
     The threat actor use cases or objectives of the ROP chain:
 
-      - changing memory permissions to executible
+      - changing memory permissions to executable
       - spawning shells
       - disable security mitigations or disable logging
       - direct the process to escalate privileges or exfiltrate
@@ -514,7 +514,7 @@
                                         # - Remove LotL bins (https://gtfobins.org/) to prevent reconaissance and to break reproducible exploit or later stages of the attack
     - Remove network
       - net=none                        # Prevent attacker from connecting to the most popular ROP entry point
-    - Remove drop zones or make the drop zones non-executible
+    - Remove drop zones or make the drop zones non-executable
       - blacklist /boot
       - blacklist /dev/shm
       - blacklist /tmp
