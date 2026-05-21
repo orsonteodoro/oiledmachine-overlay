@@ -137,7 +137,6 @@
     2. /etc/firejail/<cli-name>.local
        - for temporary time limited systemwide per app whitelisting
        - use `blacklist <path>`
-       - use `blacklist <path>`
        - use `<sandbox-restriction-command>`
        - use per-app sandbox restrictions
        - for degrading capabilities or limiting access (assumed current security architecture design use case)
