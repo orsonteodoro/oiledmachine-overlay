@@ -442,7 +442,7 @@
 
     Understanding the problem...
 
-    A ROP attack never needs to patch files or executibles, but tampers with
+    A ROP attack never needs to patch files or executables, but tampers with
     the copy in memory.  It has an attacker controlled stack, minimal changes
     to avoid triggering PaX or NX, and native ROP gadget instructions
     provided by the program.
@@ -508,7 +508,7 @@
       - noexec <path>                   # Prevent execution in drop zones (e.g. /tmp)
       - memory-deny-write-execute       # Prevent memory mappings in code reuse attack which ROP reuses gadgets produced by compiler.
                                         # Kill processes that attempt to violate W^X.
-    - Reduce the number of LotL executibles
+    - Reduce the number of LotL executables
       - private-bin=<list>              # A comma separated whitelist of <cli-name> needed to reduce/eliminate ROP command gadgets
                                         # - Remove scripting (bash, sh, python, perl) to prevent running both shell code and ROP gadget search tools and code generator
                                         # - Remove LotL bins (https://gtfobins.org/) to prevent reconaissance and to break reproducible exploit or later stages of the attack
