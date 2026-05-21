@@ -526,6 +526,9 @@
       - noexec /var/tmp
       - noexec /dev/shm
 
+    For effectiveness, the Firejail solution should be considered as a fallback.
+    For proper mitigation, use compiler based mitigations.
+
 
 
     Build time environment variables for USE=wrapper
