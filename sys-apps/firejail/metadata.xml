@@ -142,6 +142,7 @@
        - main use case:  for fixing overly permissive or overly restrictive Firejail profiles in a multiuser environment
        - for degrading capabilities or limiting access if blacklisting
        - for enabling privileged access or granting temporary time limited full access if whitelisting
+       - adding vulnerability class mitigations per app or unbreaking as partial mitigations
 
     3. ~/.config/firejail/default.local
        - for per-user profileless blacklisting fallback
@@ -167,6 +168,7 @@
        - for blacklisting weaponizable programs
        - for degrading capabilities or limiting access
        - lowest precedence, evaluated first
+       - adding vulnerability class mitigations systemwide
 
 
 
