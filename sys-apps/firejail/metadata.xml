@@ -492,7 +492,9 @@
     exploit reproducibility or completing attacker objectives.  This section
     answers applying vulnerability class mitigations in
     /etc/firejail/globals.local and unbreaking
-    /etc/firejail/<cli-name>.local.
+    /etc/firejail/<cli-name>.local.  To unbreak use
+    `ignore <sandbox-restriction-command>` or `noblacklist <path>` and
+    `whitelist <path>`.
 
     - Remove capabilities
       - seccomp                         # Disable mount, ptrace, kexec
