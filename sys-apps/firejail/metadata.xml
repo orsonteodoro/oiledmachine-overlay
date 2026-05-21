@@ -126,25 +126,44 @@
 
     Ordered by precedence
 
-    1. ~/.config/firejail/<cli-name>.local - is your personal per program
-    blacklist or config for edge cases.  (Highest precedence, overwrites others)
+    1. ~/.config/firejail/<cli-name>.local
+       - for temporary time limited per user per app whitelisting
+       - use `noblacklist <path>`, `whitelist <path>`
+       - use `ignore <sandbox-restriction-command>`
+       - for fixing Firejail profiles
+       - enabling privileged access or granting temporary time limited full access
+       - highest precedence, overwrites others
 
-    2. /etc/firejail/<cli-name>.local - is a systemwide per program blacklist or
-    config for edge cases.
+    2. /etc/firejail/<cli-name>.local
+       - for temporary time limited systemwide per app whitelisting
+       - use `blacklist <path>`
+       - use `<sandbox-restriction-command>`
+       - use per-app sandbox restrictions
+       - for degrading capabilities or limiting access
 
-    3. ~/.config/firejail/default.local - is for per-user profileless fallback.
+    3. ~/.config/firejail/default.local
+       - for per-user profileless blacklisting fallback
+       - use `blacklist <path>`
+       - for degrading capabilities or limiting access
 
-    4. /etc/firejail/default.local - is for systemwide profileless fallback.
+    4. /etc/firejail/default.local
+       - for systemwide profileless blacklisting fallback
+       - use `blacklist <path>`
+       - for degrading capabilities or limiting access
 
-    5. ~/.config/firejail/globals.local - is a per-user profile blacklist
-    containing paths in ${HOME} or user mounted paths to prevent a path
-    traversal exfiltration, but if the profile is compromised then it won't
-    work as effective as /etc/firejail/globals.local.  This private list is to
-    prevent snooping by users on the same computer.
+    5. ~/.config/firejail/globals.local
+       - for per-user profile blacklist fallback blacklisting
+       - use `blacklist <path>`
+       - for blacklisting sensitive data (e.g. PII, credentials, keys, legal papers, banking numbers)
+       - This private list is to prevent snooping by users on the same computer.
+       - for degrading capabilities or limiting access
 
-    6. /etc/firejail/globals.local - is systemwide configuration containing all
-    blacklisted paths having sensitive data (e.g. API keys, AI keys, server
-    keys).  (Lowest precedence, evaluated first)
+    6. /etc/firejail/globals.local
+       - for systemwide configuration blacklisting
+       - use `blacklist <path>`
+       - for blacklisting sensitive data (e.g. API keys, AI keys, server keys)
+       - for degrading capabilities or limiting access
+       - lowest precedence, evaluated first
 
 
 
