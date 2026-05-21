@@ -369,7 +369,7 @@
 
     Use `head <path>` or `cat <path>` to test if the file is readable by the attacker.
     Use `ls <path>` to test if the file is accessible by the attacker.
-    Use `ls *` to print all current directory files and folders which potentially have sensitive data
+    Use `ls -al *` to print all current directory files and folders which potentially have sensitive data
 
     Your keyfiles should not be reachable when doing this test.  If reachable,
     you need to either move the keys physically on another device and blacklist
