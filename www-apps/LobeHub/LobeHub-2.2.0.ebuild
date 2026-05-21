@@ -74,7 +74,7 @@ RUST_MIN_VER="1.91.1" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0
 # Obtained from https://github.com/rust-lang/rust/blob/<commit-id>/RELEASES.md
 RUST_PV="${RUST_MIN_VER}"
 
-NEXTJS_PV="16.2.5"
+NEXTJS_PV="16.2.6"
 SHARP_PV="0.34.5"
 VIPS_PV="8.18.0"
 
@@ -243,7 +243,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management minio -online-search
 +openrc +pwa +postgres +rag redis +s3 searxng systemd +tools
-ebuild_revision_109
+ebuild_revision_110
 "
 REQUIRED_USE="
 	embeddings? (
@@ -612,6 +612,7 @@ pnpm_unpack_post() {
 													# CVE-2026-44580; DT, ID; Moderate
 													# CVE-2026-44572; ZC, DoS; Low
 													# GHSA-8h8q-6873-q5fj; ZC, DoS; High
+													# CVE-2026-45109; ZC, ID; High
 			"svix@1.84.1"
 
 	# Pin better-auth and dependencies
@@ -701,11 +702,11 @@ ewarn "QA:  Manually remove path-to-regexp@8.2.0 from ${S}/package-lock.json or 
 ewarn "QA:  Manually remove tough-cookie@2.5.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove qs@6.5.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove axios@1.13.6 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove axios@1.15.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove axios@1.15.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually change axios@1.15.0 to axios@1.15.2 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 ewarn "QA:  Manually remove ai@4.3.19 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove @tootallnate/once@2.0.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @tootallnate/once@2.0.1 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove serialize-javascript@6.0.2 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 #ewarn "QA:  Manually remove undici@6.21.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
@@ -721,7 +722,7 @@ ewarn "QA:  Manually remove ajv@8.12.0 from ${S}/package-lock.json or ${S}/pnpm-
 ewarn "QA:  Manually remove ajv-formats@2.1.1 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change ajv-formats: 2.1.1(ajv@8.12.0) to ajv-formats: 3.0.1(ajv@8.20.0) from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change ajv-formats: 2.1.1(ajv@8.20.0) to ajv-formats: 3.0.1(ajv@8.20.0) from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove ajv-formats@2.1.1(ajv@8.18.0) from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove ajv-formats@2.1.1(ajv@8.18.0) from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
@@ -729,7 +730,7 @@ ewarn "QA:  Manually remove minimatch@3.1.5 from ${S}/package-lock.json or ${S}/
 ewarn "QA:  Manually remove minimatch@5.1.9 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove minimatch@9.0.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove minimatch@9.0.9 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove minimatch@10.2.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove minimatch@10.2.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove minimatch@<10.2.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually change from minimatch@x.y.z to minimatch@10.2.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
@@ -754,7 +755,7 @@ ewarn "QA:  Manually remove esbuild@0.25.12 and arch implementations from ${S}/p
 ewarn "QA:  Manually remove esbuild@0.27.7 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove esbuild@0.27.4 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change (esbuild@0.19.12) to (esbuild@0.28.0) and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually change esbuild: 0.27.4 to esbuild: 0.28.0 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change esbuild: 0.27.7 to esbuild: 0.28.0 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change esbuild@0.25.12 to esbuild@0.28.0 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove esbuild@0.21.4 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ##ewarn "QA:  Manually remove esbuild@0.21.5 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
@@ -801,9 +802,9 @@ ewarn "QA:  Manually change to ai@5.0.52(zod@3.25.76) for @upstash/workflow depe
 #ewarn "QA:  Manually remove electron@34.5.8 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove electron@39.8.8 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove electron@39.8.10 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change electron specifier to 41.2.1 and version to 41.2.1 for packages/electron-client-ipc depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change electron specifier to 42.2.0 and version to 42.2.0 for packages/electron-client-ipc depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
-ewarn "QA:  Manually change electron to 41.2.1 in ${S}/apps/desktop/package.json"
+ewarn "QA:  Manually change electron to 42.2.0 in ${S}/apps/desktop/package.json"
 
 		# DoS = Denial of Service
 		# DT = Data Tampering
@@ -851,7 +852,9 @@ ewarn "QA:  Manually change electron to 41.2.1 in ${S}/apps/desktop/package.json
 
 			sed -i -e "s|ai: 4.3.19(react@19.2.4)(zod@3.25.76)|ai: 5.0.52|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|'@octokit/rest': 19.0.13(encoding@0.1.13)|'@octokit/rest': 20.1.2|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|tar: 7.5.9|tar: 7.5.11|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|tar: 7.5.9|tar: 7.5.15|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|tar: 7.5.11|tar: 7.5.15|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|tar: 6.2.1|tar: 7.5.15|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|hono: 4.12.3|hono: 4.12.21|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|hono: 4.12.7|hono: 4.12.21|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|hono: '>=3.9.0'|hono: 4.12.21|g" "pnpm-lock.yaml" || die
@@ -889,6 +892,8 @@ ewarn "QA:  Manually change electron to 41.2.1 in ${S}/apps/desktop/package.json
 			sed -i -e "s|\"fast-xml-parser\": \"5.5.6\"|\"fast-xml-parser\": \"5.7.0\"|" "package.json" || die # Fix inconsistency or possible false positive
 			sed -i -e "s|file-type: 16.5.4|file-type: 21.3.4|" "apps/desktop/pnpm-lock.yaml" || die
 			sed -i -e "s|file-type: 16.5.4|file-type: 21.3.4|" "apps/cli/pnpm-lock.yaml" || die
+
+			sed -i -e "s|postcss: 8.4.31|postcss: 8.5.15|" "apps/cli/pnpm-lock.yaml" || die
 		}
 
 		pnpm_patch_lockfile
@@ -949,6 +954,7 @@ ewarn "QA:  Manually change electron to 41.2.1 in ${S}/apps/desktop/package.json
 													# CVE-2026-40175; ZC, DT, ID; Moderate
 													# CVE-2026-42044; ZC, DT, ID; Moderate
 													# CVE-2026-42264; ZC, DT, ID; High
+			"postcss@8.5.15"								# CVE-2026-41305; DT, ID; Moderate
 		)
 		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 
@@ -963,8 +969,13 @@ ewarn "QA:  Manually change electron to 41.2.1 in ${S}/apps/desktop/package.json
 													# CVE-2026-27904; ZC, DoS; High
 			"bn.js@5.2.3"									# CVE-2026-2739: DoS; Moderate
 			"js-yaml@4.1.1"									# CVE-2025-64718: ZC, DT; Moderate
-			"tar@7.5.11"									# GHSA-qffp-2rhf-9h96; VS(DT, ID), SS(DT, ID)
+			"tar@7.5.15"									# GHSA-qffp-2rhf-9h96; VS(DT, ID), SS(DT, ID)
 													# CVE-2026-31802; ZC, VS(DT), SS(DT), High
+													# CVE-2026-23745; VS(DT, ID), SS(DT, ID)
+													# CVE-2026-24842; DT, ID; High
+													# CVE-2026-23950; RC, DoS, DT, ID; High
+													# CVE-2026-26960; DT, ID; High
+													# CVE-2026-29786; VS(DoS, DT), SS(DoS, DT); High
 			"@hono/node-server@1.19.14"							# CVE-2026-29087; ZC, ID; High
 													# CVE-2026-39406; ZC, ID; Moderate
 			"hono@4.12.21"									# CVE-2026-29045; ZC, ID; High

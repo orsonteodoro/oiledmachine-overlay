@@ -62,10 +62,10 @@ importers:
         version: 1.10.1
       '@better-auth/expo':
         specifier: 1.6.0
-        version: 1.6.0(@better-auth/core@1.6.11(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(@opentelemetry/api@1.9.1)(better-call@1.3.5(zod@3.25.76))(jose@6.2.3)(kysely@0.28.17)(nanostores@1.3.0))(better-auth@1.6.11(@opentelemetry/api@1.9.1)(drizzle-kit@0.31.9)(drizzle-orm@0.45.2(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.1.0)(@opentelemetry/api@1.9.1)(@types/pg@8.20.0)(kysely@0.28.17)(mysql2@3.22.3(@types/node@24.12.4))(pg@8.19.0)(postgres@3.4.9))(mysql2@3.22.3(@types/node@24.12.4))(next@16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(pg@8.19.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(vitest@3.2.4(@edge-runtime/vm@5.0.0)(@types/debug@4.1.13)(@types/node@24.12.4)(happy-dom@20.9.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.47.1)(tsx@4.22.3)(yaml@2.9.0)))
+        version: 1.6.0(@better-auth/core@1.6.11(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(@opentelemetry/api@1.9.1)(better-call@1.3.5(zod@3.25.76))(jose@6.2.3)(kysely@0.28.17)(nanostores@1.3.0))(better-auth@1.6.11(@opentelemetry/api@1.9.1)(drizzle-kit@0.31.9)(drizzle-orm@0.45.2(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.1.0)(@opentelemetry/api@1.9.1)(@types/pg@8.20.0)(kysely@0.28.17)(mysql2@3.22.3(@types/node@24.12.4))(pg@8.19.0)(postgres@3.4.9))(mysql2@3.22.3(@types/node@24.12.4))(next@16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(pg@8.19.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(vitest@3.2.4(@edge-runtime/vm@5.0.0)(@types/debug@4.1.13)(@types/node@24.12.4)(happy-dom@20.9.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.47.1)(tsx@4.22.3)(yaml@2.9.0)))
       '@better-auth/passkey':
         specifier: 1.6.0
-        version: 1.6.0(@better-auth/core@1.6.11(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(@opentelemetry/api@1.9.1)(better-call@1.3.5(zod@3.25.76))(jose@6.2.3)(kysely@0.28.17)(nanostores@1.3.0))(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(better-auth@1.6.11(@opentelemetry/api@1.9.1)(drizzle-kit@0.31.9)(drizzle-orm@0.45.2(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.1.0)(@opentelemetry/api@1.9.1)(@types/pg@8.20.0)(kysely@0.28.17)(mysql2@3.22.3(@types/node@24.12.4))(pg@8.19.0)(postgres@3.4.9))(mysql2@3.22.3(@types/node@24.12.4))(next@16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(pg@8.19.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(vitest@3.2.4(@edge-runtime/vm@5.0.0)(@types/debug@4.1.13)(@types/node@24.12.4)(happy-dom@20.9.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.47.1)(tsx@4.22.3)(yaml@2.9.0)))(better-call@1.3.5(zod@3.25.76))(nanostores@1.3.0)
+        version: 1.6.0(@better-auth/core@1.6.11(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(@opentelemetry/api@1.9.1)(better-call@1.3.5(zod@3.25.76))(jose@6.2.3)(kysely@0.28.17)(nanostores@1.3.0))(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(better-auth@1.6.11(@opentelemetry/api@1.9.1)(drizzle-kit@0.31.9)(drizzle-orm@0.45.2(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.1.0)(@opentelemetry/api@1.9.1)(@types/pg@8.20.0)(kysely@0.28.17)(mysql2@3.22.3(@types/node@24.12.4))(pg@8.19.0)(postgres@3.4.9))(mysql2@3.22.3(@types/node@24.12.4))(next@16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(pg@8.19.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(vitest@3.2.4(@edge-runtime/vm@5.0.0)(@types/debug@4.1.13)(@types/node@24.12.4)(happy-dom@20.9.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.47.1)(tsx@4.22.3)(yaml@2.9.0)))(better-call@1.3.5(zod@3.25.76))(nanostores@1.3.0)
       '@cfworker/json-schema':
         specifier: ^4.1.1
         version: 4.1.1
@@ -359,16 +359,16 @@ importers:
         version: 1.6.2(debug@4.4.3)(react@19.2.5)
       '@lobehub/charts':
         specifier: ^5.0.0
-        version: 5.0.0(@lobehub/ui@5.14.0)(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 5.0.0(@lobehub/ui@5.14.1)(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@lobehub/desktop-ipc-typings':
         specifier: workspace:*
         version: link:apps/desktop/src/main
       '@lobehub/editor':
         specifier: ^4.9.3
-        version: 4.10.3(@lobehub/ui@5.14.0)(@types/mdast@4.0.4)(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(unified@11.0.5)
+        version: 4.10.3(@lobehub/ui@5.14.1)(@types/mdast@4.0.4)(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(unified@11.0.5)
       '@lobehub/icons':
         specifier: ^5.0.0
-        version: 5.8.0(@lobehub/ui@5.14.0)(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 5.8.0(@lobehub/ui@5.14.1)(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@lobehub/market-sdk':
         specifier: 0.33.3
         version: 0.33.3(zod@3.25.76)
@@ -377,7 +377,7 @@ importers:
         version: 5.1.2(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(ws@8.20.1)(zod@3.25.76)
       '@lobehub/ui':
         specifier: ^5.14.0
-        version: 5.14.0(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 5.14.1(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@modelcontextprotocol/sdk':
         specifier: ^1.26.0
         version: 1.29.0(@cfworker/json-schema@4.1.1)(zod@3.25.76)
@@ -389,7 +389,7 @@ importers:
         version: 1.1.0
       '@next/third-parties':
         specifier: ^16.1.5
-        version: 16.2.6(next@16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)
+        version: 16.2.6(next@16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)
       '@opentelemetry/auto-instrumentations-node':
         specifier: ^0.67.0
         version: 0.67.3(@opentelemetry/api@1.9.1)(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.1))(encoding@0.1.13)
@@ -434,7 +434,7 @@ importers:
         version: 11.17.0(@trpc/server@11.17.0(typescript@5.9.3))(typescript@5.9.3)
       '@trpc/next':
         specifier: ^11.8.1
-        version: 11.17.0(@tanstack/react-query@5.100.11(react@19.2.5))(@trpc/client@11.17.0(@trpc/server@11.17.0(typescript@5.9.3))(typescript@5.9.3))(@trpc/react-query@11.17.0(@tanstack/react-query@5.100.11(react@19.2.5))(@trpc/client@11.17.0(@trpc/server@11.17.0(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.17.0(typescript@5.9.3))(react@19.2.5)(typescript@5.9.3))(@trpc/server@11.17.0(typescript@5.9.3))(next@16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@5.9.3)
+        version: 11.17.0(@tanstack/react-query@5.100.11(react@19.2.5))(@trpc/client@11.17.0(@trpc/server@11.17.0(typescript@5.9.3))(typescript@5.9.3))(@trpc/react-query@11.17.0(@tanstack/react-query@5.100.11(react@19.2.5))(@trpc/client@11.17.0(@trpc/server@11.17.0(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.17.0(typescript@5.9.3))(react@19.2.5)(typescript@5.9.3))(@trpc/server@11.17.0(typescript@5.9.3))(next@16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@5.9.3)
       '@trpc/react-query':
         specifier: ^11.8.1
         version: 11.17.0(@tanstack/react-query@5.100.11(react@19.2.5))(@trpc/client@11.17.0(@trpc/server@11.17.0(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.17.0(typescript@5.9.3))(react@19.2.5)(typescript@5.9.3)
@@ -449,16 +449,16 @@ importers:
         version: 0.2.23(react@19.2.5)
       '@vercel/analytics':
         specifier: ^1.6.1
-        version: 1.6.1(next@16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)
+        version: 1.6.1(next@16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)
       '@vercel/edge-config':
         specifier: ^1.4.3
-        version: 1.4.3(@opentelemetry/api@1.9.1)(next@16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))
+        version: 1.4.3(@opentelemetry/api@1.9.1)(next@16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))
       '@vercel/functions':
         specifier: ^3.3.6
         version: 3.6.0(@aws-sdk/credential-provider-web-identity@3.972.42)
       '@vercel/speed-insights':
         specifier: ^1.3.1
-        version: 1.3.1(next@16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)
+        version: 1.3.1(next@16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)
       '@virtuoso.dev/masonry':
         specifier: ^1.4.0
         version: 1.4.3(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -491,10 +491,10 @@ importers:
         version: 3.0.3
       better-auth:
         specifier: 1.6.11
-        version: 1.6.11(@opentelemetry/api@1.9.1)(drizzle-kit@0.31.9)(drizzle-orm@0.45.2(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.1.0)(@opentelemetry/api@1.9.1)(@types/pg@8.20.0)(kysely@0.28.17)(mysql2@3.22.3(@types/node@24.12.4))(pg@8.19.0)(postgres@3.4.9))(mysql2@3.22.3(@types/node@24.12.4))(next@16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(pg@8.19.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(vitest@3.2.4(@edge-runtime/vm@5.0.0)(@types/debug@4.1.13)(@types/node@24.12.4)(happy-dom@20.9.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.47.1)(tsx@4.22.3)(yaml@2.9.0))
+        version: 1.6.11(@opentelemetry/api@1.9.1)(drizzle-kit@0.31.9)(drizzle-orm@0.45.2(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.1.0)(@opentelemetry/api@1.9.1)(@types/pg@8.20.0)(kysely@0.28.17)(mysql2@3.22.3(@types/node@24.12.4))(pg@8.19.0)(postgres@3.4.9))(mysql2@3.22.3(@types/node@24.12.4))(next@16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(pg@8.19.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(vitest@3.2.4(@edge-runtime/vm@5.0.0)(@types/debug@4.1.13)(@types/node@24.12.4)(happy-dom@20.9.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.47.1)(tsx@4.22.3)(yaml@2.9.0))
       better-auth-harmony:
         specifier: ^1.2.5
-        version: 1.3.2(better-auth@1.6.11(@opentelemetry/api@1.9.1)(drizzle-kit@0.31.9)(drizzle-orm@0.45.2(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.1.0)(@opentelemetry/api@1.9.1)(@types/pg@8.20.0)(kysely@0.28.17)(mysql2@3.22.3(@types/node@24.12.4))(pg@8.19.0)(postgres@3.4.9))(mysql2@3.22.3(@types/node@24.12.4))(next@16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(pg@8.19.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(vitest@3.2.4(@edge-runtime/vm@5.0.0)(@types/debug@4.1.13)(@types/node@24.12.4)(happy-dom@20.9.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.47.1)(tsx@4.22.3)(yaml@2.9.0)))
+        version: 1.3.2(better-auth@1.6.11(@opentelemetry/api@1.9.1)(drizzle-kit@0.31.9)(drizzle-orm@0.45.2(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.1.0)(@opentelemetry/api@1.9.1)(@types/pg@8.20.0)(kysely@0.28.17)(mysql2@3.22.3(@types/node@24.12.4))(pg@8.19.0)(postgres@3.4.9))(mysql2@3.22.3(@types/node@24.12.4))(next@16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(pg@8.19.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(vitest@3.2.4(@edge-runtime/vm@5.0.0)(@types/debug@4.1.13)(@types/node@24.12.4)(happy-dom@20.9.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.47.1)(tsx@4.22.3)(yaml@2.9.0)))
       better-call:
         specifier: 1.3.5
         version: 1.3.5(zod@3.25.76)
@@ -547,8 +547,8 @@ importers:
         specifier: ^0.5.1
         version: 0.5.1(drizzle-orm@0.45.2(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.1.0)(@opentelemetry/api@1.9.1)(@types/pg@8.20.0)(kysely@0.28.17)(mysql2@3.22.3(@types/node@24.12.4))(pg@8.19.0)(postgres@3.4.9))(zod@3.25.76)
       electron:
-        specifier: 41.2.1
-        version: 41.2.1
+        specifier: 42.2.0
+        version: 42.2.0
       epub2:
         specifier: ^3.0.2
         version: 3.0.2(ts-toolbelt@9.6.0)
@@ -646,8 +646,8 @@ importers:
         specifier: ^5.1.6
         version: 5.1.11
       next:
-        specifier: ^16.2.5
-        version: 16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        specifier: 16.2.6
+        version: 16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       next-mdx-remote:
         specifier: ^6.0.0
         version: 6.0.0(@types/react@19.2.14)(react@19.2.5)
@@ -656,7 +656,7 @@ importers:
         version: 0.4.6(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       nextjs-toploader:
         specifier: ^3.9.17
-        version: 3.9.17(next@16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 3.9.17(next@16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       node-addon-api:
         specifier: 8.7.0
         version: 8.7.0
@@ -671,7 +671,7 @@ importers:
         version: 2.0.6
       nuqs:
         specifier: ^2.8.6
-        version: 2.8.9(next@16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-router-dom@7.15.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-router@7.15.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)
+        version: 2.8.9(next@16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-router-dom@7.15.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-router@7.15.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)
       officeparser:
         specifier: 5.1.1
         version: 5.1.1
@@ -720,6 +720,9 @@ importers:
       polished:
         specifier: ^4.3.1
         version: 4.3.1
+      postcss:
+        specifier: 8.5.15
+        version: 8.5.15
       postgres:
         specifier: 3.4.9
         version: 3.4.9
@@ -1184,8 +1187,8 @@ importers:
         specifier: ^16.12.0
         version: 16.26.1(typescript@5.9.3)
       tar:
-        specifier: 7.5.11
-        version: 7.5.11
+        specifier: 7.5.15
+        version: 7.5.15
       tmp:
         specifier: 0.2.4
         version: 0.2.4
@@ -1375,7 +1378,7 @@ importers:
         version: link:../prompts
       '@lobehub/ui':
         specifier: ^5
-        version: 5.14.0(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 5.14.1(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       antd:
         specifier: 6.3.5
         version: 6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -1384,7 +1387,7 @@ importers:
         version: 1.16.0(react@19.2.5)
       next:
         specifier: '*'
-        version: 16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       react:
         specifier: 19.2.5
         version: 19.2.5
@@ -1403,7 +1406,7 @@ importers:
     dependencies:
       '@lobehub/ui':
         specifier: ^5
-        version: 5.14.0(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 5.14.1(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       antd:
         specifier: 6.3.5
         version: 6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -1456,7 +1459,7 @@ importers:
         version: link:../prompts
       '@lobehub/ui':
         specifier: ^5
-        version: 5.14.0(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 5.14.1(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@thi.ng/base-n':
         specifier: ^2.7.58
         version: 2.7.69
@@ -1490,7 +1493,7 @@ importers:
         version: link:../shared-tool-ui
       '@lobehub/ui':
         specifier: ^5
-        version: 5.14.0(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 5.14.1(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       antd-style:
         specifier: '*'
         version: 4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -1521,7 +1524,7 @@ importers:
         version: link:../tool-runtime
       '@lobehub/ui':
         specifier: ^5
-        version: 5.14.0(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 5.14.1(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       antd:
         specifier: 6.3.5
         version: 6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -1558,7 +1561,7 @@ importers:
         version: link:../builtin-tool-agent-builder
       '@lobehub/ui':
         specifier: ^5
-        version: 5.14.0(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 5.14.1(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       antd:
         specifier: 6.3.5
         version: 6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -1593,7 +1596,7 @@ importers:
         version: link:../prompts
       '@lobehub/ui':
         specifier: ^5
-        version: 5.14.0(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 5.14.1(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       antd:
         specifier: 6.3.5
         version: 6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -1624,10 +1627,10 @@ importers:
         version: link:../prompts
       '@lobehub/editor':
         specifier: ^4
-        version: 4.10.3(@lobehub/ui@5.14.0)(@types/mdast@4.0.4)(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(unified@11.0.5)
+        version: 4.10.3(@lobehub/ui@5.14.1)(@types/mdast@4.0.4)(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(unified@11.0.5)
       '@lobehub/ui':
         specifier: ^5
-        version: 5.14.0(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 5.14.1(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       antd:
         specifier: 6.3.5
         version: 6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -1658,7 +1661,7 @@ importers:
         version: link:../tool-runtime
       '@lobehub/ui':
         specifier: ^5
-        version: 5.14.0(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 5.14.1(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       antd:
         specifier: 6.3.5
         version: 6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -1692,7 +1695,7 @@ importers:
         version: link:../prompts
       '@lobehub/ui':
         specifier: ^5
-        version: 5.14.0(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 5.14.1(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       antd-style:
         specifier: '*'
         version: 4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -1717,7 +1720,7 @@ importers:
     dependencies:
       '@lobehub/ui':
         specifier: ^5
-        version: 5.14.0(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 5.14.1(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       antd-style:
         specifier: '*'
         version: 4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -1752,7 +1755,7 @@ importers:
         version: link:../editor-runtime
       '@lobehub/ui':
         specifier: ^5
-        version: 5.14.0(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 5.14.1(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       antd-style:
         specifier: '*'
         version: 4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -1790,7 +1793,7 @@ importers:
     dependencies:
       '@lobehub/ui':
         specifier: ^5
-        version: 5.14.0(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 5.14.1(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       antd-style:
         specifier: '*'
         version: 4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -1821,7 +1824,7 @@ importers:
     dependencies:
       '@lobehub/ui':
         specifier: ^5
-        version: 5.14.0(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 5.14.1(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       antd-style:
         specifier: '*'
         version: 4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -1849,7 +1852,7 @@ importers:
         version: link:../shared-tool-ui
       '@lobehub/ui':
         specifier: ^5
-        version: 5.14.0(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 5.14.1(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       antd-style:
         specifier: '*'
         version: 4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -1871,7 +1874,7 @@ importers:
         version: link:../prompts
       '@lobehub/ui':
         specifier: ^5
-        version: 5.14.0(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 5.14.1(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       antd-style:
         specifier: '*'
         version: 4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -1899,7 +1902,7 @@ importers:
     dependencies:
       '@lobehub/ui':
         specifier: ^5
-        version: 5.14.0(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 5.14.1(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       antd:
         specifier: 6.3.5
         version: 6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -1921,7 +1924,7 @@ importers:
         version: link:../prompts
       '@lobehub/ui':
         specifier: ^5
-        version: 5.14.0(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 5.14.1(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       antd:
         specifier: 6.3.5
         version: 6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -1955,7 +1958,7 @@ importers:
         version: link:../prompts
       '@lobehub/ui':
         specifier: ^5
-        version: 5.14.0(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 5.14.1(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       antd:
         specifier: 6.3.5
         version: 6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -2067,10 +2070,10 @@ importers:
         version: link:../const
       '@lobehub/icons':
         specifier: ^5.4.0
-        version: 5.8.0(@lobehub/ui@5.14.0)(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 5.8.0(@lobehub/ui@5.14.1)(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@lobehub/ui':
         specifier: ^5
-        version: 5.14.0(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 5.14.1(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       antd-style:
         specifier: '*'
         version: 4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -2208,7 +2211,7 @@ importers:
         version: link:../business/const
       '@lobehub/ui':
         specifier: ^5
-        version: 5.14.0(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 5.14.1(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       klavis:
         specifier: ^2.15.0
         version: 2.15.0(encoding@0.1.13)
@@ -2361,7 +2364,7 @@ importers:
         version: link:../prompts
       '@lobehub/editor':
         specifier: ^4
-        version: 4.10.3(@lobehub/ui@5.14.0)(@types/mdast@4.0.4)(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(unified@11.0.5)
+        version: 4.10.3(@lobehub/ui@5.14.1)(@types/mdast@4.0.4)(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(unified@11.0.5)
       debug:
         specifier: '*'
         version: 4.4.3(supports-color@10.2.2)
@@ -2377,8 +2380,8 @@ importers:
         version: 19.2.5
     devDependencies:
       electron:
-        specifier: 41.2.1
-        version: 41.2.1
+        specifier: 42.2.0
+        version: 42.2.0
 
   packages/electron-server-ipc:
     dependencies:
@@ -2488,7 +2491,7 @@ importers:
         version: link:../agent-gateway-client
       '@lobehub/icons':
         specifier: ^5.4.0
-        version: 5.8.0(@lobehub/ui@5.14.0)(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 5.8.0(@lobehub/ui@5.14.1)(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@modelcontextprotocol/sdk':
         specifier: ^1.26.0
         version: 1.29.0(@cfworker/json-schema@4.1.1)(zod@3.25.76)
@@ -2733,7 +2736,7 @@ importers:
         specifier: ^3.5.0
         version: 3.5.4
       hono:
-        specifier: ^4.12.21
+        specifier: 4.12.21
         version: 4.12.21
       js-sha256:
         specifier: ^0.11.1
@@ -2780,7 +2783,7 @@ importers:
         version: link:../tool-runtime
       '@lobehub/ui':
         specifier: ^5
-        version: 5.14.0(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 5.14.1(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       antd-style:
         specifier: '*'
         version: 4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -2834,7 +2837,7 @@ importers:
         version: 1.14.1
       '@lobehub/ui':
         specifier: ^5
-        version: 5.14.0(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 5.14.1(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       model-bank:
         specifier: workspace:*
         version: link:../model-bank
@@ -4590,6 +4593,10 @@ packages:
     resolution: {integrity: sha512-Qkzpg2s9GnVV2I2BjRksUi43U5e6+zaQMcjoJy0C+C5oxaKl+fmckGDQFtRpZpZV0NQekuZZ+tGz7EA9TVnQtQ==}
     engines: {node: '>=12'}
 
+  '@electron/get@5.0.0':
+    resolution: {integrity: sha512-pjoBpru1KdEtcExBnuHAP1cAc/5faoedw0hzJkL3o4/IJp7HNF1+fbrdxT3gMYRX2oJfvnA/WXeCTVQpYYxyJA==}
+    engines: {node: '>=22.12.0'}
+
   '@emnapi/core@1.10.0':
     resolution: {integrity: sha512-yq6OkJ4p82CAfPl0u9mQebQHKPJkY7WrIuk205cTYnYe+k2Z8YBh11FrbRG/H6ihirqcacOgl2BIO8oyMQLeXw==}
 
@@ -6310,8 +6317,8 @@ packages:
       react: 19.2.5
       react-dom: 19.2.5
 
-  '@lobehub/ui@5.14.0':
-    resolution: {integrity: sha512-+aS7hwrZuyDZg+EdBuMjbriVDWXnm+71oKtdCUPI6ifUu90k9EMC+c4In/62W5xclTX3e5oFRDaiwo9SFISmoQ==}
+  '@lobehub/ui@5.14.1':
+    resolution: {integrity: sha512-VaIekUz3daejNSLLemuVeZNh5ZTcVzWxbc09ExJUYIJTERJSmBiGzwHtCmK2LuLbsQi7KQhu+njH7eK0JtDS8w==}
     peerDependencies:
       '@lobehub/fluent-emoji': ^4.0.0
       '@lobehub/icons': ^5.0.0
@@ -6449,60 +6456,60 @@ packages:
   '@next/bundle-analyzer@16.2.6':
     resolution: {integrity: sha512-amPkVtHCTJAdBwyhhl5+qztHk24O4JlASgrWqh15AmnYi74apfZR46NGC0u4pM6BMAU1mYld4WdzD3cRBP3dOA==}
 
-  '@next/env@16.2.5':
-    resolution: {integrity: sha512-Lb9ElHD2klcyeVD25vW+siPFqz9QMzDUSgvFZNO+dZEKoMHex4viJhVuzBhrXKqb+UKnih7mVYbt50/7KLsSCA==}
+  '@next/env@16.2.6':
+    resolution: {integrity: sha512-gd8HoHN4ufj73WmR3JmVolrpJR47ILK6LouP5xElPglaVxir6e1a7VzvTvDWkOoPXT9rkkTzyCxBu4yeZfZwcw==}
 
   '@next/eslint-plugin-next@16.2.6':
     resolution: {integrity: sha512-Z8l6o4JWKUl755x4R+wogD86KPeU+Ckw4K+SYG4kHeOJtRenDeK+OSbGcqZpDtbwn9DsJVdir2UxmwXuinUbUw==}
 
-  '@next/swc-darwin-arm64@16.2.5':
-    resolution: {integrity: sha512-BW+8PGVmsruomXHsitD8JG6gny9lEdobctjBwvtPF8AKtxGDR7nR35FOl/oK9UAPXBOBm+vx0k8qtpeHOXQMGQ==}
+  '@next/swc-darwin-arm64@16.2.6':
+    resolution: {integrity: sha512-ZJGkkcNfYgrrMkqOdZ7zoLa1TOy0qpcMfk/z4Mh/FKUz40gVO+HNQWqmLxf67Z5WB64DRp0dhEbyHfel+6sJUg==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [darwin]
 
-  '@next/swc-darwin-x64@16.2.5':
-    resolution: {integrity: sha512-ZoCGnCl9LlQJWmqXrZAUlNxvuNmclvE+7zUif+nDydkkehl9FKxHJ+wxSQMj+C37BYFerKiEdX9s9o02ir975Q==}
+  '@next/swc-darwin-x64@16.2.6':
+    resolution: {integrity: sha512-v/YLBHIY132Ced3puBJ7YJKw1lqsCrgcNo2aRJlCEyQrrCeRJlvGlnmxhPxNQI3KE3N1DN5r9TPNPvka3nq5RQ==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [darwin]
 
-  '@next/swc-linux-arm64-gnu@16.2.5':
-    resolution: {integrity: sha512-AwcZzMChaWkOTZt3vu+2ZMIj8g4dYQY+B8VUVhlFSQ2JtvyZpefyYHTe00D6b6L7BysYw7vl3zsvs9jix8tl5Q==}
+  '@next/swc-linux-arm64-gnu@16.2.6':
+    resolution: {integrity: sha512-RPOvqlYBbcQjkz9VQQDZ2T2bARIjXZV1KFlt+V2Mr6SW/e4I9fcKsaA0hdyf2FHoTlsV2xnBd5Y912rP/1Ce6w==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
     libc: [glibc]
 
-  '@next/swc-linux-arm64-musl@16.2.5':
-    resolution: {integrity: sha512-QqMgqWbCBFsfiQ7BF3dUlW8HJy1LWhpcqbTpoHMWA9IV+TnWwDKozQJA5NdIAHjQ00yX2Q7AUkLr/XK4n77q8A==}
+  '@next/swc-linux-arm64-musl@16.2.6':
+    resolution: {integrity: sha512-URUTu1+dMkxJsPFgm+OeEvq9wf5sujw0EvgYy80TDGHTSLTnIHeqb0Eu8A3sC95IRgjejQL+kC4mw+4yPxiAXA==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
     libc: [musl]
 
-  '@next/swc-linux-x64-gnu@16.2.5':
-    resolution: {integrity: sha512-3hzeiFGZtyATVx9pCeuzTshXmh50vHZitqaeZiyJZaUmjQyrfjsVUgS8apOj1vEJCIpKJM/55F45yPAV2kpjsA==}
+  '@next/swc-linux-x64-gnu@16.2.6':
+    resolution: {integrity: sha512-DOj182mPV8G3UkrayLoREM5YEYI+Dk5wv7Ox9xl1fFibAELEsFD0lDPfHIeILlutMMfdyhlzYPELG3peuKaurw==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
     libc: [glibc]
 
-  '@next/swc-linux-x64-musl@16.2.5':
-    resolution: {integrity: sha512-0mzZV/mAt7Qj2tYNdTB6AqrS8dwng/AQLSYC5Z1YLpZdi2wxqKDPK7RY2RvjB1fXyJfOfdA3l/yTF5yLi+WfuQ==}
+  '@next/swc-linux-x64-musl@16.2.6':
+    resolution: {integrity: sha512-HKQ5SP/V/ub73UvF7n/zeJlxk2kLmtL7Wzrg4WfmkjmNos5onJ2tKu7yZOPdL18A6Svfn3max29ym+ry7NkK4g==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
     libc: [musl]
 
-  '@next/swc-win32-arm64-msvc@16.2.5':
-    resolution: {integrity: sha512-f/H4nZ2zJBvA8/+HpsB9mNonF9zfQoAU6D0WxJrfzhJDvJLfngVN85oqxUyrDVK99DIFfFYhLpGa5K+c5uotSw==}
+  '@next/swc-win32-arm64-msvc@16.2.6':
+    resolution: {integrity: sha512-LZXpTlPyS5v7HhSmnvsLGP3iIYgYOBnc8r8ArlT55sGHV89bR2HlDdBjWQ+PY6SJMmk8TuVGFuxalnP3k/0Dwg==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [win32]
 
-  '@next/swc-win32-x64-msvc@16.2.5':
-    resolution: {integrity: sha512-nuP7DHs4koAojsIxVPkihNgKiRUKtCU65j5X6DAbSy8VBrfT/o90bCLLHPf51JEdOZwZMFzM6e0NiGWfIWjVAg==}
+  '@next/swc-win32-x64-msvc@16.2.6':
+    resolution: {integrity: sha512-F0+4i0h9J6C4eE3EAPWsoCk7UW/dbzOjyzxY0qnDUOYFu6FFmdZ6l97/XdV3/Nz3VYyO7UWjyEJUXkGqcoXfMA==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [win32]
@@ -8990,10 +8997,6 @@ packages:
 
   '@tokenizer/token@0.3.0':
     resolution: {integrity: sha512-OvjF+z51L3ov0OyAU0duzsYuvO01PH7x4t6DJx+guahgTnBHkhJdG7soQeTSFLWN3efnHyibZ4Z8l2EuWwJN3A==}
-
-  '@tootallnate/once@2.0.1':
-    resolution: {integrity: sha512-HqmEUIGRJ5fSXchkVgR5F7qn48bDBzv0kWj/Kfu5e6uci4UlEeng4331LnBkWffb++Ei3FOVLxo8JJWMFBDMeQ==}
-    engines: {node: '>= 10'}
 
   '@tootallnate/once@3.0.1':
     resolution: {integrity: sha512-VyMVKRrpHTT8PnotUeV8L/mDaMwD5DaAKCFLP73zAqAtvF0FCqky+Ki7BYbFCYQmqFyTe9316Ed5zS70QUR9eg==}
@@ -11975,9 +11978,9 @@ packages:
   electron-to-chromium@1.5.360:
     resolution: {integrity: sha512-GkcBt6YYAw9SxFWn+xVar4cLVGlXVuswwtRLBozi2zp0GjXs4ZnOrqV4zbXzg35n7w81hCkyJNYicgXlVHAmBA==}
 
-  electron@41.2.1:
-    resolution: {integrity: sha512-teeRThiYGTPKf/2yOW7zZA1bhb91KEQ4yLBPOg7GxpmnkLFLugKgQaAKOrCgdzwsXh/5mFIfmkm+4+wACJKwaA==}
-    engines: {node: '>= 12.20.55'}
+  electron@42.2.0:
+    resolution: {integrity: sha512-b2Tc7sIKiZEl0tBVwFM5GJ+FT5KYhmy9QJHjx8BGVZPVW2SctXWEvrE959ElB56qw7H05dBkhlikDA1DmpaAMw==}
+    engines: {node: '>= 22.12.0'}
     hasBin: true
 
   emoji-mart@5.6.0:
@@ -14261,8 +14264,8 @@ packages:
   koa-compose@4.1.0:
     resolution: {integrity: sha512-8ODW8TrDuMYvXRwra/Kh7/rJo9BtOfPc6qO8eAfC80CnCvSjSl0bkRM24X6/XBBEyj0v1nRUQ1LyOy3dbqOWXw==}
 
-  koa@3.2.0:
-    resolution: {integrity: sha512-TrM4/tnNY7uJ1aW55sIIa+dqBvc4V14WRIAlGcWat9wV5pRS9Wr5Zk2ZTjQP1jtfIHDoHiSbPuV08P0fUZo2pg==}
+  koa@3.2.1:
+    resolution: {integrity: sha512-e7IpWJrnanNUroVK2taAgMxoEZvHLXdQiNjeExSu/DEIWm83jaKGBgb7tLmu2rMYpA027qFB3iLR/k3AVpFRnA==}
     engines: {node: '>= 18'}
 
   kuler@2.0.0:
@@ -15396,8 +15399,8 @@ packages:
   next-tick@1.1.0:
     resolution: {integrity: sha512-CXdUiJembsNjuToQvxayPZF9Vqht7hewsvy2sOWafLvi2awflj9mOC6bHIg50orX8IJvWKY9wYQ/zB2kogPslQ==}
 
-  next@16.2.5:
-    resolution: {integrity: sha512-TkVTm9F2WEulkgGljm4wPwNgvCCWCVw6StUHsZb8WZpHFRjepoUWg3d7L4IMg7IyjcJ4Co9eVhpro8e8O+KarQ==}
+  next@16.2.6:
+    resolution: {integrity: sha512-qOVgKJg1+At15NpeUP+eJgCHvTCgXsogweq87Ri/Ix7PkqQHg4sdaXmSFqKlgaIXE4kW0g25LE68W87UANlHtw==}
     engines: {node: '>=20.9.0'}
     hasBin: true
     peerDependencies:
@@ -18342,8 +18345,8 @@ packages:
     resolution: {integrity: sha512-uxc/zpqFg6x7C8vOE7lh6Lbda8eEL9zmVm/PLeTPBRhh1xCgdWaQ+J1CUieGpIfm2HdtsUpRv+HshiasBMcc6A==}
     engines: {node: '>=6'}
 
-  tar@7.5.11:
-    resolution: {integrity: sha512-ChjMH33/KetonMTAtpYdgUFr0tbz69Fp2v7zWxQfYZX4g5ZN2nOBXm1R2xyA+lMIKrLKIoKAwFj93jE/avX9cQ==}
+  tar@7.5.15:
+    resolution: {integrity: sha512-dzGK0boVlC4W5QFuQN1EFSl3bIDYsk7Tj40U6eIBnK2k/8ml7TZ5agbI5j5+qnoVcAA+rNtBml8SEiLxZpNqRQ==}
     engines: {node: '>=18'}
 
   tarn@3.0.2:
@@ -21942,11 +21945,11 @@ snapshots:
     optionalDependencies:
       drizzle-orm: 0.45.2(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.1.0)(@opentelemetry/api@1.9.1)(@types/pg@8.20.0)(kysely@0.28.17)(mysql2@3.22.3(@types/node@24.12.4))(pg@8.19.0)(postgres@3.4.9)
 
-  '@better-auth/expo@1.6.0(@better-auth/core@1.6.11(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(@opentelemetry/api@1.9.1)(better-call@1.3.5(zod@3.25.76))(jose@6.2.3)(kysely@0.28.17)(nanostores@1.3.0))(better-auth@1.6.11(@opentelemetry/api@1.9.1)(drizzle-kit@0.31.9)(drizzle-orm@0.45.2(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.1.0)(@opentelemetry/api@1.9.1)(@types/pg@8.20.0)(kysely@0.28.17)(mysql2@3.22.3(@types/node@24.12.4))(pg@8.19.0)(postgres@3.4.9))(mysql2@3.22.3(@types/node@24.12.4))(next@16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(pg@8.19.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(vitest@3.2.4(@edge-runtime/vm@5.0.0)(@types/debug@4.1.13)(@types/node@24.12.4)(happy-dom@20.9.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.47.1)(tsx@4.22.3)(yaml@2.9.0)))':
+  '@better-auth/expo@1.6.0(@better-auth/core@1.6.11(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(@opentelemetry/api@1.9.1)(better-call@1.3.5(zod@3.25.76))(jose@6.2.3)(kysely@0.28.17)(nanostores@1.3.0))(better-auth@1.6.11(@opentelemetry/api@1.9.1)(drizzle-kit@0.31.9)(drizzle-orm@0.45.2(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.1.0)(@opentelemetry/api@1.9.1)(@types/pg@8.20.0)(kysely@0.28.17)(mysql2@3.22.3(@types/node@24.12.4))(pg@8.19.0)(postgres@3.4.9))(mysql2@3.22.3(@types/node@24.12.4))(next@16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(pg@8.19.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(vitest@3.2.4(@edge-runtime/vm@5.0.0)(@types/debug@4.1.13)(@types/node@24.12.4)(happy-dom@20.9.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.47.1)(tsx@4.22.3)(yaml@2.9.0)))':
     dependencies:
       '@better-auth/core': 1.6.11(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(@opentelemetry/api@1.9.1)(better-call@1.3.5(zod@3.25.76))(jose@6.2.3)(kysely@0.28.17)(nanostores@1.3.0)
       '@better-fetch/fetch': 1.1.21
-      better-auth: 1.6.11(@opentelemetry/api@1.9.1)(drizzle-kit@0.31.9)(drizzle-orm@0.45.2(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.1.0)(@opentelemetry/api@1.9.1)(@types/pg@8.20.0)(kysely@0.28.17)(mysql2@3.22.3(@types/node@24.12.4))(pg@8.19.0)(postgres@3.4.9))(mysql2@3.22.3(@types/node@24.12.4))(next@16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(pg@8.19.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(vitest@3.2.4(@edge-runtime/vm@5.0.0)(@types/debug@4.1.13)(@types/node@24.12.4)(happy-dom@20.9.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.47.1)(tsx@4.22.3)(yaml@2.9.0))
+      better-auth: 1.6.11(@opentelemetry/api@1.9.1)(drizzle-kit@0.31.9)(drizzle-orm@0.45.2(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.1.0)(@opentelemetry/api@1.9.1)(@types/pg@8.20.0)(kysely@0.28.17)(mysql2@3.22.3(@types/node@24.12.4))(pg@8.19.0)(postgres@3.4.9))(mysql2@3.22.3(@types/node@24.12.4))(next@16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(pg@8.19.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(vitest@3.2.4(@edge-runtime/vm@5.0.0)(@types/debug@4.1.13)(@types/node@24.12.4)(happy-dom@20.9.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.47.1)(tsx@4.22.3)(yaml@2.9.0))
       better-call: 1.3.5(zod@4.4.3)
       zod: 4.4.3
 
@@ -21967,14 +21970,14 @@ snapshots:
       '@better-auth/core': 1.6.11(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(@opentelemetry/api@1.9.1)(better-call@1.3.5(zod@3.25.76))(jose@6.2.3)(kysely@0.28.17)(nanostores@1.3.0)
       '@better-auth/utils': 0.4.0
 
-  '@better-auth/passkey@1.6.0(@better-auth/core@1.6.11(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(@opentelemetry/api@1.9.1)(better-call@1.3.5(zod@3.25.76))(jose@6.2.3)(kysely@0.28.17)(nanostores@1.3.0))(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(better-auth@1.6.11(@opentelemetry/api@1.9.1)(drizzle-kit@0.31.9)(drizzle-orm@0.45.2(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.1.0)(@opentelemetry/api@1.9.1)(@types/pg@8.20.0)(kysely@0.28.17)(mysql2@3.22.3(@types/node@24.12.4))(pg@8.19.0)(postgres@3.4.9))(mysql2@3.22.3(@types/node@24.12.4))(next@16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(pg@8.19.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(vitest@3.2.4(@edge-runtime/vm@5.0.0)(@types/debug@4.1.13)(@types/node@24.12.4)(happy-dom@20.9.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.47.1)(tsx@4.22.3)(yaml@2.9.0)))(better-call@1.3.5(zod@3.25.76))(nanostores@1.3.0)':
+  '@better-auth/passkey@1.6.0(@better-auth/core@1.6.11(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(@opentelemetry/api@1.9.1)(better-call@1.3.5(zod@3.25.76))(jose@6.2.3)(kysely@0.28.17)(nanostores@1.3.0))(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(better-auth@1.6.11(@opentelemetry/api@1.9.1)(drizzle-kit@0.31.9)(drizzle-orm@0.45.2(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.1.0)(@opentelemetry/api@1.9.1)(@types/pg@8.20.0)(kysely@0.28.17)(mysql2@3.22.3(@types/node@24.12.4))(pg@8.19.0)(postgres@3.4.9))(mysql2@3.22.3(@types/node@24.12.4))(next@16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(pg@8.19.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(vitest@3.2.4(@edge-runtime/vm@5.0.0)(@types/debug@4.1.13)(@types/node@24.12.4)(happy-dom@20.9.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.47.1)(tsx@4.22.3)(yaml@2.9.0)))(better-call@1.3.5(zod@3.25.76))(nanostores@1.3.0)':
     dependencies:
       '@better-auth/core': 1.6.11(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(@opentelemetry/api@1.9.1)(better-call@1.3.5(zod@3.25.76))(jose@6.2.3)(kysely@0.28.17)(nanostores@1.3.0)
       '@better-auth/utils': 0.4.0
       '@better-fetch/fetch': 1.1.21
       '@simplewebauthn/browser': 13.3.0
       '@simplewebauthn/server': 13.3.0
-      better-auth: 1.6.11(@opentelemetry/api@1.9.1)(drizzle-kit@0.31.9)(drizzle-orm@0.45.2(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.1.0)(@opentelemetry/api@1.9.1)(@types/pg@8.20.0)(kysely@0.28.17)(mysql2@3.22.3(@types/node@24.12.4))(pg@8.19.0)(postgres@3.4.9))(mysql2@3.22.3(@types/node@24.12.4))(next@16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(pg@8.19.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(vitest@3.2.4(@edge-runtime/vm@5.0.0)(@types/debug@4.1.13)(@types/node@24.12.4)(happy-dom@20.9.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.47.1)(tsx@4.22.3)(yaml@2.9.0))
+      better-auth: 1.6.11(@opentelemetry/api@1.9.1)(drizzle-kit@0.31.9)(drizzle-orm@0.45.2(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.1.0)(@opentelemetry/api@1.9.1)(@types/pg@8.20.0)(kysely@0.28.17)(mysql2@3.22.3(@types/node@24.12.4))(pg@8.19.0)(postgres@3.4.9))(mysql2@3.22.3(@types/node@24.12.4))(next@16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(pg@8.19.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(vitest@3.2.4(@edge-runtime/vm@5.0.0)(@types/debug@4.1.13)(@types/node@24.12.4)(happy-dom@20.9.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.47.1)(tsx@4.22.3)(yaml@2.9.0))
       better-call: 1.3.5(zod@3.25.76)
       nanostores: 1.3.0
       zod: 4.4.3
@@ -22669,6 +22672,19 @@ snapshots:
       sumchecker: 3.0.1
     optionalDependencies:
       global-agent: 3.0.0
+    transitivePeerDependencies:
+      - supports-color
+
+  '@electron/get@5.0.0':
+    dependencies:
+      debug: 4.4.3
+      env-paths: 3.0.0
+      graceful-fs: 4.2.11
+      progress: 2.0.3
+      semver: 7.8.0
+      sumchecker: 3.0.1
+    optionalDependencies:
+      undici: 7.24.5
     transitivePeerDependencies:
       - supports-color
 
@@ -23805,11 +23821,11 @@ snapshots:
     dependencies:
       vary: 1.1.2
 
-  '@koa/router@15.5.0(koa@3.2.0)':
+  '@koa/router@15.5.0(koa@3.2.1)':
     dependencies:
       debug: 4.4.3
       http-errors: 2.0.1
-      koa: 3.2.0
+      koa: 3.2.1
       koa-compose: 4.1.0
       path-to-regexp: 8.4.2
     transitivePeerDependencies:
@@ -24060,9 +24076,9 @@ snapshots:
       - debug
       - rrweb-snapshot
 
-  '@lobehub/charts@5.0.0(@lobehub/ui@5.14.0)(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
+  '@lobehub/charts@5.0.0(@lobehub/ui@5.14.1)(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
-      '@lobehub/ui': 5.14.0(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@lobehub/ui': 5.14.1(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       ahooks: 3.9.7(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       antd: 6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       antd-style: 4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -24101,7 +24117,7 @@ snapshots:
       '@commitlint/cli': 19.8.1(@types/node@24.12.4)(typescript@5.9.3)
       commitlint-config-gitmoji: 2.3.1
 
-  '@lobehub/editor@4.10.3(@lobehub/ui@5.14.0)(@types/mdast@4.0.4)(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(unified@11.0.5)':
+  '@lobehub/editor@4.10.3(@lobehub/ui@5.14.1)(@types/mdast@4.0.4)(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(unified@11.0.5)':
     dependencies:
       '@floating-ui/dom': 1.7.6
       '@floating-ui/react': 0.27.19(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -24116,7 +24132,7 @@ snapshots:
       '@lexical/selection': 0.42.0
       '@lexical/table': 0.42.0
       '@lexical/utils': 0.42.0
-      '@lobehub/ui': 5.14.0(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@lobehub/ui': 5.14.1(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@shikijs/core': 3.23.0
       '@shikijs/engine-javascript': 3.23.0
       '@xmldom/xmldom': 0.8.13
@@ -24248,9 +24264,9 @@ snapshots:
       - ws
       - zod
 
-  '@lobehub/icons@5.8.0(@lobehub/ui@5.14.0)(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
+  '@lobehub/icons@5.8.0(@lobehub/ui@5.14.1)(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
-      '@lobehub/ui': 5.14.0(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@lobehub/ui': 5.14.1(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       antd: 6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       antd-style: 4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       es-toolkit: 1.46.1
@@ -24417,7 +24433,7 @@ snapshots:
 
   '@lobehub/tts@5.1.2(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(ws@8.20.1)(zod@3.25.76)':
     dependencies:
-      '@lobehub/ui': 5.14.0(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@lobehub/ui': 5.14.1(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       antd: 6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       antd-style: 4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       es-toolkit: 1.46.1
@@ -24450,7 +24466,7 @@ snapshots:
       - ws
       - zod
 
-  '@lobehub/ui@5.14.0(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
+  '@lobehub/ui@5.14.1(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
       '@ant-design/cssinjs': 2.1.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@base-ui/react': 1.0.0(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -24464,7 +24480,7 @@ snapshots:
       '@floating-ui/react': 0.27.19(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@giscus/react': 3.1.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@lobehub/fluent-emoji': 4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
-      '@lobehub/icons': 5.8.0(@lobehub/ui@5.14.0)(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@lobehub/icons': 5.8.0(@lobehub/ui@5.14.1)(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@mdx-js/mdx': 3.1.1
       '@mdx-js/react': 3.1.1(@types/react@19.2.14)(react@19.2.5)
       '@pierre/diffs': 1.2.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -24676,39 +24692,39 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@next/env@16.2.5': {}
+  '@next/env@16.2.6': {}
 
   '@next/eslint-plugin-next@16.2.6':
     dependencies:
       fast-glob: 3.3.1
 
-  '@next/swc-darwin-arm64@16.2.5':
+  '@next/swc-darwin-arm64@16.2.6':
     optional: true
 
-  '@next/swc-darwin-x64@16.2.5':
+  '@next/swc-darwin-x64@16.2.6':
     optional: true
 
-  '@next/swc-linux-arm64-gnu@16.2.5':
+  '@next/swc-linux-arm64-gnu@16.2.6':
     optional: true
 
-  '@next/swc-linux-arm64-musl@16.2.5':
+  '@next/swc-linux-arm64-musl@16.2.6':
     optional: true
 
-  '@next/swc-linux-x64-gnu@16.2.5':
+  '@next/swc-linux-x64-gnu@16.2.6':
     optional: true
 
-  '@next/swc-linux-x64-musl@16.2.5':
+  '@next/swc-linux-x64-musl@16.2.6':
     optional: true
 
-  '@next/swc-win32-arm64-msvc@16.2.5':
+  '@next/swc-win32-arm64-msvc@16.2.6':
     optional: true
 
-  '@next/swc-win32-x64-msvc@16.2.5':
+  '@next/swc-win32-x64-msvc@16.2.6':
     optional: true
 
-  '@next/third-parties@16.2.6(next@16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)':
+  '@next/third-parties@16.2.6(next@16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)':
     dependencies:
-      next: 16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      next: 16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       react: 19.2.5
       third-party-capital: 1.0.20
 
@@ -27604,8 +27620,6 @@ snapshots:
 
   '@tokenizer/token@0.3.0': {}
 
-  '@tootallnate/once@2.0.1': {}
-
   '@tootallnate/once@3.0.1': {}
 
   '@trickfilm400/rollup-plugin-off-main-thread@3.0.0-pre1':
@@ -27620,11 +27634,11 @@ snapshots:
       '@trpc/server': 11.17.0(typescript@5.9.3)
       typescript: 5.9.3
 
-  '@trpc/next@11.17.0(@tanstack/react-query@5.100.11(react@19.2.5))(@trpc/client@11.17.0(@trpc/server@11.17.0(typescript@5.9.3))(typescript@5.9.3))(@trpc/react-query@11.17.0(@tanstack/react-query@5.100.11(react@19.2.5))(@trpc/client@11.17.0(@trpc/server@11.17.0(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.17.0(typescript@5.9.3))(react@19.2.5)(typescript@5.9.3))(@trpc/server@11.17.0(typescript@5.9.3))(next@16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@5.9.3)':
+  '@trpc/next@11.17.0(@tanstack/react-query@5.100.11(react@19.2.5))(@trpc/client@11.17.0(@trpc/server@11.17.0(typescript@5.9.3))(typescript@5.9.3))(@trpc/react-query@11.17.0(@tanstack/react-query@5.100.11(react@19.2.5))(@trpc/client@11.17.0(@trpc/server@11.17.0(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.17.0(typescript@5.9.3))(react@19.2.5)(typescript@5.9.3))(@trpc/server@11.17.0(typescript@5.9.3))(next@16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@5.9.3)':
     dependencies:
       '@trpc/client': 11.17.0(@trpc/server@11.17.0(typescript@5.9.3))(typescript@5.9.3)
       '@trpc/server': 11.17.0(typescript@5.9.3)
-      next: 16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      next: 16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       react: 19.2.5
       react-dom: 19.2.5(react@19.2.5)
       typescript: 5.9.3
@@ -28392,19 +28406,19 @@ snapshots:
       '@use-gesture/core': 10.3.1
       react: 19.2.5
 
-  '@vercel/analytics@1.6.1(next@16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)':
+  '@vercel/analytics@1.6.1(next@16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)':
     optionalDependencies:
-      next: 16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      next: 16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       react: 19.2.5
 
   '@vercel/edge-config-fs@0.1.0': {}
 
-  '@vercel/edge-config@1.4.3(@opentelemetry/api@1.9.1)(next@16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))':
+  '@vercel/edge-config@1.4.3(@opentelemetry/api@1.9.1)(next@16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))':
     dependencies:
       '@vercel/edge-config-fs': 0.1.0
     optionalDependencies:
       '@opentelemetry/api': 1.9.1
-      next: 16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      next: 16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
 
   '@vercel/functions@3.6.0(@aws-sdk/credential-provider-web-identity@3.972.42)':
     dependencies:
@@ -28424,9 +28438,9 @@ snapshots:
       '@opentelemetry/sdk-metrics': 2.7.1(@opentelemetry/api@1.9.1)
       '@opentelemetry/sdk-trace-base': 2.7.1(@opentelemetry/api@1.9.1)
 
-  '@vercel/speed-insights@1.3.1(next@16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)':
+  '@vercel/speed-insights@1.3.1(next@16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)':
     optionalDependencies:
-      next: 16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      next: 16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       react: 19.2.5
 
   '@virtuoso.dev/gurx@1.2.3(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
@@ -29158,14 +29172,14 @@ snapshots:
 
   before-after-hook@2.2.3: {}
 
-  better-auth-harmony@1.3.2(better-auth@1.6.11(@opentelemetry/api@1.9.1)(drizzle-kit@0.31.9)(drizzle-orm@0.45.2(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.1.0)(@opentelemetry/api@1.9.1)(@types/pg@8.20.0)(kysely@0.28.17)(mysql2@3.22.3(@types/node@24.12.4))(pg@8.19.0)(postgres@3.4.9))(mysql2@3.22.3(@types/node@24.12.4))(next@16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(pg@8.19.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(vitest@3.2.4(@edge-runtime/vm@5.0.0)(@types/debug@4.1.13)(@types/node@24.12.4)(happy-dom@20.9.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.47.1)(tsx@4.22.3)(yaml@2.9.0))):
+  better-auth-harmony@1.3.2(better-auth@1.6.11(@opentelemetry/api@1.9.1)(drizzle-kit@0.31.9)(drizzle-orm@0.45.2(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.1.0)(@opentelemetry/api@1.9.1)(@types/pg@8.20.0)(kysely@0.28.17)(mysql2@3.22.3(@types/node@24.12.4))(pg@8.19.0)(postgres@3.4.9))(mysql2@3.22.3(@types/node@24.12.4))(next@16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(pg@8.19.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(vitest@3.2.4(@edge-runtime/vm@5.0.0)(@types/debug@4.1.13)(@types/node@24.12.4)(happy-dom@20.9.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.47.1)(tsx@4.22.3)(yaml@2.9.0))):
     dependencies:
-      better-auth: 1.6.11(@opentelemetry/api@1.9.1)(drizzle-kit@0.31.9)(drizzle-orm@0.45.2(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.1.0)(@opentelemetry/api@1.9.1)(@types/pg@8.20.0)(kysely@0.28.17)(mysql2@3.22.3(@types/node@24.12.4))(pg@8.19.0)(postgres@3.4.9))(mysql2@3.22.3(@types/node@24.12.4))(next@16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(pg@8.19.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(vitest@3.2.4(@edge-runtime/vm@5.0.0)(@types/debug@4.1.13)(@types/node@24.12.4)(happy-dom@20.9.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.47.1)(tsx@4.22.3)(yaml@2.9.0))
+      better-auth: 1.6.11(@opentelemetry/api@1.9.1)(drizzle-kit@0.31.9)(drizzle-orm@0.45.2(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.1.0)(@opentelemetry/api@1.9.1)(@types/pg@8.20.0)(kysely@0.28.17)(mysql2@3.22.3(@types/node@24.12.4))(pg@8.19.0)(postgres@3.4.9))(mysql2@3.22.3(@types/node@24.12.4))(next@16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(pg@8.19.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(vitest@3.2.4(@edge-runtime/vm@5.0.0)(@types/debug@4.1.13)(@types/node@24.12.4)(happy-dom@20.9.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.47.1)(tsx@4.22.3)(yaml@2.9.0))
       libphonenumber-js: 1.13.2
       mailchecker: 6.0.20
       validator: 13.15.35
 
-  better-auth@1.6.11(@opentelemetry/api@1.9.1)(drizzle-kit@0.31.9)(drizzle-orm@0.45.2(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.1.0)(@opentelemetry/api@1.9.1)(@types/pg@8.20.0)(kysely@0.28.17)(mysql2@3.22.3(@types/node@24.12.4))(pg@8.19.0)(postgres@3.4.9))(mysql2@3.22.3(@types/node@24.12.4))(next@16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(pg@8.19.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(vitest@3.2.4(@edge-runtime/vm@5.0.0)(@types/debug@4.1.13)(@types/node@24.12.4)(happy-dom@20.9.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.47.1)(tsx@4.22.3)(yaml@2.9.0)):
+  better-auth@1.6.11(@opentelemetry/api@1.9.1)(drizzle-kit@0.31.9)(drizzle-orm@0.45.2(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.1.0)(@opentelemetry/api@1.9.1)(@types/pg@8.20.0)(kysely@0.28.17)(mysql2@3.22.3(@types/node@24.12.4))(pg@8.19.0)(postgres@3.4.9))(mysql2@3.22.3(@types/node@24.12.4))(next@16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(pg@8.19.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(vitest@3.2.4(@edge-runtime/vm@5.0.0)(@types/debug@4.1.13)(@types/node@24.12.4)(happy-dom@20.9.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.47.1)(tsx@4.22.3)(yaml@2.9.0)):
     dependencies:
       '@better-auth/core': 1.6.11(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(@opentelemetry/api@1.9.1)(better-call@1.3.5(zod@3.25.76))(jose@6.2.3)(kysely@0.28.17)(nanostores@1.3.0)
       '@better-auth/drizzle-adapter': 1.6.11(@better-auth/core@1.6.11(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(@opentelemetry/api@1.9.1)(better-call@1.3.5(zod@3.25.76))(jose@6.2.3)(kysely@0.28.17)(nanostores@1.3.0))(@better-auth/utils@0.4.0)(drizzle-orm@0.45.2(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.1.0)(@opentelemetry/api@1.9.1)(@types/pg@8.20.0)(kysely@0.28.17)(mysql2@3.22.3(@types/node@24.12.4))(pg@8.19.0)(postgres@3.4.9))
@@ -29188,7 +29202,7 @@ snapshots:
       drizzle-kit: 0.31.9
       drizzle-orm: 0.45.2(@electric-sql/pglite@0.3.16)(@neondatabase/serverless@1.1.0)(@opentelemetry/api@1.9.1)(@types/pg@8.20.0)(kysely@0.28.17)(mysql2@3.22.3(@types/node@24.12.4))(pg@8.19.0)(postgres@3.4.9)
       mysql2: 3.22.3(@types/node@24.12.4)
-      next: 16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      next: 16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       pg: 8.19.0
       react: 19.2.5
       react-dom: 19.2.5(react@19.2.5)
@@ -29392,9 +29406,9 @@ snapshots:
     dependencies:
       run-applescript: 7.1.0
 
-  bundle-require@5.1.0(esbuild@0.27.7):
+  bundle-require@5.1.0(esbuild@0.28.0):
     dependencies:
-      esbuild: 0.27.7
+      esbuild: 0.28.0
       load-tsconfig: 0.2.5
 
   bytes@3.1.2: {}
@@ -29415,7 +29429,7 @@ snapshots:
       minipass-pipeline: 1.2.4
       p-map: 7.0.4
       ssri: 12.0.0
-      tar: 7.5.11
+      tar: 7.5.15
       unique-filename: 4.0.0
 
   cacheable-lookup@5.0.4: {}
@@ -30680,9 +30694,9 @@ snapshots:
 
   electron-to-chromium@1.5.360: {}
 
-  electron@41.2.1:
+  electron@42.2.0:
     dependencies:
-      '@electron/get': 2.0.3
+      '@electron/get': 5.0.0
       '@types/node': 24.12.4
       extract-zip: 2.0.1
     transitivePeerDependencies:
@@ -33513,7 +33527,7 @@ snapshots:
 
   koa-compose@4.1.0: {}
 
-  koa@3.2.0:
+  koa@3.2.1:
     dependencies:
       accepts: 1.3.8
       content-disposition: 1.0.1
@@ -34927,9 +34941,9 @@ snapshots:
 
   next-tick@1.1.0: {}
 
-  next@16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5):
+  next@16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5):
     dependencies:
-      '@next/env': 16.2.5
+      '@next/env': 16.2.6
       '@swc/helpers': 0.5.15
       baseline-browser-mapping: 2.10.31
       caniuse-lite: 1.0.30001793
@@ -34938,14 +34952,14 @@ snapshots:
       react-dom: 19.2.5(react@19.2.5)
       styled-jsx: 5.1.6(@babel/core@7.29.0)(react@19.2.5)
     optionalDependencies:
-      '@next/swc-darwin-arm64': 16.2.5
-      '@next/swc-darwin-x64': 16.2.5
-      '@next/swc-linux-arm64-gnu': 16.2.5
-      '@next/swc-linux-arm64-musl': 16.2.5
-      '@next/swc-linux-x64-gnu': 16.2.5
-      '@next/swc-linux-x64-musl': 16.2.5
-      '@next/swc-win32-arm64-msvc': 16.2.5
-      '@next/swc-win32-x64-msvc': 16.2.5
+      '@next/swc-darwin-arm64': 16.2.6
+      '@next/swc-darwin-x64': 16.2.6
+      '@next/swc-linux-arm64-gnu': 16.2.6
+      '@next/swc-linux-arm64-musl': 16.2.6
+      '@next/swc-linux-x64-gnu': 16.2.6
+      '@next/swc-linux-x64-musl': 16.2.6
+      '@next/swc-win32-arm64-msvc': 16.2.6
+      '@next/swc-win32-x64-msvc': 16.2.6
       '@opentelemetry/api': 1.9.1
       '@playwright/test': 1.60.0
       sharp: 0.34.5
@@ -34953,9 +34967,9 @@ snapshots:
       - '@babel/core'
       - babel-plugin-macros
 
-  nextjs-toploader@3.9.17(next@16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5):
+  nextjs-toploader@3.9.17(next@16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5):
     dependencies:
-      next: 16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      next: 16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       nprogress: 0.2.0
       prop-types: 15.8.1
       react: 19.2.5
@@ -35010,7 +35024,7 @@ snapshots:
       nopt: 8.1.0
       proc-log: 5.0.0
       semver: 7.8.0
-      tar: 7.5.11
+      tar: 7.5.15
       tinyglobby: 0.2.16
       which: 5.0.0
     transitivePeerDependencies:
@@ -35121,12 +35135,12 @@ snapshots:
 
   numeral@2.0.6: {}
 
-  nuqs@2.8.9(next@16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-router-dom@7.15.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-router@7.15.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5):
+  nuqs@2.8.9(next@16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-router-dom@7.15.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-router@7.15.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5):
     dependencies:
       '@standard-schema/spec': 1.0.0
       react: 19.2.5
     optionalDependencies:
-      next: 16.2.5(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      next: 16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       react-router: 7.15.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       react-router-dom: 7.15.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
 
@@ -35185,12 +35199,12 @@ snapshots:
   oidc-provider@9.8.3:
     dependencies:
       '@koa/cors': 5.0.0
-      '@koa/router': 15.5.0(koa@3.2.0)
+      '@koa/router': 15.5.0(koa@3.2.1)
       debug: 4.4.3
       eta: 4.6.0
       jose: 6.2.3
       jsesc: 3.1.0
-      koa: 3.2.0
+      koa: 3.2.1
       nanoid: 5.1.11
       quick-lru: 7.3.0
       raw-body: 3.0.2
@@ -36830,7 +36844,7 @@ snapshots:
   remark-lint-frontmatter-schema@3.15.4:
     dependencies:
       '@apidevtools/json-schema-ref-parser': 11.2.0
-      ajv: 8.20.0
+      ajv: 8.18.0
       ajv-formats: 3.0.1(ajv@8.20.0)
       find-up: 6.3.0
       minimatch: 10.2.5
@@ -38693,7 +38707,7 @@ snapshots:
 
   tapable@2.3.3: {}
 
-  tar@7.5.11:
+  tar@7.5.15:
     dependencies:
       '@isaacs/fs-minipass': 4.0.1
       chownr: 3.0.0
@@ -39011,12 +39025,12 @@ snapshots:
 
   tsup@8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.3)(typescript@5.9.3)(yaml@2.9.0):
     dependencies:
-      bundle-require: 5.1.0(esbuild@0.27.7)
+      bundle-require: 5.1.0(esbuild@0.28.0)
       cac: 6.7.14
       chokidar: 4.0.3
       consola: 3.4.2
       debug: 4.4.3
-      esbuild: 0.27.7
+      esbuild: 0.28.0
       fix-dts-default-cjs-exports: 1.0.1
       joycon: 3.1.1
       picocolors: 1.1.1
@@ -39748,7 +39762,7 @@ snapshots:
 
   vite@7.3.3(@types/node@24.12.4)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.47.1)(tsx@4.22.3)(yaml@2.9.0):
     dependencies:
-      esbuild: 0.27.7
+      esbuild: 0.28.0
       fdir: 6.5.0(picomatch@4.0.4)
       picomatch: 4.0.4
       postcss: 8.5.15
