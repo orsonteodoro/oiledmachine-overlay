@@ -24,6 +24,7 @@ EAPI=8
 # 2.1.44 -> 2.1.46
 # 2.1.46 -> 2.1.48
 # 2.1.48 -> 2.1.52
+# 2.1.52 - > 2.2.0
 
 # Ebuild using React 19
 
@@ -41,7 +42,7 @@ EAPI=8
 # Generate the lockfile as follows:
 #
 #   PATH=$(realpath "../../scripts")":${PATH}"
-#   PNPM_UPDATER_VERSIONS="2.1.52" pnpm_updater_update_locks.sh
+#   PNPM_UPDATER_VERSIONS="2.2.0" pnpm_updater_update_locks.sh
 #
 
 # U22, U24, D12
@@ -66,22 +67,22 @@ PNPM_DEDUPE=0 # Still debugging
 PNPM_SLOT="9"
 POSTGRESQL_PORT="5432"
 POSTGRESQL_SLOT="17"
-RUST_MAX_VER="1.81.0" # Inclusive
-RUST_MIN_VER="1.81.0" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0 for next.js 15.3.3 dependency of @swc/core 1.11.24 \
+RUST_MAX_VER="1.91.1" # Inclusive
+RUST_MIN_VER="1.91.1" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0 for next.js 15.3.3 dependency of @swc/core 1.11.24 \
 # Obtained from https://github.com/swc-project/swc/blob/v1.15.8/rust-toolchain \
 # Obtained from commit from committer-date:2025-05-06 GH search \
 # Obtained from https://github.com/rust-lang/rust/blob/<commit-id>/RELEASES.md
 RUST_PV="${RUST_MIN_VER}"
 
-NEXTJS_PV="16.2.3"
+NEXTJS_PV="16.2.5"
 SHARP_PV="0.34.5"
 VIPS_PV="8.18.0"
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
-	ELECTRON_APP_ELECTRON_PV="41.2.1" # Cr 146.0.7680.188, node 24.14.1
+	ELECTRON_APP_ELECTRON_PV="42.2.0" # Cr 148.0.7778.97, node 24.15.0
 else
-#https://github.com/lobehub/lobehub/blob/v2.1.52/apps/desktop/package.json#L70
+#https://github.com/lobehub/lobehub/blob/v2.2.0/apps/desktop/package.json#L70
 	# Upstream's choice
 	ELECTRON_APP_ELECTRON_PV="41.1.0" # Cr 146.0.7680.166, node 24.14.0
 fi
@@ -201,38 +202,38 @@ else
 	"
 fi
 # Third party licenses:
-# ( CC0-1.0 MIT ) - ./lobehub-2.1.52/node_modules/.pnpm/lodash.escape@4.0.1/node_modules/lodash.escape/LICENSE
-# all-rights-reserved MIT - ./lobehub-2.1.52/node_modules/.pnpm/vscode-languageserver-protocol@3.17.5/node_modules/vscode-languageserver-protocol/License.txt
-# all-rights-reserved MIT - ./lobehub-2.1.52/node_modules/.pnpm/tsyringe@4.10.0/node_modules/tsyringe/LICENSE
-# AGPL-3 - ./lobehub-2.1.52/node_modules/.pnpm/dirty-json@0.9.2/node_modules/dirty-json/LICENSE
-# Apache-2.0 - ./lobehub-2.1.52/node_modules/.pnpm/aria-query@5.3.2/node_modules/aria-query/LICENSE
-# Artistic-2 - ./lobehub-2.1.52/node_modules/.pnpm/textextensions@6.11.0/node_modules/textextensions/LICENSE.md
-# BlueOak-1.0.0 - ./lobehub-2.1.52/node_modules/.pnpm/@isaacs+cliui@9.0.0/node_modules/@isaacs/cliui/LICENSE.md
-# BlueOak-1.0.0 - ./lobehub-2.1.52/node_modules/.pnpm/yallist@5.0.0/node_modules/yallist/LICENSE.md
-# BSD - ./lobehub-2.1.52/node_modules/.pnpm/@protobufjs+pool@1.1.0/node_modules/@protobufjs/pool/LICENSE
-# BSD-2 - ./lobehub-2.1.52/node_modules/.pnpm/esutils@2.0.3/node_modules/esutils/LICENSE.BSD
-# BSD-2 CC0-1.0 ISC MIT - ./lobehub-2.1.52/node_modules/.pnpm/vite@7.3.1_@types+node@24.12.0_jiti@2.6.1_terser@5.46.1_tsx@4.21.0_yaml@2.8.3/node_modules/vite/LICENSE.md
-# CC-BY-4.0 - ./lobehub-2.1.52/node_modules/.pnpm/caniuse-lite@1.0.30001780/node_modules/caniuse-lite/LICENSE
-# CC-BY-SA-4.0 ISC - ./lobehub-2.1.52/node_modules/.pnpm/npm@9.9.4/node_modules/npm/node_modules/node-gyp/node_modules/glob/LICENSE
-# CC0-1.0 - ./lobehub-2.1.52/node_modules/.pnpm/type-fest@5.5.0/node_modules/type-fest/license-cc0
-# custom (Sustainable Use License) - ./lobehub-2.1.52/node_modules/.pnpm/@codesandbox+nodebox@0.1.8/node_modules/@codesandbox/nodebox/LICENSE
-# custom (https://code.claude.com/docs/en/legal-and-compliance) - ./lobehub-2.1.52/node_modules/.pnpm/@anthropic-ai+claude-agent-sdk@0.2.81_zod@4.3.6/node_modules/@anthropic-ai/claude-agent-sdk/LICENSE.md
-# custom - ./lobehub-2.1.52/node_modules/.pnpm/npm@9.9.4/node_modules/npm/node_modules/jsbn/LICENSE
-# ISC - ./lobehub-2.1.52/node_modules/.pnpm/internmap@2.0.3/node_modules/internmap/LICENSE
-# icu-64.2 - ./lobehub-2.1.52/node_modules/.pnpm/tree-sitter@0.21.1/node_modules/tree-sitter/vendor/tree-sitter/lib/src/unicode/LICENSE
+# ( CC0-1.0 MIT ) - ./lobehub-2.2.0/node_modules/.pnpm/lodash.escape@4.0.1/node_modules/lodash.escape/LICENSE
+# all-rights-reserved MIT - ./lobehub-2.2.0/node_modules/.pnpm/vscode-languageserver-protocol@3.17.5/node_modules/vscode-languageserver-protocol/License.txt
+# all-rights-reserved MIT - ./lobehub-2.2.0/node_modules/.pnpm/tsyringe@4.10.0/node_modules/tsyringe/LICENSE
+# AGPL-3 - ./lobehub-2.2.0/node_modules/.pnpm/dirty-json@0.9.2/node_modules/dirty-json/LICENSE
+# Apache-2.0 - ./lobehub-2.2.0/node_modules/.pnpm/aria-query@5.3.2/node_modules/aria-query/LICENSE
+# Artistic-2 - ./lobehub-2.2.0/node_modules/.pnpm/textextensions@6.11.0/node_modules/textextensions/LICENSE.md
+# BlueOak-1.0.0 - ./lobehub-2.2.0/node_modules/.pnpm/@isaacs+cliui@9.0.0/node_modules/@isaacs/cliui/LICENSE.md
+# BlueOak-1.0.0 - ./lobehub-2.2.0/node_modules/.pnpm/yallist@5.0.0/node_modules/yallist/LICENSE.md
+# BSD - ./lobehub-2.2.0/node_modules/.pnpm/@protobufjs+pool@1.1.0/node_modules/@protobufjs/pool/LICENSE
+# BSD-2 - ./lobehub-2.2.0/node_modules/.pnpm/esutils@2.0.3/node_modules/esutils/LICENSE.BSD
+# BSD-2 CC0-1.0 ISC MIT - ./lobehub-2.2.0/node_modules/.pnpm/vite@7.3.1_@types+node@24.12.0_jiti@2.6.1_terser@5.46.1_tsx@4.21.0_yaml@2.8.3/node_modules/vite/LICENSE.md
+# CC-BY-4.0 - ./lobehub-2.2.0/node_modules/.pnpm/caniuse-lite@1.0.30001780/node_modules/caniuse-lite/LICENSE
+# CC-BY-SA-4.0 ISC - ./lobehub-2.2.0/node_modules/.pnpm/npm@9.9.4/node_modules/npm/node_modules/node-gyp/node_modules/glob/LICENSE
+# CC0-1.0 - ./lobehub-2.2.0/node_modules/.pnpm/type-fest@5.5.0/node_modules/type-fest/license-cc0
+# custom (Sustainable Use License) - ./lobehub-2.2.0/node_modules/.pnpm/@codesandbox+nodebox@0.1.8/node_modules/@codesandbox/nodebox/LICENSE
+# custom (https://code.claude.com/docs/en/legal-and-compliance) - ./lobehub-2.2.0/node_modules/.pnpm/@anthropic-ai+claude-agent-sdk@0.2.81_zod@4.3.6/node_modules/@anthropic-ai/claude-agent-sdk/LICENSE.md
+# custom - ./lobehub-2.2.0/node_modules/.pnpm/npm@9.9.4/node_modules/npm/node_modules/jsbn/LICENSE
+# ISC - ./lobehub-2.2.0/node_modules/.pnpm/internmap@2.0.3/node_modules/internmap/LICENSE
+# icu-64.2 - ./lobehub-2.2.0/node_modules/.pnpm/tree-sitter@0.21.1/node_modules/tree-sitter/vendor/tree-sitter/lib/src/unicode/LICENSE
 # LobeHub-Community-License-20250921 - See https://github.com/lobehub/lobehub/blob/main/LICENSE
-# MIT - ./lobehub-2.1.52/node_modules/.pnpm/matcher@3.0.0/node_modules/matcher/license
-# MIT-0 - ./lobehub-2.1.52/node_modules/.pnpm/@csstools+selector-specificity@5.0.0_postcss-selector-parser@7.1.1/node_modules/@csstools/selector-specificity/LICENSE.md
-# MPL-2.0 - ./lobehub-2.1.52/node_modules/.pnpm/@vercel+analytics@1.6.1_next@16.1.7_@babel+core@7.29.0_@opentelemetry+api@1.9.0_@playwr_479db63f3807ed5fe2ed8b4d0278027d/node_modules/@vercel/analytics/LICENSE
-# OFL-1.1 - ./lobehub-2.1.52/node_modules/.pnpm/polished@4.3.1/node_modules/polished/docs/assets/fonts/LICENSE.txt
-# Princeton - ./lobehub-2.1.52/node_modules/.pnpm/wordnet-db@3.1.14/node_modules/wordnet-db/LICENSE
-# PSF-2.2 (similar to PSF-2.4) - ./lobehub-2.1.52/node_modules/.pnpm/argparse@2.0.1/node_modules/argparse/LICENSE
-# Unlicense - ./lobehub-2.1.52/node_modules/.pnpm/robust-predicates@3.0.2/node_modules/robust-predicates/LICENSE
-# WTFPL-2 - MIT - ./lobehub-2.1.52/node_modules/.pnpm/opener@1.5.2/node_modules/opener/LICENSE.txt
-# || ( Apache-2.0 MPL-2.0 ) - ./lobehub-2.1.52/node_modules/.pnpm/dompurify@3.3.3/node_modules/dompurify/LICENSE
-# || ( AFL-2.1 BSD ) - ./lobehub-2.1.52/node_modules/.pnpm/json-schema@0.4.0/node_modules/json-schema/LICENSE
-# || ( BSD GPL-2 ) - ./lobehub-2.1.52/node_modules/.pnpm/node-forge@1.3.3/node_modules/node-forge/LICENSE
-# || ( GPL-3 MIT ) - ./lobehub-2.1.52/node_modules/.pnpm/jszip@3.10.1/node_modules/jszip/LICENSE.markdown
+# MIT - ./lobehub-2.2.0/node_modules/.pnpm/matcher@3.0.0/node_modules/matcher/license
+# MIT-0 - ./lobehub-2.2.0/node_modules/.pnpm/@csstools+selector-specificity@5.0.0_postcss-selector-parser@7.1.1/node_modules/@csstools/selector-specificity/LICENSE.md
+# MPL-2.0 - ./lobehub-2.2.0/node_modules/.pnpm/@vercel+analytics@1.6.1_next@16.1.7_@babel+core@7.29.0_@opentelemetry+api@1.9.0_@playwr_479db63f3807ed5fe2ed8b4d0278027d/node_modules/@vercel/analytics/LICENSE
+# OFL-1.1 - ./lobehub-2.2.0/node_modules/.pnpm/polished@4.3.1/node_modules/polished/docs/assets/fonts/LICENSE.txt
+# Princeton - ./lobehub-2.2.0/node_modules/.pnpm/wordnet-db@3.1.14/node_modules/wordnet-db/LICENSE
+# PSF-2.2 (similar to PSF-2.4) - ./lobehub-2.2.0/node_modules/.pnpm/argparse@2.0.1/node_modules/argparse/LICENSE
+# Unlicense - ./lobehub-2.2.0/node_modules/.pnpm/robust-predicates@3.0.2/node_modules/robust-predicates/LICENSE
+# WTFPL-2 - MIT - ./lobehub-2.2.0/node_modules/.pnpm/opener@1.5.2/node_modules/opener/LICENSE.txt
+# || ( Apache-2.0 MPL-2.0 ) - ./lobehub-2.2.0/node_modules/.pnpm/dompurify@3.3.3/node_modules/dompurify/LICENSE
+# || ( AFL-2.1 BSD ) - ./lobehub-2.2.0/node_modules/.pnpm/json-schema@0.4.0/node_modules/json-schema/LICENSE
+# || ( BSD GPL-2 ) - ./lobehub-2.2.0/node_modules/.pnpm/node-forge@1.3.3/node_modules/node-forge/LICENSE
+# || ( GPL-3 MIT ) - ./lobehub-2.2.0/node_modules/.pnpm/jszip@3.10.1/node_modules/jszip/LICENSE.markdown
 # The distro's Apache-2.0 license file does not contain all rights reserved.
 # The distro's MIT license file does not contain all rights reserved.
 # The PSF-2.2 license differs from the PSF-2.4 license.
@@ -540,15 +541,15 @@ pnpm_unpack_post() {
 	# better-auth is bumped to 1.5.6 to avoid runtime authentication issues.
 	# All versions directly below are pinned versions using same version as
 	# better-auth's lockfile to avoid build and runtime issues.
-	# Too update most values, see https://github.com/better-auth/better-auth/blob/v1.6.5/pnpm-lock.yaml
+	# Too update most values, see https://github.com/better-auth/better-auth/blob/v1.6.11/pnpm-lock.yaml
 	sed -i \
 		-e "s|\"@types/react\": \"19.2.13\"|\"@types/react\": \"19.2.14\"|g" \
 		-e "s|\"@types/react-dom\": \"^19.2.3\"|\"@types/react-dom\": \"19.2.3\"|g" \
-		-e "s|\"better-auth\": \"1.4.6\"|\"better-auth\": \"1.6.5\"|g" \
+		-e "s|\"better-auth\": \"1.4.6\"|\"better-auth\": \"1.6.11\"|g" \
 		-e "s|\"better-call\": \"1.1.8\"|\"better-call\": \"1.3.5\"|g" \
 		-e "s|\"drizzle-kit\": \"^0.31.8\"|\"drizzle-kit\": \"0.31.9\"|g" \
 		-e "s|\"drizzle-orm\": \"^0.45.1\"|\"drizzle-orm\": \"0.45.2\"|g" \
-		-e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.5.7\"|g" \
+		-e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.7.0\"|g" \
 		-e "s|\"pg\": \"^8.17.2\"|\"pg\": \"8.19.0\"|g" \
 		"package.json" \
 		|| die
@@ -575,7 +576,7 @@ pnpm_unpack_post() {
 	eapply "${FILESDIR}/${PN}-2.1.33-use-e965-xlsx.patch"
 	if use pwa ; then
 		eapply "${FILESDIR}/${MY_PN2}-2.1.34-hardcoded-paths.patch"
-		eapply "${FILESDIR}/${PN}-2.1.44-postgresjs-driver-support.patch"
+		eapply "${FILESDIR}/${PN}-2.2.0-postgresjs-driver-support.patch"
 		eapply "${FILESDIR}/${PN}-2.1.44-docker-cjs-multidriver-support.patch"
 	fi
 
@@ -598,12 +599,25 @@ pnpm_unpack_post() {
 													# CVE-2026-27978; VS(DT); Moderate
 													# CVE-2026-27977; DT, ID; Low
 													# GHSA-q4gf-8mx6-v5v3; ZC, DoS; High
+													# CVE-2026-44578; ZC, ID; High
+													# CVE-2026-44579; ZC, DoS; High
+													# CVE-2026-44573; ZC, ID; High
+													# CVE-2026-44579; ZC, DoS; High
+													# CVE-2026-44575; ZC, ID; High
+													# CVE-2026-44581; DT, ID; Moderate
+													# CVE-2026-44574; DT, ID; High
+													# CVE-2026-44582; DT; Low
+													# CVE-2026-44577; ZC, DoS; Moderate
+													# CVE-2026-44576; ZC, DT, ID; Moderate
+													# CVE-2026-44580; DT, ID; Moderate
+													# CVE-2026-44572; ZC, DoS; Low
+													# GHSA-8h8q-6873-q5fj; ZC, DoS; High
 			"svix@1.84.1"
 
 	# Pin better-auth and dependencies
 			"drizzle-orm@0.45.2"
-			"better-auth@1.6.5"
-			"fast-xml-parser@5.5.7"
+			"better-auth@1.6.11"
+			"fast-xml-parser@5.7.0"
 			"pg@8.19.0"
 
 	# Reverse depends or transitive dependencies of better-auth
@@ -612,6 +626,9 @@ pnpm_unpack_post() {
 
 	# pg alternative
 			"postgres@3.4.9"
+
+	# For sharp
+			"node-addon-api@8.7.0"
 		)
 		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 	fi
@@ -676,7 +693,7 @@ pnpm_audit_post() {
 
 pnpm_dedupe_post() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
-ewarn "QA:  Manually change to hono: specifier: ^4.12.12 version: 4.12.14 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change to hono: specifier: ^4.12.21 version: 4.12.21 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove form-data@2.3.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove form-data@2.5.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove path-to-regexp@0.1.13 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
@@ -685,11 +702,11 @@ ewarn "QA:  Manually remove tough-cookie@2.5.0 from ${S}/package-lock.json or ${
 ewarn "QA:  Manually remove qs@6.5.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove axios@1.13.6 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove axios@1.15.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change axios@1.15.0 to axios@1.15.1 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually change axios@1.15.0 to axios@1.15.2 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 ewarn "QA:  Manually remove ai@4.3.19 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @tootallnate/once@2.0.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove serialize-javascript@6.0.2 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove @tootallnate/once@2.0.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove serialize-javascript@6.0.2 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 #ewarn "QA:  Manually remove undici@6.21.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually change undici: 6.21.3 to undici: 7.24.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
@@ -699,10 +716,11 @@ ewarn "QA:  Manually change file-type: 16.5.4 to file-type: 21.3.4 from ${S}/pac
 
 ewarn "QA:  Manually remove bn.js@4.12.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
-ewarn "QA:  Manually remove ajv@6.14.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove ajv@6.14.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove ajv@8.12.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove ajv-formats@2.1.1 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change ajv-formats: 2.1.1(ajv@8.12.0) to ajv-formats: 3.0.1(ajv@8.18.0) from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change ajv-formats: 2.1.1(ajv@8.12.0) to ajv-formats: 3.0.1(ajv@8.20.0) from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change ajv-formats: 2.1.1(ajv@8.20.0) to ajv-formats: 3.0.1(ajv@8.20.0) from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove ajv-formats@2.1.1(ajv@8.18.0) from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
@@ -723,7 +741,7 @@ ewarn "QA:  Manually remove minimatch@<10.2.5 from ${S}/package-lock.json or ${S
 #ewarn "QA:  Manually remove fast-xml-parser@5.3.6 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove fast-xml-parser@5.3.8 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove fast-xml-parser@5.4.1 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually change fast-xml-parser: 4.x, 5.x, or earlier to fast-xml-parser: 5.5.6 depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually change fast-xml-parser: 4.x, 5.x, or earlier to fast-xml-parser: 5.7.0 depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove fast-xml-parser: 5.4.1 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove fast-xml-parser: 5.5.5 or earlier in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
@@ -733,14 +751,17 @@ ewarn "QA:  Manually remove jsondiffpatch@0.6.0 from ${S}/package-lock.json"
 ewarn "QA:  Manually remove esbuild@0.18.20 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove esbuild@0.19.12 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove esbuild@0.25.12 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove esbuild@0.27.7 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove esbuild@0.27.4 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change (esbuild@0.19.12) to (esbuild@0.27.7) and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually change esbuild: 0.27.4 to esbuild: 0.27.7 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change esbuild@0.25.12 to esbuild@0.27.7 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change (esbuild@0.19.12) to (esbuild@0.28.0) and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually change esbuild: 0.27.4 to esbuild: 0.28.0 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change esbuild@0.25.12 to esbuild@0.28.0 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove esbuild@0.21.4 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ##ewarn "QA:  Manually remove esbuild@0.21.5 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove <esbuild-0.27.7 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually change esbuild: to specifier: 0.27.7 version: 0.27.7 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml ${S}/package.json"
+ewarn "QA:  Manually remove <esbuild-0.28.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change from esbuild@0.25.12 to esbuild@0.28.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+
+#ewarn "QA:  Manually change esbuild: to specifier: 0.28.0 version: 0.28.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml ${S}/package.json"
 ##ewarn "QA:  Manually change esbuild: 0.21.4 references to esbuild: 0.25.0"
 ##ewarn "QA:  Manually change esbuild: 0.21.5 references to esbuild: 0.25.0"
 ##ewarn "QA:  Manually change esbuild: 0.18.20 references to esbuild: 0.25.0"
@@ -778,8 +799,10 @@ ewarn "QA:  Manually remove @octokit/plugin-rest-endpoint-methods@7.2.3 from ${S
 #ewarn "QA:  Manually dedupe @babel/helper-module-transforms in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change to ai@5.0.52(zod@3.25.76) for @upstash/workflow depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove electron@34.5.8 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove electron@39.8.8 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove electron@39.8.8 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove electron@39.8.10 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change electron specifier to 41.2.1 and version to 41.2.1 for packages/electron-client-ipc depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+
 ewarn "QA:  Manually change electron to 41.2.1 in ${S}/apps/desktop/package.json"
 
 		# DoS = Denial of Service
@@ -791,14 +814,14 @@ ewarn "QA:  Manually change electron to 41.2.1 in ${S}/apps/desktop/package.json
 
 		pnpm_patch_lockfile() {
 			sed -i -e "s|'@apidevtools/json-schema-ref-parser': 11.1.0|'@apidevtools/json-schema-ref-parser': 11.2.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.25.12|esbuild: 0.27.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.18.20|esbuild: 0.27.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.19.12|esbuild: 0.27.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.21.4|esbuild: 0.27.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.21.5|esbuild: 0.27.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.23.1|esbuild: 0.27.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.24.2|esbuild: 0.27.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: '>=0.12 <1'|esbuild: 0.27.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.25.12|esbuild: 0.28.0|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.18.20|esbuild: 0.28.0|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.19.12|esbuild: 0.28.0|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.21.4|esbuild: 0.28.0|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.21.5|esbuild: 0.28.0|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.23.1|esbuild: 0.28.0|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: 0.24.2|esbuild: 0.28.0|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|esbuild: '>=0.12 <1'|esbuild: 0.28.0|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|snowflake-sdk: 2.0.3|snowflake-sdk: 2.0.4|g" "pnpm-lock.yaml" || die
 
 			sed -i -e "s|'@babel/runtime': 7.23.6|'@babel/runtime': 7.28.2|g" "pnpm-lock.yaml" || die
@@ -829,25 +852,25 @@ ewarn "QA:  Manually change electron to 41.2.1 in ${S}/apps/desktop/package.json
 			sed -i -e "s|ai: 4.3.19(react@19.2.4)(zod@3.25.76)|ai: 5.0.52|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|'@octokit/rest': 19.0.13(encoding@0.1.13)|'@octokit/rest': 20.1.2|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|tar: 7.5.9|tar: 7.5.11|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|hono: 4.12.3|hono: 4.12.14|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|hono: 4.12.7|hono: 4.12.14|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|hono: '>=3.9.0'|hono: 4.12.14|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|hono: ^4|hono: 4.12.14|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|hono: ^4|hono: 4.12.14|g" "apps/desktop/pnpm-lock.yaml" || die
-			sed -i -e "s|'@hono/node-server': 1.19.10(hono@4.12.7)|'@hono/node-server': 1.19.14(hono@4.12.14)|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|hono: 4.12.3|hono: 4.12.21|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|hono: 4.12.7|hono: 4.12.21|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|hono: '>=3.9.0'|hono: 4.12.21|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|hono: ^4|hono: 4.12.21|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|hono: ^4|hono: 4.12.21|g" "apps/desktop/pnpm-lock.yaml" || die
+			sed -i -e "s|'@hono/node-server': 1.19.10(hono@4.12.7)|'@hono/node-server': 1.19.14(hono@4.12.21)|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|'@tootallnate/once': 2.0.0|'@tootallnate/once': 3.0.1|g" "pnpm-lock.yaml" || die
 
 			sed -i -e "s|serialize-javascript: 6.0.2|serialize-javascript: 7.0.5|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|undici: 6.21.3|undici: 7.24.5|g" "pnpm-lock.yaml" || die
 
-			sed -i -e "s|fast-xml-parser: 5.4.1|fast-xml-parser: 5.5.6|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 5.4.2|fast-xml-parser: 5.5.6|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 5.2.5|fast-xml-parser: 5.5.6|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 5.3.6|fast-xml-parser: 5.5.6|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 4.5.4|fast-xml-parser: 5.5.6|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.5.6|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.5.6|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.5.6\"|g" "package.json" || die
+			sed -i -e "s|fast-xml-parser: 5.4.1|fast-xml-parser: 5.7.0|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 5.4.2|fast-xml-parser: 5.7.0|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 5.2.5|fast-xml-parser: 5.7.0|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 5.3.6|fast-xml-parser: 5.7.0|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 4.5.4|fast-xml-parser: 5.7.0|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.7.0|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.7.0|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.7.0\"|g" "package.json" || die
 
 			sed -i -e "s|form-data: 2.3.3|form-data: 4.0.5|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|form-data: 2.5.5|form-data: 4.0.5|g" "pnpm-lock.yaml" || die
@@ -860,10 +883,10 @@ ewarn "QA:  Manually change electron to 41.2.1 in ${S}/apps/desktop/package.json
 
 			sed -i -e "s|qs: 6.5.5|qs: 6.15.1|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|qs: 6.14.2|qs: 6.15.1|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|axios: 1.13.6(debug@4.4.3)|axios: 1.15.1(debug@4.4.3)|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|axios: 1.15.0(debug@4.4.3)|axios: 1.15.1(debug@4.4.3)|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|axios: 1.13.6(debug@4.4.3)|axios: 1.15.2(debug@4.4.3)|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|axios: 1.15.0(debug@4.4.3)|axios: 1.15.2(debug@4.4.3)|g" "pnpm-lock.yaml" || die
 
-			sed -i -e "s|\"fast-xml-parser\": \"5.5.6\"|\"fast-xml-parser\": \"5.5.7\"|" "package.json" || die # Fix inconsistency or possible false positive
+			sed -i -e "s|\"fast-xml-parser\": \"5.5.6\"|\"fast-xml-parser\": \"5.7.0\"|" "package.json" || die # Fix inconsistency or possible false positive
 			sed -i -e "s|file-type: 16.5.4|file-type: 21.3.4|" "apps/desktop/pnpm-lock.yaml" || die
 			sed -i -e "s|file-type: 16.5.4|file-type: 21.3.4|" "apps/cli/pnpm-lock.yaml" || die
 		}
@@ -889,7 +912,7 @@ ewarn "QA:  Manually change electron to 41.2.1 in ${S}/apps/desktop/package.json
 		pkgs=(
 			"@apidevtools/json-schema-ref-parser@11.2.0"					# CVE-2024-29651; DoS, DT, ID; High
 
-			"esbuild@0.27.7"								# GHSA-67mh-4wv8-2f99; DI; Moderate
+			"esbuild@0.28.0"								# GHSA-67mh-4wv8-2f99; DI; Moderate
 
 			"@e965/xlsx"									# CVE-2024-22363; DoS; High
 													# CVE-2023-30533; DoS, DT, ID; High
@@ -909,18 +932,23 @@ ewarn "QA:  Manually change electron to 41.2.1 in ${S}/apps/desktop/package.json
 													# CVE-2026-22036; ZC, DoS; Moderate
 													# CVE-2026-1527; DT, ID; Moderate
 													# CVE-2026-1528; ZC, DoS; High
-			"fast-xml-parser@5.5.6"								# CVE-2026-25896; ZC, EBR, DT, ID; Critical
+			"fast-xml-parser@5.7.0"								# CVE-2026-25896; ZC, EBR, DT, ID; Critical
 													# CVE-2026-26278; ZC, DoS; High
 													# CVE-2026-27942; ZC, VS(DoS); Low		# >= 5.3.8 or >= 4.5.4
 													# CVE-2026-33036; ZC, DoS; High
 													# CVE-2026-33349; ZC, DoS; Moderate
+													# CVE-2026-41650; DT, ID; Moderate		# Testing bump.  May break pinned.  Working 5.5.7
+													# CVE-2026-44665; ZC, VS(DT); High
+													# CVE-2026-44664; DT, ID; Moderate
 			"form-data@4.0.5"								# CVE-2025-7783; ZC, VS(DT, ID), SS(DT, ID); Critical
 			"tough-cookie@4.1.4"								# CVE-2023-26136; ZC, DT, ID; Moderate
 			"path-to-regexp@8.4.2"								# CVE-2026-4926; ZC, DoS; High
 													# CVE-2026-4923; ZC, DoS; Moderate
 			"qs@6.15.1"									# CVE-2025-15284; ZC, VS(DoS), SS(DoS); Moderate
-			"axios@1.15.1"									# CVE-2025-62718; ZC, VS(DT, ID), SS(DT, ID); Moderate
+			"axios@1.15.2"									# CVE-2025-62718; ZC, VS(DT, ID), SS(DT, ID); Moderate
 													# CVE-2026-40175; ZC, DT, ID; Moderate
+													# CVE-2026-42044; ZC, DT, ID; Moderate
+													# CVE-2026-42264; ZC, DT, ID; High
 		)
 		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 
@@ -939,7 +967,7 @@ ewarn "QA:  Manually change electron to 41.2.1 in ${S}/apps/desktop/package.json
 													# CVE-2026-31802; ZC, VS(DT), SS(DT), High
 			"@hono/node-server@1.19.14"							# CVE-2026-29087; ZC, ID; High
 													# CVE-2026-39406; ZC, ID; Moderate
-			"hono@4.12.14"									# CVE-2026-29045; ZC, ID; High
+			"hono@4.12.21"									# CVE-2026-29045; ZC, ID; High
 													# CVE-2026-29085; DT, ID; Moderate
 													# CVE-2026-29086; DT, ID; Moderate
 													# GHSA-v8w9-8mx6-g223; ZC, DT, ID; Moderate
@@ -949,6 +977,9 @@ ewarn "QA:  Manually change electron to 41.2.1 in ${S}/apps/desktop/package.json
 													# GHSA-26pp-8wgv-hjvm; ZC, DoS; Moderate
 													# GHSA-458j-xx4x-4375; ZC, DT; Moderate
 													# CVE-2026-39410; DT, ID; Moderate
+													# CVE-2026-44459; DT, ID; Low
+													# CVE-2026-44458; DT; Moderate
+													# CVE-2026-44455; DT, ID; Moderate
 			"@tootallnate/once@3.0.1"							# CVE-2026-3449; DoS; Low
 			"serialize-javascript@7.0.5"							# GHSA-5c6j-r48x-rmvq; CE, DoS, DT, ID; High
 													# CVE-2026-34043; ZC, DoS; Moderate
