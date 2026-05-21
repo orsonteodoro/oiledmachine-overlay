@@ -250,11 +250,29 @@
     Contents of ~/.config/firejail/telegram.local:
     Contents of ~/.config/firejail/zoom.local:
 
-    # Protect against using /home/<user-name> as a drop zone or against
-    # exfiltration for the above high threat profiles of your choosing.  Keep
-    # protected 99% of the time, and permit 1% of the time.  Use the # character
-    # to control permission.
-    blacklist /home
+    # Remove the # character before the command to use the rule.
+
+    # To sandbox home (aka incognito mode), add to globals.local:
+    # private
+
+    # To negate sandboxed home, add to <cli-name>.local:
+    # ignore private
+
+    # To deny access to home and to hide the path, add to globals.local:
+    # blacklist ${HOME}
+
+    # To remove access deny to home, add to <cli-name>.local:
+    # noblacklist ${HOME}
+
+    # To deny access to <path>, add to globals.local:
+    # blacklist <path>
+
+    # For full access to <path>, add these two rules to <cli-name>.local:
+    # noblacklist <path>
+    # whitelist <path>
+
+    # For listing credentials but denying access, add to <cli-name>.local:
+    # whitelist <path>
 
     # This assumes single user.  For multiuser computers, consider using
     # /etc/firejail/<cli-name>.local instead and forcing users to use USB
@@ -286,11 +304,13 @@
     blacklist ${HOME}/.config/solana
     blacklist ${HOME}/.config/ledger-live-desktop
     blacklist ${HOME}/.config/TreZor
+    blacklist ${HOME}/.config/discord/Local Storage/leveldb
 
     # Protect SSH keys and secrets
     blacklist ${HOME}/.ssh
     blacklist ${HOME}/.gnupg
     blacklist ${HOME}/.password-store
+    blacklist ${HOME}/.local/share/keyrings
 
     # Protect license files
     blacklist ${HOME}/.local/share/unity3d/Unity
