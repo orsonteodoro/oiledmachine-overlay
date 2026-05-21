@@ -255,24 +255,27 @@
     # To sandbox home (aka incognito mode), add to globals.local:
     # private
 
-    # To negate sandboxed home, add to <cli-name>.local:
+    # To negate sandboxed home (aka persistent profile), add to <cli-name>.local:
     # ignore private
 
-    # To deny access to home and to hide the path, add to globals.local:
+    # To deny r/w/ls access to home, add to globals.local:
     # blacklist ${HOME}
 
-    # To remove access deny to home, add to <cli-name>.local:
+    # To allow r/w/ls access to home, add to <cli-name>.local:
     # noblacklist ${HOME}
 
-    # To deny access to <path>, add to globals.local:
+    # To deny r/w/ls access to <path>, add to globals.local:
     # blacklist <path>
 
-    # For full access to <path>, add these two rules to <cli-name>.local:
+    # To allow r/w/ls access to <path>, add these two rules to <cli-name>.local:
     # noblacklist <path>
     # whitelist <path>
 
-    # For listing credentials but denying access, add to <cli-name>.local:
+    # To allow ls <path> but denying r/w access, add to <cli-name>.local:
     # whitelist <path>
+
+    # You want to blacklist ${HOME} for inactive programs, but noblacklist ${HOME}
+    # for actively used programs.
 
     # This assumes single user.  For multiuser computers, consider using
     # /etc/firejail/<cli-name>.local instead and forcing users to use USB
@@ -357,7 +360,8 @@
     commands:
 
     firejail --profile=<profile-name> --private-bin=bash,<term>,ls,id,head,cat /usr/bin/<term>                  # For your favorite terminal app
-    firejail --profile=<profile-name> --private-bin=bash,xfce4-terminal,ls,id,head,cat /usr/bin/xfce4-terminal  # For X11/Wayland compatibility
+    firejail --profile=<profile-name> --private-bin=bash,alacritty,ls,id,head,cat /usr/bin/alacritty            # For Wayland compatibility
+    firejail --profile=<profile-name> --private-bin=bash,xterm,ls,id,head,cat /usr/bin/xterm                    # For X11 compatibility
 
     Use `head <path>` or `cat <path>` to test if the file is readable by the attacker.
     Use `ls <path>` to test if the file is accessible by the attacker.
