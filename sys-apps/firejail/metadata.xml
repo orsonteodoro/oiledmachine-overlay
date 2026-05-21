@@ -348,7 +348,7 @@
     # Remove the blacklist ${HOME}/Downloads in globals.local.
     # cp -a /usr/local/bin/firefox /usr/local/bin/firefox-download
     # /usr/local/bin/firefox adds --blacklist=${HOME}/Downloads
-    # /usr/local/bin/firefox-download removes -blacklist=${HOME}/Downloads
+    # /usr/local/bin/firefox-download removes --blacklist=${HOME}/Downloads
 
     # The custom wrappers should be placed in /usr/local/bin not in ~/ to
     # prevent compromised profile code execution.
