@@ -533,6 +533,12 @@ einfo "Remote-hosted LobeHub Cloud:  No"
 einfo "LOBEHUB_HOSTNAME:  ${LOBEHUB_HOSTNAME} (user-definable, per-package environment variable)"
 einfo "LOBEHUB_PORT:  ${LOBEHUB_PORT} (user-definable, per-package environment variable)"
 	fi
+
+	if use postgres && ! grep -q -e "^shared_preload_libraries.*pg_search" "/etc/postgresql-${POSTGRESQL_SLOT}/postgresql.conf" ; then
+eerror "Update /etc/postgresql-${POSTGRESQL_SLOT}/postgresql.conf with the following:"
+eerror "shared_preload_libraries='pg_search'"
+		die
+	fi
 }
 
 pnpm_unpack_post() {
@@ -1139,11 +1145,6 @@ eerror
 	fi
 	if ! pg_isready -h "localhost" -p ${POSTGRESQL_PORT} ; then
 eerror "The postgres-${POSTGRESQL_SLOT} daemon needs to run to continue."
-		die
-	fi
-	if ! grep -q -e "^shared_preload_libraries.*pg_search" "/etc/postgresql-${POSTGRESQL_SLOT}/postgresql.conf" ; then
-eerror "Update /etc/postgresql-${POSTGRESQL_SLOT}/postgresql.conf with the following:"
-eerror "shared_preload_libraries='pg_search'"
 		die
 	fi
 }
