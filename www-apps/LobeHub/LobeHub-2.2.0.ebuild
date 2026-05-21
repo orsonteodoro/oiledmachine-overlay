@@ -243,7 +243,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management minio -online-search
 +openrc +pwa +postgres +rag redis +s3 searxng systemd +tools
-ebuild_revision_111
+ebuild_revision_112
 "
 REQUIRED_USE="
 	embeddings? (
@@ -810,6 +810,7 @@ ewarn "QA:  Manually change electron to 42.2.0 in ${S}/apps/desktop/package.json
 #ewarn "QA:  Manually change postcss from ^8.4.31 to 8.5.10 in ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove postcss@8.4.31 in ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove file-type@21.3.2 in ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove tar@6.2.1 in ${S}/apps/desktop/pnpm-lock.yaml"
 
 		# DoS = Denial of Service
 		# DT = Data Tampering
