@@ -132,13 +132,17 @@
     2. /etc/firejail/<cli-name>.local - is a systemwide per program blacklist or
     config for edge cases.
 
-    3. ~/.config/firejail/globals.local - is a per-user profile blacklist
+    3. ~/.config/firejail/default.local - is for per-user profileless fallback.
+
+    4. /etc/firejail/default.local - is for systemwide profileless fallback.
+
+    5. ~/.config/firejail/globals.local - is a per-user profile blacklist
     containing paths in ${HOME} or user mounted paths to prevent a path
     traversal exfiltration, but if the profile is compromised then it won't
     work as effective as /etc/firejail/globals.local.  This private list is to
     prevent snooping by users on the same computer.
 
-    4. /etc/firejail/globals.local - is systemwide configuration containing all
+    6. /etc/firejail/globals.local - is systemwide configuration containing all
     blacklisted paths having sensitive data (e.g. API keys, AI keys, server
     keys).  (Lowest precedence, evaluated first)
 
