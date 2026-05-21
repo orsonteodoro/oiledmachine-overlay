@@ -110,8 +110,8 @@ importers:
         specifier: ^8.0.4
         version: 8.0.4
       electron:
-        specifier: 41.3.0
-        version: 41.3.0
+        specifier: 42.2.0
+        version: 42.2.0
       electron-builder:
         specifier: ^26.8.1
         version: 26.8.1(electron-builder-squirrel-windows@26.8.1)
@@ -281,8 +281,8 @@ importers:
         version: 19.2.4
     devDependencies:
       electron:
-        specifier: ^39.8.1
-        version: 39.8.10
+        specifier: 42.2.0
+        version: 42.2.0
 
   ../../packages/electron-server-ipc:
     dependencies:
@@ -8212,7 +8212,7 @@ snapshots:
 
   '@electron-toolkit/preload@3.0.2(electron@41.3.0)':
     dependencies:
-      electron: 41.3.0
+      electron: 42.2.0
 
   '@electron-toolkit/tsconfig@2.0.0(@types/node@24.12.4)':
     dependencies:
@@ -8220,7 +8220,7 @@ snapshots:
 
   '@electron-toolkit/utils@4.0.0(electron@41.3.0)':
     dependencies:
-      electron: 41.3.0
+      electron: 42.2.0
 
   '@electron/asar@3.4.1':
     dependencies:

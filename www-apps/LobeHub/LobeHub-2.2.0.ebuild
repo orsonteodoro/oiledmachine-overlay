@@ -549,7 +549,7 @@ pnpm_unpack_post() {
 		-e "s|\"better-call\": \"1.1.8\"|\"better-call\": \"1.3.5\"|g" \
 		-e "s|\"drizzle-kit\": \"^0.31.8\"|\"drizzle-kit\": \"0.31.9\"|g" \
 		-e "s|\"drizzle-orm\": \"^0.45.1\"|\"drizzle-orm\": \"0.45.2\"|g" \
-		-e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.7.0\"|g" \
+		-e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.5.7\"|g" \
 		-e "s|\"pg\": \"^8.17.2\"|\"pg\": \"8.19.0\"|g" \
 		"package.json" \
 		|| die
@@ -618,7 +618,7 @@ pnpm_unpack_post() {
 	# Pin better-auth and dependencies
 			"drizzle-orm@0.45.2"
 			"better-auth@1.6.11"
-			"fast-xml-parser@5.7.0"
+			"fast-xml-parser@5.5.7"
 			"pg@8.19.0"
 
 	# Reverse depends or transitive dependencies of better-auth
@@ -713,15 +713,18 @@ ewarn "QA:  Manually remove @tootallnate/once@2.0.1 from ${S}/package-lock.json 
 #ewarn "QA:  Manually change undici: 6.21.3 to undici: 7.24.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 ewarn "QA:  Manually remove file-type@16.5.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"	# CVE-2026-31808; ZC, DoS; Moderate
+ewarn "QA:  Manually remove file-type@21.3.2 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change file-type: 16.5.4 to file-type: 21.3.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change file-type: 21.3.2 to file-type: 21.3.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 ewarn "QA:  Manually remove bn.js@4.12.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 #ewarn "QA:  Manually remove ajv@6.14.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove ajv@8.12.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove ajv-formats@2.1.1 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change ajv@8.12.0 to ajv@8.20.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change ajv: 8.18.0 to ajv: 8.20.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change ajv-formats: 2.1.1(ajv@8.12.0) to ajv-formats: 3.0.1(ajv@8.20.0) from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change ajv-formats: 2.1.1(ajv@8.20.0) to ajv-formats: 3.0.1(ajv@8.20.0) from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove ajv-formats@2.1.1(ajv@8.18.0) from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
 ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
@@ -742,7 +745,7 @@ ewarn "QA:  Manually remove minimatch@<10.2.5 from ${S}/package-lock.json or ${S
 #ewarn "QA:  Manually remove fast-xml-parser@5.3.6 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove fast-xml-parser@5.3.8 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove fast-xml-parser@5.4.1 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually change fast-xml-parser: 4.x, 5.x, or earlier to fast-xml-parser: 5.7.0 depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually change fast-xml-parser: 4.x, 5.x, or earlier to fast-xml-parser: 5.5.7 depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove fast-xml-parser: 5.4.1 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove fast-xml-parser: 5.5.5 or earlier in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
@@ -804,13 +807,16 @@ ewarn "QA:  Manually change to ai@5.0.52(zod@3.25.76) for @upstash/workflow depe
 ewarn "QA:  Manually remove electron@39.8.10 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change electron specifier to 42.2.0 and version to 42.2.0 for packages/electron-client-ipc depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
-ewarn "QA:  Manually change electron to 42.2.0 in ${S}/apps/desktop/package.json"
+ewarn "QA:  Manually change electron to 42.2.0 in ${S}/apps/desktop/pnpm-lock.yaml"
+ewarn "QA:  Manually change multiple electron: to specifier: 42.2.0 and version: 42.2.0 in ${S}/apps/desktop/pnpm-lock.yaml"
+ewarn "QA:  Manually change electron: 41.3.0 to electron: 42.2.0 in ${S}/apps/desktop/pnpm-lock.yaml"
+ewarn "QA:  Manually change \"electron\": \"41.3.0\" to \"electron\": \"42.2.0\" in ${S}/apps/desktop/package.json"
+ewarn "QA:  Manually remove tar@6.2.1 in ${S}/apps/desktop/pnpm-lock.yaml"
 
 #ewarn "QA:  Manually change postcss from 8.4.31 to 8.5.10 in ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually change postcss from ^8.4.31 to 8.5.10 in ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove postcss@8.4.31 in ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove file-type@21.3.2 in ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove tar@6.2.1 in ${S}/apps/desktop/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove file-type@21.3.2 in ${S}/pnpm-lock.yaml"
 
 		# DoS = Denial of Service
 		# DT = Data Tampering
@@ -873,14 +879,14 @@ ewarn "QA:  Manually remove tar@6.2.1 in ${S}/apps/desktop/pnpm-lock.yaml"
 			sed -i -e "s|serialize-javascript: 6.0.2|serialize-javascript: 7.0.5|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|undici: 6.21.3|undici: 7.24.5|g" "pnpm-lock.yaml" || die
 
-			sed -i -e "s|fast-xml-parser: 5.4.1|fast-xml-parser: 5.7.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 5.4.2|fast-xml-parser: 5.7.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 5.2.5|fast-xml-parser: 5.7.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 5.3.6|fast-xml-parser: 5.7.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 4.5.4|fast-xml-parser: 5.7.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.7.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.7.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.7.0\"|g" "package.json" || die
+			sed -i -e "s|fast-xml-parser: 5.4.1|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 5.4.2|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 5.2.5|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 5.3.6|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 4.5.4|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.5.7\"|g" "package.json" || die
 
 			sed -i -e "s|form-data: 2.3.3|form-data: 4.0.5|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|form-data: 2.5.5|form-data: 4.0.5|g" "pnpm-lock.yaml" || die
@@ -896,7 +902,7 @@ ewarn "QA:  Manually remove tar@6.2.1 in ${S}/apps/desktop/pnpm-lock.yaml"
 			sed -i -e "s|axios: 1.13.6(debug@4.4.3)|axios: 1.15.2(debug@4.4.3)|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|axios: 1.15.0(debug@4.4.3)|axios: 1.15.2(debug@4.4.3)|g" "pnpm-lock.yaml" || die
 
-			sed -i -e "s|\"fast-xml-parser\": \"5.5.6\"|\"fast-xml-parser\": \"5.7.0\"|" "package.json" || die # Fix inconsistency or possible false positive
+			sed -i -e "s|\"fast-xml-parser\": \"5.5.6\"|\"fast-xml-parser\": \"5.5.7\"|" "package.json" || die # Fix inconsistency or possible false positive
 			sed -i -e "s|file-type: 21.3.2|file-type: 21.3.4|" "apps/desktop/pnpm-lock.yaml" || die
 			sed -i -e "s|file-type: 16.5.4|file-type: 21.3.4|" "apps/desktop/pnpm-lock.yaml" || die
 			sed -i -e "s|file-type: 16.5.4|file-type: 21.3.4|" "apps/cli/pnpm-lock.yaml" || die
@@ -959,7 +965,7 @@ ewarn "QA:  Manually remove tar@6.2.1 in ${S}/apps/desktop/pnpm-lock.yaml"
 													# CVE-2026-22036; ZC, DoS; Moderate
 													# CVE-2026-1527; DT, ID; Moderate
 													# CVE-2026-1528; ZC, DoS; High
-			"fast-xml-parser@5.7.0"								# CVE-2026-25896; ZC, EBR, DT, ID; Critical
+			"fast-xml-parser@5.5.7"								# CVE-2026-25896; ZC, EBR, DT, ID; Critical
 													# CVE-2026-26278; ZC, DoS; High
 													# CVE-2026-27942; ZC, VS(DoS); Low		# >= 5.3.8 or >= 4.5.4
 													# CVE-2026-33036; ZC, DoS; High

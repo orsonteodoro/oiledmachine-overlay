@@ -11,7 +11,7 @@ overrides:
   better-auth: 1.6.11
   better-call: 1.3.5
   drizzle-orm: 0.45.2
-  fast-xml-parser: 5.7.0
+  fast-xml-parser: 5.5.7
   lexical: 0.42.0
   pdfjs-dist: 5.4.530
   react: 19.2.5
@@ -134,7 +134,7 @@ importers:
         version: 0.3.9
       '@langchain/community':
         specifier: 1.1.18
-        version: 1.1.18(d27dd8b8f46a08f27307de6b2e203bf3)
+        version: 1.1.18(5e2c19aec72500d6f07dda4c2e0b6175)
       '@larksuiteoapi/node-sdk':
         specifier: ^1.60.0
         version: 1.65.0(debug@4.4.3)
@@ -562,8 +562,8 @@ importers:
         specifier: ^3.1.3
         version: 3.1.3
       fast-xml-parser:
-        specifier: 5.7.0
-        version: 5.7.0
+        specifier: 5.5.7
+        version: 5.5.7
       fflate:
         specifier: ^0.8.2
         version: 0.8.3
@@ -5833,7 +5833,7 @@ packages:
       duck-duck-scrape: ^2.2.5
       epub2: ^3.0.1
       faiss-node: '*'
-      fast-xml-parser: 5.7.0
+      fast-xml-parser: 5.5.7
       firebase-admin: ^13.6.1
       google-auth-library: '*'
       googleapis: '*'
@@ -12582,8 +12582,8 @@ packages:
   fast-xml-builder@1.2.0:
     resolution: {integrity: sha512-00aAWieqff+ZJhsXA4g1g7M8k+7AYoMUUHF+/zFb5U6Uv/P0Vl4QZo84/IcufzYalLuEj9928bXN9PbbFzMF0Q==}
 
-  fast-xml-parser@5.7.0:
-    resolution: {integrity: sha512-MTcrUoRQ1GSQ9iG3QJzBGquYYYeA7piZaJoIWbPFGbRn6Jj6z7xgoAyi4DrZX4y2ZIQQBF59gc/zmvvejjgoFQ==}
+  fast-xml-parser@5.5.7:
+    resolution: {integrity: sha512-LteOsISQ2GEiDHZch6L9hB0+MLoYVLToR7xotrzU0opCICBkxOPgHAy1HxAvtxfJNXDJpgAsQN30mkrfpO2Prg==}
     hasBin: true
 
   fastest-levenshtein@1.0.16:
@@ -20989,14 +20989,14 @@ snapshots:
   '@aws-sdk/xml-builder@3.930.0':
     dependencies:
       '@smithy/types': 4.14.2
-      fast-xml-parser: 5.7.0
+      fast-xml-parser: 5.5.7
       tslib: 2.8.1
 
   '@aws-sdk/xml-builder@3.972.24':
     dependencies:
       '@nodable/entities': 2.1.0
       '@smithy/types': 4.14.2
-      fast-xml-parser: 5.7.0
+      fast-xml-parser: 5.5.7
       tslib: 2.8.1
 
   '@aws/lambda-invoke-store@0.1.1': {}
@@ -21100,7 +21100,7 @@ snapshots:
 
   '@azure/core-xml@1.5.1':
     dependencies:
-      fast-xml-parser: 5.7.0
+      fast-xml-parser: 5.5.7
       tslib: 2.8.1
 
   '@azure/identity@4.13.1':
@@ -23095,7 +23095,7 @@ snapshots:
       abort-controller: 3.0.0
       async-retry: 1.3.3
       duplexify: 4.1.3
-      fast-xml-parser: 5.7.0
+      fast-xml-parser: 5.5.7
       gaxios: 6.7.1(encoding@0.1.13)
       google-auth-library: 9.15.1(encoding@0.1.13)
       html-entities: 2.6.0
@@ -23844,7 +23844,7 @@ snapshots:
       - openai
       - ws
 
-  '@langchain/community@1.1.18(d27dd8b8f46a08f27307de6b2e203bf3)':
+  '@langchain/community@1.1.18(5e2c19aec72500d6f07dda4c2e0b6175)':
     dependencies:
       '@browserbasehq/stagehand': 1.14.0(@playwright/test@1.60.0)(deepmerge@4.3.1)(dotenv@17.4.2)(encoding@0.1.13)(openai@4.104.0(encoding@0.1.13)(ws@8.20.1)(zod@3.25.76))(zod@3.25.76)
       '@ibm-cloud/watsonx-ai': 1.7.12
@@ -23875,7 +23875,7 @@ snapshots:
       d3-dsv: 3.0.1
       discord.js: 14.26.4
       epub2: 3.0.2(ts-toolbelt@9.6.0)
-      fast-xml-parser: 5.7.0
+      fast-xml-parser: 5.5.7
       google-auth-library: 10.6.2
       html-to-text: 9.0.5
       ignore: 7.0.5
@@ -31632,9 +31632,8 @@ snapshots:
       path-expression-matcher: 1.5.0
       xml-naming: 0.1.0
 
-  fast-xml-parser@5.7.0:
+  fast-xml-parser@5.5.7:
     dependencies:
-      '@nodable/entities': 2.1.0
       fast-xml-builder: 1.2.0
       path-expression-matcher: 1.5.0
       strnum: 2.3.0
@@ -38147,7 +38146,7 @@ snapshots:
       bn.js: 5.2.3
       browser-request: 0.3.3
       expand-tilde: 2.0.2
-      fast-xml-parser: 5.7.0
+      fast-xml-parser: 5.5.7
       fastest-levenshtein: 1.0.16
       generic-pool: 3.9.0
       glob: 10.5.0
