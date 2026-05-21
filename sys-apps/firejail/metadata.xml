@@ -479,7 +479,7 @@
 
       - restrictionless arbitrary computation
       - security bypass of [non-free] PaX, NX, ALSR; [the most common use case]
-      - code reuse (Living of the Land paradigm)
+      - code reuse (using the Living of the Land paradigm)
 
     The threat actor use cases or objectives of the ROP chain:
 
