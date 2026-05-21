@@ -48,6 +48,7 @@ EAPI=8
 # U22, U24, D12
 # U24 - node 20 (release - live, debug - live)
 # U22 - node 18 (check - live)
+# Postgres and Redis slot:  https://github.com/lobehub/lobehub/blob/v2.2.0/docker-compose/deploy/docker-compose.yml#L41
 
 # TODO:
 # USE sandbox
