@@ -537,6 +537,7 @@ einfo "LOBEHUB_PORT:  ${LOBEHUB_PORT} (user-definable, per-package environment v
 	if use postgres && ! grep -q -e "^shared_preload_libraries.*pg_search" "/etc/postgresql-${POSTGRESQL_SLOT}/postgresql.conf" ; then
 eerror "Update /etc/postgresql-${POSTGRESQL_SLOT}/postgresql.conf with the following:"
 eerror "shared_preload_libraries='pg_search'"
+eerror "Then, restart the Postgres ${POSTGRESQL_SLOT} service."
 		die
 	fi
 }
