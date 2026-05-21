@@ -154,8 +154,8 @@
     5. ~/.config/firejail/globals.local
        - for per-user profile blacklist fallback blacklisting
        - use `blacklist <path>`
-       - for blacklisting sensitive data (e.g. PII, credentials, keys, legal papers, banking numbers)
-       - This private list is to prevent snooping by users on the same computer.
+       - for blacklisting sensitive data (e.g. PII, credentials, keys, secrets, legal papers, banking numbers)
+       - a private list to prevent multiuser snooping
        - for degrading capabilities or limiting access
 
     6. /etc/firejail/globals.local
