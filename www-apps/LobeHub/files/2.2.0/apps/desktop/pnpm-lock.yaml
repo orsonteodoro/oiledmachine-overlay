@@ -199,6 +199,9 @@ importers:
       superjson:
         specifier: ^2.2.6
         version: 2.2.6
+      tar:
+        specifier: 7.5.15
+        version: 7.5.15
       tsx:
         specifier: ^4.21.0
         version: 4.22.3
@@ -8993,7 +8996,7 @@ snapshots:
       npmlog: 5.0.1
       rimraf: 3.0.2
       semver: 7.8.0
-      tar: 6.2.1
+      tar: 7.5.15
     transitivePeerDependencies:
       - encoding
       - supports-color
@@ -11043,7 +11046,7 @@ snapshots:
       minipass-pipeline: 1.2.4
       p-map: 4.0.0
       ssri: 10.0.6
-      tar: 6.2.1
+      tar: 7.5.15
       unique-filename: 3.0.0
     optional: true
 
@@ -14161,7 +14164,7 @@ snapshots:
       nopt: 7.2.1
       proc-log: 4.2.0
       semver: 7.8.0
-      tar: 6.2.1
+      tar: 7.5.15
       which: 4.0.0
     transitivePeerDependencies:
       - supports-color

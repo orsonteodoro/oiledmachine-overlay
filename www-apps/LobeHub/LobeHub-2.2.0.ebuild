@@ -243,7 +243,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management minio -online-search
 +openrc +pwa +postgres +rag redis +s3 searxng systemd +tools
-ebuild_revision_110
+ebuild_revision_111
 "
 REQUIRED_USE="
 	embeddings? (
@@ -806,6 +806,11 @@ ewarn "QA:  Manually change electron specifier to 42.2.0 and version to 42.2.0 f
 
 ewarn "QA:  Manually change electron to 42.2.0 in ${S}/apps/desktop/package.json"
 
+#ewarn "QA:  Manually change postcss from 8.4.31 to 8.5.10 in ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually change postcss from ^8.4.31 to 8.5.10 in ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove postcss@8.4.31 in ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove file-type@21.3.2 in ${S}/pnpm-lock.yaml"
+
 		# DoS = Denial of Service
 		# DT = Data Tampering
 		# ID = Information Disclosure
@@ -855,6 +860,7 @@ ewarn "QA:  Manually change electron to 42.2.0 in ${S}/apps/desktop/package.json
 			sed -i -e "s|tar: 7.5.9|tar: 7.5.15|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|tar: 7.5.11|tar: 7.5.15|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|tar: 6.2.1|tar: 7.5.15|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|tar: 6.2.1|tar: 7.5.15|g" "apps/desktop/pnpm-lock.yaml" || die
 			sed -i -e "s|hono: 4.12.3|hono: 4.12.21|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|hono: 4.12.7|hono: 4.12.21|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|hono: '>=3.9.0'|hono: 4.12.21|g" "pnpm-lock.yaml" || die
@@ -890,10 +896,18 @@ ewarn "QA:  Manually change electron to 42.2.0 in ${S}/apps/desktop/package.json
 			sed -i -e "s|axios: 1.15.0(debug@4.4.3)|axios: 1.15.2(debug@4.4.3)|g" "pnpm-lock.yaml" || die
 
 			sed -i -e "s|\"fast-xml-parser\": \"5.5.6\"|\"fast-xml-parser\": \"5.7.0\"|" "package.json" || die # Fix inconsistency or possible false positive
+			sed -i -e "s|file-type: 21.3.2|file-type: 21.3.4|" "apps/desktop/pnpm-lock.yaml" || die
 			sed -i -e "s|file-type: 16.5.4|file-type: 21.3.4|" "apps/desktop/pnpm-lock.yaml" || die
 			sed -i -e "s|file-type: 16.5.4|file-type: 21.3.4|" "apps/cli/pnpm-lock.yaml" || die
 
-			sed -i -e "s|postcss: 8.4.31|postcss: 8.5.15|" "apps/cli/pnpm-lock.yaml" || die
+			sed -i -e "s|postcss: ^8.5.1|postcss: 8.5.15|" "pnpm-lock.yaml" || die
+			sed -i -e "s|postcss: ^8.4.31|postcss: 8.5.15|" "pnpm-lock.yaml" || die
+			sed -i -e "s|postcss: ^8.4.31|postcss: 8.5.15|" "pnpm-lock.yaml" || die
+			sed -i -e "s|postcss: 8.4.31|postcss: 8.5.15|" "pnpm-lock.yaml" || die
+			sed -i -e "s|postcss: ^8.4.20|postcss: 8.5.15|" "pnpm-lock.yaml" || die
+			sed -i -e "s|postcss: ^8.4.12|postcss: 8.5.15|" "pnpm-lock.yaml" || die
+			sed -i -e "s|postcss: ^8.3.5|postcss: 8.5.15|" "pnpm-lock.yaml" || die
+			sed -i -e "s|postcss: ^8.3.3|postcss: 8.5.15|" "apps/cli/pnpm-lock.yaml" || die
 		}
 
 		pnpm_patch_lockfile
@@ -903,6 +917,13 @@ ewarn "QA:  Manually change electron to 42.2.0 in ${S}/apps/desktop/package.json
 		pushd "apps/desktop" >/dev/null 2>&1 || die
 			pkgs=(
 				"file-type@21.3.4"
+				"tar@7.5.15"								# GHSA-qffp-2rhf-9h96; VS(DT, ID), SS(DT, ID)
+													# CVE-2026-31802; ZC, VS(DT), SS(DT), High
+													# CVE-2026-23745; VS(DT, ID), SS(DT, ID)
+													# CVE-2026-24842; DT, ID; High
+													# CVE-2026-23950; RC, DoS, DT, ID; High
+													# CVE-2026-26960; DT, ID; High
+													# CVE-2026-29786; VS(DoS, DT), SS(DoS, DT); High
 			)
 			epnpm add -D ${pkgs[@]}
 		popd >/dev/null 2>&1 || die

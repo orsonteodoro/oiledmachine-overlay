@@ -365,7 +365,7 @@ importers:
         version: link:apps/desktop/src/main
       '@lobehub/editor':
         specifier: ^4.9.3
-        version: 4.10.3(@lobehub/ui@5.14.1)(@types/mdast@4.0.4)(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(unified@11.0.5)
+        version: 4.10.6(@lobehub/ui@5.14.1)(@types/mdast@4.0.4)(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(unified@11.0.5)
       '@lobehub/icons':
         specifier: ^5.0.0
         version: 5.8.0(@lobehub/ui@5.14.1)(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -1627,7 +1627,7 @@ importers:
         version: link:../prompts
       '@lobehub/editor':
         specifier: ^4
-        version: 4.10.3(@lobehub/ui@5.14.1)(@types/mdast@4.0.4)(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(unified@11.0.5)
+        version: 4.10.6(@lobehub/ui@5.14.1)(@types/mdast@4.0.4)(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(unified@11.0.5)
       '@lobehub/ui':
         specifier: ^5
         version: 5.14.1(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@lobehub/icons@5.8.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -2364,7 +2364,7 @@ importers:
         version: link:../prompts
       '@lobehub/editor':
         specifier: ^4
-        version: 4.10.3(@lobehub/ui@5.14.1)(@types/mdast@4.0.4)(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(unified@11.0.5)
+        version: 4.10.6(@lobehub/ui@5.14.1)(@types/mdast@4.0.4)(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(unified@11.0.5)
       debug:
         specifier: '*'
         version: 4.4.3(supports-color@10.2.2)
@@ -6227,8 +6227,8 @@ packages:
     peerDependencies:
       '@commitlint/cli': '>=19.0.0'
 
-  '@lobehub/editor@4.10.3':
-    resolution: {integrity: sha512-wk53gFcW+lNlr17JlkUmx+MAMlYh0RvH2A8phI4XQ2tG/lVX+qRy3vqqtKxrfrwTt796T72fjiDrW6A9X8dmRg==}
+  '@lobehub/editor@4.10.6':
+    resolution: {integrity: sha512-jMrYuFykHlgkI1SG3nzo+pH/DenThvjR+MGAapnmE0HgTSLpL92r95jjilQichjrtiPCS4ab5HdwNh7g5U/uzA==}
     peerDependencies:
       '@lobehub/ui': ^5.0.0
       antd: 6.3.5
@@ -12658,10 +12658,6 @@ packages:
     resolution: {integrity: sha512-s8KNnmIDTBoD0p9uJ9uD0XY38SCeBOtj0UMXyQSLg1Ypfrfj8+dAvwsLjYQkQ2GjhVtp2HrnF5cJzMhBjfD8HA==}
     engines: {node: '>= 10'}
 
-  file-type@21.3.2:
-    resolution: {integrity: sha512-DLkUvGwep3poOV2wpzbHCOnSKGk1LzyXTv+aHFgN2VFl96wnp8YA9YjO2qPzg5PuL8q/SW9Pdi6WTkYOIh995w==}
-    engines: {node: '>=20'}
-
   file-type@21.3.4:
     resolution: {integrity: sha512-Ievi/yy8DS3ygGvT47PjSfdFoX+2isQueoYP1cntFW1JLYAuS4GD7NUPGg4zv2iZfV52uDyk5w5Z0TdpRS6Q1g==}
     engines: {node: '>=20'}
@@ -16266,7 +16262,7 @@ packages:
     resolution: {integrity: sha512-FPX16mQLyEjLzEuuJtxA8X3ejDLNGGEG503d2YGZR5Ask1SpDN8KmZUMpzCvyalWRywAn1n1VOA5dcqfCLo5rg==}
     engines: {node: '>=12'}
     peerDependencies:
-      postcss: ^8.3.5
+      postcss: 8.5.15
 
   postcss-load-config@6.0.1:
     resolution: {integrity: sha512-oPtTM4oerL+UXmx+93ytZVN82RrlY/wPUV8IeDxFrzIjXOLF1pN+EmKPLbubvKHT2HC20xXsCAH2Z+CKV6Oz/g==}
@@ -16293,7 +16289,7 @@ packages:
     resolution: {integrity: sha512-0AioNCJZ2DPYz5ABT6bddIqlhgwhpHZ/l65YAYo0BCIn0xiDpsnTHz0gnoTGk0OXZW0JRs+cDwL8u/teRdz+8A==}
     engines: {node: '>=18.0'}
     peerDependencies:
-      postcss: ^8.4.31
+      postcss: 8.5.15
 
   postcss-selector-parser@7.1.1:
     resolution: {integrity: sha512-orRsuYpJVw8LdAwqqLykBj9ecS5/cRHlI5+nvTo8LcCKmzDmqVORXtOIYEEQuL9D4BxtA1lm5isAqzQZCoQ6Eg==}
@@ -16302,20 +16298,16 @@ packages:
   postcss-sorting@8.0.2:
     resolution: {integrity: sha512-M9dkSrmU00t/jK7rF6BZSZauA5MAaBW4i5EnJXspMwt4iqTh/L9j6fgMnbElEOfyRyfLfVbIHj/R52zHzAPe1Q==}
     peerDependencies:
-      postcss: ^8.4.20
+      postcss: 8.5.15
 
   postcss-styled-syntax@0.7.1:
     resolution: {integrity: sha512-V5Iy8JztqXOKnTojdytF8IJ3zDXyVR927XftBPinJa3TnKdChGvGzUNEYlNuDtR+iqpuFkwJMgZdaJarYfGFCg==}
     engines: {node: '>=14.17'}
     peerDependencies:
-      postcss: ^8.5.1
+      postcss: 8.5.15
 
   postcss-value-parser@4.2.0:
     resolution: {integrity: sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==}
-
-  postcss@8.4.31:
-    resolution: {integrity: sha512-PS08Iboia9mts/2ygV3eLpY5ghnUcfLV/EXTOW1E2qYxJKGGBUtNjN76FYHnMs36RmARn41bC0AZmn+rR0OVpQ==}
-    engines: {node: ^10 || ^12 || >=14}
 
   postcss@8.5.15:
     resolution: {integrity: sha512-FfR8sjd4em2T6fb3I2MwAJU7HWVMr9zba+enmQeeWFfCbm+UOC/0X4DS8XtpUTMwWMGbjKYP7xjfNekzyGmB3A==}
@@ -18233,7 +18225,7 @@ packages:
   stylelint-less@3.0.1:
     resolution: {integrity: sha512-6GkZ4jhmReXxX61IiNaniZFuyTzYTTC4HvRLNNok883d1ux/wUodM1uik+iAHZM1VSCwNASaj0Th6ZX46WZLMw==}
     peerDependencies:
-      postcss: ^8.4.31
+      postcss: 8.5.15
       stylelint: ^16.0.2
 
   stylelint-order@6.0.4:
@@ -18724,7 +18716,7 @@ packages:
     peerDependencies:
       '@microsoft/api-extractor': ^7.36.0
       '@swc/core': ^1
-      postcss: ^8.4.12
+      postcss: 8.5.15
       typescript: '>=4.5.0'
     peerDependenciesMeta:
       '@microsoft/api-extractor':
@@ -24117,7 +24109,7 @@ snapshots:
       '@commitlint/cli': 19.8.1(@types/node@24.12.4)(typescript@5.9.3)
       commitlint-config-gitmoji: 2.3.1
 
-  '@lobehub/editor@4.10.3(@lobehub/ui@5.14.1)(@types/mdast@4.0.4)(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(unified@11.0.5)':
+  '@lobehub/editor@4.10.6(@lobehub/ui@5.14.1)(@types/mdast@4.0.4)(@types/react@19.2.14)(antd@6.3.5(date-fns@4.2.1)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.39.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(unified@11.0.5)':
     dependencies:
       '@floating-ui/dom': 1.7.6
       '@floating-ui/react': 0.27.19(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -31720,15 +31712,6 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  file-type@21.3.2:
-    dependencies:
-      '@tokenizer/inflate': 0.4.1
-      strtok3: 10.3.5
-      token-types: 6.1.2
-      uint8array-extras: 1.5.0
-    transitivePeerDependencies:
-      - supports-color
-
   file-type@21.3.4:
     dependencies:
       '@tokenizer/inflate': 0.4.1
@@ -32727,7 +32710,7 @@ snapshots:
       debug: 4.3.4
       dotenv: 16.4.5
       extend: 3.0.2
-      file-type: 21.3.2
+      file-type: 21.3.4
       form-data: 4.0.4
       isstream: 0.1.2
       jsonwebtoken: 9.0.3
@@ -34947,7 +34930,7 @@ snapshots:
       '@swc/helpers': 0.5.15
       baseline-browser-mapping: 2.10.31
       caniuse-lite: 1.0.30001793
-      postcss: 8.4.31
+      postcss: 8.5.15
       react: 19.2.5
       react-dom: 19.2.5(react@19.2.5)
       styled-jsx: 5.1.6(@babel/core@7.29.0)(react@19.2.5)
@@ -35787,12 +35770,6 @@ snapshots:
       typescript: 5.9.3
 
   postcss-value-parser@4.2.0: {}
-
-  postcss@8.4.31:
-    dependencies:
-      nanoid: 3.3.12
-      picocolors: 1.1.1
-      source-map-js: 1.2.1
 
   postcss@8.5.15:
     dependencies:
@@ -36844,7 +36821,7 @@ snapshots:
   remark-lint-frontmatter-schema@3.15.4:
     dependencies:
       '@apidevtools/json-schema-ref-parser': 11.2.0
-      ajv: 8.18.0
+      ajv: 8.20.0
       ajv-formats: 3.0.1(ajv@8.20.0)
       find-up: 6.3.0
       minimatch: 10.2.5
