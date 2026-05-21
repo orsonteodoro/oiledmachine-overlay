@@ -506,7 +506,7 @@
     - Hardened memory
       - nonewpriv                       # Disable privilege escalation by SUID + execve
       - noexec <path>                   # Prevent execution in drop zones (e.g. /tmp)
-      - memory-deny-write-execute       # Prevent memory mappings in code reuse attack which ROP reuses gadgets produced by compiler.
+      - memory-deny-write-execute       # Prevent memory mappings in code reuse attack which the ROP attack relies on.
                                         # Kill processes that attempt to violate W^X.
     - Reduce the number of LotL executables
       - private-bin=<list>              # A comma separated whitelist of <cli-name> needed to reduce/eliminate ROP command gadgets
