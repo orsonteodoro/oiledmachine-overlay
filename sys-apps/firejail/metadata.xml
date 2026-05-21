@@ -170,7 +170,6 @@
 
 
 
-
     Examples:
 
     # DISCLAIMER:  These are fictional/hypothetical examples.  You must verify
@@ -277,6 +276,16 @@
     Contents of ~/.config/firejail/zoom.local:
 
     # Remove the # character before the command to use the rule.
+
+    #
+    #   Home (/home/<user-name>) differences
+    #
+    # Protection implementation    # Weaknesses                                   # Strengths                           
+    # ---                          # ---                                          # ---                                 
+    # private                      # potential as a drop zone                     # privacy, isolation                  
+    # protected persistent profile # potential for information disclosure if lazy # reduced exfiltration surface        
+    # blacklist ${HOME}            # possibly load time crash                     # no r/w/lh access, no drop zone in it
+    #
 
     # To sandbox home (aka incognito mode), add to globals.local:
     # private
@@ -406,10 +415,15 @@
     Low hanging fruit to test LotL mitigation:
 
     - awk, grep, sed -- for exfiltration or tampering
-    - bash, perl, php, python, ruby, sh -- scripting commands for automating reproducible exploitation
-    - clang, gcc -- compiler commands to build kernel exploits
-    - curl, scp, ssh, ftp, tftp, wget -- network commands to exfiltrate or install exploits in drop zones
-    - dd - for exfiltration, reconaissance, sabotage, destroying attacker evidence
+    - bash, perl, php, python, ruby, sh -- scripting commands for automating
+      reproducible exploitation
+    - clang, gcc -- compiler commands to build exploits or malware,
+      exfiltration with precise control, reconaissance tools, bypass hardening,
+      to bypass antivirus/malware scanners
+    - curl, scp, ssh, ftp, tftp, wget -- network commands to exfiltrate or
+      install exploits in drop zones
+    - dd - for exfiltration, reconaissance, sabotage, destroying attacker
+      evidence
     - cat, head, tail -- for reconnaisance or exfiltration
     - find, ls -- for reconnaisance
     - tar, gunzip, unzip -- for unpacking exploits
