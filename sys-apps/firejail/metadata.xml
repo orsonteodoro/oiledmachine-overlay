@@ -130,7 +130,7 @@
        - for temporary time limited per user per app whitelisting
        - use `noblacklist <path>`, `whitelist <path>`
        - use `ignore <sandbox-restriction-command>`
-       - for fixing Firejail profiles
+       - for fixing overly restricted Firejail profiles
        - for enabling privileged access or granting temporary time limited full access
        - highest precedence, overwrites others
 
@@ -139,6 +139,7 @@
        - use `blacklist <path>`
        - use `<sandbox-restriction-command>`
        - use per-app sandbox restrictions
+       - for fixing overly permissive Firejail profiles
        - for degrading capabilities or limiting access (assumed current security architecture design use case)
        - for filejail sandboxing as root/portage (unsupported for this ebuild-package) whitelisting
 
