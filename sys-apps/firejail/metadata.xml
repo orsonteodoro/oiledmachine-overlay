@@ -131,15 +131,17 @@
        - use `noblacklist <path>`, `whitelist <path>`
        - use `ignore <sandbox-restriction-command>`
        - for fixing Firejail profiles
-       - enabling privileged access or granting temporary time limited full access
+       - for enabling privileged access or granting temporary time limited full access
        - highest precedence, overwrites others
 
     2. /etc/firejail/<cli-name>.local
        - for temporary time limited systemwide per app whitelisting
        - use `blacklist <path>`
+       - use `blacklist <path>`
        - use `<sandbox-restriction-command>`
        - use per-app sandbox restrictions
-       - for degrading capabilities or limiting access
+       - for degrading capabilities or limiting access (assumed current security architecture design use case)
+       - for filejail sandboxing as root/portage (unsupported for this ebuild-package) whitelisting
 
     3. ~/.config/firejail/default.local
        - for per-user profileless blacklisting fallback
@@ -162,6 +164,7 @@
        - for systemwide configuration blacklisting
        - use `blacklist <path>`
        - for blacklisting sensitive data (e.g. API keys, AI keys, server keys)
+       - for blacklisting weaponizable programs
        - for degrading capabilities or limiting access
        - lowest precedence, evaluated first
 
