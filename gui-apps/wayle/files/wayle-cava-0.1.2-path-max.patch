@@ -1,0 +1,13 @@
+--- a/cargo_home/gentoo/wayle-cava-0.1.2/cava/include/cava/config.h.orig	2006-07-23 18:21:28.000000000 -0700
++++ b/cargo_home/gentoo/wayle-cava-0.1.2/cava/include/cava/config.h	2026-05-21 22:33:16.900224873 -0700
+@@ -5,6 +5,10 @@
+ #include <stdio.h>
+ #include <string.h>
+ 
++#ifndef PATH_MAX
++#define PATH_MAX 4096
++#endif
++
+ #ifdef _WIN32
+ #include "windows.h"
+ #endif

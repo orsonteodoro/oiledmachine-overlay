@@ -5,10 +5,24 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CXX_STANDARD=20
 RUSTFLAGS_HARDENED_USE_CASES="untrusted-data"
 RUST_MAX_VER="1.95.0"
 RUST_MIN_VER="1.95.0" # LLVM 22.1
 RUSTFLAGS_HARDENED_USE_CASES="untrusted-data"
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX20[@]}" # 13-16
+)
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
+
+# See use_cxx23 in build/config/compiler/compiler.gni and build/config/compiler/BUILD.gn
+inherit libcxx-compat
+LLVM_COMPAT=(
+	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}" # 20-22
+)
+LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
 declare -A GIT_CRATES=(
 )
@@ -27,7 +41,6 @@ wayle-styling-0.3.0
 wayle-widgets-0.3.0
 "
 
-# Use `cargo update 'futures@0.3.31'` to pin version
 CRATES="
 adler2-2.0.1
 ahash-0.8.12
@@ -143,16 +156,16 @@ fragile-2.0.1
 fsevent-sys-4.1.0
 fs_extra-1.3.0
 funty-2.0.0
-futures-0.3.32
-futures-channel-0.3.32
-futures-core-0.3.32
-futures-executor-0.3.32
-futures-io-0.3.32
+futures-0.3.31
+futures-channel-0.3.31
+futures-core-0.3.31
+futures-executor-0.3.31
+futures-io-0.3.31
 futures-lite-2.6.1
-futures-macro-0.3.32
-futures-sink-0.3.32
-futures-task-0.3.32
-futures-util-0.3.32
+futures-macro-0.3.31
+futures-sink-0.3.31
+futures-task-0.3.31
+futures-util-0.3.31
 gdk4-0.10.3
 gdk4-sys-0.10.3
 gdk-pixbuf-0.21.5
@@ -575,7 +588,7 @@ zvariant_derive-5.9.2
 zvariant_utils-3.3.0
 "
 
-inherit cargo cflags-hardened flag-o-matic-om rust rustflags-hardened xdg
+inherit cargo cflags-hardened flag-o-matic-om libcxx-slot libstdcxx-slot rust rustflags-hardened xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
@@ -627,6 +640,29 @@ DOCS=( "README.md" )
 
 pkg_setup() {
 	rust_pkg_setup
+
+	libcxx-slot_verify
+	libstdcxx-slot_verify
+
+	# Clang (system)
+	local s
+	for s in "${LLVM_COMPAT[@]}" ; do
+		if use "llvm_slot_${s}" ; then
+			slot="${s}"
+			break
+		fi
+	done
+
+	LLVM_SLOT="${slot}"
+
+einfo "PATH:  ${PATH} (Before)"
+	export PATH=$(echo "${PATH}" \
+		| tr ":" "\n" \
+		| sed -e "/llvm/d" \
+		| sed -e "/llvm-build/d" \
+		| tr "\n" ":" \
+		| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin:${PWD}/install/bin|g")
+einfo "PATH:  ${PATH} (After)"
 }
 
 src_unpack() {
@@ -644,17 +680,24 @@ src_unpack() {
 		|| die
 }
 
+src_prepare() {
+	default
+	pushd "${WORKDIR}" || die
+		eapply "${FILESDIR}/wayle-cava-0.1.2-path-max.patch"
+	popd || die
+}
+
 src_configure() {
 	export CARGO_TERM_VERBOSE="true"
-	export CC="clang"
-	export CXX="clang++"
+	export CC="${CHOST}-gcc" # Prevent GCC atomic issue with Clang
+	export CXX="${CHOST}-g++"
 	export CPP="${CC} -E"
 	fix_mb_len_max
-	export CFLAGS+=" -include limits.h"
-	export CXXFLAGS+=" -include limits.h"
 	unset LD
 	cflags-hardened_append
 	rustflags-hardened_append
+	export LLVM_CONFIG_PATH="/usr/lib/llvm/${LLVM_SLOT}/bin/llvm-config"
+	export LIBCLANG_PATH="/usr/lib/llvm/${LLVM_SLOT}/$(get_libdir)"
 	cargo_src_configure
 einfo "CC:  ${CC}"
 einfo "CXX:  ${CXX}"
@@ -672,7 +715,7 @@ src_compile() {
 }
 
 src_install() {
-	cargo_src_install
+	cargo_install --path ./wayle --root "${D}/usr"
 	docinto "licenses"
 	dodoc "LICENSE"
 }
