@@ -617,7 +617,9 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
-IUSE+=" "
+IUSE+="
+ebuild_revision_1
+"
 RDEPEND+="
 	>=gui-libs/gtk-4.12:4
 	>=gui-libs/gtk4-layer-shell-1.0
@@ -715,7 +717,7 @@ src_compile() {
 }
 
 src_install() {
-	cargo_install --path ./wayle --root "${D}/usr"
+	cargo_src_install --path ./wayle --root "${D}/usr"
 	docinto "licenses"
 	dodoc "LICENSE"
 }
