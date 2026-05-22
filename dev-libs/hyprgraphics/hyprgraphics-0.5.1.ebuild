@@ -3,6 +3,7 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CXX_STANDARD=26
 
 inherit libstdcxx-compat
@@ -26,7 +27,7 @@ LICENSE="BSD"
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE+="
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND="
 	>=gnome-base/librsvg-2.61.4
