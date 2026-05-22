@@ -588,7 +588,7 @@ zvariant_derive-5.9.2
 zvariant_utils-3.3.0
 "
 
-inherit cargo cflags-hardened flag-o-matic-om libcxx-slot libstdcxx-slot lcnr rust rustflags-hardened xdg
+inherit cargo cflags-hardened flag-o-matic-om libcxx-slot libstdcxx-slot lcnr rust rustflags-hardened systemd xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
@@ -717,7 +717,36 @@ src_compile() {
 }
 
 src_install() {
-	cargo_src_install --path "./wayle"
+	# Main binary (the shell/daemon)
+	"${CARGO}" install \
+		--path "./wayle" \
+		--locked \
+		--features default \
+		|| die
+
+	# Settings GUI (what was missing)
+	"${CARGO}" install --path ./crates/wayle-settings \
+		--root "${D}/usr" \
+		--locked \
+		|| die
+
+	# Install resources (icons, config examples, etc.)
+	if [[ -d resources ]]; then
+		insinto "/usr/share/wayle"
+		doins -r "resources/"*
+	fi
+
+	# Desktop file + icons (if they exist in resources)
+	if [[ -f "resources/com.wayle.settings.desktop" ]]; then
+		domenu "resources/com.wayle.settings.desktop"
+	fi
+
+	doicon "wayle-settings.svg"
+
+	if [[ -f "resources/wayle.service" ]] || [[ -f "wayle.service" ]]; then
+		systemd_douserunit "resources/wayle.service" || die
+	fi
+
 	docinto "licenses"
 	dodoc "LICENSE"
 
