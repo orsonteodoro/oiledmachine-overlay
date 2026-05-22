@@ -1,0 +1,100 @@
+# Copyright 2025-2026 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+# For deps see nix/package.nix
+
+PYTHON_COMPAT=( "python3_"{12..14} )
+
+inherit optfeature python-single-r1
+
+if [[ "${PV}" =~ "9999" ]]; then
+	EGIT_BRANCH="legacy-v4"
+	EGIT_REPO_URI="https://github.com/noctalia-dev/noctalia-shell.git"
+	FALLBACK_COMMIT="3abfa1fc09b62dc4cdeeb7b787886f075696f0b7" # May 13, 2026
+	IUSE+=" fallback-commit"
+	inherit git-r3
+else
+	KEYWORDS="~amd64"
+	S="${WORKDIR}/noctalia-release"
+	SRC_URI="
+https://github.com/noctalia-dev/noctalia-shell/archive/refs/tags/v${PV}.tar.gz -> ${P}.tag.tar.gz
+	"
+fi
+
+DESCRIPTION="A sleek and minimal desktop shell thoughtfully crafted for Wayland"
+HOMEPAGE="
+	https://noctalia.dev/
+	https://github.com/noctalia-dev/noctalia-shell
+"
+LICENSE="MIT"
+SLOT="0/4" # 4 = stable, Qt Quickshell based; 5 = pre-alpha GLES based
+IUSE="calendar wayland X"
+REQUIRED_USE="
+	${PYTHON_REQUIRED_USE}
+	|| (
+		wayland
+		X
+	)
+"
+RDEPEND="
+	${PYTHON_DEPS}
+	app-misc/cliphist
+	app-misc/brightnessctl
+	app-misc/ddcutil
+	dev-util/wayland-scanner
+	gui-apps/wl-clipboard
+	gui-apps/wlr-randr
+	gui-apps/wlsunset
+	media-gfx/imagemagick
+	net-misc/wget
+	calendar? (
+		gnome-extra/evolution-data-server[introspection]
+		dev-libs/libical[introspection]
+		dev-libs/glib:2[introspection]
+		dev-libs/glib:=
+		net-libs/libsoup:3.0[introspection]
+		net-libs/libsoup:=
+		dev-libs/json-glib[introspection]
+		dev-libs/gobject-introspection
+	)
+"
+DEPEND+="
+	${RDEPEND}
+	(
+		!gui-apps/quickshell
+		gui-apps/noctalia-qs[wayland?,X?]
+	)
+	dev-qt/qtbase:6[gui,wayland?,X?]
+	dev-qt/qtbase:=
+	dev-qt/qtmultimedia:6
+	dev-qt/qtmultimedia:=
+"
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]]; then
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+}
+
+src_install() {
+	insinto "/etc/xdg/quickshell/noctalia-shell"
+	insopts "-m0755"
+	doins -r .
+
+	python_optimize "${ED}/etc/xdg/quickshell/${PN}/Scripts/python/src"
+	python_fix_shebang "${ED}/etc/xdg/quickshell/${PN}/Scripts/python/src"
+}
+
+pkg_postinst() {
+	:
+#	optfeature "clipboard history support" "app-misc/cliphist"
+#	optfeature "external display brightness control" "app-misc/ddcutil"
+#	optfeature "night light functionality" "gui-apps/wlsunset"
+#	optfeature "power profile management" "sys-power/power-profiles-daemon"
+}
