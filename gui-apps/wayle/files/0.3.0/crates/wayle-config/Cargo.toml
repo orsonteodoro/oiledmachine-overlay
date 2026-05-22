@@ -1,0 +1,33 @@
+[package]
+name = "wayle-config"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+description = "Configuration management for Wayle"
+repository.workspace = true
+license.workspace = true
+
+[dependencies]
+dotenvy.workspace = true
+futures.workspace = true
+glob.workspace = true
+inventory.workspace = true
+notify.workspace = true
+owo-colors = "4.2.3"
+schemars.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+serde_json_path.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+tokio-stream.workspace = true
+toml.workspace = true
+tracing.workspace = true
+wayle-core.workspace = true
+wayle-derive.workspace = true
+
+[features]
+default = []
+
+[lints]
+workspace = true

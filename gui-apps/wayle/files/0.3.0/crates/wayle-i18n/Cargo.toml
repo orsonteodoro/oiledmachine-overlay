@@ -1,0 +1,21 @@
+[package]
+name = "wayle-i18n"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[dependencies]
+i18n-embed.workspace = true
+i18n-embed-fl.workspace = true
+rust-embed.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+unic-langid.workspace = true
+
+[dev-dependencies]
+wayle-config = { path = "../wayle-config" }
+
+[lints]
+workspace = true
