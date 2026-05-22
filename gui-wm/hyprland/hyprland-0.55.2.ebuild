@@ -27,7 +27,7 @@ LLVM_COMPAT=(
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)" # Skip placeholder
 
-inherit abseil-cpp cflags-hardened check-compiler-switch cmake libcxx-slot libstdcxx-slot python-single-r1 toolchain-funcs re2
+inherit abseil-cpp cflags-hardened check-compiler-switch cmake libcxx-slot libstdcxx-slot optfeature python-single-r1 toolchain-funcs re2
 
 DESCRIPTION="A dynamic tiling Wayland compositor that doesn't sacrifice on its looks"
 HOMEPAGE="https://github.com/hyprwm/Hyprland"
@@ -191,6 +191,46 @@ src_configure() {
 
 src_install() {
 	cmake_src_install
+}
+
+pkg_postinst() {
+ewarn "This main package does not install a clock, terminal, file manager by default."
+einfo
+einfo
+einfo "Edit the default keybindings and my programs sections and"
+einfo "use the hyprland.lua as a starter config (RECOMMENDED):"
+einfo
+einfo "mkdir -p ~/.config/hypr"
+einfo "cat /usr/share/hypr/hyprland.lua > ~/.config/hypr/hyprland.conf"
+einfo
+einfo
+einfo "The cheat sheet for hyprland.lua keybindings:"
+einfo
+einfo "  SUPER + R -- Runs app launcher"
+einfo "  SUPER + Q -- Runs terminal"
+einfo "  SUPER + left key -- Focus on left window"
+einfo "  SUPER + right key -- Focus on right window"
+einfo "  SUPER + top key -- Focus on top window"
+einfo "  SUPER + bottom key -- Focus on bottom window"
+einfo "  SUPER + M -- Quit"
+einfo "  SUPER + SHIFT + 1 -- Move window to virtual desktop 1"
+einfo "  SUPER + SHIFT + 2 -- Move window to virtual desktop 2"
+einfo "  ..."
+einfo "  SUPER + SHIFT + 9 -- Move window to virtual desktop 9"
+einfo "  SUPER + 1 -- Use virtual desktop 1"
+einfo "  SUPER + 2 -- Use virtual desktop 2"
+einfo "  ..."
+einfo "  SUPER + 9 -- Use virtual desktop 9"
+einfo
+einfo
+einfo "Hyprlang is deprecated and will be removed in the future."
+einfo "Migrate the config to the newest LUA based config."
+einfo
+	optfeature_header "Install optional packages:"
+	optfeature "a memory safe Rust based GTK4 status bar with clock" "gui-apps/wayle"
+	optfeature "a Qt based status bar with clock with plugin support" "gui-apps/noctalia-shell"
+	optfeature "a dmenu style app lanucher" "dev-libs/bemenu"
+	optfeature "a memory safe Rust based terminal" "x11-terms/alacritty"
 }
 
 # OILEDMACHINE-OVERLAY-TEST:  INTERACTIVE 0.51.1 PASSED (20250815)
