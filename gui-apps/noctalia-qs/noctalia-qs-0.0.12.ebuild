@@ -42,12 +42,13 @@ HOMEPAGE="
 	https://github.com/noctalia-dev/noctalia-qs
 "
 LICENSE="LGPL-3"
-SLOT="0"
+SLOT="0/4"
 IUSE+="
 +bluetooth +crash-handler +dbus +dwl +hyprland +greetd +i3 +jemalloc
 +layer-shell +mpris +networkmanager +niri +notifications +pam +pipewire
 +policykit +screencopy +session-lock +sockets test +toplevel-management
 +tray +upower +wayland +X
+ebuild_revision_1
 "
 REQUIRED_USE="
 	dbus? (

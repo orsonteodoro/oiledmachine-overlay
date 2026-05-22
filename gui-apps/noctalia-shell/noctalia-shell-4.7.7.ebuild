@@ -64,7 +64,8 @@ DEPEND+="
 	${RDEPEND}
 	(
 		!gui-apps/quickshell
-		gui-apps/noctalia-qs[wayland?,X?]
+		gui-apps/noctalia-qs:${SLOT}[wayland?,X?]
+		gui-apps/noctalia-qs:=
 	)
 	dev-qt/qtbase:6[gui,wayland?,X?]
 	dev-qt/qtbase:=
