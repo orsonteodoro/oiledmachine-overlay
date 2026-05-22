@@ -222,10 +222,10 @@ einfo "  SUPER + 2 -- Use virtual desktop 2"
 einfo "  ..."
 einfo "  SUPER + 9 -- Use virtual desktop 9"
 einfo
-einfo
-einfo "Hyprlang is deprecated and will be removed in the future."
-einfo "Migrate the config to the newest LUA based config."
-einfo
+ewarn
+ewarn "Hyprlang is deprecated and will be removed in the future."
+ewarn "Migrate the config to the newest LUA based config."
+ewarn
 	optfeature_header "Install optional packages:"
 	optfeature "a memory safe Rust based GTK4 status bar with clock" "gui-apps/wayle"
 	optfeature "a Qt based status bar with clock with plugin support" "gui-apps/noctalia-shell"
