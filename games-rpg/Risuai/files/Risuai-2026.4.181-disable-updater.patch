@@ -1,0 +1,38 @@
+--- a/src-tauri/tauri.conf.json.orig	2026-04-18 06:16:46.000000000 -0700
++++ b/src-tauri/tauri.conf.json	2026-05-22 07:23:33.867154935 -0700
+@@ -17,8 +17,8 @@
+     "resources": [
+       "src-python/*"
+     ],
+-    "targets": ["deb", "rpm", "appimage", "nsis", "app", "dmg"],
+-    "createUpdaterArtifacts": true,
++    "targets": ["deb", "rpm", "nsis", "app", "dmg"],
++    "createUpdaterArtifacts": false,
+     "fileAssociations": [
+       {
+         "ext": [
+@@ -33,13 +33,7 @@
+   "identifier": "co.aiclient.risu",
+   "plugins": {
+     "updater": {
+-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDU2ODMzOTIxMDMxOTY1MUYKUldRZlpSa0RJVG1EVmx5Vm1WYlhFM29HMEJrUTRrYmg5dDQ0RFpvdUphNDdxQmVlWXJHVmV5TEYK",
+-      "endpoints": [
+-        "https://github.com/kwaroran/RisuAI/releases/latest/download/latest.json"
+-      ],
+-      "windows": {
+-        "installMode": "passive"
+-      }
++      "active": false
+     },
+     "deep-link": {
+       "desktop": {
+--- Risuai-2026.4.181/src-tauri/src/main.rs.orig	2026-04-18 06:16:46.000000000 -0700
++++ Risuai-2026.4.181/src-tauri/src/main.rs	2026-05-22 09:06:00.278172854 -0700
+@@ -582,7 +582,6 @@ fn main() {
+         .plugin(tauri_plugin_deep_link::init())
+         .plugin(tauri_plugin_shell::init())
+         .plugin(tauri_plugin_process::init())
+-        .plugin(tauri_plugin_updater::Builder::new().build())
+         .plugin(tauri_plugin_dialog::init())
+         .plugin(tauri_plugin_os::init())
+         .plugin(tauri_plugin_fs::init())
