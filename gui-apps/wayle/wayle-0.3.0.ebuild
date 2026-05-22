@@ -717,7 +717,7 @@ src_compile() {
 }
 
 src_install() {
-	cargo_src_install --path ./wayle --root "${D}/usr"
+	cargo_src_install --path "./wayle"
 	docinto "licenses"
 	dodoc "LICENSE"
 }
