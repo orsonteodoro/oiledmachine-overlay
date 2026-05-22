@@ -588,7 +588,7 @@ zvariant_derive-5.9.2
 zvariant_utils-3.3.0
 "
 
-inherit cargo cflags-hardened flag-o-matic-om libcxx-slot libstdcxx-slot rust rustflags-hardened xdg
+inherit cargo cflags-hardened flag-o-matic-om libcxx-slot libstdcxx-slot lcnr rust rustflags-hardened xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
@@ -618,7 +618,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND+="
 	>=gui-libs/gtk-4.12:4
@@ -720,6 +720,10 @@ src_install() {
 	cargo_src_install --path "./wayle"
 	docinto "licenses"
 	dodoc "LICENSE"
+
+	LCNR_SOURCE="${WORKDIR}/cargo_home/gentoo"
+	LCNR_TAG="third_party"
+        lcnr_install_files
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
