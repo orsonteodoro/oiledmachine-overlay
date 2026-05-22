@@ -868,7 +868,7 @@ _PATCHES=(
 	# Disable signing which makes it a fatal error.
 	# We don't use auto update because of supply chain attacks and to have
 	# the distro package manager have more control.
-	"A${FILESDIR}/${PN}-2026.4.181-disable-updater.patch"
+	"${FILESDIR}/${PN}-2026.4.181-disable-updater.patch"
 
 	"${FILESDIR}/${PN}-2026.4.181-hardcoded-paths.patch"
 )
