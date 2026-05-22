@@ -618,6 +618,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
+doc
 ebuild_revision_2
 "
 RDEPEND+="
@@ -737,13 +738,13 @@ src_install() {
 	fi
 
 	# Desktop file + icons (if they exist in resources)
-	if [[ -f "resources/com.wayle.settings.desktop" ]]; then
+	if [[ -f "resources/com.wayle.settings.desktop" ]] ; then
 		domenu "resources/com.wayle.settings.desktop"
 	fi
 
 	doicon "wayle-settings.svg"
 
-	if [[ -f "resources/wayle.service" ]] || [[ -f "wayle.service" ]]; then
+	if use doc && [[ -f "resources/wayle.service" ]] ; then
 		systemd_douserunit "resources/wayle.service" || die
 	fi
 
