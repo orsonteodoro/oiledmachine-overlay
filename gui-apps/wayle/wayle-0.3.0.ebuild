@@ -4,6 +4,9 @@
 
 EAPI=8
 
+# AI inference was used for obtaining info for the patch.
+# This ebuild contains AI generated code.
+
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CXX_STANDARD=20
 RUSTFLAGS_HARDENED_USE_CASES="untrusted-data"
