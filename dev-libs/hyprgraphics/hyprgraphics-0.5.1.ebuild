@@ -15,7 +15,7 @@ LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX26[@]/llvm_slot_}
 )
 
-inherit cmake libcxx-slot libstdcxx-slot
+inherit cflags-hardened cmake libcxx-slot libstdcxx-slot
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 DESCRIPTION="Hyprland graphics / resource utilities"
@@ -25,7 +25,9 @@ SRC_URI="https://github.com/hyprwm/${PN}/archive/v${PV}.tar.gz -> ${P}.gh.tar.gz
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="~amd64"
-
+IUSE+="
+ebuild_revision_1
+"
 RDEPEND="
 	>=gnome-base/librsvg-2.61.4
 	>=gui-libs/hyprutils-0.1.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
@@ -57,4 +59,9 @@ BDEPEND="
 pkg_setup() {
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+}
+
+src_configure() {
+	cflags-hardened_append
+	cmake_src_configure
 }
