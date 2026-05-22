@@ -4,6 +4,8 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
+RUSTFLAGS_HARDENED_USE_CASES="untrusted-data"
 RUST_MAX_VER="1.95.0"
 RUST_MIN_VER="1.95.0" # LLVM 22.1
 RUSTFLAGS_HARDENED_USE_CASES="untrusted-data"
@@ -573,7 +575,7 @@ zvariant_derive-5.9.2
 zvariant_utils-3.3.0
 "
 
-inherit cargo rust rustflags-hardened xdg
+inherit cargo cflags-hardened flag-o-matic-om rust rustflags-hardened xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
@@ -616,6 +618,8 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	dev-build/cmake
+	dev-vcs/git
 	llvm-core/clang
 	virtual/pkgconfig
 "
@@ -642,6 +646,24 @@ src_unpack() {
 
 src_configure() {
 	export CARGO_TERM_VERBOSE="true"
+	export CC="clang"
+	export CXX="clang++"
+	export CPP="${CC} -E"
+	fix_mb_len_max
+	export CFLAGS+=" -include limits.h"
+	export CXXFLAGS+=" -include limits.h"
+	unset LD
+	cflags-hardened_append
+	rustflags-hardened_append
+	cargo_src_configure
+einfo "CC:  ${CC}"
+einfo "CXX:  ${CXX}"
+einfo "CPP:  ${CPP}"
+einfo "LD:  ${LD}"
+einfo "CFLAGS:  ${CFLAGS}"
+einfo "CXXFLAGS:  ${CXXFLAGS}"
+einfo "CPPFLAGS:  ${CPPFLAGS}"
+einfo "LDFLAGS:  ${LDFLAGS}"
 }
 
 src_compile() {
