@@ -875,7 +875,6 @@ _PATCHES=(
 DOCS=( "README.md" )
 
 pkg_setup() {
-ewarn "This ebuild is still in development"
 	pnpm_pkg_setup
 	node-sharp_pkg_setup
 	rust_pkg_setup
