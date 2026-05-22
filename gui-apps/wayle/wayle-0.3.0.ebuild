@@ -619,7 +619,7 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 doc
-ebuild_revision_2
+ebuild_revision_3
 "
 RDEPEND+="
 	>=gui-libs/gtk-4.12:4
@@ -718,18 +718,9 @@ src_compile() {
 }
 
 src_install() {
-	# Main binary (the shell/daemon)
-	"${CARGO}" install \
-		--path "./wayle" \
-		--locked \
-		--features default \
-		|| die
-
-	# Settings GUI (what was missing)
-	"${CARGO}" install --path ./crates/wayle-settings \
-		--root "${D}/usr" \
-		--locked \
-		|| die
+	exeinto "/usr/bin"
+	doexe "target/"*"/release/wayle-settings"
+	doexe "target/"*"/release/wayle"
 
 	# Install resources (icons, config examples, etc.)
 	if [[ -d resources ]]; then
