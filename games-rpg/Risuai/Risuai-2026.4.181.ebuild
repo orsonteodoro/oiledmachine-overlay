@@ -776,7 +776,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
 ${CPU_FLAGS_X86[@]}
 ollama server tray wayland X
-ebuild_revision_21
+ebuild_revision_22
 "
 RESTRICT="mirror" # Speed up downloads
 REQUIRED_USE="
