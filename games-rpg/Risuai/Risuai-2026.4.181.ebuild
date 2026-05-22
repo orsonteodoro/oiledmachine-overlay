@@ -29,8 +29,8 @@ NODE_SLOT="22"
 PNPM_SLOT="9"
 # CI uses Rust 1.94.1
 # Lockfile deps require 1.88.0
-RUST_MAX_VER="1.88.0" # Inclusive
-RUST_MIN_VER="1.88.0" # llvm-21.1
+RUST_MAX_VER="1.91.1" # Inclusive
+RUST_MIN_VER="1.91.1" # llvm-21.1
 RUST_PV="${RUST_MIN_VER}"
 TARBALL="${P}.tar.gz"
 PNPM_TARBALL="${TARBALL}"
@@ -1318,7 +1318,17 @@ einfo "The Ollama settings found at (Settings > Chat Bot > Model > Model >"
 einfo "Show Unrecommended Settings checked) must be manually changed.  The"
 einfo "default URI is http://localhost:11434"
 einfo
+einfo "Example waifu models:  lixi, luminaid, stheno"
+einfo
 	fi
+ewarn
+ewarn "The text in the chat may be difficult to read."
+ewarn
+ewarn "Use these settings to fix:"
+ewarn "Theme:  Waifulike or Standard Risu"
+ewarn "Color scheme:  Default"
+ewarn "Text color:  High contrast"
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
@@ -1331,4 +1341,5 @@ einfo
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (166.1.0, 20250810) with rust 1.85.1
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (166.3.0, 20251004) with rust 1.85.1
 # OILEDMACHINE-OVERLAY-TEST:  FAILED (2026.4.181, 20260428) with rust 1.88.0.  tiktoken wasm errors and ollama/app freezes
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (2026.4.181, 20260522) with rust 1.88.0 and js-tiktoken
 # ollama support - passed
