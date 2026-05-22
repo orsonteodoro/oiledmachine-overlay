@@ -557,7 +557,7 @@ pnpm_unpack_post() {
 		-e "s|\"better-call\": \"1.1.8\"|\"better-call\": \"1.3.5\"|g" \
 		-e "s|\"drizzle-kit\": \"^0.31.8\"|\"drizzle-kit\": \"0.31.9\"|g" \
 		-e "s|\"drizzle-orm\": \"^0.45.1\"|\"drizzle-orm\": \"0.45.2\"|g" \
-		-e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.5.7\"|g" \
+		-e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.7.0\"|g" \
 		-e "s|\"pg\": \"^8.17.2\"|\"pg\": \"8.19.0\"|g" \
 		"package.json" \
 		|| die
@@ -626,7 +626,7 @@ pnpm_unpack_post() {
 	# Pin better-auth and dependencies
 			"drizzle-orm@0.45.2"
 			"better-auth@1.6.11"
-			"fast-xml-parser@5.5.7"
+			"fast-xml-parser@5.7.0"
 			"pg@8.19.0"
 
 	# Reverse depends or transitive dependencies of better-auth
@@ -753,7 +753,7 @@ ewarn "QA:  Manually remove minimatch@<10.2.5 from ${S}/package-lock.json or ${S
 #ewarn "QA:  Manually remove fast-xml-parser@5.3.6 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove fast-xml-parser@5.3.8 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove fast-xml-parser@5.4.1 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually change fast-xml-parser: 4.x, 5.x, or earlier to fast-xml-parser: 5.5.7 depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually change fast-xml-parser: 4.x, 5.x, or earlier to fast-xml-parser: 5.7.0 depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove fast-xml-parser: 5.4.1 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove fast-xml-parser: 5.5.5 or earlier in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
@@ -789,7 +789,7 @@ ewarn "QA:  Manually remove @octokit/rest@19.0.13 from ${S}/package-lock.json or
 ewarn "QA:  Manually remove @octokit/tsconfig@1.0.2 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/types@9.3.2 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@6.1.2 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/plugin-request-log@1.0.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove @octokit/plugin-request-log@1.0.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/plugin-rest-endpoint-methods@7.2.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove js-yaml@4.1.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 
@@ -825,6 +825,9 @@ ewarn "QA:  Manually remove tar@6.2.1 in ${S}/apps/desktop/pnpm-lock.yaml"
 #ewarn "QA:  Manually change postcss from ^8.4.31 to 8.5.10 in ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove postcss@8.4.31 in ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove file-type@21.3.2 in ${S}/pnpm-lock.yaml"
+
+ewarn "QA:  Manually change '@opentelemetry/auto-instrumentations-node': specifier: 0.75.0 version: 0.75.0 in ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @opentelemetry/auto-instrumentations-node@0.67.3 in ${S}/pnpm-lock.yaml"
 
 		# DoS = Denial of Service
 		# DT = Data Tampering
@@ -887,14 +890,14 @@ ewarn "QA:  Manually remove postcss@8.4.31 in ${S}/pnpm-lock.yaml"
 			sed -i -e "s|serialize-javascript: 6.0.2|serialize-javascript: 7.0.5|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|undici: 6.21.3|undici: 7.24.5|g" "pnpm-lock.yaml" || die
 
-			sed -i -e "s|fast-xml-parser: 5.4.1|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 5.4.2|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 5.2.5|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 5.3.6|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 4.5.4|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.5.7|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.5.7\"|g" "package.json" || die
+			sed -i -e "s|fast-xml-parser: 5.4.1|fast-xml-parser: 5.7.0|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 5.4.2|fast-xml-parser: 5.7.0|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 5.2.5|fast-xml-parser: 5.7.0|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 5.3.6|fast-xml-parser: 5.7.0|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 4.5.4|fast-xml-parser: 5.7.0|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.7.0|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.7.0|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.7.0\"|g" "package.json" || die
 
 			sed -i -e "s|form-data: 2.3.3|form-data: 4.0.5|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|form-data: 2.5.5|form-data: 4.0.5|g" "pnpm-lock.yaml" || die
@@ -910,7 +913,7 @@ ewarn "QA:  Manually remove postcss@8.4.31 in ${S}/pnpm-lock.yaml"
 			sed -i -e "s|axios: 1.13.6(debug@4.4.3)|axios: 1.15.2(debug@4.4.3)|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|axios: 1.15.0(debug@4.4.3)|axios: 1.15.2(debug@4.4.3)|g" "pnpm-lock.yaml" || die
 
-			sed -i -e "s|\"fast-xml-parser\": \"5.5.6\"|\"fast-xml-parser\": \"5.5.7\"|" "package.json" || die # Fix inconsistency or possible false positive
+			sed -i -e "s|\"fast-xml-parser\": \"5.5.6\"|\"fast-xml-parser\": \"5.7.0\"|" "package.json" || die # Fix inconsistency or possible false positive
 			sed -i -e "s|file-type: 21.3.2|file-type: 21.3.4|" "apps/desktop/pnpm-lock.yaml" || die
 			sed -i -e "s|file-type: 16.5.4|file-type: 21.3.4|" "apps/desktop/pnpm-lock.yaml" || die
 			sed -i -e "s|file-type: 16.5.4|file-type: 21.3.4|" "apps/cli/pnpm-lock.yaml" || die
@@ -923,6 +926,21 @@ ewarn "QA:  Manually remove postcss@8.4.31 in ${S}/pnpm-lock.yaml"
 			sed -i -e "s|postcss: ^8.4.12|postcss: 8.5.15|" "pnpm-lock.yaml" || die
 			sed -i -e "s|postcss: ^8.3.5|postcss: 8.5.15|" "pnpm-lock.yaml" || die
 			sed -i -e "s|postcss: ^8.3.3|postcss: 8.5.15|" "apps/cli/pnpm-lock.yaml" || die
+
+			sed -i -e "s|'@tootallnate/once': 2.0.1|'@tootallnate/once': 3.0.1|" "pnpm-lock.yaml" || die
+
+			sed -i -e "s|uuid: 9.0.1|uuid: 14.0.0|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|uuid: 8.3.2|uuid: 14.0.0|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|uuid: 10.0.0|uuid: 14.0.0|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|uuid: 11.1.1|uuid: 14.0.0|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|uuid: 13.0.2|uuid: 14.0.0|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|uuid: 14.0.0|uuid: 14.0.0|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|uuid: 3.4.0|uuid: 14.0.0|g" "pnpm-lock.yaml" || die
+
+			sed -i -e "s|uuid: 13.0.2|uuid: 14.0.0|g" "apps/cli/pnpm-lock.yaml" || die
+
+			sed -i -e "s|uuid: 13.0.2|uuid: 14.0.0|g" "apps/desktop/pnpm-lock.yaml" || die
+			sed -i -e "s|uuid: 14.0.0|uuid: 14.0.0|g" "apps/desktop/pnpm-lock.yaml" || die
 		}
 
 		pnpm_patch_lockfile
@@ -973,7 +991,7 @@ ewarn "QA:  Manually remove postcss@8.4.31 in ${S}/pnpm-lock.yaml"
 													# CVE-2026-22036; ZC, DoS; Moderate
 													# CVE-2026-1527; DT, ID; Moderate
 													# CVE-2026-1528; ZC, DoS; High
-			"fast-xml-parser@5.5.7"								# CVE-2026-25896; ZC, EBR, DT, ID; Critical
+			"fast-xml-parser@5.7.0"								# CVE-2026-25896; ZC, EBR, DT, ID; Critical
 													# CVE-2026-26278; ZC, DoS; High
 													# CVE-2026-27942; ZC, VS(DoS); Low		# >= 5.3.8 or >= 4.5.4
 													# CVE-2026-33036; ZC, DoS; High
@@ -991,6 +1009,8 @@ ewarn "QA:  Manually remove postcss@8.4.31 in ${S}/pnpm-lock.yaml"
 													# CVE-2026-42044; ZC, DT, ID; Moderate
 													# CVE-2026-42264; ZC, DT, ID; High
 			"postcss@8.5.15"								# CVE-2026-41305; DT, ID; Moderate
+			"uuid@14.0.0"									# CVE-2026-41907; ZC, VS(DT); Moderate
+			"@opentelemetry/auto-instrumentations-node@0.75.0"				# CVE-2026-44902; ZC, DoS; High
 		)
 		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 
