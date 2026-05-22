@@ -875,6 +875,7 @@ _PATCHES=(
 DOCS=( "README.md" )
 
 pkg_setup() {
+	use server && ewarn "The server USE flag is in development/testing"
 	pnpm_pkg_setup
 	node-sharp_pkg_setup
 	rust_pkg_setup
