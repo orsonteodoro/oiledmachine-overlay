@@ -1,0 +1,73 @@
+Use a more robust implementation to avoid wasm init problem.
+--- Risuai-2026.4.181/src/ts/tokenizer.ts.orig	2026-04-18 06:16:46.000000000 -0700
++++ Risuai-2026.4.181/src/ts/tokenizer.ts	2026-05-22 10:59:48.647969299 -0700
+@@ -1,4 +1,4 @@
+-import type { Tiktoken } from "@dqbd/tiktoken";
++import { getEncoding } from "js-tiktoken";
+ import type { Tokenizer } from "@mlc-ai/web-tokenizers";
+ import { type groupChat, type character, type Chat, getCurrentCharacter, getDatabase } from "./storage/database.svelte";
+ import type { MultiModal, OpenAIChat } from "./process/index.svelte";
+@@ -182,10 +182,11 @@ export async function encode(data:string
+ 
+ type tokenizerType = 'novellist'|'claude'|'novelai'|'llama'|'mistral'|'llama3'|'gemma'|'cohere'|'googleCloud'|'DeepSeek'
+ 
+-let tikParser:Tiktoken = null
++// Cache for the tokenizer
++let tikParser: any = null;
++let lastTikModel: string = "";
+ let tokenizersTokenizer:Tokenizer = null
+ let tokenizersType:tokenizerType = null
+-let lastTikModel = 'cl100k_base'
+ 
+ let googleCloudTokenizedCache = new Map<string, number>()
+ 
+@@ -235,32 +236,25 @@ async function gemmaTokenize(text:string
+     return gemmaTokenizer.encode(text)
+ }
+ 
+-async function tikJS(text:string, model='cl100k_base') {
+-    if(!tikParser || lastTikModel !== model){
+-        tikParser?.free()
+-        if(model === 'cl100k_base'){
+-            const {Tiktoken} = await import('@dqbd/tiktoken')
+-            const cl100k_base = await import("@dqbd/tiktoken/encoders/cl100k_base.json");
+-            lastTikModel = model   
+-        
+-            tikParser = new Tiktoken(
+-                cl100k_base.bpe_ranks,
+-                cl100k_base.special_tokens,
+-                cl100k_base.pat_str
+-            );
+-        }
+-        if(model === 'o200k_base'){
+-            const {Tiktoken} = await import('@dqbd/tiktoken')
+-            const o200k_base = await import("src/etc/o200k_base.json");
+-            lastTikModel = model
+-            tikParser = new Tiktoken(
+-                o200k_base.bpe_ranks,
+-                o200k_base.special_tokens,
+-                o200k_base.pat_str
+-            );
++async function tikJS(text: string, model: string = 'cl100k_base') {
++    // Only recreate tokenizer if model changed
++    if (!tikParser || lastTikModel !== model) {
++        try {
++            tikParser = getEncoding(model);
++            lastTikModel = model;
++        } catch (err) {
++            console.error("Failed to load tokenizer for model:", model, err);
++            // Fallback to cl100k_base
++            if (model !== 'cl100k_base') {
++                tikParser = getEncoding('cl100k_base');
++                lastTikModel = 'cl100k_base';
++            } else {
++                throw err;
++            }
+         }
+     }
+-    return tikParser.encode(text)
++
++    return tikParser.encode(text);
+ }
+ 
+ async function geminiTokenizer(text:string) {

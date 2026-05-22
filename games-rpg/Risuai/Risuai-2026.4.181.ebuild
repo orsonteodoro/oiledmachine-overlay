@@ -776,7 +776,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
 ${CPU_FLAGS_X86[@]}
 ollama server tray wayland X
-ebuild_revision_20
+ebuild_revision_21
 "
 RESTRICT="mirror" # Speed up downloads
 REQUIRED_USE="
@@ -862,7 +862,7 @@ BDEPEND+="
 	dev-libs/openssl
 "
 _PATCHES=(
-#	"${FILESDIR}/${PN}-2026.4.181-tiktoken-init-fix.patch"
+	"${FILESDIR}/${PN}-2026.4.181-replace-with-js-tiktoken.patch"
 	"${FILESDIR}/${PN}-163.1.1-ollama-fix.patch"
 
 	# Disable signing which makes it a fatal error.
@@ -909,6 +909,10 @@ pnpm_install_post() {
 		epnpm add -D "vite@${VITE_PV}" ${PNPM_INSTALL_ARGS[@]}
 		epnpm add -D "vite-plugin-top-level-await@1.6.0" ${PNPM_INSTALL_ARGS[@]} # For tiktoken
 		epnpm add -D "rollup@4.60.2" ${PNPM_INSTALL_ARGS[@]} # For vite-plugin-top-level-await
+
+	# Use a more robust implementation to avoid WASM error
+		pnpm remove "@dqbd/tiktoken"
+		pnpm add "js-tiktoken@1.0.21"
 	fi
 }
 
