@@ -44,11 +44,11 @@ HOMEPAGE="
 LICENSE="LGPL-3"
 SLOT="0/4"
 IUSE+="
-+bluetooth +crash-handler +dbus +dwl +hyprland +greetd +i3 +jemalloc
-+layer-shell +mpris +networkmanager +niri +notifications +minimal +pam +pipewire
-+policykit +screencopy +session-lock +sockets test +toplevel-management
-+tray +upower +wayland +X
-ebuild_revision_4
++bluetooth +crash-handler +dbus +dwl +hyprland +hyprland-ipc +greetd +i3
++jemalloc +layer-shell +mpris +networkmanager +niri +niri-ipc +notifications
++minimal +pam +pipewire +policykit +screencopy +session-lock +sockets test
++toplevel-management +tray +upower +wayland +X
+ebuild_revision_5
 "
 REQUIRED_USE="
 	dbus? (
@@ -86,6 +86,9 @@ REQUIRED_USE="
 	)
 	niri? (
 		wayland
+	)
+	niri-ipc? (
+		niri
 	)
 	screencopy? (
 		wayland
@@ -213,6 +216,10 @@ src_configure() {
 	local _niri=$(usex niri)
 	local _screencopy=$(usex screencopy)
 
+	# The reason why niri-ipc and hyprland-ipc are optional is a security issue with IPC.
+	# There is a possibility of memory corrupting two processes with IPC.  The blast
+	# radius increases with IPC support.
+	# i3 IPC is still required.
 	local mycmakeargs=(
 		-DBLUETOOTH=$(usex bluetooth)
 		-DBUILD_TESTING=$(usex test)
@@ -224,13 +231,13 @@ src_configure() {
 		-DHYPRLAND=${_hyprland}
 		-DHYPRLAND_FOCUS_GRAB=${_hyprland}
 		-DHYPRLAND_GLOBAL_SHORTCUTS=${_hyprland}
-		-DHYPRLAND_IPC=${_hyprland}
+		-DHYPRLAND_IPC=$(usex hyprland-ipc)
 		-DHYPRLAND_SURFACE_EXTENSIONS=${_hyprland}
 		-DI3=${_i3}
 		-DI3_IPC=${_i3}
 		-DNETWORK=$(usex networkmanager)
 		-DNIRI=${_niri}
-		-DNIRI_IPC=${_niri}
+		-DNIRI_IPC=$(usex niri-ipc)
 		-DSCREENCOPY=${_screencopy}
 		-DSCREENCOPY_HYPRLAND_TOPLEVEL=${_screencopy}
 		-DSCREENCOPY_ICC=${_screencopy}
