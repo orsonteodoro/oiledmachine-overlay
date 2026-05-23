@@ -48,9 +48,10 @@ IUSE+="
 +layer-shell +mpris +networkmanager +niri +notifications +pam +pipewire
 +policykit +screencopy +session-lock +sockets test +toplevel-management
 +tray +upower +wayland +X
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
+	upower
 	dbus? (
 		|| (
 			bluetooth
