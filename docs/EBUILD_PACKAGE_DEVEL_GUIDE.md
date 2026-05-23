@@ -339,7 +339,7 @@ Robustness QA
 | Hard coded paths?                                               | Allowed if no compatibility, no multilib, no slot issue                       |
 | REQUIRED_USE vs configure/compile time build errors             | REQUIRED_USE must be used for long compile times or long unpack times to resolve issues ahead of time |
 | USE flag changes reponsibility ebuild, developer, or user? [1]  | The responsibility is the ebuild and developer mostly to avoid pathological circular  |
-| Proactive fatal error vs reactive fatal error                   | Proactive preferred because compile time or unpack cost can be very expensive.  The user resolves it ahead of time, but lazy programmers are okay with reactive. |
+| Proactive fatal error vs reactive fatal error                   | Proactive is preferred because compile time or unpack cost can be very expensive.  The user resolves it ahead of time, but lazy programmers are okay with reactive. |
 
 ```bash
 # [1]
