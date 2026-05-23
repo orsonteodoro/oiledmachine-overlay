@@ -88,7 +88,7 @@ RDEPEND="
 	!gui-apps/quickshell
 	dev-qt/qtbase:6[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV},dbus?,gui,vulkan,wayland?,widgets,X?]
 	dev-qt/qtbase:=
-	dev-qt/qtdeclarative:6[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV}]
+	dev-qt/qtdeclarative:6[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV},vulkan,widgets]
 	dev-qt/qtdeclarative:=
 	dev-qt/qtsvg:6[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV}]
 	dev-qt/qtsvg:=
