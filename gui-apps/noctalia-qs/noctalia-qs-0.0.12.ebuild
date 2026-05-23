@@ -61,6 +61,7 @@ REQUIRED_USE="
 		)
 	)
 	hyprland? (
+		toplevel-management
 		wayland
 	)
 	layer-shell? (
@@ -74,6 +75,9 @@ REQUIRED_USE="
 	)
 	session-lock? (
 		wayland
+	)
+	screencopy? (
+		toplevel-management
 	)
 	toplevel-management? (
 		wayland
