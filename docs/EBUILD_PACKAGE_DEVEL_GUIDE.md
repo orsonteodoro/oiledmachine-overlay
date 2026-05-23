@@ -240,7 +240,7 @@ Slotting QA
 | Poison pilled versioning must be slotted                        | Y                                                                             |
 | LTS must be slotted                                             | Y                                                                             |
 | `:<SLOT>` needs slot operator :=                                | Y                                                                             |
-| C++ only header packages needs slot operator :=                 | Y                                                                             |
+| C++ header only packages needs slot operator :=                 | Y                                                                             |
 | Any variation of ${LIBCXX_USEDEP} or ${LIBSTDCXX_USEDEP} needs slot operator :=  | Y                                                            |
 | Explicit `<category>/<name>[static-libs]` needs slot operator :=  | Y                                                                           |
 
