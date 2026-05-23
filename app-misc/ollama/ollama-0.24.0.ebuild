@@ -21,6 +21,8 @@ EAPI=8
 # 0.12.11 -> 0.13.0
 # 0.13.0 -> 0.13.3
 # 0.13.3 -> 0.18.3
+# 0.18.3 -> 0.21.2
+# 0.21.2 -> 0.24.0
 
 # Hardened because of CVE-2024-37032 implications of similar attacks.
 
@@ -53,7 +55,7 @@ CFLAGS_HARDENED_APPEND_GOFLAGS=1
 CFLAGS_HARDENED_USE_CASES="security-critical daemon network sensitive-data server untrusted-data" # May process sensitive e-mails
 CXX_STANDARD=17
 EGO_PN="github.com/ollama/ollama"
-GEN_EBUILD=0
+GEN_EBUILD=2
 LLAMA_CPP_UPDATE=0
 VULKAN_PV="1.4.321.1"
 
@@ -329,6 +331,7 @@ FEATURED_LLMS=(
 	"deepseek-v3.1"
 	"deepseek-v3.2"
 	"deepseek-v4-flash"
+	"deepseek-v4-pro"
 	"devstral"
 	"devstral-2"
 	"devstral-small-2"
@@ -376,12 +379,14 @@ FEATURED_LLMS=(
 	"granite3.2-vision"
 	"granite3.3"
 	"granite4"
+	"granite4.1"
 	"hermes3"
 	"internlm2"
 	"kimi-k2"
 	"kimi-k2-thinking"
 	"kimi-k2.5"
 	"kimi-k2.6"
+	"laguna-xs.2"
 	"lfm2"
 	"lfm2.5-thinking"
 	"llama-guard3"
@@ -419,6 +424,7 @@ FEATURED_LLMS=(
 	"mistral"
 	"mistral-large"
 	"mistral-large-3"
+	"mistral-medium-3.5"
 	"mistral-nemo"
 	"mistral-openorca"
 	"mistral-small"
@@ -3066,6 +3072,9 @@ LLM_LICENSES="
 	ollama_llms_deepseek-v4-flash? (
 		MIT
 	)
+	ollama_llms_deepseek-v4-pro? (
+		MIT
+	)
 	ollama_llms_deepseek-llm? (
 		DEEPSEEK-LICENSE-AGREEMENT-1.0
 	)
@@ -3261,6 +3270,9 @@ LLM_LICENSES="
 	ollama_llms_granite4? (
 		Apache-2.0
 	)
+	ollama_llms_granite4.1? (
+		Apache-2.0
+	)
 	ollama_llms_hemanth-chessplayer? (
 		llama2-LICENSE
 		llama2-USE_POLICY.md
@@ -3378,6 +3390,10 @@ LLM_LICENSES="
 	ollama_llms_kimi-k2.6? (
 		Kimi-K2.6-LICENSE
 	)
+	ollama_llms_laguna-xs.2? (
+		Apache-2.0
+		Poolside-Acceptable-Use-Policy
+	)
 	ollama_llms_leeplenty-lumimaid-v0.2? (
 		Apache-2.0
 		CC-BY-NC-4.0
@@ -3455,7 +3471,10 @@ LLM_LICENSES="
 		MRL-0.1.md
 	)
 	ollama_llms_mistral-large-3? (
-		all-rights-reserved
+		Apache-2.0
+	)
+	ollama_llms_mistral-medium-3.5? (
+		Mistral-Medium-3.5-LICENSE
 	)
 	ollama_llms_mistral-nemo? (
 		Apache-2.0
@@ -4445,7 +4464,7 @@ IDEPEND="
 	${RDEPEND}
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-0.21.2-cmd-changes.patch"
+	"${FILESDIR}/${PN}-0.24.0-cmd-changes.patch"
 	"${FILESDIR}/${PN}-0.12.6-custom-cpu-features.patch"
 	"${FILESDIR}/${PN}-0.13.0-hardcoded-paths.patch"
 	"${FILESDIR}/${PN}-0.13.0-cuda-not-fatal.patch"
@@ -4578,6 +4597,7 @@ src_unpack() {
 		go-module_live_vendor
 	else
 		unpack "${P}.tar.gz"
+		#die
 
 	# Generating requires 2 phases for dependency of dependency
 		if [[ "${GEN_EBUILD}" == "1" ]] ; then
