@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# This ebuild used AI inference for debugging and installation help.
+
 EGIT_BRANCH="main"
 EGIT_COMMIT="c48ae3851c6e78d669b0ed3f1d7936163a2a7131" # Mar 29, 2026
 EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
@@ -23,7 +25,7 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ollama
-ebuild_revision_2
+ebuild_revision_3
 "
 RDEPEND+="
 	>=gui-apps/noctalia-shell-4.1.2:0/4
@@ -60,10 +62,11 @@ einfo
 einfo "Set the following in the plugin settings (Right-click status bar > Settings gear icon > Plugins > Assistant Panel)"
 einfo "OpenAI Base URL:  https://api.openai.com/v1/chat/completions"
 	if use ollama ; then
-einfo "Ollama Base URL:  http://localhost:11434/v1"
+einfo "Ollama Base URL:  http://127.0.0.1:11434/v1/chat/completions"
 einfo "Local Mode:  On (Right)"
 	fi
 einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  PASSED INTERACTIVE 2.1.6 (20260623) with Ollama, smollm:135m.
