@@ -6088,9 +6088,9 @@ ewarn
 	optfeature "Electron GUI frontend" "app-misc/llocal"
 	optfeature "GTK4 GUI frontend" "app-misc/alpaca"
 	optfeature "Tauri GUI frontend with speech synthesis and speech recognition" "app-misc/amica"
-	optfeature "Piped AI command line execution" "app-shells/loz"
 	optfeature "AI text-to-speech and speech-to-text" "app-misc/june"
 	optfeature "LLM roleplay" "games-rpg/RisuAI"
+	optfeature "an AI chat plugin for Noctalia" "noctalia-plugins/assistant-panel"
 	if use ai-agent ; then
 ewarn
 ewarn "SECURITY NOTICE"
