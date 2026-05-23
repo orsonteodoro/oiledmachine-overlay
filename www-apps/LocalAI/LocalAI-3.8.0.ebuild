@@ -1372,6 +1372,11 @@ ewarn
 ewarn "By default generated images/videos content will be removed on reset."
 ewarn "If you do not like this behavior, change LOCALAI_GENERATED_CONTENT_PATH"
 ewarn
+
+# Check if user created their own acct-{user,group}/local-ai ebuilds.
+	if ! ( groups "local-ai" | grep -q -e "video" ) ; then
+ewarn "The local-ai user needs to be added to the video group for GPU hardware acceleration in ${PN}"
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD

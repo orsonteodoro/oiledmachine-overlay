@@ -7,6 +7,7 @@ EAPI=8
 # U24
 
 # Contains AI generated synthetic data in metadata.xml
+# TODO:  add password/credential entry to for `ollama launch` command.
 
 # 0.5.4 -> 0.5.7
 # 0.5.7 -> 0.5.11
@@ -6104,6 +6105,11 @@ ewarn
 ewarn "It is suggested to blacklist immature users for the ollama executable to"
 ewarn "prevent AI agent abuse."
 ewarn
+	fi
+
+# Check if user created their own acct-{user,group}/ollama ebuilds.
+	if ! ( groups "ollama" | grep -q -e "video" ) ; then
+ewarn "The ollama user needs to be added to the video group for GPU hardware acceleration in ${PN}"
 	fi
 }
 
