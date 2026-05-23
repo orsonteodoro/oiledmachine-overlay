@@ -13,16 +13,22 @@ inherit git-r3
 
 DESCRIPTION="AI Chat and Translation panel"
 HOMEPAGE="
-	https://github.com/noctalia-dev/noctalia-plugins
+	https://noctalia.dev/plugins/assistant-panel
+	https://github.com/noctalia-dev/noctalia-plugins/tree/main/assistant-panel
 "
 LICENSE="
 	MIT
 "
 RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
-IUSE+=" ollama"
+IUSE+="
+ollama
+ebuild_revision_1
+"
 RDEPEND+="
 	>=gui-apps/noctalia-shell-4.1.2:0/4
+	dev-qt/qtwebsockets:6
+	dev-qt/qtwebsockets:=
 	ollama? (
 		app-misc/ollama
 	)
@@ -41,13 +47,24 @@ src_unpack() {
 
 src_install() {
 	insinto "/opt/noctalia-plugins/${PN}"
+	doins -r *
 	einstalldocs
+	exeinto "/opt/noctalia-plugins/bin"
+	doexe "${FILESDIR}/install-assistant-panel"
 }
 
 pkg_postinst() {
-einfo "To install per user:"
-einfo "mkdir -p ~/.config/noctalia/plugins/"
-einfo "cp -a /opt/noctalia-plugins/assistant-panel ~/.config/noctalia/plugins/"
+einfo
+einfo "To install ${PN} for the current user, run"
+einfo "/opt/noctalia-plugins/bin/install-assistant-panel"
+einfo
+einfo "Set the following in the plugin settings (Right-click status bar > Settings gear icon > Plugins > Assistant Panel)"
+einfo "OpenAI Base URL:  https://api.openai.com/v1/chat/completions"
+	if use ollama ; then
+einfo "Ollama Base URL:  http://localhost:11434/v1"
+einfo "Local Mode:  On (Right)"
+	fi
+einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
