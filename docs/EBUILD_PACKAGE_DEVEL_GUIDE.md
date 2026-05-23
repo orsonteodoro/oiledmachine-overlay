@@ -328,15 +328,38 @@ Userspace mitigation comparison
 
 Robustness QA
 
-| Subject                                                  | Answer                                                                        |
-| ---                                                      | ---                                                                           |
-| The package must work after being merged                 | Y                                                                             |
-| If ebuilds do not work, how about KEYWORDS?              | Commented out                                                                 |
-| Minimum uptime (kernel, during testing)                  | 60 days                                                                       |
-| Minimum uptime (kernel, during production)               | 30 days                                                                       |
-| Number of expected/actual crashes in 30 days             | 0                                                                             |
-| Unfinished features?                                     | Disable USE flag, disable configuration, or disable code                      |
-| Hard coded paths?                                        | Allowed if no compatibility, no multilib, no slot issue                       |
+| Subject                                                   | Answer                                                                        |
+| ---                                                       | ---                                                                           |
+| The package must work after being merged                  | Y                                                                             |
+| If ebuilds do not work, how about KEYWORDS?               | Commented out                                                                 |
+| Minimum uptime (kernel, during testing)                   | 60 days                                                                       |
+| Minimum uptime (kernel, during production)                | 30 days                                                                       |
+| Number of expected/actual crashes in 30 days              | 0                                                                             |
+| Unfinished features?                                      | Disable USE flag, disable configuration, or disable code                      |
+| Hard coded paths?                                         | Allowed if no compatibility, no multilib, no slot issue                       |
+| REQUIRED_USE vs build errors                              | REQUIRED_USE must be used for long compile times packages to resolve issues ahead of time |
+| USE flag changes reponsibility ebuild or user? [1]        | Ebuild mostly to avoid pathological circular condition                        |
+
+```bash
+# Footnote [1]
+
+# Lazy developer solution:
+# The package manager will flip-flop between +vulkan and -vulkan USE changes
+# recommendations.
+# The user uses USE="-*" in /etc/make.conf
+RDEPEND="
+	dev-qt/qtbase:6=[vulkan?]
+	dev-qt/qtdeclarative:6=
+"
+
+# Conscientious developer solution:
+# The correct solution is the below to resolve the issue.
+RDEPEND="
+	dev-qt/qtbase:6=[vulkan?]
+	dev-qt/qtdeclarative:6=[vulkan?]
+"
+
+```
 
 Performance QA
 
