@@ -33,7 +33,7 @@ LICENSE="MIT"
 SLOT="0/4" # 4 = stable, Qt Quickshell based; 5 = pre-alpha GLES based
 IUSE="
 calendar wayland X
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -44,10 +44,7 @@ REQUIRED_USE="
 "
 RDEPEND="
 	${PYTHON_DEPS}
-	app-misc/brightnessctl
 	dev-util/wayland-scanner
-	gui-apps/wl-clipboard
-	gui-apps/wlr-randr
 	media-gfx/imagemagick
 	net-misc/wget
 	calendar? (
@@ -98,5 +95,8 @@ pkg_postinst() {
 	optfeature "night light functionality" "gui-apps/wlsunset"
 	optfeature "notification sounds" "dev-qt/qtmultimedia:6"
 	optfeature "power profile management" "sys-power/power-profiles-daemon"
+	optfeature "screen brightness control" "app-misc/brightnessctl"
 	optfeature "system information" "app-misc/fastfetch"
+	optfeature "turning on/off monitors" "gui-apps/wlr-randr"
+	optfeature "wayland clipboard utilities" "gui-apps/wl-clipboard"
 }
