@@ -152,6 +152,28 @@ DOCS=( "README.md" "changelog/" )
 pkg_setup() {
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+
+	# Check now because it takes a long time to build.
+	if has_version "gui-wm/dwl" && ! use "hyprland" ; then
+eerror "You forgot to add the dwl USE flag to ${PN} for dwl support."
+		die
+	fi
+	if has_version "gui-wm/hyprland" && ! use "hyprland" ; then
+eerror "You forgot to add the hyprland USE flag to ${PN} for Hyprland support."
+		die
+	fi
+	if has_version "x11-wm/i3" && ! use "i3" ; then
+eerror "You forgot to add the i3 in USE flag to ${PN} for i3 support."
+		die
+	fi
+	if has_version "gui-wm/niri" && ! use "niri" ; then
+eerror "You forgot to add the niri USE flag to ${PN} for Niri support."
+		die
+	fi
+	if has_version "gui-wm/sway" && ! use "i3" ; then
+eerror "You forgot to add the i3 in USE flag to ${PN} for Sway support."
+		die
+	fi
 }
 
 src_unpack() {
