@@ -55,7 +55,7 @@ CFLAGS_HARDENED_APPEND_GOFLAGS=1
 CFLAGS_HARDENED_USE_CASES="security-critical daemon network sensitive-data server untrusted-data" # May process sensitive e-mails
 CXX_STANDARD=17
 EGO_PN="github.com/ollama/ollama"
-GEN_EBUILD=2
+GEN_EBUILD=0
 LLAMA_CPP_UPDATE=0
 VULKAN_PV="1.4.321.1"
 
