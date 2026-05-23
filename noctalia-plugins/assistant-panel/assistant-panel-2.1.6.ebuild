@@ -23,12 +23,11 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ollama
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND+="
 	>=gui-apps/noctalia-shell-4.1.2:0/4
-	dev-qt/qtwebsockets:6
-	dev-qt/qtwebsockets:=
+	net-misc/curl
 	ollama? (
 		app-misc/ollama
 	)
