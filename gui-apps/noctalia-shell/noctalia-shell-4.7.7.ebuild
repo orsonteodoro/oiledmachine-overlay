@@ -33,7 +33,7 @@ LICENSE="MIT"
 SLOT="0/4" # 4 = stable, Qt Quickshell based; 5 = pre-alpha GLES based
 IUSE="
 calendar wayland X
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
