@@ -3151,7 +3151,7 @@ einfo "Added ${x} from ${module} sanitizer"
 # vtable-verify (vtv) in stable package context.  For stable =C++17 packages,
 # only linking to stable <=C++17 is allowed.  For unstable >C++17 packages,
 # linking to both stable <=C++17 and unstable >C++17 are allowed.
-ewarn "Multislot vtable-verify (vtv) is not supported and sys-devel/gcc:${s}[vtv] should be disabled systemwide for GCC 15+ to avoid ABI compatibility issues and stable using unstable issue."
+ewarn "Multislot vtable-verify (vtv) is not supported and sys-devel/gcc:${s}[vtv] should be disabled systemwide for GCC 15+ to avoid ABI compatibility issues and a violation of a stable app/lib using unstable vtv lib."
 				disable_vtv=1
 				break
 			fi
