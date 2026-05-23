@@ -4,6 +4,7 @@
 EAPI=8
 
 # For deps see nix/package.nix
+# For non-essential deps, they been moved to optfeature.
 
 PYTHON_COMPAT=( "python3_"{12..14} )
 
@@ -30,7 +31,10 @@ HOMEPAGE="
 "
 LICENSE="MIT"
 SLOT="0/4" # 4 = stable, Qt Quickshell based; 5 = pre-alpha GLES based
-IUSE="calendar wayland X"
+IUSE="
+calendar wayland X
+ebuild_revision_1
+"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 	|| (
@@ -40,13 +44,10 @@ REQUIRED_USE="
 "
 RDEPEND="
 	${PYTHON_DEPS}
-	app-misc/cliphist
 	app-misc/brightnessctl
-	app-misc/ddcutil
 	dev-util/wayland-scanner
 	gui-apps/wl-clipboard
 	gui-apps/wlr-randr
-	gui-apps/wlsunset
 	media-gfx/imagemagick
 	net-misc/wget
 	calendar? (
@@ -69,8 +70,6 @@ DEPEND+="
 	)
 	dev-qt/qtbase:6[gui,wayland?,X?]
 	dev-qt/qtbase:=
-	dev-qt/qtmultimedia:6
-	dev-qt/qtmultimedia:=
 "
 
 src_unpack() {
@@ -94,8 +93,10 @@ src_install() {
 
 pkg_postinst() {
 	:
-#	optfeature "clipboard history support" "app-misc/cliphist"
-#	optfeature "external display brightness control" "app-misc/ddcutil"
-#	optfeature "night light functionality" "gui-apps/wlsunset"
-#	optfeature "power profile management" "sys-power/power-profiles-daemon"
+	optfeature "clipboard history support" "app-misc/cliphist"
+	optfeature "external display brightness control" "app-misc/ddcutil"
+	optfeature "night light functionality" "gui-apps/wlsunset"
+	optfeature "notification sounds" "dev-qt/qtmultimedia:6"
+	optfeature "power profile management" "sys-power/power-profiles-daemon"
+	optfeature "system information" "app-misc/fastfetch"
 }
