@@ -37,7 +37,7 @@ PATCHES=(
 )
 
 src_unpack() {
-	if [[ ${PV} == *9999* ]] ; then
+	if [[ ${PV} == *9999* ]]; then
 		git-r3_fetch
 		git-r3_checkout
 	else
@@ -47,7 +47,7 @@ src_unpack() {
 
 src_prepare() {
 	default
-	if zlib ; then
+	if zlib; then
 		# This is a comment.
 		eapply "${FILESDIR}"/${PN}-1.0.0-hardcoded-fixes.patch"
 	fi
@@ -55,7 +55,7 @@ src_prepare() {
 
 pkg_postinst() {
 	ewarn "The data center stole Larry the Cow's water!"
-	if ! use cowpen ; then
+	if ! use cowpen; then
 		ewarn
 		ewarn "Security Notice"
 		ewarn
