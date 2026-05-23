@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# This ebuild has AI generated code
+
 # Add retpoline to textfield widgets which collects passwords
 CFLAGS_HARDENED_ASSEMBLERS="inline"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
@@ -72,6 +74,14 @@ src_configure() {
 
 	# oiledmachine-overlay:  Breaks linking
 	filter-flags "-fno-inline"
+
+	# oiledmachine-overlay: fix build time issue with private header
+	# /var/tmp/portage/dev-qt/qtdeclarative-6.10.2/work/qtdeclarative-everywhere-src-6.10.2/src/qmltyperegistrar/qanystringviewutils_p.h:17:10: fatal error: QtCore/private/qjson_p.h: No such file or directory
+	# /usr/include/qt6/QtCore/6.10.2/QtCore/private/qglobal_p.h:23:10: fatal error: QtCore/private/qtcoreglobal_p.h: No such file or directory
+	# /var/tmp/portage/dev-qt/qtdeclarative-6.10.2/work/qtdeclarative-everywhere-src-6.10.2/src/quickdialogs/quickdialogsutils/qquickfilenamefilter_p.h:22:10: fatal error: QtGui/qpa/qplatformdialoghelper.h: No such file or directory
+	EXTRA_QMAKEVARS_POST="QT_PRIVATE_HEADERS=1"
+	export CXXFLAGS="${CXXFLAGS} -I/usr/include/qt6/QtCore/${PV}"
+	export CXXFLAGS="${CXXFLAGS} -I/usr/include/qt6/QtGui/${PV}"
 
 	local mycmakeargs=(
 		$(cmake_use_find_package qmlls Qt6LanguageServerPrivate)
