@@ -33,6 +33,9 @@
       Enable wlroots layershell integration through the zwlr-layer-shell-v1
       protocol
     </flag>
+    <flag name="minimal">
+      The minimum required USE flags for building.
+    </flag>
     <flag name="mpris">
       Enable access to MPRIS compatible media players using its dbus protocol
     </flag>

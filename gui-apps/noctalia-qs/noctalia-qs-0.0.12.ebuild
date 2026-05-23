@@ -45,13 +45,12 @@ LICENSE="LGPL-3"
 SLOT="0/4"
 IUSE+="
 +bluetooth +crash-handler +dbus +dwl +hyprland +greetd +i3 +jemalloc
-+layer-shell +mpris +networkmanager +niri +notifications +pam +pipewire
++layer-shell +mpris +networkmanager +niri +notifications +minimal +pam +pipewire
 +policykit +screencopy +session-lock +sockets test +toplevel-management
 +tray +upower +wayland +X
-ebuild_revision_2
+ebuild_revision_4
 "
 REQUIRED_USE="
-	upower
 	dbus? (
 		|| (
 			bluetooth
@@ -67,6 +66,23 @@ REQUIRED_USE="
 	)
 	layer-shell? (
 		wayland
+	)
+	minimal? (
+		bluetooth
+		dwl
+		hyprland
+		i3
+		layer-shell
+		mpris
+		networkmanager
+		niri
+		notifications
+		pam
+		pipewire
+		session-lock
+		toplevel-management
+		tray
+		upower
 	)
 	niri? (
 		wayland
@@ -237,3 +253,5 @@ src_configure() {
 	)
 	cmake_src_configure
 }
+
+# OILEDMACHINE_OVERLAY_TEST:  PASSED interactive 0.0.12 (20260523)

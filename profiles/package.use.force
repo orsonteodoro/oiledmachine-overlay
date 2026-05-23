@@ -33,3 +33,6 @@ dev-python/cython -python_targets_pypy3
 www-client/chromium partition-alloc partitionalloc
 
 sci-ml/caffe2 openmp
+
+# Prevent build issues
+gui-apps/noctalia-qs minimal
