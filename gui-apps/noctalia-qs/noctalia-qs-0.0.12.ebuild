@@ -155,24 +155,19 @@ pkg_setup() {
 
 	# Check now because it takes a long time to build.
 	if has_version "gui-wm/dwl" && ! use "hyprland" ; then
-eerror "You forgot to add the dwl USE flag to ${PN} for dwl support."
-		die
+ewarn "You forgot to add the dwl USE flag to ${PN} for dwl support."
 	fi
 	if has_version "gui-wm/hyprland" && ! use "hyprland" ; then
-eerror "You forgot to add the hyprland USE flag to ${PN} for Hyprland support."
-		die
+ewarn "You forgot to add the hyprland USE flag to ${PN} for Hyprland support."
 	fi
 	if has_version "x11-wm/i3" && ! use "i3" ; then
-eerror "You forgot to add the i3 in USE flag to ${PN} for i3 support."
-		die
+ewarn "You forgot to add the i3 in USE flag to ${PN} for i3 support."
 	fi
 	if has_version "gui-wm/niri" && ! use "niri" ; then
-eerror "You forgot to add the niri USE flag to ${PN} for Niri support."
-		die
+ewarn "You forgot to add the niri USE flag to ${PN} for Niri support."
 	fi
 	if has_version "gui-wm/sway" && ! use "i3" ; then
-eerror "You forgot to add the i3 in USE flag to ${PN} for Sway support."
-		die
+ewarn "You forgot to add the i3 in USE flag to ${PN} for Sway support."
 	fi
 }
 
