@@ -18,7 +18,7 @@ if [[ "${PV}" =~ "9999" ]]; then
 	inherit git-r3
 else
 	KEYWORDS="~amd64"
-	S="${WORKDIR}/noctalia-release"
+	S="${WORKDIR}/${P}"
 	SRC_URI="
 https://github.com/noctalia-dev/noctalia-shell/archive/refs/tags/v${PV}.tar.gz -> ${P}.tag.tar.gz
 	"
