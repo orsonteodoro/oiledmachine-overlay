@@ -110,7 +110,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip mirror" # Prevent slow down and snooping
 IUSE+="
 firejail wayland X
-ebuild_revision_78
+ebuild_revision_80
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -274,7 +274,7 @@ ewarn "QA:  Manually remove @remix-run/router@1.23.1 from ${S}/sticker-creator/p
 ewarn "QA:  Manually remove @remix-run/router@1.5.0 from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove ajv@6.12.6 from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove react-router@6.10.0 from ${S}/sticker-creator/pnpm-lock.yaml"
-ewarn "QA:  Manually remove minimatch@3.1.2 from ${S}/sticker-creator/pnpm-lock.yaml"	# Skip
+##ewarn "QA:  Manually remove minimatch@3.1.2 from ${S}/sticker-creator/pnpm-lock.yaml"	# Skip
 #ewarn "QA:  Manually remove minimatch@5.1.6 from ${S}/sticker-creator/pnpm-lock.yaml"	# Skip
 #ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild and all @esbuild/<arch>@0.18.20 associated packages from ${S}/sticker-creator/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove esbuild@0.18.20 and arch implementations from ${S}/sticker-creator/pnpm-lock.yaml"
@@ -377,6 +377,8 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 				sed -i -e "s|picomatch: 2.3.1|picomatch: 4.0.4|g" "pnpm-lock.yaml" || die											# CVE-2026-33671; DoS; High
 				sed -i -e "s|picomatch: 4.0.3|picomatch: 4.0.4|g" "pnpm-lock.yaml" || die											# CVE-2026-33672; ZC, DT; Moderate
 #				sed -i -e "s|brace-expansion: 1.1.11|brace-expansion: 5.0.4|g" "pnpm-lock.yaml" || die										# CVE-2025-5889; DoS; Low
+				sed -i -e "s|fast-uri: 3.1.0|fast-uri: 3.1.2|g" "pnpm-lock.yaml" || die												# CVE-2026-6321, ZC, DT; High
+																								# CVE-2026-6322, ZC, DT; High
 			popd >/dev/null 2>&1 || die
 			pushd "danger" >/dev/null 2>&1 || die
 				sed -i -e "s|'@octokit/plugin-paginate-rest': 2.21.3|'@octokit/plugin-paginate-rest': 9.2.2|g" "pnpm-lock.yaml" || die						# CVE-2025-25288, DoS, Moderate
@@ -451,8 +453,10 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 			sed -i -e "s|tar-fs: 2.1.2|tar-fs: 2.1.4|g" "pnpm-lock.yaml" || die													# CVE-2025-48387; ZC, DT; High
 																								# CVE-2025-59343; ZC, VS(DT)
 
-			sed -i -e "s|webpack-dev-server: 5.1.0|webpack-dev-server: 5.2.1|g" "pnpm-lock.yaml" || die										# CVE-2025-30359; ID; Medium
+			sed -i -e "s|webpack-dev-server: 5.1.0|webpack-dev-server: 5.2.4|g" "pnpm-lock.yaml" || die										# CVE-2025-30359; ID; Medium
+			sed -i -e "s|webpack-dev-server: 5.2.1|webpack-dev-server: 5.2.4|g" "pnpm-lock.yaml" || die										# CVE-2026-6402; ID; Medium
 																								# CVE-2025-30360; ID; Medium
+																								# CVE-2026-6402; ID; Moderate
 
 			sed -i -e "s|http-proxy-middleware: 2.0.7|http-proxy-middleware: 2.0.9|g" "pnpm-lock.yaml" || die									# CVE-2025-32997; DT; Medium
 																								# CVE-2025-32996; DoS; Medium
@@ -551,6 +555,11 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 			sed -i -e "s|postcss: 8.5.8|postcss: 8.5.10|g" "pnpm-lock.yaml" || die													# CVE-2026-41305; DT, ID; Moderate
 
 			sed -i -e "s|node-abi: 3.87.0|node-abi: 3.92.0|g" "pnpm-lock.yaml" || die	# Fix build error
+			sed -i -e "s|fast-uri: 3.1.0|fast-uri: 3.1.2|g" "pnpm-lock.yaml" || die													# CVE-2026-6321, ZC, DT; High
+																								# CVE-2026-6322, ZC, DT; High
+			sed -i -e "s|ws: 8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)|ws: 8.20.1|g" "pnpm-lock.yaml" || die									# CVE-2026-45736; ID; Moderate
+			sed -i -e "s|ws: 7.5.10(bufferutil@4.0.9)(utf-8-validate@5.0.10)|ws: 8.20.1|g" "pnpm-lock.yaml" || die									# CVE-2026-45736; ID; Moderate
+			sed -i -e "s|ip-address: 9.0.5|ip-address: 10.1.1|g" "pnpm-lock.yaml" || die												# CVE-2026-42338; VS(DT, ID); Moderate
 		}
 		patch_edits_pnpm
 
@@ -569,6 +578,7 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 				"@remix-run/router@1.23.2"
 				"markdown-it@14.1.1"
 				"underscore@1.13.8"
+				"fast-uri@3.1.2"
 			)
 			epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
 			deps=(
@@ -630,6 +640,8 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 			"storybook@8.6.17"
 			"uuid@14.0.0"
 			"follow-redirects@1.16.0"
+			"fast-uri@3.1.2"
+			"ws@8.20.1"
 		)
 		epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
 		deps=(
@@ -640,7 +652,7 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 			"@octokit/rest@20.1.2"
 #			"brace-expansion@5.0.4"
 			"patch-package@8.0.0"
-			"webpack-dev-server@5.2.1"
+			"webpack-dev-server@5.2.4"
 			"http-proxy-middleware@2.0.9"		# This must go after webpack-dev-server.
 			"tmp@0.2.4"
 			"on-headers@1.1.0"
@@ -657,6 +669,7 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 			"postcss@8.5.10"
 
 			"node-abi@3.92.0"			# Fix build error
+			"ip-address@10.1.1"
 		)
 		epnpm install "${deps[@]}" -D "${PNPM_INSTALL_ARGS[@]}"
 
@@ -741,7 +754,8 @@ src_compile() {
 	# fatal: not a git repository (or any of the parent directories): .git
 	gen_git_tag "${S}" "v${PV}"
 
-	epnpm run build
+	epnpm run "build:emoji-data"
+	epnpm run "build-linux"
 
 	electron-builder \
 		$(electron-app_get_electron_platarch_args) \
