@@ -110,7 +110,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip mirror" # Prevent slow down and snooping
 IUSE+="
 firejail wayland X
-ebuild_revision_77
+ebuild_revision_78
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -549,6 +549,8 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 			sed -i -e "s|uuid: 9.0.1|uuid: 14.0.0|g" "pnpm-lock.yaml" || die													# GHSA-w5hq-g745-h8pq; ZC, VS(DT); Moderate
 			sed -i -e "s|follow-redirects: 1.15.11(debug@4.4.3)|follow-redirects: 1.16.0|g" "pnpm-lock.yaml" || die									# GHSA-r4q5-vmmm-2653; ZV, VS(ID); Moderate
 			sed -i -e "s|postcss: 8.5.8|postcss: 8.5.10|g" "pnpm-lock.yaml" || die													# CVE-2026-41305; DT, ID; Moderate
+
+			sed -i -e "s|node-abi: 3.87.0|node-abi: 3.92.0|g" "pnpm-lock.yaml" || die	# Fix build error
 		}
 		patch_edits_pnpm
 
@@ -653,6 +655,8 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 			"yaml@1.10.3"
 			"@xmldom/xmldom@0.8.13"
 			"postcss@8.5.10"
+
+			"node-abi@3.92.0"			# Fix build error
 		)
 		epnpm install "${deps[@]}" -D "${PNPM_INSTALL_ARGS[@]}"
 
