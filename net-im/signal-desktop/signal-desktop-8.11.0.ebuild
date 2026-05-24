@@ -7,7 +7,7 @@ EAPI=8
 
 # To update use:
 # PATH=$(realpath "../../scripts")":${PATH}"
-# PNPM_UPDATER_PROJECT_ROOT="Signal-Desktop-8.10.0" pnpm_updater_update_locks.sh
+# PNPM_UPDATER_PROJECT_ROOT="Signal-Desktop-8.11.0" pnpm_updater_update_locks.sh
 
 # Ignore if error:
 # Could not detect abi for version ' + target + ' and runtime ' + runtime + '.  Updating "node-abi" might help solve this issue if it is a new release of ' + runtime)
@@ -27,8 +27,8 @@ NPM_SLOT="3"
 PNPM_SLOT="9"
 NODE_SLOT="24" # Upstream uses 24.14.0 from .nvmrc
 NODE_ENV="development"
-RUST_MAX_VER="1.83.0" # Inclusive
-RUST_MIN_VER="1.83.0" # Corresponds to 1.83.0 nightly not stable - llvm-19.1.  Rust is required for @swc/core@1.10.16
+RUST_MAX_VER="1.91.1" # Inclusive
+RUST_MIN_VER="1.91.1" # llvm-21.1.  Rust is required for @swc/core@1.10.16
 # https://github.com/rust-lang/rust/commits/main/src/version		# nightly-2024-10-07
 # https://github.com/swc-project/swc/blob/v1.10.16/rust-toolchain	# Find date at or before 2024-10-07
 
@@ -222,7 +222,7 @@ einfo "DEBUG:  Applying sed based patches..."
 		# RCE = Remote Code Execution
 
 ewarn "QA:  Manually remove picomatch@2.3.1 in ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change picomatch: 2.3.1 to picomatch: 4.0.4 in ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually change picomatch: 2.3.1 to picomatch: 4.0.4 in ${S}/pnpm-lock.yaml"
 #ewarn "QA:  Manually remove @tootallnate/once@2.0.0 from ${S}/pnpm-lock.yaml and ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove jws@3.2.2 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change jws@3.2.2 to jws@3.2.3 from ${S}/package.json and ${S}/pnpm-lock.yaml"
