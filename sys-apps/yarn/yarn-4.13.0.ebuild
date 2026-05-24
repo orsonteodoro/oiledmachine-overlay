@@ -18,10 +18,10 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT_MAJOR="8" # See https://github.com/yarnpkg/berry/blob/%40yarnpkg/cli/4.13.0/yarn.lock#L5
-SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
+SLOT="${SLOT_MAJOR}/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 +ssl
-ebuild_revision_6
+ebuild_revision_7
 "
 CDEPEND+="
 	!sys-apps/yarn:0

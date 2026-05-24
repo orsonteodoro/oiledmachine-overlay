@@ -242,9 +242,11 @@ unset -f _yarn_set_globals
 # @DESCRIPTION:
 # The version of the Yarn lockfile. (Default:  1)
 # Use 1.x or 3.x.
-# Valid values:  1, 8
+# Valid values:  1, 8, 9, 10
 # lockfile version | yarn version
-# 8                | 4.x
+# 10               | 4.15.x
+# 9                | 4.14.x
+# 8                | 4.13.x
 # 6                | 3.2.x, 3.3.x, 3.4.x, 3.6.x, 3.7.x, 3.8.x
 # 5                | 3.1.x
 # 4                | 2.1.x, 2.3.x, 2.4.x, 3.0.x

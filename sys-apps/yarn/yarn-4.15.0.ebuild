@@ -17,7 +17,7 @@ LICENSE="
 	BSD-2
 "
 RESTRICT="mirror"
-SLOT_MAJOR="6" # Based on yarn.lock
+SLOT_MAJOR="10" # See https://github.com/yarnpkg/berry/blob/%40yarnpkg/cli/4.15.0/yarn.lock#L5
 SLOT="${SLOT_MAJOR}/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 +ssl
@@ -25,7 +25,7 @@ ebuild_revision_7
 "
 CDEPEND+="
 	!sys-apps/yarn:0
-	>=net-libs/nodejs-14.10.0[corepack,ssl?]
+	>=net-libs/nodejs-18.12.0[corepack,ssl?]
 "
 DEPEND+="
 	${CDEPEND}
@@ -39,7 +39,7 @@ BDEPEND+="
 
 get_min_node_slot() {
 	local x
-	for x in $(seq 14 30) ; do
+	for x in $(seq 18 30) ; do
 		if [[ -e "${ESYSROOT}/usr/lib/node/${x}/bin/corepack" ]] ; then
 			echo "${x}"
 			return

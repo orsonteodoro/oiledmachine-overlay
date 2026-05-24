@@ -4,18 +4,21 @@
 
 EAPI=8
 
-# For ebuild delayed removal safety track "security release" : https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V18.md
+# FIXME:
+# ../../deps/v8/src/heap/memory-chunk.h:361:2: error: #error The global metadata pointer table requires a single external code space.
+
+# For ebuild delayed removal safety track "security release" : https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V22.md
 
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
 
-# Last deps commit date:  Mar 25, 2025
+# Last deps commit date:  May 20, 2026
 
 CFLAGS_HARDENED_PIE="1"
 CFLAGS_HARDENED_USE_CASES="jit language-runtime network server untrusted-data web-server"
 CFLAGS_HARDENED_VTABLE_VERIFY="1"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS DT ID OOBR PE PT UAF"
-CXX_STANDARD=17
+CXX_STANDARD=20
 LTO_TYPE="none" # Global var
 PYTHON_COMPAT=( "python3_"{11..13} ) # See configure
 PYTHON_REQ_USE="threads(+)"
@@ -25,14 +28,16 @@ UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
 
-ACORN_PV="8.14.0"
+ACORN_PV="8.16.0"
 AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
-COREPACK_PV="0.32.0"
-NGHTTP2_PV="1.61.0"
-NPM_PV="10.8.2" # See https://github.com/nodejs/node/blob/v18.20.8/deps/npm/package.json
+COREPACK_PV="0.35.0"
+NGHTTP2_PV="1.68.0"
+NGHTTP3_PV="1.14.0"
+NPM_PV="11.13.0" # See https://github.com/nodejs/node/blob/v24.16.0/deps/npm/package.json
 WRK_PV="1.2.1" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 
 _TRAINERS=(
+	"abort_controller"
 	"assert"
 	"async_hooks"
 	"blob"
@@ -53,6 +58,7 @@ _TRAINERS=(
 	"http"
 	"http2"
 	"https"
+	"mime"
 	"misc"
 	"module"
 	"napi"
@@ -60,18 +66,23 @@ _TRAINERS=(
 	"os"
 	"path"
 	"perf_hooks"
-	"policy"
+	"permission"
 	"process"
 	"querystring"
+	"readline"
 	"streams"
 	"string_decoder"
 	"test_runner"
 	"timers"
 	"tls"
+	"ts"
 	"url"
 	"util"
 	"v8"
+	"validators"
 	"vm"
+	"websocket"
+	"webstorage"
 	"webstreams"
 	"worker"
 	"zlib"
@@ -79,22 +90,22 @@ _TRAINERS=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+	"${LIBSTDCXX_COMPAT_STDCXX20[@]}"
 )
-LIBSTDCXX_USEDEP_DEV="gcc_slot_skip(+)"
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
+	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}"
 )
-LIBCXX_USEDEP_DEV="llvm_slot_skip(+)"
+LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
 inherit bash-completion-r1 cflags-hardened check-compiler-switch check-linker
 inherit flag-o-matic flag-o-matic-om lcnr libcxx-slot libstdcxx-slot
 inherit linux-info multiprocessing ninja-utils pax-utils python-any-r1
 inherit sandbox-changes toolchain-funcs uopts xdg-utils
 
-#KEYWORDS="~amd64 ~arm64" # EOL
+KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/node-v${PV}"
 SRC_URI="
 https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz
@@ -108,7 +119,7 @@ LICENSE="
 	Artistic-2
 	BSD
 	BSD-2
-	icu-71.1
+	icu-78.2
 	ISC
 	MIT
 	Unicode-DFS-2016
@@ -126,9 +137,8 @@ SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${_TRAINERS[@]/#/nodejs_trainers_}
-acorn +asm +corepack cpu_flags_x86_sse2 debug doc fips +icu inspector npm
-mold pax-kernel pgo -pointer-compression +snapshot +ssl system-icu +system-ssl
-systemtap test
+acorn +asm +corepack cpu_flags_x86_sse2 debug doc -drumbrake fips +icu inspector
++npm mold pax-kernel pgo +snapshot +ssl system-icu +system-ssl test
 ebuild_revision_56
 "
 
@@ -165,19 +175,19 @@ REQUIRED_USE+="
 "
 RDEPEND+="
 	!net-libs/nodejs:0
-	>=app-arch/brotli-1.1.0
+	>=app-arch/brotli-1.2.0
 	>=app-eselect/eselect-nodejs-20230521
-	>=dev-libs/libuv-1.44.2
-	>=net-dns/c-ares-1.29.0
+	>=dev-libs/libuv-1.52.1
+	>=net-dns/c-ares-1.34.6
 	>=net-libs/nghttp2-${NGHTTP2_PV}
-	>=sys-libs/zlib-1.3
+	>=sys-libs/zlib-1.3.1
 	sys-kernel/mitigate-id
 	system-icu? (
-		>=dev-libs/icu-74.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-libs/icu-78.3[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 		dev-libs/icu:=
 	)
 	system-ssl? (
-		>=dev-libs/openssl-3.0.16:0[asm?,fips?]
+		>=dev-libs/openssl-3.5.6:0[asm?,fips?]
 		dev-libs/openssl:=
 	)
 "
@@ -190,7 +200,7 @@ BDEPEND+="
 	sys-apps/coreutils
 	virtual/pkgconfig
 	mold? (
-		>=sys-devel/mold-2.0[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV}]
+		>=sys-devel/mold-2.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		sys-devel/mold:=
 	)
 	pax-kernel? (
@@ -200,9 +210,6 @@ BDEPEND+="
 		${PN}_trainers_http2? (
 			>=net-libs/nghttp2-${NGHTTP2_PV}[utils]
 		)
-	)
-	systemtap? (
-		dev-debug/systemtap
 	)
 	test? (
 		net-misc/curl
@@ -217,10 +224,11 @@ PDEPEND+="
 PATCHES=(
 	"${FILESDIR}/${PN}-12.22.5-shared_c-ares_nameser_h.patch"
 	"${FILESDIR}/${PN}-22.2.0-global-npm-config.patch"
-	"${FILESDIR}/${PN}-16.13.2-lto-update.patch"
-	"${FILESDIR}/${PN}-18.17.0-support-clang-pgo.patch"
+	"${FILESDIR}/${PN}-24.16.0-lto-update.patch"
+	"${FILESDIR}/${PN}-24.2.0-support-clang-pgo.patch"
 	"${FILESDIR}/${PN}-19.3.0-v8-oflags.patch"
-	"${FILESDIR}/${PN}-18.20.5-add-v8-jit-fine-grained-options.patch"
+	"${FILESDIR}/${PN}-24.11.1-split-pointer-compression-and-v8-sandbox-options.patch"
+	"${FILESDIR}/${PN}-24.16.0-add-v8-jit-fine-grained-options.patch"
 )
 
 _count_useflag_slots() {
@@ -270,7 +278,7 @@ einfo "FEATURES:  ${FEATURES}"
 
 # See https://github.com/nodejs/release#release-schedule
 # See https://github.com/nodejs/release#end-of-life-releases
-einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2025-04-30."
+einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2028-04-30."
 
 	local u
 	for u in "${PN}_trainers_http" "${PN}_trainers_https" ; do
@@ -451,9 +459,7 @@ src_configure() { :; }
 
 __pgo_configure() {
 	if [[ "${CC}" =~ "clang" ]] ; then
-ewarn
 ewarn "PGO clang support is experimental"
-ewarn
 	fi
 	export PGO_PROFILE_DIR="${T}/pgo-${ABI}"
 	export PGO_PROFILE_PROFDATA="${PGO_PROFILE_DIR}/pgo-custom.profdata"
@@ -497,6 +503,7 @@ enable_gdb() {
 set_jit_level() {
 	_jit_level_0() {
 		# ~20%/~50% performance similar to light swap, but a feeling of less progress (20-25%)
+		#myconf+=( --v8-disable-drumbrake )
 		#myconf+=( --disable-gdb )
 		#myconf+=( --v8-disable-maglev )
 		#myconf+=( --v8-disable-sparkplug )
@@ -506,6 +513,7 @@ set_jit_level() {
 
 	_jit_level_1() {
 		# 28%/71% performance similar to light swap, but a feeling of more progress (33%)
+		myconf+=( $(usex drumbrake "--v8-enable-drumbrake" "") )
 		myconf+=( $(enable_gdb) )
 		#myconf+=( --v8-disable-maglev ) # Requires turbofan
 		myconf+=( --v8-enable-sparkplug )
@@ -515,6 +523,7 @@ set_jit_level() {
 
 	_jit_level_2() {
 		# > 75% performance
+		myconf+=( $(usex drumbrake "--v8-enable-drumbrake" "") )
 		myconf+=( $(enable_gdb) )
 		#myconf+=( --v8-disable-maglev )
 		#myconf+=( --v8-disable-sparkplug )
@@ -524,6 +533,7 @@ set_jit_level() {
 
 	_jit_level_5() {
 		# > 90% performance
+		myconf+=( $(usex drumbrake "--v8-enable-drumbrake" "") )
 		myconf+=( $(enable_gdb) )
 		#myconf+=( --v8-disable-maglev )
 		myconf+=( --v8-enable-sparkplug )
@@ -533,10 +543,11 @@ set_jit_level() {
 
 	_jit_level_6() {
 		# 100% performance
+		myconf+=( $(usex drumbrake "--v8-enable-drumbrake" "") )
 		myconf+=( $(enable_gdb) )
-	# https://github.com/nodejs/node/blob/v18.20.5/deps/v8/BUILD.gn#L441
-		if use amd64 ; then
-			use pointer-compression && myconf+=( --v8-enable-maglev ) # %5 runtime benefit
+	# https://github.com/nodejs/node/blob/v23.6.0/deps/v8/BUILD.gn#L542
+		if use amd64 || use arm || use arm64 ; then
+			myconf+=( --v8-enable-maglev ) # %5 runtime benefit
 		fi
 		myconf+=( --v8-enable-sparkplug ) # 5% benefit
 		myconf+=( --v8-enable-turbofan ) # Subset of -O1, -O2, -O3; 100% performance
@@ -619,7 +630,13 @@ _src_configure() {
 		--shared-brotli
 		--shared-cares
 		--shared-libuv
-		--shared-nghttp2
+
+# Commenting out fixes:
+# ld: obj/deps/ngtcp2/nghttp3/lib/nghttp3.nghttp3_http.o: in function `nghttp3_http_parse_priority':
+# nghttp3_http.c:(.text+0x30): undefined reference to `sf_parser_init'
+# ld: nghttp3_http.c:(.text+0x42): undefined reference to `sf_parser_dict'
+		#--shared-nghttp2
+
 		--shared-zlib
 	)
 
@@ -688,14 +705,12 @@ eerror "To use mold, enable the mold USE flag."
 		myconf+=( --openssl-default-cipher-list=${NODEJS_OPENSSL_DEFAULT_LIST_CORE} )
 	fi
 
-	local pointer_compression_msg="Disabling pointer compression.  If out of memory (OOM) use Node.js 20 or later."
-	if use amd64 || use arm64 ; then
-		if use pointer-compression ; then
-			pointer_compression_msg="Enabling pointer compression for 4 GB heaps"
-			myconf+=( --experimental-enable-pointer-compression )
-		fi
-	fi
-einfo "${pointer_compression_msg}"
+ewarn "Disabling pointer compression."
+
+ewarn
+ewarn "Use --max-old-space-size=4096 or --max-old-space-size=8192 to"
+ewarn "NODE_OPTIONS environment variable if out of memory (OOM)."
+ewarn
 	if use kernel_linux && linux_chkconfig_present "TRANSPARENT_HUGEPAGE" && ! use debug ; then
 		myconf+=( --v8-enable-hugepage )
 	fi
@@ -716,7 +731,6 @@ einfo "${pointer_compression_msg}"
 	"${EPYTHON}" configure.py \
 		--prefix="${EPREFIX}/usr/lib/node/${SLOT_MAJOR}" \
 		--dest-cpu="${myarch}" \
-		$(use_with systemtap dtrace) \
 		"${myconf[@]}" || die
 
 	# Prevent double build on install.
@@ -896,13 +910,13 @@ src_install() {
 
 	local prefix="${EPREFIX}/usr/lib/node/${SLOT_MAJOR}"
 	"${EPYTHON}" "tools/install.py" install \
-		"${D}" \
-		"${prefix}" \
+		--dest-dir "${D}" \
+		--prefix "${prefix}" \
 		|| die
 
 	pax-mark -m "${ED}${prefix}/bin/node"
 
-	# set up a symlink structure that node-gyp expects.
+	# Set up a symlink structure that node-gyp expects.
 	local D_INCLUDE_BASE="${prefix}/include/node"
 	dodir "${D_INCLUDE_BASE}/deps/"{"v8","uv"}
 	dosym "." "${D_INCLUDE_BASE}/src"
@@ -920,13 +934,6 @@ src_install() {
 	rm -rf "${ED}${prefix}/$(get_libdir)/node_modules/npm"
 	rm -rf "${ED}${prefix}/bin/npm"
 	rm -rf "${ED}${prefix}/bin/npx"
-
-	if use systemtap ; then
-		# Move tapset to avoid conflict
-		mv "${ED}${prefix}/share/systemtap/tapset/node${,${SLOT_MAJOR}}.stp" || die
-	else
-		rm "${ED}${prefix}/share/systemtap/tapset/node.stp" || die
-	fi
 
 	uopts_src_install
 	if use debug && [[ "${FEATURES}" =~ "splitdebug" ]] ; then
@@ -966,8 +973,3 @@ ewarn "You must use PATH=\"/usr/lib/node/\${NODE_SLOT}/bin\" with scripts instea
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multislot, pgo
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (18.20.5, 20250115)
-# net-libs/nodejs-18.20.5:18/18.20::oiledmachine-overlay \
-# USE="acorn asm corepack icu inspector npm ssl -bolt -custom-optimization \
-# (-debug) -doc -fips -man -mold -pax-kernel -pgo -pointer-compression \
-# -snapshot -system-icu -system-ssl -systemtap -test"

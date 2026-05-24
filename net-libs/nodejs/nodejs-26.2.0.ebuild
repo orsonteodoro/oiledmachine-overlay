@@ -4,21 +4,23 @@
 
 EAPI=8
 
-# IMPORTANT:  The ${FILESDIR}/node-multiplexer-v* must be updated each time a new major version is introduced.
-# For ebuild delayed removal safety track "security release" : https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V16.md
+# FIXME:
+# ../../deps/v8/src/heap/memory-chunk.h:361:2: error: #error The global metadata pointer table requires a single external code space.
+
+# For ebuild delayed removal safety track "security release" : https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V22.md
 
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
 
-# Last deps commit date:  Aug 8, 2023
+# Last deps commit date:  May 19, 2026
 
 CFLAGS_HARDENED_PIE="1"
 CFLAGS_HARDENED_USE_CASES="jit language-runtime network server untrusted-data web-server"
 CFLAGS_HARDENED_VTABLE_VERIFY="1"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS DT ID OOBR PE PT UAF"
-CXX_STANDARD=14
+CXX_STANDARD=20
 LTO_TYPE="none" # Global var
-PYTHON_COMPAT=( "python3_11" ) # See configure
+PYTHON_COMPAT=( "python3_"{11..13} ) # See configure
 PYTHON_REQ_USE="threads(+)"
 TPGO_CONFIGURE_DONT_SET_FLAGS=1
 UOPTS_SUPPORT_EBOLT=0
@@ -26,21 +28,24 @@ UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
 
-ACORN_PV="8.8.0"
+ACORN_PV="8.16.0"
 AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
-COREPACK_PV="0.17.0"
-NGHTTP2_PV="1.47.0"
-NPM_PV="8.19.4" # See https://github.com/nodejs/node/blob/v16.20.2/deps/npm/package.json
+COREPACK_PV="0.35.0"
+NGHTTP2_PV="1.69.0"
+NGHTTP3_PV="1.15.0"
+NPM_PV="11.13.0" # See https://github.com/nodejs/node/blob/v26.2.0/deps/npm/package.json
 WRK_PV="1.2.1" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 
 _TRAINERS=(
+	"abort_controller"
 	"assert"
 	"async_hooks"
+	"blob"
 	"buffers"
 	"child_process"
 	"cluster"
-	"custom"
 	"crypto"
+	"custom"
 	"dgram"
 	"diagnostics_channel"
 	"dns"
@@ -53,6 +58,7 @@ _TRAINERS=(
 	"http"
 	"http2"
 	"https"
+	"mime"
 	"misc"
 	"module"
 	"napi"
@@ -60,47 +66,49 @@ _TRAINERS=(
 	"os"
 	"path"
 	"perf_hooks"
-	"policy"
+	"permission"
 	"process"
 	"querystring"
+	"readline"
 	"streams"
 	"string_decoder"
+	"test_runner"
 	"timers"
 	"tls"
+	"ts"
 	"url"
 	"util"
 	"v8"
+	"validators"
 	"vm"
+	"websocket"
+	"webstorage"
+	"webstreams"
 	"worker"
 	"zlib"
 )
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX14[@]}"
+	"${LIBSTDCXX_COMPAT_STDCXX20[@]}"
 )
-LIBSTDCXX_USEDEP_DEV="gcc_slot_skip(+)"
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}"
+	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}"
 )
-LIBCXX_USEDEP_DEV="llvm_slot_skip(+)"
+LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
 inherit bash-completion-r1 cflags-hardened check-compiler-switch check-linker
 inherit flag-o-matic flag-o-matic-om lcnr libcxx-slot libstdcxx-slot
 inherit linux-info multiprocessing ninja-utils pax-utils python-any-r1
 inherit sandbox-changes toolchain-funcs uopts xdg-utils
 
-#KEYWORDS="~amd64 ~arm64" # EOL
-if [[ -d "${WORKDIR}/node-v${PV}" ]] ; then
-	S="${WORKDIR}/node-v${PV}"
-else
-	S="${WORKDIR}/node-${PV}"
-fi
+KEYWORDS="~amd64 ~arm64"
+S="${WORKDIR}/node-v${PV}"
 SRC_URI="
-https://github.com/nodejs/node/archive/refs/tags/v${PV}.tar.gz
-	-> node-v${PV}.tar.gz
+https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz
 "
 
 DESCRIPTION="A JavaScript runtime built on the V8 JavaScript engine"
@@ -111,13 +119,13 @@ LICENSE="
 	Artistic-2
 	BSD
 	BSD-2
-	icu-70.1
+	icu-78.2
 	ISC
 	MIT
 	Unicode-DFS-2016
 	ZLIB
 	ssl? (
-		openssl
+		Apache-2.0
 	)
 "
 RESTRICT="
@@ -129,9 +137,8 @@ SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${_TRAINERS[@]/#/nodejs_trainers_}
-acorn +asm +corepack cpu_flags_x86_sse2 debug doc fips +icu inspector npm
-mold pax-kernel pgo -pointer-compression +snapshot +ssl system-icu +system-ssl
-systemtap test
+acorn +asm +corepack cpu_flags_x86_sse2 debug doc -drumbrake fips +icu inspector
++npm mold pax-kernel pgo +snapshot +ssl system-icu +system-ssl test
 ebuild_revision_56
 "
 
@@ -148,7 +155,6 @@ gen_required_use_pgo() {
 
 REQUIRED_USE+="
 	$(gen_required_use_pgo)
-	!system-icu
 	corepack
 	inspector? (
 		icu
@@ -169,19 +175,19 @@ REQUIRED_USE+="
 "
 RDEPEND+="
 	!net-libs/nodejs:0
-	>=app-arch/brotli-1.0.9
+	>=app-arch/brotli-1.2.0
 	>=app-eselect/eselect-nodejs-20230521
-	>=dev-libs/libuv-1.44.0
-	>=net-dns/c-ares-1.19.1
+	>=dev-libs/libuv-1.52.1
+	>=net-dns/c-ares-1.34.6
 	>=net-libs/nghttp2-${NGHTTP2_PV}
-	>=sys-libs/zlib-1.2.11
+	>=sys-libs/zlib-1.3.1
 	sys-kernel/mitigate-id
 	system-icu? (
-		>=dev-libs/icu-71.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-libs/icu-78.3[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 		dev-libs/icu:=
 	)
 	system-ssl? (
-		>=dev-libs/openssl-1.1.1v:0[asm?,fips?]
+		>=dev-libs/openssl-3.5.6:0[asm?,fips?]
 		dev-libs/openssl:=
 	)
 "
@@ -194,7 +200,7 @@ BDEPEND+="
 	sys-apps/coreutils
 	virtual/pkgconfig
 	mold? (
-		>=sys-devel/mold-2.0[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV}]
+		>=sys-devel/mold-2.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		sys-devel/mold:=
 	)
 	pax-kernel? (
@@ -205,27 +211,24 @@ BDEPEND+="
 			>=net-libs/nghttp2-${NGHTTP2_PV}[utils]
 		)
 	)
-	systemtap? (
-		dev-debug/systemtap
-	)
 	test? (
 		net-misc/curl
 	)
 "
 PDEPEND+="
-	sys-apps/npm:2
+	sys-apps/npm:3
 	acorn? (
 		>=dev-nodejs/acorn-$(ver_cut 1-2 ${ACORN_PV})
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-16.12.0-jinja_collections_abc.patch"
 	"${FILESDIR}/${PN}-12.22.5-shared_c-ares_nameser_h.patch"
-	"${FILESDIR}/${PN}-15.2.0-global-npm-config.patch"
-	"${FILESDIR}/${PN}-16.13.2-lto-update.patch"
-	"${FILESDIR}/${PN}-16.13.2-support-clang-pgo.patch"
+	"${FILESDIR}/${PN}-22.2.0-global-npm-config.patch"
+	"${FILESDIR}/${PN}-26.2.0-lto-update.patch"
+	"${FILESDIR}/${PN}-24.2.0-support-clang-pgo.patch"
 	"${FILESDIR}/${PN}-19.3.0-v8-oflags.patch"
-	"${FILESDIR}/${PN}-16.20.2-add-v8-jit-fine-grained-options.patch"
+	"${FILESDIR}/${PN}-25.1.0-split-pointer-compression-and-v8-sandbox-options.patch"
+	"${FILESDIR}/${PN}-26.2.0-add-v8-jit-fine-grained-options.patch"
 )
 
 _count_useflag_slots() {
@@ -275,7 +278,7 @@ einfo "FEATURES:  ${FEATURES}"
 
 # See https://github.com/nodejs/release#release-schedule
 # See https://github.com/nodejs/release#end-of-life-releases
-ewarn "The ${SLOT_MAJOR}.x has reached End Of Life (EOL) on 2023-09-11."
+einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2029-04-30."
 
 	local u
 	for u in "${PN}_trainers_http" "${PN}_trainers_https" ; do
@@ -284,10 +287,10 @@ ewarn "The ${SLOT_MAJOR}.x has reached End Of Life (EOL) on 2023-09-11."
                 fi
 	done
 
-	if [[ -n "${NODEJS_EXCLUDED_TRAINERS}" ]] ; then
+	if [[ -n "${NODEJS_EXCLUDED_BENCHMARKS}" ]] ; then
 eerror
-eerror "NODEJS_EXCLUDED_TRAINERS has been renamed to NODEJS_EXCLUDED_TRAINERS."
-eerror "Please update your /etc/portage/make.conf or package.env"
+eerror "NODEJS_EXCLUDED_BENCHMARKS has been renamed to NODEJS_EXCLUDED_TRAINERS."
+eerror "Please update your /etc/portage/make.conf or package.env."
 eerror
 		die
 	fi
@@ -456,9 +459,7 @@ src_configure() { :; }
 
 __pgo_configure() {
 	if [[ "${CC}" =~ "clang" ]] ; then
-ewarn
 ewarn "PGO clang support is experimental"
-ewarn
 	fi
 	export PGO_PROFILE_DIR="${T}/pgo-${ABI}"
 	export PGO_PROFILE_PROFDATA="${PGO_PROFILE_DIR}/pgo-custom.profdata"
@@ -502,32 +503,54 @@ enable_gdb() {
 set_jit_level() {
 	_jit_level_0() {
 		# ~20%/~50% performance similar to light swap, but a feeling of less progress (20-25%)
+		#myconf+=( --v8-disable-drumbrake )
 		#myconf+=( --disable-gdb )
+		#myconf+=( --v8-disable-maglev )
+		#myconf+=( --v8-disable-sparkplug )
+		#myconf+=( --v8-disable-turbofan )
 		myconf+=( --v8-enable-lite-mode )
 	}
 
 	_jit_level_1() {
 		# 28%/71% performance similar to light swap, but a feeling of more progress (33%)
+		myconf+=( $(usex drumbrake "--v8-enable-drumbrake" "") )
 		myconf+=( $(enable_gdb) )
+		#myconf+=( --v8-disable-maglev ) # Requires turbofan
 		myconf+=( --v8-enable-sparkplug )
+		#myconf+=( --v8-disable-turbofan )
 		#myconf+=( --v8-disable-lite-mode )
 	}
 
 	_jit_level_2() {
 		# > 75% performance
+		myconf+=( $(usex drumbrake "--v8-enable-drumbrake" "") )
 		myconf+=( $(enable_gdb) )
+		#myconf+=( --v8-disable-maglev )
+		#myconf+=( --v8-disable-sparkplug )
+		myconf+=( --v8-enable-turbofan )
 		#myconf+=( --v8-disable-lite-mode )
 	}
 
 	_jit_level_5() {
 		# > 90% performance
+		myconf+=( $(usex drumbrake "--v8-enable-drumbrake" "") )
 		myconf+=( $(enable_gdb) )
+		#myconf+=( --v8-disable-maglev )
+		myconf+=( --v8-enable-sparkplug )
+		myconf+=( --v8-enable-turbofan )
 		#myconf+=( --v8-disable-lite-mode )
 	}
 
 	_jit_level_6() {
 		# 100% performance
+		myconf+=( $(usex drumbrake "--v8-enable-drumbrake" "") )
 		myconf+=( $(enable_gdb) )
+	# https://github.com/nodejs/node/blob/v23.6.0/deps/v8/BUILD.gn#L542
+		if use amd64 || use arm || use arm64 ; then
+			myconf+=( --v8-enable-maglev ) # %5 runtime benefit
+		fi
+		myconf+=( --v8-enable-sparkplug ) # 5% benefit
+		myconf+=( --v8-enable-turbofan ) # Subset of -O1, -O2, -O3; 100% performance
 		#myconf+=( --v8-disable-lite-mode )
 	}
 
@@ -607,7 +630,13 @@ _src_configure() {
 		--shared-brotli
 		--shared-cares
 		--shared-libuv
-		--shared-nghttp2
+
+# Commenting out fixes:
+# ld: obj/deps/ngtcp2/nghttp3/lib/nghttp3.nghttp3_http.o: in function `nghttp3_http_parse_priority':
+# nghttp3_http.c:(.text+0x30): undefined reference to `sf_parser_init'
+# ld: nghttp3_http.c:(.text+0x42): undefined reference to `sf_parser_dict'
+		#--shared-nghttp2
+
 		--shared-zlib
 	)
 
@@ -619,14 +648,22 @@ einfo "Detected compiler switch.  Disabling LTO."
 		[[ "${LTO_TYPE}" =~ "lto"     ]] && myconf+=( --enable-lto )
 		[[ "${LTO_TYPE}" =~ "thinlto" ]] && myconf+=( --with-thinlto )
 		[[ "${LTO_TYPE}" =~ "goldlto" ]] && myconf+=( --with-goldlto )
+		[[ "${LTO_TYPE}" =~ "moldlto" ]] && myconf+=( --with-moldlto )
+	fi
+
+	if tc-is-gcc && [[ "${LTO_TYPE}" =~ "moldlto" ]] ; then
+ewarn "If moldlto fails for gcc, try clang."
 	fi
 
 	# LTO compiler flags are handled by configure.py itself
-	# Ban mold only for this slot for license compatibility reasons.
 	filter-flags \
 		"-flto*" \
 		"-fprofile*" \
 		"-fuse-ld*"
+
+	if use mold && [[ "${LTO_TYPE}" == "none" || -z "${LTO_TYPE}" ]] ; then
+		append-ldflags "-fuse-ld=mold"
+	fi
 
 	if ! use mold && is-flagq "-fuse-ld=mold" && has_version "sys-devel/mold" ; then
 eerror "To use mold, enable the mold USE flag."
@@ -668,14 +705,12 @@ eerror "To use mold, enable the mold USE flag."
 		myconf+=( --openssl-default-cipher-list=${NODEJS_OPENSSL_DEFAULT_LIST_CORE} )
 	fi
 
-	local pointer_compression_msg="Disabling pointer compression.  If out of memory (OOM) use Node.js 20 or later."
-	if use amd64 || use arm64 ; then
-		if use pointer-compression ; then
-			pointer_compression_msg="Enabling pointer compression for 4 GB heaps"
-			myconf+=( --experimental-enable-pointer-compression )
-		fi
-	fi
-einfo "${pointer_compression_msg}"
+ewarn "Disabling pointer compression."
+
+ewarn
+ewarn "Use --max-old-space-size=4096 or --max-old-space-size=8192 to"
+ewarn "NODE_OPTIONS environment variable if out of memory (OOM)."
+ewarn
 	if use kernel_linux && linux_chkconfig_present "TRANSPARENT_HUGEPAGE" && ! use debug ; then
 		myconf+=( --v8-enable-hugepage )
 	fi
@@ -687,6 +722,7 @@ einfo "${pointer_compression_msg}"
 	local myarch
 	myarch="${ABI/amd64/x64}"
 	myarch="${myarch/x86/ia32}"
+	[[ "${ARCH}:${ABI}" =~ "loong:lp64" ]] && myarch="loong64"
 	[[ "${ARCH}:${ABI}" =~ "riscv:lp64" ]] && myarch="riscv64"
 
 	GYP_DEFINES="linux_use_gold_flags=0
@@ -695,7 +731,6 @@ einfo "${pointer_compression_msg}"
 	"${EPYTHON}" configure.py \
 		--prefix="${EPREFIX}/usr/lib/node/${SLOT_MAJOR}" \
 		--dest-cpu="${myarch}" \
-		$(use_with systemtap dtrace) \
 		"${myconf[@]}" || die
 
 	# Prevent double build on install.
@@ -875,8 +910,8 @@ src_install() {
 
 	local prefix="${EPREFIX}/usr/lib/node/${SLOT_MAJOR}"
 	"${EPYTHON}" "tools/install.py" install \
-		"${D}" \
-		"${prefix}" \
+		--dest-dir "${D}" \
+		--prefix "${prefix}" \
 		|| die
 
 	pax-mark -m "${ED}${prefix}/bin/node"
@@ -899,13 +934,6 @@ src_install() {
 	rm -rf "${ED}${prefix}/$(get_libdir)/node_modules/npm"
 	rm -rf "${ED}${prefix}/bin/npm"
 	rm -rf "${ED}${prefix}/bin/npx"
-
-	if use systemtap ; then
-		# Move tapset to avoid conflict
-		mv "${ED}${prefix}/share/systemtap/tapset/node${,${SLOT_MAJOR}}.stp" || die
-	else
-		rm "${ED}${prefix}/share/systemtap/tapset/node.stp" || die
-	fi
 
 	uopts_src_install
 	if use debug && [[ "${FEATURES}" =~ "splitdebug" ]] ; then

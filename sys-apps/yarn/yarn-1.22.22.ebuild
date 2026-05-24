@@ -18,10 +18,10 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT_MAJOR="1" # Based on yarn.lock
-SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
+SLOT="${SLOT_MAJOR}/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 +ssl
-ebuild_revision_6
+ebuild_revision_7
 "
 CDEPEND+="
 	!sys-apps/yarn:0
