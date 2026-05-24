@@ -17,8 +17,8 @@ if [[ "${PV}" == *"9999"* ]] ; then
 	inherit git-r3
 else
 	KEYWORDS="
-~alpha amd64 arm arm64 hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86
-~amd64-linux ~x86-linux ~x64-macos ~x64-solaris
+~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc
+~x86 ~x64-macos ~x64-solaris
 	"
 	SRC_URI="
 https://github.com/google/${PN}/archive/v${PV}.tar.gz
@@ -63,6 +63,7 @@ BDEPEND="
 	)
 "
 DOCS=( "README.md" "CONTRIBUTING.md" )
+PATCHES=( "${FILESDIR}/${PV}-fix-loong-build.patch" )
 
 src_prepare() {
 	cmake_src_prepare
@@ -116,4 +117,9 @@ multilib_src_install_all() {
 			"docs/${page}.h.3" \
 			"${PN}_${page}.h.3"
 	done
+
+	dosym -r /usr/bin/brotli /usr/bin/brcat
+	dosym -r /usr/bin/brotli /usr/bin/unbrotli
+	dosym -r /usr/share/man/man1/brotli.1 /usr/share/man/man1/brcat.1
+	dosym -r /usr/share/man/man1/brotli.1 /usr/share/man/man1/unbrotli.1
 }
