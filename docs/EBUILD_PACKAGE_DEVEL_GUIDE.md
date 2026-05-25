@@ -336,7 +336,7 @@ Isolation QA
 | Bubblewrap use case                   | Web browsers[1], GNOME desktop                                                                            |
 | Bubblewrap defaults for WebKitGTK     | Mount namespace, user namespace, PID namespace, network namespace, seccomp filters, drop all capabilities |
 | Docker use case                       | Self hosting servers, testing                                                                             |
-| Firejail vs Docker vs Podman          | [2]                                                                                                       |
+| Firejail vs Docker vs Podman          | Firejail [2] but Docker containers are used to reduce build/install complexity                            |
 | Firejail vs Bubblewrap                | Firejail for profile support                                                                              |
 | Firejail required?                    | N                                                                                                         |
 | Firejail default ON?                  | N                                                                                                         |
