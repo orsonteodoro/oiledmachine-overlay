@@ -340,7 +340,7 @@ Isolation QA
 | Firejail vs Bubblewrap                | Firejail for profile support                                                                              |
 | Firejail required?                    | N                                                                                                         |
 | Firejail default ON?                  | N                                                                                                         |
-| Firejail profile baseline             | Least privileges, allow only necessary privileges or libs/bins for typical use                            |
+| Firejail profile security baseline    | Least privileges, allow only necessary privileges or libs/bins for typical use                            |
 
 [1] Bubblewrap defaults for WebKitGTK
 - Mount namespace - See only empty filesystem
