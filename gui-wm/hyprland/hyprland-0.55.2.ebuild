@@ -49,7 +49,7 @@ SLOT="0"
 IUSE="
 ${GCC_COMPAT[@]}
 legacy-renderer -guiutils systemd test X
-ebuild_revision_29
+ebuild_revision_30
 "
 # hyprpm (hyprland plugin manager) requires the dependencies at runtime
 # so that it can clone, compile and install plugins.
@@ -201,7 +201,7 @@ einfo "Edit the default keybindings and my programs sections and"
 einfo "use the hyprland.lua as a starter config (RECOMMENDED):"
 einfo
 einfo "mkdir -p ~/.config/hypr"
-einfo "cat /usr/share/hypr/hyprland.lua > ~/.config/hypr/hyprland.conf"
+einfo "cat /usr/share/hypr/hyprland.lua > ~/.config/hypr/hyprland.lua"
 einfo
 einfo
 einfo "The cheat sheet for hyprland.lua keybindings:"
