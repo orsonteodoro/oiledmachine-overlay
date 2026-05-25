@@ -305,6 +305,7 @@ Security QA
 | Binary packages                                               | Allowed with restrictions that only if it is either the only option, source package/maintenance issue, or heavy compilation cost                  |
 | Ebuild EOL pruning                                            | If the older versions are necessary for bootstrapping, it should not be deleted.  Otherwise, you're stuck with a compromised trojanized prebuilt. |
 | Hacks are allowed? (using a degraded compiler, using Cython over Zig) | If the package uses security-critical assumptions or processes untrusted data, it is disallowed.                                          |
+| X11 banned?                                                   | Y for security-critical and because Wayland has greater market share                                                                              |
 
 Userspace mitigation comparison
 
@@ -325,6 +326,29 @@ Userspace mitigation comparison
 | -mretpoline (Clang)                 | Speculative execution, information disclosure                                                      | N         | Y                    |
 | -Wl,-z,relro,-z,now (Full Relro)    | Data tampering, code execution                                                                     | Y         | Y                    |
 | _FORTIFY_SOURCE=3                   | Stack overflow (weak), heap overflow (strong), out-of-bounds access (weak)                         | Y         | Y                    |
+
+Isolation QA
+
+| Subject                               | Answer                                                                                                    |
+| ---                                   | ---                                                                                                       |
+| sys-apps/sandbox use case             | Portage only, protect live system                                                                         |
+| Firejail use case                     | Userland apps                                                                                             |
+| Bubblewrap use case                   | Web browsers[1], GNOME desktop                                                                            |
+| Bubblewrap defaults for WebKitGTK     | Mount namespace, user namespace, PID namespace, network namespace, seccomp filters, drop all capabilities |
+| Docker use case                       | Self hosting servers, testing                                                                             |
+| Firejail vs Docker vs Podman          | Firejail for reliance on locally built not on unmitigated prebuilts from other distros                    |
+| Firejail vs Bubblewrap                | Firejail for profile support                                                                              |
+| Firejail required?                    | N                                                                                                         |
+| Firejail default ON?                  | N                                                                                                         |
+| Firejail profile baseline             | Least privileges, only necessary for typical use                                                          |
+
+[1] Bubblewrap defaults for WebKitGTK
+- Mount namespace - See only empty filesystem
+- User namespace - See only current user
+- PID namespace - See only PID tree of process
+- Network namespace - Block seeing or snooping on host network interfaces
+- Seccomp filters - Block syscalls that lead to privilege escalation, sandbox escape, information disclosure
+- Drop all capabilities - 38 capabilities dropped 
 
 Robustness QA
 
