@@ -331,7 +331,7 @@ Isolation QA
 
 | Subject                               | Answer                                                                                                    |
 | ---                                   | ---                                                                                                       |
-| sys-apps/sandbox use case             | Portage only, protect live system                                                                         |
+| sys-apps/sandbox use case             | Portage only, to protect the live system                                                                  |
 | Firejail use case                     | Userland apps                                                                                             |
 | Bubblewrap use case                   | Web browsers[1], GNOME desktop                                                                            |
 | Bubblewrap defaults for WebKitGTK     | Mount namespace, user namespace, PID namespace, network namespace, seccomp filters, drop all capabilities |
@@ -340,7 +340,7 @@ Isolation QA
 | Firejail vs Bubblewrap                | Firejail for profile support                                                                              |
 | Firejail required?                    | N                                                                                                         |
 | Firejail default ON?                  | N                                                                                                         |
-| Firejail profile baseline             | Least privileges, only necessary for typical use                                                          |
+| Firejail profile baseline             | Least privileges, allow only necessary privileges or libs/bins for typical use                            |
 
 [1] Bubblewrap defaults for WebKitGTK
 - Mount namespace - See only empty filesystem
