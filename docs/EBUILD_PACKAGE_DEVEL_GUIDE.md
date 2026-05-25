@@ -336,11 +336,14 @@ Isolation QA
 | Bubblewrap use case                   | Web browsers[1], GNOME desktop                                                                            |
 | Bubblewrap defaults for WebKitGTK     | Mount namespace, user namespace, PID namespace, network namespace, seccomp filters, drop all capabilities |
 | Docker use case                       | Self hosting servers, testing                                                                             |
-| Firejail vs Docker vs Podman          | Firejail for reliance on locally built not on unmitigated prebuilts from other distros                    |
+| Firejail vs Docker vs Podman          | Firejail for reliance on the distro, ebuilds, and locally built not on unmitigated prebuilts from other distros or using these platforms to divide and conquer users into them |
 | Firejail vs Bubblewrap                | Firejail for profile support                                                                              |
 | Firejail required?                    | N                                                                                                         |
 | Firejail default ON?                  | N                                                                                                         |
 | Firejail profile security baseline    | Run with least privileges, allow only necessary privileges or libs/bins, use the maximum possible sandbox restrictions, must run without annoyance for typical use |
+| Which needs Firejail profiles?        | Executables that use the network or process untrusted data                                                |
+| Which package is responsible to install the Firejail profile? | Either firejail package (preferred) or the package itself                         |
+| Should there be a Firejail profile?   | Y                                                                                                         |
 
 [1] Bubblewrap defaults for WebKitGTK
 - Mount namespace - See only empty filesystem
