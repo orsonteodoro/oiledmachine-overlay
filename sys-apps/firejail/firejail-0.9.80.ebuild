@@ -1714,7 +1714,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 apparmor auto +chroot clang contrib +dbusproxy +file-transfer +firejail_profiles_default
 +firejail_profiles_server +globalcfg landlock +network +private-home selfrando selinux
 test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xcsecurity xvfb
-ebuild_revision_66
+ebuild_revision_67
 "
 REQUIRED_USE+="
 	${GUI_REQUIRED_USE}
@@ -2456,10 +2456,7 @@ PATCHES=(
 #	"${FILESDIR}/extra-patches/${PN}-009110a-disable-xcsecurity-usage.patch"
 	"${FILESDIR}/extra-patches/${PN}-0.9.80-profile-fixes.patch"
 	"${FILESDIR}/extra-patches/${PN}-3bbc6b5-private-bin-no-local-default-yes.patch" # Fix all wrappers and mpv
-	"${FILESDIR}/extra-patches/${PN}-1b2d18e-add-rhash-profile.patch"
-	"${FILESDIR}/extra-patches/${PN}-1b2d18e-add-upscayl-profile.patch"
 	"${FILESDIR}/extra-patches/${PN}-1b2d18e-default-res.patch"
-	"${FILESDIR}/extra-patches/${PN}-1b2d18e-add-caprine-profile.patch"
 )
 
 get_impls() {
@@ -3036,6 +3033,8 @@ src_prepare() {
 	if [[ "${GEN_EBUILD}" == "1" ]] ; then
 		gen_ebuild
 	fi
+
+	cp -aT "${FILESDIR}/extra-profiles/" "${S}/etc" || die
 
 	if use xpra ; then
 		eapply "${FILESDIR}/extra-patches/${PN}-0.9.80-xpra-speaker-override.patch"
