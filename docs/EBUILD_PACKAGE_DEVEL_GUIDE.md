@@ -344,6 +344,7 @@ Isolation QA
 | Which needs Firejail profiles?        | Executables that use the network or processes untrusted data                                              |
 | Which package is responsible to install the Firejail profile? | Either the preferred sys-apps/firejail package or the package itself              |
 | Should there be a Firejail profile?   | Y                                                                                                         |
+| Firejail with X11 or Wayland?         | Wayland                                                                                                   |
 
 [1] Bubblewrap defaults for WebKitGTK
 - Mount namespace - See only empty filesystem
