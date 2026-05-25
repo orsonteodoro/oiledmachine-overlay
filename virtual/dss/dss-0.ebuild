@@ -703,8 +703,15 @@ SANDBOX_DEPENDS="
 	)
 "
 
+# Prevent password keyboard snooping, show password screen grabs
+BANNED_RDEPEND="
+	!x11-base/xorg-server
+	!x11-base/xlibre
+"
+
 RDEPEND="
 	enforce? (
+		${BANNED_RDEPEND}
 		${ANTIVIRUS_DEPENDS}
 		${CLOUD_COMPLIANCE_DEPENDS}
 		${DATA_ENCRYPTION_DEPENDS}
