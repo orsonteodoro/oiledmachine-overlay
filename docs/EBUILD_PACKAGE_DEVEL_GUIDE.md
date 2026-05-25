@@ -359,7 +359,7 @@ Isolation QA
 - Loyalty to the distro
 - Platforms are used to shill away from this distro and to divide and conquer into co-opted platforms
 - Loyalty to source built than possibly trojanized prebuilts
-- Loyalty to customization over defaults only
+- Loyalty to modding and customization over defaults only
 - Reduced attack surface over prebuilt defaults
 
 Robustness QA
