@@ -336,7 +336,7 @@ Isolation QA
 | Bubblewrap use case                   | Web browsers[1], GNOME desktop                                                                            |
 | Bubblewrap defaults for WebKitGTK     | Mount namespace, user namespace, PID namespace, network namespace, seccomp filters, drop all capabilities |
 | Docker use case                       | Self hosting servers, testing                                                                             |
-| Firejail vs Docker vs Podman          | Firejail for reliance on the distro, ebuilds, and locally built not on unmitigated prebuilts from other distros or using these platforms to divide and conquer users into them |
+| Firejail vs Docker vs Podman          | [2]                                                                                                       |
 | Firejail vs Bubblewrap                | Firejail for profile support                                                                              |
 | Firejail required?                    | N                                                                                                         |
 | Firejail default ON?                  | N                                                                                                         |
@@ -352,6 +352,15 @@ Isolation QA
 - Network namespace - Block seeing or snooping on host network interfaces
 - Seccomp filters - Block syscalls that lead to privilege escalation, sandbox escape, information disclosure
 - Drop all capabilities - 38 capabilities dropped 
+
+[2] Why Firejail on this overlay?
+- Easier control of access/visibility of credentials, secrets, password databases
+- Blast radius reduction
+- Loyalty to the distro
+- Platforms are used to shill away from this distro and to divide and conquer into co-opted platforms
+- Loyalty to source built than possibly trojanized prebuilts
+- Loyalty to customization over defaults only
+- Reduced attack surface over prebuilt defaults
 
 Robustness QA
 
