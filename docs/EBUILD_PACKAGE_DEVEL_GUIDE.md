@@ -341,8 +341,8 @@ Isolation QA
 | Firejail required?                    | N                                                                                                         |
 | Firejail default ON?                  | N                                                                                                         |
 | Firejail profile security baseline    | Run with least privileges, allow only necessary privileges or libs/bins, use the maximum possible sandbox restrictions, must run without annoyance for typical use |
-| Which needs Firejail profiles?        | Executables that use the network or process untrusted data                                                |
-| Which package is responsible to install the Firejail profile? | Either firejail package (preferred) or the package itself                         |
+| Which needs Firejail profiles?        | Executables that use the network or processes untrusted data                                              |
+| Which package is responsible to install the Firejail profile? | Either the preferred sys-apps/firejail package or the package itself              |
 | Should there be a Firejail profile?   | Y                                                                                                         |
 
 [1] Bubblewrap defaults for WebKitGTK
