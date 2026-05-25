@@ -340,12 +340,12 @@ Isolation QA
 | Firejail vs Bubblewrap                | Firejail for profile support                                                                              |
 | Firejail required?                    | N                                                                                                         |
 | Firejail default ON?                  | N                                                                                                         |
-| Firejail profile security baseline    | Least privileges, allow only necessary privileges or libs/bins for typical use                            |
+| Firejail profile security baseline    | Run with least privileges, allow only necessary privileges or libs/bins, use the maximum possible sandbox restrictions, must run without annoyance for typical use |
 
 [1] Bubblewrap defaults for WebKitGTK
 - Mount namespace - See only empty filesystem
 - User namespace - See only current user
-- PID namespace - See only PID tree of process
+- PID namespace - See only PID tree of isolated process
 - Network namespace - Block seeing or snooping on host network interfaces
 - Seccomp filters - Block syscalls that lead to privilege escalation, sandbox escape, information disclosure
 - Drop all capabilities - 38 capabilities dropped 
