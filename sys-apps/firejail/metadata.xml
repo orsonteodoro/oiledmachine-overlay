@@ -405,7 +405,8 @@
     To verify that path traversal is mitigated by the sandbox, use one of these
     commands:
 
-    firejail --profile=<profile-name> --private-bin=bash,<term>,ls,id,head,cat /usr/bin/<term>                  # For your favorite terminal app
+    firejail --profile=<profile-name> --private-bin=bash,<term>,ls,id,head,cat /usr/bin/<term>                  # For your favorite terminal app and testing <profile-name> profile
+    firejail /usr/bin/<term>                                                                                    # For your favorite terminal app and testing the fallback default profile
     firejail --profile=<profile-name> --private-bin=bash,alacritty,ls,id,head,cat /usr/bin/alacritty            # For Wayland compatibility
     firejail --profile=<profile-name> --private-bin=bash,xterm,ls,id,head,cat /usr/bin/xterm                    # For X11 compatibility
 
