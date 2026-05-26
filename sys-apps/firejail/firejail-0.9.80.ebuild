@@ -286,7 +286,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 apparmor auto +chroot clang contrib +dbusproxy +file-transfer +firejail_profiles_default
 +firejail_profiles_server +globalcfg landlock +network +private-home selfrando selinux
 test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xcsecurity xvfb
-ebuild_revision_73
+ebuild_revision_74
 "
 REQUIRED_USE+="
 	!test
@@ -381,7 +381,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-0.9.78-firecfg.config.patch"
 #	"${FILESDIR}/extra-patches/${PN}-009110a-disable-xcsecurity.patch"
 #	"${FILESDIR}/extra-patches/${PN}-009110a-disable-xcsecurity-usage.patch"
-	"A${FILESDIR}/extra-patches/${PN}-0.9.80-profile-fixes.patch"
+	"${FILESDIR}/extra-patches/${PN}-0.9.80-profile-fixes.patch"
 	"${FILESDIR}/extra-patches/${PN}-3bbc6b5-private-bin-no-local-default-yes.patch" # Fix all wrappers and mpv
 	"${FILESDIR}/extra-patches/${PN}-1b2d18e-default-res.patch"
 	"${FILESDIR}/extra-patches/${PN}-0.9.80-devel-and-compiler-changes.patch"
@@ -1941,6 +1941,9 @@ EOF
 	# Required:
 einfo "Setting suid bit for /usr/bin/firejail"
 	fperms u+s "/usr/bin/firejail"
+
+	dodir "/usr/share/${PN}"
+	mv "${ED}//usr/share/doc/firejail-0.9.80/profile.template" "${ED}/usr/share/${PN}"
 }
 
 pkg_postinst() {
@@ -2008,6 +2011,17 @@ ewarn "IMPORTANT:  Always check sandbox profiles by manual inspection in the"
 ewarn "sandbox to verify if there is any sensitive data leaks.  See the"
 ewarn "\"path traversal mitigation verification\" section in the metadata.xml."
 ewarn
+# Remove the annoying compression
+einfo
+einfo "For a starter ${PN} profile, copy-paste"
+einfo
+einfo "  /usr/share/${PN}/profile.template"
+einfo
+einfo "into"
+einfo
+einfo "  /etc/firejail/<cli-name>.profile       # for systemwide"
+einfo "  ~/.config/firejail/<cli-name>.profile  # for profiles to follow your profile backups"
+einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
