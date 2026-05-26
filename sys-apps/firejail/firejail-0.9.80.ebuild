@@ -384,7 +384,7 @@ PATCHES=(
 	"${FILESDIR}/extra-patches/${PN}-0.9.80-profile-fixes.patch"
 	"${FILESDIR}/extra-patches/${PN}-3bbc6b5-private-bin-no-local-default-yes.patch" # Fix all wrappers and mpv
 	"${FILESDIR}/extra-patches/${PN}-1b2d18e-default-res.patch"
-	"${FILESDIR}/extra-patches/${PN}-inc-profile-changes.patch"
+	"${FILESDIR}/extra-patches/${PN}-0.9.80-inc-profile-changes.patch"
 )
 
 get_impls() {
