@@ -2049,6 +2049,7 @@ einfo
 	if ! use suid ; then
 einfo "USE=-suid is not tested.  Ask the AI for help."
 	fi
+ewarn "To update profiles, run etc-update."
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
