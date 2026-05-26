@@ -1927,7 +1927,7 @@ DEPEND+="
 
 PDEPEND+="
 	firejail? (
-		sys-apps/firejail[X?,firejail_profiles_chromium]
+		sys-apps/firejail[X?]
 	)
 "
 
