@@ -1,54 +1,54 @@
-diff '--color=auto' -urp firejail-9999.orig/etc/profile-a-l/blink-common.profile firejail-9999/etc/profile-a-l/blink-common.profile
---- firejail-9999.orig/etc/profile-a-l/blink-common.profile	2025-01-18 11:31:20.035454336 -0800
-+++ firejail-9999/etc/profile-a-l/blink-common.profile	2025-01-18 11:32:03.691152470 -0800
-@@ -30,7 +30,7 @@ apparmor
- caps.keep sys_admin,sys_chroot
- netfilter
- nodvd
--nogroups
-+#nogroups # Breaks signal-desktop
- noinput
- notv
+diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/default.profile firejail-0.9.80/etc/profile-a-l/default.profile
+--- firejail-0.9.80.orig/etc/profile-a-l/default.profile	2026-03-12 05:51:18.000000000 -0700
++++ firejail-0.9.80/etc/profile-a-l/default.profile	2026-05-26 08:27:09.548524262 -0700
+@@ -9,7 +9,7 @@ include globals.local
+ # depending on your usage, you can enable some of the commands below:
  
-diff '--color=auto' -urp firejail-9999.orig/etc/profile-a-l/eo-common.profile firejail-9999/etc/profile-a-l/eo-common.profile
---- firejail-9999.orig/etc/profile-a-l/eo-common.profile	2025-01-18 11:31:20.055454198 -0800
-+++ firejail-9999/etc/profile-a-l/eo-common.profile	2025-01-18 11:31:36.123343095 -0800
-@@ -26,7 +26,7 @@ include whitelist-var-common.inc
+ include disable-common.inc
+-#include disable-devel.inc
++include disable-devel.inc # Prevent disable-common.inc bypass
+ #include disable-exec.inc
+ #include disable-interpreters.inc
+ include disable-programs.inc
+diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/eo-common.profile firejail-0.9.80/etc/profile-a-l/eo-common.profile
+--- firejail-0.9.80.orig/etc/profile-a-l/eo-common.profile	2026-03-12 05:51:18.000000000 -0700
++++ firejail-0.9.80/etc/profile-a-l/eo-common.profile	2026-05-26 08:25:08.308271079 -0700
+@@ -27,7 +27,7 @@ include whitelist-var-common.inc
  
  apparmor
  caps.drop all
 -ipc-namespace
-+#ipc-namespace
++#ipc-namespace # Add "#" If using xpra (less secure).  Remove "#" if using xephyr (move secure).  Verified 20260525
  machine-id
  net none
  no3d
-diff '--color=auto' -urp firejail-9999.orig/etc/profile-a-l/feh.profile firejail-9999/etc/profile-a-l/feh.profile
---- firejail-9999.orig/etc/profile-a-l/feh.profile	2025-01-18 11:31:20.055454198 -0800
-+++ firejail-9999/etc/profile-a-l/feh.profile	2025-01-18 11:31:36.127343066 -0800
+diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/feh.profile firejail-0.9.80/etc/profile-a-l/feh.profile
+--- firejail-0.9.80.orig/etc/profile-a-l/feh.profile	2026-03-12 05:51:18.000000000 -0700
++++ firejail-0.9.80/etc/profile-a-l/feh.profile	2026-05-26 08:25:08.308271079 -0700
 @@ -25,7 +25,7 @@ include whitelist-runuser-common.inc
  
  apparmor
  caps.drop all
 -ipc-namespace
-+#ipc-namespace
++ipc-namespace # Verified 20260525
  machine-id
  net none
  no3d
-diff '--color=auto' -urp firejail-9999.orig/etc/profile-a-l/file.profile firejail-9999/etc/profile-a-l/file.profile
---- firejail-9999.orig/etc/profile-a-l/file.profile	2025-01-18 11:31:20.055454198 -0800
-+++ firejail-9999/etc/profile-a-l/file.profile	2025-01-18 11:31:36.127343066 -0800
+diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/file.profile firejail-0.9.80/etc/profile-a-l/file.profile
+--- firejail-0.9.80.orig/etc/profile-a-l/file.profile	2026-03-12 05:51:18.000000000 -0700
++++ firejail-0.9.80/etc/profile-a-l/file.profile	2026-05-26 08:25:08.308271079 -0700
 @@ -36,7 +36,7 @@ x11 none
  private-cache
  private-dev
  #private-etc alternatives,localtime,magic,magic.mgc
 -#private-lib file,libarchive.so.*,libfakeroot,libmagic.so.*,libseccomp.so.*
-+private-lib file,libarchive.so.*,libfakeroot,libmagic.so.*,libseccomp.so.*
++private-lib file,libarchive.so.*,libfakeroot,libmagic.so.*,libseccomp.so.* # More secure, verified 20260525
  
  dbus-user none
  dbus-system none
-diff '--color=auto' -urp firejail-9999.orig/etc/profile-a-l/inkscape.profile firejail-9999/etc/profile-a-l/inkscape.profile
---- firejail-9999.orig/etc/profile-a-l/inkscape.profile	2025-01-18 11:31:20.131453672 -0800
-+++ firejail-9999/etc/profile-a-l/inkscape.profile	2025-01-18 11:31:36.127343066 -0800
+diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/inkscape.profile firejail-0.9.80/etc/profile-a-l/inkscape.profile
+--- firejail-0.9.80.orig/etc/profile-a-l/inkscape.profile	2026-03-12 05:51:18.000000000 -0700
++++ firejail-0.9.80/etc/profile-a-l/inkscape.profile	2026-05-26 08:25:08.308271079 -0700
 @@ -45,7 +45,7 @@ include whitelist-var-common.inc
  
  apparmor
@@ -58,9 +58,9 @@ diff '--color=auto' -urp firejail-9999.orig/etc/profile-a-l/inkscape.profile fir
  machine-id
  net none
  nodvd
-diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/man.profile firejail-9999/etc/profile-m-z/man.profile
---- firejail-9999.orig/etc/profile-m-z/man.profile	2025-01-18 11:31:20.147453562 -0800
-+++ firejail-9999/etc/profile-m-z/man.profile	2025-01-18 11:31:36.127343066 -0800
+diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/man.profile firejail-0.9.80/etc/profile-m-z/man.profile
+--- firejail-0.9.80.orig/etc/profile-m-z/man.profile	2026-03-12 05:51:18.000000000 -0700
++++ firejail-0.9.80/etc/profile-m-z/man.profile	2026-05-26 08:25:08.308271079 -0700
 @@ -22,15 +22,15 @@ include disable-interpreters.inc
  include disable-programs.inc
  include disable-xdg.inc
@@ -68,16 +68,16 @@ diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/man.profile firejail
 -#mkdir ${HOME}/.local/share/man
 -#whitelist ${HOME}/.local/share/man
 -#whitelist ${HOME}/.manpath
-+mkdir ${HOME}/.local/share/man
-+whitelist ${HOME}/.local/share/man
-+whitelist ${HOME}/.manpath
++#mkdir ${HOME}/.local/share/man # Verified 20260525
++#whitelist ${HOME}/.local/share/man # Verified 20260525
++#whitelist ${HOME}/.manpath # Verified 20260525
  whitelist /usr/share/groff
  whitelist /usr/share/info
  whitelist /usr/share/lintian
  whitelist /usr/share/man
  whitelist /var/cache/man
 -#include whitelist-common.inc
-+include whitelist-common.inc
++#include whitelist-common.inc # Verified 20260525
  include whitelist-runuser-common.inc
  include whitelist-usr-share-common.inc
  include whitelist-var-common.inc
@@ -86,12 +86,12 @@ diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/man.profile firejail
  
  disable-mnt
 -#private-bin apropos,bash,cat,catman,col,gpreconv,groff,grotty,gunzip,gzip,less,man,most,nroff,preconv,sed,sh,tbl,tr,troff,whatis,which,xtotroff,zcat,zsoelim
-+private-bin apropos,bash,cat,catman,col,gpreconv,groff,grotty,gunzip,gzip,less,man,most,nroff,preconv,sed,sh,tbl,tr,troff,whatis,which,xtotroff,zcat,zsoelim,bzip2
++private-bin apropos,bash,cat,catman,col,gpreconv,groff,grotty,gunzip,gzip,less,man,most,nroff,preconv,sed,sh,tbl,tr,troff,whatis,which,xtotroff,zcat,zsoelim,manpager,bzip2  # Verified 20260525
  private-cache
  private-dev
 -private-etc @x11,groff,man_db.conf,manpath.config,sysless
 -#private-tmp
-+private-etc @x11,groff,man_db.conf,manpath.config,sysless,terminfo
++private-etc @x11,groff,man_db.conf,manpath.config,sysless,terminfo  # Verified 20260525
 +private-tmp
  
  dbus-user none
@@ -100,23 +100,23 @@ diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/man.profile firejail
  memory-deny-write-execute
  read-only ${HOME}
 -#read-only /tmp # breaks mandoc (see #4927)
-+read-only /tmp # breaks mandoc (see #4927)
++read-only /tmp # breaks mandoc (see #4927) # Verified 20260525
  restrict-namespaces
-diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/mpv.profile firejail-9999/etc/profile-m-z/mpv.profile
---- firejail-9999.orig/etc/profile-m-z/mpv.profile	2025-01-18 11:31:20.155453507 -0800
-+++ firejail-9999/etc/profile-m-z/mpv.profile	2025-01-18 11:31:36.127343066 -0800
+diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/mpv.profile firejail-0.9.80/etc/profile-m-z/mpv.profile
+--- firejail-0.9.80.orig/etc/profile-m-z/mpv.profile	2026-03-12 05:51:18.000000000 -0700
++++ firejail-0.9.80/etc/profile-m-z/mpv.profile	2026-05-26 08:25:08.308271079 -0700
 @@ -76,7 +76,7 @@ include whitelist-var-common.inc
  apparmor
  caps.drop all
  netfilter
 -nogroups
-+#nogroups
++#nogroups # Breaks streaming, verified 20260525
  noinput
  nonewprivs
  noroot
-diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/pavucontrol.profile firejail-9999/etc/profile-m-z/pavucontrol.profile
---- firejail-9999.orig/etc/profile-m-z/pavucontrol.profile	2025-01-18 11:31:20.187453285 -0800
-+++ firejail-9999/etc/profile-m-z/pavucontrol.profile	2025-01-18 11:31:36.127343066 -0800
+diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/pavucontrol.profile firejail-0.9.80/etc/profile-m-z/pavucontrol.profile
+--- firejail-0.9.80.orig/etc/profile-m-z/pavucontrol.profile	2026-03-12 05:51:18.000000000 -0700
++++ firejail-0.9.80/etc/profile-m-z/pavucontrol.profile	2026-05-26 08:25:08.308271079 -0700
 @@ -41,7 +41,7 @@ seccomp
  tracelog
  
@@ -126,9 +126,20 @@ diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/pavucontrol.profile 
  private-cache
  private-dev
  private-etc avahi
-diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/spotify.profile firejail-9999/etc/profile-m-z/spotify.profile
---- firejail-9999.orig/etc/profile-m-z/spotify.profile	2025-01-18 11:31:20.231452981 -0800
-+++ firejail-9999/etc/profile-m-z/spotify.profile	2025-01-18 11:31:36.127343066 -0800
+diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/signal-desktop.profile firejail-0.9.80/etc/profile-m-z/signal-desktop.profile
+--- firejail-0.9.80.orig/etc/profile-m-z/signal-desktop.profile	2026-03-12 05:51:18.000000000 -0700
++++ firejail-0.9.80/etc/profile-m-z/signal-desktop.profile	2026-05-26 08:25:08.308271079 -0700
+@@ -36,6 +36,7 @@ dbus-user.talk org.freedesktop.secrets
+ dbus-user.talk org.mozilla.*
+ 
+ ignore dbus-user none
++ignore nogroups # Verified 20260525
+ 
+ # Redirect
+ include electron-common.profile
+diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/spotify.profile firejail-0.9.80/etc/profile-m-z/spotify.profile
+--- firejail-0.9.80.orig/etc/profile-m-z/spotify.profile	2026-03-12 05:51:18.000000000 -0700
++++ firejail-0.9.80/etc/profile-m-z/spotify.profile	2026-05-26 08:25:08.308271079 -0700
 @@ -33,7 +33,7 @@ include whitelist-var-common.inc
  caps.drop all
  netfilter
@@ -147,27 +158,15 @@ diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/spotify.profile fire
  
  dbus-user filter
  dbus-user.own org.mpris.MediaPlayer2.spotify
-diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/tar.profile firejail-9999/etc/profile-m-z/tar.profile
---- firejail-9999.orig/etc/profile-m-z/tar.profile	2025-01-18 11:31:20.235452953 -0800
-+++ firejail-9999/etc/profile-m-z/tar.profile	2025-01-18 11:31:36.127343066 -0800
+diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/tar.profile firejail-0.9.80/etc/profile-m-z/tar.profile
+--- firejail-0.9.80.orig/etc/profile-m-z/tar.profile	2026-03-12 05:51:18.000000000 -0700
++++ firejail-0.9.80/etc/profile-m-z/tar.profile	2026-05-26 08:25:08.308271079 -0700
 @@ -17,7 +17,7 @@ ignore include disable-shell.inc
  # all capabilities this is automatically read-only.
  noblacklist /var/lib/pacman
  
 -#private-lib libfakeroot,liblzma.so.*,libreadline.so.*
-+private libfakeroot,liblzma.so.*,libreadline.so.*
++private-lib libfakeroot,liblzma.so.*,libreadline.so.* # More secure, verified 20260525
  # Debian based distributions need this for 'dpkg --unpack' (incl. synaptic)
  writable-var
  
-diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/x-terminal-emulator.profile firejail-9999/etc/profile-m-z/x-terminal-emulator.profile
---- firejail-9999.orig/etc/profile-m-z/x-terminal-emulator.profile	2025-01-18 11:31:20.287452594 -0800
-+++ firejail-9999/etc/profile-m-z/x-terminal-emulator.profile	2025-01-18 11:31:36.127343066 -0800
-@@ -6,7 +6,7 @@ include x-terminal-emulator.local
- include globals.local
- 
- caps.drop all
--ipc-namespace
-+#ipc-namespace # Breaks xfce4-terminal
- net none
- nogroups
- noinput
