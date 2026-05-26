@@ -1,6 +1,6 @@
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/allow-nodejs.inc firejail-0.9.80/etc/inc/allow-nodejs.inc
 --- firejail-0.9.80.orig/etc/inc/allow-nodejs.inc	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/inc/allow-nodejs.inc	2026-05-25 17:22:00.716427359 -0700
++++ firejail-0.9.80/etc/inc/allow-nodejs.inc	2026-05-25 22:52:21.721246601 -0700
 @@ -6,6 +6,7 @@ ignore read-only ${HOME}/.nvm
  noblacklist ${HOME}/.nvm
  noblacklist ${PATH}/node
@@ -9,9 +9,168 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/allow-nodejs.inc firejail-
  
  # Allow python for node-gyp (blacklisted by disable-interpreters.inc)
  include allow-python2.inc
+diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-common.inc firejail-0.9.80/etc/inc/disable-common.inc
+--- firejail-0.9.80.orig/etc/inc/disable-common.inc	2026-03-12 05:51:18.000000000 -0700
++++ firejail-0.9.80/etc/inc/disable-common.inc	2026-05-26 00:25:43.553501045 -0700
+@@ -631,6 +631,7 @@ blacklist ${PATH}/avahi*
+ blacklist ${PATH}/dbus-*
+ blacklist ${PATH}/debconf*
+ blacklist ${PATH}/grub-*
++blacklist ${PATH}/update-grub
+ blacklist ${PATH}/kernel-install  # from systemd package
+ 
+ # binaries installed by firejail
+@@ -760,3 +761,147 @@ blacklist ${RUNUSER}/update-notifier.pid
+ 
+ # pass utility (pass package in Debian etc.)
+ blacklist ${HOME}/.password-store
++
++# Package managers / portage
++blacklist ${PATH}/emerge
++blacklist ${PATH}/cave
++blacklist ${PATH}/etc-update
++blacklist /var/cache/edb/mtimedb
++blacklist /var/db/pkg
++
++# eix
++blacklist ${PATH}/eix
++blacklist /var/cache/eix/portage.eix
++blacklist /var/cache/eix/previous.eix
++
++# portage-utils
++blacklist ${PATH}/q
++blacklist ${PATH}/qatom
++blacklist ${PATH}/qcheck
++blacklist ${PATH}/qdepends
++blacklist ${PATH}/qfile
++blacklist ${PATH}/qgrep
++blacklist ${PATH}/qkeyword
++blacklist ${PATH}/qlist
++blacklist ${PATH}/qlop
++blacklist ${PATH}/qmerge
++blacklist ${PATH}/qpkg
++blacklist ${PATH}/qsearch
++blacklist ${PATH}/qsize
++blacklist ${PATH}/qtbz2
++blacklist ${PATH}/qtegrity
++blacklist ${PATH}/quse
++blacklist ${PATH}/qwhich
++blacklist ${PATH}/qxpak
++
++# gentoolkit
++blacklist ${PATH}/ebump
++blacklist ${PATH}/eclean*
++blacklist ${PATH}/ekeyword
++blacklist ${PATH}/equery
++blacklist ${PATH}/epkginfo
++blacklist ${PATH}/eread
++blacklist ${PATH}/eshowkw
++blacklist ${PATH}/enalyze
++blacklist ${PATH}/euse
++blacklist ${PATH}/imlate
++blacklist ${PATH}/merge-driver-ekeyword
++blacklist ${PATH}/revdep-rebuild
++blacklist /usr/lib/python*/site-packages/gentoolkit
++
++# Pkgcore
++blacklist ${PATH}/pmerge
++blacklist ${PATH}/pquery
++blacklist ${PATH}/pmaint
++blacklist ${PATH}/pinspect
++blacklist ${PATH}/pebuild
++blacklist ${PATH}/pclean
++
++# Log parsers for estimated compile time
++blacklist ${PATH}/genlop
++blacklist ${PATH}/emlop
++
++# eclean-kernel
++blacklist ${PATH}/eclean-kernel
++
++# genkernel
++blacklist ${PATH}/genkernel
++
++# eselect
++blacklist ${PATH}/eselect
++blacklist ${PATH}/kernel-config
++blacklist ${PATH}/profile-config
++blacklist ${PATH}/rc-config
++
++# Dracut
++blacklist ${PATH}/dracut
++blacklist ${PATH}/lsinitrd
++
++# Disk encryption
++blacklist ${PATH}/cryptsetup
++blacklist ${PATH}/ecryptfs-*
++blacklist ${PATH}/ecryptfsd
++blacklist ${PATH}/fscrypt
++blacklist ${PATH}/integritysetup
++blacklist ${PATH}/losetup
++blacklist ${PATH}/veracrypt
++blacklist ${PATH}/veritysetup
++blacklist /etc/conf.d/dmcrypt
++blacklist /etc/crypttab
++
++# Shedders / wipers
++blacklist ${PATH}/badblocks
++blacklist ${PATH}/blkdiscard
++blacklist ${PATH}/dd
++blacklist ${PATH}/hdparm
++blacklist ${PATH}/nvme-cli
++blacklist ${PATH}/scrub
++blacklist ${PATH}/sfill
++blacklist ${PATH}/shred
++blacklist ${PATH}/wipe
++
++# Undeleters
++blacklist ${PATH}/extundelete
++blacklist ${PATH}/testdisk
++
++# Disk utils
++blacklist ${PATH}/blkid
++blacklist ${PATH}/btrfsck
++blacklist ${PATH}/btrfs-check
++blacklist ${PATH}/cfdisk
++blacklist ${PATH}/cgdisk
++blacklist ${PATH}/fdisk
++blacklist ${PATH}/gdisk
++blacklist ${PATH}/gparted
++blacklist ${PATH}/mkswap
++blacklist ${PATH}/mke2fs
++blacklist ${PATH}/mkfs.*
++blacklist ${PATH}/mkfs
++blacklist ${PATH}/parted
++blacklist ${PATH}/resize2fs
++blacklist ${PATH}/sfdisk
++blacklist ${PATH}/sgdisk
++blacklist ${PATH}/xfs_growfs
++
++# USB inspection
++blacklist ${PATH}/lsusb
++
++# CPU inspection
++blacklist ${PATH}/cpufetch
++blacklist ${PATH}/cpuinfo
++blacklist ${PATH}/fastfetch
++blacklist ${PATH}/freshfetch
++blacklist ${PATH}/hyfetch
++blacklist ${PATH}/lscpu
++blacklist ${PATH}/neofetch
++blacklist ${PATH}/screenfetch
++blacklist ${PATH}/macchina
++blacklist ${PATH}/nerdfetch
++blacklist ${PATH}/pfetch
++
++# System inspection
++blacklist ${PATH}/dmesg
++blacklist ${PATH}/lspci
++
++# Blob dumps
++blacklist ${PATH}/dmidecode
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-devel.inc firejail-0.9.80/etc/inc/disable-devel.inc
 --- firejail-0.9.80.orig/etc/inc/disable-devel.inc	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/inc/disable-devel.inc	2026-05-25 17:22:00.716427359 -0700
++++ firejail-0.9.80/etc/inc/disable-devel.inc	2026-05-26 00:22:08.728103450 -0700
 @@ -44,6 +44,7 @@ blacklist ${PATH}/llvm*
  blacklist ${PATH}/scan-build
  # see issue #2106 - it disables hardware acceleration in Firefox on Radeon GPU
@@ -38,13 +197,16 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-devel.inc firejail
  
  # tcc - Tiny C Compiler
  blacklist ${PATH}/tcc
-@@ -109,3 +114,77 @@ blacklist /usr/include
+@@ -109,3 +114,97 @@ blacklist /usr/include
  blacklist /usr/local/include
  blacklist /usr/local/src
  blacklist /usr/src
 +
 +# npm
 +blacklist ${PATH}/npm
++
++# bun
++blacklist ${PATH}/bun
 +
 +# pnpm
 +blacklist ${PATH}/pnpm
@@ -116,9 +278,26 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-devel.inc firejail
 +
 +# Multislot Cython
 +blacklist /usr/lib/cython/*/lib/python*/site-packages/Cython
++
++# Zig
++blacklist ${PATH}/zig*
++blacklist /usr/lib*/zig
++blacklist /usr/lib*/zig
++blacklist /opt/zig-bin*
++
++# Binary inspection
++blacklist ${PATH}/elfx86exts
++
++# xdotool clones
++blacklist ${PATH}/dotool
++blacklist ${PATH}/kdotool
++blacklist ${PATH}/wlrctl
++blacklist ${PATH}/wtype
++blacklist ${PATH}/xdotool
++blacklist ${PATH}/ydotool
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-interpreters.inc firejail-0.9.80/etc/inc/disable-interpreters.inc
 --- firejail-0.9.80.orig/etc/inc/disable-interpreters.inc	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/inc/disable-interpreters.inc	2026-05-25 17:22:00.716427359 -0700
++++ firejail-0.9.80/etc/inc/disable-interpreters.inc	2026-05-25 22:52:21.725246478 -0700
 @@ -29,6 +29,7 @@ blacklist /usr/lib64/libmozjs-*
  # Node.js
  blacklist ${PATH}/node
@@ -136,7 +315,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-interpreters.inc f
 +blacklist ${PATH}/jsc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/epiphany.profile firejail-0.9.80/etc/profile-a-l/epiphany.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/epiphany.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/epiphany.profile	2026-05-25 17:23:15.770131212 -0700
++++ firejail-0.9.80/etc/profile-a-l/epiphany.profile	2026-05-25 22:52:21.725246478 -0700
 @@ -12,6 +12,7 @@ include globals.local
  noblacklist ${HOME}/.cache/epiphany
  noblacklist ${HOME}/.config/epiphany
@@ -155,7 +334,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/epiphany.profile f
  caps.drop all
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/evolution.profile firejail-0.9.80/etc/profile-a-l/evolution.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/evolution.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/evolution.profile	2026-05-25 17:23:03.242514474 -0700
++++ firejail-0.9.80/etc/profile-a-l/evolution.profile	2026-05-25 22:52:21.725246478 -0700
 @@ -16,6 +16,7 @@ noblacklist ${HOME}/.gnupg
  noblacklist ${HOME}/.local/share/evolution
  noblacklist ${HOME}/.pki
@@ -175,7 +354,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/evolution.profile 
  caps.drop all
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/geary.profile firejail-0.9.80/etc/profile-a-l/geary.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/geary.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/geary.profile	2026-05-25 17:24:22.328094989 -0700
++++ firejail-0.9.80/etc/profile-a-l/geary.profile	2026-05-25 22:52:21.725246478 -0700
 @@ -16,6 +16,7 @@ noblacklist ${HOME}/.local/share/geary
  noblacklist ${HOME}/.local/share/pki
  noblacklist ${HOME}/.mailcap
@@ -194,7 +373,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/geary.profile fire
  mkdir ${HOME}/.cache/folks
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/midori.profile firejail-0.9.80/etc/profile-m-z/midori.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/midori.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/midori.profile	2026-05-25 17:24:23.512058768 -0700
++++ firejail-0.9.80/etc/profile-m-z/midori.profile	2026-05-25 22:52:21.725246478 -0700
 @@ -21,6 +21,8 @@ noblacklist ${HOME}/.cache/gnome-mplayer
  noblacklist ${HOME}/.config/gnome-mplayer
  noblacklist ${HOME}/.lastpass
@@ -214,7 +393,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/midori.profile fir
  
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/surf.profile firejail-0.9.80/etc/profile-m-z/surf.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/surf.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/surf.profile	2026-05-25 17:24:17.752234979 -0700
++++ firejail-0.9.80/etc/profile-m-z/surf.profile	2026-05-25 22:52:21.725246478 -0700
 @@ -7,6 +7,7 @@ include surf.local
  include globals.local
  
