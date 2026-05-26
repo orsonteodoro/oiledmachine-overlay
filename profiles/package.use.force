@@ -36,3 +36,6 @@ sci-ml/caffe2 openmp
 
 # Prevent build issues
 gui-apps/noctalia-qs minimal
+
+# Prevent unprotected system with untested config
+sys-apps/firejail suid

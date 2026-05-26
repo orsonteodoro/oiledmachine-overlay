@@ -285,7 +285,7 @@ ${HARDENED_ALLOCATORS_IUSE[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 apparmor auto +chroot clang contrib +dbusproxy +file-transfer +firejail_profiles_default
 +firejail_profiles_server +globalcfg landlock +network +private-home selfrando selinux
-test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xcsecurity xvfb
++suid test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xcsecurity xvfb
 ebuild_revision_74
 "
 REQUIRED_USE+="
@@ -470,6 +470,20 @@ check_kernel_config() {
 	WARNING_FILE_LOCKING="CONFIG_FILE_LOCKING is required by ${PN} for chroot and pid sandboxing."
 	WARNING_BINFMT_SCRIPT="CONFIG_BINFMT_SCRIPT is required by ${PN} for contrib, tools, testing scripts."
 	check_extra_config
+
+	if use suid ; then
+		CONFIG_CHECK="
+			~USER_NS
+			~NAMESPACES
+			~SECCOMP
+			~SECCOMP_FILTER
+		"
+		WARNING_USER_NS="CONFIG_USER_NS is required by ${PN} for USE=-suid support"
+		WARNING_NAMESPACES="CONFIG_NAMESPACES is required by ${PN} for USE=-suid support"
+		WARNING_SECCOMP="CONFIG_SECCOMP is required by ${PN} for USE=-suid support"
+		WARNING_SECCOMP_FILTER="CONFIG_SECCOMP_FILTER is required by ${PN} for USE=-suid support"
+		check_extra_config
+	fi
 
 	if has_version "virtual/jack" ; then
 		CONFIG_CHECK="
@@ -896,7 +910,6 @@ _src_configure() {
 	_src_configure_default_res
 
 	local myconf=(
-		--enable-suid # Hard requirement
 		$(use_enable apparmor)
 		$(use_enable chroot)
 		$(use_enable dbusproxy)
@@ -906,6 +919,7 @@ _src_configure() {
 		$(use_enable network)
 		$(use_enable private-home)
 		$(use_enable selinux)
+		$(use_enable suid)
 		$(use_enable userns)
 		$(use_enable X x11)
 		${test_opts[@]}
@@ -1938,12 +1952,22 @@ EOF
 	insinto "/etc/sandbox.d"
 	doins "${T}/99firejail"
 
-	# Required:
-einfo "Setting suid bit for /usr/bin/firejail"
-	fperms u+s "/usr/bin/firejail"
+	if use suid ; then
+ewarn "Adding the suid bit for /usr/bin/firejail"
+		fperms "u+s" "/usr/bin/firejail"
+	else
+einfo "Removing the suid bit for /usr/bin/firejail"
+		fperms "u-s" "/usr/bin/firejail"
+einfo "Updating config for non-suid mode"
+		sed -i \
+			-e "s|# force-nonewprivs no|force-nonewprivs yes|g" \
+			-e "s|# userns yes|userns yes|g"
+			"${ED}/etc/firejail/firejail.conf" \
+			|| die
+	fi
 
 	dodir "/usr/share/${PN}"
-	mv "${ED}//usr/share/doc/firejail-0.9.80/profile.template" "${ED}/usr/share/${PN}"
+	mv "${ED}/usr/share/doc/firejail-0.9.80/profile.template" "${ED}/usr/share/${PN}"
 }
 
 pkg_postinst() {
@@ -2022,6 +2046,9 @@ einfo
 einfo "  /etc/firejail/<cli-name>.profile       # for systemwide"
 einfo "  ~/.config/firejail/<cli-name>.profile  # for profiles to follow your profile backups"
 einfo
+	if ! use suid ; then
+einfo "USE=-suid is not tested.  Ask the AI for help."
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
