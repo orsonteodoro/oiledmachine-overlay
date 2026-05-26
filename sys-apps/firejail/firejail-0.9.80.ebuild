@@ -286,7 +286,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 apparmor auto +chroot clang contrib +dbusproxy +file-transfer +firejail_profiles_default
 +firejail_profiles_server +globalcfg landlock +network +private-home selfrando selinux
 test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xcsecurity xvfb
-ebuild_revision_71
+ebuild_revision_73
 "
 REQUIRED_USE+="
 	!test
@@ -381,7 +381,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-0.9.78-firecfg.config.patch"
 #	"${FILESDIR}/extra-patches/${PN}-009110a-disable-xcsecurity.patch"
 #	"${FILESDIR}/extra-patches/${PN}-009110a-disable-xcsecurity-usage.patch"
-	"${FILESDIR}/extra-patches/${PN}-0.9.80-profile-fixes.patch"
+	"A${FILESDIR}/extra-patches/${PN}-0.9.80-profile-fixes.patch"
 	"${FILESDIR}/extra-patches/${PN}-3bbc6b5-private-bin-no-local-default-yes.patch" # Fix all wrappers and mpv
 	"${FILESDIR}/extra-patches/${PN}-1b2d18e-default-res.patch"
 	"${FILESDIR}/extra-patches/${PN}-0.9.80-devel-and-compiler-changes.patch"
