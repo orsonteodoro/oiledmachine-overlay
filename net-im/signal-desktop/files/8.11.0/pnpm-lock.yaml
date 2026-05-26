@@ -127,8 +127,8 @@ importers:
         specifier: 4.1.1
         version: 4.1.1
       jws:
-        specifier: 3.2.3
-        version: 3.2.3
+        specifier: 3.2.2
+        version: 3.2.2
       lodash:
         specifier: 4.18.0
         version: 4.18.0
@@ -145,8 +145,8 @@ importers:
         specifier: 1.55.1
         version: 1.55.1
       qs:
-        specifier: 6.14.2
-        version: 6.14.2
+        specifier: 6.15.2
+        version: 6.15.2
       storybook:
         specifier: 8.6.17
         version: 8.6.17(prettier@3.8.1)
@@ -233,8 +233,8 @@ importers:
         specifier: 0.1.61
         version: 0.1.61(patch_hash=d232c1154bffd88fa8df40fc91dc36098b29aba725d826c24ce74cfac7803919)
       '@octokit/plugin-paginate-rest':
-        specifier: 11.4.4-cjs.2
-        version: 11.4.4-cjs.2(@octokit/core@5.2.2)
+        specifier: 9.2.2
+        version: 9.2.2(@octokit/core@5.2.2)
       '@octokit/request':
         specifier: 8.4.1
         version: 8.4.1
@@ -664,6 +664,9 @@ importers:
       parsecurrency:
         specifier: 1.1.1
         version: 1.1.1
+      patch-package:
+        specifier: 8.0.0
+        version: 8.0.0
       path-to-regexp:
         specifier: 8.4.0
         version: 8.4.0
@@ -846,8 +849,8 @@ importers:
   danger:
     dependencies:
       '@octokit/plugin-paginate-rest':
-        specifier: 11.4.4-cjs.2
-        version: 11.4.4-cjs.2(@octokit/core@5.2.2)
+        specifier: 9.2.2
+        version: 9.2.2(@octokit/core@5.2.2)
       '@octokit/request':
         specifier: 8.4.1
         version: 8.4.1
@@ -876,8 +879,8 @@ importers:
         specifier: 4.0.4
         version: 4.0.4
       qs:
-        specifier: 6.14.2
-        version: 6.14.2
+        specifier: 6.15.2
+        version: 6.15.2
       yaml:
         specifier: 1.10.3
         version: 1.10.3
@@ -2198,6 +2201,12 @@ packages:
 
   '@octokit/plugin-paginate-rest@11.4.4-cjs.2':
     resolution: {integrity: sha512-2dK6z8fhs8lla5PaOTgqfCGBxgAv/le+EhPs27KklPhm1bKObpu6lXzwfUEQ16ajXzqNrKMujsFyo9K2eaoISw==}
+    engines: {node: '>= 18'}
+    peerDependencies:
+      '@octokit/core': '5'
+
+  '@octokit/plugin-paginate-rest@9.2.2':
+    resolution: {integrity: sha512-u3KYkGF7GcZnSD/3UP0S7K5XUFT2FkOQdcfXZGZQPGv3lm4F2Xbf71lvjldr8c1H3nNbF+33cLEkWYbokGWqiQ==}
     engines: {node: '>= 18'}
     peerDependencies:
       '@octokit/core': '5'
@@ -7882,6 +7891,9 @@ packages:
   jwa@1.4.2:
     resolution: {integrity: sha512-eeH5JO+21J78qMvTIDdBXidBd6nG2kZjg5Ohz/1fpa28Z4CcsWUzJ1ZZyFq/3z3N17aZy+ZuBoHljASbL1WfOw==}
 
+  jws@3.2.2:
+    resolution: {integrity: sha512-YHlZCB6lMTllWDtSPHz/ZXTsi8S00usEV6v1tjq8tOUZzw7DpSDWVXjXDre6ed1w/pd495ODpHZYSdkRTsa0HA==}
+
   jws@3.2.3:
     resolution: {integrity: sha512-byiJ0FLRdLdSVSReO/U4E7RoEyOCKnEnEPMjq3HxWtvzLsV08/i5RQKsFVNkCldrCaPr2vDNAOMsfs8T/Hze7g==}
 
@@ -8756,6 +8768,11 @@ packages:
   pascal-case@3.1.2:
     resolution: {integrity: sha512-uWlGT3YSnK9x3BQJaOdcZwrnV6hPpd8jFH1/ucpiLRPh/2zCVJKS19E4GvYHvaCcACn3foXZ0cLB9Wrx1KGe5g==}
 
+  patch-package@8.0.0:
+    resolution: {integrity: sha512-da8BVIhzjtgScwDJ2TtKsfT5JFWz1hYoBl9rUQ1f38MC2HwnEIkK8VN3dKMKcP7P7bvvgzNDbfNHtx3MsQb5vA==}
+    engines: {node: '>=14', npm: '>5'}
+    hasBin: true
+
   path-browserify@1.0.1:
     resolution: {integrity: sha512-b7uo2UCUOYZcnF/3ID0lulOJi/bafxa1xPe7ZPsammBSpjSWQkjNxlt635YGS2MiR9GjvuXCtz2emr3jbsz98g==}
 
@@ -8816,6 +8833,10 @@ packages:
 
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
+
+  picomatch@2.3.1:
+    resolution: {integrity: sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==}
+    engines: {node: '>=8.6'}
 
   picomatch@4.0.4:
     resolution: {integrity: sha512-QP88BAKvMam/3NxH6vj2o21R6MjxZUAd6nlwAS/pnGvN9IVLocLHxGYIzFhg6fUQ+5th6P4dv4eW9jX3DSIj7A==}
@@ -9139,10 +9160,6 @@ packages:
 
   qrcode-generator@2.0.4:
     resolution: {integrity: sha512-mZSiP6RnbHl4xL2Ap5HfkjLnmxfKcPWpWe/c+5XxCuetEenqmNFf1FH/ftXPCtFG5/TDobjsjz6sSNL0Sr8Z9g==}
-
-  qs@6.14.2:
-    resolution: {integrity: sha512-V/yCWTTF7VJ9hIh18Ugr2zhJMP01MY7c5kh4J870L7imm6/DIzBsNLTXzMwUA3yZ5b/KBqLx8Kp3uRvd7xSe3Q==}
-    engines: {node: '>=0.6'}
 
   qs@6.15.2:
     resolution: {integrity: sha512-Rzq0KEyX/w/tEybncDgdkZrJgVUsUMk3xjh3t5bv3S1HTAtg+uOYt72+ZfwiQwKdysThkTBdL/rTi6HDmX9Ddw==}
@@ -10514,8 +10531,8 @@ packages:
   webpack-hot-middleware@2.26.1:
     resolution: {integrity: sha512-khZGfAeJx6I8K9zKohEWWYN6KDlVw2DHownoe+6Vtwj1LP9WFgegXnVMSkZ/dBEBtXFwrkkydsaPFlB7f8wU2A==}
 
-  webpack-sources@3.4.1:
-    resolution: {integrity: sha512-eACpxRN02yaawnt+uUNIF7Qje6A9zArxBbcAJjK1PK3S9Ycg5jIuJ8pW4q8EMnwNZCEGltcjkRx1QzOxOkKD8A==}
+  webpack-sources@3.5.0:
+    resolution: {integrity: sha512-HPuy+uuoTCaaoEoI1LQ3JN9+vrPBvEesnnX1jADHy728cHSMlq4wUc4afYqahq2B1mhQVZxCXOkNTnXltr+2vQ==}
     engines: {node: '>=10.13.0'}
 
   webpack-virtual-modules@0.6.2:
@@ -10612,8 +10629,8 @@ packages:
     resolution: {integrity: sha512-OTIk8iR8/aCRWBqvxrzxR0hgxWpnYBblY1S5hDWBQfk/VFmJwzmJgQFN3WsoUKHISv2eAwe+PpbUzyL1CKTLXg==}
     engines: {node: ^20.17.0 || >=22.9.0}
 
-  ws@7.5.10:
-    resolution: {integrity: sha512-+dbF1tHwZpXcbOJdVOkzLDxZP1ailvSxM6ZweXTegylPny803bFhA+vqBYw4s31NSAk4S2Qz+AKXK9a4wkdjcQ==}
+  ws@7.5.11:
+    resolution: {integrity: sha512-zS54Oen9bITtp7kp2XM3AydrCIq1D+HwJOuH+c+e4LfpL/lotP5osijd+UoMnxwAam1GN8R4KtLAyIrIcBNpiA==}
     engines: {node: '>=8.3.0'}
     peerDependencies:
       bufferutil: ^4.0.1
@@ -11554,12 +11571,12 @@ snapshots:
   '@gitbeaker/core@38.12.1':
     dependencies:
       '@gitbeaker/requester-utils': 38.12.1
-      qs: 6.14.2
+      qs: 6.15.2
       xcase: 2.0.1
 
   '@gitbeaker/requester-utils@38.12.1':
     dependencies:
-      qs: 6.14.2
+      qs: 6.15.2
       xcase: 2.0.1
 
   '@gitbeaker/rest@38.12.1':
@@ -12149,6 +12166,11 @@ snapshots:
     dependencies:
       '@octokit/core': 5.2.2
       '@octokit/types': 13.10.0
+
+  '@octokit/plugin-paginate-rest@9.2.2(@octokit/core@5.2.2)':
+    dependencies:
+      '@octokit/core': 5.2.2
+      '@octokit/types': 12.6.0
 
   '@octokit/plugin-request-log@4.0.1(@octokit/core@5.2.2)':
     dependencies:
@@ -18869,6 +18891,11 @@ snapshots:
       ecdsa-sig-formatter: 1.0.11
       safe-buffer: 5.2.1
 
+  jws@3.2.2:
+    dependencies:
+      jwa: 1.4.2
+      safe-buffer: 5.2.1
+
   jws@3.2.3:
     dependencies:
       jwa: 1.4.2
@@ -19809,6 +19836,24 @@ snapshots:
       no-case: 3.0.4
       tslib: 2.8.1
 
+  patch-package@8.0.0:
+    dependencies:
+      '@yarnpkg/lockfile': 1.1.0
+      chalk: 4.1.2
+      ci-info: 3.9.0
+      cross-spawn: 7.0.6
+      find-yarn-workspace-root: 2.0.0
+      fs-extra: 9.1.0
+      json-stable-stringify: 1.3.0
+      klaw-sync: 6.0.0
+      minimist: 1.2.8
+      open: 7.4.2
+      rimraf: 2.6.3
+      semver: 7.7.4
+      slash: 2.0.0
+      tmp: 0.2.4
+      yaml: 2.8.3
+
   path-browserify@1.0.1: {}
 
   path-exists@3.0.0: {}
@@ -19845,6 +19890,8 @@ snapshots:
   pend@1.2.0: {}
 
   picocolors@1.1.1: {}
+
+  picomatch@2.3.1: {}
 
   picomatch@4.0.4: {}
 
@@ -20095,10 +20142,6 @@ snapshots:
 
   qrcode-generator@2.0.4(patch_hash=d70b44e0a29e1109f8b55b2a89c4f600bb3907877375cb50d0d363e16a2636ad): {}
 
-  qs@6.14.2:
-    dependencies:
-      side-channel: 1.1.0
-
   qs@6.15.2:
     dependencies:
       side-channel: 1.1.0
@@ -20290,7 +20333,7 @@ snapshots:
   react-devtools-core@7.0.1:
     dependencies:
       shell-quote: 1.8.3
-      ws: 7.5.10
+      ws: 7.5.11
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -21470,7 +21513,7 @@ snapshots:
 
   union@0.5.0:
     dependencies:
-      qs: 6.14.2
+      qs: 6.15.2
 
   unique-filename@2.0.1:
     dependencies:
@@ -21529,7 +21572,7 @@ snapshots:
   url@0.11.4:
     dependencies:
       punycode: 1.4.1
-      qs: 6.14.2
+      qs: 6.15.2
 
   use-callback-ref@1.3.3(@types/react@19.2.14)(react@19.2.4):
     dependencies:
@@ -21713,7 +21756,7 @@ snapshots:
       html-entities: 2.5.2
       strip-ansi: 6.0.1
 
-  webpack-sources@3.4.1: {}
+  webpack-sources@3.5.0: {}
 
   webpack-virtual-modules@0.6.2: {}
 
@@ -21743,7 +21786,7 @@ snapshots:
       tapable: 2.3.1
       terser-webpack-plugin: 5.6.0(@swc/core@1.10.16(@swc/helpers@0.5.15))(esbuild@0.25.9)(postcss@8.5.10)(webpack@5.104.1(@swc/core@1.10.16(@swc/helpers@0.5.15))(esbuild@0.25.9)(postcss@8.5.10))
       watchpack: 2.5.1
-      webpack-sources: 3.4.1
+      webpack-sources: 3.5.0
     transitivePeerDependencies:
       - '@minify-html/node'
       - '@swc/core'
@@ -21854,7 +21897,7 @@ snapshots:
     dependencies:
       signal-exit: 4.1.0
 
-  ws@7.5.10: {}
+  ws@7.5.11: {}
 
   ws@8.20.1: {}
 

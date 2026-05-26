@@ -119,7 +119,7 @@ RDEPEND+="
 	media-libs/libpulse
 "
 BDEPEND+="
-	net-libs/nodejs:${NODE_SLOT}[webassembly(+)]
+	>=net-libs/nodejs-24.15.0:${NODE_SLOT}[webassembly(+)]
 	|| (
 		dev-lang/rust:${RUST_PV}
 		dev-lang/rust-bin:${RUST_PV}
@@ -131,7 +131,7 @@ BDEPEND+="
 "
 PDEPEND+="
 	firejail? (
-		sys-apps/firejail[firejail_profiles_signal-desktop]
+		sys-apps/firejail
 	)
 "
 
@@ -398,8 +398,11 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 																								# CVE-2025-25289, CVE-2025-25288, CVE-2025-25290; DoS; Low
 
 
-				sed -i -e "s|qs: 6.14.0|qs: 6.14.2|g" "pnpm-lock.yaml" || die													# CVE-2026-2391; DoS; Low
+				sed -i -e "s|qs: 6.14.0|qs: 6.15.2|g" "pnpm-lock.yaml" || die													# CVE-2026-2391; DoS; Low
 																								# CVE-2025-15284; DoS; High
+																								# CVE-2026-8723; ZC, DoS; Moderate
+				sed -i -e "s|qs: 6.14.2|qs: 6.15.2|g" "pnpm-lock.yaml" || die													# CVE-2026-8723; ZC, DoS; Moderate
+				sed -i -e "s|qs: 6.14.2|qs: 6.15.2|g" "pnpm-lock.yaml" || die													# CVE-2026-8723; ZC, DoS; Moderate
 				sed -i -e "s|react-router: 6.10.0(react@18.3.1)|react-router: 6.30.2|g" "pnpm-lock.yaml" || die									# CVE-2025-68470; DT; Moderate
 				sed -i -e "s|jws: 3.2.2|jws: 3.2.3|g" "pnpm-lock.yaml" || die													# CVE-2025-65945; DT; High
 				sed -i -e "s|'@tootallnate/once': 2.0.0|'@tootallnate/once': 3.0.1|g" "pnpm-lock.yaml" || die									# CVE-2026-3449; DoS; Low
@@ -485,12 +488,13 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 			sed -i -e "s|lodash: 4.17.21|lodash: 4.18.0|g" "pnpm-lock.yaml" || die													# CVE-2025-13465; ZC, VS(DoS, DT), SS(DoS, DT, ID); Moderate
 			sed -i -e "s|lodash: 4.17.23|lodash: 4.18.0|g" "pnpm-lock.yaml" || die													# CVE-2026-4800; ZC, DoS, DT, ID; High
 																								# CVE-2026-2950; ZC, DT, ID; Moderate
-			sed -i -e "s|qs: 6.14.0|qs: 6.14.2|g" "pnpm-lock.yaml" || die														# CVE-2025-15284; VS(DoS), High
+			sed -i -e "s|qs: 6.14.0|qs: 6.15.2|g" "pnpm-lock.yaml" || die														# CVE-2025-15284; VS(DoS), High
 																								# CVE-2026-2391; DoS, Low
-			sed -i -e "s|qs: 6.13.0|qs: 6.14.2|g" "pnpm-lock.yaml" || die														# CVE-2025-15284; VS(DoS), High
+			sed -i -e "s|qs: 6.13.0|qs: 6.15.2|g" "pnpm-lock.yaml" || die														# CVE-2025-15284; VS(DoS), High
 																								# CVE-2026-2391; DoS, Low
-
-			sed -i -e "s|qs: 6.14.1|qs: 6.14.2|g" "pnpm-lock.yaml" || die														# CVE-2026-2391; DoS, Low
+			sed -i -e "s|qs: 6.14.1|qs: 6.15.2|g" "pnpm-lock.yaml" || die														# CVE-2026-2391; DoS, Low
+																								# CVE-2026-8723; ZC, DoS; Moderate
+			sed -i -e "s|qs: 6.14.2|qs: 6.15.2|g" "pnpm-lock.yaml" || die														# CVE-2026-8723; ZC, DoS; Moderate
 #			sed -i -e "s|\"fabric\": \"4.6.0\"|\"fabric\": \"7.2.0\"|g" "package.json" || die											# CVE-2026-27013; DoS, DT, ID, High
 #			sed -i -e "s|\"@types/fabric\": \"4.5.3\"|\"@types/fabric\": \"5.3.11\"|g" "package.json" || die									# Bump for fabric
 			sed -i -e "s|js-yaml: 4.1.0|js-yaml: 4.1.1|g" "pnpm-lock.yaml" || die													# CVE-2025-64718; DT; Moderate
@@ -604,7 +608,7 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 				"cross-spawn@7.0.5"
 				"micromatch@4.0.8"
 				"@octokit/rest@20.1.2"
-				"qs@6.14.2"
+				"qs@6.15.2"
 				"jws@3.2.3"
 				"@tootallnate/once@3.0.1"
 				"picomatch@4.0.4"
@@ -623,7 +627,7 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 			"node-forge@1.4.0"
 			"lodash@4.18.0"
 			"tar@7.5.11"
-			"qs@6.14.2"
+			"qs@6.15.2"
 			"minimatch@10.2.4"
 #			"fabric@7.2.0"
 #			"@types/fabric@5.3.11"
@@ -690,7 +694,7 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 		pushd "danger" >/dev/null 2>&1 || die
 			deps=(
 				"@octokit/rest@20.1.2"
-				"qs@6.14.2"
+				"qs@6.15.2"
 			)
 			epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
 		popd >/dev/null 2>&1 || die
@@ -823,6 +827,7 @@ pkg_postinst() {
 	elog "For using the tray icon on compatible desktop environments, start Signal with"
 	elog " '--start-in-tray' or '--use-tray-icon'."
 }
+# OILEDMACHINE-OVERLAY-TEST:  passed (8.11.0, 20260525, Electron 42.2.0, Node (build-time): 24.16.0)
 # OILEDMACHINE-OVERLAY-TEST:  passed (8.8.0, 20250504, Electron 41.5.0)
 # OILEDMACHINE-OVERLAY-TEST:  passed (8.8.0, 20250501, Electron 41.4.0)
 # OILEDMACHINE-OVERLAY-TEST:  passed (8.7.0, 20250422, Electron 41.2.2) with updated lockfile to reduce the attack surface

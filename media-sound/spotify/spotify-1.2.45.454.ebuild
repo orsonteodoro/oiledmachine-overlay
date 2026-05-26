@@ -398,7 +398,7 @@ RDEPEND+="
 	${CHROMIUM_RDEPEND}
 "
 PDEPEND+="
-	sys-apps/firejail[firejail_profiles_spotify,X?]
+	sys-apps/firejail[X?]
 "
 
 # END CEF DEPENDS

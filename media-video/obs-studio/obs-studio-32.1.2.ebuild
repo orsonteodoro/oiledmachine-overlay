@@ -743,7 +743,7 @@ BDEPEND+="
 "
 PDEPEND+="
 	firejail? (
-		sys-apps/firejail[firejail_profiles_obs,X]
+		sys-apps/firejail[X]
 	)
 "
 

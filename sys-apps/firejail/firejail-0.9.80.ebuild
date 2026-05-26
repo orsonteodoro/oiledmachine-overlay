@@ -20,7 +20,6 @@ GEN_EBUILD=0 # Uncomment to regen ebuild parts
 PYTHON_COMPAT=( "python3_"{9..12} )
 TEST_SET="distro" # distro or full
 
-declare -A _PROFILE_GRAPH
 declare -A APPARMOR_PROFILE
 declare -A ARGS
 declare -A AUTO_BLACKLIST
@@ -42,632 +41,6 @@ declare -A SCUDO_FREE_IMMEDIATE
 declare -A XEPHYR_WH
 declare -A X_BACKEND
 
-_PROFILE_GRAPH["_1password"]="electron-common"
-_PROFILE_GRAPH["_7z"]="archiver-common"
-_PROFILE_GRAPH["_7za"]="7z"
-_PROFILE_GRAPH["_7zr"]="7z"
-_PROFILE_GRAPH["Books"]="gnome-books"
-_PROFILE_GRAPH["Builder"]="gnome-builder"
-_PROFILE_GRAPH["Cheese"]="cheese"
-_PROFILE_GRAPH["Cyberfox"]="cyberfox"
-_PROFILE_GRAPH["Discord"]="discord"
-_PROFILE_GRAPH["DiscordCanary"]="discord-canary"
-_PROFILE_GRAPH["DiscordPTB"]="discord-ptb"
-_PROFILE_GRAPH["Documents"]="gnome-documents"
-_PROFILE_GRAPH["FBReader"]="fbreader"
-_PROFILE_GRAPH["FossaMail"]="fossamail"
-_PROFILE_GRAPH["Gitter"]="gitter"
-_PROFILE_GRAPH["Logs"]="gnome-logs"
-_PROFILE_GRAPH["Maps"]="gnome-maps"
-_PROFILE_GRAPH["Natron"]="natron"
-_PROFILE_GRAPH["PPSSPPQt"]="ppsspp"
-_PROFILE_GRAPH["PPSSPPSDL"]="ppsspp"
-_PROFILE_GRAPH["Postman"]="postman"
-_PROFILE_GRAPH["Screenshot"]="gnome-screenshot"
-_PROFILE_GRAPH["Telegram"]="telegram"
-_PROFILE_GRAPH["Thunar"]="file-manager-common"
-_PROFILE_GRAPH["VirtualBox"]="virtualbox"
-_PROFILE_GRAPH["abrowser"]="firefox-common"
-_PROFILE_GRAPH["acat"]="atool"
-_PROFILE_GRAPH["adiff"]="atool"
-_PROFILE_GRAPH["alienarena-wrapper"]="alienarena"
-_PROFILE_GRAPH["alpinef"]="alpine"
-_PROFILE_GRAPH["als"]="atool"
-_PROFILE_GRAPH["amuled"]="amule"
-_PROFILE_GRAPH["ani-cli"]="mpv"
-_PROFILE_GRAPH["apack"]="atool"
-_PROFILE_GRAPH["ar"]="archiver-common"
-_PROFILE_GRAPH["ardour4"]="ardour5"
-_PROFILE_GRAPH["arepack"]="atool"
-_PROFILE_GRAPH["armcord"]="electron-common"
-_PROFILE_GRAPH["atom"]="electron-common"
-_PROFILE_GRAPH["atom-beta"]="atom"
-_PROFILE_GRAPH["atool"]="archiver-common"
-_PROFILE_GRAPH["atril-previewer"]="atril"
-_PROFILE_GRAPH["atril-thumbnailer"]="atril"
-_PROFILE_GRAPH["aunpack"]="atool"
-_PROFILE_GRAPH["autokey-gtk"]="autokey-common"
-_PROFILE_GRAPH["autokey-qt"]="autokey-common"
-_PROFILE_GRAPH["autokey-run"]="autokey-common"
-_PROFILE_GRAPH["autokey-shell"]="autokey-common"
-_PROFILE_GRAPH["avidemux3_cli"]="avidemux"
-_PROFILE_GRAPH["avidemux3_jobs_qt5"]="avidemux3_qt5"
-_PROFILE_GRAPH["avidemux3_qt5"]="avidemux"
-_PROFILE_GRAPH["b2sum"]="hasher-common"
-_PROFILE_GRAPH["b3sum"]="hasher-common"
-_PROFILE_GRAPH["ballbuster-wrapper"]="ballbuster"
-_PROFILE_GRAPH["baloo_filemetadata_temp_extractor"]="baloo_file"
-_PROFILE_GRAPH["balsa"]="email-common"
-_PROFILE_GRAPH["basilisk"]="firefox-common"
-_PROFILE_GRAPH["beaker"]="electron-common"
-_PROFILE_GRAPH["bibtex"]="latex-common"
-_PROFILE_GRAPH["bitwarden"]="electron-common"
-_PROFILE_GRAPH["bitwarden-desktop"]="bitwarden"
-_PROFILE_GRAPH["bnox"]="chromium-common"
-_PROFILE_GRAPH["brave"]="chromium-common"
-_PROFILE_GRAPH["brave-browser"]="brave"
-_PROFILE_GRAPH["brave-browser-beta"]="brave"
-_PROFILE_GRAPH["brave-browser-dev"]="brave"
-_PROFILE_GRAPH["brave-browser-nightly"]="brave"
-_PROFILE_GRAPH["brave-browser-stable"]="brave"
-_PROFILE_GRAPH["brz"]="git"
-_PROFILE_GRAPH["bsdcat"]="bsdtar"
-_PROFILE_GRAPH["bsdcpio"]="bsdtar"
-_PROFILE_GRAPH["bsdtar"]="archiver-common"
-_PROFILE_GRAPH["bundle"]="build-systems-common"
-_PROFILE_GRAPH["bunzip2"]="gzip"
-_PROFILE_GRAPH["bzcat"]="gzip"
-_PROFILE_GRAPH["bzip2"]="gzip"
-_PROFILE_GRAPH["bzr"]="brz"
-_PROFILE_GRAPH["cachy-browser"]="firefox-common"
-_PROFILE_GRAPH["caja"]="file-manager-common"
-_PROFILE_GRAPH["calligraauthor"]="calligra"
-_PROFILE_GRAPH["calligraconverter"]="calligra"
-_PROFILE_GRAPH["calligraflow"]="calligra"
-_PROFILE_GRAPH["calligragemini"]="calligra"
-_PROFILE_GRAPH["calligraplan"]="calligra"
-_PROFILE_GRAPH["calligraplanwork"]="calligra"
-_PROFILE_GRAPH["calligrasheets"]="calligra"
-_PROFILE_GRAPH["calligrastage"]="calligra"
-_PROFILE_GRAPH["calligrawords"]="calligra"
-_PROFILE_GRAPH["caprine"]="electron-common"
-_PROFILE_GRAPH["cargo"]="build-systems-common"
-_PROFILE_GRAPH["chromium"]="chromium-common"
-_PROFILE_GRAPH["chromium-browser"]="chromium"
-_PROFILE_GRAPH["chromium-browser-privacy"]="chromium"
-_PROFILE_GRAPH["chromium-common"]="blink-common"
-_PROFILE_GRAPH["chromium-freeworld"]="chromium"
-_PROFILE_GRAPH["cinelerra"]="cin"
-_PROFILE_GRAPH["cinelerra-gg"]="cin"
-_PROFILE_GRAPH["cksum"]="hasher-common"
-_PROFILE_GRAPH["clamdscan"]="clamav"
-_PROFILE_GRAPH["clamdtop"]="clamav"
-_PROFILE_GRAPH["clamscan"]="clamav"
-_PROFILE_GRAPH["claws-mail"]="email-common"
-_PROFILE_GRAPH["clion-eap"]="clion"
-_PROFILE_GRAPH["cliqz"]="firefox-common"
-_PROFILE_GRAPH["clocks"]="gnome-clocks"
-_PROFILE_GRAPH["cmake"]="build-systems-common"
-_PROFILE_GRAPH["code"]="electron-common"
-_PROFILE_GRAPH["code-oss"]="code"
-_PROFILE_GRAPH["codium"]="vscodium"
-_PROFILE_GRAPH["cola"]="git-cola"
-_PROFILE_GRAPH["colorful-wrapper"]="colorful"
-_PROFILE_GRAPH["conplay"]="mpg123"
-_PROFILE_GRAPH["cpio"]="archiver-common"
-_PROFILE_GRAPH["crawl-tiles"]="crawl"
-_PROFILE_GRAPH["cryptocat"]="Cryptocat"
-_PROFILE_GRAPH["cvlc"]="vlc"
-_PROFILE_GRAPH["cyberfox"]="firefox-common"
-_PROFILE_GRAPH["d-feet"]="dbus-debug-common"
-_PROFILE_GRAPH["d-spy"]="dbus-debug-common"
-_PROFILE_GRAPH["ddgr"]="googler-common"
-_PROFILE_GRAPH["devilspie2"]="devilspie"
-_PROFILE_GRAPH["dino-im"]="dino"
-_PROFILE_GRAPH["discord"]="discord-common"
-_PROFILE_GRAPH["discord-canary"]="discord-common"
-_PROFILE_GRAPH["discord-common"]="electron-common"
-_PROFILE_GRAPH["discord-ptb"]="discord-common"
-_PROFILE_GRAPH["dnox"]="chromium-common"
-_PROFILE_GRAPH["dolphin"]="file-manager-common"
-_PROFILE_GRAPH["dooble-qt4"]="dooble"
-_PROFILE_GRAPH["dtui"]="dbus-debug-common"
-_PROFILE_GRAPH["ebook-convert"]="calibre"
-_PROFILE_GRAPH["ebook-edit"]="calibre"
-_PROFILE_GRAPH["ebook-meta"]="calibre"
-_PROFILE_GRAPH["ebook-polish"]="calibre"
-_PROFILE_GRAPH["ebook-viewer"]="calibre"
-_PROFILE_GRAPH["electron-common"]="blink-common"
-_PROFILE_GRAPH["electron-mail"]="electron-common"
-_PROFILE_GRAPH["element-desktop"]="riot-desktop"
-_PROFILE_GRAPH["elinks"]="links-common"
-_PROFILE_GRAPH["enchant-2"]="enchant"
-_PROFILE_GRAPH["enchant-lsmod"]="enchant"
-_PROFILE_GRAPH["enchant-lsmod-2"]="enchant-2"
-_PROFILE_GRAPH["enox"]="chromium-common"
-_PROFILE_GRAPH["eog"]="eo-common"
-_PROFILE_GRAPH["eom"]="eo-common"
-_PROFILE_GRAPH["et"]="wps"
-_PROFILE_GRAPH["etr-wrapper"]="etr"
-_PROFILE_GRAPH["evince-previewer"]="evince"
-_PROFILE_GRAPH["evince-thumbnailer"]="evince"
-_PROFILE_GRAPH["exfalso"]="quodlibet"
-_PROFILE_GRAPH["ffmpegthumbnailer"]="ffmpeg"
-_PROFILE_GRAPH["ffplay"]="ffmpeg"
-_PROFILE_GRAPH["ffprobe"]="ffmpeg"
-_PROFILE_GRAPH["firedragon"]="firefox-common"
-_PROFILE_GRAPH["firefox"]="firefox-common"
-_PROFILE_GRAPH["firefox-beta"]="firefox"
-_PROFILE_GRAPH["firefox-developer-edition"]="firefox"
-_PROFILE_GRAPH["firefox-esr"]="firefox"
-_PROFILE_GRAPH["firefox-nightly"]="firefox"
-_PROFILE_GRAPH["firefox-wayland"]="firefox"
-_PROFILE_GRAPH["firefox-x11"]="firefox"
-_PROFILE_GRAPH["five-or-more"]="gnome_games-common"
-_PROFILE_GRAPH["fix-qdf"]="qpdf"
-_PROFILE_GRAPH["flacsplt"]="mp3splt"
-_PROFILE_GRAPH["flashpeak-slimjet"]="chromium-common"
-_PROFILE_GRAPH["floorp"]="firefox-common"
-_PROFILE_GRAPH["fossamail"]="firefox"
-_PROFILE_GRAPH["four-in-a-row"]="gnome_games-common"
-_PROFILE_GRAPH["freecadcmd"]="freecad"
-_PROFILE_GRAPH["freeciv-gtk3"]="freeciv"
-_PROFILE_GRAPH["freeciv-mp-gtk3"]="freeciv"
-_PROFILE_GRAPH["freeoffice-planmaker"]="softmaker-common"
-_PROFILE_GRAPH["freeoffice-presentations"]="softmaker-common"
-_PROFILE_GRAPH["freeoffice-textmaker"]="softmaker-common"
-_PROFILE_GRAPH["freetube"]="electron-common"
-_PROFILE_GRAPH["gajim-history-manager"]="gajim"
-_PROFILE_GRAPH["gallery-dl"]="yt-dlp"
-_PROFILE_GRAPH["gcalccmd"]="gnome-calculator"
-_PROFILE_GRAPH["gconf-editor"]="gconf"
-_PROFILE_GRAPH["gconf-merge-schema"]="gconf"
-_PROFILE_GRAPH["gconf-merge-tree"]="gconf"
-_PROFILE_GRAPH["gconfpkg"]="gconf"
-_PROFILE_GRAPH["gconftool-2"]="gconf"
-_PROFILE_GRAPH["gh"]="git"
-_PROFILE_GRAPH["ghb"]="handbrake"
-_PROFILE_GRAPH["gist-paste"]="gist"
-_PROFILE_GRAPH["github-desktop"]="electron-common"
-_PROFILE_GRAPH["gl-117-wrapper"]="gl-117"
-_PROFILE_GRAPH["glaxium-wrapper"]="glaxium"
-_PROFILE_GRAPH["gnome-2048"]="gnome_games-common"
-_PROFILE_GRAPH["gnome-character-map"]="gucharmap"
-_PROFILE_GRAPH["gnome-keyring"]="gnome-keyring-daemon"
-_PROFILE_GRAPH["gnome-keyring-3"]="gnome-keyring"
-_PROFILE_GRAPH["gnome-klotski"]="gnome_games-common"
-_PROFILE_GRAPH["gnome-logs"]="system-log-common"
-_PROFILE_GRAPH["gnome-mahjongg"]="gnome_games-common"
-_PROFILE_GRAPH["gnome-mines"]="gnome_games-common"
-_PROFILE_GRAPH["gnome-mpv"]="celluloid"
-_PROFILE_GRAPH["gnome-nibbles"]="gnome_games-common"
-_PROFILE_GRAPH["gnome-robots"]="gnome_games-common"
-_PROFILE_GRAPH["gnome-sudoku"]="gnome_games-common"
-_PROFILE_GRAPH["gnome-system-log"]="system-log-common"
-_PROFILE_GRAPH["gnome-taquin"]="gnome_games-common"
-_PROFILE_GRAPH["gnome-tetravex"]="gnome_games-common"
-_PROFILE_GRAPH["godot3"]="godot"
-_PROFILE_GRAPH["google-chrome"]="chromium-common"
-_PROFILE_GRAPH["google-chrome-beta"]="chromium-common"
-_PROFILE_GRAPH["google-chrome-stable"]="google-chrome"
-_PROFILE_GRAPH["google-chrome-unstable"]="chromium-common"
-_PROFILE_GRAPH["google-earth-pro"]="google-earth"
-_PROFILE_GRAPH["googler"]="googler-common"
-_PROFILE_GRAPH["gpg2"]="gpg"
-_PROFILE_GRAPH["gsettings"]="dconf"
-_PROFILE_GRAPH["gsettings-data-convert"]="gconf"
-_PROFILE_GRAPH["gsettings-schema-convert"]="gconf"
-_PROFILE_GRAPH["gtar"]="tar"
-_PROFILE_GRAPH["gtk-lbry-viewer"]="gtk-youtube-viewers-common lbry-viewer"
-_PROFILE_GRAPH["gtk-pipe-viewer"]="gtk-youtube-viewers-common pipe-viewer"
-_PROFILE_GRAPH["gtk-straw-viewer"]="gtk-youtube-viewers-common straw-viewer"
-_PROFILE_GRAPH["gtk-youtube-viewer"]="gtk-youtube-viewers-common youtube-viewer"
-_PROFILE_GRAPH["gtk2-youtube-viewer"]="gtk-youtube-viewers-common youtube-viewer"
-_PROFILE_GRAPH["gtk3-youtube-viewer"]="gtk-youtube-viewers-common youtube-viewer"
-_PROFILE_GRAPH["gummi"]="latex-common"
-_PROFILE_GRAPH["gunzip"]="gzip"
-_PROFILE_GRAPH["gzdoom"]="gzdoom-common"
-_PROFILE_GRAPH["gzexe"]="gzip"
-_PROFILE_GRAPH["gzip"]="archiver-common"
-_PROFILE_GRAPH["handbrake-gtk"]="handbrake"
-_PROFILE_GRAPH["hitori"]="gnome_games-common"
-_PROFILE_GRAPH["hledger-ui"]="hledger"
-_PROFILE_GRAPH["icecat"]="firefox-common"
-_PROFILE_GRAPH["icedove"]="firefox"
-_PROFILE_GRAPH["iceweasel"]="firefox"
-_PROFILE_GRAPH["idea"]="idea_sh"
-_PROFILE_GRAPH["ideaIC"]="idea_sh"
-_PROFILE_GRAPH["inkview"]="inkscape"
-_PROFILE_GRAPH["inox"]="chromium-common"
-_PROFILE_GRAPH["ipcalc-ng"]="ipcalc"
-_PROFILE_GRAPH["iridium"]="chromium-common"
-_PROFILE_GRAPH["iridium-browser"]="iridium"
-_PROFILE_GRAPH["jami"]="jami-gnome"
-_PROFILE_GRAPH["jdownloader"]="JDownloader"
-_PROFILE_GRAPH["jitsi-meet-desktop"]="electron-common"
-_PROFILE_GRAPH["journal-viewer"]="system-log-common"
-_PROFILE_GRAPH["jumpnbump-menu"]="jumpnbump"
-_PROFILE_GRAPH["kalgebramobile"]="kalgebra"
-_PROFILE_GRAPH["karbon"]="krita"
-_PROFILE_GRAPH["keepass2"]="keepass"
-_PROFILE_GRAPH["keepassx2"]="keepassx"
-_PROFILE_GRAPH["keepassxc-cli"]="keepassxc"
-_PROFILE_GRAPH["keepassxc-proxy"]="keepassxc"
-_PROFILE_GRAPH["kid3-cli"]="kid3"
-_PROFILE_GRAPH["kid3-qt"]="kid3"
-_PROFILE_GRAPH["klatexformula_cmdl"]="klatexformula"
-_PROFILE_GRAPH["knotes"]="kmail"
-_PROFILE_GRAPH["kontact"]="kmail"
-_PROFILE_GRAPH["latex"]="latex-common"
-_PROFILE_GRAPH["lbry-viewer"]="youtube-viewers-common"
-_PROFILE_GRAPH["lbry-viewer-gtk"]="gtk-youtube-viewers-common lbry-viewer"
-_PROFILE_GRAPH["lbunzip2"]="gzip"
-_PROFILE_GRAPH["lbzcat"]="gzip"
-_PROFILE_GRAPH["lbzip2"]="gzip"
-_PROFILE_GRAPH["librewolf"]="firefox-common"
-_PROFILE_GRAPH["librewolf-nightly"]="librewolf"
-_PROFILE_GRAPH["lightsoff"]="gnome_games-common"
-_PROFILE_GRAPH["links"]="links-common"
-_PROFILE_GRAPH["links2"]="links-common"
-_PROFILE_GRAPH["linuxqq"]="electron-common"
-_PROFILE_GRAPH["lobase"]="libreoffice"
-_PROFILE_GRAPH["lobster"]="mpv"
-_PROFILE_GRAPH["localc"]="libreoffice"
-_PROFILE_GRAPH["lodraw"]="libreoffice"
-_PROFILE_GRAPH["loffice"]="libreoffice"
-_PROFILE_GRAPH["lofromtemplate"]="libreoffice"
-_PROFILE_GRAPH["loimpress"]="libreoffice"
-_PROFILE_GRAPH["lomath"]="libreoffice"
-_PROFILE_GRAPH["loweb"]="libreoffice"
-_PROFILE_GRAPH["lowriter"]="libreoffice"
-_PROFILE_GRAPH["lrunzip"]="cpio"
-_PROFILE_GRAPH["lrz"]="cpio"
-_PROFILE_GRAPH["lrzcat"]="cpio"
-_PROFILE_GRAPH["lrzip"]="cpio"
-_PROFILE_GRAPH["lrztar"]="cpio"
-_PROFILE_GRAPH["lrzuntar"]="cpio"
-_PROFILE_GRAPH["lsar"]="ar"
-_PROFILE_GRAPH["lyx"]="latex-common"
-_PROFILE_GRAPH["lz4"]="archiver-common"
-_PROFILE_GRAPH["lz4c"]="lz4"
-_PROFILE_GRAPH["lz4cat"]="lz4"
-_PROFILE_GRAPH["lzcat"]="cpio"
-_PROFILE_GRAPH["lzcmp"]="cpio"
-_PROFILE_GRAPH["lzdiff"]="cpio"
-_PROFILE_GRAPH["lzdoom"]="gzdoom-common"
-_PROFILE_GRAPH["lzegrep"]="cpio"
-_PROFILE_GRAPH["lzfgrep"]="cpio"
-_PROFILE_GRAPH["lzgrep"]="cpio"
-_PROFILE_GRAPH["lzip"]="cpio"
-_PROFILE_GRAPH["lzless"]="cpio"
-_PROFILE_GRAPH["lzma"]="cpio"
-_PROFILE_GRAPH["lzmadec"]="xzdec"
-_PROFILE_GRAPH["lzmainfo"]="cpio"
-_PROFILE_GRAPH["lzmore"]="cpio"
-_PROFILE_GRAPH["lzop"]="cpio"
-_PROFILE_GRAPH["make"]="build-systems-common"
-_PROFILE_GRAPH["makedeb"]="makepkg"
-_PROFILE_GRAPH["masterpdfeditor4"]="masterpdfeditor"
-_PROFILE_GRAPH["masterpdfeditor5"]="masterpdfeditor"
-_PROFILE_GRAPH["mate-calculator"]="mate-calc"
-_PROFILE_GRAPH["mathematica"]="Mathematica"
-_PROFILE_GRAPH["matrix-mirage"]="mirage"
-_PROFILE_GRAPH["mattermost-desktop"]="electron-common"
-_PROFILE_GRAPH["md5sum"]="hasher-common"
-_PROFILE_GRAPH["megaglest_editor"]="megaglest"
-_PROFILE_GRAPH["mencoder"]="mplayer"
-_PROFILE_GRAPH["meson"]="build-systems-common"
-_PROFILE_GRAPH["microsoft-edge"]="chromium-common"
-_PROFILE_GRAPH["microsoft-edge-beta"]="chromium-common"
-_PROFILE_GRAPH["microsoft-edge-dev"]="chromium-common"
-_PROFILE_GRAPH["microsoft-edge-stable"]="microsoft-edge"
-_PROFILE_GRAPH["min"]="chromium-common"
-_PROFILE_GRAPH["mov-cli"]="mpv"
-_PROFILE_GRAPH["mp3wrap"]="mp3splt"
-_PROFILE_GRAPH["mpg123-alsa"]="mpg123"
-_PROFILE_GRAPH["mpg123-id3dump"]="mpg123"
-_PROFILE_GRAPH["mpg123-jack"]="mpg123"
-_PROFILE_GRAPH["mpg123-nas"]="mpg123"
-_PROFILE_GRAPH["mpg123-openal"]="mpg123"
-_PROFILE_GRAPH["mpg123-oss"]="mpg123"
-_PROFILE_GRAPH["mpg123-portaudio"]="mpg123"
-_PROFILE_GRAPH["mpg123-pulse"]="mpg123"
-_PROFILE_GRAPH["mpg123-strip"]="mpg123"
-_PROFILE_GRAPH["ms-excel"]="ms-office"
-_PROFILE_GRAPH["ms-onenote"]="ms-office"
-_PROFILE_GRAPH["ms-outlook"]="ms-office"
-_PROFILE_GRAPH["ms-powerpoint"]="ms-office"
-_PROFILE_GRAPH["ms-skype"]="ms-office"
-_PROFILE_GRAPH["ms-word"]="ms-office"
-_PROFILE_GRAPH["multimc"]="multimc5"
-_PROFILE_GRAPH["mupdf-gl"]="mupdf"
-_PROFILE_GRAPH["mupdf-x11"]="mupdf"
-_PROFILE_GRAPH["mupdf-x11-curl"]="mupdf"
-_PROFILE_GRAPH["muraster"]="mupdf"
-_PROFILE_GRAPH["mutool"]="mupdf"
-_PROFILE_GRAPH["mypaint-ora-thumbnailer"]="mypaint"
-_PROFILE_GRAPH["nautilus"]="file-manager-common"
-_PROFILE_GRAPH["ncdu2"]="ncdu"
-_PROFILE_GRAPH["nemo"]="file-manager-common"
-_PROFILE_GRAPH["neverball-wrapper"]="neverball"
-_PROFILE_GRAPH["neverputt"]="neverball"
-_PROFILE_GRAPH["neverputt-wrapper"]="neverputt"
-_PROFILE_GRAPH["newsbeuter"]="newsboat"
-_PROFILE_GRAPH["nextcloud-desktop"]="nextcloud"
-_PROFILE_GRAPH["nitroshare-cli"]="nitroshare"
-_PROFILE_GRAPH["nitroshare-nmh"]="nitroshare"
-_PROFILE_GRAPH["nitroshare-send"]="nitroshare"
-_PROFILE_GRAPH["nitroshare-ui"]="nitroshare"
-_PROFILE_GRAPH["node"]="nodejs-common"
-_PROFILE_GRAPH["node-gyp"]="nodejs-common"
-_PROFILE_GRAPH["notable"]="electron-common"
-_PROFILE_GRAPH["npm"]="nodejs-common"
-_PROFILE_GRAPH["npx"]="nodejs-common"
-_PROFILE_GRAPH["nuclear"]="electron-common"
-_PROFILE_GRAPH["obsidian"]="electron-common"
-_PROFILE_GRAPH["oggsplt"]="mp3splt"
-_PROFILE_GRAPH["onionshare"]="onionshare-gui"
-_PROFILE_GRAPH["onionshare-cli"]="onionshare-gui"
-_PROFILE_GRAPH["ooffice"]="libreoffice"
-_PROFILE_GRAPH["ooviewdoc"]="libreoffice"
-_PROFILE_GRAPH["openarena_ded"]="openarena"
-_PROFILE_GRAPH["openmw-launcher"]="openmw"
-_PROFILE_GRAPH["openshot-qt"]="openshot"
-_PROFILE_GRAPH["opera"]="chromium-common"
-_PROFILE_GRAPH["opera-beta"]="chromium-common"
-_PROFILE_GRAPH["opera-developer"]="chromium-common"
-_PROFILE_GRAPH["ouch"]="archiver-common"
-_PROFILE_GRAPH["out123"]="mpg123"
-_PROFILE_GRAPH["p7zip"]="7z"
-_PROFILE_GRAPH["palemoon"]="firefox-common"
-_PROFILE_GRAPH["pavucontrol-qt"]="pavucontrol"
-_PROFILE_GRAPH["pcmanfm"]="file-manager-common"
-_PROFILE_GRAPH["pdflatex"]="latex-common"
-_PROFILE_GRAPH["pinball-wrapper"]="pinball"
-_PROFILE_GRAPH["pip"]="build-systems-common"
-_PROFILE_GRAPH["pipe-viewer"]="youtube-viewers-common"
-_PROFILE_GRAPH["pipe-viewer-gtk"]="gtk-youtube-viewers-common pipe-viewer"
-_PROFILE_GRAPH["planmaker18"]="softmaker-common"
-_PROFILE_GRAPH["planmaker18free"]="softmaker-common"
-_PROFILE_GRAPH["playonlinux"]="wine"
-_PROFILE_GRAPH["pnpm"]="nodejs-common"
-_PROFILE_GRAPH["pnpx"]="nodejs-common"
-_PROFILE_GRAPH["postman"]="electron-common"
-_PROFILE_GRAPH["presentations18"]="softmaker-common"
-_PROFILE_GRAPH["presentations18free"]="softmaker-common"
-_PROFILE_GRAPH["pycharm-professional"]="pycharm-community"
-_PROFILE_GRAPH["pzstd"]="zstd"
-_PROFILE_GRAPH["qemu-launcher"]="qemu-common"
-_PROFILE_GRAPH["qemu-system-x86_64"]="qemu-common"
-_PROFILE_GRAPH["qq"]="linuxqq"
-_PROFILE_GRAPH["qt-faststart"]="ffmpeg"
-_PROFILE_GRAPH["quadrapassel"]="gnome_games-common"
-_PROFILE_GRAPH["qupzilla"]="falkon"
-_PROFILE_GRAPH["ranger"]="file-manager-common"
-_PROFILE_GRAPH["remmina-file-wrapper"]="remmina"
-_PROFILE_GRAPH["rhash"]="hasher-common"
-_PROFILE_GRAPH["rhythmbox-client"]="rhythmbox"
-_PROFILE_GRAPH["riot-desktop"]="riot-web"
-_PROFILE_GRAPH["riot-web"]="electron-common"
-_PROFILE_GRAPH["rnano"]="nano"
-_PROFILE_GRAPH["rocketchat"]="electron-common"
-_PROFILE_GRAPH["rtin"]="tin"
-_PROFILE_GRAPH["rview"]="vim"
-_PROFILE_GRAPH["rvim"]="vim"
-_PROFILE_GRAPH["scorched3d-wrapper"]="scorched3d"
-_PROFILE_GRAPH["scp"]="ssh"
-_PROFILE_GRAPH["seahorse-daemon"]="seahorse"
-_PROFILE_GRAPH["seahorse-tool"]="seahorse"
-_PROFILE_GRAPH["seamonkey-bin"]="seamonkey"
-_PROFILE_GRAPH["secret-tool"]="gnome-keyring"
-_PROFILE_GRAPH["semver"]="nodejs-common"
-_PROFILE_GRAPH["session-messenger"]="session-desktop"
-_PROFILE_GRAPH["session-messenger-desktop"]="session-desktop"
-_PROFILE_GRAPH["sftp"]="ssh"
-_PROFILE_GRAPH["sha1sum"]="hasher-common"
-_PROFILE_GRAPH["sha224sum"]="hasher-common"
-_PROFILE_GRAPH["sha256sum"]="hasher-common"
-_PROFILE_GRAPH["sha384sum"]="hasher-common"
-_PROFILE_GRAPH["sha512sum"]="hasher-common"
-_PROFILE_GRAPH["signal-desktop"]="electron-common"
-_PROFILE_GRAPH["skypeforlinux"]="electron-common"
-_PROFILE_GRAPH["slack"]="electron-common"
-_PROFILE_GRAPH["snox"]="chromium-common"
-_PROFILE_GRAPH["soffice"]="libreoffice"
-_PROFILE_GRAPH["standard-notes"]="standardnotes-desktop"
-_PROFILE_GRAPH["start-tor-browser"]="start-tor-browser_desktop"
-_PROFILE_GRAPH["steam-native"]="steam"
-_PROFILE_GRAPH["steam-runtime"]="steam"
-_PROFILE_GRAPH["straw-viewer"]="youtube-viewers-common"
-_PROFILE_GRAPH["sum"]="hasher-common"
-_PROFILE_GRAPH["supertuxkart-wrapper"]="supertuxkart"
-_PROFILE_GRAPH["swell-foop"]="gnome_games-common"
-_PROFILE_GRAPH["sylpheed"]="email-common"
-_PROFILE_GRAPH["sysprof-cli"]="sysprof"
-_PROFILE_GRAPH["tar"]="archiver-common"
-_PROFILE_GRAPH["tb-starter-wrapper"]="torbrowser-launcher"
-_PROFILE_GRAPH["teams"]="electron-common"
-_PROFILE_GRAPH["teams-for-linux"]="electron-common"
-_PROFILE_GRAPH["telegram-desktop"]="telegram"
-_PROFILE_GRAPH["termshark"]="wireshark"
-_PROFILE_GRAPH["tex"]="latex-common"
-_PROFILE_GRAPH["textmaker18"]="softmaker-common"
-_PROFILE_GRAPH["textmaker18free"]="softmaker-common"
-_PROFILE_GRAPH["thunar"]="Thunar"
-_PROFILE_GRAPH["thunderbird"]="firefox-common"
-_PROFILE_GRAPH["thunderbird-beta"]="thunderbird"
-_PROFILE_GRAPH["thunderbird-wayland"]="thunderbird"
-_PROFILE_GRAPH["tidal-hifi"]="electron-common"
-_PROFILE_GRAPH["tor-browser"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser-ar"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser-ca"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser-cs"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser-da"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser-de"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser-el"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser-en"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser-en-us"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser-es"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser-es-es"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser-fa"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser-fr"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser-ga-ie"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser-he"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser-hu"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser-id"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser-is"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser-it"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser-ja"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser-ka"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser-ko"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser-nb"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser-nl"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser-pl"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser-pt-br"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser-ru"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser-sv-se"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser-tr"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser-vi"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser-zh-cn"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser-zh-tw"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser_ar"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser_ca"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser_cs"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser_da"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser_de"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser_el"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser_en"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser_en-US"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser_es"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser_es-ES"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser_fa"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser_fr"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser_ga-IE"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser_he"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser_hu"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser_id"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser_is"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser_it"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser_ja"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser_ka"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser_ko"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser_nb"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser_nl"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser_pl"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser_pt-BR"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser_ru"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser_sv-SE"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser_tr"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser_vi"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser_zh-CN"]="torbrowser-launcher"
-_PROFILE_GRAPH["tor-browser_zh-TW"]="torbrowser-launcher"
-_PROFILE_GRAPH["torbrowser"]="firefox-common"
-_PROFILE_GRAPH["tqemu"]="qemu-common"
-_PROFILE_GRAPH["transmission-cli"]="transmission-common"
-_PROFILE_GRAPH["transmission-create"]="transmission-common"
-_PROFILE_GRAPH["transmission-daemon"]="transmission-common"
-_PROFILE_GRAPH["transmission-edit"]="transmission-common"
-_PROFILE_GRAPH["transmission-gtk"]="transmission-common"
-_PROFILE_GRAPH["transmission-qt"]="transmission-common"
-_PROFILE_GRAPH["transmission-remote"]="transmission-common"
-_PROFILE_GRAPH["transmission-remote-cli"]="transmission-common"
-_PROFILE_GRAPH["transmission-remote-gtk"]="transmission-common"
-_PROFILE_GRAPH["transmission-show"]="transmission-common"
-_PROFILE_GRAPH["trivalent"]="chromium-common chromium-common-hardened_inc"
-_PROFILE_GRAPH["tshark"]="wireshark"
-_PROFILE_GRAPH["tuir"]="rtv"
-_PROFILE_GRAPH["tutanota-desktop"]="electron-common"
-_PROFILE_GRAPH["twitch"]="electron-common"
-_PROFILE_GRAPH["unar"]="ar"
-_PROFILE_GRAPH["uncompress"]="gzip"
-_PROFILE_GRAPH["unlz4"]="lz4"
-_PROFILE_GRAPH["unlzma"]="cpio"
-_PROFILE_GRAPH["unrar"]="archiver-common"
-_PROFILE_GRAPH["unxz"]="cpio"
-_PROFILE_GRAPH["unzip"]="archiver-common"
-_PROFILE_GRAPH["unzstd"]="zstd"
-_PROFILE_GRAPH["upscayl"]="electron-common"
-_PROFILE_GRAPH["uzdoom"]="gzdoom-common"
-_PROFILE_GRAPH["vesktop"]="discord-common"
-_PROFILE_GRAPH["vimcat"]="vim"
-_PROFILE_GRAPH["vimdiff"]="vim"
-_PROFILE_GRAPH["vimpager"]="vim"
-_PROFILE_GRAPH["vimtutor"]="vim"
-_PROFILE_GRAPH["vivaldi"]="chromium-common"
-_PROFILE_GRAPH["vivaldi-beta"]="vivaldi"
-_PROFILE_GRAPH["vivaldi-snapshot"]="vivaldi"
-_PROFILE_GRAPH["vivaldi-stable"]="vivaldi"
-_PROFILE_GRAPH["vmplayer"]="vmware"
-_PROFILE_GRAPH["vmware-player"]="vmware"
-_PROFILE_GRAPH["vmware-workstation"]="vmware"
-_PROFILE_GRAPH["vscodium"]="code"
-_PROFILE_GRAPH["vulturesclaw"]="nethack-vultures"
-_PROFILE_GRAPH["vultureseye"]="nethack-vultures"
-_PROFILE_GRAPH["waterfox"]="firefox-common"
-_PROFILE_GRAPH["waterfox-classic"]="waterfox"
-_PROFILE_GRAPH["waterfox-current"]="waterfox"
-_PROFILE_GRAPH["weechat-curses"]="weechat"
-_PROFILE_GRAPH["wget2"]="wget"
-_PROFILE_GRAPH["whalebird"]="electron-common"
-_PROFILE_GRAPH["wire-desktop"]="electron-common"
-_PROFILE_GRAPH["wireshark-gtk"]="wireshark"
-_PROFILE_GRAPH["wireshark-qt"]="wireshark"
-_PROFILE_GRAPH["wpp"]="wps"
-_PROFILE_GRAPH["wpspdf"]="wps"
-_PROFILE_GRAPH["xarchiver"]="archiver-common"
-_PROFILE_GRAPH["xlinks"]="links"
-_PROFILE_GRAPH["xlinks2"]="links2"
-_PROFILE_GRAPH["xonotic-glx"]="xonotic"
-_PROFILE_GRAPH["xonotic-sdl"]="xonotic"
-_PROFILE_GRAPH["xonotic-sdl-wrapper"]="xonotic"
-_PROFILE_GRAPH["xournalpp"]="xournal"
-_PROFILE_GRAPH["xplayer-audio-preview"]="xplayer"
-_PROFILE_GRAPH["xplayer-video-thumbnailer"]="xplayer"
-_PROFILE_GRAPH["xreader-previewer"]="xreader"
-_PROFILE_GRAPH["xreader-thumbnailer"]="xreader"
-_PROFILE_GRAPH["xxd"]="cpio"
-_PROFILE_GRAPH["xz"]="cpio"
-_PROFILE_GRAPH["xzcat"]="cpio"
-_PROFILE_GRAPH["xzcmp"]="cpio"
-_PROFILE_GRAPH["xzdec"]="archiver-common"
-_PROFILE_GRAPH["xzdiff"]="cpio"
-_PROFILE_GRAPH["xzegrep"]="cpio"
-_PROFILE_GRAPH["xzfgrep"]="cpio"
-_PROFILE_GRAPH["xzgrep"]="cpio"
-_PROFILE_GRAPH["xzless"]="cpio"
-_PROFILE_GRAPH["xzmore"]="cpio"
-_PROFILE_GRAPH["yandex-browser"]="chromium-common"
-_PROFILE_GRAPH["yarn"]="nodejs-common"
-_PROFILE_GRAPH["youtube"]="electron-common"
-_PROFILE_GRAPH["youtube-dl"]="yt-dlp"
-_PROFILE_GRAPH["youtube-music-desktop-app"]="ytmdesktop"
-_PROFILE_GRAPH["youtube-viewer"]="youtube-viewers-common"
-_PROFILE_GRAPH["youtube-viewer-gtk"]="gtk-youtube-viewers-common youtube-viewer"
-_PROFILE_GRAPH["youtubemusic-nativefier"]="electron-common"
-_PROFILE_GRAPH["ytmdesktop"]="electron-common"
-_PROFILE_GRAPH["zcat"]="gzip"
-_PROFILE_GRAPH["zcmp"]="gzip"
-_PROFILE_GRAPH["zdiff"]="gzip"
-_PROFILE_GRAPH["zegrep"]="gzip"
-_PROFILE_GRAPH["zen"]="zen-browser"
-_PROFILE_GRAPH["zen-bin"]="zen-browser"
-_PROFILE_GRAPH["zen-browser"]="firefox-common"
-_PROFILE_GRAPH["zfgrep"]="gzip"
-_PROFILE_GRAPH["zforce"]="gzip"
-_PROFILE_GRAPH["zgrep"]="gzip"
-_PROFILE_GRAPH["zless"]="gzip"
-_PROFILE_GRAPH["zlib-flate"]="qpdf"
-_PROFILE_GRAPH["zmore"]="gzip"
-_PROFILE_GRAPH["znew"]="gzip"
-_PROFILE_GRAPH["zoom"]="electron-common"
-_PROFILE_GRAPH["zpaq"]="cpio"
-_PROFILE_GRAPH["zstd"]="archiver-common"
-_PROFILE_GRAPH["zstdcat"]="zstd"
-_PROFILE_GRAPH["zstdgrep"]="zstd"
-_PROFILE_GRAPH["zstdless"]="zstd"
-_PROFILE_GRAPH["zstdmt"]="zstd"
-
-
 declare -A _SCOPE=(
 	["gpg-agent"]="ban" # Breaks loading of xfce4
 	["ssh-agent"]="ban" # Breaks loading of xfce4
@@ -678,801 +51,6 @@ declare -A _SCOPE=(
 	["Xvfb"]="ban" # Breaks --x11=xvfb
 	["x-terminal-emulator"]="ban"
 )
-
-DOTTED_FILENAMES=(
-	"blender-2.8"
-	"blender-3.6"
-	"blink-common-hardened.inc"
-	"chromium-common-hardened.inc"
-	"com.github.bleakgrey.tootle"
-	"com.github.dahenson.agenda"
-	"com.github.johnfactotum.Foliate"
-	"com.github.phase1geo.minder"
-	"com.github.tchx84.Flatseal"
-	"com.gitlab.newsflash"
-	"display-im6.q16"
-	"device-flasher.linux"
-	"electron-common-hardened.inc"
-	"feh-network.inc"
-	"gimp-2.10"
-	"gimp-2.8"
-	"gimp-3.0"
-	"idea.sh"
-	"io.github.lainsce.Notejot"
-	"mpg123.bin"
-	"openoffice.org"
-	"org.gnome.NautilusPreviewer"
-	"org.gnome.seahorse.Application"
-	"ping-hardened.inc"
-	"runenpass.sh"
-	"start-tor-browser.desktop"
-	"studio.sh"
-	"ts3client_runscript.sh"
-	"electron-hardened.inc"
-	"warzone2100.real"
-)
-
-FIREJAIL_PROFILES=(
-0ad 1password 2048-qt 7z 7za 7zr Books Builder Cheese Cryptocat Cyberfox
-Discord DiscordCanary DiscordPTB Documents FBReader FossaMail Fritzing Gitter
-JDownloader Logs Maelstrom Maps Mathematica Natron PCSX2 PPSSPPQt PPSSPPSDL
-Postman QMediathekView QOwnNotes Screenshot Telegram Thunar Viber VirtualBox
-XMind Xephyr Xvfb ZeGrapher abiword abrowser acat adiff agetpkg akonadi_control
-akregator alacarte alienarena alienarena-wrapper alienblaster alpine alpinef
-als amarok amule amuled android-studio ani-cli anki ansel anydesk aosp apack
-apktool apostrophe ar arch-audit archaudit-report archiver-common ardour4
-ardour5 arduino arepack aria2c aria2p aria2rpc ark arm armcord artha assogiate
-asunder atom atom-beta atool atril atril-previewer atril-thumbnailer audacious
-audacity audio-recorder aunpack authenticator authenticator-rs autokey-common
-autokey-gtk autokey-qt autokey-run autokey-shell avidemux avidemux3_cli
-avidemux3_jobs_qt5 avidemux3_qt5 aweather awesome axel b2sum b3sum ballbuster
-ballbuster-wrapper baloo_file baloo_filemetadata_temp_extractor balsa baobab
-barrier basilisk bcompare beaker bibletime bibtex bijiben bitcoin-qt bitlbee
-bitwarden bitwarden-desktop blackbox bleachbit blender blender-2_8 blender-3_6
-bless blink-common blink-common-hardened_inc blobby blobwars bluefish bnox
-bpftop brackets brasero brave brave-browser brave-browser-beta
-brave-browser-dev brave-browser-nightly brave-browser-stable brz bsdcat bsdcpio
-bsdtar build-systems-common buku bundle bunzip2 bzcat bzflag bzip2 bzr
-cachy-browser caja calibre calligra calligraauthor calligraconverter
-calligraflow calligragemini calligraplan calligraplanwork calligrasheets
-calligrastage calligrawords cameramonitor cantata caprine cargo catfish cawbird
-celluloid chafa chatterino checkbashisms cheese cherrytree chromium
-chromium-browser chromium-browser-privacy chromium-common
-chromium-common-hardened_inc chromium-freeworld cin cinelerra cinelerra-gg
-cksum clac clamav clamdscan clamdtop clamscan clamtk claws-mail clawsker
-clementine clion clion-eap clipgrab clipit cliqz clocks cloneit cmake cmus code
-code-oss codium cointop cola colorful colorful-wrapper
-com_github_bleakgrey_tootle com_github_dahenson_agenda
-com_github_johnfactotum_Foliate com_github_phase1geo_minder
-com_github_tchx84_Flatseal com_gitlab_newsflash conkeror conky conplay corebird
-cower coyim cpio crawl crawl-tiles crow cryptocat curl cvlc cyberfox d-feet
-d-spy daisy darktable dbus-debug-common dbus-send dconf dconf-editor ddgr ddgtk
-deadbeef deadlink default deluge desktopeditors devhelp device-flasher_linux
-devilspie devilspie2 dex2jar dexios dia dig digikam dillo dino dino-im discord
-discord-canary discord-common discord-ptb display display-im6_q16 dnox
-dnscrypt-proxy dnsmasq dolphin dolphin-emu dooble dooble-qt4 dosbox dragon
-drawio drill dropbox dtui easystroke ebook-convert ebook-edit ebook-meta
-ebook-polish ebook-viewer editorconfiger electron-cash electron-common
-electron-common-hardened_inc electron-mail electrum element-desktop elinks
-emacs email-common empathy enchant enchant-2 enchant-lsmod enchant-lsmod-2
-engrampa enox enpass eo-common eog eom ephemeral epiphany equalx erd et etr
-etr-wrapper evince evince-previewer evince-thumbnailer evolution exfalso
-exiftool falkon fbreader fdns feedreader feh feh-network_inc ferdi fetchmail
-ffmpeg ffmpegthumbnailer ffplay ffprobe file file-manager-common file-roller
-filezilla firedragon firefox firefox-beta firefox-common firefox-common-addons
-firefox-developer-edition firefox-esr firefox-nightly firefox-wayland
-firefox-x11 five-or-more fix-qdf flacsplt flameshot flashpeak-slimjet floorp
-flowblade fluffychat fluxbox foliate font-manager fontforge fossamail
-four-in-a-row fractal fragments franz freecad freecadcmd freeciv freeciv-gtk3
-freeciv-mp-gtk3 freecol freemind freeoffice-planmaker freeoffice-presentations
-freeoffice-textmaker freetube freshclam frogatto frozen-bubble ftp funnyboat
-gajim gajim-history-manager galculator gallery-dl gapplication gcalccmd gcloud
-gconf gconf-editor gconf-merge-schema gconf-merge-tree gconfpkg gconftool-2 gdu
-geany geary gedit geekbench geeqie geki2 geki3 gfeeds gget gh ghb ghostwriter
-gimp gimp-2_10 gimp-2_8 gimp-3_0 gist gist-paste git git-cola gitg
-github-desktop gitter gjs gl-117 gl-117-wrapper glaxium glaxium-wrapper
-globaltime gmpc gnome-2048 gnome-books gnome-boxes gnome-builder
-gnome-calculator gnome-calendar gnome-character-map gnome-characters
-gnome-chess gnome-clocks gnome-contacts gnome-documents gnome-font-viewer
-gnome-hexgl gnome-keyring gnome-keyring-3 gnome-keyring-daemon gnome-klotski
-gnome-latex gnome-logs gnome-mahjongg gnome-maps gnome-mines gnome-mplayer
-gnome-mpv gnome-music gnome-nettool gnome-nibbles gnome-passwordsafe
-gnome-photos gnome-pie gnome-pomodoro gnome-recipes gnome-ring gnome-robots
-gnome-schedule gnome-screenshot gnome-sound-recorder gnome-sudoku
-gnome-system-log gnome-taquin gnome-tetravex gnome-text-editor gnome-todo
-gnome-twitch gnome-weather gnome_games-common gnote gnubik godot godot3
-goldendict goobox google-chrome google-chrome-beta google-chrome-stable
-google-chrome-unstable google-earth google-earth-pro
-google-play-music-desktop-player googler googler-common gpa gpg gpg-agent gpg2
-gpicview gpredict gradio gramps gravity-beams-and-evaporating-stars
-green-recoder gsettings gsettings-data-convert gsettings-schema-convert gtar
-gthumb gtk-lbry-viewer gtk-pipe-viewer gtk-straw-viewer gtk-update-icon-cache
-gtk-youtube-viewer gtk-youtube-viewers-common gtk2-youtube-viewer
-gtk3-youtube-viewer guayadeque gucharmap gummi gunzip guvcview gwenview gzdoom
-gzdoom-common gzexe gzip halloy handbrake handbrake-gtk hashcat hasher-common
-hedgewars hexchat highlight hitori hledger hledger-ui homebank host hugin
-hyperrogue i2prouter i3 iagno icecat icedove iceweasel idea ideaIC idea_sh
-imagej img2txt impressive imv inkscape inkview inox io_github_lainsce_Notejot
-ipcalc ipcalc-ng iridium iridium-browser irssi itch jami jami-gnome jd-gui
-jdownloader jerry jitsi jitsi-meet-desktop journal-viewer jumpnbump
-jumpnbump-menu k3b kaffeine kalgebra kalgebramobile karbon kate kazam kcalc
-kdeinit4 kdenlive kdiff3 keepass keepass2 keepassx keepassx2 keepassxc
-keepassxc-cli keepassxc-proxy kfind kget kid3 kid3-cli kid3-qt kino
-kiwix-desktop klatexformula klatexformula_cmdl klavaro kmail kmplayer knotes
-kodi kontact konversation kopete koreader krita krunner ktorrent ktouch kube
-kwin_x11 kwrite latex latex-common lbreakouthd lbry-viewer lbry-viewer-gtk
-lbunzip2 lbzcat lbzip2 leafpad ledger-live-desktop less lettura librecad
-libreoffice librewolf librewolf-nightly lifeograph liferea lightsoff lincity-ng
-links links-common links2 linphone linuxqq lmms lobase lobster localc
-localsend_app lodraw loffice lofromtemplate loimpress lollypop lomath loupe
-loweb lowriter lrunzip lrz lrzcat lrzip lrztar lrzuntar lsar lugaru
-luminance-hdr lutris lximage-qt lxmusic lynx lyriek lyx lz4 lz4c lz4cat lzcat
-lzcmp lzdiff lzdoom lzegrep lzfgrep lzgrep lzip lzless lzma lzmadec lzmainfo
-lzmore lzop macrofusion magicor make makedeb makepkg man manaplus marker
-masterpdfeditor masterpdfeditor4 masterpdfeditor5 mate-calc mate-calculator
-mate-color-select mate-dictionary mathematica matrix-mirage mattermost-desktop
-mcabber mcomix md5sum mdr mediainfo mediathekview megaglest megaglest_editor
-meld mencoder mendeleydesktop menulibre meson metadata-cleaner meteo-qt
-microsoft-edge microsoft-edge-beta microsoft-edge-dev microsoft-edge-stable
-midori mimetype min mindless minecraft-launcher minetest minitube mirage
-mirrormagic mocp monero-wallet-cli mousepad mov-cli mp3splt mp3splt-gtk mp3wrap
-mpDris2 mpd mpg123 mpg123-alsa mpg123-id3dump mpg123-jack mpg123-nas
-mpg123-openal mpg123-oss mpg123-portaudio mpg123-pulse mpg123-strip mpg123_bin
-mplayer mpsyt mpv mrrescue ms-excel ms-office ms-onenote ms-outlook
-ms-powerpoint ms-skype ms-word mtpaint mullvad-browser multimc multimc5 mumble
-mupdf mupdf-gl mupdf-x11 mupdf-x11-curl mupen64plus muraster musescore
-musictube musixmatch mutool mutt mypaint mypaint-ora-thumbnailer nano natron
-nautilus ncdu ncdu2 ncmpcpp ne nemo neochat neomutt netactview nethack
-nethack-vultures netsurf neverball neverball-wrapper neverputt
-neverputt-wrapper newsbeuter newsboat newsflash nextcloud nextcloud-desktop
-nheko nhex nicotine nitroshare nitroshare-cli nitroshare-nmh nitroshare-send
-nitroshare-ui node node-gyp nodejs-common nomacs noprofile notable notify-send
-npm npx nslookup nsxiv nuclear nvim nylas nyx obs obsidian ocenaudio odt2txt
-oggsplt okular onboard onionshare onionshare-cli onionshare-gui ooffice
-ooviewdoc open-invaders openarena openarena_ded openbox opencity openclonk
-openmw openmw-launcher openoffice_org openra openshot openshot-qt openstego
-openttd opera opera-beta opera-developer orage org_gnome_NautilusPreviewer
-org_gnome_seahorse_Application ostrichriders otter-browser ouch out123 p7zip
-palemoon pandoc parole parsecd patch pavucontrol pavucontrol-qt pcmanfm pcsxr
-pdfchain pdflatex pdfmod pdfsam pdftotext peek penguin-command photoflare
-picard pidgin pinball pinball-wrapper ping ping-hardened_inc pingus pinta
-pioneer pip pipe-viewer pipe-viewer-gtk pithos pitivi pix pkglog planmaker18
-planmaker18free playonlinux pluma plv pngquant pnpm pnpx polari postman ppsspp
-pragha presentations18 presentations18free prismlauncher profanity psi psi-plus
-pybitmessage pycharm-community pycharm-professional pyradio pzstd qbittorrent
-qcomicbook qemu-common qemu-launcher qemu-system-x86_64 qgis qlipper qmmp qnapi
-qpdf qpdfview qq qrencode qt-faststart qt5ct qt6ct qtox quadrapassel quakespasm
-quassel quaternion quiterss quodlibet qupzilla qutebrowser raincat rambox
-ranger rawtherapee reader redeclipse rednotebook redshift regextester remmina
-remmina-file-wrapper retroarch rhash rhythmbox rhythmbox-client ricochet
-riot-desktop riot-web ripperx ristretto rnano rocketchat rpcs3 rssguard
-rsync-download_only rtin rtorrent rtv rtv-addons runenpass_sh rview rvim
-rymdport sayonara scallion scorched3d scorched3d-wrapper scorchwentbonkers scp
-scribus sdat2img seafile-applet seahorse seahorse-adventures seahorse-daemon
-seahorse-tool seamonkey seamonkey-bin secret-tool semver server servo
-session-desktop session-messenger session-messenger-desktop sftp sha1sum
-sha224sum sha256sum sha384sum sha512sum shellcheck shortwave shotcut shotwell
-signal-cli signal-desktop silentarmy simple-scan simplescreenrecorder simutrans
-singularity skanlite skypeforlinux slack slashem smplayer smtube
-smuxi-frontend-gnome sniffnet snox soffice softmaker-common sol songrec
-sound-juicer soundconverter spectacle spectral spectre-meltdown-checker spotify
-sqlitebrowser srb2 ssh ssh-agent ssmtp standard-notes standardnotes-desktop
-start-tor-browser start-tor-browser_desktop statusof steam steam-native
-steam-runtime stellarium straw-viewer strawberry strings studio_sh
-subdownloader sum supertux2 supertuxkart supertuxkart-wrapper surf sushi sway
-swell-foop sylpheed syncthing synfigstudio sysprof sysprof-cli
-system-log-common tar tb-starter-wrapper tcpdump teams teams-for-linux
-teamspeak3 teeworlds telegram telegram-desktop telnet terasology termshark
-tesseract tex textmaker18 textmaker18free textroom thunar thunderbird
-thunderbird-beta thunderbird-wayland tidal-hifi tilp tin tiny-rdm tmux tor
-tor-browser tor-browser-ar tor-browser-ca tor-browser-cs tor-browser-da
-tor-browser-de tor-browser-el tor-browser-en tor-browser-en-us tor-browser-es
-tor-browser-es-es tor-browser-fa tor-browser-fr tor-browser-ga-ie
-tor-browser-he tor-browser-hu tor-browser-id tor-browser-is tor-browser-it
-tor-browser-ja tor-browser-ka tor-browser-ko tor-browser-nb tor-browser-nl
-tor-browser-pl tor-browser-pt-br tor-browser-ru tor-browser-sv-se
-tor-browser-tr tor-browser-vi tor-browser-zh-cn tor-browser-zh-tw
-tor-browser_ar tor-browser_ca tor-browser_cs tor-browser_da tor-browser_de
-tor-browser_el tor-browser_en tor-browser_en-US tor-browser_es
-tor-browser_es-ES tor-browser_fa tor-browser_fr tor-browser_ga-IE
-tor-browser_he tor-browser_hu tor-browser_id tor-browser_is tor-browser_it
-tor-browser_ja tor-browser_ka tor-browser_ko tor-browser_nb tor-browser_nl
-tor-browser_pl tor-browser_pt-BR tor-browser_ru tor-browser_sv-SE
-tor-browser_tr tor-browser_vi tor-browser_zh-CN tor-browser_zh-TW torbrowser
-torbrowser-launcher torcs totem tqemu tracker transgui transmission-cli
-transmission-common transmission-create transmission-daemon transmission-edit
-transmission-gtk transmission-qt transmission-remote transmission-remote-cli
-transmission-remote-gtk transmission-show tremc tremulous trivalent trojita
-truecraft ts3client_runscript_sh tshark tuir tutanota-desktop tuxguitar tuxtype
-tvbrowser tvnamer twitch typespeed udiskie uefitool uget-gtk unar unbound
-uncompress unf unknown-horizons unlz4 unlzma unrar unxz unzip unzstd upscayl
-url-eater utox uudeview uzbl-browser uzdoom vesktop viewnior viking vim vimcat
-vimdiff vimpager vimtutor virt-manager virtualbox vivaldi vivaldi-beta
-vivaldi-snapshot vivaldi-stable vlc vmplayer vmware vmware-player vmware-view
-vmware-workstation vscodium vulturesclaw vultureseye vym w3m warmux warsow
-warzone2100 warzone2100_real waterfox waterfox-classic waterfox-current
-webstorm webui-aria2 weechat weechat-curses wesnoth wget wget2 whalebird whois
-widelands wine wire-desktop wireshark wireshark-gtk wireshark-qt wordwarvi wpp
-wps wpspdf x-terminal-emulator x2goclient xarchiver xbill xcalc xchat xed
-xfburn xfce4-dict xfce4-mixer xfce4-notes xfce4-screenshooter xiphos xlinks
-xlinks2 xmms xmr-stak xonotic xonotic-glx xonotic-sdl xonotic-sdl-wrapper
-xournal xournalpp xpdf xplayer xplayer-audio-preview xplayer-video-thumbnailer
-xpra xreader xreader-previewer xreader-thumbnailer xviewer xxd xz xzcat xzcmp
-xzdec xzdiff xzegrep xzfgrep xzgrep xzless xzmore yandex-browser yarn yelp
-youtube youtube-dl youtube-dl-gui youtube-music-desktop-app youtube-viewer
-youtube-viewer-gtk youtube-viewers-common youtubemusic-nativefier yt-dlp
-ytmdesktop zaproxy zart zathura zcat zcmp zdiff zeal zegrep zen zen-bin
-zen-browser zfgrep zforce zgrep zim zless zlib-flate zmore znew zoom zpaq zstd
-zstdcat zstdgrep zstdless zstdmt zulip
-
-)
-FIREJAIL_PROFILES_IUSE="${FIREJAIL_PROFILES[@]/#/firejail_profiles_}"
-
-GUI_REQUIRED_USE="
-firejail_profiles_godot? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_artha? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_handbrake-gtk? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_Builder? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_jami? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_lollypop? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_google-chrome? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_libreoffice? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_firefox-wayland? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gajim? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_alienarena-wrapper? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_freeciv-gtk3? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_fluffychat? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-ring? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_klatexformula? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gwenview? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_autokey-qt? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_icecat? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_krunner? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_firefox? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_fragments? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_freeciv-mp-gtk3? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_Books? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_dooble? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_foliate? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-calendar? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gl-117? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_clawsker? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-keyring-3? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_autokey-gtk? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_firefox-developer-edition? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_alacarte? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_baloo_file? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-hexgl? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gfeeds? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnubik? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-weather? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_kopete? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_io_github_lainsce_Notejot? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-documents? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-screenshot? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_cliqz? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_fractal? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_ffmpeg? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_celluloid? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_digikam? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_git-cola? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_green-recoder? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_jami-gnome? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_kmplayer? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_code? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_guvcview? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_kube? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_cachy-browser? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_chromium-browser-privacy? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_frozen-bubble? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-clocks? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_bnox? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_firefox-nightly? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-sudoku? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-mines? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_google-chrome-beta? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_konversation? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_jerry? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_firefox-esr? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_devhelp? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-boxes? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-passwordsafe? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_iridium? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-nibbles? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_ephemeral? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-mpv? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_com_github_phase1geo_minder? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_kate? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gtk3-youtube-viewer? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_k3b? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gimp? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gtk-straw-viewer? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gpicview? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_cyberfox? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gtk-pipe-viewer? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_kdeinit4? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_lifeograph? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_1password? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_inox? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_floorp? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_apostrophe? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gradio? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-text-editor? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_loupe? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_chromium? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_ark? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-taquin? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_electron-cash? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_assogiate? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_electron-mail? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_basilisk? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_deluge? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_jitsi-meet-desktop? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_alienblaster? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-mplayer? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_lximage-qt? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_com_github_bleakgrey_tootle? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_electrum? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_iagno? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_geki3? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_audacity? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_ballbuster-wrapper? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gedit? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_evince? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_alienarena? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_avidemux? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_ledger-live-desktop? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-todo? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_com_github_dahenson_agenda? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_cawbird? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_ktorrent? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-system-log? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-calculator? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_ddgtk? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_fossamail? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_etr-wrapper? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_claws-mail? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_galculator? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_glaxium? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_beaker? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-builder? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_brave? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-latex? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_caprine? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gitg? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gtk-youtube-viewer? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_hitori? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_kget? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_akregator? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gtk-lbry-viewer? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_bijiben? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_atom? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-characters? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_freeciv? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_abrowser? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_librewolf? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_com_github_tchx84_Flatseal? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_kdiff3? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_ghostwriter? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-schedule? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_freetube? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-logs? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_firefox-beta? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_calligra? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_flashpeak-slimjet? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_kwrite? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_kcalc? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_flameshot? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_chromium-browser? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-recipes? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_anki? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-nettool? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-books? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_linuxqq? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gl-117-wrapper? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_chatterino? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_alpine? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_firefox-x11? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_etr? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_colorful-wrapper? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-tetravex? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_blobby? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_firedragon? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_geki2? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-photos? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_glaxium-wrapper? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_impressive? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-character-map? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_lbreakouthd? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_iceweasel? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_inkscape? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_ani-cli? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_keepassxc? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-twitch? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_0ad? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_lobster? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_2048-qt? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_lyx? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_bitcoin-qt? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_github-desktop? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gucharmap? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_dnox? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-maps? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_atril? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_clamtk? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_kid3-qt? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_file-roller? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_Documents? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-pomodoro? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_kazam? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-mahjongg? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_armcord? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_Fritzing? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gtk2-youtube-viewer? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_lbry-viewer-gtk? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_kwin_x11? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_enox? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-font-viewer? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_balsa? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-robots? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_journal-viewer? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-klotski? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-contacts? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_icedove? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_kid3? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_dooble-qt4? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-2048? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_abiword? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_amarok? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_exfalso? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_eog? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_Logs? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_google-chrome-unstable? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-keyring? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_clocks? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_kdenlive? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_avidemux3_qt5? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_avidemux3_jobs_qt5? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_geary? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_dolphin-emu? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-music? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_kaffeine? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_falkon? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_five-or-more? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_feedreader? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_kfind? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_cantata? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_dconf-editor? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_i2prouter? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_crow? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gcalccmd? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_lettura? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_four-in-a-row? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_homebank? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_cheese? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_authenticator-rs? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_lightsoff? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_audacious? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-pie? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-chess? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnome-sound-recorder? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gnote? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_bitwarden? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_ktouch? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_chromium-freeworld? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_equalx? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-nl? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-es-es? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_notable? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_mypaint? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_neomutt? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_pdfchain? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_neverputt-wrapper? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_pt-BR? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_cs? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_start-tor-browser_desktop? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_smuxi-frontend-gnome? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_qcomicbook? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_swell-foop? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_openshot-qt? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_virt-manager? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_signal-desktop? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_pipe-viewer-gtk? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_vmware? ( || ( xcsecurity xephyr xpra xvfb ) )
-firejail_profiles_wireshark-gtk? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_srb2? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_open-invaders? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_rtv? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_whalebird? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_onboard? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_nextcloud? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_microsoft-edge-beta? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_mp3splt-gtk? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_org_gnome_seahorse_Application? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_wireshark-qt? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_marker? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_midori? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_it? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_udiskie? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_qt6ct? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_ga-IE? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-ga-ie? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_pl? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_fr? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_el? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_telegram? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_qtox? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_trojita? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_sv-SE? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_id? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_vivaldi? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_scorched3d-wrapper? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-en-us? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_openarena? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_okular? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_skanlite? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-pt-br? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_yelp? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_photoflare? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_unzip? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_hu? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_standardnotes-desktop? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_xonotic-sdl? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_transmission-qt? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_he? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_seamonkey? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-id? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-ru? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-zh-tw? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_supertuxkart-wrapper? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_quodlibet? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_nb? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_ru? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_rymdport? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_PCSX2? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_nomacs? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_nuclear? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_psi? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_meteo-qt? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_thunderbird? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-ca? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_upscayl? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_musictube? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_Screenshot? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_microsoft-edge-dev? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_en? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_openra? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-ka? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_sylpheed? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_rssguard? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_ja? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_slack? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_secret-tool? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_neochat? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_ka? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_mirage? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_opera-beta? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_pybitmessage? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_torbrowser-launcher? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_youtube-dl-gui? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_openmw? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_QMediathekView? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_minecraft-launcher? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_mattermost-desktop? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_mutt? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_qutebrowser? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_Maps? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_nl? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_shortwave? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_quadrapassel? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_waterfox? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_es? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_vi? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_mov-cli? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tutanota-desktop? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_microsoft-edge? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_transgui? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_xfce4-notes? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_snox? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_org_gnome_NautilusPreviewer? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_rocketchat? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_zeal? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_qt5ct? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_terasology? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_wire-desktop? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_x2goclient? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_fa? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-ko? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_mtpaint? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-is? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-ar? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_xfce4-screenshooter? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_pavucontrol? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_rhythmbox? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-he? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tiny-rdm? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-de? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_simutrans? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_twitch? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_mcomix? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_nheko? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-da? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_uget-gtk? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_vlc? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_seahorse? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_ko? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tb-starter-wrapper? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_spectral? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_en-US? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_onionshare-gui? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_xonotic-sdl-wrapper? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_is? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_palemoon? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-cs? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tuxtype? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-pl? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_supertuxkart? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_min? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_Viber? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_de? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_skypeforlinux? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_es-ES? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_session-desktop? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_steam? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_youtube? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_menulibre? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_ocenaudio? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_quaternion? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-it? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tidal-hifi? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_zoom? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_teams? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_transmission-remote-gtk? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_pragha? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_spectacle? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_shotwell? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_newsflash? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_qbittorrent? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-vi? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-es? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_youtube-viewer-gtk? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_tr? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-sv-se? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_typespeed? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_transmission-gtk? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_totem? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_mate-calc? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_neverball-wrapper? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-en? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_youtubemusic-nativefier? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_ar? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_raincat? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_scribus? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_qt-faststart? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_vmware-view? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_quakespasm? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_obsidian? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_zh-TW? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_singularity? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-tr? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_opera? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_warzone2100? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_ppsspp? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_metadata-cleaner? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_rednotebook? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_ytmdesktop? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_rambox? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-nb? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-zh-cn? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_postman? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-el? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_nitroshare? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_zh-CN? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_otter-browser? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_zim? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_openshot? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_trivalent? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_virtualbox? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_qgis? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_minitube? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_nautilus? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_youtube-music-desktop-app? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_zathura? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_pcsxr? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_xonotic? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_peek? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-fa? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_ca? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_pinball-wrapper? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser_da? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-ja? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_torbrowser? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-hu? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_opera-developer? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_riot-web? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_teams-for-linux? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_pavucontrol-qt? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_sysprof? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_zen-browser? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_yandex-browser? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_tor-browser-fr? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_amarok? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_amule? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_bluefish? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_brave? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_brave-browser? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_brasero? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_calligraauthor? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_calligraconverter? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_calligraflow? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_calligragemini? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_calligraplan? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_calligraplanwork? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_calligrasheets? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_calligrastage? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_calligrawords? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_chromium? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_cinelerra? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_clementine? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_dillo? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_ferdi? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_firefox? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_freecad? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_geany? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_geeqie? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gitter? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_epiphany? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_evince? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_evince-previewer? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_evince-thumbnailer? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_godot3? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_google-chrome? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_eog? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_google-earth? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_google-earth-pro? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_gramps? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_hexchat? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_hugin? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_kodi? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_leafpad? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_mousepad? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_mumble? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_nautilus? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_netsurf? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_obs? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_pcmanfm? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_pidgin? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_pinta? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_pitivi? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_qbittorrent? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_rawtherapee? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_ripperx? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_ristretto? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_qupzilla? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_seamonkey-bin? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_shotcut? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_spotify? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_surf? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_synfigstudio? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_teamspeak3? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_telegram-desktop? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_thunar? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_thunderbird? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_uzbl-browser? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_vivaldi? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_vmware-player? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_vscodium? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_x-terminal-emulator? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_xchat? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_xfburn? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_xmms? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_waterfox? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_wireshark? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_wireshark-gtk? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_wireshark-qt? ( || ( xcsecurity xephyr xpra ) )
-firejail_profiles_xpdf? ( || ( xcsecurity xephyr xpra ) )
-"
 
 HARDENED_ALLOCATORS_IUSE=(
 	"hardened_malloc"
@@ -1487,97 +65,6 @@ LLVM_COMPAT=(
 
 declare -A _PATH_CORRECTION=(
 	["spotify"]="/opt/spotify/spotify-client/spotify"
-)
-
-X11_COMPAT=(
-godot artha handbrake-gtk Builder jami lollypop google-chrome libreoffice 
-firefox-wayland gajim alienarena-wrapper freeciv-gtk3 fluffychat gnome-ring 
-klatexformula gwenview autokey-qt icecat krunner firefox fragments 
-freeciv-mp-gtk3 Books dooble foliate gnome-calendar gl-117 clawsker 
-gnome-keyring-3 autokey-gtk firefox-developer-edition alacarte baloo_file 
-gnome-hexgl gfeeds gnubik gnome-weather kopete io_github_lainsce_Notejot 
-gnome-documents gnome-screenshot cliqz fractal ffmpeg celluloid digikam 
-git-cola green-recoder jami-gnome kmplayer code guvcview kube cachy-browser 
-chromium-browser-privacy frozen-bubble gnome-clocks bnox firefox-nightly 
-gnome-sudoku gnome-mines google-chrome-beta konversation jerry firefox-esr 
-devhelp gnome-boxes gnome-passwordsafe iridium gnome-nibbles ephemeral 
-gnome-mpv com_github_phase1geo_minder kate gtk3-youtube-viewer k3b gimp 
-gtk-straw-viewer gpicview cyberfox gtk-pipe-viewer kdeinit4 lifeograph 
-1password inox floorp apostrophe gradio gnome-text-editor loupe chromium ark 
-gnome-taquin electron-cash assogiate electron-mail basilisk deluge 
-jitsi-meet-desktop alienblaster gnome-mplayer lximage-qt 
-com_github_bleakgrey_tootle electrum iagno geki3 audacity ballbuster-wrapper 
-gedit evince alienarena avidemux ledger-live-desktop gnome-todo 
-com_github_dahenson_agenda cawbird ktorrent gnome-system-log gnome-calculator 
-ddgtk fossamail etr-wrapper claws-mail galculator glaxium beaker gnome-builder 
-brave gnome-latex caprine gitg gtk-youtube-viewer hitori kget akregator 
-gtk-lbry-viewer bijiben atom gnome-characters freeciv abrowser librewolf 
-com_github_tchx84_Flatseal kdiff3 ghostwriter gnome-schedule freetube 
-gnome-logs firefox-beta calligra flashpeak-slimjet kwrite kcalc flameshot 
-chromium-browser gnome-recipes anki gnome-nettool gnome-books linuxqq 
-gl-117-wrapper chatterino alpine firefox-x11 etr colorful-wrapper 
-gnome-tetravex blobby firedragon geki2 gnome-photos glaxium-wrapper impressive 
-gnome-character-map lbreakouthd iceweasel inkscape ani-cli keepassxc 
-gnome-twitch 0ad lobster 2048-qt lyx bitcoin-qt github-desktop gucharmap dnox 
-gnome-maps atril clamtk kid3-qt file-roller Documents gnome-pomodoro kazam 
-gnome-mahjongg armcord Fritzing gtk2-youtube-viewer lbry-viewer-gtk kwin_x11 
-enox gnome-font-viewer balsa gnome-robots journal-viewer gnome-klotski 
-gnome-contacts icedove kid3 dooble-qt4 gnome-2048 abiword amarok exfalso eog 
-Logs google-chrome-unstable gnome-keyring clocks kdenlive avidemux3_qt5 
-avidemux3_jobs_qt5 geary dolphin-emu gnome-music kaffeine falkon five-or-more 
-feedreader kfind cantata dconf-editor i2prouter crow gcalccmd lettura 
-four-in-a-row homebank cheese authenticator-rs lightsoff audacious gnome-pie 
-gnome-chess gnome-sound-recorder gnote bitwarden ktouch chromium-freeworld 
-equalx tor-browser-nl tor-browser-es-es notable mypaint neomutt pdfchain 
-neverputt-wrapper tor-browser_pt-BR tor-browser_cs start-tor-browser_desktop 
-smuxi-frontend-gnome qcomicbook swell-foop openshot-qt virt-manager 
-signal-desktop pipe-viewer-gtk vmware wireshark-gtk srb2 open-invaders rtv 
-whalebird onboard nextcloud microsoft-edge-beta mp3splt-gtk 
-org_gnome_seahorse_Application wireshark-qt marker midori tor-browser_it 
-udiskie qt6ct tor-browser_ga-IE tor-browser-ga-ie tor-browser_pl tor-browser_fr 
-tor-browser_el telegram qtox trojita tor-browser_sv-SE tor-browser_id vivaldi 
-scorched3d-wrapper tor-browser-en-us openarena okular skanlite 
-tor-browser-pt-br yelp photoflare unzip tor-browser_hu standardnotes-desktop 
-xonotic-sdl transmission-qt tor-browser_he seamonkey tor-browser-id 
-tor-browser-ru tor-browser-zh-tw supertuxkart-wrapper quodlibet tor-browser_nb 
-tor-browser_ru rymdport PCSX2 nomacs nuclear psi meteo-qt thunderbird 
-tor-browser-ca upscayl musictube Screenshot microsoft-edge-dev tor-browser_en 
-openra tor-browser-ka sylpheed rssguard tor-browser_ja slack secret-tool 
-neochat tor-browser_ka mirage opera-beta pybitmessage torbrowser-launcher 
-youtube-dl-gui openmw QMediathekView minecraft-launcher mattermost-desktop mutt 
-qutebrowser Maps tor-browser_nl shortwave quadrapassel waterfox tor-browser_es 
-tor-browser_vi mov-cli tutanota-desktop microsoft-edge transgui xfce4-notes 
-snox org_gnome_NautilusPreviewer rocketchat zeal qt5ct terasology wire-desktop 
-x2goclient tor-browser_fa tor-browser-ko mtpaint tor-browser-is tor-browser-ar 
-xfce4-screenshooter pavucontrol rhythmbox tor-browser-he tiny-rdm 
-tor-browser-de simutrans tor-browser twitch mcomix nheko tor-browser-da 
-uget-gtk vlc seahorse tor-browser_ko tb-starter-wrapper spectral 
-tor-browser_en-US onionshare-gui xonotic-sdl-wrapper tor-browser_is palemoon 
-tor-browser-cs tuxtype tor-browser-pl supertuxkart min Viber tor-browser_de 
-skypeforlinux tor-browser_es-ES session-desktop steam youtube menulibre 
-ocenaudio quaternion tor-browser-it tidal-hifi zoom teams 
-transmission-remote-gtk pragha spectacle shotwell newsflash qbittorrent 
-tor-browser-vi tor-browser-es youtube-viewer-gtk tor-browser_tr 
-tor-browser-sv-se typespeed transmission-gtk totem mate-calc neverball-wrapper 
-tor-browser-en youtubemusic-nativefier tor-browser_ar raincat scribus 
-qt-faststart vmware-view quakespasm obsidian tor-browser_zh-TW singularity 
-tor-browser-tr opera warzone2100 ppsspp metadata-cleaner rednotebook ytmdesktop 
-rambox tor-browser-nb tor-browser-zh-cn postman tor-browser-el nitroshare 
-tor-browser_zh-CN otter-browser zim openshot trivalent virtualbox qgis minitube 
-nautilus youtube-music-desktop-app zathura pcsxr xonotic peek tor-browser-fa 
-tor-browser_ca pinball-wrapper tor-browser_da tor-browser-ja torbrowser 
-tor-browser-hu opera-developer riot-web teams-for-linux pavucontrol-qt sysprof 
-zen-browser yandex-browser tor-browser-fr amarok amule bluefish brave 
-brave-browser brasero calligraauthor calligraconverter calligraflow 
-calligragemini calligraplan calligraplanwork calligrasheets calligrastage 
-calligrawords chromium cinelerra clementine dillo ferdi firefox freecad geany 
-geeqie gitter epiphany evince evince-previewer evince-thumbnailer godot3 
-google-chrome eog google-earth google-earth-pro gramps hexchat hugin kodi 
-leafpad mousepad mumble nautilus netsurf obs pcmanfm pidgin pinta pitivi 
-qbittorrent rawtherapee ripperx ristretto qupzilla seamonkey-bin shotcut 
-spotify surf synfigstudio teamspeak3 telegram-desktop thunar thunderbird 
-uzbl-browser vivaldi vmware-player vscodium x-terminal-emulator xchat xfburn 
-xmms waterfox wireshark wireshark-gtk wireshark-qt xpdf
 )
 
 X_BLACKLIST=(
@@ -1670,6 +157,91 @@ X_XPRA_ONLY=(
 	"firefox-x11"
 )
 
+CURSES_COMPAT=(
+# This list are apps that may run in the console but are organized like a GUI.
+	"weechat"
+	"weechat-curses"
+)
+
+X_APPS_MISSING_REQUIRED_USE=(
+	"amarok"
+	"amule"
+	"bluefish"
+	"brave"
+	"brave-browser"
+	"brasero"
+	"calligraauthor"
+	"calligraconverter"
+	"calligraflow"
+	"calligragemini"
+	"calligraplan"
+	"calligraplanwork"
+	"calligrasheets"
+	"calligrastage"
+	"calligrawords"
+	"chromium"
+	"cinelerra"
+	"clementine"
+	"dillo"
+	"ferdi"
+	"firefox"
+	"freecad"
+	"geany"
+	"geeqie"
+	"gitter"
+	"epiphany"
+	"evince"
+	"evince-previewer"
+	"evince-thumbnailer"
+	"godot3"
+	"google-chrome"
+	"eog"
+	"google-earth"
+	"google-earth-pro"
+	"gramps"
+	"hexchat"
+	"hugin"
+	"kodi"
+	"leafpad"
+	"mousepad"
+	"mumble"
+	"nautilus"
+	"netsurf"
+	"obs"
+	"pcmanfm"
+	"pidgin"
+	"pinta"
+	"pitivi"
+	"qbittorrent"
+	"rawtherapee"
+	"ripperx"
+	"ristretto"
+	"qupzilla"
+	"seamonkey-bin"
+	"shotcut"
+	"spotify"
+	"surf"
+	"synfigstudio"
+	"teamspeak3"
+	"telegram-desktop"
+	"thunar"
+	"thunderbird"
+	"uzbl-browser"
+	"vivaldi"
+	"vmware-player"
+	"vscodium"
+	"x-terminal-emulator"
+	"xchat"
+	"xfburn"
+	"xmms"
+	"waterfox"
+	"wireshark"
+	"wireshark-gtk"
+	"wireshark-qt"
+	"xpdf"
+# If it is uppercase, it is assumed is is a win port of that app.
+)
+
 inherit cflags-hardened flag-o-matic libcxx-slot linux-info python-single-r1 toolchain-funcs
 inherit virtualx
 
@@ -1716,7 +288,6 @@ apparmor auto +chroot clang contrib +dbusproxy +file-transfer +firejail_profiles
 test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xcsecurity xvfb
 ebuild_revision_71
 "
-#	${GUI_REQUIRED_USE}
 REQUIRED_USE+="
 	!test
 	clang? (
@@ -1805,650 +376,6 @@ BDEPEND+="
 	)
 "
 
-#	Not required until uncommented
-#	firejail_profiles_blink-common? ( firejail_profiles_blink-common-hardened.inc )
-#	firejail_profiles_chromium-common? ( firejail_profiles_chromium-common-hardened.inc )
-#	firejail_profiles_electron-common? ( firejail_profiles_electron-common-hardened.inc )
-#	firejail_profiles_feh? ( firejail_profiles_feh-network.inc )
-#	firejail_profiles_firefox-common? ( firejail_profiles_firefox-common-addons )
-#	firejail_profiles_rtv? ( firejail_profiles_rtv-addons )
-
-REQUIRED_USE+="
-	firejail_profiles_1password? ( firejail_profiles_electron-common )
-	firejail_profiles_7z? ( firejail_profiles_archiver-common )
-	firejail_profiles_7za? ( firejail_profiles_7z )
-	firejail_profiles_7zr? ( firejail_profiles_7z )
-	firejail_profiles_Books? ( firejail_profiles_gnome-books )
-	firejail_profiles_Builder? ( firejail_profiles_gnome-builder )
-	firejail_profiles_Cheese? ( firejail_profiles_cheese )
-	firejail_profiles_Cyberfox? ( firejail_profiles_cyberfox )
-	firejail_profiles_Discord? ( firejail_profiles_discord )
-	firejail_profiles_DiscordCanary? ( firejail_profiles_discord-canary )
-	firejail_profiles_DiscordPTB? ( firejail_profiles_discord-ptb )
-	firejail_profiles_Documents? ( firejail_profiles_gnome-documents )
-	firejail_profiles_FBReader? ( firejail_profiles_fbreader )
-	firejail_profiles_FossaMail? ( firejail_profiles_fossamail )
-	firejail_profiles_Gitter? ( firejail_profiles_gitter )
-	firejail_profiles_Logs? ( firejail_profiles_gnome-logs )
-	firejail_profiles_Maps? ( firejail_profiles_gnome-maps )
-	firejail_profiles_Natron? ( firejail_profiles_natron )
-	firejail_profiles_PPSSPPQt? ( firejail_profiles_ppsspp )
-	firejail_profiles_PPSSPPSDL? ( firejail_profiles_ppsspp )
-	firejail_profiles_Postman? ( firejail_profiles_postman )
-	firejail_profiles_Screenshot? ( firejail_profiles_gnome-screenshot )
-	firejail_profiles_Telegram? ( firejail_profiles_telegram )
-	firejail_profiles_Thunar? ( firejail_profiles_file-manager-common )
-	firejail_profiles_VirtualBox? ( firejail_profiles_virtualbox )
-	firejail_profiles_abrowser? ( firejail_profiles_firefox-common )
-	firejail_profiles_acat? ( firejail_profiles_atool )
-	firejail_profiles_adiff? ( firejail_profiles_atool )
-	firejail_profiles_alienarena-wrapper? ( firejail_profiles_alienarena )
-	firejail_profiles_alpinef? ( firejail_profiles_alpine )
-	firejail_profiles_als? ( firejail_profiles_atool )
-	firejail_profiles_amuled? ( firejail_profiles_amule )
-	firejail_profiles_ani-cli? ( firejail_profiles_mpv )
-	firejail_profiles_apack? ( firejail_profiles_atool )
-	firejail_profiles_ar? ( firejail_profiles_archiver-common )
-	firejail_profiles_ardour4? ( firejail_profiles_ardour5 )
-	firejail_profiles_arepack? ( firejail_profiles_atool )
-	firejail_profiles_armcord? ( firejail_profiles_electron-common )
-	firejail_profiles_atom? ( firejail_profiles_electron-common )
-	firejail_profiles_atom-beta? ( firejail_profiles_atom )
-	firejail_profiles_atool? ( firejail_profiles_archiver-common )
-	firejail_profiles_atril-previewer? ( firejail_profiles_atril )
-	firejail_profiles_atril-thumbnailer? ( firejail_profiles_atril )
-	firejail_profiles_aunpack? ( firejail_profiles_atool )
-	firejail_profiles_autokey-gtk? ( firejail_profiles_autokey-common )
-	firejail_profiles_autokey-qt? ( firejail_profiles_autokey-common )
-	firejail_profiles_autokey-run? ( firejail_profiles_autokey-common )
-	firejail_profiles_autokey-shell? ( firejail_profiles_autokey-common )
-	firejail_profiles_avidemux3_cli? ( firejail_profiles_avidemux )
-	firejail_profiles_avidemux3_jobs_qt5? ( firejail_profiles_avidemux3_qt5 )
-	firejail_profiles_avidemux3_qt5? ( firejail_profiles_avidemux )
-	firejail_profiles_b2sum? ( firejail_profiles_hasher-common )
-	firejail_profiles_b3sum? ( firejail_profiles_hasher-common )
-	firejail_profiles_ballbuster-wrapper? ( firejail_profiles_ballbuster )
-	firejail_profiles_baloo_filemetadata_temp_extractor? ( firejail_profiles_baloo_file )
-	firejail_profiles_balsa? ( firejail_profiles_email-common )
-	firejail_profiles_basilisk? ( firejail_profiles_firefox-common )
-	firejail_profiles_beaker? ( firejail_profiles_electron-common )
-	firejail_profiles_bibtex? ( firejail_profiles_latex-common )
-	firejail_profiles_bitwarden? ( firejail_profiles_electron-common )
-	firejail_profiles_bitwarden-desktop? ( firejail_profiles_bitwarden )
-	firejail_profiles_bnox? ( firejail_profiles_chromium-common )
-	firejail_profiles_brave? ( firejail_profiles_chromium-common )
-	firejail_profiles_brave-browser? ( firejail_profiles_brave )
-	firejail_profiles_brave-browser-beta? ( firejail_profiles_brave )
-	firejail_profiles_brave-browser-dev? ( firejail_profiles_brave )
-	firejail_profiles_brave-browser-nightly? ( firejail_profiles_brave )
-	firejail_profiles_brave-browser-stable? ( firejail_profiles_brave )
-	firejail_profiles_brz? ( firejail_profiles_git )
-	firejail_profiles_bsdcat? ( firejail_profiles_bsdtar )
-	firejail_profiles_bsdcpio? ( firejail_profiles_bsdtar )
-	firejail_profiles_bsdtar? ( firejail_profiles_archiver-common )
-	firejail_profiles_bundle? ( firejail_profiles_build-systems-common )
-	firejail_profiles_bunzip2? ( firejail_profiles_gzip )
-	firejail_profiles_bzcat? ( firejail_profiles_gzip )
-	firejail_profiles_bzip2? ( firejail_profiles_gzip )
-	firejail_profiles_bzr? ( firejail_profiles_brz )
-	firejail_profiles_cachy-browser? ( firejail_profiles_firefox-common )
-	firejail_profiles_caja? ( firejail_profiles_file-manager-common )
-	firejail_profiles_calligraauthor? ( firejail_profiles_calligra )
-	firejail_profiles_calligraconverter? ( firejail_profiles_calligra )
-	firejail_profiles_calligraflow? ( firejail_profiles_calligra )
-	firejail_profiles_calligragemini? ( firejail_profiles_calligra )
-	firejail_profiles_calligraplan? ( firejail_profiles_calligra )
-	firejail_profiles_calligraplanwork? ( firejail_profiles_calligra )
-	firejail_profiles_calligrasheets? ( firejail_profiles_calligra )
-	firejail_profiles_calligrastage? ( firejail_profiles_calligra )
-	firejail_profiles_calligrawords? ( firejail_profiles_calligra )
-	firejail_profiles_caprine? ( firejail_profiles_electron-common )
-	firejail_profiles_cargo? ( firejail_profiles_build-systems-common )
-	firejail_profiles_chromium? ( firejail_profiles_chromium-common )
-	firejail_profiles_chromium-browser? ( firejail_profiles_chromium )
-	firejail_profiles_chromium-browser-privacy? ( firejail_profiles_chromium )
-	firejail_profiles_chromium-common? ( firejail_profiles_blink-common )
-	firejail_profiles_chromium-freeworld? ( firejail_profiles_chromium )
-	firejail_profiles_cinelerra? ( firejail_profiles_cin )
-	firejail_profiles_cinelerra-gg? ( firejail_profiles_cin )
-	firejail_profiles_cksum? ( firejail_profiles_hasher-common )
-	firejail_profiles_clamdscan? ( firejail_profiles_clamav )
-	firejail_profiles_clamdtop? ( firejail_profiles_clamav )
-	firejail_profiles_clamscan? ( firejail_profiles_clamav )
-	firejail_profiles_claws-mail? ( firejail_profiles_email-common )
-	firejail_profiles_clion-eap? ( firejail_profiles_clion )
-	firejail_profiles_cliqz? ( firejail_profiles_firefox-common )
-	firejail_profiles_clocks? ( firejail_profiles_gnome-clocks )
-	firejail_profiles_cmake? ( firejail_profiles_build-systems-common )
-	firejail_profiles_code? ( firejail_profiles_electron-common )
-	firejail_profiles_code-oss? ( firejail_profiles_code )
-	firejail_profiles_codium? ( firejail_profiles_vscodium )
-	firejail_profiles_cola? ( firejail_profiles_git-cola )
-	firejail_profiles_colorful-wrapper? ( firejail_profiles_colorful )
-	firejail_profiles_conplay? ( firejail_profiles_mpg123 )
-	firejail_profiles_cpio? ( firejail_profiles_archiver-common )
-	firejail_profiles_crawl-tiles? ( firejail_profiles_crawl )
-	firejail_profiles_cryptocat? ( firejail_profiles_Cryptocat )
-	firejail_profiles_cvlc? ( firejail_profiles_vlc )
-	firejail_profiles_cyberfox? ( firejail_profiles_firefox-common )
-	firejail_profiles_d-feet? ( firejail_profiles_dbus-debug-common )
-	firejail_profiles_d-spy? ( firejail_profiles_dbus-debug-common )
-	firejail_profiles_ddgr? ( firejail_profiles_googler-common )
-	firejail_profiles_devilspie2? ( firejail_profiles_devilspie )
-	firejail_profiles_dino-im? ( firejail_profiles_dino )
-	firejail_profiles_discord? ( firejail_profiles_discord-common )
-	firejail_profiles_discord-canary? ( firejail_profiles_discord-common )
-	firejail_profiles_discord-common? ( firejail_profiles_electron-common )
-	firejail_profiles_discord-ptb? ( firejail_profiles_discord-common )
-	firejail_profiles_dnox? ( firejail_profiles_chromium-common )
-	firejail_profiles_dolphin? ( firejail_profiles_file-manager-common )
-	firejail_profiles_dooble-qt4? ( firejail_profiles_dooble )
-	firejail_profiles_dtui? ( firejail_profiles_dbus-debug-common )
-	firejail_profiles_ebook-convert? ( firejail_profiles_calibre )
-	firejail_profiles_ebook-edit? ( firejail_profiles_calibre )
-	firejail_profiles_ebook-meta? ( firejail_profiles_calibre )
-	firejail_profiles_ebook-polish? ( firejail_profiles_calibre )
-	firejail_profiles_ebook-viewer? ( firejail_profiles_calibre )
-	firejail_profiles_electron-common? ( firejail_profiles_blink-common )
-	firejail_profiles_electron-mail? ( firejail_profiles_electron-common )
-	firejail_profiles_element-desktop? ( firejail_profiles_riot-desktop )
-	firejail_profiles_elinks? ( firejail_profiles_links-common )
-	firejail_profiles_enchant-2? ( firejail_profiles_enchant )
-	firejail_profiles_enchant-lsmod? ( firejail_profiles_enchant )
-	firejail_profiles_enchant-lsmod-2? ( firejail_profiles_enchant-2 )
-	firejail_profiles_enox? ( firejail_profiles_chromium-common )
-	firejail_profiles_eog? ( firejail_profiles_eo-common )
-	firejail_profiles_eom? ( firejail_profiles_eo-common )
-	firejail_profiles_et? ( firejail_profiles_wps )
-	firejail_profiles_etr-wrapper? ( firejail_profiles_etr )
-	firejail_profiles_evince-previewer? ( firejail_profiles_evince )
-	firejail_profiles_evince-thumbnailer? ( firejail_profiles_evince )
-	firejail_profiles_exfalso? ( firejail_profiles_quodlibet )
-	firejail_profiles_ffmpegthumbnailer? ( firejail_profiles_ffmpeg )
-	firejail_profiles_ffplay? ( firejail_profiles_ffmpeg )
-	firejail_profiles_ffprobe? ( firejail_profiles_ffmpeg )
-	firejail_profiles_firedragon? ( firejail_profiles_firefox-common )
-	firejail_profiles_firefox? ( firejail_profiles_firefox-common )
-	firejail_profiles_firefox-beta? ( firejail_profiles_firefox )
-	firejail_profiles_firefox-developer-edition? ( firejail_profiles_firefox )
-	firejail_profiles_firefox-esr? ( firejail_profiles_firefox )
-	firejail_profiles_firefox-nightly? ( firejail_profiles_firefox )
-	firejail_profiles_firefox-wayland? ( firejail_profiles_firefox )
-	firejail_profiles_firefox-x11? ( firejail_profiles_firefox )
-	firejail_profiles_five-or-more? ( firejail_profiles_gnome_games-common )
-	firejail_profiles_fix-qdf? ( firejail_profiles_qpdf )
-	firejail_profiles_flacsplt? ( firejail_profiles_mp3splt )
-	firejail_profiles_flashpeak-slimjet? ( firejail_profiles_chromium-common )
-	firejail_profiles_floorp? ( firejail_profiles_firefox-common )
-	firejail_profiles_fossamail? ( firejail_profiles_firefox )
-	firejail_profiles_four-in-a-row? ( firejail_profiles_gnome_games-common )
-	firejail_profiles_freecadcmd? ( firejail_profiles_freecad )
-	firejail_profiles_freeciv-gtk3? ( firejail_profiles_freeciv )
-	firejail_profiles_freeciv-mp-gtk3? ( firejail_profiles_freeciv )
-	firejail_profiles_freeoffice-planmaker? ( firejail_profiles_softmaker-common )
-	firejail_profiles_freeoffice-presentations? ( firejail_profiles_softmaker-common )
-	firejail_profiles_freeoffice-textmaker? ( firejail_profiles_softmaker-common )
-	firejail_profiles_freetube? ( firejail_profiles_electron-common )
-	firejail_profiles_gajim-history-manager? ( firejail_profiles_gajim )
-	firejail_profiles_gallery-dl? ( firejail_profiles_yt-dlp )
-	firejail_profiles_gcalccmd? ( firejail_profiles_gnome-calculator )
-	firejail_profiles_gconf-editor? ( firejail_profiles_gconf )
-	firejail_profiles_gconf-merge-schema? ( firejail_profiles_gconf )
-	firejail_profiles_gconf-merge-tree? ( firejail_profiles_gconf )
-	firejail_profiles_gconfpkg? ( firejail_profiles_gconf )
-	firejail_profiles_gconftool-2? ( firejail_profiles_gconf )
-	firejail_profiles_gh? ( firejail_profiles_git )
-	firejail_profiles_ghb? ( firejail_profiles_handbrake )
-	firejail_profiles_gist-paste? ( firejail_profiles_gist )
-	firejail_profiles_github-desktop? ( firejail_profiles_electron-common )
-	firejail_profiles_gl-117-wrapper? ( firejail_profiles_gl-117 )
-	firejail_profiles_glaxium-wrapper? ( firejail_profiles_glaxium )
-	firejail_profiles_gnome-2048? ( firejail_profiles_gnome_games-common )
-	firejail_profiles_gnome-character-map? ( firejail_profiles_gucharmap )
-	firejail_profiles_gnome-keyring? ( firejail_profiles_gnome-keyring-daemon )
-	firejail_profiles_gnome-keyring-3? ( firejail_profiles_gnome-keyring )
-	firejail_profiles_gnome-klotski? ( firejail_profiles_gnome_games-common )
-	firejail_profiles_gnome-logs? ( firejail_profiles_system-log-common )
-	firejail_profiles_gnome-mahjongg? ( firejail_profiles_gnome_games-common )
-	firejail_profiles_gnome-mines? ( firejail_profiles_gnome_games-common )
-	firejail_profiles_gnome-mpv? ( firejail_profiles_celluloid )
-	firejail_profiles_gnome-nibbles? ( firejail_profiles_gnome_games-common )
-	firejail_profiles_gnome-robots? ( firejail_profiles_gnome_games-common )
-	firejail_profiles_gnome-sudoku? ( firejail_profiles_gnome_games-common )
-	firejail_profiles_gnome-system-log? ( firejail_profiles_system-log-common )
-	firejail_profiles_gnome-taquin? ( firejail_profiles_gnome_games-common )
-	firejail_profiles_gnome-tetravex? ( firejail_profiles_gnome_games-common )
-	firejail_profiles_godot3? ( firejail_profiles_godot )
-	firejail_profiles_google-chrome? ( firejail_profiles_chromium-common )
-	firejail_profiles_google-chrome-beta? ( firejail_profiles_chromium-common )
-	firejail_profiles_google-chrome-stable? ( firejail_profiles_google-chrome )
-	firejail_profiles_google-chrome-unstable? ( firejail_profiles_chromium-common )
-	firejail_profiles_google-earth-pro? ( firejail_profiles_google-earth )
-	firejail_profiles_googler? ( firejail_profiles_googler-common )
-	firejail_profiles_gpg2? ( firejail_profiles_gpg )
-	firejail_profiles_gsettings? ( firejail_profiles_dconf )
-	firejail_profiles_gsettings-data-convert? ( firejail_profiles_gconf )
-	firejail_profiles_gsettings-schema-convert? ( firejail_profiles_gconf )
-	firejail_profiles_gtar? ( firejail_profiles_tar )
-	firejail_profiles_gtk-lbry-viewer? ( firejail_profiles_gtk-youtube-viewers-common
-firejail_profiles_lbry-viewer )
-	firejail_profiles_gtk-pipe-viewer? ( firejail_profiles_gtk-youtube-viewers-common
-firejail_profiles_pipe-viewer )
-	firejail_profiles_gtk-straw-viewer? ( firejail_profiles_gtk-youtube-viewers-common
-firejail_profiles_straw-viewer )
-	firejail_profiles_gtk-youtube-viewer? ( firejail_profiles_gtk-youtube-viewers-common
-firejail_profiles_youtube-viewer )
-	firejail_profiles_gtk2-youtube-viewer? ( firejail_profiles_gtk-youtube-viewers-common
-firejail_profiles_youtube-viewer )
-	firejail_profiles_gtk3-youtube-viewer? ( firejail_profiles_gtk-youtube-viewers-common
-firejail_profiles_youtube-viewer )
-	firejail_profiles_gummi? ( firejail_profiles_latex-common )
-	firejail_profiles_gunzip? ( firejail_profiles_gzip )
-	firejail_profiles_gzdoom? ( firejail_profiles_gzdoom-common )
-	firejail_profiles_gzexe? ( firejail_profiles_gzip )
-	firejail_profiles_gzip? ( firejail_profiles_archiver-common )
-	firejail_profiles_handbrake-gtk? ( firejail_profiles_handbrake )
-	firejail_profiles_hitori? ( firejail_profiles_gnome_games-common )
-	firejail_profiles_hledger-ui? ( firejail_profiles_hledger )
-	firejail_profiles_icecat? ( firejail_profiles_firefox-common )
-	firejail_profiles_icedove? ( firejail_profiles_firefox )
-	firejail_profiles_iceweasel? ( firejail_profiles_firefox )
-	firejail_profiles_idea? ( firejail_profiles_idea_sh )
-	firejail_profiles_ideaIC? ( firejail_profiles_idea_sh )
-	firejail_profiles_inkview? ( firejail_profiles_inkscape )
-	firejail_profiles_inox? ( firejail_profiles_chromium-common )
-	firejail_profiles_ipcalc-ng? ( firejail_profiles_ipcalc )
-	firejail_profiles_iridium? ( firejail_profiles_chromium-common )
-	firejail_profiles_iridium-browser? ( firejail_profiles_iridium )
-	firejail_profiles_jami? ( firejail_profiles_jami-gnome )
-	firejail_profiles_jdownloader? ( firejail_profiles_JDownloader )
-	firejail_profiles_jitsi-meet-desktop? ( firejail_profiles_electron-common )
-	firejail_profiles_journal-viewer? ( firejail_profiles_system-log-common )
-	firejail_profiles_jumpnbump-menu? ( firejail_profiles_jumpnbump )
-	firejail_profiles_kalgebramobile? ( firejail_profiles_kalgebra )
-	firejail_profiles_karbon? ( firejail_profiles_krita )
-	firejail_profiles_keepass2? ( firejail_profiles_keepass )
-	firejail_profiles_keepassx2? ( firejail_profiles_keepassx )
-	firejail_profiles_keepassxc-cli? ( firejail_profiles_keepassxc )
-	firejail_profiles_keepassxc-proxy? ( firejail_profiles_keepassxc )
-	firejail_profiles_kid3-cli? ( firejail_profiles_kid3 )
-	firejail_profiles_kid3-qt? ( firejail_profiles_kid3 )
-	firejail_profiles_klatexformula_cmdl? ( firejail_profiles_klatexformula )
-	firejail_profiles_knotes? ( firejail_profiles_kmail )
-	firejail_profiles_kontact? ( firejail_profiles_kmail )
-	firejail_profiles_latex? ( firejail_profiles_latex-common )
-	firejail_profiles_lbry-viewer? ( firejail_profiles_youtube-viewers-common )
-	firejail_profiles_lbry-viewer-gtk? ( firejail_profiles_gtk-youtube-viewers-common
-firejail_profiles_lbry-viewer )
-	firejail_profiles_lbunzip2? ( firejail_profiles_gzip )
-	firejail_profiles_lbzcat? ( firejail_profiles_gzip )
-	firejail_profiles_lbzip2? ( firejail_profiles_gzip )
-	firejail_profiles_librewolf? ( firejail_profiles_firefox-common )
-	firejail_profiles_librewolf-nightly? ( firejail_profiles_librewolf )
-	firejail_profiles_lightsoff? ( firejail_profiles_gnome_games-common )
-	firejail_profiles_links? ( firejail_profiles_links-common )
-	firejail_profiles_links2? ( firejail_profiles_links-common )
-	firejail_profiles_linuxqq? ( firejail_profiles_electron-common )
-	firejail_profiles_lobase? ( firejail_profiles_libreoffice )
-	firejail_profiles_lobster? ( firejail_profiles_mpv )
-	firejail_profiles_localc? ( firejail_profiles_libreoffice )
-	firejail_profiles_lodraw? ( firejail_profiles_libreoffice )
-	firejail_profiles_loffice? ( firejail_profiles_libreoffice )
-	firejail_profiles_lofromtemplate? ( firejail_profiles_libreoffice )
-	firejail_profiles_loimpress? ( firejail_profiles_libreoffice )
-	firejail_profiles_lomath? ( firejail_profiles_libreoffice )
-	firejail_profiles_loweb? ( firejail_profiles_libreoffice )
-	firejail_profiles_lowriter? ( firejail_profiles_libreoffice )
-	firejail_profiles_lrunzip? ( firejail_profiles_cpio )
-	firejail_profiles_lrz? ( firejail_profiles_cpio )
-	firejail_profiles_lrzcat? ( firejail_profiles_cpio )
-	firejail_profiles_lrzip? ( firejail_profiles_cpio )
-	firejail_profiles_lrztar? ( firejail_profiles_cpio )
-	firejail_profiles_lrzuntar? ( firejail_profiles_cpio )
-	firejail_profiles_lsar? ( firejail_profiles_ar )
-	firejail_profiles_lyx? ( firejail_profiles_latex-common )
-	firejail_profiles_lz4? ( firejail_profiles_archiver-common )
-	firejail_profiles_lz4c? ( firejail_profiles_lz4 )
-	firejail_profiles_lz4cat? ( firejail_profiles_lz4 )
-	firejail_profiles_lzcat? ( firejail_profiles_cpio )
-	firejail_profiles_lzcmp? ( firejail_profiles_cpio )
-	firejail_profiles_lzdiff? ( firejail_profiles_cpio )
-	firejail_profiles_lzdoom? ( firejail_profiles_gzdoom-common )
-	firejail_profiles_lzegrep? ( firejail_profiles_cpio )
-	firejail_profiles_lzfgrep? ( firejail_profiles_cpio )
-	firejail_profiles_lzgrep? ( firejail_profiles_cpio )
-	firejail_profiles_lzip? ( firejail_profiles_cpio )
-	firejail_profiles_lzless? ( firejail_profiles_cpio )
-	firejail_profiles_lzma? ( firejail_profiles_cpio )
-	firejail_profiles_lzmadec? ( firejail_profiles_xzdec )
-	firejail_profiles_lzmainfo? ( firejail_profiles_cpio )
-	firejail_profiles_lzmore? ( firejail_profiles_cpio )
-	firejail_profiles_lzop? ( firejail_profiles_cpio )
-	firejail_profiles_make? ( firejail_profiles_build-systems-common )
-	firejail_profiles_makedeb? ( firejail_profiles_makepkg )
-	firejail_profiles_masterpdfeditor4? ( firejail_profiles_masterpdfeditor )
-	firejail_profiles_masterpdfeditor5? ( firejail_profiles_masterpdfeditor )
-	firejail_profiles_mate-calculator? ( firejail_profiles_mate-calc )
-	firejail_profiles_mathematica? ( firejail_profiles_Mathematica )
-	firejail_profiles_matrix-mirage? ( firejail_profiles_mirage )
-	firejail_profiles_mattermost-desktop? ( firejail_profiles_electron-common )
-	firejail_profiles_md5sum? ( firejail_profiles_hasher-common )
-	firejail_profiles_megaglest_editor? ( firejail_profiles_megaglest )
-	firejail_profiles_mencoder? ( firejail_profiles_mplayer )
-	firejail_profiles_meson? ( firejail_profiles_build-systems-common )
-	firejail_profiles_microsoft-edge? ( firejail_profiles_chromium-common )
-	firejail_profiles_microsoft-edge-beta? ( firejail_profiles_chromium-common )
-	firejail_profiles_microsoft-edge-dev? ( firejail_profiles_chromium-common )
-	firejail_profiles_microsoft-edge-stable? ( firejail_profiles_microsoft-edge )
-	firejail_profiles_min? ( firejail_profiles_chromium-common )
-	firejail_profiles_mov-cli? ( firejail_profiles_mpv )
-	firejail_profiles_mp3wrap? ( firejail_profiles_mp3splt )
-	firejail_profiles_mpg123-alsa? ( firejail_profiles_mpg123 )
-	firejail_profiles_mpg123-id3dump? ( firejail_profiles_mpg123 )
-	firejail_profiles_mpg123-jack? ( firejail_profiles_mpg123 )
-	firejail_profiles_mpg123-nas? ( firejail_profiles_mpg123 )
-	firejail_profiles_mpg123-openal? ( firejail_profiles_mpg123 )
-	firejail_profiles_mpg123-oss? ( firejail_profiles_mpg123 )
-	firejail_profiles_mpg123-portaudio? ( firejail_profiles_mpg123 )
-	firejail_profiles_mpg123-pulse? ( firejail_profiles_mpg123 )
-	firejail_profiles_mpg123-strip? ( firejail_profiles_mpg123 )
-	firejail_profiles_ms-excel? ( firejail_profiles_ms-office )
-	firejail_profiles_ms-onenote? ( firejail_profiles_ms-office )
-	firejail_profiles_ms-outlook? ( firejail_profiles_ms-office )
-	firejail_profiles_ms-powerpoint? ( firejail_profiles_ms-office )
-	firejail_profiles_ms-skype? ( firejail_profiles_ms-office )
-	firejail_profiles_ms-word? ( firejail_profiles_ms-office )
-	firejail_profiles_multimc? ( firejail_profiles_multimc5 )
-	firejail_profiles_mupdf-gl? ( firejail_profiles_mupdf )
-	firejail_profiles_mupdf-x11? ( firejail_profiles_mupdf )
-	firejail_profiles_mupdf-x11-curl? ( firejail_profiles_mupdf )
-	firejail_profiles_muraster? ( firejail_profiles_mupdf )
-	firejail_profiles_mutool? ( firejail_profiles_mupdf )
-	firejail_profiles_mypaint-ora-thumbnailer? ( firejail_profiles_mypaint )
-	firejail_profiles_nautilus? ( firejail_profiles_file-manager-common )
-	firejail_profiles_ncdu2? ( firejail_profiles_ncdu )
-	firejail_profiles_nemo? ( firejail_profiles_file-manager-common )
-	firejail_profiles_neverball-wrapper? ( firejail_profiles_neverball )
-	firejail_profiles_neverputt? ( firejail_profiles_neverball )
-	firejail_profiles_neverputt-wrapper? ( firejail_profiles_neverputt )
-	firejail_profiles_newsbeuter? ( firejail_profiles_newsboat )
-	firejail_profiles_nextcloud-desktop? ( firejail_profiles_nextcloud )
-	firejail_profiles_nitroshare-cli? ( firejail_profiles_nitroshare )
-	firejail_profiles_nitroshare-nmh? ( firejail_profiles_nitroshare )
-	firejail_profiles_nitroshare-send? ( firejail_profiles_nitroshare )
-	firejail_profiles_nitroshare-ui? ( firejail_profiles_nitroshare )
-	firejail_profiles_node? ( firejail_profiles_nodejs-common )
-	firejail_profiles_node-gyp? ( firejail_profiles_nodejs-common )
-	firejail_profiles_notable? ( firejail_profiles_electron-common )
-	firejail_profiles_npm? ( firejail_profiles_nodejs-common )
-	firejail_profiles_npx? ( firejail_profiles_nodejs-common )
-	firejail_profiles_nuclear? ( firejail_profiles_electron-common )
-	firejail_profiles_obsidian? ( firejail_profiles_electron-common )
-	firejail_profiles_oggsplt? ( firejail_profiles_mp3splt )
-	firejail_profiles_onionshare? ( firejail_profiles_onionshare-gui )
-	firejail_profiles_onionshare-cli? ( firejail_profiles_onionshare-gui )
-	firejail_profiles_ooffice? ( firejail_profiles_libreoffice )
-	firejail_profiles_ooviewdoc? ( firejail_profiles_libreoffice )
-	firejail_profiles_openarena_ded? ( firejail_profiles_openarena )
-	firejail_profiles_openmw-launcher? ( firejail_profiles_openmw )
-	firejail_profiles_openshot-qt? ( firejail_profiles_openshot )
-	firejail_profiles_opera? ( firejail_profiles_chromium-common )
-	firejail_profiles_opera-beta? ( firejail_profiles_chromium-common )
-	firejail_profiles_opera-developer? ( firejail_profiles_chromium-common )
-	firejail_profiles_ouch? ( firejail_profiles_archiver-common )
-	firejail_profiles_out123? ( firejail_profiles_mpg123 )
-	firejail_profiles_p7zip? ( firejail_profiles_7z )
-	firejail_profiles_palemoon? ( firejail_profiles_firefox-common )
-	firejail_profiles_pavucontrol-qt? ( firejail_profiles_pavucontrol )
-	firejail_profiles_pcmanfm? ( firejail_profiles_file-manager-common )
-	firejail_profiles_pdflatex? ( firejail_profiles_latex-common )
-	firejail_profiles_pinball-wrapper? ( firejail_profiles_pinball )
-	firejail_profiles_pip? ( firejail_profiles_build-systems-common )
-	firejail_profiles_pipe-viewer? ( firejail_profiles_youtube-viewers-common )
-	firejail_profiles_pipe-viewer-gtk? ( firejail_profiles_gtk-youtube-viewers-common
-firejail_profiles_pipe-viewer )
-	firejail_profiles_planmaker18? ( firejail_profiles_softmaker-common )
-	firejail_profiles_planmaker18free? ( firejail_profiles_softmaker-common )
-	firejail_profiles_playonlinux? ( firejail_profiles_wine )
-	firejail_profiles_pnpm? ( firejail_profiles_nodejs-common )
-	firejail_profiles_pnpx? ( firejail_profiles_nodejs-common )
-	firejail_profiles_postman? ( firejail_profiles_electron-common )
-	firejail_profiles_presentations18? ( firejail_profiles_softmaker-common )
-	firejail_profiles_presentations18free? ( firejail_profiles_softmaker-common )
-	firejail_profiles_pycharm-professional? ( firejail_profiles_pycharm-community )
-	firejail_profiles_pzstd? ( firejail_profiles_zstd )
-	firejail_profiles_qemu-launcher? ( firejail_profiles_qemu-common )
-	firejail_profiles_qemu-system-x86_64? ( firejail_profiles_qemu-common )
-	firejail_profiles_qq? ( firejail_profiles_linuxqq )
-	firejail_profiles_qt-faststart? ( firejail_profiles_ffmpeg )
-	firejail_profiles_quadrapassel? ( firejail_profiles_gnome_games-common )
-	firejail_profiles_qupzilla? ( firejail_profiles_falkon )
-	firejail_profiles_ranger? ( firejail_profiles_file-manager-common )
-	firejail_profiles_remmina-file-wrapper? ( firejail_profiles_remmina )
-	firejail_profiles_rhash? ( firejail_profiles_hasher-common )
-	firejail_profiles_rhythmbox-client? ( firejail_profiles_rhythmbox )
-	firejail_profiles_riot-desktop? ( firejail_profiles_riot-web )
-	firejail_profiles_riot-web? ( firejail_profiles_electron-common )
-	firejail_profiles_rnano? ( firejail_profiles_nano )
-	firejail_profiles_rocketchat? ( firejail_profiles_electron-common )
-	firejail_profiles_rtin? ( firejail_profiles_tin )
-	firejail_profiles_rview? ( firejail_profiles_vim )
-	firejail_profiles_rvim? ( firejail_profiles_vim )
-	firejail_profiles_scorched3d-wrapper? ( firejail_profiles_scorched3d )
-	firejail_profiles_scp? ( firejail_profiles_ssh )
-	firejail_profiles_seahorse-daemon? ( firejail_profiles_seahorse )
-	firejail_profiles_seahorse-tool? ( firejail_profiles_seahorse )
-	firejail_profiles_seamonkey-bin? ( firejail_profiles_seamonkey )
-	firejail_profiles_secret-tool? ( firejail_profiles_gnome-keyring )
-	firejail_profiles_semver? ( firejail_profiles_nodejs-common )
-	firejail_profiles_session-messenger? ( firejail_profiles_session-desktop )
-	firejail_profiles_session-messenger-desktop? ( firejail_profiles_session-desktop )
-	firejail_profiles_sftp? ( firejail_profiles_ssh )
-	firejail_profiles_sha1sum? ( firejail_profiles_hasher-common )
-	firejail_profiles_sha224sum? ( firejail_profiles_hasher-common )
-	firejail_profiles_sha256sum? ( firejail_profiles_hasher-common )
-	firejail_profiles_sha384sum? ( firejail_profiles_hasher-common )
-	firejail_profiles_sha512sum? ( firejail_profiles_hasher-common )
-	firejail_profiles_signal-desktop? ( firejail_profiles_electron-common )
-	firejail_profiles_skypeforlinux? ( firejail_profiles_electron-common )
-	firejail_profiles_slack? ( firejail_profiles_electron-common )
-	firejail_profiles_snox? ( firejail_profiles_chromium-common )
-	firejail_profiles_soffice? ( firejail_profiles_libreoffice )
-	firejail_profiles_standard-notes? ( firejail_profiles_standardnotes-desktop )
-	firejail_profiles_start-tor-browser? ( firejail_profiles_start-tor-browser_desktop )
-	firejail_profiles_steam-native? ( firejail_profiles_steam )
-	firejail_profiles_steam-runtime? ( firejail_profiles_steam )
-	firejail_profiles_straw-viewer? ( firejail_profiles_youtube-viewers-common )
-	firejail_profiles_sum? ( firejail_profiles_hasher-common )
-	firejail_profiles_supertuxkart-wrapper? ( firejail_profiles_supertuxkart )
-	firejail_profiles_swell-foop? ( firejail_profiles_gnome_games-common )
-	firejail_profiles_sylpheed? ( firejail_profiles_email-common )
-	firejail_profiles_sysprof-cli? ( firejail_profiles_sysprof )
-	firejail_profiles_tar? ( firejail_profiles_archiver-common )
-	firejail_profiles_tb-starter-wrapper? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_teams? ( firejail_profiles_electron-common )
-	firejail_profiles_teams-for-linux? ( firejail_profiles_electron-common )
-	firejail_profiles_telegram-desktop? ( firejail_profiles_telegram )
-	firejail_profiles_termshark? ( firejail_profiles_wireshark )
-	firejail_profiles_tex? ( firejail_profiles_latex-common )
-	firejail_profiles_textmaker18? ( firejail_profiles_softmaker-common )
-	firejail_profiles_textmaker18free? ( firejail_profiles_softmaker-common )
-	firejail_profiles_thunar? ( firejail_profiles_Thunar )
-	firejail_profiles_thunderbird? ( firejail_profiles_firefox-common )
-	firejail_profiles_thunderbird-beta? ( firejail_profiles_thunderbird )
-	firejail_profiles_thunderbird-wayland? ( firejail_profiles_thunderbird )
-	firejail_profiles_tidal-hifi? ( firejail_profiles_electron-common )
-	firejail_profiles_tor-browser? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser-ar? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser-ca? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser-cs? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser-da? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser-de? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser-el? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser-en? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser-en-us? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser-es? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser-es-es? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser-fa? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser-fr? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser-ga-ie? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser-he? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser-hu? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser-id? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser-is? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser-it? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser-ja? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser-ka? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser-ko? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser-nb? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser-nl? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser-pl? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser-pt-br? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser-ru? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser-sv-se? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser-tr? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser-vi? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser-zh-cn? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser-zh-tw? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser_ar? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser_ca? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser_cs? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser_da? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser_de? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser_el? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser_en? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser_en-US? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser_es? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser_es-ES? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser_fa? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser_fr? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser_ga-IE? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser_he? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser_hu? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser_id? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser_is? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser_it? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser_ja? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser_ka? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser_ko? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser_nb? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser_nl? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser_pl? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser_pt-BR? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser_ru? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser_sv-SE? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser_tr? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser_vi? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser_zh-CN? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_tor-browser_zh-TW? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_torbrowser? ( firejail_profiles_firefox-common )
-	firejail_profiles_tqemu? ( firejail_profiles_qemu-common )
-	firejail_profiles_transmission-cli? ( firejail_profiles_transmission-common )
-	firejail_profiles_transmission-create? ( firejail_profiles_transmission-common )
-	firejail_profiles_transmission-daemon? ( firejail_profiles_transmission-common )
-	firejail_profiles_transmission-edit? ( firejail_profiles_transmission-common )
-	firejail_profiles_transmission-gtk? ( firejail_profiles_transmission-common )
-	firejail_profiles_transmission-qt? ( firejail_profiles_transmission-common )
-	firejail_profiles_transmission-remote? ( firejail_profiles_transmission-common )
-	firejail_profiles_transmission-remote-cli? ( firejail_profiles_transmission-common )
-	firejail_profiles_transmission-remote-gtk? ( firejail_profiles_transmission-common )
-	firejail_profiles_transmission-show? ( firejail_profiles_transmission-common )
-	firejail_profiles_trivalent? ( firejail_profiles_chromium-common
-firejail_profiles_chromium-common-hardened_inc )
-	firejail_profiles_tshark? ( firejail_profiles_wireshark )
-	firejail_profiles_tuir? ( firejail_profiles_rtv )
-	firejail_profiles_tutanota-desktop? ( firejail_profiles_electron-common )
-	firejail_profiles_twitch? ( firejail_profiles_electron-common )
-	firejail_profiles_unar? ( firejail_profiles_ar )
-	firejail_profiles_uncompress? ( firejail_profiles_gzip )
-	firejail_profiles_unlz4? ( firejail_profiles_lz4 )
-	firejail_profiles_unlzma? ( firejail_profiles_cpio )
-	firejail_profiles_unrar? ( firejail_profiles_archiver-common )
-	firejail_profiles_unxz? ( firejail_profiles_cpio )
-	firejail_profiles_unzip? ( firejail_profiles_archiver-common )
-	firejail_profiles_unzstd? ( firejail_profiles_zstd )
-	firejail_profiles_upscayl? ( firejail_profiles_electron-common )
-	firejail_profiles_uzdoom? ( firejail_profiles_gzdoom-common )
-	firejail_profiles_vesktop? ( firejail_profiles_discord-common )
-	firejail_profiles_vimcat? ( firejail_profiles_vim )
-	firejail_profiles_vimdiff? ( firejail_profiles_vim )
-	firejail_profiles_vimpager? ( firejail_profiles_vim )
-	firejail_profiles_vimtutor? ( firejail_profiles_vim )
-	firejail_profiles_vivaldi? ( firejail_profiles_chromium-common )
-	firejail_profiles_vivaldi-beta? ( firejail_profiles_vivaldi )
-	firejail_profiles_vivaldi-snapshot? ( firejail_profiles_vivaldi )
-	firejail_profiles_vivaldi-stable? ( firejail_profiles_vivaldi )
-	firejail_profiles_vmplayer? ( firejail_profiles_vmware )
-	firejail_profiles_vmware-player? ( firejail_profiles_vmware )
-	firejail_profiles_vmware-workstation? ( firejail_profiles_vmware )
-	firejail_profiles_vscodium? ( firejail_profiles_code )
-	firejail_profiles_vulturesclaw? ( firejail_profiles_nethack-vultures )
-	firejail_profiles_vultureseye? ( firejail_profiles_nethack-vultures )
-	firejail_profiles_waterfox? ( firejail_profiles_firefox-common )
-	firejail_profiles_waterfox-classic? ( firejail_profiles_waterfox )
-	firejail_profiles_waterfox-current? ( firejail_profiles_waterfox )
-	firejail_profiles_weechat-curses? ( firejail_profiles_weechat )
-	firejail_profiles_wget2? ( firejail_profiles_wget )
-	firejail_profiles_whalebird? ( firejail_profiles_electron-common )
-	firejail_profiles_wire-desktop? ( firejail_profiles_electron-common )
-	firejail_profiles_wireshark-gtk? ( firejail_profiles_wireshark )
-	firejail_profiles_wireshark-qt? ( firejail_profiles_wireshark )
-	firejail_profiles_wpp? ( firejail_profiles_wps )
-	firejail_profiles_wpspdf? ( firejail_profiles_wps )
-	firejail_profiles_xarchiver? ( firejail_profiles_archiver-common )
-	firejail_profiles_xlinks? ( firejail_profiles_links )
-	firejail_profiles_xlinks2? ( firejail_profiles_links2 )
-	firejail_profiles_xonotic-glx? ( firejail_profiles_xonotic )
-	firejail_profiles_xonotic-sdl? ( firejail_profiles_xonotic )
-	firejail_profiles_xonotic-sdl-wrapper? ( firejail_profiles_xonotic )
-	firejail_profiles_xournalpp? ( firejail_profiles_xournal )
-	firejail_profiles_xplayer-audio-preview? ( firejail_profiles_xplayer )
-	firejail_profiles_xplayer-video-thumbnailer? ( firejail_profiles_xplayer )
-	firejail_profiles_xreader-previewer? ( firejail_profiles_xreader )
-	firejail_profiles_xreader-thumbnailer? ( firejail_profiles_xreader )
-	firejail_profiles_xxd? ( firejail_profiles_cpio )
-	firejail_profiles_xz? ( firejail_profiles_cpio )
-	firejail_profiles_xzcat? ( firejail_profiles_cpio )
-	firejail_profiles_xzcmp? ( firejail_profiles_cpio )
-	firejail_profiles_xzdec? ( firejail_profiles_archiver-common )
-	firejail_profiles_xzdiff? ( firejail_profiles_cpio )
-	firejail_profiles_xzegrep? ( firejail_profiles_cpio )
-	firejail_profiles_xzfgrep? ( firejail_profiles_cpio )
-	firejail_profiles_xzgrep? ( firejail_profiles_cpio )
-	firejail_profiles_xzless? ( firejail_profiles_cpio )
-	firejail_profiles_xzmore? ( firejail_profiles_cpio )
-	firejail_profiles_yandex-browser? ( firejail_profiles_chromium-common )
-	firejail_profiles_yarn? ( firejail_profiles_nodejs-common )
-	firejail_profiles_youtube? ( firejail_profiles_electron-common )
-	firejail_profiles_youtube-dl? ( firejail_profiles_yt-dlp )
-	firejail_profiles_youtube-music-desktop-app? ( firejail_profiles_ytmdesktop )
-	firejail_profiles_youtube-viewer? ( firejail_profiles_youtube-viewers-common )
-	firejail_profiles_youtube-viewer-gtk? ( firejail_profiles_gtk-youtube-viewers-common
-firejail_profiles_youtube-viewer )
-	firejail_profiles_youtubemusic-nativefier? ( firejail_profiles_electron-common )
-	firejail_profiles_ytmdesktop? ( firejail_profiles_electron-common )
-	firejail_profiles_zcat? ( firejail_profiles_gzip )
-	firejail_profiles_zcmp? ( firejail_profiles_gzip )
-	firejail_profiles_zdiff? ( firejail_profiles_gzip )
-	firejail_profiles_zegrep? ( firejail_profiles_gzip )
-	firejail_profiles_zen? ( firejail_profiles_zen-browser )
-	firejail_profiles_zen-bin? ( firejail_profiles_zen-browser )
-	firejail_profiles_zen-browser? ( firejail_profiles_firefox-common )
-	firejail_profiles_zfgrep? ( firejail_profiles_gzip )
-	firejail_profiles_zforce? ( firejail_profiles_gzip )
-	firejail_profiles_zgrep? ( firejail_profiles_gzip )
-	firejail_profiles_zless? ( firejail_profiles_gzip )
-	firejail_profiles_zlib-flate? ( firejail_profiles_qpdf )
-	firejail_profiles_zmore? ( firejail_profiles_gzip )
-	firejail_profiles_znew? ( firejail_profiles_gzip )
-	firejail_profiles_zoom? ( firejail_profiles_electron-common )
-	firejail_profiles_zpaq? ( firejail_profiles_cpio )
-	firejail_profiles_zstd? ( firejail_profiles_archiver-common )
-	firejail_profiles_zstdcat? ( firejail_profiles_zstd )
-	firejail_profiles_zstdgrep? ( firejail_profiles_zstd )
-	firejail_profiles_zstdless? ( firejail_profiles_zstd )
-	firejail_profiles_zstdmt? ( firejail_profiles_zstd )
-"
 PATCHES=(
 	"${FILESDIR}/${PN}-0.9.78-envlimits.patch"
 	"${FILESDIR}/${PN}-0.9.78-firecfg.config.patch"
@@ -2457,7 +384,7 @@ PATCHES=(
 	"${FILESDIR}/extra-patches/${PN}-0.9.80-profile-fixes.patch"
 	"${FILESDIR}/extra-patches/${PN}-3bbc6b5-private-bin-no-local-default-yes.patch" # Fix all wrappers and mpv
 	"${FILESDIR}/extra-patches/${PN}-1b2d18e-default-res.patch"
-	"A${FILESDIR}/extra-patches/${PN}-0.9.80-devel-and-compiler-changes.patch"
+	"${FILESDIR}/extra-patches/${PN}-0.9.80-devel-and-compiler-changes.patch"
 )
 
 get_impls() {
@@ -2465,312 +392,61 @@ get_impls() {
 	use test && echo "test"
 }
 
-gen_profile_array() {
-einfo "Replace FIREJAIL_PROFILES with the following:"
-
-	cd "${S}" ; \
-	find "etc"/{"profile-m-z","profile-a-l"} -name "*.profile" \
-		| cut -f 3 -d "/" \
-		| sed -e "s|\.profile||g" \
-		| sed -e "s|\.|_|g" \
-		| sort \
-		| tr "\n" " " \
-		| fold -s -w 80 \
-		| sed -E -e "s|[ ]*$||g"
-	echo
-}
-
-gen_required_use() {
-	# Regenerates the REQUIRED_USE dependency graph.
-
-	# #1 identify and find all the nodes (aka points)
-	# #2 connect the edges via conditional dependency
-
-einfo "Replace REQUIRED_USE with the following:"
-
+get_supported_commands() {
 	local etc_folder="${S}/etc"
-
-	local nodes=()
-
 	local f
-	for f in $(find "${etc_folder}/"{"profile-a-l","profile-m-z"} -name "*.profile") ; do
-		local n=$(basename "${f}" \
-			| sed -e "s|\.profile||g" \
-			| sed -e "s|\.|_|g")
-		nodes+=( "${n}" )
-	done
-
-	unset g
-	declare -A g
-
-	# The parent is always left hand side, the child is the right hand side in the bucket list
-
-	local p
-	for p in $(echo "${nodes[@]}" | tr " " "\n" | sort) ; do
-		ls "${etc_folder}/"*"/${p}.profile" \
-			>/dev/null \
-			2>&1 \
-			|| continue
-		local profiles=$(grep -E \
-			-e "include .*.profile" \
-			$(ls "${etc_folder}/"*"/${p}.profile") \
-				| sed -e "/^#/d")
-		local childs=$(echo "${profiles}" \
-			| sed -e "s|\.profile||" \
-				-e "s|include ||" \
-				-e "s|\.|_|g")
-		if [[ -n "${childs}" ]] ; then
-			childs=$(echo "${childs}" \
-				| sed -e "s|^|firejail_profiles_|g")
-			echo -e "\tfirejail_profiles_${p}? ( ${childs} )"  # parent: childs
-		fi
-	done
-	echo
-}
-
-# Based on gen_required_use()
-gen_dep_graph() {
-	# Regenerates the REQUIRED_USE dependency graph.
-
-	# #1 identify and find all the nodes (aka points)
-	# #2 connect the edges via conditional dependency
-
-einfo "Add in global scope the following:"
-
-	local etc_folder="${S}/etc"
-
-	local nodes=()
-
-	local f
-	for f in $(find "${etc_folder}/"{"profile-a-l","profile-m-z"} -name "*.profile") ; do
-		local n=$(basename "${f}" \
-			| sed -e "s|\.profile||g" \
-			| sed -e "s|\.|_|g")
-		nodes+=( "${n}" )
-	done
-
-	unset g
-	declare -A g
-
-	# The parent is always left hand side, the child is the right hand side in the bucket list
-
-	local p
-	for p in $(echo "${nodes[@]}" | tr " " "\n" | sort) ; do
-		ls "${etc_folder}/"*"/${p}.profile" \
-			>/dev/null \
-			2>&1 \
-			|| continue
-		local profiles=$(grep -E \
-			-e "include .*.profile" \
-			$(ls "${etc_folder}/"*"/${p}.profile") \
-				| sed -e "/^#/d")
-		local childs=$(echo "${profiles}" \
-			| sed -e "s|\.profile||" \
-				-e "s|include ||" \
-				-e "s|\.|_|g")
-		if [[ -n "${childs}" ]] ; then
-			childs=$(echo "${childs}" \
-				| sed -e "s|^||g" \
-				| tr "\n" " " \
-				| sed -r -e "s|[ ]+$||g")
-			if [[ "${p:0:1}" =~ ^[0-9] ]] ; then
-				echo -e "_PROFILE_GRAPH[\"_${p}\"]=\"${childs}\""  # parent: childs
-			else
-				echo -e "_PROFILE_GRAPH[\"${p}\"]=\"${childs}\""  # parent: childs
-			fi
-		fi
-	done
-	echo
-}
-
-gen_x11_compat() {
-einfo
-einfo "Place the following in the X11_COMPAT array:"
-einfo
-	local CURSES_COMPAT=(
-# This list are apps that may run in the console but are organized like a GUI.
-		"weechat"
-		"weechat-curses"
-	)
-	local X_APPS_MISSING_REQUIRED_USE=(
-		"amarok"
-		"amule"
-		"bluefish"
-		"brave"
-		"brave-browser"
-		"brasero"
-		"calligraauthor"
-		"calligraconverter"
-		"calligraflow"
-		"calligragemini"
-		"calligraplan"
-		"calligraplanwork"
-		"calligrasheets"
-		"calligrastage"
-		"calligrawords"
-		"chromium"
-		"cinelerra"
-		"clementine"
-		"dillo"
-		"ferdi"
-		"firefox"
-		"freecad"
-		"geany"
-		"geeqie"
-		"gitter"
-		"epiphany"
-		"evince"
-		"evince-previewer"
-		"evince-thumbnailer"
-		"godot3"
-		"google-chrome"
-		"eog"
-		"google-earth"
-		"google-earth-pro"
-		"gramps"
-		"hexchat"
-		"hugin"
-		"kodi"
-		"leafpad"
-		"mousepad"
-		"mumble"
-		"nautilus"
-		"netsurf"
-		"obs"
-		"pcmanfm"
-		"pidgin"
-		"pinta"
-		"pitivi"
-		"qbittorrent"
-		"rawtherapee"
-		"ripperx"
-		"ristretto"
-		"qupzilla"
-		"seamonkey-bin"
-		"shotcut"
-		"spotify"
-		"surf"
-		"synfigstudio"
-		"teamspeak3"
-		"telegram-desktop"
-		"thunar"
-		"thunderbird"
-		"uzbl-browser"
-		"vivaldi"
-		"vmware-player"
-		"vscodium"
-		"x-terminal-emulator"
-		"xchat"
-		"xfburn"
-		"xmms"
-		"waterfox"
-		"wireshark"
-		"wireshark-gtk"
-		"wireshark-qt"
-		"xpdf"
-	# If it is uppercase, it is assumed is is a win port of that app.
-	)
-
-	is_x_blacklisted() {
-		local arg="${1}"
-		local y
-		for y in ${X_BLACKLIST[@]} ; do
-			if [[ "${arg}" == "${y}" ]] ; then
-				return 0
-			fi
-		done
-		return 1
-	}
-
-	is_x_headless_compat() {
-		local arg="${1}"
-		local y
-		for y in ${X_HEADLESS_COMPAT[@]} ; do
-			if [[ "${arg}" == "${y}" ]] ; then
-				return 0
-			fi
-		done
-		return 1
-	}
-
-	is_xephyr_only() {
-		local arg="${1}"
-		local y
-		for y in ${X_XEPHYR_ONLY[@]} ; do
-			if [[ "${arg}" == "${y}" ]] ; then
-				return 0
-			fi
-		done
-		return 1
-	}
-
-	is_xpra_only() {
-		local arg="${1}"
-		local y
-		for y in ${X_XPRA_ONLY[@]} ; do
-			if [[ "${arg}" == "${y}" ]] ; then
-				return 0
-			fi
-		done
-		return 1
-	}
-
-	cond_basename() {
-		if [[ -e "${x}" ]] && grep -q -e "^x11 none" ; then
-			:
-		elif [[ "${x}" =~ "-common" ]] ; then
-			:
-		else
-			local t=$(basename "${x}" \
-				| sed -e "s|\.profile||g" \
-				| sed -e "s|\.|_|g")
-			if is_x_blacklisted "${t}" ; then
-				:
-			else
-				echo "${t}"
-			fi
-		fi
-	}
-
 	local L=(
-		$(grep -l -r -E -e "(tauri|electron|chromium|firefox.profile|firefox-common|torbrowser-launcher|opengl|@x11|gtk|gnome|kde|sdl|qt|opengl|vulkan)" "${S}/etc/profile"*)
-		"${X_APPS_MISSING_REQUIRED_USE[@]}"
+		$(find "${etc_folder}/"{"profile-a-l","profile-m-z"} -name "*.profile")
 	)
-	local L_sanitized=()
-
-	local x
-	for x in "${L[@]}" ; do
-		L_sanitized+=( $(cond_basename "${x}") )
-	done
-	echo "${L_sanitized[@]}" | fold -s -w 80
-
-einfo
-einfo "Replace GUI_REQUIRED_USE with the following:"
-einfo
-	for x in "${L_sanitized[@]}" ; do
-		if is_x_blacklisted "${x}" ; then
-			:
-		elif is_x_headless_compat "${x}" && is_xephyr_only "${x}" ; then
-echo "firejail_profiles_${x}? ( || ( xephyr ) )"
-		elif is_x_headless_compat "${x}" && is_xpra_only "${x}" ; then
-echo "firejail_profiles_${x}? ( || ( xpra ) )"
-		elif is_x_headless_compat "${x}" ; then
-echo "firejail_profiles_${x}? ( || ( xcsecurity xephyr xpra xvfb ) )"
-		else
-echo "firejail_profiles_${x}? ( || ( xcsecurity xephyr xpra ) )"
-		fi
+	for f in "${L[@]}" ; do
+		local n=$(basename "${f}" \
+			| sed -e "s|\.profile||g")
+		echo "${n}"
 	done
 }
 
-gen_ebuild() {
-	gen_profile_array
-	gen_required_use
-	gen_dep_graph
-	gen_x11_compat
-eerror
-eerror "Comment out GEN_EBUILD when you are done."
-eerror
-	die
+is_x_blacklisted() {
+	local arg="${1}"
+	local y
+	for y in ${X_BLACKLIST[@]} ; do
+		if [[ "${arg}" == "${y}" ]] ; then
+			return 0
+		fi
+	done
+	return 1
+}
+
+is_x_headless_compat() {
+	local arg="${1}"
+	local y
+	for y in ${X_HEADLESS_COMPAT[@]} ; do
+		if [[ "${arg}" == "${y}" ]] ; then
+			return 0
+		fi
+	done
+	return 1
+}
+
+is_xephyr_only() {
+	local arg="${1}"
+	local y
+	for y in ${X_XEPHYR_ONLY[@]} ; do
+		if [[ "${arg}" == "${y}" ]] ; then
+			return 0
+		fi
+	done
+	return 1
+}
+
+is_xpra_only() {
+	local arg="${1}"
+	local y
+	for y in ${X_XPRA_ONLY[@]} ; do
+		if [[ "${arg}" == "${y}" ]] ; then
+			return 0
+		fi
+	done
+	return 1
 }
 
 check_kernel_config() {
@@ -2941,6 +617,37 @@ eerror "The AUTO_BLACKLIST has been changed to SCOPE[@].  See metadata.xml or \`
 	fi
 }
 
+get_x11_compat() {
+	local L=(
+		$(grep -l -r -E -e "(tauri|electron|chromium|firefox.profile|firefox-common|torbrowser-launcher|opengl|@x11|gtk|gnome|kde|sdl|qt|opengl|vulkan)" "${S}/etc/profile"*)
+		"${X_APPS_MISSING_REQUIRED_USE[@]}"
+	)
+	local L_sanitized=()
+
+	cond_basename() {
+		if [[ -e "${x}" ]] && grep -q -e "^x11 none" ; then
+			:
+		elif [[ "${x}" =~ "-common" ]] ; then
+			:
+		else
+			local t=$(basename "${x}" \
+				| sed -e "s|\.profile||g" \
+				| sed -e "s|\.|_|g")
+			if is_x_blacklisted "${t}" ; then
+				:
+			else
+				echo "${t}"
+			fi
+		fi
+	}
+
+	local x
+	for x in "${L[@]}" ; do
+		L_sanitized+=( $(cond_basename "${x}") )
+	done
+	echo "${L_sanitized[@]}" | fold -s -w 80
+}
+
 pkg_setup() {
 	check_kernel_config
 	if use test && [[ "${TEST_SET}" == "full" ]] ; then
@@ -3030,10 +737,6 @@ get_selfrando_arch() {
 
 src_prepare() {
 	default
-
-	if [[ "${GEN_EBUILD}" == "1" ]] ; then
-		gen_ebuild
-	fi
 
 	cp -aT "${FILESDIR}/extra-profiles/" "${S}/etc" || die
 
@@ -3475,9 +1178,7 @@ eerror
 			die
 		fi
 		if grep -q -E -e "Error [0-9]+" "${T}/test.log" ; then
-eerror
 eerror "Test failed for ${x}.  For details see ${T}/test.log"
-eerror
 			die
 		fi
 		cat "${T}/test.log" >> "${T}/test-all.log" || die
@@ -3518,15 +1219,11 @@ EOF
 			virtx "${BUILD_DIR}/run.sh"
 			restore_env
 			if grep -q -E -e "Error [0-9]+" "${T}/test.log" ; then
-eerror
 eerror "Test failed for ${x}.  For details see ${T}/test.log"
-eerror
 				die
 			fi
 			if [[ ! -f "${T}/test-retcode.log" ]] ; then
-eerror
 eerror "Missing retcode for ${x}"
-eerror
 				die
 			fi
 			local test_retcode=$(cat "${T}/test-retcode.log")
@@ -3586,27 +1283,6 @@ src_test() {
 	done
 }
 
-is_use_dotted() {
-	local u="${1}"
-	local fn
-	for fn in ${DOTTED_FILENAMES[@]} ; do
-		[[ "${fn//./_}" == "${u}" ]] && return 0
-	done
-	return 1
-}
-
-get_dotted_fn() {
-	local u="${1}"
-	local fn
-	for fn in ${DOTTED_FILENAMES[@]} ; do
-		if [[ "${fn//./_}" == "${u}" ]] ; then
-			echo "${fn}"
-			return
-		fi
-	done
-	echo ""
-}
-
 # See also https://github.com/llvm/llvm-project/blob/llvmorg-18.1.8/compiler-rt/cmake/Modules/AllSupportedArchDefs.cmake
 get_llvm_arch() {
 	if [[ "${ARCH}" == "amd64" ]] ; then
@@ -3637,14 +1313,15 @@ get_llvm_arch() {
 }
 
 _gen_one_wrapper() {
-	local raw_profile_name="${1}"
-	local profile_name="${1}"
+	local command="${1}"
 	local wrapper_name="${2}"
 	local exe_path="${3}"
 einfo "Generating wrapper for ${wrapper_name}"
-	if [[ "${profile_name:0:1}" =~ ^[0-9] ]] ; then
+
+	local key_command="${1//./_}" # Sanitized associative array key
+	if [[ "${1:0:1}" =~ ^[0-9] ]] ; then
 # You cannot use a number as the prefix to associative array.
-		profile_name="_${1}"
+		key_command="_${1//./_}"
 	fi
 
 	local x11_arg=""
@@ -3663,7 +1340,7 @@ einfo "Generating wrapper for ${wrapper_name}"
 
 	if \
 		[[ \
-			"${X_BACKEND[${profile_name}]}" == "auto" \
+			"${X_BACKEND[${key_command}]}" == "auto" \
 		]] \
 	; then
 eerror
@@ -3674,9 +1351,9 @@ eerror
 
 	if \
 		[[ \
-			   "${X_BACKEND[${profile_name}]}" == "game" \
-			|| "${X_BACKEND[${profile_name}]}" == "gaming" \
-			|| "${X_BACKEND[${profile_name}]}" == "opengl" \
+			   "${X_BACKEND[${key_command}]}" == "game" \
+			|| "${X_BACKEND[${key_command}]}" == "gaming" \
+			|| "${X_BACKEND[${key_command}]}" == "opengl" \
 		]] \
 	; then
 eerror
@@ -3693,7 +1370,7 @@ eerror
 	for x in ${X_FALLBACKS[@]} ; do
 		local fallback_profile=${x%:*}
 		local x_backend=${x#*:}
-		if [[ "${profile_name}" =~ "${fallback_profile}" ]] ; then
+		if [[ "${key_command}" =~ "${fallback_profile}" ]] ; then
 			preferred_fallback="${x_backend}"
 			break
 		fi
@@ -3724,68 +1401,69 @@ eerror
 	local x11_sandbox=""
 	if ! use X ; then
 		:
-	elif [[ "${X_BACKEND[${profile_name}]}" =~ ("disable"|"none"|"unsandboxed"|"gaming-unsandboxed"|"opengl-unsandboxed") ]] ; then
+	elif [[ "${X_BACKEND[${key_command}]}" =~ ("disable"|"none"|"unsandboxed"|"gaming-unsandboxed"|"opengl-unsandboxed") ]] ; then
 		:
-	elif is_xpra_only "${profile_name}" ; then
-einfo "Forcing xpra for ${profile_name}"
+	elif is_xpra_only "${key_command}" ; then
+einfo "Forcing xpra for ${key_command}"
 		x11_arg="--x11=xpra"
-	elif is_xephyr_only "${profile_name}" ; then
-einfo "Forcing xephyr for ${profile_name}"
+	elif is_xephyr_only "${key_command}" ; then
+einfo "Forcing xephyr for ${key_command}"
 		x11_arg="--x11=xephyr"
 		x11_sandbox="xephyr"
-	elif [[ "${X_BACKEND[${profile_name}]}" =~ ("gaming-sandboxed"|"opengl-sandboxed") ]] ; then
+	elif [[ "${X_BACKEND[${key_command}]}" =~ ("gaming-sandboxed"|"opengl-sandboxed") ]] ; then
 		x11_arg="--x11=xpra"
-	elif [[ "${X_BACKEND[${profile_name}]}" =~ "xpra" ]] ; then
+	elif [[ "${X_BACKEND[${key_command}]}" =~ "xpra" ]] ; then
 		x11_arg="--x11=xpra"
-	elif [[ "${X_BACKEND[${profile_name}]}" == "xephyr" ]] ; then
+	elif [[ "${X_BACKEND[${key_command}]}" == "xephyr" ]] ; then
 		x11_arg="--x11=xephyr"
 		x11_sandbox="xephyr"
-	elif [[ "${X_BACKEND[${profile_name}]}" =~ "xorg" ]] ; then
+	elif [[ "${X_BACKEND[${key_command}]}" =~ "xorg" ]] ; then
 		x11_arg="--x11=xorg"
 		x11_sandbox="xorg"
-	elif [[ "${X_BACKEND[${profile_name}]}" =~ ("/dev/null"|"headless"|"xvfb") ]] ; then
+	elif [[ "${X_BACKEND[${key_command}]}" =~ ("/dev/null"|"headless"|"xvfb") ]] ; then
 		x11_arg="--x11=xvfb"
-	elif [[ "${X_BACKEND[${profile_name}]}" == "auto" ]] ; then
+	elif [[ "${X_BACKEND[${key_command}]}" == "auto" ]] ; then
 		x11_arg="--x11"
-	elif is_x11_compat "${profile_name}" && [[ "${preferred_fallback}" == "xpra" ]] && use xpra ; then
+	elif is_x11_compat "${key_command}" && [[ "${preferred_fallback}" == "xpra" ]] && use xpra ; then
 		x11_arg="--x11=xpra"
-	elif is_x11_compat "${profile_name}" && [[ "${preferred_fallback}" == "xephyr" ]] && use xephyr ; then
+	elif is_x11_compat "${key_command}" && [[ "${preferred_fallback}" == "xephyr" ]] && use xephyr ; then
 		x11_arg="--x11=xephyr"
 		x11_sandbox="xephyr"
-	elif is_x11_compat "${profile_name}" && [[ "${preferred_fallback}" == "xvfb" ]] && use xvfb ; then
+	elif is_x11_compat "${key_command}" && [[ "${preferred_fallback}" == "xvfb" ]] && use xvfb ; then
 		x11_arg="--x11=xvfb"
-	elif is_x11_compat "${profile_name}" && [[ "${preferred_fallback}" == "xorg" ]] && use xcsecurity ; then
+	elif is_x11_compat "${key_command}" && [[ "${preferred_fallback}" == "xorg" ]] && use xcsecurity ; then
 		x11_arg="--x11=xorg"
 		x11_sandbox="xorg"
-	elif is_x11_compat "${profile_name}" && use xpra ; then
+	elif is_x11_compat "${key_command}" && use xpra ; then
 		x11_arg="--x11=xpra"
-	elif is_x11_compat "${profile_name}" && use xephyr ; then
+	elif is_x11_compat "${key_command}" && use xephyr ; then
 		x11_arg="--x11=xephyr"
 		x11_sandbox="xephyr"
-	elif is_x11_compat "${profile_name}" && use xcsecurity ; then
+	elif is_x11_compat "${key_command}" && use xcsecurity ; then
 		x11_arg="--x11=xorg"
 		x11_sandbox="xorg"
 	else
-ewarn "Uncaught x11_arg case for raw_profile_name:  ${raw_profile_name}.  Ignore if console app"
+ewarn "Uncaught x11_arg case for ${command}.  Ignore the warning if it is a console app."
 	fi
 
 	if [[ "${x11_sandbox}" == "xephyr" ]] ; then
-		if [[ -z "${XEPHYR_WH[${profile_name}]}" ]] ; then
-ewarn "XEPHYR_WH[${profile_name}] is unset.  The default 1920x1080 will be used.  Consider setting it to either 1280x720, 1920x1080, 2560x1440, 3840x2160 instead."
+		if [[ -z "${XEPHYR_WH[${key_command}]}" ]] ; then
+ewarn
+ewarn "XEPHYR_WH[${key_command}] is unset.  The default 1920x1080 will be used."
+ewarn "Consider setting it to either 1280x720, 1920x1080, 2560x1440, 3840x2160 instead."
 ewarn "See metadata.xml or \`epkginfo -x sys-apps/firejail::oiledmachine-overlay\` for details."
+ewarn
 		fi
 	fi
 
 	local profile_path=""
-	if [[ "${COMMAND[${exe_name}]}" == "1" ]] ; then
+	if [[ "${COMMAND[${key_command}]}" == "1" ]] ; then
 		:
-	elif is_use_dotted "${u}" ; then
-		profile_path=$(find "${T}/profiles" "${T}/profiles_processed" "${S}/etc/profile"* -name $(get_dotted_fn "${u}")".profile")
 	else
-		profile_path=$(find "${T}/profiles" "${T}/profiles_processed" "${S}/etc/profile"* -name "${u}.profile")
+		profile_path=$(find "${T}/profiles" "${T}/profiles_processed" "${S}/etc/profile"* -name "${command}.profile")
 	fi
 
-	if [[ "${COMMAND[${exe_name}]}" == "1" ]] ; then
+	if [[ "${COMMAND[${key_command}]}" == "1" ]] ; then
 		:
 	elif [[ -n "${x11_arg}" ]] && grep -q -e "x11 none" "${profile_path}" ; then
 	# False positive
@@ -3799,7 +1477,7 @@ ewarn "See metadata.xml or \`epkginfo -x sys-apps/firejail::oiledmachine-overlay
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
 		if use "llvm_slot_${s}" && has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[scudo]" ; then
-			if [[ "${SCUDO_FREE_IMMEDIATE[${profile_name}]}" != "1" ]] ; then
+			if [[ "${SCUDO_FREE_IMMEDIATE[${key_command}]}" != "1" ]] ; then
 				allocator_args_scudo+=" --env=SCUDO_OPTIONS='quarantine_size_kb=256:quarantine_max_chunk_size=2048:thread_local_quarantine_size_kb=64' "
 			fi
 			allocator_args_scudo+=" --env=LD_PRELOAD=/usr/lib/clang/${s}/lib/linux/libclang_rt.scudo_standalone-$(get_llvm_arch).so"
@@ -3829,19 +1507,24 @@ ewarn "See metadata.xml or \`epkginfo -x sys-apps/firejail::oiledmachine-overlay
 
 	local force_system_allocator=0
 
-	if [[ "${_PROFILE_GRAPH[${profile_name}]}" =~ "electron-common" ]] ; then
+	if grep -q -e "electron-common" "${T}/profiles_data/${command}.profile" 2>/dev/null ; then
+einfo "Forcing system allocator for ${command} (1)"
 		force_system_allocator=1
-	elif [[ "${exe_path}" =~ "firefox-bin" ]] ; then
+	elif [[ "${command}" == "electron-common" ]] ; then
+einfo "Forcing system allocator for ${command} (2)"
+		force_system_allocator=1
+	elif [[ "${command}" == "firefox-bin" ]] ; then
+einfo "Forcing system allocator for ${command} (3)"
 		force_system_allocator=1
 	fi
 
 	local x
 	for x in ${PROFILE_NEEDS_SYSTEM_ALLOCATOR[@]} ; do
-		if [[ "${profile_name}" == "firefox" ]] && has_version "www-client/firefox" && ! has_version "www-client/firefox[jemalloc]" ; then
+		if [[ "${key_command}" == "firefox" ]] && has_version "www-client/firefox" && ! has_version "www-client/firefox[jemalloc]" ; then
 			:
-		elif [[ "${profile_name}" == "chromium" ]] && has_version "www-client/chromium" && ! has_version "www-client/chromium[partitionalloc]" ; then
+		elif [[ "${key_command}" == "chromium" ]] && has_version "www-client/chromium" && ! has_version "www-client/chromium[partitionalloc]" ; then
 			:
-		elif [[ "${profile_name}" == "${x}" ]] ; then
+		elif [[ "${key_command}" == "${x}" ]] ; then
 			force_system_allocator=1
 			break
 		fi
@@ -3850,13 +1533,13 @@ ewarn "See metadata.xml or \`epkginfo -x sys-apps/firejail::oiledmachine-overlay
 	# Sort by data remittance policy (most scrambled on top, least scrambled bottom)
 	if (( ${force_system_allocator} == 1 )) ; then
 		:
-	elif [[ "${MALLOC_BACKEND[${profile_name}]}" == "mimalloc" ]] && use mimalloc ; then
+	elif [[ "${MALLOC_BACKEND[${key_command}]}" == "mimalloc" ]] && use mimalloc ; then
 		allocator_args="${allocator_args_mimalloc}"
-	elif [[ "${MALLOC_BACKEND[${profile_name}]}" == "scudo" ]] && use scudo ; then
+	elif [[ "${MALLOC_BACKEND[${key_command}]}" == "scudo" ]] && use scudo ; then
 		allocator_args="${allocator_args_scudo}"
-	elif [[ "${MALLOC_BACKEND[${profile_name}]}" == "hardened_malloc" ]] && use hardened_malloc ; then
+	elif [[ "${MALLOC_BACKEND[${key_command}]}" == "hardened_malloc" ]] && use hardened_malloc ; then
 		allocator_args="${allocator_args_hardened_malloc}"
-	elif [[ "${MALLOC_BACKEND[${profile_name}]}" == "system-malloc" ]] ; then
+	elif [[ "${MALLOC_BACKEND[${key_command}]}" == "system-malloc" ]] ; then
 		:
 	elif use mimalloc ; then
 		allocator_args="${allocator_args_mimalloc}"
@@ -3868,81 +1551,81 @@ ewarn "See metadata.xml or \`epkginfo -x sys-apps/firejail::oiledmachine-overlay
 
 	local landlock_arg=""
 	if use landlock ; then
-		if [[ -n "${LANDLOCK[${profile_name}]}" ]] ; then
+		if [[ -n "${LANDLOCK[${key_command}]}" ]] ; then
 			landlock_arg="--landlock"
 		fi
-		if [[ -n "${LANDLOCK_READ[${profile_name}]}" ]] ; then
+		if [[ -n "${LANDLOCK_READ[${key_command}]}" ]] ; then
 			local L=(
 				echo
 			)
 			local p
 			while IFS=, read p ; do
 				landlock_arg+=" --landlock.read=${p}"
-			done <<< ${LANDLOCK_READ[${profile_name}]}
+			done <<< ${LANDLOCK_READ[${key_command}]}
 		fi
-		if [[ -n "${LANDLOCK_WRITE[${profile_name}]}" ]] ; then
+		if [[ -n "${LANDLOCK_WRITE[${key_command}]}" ]] ; then
 			local p
 			while IFS=, read p ; do
 				landlock_arg+=" --landlock.write=${p}"
-			done <<< ${LANDLOCK_WRITE[${profile_name}]}
+			done <<< ${LANDLOCK_WRITE[${key_command}]}
 		fi
-		if [[ -n "${LANDLOCK_SPECIAL[${profile_name}]}" ]] ; then
+		if [[ -n "${LANDLOCK_SPECIAL[${key_command}]}" ]] ; then
 			local p
 			while IFS=, read p ; do
 				landlock_arg+=" --landlock.special=${p}"
-			done <<< ${LANDLOCK_SPECIAL[${profile_name}]}
+			done <<< ${LANDLOCK_SPECIAL[${key_command}]}
 		fi
-		if [[ -n "${LANDLOCK_EXECUTE[${profile_name}]}" ]] ; then
+		if [[ -n "${LANDLOCK_EXECUTE[${key_command}]}" ]] ; then
 			local p
 			while IFS=, read p ; do
 				landlock_arg+=" --landlock.execute=${p}"
-			done <<< ${LANDLOCK_EXECUTE[${profile_name}]}
+			done <<< ${LANDLOCK_EXECUTE[${key_command}]}
 		fi
-		if [[ -n "${LANDLOCK_PROC[${profile_name}]}" ]] ; then
-			local x="${LANDLOCK_PROC[${profile_name}]}"
+		if [[ -n "${LANDLOCK_PROC[${key_command}]}" ]] ; then
+			local x="${LANDLOCK_PROC[${key_command}]}"
 			landlock_arg+=" --landlock.proc=${x}"
 		fi
 	fi
 
 	local wh_arg=""
-	if [[ -n "${XEPHYR_WH[${profile_name}]}" ]] ; then
-		wh_arg="--xephyr-screen=${XEPHYR_WH[${profile_name}]}"
+	if [[ -n "${XEPHYR_WH[${key_command}]}" ]] ; then
+		wh_arg="--xephyr-screen=${XEPHYR_WH[${key_command}]}"
 	fi
 
 	local apparmor_arg=""
-	if [[ "${APPARMOR_PROFILE[${profile_name}]}" == "default" ]] ; then
+	if [[ "${APPARMOR_PROFILE[${key_command}]}" == "default" ]] ; then
 		apparmor_arg="--apparmor"
-	elif [[ -n "${APPARMOR_PROFILE[${profile_name}]}" ]] ; then
-		apparmor_arg="--apparmor=${APPARMOR_PROFILE[${profile_name}]}"
+	elif [[ -n "${APPARMOR_PROFILE[${key_command}]}" ]] ; then
+		apparmor_arg="--apparmor=${APPARMOR_PROFILE[${key_command}]}"
 	fi
 
 	local seccomp_arg=""
-	if [[ -n "${SECCOMP[${profile_name}]}" ]] ; then
+	if [[ -n "${SECCOMP[${key_command}]}" ]] ; then
 		seccomp_arg+=" --seccomp"
 	fi
 
-	if [[ -n "${SECCOMP_BLOCK[${profile_name}]}" ]] ; then
-		seccomp_arg+=" --seccomp.drop=${SECCOMP_BLOCK[${profile_name}]}"
+	if [[ -n "${SECCOMP_BLOCK[${key_command}]}" ]] ; then
+		seccomp_arg+=" --seccomp.drop=${SECCOMP_BLOCK[${key_command}]}"
 	fi
 
-	if [[ -n "${SECCOMP_KEEP[${profile_name}]}" ]] ; then
-		seccomp_arg=+" --seccomp.keep=${SECCOMP_KEEP[${profile_name}]}"
+	if [[ -n "${SECCOMP_KEEP[${key_command}]}" ]] ; then
+		seccomp_arg=+" --seccomp.keep=${SECCOMP_KEEP[${key_command}]}"
 	fi
 
 	local args=""
-	if [[ -n "${ARGS[${profile_name}]}" ]] ; then
-		args="${ARGS[${profile_name}]}"
+	if [[ -n "${ARGS[${key_command}]}" ]] ; then
+		args="${ARGS[${key_command}]}"
 	fi
 
 	local profile_arg=""
 	if [[ -e "${profile_path}" ]] ; then
-		profile_arg="--profile=${raw_profile_name}"
+		profile_arg="--profile=${command}"
 	else
 		profile_arg="--noprofile"
 	fi
 
 	local pulse_arg=""
-	if [[ "${profile_name}" == "pavucontrol" ]] ; then
+	if [[ "${key_command}" == "pavucontrol" ]] ; then
 		pulse_arg+="--keep-config-pulse"
 	fi
 
@@ -3955,8 +1638,8 @@ ewarn "See metadata.xml or \`epkginfo -x sys-apps/firejail::oiledmachine-overlay
 	fi
 
 	local oom_arg=""
-	if [[ -n "${OOM[${profile_name}]}" ]] ; then
-		oom_arg="--oom=${OOM[${profile_name}]}"
+	if [[ -n "${OOM[${key_command}]}" ]] ; then
+		oom_arg="--oom=${OOM[${key_command}]}"
 	fi
 
 	local all_args_x=(
@@ -4036,30 +1719,30 @@ EOF
 }
 
 gen_wrapper() {
-	local u="${1}"
-	local profile_name="${1}"
-	if [[ "${profile_name:0:1}" =~ ^[0-9] ]] ; then
+	local command="${1}"
+	local key_command="${1//./_}" # Sanitized associative array key
+	if [[ "${1:0:1}" =~ ^[0-9] ]] ; then
 # You cannot use a number as the prefix to associative array.
-		profile_name="_${1}"
+		key_command="_${1//./_}"
 	fi
 
 	local exe_path=""
-	if [[ -n "${PATH_CORRECTION[${profile_name}]}" ]] ; then
-		exe_path="${PATH_CORRECTION[${profile_name}]}"
-	elif [[ -n "${_PATH_CORRECTION[${profile_name}]}" ]] ; then
-		exe_path="${_PATH_CORRECTION[${profile_name}]}"
+	if [[ -n "${PATH_CORRECTION[${key_command}]}" ]] ; then
+		exe_path="${PATH_CORRECTION[${key_command}]}"
+	elif [[ -n "${_PATH_CORRECTION[${key_command}]}" ]] ; then
+		exe_path="${_PATH_CORRECTION[${key_command}]}"
 	else
-		exe_path="/usr/bin/${exe_name}"
+		exe_path="/usr/bin/${command}"
 	fi
 
-	if [[ "${u}" == "firefox" ]] ; then
+	if [[ "${command}" == "firefox" ]] ; then
 		if has_version "www-client/firefox" ; then
-			_gen_one_wrapper "${u}" "firefox" "${exe_path}"
+			_gen_one_wrapper "${command}" "firefox" "${exe_path}"
 		fi
 		if has_version "www-client/firefox-bin" ; then
-			_gen_one_wrapper "${u}" "firefox-bin" "/usr/bin/firefox-bin"
+			_gen_one_wrapper "${command}" "firefox-bin" "/usr/bin/firefox-bin"
 		fi
-	elif [[ "${u}" == "x-terminal-emulator" ]] ; then
+	elif [[ "${command}" == "x-terminal-emulator" ]] ; then
 		local terms=(
 			"alacritty"
 			"aterm"
@@ -4087,37 +1770,26 @@ gen_wrapper() {
 			"yeahconsole"
 			"zutty"
 		)
-		local exe_name
-		for exe_name in ${terms[@]} ; do
+		local command
+		for command in ${terms[@]} ; do
 			local exe_path=""
-			if [[ -n "${PATH_CORRECTION[${exe_name}]}" ]] ; then
-				exe_path="${PATH_CORRECTION[${exe_name}]}"
-			elif [[ -n "${_PATH_CORRECTION[${exe_name}]}" ]] ; then
-				exe_path="${_PATH_CORRECTION[${exe_name}]}"
-			elif [[ -e "/usr/bin/${exe_name}" ]] ; then
-				exe_path="/usr/bin/${exe_name}"
+			if [[ -n "${PATH_CORRECTION[${command}]}" ]] ; then
+				exe_path="${PATH_CORRECTION[${command}]}"
+			elif [[ -n "${_PATH_CORRECTION[${command}]}" ]] ; then
+				exe_path="${_PATH_CORRECTION[${command}]}"
+			elif [[ -e "/usr/bin/${command}" ]] ; then
+				exe_path="/usr/bin/${command}"
 			fi
 			if [[ -e "${exe_path}" ]] ; then
-				_gen_one_wrapper "${u}" "${exe_name}" "${exe_path}"
+				_gen_one_wrapper "${command}" "${command}" "${exe_path}"
 			fi
 		done
 	elif [[ -e "${exe_path}" ]] ; then
-		_gen_one_wrapper "${u}" "${u}" "${exe_path}"
+		_gen_one_wrapper "${command}" "${command}" "${exe_path}"
 	fi
 }
 
-# recursive
-get_profile_deps() {
-	local nodes=( ${@} )
-	(( ${#nodes[@]} == 0 )) && return
-	local node
-	for node in ${nodes[@]} ; do
-		echo "${node}"
-		get_profile_deps ${_PROFILE_GRAPH[${node}]}
-	done
-}
-
-_install_one_profile() {
+_install_profiles() {
 	default
 
 	if use contrib ; then
@@ -4128,8 +1800,14 @@ _install_one_profile() {
 	fi
 
 	mkdir -p "${T}/profiles" || die
-	mv $(find "${ED}/etc/firejail/" -name "*.profile") \
-		"${T}/profiles" || die
+	mv \
+		$(find "${ED}/etc/firejail/" -name "*.profile") \
+		"${T}/profiles" \
+		|| die
+
+	# Stable state set for analysis
+	mkdir -p "${T}/profiles_data" || die
+	cp -aT "${T}/profiles" "${T}/profiles_data" || die
 
 	mkdir -p "${T}/profiles_processed" || die
 
@@ -4147,102 +1825,83 @@ _install_one_profile() {
 		fi
 	}
 
-	local pf
-	for pf in ${FIREJAIL_PROFILES_IUSE} ; do
-		local u="${pf/firejail_profiles_/}"
+	local commands=(
+		$(get_supported_commands) # Program name
+	)
+
+einfo "DEBUG: commands ${commands[@]}"
+
+	local command
+	for command in ${commands[@]} ; do
 		local src
 		local dest
-		if is_use_dotted "${u}" ; then
-			src=$(find "${T}/profiles" -name $(get_dotted_fn "${u}")".profile" \
-				| sed -r -e "s|[ ]+||g")
-			dest="${ED}/etc/firejail/"$(get_dotted_fn "${u}")".profile"
-		else
-			src=$(find "${T}/profiles" -name "${u}.profile" \
-				| sed -r -e "s|[ ]+||g")
-			dest="${ED}/etc/firejail/${u}.profile"
-		fi
-		if [[ ! -e "${src}" ]] ; then
-eerror
-eerror "u=${u}"
-eerror "${src} is missing"
-eerror
-eerror "QA:  Try converting u value underscores (_) to a period (.) before"
-eerror "adding to DOTTED_FILENAMES."
-eerror
-#			die
-			continue
-		fi
+		src=$(find "${T}/profiles" -name "${command}.profile" \
+			| sed -r -e "s|[ ]+||g")
+		dest="${ED}/etc/firejail/${command}.profile"
 
-		local raw_profile_name="${u}"
-		local profile_name="${u}"
-		if [[ "${profile_name:0:1}" =~ ^[0-9] ]] ; then
+		local key_command="${command//./_}" # # Sanitized associative array key
+		if [[ "${command:0:1}" =~ ^[0-9] ]] ; then
 # You cannot use a number as the prefix to associative array.
-			profile_name="_${u}"
+			key_command="_${command//./_}"
 		fi
 
 		local exe_path=""
-		local exe_name="${u}"
-		if [[ -n "${PATH_CORRECTION[${profile_name}]}" ]] ; then
-			exe_path="${PATH_CORRECTION[${profile_name}]}"
-		elif [[ -n "${_PATH_CORRECTION[${profile_name}]}" ]] ; then
-			exe_path="${_PATH_CORRECTION[${profile_name}]}"
+		if [[ -n "${PATH_CORRECTION[${key_command}]}" ]] ; then
+			exe_path="${PATH_CORRECTION[${key_command}]}"
+		elif [[ -n "${_PATH_CORRECTION[${key_command}]}" ]] ; then
+			exe_path="${_PATH_CORRECTION[${key_command}]}"
 		else
-			exe_path="/usr/bin/${exe_name}"
+			exe_path="/usr/bin/${command}"
 		fi
 
 		local scope
-		scope=$(get_scope "${profile_name}")
+		scope=$(get_scope "${key_command}")
 
-		if use auto && use wrapper && [[ -e "${exe_path}" || "${u}" =~ "x-terminal-emulator" ]] && ! [[ "${u}" =~ "-common" ]] && ! [[ "${u}" =~ "-wrapper" ]] && ! [[ "${scope}" =~ ("ban"|"blacklist"|"blacklisted") ]] ; then
-einfo "Auto adding ${u} profile"
-			local deps=( $(get_profile_deps ${_PROFILE_GRAPH[${profile_name}]}) )
-			queued_profile_deps+=( ${deps[@]} )
-			#einfo "deps for ${u}:  ${deps[@]}"
+# Move it to image foler
+		if use wrapper [[ -e "${exe_path}" || "${command}" == "x-terminal-emulator" ]] && ! [[ "${command}" =~ "-common" ]] && ! [[ "${command}" =~ "-wrapper" ]] && ! [[ "${scope}" =~ ("ban"|"blacklist"|"blacklisted") ]] ; then
+einfo "Adding ${command} profile with wrapper (1)"
+			#einfo "deps for ${command}:  ${deps[@]}"
 			mv "${src}" "${dest}" || die
-			gen_wrapper "${u}"
-		elif ( use auto || use ${pv} ) && [[ "${u}" =~ ("default"|"server") ]] ; then
+			gen_wrapper "${command}"
+		elif [[ "${command}" =~ ("default"|"server") ]] ; then
+einfo "Adding ${command} profile (2)"
 			mv "${src}" "${dest}" || die
-		elif use ${pf} ; then
-einfo "Adding ${u} profile"
+		elif true ; then
+	# Add all the profiles
 			mv "${src}" "${dest}" || die
 			if use wrapper && ! [[ "${u}" =~ "-common" ]] && ! [[ "${u}" =~ "-wrapper" ]] ; then
-				gen_wrapper "${u}"
+einfo "Adding ${command} profile with wrapper (3)"
+				gen_wrapper "${command}"
+			else
+einfo "Adding ${command} profile (4)"
 			fi
 		else
-einfo "Rejecting ${u} profile"
+einfo "Moving rejected ${command} profile (5)"
 			local dest="${T}/profiles_processed"
 			mv "${src}" "${dest}" || die
 		fi
 	done
 
-	for pf in $(find "${T}/profiles" | sed -e "1d") ; do
-		local u=$(basename "${pf}" | sed -e "s|.profile||g")
-ewarn "Q/A: Missing ${u} in IUSE flags."
-	done
 	if (( $(find "${T}/profiles" | sed -e "1d" | wc -l) != 0 )) ; then
-eerror
 eerror "${T}/profiles is not empty"
-eerror
 		die
 	fi
 
 einfo "Verifying release build"
 	if grep -r -e "/image/" "${ED}/usr/bin" ; then
-eerror
 eerror "Detected test binaries"
-eerror
 		die
 	fi
 	if grep -r -e "/image/" "${ED}/usr/$(get_libdir)" ; then
-eerror
 eerror "Detected test libraries"
-eerror
 		die
 	fi
 }
 
 src_install() {
-	local queued_profile_deps=()
+	export X11_COMPAT=( $(get_x11_compat) ) # Use before wrappers installed
+einfo "${X11_COMPAT}:  ${X11_COMPAT}"
+
 	use wrapper && dodir "/usr/local/bin"
 	local impl
 	for impl in $(get_impls) ; do
@@ -4252,37 +1911,14 @@ src_install() {
 		# Test does not get installed due to modifications
 		[[ "${impl}" == "test" ]] && continue
 
-		_install_one_profile
+		_install_profiles
 	done
-
-	if use auto && use wrapper ; then
-		mv "${T}/profiles_processed/"* "${T}/profiles"
-		local pf
-		for pf in ${queued_profile_deps[@]} ; do
-			local u="${pf/firejail_profiles_/}"
-			local src
-			local dest
-			if is_use_dotted "${u}" ; then
-				src=$(find "${T}/profiles" -name $(get_dotted_fn "${u}")".profile" \
-					| sed -r -e "s|[ ]+||g")
-				dest="${ED}/etc/firejail/"$(get_dotted_fn "${u}")".profile"
-			else
-				src=$(find "${T}/profiles" -name "${u}.profile" \
-					| sed -r -e "s|[ ]+||g")
-				dest="${ED}/etc/firejail/${u}.profile"
-			fi
-			if [[ ! -e "${dest}" && -e "${src}" ]] ; then
-einfo "Auto copying ${u} as a missing profile dependency"
-				mv "${src}" "${dest}" || die
-			fi
-		done
-	fi
 
 	if (( "${#COMMAND[@]}" >= "1" )) ; then
 		local x
 		for x in ${!COMMAND[@]} ; do
-			local exe_name="${x}"
-			gen_wrapper "${exe_name}"
+			local program="${x}"
+			gen_wrapper "${command}"
 		done
 	fi
 
@@ -4332,16 +1968,6 @@ einfo "Note to ricers and optimization fanatics:"
 einfo
 einfo "You may need to update /etc/firejail/globals.local to add"
 einfo "private-lib gcc/*/*/libgomp.so.*"
-einfo
-einfo "The following optional USE flags are required if the disabled included"
-einfo "profiles are uncommented inside:"
-einfo
-einfo "  firejail_profiles_blink-common? ( firejail_profiles_blink-common-hardened.inc )"
-einfo "  firejail_profiles_chromium-common? ( firejail_profiles_chromium-common-hardened.inc )"
-einfo "  firejail_profiles_electron-common? ( firejail_profiles_electron-common-hardened.inc )"
-einfo "  firejail_profiles_feh? ( firejail_profiles_feh-network.inc )"
-einfo "  firejail_profiles_firefox-common? ( firejail_profiles_firefox-common-addons )"
-einfo "  firejail_profiles_rtv? ( firejail_profiles_rtv-addons )"
 einfo
 	if ! use firejail_profiles_server ; then
 ewarn

@@ -142,7 +142,7 @@ BDEPEND+="
 "
 PDEPEND+="
 	firejail? (
-		sys-apps/firejail[firejail_profiles_upscayl]
+		sys-apps/firejail
 	)
 "
 

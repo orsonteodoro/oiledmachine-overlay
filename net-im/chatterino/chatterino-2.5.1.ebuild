@@ -208,7 +208,7 @@ BDEPEND="
 "
 PDEPEND="
 	firejail? (
-		sys-apps/firejail[firejail_profiles_chatterino,X?]
+		sys-apps/firejail[X?]
 	)
 "
 
