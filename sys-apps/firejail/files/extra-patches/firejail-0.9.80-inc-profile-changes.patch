@@ -11,7 +11,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/allow-nodejs.inc firejail-
  include allow-python2.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-common.inc firejail-0.9.80/etc/inc/disable-common.inc
 --- firejail-0.9.80.orig/etc/inc/disable-common.inc	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/inc/disable-common.inc	2026-05-26 00:25:43.553501045 -0700
++++ firejail-0.9.80/etc/inc/disable-common.inc	2026-05-26 00:45:12.957556909 -0700
 @@ -631,6 +631,7 @@ blacklist ${PATH}/avahi*
  blacklist ${PATH}/dbus-*
  blacklist ${PATH}/debconf*
@@ -20,7 +20,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-common.inc firejai
  blacklist ${PATH}/kernel-install  # from systemd package
  
  # binaries installed by firejail
-@@ -760,3 +761,147 @@ blacklist ${RUNUSER}/update-notifier.pid
+@@ -760,3 +761,150 @@ blacklist ${RUNUSER}/update-notifier.pid
  
  # pass utility (pass package in Debian etc.)
  blacklist ${HOME}/.password-store
@@ -168,9 +168,12 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-common.inc firejai
 +
 +# Blob dumps
 +blacklist ${PATH}/dmidecode
++
++# rsync
++blacklist ${PATH}/rsync
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-devel.inc firejail-0.9.80/etc/inc/disable-devel.inc
 --- firejail-0.9.80.orig/etc/inc/disable-devel.inc	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/inc/disable-devel.inc	2026-05-26 00:22:08.728103450 -0700
++++ firejail-0.9.80/etc/inc/disable-devel.inc	2026-05-26 00:51:28.210021516 -0700
 @@ -44,6 +44,7 @@ blacklist ${PATH}/llvm*
  blacklist ${PATH}/scan-build
  # see issue #2106 - it disables hardware acceleration in Firefox on Radeon GPU
@@ -197,7 +200,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-devel.inc firejail
  
  # tcc - Tiny C Compiler
  blacklist ${PATH}/tcc
-@@ -109,3 +114,97 @@ blacklist /usr/include
+@@ -109,3 +114,109 @@ blacklist /usr/include
  blacklist /usr/local/include
  blacklist /usr/local/src
  blacklist /usr/src
@@ -295,6 +298,18 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-devel.inc firejail
 +blacklist ${PATH}/wtype
 +blacklist ${PATH}/xdotool
 +blacklist ${PATH}/ydotool
++
++# nasm
++blacklist ${PATH}/nasm
++
++# pip
++blacklist ${PATH}/pip
++
++# TypeScript
++blacklist ${PATH}/tsc
++
++# distcc
++blacklist ${PATH}/distcc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-interpreters.inc firejail-0.9.80/etc/inc/disable-interpreters.inc
 --- firejail-0.9.80.orig/etc/inc/disable-interpreters.inc	2026-03-12 05:51:18.000000000 -0700
 +++ firejail-0.9.80/etc/inc/disable-interpreters.inc	2026-05-25 22:52:21.725246478 -0700
