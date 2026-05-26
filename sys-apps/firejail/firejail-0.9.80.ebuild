@@ -1714,10 +1714,10 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 apparmor auto +chroot clang contrib +dbusproxy +file-transfer +firejail_profiles_default
 +firejail_profiles_server +globalcfg landlock +network +private-home selfrando selinux
 test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xcsecurity xvfb
-ebuild_revision_70
+ebuild_revision_71
 "
+#	${GUI_REQUIRED_USE}
 REQUIRED_USE+="
-	${GUI_REQUIRED_USE}
 	!test
 	clang? (
 		^^ (
