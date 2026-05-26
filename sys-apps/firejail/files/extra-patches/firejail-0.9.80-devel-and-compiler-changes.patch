@@ -1,6 +1,6 @@
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/allow-nodejs.inc firejail-0.9.80/etc/inc/allow-nodejs.inc
 --- firejail-0.9.80.orig/etc/inc/allow-nodejs.inc	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/inc/allow-nodejs.inc	2026-05-25 15:29:45.942798280 -0700
++++ firejail-0.9.80/etc/inc/allow-nodejs.inc	2026-05-25 17:22:00.716427359 -0700
 @@ -6,6 +6,7 @@ ignore read-only ${HOME}/.nvm
  noblacklist ${HOME}/.nvm
  noblacklist ${PATH}/node
@@ -11,7 +11,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/allow-nodejs.inc firejail-
  include allow-python2.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-devel.inc firejail-0.9.80/etc/inc/disable-devel.inc
 --- firejail-0.9.80.orig/etc/inc/disable-devel.inc	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/inc/disable-devel.inc	2026-05-25 17:03:09.439031626 -0700
++++ firejail-0.9.80/etc/inc/disable-devel.inc	2026-05-25 17:22:00.716427359 -0700
 @@ -44,6 +44,7 @@ blacklist ${PATH}/llvm*
  blacklist ${PATH}/scan-build
  # see issue #2106 - it disables hardware acceleration in Firefox on Radeon GPU
@@ -118,7 +118,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-devel.inc firejail
 +blacklist /usr/lib/cython/*/lib/python*/site-packages/Cython
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-interpreters.inc firejail-0.9.80/etc/inc/disable-interpreters.inc
 --- firejail-0.9.80.orig/etc/inc/disable-interpreters.inc	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/inc/disable-interpreters.inc	2026-05-25 16:30:33.974177212 -0700
++++ firejail-0.9.80/etc/inc/disable-interpreters.inc	2026-05-25 17:22:00.716427359 -0700
 @@ -29,6 +29,7 @@ blacklist /usr/lib64/libmozjs-*
  # Node.js
  blacklist ${PATH}/node
@@ -136,7 +136,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-interpreters.inc f
 +blacklist ${PATH}/jsc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/epiphany.profile firejail-0.9.80/etc/profile-a-l/epiphany.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/epiphany.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/epiphany.profile	2026-05-25 16:35:12.493768262 -0700
++++ firejail-0.9.80/etc/profile-a-l/epiphany.profile	2026-05-25 17:23:15.770131212 -0700
 @@ -12,6 +12,7 @@ include globals.local
  noblacklist ${HOME}/.cache/epiphany
  noblacklist ${HOME}/.config/epiphany
@@ -145,9 +145,17 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/epiphany.profile f
  
  include disable-common.inc
  include disable-devel.inc
+@@ -25,6 +26,7 @@ whitelist ${DOWNLOADS}
+ whitelist ${HOME}/.cache/epiphany
+ whitelist ${HOME}/.config/epiphany
+ whitelist ${HOME}/.local/share/epiphany
++whitelist ${PATH}/jsc
+ include whitelist-common.inc
+ 
+ caps.drop all
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/evolution.profile firejail-0.9.80/etc/profile-a-l/evolution.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/evolution.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/evolution.profile	2026-05-25 16:35:45.824761450 -0700
++++ firejail-0.9.80/etc/profile-a-l/evolution.profile	2026-05-25 17:23:03.242514474 -0700
 @@ -16,6 +16,7 @@ noblacklist ${HOME}/.gnupg
  noblacklist ${HOME}/.local/share/evolution
  noblacklist ${HOME}/.pki
@@ -156,9 +164,18 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/evolution.profile 
  
  include disable-common.inc
  include disable-devel.inc
+@@ -25,6 +26,8 @@ include disable-programs.inc
+ 
+ include whitelist-runuser-common.inc
+ 
++whitelist ${PATH}/jsc
++
+ writable-var
+ 
+ caps.drop all
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/geary.profile firejail-0.9.80/etc/profile-a-l/geary.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/geary.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/geary.profile	2026-05-25 16:36:49.146848427 -0700
++++ firejail-0.9.80/etc/profile-a-l/geary.profile	2026-05-25 17:24:22.328094989 -0700
 @@ -16,6 +16,7 @@ noblacklist ${HOME}/.local/share/geary
  noblacklist ${HOME}/.local/share/pki
  noblacklist ${HOME}/.mailcap
@@ -167,9 +184,17 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/geary.profile fire
  
  # sh is needed to allow Firefox to open links
  include allow-bin-sh.inc
+@@ -35,6 +36,7 @@ noblacklist ${HOME}/.config/mozilla
+ noblacklist ${HOME}/.mozilla
+ whitelist ${HOME}/.config/mozilla/firefox/profiles.ini
+ whitelist ${HOME}/.mozilla/firefox/profiles.ini
++whitelist ${PATH}/jsc
+ 
+ mkdir ${HOME}/.cache/evolution
+ mkdir ${HOME}/.cache/folks
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/midori.profile firejail-0.9.80/etc/profile-m-z/midori.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/midori.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/midori.profile	2026-05-25 16:36:22.143664265 -0700
++++ firejail-0.9.80/etc/profile-m-z/midori.profile	2026-05-25 17:24:23.512058768 -0700
 @@ -21,6 +21,8 @@ noblacklist ${HOME}/.cache/gnome-mplayer
  noblacklist ${HOME}/.config/gnome-mplayer
  noblacklist ${HOME}/.lastpass
@@ -179,9 +204,17 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/midori.profile fir
  include disable-common.inc
  include disable-devel.inc
  include disable-exec.inc
+@@ -45,6 +47,7 @@ whitelist ${HOME}/.local/share/pki
+ whitelist ${HOME}/.local/share/webkit
+ whitelist ${HOME}/.local/share/webkitgtk
+ whitelist ${HOME}/.pki
++whitelist ${PATH}/jsc
+ include whitelist-common.inc
+ include whitelist-var-common.inc
+ 
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/surf.profile firejail-0.9.80/etc/profile-m-z/surf.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/surf.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/surf.profile	2026-05-25 16:33:28.996893874 -0700
++++ firejail-0.9.80/etc/profile-m-z/surf.profile	2026-05-25 17:24:17.752234979 -0700
 @@ -7,6 +7,7 @@ include surf.local
  include globals.local
  
@@ -190,3 +223,11 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/surf.profile firej
  
  include disable-common.inc
  include disable-devel.inc
+@@ -16,6 +17,7 @@ include disable-programs.inc
+ mkdir ${HOME}/.surf
+ whitelist ${HOME}/.surf
+ whitelist ${DOWNLOADS}
++whitelist ${PATH}/jsc
+ include whitelist-common.inc
+ 
+ caps.drop all

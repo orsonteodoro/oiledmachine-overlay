@@ -124,6 +124,15 @@
     as the cli command.
 
 
+    Usage order
+
+    To negate a blacklist, the `noblacklist <path>` must appear before
+    `blacklist <path>`.
+
+    The order of `blacklist <path>` or `whitelist <path>` does not matter but
+    `whitelist <path>` must appear for `ls <path>` to work.
+
+
     Ordered by precedence
 
     1. ~/.config/firejail/<cli-name>.local
