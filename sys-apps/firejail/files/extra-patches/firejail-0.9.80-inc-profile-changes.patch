@@ -11,7 +11,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/allow-nodejs.inc firejail-
  include allow-python2.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-common.inc firejail-0.9.80/etc/inc/disable-common.inc
 --- firejail-0.9.80.orig/etc/inc/disable-common.inc	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/inc/disable-common.inc	2026-05-26 00:45:12.957556909 -0700
++++ firejail-0.9.80/etc/inc/disable-common.inc	2026-05-26 07:43:53.388487245 -0700
 @@ -631,6 +631,7 @@ blacklist ${PATH}/avahi*
  blacklist ${PATH}/dbus-*
  blacklist ${PATH}/debconf*
@@ -20,7 +20,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-common.inc firejai
  blacklist ${PATH}/kernel-install  # from systemd package
  
  # binaries installed by firejail
-@@ -760,3 +761,150 @@ blacklist ${RUNUSER}/update-notifier.pid
+@@ -760,3 +761,185 @@ blacklist ${RUNUSER}/update-notifier.pid
  
  # pass utility (pass package in Debian etc.)
  blacklist ${HOME}/.password-store
@@ -166,14 +166,49 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-common.inc firejai
 +blacklist ${PATH}/dmesg
 +blacklist ${PATH}/lspci
 +
-+# Blob dumps
-+blacklist ${PATH}/dmidecode
++# coreboot-utils
++blacklist ${PATH}/cbmem
++blacklist ${PATH}/ifdtool
++blacklist ${PATH}/intelmetool
++blacklist ${PATH}/inteltool
++blacklist ${PATH}/me_cleaner.py
++blacklist ${PATH}/nvramtool
++blacklist ${PATH}/pmh7tool
++blacklist ${PATH}/superiotool
 +
-+# rsync
++# dmidecode
++blacklist ${PATH}/dmidecode
++blacklist ${PATH}/ownership
++blacklist ${PATH}/vpddecode
++blacklist ${PATH}/biosdecode
++
++# flashrom
++blacklist ${PATH}/flashrom
++
++# Uploaders
++blacklist ${PATH}/curl
++blacklist ${PATH}/ftp
++blacklist ${PATH}/lftp
++blacklist ${PATH}/nc
++blacklist ${PATH}/ncat
++blacklist ${PATH}/ncftp
 +blacklist ${PATH}/rsync
++blacklist ${PATH}/scp
++blacklist ${PATH}/sftp
++blacklist ${PATH}/socat
++blacklist ${PATH}/tftp
++blacklist ${PATH}/tnftp
++blacklist ${PATH}/yafc
++blacklist ${PATH}/wget
++
++# Remote admin
++blacklist ${PATH}/freerdp
++blacklist ${PATH}/ssh
++blacklist ${PATH}/rdesktop
++blacklist ${PATH}/xpra
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-devel.inc firejail-0.9.80/etc/inc/disable-devel.inc
 --- firejail-0.9.80.orig/etc/inc/disable-devel.inc	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/inc/disable-devel.inc	2026-05-26 00:51:28.210021516 -0700
++++ firejail-0.9.80/etc/inc/disable-devel.inc	2026-05-26 07:26:51.943805586 -0700
 @@ -44,6 +44,7 @@ blacklist ${PATH}/llvm*
  blacklist ${PATH}/scan-build
  # see issue #2106 - it disables hardware acceleration in Firefox on Radeon GPU
@@ -200,7 +235,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-devel.inc firejail
  
  # tcc - Tiny C Compiler
  blacklist ${PATH}/tcc
-@@ -109,3 +114,109 @@ blacklist /usr/include
+@@ -109,3 +114,123 @@ blacklist /usr/include
  blacklist /usr/local/include
  blacklist /usr/local/src
  blacklist /usr/src
@@ -228,6 +263,9 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-devel.inc firejail
 +
 +# Bazel
 +blacklist ${PATH}/bazel*
++
++# gn
++blacklist ${PATH}/gn
 +
 +# Conan
 +blacklist ${PATH}/conan
@@ -302,14 +340,25 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-devel.inc firejail
 +# nasm
 +blacklist ${PATH}/nasm
 +
-+# pip
++# pip / pipx
 +blacklist ${PATH}/pip
++blacklist ${PATH}/pipx
 +
 +# TypeScript
 +blacklist ${PATH}/tsc
 +
 +# distcc
 +blacklist ${PATH}/distcc
++
++# Python devel libs
++blacklist /usr/lib/python*/site-packages/selenium
++
++# Prevent accessing EOL browsers
++blacklist /opt/carbon-now-cli/node_modules/playwright-core/.local-browsers/
++
++# Wireshark
++blacklist ${PATH}/dumpcap
++blacklist ${PATH}/tshark
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-interpreters.inc firejail-0.9.80/etc/inc/disable-interpreters.inc
 --- firejail-0.9.80.orig/etc/inc/disable-interpreters.inc	2026-03-12 05:51:18.000000000 -0700
 +++ firejail-0.9.80/etc/inc/disable-interpreters.inc	2026-05-25 22:52:21.725246478 -0700
