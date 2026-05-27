@@ -200,7 +200,7 @@ RESTRICT="binchecks mirror strip"
 SLOT="0/${DEFAULT_CONFIGURATION}"
 IUSE+="
 emoji ffmpeg firejail bluetooth libnotify pulseaudio vaapi wayland zenity +X
-ebuild_revision_1
+ebuild_revision_3
 "
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
@@ -1080,7 +1080,43 @@ src_compile() {
 	fi
 }
 
-gen_wrapper() {
+gen_wrapper_firejail() {
+# FIXES:
+# libayatana-appindicator-WARNING **: 13:43:34.668: Unable to get the session bus: Unknown or unsupported transport “disabled” for address “disabled:”
+# LIBDBUSMENU-GLIB-WARNING **: 13:43:34.668: Unable to get session bus: Unknown or unsupported transport “disabled” for address “disabled:”
+# dbus-launch required for openrc, but not required for systemd.
+cat <<-EOF >"${D}/usr/bin/${PN}" || die
+#!/bin/bash
+
+ps -eo "cmd" | grep -q "^dbus-launch.*exit-with-session"
+ret="\$?"
+if which ps >/dev/null && (( \${ret} != 0 )) ; then
+echo
+echo "Did not detect a running dbus-launch.  Please read"
+echo
+echo "https://wiki.gentoo.org/wiki/D-Bus#The_session_bus"
+echo "https://wiki.gentoo.org/wiki/Dwm#Starting"
+echo
+fi
+
+if [[ -e "/usr/lib64/ffmpeg/56.58.58/lib64" ]] ; then
+	export LD_LIBRARY_PATH="/usr/lib64/ffmpeg/56.58.58/lib64:\${LD_LIBRARY_PATH}"
+fi
+
+INIT_SYSTEM="${init_system}"
+if test -n "\${DISPLAY}" ; then
+	"${DEST}/${PN}" "\$@"
+else
+	firejail --env=LD_PRELOAD="/usr/$(get_libdir)/${PN}-xstub.so" \
+	"${DEST}/${PN}" \
+		--enable-features=UseOzonePlatform \
+		--ozone-platform=wayland \
+		"\$@"
+fi
+EOF
+}
+
+gen_wrapper_vanilla() {
 # FIXES:
 # libayatana-appindicator-WARNING **: 13:43:34.668: Unable to get the session bus: Unknown or unsupported transport “disabled” for address “disabled:”
 # LIBDBUSMENU-GLIB-WARNING **: 13:43:34.668: Unable to get session bus: Unknown or unsupported transport “disabled” for address “disabled:”
@@ -1132,7 +1168,11 @@ src_install() {
 
 	dodir /usr/bin
 	use wayland && dolib.so "${T}/${PN}-xstub.so"
-	gen_wrapper
+	if use firejail ; then
+		gen_wrapper_firejail
+	else
+		gen_wrapper_vanilla
+	fi
 	fperms +x /usr/bin/${PN}
 
 	dosym "/usr/$(get_libdir)/libcurl.so.4" \
