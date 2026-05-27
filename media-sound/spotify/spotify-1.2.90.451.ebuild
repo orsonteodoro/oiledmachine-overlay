@@ -11,12 +11,12 @@ EAPI=8
 # https://www.spotify.com/us/download/linux/
 # https://community.spotify.com/t5/Desktop-Linux/Linux-Spotify-client-1-x-now-in-stable/m-p/1300404
 #
-# CEF_VERSION="134.3.11"
-# CEF_DEPENDS_VERSION="134.0.6998.178"
-# CEF_DEPENDS_VERSION_A="134"
+# CEF_VERSION="146.0.7680"
+# CEF_DEPENDS_VERSION="146.0.7680.179"
+# CEF_DEPENDS_VERSION_A="146"
 # CEF_DEPENDS_VERSION_B="0"
-# CEF_DEPENDS_VERSION_C="6998"
-# CEF_DEPENDS_VERSION_D="178"
+# CEF_DEPENDS_VERSION_C="7680"
+# CEF_DEPENDS_VERSION_D="179"
 #
 # Third party licenses:
 #
@@ -46,23 +46,23 @@ EAPI=8
 #
 # For Chromium *DEPENDs and versioning see:
 #
-# https://github.com/chromium/chromium/tree/134.0.6998.178/build/linux/sysroot_scripts/generated_package_lists
-# https://github.com/chromium/chromium/blob/134.0.6998.178/build/install-build-deps.py
-# https://github.com/chromium/chromium/blob/134.0.6998.178/tools/clang/scripts/update.py#L42
+# https://github.com/chromium/chromium/tree/146.0.7680.179/build/linux/sysroot_scripts/generated_package_lists
+# https://github.com/chromium/chromium/blob/146.0.7680.179/build/install-build-deps.py
+# https://github.com/chromium/chromium/blob/146.0.7680.179/tools/clang/scripts/update.py#L42
 #
 # For vendored Chromium third party *DEPENDs versioning see:
 #
-# https://github.com/chromium/chromium/blob/134.0.6998.178/third_party/fontconfig/README.chromium#L3
-# https://github.com/chromium/chromium/blob/134.0.6998.178/third_party/zlib/zlib.h#L40
+# https://github.com/chromium/chromium/blob/146.0.7680.179/third_party/fontconfig/README.chromium#L3
+# https://github.com/chromium/chromium/blob/146.0.7680.179/third_party/zlib/zlib.h#L40
 #
 # Versions only obtainable through tarball:
 #
-# https://chromium.googlesource.com/chromium/src.git/+/refs/tags/134.0.6998.178/third_party/freetype/README.chromium            L165    ; newer than generated_package_lists
-# https://chromium.googlesource.com/chromium/src.git/+/refs/tags/134.0.6998.178/third_party/harfbuzz-ng/README.chromium         L3      ; newer than generated_package_lists
-# https://chromium.googlesource.com/chromium/src.git/+/refs/tags/134.0.6998.178/third_party/libdrm/README.chromium              L24     ; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-134.0.6998.178/work/chromium-134.0.6998.178/third_party/ffmpeg/libavutil/version.h               ; do not use
-# /var/tmp/portage/www-client/chromium-134.0.6998.178/work/chromium-134.0.6998.178/third_party/ffmpeg/libavcodec/version*.h             ; do not use
-# /var/tmp/portage/www-client/chromium-134.0.6998.178/work/chromium-134.0.6998.178/third_party/ffmpeg/libavformat/version*.h            ; do not use
+# https://chromium.googlesource.com/chromium/src.git/+/refs/tags/146.0.7680.179/third_party/freetype/README.chromium            L165    ; newer than generated_package_lists
+# https://chromium.googlesource.com/chromium/src.git/+/refs/tags/146.0.7680.179/third_party/harfbuzz-ng/README.chromium         L3      ; newer than generated_package_lists
+# https://chromium.googlesource.com/chromium/src.git/+/refs/tags/146.0.7680.179/third_party/libdrm/README.chromium              L24     ; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-146.0.7680.179/work/chromium-146.0.7680.179/third_party/ffmpeg/libavutil/version.h               ; do not use
+# /var/tmp/portage/www-client/chromium-146.0.7680.179/work/chromium-146.0.7680.179/third_party/ffmpeg/libavcodec/version*.h             ; do not use
+# /var/tmp/portage/www-client/chromium-146.0.7680.179/work/chromium-146.0.7680.179/third_party/ffmpeg/libavformat/version*.h            ; do not use
 #
 
 # Dropped pax-kernel USE flag because of the license plus the CEF version used
@@ -74,7 +74,7 @@ EAPI=8
 # For ffmpeg:0/x.y.z, y must be <= 59.
 ALSA_LIB="1.1.3"
 ATK_PV="2.26.2"
-BUILD_ID_AMD64="g126b0d89" # Change this after every bump
+BUILD_ID_AMD64="gb094aab0" # Change this after every bump
 CAIRO_PV="1.16.0"
 CLANG_PV="17"
 DEFAULT_CONFIGURATION="stable"
@@ -99,8 +99,8 @@ PKG_ARCH="amd64" # It can be amd64, i386, all.
 REPO_DOMAIN="https://repository-origin.spotify.com/"
 
 EXPECTED_DEPENDS_FINGERPRINT="\
-fd58cdd53a8053f5409d059776d9356e26a621bf8753f3e9d6887814769a2eab\
-83d57ce65c17167fa95d373912ecbe057f08a6d73b17a6a7e6b00c507e1f1529\
+827b79fd77259164b4e49adf1229277b763116ced1d49a010e97562cebc0be7e\
+2939e3c56a402ebce32faeaa0e17d95d7f93c5533578091afe6363c8f78f84c1\
 " # Packages fingerprint for client
 
 EXPECTED_CR_DEPENDS_FINGERPRINT="\
@@ -118,21 +118,21 @@ FFMPEG_COMPAT=(
 )
 
 # Details of the repo public key itself \
-GPG_KEY_ID="B420FD3777CCE3A7F0076B55C85668DF69375001" # RSA Key
+GPG_KEY_ID="E1096BCBFF6D418796DE78515384CE82BA52C83A" # RSA Key
 GPG_EXPECTED_UID="Spotify Public Repository Signing Key <tux@spotify.com>"
 # It is possible to fingerprint the public keys using ebuild, but it is only
 # done in the non-live ebuild versions.
 #
 # From first line of https://www.spotify.com/us/download/linux/ \
-GPG_PUBLIC_KEY_ID="C85668DF69375001"
+GPG_PUBLIC_KEY_ID="5384CE82BA52C83A"
 GPG_PUBLIC_KEY_URI="https://download.spotify.com/debian/pubkey_${GPG_PUBLIC_KEY_ID}.gpg"
 GPG_PUBLIC_KEY_SHA512="\
-6c6a304887c783681f774e7b3d02c08e0c6d64ad6686d153f5e65a0adc594ca7\
-3b6c04ecc06f2b343fc888b03fa892ea225d51f0bc345bb50c52ecc75ea1ee73\
+589ec6868a2535afd930646b922c53247fef98b00efa5b400272748cc6980a16\
+248f903621b6ce7820c2c063cdc0aae2bed04938312133546fa39035c76f741c\
 "
 GPG_PUBLIC_KEY_BLAKE2B="\
-817fb9344eaa0ce296f66b18fa73f5d8786d117ca90c386d0e5ccedf9acc32c9\
-5c41b83aa25d442e2c401e5bb0cec9fa415ef1fb62c3f134cbffd2061e6d8e86\
+ee84fb77523683c65d7903f559050504160f4124015749f2265a36a7df3eade7\
+731432681f100d1973dc92b79cf20e95fe8f796e4bcf099e8231262fe37ae9e3\
 "
 
 QA_PREBUILT="
@@ -280,7 +280,7 @@ OPTIONAL_RDEPENDS_UNLISTED="
 # *DEPENDs based on install-build-deps.sh's common_lib_list and lib_list variables.
 
 # For details see:
-# https://github.com/chromium/chromium/blob/134.0.6998.178/build/install-build-deps.py#L329
+# https://github.com/chromium/chromium/blob/146.0.7680.179/build/install-build-deps.py#L329
 
 # The version is obtained in src_prepare
 
@@ -340,10 +340,6 @@ UNLISTED_RDEPEND="
 #	)
 #"
 # libappindicator and gnome-keyring not in generated_package_lists.
-
-#UNLISTED_SP_RDEPEND_DROPPED="
-#	>=x11-libs/libxshmfence-1.3
-#"
 
 OPTIONAL_RDEPEND="
 	>=media-libs/vulkan-loader-1.3.224.0
@@ -425,6 +421,7 @@ RDEPEND+="
 	>=sys-libs/glibc-${GLIBC_PV}
 	X? (
 		>=x11-libs/libXScrnSaver-${LIBXSCRNSAVER_PV}
+		>=x11-libs/libxshmfence-1.3
 		>=x11-libs/libXtst-${LIBXTST_PV}
 	)
 	|| (
@@ -1290,6 +1287,7 @@ ewarn
 # OILEDMACHINE-OVERLAY-TEST:  FAIL (interactive) 1.2.52.442 (20250111) with OpenRC
 # OILEDMACHINE-OVERLAY-TEST:  FAIL (interactive) 1.2.59.514 (20250426) with OpenRC
 # OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 1.2.45.454 (20260526) with OpenRC, Firejail, Wayland
+# OILEDMACHINE-OVERLAY-TEST:  FAIL (interactive) 1.2.90.451 (20260526) with OpenRC, no Firejail, Wayland
 # CPU support:  fail with illegal instruction
 # X:  pass
 # wayland:  pass with older ebuilds
