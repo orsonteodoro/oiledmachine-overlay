@@ -242,6 +242,10 @@ X_APPS_MISSING_REQUIRED_USE=(
 # If it is uppercase, it is assumed is is a win port of that app.
 )
 
+CHROMIUM_APPS=(
+	"spotify"
+)
+
 inherit cflags-hardened flag-o-matic libcxx-slot linux-info python-single-r1 toolchain-funcs
 inherit virtualx
 
@@ -286,7 +290,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 apparmor auto +chroot clang contrib +dbusproxy +file-transfer +firejail_profiles_default
 +firejail_profiles_server +globalcfg landlock +network +private-home selfrando selinux
 +suid test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xcsecurity xvfb
-ebuild_revision_90
+ebuild_revision_91
 "
 REQUIRED_USE+="
 	!test
@@ -442,6 +446,17 @@ is_xpra_only() {
 	local arg="${1}"
 	local y
 	for y in ${X_XPRA_ONLY[@]} ; do
+		if [[ "${arg}" == "${y}" ]] ; then
+			return 0
+		fi
+	done
+	return 1
+}
+
+is_chromium_app() {
+	local arg="${1}"
+	local y
+	for y in ${CHROMIUM_APPS[@]} ; do
 		if [[ "${arg}" == "${y}" ]] ; then
 			return 0
 		fi
@@ -1673,7 +1688,9 @@ einfo "Forcing system allocator for ${command} (3)"
 	local ozone_args=()
 	is_ozone=0
 
-	if grep -q -E -e "include.*(electron-common|chromium-common)" "${T}/profiles_data/${command}.profile" 2>/dev/null ; then
+	if is_chromium_app "${command}" ; then
+		is_ozone=1
+	elif grep -q -E -e "include.*(electron-common|chromium-common)" "${T}/profiles_data/${command}.profile" 2>/dev/null ; then
 		is_ozone=1
 	fi
 
@@ -1683,6 +1700,7 @@ einfo "Forcing system allocator for ${command} (3)"
 		)
 	fi
 	if (( ${is_ozone} == 1 )) ; then
+einfo "Detected CEF/Chromium.  Using ozone for Wayland."
 		ozone_args=(
 			--enable-features=UseOzonePlatform
 			--ozone-platform=wayland
