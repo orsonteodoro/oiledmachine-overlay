@@ -286,7 +286,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 apparmor auto +chroot clang contrib +dbusproxy +file-transfer +firejail_profiles_default
 +firejail_profiles_server +globalcfg landlock +network +private-home selfrando selinux
 +suid test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xcsecurity xvfb
-ebuild_revision_88
+ebuild_revision_90
 "
 REQUIRED_USE+="
 	!test
@@ -1669,6 +1669,26 @@ einfo "Forcing system allocator for ${command} (3)"
 		${args}
 	)
 
+	local env_args=()
+	local ozone_args=()
+	is_ozone=0
+
+	if grep -q -E -e "include.*(electron-common|chromium-common)" "${T}/profiles_data/${command}.profile" 2>/dev/null ; then
+		is_ozone=1
+	fi
+
+	if [[ "${command}" == "spotify" ]] ; then
+		env_args=(
+			--env=LD_PRELOAD="/usr/lib64/spotify-xstub.so"
+		)
+	fi
+	if (( ${is_ozone} == 1 )) ; then
+		ozone_args=(
+			--enable-features=UseOzonePlatform
+			--ozone-platform=wayland
+		)
+	fi
+
 	local all_args_wayland=(
 		${apparmor_arg}
 		${allocator_args}
@@ -1681,12 +1701,6 @@ einfo "Forcing system allocator for ${command} (3)"
 		${args}
 	)
 
-	if [[ "${command}" == "spotify" ]] ; then
-		all_args_wayland+=(
-			"--env=LD_PRELOAD=/usr/lib64/spotify-xstub.so"
-		)
-	fi
-
 	gen_x11_wrapper() {
 cat <<EOF > "${ED}/usr/local/${folder}/${wrapper_name}" || die
 #!/bin/bash
@@ -1696,7 +1710,7 @@ if [[ "\${EUID}" == "0" || "\${EUID}" == "250" ]] ; then
 elif [[ -n "\${DISPLAY}" ]] ; then
 	exec firejail ${all_args_x[@]} "${exe_path}" "\$@"
 else
-	exec firejail ${all_args_wayland[@]} "${exe_path}" "\$@"
+	exec firejail ${env_args[@]} ${all_args_wayland[@]} "${exe_path}" ${ozone_args[@]} "\$@"
 fi
 EOF
 	}
@@ -1721,7 +1735,7 @@ elif [[ -n "\${DISPLAY}" ]] ; then
 	xhost +si:localuser:\${USER}
 	exec firejail ${all_args_x[@]} --env=XAUTHORITY="\${_XAUTHORITY}" "${exe_path}" "\$@"
 else
-	exec firejail ${all_args_wayland[@]} "${exe_path}" "\$@"
+	exec firejail ${env_args[@]} ${all_args_wayland[@]} "${exe_path}" ${ozone_args[@]} "\$@"
 fi
 EOF
 	}
