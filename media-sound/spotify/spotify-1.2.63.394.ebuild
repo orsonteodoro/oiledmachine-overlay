@@ -1286,9 +1286,10 @@ ewarn
 # OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / PASS [UK] (interactive) 1.2.22.982 (20230712) ; Sorting playlists by creator is broken.
 # OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / PASS [UK] (interactive) 1.2.25.1011 (20231123) ; Sorting playlists by creator is broken.
 # OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / PASS [UK] (interactive) 1.2.26.1187 (20231221) ; Sorting playlists by creator is broken.
-# OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / PASS [UK] (interactive) 1.2.37.701 (20240531) with openrc
-# OILEDMACHINE-OVERLAY-TEST:  FAIL (interactive) 1.2.52.442 (20250111) with openrc
-# OILEDMACHINE-OVERLAY-TEST:  FAIL (interactive) 1.2.59.514 (20250426) with openrc
+# OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / PASS [UK] (interactive) 1.2.37.701 (20240531) with OpenRC
+# OILEDMACHINE-OVERLAY-TEST:  FAIL (interactive) 1.2.52.442 (20250111) with OpenRC
+# OILEDMACHINE-OVERLAY-TEST:  FAIL (interactive) 1.2.59.514 (20250426) with OpenRC
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 1.2.45.454 (20260526) with OpenRC, Firejail, Wayland
 # CPU support:  fail with illegal instruction
 # X:  pass
 # wayland:  pass with older ebuilds
