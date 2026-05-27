@@ -166,7 +166,7 @@ declare -A atabs=(
 
 inherit desktop flag-o-matic gnome2-utils sandbox-changes toolchain-funcs unpacker xdg
 
-#KEYWORDS="~amd64"
+#KEYWORDS="~amd64" # KEYWORDS, aka ready for testing, is off until the illegal instruction is fixed.
 S="${WORKDIR}"
 SRC_URI+="
 	${GPG_PUBLIC_KEY_URI}
