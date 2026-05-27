@@ -286,7 +286,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 apparmor auto +chroot clang contrib +dbusproxy +file-transfer +firejail_profiles_default
 +firejail_profiles_server +globalcfg landlock +network +private-home selfrando selinux
 +suid test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xcsecurity xvfb
-ebuild_revision_87
+ebuild_revision_88
 "
 REQUIRED_USE+="
 	!test
@@ -1680,6 +1680,12 @@ einfo "Forcing system allocator for ${command} (3)"
 		${oom_arg}
 		${args}
 	)
+
+	if [[ "${command}" == "spotify" ]] ; then
+		all_args_wayland+=(
+			"--env=LD_PRELOAD=/usr/lib64/spotify-xstub.so"
+		)
+	fi
 
 	gen_x11_wrapper() {
 cat <<EOF > "${ED}/usr/local/${folder}/${wrapper_name}" || die
