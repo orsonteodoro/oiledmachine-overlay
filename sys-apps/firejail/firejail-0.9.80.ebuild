@@ -290,7 +290,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 apparmor auto +chroot clang contrib +dbusproxy +file-transfer +firejail_profiles_default
 +firejail_profiles_server +globalcfg landlock +network +private-home selfrando selinux
 +suid test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xcsecurity xvfb
-ebuild_revision_100
+ebuild_revision_101
 "
 REQUIRED_USE+="
 	!test
@@ -2088,6 +2088,10 @@ einfo
 einfo "USE=-suid is not tested.  Ask the AI for help."
 	fi
 ewarn "To update profiles, run etc-update."
+ewarn
+ewarn "The /etc/profile/default.profile is now more restrictive."
+ewarn "To relax, add needed noblacklist <path> to /etc/firejail/default.local."
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
