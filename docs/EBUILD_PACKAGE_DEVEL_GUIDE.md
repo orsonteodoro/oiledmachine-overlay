@@ -373,7 +373,7 @@ Firejail
 | Social engineering mitigation by default            | N                                | N                                  | Y                                                             |
 | Configuration vulnerability for disable-devel.inc evaluated under distro context  | Inappropriate  | Inappropriate          | More appropriate                                              |
 | Configuration vulnerability for disable-common.inc evaluated under distro context | Inappropriate  | Inappropriate          | More appropriate                                              |
-| Threat vectors for defaults                         | Information disclosure           | Information disclosure             | -                                                             |
+| Threat vectors for defaults                         | Information disclosure, lateral movement | Information disclosure, lateral movement | -                                                             |
 | Additional profiles                                 | -                                | N                                  | Y                                                             |
 
 Robustness QA
