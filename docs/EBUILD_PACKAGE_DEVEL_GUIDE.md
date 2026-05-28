@@ -331,11 +331,11 @@ Isolation QA
 
 | Subject                               | Answer                                                                                                    |
 | ---                                   | ---                                                                                                       |
-| sys-apps/sandbox use case             | Portage only, to protect the live system                                                                  |
-| Firejail use case                     | Userland apps                                                                                             |
-| Bubblewrap use case                   | Web browsers[1], GNOME desktop                                                                            |
+| sys-apps/sandbox use cases            | Portage only, to protect the live system                                                                  |
+| Firejail use cases                    | Userland apps                                                                                             |
+| Bubblewrap use cases                  | Web browsers[1], GNOME desktop                                                                            |
 | Bubblewrap defaults for WebKitGTK     | Mount namespace, user namespace, PID namespace, network namespace, seccomp filters, drop all capabilities |
-| Docker use case                       | Self hosting servers, testing                                                                             |
+| Docker use cases                      | Self hosting servers, testing                                                                             |
 | Firejail vs Docker vs Podman          | Firejail [2] but Docker containers are used to reduce build/install complexity                            |
 | Firejail vs Bubblewrap                | Firejail for profile support                                                                              |
 | Firejail required?                    | N                                                                                                         |
@@ -362,6 +362,19 @@ Isolation QA
 - Loyalty to source built than possibly trojanized prebuilts
 - Loyalty to modding and customization over defaults only
 - Reduced attack surface over prebuilt defaults
+
+Firejail
+
+| Subject                                             | Upstream                         | Distro                             | oiledmachine-overlay                                          |
+| ---                                                 | ---                              | ---                                | ---                                                           |
+| Default profile security policy                     | Permissive                       | Permissive                         | Restrictive                                                   |
+| Default profile goal                                | Compatibility, basic protection  | Compatibility, basic protection    | Neutralizing threat classes, least privileges, verification   |
+| Living off the Land mitigation by default           | N                                | N                                  | Y                                                             |
+| Social engineering mitigation by default            | N                                | N                                  | Y                                                             |
+| Configuration vulnerability for disable-devel.inc evaluated under distro context  | Inappropriate  | Inappropriate          | More appropriate                                              |
+| Configuration vulnerability for disable-common.inc evaluated under distro context | Inappropriate  | Inappropriate          | More appropriate                                              |
+| Threat vectors for defaults                         | Information disclosure           | Information disclosure             | -                                                             |
+| Additional profiles                                 | -                                | N                                  | Y                                                             |
 
 Robustness QA
 
