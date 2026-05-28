@@ -1,6 +1,21 @@
+diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/allow-java.inc firejail-0.9.80/etc/inc/allow-java.inc
+--- firejail-0.9.80.orig/etc/inc/allow-java.inc	2026-03-12 05:51:18.000000000 -0700
++++ firejail-0.9.80/etc/inc/allow-java.inc	2026-05-28 14:11:52.050983031 -0700
+@@ -7,3 +7,11 @@ noblacklist ${PATH}/java
+ noblacklist /etc/java
+ noblacklist /usr/lib/java
+ noblacklist /usr/share/java
++
++# Java implementations
++noblacklist /usr/lib*/icedtea*
++noblacklist /usr/lib*/openjdk*
++noblacklist /opt/corretto-bin*
++noblacklist /opt/openjdk*
++noblacklist /opt/oraclejdk-bin*
++noblacklist /opt/microsoft-openjdk-bin*
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/allow-nodejs.inc firejail-0.9.80/etc/inc/allow-nodejs.inc
 --- firejail-0.9.80.orig/etc/inc/allow-nodejs.inc	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/inc/allow-nodejs.inc	2026-05-28 11:00:42.607476224 -0700
++++ firejail-0.9.80/etc/inc/allow-nodejs.inc	2026-05-28 12:32:49.858328906 -0700
 @@ -6,6 +6,7 @@ ignore read-only ${HOME}/.nvm
  noblacklist ${HOME}/.nvm
  noblacklist ${PATH}/node
@@ -11,7 +26,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/allow-nodejs.inc firejail-
  include allow-python2.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/allow-opengl-game.inc firejail-0.9.80/etc/inc/allow-opengl-game.inc
 --- firejail-0.9.80.orig/etc/inc/allow-opengl-game.inc	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/inc/allow-opengl-game.inc	2026-05-28 11:00:42.611476101 -0700
++++ firejail-0.9.80/etc/inc/allow-opengl-game.inc	2026-05-28 12:32:49.858328906 -0700
 @@ -9,5 +9,12 @@ include allow-opengl-game.local
  # problem.
  
@@ -27,7 +42,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/allow-opengl-game.inc fire
  private-bin basename,bash,cut,glxinfo,grep,head,sed,zenity
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-common.inc firejail-0.9.80/etc/inc/disable-common.inc
 --- firejail-0.9.80.orig/etc/inc/disable-common.inc	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/inc/disable-common.inc	2026-05-28 11:06:51.492139593 -0700
++++ firejail-0.9.80/etc/inc/disable-common.inc	2026-05-28 13:32:05.404747821 -0700
 @@ -209,6 +209,7 @@ blacklist /var/lib/systemd
  blacklist /etc/init.d
  blacklist /etc/rc.conf
@@ -44,7 +59,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-common.inc firejai
  blacklist ${PATH}/kernel-install  # from systemd package
  
  # binaries installed by firejail
-@@ -760,3 +762,894 @@ blacklist ${RUNUSER}/update-notifier.pid
+@@ -760,3 +762,927 @@ blacklist ${RUNUSER}/update-notifier.pid
  
  # pass utility (pass package in Debian etc.)
  blacklist ${HOME}/.password-store
@@ -900,14 +915,31 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-common.inc firejai
 +blacklist ${PATH}/upx
 +blacklist ${PATH}/zsteg
 +
++# Device sync
++blacklist ${PATH}/adb
++blacklist ${PATH}/fusermount
++blacklist ${PATH}/gapplication
++blacklist ${PATH}/gmtp
++blacklist ${PATH}/idevicebackup2
++blacklist ${PATH}/ifuse
++blacklist ${PATH}/jmtpfs
++blacklist ${PATH}/jpilot*
++blacklist ${PATH}/kdeconnect-cli
++blacklist ${PATH}/mtp-*
++blacklist ${PATH}/pilot-xfer
++
 +# Virtualization
-+blacklist ${PATH}/emulator
++blacklist ${PATH}/anbox
++blacklist ${PATH}/dosbox
++blacklist ${PATH}/dosemu
++blacklist ${PATH}/emulator # AVD
 +blacklist ${PATH}/genymotion
 +blacklist ${PATH}/genymotion-shell
 +blacklist ${PATH}/gmtool
 +blacklist ${PATH}/gmsaas
 +blacklist ${PATH}/gnome-boxes
 +blacklist ${PATH}/kvm
++blacklist ${PATH}/pumpkin
 +blacklist ${PATH}/tqemu
 +blacklist ${PATH}/qemu*
 +blacklist ${PATH}/virtualbox
@@ -916,32 +948,48 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-common.inc firejai
 +blacklist ${PATH}/virt-manager
 +blacklist ${PATH}/vmrun
 +blacklist ${PATH}/vmware
++blacklist ${PATH}/waydroid
 +blacklist ${HOME}/.android/avd
++blacklist ${HOME}/.config/dosbox
 +blacklist ${HOME}/.config/VirtualBox
++blacklist ${HOME}/.dosbox
++blacklist ${HOME}/.dosemu
++blacklist ${HOME}/.dosemurc
 +blacklist ${HOME}/.Genymobile
 +blacklist ${HOME}/.local/share/libvirt
 +blacklist ${HOME}/.local/share/applications/wine
++blacklist ${HOME}/.local/share/waydroid
 +blacklist ${HOME}/.VirtualBox
 +blacklist ${HOME}/.wine
++blacklist ${HOME}/Android/Sdk/emulator
++#blacklist ${HOME}/Games # User defined, typical
++#blacklist ${HOME}/DOS # User defined, typical
++blacklist ${HOME}/capture # DosBox, based on run
 +blacklist ${HOME}/Documents/Virtual Machines
 +blacklist ${HOME}/snap/multipass
 +blacklist ${HOME}/VirtualBox VMs
 +blacklist ${HOME}/vmware
++blacklist ${RUNUSER}/dosemu2
 +blacklist ${RUNUSER}/libvirt
++blacklist /etc/dosemu/dosemu.conf
 +blacklist /etc/libvirt/qemu
 +blacklist /run/libvirt
++blacklist /var/lib/dosemu
 +blacklist /var/lib/libvirt
 +blacklist /var/lib/vmware
++blacklist /var/lib/waydroid
 +blacklist /var/log/libvirt
 +blacklist /var/log/vmware
 +blacklist /var/log/vmware-vmsvc.log
++blacklist /usr/share/waydroid-extra
++blacklist /tmp/dosemu
 +
 +# Compatibility layer
 +blacklist ${PATH}/wine*
 +blacklist /usr/lib/wine-*
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-devel.inc firejail-0.9.80/etc/inc/disable-devel.inc
 --- firejail-0.9.80.orig/etc/inc/disable-devel.inc	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/inc/disable-devel.inc	2026-05-28 11:00:42.611476101 -0700
++++ firejail-0.9.80/etc/inc/disable-devel.inc	2026-05-28 15:31:35.187310227 -0700
 @@ -16,11 +16,28 @@ blacklist ${PATH}/autoupdate
  blacklist ${PATH}/ifnames
  blacklist ${PATH}/m4
@@ -1010,7 +1058,22 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-devel.inc firejail
  
  # Go
  blacklist ${PATH}/gccgo
-@@ -94,6 +135,7 @@ blacklist ${PATH}/openssl-1.0
+@@ -79,6 +120,14 @@ blacklist /etc/java
+ blacklist /usr/lib/java
+ blacklist /usr/share/java
+ 
++# Java implementations
++blacklist /usr/lib*/icedtea*
++blacklist /usr/lib*/openjdk*
++blacklist /opt/corretto-bin*
++blacklist /opt/openjdk*
++blacklist /opt/oraclejdk-bin*
++blacklist /opt/microsoft-openjdk-bin*
++
+ # Scala
+ blacklist ${PATH}/scala
+ blacklist ${PATH}/scala3
+@@ -94,6 +143,7 @@ blacklist ${PATH}/openssl-1.0
  blacklist ${PATH}/rust-gdb
  blacklist ${PATH}/rust-lldb
  blacklist ${PATH}/rustc
@@ -1018,7 +1081,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-devel.inc firejail
  
  # tcc - Tiny C Compiler
  blacklist ${PATH}/tcc
-@@ -109,3 +151,245 @@ blacklist /usr/include
+@@ -109,3 +159,309 @@ blacklist /usr/include
  blacklist /usr/local/include
  blacklist /usr/local/src
  blacklist /usr/src
@@ -1102,6 +1165,15 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-devel.inc firejail
 +
 +# Gradle
 +blacklist ${PATH}/gradle*
++
++# Cask
++blacklist ${PATH}/cask
++
++# Perl package managers
++blacklist ${PATH}/cpan
++blacklist ${PATH}/cpanm
++blacklist ${PATH}/cpanp
++blacklist ${PATH}/carton
 +
 +# glibc
 +blacklist ${PATH}/lld
@@ -1264,9 +1336,64 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-devel.inc firejail
 +blacklist ${PATH}/grpc_cpp_plugin
 +blacklist ${PATH}/grpc_python_plugin
 +blacklist ${PATH}/protoc-gen-go-grpc
++
++# Racket
++blacklist ${PATH}/gracket
++blacklist ${PATH}/drracket
++blacklist ${PATH}/gracket
++blacklist ${PATH}/gracket-text
++blacklist ${PATH}/mred
++blacklist ${PATH}/mred-text
++blacklist ${PATH}/mzc
++blacklist ${PATH}/mzpp
++blacklist ${PATH}/mzscheme
++blacklist ${PATH}/mztext
++blacklist ${PATH}/pdf-slatex
++blacklist ${PATH}/plt-games
++blacklist ${PATH}/plt-help
++blacklist ${PATH}/plt-r5rs
++blacklist ${PATH}/plt-r6rs
++blacklist ${PATH}/plt-web-server
++blacklist ${PATH}/racket
++blacklist ${PATH}/raco
++blacklist ${PATH}/scribble
++blacklist ${PATH}/setup-plt
++blacklist ${PATH}/slatex
++blacklist ${PATH}/slideshow
++blacklist ${PATH}/swindle
++blacklist ${PATH}/zuo
++blacklist /etc/racket/config.rktd
++blacklist /usr/lib*/racket
++blacklist /usr/share/racket/pkgs
++blacklist /usr/share/zuo
++
++# IDEs
++blacklist ${PATH}/android-studio
++blacklist ${PATH}/clion
++blacklist ${PATH}/clion-eap
++blacklist ${PATH}/codium
++blacklist ${PATH}/drracket
++blacklist ${PATH}/eclipse
++blacklist ${PATH}/emacs*
++blacklist ${PATH}/emacs-ycmd
++blacklist ${PATH}/geany
++blacklist ${PATH}/intellij-idea
++blacklist ${PATH}/monodevelop
++blacklist ${PATH}/netbeans
++blacklist ${PATH}/pycharm*
++blacklist ${PATH}/qtcreator
++blacklist ${PATH}/theia
++blacklist ${PATH}/vscode
++blacklist ${PATH}/vscodium
++blacklist ${PATH}/ynano
++blacklist ${HOME}/Android/Sdk/emulator
++blacklist /opt/android-studio
++blacklist /opt/clion
++blacklist /opt/intellij-idea
++blacklist /opt/pycharm*
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-interpreters.inc firejail-0.9.80/etc/inc/disable-interpreters.inc
 --- firejail-0.9.80.orig/etc/inc/disable-interpreters.inc	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/inc/disable-interpreters.inc	2026-05-28 11:00:42.611476101 -0700
++++ firejail-0.9.80/etc/inc/disable-interpreters.inc	2026-05-28 12:32:49.858328906 -0700
 @@ -29,6 +29,10 @@ blacklist /usr/lib64/libmozjs-*
  # Node.js
  blacklist ${PATH}/node
@@ -1287,7 +1414,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-interpreters.inc f
 +blacklist ${PATH}/jsc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/0ad.profile firejail-0.9.80/etc/profile-a-l/0ad.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/0ad.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/0ad.profile	2026-05-28 11:00:42.611476101 -0700
++++ firejail-0.9.80/etc/profile-a-l/0ad.profile	2026-05-28 12:32:49.858328906 -0700
 @@ -9,6 +9,7 @@ include globals.local
  noblacklist ${HOME}/.cache/0ad
  noblacklist ${HOME}/.config/0ad
@@ -1298,7 +1425,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/0ad.profile fireja
  include allow-gjs.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/alacarte.profile firejail-0.9.80/etc/profile-a-l/alacarte.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/alacarte.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/alacarte.profile	2026-05-28 11:00:42.611476101 -0700
++++ firejail-0.9.80/etc/profile-a-l/alacarte.profile	2026-05-28 12:32:49.858328906 -0700
 @@ -6,6 +6,10 @@ include alacarte.local
  # Persistent global definitions
  include globals.local
@@ -1312,7 +1439,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/alacarte.profile f
  include allow-python3.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/alpinef.profile firejail-0.9.80/etc/profile-a-l/alpinef.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/alpinef.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/alpinef.profile	2026-05-28 11:00:42.611476101 -0700
++++ firejail-0.9.80/etc/profile-a-l/alpinef.profile	2026-05-28 12:32:49.858328906 -0700
 @@ -8,6 +8,8 @@ include alpinef.local
  # added by included profile
  #include globals.local
@@ -1324,7 +1451,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/alpinef.profile fi
  # Redirect
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/alpine.profile firejail-0.9.80/etc/profile-a-l/alpine.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/alpine.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/alpine.profile	2026-05-28 11:00:42.611476101 -0700
++++ firejail-0.9.80/etc/profile-a-l/alpine.profile	2026-05-28 12:32:49.858328906 -0700
 @@ -29,6 +29,7 @@ noblacklist ${HOME}/.pinerc
  noblacklist ${HOME}/.pinercex
  noblacklist ${HOME}/.signature
@@ -1333,9 +1460,21 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/alpine.profile fir
  
  blacklist ${RUNUSER}/wayland-*
  
+diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/android-studio.profile firejail-0.9.80/etc/profile-a-l/android-studio.profile
+--- firejail-0.9.80.orig/etc/profile-a-l/android-studio.profile	2026-03-12 05:51:18.000000000 -0700
++++ firejail-0.9.80/etc/profile-a-l/android-studio.profile	2026-05-28 13:22:28.638581159 -0700
+@@ -12,6 +12,8 @@ noblacklist ${HOME}/.jack-server
+ noblacklist ${HOME}/.jack-settings
+ noblacklist ${HOME}/.local/share/JetBrains
+ noblacklist ${HOME}/.tooling
++noblacklist ${PATH}/android-studio
++noblacklist /opt/android-studio
+ 
+ # Allows files commonly used by IDEs
+ include allow-common-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/ani-cli.profile firejail-0.9.80/etc/profile-a-l/ani-cli.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/ani-cli.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/ani-cli.profile	2026-05-28 11:00:42.611476101 -0700
++++ firejail-0.9.80/etc/profile-a-l/ani-cli.profile	2026-05-28 12:32:49.858328906 -0700
 @@ -10,7 +10,23 @@ include ani-cli.local
  
  noblacklist ${HOME}/.cache/ani-cli
@@ -1362,7 +1501,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/ani-cli.profile fi
  include allow-bin-sh.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/ansel.profile firejail-0.9.80/etc/profile-a-l/ansel.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/ansel.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/ansel.profile	2026-05-28 11:00:42.611476101 -0700
++++ firejail-0.9.80/etc/profile-a-l/ansel.profile	2026-05-28 12:32:49.858328906 -0700
 @@ -9,6 +9,8 @@ include globals.local
  noblacklist ${HOME}/.cache/ansel
  noblacklist ${HOME}/.config/ansel
@@ -1374,7 +1513,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/ansel.profile fire
  include allow-lua.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/apktool.profile firejail-0.9.80/etc/profile-a-l/apktool.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/apktool.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/apktool.profile	2026-05-28 11:00:42.611476101 -0700
++++ firejail-0.9.80/etc/profile-a-l/apktool.profile	2026-05-28 12:32:49.858328906 -0700
 @@ -7,6 +7,10 @@ include apktool.local
  # Persistent global definitions
  include globals.local
@@ -1388,7 +1527,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/apktool.profile fi
  include disable-programs.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/apostrophe.profile firejail-0.9.80/etc/profile-a-l/apostrophe.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/apostrophe.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/apostrophe.profile	2026-05-28 11:00:42.611476101 -0700
++++ firejail-0.9.80/etc/profile-a-l/apostrophe.profile	2026-05-28 12:32:49.858328906 -0700
 @@ -9,6 +9,9 @@ include globals.local
  noblacklist ${HOME}/.texlive20*
  noblacklist ${DOCUMENTS}
@@ -1401,7 +1540,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/apostrophe.profile
  include allow-lua.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/archaudit-report.profile firejail-0.9.80/etc/profile-a-l/archaudit-report.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/archaudit-report.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/archaudit-report.profile	2026-05-28 11:00:42.611476101 -0700
++++ firejail-0.9.80/etc/profile-a-l/archaudit-report.profile	2026-05-28 12:32:49.858328906 -0700
 @@ -7,6 +7,14 @@ include archaudit-report.local
  include globals.local
  
@@ -1419,7 +1558,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/archaudit-report.p
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/ardour5.profile firejail-0.9.80/etc/profile-a-l/ardour5.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/ardour5.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/ardour5.profile	2026-05-28 11:00:42.611476101 -0700
++++ firejail-0.9.80/etc/profile-a-l/ardour5.profile	2026-05-28 12:32:49.858328906 -0700
 @@ -11,6 +11,10 @@ noblacklist ${HOME}/.lv2
  noblacklist ${HOME}/.vst
  noblacklist ${DOCUMENTS}
@@ -1433,7 +1572,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/ardour5.profile fi
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/aria2c.profile firejail-0.9.80/etc/profile-a-l/aria2c.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/aria2c.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/aria2c.profile	2026-05-28 11:00:42.611476101 -0700
++++ firejail-0.9.80/etc/profile-a-l/aria2c.profile	2026-05-28 12:32:49.858328906 -0700
 @@ -10,6 +10,8 @@ noblacklist ${HOME}/.aria2
  noblacklist ${HOME}/.cache/winetricks # XXX: See #5238
  noblacklist ${HOME}/.config/aria2
@@ -1445,7 +1584,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/aria2c.profile fir
  
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/ark.profile firejail-0.9.80/etc/profile-a-l/ark.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/ark.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/ark.profile	2026-05-28 11:00:42.611476101 -0700
++++ firejail-0.9.80/etc/profile-a-l/ark.profile	2026-05-28 12:32:49.858328906 -0700
 @@ -8,6 +8,21 @@ include globals.local
  
  noblacklist ${HOME}/.config/arkrc
@@ -1470,7 +1609,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/ark.profile fireja
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/arm.profile firejail-0.9.80/etc/profile-a-l/arm.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/arm.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/arm.profile	2026-05-28 11:00:42.611476101 -0700
++++ firejail-0.9.80/etc/profile-a-l/arm.profile	2026-05-28 12:32:49.858328906 -0700
 @@ -7,6 +7,13 @@ include arm.local
  include globals.local
  
@@ -1487,7 +1626,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/arm.profile fireja
  include allow-python2.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/atril.profile firejail-0.9.80/etc/profile-a-l/atril.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/atril.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/atril.profile	2026-05-28 11:00:42.611476101 -0700
++++ firejail-0.9.80/etc/profile-a-l/atril.profile	2026-05-28 12:32:49.858328906 -0700
 @@ -9,6 +9,14 @@ include globals.local
  noblacklist ${HOME}/.cache/atril
  noblacklist ${HOME}/.config/atril
@@ -1505,7 +1644,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/atril.profile fire
  # it seems to use only ${HOME}/.local/share/webkitgtk
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/bless.profile firejail-0.9.80/etc/profile-a-l/bless.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/bless.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/bless.profile	2026-05-28 11:00:42.611476101 -0700
++++ firejail-0.9.80/etc/profile-a-l/bless.profile	2026-05-28 12:32:49.858328906 -0700
 @@ -7,6 +7,10 @@ include bless.local
  include globals.local
  
@@ -1519,7 +1658,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/bless.profile fire
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/brz.profile firejail-0.9.80/etc/profile-a-l/brz.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/brz.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/brz.profile	2026-05-28 11:00:42.611476101 -0700
++++ firejail-0.9.80/etc/profile-a-l/brz.profile	2026-05-28 12:32:49.858328906 -0700
 @@ -9,6 +9,7 @@ include brz.local
  #include globals.local
  
@@ -1530,7 +1669,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/brz.profile fireja
  include git.profile
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/bzr.profile firejail-0.9.80/etc/profile-a-l/bzr.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/bzr.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/bzr.profile	2026-05-28 11:00:42.611476101 -0700
++++ firejail-0.9.80/etc/profile-a-l/bzr.profile	2026-05-28 12:32:49.858328906 -0700
 @@ -6,5 +6,7 @@ include bzr.local
  # added by included profile
  #include globals.local
@@ -1541,7 +1680,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/bzr.profile fireja
  include brz.profile
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/cantata.profile firejail-0.9.80/etc/profile-a-l/cantata.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/cantata.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/cantata.profile	2026-05-28 11:00:42.615475978 -0700
++++ firejail-0.9.80/etc/profile-a-l/cantata.profile	2026-05-28 12:32:49.858328906 -0700
 @@ -10,6 +10,7 @@ noblacklist ${HOME}/.cache/cantata
  noblacklist ${HOME}/.config/cantata
  noblacklist ${HOME}/.local/share/cantata
@@ -1552,7 +1691,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/cantata.profile fi
  include allow-perl.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/catfish.profile firejail-0.9.80/etc/profile-a-l/catfish.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/catfish.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/catfish.profile	2026-05-28 11:00:42.615475978 -0700
++++ firejail-0.9.80/etc/profile-a-l/catfish.profile	2026-05-28 12:32:49.858328906 -0700
 @@ -10,6 +10,11 @@ include globals.local
  # is for finding files/content
  
@@ -1567,7 +1706,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/catfish.profile fi
  include allow-python2.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/chatterino.profile firejail-0.9.80/etc/profile-a-l/chatterino.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/chatterino.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/chatterino.profile	2026-05-28 11:00:42.615475978 -0700
++++ firejail-0.9.80/etc/profile-a-l/chatterino.profile	2026-05-28 12:32:49.858328906 -0700
 @@ -19,6 +19,8 @@ noblacklist ${HOME}/.config/vlc
  noblacklist ${HOME}/.local/share/chatterino
  noblacklist ${HOME}/.local/share/vlc
@@ -1579,7 +1718,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/chatterino.profile
  # Allow lua (blacklisted by disable-interpreters.inc)
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/checkbashisms.profile firejail-0.9.80/etc/profile-a-l/checkbashisms.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/checkbashisms.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/checkbashisms.profile	2026-05-28 11:00:42.615475978 -0700
++++ firejail-0.9.80/etc/profile-a-l/checkbashisms.profile	2026-05-28 12:32:49.862328783 -0700
 @@ -8,6 +8,7 @@ include checkbashisms.local
  include globals.local
  
@@ -1590,7 +1729,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/checkbashisms.prof
  include allow-perl.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/chromium-browser-privacy.profile firejail-0.9.80/etc/profile-a-l/chromium-browser-privacy.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/chromium-browser-privacy.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/chromium-browser-privacy.profile	2026-05-28 11:00:42.615475978 -0700
++++ firejail-0.9.80/etc/profile-a-l/chromium-browser-privacy.profile	2026-05-28 12:32:49.862328783 -0700
 @@ -6,6 +6,11 @@ include chromium-browser-privacy.local
  noblacklist ${HOME}/.cache/ungoogled-chromium
  noblacklist ${HOME}/.config/ungoogled-chromium
@@ -1605,7 +1744,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/chromium-browser-p
  mkdir ${HOME}/.cache/ungoogled-chromium
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/chromium.profile firejail-0.9.80/etc/profile-a-l/chromium.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/chromium.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/chromium.profile	2026-05-28 11:00:42.615475978 -0700
++++ firejail-0.9.80/etc/profile-a-l/chromium.profile	2026-05-28 12:32:49.862328783 -0700
 @@ -10,6 +10,10 @@ noblacklist ${HOME}/.cache/chromium
  noblacklist ${HOME}/.config/chromium
  noblacklist ${HOME}/.config/chromium-flags.conf
@@ -1619,7 +1758,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/chromium.profile f
  whitelist ${HOME}/.cache/chromium
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/cin.profile firejail-0.9.80/etc/profile-a-l/cin.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/cin.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/cin.profile	2026-05-28 11:00:42.615475978 -0700
++++ firejail-0.9.80/etc/profile-a-l/cin.profile	2026-05-28 12:32:49.862328783 -0700
 @@ -6,6 +6,7 @@ include cin.local
  include globals.local
  
@@ -1630,7 +1769,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/cin.profile fireja
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/clawsker.profile firejail-0.9.80/etc/profile-a-l/clawsker.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/clawsker.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/clawsker.profile	2026-05-28 11:00:42.615475978 -0700
++++ firejail-0.9.80/etc/profile-a-l/clawsker.profile	2026-05-28 12:32:49.862328783 -0700
 @@ -7,6 +7,9 @@ include clawsker.local
  include globals.local
  
@@ -1643,7 +1782,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/clawsker.profile f
  include allow-perl.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/claws-mail.profile firejail-0.9.80/etc/profile-a-l/claws-mail.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/claws-mail.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/claws-mail.profile	2026-05-28 11:00:42.615475978 -0700
++++ firejail-0.9.80/etc/profile-a-l/claws-mail.profile	2026-05-28 12:32:49.862328783 -0700
 @@ -13,6 +13,7 @@ include globals.local
  
  noblacklist ${HOME}/.cache/claws-mail
@@ -1652,9 +1791,32 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/claws-mail.profile
  
  mkdir ${HOME}/.cache/claws-mail
  mkdir ${HOME}/.claws-mail
+diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/clion-eap.profile firejail-0.9.80/etc/profile-a-l/clion-eap.profile
+--- firejail-0.9.80.orig/etc/profile-a-l/clion-eap.profile	2026-03-12 05:51:18.000000000 -0700
++++ firejail-0.9.80/etc/profile-a-l/clion-eap.profile	2026-05-28 15:31:18.835812170 -0700
+@@ -6,5 +6,7 @@ include clion-eap.local
+ # added by included profile
+ #include globals.local
+ 
++blacklist ${PATH}/clion-eap
++
+ # Redirect
+ include clion.profile
+diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/clion.profile firejail-0.9.80/etc/profile-a-l/clion.profile
+--- firejail-0.9.80.orig/etc/profile-a-l/clion.profile	2026-03-12 05:51:18.000000000 -0700
++++ firejail-0.9.80/etc/profile-a-l/clion.profile	2026-05-28 15:30:52.184630275 -0700
+@@ -5,6 +5,8 @@ include clion.local
+ # Persistent global definitions
+ include globals.local
+ 
++blacklist ${PATH}/clion
++
+ noblacklist ${HOME}/.config/JetBrains/CLion*
+ noblacklist ${HOME}/.cache/JetBrains/CLion*
+ noblacklist ${HOME}/.clion*
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/clipit.profile firejail-0.9.80/etc/profile-a-l/clipit.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/clipit.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/clipit.profile	2026-05-28 11:00:42.615475978 -0700
++++ firejail-0.9.80/etc/profile-a-l/clipit.profile	2026-05-28 12:32:49.862328783 -0700
 @@ -8,6 +8,7 @@ include globals.local
  
  noblacklist ${HOME}/.config/clipit
@@ -1665,7 +1827,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/clipit.profile fir
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/cmake.profile firejail-0.9.80/etc/profile-a-l/cmake.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/cmake.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/cmake.profile	2026-05-28 11:00:42.615475978 -0700
++++ firejail-0.9.80/etc/profile-a-l/cmake.profile	2026-05-28 12:32:49.862328783 -0700
 @@ -7,6 +7,8 @@ include cmake.local
  # Persistent global definitions
  include globals.local
@@ -1675,9 +1837,20 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/cmake.profile fire
  whitelist /usr/share/cmake
  whitelist /usr/share/cmake-*
  
+diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/codium.profile firejail-0.9.80/etc/profile-a-l/codium.profile
+--- firejail-0.9.80.orig/etc/profile-a-l/codium.profile	2026-03-12 05:51:18.000000000 -0700
++++ firejail-0.9.80/etc/profile-a-l/codium.profile	2026-05-28 13:17:58.790931990 -0700
+@@ -6,5 +6,7 @@ include codium.local
+ # added by included profile
+ #include globals.local
+ 
++noblacklist ${PATH}/codium
++
+ # Redirect
+ include vscodium.profile
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/curl.profile firejail-0.9.80/etc/profile-a-l/curl.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/curl.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/curl.profile	2026-05-28 11:00:42.615475978 -0700
++++ firejail-0.9.80/etc/profile-a-l/curl.profile	2026-05-28 12:32:49.862328783 -0700
 @@ -20,6 +20,7 @@ noblacklist ${HOME}/.config/curlrc # sin
  noblacklist ${HOME}/.curl-hsts
  noblacklist ${HOME}/.curlrc
@@ -1688,7 +1861,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/curl.profile firej
  
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/cyberfox.profile firejail-0.9.80/etc/profile-a-l/cyberfox.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/cyberfox.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/cyberfox.profile	2026-05-28 11:00:42.615475978 -0700
++++ firejail-0.9.80/etc/profile-a-l/cyberfox.profile	2026-05-28 12:32:49.862328783 -0700
 @@ -7,6 +7,7 @@ include globals.local
  
  noblacklist ${HOME}/.8pecxstudios
@@ -1699,7 +1872,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/cyberfox.profile f
  mkdir ${HOME}/.cache/8pecxstudios
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/darktable.profile firejail-0.9.80/etc/profile-a-l/darktable.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/darktable.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/darktable.profile	2026-05-28 11:00:42.615475978 -0700
++++ firejail-0.9.80/etc/profile-a-l/darktable.profile	2026-05-28 12:32:49.862328783 -0700
 @@ -9,6 +9,8 @@ include globals.local
  noblacklist ${HOME}/.cache/darktable
  noblacklist ${HOME}/.config/darktable
@@ -1711,7 +1884,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/darktable.profile 
  include allow-lua.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/dconf.profile firejail-0.9.80/etc/profile-a-l/dconf.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/dconf.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/dconf.profile	2026-05-28 11:00:42.615475978 -0700
++++ firejail-0.9.80/etc/profile-a-l/dconf.profile	2026-05-28 12:32:49.862328783 -0700
 @@ -6,6 +6,9 @@ include dconf.local
  # Persistent global definitions
  include globals.local
@@ -1724,7 +1897,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/dconf.profile fire
  include disable-common.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/ddgtk.profile firejail-0.9.80/etc/profile-a-l/ddgtk.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/ddgtk.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/ddgtk.profile	2026-05-28 11:00:42.615475978 -0700
++++ firejail-0.9.80/etc/profile-a-l/ddgtk.profile	2026-05-28 12:32:49.862328783 -0700
 @@ -6,6 +6,15 @@ include ddgtk.local
  # Persistent global definitions
  include globals.local
@@ -1742,8 +1915,8 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/ddgtk.profile fire
  include allow-python2.inc
  include allow-python3.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/default.profile firejail-0.9.80/etc/profile-a-l/default.profile
---- firejail-0.9.80.orig/etc/profile-a-l/default.profile	2026-05-28 11:00:16.576278834 -0700
-+++ firejail-0.9.80/etc/profile-a-l/default.profile	2026-05-28 11:00:42.615475978 -0700
+--- firejail-0.9.80.orig/etc/profile-a-l/default.profile	2026-05-28 12:32:01.763803119 -0700
++++ firejail-0.9.80/etc/profile-a-l/default.profile	2026-05-28 12:32:49.862328783 -0700
 @@ -8,6 +8,10 @@ include globals.local
  # generic GUI profile
  # depending on your usage, you can enable some of the commands below:
@@ -1757,7 +1930,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/default.profile fi
  #include disable-exec.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/deluge.profile firejail-0.9.80/etc/profile-a-l/deluge.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/deluge.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/deluge.profile	2026-05-28 11:00:42.615475978 -0700
++++ firejail-0.9.80/etc/profile-a-l/deluge.profile	2026-05-28 12:32:49.862328783 -0700
 @@ -7,6 +7,13 @@ include deluge.local
  include globals.local
  
@@ -1774,7 +1947,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/deluge.profile fir
  include allow-python2.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/device-flasher.linux.profile firejail-0.9.80/etc/profile-a-l/device-flasher.linux.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/device-flasher.linux.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/device-flasher.linux.profile	2026-05-28 11:00:42.615475978 -0700
++++ firejail-0.9.80/etc/profile-a-l/device-flasher.linux.profile	2026-05-28 12:32:49.862328783 -0700
 @@ -16,6 +16,9 @@ ignore noexec ${HOME}
  include allow-bin-sh.inc
  
@@ -1787,7 +1960,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/device-flasher.lin
  blacklist /usr/libexec
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/dex2jar.profile firejail-0.9.80/etc/profile-a-l/dex2jar.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/dex2jar.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/dex2jar.profile	2026-05-28 11:00:42.615475978 -0700
++++ firejail-0.9.80/etc/profile-a-l/dex2jar.profile	2026-05-28 12:32:49.862328783 -0700
 @@ -6,6 +6,13 @@ include dex2jar.local
  # Persistent global definitions
  include globals.local
@@ -1804,7 +1977,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/dex2jar.profile fi
  
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/dig.profile firejail-0.9.80/etc/profile-a-l/dig.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/dig.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/dig.profile	2026-05-28 11:00:42.615475978 -0700
++++ firejail-0.9.80/etc/profile-a-l/dig.profile	2026-05-28 12:32:49.862328783 -0700
 @@ -8,7 +8,9 @@ include dig.local
  include globals.local
  
@@ -1817,7 +1990,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/dig.profile fireja
  
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/discord-common.profile firejail-0.9.80/etc/profile-a-l/discord-common.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/discord-common.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/discord-common.profile	2026-05-28 11:00:42.615475978 -0700
++++ firejail-0.9.80/etc/profile-a-l/discord-common.profile	2026-05-28 12:32:49.862328783 -0700
 @@ -6,6 +6,21 @@ include discord-common.local
  # added by caller profile
  #include globals.local
@@ -1842,7 +2015,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/discord-common.pro
  
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/dolphin-emu.profile firejail-0.9.80/etc/profile-a-l/dolphin-emu.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/dolphin-emu.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/dolphin-emu.profile	2026-05-28 11:00:42.615475978 -0700
++++ firejail-0.9.80/etc/profile-a-l/dolphin-emu.profile	2026-05-28 12:32:49.862328783 -0700
 @@ -11,6 +11,8 @@ include globals.local
  noblacklist ${HOME}/.cache/dolphin-emu
  noblacklist ${HOME}/.config/dolphin-emu
@@ -1852,9 +2025,22 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/dolphin-emu.profil
  
  include disable-common.inc
  include disable-devel.inc
+diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/dosbox.profile firejail-0.9.80/etc/profile-a-l/dosbox.profile
+--- firejail-0.9.80.orig/etc/profile-a-l/dosbox.profile	2026-03-12 05:51:18.000000000 -0700
++++ firejail-0.9.80/etc/profile-a-l/dosbox.profile	2026-05-28 13:06:10.508843632 -0700
+@@ -7,7 +7,9 @@ include dosbox.local
+ include globals.local
+ 
+ noblacklist ${HOME}/.dosbox
++noblacklist ${HOME}/capture # DosBox, based on run
+ noblacklist ${DOCUMENTS}
++noblacklist ${PATH}/dosbox
+ 
+ include disable-common.inc
+ include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/drill.profile firejail-0.9.80/etc/profile-a-l/drill.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/drill.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/drill.profile	2026-05-28 11:00:42.615475978 -0700
++++ firejail-0.9.80/etc/profile-a-l/drill.profile	2026-05-28 12:32:49.862328783 -0700
 @@ -7,7 +7,9 @@ include drill.local
  # Persistent global definitions
  include globals.local
@@ -1867,7 +2053,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/drill.profile fire
  
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/easystroke.profile firejail-0.9.80/etc/profile-a-l/easystroke.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/easystroke.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/easystroke.profile	2026-05-28 11:00:42.615475978 -0700
++++ firejail-0.9.80/etc/profile-a-l/easystroke.profile	2026-05-28 12:32:49.862328783 -0700
 @@ -7,6 +7,8 @@ include easystroke.local
  include globals.local
  
@@ -1879,7 +2065,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/easystroke.profile
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/elinks.profile firejail-0.9.80/etc/profile-a-l/elinks.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/elinks.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/elinks.profile	2026-05-28 11:00:42.615475978 -0700
++++ firejail-0.9.80/etc/profile-a-l/elinks.profile	2026-05-28 12:32:49.862328783 -0700
 @@ -8,6 +8,7 @@ include elinks.local
  include globals.local
  
@@ -1890,7 +2076,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/elinks.profile fir
  include allow-lua.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/emacs.profile firejail-0.9.80/etc/profile-a-l/emacs.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/emacs.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/emacs.profile	2026-05-28 11:00:42.619475854 -0700
++++ firejail-0.9.80/etc/profile-a-l/emacs.profile	2026-05-28 12:32:49.862328783 -0700
 @@ -10,6 +10,7 @@ noblacklist ${HOME}/.emacs
  noblacklist ${HOME}/.emacs.d
  # Add the next line to your emacs.local if you need gpg support.
@@ -1901,7 +2087,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/emacs.profile fire
  include allow-common-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/epiphany.profile firejail-0.9.80/etc/profile-a-l/epiphany.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/epiphany.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/epiphany.profile	2026-05-28 11:00:42.619475854 -0700
++++ firejail-0.9.80/etc/profile-a-l/epiphany.profile	2026-05-28 12:32:49.862328783 -0700
 @@ -12,6 +12,7 @@ include globals.local
  noblacklist ${HOME}/.cache/epiphany
  noblacklist ${HOME}/.config/epiphany
@@ -1912,7 +2098,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/epiphany.profile f
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/evolution.profile firejail-0.9.80/etc/profile-a-l/evolution.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/evolution.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/evolution.profile	2026-05-28 11:00:42.619475854 -0700
++++ firejail-0.9.80/etc/profile-a-l/evolution.profile	2026-05-28 12:32:49.862328783 -0700
 @@ -16,6 +16,7 @@ noblacklist ${HOME}/.gnupg
  noblacklist ${HOME}/.local/share/evolution
  noblacklist ${HOME}/.pki
@@ -1923,7 +2109,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/evolution.profile 
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/exiftool.profile firejail-0.9.80/etc/profile-a-l/exiftool.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/exiftool.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/exiftool.profile	2026-05-28 11:00:42.619475854 -0700
++++ firejail-0.9.80/etc/profile-a-l/exiftool.profile	2026-05-28 12:32:49.866328661 -0700
 @@ -6,6 +6,9 @@ include exiftool.local
  # Persistent global definitions
  include globals.local
@@ -1936,7 +2122,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/exiftool.profile f
  
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/fdns.profile firejail-0.9.80/etc/profile-a-l/fdns.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/fdns.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/fdns.profile	2026-05-28 11:00:42.619475854 -0700
++++ firejail-0.9.80/etc/profile-a-l/fdns.profile	2026-05-28 12:32:49.866328661 -0700
 @@ -5,6 +5,8 @@ include fdns.local
  # Persistent global definitions
  include globals.local
@@ -1948,7 +2134,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/fdns.profile firej
  
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/fetchmail.profile firejail-0.9.80/etc/profile-a-l/fetchmail.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/fetchmail.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/fetchmail.profile	2026-05-28 11:00:42.619475854 -0700
++++ firejail-0.9.80/etc/profile-a-l/fetchmail.profile	2026-05-28 12:32:49.866328661 -0700
 @@ -8,6 +8,8 @@ include globals.local
  
  noblacklist ${HOME}/.fetchmailrc
@@ -1960,7 +2146,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/fetchmail.profile 
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/ffmpeg.profile firejail-0.9.80/etc/profile-a-l/ffmpeg.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/ffmpeg.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/ffmpeg.profile	2026-05-28 11:00:42.619475854 -0700
++++ firejail-0.9.80/etc/profile-a-l/ffmpeg.profile	2026-05-28 12:32:49.866328661 -0700
 @@ -10,6 +10,7 @@ include globals.local
  noblacklist ${MUSIC}
  noblacklist ${VIDEOS}
@@ -1970,8 +2156,8 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/ffmpeg.profile fir
  include disable-common.inc
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/file.profile firejail-0.9.80/etc/profile-a-l/file.profile
---- firejail-0.9.80.orig/etc/profile-a-l/file.profile	2026-05-28 11:00:16.576278834 -0700
-+++ firejail-0.9.80/etc/profile-a-l/file.profile	2026-05-28 11:00:42.619475854 -0700
+--- firejail-0.9.80.orig/etc/profile-a-l/file.profile	2026-05-28 12:32:01.763803119 -0700
++++ firejail-0.9.80/etc/profile-a-l/file.profile	2026-05-28 12:32:49.866328661 -0700
 @@ -7,6 +7,15 @@ include file.local
  # Persistent global definitions
  include globals.local
@@ -1990,7 +2176,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/file.profile firej
  include disable-common.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/file-roller.profile firejail-0.9.80/etc/profile-a-l/file-roller.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/file-roller.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/file-roller.profile	2026-05-28 11:00:42.619475854 -0700
++++ firejail-0.9.80/etc/profile-a-l/file-roller.profile	2026-05-28 12:32:49.866328661 -0700
 @@ -6,7 +6,50 @@ include file-roller.local
  # Persistent global definitions
  include globals.local
@@ -2044,7 +2230,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/file-roller.profil
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/filezilla.profile firejail-0.9.80/etc/profile-a-l/filezilla.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/filezilla.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/filezilla.profile	2026-05-28 11:00:42.619475854 -0700
++++ firejail-0.9.80/etc/profile-a-l/filezilla.profile	2026-05-28 12:32:49.866328661 -0700
 @@ -8,6 +8,12 @@ include globals.local
  
  noblacklist ${HOME}/.config/filezilla
@@ -2060,7 +2246,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/filezilla.profile 
  include allow-python2.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/firedragon.profile firejail-0.9.80/etc/profile-a-l/firedragon.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/firedragon.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/firedragon.profile	2026-05-28 11:00:42.619475854 -0700
++++ firejail-0.9.80/etc/profile-a-l/firedragon.profile	2026-05-28 12:32:49.866328661 -0700
 @@ -8,6 +8,9 @@ include globals.local
  
  noblacklist ${HOME}/.cache/firedragon
@@ -2073,7 +2259,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/firedragon.profile
  mkdir ${HOME}/.firedragon
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/firefox.profile firejail-0.9.80/etc/profile-a-l/firefox.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/firefox.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/firefox.profile	2026-05-28 11:00:42.619475854 -0700
++++ firejail-0.9.80/etc/profile-a-l/firefox.profile	2026-05-28 12:32:49.866328661 -0700
 @@ -21,6 +21,17 @@ ignore read-only ${HOME}/.mozilla/firefo
  noblacklist ${HOME}/.cache/mozilla
  noblacklist ${HOME}/.config/mozilla
@@ -2094,7 +2280,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/firefox.profile fi
  
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/flameshot.profile firejail-0.9.80/etc/profile-a-l/flameshot.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/flameshot.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/flameshot.profile	2026-05-28 11:00:42.619475854 -0700
++++ firejail-0.9.80/etc/profile-a-l/flameshot.profile	2026-05-28 12:32:49.866328661 -0700
 @@ -10,6 +10,7 @@ include globals.local
  noblacklist ${PICTURES}
  noblacklist ${HOME}/.config/Dharkael
@@ -2105,7 +2291,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/flameshot.profile 
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/fluffychat.profile firejail-0.9.80/etc/profile-a-l/fluffychat.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/fluffychat.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/fluffychat.profile	2026-05-28 11:00:42.619475854 -0700
++++ firejail-0.9.80/etc/profile-a-l/fluffychat.profile	2026-05-28 12:32:49.866328661 -0700
 @@ -7,6 +7,8 @@ include fluffychat.local
  include globals.local
  
@@ -2117,7 +2303,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/fluffychat.profile
  include allow-bin-sh.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/freemind.profile firejail-0.9.80/etc/profile-a-l/freemind.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/freemind.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/freemind.profile	2026-05-28 11:00:42.619475854 -0700
++++ firejail-0.9.80/etc/profile-a-l/freemind.profile	2026-05-28 12:32:49.866328661 -0700
 @@ -8,8 +8,16 @@ include globals.local
  
  noblacklist ${DOCUMENTS}
@@ -2138,7 +2324,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/freemind.profile f
  include allow-java.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/gajim.profile firejail-0.9.80/etc/profile-a-l/gajim.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/gajim.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/gajim.profile	2026-05-28 11:00:42.619475854 -0700
++++ firejail-0.9.80/etc/profile-a-l/gajim.profile	2026-05-28 12:32:49.866328661 -0700
 @@ -10,6 +10,10 @@ noblacklist ${HOME}/.gnupg
  noblacklist ${HOME}/.cache/gajim
  noblacklist ${HOME}/.config/gajim
@@ -2152,7 +2338,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/gajim.profile fire
  #include allow-python2.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/gconf.profile firejail-0.9.80/etc/profile-a-l/gconf.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/gconf.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/gconf.profile	2026-05-28 11:00:42.619475854 -0700
++++ firejail-0.9.80/etc/profile-a-l/gconf.profile	2026-05-28 12:32:49.866328661 -0700
 @@ -6,8 +6,6 @@ include gconf.local
  # Persistent global definitions
  include globals.local
@@ -2162,9 +2348,20 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/gconf.profile fire
  # Allow python (blacklisted by disable-interpreters.inc)
  include allow-python2.inc
  #include allow-python3.inc
+diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/geany.profile firejail-0.9.80/etc/profile-a-l/geany.profile
+--- firejail-0.9.80.orig/etc/profile-a-l/geany.profile	2026-03-12 05:51:18.000000000 -0700
++++ firejail-0.9.80/etc/profile-a-l/geany.profile	2026-05-28 13:36:56.387757620 -0700
+@@ -7,6 +7,7 @@ include geany.local
+ include globals.local
+ 
+ noblacklist ${HOME}/.config/geany
++noblacklist ${PATH}/geany
+ 
+ # Allows files commonly used by IDEs
+ include allow-common-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/geary.profile firejail-0.9.80/etc/profile-a-l/geary.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/geary.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/geary.profile	2026-05-28 11:00:42.619475854 -0700
++++ firejail-0.9.80/etc/profile-a-l/geary.profile	2026-05-28 12:32:49.866328661 -0700
 @@ -16,6 +16,7 @@ noblacklist ${HOME}/.local/share/geary
  noblacklist ${HOME}/.local/share/pki
  noblacklist ${HOME}/.mailcap
@@ -2175,7 +2372,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/geary.profile fire
  include allow-bin-sh.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/geekbench.profile firejail-0.9.80/etc/profile-a-l/geekbench.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/geekbench.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/geekbench.profile	2026-05-28 11:00:42.619475854 -0700
++++ firejail-0.9.80/etc/profile-a-l/geekbench.profile	2026-05-28 12:32:49.866328661 -0700
 @@ -7,6 +7,8 @@ include geekbench.local
  include globals.local
  
@@ -2187,7 +2384,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/geekbench.profile 
  
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/ghostwriter.profile firejail-0.9.80/etc/profile-a-l/ghostwriter.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/ghostwriter.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/ghostwriter.profile	2026-05-28 11:00:42.619475854 -0700
++++ firejail-0.9.80/etc/profile-a-l/ghostwriter.profile	2026-05-28 12:32:49.866328661 -0700
 @@ -10,6 +10,8 @@ noblacklist ${HOME}/.config/ghostwriter
  noblacklist ${HOME}/.local/share/ghostwriter
  noblacklist ${DOCUMENTS}
@@ -2199,7 +2396,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/ghostwriter.profil
  
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/git-cola.profile firejail-0.9.80/etc/profile-a-l/git-cola.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/git-cola.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/git-cola.profile	2026-05-28 11:00:42.619475854 -0700
++++ firejail-0.9.80/etc/profile-a-l/git-cola.profile	2026-05-28 12:32:49.866328661 -0700
 @@ -16,6 +16,15 @@ noblacklist ${HOME}/.config/git
  noblacklist ${HOME}/.config/git-cola
  # Add your editor/diff viewer config paths and the next line to your git-cola.local to load settings.
@@ -2218,7 +2415,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/git-cola.profile f
  include allow-python2.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/gitg.profile firejail-0.9.80/etc/profile-a-l/gitg.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/gitg.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/gitg.profile	2026-05-28 11:00:42.619475854 -0700
++++ firejail-0.9.80/etc/profile-a-l/gitg.profile	2026-05-28 12:32:49.866328661 -0700
 @@ -10,6 +10,7 @@ noblacklist ${HOME}/.config/git
  noblacklist ${HOME}/.gitconfig
  noblacklist ${HOME}/.git-credentials
@@ -2229,7 +2426,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/gitg.profile firej
  include allow-ssh.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/gitter.profile firejail-0.9.80/etc/profile-a-l/gitter.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/gitter.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/gitter.profile	2026-05-28 11:00:42.619475854 -0700
++++ firejail-0.9.80/etc/profile-a-l/gitter.profile	2026-05-28 12:32:49.866328661 -0700
 @@ -11,6 +11,7 @@ include globals.local
  #whitelist ${HOME}/.config/autostart
  
@@ -2240,7 +2437,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/gitter.profile fir
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/gnome-boxes.profile firejail-0.9.80/etc/profile-a-l/gnome-boxes.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/gnome-boxes.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/gnome-boxes.profile	2026-05-28 11:00:42.619475854 -0700
++++ firejail-0.9.80/etc/profile-a-l/gnome-boxes.profile	2026-05-28 12:32:49.866328661 -0700
 @@ -10,6 +10,9 @@ noblacklist ${HOME}/.cache/gnome-boxes
  noblacklist ${HOME}/.config/gnome-boxes
  noblacklist ${HOME}/.local/share/gnome-boxes
@@ -2253,7 +2450,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/gnome-boxes.profil
  noblacklist /usr/sbin
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/gnome-recipes.profile firejail-0.9.80/etc/profile-a-l/gnome-recipes.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/gnome-recipes.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/gnome-recipes.profile	2026-05-28 11:00:42.619475854 -0700
++++ firejail-0.9.80/etc/profile-a-l/gnome-recipes.profile	2026-05-28 12:32:49.866328661 -0700
 @@ -8,6 +8,7 @@ include globals.local
  
  noblacklist ${HOME}/.cache/gnome-recipes
@@ -2264,7 +2461,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/gnome-recipes.prof
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/gnome-text-editor.profile firejail-0.9.80/etc/profile-a-l/gnome-text-editor.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/gnome-text-editor.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/gnome-text-editor.profile	2026-05-28 11:00:42.619475854 -0700
++++ firejail-0.9.80/etc/profile-a-l/gnome-text-editor.profile	2026-05-28 12:32:49.866328661 -0700
 @@ -6,6 +6,10 @@ include gnome-text-editor.local
  # Persistent global definitions
  include globals.local
@@ -2278,7 +2475,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/gnome-text-editor.
  include disable-exec.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/godot3.profile firejail-0.9.80/etc/profile-a-l/godot3.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/godot3.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/godot3.profile	2026-05-28 11:00:42.619475854 -0700
++++ firejail-0.9.80/etc/profile-a-l/godot3.profile	2026-05-28 12:32:49.866328661 -0700
 @@ -7,5 +7,7 @@ include godot3.local
  # added by included profile
  #include globals.local
@@ -2289,7 +2486,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/godot3.profile fir
  include godot.profile
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/godot.profile firejail-0.9.80/etc/profile-a-l/godot.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/godot.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/godot.profile	2026-05-28 11:00:42.619475854 -0700
++++ firejail-0.9.80/etc/profile-a-l/godot.profile	2026-05-28 12:32:49.866328661 -0700
 @@ -13,6 +13,7 @@ noblacklist ${HOME}/.cache/godot
  noblacklist ${HOME}/.config/godot
  noblacklist ${HOME}/.local/share/Trash
@@ -2300,7 +2497,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/godot.profile fire
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/google-chrome.profile firejail-0.9.80/etc/profile-a-l/google-chrome.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/google-chrome.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/google-chrome.profile	2026-05-28 11:00:42.619475854 -0700
++++ firejail-0.9.80/etc/profile-a-l/google-chrome.profile	2026-05-28 12:32:49.866328661 -0700
 @@ -5,6 +5,12 @@ include google-chrome.local
  # Persistent global definitions
  include globals.local
@@ -2316,7 +2513,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/google-chrome.prof
  
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/google-earth.profile firejail-0.9.80/etc/profile-a-l/google-earth.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/google-earth.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/google-earth.profile	2026-05-28 11:00:42.619475854 -0700
++++ firejail-0.9.80/etc/profile-a-l/google-earth.profile	2026-05-28 12:32:49.866328661 -0700
 @@ -7,6 +7,11 @@ include globals.local
  
  noblacklist ${HOME}/.config/Google
@@ -2331,7 +2528,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/google-earth.profi
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/googler-common.profile firejail-0.9.80/etc/profile-a-l/googler-common.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/googler-common.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/googler-common.profile	2026-05-28 11:00:42.623475731 -0700
++++ firejail-0.9.80/etc/profile-a-l/googler-common.profile	2026-05-28 12:32:49.866328661 -0700
 @@ -8,6 +8,8 @@ include googler-common.local
  #include globals.local
  
@@ -2343,7 +2540,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/googler-common.pro
  include allow-bin-sh.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/green-recoder.profile firejail-0.9.80/etc/profile-a-l/green-recoder.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/green-recoder.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/green-recoder.profile	2026-05-28 11:00:42.623475731 -0700
++++ firejail-0.9.80/etc/profile-a-l/green-recoder.profile	2026-05-28 12:32:49.870328538 -0700
 @@ -7,6 +7,17 @@ include green-recorder.local
  include globals.local
  
@@ -2364,7 +2561,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/green-recoder.prof
  include allow-python3.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/gsettings.profile firejail-0.9.80/etc/profile-a-l/gsettings.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/gsettings.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/gsettings.profile	2026-05-28 11:00:42.623475731 -0700
++++ firejail-0.9.80/etc/profile-a-l/gsettings.profile	2026-05-28 12:32:49.870328538 -0700
 @@ -7,5 +7,7 @@ include gsettings.local
  # added by included profile
  #include globals.local
@@ -2375,7 +2572,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/gsettings.profile 
  include dconf.profile
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/gtk-youtube-viewers-common.profile firejail-0.9.80/etc/profile-a-l/gtk-youtube-viewers-common.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/gtk-youtube-viewers-common.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/gtk-youtube-viewers-common.profile	2026-05-28 11:00:42.623475731 -0700
++++ firejail-0.9.80/etc/profile-a-l/gtk-youtube-viewers-common.profile	2026-05-28 12:32:49.870328538 -0700
 @@ -7,6 +7,8 @@ include gtk-youtube-viewers-common.local
  # added by caller profile
  #include globals.local
@@ -2387,7 +2584,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/gtk-youtube-viewer
  # The lines below are needed to find the default Firefox profile name, to allow
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/gummi.profile firejail-0.9.80/etc/profile-a-l/gummi.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/gummi.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/gummi.profile	2026-05-28 11:00:42.623475731 -0700
++++ firejail-0.9.80/etc/profile-a-l/gummi.profile	2026-05-28 12:32:49.870328538 -0700
 @@ -7,6 +7,8 @@ include globals.local
  
  noblacklist ${HOME}/.cache/gummi
@@ -2399,7 +2596,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/gummi.profile fire
  include allow-lua.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/gzdoom-common.profile firejail-0.9.80/etc/profile-a-l/gzdoom-common.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/gzdoom-common.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/gzdoom-common.profile	2026-05-28 11:00:42.623475731 -0700
++++ firejail-0.9.80/etc/profile-a-l/gzdoom-common.profile	2026-05-28 12:32:49.870328538 -0700
 @@ -7,6 +7,12 @@ include gzdoom-common.local
  #include globals.local
  
@@ -2415,7 +2612,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/gzdoom-common.prof
  include allow-bin-sh.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/host.profile firejail-0.9.80/etc/profile-a-l/host.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/host.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/host.profile	2026-05-28 11:00:42.623475731 -0700
++++ firejail-0.9.80/etc/profile-a-l/host.profile	2026-05-28 12:32:49.870328538 -0700
 @@ -7,7 +7,9 @@ include host.local
  # Persistent global definitions
  include globals.local
@@ -2428,7 +2625,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/host.profile firej
  
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/hugin.profile firejail-0.9.80/etc/profile-a-l/hugin.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/hugin.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/hugin.profile	2026-05-28 11:00:42.623475731 -0700
++++ firejail-0.9.80/etc/profile-a-l/hugin.profile	2026-05-28 12:32:49.870328538 -0700
 @@ -9,6 +9,10 @@ include globals.local
  noblacklist ${HOME}/.hugin
  noblacklist ${DOCUMENTS}
@@ -2442,7 +2639,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/hugin.profile fire
  include allow-bin-sh.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/imagej.profile firejail-0.9.80/etc/profile-a-l/imagej.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/imagej.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/imagej.profile	2026-05-28 11:00:42.623475731 -0700
++++ firejail-0.9.80/etc/profile-a-l/imagej.profile	2026-05-28 12:32:49.870328538 -0700
 @@ -7,6 +7,20 @@ include imagej.local
  include globals.local
  
@@ -2466,7 +2663,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/imagej.profile fir
  include allow-java.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/ipcalc.profile firejail-0.9.80/etc/profile-a-l/ipcalc.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/ipcalc.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/ipcalc.profile	2026-05-28 11:00:42.623475731 -0700
++++ firejail-0.9.80/etc/profile-a-l/ipcalc.profile	2026-05-28 12:32:49.870328538 -0700
 @@ -6,6 +6,10 @@ include ipcalc.local
  # Persistent global definitions
  include globals.local
@@ -2480,7 +2677,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/ipcalc.profile fir
  
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/jd-gui.profile firejail-0.9.80/etc/profile-a-l/jd-gui.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/jd-gui.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/jd-gui.profile	2026-05-28 11:00:42.623475731 -0700
++++ firejail-0.9.80/etc/profile-a-l/jd-gui.profile	2026-05-28 12:32:49.870328538 -0700
 @@ -6,6 +6,8 @@ include jd-gui.local
  include globals.local
  
@@ -2492,7 +2689,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/jd-gui.profile fir
  include allow-java.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/jerry.profile firejail-0.9.80/etc/profile-a-l/jerry.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/jerry.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/jerry.profile	2026-05-28 11:00:42.623475731 -0700
++++ firejail-0.9.80/etc/profile-a-l/jerry.profile	2026-05-28 12:32:49.870328538 -0700
 @@ -7,6 +7,8 @@ include jerry.local
  include globals.local
  
@@ -2504,7 +2701,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/jerry.profile fire
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/jitsi-meet-desktop.profile firejail-0.9.80/etc/profile-a-l/jitsi-meet-desktop.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/jitsi-meet-desktop.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/jitsi-meet-desktop.profile	2026-05-28 11:00:42.623475731 -0700
++++ firejail-0.9.80/etc/profile-a-l/jitsi-meet-desktop.profile	2026-05-28 12:32:49.870328538 -0700
 @@ -13,6 +13,8 @@ ignore novideo
  ignore noexec /tmp
  
@@ -2516,7 +2713,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/jitsi-meet-desktop
  
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/kazam.profile firejail-0.9.80/etc/profile-a-l/kazam.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/kazam.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/kazam.profile	2026-05-28 11:00:42.623475731 -0700
++++ firejail-0.9.80/etc/profile-a-l/kazam.profile	2026-05-28 12:32:49.870328538 -0700
 @@ -11,6 +11,7 @@ ignore noexec ${HOME}
  noblacklist ${PICTURES}
  noblacklist ${VIDEOS}
@@ -2527,7 +2724,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/kazam.profile fire
  include allow-python2.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/kdenlive.profile firejail-0.9.80/etc/profile-a-l/kdenlive.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/kdenlive.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/kdenlive.profile	2026-05-28 11:00:42.623475731 -0700
++++ firejail-0.9.80/etc/profile-a-l/kdenlive.profile	2026-05-28 12:32:49.870328538 -0700
 @@ -12,6 +12,8 @@ noblacklist ${HOME}/.cache/kdenlive
  noblacklist ${HOME}/.config/kdenliverc
  noblacklist ${HOME}/.local/share/kdenlive
@@ -2539,7 +2736,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/kdenlive.profile f
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/klavaro.profile firejail-0.9.80/etc/profile-a-l/klavaro.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/klavaro.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/klavaro.profile	2026-05-28 11:00:42.623475731 -0700
++++ firejail-0.9.80/etc/profile-a-l/klavaro.profile	2026-05-28 12:32:49.870328538 -0700
 @@ -8,6 +8,10 @@ include globals.local
  
  noblacklist ${HOME}/.config/klavaro
@@ -2553,7 +2750,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/klavaro.profile fi
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/libreoffice.profile firejail-0.9.80/etc/profile-a-l/libreoffice.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/libreoffice.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/libreoffice.profile	2026-05-28 11:00:42.623475731 -0700
++++ firejail-0.9.80/etc/profile-a-l/libreoffice.profile	2026-05-28 12:32:49.870328538 -0700
 @@ -10,6 +10,11 @@ ignore hostname-randomize
  
  noblacklist ${HOME}/.config/libreoffice
@@ -2568,7 +2765,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/libreoffice.profil
  # libreoffice can sign documents with GPG
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/links2.profile firejail-0.9.80/etc/profile-a-l/links2.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/links2.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/links2.profile	2026-05-28 11:00:42.623475731 -0700
++++ firejail-0.9.80/etc/profile-a-l/links2.profile	2026-05-28 12:32:49.870328538 -0700
 @@ -8,6 +8,7 @@ include links2.local
  include globals.local
  
@@ -2579,7 +2776,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/links2.profile fir
  whitelist ${HOME}/.links2
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/links.profile firejail-0.9.80/etc/profile-a-l/links.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/links.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/links.profile	2026-05-28 11:00:42.623475731 -0700
++++ firejail-0.9.80/etc/profile-a-l/links.profile	2026-05-28 12:32:49.870328538 -0700
 @@ -8,6 +8,7 @@ include links.local
  include globals.local
  
@@ -2590,7 +2787,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/links.profile fire
  whitelist ${HOME}/.links
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/lobster.profile firejail-0.9.80/etc/profile-a-l/lobster.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/lobster.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/lobster.profile	2026-05-28 11:00:42.623475731 -0700
++++ firejail-0.9.80/etc/profile-a-l/lobster.profile	2026-05-28 12:32:49.870328538 -0700
 @@ -16,8 +16,35 @@ noblacklist ${HOME}/.config/lobster
  noblacklist ${HOME}/.config/ueberzugpp
  noblacklist ${HOME}/.local/share/applications/lobster
@@ -2629,7 +2826,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/lobster.profile fi
  include allow-bin-sh.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/lyx.profile firejail-0.9.80/etc/profile-a-l/lyx.profile
 --- firejail-0.9.80.orig/etc/profile-a-l/lyx.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-a-l/lyx.profile	2026-05-28 11:00:42.623475731 -0700
++++ firejail-0.9.80/etc/profile-a-l/lyx.profile	2026-05-28 12:32:49.870328538 -0700
 @@ -10,6 +10,10 @@ ignore private-tmp
  
  noblacklist ${HOME}/.config/LyX
@@ -2643,7 +2840,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/lyx.profile fireja
  include allow-lua.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/macrofusion.profile firejail-0.9.80/etc/profile-m-z/macrofusion.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/macrofusion.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/macrofusion.profile	2026-05-28 11:00:42.623475731 -0700
++++ firejail-0.9.80/etc/profile-m-z/macrofusion.profile	2026-05-28 12:32:49.870328538 -0700
 @@ -7,6 +7,8 @@ include globals.local
  
  noblacklist ${HOME}/.config/mfusion
@@ -2654,8 +2851,8 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/macrofusion.profil
  # Allow python (blacklisted by disable-interpreters.inc)
  include allow-python2.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/man.profile firejail-0.9.80/etc/profile-m-z/man.profile
---- firejail-0.9.80.orig/etc/profile-m-z/man.profile	2026-05-28 11:00:16.576278834 -0700
-+++ firejail-0.9.80/etc/profile-m-z/man.profile	2026-05-28 11:00:42.623475731 -0700
+--- firejail-0.9.80.orig/etc/profile-m-z/man.profile	2026-05-28 12:32:01.767802996 -0700
++++ firejail-0.9.80/etc/profile-m-z/man.profile	2026-05-28 12:32:49.870328538 -0700
 @@ -9,6 +9,19 @@ include globals.local
  
  noblacklist ${HOME}/.local/share/man
@@ -2678,7 +2875,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/man.profile fireja
  include allow-perl.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/mcomix.profile firejail-0.9.80/etc/profile-m-z/mcomix.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/mcomix.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/mcomix.profile	2026-05-28 11:00:42.623475731 -0700
++++ firejail-0.9.80/etc/profile-m-z/mcomix.profile	2026-05-28 12:32:49.870328538 -0700
 @@ -9,6 +9,12 @@ include globals.local
  noblacklist ${HOME}/.config/mcomix
  noblacklist ${HOME}/.local/share/mcomix
@@ -2694,7 +2891,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/mcomix.profile fir
  include allow-bin-sh.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/meld.profile firejail-0.9.80/etc/profile-m-z/meld.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/meld.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/meld.profile	2026-05-28 11:00:42.623475731 -0700
++++ firejail-0.9.80/etc/profile-m-z/meld.profile	2026-05-28 12:32:49.870328538 -0700
 @@ -19,6 +19,12 @@ noblacklist ${HOME}/.gitconfig
  noblacklist ${HOME}/.git-credentials
  noblacklist ${HOME}/.local/share/meld
@@ -2710,7 +2907,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/meld.profile firej
  # Python 2 is EOL (see #3164). Add the next line to your meld.local if you understand the risks
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/mendeleydesktop.profile firejail-0.9.80/etc/profile-m-z/mendeleydesktop.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/mendeleydesktop.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/mendeleydesktop.profile	2026-05-28 11:00:42.623475731 -0700
++++ firejail-0.9.80/etc/profile-m-z/mendeleydesktop.profile	2026-05-28 12:32:49.870328538 -0700
 @@ -13,6 +13,10 @@ noblacklist ${HOME}/.local/share/Mendele
  noblacklist ${HOME}/.local/share/data/Mendeley Ltd.
  noblacklist ${HOME}/.pki
@@ -2724,7 +2921,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/mendeleydesktop.pr
  include allow-python2.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/metadata-cleaner.profile firejail-0.9.80/etc/profile-m-z/metadata-cleaner.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/metadata-cleaner.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/metadata-cleaner.profile	2026-05-28 11:00:42.623475731 -0700
++++ firejail-0.9.80/etc/profile-m-z/metadata-cleaner.profile	2026-05-28 12:32:49.870328538 -0700
 @@ -6,6 +6,14 @@ include metadata-cleaner.local
  # Persistent global definitions
  include globals.local
@@ -2742,7 +2939,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/metadata-cleaner.p
  # Allow perl (blacklisted by disable-interpreters.inc)
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/midori.profile firejail-0.9.80/etc/profile-m-z/midori.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/midori.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/midori.profile	2026-05-28 11:00:42.623475731 -0700
++++ firejail-0.9.80/etc/profile-m-z/midori.profile	2026-05-28 12:32:49.870328538 -0700
 @@ -21,6 +21,8 @@ noblacklist ${HOME}/.cache/gnome-mplayer
  noblacklist ${HOME}/.config/gnome-mplayer
  noblacklist ${HOME}/.lastpass
@@ -2754,7 +2951,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/midori.profile fir
  include disable-exec.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/mirage.profile firejail-0.9.80/etc/profile-m-z/mirage.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/mirage.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/mirage.profile	2026-05-28 11:00:42.623475731 -0700
++++ firejail-0.9.80/etc/profile-m-z/mirage.profile	2026-05-28 12:32:49.870328538 -0700
 @@ -9,6 +9,7 @@ include globals.local
  noblacklist ${HOME}/.cache/mirage
  noblacklist ${HOME}/.config/mirage
@@ -2765,7 +2962,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/mirage.profile fir
  # Allow python (blacklisted by disable-interpreters.inc)
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/mov-cli.profile firejail-0.9.80/etc/profile-m-z/mov-cli.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/mov-cli.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/mov-cli.profile	2026-05-28 11:00:42.627475608 -0700
++++ firejail-0.9.80/etc/profile-m-z/mov-cli.profile	2026-05-28 12:32:49.870328538 -0700
 @@ -9,6 +9,9 @@ include mov-cli.local
  #include globals.local
  
@@ -2778,7 +2975,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/mov-cli.profile fi
  include allow-bin-sh.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/mpd.profile firejail-0.9.80/etc/profile-m-z/mpd.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/mpd.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/mpd.profile	2026-05-28 11:00:42.627475608 -0700
++++ firejail-0.9.80/etc/profile-m-z/mpd.profile	2026-05-28 12:32:49.870328538 -0700
 @@ -10,6 +10,7 @@ noblacklist ${HOME}/.config/mpd
  noblacklist ${HOME}/.mpd
  noblacklist ${HOME}/.mpdconf
@@ -2789,7 +2986,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/mpd.profile fireja
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/mpsyt.profile firejail-0.9.80/etc/profile-m-z/mpsyt.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/mpsyt.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/mpsyt.profile	2026-05-28 11:00:42.627475608 -0700
++++ firejail-0.9.80/etc/profile-m-z/mpsyt.profile	2026-05-28 12:32:49.870328538 -0700
 @@ -14,6 +14,7 @@ noblacklist ${HOME}/.local/state/mpv
  noblacklist ${HOME}/.mplayer
  noblacklist ${HOME}/.netrc
@@ -2800,7 +2997,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/mpsyt.profile fire
  include allow-lua.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/ms-office.profile firejail-0.9.80/etc/profile-m-z/ms-office.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/ms-office.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/ms-office.profile	2026-05-28 11:00:42.627475608 -0700
++++ firejail-0.9.80/etc/profile-m-z/ms-office.profile	2026-05-28 12:32:49.870328538 -0700
 @@ -7,6 +7,9 @@ include globals.local
  
  noblacklist ${HOME}/.cache/ms-office-online
@@ -2813,7 +3010,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/ms-office.profile 
  include allow-python2.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/mullvad-browser.profile firejail-0.9.80/etc/profile-m-z/mullvad-browser.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/mullvad-browser.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/mullvad-browser.profile	2026-05-28 11:00:42.627475608 -0700
++++ firejail-0.9.80/etc/profile-m-z/mullvad-browser.profile	2026-05-28 12:32:49.874328417 -0700
 @@ -27,6 +27,28 @@ noblacklist ${HOME}/.cache/mullvad/mullv
  noblacklist ${HOME}/.config/mullvad-browser-flags.conf
  noblacklist ${HOME}/.local/share/mullvad-browser
@@ -2853,7 +3050,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/mullvad-browser.pr
  private-dev
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/multimc5.profile firejail-0.9.80/etc/profile-m-z/multimc5.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/multimc5.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/multimc5.profile	2026-05-28 11:00:42.627475608 -0700
++++ firejail-0.9.80/etc/profile-m-z/multimc5.profile	2026-05-28 12:32:49.874328417 -0700
 @@ -9,6 +9,17 @@ noblacklist ${HOME}/.local/share/multimc
  noblacklist ${HOME}/.local/share/multimc5
  noblacklist ${HOME}/.multimc5
@@ -2874,7 +3071,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/multimc5.profile f
  # Ignore noexec on ${HOME} as MultiMC installs LWJGL native
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/mutt.profile firejail-0.9.80/etc/profile-m-z/mutt.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/mutt.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/mutt.profile	2026-05-28 11:00:42.627475608 -0700
++++ firejail-0.9.80/etc/profile-m-z/mutt.profile	2026-05-28 12:32:49.874328417 -0700
 @@ -36,6 +36,7 @@ noblacklist ${HOME}/Mail
  noblacklist ${HOME}/mail
  noblacklist ${HOME}/postponed
@@ -2885,7 +3082,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/mutt.profile firej
  # Add the next lines to your mutt.local for oauth.py,S/MIME support.
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/nano.profile firejail-0.9.80/etc/profile-m-z/nano.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/nano.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/nano.profile	2026-05-28 11:00:42.627475608 -0700
++++ firejail-0.9.80/etc/profile-m-z/nano.profile	2026-05-28 12:32:49.874328417 -0700
 @@ -9,6 +9,7 @@ include globals.local
  
  noblacklist ${HOME}/.config/nano
@@ -2896,7 +3093,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/nano.profile firej
  
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/neomutt.profile firejail-0.9.80/etc/profile-m-z/neomutt.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/neomutt.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/neomutt.profile	2026-05-28 11:00:42.627475608 -0700
++++ firejail-0.9.80/etc/profile-m-z/neomutt.profile	2026-05-28 12:32:49.874328417 -0700
 @@ -35,6 +35,8 @@ noblacklist ${HOME}/Mail
  noblacklist ${HOME}/mail
  noblacklist ${HOME}/postponed
@@ -2908,7 +3105,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/neomutt.profile fi
  noblacklist /var/spool/mail
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/newsboat.profile firejail-0.9.80/etc/profile-m-z/newsboat.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/newsboat.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/newsboat.profile	2026-05-28 11:00:42.627475608 -0700
++++ firejail-0.9.80/etc/profile-m-z/newsboat.profile	2026-05-28 12:32:49.874328417 -0700
 @@ -12,6 +12,10 @@ noblacklist ${HOME}/.local/share/newsbeu
  noblacklist ${HOME}/.local/share/newsboat
  noblacklist ${HOME}/.newsbeuter
@@ -2922,7 +3119,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/newsboat.profile f
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/nitroshare.profile firejail-0.9.80/etc/profile-m-z/nitroshare.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/nitroshare.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/nitroshare.profile	2026-05-28 11:00:42.627475608 -0700
++++ firejail-0.9.80/etc/profile-m-z/nitroshare.profile	2026-05-28 12:32:49.874328417 -0700
 @@ -8,6 +8,8 @@ include globals.local
  
  noblacklist ${HOME}/.config/Nathan Osman
@@ -2934,7 +3131,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/nitroshare.profile
  include allow-python2.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/nslookup.profile firejail-0.9.80/etc/profile-m-z/nslookup.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/nslookup.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/nslookup.profile	2026-05-28 11:00:42.627475608 -0700
++++ firejail-0.9.80/etc/profile-m-z/nslookup.profile	2026-05-28 12:32:49.874328417 -0700
 @@ -7,7 +7,9 @@ include nslookup.local
  # Persistent global definitions
  include globals.local
@@ -2947,7 +3144,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/nslookup.profile f
  
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/obsidian.profile firejail-0.9.80/etc/profile-m-z/obsidian.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/obsidian.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/obsidian.profile	2026-05-28 11:00:42.627475608 -0700
++++ firejail-0.9.80/etc/profile-m-z/obsidian.profile	2026-05-28 12:32:49.874328417 -0700
 @@ -8,6 +8,11 @@ include globals.local
  
  noblacklist ${DOCUMENTS}
@@ -2962,7 +3159,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/obsidian.profile f
  whitelist ${DOCUMENTS}
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/obs.profile firejail-0.9.80/etc/profile-m-z/obs.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/obs.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/obs.profile	2026-05-28 11:00:42.627475608 -0700
++++ firejail-0.9.80/etc/profile-m-z/obs.profile	2026-05-28 12:32:49.874328417 -0700
 @@ -9,6 +9,10 @@ noblacklist ${HOME}/.config/obs-studio
  noblacklist ${MUSIC}
  noblacklist ${PICTURES}
@@ -2976,7 +3173,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/obs.profile fireja
  include allow-lua.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/okular.profile firejail-0.9.80/etc/profile-m-z/okular.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/okular.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/okular.profile	2026-05-28 11:00:42.627475608 -0700
++++ firejail-0.9.80/etc/profile-m-z/okular.profile	2026-05-28 12:32:49.874328417 -0700
 @@ -18,6 +18,8 @@ noblacklist ${HOME}/.kde4/share/config/o
  noblacklist ${HOME}/.local/share/kxmlgui5/okular
  noblacklist ${HOME}/.local/share/okular
@@ -2988,7 +3185,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/okular.profile fir
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/openarena.profile firejail-0.9.80/etc/profile-m-z/openarena.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/openarena.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/openarena.profile	2026-05-28 11:00:42.627475608 -0700
++++ firejail-0.9.80/etc/profile-m-z/openarena.profile	2026-05-28 12:32:49.874328417 -0700
 @@ -7,6 +7,12 @@ include openarena.local
  include globals.local
  
@@ -3004,7 +3201,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/openarena.profile 
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/openra.profile firejail-0.9.80/etc/profile-m-z/openra.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/openra.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/openra.profile	2026-05-28 11:00:42.627475608 -0700
++++ firejail-0.9.80/etc/profile-m-z/openra.profile	2026-05-28 12:32:49.874328417 -0700
 @@ -7,6 +7,10 @@ include openra.local
  include globals.local
  
@@ -3018,7 +3215,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/openra.profile fir
  include allow-bin-sh.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/openstego.profile firejail-0.9.80/etc/profile-m-z/openstego.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/openstego.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/openstego.profile	2026-05-28 11:00:42.627475608 -0700
++++ firejail-0.9.80/etc/profile-m-z/openstego.profile	2026-05-28 12:32:49.874328417 -0700
 @@ -7,6 +7,8 @@ include openstego.local
  include globals.local
  
@@ -3030,7 +3227,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/openstego.profile 
  include allow-java.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/otter-browser.profile firejail-0.9.80/etc/profile-m-z/otter-browser.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/otter-browser.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/otter-browser.profile	2026-05-28 11:00:42.627475608 -0700
++++ firejail-0.9.80/etc/profile-m-z/otter-browser.profile	2026-05-28 12:32:49.874328417 -0700
 @@ -13,6 +13,8 @@ noblacklist ${HOME}/.config/otter
  noblacklist ${HOME}/.local/share/pki
  noblacklist ${HOME}/.mailcap
@@ -3042,7 +3239,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/otter-browser.prof
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/p7zip.profile firejail-0.9.80/etc/profile-m-z/p7zip.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/p7zip.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/p7zip.profile	2026-05-28 11:00:42.627475608 -0700
++++ firejail-0.9.80/etc/profile-m-z/p7zip.profile	2026-05-28 12:32:49.874328417 -0700
 @@ -8,5 +8,7 @@ include p7zip.local
  # added by included profile
  #include globals.local
@@ -3053,7 +3250,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/p7zip.profile fire
  include 7z.profile
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/parsecd.profile firejail-0.9.80/etc/profile-m-z/parsecd.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/parsecd.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/parsecd.profile	2026-05-28 11:00:42.627475608 -0700
++++ firejail-0.9.80/etc/profile-m-z/parsecd.profile	2026-05-28 12:32:49.874328417 -0700
 @@ -7,6 +7,7 @@ include parsecd.local
  include globals.local
  
@@ -3064,7 +3261,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/parsecd.profile fi
  include disable-common.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/pdfsam.profile firejail-0.9.80/etc/profile-m-z/pdfsam.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/pdfsam.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/pdfsam.profile	2026-05-28 11:00:42.627475608 -0700
++++ firejail-0.9.80/etc/profile-m-z/pdfsam.profile	2026-05-28 12:32:49.874328417 -0700
 @@ -7,6 +7,16 @@ include pdfsam.local
  include globals.local
  
@@ -3084,7 +3281,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/pdfsam.profile fir
  include allow-java.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/peek.profile firejail-0.9.80/etc/profile-m-z/peek.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/peek.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/peek.profile	2026-05-28 11:00:42.627475608 -0700
++++ firejail-0.9.80/etc/profile-m-z/peek.profile	2026-05-28 12:32:49.874328417 -0700
 @@ -9,6 +9,15 @@ include globals.local
  noblacklist ${HOME}/.cache/peek
  noblacklist ${PICTURES}
@@ -3103,7 +3300,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/peek.profile firej
  #include allow-python2.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/pybitmessage.profile firejail-0.9.80/etc/profile-m-z/pybitmessage.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/pybitmessage.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/pybitmessage.profile	2026-05-28 11:00:42.627475608 -0700
++++ firejail-0.9.80/etc/profile-m-z/pybitmessage.profile	2026-05-28 12:32:49.874328417 -0700
 @@ -8,6 +8,11 @@ include globals.local
  noblacklist /sbin
  noblacklist /usr/local/sbin
@@ -3116,9 +3313,37 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/pybitmessage.profi
  
  # Allow python (blacklisted by disable-interpreters.inc)
  include allow-python2.inc
+diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/pycharm-community.profile firejail-0.9.80/etc/profile-m-z/pycharm-community.profile
+--- firejail-0.9.80.orig/etc/profile-m-z/pycharm-community.profile	2026-03-12 05:51:18.000000000 -0700
++++ firejail-0.9.80/etc/profile-m-z/pycharm-community.profile	2026-05-28 14:02:31.544369649 -0700
+@@ -12,6 +12,10 @@ noblacklist ${HOME}/.config/JetBrains/Py
+ # Not `PyCharm*`, because the state about of "anonymous data sent" is shared
+ # between JetBrains IDEs.
+ noblacklist ${HOME}/.local/share/JetBrains
++noblacklist ${PATH}/java*
++noblacklist ${PATH}/pycharm
++noblacklist ${PATH}/pycharm-community
++noblacklist /opt/pycharm-community
+ 
+ # Allow java (blacklisted by disable-devel.inc)
+ include allow-java.inc
+diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/pycharm-professional.profile firejail-0.9.80/etc/profile-m-z/pycharm-professional.profile
+--- firejail-0.9.80.orig/etc/profile-m-z/pycharm-professional.profile	2026-03-12 05:51:18.000000000 -0700
++++ firejail-0.9.80/etc/profile-m-z/pycharm-professional.profile	2026-05-28 14:02:22.872638754 -0700
+@@ -6,5 +6,10 @@ include pycharm-professional.local
+ # added by included profile
+ #include globals.local
+ 
++noblacklist ${PATH}/java*
++noblacklist ${PATH}/pycharm
++noblacklist ${PATH}/pycharm-professional
++noblacklist /opt/pycharm-professional
++
+ # Redirect
+ include pycharm-community.profile
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/qcomicbook.profile firejail-0.9.80/etc/profile-m-z/qcomicbook.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/qcomicbook.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/qcomicbook.profile	2026-05-28 11:00:42.627475608 -0700
++++ firejail-0.9.80/etc/profile-m-z/qcomicbook.profile	2026-05-28 12:32:49.874328417 -0700
 @@ -10,6 +10,14 @@ noblacklist ${HOME}/.cache/PawelStolowsk
  noblacklist ${HOME}/.config/PawelStolowski
  noblacklist ${HOME}/.local/share/PawelStolowski
@@ -3136,7 +3361,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/qcomicbook.profile
  include allow-bin-sh.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/qemu-common.profile firejail-0.9.80/etc/profile-m-z/qemu-common.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/qemu-common.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/qemu-common.profile	2026-05-28 11:00:42.627475608 -0700
++++ firejail-0.9.80/etc/profile-m-z/qemu-common.profile	2026-05-28 12:32:49.874328417 -0700
 @@ -7,6 +7,8 @@ include qemu-common.local
  # added by caller profile
  #include globals.local
@@ -3148,7 +3373,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/qemu-common.profil
  
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/qemu-launcher.profile firejail-0.9.80/etc/profile-m-z/qemu-launcher.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/qemu-launcher.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/qemu-launcher.profile	2026-05-28 11:00:42.627475608 -0700
++++ firejail-0.9.80/etc/profile-m-z/qemu-launcher.profile	2026-05-28 12:32:49.874328417 -0700
 @@ -6,6 +6,7 @@ include qemu-launcher.local
  include globals.local
  
@@ -3159,7 +3384,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/qemu-launcher.prof
  include qemu-common.profile
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/qemu-system-x86_64.profile firejail-0.9.80/etc/profile-m-z/qemu-system-x86_64.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/qemu-system-x86_64.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/qemu-system-x86_64.profile	2026-05-28 11:00:42.627475608 -0700
++++ firejail-0.9.80/etc/profile-m-z/qemu-system-x86_64.profile	2026-05-28 12:32:49.874328417 -0700
 @@ -6,5 +6,7 @@ include qemu-system-x86_64.local
  # Persistent global definitions
  include globals.local
@@ -3170,7 +3395,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/qemu-system-x86_64
  include qemu-common.profile
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/qmmp.profile firejail-0.9.80/etc/profile-m-z/qmmp.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/qmmp.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/qmmp.profile	2026-05-28 11:00:42.627475608 -0700
++++ firejail-0.9.80/etc/profile-m-z/qmmp.profile	2026-05-28 12:32:49.874328417 -0700
 @@ -8,6 +8,11 @@ include globals.local
  
  noblacklist ${HOME}/.qmmp
@@ -3185,7 +3410,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/qmmp.profile firej
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/qnapi.profile firejail-0.9.80/etc/profile-m-z/qnapi.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/qnapi.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/qnapi.profile	2026-05-28 11:00:42.627475608 -0700
++++ firejail-0.9.80/etc/profile-m-z/qnapi.profile	2026-05-28 12:32:49.874328417 -0700
 @@ -7,6 +7,7 @@ include qnapi.local
  include globals.local
  
@@ -3196,7 +3421,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/qnapi.profile fire
  
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/QOwnNotes.profile firejail-0.9.80/etc/profile-m-z/QOwnNotes.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/QOwnNotes.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/QOwnNotes.profile	2026-05-28 11:00:42.627475608 -0700
++++ firejail-0.9.80/etc/profile-m-z/QOwnNotes.profile	2026-05-28 12:32:49.874328417 -0700
 @@ -11,6 +11,7 @@ noblacklist ${HOME}/.config/PBE
  noblacklist ${HOME}/.local/share/PBE
  noblacklist ${HOME}/Nextcloud
@@ -3207,7 +3432,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/QOwnNotes.profile 
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/redeclipse.profile firejail-0.9.80/etc/profile-m-z/redeclipse.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/redeclipse.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/redeclipse.profile	2026-05-28 11:00:42.627475608 -0700
++++ firejail-0.9.80/etc/profile-m-z/redeclipse.profile	2026-05-28 12:32:49.874328417 -0700
 @@ -7,6 +7,7 @@ include redeclipse.local
  include globals.local
  
@@ -3218,7 +3443,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/redeclipse.profile
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/remmina.profile firejail-0.9.80/etc/profile-m-z/remmina.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/remmina.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/remmina.profile	2026-05-28 11:00:42.631475484 -0700
++++ firejail-0.9.80/etc/profile-m-z/remmina.profile	2026-05-28 12:32:49.874328417 -0700
 @@ -9,6 +9,7 @@ include globals.local
  noblacklist ${HOME}/.remmina
  noblacklist ${HOME}/.config/remmina
@@ -3229,7 +3454,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/remmina.profile fi
  include allow-ssh.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/rsync-download_only.profile firejail-0.9.80/etc/profile-m-z/rsync-download_only.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/rsync-download_only.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/rsync-download_only.profile	2026-05-28 11:00:42.631475484 -0700
++++ firejail-0.9.80/etc/profile-m-z/rsync-download_only.profile	2026-05-28 12:32:49.874328417 -0700
 @@ -11,6 +11,7 @@ include globals.local
  # not as a daemon (rsync --daemon) nor to create backups.
  # Usage: firejail --profile=rsync-download_only rsync
@@ -3240,7 +3465,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/rsync-download_onl
  include disable-common.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/rtv-addons.profile firejail-0.9.80/etc/profile-m-z/rtv-addons.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/rtv-addons.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/rtv-addons.profile	2026-05-28 11:00:42.631475484 -0700
++++ firejail-0.9.80/etc/profile-m-z/rtv-addons.profile	2026-05-28 12:32:49.874328417 -0700
 @@ -17,6 +17,7 @@ noblacklist ${HOME}/.local/state/mpv
  noblacklist ${HOME}/.mailcap
  noblacklist ${HOME}/.netrc
@@ -3251,7 +3476,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/rtv-addons.profile
  include allow-lua.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/rtv.profile firejail-0.9.80/etc/profile-m-z/rtv.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/rtv.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/rtv.profile	2026-05-28 11:00:42.631475484 -0700
++++ firejail-0.9.80/etc/profile-m-z/rtv.profile	2026-05-28 12:32:49.874328417 -0700
 @@ -13,6 +13,11 @@ include globals.local
  
  noblacklist ${HOME}/.config/rtv
@@ -3266,7 +3491,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/rtv.profile fireja
  include allow-bin-sh.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/scp.profile firejail-0.9.80/etc/profile-m-z/scp.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/scp.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/scp.profile	2026-05-28 11:00:42.631475484 -0700
++++ firejail-0.9.80/etc/profile-m-z/scp.profile	2026-05-28 12:32:49.874328417 -0700
 @@ -8,5 +8,7 @@ include scp.local
  # added by included profile
  #include globals.local
@@ -3277,7 +3502,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/scp.profile fireja
  include ssh.profile
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/seahorse-adventures.profile firejail-0.9.80/etc/profile-m-z/seahorse-adventures.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/seahorse-adventures.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/seahorse-adventures.profile	2026-05-28 11:00:42.631475484 -0700
++++ firejail-0.9.80/etc/profile-m-z/seahorse-adventures.profile	2026-05-28 12:32:49.874328417 -0700
 @@ -6,6 +6,11 @@ include seahorse-adventures.local
  # Persistent global definitions
  include globals.local
@@ -3292,7 +3517,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/seahorse-adventure
  
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/sftp.profile firejail-0.9.80/etc/profile-m-z/sftp.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/sftp.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/sftp.profile	2026-05-28 11:00:42.631475484 -0700
++++ firejail-0.9.80/etc/profile-m-z/sftp.profile	2026-05-28 12:32:49.874328417 -0700
 @@ -8,5 +8,7 @@ include sftp.local
  # added by included profile
  #include globals.local
@@ -3303,7 +3528,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/sftp.profile firej
  include ssh.profile
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/signal-cli.profile firejail-0.9.80/etc/profile-m-z/signal-cli.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/signal-cli.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/signal-cli.profile	2026-05-28 11:00:42.631475484 -0700
++++ firejail-0.9.80/etc/profile-m-z/signal-cli.profile	2026-05-28 12:32:49.878328294 -0700
 @@ -7,6 +7,8 @@ include signal-cli.local
  include globals.local
  
@@ -3315,7 +3540,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/signal-cli.profile
  
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/singularity.profile firejail-0.9.80/etc/profile-m-z/singularity.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/singularity.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/singularity.profile	2026-05-28 11:00:42.631475484 -0700
++++ firejail-0.9.80/etc/profile-m-z/singularity.profile	2026-05-28 12:32:49.878328294 -0700
 @@ -8,6 +8,7 @@ include globals.local
  
  noblacklist ${HOME}/.config/singularity
@@ -3326,7 +3551,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/singularity.profil
  include allow-bin-sh.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/slack.profile firejail-0.9.80/etc/profile-m-z/slack.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/slack.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/slack.profile	2026-05-28 11:00:42.631475484 -0700
++++ firejail-0.9.80/etc/profile-m-z/slack.profile	2026-05-28 12:32:49.878328294 -0700
 @@ -5,6 +5,8 @@ include slack.local
  # Persistent global definitions
  include globals.local
@@ -3338,7 +3563,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/slack.profile fire
  ignore include disable-xdg.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/smuxi-frontend-gnome.profile firejail-0.9.80/etc/profile-m-z/smuxi-frontend-gnome.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/smuxi-frontend-gnome.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/smuxi-frontend-gnome.profile	2026-05-28 11:00:42.631475484 -0700
++++ firejail-0.9.80/etc/profile-m-z/smuxi-frontend-gnome.profile	2026-05-28 12:32:49.878328294 -0700
 @@ -9,6 +9,10 @@ include globals.local
  noblacklist ${HOME}/.cache/smuxi
  noblacklist ${HOME}/.config/smuxi
@@ -3352,7 +3577,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/smuxi-frontend-gno
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/softmaker-common.profile firejail-0.9.80/etc/profile-m-z/softmaker-common.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/softmaker-common.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/softmaker-common.profile	2026-05-28 11:00:42.631475484 -0700
++++ firejail-0.9.80/etc/profile-m-z/softmaker-common.profile	2026-05-28 12:32:49.878328294 -0700
 @@ -11,6 +11,7 @@ include softmaker-common.local
  # therefore you must manually copy them in you home and remove '/usr/bin/'.
  
@@ -3363,7 +3588,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/softmaker-common.p
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/songrec.profile firejail-0.9.80/etc/profile-m-z/songrec.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/songrec.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/songrec.profile	2026-05-28 11:00:42.631475484 -0700
++++ firejail-0.9.80/etc/profile-m-z/songrec.profile	2026-05-28 12:32:49.878328294 -0700
 @@ -9,6 +9,7 @@ include globals.local
  noblacklist ${HOME}/.local/share/SongRec
  noblacklist ${MUSIC}
@@ -3374,7 +3599,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/songrec.profile fi
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/spectacle.profile firejail-0.9.80/etc/profile-m-z/spectacle.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/spectacle.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/spectacle.profile	2026-05-28 11:00:42.631475484 -0700
++++ firejail-0.9.80/etc/profile-m-z/spectacle.profile	2026-05-28 12:32:49.878328294 -0700
 @@ -14,6 +14,7 @@ include globals.local
  
  noblacklist ${HOME}/.config/spectaclerc
@@ -3385,7 +3610,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/spectacle.profile 
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/spectre-meltdown-checker.profile firejail-0.9.80/etc/profile-m-z/spectre-meltdown-checker.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/spectre-meltdown-checker.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/spectre-meltdown-checker.profile	2026-05-28 11:00:42.631475484 -0700
++++ firejail-0.9.80/etc/profile-m-z/spectre-meltdown-checker.profile	2026-05-28 12:32:49.878328294 -0700
 @@ -6,8 +6,45 @@ include spectre-meltdown-checker.local
  # Persistent global definitions
  include globals.local
@@ -3433,8 +3658,8 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/spectre-meltdown-c
  
  # Allow perl (blacklisted by disable-interpreters.inc)
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/spotify.profile firejail-0.9.80/etc/profile-m-z/spotify.profile
---- firejail-0.9.80.orig/etc/profile-m-z/spotify.profile	2026-05-28 11:00:16.580278710 -0700
-+++ firejail-0.9.80/etc/profile-m-z/spotify.profile	2026-05-28 11:00:42.631475484 -0700
+--- firejail-0.9.80.orig/etc/profile-m-z/spotify.profile	2026-05-28 12:32:01.767802996 -0700
++++ firejail-0.9.80/etc/profile-m-z/spotify.profile	2026-05-28 12:32:49.878328294 -0700
 @@ -9,6 +9,15 @@ noblacklist ${HOME}/.cache/spotify
  noblacklist ${HOME}/.config/spotify
  noblacklist ${HOME}/.config/spotify-adblock
@@ -3453,7 +3678,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/spotify.profile fi
  
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/ssmtp.profile firejail-0.9.80/etc/profile-m-z/ssmtp.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/ssmtp.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/ssmtp.profile	2026-05-28 11:00:42.631475484 -0700
++++ firejail-0.9.80/etc/profile-m-z/ssmtp.profile	2026-05-28 12:32:49.878328294 -0700
 @@ -13,6 +13,7 @@ noblacklist /sbin
  noblacklist /usr/sbin
  
@@ -3464,7 +3689,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/ssmtp.profile fire
  blacklist ${RUNUSER}
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/steam.profile firejail-0.9.80/etc/profile-m-z/steam.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/steam.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/steam.profile	2026-05-28 11:00:42.631475484 -0700
++++ firejail-0.9.80/etc/profile-m-z/steam.profile	2026-05-28 12:32:49.878328294 -0700
 @@ -47,6 +47,62 @@ noblacklist ${HOME}/.steam
  noblacklist ${HOME}/.steampath
  noblacklist ${HOME}/.steampid
@@ -3530,7 +3755,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/steam.profile fire
  noblacklist /usr/sbin
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/surf.profile firejail-0.9.80/etc/profile-m-z/surf.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/surf.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/surf.profile	2026-05-28 11:00:42.631475484 -0700
++++ firejail-0.9.80/etc/profile-m-z/surf.profile	2026-05-28 12:32:49.878328294 -0700
 @@ -7,6 +7,16 @@ include surf.local
  include globals.local
  
@@ -3550,7 +3775,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/surf.profile firej
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/sway.profile firejail-0.9.80/etc/profile-m-z/sway.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/sway.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/sway.profile	2026-05-28 11:00:42.631475484 -0700
++++ firejail-0.9.80/etc/profile-m-z/sway.profile	2026-05-28 12:32:49.878328294 -0700
 @@ -13,6 +13,7 @@ noblacklist ${HOME}/.config/i3
  # allow creation of IPC socket
  noblacklist ${RUNUSER}/sway-ipc.*
@@ -3561,7 +3786,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/sway.profile firej
  
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/sylpheed.profile firejail-0.9.80/etc/profile-m-z/sylpheed.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/sylpheed.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/sylpheed.profile	2026-05-28 11:00:42.631475484 -0700
++++ firejail-0.9.80/etc/profile-m-z/sylpheed.profile	2026-05-28 12:32:49.878328294 -0700
 @@ -7,6 +7,7 @@ include sylpheed.local
  include globals.local
  
@@ -3572,7 +3797,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/sylpheed.profile f
  whitelist ${HOME}/.sylpheed-2.0
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/synfigstudio.profile firejail-0.9.80/etc/profile-m-z/synfigstudio.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/synfigstudio.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/synfigstudio.profile	2026-05-28 11:00:42.631475484 -0700
++++ firejail-0.9.80/etc/profile-m-z/synfigstudio.profile	2026-05-28 12:32:49.878328294 -0700
 @@ -8,6 +8,7 @@ include globals.local
  
  noblacklist ${HOME}/.config/synfig
@@ -3583,7 +3808,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/synfigstudio.profi
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/teams-for-linux.profile firejail-0.9.80/etc/profile-m-z/teams-for-linux.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/teams-for-linux.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/teams-for-linux.profile	2026-05-28 11:00:42.631475484 -0700
++++ firejail-0.9.80/etc/profile-m-z/teams-for-linux.profile	2026-05-28 12:32:49.878328294 -0700
 @@ -6,6 +6,18 @@ include teams-for-linux.local
  # Persistent global definitions
  include globals.local
@@ -3605,7 +3830,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/teams-for-linux.pr
  ignore include whitelist-runuser-common.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/telegram.profile firejail-0.9.80/etc/profile-m-z/telegram.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/telegram.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/telegram.profile	2026-05-28 11:00:42.631475484 -0700
++++ firejail-0.9.80/etc/profile-m-z/telegram.profile	2026-05-28 12:32:49.878328294 -0700
 @@ -8,6 +8,9 @@ include globals.local
  noblacklist ${HOME}/.TelegramDesktop
  noblacklist ${HOME}/.local/share/TelegramDesktop
@@ -3618,7 +3843,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/telegram.profile f
  include allow-bin-sh.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/termshark.profile firejail-0.9.80/etc/profile-m-z/termshark.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/termshark.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/termshark.profile	2026-05-28 11:00:42.631475484 -0700
++++ firejail-0.9.80/etc/profile-m-z/termshark.profile	2026-05-28 12:32:49.878328294 -0700
 @@ -8,6 +8,7 @@ include termshark.local
  # added by included profile
  #include globals.local
@@ -3629,7 +3854,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/termshark.profile 
  include disable-x11.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/torbrowser-launcher.profile firejail-0.9.80/etc/profile-m-z/torbrowser-launcher.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/torbrowser-launcher.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/torbrowser-launcher.profile	2026-05-28 11:00:42.631475484 -0700
++++ firejail-0.9.80/etc/profile-m-z/torbrowser-launcher.profile	2026-05-28 12:32:49.878328294 -0700
 @@ -10,6 +10,31 @@ ignore noexec ${HOME}
  
  noblacklist ${HOME}/.config/torbrowser
@@ -3664,7 +3889,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/torbrowser-launche
  include allow-python2.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/torcs.profile firejail-0.9.80/etc/profile-m-z/torcs.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/torcs.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/torcs.profile	2026-05-28 11:00:42.631475484 -0700
++++ firejail-0.9.80/etc/profile-m-z/torcs.profile	2026-05-28 12:32:49.878328294 -0700
 @@ -7,6 +7,11 @@ include torcs.local
  include globals.local
  
@@ -3679,7 +3904,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/torcs.profile fire
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/tor.profile firejail-0.9.80/etc/profile-m-z/tor.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/tor.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/tor.profile	2026-05-28 11:00:42.631475484 -0700
++++ firejail-0.9.80/etc/profile-m-z/tor.profile	2026-05-28 12:32:49.878328294 -0700
 @@ -6,6 +6,9 @@ include tor.local
  # Persistent global definitions
  include globals.local
@@ -3692,7 +3917,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/tor.profile fireja
  # with the following contents:
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/tqemu.profile firejail-0.9.80/etc/profile-m-z/tqemu.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/tqemu.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/tqemu.profile	2026-05-28 11:00:42.631475484 -0700
++++ firejail-0.9.80/etc/profile-m-z/tqemu.profile	2026-05-28 12:32:49.878328294 -0700
 @@ -6,6 +6,8 @@ include tqemu.local
  # Persistent global definitions
  include globals.local
@@ -3704,7 +3929,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/tqemu.profile fire
  
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/tremulous.profile firejail-0.9.80/etc/profile-m-z/tremulous.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/tremulous.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/tremulous.profile	2026-05-28 11:00:42.635475361 -0700
++++ firejail-0.9.80/etc/profile-m-z/tremulous.profile	2026-05-28 12:32:49.878328294 -0700
 @@ -7,6 +7,7 @@ include tremulous.local
  include globals.local
  
@@ -3715,7 +3940,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/tremulous.profile 
  include allow-bin-sh.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/trivalent.profile firejail-0.9.80/etc/profile-m-z/trivalent.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/trivalent.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/trivalent.profile	2026-05-28 11:00:42.635475361 -0700
++++ firejail-0.9.80/etc/profile-m-z/trivalent.profile	2026-05-28 12:32:49.878328294 -0700
 @@ -8,6 +8,12 @@ include globals.local
  
  noblacklist ${HOME}/.cache/trivalent
@@ -3731,7 +3956,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/trivalent.profile 
  mkdir ${HOME}/.config/trivalent
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/udiskie.profile firejail-0.9.80/etc/profile-m-z/udiskie.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/udiskie.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/udiskie.profile	2026-05-28 11:00:42.635475361 -0700
++++ firejail-0.9.80/etc/profile-m-z/udiskie.profile	2026-05-28 12:32:49.878328294 -0700
 @@ -6,6 +6,19 @@ include udiskie.local
  # Persistent global definitions
  include globals.local
@@ -3754,7 +3979,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/udiskie.profile fi
  
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/unrar.profile firejail-0.9.80/etc/profile-m-z/unrar.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/unrar.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/unrar.profile	2026-05-28 11:00:42.635475361 -0700
++++ firejail-0.9.80/etc/profile-m-z/unrar.profile	2026-05-28 12:32:49.878328294 -0700
 @@ -7,6 +7,8 @@ include unrar.local
  # Persistent global definitions
  include globals.local
@@ -3766,7 +3991,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/unrar.profile fire
  
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/Viber.profile firejail-0.9.80/etc/profile-m-z/Viber.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/Viber.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/Viber.profile	2026-05-28 11:00:42.635475361 -0700
++++ firejail-0.9.80/etc/profile-m-z/Viber.profile	2026-05-28 12:32:49.878328294 -0700
 @@ -7,7 +7,10 @@ include globals.local
  
  noblacklist ${HOME}/.ViberPC
@@ -3780,7 +4005,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/Viber.profile fire
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/virt-manager.profile firejail-0.9.80/etc/profile-m-z/virt-manager.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/virt-manager.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/virt-manager.profile	2026-05-28 11:00:42.635475361 -0700
++++ firejail-0.9.80/etc/profile-m-z/virt-manager.profile	2026-05-28 12:32:49.878328294 -0700
 @@ -8,6 +8,12 @@ include globals.local
  
  noblacklist ${HOME}/.cache/virt-manager
@@ -3796,7 +4021,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/virt-manager.profi
  noblacklist /usr/sbin
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/virtualbox.profile firejail-0.9.80/etc/profile-m-z/virtualbox.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/virtualbox.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/virtualbox.profile	2026-05-28 11:06:16.961193009 -0700
++++ firejail-0.9.80/etc/profile-m-z/virtualbox.profile	2026-05-28 12:32:49.878328294 -0700
 @@ -9,9 +9,15 @@ include globals.local
  noblacklist ${HOME}/.VirtualBox
  noblacklist ${HOME}/.config/VirtualBox
@@ -3818,7 +4043,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/virtualbox.profile
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/VirtualBox.profile firejail-0.9.80/etc/profile-m-z/VirtualBox.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/VirtualBox.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/VirtualBox.profile	2026-05-28 11:04:58.803578143 -0700
++++ firejail-0.9.80/etc/profile-m-z/VirtualBox.profile	2026-05-28 12:32:49.878328294 -0700
 @@ -7,5 +7,7 @@ include VirtualBox.local
  # added by included profile
  #include globals.local
@@ -3829,7 +4054,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/VirtualBox.profile
  include virtualbox.profile
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/vivaldi.profile firejail-0.9.80/etc/profile-m-z/vivaldi.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/vivaldi.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/vivaldi.profile	2026-05-28 11:00:42.635475361 -0700
++++ firejail-0.9.80/etc/profile-m-z/vivaldi.profile	2026-05-28 12:32:49.878328294 -0700
 @@ -5,6 +5,10 @@ include vivaldi.local
  # Persistent global definitions
  include globals.local
@@ -3843,7 +4068,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/vivaldi.profile fi
  ignore noexec /var
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/vmware.profile firejail-0.9.80/etc/profile-m-z/vmware.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/vmware.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/vmware.profile	2026-05-28 11:06:34.532656974 -0700
++++ firejail-0.9.80/etc/profile-m-z/vmware.profile	2026-05-28 12:32:49.878328294 -0700
 @@ -8,7 +8,16 @@ include globals.local
  
  noblacklist ${HOME}/.cache/vmware
@@ -3861,9 +4086,20 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/vmware.profile fir
  
  include disable-common.inc
  #include disable-devel.inc # gcc is used to compile kernel modules
+diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/vscodium.profile firejail-0.9.80/etc/profile-m-z/vscodium.profile
+--- firejail-0.9.80.orig/etc/profile-m-z/vscodium.profile	2026-03-12 05:51:18.000000000 -0700
++++ firejail-0.9.80/etc/profile-m-z/vscodium.profile	2026-05-28 13:18:00.470879989 -0700
+@@ -8,6 +8,7 @@ include vscodium.local
+ 
+ noblacklist ${HOME}/.VSCodium
+ noblacklist ${HOME}/.config/VSCodium
++noblacklist ${PATH}/vscodium
+ 
+ # Redirect
+ include code.profile
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/w3m.profile firejail-0.9.80/etc/profile-m-z/w3m.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/w3m.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/w3m.profile	2026-05-28 11:00:42.635475361 -0700
++++ firejail-0.9.80/etc/profile-m-z/w3m.profile	2026-05-28 12:32:49.882328170 -0700
 @@ -14,6 +14,9 @@ include globals.local
  
  noblacklist ${HOME}/.mailcap
@@ -3876,7 +4112,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/w3m.profile fireja
  include allow-bin-sh.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/warsow.profile firejail-0.9.80/etc/profile-m-z/warsow.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/warsow.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/warsow.profile	2026-05-28 11:00:42.635475361 -0700
++++ firejail-0.9.80/etc/profile-m-z/warsow.profile	2026-05-28 12:32:49.882328170 -0700
 @@ -10,6 +10,10 @@ ignore noexec ${HOME}
  
  noblacklist ${HOME}/.cache/warsow-2.1
@@ -3890,7 +4126,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/warsow.profile fir
  include allow-bin-sh.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/warzone2100.profile firejail-0.9.80/etc/profile-m-z/warzone2100.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/warzone2100.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/warzone2100.profile	2026-05-28 11:00:42.635475361 -0700
++++ firejail-0.9.80/etc/profile-m-z/warzone2100.profile	2026-05-28 12:32:49.882328170 -0700
 @@ -9,6 +9,10 @@ include globals.local
  noblacklist ${HOME}/.warzone2100-3.*
  noblacklist ${HOME}/.local/share/warzone2100
@@ -3904,7 +4140,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/warzone2100.profil
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/waterfox.profile firejail-0.9.80/etc/profile-m-z/waterfox.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/waterfox.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/waterfox.profile	2026-05-28 11:00:42.635475361 -0700
++++ firejail-0.9.80/etc/profile-m-z/waterfox.profile	2026-05-28 12:32:49.882328170 -0700
 @@ -7,6 +7,8 @@ include globals.local
  
  noblacklist ${HOME}/.cache/waterfox
@@ -3916,7 +4152,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/waterfox.profile f
  mkdir ${HOME}/.waterfox
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/wget2.profile firejail-0.9.80/etc/profile-m-z/wget2.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/wget2.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/wget2.profile	2026-05-28 11:00:42.635475361 -0700
++++ firejail-0.9.80/etc/profile-m-z/wget2.profile	2026-05-28 12:32:49.882328170 -0700
 @@ -8,6 +8,8 @@ include wget2.local
  # added by included profile
  #include globals.local
@@ -3928,7 +4164,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/wget2.profile fire
  # Redirect
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/wget.profile firejail-0.9.80/etc/profile-m-z/wget.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/wget.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/wget.profile	2026-05-28 11:00:42.635475361 -0700
++++ firejail-0.9.80/etc/profile-m-z/wget.profile	2026-05-28 12:32:49.882328170 -0700
 @@ -16,6 +16,7 @@ noblacklist ${HOME}/.local/share/wget
  noblacklist ${HOME}/.netrc
  noblacklist ${HOME}/.wget-hsts
@@ -3939,7 +4175,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/wget.profile firej
  
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/whois.profile firejail-0.9.80/etc/profile-m-z/whois.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/whois.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/whois.profile	2026-05-28 11:00:42.635475361 -0700
++++ firejail-0.9.80/etc/profile-m-z/whois.profile	2026-05-28 12:32:49.882328170 -0700
 @@ -8,6 +8,9 @@ include whois.local
  include globals.local
  
@@ -3950,9 +4186,25 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/whois.profile fire
  
  include disable-common.inc
  include disable-devel.inc
+diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/wine.profile firejail-0.9.80/etc/profile-m-z/wine.profile
+--- firejail-0.9.80.orig/etc/profile-m-z/wine.profile	2026-03-12 05:51:18.000000000 -0700
++++ firejail-0.9.80/etc/profile-m-z/wine.profile	2026-05-28 13:27:13.237778095 -0700
+@@ -11,9 +11,12 @@ noblacklist ${HOME}/.cache/winetricks
+ noblacklist ${HOME}/.Steam
+ noblacklist ${HOME}/.local/share/Steam
+ noblacklist ${HOME}/.local/share/steam
++noblacklist ${HOME}/.local/share/applications/wine
+ noblacklist ${HOME}/.steam
+ noblacklist ${HOME}/.wine
++noblacklist ${PATH}/wine*
+ noblacklist /tmp/.wine-*
++noblacklist /usr/lib/wine-*
+ 
+ # Allow python (blacklisted by disable-interpreters.inc)
+ include allow-python2.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/wire-desktop.profile firejail-0.9.80/etc/profile-m-z/wire-desktop.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/wire-desktop.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/wire-desktop.profile	2026-05-28 11:00:42.635475361 -0700
++++ firejail-0.9.80/etc/profile-m-z/wire-desktop.profile	2026-05-28 12:32:49.882328170 -0700
 @@ -6,6 +6,9 @@ include wire-desktop.local
  # Persistent global definitions
  include globals.local
@@ -3965,7 +4217,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/wire-desktop.profi
  # Disabled until someone reported positive feedback
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/wireshark.profile firejail-0.9.80/etc/profile-m-z/wireshark.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/wireshark.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/wireshark.profile	2026-05-28 11:00:42.635475361 -0700
++++ firejail-0.9.80/etc/profile-m-z/wireshark.profile	2026-05-28 12:32:49.882328170 -0700
 @@ -10,6 +10,7 @@ noblacklist ${HOME}/.config/wireshark
  noblacklist ${HOME}/.wireshark
  noblacklist ${DOCUMENTS}
@@ -3976,7 +4228,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/wireshark.profile 
  include allow-lua.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/Xephyr.profile firejail-0.9.80/etc/profile-m-z/Xephyr.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/Xephyr.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/Xephyr.profile	2026-05-28 11:00:42.635475361 -0700
++++ firejail-0.9.80/etc/profile-m-z/Xephyr.profile	2026-05-28 12:32:49.882328170 -0700
 @@ -6,6 +6,13 @@ include Xephyr.local
  # Persistent global definitions
  include globals.local
@@ -3993,7 +4245,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/Xephyr.profile fir
  # To enable it, create a firejail-Xephyr symlink in /usr/local/bin:
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/xlinks2.profile firejail-0.9.80/etc/profile-m-z/xlinks2.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/xlinks2.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/xlinks2.profile	2026-05-28 11:00:42.635475361 -0700
++++ firejail-0.9.80/etc/profile-m-z/xlinks2.profile	2026-05-28 12:32:49.882328170 -0700
 @@ -8,6 +8,7 @@ include xlinks2.local
  #include globals.local
  
@@ -4004,7 +4256,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/xlinks2.profile fi
  
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/xlinks.profile firejail-0.9.80/etc/profile-m-z/xlinks.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/xlinks.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/xlinks.profile	2026-05-28 11:00:42.635475361 -0700
++++ firejail-0.9.80/etc/profile-m-z/xlinks.profile	2026-05-28 12:32:49.882328170 -0700
 @@ -8,6 +8,7 @@ include xlinks.local
  #include globals.local
  
@@ -4015,7 +4267,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/xlinks.profile fir
  
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/xonotic.profile firejail-0.9.80/etc/profile-m-z/xonotic.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/xonotic.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/xonotic.profile	2026-05-28 11:00:42.635475361 -0700
++++ firejail-0.9.80/etc/profile-m-z/xonotic.profile	2026-05-28 12:32:49.882328170 -0700
 @@ -7,6 +7,11 @@ include xonotic.local
  include globals.local
  
@@ -4030,7 +4282,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/xonotic.profile fi
  include allow-bin-sh.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/xpra.profile firejail-0.9.80/etc/profile-m-z/xpra.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/xpra.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/xpra.profile	2026-05-28 11:00:42.635475361 -0700
++++ firejail-0.9.80/etc/profile-m-z/xpra.profile	2026-05-28 12:32:49.882328170 -0700
 @@ -7,6 +7,18 @@ include xpra.local
  # Persistent global definitions
  include globals.local
@@ -4052,7 +4304,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/xpra.profile firej
  # To enable it, create a firejail-xpra symlink in /usr/local/bin:
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/Xvfb.profile firejail-0.9.80/etc/profile-m-z/Xvfb.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/Xvfb.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/Xvfb.profile	2026-05-28 11:00:42.635475361 -0700
++++ firejail-0.9.80/etc/profile-m-z/Xvfb.profile	2026-05-28 12:32:49.882328170 -0700
 @@ -7,6 +7,13 @@ include Xvfb.local
  # Persistent global definitions
  include globals.local
@@ -4069,7 +4321,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/Xvfb.profile firej
  # The target program is sandboxed with its own profile. By default the this functionality
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/xxd.profile firejail-0.9.80/etc/profile-m-z/xxd.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/xxd.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/xxd.profile	2026-05-28 11:00:42.635475361 -0700
++++ firejail-0.9.80/etc/profile-m-z/xxd.profile	2026-05-28 12:32:49.882328170 -0700
 @@ -8,5 +8,7 @@ include xxd.local
  # added by included profile
  #include globals.local
@@ -4080,7 +4332,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/xxd.profile fireja
  include cpio.profile
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/youtube-dl-gui.profile firejail-0.9.80/etc/profile-m-z/youtube-dl-gui.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/youtube-dl-gui.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/youtube-dl-gui.profile	2026-05-28 11:00:42.635475361 -0700
++++ firejail-0.9.80/etc/profile-m-z/youtube-dl-gui.profile	2026-05-28 12:32:49.882328170 -0700
 @@ -9,6 +9,9 @@ include allow-python2.inc
  include allow-python3.inc
  
@@ -4093,7 +4345,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/youtube-dl-gui.pro
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/youtube-viewers-common.profile firejail-0.9.80/etc/profile-m-z/youtube-viewers-common.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/youtube-viewers-common.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/youtube-viewers-common.profile	2026-05-28 11:00:42.635475361 -0700
++++ firejail-0.9.80/etc/profile-m-z/youtube-viewers-common.profile	2026-05-28 12:32:49.882328170 -0700
 @@ -11,6 +11,14 @@ noblacklist ${HOME}/.cache/mpv
  noblacklist ${HOME}/.cache/youtube-dl
  noblacklist ${HOME}/.config/mpv
@@ -4111,7 +4363,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/youtube-viewers-co
  include allow-lua.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/yt-dlp.profile firejail-0.9.80/etc/profile-m-z/yt-dlp.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/yt-dlp.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/yt-dlp.profile	2026-05-28 11:00:42.635475361 -0700
++++ firejail-0.9.80/etc/profile-m-z/yt-dlp.profile	2026-05-28 12:32:49.882328170 -0700
 @@ -33,6 +33,12 @@ noblacklist ${HOME}/yt-dlp.conf
  noblacklist ${HOME}/yt-dlp.conf.txt
  noblacklist ${MUSIC}
@@ -4127,7 +4379,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/yt-dlp.profile fir
  include allow-python3.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/zart.profile firejail-0.9.80/etc/profile-m-z/zart.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/zart.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/zart.profile	2026-05-28 11:00:42.635475361 -0700
++++ firejail-0.9.80/etc/profile-m-z/zart.profile	2026-05-28 12:32:49.882328170 -0700
 @@ -8,6 +8,8 @@ include globals.local
  
  noblacklist ${DOCUMENTS}
@@ -4139,7 +4391,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/zart.profile firej
  include disable-devel.inc
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-m-z/zen-browser.profile firejail-0.9.80/etc/profile-m-z/zen-browser.profile
 --- firejail-0.9.80.orig/etc/profile-m-z/zen-browser.profile	2026-03-12 05:51:18.000000000 -0700
-+++ firejail-0.9.80/etc/profile-m-z/zen-browser.profile	2026-05-28 11:00:42.635475361 -0700
++++ firejail-0.9.80/etc/profile-m-z/zen-browser.profile	2026-05-28 12:32:49.882328170 -0700
 @@ -11,6 +11,17 @@ ignore read-only ${HOME}/.zen/profiles.i
  
  noblacklist ${HOME}/.cache/zen
