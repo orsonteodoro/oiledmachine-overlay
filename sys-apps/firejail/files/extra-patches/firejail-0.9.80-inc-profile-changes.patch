@@ -44,7 +44,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-common.inc firejai
  blacklist ${PATH}/kernel-install  # from systemd package
  
  # binaries installed by firejail
-@@ -760,3 +762,841 @@ blacklist ${RUNUSER}/update-notifier.pid
+@@ -760,3 +762,842 @@ blacklist ${RUNUSER}/update-notifier.pid
  
  # pass utility (pass package in Debian etc.)
  blacklist ${HOME}/.password-store
@@ -885,6 +885,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-common.inc firejai
 +blacklist ${PATH}/openssl
 +blacklist ${PATH}/setfattr
 +blacklist ${PATH}/steghide
++blacklist ${PATH}/upx
 +blacklist ${PATH}/zsteg
 diff '--color=auto' -urp firejail-0.9.80.orig/etc/inc/disable-devel.inc firejail-0.9.80/etc/inc/disable-devel.inc
 --- firejail-0.9.80.orig/etc/inc/disable-devel.inc	2026-03-12 05:51:18.000000000 -0700
