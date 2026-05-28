@@ -2089,8 +2089,15 @@ einfo "USE=-suid is not tested.  Ask the AI for help."
 	fi
 ewarn "To update profiles, run etc-update."
 ewarn
-ewarn "The /etc/profile/default.profile is now more restrictive."
-ewarn "To relax, add needed noblacklist <path> to /etc/firejail/default.local."
+ewarn "The /etc/profile/default.profile is now more restrictive to mitigate"
+ewarn "Living of the Land attacks.  To relax, add needed noblacklist <path> to"
+ewarn "/etc/firejail/default.local or ~/.config/firejail/default.local."
+ewarn
+ewarn "Example:"
+ewarn
+ewarn "noblacklist \${PATH}/bash"
+ewarn "noblacklist \${PATH}/sh"
+ewarn "noblacklist \${PATH}/ls"
 ewarn
 }
 
