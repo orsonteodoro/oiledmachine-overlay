@@ -7,6 +7,7 @@ include caprine.local
 include globals.local
 
 noblacklist ${HOME}/.config/Caprine
+noblacklist ${PATH}/caprine
 
 mkdir ${HOME}/.config/Caprine
 whitelist ${HOME}/.config/Caprine
