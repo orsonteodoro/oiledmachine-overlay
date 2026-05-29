@@ -230,6 +230,7 @@ ewarn
 	optfeature "a memory safe Rust based GTK4 status bar with clock" "gui-apps/wayle"
 	optfeature "a Qt themable status bar with clock and plugins" "gui-apps/noctalia-shell"
 	optfeature "a dmenu style app lanucher" "dev-libs/bemenu"
+	optfeature "a Polkit agent for password requests for privileged actions" "sys-auth/hyprpolkitagent"
 	optfeature "a memory safe Rust based terminal" "x11-terms/alacritty"
 }
 
