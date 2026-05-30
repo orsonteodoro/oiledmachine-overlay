@@ -266,6 +266,22 @@ unset -f _yarn_set_globals
 # Requires manual configuration of npm.local or globals.local.
 # Valid values:  1, 0, auto, unset (same as auto)
 
+#
+# Sandbox comparison in npm/yarn context
+#
+# Package               | Primary purpose                    |
+# ---                   | ---                                |
+# sys-apps/sandbox      | Protect the live system [6]        |
+# sys-apps/firejail [1] | Prevent credential theft[4],       |
+#                       | unify[5] access control to secrets |
+#
+# [1] oiledmachine-overlay ebuild only
+# [4] Downloads are required in src_unpack phase for tagged releases requiring FEATURES=-network-sandbox.
+#     Supply chain attack exfiltration is a trending issue in the mid 2020s era.
+# [5] Centralized management of visibility or access to secrets/credentials for sandboxed apps.
+# [6] from catastrophic changes or mistakes
+#
+
 # @ECLASS_VARIABLE: NPM_AUDIT_FIX
 # @DESCRIPTION:
 # Allow audit fix
