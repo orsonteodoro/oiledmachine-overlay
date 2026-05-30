@@ -1,0 +1,27 @@
+diff '--color=auto' -urp firejail-0.9.80.orig/src/firejail/x11.c firejail-0.9.80/src/firejail/x11.c
+--- firejail-0.9.80.orig/src/firejail/x11.c	2026-05-29 18:41:14.176230027 -0700
++++ firejail-0.9.80/src/firejail/x11.c	2026-05-29 18:41:59.430835455 -0700
+@@ -719,10 +719,10 @@ static void __attribute__((noreturn)) x1
+ 	// build the start command
+ 	char *server_argv[256];
+ 	char *_server_argv[256] = {		  // rest initialized to NULL
+-		"xpra", "start", display_str, "--no-daemon",
++		"xpra", "start", display_str, "--no-daemon", "--splash=no",
+ 	};
+ 	char *_server_argv_virtualgl[256] = {		  // rest initialized to NULL
+-		"xpra", "start", display_str, "--exec-wrapper=vglrun", "--no-daemon",
++		"xpra", "start", display_str, "--exec-wrapper=vglrun", "--no-daemon", "--splash=no",
+ 	};
+ 	unsigned pos = 0;
+ 	if (xpra_virtualgl) {
+@@ -852,7 +852,7 @@ static void __attribute__((noreturn)) x1
+ 
+ 	char * title_arg_str = get_title_arg_str();
+ 
+-	char *attach_argv[] = { "xpra", title_arg_str, "attach", display_str, NULL };
++	char *attach_argv[] = { "xpra", title_arg_str, "attach", display_str, "--splash=no", NULL };
+ 
+ 	// run attach command
+ 	client = fork();
+Only in firejail-0.9.80/src/firejail: x11.c.orig
+Only in firejail-0.9.80/src/firejail: x11.c.rej

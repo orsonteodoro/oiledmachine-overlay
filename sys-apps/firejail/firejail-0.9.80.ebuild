@@ -775,7 +775,7 @@ src_prepare() {
 
 	if use xpra ; then
 		eapply "${FILESDIR}/extra-patches/${PN}-0.9.80-xpra-opengl.patch"
-		eapply "${FILESDIR}/extra-patches/${PN}-1a576d1-disable-xpra-splash.patch"
+		eapply "${FILESDIR}/extra-patches/${PN}-0.9.80-disable-xpra-splash-v2.patch"
 	fi
 
 	# Our toolchain already sets SSP by default but forcing it causes problems
