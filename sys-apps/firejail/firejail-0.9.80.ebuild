@@ -283,13 +283,15 @@ DESCRIPTION="Security sandbox for any type of processes"
 HOMEPAGE="https://firejail.wordpress.com/"
 LICENSE="GPL-2"
 SLOT="0"
+# Upstream enables landlock, but disabled in ebuild to prevent soft brick possibility.
+# Defaults based on CI
 IUSE+="
 ${FIREJAIL_PROFILES_IUSE[@]}
 ${HARDENED_ALLOCATORS_IUSE[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-apparmor auto +chroot clang contrib +dbusproxy +file-transfer
-+globalcfg landlock +network +private-home selfrando selinux
-+suid test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xcsecurity xvfb
+-apparmor +chroot clang contrib +dbusproxy +file-transfer +globalcfg
+landlock +network +private-home -private-lib selfrando -selinux +suid
+test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xcsecurity xvfb
 ebuild_revision_116
 "
 REQUIRED_USE+="
@@ -936,6 +938,7 @@ _src_configure() {
 		$(use_enable landlock)
 		$(use_enable network)
 		$(use_enable private-home)
+		$(use_enable private-lib)
 		$(use_enable selinux)
 		$(use_enable suid)
 		$(use_enable userns)

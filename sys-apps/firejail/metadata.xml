@@ -883,7 +883,10 @@
       Enable overlayfs
     </flag>
     <flag name="private-home">
-      Enable private home feature
+      Enable private-home feature
+    </flag>
+    <flag name="private-lib">
+      Enable private-lib feature
     </flag>
     <flag name="scudo">
       Enable support for Scudo as a hardened allocator.
