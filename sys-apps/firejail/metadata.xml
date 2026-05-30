@@ -139,6 +139,7 @@
        - for temporary time limited per user per app whitelisting of the key, credential, or valued asset
          (like in a house door lock, you do no leave the physical key in the deadbolt lock the whole day.)
        - use `noblacklist <path>`, `whitelist <path>`, `ignore <sandbox-restriction-command>`
+       - use `ignore rmenv <var-name>` to whitelist keys/tokens/secrets
        - for fixing overly restricted Firejail profiles
        - for enabling privileged access or granting temporary time limited full access
        - highest precedence, overwrites others
@@ -173,6 +174,7 @@
     6. /etc/firejail/globals.local
        - for systemwide configuration blacklisting
        - use `blacklist <path>`
+       - use `rmenv <var-name>` to blacklist keys/tokens/secrets systemwide
        - for blacklisting sensitive data (e.g. API keys, AI keys, server keys)
        - for blacklisting weaponizable programs
        - for degrading capabilities or limiting access
