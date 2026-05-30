@@ -1787,11 +1787,7 @@ EOF
 	}
 
 	if (( ${is_allowed_wrapper} == 1 )) ; then
-		if [[ "${command}" == "npm" || "${command}" == "pnpm" || "${command}" == "yarn" ]] ; then
-	# Mitigate credential theft but it requires setting up npm.local,
-	# pnpm.local, yarn.local to `blacklist <credential-path>`.
-			gen_node_package_manager_wrapper
-		elif [[ "${x11_sandbox}" == "xorg" ]] ; then
+		if [[ "${x11_sandbox}" == "xorg" ]] ; then
 			gen_xcsecurity_wrapper
 		else
 			gen_x11_wrapper
