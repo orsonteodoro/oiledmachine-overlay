@@ -2154,7 +2154,7 @@ einfo
 einfo "Installing Firejail already opts-in to using Firejail as a way for"
 einfo "access control to credentials/secrets."
 einfo
-einfo "To opt-out, add the following per package or to /etc/make.conf:"
+einfo "To opt-out, add the following per package or to /etc/portage/make.conf:"
 einfo
 einfo "  NPM_FIREJAIL=0"
 einfo "  PNPM_FIREJAIL=0"
