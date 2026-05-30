@@ -1,0 +1,25 @@
+--- a/src/firejail/util.c.orig	2026-03-12 05:51:18.000000000 -0700
++++ b/src/firejail/util.c	2026-05-30 10:06:19.399060067 -0700
+@@ -1114,7 +1114,7 @@ void mkdir_attr(const char *fname, mode_
+ 	    chmod(fname, mode) == -1 ||
+ 	    chown(fname, uid, gid)) {
+ 		fprintf(stderr, "Error: failed to create %s directory\n", fname);
+-		errExit("mkdir/chmod");
++		errExit("mkdir/chmod/chown");
+ 	}
+ 
+ 	ASSERT_PERMS(fname, uid, gid, mode);
+--- a/src/fcopy/main.c.orig	2026-03-12 05:51:18.000000000 -0700
++++ b/src/fcopy/main.c	2026-05-30 10:10:11.791884669 -0700
+@@ -176,8 +176,10 @@ static void mkdir_attr(const char *fname
+ 		errExit("mkdir/chmod");
+ 	}
+ 	if (chown(fname, uid, gid)) {
+-		if (!arg_quiet)
++		if (!arg_quiet) {
+ 			fprintf(stderr, "Warning fcopy: failed to change ownership of %s\n", fname);
++			errExit("chown");
++		}
+ 	}
+ }
+ 

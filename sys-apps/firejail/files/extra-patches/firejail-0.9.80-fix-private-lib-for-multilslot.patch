@@ -1,0 +1,359 @@
+This patch has AI generated code.
+
+It fixes these issues:
+
+1.  Fix issue where lib64 libs are inappropriately placed in /usr/lib.
+2.  Fix issue where libgcc_1.so* is placed in /usr/lib reducing multislot to unislot.
+3.  Fix issue where libLLVM.so* is placed in /usr/lib reducing multislot to unislot.
+4.  Fixes issue where relative paths for gcc an LLVM are not preserved for hardcoded RPATHs.
+
+diff '--color=auto' -urp firejail-0.9.80.orig/src/firejail/fs_lib.c firejail-0.9.80/src/firejail/fs_lib.c
+--- firejail-0.9.80.orig/src/firejail/fs_lib.c	2026-03-12 05:51:18.000000000 -0700
++++ firejail-0.9.80/src/firejail/fs_lib.c	2026-05-30 16:01:38.742858888 -0700
+@@ -23,11 +23,60 @@
+ #include <sys/stat.h>
+ #include <sys/types.h>
+ #include <unistd.h>
++#include <elf.h>
+ #include <fcntl.h>
+ #include <errno.h>
+ #include <glob.h>
+ #define MAXBUF 4096
+ 
++typedef enum {
++        LIB_NONE = 0,
++        LIB_32,
++        LIB_64
++} lib_class_t;
++
++static lib_class_t get_lib_class(const char *path) {
++        int fd = open(path, O_RDONLY | O_CLOEXEC);
++        if (fd < 0)
++                return LIB_NONE;
++
++        unsigned char e_ident[EI_NIDENT];
++        if (read(fd, e_ident, EI_NIDENT)!= EI_NIDENT) {
++                close(fd);
++                return LIB_NONE;
++        }
++        close(fd);
++
++        if (memcmp(e_ident, ELFMAG, SELFMAG)!= 0)
++                return LIB_NONE;
++
++        if (e_ident[EI_CLASS] == ELFCLASS64)
++                return LIB_64;
++        if (e_ident[EI_CLASS] == ELFCLASS32)
++                return LIB_32;
++        return LIB_NONE;
++}
++
++// Decide which lib dir to use: lib, lib64, lib32, libx32
++static const char *get_dest_libdir(const char *src_path, lib_class_t cls) {
++        // If source path already has lib64/lib32/libx32, respect it
++        if (strstr(src_path, "/lib64/"))
++                return "lib64";
++        if (strstr(src_path, "/lib32/"))
++                return "lib32";
++        if (strstr(src_path, "/libx32/"))
++                return "libx32";
++        if (strstr(src_path, "/lib/"))
++                return "lib";
++
++        // Fallback: use ELF class
++        if (cls == LIB_64)
++                return "lib64";
++        if (cls == LIB_32)
++                return "lib"; // on x86_64, 32-bit usually goes to /lib
++        return "lib";
++}
++
+ extern void fslib_install_stdc(void);
+ extern void fslib_install_firejail(void);
+ extern void fslib_install_system(void);
+@@ -117,26 +166,96 @@ static int valid_full_path(const char *f
+ 	return 0;
+ }
+ 
++static const char *get_abi_root(const char *path) {
++        // Match longest first to handle /lib64/lp64d before /lib64
++        if (strstr(path, "/lib64/lp64d/") || strstr(path, "/usr/lib64/lp64d/"))
++                return RUN_LIB64_LP64D_DIR;
++        if (strstr(path, "/lib64/lp64/") || strstr(path, "/usr/lib64/lp64/"))
++                return RUN_LIB64_LP64_DIR;
++        if (strstr(path, "/lib32/ilp32d/") || strstr(path, "/usr/lib32/ilp32d/"))
++                return RUN_LIB32_ILP32D_DIR;
++        if (strstr(path, "/lib32/ilp32/") || strstr(path, "/usr/lib32/ilp32/"))
++                return RUN_LIB32_ILP32_DIR;
++        if (strstr(path, "/lib64/") || strstr(path, "/usr/lib64/"))
++                return RUN_LIB64_DIR;
++        if (strstr(path, "/lib32/") || strstr(path, "/usr/lib32/"))
++                return RUN_LIB32_DIR;
++        if (strstr(path, "/libx32/") || strstr(path, "/usr/libx32/"))
++                return RUN_LIBX32_DIR;
++        if (strstr(path, "/lib/") || strstr(path, "/usr/lib/"))
++                return RUN_LIB_DIR;
++        return RUN_LIB_DIR; // fallback
++}
++
+ static char *build_dest_dir(const char *full_path) {
+-	assert(full_path);
+-	if (strstr(full_path, "/x86_64-linux-gnu/"))
+-		return RUN_LIB_DIR "/x86_64-linux-gnu";
+-	return RUN_LIB_DIR;
++        assert(full_path);
++        const char *base = get_abi_root(full_path);
++
++        // Get path relative to /usr/lib*/ or /lib*/
++        const char *rel = full_path;
++        const char *pats[] = {
++                "/usr/lib64/lp64d/", "/usr/lib64/lp64/", "/usr/lib32/ilp32d/", "/usr/lib32/ilp32/",
++                "/usr/lib64/", "/usr/lib32/", "/usr/libx32/", "/usr/lib/",
++                "/lib64/lp64d/", "/lib64/lp64/", "/lib32/ilp32d/", "/lib32/ilp32/",
++                "/lib64/", "/lib32/", "/libx32/", "/lib/", NULL
++        };
++        for (int i = 0; pats[i]; i++) {
++                if ((rel = strstr(full_path, pats[i]))) {
++                        rel += strlen(pats[i]);
++                        break;
++                }
++        }
++        if (!rel || rel == full_path)
++                rel = "";
++
++        // Strip filename, keep subdirs for multislot
++        char *tmp = strdupa(rel);
++        char *slash = strrchr(tmp, '/');
++        if (slash)
++                *slash = '\0';
++        else
++                *tmp = '\0';
++
++        char *dest;
++        if (*tmp)
++                asprintf(&dest, "%s/%s", base, tmp);
++        else
++                dest = strdup(base);
++        if (!dest)
++                errExit("asprintf");
++        return dest;
++}
++
++static void ensure_parent_dir(const char *path) {
++        char *tmp = strdupa(path);
++        char *slash = strrchr(tmp, '/');
++        if (!slash) return;
++        *slash = '\0';
++        for (char *p = tmp + 1; *p; p++) {
++                if (*p == '/') {
++                        *p = '\0';
++                        mkdir(tmp, 0755);
++                        *p = '/';
++                }
++        }
++        mkdir(tmp, 0755);
+ }
+ 
+-// return name of mount target in allocated memory
+ static char *build_dest_name(const char *full_path) {
+-	assert(full_path);
+-	char *fname = strrchr(full_path, '/');
+-	assert(fname);
+-	fname++;
+-	// no trailing slash or dot
+-	assert(fname[0] != '\0' && (fname[0] != '.' || fname[1] != '\0'));
+-
+-	char *dest;
+-	if (asprintf(&dest, "%s/%s", build_dest_dir(full_path), fname) == -1)
+-		errExit("asprintf");
+-	return dest;
++        assert(full_path);
++        char *fname = strrchr(full_path, '/');
++        assert(fname);
++        fname++;
++        assert(fname[0]!= '\0' && (fname[0]!= '.' || fname[1]!= '\0'));
++
++        char *dest_dir = build_dest_dir(full_path);
++        char *dest;
++        if (asprintf(&dest, "%s/%s", dest_dir, fname) == -1)
++                errExit("asprintf");
++        free(dest_dir);
++
++        ensure_parent_dir(dest);
++        return dest;
+ }
+ 
+ static void fslib_mount_dir(const char *full_path) {
+@@ -182,19 +301,19 @@ static void fslib_mount_file(const char
+ }
+ 
+ void fslib_mount(const char *full_path) {
+-	assert(full_path);
+-	struct stat s;
+-
+-	if (*full_path == '\0' ||
+-	    !valid_full_path(full_path) ||
+-	    stat_as_user(full_path, &s) != 0 ||
+-	    s.st_uid != 0)
+-		return;
++        assert(full_path);
++        struct stat s;
+ 
+-	if (S_ISDIR(s.st_mode))
+-		fslib_mount_dir(full_path);
+-	else if (S_ISREG(s.st_mode) && is_lib_64(full_path))
+-		fslib_mount_file(full_path);
++        if (*full_path == '\0' ||
++         !valid_full_path(full_path) ||
++            stat_as_user(full_path, &s)!= 0 ||
++            s.st_uid!= 0)
++                return;
++
++        if (S_ISDIR(s.st_mode))
++                fslib_mount_dir(full_path);
++        else if (S_ISREG(s.st_mode)) // mount all regular files, not just 64-bit
++                fslib_mount_file(full_path);
+ }
+ 
+ // requires full path for lib
+@@ -356,33 +475,50 @@ void fslib_install_list(const char *lib_
+ 	fs_logger_print();
+ }
+ 
++static void mount_one(const char *src, const char *dest) {
++        if (!is_dir(dest) || !is_dir(src))
++                return;
++        if (arg_debug || arg_debug_private_lib)
++                printf("Mount-bind %s on top of %s\n", src, dest);
++        if (mount(src, dest, NULL, MS_BIND|MS_REC, NULL) < 0)
++                errExit("mount bind");
++        fs_logger2("tmpfs", dest);
++        fs_logger2("mount", dest);
++}
++
+ static void mount_directories(void) {
+-	fs_remount(RUN_LIB_DIR, MOUNT_READONLY, 1); // should be redundant except for RUN_LIB_DIR itself
++        fs_remount(RUN_LIB_DIR, MOUNT_READONLY, 1);
++        fs_remount(RUN_LIB64_DIR, MOUNT_READONLY, 1);
++        fs_remount(RUN_LIB32_DIR, MOUNT_READONLY, 1);
++        fs_remount(RUN_LIBX32_DIR, MOUNT_READONLY, 1);
++
++        // Primary ABI dirs
++        mount_one(RUN_LIB_DIR, "/lib");
++        mount_one(RUN_LIB_DIR, "/usr/lib");
++        mount_one(RUN_LIB_DIR, "/usr/local/lib");
++
++        mount_one(RUN_LIB64_DIR, "/lib64");
++        mount_one(RUN_LIB64_DIR, "/usr/lib64");
++        mount_one(RUN_LIB64_DIR, "/usr/local/lib64");
++
++        mount_one(RUN_LIB32_DIR, "/lib32");
++        mount_one(RUN_LIB32_DIR, "/usr/lib32");
++
++        mount_one(RUN_LIBX32_DIR, "/libx32");
++        mount_one(RUN_LIBX32_DIR, "/usr/libx32");
++
++        // RISC-V ABIs
++        mount_one(RUN_LIB64_LP64D_DIR, "/lib64/lp64d");
++        mount_one(RUN_LIB64_LP64D_DIR, "/usr/lib64/lp64d");
+ 
+-	int i = 0;
+-	while (masked_lib_dirs[i]) {
+-		if (is_dir(masked_lib_dirs[i])) {
+-			if (arg_debug || arg_debug_private_lib)
+-				printf("Mount-bind %s on top of %s\n", RUN_LIB_DIR, masked_lib_dirs[i]);
+-			if (mount(RUN_LIB_DIR, masked_lib_dirs[i], NULL, MS_BIND|MS_REC, NULL) < 0)
+-				errExit("mount bind");
+-			fs_logger2("tmpfs", masked_lib_dirs[i]);
+-			fs_logger2("mount", masked_lib_dirs[i]);
+-		}
+-		i++;
+-	}
++        mount_one(RUN_LIB64_LP64_DIR, "/lib64/lp64");
++        mount_one(RUN_LIB64_LP64_DIR, "/usr/lib64/lp64");
+ 
+-	// for amd64 only - we'll deal with i386 later
+-	if (is_dir("/lib32")) {
+-		if (mount(RUN_RO_DIR, "/lib32", "none", MS_BIND, "mode=400,gid=0") < 0)
+-			errExit("disable file");
+-		fs_logger("blacklist-nolog /lib32");
+-	}
+-	if (is_dir("/libx32")) {
+-		if (mount(RUN_RO_DIR, "/libx32", "none", MS_BIND, "mode=400,gid=0") < 0)
+-			errExit("disable file");
+-		fs_logger("blacklist-nolog /libx32");
+-	}
++        mount_one(RUN_LIB32_ILP32D_DIR, "/lib32/ilp32d");
++        mount_one(RUN_LIB32_ILP32D_DIR, "/usr/lib32/ilp32d");
++
++        mount_one(RUN_LIB32_ILP32_DIR, "/lib32/ilp32");
++        mount_one(RUN_LIB32_ILP32_DIR, "/usr/lib32/ilp32");
+ }
+ 
+ void fs_private_lib(void) {
+@@ -395,15 +531,40 @@ void fs_private_lib(void) {
+ 		printf("Starting private-lib processing: program %s, shell %s\n",
+ 			(cfg.original_program_index > 0)? cfg.original_argv[cfg.original_program_index]: "none", cfg.usershell);
+ 
+-	// create /run/firejail/mnt/lib directory
++	// create /run/firejail/mnt/<libdir> directory
+ 	mkdir_attr(RUN_LIB_DIR, 0755, 0, 0);
+ 	selinux_relabel_path(RUN_LIB_DIR, "/usr/lib");
++	mkdir_attr(RUN_LIB64_DIR, 0755, 0, 0);
++	selinux_relabel_path(RUN_LIB64_DIR, "/usr/lib64");
++	mkdir_attr(RUN_LIB32_DIR, 0755, 0, 0);
++	selinux_relabel_path(RUN_LIB32_DIR, "/usr/lib32");
++	mkdir_attr(RUN_LIBX32_DIR, 0755, 0, 0);
++	selinux_relabel_path(RUN_LIBX32_DIR, "/usr/libx32");
++	// Add the RISC-V ABI dirs if you use them
++	mkdir_attr(RUN_LIB64_LP64D_DIR, 0755, 0, 0);
++	mkdir_attr(RUN_LIB64_LP64_DIR, 0755, 0, 0);
++	mkdir_attr(RUN_LIB32_ILP32D_DIR, 0755, 0, 0);
++	mkdir_attr(RUN_LIB32_ILP32_DIR, 0755, 0, 0);
+ 
+ 	// install standard C libraries
+ 	if (arg_debug || arg_debug_private_lib)
+ 		printf("Installing standard C library\n");
+ 	fslib_install_stdc();
+ 
++	// ensure ld.so.conf has lib64
++        FILE *fp = fopen(RUN_LIB_FILE ".ld.so.conf", "a");
++        if (fp) {
++		fprintf(fp, "%s\n", RUN_LIB_DIR);
++		fprintf(fp, "%s\n", RUN_LIB64_DIR);
++		fprintf(fp, "%s\n", RUN_LIB32_DIR);
++		fprintf(fp, "%s\n", RUN_LIBX32_DIR);
++		fprintf(fp, "%s\n", RUN_LIB64_LP64D_DIR);
++		fprintf(fp, "%s\n", RUN_LIB64_LP64_DIR);
++		fprintf(fp, "%s\n", RUN_LIB32_ILP32D_DIR);
++		fprintf(fp, "%s\n", RUN_LIB32_ILP32_DIR);
++                fclose(fp);
++        }
++
+ 	// install other libraries needed by firejail
+ 	if (arg_debug || arg_debug_private_lib)
+ 		printf("Installing Firejail libraries\n");
+@@ -466,4 +627,4 @@ void fs_private_lib(void) {
+ 	// mount lib filesystem
+ 	mount_directories();
+ }
+-#endif
+\ No newline at end of file
++#endif
+diff '--color=auto' -urp firejail-0.9.80.orig/src/include/rundefs.h firejail-0.9.80/src/include/rundefs.h
+--- firejail-0.9.80.orig/src/include/rundefs.h	2026-03-12 05:51:18.000000000 -0700
++++ firejail-0.9.80/src/include/rundefs.h	2026-05-30 15:56:52.463663076 -0700
+@@ -49,6 +49,13 @@
+ #define RUN_BIN_DIR			RUN_MNT_DIR "/bin"
+ #define RUN_PULSE_DIR			RUN_MNT_DIR "/pulse"
+ #define RUN_LIB_DIR			RUN_MNT_DIR "/lib"
++#define RUN_LIB32_DIR			RUN_MNT_DIR "/lib32"
++#define RUN_LIB64_DIR			RUN_MNT_DIR "/lib64"
++#define RUN_LIBX32_DIR			RUN_MNT_DIR "/libx32"
++#define RUN_LIB64_LP64D_DIR		RUN_MNT_DIR "/lib64/lp64d"
++#define RUN_LIB64_LP64_DIR		RUN_MNT_DIR "/lib64/lp64"
++#define RUN_LIB32_ILP32D_DIR		RUN_MNT_DIR "/lib32/ilp32d"
++#define RUN_LIB32_ILP32_DIR		RUN_MNT_DIR "/lib32/ilp32"
+ #define RUN_LIB_FILE			RUN_MNT_DIR "/libfiles"
+ #define RUN_DNS_ETC			RUN_MNT_DIR "/dns-etc"
+ #define RUN_DHCLIENT_DIR			RUN_MNT_DIR "/dhclient-dir"
