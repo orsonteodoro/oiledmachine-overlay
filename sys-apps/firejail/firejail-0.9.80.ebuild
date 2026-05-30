@@ -2171,6 +2171,10 @@ einfo "  Set the contents of /etc/firejail/globals.local:"
 einfo
 einfo "blacklist <credentials-path>"
 einfo "blacklist <secrets-path>"
+einfo "rmenv <var-name>"
+einfo "blacklist /mnt/usb/passwords.kdbx"
+einfo "blacklist /home/johndoe/.ssh"
+einfo "rmenv KEY_VAULTS_SECRET"
 einfo
 }
 
