@@ -252,6 +252,18 @@ unset -f _yarn_set_globals
 # 4                | 2.1.x, 2.3.x, 2.4.x, 3.0.x
 # 1                | 1.22.x
 
+# @ECLASS_VARIABLE: YARN_FIREJAIL
+# @DESCRIPTION:
+# Use the Firejail sandbox to mitigate against credentials and secrets theft in Yarn contexts.
+# Requires manual configuration of yarn.local or globals.local.
+# Valid values:  1, 0, auto, unset (same as auto)
+
+# @ECLASS_VARIABLE: NPM_FIREJAIL
+# @DESCRIPTION:
+# Use the Firejail sandbox to mitigate against credentials and secrets theft in npm contexts.
+# Requires manual configuration of npm.local or globals.local.
+# Valid values:  1, 0, auto, unset (same as auto)
+
 # @ECLASS_VARIABLE: NPM_AUDIT_FIX
 # @DESCRIPTION:
 # Allow audit fix
@@ -617,13 +629,48 @@ einfo "Skipping audit fix."
 		network_sandbox=1
 	fi
 
+	# Use Firejail's npm.local or globals.local to protect credentials/secrets.
+
+	local sandbox_launcher=()
+	if [[ -n "${YARN_FIREJAIL}" ]] ; then
+		if [[ "${NPM_FIREJAIL}" == "1" ]] ; then
+einfo "Firejail:  ON"
+			sandbox_launcher+=(
+				"firejail" --profile=npm
+			)
+		elif [[ "${NPM_FIREJAIL}" == "0" ]] ; then
+ewarn "Firejail:  OFF"
+		elif [[ "${NPM_FIREJAIL}" == "auto" ]] ; then
+			if which firejail >/dev/null 2>&1 ; then
+einfo "Firejail:  ON"
+				sandbox_launcher+=(
+					"firejail" --profile=npm
+				)
+
+			else
+ewarn "Firejail:  OFF"
+			fi
+		else
+eerror "NPM_FIREJAIL is invalid."
+eerror "Valid values:  1, 0, auto, unset"
+			die
+		fi
+	if which firejail >/dev/null 2>&1 ; then
+einfo "Firejail:  ON"
+		sandbox_launcher+=(
+			"firejail" --profile=npm
+		)
+	else
+ewarn "Firejail:  OFF"
+	fi
+
 	local tries
 	tries=0
 	while (( ${tries} < ${NPM_TRIES} )) ; do
 einfo "Current directory:\t${PWD}"
 einfo "Tries:\t\t${tries}"
-einfo "Running:\t\tnpm ${cmd[@]}"
-		npm "${cmd[@]}" || die
+einfo "Running:\t\t${sandbox_launcher[@]} npm ${cmd[@]}"
+		${sandbox_launcher[@]} npm "${cmd[@]}" || die
 		if ! grep -q -E -r -e "(EAI_AGAIN|ENOTEMPTY|ERR_SOCKET_TIMEOUT|ETIMEDOUT|ECONNRESET)" "${HOME}/.npm/_logs" ; then
 			break
 		fi
@@ -659,14 +706,49 @@ eyarn() {
 	local cmd=("${@}")
 einfo "Running:\tyarn ${cmd[@]}"
 
+	# Use Firejail's yarn.local or globals.local to protect credentials/secrets.
+
+	local sandbox_launcher=()
+	if [[ -n "${YARN_FIREJAIL}" ]] ; then
+		if [[ "${YARN_FIREJAIL}" == "1" ]] ; then
+einfo "Firejail:  ON"
+			sandbox_launcher+=(
+				"firejail" --profile=yarn
+			)
+		elif [[ "${YARN_FIREJAIL}" == "0" ]] ; then
+ewarn "Firejail:  OFF (Requested by user)"
+		elif [[ "${YARN_FIREJAIL}" == "auto" ]] ; then
+			if which firejail >/dev/null 2>&1 ; then
+einfo "Firejail:  ON"
+				sandbox_launcher+=(
+					"firejail" --profile=yarn
+				)
+
+			else
+ewarn "Firejail:  OFF"
+			fi
+		else
+eerror "YARN_FIREJAIL is invalid."
+eerror "Valid values:  1, 0, auto, unset"
+			die
+		fi
+	if which firejail >/dev/null 2>&1 ; then
+einfo "Firejail:  ON"
+		sandbox_launcher+=(
+			"firejail" --profile=yarn
+		)
+	else
+ewarn "Firejail:  OFF"
+	fi
+
 	local tries
 	tries=0
 	while (( ${tries} < ${YARN_TRIES} )) ; do
 einfo "Current directory:\t${PWD}"
 einfo "Tries:\t\t${tries}"
-einfo "Running:\t\tyarn ${cmd[@]}"
+einfo "Running:\t\t${sandbox_launcher[@]} yarn ${cmd[@]}"
 		yarn_env_push
-		yarn "${cmd[@]}" 2>&1 || die
+		${sandbox_launcher[@]} yarn "${cmd[@]}" 2>&1 || die
 		yarn_env_pop
 		if ! grep -q -E -e "(ETIMEDOUT|EAI_AGAIN|ECONNRESET)" "${T}/build.log" ; then
 			break

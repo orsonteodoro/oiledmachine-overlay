@@ -287,10 +287,10 @@ IUSE+="
 ${FIREJAIL_PROFILES_IUSE[@]}
 ${HARDENED_ALLOCATORS_IUSE[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-apparmor auto +chroot clang contrib +dbusproxy +file-transfer +firejail_profiles_default
-+firejail_profiles_server +globalcfg landlock +network +private-home selfrando selinux
+apparmor auto +chroot clang contrib +dbusproxy +file-transfer
++globalcfg landlock +network +private-home selfrando selinux
 +suid test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xcsecurity xvfb
-ebuild_revision_114
+ebuild_revision_115
 "
 REQUIRED_USE+="
 	!test
@@ -399,14 +399,18 @@ get_impls() {
 get_supported_commands() {
 	local etc_folder="${S}/etc"
 	local f
-	local L=(
+	local L1=(
 		$(find "${etc_folder}/"{"profile-a-l","profile-m-z"} -name "*.profile")
 	)
-	for f in "${L[@]}" ; do
+	local L2=()
+	for f in "${L1[@]}" ; do
 		local n=$(basename "${f}" \
 			| sed -e "s|\.profile||g")
-		echo "${n}"
+		L2+=(
+			"${n}"
+		)
 	done
+	echo "${L2[@]}" | tr " " $'\n' | sort | uniq
 }
 
 is_x_blacklisted() {
@@ -770,7 +774,6 @@ src_prepare() {
 	cp -aT "${FILESDIR}/extra-profiles/" "${S}/etc" || die
 
 	if use xpra ; then
-		eapply "${FILESDIR}/extra-patches/${PN}-0.9.80-xpra-speaker-override.patch"
 		eapply "${FILESDIR}/extra-patches/${PN}-0.9.80-xpra-opengl.patch"
 		eapply "${FILESDIR}/extra-patches/${PN}-1a576d1-disable-xpra-splash.patch"
 	fi
@@ -1616,7 +1619,7 @@ einfo "Forcing system allocator for ${command} (3)"
 		fi
 	fi
 
-	local wh_arg=""
+	local wh_arg="" # WidthxHeight args
 	if [[ -n "${XEPHYR_WH[${key_command}]}" ]] ; then
 		wh_arg="--xephyr-screen=${XEPHYR_WH[${key_command}]}"
 	fi
@@ -1671,7 +1674,7 @@ einfo "Forcing system allocator for ${command} (3)"
 		oom_arg="--oom=${OOM[${key_command}]}"
 	fi
 
-	local all_args_x=(
+	local all_args_x11=(
 		${apparmor_arg}
 		${x11_arg}
 		${allocator_args}
@@ -1710,7 +1713,6 @@ einfo "Detected CEF/Chromium.  Using ozone for Wayland."
 	local all_args_wayland=(
 		${apparmor_arg}
 		${allocator_args}
-		${wh_arg}
 		${seccomp_arg}
 		${landlock_arg}
 		${profile_arg}
@@ -1719,6 +1721,32 @@ einfo "Detected CEF/Chromium.  Using ozone for Wayland."
 		${args}
 	)
 
+	local all_args_headless=(
+		${apparmor_arg}
+		${allocator_args}
+		${seccomp_arg}
+		${landlock_arg}
+		${profile_arg}
+		${oom_arg}
+		${args}
+	)
+
+	# The root doesn't get Firejail because we need at least 1 user to
+	# unbreak a bad Firejail configuration and to not mess up the uptime
+	# score.
+
+	gen_node_package_manager_wrapper() {
+cat <<EOF > "${ED}/usr/local/${folder}/${wrapper_name}" || die
+#!/bin/bash
+if [[ "\${EUID}" == "0" ]] ; then
+	"${exe_path}" "\$@"
+else
+	echo "DEBUG:  Protecting ${command} with Firejail"
+	exec firejail ${all_args_headless[@]} "${exe_path}" "\$@"
+fi
+EOF
+	}
+
 	gen_x11_wrapper() {
 cat <<EOF > "${ED}/usr/local/${folder}/${wrapper_name}" || die
 #!/bin/bash
@@ -1726,7 +1754,7 @@ cat <<EOF > "${ED}/usr/local/${folder}/${wrapper_name}" || die
 if [[ "\${EUID}" == "0" || "\${EUID}" == "250" ]] ; then
 	"${exe_path}" "\$@"
 elif [[ -n "\${DISPLAY}" ]] ; then
-	exec firejail ${all_args_x[@]} "${exe_path}" "\$@"
+	exec firejail ${all_args_x11[@]} "${exe_path}" "\$@"
 else
 	exec firejail ${env_args[@]} ${all_args_wayland[@]} "${exe_path}" ${ozone_args[@]} "\$@"
 fi
@@ -1751,7 +1779,7 @@ if [[ "\${EUID}" == "0" || "\${EUID}" == "250" ]] ; then
 	"${exe_path}" "\$@"
 elif [[ -n "\${DISPLAY}" ]] ; then
 	xhost +si:localuser:\${USER}
-	exec firejail ${all_args_x[@]} --env=XAUTHORITY="\${_XAUTHORITY}" "${exe_path}" "\$@"
+	exec firejail ${all_args_x11[@]} --env=XAUTHORITY="\${_XAUTHORITY}" "${exe_path}" "\$@"
 else
 	exec firejail ${env_args[@]} ${all_args_wayland[@]} "${exe_path}" ${ozone_args[@]} "\$@"
 fi
@@ -1759,7 +1787,11 @@ EOF
 	}
 
 	if (( ${is_allowed_wrapper} == 1 )) ; then
-		if [[ "${x11_sandbox}" == "xorg" ]] ; then
+		if [[ "${command}" == "npm" || "${command}" == "pnpm" || "${command}" == "yarn" ]] ; then
+	# Mitigate credential theft but it requires setting up npm.local,
+	# pnpm.local, yarn.local to `blacklist <credential-path>`.
+			gen_node_package_manager_wrapper
+		elif [[ "${x11_sandbox}" == "xorg" ]] ; then
 			gen_xcsecurity_wrapper
 		else
 			gen_x11_wrapper
@@ -1784,7 +1816,20 @@ gen_wrapper() {
 	elif [[ -n "${_PATH_CORRECTION[${key_command}]}" ]] ; then
 		exe_path="${_PATH_CORRECTION[${key_command}]}"
 	else
-		exe_path="/usr/bin/${command}"
+		if [[ -e "/bin/${command}" ]] ; then
+			exe_path="/bin/${command}"
+		elif [[ -e "/sbin/${command}" ]] ; then
+			exe_path="/sbin/${command}"
+		elif [[ -e "/usr/bin/${command}" ]] ; then
+			exe_path="/usr/bin/${command}"
+		elif [[ -e "/usr/sbin/${command}" ]] ; then
+			exe_path="/usr/sbin/${command}"
+		else
+# The abspath excluding /usr/local/bin/${command} is required to avoid possible infinite loop.
+			exe_path="${command}"
+ewarn "${command} is not found in standard paths.  Skipping wrapper creation for ${command} to avoid infinite loop."
+			return
+		fi
 	fi
 
 	if [[ "${command}" == "firefox" ]] ; then
@@ -1836,8 +1881,29 @@ gen_wrapper() {
 				_gen_one_wrapper "${command}" "${command}" "${exe_path}"
 			fi
 		done
-	elif [[ -e "${exe_path}" ]] ; then
+	elif \
+		[[ \
+			   -e "/bin/${command}" \
+			|| -e "/sbin/${command}" \
+			|| -e "/usr/bin/${command}" \
+			|| -e "/usr/sbin/${command}" \
+		]] \
+	; then
+	#
+	# Ideally we like to install the wrappers to catch all the future cases,
+	# but it is not possible without all the information.
+	#
+	# Many programs and build system configure checks use the which command
+	# as a lazy way to check if the program exists.  We cannot install all
+	# the wrappers because it will break a lot of configure test
+	# assumptions.
+	#
+	# Also if it is not installed, we don't know which of the above is
+	# correct.
+	#
 		_gen_one_wrapper "${command}" "${command}" "${exe_path}"
+	else
+ewarn "Skipping wrapper creation for ${command} because it was not found in standard paths."
 	fi
 }
 
@@ -2009,37 +2075,12 @@ einfo "Updating config for non-suid mode"
 }
 
 pkg_postinst() {
-	if use xpra ; then
-einfo
-einfo "A new custom args have been added to improve performance.  To lessen"
-einfo "shuddering/skipping some apps may benefit by disabiling sound sound"
-einfo "input and output forwarding."
-einfo
-einfo
-einfo "New args (must be placed before --x11=xpra)"
-einfo
-einfo "  --xpra-speaker=0  # disables sound forwarding for xpra"
-einfo "  --xpra-speaker=1  # enables sound forwarding for xpra"
-einfo
-einfo
-einfo "Profile additions"
-einfo
-einfo "  xpra_speaker_off  # disables sound forwarding for xpra"
-einfo "  xpra_speaker_on  # enables sound forwarding for xpra"
-einfo
-	fi
 einfo
 einfo "Note to ricers and optimization fanatics:"
 einfo
 einfo "You may need to update /etc/firejail/globals.local to add"
 einfo "private-lib gcc/*/*/libgomp.so.*"
 einfo
-	if ! use firejail_profiles_server ; then
-ewarn
-ewarn "Disabling firejail_profiles_server disables default sandboxing for the"
-ewarn "root user"
-ewarn
-	fi
 ewarn
 ewarn "The /usr/local/firejail-bin has been removed.  You should remove"
 ewarn "PATH=\"/usr/local/firejail-bin:\${PATH}\" from ~/.bashrc."
@@ -2057,17 +2098,20 @@ einfo "profile."
 einfo
 
 ewarn
+ewarn
 ewarn "IMPORTANT:  Please read the section \"important blacklist paths\" and"
 ewarn "\"path traversal mitigation verification\" section in the metadata.xml"
 ewarn "(\`epkginfo -x firejail::oiledmachine-overlay\`) to properly secure"
 ewarn "the browser ~/Downloads folder containing PII or sensitive data and"
 ewarn "crown jewel keys."
 ewarn
+ewarn
 ewarn "IMPORTANT:  File names containing sensitive data/keys in the root"
 ewarn "directory are exposed to an attacker in the sandbox.  They should be"
 ewarn "moved in either another disk or in a folder with a blacklist.  Blacklist"
 ewarn "these paths in /etc/firejail/globals.local.  Blacklist the folder"
 ewarn "containing the file."
+ewarn
 ewarn
 ewarn "IMPORTANT:  Always check sandbox profiles by manual inspection in the"
 ewarn "sandbox to verify if there is any sensitive data leaks.  See the"
@@ -2083,11 +2127,16 @@ einfo "into"
 einfo
 einfo "  /etc/firejail/<cli-name>.profile       # for systemwide"
 einfo "  ~/.config/firejail/<cli-name>.profile  # for profiles to follow your profile backups"
+ewarn
 einfo
 	if ! use suid ; then
+einfo
 einfo "USE=-suid is not tested.  Ask the AI for help."
+einfo
 	fi
+ewarn
 ewarn "To update profiles, run etc-update."
+ewarn
 ewarn
 ewarn "The /etc/profile/default.profile is now more restrictive to mitigate"
 ewarn "Living of the Land attacks.  To relax, add needed noblacklist <path> to"
@@ -2099,6 +2148,34 @@ ewarn "noblacklist \${PATH}/bash"
 ewarn "noblacklist \${PATH}/sh"
 ewarn "noblacklist \${PATH}/ls"
 ewarn
+einfo
+einfo "\`emerge -vO ${CATEGORY}/${PN}\` later after installing @world to update wrappers."
+einfo
+einfo
+einfo "The npm, pnpm, yarn eclasses now use Firejail, but it requires setup to"
+einfo "protect credentials and secrets.  (oiledmachine-overlay feature)"
+einfo
+einfo "Installing Firejail already opts-in to using Firejail as a way for"
+einfo "access control to credentials/secrets."
+einfo
+einfo "To opt-out, add the following per package or to /etc/make.conf:"
+einfo
+einfo "  NPM_FIREJAIL=0"
+einfo "  PNPM_FIREJAIL=0"
+einfo "  YARN_FIREJAIL=0"
+einfo
+einfo
+einfo "To protect credentials and secrets from supply chain attacks for npm, pnpm, yarn, node"
+einfo
+einfo "  Set the contents of /etc/firejail/npm.local:"
+einfo "  Set the contents of /etc/firejail/pnpm.local:"
+einfo "  Set the contents of /etc/firejail/yarn.local:"
+einfo "  Set the contents of /etc/firejail/node.local:"
+einfo "  Set the contents of /etc/firejail/globals.local:"
+einfo
+einfo "blacklist <credentials-path>"
+einfo "blacklist <secrets-path>"
+einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS

@@ -229,6 +229,12 @@ unset -f _npm_set_globals
 # Checks if state variables are initalized and network sandbox disabled.
 _NPM_PKG_SETUP_CALLED=0
 
+# @ECLASS_VARIABLE: NPM_FIREJAIL
+# @DESCRIPTION:
+# Use the Firejail sandbox to mitigate against credentials and secrets theft.
+# Requires manual configuration of npm.local or globals.local.
+# Valid values:  1, 0, auto, unset (same as auto)
+
 # @FUNCTION: npm_check_network_sandbox
 # @DESCRIPTION:
 # Check the network sandbox.
@@ -479,17 +485,52 @@ einfo "Skipping audit fix."
 		network_sandbox=1
 	fi
 
+	# Use Firejail's npm.local or globals.local to protect credentials/secrets.
+
+	local sandbox_launcher=()
+	if [[ -n "${NPM_FIREJAIL}" ]] ; then
+		if [[ "${NPM_FIREJAIL}" == "1" ]] ; then
+einfo "Firejail:  ON"
+			sandbox_launcher+=(
+				"firejail" --profile=npm
+			)
+		elif [[ "${NPM_FIREJAIL}" == "0" ]] ; then
+ewarn "Firejail:  OFF"
+		elif [[ "${NPM_FIREJAIL}" == "auto" ]] ; then
+			if which firejail >/dev/null 2>&1 ; then
+einfo "Firejail:  ON"
+				sandbox_launcher+=(
+					"firejail" --profile=npm
+				)
+
+			else
+ewarn "Firejail:  OFF"
+			fi
+		else
+eerror "NPM_FIREJAIL is invalid."
+eerror "Valid values:  1, 0, auto, unset"
+			die
+		fi
+	elif which firejail >/dev/null 2>&1 ; then
+einfo "Firejail:  ON"
+		sandbox_launcher+=(
+			"firejail" --profile=npm
+		)
+	else
+ewarn "Firejail:  OFF"
+	fi
+
 	mkdir -p "${HOME}/.npm/_logs" || true
 	local tries
 	tries=0
 	while (( ${tries} < ${NPM_TRIES} )) ; do
 einfo "Current directory:\t${PWD}"
 einfo "Tries:\t\t${tries}"
-einfo "Running:\t\tnpm ${cmd[@]}"
+einfo "Running:\t\t${sandbox_launcher[@]} npm ${cmd[@]}"
 		if [[ "${cmd[@]}" =~ "audit fix" ]] ; then
-			npm "${cmd[@]}" || npm_die
+			${sandbox_launcher[@]} npm "${cmd[@]}" || npm_die
 		else
-			npm "${cmd[@]}" || die
+			${sandbox_launcher[@]} npm "${cmd[@]}" || die
 		fi
 		if ! grep -q -E -r -e "(EAI_AGAIN|ENOTEMPTY|ERR_SOCKET_TIMEOUT|ETIMEDOUT|ECONNRESET)" "${HOME}/.npm/_logs" ; then
 			break
