@@ -253,12 +253,14 @@ unset -f _yarn_set_globals
 # 1                | 1.22.x
 
 # @ECLASS_VARIABLE: YARN_FIREJAIL
+# @USER_VARIABLE
 # @DESCRIPTION:
 # Use the Firejail sandbox to mitigate against credentials and secrets theft in Yarn contexts.
 # Requires manual configuration of yarn.local or globals.local.
 # Valid values:  1, 0, auto, unset (same as auto)
 
 # @ECLASS_VARIABLE: NPM_FIREJAIL
+# @USER_VARIABLE
 # @DESCRIPTION:
 # Use the Firejail sandbox to mitigate against credentials and secrets theft in npm contexts.
 # Requires manual configuration of npm.local or globals.local.

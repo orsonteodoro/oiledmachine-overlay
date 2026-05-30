@@ -230,6 +230,7 @@ unset -f _npm_set_globals
 _NPM_PKG_SETUP_CALLED=0
 
 # @ECLASS_VARIABLE: NPM_FIREJAIL
+# @USER_VARIABLE
 # @DESCRIPTION:
 # Use the Firejail sandbox to mitigate against credentials and secrets theft.
 # Requires manual configuration of npm.local or globals.local.

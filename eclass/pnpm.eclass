@@ -168,6 +168,7 @@ _PNPM_PKG_SETUP_CALLED=0
 # The project root containing the pnpm-lock.yaml file.
 
 # @ECLASS_VARIABLE: PNPM_FIREJAIL
+# @USER_VARIABLE
 # @DESCRIPTION:
 # Use the Firejail sandbox to mitigate against credentials and secrets theft.
 # Requires manual configuration of pnpm.local or globals.local.

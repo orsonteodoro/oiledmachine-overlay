@@ -290,7 +290,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 apparmor auto +chroot clang contrib +dbusproxy +file-transfer
 +globalcfg landlock +network +private-home selfrando selinux
 +suid test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xcsecurity xvfb
-ebuild_revision_115
+ebuild_revision_116
 "
 REQUIRED_USE+="
 	!test
@@ -2166,7 +2166,7 @@ einfo
 einfo "  Set the contents of /etc/firejail/npm.local:"
 einfo "  Set the contents of /etc/firejail/pnpm.local:"
 einfo "  Set the contents of /etc/firejail/yarn.local:"
-einfo "  Set the contents of /etc/firejail/node.local:"
+einfo "  Set the contents of /etc/firejail/node-common.local:"
 einfo "  Set the contents of /etc/firejail/globals.local:"
 einfo
 einfo "blacklist <credentials-path>"
