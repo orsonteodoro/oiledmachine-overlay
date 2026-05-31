@@ -78,7 +78,8 @@ noblacklist /usr/lib/llvm
 # See exec.Command sections in cmd/launch/openclaw.go
 #noblacklist ${PATH}/clawdbot
 #noblacklist ${PATH}/openclaw
-#noblacklist ${PATH}/npm
+#noblacklist ${PATH}/npm (ebuild package manager security bypass, DO NOT USE, use ebuild instead)
+#noblacklist ${PATH}/git (ebuild package manager security bypass, DO NOT USE, use ebuild instead)
 
 # OpenCode coding assistant support (optional)
 #noblacklist ${PATH}/opencode
