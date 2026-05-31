@@ -6118,6 +6118,53 @@ ewarn
 	if ! ( groups "ollama" | grep -q -e "video" ) ; then
 ewarn "The ollama user needs to be added to the video group for GPU hardware acceleration in ${PN}"
 	fi
+
+	if use firejail ; then
+einfo
+einfo "You need to etc-update and restart the Ollama service scripts for the"
+einfo "new sandbox changes to work."
+einfo
+einfo "For OpenRC:"
+einfo
+einfo "  etc-update"
+einfo "  \`killall -9 ollama\`"
+einfo "  /etc/init.d/ollama stop"
+einfo "  \`killall -9 ollama\`"
+einfo "  /etc/init.d/ollama zap"
+einfo "  /etc/init.d/ollama start"
+einfo
+einfo "For systemd:"
+einfo
+einfo "  etc-update"
+einfo "  \`killall -9 ollama\`"
+einfo "  systemctl stop ollama"
+einfo "  \`killall -9 ollama\`"
+einfo "  systemctl start ollama"
+einfo
+		die
+	fi
+	if use firejail && use cuda ; then
+ewarn
+ewarn "CUDA support for Firejail ebuild's ollama.profile is untested."
+ewarn
+ewarn "You must manually make changes to /etc/firejail/ollama.local for CUDA"
+ewarn "support.  You could submit a pull request with fixes for ollama.profile"
+ewarn "for Firejail overlay support."
+ewarn
+ewarn "Consider using the vulkan USE flag which has been tested."
+ewarn
+	fi
+	if use firejail && use rocm ; then
+ewarn
+ewarn "ROCm support for Firejail ebuild's ollama.profile is untested."
+ewarn
+ewarn "You must manually make changes to /etc/firejail/ollama.local for ROCm"
+ewarn "support.  You could submit a pull request with fixes for ollama.profile"
+ewarn "for Firejail overlay support."
+ewarn
+ewarn "Consider using the vulkan USE flag which has been tested."
+ewarn
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.3.13, 20241020)
