@@ -48,9 +48,9 @@ noblacklist /usr/lib/llvm
 # See exec.Command sections in cmd/launch/hermes.go
 #noblacklist ${PATH}/hermes
 #include allow-bin-sh.inc
-#noblacklist ${PATH}/curl # For installer if not installed (ebuild package manager security bypass, DO NOT USE, use ebuild instead)
-#noblacklist ${PATH}/bash # For installer if not installed (ebuild package manager security bypass, DO NOT USE, use ebuild instead)
-#noblacklist ${PATH}/git # For installer if not installed (ebuild package manager security bypass, DO NOT USE, use ebuild instead)
+#noblacklist ${PATH}/curl # (ebuild package manager security bypass, DO NOT USE, use ebuild instead)
+#noblacklist ${PATH}/bash # (ebuild package manager security bypass, DO NOT USE, use ebuild instead)
+#noblacklist ${PATH}/git # (ebuild package manager security bypass, DO NOT USE, use ebuild instead)
 
 # llama-quantize (optional)
 # llama-quantize is packaged with llama-server
@@ -60,8 +60,8 @@ noblacklist /usr/lib/llvm
 # Kimi support (optional)
 # See exec.Command sections in cmd/launch/kimi.go
 #noblacklist ${PATH}/kimi
-#noblacklist ${PATH}/curl # For installer if not installed (ebuild package manager security bypass, DO NOT USE, use ebuild instead)
-#noblacklist ${PATH}/bash # For installer if not installed (ebuild package manager security bypass, DO NOT USE, use ebuild instead)
+#noblacklist ${PATH}/curl # (ebuild package manager security bypass, DO NOT USE, use ebuild instead)
+#noblacklist ${PATH}/bash # (ebuild package manager security bypass, DO NOT USE, use ebuild instead)
 
 # llama-server (optional)
 # See exec.Command sections in llm/llama_server.go
@@ -78,8 +78,8 @@ noblacklist /usr/lib/llvm
 # See exec.Command sections in cmd/launch/openclaw.go
 #noblacklist ${PATH}/clawdbot
 #noblacklist ${PATH}/openclaw
-#noblacklist ${PATH}/npm (ebuild package manager security bypass, DO NOT USE, use ebuild instead)
-#noblacklist ${PATH}/git (ebuild package manager security bypass, DO NOT USE, use ebuild instead)
+#noblacklist ${PATH}/npm # (ebuild package manager security bypass, DO NOT USE, use ebuild instead)
+#noblacklist ${PATH}/git # (ebuild package manager security bypass, DO NOT USE, use ebuild instead)
 
 # OpenCode coding assistant support (optional)
 #noblacklist ${PATH}/opencode
@@ -90,7 +90,7 @@ noblacklist /usr/lib/llvm
 
 # Pi coding agent support (optional)
 # See exec.Command sections in cmd/launch/pi.go
-#noblacklist ${PATH}/npm
+#noblacklist ${PATH}/npm # (ebuild package manager security bypass, DO NOT USE, use ebuild instead)
 #noblacklist ${PATH}/pi
 
 # VSCode IDE integration support (optional)
