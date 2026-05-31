@@ -41,7 +41,7 @@ noblacklist /dev/dri
 whitelist /dev/dri
 whitelist /dev/null
 
-# Alternative to noroot but do coarse-grained relaxed restriction
+# Alternative to noroot but do coarse-grained relaxed restrictions
 caps.drop all						# First drop all privileges
 caps.keep sys_admin,sys_nice,dac_override,chown		# sys_admin - For GPU memory allocation
 							# sys_nice - For GPU priority scheduling
