@@ -540,6 +540,11 @@
     For proper mitigation, use compiler based mitigations.
 
 
+    private-lib notes:
+
+    If a package uses /usr/lib*/<folder-name>,  add `private-lib <folder-name>`
+    to the profile and possibly `noblacklist /usr/lib*/<folder-name>`.
+
 
     Build time environment variables for USE=wrapper
 
@@ -884,7 +889,12 @@
       Enable private-home feature
     </flag>
     <flag name="private-lib">
-      Enable private-lib feature.
+      Enable private-lib for increased mitigation against multiple vulnerable
+      library copies in /lib or /usr/lib with a tradeoff of higher maintenance
+      cost.
+
+      Security note:  Blacklist also vulnerable libraries copies in /opt for
+      proper attack surface reduction.
     </flag>
     <flag name="scudo">
       Enable support for Scudo as a hardened allocator.
