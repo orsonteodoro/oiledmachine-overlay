@@ -10,8 +10,20 @@ Restart=always
 RestartSec=3
 Environment="LD_LIBRARY_PATH=@LD_LIBRARY_PATH@"
 Environment="OLLAMA_CONTEXT_LENGTH=@OLLAMA_CONTEXT_LENGTH@"
+Environment="OLLAMA_FIREJAIL=@OLLAMA_FIREJAIL@"
 Environment="OLLAMA_FLASH_ATTENTION=@OLLAMA_FLASH_ATTENTION@"
 Environment="OLLAMA_KV_CACHE_TYPE=@OLLAMA_KV_CACHE_TYPE@"
+
+# CWE-401, DoS
+# Kill process on OOM for FAFO users
+# -1000 never killed
+# 0 default
+# <500 mid-back of the OOM kill list
+# >=500 mid-front of the OOM kill list
+# 1000 front of the line OOM kill
+Environment="OLLAMA_OOM=500"
+
+#Environment="OLLAMA_ORIGINS=@OLLAMA_ORIGINS@"
 Environment="OLLAMA_VULKAN=@OLLAMA_VULKAN@"
 Environment="PATH=$PATH"
 #

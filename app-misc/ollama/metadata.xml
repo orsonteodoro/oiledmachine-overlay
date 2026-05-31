@@ -113,12 +113,15 @@
     <flag name="blis">
       Support CPU optimized linear math via BLIS.
     </flag>
-    <flag name="chroot">
-      Isolate the ollama daemon filesystem instance to limit breach.
-      (EXPERIMENTAL)
-    </flag>
     <flag name="emoji">
       Support emojis.
+    </flag>
+    <flag name="firejail">
+      Isolate the Ollama server-daemon to mitigate against path traversal that
+      leads to information disclosure, malicious uncensored agents, trojanized
+      LLMs with malicious payloads.  Also, use Firejail to control
+      access/visibility to credentials/secrets for the server-daemon and the
+      agents.
     </flag>
     <flag name="flash">
       Use the FlashAttention optimization to reduce memory use and speed up
@@ -140,11 +143,6 @@
     </flag>
     <flag name="rocm">
       Support ROCm™ for AMD GPUs.
-    </flag>
-    <flag name="sandbox">
-      Isolate the ollama daemon filesystem instance to limit reconnasiance and
-      information disclosure
-      (EXPERIMENTAL)
     </flag>
     <flag name="unrestrict">
       Allow unrestricted downloading of ollama models.  Otherwise, only allow

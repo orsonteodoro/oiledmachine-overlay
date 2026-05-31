@@ -33,24 +33,38 @@ whitelist /etc/ld.so.cache # Required, minimal visibility
 
 include landlock-common.inc
 
+# Alternative to no3d but do coarse-grained relaxed restrictions
+#blacklist /dev/nvidia*
+blacklist /dev/kfd
+# but keep /dev/dri whitelisted
+noblacklist /dev/dri
+whitelist /dev/dri
+whitelist /dev/null
+
+# Alternative to noroot but do coarse-grained relaxed restriction
+caps.drop all						# First drop all privileges
+caps.keep sys_admin,sys_nice,dac_override,chown		# sys_admin - For GPU memory allocation
+							# sys_nice - For GPU priority scheduling
+							# dac_override - For /dev/dri access
+							# chown - Let ollama manage own files
+nonewprivs						# Prevent privilege escalaction
+seccomp !kexec_load,!ptrace,!perf_event_open		# Allow most of seccomp and allow Mesa syscalls
+
 apparmor
-caps.drop all
 ipc-namespace
 machine-id
 #net none
 netfilter
 #no3d
 nodvd
-nogroups
+#nogroups
 noinput
-nonewprivs
-noroot
+#noroot
 nosound
 notv
 nou2f
 novideo
 protocol unix,inet,inet6
-seccomp
 #tracelog
 
 disable-mnt
@@ -77,6 +91,6 @@ dbus-user none
 dbus-system none
 
 #deterministic-shutdown
-memory-deny-write-execute
+memory-deny-write-execute # Disable to debug with alacritty
 #read-only ${HOME}
 restrict-namespaces

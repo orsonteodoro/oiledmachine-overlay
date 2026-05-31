@@ -1,0 +1,103 @@
+#!/sbin/openrc-run
+
+description="Ollama Service"
+real_command="/usr/bin/ollama"
+real_command_args="serve"
+command_user="ollama"
+command_group="ollama"
+command_background="yes"
+pidfile="/run/ollama.pid"
+log="/var/log/ollama/ollama.log"
+
+# AC = Access Control
+# CE = Code Execution
+# ID = Information Disclosure
+# DoS = Denial of Service
+# DT = Data Tampering
+
+# CWE-653 mitigation with Firejail sandboxing
+# Use the Firejail to mitigate against trojanized LLMs with .so files or malicous payloads.
+
+_OLLAMA_DEBUG=${_OLLAMA_DEBUG:-"0"}
+
+OLLAMA_BACKEND=${OLLAMA_BACKEND:-"@OLLAMA_BACKEND@"}
+OLLAMA_CONTEXT_LENGTH=${OLLAMA_CONTEXT_LENGTH:-@OLLAMA_CONTEXT_LENGTH@}
+OLLAMA_FIREJAIL=${OLLAMA_FIREJAIL:-@OLLAMA_FIREJAIL@}
+OLLAMA_FLASH_ATTENTION=${OLLAMA_FLASH_ATTENTION:-@OLLAMA_FLASH_ATTENTION@}
+OLLAMA_KV_CACHE_TYPE=${OLLAMA_KV_CACHE_TYPE:-"@OLLAMA_KV_CACHE_TYPE@"}
+OLLAMA_VULKAN=${OLLAMA_VULKAN:-"@OLLAMA_VULKAN@"}
+
+# CWE-401, DoS
+# Kill process on OOM for FAFO users
+# -1000 never killed
+# 0 default
+# <500 mid-back of the OOM kill list
+# >=500 mid-front of the OOM kill list
+# 1000 front of the line OOM kill
+OLLAMA_OOM=${OLLAMA_OOM:-500}
+
+# Ollama allows cross-origin requests from 127.0.0.1 and 0.0.0.0 by default.
+# Additional origins can be configured with OLLAMA_ORIGINS.
+# export OLLAMA_ORIGINS="<ip>"
+
+bind_mount_file() {
+	local path="${1}"
+	local dir
+}
+
+start() {
+	ebegin "Starting $description"
+	exec >> >(logger -t "$RC_SVCNAME Start daemon" -p "daemon.info")
+
+	local args=()
+
+	local uid=$(grep "^ollama:" "/etc/passwd" | cut -f 3 -d ":")
+	local gid=$(grep "^ollama:" "/etc/passwd" | cut -f 4 -d ":")
+
+	args+=(
+		-e LD_LIBRARY_PATH="@LD_LIBRARY_PATH@"
+		-e OLLAMA_CONTEXT_LENGTH="${OLLAMA_CONTEXT_LENGTH}"
+		-e OLLAMA_FIREJAIL="${OLLAMA_FIREJAIL}"
+		-e OLLAMA_FLASH_ATTENTION="${OLLAMA_FLASH_ATTENTION}"
+		-e OLLAMA_KV_CACHE_TYPE="${OLLAMA_KV_CACHE_TYPE}"
+		-e OLLAMA_ORIGINS="${OLLAMA_ORIGINS}"
+		-e OLLAMA_OOM="${OLLAMA_OOM}"
+		-e OLLAMA_VULKAN="${OLLAMA_VULKAN}"
+	)
+
+	if [[ "${_OLLAMA_DEBUG}" == "1" ]] ; then
+		:
+	else
+		args+=(
+			--background
+			--stdout "$log"
+			--stderr "$log"
+		)
+	fi
+
+	args+=(
+		--exec $real_command -- $real_command_args
+	)
+
+	start-stop-daemon \
+		--start \
+		--make-pidfile \
+		--pidfile "$pidfile" \
+		--user "$command_user" \
+		--group "$command_group" \
+		${args[@]}
+
+	eend $?
+}
+
+stop() {
+	ebegin "Stopping $description"
+	exec >> >(logger -t "$RC_SVCNAME Stop daemon" -p daemon.info)
+
+#	start-stop-daemon --stop --pidfile "$pidfile"
+
+	# The start-stop-daemon line is bugged
+	pkill -9 -G ollama
+
+	eend $?
+}

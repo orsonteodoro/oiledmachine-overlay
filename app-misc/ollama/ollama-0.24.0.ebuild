@@ -3992,6 +3992,9 @@ LICENSE="
 
 RESTRICT="mirror" # Speed up downloads
 SLOT="0"
+# Firejail support is an oiledmachine-overlay exclusive.  It is enabled by
+# default to mitigate against uncaught path traversal vulnerabilities and
+# unreviewed community LLMs that may have malicious payloads.
 IUSE+="
 ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${CPU_FLAGS_ARM[@]}
@@ -4001,9 +4004,9 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
-ai-agent blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
-sandbox systemd unrestrict video_cards_intel -vulkan
-ebuild_revision_126
+ai-agent blis chroot cuda debug emoji +firejail flash lapack mkl openblas openrc
+rocm systemd unrestrict video_cards_intel -vulkan
+ebuild_revision_127
 "
 
 gen_rocm_required_use() {
@@ -4152,9 +4155,6 @@ REQUIRED_USE="
 			${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]}
 		)
 	)
-	sandbox? (
-		openrc
-	)
 	video_cards_intel? (
 		openrc
 	)
@@ -4253,6 +4253,9 @@ RDEPEND="
 			media-fonts/twemoji
 		)
 	)
+	firejail? (
+		sys-apps/firejail
+	)
 	lapack? (
 		sci-libs/lapack:=
 	)
@@ -4272,9 +4275,6 @@ RDEPEND="
 	rocm? (
 		$(gen_rocm_rdepend)
 		x11-libs/libdrm[video_cards_amdgpu]
-	)
-	sandbox? (
-		sys-apps/sandbox
 	)
 	video_cards_intel? (
 		>=dev-libs/intel-compute-runtime-2024[l0]
@@ -4776,6 +4776,13 @@ get_cuda_flags() {
 
 _NVCC_FLAGS=""
 src_configure() {
+	if use firejail ; then
+		if [[ ! -e "/etc/firejail/ollama.profile" ]] ; then
+eerror "Re-emerge sys-apps/firejail::oiledmachine-overlay for the ollama profile."
+			die
+		fi
+	fi
+
 	PATH="/usr/lib/protobuf/3/bin:${PATH}"
 	if use cuda ; then
 		if has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
@@ -5922,14 +5929,14 @@ src_install() {
 		ld_library_path+="/usr/$(get_libdir)"
 	fi
 
-	cat "${FILESDIR}/${PN}-muxer" > "${T}/${PN}-muxer"
+	cat "${FILESDIR}/${PN}" > "${T}/${PN}"
 
 	# Prune generators
 	sed -i \
 		-e "/START IUSE_GENERATOR/,/END IUSE_GENERATOR/d" \
 		-e "/START LICENSE_ARRAY_GENERATOR/,/END LICENSE_ARRAY_GENERATOR/d" \
 		-e "/START USE_DESC_GENERATOR/,/END USE_DESC_GENERATOR/d" \
-		"${T}/${PN}-muxer" \
+		"${T}/${PN}" \
 		|| die
 
 	# Set default backend for wrapper
@@ -5951,11 +5958,11 @@ src_install() {
 	fi
 
 	sed -i -e "s|@OLLAMA_BACKEND@|${backend}|g" \
-		"${T}/${PN}-muxer" \
+		"${T}/${PN}" \
 		|| die
 
 	exeinto "/usr/bin"
-	newexe "${T}/${PN}-muxer" "${PN}"
+	newexe "${T}/${PN}" "${PN}"
 
 	#
 	# We build/install two backends for scenarios
@@ -5968,21 +5975,20 @@ src_install() {
 
 	local chroot=$(usex chroot "1" "0")
 	local context_length=${OLLAMA_CONTEXT_LENGTH:-2048}
+	local firejail=$(usex firejail "1" "0")
 	local flash_attention=$(usex flash "1" "0")
 	local kv_cache_type=${OLLAMA_KV_CACHE_TYPE:-"f16"}
-	local sandbox=$(usex sandbox "sandbox" "")
-	local vulkan=$(usex vulkan "1" "0")
 	local libdir=$(get_libdir)
+	local vulkan=$(usex vulkan "1" "0")
 
 	if use openrc ; then
-		doinitd "${FILESDIR}/${PN}"
+		newinitd "${FILESDIR}/${PN}.openrc" "${PN}"
 		sed -i \
 			-e "s|@OLLAMA_BACKEND@|${backend}|g" \
-			-e "s|@OLLAMA_CHROOT@|${chroot}|g" \
 			-e "s|@OLLAMA_CONTEXT_LENGTH@|${context_length}|g" \
+			-e "s|@OLLAMA_FIREJAIL@|${firejail}|g" \
 			-e "s|@OLLAMA_FLASH_ATTENTION@|${flash_attention}|g" \
 			-e "s|@OLLAMA_KV_CACHE_TYPE@|${kv_cache_type}|g" \
-			-e "s|@OLLAMA_SANDBOX_PROVIDER@|${sandbox}|g" \
 			-e "s|@OLLAMA_VULKAN@|${vulkan}|g" \
 			-e "s|@LD_LIBRARY_PATH@|${ld_library_path}|g" \
 			-e "s|@LIBDIR@|${libdir}|g" \
@@ -5994,6 +6000,7 @@ src_install() {
 		doins "${FILESDIR}/${PN}.service"
 		sed -i \
 			-e "s|@OLLAMA_CONTEXT_LENGTH@|${context_length}|g" \
+			-e "s|@OLLAMA_FIREJAIL@|${firejail}|g" \
 			-e "s|@OLLAMA_FLASH_ATTENTION@|${flash_attention}|g" \
 			-e "s|@OLLAMA_KV_CACHE_TYPE@|${kv_cache_type}|g" \
 			-e "s|@OLLAMA_VULKAN@|${vulkan}|g" \
@@ -6006,8 +6013,8 @@ src_install() {
 	sed -i \
 		-e "s|@LIBDIR@|${libdir}|g" \
 		-e "s|@OLLAMA_BACKEND@|${backend}|g" \
+		-e "s|@OLLAMA_FIREJAIL@|${firejail}|g" \
 		-e "s|@OLLAMA_MALLOC_PROVIDER@|${malloc}|g" \
-		-e "s|@OLLAMA_SANDBOX_PROVIDER@|${sandbox}|g" \
 		"${ED}/usr/bin/${PN}" \
 		|| die
 
