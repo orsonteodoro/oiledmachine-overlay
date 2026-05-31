@@ -6142,7 +6142,7 @@ einfo "  \`killall -9 ollama\`"
 einfo "  systemctl start ollama"
 einfo
 einfo "You must manually configure /etc/firejail/ollama.profile for"
-einfo "coding agents, AI assistants, and Editor & IDE integrations."
+einfo "coding agents, AI assistants, and editor & IDE integrations."
 einfo
 	fi
 	if use firejail && use cuda ; then
