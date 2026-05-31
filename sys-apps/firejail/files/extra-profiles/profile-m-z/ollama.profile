@@ -13,6 +13,96 @@ noblacklist /var/lib/ollama
 noblacklist /usr/lib/gcc
 noblacklist /usr/lib/llvm
 
+# Bash (optional)
+# See exec.Command sections in x/tools/bash.go
+#include allow-bin-sh.inc
+
+# Claude Code coding assistant support (optional)
+# See exec.Command sections in cmd/launch/claude.go
+#noblacklist ${PATH}/claude
+
+# Cline IDE integration support (optional)
+# See exec.Command sections in cmd/launch/cline.go
+#noblacklist ${PATH}/cline
+
+# Cloud LLM support (optional)
+#noblacklist ${PATH}/xdg-open
+
+# Codex CLI coding assistant support (optional)
+# See exec.Command sections in cmd/launch/codex.go
+#noblacklist ${PATH}/codex
+
+# Droid coding assistant support (optional)
+# See exec.Command sections in cmd/launch/droid.go
+#noblacklist ${PATH}/droid
+
+# External editor (optional)
+# Requires EDITOR environment variable
+# See exec.Command sections in cmd/interactive.go
+
+# GitHub Copilot CLI coding agent support (optional)
+# See exec.Command sections in cmd/launch/copilot.go
+#noblacklist ${PATH}/copilot
+
+# Hermes Agent AI assistant support (optional)
+# See exec.Command sections in cmd/launch/hermes.go
+#noblacklist ${PATH}/hermes
+#include allow-bin-sh.inc
+#noblacklist ${PATH}/curl # For installer if not installed (ebuild package manager security bypass, DO NOT USE, use ebuild instead)
+#noblacklist ${PATH}/bash # For installer if not installed (ebuild package manager security bypass, DO NOT USE, use ebuild instead)
+#noblacklist ${PATH}/git # For installer if not installed (ebuild package manager security bypass, DO NOT USE, use ebuild instead)
+
+# llama-quantize (optional)
+# llama-quantize is packaged with llama-server
+# See exec.Command sections in server/quantization.go
+#noblacklist ${PATH}/llama-quantize
+
+# Kimi support (optional)
+# See exec.Command sections in cmd/launch/kimi.go
+#noblacklist ${PATH}/kimi
+#noblacklist ${PATH}/curl # For installer if not installed (ebuild package manager security bypass, DO NOT USE, use ebuild instead)
+#noblacklist ${PATH}/bash # For installer if not installed (ebuild package manager security bypass, DO NOT USE, use ebuild instead)
+
+# llama-server (optional)
+# See exec.Command sections in llm/llama_server.go
+# See exec.Command sections in discover/llama_server.go
+#noblacklist ${PATH}/llama-server
+
+# mlxrunner (CUDA 13+, sm50, experimental) (optional)
+# For Z-Image Turbo and FLUX.2 Klein models
+# See exec.Command sections in x/mlxrunner/client.go
+# See exec.Command sections in x/imagegen/server.go
+#noblacklist ${PATH}/ollama
+
+# OpenClaw AI assistant support (optional)
+# See exec.Command sections in cmd/launch/openclaw.go
+#noblacklist ${PATH}/clawdbot
+#noblacklist ${PATH}/openclaw
+#noblacklist ${PATH}/npm
+
+# OpenCode coding assistant support (optional)
+#noblacklist ${PATH}/opencode
+
+# Pool coding assistant support (optional)
+# See exec.Command sections in cmd/launch/poolside.go
+#noblacklist ${PATH}/pool
+
+# Pi coding agent support (optional)
+# See exec.Command sections in cmd/launch/pi.go
+#noblacklist ${PATH}/npm
+#noblacklist ${PATH}/pi
+
+# VSCode IDE integration support (optional)
+# See exec.Command sections in cmd/launch/vscode.go
+#noblacklist ${PATH}/code
+#noblacklist ${PATH}/pkill
+#noblacklist ${PATH}/pgrep
+
+# Unix server (optional)
+# See exec.Command sections in app/server/server_unix.go
+#noblacklist ${PATH}/pgrep
+#noblacklist ${PATH}/ps
+
 include disable-common.inc
 include disable-devel.inc # Prevent bypass of disable-common.inc
 include disable-exec.inc
