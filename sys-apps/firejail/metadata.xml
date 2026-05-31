@@ -543,7 +543,10 @@
     private-lib notes:
 
     If a package uses /usr/lib*/<folder-name>,  add `private-lib <folder-name>`
-    to the profile and possibly `noblacklist /usr/lib*/<folder-name>`.
+    to the profile and possibly `noblacklist /usr/lib*/<folder-name>`.  It is
+    important because executibles may live in the /usr/lib folder.
+    For /usr/lib/ollama/bin/ollama, you could try `private-lib ollama` or
+    `private ollama/bin/ollama`.
 
 
     Build time environment variables for USE=wrapper
