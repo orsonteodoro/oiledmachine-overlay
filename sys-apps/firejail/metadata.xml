@@ -407,10 +407,8 @@
     To verify that path traversal is mitigated by the sandbox, use one of these
     commands:
 
-    firejail --profile=<profile-name> --private-bin=bash,<term>,ls,id,head,cat /usr/bin/<term>                  # For your favorite terminal app and testing <profile-name> profile
-    firejail /usr/bin/<term>                                                                                    # For your favorite terminal app and testing the fallback default profile
-    firejail --profile=<profile-name> --private-bin=bash,alacritty,ls,id,head,cat /usr/bin/alacritty            # For Wayland compatibility
-    firejail --profile=<profile-name> --private-bin=bash,xterm,ls,id,head,cat /usr/bin/xterm                    # For X11 compatibility
+    firejail --profile=<profile-name> --private-bin=bash,<term>,ls,id,head,cat bash      # For testing with <profile-name> profile
+    firejail --private-bin=bash,<term>,ls,id,head,cat bash                               # For testing the fallback default.profile
 
     Use `head <path>` or `cat <path>` to test if the file is readable by the attacker.
     Use `ls <path>` to test if the file is accessible by the attacker.
@@ -886,7 +884,7 @@
       Enable private-home feature
     </flag>
     <flag name="private-lib">
-      Enable private-lib feature
+      Enable private-lib feature.
     </flag>
     <flag name="scudo">
       Enable support for Scudo as a hardened allocator.
