@@ -9,8 +9,7 @@
 # associated with new projects.
 
 # CWE-653 mitigation, currently the use of the sandbox is to mitigate against
-# trojanized LLMs, agents without guardrails that produce malware,
-# Living of the LLM attacks (LOLLM).
+# trojanized LLMs, agents without guardrails that produce malware.
 
 ARGS=( ${@} )
 
