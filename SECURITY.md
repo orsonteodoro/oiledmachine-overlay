@@ -451,10 +451,10 @@ SANDBOX_DENY="/home:/root:/boot:/media:/home/johndoe:/backup:/home/johndoe/bank:
 
 See also [Gentoo Wiki:/etc/sandbox.conf](https://wiki.gentoo.org/wiki//etc/sandbox.conf)
 
-### Protecting secrets in /etc/firejail/globals.conf with sys-apps/sandbox
+### Protecting secrets in /etc/firejail/globals.conf with sys-apps/firejail
 
 This is a stronger sandbox because it mitigates against Living of the Land
-attacks which are currently more than 80% of the cyberattacks.
+attacks which are currently more than the estimated 70% of the cyberattacks today.
 
 Use cases:
 * npm - during download and builds if properly using enpm wrapper
