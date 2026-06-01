@@ -1451,6 +1451,9 @@ ewarn
 ewarn "You need to etc-update and restart the init service for the new sandbox"
 ewarn "changes."
 ewarn
+ewarn "The /etc/firejail/local-ai.profile assumes single mode USE case."
+ewarn "Change the config if using Docker plugins"
+ewarn
 	fi
 }
 
