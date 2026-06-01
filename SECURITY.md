@@ -440,7 +440,8 @@ will mitigate for others.
 ### Protecting secrets in /etc/sandbox.conf with sys-apps/sandbox
 
 Primary purpose:
-Protect the live system against catastropic damages.
+Protect the live system against catastropic damages from both project
+developers and ebuild developers.
 
 Secondary purpose:
 Degrade attacker capabilities.
