@@ -18,7 +18,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/eo-common.profile 
  apparmor
  caps.drop all
 -ipc-namespace
-+#ipc-namespace # Add "#" If using xpra (less secure).  Remove "#" if using xephyr (move secure).  Verified 20260525
++@IPC_NAMESPACE_FIX@ipc-namespace # Add "#" If using xpra (less secure).  Remove "#" if using xephyr (move secure).  Verified 20260525
  machine-id
  net none
  no3d

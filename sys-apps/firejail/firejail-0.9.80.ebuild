@@ -1,5 +1,5 @@
 # Copyright 2022-2025 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -16,7 +16,7 @@ CXX_STANDARD="ignore"
 FIREJAIL_DEFAULT_WIDTH=${FIREJAIL_DEFAULT_WIDTH:-1920}
 FIREJAIL_DEFAULT_HEIGHT=${FIREJAIL_DEFAULT_HEIGHT:-1080}
 FIREJAIL_DEFAULT_BPP=${FIREJAIL_DEFAULT_BBP:-24}
-FIREJAIL_MAX_ENVS=${FIREJAIL_MAX_ENVS:-512} # 2048 may be needed for testing
+FIREJAIL_MAX_ENVS=${FIREJAIL_MAX_ENVS:-512} # 2048 for testing only
 GEN_EBUILD=0 # Uncomment to regen ebuild parts
 PYTHON_COMPAT=( "python3_"{9..12} )
 TEST_SET="distro" # distro or full
@@ -293,7 +293,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 -apparmor +chroot clang contrib +dbusproxy +file-transfer +globalcfg
 landlock +network +private-home -private-lib selfrando -selinux +suid
 test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xcsecurity xvfb
-ebuild_revision_127
+ebuild_revision_129
 "
 REQUIRED_USE+="
 	!test
@@ -384,8 +384,8 @@ BDEPEND+="
 "
 
 PATCHES=(
-	"${FILESDIR}/${PN}-0.9.78-envlimits.patch"
-	"${FILESDIR}/${PN}-0.9.78-firecfg.config.patch"
+	"${FILESDIR}/${PN}-0.9.80-firecfg.config.patch"
+	"${FILESDIR}/${PN}-0.9.80-manpage-nocompress.patch"
 #	"${FILESDIR}/extra-patches/${PN}-009110a-disable-xcsecurity.patch"
 #	"${FILESDIR}/extra-patches/${PN}-009110a-disable-xcsecurity-usage.patch"
 	"${FILESDIR}/extra-patches/${PN}-0.9.80-profile-fixes.patch"
@@ -394,6 +394,9 @@ PATCHES=(
 	"${FILESDIR}/extra-patches/${PN}-0.9.80-inc-profile-changes.patch"
 	"${FILESDIR}/extra-patches/${PN}-0.9.80-fix-private-lib-for-multilslot.patch"
 	"${FILESDIR}/extra-patches/${PN}-0.9.80-chown-warning.patch"
+)
+
+TESTING_PATCHES=(
 )
 
 get_impls() {
@@ -778,9 +781,18 @@ src_prepare() {
 
 	cp -aT "${FILESDIR}/extra-profiles/" "${S}/etc" || die
 
+	if use test ; then
+		eapply "${FILESDIR}/${PN}-0.9.78-envlimits.patch"
+	fi
+
 	if use xpra ; then
 		eapply "${FILESDIR}/extra-patches/${PN}-0.9.80-xpra-opengl.patch"
 		eapply "${FILESDIR}/extra-patches/${PN}-0.9.80-disable-xpra-splash-v2.patch"
+	fi
+
+	if use xpra ; then
+	# eog fix
+		sed -i -e "s|@IPC_NAMESPACE_FIX@|#|g" "etc/profile-a-l/eo-common.profile" || die
 	fi
 
 	# Our toolchain already sets SSP by default but forcing it causes problems
@@ -885,6 +897,7 @@ ewarn "Use LLD or mold for ROP mitigation"
 }
 
 _src_configure_default_res() {
+	use test || return
 	sed -i \
 		-e "s|@WIDTH@|${FIREJAIL_DEFAULT_WIDTH}|g" \
 		-e "s|@HEIGHT@|${FIREJAIL_DEFAULT_HEIGHT}|g" \
