@@ -432,12 +432,16 @@ See also https://docs.github.com/en/authentication/keeping-your-account-and-data
 This overlay uses 2 sandboxes.  This ensures defense in depth protection in case
 one of the other fails because of quirk differences.  This will help mitigate
 against supply chain attacks leading to credential theft or sabotage, but
-requires effort on your part.
+it requires effort on your part.
+
+If it bypasses the sandbox (e.g. Copy Fail), it will not protect that case but
+will mitigate for others.
 
 ### Protecting secrets in /etc/sandbox.conf with sys-apps/sandbox
 
 Use cases:
 * Live ebuilds
+* Ebuilds linked to previously compromised projects
 * ebuild context
 
 This is an underutilized or underdocumented use case.
