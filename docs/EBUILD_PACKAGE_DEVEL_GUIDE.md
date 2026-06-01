@@ -379,7 +379,7 @@ Firejail
 | `${PATH}/<cmd>` bypass mitigation [1]               | N                                | N                                  | Y (Some/WIP)                                                  |
 | Flooding the zone mitigation [2]                    | N                                | N                                  | Y                                                             |
 
-* [1] For LOTL attack /opt installations are reachable.
+* [1] For LOTL attack, /opt installations are reachable.
 * [2] Bypassing or adding too many (language or implementation) alternatives to bypass the sandbox blacklists which can be weaponized in LOTL attacks.
 
 Robustness QA
