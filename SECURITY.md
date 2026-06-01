@@ -459,7 +459,7 @@ Example:
 
 ```bash
 # It is recursive but does not support globs (*)
-SANDBOX_DENY="/home:/root:/boot/keys:/boot/documents:/media:/home/johndoe:/backup:/home/johndoe/bank:/home/johndoe/.ssh:/home/johndoe/Downloads:/home/johndoe/passwords.kdbx:/mnt/wallet"
+SANDBOX_DENY="/home:/root:/boot/keys:/boot/documents:/media:/home/johndoe:/backup:/home/johndoe/bank:/home/johndoe/.ssh:/home/johndoe/Downloads:/home/johndoe/passwords.kdbx:/mnt/wallet:/backups"
 ```
 
 See also [Gentoo Wiki:/etc/sandbox.conf](https://wiki.gentoo.org/wiki//etc/sandbox.conf)
@@ -490,6 +490,7 @@ Example:
 # blacklist <path>
 blacklist /root
 blacklist /boot
+blacklist /backups
 blacklist /media
 blacklist /home/johndoe
 blacklist /home/johndoe/*.kdbx
