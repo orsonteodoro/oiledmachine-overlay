@@ -446,7 +446,7 @@ Example:
 
 ```bash
 # It is recursive but does not support globs (*)
-SANDBOX_DENY="/home:/root:/boot:/media:/home/johndoe:/backup:/home/johndoe/bank:/home/johndoe/.ssh:/mnt/wallet"
+SANDBOX_DENY="/home:/root:/boot:/media:/home/johndoe:/backup:/home/johndoe/bank:/home/johndoe/.ssh:/home/johndoe/Downloads:/mnt/wallet"
 ```
 
 See also [Gentoo Wiki:/etc/sandbox.conf](https://wiki.gentoo.org/wiki//etc/sandbox.conf)
