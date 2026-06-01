@@ -376,7 +376,11 @@ Firejail
 | Threat vectors for defaults                         | Information disclosure, lateral movement  | Information disclosure, lateral movement | -                                              |
 | Additional profiles                                 | -                                | N                                  | Y                                                             |
 | Multislot private-lib support                       | N                                | N                                  | Y                                                             |
-| Not PATH bypass (aka abspath bypass) mitigation     | N                                | N                                  | Y (Some/WIP)                                                  |
+| `${PATH}/<cmd>` bypass mitigation [1]               | N                                | N                                  | Y (Some/WIP)                                                  |
+| Flood the zone mitigation [2]                       | N                                | N                                  | Y                                                             |
+
+* [1] For LOTL attack /opt installations are reachable.
+* [2] Bypassing using language alternatives which can be weaponized in LOTL attacks.
 
 Robustness QA
 
