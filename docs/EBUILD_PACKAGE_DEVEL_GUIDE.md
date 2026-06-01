@@ -376,6 +376,7 @@ Firejail
 | Threat vectors for defaults                         | Information disclosure, lateral movement  | Information disclosure, lateral movement | -                                              |
 | Additional profiles                                 | -                                | N                                  | Y                                                             |
 | Multislot private-lib support                       | N                                | N                                  | Y                                                             |
+| Not PATH bypass (aka abspath bypass) mitigation     | N                                | N                                  | Y (Some/WIP)                                                  |
 
 Robustness QA
 
