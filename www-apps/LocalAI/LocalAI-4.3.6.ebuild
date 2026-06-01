@@ -876,6 +876,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-4.3.6-libbackend-sh.patch"
 	"${FILESDIR}/${PN}-3.8.0-proto-reorder.patch"
 	"${FILESDIR}/${PN}-3.8.0-llama-cpp-config.patch"
+	"${FILESDIR}/${PN}-4.3.6-disable-syslibs-copy.patch"
 )
 
 pkg_setup() {
@@ -923,12 +924,14 @@ src_unpack() {
 		gen_git_tag "${S}" "v${PV}"
 	fi
 
+if false ; then
 	mkdir -p "${S}/core/http/react-ui" || die
 	pushd "${S}/core/http/react-ui" >/dev/null 2>&1 || die
 		npm_hydrate
 		enpm install
 		enpm run build
 	popd >/dev/null 2>&1 || die
+fi
 }
 
 get_onnx_arch() {
