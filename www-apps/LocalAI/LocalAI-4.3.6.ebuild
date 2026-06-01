@@ -262,7 +262,7 @@ ${MODES[@]/+}
 ${PYTHON_BACKENDS[@]/#/localai_backends_}
 ci cuda debug devcontainer docker +firejail native openblas opencl
 openrc rag rocm stt sycl-f16 sycl-f32 systemd tts vulkan
-ebuild_revision_45
+ebuild_revision_46
 "
 REQUIRED_USE="
 	!ci
@@ -924,14 +924,12 @@ src_unpack() {
 		gen_git_tag "${S}" "v${PV}"
 	fi
 
-if false ; then
 	mkdir -p "${S}/core/http/react-ui" || die
 	pushd "${S}/core/http/react-ui" >/dev/null 2>&1 || die
 		npm_hydrate
 		enpm install
 		enpm run build
 	popd >/dev/null 2>&1 || die
-fi
 }
 
 get_onnx_arch() {
