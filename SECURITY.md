@@ -450,7 +450,7 @@ Example:
 
 ```bash
 # It is recursive but does not support globs (*)
-SANDBOX_DENY="/home:/root:/boot:/media:/home/johndoe:/backup:/home/johndoe/bank:/home/johndoe/.ssh:/home/johndoe/Downloads:/mnt/wallet"
+SANDBOX_DENY="/home:/root:/boot:/media:/home/johndoe:/backup:/home/johndoe/bank:/home/johndoe/.ssh:/home/johndoe/Downloads:/home/johndoe/passwords.kdbx:/mnt/wallet"
 ```
 
 See also [Gentoo Wiki:/etc/sandbox.conf](https://wiki.gentoo.org/wiki//etc/sandbox.conf)
@@ -467,16 +467,18 @@ Use cases:
 * All Firejailed sandbox apps using wrapper or `firejail <cli-cmd>` for the
 default profile or `firejail --profile=<cli-cmd> <cli-cmd>`
 
+Example:
+
 ```bash
 # In /etc/firejail/globals.local
 # blacklist <path>
-blacklist /home/*.kdbx
 blacklist /root
 blacklist /boot
 blacklist /media
 blacklist /home/johndoe
-blacklist /home/johndoe/bank
+blacklist /home/johndoe/*.kdbx
 blacklist /home/johndoe/.ssh
+blacklist /home/johndoe/bank
 blacklist /home/johndoe/Downloads
 blacklist ${HOME}/.ssh
 blacklist /mnt/wallet
