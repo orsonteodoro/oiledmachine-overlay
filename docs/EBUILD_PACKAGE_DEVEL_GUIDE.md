@@ -377,7 +377,7 @@ Firejail
 | Additional profiles                                 | -                                | N                                  | Y                                                             |
 | Multislot private-lib support                       | N                                | N                                  | Y                                                             |
 | `${PATH}/<cmd>` bypass mitigation [1]               | N                                | N                                  | Y (Some/WIP)                                                  |
-| Flood the zone mitigation [2]                       | N                                | N                                  | Y                                                             |
+| Flooding the zone mitigation [2]                    | N                                | N                                  | Y                                                             |
 
 * [1] For LOTL attack /opt installations are reachable.
 * [2] Bypassing using language alternatives which can be weaponized in LOTL attacks.
