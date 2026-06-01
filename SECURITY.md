@@ -506,7 +506,7 @@ blacklist /mnt/wallet
 # When you need to use your credentials/secrets temporarily, edit
 # ${HOME}/firejail/globals.local with the following
 # noblacklist <path> rule.  For example:
-noblacklist /home/johndoe/*.kdb
+noblacklist /home/johndoe/*.kdbx
 # After use, remove the line or disable the line with #
 # Do not leave your keys in the lock for the entire day.
 
