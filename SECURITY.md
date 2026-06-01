@@ -452,7 +452,7 @@ Protect secrets/credentials.
 Use cases:
 * Live ebuilds
 * Ebuilds linked to previously compromised projects
-* During pnpm, yarn, npm, node build phases
+* During pnpm, yarn, npm, node download and build phases
 * ebuild context
 
 This is an underutilized or underdocumented use case.
