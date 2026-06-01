@@ -451,6 +451,7 @@ Protect secrets/credentials.
 Use cases:
 * Live ebuilds
 * Ebuilds linked to previously compromised projects
+* During pnpm, yarn, npm, node build phases
 * ebuild context
 
 This is an underutilized or underdocumented use case.
@@ -466,6 +467,8 @@ See also [Gentoo Wiki:/etc/sandbox.conf](https://wiki.gentoo.org/wiki//etc/sandb
 
 ### Protecting secrets in /etc/firejail/globals.local with sys-apps/firejail
 
+(EXPERIMENTAL during build time)
+
 This is a stronger sandbox because it mitigates against Living of the Land
 attacks which are currently more than the estimated 70% of the cyberattacks today.
 
@@ -475,10 +478,10 @@ Protect secrets/credentials.
 Secondary purpose (on this overlay):
 Degrade attacker capabilities.
 
+Note:  Currently it only works on post install.  Portage may be modded later in
+this overlay to use Firejail as an alternative.
+
 Use cases:
-* npm - during download and builds if properly using the enpm wrapper
-* pnpm - during download and builds if properly using the epnpm wrapper
-* Yarn - during download and builds if properly using the eyarn wrapper
 * Web browsers - when a sandbox breakout happens with the one used by the browser
 * All Firejailed sandbox apps using `/usr/local/bin/<cli-cmd>` wrapper scripts,
 `firejail <cli-cmd>` with the default.profile, or
