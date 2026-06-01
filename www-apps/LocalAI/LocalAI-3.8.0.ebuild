@@ -41,6 +41,13 @@ PROTOBUF_PYTHON_SLOT="5"
 PYTHON_COMPAT=( "python3_"{10..12} )
 RE2_SLOT="20250512"
 
+MODES=(
+	"single"
+	"federated-load-balancer"
+	"federated-worker-node"
+	"worker"
+)
+
 ONNXRUNTIME_PV="1.20.0" # From https://github.com/mudler/LocalAI/blob/v3.8.0/backend/go/silero-vad/Makefile#L5
 VULKAN_PV="1.4.328.0" # From the last vulkan-sdk-<ver> tag in https://github.com/KhronosGroup/Vulkan-Tools/tags relative to LLAMA_CPP_COMMIT commit date.  llama.cpp uses https://vulkan.lunarg.com/sdk/latest/linux.txt
 
@@ -241,6 +248,9 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
+# Upstream does not use a sandbox.  This is a oiledmachine-overlay exclusive
+# feature.  It is enabled by default to mitigate against drive by download of
+# unreviewed trojanized LLM models which may contain malicious payloads.
 IUSE+="
 ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${CPP_BACKENDS[@]/#/localai_backends_}
@@ -250,14 +260,18 @@ ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
 ${GOLANG_BACKENDS[@]/#/localai_backends_}
+${MODES[@]}
 ${PYTHON_BACKENDS[@]/#/localai_backends_}
-ci cuda debug devcontainer docker native openblas opencl openrc p2p rag rocm stt
-sycl-f16 sycl-f32 systemd tts vulkan
+ci cuda debug devcontainer docker +firejail native openblas opencl
+openrc rag rocm stt sycl-f16 sycl-f32 systemd tts vulkan
 ebuild_revision_44
 "
 REQUIRED_USE="
 	!ci
 	!devcontainer
+	^^ (
+		${MODES[@]}
+	)
 	?? (
 		cuda
 		openblas
@@ -689,6 +703,9 @@ RDEPEND+="
 	docker? (
 		app-containers/docker
 	)
+	firejail? (
+		sys-apps/firejail
+	)
 	localai_backends_bark? (
 		${PYTHON_COMMON_RDEPEND}
 		${BARK_RDEPEND}
@@ -957,6 +974,13 @@ src_prepare() {
 }
 
 src_configure() {
+	if use firejail ; then
+		if [[ ! -e "/etc/firejail/local-ai.profile" ]] ; then
+eerror "Re-emerge sys-apps/firejail::oiledmachine-overlay to add the local-ai.profile."
+			die
+		fi
+	fi
+
 	abseil-cpp_src_configure
 	protobuf_src_configure
 	re2_src_configure
@@ -1000,8 +1024,14 @@ src_compile() {
 	go-download-cache_setup
 	local go_tags=()
 	use debug && go_tags+=( "debug" )
-	use p2p && go_tags+=( "p2p" )
-	if use debug || use p2p || use tts ; then
+
+	if ! use single ; then
+		go_tags+=( "p2p" )
+	fi
+
+	if ! use single ; then
+		:
+	elif use debug || use tts ; then
 		:
 	else
 		go_tags+=( "none" )
@@ -1191,9 +1221,32 @@ einfo "Sanitizing file/folder permissions"
 	chmod "0640" "/etc/conf.d/${MY_PN2}"
 }
 
+get_mode() {
+	local mode=""
+	if use single ; then
+		mode="single"
+	elif use federated-load-balancer ; then
+		mode="federated-load-balancer"
+	elif use federated-worker-node ; then
+		mode="federated-worker-node"
+	elif use worker ; then
+		mode="worker"
+	else
+eerror "Supported modes:  single, federated-load-balancer, federated-worker-node, worker"
+		die
+	fi
+	echo "${mode}"
+}
+
 install_init_services() {
+	local federated=$(usex federated "1" "0")
+
+	local mode=$(get_mode)
+
 	sed \
 		-e "s|@EPYTHON@|${EPYTHON}|g" \
+		-e "s|@LOCAL_AI_FIREJAIL@|${firejail}|g" \
+		-e "s|@LOCAL_AI_MODE@|${mode}|g" \
 		"${FILESDIR}/${MY_PN2}-start-server" \
 			> \
 		"${T}/${MY_PN2}-start-server" \
@@ -1268,11 +1321,23 @@ install_init_services() {
 
 	if use openrc ; then
 		exeinto "/etc/init.d"
-		newexe "${FILESDIR}/${MY_PN2}.openrc" "${MY_PN2}"
+		cat "${FILESDIR}/${MY_PN2}.openrc" > "${T}/${MY_PN2}.openrc" || die
+		sed -i \
+			-e "s|@LOCAL_AI_FIREJAIL@|${firejail}|g" \
+			-e "s|@LOCAL_AI_MODE@|${mode}|g" \
+			"${T}/${MY_PN2}.openrc" \
+			|| die
+		newexe "${T}/${MY_PN2}.openrc" "${MY_PN2}"
 	fi
 	if use systemd ; then
 		insinto "/usr/lib/systemd/system"
-		newins "${FILESDIR}/${MY_PN2}.systemd" "${MY_PN2}.service"
+		cat "${FILESDIR}/${MY_PN2}.systemd" > "${T}/${MY_PN2}.systemd" || die
+		sed -i \
+			-e "s|@LOCAL_AI_FIREJAIL@|${firejail}|g" \
+			-e "s|@LOCAL_AI_MODE@|${mode}|g" \
+			"${T}/${MY_PN2}.systemd" \
+			|| die
+		newins "${T}/${MY_PN2}.systemd" "${MY_PN2}.service"
 	fi
 }
 
@@ -1375,7 +1440,17 @@ ewarn
 
 # Check if user created their own acct-{user,group}/local-ai ebuilds.
 	if ! ( groups "local-ai" | grep -q -e "video" ) ; then
-ewarn "The local-ai user needs to be added to the video group for GPU hardware acceleration in ${PN}"
+ewarn
+ewarn "The local-ai user needs to be added to the video group for GPU hardware"
+ewarn "acceleration in ${PN}"
+ewarn
+	fi
+
+	if use firejail ; then
+ewarn
+ewarn "You need to etc-update and restart the init service for the new sandbox"
+ewarn "changes."
+ewarn
 	fi
 }
 
@@ -1394,3 +1469,4 @@ ewarn "The local-ai user needs to be added to the video group for GPU hardware a
 # diffusers (image) - untested
 # diffusers (video) - untested
 # stablediffusion - untested
+# Test case:  how many letters in the english language? [Expected answer in 9 seconds]

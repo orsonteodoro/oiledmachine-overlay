@@ -89,20 +89,26 @@
     <flag name="docker">
       Support post-install Docker based backend options.
     </flag>
+    <flag name="federated-load-balancer">
+      Build/use as a Federated load balancer.
+    </flag>
+    <flag name="federated-worker-node">
+      Build/use as a Federated worker node.
+    </flag>
     <flag name="native">
       Build with -march=native.  Disabling requires SSE4.2 for ARCH=amd64.
     </flag>
     <flag name="openblas">
       Support CPU accelerated BLAS.
     </flag>
-    <flag name="p2p">
-      Support peer-to-peer inference.
-    </flag>
     <flag name="rag">
       Support basic RAG (Retrieval-Augmented Generation).
     </flag>
     <flag name="rocm">
       Support AMD GPU accelerated BLAS.
+    </flag>
+    <flag name="single">
+      Build/use as single user mode.
     </flag>
     <flag name="stt">
       Support speech to text or microphone support.
@@ -115,6 +121,9 @@
     </flag>
     <flag name="tts">
       Support text to speech or artificial voice audio out support.
+    </flag>
+    <flag name="worker">
+      Build/use as a P2P shared worker.
     </flag>
   </use>
 </pkgmetadata>

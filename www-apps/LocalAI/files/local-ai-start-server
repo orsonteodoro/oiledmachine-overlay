@@ -2,6 +2,24 @@
 
 ARGS=( "${@}" )
 
+# CWE-653 mitigation with sandbox
+LOCAL_AI_FIREJAIL=${LOCAL_AI_FIREJAIL:-@LOCAL_AI_FIREJAIL@}
+
+# Task processing modes:
+#                  single - single user, no network (default)
+#   federated-worker-node - request processed entirely
+# federated-load-balancer - request assigner
+#                  worker - requests are split
+LOCAL_AI_MODE=${LOCAL_AI_MODE:-"single"}
+
+# Mitigate DoS by FAFO users
+# -1000 is never kill process
+#     0 is system default
+#  <500 is mid-back of the OOM kill list
+# >=500 is mid-front of the OOM kill list
+#  1000 is front of the line OOM kill
+LOCAL_AI_OOM=${LOCAL_AI_OOM:-500}
+
 prepare_backends() {
 	if [[ -n "${EXTRA_BACKENDS}" ]] ; then
 		local backend
@@ -19,8 +37,40 @@ main() {
 	cd "/opt/local-ai"
 	source "/etc/conf.d/local-ai"
 	prepare_backends
-	# TODO sandbox local-ai
-	./local-ai "${ARGS[@]}"
+
+	local FIREJAIL_ARGS=()
+	local LOCAL_AI_ARGS=()
+
+	if [[ -n "${LOCAL_AI_OOM}" ]] ; then
+		FIREJAIL_ARGS+=(
+			--oom=${LOCAL_AI_OOM}
+		)
+	fi
+
+	if [[ "${LOCAL_AI_MODE}" == "federated-worker-node" ]] ; then
+		LOCAL_AI_ARGS+=(
+			"run" "--p2p" "--federated"
+		)
+	elif [[ "${LOCAL_AI_MODE}" == "federated-load-balancer" ]] ; then
+		LOCAL_AI_ARGS+=(
+			"federated"
+		)
+	elif [[ "${LOCAL_AI_MODE}" == "worker" ]] ; then
+		LOCAL_AI_ARGS+=(
+			"run" "--p2p"
+		)
+	else
+	# Single
+		LOCAL_AI_ARGS+=(
+			"run"
+		)
+	fi
+
+	if [[ "${LOCAL_AI_FIREJAIL}" == "1" ]] ; then
+		"/usr/bin/firejail" --profile="local-ai" ${FIREJAIL_ARGS[@]} "/opt/local-ai/local-ai" ${LOCAL_AI_ARGS[@]} "${ARGS[@]}"
+	else
+		"/opt/local-ai/local-ai" "${ARGS[@]}"
+	fi
 }
 
 main

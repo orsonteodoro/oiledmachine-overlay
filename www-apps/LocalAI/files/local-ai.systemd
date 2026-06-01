@@ -9,7 +9,24 @@ ExecStart=/usr/bin/local-ai-start-server
 Restart=always
 RestartSec=3
 Environment="LD_LIBRARY_PATH=@LD_LIBRARY_PATH@"
+Environment="LOCAL_AI_FIREJAIL=@LOCAL_AI_FIREJAIL@"
 Environment="PATH=$PATH"
+
+# Task processing modes
+#                  single - single user, no network (default)
+#   federated-worker-node - request processed entirely
+# federated-load-balancer - request assigner
+#                  worker - requests are split
+Environment="LOCAL_AI_MODE=@LOCAL_AI_MODE@"
+
+# Mitigate DoS by FAFO users
+# -1000 is never kill process
+#     0 is system default
+#  <500 is mid-back of the OOM kill list
+# >=500 is mid-front of the OOM kill list
+#  1000 is front of the line OOM kill
+Environment="LOCAL_AI_OOM=500"
+
 #
 # TODO: test settings
 #
