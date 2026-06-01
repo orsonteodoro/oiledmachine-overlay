@@ -540,6 +540,7 @@
     For proper mitigation, use compiler based mitigations.
 
 
+
     private-lib notes:
 
     If a package uses /usr/lib*/<folder-name>,  add `private-lib <folder-name>`
@@ -547,6 +548,28 @@
     important because executibles may live in the /usr/lib folder.
     For /usr/lib/ollama/bin/ollama, you could try `private-lib ollama` or
     `private ollama/bin/ollama`.
+
+    3 ways of getting the required libs for private-lib attack surface reduction:
+
+    (1) ldd <cli-name>
+    (2) strace -e trace=open,openat -f -o trace.txt <cli-trace> | grep -F .so
+    (3) Add results from `ldd <cli-name>`
+
+        Add temporary allowlist in <profile-name>.local
+        noblacklist ${PATH}/bash
+        noblacklist ${PATH}/sh
+        noblacklist ${PATH}/ls
+        noblacklist ${PATH}/find
+        noblacklist ${PATH}/grep
+        noblacklist ${PATH}/sort
+        noblacklist ${PATH}/uniq
+
+        Run the following from host:
+        firejail --profile=<profile-name> bash
+
+        Run the following inside the sandbox:
+        ldd $(find /lib* /usr/lib*) | grep "not found" | sort | uniq
+
 
 
     Build time environment variables for USE=wrapper

@@ -2195,6 +2195,15 @@ einfo "blacklist /mnt/usb/passwords.kdbx"
 einfo "blacklist /home/johndoe/.ssh"
 einfo "rmenv KEY_VAULTS_SECRET"
 einfo
+ewarn
+# This is course-grained edit that decreases the complexity of stack smash
+# attack suggested by distro patch.  It should only be applied per profile but
+# doesn't support it yet.
+ewarn "If having issues with Boost based apps, set arg-max-count 4096 and"
+ewarn "env-max-count 1024 in /etc/firejail/firejail.config but only"
+ewarn "as a last resort because it will decrease the attack complexity of"
+ewarn "stack smashing across all sandboxed apps."
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
