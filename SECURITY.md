@@ -464,8 +464,9 @@ Use cases:
 * npm - during download and builds if properly using enpm wrapper
 * pnpm - during download and builds if properly using enpm wrapper
 * yarn - during download and builds if properly using eyarn wrapper
-* All Firejailed sandbox apps using wrapper or `firejail <cli-cmd>` for the
-default profile or `firejail --profile=<cli-cmd> <cli-cmd>`
+* All Firejailed sandbox apps using `/usr/local/bin/<cli-cmd>` wrapper scripts,
+`firejail <cli-cmd>` with the default.profile, or
+`firejail --profile=<cli-cmd> <cli-cmd>`
 
 Example:
 
