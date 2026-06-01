@@ -36,6 +36,7 @@ CFLAGS_HARDENED_APPEND_GOFLAGS=1
 CFLAGS_HARDENED_USE_CASES="daemon network p2p security-critical sensitive-data server untrusted-data" # May process sensitive emails or photos.
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE CSRF SSRF XSS"
 GRPC_SLOT="5" # Same as the backends.  Ignore the /Makefile
+NODE_SLOT="22"
 PROTOBUF_CPP_SLOT="5"
 PROTOBUF_PYTHON_SLOT="5"
 PYTHON_COMPAT=( "python3_"{10..12} )
@@ -48,23 +49,22 @@ MODES=(
 	"worker"
 )
 
-ONNXRUNTIME_PV="1.20.0" # From https://github.com/mudler/LocalAI/blob/v3.8.0/backend/go/silero-vad/Makefile#L5
-VULKAN_PV="1.4.328.0" # From the last vulkan-sdk-<ver> tag in https://github.com/KhronosGroup/Vulkan-Tools/tags relative to LLAMA_CPP_COMMIT commit date.  llama.cpp uses https://vulkan.lunarg.com/sdk/latest/linux.txt
+ONNXRUNTIME_PV="1.20.0" # From https://github.com/mudler/LocalAI/blob/v4.3.6/backend/go/silero-vad/Makefile#L5
+VULKAN_PV="1.4.350.1" # From the last vulkan-sdk-<ver> tag in https://github.com/KhronosGroup/Vulkan-Tools/tags relative to LLAMA_CPP_COMMIT commit date.  llama.cpp uses https://vulkan.lunarg.com/sdk/latest/linux.txt
 
-BARK_CPP_COMMIT="5d5be84f089ab9ea53b7a793f088d3fbf7247495" # From https://github.com/mudler/LocalAI/blob/v3.8.0/backend/go/bark-cpp/Makefile#L15
-ENCODEC_CPP_COMMIT="1cc279db4da979455651fbac1cbd151a2d121609" # For bark.cpp, from https://github.com/PABannier/bark.cpp/tree/5d5be84f089ab9ea53b7a793f088d3fbf7247495
 ESPEAK_NG_COMMIT="8593723f10cfd9befd50de447f14bf0a9d2a14a4" # For go-piper, from https://github.com/mudler/go-piper/tree/e10ca041a885d4a8f3871d52924b47792d5e5aa0
-GGML_COMMIT_1="c18f9baeea2f3aea1ffc4afa4ad4496e51b7ff8a" # For bark.cpp/encodec.cpp, from https://github.com/PABannier/encodec.cpp/tree/1cc279db4da979455651fbac1cbd151a2d121609
-GGML_COMMIT_2="5fdc78fff274094e2a1b155928131983362d8a71" # For stable-diffusion.cpp, from https://github.com/leejet/stable-diffusion.cpp/tree/0ebe6fe118f125665939b27c89f34ed38716bff8
-GO_PIPER_COMMIT="e10ca041a885d4a8f3871d52924b47792d5e5aa0" # From https://github.com/mudler/LocalAI/blob/v3.8.0/backend/go/piper/Makefile#L4
-LLAMA_CPP_COMMIT="583cb83416467e8abf9b37349dcf1f6a0083745a" # From https://github.com/mudler/LocalAI/blob/v3.8.0/backend/cpp/llama-cpp/Makefile#L2
+GGML_COMMIT_2="0ce7ad348a3151e1da9f65d962044546bcaad421" # For stable-diffusion.cpp, from https://github.com/leejet/stable-diffusion.cpp/tree/0e4ee04488159b81d95a9ffcd983a077fd5dcb77
+GO_PIPER_COMMIT="e10ca041a885d4a8f3871d52924b47792d5e5aa0" # From https://github.com/mudler/LocalAI/blob/v4.3.6/backend/go/piper/Makefile#L4
+HUGO_THEME_RELEARN_COMMIT="8bb66fa674351f3a0b0917a7552caac686eca920" # From https://github.com/mudler/LocalAI/tree/v4.3.6/docs/themes
+KOKOROS_COMMIT="7089168f0ca2d8e1fcd8e523c9d75d915c6afdff" # From https://github.com/mudler/LocalAI/tree/v4.3.6/backend/rust/kokoros/sources
+LLAMA_CPP_COMMIT="22d66b567eef11cf2e9832f04db64ee0323a0fd0" # From https://github.com/mudler/LocalAI/blob/v4.3.6/backend/cpp/llama-cpp/Makefile#L2
 PIPER_COMMIT="0987603ebd2a93c3c14289f3914cd9145a7dddb5" # For go-piper, from https://github.com/mudler/go-piper/tree/e10ca041a885d4a8f3871d52924b47792d5e5aa0
 PIPER_PHONEMIZE_COMMIT="fccd4f335aa68ac0b72600822f34d84363daa2bf" # For go-piper, from https://github.com/mudler/go-piper/tree/e10ca041a885d4a8f3871d52924b47792d5e5aa0
-STABLE_DIFFUSION_CPP_COMMIT="0ebe6fe118f125665939b27c89f34ed38716bff8" # From https://github.com/mudler/LocalAI/blob/v3.8.0/backend/go/stablediffusion-ggml/Makefile#L22
-WHISPER_CPP_COMMIT="19ceec8eac980403b714d603e5ca31653cd42a3f" # From https://github.com/mudler/LocalAI/blob/v3.8.0/backend/go/whisper/Makefile#L9
+STABLE_DIFFUSION_CPP_COMMIT="0e4ee04488159b81d95a9ffcd983a077fd5dcb77" # From https://github.com/mudler/LocalAI/blob/v4.3.6/backend/go/stablediffusion-ggml/Makefile#L22
+WHISPER_CPP_COMMIT="f24588a272ae8e23280d9c220536437164e6ed28" # From https://github.com/mudler/LocalAI/blob/v4.3.6/backend/go/whisper/Makefile#L9
 
 # Yes the Protobuf situation is a mess.
-# Protobuf 6 needed by go-tools (protoc-gen-go@v1.34.2, protoc-gen-go-grpc@1958fcb) in https://github.com/mudler/LocalAI/blob/v3.8.0/Makefile#L267
+# Protobuf 6 needed by go-tools (protoc-gen-go@v1.34.2, protoc-gen-go-grpc@1958fcb) in https://github.com/mudler/LocalAI/blob/v4.3.6/Makefile#L267
 
 # Protobuf 5
 CPP_BACKENDS=(
@@ -176,7 +176,7 @@ ROCM_SLOTS=(
 )
 
 inherit abseil-cpp cflags-hardened dep-prepare desktop edo flag-o-matic go-download-cache
-inherit grpc protobuf python-single-r1 re2 sandbox-changes toolchain-funcs xdg
+inherit grpc npm protobuf python-single-r1 re2 sandbox-changes toolchain-funcs xdg
 
 #
 # Used go-download-cache to avoid:
@@ -187,10 +187,10 @@ inherit grpc protobuf python-single-r1 re2 sandbox-changes toolchain-funcs xdg
 #
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	EGIT_BRANCH="main"
+	EGIT_BRANCH="master"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/mudler/LocalAI.git"
-	FALLBACK_COMMIT="d6274eaf4ab0bf10fb130ec5e762c73ae6ea3feb" # Aug 4, 2025
+	FALLBACK_COMMIT="aee4611ab2d1400869de7e78fad5cb41cce0c5d0" # May 30, 2026
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
 	inherit git-r3
@@ -205,30 +205,28 @@ else
 		"
 	fi
 	SRC_URI+="
-https://github.com/ggml-org/ggml/archive/${GGML_COMMIT_1}.tar.gz
-	-> ggml-${GGML_COMMIT_1:0:7}.tar.gz
 https://github.com/ggml-org/ggml/archive/${GGML_COMMIT_2}.tar.gz
 	-> ggml-${GGML_COMMIT_2:0:7}.tar.gz
 https://github.com/ggml-org/llama.cpp/archive/${LLAMA_CPP_COMMIT}.tar.gz
 	-> llama-cpp-${LLAMA_CPP_COMMIT:0:7}.tar.gz
 https://github.com/ggml-org/whisper.cpp/archive/${WHISPER_CPP_COMMIT}.tar.gz
 	-> whisper-cpp-${WHISPER_CPP_COMMIT:0:7}.tar.gz
+https://github.com/leejet/stable-diffusion.cpp/archive/${STABLE_DIFFUSION_CPP_COMMIT}.tar.gz
+	-> leejet-stable-diffusion-cpp-${STABLE_DIFFUSION_CPP_COMMIT:0:7}.tar.gz
+https://github.com/lucasjinreal/Kokoros/archive/${KOKOROS_COMMIT}.tar.gz
+	-> ${KOKOROS_COMMIT:0:7}.tar.gz
+https://github.com/McShelby/hugo-theme-relearn/archive/${HUGO_THEME_RELEARN_COMMIT}.tar.gz
+	-> hugo-theme-relearn-${HUGO_THEME_RELEARN_COMMIT:0:7}.tar.gz
 https://github.com/mudler/go-piper/archive/${GO_PIPER_COMMIT}.tar.gz
 	-> go-piper-${GO_PIPER_COMMIT:0:7}.tar.gz
 https://github.com/mudler/LocalAI/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
-https://github.com/PABannier/bark.cpp/archive/${BARK_CPP_COMMIT}.tar.gz
-	-> bark-cpp-${BARK_CPP_COMMIT:0:7}.tar.gz
-https://github.com/PABannier/encodec.cpp/archive/${ENCODEC_CPP_COMMIT}.tar.gz
-	-> encodec-cpp-${ENCODEC_CPP_COMMIT:0:7}.tar.gz
 https://github.com/rhasspy/piper/archive/${PIPER_COMMIT}.tar.gz
 	-> piper-${PIPER_COMMIT:0:7}.tar.gz
 https://github.com/rhasspy/espeak-ng/archive/${ESPEAK_NG_COMMIT}.tar.gz
 	-> rhasspy-espeak-ng-${ESPEAK_NG_COMMIT:0:7}.tar.gz
 https://github.com/rhasspy/piper-phonemize/archive/${PIPER_PHONEMIZE_COMMIT}.tar.gz
 	-> piper-phonemize-${PIPER_PHONEMIZE_COMMIT:0:7}.tar.gz
-https://github.com/leejet/stable-diffusion.cpp/archive/${STABLE_DIFFUSION_CPP_COMMIT}.tar.gz
-	-> leejet-stable-diffusion-cpp-${STABLE_DIFFUSION_CPP_COMMIT:0:7}.tar.gz
 	amd64? (
 https://github.com/microsoft/onnxruntime/releases/download/v${ONNXRUNTIME_PV}/onnxruntime-linux-x64-${ONNXRUNTIME_PV}.tgz
 	)
@@ -260,7 +258,7 @@ ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
 ${GOLANG_BACKENDS[@]/#/localai_backends_}
-${MODES[@]}
+${MODES[@]/+}
 ${PYTHON_BACKENDS[@]/#/localai_backends_}
 ci cuda debug devcontainer docker +firejail native openblas opencl
 openrc rag rocm stt sycl-f16 sycl-f32 systemd tts vulkan
@@ -270,7 +268,7 @@ REQUIRED_USE="
 	!ci
 	!devcontainer
 	^^ (
-		${MODES[@]}
+		${MODES[@]/+}
 	)
 	?? (
 		cuda
@@ -678,12 +676,12 @@ VLLM_RDEPEND="
 	')
 "
 
-# CUDA versions:  https://github.com/mudler/LocalAI/blob/v3.8.0/Dockerfile#L20
-#		  https://github.com/mudler/LocalAI/blob/v3.8.0/.github/workflows/image_build.yml#L20
+# CUDA versions:  https://github.com/mudler/LocalAI/blob/v4.3.6/Dockerfile#L20
+#		  https://github.com/mudler/LocalAI/blob/v4.3.6/.github/workflows/image_build.yml#L20
 # ROCm versions:
-#		  https://github.com/mudler/LocalAI/blob/v3.8.0/backend/python/kokoro/requirements-hipblas.txt
-#		  https://github.com/mudler/LocalAI/blob/v3.8.0/backend/python/vllm/requirements-hipblas.txt
-#		  https://github.com/mudler/LocalAI/blob/v3.8.0/.github/workflows/image.yml#L42
+#		  https://github.com/mudler/LocalAI/blob/v4.3.6/backend/python/kokoro/requirements-hipblas.txt
+#		  https://github.com/mudler/LocalAI/blob/v4.3.6/backend/python/vllm/requirements-hipblas.txt
+#		  https://github.com/mudler/LocalAI/blob/v4.3.6/.github/workflows/image.yml#L42
 RDEPEND+="
 	(
 		|| (
@@ -824,8 +822,8 @@ DISABLED_DEPEND="
 	)
 "
 # iputils, rhash, wget are for custom downloader in src_unpack() only.
-# go, cmake versions:  https://github.com/mudler/LocalAI/blob/v3.8.0/Dockerfile#L118
-# protoc-gen-go, protoc-gen-go-grpc versions:  https://github.com/mudler/LocalAI/blob/v3.8.0/Dockerfile#L154
+# go, cmake versions:  https://github.com/mudler/LocalAI/blob/v4.3.6/Dockerfile#L118
+# protoc-gen-go, protoc-gen-go-grpc versions:  https://github.com/mudler/LocalAI/blob/v4.3.6/Dockerfile#L154
 # TODO:  Review dev-go/protobuf-go multislot
 BDEPEND+="
 	${PYTHON_DEPS}
@@ -844,6 +842,10 @@ BDEPEND+="
 	(
 		dev-libs/protobuf:${PROTOBUF_CPP_SLOT}
 		dev-libs/protobuf:=
+	)
+	(
+		net-libs/nodejs:22
+		net-libs/nodejs:=
 	)
 	>=dev-build/cmake-3.26.4
 	>=dev-lang/go-1.22.6
@@ -868,10 +870,10 @@ BDEPEND+="
 "
 DOCS=( "README.md" )
 PATCHES=(
-	"${FILESDIR}/${PN}-3.8.0-offline-install.patch"
-	"${FILESDIR}/${PN}-3.8.0-package-sh-fix.patch"
+	"${FILESDIR}/${PN}-4.3.6-offline-install.patch"
+	"${FILESDIR}/${PN}-4.3.6-package-sh-fix.patch"
 	"${FILESDIR}/${PN}-3.8.0-cwd-change.patch"
-	"${FILESDIR}/${PN}-3.8.0-libbackend-sh.patch"
+	"${FILESDIR}/${PN}-4.3.6-libbackend-sh.patch"
 	"${FILESDIR}/${PN}-3.8.0-proto-reorder.patch"
 	"${FILESDIR}/${PN}-3.8.0-llama-cpp-config.patch"
 )
@@ -880,6 +882,7 @@ pkg_setup() {
 ewarn "This ebuild is still in development"
 	sandbox-changes_no_network_sandbox "For downloading micropackages"
 	python-single-r1_pkg_setup
+	npm_pkg_setup
 }
 
 gen_git_tag() {
@@ -919,6 +922,13 @@ src_unpack() {
 		unpack ${A}
 		gen_git_tag "${S}" "v${PV}"
 	fi
+
+	mkdir -p "${S}/core/http/react-ui" || die
+	pushd "${S}/core/http/react-ui" >/dev/null 2>&1 || die
+		npm_hydrate
+		enpm install
+		enpm run build
+	popd >/dev/null 2>&1 || die
 }
 
 get_onnx_arch() {
@@ -929,10 +939,6 @@ get_onnx_arch() {
 src_prepare() {
 	default
 	# S_GO should appear at this point
-	dep_prepare_mv "${WORKDIR}/bark.cpp-${BARK_CPP_COMMIT}" "${S}/backend/go/bark-cpp/sources/bark.cpp"
-	dep_prepare_mv "${WORKDIR}/encodec.cpp-${ENCODEC_CPP_COMMIT}" "${S}/backend/go/bark-cpp/sources/bark.cpp/encodec.cpp"
-	dep_prepare_mv "${WORKDIR}/ggml-${GGML_COMMIT_1}" "${S}/backend/go/bark-cpp/sources/bark.cpp/encodec.cpp/ggml"
-
 	dep_prepare_mv "${WORKDIR}/stable-diffusion.cpp-${STABLE_DIFFUSION_CPP_COMMIT}" "${S}/backend/go/stablediffusion-ggml/sources/stablediffusion-ggml.cpp"
 	dep_prepare_mv "${WORKDIR}/ggml-${GGML_COMMIT_2}" "${S}/backend/go/stablediffusion-ggml/sources/stablediffusion-ggml.cpp/ggml"
 
@@ -948,10 +954,12 @@ src_prepare() {
 	local onnx_arch=$(get_onnx_arch)
 	dep_prepare_mv "${WORKDIR}/onnxruntime-linux-${onnx_arch}-${ONNXRUNTIME_PV}" "${S}/backend/go/silero-vad/sources/onnxruntime"
 
+	dep_prepare_mv "${WORKDIR}/hugo-theme-relearn-${HUGO_THEME_RELEARN_COMMIT}" "${S}/docs/themes/hugo-theme-relearn"
+	dep_prepare_mv "${WORKDIR}/Kokoros-${KOKOROS_COMMIT}" "${S}/backend/rust/kokoros/sources/Kokoros"
+
 	local L=(
 		"backend/python/neutts/install.sh"
 		"backend/python/kitten-tts/install.sh"
-		"backend/python/bark/install.sh"
 		"backend/python/common/template/install.sh"
 		"backend/python/diffusers/install.sh"
 		"backend/python/rerankers/install.sh"

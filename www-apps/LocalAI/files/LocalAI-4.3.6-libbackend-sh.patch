@@ -1,0 +1,79 @@
+diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/python/common/libbackend.sh LocalAI-4.3.6/backend/python/common/libbackend.sh
+--- LocalAI-4.3.6.orig/backend/python/common/libbackend.sh	2026-05-30 13:48:09.000000000 -0700
++++ LocalAI-4.3.6/backend/python/common/libbackend.sh	2026-06-01 11:59:08.489881867 -0700
+@@ -26,6 +26,8 @@ PYTHON_PATCH="${PYTHON_PATCH:-18}"
+ PY_STANDALONE_TAG="${PY_STANDALONE_TAG:-20250818}"  # release tag date
+ # Enable/disable bundling of a portable Python build
+ PORTABLE_PYTHON="${PORTABLE_PYTHON:-false}"
++OFFLINE="${OFFLINE:-1}"
++USE_VENV="${USE_VENV:-0}"
+ 
+ # If you want to fully pin the filename (including tuned CPU targets), set:
+ # PORTABLE_PY_FILENAME="cpython-3.10.18+20250818-x86_64_v3-unknown-linux-gnu-install_only.tar.gz"
+@@ -338,6 +340,7 @@ _activateVenv() {
+ # This function is idempotent, so you can call it as many times as you want and it will
+ # always result in an activated virtual environment
+ function ensureVenv() {
++    [ "${USE_VENV}" != "1" ] && return
+     local interpreter=""
+ 
+     if [ "x${PORTABLE_PYTHON}" == "xtrue" ] || [ -e "$(_portable_python)" ]; then
+@@ -397,7 +400,9 @@ function ensureVenv() {
+ 
+ function runProtogen() {
+     ensureVenv
+-    if [ "x${USE_PIP}" == "xtrue" ]; then
++    if [ "x${OFFLINE}" == "x1" ] || [ "x${OFFLINE}" == "xtrue" ]; then
++        :
++    elif [ "x${USE_PIP}" == "xtrue" ]; then
+         pip install grpcio-tools
+     else
+         uv pip install grpcio-tools
+@@ -457,7 +462,9 @@ function installRequirements() {
+     for reqFile in ${requirementFiles[@]}; do
+         if [ -f "${reqFile}" ]; then
+             echo "starting requirements install for ${reqFile}"
+-            if [ "x${USE_PIP}" == "xtrue" ]; then
++            if [ "x${OFFLINE}" == "x1" ] || [ "x${OFFLINE}" == "xtrue" ]; then
++                :
++            elif [ "x${USE_PIP}" == "xtrue" ]; then
+                 pip install ${EXTRA_PIP_INSTALL_FLAGS:-} --requirement "${reqFile}"
+             else
+                 uv pip install ${EXTRA_PIP_INSTALL_FLAGS:-} --requirement "${reqFile}"
+@@ -497,14 +504,26 @@ function startBackend() {
+         echo "Added ${EDIR}/lib to LD_LIBRARY_PATH for GPU libraries"
+     fi
+ 
+-    if [ ! -z "${BACKEND_FILE:-}" ]; then
+-        exec "${EDIR}/venv/bin/python" "${BACKEND_FILE}" "$@"
+-    elif [ -e "${MY_DIR}/server.py" ]; then
+-        exec "${EDIR}/venv/bin/python" "${MY_DIR}/server.py" "$@"
+-    elif [ -e "${MY_DIR}/backend.py" ]; then
+-        exec "${EDIR}/venv/bin/python" "${MY_DIR}/backend.py" "$@"
+-    elif [ -e "${MY_DIR}/${BACKEND_NAME}.py" ]; then
+-        exec "${EDIR}/venv/bin/python" "${MY_DIR}/${BACKEND_NAME}.py" "$@"
++    if [ "${USE_VENV}" != "1" ]; then
++        if [ ! -z "${BACKEND_FILE:-}" ]; then
++            exec "@EPYTHON@" "${BACKEND_FILE}" "$@"
++        elif [ -e "${MY_DIR}/server.py" ]; then
++            exec "@EPYTHON@" "${MY_DIR}/server.py" "$@"
++        elif [ -e "${MY_DIR}/backend.py" ]; then
++            exec "@EPYTHON@" "${MY_DIR}/backend.py" "$@"
++        elif [ -e "${MY_DIR}/${BACKEND_NAME}.py" ]; then
++            exec "@EPYTHON@" "${MY_DIR}/${BACKEND_NAME}.py" "$@"
++       fi
++    else
++        if [ ! -z "${BACKEND_FILE:-}" ]; then
++            exec "${EDIR}/venv/bin/python" "${BACKEND_FILE}" "$@"
++        elif [ -e "${MY_DIR}/server.py" ]; then
++            exec "${EDIR}/venv/bin/python" "${MY_DIR}/server.py" "$@"
++        elif [ -e "${MY_DIR}/backend.py" ]; then
++            exec "${EDIR}/venv/bin/python" "${MY_DIR}/backend.py" "$@"
++        elif [ -e "${MY_DIR}/${BACKEND_NAME}.py" ]; then
++            exec "${EDIR}/venv/bin/python" "${MY_DIR}/${BACKEND_NAME}.py" "$@"
++       fi
+     fi
+ }
+ 
+Only in LocalAI-4.3.6/backend/python/common: libbackend.sh.orig
+Only in LocalAI-4.3.6/backend/python/common: libbackend.sh.rej
