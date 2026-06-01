@@ -427,6 +427,67 @@ DO NOT SEND AN ISSUE REQUEST.
 
 See also https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository
 
+### Protecting secrets and credentials
+
+This overlay uses 2 sandboxes.  This ensures defense in depth protection in case
+one of the other fails because of quirk differences.  This will help mitigate
+against supply chain attacks leading to credential theft or sabotage, but
+requires effort on your part.
+
+#### Protecting secrets in /etc/sandbox.conf with sys-apps/sandbox
+
+Use cases:
+* Live ebuilds
+* ebuild context
+
+This is an underutilized or underdocumented use case.
+
+Example:
+
+```bash
+# It is recursive but does not support globs (*)
+SANDBOX_DENY="/home:/root:/boot:/media:/home/johndoe:/backup:/home/johndoe/bank:/home/johndoe/.ssh:/mnt/wallet"
+```
+
+See also [Gentoo Wiki:/etc/sandbox.conf](https://wiki.gentoo.org/wiki//etc/sandbox.conf)
+
+#### Protecting secrets in /etc/firejail/globals.conf with sys-apps/sandbox
+
+This is a stronger sandbox because it mitigates against Living of the Land
+attacks which are currently more than 80% of the cyberattacks.
+
+Use cases:
+* npm - during download and builds if properly using enpm wrapper
+* pnpm - during download and builds if properly using enpm wrapper
+* yarn - during download and builds if properly using eyarn wrapper
+* All Firejailed sandbox apps using wrapper or `firejail <cli-cmd>` for the
+default profile or `firejail --profile=<cli-cmd> <cli-cmd>`
+
+```bash
+# In /etc/firejail/globals.conf
+# blacklist <path>
+blacklist /home/*.kdbx
+blacklist /root
+blacklist /boot
+blacklist /media
+blacklist /home/johndoe
+blacklist /home/johndoe/bank
+blacklist /home/johndoe/.ssh
+blacklist /home/johndoe/Downloads
+blacklist ${HOME}/.ssh
+blacklist /mnt/wallet
+```
+
+```bash
+# When you need to use your credentials/secrets temporarily, edit
+# ${HOME}/firejail/globals.conf with the following
+# noblacklist <path> rule.  For example:
+noblacklist /home/johndoe/*.kdb
+# After use, remove the line or disable the line with
+# Do not leave your keys in the lock for the entire day.
+
+```
+
 ## Threat model
 
 The current threat model is a 4 category threat model.  This threat model is
