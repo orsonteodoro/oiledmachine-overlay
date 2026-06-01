@@ -872,7 +872,7 @@ BDEPEND+="
 "
 DOCS=( "README.md" )
 PATCHES=(
-	"A${FILESDIR}/${PN}-4.3.6-offline-install.patch"
+	"${FILESDIR}/${PN}-4.3.6-offline-install.patch"
 	"${FILESDIR}/${PN}-4.3.6-package-sh-fix.patch"
 	"${FILESDIR}/${PN}-3.8.0-cwd-change.patch"
 	"${FILESDIR}/${PN}-4.3.6-libbackend-sh.patch"
