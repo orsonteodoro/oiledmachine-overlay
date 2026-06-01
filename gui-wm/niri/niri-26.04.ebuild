@@ -7,7 +7,7 @@ EAPI=8
 # A3.23, F42, N2.34
 
 RUST_MAX_VER="1.95.0"
-RUST_MIN_VER="1.95.0" # LLVM 21.1
+RUST_MIN_VER="1.95.0" # LLVM 22.1
 RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data"
 
 declare -A GIT_CRATES=(
