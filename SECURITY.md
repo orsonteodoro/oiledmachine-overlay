@@ -487,7 +487,7 @@ blacklist /mnt/wallet
 # ${HOME}/firejail/globals.local with the following
 # noblacklist <path> rule.  For example:
 noblacklist /home/johndoe/*.kdb
-# After use, remove the line or disable the line with
+# After use, remove the line or disable the line with #
 # Do not leave your keys in the lock for the entire day.
 
 ```
