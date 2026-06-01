@@ -455,7 +455,7 @@ SANDBOX_DENY="/home:/root:/boot:/media:/home/johndoe:/backup:/home/johndoe/bank:
 
 See also [Gentoo Wiki:/etc/sandbox.conf](https://wiki.gentoo.org/wiki//etc/sandbox.conf)
 
-### Protecting secrets in /etc/firejail/globals.conf with sys-apps/firejail
+### Protecting secrets in /etc/firejail/globals.local with sys-apps/firejail
 
 This is a stronger sandbox because it mitigates against Living of the Land
 attacks which are currently more than the estimated 70% of the cyberattacks today.
@@ -468,7 +468,7 @@ Use cases:
 default profile or `firejail --profile=<cli-cmd> <cli-cmd>`
 
 ```bash
-# In /etc/firejail/globals.conf
+# In /etc/firejail/globals.local
 # blacklist <path>
 blacklist /home/*.kdbx
 blacklist /root
@@ -484,7 +484,7 @@ blacklist /mnt/wallet
 
 ```bash
 # When you need to use your credentials/secrets temporarily, edit
-# ${HOME}/firejail/globals.conf with the following
+# ${HOME}/firejail/globals.local with the following
 # noblacklist <path> rule.  For example:
 noblacklist /home/johndoe/*.kdb
 # After use, remove the line or disable the line with
