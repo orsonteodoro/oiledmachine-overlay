@@ -13,9 +13,9 @@ noblacklist /var/lib/ollama
 noblacklist /usr/lib/gcc
 noblacklist /usr/lib/llvm
 
-# Bash (optional)
+# Bash (required)
 # See exec.Command sections in x/tools/bash.go
-#include allow-bin-sh.inc
+include allow-bin-sh.inc
 
 # Claude Code coding assistant support (optional)
 # See exec.Command sections in cmd/launch/claude.go
@@ -121,6 +121,7 @@ whitelist ${HOME}/.ollama
 whitelist /usr/share/vulkan # For GPU acceleraton
 
 whitelist /etc/ld.so.cache # Required, minimal visibility
+whitelist /etc/passwd # Required, minimal visibility
 
 include landlock-common.inc
 
@@ -175,6 +176,9 @@ private-lib libvulkan.so*
 
 # For GPU Vulkan support
 private-lib libvulkan*.so*,llvm/*/lib*/libLLVM.so*
+
+# For --help
+private-lib libreadline.so*,libtinfo.so*
 
 private-tmp
 
