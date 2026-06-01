@@ -4006,7 +4006,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 ai-agent blis chroot cuda debug emoji +firejail flash lapack mkl openblas openrc
 rocm systemd unrestrict video_cards_intel -vulkan
-ebuild_revision_127
+ebuild_revision_128
 "
 
 gen_rocm_required_use() {
@@ -4469,6 +4469,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-0.12.6-custom-cpu-features.patch"
 	"${FILESDIR}/${PN}-0.13.0-hardcoded-paths.patch"
 	"${FILESDIR}/${PN}-0.13.0-cuda-not-fatal.patch"
+	"${FILESDIR}/${PN}-0.24.0-disable-agent-install.patch"
 )
 
 pkg_pretend() {
@@ -4598,7 +4599,7 @@ src_unpack() {
 		go-module_live_vendor
 	else
 		unpack "${P}.tar.gz"
-		#die
+#		die
 
 	# Generating requires 2 phases for dependency of dependency
 		if [[ "${GEN_EBUILD}" == "1" ]] ; then

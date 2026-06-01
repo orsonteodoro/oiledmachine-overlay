@@ -1,0 +1,50 @@
+# Disable unsandboxed installs into user profile.
+
+diff '--color=auto' -urp ollama-0.24.0.orig/cmd/launch/hermes.go ollama-0.24.0/cmd/launch/hermes.go
+--- ollama-0.24.0.orig/cmd/launch/hermes.go	2026-05-14 12:08:13.000000000 -0700
++++ ollama-0.24.0/cmd/launch/hermes.go	2026-06-01 10:49:43.958395878 -0700
+@@ -191,6 +191,8 @@ func (h *Hermes) ensureInstalled() error
+ 		return hermesWindowsHint()
+ 	}
+ 
++	return fmt.Errorf("hermes installation cancelled")
++
+ 	var missing []string
+ 	for _, dep := range []string{"bash", "curl", "git"} {
+ 		if _, err := hermesLookPath(dep); err != nil {
+diff '--color=auto' -urp ollama-0.24.0.orig/cmd/launch/kimi.go ollama-0.24.0/cmd/launch/kimi.go
+--- ollama-0.24.0.orig/cmd/launch/kimi.go	2026-05-14 12:08:13.000000000 -0700
++++ ollama-0.24.0/cmd/launch/kimi.go	2026-06-01 10:50:41.876606899 -0700
+@@ -242,6 +242,8 @@ func ensureKimiInstalled() (string, erro
+ 		return "", err
+ 	}
+ 
++	return "", fmt.Errorf("kimi installation cancelled")
++
+ 	ok, err := ConfirmPrompt("Kimi is not installed. Install now?")
+ 	if err != nil {
+ 		return "", err
+diff '--color=auto' -urp ollama-0.24.0.orig/cmd/launch/openclaw.go ollama-0.24.0/cmd/launch/openclaw.go
+--- ollama-0.24.0.orig/cmd/launch/openclaw.go	2026-06-01 10:45:51.885564558 -0700
++++ ollama-0.24.0/cmd/launch/openclaw.go	2026-06-01 10:46:44.971924675 -0700
+@@ -603,6 +603,8 @@ func ensureOpenclawInstalled() (string,
+ 		return "clawdbot", nil
+ 	}
+ 
++	return "", fmt.Errorf("openclaw installation cancelled")
++
+ 	_, npmErr := exec.LookPath("npm")
+ 	_, gitErr := exec.LookPath("git")
+ 	if npmErr != nil || gitErr != nil {
+diff '--color=auto' -urp ollama-0.24.0.orig/cmd/launch/pi.go ollama-0.24.0/cmd/launch/pi.go
+--- ollama-0.24.0.orig/cmd/launch/pi.go	2026-05-14 12:08:13.000000000 -0700
++++ ollama-0.24.0/cmd/launch/pi.go	2026-06-01 10:47:30.842507720 -0700
+@@ -63,6 +63,8 @@ func ensurePiInstalled() (string, error)
+ 		return "pi", nil
+ 	}
+ 
++	return "", fmt.Errorf("pi installation cancelled")
++
+ 	if _, err := exec.LookPath("npm"); err != nil {
+ 		return "", fmt.Errorf("pi is not installed and required dependencies are missing\n\nInstall the following first:\n  npm (Node.js): https://nodejs.org/\n\nThen re-run:\n  ollama launch pi")
+ 	}
