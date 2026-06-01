@@ -650,7 +650,7 @@ einfo "Skipping audit fix."
 	# Use Firejail's npm.local or globals.local to protect credentials/secrets.
 
 	local sandbox_launcher=()
-	if [[ -n "${YARN_FIREJAIL}" ]] ; then
+	if [[ -n "${NPM_FIREJAIL}" ]] ; then
 		if [[ "${NPM_FIREJAIL}" == "1" ]] ; then
 einfo "Firejail:  ON"
 			sandbox_launcher+=(
@@ -673,7 +673,7 @@ eerror "NPM_FIREJAIL is invalid."
 eerror "Valid values:  1, 0, auto, unset"
 			die
 		fi
-	if which firejail >/dev/null 2>&1 ; then
+	elif which firejail >/dev/null 2>&1 ; then
 einfo "Firejail:  ON"
 		sandbox_launcher+=(
 			"firejail" --profile=npm
@@ -750,7 +750,7 @@ eerror "YARN_FIREJAIL is invalid."
 eerror "Valid values:  1, 0, auto, unset"
 			die
 		fi
-	if which firejail >/dev/null 2>&1 ; then
+	elif which firejail >/dev/null 2>&1 ; then
 einfo "Firejail:  ON"
 		sandbox_launcher+=(
 			"firejail" --profile=yarn
