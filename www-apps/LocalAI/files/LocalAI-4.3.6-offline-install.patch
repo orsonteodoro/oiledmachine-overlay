@@ -1,6 +1,6 @@
 diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/cpp/grpc/Makefile LocalAI-4.3.6/backend/cpp/grpc/Makefile
 --- LocalAI-4.3.6.orig/backend/cpp/grpc/Makefile	2026-05-30 13:48:09.000000000 -0700
-+++ LocalAI-4.3.6/backend/cpp/grpc/Makefile	2026-06-01 12:20:35.190362691 -0700
++++ LocalAI-4.3.6/backend/cpp/grpc/Makefile	2026-06-01 15:49:48.800766193 -0700
 @@ -5,6 +5,7 @@ SYSTEM ?= $(HOST_SYSTEM)
  TAG_LIB_GRPC?=v1.59.0
  GIT_REPO_LIB_GRPC?=https://github.com/grpc/grpc.git
@@ -27,7 +27,7 @@ diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/cpp/grpc/Makefile LocalAI-4.
  	mkdir -p $(GRPC_BUILD)
 diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/cpp/llama-cpp/Makefile LocalAI-4.3.6/backend/cpp/llama-cpp/Makefile
 --- LocalAI-4.3.6.orig/backend/cpp/llama-cpp/Makefile	2026-05-30 13:48:09.000000000 -0700
-+++ LocalAI-4.3.6/backend/cpp/llama-cpp/Makefile	2026-06-01 12:20:35.206362200 -0700
++++ LocalAI-4.3.6/backend/cpp/llama-cpp/Makefile	2026-06-01 15:49:48.800766193 -0700
 @@ -1,6 +1,7 @@
  
  LLAMA_VERSION?=22d66b567eef11cf2e9832f04db64ee0323a0fd0
@@ -54,7 +54,7 @@ diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/cpp/llama-cpp/Makefile Local
  	mkdir -p llama.cpp/tools/grpc-server
 diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/piper/Makefile LocalAI-4.3.6/backend/go/piper/Makefile
 --- LocalAI-4.3.6.orig/backend/go/piper/Makefile	2026-05-30 13:48:09.000000000 -0700
-+++ LocalAI-4.3.6/backend/go/piper/Makefile	2026-06-01 12:20:35.206362200 -0700
++++ LocalAI-4.3.6/backend/go/piper/Makefile	2026-06-01 15:49:48.800766193 -0700
 @@ -2,6 +2,7 @@
  # go-piper version
  PIPER_REPO?=https://github.com/mudler/go-piper
@@ -81,7 +81,7 @@ diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/piper/Makefile LocalAI-4.
  	$(MAKE) -C sources/go-piper libpiper_binding.a example/main piper.o
 diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/silero-vad/Makefile LocalAI-4.3.6/backend/go/silero-vad/Makefile
 --- LocalAI-4.3.6.orig/backend/go/silero-vad/Makefile	2026-05-30 13:48:09.000000000 -0700
-+++ LocalAI-4.3.6/backend/go/silero-vad/Makefile	2026-06-01 12:20:35.206362200 -0700
++++ LocalAI-4.3.6/backend/go/silero-vad/Makefile	2026-06-01 15:51:33.337546261 -0700
 @@ -5,6 +5,7 @@ GOCMD=go
  ONNX_VERSION?=1.20.0
  ONNX_ARCH?=x64
@@ -103,19 +103,16 @@ diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/silero-vad/Makefile Local
  
  backend-assets/lib/libonnxruntime.so.1: sources/onnxruntime
  	mkdir -p backend-assets/lib
-@@ -44,7 +47,5 @@ silero-vad: backend-assets/lib/libonnxru
- package:
- 	bash package.sh
+@@ -47,4 +50,4 @@ package:
+ build: silero-vad package
  
--build: silero-vad package
--
  clean:
 -	rm -f silero-vad
 \ No newline at end of file
 +	rm -f silero-vad
 diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/stablediffusion-ggml/Makefile LocalAI-4.3.6/backend/go/stablediffusion-ggml/Makefile
 --- LocalAI-4.3.6.orig/backend/go/stablediffusion-ggml/Makefile	2026-05-30 13:48:09.000000000 -0700
-+++ LocalAI-4.3.6/backend/go/stablediffusion-ggml/Makefile	2026-06-01 12:20:35.210362077 -0700
++++ LocalAI-4.3.6/backend/go/stablediffusion-ggml/Makefile	2026-06-01 15:49:48.800766193 -0700
 @@ -5,6 +5,7 @@ NATIVE?=false
  GOCMD?=go
  GO_TAGS?=
@@ -139,7 +136,7 @@ diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/stablediffusion-ggml/Make
  UNAME_S := $(shell uname -s)
 diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/whisper/Makefile LocalAI-4.3.6/backend/go/whisper/Makefile
 --- LocalAI-4.3.6.orig/backend/go/whisper/Makefile	2026-05-30 13:48:09.000000000 -0700
-+++ LocalAI-4.3.6/backend/go/whisper/Makefile	2026-06-01 12:20:35.214361954 -0700
++++ LocalAI-4.3.6/backend/go/whisper/Makefile	2026-06-01 15:49:48.800766193 -0700
 @@ -10,6 +10,7 @@ JOBS?=$(shell nproc --ignore=1)
  WHISPER_REPO?=https://github.com/ggml-org/whisper.cpp
  WHISPER_CPP_VERSION?=f24588a272ae8e23280d9c220536437164e6ed28
@@ -166,7 +163,7 @@ diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/whisper/Makefile LocalAI-
  UNAME_S := $(shell uname -s)
 diff '--color=auto' -urp LocalAI-4.3.6.orig/Makefile LocalAI-4.3.6/Makefile
 --- LocalAI-4.3.6.orig/Makefile	2026-05-30 13:48:09.000000000 -0700
-+++ LocalAI-4.3.6/Makefile	2026-06-01 12:21:59.731767893 -0700
++++ LocalAI-4.3.6/Makefile	2026-06-01 15:49:48.804766069 -0700
 @@ -26,6 +26,7 @@ export CUDA_MINOR_VERSION?=0
  GO_TAGS?=
  BUILD_ID?=

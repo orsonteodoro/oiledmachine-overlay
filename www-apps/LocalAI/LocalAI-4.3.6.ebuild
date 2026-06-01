@@ -31,6 +31,8 @@ MY_PN2="local-ai"
 #
 GEN_EBUILD=0
 
+MAINTAINER_MODE=0
+
 ABSEIL_CPP_SLOT="20240722" # The abseil-cpp version is the same used by same Protobuf slot for all of the backends.
 CFLAGS_HARDENED_APPEND_GOFLAGS=1
 CFLAGS_HARDENED_USE_CASES="daemon network p2p security-critical sensitive-data server untrusted-data" # May process sensitive emails or photos.
@@ -262,7 +264,7 @@ ${MODES[@]/+}
 ${PYTHON_BACKENDS[@]/#/localai_backends_}
 ci cuda debug devcontainer docker +firejail native openblas opencl
 openrc rag rocm stt sycl-f16 sycl-f32 systemd tts vulkan
-ebuild_revision_46
+ebuild_revision_48
 "
 REQUIRED_USE="
 	!ci
@@ -870,7 +872,7 @@ BDEPEND+="
 "
 DOCS=( "README.md" )
 PATCHES=(
-	"${FILESDIR}/${PN}-4.3.6-offline-install.patch"
+	"A${FILESDIR}/${PN}-4.3.6-offline-install.patch"
 	"${FILESDIR}/${PN}-4.3.6-package-sh-fix.patch"
 	"${FILESDIR}/${PN}-3.8.0-cwd-change.patch"
 	"${FILESDIR}/${PN}-4.3.6-libbackend-sh.patch"
@@ -924,12 +926,14 @@ src_unpack() {
 		gen_git_tag "${S}" "v${PV}"
 	fi
 
-	mkdir -p "${S}/core/http/react-ui" || die
-	pushd "${S}/core/http/react-ui" >/dev/null 2>&1 || die
-		npm_hydrate
-		enpm install
-		enpm run build
-	popd >/dev/null 2>&1 || die
+	if [[ "${MAINTAINER_MODE}" != "1" ]] ; then
+		mkdir -p "${S}/core/http/react-ui" || die
+		pushd "${S}/core/http/react-ui" >/dev/null 2>&1 || die
+			npm_hydrate
+			enpm install
+			enpm run build
+		popd >/dev/null 2>&1 || die
+	fi
 }
 
 get_onnx_arch() {
