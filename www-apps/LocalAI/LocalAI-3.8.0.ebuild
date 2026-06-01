@@ -33,7 +33,7 @@ GEN_EBUILD=0
 
 ABSEIL_CPP_SLOT="20240722" # The abseil-cpp version is the same used by same Protobuf slot for all of the backends.
 CFLAGS_HARDENED_APPEND_GOFLAGS=1
-CFLAGS_HARDENED_USE_CASES="daemon security-critical sensitive-data server untrusted-data" # May process sensitive emails or photos.
+CFLAGS_HARDENED_USE_CASES="daemon network p2p security-critical sensitive-data server untrusted-data" # May process sensitive emails or photos.
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE"
 GRPC_SLOT="5" # Same as the backends.  Ignore the /Makefile
 PROTOBUF_CPP_SLOT="5"
@@ -264,7 +264,7 @@ ${MODES[@]}
 ${PYTHON_BACKENDS[@]/#/localai_backends_}
 ci cuda debug devcontainer docker +firejail native openblas opencl
 openrc rag rocm stt sycl-f16 sycl-f32 systemd tts vulkan
-ebuild_revision_44
+ebuild_revision_45
 "
 REQUIRED_USE="
 	!ci
