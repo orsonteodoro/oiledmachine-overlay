@@ -439,6 +439,15 @@ will mitigate for others.
 
 ### Protecting secrets in /etc/sandbox.conf with sys-apps/sandbox
 
+Primary purpose:
+Protect the live system against catastropic damages.
+
+Secondary purpose:
+Degrade attacker capabilities.
+
+Last purpose (not documented upstream):
+Protect secrets/credentials.
+
 Use cases:
 * Live ebuilds
 * Ebuilds linked to previously compromised projects
@@ -459,6 +468,12 @@ See also [Gentoo Wiki:/etc/sandbox.conf](https://wiki.gentoo.org/wiki//etc/sandb
 
 This is a stronger sandbox because it mitigates against Living of the Land
 attacks which are currently more than the estimated 70% of the cyberattacks today.
+
+Primary purpose (on this overlay):
+Protect secrets/credentials.
+
+Secondary purpose (on this overlay):
+Degrade attacker capabilities.
 
 Use cases:
 * npm - during download and builds if properly using enpm wrapper
