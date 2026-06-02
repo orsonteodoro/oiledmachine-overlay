@@ -2200,18 +2200,22 @@ ewarn
 # actors.  The unintended consequence is that lifting the limits encourages
 # abusing environment variables to store keys or non-free access tokens in
 # plaintext.
-ewarn "For Boost based apps with issues, in /etc/firejail/firejail.config"
-ewarn "set arg-max-count 4096 and env-max-count 1024."
+ewarn "For Boost or CMake dependent builds with issues, in"
+ewarn "/etc/firejail/firejail.config set arg-max-count 4096 and"
+ewarn "env-max-count 1024."
 ewarn
-ewarn "For emerge, use keep env-max-count as 512."
+ewarn "For Electron or Node.js dependent builds, use keep env-max-count as 512."
+ewarn
 ewarn "For production or after emerging, keep env-max-count as 256."
 ewarn
 ewarn "The reasons why env-max-count should kept low:"
 ewarn
-ewarn "- To prevent truncation of PATH in different implementations."
-ewarn "- To reduce the chances too many secrets or API keys leaked."
 ewarn "- To mitigate DoS."
+ewarn "- To mitigate payload obfuscation."
 ewarn "- To mitigate RCE buffer overflows."
+ewarn "- To mitigate SUID privilege escalation via stack clash attack."
+ewarn "- To mitigate truncation of PATH in different implementations."
+ewarn "- To mitigate the chances of too many secrets or API keys leaked."
 ewarn
 }
 
