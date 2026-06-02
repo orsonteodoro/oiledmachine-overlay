@@ -1378,6 +1378,8 @@ einfo "Installing backend/python/${x}"
 	keepdir "/var/lib/${MY_PN2}/configuration"
 	keepdir "/var/lib/${MY_PN2}/huggingface/hub"				# HF models
 	keepdir "/var/lib/${MY_PN2}/models"
+	keepdir "/opt/local-ai/data"
+	fowners "local-ai:local-ai" "/opt/local-ai/data"
 
 	sanitize_file_permissions
 }
