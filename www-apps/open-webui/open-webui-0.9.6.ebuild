@@ -4,7 +4,9 @@
 
 EAPI=8
 
-# For requirements, see https://github.com/open-webui/open-webui/blob/v0.9.2/backend/requirements.txt
+# A3.20, U24
+
+# For requirements, see https://github.com/open-webui/open-webui/blob/v0.9.6/backend/requirements.txt
 # For telemetry, see https://docs.openwebui.com/reference/monitoring/otel/
 
 # TODO package
@@ -24,14 +26,14 @@ EAPI=8
 
 # To update lockfile:
 # PATH="$(realpath ../../scripts):${PATH}"
-# NPM_UPDATER_VERSIONS="0.9.2" npm_updater_update_locks.sh
+# NPM_UPDATER_VERSIONS="0.9.6" npm_updater_update_locks.sh
 
 MY_PN="Open WebUI"
 
 AT_TYPES_NODE_PV="25.5.0"
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="hatchling"
-NODE_SLOT="22" # From https://github.com/open-webui/open-webui/blob/v0.8.12/Dockerfile#L27
+NODE_SLOT="22" # From https://github.com/open-webui/open-webui/blob/v0.9.6/Dockerfile#L27
 NPM_AUDIT_FATAL=0
 NPM_SLOT="3"
 PROTOBUF_CPP_SLOT="5"
@@ -67,7 +69,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-	#KEYWORDS="~amd64" # Dependencies are unpackaged, untested
+	#KEYWORDS="~amd64 ~arm64" # Dependencies are unpackaged, untested
 	S="${WORKDIR}/${PN}-${PV}"
 	SRC_URI="
 https://github.com/open-webui/open-webui/archive/refs/tags/v${PV}.tar.gz
