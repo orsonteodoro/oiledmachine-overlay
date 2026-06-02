@@ -261,7 +261,7 @@ ${MODES[@]/+}
 ${PYTHON_BACKENDS[@]/#/localai_backends_}
 ci cuda debug devcontainer docker +firejail native openblas opencl
 openrc rag rocm stt sycl-f16 sycl-f32 systemd tts vulkan
-ebuild_revision_50
+ebuild_revision_51
 "
 REQUIRED_USE="
 	!ci
@@ -1185,7 +1185,8 @@ einfo "Sanitizing file/folder permissions"
 	IFS=$' \t\n'
 
 	# Secure key/token permissions
-	chmod "0640" "${ED}/etc/conf.d/${MY_PN2}"
+	fperms "0640" "/etc/conf.d/${MY_PN2}"
+	fowners "local-ai:local-ai" "/etc/conf.d/${MY_PN2}"
 }
 
 get_mode() {
