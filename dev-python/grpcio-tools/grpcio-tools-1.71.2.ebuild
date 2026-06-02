@@ -116,7 +116,7 @@ ${PKG_CONFIG_PATH}" \
 		pkg-config --libs protobuf)
 	)
 	append-ldflags -Wl,--whole-archive "${L1[@]}" -Wl,--no-whole-archive "${L2[@]}"
-	filter-flags "-Wl,--as-needed"
+#	filter-flags "-Wl,--as-needed"
 	export PATH="${ESYSROOT}/usr/bin/protobuf/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
 	export PATH="${ESYSROOT}/usr/bin/grpc/${GRPC_SLOT}/bin:${PATH}"
 	export PYTHONPATH="${ESYSROOT}/usr/bin/protobuf/${PROTOBUF_PYTHON_SLOT}/lib/${EPYTHON}:${PYTHONPATH}"
