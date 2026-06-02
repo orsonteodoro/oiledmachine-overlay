@@ -13,7 +13,6 @@ EAPI=8
 
 # TODO package:
 # accelerate
-# bark
 # gguf
 # mlx-audio
 # piper-phonemize
@@ -75,7 +74,6 @@ CPP_BACKENDS=(
 
 # Protobuf 5
 GOLANG_BACKENDS=(
-	"bark-cpp"
 	"huggingface"
 	"local-store"
 	"piper"
@@ -87,7 +85,6 @@ GOLANG_BACKENDS=(
 # Protobuf 5
 PYTHON_BACKENDS=(
 	# From backend/python
-	"bark"
 	"chatterbox"
 	"coqui"
 	"diffusers"
@@ -385,8 +382,6 @@ REQUIRED_USE="
 	)
 	tts? (
 		|| (
-			localai_backends_bark
-			localai_backends_bark-cpp
 			localai_backends_chatterbox
 			localai_backends_coqui
 			localai_backends_kitten-tts
@@ -429,41 +424,6 @@ gen_rocm_rdepend() {
 		"
 	done
 }
-
-BARK_RDEPEND="
-	$(python_gen_cond_dep '
-		>=dev-python/bark-0.1.5[${PYTHON_USEDEP}]
-		dev-python/certifi[${PYTHON_USEDEP}]
-		dev-python/grpcio:'${GRPC_SLOT}'[${PYTHON_USEDEP}]
-		dev-python/protobuf:'${PROTOBUF_PYTHON_SLOT}'[${PYTHON_USEDEP}]
-	')
-"
-
-BARK_CPP_RDEPEND="
-	$(python_gen_cond_dep '
-		dev-python/numpy[${PYTHON_USEDEP}]
-	')
-	>=dev-python/huggingface_hub-0.14.1[${PYTHON_SINGLE_USEDEP}]
-	sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
-"
-
-# For bark-cpp
-GGML_1_RDEPEND="
-	$(python_gen_cond_dep '
-		>=dev-python/accelerate-0.19.0[${PYTHON_USEDEP}]
-		>=dev-python/gguf-0.1.0[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.24.4[${PYTHON_USEDEP}]
-		>=sci-ml/sentencepiece-0.1.98[${PYTHON_USEDEP}]
-	')
-	(
-		>=sci-ml/transformers-4.35.2[${PYTHON_SINGLE_USEDEP}]
-		<sci-ml/transformers-5.0.0[${PYTHON_SINGLE_USEDEP}]
-	)
-	>=dev-python/keras-2.15.0[${PYTHON_SINGLE_USEDEP}]
-	>=dev-python/tensorflow-2.15.0[${PYTHON_SINGLE_USEDEP},python]
-	>=dev-python/pytorch-2.2.1[${PYTHON_SINGLE_USEDEP}]
-	>=sci-ml/torchvision-0.15.2[${PYTHON_SINGLE_USEDEP}]
-"
 
 CHATTERBOX_RDEPEND="
 	$(python_gen_cond_dep '
@@ -705,14 +665,6 @@ RDEPEND+="
 	)
 	firejail? (
 		sys-apps/firejail
-	)
-	localai_backends_bark? (
-		${PYTHON_COMMON_RDEPEND}
-		${BARK_RDEPEND}
-	)
-	localai_backends_bark-cpp? (
-		${BARK_CPP_RDEPEND}
-		${GGML_1_RDEPEND}
 	)
 	localai_backends_chatterbox? (
 		${PYTHON_COMMON_RDEPEND}
@@ -1014,7 +966,7 @@ einfo "LDFLAGS: ${LDFLAGS}"
 		export USE_PIP="true"
 	fi
 
-	if use localai_backends_llama-cpp ; then
+	if ! use localai_backends_llama-cpp ; then
 ewarn "You are disabling the llama-cpp backend."
 ewarn "The localai_backends_llama-cpp USE flag is the recommended default for LLMs support."
 	fi
