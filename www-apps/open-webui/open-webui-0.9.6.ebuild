@@ -10,8 +10,6 @@ EAPI=8
 # For telemetry, see https://docs.openwebui.com/reference/monitoring/otel/
 
 # TODO package
-# langchain-classic
-# langchain-text-splitters
 # opentelemetry-exporter-otlp [optional]
 # opentelemetry-instrumentation-sqlalchemy [optional]
 # opentelemetry-instrumentation-redis [optional]
@@ -221,6 +219,10 @@ RDEPEND+="
 		>=dev-python/httpx-0.28.1[${PYTHON_USEDEP},socks(+),http2(+),zstd(+),cli(+),brotli(+)]
 		>=dev-python/itsdangerous-2.2.0[${PYTHON_USEDEP}]
 		>=dev-python/ldap3-2.9.1[${PYTHON_USEDEP}]
+		>=dev-python/langchain-1.2.10[${PYTHON_USEDEP}]
+		>=dev-python/langchain-classic-1.0.1[${PYTHON_USEDEP}]
+		>=dev-python/langchain-community-0.4.1[${PYTHON_USEDEP}]
+		>=dev-python/langchain-text-splitters-1.1.1[${PYTHON_USEDEP}]
 		>=dev-python/loguru-0.7.3[${PYTHON_USEDEP}]
 		>=dev-python/markdown-3.10.2[${PYTHON_USEDEP}]
 		>=dev-python/msoffcrypto-tool-6.0.0[${PYTHON_USEDEP}]
@@ -319,10 +321,6 @@ RDEPEND+="
 	')
 	>=dev-python/chromadb-1.5.2[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/faster-whisper-1.2.1[${PYTHON_SINGLE_USEDEP}]
-	>=dev-python/langchain-1.2.10[${PYTHON_SINGLE_USEDEP}]
-	>=dev-python/langchain-classic-1.0.1[${PYTHON_SINGLE_USEDEP}]
-	>=dev-python/langchain-community-0.4.1[${PYTHON_SINGLE_USEDEP}]
-	>=dev-python/langchain-text-splitters-1.1.1[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/rapidocr-onnxruntime-1.4.4[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/sentence-transformers-5.4.0[${PYTHON_SINGLE_USEDEP}]
 	>=media-libs/opencv-4.13.0[${PYTHON_SINGLE_USEDEP},python]
