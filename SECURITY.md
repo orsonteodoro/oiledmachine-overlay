@@ -449,6 +449,12 @@ Degrade attacker capabilities.
 Last purpose (not documented upstream):
 Protect secrets/credentials.
 
+Weaknesses:
+* Limited or typical use case is only building software.
+* Can be bypassed with a kernel exploit if the kernel is not kept up to date.
+* Not hardened against a Living off the Land attack.
+* Exposes home, secrets, credentials if not adequately configured by admin.
+
 Use cases:
 * Live ebuilds
 * Ebuilds linked to previously compromised projects
@@ -470,7 +476,7 @@ See also [Gentoo Wiki:/etc/sandbox.conf](https://wiki.gentoo.org/wiki//etc/sandb
 
 (EXPERIMENTAL during build time)
 
-This is a stronger sandbox because it mitigates against Living of the Land
+This is a stronger sandbox because it mitigates against Living off the Land
 attacks which are currently more than the estimated 70% of the cyberattacks today.
 
 Primary purpose (on this overlay):
@@ -481,6 +487,15 @@ Degrade attacker capabilities.
 
 Note:  Currently it only works on post install.  Portage may be modded later in
 this overlay to use Firejail as an alternative.
+
+Weaknesses:
+* Typically runs as SUID which can lead to privilege escalation.
+* Can be bypassed with a kernel exploit if the kernel is not kept to date.
+* Not hardened against Living off the Land attack if not the oiledmachine-overlay
+version.
+* Exposes home, secrets, credentials if not adequately configured by admin or end user.
+* Not able to protect during build because the distro sandbox controls and drops
+capabilities, so more effective after installation.
 
 Use cases:
 * Web browsers - when a sandbox breakout happens with the one used by the browser
