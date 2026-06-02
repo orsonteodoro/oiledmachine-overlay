@@ -261,7 +261,7 @@ ${MODES[@]/+}
 ${PYTHON_BACKENDS[@]/#/localai_backends_}
 ci cuda debug devcontainer docker +firejail native openblas opencl
 openrc rag rocm stt sycl-f16 sycl-f32 systemd tts vulkan
-ebuild_revision_48
+ebuild_revision_49
 "
 REQUIRED_USE="
 	!ci
