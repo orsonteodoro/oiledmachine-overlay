@@ -1426,6 +1426,13 @@ ewarn "The /etc/firejail/local-ai.profile assumes single mode USE case."
 ewarn "Change the config if using Docker plugins"
 ewarn
 	fi
+	local localai_address=${LOCALAI_ADDRESS:-"127.0.0.1:8080"}
+einfo
+einfo "To use it first start the ${PN} init script."
+einfo
+einfo "Then, open ${localai_address} and bookmark it with the web browser,"
+einfo "or run via ${PN} in the command line."
+einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD
