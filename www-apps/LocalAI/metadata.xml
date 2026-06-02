@@ -108,7 +108,7 @@
       Support AMD GPU accelerated BLAS.
     </flag>
     <flag name="single">
-      Build/use as single user mode.
+      Build/use as a single instance mode.
     </flag>
     <flag name="stt">
       Support speech to text or microphone support.
