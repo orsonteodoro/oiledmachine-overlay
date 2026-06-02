@@ -5,7 +5,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{10..13} )
 
 inherit distutils-r1 pypi
 
@@ -25,10 +25,12 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" test"
+SLOT="0/"$(ver_cut "1-2" "${PV}")
+IUSE+=" build data test"
 RDEPEND+="
-	>=dev-python/language-data-1.2[${PYTHON_USEDEP}]
+	data? (
+		>=dev-python/language-data-1.2[${PYTHON_USEDEP}]
+	)
 "
 DEPEND+="
 	${RDEPEND}
@@ -36,13 +38,13 @@ DEPEND+="
 BDEPEND+="
 	>=dev-python/setuptools-60[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-scm-8.0[${PYTHON_USEDEP}]
-
-	dev-python/build[${PYTHON_USEDEP}]
-	dev-python/twine[${PYTHON_USEDEP}]
-
 	test? (
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-cov[${PYTHON_USEDEP}]
+	)
+	build? (
+		dev-python/build[${PYTHON_USEDEP}]
+		dev-python/twine[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "README.md" )
