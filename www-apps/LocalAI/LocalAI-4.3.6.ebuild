@@ -1233,7 +1233,7 @@ einfo "Sanitizing file/folder permissions"
 	IFS=$' \t\n'
 
 	# Secure key/token permissions
-	chmod "0640" "/etc/conf.d/${MY_PN2}"
+	chmod "0640" "${ED}/etc/conf.d/${MY_PN2}"
 }
 
 get_mode() {
