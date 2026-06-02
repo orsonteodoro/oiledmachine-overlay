@@ -31,7 +31,7 @@ MY_PN2="local-ai"
 #
 GEN_EBUILD=0
 
-MAINTAINER_MODE=1
+MAINTAINER_MODE=0
 
 ABSEIL_CPP_SLOT="20240722" # The abseil-cpp version is the same used by same Protobuf slot for all of the backends.
 CFLAGS_HARDENED_APPEND_GOFLAGS=1
