@@ -43,6 +43,10 @@
     <flag name="cuda">
       Add GPU hardware acceleration.
     </flag>
+    <flag name="firejail">
+      Use Firejail for secrets/credential isolation, untrusted LLM sandboxing,
+      and server daemon security.
+    </flag>
     <flag name="mariadb">
       Save data into MariaDB
     </flag>
