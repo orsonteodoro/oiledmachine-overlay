@@ -67,7 +67,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-	#KEYWORDS="~amd64 ~arm64" # Dependencies are unpackaged, untested
+	KEYWORDS="~amd64 ~arm64"
 	S="${WORKDIR}/${PN}-${PV}"
 	SRC_URI="
 https://github.com/open-webui/open-webui/archive/refs/tags/v${PV}.tar.gz
