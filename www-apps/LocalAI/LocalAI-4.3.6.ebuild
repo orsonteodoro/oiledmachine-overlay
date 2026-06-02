@@ -52,7 +52,7 @@ MODES=(
 )
 
 ONNXRUNTIME_PV="1.20.0" # From https://github.com/mudler/LocalAI/blob/v4.3.6/backend/go/silero-vad/Makefile#L5
-VULKAN_PV="1.4.350.1" # From the last vulkan-sdk-<ver> tag in https://github.com/KhronosGroup/Vulkan-Tools/tags relative to LLAMA_CPP_COMMIT commit date.  llama.cpp uses https://vulkan.lunarg.com/sdk/latest/linux.txt
+VULKAN_PV="1.4.350.0" # Version relaxed.  Originally 1.4.350.1.  From the last vulkan-sdk-<ver> tag in https://github.com/KhronosGroup/Vulkan-Tools/tags relative to LLAMA_CPP_COMMIT commit date.  llama.cpp uses https://vulkan.lunarg.com/sdk/latest/linux.txt
 
 ESPEAK_NG_COMMIT="8593723f10cfd9befd50de447f14bf0a9d2a14a4" # For go-piper, from https://github.com/mudler/go-piper/tree/e10ca041a885d4a8f3871d52924b47792d5e5aa0
 GGML_COMMIT_2="0ce7ad348a3151e1da9f65d962044546bcaad421" # For stable-diffusion.cpp, from https://github.com/leejet/stable-diffusion.cpp/tree/0e4ee04488159b81d95a9ffcd983a077fd5dcb77
