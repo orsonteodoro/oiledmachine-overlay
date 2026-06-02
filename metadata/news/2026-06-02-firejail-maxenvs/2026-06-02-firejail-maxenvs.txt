@@ -1,0 +1,21 @@
+Title: Firejail env-max-count
+Author: Orson Teodoro <orsonteodoro@hotmail.com>
+Content-Type: text/plain
+Posted: 2026-06-02
+Revision: 0
+News-Item-Format: 2.0
+Display-If-Installed: sys-apps/firejail
+Display-If-Installed: sys-apps/npm
+Display-If-Installed: sys-apps/yarn
+Display-If-Installed: sys-apps/pnpm
+
+If the following error is encountered:
+
+Error: too many environment variables: >= env-max-count (256)
+
+Either set env-max-count 512 in /etc/portage/firejail.config or
+`emerge -vO firejail`.
+
+The 512 should be used when emerging, but downgraded back to 256 when using apps
+after install.  The ebuild or build system adds too many of them for the default
+to be used.

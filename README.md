@@ -46,6 +46,7 @@ to the .txt file at:
 
 The selected first 5 news items:
 
+* 2026-06-02 - [Firejail env-max-count](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-06-02-firejail-maxenvs/2026-06-02-firejail-maxenvs.txt)
 * 2026-05-14 - [Rebuild the kernel against 0-day vulnerabilities (Fragnesia mitigation)](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-05-14-update-kernel/2026-05-14-update-kernel.txt)
 * 2026-05-09 - [Rebuild and restart coolercontrold as non-root](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-05-09-coolercontrold-update/2026-05-09-coolercontrold-update.txt)
 * 2026-05-09 - [Rebuild libpcre2 dependencies](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-05-09-rebuild-libpcre2-dependencies/2026-05-09-rebuild-libpcre2-dependencies.txt)
