@@ -603,7 +603,6 @@ RFDETR_RDEPEND="
 
 STABLEDIFFUSION_GGML_RDEPEND="
 	$(python_gen_cond_dep '
-		>=dev-python/accelerate-0.19.0[${PYTHON_USEDEP}]
 		>=dev-python/gguf-0.1.0[${PYTHON_USEDEP}]
 		>=dev-python/numpy-2.0.2[${PYTHON_USEDEP}]
 		>=sci-ml/sentencepiece-0.1.98[${PYTHON_USEDEP}]
@@ -612,6 +611,7 @@ STABLEDIFFUSION_GGML_RDEPEND="
 		>=sci-ml/transformers-4.35.2[${PYTHON_SINGLE_USEDEP}]
 		<sci-ml/transformers-5.0.0[${PYTHON_SINGLE_USEDEP}]
 	)
+	>=dev-python/accelerate-0.19.0[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/keras-3.5.0[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/torchvision-0.15.2[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/tensorflow-2.18.0[${PYTHON_SINGLE_USEDEP},python]

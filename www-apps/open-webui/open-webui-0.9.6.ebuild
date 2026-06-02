@@ -180,7 +180,6 @@ RDEPEND+="
 	${UVICORN_RDEPEND}
 	$(python_gen_cond_dep '
 		>=app-arch/brotli-1.2.0[${PYTHON_USEDEP}]
-		>=dev-python/accelerate-1.13.0[${PYTHON_USEDEP}]
 		>=dev-python/aiocache-0.12.3[${PYTHON_USEDEP}]
 		>=dev-python/aiofiles-25.1.0[${PYTHON_USEDEP}]
 		>=dev-python/aiohttp-3.13.5[${PYTHON_USEDEP}]
@@ -319,6 +318,7 @@ RDEPEND+="
 			>=dev-python/valkey-glide-sync-2.3.1[${PYTHON_USEDEP}]
 		)
 	')
+	>=dev-python/accelerate-1.13.0[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/chromadb-1.5.2[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/faster-whisper-1.2.1[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/rapidocr-onnxruntime-1.4.4[${PYTHON_SINGLE_USEDEP}]
