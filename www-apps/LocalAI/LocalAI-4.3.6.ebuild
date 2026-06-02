@@ -1252,8 +1252,6 @@ eerror "Supported modes:  single, federated-load-balancer, federated-worker-node
 }
 
 install_init_services() {
-	local federated=$(usex federated "1" "0")
-
 	local mode=$(get_mode)
 
 	sed \
