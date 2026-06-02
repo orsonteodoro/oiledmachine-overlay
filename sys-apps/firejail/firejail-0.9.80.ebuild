@@ -16,7 +16,7 @@ CXX_STANDARD="ignore"
 FIREJAIL_DEFAULT_WIDTH=${FIREJAIL_DEFAULT_WIDTH:-1920}
 FIREJAIL_DEFAULT_HEIGHT=${FIREJAIL_DEFAULT_HEIGHT:-1080}
 FIREJAIL_DEFAULT_BPP=${FIREJAIL_DEFAULT_BBP:-24}
-FIREJAIL_MAX_ENVS=${FIREJAIL_MAX_ENVS:-512} # 2048 for testing only
+FIREJAIL_MAX_ENVS=${FIREJAIL_MAX_ENVS:-512} # 2048 for testing only, the 512 is needed when building with firejail inside ebuild.
 GEN_EBUILD=0 # Uncomment to regen ebuild parts
 PYTHON_COMPAT=( "python3_"{9..12} )
 TEST_SET="distro" # distro or full
@@ -293,7 +293,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 -apparmor +chroot clang contrib +dbusproxy +file-transfer +globalcfg
 landlock +network +private-home -private-lib selfrando -selinux +suid
 test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xcsecurity xvfb
-ebuild_revision_129
+ebuild_revision_130
 "
 REQUIRED_USE+="
 	!test
@@ -384,6 +384,7 @@ BDEPEND+="
 "
 
 PATCHES=(
+	"${FILESDIR}/${PN}-0.9.78-envlimits.patch"
 	"${FILESDIR}/${PN}-0.9.80-firecfg.config.patch"
 	"${FILESDIR}/${PN}-0.9.80-manpage-nocompress.patch"
 #	"${FILESDIR}/extra-patches/${PN}-009110a-disable-xcsecurity.patch"
@@ -780,10 +781,6 @@ src_prepare() {
 	default
 
 	cp -aT "${FILESDIR}/extra-profiles/" "${S}/etc" || die
-
-	if use test ; then
-		eapply "${FILESDIR}/${PN}-0.9.78-envlimits.patch"
-	fi
 
 	if use xpra ; then
 		eapply "${FILESDIR}/extra-patches/${PN}-0.9.80-xpra-opengl.patch"
