@@ -73,6 +73,7 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/numpy-1.26.2[${PYTHON_USEDEP}]
 	' python3_{10..12})
+
 	$(python_gen_cond_dep '
 		>=dev-python/numpy-2.1.0[${PYTHON_USEDEP}]
 	' python3_13)
