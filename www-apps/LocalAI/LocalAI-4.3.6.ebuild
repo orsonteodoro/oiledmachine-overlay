@@ -31,7 +31,7 @@ MY_PN2="local-ai"
 #
 GEN_EBUILD=0
 
-MAINTAINER_MODE=0
+MAINTAINER_MODE=1
 
 ABSEIL_CPP_SLOT="20240722" # The abseil-cpp version is the same used by same Protobuf slot for all of the backends.
 CFLAGS_HARDENED_APPEND_GOFLAGS=1
@@ -878,7 +878,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-4.3.6-libbackend-sh.patch"
 	"${FILESDIR}/${PN}-3.8.0-proto-reorder.patch"
 	"${FILESDIR}/${PN}-3.8.0-llama-cpp-config.patch"
-	"${FILESDIR}/${PN}-4.3.6-disable-syslibs-copy.patch"
 )
 
 pkg_setup() {
@@ -1031,6 +1030,9 @@ ewarn "For GPU inferencing, use either cuda, opencl, rocm, sycl-f16, sycl-f32, v
 eerror "OpenCL is only supported on ARCH=${ARCH}.  Disable the opencl USE flag to continue."
 		die
 	fi
+
+	export LIBDIR=$(get_libdir)
+	export PORTABLE=0
 }
 
 src_compile() {

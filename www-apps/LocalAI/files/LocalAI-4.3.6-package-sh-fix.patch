@@ -1,146 +1,700 @@
-Only in LocalAI-4.3.6/backend/cpp/llama-cpp: package.sh.orig
-Only in LocalAI-4.3.6/backend/cpp/llama-cpp: package.sh.rej
-diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/piper/package.sh LocalAI-4.3.6/backend/go/piper/package.sh
---- LocalAI-4.3.6.orig/backend/go/piper/package.sh	2026-05-30 13:48:09.000000000 -0700
-+++ LocalAI-4.3.6/backend/go/piper/package.sh	2026-06-01 11:55:50.735979015 -0700
-@@ -16,34 +16,35 @@ cp -rfv $CURDIR/run.sh $CURDIR/package/
- cp -rfLv $CURDIR/sources/go-piper/piper-phonemize/pi/lib/* $CURDIR/package/lib/
+diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/cpp/ds4/package.sh LocalAI-4.3.6/backend/cpp/ds4/package.sh
+--- LocalAI-4.3.6.orig/backend/cpp/ds4/package.sh	2026-05-30 13:48:09.000000000 -0700
++++ LocalAI-4.3.6/backend/cpp/ds4/package.sh	2026-06-01 22:30:49.277105569 -0700
+@@ -14,21 +14,27 @@ if [ "$UNAME_S" = "Darwin" ]; then
+     exit 0
+ fi
+ 
+-if [ -f "/lib64/ld-linux-x86-64.so.2" ]; then
+-    cp -arfLv /lib64/ld-linux-x86-64.so.2 "$CURDIR/package/lib/ld.so"
+-    LIBDIR=/lib/x86_64-linux-gnu
+-elif [ -f "/lib/ld-linux-aarch64.so.1" ]; then
+-    cp -arfLv /lib/ld-linux-aarch64.so.1 "$CURDIR/package/lib/ld.so"
+-    LIBDIR=/lib/aarch64-linux-gnu
++arch=$(uname -m) # with _ as in x86_64
++arch2="${arch/_/-}" # with - as in x86-64
++d=$(dirname $(gcc -print-libgcc-file-name))
++libdir="${LIBDIR}"
++if [ "${PORTABLE}" != "1" ] ; then
++    :
++elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
++    cp -arfLv "${libdir}"/ld-linux-${arch2}.so.2 "$CURDIR/package/lib/ld.so"
+ else
+     echo "package.sh: unknown architecture" >&2; exit 1
+ fi
+ 
+-for lib in libc.so.6 libgcc_s.so.1 libstdc++.so.6 libm.so.6 libgomp.so.1 \
++for lib in libc.so.6 libm.so.6 \
+            libdl.so.2 librt.so.1 libpthread.so.0; do
+     cp -arfLv "$LIBDIR/$lib" "$CURDIR/package/lib/$lib"
+ done
+ 
++for lib in libgcc_s.so.1 libstdc++.so.6 libgomp.so.1; do
++    cp -arfLv "${d}/$lib" "$CURDIR/package/lib/$lib"
++done
++
+ GPU_LIB_SCRIPT="${REPO_ROOT}/scripts/build/package-gpu-libs.sh"
+ if [ -f "$GPU_LIB_SCRIPT" ]; then
+     source "$GPU_LIB_SCRIPT" "$CURDIR/package/lib"
+diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/cpp/ik-llama-cpp/package.sh LocalAI-4.3.6/backend/cpp/ik-llama-cpp/package.sh
+--- LocalAI-4.3.6.orig/backend/cpp/ik-llama-cpp/package.sh	2026-05-30 13:48:09.000000000 -0700
++++ LocalAI-4.3.6/backend/cpp/ik-llama-cpp/package.sh	2026-06-01 22:31:39.051552555 -0700
+@@ -15,30 +15,23 @@ cp -avrf $CURDIR/ik-llama-cpp-* $CURDIR/
+ cp -rfv $CURDIR/run.sh $CURDIR/package/
  
  # Detect architecture and copy appropriate libraries
-+d=$(dirname $(gcc -print-libgcc-file-name))
- if [ -f "/lib64/ld-linux-x86-64.so.2" ]; then
-     # x86_64 architecture
-     echo "Detected x86_64 architecture, copying x86_64 libraries..."
-     cp -arfLv /lib64/ld-linux-x86-64.so.2 $CURDIR/package/lib/ld.so
+-if [ -f "/lib64/ld-linux-x86-64.so.2" ]; then
+-    # x86_64 architecture
+-    echo "Detected x86_64 architecture, copying x86_64 libraries..."
+-    cp -arfLv /lib64/ld-linux-x86-64.so.2 $CURDIR/package/lib/ld.so
 -    cp -arfLv /lib/x86_64-linux-gnu/libc.so.6 $CURDIR/package/lib/libc.so.6
 -    cp -arfLv /lib/x86_64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
 -    cp -arfLv /lib/x86_64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
 -    cp -arfLv /lib/x86_64-linux-gnu/libm.so.6 $CURDIR/package/lib/libm.so.6
 -    cp -arfLv /lib/x86_64-linux-gnu/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
--    cp -arfLv /lib/x86_64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
--    cp -arfLv /lib/x86_64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
 -    cp -arfLv /lib/x86_64-linux-gnu/libdl.so.2 $CURDIR/package/lib/libdl.so.2
 -    cp -arfLv /lib/x86_64-linux-gnu/librt.so.1 $CURDIR/package/lib/librt.so.1
 -    cp -arfLv /lib/x86_64-linux-gnu/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
 -elif [ -f "/lib/ld-linux-aarch64.so.1" ]; then
-+    cp -arfLv /lib64/libc.so.6 $CURDIR/package/lib/libc.so.6
-+    cp -arfLv "${d}"/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
-+    cp -arfLv "${d}"/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
-+    cp -arfLv /lib64/libm.so.6 $CURDIR/package/lib/libm.so.6
-+    cp -arfLv "${d}"/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
-+    cp -arfLv "${d}"/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
-+    cp -arfLv "${d}"/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
-+    cp -arfLv /lib64/libdl.so.2 $CURDIR/package/lib/libdl.so.2
-+    cp -arfLv /lib64/librt.so.1 $CURDIR/package/lib/librt.so.1
-+    cp -arfLv /lib64/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
-+elif [ -f "/lib64/ld-linux-aarch64.so.1" ]; then
-     # ARM64 architecture
-     echo "Detected ARM64 architecture, copying ARM64 libraries..."
+-    # ARM64 architecture
+-    echo "Detected ARM64 architecture, copying ARM64 libraries..."
 -    cp -arfLv /lib/ld-linux-aarch64.so.1 $CURDIR/package/lib/ld.so
 -    cp -arfLv /lib/aarch64-linux-gnu/libc.so.6 $CURDIR/package/lib/libc.so.6
 -    cp -arfLv /lib/aarch64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
 -    cp -arfLv /lib/aarch64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
 -    cp -arfLv /lib/aarch64-linux-gnu/libm.so.6 $CURDIR/package/lib/libm.so.6
 -    cp -arfLv /lib/aarch64-linux-gnu/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
--    cp -arfLv /lib/aarch64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
--    cp -arfLv /lib/aarch64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
 -    cp -arfLv /lib/aarch64-linux-gnu/libdl.so.2 $CURDIR/package/lib/libdl.so.2
 -    cp -arfLv /lib/aarch64-linux-gnu/librt.so.1 $CURDIR/package/lib/librt.so.1
 -    cp -arfLv /lib/aarch64-linux-gnu/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
-+    cp -arfLv /lib64/ld-linux-aarch64.so.1 $CURDIR/package/lib/ld.so
-+    cp -arfLv /lib64/libc.so.6 $CURDIR/package/lib/libc.so.6
++arch=$(uname -m) # with _ as in x86_64
++arch2="${arch/_/-}" # with - as in x86-64
++d=$(dirname $(gcc -print-libgcc-file-name))
++libdir="${LIBDIR}"
++if [ "${PORTABLE}" != "1" ] ; then
++    :
++elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
++    echo "Detected ${arch} architecture, copying ${arch} libraries..."
++    cp -arfLv "${libdir}"/ld-linux-${arch2}.so.2 $CURDIR/package/lib/ld.so
++    cp -arfLv "${libdir}"/libc.so.6 $CURDIR/package/lib/libc.so.6
 +    cp -arfLv "${d}"/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
 +    cp -arfLv "${d}"/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
-+    cp -arfLv /lib64/libm.so.6 $CURDIR/package/lib/libm.so.6
++    cp -arfLv "${libdir}"/libm.so.6 $CURDIR/package/lib/libm.so.6
 +    cp -arfLv "${d}"/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
-+    cp -arfLv "${d}"/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
-+    cp -arfLv "${d}"/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
-+    cp -arfLv /lib64/libdl.so.2 $CURDIR/package/lib/libdl.so.2
-+    cp -arfLv /lib64/librt.so.1 $CURDIR/package/lib/librt.so.1
-+    cp -arfLv /lib64/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
++    cp -arfLv "${libdir}"/libdl.so.2 $CURDIR/package/lib/libdl.so.2
++    cp -arfLv "${libdir}"/librt.so.1 $CURDIR/package/lib/librt.so.1
++    cp -arfLv "${libdir}"/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
  else
      echo "Error: Could not detect architecture"
      exit 1
-@@ -51,4 +52,4 @@ fi
+diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/cpp/llama-cpp/package.sh LocalAI-4.3.6/backend/cpp/llama-cpp/package.sh
+--- LocalAI-4.3.6.orig/backend/cpp/llama-cpp/package.sh	2026-05-30 13:48:09.000000000 -0700
++++ LocalAI-4.3.6/backend/cpp/llama-cpp/package.sh	2026-06-01 22:31:37.787591993 -0700
+@@ -15,30 +15,23 @@ cp -avrf $CURDIR/llama-cpp-* $CURDIR/pac
+ cp -rfv $CURDIR/run.sh $CURDIR/package/
+ 
+ # Detect architecture and copy appropriate libraries
+-if [ -f "/lib64/ld-linux-x86-64.so.2" ]; then
+-    # x86_64 architecture
+-    echo "Detected x86_64 architecture, copying x86_64 libraries..."
+-    cp -arfLv /lib64/ld-linux-x86-64.so.2 $CURDIR/package/lib/ld.so
+-    cp -arfLv /lib/x86_64-linux-gnu/libc.so.6 $CURDIR/package/lib/libc.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libm.so.6 $CURDIR/package/lib/libm.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libdl.so.2 $CURDIR/package/lib/libdl.so.2
+-    cp -arfLv /lib/x86_64-linux-gnu/librt.so.1 $CURDIR/package/lib/librt.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
+-elif [ -f "/lib/ld-linux-aarch64.so.1" ]; then
+-    # ARM64 architecture
+-    echo "Detected ARM64 architecture, copying ARM64 libraries..."
+-    cp -arfLv /lib/ld-linux-aarch64.so.1 $CURDIR/package/lib/ld.so
+-    cp -arfLv /lib/aarch64-linux-gnu/libc.so.6 $CURDIR/package/lib/libc.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libm.so.6 $CURDIR/package/lib/libm.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libdl.so.2 $CURDIR/package/lib/libdl.so.2
+-    cp -arfLv /lib/aarch64-linux-gnu/librt.so.1 $CURDIR/package/lib/librt.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
++arch=$(uname -m) # with _ as in x86_64
++arch2="${arch/_/-}" # with - as in x86-64
++d=$(dirname $(gcc -print-libgcc-file-name))
++libdir="${LIBDIR}"
++if [ "${PORTABLE}" != "1" ] ; then
++    :
++elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
++    echo "Detected ${arch} architecture, copying ${arch} libraries..."
++    cp -arfLv "${libdir}"/ld-linux-${arch2}.so.2 $CURDIR/package/lib/ld.so
++    cp -arfLv "${libdir}"/libc.so.6 $CURDIR/package/lib/libc.so.6
++    cp -arfLv "${d}"/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
++    cp -arfLv "${d}"/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
++    cp -arfLv "${libdir}"/libm.so.6 $CURDIR/package/lib/libm.so.6
++    cp -arfLv "${d}"/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
++    cp -arfLv "${libdir}"/libdl.so.2 $CURDIR/package/lib/libdl.so.2
++    cp -arfLv "${libdir}"/librt.so.1 $CURDIR/package/lib/librt.so.1
++    cp -arfLv "${libdir}"/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
+ else
+     echo "Error: Could not detect architecture"
+     exit 1
+@@ -55,4 +48,4 @@ fi
  
  echo "Packaging completed successfully" 
  ls -liah $CURDIR/package/
 -ls -liah $CURDIR/package/lib/
 \ No newline at end of file
 +ls -liah $CURDIR/package/lib/
-diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/silero-vad/package.sh LocalAI-4.3.6/backend/go/silero-vad/package.sh
---- LocalAI-4.3.6.orig/backend/go/silero-vad/package.sh	2026-05-30 13:48:09.000000000 -0700
-+++ LocalAI-4.3.6/backend/go/silero-vad/package.sh	2026-06-01 11:55:50.735979015 -0700
-@@ -15,34 +15,35 @@ cp -avf $CURDIR/run.sh $CURDIR/package/
- cp -rfLv $CURDIR/backend-assets/lib/* $CURDIR/package/lib/
+diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/cpp/turboquant/package.sh LocalAI-4.3.6/backend/cpp/turboquant/package.sh
+--- LocalAI-4.3.6.orig/backend/cpp/turboquant/package.sh	2026-05-30 13:48:09.000000000 -0700
++++ LocalAI-4.3.6/backend/cpp/turboquant/package.sh	2026-06-01 22:31:36.139643411 -0700
+@@ -15,30 +15,23 @@ cp -avrf $CURDIR/turboquant-* $CURDIR/pa
+ cp -rfv $CURDIR/run.sh $CURDIR/package/
  
  # Detect architecture and copy appropriate libraries
-+d=$(dirname $(gcc -print-libgcc-file-name))
- if [ -f "/lib64/ld-linux-x86-64.so.2" ]; then
-     # x86_64 architecture
-     echo "Detected x86_64 architecture, copying x86_64 libraries..."
-     cp -arfLv /lib64/ld-linux-x86-64.so.2 $CURDIR/package/lib/ld.so
+-if [ -f "/lib64/ld-linux-x86-64.so.2" ]; then
+-    # x86_64 architecture
+-    echo "Detected x86_64 architecture, copying x86_64 libraries..."
+-    cp -arfLv /lib64/ld-linux-x86-64.so.2 $CURDIR/package/lib/ld.so
 -    cp -arfLv /lib/x86_64-linux-gnu/libc.so.6 $CURDIR/package/lib/libc.so.6
 -    cp -arfLv /lib/x86_64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
 -    cp -arfLv /lib/x86_64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
 -    cp -arfLv /lib/x86_64-linux-gnu/libm.so.6 $CURDIR/package/lib/libm.so.6
 -    cp -arfLv /lib/x86_64-linux-gnu/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
--    cp -arfLv /lib/x86_64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
--    cp -arfLv /lib/x86_64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
 -    cp -arfLv /lib/x86_64-linux-gnu/libdl.so.2 $CURDIR/package/lib/libdl.so.2
 -    cp -arfLv /lib/x86_64-linux-gnu/librt.so.1 $CURDIR/package/lib/librt.so.1
 -    cp -arfLv /lib/x86_64-linux-gnu/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
 -elif [ -f "/lib/ld-linux-aarch64.so.1" ]; then
-+    cp -arfLv /lib64/libc.so.6 $CURDIR/package/lib/libc.so.6
-+    cp -arfLv "${d}"/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
-+    cp -arfLv "${d}"/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
-+    cp -arfLv /lib64/libm.so.6 $CURDIR/package/lib/libm.so.6
-+    cp -arfLv "${d}"/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
-+    cp -arfLv "${d}"/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
-+    cp -arfLv "${d}"/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
-+    cp -arfLv /lib64/libdl.so.2 $CURDIR/package/lib/libdl.so.2
-+    cp -arfLv /lib64/librt.so.1 $CURDIR/package/lib/librt.so.1
-+    cp -arfLv /lib64/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
-+elif [ -f "/lib64/ld-linux-aarch64.so.1" ]; then
-     # ARM64 architecture
-     echo "Detected ARM64 architecture, copying ARM64 libraries..."
+-    # ARM64 architecture
+-    echo "Detected ARM64 architecture, copying ARM64 libraries..."
 -    cp -arfLv /lib/ld-linux-aarch64.so.1 $CURDIR/package/lib/ld.so
 -    cp -arfLv /lib/aarch64-linux-gnu/libc.so.6 $CURDIR/package/lib/libc.so.6
 -    cp -arfLv /lib/aarch64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
 -    cp -arfLv /lib/aarch64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
 -    cp -arfLv /lib/aarch64-linux-gnu/libm.so.6 $CURDIR/package/lib/libm.so.6
 -    cp -arfLv /lib/aarch64-linux-gnu/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
--    cp -arfLv /lib/aarch64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
--    cp -arfLv /lib/aarch64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
 -    cp -arfLv /lib/aarch64-linux-gnu/libdl.so.2 $CURDIR/package/lib/libdl.so.2
 -    cp -arfLv /lib/aarch64-linux-gnu/librt.so.1 $CURDIR/package/lib/librt.so.1
 -    cp -arfLv /lib/aarch64-linux-gnu/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
-+    cp -arfLv /lib64/ld-linux-aarch64.so.1 $CURDIR/package/lib/ld.so
-+    cp -arfLv /lib64/libc.so.6 $CURDIR/package/lib/libc.so.6
++arch=$(uname -m) # with _ as in x86_64
++arch2="${arch/_/-}" # with - as in x86-64
++d=$(dirname $(gcc -print-libgcc-file-name))
++libdir="${LIBDIR}"
++if [ "${PORTABLE}" != "1" ] ; then
++    :
++elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
++    echo "Detected ${arch} architecture, copying ${arch} libraries..."
++    cp -arfLv "${libdir}"/ld-linux-${arch2}.so.2 $CURDIR/package/lib/ld.so
++    cp -arfLv "${d}"/libc.so.6 $CURDIR/package/lib/libc.so.6
 +    cp -arfLv "${d}"/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
 +    cp -arfLv "${d}"/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
-+    cp -arfLv /lib64/libm.so.6 $CURDIR/package/lib/libm.so.6
++    cp -arfLv "${d}"/libm.so.6 $CURDIR/package/lib/libm.so.6
 +    cp -arfLv "${d}"/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
-+    cp -arfLv "${d}"/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
-+    cp -arfLv "${d}"/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
-+    cp -arfLv /lib64/libdl.so.2 $CURDIR/package/lib/libdl.so.2
-+    cp -arfLv /lib64/librt.so.1 $CURDIR/package/lib/librt.so.1
-+    cp -arfLv /lib64/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
++    cp -arfLv "${d}"/libdl.so.2 $CURDIR/package/lib/libdl.so.2
++    cp -arfLv "${d}"/librt.so.1 $CURDIR/package/lib/librt.so.1
++    cp -arfLv "${d}"/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
  else
      echo "Error: Could not detect architecture"
      exit 1
+diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/acestep-cpp/package.sh LocalAI-4.3.6/backend/go/acestep-cpp/package.sh
+--- LocalAI-4.3.6.orig/backend/go/acestep-cpp/package.sh	2026-05-30 13:48:09.000000000 -0700
++++ LocalAI-4.3.6/backend/go/acestep-cpp/package.sh	2026-06-01 22:31:46.827309941 -0700
+@@ -16,34 +16,25 @@ cp -fv $CURDIR/libgoacestepcpp-*.so $CUR
+ cp -fv $CURDIR/run.sh $CURDIR/package/
+ 
+ # Detect architecture and copy appropriate libraries
+-if [ -f "/lib64/ld-linux-x86-64.so.2" ]; then
+-    # x86_64 architecture
+-    echo "Detected x86_64 architecture, copying x86_64 libraries..."
+-    cp -arfLv /lib64/ld-linux-x86-64.so.2 $CURDIR/package/lib/ld.so
+-    cp -arfLv /lib/x86_64-linux-gnu/libc.so.6 $CURDIR/package/lib/libc.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libm.so.6 $CURDIR/package/lib/libm.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libdl.so.2 $CURDIR/package/lib/libdl.so.2
+-    cp -arfLv /lib/x86_64-linux-gnu/librt.so.1 $CURDIR/package/lib/librt.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
+-elif [ -f "/lib/ld-linux-aarch64.so.1" ]; then
+-    # ARM64 architecture
+-    echo "Detected ARM64 architecture, copying ARM64 libraries..."
+-    cp -arfLv /lib/ld-linux-aarch64.so.1 $CURDIR/package/lib/ld.so
+-    cp -arfLv /lib/aarch64-linux-gnu/libc.so.6 $CURDIR/package/lib/libc.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libm.so.6 $CURDIR/package/lib/libm.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libdl.so.2 $CURDIR/package/lib/libdl.so.2
+-    cp -arfLv /lib/aarch64-linux-gnu/librt.so.1 $CURDIR/package/lib/librt.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
++arch=$(uname -m) # with _ as in x86_64
++arch2="${arch/_/-}" # with - as in x86-64
++d=$(dirname $(gcc -print-libgcc-file-name))
++libdir="${LIBDIR}"
++if [ "${PORTABLE}" != "1" ] ; then
++    :
++elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
++    echo "Detected ${arch} architecture, copying ${arch} libraries..."
++    cp -arfLv "${libdir}"/ld-linux-${arch2}.so.2 $CURDIR/package/lib/ld.so
++    cp -arfLv "${libdir}"/libc.so.6 $CURDIR/package/lib/libc.so.6
++    cp -arfLv "${d}"/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
++    cp -arfLv "${d}"/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
++    cp -arfLv "${libdir}"/libm.so.6 $CURDIR/package/lib/libm.so.6
++    cp -arfLv "${d}"/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
++    cp -arfLv "${d}"/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
++    cp -arfLv "${d}"/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
++    cp -arfLv "${libdir}"/libdl.so.2 $CURDIR/package/lib/libdl.so.2
++    cp -arfLv "${libdir}"/librt.so.1 $CURDIR/package/lib/librt.so.1
++    cp -arfLv "${libdir}"/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
+ elif [ $(uname -s) = "Darwin" ]; then
+     echo "Detected Darwin"
+ else
+diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/localvqe/package.sh LocalAI-4.3.6/backend/go/localvqe/package.sh
+--- LocalAI-4.3.6.orig/backend/go/localvqe/package.sh	2026-05-30 13:48:09.000000000 -0700
++++ LocalAI-4.3.6/backend/go/localvqe/package.sh	2026-06-01 22:31:49.739219084 -0700
+@@ -19,28 +19,23 @@ cp -P $CURDIR/libggml*.so* $CURDIR/packa
+ cp -fv $CURDIR/run.sh $CURDIR/package/
+ 
+ # Detect architecture and copy appropriate libraries
+-if [ -f "/lib64/ld-linux-x86-64.so.2" ]; then
+-    echo "Detected x86_64 architecture, copying x86_64 libraries..."
+-    cp -arfLv /lib64/ld-linux-x86-64.so.2 $CURDIR/package/lib/ld.so
+-    cp -arfLv /lib/x86_64-linux-gnu/libc.so.6 $CURDIR/package/lib/libc.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libm.so.6 $CURDIR/package/lib/libm.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libdl.so.2 $CURDIR/package/lib/libdl.so.2
+-    cp -arfLv /lib/x86_64-linux-gnu/librt.so.1 $CURDIR/package/lib/librt.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
+-elif [ -f "/lib/ld-linux-aarch64.so.1" ]; then
+-    echo "Detected ARM64 architecture, copying ARM64 libraries..."
+-    cp -arfLv /lib/ld-linux-aarch64.so.1 $CURDIR/package/lib/ld.so
+-    cp -arfLv /lib/aarch64-linux-gnu/libc.so.6 $CURDIR/package/lib/libc.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libm.so.6 $CURDIR/package/lib/libm.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libdl.so.2 $CURDIR/package/lib/libdl.so.2
+-    cp -arfLv /lib/aarch64-linux-gnu/librt.so.1 $CURDIR/package/lib/librt.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
++arch=$(uname -m) # with _ as in x86_64
++arch2="${arch/_/-}" # with - as in x86-64
++d=$(dirname $(gcc -print-libgcc-file-name))
++libdir="${LIBDIR}"
++if [ "${PORTABLE}" != "1" ] ; then
++    :
++elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
++    echo "Detected ${arch} architecture, copying ${arch} libraries..."
++    cp -arfLv "${libdir}"/ld-linux-${arch2}.so.2 $CURDIR/package/lib/ld.so
++    cp -arfLv "${libdir}"/libc.so.6 $CURDIR/package/lib/libc.so.6
++    cp -arfLv "${d}"/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
++    cp -arfLv "${d}"/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
++    cp -arfLv "${libdir}"/libm.so.6 $CURDIR/package/lib/libm.so.6
++    cp -arfLv "${d}"/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
++    cp -arfLv "${libdir}"/libdl.so.2 $CURDIR/package/lib/libdl.so.2
++    cp -arfLv "${libdir}"/librt.so.1 $CURDIR/package/lib/librt.so.1
++    cp -arfLv "${libdir}"/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
+ elif [ $(uname -s) = "Darwin" ]; then
+     echo "Detected Darwin"
+ else
+diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/opus/package.sh LocalAI-4.3.6/backend/go/opus/package.sh
+--- LocalAI-4.3.6.orig/backend/go/opus/package.sh	2026-05-30 13:48:09.000000000 -0700
++++ LocalAI-4.3.6/backend/go/opus/package.sh	2026-06-01 22:31:50.779186636 -0700
+@@ -18,26 +18,22 @@ if command -v pkg-config >/dev/null 2>&1
+ fi
+ 
+ # Detect architecture and copy appropriate libraries
+-if [ -f "/lib64/ld-linux-x86-64.so.2" ]; then
+-    echo "Detected x86_64 architecture, copying x86_64 libraries..."
+-    cp -arfLv /lib64/ld-linux-x86-64.so.2 $CURDIR/package/lib/ld.so
+-    cp -arfLv /lib/x86_64-linux-gnu/libc.so.6 $CURDIR/package/lib/libc.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libm.so.6 $CURDIR/package/lib/libm.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libdl.so.2 $CURDIR/package/lib/libdl.so.2
+-    cp -arfLv /lib/x86_64-linux-gnu/librt.so.1 $CURDIR/package/lib/librt.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
+-elif [ -f "/lib/ld-linux-aarch64.so.1" ]; then
+-    echo "Detected ARM64 architecture, copying ARM64 libraries..."
+-    cp -arfLv /lib/ld-linux-aarch64.so.1 $CURDIR/package/lib/ld.so
+-    cp -arfLv /lib/aarch64-linux-gnu/libc.so.6 $CURDIR/package/lib/libc.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libm.so.6 $CURDIR/package/lib/libm.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libdl.so.2 $CURDIR/package/lib/libdl.so.2
+-    cp -arfLv /lib/aarch64-linux-gnu/librt.so.1 $CURDIR/package/lib/librt.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
++arch=$(uname -m) # with _ as in x86_64
++arch2="${arch/_/-}" # with - as in x86-64
++d=$(dirname $(gcc -print-libgcc-file-name))
++libdir="${LIBDIR}"
++if [ "${PORTABLE}" != "1" ] ; then
++    :
++elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
++    echo "Detected ${arch} architecture, copying ${arch} libraries..."
++    cp -arfLv "${libdir}"/ld-linux-${arch2}.so.2 $CURDIR/package/lib/ld.so
++    cp -arfLv "${libdir}"/libc.so.6 $CURDIR/package/lib/libc.so.6
++    cp -arfLv "${d}"/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
++    cp -arfLv "${d}"/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
++    cp -arfLv "${d}"/libm.so.6 $CURDIR/package/lib/libm.so.6
++    cp -arfLv "${libdir}"/libdl.so.2 $CURDIR/package/lib/libdl.so.2
++    cp -arfLv "${libdir}"/librt.so.1 $CURDIR/package/lib/librt.so.1
++    cp -arfLv "${libdir}"/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
+ else
+     echo "Warning: Could not detect architecture for system library bundling"
+ fi
+diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/piper/package.sh LocalAI-4.3.6/backend/go/piper/package.sh
+--- LocalAI-4.3.6.orig/backend/go/piper/package.sh	2026-05-30 13:48:09.000000000 -0700
++++ LocalAI-4.3.6/backend/go/piper/package.sh	2026-06-01 22:31:52.155143704 -0700
+@@ -16,34 +16,25 @@ cp -rfv $CURDIR/run.sh $CURDIR/package/
+ cp -rfLv $CURDIR/sources/go-piper/piper-phonemize/pi/lib/* $CURDIR/package/lib/
+ 
+ # Detect architecture and copy appropriate libraries
+-if [ -f "/lib64/ld-linux-x86-64.so.2" ]; then
+-    # x86_64 architecture
+-    echo "Detected x86_64 architecture, copying x86_64 libraries..."
+-    cp -arfLv /lib64/ld-linux-x86-64.so.2 $CURDIR/package/lib/ld.so
+-    cp -arfLv /lib/x86_64-linux-gnu/libc.so.6 $CURDIR/package/lib/libc.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libm.so.6 $CURDIR/package/lib/libm.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libdl.so.2 $CURDIR/package/lib/libdl.so.2
+-    cp -arfLv /lib/x86_64-linux-gnu/librt.so.1 $CURDIR/package/lib/librt.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
+-elif [ -f "/lib/ld-linux-aarch64.so.1" ]; then
+-    # ARM64 architecture
+-    echo "Detected ARM64 architecture, copying ARM64 libraries..."
+-    cp -arfLv /lib/ld-linux-aarch64.so.1 $CURDIR/package/lib/ld.so
+-    cp -arfLv /lib/aarch64-linux-gnu/libc.so.6 $CURDIR/package/lib/libc.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libm.so.6 $CURDIR/package/lib/libm.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libdl.so.2 $CURDIR/package/lib/libdl.so.2
+-    cp -arfLv /lib/aarch64-linux-gnu/librt.so.1 $CURDIR/package/lib/librt.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
++arch=$(uname -m) # with _ as in x86_64
++arch2="${arch/_/-}" # with - as in x86-64
++d=$(dirname $(gcc -print-libgcc-file-name))
++libdir="${LIBDIR}"
++if [ "${PORTABLE}" != "1" ] ; then
++    :
++elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
++    echo "Detected ${arch} architecture, copying ${arch} libraries..."
++    cp -arfLv "${libdir}"/ld-linux-${arch2}.so.2 $CURDIR/package/lib/ld.so
++    cp -arfLv "${libdir}"/libc.so.6 $CURDIR/package/lib/libc.so.6
++    cp -arfLv "${d}"/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
++    cp -arfLv "${d}"/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
++    cp -arfLv "${libdir}"/libm.so.6 $CURDIR/package/lib/libm.so.6
++    cp -arfLv "${d}"/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
++    cp -arfLv "${d}"/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
++    cp -arfLv "${d}"/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
++    cp -arfLv "${libdir}"/libdl.so.2 $CURDIR/package/lib/libdl.so.2
++    cp -arfLv "${libdir}"/librt.so.1 $CURDIR/package/lib/librt.so.1
++    cp -arfLv "${libdir}"/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
+ else
+     echo "Error: Could not detect architecture"
+     exit 1
+@@ -51,4 +42,4 @@ fi
+ 
+ echo "Packaging completed successfully" 
+ ls -liah $CURDIR/package/
+-ls -liah $CURDIR/package/lib/
+\ No newline at end of file
++ls -liah $CURDIR/package/lib/
+diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/qwen3-tts-cpp/package.sh LocalAI-4.3.6/backend/go/qwen3-tts-cpp/package.sh
+--- LocalAI-4.3.6.orig/backend/go/qwen3-tts-cpp/package.sh	2026-05-30 13:48:09.000000000 -0700
++++ LocalAI-4.3.6/backend/go/qwen3-tts-cpp/package.sh	2026-06-01 22:31:41.915463198 -0700
+@@ -16,34 +16,25 @@ cp -fv $CURDIR/libgoqwen3ttscpp-*.so $CU
+ cp -fv $CURDIR/run.sh $CURDIR/package/
+ 
+ # Detect architecture and copy appropriate libraries
+-if [ -f "/lib64/ld-linux-x86-64.so.2" ]; then
+-    # x86_64 architecture
+-    echo "Detected x86_64 architecture, copying x86_64 libraries..."
+-    cp -arfLv /lib64/ld-linux-x86-64.so.2 $CURDIR/package/lib/ld.so
+-    cp -arfLv /lib/x86_64-linux-gnu/libc.so.6 $CURDIR/package/lib/libc.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libm.so.6 $CURDIR/package/lib/libm.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libdl.so.2 $CURDIR/package/lib/libdl.so.2
+-    cp -arfLv /lib/x86_64-linux-gnu/librt.so.1 $CURDIR/package/lib/librt.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
+-elif [ -f "/lib/ld-linux-aarch64.so.1" ]; then
+-    # ARM64 architecture
+-    echo "Detected ARM64 architecture, copying ARM64 libraries..."
+-    cp -arfLv /lib/ld-linux-aarch64.so.1 $CURDIR/package/lib/ld.so
+-    cp -arfLv /lib/aarch64-linux-gnu/libc.so.6 $CURDIR/package/lib/libc.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libm.so.6 $CURDIR/package/lib/libm.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libdl.so.2 $CURDIR/package/lib/libdl.so.2
+-    cp -arfLv /lib/aarch64-linux-gnu/librt.so.1 $CURDIR/package/lib/librt.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
++arch=$(uname -m) # with _ as in x86_64
++arch2="${arch/_/-}" # with - as in x86-64
++d=$(dirname $(gcc -print-libgcc-file-name))
++libdir="${LIBDIR}"
++if [ "${PORTABLE}" != "1" ] ; then
++    :
++elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
++    echo "Detected ${arch} architecture, copying ${arch} libraries..."
++    cp -arfLv "${libdir}"/ld-linux-${arch2}.so.2 $CURDIR/package/lib/ld.so
++    cp -arfLv "${libdir}"/libc.so.6 $CURDIR/package/lib/libc.so.6
++    cp -arfLv "${d}"/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
++    cp -arfLv "${d}"/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
++    cp -arfLv "${libdir}"/libm.so.6 $CURDIR/package/lib/libm.so.6
++    cp -arfLv "${d}"/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
++    cp -arfLv "${d}"/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
++    cp -arfLv "${d}"/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
++    cp -arfLv "${libdir}"/libdl.so.2 $CURDIR/package/lib/libdl.so.2
++    cp -arfLv "${libdir}"/librt.so.1 $CURDIR/package/lib/librt.so.1
++    cp -arfLv "${libdir}"/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
+ elif [ $(uname -s) = "Darwin" ]; then
+     echo "Detected Darwin"
+ else
+diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/rfdetr-cpp/package.sh LocalAI-4.3.6/backend/go/rfdetr-cpp/package.sh
+--- LocalAI-4.3.6.orig/backend/go/rfdetr-cpp/package.sh	2026-05-30 13:48:09.000000000 -0700
++++ LocalAI-4.3.6/backend/go/rfdetr-cpp/package.sh	2026-06-01 22:31:41.003491652 -0700
+@@ -15,30 +15,23 @@ cp -avf $CURDIR/rfdetr-cpp $CURDIR/packa
+ cp -fv $CURDIR/run.sh $CURDIR/package/
+ 
+ # Detect architecture and copy appropriate libraries
+-if [ -f "/lib64/ld-linux-x86-64.so.2" ]; then
+-    # x86_64 architecture
+-    echo "Detected x86_64 architecture, copying x86_64 libraries..."
+-    cp -arfLv /lib64/ld-linux-x86-64.so.2 $CURDIR/package/lib/ld.so
+-    cp -arfLv /lib/x86_64-linux-gnu/libc.so.6 $CURDIR/package/lib/libc.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libm.so.6 $CURDIR/package/lib/libm.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libdl.so.2 $CURDIR/package/lib/libdl.so.2
+-    cp -arfLv /lib/x86_64-linux-gnu/librt.so.1 $CURDIR/package/lib/librt.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
+-elif [ -f "/lib/ld-linux-aarch64.so.1" ]; then
+-    # ARM64 architecture
+-    echo "Detected ARM64 architecture, copying ARM64 libraries..."
+-    cp -arfLv /lib/ld-linux-aarch64.so.1 $CURDIR/package/lib/ld.so
+-    cp -arfLv /lib/aarch64-linux-gnu/libc.so.6 $CURDIR/package/lib/libc.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libm.so.6 $CURDIR/package/lib/libm.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libdl.so.2 $CURDIR/package/lib/libdl.so.2
+-    cp -arfLv /lib/aarch64-linux-gnu/librt.so.1 $CURDIR/package/lib/librt.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
++arch=$(uname -m) # with _ as in x86_64
++arch2="${arch/_/-}" # with - as in x86-64
++d=$(dirname $(gcc -print-libgcc-file-name))
++libdir="${LIBDIR}"
++if [ "${PORTABLE}" != "1" ] ; then
++    :
++elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
++    echo "Detected ${arch} architecture, copying ${arch} libraries..."
++    cp -arfLv "${libdir}"/ld-linux-${arch2}.so.2 $CURDIR/package/lib/ld.so
++    cp -arfLv "${libdir}"/libc.so.6 $CURDIR/package/lib/libc.so.6
++    cp -arfLv "${d}"/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
++    cp -arfLv "${d}"/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
++    cp -arfLv "${libdir}"/libm.so.6 $CURDIR/package/lib/libm.so.6
++    cp -arfLv "${d}"/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
++    cp -arfLv "${libdir}"/libdl.so.2 $CURDIR/package/lib/libdl.so.2
++    cp -arfLv "${libdir}"/librt.so.1 $CURDIR/package/lib/librt.so.1
++    cp -arfLv "${libdir}"/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
+ elif [ $(uname -s) = "Darwin" ]; then
+     echo "Detected Darwin"
+ else
+diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/sam3-cpp/package.sh LocalAI-4.3.6/backend/go/sam3-cpp/package.sh
+--- LocalAI-4.3.6.orig/backend/go/sam3-cpp/package.sh	2026-05-30 13:48:09.000000000 -0700
++++ LocalAI-4.3.6/backend/go/sam3-cpp/package.sh	2026-06-01 22:31:48.795248538 -0700
+@@ -15,30 +15,23 @@ cp -avf $CURDIR/sam3-cpp $CURDIR/package
+ cp -fv $CURDIR/run.sh $CURDIR/package/
+ 
+ # Detect architecture and copy appropriate libraries
+-if [ -f "/lib64/ld-linux-x86-64.so.2" ]; then
+-    # x86_64 architecture
+-    echo "Detected x86_64 architecture, copying x86_64 libraries..."
+-    cp -arfLv /lib64/ld-linux-x86-64.so.2 $CURDIR/package/lib/ld.so
+-    cp -arfLv /lib/x86_64-linux-gnu/libc.so.6 $CURDIR/package/lib/libc.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libm.so.6 $CURDIR/package/lib/libm.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libdl.so.2 $CURDIR/package/lib/libdl.so.2
+-    cp -arfLv /lib/x86_64-linux-gnu/librt.so.1 $CURDIR/package/lib/librt.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
+-elif [ -f "/lib/ld-linux-aarch64.so.1" ]; then
+-    # ARM64 architecture
+-    echo "Detected ARM64 architecture, copying ARM64 libraries..."
+-    cp -arfLv /lib/ld-linux-aarch64.so.1 $CURDIR/package/lib/ld.so
+-    cp -arfLv /lib/aarch64-linux-gnu/libc.so.6 $CURDIR/package/lib/libc.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libm.so.6 $CURDIR/package/lib/libm.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libdl.so.2 $CURDIR/package/lib/libdl.so.2
+-    cp -arfLv /lib/aarch64-linux-gnu/librt.so.1 $CURDIR/package/lib/librt.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
++arch=$(uname -m) # with _ as in x86_64
++arch2="${arch/_/-}" # with - as in x86-64
++d=$(dirname $(gcc -print-libgcc-file-name))
++libdir="${LIBDIR}"
++if [ "${PORTABLE}" != "1" ] ; then
++    :
++elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
++    echo "Detected ${arch} architecture, copying ${arch} libraries..."
++    cp -arfLv "${libdir}"/ld-linux-${arch2}.so.2 $CURDIR/package/lib/ld.so
++    cp -arfLv "${libdir}"/libc.so.6 $CURDIR/package/lib/libc.so.6
++    cp -arfLv "${d}"/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
++    cp -arfLv "${d}"/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
++    cp -arfLv "${libdir}"/libm.so.6 $CURDIR/package/lib/libm.so.6
++    cp -arfLv "${d}"/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
++    cp -arfLv "${libdir}"/libdl.so.2 $CURDIR/package/lib/libdl.so.2
++    cp -arfLv "${libdir}"/librt.so.1 $CURDIR/package/lib/librt.so.1
++    cp -arfLv "${libdir}"/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
+ elif [ $(uname -s) = "Darwin" ]; then
+     echo "Detected Darwin"
+ else
+diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/sherpa-onnx/package.sh LocalAI-4.3.6/backend/go/sherpa-onnx/package.sh
+--- LocalAI-4.3.6.orig/backend/go/sherpa-onnx/package.sh	2026-05-30 13:48:09.000000000 -0700
++++ LocalAI-4.3.6/backend/go/sherpa-onnx/package.sh	2026-06-01 22:31:47.867277492 -0700
+@@ -10,28 +10,23 @@ cp -avf $CURDIR/sherpa-onnx $CURDIR/pack
+ cp -avf $CURDIR/run.sh $CURDIR/package/
+ cp -rfLv $CURDIR/backend-assets/lib/* $CURDIR/package/lib/
+ 
+-if [ -f "/lib64/ld-linux-x86-64.so.2" ]; then
+-    echo "Detected x86_64 architecture, copying x86_64 libraries..."
+-    cp -arfLv /lib64/ld-linux-x86-64.so.2 $CURDIR/package/lib/ld.so
+-    cp -arfLv /lib/x86_64-linux-gnu/libc.so.6 $CURDIR/package/lib/libc.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libm.so.6 $CURDIR/package/lib/libm.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libdl.so.2 $CURDIR/package/lib/libdl.so.2
+-    cp -arfLv /lib/x86_64-linux-gnu/librt.so.1 $CURDIR/package/lib/librt.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
+-elif [ -f "/lib/ld-linux-aarch64.so.1" ]; then
+-    echo "Detected ARM64 architecture, copying ARM64 libraries..."
+-    cp -arfLv /lib/ld-linux-aarch64.so.1 $CURDIR/package/lib/ld.so
+-    cp -arfLv /lib/aarch64-linux-gnu/libc.so.6 $CURDIR/package/lib/libc.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libm.so.6 $CURDIR/package/lib/libm.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libdl.so.2 $CURDIR/package/lib/libdl.so.2
+-    cp -arfLv /lib/aarch64-linux-gnu/librt.so.1 $CURDIR/package/lib/librt.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
++arch=$(uname -m) # with _ as in x86_64
++arch2="${arch/_/-}" # with - as in x86-64
++d=$(dirname $(gcc -print-libgcc-file-name))
++libdir="${LIBDIR}"
++if [ "${PORTABLE}" != "1" ] ; then
++    :
++elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
++    echo "Detected ${arch} architecture, copying ${arch} libraries..."
++    cp -arfLv "${libdir}"/ld-linux-${arch2}.so.2 $CURDIR/package/lib/ld.so
++    cp -arfLv "${libdir}"/libc.so.6 $CURDIR/package/lib/libc.so.6
++    cp -arfLv "${d}"/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
++    cp -arfLv "${d}"/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
++    cp -arfLv "${libdir}"/libm.so.6 $CURDIR/package/lib/libm.so.6
++    cp -arfLv "${d}"/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
++    cp -arfLv "${libdir}"/libdl.so.2 $CURDIR/package/lib/libdl.so.2
++    cp -arfLv "${libdir}"/librt.so.1 $CURDIR/package/lib/librt.so.1
++    cp -arfLv "${libdir}"/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
+ elif [ $(uname -s) = "Darwin" ]; then
+     echo "Detected Darwin"
+ else
+diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/silero-vad/package.sh LocalAI-4.3.6/backend/go/silero-vad/package.sh
+--- LocalAI-4.3.6.orig/backend/go/silero-vad/package.sh	2026-05-30 13:48:09.000000000 -0700
++++ LocalAI-4.3.6/backend/go/silero-vad/package.sh	2026-06-01 22:31:42.811435242 -0700
+@@ -15,34 +15,25 @@ cp -avf $CURDIR/run.sh $CURDIR/package/
+ cp -rfLv $CURDIR/backend-assets/lib/* $CURDIR/package/lib/
+ 
+ # Detect architecture and copy appropriate libraries
+-if [ -f "/lib64/ld-linux-x86-64.so.2" ]; then
+-    # x86_64 architecture
+-    echo "Detected x86_64 architecture, copying x86_64 libraries..."
+-    cp -arfLv /lib64/ld-linux-x86-64.so.2 $CURDIR/package/lib/ld.so
+-    cp -arfLv /lib/x86_64-linux-gnu/libc.so.6 $CURDIR/package/lib/libc.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libm.so.6 $CURDIR/package/lib/libm.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libdl.so.2 $CURDIR/package/lib/libdl.so.2
+-    cp -arfLv /lib/x86_64-linux-gnu/librt.so.1 $CURDIR/package/lib/librt.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
+-elif [ -f "/lib/ld-linux-aarch64.so.1" ]; then
+-    # ARM64 architecture
+-    echo "Detected ARM64 architecture, copying ARM64 libraries..."
+-    cp -arfLv /lib/ld-linux-aarch64.so.1 $CURDIR/package/lib/ld.so
+-    cp -arfLv /lib/aarch64-linux-gnu/libc.so.6 $CURDIR/package/lib/libc.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libm.so.6 $CURDIR/package/lib/libm.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libdl.so.2 $CURDIR/package/lib/libdl.so.2
+-    cp -arfLv /lib/aarch64-linux-gnu/librt.so.1 $CURDIR/package/lib/librt.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
++arch=$(uname -m) # with _ as in x86_64
++arch2="${arch/_/-}" # with - as in x86-64
++d=$(dirname $(gcc -print-libgcc-file-name))
++libdir="${LIBDIR}"
++if [ "${PORTABLE}" != "1" ] ; then
++    :
++elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
++    echo "Detected ${arch} architecture, copying ${arch} libraries..."
++    cp -arfLv "${libdir}"/ld-linux-${arch2}.so.2 $CURDIR/package/lib/ld.so
++    cp -arfLv "${libdir}"/libc.so.6 $CURDIR/package/lib/libc.so.6
++    cp -arfLv "${d}"/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
++    cp -arfLv "${d}"/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
++    cp -arfLv "${libdir}"/libm.so.6 $CURDIR/package/lib/libm.so.6
++    cp -arfLv "${d}"/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
++    cp -arfLv "${d}"/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
++    cp -arfLv "${d}"/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
++    cp -arfLv "${libdir}"/libdl.so.2 $CURDIR/package/lib/libdl.so.2
++    cp -arfLv "${libdir}"/librt.so.1 $CURDIR/package/lib/librt.so.1
++    cp -arfLv "${libdir}"/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
+ else
+     echo "Error: Could not detect architecture"
+     exit 1
+@@ -50,4 +41,4 @@ fi
+ 
+ echo "Packaging completed successfully" 
+ ls -liah $CURDIR/package/
+-ls -liah $CURDIR/package/lib/
+\ No newline at end of file
++ls -liah $CURDIR/package/lib/
 diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/stablediffusion-ggml/package.sh LocalAI-4.3.6/backend/go/stablediffusion-ggml/package.sh
 --- LocalAI-4.3.6.orig/backend/go/stablediffusion-ggml/package.sh	2026-05-30 13:48:09.000000000 -0700
-+++ LocalAI-4.3.6/backend/go/stablediffusion-ggml/package.sh	2026-06-01 11:55:50.735979015 -0700
-@@ -16,34 +16,35 @@ cp -avf $CURDIR/stablediffusion-ggml $CU
++++ LocalAI-4.3.6/backend/go/stablediffusion-ggml/package.sh	2026-06-01 22:31:43.835403293 -0700
+@@ -16,34 +16,25 @@ cp -avf $CURDIR/stablediffusion-ggml $CU
  cp -fv $CURDIR/run.sh $CURDIR/package/
  
  # Detect architecture and copy appropriate libraries
-+d=$(dirname $(gcc -print-libgcc-file-name))
- if [ -f "/lib64/ld-linux-x86-64.so.2" ]; then
-     # x86_64 architecture
-     echo "Detected x86_64 architecture, copying x86_64 libraries..."
-     cp -arfLv /lib64/ld-linux-x86-64.so.2 $CURDIR/package/lib/ld.so
+-if [ -f "/lib64/ld-linux-x86-64.so.2" ]; then
+-    # x86_64 architecture
+-    echo "Detected x86_64 architecture, copying x86_64 libraries..."
+-    cp -arfLv /lib64/ld-linux-x86-64.so.2 $CURDIR/package/lib/ld.so
 -    cp -arfLv /lib/x86_64-linux-gnu/libc.so.6 $CURDIR/package/lib/libc.so.6
 -    cp -arfLv /lib/x86_64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
 -    cp -arfLv /lib/x86_64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
@@ -152,19 +706,8 @@ diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/stablediffusion-ggml/pack
 -    cp -arfLv /lib/x86_64-linux-gnu/librt.so.1 $CURDIR/package/lib/librt.so.1
 -    cp -arfLv /lib/x86_64-linux-gnu/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
 -elif [ -f "/lib/ld-linux-aarch64.so.1" ]; then
-+    cp -arfLv /lib64/libc.so.6 $CURDIR/package/lib/libc.so.6
-+    cp -arfLv "${d}"/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
-+    cp -arfLv "${d}"/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
-+    cp -arfLv /lib64/libm.so.6 $CURDIR/package/lib/libm.so.6
-+    cp -arfLv "${d}"/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
-+    cp -arfLv "${d}"/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
-+    cp -arfLv "${d}"/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
-+    cp -arfLv /lib64/libdl.so.2 $CURDIR/package/lib/libdl.so.2
-+    cp -arfLv /lib64/librt.so.1 $CURDIR/package/lib/librt.so.1
-+    cp -arfLv /lib64/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
-+elif [ -f "/lib64/ld-linux-aarch64.so.1" ]; then
-     # ARM64 architecture
-     echo "Detected ARM64 architecture, copying ARM64 libraries..."
+-    # ARM64 architecture
+-    echo "Detected ARM64 architecture, copying ARM64 libraries..."
 -    cp -arfLv /lib/ld-linux-aarch64.so.1 $CURDIR/package/lib/ld.so
 -    cp -arfLv /lib/aarch64-linux-gnu/libc.so.6 $CURDIR/package/lib/libc.so.6
 -    cp -arfLv /lib/aarch64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
@@ -176,33 +719,148 @@ diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/stablediffusion-ggml/pack
 -    cp -arfLv /lib/aarch64-linux-gnu/libdl.so.2 $CURDIR/package/lib/libdl.so.2
 -    cp -arfLv /lib/aarch64-linux-gnu/librt.so.1 $CURDIR/package/lib/librt.so.1
 -    cp -arfLv /lib/aarch64-linux-gnu/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
-+    cp -arfLv /lib64/ld-linux-aarch64.so.1 $CURDIR/package/lib/ld.so
-+    cp -arfLv /lib64/libc.so.6 $CURDIR/package/lib/libc.so.6
++arch=$(uname -m) # with _ as in x86_64
++arch2="${arch/_/-}" # with - as in x86-64
++d=$(dirname $(gcc -print-libgcc-file-name))
++libdir="${LIBDIR}"
++if [ "${PORTABLE}" != "1" ] ; then
++    :
++elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
++    echo "Detected ${arch} architecture, copying ${arch} libraries..."
++    cp -arfLv "${libdir}"/ld-linux-${arch2}.so.2 $CURDIR/package/lib/ld.so
++    cp -arfLv "${libdir}"/libc.so.6 $CURDIR/package/lib/libc.so.6
 +    cp -arfLv "${d}"/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
 +    cp -arfLv "${d}"/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
-+    cp -arfLv /lib64/libm.so.6 $CURDIR/package/lib/libm.so.6
++    cp -arfLv "${libdir}"/libm.so.6 $CURDIR/package/lib/libm.so.6
 +    cp -arfLv "${d}"/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
 +    cp -arfLv "${d}"/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
 +    cp -arfLv "${d}"/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
-+    cp -arfLv /lib64/libdl.so.2 $CURDIR/package/lib/libdl.so.2
-+    cp -arfLv /lib64/librt.so.1 $CURDIR/package/lib/librt.so.1
-+    cp -arfLv /lib64/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
++    cp -arfLv "${libdir}"/libdl.so.2 $CURDIR/package/lib/libdl.so.2
++    cp -arfLv "${libdir}"/librt.so.1 $CURDIR/package/lib/librt.so.1
++    cp -arfLv "${libdir}"/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
  elif [ $(uname -s) = "Darwin" ]; then
      echo "Detected Darwin"
  else
-Only in LocalAI-4.3.6/backend/go/stablediffusion-ggml: package.sh.orig
+diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/vibevoice-cpp/package.sh LocalAI-4.3.6/backend/go/vibevoice-cpp/package.sh
+--- LocalAI-4.3.6.orig/backend/go/vibevoice-cpp/package.sh	2026-05-30 13:48:09.000000000 -0700
++++ LocalAI-4.3.6/backend/go/vibevoice-cpp/package.sh	2026-06-01 22:31:40.027522104 -0700
+@@ -16,28 +16,23 @@ cp -fv $CURDIR/libgovibevoicecpp-*.so $C
+ cp -fv $CURDIR/run.sh $CURDIR/package/
+ 
+ # Detect architecture and copy appropriate libraries
+-if [ -f "/lib64/ld-linux-x86-64.so.2" ]; then
+-    echo "Detected x86_64 architecture, copying x86_64 libraries..."
+-    cp -arfLv /lib64/ld-linux-x86-64.so.2 $CURDIR/package/lib/ld.so
+-    cp -arfLv /lib/x86_64-linux-gnu/libc.so.6 $CURDIR/package/lib/libc.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libm.so.6 $CURDIR/package/lib/libm.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libdl.so.2 $CURDIR/package/lib/libdl.so.2
+-    cp -arfLv /lib/x86_64-linux-gnu/librt.so.1 $CURDIR/package/lib/librt.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
+-elif [ -f "/lib/ld-linux-aarch64.so.1" ]; then
+-    echo "Detected ARM64 architecture, copying ARM64 libraries..."
+-    cp -arfLv /lib/ld-linux-aarch64.so.1 $CURDIR/package/lib/ld.so
+-    cp -arfLv /lib/aarch64-linux-gnu/libc.so.6 $CURDIR/package/lib/libc.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libm.so.6 $CURDIR/package/lib/libm.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libdl.so.2 $CURDIR/package/lib/libdl.so.2
+-    cp -arfLv /lib/aarch64-linux-gnu/librt.so.1 $CURDIR/package/lib/librt.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
++arch=$(uname -m) # with _ as in x86_64
++arch2="${arch/_/-}" # with - as in x86-64
++d=$(dirname $(gcc -print-libgcc-file-name))
++libdir="${LIBDIR}"
++if [ "${PORTABLE}" != "1" ] ; then
++    :
++elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
++    echo "Detected ${arch} architecture, copying ${arch} libraries..."
++    cp -arfLv "${libdir}"/ld-linux-${arch2}.so.2 $CURDIR/package/lib/ld.so
++    cp -arfLv "${libdir}"/libc.so.6 $CURDIR/package/lib/libc.so.6
++    cp -arfLv "${d}"/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
++    cp -arfLv "${d}"/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
++    cp -arfLv "${libdir}"/libm.so.6 $CURDIR/package/lib/libm.so.6
++    cp -arfLv "${d}"/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
++    cp -arfLv "${libdir}"/libdl.so.2 $CURDIR/package/lib/libdl.so.2
++    cp -arfLv "${libdir}"/librt.so.1 $CURDIR/package/lib/librt.so.1
++    cp -arfLv "${libdir}"/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
+ elif [ $(uname -s) = "Darwin" ]; then
+     echo "Detected Darwin"
+ else
+diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/voxtral/package.sh LocalAI-4.3.6/backend/go/voxtral/package.sh
+--- LocalAI-4.3.6.orig/backend/go/voxtral/package.sh	2026-05-30 13:48:09.000000000 -0700
++++ LocalAI-4.3.6/backend/go/voxtral/package.sh	2026-06-01 22:31:44.843371842 -0700
+@@ -16,37 +16,26 @@ cp -fv $CURDIR/libgovoxtral-*.dylib $CUR
+ cp -fv $CURDIR/run.sh $CURDIR/package/
+ 
+ # Detect architecture and copy appropriate libraries
+-if [ -f "/lib64/ld-linux-x86-64.so.2" ]; then
+-    # x86_64 architecture
+-    echo "Detected x86_64 architecture, copying x86_64 libraries..."
+-    cp -arfLv /lib64/ld-linux-x86-64.so.2 $CURDIR/package/lib/ld.so
+-    cp -arfLv /lib/x86_64-linux-gnu/libc.so.6 $CURDIR/package/lib/libc.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libm.so.6 $CURDIR/package/lib/libm.so.6
+-    cp -arfLv /lib/x86_64-linux-gnu/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libdl.so.2 $CURDIR/package/lib/libdl.so.2
+-    cp -arfLv /lib/x86_64-linux-gnu/librt.so.1 $CURDIR/package/lib/librt.so.1
+-    cp -arfLv /lib/x86_64-linux-gnu/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
++arch=$(uname -m) # with _ as in x86_64
++arch2="${arch/_/-}" # with - as in x86-64
++d=$(dirname $(gcc -print-libgcc-file-name))
++libdir="${LIBDIR}"
++if [ "${PORTABLE}" != "1" ] ; then
++    :
++elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
++    echo "Detected ${arch} architecture, copying ${arch} libraries..."
++    cp -arfLv "${libdir}"/ld-linux-${arch2}.so.2 $CURDIR/package/lib/ld.so
++    cp -arfLv "${libdir}"/libc.so.6 $CURDIR/package/lib/libc.so.6
++    cp -arfLv "${d}"/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
++    cp -arfLv "${d}"/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
++    cp -arfLv "${libdir}"/libm.so.6 $CURDIR/package/lib/libm.so.6
++    cp -arfLv "${d}"/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
++    cp -arfLv "${libdir}"/libdl.so.2 $CURDIR/package/lib/libdl.so.2
++    cp -arfLv "${libdir}"/librt.so.1 $CURDIR/package/lib/librt.so.1
++    cp -arfLv "${libdir}"/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
+     # OpenBLAS if available
+-    if [ -f /usr/lib/x86_64-linux-gnu/libopenblas.so.0 ]; then
+-        cp -arfLv /usr/lib/x86_64-linux-gnu/libopenblas.so.0 $CURDIR/package/lib/
+-    fi
+-elif [ -f "/lib/ld-linux-aarch64.so.1" ]; then
+-    # ARM64 architecture
+-    echo "Detected ARM64 architecture, copying ARM64 libraries..."
+-    cp -arfLv /lib/ld-linux-aarch64.so.1 $CURDIR/package/lib/ld.so
+-    cp -arfLv /lib/aarch64-linux-gnu/libc.so.6 $CURDIR/package/lib/libc.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libm.so.6 $CURDIR/package/lib/libm.so.6
+-    cp -arfLv /lib/aarch64-linux-gnu/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libdl.so.2 $CURDIR/package/lib/libdl.so.2
+-    cp -arfLv /lib/aarch64-linux-gnu/librt.so.1 $CURDIR/package/lib/librt.so.1
+-    cp -arfLv /lib/aarch64-linux-gnu/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
+-    # OpenBLAS if available
+-    if [ -f /usr/lib/aarch64-linux-gnu/libopenblas.so.0 ]; then
+-        cp -arfLv /usr/lib/aarch64-linux-gnu/libopenblas.so.0 $CURDIR/package/lib/
++    if [ -f /usr"${d}"/libopenblas.so.0 ]; then
++        cp -arfLv /usr"${d}"/libopenblas.so.0 $CURDIR/package/lib/
+     fi
+ elif [ $(uname -s) = "Darwin" ]; then
+     echo "Detected Darwin — system frameworks linked dynamically, no bundled libs needed"
 diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/whisper/package.sh LocalAI-4.3.6/backend/go/whisper/package.sh
 --- LocalAI-4.3.6.orig/backend/go/whisper/package.sh	2026-05-30 13:48:09.000000000 -0700
-+++ LocalAI-4.3.6/backend/go/whisper/package.sh	2026-06-01 11:55:50.735979015 -0700
-@@ -16,34 +16,35 @@ cp -fv $CURDIR/libgowhisper-*.so $CURDIR
++++ LocalAI-4.3.6/backend/go/whisper/package.sh	2026-06-01 22:31:45.819341391 -0700
+@@ -16,34 +16,25 @@ cp -fv $CURDIR/libgowhisper-*.so $CURDIR
  cp -fv $CURDIR/run.sh $CURDIR/package/
  
  # Detect architecture and copy appropriate libraries
-+d=$(dirname $(gcc -print-libgcc-file-name))
- if [ -f "/lib64/ld-linux-x86-64.so.2" ]; then
-     # x86_64 architecture
-     echo "Detected x86_64 architecture, copying x86_64 libraries..."
-     cp -arfLv /lib64/ld-linux-x86-64.so.2 $CURDIR/package/lib/ld.so
+-if [ -f "/lib64/ld-linux-x86-64.so.2" ]; then
+-    # x86_64 architecture
+-    echo "Detected x86_64 architecture, copying x86_64 libraries..."
+-    cp -arfLv /lib64/ld-linux-x86-64.so.2 $CURDIR/package/lib/ld.so
 -    cp -arfLv /lib/x86_64-linux-gnu/libc.so.6 $CURDIR/package/lib/libc.so.6
 -    cp -arfLv /lib/x86_64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
 -    cp -arfLv /lib/x86_64-linux-gnu/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
@@ -214,19 +872,8 @@ diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/whisper/package.sh LocalA
 -    cp -arfLv /lib/x86_64-linux-gnu/librt.so.1 $CURDIR/package/lib/librt.so.1
 -    cp -arfLv /lib/x86_64-linux-gnu/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
 -elif [ -f "/lib/ld-linux-aarch64.so.1" ]; then
-+    cp -arfLv /lib64/libc.so.6 $CURDIR/package/lib/libc.so.6
-+    cp -arfLv "${d}"/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
-+    cp -arfLv "${d}"/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
-+    cp -arfLv /lib64/libm.so.6 $CURDIR/package/lib/libm.so.6
-+    cp -arfLv "${d}"/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
-+    cp -arfLv "${d}"/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
-+    cp -arfLv "${d}"/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
-+    cp -arfLv /lib64/libdl.so.2 $CURDIR/package/lib/libdl.so.2
-+    cp -arfLv /lib64/librt.so.1 $CURDIR/package/lib/librt.so.1
-+    cp -arfLv /lib64/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
-+elif [ -f "/lib64/ld-linux-aarch64.so.1" ]; then
-     # ARM64 architecture
-     echo "Detected ARM64 architecture, copying ARM64 libraries..."
+-    # ARM64 architecture
+-    echo "Detected ARM64 architecture, copying ARM64 libraries..."
 -    cp -arfLv /lib/ld-linux-aarch64.so.1 $CURDIR/package/lib/ld.so
 -    cp -arfLv /lib/aarch64-linux-gnu/libc.so.6 $CURDIR/package/lib/libc.so.6
 -    cp -arfLv /lib/aarch64-linux-gnu/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
@@ -238,18 +885,47 @@ diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/whisper/package.sh LocalA
 -    cp -arfLv /lib/aarch64-linux-gnu/libdl.so.2 $CURDIR/package/lib/libdl.so.2
 -    cp -arfLv /lib/aarch64-linux-gnu/librt.so.1 $CURDIR/package/lib/librt.so.1
 -    cp -arfLv /lib/aarch64-linux-gnu/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
-+    cp -arfLv /lib64/ld-linux-aarch64.so.1 $CURDIR/package/lib/ld.so
-+    cp -arfLv /lib64/libc.so.6 $CURDIR/package/lib/libc.so.6
++arch=$(uname -m) # with _ as in x86_64
++arch2="${arch/_/-}" # with - as in x86-64
++d=$(dirname $(gcc -print-libgcc-file-name))
++libdir="${LIBDIR}"
++if [ "${PORTABLE}" != "1" ] ; then
++    :
++elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
++    echo "Detected ${arch} architecture, copying ${arch} libraries..."
++    cp -arfLv "${libdir}"/ld-linux-${arch2}.so.2 $CURDIR/package/lib/ld.so
++    cp -arfLv "${libdir}"/libc.so.6 $CURDIR/package/lib/libc.so.6
 +    cp -arfLv "${d}"/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
 +    cp -arfLv "${d}"/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
-+    cp -arfLv /lib64/libm.so.6 $CURDIR/package/lib/libm.so.6
++    cp -arfLv "${libdir}"/libm.so.6 $CURDIR/package/lib/libm.so.6
 +    cp -arfLv "${d}"/libgomp.so.1 $CURDIR/package/lib/libgomp.so.1
 +    cp -arfLv "${d}"/libgcc_s.so.1 $CURDIR/package/lib/libgcc_s.so.1
 +    cp -arfLv "${d}"/libstdc++.so.6 $CURDIR/package/lib/libstdc++.so.6
-+    cp -arfLv /lib64/libdl.so.2 $CURDIR/package/lib/libdl.so.2
-+    cp -arfLv /lib64/librt.so.1 $CURDIR/package/lib/librt.so.1
-+    cp -arfLv /lib64/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
++    cp -arfLv "${libdir}"/libdl.so.2 $CURDIR/package/lib/libdl.so.2
++    cp -arfLv "${libdir}"/librt.so.1 $CURDIR/package/lib/librt.so.1
++    cp -arfLv "${libdir}"/libpthread.so.0 $CURDIR/package/lib/libpthread.so.0
  elif [ $(uname -s) = "Darwin" ]; then
      echo "Detected Darwin"
  else
-Only in LocalAI-4.3.6/backend/go/whisper: package.sh.orig
+diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/rust/kokoros/package.sh LocalAI-4.3.6/backend/rust/kokoros/package.sh
+--- LocalAI-4.3.6.orig/backend/rust/kokoros/package.sh	2026-05-30 13:48:09.000000000 -0700
++++ LocalAI-4.3.6/backend/rust/kokoros/package.sh	2026-06-01 22:31:35.083676358 -0700
+@@ -31,10 +31,14 @@ if [ -d "/etc/ssl/certs" ]; then
+ fi
+ 
+ # Copy the dynamic linker
+-if [ -f "/lib64/ld-linux-x86-64.so.2" ]; then
+-    cp -arfLv /lib64/ld-linux-x86-64.so.2 $CURDIR/package/lib/ld.so
+-elif [ -f "/lib/ld-linux-aarch64.so.1" ]; then
+-    cp -arfLv /lib/ld-linux-aarch64.so.1 $CURDIR/package/lib/ld.so
++arch=$(uname -m) # with _ as in x86_64
++arch2="${arch/_/-}" # with - as in x86-64
++d=$(dirname $(gcc -print-libgcc-file-name))
++libdir="${LIBDIR}"
++if [ "${PORTABLE}" != "1" ] ; then
++    :
++elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
++    cp -arfLv "${libdir}"/ld-linux-${arch2}.so.2 $CURDIR/package/lib/ld.so
+ fi
+ 
+ echo "Packaging completed successfully"
