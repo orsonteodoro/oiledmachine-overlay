@@ -491,7 +491,7 @@ this overlay to use Firejail as an alternative.
 Weaknesses:
 * Typically runs as SUID which can lead to privilege escalation.
 * Can be bypassed with a kernel exploit if the kernel is not kept to date.
-* Not hardened against Living off the Land attack if not the oiledmachine-overlay
+* Not hardened against Living off the Land attack if not using the oiledmachine-overlay
 version.
 * Exposes home, secrets, credentials if not adequately configured by admin or end user.
 * Not able to protect during build because the distro sandbox controls and drops
