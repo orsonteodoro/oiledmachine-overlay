@@ -7,7 +7,6 @@ EAPI=8
 # For requirements, see https://github.com/open-webui/open-webui/blob/v0.9.2/backend/requirements.txt
 
 # TODO package
-# google-genai
 # langchain-classic
 # langchain-text-splitters
 # opentelemetry-exporter-otlp [optional]
