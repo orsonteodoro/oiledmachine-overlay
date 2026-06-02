@@ -984,7 +984,7 @@ eerror "OpenCL is only supported on ARCH=${ARCH}.  Disable the opencl USE flag t
 	fi
 
 	export LIBDIR=$(get_libdir)
-	export PORTABLE=0
+	export DOCKER=0
 }
 
 src_compile() {

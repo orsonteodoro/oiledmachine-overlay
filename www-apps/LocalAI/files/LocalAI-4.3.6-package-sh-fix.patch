@@ -15,7 +15,7 @@ diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/cpp/ds4/package.sh LocalAI-4
 +arch2="${arch/_/-}" # with - as in x86-64
 +d=$(dirname $(gcc -print-libgcc-file-name))
 +libdir="${LIBDIR}"
-+if [ "${PORTABLE}" != "1" ] ; then
++if [ "${DOCKER}" = "0" ] ; then
 +    :
 +elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
 +    cp -arfLv "${libdir}"/ld-linux-${arch2}.so.2 "$CURDIR/package/lib/ld.so"
@@ -71,7 +71,7 @@ diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/cpp/ik-llama-cpp/package.sh 
 +arch2="${arch/_/-}" # with - as in x86-64
 +d=$(dirname $(gcc -print-libgcc-file-name))
 +libdir="${LIBDIR}"
-+if [ "${PORTABLE}" != "1" ] ; then
++if [ "${DOCKER}" = "0" ] ; then
 +    :
 +elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
 +    echo "Detected ${arch} architecture, copying ${arch} libraries..."
@@ -122,7 +122,7 @@ diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/cpp/llama-cpp/package.sh Loc
 +arch2="${arch/_/-}" # with - as in x86-64
 +d=$(dirname $(gcc -print-libgcc-file-name))
 +libdir="${LIBDIR}"
-+if [ "${PORTABLE}" != "1" ] ; then
++if [ "${DOCKER}" = "0" ] ; then
 +    :
 +elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
 +    echo "Detected ${arch} architecture, copying ${arch} libraries..."
@@ -180,7 +180,7 @@ diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/cpp/turboquant/package.sh Lo
 +arch2="${arch/_/-}" # with - as in x86-64
 +d=$(dirname $(gcc -print-libgcc-file-name))
 +libdir="${LIBDIR}"
-+if [ "${PORTABLE}" != "1" ] ; then
++if [ "${DOCKER}" = "0" ] ; then
 +    :
 +elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
 +    echo "Detected ${arch} architecture, copying ${arch} libraries..."
@@ -235,7 +235,7 @@ diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/acestep-cpp/package.sh Lo
 +arch2="${arch/_/-}" # with - as in x86-64
 +d=$(dirname $(gcc -print-libgcc-file-name))
 +libdir="${LIBDIR}"
-+if [ "${PORTABLE}" != "1" ] ; then
++if [ "${DOCKER}" = "0" ] ; then
 +    :
 +elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
 +    echo "Detected ${arch} architecture, copying ${arch} libraries..."
@@ -286,7 +286,7 @@ diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/localvqe/package.sh Local
 +arch2="${arch/_/-}" # with - as in x86-64
 +d=$(dirname $(gcc -print-libgcc-file-name))
 +libdir="${LIBDIR}"
-+if [ "${PORTABLE}" != "1" ] ; then
++if [ "${DOCKER}" = "0" ] ; then
 +    :
 +elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
 +    echo "Detected ${arch} architecture, copying ${arch} libraries..."
@@ -333,7 +333,7 @@ diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/opus/package.sh LocalAI-4
 +arch2="${arch/_/-}" # with - as in x86-64
 +d=$(dirname $(gcc -print-libgcc-file-name))
 +libdir="${LIBDIR}"
-+if [ "${PORTABLE}" != "1" ] ; then
++if [ "${DOCKER}" = "0" ] ; then
 +    :
 +elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
 +    echo "Detected ${arch} architecture, copying ${arch} libraries..."
@@ -387,7 +387,7 @@ diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/piper/package.sh LocalAI-
 +arch2="${arch/_/-}" # with - as in x86-64
 +d=$(dirname $(gcc -print-libgcc-file-name))
 +libdir="${LIBDIR}"
-+if [ "${PORTABLE}" != "1" ] ; then
++if [ "${DOCKER}" = "0" ] ; then
 +    :
 +elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
 +    echo "Detected ${arch} architecture, copying ${arch} libraries..."
@@ -451,7 +451,7 @@ diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/qwen3-tts-cpp/package.sh 
 +arch2="${arch/_/-}" # with - as in x86-64
 +d=$(dirname $(gcc -print-libgcc-file-name))
 +libdir="${LIBDIR}"
-+if [ "${PORTABLE}" != "1" ] ; then
++if [ "${DOCKER}" = "0" ] ; then
 +    :
 +elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
 +    echo "Detected ${arch} architecture, copying ${arch} libraries..."
@@ -504,7 +504,7 @@ diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/rfdetr-cpp/package.sh Loc
 +arch2="${arch/_/-}" # with - as in x86-64
 +d=$(dirname $(gcc -print-libgcc-file-name))
 +libdir="${LIBDIR}"
-+if [ "${PORTABLE}" != "1" ] ; then
++if [ "${DOCKER}" = "0" ] ; then
 +    :
 +elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
 +    echo "Detected ${arch} architecture, copying ${arch} libraries..."
@@ -555,7 +555,7 @@ diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/sam3-cpp/package.sh Local
 +arch2="${arch/_/-}" # with - as in x86-64
 +d=$(dirname $(gcc -print-libgcc-file-name))
 +libdir="${LIBDIR}"
-+if [ "${PORTABLE}" != "1" ] ; then
++if [ "${DOCKER}" = "0" ] ; then
 +    :
 +elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
 +    echo "Detected ${arch} architecture, copying ${arch} libraries..."
@@ -604,7 +604,7 @@ diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/sherpa-onnx/package.sh Lo
 +arch2="${arch/_/-}" # with - as in x86-64
 +d=$(dirname $(gcc -print-libgcc-file-name))
 +libdir="${LIBDIR}"
-+if [ "${PORTABLE}" != "1" ] ; then
++if [ "${DOCKER}" = "0" ] ; then
 +    :
 +elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
 +    echo "Detected ${arch} architecture, copying ${arch} libraries..."
@@ -659,7 +659,7 @@ diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/silero-vad/package.sh Loc
 +arch2="${arch/_/-}" # with - as in x86-64
 +d=$(dirname $(gcc -print-libgcc-file-name))
 +libdir="${LIBDIR}"
-+if [ "${PORTABLE}" != "1" ] ; then
++if [ "${DOCKER}" = "0" ] ; then
 +    :
 +elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
 +    echo "Detected ${arch} architecture, copying ${arch} libraries..."
@@ -723,7 +723,7 @@ diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/stablediffusion-ggml/pack
 +arch2="${arch/_/-}" # with - as in x86-64
 +d=$(dirname $(gcc -print-libgcc-file-name))
 +libdir="${LIBDIR}"
-+if [ "${PORTABLE}" != "1" ] ; then
++if [ "${DOCKER}" = "0" ] ; then
 +    :
 +elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
 +    echo "Detected ${arch} architecture, copying ${arch} libraries..."
@@ -774,7 +774,7 @@ diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/vibevoice-cpp/package.sh 
 +arch2="${arch/_/-}" # with - as in x86-64
 +d=$(dirname $(gcc -print-libgcc-file-name))
 +libdir="${LIBDIR}"
-+if [ "${PORTABLE}" != "1" ] ; then
++if [ "${DOCKER}" = "0" ] ; then
 +    :
 +elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
 +    echo "Detected ${arch} architecture, copying ${arch} libraries..."
@@ -813,7 +813,7 @@ diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/voxtral/package.sh LocalA
 +arch2="${arch/_/-}" # with - as in x86-64
 +d=$(dirname $(gcc -print-libgcc-file-name))
 +libdir="${LIBDIR}"
-+if [ "${PORTABLE}" != "1" ] ; then
++if [ "${DOCKER}" = "0" ] ; then
 +    :
 +elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
 +    echo "Detected ${arch} architecture, copying ${arch} libraries..."
@@ -889,7 +889,7 @@ diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/go/whisper/package.sh LocalA
 +arch2="${arch/_/-}" # with - as in x86-64
 +d=$(dirname $(gcc -print-libgcc-file-name))
 +libdir="${LIBDIR}"
-+if [ "${PORTABLE}" != "1" ] ; then
++if [ "${DOCKER}" = "0" ] ; then
 +    :
 +elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
 +    echo "Detected ${arch} architecture, copying ${arch} libraries..."
@@ -922,7 +922,7 @@ diff '--color=auto' -urp LocalAI-4.3.6.orig/backend/rust/kokoros/package.sh Loca
 +arch2="${arch/_/-}" # with - as in x86-64
 +d=$(dirname $(gcc -print-libgcc-file-name))
 +libdir="${LIBDIR}"
-+if [ "${PORTABLE}" != "1" ] ; then
++if [ "${DOCKER}" = "0" ] ; then
 +    :
 +elif [ -f "${libdir}/ld-linux-${arch2}.so.2" ]; then
 +    cp -arfLv "${libdir}"/ld-linux-${arch2}.so.2 $CURDIR/package/lib/ld.so
