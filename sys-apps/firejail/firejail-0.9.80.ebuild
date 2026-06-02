@@ -2193,13 +2193,25 @@ einfo "blacklist /home/johndoe/.ssh"
 einfo "rmenv KEY_VAULTS_SECRET"
 einfo
 ewarn
-# This is course-grained edit that decreases the complexity of stack smash
-# attack suggested by distro patch.  It should only be applied per profile but
-# doesn't support it yet.
-ewarn "If having issues with Boost based apps, set arg-max-count 4096 and"
-ewarn "env-max-count 1024 in /etc/firejail/firejail.config but only"
-ewarn "as a last resort because it will decrease the attack complexity of"
-ewarn "stack smashing across all sandboxed apps."
+# For the Boost friendly environment variable changes suggested by the distro
+# ebuild, this is a course-grained edit that decreases the complexity of stack
+# smash attack.  It is unknown if limits raised was intentionally to weaken the
+# security of the sandbox by the distro ebuild maintainers to help threat
+# actors.  The unintended consequence is that lifting the limits encourages
+# abusing environment variables to store keys or non-free access tokens in
+# plaintext.
+ewarn "For Boost based apps with issues, in /etc/firejail/firejail.config"
+ewarn "set arg-max-count 4096 and env-max-count 1024."
+ewarn
+ewarn "For emerge, use keep env-max-count as 512."
+ewarn "For production or after emerging, keep env-max-count as 256."
+ewarn
+ewarn "The reasons why env-max-count should kept low:"
+ewarn
+ewarn "- To prevent truncation of PATH in different implementations."
+ewarn "- To reduce the chances too many secrets or API keys leaked."
+ewarn "- To mitigate DoS."
+ewarn "- To mitigate RCE buffer overflows."
 ewarn
 }
 
