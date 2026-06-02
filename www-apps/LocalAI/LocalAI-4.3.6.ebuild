@@ -4,7 +4,7 @@
 
 EAPI=8
 
-# U22
+# U24
 
 # Contains AI generated synthetic data in metadata.xml
 
@@ -41,7 +41,7 @@ GRPC_SLOT="5" # Same as the backends.  Ignore the /Makefile
 NODE_SLOT="22"
 PROTOBUF_CPP_SLOT="5"
 PROTOBUF_PYTHON_SLOT="5"
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_12" )
 RE2_SLOT="20250512"
 
 MODES=(
