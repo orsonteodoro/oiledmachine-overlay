@@ -8,7 +8,7 @@ main() {
 	fi
 
 	local d_src_root="/var/tmp/portage/dev-vcs/breezy-${VER}/work/breezy-brz-${VER}"
-	local d_dest="/usr/local/oiledmachine-overlay/dev-python/breezy/files/${VER}"
+	local d_dest="/usr/local/oiledmachine-overlay/dev-vcs/breezy/files/${VER}"
 	IFS=$'\n'
 	pushd "${d_src_root}"
 		for x in $(find . -name "Cargo.*") ; do
