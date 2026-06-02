@@ -89,6 +89,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 # by default to harden the server daemon.
 IUSE+="
 all cuda dev +firejail mariadb ollama +openrc postgres rag-ocr unstructured systemd
+valkey
 ebuild_revision_12
 "
 REQUIRED_USE="
@@ -305,6 +306,9 @@ RDEPEND+="
 			>=dev-python/psycopg-3.2.9:2[${PYTHON_USEDEP},binary(+)]
 			dev-python/psycopg:=
 			>=dev-python/pgvector-0.4.2[${PYTHON_USEDEP}]
+		)
+		valkey? (
+			>=dev-python/valkey-glide-sync-2.3.1[${PYTHON_USEDEP}]
 		)
 	')
 	>=dev-python/chromadb-1.5.2[${PYTHON_SINGLE_USEDEP}]

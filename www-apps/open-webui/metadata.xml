@@ -37,8 +37,17 @@
     <remote-id type="pypi">open-webui</remote-id>
   </upstream>
   <use>
+    <flag name="all">
+      Enable all features
+    </flag>
     <flag name="cuda">
       Add GPU hardware acceleration.
+    </flag>
+    <flag name="mariadb">
+      Save data into MariaDB
+    </flag>
+    <flag name="postgres">
+      Save data into PostgreSQL
     </flag>
     <flag name="ollama">
       Add Ollama local LLM support.
@@ -51,6 +60,12 @@
     </flag>
     <flag name="systemd">
       Add support for systemd.
+    </flag>
+    <flag name="unstructured">
+      Add support for document RAG support.
+    </flag>
+    <flag name="valkey">
+      Add support for valkey for RAG support.
     </flag>
   </use>
 </pkgmetadata>
