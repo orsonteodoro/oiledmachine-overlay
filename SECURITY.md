@@ -461,7 +461,7 @@ Use cases:
 * During pnpm, yarn, npm, node download and build phases
 * ebuild context
 
-This is an underutilized or underdocumented use case.
+Protecting secrets/credentials is an underutilized or underdocumented use case.
 
 Example:
 
@@ -490,7 +490,7 @@ this overlay to use Firejail as an alternative.
 
 Weaknesses:
 * Typically runs as SUID which can lead to privilege escalation.
-* Can be bypassed with a kernel exploit if the kernel is not kept to date.
+* Can be bypassed with a kernel exploit if the kernel is not kept up to date.
 * Not hardened against Living off the Land attack if not using the oiledmachine-overlay
 version.
 * Exposes home, secrets, credentials if not adequately configured by admin or end user.
@@ -499,6 +499,7 @@ capabilities, so more effective after installation.
 
 Use cases:
 * Web browsers - when a sandbox breakout happens with the one used by the browser
+* AI - untrusted community LLMs and self hosted AI servers with inadequate security
 * All Firejailed sandbox apps using `/usr/local/bin/<cli-cmd>` wrapper scripts,
 `firejail <cli-cmd>` with the default.profile, or
 `firejail --profile=<cli-cmd> <cli-cmd>`
