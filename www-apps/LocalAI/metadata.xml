@@ -11,11 +11,11 @@
     Build time environment variables:
 
     LOCALAI_ADDRESS - Address to the front end.
-    Default:  http://127.0.0.1:8080
+    Default:  127.0.0.1:8080
 
     Sample /etc/portage/env/local-ai.conf:
 
-    LOCALAI_ADDRESS="http://127.0.0.1:8080"
+    LOCALAI_ADDRESS="127.0.0.1:8080"
 
     Sample /etc/portage/package.env:
     dev-python/local-ai local-ai.conf

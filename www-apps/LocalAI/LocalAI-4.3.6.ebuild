@@ -261,7 +261,7 @@ ${MODES[@]/+}
 ${PYTHON_BACKENDS[@]/#/localai_backends_}
 ci cuda debug devcontainer docker +firejail native openblas opencl
 openrc rag rocm stt sycl-f16 sycl-f32 systemd tts vulkan
-ebuild_revision_51
+ebuild_revision_52
 "
 REQUIRED_USE="
 	!ci
@@ -1307,7 +1307,7 @@ install_init_services() {
 }
 
 src_install() {
-	local localai_address=${LOCALAI_ADDRESS:-"http://127.0.0.1:8080"}
+	local localai_address=${LOCALAI_ADDRESS:-"127.0.0.1:8080"}
 einfo "LOCALAI_ADDRESS:  ${LOCALAI_ADDRESS} (user-definable, per-package environment variable)"
 
 	docinto "licenses"
@@ -1364,7 +1364,7 @@ einfo "Installing backend/python/${x}"
 
 	cat "${FILESDIR}/${MY_PN2}" > "${T}/${MY_PN2}" || die
 	sed -i -e \
-		"s|@LOCALAI_ADDRESS@|${localai_address}|g" \
+		"s|@LOCALAI_ADDRESS@|http://${localai_address}|g" \
 		"${T}/${MY_PN2}" \
 		|| die
 	exeinto "/usr/bin"
