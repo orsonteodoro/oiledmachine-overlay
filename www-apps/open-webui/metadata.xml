@@ -65,6 +65,9 @@
     <flag name="systemd">
       Add support for systemd.
     </flag>
+    <flag name="telemetry">
+      Add support for telemetry for distributed tracing and metrics.
+    </flag>
     <flag name="unstructured">
       Add support for document RAG support.
     </flag>

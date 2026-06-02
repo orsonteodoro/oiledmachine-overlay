@@ -5,6 +5,7 @@
 EAPI=8
 
 # For requirements, see https://github.com/open-webui/open-webui/blob/v0.9.2/backend/requirements.txt
+# For telemetry, see https://docs.openwebui.com/reference/monitoring/otel/
 
 # TODO package
 # langchain-classic
@@ -88,13 +89,14 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 # Firejail is an ebuild exclusive for the oiledmachine-overlay.  It is enabled
 # by default to harden the server daemon.
 IUSE+="
-all cuda dev +firejail mariadb ollama +openrc postgres rag-ocr unstructured systemd
+all cuda dev +firejail mariadb ollama +openrc postgres rag-ocr -telemetry unstructured systemd
 valkey
 ebuild_revision_12
 "
 REQUIRED_USE="
 	all? (
 		postgres
+		telemetry
 		unstructured
 	)
 	|| (
@@ -225,30 +227,6 @@ RDEPEND+="
 		>=dev-python/openai-2.29.0[${PYTHON_USEDEP}]
 		>=dev-python/openpyxl-3.1.5[${PYTHON_USEDEP}]
 		>=dev-python/opensearch-py-3.1.0[${PYTHON_USEDEP}]
-		>=dev-python/opentelemetry-api-1.40.0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
-		dev-python/opentelemetry-api:=
-		>=dev-python/opentelemetry-sdk-1.40.0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
-		dev-python/opentelemetry-sdk:=
-		>=dev-python/opentelemetry-exporter-otlp-1.40.0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
-		dev-python/opentelemetry-exporter-otlp:=
-		>=dev-python/opentelemetry-instrumentation-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
-		dev-python/opentelemetry-instrumentation:=
-		>=dev-python/opentelemetry-instrumentation-fastapi-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
-		dev-python/opentelemetry-instrumentation-fastapi:=
-		>=dev-python/opentelemetry-instrumentation-sqlalchemy-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
-		dev-python/opentelemetry-instrumentation-sqlalchemy:=
-		>=dev-python/opentelemetry-instrumentation-redis-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
-		dev-python/opentelemetry-instrumentation-redis:=
-		>=dev-python/opentelemetry-instrumentation-requests-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
-		dev-python/opentelemetry-instrumentation-requests:=
-		>=dev-python/opentelemetry-instrumentation-logging-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
-		dev-python/opentelemetry-instrumentation-logging:=
-		>=dev-python/opentelemetry-instrumentation-httpx-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
-		dev-python/opentelemetry-instrumentation-httpx:=
-		>=dev-python/opentelemetry-instrumentation-aiohttp-client-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
-		dev-python/opentelemetry-instrumentation-aiohttp-client:=
-		>=dev-python/opentelemetry-instrumentation-system-metrics-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
-		dev-python/opentelemetry-instrumentation-system-metrics:=
 		>=dev-python/pandas-3.0.1[${PYTHON_USEDEP}]
 		>=dev-python/pycrdt-0.12.47[${PYTHON_USEDEP}]
 		>=dev-python/pytz-2026.1_p1[${PYTHON_USEDEP}]
@@ -306,6 +284,32 @@ RDEPEND+="
 			>=dev-python/psycopg-3.2.9:2[${PYTHON_USEDEP},binary(+)]
 			dev-python/psycopg:=
 			>=dev-python/pgvector-0.4.2[${PYTHON_USEDEP}]
+		)
+		telemetry? (
+			>=dev-python/opentelemetry-api-1.40.0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
+			dev-python/opentelemetry-api:=
+			>=dev-python/opentelemetry-sdk-1.40.0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
+			dev-python/opentelemetry-sdk:=
+			>=dev-python/opentelemetry-exporter-otlp-1.40.0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
+			dev-python/opentelemetry-exporter-otlp:=
+			>=dev-python/opentelemetry-instrumentation-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
+			dev-python/opentelemetry-instrumentation:=
+			>=dev-python/opentelemetry-instrumentation-fastapi-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
+			dev-python/opentelemetry-instrumentation-fastapi:=
+			>=dev-python/opentelemetry-instrumentation-sqlalchemy-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
+			dev-python/opentelemetry-instrumentation-sqlalchemy:=
+			>=dev-python/opentelemetry-instrumentation-redis-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
+			dev-python/opentelemetry-instrumentation-redis:=
+			>=dev-python/opentelemetry-instrumentation-requests-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
+			dev-python/opentelemetry-instrumentation-requests:=
+			>=dev-python/opentelemetry-instrumentation-logging-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
+			dev-python/opentelemetry-instrumentation-logging:=
+			>=dev-python/opentelemetry-instrumentation-httpx-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
+			dev-python/opentelemetry-instrumentation-httpx:=
+			>=dev-python/opentelemetry-instrumentation-aiohttp-client-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
+			dev-python/opentelemetry-instrumentation-aiohttp-client:=
+			>=dev-python/opentelemetry-instrumentation-system-metrics-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
+			dev-python/opentelemetry-instrumentation-system-metrics:=
 		)
 		valkey? (
 			>=dev-python/valkey-glide-sync-2.3.1[${PYTHON_USEDEP}]
@@ -630,13 +634,17 @@ install_init_services() {
 	exeinto "/usr/bin"
 	doexe "${T}/${PN}-start-server"
 
+	local telemetry=$(usex telemetry "true" "false")
+
 	insinto "/etc/conf.d"
-	sed \
+	cat "${T}/${PN}.conf" > "${T}/${PN}.conf" || die
+	sed -i \
+		-e "s|@ENABLE_OTEL@|${telemetry}|g" \
+		-e "s|@ENABLE_OTEL_TRACES@|${telemetry}|g" \
+		-e "s|@ENABLE_OTEL_METRICS@|${telemetry}|g" \
 		-e "s|@OPEN_WEBUI_HOST@|${open_webui_hostname}|g" \
 		-e "s|@OPEN_WEBUI_PORT@|${open_webui_port}|g" \
 		"${FILESDIR}/${PN}.conf" \
-			> \
-		"${T}/${PN}.conf" \
 		|| die
 	newins "${T}/${PN}.conf" "${PN}"
 
