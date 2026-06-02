@@ -1,7 +1,22 @@
 #!/bin/bash
+
+OPEN_WEBUI_FIREJAIL=${OPEN_WEBUI_FIREJAIL:-@OPEN_WEBUI_FIREJAIL@}
+
+# Prevent DoS for FAFO users
+# -1000 is deny kill
+#     0 is the back of the line OOM kill list
+#  <500 is the mid-back of the OOM kill list
+# >=500 is the mid-front of the OOM kill list
+#  1000 is the front of the line OOM kill
+OPEN_WEBUI_OOM=${OPEN_WEBUI_OOM:-500}
+
 main() {
 	cd "/usr/lib/@EPYTHON@/site-packages/open_webui/backend"
 	source "/etc/conf.d/open-webui"
-	"./start.sh"
+	if [[ "${OPEN_WEBUI_FIREJAIL}" == "1" ]] ; then
+		firejail --profile=open-webui "./start.sh"
+	else
+		"./start.sh"
+	fi
 }
 main

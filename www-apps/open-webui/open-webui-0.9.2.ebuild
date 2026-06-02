@@ -85,8 +85,10 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
+# Firejail is an ebuild exclusive for the oiledmachine-overlay.  It is enabled
+# by default to harden the server daemon.
 IUSE+="
-all cuda dev mariadb ollama +openrc postgres rag-ocr unstructured systemd
+all cuda dev +firejail mariadb ollama +openrc postgres rag-ocr unstructured systemd
 ebuild_revision_12
 "
 REQUIRED_USE="
@@ -581,6 +583,12 @@ src_prepare() {
 }
 
 src_configure() {
+	if use firejail ; then
+		if [[ -e "/etc/firejail/open-webui.profile" ]] ; then
+eerror "The open-webui.profile is missing.  emerge sys-apps/firejail::oiledmachine-overlay to continue or disable the firejail USE flag."
+			die
+		fi
+	fi
 	distutils-r1_src_configure
 }
 
@@ -628,13 +636,25 @@ install_init_services() {
 		|| die
 	newins "${T}/${PN}.conf" "${PN}"
 
+	local firejail=$(usex firejail "1" "0")
+
 	if use openrc ; then
 		exeinto "/etc/init.d"
-		newexe "${FILESDIR}/${PN}.openrc" "${PN}"
+		cat "${FILESDIR}/${PN}.openrc" > "${T}/${PN}.openrc" || die
+		sed -i \
+			-e "s|@OPEN_WEBUI_FIREJAIL@|${firejail}|g" \
+			"${T}/${PN}.openrc" \
+			|| die
+		newexe "${T}/${PN}.openrc" "${PN}"
 	fi
 	if use systemd ; then
 		insinto "/usr/lib/systemd/system"
-		newins "${FILESDIR}/${PN}.systemd" "${PN}.service"
+		cat "${FILESDIR}/${PN}.systemd" > "${T}/${PN}.systemd" || die
+		sed -i \
+			-e "s|@OPEN_WEBUI_FIREJAIL@|${firejail}|g" \
+			"${T}/${PN}.systemd" \
+			|| die
+		newins "${T}/${PN}.systemd" "${PN}.service"
 	fi
 }
 

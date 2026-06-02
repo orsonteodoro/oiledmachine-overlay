@@ -9,7 +9,17 @@ ExecStart=/usr/bin/open-webui-start-server
 Restart=always
 RestartSec=3
 Environment="LD_LIBRARY_PATH=@LD_LIBRARY_PATH@"
-Environment="PATH=$PATH"
+Environment="OPEN_WEBUI_FIREJAIL=@OPEN_WEBUI_FIREJAIL@"
+#Environment="PATH=@PATH@"
+
+# Prevent DoS for FAFO users
+# -1000 is deny kill
+#     0 is the back of the line OOM kill list
+#  <500 is the mid-back of the OOM kill list
+# >=500 is the mid-front of the OOM kill list
+#  1000 is the front of the line OOM kill
+Environment="OPEN_WEBUI_OOM=500"
+
 #
 # TODO: test settings
 #
