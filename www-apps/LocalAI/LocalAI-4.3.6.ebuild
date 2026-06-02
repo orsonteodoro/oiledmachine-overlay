@@ -261,7 +261,7 @@ ${MODES[@]/+}
 ${PYTHON_BACKENDS[@]/#/localai_backends_}
 ci cuda debug devcontainer docker +firejail native openblas opencl
 openrc rag rocm stt sycl-f16 sycl-f32 systemd tts vulkan
-ebuild_revision_49
+ebuild_revision_50
 "
 REQUIRED_USE="
 	!ci
@@ -1222,8 +1222,7 @@ install_init_services() {
 	# From https://github.com/mudler/LocalAI/blob/v2.28.0/.env
 	insinto "/etc/conf.d"
 	sed \
-		-e "s|@LOCAL_AI_HOST@|${local_ai_hostname}|g" \
-		-e "s|@LOCAL_AI_PORT@|${local_ai_port}|g" \
+		-e "s|@LOCALAI_ADDRESS@|${localai_address}|g" \
 		-e "s|@GO_TAGS@|${go_tags}|g" \
 		"${FILESDIR}/${MY_PN2}.conf" \
 			> \
@@ -1307,14 +1306,8 @@ install_init_services() {
 }
 
 src_install() {
-	local local_ai_hostname=${LOCAL_AI_HOSTNAME:-"127.0.0.1"}
-	local local_ai_port=${LOCAL_AI_PORT:-8080}
-
-einfo "LOCAL_AI_HOSTNAME:  ${local_ai_hostname} (user-definable, per-package environment variable)"
-einfo "LOCAL_AI_PORT:  ${local_ai_port} (user-definable, per-package environment variable)"
-
-	local local_ai_uri=${LOCAL_AI_URI:-"http://${local_ai_hostname}:${local_ai_port}"}
-einfo "LOCAL_AI_URI:  ${local_ai_uri}"
+	local localai_address=${LOCALAI_ADDRESS:-"http://127.0.0.1:8080"}
+einfo "LOCALAI_ADDRESS:  ${LOCALAI_ADDRESS} (user-definable, per-package environment variable)"
 
 	docinto "licenses"
 	dodoc "LICENSE"
@@ -1367,6 +1360,16 @@ einfo "Installing backend/python/${x}"
 	newicon \
 		"core/http/static/logo.png" \
 		"${MY_PN2}.png"
+
+	cat "${FILESDIR}/${MY_PN2}" > "${T}/${MY_PN2}" || die
+	sed -i -e \
+		"s|@LOCALAI_ADDRESS@|${localai_address}|g" \
+		"${T}/${MY_PN2}" \
+		|| die
+	exeinto "/usr/bin"
+	newexe "${T}/${MY_PN2}" "${MY_PN2}"
+	dosym "/usr/bin/local-ai" "/usr/bin/LocalAI"
+	dosym "/usr/bin/local-ai" "/usr/bin/localai"
 
 	make_desktop_entry \
 		"${MY_PN2}" \
