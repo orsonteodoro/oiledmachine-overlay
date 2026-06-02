@@ -2206,7 +2206,8 @@ ewarn "env-max-count 1024."
 ewarn
 ewarn "For Electron or Node.js dependent builds, use keep env-max-count as 512."
 ewarn
-ewarn "For production or after emerging, keep env-max-count as 256."
+ewarn "For production or after emerging, revert back to upstream defaults with"
+ewarn "env-max-count 256 and arg-max-count 128."
 ewarn
 ewarn "The reasons why env-max-count should kept low:"
 ewarn
