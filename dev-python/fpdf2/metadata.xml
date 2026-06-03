@@ -12,4 +12,24 @@
     <remote-id type="github">py-pdf/fpdf2</remote-id>
     <remote-id type="pypi">fpdf2</remote-id>
   </upstream>
+  <use>
+    <flag name="lcms">
+      Add support of adding ICC profile
+    </flag>
+    <flag name="jpeg">
+      Add support for embedding JPEG images.
+    </flag>
+    <flag name="jpeg2k">
+      Add support for embedding JPEG2000 images.
+    </flag>
+    <flag name="png">
+      Add support for embedding PNG images.
+    </flag>
+    <flag name="tiff">
+      Add support for embedding TIFF images.
+    </flag>
+    <flag name="truetype">
+      Add support for embedding custom fonts.
+    </flag>
+  </use>
 </pkgmetadata>

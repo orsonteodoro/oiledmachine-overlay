@@ -38,14 +38,17 @@ LICENSE="
 RESTRICT="mirror test" # Untested
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
-dev doc test
+dev doc jpeg jpeg2k lcms png test tiff truetype
 ebuild_revision_1
 "
 RDEPEND+="
 	dev-python/defusedxml[${PYTHON_USEDEP}]
 	>=dev-python/fonttools-4.34.0[${PYTHON_USEDEP}]
 	!=dev-python/pillow-9.2*
-	virtual/pillow[${PYTHON_USEDEP},jpeg,jpeg2k,tiff,truetype,zlib]
+	virtual/pillow[${PYTHON_USEDEP},jpeg?,jpeg2k?,tiff?,truetype?]
+	png? (
+		virtual/pillow[zlib]
+	)
 "
 DEPEND+="
 	${RDEPEND}
