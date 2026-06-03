@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# U24
+
 # TODO package:
 #
 # blobfile
@@ -36,7 +38,7 @@ DISTUTILS_USE_PEP517="setuptools"
 LANGS=(
 	"ja"
 )
-PYTHON_COMPAT=( "python3_"{10,11} ) # Package lists up to 3.10 for this release.  Relax for open-webui
+PYTHON_COMPAT=( "python3_"{12,13} ) # Python tests 3.13, relaxed for Open WebUI
 
 inherit distutils-r1
 
