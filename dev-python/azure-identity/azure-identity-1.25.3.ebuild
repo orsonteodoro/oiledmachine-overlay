@@ -6,7 +6,7 @@ EAPI=8
 MY_PN="azure_identity"
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..13} )
+PYTHON_COMPAT=( "python3_"{10..14} "pypy3_11" )
 PYPI_NO_NORMALIZE=1
 
 inherit distutils-r1 pypi
@@ -42,7 +42,9 @@ BDEPEND="
 	dev-python/gpep517[${PYTHON_USEDEP}]
 	dev? (
 		>=dev-python/aiohttp-3.0[${PYTHON_USEDEP}]
-		>=dev-python/azure-identity-broker-1.1.0[${PYTHON_USEDEP}]
+		$(python_gen_cond_dep '
+			>=dev-python/azure-identity-broker-1.1.0[${PYTHON_USEDEP}]
+		' python3_{11..14})
 		>=dev-python/typing_extensions-3.7.2[${PYTHON_USEDEP}]
 	)
 "
