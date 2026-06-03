@@ -53,14 +53,14 @@ RDEPEND+="
 		>=dev-python/requests-2.7[${PYTHON_USEDEP}]
 		>=dev-python/six-1.5[${PYTHON_USEDEP}]
 		>dev-python/python-dateutil-2.1[${PYTHON_USEDEP}]
+		langchain? (
+			>=dev-python/langchain-0.2.0[${PYTHON_USEDEP}]
+		)
 		sentry? (
 			dev-python/sentry-sdk[${PYTHON_USEDEP}]
 			dev-python/django[${PYTHON_USEDEP}]
 		)
 	')
-	langchain? (
-		>=dev-python/langchain-0.2.0[${PYTHON_SINGLE_USEDEP}]
-	)
 "
 DEPEND+="
 	${RDEPEND}
@@ -73,6 +73,9 @@ DEPEND+="
 		)
 		test? (
 			>=dev-python/freezegun-0.3.15[${PYTHON_USEDEP}]
+			>=dev-python/langchain-anthropic-0.2.0[${PYTHON_USEDEP}]
+			>=dev-python/langchain-community-0.2.0[${PYTHON_USEDEP}]
+			>=dev-python/langchain-openai-0.2.0[${PYTHON_USEDEP}]
 			>=dev-python/mock-2.0.0[${PYTHON_USEDEP}]
 			dev-python/anthropic[${PYTHON_USEDEP}]
 			dev-python/coverage[${PYTHON_USEDEP}]
@@ -89,11 +92,6 @@ DEPEND+="
 	')
 	dev? (
 		dev-vcs/pre-commit[${PYTHON_SINGLE_USEDEP}]
-	)
-	test? (
-		>=dev-python/langchain-anthropic-0.2.0[${PYTHON_SINGLE_USEDEP}]
-		>=dev-python/langchain-community-0.2.0[${PYTHON_SINGLE_USEDEP}]
-		>=dev-python/langchain-openai-0.2.0[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 BDEPEND+="
