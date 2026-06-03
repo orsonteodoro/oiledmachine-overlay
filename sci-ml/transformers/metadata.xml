@@ -10,4 +10,9 @@
     <remote-id type="github">huggingface/transformers</remote-id>
     <remote-id type="pypi">transformers</remote-id>
   </upstream>
+  <use>
+    <flag name="orphans">
+      Install listed dependency but not required to install.
+    </flag>
+  </use>
 </pkgmetadata>

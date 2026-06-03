@@ -57,8 +57,8 @@ SLOT="0"
 IUSE="
 ${LANGS[@]/#/l10n_}
 accelerate agents all audio av benchmark chat_template codecarbon deepspeed
-deepspeed-testing doc integrations kernels mistral-common natten num2words
-optuna pillow torch quality ray retrieval sentencepiece serving sagemaker
+deepspeed-testing dev doc integrations kernels mistral-common natten num2words
+optuna orphans pillow torch quality ray retrieval sentencepiece serving sagemaker
 sklearn test tiktoken timm torchhub tokenizers video vision
 ebuild_revision_9
 "
@@ -85,6 +85,12 @@ REQUIRED_USE="
 		sentencepiece
 		test
 	)
+	dev? (
+		all
+		l10n_ja
+		sklearn
+		test
+	)
 	integrations? (
 		codecarbon
 		kernels
@@ -98,8 +104,11 @@ REQUIRED_USE="
 		torch
 	)
 	test? (
+		doc
+		quality
 		mistral-common
 		sentencepiece
+		serving
 		retrieval
 	)
 	video? (
@@ -156,6 +165,11 @@ RDEPEND="
 		optuna? (
 			dev-python/optuna[${PYTHON_USEDEP}]
 		)
+		orphans? (
+			>=dev-python/schedulefree-1.2.6[${PYTHON_USEDEP}]
+			dev-python/peft[${PYTHON_USEDEP}]
+			dev-python/scipy[${PYTHON_USEDEP}]
+		)
 		ray? (
 			>=dev-python/ray-2.7.0[${PYTHON_USEDEP},tune]
 		)
@@ -210,6 +224,9 @@ RDEPEND="
 	av? (
 		dev-python/av[${PYTHON_SINGLE_USEDEP}]
 	)
+	orphans? (
+		media-libs/opencv[${PYTHON_SINGLE_USEDEP},python]
+	)
 	torch? (
 		>=sci-ml/pytorch-2.4[${PYTHON_SINGLE_USEDEP}]
 	)
@@ -228,9 +245,6 @@ RDEPEND="
 "
 BDEPEND="
 	$(python_gen_cond_dep '
-		>=dev-python/schedulefree-1.2.6[${PYTHON_USEDEP}]
-		dev-python/peft[${PYTHON_USEDEP}]
-		dev-python/scipy[${PYTHON_USEDEP}]
 		benchmark? (
 			>=dev-python/optimum-benchmark-0.3.0[${PYTHON_USEDEP}]
 		)
@@ -283,7 +297,6 @@ BDEPEND="
 			dev-python/timeout-decorator[${PYTHON_USEDEP}]
 		)
 	')
-	media-libs/opencv[${PYTHON_SINGLE_USEDEP},python]
 "
 
 distutils_enable_tests "pytest"
