@@ -8,6 +8,7 @@
   </maintainer>
   <upstream>
     <bugs-to>https://github.com/zopefoundation/RestrictedPython/issues</bugs-to>
+    <changelog>https://github.com/zopefoundation/RestrictedPython/blob/master/CHANGES.rst</changelog>
     <remote-id type="github">zopefoundation/RestrictedPython</remote-id>
     <remote-id type="pypi">RestrictedPython</remote-id>
   </upstream>
