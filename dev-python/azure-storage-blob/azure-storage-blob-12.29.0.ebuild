@@ -24,7 +24,7 @@ HOMEPAGE="
 "
 LICENSE="MIT"
 SLOT="0"
-IUSE="aio test"
+IUSE="aio dev test"
 RESTRICT="
 	!test? (
 		test
@@ -40,6 +40,10 @@ RDEPEND="
 BDEPEND="
 	>=dev-python/setuptools-74.1.3[${PYTHON_USEDEP}]
 	app-arch/unzip
+	dev? (
+		=dev-python/azure-mgmt-storage-20.1.0[${PYTHON_USEDEP}]
+		>=dev-python/aiohttp-3.0[${PYTHON_USEDEP}]
+	)
 "
 
 distutils_enable_tests "pytest"
