@@ -37,9 +37,12 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" dev test"
+IUSE+="
+dev test
+ebuild_revision_1
+"
 RDEPEND+="
-	>=dev-python/diffusers-0.19.0[${PYTHON_SINGLE_USEDEP},pytorch]
+	>=dev-python/diffusers-0.19.0[${PYTHON_SINGLE_USEDEP},torch]
 	>=sci-ml/transformers-4.25.1[${PYTHON_SINGLE_USEDEP}]
 	dev-python/ultralytics[${PYTHON_SINGLE_USEDEP}]
 "

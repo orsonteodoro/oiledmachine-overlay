@@ -46,7 +46,7 @@ LICENSE="
 RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-dev doc flax pytorch quality test training
+dev doc flax quality test torch training
 ebuild_revision_3
 "
 REQUIRED_USE="
@@ -54,8 +54,8 @@ REQUIRED_USE="
 		doc
 		flax
 		quality
-		pytorch
 		test
+		torch
 		training
 	)
 "
@@ -88,17 +88,15 @@ RDEPEND+="
 		>=dev-python/jax-0.4.1[${PYTHON_SINGLE_USEDEP}]
 		>=dev-python/jaxlib-0.4.1[${PYTHON_SINGLE_USEDEP}]
 	)
-	pytorch? (
-		>=sci-ml/pytorch-1.4[${PYTHON_SINGLE_USEDEP}]
-		dev-python/torchsde[${PYTHON_SINGLE_USEDEP}]
-	)
-	pytorch? (
-		>=sci-ml/accelerate-0.29.3[${PYTHON_SINGLE_USEDEP}]
-	)
 	training? (
 		>=sci-ml/accelerate-0.29.3[${PYTHON_SINGLE_USEDEP}]
 		dev-python/datasets[${PYTHON_SINGLE_USEDEP}]
 		sci-visualization/tensorboard[${PYTHON_SINGLE_USEDEP}]
+	)
+	torch? (
+		>=sci-ml/pytorch-1.4[${PYTHON_SINGLE_USEDEP}]
+		dev-python/torchsde[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/accelerate-0.29.3[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DEPEND+="

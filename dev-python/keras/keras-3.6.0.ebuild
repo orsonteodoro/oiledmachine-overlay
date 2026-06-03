@@ -31,14 +31,14 @@ RESTRICT=""
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE="
-cpu cuda jax pytorch tensorflow test
+cpu cuda jax tensorflow test torch
 ebuild_revision_5
 "
 REQUIRED_USE="
 	cpu? (
 		jax
-		pytorch
 		tensorflow
+		torch
 	)
 "
 gen_rdepend_protobuf() {
@@ -84,7 +84,7 @@ RDEPEND="
 		virtual/pillow[${PYTHON_USEDEP}]
 	')
 	>=sci-ml/tensorflow-${TENSORFLOW_PV}[${PYTHON_SINGLE_USEDEP},python]
-	dev-python/optree[${PYTHON_SINGLE_USEDEP},jax?,pytorch?]
+	dev-python/optree[${PYTHON_SINGLE_USEDEP},jax?,torch?]
 	sci-visualization/tensorboard-plugin-profile[${PYTHON_SINGLE_USEDEP}]
 	|| (
 		$(gen_rdepend_protobuf)
@@ -128,12 +128,12 @@ PDEPEND="
 		jax? (
 			dev-python/jax[${PYTHON_SINGLE_USEDEP}]
 		)
-		pytorch? (
-			=sci-ml/pytorch-2.4*[${PYTHON_SINGLE_USEDEP}]
-			=sci-ml/torchvision-0.19*[${PYTHON_SINGLE_USEDEP}]
-		)
 		tensorflow? (
 			>=sci-ml/tensorflow-${TENSORFLOW_PV}[${PYTHON_SINGLE_USEDEP},python]
+		)
+		torch? (
+			=sci-ml/pytorch-2.4*[${PYTHON_SINGLE_USEDEP}]
+			=sci-ml/torchvision-0.19*[${PYTHON_SINGLE_USEDEP}]
 		)
 	)
 	cuda? (
@@ -153,7 +153,7 @@ PDEPEND="
 				dev-python/jax[${PYTHON_SINGLE_USEDEP},cpu]
 			)
 		)
-		pytorch? (
+		torch? (
 			=sci-ml/pytorch-2.4*[${PYTHON_SINGLE_USEDEP}]
 			=sci-ml/torchvision-0.19*[${PYTHON_SINGLE_USEDEP}]
 			test? (

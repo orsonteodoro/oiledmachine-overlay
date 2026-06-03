@@ -37,7 +37,10 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
-IUSE+=" conversion dev"
+IUSE+="
+conversion dev
+ebuild_revision_1
+"
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/ctranslate2-4.0[${PYTHON_USEDEP}]
@@ -55,7 +58,7 @@ RDEPEND+="
 	<sci-ml/tokenizers-1[${PYTHON_SINGLE_USEDEP}]
 
 	conversion? (
-		>=sci-ml/transformers-4.23[${PYTHON_SINGLE_USEDEP},pytorch]
+		>=sci-ml/transformers-4.23[${PYTHON_SINGLE_USEDEP},torch]
 	)
 "
 DEPEND+="
