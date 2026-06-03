@@ -6,12 +6,14 @@ EAPI=8
 # arrow.git: testing
 # arrow.git: cpp/submodules/parquet-testing
 
-ARROW_DATA_GIT_HASH="4d209492d514c2d3cb2d392681b9aa00e6d8da1c"
+CXX_STANDARD=20
 EPYTEST_XDIST=1
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
-PARQUET_DATA_GIT_HASH="cb7a9674142c137367bf75a01b79c6e214a73199"
-PYTHON_COMPAT=( "python3_"{10..13} )
+PYTHON_COMPAT=( "python3_"{10..14} )
+
+ARROW_TESTING_COMMIT="249079a810caedda6898464003c7ef8a47efeeae"
+PARQUET_TESTING_COMMIT="e74785d85a4ecee829e1e405444d6a1b24b8bc9c"
 
 CPU_FLAGS_ARM=(
 	"cpu_flags_arm_neon"
@@ -35,17 +37,27 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse4_2"
 )
 
-inherit distutils-r1 multiprocessing
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX20[@]}"
+)
 
-KEYWORDS="amd64 arm64 ~riscv x86"
+inherit libcxx-compat
+LLVM_COMPAT=(
+	"${LIBCXX_COMPAT_STDCXX20[@]}"
+)
+
+inherit distutils-r1 libcxx-slot libstdcxx-slot multiprocessing
+
+KEYWORDS="~amd64 ~arm64 ~riscv ~x86"
 S="${WORKDIR}/apache-arrow-${PV}/python"
 SRC_URI="
 mirror://apache/arrow/arrow-${PV}/apache-arrow-${PV}.tar.gz
 	test? (
-https://github.com/apache/parquet-testing/archive/${PARQUET_DATA_GIT_HASH}.tar.gz
-	-> parquet-testing-${PARQUET_DATA_GIT_HASH}.tar.gz
-https://github.com/apache/arrow-testing/archive/${ARROW_DATA_GIT_HASH}.tar.gz
-	-> arrow-testing-${ARROW_DATA_GIT_HASH}.tar.gz
+https://github.com/apache/parquet-testing/archive/${PARQUET_TESTING_COMMIT}.tar.gz
+	-> parquet-testing-${PARQUET_TESTING_COMMIT}.tar.gz
+https://github.com/apache/arrow-testing/archive/${ARROW_TESTING_COMMIT}.tar.gz
+	-> arrow-testing-${ARROW_TESTING_COMMIT}.tar.gz
 	)
 "
 
@@ -61,7 +73,7 @@ IUSE="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
-+parquet +snappy ssl
++parquet +snappy ssl test
 ebuild_revision_2
 "
 REQUIRED_USE="
@@ -94,16 +106,35 @@ RDEPEND="
 	~dev-libs/apache-arrow-${PV}[compute,dataset,json,parquet?,re2,snappy?,ssl?]
 "
 BDEPEND="
+	dev-python/build[${PYTHON_USEDEP}]
+	>=dev-python/cython-3.1:3.1[${PYTHON_USEDEP}]
+	>=dev-python/libcst-1.8.6[${PYTHON_USEDEP}]
+	>=dev-python/numpy-2.0[${PYTHON_USEDEP}]
+	dev-python/scikit-build-core[${PYTHON_USEDEP}]
+	>=dev-python/setuptools-scm-8[${PYTHON_USEDEP}]
+	dev-python/wheel[${PYTHON_USEDEP}]
 	test? (
 		dev-libs/apache-arrow[lz4,zlib]
+		dev-python/packaging[${PYTHON_USEDEP}]
 		dev-python/cffi[${PYTHON_USEDEP}]
 		dev-python/hypothesis[${PYTHON_USEDEP}]
 		dev-python/pandas[${PYTHON_USEDEP}]
+		dev-python/pytest[${PYTHON_USEDEP}]
+		dev-python/pytest-xdist[${PYTHON_USEDEP}]
 		dev-python/pytz[${PYTHON_USEDEP}]
+		$(python_gen_cond_dep '
+			dev-python/pyuwsgi[${PYTHON_USEDEP}]
+		' python3_{10..12})
 	)
 "
 
 distutils_enable_tests "pytest"
+
+pkg_setup() {
+	libcxx-slot_verify
+	libstdcxx-slot_verify
+	python_setup
+}
 
 src_prepare() {
 	distutils-r1_src_prepare
@@ -205,8 +236,8 @@ python_test() {
 	)
 
 	cd "${T}" || die
-	local -x ARROW_TEST_DATA="${WORKDIR}/arrow-testing-${ARROW_DATA_GIT_HASH}/data"
-	local -x PARQUET_TEST_DATA="${WORKDIR}/parquet-testing-${PARQUET_DATA_GIT_HASH}/data"
+	local -x ARROW_TEST_DATA="${WORKDIR}/arrow-testing-${ARROW_TESTING_COMMIT}/data"
+	local -x PARQUET_TEST_DATA="${WORKDIR}/parquet-testing-${PARQUET_TESTING_COMMIT}/data"
 	local -x PYTEST_DISABLE_PLUGIN_AUTOLOAD=1
 	epytest --pyargs "pyarrow"
 }
