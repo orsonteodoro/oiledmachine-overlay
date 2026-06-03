@@ -6,7 +6,7 @@ EAPI=8
 MY_PN="azure_storage_blob"
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{10..14} )
 PYPI_NO_NORMALIZE=1
 
 inherit distutils-r1 pypi
@@ -32,7 +32,7 @@ RESTRICT="
 "
 DOCS=()
 RDEPEND="
-	>=dev-python/azure-core-1.30.0[${PYTHON_USEDEP},aio(+)]
+	>=dev-python/azure-core-1.37.0[${PYTHON_USEDEP},aio?]
 	>=dev-python/cryptography-2.1.4[${PYTHON_USEDEP}]
 	>=dev-python/isodate-0.6.1[${PYTHON_USEDEP}]
 	>=dev-python/typing-extensions-4.6.0[${PYTHON_USEDEP}]
