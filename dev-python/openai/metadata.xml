@@ -8,7 +8,7 @@
   </maintainer>
   <upstream>
     <bugs-to>https://github.com/openai/openai-python/issues</bugs-to>
-    <changelog>https://github.com/openai/openai-python/blob/v1.52.0/CHANGELOG.md</changelog>
+    <changelog>https://github.com/openai/openai-python/blob/master/CHANGELOG.md</changelog>
     <remote-id type="github">openai/openai-python</remote-id>
     <remote-id type="pypi">openai</remote-id>
   </upstream>
