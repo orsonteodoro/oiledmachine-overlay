@@ -15,7 +15,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/google/sentencepiece.git"
 	EGIT_BRANCH="master"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${PN}-${PV}"
-	FALLBACK_COMMIT="17d7580d6407802f85855d2cc9190634e2c95624" # Feb 19, 2024
+	FALLBACK_COMMIT="31646a467d2051eb904e0b45de3a73e91fe1c1e3" # Aug 11, 2025
 	inherit git-r3
 else
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~arm64-linux ~ppc ~ppc64 ~m68k ~riscv ~s390 ~sparc ~x64-macos ~x86"
@@ -32,7 +32,7 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+=" python test"
 RDEPEND+="
 	dev-libs/protobuf:=
