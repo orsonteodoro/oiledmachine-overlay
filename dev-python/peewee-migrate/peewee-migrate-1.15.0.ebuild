@@ -4,13 +4,10 @@
 
 EAPI=8
 
-# TODO package:
-# pytest-mypy
-
 MY_PN="${PN/-/_}"
 
-DISTUTILS_USE_PEP517="poetry"
-PYTHON_COMPAT=( "python3_"{10..12} )
+DISTUTILS_USE_PEP517="uv-build"
+PYTHON_COMPAT=( "python3_"{10..14} )
 
 inherit distutils-r1 pypi
 
@@ -40,22 +37,24 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+=" dev"
 RDEPEND+="
-	>=dev-python/peewee-3[${PYTHON_USEDEP}]
+	${PYTHON_DEPS}
+	dev-python/peewee[${PYTHON_USEDEP}]
 	dev-python/click[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/poetry-core-1.0[${PYTHON_USEDEP}]
+	>=dev-python/uv-build-0.10.2[${PYTHON_USEDEP}]
+	<dev-python/uv-build-0.11.0[${PYTHON_USEDEP}]
+
 	dev? (
-		>=dev-python/psycopg-2.9.5:2[${PYTHON_USEDEP}]
-		dev-python/black[${PYTHON_USEDEP}]
+		dev-python/psycopg:2[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
-		dev-python/pytest-mypy[${PYTHON_USEDEP}]
+		dev-python/pyrefly
 		dev-util/ruff
 		$(python_gen_any_dep '
 			dev-vcs/pre-commit[${PYTHON_SINGLE_USEDEP}]
