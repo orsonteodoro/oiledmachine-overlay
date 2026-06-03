@@ -27,7 +27,10 @@ https://pypi.org/project/timm/
 "
 LICENSE="Apache-2.0"
 SLOT="0"
-IUSE="doc modelindex"
+IUSE="
+doc modelindex
+ebuild_revision_1
+"
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=sci-ml/safetensors-0.2[${PYTHON_USEDEP}]
@@ -39,7 +42,7 @@ RDEPEND+="
 	')
 	>=sci-ml/pytorch-1.7[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/torchvision-0.5.0[${PYTHON_SINGLE_USEDEP}]
-	sci-ml/huggingface_hub[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/huggingface-hub[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}

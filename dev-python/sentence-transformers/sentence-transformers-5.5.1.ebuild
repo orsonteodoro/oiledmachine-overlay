@@ -37,7 +37,10 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
-IUSE+=" dev doc lint test"
+IUSE+="
+dev doc lint test
+ebuild_revision_1
+"
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/numpy-1.20.0[${PYTHON_USEDEP}]
@@ -48,7 +51,7 @@ RDEPEND+="
 
 		virtual/pillow[${PYTHON_USEDEP}]
 	')
-	>=sci-ml/huggingface_hub-0.23.0[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/huggingface-hub-0.23.0[${PYTHON_SINGLE_USEDEP}]
 
 	>=sci-ml/transformers-4.41.0[${PYTHON_SINGLE_USEDEP}]
 	<sci-ml/transformers-6.0.0[${PYTHON_SINGLE_USEDEP}]

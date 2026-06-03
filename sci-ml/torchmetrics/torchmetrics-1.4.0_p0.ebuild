@@ -78,7 +78,10 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" audio debug detection doc image multimodal text -strict test visual"
+IUSE+="
+audio debug detection doc image multimodal text -strict test visual
+ebuild_revision_1
+"
 AUDIO_RDEPEND="
 	$(python_gen_cond_dep '
 		(
@@ -538,10 +541,10 @@ TEXT_TEST_BDEPEND="
 		)
 	')
 	!strict? (
-		sci-ml/huggingface_hub[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/huggingface-hub[${PYTHON_SINGLE_USEDEP}]
 	)
 	strict? (
-		<sci-ml/huggingface_hub-0.23[${PYTHON_SINGLE_USEDEP}]
+		<sci-ml/huggingface-hub-0.23[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 BDEPEND+="

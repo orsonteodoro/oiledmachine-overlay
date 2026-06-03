@@ -40,7 +40,10 @@ LICENSE="
 "
 RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" test training"
+IUSE+="
+test training
+ebuild_revision_1
+"
 REQUIRED_USE="
 	test? (
 		training
@@ -60,7 +63,7 @@ RDEPEND+="
 	')
 	>=sci-ml/pytorch-1.9.0[${PYTHON_SINGLE_USEDEP}]
 	dev-python/timm[${PYTHON_SINGLE_USEDEP}]
-	sci-ml/huggingface_hub[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/huggingface-hub[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 	training? (
 		>=dev-python/timm-1.0.10[${PYTHON_SINGLE_USEDEP}]

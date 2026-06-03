@@ -35,8 +35,11 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" dev"
+SLOT="0/"$(ver_cut "1-2" "${PV}")
+IUSE+="
+dev
+ebuild_revision_1
+"
 RDEPEND+="
 	>=dev-python/numpy-1.24.2[${PYTHON_USEDEP}]
 	>=dev-python/pycocotools-2.0.6[${PYTHON_USEDEP}]
@@ -57,7 +60,7 @@ BDEPEND+="
 		>=dev-python/pytest-timeout-2.1.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-depends-1.0.1[${PYTHON_USEDEP}]
 		$(python_gen_any_dep '
-			>=sci-ml/huggingface_hub-0.25.0[${PYTHON_SINGLE_USEDEP}]
+			>=sci-ml/huggingface-hub-0.25.0[${PYTHON_SINGLE_USEDEP}]
 		')
 	)
 "

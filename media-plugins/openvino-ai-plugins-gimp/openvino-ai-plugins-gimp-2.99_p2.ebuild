@@ -14,7 +14,7 @@ MY_PV="$(ver_cut 1-2)-R$(ver_cut 4)"
 
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_10" ) # Upstream list only 3.8
+PYTHON_COMPAT=( "python3_"{10..12} ) # Upstream list only 3.8
 
 inherit distutils-r1
 
@@ -41,7 +41,10 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" test"
+IUSE+="
+test
+ebuild_revision_1
+"
 STABLE_DIFFUSION_MODEL_RDEPEND="
 	$(python_gen_cond_dep '
 		>=sci-libs/nncf-2.4.0[${PYTHON_USEDEP}]
@@ -85,7 +88,7 @@ STABLE_DIFFUSION_MODEL_RDEPEND="
 	>=dev-python/controlnet-aux-0.0.6[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/diffusers-0.9.0[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/diffusers-0.23.0[${PYTHON_SINGLE_USEDEP}]
-	>=sci-ml/huggingface_hub-0.9.1[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/huggingface-hub-0.9.1[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/openvino-2022.2.0[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/pytorch-1.13.1[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/tensorflow-datasets-4.2.0[${PYTHON_SINGLE_USEDEP}]
@@ -107,7 +110,7 @@ PLUGIN_RDEPEND="
 	>=dev-python/diffusers-0.22.0[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/transformers-4.38.0[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/accelerate[${PYTHON_SINGLE_USEDEP}]
-	sci-ml/huggingface_hub[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/huggingface-hub[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/openvino[${PYTHON_SINGLE_USEDEP}]
 "
 #	${STABLE_DIFFUSION_MODEL_RDEPEND}

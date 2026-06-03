@@ -54,6 +54,7 @@ RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 aitemplate cuda doc onnx pytorch rocm xformers
+ebuild_revision_1
 "
 REQUIRED_USE="
 	|| (
@@ -114,7 +115,7 @@ PYTORCH_DEPENDS="
 	>=dev-python/tomesd-0.1.3[${PYTHON_SINGLE_USEDEP}]
 	>=media-libs/opencv-4.7.0.72[${PYTHON_SINGLE_USEDEP},imgproc,png,python]
 	>=sci-ml/accelerate-0.24.1[${PYTHON_SINGLE_USEDEP}]
-	>=sci-ml/huggingface_hub-0.19.4[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/huggingface-hub-0.19.4[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/tokenizers-0.15.0[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/transformers-4.36.1[${PYTHON_SINGLE_USEDEP}]
 "

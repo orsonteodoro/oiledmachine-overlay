@@ -39,7 +39,7 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 conversion dev
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
@@ -49,7 +49,7 @@ RDEPEND+="
 		dev-python/tqdm[${PYTHON_USEDEP}]
 	')
 	>=dev-python/av-11[${PYTHON_SINGLE_USEDEP}]
-	>=sci-ml/huggingface_hub-0.21[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/huggingface-hub-0.21[${PYTHON_SINGLE_USEDEP}]
 
 	>=sci-ml/onnxruntime-1.14[${PYTHON_SINGLE_USEDEP},python]
 	<sci-ml/onnxruntime-2[${PYTHON_SINGLE_USEDEP},python]

@@ -39,6 +39,7 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 deepspeed dev quality rich sagemaker test test-dev test-fp8 test-prod test-trackers
+ebuild_revision_1
 "
 REQUIRED_USE+="
 	test? (
@@ -71,7 +72,7 @@ RDEPEND+="
 			dev-python/sagemaker[${PYTHON_USEDEP}]
 		)
 	')
-	>=dev-python/huggingface_hub-0.21.0[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/huggingface-hub-0.21.0[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/torch-2.0.0[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="

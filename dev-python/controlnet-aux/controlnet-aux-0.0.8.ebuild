@@ -39,7 +39,9 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" "
+IUSE+="
+ebuild_revision_1
+"
 RDEPEND+="
 	$(python_gen_cond_dep '
 		dev-python/einops[${PYTHON_USEDEP}]
@@ -52,7 +54,7 @@ RDEPEND+="
 	')
 	<dev-python/timm-0.6.8[${PYTHON_SINGLE_USEDEP}]
 	media-libs/opencv[${PYTHON_SINGLE_USEDEP},python]
-	sci-ml/huggingface_hub[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/huggingface-hub[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 "
