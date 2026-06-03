@@ -40,7 +40,6 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+=" dev doc"
 RDEPEND+="
 	${PYTHON_DEPS}
-	>=dev-python/python-3.10[${PYTHON_USEDEP}]
 	>=dev-python/cryptography-39.0[${PYTHON_USEDEP}]
 	>=dev-python/olefile-0.46[${PYTHON_USEDEP}]
 "
