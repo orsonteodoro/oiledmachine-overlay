@@ -3,6 +3,9 @@
 
 EAPI=8
 
+# 22 - gnu++17
+# 23 - gnu++20
+
 # Requirements:
 # https://github.com/apache/arrow/blob/apache-arrow-22.0.0/.env
 
@@ -13,9 +16,9 @@ PROTOBUF_CPP_SLOT="4"
 RE2_SLOT="20220623"
 
 # arrow.git: testing
-ARROW_DATA_GIT_HASH="9a02925d1ba80bd493b6d4da6e8a777588d57ac4"
+ARROW_TESTING_COMMIT="9a02925d1ba80bd493b6d4da6e8a777588d57ac4"
 # arrow.git: cpp/submodules/parquet-testing
-PARQUET_DATA_GIT_HASH="a3d96a65e11e2bbca7d22a894e8313ede90a33a3"
+PARQUET_TESTING_COMMIT="a3d96a65e11e2bbca7d22a894e8313ede90a33a3"
 
 CPU_FLAGS_ARM=(
 	"cpu_flags_arm_neon"
@@ -54,10 +57,10 @@ S="${WORKDIR}/${P}/cpp"
 SRC_URI="
 mirror://apache/arrow/arrow-${PV}/${P}.tar.gz
 	test? (
-https://github.com/apache/parquet-testing/archive/${PARQUET_DATA_GIT_HASH}.tar.gz
-	-> parquet-testing-${PARQUET_DATA_GIT_HASH}.tar.gz
-https://github.com/apache/arrow-testing/archive/${ARROW_DATA_GIT_HASH}.tar.gz
-	-> arrow-testing-${ARROW_DATA_GIT_HASH}.tar.gz
+https://github.com/apache/parquet-testing/archive/${PARQUET_TESTING_COMMIT}.tar.gz
+	-> parquet-testing-${PARQUET_TESTING_COMMIT}.tar.gz
+https://github.com/apache/arrow-testing/archive/${ARROW_TESTING_COMMIT}.tar.gz
+	-> arrow-testing-${ARROW_TESTING_COMMIT}.tar.gz
 	)
 "
 
@@ -366,8 +369,8 @@ src_configure() {
 }
 
 src_test() {
-	local -x PARQUET_TEST_DATA="${WORKDIR}/parquet-testing-${PARQUET_DATA_GIT_HASH}/data"
-	local -x ARROW_TEST_DATA="${WORKDIR}/arrow-testing-${ARROW_DATA_GIT_HASH}/data"
+	local -x PARQUET_TEST_DATA="${WORKDIR}/parquet-testing-${PARQUET_TESTING_COMMIT}/data"
+	local -x ARROW_TEST_DATA="${WORKDIR}/arrow-testing-${ARROW_TESTING_COMMIT}/data"
 	cmake_src_test
 }
 
