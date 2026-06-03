@@ -9,6 +9,8 @@ PYTHON_COMPAT=( "python3_"{10..13} )
 
 inherit distutils-r1 pypi
 
+KEYWORDS="~amd64"
+
 DESCRIPTION="Building applications with LLMs through composability"
 HOMEPAGE="
 	https://github.com/langchain-ai/langchain/blob/master/libs/langchain/pyproject.toml
