@@ -29,7 +29,7 @@ LICENSE="
 # all-rights-reserved MIT - See header of setup.py
 # The distro's MIT license template does not contain All rights reserved.
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+=" dev"
 RDEPEND+="
 	>=dev-python/isodate-0.6.1[${PYTHON_USEDEP}]
