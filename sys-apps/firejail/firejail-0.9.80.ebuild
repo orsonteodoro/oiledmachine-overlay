@@ -293,7 +293,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 -apparmor +chroot clang contrib +dbusproxy +file-transfer +globalcfg
 landlock +network +private-home -private-lib selfrando -selinux +suid
 test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xcsecurity xvfb
-ebuild_revision_130
+ebuild_revision_131
 "
 REQUIRED_USE+="
 	!test
@@ -2217,6 +2217,21 @@ ewarn "- To mitigate RCE buffer overflows."
 ewarn "- To mitigate SUID privilege escalation via stack clash attack."
 ewarn "- To mitigate truncation of PATH in different implementations."
 ewarn "- To mitigate the chances of too many secrets or API keys leaked."
+ewarn
+ewarn
+ewarn "GPU acceleration is off by default."
+ewarn
+ewarn "To add GPU acceleration add \`include allow-gpu-acceleration.inc\` to"
+ewarn "either:"
+ewarn
+ewarn "/etc/firejail/globals.local"
+ewarn "/etc/firejail/<cli-cmd>.local"
+ewarn "/home/<user-name>/.config/firejail/globals.local"
+ewarn "/home/<user-name>/.config/firejail/<cli-cmd>.local"
+ewarn
+ewarn "Keep GPU acceleration off in untrusted contexts to mitigate sandbox"
+ewarn "escape, information disclosure, code execution, privilege escalation."
+ewarn "Use GPU acceleration selectively."
 ewarn
 }
 
