@@ -6,7 +6,7 @@ EAPI=8
 
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream only tests up to 3.11
+PYTHON_COMPAT=( "python3_"{10..12} ) # Upstream only tests up to 3.11, 3.12 needed for Open WebUI
 
 inherit distutils-r1 pypi
 
@@ -36,17 +36,24 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+=" conversion dev"
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/ctranslate2-4.0[${PYTHON_USEDEP}]
+		<dev-python/ctranslate2-5[${PYTHON_USEDEP}]
+
 		dev-python/tqdm[${PYTHON_USEDEP}]
 	')
 	>=dev-python/av-11[${PYTHON_SINGLE_USEDEP}]
-	>=sci-ml/huggingface_hub-0.13[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/huggingface_hub-0.21[${PYTHON_SINGLE_USEDEP}]
+
 	>=sci-ml/onnxruntime-1.14[${PYTHON_SINGLE_USEDEP},python]
+	<sci-ml/onnxruntime-2[${PYTHON_SINGLE_USEDEP},python]
+
 	>=sci-ml/tokenizers-0.13[${PYTHON_SINGLE_USEDEP}]
+	<sci-ml/tokenizers-1[${PYTHON_SINGLE_USEDEP}]
+
 	conversion? (
 		>=sci-ml/transformers-4.23[${PYTHON_SINGLE_USEDEP},pytorch]
 	)
@@ -57,10 +64,10 @@ DEPEND+="
 BDEPEND+="
 	dev? (
 		$(python_gen_cond_dep '
-			>=dev-python/black-23[${PYTHON_USEDEP}]
-			>=dev-python/flake8-6[${PYTHON_USEDEP}]
-			>=dev-python/isort-5[${PYTHON_USEDEP}]
-			>=dev-python/pytest-7[${PYTHON_USEDEP}]
+			=dev-python/black-23*[${PYTHON_USEDEP}]
+			=dev-python/flake8-6*[${PYTHON_USEDEP}]
+			=dev-python/isort-5*[${PYTHON_USEDEP}]
+			=dev-python/pytest-7*[${PYTHON_USEDEP}]
 		')
 	)
 "
