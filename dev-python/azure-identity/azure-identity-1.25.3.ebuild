@@ -29,17 +29,22 @@ RESTRICT="
 	)
 "
 SLOT="0"
-IUSE="test"
+IUSE=" dev test"
 RDEPEND="
 	>=dev-python/azure-core-1.31.0[${PYTHON_USEDEP}]
 	>=dev-python/cryptography-2.5[${PYTHON_USEDEP}]
-	>=dev-python/msal-1.30.0[${PYTHON_USEDEP}]
+	>=dev-python/msal-1.35.1[${PYTHON_USEDEP}]
 	>=dev-python/msal-extensions-1.2.0[${PYTHON_USEDEP}]
 	>=dev-python/typing-extensions-4.0.0[${PYTHON_USEDEP}]
 "
 BDEPEND="
 	app-arch/unzip
 	dev-python/gpep517[${PYTHON_USEDEP}]
+	dev? (
+		>=dev-python/aiohttp-3.0[${PYTHON_USEDEP}]
+		>=dev-python/azure-identity-broker-1.1.0[${PYTHON_USEDEP}]
+		>=dev-python/typing_extensions-3.7.2[${PYTHON_USEDEP}]
+	)
 "
 DOCS=()
 
