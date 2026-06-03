@@ -124,6 +124,7 @@ KEYWORDS="~amd64"
 EGIT_REPO_URI="https://github.com/microsoft/onnxruntime.git"
 EGIT_BRANCH="main"
 EGIT_COMMIT="v${PV}"
+EGIT_MIN_CLONE_TYPE="single"
 inherit git-r3
 
 DESCRIPTION="Cross-platform inference and training machine-learning accelerator."
@@ -579,6 +580,7 @@ pkg_setup() {
 }
 
 src_unpack() {
+einfo "This ebuild is a Work In Progress (WIP)"
 # Save for offline cache
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	export DOWNLOAD_DIR="${EDISTDIR}/onnxruntime-${PV}" # Do not simplify
