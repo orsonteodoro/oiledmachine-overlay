@@ -581,7 +581,7 @@ pkg_setup() {
 src_unpack() {
 # Save for offline cache
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	export DOWNLOAD_DIR="${EDISTDIR}/onnxruntime-"$(ver_cut "1-2" "${PV}")
+	export DOWNLOAD_DIR="${EDISTDIR}/onnxruntime-${PV}" # Do not simplify
 	addwrite "${DOWNLOAD_DIR}"
 einfo "DOWNLOAD_DIR (CMake offline cache):  ${DOWNLOAD_DIR}"
 
