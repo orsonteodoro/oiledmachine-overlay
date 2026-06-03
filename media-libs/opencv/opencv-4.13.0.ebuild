@@ -6,12 +6,12 @@ EAPI=8
 # U20, U22, U24
 
 # For the flatbuffers version restriction, see
-# https://github.com/opencv/opencv/blob/4.12.0/modules/dnn/misc/tflite/schema_generated.h#L11
+# https://github.com/opencv/opencv/blob/4.13.0/modules/dnn/misc/tflite/schema_generated.h#L11
 # (The patch will allow for newer revisions.)
 
 # For CUDA, check optical flow driver requirement.
 
-# For CUDA C++ standard, see also https://github.com/opencv/opencv/blob/4.12.0/cmake/OpenCVDetectCUDA.cmake#L154
+# For CUDA C++ standard, see also https://github.com/opencv/opencv/blob/4.13.0/cmake/OpenCVDetectCUDA.cmake#L154
 CFLAGS_HARDENED_ASSEMBLERS="inline nasm yasm"
 CFLAGS_HARDENED_LANGS="asm c-lang"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data" # Biometrics TFA
@@ -21,7 +21,7 @@ PYTHON_COMPAT=( "python3_"{8..12} )
 
 CMAKE_PV="3.15"
 GSTREAMER_PV="1.16.2"
-KLEIDICV_PV="0.3.0"
+KLEIDICV_PV="0.5.0"
 QT5_PV="5.12.8"
 QT6_PV="6.2.4"
 
@@ -129,9 +129,13 @@ CUDA_TARGETS_COMPAT=(
 	"compute_75"
 	"compute_80"
 	"compute_86"
+	"compute_89"
 	"compute_90"
 	"compute_100"
+	"compute_103"
+	"compute_110"
 	"compute_120"
+	"compute_121"
 	"sm_30"
 	"sm_35"
 	"sm_37"
@@ -143,13 +147,17 @@ CUDA_TARGETS_COMPAT=(
 	"sm_75"
 	"sm_80"
 	"sm_86"
+	"sm_89"
 	"sm_90"
 	"sm_100"
+	"sm_103"
+	"sm_110"
 	"sm_120"
+	"sm_121"
 )
 
 declare -A CUDA_TARGETS_COMPAT_HT=(
-	["auto"]="3.0 3.5 3.7 5.0 5.2 6.0 6.1 7.0 7.5 8.0 8.6 9.0 10.0 12.0"
+	["auto"]="3.0 3.5 3.7 5.0 5.2 6.0 6.1 7.0 7.5 8.0 8.6 8.9 9.0 10.0 10.3 11.0 12.0 12.1"
 	["compute_30"]="3.0"
 	["compute_35"]="3.5"
 	["compute_37"]="3.7"
@@ -161,9 +169,13 @@ declare -A CUDA_TARGETS_COMPAT_HT=(
 	["compute_75"]="7.5"
 	["compute_80"]="8.0"
 	["compute_86"]="8.6"
+	["compute_89"]="8.9"
 	["compute_90"]="9.0"
 	["compute_100"]="10.0"
+	["compute_103"]="10.3"
+	["compute_110"]="11.0"
 	["compute_120"]="12.0"
+	["compute_121"]="12.1"
 	["sm_30"]="3.0"
 	["sm_35"]="3.5"
 	["sm_37"]="3.7"
@@ -175,9 +187,13 @@ declare -A CUDA_TARGETS_COMPAT_HT=(
 	["sm_75"]="7.5"
 	["sm_80"]="8.0"
 	["sm_86"]="8.6"
+	["sm_89"]="8.9"
 	["sm_90"]="9.0"
 	["sm_100"]="10.0"
+	["sm_103"]="10.3"
+	["sm_110"]="11.0"
 	["sm_120"]="12.0"
+	["sm_121"]="12.1"
 )
 
 PATENT_STATUS_IUSE=(
@@ -350,13 +366,13 @@ if [[ "${PV}" == *"9999"* ]] ; then
 	EGIT_REPO_URI="https://github.com/${PN}/${PN}.git"
 else
 	# From ocv_download()
-	ADE_PV="0.1.2e"									# See https://github.com/opencv/opencv/blob/4.12.0/modules/gapi/cmake/DownloadADE.cmake#L2
-	DNN_SAMPLES_FACE_DETECTOR_COMMIT="b2bfc75f6aea5b1f834ff0f0b865a7c18ff1459f"	# See https://github.com/opencv/opencv_extra/blob/4.12.0/testdata/dnn/download_models.py#L389
-	FACE_ALIGNMENT_COMMIT="8afa57abc8229d611c4937165d20e2a2d9fc5a12"		# See https://github.com/opencv/opencv_contrib/blob/4.12.0/modules/face/CMakeLists.txt#L11
-	NVIDIA_OPTICAL_FLOW_COMMIT="edb50da3cf849840d680249aa6dbef248ebce2ca"		# See https://github.com/opencv/opencv_contrib/blob/4.12.0/modules/cudaoptflow/CMakeLists.txt#L12
-	QRCODE_COMMIT="a8b69ccc738421293254aec5ddb38bd523503252"			# See https://github.com/opencv/opencv_contrib/blob/4.12.0/modules/wechat_qrcode/CMakeLists.txt#L15
-	XFEATURES2D_BOOSTDESC_COMMIT="34e4206aef44d50e6bbcd0ab06354b52e7466d26"		# See https://github.com/opencv/opencv_contrib/blob/4.12.0/modules/xfeatures2d/cmake/download_boostdesc.cmake#L2
-	XFEATURES2D_VGG_COMMIT="fccf7cd6a4b12079f73bbfb21745f9babcd4eb1d"		# See https://github.com/opencv/opencv_contrib/blob/4.12.0/modules/xfeatures2d/cmake/download_vgg.cmake#L2
+	ADE_PV="0.1.2e"									# See https://github.com/opencv/opencv/blob/4.13.0/modules/gapi/cmake/DownloadADE.cmake#L2	# Replace raw with blob for commit id
+	DNN_SAMPLES_FACE_DETECTOR_COMMIT="b2bfc75f6aea5b1f834ff0f0b865a7c18ff1459f"	# See https://github.com/opencv/opencv_extra/blob/4.13.0/testdata/dnn/download_models.py#L389
+	FACE_ALIGNMENT_COMMIT="8afa57abc8229d611c4937165d20e2a2d9fc5a12"		# See https://github.com/opencv/opencv_contrib/blob/4.13.0/modules/face/CMakeLists.txt#L11
+	NVIDIA_OPTICAL_FLOW_COMMIT="edb50da3cf849840d680249aa6dbef248ebce2ca"		# See https://github.com/opencv/opencv_contrib/blob/4.13.0/modules/cudaoptflow/CMakeLists.txt#L12
+	QRCODE_COMMIT="a8b69ccc738421293254aec5ddb38bd523503252"			# See https://github.com/opencv/opencv_contrib/blob/4.13.0/modules/wechat_qrcode/CMakeLists.txt#L15
+	XFEATURES2D_BOOSTDESC_COMMIT="34e4206aef44d50e6bbcd0ab06354b52e7466d26"		# See https://github.com/opencv/opencv_contrib/blob/4.13.0/modules/xfeatures2d/cmake/download_boostdesc.cmake#L2
+	XFEATURES2D_VGG_COMMIT="fccf7cd6a4b12079f73bbfb21745f9babcd4eb1d"		# See https://github.com/opencv/opencv_contrib/blob/4.13.0/modules/xfeatures2d/cmake/download_vgg.cmake#L2
 
 	KEYWORDS="~amd64 ~arm64 ~riscv"
 	SRC_URI="
@@ -810,7 +826,7 @@ CUDA_DEPEND="
 # For ffmpeg version, see \
 # https://github.com/opencv/opencv_3rdparty/blob/ea9240e39bc0d6a69d2b1f0ba4513bdc7612a41e/ffmpeg/download_src.sh#L24	# FFmpeg 4.x
 # For the commit above, see
-# https://github.com/opencv/opencv/blob/4.12.0/3rdparty/ffmpeg/ffmpeg.cmake#L3
+# https://github.com/opencv/opencv/blob/4.13.0/3rdparty/ffmpeg/ffmpeg.cmake#L3
 gen_rocm_rdepend() {
 	local s
 	for s in "${ROCM_SLOTS[@]}" ; do
@@ -879,7 +895,7 @@ RDEPEND="
 	)
 	contribdnn? (
 		system-flatbuffers? (
-			=dev-libs/flatbuffers-23.5*:0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+			=dev-libs/flatbuffers-25.9*:0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 			dev-libs/flatbuffers:=
 		)
 	)
@@ -941,12 +957,12 @@ RDEPEND="
 		>=virtual/jre-1.8:*
 	)
 	jpeg? (
-		>=media-libs/libjpeg-turbo-3.1.0:0[${MULTILIB_USEDEP}]
+		>=media-libs/libjpeg-turbo-3.1.2:0[${MULTILIB_USEDEP}]
 		media-libs/libjpeg-turbo:=
 	)
 	jpeg2k? (
 		!jasper? (
-			>=media-libs/openjpeg-2.5.3:2[${MULTILIB_USEDEP}]
+			>=media-libs/openjpeg-2.5.4:2[${MULTILIB_USEDEP}]
 			media-libs/openjpeg:=
 		)
 		jasper? (
@@ -987,7 +1003,7 @@ RDEPEND="
 		>=sci-ml/openvino-2024.0.0
 	)
 	png? (
-		>=media-libs/libpng-1.6.43:0[${MULTILIB_USEDEP}]
+		>=media-libs/libpng-1.6.53:0[${MULTILIB_USEDEP}]
 		media-libs/libpng:=
 	)
 	python? (
@@ -1034,7 +1050,7 @@ RDEPEND="
 		dev-cpp/tbb:=
 	)
 	tiff? (
-		>=media-libs/tiff-4.6.0:0[${MULTILIB_USEDEP}]
+		>=media-libs/tiff-4.7.1:0[${MULTILIB_USEDEP}]
 		media-libs/tiff:=
 	)
 	v4l? (
@@ -1057,7 +1073,7 @@ RDEPEND="
 		>=x11-libs/libxkbcommon-0.10.0[${MULTILIB_USEDEP}]
 	)
 	webp? (
-		>=media-libs/libwebp-1.4.0:0[${MULTILIB_USEDEP}]
+		>=media-libs/libwebp-1.6.0:0[${MULTILIB_USEDEP}]
 		media-libs/libwebp:=
 	)
 	xine? (
