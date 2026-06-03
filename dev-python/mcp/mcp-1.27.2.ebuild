@@ -30,6 +30,7 @@ fi
 
 DESCRIPTION="Model Context Protocol SDK"
 HOMEPAGE="
+	https://modelcontextprotocol.io
 	https://github.com/modelcontextprotocol/python-sdk
 	https://pypi.org/project/mcp
 "
@@ -40,12 +41,14 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+=" cli dev doc rich ws"
 RDEPEND+="
-	(
-		>=dev-python/pydantic-2.11.0[${PYTHON_USEDEP}]
-		<dev-python/pydantic-3.0.0[${PYTHON_USEDEP}]
-	)
+	>=dev-python/pydantic-2.11.0[${PYTHON_USEDEP}]
+	<dev-python/pydantic-3.0.0[${PYTHON_USEDEP}]
+
 	>=dev-python/anyio-4.5[${PYTHON_USEDEP}]
+
 	>=dev-python/httpx-0.27.1[${PYTHON_USEDEP}]
+	<dev-python/httpx-1.0.0[${PYTHON_USEDEP}]
+
 	>=dev-python/httpx-sse-0.4[${PYTHON_USEDEP}]
 	>=dev-python/jsonschema-4.20.0[${PYTHON_USEDEP}]
 	>=dev-python/pydantic-settings-2.5.2[${PYTHON_USEDEP}]
@@ -73,7 +76,7 @@ BDEPEND+="
 	dev-python/hatchling[${PYTHON_USEDEP}]
 	dev-python/uv-dynamic-versioning[${PYTHON_USEDEP}]
 	dev? (
-		>=dev-python/coverage-7.10.7[${PYTHON_USEDEP},toml(+)]
+		~dev-python/coverage-7.10.7[${PYTHON_USEDEP},toml(+)]
 		>=dev-python/dirty-equals-0.9.0[${PYTHON_USEDEP}]
 		>=dev-python/inline-snapshot-0.23.0[${PYTHON_USEDEP}]
 		>=dev-python/pyright-1.1.400[${PYTHON_USEDEP}]
