@@ -16,6 +16,7 @@ S="${WORKDIR}/${MY_PN}-${PV}"
 
 DESCRIPTION="Microsoft Azure AI Document Intelligence Client Library for Python"
 HOMEPAGE="
+	https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence
 	https://github.com/Azure/azure-sdk-for-python/tree/main/sdk
 	https://pypi.org/project/azure-ai-documentintelligence
 "
@@ -40,6 +41,10 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	dev? (
+		dev-python/aiohttp[${PYTHON_USEDEP}]
+		dev-python/azure-identity[${PYTHON_USEDEP}]
+	)
 "
 DOCS=( "CHANGELOG.md" "README.md" )
 
