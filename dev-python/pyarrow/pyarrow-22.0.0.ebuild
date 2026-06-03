@@ -6,14 +6,14 @@ EAPI=8
 # arrow.git: testing
 # arrow.git: cpp/submodules/parquet-testing
 
-CXX_STANDARD=20
+CXX_STANDARD=17
 EPYTEST_XDIST=1
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..14} )
 
-ARROW_TESTING_COMMIT="249079a810caedda6898464003c7ef8a47efeeae"
-PARQUET_TESTING_COMMIT="e74785d85a4ecee829e1e405444d6a1b24b8bc9c"
+ARROW_TESTING_COMMIT="9a02925d1ba80bd493b6d4da6e8a777588d57ac4"
+PARQUET_TESTING_COMMIT="a3d96a65e11e2bbca7d22a894e8313ede90a33a3"
 
 CPU_FLAGS_ARM=(
 	"cpu_flags_arm_neon"
@@ -39,15 +39,15 @@ CPU_FLAGS_X86=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX20[@]}"
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX20[@]}"
+	"${LIBCXX_COMPAT_STDCXX17[@]}"
 )
 
-inherit distutils-r1 libcxx-slot libstdcxx-slot multiprocessing
+inherit cython distutils-r1 libcxx-slot libstdcxx-slot multiprocessing
 
 KEYWORDS="~amd64 ~arm64 ~riscv ~x86"
 S="${WORKDIR}/apache-arrow-${PV}/python"
@@ -101,16 +101,44 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	>=dev-python/numpy-1.16.6[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		>=dev-python/numpy-2.3.3[${PYTHON_USEDEP}]
+	' python3_14)
+	$(python_gen_cond_dep '
+		>=dev-python/numpy-2.1.0[${PYTHON_USEDEP}]
+	' python3_13)
+	$(python_gen_cond_dep '
+		>=dev-python/numpy-1.26.0[${PYTHON_USEDEP}]
+	' python3_12)
+	$(python_gen_cond_dep '
+		>=dev-python/numpy-1.23.2[${PYTHON_USEDEP}]
+	' python3_11)
+	$(python_gen_cond_dep '
+		>=dev-python/numpy-1.21.3[${PYTHON_USEDEP}]
+	' python3_10)
 	dev-python/numpy:=
 	~dev-libs/apache-arrow-${PV}[compute,dataset,json,parquet?,re2,snappy?,ssl?]
 "
 BDEPEND="
-	dev-python/build[${PYTHON_USEDEP}]
 	>=dev-python/cython-3.1:3.1[${PYTHON_USEDEP}]
-	>=dev-python/libcst-1.8.6[${PYTHON_USEDEP}]
-	>=dev-python/numpy-2.0[${PYTHON_USEDEP}]
-	dev-python/scikit-build-core[${PYTHON_USEDEP}]
+
+	$(python_gen_cond_dep '
+		>=dev-python/numpy-2.3.3[${PYTHON_USEDEP}]
+	' python3_14)
+	$(python_gen_cond_dep '
+		>=dev-python/numpy-2.1.0[${PYTHON_USEDEP}]
+	' python3_13)
+	$(python_gen_cond_dep '
+		>=dev-python/numpy-1.26.0[${PYTHON_USEDEP}]
+	' python3_12)
+	$(python_gen_cond_dep '
+		>=dev-python/numpy-1.23.2[${PYTHON_USEDEP}]
+	' python3_11)
+	$(python_gen_cond_dep '
+		>=dev-python/numpy-1.21.3[${PYTHON_USEDEP}]
+	' python3_10)
+
+	>=dev-python/setuptools-58[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-scm-8[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
 	test? (
@@ -120,7 +148,6 @@ BDEPEND="
 		dev-python/hypothesis[${PYTHON_USEDEP}]
 		dev-python/pandas[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
-		dev-python/pytest-xdist[${PYTHON_USEDEP}]
 		dev-python/pytz[${PYTHON_USEDEP}]
 		$(python_gen_cond_dep '
 			dev-python/pyuwsgi[${PYTHON_USEDEP}]
@@ -148,6 +175,9 @@ src_prepare() {
 }
 
 python_configure() {
+	cython_set_cython_slot 3.1
+	cython_python_configure
+
 	local mycmakeargs=()
 	local simd_level=""
 	local altivec=$(usex cpu_flags_ppc_altivec "ON" "OFF")
