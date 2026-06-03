@@ -11,4 +11,9 @@
     <remote-id type="github">huggingface/diffusers</remote-id>
     <remote-id type="pypi">diffusers</remote-id>
   </upstream>
+  <use>
+    <flag name="orphans">
+      Install dependencies listed but not required.
+    </flag>
+  </use>
 </pkgmetadata>

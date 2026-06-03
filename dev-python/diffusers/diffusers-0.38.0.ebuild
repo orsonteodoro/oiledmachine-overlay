@@ -46,8 +46,9 @@ LICENSE="
 RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-dev doc flax quality test torch training
-ebuild_revision_3
+bitsandbytes dev doc flashpack flax gguf nvidia_modelopt optimum_quanto orphans
+quality test torch torchao training
+ebuild_revision_4
 "
 REQUIRED_USE="
 	dev? (
@@ -58,22 +59,38 @@ REQUIRED_USE="
 		torch
 		training
 	)
+	quality? (
+		dev
+		torch
+	)
 "
 # The protobuf requirement is relaxed
 RDEPEND+="
 	$(python_gen_cond_dep '
 		!~dev-python/regex-2019.12.17[${PYTHON_USEDEP}]
-		>=dev-python/python-3.8.0[${PYTHON_USEDEP}]
-		>=sci-ml/safetensors-0.3.1[${PYTHON_USEDEP}]
+		>=sci-ml/safetensors-0.8.0_rc0[${PYTHON_USEDEP}]
 		dev-python/filelock[${PYTHON_USEDEP}]
 		dev-python/importlib-metadata[${PYTHON_USEDEP}]
-		dev-python/note_seq[${PYTHON_USEDEP}]
 		dev-python/numpy[${PYTHON_USEDEP}]
 		virtual/pillow[${PYTHON_USEDEP}]
 		dev-python/requests[${PYTHON_USEDEP}]
-		sci-ml/onnx[${PYTHON_USEDEP}]
+
+		<dev-python/httpx-1.0.0[${PYTHON_USEDEP}]
+
+		>=dev-python/huggingface-hub-1.0.0[${PYTHON_USEDEP}]
+		<dev-python/huggingface-hub-1.0.0[${PYTHON_USEDEP}]
+
+		flashpack? (
+			dev-python/flashpack[${PYTHON_USEDEP}]
+		)
+
+		orphans? (
+			dev-python/note-seq[${PYTHON_USEDEP}]
+			sci-ml/onnx[${PYTHON_USEDEP}]
+		)
+
 		training? (
-			>=dev-python/peft-0.6.0[${PYTHON_USEDEP}]
+			>=dev-python/peft-0.17.0[${PYTHON_USEDEP}]
 			dev-python/jinja2[${PYTHON_USEDEP}]
 			|| (
 				dev-python/protobuf:3.12[${PYTHON_USEDEP}]
@@ -82,21 +99,54 @@ RDEPEND+="
 			dev-python/protobuf:=
 		)
 	')
-	>=sci-ml/huggingface_hub-0.23.2[${PYTHON_SINGLE_USEDEP}]
+
+	>=sci-ml/huggingface-hub-0.34.0[${PYTHON_SINGLE_USEDEP}]
+	<sci-ml/huggingface-hub-2.0.0[${PYTHON_SINGLE_USEDEP}]
+
+	bitsandbytes? (
+		>=sci-ml/accelerate-0.31.0[${PYTHON_SINGLE_USEDEP}]
+		$(python_gen_cond_dep '
+			>=dev-python/bitsandbytes-0.43.3[${PYTHON_USEDEP}]
+		')
+	)
 	flax? (
 		>=dev-python/flax-0.4.1[${PYTHON_SINGLE_USEDEP}]
 		>=dev-python/jax-0.4.1[${PYTHON_SINGLE_USEDEP}]
 		>=dev-python/jaxlib-0.4.1[${PYTHON_SINGLE_USEDEP}]
 	)
+	gguf? (
+		$(python_gen_cond_dep '
+			>=dev-python/gguf-0.10.0[${PYTHON_USEDEP}]
+		')
+		>=sci-ml/accelerate-0.31.0[${PYTHON_SINGLE_USEDEP}]
+	)
+	nvidia_modelopt? (
+		>=dev-python/nvidia_modelopt-0.33.1[${PYTHON_SINGLE_USEDEP},hf]
+	)
+	optimum_quanto? (
+		$(python_gen_cond_dep '
+			>=dev-python/optimum_quanto-0.2.6[${PYTHON_USEDEP}]
+		')
+		>=sci-ml/accelerate-0.31.0[${PYTHON_SINGLE_USEDEP}]
+	)
+	orphans? (
+		media-libs/opencv[${PYTHON_SINGLE_USEDEP}]
+		dev-python/timm[${PYTHON_SINGLE_USEDEP}]
+	)
 	training? (
-		>=sci-ml/accelerate-0.29.3[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/accelerate-0.31.0[${PYTHON_SINGLE_USEDEP}]
 		dev-python/datasets[${PYTHON_SINGLE_USEDEP}]
 		sci-visualization/tensorboard[${PYTHON_SINGLE_USEDEP}]
 	)
 	torch? (
+		>=sci-ml/accelerate-0.31.0[${PYTHON_SINGLE_USEDEP}]
 		>=sci-ml/pytorch-1.4[${PYTHON_SINGLE_USEDEP}]
-		dev-python/torchsde[${PYTHON_SINGLE_USEDEP}]
-		>=sci-ml/accelerate-0.29.3[${PYTHON_SINGLE_USEDEP}]
+	)
+	torchao? (
+		$(python_gen_cond_dep '
+			>=dev-python/torchao-0.7.0[${PYTHON_USEDEP}]
+		')
+		>=sci-ml/accelerate-0.31.0[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DEPEND+="
@@ -110,35 +160,47 @@ BDEPEND+="
 			<dev-python/urllib3-2.0.1[${PYTHON_USEDEP}]
 			>=dev-python/hf-doc-builder-0.3.0[${PYTHON_USEDEP}]
 			>=dev-python/isort-5.5.4[${PYTHON_USEDEP}]
-			>=dev-util/ruff-0.1.5
+			~dev-util/ruff-0.9.10
 			dev-python/black[${PYTHON_USEDEP}]
 		)
 		doc? (
 			>=dev-python/hf-doc-builder-0.3.0[${PYTHON_USEDEP}]
 		)
 		test? (
-			(
-				>=sci-ml/sentencepiece-0.1.91[${PYTHON_USEDEP}]
-				!~sci-ml/sentencepiece-0.1.92[${PYTHON_USEDEP}]
-			)
+			>=sci-ml/sentencepiece-0.1.91[${PYTHON_USEDEP}]
+			!~sci-ml/sentencepiece-0.1.92[${PYTHON_USEDEP}]
+
 			<dev-python/GitPython-3.1.19[${PYTHON_USEDEP}]
 			>=dev-python/compel-0.1.8[${PYTHON_USEDEP}]
-			>=dev-python/requests-mock-1.10.0[${PYTHON_USEDEP}]
-			>=sci-ml/safetensors-0.3.1[${PYTHON_USEDEP}]
+			>=dev-python/tiktoken-0.7.0[${PYTHON_USEDEP}]
+			~dev-python/requests-mock-1.10.0[${PYTHON_USEDEP}]
+			>=sci-ml/safetensors-0.8.0_rc0[${PYTHON_USEDEP}]
 			dev-python/datasets[${PYTHON_USEDEP}]
+			dev-python/ftfy[${PYTHON_USEDEP}]
 			dev-python/jinja2[${PYTHON_USEDEP}]
 			dev-python/librosa[${PYTHON_USEDEP}]
 			dev-python/parameterized[${PYTHON_USEDEP}]
+			dev-python/phonemizer[${PYTHON_USEDEP}]
 			dev-python/pytest[${PYTHON_USEDEP}]
 			dev-python/pytest-timeout[${PYTHON_USEDEP}]
 			dev-python/pytest-xdist[${PYTHON_USEDEP}]
 			dev-python/scipy[${PYTHON_USEDEP}]
+
+			|| (
+				dev-python/protobuf:3.12[${PYTHON_USEDEP}]
+				dev-python/protobuf:4.21[${PYTHON_USEDEP}]
+			)
+			dev-python/protobuf:=
+
 		)
 	')
+	quality? (
+		>=dev-python/flax-0.4.1[${PYTHON_SINGLE_USEDEP}]
+	)
 	test? (
 		>=dev-python/invisible-watermark-0.2.0[${PYTHON_SINGLE_USEDEP}]
-		>=dev-python/k-diffusion-0.0.12[${PYTHON_SINGLE_USEDEP}]
-		>=sci-ml/transformers-4.25.1[${PYTHON_SINGLE_USEDEP}]
+		dev-python/torchsde[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/transformers-4.41.2[${PYTHON_SINGLE_USEDEP}]
 		sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 	)
 "
@@ -149,8 +211,6 @@ src_unpack() {
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
 		git-r3_checkout
-		grep -q -e "version=\"0.29.0\"," "${S}/setup.py" \
-			|| die "QA:  Bump version"
 	else
 		unpack ${A}
 	fi
