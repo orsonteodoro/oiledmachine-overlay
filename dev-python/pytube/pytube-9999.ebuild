@@ -4,7 +4,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream only test up to 3.11
+PYTHON_COMPAT=( "python3_"{10..12} ) # Upstream only test up to 3.11, 3.12 needed for Open WebUI
 
 inherit distutils-r1
 
