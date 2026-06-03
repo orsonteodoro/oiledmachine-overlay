@@ -5,7 +5,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="poetry"
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{10..14} )
 
 inherit distutils-r1 pypi
 
@@ -25,7 +25,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror test" # Untested
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+=" dev test"
 RDEPEND+="
 	${PYTHON_DEPS}
@@ -37,13 +37,13 @@ DEPEND+="
 "
 BDEPEND+="
 	${PYTHON_DEPS}
+	dev-python/poetry-core[${PYTHON_USEDEP}]
 	dev? (
 		>=dev-util/ruff-0.6.8
 	)
 	test? (
 		>=dev-python/coverage-7.6.1[${PYTHON_USEDEP}]
-		>=dev-python/mock-5.1.0[${PYTHON_USEDEP}]
-		>=dev-python/httpretty-1.1.4[${PYTHON_USEDEP}]
+		<dev-python/httpretty-1.1[${PYTHON_USEDEP}]
 		>=dev-python/pytest-8.3.3[${PYTHON_USEDEP}]
 	)
 "
@@ -54,8 +54,6 @@ src_unpack() {
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
 		git-r3_checkout
-		grep -q -e "version = \"1.8.2\"" "${S}/pyproject.toml" \
-			|| die "QA:  Bump version"
 	else
 		unpack ${A}
 	fi
