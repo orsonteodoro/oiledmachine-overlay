@@ -191,7 +191,6 @@ RDEPEND+="
 		>=dev-python/asgiref-3.11.1[${PYTHON_USEDEP}]
 		>=dev-python/async-timeout-5.0.1[${PYTHON_USEDEP}]
 		>=dev-python/authlib-1.6.10[${PYTHON_USEDEP}]
-		>=dev-python/av-14.0.1[${PYTHON_USEDEP}]
 		>=dev-python/azure-ai-documentintelligence-1.0.2[${PYTHON_USEDEP}]
 		>=dev-python/azure-identity-1.25.2[${PYTHON_USEDEP}]
 		>=dev-python/azure-storage-blob-12.28.0[${PYTHON_USEDEP}]
@@ -319,6 +318,7 @@ RDEPEND+="
 		)
 	')
 	>=dev-python/accelerate-1.13.0[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/av-14.0.1[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/chromadb-1.5.2[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/faster-whisper-1.2.1[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/rapidocr-onnxruntime-1.4.4[${PYTHON_SINGLE_USEDEP}]
