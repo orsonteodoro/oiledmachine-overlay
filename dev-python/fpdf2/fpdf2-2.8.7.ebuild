@@ -45,7 +45,7 @@ RDEPEND+="
 	dev-python/defusedxml[${PYTHON_USEDEP}]
 	>=dev-python/fonttools-4.34.0[${PYTHON_USEDEP}]
 	!=dev-python/pillow-9.2*
-	virtual/pillow[${PYTHON_USEDEP}]
+	virtual/pillow[${PYTHON_USEDEP},jpeg,jpeg2k,tiff,truetype,zlib]
 "
 DEPEND+="
 	${RDEPEND}
