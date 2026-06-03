@@ -8,8 +8,11 @@ EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
 DISTUTILS_EXT=1
-PYTHON_COMPAT=( "python3_"{10..12} )
-LLVM_COMPAT=( {15..14} )
+PYTHON_COMPAT=( "python3_"{10..14} )
+
+# See FALLBACK_LLVMDEV_VERSION in https://github.com/numba/llvmlite/blob/v0.47.0/.github/workflows/llvmlite_linux-64_wheel_builder.yml
+# See https://github.com/numba/llvmlite/blob/v0.47.0/README.rst#compatibility
+LLVM_COMPAT=( 20 )
 
 inherit check-compiler-switch distutils-r1 flag-o-matic toolchain-funcs
 
@@ -56,19 +59,15 @@ REQUIRED_USE="
 	)
 "
 RDEPEND+="
-	(
-		>=dev-python/numpy-1.22[${PYTHON_USEDEP}]
-		<dev-python/numpy-1.27[${PYTHON_USEDEP}]
-	)
+	>=dev-python/numpy-1.22[${PYTHON_USEDEP}]
+	<dev-python/numpy-2.5[${PYTHON_USEDEP}]
+
 	cuda? (
 		>=dev-util/nvidia-cuda-toolkit-11.2
 		dev-python/cuda-python[${PYTHON_USEDEP}]
 	)
-	llvm_slot_15? (
-		=dev-python/llvmlite-0.43*[${PYTHON_USEDEP}]
-	)
-	llvm_slot_14? (
-		=dev-python/llvmlite-0.42*[${PYTHON_USEDEP}]
+	llvm_slot_20? (
+		=dev-python/llvmlite-0.47*[${PYTHON_USEDEP}]
 	)
 	tbb? (
 		>=dev-cpp/tbb-2021.1:0
@@ -94,6 +93,10 @@ BDEPEND+="
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/versioneer[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
+
+	>=dev-python/numpy-2.0.0_rc1[${PYTHON_USEDEP}]
+	<dev-python/numpy-2.5[${PYTHON_USEDEP}]
+
 	!clang? (
 		sys-devel/gcc[openmp]
 	)
