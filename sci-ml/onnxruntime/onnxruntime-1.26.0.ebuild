@@ -357,9 +357,7 @@ ROCM_SLOTS=(
 
 inherit cflags-hardened check-compiler-switch cmake cuda dep-prepare distutils-r1 flag-o-matic libcxx-slot libstdcxx-slot llvm-r1 rocm toolchain-funcs
 
-# Vendored packages need to be added or reviewed for compleness.
-# The reason for delay is submodule hell (the analog of dll hell or dependency hell).
-#KEYWORDS="~amd64"
+KEYWORDS="~amd64"
 if [[ "${ENABLE_WEBGPU}" == "1" ]] ; then
 	SRC_URI+="
 	webgpu? (
