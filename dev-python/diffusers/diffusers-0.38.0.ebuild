@@ -48,7 +48,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 bitsandbytes dev doc flashpack flax gguf nvidia_modelopt optimum_quanto orphans
 quality test torch torchao training
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	dev? (
@@ -76,9 +76,6 @@ RDEPEND+="
 		dev-python/requests[${PYTHON_USEDEP}]
 
 		<dev-python/httpx-1.0.0[${PYTHON_USEDEP}]
-
-		>=dev-python/huggingface-hub-1.0.0[${PYTHON_USEDEP}]
-		<dev-python/huggingface-hub-1.0.0[${PYTHON_USEDEP}]
 
 		flashpack? (
 			dev-python/flashpack[${PYTHON_USEDEP}]

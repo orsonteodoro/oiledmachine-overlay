@@ -62,7 +62,7 @@ accelerate agents all audio av benchmark chat_template codecarbon deepspeed
 deepspeed-testing dev doc integrations kernels mistral-common natten num2words
 optuna orphans pillow torch quality ray retrieval sentencepiece serving sagemaker
 sklearn test tiktoken timm torchhub tokenizers video vision
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE="
 	all? (
@@ -210,8 +210,8 @@ RDEPEND="
 			<virtual/pillow-15.0[${PYTHON_USEDEP}]
 		)
 	')
-	>=dev-python/huggingface-hub-1.5.0[${PYTHON_SINGLE_USEDEP}]
-	<dev-python/huggingface-hub-2.0[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/huggingface-hub-1.5.0[${PYTHON_SINGLE_USEDEP}]
+	<sci-ml/huggingface-hub-2.0[${PYTHON_SINGLE_USEDEP}]
 	=sci-ml/tokenizers-0.22*[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/tokenizers:=
 	accelerate? (

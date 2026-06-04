@@ -45,7 +45,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 all dev server test
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	all? (
@@ -92,11 +92,11 @@ BDEPEND+="
 		)
 		>=dev-python/fastapi-0.100.0[${PYTHON_USEDEP}]
 		>=dev-python/httpx-0.24.1[${PYTHON_USEDEP}]
-		>=dev-python/huggingface-hub-0.23.0[${PYTHON_USEDEP}]
 		>=dev-python/pydantic-settings-2.0.1[${PYTHON_USEDEP}]
 		>=dev-python/pytest-7.4.0[${PYTHON_USEDEP}]
 		>=dev-python/scipy-1.10[${PYTHON_USEDEP}]
 		>=dev-python/sse-starlette-1.6.1[${PYTHON_USEDEP}]
+		>=sci-ml/huggingface-hub-0.23.0[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "CHANGELOG.md" "README.md" )
