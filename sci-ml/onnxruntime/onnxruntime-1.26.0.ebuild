@@ -1300,7 +1300,6 @@ BDEPEND+="
 "
 _PATCHES=(
 	"${FILESDIR}/${PN}-1.26.0-onnx_proto-visibility.patch"
-	"${FILESDIR}/${PN}-1.20.2-fix-eigen-external-deps.patch"
 )
 
 pkg_setup() {
