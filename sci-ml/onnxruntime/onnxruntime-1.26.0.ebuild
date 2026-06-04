@@ -690,8 +690,6 @@ https://github.com/google/dawn/archive/${DAWN_COMMIT_1}.tar.gz
 
 https://github.com/google/langsvr/archive/${LANGSVR_COMMIT}.tar.gz
 	-> langsvr-${LANGSVR_COMMIT:0:7}.tar.gz
-https://github.com/google/libprotobuf-mutator/archive/${LIBPROTOBUF_MUTATOR_COMMIT_1}.tar.gz
-	-> libprotobuf-mutator-${LIBPROTOBUF_MUTATOR_COMMIT_1:0:7}.tar.gz
 https://github.com/google/libprotobuf-mutator/archive/${LIBPROTOBUF_MUTATOR_COMMIT_2}.tar.gz
 	-> libprotobuf-mutator-${LIBPROTOBUF_MUTATOR_COMMIT_2:0:7}.tar.gz
 
@@ -783,6 +781,8 @@ https://github.com/emscripten-core/emsdk/archive/refs/tags/${EMSDK_PV}.tar.gz
 	-> emsdk-${EMSDK_PV}.tar.gz
 https://github.com/google/flatbuffers/archive/v${FLATBUFFERS_PV}.tar.gz
 	-> flatbuffers-${FLATBUFFERS_PV}.tar.gz
+https://github.com/google/libprotobuf-mutator/archive/${LIBPROTOBUF_MUTATOR_COMMIT_1}.tar.gz
+	-> libprotobuf-mutator-${LIBPROTOBUF_MUTATOR_COMMIT_1:0:7}.tar.gz
 https://github.com/google/re2/archive/refs/tags/${RE2_PV}.tar.gz
 	-> re2-${RE2_PV}.tar.gz
 https://github.com/HowardHinnant/date/archive/v${DATE_PV_1}.tar.gz
@@ -970,7 +970,7 @@ ${ROCM_SLOTS[@]}
 openvino-auto
 openvino-hetero
 openvino-multi
-ebuild_revision_28
+ebuild_revision_29
 "
 gen_cuda_required_use() {
 	local x
@@ -1130,10 +1130,6 @@ DISABLED_RDEPEND="
 	(
 		>=dev-libs/flatbuffers-23.5.26
 		dev-libs/flatbuffers:=
-	)
-	(
-		>=dev-libs/nsync-1.26.0
-		dev-libs/nsync:=
 	)
 	(
 		>=dev-libs/protobuf-21.12:0/3.21
@@ -1303,8 +1299,6 @@ BDEPEND+="
 	)
 "
 _PATCHES=(
-	"${FILESDIR}/${PN}-1.20.0-use-system-composable-kernel.patch"
-	"${FILESDIR}/${PN}-1.20.0-drop-nsync.patch"
 	"${FILESDIR}/${PN}-1.19.2-onnx_proto-visibility.patch"
 	"${FILESDIR}/${PN}-1.20.2-fix-eigen-external-deps.patch"
 )
@@ -1503,32 +1497,33 @@ _unpack() {
 		local is_protoc_submodule=0
 		local row
 
-		if use webgpu ; then
-			for row in ${NO_ROOT_DIR_TARBALLS[@]} ; do
-				local f2="${row%;*}"
-				local path="${row#*;}"
-				if [[ "${f}" == "${f2}" ]] ; then
-					mkdir -p "${WORKDIR}/${path}" || die
-					pushd "${WORKDIR}/${path}" >/dev/null 2>&1 || die
-						unpack "${f}"
-					popd >/dev/null 2>&1 || die
-					is_no_root_submodule=1
-					break
-				fi
-			done
-			for row in ${PROTOC_TARBALLS[@]} ; do
-				local f2="${row%;*}"
-				local path="${row#*;}"
-				if [[ "${f}" == "${f2}" ]] ; then
-					mkdir -p "${WORKDIR}/${path}" || die
-					pushd "${WORKDIR}/${path}" >/dev/null 2>&1 || die
-						unpack "${f}"
-					popd >/dev/null 2>&1 || die
-					is_protoc_submodule=1
-					break
-				fi
-			done
-		fi
+		[[ -e "${DISTDIR}/${f}" ]] || continue
+
+		for row in ${NO_ROOT_DIR_TARBALLS[@]} ; do
+			local f2="${row%;*}"
+			local path="${row#*;}"
+			if [[ "${f}" == "${f2}" ]] ; then
+				mkdir -p "${WORKDIR}/${path}" || die
+				pushd "${WORKDIR}/${path}" >/dev/null 2>&1 || die
+					unpack "${f}"
+				popd >/dev/null 2>&1 || die
+				is_no_root_submodule=1
+				break
+			fi
+		done
+		for row in ${PROTOC_TARBALLS[@]} ; do
+			local f2="${row%;*}"
+			local path="${row#*;}"
+			if [[ "${f}" == "${f2}" ]] ; then
+				mkdir -p "${WORKDIR}/${path}" || die
+				pushd "${WORKDIR}/${path}" >/dev/null 2>&1 || die
+					unpack "${f}"
+				popd >/dev/null 2>&1 || die
+				is_protoc_submodule=1
+				break
+			fi
+		done
+
 		if (( ${is_no_root_submodule} == 0 && ${is_protoc_submodule} == 0 )) ; then
 			unpack "${f}"
 		fi
@@ -2095,7 +2090,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DFETCHCONTENT_SOURCE_DIR_CXXOPTS="${S}/cmake/external/flatbuffers/third_party/cxxopts"
 		-DFETCHCONTENT_SOURCE_DIR_DATE="${S}/cmake/external/date-1"
 		-DFETCHCONTENT_SOURCE_DIR_FLATBUFFERS="${S}/cmake/external/flatbuffers"
-		-DFETCHCONTENT_SOURCE_DIR_GOOGLE_NSYNC="${S}/cmake/external/google_nsync"
 		-DFETCHCONTENT_SOURCE_DIR_GSL="${S}/cmake/external/microsoft_gsl"
 		-DFETCHCONTENT_SOURCE_DIR_MP11="${S}/cmake/external/mp11"
 		-DFETCHCONTENT_SOURCE_DIR_MICROSOFT_WIL="${S}/cmake/external/microsoft_wil"
