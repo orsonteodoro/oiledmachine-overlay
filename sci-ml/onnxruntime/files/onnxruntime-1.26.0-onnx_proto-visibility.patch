@@ -1,0 +1,11 @@
+--- a/cmake/external/onnx/CMakeLists.txt.orig	2026-03-27 10:18:24.000000000 -0700
++++ b/cmake/external/onnx/CMakeLists.txt	2026-06-04 15:04:39.993910374 -0700
+@@ -419,7 +419,7 @@ add_onnx_global_defines(onnx_proto)
+ 
+ add_library(onnx ${ONNX_SRCS} ${ONNX_PROTO_SRCS})
+ add_dependencies(onnx onnx_proto)
+-set_source_files_properties(${ONNX_SRCS} PROPERTIES CXX_VISIBILITY_PRESET hidden)
++#set_source_files_properties(${ONNX_SRCS} PROPERTIES CXX_VISIBILITY_PRESET hidden)
+ add_onnx_global_defines(onnx)
+ 
+ if(ONNX_BUILD_PYTHON)
