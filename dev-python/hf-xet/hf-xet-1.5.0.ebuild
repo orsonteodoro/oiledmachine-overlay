@@ -661,7 +661,7 @@ zerovec-derive-0.11.3
 zmij-1.0.21
 "
 
-inherit cargo distutils-r1 rustflags-hardened
+inherit cargo distutils-r1 lcnr rustflags-hardened
 
 SRC_URI+="
 $(cargo_crate_uris ${CRATES})
@@ -682,7 +682,11 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
-IUSE+=" test"
+# Upstream enables lto by default
+IUSE+="
+lto test
+ebuild_revision_1
+"
 RDEPEND+="
 "
 DEPEND+="
@@ -711,6 +715,12 @@ src_configure() {
 	export CARGO_TERM_VERBOSE="true"
 	rustflags-hardened_append
 	cargo_src_configure
+	local lto=$(usex lto "true" "false")
+	sed -i \
+		-e "lto = ${lto}" \
+		"hf_xet/Cargo.toml" \
+		"Cargo.toml" \
+		|| die
 }
 
 python_compile() {
@@ -723,6 +733,10 @@ src_install() {
 	distutils-r1_src_install
 	docinto "licenses"
 	dodoc "LICENSE"
+
+	LCNR_SOURCE="${WORKDIR}/cargo_home/gentoo"
+	LCNR_TAG="third_party"
+        lcnr_install_files
 }
 
 # OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD
