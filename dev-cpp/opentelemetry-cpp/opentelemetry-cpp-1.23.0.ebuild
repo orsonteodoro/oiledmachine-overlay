@@ -3,8 +3,8 @@
 
 EAPI=8
 
-# Protobuf version reference:
-# https://github.com/open-telemetry/opentelemetry-cpp/blob/v1.23.0/MODULE.bazel
+# For deps versions, see:
+# https://github.com/open-telemetry/opentelemetry-cpp/blob/v1.23.0/third_party_release#L20
 
 _CXX_STANDARD=(
 	"cxx_standard_cxx14"
@@ -21,12 +21,12 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-ABSEIL_CPP_SLOT="20240722"
+ABSEIL_CPP_SLOT="20220623"
 CXX_STANDARD=17
-GRPC_SLOT="5"
-OPENTELEMETRY_PROTO_PV="1.3.1"
-PROTOBUF_CPP_SLOT="5"
-RE2_SLOT="20250512"
+GRPC_SLOT="3"
+OPENTELEMETRY_PROTO_PV="1.7.0"
+PROTOBUF_CPP_SLOT="3"
+RE2_SLOT="20220623"
 
 inherit abseil-cpp cmake dep-prepare grpc libcxx-slot libstdcxx-slot protobuf re2
 
@@ -49,7 +49,7 @@ RESTRICT="
 		test
 	)
 "
-SLOT="${PROTOBUF_CPP_SLOT}/$(ver_cut 1-2 ${PV})"
+SLOT="${PROTOBUF_CPP_SLOT}/"$(ver_cut "1-2" "${PV}")
 IUSE="
 ${_CXX_STANDARD[@]}
 -otlp-file -otlp-grpc -otlp-http -prometheus test -zlib
@@ -73,7 +73,7 @@ RDEPEND="
 		net-libs/grpc:=
 	)
 	otlp-http? (
-		>=net-misc/curl-8.8.0
+		>=net-misc/curl-8.12.0
 		net-misc/curl:=
 	)
 	prometheus? (
@@ -94,7 +94,7 @@ DEPEND="
 "
 BDEPEND="
 	test? (
-		>=dev-cpp/benchmark-1.8.4[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-cpp/benchmark-1.8.3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		>=dev-cpp/gtest-1.14.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 "
