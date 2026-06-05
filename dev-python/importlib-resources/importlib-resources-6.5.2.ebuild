@@ -18,7 +18,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-	#KEYWORDS="~amd64" # Missing coherent-licensed package
+	KEYWORDS="~amd64"
 	S="${WORKDIR}/${PN}-${PV}"
 	SRC_URI="
 https://github.com/python/importlib_resources/archive/refs/tags/v${PV}.tar.gz
@@ -46,9 +46,8 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	dev-python/coherent-licensed[${PYTHON_USEDEP}]
 	check? (
-		>=dev-python/pytest-checkdocs-2.14[${PYTHON_USEDEP}]
+		>=dev-python/pytest-checkdocs-2.4[${PYTHON_USEDEP}]
 		>=dev-python/pytest-ruff-0.2.1[${PYTHON_USEDEP}]
 	)
 	cover? (
@@ -64,7 +63,7 @@ BDEPEND+="
 		>=dev-python/jaraco-tidelift-1.4[${PYTHON_USEDEP}]
 	)
 	enabler? (
-		>=dev-python/pytest-enabler-3.4[${PYTHON_USEDEP}]
+		>=dev-python/pytest-enabler-2.2[${PYTHON_USEDEP}]
 	)
 	test? (
 		>=dev-python/pytest-6[${PYTHON_USEDEP}]
@@ -74,9 +73,7 @@ BDEPEND+="
 		>=dev-python/jaraco-test-5.4[${PYTHON_USEDEP}]
 	)
 	type? (
-		$(python_gen_cond_dep '
-			>=dev-python/pytest-mypy-1.0.1[${PYTHON_USEDEP}]
-		' python3_{10..12})
+		dev-python/pytest-mypy[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "NEWS.rst" "README.rst" )
