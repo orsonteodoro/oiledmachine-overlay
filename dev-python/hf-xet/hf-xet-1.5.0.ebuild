@@ -736,11 +736,8 @@ python_compile() {
 		"${S}/hf_xet/Cargo.toml" \
 		"${S}/Cargo.toml" \
 		|| die
-#	cd "${WORKDIR}/xet-core-${PV}" || die
-#	cargo_src_compile
 
 	cd "${WORKDIR}/xet-core-${PV}/hf_xet" || die
-#	cargo_src_compile
 
 	export BUILD_DIR="${WORKDIR}/xet-core-${PV}/hf_xet"
 	distutils-r1_python_compile
