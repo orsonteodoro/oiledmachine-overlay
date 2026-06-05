@@ -725,7 +725,7 @@ src_configure() {
 
 python_compile() {
 	cargo_src_compile
-	S="${WORKDIR}/xet-core-${PV}" \
+	S="${WORKDIR}/xet-core-${PV}/hf_xet" \
 	distutils-r1_python_compile
 }
 
