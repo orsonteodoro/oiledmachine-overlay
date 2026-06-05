@@ -7,6 +7,7 @@ EAPI=8
 MY_PN="${PN/-/_}"
 MY_P="${PN/-/_}-${PV}"
 
+DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="maturin"
 PYTHON_COMPAT=( "python3_"{10..14} "pypy3_11" )
 RUST_MAX_VER="1.91.1"
@@ -685,7 +686,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 # Upstream enables lto by default
 IUSE+="
 lto test
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND+="
 "
@@ -714,6 +715,7 @@ src_unpack() {
 src_configure() {
 	export CARGO_TERM_VERBOSE="true"
 	rustflags-hardened_append
+	S="${WORKDIR}/xet-core-${PV}" \
 	cargo_src_configure
 	local lto=$(usex lto "true" "false")
 	sed -i \
@@ -724,9 +726,39 @@ src_configure() {
 }
 
 python_compile() {
-	cargo_src_compile
-	S="${WORKDIR}/xet-core-${PV}/hf_xet" \
+	export PYTHON_SYS_EXECUTABLE="${PYTHON}"
+	local pypv="${EPYTHON}"
+	pypv="${pypv/./}"
+	pypv="${pypv/python/}"
+	sed -i \
+		-r -e "s|abi3-py[0-9]+|abi3-py${pypv}|g" \
+		"${S}/xet_data/Cargo.toml" \
+		"${S}/hf_xet/Cargo.toml" \
+		"${S}/Cargo.toml" \
+		|| die
+#	cd "${WORKDIR}/xet-core-${PV}" || die
+#	cargo_src_compile
+
+	cd "${WORKDIR}/xet-core-${PV}/hf_xet" || die
+#	cargo_src_compile
+
+	export BUILD_DIR="${WORKDIR}/xet-core-${PV}/hf_xet"
 	distutils-r1_python_compile
+
+	local wheel_path=$(realpath "${WORKDIR}/xet-core-${PV}/hf_xet/target/wheels/hf_xet-${PV}-cp${pypv}-abi3-linux_"*".whl")
+	einfo "wheel_path=${wheel_path}"
+	local d="${WORKDIR}/xet-core-${PV}-${EPYTHON/./_}/install"
+	distutils_wheel_install "${d}" \
+		"${wheel_path}"
+
+	# Unbreak die check
+	mkdir -p "${d}/usr/bin"
+	touch "${d}/usr/bin/"{"${EPYTHON}","python3","python","pyvenv.cfg"}
+	mv "${d}/usr/bin/pyvenv.cfg" "${d}/usr/bin/../pyvenv.cfg" || die
+}
+
+python_install() {
+	distutils-r1_python_install
 }
 
 src_install() {
