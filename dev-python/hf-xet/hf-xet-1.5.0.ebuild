@@ -717,7 +717,7 @@ src_configure() {
 	cargo_src_configure
 	local lto=$(usex lto "true" "false")
 	sed -i \
-		-e "lto = ${lto}" \
+		-e "s|lto = true|lto = ${lto}|g" \
 		"hf_xet/Cargo.toml" \
 		"Cargo.toml" \
 		|| die
