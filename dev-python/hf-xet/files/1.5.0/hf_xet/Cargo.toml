@@ -1,0 +1,72 @@
+[package]
+name = "hf_xet"
+version = "1.5.0"
+edition = "2024"
+license = "Apache-2.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+name = "hf_xet"
+crate-type = ["cdylib", "lib"]
+
+[dependencies]
+xet-pkg = { package = "hf-xet", path = "../xet_pkg", features = ["python"] }
+xet-runtime = { path = "../xet_runtime" }
+xet-client = { path = "../xet_client" }
+
+pprof = { version = "0.14", features = [
+    "flamegraph",
+    "prost",
+    "protobuf-codec",
+], optional = true }
+pyo3 = { version = "0.26", features = [
+    "abi3-py37",
+    "auto-initialize",
+] }
+async-trait = "0.1"
+http = "1"
+itertools = "0.14"
+lazy_static = "1.5"
+rand = "0.10"
+tracing = "0.1"
+
+# Unix-specific dependencies
+[target.'cfg(unix)'.dependencies]
+signal-hook = "0.3"
+
+# Windows-specific dependencies
+[target.'cfg(windows)'.dependencies]
+winapi = { version = "0.3", features = ["consoleapi", "wincon", "errhandlingapi"] }
+
+[features]
+default = ["no-default-cache", "elevated_information_level"] # By default, hf_xet disables the disk cache and uses aggressive logging level
+extension-module = ["pyo3/extension-module"] # Only enabled when building with maturin
+native-tls = ["xet-pkg/native-tls"]
+native-tls-vendored = ["xet-pkg/native-tls-vendored"]
+no-default-cache = ["xet-pkg/no-default-cache"]
+profiling = ["pprof"]
+tokio-console = ["xet-pkg/tokio-console"]
+elevated_information_level = ["xet-pkg/elevated_information_level"]
+
+[profile.release]
+split-debuginfo = "packed"
+opt-level = "s"
+lto = true
+codegen-units = 1
+
+# on manylinux and macos maturin + split-debuginfo doesn't output debug symbols for .so objects,
+# so we need a different profile to build. For mac, the below settings will output a .dSYM
+# file. For Linux, we are stripping them manually using binutils.
+[profile.release-dbgsymbols]
+inherits = "release"
+debug = true
+split-debuginfo = "none"
+
+
+[dev-dependencies]
+tempfile = "3"
+
+[profile.opt-test]
+inherits = "dev"
+debug = true
+opt-level = 3
