@@ -9,7 +9,7 @@ EAPI=8
 # sphinx-markdown-tables
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_11" )
+PYTHON_COMPAT=( "python3_"{10..14} )
 
 inherit distutils-r1 pypi
 
@@ -17,7 +17,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/kubernetes-client/python.git"
-	FALLBACK_COMMIT="bc4fd671bfa702007e090ae3ae28bf28bc9c3a6e" # Feb 18, 2025
+	FALLBACK_COMMIT="1f2df0359a6f48c20581ccc5f120105b3e99f07f" # Jun 1, 2026
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
 	inherit git-r3
@@ -40,39 +40,49 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" adal test"
+IUSE+=" adal aiohttp google-auth test"
 RDEPEND+="
-	(
-		>=dev-python/websocket-client-0.32.0[${PYTHON_USEDEP}]
-		!=dev-python/websocket-client-0.40.0
-		!=dev-python/websocket-client-0.41*
-		!=dev-python/websocket-client-0.42*
-	)
+	>=dev-python/websocket-client-0.32.0[${PYTHON_USEDEP}]
+	!~dev-python/websocket-client-0.40.0
+	!=dev-python/websocket-client-0.41*
+	!=dev-python/websocket-client-0.42*
+
 	>=dev-python/certifi-14.05.14[${PYTHON_USEDEP}]
 	>=dev-python/durationpy-0.7[${PYTHON_USEDEP}]
 	>=dev-python/google-auth-1.0.1[${PYTHON_USEDEP}]
 	>=dev-python/oauthlib-3.2.2[${PYTHON_USEDEP}]
 	>=dev-python/python-dateutil-2.5.3[${PYTHON_USEDEP}]
-	>=dev-python/pyyaml-5.4.1[${PYTHON_USEDEP}]
+	>=dev-python/pyyaml-6.0.3[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-21.0.0[${PYTHON_USEDEP}]
 	>=dev-python/six-1.9.0[${PYTHON_USEDEP}]
+
 	>=dev-python/urllib3-1.24.2[${PYTHON_USEDEP}]
+	!~dev-python/urllib3-2.6.0[${PYTHON_USEDEP}]
+
 	dev-python/requests[${PYTHON_USEDEP}]
 	dev-python/requests-oauthlib[${PYTHON_USEDEP}]
 	adal? (
 		>=dev-python/adal-1.0.2[${PYTHON_USEDEP}]
+	)
+	aiohttp? (
+		>=dev-python/aiohttp-3.13.5[${PYTHON_USEDEP}]
+		<dev-python/aiohttp-4.0.0[${PYTHON_USEDEP}]
+	)
+	google-auth? (
+		>=dev-python/google-auth-1.0.1[${PYTHON_USEDEP}]
 	)
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	>=dev-python/setuptools-21.0.0[${PYTHON_USEDEP}]
 	test? (
 		>=dev-python/coverage-4.0.3[${PYTHON_USEDEP}]
 		>=dev-python/nose-1.3.7[${PYTHON_USEDEP}]
-		>=dev-python/pluggy-0.3.1[${PYTHON_USEDEP}]
+		>=dev-python/pluggy-1.6.0[${PYTHON_USEDEP}]
 		>=dev-python/randomize-0.13[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-1.4[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-8.1.3[${PYTHON_USEDEP}]
 		dev-python/autopep8[${PYTHON_USEDEP}]
 		dev-python/isort[${PYTHON_USEDEP}]
 		dev-python/pycodestyle[${PYTHON_USEDEP}]
