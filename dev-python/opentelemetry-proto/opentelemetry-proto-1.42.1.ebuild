@@ -4,7 +4,7 @@
 
 EAPI=8
 
-MY_PN="opentelemetry_exporter_otlp_proto_common"
+MY_PN="opentelemetry_proto"
 
 DISTUTILS_USE_PEP517="hatchling"
 PROTOBUF_CPP_SLOT="5"
@@ -15,42 +15,47 @@ inherit abseil-cpp distutils-r1 protobuf pypi
 KEYWORDS="~amd64"
 S="${WORKDIR}/${MY_PN}-${PV}"
 
-DESCRIPTION="OpenTelemetry Protobuf encoding"
+DESCRIPTION="OpenTelemetry Python Proto"
 HOMEPAGE="
-	https://github.com/open-telemetry/opentelemetry-python/tree/main/exporter/opentelemetry-exporter-otlp-proto-common
-	https://pypi.org/project/opentelemetry-exporter-otlp-proto-common
+	https://github.com/open-telemetry/opentelemetry-python/tree/main/opentelemetry-proto
+	https://pypi.org/project/opentelemetry-proto
 "
 LICENSE="
-	MIT
+	Apache-2.0
 "
 RESTRICT="mirror"
 SLOT="${PROTOBUF_CPP_SLOT}/$(ver_cut 1-2 ${PV})" # Use PYTHONPATH for multislot package
 IUSE+="
 test
-ebuild_revision_3
+ebuild_revision_7
 "
 RDEPEND+="
-	~dev-python/opentelemetry-proto-${PV}:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
-	dev-python/opentelemetry-proto:=
+	|| (
+		dev-python/protobuf:5[${PYTHON_USEDEP}]
+		dev-python/protobuf:6[${PYTHON_USEDEP}]
+	)
+	dev-python/protobuf:=
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
 	test? (
-		>=dev-python/asgiref-3.7.2[${PYTHON_USEDEP}]
-		>=dev-python/importlib-metadata-6.11.0[${PYTHON_USEDEP}]
-		>=dev-python/iniconfig-2.0.0[${PYTHON_USEDEP}]
-		>=dev-python/packaging-24.0[${PYTHON_USEDEP}]
-		>=dev-python/pluggy-1.5.0[${PYTHON_USEDEP}]
-		>=dev-python/protobuf-5.26.1:5.29[${PYTHON_USEDEP}]
+		$(python_gen_cond_dep '
+			~dev-python/exceptiongroup-1.3.1[${PYTHON_USEDEP}]
+			~dev-python/tomli-2.4.1[${PYTHON_USEDEP}]
+			~dev-python/typing-extensions-4.15.0[${PYTHON_USEDEP}]
+		' python3_10)
+		~dev-python/colorama-0.4.6[${PYTHON_USEDEP}]
+		~dev-python/iniconfig-2.3.0[${PYTHON_USEDEP}]
+		~dev-python/packaging-26.0[${PYTHON_USEDEP}]
+		|| (
+			dev-python/protobuf:5[${PYTHON_USEDEP}]
+			dev-python/protobuf:6[${PYTHON_USEDEP}]
+		)
 		dev-python/protobuf:=
-		>=dev-python/py-cpuinfo-9.0.0[${PYTHON_USEDEP}]
-		>=dev-python/pytest-7.4.4[${PYTHON_USEDEP}]
-		>=dev-python/tomli-2.0.1[${PYTHON_USEDEP}]
-		>=dev-python/typing-extensions-4.10.0[${PYTHON_USEDEP}]
-		>=dev-python/wrapt-1.16.0[${PYTHON_USEDEP}]
-		>=dev-python/zipp-3.19.2[${PYTHON_USEDEP}]
+		~dev-python/pluggy-1.6.0[${PYTHON_USEDEP}]
+		~dev-python/pytest-7.4.4[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "README.rst" )
@@ -60,10 +65,14 @@ src_unpack() {
 }
 
 python_configure() {
-	if has_version "dev-libs/protobuf:5/5.29" ; then
+	if has_version "dev-libs/python:5/5.29" ; then
 		ABSEIL_CPP_SLOT="20240722"
 		PROTOBUF_CPP_SLOT="5"
 		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_5}"
+	elif has_version "dev-libs/python:6/6.33" ; then
+		ABSEIL_CPP_SLOT="20250512"
+		PROTOBUF_CPP_SLOT="6"
+		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_6}"
 	fi
 	abseil-cpp_python_configure
 	protobuf_python_configure

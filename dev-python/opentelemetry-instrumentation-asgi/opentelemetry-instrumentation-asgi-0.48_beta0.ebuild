@@ -52,18 +52,18 @@ DEPEND+="
 "
 BDEPEND+="
 	test? (
-		>=dev-python/asgiref-3.7.2[${PYTHON_USEDEP}]
-		>=dev-python/deprecated-1.2.14[${PYTHON_USEDEP}]
-		>=dev-python/importlib-metadata-6.11.0[${PYTHON_USEDEP}]
-		>=dev-python/iniconfig-2.0.0[${PYTHON_USEDEP}]
-		>=dev-python/packaging-24.0[${PYTHON_USEDEP}]
-		>=dev-python/pluggy-1.5.0[${PYTHON_USEDEP}]
-		>=dev-python/py-cpuinfo-9.0.0[${PYTHON_USEDEP}]
-		>=dev-python/pytest-7.4.4[${PYTHON_USEDEP}]
-		>=dev-python/tomli-2.0.1[${PYTHON_USEDEP}]
-		>=dev-python/typing-extensions-4.9.2[${PYTHON_USEDEP}]
-		>=dev-python/wrapt-1.16.0[${PYTHON_USEDEP}]
-		>=dev-python/zipp-3.19.2[${PYTHON_USEDEP}]
+		~dev-python/asgiref-3.7.2[${PYTHON_USEDEP}]
+		~dev-python/deprecated-1.2.14[${PYTHON_USEDEP}]
+		~dev-python/importlib-metadata-6.11.0[${PYTHON_USEDEP}]
+		~dev-python/iniconfig-2.0.0[${PYTHON_USEDEP}]
+		~dev-python/packaging-24.0[${PYTHON_USEDEP}]
+		~dev-python/pluggy-1.5.0[${PYTHON_USEDEP}]
+		~dev-python/py-cpuinfo-9.0.0[${PYTHON_USEDEP}]
+		~dev-python/pytest-7.4.4[${PYTHON_USEDEP}]
+		~dev-python/tomli-2.0.1[${PYTHON_USEDEP}]
+		~dev-python/typing-extensions-4.9.0[${PYTHON_USEDEP}]
+		~dev-python/wrapt-1.16.0[${PYTHON_USEDEP}]
+		~dev-python/zipp-3.19.2[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "README.rst" )

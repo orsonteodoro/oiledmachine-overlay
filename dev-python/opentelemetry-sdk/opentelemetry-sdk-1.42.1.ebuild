@@ -18,11 +18,13 @@ DESCRIPTION="OpenTelemetry Python SDK"
 HOMEPAGE="
 	https://opentelemetry.io/
 	https://pypi.org/project/opentelemetry-sdk/
-	https://github.com/open-telemetry/opentelemetry-python/
+	https://github.com/open-telemetry/opentelemetry-python/tree/main/opentelemetry-sdk
 "
 LICENSE="Apache-2.0"
 SLOT="${PROTOBUF_CPP_SLOT}/$(ver_cut 1-2 ${PV})" # Use PYTHONPATH for multislot package
 IUSE="
+benchmark
+file-configuration
 ebuild_revision_1
 "
 RDEPEND="
@@ -31,22 +33,37 @@ RDEPEND="
 	dev-python/opentelemetry-api:=
 	~dev-python/opentelemetry-semantic-conventions-0.59_beta0:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
 	dev-python/opentelemetry-semantic-conventions:=
+	file-configuration? (
+		>=dev-python/pyyaml-6.0[${PYTHON_USEDEP}]
+		>=dev-python/jsonschema-4.0[${PYTHON_USEDEP}]
+	)
 "
 BDEPEND="
+	benchmark? (
+		~dev-python/pytest-benchmark-4.0.0[${PYTHON_USEDEP}]
+	)
 	test? (
-		>=dev-python/asgiref-3.7.2[${PYTHON_USEDEP}]
-		>=dev-python/flaky-3.7.0[${PYTHON_USEDEP}]
-		>=dev-python/importlib-metadata-6.11.0[${PYTHON_USEDEP}]
-		>=dev-python/iniconfig-2.0.0[${PYTHON_USEDEP}]
-		>=dev-python/packaging-24.0[${PYTHON_USEDEP}]
-		>=dev-python/pluggy-1.5.0[${PYTHON_USEDEP}]
-		>=dev-python/psutil-5.9.6[${PYTHON_USEDEP}]
-		>=dev-python/py-cpuinfo-9.0.0[${PYTHON_USEDEP}]
-		>=dev-python/pytest-7.4.4[${PYTHON_USEDEP}]
-		>=dev-python/tomli-2.0.1[${PYTHON_USEDEP}]
-		>=dev-python/typing-extensions-4.10.0[${PYTHON_USEDEP}]
-		>=dev-python/wrapt-1.16.0[${PYTHON_USEDEP}]
-		>=dev-python/zipp-3.19.2[${PYTHON_USEDEP}]
+		~dev-python/asgiref-3.7.2[${PYTHON_USEDEP}]
+		~dev-python/flaky-3.7.0[${PYTHON_USEDEP}]
+		~dev-python/importlib-metadata-6.11.0[${PYTHON_USEDEP}]
+		~dev-python/iniconfig-2.0.0[${PYTHON_USEDEP}]
+		~dev-python/packaging-24.0[${PYTHON_USEDEP}]
+		~dev-python/pluggy-1.6.0[${PYTHON_USEDEP}]
+		~dev-python/psutil-7.2.2[${PYTHON_USEDEP}]
+		~dev-python/py-cpuinfo-9.0.0[${PYTHON_USEDEP}]
+		~dev-python/pytest-7.4.4[${PYTHON_USEDEP}]
+		~dev-python/jsonschema-4.25.1[${PYTHON_USEDEP}]
+		$(python_gen_cond_dep '
+			~dev-python/rpds-py-0.23.1[${PYTHON_USEDEP}]
+		' python3_10)
+		$(python_gen_cond_dep '
+			~dev-python/rpds-py-0.30.0[${PYTHON_USEDEP}]
+		' python3_{11..13})
+		~dev-python/pyyaml-6.0.3[${PYTHON_USEDEP}]
+		~dev-python/tomli-2.0.1[${PYTHON_USEDEP}]
+		~dev-python/typing-extensions-4.12.0[${PYTHON_USEDEP}]
+		~dev-python/wrapt-1.16.0[${PYTHON_USEDEP}]
+		~dev-python/zipp-3.19.2[${PYTHON_USEDEP}]
 	)
 "
 

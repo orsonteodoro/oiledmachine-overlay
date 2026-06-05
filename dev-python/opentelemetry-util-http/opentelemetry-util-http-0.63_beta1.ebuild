@@ -8,9 +8,9 @@ MY_PN="opentelemetry_util_http"
 MY_PV="${PV/_beta/b}"
 
 DISTUTILS_USE_PEP517="hatchling"
-OPENTELEMETRY_PV="1.29.0"
+OPENTELEMETRY_PV="1.42.1"
 PROTOBUF_CPP_SLOT="5"
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{10..13} )
 
 inherit distutils-r1 pypi
 
@@ -28,6 +28,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="${PROTOBUF_CPP_SLOT}/${OPENTELEMETRY_PV%.*}"
 IUSE+="
+test
 ebuild_revision_2
 "
 RDEPEND+="
@@ -36,6 +37,17 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	test? (
+		~dev-python/asgiref-3.8.1[${PYTHON_USEDEP}]
+		~dev-python/deprecated-1.2.14[${PYTHON_USEDEP}]
+		~dev-python/iniconfig-2.0.0[${PYTHON_USEDEP}]
+		~dev-python/packaging-24.0[${PYTHON_USEDEP}]
+		~dev-python/pluggy-1.6.0[${PYTHON_USEDEP}]
+		~dev-python/py-cpuinfo-9.0.0[${PYTHON_USEDEP}]
+		~dev-python/pytest-7.4.4[${PYTHON_USEDEP}]
+		~dev-python/tomli-2.0.1[${PYTHON_USEDEP}]
+		~dev-python/typing_extensions-4.12.2[${PYTHON_USEDEP}]
+	)
 "
 DOCS=( "README.rst" )
 

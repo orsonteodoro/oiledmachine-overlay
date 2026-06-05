@@ -10,7 +10,7 @@ DISTUTILS_USE_PEP517="hatchling"
 GRPC_SLOT="5"
 PROTOBUF_CPP_SLOT="5"
 PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_5}"
-PYTHON_COMPAT=( "python3_"{10..13} )
+PYTHON_COMPAT=( "python3_"{11..13} )
 RE2_SLOT="20250512"
 
 inherit abseil-cpp distutils-r1 grpc protobuf re2 pypi
@@ -29,11 +29,20 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="${PROTOBUF_CPP_SLOT}/"$(ver_cut "1-2" "${PV}") # Use PYTHONPATH for multislot package
 IUSE+="
+test
 ebuild_revision_4
 "
 RDEPEND+="
 	>=dev-python/googleapis-common-protos-1.57[${PYTHON_USEDEP}]
-	>=dev-python/grpcio-1.63.2:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
+	python_targets_python3_11? (
+		>=dev-python/grpcio-1.63.2:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
+	)
+	python_targets_python3_12? (
+		>=dev-python/grpcio-1.63.2:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
+	)
+	python_targets_python3_13? (
+		>=dev-python/grpcio-1.66.2:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
+	)
 	>=dev-python/typing-extensions-4.6.0[${PYTHON_USEDEP}]
 	~dev-python/opentelemetry-api-${PV}:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
 	dev-python/opentelemetry-api:=
@@ -48,6 +57,31 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	test? (
+		~dev-python/asgiref-3.7.2[${PYTHON_USEDEP}]
+		~dev-python/certifi-2026.4.22[${PYTHON_USEDEP}]
+		~dev-python/charset-normalizer-3.4.7[${PYTHON_USEDEP}]
+		~dev-python/colorama-0.4.6[${PYTHON_USEDEP}]
+		$(python_gen_cond_dep '
+			~dev-python/exceptiongroup-1.3.1[${PYTHON_USEDEP}]
+		' python3_10)
+		~dev-python/googleapis-common-protos-1.74.0[${PYTHON_USEDEP}]
+		dev-python/grpcio:${GRPC_SLOT}[${PYTHON_USEDEP}]
+		dev-python/grpcio:=
+		~dev-python/idna-3.14[${PYTHON_USEDEP}]
+		~dev-python/iniconfig-2.3.0[${PYTHON_USEDEP}]
+		~dev-python/packaging-26.0[${PYTHON_USEDEP}]
+		~dev-python/pluggy-1.6.0[${PYTHON_USEDEP}]
+		dev-python/protobuf:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
+		dev-python/protobuf:=
+		~dev-python/pytest-7.4.4[${PYTHON_USEDEP}]
+		~dev-python/requests-2.32.3[${PYTHON_USEDEP}]
+		$(python_gen_cond_dep '
+			~dev-python/tomli-2.4.1[${PYTHON_USEDEP}]
+		' python3_10)
+		~dev-python/typing-extensions-4.15.0[${PYTHON_USEDEP}]
+		~dev-python/urllib3-2.7.0[${PYTHON_USEDEP}]
+	)
 "
 DOCS=( "README.rst" )
 

@@ -18,11 +18,12 @@ DESCRIPTION="OpenTelemetry Python SDK"
 HOMEPAGE="
 	https://opentelemetry.io/
 	https://pypi.org/project/opentelemetry-sdk/
-	https://github.com/open-telemetry/opentelemetry-python/
+	https://github.com/open-telemetry/opentelemetry-python/tree/main/opentelemetry-sdk
 "
 LICENSE="Apache-2.0"
 SLOT="${PROTOBUF_CPP_SLOT}/$(ver_cut 1-2 ${PV})" # Use PYTHONPATH for multislot package
 IUSE="
+benchmark
 ebuild_revision_1
 "
 RDEPEND="
@@ -33,20 +34,23 @@ RDEPEND="
 	dev-python/opentelemetry-semantic-conventions:=
 "
 BDEPEND="
+	benchmark? (
+		~dev-python/pytest-benchmark-4.0.0[${PYTHON_USEDEP}]
+	)
 	test? (
-		>=dev-python/asgiref-3.7.2[${PYTHON_USEDEP}]
-		>=dev-python/flaky-3.7.0[${PYTHON_USEDEP}]
-		>=dev-python/importlib-metadata-6.11.0[${PYTHON_USEDEP}]
-		>=dev-python/iniconfig-2.0.0[${PYTHON_USEDEP}]
-		>=dev-python/packaging-24.0[${PYTHON_USEDEP}]
-		>=dev-python/pluggy-1.5.0[${PYTHON_USEDEP}]
-		>=dev-python/psutil-5.9.6[${PYTHON_USEDEP}]
-		>=dev-python/py-cpuinfo-9.0.0[${PYTHON_USEDEP}]
-		>=dev-python/pytest-7.4.4[${PYTHON_USEDEP}]
-		>=dev-python/tomli-2.0.1[${PYTHON_USEDEP}]
-		>=dev-python/typing-extensions-4.10.0[${PYTHON_USEDEP}]
-		>=dev-python/wrapt-1.16.0[${PYTHON_USEDEP}]
-		>=dev-python/zipp-3.19.2[${PYTHON_USEDEP}]
+		~dev-python/asgiref-3.7.2[${PYTHON_USEDEP}]
+		~dev-python/deprecated-1.2.14[${PYTHON_USEDEP}]
+		~dev-python/flaky-3.7.0[${PYTHON_USEDEP}]
+		~dev-python/importlib-metadata-6.11.0[${PYTHON_USEDEP}]
+		~dev-python/iniconfig-2.0.0[${PYTHON_USEDEP}]
+		~dev-python/packaging-24.0[${PYTHON_USEDEP}]
+		~dev-python/pluggy-1.5.0[${PYTHON_USEDEP}]
+		~dev-python/py-cpuinfo-9.0.0[${PYTHON_USEDEP}]
+		~dev-python/pytest-7.4.4[${PYTHON_USEDEP}]
+		~dev-python/tomli-2.0.1[${PYTHON_USEDEP}]
+		~dev-python/typing-extensions-4.10.0[${PYTHON_USEDEP}]
+		~dev-python/wrapt-1.16.0[${PYTHON_USEDEP}]
+		~dev-python/zipp-3.19.2[${PYTHON_USEDEP}]
 	)
 "
 
