@@ -156,6 +156,9 @@
     <flag name="hermes">
       Add support for Hermes Agent AI assistant agent.
     </flag>
+    <flag name="kimi">
+      Add support for Kimi Code CLI coding agent.
+    </flag>
     <flag name="lapack">
       Support CPU optimized linear math via the older LAPACK.
     </flag>
@@ -163,7 +166,7 @@
       Support CPU optimized linear math via oneMKL for Intel® CPUs/GPUs.
     </flag>
     <flag name="mlx">
-      Add support for MLX engine.
+      Add support for the MLX engine.
     </flag>
     <flag name="native">
       Autodetect CPU instruction sets during build time for vendored llama.cpp

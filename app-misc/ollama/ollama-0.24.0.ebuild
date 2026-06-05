@@ -220,6 +220,7 @@ APP_FEATURES=(
 	"droid"
 	"external-editor"
 	"hermes"
+	"kimi"
 	"mlx"
 	"openclaw"
 	"opencode"
