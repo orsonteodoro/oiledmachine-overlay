@@ -107,14 +107,39 @@
     <flag name="ai-agent">
       Add support for AI agents (DANGEROUS)
     </flag>
-    <flag name="cuda">
-      Support CUDA® for NVIDIA® GPUs.
+    <flag name="bash">
+      Add support for running BASH scripts.
     </flag>
     <flag name="blis">
       Support CPU optimized linear math via BLIS.
     </flag>
+    <flag name="claude">
+      Add support for Claude Code coding agent.
+    </flag>
+    <flag name="cline">
+      Add support for Cline CLI coding agent.
+    </flag>
+    <flag name="cloud">
+      Add support for cloud LLMs.
+    </flag>
+    <flag name="codex">
+      Add support for Codex CLI coding agent.
+    </flag>
+    <flag name="copilot">
+      Add support for GitHub Copilot CLI coding agent.
+    </flag>
+    <flag name="cuda">
+      Support CUDA® for NVIDIA® GPUs.
+    </flag>
+    <flag name="droid">
+      Add support for Droid coding agent.
+    </flag>
     <flag name="emoji">
       Support emojis.
+    </flag>
+    <flag name="external-editor">
+      Add support for external editors.  Requires setting the EDITOR environment
+      variable.
     </flag>
     <flag name="firejail">
       Isolate the Ollama server-daemon to mitigate against path traversal that
@@ -128,11 +153,17 @@
       inference instead of using standard attention.  Also, support less common
       quantizations.
     </flag>
+    <flag name="hermes">
+      Add support for Hermes Agent AI assistant agent.
+    </flag>
     <flag name="lapack">
       Support CPU optimized linear math via the older LAPACK.
     </flag>
     <flag name="mkl">
       Support CPU optimized linear math via oneMKL for Intel® CPUs/GPUs.
+    </flag>
+    <flag name="mlx">
+      Add support for MLX engine.
     </flag>
     <flag name="native">
       Autodetect CPU instruction sets during build time for vendored llama.cpp
@@ -140,6 +171,18 @@
     </flag>
     <flag name="openblas">
       Support CPU optimized linear math via OpenBLAS.
+    </flag>
+    <flag name="openclaw">
+      Add support for OpenClaw AI assistant agent.
+    </flag>
+    <flag name="opencode">
+      Add support for OpenCode coding agent.
+    </flag>
+    <flag name="pi">
+      Add support for Pi coding agent.
+    </flag>
+    <flag name="pool">
+      Add support for Pool coding agent.
     </flag>
     <flag name="rocm">
       Support ROCm™ for AMD GPUs.
@@ -152,11 +195,13 @@
       Support SYCL MKL acceleration for Intel® GPUs.
       (EXPERIMENTAL)
     </flag>
+    <flag name="vscode">
+      Add support for VS Code integration.
+    </flag>
     <flag name="vulkan">
       Support GPU accelerated inference through Vulkan.
       (EXPERIMENTAL)
     </flag>
-
     <flag name="amdgpu_targets_gfx908_xnack_minus">
       Generate compile time performance-critical Arcturus microarchitecture GPU
       kernels.

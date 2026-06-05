@@ -209,6 +209,25 @@ LLVM_COMPAT=(
 	{18..19}
 )
 
+# Mitigate code execution
+APP_FEATURES=(
+	"bash"
+	"claude"
+	"cline"
+	"cloud"
+	"copilot"
+	"codex"
+	"droid"
+	"external-editor"
+	"hermes"
+	"mlx"
+	"openclaw"
+	"opencode"
+	"pi"
+	"pool"
+	"vscode"
+)
+
 COMMUNITY_LLMS=(
 	"agcobra-liberated-qwen1.5-72b"
 	"adens-quran-guide"
@@ -3996,6 +4015,7 @@ SLOT="0"
 # default to mitigate against uncaught path traversal vulnerabilities and
 # unreviewed community LLMs that may have malicious payloads.
 IUSE+="
+${APP_FEATURES[@]}
 ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
@@ -4006,7 +4026,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 ai-agent blis chroot cuda debug emoji +firejail flash lapack mkl openblas openrc
 rocm systemd unrestrict video_cards_intel -vulkan
-ebuild_revision_128
+ebuild_revision_129
 "
 
 gen_rocm_required_use() {
@@ -4062,6 +4082,7 @@ REQUIRED_USE="
 		openblas
 	)
 	!kernel_Darwin? (
+		!mlx
 		!ollama_llms_x-flux2-klein
 		!ollama_llms_x-z-image-turbo
 	)
@@ -4143,6 +4164,9 @@ REQUIRED_USE="
 				${CUDA_FATTN_TARGETS_COMPAT[@]/#/cuda_targets_}
 			)
 		)
+	)
+	mlx? (
+		kernel_Darwin
 	)
 	rocm? (
 		|| (
@@ -4464,12 +4488,18 @@ BDEPEND="
 IDEPEND="
 	${RDEPEND}
 "
+PDEPEND="
+	vscode? (
+		>=app-editors/vscode-1.113
+	)
+"
 PATCHES=(
 	"${FILESDIR}/${PN}-0.24.0-cmd-changes.patch"
 	"${FILESDIR}/${PN}-0.12.6-custom-cpu-features.patch"
 	"${FILESDIR}/${PN}-0.13.0-hardcoded-paths.patch"
 	"${FILESDIR}/${PN}-0.13.0-cuda-not-fatal.patch"
 	"${FILESDIR}/${PN}-0.24.0-disable-agent-install.patch"
+	"${FILESDIR}/${PN}-0.24.0-optionalize-features.patch"
 )
 
 pkg_pretend() {
@@ -4721,6 +4751,71 @@ einfo "Editing ${x} for ragel -Z -> ragel-go"
 
 	if ! use ai-agent ; then
 		sed -i -e "/@AI_AGENT_SUPPORT_START@/,/@AI_AGENT_SUPPORT_END@/d" "cmd/cmd.go" || die
+	fi
+
+	if ! use bash ; then
+		sed -i -e "\|// DISABLE_BASH|d" "x/tools/bash.go" || die
+	fi
+	if ! use claude ; then
+		sed -i -e "\|// DISABLE_CLAUDE|d" "cmd/launch/claude.go" || die
+	fi
+	if ! use cline ; then
+		sed -i -e "\|// DISABLE_CLINE|d" "cmd/launch/cline.go" || die
+	fi
+	if ! use codex ; then
+		sed -i -e "\|// DISABLE_CODEX|d" "cmd/launch/codex.go" || die
+	fi
+	if ! use copilot ; then
+		sed -i -e "\|// DISABLE_COPILOT|d" "cmd/launch/copilot.go" || die
+	fi
+	if ! use droid ; then
+		sed -i -e "\|// DISABLE_DROID|d" "cmd/launch/droid.go" || die
+	fi
+	if ! use external-editor ; then
+		sed -i -e "\|// DISABLE_EXTERNAL_EDITOR|d" "cmd/interactive.go" || die
+	fi
+	if ! use hermes ; then
+		sed -i -e "\|// DISABLE_HERMES|d" "cmd/launch/hermes.go" || die
+	fi
+	if ! use kimi ; then
+		sed -i -e "\|// DISABLE_KIMI|d" "cmd/launch/kimi.go" || die
+	fi
+	if ! use cloud ; then
+		sed -i \
+			-e "s|@DISABLE_CLOUD_SUPPORT@|false|g" \
+			-e "\|// DISABLE_CLOUD|d" \
+			"api/client.go" \
+			"app/tools/cloud_policy.go" \
+			"cmd/launch/models.go" \
+			"x/cmd/run.go" \
+			|| die
+	else
+		sed -i \
+			-e "s|@DISABLE_CLOUD_SUPPORT@|true|g" \
+			"x/cmd/run.go" \
+			|| die
+	fi
+	if ! use mlx ; then
+		sed -i \
+			-e "\|// DISABLE_MLX|d" \
+			"x/imagegen/server.go" \
+			"x/mlxrunner/client.go" \
+			|| die
+	fi
+	if ! use openclaw ; then
+		sed -i -e "\|// DISABLE_OPENCLAW|d" "cmd/launch/openclaw.go" || die
+	fi
+	if ! use opencode ; then
+		sed -i -e "\|// DISABLE_OPENCODE|d" "cmd/launch/opencode.go" || die
+	fi
+	if ! use pi ; then
+		sed -i -e "\|// DISABLE_PI|d" "cmd/launch/pi.go" || die
+	fi
+	if ! use pool ; then
+		sed -i -e "\|// DISABLE_POOL|d" "cmd/launch/poolside.go" || die
+	fi
+	if ! use vscode ; then
+		sed -i -e "\|// DISABLE_VSCODE|d" "cmd/launch/vscode.go" || die
 	fi
 }
 
