@@ -4026,7 +4026,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 ai-agent blis chroot cuda debug emoji +firejail flash lapack mkl openblas openrc
 rocm systemd unrestrict video_cards_intel -vulkan
-ebuild_revision_129
+ebuild_revision_130
 "
 
 gen_rocm_required_use() {
@@ -4753,34 +4753,34 @@ einfo "Editing ${x} for ragel -Z -> ragel-go"
 		sed -i -e "/@AI_AGENT_SUPPORT_START@/,/@AI_AGENT_SUPPORT_END@/d" "cmd/cmd.go" || die
 	fi
 
-	if ! use bash ; then
+	if use bash ; then
 		sed -i -e "\|// DISABLE_BASH|d" "x/tools/bash.go" || die
 	fi
-	if ! use claude ; then
+	if use claude ; then
 		sed -i -e "\|// DISABLE_CLAUDE|d" "cmd/launch/claude.go" || die
 	fi
-	if ! use cline ; then
+	if use cline ; then
 		sed -i -e "\|// DISABLE_CLINE|d" "cmd/launch/cline.go" || die
 	fi
-	if ! use codex ; then
+	if use codex ; then
 		sed -i -e "\|// DISABLE_CODEX|d" "cmd/launch/codex.go" || die
 	fi
-	if ! use copilot ; then
+	if use copilot ; then
 		sed -i -e "\|// DISABLE_COPILOT|d" "cmd/launch/copilot.go" || die
 	fi
-	if ! use droid ; then
+	if use droid ; then
 		sed -i -e "\|// DISABLE_DROID|d" "cmd/launch/droid.go" || die
 	fi
-	if ! use external-editor ; then
+	if use external-editor ; then
 		sed -i -e "\|// DISABLE_EXTERNAL_EDITOR|d" "cmd/interactive.go" || die
 	fi
-	if ! use hermes ; then
+	if use hermes ; then
 		sed -i -e "\|// DISABLE_HERMES|d" "cmd/launch/hermes.go" || die
 	fi
-	if ! use kimi ; then
+	if use kimi ; then
 		sed -i -e "\|// DISABLE_KIMI|d" "cmd/launch/kimi.go" || die
 	fi
-	if ! use cloud ; then
+	if use cloud ; then
 		sed -i \
 			-e "s|@DISABLE_CLOUD_SUPPORT@|false|g" \
 			-e "\|// DISABLE_CLOUD|d" \
@@ -4795,26 +4795,26 @@ einfo "Editing ${x} for ragel -Z -> ragel-go"
 			"x/cmd/run.go" \
 			|| die
 	fi
-	if ! use mlx ; then
+	if use mlx ; then
 		sed -i \
 			-e "\|// DISABLE_MLX|d" \
 			"x/imagegen/server.go" \
 			"x/mlxrunner/client.go" \
 			|| die
 	fi
-	if ! use openclaw ; then
+	if use openclaw ; then
 		sed -i -e "\|// DISABLE_OPENCLAW|d" "cmd/launch/openclaw.go" || die
 	fi
-	if ! use opencode ; then
+	if use opencode ; then
 		sed -i -e "\|// DISABLE_OPENCODE|d" "cmd/launch/opencode.go" || die
 	fi
-	if ! use pi ; then
+	if use pi ; then
 		sed -i -e "\|// DISABLE_PI|d" "cmd/launch/pi.go" || die
 	fi
-	if ! use pool ; then
+	if use pool ; then
 		sed -i -e "\|// DISABLE_POOL|d" "cmd/launch/poolside.go" || die
 	fi
-	if ! use vscode ; then
+	if use vscode ; then
 		sed -i -e "\|// DISABLE_VSCODE|d" "cmd/launch/vscode.go" || die
 	fi
 }
