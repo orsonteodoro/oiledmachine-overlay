@@ -1094,6 +1094,7 @@ ${CPU_FLAGS_X86[@]}
 dev
 ebuild_revision_8
 "
+
 gen_grpcio_rdepend_dev() {
 	local impl
 	for impl in "${PYTHON_COMPAT[@]}" ; do
@@ -1104,6 +1105,7 @@ gen_grpcio_rdepend_dev() {
 		"
 	done
 }
+
 gen_grpcio_bdepend_dev() {
 	local impl
 	for impl in "${PYTHON_COMPAT[@]}" ; do
@@ -1117,6 +1119,7 @@ gen_grpcio_bdepend_dev() {
 		"
 	done
 }
+
 gen_grpcio_rdepend_rel() {
 	local impl
 	for impl in "${PYTHON_COMPAT[@]}" ; do
@@ -1130,23 +1133,11 @@ gen_grpcio_rdepend_rel() {
 		"
 	done
 }
+
 RDEPEND+="
-	!dev? (
-		|| (
-			$(gen_grpcio_rdepend_rel)
-		)
-		dev-python/grpcio:=
-		dev-python/protobuf:=
-	)
-	dev? (
-		|| (
-			$(gen_grpcio_rdepend_dev)
-		)
-		dev-python/grpcio-tools:=
-		dev-python/protobuf:=
-	)
 	$(python_gen_cond_dep '
 		>=dev-python/bcrypt-4.0.1[${PYTHON_USEDEP}]
+		>=dev-python/build-1.0.3[${PYTHON_USEDEP}]
 		>=dev-python/httpx-0.27.0[${PYTHON_USEDEP}]
 		>=dev-python/jsonschema-4.19.0[${PYTHON_USEDEP}]
 		>=dev-python/kubernetes-28.1.0[${PYTHON_USEDEP}]
@@ -1179,6 +1170,20 @@ RDEPEND+="
 		)
 	')
 	>=sci-ml/onnxruntime-1.14.1[${PYTHON_SINGLE_USEDEP},python]
+	!dev? (
+		|| (
+			$(gen_grpcio_rdepend_rel)
+		)
+		dev-python/grpcio:=
+		dev-python/protobuf:=
+	)
+	dev? (
+		|| (
+			$(gen_grpcio_rdepend_dev)
+		)
+		dev-python/grpcio-tools:=
+		dev-python/protobuf:=
+	)
 "
 DEPEND+="
 	${RDEPEND}
@@ -1187,18 +1192,16 @@ DEPEND+="
 # dev? ( protobuf ) requirement changed for opentelemetry-proto 1.29.0
 BDEPEND+="
 	$(python_gen_cond_dep '
-		(
-			>=dev-util/maturin-1.0[${PYTHON_USEDEP}]
-			<dev-util/maturin-2.0[${PYTHON_USEDEP}]
-		)
+		>=dev-util/maturin-1.0[${PYTHON_USEDEP}]
+		<dev-util/maturin-2.0[${PYTHON_USEDEP}]
+
 		>=dev-python/setuptools-61.0[${PYTHON_USEDEP}]
 		>=dev-python/setuptools-scm-6.2[${PYTHON_USEDEP},toml(+)]
-		dev-python/setuptools-git-versioning[${PYTHON_USEDEP}]
 		dev? (
-			>=dev-python/black-23.3.0[${PYTHON_USEDEP}]
-			>=dev-python/chroma-hnswlib-0.7.6[${PYTHON_USEDEP}]
+			~dev-python/black-23.3.0[${PYTHON_USEDEP}]
+			~dev-python/chroma-hnswlib-0.7.6[${PYTHON_USEDEP}]
 			>=dev-python/fastapi-0.115.9[${PYTHON_USEDEP}]
-			>=dev-python/hypothesis-6.112.2[${PYTHON_USEDEP},numpy(+)]
+			~dev-python/hypothesis-6.112.2[${PYTHON_USEDEP},numpy(+)]
 			>=dev-python/opentelemetry-instrumentation-fastapi-0.41_beta0[${PYTHON_USEDEP}]
 			dev-python/build[${PYTHON_USEDEP}]
 			dev-python/httpx[${PYTHON_USEDEP}]
@@ -1216,12 +1219,12 @@ BDEPEND+="
 		)
 	')
 	dev? (
-		|| (
-			$(gen_grpcio_bdepend_dev)
-		)
 		dev-python/grpcio-tools:=
 		dev-python/protobuf:=
 		dev-vcs/pre-commit[${PYTHON_SINGLE_USEDEP}]
+		|| (
+			$(gen_grpcio_bdepend_dev)
+		)
 	)
 "
 DOCS=( "README.md" )
