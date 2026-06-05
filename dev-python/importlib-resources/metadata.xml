@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/python/importlib_resources/issues</bugs-to>
+    <remote-id type="github">python/importlib_resources</remote-id>
+    <remote-id type="pypi">importlib-resources</remote-id>
+  </upstream>
+</pkgmetadata>
