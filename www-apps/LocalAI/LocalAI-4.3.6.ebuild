@@ -364,25 +364,25 @@ REQUIRED_USE="
 	)
 	localai_backends_neutts? (
 		|| (
-			python_targets_python3_13
+			python_single_target_python3_13
 		)
 	)
 	localai_backends_outetts? (
 		|| (
-			python_targets_python3_13
-			python_targets_python3_14
+			python_single_target_python3_13
+			python_single_target_python3_14
 		)
 	)
 	localai_backends_tinygrad? (
 		|| (
-			python_targets_python3_13
-			python_targets_python3_14
+			python_single_target_python3_13
+			python_single_target_python3_14
 		)
 	)
 	localai_backends_transformers? (
 		|| (
-			python_targets_python3_13
-			python_targets_python3_14
+			python_single_target_python3_13
+			python_single_target_python3_14
 		)
 	)
 	rag? (
