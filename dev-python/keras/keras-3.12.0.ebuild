@@ -35,7 +35,7 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE="
 cpu cuda jax tensorflow test torch
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	cpu? (
