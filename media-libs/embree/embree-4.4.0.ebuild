@@ -76,7 +76,7 @@ ${CPU_FLAGS[@]%:*}
 -compact-polys -custom-cflags custom-optimization debug doc doc-docfiles
 doc-html doc-images doc-man +hardened +filter-function gcc ispc raymask -ssp
 static-libs sycl +tbb test tutorials
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -141,7 +141,7 @@ BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-build/cmake-3.23.0
 	>=dev-python/sympy-1.9[${PYTHON_USEDEP}]
-	dev-python/numpy[${PYTHON_USEDEP}]
+	virtual/numpy[${PYTHON_USEDEP}]
 	virtual/pkgconfig
 	clang? (
 		>=llvm-core/clang-${CLANG_PV}
