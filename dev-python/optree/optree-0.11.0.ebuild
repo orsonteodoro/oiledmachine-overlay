@@ -30,13 +30,13 @@ RESTRICT="mirror test" # Not tested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 benchmark doc jax numpy test torch
-ebuild_revision_2
+ebuild_revision_3
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
 		dev-python/typing-extensions[${PYTHON_USEDEP}]
 		numpy? (
-			dev-python/numpy[${PYTHON_USEDEP}]
+			virtual/numpy[${PYTHON_USEDEP}]
 		)
 	')
 	jax? (
@@ -73,7 +73,7 @@ BDEPEND+="
 			dev-python/sphinx-rtd-theme[${PYTHON_USEDEP}]
 			dev-python/sphinxcontrib-bibtex[${PYTHON_USEDEP}]
 			dev-python/docutils[${PYTHON_USEDEP}]
-			dev-python/numpy[${PYTHON_USEDEP}]
+			virtual/numpy[${PYTHON_USEDEP}]
 		)
 		test? (
 			dev-python/pytest[${PYTHON_USEDEP}]
