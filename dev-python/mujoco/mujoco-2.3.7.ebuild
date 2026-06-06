@@ -129,17 +129,17 @@ RESTRICT="
 	test
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" doc +test ebuild_revision_1"
+IUSE+=" doc +test ebuild_revision_2"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
 RDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-python/absl-py-1.4.0[${PYTHON_USEDEP}]
-	>=dev-python/numpy-1.25.1[${PYTHON_USEDEP}]
 	>=dev-python/pyopengl-3.1.7[${PYTHON_USEDEP}]
 	>=sci-physics/mujoco-${PV}:${SLOT}
 	dev-python/pyglfw[${PYTHON_USEDEP}]
+	virtual/numpy[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
