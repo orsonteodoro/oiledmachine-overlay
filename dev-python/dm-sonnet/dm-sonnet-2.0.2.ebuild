@@ -43,10 +43,10 @@ IUSE+=" cuda doc examples tensorflow test"
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/absl-py-0.7.1[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.16.3[${PYTHON_USEDEP}]
 		>=dev-python/tabulate-0.7.5[${PYTHON_USEDEP}]
 		>=dev-python/wrapt-1.11.1[${PYTHON_USEDEP}]
 		>=dev-python/dm-tree-0.1.1[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	tensorflow? (
 		>=sci-ml/tensorflow-2.12.0_rc0[${PYTHON_SINGLE_USEDEP},cuda?,python]
