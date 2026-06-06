@@ -33,13 +33,11 @@ DEPEND="libpfm? ( dev-libs/libpfm:= )"
 
 RDEPEND="
 	${DEPEND}
-
 	tools? (
 		$(python_gen_cond_dep '
-			dev-python/numpy[${PYTHON_USEDEP}]
 			>=dev-python/scipy-1.10.0[${PYTHON_USEDEP}]
+			virtual/numpy[${PYTHON_USEDEP}]
 		')
-
 		${PYTHON_DEPS}
 	)
 "
