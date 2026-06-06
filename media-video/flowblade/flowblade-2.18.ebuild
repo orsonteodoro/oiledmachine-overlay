@@ -46,7 +46,7 @@ IUSE+="
 ${PATENT_STATUS_IUSE[@]}
 alsa frei0r jack jpeg mp3 nvenc opencv opus oss pulseaudio rtaudio rubberband
 sox vaapi vidstab vorbis vpx x264 x265
-ebuild_revision_4
+ebuild_revision_5
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -119,9 +119,9 @@ PATENT_STATUS_RDEPEND="
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/libusb1-2.0.1[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.21.5[${PYTHON_USEDEP}]
 		>=dev-python/pycairo-1.21[${PYTHON_USEDEP}]
 		>=virtual/pillow-9.0.1[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	>=dev-lang/python-3.10.4
 	>=dev-libs/dbus-glib-0.112
