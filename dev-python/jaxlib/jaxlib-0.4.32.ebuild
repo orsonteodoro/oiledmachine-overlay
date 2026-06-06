@@ -412,8 +412,10 @@ gen_llvm_slot_required_use() {
 }
 
 # CUDA is disabled because version is not supported on overlay.
+# ROCm needs NumPy 1.x
 REQUIRED_USE+="
 	!cuda
+	!rocm
 	$(gen_cuda_required_use)
 	$(gen_rocm_required_use)
 	$(gen_llvm_slot_required_use)
@@ -442,7 +444,6 @@ REQUIRED_USE+="
 		^^ (
 			${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]}
 		)
-		python_single_target_python3_12
 	)
 	rocm_6_4? (
 		llvm_slot_19
@@ -544,6 +545,9 @@ gen_rocm_depends() {
 RDEPEND+="
 	!dev-python/jaxlib-bin
 	!sci-libs/jaxlib-bin
+	$(python_gen_cond_dep '
+		virtual/numpy[${PYTHON_USEDEP}]
+	')
 	>=app-arch/snappy-1.1.10[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/double-conversion-3.2.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/nsync-1.25.0
@@ -551,7 +555,6 @@ RDEPEND+="
 	net-libs/grpc:3/1.51[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	net-libs/grpc:=
 	virtual/jre:${JAVA_SLOT}
-	virtual/numpy[${PYTHON_USEDEP}]
 	cuda? (
 		=dev-util/nvidia-cuda-toolkit-12.3*
 		dev-util/nvidia-cuda-toolkit:=
