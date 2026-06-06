@@ -54,7 +54,6 @@ RDEPEND+="
 	>=dev-python/decorator-4.3.0[${PYTHON_USEDEP}]
 	>=dev-python/lazy-loader-0.1[${PYTHON_USEDEP}]
 	>=dev-python/msgpack-1.0[${PYTHON_USEDEP}]
-	>=dev-python/numpy-1.22.3[${PYTHON_USEDEP}]
 	>=dev-python/scikit-learn-1.1.0[${PYTHON_USEDEP}]
 	>=dev-python/scipy-1.6.0[${PYTHON_USEDEP}]
 	>=dev-python/joblib-1.0.0[${PYTHON_USEDEP}]
@@ -65,6 +64,7 @@ RDEPEND+="
 	>=dev-python/soundfile-0.12.1[${PYTHON_USEDEP}]
 	>=dev-python/typing-extensions-4.1.1[${PYTHON_USEDEP}]
 	dev-python/samplerate[${PYTHON_USEDEP}]
+	virtual/numpy[${PYTHON_USEDEP}]
 	display? (
 		>=dev-python/matplotlib-3.5.0[${PYTHON_USEDEP}]
 	)
@@ -92,7 +92,6 @@ BDEPEND+="
 		dev-python/sphinx[${PYTHON_USEDEP}]
 	)
 	lint? (
-		>=dev-python/numpy-1.23.4[${PYTHON_USEDEP}]
 		dev-python/bandit[${PYTHON_USEDEP}]
 		dev-python/flake8[${PYTHON_USEDEP}]
 		dev-python/types-decorator[${PYTHON_USEDEP}]
@@ -102,6 +101,7 @@ BDEPEND+="
 		dev-python/pydocstyle[${PYTHON_USEDEP}]
 		dev-python/velin[${PYTHON_USEDEP}]
 		dev-util/codespell[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	)
 	test? (
 		>=dev-python/matplotlib-3.5.0[${PYTHON_USEDEP}]
