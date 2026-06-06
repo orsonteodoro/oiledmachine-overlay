@@ -39,16 +39,15 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 dev doc lint test
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.20.0[${PYTHON_USEDEP}]
 		>=dev-python/scikit-learn-0.22.0[${PYTHON_USEDEP}]
 		>=dev-python/scipy-1.0.0[${PYTHON_USEDEP}]
 		>=dev-python/tqdm-4.0.0[${PYTHON_USEDEP}]
 		>=dev-python/typing-extensions-4.5.0[${PYTHON_USEDEP}]
-
+		virtual/numpy[${PYTHON_USEDEP}]
 		virtual/pillow[${PYTHON_USEDEP}]
 	')
 	>=sci-ml/huggingface-hub-0.23.0[${PYTHON_SINGLE_USEDEP}]
