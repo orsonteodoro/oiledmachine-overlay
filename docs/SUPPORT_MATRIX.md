@@ -259,7 +259,8 @@ Language defaults
       package) is using an image is using U20 CI image or testing with older CI images,
       this overlay may immediately delete the package or dependencies associated with it
       which can cause an init or boot issues.  The developer or contributors may choose not
-      to apply patches because it is unpaid free labor to fix any issue.
+      to apply patches because it is unpaid free labor to fix any issue.  It is a common
+      practice by the distro overlay to delete EOL packages/ebuilds.
 
 * [2] [Python 3.10](https://projects.gentoo.org/python/guide/basic.html#python-compat)
 * [3] Not widely tested with CI.
