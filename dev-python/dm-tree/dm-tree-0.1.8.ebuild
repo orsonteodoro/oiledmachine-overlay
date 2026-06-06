@@ -29,7 +29,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" doc test ebuild_revision_1"
+IUSE+=" doc test ebuild_revision_2"
 RDEPEND+="
 "
 DEPEND+="
@@ -44,8 +44,8 @@ BDEPEND+="
 	test? (
 		>=dev-python/absl-py-0.6.1[${PYTHON_USEDEP}]
 		>=dev-python/attrs-18.2.0[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.15.4[${PYTHON_USEDEP}]
 		>=dev-python/wrapt-1.11.2[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "README.md" )
