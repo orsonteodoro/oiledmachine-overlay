@@ -249,7 +249,7 @@ Language defaults
 | pypy3_11 [3]         | Not supported                         |                                                                |
 
 * [1] Not supported due to [python-utils-r1.eclass](https://github.com/gentoo/gentoo/blob/master/eclass/python-utils-r1.eclass#L44)
-      Distro FAFO EOL restrictions, but not [EOL upstream](https://devguide.python.org/versions/).
+      distro FAFO EOL restrictions, but not [EOL upstream](https://devguide.python.org/versions/).
       Forced PYTHON_COMPAT bumps (to Python 3.11 or any future minimum version
       bumps) may introduce DoS vulnerabilities (e.g. crash) or incompatibilities.
 * [2] [Python 3.10](https://projects.gentoo.org/python/guide/basic.html#python-compat)
