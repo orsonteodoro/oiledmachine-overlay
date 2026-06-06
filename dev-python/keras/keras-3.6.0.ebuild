@@ -4,14 +4,14 @@
 EAPI=8
 
 # For dep versions, see
-# https://github.com/keras-team/keras/blob/v3.1.0/requirements.txt
-# https://github.com/keras-team/keras/blob/v3.1.0/WORKSPACE
+# https://github.com/keras-team/keras/blob/v3.6.0/requirements.txt
+# https://github.com/keras-team/keras/blob/v3.6.0/WORKSPACE
 
 # TensorFlow 2.17 needs numpy 1.x
 
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_11" )
+PYTHON_COMPAT=( "python3_"{11,12} ) # NumPy needs < 3.13
 TENSORFLOW_PV="2.17.0"
 
 inherit abseil-cpp distutils-r1 protobuf
@@ -32,7 +32,7 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE="
 cpu cuda jax tensorflow test torch
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE="
 	cpu? (
@@ -56,18 +56,6 @@ gen_rdepend_protobuf() {
 }
 RDEPEND="
 	$(python_gen_cond_dep '
-		(
-			>=dev-python/numpy-1.23.5[${PYTHON_USEDEP}]
-			<dev-python/numpy-2[${PYTHON_USEDEP}]
-		)
-	' python3_{10,11})
-	$(python_gen_cond_dep '
-		(
-			>=dev-python/numpy-1.26.0[${PYTHON_USEDEP}]
-			<dev-python/numpy-2[${PYTHON_USEDEP}]
-		)
-	' python3_12)
-	$(python_gen_cond_dep '
 		>=dev-python/six-1.16.0[${PYTHON_USEDEP}]
 		>=dev-python/namex-0.0.8[${PYTHON_USEDEP}]
 		>=sys-libs/zlib-1.2.13
@@ -81,6 +69,7 @@ RDEPEND="
 		dev-python/rich[${PYTHON_USEDEP}]
 		dev-python/scipy[${PYTHON_USEDEP}]
 		dev-python/ml-dtypes[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 		virtual/pillow[${PYTHON_USEDEP}]
 	')
 	>=sci-ml/tensorflow-${TENSORFLOW_PV}[${PYTHON_SINGLE_USEDEP},python]

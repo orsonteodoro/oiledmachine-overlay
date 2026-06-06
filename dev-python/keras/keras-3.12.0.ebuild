@@ -4,8 +4,7 @@
 EAPI=8
 
 # For dep versions, see
-# https://github.com/keras-team/keras/blob/v3.1.0/requirements.txt
-# https://github.com/keras-team/keras/blob/v3.1.0/WORKSPACE
+# https://github.com/keras-team/keras/blob/v3.12.0/requirements.txt
 
 # TODO package:
 # grain
@@ -35,7 +34,7 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE="
 cpu cuda jax tensorflow test torch
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE="
 	cpu? (
@@ -59,7 +58,6 @@ gen_rdepend_protobuf() {
 }
 RDEPEND="
 	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.26.0[${PYTHON_USEDEP}]
 		>=dev-python/six-1.16.0[${PYTHON_USEDEP}]
 		>=dev-python/namex-0.0.8[${PYTHON_USEDEP}]
 		>=sys-libs/zlib-1.2.13
@@ -75,6 +73,7 @@ RDEPEND="
 		dev-python/scikit-learn[${PYTHON_USEDEP}]
 		dev-python/ml-dtypes[${PYTHON_USEDEP}]
 		dev-python/packaging[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 		virtual/pillow[${PYTHON_USEDEP}]
 	')
 	>=sci-ml/tensorflow-${TENSORFLOW_PV}[${PYTHON_SINGLE_USEDEP},python]
