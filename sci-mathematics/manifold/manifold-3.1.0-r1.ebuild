@@ -41,7 +41,7 @@ SLOT="0/1"
 
 IUSE="
 debug python +tbb test
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	python? (
@@ -58,7 +58,7 @@ RDEPEND="
 	sci-mathematics/clipper2:=
 	python? ( ${PYTHON_DEPS}
 		$(python_gen_cond_dep '
-			dev-python/numpy[${PYTHON_USEDEP}]
+			virtual/numpy[${PYTHON_USEDEP}]
 		')
 	)
 	tbb? (
