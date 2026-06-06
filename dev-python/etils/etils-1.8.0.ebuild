@@ -119,7 +119,7 @@ RDEPEND+="
 			dev-python/python-protobuf[${PYTHON_USEDEP}]
 		)
 		enp? (
-			dev-python/numpy[${PYTHON_USEDEP}]
+			virtual/numpy[${PYTHON_USEDEP}]
 		)
 		epath? (
 			dev-python/fsspec[${PYTHON_USEDEP}]
