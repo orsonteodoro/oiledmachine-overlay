@@ -9,7 +9,7 @@ EAPI=8
 MY_PN="${PN/-/_}"
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{8..11} ) # CI tests with 3.10
+PYTHON_COMPAT=( "python3_"{10..12} ) #  CI tests with 3.10
 
 inherit abseil-cpp distutils-r1 protobuf
 
@@ -30,13 +30,12 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 hdf5 test
-ebuild_revision_3
+ebuild_revision_4
 "
 RDEPEND+="
 	>=dev-python/absl-py-2.1.0[${PYTHON_USEDEP}]
 	>=dev-python/lxml-5.2.1[${PYTHON_USEDEP}]
 	>=dev-python/mujoco-3.1.5[${PYTHON_USEDEP}]
-	>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
 	>=dev-python/pyglfw-1.12.0[${PYTHON_USEDEP}]
 	>=dev-python/pyopengl-3.1.7[${PYTHON_USEDEP}]
 	>=dev-python/pyparsing-3.1.2[${PYTHON_USEDEP}]
@@ -46,6 +45,7 @@ RDEPEND+="
 	>=dev-python/dm-tree-0.1.8[${PYTHON_USEDEP}]
 	>=dev-python/dm-env-1.6[${PYTHON_USEDEP}]
 	>=dev-python/labmaze-1.0.6[${PYTHON_USEDEP}]
+	virtual/numpy[${PYTHON_USEDEP}]
 	hdf5? (
 		>=dev-python/h5py-3.11.0[${PYTHON_USEDEP}]
 	)
