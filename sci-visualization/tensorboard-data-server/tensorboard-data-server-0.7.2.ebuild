@@ -291,7 +291,7 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut 1-2 "${PV}")
 IUSE+="
 test
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE="
 	^^ (
@@ -315,9 +315,9 @@ RDEPEND="
 		)
 		>=dev-python/absl-py-0.4[${PYTHON_USEDEP}]
 		>=dev-python/markdown-2.6.8[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.12.0[${PYTHON_USEDEP}]
 		>=dev-python/werkzeug-1.0.1[${PYTHON_USEDEP}]
 		>dev-python/six-1.9[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 
 		gcc_slot_11_5? (
 			dev-python/grpcio:'${GRPC_SLOT}'/1.30[${PYTHON_USEDEP},gcc_slot_11_5,cxx_standard_cxx17]
