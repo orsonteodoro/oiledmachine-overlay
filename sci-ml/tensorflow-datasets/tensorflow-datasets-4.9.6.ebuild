@@ -17,11 +17,14 @@ EAPI=8
 # pytest-shard
 # tensorflow-data-validation
 
+# For Python versions supported, see https://github.com/tensorflow/datasets/blob/v4.9.6/.github/workflows/pytest.yml#L87
+# For TensorFlow versions supported, see https://github.com/tensorflow/datasets/blob/v4.9.6/setup.py#L223
+
 MY_PN="datasets"
 
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{11..12} ) # NumPy 1.x
 
 inherit distutils-r1 pypi
 
@@ -63,14 +66,8 @@ wsc273 youtube_vis
 # Same as RDEPEND without conditionals and apache-beam
 HUGGINGFACE_RDEPEND="
 	$(python_gen_cond_dep '
-		>=dev-python/etils-1.6.0[${PYTHON_SINGLE_USEDEP},enp,epath,epy,etree]
-	' python3_10)
-	$(python_gen_cond_dep '
 		>=dev-python/etils-1.9.1[${PYTHON_SINGLE_USEDEP},enp,epath,epy,etree]
 	' python3_{11,12})
-	$(python_gen_cond_dep '
-		dev-python/envlogger[${PYTHON_USEDEP}]
-	' python3_10)
 	$(python_gen_cond_dep '
 		>=dev-python/protobuf-3.20[${PYTHON_USEDEP}]
 		dev-python/protobuf:=
@@ -117,16 +114,14 @@ HUGGINGFACE_RDEPEND="
 	>=dev-python/array-record-0.5.0[${PYTHON_SINGLE_USEDEP}]
 	media-libs/opencv[${PYTHON_SINGLE_USEDEP},python]
 	sci-ml/datasets[${PYTHON_SINGLE_USEDEP}]
-	sci-ml/tensorflow[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/tensorflow-2.1[${PYTHON_SINGLE_USEDEP}]
+	<sci-ml/tensorflow-2.18.0[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/tensorflow-data-validation[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/tensorflow-io[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/tensorflow-metadata[${PYTHON_SINGLE_USEDEP}]
 "
 
 RDEPEND+="
-	$(python_gen_cond_dep '
-		>=dev-python/etils-1.6.0[${PYTHON_SINGLE_USEDEP},enp,epath,epy,etree]
-	' python3_10)
 	$(python_gen_cond_dep '
 		>=dev-python/etils-1.9.1[${PYTHON_SINGLE_USEDEP},enp,epath,epy,etree]
 	' python3_{11,12})
@@ -255,21 +250,12 @@ RDEPEND+="
 	imagenet2012_corrupted? (
 		media-libs/opencv[${PYTHON_SINGLE_USEDEP},python]
 	)
-	locomotion? (
-		$(python_gen_cond_dep '
-			dev-python/envlogger[${PYTHON_USEDEP}]
-		' python3_10)
-	)
 	lsun? (
 		sci-ml/tensorflow-io[${PYTHON_SINGLE_USEDEP}]
 	)
-	robosuite_panda_pick_place_can? (
-		$(python_gen_cond_dep '
-			dev-python/envlogger[${PYTHON_USEDEP}]
-		' python3_10)
-	)
 	tensorflow? (
-		sci-ml/tensorflow[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/tensorflow-2.1[${PYTHON_SINGLE_USEDEP}]
+		<sci-ml/tensorflow-2.18.0[${PYTHON_SINGLE_USEDEP}]
 	)
 	tensorflow-data-validation? (
 		sci-ml/tensorflow-data-validation[${PYTHON_SINGLE_USEDEP}]
