@@ -40,7 +40,7 @@ IUSE+=" examples test"
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/absl-py-0.9.0[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.23.0[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	>=dev-python/chex-0.1.8[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/jax-0.1.55[${PYTHON_SINGLE_USEDEP}]
