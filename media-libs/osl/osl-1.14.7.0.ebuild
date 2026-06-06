@@ -111,7 +111,7 @@ ${CPU_FEATURES[@]%:*}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 cuda doc gui libcxx nofma optix partio python qt5 qt6 static-libs test wayland X
-ebuild_revision_11
+ebuild_revision_12
 "
 REQUIRED_USE+="
 	^^ (
@@ -305,7 +305,7 @@ RDEPEND+="
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
 			>=dev-python/pybind11-2.7[${PYTHON_USEDEP}]
-			dev-python/numpy[${PYTHON_USEDEP}]
+			virtual/numpy[${PYTHON_USEDEP}]
 		')
 	)
 	qt5? (
