@@ -42,7 +42,7 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF SO HO IO UAF"
 CHECKREQS_DISK_BUILD="19G"
 CHECKREQS_DISK_USR="5G"
 CHECKREQS_MEMORY="11G" # Linking goes above 10 GiB
-PYTHON_COMPAT=( "python3_"{11..12} ) # See https://github.com/tensorflow/tensorflow/blob/v2.17.1/tensorflow/tools/pip_package/setup.py#L429
+PYTHON_COMPAT=( "python3_"{11..12} ) # NumPy needs < 3.13 . See https://github.com/tensorflow/tensorflow/blob/v2.17.1/tensorflow/tools/pip_package/setup.py#L429
 # Limited by jax/flax
 # PYTHON_COMPAT limited by gast-4.0[python_targets_python3_9]
 RE2_SLOT="20250512"
@@ -441,7 +441,7 @@ ${HIP_SLOTS2[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 alt-ssl -big-endian +clang cuda keras3 models -mpi +python rocm
 system-flatbuffers test +xla
-ebuild_revision_32
+ebuild_revision_33
 "
 gen_required_use_cuda_targets() {
 	local x
@@ -699,18 +699,6 @@ RDEPEND="
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
 			(
-				>=dev-python/numpy-1.23.5[${PYTHON_USEDEP}]
-				<dev-python/numpy-2[${PYTHON_USEDEP}]
-			)
-		' python3_{10,11})
-		$(python_gen_cond_dep '
-			(
-				>=dev-python/numpy-1.26.0[${PYTHON_USEDEP}]
-				<dev-python/numpy-2[${PYTHON_USEDEP}]
-			)
-		' python3_12)
-		$(python_gen_cond_dep '
-			(
 				>=dev-python/wrapt-1.16.0[${PYTHON_USEDEP}]
 			)
 			>=dev-python/absl-py-1.0.0[${PYTHON_USEDEP}]
@@ -731,6 +719,7 @@ RDEPEND="
 			>=dev-python/dill-0.3.7[${PYTHON_USEDEP}]
 			>=dev-python/pybind11-2.10.4[${PYTHON_USEDEP}]
 			>=dev-python/tblib-2.0.0[${PYTHON_USEDEP}]
+			virtual/numpy[${PYTHON_USEDEP}]
 			system-flatbuffers? (
 				~dev-libs/flatbuffers-'${FLATBUFFERS_PV}'
 			)
