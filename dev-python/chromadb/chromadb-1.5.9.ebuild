@@ -9,6 +9,9 @@ EAPI=8
 
 # For protobuf version, see Dockerfile
 
+# USE=-dev (production):  Protobuf >= 4
+#               USE=dev:  Protobuf == 5
+
 MY_PN="chroma"
 
 inherit protobuf
@@ -1091,8 +1094,14 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
-dev
-ebuild_revision_9
+dev protobuf4 +protobuf5
+ebuild_revision_10
+"
+REQUIRED_USE+="
+	^^ (
+		protobuf4
+		protobuf5
+	)
 "
 
 # grpcio:>=4 protobuf-python:>=4
@@ -1159,15 +1168,15 @@ RDEPEND+="
 		>=dev-python/typing-extensions-4.5.0[${PYTHON_USEDEP}]
 		>=dev-python/uvicorn-0.18.3[${PYTHON_USEDEP},standard]
 		dev-python/importlib-resources[${PYTHON_USEDEP}]
-		!dev? (
-			~dev-python/opentelemetry-api-'${OPENTELEMETRY_PV_REL}'[${PYTHON_USEDEP}]
-			~dev-python/opentelemetry-exporter-otlp-proto-grpc-'${OPENTELEMETRY_PV_REL}'[${PYTHON_USEDEP}]
-			~dev-python/opentelemetry-sdk-'${OPENTELEMETRY_PV_REL}'[${PYTHON_USEDEP}]
+		protobuf4? (
+			dev-python/opentelemetry-api:4[${PYTHON_USEDEP}]
+			dev-python/opentelemetry-exporter-otlp-proto-grpc:4[${PYTHON_USEDEP}]
+			dev-python/opentelemetry-sdk:4[${PYTHON_USEDEP}]
 		)
-		dev? (
-			~dev-python/opentelemetry-api-'${OPENTELEMETRY_PV_DEV}'[${PYTHON_USEDEP}]
-			~dev-python/opentelemetry-exporter-otlp-proto-grpc-'${OPENTELEMETRY_PV_DEV}'[${PYTHON_USEDEP}]
-			~dev-python/opentelemetry-sdk-'${OPENTELEMETRY_PV_DEV}'[${PYTHON_USEDEP}]
+		protobuf5? (
+			dev-python/opentelemetry-api:5[${PYTHON_USEDEP}]
+			dev-python/opentelemetry-exporter-otlp-proto-grpc:5[${PYTHON_USEDEP}]
+			dev-python/opentelemetry-sdk:5[${PYTHON_USEDEP}]
 		)
 	')
 	>=sci-ml/onnxruntime-1.14.1[${PYTHON_SINGLE_USEDEP},python]
@@ -1281,6 +1290,15 @@ src_prepare() {
 }
 
 python_configure() {
+	if use protobuf5 ; then
+		PROTOBUF_GRPC="5"
+		PROTOBUF_CPP_SLOT="5"
+		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_5[@]}"
+	elif use protobuf4 ; then
+		PROTOBUF_GRPC="4"
+		PROTOBUF_CPP_SLOT="4"
+		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_4[@]}"
+	fi
 	abseil-cpp_python_configure
 	protobuf_python_configure
 	re2_python_configure
