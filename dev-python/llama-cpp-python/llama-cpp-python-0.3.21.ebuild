@@ -45,7 +45,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 all dev server test
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	all? (
@@ -57,8 +57,8 @@ REQUIRED_USE="
 RDEPEND+="
 	>=dev-python/diskcache-5.6.1[${PYTHON_USEDEP}]
 	>=dev-python/jinja2-2.11.3[${PYTHON_USEDEP}]
-	>=dev-python/numpy-1.20.0[${PYTHON_USEDEP}]
 	>=dev-python/typing-extensions-4.5.0[${PYTHON_USEDEP}]
+	virtual/numpy[${PYTHON_USEDEP}]
 	server? (
 		(
 			>=dev-python/starlette-context-0.3.6[${PYTHON_USEDEP}]
