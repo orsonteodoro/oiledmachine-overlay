@@ -44,9 +44,9 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		dev-python/absl-py[${PYTHON_USEDEP}]
 		dev-python/dm-tree[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/six[${PYTHON_USEDEP}]
 		dev-python/wrapt[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	tensorflow? (
 		>=sci-ml/tensorflow-1.15[${PYTHON_SINGLE_USEDEP},cuda?]
