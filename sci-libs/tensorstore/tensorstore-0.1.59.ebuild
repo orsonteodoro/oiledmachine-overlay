@@ -73,7 +73,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang doc
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE+="
 	^^ (
@@ -99,11 +99,11 @@ JRE_DEPEND="
 "
 RDEPEND+="
 	${JRE_DEPEND}
-	dev-libs/protobuf:=
 	>=dev-python/ml-dtypes-0.3.1[${PYTHON_USEDEP}]
-	>=dev-python/numpy-1.16.0[${PYTHON_USEDEP}]
 	>=media-libs/libjpeg-turbo-2.1.4
 	>=media-libs/libpng-1.6.37
+	dev-libs/protobuf:=
+	virtual/numpy[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
