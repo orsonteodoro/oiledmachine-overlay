@@ -47,10 +47,10 @@ DEPEND+="
 BDEPEND+="
 	=dev-python/cython-3*[${PYTHON_USEDEP}]
 	dev-python/cython:=
-	>=dev-python/numpy-1.21.1[${PYTHON_USEDEP}]
 	>=dev-python/pyclibrary-0.1.7[${PYTHON_USEDEP}]
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
+	virtual/numpy[${PYTHON_USEDEP}]
 	test? (
 		>=dev-python/pytest-6.2.4[${PYTHON_USEDEP}]
 		>=dev-python/pytest-benchmark-3.4.1[${PYTHON_USEDEP}]
