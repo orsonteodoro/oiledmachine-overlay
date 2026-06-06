@@ -37,7 +37,7 @@ SO_VERSION="29"
 SLOT="${SLOT_MAJOR}/${SO_VERSION}"
 IUSE="
 doc large-stack python test
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	python? (
@@ -56,7 +56,7 @@ RDEPEND="
 		$(python_gen_cond_dep '
 			dev-libs/boost:=['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}",'python,${PYTHON_USEDEP}]
 			dev-libs/boost:=
-			dev-python/numpy[${PYTHON_USEDEP}]
+			virtual/numpy[${PYTHON_USEDEP}]
 		')
 	)
 "
