@@ -24,7 +24,7 @@ LANGS=(
 	"ko"
 	"th"
 )
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_13" )
 
 inherit cython distutils-r1 pypi
 
@@ -48,7 +48,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${LANGS[@]/#/l10n_}
 cuda dev lookups transformers
-ebuild_revision_2
+ebuild_revision_3
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
@@ -59,7 +59,6 @@ RDEPEND+="
 		>=dev-python/langcodes-3.2.0[${PYTHON_USEDEP}]
 		>=dev-python/ml-datasets-0.2.0[${PYTHON_USEDEP}]
 		>=dev-python/murmurhash-0.28.0[${PYTHON_USEDEP}]
-		>=dev-python/numpy-2.0.0[${PYTHON_USEDEP}]
 		>=dev-python/preshed-3.0.2[${PYTHON_USEDEP}]
 		=dev-python/preshed-3*[${PYTHON_USEDEP}]
 		>=dev-python/pydantic-1.7.4[${PYTHON_USEDEP}]
@@ -70,6 +69,7 @@ RDEPEND+="
 		>=dev-python/wasabi-0.9.1[${PYTHON_USEDEP}]
 		>=dev-python/weasel-0.1.0[${PYTHON_USEDEP}]
 		dev-python/setuptools[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 		cuda? (
 			>=dev-python/cupy-5.0.0_beta4[${PYTHON_USEDEP}]
 		)
@@ -105,8 +105,8 @@ BDEPEND+="
 		dev-python/cython:=
 		>=dev-python/preshed-3.0.2[${PYTHON_USEDEP}]
 		>=dev-python/murmurhash-0.28.0[${PYTHON_USEDEP}]
-		>=dev-python/numpy-2.0.0[${PYTHON_USEDEP}]
 		dev-python/setuptools[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 		dev? (
 			!~dev-python/pytest-7.1.0
 			>=dev-python/black-22.3.0[${PYTHON_USEDEP}]
