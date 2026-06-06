@@ -34,8 +34,8 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/absl-py-0.7.1[${PYTHON_USEDEP}]
 		>=dev-python/jmp-0.0.2[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
 		>=dev-python/tabulate-0.8.9[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	>=dev-python/flax-0.7.1[${PYTHON_SINGLE_USEDEP}]
 	jax? (
