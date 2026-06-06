@@ -40,7 +40,7 @@ CYTHON_SLOT="0.29"
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PROTOBUF_CPP_SLOT="3"
-PYTHON_COMPAT=( "python3_"{10..12} ) # DO NOT BUMP TO 2.14 FOR NUMPY.  Based on https://github.com/openvinotoolkit/openvino/blob/2025.1.0/docs/dev/build_linux.md#software-requirements
+PYTHON_COMPAT=( "python3_"{10..12} ) # NumPy needs < 3.14.  Based on https://github.com/openvinotoolkit/openvino/blob/2025.1.0/docs/dev/build_linux.md#software-requirements
 
 BENCHMARK_1_COMMIT="d572f4777349d43653b21d6c2fc63020ab326db2"
 BENCHMARK_2_COMMIT="5b7683f49e1e9223cf9927b24f6fd3d6bd82e3f8"
@@ -207,7 +207,7 @@ ${CPU_FLAGS_X86[@]}
 development-tools doc -lto +mlas +npu -openmp python runtime +samples
 -system-flatbuffers system-opencl system-protobuf system-pugixml system-snappy
 system-tbb -telemetry test +tbb video_cards_intel
-ebuild_revision_29
+ebuild_revision_30
 "
 REQUIRED_USE="
 	?? (
