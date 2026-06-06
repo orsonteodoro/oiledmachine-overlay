@@ -7,7 +7,7 @@ EAPI=8
 MY_PV="${PN/-/_}"
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_10" )
+PYTHON_COMPAT=( "python3_"{10..12} ) # Uses NumPy 1.x so < 3.13
 
 inherit distutils-r1
 
