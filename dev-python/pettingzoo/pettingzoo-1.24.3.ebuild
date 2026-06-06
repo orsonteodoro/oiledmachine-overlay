@@ -38,7 +38,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" atari butterfly classic doc mpe other sisl test"
 RDEPEND+="
 	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.21.0[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 		atari? (
 			>=dev-python/multi-agent-ale-py-0.1.11:0/0.1[${PYTHON_USEDEP}]
 			>=dev-python/pygame-'${PYGAME_PV}'[${PYTHON_USEDEP}]
