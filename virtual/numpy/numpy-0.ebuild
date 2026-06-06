@@ -13,7 +13,8 @@ EAPI=8
 # Prune EOL Python versions or distro dropped versions.
 # Only bump for newest LTS releases.
 
-# See also https://devguide.python.org/versions/
+# For upstream dropped versions, see also https://devguide.python.org/versions/
+# For dropped FAFO distro versions, see https://github.com/gentoo/gentoo/blob/master/eclass/python-utils-r1.eclass#L55
 
 DISTUTILS_USE_PEP517="no"
 PYTHON_COMPAT=( "python3_"{12..14} )
