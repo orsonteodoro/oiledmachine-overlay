@@ -62,9 +62,9 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" "
 RDEPEND+="
 	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.12.0[${PYTHON_USEDEP}]
 		>=dev-python/protobuf-3.19.6[${PYTHON_USEDEP}]
 		dev-libs/protobuf:=
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	>=sci-libs/tf-keras-2.14.1[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/tensorflow-${TENSORFLOW_PV}[${PYTHON_SINGLE_USEDEP}]
