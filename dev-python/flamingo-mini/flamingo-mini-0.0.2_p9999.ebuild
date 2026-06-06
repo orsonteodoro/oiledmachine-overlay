@@ -44,7 +44,7 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/einops-0.4[${PYTHON_USEDEP}]
 		dev-python/einops-exts[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 		virtual/pillow[${PYTHON_USEDEP}]
 	')
 	>=sci-ml/pytorch-1.6[${PYTHON_SINGLE_USEDEP}]
