@@ -13,11 +13,14 @@ EAPI=8
 
 # U20
 
+# For version requirements, see https://github.com/TNTwise/REAL-Video-Enhancer/blob/RVE-2.1.0/src/DownloadDeps.py
+# Upstream uses numpy 1.26.4
+
 MY_PN="${PN}-RVE"
 
 BACKEND_PV="2.1.5"
 #CMAKE_MAKEFILE_GENERATOR="emake"
-PYTHON_COMPAT=( "python3_11" )
+PYTHON_COMPAT=( "python3_12" ) # Upstream uses 3.11.  Align with NumPy.
 
 inherit ffmpeg
 FFMPEG_COMPAT_SLOTS=(
@@ -189,7 +192,7 @@ IUSE+="
 ${PATENT_STATUS_IUSE[@]}
 ${ROCM_SLOTS[@]}
 fp16 cuda rocm svt-av1 tensorrt vpx vulkan wayland X x264 x265
-ebuild_revision_14
+ebuild_revision_15
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -255,14 +258,8 @@ MISSING_DEPEND="
 		>=dev-python/urllib3-2.2.3[${PYTHON_USEDEP}]
 	')
 "
-# See https://github.com/TNTwise/REAL-Video-Enhancer/blob/RVE-2.1.0/src/DownloadDeps.py
-# Upstream uses numpy 1.26.4
 COMMON_DEPEND="
 	$(python_gen_cond_dep '
-		(
-			>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
-			<dev-python/numpy-2[${PYTHON_USEDEP}]
-		)
 		>=dev-python/mpmath-1.3.0[${PYTHON_USEDEP}]
 		>=dev-python/packaging-24.2[${PYTHON_USEDEP}]
 		>=dev-python/pypresence-4.3.0[${PYTHON_USEDEP}]
@@ -272,6 +269,7 @@ COMMON_DEPEND="
 		>=dev-python/testresources-2.0.1[${PYTHON_USEDEP}]
 		>=dev-python/typing-extensions-4.12.2[${PYTHON_USEDEP}]
 		>=virtual/pillow-11.0.0[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	>=dev-python/scenedetect-0.6.5[${PYTHON_SINGLE_USEDEP}]
 	>=media-libs/opencv-4.10.0[${PYTHON_SINGLE_USEDEP},ffmpeg,python]
@@ -289,9 +287,9 @@ CUDA_DEPEND="
 NCNN_DEPEND="
 	$(python_gen_cond_dep '
 		>=dev-python/mpmath-1.3.0[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
 		>=dev-python/rife-ncnn-vulkan-python-tntwise-1.4.4[${PYTHON_USEDEP}]
 		>=dev-python/sympy-1.13.1[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	>=dev-python/ncnn-20240820[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/upscale-ncnn-py-1.2.0[${PYTHON_SINGLE_USEDEP}]
@@ -340,7 +338,6 @@ RDEPEND+="
 	${PATENT_STATUS_RDEPEND}
 	$(python_gen_cond_dep '
 		>=dev-python/certifi-2024.12.14[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
 		>=dev-python/pypresence-4.3.0[${PYTHON_USEDEP}]
 		>=dev-python/requests-2.32.3[${PYTHON_USEDEP}]
 		dev-libs/lief[${PYTHON_USEDEP},python]
@@ -351,6 +348,7 @@ RDEPEND+="
 		dev-python/pyside:6[${PYTHON_USEDEP},gui,network,qml,quick,widgets]
 		dev-python/validators[${PYTHON_USEDEP}]
 		net-misc/yt-dlp[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 		|| (
 			>=dev-python/cx-Freeze-7.0.0[${PYTHON_USEDEP}]
 			>=dev-python/cx-Freeze-bin-7.0.0[${PYTHON_USEDEP}]
