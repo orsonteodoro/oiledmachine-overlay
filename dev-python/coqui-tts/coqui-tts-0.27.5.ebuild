@@ -114,7 +114,7 @@ RDEPEND+="
 	<dev-python/coqui-tts-trainer-0.4.0[${PYTHON_SINGLE_USEDEP}]
 
 	>=dev-python/pysbd-0.3.4[${PYTHON_SINGLE_USEDEP}]
-	>=dev-python/transformers-4.57[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/transformers-4.57[${PYTHON_SINGLE_USEDEP}]
 
 	cpu? (
 		>=dev-python/pytorch-2.2[${PYTHON_SINGLE_USEDEP},cpu]
