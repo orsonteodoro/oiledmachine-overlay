@@ -34,7 +34,7 @@ RDEPEND="
 	>=dev-python/scipy-0.17.0[${PYTHON_USEDEP}]
 	>=sci-libs/dlib-19.3.0[${PYTHON_USEDEP}]
 	dev-python/face_recognition_models[${PYTHON_USEDEP}]
-	dev-python/numpy[${PYTHON_USEDEP}]
+	virtual/numpy[${PYTHON_USEDEP}]
 	virtual/pillow[${PYTHON_USEDEP}]
 "
 BDEPEND="
@@ -54,8 +54,8 @@ BDEPEND="
 		>=sci-libs/dlib-19.3.0[${PYTHON_USEDEP}]
 		dev-python/face_recognition_models[${PYTHON_USEDEP}]
 		dev-python/flake8[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/scipy[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	)
 	test? (
 		dev-python/pytest[${PYTHON_USEDEP}]
