@@ -46,10 +46,10 @@ RDEPEND+="
 		dev-python/requests[${PYTHON_USEDEP}]
 	)
 	machine-learning? (
-		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/python-crfsuite[${PYTHON_USEDEP}]
 		dev-python/scikit-learn[${PYTHON_USEDEP}]
 		dev-python/scipy[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	)
 	plot? (
 		dev-python/matplotlib[${PYTHON_USEDEP}]
@@ -89,7 +89,6 @@ BDEPEND+="
 		>=dev-python/click-7.1.2[${PYTHON_USEDEP}]
 		>=dev-python/joblib-1.0.1[${PYTHON_USEDEP}]
 		>=dev-python/matplotlib-1.3.1[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.8.0[${PYTHON_USEDEP}]
 		>=dev-python/pre-commit-2.13.0[${PYTHON_USEDEP}]
 		>=dev-python/pylint-1.1.0[${PYTHON_USEDEP}]
 		>=dev-python/pyparsing-2.0.3[${PYTHON_USEDEP}]
@@ -101,6 +100,7 @@ BDEPEND+="
 		>=dev-python/scipy-0.13.2[${PYTHON_USEDEP}]
 		>=dev-python/tox-1.6.1[${PYTHON_USEDEP}]
 		>=dev-python/twython-3.2.0[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	)
 	test? (
 		>=dev-python/pytest-6.0.1[${PYTHON_USEDEP}]
