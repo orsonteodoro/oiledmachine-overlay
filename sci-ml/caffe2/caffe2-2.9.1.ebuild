@@ -544,7 +544,7 @@ ${ROCM_SLOTS2[@]}
 clang cuda +distributed +eigen +fbgemm +flash-attention +gloo -jit +kineto +magma -mimalloc
 -mkl +mpi +nccl +nnpack +numpy +onednn openblas -opencl +openmp +tensorpipe
 +qnnpack +rccl rocm roctracer -ssl system-libs test +xnnpack
-ebuild_revision_52
+ebuild_revision_53
 "
 # bin/torch_shm_manager requires openmp
 gen_cuda_required_use() {
@@ -771,6 +771,20 @@ REQUIRED_USE="
 		)
 		^^ (
 			${ROCM_SLOTS2[@]}
+		)
+		!python_targets_python3_13
+		!python_targets_python3_14
+		numpy? (
+			|| (
+				python_targets_python3_11
+				python_targets_python3_12
+			)
+		)
+		flash-attention? (
+			|| (
+				python_targets_python3_11
+				python_targets_python3_12
+			)
 		)
 	)
 	rocm_6_4? (
@@ -1016,17 +1030,12 @@ RDEPEND="
 			dev-python/iniconfig[${PYTHON_USEDEP}]
 			dev-python/packaging[${PYTHON_USEDEP}]
 			dev-python/pluggy[${PYTHON_USEDEP}]
-			dev-python/numpy[${PYTHON_USEDEP}]
 			dev-python/setuptools[${PYTHON_USEDEP}]
 			dev-python/wheel[${PYTHON_USEDEP}]
 			dev-python/pybind11[${PYTHON_USEDEP}]
 			dev-python/pandas[${PYTHON_USEDEP}]
+			virtual/numpy[${PYTHON_USEDEP}]
 		')
-		rocm? (
-			$(python_gen_cond_dep '
-				 <dev-python/numpy-2.0[${PYTHON_USEDEP}]
-			')
-		)
 	)
 	gloo? (
 		ssl? (
@@ -1045,7 +1054,7 @@ RDEPEND="
 	)
 	numpy? (
 		$(python_gen_cond_dep '
-			dev-python/numpy[${PYTHON_USEDEP}]
+			virtual/numpy[${PYTHON_USEDEP}]
 		')
 	)
 	openblas? (
