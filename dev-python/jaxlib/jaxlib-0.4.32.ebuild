@@ -55,7 +55,7 @@ EROCM_SKIP_EXCLUSIVE_LLVM_SLOT_IN_PATH=1
 JAVA_SLOT="11"
 LLVM_MAX_SLOT="19"
 MAINTAINER_MODE=0
-PYTHON_COMPAT=( "python3_"{11..12} ) # Limited by Flax CI
+PYTHON_COMPAT=( "python3_13" ) # NumPy 2 needs >= 3.13
 
 # For system gRPC
 ABSEIL_CPP_SLOT="20220623"
@@ -374,7 +374,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${CPU_FLAGS_X86_64[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang cpu cuda debug rocm rocm_6_4
-ebuild_revision_30
+ebuild_revision_31
 "
 # We don't add tpu because licensing issue with libtpu_nightly.
 
@@ -544,12 +544,6 @@ gen_rocm_depends() {
 RDEPEND+="
 	!dev-python/jaxlib-bin
 	!sci-libs/jaxlib-bin
-	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.24[${PYTHON_USEDEP}]
-	' python3_11)
-	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.26[${PYTHON_USEDEP}]
-	' python3_12)
 	>=app-arch/snappy-1.1.10[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/double-conversion-3.2.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/nsync-1.25.0
@@ -557,6 +551,7 @@ RDEPEND+="
 	net-libs/grpc:3/1.51[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	net-libs/grpc:=
 	virtual/jre:${JAVA_SLOT}
+	virtual/numpy[${PYTHON_USEDEP}]
 	cuda? (
 		=dev-util/nvidia-cuda-toolkit-12.3*
 		dev-util/nvidia-cuda-toolkit:=
