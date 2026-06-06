@@ -28,10 +28,10 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" "
 RDEPEND+="
-	>=dev-python/numpy-1.7.0[${PYTHON_USEDEP}]
 	>=dev-python/tqdm-4.10.0[${PYTHON_USEDEP}]
 	>=dev-python/srsly-1.0.1[${PYTHON_USEDEP}]
 	>=dev-python/catalogue-0.2.0[${PYTHON_USEDEP}]
+	virtual/numpy[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
