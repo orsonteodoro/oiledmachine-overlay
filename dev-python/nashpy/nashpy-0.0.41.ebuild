@@ -44,8 +44,8 @@ IUSE+=" benchmark doc test"
 RDEPEND+="
 	>=dev-python/deprecated-1.2.14[${PYTHON_USEDEP}]
 	>=dev-python/networkx-3.0.0[${PYTHON_USEDEP}]
-	>=dev-python/numpy-1.21.0[${PYTHON_USEDEP}]
 	>=dev-python/scipy-0.19.0[${PYTHON_USEDEP}]
+	virtual/numpy[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
