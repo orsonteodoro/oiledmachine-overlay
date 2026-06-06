@@ -45,17 +45,17 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
 RDEPEND+="
-	>=dev-python/numpy-1.6[${PYTHON_USEDEP}]
 	>=dev-python/scipy-0.9[${PYTHON_USEDEP}]
+	virtual/numpy[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/numpy-1.6[${PYTHON_USEDEP}]
 	dev-python/oldest-supported-numpy[${PYTHON_USEDEP}]
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
+	virtual/numpy[${PYTHON_USEDEP}]
 	test? (
 		dev-python/pytest[${PYTHON_USEDEP}]
 	)
