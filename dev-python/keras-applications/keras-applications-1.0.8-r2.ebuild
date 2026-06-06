@@ -24,8 +24,8 @@ LICENSE="MIT"
 SLOT="0"
 IUSE+=" test"
 RDEPEND+="
-	>=dev-python/numpy-1.9.1[${PYTHON_USEDEP}]
 	dev-python/h5py[${PYTHON_USEDEP}]
+	virtual/numpy[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
