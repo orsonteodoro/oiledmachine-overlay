@@ -65,8 +65,8 @@ RDEPEND+="
 	>=dev-python/jsonlines-1.2.0[${PYTHON_USEDEP}]
 	>=dev-python/networkx-2.5.0[${PYTHON_USEDEP}]
 	>=dev-python/num2words-0.5.10[${PYTHON_USEDEP}]
-	>=dev-python/numpy-1.19.0[${PYTHON_USEDEP}]
 	>=dev-python/python-crfsuite-0.9.7[${PYTHON_USEDEP}]
+	virtual/numpy[${PYTHON_USEDEP}]
 	align? (
 		>=dev-python/aeneas-1.7.3.0[${PYTHON_USEDEP}]
 		>=dev-python/pydub-0.24.1[${PYTHON_USEDEP}]
