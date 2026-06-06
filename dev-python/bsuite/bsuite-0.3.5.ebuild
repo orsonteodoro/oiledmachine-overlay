@@ -47,7 +47,6 @@ RDEPEND+="
 		dev-python/absl-py[${PYTHON_USEDEP}]
 		dev-python/immutabledict[${PYTHON_USEDEP}]
 		dev-python/matplotlib[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/pandas[${PYTHON_USEDEP}]
 		dev-python/plotnine[${PYTHON_USEDEP}]
 		dev-python/scipy[${PYTHON_USEDEP}]
@@ -55,6 +54,7 @@ RDEPEND+="
 		dev-python/six[${PYTHON_USEDEP}]
 		dev-python/termcolor[${PYTHON_USEDEP}]
 		dev-python/dm-env[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 		baselines-tensorflow? (
 			dev-python/dm-tree[${PYTHON_USEDEP}]
 		)
