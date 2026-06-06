@@ -45,7 +45,7 @@ RESTRICT="fetch mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 cuda ffmpeg gstreamer openh264 rocm vaapi x264 xla xpu
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE="
 	|| (
@@ -69,11 +69,11 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.25.1[${PYTHON_USEDEP}]
 		dev-python/natsort[${PYTHON_USEDEP}]
 		dev-python/pybboxes[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 		dev-python/rich[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	>=dev-python/ultralytics-8.0.144[${PYTHON_SINGLE_USEDEP}]
 	>=media-libs/opencv-4.6.0[${PYTHON_SINGLE_USEDEP},ffmpeg?,gstreamer?,imgproc,jpeg,openh264?,png,python]
