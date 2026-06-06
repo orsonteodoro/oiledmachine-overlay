@@ -73,7 +73,7 @@ RDEPEND+="
 		)
 	')
 	>=sci-ml/huggingface-hub-0.21.0[${PYTHON_SINGLE_USEDEP}]
-	>=sci-ml/torch-2.0.0[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/pytorch-2.0.0[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
