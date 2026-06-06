@@ -43,9 +43,9 @@ IUSE+=" dev moviepy opencv pyav test"
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/click-8.0[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/platformdirs[${PYTHON_USEDEP}]
 		dev-python/tqdm[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	moviepy? (
 		dev-python/moviepy[${PYTHON_SINGLE_USEDEP}]
