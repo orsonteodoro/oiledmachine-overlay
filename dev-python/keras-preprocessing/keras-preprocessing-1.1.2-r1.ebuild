@@ -27,9 +27,9 @@ SLOT="0"
 IUSE+=" dev image test"
 RDEPEND="
 	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.9.1[${PYTHON_USEDEP}]
 		>=dev-python/six-1.9.0[${PYTHON_USEDEP}]
 		dev-python/scipy[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 		image? (
 			>=dev-python/cipy-0.14[${PYTHON_USEDEP}]
 			>=virtual/pillow-5.2.0[${PYTHON_USEDEP}]
