@@ -63,9 +63,9 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		dev-python/docopt[${PYTHON_USEDEP}]
 		dev-python/matplotlib[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/scipy[${PYTHON_USEDEP}]
 		sci-libs/dlib[${PYTHON_USEDEP},jpeg?,png?]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	media-libs/opencv[${PYTHON_SINGLE_USEDEP},ffmpeg?,gstreamer?,python]
 	stasm? (
