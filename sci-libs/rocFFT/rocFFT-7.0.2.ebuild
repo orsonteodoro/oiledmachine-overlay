@@ -7,7 +7,7 @@ CHECKREQS_DISK_BUILD="7G"
 CXX_STANDARD=17
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=19
-PYTHON_COMPAT=( "python3_"{10..13} )
+PYTHON_COMPAT=( "python3_"{10..12} ) # Force NumPy 1.x with < 3.13
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 AMDGPU_TARGETS_COMPAT=(
@@ -81,7 +81,7 @@ SLOT="0/${ROCM_SLOT}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 -asan +aot benchmark cuda perfscripts +rocm test
-ebuild_revision_14
+ebuild_revision_15
 "
 gen_cuda_required_use() {
 	local x
@@ -145,10 +145,10 @@ RDEPEND="
 		dev-tex/latexmk
 		dev-texlive/texlive-latex
 		sys-apps/texinfo
-		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/pandas[${PYTHON_USEDEP}]
 		dev-python/scipy[${PYTHON_USEDEP}]
 		dev-python/sympy[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	)
 "
 DEPEND="
