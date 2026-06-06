@@ -57,8 +57,8 @@ RDEPEND+="
 			<dev-python/imageio-3[${PYTHON_USEDEP}]
 		)
 		>=dev-python/imageio-ffmpeg-0.2.0[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.17.3[${PYTHON_USEDEP}]
 		<dev-python/proglog-1.0.1[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 		matplotlib? (
 			dev-python/matplotlib[${PYTHON_USEDEP}]
 		)
