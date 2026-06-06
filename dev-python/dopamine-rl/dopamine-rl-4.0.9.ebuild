@@ -41,7 +41,7 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 +keras2
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIREMENTS_RDEPEND="
 	$(python_gen_cond_dep '
@@ -64,22 +64,9 @@ REQUIREMENTS_RDEPEND="
 		>=dev-python/markdown-3.2.2[${PYTHON_USEDEP}]
 		>=dev-python/matplotlib-3.3.0[${PYTHON_USEDEP}]
 		>=dev-python/msgpack-1.0.0[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.18.5[${PYTHON_USEDEP}]
 		>=dev-python/oauthlib-3.1.0[${PYTHON_USEDEP}]
 		>=dev-python/opt-einsum-3.3.0[${PYTHON_USEDEP}]
 		>=dev-python/pandas-1.0.5[${PYTHON_USEDEP}]
-		|| (
-			|| (
-				dev-python/protobuf:3.12[${PYTHON_USEDEP}]
-				dev-python/protobuf:4.21[${PYTHON_USEDEP}]
-				dev-python/protobuf:4.25[${PYTHON_USEDEP}]
-				dev-python/protobuf:5.29[${PYTHON_USEDEP}]
-				dev-python/protobuf:6.33[${PYTHON_USEDEP}]
-			)
-			dev-python/protobuf:=
-			>=dev-python/protobuf-3.12.2[${PYTHON_USEDEP}]
-		)
-		dev-python/protobuf:=
 		>=dev-python/pyasn1-0.4.8[${PYTHON_USEDEP}]
 		>=dev-python/pyasn1-modules-0.2.8[${PYTHON_USEDEP}]
 		>=dev-python/pygame-1.9.6[${PYTHON_USEDEP}]
@@ -99,6 +86,19 @@ REQUIREMENTS_RDEPEND="
 		>=dev-python/werkzeug-1.0.1[${PYTHON_USEDEP}]
 		>=dev-python/wrapt-1.12.1[${PYTHON_USEDEP}]
 		>=virtual/pillow-7.2.0[${PYTHON_USEDEP}]
+		|| (
+			|| (
+				dev-python/protobuf:3.12[${PYTHON_USEDEP}]
+				dev-python/protobuf:4.21[${PYTHON_USEDEP}]
+				dev-python/protobuf:4.25[${PYTHON_USEDEP}]
+				dev-python/protobuf:5.29[${PYTHON_USEDEP}]
+				dev-python/protobuf:6.33[${PYTHON_USEDEP}]
+			)
+			dev-python/protobuf:=
+			>=dev-python/protobuf-3.12.2[${PYTHON_USEDEP}]
+		)
+		dev-python/protobuf:=
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	>=dev-python/flax-0.5.3[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/gin-config-0.3.0[${PYTHON_SINGLE_USEDEP}]
@@ -123,11 +123,11 @@ RDEPEND+="
 	${REQUIREMENTS_RDEPEND}
 	$(python_gen_cond_dep '
 		>=dev-python/absl-py-0.9.0[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.16.4[${PYTHON_USEDEP}]
 		>=dev-python/pandas-0.24.2[${PYTHON_USEDEP}]
 		>=dev-python/pygame-1.9.2[${PYTHON_USEDEP}]
 		>=dev-python/tqdm-4.64.1[${PYTHON_USEDEP}]
 		>=virtual/pillow-7.0.0[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	>=dev-python/flax-0.2.0[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/gin-config-0.3.0[${PYTHON_SINGLE_USEDEP}]
