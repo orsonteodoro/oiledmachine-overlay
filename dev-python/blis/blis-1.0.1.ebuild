@@ -8,7 +8,7 @@ CYTHON_SLOT="0.29"
 BLIS_COMMIT="8137f660d8351c3a3c3b38f4606121578e128b70"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{13..14} ) # NumPy needs >= 3.13
 
 inherit cython dep-prepare distutils-r1 pypi
 
@@ -23,20 +23,20 @@ https://github.com/explosion/blis/archive/${BLIS_COMMIT}.tar.gz
 
 DESCRIPTION="A self-contained 💥 fast matrix-multiplication Python library without system dependencies!"
 HOMEPAGE="
-	https://github.com/explosion/blis
+	https://github.com/explosion/cython-blis
 	https://pypi.org/project/blis
 "
 LICENSE="
 	BSD
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 test
-ebuild_revision_2
+ebuild_revision_3
 "
 RDEPEND+="
-	>=dev-python/numpy-2.0.0[${PYTHON_USEDEP}]
+	virtual/numpy[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
@@ -44,7 +44,7 @@ DEPEND+="
 BDEPEND+="
 	>=dev-python/cython-0.25:${CYTHON_SLOT}[${PYTHON_USEDEP}]
 	dev-python/cython:=
-	>=dev-python/numpy-2.0.0[${PYTHON_USEDEP}]
+	virtual/numpy[${PYTHON_USEDEP}]
 	test? (
 		>=dev-python/hypothesis-4.0.0
 		dev-python/pytest
