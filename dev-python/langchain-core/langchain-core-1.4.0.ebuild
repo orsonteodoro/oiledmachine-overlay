@@ -7,7 +7,7 @@ EAPI=8
 MY_PN="${PN/-/_}"
 
 DISTUTILS_USE_PEP517="pdm-backend"
-PYTHON_COMPAT=( "python3_"{11..14} )
+PYTHON_COMPAT=( "python3_"{12..14} )
 
 inherit distutils-r1 pypi
 
@@ -26,6 +26,14 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 dev lint test typing
+"
+# For numpy:
+REQUIRED_USE="
+	|| (
+		python_targets_python3_12
+		python_targets_python3_13
+		python_targets_python3_14
+	)
 "
 RDEPEND+="
 	>=dev-python/langsmith-0.3.45[${PYTHON_USEDEP}]
@@ -106,17 +114,11 @@ BDEPEND+="
 		>=dev-python/blockbuster-1.5.18[${PYTHON_USEDEP}]
 		<dev-python/blockbuster-1.6.0[${PYTHON_USEDEP}]
 
-		$(python_gen_cond_dep '
-			>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
-		' python3_{10..12})
-
-		$(python_gen_cond_dep '
-			>=dev-python/numpy-2.1.0[${PYTHON_USEDEP}]
-		' python3_{13..14})
-
 		dev-python/langchain-tests[${PYTHON_USEDEP}]
 		dev-python/pytest-benchmark[${PYTHON_USEDEP}]
 		dev-python/pytest-codspeed[${PYTHON_USEDEP}]
+
+		virtual/numpy[${PYTHON_USEDEP}]
 	)
 	typing? (
 		>=dev-python/mypy-1.19.1[${PYTHON_USEDEP}]
