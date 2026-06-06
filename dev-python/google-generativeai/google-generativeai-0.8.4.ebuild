@@ -32,7 +32,7 @@ RESTRICT="
 SLOT="0"
 IUSE="
 test
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND="
 	>=dev-python/google-auth-2.15.0[${PYTHON_USEDEP}]
