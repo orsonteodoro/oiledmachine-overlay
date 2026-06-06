@@ -28,6 +28,14 @@ anthropic aws azure-ai cohere community deepseek dev fireworks lint google-genai
 google-vertexai groq huggingface mistralai ollama openai perplexity test
 test-integration together typing xai
 "
+REQUIRED_USE="
+	test? (
+		|| (
+			python_targets_python3_12
+			python_targets_python3_13
+		)
+	)
+"
 RDEPEND+="
 	>=dev-python/langchain-core-1.3.3[${PYTHON_USEDEP}]
 	<dev-python/langchain-core-2.0.0[${PYTHON_USEDEP}]
@@ -158,14 +166,6 @@ BDEPEND+="
 		<dev-python/pytest-xdist-4.0.0[${PYTHON_USEDEP}]
 
 		$(python_gen_cond_dep '
-			>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
-		' python3_{10..12})
-
-		$(python_gen_cond_dep '
-			>=dev-python/numpy-2.1.0[${PYTHON_USEDEP}]
-		' python3_13)
-
-		$(python_gen_cond_dep '
 			dev-python/cffi
 		' python3_{10..13})
 
@@ -197,6 +197,8 @@ BDEPEND+="
 		dev-python/langchain-core[${PYTHON_USEDEP}]
 		dev-python/langchain-text-splitters[${PYTHON_USEDEP}]
 		dev-python/langchain-openai[${PYTHON_USEDEP}]
+
+		virtual/numpy[${PYTHON_USEDEP}]
 	)
 	test-integration? (
 		>=dev-python/vcrpy-8.0.0[${PYTHON_USEDEP}]
@@ -241,19 +243,13 @@ BDEPEND+="
 		>=dev-python/types-chardet-5.0.4.6[${PYTHON_USEDEP}]
 		<dev-python/types-chardet-6.0.0.0[${PYTHON_USEDEP}]
 
-		$(python_gen_cond_dep '
-			>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
-		' python3_{10..12})
-
-		$(python_gen_cond_dep '
-			>=dev-python/numpy-2.1.0[${PYTHON_USEDEP}]
-		' python3_13)
-
 		dev-python/langchain-core[${PYTHON_USEDEP}]
 		dev-python/langchain-text-splitters[${PYTHON_USEDEP}]
 
 		>=dev-python/fastapi-0.116.1[${PYTHON_USEDEP}]
 		<dev-python/fastapi-1.0.0[${PYTHON_USEDEP}]
+
+		virtual/numpy[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "README.md" )
