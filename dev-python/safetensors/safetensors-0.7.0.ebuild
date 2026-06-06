@@ -212,7 +212,7 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	numpy? (
-		>=dev-python/numpy-1.21.6[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	)
 	torch? (
 		dev-python/packaging[${PYTHON_USEDEP}]
