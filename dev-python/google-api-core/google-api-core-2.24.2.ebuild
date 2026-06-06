@@ -31,7 +31,7 @@ LICENSE="Apache-2.0"
 SLOT="0/3.21" # 0/$PROTOBUF_SLOT
 IUSE="
 async-rest grpc grpcgcp grpcio-gcp
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	test? (
