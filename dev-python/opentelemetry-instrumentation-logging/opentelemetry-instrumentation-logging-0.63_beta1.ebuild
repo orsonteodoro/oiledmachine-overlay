@@ -1,4 +1,4 @@
-# Copyright 2025 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 2026 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -6,7 +6,7 @@ EAPI=8
 
 # See dev-python/opentelemetry-semantic-conventions for version correspondence
 
-MY_PN="opentelemetry_instrumentation_asgi"
+MY_PN="opentelemetry_instrumentation_logging"
 MY_PV="${PV/_beta/b}"
 
 DISTUTILS_USE_PEP517="hatchling"
@@ -19,10 +19,10 @@ inherit distutils-r1 pypi
 KEYWORDS="~amd64"
 S="${WORKDIR}/${MY_PN}-${MY_PV}"
 
-DESCRIPTION="ASGI instrumentation for OpenTelemetry"
+DESCRIPTION="OpenTelemetry Logging instrumentation"
 HOMEPAGE="
-	https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation/opentelemetry-instrumentation-asgi
-	https://pypi.org/project/opentelemetry-instrumentation-asgi
+	https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation/opentelemetry-instrumentation-logging
+	https://pypi.org/project/opentelemetry-instrumentation-logging
 "
 LICENSE="
 	Apache-2.0
@@ -30,27 +30,24 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="${PROTOBUF_CPP_SLOT}/"$(ver_cut "1-2" "${OPENTELEMETRY_PV}")
 IUSE+="
-instruments test
+benchmark test
 ebuild_revision_1
 "
 RDEPEND+="
-	>=dev-python/asgiref-3.0[${PYTHON_USEDEP}]
 	~dev-python/opentelemetry-api-${OPENTELEMETRY_PV}:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
 	dev-python/opentelemetry-api:=
 	~dev-python/opentelemetry-instrumentation-${PV}:${SLOT}[${PYTHON_USEDEP}]
 	dev-python/opentelemetry-instrumentation:=
 	~dev-python/opentelemetry-semantic-conventions-${PV}:${SLOT}[${PYTHON_USEDEP}]
 	dev-python/opentelemetry-semantic-conventions:=
-	~dev-python/opentelemetry-util-http-${PV}:${SLOT}[${PYTHON_USEDEP}]
-	dev-python/opentelemetry-util-http:=
-	instruments? (
-		>=dev-python/asgiref-3.0[${PYTHON_USEDEP}]
-	)
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	benchmark? (
+		~dev-python/pytest-benchmark-4.0.0[${PYTHON_USEDEP}]
+	)
 	test? (
 		~dev-python/asgiref-3.8.1[${PYTHON_USEDEP}]
 		~dev-python/deprecated-1.2.14[${PYTHON_USEDEP}]

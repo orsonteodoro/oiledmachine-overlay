@@ -24,7 +24,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT="${PROTOBUF_CPP_SLOT}/$(ver_cut 1-2 ${PV})" # Use PYTHONPATH for multislot package
+SLOT="${PROTOBUF_CPP_SLOT}/"$(ver_cut "1-2" "${PV}") # Use PYTHONPATH for multislot package
 IUSE+="
 test
 ebuild_revision_3

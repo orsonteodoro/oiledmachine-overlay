@@ -11,6 +11,7 @@ MY_PV="${PV/_beta/b}"
 
 DISTUTILS_USE_PEP517="hatchling"
 OPENTELEMETRY_PV="1.42.1"
+PROTOBUF_CPP_SLOT="5"
 PYTHON_COMPAT=( "python3_"{10..13} )
 
 inherit distutils-r1 pypi
@@ -27,7 +28,7 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror"
-SLOT="0/${OPENTELEMETRY_PV}"
+SLOT="${PROTOBUF_CPP_SLOT}/"$(ver_cut "1-2" "${OPENTELEMETRY_PV}")
 IUSE+="
 instruments test
 ebuild_revision_1

@@ -10,7 +10,7 @@ MY_PN="opentelemetry_instrumentation"
 MY_PV="${PV/_beta/b}"
 
 DISTUTILS_USE_PEP517="hatchling"
-OPENTELEMETRY_PV="1.27.0"
+OPENTELEMETRY_PV="1.27"
 PROTOBUF_CPP_SLOT="3"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
@@ -28,7 +28,7 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror"
-SLOT="${PROTOBUF_CPP_SLOT}/${OPENTELEMETRY_PV%.*}"
+SLOT="${PROTOBUF_CPP_SLOT}/"$(ver_cut "1-2" "${OPENTELEMETRY_PV}")
 IUSE+="
 test
 ebuild_revision_2

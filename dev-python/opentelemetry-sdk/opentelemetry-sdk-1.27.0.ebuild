@@ -21,7 +21,7 @@ HOMEPAGE="
 	https://github.com/open-telemetry/opentelemetry-python/tree/main/opentelemetry-sdk
 "
 LICENSE="Apache-2.0"
-SLOT="${PROTOBUF_CPP_SLOT}/$(ver_cut 1-2 ${PV})" # Use PYTHONPATH for multislot package
+SLOT="${PROTOBUF_CPP_SLOT}/"$(ver_cut "1-2" "${PV}")
 IUSE="
 benchmark
 ebuild_revision_1

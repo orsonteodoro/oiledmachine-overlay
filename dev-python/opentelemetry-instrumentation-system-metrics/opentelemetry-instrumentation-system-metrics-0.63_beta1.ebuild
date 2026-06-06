@@ -1,4 +1,4 @@
-# Copyright 2025 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 2026 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -6,7 +6,7 @@ EAPI=8
 
 # See dev-python/opentelemetry-semantic-conventions for version correspondence
 
-MY_PN="opentelemetry_instrumentation_asgi"
+MY_PN="opentelemetry_instrumentation_system_metrics"
 MY_PV="${PV/_beta/b}"
 
 DISTUTILS_USE_PEP517="hatchling"
@@ -19,10 +19,10 @@ inherit distutils-r1 pypi
 KEYWORDS="~amd64"
 S="${WORKDIR}/${MY_PN}-${MY_PV}"
 
-DESCRIPTION="ASGI instrumentation for OpenTelemetry"
+DESCRIPTION="OpenTelemetry System Metrics Instrumentation"
 HOMEPAGE="
-	https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation/opentelemetry-instrumentation-asgi
-	https://pypi.org/project/opentelemetry-instrumentation-asgi
+	https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation/opentelemetry-instrumentation-system-metrics
+	https://pypi.org/project/opentelemetry-instrumentation-system-metrics
 "
 LICENSE="
 	Apache-2.0
@@ -34,17 +34,18 @@ instruments test
 ebuild_revision_1
 "
 RDEPEND+="
-	>=dev-python/asgiref-3.0[${PYTHON_USEDEP}]
 	~dev-python/opentelemetry-api-${OPENTELEMETRY_PV}:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
 	dev-python/opentelemetry-api:=
 	~dev-python/opentelemetry-instrumentation-${PV}:${SLOT}[${PYTHON_USEDEP}]
 	dev-python/opentelemetry-instrumentation:=
 	~dev-python/opentelemetry-semantic-conventions-${PV}:${SLOT}[${PYTHON_USEDEP}]
 	dev-python/opentelemetry-semantic-conventions:=
-	~dev-python/opentelemetry-util-http-${PV}:${SLOT}[${PYTHON_USEDEP}]
-	dev-python/opentelemetry-util-http:=
+
+	>=dev-python/psutil-5.9.0[${PYTHON_USEDEP}]
+	<dev-python/psutil-8[${PYTHON_USEDEP}]
+
 	instruments? (
-		>=dev-python/asgiref-3.0[${PYTHON_USEDEP}]
+		>=dev-python/psutil-5[${PYTHON_USEDEP}]
 	)
 "
 DEPEND+="
@@ -57,10 +58,11 @@ BDEPEND+="
 		~dev-python/iniconfig-2.0.0[${PYTHON_USEDEP}]
 		~dev-python/packaging-24.0[${PYTHON_USEDEP}]
 		~dev-python/pluggy-1.6.0[${PYTHON_USEDEP}]
+		~dev-python/psutil-7.0.0[${PYTHON_USEDEP}]
 		~dev-python/py-cpuinfo-9.0.0[${PYTHON_USEDEP}]
 		~dev-python/pytest-7.4.4[${PYTHON_USEDEP}]
 		~dev-python/tomli-2.0.1[${PYTHON_USEDEP}]
-		~dev-python/typing-extensions-4.12.2[${PYTHON_USEDEP}]
+		~dev-python/typing_extensions-4.12.2[${PYTHON_USEDEP}]
 		~dev-python/wrapt-1.16.0[${PYTHON_USEDEP}]
 		~dev-python/zipp-3.19.2[${PYTHON_USEDEP}]
 	)

@@ -26,7 +26,7 @@ HOMEPAGE="
 	https://github.com/open-telemetry/opentelemetry-python/
 "
 LICENSE="Apache-2.0"
-SLOT="${PROTOBUF_CPP_SLOT}/${OPENTELEMETRY_PV%.*}"
+SLOT="${PROTOBUF_CPP_SLOT}/"$(ver_cut "1-2" "${OPENTELEMETRY_PV}")
 IUSE="
 ebuild_revision_1
 "

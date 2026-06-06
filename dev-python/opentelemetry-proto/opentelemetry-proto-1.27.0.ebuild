@@ -24,7 +24,7 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror"
-SLOT="${PROTOBUF_CPP_SLOT}/$(ver_cut 1-2 ${PV})" # Use PYTHONPATH for multislot package
+SLOT="${PROTOBUF_CPP_SLOT}/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 test
 ebuild_revision_7

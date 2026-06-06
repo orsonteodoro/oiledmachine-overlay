@@ -28,7 +28,7 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror"
-SLOT="0/${OPENTELEMETRY_PV}"
+SLOT="${PROTOBUF_CPP_SLOT}/"$(ver_cut "1-2" "${OPENTELEMETRY_PV}")
 IUSE+="
 instruments test
 ebuild_revision_1
