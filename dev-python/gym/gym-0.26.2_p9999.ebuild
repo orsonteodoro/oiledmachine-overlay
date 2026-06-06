@@ -51,12 +51,10 @@ RDEPEND+="
 	${PYTHON_DEPS}
 	$(python_gen_cond_dep '
 		>=dev-python/cloudpickle-1.2.0[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
 		>=dev-python/gym-notices-0.0.4[${PYTHON_USEDEP}]
-
 		>=dev-python/lz4-3.1.0[${PYTHON_USEDEP}]
 		>=dev-python/matplotlib-3.0[${PYTHON_USEDEP}]
-
+		virtual/numpy[${PYTHON_USEDEP}]
 		mujoco? (
 			|| (
 				(
