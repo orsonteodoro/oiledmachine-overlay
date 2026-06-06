@@ -61,16 +61,14 @@ BDEPEND+="
 	')
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	test? (
-		dev-python/numpy[${PYTHON_USEDEP}]
+		dev-python/flake8[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-benchmark[${PYTHON_USEDEP}]
 		dev-python/pytest-regressions[${PYTHON_USEDEP}]
 		dev-python/pytest-xdist[${PYTHON_USEDEP}]
-
 		dev-python/matplotlib[${PYTHON_USEDEP}]
 		dev-python/orion[${PYTHON_USEDEP}]
-
-		dev-python/flake8[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "README.md" )
