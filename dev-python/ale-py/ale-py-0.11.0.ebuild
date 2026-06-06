@@ -33,7 +33,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" cibuildwheel test"
 RDEPEND+="
 	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.20.0[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	media-libs/libsdl2
 	sys-libs/zlib
