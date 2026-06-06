@@ -26,8 +26,8 @@ RDEPEND="
 	$(python_gen_cond_dep '
 		>=dev-python/cffi-1.0.0[${PYTHON_USEDEP}]
 	' 'python*')
-	dev-python/numpy[${PYTHON_USEDEP}]
 	media-libs/libsndfile
+	virtual/numpy[${PYTHON_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
