@@ -39,15 +39,15 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-ebuild_revision_2
+ebuild_revision_3
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/scipy-1.10.0[${PYTHON_USEDEP}]
 		dev-python/protobuf:3/3.12[${PYTHON_USEDEP}]
 		dev-python/protobuf:=
-		dev-python/numpy[${PYTHON_USEDEP}]
 		sci-ml/onnxruntime[${PYTHON_SINGLE_USEDEP},python]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	>=sci-ml/transformers-4.36.0[${PYTHON_SINGLE_USEDEP}]
 "
