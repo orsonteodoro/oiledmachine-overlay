@@ -10,7 +10,7 @@ EAPI=8
 # qdrant-sphinx-theme
 
 DISTUTILS_USE_PEP517="poetry"
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{10..13} )
 
 inherit abseil-cpp distutils-r1 grpc protobuf pypi re2
 
@@ -43,7 +43,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 dev doc fastembed fastembed-gpu test types
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	test? (
@@ -75,19 +75,11 @@ gen_grpcio_rdepend() {
 	"
 }
 RDEPEND+="
-	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.21[${PYTHON_USEDEP}]
-	' python3_{10,11})
-	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.26[${PYTHON_USEDEP}]
-	' python3_12)
-	$(python_gen_cond_dep '
-		>=dev-python/numpy-2.1.0[${PYTHON_USEDEP}]
-	' python3_13)
 	>=dev-python/httpx-0.20.0[http2(+)]
 	>=dev-python/pydantic-1.10.8[${PYTHON_USEDEP}]
 	>=dev-python/urllib3-1.26.14[${PYTHON_USEDEP}]
 	>=dev-python/portalocker-2.7.0[${PYTHON_USEDEP}]
+	virtual/numpy[${PYTHON_USEDEP}]
 	fastembed? (
 		>=dev-python/fastembed-0.5.1[${PYTHON_USEDEP}]
 	)
