@@ -50,10 +50,10 @@ RDEPEND+="
 		dev-python/humanize[${PYTHON_USEDEP}]
 		dev-python/msgpack[${PYTHON_USEDEP}]
 		dev-python/nest-asyncio[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/protobuf[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 		dev-python/typing-extensions[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	>=dev-python/jax-0.5.0[${PYTHON_SINGLE_USEDEP}]
 	dev-python/etils[${PYTHON_SINGLE_USEDEP}]
