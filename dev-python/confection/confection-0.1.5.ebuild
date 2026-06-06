@@ -45,10 +45,10 @@ BDEPEND+="
 		>=dev-python/pathy-0.3.5[${PYTHON_USEDEP}]
 		>=dev-python/pytest-5.2.0[${PYTHON_USEDEP}]
 		>=dev-python/mypy-1.7.0[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.15.0[${PYTHON_USEDEP}]
 		>=dev-python/black-22.0[${PYTHON_USEDEP}]
 		>=dev-python/flake8-3.8.0[${PYTHON_USEDEP}]
 		>=dev-python/isort-5.0[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "README.md" )
