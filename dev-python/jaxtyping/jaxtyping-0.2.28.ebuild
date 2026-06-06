@@ -34,8 +34,8 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc test"
 DEPEND+="
 	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.20.0[${PYTHON_USEDEP}]
 		>=dev-python/typeguard-2.13.3[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 "
 RDEPEND+="
