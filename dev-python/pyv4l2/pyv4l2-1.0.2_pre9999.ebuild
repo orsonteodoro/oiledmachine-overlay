@@ -34,14 +34,14 @@ LICENSE="
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 examples
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE+="
 "
 RDEPEND+="
 	media-libs/libv4l
 	examples? (
-		dev-python/numpy[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 		virtual/pillow[${PYTHON_USEDEP}]
 	)
 "
