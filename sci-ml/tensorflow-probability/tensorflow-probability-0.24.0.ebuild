@@ -70,11 +70,11 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/cloudpickle-1.3[${PYTHON_USEDEP}]
 		>=dev-python/gast-0.3.2[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.13.3[${PYTHON_USEDEP}]
 		>=dev-python/six-1.10.0[${PYTHON_USEDEP}]
 		dev-python/absl-py[${PYTHON_USEDEP}]
 		dev-python/decorator[${PYTHON_USEDEP}]
 		dev-python/dm-tree[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 "
 DEPEND+="
