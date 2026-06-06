@@ -78,7 +78,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 all cuda dev +firejail mariadb ollama +openrc postgres rag-ocr -telemetry unstructured systemd
 valkey
-ebuild_revision_12
+ebuild_revision_13
 "
 REQUIRED_USE="
 	all? (
@@ -306,7 +306,7 @@ RDEPEND+="
 	')
 	>=dev-python/accelerate-1.13.0[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/av-14.0.1[${PYTHON_SINGLE_USEDEP}]
-	>=dev-python/chromadb-1.5.2[${PYTHON_SINGLE_USEDEP},protobuf_5]
+	>=dev-python/chromadb-1.5.2[${PYTHON_SINGLE_USEDEP},protobuf_python_5]
 	>=dev-python/faster-whisper-1.2.1[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/rapidocr-onnxruntime-1.4.4[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/sentence-transformers-5.4.0[${PYTHON_SINGLE_USEDEP}]
