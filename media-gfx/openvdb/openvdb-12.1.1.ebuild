@@ -97,7 +97,7 @@ ${OPENVDB_ABIS_[@]} +abi${PV%%.*}-compat
 -alembic ax +blosc cuda doc -imath-half +jemalloc -jpeg -log4cplus +nanovdb -numpy
 -python +static-libs -tbbmalloc nanovdb -no-concurrent-malloc -openexr -png test
 -vdb_lod +vdb_print -vdb_render -vdb_view
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE+="
 	^^ (
@@ -189,7 +189,7 @@ RDEPEND+="
 			>=dev-python/nanobind-2.0.0[${PYTHON_USEDEP}]
 			>=dev-python/pybind11-2.10.0[${PYTHON_USEDEP}]
 			numpy? (
-				>=dev-python/numpy-1.23.0[${PYTHON_USEDEP}]
+				virtual/numpy[${PYTHON_USEDEP}]
 			)
 		')
 	)
