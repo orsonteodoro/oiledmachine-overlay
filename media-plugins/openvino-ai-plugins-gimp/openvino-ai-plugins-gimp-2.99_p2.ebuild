@@ -43,7 +43,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 test
-ebuild_revision_1
+ebuild_revision_2
 "
 STABLE_DIFFUSION_MODEL_RDEPEND="
 	$(python_gen_cond_dep '
@@ -55,10 +55,8 @@ STABLE_DIFFUSION_MODEL_RDEPEND="
 			<dev-python/matplotlib-3.5.3[${PYTHON_USEDEP}]
 		)
 		>=dev-python/librosa-0.8.1[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.21.0[${PYTHON_USEDEP}]
 		>=dev-python/pytube-12.1.0[${PYTHON_USEDEP}]
 		>=dev-python/shapely-1.7.1[${PYTHON_USEDEP}]
-		>=virtual/pillow-8.3.2[${PYTHON_USEDEP}]
 		dev-python/psutil[${PYTHON_USEDEP}]
 		dev-python/scipy[${PYTHON_USEDEP}]
 		net-misc/gdown[${PYTHON_USEDEP}]
@@ -79,7 +77,8 @@ STABLE_DIFFUSION_MODEL_RDEPEND="
 		>=dev-python/rsa-4.7[${PYTHON_USEDEP}]
 		>=dev-python/seaborn-0.11.0[${PYTHON_USEDEP}]
 		>=dev-python/scikit-image-0.19.2[${PYTHON_USEDEP}]
-
+		>=virtual/pillow-8.3.2[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 		(
 		>=sci-ml/tensorflow-2.5[${PYTHON_SINGLE_USEDEP}]
@@ -117,7 +116,6 @@ PLUGIN_RDEPEND="
 RDEPEND+="
 	$(python_gen_cond_dep '
 		dev-python/matplotlib[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/psutil[${PYTHON_USEDEP}]
 		dev-python/requests[${PYTHON_USEDEP}]
 		dev-python/scikit-image[${PYTHON_USEDEP}]
@@ -125,6 +123,7 @@ RDEPEND+="
 		dev-python/typing[${PYTHON_USEDEP}]
 		media-gfx/gimp:0/3
 		net-misc/gdown[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	${PLUGIN_RDEPEND}
 	>=dev-python/controlnet-aux-0.0.6[${PYTHON_SINGLE_USEDEP}]
