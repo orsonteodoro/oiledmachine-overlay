@@ -54,19 +54,13 @@ REQUIRED_USE="
 # Some examples require cuda11+cudnn
 RDEPEND+="
 	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.23.2[${PYTHON_USEDEP}]
-	' python3_11)
-	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.26.0[${PYTHON_USEDEP}]
-	' python3_12)
-	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.12[${PYTHON_USEDEP}]
 		>=dev-python/typing-extensions-4.2[${PYTHON_USEDEP}]
 		>=dev-python/pyyaml-5.4.1[${PYTHON_USEDEP}]
 		>=dev-python/rich-11.1[${PYTHON_USEDEP}]
 		dev-python/matplotlib[${PYTHON_USEDEP}]
 		dev-python/msgpack[${PYTHON_USEDEP}]
 		sci-libs/tensorstore[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	(
 		!examples? (

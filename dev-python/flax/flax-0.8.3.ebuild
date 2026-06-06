@@ -23,7 +23,7 @@ EAPI=8
 
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream lists only up to 3.11 in classifiers section.  CI only tests up to 3.11.
+PYTHON_COMPAT=( "python3_"{10..11} ) #  Upstream lists only up to 3.11 in classifiers section.  CI only tests up to 3.11.
 
 # Limited by orbax
 inherit distutils-r1
@@ -55,19 +55,13 @@ REQUIRED_USE="
 # Some examples require cuda11+cudnn
 RDEPEND+="
 	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.23.2[${PYTHON_USEDEP}]
-	' python3_11)
-	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.26.0[${PYTHON_USEDEP}]
-	' python3_12)
-	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.22[${PYTHON_USEDEP}]
 		>=dev-python/typing-extensions-4.2[${PYTHON_USEDEP}]
 		>=dev-python/pyyaml-5.4.1[${PYTHON_USEDEP}]
 		>=dev-python/rich-11.1[${PYTHON_USEDEP}]
 		dev-python/matplotlib[${PYTHON_USEDEP}]
 		dev-python/msgpack[${PYTHON_USEDEP}]
 		sci-libs/tensorstore[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	(
 		!examples? (
