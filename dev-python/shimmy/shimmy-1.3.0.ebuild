@@ -33,7 +33,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" atari bsuite dm-control dm-control-multi-agent doc gym meltingpot openspiel test"
 RDEPEND+="
 	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 		dm-control? (
 			>=dev-python/h5py-3.7.0[${PYTHON_USEDEP}]
 			>=dev-python/dm-control-1.0.10[${PYTHON_USEDEP}]
