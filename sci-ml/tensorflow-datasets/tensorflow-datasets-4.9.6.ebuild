@@ -92,7 +92,6 @@ HUGGINGFACE_RDEPEND="
 		dev-python/mwxml[${PYTHON_USEDEP}]
 		dev-python/networkx[${PYTHON_USEDEP}]
 		dev-python/nltk[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/pandas[${PYTHON_USEDEP}]
 		dev-python/pretty_midi[${PYTHON_USEDEP}]
 		dev-python/promise[${PYTHON_USEDEP}]
@@ -112,6 +111,7 @@ HUGGINGFACE_RDEPEND="
 		dev-python/zarr[${PYTHON_USEDEP}]
 		dev-python/dm-tree[${PYTHON_USEDEP}]
 		sci-libs/gcld3[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 		virtual/pillow[${PYTHON_USEDEP}]
 	')
 	>=dev-python/array-record-0.5.0[${PYTHON_SINGLE_USEDEP}]
@@ -137,7 +137,6 @@ RDEPEND+="
 		dev-python/absl-py[${PYTHON_USEDEP}]
 		dev-python/click[${PYTHON_USEDEP}]
 		dev-python/immutabledict[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/promise[${PYTHON_USEDEP}]
 		dev-python/psutil[${PYTHON_USEDEP}]
 		dev-python/pyarrow[${PYTHON_USEDEP}]
@@ -147,6 +146,7 @@ RDEPEND+="
 		dev-python/tqdm[${PYTHON_USEDEP}]
 		dev-python/wrapt[${PYTHON_USEDEP}]
 		dev-python/dm-tree[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 		aflw2k3d? (
 			dev-python/scipy[${PYTHON_USEDEP}]
 		)
