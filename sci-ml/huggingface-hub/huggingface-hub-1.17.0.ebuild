@@ -50,7 +50,7 @@ REQUIRED_USE="
 # Missing in safetensors[torch]:
 PYTORCH_DEPENDS="
 	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.21.6[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	>=sci-ml/pytorch-1.10[${PYTHON_SINGLE_USEDEP}]
 "
@@ -116,20 +116,20 @@ BDEPEND+="
 		test? (
 			>=dev-python/pytest-8.4.2[${PYTHON_USEDEP}]
 			<dev-python/urllib3-2.0[${PYTHON_USEDEP}]
+			<dev-python/pytest-rerunfailures-16.0[${PYTHON_USEDEP}]
 			dev-python/duckdb[${PYTHON_USEDEP}]
 			dev-python/fastapi[${PYTHON_USEDEP}]
 			dev-python/jedi[${PYTHON_USEDEP}]
 			dev-python/jinja2[${PYTHON_USEDEP}]
-			dev-python/numpy[${PYTHON_USEDEP}]
 			dev-python/pillow[${PYTHON_USEDEP}]
 			dev-python/pytest-asyncio[${PYTHON_USEDEP}]
 			dev-python/pytest-cov[${PYTHON_USEDEP}]
 			dev-python/pytest-env[${PYTHON_USEDEP}]
 			dev-python/pytest-mock[${PYTHON_USEDEP}]
-			<dev-python/pytest-rerunfailures-16.0[${PYTHON_USEDEP}]
 			dev-python/pytest-xdist[${PYTHON_USEDEP}]
 			dev-python/pytest-vcr[${PYTHON_USEDEP}]
 			dev-python/soundfile[${PYTHON_USEDEP}]
+			virtual/numpy[${PYTHON_USEDEP}]
 		)
 		typing? (
 			>=dev-python/typing-extensions-4.8.0[${PYTHON_USEDEP}]
