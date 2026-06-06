@@ -32,7 +32,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 all atari box2d classic-control jax mujoco other pygame pytorch test toy-text
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -61,10 +61,9 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/cloudpickle-1.2.0[${PYTHON_USEDEP}]
 		>=dev-python/farama-notifications-0.0.1[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.21.0[${PYTHON_USEDEP}]
 		>=dev-python/typing-extensions-4.3.0[${PYTHON_USEDEP}]
 		>=dev-python/jumpy-0.2.0[${PYTHON_USEDEP}]
-
+		virtual/numpy[${PYTHON_USEDEP}]
 		atari? (
 			>=dev-python/ale-py-0.9[${PYTHON_USEDEP}]
 		)
