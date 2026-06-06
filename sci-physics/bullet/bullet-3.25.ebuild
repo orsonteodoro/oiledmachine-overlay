@@ -318,7 +318,7 @@ IUSE+="
 	+serialize
 	test
 	-threads
-	ebuild_revision_4
+	ebuild_revision_5
 "
 REQUIRED_USE+="
 	bullet-robotics? (
@@ -374,7 +374,9 @@ CDEPEND="
 	python? (
 		${PYTHON_DEPS}
 		numpy? (
-			$(python_gen_cond_dep 'dev-python/numpy[${PYTHON_USEDEP}]')
+			$(python_gen_cond_dep '
+				virtual/numpy[${PYTHON_USEDEP}]
+			')
 		)
 	)
 "
