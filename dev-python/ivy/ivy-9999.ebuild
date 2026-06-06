@@ -59,12 +59,12 @@ RDEPEND+="
 		dev-python/einops[${PYTHON_USEDEP}]
 		dev-python/gast[${PYTHON_USEDEP}]
 		dev-python/networkx[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/packaging[${PYTHON_USEDEP}]
 		dev-python/psutil[${PYTHON_USEDEP}]
 		dev-python/requests[${PYTHON_USEDEP}]
 		dev-python/tqdm[${PYTHON_USEDEP}]
 		dev-util/ruff
+		virtual/numpy[${PYTHON_USEDEP}]
 		cuda? (
 			dev-python/autoflake[${PYTHON_USEDEP}]
 			dev-python/coverage[${PYTHON_USEDEP}]
