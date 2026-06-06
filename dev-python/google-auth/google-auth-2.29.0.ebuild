@@ -39,7 +39,7 @@ RESTRICT="test" # Not tested
 SLOT="0"
 IUSE+="
 aiohttp doc enterprise_cert pyopenssl reauth requests test
-ebuild_revision_4
+ebuild_revision_5
 "
 RDEPEND="
 	!dev-python/namespace-google
