@@ -78,7 +78,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 +cli +cpu-dispatch -cuda -cudnn -dnnl dev -flash +openmp -tensor-parallel
 +mkl -openblas -profiling +python -ruy test
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	flash? (
@@ -102,8 +102,8 @@ RDEPEND+="
 	python? (
 		$(python_gen_cond_dep '
 			>=dev-python/pyyaml-5.3[${PYTHON_USEDEP}]
-			dev-python/numpy[${PYTHON_USEDEP}]
 			dev-python/setuptools[${PYTHON_USEDEP}]
+			virtual/numpy[${PYTHON_USEDEP}]
 		')
 	)
 	tensor-parallel? (
