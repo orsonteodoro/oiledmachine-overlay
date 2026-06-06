@@ -99,7 +99,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${ROCM_SLOTS[@]}
 cuda rocm test tutorials video_cards_intel
-ebuild_revision_7
+ebuild_revision_8
 "
 gen_rocm_required_use() {
 	local u
@@ -239,10 +239,10 @@ BDEPEND+="
 			dev-python/flake8[${PYTHON_USEDEP}]
 			dev-python/isort[${PYTHON_USEDEP}]
 			dev-python/llnl-hatchet[${PYTHON_USEDEP}]
-			dev-python/numpy[${PYTHON_USEDEP}]
 			dev-python/pytest[${PYTHON_USEDEP}]
 			dev-python/pytest-forked[${PYTHON_USEDEP}]
 			dev-python/pytest-xdist[${PYTHON_USEDEP}]
+			virtual/numpy[${PYTHON_USEDEP}]
 		)
 		tutorials? (
 			dev-python/pandas[${PYTHON_USEDEP}]
