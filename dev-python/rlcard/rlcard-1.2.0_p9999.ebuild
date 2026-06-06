@@ -44,8 +44,8 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.16.3[${PYTHON_USEDEP}]
 		dev-python/termcolor[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 		test? (
 			dev-python/pytest[${PYTHON_USEDEP}]
 			dev-python/pytest-cov[${PYTHON_USEDEP}]
