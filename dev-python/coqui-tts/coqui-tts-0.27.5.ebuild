@@ -67,7 +67,7 @@ RDEPEND+="
 		>=dev-python/pyyaml-6.0[${PYTHON_USEDEP}]
 		>=dev-python/fsspec-2023.6.0[${PYTHON_USEDEP},http(+)]
 		>=dev-python/packaging-23.1[${PYTHON_USEDEP}]
-		>=dev-python/typing_extensions-4.10[${PYTHON_USEDEP}]
+		>=dev-python/typing-extensions-4.10[${PYTHON_USEDEP}]
 		>=dev-python/matplotlib-3.8.4[${PYTHON_USEDEP}]
 
 		>=dev-python/coqpit-config-0.2.0[${PYTHON_USEDEP}]
