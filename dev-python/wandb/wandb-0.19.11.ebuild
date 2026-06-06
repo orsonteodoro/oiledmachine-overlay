@@ -43,7 +43,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 aws azure dev gcp importers kubeflow launch media models perf sweeps test
 workspaces
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	dev? (
