@@ -68,7 +68,7 @@ LICENSE="
 SLOT="0"
 IUSE="
 examples hdf5 python test
-ebuild_revision_11
+ebuild_revision_12
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -120,7 +120,7 @@ RDEPEND+="
 	python? (
 		$(python_gen_cond_dep '
 			>=dev-libs/boost-1.55.0[${PYTHON_USEDEP},python]
-			dev-python/numpy[${PYTHON_USEDEP}]
+			virtual/numpy[${PYTHON_USEDEP}]
 		')
 		>=dev-libs/boost-1.55.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		|| (
