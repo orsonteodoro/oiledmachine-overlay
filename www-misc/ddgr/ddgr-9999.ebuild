@@ -1,18 +1,26 @@
-# Copyright 2022-2025 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 2022-2026 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
-PYTHON_COMPAT=( "python3_"{8..11} )
+PYTHON_COMPAT=( "python3_12" )
 
 inherit python-single-r1
 
-SRC_URI="
+if [[ "${PV}" =~ "9999" ]] ; then
+	EGIT_BRANCH="main"
+	EGIT_REPO_URI="https://github.com/jarun/ddgr.git"
+	FALLBACK_COMMIT="3cb98894060459f6e107d827b75b862d7288b9e8" # Jun 5, 2026
+	IUSE+=" fallback-commit"
+	inherit git-r3
+else
+	S="${WORKDIR}/${P}"
+	SRC_URI="
 https://github.com/jarun/ddgr/archive/v${PV}.tar.gz
 	-> ${P}.tar.gz
-"
-S="${WORKDIR}/${P}"
+	"
+fi
 
 DESCRIPTION="DuckDuckGo from the terminal"
 HOMEPAGE="https://github.com/jarun/ddgr"
@@ -35,6 +43,16 @@ RESTRICT="mirror"
 
 pkg_setup() {
 	python-single-r1_pkg_setup
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
 }
 
 src_install() {
