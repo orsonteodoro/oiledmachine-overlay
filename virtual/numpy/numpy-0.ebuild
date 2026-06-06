@@ -4,11 +4,11 @@
 
 EAPI=8
 
-# U22 - numpy 1.21   - python 3.10
-# D12 - numpy 1.24.2 - python 3.11
-# U24 - numpy 1.2x   - python 3.12
-# D13 - numpy 2.2.4 - python 3.13
-# U26 - numpy 2.3   - python 3.14
+# U22 - numpy 1.21 - python 3.10
+# D12 - numpy 1.24 - python 3.11
+# U24 - numpy 1.26 - python 3.12
+# D13 - numpy 2.2  - python 3.13
+# U26 - numpy 2.3  - python 3.14
 
 DISTUTILS_USE_PEP517="no"
 PYTHON_COMPAT=( "python3_"{11..14} )
