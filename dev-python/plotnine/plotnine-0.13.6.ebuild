@@ -51,9 +51,9 @@ RDEPEND+="
 	)
 	>=dev-python/matplotlib-3.7.0[${PYTHON_USEDEP}]
 	>=dev-python/mizani-0.11.0[${PYTHON_USEDEP}]
-	>=dev-python/numpy-1.23.0[${PYTHON_USEDEP}]
 	>=dev-python/scipy-1.7.0[${PYTHON_USEDEP}]
 	>=dev-python/statsmodels-0.14.0[${PYTHON_USEDEP}]
+	virtual/numpy[${PYTHON_USEDEP}]
 	extra? (
 		>=dev-python/numpydoc-0.9.1[${PYTHON_USEDEP}]
 		>=dev-python/quartodoc-0.7.2[${PYTHON_USEDEP}]
