@@ -50,9 +50,9 @@ BDEPEND+="
 	test? (
 		dev-python/codecov[${PYTHON_USEDEP}]
 		dev-python/flake8[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-cov[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "README.rst" )
