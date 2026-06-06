@@ -240,7 +240,7 @@ ewarn "QA:  Setting protobuf-python support for PYTHONPATH is skipped.  Set PROT
 # }
 #
 protobuf_python_configure() {
-	grpc_src_configure
+	protobuf_src_configure
 }
 
 # @FUNCTION:  protobuf_append_cmake
