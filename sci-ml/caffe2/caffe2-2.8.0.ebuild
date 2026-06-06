@@ -764,17 +764,17 @@ REQUIRED_USE="
 		^^ (
 			${ROCM_SLOTS2[@]}
 		)
-		!python_targets_python3_13
+		!python_single_target_python3_13
 		numpy? (
 			|| (
-				python_targets_python3_11
-				python_targets_python3_12
+				python_single_target_python3_11
+				python_single_target_python3_12
 			)
 		)
 		flash-attention? (
 			|| (
-				python_targets_python3_11
-				python_targets_python3_12
+				python_single_target_python3_11
+				python_single_target_python3_12
 			)
 		)
 	)
