@@ -31,7 +31,7 @@ LICENSE="GPL-2 LGPL-2.1"
 SLOT="0"
 IUSE="
 cdr dia exif graphicsmagick imagemagick inkjar jpeg openmp postscript readline sourceview spell svg2 test visio wpg X
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 # Lots of test failures which need investigating, bug #871621
@@ -108,7 +108,7 @@ COMMON_DEPEND="${PYTHON_DEPS}
 # on that.
 RDEPEND="${COMMON_DEPEND}
 	$(python_gen_cond_dep '
-		dev-python/numpy[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	dia? ( app-office/dia )
 	postscript? ( app-text/ghostscript-gpl )
