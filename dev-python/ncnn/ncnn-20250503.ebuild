@@ -196,7 +196,7 @@ ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
 openmp
-ebuild_revision_21
+ebuild_revision_22
 "
 REQUIRED_USE="
 	cpu_flags_arm_bf16? (
@@ -299,10 +299,10 @@ RESTRICT="test"
 
 RDEPEND="
 	$(python_gen_cond_dep '
-		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/tqdm[${PYTHON_USEDEP}]
 		dev-python/requests[${PYTHON_USEDEP}]
 		dev-python/portalocker[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	media-libs/opencv[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},python,${PYTHON_SINGLE_USEDEP}]
 	media-libs/opencv:=
