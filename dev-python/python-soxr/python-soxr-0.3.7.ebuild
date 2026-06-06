@@ -45,10 +45,10 @@ RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 doc system-soxr test
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND+="
-	dev-python/numpy[${PYTHON_USEDEP}]
+	virtual/numpy[${PYTHON_USEDEP}]
 	system-soxr? (
 		>=media-libs/soxr-0.1.3
 	)
