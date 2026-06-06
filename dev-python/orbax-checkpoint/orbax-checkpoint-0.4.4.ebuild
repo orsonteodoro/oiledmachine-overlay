@@ -41,7 +41,7 @@ RESTRICT="mirror test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 tensorflow test
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 "
@@ -73,9 +73,9 @@ CHECKPOINT_RDEPEND="
 		dev-python/absl-py[${PYTHON_USEDEP}]
 		dev-python/msgpack[${PYTHON_USEDEP}]
 		dev-python/nest-asyncio[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 		dev-python/typing-extensions[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	>=dev-python/jax-0.4.9[${PYTHON_SINGLE_USEDEP}]
 	dev-python/etils[${PYTHON_SINGLE_USEDEP},epath,epy]
@@ -91,7 +91,7 @@ ORBAX_EXPORT_RDEPEND="
 	$(python_gen_cond_dep '
 		dev-python/absl-py[${PYTHON_USEDEP}]
 		dev-python/dataclasses-json[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	dev-python/etils[${PYTHON_SINGLE_USEDEP}]
 	dev-python/jax[${PYTHON_SINGLE_USEDEP}]
