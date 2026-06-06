@@ -27,7 +27,7 @@ RESTRICT="mirror"
 SLOT="${PROTOBUF_CPP_SLOT}/"$(ver_cut "1-2" "${PV}") # Use PYTHONPATH for multislot package
 IUSE+="
 gcp-auth test
-ebuild_revision_4
+ebuild_revision_5
 "
 RDEPEND+="
 	>=dev-python/googleapis-common-protos-1.52[${PYTHON_USEDEP}]
