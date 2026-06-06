@@ -45,7 +45,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 DOCS_IUSE="
 all-docs csv doc docx epub image md odt org pdf ppt pptx rst rtf tsv xlsx
-ebuild_revision_3
+ebuild_revision_4
 "
 LEGACY_IUSE="
 huggingface local-inference paddleocr
