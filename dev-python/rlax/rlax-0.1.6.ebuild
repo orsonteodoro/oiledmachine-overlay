@@ -42,8 +42,8 @@ IUSE+=" doc examples test"
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/absl-py-0.9.0[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
 		dev-python/dm-env[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 		examples? (
 			>=dev-python/dm-env-1.2[${PYTHON_USEDEP}]
 		)
