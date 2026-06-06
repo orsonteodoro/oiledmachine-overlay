@@ -51,7 +51,6 @@ RDEPEND+="
 		dev-python/absl-py[${PYTHON_USEDEP}]
 		dev-python/immutabledict[${PYTHON_USEDEP}]
 		dev-python/networkx[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/pandas[${PYTHON_USEDEP}]
 		dev-python/pygame[${PYTHON_USEDEP}]
 		dev-python/reactivex[${PYTHON_USEDEP}]
@@ -59,6 +58,7 @@ RDEPEND+="
 		dev-python/dm-tree[${PYTHON_USEDEP}]
 		dev-python/dm-env[${PYTHON_USEDEP}]
 		dev-python/ml-collections[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	<media-libs/opencv-4.7[${PYTHON_SINGLE_USEDEP},python]
 	dev-python/chex[${PYTHON_SINGLE_USEDEP}]
