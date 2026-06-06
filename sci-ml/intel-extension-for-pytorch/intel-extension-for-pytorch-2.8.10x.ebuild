@@ -89,9 +89,9 @@ SLOT="0/$(ver_cut 1-2)-xpu" # TODO:  recheck if we can multislot
 IUSE+=" dev test"
 RDEPEND+="
 	$(python_gen_cond_dep '
-		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/packaging[${PYTHON_USEDEP}]
 		dev-python/psutil[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	=sci-ml/pytorch-${PV%.*}*[${PYTHON_SINGLE_USEDEP}]
 "
@@ -107,12 +107,12 @@ BDEPEND+="
 			>=dev-python/scipy-1.8.0[${PYTHON_USEDEP}]
 			>=dev-python/setuptools-72.1.1[${PYTHON_USEDEP}]
 			dev-python/hypothesis[${PYTHON_USEDEP}]
-			dev-python/numpy[${PYTHON_USEDEP}]
 			dev-python/psutil[${PYTHON_USEDEP}]
 			dev-python/pytest[${PYTHON_USEDEP}]
 			dev-python/pyyaml[${PYTHON_USEDEP}]
 			dev-python/types-dataclasses[${PYTHON_USEDEP}]
 			dev-python/typing-extensions[${PYTHON_USEDEP}]
+			virtual/numpy[${PYTHON_USEDEP}]
 		)
 		test? (
 			dev-python/expecttest[${PYTHON_USEDEP}]

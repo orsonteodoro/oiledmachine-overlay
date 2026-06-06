@@ -74,9 +74,9 @@ SLOT="0/$(ver_cut 1-2)-cpu" # TODO:  recheck if we can multislot
 IUSE+=" dev test"
 RDEPEND+="
 	$(python_gen_cond_dep '
-		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/packaging[${PYTHON_USEDEP}]
 		dev-python/psutil[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	=sci-ml/pytorch-${PV%.*}*[${PYTHON_SINGLE_USEDEP}]
 "
