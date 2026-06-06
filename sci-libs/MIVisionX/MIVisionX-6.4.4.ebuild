@@ -90,7 +90,7 @@ IUSE="
 caffe cpu +enhanced-message ffmpeg -fp16 +ieee1394 +loom +migraphx +neural-net
 nnef onnx opencl opencv +rocal +rocal-python +rocm +rpp system-nnef-parser
 system-rapidjson
-ebuild_revision_26
+ebuild_revision_27
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -169,8 +169,8 @@ RDEPEND="
 	neural-net? (
 		$(python_gen_cond_dep '
 			>=dev-python/future-0.18.2[${PYTHON_USEDEP}]
-			>=dev-python/numpy-1.21.0[${PYTHON_USEDEP}]
 			>=dev-python/pytz-2022.1[${PYTHON_USEDEP}]
+			virtual/numpy[${PYTHON_USEDEP}]
 		')
 	)
 	nnef? (
