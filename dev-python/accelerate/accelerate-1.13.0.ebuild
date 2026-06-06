@@ -39,7 +39,7 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 deepspeed dev quality rich sagemaker test test-dev test-fp8 test-prod test-trackers
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE+="
 	test? (
@@ -54,11 +54,11 @@ REQUIRED_USE+="
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.17[${PYTHON_USEDEP}]
 		>=dev-python/packaging-20.0[${PYTHON_USEDEP}]
 		dev-python/psutil[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 		>=dev-python/safetensors-0.4.3[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 		deepspeed? (
 			dev-python/deepspeed[${PYTHON_USEDEP}]
 		)
