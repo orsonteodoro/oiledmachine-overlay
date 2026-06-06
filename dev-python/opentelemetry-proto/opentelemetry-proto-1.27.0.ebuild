@@ -27,7 +27,7 @@ RESTRICT="mirror"
 SLOT="${PROTOBUF_CPP_SLOT}/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 test
-ebuild_revision_7
+ebuild_revision_8
 "
 RDEPEND+="
 	|| (
