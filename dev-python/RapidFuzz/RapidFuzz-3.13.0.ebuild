@@ -21,13 +21,13 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 cpp doc numpy test
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 RDEPEND+="
 	>=dev-cpp/taskflow-3.9.0
 	numpy? (
-		dev-python/numpy[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	)
 "
 DEPEND+="
@@ -38,9 +38,9 @@ BDEPEND+="
 	doc? (
 		>=dev-python/docutils-0.18.1[${PYTHON_USEDEP}]
 		dev-python/furo[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/sphinx[${PYTHON_USEDEP}]
 		dev-python/sphinxcontrib-bibtex[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	)
 	cpp? (
 		=dev-python/cython-3*[${PYTHON_USEDEP}]
