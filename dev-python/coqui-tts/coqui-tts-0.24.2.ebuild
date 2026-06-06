@@ -52,7 +52,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${LANGS[@]/#/l10n_}
 -cors dev doc notebooks server
-ebuild_revision_7
+ebuild_revision_8
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
@@ -67,12 +67,12 @@ RDEPEND+="
 		>=dev-python/librosa-0.10.1[${PYTHON_USEDEP}]
 		>=dev-python/matplotlib-3.7.0[${PYTHON_USEDEP}]
 		>=dev-python/num2words-0.5.11[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.25.2[${PYTHON_USEDEP}]
 		>=dev-python/packaging-23.1[${PYTHON_USEDEP}]
 		>=dev-python/pyyaml-6.0[${PYTHON_USEDEP}]
 		>=dev-python/scipy-1.11.2[${PYTHON_USEDEP}]
 		>=dev-python/soundfile-0.12.0[${PYTHON_USEDEP}]
 		>=dev-python/tqdm-4.64.1[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 		cors? (
 			dev-python/flask-cors[${PYTHON_USEDEP}]
 		)
@@ -119,9 +119,9 @@ BDEPEND+="
 	$(python_gen_cond_dep '
 		=dev-python/cython-3*[${PYTHON_USEDEP}]
 		dev-python/cython:=
-		>=dev-python/numpy-1.25.2[${PYTHON_USEDEP}]
 		dev-python/setuptools[${PYTHON_USEDEP}]
 		dev-python/setuptools-scm[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 		dev? (
 			>=dev-python/black-24.2.0[${PYTHON_USEDEP}]
 			>=dev-python/coverage-7[${PYTHON_USEDEP},toml(+)]
