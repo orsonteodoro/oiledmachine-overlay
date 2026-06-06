@@ -43,7 +43,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ffmpeg gtk3 gstreamer +jpeg +png qt5 qt6 wayland
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	^^ (
@@ -65,9 +65,9 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		dev-python/docopt[${PYTHON_USEDEP}]
 		dev-python/matplotlib[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/scipy[${PYTHON_USEDEP}]
 		sci-libs/dlib[${PYTHON_USEDEP},jpeg?,png?]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	>=media-libs/opencv-3.4.1[${PYTHON_SINGLE_USEDEP},ffmpeg?,gstreamer?,gtk3?,jpeg?,png?,python,qt5?,qt6?,wayland?]
 	dev-python/facemorpher[${PYTHON_SINGLE_USEDEP},ffmpeg?,gstreamer?,stasm]
