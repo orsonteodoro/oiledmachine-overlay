@@ -45,12 +45,6 @@ FABRIC_BASE_RDEPEND="
 			)
 		)
 		(
-			>=dev-python/numpy-1.17.2[${PYTHON_USEDEP}]
-			strict? (
-				<dev-python/numpy-1.27.0[${PYTHON_USEDEP}]
-			)
-		)
-		(
 			>=dev-python/packaging-20.0[${PYTHON_USEDEP}]
 			strict? (
 				<dev-python/packaging-23.1.1[${PYTHON_USEDEP}]
@@ -62,6 +56,7 @@ FABRIC_BASE_RDEPEND="
 				<dev-python/typing-extensions-4.10.0[${PYTHON_USEDEP}]
 			)
 		)
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	(
 		>=dev-python/lightning-utilities-0.8.0[${PYTHON_SINGLE_USEDEP}]
