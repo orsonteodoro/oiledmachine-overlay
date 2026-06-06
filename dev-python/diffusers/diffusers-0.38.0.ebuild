@@ -48,7 +48,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 bitsandbytes dev doc flashpack flax gguf nvidia_modelopt optimum_quanto orphans
 quality test torch torchao training
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE="
 	dev? (
@@ -71,12 +71,10 @@ RDEPEND+="
 		>=sci-ml/safetensors-0.8.0_rc0[${PYTHON_USEDEP}]
 		dev-python/filelock[${PYTHON_USEDEP}]
 		dev-python/importlib-metadata[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
-		virtual/pillow[${PYTHON_USEDEP}]
 		dev-python/requests[${PYTHON_USEDEP}]
-
 		<dev-python/httpx-1.0.0[${PYTHON_USEDEP}]
-
+		virtual/numpy[${PYTHON_USEDEP}]
+		virtual/pillow[${PYTHON_USEDEP}]
 		flashpack? (
 			dev-python/flashpack[${PYTHON_USEDEP}]
 		)
