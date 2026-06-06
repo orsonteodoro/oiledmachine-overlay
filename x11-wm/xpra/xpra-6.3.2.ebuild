@@ -459,8 +459,8 @@ RDEPEND+="
 			>=dev-python/pycuda-'${PYCUDA_PV}'[${PYTHON_USEDEP}]
 			>=dev-util/nvidia-cuda-toolkit-5:=
 			>=media-video/nvidia-video-codec-sdk-10
-			virtual/numpy[${PYTHON_USEDEP}]
 			dev-python/pynvml[${PYTHON_USEDEP}]
+			virtual/numpy[${PYTHON_USEDEP}]
 		)
 		nvfbc? (
 			>=dev-python/pycuda-'${PYCUDA_PV}'[${PYTHON_USEDEP}]

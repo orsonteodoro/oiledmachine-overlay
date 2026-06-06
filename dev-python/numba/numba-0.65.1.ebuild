@@ -8,7 +8,7 @@ EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
 DISTUTILS_EXT=1
-PYTHON_COMPAT=( "python3_"{10..14} )
+PYTHON_COMPAT=( "python3_"{13..14} )
 
 # See FALLBACK_LLVMDEV_VERSION in https://github.com/numba/llvmlite/blob/v0.47.0/.github/workflows/llvmlite_linux-64_wheel_builder.yml
 # See https://github.com/numba/llvmlite/blob/v0.47.0/README.rst#compatibility
@@ -59,9 +59,7 @@ REQUIRED_USE="
 	)
 "
 RDEPEND+="
-	>=dev-python/numpy-1.22[${PYTHON_USEDEP}]
-	<dev-python/numpy-2.5[${PYTHON_USEDEP}]
-
+	virtual/numpy[${PYTHON_USEDEP}]
 	cuda? (
 		>=dev-util/nvidia-cuda-toolkit-11.2
 		dev-python/cuda-python[${PYTHON_USEDEP}]
@@ -93,10 +91,7 @@ BDEPEND+="
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/versioneer[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
-
-	>=dev-python/numpy-2.0.0_rc1[${PYTHON_USEDEP}]
-	<dev-python/numpy-2.5[${PYTHON_USEDEP}]
-
+	virtual/numpy[${PYTHON_USEDEP}]
 	!clang? (
 		sys-devel/gcc[openmp]
 	)

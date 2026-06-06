@@ -66,9 +66,9 @@ BDEPEND="
 	)
 	test? (
 		$(python_gen_any_dep '
-			<dev-python/numpy-2[${PYTHON_USEDEP}]
 			dev-python/coverage[${PYTHON_USEDEP}]
 			dev-python/pycodestyle[${PYTHON_USEDEP}]
+			virtual/numpy[${PYTHON_USEDEP}]
 		')
 		$(python_gen_cond_dep '
 			dev-python/line-profiler[${PYTHON_USEDEP}]

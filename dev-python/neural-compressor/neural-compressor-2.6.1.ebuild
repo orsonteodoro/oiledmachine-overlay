@@ -24,7 +24,7 @@ EAPI=8
 DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..12} ) # U22 uses 3.10 but PyTorch is 3.12 inclusive.
+PYTHON_COMPAT=( "python3_"{10..12} ) # DO NOT BUMP TO 3.13 FOR NUMPY.  U22 uses 3.10 but PyTorch is 3.12 inclusive.
 
 inherit distutils-r1
 
@@ -58,16 +58,15 @@ LICENSE="
 # GPL-3 - neural-compressor-2.6.1/examples/pytorch/object_detection/yolo_v3/quantization/ptq_static/fx/LICENSE
 # The distro's Apache-2.0 license template does not contain all rights reserved.
 SLOT="0"
-IUSE="doc ipex mxnet ort pytorch tensorflow test"
+IUSE="doc ipex mxnet ort tensorflow test torch"
 REQUIRED_USE="
 	ipex? (
-		pytorch
+		torch
 	)
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/deprecated-1.2.13[${PYTHON_USEDEP}]
-		<dev-python/numpy-2.0[${PYTHON_USEDEP}]
 		dev-python/pandas[${PYTHON_USEDEP}]
 		dev-python/prettytable[${PYTHON_USEDEP}]
 		dev-python/psutil[${PYTHON_USEDEP}]
@@ -77,24 +76,25 @@ RDEPEND+="
 		dev-python/requests[${PYTHON_USEDEP}]
 		dev-python/schema[${PYTHON_USEDEP}]
 		dev-python/scikit-learn[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 		virtual/pillow[${PYTHON_USEDEP}]
 		mxnet? (
 			>=sci-libs/mxnet-1.9.1[${PYTHON_USEDEP}]
 		)
 		ort? (
 			>=sci-ml/onnx-1.15.0[${PYTHON_USEDEP}]
-			dev-python/numpy[${PYTHON_USEDEP}]
 			dev-python/py-cpuinfo[${PYTHON_USEDEP}]
 			dev-python/psutil[${PYTHON_USEDEP}]
 			dev-python/pydantic[${PYTHON_USEDEP}]
 			dev-python/onnxruntime-extensions[${PYTHON_USEDEP}]
+			virtual/numpy[${PYTHON_USEDEP}]
 		)
-		pytorch? (
+		torch? (
 			>=dev-python/peft-0.10.0[${PYTHON_USEDEP}]
-			dev-python/numpy[${PYTHON_USEDEP}]
 			dev-python/py-cpuinfo[${PYTHON_USEDEP}]
 			dev-python/psutil[${PYTHON_USEDEP}]
 			dev-python/pydantic[${PYTHON_USEDEP}]
+			virtual/numpy[${PYTHON_USEDEP}]
 		)
 		tensorflow? (
 			dev-python/prettytable[${PYTHON_USEDEP}]
@@ -112,7 +112,7 @@ RDEPEND+="
 		>=sci-ml/onnxruntime-1.17.1[${PYTHON_SINGLE_USEDEP},extensions,python,training-ort]
 		>=sci-ml/transformers-4.34.0[${PYTHON_SINGLE_USEDEP}]
 	)
-	pytorch? (
+	torch? (
 		>=sci-ml/pytorch-2.2.1[${PYTHON_SINGLE_USEDEP}]
 	)
 	tensorflow? (

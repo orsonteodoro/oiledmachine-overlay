@@ -183,23 +183,23 @@ BDEPEND="
 	)
 	test? (
 		$(python_gen_any_dep '
-			<dev-python/numpy-2[${PYTHON_USEDEP}]
 			dev-python/setuptools[${PYTHON_USEDEP}]
 			dev-python/coverage[${PYTHON_USEDEP}]
 			dev-python/pycodestyle[${PYTHON_USEDEP}]
+			virtual/numpy[${PYTHON_USEDEP}]
 		')
 		$(python_gen_cond_dep '
-			<dev-python/numpy-2[${PYTHON_USEDEP}]
 			dev-python/coverage[${PYTHON_USEDEP}]
 			dev-python/pycodestyle[${PYTHON_USEDEP}]
 			dev-python/setuptools[${PYTHON_USEDEP}]
+			virtual/numpy[${PYTHON_USEDEP}]
 		' python3_12)
 		$(python_gen_cond_dep '
-			<dev-python/numpy-2[${PYTHON_USEDEP}]
 			dev-python/coverage[${PYTHON_USEDEP}]
 			dev-python/line-profiler[${PYTHON_USEDEP}]
 			dev-python/pycodestyle[${PYTHON_USEDEP}]
 			dev-python/pytest[${PYTHON_USEDEP}]
+			virtual/numpy[${PYTHON_USEDEP}]
 		' python3_{10..11})
 		doc? (
 			$(python_gen_cond_dep '

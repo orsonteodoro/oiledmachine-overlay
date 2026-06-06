@@ -40,7 +40,7 @@ CYTHON_SLOT="0.29"
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PROTOBUF_CPP_SLOT="3"
-PYTHON_COMPAT=( "python3_"{10..12} ) # Based on https://github.com/openvinotoolkit/openvino/blob/2024.6.0/docs/dev/build_linux.md#software-requirements
+PYTHON_COMPAT=( "python3_"{10..12} ) # DO NOT BUMP TO >= 3.13 FOR NUMPY.  Based on https://github.com/openvinotoolkit/openvino/blob/2024.6.0/docs/dev/build_linux.md#software-requirements
 
 BENCHMARK_1_COMMIT="d572f4777349d43653b21d6c2fc63020ab326db2"
 BENCHMARK_2_COMMIT="5b7683f49e1e9223cf9927b24f6fd3d6bd82e3f8"
@@ -231,11 +231,6 @@ RDEPEND_PROTOBUF="
 RDEPEND_CONSTRAINTS="
 	$(python_gen_cond_dep '
 		(
-			>=dev-python/numpy-1.16.6[${PYTHON_USEDEP}]
-			<dev-python/numpy-1.27[${PYTHON_USEDEP}]
-		)
-
-		(
 			>=dev-python/pytest-5.0[${PYTHON_USEDEP}]
 			<dev-python/pytest-8.3[${PYTHON_USEDEP}]
 		)
@@ -261,6 +256,7 @@ RDEPEND_CONSTRAINTS="
 			dev-python/protobuf:=
 		)
 		>=dev-python/onnx-1.15.0[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	(
 		>=dev-ml/tensorflow-1.15.5[${PYTHON_SINGLE_USEDEP},python]
@@ -270,12 +266,9 @@ RDEPEND_CONSTRAINTS="
 # src/bindings/python/requirements.txt
 RDEPEND_PYTHON_BINDINGS="
 	$(python_gen_cond_dep '
-		(
-			>=dev-python/numpy-1.16.6[${PYTHON_USEDEP}]
-			<dev-python/numpy-2.0.0[${PYTHON_USEDEP}]
-		)
 		>=dev-python/openvino-telemetry-2023.2.1[${PYTHON_USEDEP}]
 		dev-python/packaging[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 "
 # TODO:  src/bindings/python/requirements_test.txt
@@ -326,10 +319,6 @@ BDEPEND_TEST_CONSTRAINTS="
 			<dev-python/h5py-3.12.0[${PYTHON_USEDEP}]
 		)
 		(
-			>=dev-python/numpy-1.16.6[${PYTHON_USEDEP}]
-			<dev-python/numpy-1.27[${PYTHON_USEDEP}]
-		)
-		(
 			>=dev-python/pytest-5.0[${PYTHON_USEDEP}]
 			<dev-python/pytest-7.5[${PYTHON_USEDEP}]
 		)
@@ -352,6 +341,7 @@ BDEPEND_TEST_CONSTRAINTS="
 		>=dev-python/scipy-1.11.1[${PYTHON_USEDEP}]
 		>=dev-python/sympy-1.10[${PYTHON_USEDEP}]
 		>=dev-python/wheel-0.38.1[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	(
 		>=dev-python/keras-2.0.0[${PYTHON_SINGLE_USEDEP}]
@@ -414,7 +404,7 @@ BDEPEND_E2E_TESTS="
 		dev-python/deepctr-torch[${PYTHON_USEDEP}]
 		dev-python/openvino-dev[${PYTHON_USEDEP}]
 		dev-python/pytest-html[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	>=dev-python/timm-0.9.2[${PYTHON_SINGLE_USEDEP}]
 	>=media-libs/opencv-4.5[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},python]
@@ -424,9 +414,9 @@ BDEPEND_E2E_TESTS="
 BDEPEND_MODEL_HUB_TENSORFLOW_TESTS="
 	${BDEPEND_TEST_CONSTRAINTS}
 	$(python_gen_cond_dep '
-		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-html[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	dev-python/tf-sentence-transformers[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/tensorflow[${PYTHON_SINGLE_USEDEP}]
@@ -438,10 +428,10 @@ BDEPEND_MODEL_HUB_TENSORFLOW_TESTS="
 BDEPEND_MODEL_HUB_TESTS_PERFORMANCE_TESTS="
 	${BDEPEND_TEST_CONSTRAINTS}
 	$(python_gen_cond_dep '
-		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/py[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-html[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	sci-ml/tensorflow-hub[${PYTHON_SINGLE_USEDEP}]
 "
@@ -449,12 +439,12 @@ BDEPEND_MODEL_HUB_TESTS_PERFORMANCE_TESTS="
 BDEPEND_LAYER_TESTS="
 	${BDEPEND_TEST_CONSTRAINTS}
 	$(python_gen_cond_dep '
-		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/packaging[${PYTHON_USEDEP}]
-		virtual/pillow[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/requests[${PYTHON_USEDEP}]
 		dev-python/sympy[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
+		virtual/pillow[${PYTHON_USEDEP}]
 	')
 	sci-ml/onnxruntime[${PYTHON_SINGLE_USEDEP},python]
 	sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
@@ -481,13 +471,13 @@ BDEPEND_TIME_TESTS_TEST_RUNNER="
 		dev-python/attrs[${PYTHON_USEDEP}]
 		dev-python/distro[${PYTHON_USEDEP}]
 		dev-python/jsonschema[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/py[${PYTHON_USEDEP}]
 		dev-python/pymongo[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-html[${PYTHON_USEDEP}]
 		dev-python/pytest-timeout[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 "
 # tests/memory_tests/test_runner/requirements.txt \
@@ -496,20 +486,19 @@ BDEPEND_MEMORY_TESTS="
 	$(python_gen_cond_dep '
 		dev-python/distro[${PYTHON_USEDEP}]
 		dev-python/jsonschema[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/py[${PYTHON_USEDEP}]
 		dev-python/pymongo[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-html[${PYTHON_USEDEP}]
 		dev-python/pytest-timeout[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 "
 # tests/conditional_compilation/requirements.txt \
 BDEPEND_CONDITIONAL_COMPILATION="
 	${BDEPEND_TEST_CONSTRAINTS}
 	$(python_gen_cond_dep '
-		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/protobuf['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}"',${PYTHON_USEDEP}]
 		dev-python/protobuf:=
 		dev-python/py[${PYTHON_USEDEP}]
@@ -517,16 +506,17 @@ BDEPEND_CONDITIONAL_COMPILATION="
 		dev-python/pytest-dependency[${PYTHON_USEDEP}]
 		dev-python/pytest-html[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 "
 # tests/samples_tests/smoke_tests/requirements.txt \
 BDEPEND_SAMPLES_TESTS_SMOKE_TESTS="
 	$(python_gen_cond_dep '
-		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-xdist[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 		dev-python/requests[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	media-libs/opencv[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},python]
 "

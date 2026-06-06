@@ -48,7 +48,7 @@ CUDA_TARGETS_COMPAT=(
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 +bash-completion cuda -ffmpeg -pyv4l2
-ebuild_revision_53
+ebuild_revision_54
 "
 REQUIRED_USE+="
 	!ffmpeg
@@ -67,7 +67,7 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		>=sci-libs/dlib-19.16[${PYTHON_USEDEP},python]
 		dev-libs/boost[${PYTHON_USEDEP},python]
-		dev-python/numpy[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 		cuda_targets_sm_50? (
 			>=sci-libs/dlib-19.21[${PYTHON_USEDEP},cuda?,python]
 		)

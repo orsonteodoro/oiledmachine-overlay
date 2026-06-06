@@ -59,16 +59,16 @@ BDEPEND="
 		lint? (
 			>=dev-python/mypy-1.16.1[${PYTHON_USEDEP}]
 			dev-python/isort[${PYTHON_USEDEP}]
-			virtual/numpy[${PYTHON_USEDEP}]
 			dev-python/pytest[${PYTHON_USEDEP}]
 			dev-python/ruff[${PYTHON_USEDEP}]
+			virtual/numpy[${PYTHON_USEDEP}]
 			virtual/pillow[${PYTHON_USEDEP}]
 		)
 		test? (
 			dev-python/cython[${PYTHON_USEDEP}]
 			dev-python/cython:=
-			virtual/numpy[${PYTHON_USEDEP}]
 			dev-python/pytest[${PYTHON_USEDEP}]
+			virtual/numpy[${PYTHON_USEDEP}]
 			virtual/pillow[${PYTHON_USEDEP}]
 		)
 	')

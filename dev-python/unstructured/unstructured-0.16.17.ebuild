@@ -12,7 +12,7 @@ EAPI=8
 
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{10..12} ) # DO NOT BUMP TO 3.13 FOR NUMPY
 
 inherit abseil-cpp distutils-r1 grpc protobuf pypi re2
 
@@ -88,8 +88,6 @@ CONSTRAINTS_RDEPEND="
 BASE_RDEPEND="
 	${CONSTRAINTS_RDEPEND}
 	$(python_gen_cond_dep '
-		
-		<dev-python/numpy-2[${PYTHON_USEDEP}]
 		dev-python/backoff[${PYTHON_USEDEP}]
 		dev-python/beautifulsoup4[${PYTHON_USEDEP}]
 		dev-python/chardet[${PYTHON_USEDEP}]
@@ -110,6 +108,7 @@ BASE_RDEPEND="
 		dev-python/typing-extensions[${PYTHON_USEDEP}]
 		dev-python/unstructured-client[${PYTHON_USEDEP}]
 		dev-python/wrapt[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 "
 CSV_RDEPEND="
