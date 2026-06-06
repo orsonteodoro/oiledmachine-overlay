@@ -41,7 +41,7 @@ LICENSE="Apache-2.0"
 SLOT="0"
 IUSE+="
 doc examples extra -strict test test-gpu
-ebuild_revision_10
+ebuild_revision_11
 "
 PYTORCH_BASE_RDEPEND="
 	$(python_gen_cond_dep '
@@ -49,12 +49,6 @@ PYTORCH_BASE_RDEPEND="
 			>=dev-python/fsspec-2022.5.0[${PYTHON_USEDEP},http(+)]
 			strict? (
 				<dev-python/fsspec-2024.4.0[${PYTHON_USEDEP},http(+)]
-			)
-		)
-		(
-			>=dev-python/numpy-1.17.2[${PYTHON_USEDEP}]
-			strict? (
-				<dev-python/numpy-1.27.0[${PYTHON_USEDEP}]
 			)
 		)
 		(
@@ -81,6 +75,7 @@ PYTORCH_BASE_RDEPEND="
 				<dev-python/typing-extensions-4.10.0[${PYTHON_USEDEP}]
 			)
 		)
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	(
 		>=dev-python/lightning-utilities-0.8.0[${PYTHON_SINGLE_USEDEP}]
