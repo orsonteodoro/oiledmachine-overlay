@@ -44,7 +44,6 @@ IUSE+=" dev doc test"
 # tensorboard based on author-date:2022-08-29 and RELEASE.md
 RDEPEND+="
 	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.17[${PYTHON_USEDEP}]
 		dev-python/addict[${PYTHON_USEDEP}]
 		dev-python/future[${PYTHON_USEDEP}]
 		dev-python/lmdb[${PYTHON_USEDEP}]
@@ -54,6 +53,7 @@ RDEPEND+="
 		dev-python/scipy[${PYTHON_USEDEP}]
 		dev-python/tqdm[${PYTHON_USEDEP}]
 		dev-python/yapf[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 		virtual/pillow[${PYTHON_USEDEP}]
 	')
 	>=sci-visualization/tensorboard-2.10.0[${PYTHON_SINGLE_USEDEP}]
@@ -67,7 +67,7 @@ DEPEND+="
 BDEPEND+="
 	$(python_gen_cond_dep '
 		dev-python/cython[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 		dev? (
 			dev-python/flake8[${PYTHON_USEDEP}]
 			dev-python/isort[${PYTHON_USEDEP}]
