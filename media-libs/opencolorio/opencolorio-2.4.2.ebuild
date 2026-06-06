@@ -139,7 +139,7 @@ IUSE+="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_X86[@]}
 doc opengl python static-libs test
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE="
 	doc? (
@@ -229,11 +229,8 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	>=dev-build/cmake-3.14
-	virtual/pkgconfig
-	doc? (
-		app-text/doxygen
-		$(python_gen_cond_dep '
+	$(python_gen_cond_dep '
+		doc? (
 			dev-python/breathe[${PYTHON_USEDEP}]
 			dev-python/expandvars[${PYTHON_USEDEP}]
 			dev-python/recommonmark[${PYTHON_USEDEP}]
@@ -242,17 +239,20 @@ BDEPEND="
 			dev-python/sphinx-press-theme[${PYTHON_USEDEP}]
 			dev-python/sphinx-tabs[${PYTHON_USEDEP}]
 			dev-python/testresources[${PYTHON_USEDEP}]
-		')
-	)
-	python? (
-		$(python_gen_cond_dep '
+		)
+		python? (
 			>=dev-python/setuptools-42[${PYTHON_USEDEP}]
-		')
+		)
+		test? (
+			virtual/numpy[${PYTHON_USEDEP}]
+		)
+	')
+	>=dev-build/cmake-3.14
+	virtual/pkgconfig
+	doc? (
+		app-text/doxygen
 	)
 	test? (
-		$(python_gen_cond_dep '
-			dev-python/numpy[${PYTHON_USEDEP}]
-		')
 		>=media-libs/osl-1.11
 		|| (
 			$(gen_imath_bdepend)
