@@ -41,7 +41,7 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 +keras2
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIREMENTS_RDEPEND="
 	$(python_gen_cond_dep '
