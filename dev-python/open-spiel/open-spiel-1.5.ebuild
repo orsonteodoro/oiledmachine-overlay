@@ -4,11 +4,11 @@
 
 EAPI=8
 
-# See also https://github.com/deepmind/open_spiel/blob/v1.3/open_spiel/scripts/python_extra_deps.sh
+# For test wheel requirements, see also https://github.com/deepmind/open_spiel/blob/v1.5/open_spiel/scripts/python_extra_deps.sh
 
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream only tests up to 3.11
+PYTHON_COMPAT=( "python3_"{10..12} ) # Upstream only tests up to 3.11
 
 # Limited by jax
 inherit check-compiler-switch distutils-r1 flag-o-matic
@@ -29,16 +29,22 @@ LICENSE="Apache-2.0"
 RESTRICT="mirror test" # Not tested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-doc -eigen -go -jax -julia -libnop -python-misc -pytorch -rust -tensorflow test
-ebuild_revision_5
+doc -eigen -go -jax -julia -libnop -python-misc-deps -torch -rust -tensorflow test
+ebuild_revision_6
+"
+REQUIRED_USE="
+	tensorflow? (
+		python_single_target_python3_11
+		python_single_target_python3_12
+	)
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/attrs-19.3.0[${PYTHON_USEDEP}]
 		>=dev-python/absl-py-0.10.0[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.21.5[${PYTHON_USEDEP}]
 		>=dev-python/scipy-1.10.1[${PYTHON_USEDEP}]
 		>=dev-python/ml-collections-0.1.1[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 		go? (
 			dev-lang/go
 		)
@@ -48,19 +54,6 @@ RDEPEND+="
 		libnop? (
 			dev-libs/libnop
 		)
-		python-misc? (
-			>=dev-python/cvxopt-1.3.1[${PYTHON_USEDEP}]
-			>=dev-python/cvxpy-1.4.1[${PYTHON_USEDEP}]
-			>=dev-python/ipython-5.8.0[${PYTHON_USEDEP}]
-			>=dev-python/matplotlib-3.5.2[${PYTHON_USEDEP}]
-			>=dev-python/mock-4.0.2[${PYTHON_USEDEP}]
-			>=dev-python/nashpy-0.0.19[${PYTHON_USEDEP}]
-			>=dev-python/networkx-3.2[${PYTHON_USEDEP}]
-			>=dev-python/osqp-python-0.6.2_p5[${PYTHON_USEDEP}]
-			>=dev-python/scipy-1.11.3[${PYTHON_USEDEP}]
-			>=dev-python/testresources-2.0.1[${PYTHON_USEDEP}]
-			>=dev-python/ecos-2.0.10[${PYTHON_USEDEP}]
-		)
 		rust? (
 			|| (
 				dev-lang/rust:=
@@ -68,31 +61,9 @@ RDEPEND+="
 			)
 		)
 		tensorflow? (
-			>=dev-python/numpy-1.26.1[${PYTHON_USEDEP}]
+			virtaul/numpy[${PYTHON_USEDEP}]
 		)
 	')
-	jax? (
-		>=dev-python/chex-0.1.84[${PYTHON_SINGLE_USEDEP}]
-		>=dev-python/distrax-0.1.4[${PYTHON_SINGLE_USEDEP}]
-		>=dev-python/dm-haiku-0.0.10[${PYTHON_SINGLE_USEDEP}]
-		>=dev-python/jax-0.4.20[${PYTHON_SINGLE_USEDEP}]
-		>=dev-python/jaxlib-0.4.20[${PYTHON_SINGLE_USEDEP}]
-		>=dev-python/optax-0.1.7[${PYTHON_SINGLE_USEDEP}]
-		>=dev-python/rlax-0.1.6[${PYTHON_SINGLE_USEDEP}]
-	)
-	python-misc? (
-		>=dev-python/clu-0.0.6[${PYTHON_SINGLE_USEDEP}]
-		>=dev-python/flax-0.5.3[${PYTHON_SINGLE_USEDEP}]
-	)
-	pytorch? (
-		=sci-ml/pytorch-2.1.0*[${PYTHON_SINGLE_USEDEP}]
-	)
-	tensorflow? (
-		>=sci-ml/tensorflow-datasets-4.9.2[${PYTHON_SINGLE_USEDEP}]
-		>=sci-ml/tensorflow-probability-0.22.1[${PYTHON_SINGLE_USEDEP}]
-		=dev-python/keras-2.14*[${PYTHON_SINGLE_USEDEP}]
-		=sci-ml/tensorflow-0.14*[${PYTHON_SINGLE_USEDEP},python]
-	)
 "
 DEPEND+="
 	${RDEPEND}
@@ -113,6 +84,85 @@ BDEPEND+="
 			dev-python/nox[${PYTHON_USEDEP}]
 		)
 	')
+	jax? (
+		$(python_gen_cond_dep '
+			~dev-python/jax-0.4.20[${PYTHON_SINGLE_USEDEP}]
+			~dev-python/jaxlib-0.4.20[${PYTHON_SINGLE_USEDEP}]
+			~dev-python/dm-haiku-0.0.10[${PYTHON_SINGLE_USEDEP}]
+			~dev-python/optax-0.1.7[${PYTHON_SINGLE_USEDEP}]
+			~dev-python/chex-0.1.84[${PYTHON_SINGLE_USEDEP}]
+			~dev-python/rlax-0.1.6[${PYTHON_SINGLE_USEDEP}]
+			~dev-python/distrax-0.1.4[${PYTHON_SINGLE_USEDEP}]
+		' python3_{10,11})
+		$(python_gen_cond_dep '
+			~dev-python/jax-0.4.26[${PYTHON_SINGLE_USEDEP}]
+			~dev-python/jaxlib-0.4.26[${PYTHON_SINGLE_USEDEP}]
+			~dev-python/dm-haiku-0.0.12[${PYTHON_SINGLE_USEDEP}]
+			~dev-python/optax-0.2.2[${PYTHON_SINGLE_USEDEP}]
+			~dev-python/chex-0.1.86[${PYTHON_SINGLE_USEDEP}]
+			~dev-python/rlax-0.1.6[${PYTHON_SINGLE_USEDEP}]
+			~dev-python/distrax-0.1.5[${PYTHON_SINGLE_USEDEP}]
+		' python3_12)
+	)
+	python-misc-deps? (
+		$(python_gen_cond_dep '
+			~dev-python/ipython-5.8.0[${PYTHON_USEDEP}]
+			~dev-python/networkx-3.2[${PYTHON_USEDEP}]
+			~dev-python/matplotlib-3.5.2[${PYTHON_USEDEP}]
+			~dev-python/mock-4.0.2[${PYTHON_USEDEP}]
+			~dev-python/nashpy-0.0.19[${PYTHON_USEDEP}]
+			~dev-python/scipy-1.11.3[${PYTHON_USEDEP}]
+			~dev-python/testresources-2.0.1[${PYTHON_USEDEP}]
+			~dev-python/cvxopt-1.3.1[${PYTHON_USEDEP}]
+			~dev-python/cvxpy-1.4.1[${PYTHON_USEDEP}]
+			~dev-python/ecos-2.0.10[${PYTHON_USEDEP}]
+			~dev-python/osqp-0.6.2_p5[${PYTHON_USEDEP}]
+		' python3_{10..11})
+		$(python_gen_cond_dep '
+			~dev-python/ipython-8.23.0[${PYTHON_USEDEP}]
+			~dev-python/networkx-3.3[${PYTHON_USEDEP}]
+			~dev-python/matplotlib-3.8.4[${PYTHON_USEDEP}]
+			~dev-python/mock-5.1.0[${PYTHON_USEDEP}]
+			~dev-python/nashpy-0.0.41[${PYTHON_USEDEP}]
+			~dev-python/scipy-1.11.4[${PYTHON_USEDEP}]
+			~dev-python/testresources-2.0.1[${PYTHON_USEDEP}]
+			~dev-python/cvxopt-1.3.2[${PYTHON_USEDEP}]
+			~dev-python/cvxpy-1.4.2[${PYTHON_USEDEP}]
+			~dev-python/ecos-2.0.13[${PYTHON_USEDEP}]
+			~dev-python/osqp-0.6.5[${PYTHON_USEDEP}]
+		' python3_12)
+		python_single_target_python3_11? (
+			~dev-python/clu-0.0.6[${PYTHON_SINGLE_USEDEP}]
+			~dev-python/flax-0.5.3[${PYTHON_SINGLE_USEDEP}]
+		)
+		python_single_target_python3_12? (
+			~dev-python/clu-0.0.11[${PYTHON_SINGLE_USEDEP}]
+			~dev-python/flax-0.8.2[${PYTHON_SINGLE_USEDEP}]
+		)
+	)
+	tensorflow? (
+		$(python_gen_cond_dep '
+			~dev-python/keras-2.14.0[${PYTHON_SINGLE_USEDEP}]
+			~sci-ml/tensorflow-2.14.0[${PYTHON_SINGLE_USEDEP},python]
+			~sci-ml/tensorflow-probability-0.22.1[${PYTHON_SINGLE_USEDEP}]
+			~sci-ml/tensorflow_datasets-4.9.2[${PYTHON_SINGLE_USEDEP}]
+			virtual/numpy[${PYTHON_USEDEP}]
+		' python3_{10,11})
+		$(python_gen_cond_dep '
+			~dev-python/keras-3.1.1[${PYTHON_SINGLE_USEDEP}]
+			~sci-ml/tensorflow-2.16.1[${PYTHON_SINGLE_USEDEP},python]
+			~sci-ml/tensorflow_datasets-4.9.4[${PYTHON_SINGLE_USEDEP}]
+			virtual/numpy[${PYTHON_USEDEP}]
+		' python3_12)
+	)
+	torch? (
+		$(python_gen_cond_dep '
+			~sci-ml/pytorch-2.1.0[${PYTHON_SINGLE_USEDEP}]
+		' python3_{10,11})
+		$(python_gen_cond_dep '
+			~sci-ml/pytorch-2.2.2[${PYTHON_SINGLE_USEDEP}]
+		' python3_12)
+	)
 "
 
 distutils_enable_sphinx="docs"
