@@ -41,7 +41,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 doc test
-ebuild_revision_1
+ebuild_revision_2
 "
 gen_protobuf_rdepends() {
 	local impl
