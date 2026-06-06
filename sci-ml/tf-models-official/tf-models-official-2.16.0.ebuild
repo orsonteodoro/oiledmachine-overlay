@@ -67,7 +67,6 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/google-api-python-client-1.6.7[${PYTHON_USEDEP}]
 		>=dev-python/kaggle-1.3.9[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.20[${PYTHON_USEDEP}]
 		>=dev-python/pandas-0.22.0[${PYTHON_USEDEP}]
 		>=dev-python/psutil-5.4.3[${PYTHON_USEDEP}]
 		>=dev-python/py-cpuinfo-3.3.0[${PYTHON_USEDEP}]
@@ -78,6 +77,7 @@ RDEPEND+="
 		dev-python/oauth2client[${PYTHON_USEDEP}]
 		dev-python/pycocotools[${PYTHON_USEDEP}]
 		dev-python/six[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 		virtual/pillow[${PYTHON_USEDEP}]
 		nlp? (
 			dev-python/sacrebleu[${PYTHON_USEDEP}]
