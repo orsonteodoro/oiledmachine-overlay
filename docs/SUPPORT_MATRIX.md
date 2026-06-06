@@ -252,6 +252,15 @@ Language defaults
       distro FAFO EOL restrictions, but not [EOL upstream](https://devguide.python.org/versions/).
       Forced PYTHON_COMPAT bumps (to Python 3.11 or any future minimum version
       bumps) may introduce DoS vulnerabilities (e.g. crash) or incompatibilities.
+
+      DISCLAIMER:  This overlay may delete Python based security-critical components without
+      warning associated with eager distro EOL restriction and upstream not updating
+      their releases to use CI test images.  If the package (e.g. Howdy or Python based PAM
+      package) is using an image is using U20 CI image or testing with older CI images,
+      this overlay may immediately delete the package or dependencies associated with it
+      which can cause an init or boot issues.  The developer or contributors may choose not
+      to apply patches because it is unpaid free labor to fix any issue.
+
 * [2] [Python 3.10](https://projects.gentoo.org/python/guide/basic.html#python-compat)
 * [3] Not widely tested with CI.
 * [4] Distro - deprecated, this overlay - EOL.  The portage ebuild dropped support for 3.11.
