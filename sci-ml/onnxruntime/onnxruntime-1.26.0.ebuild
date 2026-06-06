@@ -968,7 +968,7 @@ ${ROCM_SLOTS[@]}
 openvino-auto
 openvino-hetero
 openvino-multi
-ebuild_revision_29
+ebuild_revision_30
 "
 gen_cuda_required_use() {
 	local x
@@ -1160,9 +1160,9 @@ RDEPEND="
 		>=sys-cluster/openmpi-4.0.0[cuda?]
 		sys-cluster/openmpi:=
 	)
-	>=dev-python/numpy-1.21.6
 	>=sci-ml/pytorch-1.13.1[${PYTHON_SINGLE_USEDEP}]
 	app-admin/chrpath
+	virtual/numpy
 	cuda? (
 		|| (
 			(
@@ -1232,19 +1232,19 @@ RDEPEND="
 		>=sci-ml/transformers-4.18.0[${PYTHON_SINGLE_USEDEP}]
 		$(python_gen_cond_dep '
 			training? (
-				>=dev-python/numpy-1.16.6[${PYTHON_USEDEP}]
 				dev-python/cerberus[${PYTHON_USEDEP}]
 				dev-python/h5py[${PYTHON_USEDEP}]
 				sci-ml/onnx[${PYTHON_USEDEP}]
+				virtual/numpy[${PYTHON_USEDEP}]
 			)
 			>=dev-python/flatbuffers-23.5.26[${PYTHON_USEDEP}]
-			>=dev-python/numpy-1.21.6[${PYTHON_USEDEP}]
+			>=dev-python/sympy-1.12[${PYTHON_USEDEP}]
 			dev-python/coloredlogs[${PYTHON_USEDEP}]
 			dev-python/packaging[${PYTHON_USEDEP}]
 			dev-python/protobuf:=[${PYTHON_USEDEP}]
 			dev-python/psutil[${PYTHON_USEDEP}]
 			dev-python/py-cpuinfo[${PYTHON_USEDEP}]
-			>=dev-python/sympy-1.12[${PYTHON_USEDEP}]
+			virtual/numpy[${PYTHON_USEDEP}]
 		')
 		quant? (
 			dev-python/neural-compressor[${PYTHON_SINGLE_USEDEP}]
