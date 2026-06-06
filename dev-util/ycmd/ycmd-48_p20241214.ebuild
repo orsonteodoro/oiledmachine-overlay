@@ -540,7 +540,7 @@ libclang minimal netcore netfx objc objcxx python rust system-abseil
 system-clangd system-gopls system-jdtls system-jedi
 system-libclang system-mono system-mrab-regex system-requests system-rust
 system-rust system-tern system-typescript system-watchdog test typescript vim
-ebuild_revision_12
+ebuild_revision_13
 "
 if [[ "${PV}" =~ "9999" || "${PV}" =~ "_p" ]] ; then
 	IUSE+="
@@ -653,9 +653,9 @@ NODEJS_BDEPEND="
 	net-libs/nodejs:${NODE_SLOT%%.*}[npm]
 "
 NUMPYDOC_RDEPEND="
-	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/matplotlib[${PYTHON_USEDEP}]
 	dev-python/pydata-sphinx-theme[${PYTHON_USEDEP}]
+	virtual/numpy[${PYTHON_USEDEP}]
 "
 RDEPEND+="
 	${PYTHON_DEPS}
