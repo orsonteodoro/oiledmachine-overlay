@@ -40,11 +40,11 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" dev"
 RDEPEND+="
 	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.14.3[${PYTHON_USEDEP}]
 		>=dev-python/scipy-1.0.1[${PYTHON_USEDEP}]
 		>=dev-python/tqdm-4.28.1[${PYTHON_USEDEP}]
 		>=virtual/pillow-8.1[${PYTHON_USEDEP}]
 		dev-python/requests[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
