@@ -25,8 +25,8 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" dev"
 RDEPEND+="
 	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.22.3[${PYTHON_USEDEP}]
 		>=dev-python/scipy-1.8.0[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	>=sci-ml/pytorch-1.11.0[${PYTHON_SINGLE_USEDEP}]
 "
