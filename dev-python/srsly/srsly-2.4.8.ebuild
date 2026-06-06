@@ -30,7 +30,7 @@ RESTRICT="mirror test" # untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 dev test
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	test? (
@@ -50,8 +50,8 @@ BDEPEND+="
 		>=dev-python/pytest-4.6.5[${PYTHON_USEDEP}]
 		>=dev-python/pytest-timeout-1.3.3[${PYTHON_USEDEP}]
 		>=dev-python/mock-2.0.0[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.15.0[${PYTHON_USEDEP}]
 		dev-python/psutil[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "README.md" )
