@@ -8,19 +8,19 @@
   </maintainer>
   <use>
     <flag name="python_targets_python3_10">
-      Support U22/F35-F36 tested packages
+      Support U22/F35-F36 CI tested packages
     </flag>
     <flag name="python_targets_python3_11">
-      Support D12/F37-F38 tested packages
+      Support D12/F37-F38 CI tested packages
     </flag>
     <flag name="python_targets_python3_12">
-      Support U24/F39-F40 tested packages
+      Support U24/F39-F40 CI tested packages
     </flag>
     <flag name="python_targets_python3_13">
-      Support D13/F41-F42 tested packages
+      Support D13/F41-F42 CI tested packages
     </flag>
     <flag name="python_targets_python3_14">
-      Support U26/F43 tested packages
+      Support U26/F43 CI tested packages
     </flag>
   </use>
 </pkgmetadata>
