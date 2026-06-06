@@ -66,8 +66,8 @@ BDEPEND+="
 	test? (
 		<dev-python/pyglet-2.0.0[${PYTHON_USEDEP}]
 		dev-python/matplotlib[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/pygame[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "CHANGELOG.rst" "CITATION.cff" "THANKS.txt" "README.rst" )
