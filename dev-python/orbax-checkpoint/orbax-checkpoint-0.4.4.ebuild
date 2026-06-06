@@ -41,7 +41,7 @@ RESTRICT="mirror test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 tensorflow test
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 "
