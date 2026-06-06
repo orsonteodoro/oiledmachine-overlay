@@ -27,7 +27,7 @@ RESTRICT="mirror"
 SLOT="${PROTOBUF_CPP_SLOT}/"$(ver_cut "1-2" "${PV}") # Use PYTHONPATH for multislot package
 IUSE+="
 gcp-auth test
-ebuild_revision_3
+ebuild_revision_4
 "
 RDEPEND+="
 	>=dev-python/googleapis-common-protos-1.52[${PYTHON_USEDEP}]
@@ -42,7 +42,7 @@ RDEPEND+="
 	>=dev-python/requests-2.7[${PYTHON_USEDEP}]
 	>=dev-python/typing-extensions-4.5.0[${PYTHON_USEDEP}]
 	gcp-auth? (
-		>=dev-python/opentelemetry-exporter-credential-provider-gcp-0.59_beta0:${PROTOBUF_CPP_SLOT}
+		~dev-python/opentelemetry-exporter-credential-provider-gcp-0.63_beta1:${PROTOBUF_CPP_SLOT}
 		dev-python/opentelemetry-exporter-credential-provider-gcp:=
 	)
 "

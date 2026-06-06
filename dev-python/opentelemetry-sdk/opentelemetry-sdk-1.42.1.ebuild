@@ -25,13 +25,13 @@ SLOT="${PROTOBUF_CPP_SLOT}/"$(ver_cut "1-2" "${PV}")
 IUSE="
 benchmark
 file-configuration
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND="
 	>=dev-python/typing-extensions-4.5.0[${PYTHON_USEDEP}]
 	~dev-python/opentelemetry-api-${PV}:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
 	dev-python/opentelemetry-api:=
-	~dev-python/opentelemetry-semantic-conventions-0.59_beta0:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
+	~dev-python/opentelemetry-semantic-conventions-0.63_beta1:${PROTOBUF_CPP_SLOT}[${PYTHON_USEDEP}]
 	dev-python/opentelemetry-semantic-conventions:=
 	file-configuration? (
 		>=dev-python/pyyaml-6.0[${PYTHON_USEDEP}]
