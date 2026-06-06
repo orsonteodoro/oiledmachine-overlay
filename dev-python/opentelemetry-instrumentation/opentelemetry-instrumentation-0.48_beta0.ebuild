@@ -10,7 +10,7 @@ MY_PN="opentelemetry_instrumentation"
 MY_PV="${PV/_beta/b}"
 
 DISTUTILS_USE_PEP517="hatchling"
-OPENTELEMETRY_PV="1.27"
+OPENTELEMETRY_PV="1.27.0"
 PROTOBUF_CPP_SLOT="3"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
