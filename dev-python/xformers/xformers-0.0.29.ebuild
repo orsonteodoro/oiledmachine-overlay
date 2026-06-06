@@ -47,7 +47,7 @@ RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 benchmark lra-benchmark test
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	benchmark? (
