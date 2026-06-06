@@ -49,7 +49,7 @@ PROPERTIES="live"
 SLOT="0"
 IUSE+="
 dev test
-ebuild_revision_13
+ebuild_revision_14
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -78,14 +78,13 @@ RDEPEND="
 	$(python_gen_cond_dep '
 		>=dev-python/absl-py-0.4[${PYTHON_USEDEP}]
 		>=dev-python/markdown-2.6.8[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.12.0[${PYTHON_USEDEP}]
 		>=dev-python/scipy-1.4.1[${PYTHON_USEDEP}]
 		>=dev-python/werkzeug-1.0.1[${PYTHON_USEDEP}]
 		dev-python/bleach[${PYTHON_USEDEP}]
 		dev-python/html5lib[${PYTHON_USEDEP}]
 		dev-python/packaging[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 		virtual/pillow[${PYTHON_USEDEP}]
-
 		gcc_slot_11_5? (
 			dev-python/grpcio:'${GRPC_SLOT}'/1.30[${PYTHON_USEDEP},gcc_slot_11_5,cxx_standard_cxx17]
 			dev-python/protobuf:3.12['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},"'${PYTHON_USEDEP}]
