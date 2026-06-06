@@ -10,7 +10,7 @@ EAPI=8
 # pendulum
 
 DISTUTILS_USE_PEP517="poetry"
-PYTHON_COMPAT=( "python3_"{10..11} )
+PYTHON_COMPAT=( "python3_"{10..11} ) # dev needs NumPy 1.x with < 3.13
 
 inherit distutils-r1 pypi
 
@@ -40,8 +40,15 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror test" # Not tested
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+=" dev"
+REQUIRED_USE="
+	dev? (
+		|| (
+			python_targets_python3_11
+		)
+	)
+"
 RDEPEND+="
 "
 DEPEND+="
@@ -50,6 +57,12 @@ DEPEND+="
 BDEPEND+="
 	dev-python/poetry-core[${PYTHON_USEDEP}]
 	dev? (
+		$(python_gen_cond_dep '
+			>=dev-python/pendulum-2[${PYTHON_USEDEP}]
+		' python3_{10..11})
+		$(python_gen_cond_dep '
+			>=dev-python/pendulum-3[${PYTHON_USEDEP}]
+		' python3_12)
 		>=dev-python/flake8-5[${PYTHON_USEDEP}]
 		>=dev-python/flake8-bugbear-22[${PYTHON_USEDEP}]
 		>=dev-python/flake8-commas-2[${PYTHON_USEDEP}]
@@ -59,19 +72,13 @@ BDEPEND+="
 		>=dev-python/flake8-polyfill-1[${PYTHON_USEDEP}]
 		>=dev-python/flake8-quotes-3[${PYTHON_USEDEP}]
 		>=dev-python/mock-3[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
 		>=dev-python/pep8-naming-0.11[${PYTHON_USEDEP}]
-		>=virtual/pillow-9[${PYTHON_USEDEP}]
 		>=dev-python/pytest-6[${PYTHON_USEDEP}]
 		>=dev-python/pytest-cov-3[${PYTHON_USEDEP}]
 		>=dev-python/pytest-mock-2[${PYTHON_USEDEP}]
 		>=dev-python/pytest-pythonpath-0.7.3[${PYTHON_USEDEP}]
-		$(python_gen_cond_dep '
-			>=dev-python/pendulum-2[${PYTHON_USEDEP}]
-		' python3_{10..11})
-		$(python_gen_cond_dep '
-			>=dev-python/pendulum-3[${PYTHON_USEDEP}]
-		' python3_12)
+		>=virtual/pillow-9[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "README.md" )
