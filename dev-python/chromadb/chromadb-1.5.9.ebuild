@@ -1101,7 +1101,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 ${PROTOBUF_PYTHON[@]/+}
 dev
-ebuild_revision_12
+ebuild_revision_13
 "
 REQUIRED_USE+="
 	^^ (
@@ -1158,7 +1158,6 @@ RDEPEND+="
 		>=dev-python/jsonschema-4.19.0[${PYTHON_USEDEP}]
 		>=dev-python/kubernetes-28.1.0[${PYTHON_USEDEP}]
 		>=dev-python/mmh3-4.0.1[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.22.5[${PYTHON_USEDEP}]
 		>=dev-python/orjson-3.9.12[${PYTHON_USEDEP}]
 		>=dev-python/overrides-7.3.1[${PYTHON_USEDEP}]
 		>=dev-python/pybase64-1.4.1[${PYTHON_USEDEP}]
@@ -1174,6 +1173,7 @@ RDEPEND+="
 		>=dev-python/typing-extensions-4.5.0[${PYTHON_USEDEP}]
 		>=dev-python/uvicorn-0.18.3[${PYTHON_USEDEP},standard]
 		dev-python/importlib-resources[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 		protobuf_python_4? (
 			dev-python/opentelemetry-api:4[${PYTHON_USEDEP}]
 			dev-python/opentelemetry-exporter-otlp-proto-grpc:4[${PYTHON_USEDEP}]
