@@ -12,7 +12,7 @@ EAPI=8
 
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..12} ) # Dev needs <3.13 for numpy
+PYTHON_COMPAT=( "python3_"{11..12} ) # Dev needs <3.13 for numpy
 
 inherit distutils-r1 pypi
 
@@ -48,6 +48,10 @@ REQUIRED_USE="
 	dev? (
 		|| (
 			python
+		)
+		|| (
+			python_targets_python3_11
+			python_targets_python3_12
 		)
 	)
 	x? (
