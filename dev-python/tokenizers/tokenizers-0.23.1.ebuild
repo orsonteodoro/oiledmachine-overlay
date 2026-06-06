@@ -382,10 +382,10 @@ BDEPEND+="
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-asyncio[${PYTHON_USEDEP}]
 		dev-python/requests[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/datasets[${PYTHON_USEDEP}]
 		dev-python/ruff[${PYTHON_USEDEP}]
 		dev-python/ty[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	)
 
 "
