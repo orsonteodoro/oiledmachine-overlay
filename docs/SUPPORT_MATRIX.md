@@ -257,7 +257,7 @@ Language defaults
       DISCLAIMER:  This overlay may delete Python based security-critical components without
       warning associated with eager distro EOL restriction and upstream not updating
       their releases to use CI test images.  If the package (e.g. Howdy or Python based PAM
-      package) is using an D12/U20 CI image or testing with older CI images,
+      package) is using a D12/U20 CI image or testing with older CI images,
       this overlay may immediately delete the package or dependencies associated with it
       which can cause an init or boot issues.  The developer or contributors may choose not
       to apply patches because it is unpaid free labor to fix any issue.  It is a common
