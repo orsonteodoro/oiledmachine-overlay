@@ -50,8 +50,8 @@ BDEPEND+="
 	>=dev-python/setuptools-42[${PYTHON_USEDEP}]
 	>=dev-build/cmake-3.14
 	dev-build/ninja
-	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
+	virtual/numpy[${PYTHON_USEDEP}]
 "
 DOCS=( "ChangeLog" "README.md" "doc/manual/manual.pdf" )
 
