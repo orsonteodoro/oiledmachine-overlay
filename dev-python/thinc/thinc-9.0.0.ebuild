@@ -34,7 +34,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 cuda cuda-autodetect datasets mxnet pytorch tensorflow
-ebuild_revision_2
+ebuild_revision_3
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
@@ -46,10 +46,10 @@ RDEPEND+="
 		>=dev-python/srsly-2.4.0[${PYTHON_USEDEP}]
 		>=dev-python/catalogue-2.0.4[${PYTHON_USEDEP}]
 		>=dev-python/confection-0.0.1[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.19.0[${PYTHON_USEDEP}]
 		>=dev-python/pydantic-1.7.4[${PYTHON_USEDEP}]
 		>=dev-python/packaging-20.0[${PYTHON_USEDEP}]
 		dev-python/setuptools[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 		cuda? (
 			>=dev-python/cupy-11.0.0[${PYTHON_USEDEP}]
 			dev-python/cupy:=
@@ -78,11 +78,11 @@ BDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/cython-0.25:'${CYTHON_SLOT}'[${PYTHON_USEDEP}]
 		dev-python/cython:=
-		>=dev-python/numpy-1.15.0[${PYTHON_USEDEP}]
 		>=dev-python/cymem-2.0.2[${PYTHON_USEDEP}]
 		>=dev-python/preshed-3.0.2[${PYTHON_USEDEP}]
 		>=dev-python/murmurhash-1.0.2[${PYTHON_USEDEP}]
 		>=dev-python/blis-0.7.8[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 "
 DOCS=( "README.md" )
