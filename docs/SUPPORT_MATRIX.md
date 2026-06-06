@@ -245,8 +245,8 @@ Language defaults
 | 3.13                 | Available                             | D13 (EOL Aug 2028), F41 (EOL Nov 2025), F42 (EOL May 2026)     |
 | 3.13t [3]            | Not supported                         |                                                                |
 | 3.14 and later [3]   | Not supported                         | G23, F43, F44                                                  |
-| pypy3 [2][3]         | Not supported                         |                                                                |
-| pypy3_11 [3]         | Not supported                         |                                                                |
+| pypy3 [2][3]         | Not Supported (EOL)                   |                                                                |
+| pypy3_11 [3]         | Not Supported (EOL)                   |                                                                |
 
 * [1] Not supported due to [python-utils-r1.eclass](https://github.com/gentoo/gentoo/blob/master/eclass/python-utils-r1.eclass#L44)
       distro FAFO EOL restrictions, but not [EOL upstream](https://devguide.python.org/versions/).
