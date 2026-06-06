@@ -43,7 +43,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 dev test
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	test? (
@@ -52,15 +52,7 @@ REQUIRED_USE="
 "
 
 RDEPEND+="
-	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.23.3[${PYTHON_USEDEP}]
-	' python3_11)
-	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.26.0[${PYTHON_USEDEP}]
-	' python3_12)
-	$(python_gen_cond_dep '
-		>=dev-python/numpy-2.1.0[${PYTHON_USEDEP}]
-	' python3_13)
+	virtual/numpy[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
