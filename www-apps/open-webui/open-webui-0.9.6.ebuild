@@ -9,12 +9,6 @@ EAPI=8
 # For requirements, see https://github.com/open-webui/open-webui/blob/v0.9.6/backend/requirements.txt
 # For telemetry, see https://docs.openwebui.com/reference/monitoring/otel/
 
-# TODO package
-# opentelemetry-exporter-otlp [optional]
-
-# TODO review
-# httpx
-
 # To update lockfile:
 # PATH="$(realpath ../../scripts):${PATH}"
 # NPM_UPDATER_VERSIONS="0.9.6" npm_updater_update_locks.sh
@@ -207,7 +201,7 @@ RDEPEND+="
 		>=dev-python/google-cloud-storage-3.9.0[${PYTHON_USEDEP}]
 		>=dev-python/google-genai-1.66.0[${PYTHON_USEDEP}]
 		>=dev-python/googleapis-common-protos-1.72.0[${PYTHON_USEDEP}]
-		>=dev-python/httpx-0.28.1[${PYTHON_USEDEP},socks(+),http2(+),zstd(+),cli(+),brotli(+)]
+		>=dev-python/httpx-0.28.1[${PYTHON_USEDEP},brotli,cli,http2,socks,zstd]
 		>=dev-python/itsdangerous-2.2.0[${PYTHON_USEDEP}]
 		>=dev-python/ldap3-2.9.1[${PYTHON_USEDEP}]
 		>=dev-python/langchain-1.2.10[${PYTHON_USEDEP}]
