@@ -47,7 +47,7 @@ RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 benchmark lra-benchmark test
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	benchmark? (
@@ -57,7 +57,7 @@ REQUIRED_USE="
 RDEPEND+="
 	>=sci-ml/pytorch-2.4[${PYTHON_SINGLE_USEDEP}]
 	$(python_gen_cond_dep '
-		dev-python/numpy[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 "
 DEPEND+="
