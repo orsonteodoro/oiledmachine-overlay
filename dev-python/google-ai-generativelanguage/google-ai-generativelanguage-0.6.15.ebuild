@@ -26,7 +26,7 @@ LICENSE="Apache-2.0"
 SLOT="0"
 IUSE="
 test
-ebuild_revision_2
+ebuild_revision_3
 "
 RESTRICT="
 	!test? (
