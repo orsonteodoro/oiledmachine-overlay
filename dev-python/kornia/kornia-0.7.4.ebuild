@@ -47,11 +47,8 @@ IUSE+=" cuda dev doc x"
 REQUIRED_USE="
 	dev? (
 		|| (
-			python
-		)
-		|| (
-			python_targets_python3_11
-			python_targets_python3_12
+			python_single_target_python3_11
+			python_single_target_python3_12
 		)
 	)
 	x? (
