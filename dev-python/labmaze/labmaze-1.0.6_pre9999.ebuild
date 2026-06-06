@@ -51,8 +51,8 @@ JRE_DEPEND="
 RDEPEND+="
 	${JRE_DEPEND}
 	!=dev-python/setuptools-50.0.0[${PYTHON_USEDEP}]
-	>=dev-python/numpy-1.8.0[${PYTHON_USEDEP}]
 	dev-python/absl-py[${PYTHON_USEDEP}]
+	virtual/numpy[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
