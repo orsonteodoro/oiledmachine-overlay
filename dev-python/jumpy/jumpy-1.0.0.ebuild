@@ -25,14 +25,14 @@ https://github.com/Farama-Foundation/Jumpy
 LICENSE="Apache-2.0"
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" jax test ebuild_revision_1"
+IUSE+=" jax test ebuild_revision_2"
 REQUIRED_USE="
 	test? (
 		jax
 	)
 "
 RDEPEND+="
-	>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
+	virtual/numpy[${PYTHON_USEDEP}]
 	jax? (
 		>=sci-libs/jax-0.3.24[${PYTHON_USEDEP}]
 		>=sci-libs/jaxlib-0.3.24[${PYTHON_USEDEP}]
