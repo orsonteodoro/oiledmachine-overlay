@@ -43,7 +43,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 bulk_writer dev model
-ebuild_revision_4
+ebuild_revision_5
 "
 gen_grpcio_dev() {
 	local impl
