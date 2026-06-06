@@ -9,7 +9,7 @@ DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 JAVA_SLOT=11
 PROTOBUF_PYTHON_SLOT="4.21"
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{10..12} ) # NumPy needs < 3.13
 
 inherit abseil-cpp bazel distutils-r1 java-pkg-opt-2 protobuf pypi
 
@@ -62,16 +62,12 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
-ebuild_revision_6
+ebuild_revision_7
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
-		(
-			>=dev-python/numpy-1.26.0[${PYTHON_USEDEP}]
-			<dev-python/numpy-2.1.0[${PYTHON_USEDEP}]
-		)
 		dev-python/protobuf:4.21[${PYTHON_USEDEP}]
 		dev-python/protobuf:=
 		>=dev-python/black-22.3.0[${PYTHON_USEDEP}]
@@ -82,6 +78,7 @@ RDEPEND+="
 		dev-python/portpicker[${PYTHON_USEDEP}]
 		dev-python/pydot[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 		virtual/pillow[${PYTHON_USEDEP}]
 	')
 	=sci-ml/tensorflow-${PV%.*}*[${PYTHON_SINGLE_USEDEP}]
