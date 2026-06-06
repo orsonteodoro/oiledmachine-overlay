@@ -8,7 +8,7 @@ MY_PN="${PN/-/_}"
 
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{11..12} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 # Limited by flax
 
 inherit distutils-r1
@@ -32,22 +32,16 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 cpu cuda doc experimental rocm test
-ebuild_revision_2
+ebuild_revision_3
 "
 # flax and tensorstore are missing in setup.py *_require sections but referenced
 # in experimental but not in tests folder.
 DEPEND+="
 	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.24[${PYTHON_USEDEP}]
-		>=dev-python/scipy-1.10[${PYTHON_USEDEP}]
-	' python3_11)
-	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.26.0[${PYTHON_USEDEP}]
 		>=dev-python/scipy-1.11.1[${PYTHON_USEDEP}]
-	' python3_12)
-	$(python_gen_cond_dep '
 		>=dev-python/ml-dtypes-0.2.0[${PYTHON_USEDEP}]
 		dev-python/opt-einsum[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 		cuda? (
 			=dev-libs/cudnn-9*
 			dev-libs/cudnn:=
