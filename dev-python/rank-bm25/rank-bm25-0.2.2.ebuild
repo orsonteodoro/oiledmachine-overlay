@@ -45,7 +45,7 @@ REQUIRED_USE="
 	)
 "
 RDEPEND+="
-	dev-python/numpy[${PYTHON_USEDEP}]
+	virtual/numpy[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
