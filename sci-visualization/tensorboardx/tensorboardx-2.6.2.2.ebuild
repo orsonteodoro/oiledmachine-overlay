@@ -41,7 +41,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 doc test
-ebuild_revision_2
+ebuild_revision_3
 "
 gen_protobuf_rdepends() {
 	local impl
@@ -71,8 +71,8 @@ gen_protobuf_bdepends() {
 }
 RDEPEND+="
 	$(python_gen_cond_dep '
-		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/packaging[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	|| (
 		$(gen_protobuf_rdepends)
@@ -94,7 +94,6 @@ BDEPEND+="
 			>=dev-python/imageio-2.27[${PYTHON_USEDEP}]
 			dev-python/boto3[${PYTHON_USEDEP}]
 			dev-python/flake8[${PYTHON_USEDEP}]
-			dev-python/numpy[${PYTHON_USEDEP}]
 			dev-python/pytest[${PYTHON_USEDEP}]
 			dev-python/tensorboard[${PYTHON_USEDEP}]
 			dev-python/matplotlib[${PYTHON_USEDEP}]
@@ -103,6 +102,7 @@ BDEPEND+="
 			dev-python/pytest-cov[${PYTHON_USEDEP}]
 			dev-python/soundfile[${PYTHON_USEDEP}]
 			dev-python/visdom[${PYTHON_USEDEP}]
+			virtual/numpy[${PYTHON_USEDEP}]
 		)
 	')
 	test? (
