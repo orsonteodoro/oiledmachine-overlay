@@ -39,17 +39,17 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-ebuild_revision_2
+ebuild_revision_3
 "
 # Tensorboard based on author-date:2022-09-16 and RELEASE.md
 RDEPEND+="
 	$(python_gen_cond_dep '
 		dev-python/lmdb[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 		dev-python/scipy[${PYTHON_USEDEP}]
 		dev-python/tqdm[${PYTHON_USEDEP}]
 		dev-python/yapf[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	>=dev-python/basicsr-1.4.2[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/facexlib-0.2.5[${PYTHON_SINGLE_USEDEP}]
@@ -65,7 +65,7 @@ BDEPEND+="
 	$(python_gen_cond_dep '
 		dev-python/cython:'${CYTHON_SLOT}'[${PYTHON_USEDEP}]
 		dev-python/cython:=
-		dev-python/numpy[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 "
 DOCS=( "README.md" )
