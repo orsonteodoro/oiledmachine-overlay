@@ -51,7 +51,6 @@ RDEPEND+="
 		>=dev-python/jedi-0.18.1[${PYTHON_USEDEP}]
 		>=dev-python/matplotlib-inline-0.1.6[${PYTHON_USEDEP}]
 		>=dev-python/mccabe-0.7.0[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.23.3[${PYTHON_USEDEP}]
 		>=dev-python/parso-0.8.3[${PYTHON_USEDEP}]
 		>=dev-python/pexpect-4.8.0[${PYTHON_USEDEP}]
 		>=dev-python/pickleshare-0.7.5[${PYTHON_USEDEP}]
@@ -69,6 +68,7 @@ RDEPEND+="
 		>=sci-libs/dlib-19.24.0[${PYTHON_USEDEP}]
 		>=virtual/pillow-10.3.0[${PYTHON_USEDEP}]
 		media-video/ffmpeg[encode]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	>=media-libs/opencv-4.8.1.78[${PYTHON_SINGLE_USEDEP},ffmpeg,imgproc,python]
 "
