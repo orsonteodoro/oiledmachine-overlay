@@ -44,10 +44,10 @@ REQUIRED_USE="
 RDEPEND+="
 	$(python_gen_cond_dep '
 		dev-python/future[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/six[${PYTHON_USEDEP}]
 		dev-python/typing[${PYTHON_USEDEP}]
 		dev-python/nnef-parser[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 		caffe? (
 			dev-python/protobuf[${PYTHON_USEDEP}]
 			dev-python/protobuf:=
