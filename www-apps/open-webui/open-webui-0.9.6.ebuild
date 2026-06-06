@@ -11,13 +11,6 @@ EAPI=8
 
 # TODO package
 # opentelemetry-exporter-otlp [optional]
-# opentelemetry-instrumentation-sqlalchemy [optional]
-# opentelemetry-instrumentation-redis [optional]
-# opentelemetry-instrumentation-requests [optional]
-# opentelemetry-instrumentation-logging [optional]
-# opentelemetry-instrumentation-httpx [optional]
-# opentelemetry-instrumentation-aiohttp-client [optional]
-# opentelemetry-instrumentation-system-metrics [optional]
 
 # TODO review
 # httpx
