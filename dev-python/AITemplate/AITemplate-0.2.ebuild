@@ -12,7 +12,7 @@ PICOJSON_COMMIT="111c9be5188f7350c2eac9ddaedd8cca3d7bf394"
 PYTHON_COMPAT=( "python3_"{10..12} )
 inherit hip-versions
 ROCM_VERSIONS=(
-	"${HIP_5_6_VERSION}" # Same same major.minor version used in Composable Kernel, similar range to PyTorch 2.1, 2.2
+	"${HIP_6_4_VERSION}" # Same same major.minor version used in Composable Kernel, similar range to PyTorch 2.1, 2.2
 )
 
 inherit dep-prepare distutils-r1
@@ -62,9 +62,11 @@ LICENSE="
 # MIT all-rights-reserved - composable_kernel
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+=" cuda dev doc rocm"
+# ROCm 6.4 is not version aligned with this release which uses 5.2.3.
 REQUIRED_USE="
+	!rocm
 	|| (
 		cuda
 		rocm
