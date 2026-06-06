@@ -30,7 +30,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 hdf5 test
-ebuild_revision_2
+ebuild_revision_3
 "
 RDEPEND+="
 	>=dev-python/absl-py-2.1.0[${PYTHON_USEDEP}]
