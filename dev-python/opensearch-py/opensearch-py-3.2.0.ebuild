@@ -72,7 +72,7 @@ BDEPEND="
 		~dev-python/setuptools-71.1.0[${PYTHON_USEDEP}]
 
 		$(python_gen_cond_dep '
-			dev-python/numpy[${PYTHON_USEDEP}]
+			virtual/numpy[${PYTHON_USEDEP}]
 		' python3_{10..12})
 		$(python_gen_cond_dep '
 			dev-python/pandas[${PYTHON_USEDEP}]
