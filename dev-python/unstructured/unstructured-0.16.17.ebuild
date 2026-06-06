@@ -88,6 +88,7 @@ CONSTRAINTS_RDEPEND="
 BASE_RDEPEND="
 	${CONSTRAINTS_RDEPEND}
 	$(python_gen_cond_dep '
+		
 		<dev-python/numpy-2[${PYTHON_USEDEP}]
 		dev-python/backoff[${PYTHON_USEDEP}]
 		dev-python/beautifulsoup4[${PYTHON_USEDEP}]
