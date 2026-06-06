@@ -8,7 +8,7 @@ EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
 DISTUTILS_EXT=1
-PYTHON_COMPAT=( "python3_"{13..14} )
+PYTHON_COMPAT=( "python3_"{10..14} ) # Relaxed build requirements.  Allow NumPy 1.x for BDEPEND.
 
 # See FALLBACK_LLVMDEV_VERSION in https://github.com/numba/llvmlite/blob/v0.47.0/.github/workflows/llvmlite_linux-64_wheel_builder.yml
 # See https://github.com/numba/llvmlite/blob/v0.47.0/README.rst#compatibility
