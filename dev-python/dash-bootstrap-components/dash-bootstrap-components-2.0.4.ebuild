@@ -34,13 +34,20 @@ RESTRICT="mirror test" # Did not test
 SLOT="0"
 IUSE="
 dev pandas
-ebuild_revision_6
+ebuild_revision_7
+"
+REQUIRED_USE="
+	pandas? (
+		|| (
+			python_targets_python3_13
+		)
+	)
 "
 RDEPEND+="
 	>=sci-visualization/dash-3.0.4[${PYTHON_USEDEP},dev(+)]
 	pandas? (
-		>=dev-python/numpy-2.0.2[${PYTHON_USEDEP}]
 		>=dev-python/pandas-2.2.3[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	)
 "
 DEPEND+="
