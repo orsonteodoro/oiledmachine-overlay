@@ -43,9 +43,9 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" dev doc test"
 RDEPEND+="
-	>=dev-python/numpy-1.23.0[${PYTHON_USEDEP}]
 	>=dev-python/pandas-2.1.0[${PYTHON_USEDEP}]
 	>=dev-python/scipy-1.7.0[${PYTHON_USEDEP}]
+	virtual/numpy[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
