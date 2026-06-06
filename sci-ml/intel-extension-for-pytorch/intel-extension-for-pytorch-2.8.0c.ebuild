@@ -90,7 +90,7 @@ BDEPEND+="
 		dev? (
 			>=dev-python/scipy-1.8.0[${PYTHON_USEDEP}]
 			>=dev-python/setuptools-50.0[${PYTHON_USEDEP}]
-			dev-python/expecttest-0.3.0
+			>=dev-python/expecttest-0.3.0
 			dev-python/hypothesis[${PYTHON_USEDEP}]
 			dev-python/packaging[${PYTHON_USEDEP}]
 			dev-python/psutil[${PYTHON_USEDEP}]
