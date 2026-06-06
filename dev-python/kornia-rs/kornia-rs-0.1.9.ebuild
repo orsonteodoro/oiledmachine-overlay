@@ -1527,7 +1527,7 @@ RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 dev test
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	dev? (
@@ -1544,8 +1544,8 @@ BDEPEND+="
 		>=dev-util/maturin-1[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev? (
-			>=dev-python/numpy-1.23.0[${PYTHON_USEDEP}]
 			dev-python/pytest[${PYTHON_USEDEP}]
+			virtual/numpy[${PYTHON_USEDEP}]
 		)
 	')
 	|| (
