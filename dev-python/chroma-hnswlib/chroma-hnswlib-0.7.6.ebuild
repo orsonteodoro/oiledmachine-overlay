@@ -50,7 +50,7 @@ BDEPEND+="
 	>=dev-python/pybind11-2.0[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-42[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
-	virtual/numpy-1.10.0[${PYTHON_USEDEP}]
+	virtual/numpy[${PYTHON_USEDEP}]
 "
 DOCS=( "README.md" )
 
