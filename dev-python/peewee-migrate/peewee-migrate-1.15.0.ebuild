@@ -47,9 +47,9 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 "
+# uv-build requirement relaxed
 BDEPEND+="
 	>=dev-python/uv-build-0.10.2[${PYTHON_USEDEP}]
-	<dev-python/uv-build-0.11.0[${PYTHON_USEDEP}]
 
 	dev? (
 		dev-python/psycopg:2[${PYTHON_USEDEP}]
