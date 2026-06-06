@@ -38,12 +38,12 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 cuda migraphx openvino rocm tensorrt
-ebuild_revision_5
+ebuild_revision_6
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
 		dev-python/nudenet[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	media-libs/opencv[${PYTHON_SINGLE_USEDEP},contribdnn,ffmpeg,jpeg,python]
 	sci-ml/onnxruntime[${PYTHON_SINGLE_USEDEP},cuda?,migraphx?,python,rocm?,tensorrt?]
