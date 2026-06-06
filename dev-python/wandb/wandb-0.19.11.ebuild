@@ -43,7 +43,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 aws azure dev gcp importers kubeflow launch media models perf sweeps test
 workspaces
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	dev? (
@@ -131,10 +131,10 @@ RDEPEND+="
 			>=dev-python/plotly-5.18.0[${PYTHON_USEDEP}]
 			dev-python/bokeh[${PYTHON_USEDEP}]
 			dev-python/imageio[${PYTHON_USEDEP}]
-			dev-python/numpy[${PYTHON_USEDEP}]
 			dev-python/pillow[${PYTHON_USEDEP}]
 			dev-python/rdkit[${PYTHON_USEDEP}]
 			dev-python/soundfile[${PYTHON_USEDEP}]
+			virtual/numpy[${PYTHON_USEDEP}]
 		)
 		models? (
 			dev-python/cloudpickle[${PYTHON_USEDEP}]
