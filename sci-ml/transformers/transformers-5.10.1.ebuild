@@ -62,7 +62,7 @@ accelerate agents all audio av benchmark chat_template codecarbon deepspeed
 deepspeed-testing dev doc integrations kernels mistral-common natten num2words
 optuna orphans pillow torch quality ray retrieval sentencepiece serving sagemaker
 sklearn test tiktoken timm torchhub tokenizers video vision
-ebuild_revision_10
+ebuild_revision_11
 "
 REQUIRED_USE="
 	all? (
@@ -120,13 +120,12 @@ REQUIRED_USE="
 RDEPEND="
 	$(python_gen_cond_dep '
 		>=dev-python/regex-2025.10.22[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.17[${PYTHON_USEDEP}]
 		>=dev-python/packaging-20.0[${PYTHON_USEDEP}]
 		>=dev-python/pyyaml-5.1[${PYTHON_USEDEP}]
 		>=dev-python/tqdm-4.27[${PYTHON_USEDEP}]
 		>=sci-ml/safetensors-0.4.3[${PYTHON_USEDEP}]
 		dev-python/typer[${PYTHON_USEDEP}]
-
+		virtual/numpy[${PYTHON_USEDEP}]
 		audio? (
 			>=dev-python/pyctcdecode-0.4.0[${PYTHON_USEDEP}]
 			dev-python/librosa[${PYTHON_USEDEP}]
