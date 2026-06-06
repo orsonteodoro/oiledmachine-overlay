@@ -11,6 +11,8 @@ EAPI=8
 # We use partial offline to avoid "argument list too long" for go modules.
 # We don't use go-module but just sandbox changes.
 
+# TODO add/update backend Python deps.
+
 # TODO package:
 # accelerate
 # gguf
@@ -40,7 +42,7 @@ GRPC_SLOT="5" # Same as the backends.  Ignore the /Makefile
 NODE_SLOT="22"
 PROTOBUF_CPP_SLOT="5"
 PROTOBUF_PYTHON_SLOT="5"
-PYTHON_COMPAT=( "python3_12" )
+PYTHON_COMPAT=( "python3_"{11..14} ) # Based on NumPy
 RE2_SLOT="20250512"
 
 MODES=(
@@ -96,9 +98,12 @@ PYTHON_BACKENDS=(
 	"mlx-audio"
 	"mlx-vlm"
 	"neutts"
+	"outetts"
 	"rerankers"
 	"rfdetr"
+	"tinygrad"
 	"transformers"
+	"vibevoice"
 	"vllm"
 )
 
@@ -261,7 +266,7 @@ ${MODES[@]/+}
 ${PYTHON_BACKENDS[@]/#/localai_backends_}
 ci cuda debug devcontainer docker +firejail native openblas opencl
 openrc rag rocm stt sycl-f16 sycl-f32 systemd tts vulkan
-ebuild_revision_52
+ebuild_revision_53
 "
 REQUIRED_USE="
 	!ci
@@ -356,6 +361,29 @@ REQUIRED_USE="
 	)
 	localai_backends_mlx-vlm? (
 		localai_backends_mlx
+	)
+	localai_backends_neutts? (
+		|| (
+			python_targets_python3_13
+		)
+	)
+	localai_backends_outetts? (
+		|| (
+			python_targets_python3_13
+			python_targets_python3_14
+		)
+	)
+	localai_backends_tinygrad? (
+		|| (
+			python_targets_python3_13
+			python_targets_python3_14
+		)
+	)
+	localai_backends_transformers? (
+		|| (
+			python_targets_python3_13
+			python_targets_python3_14
+		)
 	)
 	rag? (
 		localai_backends_local-store
@@ -517,9 +545,9 @@ MLX_AUDIO_RDEPEND="
 		dev-python/grpcio:'${GRPC_SLOT}'[${PYTHON_USEDEP}]
 		dev-python/protobuf:'${PROTOBUF_PYTHON_SLOT}'[${PYTHON_USEDEP}]
 		dev-python/mlx-audio[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/setuptools[${PYTHON_USEDEP}]
 		dev-python/soundfile[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 "
 
@@ -534,13 +562,13 @@ MLX_VLM_RDEPEND="
 
 NEUTTS_RDEPEND="
 	$(python_gen_cond_dep '
-		>=dev-python/numpy-2.2.6[${PYTHON_USEDEP}]
 		dev-python/certifi[${PYTHON_USEDEP}]
 		dev-python/grpcio:'${GRPC_SLOT}'[${PYTHON_USEDEP}]
 		dev-python/packaging[${PYTHON_USEDEP}]
 		dev-python/protobuf:'${PROTOBUF_PYTHON_SLOT}'[${PYTHON_USEDEP}]
 		dev-python/scikit-build-core[${PYTHON_USEDEP}]
 		dev-python/setuptools[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 "
 
@@ -551,8 +579,8 @@ PIPER_RDEPEND="
 			<dev-python/librosa-1[${PYTHON_USEDEP}]
 		)
 		>=dev-python/cython-0.29.0:0.29[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.19.0[${PYTHON_USEDEP}]
 		>=dev-python/piper-phonemize-1.1.0[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	(
 		>=sci-ml/pytorch-1.11.0[${PYTHON_SINGLE_USEDEP}]
@@ -604,8 +632,8 @@ RFDETR_RDEPEND="
 STABLEDIFFUSION_GGML_RDEPEND="
 	$(python_gen_cond_dep '
 		>=dev-python/gguf-0.1.0[${PYTHON_USEDEP}]
-		>=dev-python/numpy-2.0.2[${PYTHON_USEDEP}]
 		>=sci-ml/sentencepiece-0.1.98[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	(
 		>=sci-ml/transformers-4.35.2[${PYTHON_SINGLE_USEDEP}]
@@ -620,12 +648,12 @@ STABLEDIFFUSION_GGML_RDEPEND="
 
 TRANSFORMERS_RDEPEND="
 	$(python_gen_cond_dep '
-		>=dev-python/numpy-2.0.0[${PYTHON_USEDEP}]
 		>=dev-python/scipy-1.15.1[${PYTHON_USEDEP}]
 		dev-python/certifi[${PYTHON_USEDEP}]
 		dev-python/grpcio:'${GRPC_SLOT}'[${PYTHON_USEDEP}]
 		dev-python/protobuf:'${PROTOBUF_PYTHON_SLOT}'[${PYTHON_USEDEP}]
 		dev-python/setuptools[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 "
 
@@ -636,6 +664,10 @@ VLLM_RDEPEND="
 		dev-python/protobuf:'${PROTOBUF_PYTHON_SLOT}'[${PYTHON_USEDEP}]
 		dev-python/setuptools[${PYTHON_USEDEP}]
 	')
+"
+
+VIBEVOICE_RDEPEND="
+	
 "
 
 # CUDA versions:  https://github.com/mudler/LocalAI/blob/v4.3.6/Dockerfile#L20
