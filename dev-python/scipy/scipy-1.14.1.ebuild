@@ -6,7 +6,7 @@ EAPI=8
 FORTRAN_NEEDED="fortran"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="meson-python"
-PYTHON_COMPAT=( "pypy3" "python3_"{10..13} )
+PYTHON_COMPAT=( "python3_"{11..12} )
 PYTHON_REQ_USE="threads(+)"
 
 inherit cython flag-o-matic fortran-2 distutils-r1
@@ -45,17 +45,16 @@ LICENSE="BSD LGPL-2"
 SLOT="0"
 IUSE="
 doc +fortran test-rust
-ebuild_revision_1
+ebuild_revision_2
 "
 
 # umfpack is technically optional but it's preferred to have it available.
 RDEPEND="
-	>=dev-python/numpy-1.23.5[lapack,${PYTHON_USEDEP}]
 	>=virtual/lapack-3.8
-	dev-python/numpy:=
 	sci-libs/arpack:=
 	sci-libs/umfpack
 	virtual/cblas
+	virtual/numpy[${PYTHON_USEDEP},lapack]
 "
 DEPEND="
 	${RDEPEND}
