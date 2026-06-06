@@ -29,7 +29,7 @@ RESTRICT="mirror test" # untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" "
 RDEPEND+="
-	>=dev-python/numpy-1.15.3[${PYTHON_USEDEP}]
+	virtual/numpy[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
