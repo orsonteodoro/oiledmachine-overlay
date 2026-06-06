@@ -87,8 +87,8 @@ gen_rocm_depends() {
 }
 RDEPEND+="
 	dev-python/jinja2[${PYTHON_USEDEP}]
-	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/sympy[${PYTHON_USEDEP}]
+	virtual/numpy[${PYTHON_USEDEP}]
 	cuda? (
 		=dev-util/nvidia-cuda-toolkit-11.8*
 		dev-util/nvidia-cuda-toolkit:=
