@@ -38,12 +38,12 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 dev
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND+="
-	>=dev-python/numpy-1.24.2[${PYTHON_USEDEP}]
 	>=dev-python/pycocotools-2.0.6[${PYTHON_USEDEP}]
 	>=dev-python/pyyaml-6.0[${PYTHON_USEDEP}]
+	virtual/numpy[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
