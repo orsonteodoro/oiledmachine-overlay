@@ -5,7 +5,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..13} )
+PYTHON_COMPAT=( "python3_13" )
 
 inherit python-single-r1
 
@@ -37,7 +37,7 @@ RESTRICT="mirror test" # untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 alsa dev jack nas oss pipewire pulseaudio sndio test
-ebuild_revision_1
+ebuild_revision_2
 "
 AUDIO_OUTPUT_REQUIRED_USE="
 	|| (
@@ -70,11 +70,11 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/click-8.1.7[${PYTHON_USEDEP}]
 		>=dev-python/colorama-0.4.6[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.26.4[${PYTHON_USEDEP},lapack]
 		>=dev-python/ollama-0.2.1[${PYTHON_USEDEP}]
 		>=dev-python/pyaudio-0.2.14[${PYTHON_USEDEP}]
 		>=dev-python/pydantic-settings-2.3.1[${PYTHON_USEDEP}]
 		>=dev-python/pygame-2.5.2[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP},lapack]
 	')
 	>=dev-python/coqui-tts-0.24.1[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/pytorch-2.3.1[${PYTHON_SINGLE_USEDEP}]
