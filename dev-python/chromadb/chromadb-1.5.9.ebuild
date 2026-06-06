@@ -1092,9 +1092,10 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 dev
-ebuild_revision_8
+ebuild_revision_9
 "
 
+# grpcio:>=4 protobuf-python:>=4
 gen_grpcio_rdepend_dev() {
 	local impl
 	for impl in "${PYTHON_COMPAT[@]}" ; do
