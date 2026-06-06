@@ -12,7 +12,7 @@ EAPI=8
 
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..12} ) # DO NOT BUMP TO 3.13 FOR NUMPY
+PYTHON_COMPAT=( "python3_"{10..12} ) # NumPy needs < 3.13 for onnx
 
 inherit abseil-cpp distutils-r1 grpc protobuf pypi re2
 
@@ -45,7 +45,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 DOCS_IUSE="
 all-docs csv doc docx epub image md odt org pdf ppt pptx rst rtf tsv xlsx
-ebuild_revision_4
+ebuild_revision_5
 "
 LEGACY_IUSE="
 huggingface local-inference paddleocr
