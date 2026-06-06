@@ -48,7 +48,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 bitsandbytes dev doc flashpack flax gguf nvidia_modelopt optimum_quanto orphans
 quality test torch torchao training
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	dev? (
