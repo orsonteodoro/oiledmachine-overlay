@@ -22,7 +22,7 @@ LICENSE="
 	metapackage
 "
 RESTRICT="mirror"
-SLOT="0/"$(ver_cut "1-2" "${PV}")
+SLOT="0/U26" # Bump subslot to the latest LTS
 IUSE+=" "
 RDEPEND+="
 	python_targets_python3_11? (
