@@ -33,6 +33,14 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 aiohttp datalib dev realtime voice_helpers
 "
+REQUIRED_USE="
+	voice_helpers? (
+		|| (
+			python_targets_python3_13
+			python_targets_python3_14
+		)
+	)
+"
 RDEPEND+="
 	>=dev-python/anyio-3.5.0[${PYTHON_USEDEP}]
 	<dev-python/anyio-5[${PYTHON_USEDEP}]
@@ -61,9 +69,9 @@ RDEPEND+="
 		>=dev-python/httpx_aiohttp-0.1.9[${PYTHON_USEDEP}]
 	)
 	datalib? (
-		>=dev-python/numpy-1[${PYTHON_USEDEP}]
 		>=dev-python/pandas-1.2.3[${PYTHON_USEDEP}]
 		>=dev-python/pandas-stubs-1.1.0.11[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	)
 	realtime? (
 		>=dev-python/websockets-13[${PYTHON_USEDEP}]
@@ -71,7 +79,7 @@ RDEPEND+="
 	)
 	voice_helpers? (
 		>=dev-python/sounddevice-0.5.1[${PYTHON_USEDEP}]
-		>=dev-python/numpy-2.0.2[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	)
 "
 DEPEND+="
