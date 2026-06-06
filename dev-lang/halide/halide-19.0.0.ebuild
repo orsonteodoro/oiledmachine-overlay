@@ -27,7 +27,7 @@ MUNIT_COMMIT="da8f73412998e4f1adf1100dc187533a51af77fd"
 PICOSHA2_COMMIT="27fcf6979298949e8a462e16d09a0351c18fcaf2"
 PYBIND11_PV="2.10.4"
 PLY_COMMIT="d776a2ece6c12bf8f8b6a0e65b48546ac6078765"
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{10..13} )
 SIMDE_COMMIT="71fd833d9666141edcd1d3c109a80e228303d8d7"
 UVWASI_COMMIT="55eff19f4c7e69ec151424a037f951e0ad006ed6"
 VULKAN_HEADERS_PV="1.3.296"
@@ -89,7 +89,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 cuda -doc +serialization tutorials +python test +utils +wabt
-ebuild_revision_10
+ebuild_revision_11
 "
 REQUIRED_USE="
 	python? (
@@ -150,9 +150,9 @@ RDEPEND+="
 			>=dev-util/tbump-6.11.0[${PYTHON_USEDEP}]
 			dev-python/build[${PYTHON_USEDEP}]
 			dev-python/imageio[${PYTHON_USEDEP}]
-			dev-python/numpy[${PYTHON_USEDEP}]
 			dev-python/scipy[${PYTHON_USEDEP}]
 			dev-python/wheel[${PYTHON_USEDEP}]
+			virtual/numpy[${PYTHON_USEDEP}]
 			virtual/pillow[${PYTHON_USEDEP}]
 		)
 	')
