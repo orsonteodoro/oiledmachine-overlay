@@ -306,7 +306,7 @@ RDEPEND+="
 	')
 	>=dev-python/accelerate-1.13.0[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/av-14.0.1[${PYTHON_SINGLE_USEDEP}]
-	>=dev-python/chromadb-1.5.2[${PYTHON_SINGLE_USEDEP},protobuf5]
+	>=dev-python/chromadb-1.5.2[${PYTHON_SINGLE_USEDEP},protobuf_5]
 	>=dev-python/faster-whisper-1.2.1[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/rapidocr-onnxruntime-1.4.4[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/sentence-transformers-5.4.0[${PYTHON_SINGLE_USEDEP}]

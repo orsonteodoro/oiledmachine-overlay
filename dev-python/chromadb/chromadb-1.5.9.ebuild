@@ -1094,13 +1094,13 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
-dev protobuf4 +protobuf5
-ebuild_revision_10
+dev protobuf_4 +protobuf_5
+ebuild_revision_11
 "
 REQUIRED_USE+="
 	^^ (
-		protobuf4
-		protobuf5
+		protobuf_4
+		protobuf_5
 	)
 "
 
@@ -1168,12 +1168,12 @@ RDEPEND+="
 		>=dev-python/typing-extensions-4.5.0[${PYTHON_USEDEP}]
 		>=dev-python/uvicorn-0.18.3[${PYTHON_USEDEP},standard]
 		dev-python/importlib-resources[${PYTHON_USEDEP}]
-		protobuf4? (
+		protobuf_4? (
 			dev-python/opentelemetry-api:4[${PYTHON_USEDEP}]
 			dev-python/opentelemetry-exporter-otlp-proto-grpc:4[${PYTHON_USEDEP}]
 			dev-python/opentelemetry-sdk:4[${PYTHON_USEDEP}]
 		)
-		protobuf5? (
+		protobuf_5? (
 			dev-python/opentelemetry-api:5[${PYTHON_USEDEP}]
 			dev-python/opentelemetry-exporter-otlp-proto-grpc:5[${PYTHON_USEDEP}]
 			dev-python/opentelemetry-sdk:5[${PYTHON_USEDEP}]
