@@ -10,7 +10,7 @@ CXX_STANDARD=17
 EPYTEST_XDIST=1
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..14} )
+PYTHON_COMPAT=( "python3_"{13..14} )
 
 ARROW_TESTING_COMMIT="9a02925d1ba80bd493b6d4da6e8a777588d57ac4"
 PARQUET_TESTING_COMMIT="a3d96a65e11e2bbca7d22a894e8313ede90a33a3"
@@ -74,7 +74,7 @@ ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
 +parquet +snappy ssl test
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	cpu_flags_x86_avx? (
@@ -101,46 +101,18 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	$(python_gen_cond_dep '
-		>=dev-python/numpy-2.3.3[${PYTHON_USEDEP}]
-	' python3_14)
-	$(python_gen_cond_dep '
-		>=dev-python/numpy-2.1.0[${PYTHON_USEDEP}]
-	' python3_13)
-	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.26.0[${PYTHON_USEDEP}]
-	' python3_12)
-	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.23.2[${PYTHON_USEDEP}]
-	' python3_11)
-	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.21.3[${PYTHON_USEDEP}]
-	' python3_10)
-	dev-python/numpy:=
 	~dev-libs/apache-arrow-${PV}[compute,dataset,json,parquet?,re2,snappy?,ssl?]
+	dev-libs/apache-arrow:=
+	virtual/numpy
 "
 BDEPEND="
 	>=dev-python/cython-3.1:3.1[${PYTHON_USEDEP}]
 
-	$(python_gen_cond_dep '
-		>=dev-python/numpy-2.3.3[${PYTHON_USEDEP}]
-	' python3_14)
-	$(python_gen_cond_dep '
-		>=dev-python/numpy-2.1.0[${PYTHON_USEDEP}]
-	' python3_13)
-	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.26.0[${PYTHON_USEDEP}]
-	' python3_12)
-	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.23.2[${PYTHON_USEDEP}]
-	' python3_11)
-	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.21.3[${PYTHON_USEDEP}]
-	' python3_10)
-
 	>=dev-python/setuptools-58[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-scm-8[${PYTHON_USEDEP}]
+
 	dev-python/wheel[${PYTHON_USEDEP}]
+	virtual/numpy
 	test? (
 		dev-libs/apache-arrow[lz4,zlib]
 		dev-python/packaging[${PYTHON_USEDEP}]
