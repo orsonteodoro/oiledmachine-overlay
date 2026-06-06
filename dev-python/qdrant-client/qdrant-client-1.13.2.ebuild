@@ -43,7 +43,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 dev doc fastembed fastembed-gpu test types
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	test? (
