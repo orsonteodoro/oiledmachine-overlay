@@ -75,11 +75,11 @@ BDEPEND+="
 	dev-python/wheel[${PYTHON_USEDEP}]
 	test? (
 		dev-python/anyio[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/pandas[${PYTHON_USEDEP}]
 		dev-python/pyarrow[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/tox[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "README.md" "README.txt" )
