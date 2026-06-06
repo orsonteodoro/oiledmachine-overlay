@@ -18,7 +18,7 @@ EAPI=8
 MY_PN="${PN/-/_}"
 
 DISTUTILS_USE_PEP517="hatchling"
-PYTHON_COMPAT=( "python3_"{10..13} )
+PYTHON_COMPAT=( "python3_"{12..13} )
 
 inherit distutils-r1 pypi
 
@@ -27,7 +27,7 @@ S="${WORKDIR}/${MY_PN}-${PV}"
 
 DESCRIPTION="Community contributed LangChain integrations"
 HOMEPAGE="
-	https://github.com/langchain-ai/langchain/tree/master/libs/community
+	https://github.com/langchain-ai/langchain-community/tree/main/libs/community
 	https://pypi.org/project/langchain-community
 "
 LICENSE="
@@ -37,6 +37,13 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 dev lint test test-integration typing
+"
+# For Numpy:
+REQUIRED_USE="
+	|| (
+		python_targets_python3_12
+		python_targets_python3_13
+	)
 "
 RDEPEND+="
 	>=dev-python/langchain-core-1.4.0[${PYTHON_USEDEP}]
@@ -70,13 +77,7 @@ RDEPEND+="
 	>=dev-python/httpx-sse-0.4.0[${PYTHON_USEDEP}]
 	<dev-python/httpx-sse-1.0.0[${PYTHON_USEDEP}]
 
-	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.26.2[${PYTHON_USEDEP}]
-	' python3_{10..12})
-
-	$(python_gen_cond_dep '
-		>=dev-python/numpy-2.1.0[${PYTHON_USEDEP}]
-	' python3_13)
+	virtual/numpy[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
