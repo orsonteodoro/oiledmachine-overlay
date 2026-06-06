@@ -33,12 +33,12 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 "
 RDEPEND+="
-	dev-python/numpy[${PYTHON_USEDEP}]
+	virtual/numpy[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
@@ -46,9 +46,9 @@ DEPEND+="
 BDEPEND+="
 	dev-python/cython[${PYTHON_USEDEP}]
 	dev-python/cython:=
-	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
+	virtual/numpy[${PYTHON_USEDEP}]
 "
 DOCS=( "README.md" )
 PATCHES=(
