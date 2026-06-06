@@ -4,7 +4,7 @@
 
 EAPI=8
 
-MY_PN="opentelemetry_exporter_otlp_proto_common"
+MY_PN="opentelemetry_exporter_otlp"
 
 DISTUTILS_USE_PEP517="hatchling"
 PROTOBUF_CPP_SLOT="5"
