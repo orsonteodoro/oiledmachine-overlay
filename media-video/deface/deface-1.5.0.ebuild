@@ -50,9 +50,9 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/imageio-2.25[${PYTHON_USEDEP}]
 		>=dev-python/imageio-ffmpeg-0.4.6[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/tqdm[${PYTHON_USEDEP}]
 		dev-python/scikit-image[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 		cuda? (
 			sci-ml/onnx[${PYTHON_USEDEP}]
 		)
