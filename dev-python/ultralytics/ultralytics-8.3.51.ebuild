@@ -58,7 +58,6 @@ REQUIRED_USE="
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/matplotlib-3.3.0[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.23.0[${PYTHON_USEDEP}]
 		>=dev-python/pandas-1.1.4[${PYTHON_USEDEP}]
 		>=dev-python/pyyaml-5.3.1[${PYTHON_USEDEP}]
 		>=dev-python/requests-2.23.0[${PYTHON_USEDEP}]
@@ -68,6 +67,7 @@ RDEPEND+="
 		>=virtual/pillow-7.1.2[${PYTHON_USEDEP}]
 		dev-python/psutil[${PYTHON_USEDEP}]
 		dev-python/py-cpuinfo[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	>=dev-python/ultralytics-thop-2.0.0[${PYTHON_SINGLE_USEDEP}]
 	>=media-libs/opencv-4.6.0[${PYTHON_SINGLE_USEDEP},python]
@@ -92,8 +92,8 @@ RDEPEND+="
 					>=dev-libs/flatbuffers-23.5.26
 					<dev-libs/flatbuffers-100
 				)
-				!=dev-python/h5py-3.11.0[${PYTHON_USEDEP}]
-				>=dev-python/numpy-1.23.5[${PYTHON_USEDEP}]
+				!~dev-python/h5py-3.11.0[${PYTHON_USEDEP}]
+				virtual/numpy[${PYTHON_USEDEP}]
 			)
 		')
 		>=sci-ml/tensorflow-2.0.0[${PYTHON_SINGLE_USEDEP}]
