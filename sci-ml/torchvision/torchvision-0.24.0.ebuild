@@ -27,7 +27,7 @@ LICENSE="BSD"
 SLOT="0"
 IUSE="
 cuda gdown rocm scipy test
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	?? (
@@ -43,7 +43,7 @@ RESTRICT="
 RDEPEND="
 	$(python_gen_cond_dep '
 		!=virtual/pillow-8.3*
-		dev-python/numpy[${PYTHON_USEDEP}]
+		virtual/numpy[${PYTHON_USEDEP}]
 		gdown? (
 			>=dev-python/gdown-4.7.3[${PYTHON_USEDEP}]
 		)
