@@ -58,3 +58,7 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 "
+
+src_install() {
+	:
+}
