@@ -110,15 +110,16 @@ The new Rust rules on this overlay (May 2026) for the non C/C++ languages
 scenario addresses a security issue possibility (e.g. miscompilation slots
 causing errors or vulnerabilities which could lead to the worst case RCE).
 
-
 For C/C++ the Rust slot rules for version pinning are as follows:
 
--     LLVM 22 (Rolling):  Rust 9999 with timestamp verification associated with latest [version](https://github.com/rust-lang/rust/blob/main/src/version)
--     LLVM 21 (Rolling):  Rust 1.94.1
--     LLVM 20 (Rolling):  Rust 1.90.0
--         LLVM 19 (LTS):  Rust 1.86.0
--         LLVM 18 (LTS):  Rust 1.81.0
--         LLVM 17 (LTS):  Rust 1.77.2
+| LLVM slot    | Rust slot |
+| ---          | ---       |
+| 22 (Rolling) | 9999 with timestamp verification associated with latest [version](https://github.com/rust-lang/rust/blob/main/src/version) |
+| 21 (Rolling) | 1.94.1    |
+| 20 (Rolling) | 1.90.0    |
+| 19 (LTS)     | 1.86.0    |
+| 18 (LTS)     | 1.81.0    |
+| 17 (LTS)     | 1.77.2    |
 
 The version ranges are matching to avoid multiple LLVM versions loaded issues.
 
