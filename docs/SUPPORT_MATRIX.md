@@ -249,7 +249,7 @@ Language defaults
 | 3.14                 | Available                             | G23, F43, F44                                                  |
 | >= 3.15 [3]          | Not supported                         |                                                                |
 | pypy3 [2][3]         | Not supported (EOL)                   |                                                                |
-| pypy3_11 [3]         | Not supported (EOL)                   |                                                                |
+| pypy3_11 [3]         | Available [1]                         |                                                                |
 
 * [1] Available but not fully supported because the PYTHON_COMPAT removal of
       affected versions by eager FAFO removal from distro and community overlays.
