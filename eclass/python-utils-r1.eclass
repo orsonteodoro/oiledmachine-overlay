@@ -52,7 +52,10 @@ readonly _PYTHON_ALL_IMPLS
 _PYTHON_HISTORICAL_IMPLS=(
 # oiledmachine-overlay modified
 	jython2_7
-	pypy pypy1_{8,9} pypy2_0 pypy3
+	pypy
+	pypy1_{8,9}
+	pypy2_0
+	pypy3
 	python2_{5..7}
 	python3_{1..9}
 	python3_15
