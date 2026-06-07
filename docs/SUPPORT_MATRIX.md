@@ -113,12 +113,12 @@ causing errors or vulnerabilities which could lead to the worst case RCE).
 
 For C/C++ the Rust slot rules for version pinning are as follows:
 
-- LLVM 22 (Rolling):  Rust 1.95.0 - 9999
-- LLVM 21 (Rolling):  Rust 1.91.0 - 1.94.1
-- LLVM 20 (Rolling):  Rust 1.87.0 - 1.90.0
-- LLVM 19 (LTS):  Rust 1.82.0 - 1.86.0
-- LLVM 18 (LTS):  Rust 1.78.0 - 1.81.0
-- LLVM 17 (LTS):  Rust 1.74.1 - 1.77.2
+-     LLVM 22 (Rolling):  Rust 9999 with timestamp verification associated with latest [version](https://github.com/rust-lang/rust/blob/main/src/version)
+-     LLVM 21 (Rolling):  Rust 1.94.1
+-     LLVM 20 (Rolling):  Rust 1.90.0
+-         LLVM 19 (LTS):  Rust 1.86.0
+-         LLVM 18 (LTS):  Rust 1.81.0
+-         LLVM 17 (LTS):  Rust 1.77.2
 
 The version ranges are matching to avoid multiple LLVM versions loaded issues.
 
@@ -239,7 +239,8 @@ Language defaults
 
 | Python               | Ebuild level of support               | Distro or CI image correspondence                              |
 | ---                  | ---                                   | ---                                                            |
-| 3.10 and earlier     | Available [1]                         | U22 (EOL Apr 2027)                                             |
+| 3.9 and earlier      | Not supported (EOL)                   |                                                                |
+| 3.10                 | Available [1]                         | U22 (EOL Apr 2027)                                             |
 | 3.11                 | Available [4]                         | D12 (EOL Jun 2026)                                             |
 | 3.12                 | Partially supported                   | U24 (EOL Apr 2029)                                             |
 | 3.13                 | Available                             | D13 (EOL Aug 2028), F41 (EOL Nov 2025), F42 (EOL May 2026)     |
