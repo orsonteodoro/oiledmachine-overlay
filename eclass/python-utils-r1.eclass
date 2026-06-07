@@ -51,11 +51,11 @@ readonly _PYTHON_ALL_IMPLS
 # All historical Python implementations that are no longer supported.
 _PYTHON_HISTORICAL_IMPLS=(
 # oiledmachine-overlay modified
-#	jython2_7
-#	pypy pypy1_{8,9} pypy2_0 pypy3 pypy3_11
-#	python2_{5..7}
+	jython2_7
+	pypy pypy1_{8,9} pypy2_0 pypy3
+	python2_{5..7}
 	python3_{1..9}
-#	python3_13t
+	python3_{13..15}t
 )
 readonly _PYTHON_HISTORICAL_IMPLS
 
