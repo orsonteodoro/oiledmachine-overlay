@@ -255,8 +255,8 @@ Language defaults
       affected versions from eager removal in the distro and community overlays.
       This overlay may fork affected packages for AI stack stability.  Forced
       PYTHON_COMPAT bumps (to Python 3.12 or any future minimum version bumps)
-      may introduce DoS vulnerabilities (e.g. crash, broken boot/login) or
-      incompatibilities.
+      may introduce DoS vulnerabilities (e.g. crash, broken boot/login),
+      degraded security (3FA -> 2FA), or incompatibilities.
 
       DISCLAIMER:  This overlay may delete Python based security-critical
       components without warning associated with eager distro EOL restriction
