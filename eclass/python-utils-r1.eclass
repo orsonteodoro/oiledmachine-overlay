@@ -55,6 +55,7 @@ _PYTHON_HISTORICAL_IMPLS=(
 	pypy pypy1_{8,9} pypy2_0 pypy3
 	python2_{5..7}
 	python3_{1..9}
+	python3_15
 	python3_{13..15}t
 )
 readonly _PYTHON_HISTORICAL_IMPLS
