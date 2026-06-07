@@ -252,7 +252,7 @@ Language defaults
 | pypy3_11 [3]         | Not supported (EOL)                   |                                                                |
 
 * [1] Available but not fully supported because the PYTHON_COMPAT removal of
-      affected versions from eager removal in the distro and community overlays.
+      affected versions by eager FAFO removal from distro and community overlays.
       This overlay may fork affected packages for AI stack stability.  Forced
       PYTHON_COMPAT bumps (to Python 3.12 or any future minimum version bumps)
       may introduce DoS vulnerabilities (e.g. crash, broken boot/login),
