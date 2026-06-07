@@ -245,7 +245,7 @@ Language defaults
 | 3.11                 | Available [4]                         | D12 (EOL Jun 2026)                                             |
 | 3.12                 | Partially supported                   | U24 (EOL Apr 2029)                                             |
 | 3.13                 | Available                             | D13 (EOL Aug 2028), F41 (EOL Nov 2025), F42 (EOL May 2026)     |
-| 3.13t [3]            | Not supported                         |                                                                |
+| >= 3.13t [3]         | Not supported                         |                                                                |
 | 3.14                 | Available                             | G23, F43, F44                                                  |
 | >= 3.15 [3]          | Not supported                         |                                                                |
 | pypy3 [2][3]         | Not supported (EOL)                   |                                                                |
