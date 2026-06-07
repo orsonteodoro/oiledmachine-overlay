@@ -5,7 +5,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10,11} )
+PYTHON_COMPAT=( "python3_"{10,14} )
 
 inherit distutils-r1
 
@@ -32,20 +32,25 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" doc test"
+IUSE+=" dev doc test"
 RDEPEND+="
+	dev-python/flask[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/setuptools-42[${PYTHON_USEDEP}]
-	dev-python/wheel[${PYTHON_USEDEP}]
+	>=dev-python/setuptools-61.2[${PYTHON_USEDEP}]
+	dev? (
+		dev-python/tox
+	)
 	doc? (
+		dev-python/furo[${PYTHON_USEDEP}]
 		dev-python/sphinx[${PYTHON_USEDEP}]
 	)
 	test? (
 		dev-python/asgiref[${PYTHON_USEDEP}]
+		dev-python/flake8[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-cov[${PYTHON_USEDEP}]
 	)
@@ -60,8 +65,6 @@ src_unpack() {
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
 		git-r3_checkout
-		grep -q -e "__version__ = '1.6'" "${S}/setup.cfg" \
-			|| die "QA:  Bump version"
 	else
 		unpack ${A}
 	fi
