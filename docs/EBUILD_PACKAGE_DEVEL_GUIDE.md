@@ -180,6 +180,7 @@ Python defaults
 | pypy3_11 support                           | Y if specified in setup.py                                                                            |
 | Must use slotted Cython                    | Y, forcing untested newer versions may result in undefined behavior or miscompilation vulnerabilities |
 | Hacks are allowed? (using Cython over Zig) | If the package uses security-critical assumptions or processes untrusted data, it is disallowed.      |
+| Is Python freethreading allowed?           | N for security-critical packages.                                                                     |
 
 Rust defaults
 
@@ -306,6 +307,7 @@ Security QA
 | Ebuild EOL pruning                                            | If the older versions are necessary for bootstrapping, it should not be deleted.  Otherwise, you're stuck with a compromised trojanized prebuilt. |
 | Hacks are allowed? (using a degraded compiler, using Cython over Zig) | If the package uses security-critical assumptions or processes untrusted data, it is disallowed.                                          |
 | X11 banned?                                                   | Y for security-critical and because Wayland has greater market share                                                                              |
+| Is Python freethreading allowed?                              | N for security-critical packages.  It may introduce race condition vulnerabilities.                                                               |
 
 Userspace mitigation comparison
 
