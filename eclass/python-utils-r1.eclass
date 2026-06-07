@@ -40,6 +40,7 @@ inherit multiprocessing toolchain-funcs
 # All supported Python implementations, most preferred last.
 _PYTHON_ALL_IMPLS=(
 # oiledmachine-overlay changed
+# Only CI listed versions appear
 	python3_{10..14} # Only LTS supported on this overlay
 	pypy3_11
 )
@@ -50,16 +51,17 @@ readonly _PYTHON_ALL_IMPLS
 # @DESCRIPTION:
 # All historical Python implementations that are no longer supported.
 _PYTHON_HISTORICAL_IMPLS=(
-# oiledmachine-overlay modified
+# oiledmachine-overlay changed
+# See also https://projects.gentoo.org/python/guide/basic.html#python-compat
 	jython2_7
-	pypy
+	pypy # Same as PyPy 2.7
 	pypy1_{8,9}
 	pypy2_0
-	pypy3
+	pypy3 # Same as PyPy 3.10
 	python2_{5..7}
 	python3_{1..9}
 	python3_15
-	python3_{13..15}t
+	python3_{13..15}t # free-threading or truly multicore optimized
 )
 readonly _PYTHON_HISTORICAL_IMPLS
 
