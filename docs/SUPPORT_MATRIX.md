@@ -260,14 +260,15 @@ Language defaults
 
       DISCLAIMER:  This overlay may delete Python based security-critical
       components without warning associated with eager distro EOL restriction
-      and upstream not updating their releases to use CI test images.  If the
-      package (e.g. Howdy or Python based PAM package) is using a D12/U20 CI
-      image or testing with older CI images, this overlay may immediately delete
-      the package or dependencies associated with it which can cause an init or
-      boot issues.  The developer or contributors may choose not to apply
-      patches because it is unpaid free labor to fix any issue, stress relief,
-      or an alternative to replace it exists.  It is a common practice by the
-      distro overlay to delete ebuilds for EOL packages or defuct projects.
+      and upstream not updating their releases to use the latest CI test images.
+      If the package (e.g. Howdy or Python based PAM package) is using a
+      D12/U18/U20/U22 CI image or testing with older CI images, this overlay may
+      immediately delete the package or dependencies associated with it which
+      can cause an init or boot issues.  The developer or contributors may
+      choose not to apply patches because it is unpaid free labor to fix any
+      issue, stress relief, or an alternative to replace it exists.  It is a
+      common practice by the distro overlay to delete ebuilds for EOL packages
+      or defuct projects.
 
 * [2] [Python 3.10](https://projects.gentoo.org/python/guide/basic.html#python-compat)
 * [3] Not widely tested with CI.
