@@ -206,6 +206,7 @@ has_all_hardening_flags() {
 # Check compiler hardening requirements.
 verify_compiler_flags_hardening() {
 	local L1=(
+		"unconditional:dev-lang/python:sensitive-data,untrusted-data"
 		"unconditional:gui-libs/gtk:sensitive-data,untrusted-data"
 
 	# All input deps
