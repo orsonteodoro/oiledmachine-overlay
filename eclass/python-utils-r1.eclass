@@ -57,18 +57,18 @@ _PYTHON_HISTORICAL_IMPLS=(
 # See also https://projects.gentoo.org/python/guide/basic.html#python-compat
 #
 # Estimated performance impact
-# pypy:  3.5x - 5x
-# free-threading:  3.5-4x multicore or 1-15% single thread penalty, 15-20% increased memory
+# pypy:  3.5x - 5x benefit
+# free-threading:  3.5-4x multicore benefit or 1-15% single thread penalty, 15-20% increased memory
 #
 	jython2_7
-	pypy # Same as PyPy 2.7
-	pypy1_{8,9}
-	pypy2_0
-	pypy3 # Same as PyPy 3.10
 	python2_{5..7}
 	python3_{1..9}
 	python3_15
 	python3_{13..15}t # free-threading or truly multicore optimized
+	pypy # Same as PyPy 2.7
+	pypy1_{8,9}
+	pypy2_0
+	pypy3 # Same as PyPy 3.10
 )
 readonly _PYTHON_HISTORICAL_IMPLS
 
