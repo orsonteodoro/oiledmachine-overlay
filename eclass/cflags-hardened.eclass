@@ -325,8 +325,10 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 #
 # Valid values:
 # BO - Buffer Overflow
+# BOR - Buffer Overread
 # BU - Buffer Underflow
 # CE - Code Execution
+# CI - Code Injection or Command Injection
 # DOS - Denial Of Service
 # DF - Double Free
 # DP - Dangling Pointer
@@ -336,6 +338,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # ID - Information Disclosure
 # IO - Integer Overflow
 # IU - Integer Underflow
+# IL - Infinite Loop
 # MC - Memory Corruption
 # NPD - Null Pointer Dereference
 # OOBA - Out Of Bound Access
@@ -344,6 +347,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # PE - Privilege Escalation
 # PT - Path Traversal
 # RC - Race Condition
+# REDOS - Regular Expression Denial of Service
 # SO - Stack Overflow
 # TA - Timing Attack
 # TC - Type Confusion

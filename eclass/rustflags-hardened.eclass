@@ -248,8 +248,10 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 #
 # Valid values:
 # BO - Buffer Overflow
+# BOR - Buffer Overread
 # BU - Buffer Underflow
 # CE - Code Execution
+# CI - Code Injection or Command Injection
 # DOS - Denial Of Service
 # DF - Double Free
 # DP - Dangling Pointer
@@ -258,6 +260,7 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # ID - Information Disclosure
 # IO - Integer Overflow
 # IU - Integer Underflow
+# IL - Infinite Loop
 # MC - Memory Corruption
 # NPD - Null Pointer Dereference
 # OOBA - Out Of Bound Access
@@ -266,6 +269,7 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # PE - Privilege Escalation
 # PT - Path Traversal
 # RC - Race Condition
+# REDOS - Regular Expression Denial of Service
 # SO - Stack Overflow
 # TA - Timing Attack
 # TC - Type Confusion

@@ -128,6 +128,9 @@ einfo "BGC = Badly Generated Code"
 # Stack size insufficient
 einfo "BO = Buffer Overflow"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"BOR"($|" "|";"|",") ]] ; then
+einfo "BOR = Buffer Overread"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"C"($|" "|";"|",") ]] ; then
 # Same as ID
 einfo "C = Confidentiality Impacted"
