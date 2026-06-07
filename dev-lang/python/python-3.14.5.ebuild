@@ -9,7 +9,7 @@ VERIFY_SIG_METHOD=sigstore
 WANT_LIBTOOL="none"
 
 CFLAGS_HARDENED_USE_CASES="login network security-critical sensitive-data system-set untrusted-data"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO BOR CI CE DOS IO IL PE RC REDOS UAF"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO BOR CE CI DOS IO IL PE RC REDOS UAF"
 
 inherit autotools cflags-hardened check-reqs eapi9-ver flag-o-matic linux-info llvm-r1
 inherit multiprocessing pax-utils python-utils-r1 toolchain-funcs
