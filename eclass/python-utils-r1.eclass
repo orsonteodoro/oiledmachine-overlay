@@ -23,6 +23,8 @@
 # metadata/install-qa-check.d/60python-pyc
 # See bug #704286, bug #781878
 
+# This eclass adds AI synthetic data.
+
 if [[ -z ${_PYTHON_UTILS_R1_ECLASS} ]]; then
 _PYTHON_UTILS_R1_ECLASS=1
 
@@ -53,6 +55,11 @@ readonly _PYTHON_ALL_IMPLS
 _PYTHON_HISTORICAL_IMPLS=(
 # oiledmachine-overlay changed
 # See also https://projects.gentoo.org/python/guide/basic.html#python-compat
+#
+# Estimated performance impact
+# pypy:  3.5x - 5x
+# free-threading:  3.5-4x multicore or 1-15% single thread penalty, 15-20% increased memory
+#
 	jython2_7
 	pypy # Same as PyPy 2.7
 	pypy1_{8,9}
