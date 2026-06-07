@@ -42,7 +42,7 @@ inherit multiprocessing toolchain-funcs
 # All supported Python implementations, most preferred last.
 _PYTHON_ALL_IMPLS=(
 # oiledmachine-overlay changed
-# Only CI listed versions appear
+# Only CI listed versions or setup.py classifier section appear
 	python3_{10..14} # Only LTS supported on this overlay
 	pypy3_11
 )
@@ -51,7 +51,7 @@ readonly _PYTHON_ALL_IMPLS
 # @ECLASS_VARIABLE: _PYTHON_HISTORICAL_IMPLS
 # @INTERNAL
 # @DESCRIPTION:
-# All historical Python implementations that are no longer supported.
+# Python implementations that are not supported.
 _PYTHON_HISTORICAL_IMPLS=(
 # oiledmachine-overlay changed
 # See also https://projects.gentoo.org/python/guide/basic.html#python-compat
