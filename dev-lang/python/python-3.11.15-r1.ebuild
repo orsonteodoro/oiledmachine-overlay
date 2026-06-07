@@ -114,6 +114,9 @@ pkg_pretend() {
 }
 
 pkg_setup() {
+# See https://devguide.python.org/versions/#supported-versions
+einfo "EOL date:  Oct 2027"
+
 	use test && check-reqs_pkg_setup
 }
 

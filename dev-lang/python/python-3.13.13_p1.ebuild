@@ -140,6 +140,9 @@ pkg_pretend() {
 }
 
 pkg_setup() {
+# See https://devguide.python.org/versions/#supported-versions
+einfo "EOL date:  Oct 2029"
+
 	if [[ ${MERGE_TYPE} != binary ]]; then
 		use jit && llvm-r1_pkg_setup
 		if use test || use pgo; then
