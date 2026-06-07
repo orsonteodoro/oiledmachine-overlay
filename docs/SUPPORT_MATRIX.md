@@ -239,8 +239,8 @@ Language defaults
 
 | Python               | Ebuild level of support               | Distro or CI image correspondence                              |
 | ---                  | ---                                   | ---                                                            |
-| 3.10 and earlier     | Not supported (EOL) [1]               | U22 (EOL Apr 2027)                                             |
-| 3.11                 | Not supported (EOL) [4]               | D12 (EOL Jun 2026)                                             |
+| 3.10 and earlier     | Available [1]                         | U22 (EOL Apr 2027)                                             |
+| 3.11                 | Available [4]                         | D12 (EOL Jun 2026)                                             |
 | 3.12                 | Partially supported                   | U24 (EOL Apr 2029)                                             |
 | 3.13                 | Available                             | D13 (EOL Aug 2028), F41 (EOL Nov 2025), F42 (EOL May 2026)     |
 | 3.13t [3]            | Not supported                         |                                                                |
@@ -249,20 +249,23 @@ Language defaults
 | pypy3 [2][3]         | Not supported (EOL)                   |                                                                |
 | pypy3_11 [3]         | Not supported (EOL)                   |                                                                |
 
-* [1] Not supported due to [python-utils-r1.eclass](https://github.com/gentoo/gentoo/blob/master/eclass/python-utils-r1.eclass#L44)
-      distro FAFO EOL restrictions, but not [EOL upstream](https://devguide.python.org/versions/).
-      Forced PYTHON_COMPAT bumps (to Python 3.11 or any future minimum version
-      bumps) may introduce DoS vulnerabilities (e.g. crash) or incompatibilities.
+* [1] Available but not fully supported because the PYTHON_COMPAT removal of
+      affected versions from eager removal in the distro and community overlays.
+      This overlay may fork affected packages for AI stack stability.  Forced
+      PYTHON_COMPAT bumps (to Python 3.12 or any future minimum version bumps)
+      may introduce DoS vulnerabilities (e.g. crash, broken boot/login) or
+      incompatibilities.
 
-      DISCLAIMER:  This overlay may delete Python based security-critical components without
-      warning associated with eager distro EOL restriction and upstream not updating
-      their releases to use CI test images.  If the package (e.g. Howdy or Python based PAM
-      package) is using a D12/U20 CI image or testing with older CI images,
-      this overlay may immediately delete the package or dependencies associated with it
-      which can cause an init or boot issues.  The developer or contributors may choose not
-      to apply patches because it is unpaid free labor to fix any issue, stress relief, or
-      an alternative to replace it exists.  It is a common practice by the distro overlay
-      to delete ebuilds for EOL packages or defuct projects.
+      DISCLAIMER:  This overlay may delete Python based security-critical
+      components without warning associated with eager distro EOL restriction
+      and upstream not updating their releases to use CI test images.  If the
+      package (e.g. Howdy or Python based PAM package) is using a D12/U20 CI
+      image or testing with older CI images, this overlay may immediately delete
+      the package or dependencies associated with it which can cause an init or
+      boot issues.  The developer or contributors may choose not to apply
+      patches because it is unpaid free labor to fix any issue, stress relief,
+      or an alternative to replace it exists.  It is a common practice by the
+      distro overlay to delete ebuilds for EOL packages or defuct projects.
 
 * [2] [Python 3.10](https://projects.gentoo.org/python/guide/basic.html#python-compat)
 * [3] Not widely tested with CI.
