@@ -307,7 +307,7 @@ Security QA
 | Ebuild EOL pruning                                            | If the older versions are necessary for bootstrapping, it should not be deleted.  Otherwise, you're stuck with a compromised trojanized prebuilt. |
 | Hacks are allowed? (using a degraded compiler, using Cython over Zig) | If the package uses security-critical assumptions or processes untrusted data, it is disallowed.                                          |
 | X11 banned?                                                   | Y for security-critical and because Wayland has greater market share                                                                              |
-| Is Python freethreading allowed?                              | N for security-critical packages.  It may introduce race condition vulnerabilities.                                                               |
+| Is Python freethreading allowed?                              | N for security-critical packages.  It may introduce race condition or TOCTOU vulnerabilities.  TOCTOU may lead to privilege escalation.           |
 
 Userspace mitigation comparison
 
