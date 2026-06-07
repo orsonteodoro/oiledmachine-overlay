@@ -17,7 +17,7 @@ EAPI=8
 # For dropped FAFO distro versions, see https://github.com/gentoo/gentoo/blob/master/eclass/python-utils-r1.eclass#L55
 
 DISTUTILS_USE_PEP517="no"
-PYTHON_COMPAT=( "python3_"{12..14} )
+PYTHON_COMPAT=( "python3_"{10..14} )
 
 inherit distutils-r1
 
@@ -31,6 +31,14 @@ RESTRICT="mirror"
 SLOT="0/U26" # Bump subslot to the latest LTS
 IUSE+=" "
 RDEPEND+="
+	python_targets_python3_11? (
+		>=dev-python/numpy-1.21.5[${PYTHON_USEDEP}]
+		<dev-python/numpy-2[${PYTHON_USEDEP}]
+	)
+	python_targets_python3_11? (
+		>=dev-python/numpy-1.24.2[${PYTHON_USEDEP}]
+		<dev-python/numpy-2[${PYTHON_USEDEP}]
+	)
 	python_targets_python3_12? (
 		>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
 		<dev-python/numpy-2[${PYTHON_USEDEP}]
