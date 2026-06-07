@@ -6,7 +6,7 @@ EAPI=8
 
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..12} ) # upstream listed up to 3.10
+PYTHON_COMPAT=( "python3_"{10..14} )
 CRFSUITE_COMMIT="dc5b6c7b726de90ca63cbf269e6476e18f1dd0d9"
 LIBLBFGS_COMMIT="57678b188ae34c2fb2ed36baf54f9a58b4260d1c"
 
@@ -42,12 +42,10 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 "
-# dev-python/numpy-1.26.4 was bumped to avoid build error
 BDEPEND+="
 	=dev-python/cython-3*[${PYTHON_USEDEP}]
 	dev-python/cython:=
 	>=dev-python/setuptools-42[${PYTHON_USEDEP}]
-	>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
 	dev? (
 		dev-python/tox[${PYTHON_USEDEP}]
