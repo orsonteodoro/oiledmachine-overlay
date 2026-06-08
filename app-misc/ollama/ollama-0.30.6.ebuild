@@ -2553,10 +2553,12 @@ gen_rocm_required_use() {
 	done
 }
 
-# OpenCL support (via CLBlast) removed in >= 0.1.45 in favor of vulkan which is not supported yet.
+#
 # There is a bug for ?? operator where 1 element causes it to be required.
+#
 # The external-editor is banned to simplify the security architecture.  We want
 # to limit the blast radius by keeping the lid on access to home.
+#
 REQUIRED_USE="
 	!external-editor
 	!cuda

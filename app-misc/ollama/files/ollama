@@ -39,9 +39,10 @@ main() {
 	local FIREJAIL_ARGS=()
 
 # See also https://github.com/ollama/ollama/blob/v0.30.6/envconfig/config.go
+	# Editor blocked to limit implied blast radius of saving or accessing home folder.
 	local L=(
 		"CUDA_VISIBLE_DEVICES"
-		"EDITOR"
+		#"EDITOR"
 		"GGML_VK_VISIBLE_DEVICES"
 		"GPU_DEVICE_ORDINAL"
 		"HIP_VISIBLE_DEVICES"
@@ -58,7 +59,7 @@ main() {
 		"OLLAMA_DEBUG"
 		"OLLAMA_DEBUG_LOG_REQUESTS"
 		"OLLAMA_CONTEXT_LENGTH"
-		"OLLAMA_EDITOR"
+		#"OLLAMA_EDITOR"
 		"OLLAMA_FLASH_ATTENTION"
 		"OLLAMA_GPU_OVERHEAD"
 		"OLLAMA_GO_TEMPLATE"
