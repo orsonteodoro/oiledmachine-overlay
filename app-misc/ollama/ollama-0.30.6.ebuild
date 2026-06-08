@@ -3252,7 +3252,11 @@ einfo "Editing ${x} for ragel -Z -> ragel-go"
 		sed -i -e "/@AI_AGENT_SUPPORT_START@/,/@AI_AGENT_SUPPORT_END@/d" "cmd/cmd.go" || die
 	fi
 
-	# Allow agent if user approves instead of running hijack/spoof
+	# Allow agent if user approves instead of running spoof/malicious/squatter shim script/binary.
+	# Upstream's code doesn't verify before calling exec.Command.
+	# FIXME Two options:
+	# 1.  Use absolute path to CLI agent.
+	# 2.  Use hash based verification before running CLI AI tool.
 	if use bash ; then
 		sed -i -e "\|// DISABLE_BASH|d" "x/tools/bash.go" || die
 	fi
@@ -3330,7 +3334,7 @@ einfo "Editing ${x} for ragel -Z -> ragel-go"
 		sed -i -e "\|// DISABLE_VSCODE|d" "cmd/launch/vscode.go" || die
 	fi
 
-	# Prevent code execution or hijack
+	# Prevent hijack from malicious shim or binary
 	if [[ -n "${OLLAMA_EDITOR}" ]] ; then
 		sed -i -e "s|vi|${OLLAMA_EDITOR}|g" "cmd/editor_unix.go" || die
 	elif has_version "app-editors/vim" ; then
