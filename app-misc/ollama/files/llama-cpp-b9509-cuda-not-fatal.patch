@@ -1,0 +1,11 @@
+diff '--color=auto' -urp llama.cpp-b9509.orig2/ggml/src/ggml-cuda/CMakeLists.txt llama.cpp-b9509/ggml/src/ggml-cuda/CMakeLists.txt
+--- llama.cpp-b9509.orig2/ggml/src/ggml-cuda/CMakeLists.txt	2026-06-04 06:09:01.000000000 -0700
++++ llama.cpp-b9509/ggml/src/ggml-cuda/CMakeLists.txt	2026-06-07 22:21:26.284535347 -0700
+@@ -265,5 +265,5 @@ if (CUDAToolkit_FOUND)
+ 
+     target_compile_options(ggml-cuda PRIVATE "$<$<COMPILE_LANGUAGE:CUDA>:${CUDA_FLAGS}>")
+ else()
+-    message(FATAL_ERROR "CUDA Toolkit not found")
++    message(STATUS "CUDA Toolkit not found")
+ endif()
+Only in llama.cpp-b9509/ggml/src/ggml-cuda: CMakeLists.txt.orig

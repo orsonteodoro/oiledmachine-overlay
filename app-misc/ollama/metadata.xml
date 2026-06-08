@@ -116,6 +116,9 @@
     <flag name="claude">
       Add support for Claude Code coding agent.
     </flag>
+    <flag name="claude-desktop">
+      Add support for Claude Desktop integration (No longer supported).
+    </flag>
     <flag name="cline">
       Add support for Cline CLI coding agent.
     </flag>
@@ -124,6 +127,9 @@
     </flag>
     <flag name="codex">
       Add support for Codex CLI coding agent.
+    </flag>
+    <flag name="codex-app">
+      Add support for Codex App coding agent.
     </flag>
     <flag name="copilot">
       Add support for GitHub Copilot CLI coding agent.
@@ -172,6 +178,9 @@
       Autodetect CPU instruction sets during build time for vendored llama.cpp
       used for inference for the old runner.
     </flag>
+    <flag name="omp">
+      Add support for OMP (Oh-My-Pi) AI coding assistant.
+    </flag>
     <flag name="openblas">
       Support CPU optimized linear math via OpenBLAS.
     </flag>
@@ -186,6 +195,9 @@
     </flag>
     <flag name="pool">
       Add support for Pool coding agent.
+    </flag>
+    <flag name="qwen-code">
+      Add support for Qwen Code CLI terminal agent.
     </flag>
     <flag name="rocm">
       Support ROCm™ for AMD GPUs.

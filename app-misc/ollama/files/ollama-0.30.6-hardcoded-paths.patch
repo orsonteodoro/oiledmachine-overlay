@@ -1,0 +1,39 @@
+diff '--color=auto' -urp ollama-0.30.6.orig/discover/types.go ollama-0.30.6/discover/types.go
+--- ollama-0.30.6.orig/discover/types.go	2026-06-04 17:49:49.000000000 -0700
++++ ollama-0.30.6/discover/types.go	2026-06-07 21:09:07.713885332 -0700
+@@ -21,7 +21,7 @@ func LogDetails(devices []ml.DeviceInfo)
+ 	for _, dev := range devices {
+ 		var libs []string
+ 		for _, dir := range dev.LibraryPath {
+-			if strings.Contains(dir, filepath.Join("lib", "ollama")) {
++			if strings.Contains(dir, filepath.Join("@LIBDIR@")) {
+ 				libs = append(libs, filepath.Base(dir))
+ 			}
+ 		}
+diff '--color=auto' -urp ollama-0.30.6.orig/llm/llama_binary.go ollama-0.30.6/llm/llama_binary.go
+--- ollama-0.30.6.orig/llm/llama_binary.go	2026-06-04 17:49:49.000000000 -0700
++++ ollama-0.30.6/llm/llama_binary.go	2026-06-07 21:09:05.313959121 -0700
+@@ -97,8 +97,8 @@ func llamaCppBinaryCandidates(name strin
+ 			// Standard CMake installs put ollama in bin/ and helpers in ../lib/ollama/.
+ 			add(filepath.Join(base, "..", "lib", "ollama"))
+ 		case "linux":
+-			// Linux packages install ollama in bin/ and helpers in ../lib/ollama/.
+-			add(filepath.Join(base, "..", "lib", "ollama"))
++			// Linux packages install ollama in bin/ and helpers in @LIBDIR@/.
++			add(filepath.Join(base, "@LIBDIR@"))
+ 		case "windows":
+ 			// Windows packages keep ollama.exe at top level with lib/ as a peer.
+ 			add(filepath.Join(base, "lib", "ollama"))
+diff '--color=auto' -urp ollama-0.30.6.orig/ml/path.go ollama-0.30.6/ml/path.go
+--- ollama-0.30.6.orig/ml/path.go	2026-06-04 17:49:49.000000000 -0700
++++ ollama-0.30.6/ml/path.go	2026-06-07 21:09:10.001814986 -0700
+@@ -83,8 +83,7 @@ func libOllamaPathCandidates(search libO
+ 			add(filepath.Join(exeDir, "lib", "ollama"))
+ 			add(filepath.Join(exeDir, "..", "lib", "ollama"))
+ 		case "linux":
+-			add(filepath.Join(exeDir, "..", "lib", "ollama"))
+-			add(filepath.Join(exeDir, "lib", "ollama"))
++			add(filepath.Join(exeDir, "@LIBDIR@"))
+ 		case "windows":
+ 			add(filepath.Join(exeDir, "lib", "ollama"))
+ 			add(filepath.Join(exeDir, "..", "lib", "ollama"))
