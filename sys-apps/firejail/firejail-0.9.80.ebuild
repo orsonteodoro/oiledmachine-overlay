@@ -293,7 +293,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 -apparmor +chroot clang contrib +dbusproxy +file-transfer +globalcfg
 landlock +network +private-home -private-lib selfrando -selinux +suid
 test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xcsecurity xvfb
-ebuild_revision_133
+ebuild_revision_134
 "
 REQUIRED_USE+="
 	!test

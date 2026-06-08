@@ -6,6 +6,7 @@ include ollama.local
 include globals.local
 
 noblacklist ${PATH}/ollama
+noblacklist /usr/lib/ollama/bin/llama-*
 noblacklist /usr/lib/ollama/bin/ollama
 noblacklist /usr/lib/ollama
 noblacklist /var/lib/ollama
