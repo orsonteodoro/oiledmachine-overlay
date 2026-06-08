@@ -32,9 +32,9 @@ main() {
 	elif [[ "${OLLAMA_BACKEND}" == "cuda" ]] ; then
 		export LD_LIBRARY_PATH="/opt/cuda/${LIBDIR}:${LD_LIBRARY_PATH}"
 	fi
-	export LD_LIBRARY_PATH="/usr/lib/ollama/${LIBDIR}/${OLLAMA_BACKEND}:${LD_LIBRARY_PATH}"
-	export PATH="/usr/lib/ollama/${LIBDIR}/${OLLAMA_BACKEND}:/usr/lib/ollama/bin:${PATH}"
-	cd "/usr/lib/ollama/${LIBDIR}/${OLLAMA_BACKEND}" || exit 1
+	export LD_LIBRARY_PATH="/usr/lib/ollama/${LIBDIR}:${LD_LIBRARY_PATH}"
+	export PATH="/usr/lib/ollama/bin:${PATH}"
+	cd "/usr/lib/ollama/${LIBDIR}" || exit 1
 
 	local FIREJAIL_ARGS=()
 

@@ -1,6 +1,6 @@
 diff '--color=auto' -urp ollama-0.30.6.orig/discover/types.go ollama-0.30.6/discover/types.go
 --- ollama-0.30.6.orig/discover/types.go	2026-06-04 17:49:49.000000000 -0700
-+++ ollama-0.30.6/discover/types.go	2026-06-08 14:32:54.407788820 -0700
++++ ollama-0.30.6/discover/types.go	2026-06-08 15:41:05.273959892 -0700
 @@ -21,7 +21,7 @@ func LogDetails(devices []ml.DeviceInfo)
  	for _, dev := range devices {
  		var libs []string
@@ -10,9 +10,20 @@ diff '--color=auto' -urp ollama-0.30.6.orig/discover/types.go ollama-0.30.6/disc
  				libs = append(libs, filepath.Base(dir))
  			}
  		}
+diff '--color=auto' -urp ollama-0.30.6.orig/llm/llama_binary.go ollama-0.30.6/llm/llama_binary.go
+--- ollama-0.30.6.orig/llm/llama_binary.go	2026-06-04 17:49:49.000000000 -0700
++++ ollama-0.30.6/llm/llama_binary.go	2026-06-08 15:43:48.896925039 -0700
+@@ -98,6 +98,7 @@ func llamaCppBinaryCandidates(name strin
+ 			add(filepath.Join(base, "..", "lib", "ollama"))
+ 		case "linux":
+ 			// Linux packages install ollama in bin/ and helpers in ../lib/ollama/.
++			add(filepath.Join(base, "..", "bin"))
+ 			add(filepath.Join(base, "..", "lib", "ollama"))
+ 		case "windows":
+ 			// Windows packages keep ollama.exe at top level with lib/ as a peer.
 diff '--color=auto' -urp ollama-0.30.6.orig/ml/path.go ollama-0.30.6/ml/path.go
 --- ollama-0.30.6.orig/ml/path.go	2026-06-04 17:49:49.000000000 -0700
-+++ ollama-0.30.6/ml/path.go	2026-06-08 14:34:09.133491607 -0700
++++ ollama-0.30.6/ml/path.go	2026-06-08 15:41:05.273959892 -0700
 @@ -83,8 +83,7 @@ func libOllamaPathCandidates(search libO
  			add(filepath.Join(exeDir, "lib", "ollama"))
  			add(filepath.Join(exeDir, "..", "lib", "ollama"))
