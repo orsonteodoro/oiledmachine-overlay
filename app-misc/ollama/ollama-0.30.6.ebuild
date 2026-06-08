@@ -4756,6 +4756,19 @@ ewarn "for Firejail overlay support."
 ewarn
 ewarn "Consider using the vulkan USE flag which has been tested."
 ewarn
+		if use external-editor ; then
+ewarn
+ewarn "You must \`noblacklist <editor-path>\` by adding it to"
+ewarn
+ewarn "  /etc/firejail/ollama.local"
+ewarn
+ewarn "    or"
+ewarn
+ewarn "  /home/<user-name>/.config/firejail/local.local"
+ewarn
+ewarn "to work inside the sandbox."
+ewarn
+		fi
 	fi
 }
 
