@@ -55,6 +55,10 @@
   Upstream default: 1000
   Ebuild default: 2
 
+  OLLAMA_EDITOR - The fallback default text editor.
+  Upstream default:  vi
+  Ebuild default:  autodetect
+
   Example
 
   Contents of /etc/portage/env/ollama.conf

@@ -3324,6 +3324,20 @@ einfo "Editing ${x} for ragel -Z -> ragel-go"
 	if use vscode ; then
 		sed -i -e "\|// DISABLE_VSCODE|d" "cmd/launch/vscode.go" || die
 	fi
+
+	# Prevent code execution or hijack
+	if [[ -n "${OLLAMA_EDITOR}" ]] ; then
+		sed -i -e "s|vi|${OLLAMA_EDITOR}|g" "cmd/editor_unix.go" || die
+	elif has_version "app-editors/vim" ; then
+		sed -i -e "s|vi|vi|g" "cmd/editor_unix.go" || die
+	elif has_version "app-editors/nano" ; then
+		sed -i -e "s|vi|nano|g" "cmd/editor_unix.go" || die
+	elif has_version "app-editors/emacs" ; then
+		sed -i -e "s|vi|emacs|g" "cmd/editor_unix.go" || die
+	else
+		sed -i -e "s|vi|false|g" "cmd/editor_unix.go" || die
+	fi
+
 }
 
 check_toolchain() {

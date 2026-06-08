@@ -38,45 +38,67 @@ main() {
 
 	local FIREJAIL_ARGS=()
 
-	if [[ -n "${LD_LIBRARY_PATH}" ]] ; then
-		FIREJAIL_ARGS+=(
-			--env=LD_LIBRARY_PATH=${LD_LIBRARY_PATH}
-		)
-	fi
+# See also https://github.com/ollama/ollama/blob/v0.30.6/envconfig/config.go
+	local L=(
+		"CUDA_VISIBLE_DEVICES"
+		"EDITOR"
+		"GGML_VK_VISIBLE_DEVICES"
+		"GPU_DEVICE_ORDINAL"
+		"HIP_VISIBLE_DEVICES"
+		"HSA_OVERRIDE_GFX_VERSION"
+		"HTTP_PROXY"
+		"http_proxy"
+		"HTTPS_PROXY"
+		"https_proxy"
+		"LD_LIBRARY_PATH"
+		"LLAMA_ARG_FIT"
+		"LLAMA_ARG_FIT_TARGET"
+		"NO_PROXY"
+		"no_proxy"
+		"OLLAMA_DEBUG"
+		"OLLAMA_DEBUG_LOG_REQUESTS"
+		"OLLAMA_CONTEXT_LENGTH"
+		"OLLAMA_EDITOR"
+		"OLLAMA_FLASH_ATTENTION"
+		"OLLAMA_GPU_OVERHEAD"
+		"OLLAMA_GO_TEMPLATE"
+		"OLLAMA_IGPU_ENABLE"
+		"OLLAMA_KV_CACHE_TYPE"
+		"OLLAMA_HOST"
+		"OLLAMA_KEEP_ALIVE"
+		"OLLAMA_LLM_LIBRARY"
+		"OLLAMA_LOAD_TIMEOUT"
+		"OLLAMA_MAX_LOADED_MODELS"
+		"OLLAMA_MAX_TRANSFER_STREAMS"
+		"OLLAMA_MAX_QUEUE"
+		"OLLAMA_MODELS"
+		"OLLAMA_NO_CLOUD"
+		"OLLAMA_NOHISTORY"
+		"OLLAMA_NOPRUNE"
+		"OLLAMA_NUM_PARALLEL"
+		"OLLAMA_REMOTES"
+		"OLLAMA_ORIGINS"
+		"OLLAMA_SCHED_SPREAD"
+		"OLLAMA_VULKAN"
+		"ROCR_VISIBLE_DEVICES"
+		"VISUAL"
+	)
 
-	if [[ -n "${OLLAMA_CONTEXT_LENGTH}" ]] ; then
-		FIREJAIL_ARGS+=(
-			--env=OLLAMA_CONTEXT_LENGTH=${OLLAMA_CONTEXT_LENGTH}
-		)
-	fi
+	local x
+	for x in "${L[@]}" ; do
+		[[ "${x}" == "LOCALAI_ARGS" ]] && continue
+		if [[ -n "${!x}" ]] ; then
+			FIREJAIL_ARGS+=(
+				--env=${x}="${!x}"
+			)
+			export ${x}
+		fi
+	done
 
-	if [[ -n "${OLLAMA_FLASH_ATTENTION}" ]] ; then
-		FIREJAIL_ARGS+=(
-			--env=OLLAMA_FLASH_ATTENTION=${OLLAMA_FLASH_ATTENTION}
-		)
-	fi
-
-	if [[ -n "${OLLAMA_KV_CACHE_TYPE}" ]] ; then
-		FIREJAIL_ARGS+=(
-			--env=OLLAMA_KV_CACHE_TYPE=${OLLAMA_KV_CACHE_TYPE}
-		)
-	fi
 
 	if [[ -n "${OLLAMA_OOM}" ]] ; then
 		FIREJAIL_ARGS+=(
 			--oom=${OLLAMA_OOM}
-		)
-	fi
-
-	if [[ -n "${OLLAMA_ORIGINS}" ]] ; then
-		FIREJAIL_ARGS+=(
-			--env=OLLAMA_ORIGINS=${OLLAMA_ORIGINS}
-		)
-	fi
-
-	if [[ -n "${OLLAMA_VULKAN}" ]] ; then
-		FIREJAIL_ARGS+=(
-			--env=OLLAMA_VULKAN=${OLLAMA_VULKAN}
 		)
 	fi
 
