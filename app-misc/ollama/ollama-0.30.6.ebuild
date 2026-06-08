@@ -2517,7 +2517,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 ai-agent blis cuda debug emoji +firejail flash lapack mkl openblas openrc
 rocm systemd unrestrict video_cards_intel -vulkan
-ebuild_revision_133
+ebuild_revision_134
 "
 
 gen_rocm_required_use() {
@@ -4430,17 +4430,32 @@ install_gpu_runners() {
 	elif use vulkan ; then
 		install_vulkan_runners
 	fi
+}
+
+fix_rpaths() {
 	local L
 	L=(
-		$(find "${ED}/usr/lib/ollama/$(get_libdir)")
+		$(find "${ED}/usr/lib/ollama")
 	)
 	local x
 	for x in "${L[@]}" ; do
 		[[ -L "${x}" ]] && continue
 		patchelf \
 			--add-rpath "/opt/cuda/$(get_libdir)" \
-			"${ED}/usr/lib/${PN}/$(get_libdir)" \
+			"${x}" \
 			|| die
+
+		if use cuda ; then
+			patchelf \
+				--add-rpath "/opt/cuda/$(get_libdir)" \
+				"${x}" \
+				|| die
+		elif use rocm ; then
+			patchelf \
+				--add-rpath "/opt/rocm/lib" \
+				"${x}" \
+				|| die
+		fi
 	done
 }
 
@@ -4488,6 +4503,7 @@ src_install() {
 
 	install_cpu_runners
 	install_gpu_runners
+	fix_rpaths
 
 	local ld_library_path=""
 	if use cuda ; then
@@ -4497,23 +4513,11 @@ src_install() {
 		elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
 			dir_name="cuda_v12"
 		fi
-		patchelf \
-			--add-rpath "/opt/cuda/$(get_libdir)" \
-			"${ED}/usr/lib/${PN}/bin/${PN}" \
-			|| die
 		ld_library_path+="/opt/cuda/$(get_libdir):/usr/$(get_libdir)"
 	elif use rocm ; then
 		local dir_name="rocm"
-		patchelf \
-			--add-rpath "/opt/rocm/lib" \
-			"${ED}/usr/lib/${PN}/bin/${PN}" \
-			|| die
 	elif use vulkan ; then
 		local dir_name="vulkan"
-		patchelf \
-			--add-rpath "/opt/rocm/lib" \
-			"${ED}/usr/lib/${PN}/bin/${PN}" \
-			|| die
 	elif use video_cards_intel ; then
 		ld_library_path+="/usr/$(get_libdir)"
 	fi
