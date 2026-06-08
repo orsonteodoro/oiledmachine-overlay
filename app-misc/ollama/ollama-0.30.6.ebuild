@@ -131,6 +131,17 @@ CPU_FLAGS_PPC=(
 	"cpu_flags_ppc_vsx"
 )
 
+CPU_FLAGS_RISCV=(
+	"cpu_flags_s390_rvv"
+)
+
+CPU_FLAGS_S390=(
+	"cpu_flags_s390_z15"
+	"cpu_flags_s390_z16"
+	"cpu_flags_s390_nnpa"
+	"cpu_flags_s390_vxe2"
+)
+
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_bmi2"
 	"cpu_flags_x86_f16c"
@@ -2497,6 +2508,8 @@ ${APP_FEATURES[@]}
 ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
+${CPU_FLAGS_RISCV[@]}
+${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLMS[@]/#/ollama_llms_}
@@ -3482,6 +3495,23 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 	if use cpu_flags_ppc_vsx ; then
 		CPU_FEATURES+=( "VSX" )
+	fi
+
+	if use cpu_flags_s390_nnpa ; then
+		CPU_FEATURES+=( "NNPA" )
+	fi
+	if use cpu_flags_s390_vxe2 ; then
+		CPU_FEATURES+=( "VXE2" )
+	fi
+	if use cpu_flags_s390_z15 ; then
+		CPU_FEATURES+=( "Z15" )
+	fi
+	if use cpu_flags_s390_z16 ; then
+		CPU_FEATURES+=( "Z16" )
+	fi
+
+	if use cpu_flags_riscv_rvv ; then
+		CPU_FEATURES+=( "RVV" )
 	fi
 
 	if use cpu_flags_x86_sse ; then
