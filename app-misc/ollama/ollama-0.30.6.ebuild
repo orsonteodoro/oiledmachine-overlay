@@ -3234,7 +3234,7 @@ einfo "Editing ${x} for ragel -Z -> ragel-go"
 		sed -i -e "/@AI_AGENT_SUPPORT_START@/,/@AI_AGENT_SUPPORT_END@/d" "cmd/cmd.go" || die
 	fi
 
-	# Mitigate code execution
+	# Allow agent if user approves instead of running hijack/spoof
 	if use bash ; then
 		sed -i -e "\|// DISABLE_BASH|d" "x/tools/bash.go" || die
 	fi
