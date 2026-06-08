@@ -1,18 +1,17 @@
 diff '--color=auto' -urp ollama-0.30.6.orig/api/client.go ollama-0.30.6/api/client.go
 --- ollama-0.30.6.orig/api/client.go	2026-06-04 17:49:49.000000000 -0700
-+++ ollama-0.30.6/api/client.go	2026-06-07 21:14:41.259630060 -0700
-@@ -465,6 +465,7 @@ func (c *Client) Version(ctx context.Con
- 
++++ ollama-0.30.6/api/client.go	2026-06-08 09:32:00.126806291 -0700
+@@ -466,6 +466,7 @@ func (c *Client) Version(ctx context.Con
  // CloudStatusExperimental returns whether cloud features are disabled on the server.
  func (c *Client) CloudStatusExperimental(ctx context.Context) (*StatusResponse, error) {
-+	return nil, errors.New(string("cloud support is disabled")) // DISABLE_CLOUD
  	var status StatusResponse
++	return &status, fmt.Errorf("cloud support is disabled") // DISABLE_CLOUD
  	if err := c.do(ctx, http.MethodGet, "/api/status", nil, &status); err != nil {
  		return nil, err
-Only in ollama-0.30.6/api: client.go.orig
+ 	}
 diff '--color=auto' -urp ollama-0.30.6.orig/app/tools/cloud_policy.go ollama-0.30.6/app/tools/cloud_policy.go
 --- ollama-0.30.6.orig/app/tools/cloud_policy.go	2026-06-04 17:49:49.000000000 -0700
-+++ ollama-0.30.6/app/tools/cloud_policy.go	2026-06-07 21:14:41.259630060 -0700
++++ ollama-0.30.6/app/tools/cloud_policy.go	2026-06-08 09:13:38.244574087 -0700
 @@ -17,6 +17,8 @@ func ensureCloudEnabledForTool(ctx conte
  	// the connected server's /api/status endpoint below.
  	disabledMessage := internalcloud.DisabledError(operation)
@@ -24,7 +23,7 @@ diff '--color=auto' -urp ollama-0.30.6.orig/app/tools/cloud_policy.go ollama-0.3
  		return errors.New(disabledMessage + " (unable to verify server cloud policy)")
 diff '--color=auto' -urp ollama-0.30.6.orig/cmd/interactive.go ollama-0.30.6/cmd/interactive.go
 --- ollama-0.30.6.orig/cmd/interactive.go	2026-06-04 17:49:49.000000000 -0700
-+++ ollama-0.30.6/cmd/interactive.go	2026-06-07 21:14:41.259630060 -0700
++++ ollama-0.30.6/cmd/interactive.go	2026-06-08 09:13:38.244574087 -0700
 @@ -641,6 +641,7 @@ func extractFileData(input string) (stri
  }
  
@@ -35,7 +34,7 @@ diff '--color=auto' -urp ollama-0.30.6.orig/cmd/interactive.go ollama-0.30.6/cmd
  		editor = os.Getenv("VISUAL")
 diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/claude_desktop.go ollama-0.30.6/cmd/launch/claude_desktop.go
 --- ollama-0.30.6.orig/cmd/launch/claude_desktop.go	2026-06-04 17:49:49.000000000 -0700
-+++ ollama-0.30.6/cmd/launch/claude_desktop.go	2026-06-07 21:51:19.956113289 -0700
++++ ollama-0.30.6/cmd/launch/claude_desktop.go	2026-06-08 09:13:38.244574087 -0700
 @@ -816,6 +816,7 @@ func waitForClaudeDesktopExit(timeout ti
  }
  
@@ -78,7 +77,7 @@ diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/claude_desktop.go ollama-
  		return exec.Command("powershell.exe", "-NoProfile", "-Command", script).Run()
 diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/claude.go ollama-0.30.6/cmd/launch/claude.go
 --- ollama-0.30.6.orig/cmd/launch/claude.go	2026-06-04 17:49:49.000000000 -0700
-+++ ollama-0.30.6/cmd/launch/claude.go	2026-06-07 21:15:08.102804745 -0700
++++ ollama-0.30.6/cmd/launch/claude.go	2026-06-08 09:13:38.244574087 -0700
 @@ -26,6 +26,7 @@ func (c *Claude) args(model string, extr
  }
  
@@ -95,16 +94,14 @@ diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/claude.go ollama-0.30.6/c
  	claudePath, err := c.findPath()
  	if err != nil {
  		return fmt.Errorf("claude is not installed, install from https://code.claude.com/docs/en/quickstart")
-Only in ollama-0.30.6/cmd/launch: claude.go.orig
-Only in ollama-0.30.6/cmd/launch: claude.go.rej
 diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/cline.go ollama-0.30.6/cmd/launch/cline.go
 --- ollama-0.30.6.orig/cmd/launch/cline.go	2026-06-04 17:49:49.000000000 -0700
-+++ ollama-0.30.6/cmd/launch/cline.go	2026-06-07 21:16:07.460979736 -0700
++++ ollama-0.30.6/cmd/launch/cline.go	2026-06-08 09:17:39.737164928 -0700
 @@ -21,6 +21,7 @@ type Cline struct{}
  func (c *Cline) String() string { return "Cline" }
  
  func (c *Cline) Run(model string, _ []LaunchModel, args []string) error {
-+	return fmt.Errorf("cline support is disabled"); // DISABLE_CLINE
++	return fmt.Errorf("cline support is disabled") // DISABLE_CLINE
  	bin, err := ensureClineInstalled()
  	if err != nil {
  		return err
@@ -112,15 +109,13 @@ diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/cline.go ollama-0.30.6/cm
  }
  
  func ensureClineInstalled() (string, error) {
-+	return "", fmt.Errorf("cline support is disabled"); // DISABLE_CLINE
++	return "", fmt.Errorf("cline support is disabled") // DISABLE_CLINE
  	if _, err := exec.LookPath("cline"); err == nil {
  		return "cline", nil
  	}
-Only in ollama-0.30.6/cmd/launch: cline.go.orig
-Only in ollama-0.30.6/cmd/launch: cline.go.rej
 diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/codex_app.go ollama-0.30.6/cmd/launch/codex_app.go
 --- ollama-0.30.6.orig/cmd/launch/codex_app.go	2026-06-04 17:49:49.000000000 -0700
-+++ ollama-0.30.6/cmd/launch/codex_app.go	2026-06-07 21:49:17.755869016 -0700
++++ ollama-0.30.6/cmd/launch/codex_app.go	2026-06-08 09:13:38.244574087 -0700
 @@ -691,6 +691,7 @@ func waitForCodexAppCondition(timeout ti
  }
  
@@ -216,7 +211,7 @@ diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/codex_app.go ollama-0.30.
  	}
 diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/codex.go ollama-0.30.6/cmd/launch/codex.go
 --- ollama-0.30.6.orig/cmd/launch/codex.go	2026-06-04 17:49:49.000000000 -0700
-+++ ollama-0.30.6/cmd/launch/codex.go	2026-06-07 21:34:41.526801920 -0700
++++ ollama-0.30.6/cmd/launch/codex.go	2026-06-08 09:13:38.248573964 -0700
 @@ -49,6 +49,7 @@ func (c *Codex) args(model, modelCatalog
  }
  
@@ -233,11 +228,9 @@ diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/codex.go ollama-0.30.6/cm
  	if _, err := exec.LookPath("codex"); err != nil {
  		return fmt.Errorf("codex is not installed, install with: npm install -g @openai/codex")
  	}
-Only in ollama-0.30.6/cmd/launch: codex.go.orig
-Only in ollama-0.30.6/cmd/launch: codex.go.rej
 diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/copilot.go ollama-0.30.6/cmd/launch/copilot.go
 --- ollama-0.30.6.orig/cmd/launch/copilot.go	2026-06-04 17:49:49.000000000 -0700
-+++ ollama-0.30.6/cmd/launch/copilot.go	2026-06-07 21:17:00.663343996 -0700
++++ ollama-0.30.6/cmd/launch/copilot.go	2026-06-08 09:13:38.248573964 -0700
 @@ -25,6 +25,7 @@ func (c *Copilot) args(model string, ext
  }
  
@@ -254,11 +247,9 @@ diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/copilot.go ollama-0.30.6/
  	copilotPath, err := c.findPath()
  	if err != nil {
  		return fmt.Errorf("copilot is not installed, install from https://docs.github.com/en/copilot/how-tos/set-up/install-copilot-cli")
-Only in ollama-0.30.6/cmd/launch: copilot.go.orig
-Only in ollama-0.30.6/cmd/launch: copilot.go.rej
 diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/droid.go ollama-0.30.6/cmd/launch/droid.go
 --- ollama-0.30.6.orig/cmd/launch/droid.go	2026-06-04 17:49:49.000000000 -0700
-+++ ollama-0.30.6/cmd/launch/droid.go	2026-06-07 21:17:56.161637674 -0700
++++ ollama-0.30.6/cmd/launch/droid.go	2026-06-08 09:13:38.248573964 -0700
 @@ -41,6 +41,7 @@ type modelEntry struct {
  func (d *Droid) String() string { return "Droid" }
  
@@ -267,11 +258,9 @@ diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/droid.go ollama-0.30.6/cm
  	if _, err := exec.LookPath("droid"); err != nil {
  		return fmt.Errorf("droid is not installed, install from https://docs.factory.ai/cli/getting-started/quickstart")
  	}
-Only in ollama-0.30.6/cmd/launch: droid.go.orig
-Only in ollama-0.30.6/cmd/launch: droid.go.rej
 diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/hermes.go ollama-0.30.6/cmd/launch/hermes.go
---- ollama-0.30.6.orig/cmd/launch/hermes.go	2026-06-07 21:14:22.116218641 -0700
-+++ ollama-0.30.6/cmd/launch/hermes.go	2026-06-07 21:36:47.646925015 -0700
+--- ollama-0.30.6.orig/cmd/launch/hermes.go	2026-06-08 09:06:48.589170192 -0700
++++ ollama-0.30.6/cmd/launch/hermes.go	2026-06-08 09:13:38.248573964 -0700
 @@ -68,6 +68,8 @@ type Hermes struct{}
  func (h *Hermes) String() string { return "Hermes Agent" }
  
@@ -330,11 +319,9 @@ diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/hermes.go ollama-0.30.6/c
  	bin, err := h.binary()
  	if err != nil {
  		return err
-Only in ollama-0.30.6/cmd/launch: hermes.go.orig
-Only in ollama-0.30.6/cmd/launch: hermes.go.rej
 diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/kimi.go ollama-0.30.6/cmd/launch/kimi.go
---- ollama-0.30.6.orig/cmd/launch/kimi.go	2026-06-07 21:14:22.116218641 -0700
-+++ ollama-0.30.6/cmd/launch/kimi.go	2026-06-07 21:20:56.960091780 -0700
+--- ollama-0.30.6.orig/cmd/launch/kimi.go	2026-06-08 09:06:48.593170069 -0700
++++ ollama-0.30.6/cmd/launch/kimi.go	2026-06-08 09:13:38.248573964 -0700
 @@ -37,6 +37,7 @@ func (k *Kimi) args(config string, extra
  }
  
@@ -359,11 +346,9 @@ diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/kimi.go ollama-0.30.6/cmd
  	if path, err := findKimiBinary(); err == nil {
  		return path, nil
  	}
-Only in ollama-0.30.6/cmd/launch: kimi.go.orig
-Only in ollama-0.30.6/cmd/launch: kimi.go.rej
 diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/models.go ollama-0.30.6/cmd/launch/models.go
 --- ollama-0.30.6.orig/cmd/launch/models.go	2026-06-04 17:49:49.000000000 -0700
-+++ ollama-0.30.6/cmd/launch/models.go	2026-06-07 21:14:41.263629937 -0700
++++ ollama-0.30.6/cmd/launch/models.go	2026-06-08 09:13:38.248573964 -0700
 @@ -155,6 +155,7 @@ const (
  
  // OpenBrowser opens the URL in the user's browser.
@@ -388,18 +373,18 @@ diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/models.go ollama-0.30.6/c
  		if disabled, known := cloudStatusDisabled(ctx, client); known && disabled {
  			return errors.New(internalcloud.DisabledError("remote inference is unavailable"))
  		}
-@@ -520,6 +523,7 @@ func isCloudModel(ctx context.Context, c
- 
+@@ -521,6 +524,7 @@ func isCloudModel(ctx context.Context, c
  // cloudStatusDisabled returns whether cloud usage is currently disabled.
  func cloudStatusDisabled(ctx context.Context, client *api.Client) (disabled bool, known bool) {
  	status, err := client.CloudStatusExperimental(ctx)
 +	return status.Cloud.Disabled, true // DISABLE_CLOUD
  	if err != nil {
  		var statusErr api.StatusError
+ 		if errors.As(err, &statusErr) && statusErr.StatusCode == http.StatusNotFound {
 Only in ollama-0.30.6/cmd/launch: models.go.orig
 diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/omp.go ollama-0.30.6/cmd/launch/omp.go
 --- ollama-0.30.6.orig/cmd/launch/omp.go	2026-06-04 17:49:49.000000000 -0700
-+++ ollama-0.30.6/cmd/launch/omp.go	2026-06-07 21:31:51.388023683 -0700
++++ ollama-0.30.6/cmd/launch/omp.go	2026-06-08 09:13:38.248573964 -0700
 @@ -136,6 +136,7 @@ func ompExecutableNames() []string {
  }
  
@@ -425,8 +410,8 @@ diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/omp.go ollama-0.30.6/cmd/
  	out, err := cmd.CombinedOutput()
  	if err != nil {
 diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/openclaw.go ollama-0.30.6/cmd/launch/openclaw.go
---- ollama-0.30.6.orig/cmd/launch/openclaw.go	2026-06-07 21:14:22.120218518 -0700
-+++ ollama-0.30.6/cmd/launch/openclaw.go	2026-06-07 21:40:25.388231954 -0700
+--- ollama-0.30.6.orig/cmd/launch/openclaw.go	2026-06-08 09:06:48.593170069 -0700
++++ ollama-0.30.6/cmd/launch/openclaw.go	2026-06-08 09:13:38.248573964 -0700
 @@ -28,6 +28,7 @@ type Openclaw struct{}
  func (c *Openclaw) String() string { return "OpenClaw" }
  
@@ -459,11 +444,9 @@ diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/openclaw.go ollama-0.30.6
  	if _, err := exec.LookPath("openclaw"); err == nil {
  		return "openclaw", nil
  	}
-Only in ollama-0.30.6/cmd/launch: openclaw.go.orig
-Only in ollama-0.30.6/cmd/launch: openclaw.go.rej
 diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/opencode.go ollama-0.30.6/cmd/launch/opencode.go
 --- ollama-0.30.6.orig/cmd/launch/opencode.go	2026-06-04 17:49:49.000000000 -0700
-+++ ollama-0.30.6/cmd/launch/opencode.go	2026-06-07 21:21:58.218213498 -0700
++++ ollama-0.30.6/cmd/launch/opencode.go	2026-06-08 09:13:38.248573964 -0700
 @@ -25,6 +25,7 @@ func (o *OpenCode) String() string { ret
  // findOpenCode returns the opencode binary path, checking PATH first then the
  // curl installer location (~/.opencode/bin) which may not be on PATH yet.
@@ -480,11 +463,9 @@ diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/opencode.go ollama-0.30.6
  	opencodePath, ok := findOpenCode()
  	if !ok {
  		return fmt.Errorf("opencode is not installed, install from https://opencode.ai")
-Only in ollama-0.30.6/cmd/launch: opencode.go.orig
-Only in ollama-0.30.6/cmd/launch: opencode.go.rej
 diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/pi.go ollama-0.30.6/cmd/launch/pi.go
---- ollama-0.30.6.orig/cmd/launch/pi.go	2026-06-07 21:14:22.120218518 -0700
-+++ ollama-0.30.6/cmd/launch/pi.go	2026-06-07 21:42:30.536385220 -0700
+--- ollama-0.30.6.orig/cmd/launch/pi.go	2026-06-08 09:06:48.593170069 -0700
++++ ollama-0.30.6/cmd/launch/pi.go	2026-06-08 09:13:38.248573964 -0700
 @@ -34,6 +34,7 @@ func (p *Pi) String() string { return "P
  var npmRegistryBaseURL = "https://registry.npmjs.org"
  
@@ -541,11 +522,9 @@ diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/pi.go ollama-0.30.6/cmd/l
  	cmd := exec.Command(bin, "list")
  	out, err := cmd.CombinedOutput()
  	if err != nil {
-Only in ollama-0.30.6/cmd/launch: pi.go.orig
-Only in ollama-0.30.6/cmd/launch: pi.go.rej
 diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/poolside.go ollama-0.30.6/cmd/launch/poolside.go
 --- ollama-0.30.6.orig/cmd/launch/poolside.go	2026-06-04 17:49:49.000000000 -0700
-+++ ollama-0.30.6/cmd/launch/poolside.go	2026-06-07 21:22:34.729093989 -0700
++++ ollama-0.30.6/cmd/launch/poolside.go	2026-06-08 09:13:38.248573964 -0700
 @@ -30,6 +30,7 @@ func (p *Poolside) args(model string, ex
  }
  
@@ -554,11 +533,9 @@ diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/poolside.go ollama-0.30.6
  	if poolsideGOOS == "windows" {
  		return poolsideUnsupportedError()
  	}
-Only in ollama-0.30.6/cmd/launch: poolside.go.orig
-Only in ollama-0.30.6/cmd/launch: poolside.go.rej
 diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/qwen.go ollama-0.30.6/cmd/launch/qwen.go
 --- ollama-0.30.6.orig/cmd/launch/qwen.go	2026-06-04 17:49:49.000000000 -0700
-+++ ollama-0.30.6/cmd/launch/qwen.go	2026-06-07 21:33:59.400096912 -0700
++++ ollama-0.30.6/cmd/launch/qwen.go	2026-06-08 09:13:38.248573964 -0700
 @@ -94,6 +94,7 @@ func qwenWindowsLocalAppData(home string
  }
  
@@ -577,7 +554,7 @@ diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/qwen.go ollama-0.30.6/cmd
  		return fmt.Errorf("qwen is not installed: %w", err)
 diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/vscode.go ollama-0.30.6/cmd/launch/vscode.go
 --- ollama-0.30.6.orig/cmd/launch/vscode.go	2026-06-04 17:49:49.000000000 -0700
-+++ ollama-0.30.6/cmd/launch/vscode.go	2026-06-07 21:44:11.629277956 -0700
++++ ollama-0.30.6/cmd/launch/vscode.go	2026-06-08 09:13:38.248573964 -0700
 @@ -27,6 +27,7 @@ func (v *VSCode) String() string { retur
  // findBinary returns the path/command to launch VS Code, or "" if not found.
  // It checks platform-specific locations only.
@@ -642,16 +619,14 @@ diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/vscode.go ollama-0.30.6/c
  	binary := v.findBinary()
  	if binary == "" {
  		return ""
-Only in ollama-0.30.6/cmd/launch: vscode.go.orig
-Only in ollama-0.30.6/cmd/launch: vscode.go.rej
 diff '--color=auto' -urp ollama-0.30.6.orig/x/cmd/run.go ollama-0.30.6/x/cmd/run.go
 --- ollama-0.30.6.orig/x/cmd/run.go	2026-06-04 17:49:49.000000000 -0700
-+++ ollama-0.30.6/x/cmd/run.go	2026-06-07 21:14:41.279629445 -0700
++++ ollama-0.30.6/x/cmd/run.go	2026-06-08 09:42:14.027984528 -0700
 @@ -66,6 +66,7 @@ func isLocalServer() bool {
  }
  
  func cloudStatusDisabled(ctx context.Context, client *api.Client) (disabled bool, known bool) {
-+	return status.Cloud.Disabled, true // DISABLE_CLOUD
++	return false, false // DISABLE_CLOUD
  	status, err := client.CloudStatusExperimental(ctx)
  	if err != nil {
  		var statusErr api.StatusError
@@ -678,7 +653,7 @@ diff '--color=auto' -urp ollama-0.30.6.orig/x/cmd/run.go ollama-0.30.6/x/cmd/run
  				enableWebsearch = false
 diff '--color=auto' -urp ollama-0.30.6.orig/x/imagegen/server.go ollama-0.30.6/x/imagegen/server.go
 --- ollama-0.30.6.orig/x/imagegen/server.go	2026-06-04 17:49:49.000000000 -0700
-+++ ollama-0.30.6/x/imagegen/server.go	2026-06-07 21:14:41.279629445 -0700
++++ ollama-0.30.6/x/imagegen/server.go	2026-06-08 09:13:38.248573964 -0700
 @@ -103,6 +103,8 @@ func (s *Server) Load(ctx context.Contex
  	}
  	s.port = port
@@ -690,7 +665,7 @@ diff '--color=auto' -urp ollama-0.30.6.orig/x/imagegen/server.go ollama-0.30.6/x
  	if err != nil {
 diff '--color=auto' -urp ollama-0.30.6.orig/x/mlxrunner/client.go ollama-0.30.6/x/mlxrunner/client.go
 --- ollama-0.30.6.orig/x/mlxrunner/client.go	2026-06-04 17:49:49.000000000 -0700
-+++ ollama-0.30.6/x/mlxrunner/client.go	2026-06-07 21:14:41.279629445 -0700
++++ ollama-0.30.6/x/mlxrunner/client.go	2026-06-08 09:13:38.248573964 -0700
 @@ -287,6 +287,8 @@ func (c *Client) Load(ctx context.Contex
  	}
  	c.port = port
@@ -700,10 +675,9 @@ diff '--color=auto' -urp ollama-0.30.6.orig/x/mlxrunner/client.go ollama-0.30.6/
  	// Get the current executable path
  	exe, err := os.Executable()
  	if err != nil {
-Only in ollama-0.30.6/x/mlxrunner: client.go.orig
 diff '--color=auto' -urp ollama-0.30.6.orig/x/tools/bash.go ollama-0.30.6/x/tools/bash.go
 --- ollama-0.30.6.orig/x/tools/bash.go	2026-06-04 17:49:49.000000000 -0700
-+++ ollama-0.30.6/x/tools/bash.go	2026-06-07 21:14:41.279629445 -0700
++++ ollama-0.30.6/x/tools/bash.go	2026-06-08 09:13:38.248573964 -0700
 @@ -51,6 +51,7 @@ func (b *BashTool) Schema() api.ToolFunc
  
  // Execute runs the bash command.
