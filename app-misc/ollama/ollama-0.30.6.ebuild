@@ -3232,7 +3232,7 @@ einfo "Editing ${x} for ragel -Z -> ragel-go"
 
 	# Hardcoded paths
 	sed -i \
-		-e "s|@LIBDIR@|${libdir}|g"
+		-e "s|@LIBDIR@|${libdir}|g" \
 		"discover/types.go" \
 		"ml/path.go" \
 		|| die
