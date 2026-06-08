@@ -3335,7 +3335,7 @@ einfo "Editing ${x} for ragel -Z -> ragel-go"
 	elif has_version "app-editors/emacs" ; then
 		sed -i -e "s|vi|emacs|g" "cmd/editor_unix.go" || die
 	else
-		sed -i -e "s|vi|false|g" "cmd/editor_unix.go" || die
+		sed -i -e "s|vi|/dev/null|g" "cmd/editor_unix.go" || die
 	fi
 
 }
