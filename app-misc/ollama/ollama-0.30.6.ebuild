@@ -2975,10 +2975,10 @@ PATCHES=(
 	"${FILESDIR}/${PN}-0.30.6-optionalize-features.patch"
 )
 
-LLAMA_CPP_PATCHES="
+LLAMA_CPP_PATCHES=(
 	"${FILESDIR}/llama-cpp-b9509-custom-cpu-features.patch"
 	"${FILESDIR}/llama-cpp-b9509-cuda-not-fatal.patch"
-"
+)
 
 pkg_pretend() {
 	if use video_cards_intel ; then
