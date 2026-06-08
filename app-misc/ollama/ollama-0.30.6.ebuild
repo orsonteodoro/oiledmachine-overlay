@@ -132,7 +132,7 @@ CPU_FLAGS_PPC=(
 )
 
 CPU_FLAGS_RISCV=(
-	"cpu_flags_s390_rvv"
+	"cpu_flags_riscv_rvv"
 )
 
 CPU_FLAGS_S390=(
