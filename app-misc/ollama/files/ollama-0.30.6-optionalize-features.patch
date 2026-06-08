@@ -112,7 +112,7 @@ diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/cline.go ollama-0.30.6/cm
  }
  
  func ensureClineInstalled() (string, error) {
-+	return fmt.Errorf("cline support is disabled"); // DISABLE_CLINE
++	return "", fmt.Errorf("cline support is disabled"); // DISABLE_CLINE
  	if _, err := exec.LookPath("cline"); err == nil {
  		return "cline", nil
  	}
@@ -392,8 +392,8 @@ diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/models.go ollama-0.30.6/c
  
  // cloudStatusDisabled returns whether cloud usage is currently disabled.
  func cloudStatusDisabled(ctx context.Context, client *api.Client) (disabled bool, known bool) {
-+	return status.Cloud.Disabled, true // DISABLE_CLOUD
  	status, err := client.CloudStatusExperimental(ctx)
++	return status.Cloud.Disabled, true // DISABLE_CLOUD
  	if err != nil {
  		var statusErr api.StatusError
 Only in ollama-0.30.6/cmd/launch: models.go.orig
@@ -420,7 +420,7 @@ diff '--color=auto' -urp ollama-0.30.6.orig/cmd/launch/omp.go ollama-0.30.6/cmd/
  }
  
  func ompPluginInstalled(bin, plugin string) (bool, error) {
-+	return // DISABLE_OMP
++	return false, fmt.Errorf("omp support is disabled") // DISABLE_OMP
  	cmd := exec.Command(bin, "plugin", "list")
  	out, err := cmd.CombinedOutput()
  	if err != nil {

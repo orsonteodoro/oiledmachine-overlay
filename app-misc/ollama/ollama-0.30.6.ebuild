@@ -2517,7 +2517,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 ai-agent blis cuda debug emoji +firejail flash lapack mkl openblas openrc
 rocm systemd unrestrict video_cards_intel -vulkan
-ebuild_revision_130
+ebuild_revision_131
 "
 
 gen_rocm_required_use() {
@@ -4326,7 +4326,7 @@ build_ollama() {
 		-x # You can see a lot of undefined references when this is enabled, but it still works with basic cpu build.
 		-v
 	)
-	edo go build -trimpath -buildmode=pie ${args[@]} .
+	edo go build -trimpath -buildmode=pie ${args[@]} -o "${PN}" .
 }
 
 src_compile() {
