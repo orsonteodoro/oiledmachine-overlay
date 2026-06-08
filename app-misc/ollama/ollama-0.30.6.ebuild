@@ -2517,7 +2517,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 ai-agent blis cuda debug emoji +firejail flash lapack mkl openblas openrc
 rocm systemd unrestrict video_cards_intel -vulkan
-ebuild_revision_132
+ebuild_revision_133
 "
 
 gen_rocm_required_use() {
@@ -4001,6 +4001,29 @@ einfo "OLLAMA_MIN_DOWNLOAD_PART_SIZE:  ${min_download_part_size}"
 einfo "OLLAMA_MAX_DOWNLOAD_PART_SIZE:  ${max_download_part_size}"
 }
 
+use_ccache() {
+	if [[ "${FEATURES}" =~ "ccache" ]] ; then
+einfo "CCACHE:  ON"
+		echo "ON"
+		export PATH=$("${PATH}" \
+			| tr ":" $'\n' \
+			| sed -e "\|/usr/lib/ccache/bin|d" \
+			| tr $'\n' ":")
+		export PATH="/usr/lib/ccache/bin:${PATH}"
+	else
+	# Disable deceptive use.
+einfo "CCACHE:  OFF"
+		echo "OFF"
+		export PATH=$("${PATH}" \
+			| tr ":" $'\n' \
+			| sed -e "\|/usr/lib/ccache/bin|d" \
+			| tr $'\n' ":")
+		unset CCACHE_DIR
+	fi
+einfo "PATH:  ${PATH}"
+einfo "CCACHE_DIR:  ${CCACHE_DIR}"
+}
+
 build_new_runner_cpu() {
 	# The documentation is sloppy.
 
@@ -4087,6 +4110,7 @@ einfo "CUSTOM_CPU_FLAGS:  ${CUSTOM_CPU_FLAGS}"
 		-DCMAKE_VERBOSE_MAKEFILE=ON
 		-DFETCHCONTENT_FULLY_DISCONNECTED=ON
 		-DFETCHCONTENT_SOURCE_DIR_LLAMA_CPP="${S_LLAMA_CPP}"
+		-DGGML_CCACHE=$(use_ccache)
 		-DGGML_VERSION=0
 		-DGGML_VERSION_MAJOR=0
 	)
@@ -4228,6 +4252,7 @@ einfo "LDFLAGS: ${LDFLAGS}"
 		-DCMAKE_VERBOSE_MAKEFILE=ON
 		-DFETCHCONTENT_FULLY_DISCONNECTED=ON
 		-DFETCHCONTENT_SOURCE_DIR_LLAMA_CPP="${S_LLAMA_CPP}"
+		-DGGML_CCACHE=$(use_ccache)
 		-DGGML_VERSION=0
 		-DGGML_VERSION_MAJOR=0
 	)
@@ -4373,134 +4398,103 @@ eerror "ARCH=${ARCH} ABI=${ABI} is not supported"
 	fi
 }
 
-install_cpu_runner() {
-	local runner_path1
-
-	local flavor_name
-	local dir_name="cpu"
-	if [[ -e "${S}/dist/lib/ollama/libggml-cpu-custom.so" ]] ; then
-		runner_path1="${S}/dist/lib/ollama"
-		flavor_name="custom"
-	else
-		runner_path1="${S}/dist/lib/ollama"
-		flavor_name="cpu"
-	fi
-
-	[[ -e "${runner_path1}" ]] || return
-
-	exeinto "/usr/lib/${PN}/$(get_libdir)/${dir_name}"
-	pushd "${runner_path1}" >/dev/null 2>&1 || die
-		doexe "libggml-base.so"
-		doexe "libggml-base.so.0"
-		doexe "libggml-${flavor_name}.so"
-	popd >/dev/null 2>&1 || die
-	patchelf \
-		--add-rpath "/usr/lib/${PN}/$(get_libdir)/cpu" \
-		"${ED}/usr/lib/${PN}/$(get_libdir)/${dir_name}/libggml-${flavor_name}.so" \
-		|| die
+install_cpu_runners() {
+	dodir "/usr/lib/ollama/$(get_libdir)"
+	mv "${WORKDIR}/${PN}-${PV}_build_cpu/bin/"* "${ED}/usr/lib/ollama/$(get_libdir)"
 }
 
-install_gpu_runner() {
-	local runner_path1
+install_cuda_runners() {
+	dodir "/usr/lib/ollama/$(get_libdir)"
+	mv "${WORKDIR}/${PN}-${PV}_build_cuda/bin/"* "${ED}/usr/lib/ollama/$(get_libdir)"
+}
 
-	local flavor_name=""
-	if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-13*" ; then
-		runner_path1="${S}/dist/lib/ollama/cuda_v12"
-		dir_name="cuda_v12"
-		flavor_name="cuda"
-	elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
-		runner_path1="${S}/dist/lib/ollama/cuda_v11"
-		dir_name="cuda_v11"
-		flavor_name="cuda"
-	elif use rocm ; then
-		runner_path1="${S}/dist/lib/ollama/rocm"
-		dir_name="rocm"
-		flavor_name="hip"
-	elif use vulkan ; then
-		runner_path1="${S}/dist/lib/ollama/vulkan"
-		dir_name="vulkan"
-		flavor_name="vulkan"
-	fi
+install_rocm_runners() {
+	dodir "/usr/lib/ollama/$(get_libdir)"
+	mv "${WORKDIR}/${PN}-${PV}_build_rocm/bin/"* "${ED}/usr/lib/ollama/$(get_libdir)"
+}
 
-	[[ -z "${flavor_name}" ]] && return
-	[[ -e "${runner_path1}" ]] || return
+install_vulkan_runners() {
+	dodir "/usr/lib/ollama/$(get_libdir)"
+	mv "${WORKDIR}/${PN}-${PV}_build_vulkan/bin/"* "${ED}/usr/lib/ollama/$(get_libdir)"
+}
 
-	exeinto "/usr/lib/${PN}/$(get_libdir)/${dir_name}"
-	pushd "${runner_path1}" >/dev/null 2>&1 || die
-		if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-13*" ; then
-			doexe "libggml-cuda.so"
-		elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
-			doexe "libggml-cuda.so"
-		elif use rocm ; then
-			doexe "libggml-hip.so"
-		elif use vulkan ; then
-			doexe "libggml-vulkan.so"
-		fi
-	popd >/dev/null 2>&1 || die
-
-	local list=(
-		"libggml-${flavor_name}.so"
-	)
-	local n
+install_gpu_runners() {
 	if use cuda ; then
-		for n in "${list[@]}" ; do
-			patchelf \
-				--add-rpath "/usr/lib/${PN}/$(get_libdir)/cpu" \
-				"${ED}/usr/lib/${PN}/$(get_libdir)/${dir_name}/${n}" \
-				|| die
-			patchelf \
-				--add-rpath "/usr/lib/${PN}/$(get_libdir)/${dir_name}" \
-				"${ED}/usr/lib/${PN}/$(get_libdir)/${dir_name}/${n}" \
-				|| die
-			patchelf \
-				--add-rpath "/opt/cuda/$(get_libdir)" \
-				"${ED}/usr/lib/${PN}/$(get_libdir)/${dir_name}/${n}" \
-				|| die
-		done
+		install_cuda_runners
 	elif use rocm ; then
-		for n in "${list[@]}" ; do
-			patchelf \
-				--add-rpath "/usr/lib/${PN}/$(get_libdir)/cpu" \
-				"${ED}/usr/lib/${PN}/$(get_libdir)/${dir_name}/${n}" \
-				|| die
-			patchelf \
-				--add-rpath "/usr/lib/${PN}/$(get_libdir)/${dir_name}" \
-				"${ED}/usr/lib/${PN}/$(get_libdir)/${dir_name}/${n}" \
-				|| die
-			patchelf \
-				--add-rpath "/opt/rocm/lib" \
-				"${ED}/usr/lib/${PN}/$(get_libdir)/${dir_name}/${n}" \
-				|| die
-		done
+		install_rocm_runners
 	elif use vulkan ; then
-		# Link ggml-base.so
-		for n in "${list[@]}" ; do
-			patchelf \
-				--add-rpath "/usr/lib/${PN}/$(get_libdir)/cpu" \
-				"${ED}/usr/lib/${PN}/$(get_libdir)/${dir_name}/${n}" \
-				|| die
-		done
+		install_vulkan_runners
 	fi
+	local L
+	L=(
+		$(find "${ED}/usr/lib/ollama/$(get_libdir)")
+	)
+	local x
+	for x in "${L[@]}" ; do
+		[[ -L "${x}" ]] && continue
+		patchelf \
+			--add-rpath "/opt/cuda/$(get_libdir)" \
+			"${ED}/usr/lib/${PN}/$(get_libdir)" \
+			|| die
+	done
+}
+
+sanitize_file_permissions() {
+einfo "Sanitizing file/folder permissions"
+	IFS=$'\n'
+	local path
+	for path in $(find "${ED}") ; do
+		[[ -L "${path}" ]] && continue
+		chown "root:root" "${path}" || die
+		if file "${path}" | grep -q -e "directory" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -e "ELF.*shared object" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -e "ELF.*executable" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -e "OpenRC script" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -e "Bourne-Again shell script" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -e "symbolic link" ; then
+			:
+		else
+			chmod 0644 "${path}" || die
+		fi
+	done
+	IFS=$' \t\n'
 }
 
 src_install() {
 	exeinto "/usr/lib/${PN}/bin"
 	doexe "${PN}"
 
+	patchelf \
+		--add-rpath "/usr/lib/ollama/$(get_libdir)" \
+		"${ED}/usr/lib/ollama/bin/ollama" \
+		|| die
+
+	#
+	# We build/install two backends for scenarios
+	#
+	# * Gaming with GPU with LLM search with CPU runner.
+	# * Live streaming GPU encoding with LLM search with CPU runner.
+	#
+
+	install_cpu_runners
+	install_gpu_runners
+
 	local ld_library_path=""
 	if use cuda ; then
 		local dir_name=""
 		if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-13*" ; then
-			dir_name="cuda_v12"
+			dir_name="cuda_v13"
 		elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
-			dir_name="cuda_v11"
+			dir_name="cuda_v12"
 		fi
 		patchelf \
 			--add-rpath "/opt/cuda/$(get_libdir)" \
-			"${ED}/usr/lib/${PN}/bin/${PN}" \
-			|| die
-		patchelf \
-			--add-rpath "/usr/lib/${PN}/$(get_libdir)/${dir_name}" \
 			"${ED}/usr/lib/${PN}/bin/${PN}" \
 			|| die
 		ld_library_path+="/opt/cuda/$(get_libdir):/usr/$(get_libdir)"
@@ -4510,18 +4504,10 @@ src_install() {
 			--add-rpath "/opt/rocm/lib" \
 			"${ED}/usr/lib/${PN}/bin/${PN}" \
 			|| die
-		patchelf \
-			--add-rpath "/usr/lib/${PN}/$(get_libdir)/${dir_name}" \
-			"${ED}/usr/lib/${PN}/bin/${PN}" \
-			|| die
 	elif use vulkan ; then
 		local dir_name="vulkan"
 		patchelf \
 			--add-rpath "/opt/rocm/lib" \
-			"${ED}/usr/lib/${PN}/bin/${PN}" \
-			|| die
-		patchelf \
-			--add-rpath "/usr/lib/${PN}/$(get_libdir)/${dir_name}" \
 			"${ED}/usr/lib/${PN}/bin/${PN}" \
 			|| die
 	elif use video_cards_intel ; then
@@ -4530,20 +4516,12 @@ src_install() {
 
 	cat "${FILESDIR}/${PN}" > "${T}/${PN}"
 
-	# Prune generators
-	sed -i \
-		-e "/START IUSE_GENERATOR/,/END IUSE_GENERATOR/d" \
-		-e "/START LICENSE_ARRAY_GENERATOR/,/END LICENSE_ARRAY_GENERATOR/d" \
-		-e "/START USE_DESC_GENERATOR/,/END USE_DESC_GENERATOR/d" \
-		"${T}/${PN}" \
-		|| die
-
 	# Set default backend for wrapper
 	local backend=""
 	if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-13*" ; then
-		backend="cuda_v12"
+		backend="cuda_v13"
 	elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
-		backend="cuda_v11"
+		backend="cuda_v12"
 	elif use rocm ; then
 		backend="rocm"
 	elif use cpu_flags_x86_avx2 ; then
@@ -4562,15 +4540,6 @@ src_install() {
 
 	exeinto "/usr/bin"
 	newexe "${T}/${PN}" "${PN}"
-
-	#
-	# We build/install two backends for scenarios
-	#
-	# * Gaming with GPU with LLM search with CPU runner.
-	# * Live streaming GPU encoding with LLM search with CPU runner.
-	#
-	install_cpu_runner
-	install_gpu_runner
 
 	local context_length=${OLLAMA_CONTEXT_LENGTH:-2048}
 	local firejail=$(usex firejail "1" "0")
@@ -4615,6 +4584,8 @@ src_install() {
 		-e "s|@OLLAMA_MALLOC_PROVIDER@|${malloc}|g" \
 		"${ED}/usr/bin/${PN}" \
 		|| die
+
+	sanitize_file_permissions
 
 	LCNR_SOURCE="${WORKDIR}/go-mod"
 	LCNR_TAG="third_party"

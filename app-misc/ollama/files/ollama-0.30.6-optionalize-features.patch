@@ -645,7 +645,7 @@ diff '--color=auto' -urp ollama-0.30.6.orig/x/cmd/run.go ollama-0.30.6/x/cmd/run
  	if enableWebsearch {
 -		if client, err := api.ClientFromEnvironment(); err == nil {
 +		if @DISABLE_CLOUD_SUPPORT@ {
-+			mt.Fprintf(os.Stderr, "%s\n", internalcloud.DisabledError("cloud support is disabled"))
++			fmt.Fprintf(os.Stderr, "%s\n", internalcloud.DisabledError("cloud support is disabled"))
 +			enableWebsearch = false
 +		} else if client, err := api.ClientFromEnvironment(); err == nil {
  			if disabled, known := cloudStatusDisabled(cmd.Context(), client); known && disabled {
