@@ -3143,7 +3143,7 @@ src_prepare() {
 	default
 
 	pushd "${S_LLAMA_CPP}" >/dev/null 2>&1 || die
-		eapply "${LAMA_CPP_PATCHES[@]}"
+		eapply "${LLAMA_CPP_PATCHES[@]}"
 	popd >/dev/null 2>&1 || die
 
 	# S_GO should appear at this point
