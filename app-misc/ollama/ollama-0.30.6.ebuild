@@ -4435,7 +4435,7 @@ install_gpu_runners() {
 fix_rpaths() {
 	local L
 	L=(
-		$(find "${ED}/usr/lib/ollama")
+		$(find "${ED}/usr/lib/ollama" -type f)
 	)
 	local x
 	for x in "${L[@]}" ; do
