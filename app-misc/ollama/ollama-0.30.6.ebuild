@@ -2555,7 +2555,10 @@ gen_rocm_required_use() {
 
 # OpenCL support (via CLBlast) removed in >= 0.1.45 in favor of vulkan which is not supported yet.
 # There is a bug for ?? operator where 1 element causes it to be required.
+# The external-editor is banned to simplify the security architecture.  We want
+# to limit the blast radius by keeping the lid on access to home.
 REQUIRED_USE="
+	!external-editor
 	!cuda
 	!rocm
 	$(gen_cuda_required_use)
@@ -4756,19 +4759,6 @@ ewarn "for Firejail overlay support."
 ewarn
 ewarn "Consider using the vulkan USE flag which has been tested."
 ewarn
-		if use external-editor ; then
-ewarn
-ewarn "You must \`noblacklist <editor-path>\` by adding it to"
-ewarn
-ewarn "  /etc/firejail/ollama.local"
-ewarn
-ewarn "    or"
-ewarn
-ewarn "  /home/<user-name>/.config/firejail/local.local"
-ewarn
-ewarn "to work inside the sandbox."
-ewarn
-		fi
 	fi
 }
 
