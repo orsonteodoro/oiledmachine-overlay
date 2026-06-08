@@ -2517,7 +2517,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 ai-agent blis cuda debug emoji +firejail flash lapack mkl openblas openrc
 rocm systemd unrestrict video_cards_intel -vulkan
-ebuild_revision_134
+ebuild_revision_135
 "
 
 gen_rocm_required_use() {
@@ -4432,6 +4432,22 @@ install_gpu_runners() {
 	fi
 }
 
+mv_exes() {
+	local L
+	L=(
+		$(find "${ED}/usr/lib/ollama" -type f)
+	)
+	local x
+	for x in "${L[@]}" ; do
+		if file "${x}" | grep -q "ELF .* executable" ; then
+			mv \
+				"${x}" \
+				"${ED}/usr/lib/ollama/bin" \
+				|| die
+		fi
+	done
+}
+
 fix_rpaths() {
 	local L
 	L=(
@@ -4503,6 +4519,7 @@ src_install() {
 
 	install_cpu_runners
 	install_gpu_runners
+	mv_exes
 	fix_rpaths
 
 	local ld_library_path=""
