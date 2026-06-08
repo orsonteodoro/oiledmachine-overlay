@@ -7,9 +7,9 @@ EAPI=8
 # Contains patches derived from AI generated code.
 
 EBUILD_REV="ebuild_revision_12"
-GENPATCHES_VER="221"
+GENPATCHES_VER="225"
 PATCH_PROJC_VER="5.15-r2"
-PATCH_RT_VER="5.15.206-rt95"
+PATCH_RT_VER="5.15.209-rt96"
 
 inherit ot-kernel-v5.15
 

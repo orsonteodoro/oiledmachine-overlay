@@ -544,7 +544,7 @@ FIREWALL_DEPENDS="
 # Mitigate against transient execution CPU vulnerabilities.
 FIRMWARE_DEPENDS="
 	intel-microcode? (
-		>=sys-firmware/intel-microcode-20260210
+		>=sys-firmware/intel-microcode-20260512
 	)
 	linux-firmware? (
 		>=sys-kernel/linux-firmware-20251030
@@ -611,31 +611,31 @@ LOGGER_DEPENDS="
 KERNEL_DEPENDS="
 	gentoo-sources? (
 		|| (
-			~sys-kernel/gentoo-sources-7.0.9
-			~sys-kernel/gentoo-sources-6.18.32
-			~sys-kernel/gentoo-sources-6.12.90
+			~sys-kernel/gentoo-sources-7.0.11
+			~sys-kernel/gentoo-sources-6.18.34
+			~sys-kernel/gentoo-sources-6.12.92
 		)
 		sys-kernel/gentoo-sources:=
 	)
 	git-sources? (
 		|| (
-			~sys-kernel/git-sources-7.1_rc4
+			~sys-kernel/git-sources-7.1_rc7
 		)
 		sys-kernel/git-sources:=
 	)
 	ot-sources? (
 		|| (
-			~sys-kernel/ot-sources-7.0.9
-			~sys-kernel/ot-sources-6.18.32
-			~sys-kernel/ot-sources-6.12.90
+			~sys-kernel/ot-sources-7.0.11
+			~sys-kernel/ot-sources-6.18.34
+			~sys-kernel/ot-sources-6.12.92
 		)
 		sys-kernel/ot-sources:=
 	)
 	vanilla-sources? (
 		|| (
-			~sys-kernel/vanilla-sources-7.0.9
-			~sys-kernel/vanilla-sources-6.18.32
-			~sys-kernel/vanilla-sources-6.12.90
+			~sys-kernel/vanilla-sources-7.0.11
+			~sys-kernel/vanilla-sources-6.18.34
+			~sys-kernel/vanilla-sources-6.12.92
 		)
 		sys-kernel/vanilla-sources:=
 	)

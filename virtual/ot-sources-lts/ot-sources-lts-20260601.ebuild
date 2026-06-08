@@ -16,22 +16,22 @@ ebuild_revision_1
 "
 RDEPEND="
 	5_10? (
-		~sys-kernel/ot-sources-5.10.256
+		~sys-kernel/ot-sources-5.10.258
 	)
 	5_15? (
-		~sys-kernel/ot-sources-5.15.207
+		~sys-kernel/ot-sources-5.15.209
 	)
 	6_1? (
-		~sys-kernel/ot-sources-6.1.173
+		~sys-kernel/ot-sources-6.1.175
 	)
 	6_6? (
-		~sys-kernel/ot-sources-6.6.140
+		~sys-kernel/ot-sources-6.6.142
 	)
 	6_12? (
-		~sys-kernel/ot-sources-6.12.90
+		~sys-kernel/ot-sources-6.12.92
 	)
 	6_18? (
-		~sys-kernel/ot-sources-6.18.32
+		~sys-kernel/ot-sources-6.18.34
 	)
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
