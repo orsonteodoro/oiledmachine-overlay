@@ -2517,7 +2517,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 ai-agent blis cuda debug emoji +firejail flash lapack mkl openblas openrc
 rocm systemd unrestrict video_cards_intel -vulkan
-ebuild_revision_138
+ebuild_revision_139
 "
 
 gen_rocm_required_use() {
@@ -4459,7 +4459,7 @@ fix_rpaths() {
 	for x in "${L[@]}" ; do
 		[[ -L "${x}" ]] && continue
 		patchelf \
-			--add-rpath "/opt/cuda/$(get_libdir)" \
+			--add-rpath "/usr/lib/ollama/$(get_libdir)" \
 			"${x}" \
 			|| die
 
@@ -4506,11 +4506,6 @@ einfo "Sanitizing file/folder permissions"
 src_install() {
 	exeinto "/usr/lib/${PN}/bin"
 	doexe "${PN}"
-
-	patchelf \
-		--add-rpath "/usr/lib/ollama/$(get_libdir)" \
-		"${ED}/usr/lib/ollama/bin/ollama" \
-		|| die
 
 	#
 	# We build/install two backends for scenarios
