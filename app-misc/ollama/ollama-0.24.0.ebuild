@@ -4025,7 +4025,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
-ai-agent blis chroot cuda debug emoji +firejail flash lapack mkl openblas openrc
+ai-agent blis cuda debug emoji +firejail flash lapack mkl openblas openrc
 rocm systemd unrestrict video_cards_intel -vulkan
 ebuild_revision_130
 "
@@ -4091,9 +4091,6 @@ REQUIRED_USE="
 		|| (
 			${LLVM_COMPAT[@]/#/llvm_slot_}
 		)
-	)
-	chroot? (
-		openrc
 	)
 	cpu_flags_x86_avx? (
 		cpu_flags_x86_sse2
@@ -6070,7 +6067,6 @@ src_install() {
 	install_cpu_runner
 	install_gpu_runner
 
-	local chroot=$(usex chroot "1" "0")
 	local context_length=${OLLAMA_CONTEXT_LENGTH:-2048}
 	local firejail=$(usex firejail "1" "0")
 	local flash_attention=$(usex flash "1" "0")
@@ -6173,9 +6169,6 @@ einfo "Tip:  If the words per minute is slower than 130, use a smaller model.  U
 einfo "Tip:  If the cold start time is more than 20 seconds, use a smaller model."
 einfo "Tip:  To mitigate long load times, use SSD for magnitude 10 GBs models, NVMe RAID for magnitude 100 GBs or magnitude 1 TBs models."
 einfo
-	if use systemd ; then
-ewarn "The chroot and sandbox mitigation edits has not been implemented for systemd init script."
-	fi
 
 	local context_length=${OLLAMA_CONTEXT_LENGTH:-2048}
 	if (( ${context_length} < 8192 )) ; then

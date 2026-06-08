@@ -39,7 +39,7 @@ diff '--color=auto' -urp ollama-0.24.0.orig/cmd/launch/claude.go ollama-0.24.0/c
  }
  
  func (c *Claude) findPath() (string, error) {
-+        return "", fmt.Errorf("claude support is disabled") // DISABLE_CLAUDE
++	return "", fmt.Errorf("claude support is disabled") // DISABLE_CLAUDE
  	if p, err := exec.LookPath("claude"); err == nil {
  		return p, nil
  	}
@@ -237,7 +237,7 @@ diff '--color=auto' -urp ollama-0.24.0.orig/cmd/launch/opencode.go ollama-0.24.0
  // findOpenCode returns the opencode binary path, checking PATH first then the
  // curl installer location (~/.opencode/bin) which may not be on PATH yet.
  func findOpenCode() (string, bool) {
-+	return "" false // DISABLE_OPENCODE
++	return "", false // DISABLE_OPENCODE
  	if p, err := exec.LookPath("opencode"); err == nil {
  		return p, true
  	}
