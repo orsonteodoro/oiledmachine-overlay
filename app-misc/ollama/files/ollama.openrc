@@ -49,21 +49,67 @@ start() {
 	ebegin "Starting $description"
 	exec >> >(logger -t "$RC_SVCNAME Start daemon" -p "daemon.info")
 
-	local args=()
-
 	local uid=$(grep "^ollama:" "/etc/passwd" | cut -f 3 -d ":")
 	local gid=$(grep "^ollama:" "/etc/passwd" | cut -f 4 -d ":")
 
-	args+=(
+	local args=(
 		-e LD_LIBRARY_PATH="@LD_LIBRARY_PATH@"
-		-e OLLAMA_CONTEXT_LENGTH="${OLLAMA_CONTEXT_LENGTH}"
-		-e OLLAMA_FIREJAIL="${OLLAMA_FIREJAIL}"
-		-e OLLAMA_FLASH_ATTENTION="${OLLAMA_FLASH_ATTENTION}"
-		-e OLLAMA_KV_CACHE_TYPE="${OLLAMA_KV_CACHE_TYPE}"
-		-e OLLAMA_ORIGINS="${OLLAMA_ORIGINS}"
-		-e OLLAMA_OOM="${OLLAMA_OOM}"
-		-e OLLAMA_VULKAN="${OLLAMA_VULKAN}"
 	)
+
+	# See also https://github.com/ollama/ollama/blob/v0.30.6/envconfig/config.go
+	# Editor blocked to limit implied blast radius of saving or accessing home folder.
+	local L=(
+		"CUDA_VISIBLE_DEVICES"
+		#"EDITOR"
+		"GGML_VK_VISIBLE_DEVICES"
+		"GPU_DEVICE_ORDINAL"
+		"HIP_VISIBLE_DEVICES"
+		"HSA_OVERRIDE_GFX_VERSION"
+		"HTTP_PROXY"
+		"http_proxy"
+		"HTTPS_PROXY"
+		"https_proxy"
+		"LLAMA_ARG_FIT"
+		"LLAMA_ARG_FIT_TARGET"
+		"NO_PROXY"
+		"no_proxy"
+		"OLLAMA_DEBUG"
+		"OLLAMA_DEBUG_LOG_REQUESTS"
+		"OLLAMA_CONTEXT_LENGTH"
+		#"OLLAMA_EDITOR"
+		"OLLAMA_FLASH_ATTENTION"
+		"OLLAMA_GPU_OVERHEAD"
+		"OLLAMA_GO_TEMPLATE"
+		"OLLAMA_IGPU_ENABLE"
+		"OLLAMA_KV_CACHE_TYPE"
+		"OLLAMA_HOST"
+		"OLLAMA_KEEP_ALIVE"
+		"OLLAMA_LLM_LIBRARY"
+		"OLLAMA_LOAD_TIMEOUT"
+		"OLLAMA_MAX_LOADED_MODELS"
+		"OLLAMA_MAX_TRANSFER_STREAMS"
+		"OLLAMA_MAX_QUEUE"
+		"OLLAMA_MODELS"
+		"OLLAMA_NO_CLOUD"
+		"OLLAMA_NOHISTORY"
+		"OLLAMA_NOPRUNE"
+		"OLLAMA_NUM_PARALLEL"
+		"OLLAMA_REMOTES"
+		"OLLAMA_ORIGINS"
+		"OLLAMA_SCHED_SPREAD"
+		"OLLAMA_VULKAN"
+		"ROCR_VISIBLE_DEVICES"
+		#"VISUAL"
+	)
+
+	local x
+	for x in "${L[@]}" ; do
+		if [[ -n "${!x}" ]] ; then
+			args+=(
+				-e ${x}="${!x}"
+			)
+		fi
+	done
 
 	if [[ "${_OLLAMA_DEBUG}" == "1" ]] ; then
 		:

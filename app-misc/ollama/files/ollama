@@ -38,7 +38,7 @@ main() {
 
 	local FIREJAIL_ARGS=()
 
-# See also https://github.com/ollama/ollama/blob/v0.30.6/envconfig/config.go
+	# See also https://github.com/ollama/ollama/blob/v0.30.6/envconfig/config.go
 	# Editor blocked to limit implied blast radius of saving or accessing home folder.
 	local L=(
 		"CUDA_VISIBLE_DEVICES"
@@ -82,12 +82,11 @@ main() {
 		"OLLAMA_SCHED_SPREAD"
 		"OLLAMA_VULKAN"
 		"ROCR_VISIBLE_DEVICES"
-		"VISUAL"
+		#"VISUAL"
 	)
 
 	local x
 	for x in "${L[@]}" ; do
-		[[ "${x}" == "LOCALAI_ARGS" ]] && continue
 		if [[ -n "${!x}" ]] ; then
 			FIREJAIL_ARGS+=(
 				--env=${x}="${!x}"
@@ -95,7 +94,6 @@ main() {
 			export ${x}
 		fi
 	done
-
 
 	if [[ -n "${OLLAMA_OOM}" ]] ; then
 		FIREJAIL_ARGS+=(
