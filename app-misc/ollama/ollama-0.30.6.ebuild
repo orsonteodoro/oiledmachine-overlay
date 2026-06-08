@@ -2517,7 +2517,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 ai-agent blis cuda debug emoji +firejail flash lapack mkl openblas openrc
 rocm systemd unrestrict video_cards_intel -vulkan
-ebuild_revision_136
+ebuild_revision_138
 "
 
 gen_rocm_required_use() {
@@ -2988,7 +2988,7 @@ PDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-0.30.6-cmd-changes.patch"
-	"${FILESDIR}/${PN}-0.30.6-hardcoded-paths.patch"
+	"A${FILESDIR}/${PN}-0.30.6-hardcoded-paths.patch"
 	"${FILESDIR}/${PN}-0.24.0-disable-agent-install.patch"
 	"${FILESDIR}/${PN}-0.30.6-optionalize-features.patch"
 )
@@ -3229,8 +3229,11 @@ einfo "Editing ${x} for ragel -Z -> ragel-go"
 		|| die
 
 	local libdir=$(get_libdir)
+
+	# Hardcoded paths
 	sed -i \
-		-e "s|@LIBDIR@|${libdir}|g" \
+		-e "s|@LIBDIR@|${libdir}|g"
+		"discover/types.go" \
 		"ml/path.go" \
 		|| die
 
@@ -3346,7 +3349,6 @@ einfo "Editing ${x} for ragel -Z -> ragel-go"
 	else
 		sed -i -e "s|vi|/dev/null|g" "cmd/editor_unix.go" || die
 	fi
-
 }
 
 check_toolchain() {
