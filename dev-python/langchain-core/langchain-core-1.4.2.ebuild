@@ -6,7 +6,7 @@ EAPI=8
 
 MY_PN="${PN/-/_}"
 
-DISTUTILS_USE_PEP517="poetry"
+DISTUTILS_USE_PEP517="hatchling"
 PYTHON_COMPAT=( "python3_"{11..14} )
 
 inherit distutils-r1 caret pypi
