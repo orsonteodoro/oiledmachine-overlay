@@ -293,7 +293,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 -apparmor +chroot clang contrib +dbusproxy +file-transfer +globalcfg
 landlock +network +private-home -private-lib selfrando -selinux +suid
 test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xcsecurity xvfb
-ebuild_revision_137
+ebuild_revision_138
 "
 REQUIRED_USE+="
 	!test
@@ -887,6 +887,23 @@ ewarn "Use LLD or mold for ROP mitigation"
 		fi
 	fi
 
+	if use private-lib ; then
+		sed -i -e "s|# private-lib no|private-lib yes|" \
+			"etc/firejail.config" \
+			|| die
+	fi
+
+	# Common symbol replacements
+	local L=(
+		$(find "etc" -type f)
+	)
+	local x
+	for x in "${L[@]}" ; do
+		sed -i -e "s|@LIBDIR@|$(get_libdir)|" \
+			"${x}" \
+			|| die
+	done
+
 	local impl
 	for impl in $(get_impls) ; do
 		cp -a "${S}" "${S}_${impl}" || die
@@ -966,23 +983,6 @@ src_configure()
 {
 	# Make _FORTIFY_SOURCE=2 work
 	replace-flags "-O0" "-O1"
-
-	if use private-lib ; then
-		sed -i -e "s|# private-lib no|private-lib yes|" \
-			"etc/firejail.config" \
-			|| die
-	fi
-
-	# Common symbol replacements
-	local L=(
-		$(find "etc/firejail" -type f)
-	)
-	local x
-	for x in "${L[@]}" ; do
-		sed -i -e "s|@LIBDIR@|$(get_libdir)|" \
-			"${x}" \
-			|| die
-	done
 
 	local impl
 	for impl in $(get_impls) ; do
