@@ -25,7 +25,9 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
-dev lint test test-integration typing
+dev lint test typing
+"
+REQUIRED_USE="
 "
 RDEPEND+="
 	>=dev-python/langchain-core-1.2.31[${PYTHON_USEDEP}]
@@ -71,7 +73,7 @@ BDEPEND+="
 
 		dev-python/langchain-core[${PYTHON_USEDEP}]
 	)
-	test-integration? (
+	typing? (
 		>=dev-python/spacy-3.8.13[${PYTHON_USEDEP}]
 		<dev-python/spacy-4.0.0[${PYTHON_USEDEP}]
 
@@ -88,22 +90,6 @@ BDEPEND+="
 		<dev-python/tiktoken-1.0.0[${PYTHON_USEDEP}]
 
 		dev-python/en-core-web-sm[${PYTHON_USEDEP}]
-	)
-	typing? (
-		>=dev-python/mypy-1.19.1[${PYTHON_USEDEP}]
-		<dev-python/mypy-1.20.0[${PYTHON_USEDEP}]
-
-		>=dev-python/lxml-stubs-0.5.1[${PYTHON_USEDEP}]
-		<dev-python/lxml-stubs-1.0.0[${PYTHON_USEDEP}]
-
-		>=dev-python/types-requests-2.31.0.20240218[${PYTHON_USEDEP}]
-		<dev-python/types-requests-3.0.0.0[${PYTHON_USEDEP}]
-
-		>=dev-python/tiktoken-0.8.0[${PYTHON_USEDEP}]
-		<dev-python/tiktoken-1.0.0[${PYTHON_USEDEP}]
-
-		>=dev-python/beautifulsoup4-4.13.5[${PYTHON_USEDEP}]
-		<dev-python/beautifulsoup4-5.0.0[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "README.md" )
