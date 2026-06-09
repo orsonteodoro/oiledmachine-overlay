@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# U24
+
 DISTUTILS_USE_PEP517="hatchling"
 PYTHON_COMPAT=( "python3_"{10..12} )
 

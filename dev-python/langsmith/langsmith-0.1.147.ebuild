@@ -4,8 +4,10 @@
 
 EAPI=8
 
+# U22
+
 DISTUTILS_USE_PEP517="hatchling"
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{10..13} )
 
 inherit distutils-r1 caret pypi
 
@@ -38,9 +40,6 @@ RDEPEND+="
 		$(caret dev-python/pydantic 2.7.4 '[${PYTHON_USEDEP}]')
 	)
 	python_targets_python3_13? (
-		$(caret dev-python/pydantic 2.7.4 '[${PYTHON_USEDEP}]')
-	)
-	python_targets_python3_14? (
 		$(caret dev-python/pydantic 2.7.4 '[${PYTHON_USEDEP}]')
 	)
 
