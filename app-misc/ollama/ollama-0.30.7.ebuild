@@ -454,6 +454,8 @@ FEATURED_LLMS=(
 	"medllama2"
 	"megadolphin"
 	"minicpm-v"
+	"minicpm-v4.5"
+	"minicpm-v4.6"
 	"minimax-m2"
 	"minimax-m2.1"
 	"minimax-m2.5"
@@ -1950,6 +1952,12 @@ LLM_LICENSES="
 	ollama_llms_minicpm-v? (
 		Apache-2.0
 	)
+	ollama_llms_minicpm-v4.5? (
+		Apache-2.0
+	)
+	ollama_llms_minicpm-v4.6? (
+		Apache-2.0
+	)
 	ollama_llms_minimax-m2? (
 		MiniMax-M2
 		MIT
@@ -2517,7 +2525,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 ai-agent blis cuda debug emoji +firejail flash lapack mkl openblas openrc
 rocm systemd unrestrict video_cards_intel -vulkan
-ebuild_revision_142
+ebuild_revision_143
 "
 
 gen_rocm_required_use() {
