@@ -55,13 +55,14 @@ caret() {
 	elif (( ${n_periods} == 3 )) ; then
 		t="
 			>=${category_pn}-${pv}${use_dep}
-			<${category_pn}-${pv_0}.${pv_1}.$(( ${pv_3} + 1 )).0${use_dep}
+			<${category_pn}-${pv_0}.${pv_1}.$(( ${pv_2} + 1 )).0${use_dep}
 		"
 	else
 die "> 3 periods is not supported for the ^ (caret) implementation."
 	fi
 
-	local t2
+	# See cro.eclass
+	local t2="${t}"
 	if declare -f caret_replace_dep ; then
 		caret_replace_dep
 	fi
