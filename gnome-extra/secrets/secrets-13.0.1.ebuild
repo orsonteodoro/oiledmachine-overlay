@@ -372,6 +372,7 @@ pkg_postrm() {
 # OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-TEST:  PASS (interactive, 12.3, 20260505)
 # OILEDMACHINE-OVERLAY-TEST:  PASS (interactive, 12.3, 20260507)
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive, 13.0.1, 20260608)
 # Copy-paste password:  pass
 # Default enable numbers for password generator defaults:  pass
 # Default enable symbols for password generator defaults:  pass
