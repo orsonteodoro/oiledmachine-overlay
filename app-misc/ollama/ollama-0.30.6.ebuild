@@ -2517,7 +2517,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 ai-agent blis cuda debug emoji +firejail flash lapack mkl openblas openrc
 rocm systemd unrestrict video_cards_intel -vulkan
-ebuild_revision_140
+ebuild_revision_141
 "
 
 gen_rocm_required_use() {
@@ -3646,21 +3646,27 @@ einfo "Detected compiler switch.  Disabling LTO."
 		)
 	fi
 
+	sed -i \
+		-e "s|@GGML_CPU_ALL_VARIANTS@|ON|g" \
+		"${S_LLAMA_CPP}/ggml/src/CMakeLists.txt" \
+		|| die
+
 	if (( ${#CPU_FEATURES[@]} > 0 )) ; then
 		local cpu_features="${CPU_FEATURES[@]}"
+einfo "CPU_FEATURES:  ${cpu_features} (1)"
 		sed -i \
-			-e "s|@GGML_CPU_ALL_VARIANTS@|ON|g" \
 			-e "s|@CPU_FEATURES@|${cpu_features}|g" \
 			"${S_LLAMA_CPP}/ggml/src/CMakeLists.txt" \
 			|| die
 	else
 		local cpu_features="${CPU_FEATURES[@]}"
+einfo "CPU_FEATURES:  ${cpu_features} (2)"
 		sed -i \
-			-e "s|@GGML_CPU_ALL_VARIANTS@|OFF|g" \
 			-e "s|@CPU_FEATURES@|${cpu_features}|g" \
 			"${S_LLAMA_CPP}/ggml/src/CMakeLists.txt" \
 			|| die
 	fi
+einfo "DEBUG:  CPU_FEATURES edited file:  ${S_LLAMA_CPP}/ggml/src/CMakeLists.txt"
 
 	local arm_ext=""
 	if use cpu_flags_arm_i8mm ; then
