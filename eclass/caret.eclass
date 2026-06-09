@@ -23,12 +23,12 @@
 # @DESCRIPTION:
 # Generate an ebuild compatible expression for the ^ operator.
 # RDEPEND="
-#	$(caret dev-util/foo 1.4)
+#	$(caret dev-util/foo 1.4 '[${PYTHON_USEDEP}]')
 # "
 # Generates:
 # RDEPEND="
-#	>=dev-util/foo-1.4
-#	<dev-util/foo-2.0
+#	>=dev-util/foo-1.4[python_targets_python3_10(-)?,python_targets_python3_11(-)?,python_targets_python3_12(-)?,python_targets_python3_13(-)?,python_targets_python3_14(-)?]
+#	<dev-util/foo-2.0[python_targets_python3_10(-)?,python_targets_python3_11(-)?,python_targets_python3_12(-)?,python_targets_python3_13(-)?,python_targets_python3_14(-)?]
 # "
 caret() {
 	local category_pn="${1}"	# e.g. dev-util

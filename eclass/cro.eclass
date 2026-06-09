@@ -30,8 +30,8 @@
 # "
 # Generates:
 # RDEPEND="
-#	>=dev-python/uv-dynamic-versioning-1.2[${PYTHON_USEDEP}]
-#	<dev-python/uv-dynamic-versioning-2.0[${PYTHON_USEDEP}]
+#	>=dev-python/uv-dynamic-versioning-1.2[python_targets_python3_10(-)?,python_targets_python3_11(-)?,python_targets_python3_12(-)?,python_targets_python3_13(-)?,python_targets_python3_14(-)?]
+#	<dev-python/uv-dynamic-versioning-2.0[python_targets_python3_10(-)?,python_targets_python3_11(-)?,python_targets_python3_12(-)?,python_targets_python3_13(-)?,python_targets_python3_14(-)?]
 # "
 cro() {
 	local category_pn="${1}"	# e.g. sys-devel/gcc
