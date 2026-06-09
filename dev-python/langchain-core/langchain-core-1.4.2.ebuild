@@ -36,6 +36,7 @@ REQUIRED_USE="
 		python_targets_python3_14
 	)
 "
+# dev-python/pyyaml version relaxed
 RDEPEND+="
 	>=dev-python/pydantic-1[${PYTHON_USEDEP}]
 	<dev-python/pydantic-3[${PYTHON_USEDEP}]
@@ -43,7 +44,7 @@ RDEPEND+="
 	$(caret dev-python/langsmith 0.1.0 '[${PYTHON_USEDEP}]')
 	$(caret dev-python/tenacity 8.1.0 '[${PYTHON_USEDEP}]')
 	$(caret dev-python/jsonpatch 1.33 '[${PYTHON_USEDEP}]')
-	$(caret dev-python/pyyaml 5.3 '[${PYTHON_USEDEP}]')
+	>=dev-python/pyyaml-5.3[${PYTHON_USEDEP}]
 	$(caret dev-python/packaging 23.2 '[${PYTHON_USEDEP}]')
 	$(caret dev-python/jinja2 3 '[${PYTHON_USEDEP}]')
 "
