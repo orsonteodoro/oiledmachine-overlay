@@ -56,17 +56,17 @@ caret() {
 		elif (( ${n_periods} == 1 )) ; then
 			t="
 				>=${category_pn}-${pv}${use_dep}
-				<${category_pn}-0.$(( ${pv_2} + 1 )).0${use_dep}
+				<${category_pn}-0.$(( ${pv_1} + 1 )).0${use_dep}
 			"
 		elif (( ${n_periods} == 2 )) ; then
 			t="
 				>=${category_pn}-${pv}${use_dep}
-				<${category_pn}-0.$(( ${pv_2} + 1 )).0${use_dep}
+				<${category_pn}-0.$(( ${pv_1} + 1 )).0${use_dep}
 			"
 		elif (( ${n_periods} == 3 )) ; then
 			t="
 				>=${category_pn}-${pv}${use_dep}
-				<${category_pn}-0.$(( ${pv_2} + 1 )).0${use_dep}
+				<${category_pn}-0.$(( ${pv_1} + 1 )).0${use_dep}
 			"
 		else
 die ">= 4 periods is not supported for the ^ (caret) implementation."

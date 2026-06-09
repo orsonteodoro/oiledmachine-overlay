@@ -15,6 +15,8 @@
 # The operator can be used to harden against suspicious version bumps.
 
 # Semantics
+# ~0.45.2.7    >= 0.45.2.7  && < 0.45.3.0
+# ~0.45.2      >= 0.45.2    && < 0.46.0
 # ~0.45        >= 0.45.0    && < 0.46.0
 # ~1           >= 1.0.0     && < 2.0.0
 # ~1.4         >= 1.4.0     && < 1.5.0
