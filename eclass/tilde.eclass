@@ -67,13 +67,13 @@ tilde() {
 die "> 4 periods are not supported for the ~ (tilde) implementation."
 	fi
 
-	# See cro.eclass
-	local t2="${t}"
+	local output
 	if declare -f tilde_replace_dep ; then
-		tilde_replace_dep
+		output=$(tilde_replace_dep)
+	else
+		local t2
+		t2="${t//\$\{PYTHON_USEDEP\}/${PYTHON_USEDEP}}"
+		output="${t2//\$\{PYTHON_SINGLE_USEDEP\}/${PYTHON_SINGLE_USEDEP}}"
 	fi
-#	einfo "
-#		${t2}
-#	"
-	echo "${t2}"
+	echo "${output}"
 }

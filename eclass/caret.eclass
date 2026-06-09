@@ -61,13 +61,13 @@ caret() {
 die "> 3 periods is not supported for the ^ (caret) implementation."
 	fi
 
-	# See cro.eclass
-	local t2="${t}"
+	local output
 	if declare -f caret_replace_dep ; then
-		caret_replace_dep
+		output=$(caret_replace_dep)
+	else
+		local t2
+		t2="${t//\$\{PYTHON_USEDEP\}/${PYTHON_USEDEP}}"
+		output="${t2//\$\{PYTHON_SINGLE_USEDEP\}/${PYTHON_SINGLE_USEDEP}}"
 	fi
-#	einfo "
-#		${t2}
-#	"
-	echo "${t2}"
+	echo "${output}"
 }

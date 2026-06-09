@@ -71,15 +71,13 @@ cro() {
 die "> 4 periods is not supported for the cro (compatibility release operator) implementation."
 	fi
 
-	local t2
+	local output
 	if declare -f cro_replace_dep ; then
-		cro_replace_dep
+		output=$(cro_replace_dep)
 	else
+		local t2
 		t2="${t//\$\{PYTHON_USEDEP\}/${PYTHON_USEDEP}}"
-		t2="${t2//\$\{PYTHON_SINGLE_USEDEP\}/${PYTHON_SINGLE_USEDEP}}"
+		output="${t2//\$\{PYTHON_SINGLE_USEDEP\}/${PYTHON_SINGLE_USEDEP}}"
 	fi
-#	einfo "
-#		${t2}
-#	"
-	echo "${t2}"
+	echo "${output}"
 }
