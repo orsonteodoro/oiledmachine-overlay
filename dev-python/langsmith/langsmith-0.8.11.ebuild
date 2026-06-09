@@ -1,4 +1,4 @@
-# Copyright 2025 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 2025-2026 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -23,7 +23,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
-claude-agent-sdk dev google-adk langsmith_pyo3 langsmith_pyo3 lint openai-agents
+claude-agent-sdk dev google-adk langsmith_pyo3 lint openai-agents
 otel pytest strands-agents test vcr
 "
 RDEPEND+="
@@ -128,7 +128,7 @@ BDEPEND+="
 		>=dev-python/langchain-anthropic-1.0.0[${PYTHON_USEDEP}]
 		>=dev-python/debugpy-1.8.17[${PYTHON_USEDEP}]
 		>=dev-python/google-genai-1.2.0[${PYTHON_USEDEP}]
-		>=dev-python/pillow-12.0.0[${PYTHON_USEDEP}]
+		>=virtual/pillow-12.0.0[${PYTHON_USEDEP}]
 		~dev-python/ty-0.0.35[${PYTHON_USEDEP}]
 		>=dev-python/pytest-httpx-0.30.0[${PYTHON_USEDEP}]
 		>=dev-python/wrapt-1.16.0[${PYTHON_USEDEP}]
