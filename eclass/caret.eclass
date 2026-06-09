@@ -13,11 +13,14 @@
 # The operator can be used to harden against suspicious version bumps.
 
 # Semantics
+# ^0.45.1.5    >= 0.45.1.5  && < 0.46.0
+# ^0.45.1      >= 0.45.1    && < 0.46.0
 # ^0.45        >= 0.45.0    && < 0.46.0
+# ^0           >= 0.0.0     && < 1.0.0
 # ^1           >= 1.0.0     && < 2.0.0
 # ^1.4         >= 1.4.0     && < 2.0.0
 # ^1.4.1       >= 1.4.1     && < 2.0.0
-# ^1.4.3.4     invalid
+# ^1.4.3.4     >= 1.4.3.4   && < 2.0.0.0
 
 # @FUNCTION:  caret
 # @DESCRIPTION:
@@ -42,23 +45,59 @@ caret() {
 	local n_periods=$(( ${#pv} - ${#stripped_len} ))
 
 	local t
-	if (( ${n_periods} == 1 )) ; then
-		t="
-			>=${category_pn}-${pv}${use_dep}
-			<${category_pn}-$(( ${pv_0} + 1 )).0${use_dep}
-		"
-	elif (( ${n_periods} == 2 )) ; then
-		t="
-			>=${category_pn}-${pv}${use_dep}
-			<${category_pn}-${pv_0}.$(( ${pv_1} + 1 )).0${use_dep}
-		"
-	elif (( ${n_periods} == 3 )) ; then
-		t="
-			>=${category_pn}-${pv}${use_dep}
-			<${category_pn}-${pv_0}.${pv_1}.$(( ${pv_2} + 1 )).0${use_dep}
-		"
+	if (( ${pv_0} == 0 )) ; then
+		if (( ${n_periods} == 0 )) ; then
+			t="
+				>=${category_pn}-${pv}${use_dep}
+				<${category_pn}-1.0.0${use_dep}
+			"
+		elif (( ${n_periods} == 1 )) ; then
+			t="
+				>=${category_pn}-${pv}${use_dep}
+				<${category_pn}-0.$(( ${pv_2} + 1 )).0${use_dep}
+			"
+		elif (( ${n_periods} == 2 )) ; then
+			t="
+				>=${category_pn}-${pv}${use_dep}
+				<${category_pn}-0.$(( ${pv_2} + 1 )).0${use_dep}
+			"
+		elif (( ${n_periods} == 3 )) ; then
+			t="
+				>=${category_pn}-${pv}${use_dep}
+				<${category_pn}-0.$(( ${pv_2} + 1 )).0${use_dep}
+			"
+		else
+die ">= 4 periods is not supported for the ^ (caret) implementation."
+		fi
 	else
-die "> 3 periods is not supported for the ^ (caret) implementation."
+		if (( ${n_periods} == 0 )) ; then
+			t="
+				>=${category_pn}-${pv}${use_dep}
+				<${category_pn}-$(( ${pv_0} + 1 )).0${use_dep}
+			"
+		elif (( ${n_periods} == 1 )) ; then
+			t="
+				>=${category_pn}-${pv}${use_dep}
+				<${category_pn}-$(( ${pv_0} + 1 )).0${use_dep}
+			"
+		elif (( ${n_periods} == 2 )) ; then
+			t="
+				>=${category_pn}-${pv}${use_dep}
+				<${category_pn}-$(( ${pv_0} + 1 )).0.0${use_dep}
+			"
+		elif (( ${n_periods} == 3 )) ; then
+			t="
+				>=${category_pn}-${pv}${use_dep}
+				<${category_pn}-$(( ${pv_0} + 1 )).0.0.0${use_dep}
+			"
+		elif (( ${n_periods} == 4 )) ; then
+			t="
+				>=${category_pn}-${pv}${use_dep}
+				<${category_pn}-$(( ${pv_0} + 1 )).0.0.0.0${use_dep}
+			"
+		else
+die ">= 5 periods is not supported for the ^ (caret) implementation."
+		fi
 	fi
 
 	local output
