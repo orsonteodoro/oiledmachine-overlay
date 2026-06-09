@@ -293,7 +293,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 -apparmor +chroot clang contrib +dbusproxy +file-transfer +globalcfg
 landlock +network +private-home -private-lib selfrando -selinux +suid
 test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xcsecurity xvfb
-ebuild_revision_135
+ebuild_revision_136
 "
 REQUIRED_USE+="
 	!test
@@ -938,6 +938,23 @@ _src_configure() {
 	else
 		test_opts=()
 	fi
+
+	if use private-lib ; then
+		sed -i -e "s|# private-lib no|private-lib yes|" \
+			"etc/firejail.config" \
+			|| die
+	fi
+
+	# Common symbol replacements
+	local L=(
+		$(find "etc/firejail" -type f)
+	)
+	local x
+	for x in "${L[@]}" ; do
+		sed -i -e "s|@LIBDIR@|$(get_libdir)|" \
+			"${x}" \
+			|| die
+	done
 
 	_src_configure_max_envs
 	_src_configure_default_res
@@ -2084,12 +2101,6 @@ einfo "Updating config for non-suid mode"
 
 	dodir "/usr/share/${PN}"
 	mv "${ED}/usr/share/doc/firejail-0.9.80/profile.template" "${ED}/usr/share/${PN}"
-
-	if use private-lib ; then
-		sed -i -e "s|# private-lib no|private-lib yes|" \
-			"${ED}/etc/firejail/firejail.config" \
-			|| die
-	fi
 }
 
 pkg_postinst() {

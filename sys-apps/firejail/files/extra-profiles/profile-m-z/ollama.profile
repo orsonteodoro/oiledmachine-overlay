@@ -162,7 +162,7 @@ protocol unix,inet,inet6
 
 disable-mnt
 private-cache
-private-cwd
+private-cwd /usr/lib/ollama/@LIBDIR@
 private-dev
 private-etc ld.so.cache
 private-lib ollama
