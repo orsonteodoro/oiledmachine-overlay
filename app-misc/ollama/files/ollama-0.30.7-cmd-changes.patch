@@ -1,14 +1,14 @@
---- ollama-0.24.0/cmd/cmd.go.orig	2026-05-14 12:08:13.000000000 -0700
-+++ ollama-0.24.0/cmd/cmd.go	2026-05-23 04:11:03.104939120 -0700
-@@ -19,6 +19,7 @@ import (
- 	"os/exec"
+--- ollama-0.30.7.orig/cmd/cmd.go	2026-06-07 12:43:13.000000000 -0700
++++ ollama-0.30.7/cmd/cmd.go	2026-06-08 21:25:06.729506216 -0700
+@@ -20,6 +20,7 @@ import (
  	"os/signal"
+ 	"path"
  	"path/filepath"
 +	"regexp" // oteodoro:  added line
  	"runtime"
  	"slices"
  	"sort"
-@@ -217,6 +218,3647 @@ func resolveExperimentalDraftDir(ref, fi
+@@ -219,6 +220,3694 @@ func resolveExperimentalDraftDir(ref, fi
  	return "", fmt.Errorf("DRAFT model references are not supported with --experimental yet: %s", ref)
  }
  
@@ -676,6 +676,11 @@
 +	"gemma4:e4b": "9.6GB",
 +	"gemma4:26b": "18GB",
 +	"gemma4:31b": "20GB",
++	"gemma4:e2b-it-qat": "4.3GB",
++	"gemma4:e4b-it-qat": "6.1GB",
++	"gemma4:12b-it-qat": "7.2GB",
++	"gemma4:26b-a4b-it-qat": "16GB",
++	"gemma4:31b-it-qat": "19GB",
 +	"gemma4:e2b-it-q4_K_M": "7.2GB",
 +	"gemma4:e2b-it-q8_0": "8.1GB",
 +	"gemma4:e2b-it-bf16": "10GB",
@@ -923,6 +928,10 @@
 +	"lfm2:24b-a2b": "14GB",
 +	"lfm2:24b-q8_0": "48GB",
 +	"lfm2:24b-bf16": "48GB",
++	"lfm2.5:latest": "5.2GB",
++	"lfm2.5:8b": "5.2GB",
++	"lfm2.5:8b-a1b-q8_0": "9.0GB",
++	"lfm2.5:8b-a1b-bf16": "17GB",
 +	"lfm2.5-thinking:latest": "731MB",
 +	"lfm2.5-thinking:1.2b": "731MB",
 +	"lfm2.5-thinking:1.2b-q8_0": "1.2GB",
@@ -1306,10 +1315,37 @@
 +	"minicpm-v:8b-2.6-q6_K": "7.3GB",
 +	"minicpm-v:8b-2.6-q8_0": "9.1GB",
 +	"minicpm-v:8b-2.6-fp16": "16GB",
++	"minicpm-v4.5:latest": "6.1GB",
++	"minicpm-v4.5:8b": "6.1GB",
++	"minicpm-v4.5:q4_0": "5.9GB",
++	"minicpm-v4.5:q4_1": "6.3GB",
++	"minicpm-v4.5:q4_K_S": "5.9GB",
++	"minicpm-v4.5:q4_K_M": "6.1GB"
++	"minicpm-v4.5:q5_0": "6.8GB",
++	"minicpm-v4.5:q5_1": "7.3GB",
++	"minicpm-v4.5:q5_K_S": "6.8GB",
++	"minicpm-v4.5:q5_K_M": "6.9GB",
++	"minicpm-v4.5:q6_K": "7.8GB",
++	"minicpm-v4.5:q8_0": "9.8GB",
++	"minicpm-v4.5:f16": "17GB",
++	"minicpm-v4.6:latest": "1.6GB",
++	"minicpm-v4.6:1b": "1.6GB",
++	"minicpm-v4.6:q4_0": "1.6GB",
++	"minicpm-v4.6:q4_1": "1.6GB",
++	"minicpm-v4.6:q4_K_S": "1.6GB",
++	"minicpm-v4.6:q4_K_M": "1.6GB",
++	"minicpm-v4.6:q5_0": "1.7GB",
++	"minicpm-v4.6:q5_1": "1.7GB",
++	"minicpm-v4.6:q5_K_S": "1.7GB",
++	"minicpm-v4.6:q5_K_M": "1.7GB",
++	"minicpm-v4.6:q6_K": "1.7GB",
++	"minicpm-v4.6:q8_0": "1.9GB",
++	"minicpm-v4.6:f16": "2.6GB",
 +	"minimax-m2:cloud": "0GB",
 +	"minimax-m2.1:cloud": "0GB",
 +	"minimax-m2.5:cloud": "0GB",
 +	"minimax-m2.7:cloud": "0GB",
++	"minimax-m3:cloud": "0GB",
 +	"ministral-3:3b": "3.0GB",
 +	"ministral-3:8b": "6.0GB",
 +	"ministral-3:14b": "9.1GB",
@@ -1473,6 +1509,7 @@
 +	"nemotron-3-super:120b-a12b": "87GB",
 +	"nemotron-3-super:120b-a12b-q8_0": "132GB",
 +	"nemotron-3-super:120b-a12b-bf16": "247GB",
++	"nemotron-3-ultra:cloud": "0GB",
 +	"nemotron-cascade-2:latest": "24GB",
 +	"nemotron-cascade-2:30b": "24GB",
 +	"nemotron-cascade-2:30b-a3b-q4_K_M": "24GB",
@@ -3058,6 +3095,7 @@
 +	"laguna-xs.2": 1,
 +	"leeplenty/lumimaid-v0.2": 1,
 +	"lfm2": 1,
++	"lfm2.5": 1,
 +	"lfm2.5-thinking": 1,
 +	"llama-guard3": 1,
 +	"llama-pro": 1,
@@ -3108,10 +3146,13 @@
 +	"megadolphin": 1,
 +	"MichelRosselli/grok-2": 1,
 +	"minicpm-v": 1,
++	"minicpm-v4.5": 1,
++	"minicpm-v4.6": 1,
 +	"minimax-m2": 1,
 +	"minimax-m2.1": 1,
 +	"minimax-m2.5": 1,
 +	"minimax-m2.7": 1,
++	"minimax-m3": 1,
 +	"ministral-3": 1,
 +	"mistral": 1,
 +	"mistral-large": 1,
@@ -3136,6 +3177,7 @@
 +	"nemotron": 1,
 +	"nemotron-3-nano": 1,
 +	"nemotron-3-super": 1,
++	"nemotron-3-ultra": 1,
 +	"nemotron-cascade-2": 1,
 +	"nemotron-mini": 1,
 +	"nemotron3": 1,
@@ -3415,6 +3457,7 @@
 +	"laguna-xs.2": "coding single-file-coding long-context safety-guardrails",
 +	"leeplenty/lumimaid-v0.2": "nsfw adult-content fantasy roleplay waifu anime",
 +	"lfm2": "tool-use qa summaries",
++	"lfm2.5": "multilingual-instruction-following customer-service-troubleshooting",
 +	"lfm2.5-thinking": "instruction-following high-school-math math-word-problems",
 +	"llama-guard3": "content-moderation",
 +	"llama-pro": "coding math common-sense",
@@ -3487,10 +3530,13 @@
 +	"megadolphin": "uncensored common-sense empathy advice detailed-reponse fine-tunable-alignment nsfw-content detailed-roleplay",
 +	"MichelRosselli/grok-2": "chatbot open-weights coding-assistant multilingual-content synthetic-data-generation text-only",
 +	"minicpm-v": "text-to-speech ocr optical-character-recognition code-screenshot-bugfixes how-to-generator translating-screenshots translation",
++	"minicpm-v4.5": "optical-character-recognition ocr document-understanding embedded-text-reasoning chart-understanding visual-mathematical-reasoning multi-image-reasoning real-world-spatial-reasoning visual-intelligence",
++	"minicpm-v4.6": "document-understanding embedded-text-reasoning chart-understanding visual-mathematical-reasoning multi-image-reasoning real-world-spatial-reasoning natural-language-to-mobile-gui-coords complex-document-understanding visual-diagram-understanding visual-intelligence spatial-reasoning spatial-prediction",
 +	"minimax-m2": "cloud cloud-hosted coding coding-assistant rag-tool-use ai-assistant instruction-following human-and-ai-collaboration human-and-ai-team rate-limited troubleshooting expert-level-reasoning high-school-math general-knowedge",
 +	"minimax-m2.1": "cloud cloud-hosted coding python software-engineering multiple-programming-languages multilingual-software-engineering",
 +	"minimax-m2.5": "cloud cloud-hosted coding software-engineering search-agent tool-calling troubleshooting",
 +	"minimax-m2.7": "cloud cloud-hosted multilingual multiple-programming-languages multilingual-software-engineering office-agent office-software-agent word-processing-agent spreadsheet-agent presentation-agent",
++	"minimax-m3": "cloud cloud-hosted single-file-coding agentic-browsing deep-research real-business-competency junior-level-agentic-investment-banking spreadsheets mcp-tool-use professional-real-world-environment real-world-agent visual-reasoning document-understanding video-understanding",
 +	"ministral-3": "function-calling math vision edge-devices multilingual english french spanish german italian portuguese dutch chinese japanese korean arabic",
 +	"ministral-3:3b-cloud": "cloud-hosted function-calling math vision edge-devices multilingual english french spanish german italian portuguese dutch chinese japanese korean arabic",
 +	"mistral": "multilingual function-calling fine-tuneable made-in-france european",
@@ -3513,6 +3559,7 @@
 +	"nemotron": "training-data-generator llm-creation",
 +	"nemotron-3-nano": "high-school-math instruction-following long-context graduate-level-reasoning general-reasoning advanced-knowledge",
 +	"nemotron-3-super": "instruction-following coding-assistant stem biology chemistry physics expert-level-reasoning general-knowledge high-school-math multilingual rag chatbot",
++	"nemotron-3-ultra": "cloud cloud-hosted instruction-following long-context cost-efficient-coding-tasks enterprise openclaw-agent single-file-coding customer-service pre-college-computer-algorithm-design",
 +	"nemotron-cascade-2": "coding-agent instruction-following",
 +	"nemotron-mini": "roleplay rag qa function-calling",
 +	"nemotron3": "multimodal enterprise-business media-and-entertainment gui-agentic-automation document-ai-assistants customer-service",
@@ -3656,7 +3703,7 @@
  func CreateHandler(cmd *cobra.Command, args []string) error {
  	p := progress.NewProgress(os.Stderr)
  	defer p.Stop()
-@@ -636,6 +4278,25 @@ func hasListedModelName(models []api.Lis
+@@ -712,6 +4401,25 @@ func hasListedModelName(models []api.Lis
  func RunHandler(cmd *cobra.Command, args []string) error {
  	interactive := true
  
@@ -3682,7 +3729,7 @@
  	opts := runOptions{
  		Model:       args[0],
  		WordWrap:    os.Getenv("TERM") == "xterm-256color",
-@@ -1134,10 +4795,12 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -1210,10 +4918,12 @@ func ShowHandler(cmd *cobra.Command, arg
  	modelfile, errModelfile := cmd.Flags().GetBool("modelfile")
  	parameters, errParams := cmd.Flags().GetBool("parameters")
  	system, errSystem := cmd.Flags().GetBool("system")
@@ -3696,7 +3743,7 @@
  		if boolErr != nil {
  			return errors.New("error retrieving flags")
  		}
-@@ -1166,13 +4829,402 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -1242,13 +4952,407 @@ func ShowHandler(cmd *cobra.Command, arg
  		showType = "system"
  	}
  
@@ -3868,6 +3915,7 @@
 +		"kimi-k2-thinking": "Kimi-K2-LICENSE MIT",
 +		"leeplenty/lumimaid-v0.2": "Apache-2.0, CC-BY-NC-4.0, LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Acceptable Use Policy",
 +		"lfm2": "LFM Open License v1.0",
++		"lfm2.5": "LFM Open License v1.0",
 +		"lfm2.5-thinking": "LFM Open License v1.0",
 +		"llama-guard3": "LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Acceptable Use Policy",
 +		"llama-pro": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
@@ -3902,10 +3950,13 @@
 +		"megadolphin": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
 +		"MichelRosselli/grok-2": "Grok 2 Community License Agreement, xAI Acceptable Use Policy, This product includes materials licensed under the xAI Community License. All rights reserved. Copyright © xAI 2025.",
 +		"minicpm-v": "Apache-2.0",
++		"minicpm-v4.5": "Apache-2.0",
++		"minicpm-v4.6": "Apache-2.0",
 +		"minimax-m2": "MiniMax-M2 MIT",
 +		"minimax-m2.1": "MiniMax-M2.1 MIT",
 +		"minimax-m2.5": "MINIMAX MODEL LICENSE",
-+		"minimax-m2.7": "all-rights-reserved",
++		"minimax-m2.7": "MiniMax-M2.7",
++		"minimax-m3": "all-rights-reserved",
 +		"ministral-3": "Apache-2.0",
 +		"mistral": "Apache-2.0",
 +		"mistral-large": "MRL-0.1",
@@ -3929,6 +3980,7 @@
 +		"nemotron": "LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Acceptable Use Policy, Meta Privacy Policy",
 +		"nemotron-3-nano": "NVIDIA Nemotron Open Model License", // Ollama site says "NVIDIA Open Model License Agreement".  HuggingFace site says "NVIDIA Nemotron Open Model License".
 +		"nemotron-3-super": "NVIDIA Nemotron Open Model License",
++		"nemotron-3-ultra": "OpenMDW-1.1",
 +		"nemotron-cascade-2": "NVIDIA Open Model License Agreement",
 +		"nemotron-mini": "NVIDIA AI Foundation Models Community License Agreement",
 +		"nemotron3": "NVIDIA-OPEN-MODEL-AGREEMENT",
@@ -4100,7 +4152,7 @@
  	}
  
  	req := api.ShowRequest{Name: args[0], Verbose: verbose}
-@@ -1489,6 +5541,146 @@ func PullHandler(cmd *cobra.Command, arg
+@@ -1582,6 +5686,146 @@ func PullHandler(cmd *cobra.Command, arg
  	return client.Pull(cmd.Context(), &request, fn)
  }
  
@@ -4247,7 +4299,7 @@
  type generateContextKey string
  
  type runOptions struct {
-@@ -2246,9 +6438,14 @@ func NewCLI() *cobra.Command {
+@@ -2339,9 +6583,14 @@ func NewCLI() *cobra.Command {
  		console.ConsoleFromFile(os.Stdin) //nolint:errcheck
  	}
  
@@ -4263,7 +4315,7 @@
  		SilenceUsage:  true,
  		SilenceErrors: true,
  		CompletionOptions: cobra.CompletionOptions{
-@@ -2303,7 +6500,9 @@ func NewCLI() *cobra.Command {
+@@ -2393,7 +6642,9 @@ func NewCLI() *cobra.Command {
  	showCmd.Flags().Bool("parameters", false, "Show parameters of a model")
  	showCmd.Flags().Bool("template", false, "Show template of a model")
  	showCmd.Flags().Bool("system", false, "Show system message of a model")
@@ -4273,9 +4325,9 @@
  
  	runCmd := &cobra.Command{
  		Use:     "run MODEL [PROMPT]",
-@@ -2445,6 +6644,30 @@ func NewCLI() *cobra.Command {
- 		_ = runner.Execute(args[1:])
- 	})
+@@ -2545,6 +6796,30 @@ func NewCLI() *cobra.Command {
+ 	}
+ 	gpuDiscoverCmd.Flags().StringArrayVar(&gpuDiscoverLibDirs, "lib-dir", nil, "Ollama runtime library directory")
  
 +	availCmd := &cobra.Command{
 +		Use:     "avail",
@@ -4304,7 +4356,7 @@
  	envVars := envconfig.AsMap()
  
  	envs := []envconfig.EnvVar{envVars["OLLAMA_HOST"]}
-@@ -2461,6 +6684,9 @@ func NewCLI() *cobra.Command {
+@@ -2561,6 +6836,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		serveCmd,
@@ -4314,10 +4366,10 @@
  	} {
  		switch cmd {
  		case runCmd:
-@@ -2509,7 +6735,12 @@ func NewCLI() *cobra.Command {
- 		copyCmd,
+@@ -2613,7 +6891,12 @@ func NewCLI() *cobra.Command {
  		deleteCmd,
  		runnerCmd,
+ 		gpuDiscoverCmd,
 +		availCmd,
 +		findSizeCmd,
 +		findKeywordsCmd,
