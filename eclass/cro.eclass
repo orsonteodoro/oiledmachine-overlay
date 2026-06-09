@@ -9,6 +9,8 @@
 # @DESCRIPTION:
 # Add ~= compatibility release operator.
 
+# This eclass used AI inference for help and contains AI output.
+
 # In supply chain attacks, the versioning may feel out of place or is unusual.
 # The operator can be used to harden against suspicious version bumps.
 
