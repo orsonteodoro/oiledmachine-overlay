@@ -53,7 +53,7 @@ RDEPEND+="
 	<dev-python/langchain-classic-2.0.0[${PYTHON_USEDEP}]
 
 	>=dev-python/sqlalchemy-1.4.0[${PYTHON_USEDEP}]
-	<dev-python/sqalchemy-3.0.0[${PYTHON_USEDEP}]
+	<dev-python/sqlalchemy-3.0.0[${PYTHON_USEDEP}]
 
 	>=dev-python/requests-2.32.5[${PYTHON_USEDEP}]
 	<dev-python/requests-3.0.0[${PYTHON_USEDEP}]
