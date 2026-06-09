@@ -28,7 +28,7 @@
 # Generates:
 # RDEPEND="
 #	>=dev-util/foo-1.4
-#	<dev-util/foo-2.0
+#	<dev-util/foo-1.5
 # "
 tilde() {
 	local category_pn="${1}"	# e.g. dev-util
