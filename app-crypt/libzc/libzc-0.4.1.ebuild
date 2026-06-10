@@ -34,7 +34,7 @@ SLOT="0"
 IUSE="
 ${TRAINERS[@]}
 test
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	bolt? (
@@ -51,7 +51,7 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	sys-libs/zlib
+	virtual/zlib
 "
 DEPEND="
 	${RDEPEND}
