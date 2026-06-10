@@ -541,7 +541,7 @@ ${USE_LICENSES[@]}
 alsa chromium -clear-config-first cuda cuda-filters doc dvdvideo +encode gdbm
 liblensfun libqrencode mold openvino oss pgo pipewire +re-codecs sndio soc sr
 static-libs tensorflow test torch v4l wayland
-ebuild_revision_58
+ebuild_revision_59
 "
 
 # The distro has frei0r-plugins as GPL-2 only but source is actually GPL-2+, GPL-3+ [baltan.cpp], LGPL-2.1+ [nois0r.cpp].
@@ -1149,7 +1149,7 @@ RDEPEND+="
 		>=media-libs/zimg-2.7.4:=[${MULTILIB_USEDEP}]
 	)
 	zlib? (
-		>=sys-libs/zlib-1.2.8-r1[${MULTILIB_USEDEP}]
+		>=virtual/zlib-1.2.8-r1[${MULTILIB_USEDEP}]
 	)
 	zvbi? (
 		>=media-libs/zvbi-0.2.35[${MULTILIB_USEDEP}]
