@@ -32,7 +32,7 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE="
 cpu cuda jax tensorflow test torch
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE="
 	cpu? (
@@ -58,7 +58,7 @@ RDEPEND="
 	$(python_gen_cond_dep '
 		>=dev-python/six-1.16.0[${PYTHON_USEDEP}]
 		>=dev-python/namex-0.0.8[${PYTHON_USEDEP}]
-		>=sys-libs/zlib-1.2.13
+		>=virtual/zlib-1.2.13
 		dev-python/absl-py[${PYTHON_USEDEP}]
 		dev-python/h5py[${PYTHON_USEDEP}]
 		dev-python/packaging[${PYTHON_USEDEP}]
