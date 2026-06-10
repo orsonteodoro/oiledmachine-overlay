@@ -26,7 +26,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="
 +curl +fftw gimp2 gimp3 lto openmp qt5 qt6 standalone
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	?? (
@@ -61,7 +61,7 @@ QT6_DEPS="
 COMMON_DEPEND="
 	media-libs/libpng
 	media-gfx/gmic[fftw,png,X]
-	sys-libs/zlib
+	virtual/zlib
 	x11-libs/libX11
 	curl? (
 		net-misc/curl
