@@ -85,13 +85,13 @@ LICENSE="
 # The distro's GPL-3+ license template does not contain all rights reserved.
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="0/${ROCM_SLOT}"
-IUSE="ebuild_revision_11"
+IUSE="ebuild_revision_12"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
 RDEPEND="
 	${PYTHON_DEPS}
-	>=sys-libs/zlib-1.1.4
+	>=virtual/zlib-1.1.4
 	app-arch/xz-utils
 	app-arch/zstd
 	dev-libs/expat
