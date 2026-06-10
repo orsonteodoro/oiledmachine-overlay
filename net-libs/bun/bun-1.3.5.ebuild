@@ -191,7 +191,7 @@ IUSE+="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_X86[@]}
 clang lto -telemetry
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	clang
@@ -261,7 +261,7 @@ RDEPEND+="
 	dev-libs/libxml2
 	dev-libs/openssl
 	dev-vcs/git
-	sys-libs/zlib
+	virtual/zlib
 "
 DEPEND+="
 	${RDEPEND}
