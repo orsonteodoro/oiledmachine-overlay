@@ -57,7 +57,7 @@ ${IUSE_OPENMPI_FABRICS}
 ${IUSE_OPENMPI_RM}
 ${ROCM_IUSE[@]}
 cma cuda custom-kernel fortran hcoll ipv6 peruse rocm romio system-ucx ucx valgrind
-ebuild_revision_5
+ebuild_revision_6
 "
 
 gen_rocm_iuse_required_use() {
@@ -99,7 +99,7 @@ RDEPEND="
 	!sys-cluster/prrte
 	>=dev-libs/libevent-2.1.12:=[threads(+)]
 	>=sys-apps/hwloc-2.7.1:=
-	>=sys-libs/zlib-1.2.8-r1
+	>=virtual/zlib-1.2.8-r1
 	sys-cluster/pmix:=
 	cma? (
 		>=sys-libs/glibc-2.15
