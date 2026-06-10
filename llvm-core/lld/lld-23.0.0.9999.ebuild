@@ -47,7 +47,7 @@ IUSE+="
 ${LLVM_EBUILDS_LLVM23_REVISION}
 +debug default-full-relro default-no-relro +default-partial-relro hardened
 hardened-compat test zstd
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE+="
 	^^ (
@@ -103,7 +103,7 @@ REQUIRED_USE+="
 "
 RDEPEND="
 	!llvm-core/lld:0
-	sys-libs/zlib:=
+	virtual/zlib:=
 	zstd? (
 		app-arch/zstd:=
 	)
