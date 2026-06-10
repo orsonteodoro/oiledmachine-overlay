@@ -79,7 +79,7 @@ ${PATENT_STATUS_IUSE[@]}
 +jpeg2k +jpegxl +lcms +matio -nifti +openexr +openslide +orc
 +pango +png +poppler +python +ppm -spng +svg test +tiff
 +vala +webp +zlib
-ebuild_revision_50
+ebuild_revision_51
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -287,7 +287,7 @@ RDEPEND+="
 		>=media-libs/libwebp-1.2.2[${MULTILIB_USEDEP}]
 	)
 	zlib? (
-		>=sys-libs/zlib-1.2.11[${MULTILIB_USEDEP}]
+		>=virtual/zlib-1.2.11[${MULTILIB_USEDEP}]
 	)
 "
 PATCHES=(
