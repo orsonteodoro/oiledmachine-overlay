@@ -445,7 +445,7 @@ ${HIP_SLOTS2[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 alt-ssl -big-endian +clang cuda keras3 models -mpi +python rocm
 system-flatbuffers test +xla
-ebuild_revision_33
+ebuild_revision_34
 "
 gen_required_use_cuda_targets() {
 	local x
@@ -687,7 +687,7 @@ RDEPEND="
 	>=net-misc/curl-8.11.0
 	>=sys-apps/hwloc-2.7.1
 	sys-apps/hwloc:=
-	>=sys-libs/zlib-1.3.1
+	>=virtual/zlib-1.3.1
 	|| (
 		$(gen_protobuf_rdepend)
 	)
