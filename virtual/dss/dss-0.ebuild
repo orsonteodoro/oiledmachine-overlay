@@ -611,9 +611,9 @@ LOGGER_DEPENDS="
 KERNEL_DEPENDS="
 	gentoo-sources? (
 		|| (
-			~sys-kernel/gentoo-sources-7.0.11
-			~sys-kernel/gentoo-sources-6.18.34
-			~sys-kernel/gentoo-sources-6.12.92
+			~sys-kernel/gentoo-sources-7.0.12
+			~sys-kernel/gentoo-sources-6.18.35
+			~sys-kernel/gentoo-sources-6.12.93
 		)
 		sys-kernel/gentoo-sources:=
 	)
@@ -625,17 +625,17 @@ KERNEL_DEPENDS="
 	)
 	ot-sources? (
 		|| (
-			~sys-kernel/ot-sources-7.0.11
-			~sys-kernel/ot-sources-6.18.34
-			~sys-kernel/ot-sources-6.12.92
+			~sys-kernel/ot-sources-7.0.12
+			~sys-kernel/ot-sources-6.18.35
+			~sys-kernel/ot-sources-6.12.93
 		)
 		sys-kernel/ot-sources:=
 	)
 	vanilla-sources? (
 		|| (
-			~sys-kernel/vanilla-sources-7.0.11
-			~sys-kernel/vanilla-sources-6.18.34
-			~sys-kernel/vanilla-sources-6.12.92
+			~sys-kernel/vanilla-sources-7.0.12
+			~sys-kernel/vanilla-sources-6.18.35
+			~sys-kernel/vanilla-sources-6.12.93
 		)
 		sys-kernel/vanilla-sources:=
 	)
