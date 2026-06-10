@@ -89,7 +89,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 box2d bullet clang d3d ds doc externalfuncs +freetype gles2 gles3 gme
 gnome gtk2 headless joystick kde network +openal
 +opengl +png sdl2 sound test threads vulkan widgets +X xrandr xtest
-ebuild_revision_13
+ebuild_revision_14
 "
 REQUIRED_USE_PLATFORMS="
 	|| (
@@ -227,7 +227,7 @@ RDEPEND+="
 	dev-libs/pugixml:=
 	>=media-libs/harfbuzz-8.2.1
 	>=net-dns/c-ares-1.20.1
-	>=sys-libs/zlib-${ZLIB_PV}
+	>=virtual/zlib-${ZLIB_PV}
 	virtual/jpeg
 	virtual/libc
 	|| (
@@ -293,7 +293,7 @@ RDEPEND+="
 	)
 	png? (
 		>=media-libs/libpng-${LIBPNG_PV}
-		>=sys-libs/zlib-${ZLIB_PV}
+		>=virtual/zlib-${ZLIB_PV}
 	)
 	sdl2? (
 		>=media-libs/libsdl2-${LIBSDL2_PV}[joystick?,sound?,threads(+)?,vulkan?]
@@ -305,7 +305,7 @@ RDEPEND+="
 		)
 	)
 	X? (
-		>=sys-libs/zlib-${ZLIB_PV}
+		>=virtual/zlib-${ZLIB_PV}
 		>=sys-process/procps-4.0.4
 		>=x11-libs/libX11-${LIBX11_PV}
 		>=x11-libs/libXinerama-1.1.4
