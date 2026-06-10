@@ -47,7 +47,7 @@ LICENSE="
 SLOT="0"
 IUSE="
 debug +mimalloc -system-mimalloc -system-tbb test
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	kernel_Darwin? (
@@ -64,8 +64,8 @@ RDEPEND="
 	app-arch/zstd:=
 	>=dev-libs/blake3-1.6.1
 	dev-libs/blake3:=
-	>=sys-libs/zlib-1.3
-	sys-libs/zlib:=
+	>=virtual/zlib-1.3
+	virtual/zlib:=
 	system-mimalloc? (
 		>=dev-libs/mimalloc-2.2.2
 		dev-libs/mimalloc:=
