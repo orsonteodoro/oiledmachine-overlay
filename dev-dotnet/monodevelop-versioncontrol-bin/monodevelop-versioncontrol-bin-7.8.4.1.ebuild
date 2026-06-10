@@ -41,7 +41,7 @@ RDEPEND="
 	>=net-libs/libssh-1.7.0
 	>=net-misc/curl-3[gnutls]
 	>=sys-libs/glibc-2.27
-	>=sys-libs/zlib-1.1.4
+	>=virtual/zlib-1.1.4
 	>=dev-lang/mono-4
 	=dev-libs/openssl-1.0*:0
 	dev-libs/apr
