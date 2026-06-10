@@ -76,7 +76,10 @@ RDEPEND="
 	mpi? ( virtual/mpi[${MULTILIB_USEDEP},threads] )
 	python? (
 		${PYTHON_DEPS}
-		numpy? ( virtual/numpy:=[${PYTHON_USEDEP}] )
+		numpy? (
+			dev-python/numpy:=[${PYTHON_USEDEP}]
+			virtual/numpy:=[${PYTHON_USEDEP}]
+		)
 	)
 	zlib? ( virtual/zlib:=[${MULTILIB_USEDEP}] )
 	zstd? ( app-arch/zstd:=[${MULTILIB_USEDEP}] )"
