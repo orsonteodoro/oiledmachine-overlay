@@ -51,7 +51,7 @@ IUSE+=" mbedtls +openssl +pop3 +psl +quic rtmp rustls samba sasl-scram +smtp ssh
 IUSE+=" telnet +tftp +websockets zstd"
 # These select the default tls implementation / which quic impl to use
 IUSE+=" +curl_quic_openssl curl_quic_ngtcp2 curl_ssl_gnutls curl_ssl_mbedtls +curl_ssl_openssl curl_ssl_rustls"
-IUSE+=" ebuild_revision_8"
+IUSE+=" ebuild_revision_9"
 RESTRICT="!test? ( test )"
 
 # HTTPS RR is technically usable with the threaded resolver, but it still uses c-ares to
@@ -117,7 +117,7 @@ REQUIRED_USE="
 # - https://github.com/curl/curl/pull/18820 (Deprecate OpenSSL QUIC support)
 # - https://github.com/curl/curl/issues/18336 (curl w/ OpenSSL QUIC fails to fetch Google.com)
 RDEPEND="
-	>=sys-libs/zlib-1.2.5[${MULTILIB_USEDEP}]
+	>=virtual/zlib-1.2.5[${MULTILIB_USEDEP}]
 	adns? ( >=net-dns/c-ares-1.16.0:=[${MULTILIB_USEDEP}] )
 	brotli? ( app-arch/brotli:=[${MULTILIB_USEDEP}] )
 	http2? ( >=net-libs/nghttp2-1.15.0:=[${MULTILIB_USEDEP}] )
