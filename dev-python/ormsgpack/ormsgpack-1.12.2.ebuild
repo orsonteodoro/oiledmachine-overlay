@@ -86,8 +86,8 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/maturin-1.0[${PYTHON_USEDEP}]
-	<dev-python/maturin-2.0[${PYTHON_USEDEP}]
+	>=dev-util/maturin-1.0[${PYTHON_USEDEP}]
+	<dev-util/maturin-2.0[${PYTHON_USEDEP}]
 	dev? (
 		dev-python/msgpack[${PYTHON_USEDEP}]
 		$(python_gen_cond_dep '

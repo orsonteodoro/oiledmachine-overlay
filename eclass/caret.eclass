@@ -110,5 +110,7 @@ die ">= 5 periods is not supported for the ^ (caret) implementation."
 		t2="${t//\$\{PYTHON_USEDEP\}/${PYTHON_USEDEP}}"
 		output="${t2//\$\{PYTHON_SINGLE_USEDEP\}/${PYTHON_SINGLE_USEDEP}}"
 	fi
+#einfo "${output}"
+
 	echo "${output}"
 }
