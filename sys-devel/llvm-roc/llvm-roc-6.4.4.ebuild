@@ -109,7 +109,7 @@ IUSE+="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
 bolt flang -mlir profile
-ebuild_revision_55
+ebuild_revision_56
 "
 REQUIRED_USE="
 	^^ (
@@ -124,7 +124,7 @@ RDEPEND="
 	sys-devel/llvm-roc-symlinks:${SLOT}
 	sys-devel/llvm-roc-symlinks:=
 	sys-libs/ncurses:=
-	sys-libs/zlib
+	virtual/zlib
 	virtual/cblas
 	asan? (
 		dev-libs/rocm-comgr:${SLOT}
