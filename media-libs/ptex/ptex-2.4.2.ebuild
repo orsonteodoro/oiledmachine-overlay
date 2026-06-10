@@ -28,10 +28,10 @@ SLOT="0"
 KEYWORDS="amd64 ~arm ~arm64 ~riscv x86"
 IUSE="
 static-libs
-ebuild_revision_9
+ebuild_revision_10
 "
 
-RDEPEND="sys-libs/zlib"
+RDEPEND="virtual/zlib"
 DEPEND="${RDEPEND}"
 BDEPEND="app-text/doxygen"
 
