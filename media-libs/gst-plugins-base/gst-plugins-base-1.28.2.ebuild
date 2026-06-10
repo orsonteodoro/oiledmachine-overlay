@@ -56,7 +56,7 @@ LICENSE="GPL-2+ LGPL-2+"
 IUSE="
 alsa +egl gbm +gles2 +introspection ivorbis nls +ogg opengl +orc +pango theora
 +vorbis wayland +X
-ebuild_revision_27
+ebuild_revision_28
 "
 GL_REQUIRED_USE="
 	|| (
@@ -131,7 +131,7 @@ RDEPEND="
 	>=dev-libs/glib-2.64.0:2[${MULTILIB_USEDEP}]
 	dev-libs/glib:=
 	app-text/iso-codes
-	sys-libs/zlib[${MULTILIB_USEDEP}]
+	virtual/zlib[${MULTILIB_USEDEP}]
 	alsa? (
 		>=media-libs/alsa-lib-0.9.1[${MULTILIB_USEDEP}]
 	)
