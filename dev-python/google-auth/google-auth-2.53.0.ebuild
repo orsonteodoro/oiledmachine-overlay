@@ -22,8 +22,7 @@ EPYTEST_IGNORE=(
 	# disable them to unblock removal of that package
 	"tests/test__oauth2client.py"
 )
-PYPI_NO_NORMALIZE=1
-PYTHON_COMPAT=( "python3_"{11..14} )
+PYTHON_COMPAT=( "python3_"{10..14} )
 
 _PROTOBUF_PYTHON=(
 	protobuf_python_3
@@ -38,9 +37,9 @@ _PROTOBUF_CPP=(
 	protobuf_cpp_6
 )
 
-CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical network sensitive-data untrusted-data"
 
-inherit abseil-cpp cflags-hardened distutils-r1 grpc protobuf pypi re2
+inherit abseil-cpp cflags-hardened distutils-r1 grpc protobuf re2
 
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 S="${WORKDIR}/google-cloud-python-google-auth-v${PV}/packages/google-auth"
