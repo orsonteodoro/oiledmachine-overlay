@@ -21,7 +21,7 @@ IUSE="
 +X apidoc avif bzip2 cpu_flags_x86_mmx cpu_flags_x86_sse2 debug
 eps +filters +gif +jpeg jpeg2k jpegxl heif lzma mp3 packing +png
 raw +shm static-libs svg +text +tools +tiff +webp y4m +zlib
-ebuild_revision_19
+ebuild_revision_20
 "
 
 REQUIRED_USE="shm? ( X )"
@@ -46,11 +46,11 @@ RDEPEND="
 	png? ( >=media-libs/libpng-1.6.10:0=[${MULTILIB_USEDEP}] )
 	raw? ( media-libs/libraw:=[${MULTILIB_USEDEP}] )
 	svg? ( >=gnome-base/librsvg-2.46.0:=[${MULTILIB_USEDEP}] )
-	tools? ( sys-libs/zlib[${MULTILIB_USEDEP}] )
+	tools? ( virtual/zlib[${MULTILIB_USEDEP}] )
 	tiff? ( >=media-libs/tiff-4.0.4:=[${MULTILIB_USEDEP}] )
 	webp? ( media-libs/libwebp:=[${MULTILIB_USEDEP}] )
 	y4m? ( media-libs/libyuv:= )
-	zlib? ( sys-libs/zlib[${MULTILIB_USEDEP}] )
+	zlib? ( virtual/zlib[${MULTILIB_USEDEP}] )
 	!<media-plugins/imlib2_loaders-${PV}
 "
 DEPEND="${RDEPEND}
