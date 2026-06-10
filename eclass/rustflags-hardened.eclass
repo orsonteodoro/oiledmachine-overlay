@@ -247,6 +247,9 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # cf-protection mutually exclusive flags.
 #
 # Valid values:
+# AFA - Arbitrary File Access
+# AFR - Arbitrary File Read
+# AFW - Arbitrary File Write
 # BO - Buffer Overflow
 # BOR - Buffer Overread
 # BU - Buffer Underflow
@@ -259,6 +262,7 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # HO - Heap Overflow
 # ID - Information Disclosure
 # IO - Integer Overflow
+# ISD - Insecure Deserialization
 # IU - Integer Underflow
 # IL - Infinite Loop
 # MC - Memory Corruption
@@ -271,6 +275,7 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # RC - Race Condition
 # REDOS - Regular Expression Denial of Service
 # SO - Stack Overflow
+# SYM - Symlink Attack
 # TA - Timing Attack
 # TC - Type Confusion
 # UAF - Use After Free

@@ -324,6 +324,9 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # cf-protection mutually exclusive flags.
 #
 # Valid values:
+# AFA - Arbitrary File Access
+# AFR - Arbitrary File Read
+# AFW - Arbitrary File Write
 # BO - Buffer Overflow
 # BOR - Buffer Overread
 # BU - Buffer Underflow
@@ -337,6 +340,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # HO - Heap Overflow
 # ID - Information Disclosure
 # IO - Integer Overflow
+# ISD - Insecure Deserialization
 # IU - Integer Underflow
 # IL - Infinite Loop
 # MC - Memory Corruption
@@ -349,6 +353,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # RC - Race Condition
 # REDOS - Regular Expression Denial of Service
 # SO - Stack Overflow
+# SYM - Symlink Attack
 # TA - Timing Attack
 # TC - Type Confusion
 # UAF - Use After Free

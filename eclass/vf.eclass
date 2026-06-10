@@ -114,6 +114,15 @@ einfo "AEITW = Actively Exploited In The Wild" # Most formal
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ACP"($|" "|";"|",") ]] ; then
 einfo "ACP = Attack Chain Primitive"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AFA"($|" "|";"|",") ]] ; then
+einfo "AFA = Arbitrary File Access"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AFR"($|" "|";"|",") ]] ; then
+einfo "AFR = Arbitrary File Read"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AFW"($|" "|";"|",") ]] ; then
+einfo "AFW = Arbitrary File Write"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AR"($|" "|";"|",") ]] ; then
 einfo "AR = Arbitrary Read"
 		fi
@@ -252,6 +261,9 @@ einfo "ICP = Insecure Coding Practices"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ID"($|" "|";"|",") ]] ; then
 # Same as C
 einfo "ID = Information Disclosure"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ISD"($|" "|";"|",") ]] ; then
+einfo "ISD = Insecure Deserialization"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("IE")($|" "|";"|",") ]] ; then
 einfo "IE = Insufficient Entropy"
@@ -514,6 +526,9 @@ einfo "SQLI = SQL Injection"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SUF"($|" "|";"|",") ]] ; then
 einfo "SUF = Shift Underflow"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SYM"($|" "|";"|",") ]] ; then
+einfo "SYM = Symlink Attack"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"TC"($|" "|";"|",") ]] ; then
 einfo "TC = Type Confusion"
