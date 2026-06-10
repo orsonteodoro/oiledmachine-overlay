@@ -127,12 +127,12 @@ RDEPEND+="
 	graphics? (
 		>=media-libs/freetype-2.10.1:2[${MULTILIB_USEDEP}]
 		elibc_bionic? (
-			sys-libs/zlib[${MULTILIB_USEDEP}]
+			virtual/zlib[${MULTILIB_USEDEP}]
 		)
 		elibc_Darwin? (
 			ios? (
 				app-arch/bzip2[${MULTILIB_USEDEP}]
-				sys-libs/zlib[${MULTILIB_USEDEP}]
+				virtual/zlib[${MULTILIB_USEDEP}]
 			)
 		)
 	)
