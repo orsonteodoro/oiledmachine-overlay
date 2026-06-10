@@ -166,21 +166,24 @@ C++ defaults
 
 Python defaults
 
-| Subject                                    | Answer                                                                                                |
-| ---                                        | ---                                                                                                   |
-| Default Python                             | python3_12                                                                                            |
-| Acceptable rolling Python slots            | python3_14                                                                                            |
-| Acceptable LTS Python slots                | python3_{11..13}                                                                                      |
-| Acceptable multislot Python                | python3_{11..14}                                                                                      |
-| Acceptable single slot Python              | python3_{11..14}                                                                                      |
-| Acceptable slot paring                     | The Python app slot must pair with same Python slot for dependencies down to the leaf packages        |
-| Are binary packages allowed?               | Allowed with restrictions but only if that is the only option or difficult to package                 |
-| Default Python interpreter                 | CPython                                                                                               |
-| Python slot precedence                     | App's setup.py, CI's .github/*.yaml, Dockerfile, lib's setup.py, CI image default Python slot         |
-| pypy3_11 support                           | Y if specified in setup.py                                                                            |
-| Must use slotted Cython                    | Y, forcing untested newer versions may result in undefined behavior or miscompilation vulnerabilities |
-| Hacks are allowed? (using Cython over Zig) | If the package uses security-critical assumptions or processes untrusted data, it is disallowed.      |
-| Is Python freethreading allowed?           | N for security-critical packages.                                                                     |
+| Subject                                       | Answer                                                                                                |
+| ---                                           | ---                                                                                                   |
+| Default Python                                | python3_12                                                                                            |
+| Acceptable rolling Python slots               | python3_14                                                                                            |
+| Acceptable LTS Python slots                   | python3_{11..13}                                                                                      |
+| Acceptable multislot Python                   | python3_{11..14}                                                                                      |
+| Acceptable single slot Python                 | python3_{11..14}                                                                                      |
+| Acceptable slot paring                        | The Python app slot must pair with same Python slot for dependencies down to the leaf packages        |
+| Are binary packages allowed?                  | Allowed with restrictions but only if that is the only option or difficult to package                 |
+| Default Python interpreter                    | CPython                                                                                               |
+| Python slot precedence                        | App's setup.py, CI's .github/*.yaml, Dockerfile, lib's setup.py, CI image default Python slot         |
+| pypy3_11 support                              | Y if specified in setup.py                                                                            |
+| Must use slotted Cython                       | Y, forcing untested newer versions may result in undefined behavior or miscompilation vulnerabilities |
+| Hacks are allowed? (using Cython over Zig)    | If the package uses security-critical assumptions or processes untrusted data, it is disallowed.      |
+| Is Python freethreading allowed?              | N for security-critical packages.                                                                     |
+| Existing naming precedence -- distro or PyPi? | Distro to prevent emerge issues                                                                       |
+| Naming rules distro or PyPi for nonexisting packages? | From PyPi header to simplify conversion                                                       |
+| Extras -- convert to conditional USE flags, make optfeature, or add deps unconditionally without USE flag? | Convert to conditional USE flag to allow users to consent to the attack surface and for USE flag consistency like non Python |
 
 Rust defaults
 
@@ -308,6 +311,7 @@ Security QA
 | Hacks are allowed? (using a degraded compiler, using Cython over Zig) | If the package uses security-critical assumptions or processes untrusted data, it is disallowed.                                          |
 | X11 banned?                                                   | Y for security-critical and because Wayland has greater market share                                                                              |
 | Is Python freethreading allowed?                              | N for security-critical packages.  It may introduce race condition or TOCTOU vulnerabilities.  TOCTOU may lead to privilege escalation.           |
+| Security features should be deferred to optfeature?           | N, optfeature is less consequential but USE flags are serious consequential                                                                       |
 
 Userspace mitigation comparison
 
