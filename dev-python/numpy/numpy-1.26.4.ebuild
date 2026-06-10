@@ -100,7 +100,7 @@ BDEPEND="
 		dev-python/pytest-xdist[${PYTHON_USEDEP}]
 		~dev-python/mypy-1.5.1[${PYTHON_USEDEP}]
 		>=dev-python/typing-extensions-4.2.0[${PYTHON_USEDEP}]
-		~dev-python/charset-normalizer[${PYTHON_USEDEP}]
+		dev-python/charset-normalizer[${PYTHON_USEDEP}]
 	)
 "
 

@@ -96,7 +96,7 @@ BDEPEND="
 		~dev-python/pytest-cov-3.0.0[${PYTHON_USEDEP}]
 		~dev-python/mypy-0.981[${PYTHON_USEDEP}]
 		>=dev-python/typing-extensions-4.2.0[${PYTHON_USEDEP}]
-		~dev-python/charset-normalizer[${PYTHON_USEDEP}]
+		dev-python/charset-normalizer[${PYTHON_USEDEP}]
 	)
 "
 PATCHES=(

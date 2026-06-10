@@ -121,7 +121,7 @@ BDEPEND="
 		dev-build/ninja[${PYTHON_USEDEP}]
 		dev-python/pytest-xdist[${PYTHON_USEDEP}]
 		dev-python/pytest-timeout[${PYTHON_USEDEP}]
-		~dev-python/mypy~1.14.1[${PYTHON_USEDEP}]
+		~dev-python/mypy-1.14.1[${PYTHON_USEDEP}]
 		>=dev-python/typing-extensions-4.2.0[${PYTHON_USEDEP}]
 		dev-python/charset-normalizer[${PYTHON_USEDEP}]
 	)
