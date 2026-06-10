@@ -153,7 +153,7 @@ RDEPEND+="
 	dev-libs/libxslt
 	dev-libs/popt
 	sys-devel/gcc[openmp]
-	sys-libs/zlib
+	virtual/zlib
 	full? (
 		>=dev-python/extractcode-31.0.0[${PYTHON_USEDEP},full]
 		>=dev-python/typecode-30.0.0[${PYTHON_USEDEP},full]
