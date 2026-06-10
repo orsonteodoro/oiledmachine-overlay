@@ -8,7 +8,6 @@
   </maintainer>
   <upstream>
     <bugs-to>https://github.com/langchain-ai/langgraph/issues</bugs-to>
-    <changelog>https://github.com/langchain-ai/langgraph/blob/main/CHANGELOG</changelog>
     <remote-id type="github">langchain-ai/langgraph</remote-id>
     <remote-id type="pypi">langgraph-checkpoint</remote-id>
   </upstream>

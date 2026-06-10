@@ -19,7 +19,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 else
 	KEYWORDS="~amd64"
-	S="${WORKDIR}/${PN}-${PV}"
+	S="${WORKDIR}/${PN}-${PV}/libs/checkpoint"
 	SRC_URI="
 https://github.com/langchain-ai/langgraph/archive/refs/tags/checkpoint==${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -39,6 +39,7 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 dev lint test
+ebuild_revision_1
 "
 REQUIRED_USE="
 	dev? (

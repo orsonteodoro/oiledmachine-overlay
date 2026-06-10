@@ -14,7 +14,6 @@ S="${WORKDIR}/${PN}-${PV}"
 
 DESCRIPTION="A client library for accessing langfuse"
 HOMEPAGE="
-	https://github.com/rec/tdir
 	https://pypi.org/project/langfuse
 "
 LICENSE="
