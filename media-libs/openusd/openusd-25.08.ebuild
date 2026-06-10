@@ -89,7 +89,7 @@ IUSE+="
 -materialx -monolithic -opencolorio +opengl -openimageio -openvdb openexr -osl
 -ptex +python +safety-over-speed -static-libs +tutorials -test +tools +usdview
 -vulkan
-ebuild_revision_16
+ebuild_revision_17
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -154,7 +154,7 @@ gen_openexr_pairs() {
 
 # TODO experimental
 RDEPEND+="
-	>=sys-libs/zlib-1.2.11
+	>=virtual/zlib-1.2.11
 	>=dev-cpp/tbb-2021:${ONETBB_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-cpp/tbb:=
 	!python? (
