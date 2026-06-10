@@ -614,7 +614,7 @@ aqua +avif -bmalloc -cache-partitioning clang dash debug +doc -eme +flite
 +opengl openmp -seccomp +speech-synthesis -spell -system-malloc test thunder
 +variation-fonts wayland +webassembly -webdriver +webgl webm-eme -webrtc webvtt
 -webxr +woff2 +X
-ebuild_revision_39
+ebuild_revision_40
 "
 
 gen_gst_plugins_duse() {
@@ -917,8 +917,8 @@ RDEPEND+="
 	media-libs/libwebp:=
 	>=net-libs/libsoup-3.0.0:3.0[${MULTILIB_USEDEP},introspection?]
 	net-libs/libsoup:=
-	>=sys-libs/zlib-1.2.11:0[${MULTILIB_USEDEP}]
-	sys-libs/zlib:=
+	>=virtual/zlib-1.2.11:0[${MULTILIB_USEDEP}]
+	virtual/zlib:=
 	>=x11-libs/cairo-${CAIRO_PV}[${MULTILIB_USEDEP},X?]
 	x11-libs/cairo:=
 	sys-kernel/mitigate-id
@@ -2126,7 +2126,7 @@ verify_compiler_flags_hardening() {
 	"unconditional:media-libs/freetype:untrusted-data"
 	"unconditional:media-libs/harfbuzz:attack-surface-risk,untrusted-data,sensitive-data"		# PII
 	"unconditional:media-libs/libjpeg-turbo:sensitive-data,untrusted-data"				# PII
-	"unconditional:sys-libs/zlib:untrusted-data"
+	"unconditional:virtual/zlib:untrusted-data"
 	"unconditional:x11-libs/gtk+:sensitive-data"
 
 	"aom:media-plugins/gst-plugins-aom:sensitive-data,untrusted-data"				# PII
