@@ -41,7 +41,7 @@ RESTRICT="
 "
 SLOT="${LLVM_MAX_SLOT}/${PV}"
 IUSE="
-	ebuild_revision_3
+	ebuild_revision_4
 "
 REQUIRED_USE="
 "
@@ -54,7 +54,7 @@ RDEPEND="
 	dev-build/libtool
 	sys-libs/glibc
 	sys-libs/ncurses
-	sys-libs/zlib
+	virtual/zlib
 	virtual/libelf
 "
 DEPEND="
