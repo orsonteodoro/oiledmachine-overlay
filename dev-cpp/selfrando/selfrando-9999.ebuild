@@ -48,7 +48,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+=" doc test"
 CDEPEND="
-	>=sys-libs/zlib-1.2.11
+	>=virtual/zlib-1.2.11
 	sys-devel/gcc[cxx(+)]
 	virtual/libc
 "
