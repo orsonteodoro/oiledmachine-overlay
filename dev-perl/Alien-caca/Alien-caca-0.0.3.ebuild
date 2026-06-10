@@ -23,7 +23,7 @@ LICENSE="
 "
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE+=" system-libcaca ebuild_revision_5"
+IUSE+=" system-libcaca ebuild_revision_6"
 RESTRICT="mirror"
 PERL_PV="5.6"
 FILE_SHAREDIR_PV="1.3"
@@ -36,7 +36,7 @@ RDEPEND_LIBCACA+="
 	sys-devel/gcc
 	sys-libs/ncurses
 	sys-libs/slang
-	sys-libs/zlib
+	virtual/zlib
 	x11-libs/libX11
 	x11-libs/pango
 	virtual/libc
