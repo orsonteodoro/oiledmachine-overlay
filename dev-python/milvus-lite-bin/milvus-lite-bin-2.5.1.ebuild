@@ -35,7 +35,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND+="
 	>=dev-cpp/gflags-2.2.2
@@ -45,7 +45,7 @@ RDEPEND+="
 	>=sci-libs/openblas-0.3.27
 	>=sys-devel/gcc-9.3.0[cxx]
 	>=sys-libs/glibc-2.31
-	>=sys-libs/zlib-1.2.13
+	>=virtual/zlib-1.2.13
 	dev-python/tqdm[${PYTHON_USEDEP}]
 "
 DEPEND+="
