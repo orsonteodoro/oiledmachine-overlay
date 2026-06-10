@@ -37,7 +37,7 @@ SO_VERSION="29"
 SLOT="${SLOT_MAJOR}/${SO_VERSION}"
 IUSE="
 doc large-stack python test
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	python? (
@@ -50,7 +50,7 @@ RESTRICT="
 	)
 "
 RDEPEND="
-	sys-libs/zlib
+	virtual/zlib
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
