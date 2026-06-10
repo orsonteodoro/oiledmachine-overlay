@@ -26,12 +26,12 @@ KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390
 IUSE="
 	acl blake2 +bzip2 +e2fsprogs expat +iconv lz4 +lzma lzo nettle
 	static-libs test xattr +zstd
-	ebuild_revision_13
+	ebuild_revision_14
 "
 RESTRICT="!test? ( test )"
 
 RDEPEND="
-	sys-libs/zlib:=[${MULTILIB_USEDEP}]
+	virtual/zlib:=[${MULTILIB_USEDEP}]
 	acl? ( virtual/acl:=[${MULTILIB_USEDEP}] )
 	blake2? ( app-crypt/libb2:=[${MULTILIB_USEDEP}] )
 	bzip2? ( app-arch/bzip2:=[${MULTILIB_USEDEP}] )
