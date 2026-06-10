@@ -39,7 +39,7 @@ RDEPEND="
 	dev-qt/qtshadertools:=
 	media-libs/assimp[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	media-libs/assimp:=
-	sys-libs/zlib:=
+	virtual/zlib:=
 "
 DEPEND="
 	${RDEPEND}
