@@ -131,15 +131,8 @@ REQUIRED_USE+="
 #
 # Additional *DEPENDs versioning info:
 #
-# https://github.com/chromium/chromium/blob/147.0.7727.118/third_party/libpng/png.h#L288
-# https://github.com/chromium/chromium/blob/147.0.7727.118/third_party/zlib/zlib.h#L40
 # https://github.com/chromium/chromium/blob/147.0.7727.118/tools/clang/scripts/update.py#L42
 # https://chromium.googlesource.com/chromium/src.git/+/refs/tags/147.0.7727.118/third_party/
-
-# /var/tmp/portage/www-client/chromium-147.0.7727.118/work/chromium-147.0.7727.118/third_party/fontconfig/src/fontconfig/fontconfig.h L54 ; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-147.0.7727.118/work/chromium-147.0.7727.118/third_party/freetype/src/CMakeLists.txt	L165	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-147.0.7727.118/work/chromium-147.0.7727.118/third_party/harfbuzz-ng/src/configure.ac	L3	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-147.0.7727.118/work/chromium-147.0.7727.118/third_party/libdrm/src/meson.build		L24	; newer than generated_package_lists
 
 # gnome-keyring, vulkan-loader, gtkglext, libappindicator versioning from U 16.06
 
@@ -482,10 +475,6 @@ ewarn
 	libcxx-slot_verify
 	libstdcxx-slot_verify
 	verify_compiler_flags_hardening
-	if has_version "sys-libs/zlib-ng[-compat]" ; then
-eerror "You need sys-libs/zlib-ng[compat] for ${CATEGORY}/${PN}"
-		die
-	fi
 }
 
 get_uri_tarball() {
