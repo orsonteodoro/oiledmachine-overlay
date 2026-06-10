@@ -46,13 +46,13 @@ LICENSE="Apache-2.0"
 SLOT="0/$(ver_cut 1)" # .so version of libssl/libcrypto
 IUSE="
 +asm cpu_flags_x86_sse2 fips ktls +quic rfc3779 sctp static-libs test tls-compression vanilla weak-ssl-ciphers
-ebuild_revision_9
+ebuild_revision_10
 "
 RESTRICT="!test? ( test )"
 
 COMMON_DEPEND="
 	!<net-misc/openssh-9.2_p1-r3
-	tls-compression? ( >=sys-libs/zlib-1.2.8-r1[static-libs(+)?,${MULTILIB_USEDEP}] )
+	tls-compression? ( >=virtual/zlib-1.2.8-r1[static-libs(+)?,${MULTILIB_USEDEP}] )
 "
 BDEPEND+="
 	>=dev-lang/perl-5
