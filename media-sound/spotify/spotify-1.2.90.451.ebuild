@@ -516,7 +516,7 @@ ewarn
 	export EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 
 	if has_version "sys-libs/zlib-ng[-compat]" ; then
-eerror "sys-libs/zlib-ng[compat] is required for ${PN}"
+eerror "You need sys-libs/zlib-ng[compat] for ${PN}"
 		die
 	fi
 }
