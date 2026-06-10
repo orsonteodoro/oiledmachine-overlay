@@ -7,7 +7,7 @@ EAPI=8
 MY_PN="microsoft-authentication-library-for-python"
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{10..14} )
 
 inherit distutils-r1 pypi
 
@@ -15,7 +15,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="dev"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/AzureAD/microsoft-authentication-library-for-python.git"
-	FALLBACK_COMMIT="b92b4f18cb176231ae494639d24aeb19bd457d73" # Mar 11, 2025
+	FALLBACK_COMMIT="ebb980f1636e1b3a097ec6dbfd197fb88c5b9e7a" # May 29, 2026
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
 	inherit git-r3
@@ -40,19 +40,25 @@ LICENSE="
 # The distro's MIT license template does not contain the all rights reserved clause.
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" doc"
+IUSE+=" broker doc test"
+REQUIRED_USE="
+	doc? (
+		test
+	)
+"
 RDEPEND+="
-	(
-		>=dev-python/requests-2.0.0[${PYTHON_USEDEP}]
-		<dev-python/requests-3[${PYTHON_USEDEP}]
-	)
-	(
-		>=dev-python/pyjwt-1.0.0[${PYTHON_USEDEP},crypto(+)]
-		<dev-python/pyjwt-3[${PYTHON_USEDEP}]
-	)
-	(
-		>=dev-python/cryptography-2.5[${PYTHON_USEDEP}]
-		<dev-python/cryptography-47[${PYTHON_USEDEP}]
+	>=dev-python/requests-2.0.0[${PYTHON_USEDEP}]
+	<dev-python/requests-3[${PYTHON_USEDEP}]
+
+	>=dev-python/pyjwt-1.0.0[${PYTHON_USEDEP},crypto]
+	<dev-python/pyjwt-3[${PYTHON_USEDEP}]
+
+	>=dev-python/cryptography-2.5[${PYTHON_USEDEP}]
+	<dev-python/cryptography-51[${PYTHON_USEDEP}]
+
+	broker? (
+		>=dev-python/pymsalruntime-0.20[${PYTHON_USEDEP}]
+		<dev-python/pymsalruntime-0.21[${PYTHON_USEDEP}]
 	)
 "
 DEPEND+="
@@ -62,6 +68,24 @@ BDEPEND+="
 	doc? (
 		dev-python/furo[${PYTHON_USEDEP}]
 		dev-python/sphinx-paramlinks[${PYTHON_USEDEP}]
+	)
+	test? (
+		dev-python/pytest[${PYTHON_USEDEP}]
+
+		>=dev-python/python-dotenv-0.21[${PYTHON_USEDEP}]
+		<dev-python/python-dotenv-2[${PYTHON_USEDEP}]
+
+		>=dev-python/pytest-benchmark-4[${PYTHON_USEDEP}]
+		<dev-python/pytest-benchmark-5[${PYTHON_USEDEP}]
+
+		>=dev-python/perf_baseline-0.1[${PYTHON_USEDEP}]
+		<dev-python/perf_baseline-0.2[${PYTHON_USEDEP}]
+
+		>=dev-python/azure-identity-1.12[${PYTHON_USEDEP}]
+		<dev-python/azure-identity-2[${PYTHON_USEDEP}]
+
+		>=dev-python/azure-keyvault-secrets-4.6[${PYTHON_USEDEP}]
+		<dev-python/azure-keyvault-secrets-5[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "README.md" )
