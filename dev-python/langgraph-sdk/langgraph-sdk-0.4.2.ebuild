@@ -15,7 +15,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/rec/tdir.git"
 	FALLBACK_COMMIT="13f2ecc84bdf257af19b370a2f03a0f02d15674d" # Jun 1, 2026
 	IUSE+=" fallback-commit"
-	S="${WORKDIR}/${P}"
+	S="${WORKDIR}/${P}/libs/sdk-py"
 	inherit git-r3
 else
 	KEYWORDS="~amd64"

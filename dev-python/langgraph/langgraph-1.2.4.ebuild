@@ -15,7 +15,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/langchain-ai/langgraph.git"
 	FALLBACK_COMMIT="054a6f3d8b48d022a4881af3ba3dc0ddc3ac0690" # Jun 2, 2024
 	IUSE+=" fallback-commit"
-	S="${WORKDIR}/${P}"
+	S="${WORKDIR}/${P}/libs/langgraph"
 	inherit git-r3
 else
 	KEYWORDS="~amd64"
