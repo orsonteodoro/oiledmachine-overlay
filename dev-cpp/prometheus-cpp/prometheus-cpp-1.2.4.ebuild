@@ -30,7 +30,7 @@ RESTRICT="!test? ( test )"
 
 RDEPEND="
 	net-misc/curl
-	sys-libs/zlib
+	virtual/zlib
 	www-servers/civetweb[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx]
 "
 DEPEND="
