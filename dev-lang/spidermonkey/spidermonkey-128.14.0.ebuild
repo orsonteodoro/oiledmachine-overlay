@@ -103,7 +103,7 @@ IUSE="
 ${CPU_FLAGS_ARM[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang debug +jit lto rust-simd test
-ebuild_revision_35
+ebuild_revision_36
 "
 REQUIRED_USE="
 	rust-simd? (
@@ -160,7 +160,7 @@ RDEPEND="
 	>=dev-libs/nspr-4.35
 	sys-libs/readline:0
 	sys-libs/readline:=
-	>=sys-libs/zlib-1.2.13
+	>=virtual/zlib-1.2.13
 	sys-kernel/mitigate-id
 "
 DEPEND="
