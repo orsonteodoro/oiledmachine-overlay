@@ -30,28 +30,33 @@ LICENSE="
 	metapackage
 "
 RESTRICT="mirror"
-SLOT="0/U26" # Bump subslot to the latest LTS
-IUSE+=" "
+SLOT="0/2.4" # Bump subslot to the latest major-minor version
+IUSE+=" lts"
 RDEPEND+="
 	python_targets_python3_11? (
-		>=dev-python/numpy-1.21.5[${PYTHON_USEDEP}]
-		<dev-python/numpy-2[${PYTHON_USEDEP}]
+		=dev-python/numpy-1.21*[${PYTHON_USEDEP}]
+		dev-python/numpy:=
 	)
 	python_targets_python3_11? (
-		>=dev-python/numpy-1.24.2[${PYTHON_USEDEP}]
-		<dev-python/numpy-2[${PYTHON_USEDEP}]
+		=dev-python/numpy-1.24*[${PYTHON_USEDEP}]
+		dev-python/numpy:=
 	)
 	python_targets_python3_12? (
-		>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
-		<dev-python/numpy-2[${PYTHON_USEDEP}]
+		=dev-python/numpy-1.26*[${PYTHON_USEDEP}]
+		dev-python/numpy:=
 	)
 	python_targets_python3_13? (
-		>=dev-python/numpy-2.2.4[${PYTHON_USEDEP}]
-		<dev-python/numpy-3[${PYTHON_USEDEP}]
+		=dev-python/numpy-2.2*[${PYTHON_USEDEP}]
+		dev-python/numpy:=
 	)
 	python_targets_python3_14? (
-		>=dev-python/numpy-2.3.5[${PYTHON_USEDEP}]
-		<dev-python/numpy-3[${PYTHON_USEDEP}]
+		lts? (
+			=dev-python/numpy-2.3*[${PYTHON_USEDEP}]
+		)
+		!lts? (
+			=dev-python/numpy-2.4*[${PYTHON_USEDEP}]
+		)
+		dev-python/numpy:=
 	)
 	dev-python/numpy:=
 "
