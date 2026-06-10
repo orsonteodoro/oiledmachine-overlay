@@ -71,7 +71,7 @@ SLOT="${PV%%.*}"
 IUSE+="
 ${LLVM_TARGETS[@]}
 clang debug
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE="
 	clang
@@ -106,8 +106,8 @@ DEPEND+="
 	app-arch/zstd:=
 	dev-libs/libxml2[static-libs]
 	dev-libs/libxml2:=
-	>=sys-libs/zlib-1.2.11[static-libs]
-	sys-libs/zlib:=
+	>=virtual/zlib-1.2.11[static-libs]
+	virtual/zlib:=
 "
 BDEPEND+="
 	$(gen_depend_llvm)
