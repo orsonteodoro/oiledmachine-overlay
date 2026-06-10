@@ -57,7 +57,7 @@ ${PATENT_STATUS_IUSE[@]}
 +iconv jack javascript jpeg lcms libcaca +libmpv +lua network nvenc openal
 pipewire pulseaudio rubberband sdl selinux sixel sndio soc test tools +uchardet
 vaapi vapoursynth vdpau vulkan wayland xv zimg zlib
-ebuild_revision_21
+ebuild_revision_22
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -268,7 +268,7 @@ COMMON_DEPEND="
 		>=media-libs/zimg-2.9
 	)
 	zlib? (
-		sys-libs/zlib:=
+		virtual/zlib:=
 	)
 "
 RDEPEND="
