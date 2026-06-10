@@ -73,7 +73,7 @@ ${IUSE_OPENMPI_RM}
 ${ROCM_IUSE[@]}
 cma cuda custom-kernel cxx fortran hcoll ipv6 knem libompitrace peruse rocm romio
 system-ucx ucx valgrind xpmem
-ebuild_revision_5
+ebuild_revision_6
 "
 
 gen_rocm_iuse_required_use() {
@@ -127,7 +127,7 @@ RDEPEND="
 	!sys-cluster/pmix
 	>=dev-libs/libevent-2.0.22:=[${MULTILIB_USEDEP},threads(+)]
 	>=sys-apps/hwloc-2.0.2:=[${MULTILIB_USEDEP}]
-	>=sys-libs/zlib-1.2.8-r1[${MULTILIB_USEDEP}]
+	>=virtual/zlib-1.2.8-r1[${MULTILIB_USEDEP}]
 	dev-libs/libltdl:0[${MULTILIB_USEDEP}]
 	cma? (
 		>=sys-libs/glibc-2.15
