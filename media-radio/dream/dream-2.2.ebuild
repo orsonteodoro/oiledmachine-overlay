@@ -59,7 +59,7 @@ REQUIRED_USE="
 RDEPEND+="
 	net-libs/libpcap
 	sci-libs/fftw
-	sys-libs/zlib
+	virtual/zlib
 	virtual/patent-status[patent_status_nonfree=]
 	alsa? (
 		media-libs/alsa-lib
