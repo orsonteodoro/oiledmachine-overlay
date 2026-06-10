@@ -34,7 +34,7 @@ LICENSE="LGPL-2.1+"
 SLOT="2/${PV}"
 IUSE+="
 +aspell +hunspell +nuspell test +voikko -zemberek
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	|| (
@@ -52,7 +52,7 @@ RDEPEND+="
 	)
 	hunspell? (
 		>=app-text/hunspell-1.7.0:0=[${MULTILIB_USEDEP}]
-		>=sys-libs/zlib-1.2.11[${MULTILIB_USEDEP}]
+		>=virtual/zlib-1.2.11[${MULTILIB_USEDEP}]
 	)
 	nuspell? (
 		>=app-text/nuspell-5.1.0:0=
