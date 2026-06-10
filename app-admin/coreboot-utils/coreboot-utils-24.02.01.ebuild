@@ -15,7 +15,7 @@ LICENSE="GPL-2+ GPL-2"
 SLOT="0"
 DEPEND="
 	sys-apps/pciutils
-	sys-libs/zlib
+	virtual/zlib
 "
 RDEPEND="
 	${DEPEND}
