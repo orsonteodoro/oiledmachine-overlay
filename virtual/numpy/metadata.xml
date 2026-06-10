@@ -7,6 +7,9 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <use>
+    <flag name="lts">
+      Enable for binary compatible NumPy.
+    </flag>
     <flag name="python_targets_python3_10">
       Support U22/F35-F36 CI tested packages
     </flag>
