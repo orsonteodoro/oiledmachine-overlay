@@ -5,6 +5,8 @@ EAPI=8
 
 # U26
 
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="AFW BO CE DOS IL IDE NPD SL"
 CYTHON_SLOT="3.1"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="meson-python"
@@ -34,7 +36,7 @@ IUSE+="
 	${X86_FLAGS[*]/#/cpu_flags_x86_}
 "
 
-inherit cython distutils-r1 flag-o-matic fortran-2
+inherit cflags-hardened cython distutils-r1 flag-o-matic fortran-2
 
 SRC_URI+="
 https://github.com/numpy/numpy/archive/refs/tags/v${PV}.tar.gz
@@ -56,7 +58,7 @@ SLOT="0/2"
 # is barely supported anyway, see bug #914358.
 IUSE+="
 all big-endian ci ci32 +cpudetection doc index64 -lapack linter release test
-ebuild_revision_5
+ebuild_revision_7
 "
 REQUIRED_USE="
 	all? (
@@ -186,6 +188,7 @@ has_all_x86() {
 }
 
 python_configure_all() {
+	cflags-hardened_append
 	local cpu_baseline=()
 	local map flag
 	case ${ARCH} in

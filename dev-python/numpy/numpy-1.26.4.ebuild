@@ -5,6 +5,8 @@ EAPI=8
 
 # U24
 
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="AFW BO CE DOS IL IDE NPD SL"
 CYTHON_SLOT="3.0"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="meson-python"
@@ -13,7 +15,7 @@ FORTRAN_NEEDED="lapack"
 PYTHON_COMPAT=( "python3_12" ) # Forced for binary packages
 PYTHON_REQ_USE="threads(+)"
 
-inherit cython distutils-r1 flag-o-matic fortran-2 toolchain-funcs
+inherit cflags-hardened cython distutils-r1 flag-o-matic fortran-2 toolchain-funcs
 
 if [[ ${PV} != *_[rab]* ]] ; then
 	KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86"
@@ -36,7 +38,7 @@ SLOT="0"
 # is barely supported anyway, see bug #914358.
 IUSE="
 doc -lapack linter release test
-ebuild_revision_5
+ebuild_revision_7
 "
 
 RDEPEND="
@@ -129,6 +131,7 @@ python_configure() {
 }
 
 python_configure_all() {
+	cflags-hardened_append
 	DISTUTILS_ARGS=(
 		-Dallow-noblas=$(usex !lapack true false)
 		-Dblas=$(usev lapack cblas)

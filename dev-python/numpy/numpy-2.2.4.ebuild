@@ -5,6 +5,8 @@ EAPI=8
 
 # D13
 
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="AFW BO CE DOS IL IDE NPD SL"
 CYTHON_SLOT="3.0"
 EPYTEST_XDIST=1
 DISTUTILS_EXT=1
@@ -18,7 +20,7 @@ QA_CONFIG_IMPL_DECL_SKIP=(
 	"vrndq_f32"
 )
 
-inherit cython distutils-r1 flag-o-matic fortran-2
+inherit cflags-hardened cython distutils-r1 flag-o-matic fortran-2
 
 KEYWORDS="~alpha amd64 ~arm arm64 hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86"
 SRC_URI+="
@@ -39,7 +41,7 @@ SLOT="0/2"
 # is barely supported anyway, see bug #914358.
 IUSE="
 all big-endian ci ci32 doc -lapack linter release test
-ebuild_revision_5
+ebuild_revision_7
 "
 REQUIRED_USE="
 	all? (
@@ -96,7 +98,7 @@ BDEPEND="
 	)
 	linter? (
 		~dev-python/pycodestyle-2.12.1[${PYTHON_USEDEP}]
-		>=GitPython-3.1.30[${PYTHON_USEDEP}]
+		>=dev-python/gitpython-3.1.30[${PYTHON_USEDEP}]
 	)
 	release? (
 		dev-python/urllib3[${PYTHON_USEDEP}]
@@ -161,6 +163,7 @@ python_configure() {
 }
 
 python_configure_all() {
+	cflags-hardened_append
 	DISTUTILS_ARGS=(
 		-Dallow-noblas=$(usex !lapack true false)
 		-Dblas=$(usev lapack cblas)
