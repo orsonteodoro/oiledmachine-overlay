@@ -72,13 +72,13 @@ LICENSE="GPL-2"
 SLOT="0"
 IUSE="
 +curl cgi cvs doc keyring +gpg highlight +iconv +nls +pcre perforce +perl rust +safe-directory selinux subversion test tk +webdav xinetd
-ebuild_revision_9
+ebuild_revision_10
 "
 
 # Common to both DEPEND and RDEPEND
 DEPEND="
 	dev-libs/openssl:=
-	sys-libs/zlib
+	virtual/zlib
 	curl? (
 		net-misc/curl
 		webdav? ( dev-libs/expat )
