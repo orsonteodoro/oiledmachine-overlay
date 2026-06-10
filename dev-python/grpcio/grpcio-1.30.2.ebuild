@@ -52,7 +52,7 @@ SLOT="${GRPC_SLOT}/"$(ver_cut "1-2" "${PV}") # Use wrapper for PYTHONPATH
 IUSE+="
 ${_CXX_STANDARD[@]}
 doc protobuf
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE="
 	^^ (
@@ -71,8 +71,8 @@ RDEPEND+="
 	>=dev-python/six-1.5.2[${PYTHON_USEDEP}]
 	>=net-dns/c-ares-1.15.0
 	net-dns/c-ares:=
-	>=sys-libs/zlib-1.2.11
-	sys-libs/zlib:=
+	>=virtual/zlib-1.2.11
+	virtual/zlib:=
 "
 DEPEND+="
 	${RDEPEND}
