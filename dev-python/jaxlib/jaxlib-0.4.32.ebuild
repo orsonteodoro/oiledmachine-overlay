@@ -374,7 +374,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${CPU_FLAGS_X86_64[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang cpu cuda debug rocm rocm_6_4
-ebuild_revision_31
+ebuild_revision_32
 "
 # We don't add tpu because licensing issue with libtpu_nightly.
 
@@ -551,7 +551,7 @@ RDEPEND+="
 	>=app-arch/snappy-1.1.10[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/double-conversion-3.2.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/nsync-1.25.0
-	>=sys-libs/zlib-1.2.13
+	>=virtual/zlib-1.2.13
 	net-libs/grpc:3/1.51[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	net-libs/grpc:=
 	virtual/jre:${JAVA_SLOT}
