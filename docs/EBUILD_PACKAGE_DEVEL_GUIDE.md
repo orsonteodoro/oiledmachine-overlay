@@ -311,7 +311,7 @@ Security QA
 | Hacks are allowed? (using a degraded compiler, using Cython over Zig) | If the package uses security-critical assumptions or processes untrusted data, it is disallowed.                                          |
 | X11 banned?                                                   | Y for security-critical and because Wayland has greater market share                                                                              |
 | Is Python freethreading allowed?                              | N for security-critical packages.  It may introduce race condition or TOCTOU vulnerabilities.  TOCTOU may lead to privilege escalation.           |
-| Security features should be deferred to optfeature?           | N, optfeature is less consequential but USE flags are serious consequential                                                                       |
+| Security features should be deferred to optfeature?           | N, optfeature is less consequential but USE flags are serious consequential.  Optfeature should not be abused to secretly weaken the security.    |
 
 Userspace mitigation comparison
 
