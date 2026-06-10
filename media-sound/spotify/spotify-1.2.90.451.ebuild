@@ -53,7 +53,6 @@ EAPI=8
 # For vendored Chromium third party *DEPENDs versioning see:
 #
 # https://github.com/chromium/chromium/blob/146.0.7680.179/third_party/fontconfig/README.chromium#L3
-# https://github.com/chromium/chromium/blob/146.0.7680.179/third_party/zlib/zlib.h#L40
 #
 # Versions only obtainable through tarball:
 #
@@ -201,7 +200,7 @@ RESTRICT="binchecks mirror strip"
 SLOT="0/${DEFAULT_CONFIGURATION}"
 IUSE+="
 emoji ffmpeg firejail bluetooth libnotify pulseaudio vaapi wayland zenity +X
-ebuild_revision_4
+ebuild_revision_5
 "
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
@@ -362,7 +361,6 @@ CHROMIUM_RDEPEND="
 	>=sys-devel/gcc-${GCC_PV}[cxx(+)]
 	>=x11-libs/pango-1.46.2
 	>=x11-libs/pixman-0.40.0
-	>=virtual/zlib-1.3
 	X? (
 		>=x11-libs/libX11-1.7.2
 		>=x11-libs/libXau-1.0.9
@@ -379,7 +377,6 @@ CHROMIUM_RDEPEND="
 		>=x11-libs/libxcb-1.14
 	)
 "
-# Use zlib from vendored lists for versioning.
 
 CEFCLIENT_RDEPEND_NOT_LISTED="
 	>=x11-libs/gtk+-${GTK3_PV}:3[wayland?,X?]
@@ -514,11 +511,6 @@ ewarn
 		sandbox-changes_no_network_sandbox "To download from a life source and verify public repository key"
 	fi
 	export EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-
-	if has_version "sys-libs/zlib-ng[-compat]" ; then
-eerror "You need sys-libs/zlib-ng[compat] for ${PN}"
-		die
-	fi
 }
 
 verify_pubkey() {
