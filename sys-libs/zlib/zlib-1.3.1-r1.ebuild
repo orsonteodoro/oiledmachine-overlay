@@ -75,7 +75,7 @@ SLOT="0/1" # subslot = SONAME
 IUSE="
 ${_TRAINERS[@]}
 minizip minizip-utils pgo static-libs
-ebuild_revision_29
+ebuild_revision_30
 "
 REQUIRED_USE="
 	pgo? (
@@ -187,7 +187,7 @@ BDEPEND+="
 # See #309623 for libxml2
 RDEPEND+="
 	!<dev-libs/libxml2-2.7.7
-	!sys-libs/zlib-ng[compat]
+	!virtual/zlib-ng[compat]
 "
 DEPEND+="
 	${RDEPEND}
