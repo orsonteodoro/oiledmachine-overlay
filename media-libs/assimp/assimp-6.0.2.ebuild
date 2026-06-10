@@ -46,10 +46,10 @@ RESTRICT="
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
 samples static-libs test
-ebuild_revision_20
+ebuild_revision_21
 "
 RDEPEND="
-	sys-libs/zlib[${MULTILIB_USEDEP},minizip]
+	virtual/zlib[${MULTILIB_USEDEP},minizip]
 	samples? (
 		media-libs/freeglut[${MULTILIB_USEDEP}]
 		virtual/opengl[${MULTILIB_USEDEP}]
