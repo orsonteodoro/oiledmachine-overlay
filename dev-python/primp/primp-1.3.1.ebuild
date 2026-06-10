@@ -6,14 +6,14 @@ EAPI=8
 
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="maturin"
-PYTHON_COMPAT=( "python3_"{10..13} )
+PYTHON_COMPAT=( "python3_"{10..14} "pypy3_11" )
+RUSTFLAGS_HARDENED_USE_CASES="security-critical network untrusted-data"
 
-RUST_MAX_VER="1.91.1"
-RUST_MIN_VER="1.91.1" # LLVM 21.1
+RUST_MAX_VER="1.95.0"
+RUST_MIN_VER="1.95.0" # LLVM 22.1
 
 DISABLED_CRATES="
-primp-1.2.3
-primp-python-1.2.3
+primp-python-1.3.1
 rustls-test-0.1.0
 "
 
@@ -32,7 +32,7 @@ argh-0.1.19
 argh_derive-0.1.19
 argh_shared-0.1.19
 asn1-rs-0.6.2
-asn1-rs-0.7.1
+asn1-rs-0.7.2
 asn1-rs-derive-0.5.1
 asn1-rs-derive-0.6.0
 asn1-rs-impl-0.2.0
@@ -40,18 +40,18 @@ async-compression-0.4.42
 async-trait-0.1.89
 atomic-waker-1.1.2
 autocfg-1.5.0
-aws-lc-rs-1.16.3
-aws-lc-sys-0.40.0
+aws-lc-rs-1.17.0
+aws-lc-sys-0.41.0
 base64-0.22.1
 bencher-0.1.5
 bitflags-2.11.1
+bit-vec-0.9.1
 brotli-8.0.2
 brotli-decompressor-5.0.0
 bumpalo-3.20.2
 bytes-1.11.1
 cast-0.3.0
-cc-1.2.61
-cesu8-1.1.0
+cc-1.2.62
 cfg_aliases-0.2.1
 cfg-if-1.0.4
 chacha20-0.10.0
@@ -90,7 +90,6 @@ document-features-0.2.12
 dunce-1.0.5
 either-1.15.0
 encoding_rs-0.8.35
-enum-as-inner-0.6.1
 env_logger-0.10.2
 equivalent-1.0.2
 errno-0.3.14
@@ -116,17 +115,19 @@ futures-util-0.3.32
 getrandom-0.2.17
 getrandom-0.3.4
 getrandom-0.4.2
+h2-0.4.14
 h3-0.0.8
 h3-quinn-0.0.10
 half-2.7.1
 hashbrown-0.15.5
 hashbrown-0.16.1
-hashbrown-0.17.0
+hashbrown-0.17.1
 heck-0.5.0
 hermit-abi-0.5.2
 hex-0.4.3
-hickory-proto-0.25.2
-hickory-resolver-0.25.2
+hickory-net-0.26.1
+hickory-proto-0.26.1
+hickory-resolver-0.26.1
 html2text-0.16.7
 html5ever-0.38.0
 http-1.4.0
@@ -156,12 +157,12 @@ ipnetwork-0.20.0
 is-terminal-0.4.17
 itertools-0.13.0
 itoa-1.0.18
-jni-0.21.1
-jni-sys-0.3.1
+jni-0.22.4
+jni-macros-0.22.4
 jni-sys-0.4.1
 jni-sys-macros-0.4.1
 jobserver-0.1.34
-js-sys-0.3.97
+js-sys-0.3.98
 lazy_static-1.5.0
 leb128fmt-0.1.0
 libc-0.2.186
@@ -184,12 +185,13 @@ miniz_oxide-0.8.9
 mio-1.2.0
 moka-0.12.15
 native-tls-0.2.18
+ndk-context-0.1.1
 new_debug_unreachable-1.0.6
 nom-7.1.3
 no-std-net-0.6.0
 nu-ansi-term-0.50.3
 num-bigint-0.4.6
-num-conv-0.2.1
+num-conv-0.2.2
 num_cpus-1.17.0
 num-integer-0.1.46
 num-traits-0.2.19
@@ -197,11 +199,11 @@ oid-registry-0.7.1
 oid-registry-0.8.1
 once_cell-1.21.4
 oorandom-11.1.5
-openssl-0.10.79
+openssl-0.10.80
 openssl-macros-0.1.1
 openssl-probe-0.2.1
 openssl-src-300.6.0+3.6.2
-openssl-sys-0.9.115
+openssl-sys-0.9.116
 parking_lot-0.12.5
 parking_lot_core-0.9.12
 paste-1.0.15
@@ -211,10 +213,9 @@ phf-0.13.1
 phf_codegen-0.13.1
 phf_generator-0.13.1
 phf_shared-0.13.1
-pin-project-1.1.12
-pin-project-internal-1.1.12
+pin-project-1.1.13
+pin-project-internal-1.1.13
 pin-project-lite-0.2.17
-pin-utils-0.1.0
 pkg-config-0.3.33
 plotters-0.3.7
 plotters-backend-0.3.7
@@ -227,15 +228,17 @@ potential_utf-0.1.5
 powerfmt-0.2.0
 ppv-lite86-0.2.21
 precomputed-hash-0.1.1
+prefix-trie-0.8.4
 pretty_env_logger-0.5.0
 prettyplease-0.2.37
-primp-h2-0.4.13
-primp-hyper-1.8.1
-primp-hyper-rustls-0.27.7
-primp-hyper-util-0.1.20
-primp-reqwest-0.13.2
-primp-rustls-0.23.38
-primp-tokio-rustls-0.26.4
+primp-1.3.1
+primp-h2-0.4.15
+primp-hyper-1.9.1
+primp-hyper-rustls-0.27.9
+primp-hyper-util-0.1.22
+primp-reqwest-0.13.4
+primp-rustls-0.23.40
+primp-tokio-rustls-0.26.5
 proc-macro2-1.0.106
 psl-types-2.0.11
 publicsuffix-2.3.0
@@ -263,7 +266,7 @@ rand_core-0.9.5
 rayon-1.12.0
 rayon-core-1.13.0
 rcgen-0.13.2
-rcgen-0.14.7
+rcgen-0.14.8
 redox_syscall-0.5.18
 r-efi-5.3.0
 r-efi-6.0.0
@@ -273,13 +276,13 @@ regex-syntax-0.8.10
 resolv-conf-0.7.6
 ring-0.17.14
 rustc-hash-2.1.2
+rustc_version-0.4.1
 rusticata-macros-4.1.0
 rustix-1.1.4
 rustls-0.23.40
 rustls-native-certs-0.8.3
-rustls-pemfile-2.2.0
 rustls-pki-types-1.14.1
-rustls-platform-verifier-0.6.2
+rustls-platform-verifier-0.7.0
 rustls-platform-verifier-android-0.1.1
 rustls-webpki-0.103.13
 rustversion-1.0.22
@@ -298,6 +301,8 @@ serde_urlencoded-0.7.1
 shlex-1.3.0
 signal-hook-registry-1.4.8
 simd-adler32-0.3.9
+simd_cesu8-1.1.1
+simdutf8-0.1.5
 siphasher-1.0.3
 slab-0.4.12
 smallvec-1.15.1
@@ -310,7 +315,7 @@ subtle-2.6.1
 syn-2.0.117
 sync_wrapper-1.0.2
 synstructure-0.13.2
-system-configuration-0.6.1
+system-configuration-0.7.0
 system-configuration-sys-0.6.0
 tagptr-0.2.0
 target-lexicon-0.13.5
@@ -328,14 +333,15 @@ tinystr-0.8.3
 tinytemplate-1.2.1
 tinyvec-1.11.0
 tinyvec_macros-0.1.1
-tokio-1.52.2
+tokio-1.52.3
 tokio-macros-2.7.0
 tokio-native-tls-0.3.1
+tokio-rustls-0.26.4
 tokio-stream-0.1.18
 tokio-test-0.4.5
 tokio-util-0.7.18
 tower-0.5.3
-tower-http-0.6.9
+tower-http-0.6.11
 tower-layer-0.3.3
 tower-service-0.3.3
 tower-test-0.4.0
@@ -343,8 +349,6 @@ tracing-0.1.44
 tracing-attributes-0.1.31
 tracing-core-0.1.36
 try-lock-0.2.5
-typed-builder-0.20.1
-typed-builder-macro-0.20.1
 unicase-2.9.0
 unicode-ident-1.0.24
 unicode-width-0.2.2
@@ -362,14 +366,14 @@ want-0.3.1
 wasi-0.11.1+wasi-snapshot-preview1
 wasip2-1.0.3+wasi-0.2.9
 wasip3-0.4.0+wasi-0.3.0-rc-2026-01-06
-wasm-bindgen-0.2.120
-wasm-bindgen-futures-0.4.70
-wasm-bindgen-macro-0.2.120
-wasm-bindgen-macro-support-0.2.120
-wasm-bindgen-shared-0.2.120
-wasm-bindgen-test-0.3.70
-wasm-bindgen-test-macro-0.3.70
-wasm-bindgen-test-shared-0.2.120
+wasm-bindgen-0.2.121
+wasm-bindgen-futures-0.4.71
+wasm-bindgen-macro-0.2.121
+wasm-bindgen-macro-support-0.2.121
+wasm-bindgen-shared-0.2.121
+wasm-bindgen-test-0.3.71
+wasm-bindgen-test-macro-0.3.71
+wasm-bindgen-test-shared-0.2.121
 wasm-encoder-0.244.0
 wasm-metadata-0.244.0
 wasmparser-0.244.0
@@ -377,45 +381,36 @@ wasm-streams-0.5.0
 web_atoms-0.2.4
 webpki-root-certs-1.0.7
 webpki-roots-1.0.7
-web-sys-0.3.97
+web-sys-0.3.98
 web-time-1.1.0
 widestring-1.2.1
 winapi-0.3.9
 winapi-i686-pc-windows-gnu-0.4.0
 winapi-util-0.1.11
 winapi-x86_64-pc-windows-gnu-0.4.0
-windows_aarch64_gnullvm-0.42.2
 windows_aarch64_gnullvm-0.52.6
 windows_aarch64_gnullvm-0.53.1
-windows_aarch64_msvc-0.42.2
 windows_aarch64_msvc-0.52.6
 windows_aarch64_msvc-0.53.1
-windows_i686_gnu-0.42.2
 windows_i686_gnu-0.52.6
 windows_i686_gnu-0.53.1
 windows_i686_gnullvm-0.52.6
 windows_i686_gnullvm-0.53.1
-windows_i686_msvc-0.42.2
 windows_i686_msvc-0.52.6
 windows_i686_msvc-0.53.1
 windows-link-0.2.1
 windows-registry-0.6.1
 windows-result-0.4.1
 windows-strings-0.5.1
-windows-sys-0.45.0
 windows-sys-0.52.0
 windows-sys-0.60.2
 windows-sys-0.61.2
-windows-targets-0.42.2
 windows-targets-0.52.6
 windows-targets-0.53.5
-windows_x86_64_gnu-0.42.2
 windows_x86_64_gnu-0.52.6
 windows_x86_64_gnu-0.53.1
-windows_x86_64_gnullvm-0.42.2
 windows_x86_64_gnullvm-0.52.6
 windows_x86_64_gnullvm-0.53.1
-windows_x86_64_msvc-0.42.2
 windows_x86_64_msvc-0.52.6
 windows_x86_64_msvc-0.53.1
 wit-bindgen-0.51.0
@@ -429,11 +424,12 @@ writeable-0.6.3
 x509-parser-0.16.0
 x509-parser-0.18.1
 yasna-0.5.2
+yasna-0.6.0
 yoke-0.8.2
 yoke-derive-0.8.2
 zerocopy-0.8.48
 zerocopy-derive-0.8.48
-zerofrom-0.1.7
+zerofrom-0.1.8
 zerofrom-derive-0.1.7
 zeroize-1.8.2
 zeroize_derive-1.4.3
@@ -448,19 +444,20 @@ zstd-sys-2.0.16+zstd.1.5.7
 "
 
 # Cargo must go after distutils-r1
-inherit distutils-r1 cargo pypi
+inherit distutils-r1 cargo lcnr pypi rustflags-hardened
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${PV}"
 # The repo is missing the pyproject.toml
 SRC_URI="
 $(cargo_crate_uris ${CRATES})
-https://files.pythonhosted.org/packages/ee/ca/383bdf0df3dc87b60bf73c55da526ac743d42c5155a84a9014775b895e96/primp-${PV}.tar.gz
+https://files.pythonhosted.org/packages/cc/4b/7efa54f38da7de8df6b70dfed173bb41a52b740b144e4be24c1172db4209/primp-${PV}.tar.gz
 	-> ${P}.pypi.tar.gz
 "
 
 DESCRIPTION="HTTP client that can impersonate web browsers, mimicking their headers and \`TLS/JA3/JA4/HTTP2\` fingerprints"
 HOMEPAGE="
+	https://github.com/deedy5/primp/blob/main/crates/primp-python/pyproject.toml
 	https://github.com/deedy5/primp
 	https://pypi.org/project/primp
 "
@@ -468,7 +465,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 dev
 ebuild_revision_2
@@ -479,12 +476,14 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	>=dev-util/maturin-1.5[${PYTHON_USEDEP}]
+	<dev-util/maturin-2.0[${PYTHON_USEDEP}]
 	dev? (
 		dev-python/certifi[${PYTHON_USEDEP}]
 		>=dev-python/pytest-8.1.1[${PYTHON_USEDEP}]
 		>=dev-python/pytest-asyncio-0.25.3[${PYTHON_USEDEP}]
 		$(python_gen_cond_dep '
-			>=dev-python/typing-extensions0'3.11'[${PYTHON_USEDEP}]
+			dev-python/typing-extensions
 		' python3_10)
 		>=dev-python/mypy-1.14.1[${PYTHON_USEDEP}]
 		>=dev-python/ruff-0.9.2[${PYTHON_USEDEP}]
@@ -516,23 +515,53 @@ python_configure() {
 }
 
 src_configure() {
+	export CARGO_TERM_VERBOSE="true"
+	rustflags-hardened_append
 	cargo_src_configure
 	distutils-r1_src_configure
 }
 
 python_compile() {
-	cargo_src_compile
+	export PYTHON_SYS_EXECUTABLE="${PYTHON}"
+	export BUILD_DIR="${S}"
+	local pypv="${EPYTHON}"
+	pypv="${pypv/./}"
+	pypv="${pypv/python/}"
+	sed -i \
+		-r -e "s|abi3-py[0-9]+|abi3-py${pypv}|g" \
+		"${S}/crates/primp-python/Cargo.toml" \
+		|| die
+
 	distutils-r1_python_compile
+
+	local wheel_path=$(realpath "${WORKDIR}/${P}/target/wheels/${P}-cp${pypv}-abi3-linux_"*".whl")
+	einfo "wheel_path=${wheel_path}"
+	local d="${WORKDIR}/${P}-${EPYTHON/./_}/install"
+	distutils_wheel_install "${d}" \
+		"${wheel_path}"
+
+	# Unbreak die check
+	mkdir -p "${d}/usr/bin"
+	touch "${d}/usr/bin/"{"${EPYTHON}","python3","python","pyvenv.cfg"}
+	mv "${d}/usr/bin/pyvenv.cfg" "${d}/usr/bin/../pyvenv.cfg" || die
 }
 
 src_compile() {
 	distutils-r1_src_compile
 }
 
+python_install() {
+	distutils-r1_python_install
+}
+
 src_install() {
 	distutils-r1_src_install
 	docinto "licenses"
-	dodoc "LICENSE"
+	dodoc "LICENSE-MIT"
+
+	LCNR_SOURCE="${WORKDIR}/cargo_home/gentoo"
+	LCNR_TAG="third_party"
+        lcnr_install_files
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

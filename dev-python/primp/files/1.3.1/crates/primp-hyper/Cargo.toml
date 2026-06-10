@@ -1,12 +1,12 @@
 [package]
 name = "primp-hyper"
-version = "1.8.1"
+version = "1.9.1"  # based on upstream v1.9.0, cherry-picks through 2026-05-23
 description = "Fork of the original hyper HTTP library."
 readme = "README.md"
 license = "MIT"
 authors = ["deedy5", "Sean McArthur <sean@seanmonstar.com>"]
 edition = "2021"
-rust-version = "1.84"
+rust-version = "1.89"
 build = false
 include = [
     "Cargo.toml",
@@ -76,7 +76,6 @@ http1 = [
     "dep:futures-core",
     "dep:httparse",
     "dep:itoa",
-    "dep:pin-utils",
 ]
 http2 = [
     "dep:futures-channel",
@@ -121,6 +120,7 @@ version = "0.4"
 path = "../primp-h2"
 package = "primp-h2"
 default-features = false
+features = ["unstable"]
 optional = true
 
 [dependencies.http]
@@ -147,10 +147,6 @@ optional = true
 
 [dependencies.pin-project-lite]
 version = "0.2.4"
-optional = true
-
-[dependencies.pin-utils]
-version = "0.1"
 optional = true
 
 [dependencies.smallvec]

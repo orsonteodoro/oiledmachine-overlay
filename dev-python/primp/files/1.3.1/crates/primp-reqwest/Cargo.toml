@@ -1,6 +1,6 @@
 [package]
 name = "primp-reqwest"
-version = "0.13.2"
+version = "0.13.4"  # based on upstream v0.13.3, cherry-picks through 2026-05-23
 description = "Fork of the original reqwest library"
 keywords = ["http", "request", "client"]
 categories = ["web-programming::http-client", "wasm"]
@@ -8,7 +8,7 @@ authors = ["deedy5", "Sean McArthur <sean@seanmonstar.com>"]
 readme = "README.md"
 license = "MIT OR Apache-2.0"
 edition = "2021"
-rust-version = "1.84"
+rust-version = "1.89"
 autotests = true
 include = [
     "README.md",
@@ -70,7 +70,13 @@ json = ["dep:serde", "dep:serde_json"]
 
 multipart = ["dep:mime_guess", "dep:futures-util"]
 
-hickory-dns = ["dep:hickory-resolver", "dep:once_cell"]
+hickory-dns = [
+    "dep:hickory-resolver",
+    "dep:once_cell",
+    "hickory-resolver/https-aws-lc-rs",
+    "hickory-resolver/tls-aws-lc-rs",
+    "hickory-resolver/webpki-roots",
+]
 
 stream = ["tokio/fs", "dep:futures-util", "dep:tokio-util", "dep:wasm-streams"]
 
@@ -155,7 +161,7 @@ cookie_store = { version = "0.22.0", optional = true }
 tokio-util = { version = "0.7.9", default-features = false, features = ["io"], optional = true }
 
 ## hickory-dns
-hickory-resolver = { version = "0.25", optional = true, features = ["tokio"] }
+hickory-resolver = { version = "0.26", optional = true, features = ["tokio", "system-config"] }
 once_cell = { version = "1.18", optional = true }
 
 # HTTP/3 experimental support

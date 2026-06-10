@@ -1,6 +1,6 @@
 [package]
 name = "primp-h2"
-version = "0.4.13"
+version = "0.4.15"  # based on upstream v0.4.14, cherry-picks through 2026-05-23
 license = "MIT"
 authors = [
   "deedy5",
@@ -9,7 +9,7 @@ authors = [
 ]
 description = "A fork of the HTTP/2 client and server library from hyperium"
 edition = "2021"
-rust-version = "1.84"
+rust-version = "1.89"
 readme = "README.md"
 
 # Aliases
