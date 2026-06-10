@@ -44,7 +44,7 @@ RDEPEND="
 	  sys-libs/glibc
 	  sys-libs/libxcrypt
 	  sys-libs/ncurses-compat:5[abi_x86_32(-),tinfo]
-	  sys-libs/zlib
+	  virtual/zlib
 "
 DEPEND=""
 RESTRICT="mirror strip installsources test"
