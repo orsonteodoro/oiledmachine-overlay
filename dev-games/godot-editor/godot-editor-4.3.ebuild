@@ -242,7 +242,7 @@ IUSE+="
 	${IUSE_SCRIPTING}
 	${IUSE_SYSTEM}
 	${LLVM_COMPAT[@]/#/llvm_slot_}
-	ebuild_revision_39
+	ebuild_revision_40
 "
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
@@ -428,7 +428,7 @@ DEPEND+="
         >=media-libs/freetype-${FREETYPE_PV}
 	>=media-libs/libogg-${LIBOGG_PV}
 	>=media-libs/libvorbis-${LIBVORBIS_PV}
-	>=sys-libs/zlib-${ZLIB_PV}
+	>=virtual/zlib-${ZLIB_PV}
 	app-arch/bzip2
 	dev-libs/libbsd
 	media-libs/alsa-lib
@@ -560,7 +560,7 @@ DEPEND+="
 		media-libs/xatlas
 	)
 	system-zlib? (
-		>=sys-libs/zlib-${ZLIB_PV}
+		>=virtual/zlib-${ZLIB_PV}
 	)
 	system-zstd? (
 		>=app-arch/zstd-${ZSTD_PV}
