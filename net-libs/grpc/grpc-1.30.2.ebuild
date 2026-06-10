@@ -91,7 +91,7 @@ IUSE+="
 ${_CXX_STANDARD[@]}
 ${LSRT_IUSE[@]/#/-}
 cxx doc examples test
-ebuild_revision_49
+ebuild_revision_50
 "
 REQUIRED_USE+="
 	^^ (
@@ -114,8 +114,8 @@ RDEPEND+="
 	dev-libs/protobuf:=
 	>=net-dns/c-ares-1.15.0[${MULTILIB_USEDEP}]
 	net-dns/c-ares:=
-	>=sys-libs/zlib-1.2.11[${MULTILIB_USEDEP}]
-	sys-libs/zlib:=
+	>=virtual/zlib-1.2.11[${MULTILIB_USEDEP}]
+	virtual/zlib:=
 "
 # See also
 # third_party/boringssl-with-bazel/src/include/openssl/crypto.h: OPENSSL_VERSION_TEXT
