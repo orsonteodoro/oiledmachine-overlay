@@ -57,7 +57,7 @@ IUSE+="
 ${LLVM_EBUILDS_LLVM18_REVISION}
 +binutils-plugin bolt bolt-heatmap +debug debuginfod doc -dump exegesis jemalloc
 libedit +libffi ncurses tcmalloc test xml z3 zstd
-ebuild_revision_11
+ebuild_revision_12
 "
 REQUIRED_USE+="
 	!amd64? (
@@ -109,7 +109,7 @@ REQUIRED_USE+="
 	)
 "
 RDEPEND="
-	sys-libs/zlib:0=[${MULTILIB_USEDEP}]
+	virtual/zlib:0=[${MULTILIB_USEDEP}]
 	binutils-plugin? (
 		>=sys-devel/binutils-2.31.1-r4:*[plugins]
 	)
