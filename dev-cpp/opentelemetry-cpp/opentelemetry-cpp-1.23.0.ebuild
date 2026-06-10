@@ -53,7 +53,7 @@ SLOT="${PROTOBUF_CPP_SLOT}/"$(ver_cut "1-2" "${PV}")
 IUSE="
 ${_CXX_STANDARD[@]}
 -otlp-file -otlp-grpc -otlp-http -prometheus test -zlib
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE="
 	^^ (
@@ -80,7 +80,7 @@ RDEPEND="
 		>=dev-cpp/prometheus-cpp-1.3.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	zlib? (
-		>=sys-libs/zlib-1.3.1
+		>=virtual/zlib-1.3.1
 	)
 "
 DEPEND="
