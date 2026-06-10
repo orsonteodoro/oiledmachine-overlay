@@ -47,7 +47,7 @@ SLOT="${PROTOBUF_CPP_SLOT}/"$(ver_cut "1-2" "${PV}")
 KEYWORDS="~amd64 ~x86"
 IUSE="
 test
-ebuild_revision_15
+ebuild_revision_16
 "
 # Tests need a GCP account
 RESTRICT="test"
@@ -74,7 +74,7 @@ RDEPEND="
 	)
 	>=dev-libs/crc32c-1.1.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=net-misc/curl-7.69.1
-	>=sys-libs/zlib-1.2.11
+	>=virtual/zlib-1.2.11
 "
 DEPEND="
 	${RDEPEND}
