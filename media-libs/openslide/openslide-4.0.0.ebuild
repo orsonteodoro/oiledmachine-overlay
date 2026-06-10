@@ -34,7 +34,7 @@ RDEPEND="
 	>=media-libs/openjpeg-2.1.0:2
 	>=media-libs/tiff-4.1.0:0
 	>=media-libs/libdicom-1.0.5
-	>=sys-libs/zlib-1.2.11
+	>=virtual/zlib-1.2.11
 	>=x11-libs/gdk-pixbuf-2.40.0
 	>=x11-libs/cairo-1.2
 	virtual/libc
