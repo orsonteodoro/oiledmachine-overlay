@@ -81,7 +81,7 @@ BDEPEND+="
 		dev-python/pdoc3[${PYTHON_USEDEP}]
 	)
 	test? (
-		dev-python/brotli[${PYTHON_USEDEP}]
+		app-arch/brotli[${PYTHON_USEDEP}]
 		dev-python/camelot-py[${PYTHON_USEDEP},base]
 		dev-python/endesive[${PYTHON_USEDEP},full]
 		dev-python/pytest[${PYTHON_USEDEP}]

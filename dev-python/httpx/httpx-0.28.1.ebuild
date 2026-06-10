@@ -47,7 +47,7 @@ RDEPEND+="
 	dev-python/idna[${PYTHON_USEDEP}]
 	brotli? (
 		$(python_gen_cond_dep '
-			dev-python/brotli[${PYTHON_USEDEP}]
+			app-arch/brotli[${PYTHON_USEDEP}]
 		' python3_{10..12})
 		$(python_gen_cond_dep '
 			dev-python/brotlicffi[${PYTHON_USEDEP}]
