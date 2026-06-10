@@ -139,7 +139,7 @@ IUSE+="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_X86[@]}
 doc opengl python static-libs test
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE="
 	doc? (
@@ -202,7 +202,7 @@ RDEPEND="
 	dev-cpp/pystring:=
 	>=dev-libs/expat-2.4.1
 	>=sys-libs/minizip-ng-3.0.7
-	>=sys-libs/zlib-1.2.13
+	>=virtual/zlib-1.2.13
 	dev-libs/tinyxml[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-libs/tinyxml:=
 	dev-build/ninja
