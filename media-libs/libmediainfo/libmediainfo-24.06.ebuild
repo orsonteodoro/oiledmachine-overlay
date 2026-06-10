@@ -27,7 +27,7 @@ DEPEND+="
 	>=dev-libs/glib-2.72.1[${MULTILIB_USEDEP}]
 	>=dev-libs/libxml2-2.9.13:=[${MULTILIB_USEDEP}]
 	>=media-libs/libzen-0.4.41:=[${MULTILIB_USEDEP},static-libs=]
-	>=sys-libs/zlib-1.2.11[${MULTILIB_USEDEP}]
+	>=virtual/zlib-1.2.11[${MULTILIB_USEDEP}]
 	curl? (
 		>=net-misc/curl-7.81.0[${MULTILIB_USEDEP}]
 	)
