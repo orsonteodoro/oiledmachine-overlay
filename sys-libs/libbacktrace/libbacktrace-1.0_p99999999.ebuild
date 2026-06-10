@@ -58,7 +58,7 @@ BDEPEND="
 	test? (
 		app-arch/xz-utils[${MULTILIB_USEDEP}]
 		app-arch/zstd[${MULTILIB_USEDEP}]
-		sys-libs/zlib[${MULTILIB_USEDEP}]
+		virtual/zlib[${MULTILIB_USEDEP}]
 	)
 "
 PATCHES=(
