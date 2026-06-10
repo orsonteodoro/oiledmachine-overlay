@@ -88,7 +88,7 @@ LSRT_IUSE=(
 IUSE+="
 ${LSRT_IUSE[@]/#/-}
 cxx doc examples test
-ebuild_revision_49
+ebuild_revision_50
 "
 REQUIRED_USE+="
 	python? (
@@ -110,8 +110,8 @@ RDEPEND+="
 	dev-libs/re2:=
 	>=net-dns/c-ares-1.19.1[${MULTILIB_USEDEP}]
 	net-dns/c-ares:=
-	>=sys-libs/zlib-1.3[${MULTILIB_USEDEP}]
-	sys-libs/zlib:=
+	>=virtual/zlib-1.3[${MULTILIB_USEDEP}]
+	virtual/zlib:=
 "
 # See also
 # third_party/boringssl-with-bazel/src/include/openssl/crypto.h: OPENSSL_VERSION_TEXT
