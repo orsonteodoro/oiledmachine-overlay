@@ -182,7 +182,7 @@ Python defaults
 | Hacks are allowed? (using Cython over Zig)    | If the package uses security-critical assumptions or processes untrusted data, it is disallowed.      |
 | Is Python freethreading allowed?              | N for security-critical packages.                                                                     |
 | Existing naming precedence -- distro or PyPi? | Distro to prevent emerge issues                                                                       |
-| Naming rules distro or PyPi for nonexisting packages? | From PyPi header to minimize friction                                                         |
+| Naming rules for nonexisting packages -- distro or PyPi? | Use the big ID from the PyPi header to minimize friction                                   |
 | Extras -- convert to conditional USE flags, make optfeature, or add deps unconditionally without USE flag? | Convert to conditional USE flag to allow users to consent to the attack surface and for USE flag consistency like non Python |
 
 Rust defaults
