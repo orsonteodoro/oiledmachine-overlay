@@ -104,7 +104,7 @@ rocm
 video_cards_amdgpu
 video_cards_intel
 video_cards_nvidia
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	$(rocm_gen_rocm_required_use1)
@@ -127,7 +127,7 @@ DEPEND="
 	)
 	app-arch/lzma
 	app-arch/unrar
-	sys-libs/zlib[minizip]
+	virtual/zlib[minizip]
 	brain? (
 		dev-libs/xxhash
 	)
