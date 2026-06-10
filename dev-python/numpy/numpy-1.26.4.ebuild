@@ -37,7 +37,7 @@ SLOT="0"
 # +lapack because the internal fallbacks are pretty slow. Building without blas
 # is barely supported anyway, see bug #914358.
 IUSE="
-doc -lapack linter release test
+build doc -lapack linter release test
 ebuild_revision_7
 "
 
@@ -51,12 +51,17 @@ RDEPEND="
 BDEPEND="
 	${RDEPEND}
 	>=dev-build/meson-0.15.0[${PYTHON_USEDEP}]
-	dev-build/ninja
 	dev-python/cython:${CYTHON_SLOT}[${PYTHON_USEDEP}]
 	dev-python/cython:=
-	dev-python/build[${PYTHON_USEDEP}]
-	dev-python/wheel[${PYTHON_USEDEP}]
-	>=dev-python/spin-0.7[${PYTHON_USEDEP}]
+	build? (
+		>=dev-build/meson-0.13.1[${PYTHON_USEDEP}]
+		dev-python/cython:${CYTHON_SLOT}[${PYTHON_USEDEP}]
+		dev-python/cython:=
+		dev-python/wheel[${PYTHON_USEDEP}]
+		dev-build/ninja
+		~dev-python/spin-0.7[${PYTHON_USEDEP}]
+		dev-python/build[${PYTHON_USEDEP}]
+	)
 	doc? (
 		>=dev-python/sphinx-4.5.0[${PYTHON_USEDEP}]
 		<dev-python/sphinx-7.2.0[${PYTHON_USEDEP}]

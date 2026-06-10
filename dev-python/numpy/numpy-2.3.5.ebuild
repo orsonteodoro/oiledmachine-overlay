@@ -57,11 +57,12 @@ SLOT="0/2"
 # +lapack because the internal fallbacks are pretty slow. Building without blas
 # is barely supported anyway, see bug #914358.
 IUSE+="
-all big-endian ci ci32 +cpudetection doc index64 -lapack linter release test
+all big-endian build ci ci32 +cpudetection doc index64 -lapack linter release test
 ebuild_revision_7
 "
 REQUIRED_USE="
 	all? (
+		build
 		ci
 		doc
 		linter
@@ -78,11 +79,16 @@ RDEPEND="
 BDEPEND="
 	${RDEPEND}
 	>=dev-build/meson-0.15.0[${PYTHON_USEDEP}]
-	dev-build/ninja
 	dev-python/cython:${CYTHON_SLOT}[${PYTHON_USEDEP}]
 	dev-python/cython:=
-	dev-python/build[${PYTHON_USEDEP}]
-	>=dev-python/spin-0.15[${PYTHON_USEDEP}]
+	build? (
+		>=dev-build/meson-0.13.1[${PYTHON_USEDEP}]
+		dev-python/cython:${CYTHON_SLOT}[${PYTHON_USEDEP}]
+		dev-python/cython:=
+		dev-build/ninja
+		~dev-python/spin-0.15[${PYTHON_USEDEP}]
+		dev-python/build[${PYTHON_USEDEP}]
+	)
 	ci? (
 		~dev-python/spin-0.15[${PYTHON_USEDEP}]
 		~dev-python/scipy-openblas32-0.3.30.0.7[${PYTHON_USEDEP}]
