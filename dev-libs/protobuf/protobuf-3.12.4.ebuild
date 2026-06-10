@@ -78,7 +78,7 @@ SLOT="${SLOT_MAJOR}/"$(ver_cut "1-2" "${INTERNAL_VERSION}")
 IUSE="
 ${_CXX_STANDARD[@]}
 emacs examples static-libs test zlib
-ebuild_revision_42
+ebuild_revision_43
 "
 REQUIRED_USE="
 	^^ (
@@ -88,7 +88,7 @@ REQUIRED_USE="
 RDEPEND="
 	!dev-libs/protobuf:0
 	zlib? (
-		>=sys-libs/zlib-1.2.11[${MULTILIB_USEDEP}]
+		>=virtual/zlib-1.2.11[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
