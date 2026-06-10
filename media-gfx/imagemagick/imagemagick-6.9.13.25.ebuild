@@ -43,7 +43,7 @@ LICENSE="imagemagick"
 SLOT="0/$(ver_cut 1-3)-0"
 IUSE="
 bzip2 corefonts +cxx djvu fftw fontconfig fpx graphviz hardened hdri heif jbig jpeg jpeg2k lcms lqr lzma opencl openexr openmp pango perl +png postscript q32 q8 raw static-libs svg test tiff truetype webp wmf X xml zlib
-ebuild_revision_9
+ebuild_revision_10
 "
 
 REQUIRED_USE="
@@ -99,7 +99,7 @@ RDEPEND="
 	)
 	xml? ( dev-libs/libxml2:= )
 	lzma? ( app-arch/xz-utils )
-	zlib? ( sys-libs/zlib:= )
+	zlib? ( virtual/zlib:= )
 "
 DEPEND="
 	${RDEPEND}
