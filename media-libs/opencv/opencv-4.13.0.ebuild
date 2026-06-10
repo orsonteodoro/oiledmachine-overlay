@@ -427,7 +427,7 @@ IUSE="
 	${PATENT_STATUS_IUSE[@]}
 	debug -doc +eigen gflags glog -halide +java -non-free +opencvapps +protobuf +python
 	-system-flatbuffers test -testprograms -vulkan -zlib-ng
-	ebuild_revision_56
+	ebuild_revision_57
 "
 # hal for acceleration
 IUSE+="
@@ -877,7 +877,7 @@ PATENT_STATUS_RDEPEND="
 RDEPEND="
 	${PATENT_STATUS_RDEPEND}
 	>=app-arch/bzip2-1.0.8[${MULTILIB_USEDEP}]
-	>=sys-libs/zlib-1.3.1[${MULTILIB_USEDEP}]
+	>=virtual/zlib-1.3.1[${MULTILIB_USEDEP}]
 	|| (
 		dev-libs/protobuf:3/3.12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx_standard_cxx17]
 		dev-libs/protobuf:3/3.21[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx_standard_cxx17]
