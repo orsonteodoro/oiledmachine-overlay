@@ -31,7 +31,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="
 +bash-completion +cli +curl +ffmpeg +fftw +graphicsmagick +jpeg -lto -opencv
 +openexr +openmp +png static-libs +tiff wayland +X +zlib
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 "
@@ -73,8 +73,8 @@ COMMON_DEPEND="
 		x11-libs/libXext
 	)
 	zlib? (
-		sys-libs/zlib:0
-		sys-libs/zlib:=
+		virtual/zlib:0
+		virtual/zlib:=
 	)
 "
 RDEPEND="
