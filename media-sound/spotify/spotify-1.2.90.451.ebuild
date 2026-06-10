@@ -201,7 +201,7 @@ RESTRICT="binchecks mirror strip"
 SLOT="0/${DEFAULT_CONFIGURATION}"
 IUSE+="
 emoji ffmpeg firejail bluetooth libnotify pulseaudio vaapi wayland zenity +X
-ebuild_revision_3
+ebuild_revision_4
 "
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
@@ -362,7 +362,7 @@ CHROMIUM_RDEPEND="
 	>=sys-devel/gcc-${GCC_PV}[cxx(+)]
 	>=x11-libs/pango-1.46.2
 	>=x11-libs/pixman-0.40.0
-	>=sys-libs/zlib-1.3
+	>=virtual/zlib-1.3
 	X? (
 		>=x11-libs/libX11-1.7.2
 		>=x11-libs/libXau-1.0.9
