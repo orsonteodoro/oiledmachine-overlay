@@ -135,7 +135,7 @@ IUSE+="
 ${_TRAINERS[@]/#/nodejs_trainers_}
 acorn +asm +corepack cpu_flags_x86_sse2 debug doc fips +icu inspector +npm
 mold pax-kernel pgo +snapshot +ssl system-icu +system-ssl test
-ebuild_revision_56
+ebuild_revision_57
 "
 
 gen_required_use_pgo() {
@@ -176,7 +176,7 @@ RDEPEND+="
 	>=dev-libs/libuv-1.47.0
 	>=net-dns/c-ares-1.34.6
 	>=net-libs/nghttp2-${NGHTTP2_PV}
-	>=sys-libs/zlib-1.3.1
+	>=virtual/zlib-1.3.1
 	sys-kernel/mitigate-id
 	system-icu? (
 		>=dev-libs/icu-78.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
