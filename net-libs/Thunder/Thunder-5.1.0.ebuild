@@ -45,7 +45,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 -awc -bcm43xx -bluetooth -bluetooth-audio -broadcast -crun -debug -dobby -gatt -hibernate
 -lxc -privileged-request -process-containers -runc ssl -systemd test
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	process-containers? (
@@ -60,7 +60,7 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	dev-libs/openssl:=
-	sys-libs/zlib
+	virtual/zlib
 	~net-misc/ThunderTools-${PV}[${PYTHON_SINGLE_USEDEP}]
 	awc? (
 		app-containers/lxc
