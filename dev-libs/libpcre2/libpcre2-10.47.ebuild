@@ -38,7 +38,7 @@ if [[ ${PV} != *_rc* ]] ; then
 fi
 IUSE="
 bzip2 +jit libedit +pcre16 +pcre32 +readline static-libs unicode valgrind zlib
-ebuild_revision_11
+ebuild_revision_12
 "
 REQUIRED_USE="?? ( libedit readline )"
 
@@ -46,7 +46,7 @@ RDEPEND="
 	bzip2? ( app-arch/bzip2 )
 	libedit? ( dev-libs/libedit )
 	readline? ( sys-libs/readline:= )
-	zlib? ( sys-libs/zlib )
+	zlib? ( virtual/zlib )
 "
 DEPEND="
 	${RDEPEND}
