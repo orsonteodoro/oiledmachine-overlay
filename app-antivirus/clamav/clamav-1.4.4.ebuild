@@ -385,7 +385,7 @@ SLOT="0/lts" # sts or lts
 IUSE="
 doc clamonacc +clamapp custom-cflags experimental jit libclamav-only man milter rar
 selinux +system-mspack systemd test valgrind
-ebuild_revision_49
+ebuild_revision_50
 "
 REQUIRED_USE="
 	clamonacc? (
@@ -413,7 +413,7 @@ CDEPEND="
 	>=dev-libs/libltdl-2.4.6
 	>=dev-libs/libpcre2-8.39:=
 	>=dev-libs/libxml2-2.9.10
-	>=sys-libs/zlib-1.2.1:=
+	>=virtual/zlib-1.2.1:=
 	acct-group/clamav
 	acct-user/clamav
 	virtual/libiconv
