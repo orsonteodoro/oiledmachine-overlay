@@ -3,39 +3,40 @@
 
 EAPI=8
 
+# U22
+
 CYTHON_SLOT="0.29"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{8..11} )
+FORTRAN_NEEDED="lapack"
+PYTHON_COMPAT=( "python3_10" ) # Forced for binary packages
 PYTHON_REQ_USE="threads(+)"
 
-FORTRAN_NEEDED="lapack"
+DOC_PV="${PV}"
 
 inherit cython distutils-r1 flag-o-matic fortran-2 toolchain-funcs
 
-KEYWORDS="~amd64 ~arm64 ~arm64-linux ~ppc64 ~s390"
+KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~x64-solaris ~x86-solaris"
+SRC_URI="
+https://github.com/numpy/numpy/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.gh.tar.gz
+	doc? (
+https://numpy.org/doc/$(ver_cut 1-2 ${DOC_PV})/numpy-html.zip -> numpy-html-${DOC_PV}.zip
+https://numpy.org/doc/$(ver_cut 1-2 ${DOC_PV})/numpy-ref.pdf -> numpy-ref-${DOC_PV}.pdf
+https://numpy.org/doc/$(ver_cut 1-2 ${DOC_PV})/numpy-user.pdf -> numpy-user-${DOC_PV}.pdf
+	)
+"
 
-DOC_PV="${PV}"
-# For when docs aren't ready yet, set to last version
-#DOC_PV=1.23.0
 DESCRIPTION="Fast array and numerical Python library"
 HOMEPAGE="
 	https://numpy.org/
 	https://github.com/numpy/numpy/
 	https://pypi.org/project/numpy/
 "
-SRC_URI="
-	mirror://pypi/${PN:0:1}/${PN}/${P}.zip
-	doc? (
-		https://numpy.org/doc/$(ver_cut 1-2 ${DOC_PV})/numpy-html.zip -> numpy-html-${DOC_PV}.zip
-		https://numpy.org/doc/$(ver_cut 1-2 ${DOC_PV})/numpy-ref.pdf -> numpy-ref-${DOC_PV}.pdf
-		https://numpy.org/doc/$(ver_cut 1-2 ${DOC_PV})/numpy-user.pdf -> numpy-user-${DOC_PV}.pdf
-	)
-"
 LICENSE="BSD"
 SLOT="0"
 IUSE="
-doc lapack
+doc lapack linter release test
 ebuild_revision_5
 "
 
@@ -47,30 +48,53 @@ RDEPEND="
 "
 BDEPEND="
 	${RDEPEND}
-	>=dev-python/cython-0.29.30:${CYTHON_SLOT}[${PYTHON_USEDEP}]
+	arm64? (
+		>=dev-python/packaging-20.5[${PYTHON_USEDEP}]
+	)
+	>=dev-python/setuptools-59.2.0[${PYTHON_USEDEP}]
+	>=dev-python/wheel-0.37.0[${PYTHON_USEDEP}]
+	dev-python/cython:${CYTHON_SLOT}[${PYTHON_USEDEP}]
 	dev-python/cython:=
 	>=dev-python/wheel-0.37.0[${PYTHON_USEDEP}]
 	doc? (
-		app-arch/unzip
+		~dev-python/sphinx-4.0.1[${PYTHON_USEDEP}]
+		~dev-python/numpydoc-1.1.0[${PYTHON_USEDEP}]
+		dev-python/ipython[${PYTHON_USEDEP}]
+		dev-python/scipy[${PYTHON_USEDEP}]
+		dev-python/matplotlib[${PYTHON_USEDEP}]
+		dev-python/pandas[${PYTHON_USEDEP}]
+		~dev-python/pydata-sphinx-theme-0.5.2[${PYTHON_USEDEP}]
 	)
 	lapack? (
 		virtual/pkgconfig
 	)
+	linter? (
+		~dev-python/pycodestyle-2.7.0[${PYTHON_USEDEP}]
+		~dev-python/gitpython-3.1.13[${PYTHON_USEDEP}]
+	)
+	release? (
+		dev-python/urllib3[${PYTHON_USEDEP}]
+		dev-python/beautifulsoup4[${PYTHON_USEDEP}]
+		dev-python/pygithub[${PYTHON_USEDEP}]
+		dev-python/gitpython[${PYTHON_USEDEP}]
+		dev-python/twine[${PYTHON_USEDEP}]
+		dev-python/paver[${PYTHON_USEDEP}]
+		dev-python/towncrier[${PYTHON_USEDEP}]
+	)
 	test? (
-		>=dev-python/cffi-1.14.0[${PYTHON_USEDEP}]
-		>=dev-python/hypothesis-6.24.1[${PYTHON_USEDEP}]
-		>=dev-python/mypy-0.981[${PYTHON_USEDEP}]
-		>=dev-python/pytest-6.2.5[${PYTHON_USEDEP}]
-		>=dev-python/pytest-cov-3.0.0[${PYTHON_USEDEP}]
-		>=dev-python/pytz-2021.3[${PYTHON_USEDEP}]
-		>=dev-python/typing-extensions-4.2.0[${PYTHON_USEDEP}]
+		~dev-python/cython-0.29.24[${PYTHON_USEDEP}]
+		~dev-python/wheel-0.37.0[${PYTHON_USEDEP}]
+		~dev-python/setuptools-59.2.0[${PYTHON_USEDEP}]
+		~dev-python/hypothesis-6.24.1[${PYTHON_USEDEP}]
+		~dev-python/pytest-6.2.5[${PYTHON_USEDEP}]
+		~dev-python/pytz-2021.3[${PYTHON_USEDEP}]
+		~dev-python/pytest-cov-3.0.0[${PYTHON_USEDEP}]
+		~dev-python/mypy-0.910[${PYTHON_USEDEP}]
 	)
 "
 
 PATCHES=(
-	"${FILESDIR}/${PN}-1.22.0-no-hardcode-blasv2.patch"
-	"${FILESDIR}/${PN}-1.22.4-py311.patch"
-	"${FILESDIR}/${PN}-2.1.2-disable-generate-manifest.patch" # unbreak ModuleNotFoundError: No module named 'distutils.msvccompiler' with distutils 74.x
+	"${FILESDIR}/numpy-1.21.0-no-hardcode-blasv2.patch"
 )
 
 distutils_enable_tests "pytest"
@@ -83,10 +107,6 @@ src_unpack() {
 }
 
 python_prepare_all() {
-	# Allow use with setuptools 60.x
-	# See numpy-1.22.1-revert-setuptools-upper-bound.patch for details
-	export SETUPTOOLS_USE_DISTUTILS="stdlib"
-
 	if use lapack; then
 		local incdir="${EPREFIX}/usr/include"
 		local libdir="${EPREFIX}/usr/$(get_libdir)"
@@ -128,6 +148,12 @@ python_prepare_all() {
 	# don't version f2py, we will handle it.
 	sed -i -e '/f2py_exe/s: + os\.path.*$::' numpy/f2py/setup.py || die
 
+	# disable fuzzed tests
+	find numpy/*/tests -name '*.py' -exec sed -i \
+		-e 's:def \(.*_fuzz\):def _\1:' {} + || die
+	# very memory- and disk-hungry
+	sed -i -e 's:test_large_zip:_&:' numpy/lib/tests/test_io.py || die
+
 	distutils-r1_python_prepare_all
 }
 
@@ -142,55 +168,32 @@ python_compile() {
 }
 
 python_test() {
-	local EPYTEST_DESELECT=(
-		# very disk- and memory-hungry
-		numpy/lib/tests/test_io.py::test_large_zip
-
-		# precision problems
-		numpy/core/tests/test_umath_accuracy.py::TestAccuracy::test_validate_transcendentals
-
-		# runs the whole test suite recursively, that's just crazy
-		numpy/core/tests/test_mem_policy.py::test_new_policy
-
-		# very slow, unlikely to be practically useful
-		numpy/typing/tests/test_typing.py
+	local deselect=(
+		numpy/typing/tests/test_typing.py::test_reveal[arrayterator.py]
 	)
 
 	if use arm && [[ $(uname -m || echo "unknown") == "armv8l" ]] ; then
 		# Degenerate case. arm32 chroot on arm64.
 		# bug #774108
-		EPYTEST_DESELECT+=(
+		deselect+=(
 			numpy/core/tests/test_cpu_features.py::Test_ARM_Features::test_features
 		)
 	fi
 
 	if use x86 ; then
-		EPYTEST_DESELECT+=(
+		deselect+=(
 			# https://github.com/numpy/numpy/issues/18388
 			numpy/core/tests/test_umath.py::TestRemainder::test_float_remainder_overflow
 			# https://github.com/numpy/numpy/issues/18387
 			numpy/random/tests/test_generator_mt19937.py::TestRandomDist::test_pareto
-			# more precision problems
-			numpy/core/tests/test_einsum.py::TestEinsum::test_einsum_sums_int16
 		)
 	fi
-	if use arm || use x86 ; then
-		EPYTEST_DESELECT+=(
-			# too large for 32-bit platforms
-			numpy/core/tests/test_ufunc.py::TestUfunc::test_identityless_reduction_huge_array
-		)
-	fi
-
-	[[ ${EPYTHON} == python3.11 ]] && EPYTEST_DESELECT+=(
-		# known problem
-		'numpy/typing/tests/test_generic_alias.py::TestGenericAlias::test_pass[__dir__-<lambda>]'
-	)
 
 	distutils_install_for_testing --single-version-externally-managed \
 		--record "${TMPDIR}/record.txt" ${NUMPY_FCONFIG}
 
 	cd "${TEST_DIR}/lib" || die
-	epytest -k "not _fuzz"
+	epytest ${deselect[@]/#/--deselect }
 }
 
 python_install() {
@@ -201,12 +204,7 @@ python_install() {
 }
 
 python_install_all() {
-	local DOCS=( "LICENSE.txt" "README.md" "THANKS.txt" )
-
-	if use doc; then
-		local HTML_DOCS=( "${WORKDIR}/html/." )
-		DOCS+=( "${DISTDIR}/${PN}-"{"user","ref"}"-${DOC_PV}.pdf" )
-	fi
+	local DOCS=( "LICENSE.txt" "LICENSES_bundled.txt" "README.md" "THANKS.txt" )
 
 	distutils-r1_python_install_all
 }

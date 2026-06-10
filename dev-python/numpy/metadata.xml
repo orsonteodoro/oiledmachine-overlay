@@ -29,8 +29,15 @@
 
     oiledmachine-overlay notes:
 
-    This ebuild is provided for testing packages purposes only.  Use the distro
-    ebuild instead for production.
+    This for exists for multislot cython and for binary package compatibility
+    for GPU stack frameworks.
+
+        U22 - 1.21
+        D12 - 1.24
+        U24 - 1.26
+        D13 - 2.2
+    F43/U26 - 2.3
+    F44/G23 - 2.4
 
   -->
   <upstream>

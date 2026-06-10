@@ -3,18 +3,25 @@
 
 EAPI=8
 
+# U24
+
 CYTHON_SLOT="3.0"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="meson-python"
+EPYTEST_XDIST=1
 FORTRAN_NEEDED="lapack"
-PYTHON_COMPAT=( "python3_"{10..12} "pypy3" )
+PYTHON_COMPAT=( "python3_12" ) # Forced for binary packages
 PYTHON_REQ_USE="threads(+)"
 
-inherit cython distutils-r1 flag-o-matic fortran-2 pypi toolchain-funcs
+inherit cython distutils-r1 flag-o-matic fortran-2 toolchain-funcs
 
-if [[ "${PV}" != *"_"[rab]* ]] ; then
-	KEYWORDS="~amd64 ~amd64-linux ~arm64 ~arm64-linux ~arm64-macos ~arm64-linux ~x86 ~x86-linux"
+if [[ ${PV} != *_[rab]* ]] ; then
+	KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86"
 fi
+SRC_URI+="
+https://github.com/numpy/numpy/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.gh.tar.gz
+"
 
 DESCRIPTION="Fast array and numerical Python library"
 HOMEPAGE="
@@ -28,7 +35,7 @@ SLOT="0"
 # +lapack because the internal fallbacks are pretty slow. Building without blas
 # is barely supported anyway, see bug #914358.
 IUSE="
--lapack
+doc -lapack linter release test
 ebuild_revision_5
 "
 
@@ -38,34 +45,69 @@ RDEPEND="
 		>=virtual/lapack-3.8
 	)
 "
+# meson requirement relaxed
 BDEPEND="
 	${RDEPEND}
-	>=dev-build/meson-1.1.0
-	>=dev-python/cython-0.29:${CYTHON_SLOT}[${PYTHON_USEDEP}]
+	>=dev-build/meson-0.15.0[${PYTHON_USEDEP}]
+	dev-build/ninja
+	dev-python/cython:${CYTHON_SLOT}[${PYTHON_USEDEP}]
 	dev-python/cython:=
+	dev-python/build[${PYTHON_USEDEP}]
+	dev-python/wheel[${PYTHON_USEDEP}]
+	>=dev-python/spin-0.7[${PYTHON_USEDEP}]
+	doc? (
+		>=dev-python/sphinx-4.5.0[${PYTHON_USEDEP}]
+		<dev-python/sphinx-7.2.0[${PYTHON_USEDEP}]
+
+		~dev-python/numpydoc-1.4[${PYTHON_USEDEP}]
+		~dev-python/pydata-sphinx-theme-0.13.3[${PYTHON_USEDEP}]
+		dev-python/sphinx-design[${PYTHON_USEDEP}]
+		!~dev-python/ipython-8.1.0[${PYTHON_USEDEP}]
+		dev-python/scipy[${PYTHON_USEDEP}]
+		dev-python/matplotlib[${PYTHON_USEDEP}]
+		dev-python/pandas[${PYTHON_USEDEP}]
+		>dev-python/breathe-4.33.0[${PYTHON_USEDEP}]
+
+		dev-python/towncrier[${PYTHON_USEDEP}]
+		dev-python/toml[${PYTHON_USEDEP}]
+	)
 	lapack? (
 		virtual/pkgconfig
 	)
+	linter? (
+		~dev-python/pycodestyle-2.8.0[${PYTHON_USEDEP}]
+		>=dev-python/gitpython-3.1.30[${PYTHON_USEDEP}]
+	)
+	release? (
+		dev-python/urllib3[${PYTHON_USEDEP}]
+		dev-python/beautifulsoup4[${PYTHON_USEDEP}]
+		dev-python/pygithub[${PYTHON_USEDEP}]
+		>=dev-python/gitpython-3.1.30[${PYTHON_USEDEP}]
+		dev-python/twine[${PYTHON_USEDEP}]
+		dev-python/paver[${PYTHON_USEDEP}]
+	)
 	test? (
-		$(python_gen_cond_dep '
-			>=dev-python/cffi-1.14.0[${PYTHON_USEDEP}]
-		' 'python*')
-		dev-python/charset-normalizer[${PYTHON_USEDEP}]
-		>=dev-python/hypothesis-5.8.0[${PYTHON_USEDEP}]
-		>=dev-python/pytz-2019.3[${PYTHON_USEDEP}]
+		dev-python/cython[${PYTHON_USEDEP}]
+		~dev-python/wheel-0.38.1[${PYTHON_USEDEP}]
+		dev-python/setuptools[${PYTHON_USEDEP}]
+		~dev-python/hypothesis-6.81.1[${PYTHON_USEDEP}]
+		~dev-python/pytest-7.4.0[${PYTHON_USEDEP}]
+		~dev-python/pytz-2023.3_p1[${PYTHON_USEDEP}]
+		~dev-python/pytest-cov-4.1.0[${PYTHON_USEDEP}]
+		dev-build/meson[${PYTHON_USEDEP}]
+		dev-python/pytest-xdist[${PYTHON_USEDEP}]
+		~dev-python/mypy-1.5.1[${PYTHON_USEDEP}]
+		>=dev-python/typing-extensions-4.2.0[${PYTHON_USEDEP}]
+		~dev-python/charset-normalizer[${PYTHON_USEDEP}]
 	)
 "
 
-EPYTEST_XDIST=1
 distutils_enable_tests pytest
 PATCHES=(
 	"${FILESDIR}/${PN}-2.1.2-disable-generate-manifest.patch" # unbreak ModuleNotFoundError: No module named 'distutils.msvccompiler' with distutils 74.x
 )
 
 python_prepare_all() {
-	# bug #922457
-	filter-lto
-	# https://github.com/numpy/numpy/issues/25004
 	append-flags -fno-strict-aliasing
 
 	distutils-r1_python_prepare_all
@@ -204,6 +246,6 @@ python_test() {
 }
 
 python_install_all() {
-	local DOCS=( "LICENSE.txt" "README.md" "THANKS.txt" )
+	local DOCS=( "CITATION.bib" "LICENSE.txt" "LICENSES_bundled.txt" "README.md" "THANKS.txt" )
 	distutils-r1_python_install_all
 }

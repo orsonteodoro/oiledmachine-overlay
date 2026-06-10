@@ -3,39 +3,41 @@
 
 EAPI=8
 
+# D12
+
 CYTHON_SLOT="0.29"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{8..11} )
+FORTRAN_NEEDED="lapack"
+PYTHON_COMPAT=( "python3_11" ) # Forced for binary packages
 PYTHON_REQ_USE="threads(+)"
 
-FORTRAN_NEEDED="lapack"
+
+DOC_PV="${PV}"
 
 inherit cython distutils-r1 flag-o-matic fortran-2 toolchain-funcs
 
-KEYWORDS="~amd64 ~arm64 ~arm64-linux ~ppc64 ~s390"
+KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x64-solaris"
+SRC_URI+="
+https://github.com/numpy/numpy/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.gh.tar.gz
+"
+#	doc? (
+#https://numpy.org/doc/$(ver_cut 1-2 ${DOC_PV})/numpy-html.zip -> numpy-html-${DOC_PV}.zip
+#https://numpy.org/doc/$(ver_cut 1-2 ${DOC_PV})/numpy-ref.pdf -> numpy-ref-${DOC_PV}.pdf
+#https://numpy.org/doc/$(ver_cut 1-2 ${DOC_PV})/numpy-user.pdf -> numpy-user-${DOC_PV}.pdf
+#	)
 
-DOC_PV="${PV}"
-# For when docs aren't ready yet, set to last version
-#DOC_PV=1.23.0
 DESCRIPTION="Fast array and numerical Python library"
 HOMEPAGE="
 	https://numpy.org/
 	https://github.com/numpy/numpy/
 	https://pypi.org/project/numpy/
 "
-SRC_URI="
-	mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz
-	doc? (
-		https://numpy.org/doc/$(ver_cut 1-2 ${DOC_PV})/numpy-html.zip -> numpy-html-${DOC_PV}.zip
-		https://numpy.org/doc/$(ver_cut 1-2 ${DOC_PV})/numpy-ref.pdf -> numpy-ref-${DOC_PV}.pdf
-		https://numpy.org/doc/$(ver_cut 1-2 ${DOC_PV})/numpy-user.pdf -> numpy-user-${DOC_PV}.pdf
-	)
-"
 LICENSE="BSD"
 SLOT="0"
 IUSE="
-doc lapack
+doc lapack linter release test
 ebuild_revision_5
 "
 
@@ -47,29 +49,57 @@ RDEPEND="
 "
 BDEPEND="
 	${RDEPEND}
-	>=dev-python/cython-0.29.30:${CYTHON_SLOT}[${PYTHON_USEDEP}]
+	>=dev-python/setuptools-59.2.0[${PYTHON_USEDEP}]
+	>=dev-python/wheel-0.37.0[${PYTHON_USEDEP}]
+	dev-python/cython:${CYTHON_SLOT}[${PYTHON_USEDEP}]
 	dev-python/cython:=
 	>=dev-python/wheel-0.37.0[${PYTHON_USEDEP}]
-	>=dev-python/setuptools-59.2.0[${PYTHON_USEDEP}]
 	doc? (
-		app-arch/unzip
+		>=dev-python/sphinx-4.5.0[${PYTHON_USEDEP}]
+		~dev-python/numpydoc-1.4[${PYTHON_USEDEP}]
+		~dev-python/pydata-sphinx-theme-0.9.0[${PYTHON_USEDEP}]
+		dev-python/sphinx-design[${PYTHON_USEDEP}]
+		!~dev-python/ipython-8.1.0[${PYTHON_USEDEP}]
+		dev-python/scipy[${PYTHON_USEDEP}]
+		dev-python/matplotlib[${PYTHON_USEDEP}]
+		dev-python/pandas[${PYTHON_USEDEP}]
+		dev-python/breathe[${PYTHON_USEDEP}]
+
+		dev-python/towncrier[${PYTHON_USEDEP}]
 	)
 	lapack? (
 		virtual/pkgconfig
 	)
+	linter? (
+		~dev-python/pycodestyle-2.8.0[${PYTHON_USEDEP}]
+		~dev-python/gitpython-3.1.13[${PYTHON_USEDEP}]
+	)
+	release? (
+		dev-python/urllib3[${PYTHON_USEDEP}]
+		dev-python/beautifulsoup4[${PYTHON_USEDEP}]
+		dev-python/pygithub[${PYTHON_USEDEP}]
+		dev-python/gitpython[${PYTHON_USEDEP}]
+		dev-python/twine[${PYTHON_USEDEP}]
+		dev-python/paver[${PYTHON_USEDEP}]
+	)
 	test? (
-		>=dev-python/cffi-1.14.0[${PYTHON_USEDEP}]
-		>=dev-python/hypothesis-6.24.1[${PYTHON_USEDEP}]
-		>=dev-python/mypy-0.940[${PYTHON_USEDEP}]
-		>=dev-python/pytest-6.2.5[${PYTHON_USEDEP}]
-		>=dev-python/pytest-cov-3.0.0[${PYTHON_USEDEP}]
-		>=dev-python/pytz-2021.3[${PYTHON_USEDEP}]
+		>=dev-python/cython-0.29.30[${PYTHON_USEDEP}]
+		<dev-python/cython-0.29.30[${PYTHON_USEDEP}]
+
+		~dev-python/wheel-0.37.0[${PYTHON_USEDEP}]
+		~dev-python/setuptools-59.2.0[${PYTHON_USEDEP}]
+		~dev-python/hypothesis-6.24.1[${PYTHON_USEDEP}]
+		~dev-python/pytest-6.2.5[${PYTHON_USEDEP}]
+		~dev-python/pytz-2021.3[${PYTHON_USEDEP}]
+		~dev-python/pytest-cov-3.0.0[${PYTHON_USEDEP}]
+		~dev-python/mypy-0.981[${PYTHON_USEDEP}]
+		>=dev-python/typing-extensions-4.2.0[${PYTHON_USEDEP}]
+		~dev-python/charset-normalizer[${PYTHON_USEDEP}]
 	)
 "
-
 PATCHES=(
-	"${FILESDIR}/${PN}-1.22.0-no-hardcode-blasv2.patch"
-	"${FILESDIR}/${PN}-2.1.2-disable-generate-manifest.patch" # unbreak ModuleNotFoundError: No module named 'distutils.msvccompiler' with distutils 74.x
+	"${FILESDIR}/numpy-1.22.0-no-hardcode-blasv2.patch"
+	"${FILESDIR}/numpy-1.24.3-fix-c++-linkage.patch"
 )
 
 distutils_enable_tests "pytest"
@@ -143,6 +173,7 @@ python_compile() {
 python_test() {
 	local EPYTEST_DESELECT=(
 		# very disk- and memory-hungry
+		numpy/lib/tests/test_histograms.py::TestHistogram::test_big_arrays
 		numpy/lib/tests/test_io.py::test_large_zip
 
 		# precision problems
@@ -173,18 +204,23 @@ python_test() {
 			numpy/core/tests/test_einsum.py::TestEinsum::test_einsum_sums_int16
 		)
 	fi
-	if use arm || use x86 ; then
-		EPYTEST_DESELECT+=(
-			# too large for 32-bit platforms
-			numpy/core/tests/test_ufunc.py::TestUfunc::test_identityless_reduction_huge_array
-		)
-	fi
+
+	case "${ABI}" in
+		alpha|arm|hppa|m68k|o32|ppc|s390|sh|sparc|x86)
+			EPYTEST_DESELECT+=(
+				# too large for 32-bit platforms
+				numpy/core/tests/test_ufunc.py::TestUfunc::test_identityless_reduction_huge_array
+			)
+			;;
+		*)
+			;;
+	esac
 
 	distutils_install_for_testing --single-version-externally-managed \
 		--record "${TMPDIR}/record.txt" ${NUMPY_FCONFIG}
 
 	cd "${TEST_DIR}/lib" || die
-	epytest -k "not _fuzz"
+	epytest -k "not _fuzz" -n "$(makeopts_jobs)"
 }
 
 python_install() {
@@ -195,12 +231,7 @@ python_install() {
 }
 
 python_install_all() {
-	local DOCS=( "LICENSE.txt" "README.md" "THANKS.txt" )
-
-	if use doc; then
-		local HTML_DOCS=( "${WORKDIR}/html/." )
-		DOCS+=( "${DISTDIR}/${PN}-"{"user","ref"}"-${DOC_PV}.pdf" )
-	fi
+	local DOCS=( "CITATION.bib" "LICENSE.txt" "LICENSES_bundled.txt" "README.md" "THANKS.txt" )
 
 	distutils-r1_python_install_all
 }
