@@ -54,7 +54,7 @@ LDD_RDEPEND="
 	dev-libs/libpcre2
 	sys-apps/util-linux
 	sys-libs/glibc
-	sys-libs/zlib
+	virtual/zlib
 "
 
 RDEPEND+="
