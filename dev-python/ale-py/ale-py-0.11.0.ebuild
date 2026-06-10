@@ -36,7 +36,7 @@ RDEPEND+="
 		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	media-libs/libsdl2
-	sys-libs/zlib
+	virtual/zlib
 "
 DEPEND+="
 	${RDEPEND}
