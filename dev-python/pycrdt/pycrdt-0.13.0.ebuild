@@ -128,7 +128,7 @@ BDEPEND+="
 	)
 	test? (
 		$(python_gen_cond_dep '
-			>=dev-python/exceptiongroup[${PYTHON_USEDEP}]
+			dev-python/exceptiongroup[${PYTHON_USEDEP}]
 		' python3_10)
 		(
 			>=dev-python/pydantic-2.5.2[${PYTHON_USEDEP}]
