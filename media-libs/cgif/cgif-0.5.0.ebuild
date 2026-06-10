@@ -26,10 +26,10 @@ LICENSE="MIT"
 SLOT="0"
 IUSE="
 examples test
-ebuild_revision_9
+ebuild_revision_10
 "
 RDEPEND="
-	sys-libs/zlib
+	virtual/zlib
 "
 BDEPEND="
 	>=dev-build/meson-0.56
