@@ -97,7 +97,7 @@ ${OPENVDB_ABIS_[@]} +abi${PV%%.*}-compat
 -alembic ax +blosc cuda doc -imath-half +jemalloc -jpeg -log4cplus +nanovdb -numpy
 -python +static-libs -tbbmalloc nanovdb -no-concurrent-malloc -openexr -png test
 -vdb_lod +vdb_print -vdb_render -vdb_view
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE+="
 	^^ (
@@ -168,7 +168,7 @@ RDEPEND+="
 	)
 	>=dev-libs/boost-1.80[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-libs/boost:=
-	>=sys-libs/zlib-1.2.7:=
+	>=virtual/zlib-1.2.7:=
 	ax? (
 		$(gen_ax_depend)
 	)
