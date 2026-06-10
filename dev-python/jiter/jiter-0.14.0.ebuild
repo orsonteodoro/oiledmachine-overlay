@@ -192,7 +192,7 @@ DEPEND+="
 BDEPEND+="
 	dev-util/maturin[${PYTHON_USEDEP}]
 	dev? (
-		dev-python/maturin[${PYTHON_USEDEP}]
+		dev-util/maturin[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-pretty[${PYTHON_USEDEP}]
 		dev-python/dirty-equals[${PYTHON_USEDEP}]

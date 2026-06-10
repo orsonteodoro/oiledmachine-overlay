@@ -370,8 +370,8 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/maturin-1.0[${PYTHON_USEDEP}]
-	<dev-python/maturin-2.0[${PYTHON_USEDEP}]
+	>=dev-util/maturin-1.0[${PYTHON_USEDEP}]
+	<dev-util/maturin-2.0[${PYTHON_USEDEP}]
 
 	doc? (
 		dev-python/sphinx[${PYTHON_USEDEP}]
