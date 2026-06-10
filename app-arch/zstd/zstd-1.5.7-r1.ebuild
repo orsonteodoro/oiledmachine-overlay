@@ -28,7 +28,7 @@ LICENSE="
 SLOT="0/1"
 IUSE="
 +lzma lz4 static-libs test zlib
-ebuild_revision_41
+ebuild_revision_42
 "
 RESTRICT="
 	!test? (
@@ -43,7 +43,7 @@ RDEPEND="
 		app-arch/lz4:=
 	)
 	zlib? (
-		sys-libs/zlib
+		virtual/zlib
 	)
 "
 DEPEND="
