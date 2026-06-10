@@ -45,7 +45,7 @@ IUSE="
 	accessibility +alsa bindist custom-cflags designer geolocation
 	+jumbo-build kerberos opengl +pdfium pulseaudio qml screencast
 	+system-icu vaapi vulkan webdriver +widgets
-	ebuild_revision_11
+	ebuild_revision_12
 "
 REQUIRED_USE="
 	designer? ( qml widgets )
@@ -79,7 +79,7 @@ RDEPEND="
 	media-libs/tiff:=
 	sys-apps/dbus
 	sys-apps/pciutils
-	sys-libs/zlib:=[minizip]
+	virtual/zlib:=[minizip]
 	virtual/libudev:=
 	x11-libs/libX11
 	x11-libs/libXcomposite
@@ -320,7 +320,7 @@ _verify_compiler_flags_hardening() {
 	"unconditional:media-libs/tiff:untrusted-data"
 	#"unconditional:net-print/cups:sensitive-data,untrusted-data"
 	"unconditional:sys-apps/dbus:sensitive-data,untrusted-data"							# PII, Crown Jewel Keys
-	"unconditional:sys-libs/zlib:untrusted-data"
+	"unconditional:virtual/zlib:untrusted-data"
 	#"unconditional:x11-libs/pango:sensitive-data,untrusted-data"
 	#"unconditional:x11-libs/cairo:sensitive-data,untrusted-data"
 	"unconditional:x11-libs/libX11:sensitive-data"
