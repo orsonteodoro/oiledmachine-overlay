@@ -31,7 +31,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/2.4" # Bump subslot to the latest major-minor version
-IUSE+=" lts"
+IUSE+=" +lts"
 RDEPEND+="
 	python_targets_python3_11? (
 		=dev-python/numpy-1.21*[${PYTHON_USEDEP}]
