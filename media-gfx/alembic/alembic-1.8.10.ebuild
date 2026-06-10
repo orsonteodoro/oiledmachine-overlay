@@ -68,7 +68,7 @@ LICENSE="
 SLOT="0"
 IUSE="
 examples hdf5 python test
-ebuild_revision_12
+ebuild_revision_13
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -115,7 +115,7 @@ RDEPEND+="
 			>=sci-libs/hdf5-1.8.9:=[zlib(+)]
 			sci-libs/hdf5:=
 		)
-		>=sys-libs/zlib-1.3
+		>=virtual/zlib-1.3
 	)
 	python? (
 		$(python_gen_cond_dep '
