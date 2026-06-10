@@ -111,7 +111,7 @@ ${CPU_FEATURES[@]%:*}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 cuda doc gui libcxx nofma optix partio python qt5 qt6 static-libs test wayland X
-ebuild_revision_12
+ebuild_revision_13
 "
 REQUIRED_USE+="
 	^^ (
@@ -262,8 +262,8 @@ RDEPEND+="
 		dev-libs/boost:=
 	)
 	(
-		sys-libs/zlib[${MULTILIB_USEDEP}]
-		sys-libs/zlib:=
+		virtual/zlib[${MULTILIB_USEDEP}]
+		virtual/zlib:=
 	)
 	$(gen_llvm_depend)
 	>=dev-libs/pugixml-1.8[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
