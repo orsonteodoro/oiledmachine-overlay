@@ -43,7 +43,7 @@ LICENSE="
 "
 SLOT="0"
 IUSE="
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE+="
 	^^ (
@@ -70,7 +70,7 @@ RDEPEND="
 	dev-libs/icu:=
 	dev-libs/libffi:=
 	dev-libs/libxml2:2
-	sys-libs/zlib:=
+	virtual/zlib:=
 	sys-libs/ncurses[tinfo]
 	sys-libs/ncurses:=
 	app-arch/zstd
