@@ -170,7 +170,7 @@ RDEPEND+="
 	>=dev-dotnet/dotnet-sdk-bin-${DOTNET_VER}:${DOTNET_VER}
 	media-libs/libpng
 	sys-devel/gcc[openmp]
-	sys-libs/zlib[minizip]
+	virtual/zlib[minizip]
 	virtual/libc
 "
 DEPEND+="
