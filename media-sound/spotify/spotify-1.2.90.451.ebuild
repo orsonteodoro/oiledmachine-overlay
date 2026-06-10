@@ -514,6 +514,11 @@ ewarn
 		sandbox-changes_no_network_sandbox "To download from a life source and verify public repository key"
 	fi
 	export EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+
+	if has_version "sys-libs/zlib-ng[-compat]" ; then
+eerror "sys-libs/zlib-ng[compat] is required for ${PN}"
+		die
+	fi
 }
 
 verify_pubkey() {
