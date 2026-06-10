@@ -36,43 +36,16 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
-IUSE+=" converter"
+IUSE+=" converter lint test"
+REQUIRED_USE="
+	lint? (
+		test
+	)
+	converter? (
+		test
+	)
+"
 RDEPEND+="
-	>=dev-python/attrs-25.3.0[${PYTHON_USEDEP}]
-	>=dev-python/black-25.1.0[${PYTHON_USEDEP}]
-	>=dev-python/build-1.2.2_p1[${PYTHON_USEDEP}]
-	>=dev-python/cachetools-5.5.0[${PYTHON_USEDEP}]
-	>=dev-python/chardet-5.2.0[${PYTHON_USEDEP}]
-	>=dev-python/click-8.1.8[${PYTHON_USEDEP}]
-	>=dev-python/colorama-0.4.6[${PYTHON_USEDEP}]
-	>=dev-python/coverage-7.8.0[${PYTHON_USEDEP}]
-	>=dev-python/distlib-0.3.9[${PYTHON_USEDEP}]
-	>=dev-python/exceptiongroup-1.2.2[${PYTHON_USEDEP}]
-	>=dev-python/fastjsonschema-2.21.1[${PYTHON_USEDEP}]
-	>=dev-python/filelock-3.17.0[${PYTHON_USEDEP}]
-	>=dev-python/importlib-resources-6.5.2[${PYTHON_USEDEP}]
-	>=dev-python/iniconfig-2.0.0[${PYTHON_USEDEP}]
-	>=dev-python/isort-5.13.2[${PYTHON_USEDEP}]
-	>=dev-python/mypy-extensions-1.0.0[${PYTHON_USEDEP}]
-	>=dev-python/packaging-24.2[${PYTHON_USEDEP}]
-	>=dev-python/pathspec-0.12.1[${PYTHON_USEDEP}]
-	>=dev-python/pep517-0.13.1[${PYTHON_USEDEP}]
-	>=dev-python/platformdirs-4.3.6[${PYTHON_USEDEP}]
-	>=dev-python/pluggy-1.5.0[${PYTHON_USEDEP}]
-	>=dev-python/py-1.11.0[${PYTHON_USEDEP}]
-	>=dev-python/pyparsing-3.2.3[${PYTHON_USEDEP}]
-	>=dev-python/pyproject-api-1.9.0[${PYTHON_USEDEP}]
-	>=dev-python/pyproject-hooks-1.2.0[${PYTHON_USEDEP}]
-	>=dev-python/pytest-8.3.5[${PYTHON_USEDEP}]
-	>=dev-python/pytest-cov-6.0.0[${PYTHON_USEDEP}]
-	>=dev-python/ruff-0.11.4[${PYTHON_USEDEP}]
-	>=dev-python/six-1.17.0[${PYTHON_USEDEP}]
-	>=dev-python/tomli-2.2.1[${PYTHON_USEDEP}]
-	>=dev-python/tox-4.14.1[${PYTHON_USEDEP}]
-	>=dev-python/typing-extensions-4.13.2[${PYTHON_USEDEP}]
-	>=dev-python/validate-pyproject-0.24.1[${PYTHON_USEDEP}]
-	>=dev-python/virtualenv-20.25.1[${PYTHON_USEDEP}]
-	>=dev-python/zipp-3.21.0[${PYTHON_USEDEP}]
 	converter? (
 		>=dev-python/ua-parser-1.0.0[${PYTHON_USEDEP}]
 		>=dev-python/ua-parser-builtins-0.18.0_p1[${PYTHON_USEDEP}]
@@ -85,6 +58,43 @@ DEPEND+="
 "
 BDEPEND+="
 	>=dev-python/setuptools-77.0[${PYTHON_USEDEP}]
+	test? (
+		~dev-python/attrs-25.3.0[${PYTHON_USEDEP}]
+		~dev-python/black-25.1.0[${PYTHON_USEDEP}]
+		~dev-python/build-1.2.2_p1[${PYTHON_USEDEP}]
+		~dev-python/cachetools-5.5.0[${PYTHON_USEDEP}]
+		~dev-python/chardet-5.2.0[${PYTHON_USEDEP}]
+		~dev-python/click-8.1.8[${PYTHON_USEDEP}]
+		~dev-python/colorama-0.4.6[${PYTHON_USEDEP}]
+		~dev-python/coverage-7.8.0[${PYTHON_USEDEP}]
+		~dev-python/distlib-0.3.9[${PYTHON_USEDEP}]
+		~dev-python/exceptiongroup-1.2.2[${PYTHON_USEDEP}]
+		~dev-python/fastjsonschema-2.21.1[${PYTHON_USEDEP}]
+		~dev-python/filelock-3.17.0[${PYTHON_USEDEP}]
+		~dev-python/importlib-resources-6.5.2[${PYTHON_USEDEP}]
+		~dev-python/iniconfig-2.0.0[${PYTHON_USEDEP}]
+		~dev-python/isort-5.13.2[${PYTHON_USEDEP}]
+		~dev-python/mypy-extensions-1.0.0[${PYTHON_USEDEP}]
+		~dev-python/packaging-24.2[${PYTHON_USEDEP}]
+		~dev-python/pathspec-0.12.1[${PYTHON_USEDEP}]
+		~dev-python/pep517-0.13.1[${PYTHON_USEDEP}]
+		~dev-python/platformdirs-4.3.6[${PYTHON_USEDEP}]
+		~dev-python/pluggy-1.5.0[${PYTHON_USEDEP}]
+		~dev-python/py-1.11.0[${PYTHON_USEDEP}]
+		~dev-python/pyparsing-3.2.3[${PYTHON_USEDEP}]
+		~dev-python/pyproject-api-1.9.0[${PYTHON_USEDEP}]
+		~dev-python/pyproject-hooks-1.2.0[${PYTHON_USEDEP}]
+		~dev-python/pytest-8.3.5[${PYTHON_USEDEP}]
+		~dev-python/pytest-cov-6.0.0[${PYTHON_USEDEP}]
+		~dev-python/ruff-0.11.4[${PYTHON_USEDEP}]
+		~dev-python/six-1.17.0[${PYTHON_USEDEP}]
+		~dev-python/tomli-2.2.1[${PYTHON_USEDEP}]
+		~dev-python/tox-4.14.1[${PYTHON_USEDEP}]
+		~dev-python/typing-extensions-4.13.2[${PYTHON_USEDEP}]
+		~dev-python/validate-pyproject-0.24.1[${PYTHON_USEDEP}]
+		~dev-python/virtualenv-20.25.1[${PYTHON_USEDEP}]
+		~dev-python/zipp-3.21.0[${PYTHON_USEDEP}]
+	)
 "
 DOCS=( "README.md" )
 
