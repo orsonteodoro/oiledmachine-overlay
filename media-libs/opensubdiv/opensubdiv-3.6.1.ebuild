@@ -54,7 +54,7 @@ IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 cuda +doc +examples -glew +glfw +opencl +openmp +opengl +ptex +tbb test
 +tutorials +X
-ebuild_revision_5
+ebuild_revision_6
 "
 gen_required_use_cuda_targets() {
 	local x
@@ -103,7 +103,7 @@ RDEPEND="
 	ptex? (
 		>=media-libs/ptex-2.4.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		media-libs/ptex:=
-		>=sys-libs/zlib-1.2.13
+		>=virtual/zlib-1.2.13
 	)
 	X? (
 		x11-libs/libX11
