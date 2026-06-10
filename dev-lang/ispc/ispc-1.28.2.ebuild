@@ -73,7 +73,7 @@ SLOT="0"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +cpu +examples -fast-math lto +openmp pthread tbb test +video_cards_intel -xe
-ebuild_revision_24
+ebuild_revision_25
 "
 REQUIRED_USE+="
 	kernel_Darwin? (
@@ -138,7 +138,7 @@ gen_omp_depends() {
 }
 RDEPEND="
 	$(gen_llvm_depends)
-	>=sys-libs/zlib-1.2.11
+	>=virtual/zlib-1.2.11
 	openmp? (
 		|| (
 			$(gen_omp_depends)
