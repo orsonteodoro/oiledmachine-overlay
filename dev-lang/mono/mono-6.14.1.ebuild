@@ -207,7 +207,7 @@ IUSE+="
 ${TRAINERS[@]}
 doc jemalloc jemalloc-assert jemalloc-custom-cflags jemalloc-default minimal nls
 pax-kernel xen
-ebuild_revision_28
+ebuild_revision_29
 "
 REQUIRED_USE+="
 	jemalloc-assert? (
@@ -230,7 +230,7 @@ REQUIRED_USE+="
 "
 DEPEND+="
 	app-crypt/mit-krb5[${MULTILIB_USEDEP}]
-	sys-libs/zlib[${MULTILIB_USEDEP}]
+	virtual/zlib[${MULTILIB_USEDEP}]
 	!minimal? (
 		>=dev-dotnet/libgdiplus-6.0.2
 	)
