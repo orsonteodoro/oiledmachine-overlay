@@ -482,6 +482,10 @@ ewarn
 	libcxx-slot_verify
 	libstdcxx-slot_verify
 	verify_compiler_flags_hardening
+	if has_version "sys-libs/zlib-ng[-compat]" ; then
+eerror "You need sys-libs/zlib-ng[compat] for ${CATEGORY}/${PN}"
+		die
+	fi
 }
 
 get_uri_tarball() {
