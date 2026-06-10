@@ -48,7 +48,7 @@ IUSE+="
 ${GAMBAS_MODULES_DEFAULTS[@]}
 debug doc +glsl +glu +ide +jit +glsl +sge remove_deprecated +remove_not_finished
 +remove_unstable smtp +webview
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE+="
 	glsl? (
@@ -319,7 +319,7 @@ DEPEND+="
 		dev-libs/libxslt
 	)
 	zlib? (
-		sys-libs/zlib
+		virtual/zlib
 	)
 	zstd? (
 		>=app-arch/zstd-1.3.3
