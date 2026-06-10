@@ -147,7 +147,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
 asahi debug +llvm lm-sensors opencl +opengl +proprietary-codecs +shader-cache
 sysprof test unwind vaapi valgrind vdpau vulkan wayland +X +zstd
-ebuild_revision_28
+ebuild_revision_29
 "
 REQUIRED_USE="
 	video_cards_lavapipe? (
@@ -189,7 +189,7 @@ RDEPEND="
 	>=dev-libs/expat-2.1.0-r3[${MULTILIB_USEDEP}]
 	>=dev-util/spirv-tools-1.3.231.0[${MULTILIB_USEDEP}]
 	>=media-libs/libglvnd-1.3.2[X?,${MULTILIB_USEDEP}]
-	>=sys-libs/zlib-1.2.9[${MULTILIB_USEDEP}]
+	>=virtual/zlib-1.2.9[${MULTILIB_USEDEP}]
 	virtual/patent-status[patent_status_nonfree=]
 	llvm? (
 		video_cards_r600? (
