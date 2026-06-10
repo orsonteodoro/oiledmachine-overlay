@@ -88,7 +88,7 @@ SLOT="${SLOT_MAJOR}/"$(ver_cut "1-2" "${INTERNAL_VERSION}")
 IUSE="
 ${_CXX_STANDARD[@]}
 emacs examples static-libs test zlib
-ebuild_revision_42
+ebuild_revision_43
 "
 REQUIRED_USE="
 	^^ (
@@ -100,7 +100,7 @@ RDEPEND="
 	dev-cpp/abseil-cpp:${ABSEIL_CPP_PV}[cxx_standard_cxx11?,cxx_standard_cxx14?,cxx_standard_cxx17?]
 	dev-cpp/abseil-cpp:=
 	zlib? (
-		>=sys-libs/zlib-1.2.13[${MULTILIB_USEDEP}]
+		>=virtual/zlib-1.2.13[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
