@@ -61,7 +61,7 @@ avif +aom -brotli -dav1d doc -doxygen +examples -ffmpeg +gdk-pixbuf -header-comp
 jpeg -jpeg2k -kvazaar -heic -htj2k -libde265 -openh264 -rav1e +libsharpyuv
 -system-libsharpyuv -svt-av1 test +threads -uncompressed -uvg266 -vvc
 -vvenc -webcodecs -x264 -x265
-ebuild_revision_27
+ebuild_revision_28
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -142,7 +142,7 @@ RDEPEND="
 		x11-libs/gdk-pixbuf[${MULTILIB_USEDEP}]
 	)
 	header-compression? (
-		sys-libs/zlib:=[${MULTILIB_USEDEP}]
+		virtual/zlib:=[${MULTILIB_USEDEP}]
 	)
 	htj2k? (
 		media-libs/openjpeg:=[${MULTILIB_USEDEP}]
@@ -173,7 +173,7 @@ RDEPEND="
 		media-libs/svt-av1:=[${MULTILIB_USEDEP}]
 	)
 	uncompressed? (
-		sys-libs/zlib:=[${MULTILIB_USEDEP}]
+		virtual/zlib:=[${MULTILIB_USEDEP}]
 	)
 	vvc? (
 		media-libs/vvdec:=[${MULTILIB_USEDEP}]
