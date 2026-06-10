@@ -32,14 +32,14 @@ SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86"
 IUSE="
 static-libs
-ebuild_revision_10
+ebuild_revision_11
 "
 RDEPEND="
 	dev-libs/libpcre:=
 	dev-libs/libxml2:=
 	dev-libs/zziplib
 	media-libs/lib3ds
-	sys-libs/zlib
+	virtual/zlib
 "
 DEPEND="
 	${RDEPEND}
