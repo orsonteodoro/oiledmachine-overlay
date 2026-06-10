@@ -33,23 +33,23 @@ exist in build files.
 
 | LIBC                 | Arch     | Ebuild level of support     | Distro or CI image correspondence                                                                          |
 | ---                  | ----     | ---                         | ---                                                                                                        |
-| glibc                | 64-bit   | Generally supported         | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39)                                                             |
-| glibc                | 32-bit   | Deprecated*                 | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39)                                                             |
+| glibc                | 64-bit   | Generally supported         | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39), U26 (2.43)                                                 |
+| glibc                | 32-bit   | Deprecated*                 | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39), U26 (2.43)                                                 |
 | glibc                | alpha    | Not supported               |                                                                                                            |
-| glibc >= 3.40        | amd64    | Fully supported             | D12 (2.36), D13 (2.41), F41 (2.40), F42 (2.41), F43 (2.42), F44 (2.43), G23 (2.42), U22 (2.35), U24 (2.39) |
-| glibc                | arm      | Not supported               | D12 (2.36), D13 (2.41), U24 (2.39)  U24 (2.39)                                                             |
-| glibc                | arm64    | Available                   | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39)                                                             |
+| glibc >= 3.40        | amd64    | Fully supported             | D12 (2.36), D13 (2.41), F41 (2.40), F42 (2.41), F43 (2.42), F44 (2.43), G23 (2.42), U22 (2.35), U24 (2.39), U26 (2.43) |
+| glibc                | arm      | Not supported               | D12 (2.36), D13 (2.41), U24 (2.39)  U24 (2.39), U26 (2.43)                                                 |
+| glibc                | arm64    | Available                   | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39), U26 (2.43)                                                 |
 | glibc                | hppa     | Not supported               | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39)                                                             |
 | glibc                | loong    | Available                   |             D13 (2.41),             U24 (2.39)                                                             |
 | glibc                | mips64   | Available                   | D12 (2.36), D13 (2.40), U22 (2.35), U24 (2.39)                                                             |
 | glibc                | mips     | Available                   | D12 (2.36), D13 (2.40), U22 (2.35), U24 (2.39)                                                             |
 | glibc                | ppc      | Not supported               | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39)                                                             |
-| glibc                | ppc64    | Available                   | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39)                                                             |
-| glibc                | riscv    | Available                   | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39)                                                             |
-| glibc                | s390x    | Available                   | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39)                                                             |
+| glibc                | ppc64    | Available                   | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39), U26 (2.43)                                                 |
+| glibc                | riscv    | Available                   | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39), U26 (2.43)                                                 |
+| glibc                | s390x    | Available                   | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39), U26 (2.43)                                                 |
 | glibc                | sparc64  | Available                   | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39)                                                             |
-| glibc                | x86      | Not supported               | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39)                                                             |
-| musl >= 1.2.3        | *        | Available                   | D12 (1.2.3), D13 (1.2.5), F42 (1.2.5), F43 (1.2.5), F44 (1.2.5), G23 (1.2.5) U22 (1.2.2), U24 (1.2.4)      |
+| glibc                | x86      | Not supported               | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39), U26 (2.43)                                                 |
+| musl >= 1.2.3        | *        | Available                   | D12 (1.2.3), D13 (1.2.5), F42 (1.2.5), F43 (1.2.5), F44 (1.2.5), G23 (1.2.5) U22 (1.2.2), U24 (1.2.4), U26 (1.2.5) |
 
 * Using 32-bit may increase the chances of high-critical vulnerabilities.  Examples:
   - ASLR effectiveness on 32-bit is estimated to be 10-20% or 20-50% and can lead to increased privilege escalation, data tampering, information disclosure
@@ -59,22 +59,22 @@ exist in build files.
 | Compiler                        | Ebuild level of support               | Distro or CI image correspondence                  |
 | ---                             | ---                                   | ---                                                |
 | Clang <= 16                     | Not supported                         | D12 (14.0), U22 (14.0)                             |
-| Clang 17                        | Limited support                       |                                                    |
-| Clang 18                        | Fully supported                       | U24 (18.0)                                         |
-| Clang 19                        | Supported                             | D13 (19.0), F41 (19.1.7)                           |
-| Clang 20                        | Available                             | F42 (20.1.3),                                      |
-| Clang 21                        | Available                             | F43 (21.1.8), F44 (21.1.8), G23 (21.1.8)           |
-| Clang 22                        | Available                             |                                                    |
+| Clang 17                        | Limited support                       | U26 (17.0.6)                                       |
+| Clang 18                        | Fully supported                       | U24 (18.0), U26 (18.1.8)                           |
+| Clang 19                        | Supported                             | D13 (19.0), F41 (19.1.7), U26 (19.1.7)             |
+| Clang 20                        | Available                             | F42 (20.1.3), U26 (20.1.8)                         |
+| Clang 21                        | Available                             | F43 (21.1.8), F44 (21.1.8), G23 (21.1.8), U26 (21.1.8) |
+| Clang 22                        | Available                             | U26 (22.1.2)                                       |
 | Clang 23                        | Limited support                       |                                                    |
 | Cython 0.29.37.1                | Fully supported                       | D12 (0.29.32), U22 (0.29)                          |
 | Cython 3.0.12                   | Fully Supported                       | D13 (3.0.11), F42 (3.0.12), U24 (3.0.8)            |
-| Cython 3.1.0                    | Fully supported                       | F43 (3.1.3)                                        |
+| Cython 3.1.0                    | Fully supported                       | F43 (3.1.3), U26 (3.1.6)                           |
 | Cython 3.2.0                    | Not supported                         | F44 (3.2.4), G23 (3.2.4)                           |
 | GCC 11                          | Fully supported                       | U22 (11.2)                                         |
 | GCC 12                          | Fully supported                       | D12 (12.2)                                         |
 | GCC 13                          | Fully supported                       | U24 (13.2)                                         |
 | GCC 14                          | Partially Supported                   | D13 (14.2), F40 (14.0), F41 (14.2.1), F43 (14.3.1) |
-| GCC 15                          | Fully supported                       | F42 (15.2.1), F43 (15.2.1), G23 (15.2.1)           |
+| GCC 15                          | Fully supported                       | F42 (15.2.1), F43 (15.2.1), G23 (15.2.1), U26 (15.2.0) |
 | GCC 16			  | Not Supported                         | F44 (16.1.1)                                       |
 | Rust 1.63.0                     | Not supported                         | D12 (1.63.0)                                       |
 | Rust 1.74.1                     | Available                             |                                                    |
@@ -84,8 +84,9 @@ exist in build files.
 | Rust 1.88.0                     | Available                             |                                                    |
 | Rust 1.89.0                     | Available                             | U22 (1.89.0), U24 (1.89.0)                         |
 | Rust 1.91.0                     | Not supported                         | G23 (1.91.0)                                       |
-| Rust 1.91.1 [C]                 | Available                             | U22 (1.91.1), U24 (1.91.1)                         |
-| Rust 1.93.1                     | Available                             | G23 (1.93.1)                                       |
+| Rust 1.91.1 [C]                 | Available                             | U22 (1.91.1), U24 (1.91.1), U26 (1.91.1)           |
+| Rust 1.92.0                     | Available                             | U26 (1.92.0)                                       |
+| Rust 1.93.1                     | Available                             | G23 (1.93.1), U26 (1.93.1)                         |
 | Rust 1.94.1                     | Available                             |                                                    |
 | Rust 1.95.0 [C]                 | Available                             | F43 (1.95.0), F44 (1.95.0)                         |
 | Rust-9999 (1.97.0-nightly) [C]  | Limited support                       |                                                    |
@@ -93,7 +94,7 @@ exist in build files.
 For non C/C++ langages (e.g. Python or JS) the Rust slot rules for version
 pinning are as follows:
 
-- The latest LTS slot by LTS distro releases is supported for LTS packages.
+- The latest LTS slot by LTS distro releases used in CI is supported for LTS packages.
 - The latest rolling slot by a rolling distro release is supported for rolling
   packages.
 - The live slot for Chromium.
@@ -246,10 +247,10 @@ Language defaults
 | 3.12                 | Partially supported                   | U24 (EOL Apr 2029)                                             |
 | 3.13                 | Available                             | D13 (EOL Aug 2028), F41 (EOL Nov 2025), F42 (EOL May 2026)     |
 | >= 3.13t [3]         | Not supported                         |                                                                |
-| 3.14                 | Available                             | G23, F43, F44                                                  |
+| 3.14                 | Available                             | G23, F43, F44, U26                                             |
 | >= 3.15 [3]          | Not supported                         |                                                                |
 | pypy3 [2][3]         | Not supported (EOL)                   |                                                                |
-| pypy3_11 [3]         | Available [1]                         |                                                                |
+| pypy3_11 [3]         | Available [1]                         | D12 (7.3.11), D13 (7.3.10), F42 (7.3.20), F43 (7.3.22), F44 (7.3.22), G23 (7.3.23), U22 (7.3.9), U24 (7.3.15), U26 (7.3.20) |
 
 * [1] Available but not fully supported because the PYTHON_COMPAT removal of
       affected versions by eager FAFO removal from distro and community overlays.
@@ -284,12 +285,13 @@ Language defaults
 | CUDA 12.8                           | Available                             | D12, F41, U20, U22, U24                                  |
 | CUDA 12.9                           | Available                             | D12, F41, U20, U22, U24                                  |
 | CUDA 13.0                           | Not supported                         | D12, F42, U22, U24                                       |
+| CUDA 13.1                           | Not supported                         | U26                                                      |
 | Electron (amd64)                    | Fully supported                       |                                                          |
 | Electron (arm64)                    | Not supported                         |                                                          |
 | Electron (armv7)                    | Not supported                         |                                                          |
 | Electron (x86)                      | Not supported                         |                                                          |
 | gRPC 1.30.2 [3]                     | Fully supported                       | U22 (1.30.2)                                             |
-| gRPC 1.51.3 [3]                     | Fully supported                       | D12 (1.51.1), D13 (1.51.1), U24 (1.51.1)                 |
+| gRPC 1.51.3 [3]                     | Fully supported                       | D12 (1.51.1), D13 (1.51.1), U24 (1.51.1), U26 (1.51.1)   |
 | gRPC 1.71.2 [3]                     | Fully supported                       |                                                          |
 | gRPC >= 1.75.1 (3)                  | Fully supported                       |                                                          |
 | GTK 2 (4)                           | Not Supported                         |                                                          |
@@ -312,20 +314,22 @@ Language defaults
 | ROCm OpenMP offload (2)             | WIP                                   |                                                          |
 | DPC++ OpenMP offload                | Not Supported                         |                                                          |
 | OpenRC                              | Fully supported                       |                                                          |
-| Protobuf-cpp 3 [3]                  | Fully supported                       | D12 (3.21.12), F41 (3.19.6), F42 (3.19.6), U24 (3.21.12) |
+| Protobuf-cpp 3 [3]                  | Fully supported                       | D12 (3.21.12), F41 (3.19.6), F42 (3.19.6), U24 (3.21.12), U26 (3.21.12) |
 | Protobuf-cpp 5 [3]                  | Fully supported                       |                                                          |
 | Protobuf-cpp 6 [3]                  | Fully supported                       |                                                          |
 | PyTorch <= 2.7                      | Not supported                         | D12 (1.13.1), D13 (2.6.0)                                |
-| PyTorch 2.8 (CPU)                   | Available                             | F43 (2.8.0)                                              |
+| PyTorch 2.8 (CPU)                   | Available                             | F43 (2.8.0), U22 (1.8.1)                                 |
 | PyTorch 2.8 (CUDA 12.6, 12.8, 12.9) | Available                             |                                                          |
 | PyTorch 2.8 (ROCm 6.4)              | Available                             |                                                          |
-| PyTorch 2.9 (CPU)                   | Available                             | F44 (2.9.1)                                              |
+| PyTorch 2.9 (CPU)                   | Available                             | F44 (2.9.1), U26 (2.9.1)                                 |
 | PyTorch 2.9 (CUDA 12.6, 12.8, 13.0) | Available                             |                                                          |
 | PyTorch 2.9 (ROCm 6.4)              | Available                             |                                                          |
 | Qt 5.x [4][5]                       | Not supported, but available          |                                                          |
 | Qt 6.x                              | Fully supported                       |                                                          |
-| ROCm 6.4                            | WIP                                   | D12, U22, U24                                            |
-| ROCm 7.0                            | WIP                                   | D12, D13, U22, U24                                       |
+| ROCm 6.4                            | Available                             | D12, U22, U24                                            |
+| ROCm 7.0                            | Available                             | D12, D13, U22, U24                                       |
+| ROCm 7.1                            | Not supported                         | U26                                                      |
+| ROCm 7.2                            | In planning                           |                                                          |
 | SYCL                                | Not supported                         |                                                          |
 | systemd                             | Partially supported                   |                                                          |
 | TensorFlow 2.17 (CPU)               | WIP                                   |                                                          |
