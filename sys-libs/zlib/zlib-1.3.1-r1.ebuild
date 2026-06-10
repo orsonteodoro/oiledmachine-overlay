@@ -187,7 +187,7 @@ BDEPEND+="
 # See #309623 for libxml2
 RDEPEND+="
 	!<dev-libs/libxml2-2.7.7
-	!virtual/zlib-ng[compat]
+	!sys-libs/zlib-ng[compat]
 "
 DEPEND+="
 	${RDEPEND}
