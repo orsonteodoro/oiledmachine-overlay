@@ -503,7 +503,7 @@ ${USE_LICENSES[@]}
 alsa chromium -clear-config-first cuda cuda-filters doc +encode gdbm liblensfun
 mold openvino oss pgo +re-codecs sndio sr static-libs tensorflow test v4l
 wayland
-ebuild_revision_58
+ebuild_revision_59
 "
 
 # x means plus.  There is a bug in the USE flag system where + is not recognized.
@@ -1064,7 +1064,7 @@ RDEPEND+="
 		>=media-libs/zimg-2.7.4:=[${MULTILIB_USEDEP}]
 	)
 	zlib? (
-		>=sys-libs/zlib-1.2.8-r1[${MULTILIB_USEDEP}]
+		>=virtual/zlib-1.2.8-r1[${MULTILIB_USEDEP}]
 	)
 	zvbi? (
 		>=media-libs/zvbi-0.2.35[${MULTILIB_USEDEP}]
