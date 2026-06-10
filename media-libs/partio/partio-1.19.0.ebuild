@@ -36,7 +36,7 @@ RESTRICT="test"
 SLOT="0"
 IUSE="
 doc test
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -46,7 +46,7 @@ RDEPEND="
 	>=media-libs/freeglut-3.4.0
 	>=media-libs/glu-9.0.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	media-libs/glu:=
-	>=sys-libs/zlib-1.3
+	>=virtual/zlib-1.3
 	virtual/opengl
 "
 DEPEND="
