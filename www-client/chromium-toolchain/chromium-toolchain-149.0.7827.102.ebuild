@@ -35,6 +35,7 @@ LLVM_SLOT_LIVE="1"
 RUST_LIVE_TIMESTAMP="May 22, 2026 00:33:25 -0700" # Same as Rust 1.98.0 timestamp
 RUST_COMMIT="4c4205163abcbd08948b3efab796c543ba1ea687" # Vendored commit
 RUST_SUB_REV="2"
+RUST_VENDORED_VER="1.96.0" # See https://github.com/rust-lang/rust/blob/4c4205163abcbd08948b3efab796c543ba1ea687/src/version
 # Upstream uses 1.96.0 corresponding to LLVM 22.1
 # This ebuild assumes 1.98.0 (live 9999) corresponding to llvm 22 to reduce build time.
 # For the LLVM version used for Rust snapshot, see https://github.com/rust-lang/rust/blob/4c4205163abcbd08948b3efab796c543ba1ea687/.gitmodules#L28
@@ -284,7 +285,7 @@ eerror "Switch to live with \`eselect rust\`"
 		if (( ${merge_time} < ${compatible_time} )) ; then
 eerror
 eerror "Detected old live timestamp."
-eerror "Re-emerge ${pkg_name} or switch to Rust 1.96.0 or later."
+eerror "Re-emerge ${pkg_name} or switch to Rust ${RUST_VENDORED_VER} or later."
 eerror
 eerror "Current timestamp:  "$(date --date="@${merge_time}")
 eerror "Expected timestamp:  >= "$(date --date="@${compatible_time}")
