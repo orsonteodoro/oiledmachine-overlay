@@ -6,7 +6,7 @@ EAPI=8
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_TRAPV="0" # Breaks during test suite
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO MC NPD OOBR SO UAF UM"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO ID IO MC NPD OOBR OOBW SO UAF UM"
 CXX_STANDARD=20
 
 inherit libstdcxx-compat
@@ -21,7 +21,7 @@ LLVM_COMPAT=(
 
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
-PYTHON_COMPAT=( python3_{11..14} )
+PYTHON_COMPAT=( python3_{11..15} )
 inherit cflags-hardened check-compiler-switch cmake flag-o-matic flag-o-matic-om
 inherit libcxx-slot libstdcxx-slot python-any-r1 toolchain-funcs xdg-utils
 
@@ -33,36 +33,36 @@ else
 	VERIFY_SIG_OPENPGP_KEY_PATH=/usr/share/openpgp-keys/aacid.asc
 	inherit verify-sig
 
-	TEST_COMMIT="9d5011815a14c157ba25bb160187842fb81579a5"
+	TEST_COMMIT="b85e4d1ce75636b3e727555a9d31da34ad771c1c"
 	SRC_URI="https://poppler.freedesktop.org/${P}.tar.xz"
 	SRC_URI+=" test? ( https://gitlab.freedesktop.org/poppler/test/-/archive/${TEST_COMMIT}/test-${TEST_COMMIT}.tar.bz2 -> ${PN}-test-${TEST_COMMIT}.tar.bz2 )"
 	SRC_URI+=" verify-sig? ( https://poppler.freedesktop.org/${P}.tar.xz.sig )"
-	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
-	SLOT="0/158"   # CHECK THIS WHEN BUMPING!!! SUBSLOT IS libpoppler.so SOVERSION
+	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc x86 ~arm64-macos ~x64-macos ~x64-solaris"
+	SLOT="0/160"   # CHECK THIS WHEN BUMPING!!! SUBSLOT IS libpoppler.so SOVERSION
 fi
 
 DESCRIPTION="PDF rendering library based on the xpdf-3.0 code base"
 HOMEPAGE="https://poppler.freedesktop.org/"
 
 LICENSE="GPL-2"
-IUSE="boost cairo cjk curl +cxx debug doc gpgme +introspection +jpeg +jpeg2k +lcms nss png qt6 test tiff +utils"
+IUSE="boost cairo cjk curl +cxx debug doc gpg +introspection +jpeg +jpeg2k +lcms nss png qt6 test tiff +utils"
 RESTRICT="!test? ( test )"
 
 COMMON_DEPEND="
-	>=media-libs/fontconfig-2.13
-	>=media-libs/freetype-2.10
+	>=media-libs/fontconfig-2.15
+	>=media-libs/freetype-2.11
 	virtual/zlib:=
 	cairo? (
-		>=dev-libs/glib-2.64:2
-		>=x11-libs/cairo-1.16
+		>=dev-libs/glib-2.80:2
+		>=x11-libs/cairo-1.18
 		introspection? ( >=dev-libs/gobject-introspection-1.82.0-r2:= )
 	)
 	curl? ( net-misc/curl )
-	gpgme? ( dev-cpp/gpgmepp:= )
+	gpg? ( dev-cpp/gpgmepp:= )
 	jpeg? ( >=media-libs/libjpeg-turbo-1.1.0:= )
 	jpeg2k? ( >=media-libs/openjpeg-2.3.0-r1:2= )
 	lcms? ( media-libs/lcms:2 )
-	nss? ( >=dev-libs/nss-3.49 )
+	nss? ( >=dev-libs/nss-3.98 )
 	png? ( media-libs/libpng:0= )
 	qt6? ( dev-qt/qtbase:6[gui,xml] )
 	tiff? ( media-libs/tiff:= )
@@ -71,12 +71,11 @@ RDEPEND="${COMMON_DEPEND}
 	cjk? ( app-text/poppler-data )
 "
 DEPEND="${COMMON_DEPEND}
-	boost? ( >=dev-libs/boost-1.74 )
+	boost? ( >=dev-libs/boost-1.83 )
 	test? ( qt6? ( dev-qt/qtbase:6[widgets] ) )
 "
-BDEPEND="
-	${PYTHON_DEPS}
-	>=dev-util/glib-utils-2.64
+BDEPEND="${PYTHON_DEPS}
+	>=dev-util/glib-utils-2.80
 	virtual/pkgconfig
 "
 
@@ -87,7 +86,7 @@ fi
 DOCS=( AUTHORS NEWS README.md README-XPDF )
 
 PATCHES=(
-	"${FILESDIR}/${PN}-26.01.0-qt-deps.patch"
+	"${FILESDIR}/${PN}-26.05.0-qt-deps.patch"
 	"${FILESDIR}/${PN}-26.01.0-respect-cflags.patch"
 	"${FILESDIR}/${PN}-0.57.0-disable-internal-jpx.patch"
 )
@@ -196,7 +195,7 @@ src_configure() {
 		-DWITH_Cairo=$(usex cairo)
 		-DENABLE_LIBCURL=$(usex curl)
 		-DENABLE_CPP=$(usex cxx)
-		-DENABLE_GPGME=$(usex gpgme)
+		-DENABLE_GPGME=$(usex gpg)
 		-DWITH_JPEG=$(usex jpeg)
 		-DENABLE_DCTDECODER=$(usex jpeg libjpeg none)
 		-DENABLE_LIBOPENJPEG=$(usex jpeg2k openjpeg2 none)
