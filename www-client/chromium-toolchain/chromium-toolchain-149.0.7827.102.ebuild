@@ -17,28 +17,28 @@ inherit dhms
 # lld = c++17
 # llvm = c++17
 CXX_STANDARD=23 # Same as libcxx and chromium.
-# https://github.com/chromium/chromium/blob/148.0.7778.96/DEPS#L533
-GN_COMMIT="6e8dcdebbadf4f8aa75e6a4b6e0bdf89dce1513a"
-GN_PV="0.2354" # See get_gn_ver.sh
+# https://github.com/chromium/chromium/blob/149.0.7827.102/DEPS#L533
+GN_COMMIT="1740f5c25bcac5a650ee3d1c1ec22bfa25fcd756"
+GN_PV="0.2384" # See get_gn_ver.sh
 INSTALL_PREFIX="/usr/share/chromium/${PV%.*}.x"
 LIBCXX_USEDEP_SKIP=1
-# https://github.com/chromium/chromium/blob/148.0.7778.96/tools/clang/scripts/update.py#L38 \
-LLVM_COMMIT="8a0be0bc" # without the g prefix
+# https://github.com/chromium/chromium/blob/149.0.7827.102/tools/clang/scripts/update.py#L38 \
+LLVM_COMMIT="20b6ec66" # without the g prefix
 LLVM_LIVE_TIMESTAMP="Fri, 27 Feb 2026 18:38:25 +0530" # Unvendored timestamp from https://github.com/llvm/llvm-project/commit/${LLVM_COMMIT}.patch
-LLVM_N_COMMITS="5669"
+LLVM_N_COMMITS="10931" # The number to the right of -init- in llvmorg-23-init-10931-g20b6ec66
 LLVM_OFFICIAL_SLOT="23" # Cr official slot
-LLVM_SUB_REV="4"
+LLVM_SUB_REV="8"
 LLVM_SLOT_UNSTABLE="23" # Comment out if using stable slot
 LLVM_SLOT_LIVE="1"
-# https://github.com/chromium/chromium/blob/148.0.7778.96/tools/rust/update_rust.py#L37 \
+# https://github.com/chromium/chromium/blob/149.0.7827.102/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
-RUST_LIVE_TIMESTAMP="Apr 10, 2026 10:49:37 -0400" # Same as Rust 1.97.0 timestamp
-RUST_COMMIT="6f54d591c3116ee7f8ce9321ddeca286810cc142" # Vendored commit
-RUST_SUB_REV="7"
-# Upstream uses 1.95.0 corresponding to LLVM 22.1
-# This ebuild assumes 1.96.0 (live 9999) corresponding to llvm 22 to reduce build time.
-# For the LLVM version used for Rust snapshot, see https://github.com/rust-lang/rust/blob/6f54d591c3116ee7f8ce9321ddeca286810cc142/.gitmodules#L28
-# For the Rust version, see https://github.com/rust-lang/rust/blob/6f54d591c3116ee7f8ce9321ddeca286810cc142/src/version
+RUST_LIVE_TIMESTAMP="May 22, 2026 00:33:25 -0700" # Same as Rust 1.98.0 timestamp
+RUST_COMMIT="4c4205163abcbd08948b3efab796c543ba1ea687" # Vendored commit
+RUST_SUB_REV="2"
+# Upstream uses 1.96.0 corresponding to LLVM 22.1
+# This ebuild assumes 1.98.0 (live 9999) corresponding to llvm 22 to reduce build time.
+# For the LLVM version used for Rust snapshot, see https://github.com/rust-lang/rust/blob/4c4205163abcbd08948b3efab796c543ba1ea687/.gitmodules#L28
+# For the Rust version, see https://github.com/rust-lang/rust/blob/4c4205163abcbd08948b3efab796c543ba1ea687/src/version
 RUST_MAX_VER="9999" # Inclusive
 RUST_MIN_VER="9999" # Corresponds to llvm-22.1
 RUST_PV="${RUST_MIN_VER}"
