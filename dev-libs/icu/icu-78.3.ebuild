@@ -1,12 +1,9 @@
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
-# Please bump with dev-libs/icu-layoutex
-
 MY_PV="${PV/_rc/-rc}"
-MY_PV="${MY_PV//./_}"
 
 CFLAGS_HARDENED_CI_SANITIZERS="asan cfi lsan tsan ubsan"
 CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="18" # U24
@@ -36,23 +33,20 @@ inherit autotools cflags-hardened check-compiler-switch flag-o-matic
 inherit flag-o-matic-om libcxx-slot libstdcxx-slot llvm multilib-minimal
 inherit python-any-r1 toolchain-funcs verify-sig
 
-if [[ "${PV}" =~ "_rc" ]] ; then
+if [[ "${PV}" != *"_rc"* ]] ; then
 	KEYWORDS="
-~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390
-~sparc ~x86
-
-~arm64-macos ~ppc-macos ~x86-macos
-
-~x64-solaris
-	" # Based on the Linux kernel KEYWORDS and icu4c/source/runConfigureICU
+~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc
+x86 ~x64-macos ~x64-solaris
+	"
 fi
+
 S="${WORKDIR}/${PN}/source"
 S_ORIG="${WORKDIR}/${PN}/source"
 SRC_URI="
-https://github.com/unicode-org/icu/releases/download/release-${MY_PV/_/-}/icu4c-${MY_PV/-rc/rc}-src.tgz
-verify-sig? (
-	https://github.com/unicode-org/icu/releases/download/release-${MY_PV/_/-}/icu4c-${MY_PV/-rc/rc}-src.tgz.asc
-)
+	https://github.com/unicode-org/icu/releases/download/release-${MY_PV/_/-}/icu4c-${MY_PV/-rc/rc}-sources.tgz
+	verify-sig? (
+		https://github.com/unicode-org/icu/releases/download/release-${MY_PV/_/-}/icu4c-${MY_PV/-rc/rc}-sources.tgz.asc
+	)
 "
 
 DESCRIPTION="International Components for Unicode"
@@ -213,9 +207,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 	local myeconfargs=(
 		--disable-renaming
 		--disable-samples
-		# TODO: Merge with dev-libs/icu-layoutex
-		# Planned to do this w/ 73.2 but seem to get test failures
-		# only with --enable-layoutex.
+	# TODO: Re-enable(?) - planned to do this w/ 73.2 but seem to
+	# get test failures only with --enable-layoutex.
 		--disable-layoutex
 		$(use_enable debug)
 		$(use_enable test tests)
@@ -287,6 +280,11 @@ src_configure() {
 		emake
 
 		popd >/dev/null || die
+	fi
+
+	# Workaround for bug #963337 (gcc PR122058)
+	if tc-is-gcc && [[ $(gcc-major-version) -ge 16 ]] ; then
+		append-cxxflags "-fno-devirtualize-speculatively"
 	fi
 
 	configure_abi() {
