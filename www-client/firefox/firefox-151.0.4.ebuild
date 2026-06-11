@@ -199,6 +199,7 @@ RUST_LIVE_TIMESTAMP="May 22, 2026 00:33:25 -0700" # Same as Rust 1.98.0 timestam
 RUST_MAX_VER="9999"
 RUST_MIN_VER="1.90.0"
 RUST_NEEDS_LLVM=1 # Prune rustc for unused LLVM slots
+RUST_NIGHTLY_PV="1.98.0"
 RUST_PV="${RUST_MIN_VER}"
 SPEECH_DISPATCHER_PV="0.11.4-r1"
 XKBCOMMON_PV="0.4.1"
@@ -1355,7 +1356,7 @@ eerror "Switch to live with \`eselect rust\`"
 		if (( ${merge_time} < ${compatible_time} )) ; then
 eerror
 eerror "Detected old live timestamp."
-eerror "Re-emerge ${pkg_name} or switch to Rust 1.98.0 or later."
+eerror "Re-emerge ${pkg_name} or switch to Rust ${RUST_NIGHTLY_PV} or later."
 eerror
 eerror "Current timestamp:  "$(date --date="@${merge_time}")
 eerror "Expected timestamp:  >= "$(date --date="@${compatible_time}")
