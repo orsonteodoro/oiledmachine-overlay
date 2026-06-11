@@ -7,7 +7,7 @@ EAPI=8
 # This ebuild contains AI generated code and AI synthetic data.
 
 # D11, D12, D13, F36, F37, F38, F39, F40, F41, F42, U22, U24
-# See /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/taskcluster/kinds/bootstrap/kind.yml
+# See /var/tmp/portage/www-client/firefox-151.0.4/work/firefox-151.0.4/taskcluster/kinds/bootstrap/kind.yml
 
 # 127.0.1 -> 129.0.2
 # 129.0.2 -> 130.0.0
@@ -38,6 +38,7 @@ EAPI=8
 # 149.0.2 -> 150.0.1
 # 150.0.1 -> 150.0.2
 # 150.0.2 -> 150.0.3
+# 150.0.3 -> 151.0.4
 
 # Originally based on the firefox-89.0.ebuild from the gentoo-overlay,
 # with update sync updated to this version of the ebuild.
@@ -53,28 +54,28 @@ EAPI=8
 #
 # For dependency versioning, see also
 # https://firefox-source-docs.mozilla.org/setup/linux_build.html
-# https://www.mozilla.org/en-US/firefox/150.0.3/system-requirements/
-# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/moz.configure
-# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41 [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
-# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/security/nss/lib/nss/nss.h
-# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/gfx/graphite2/include/graphite2/Font.h L31
-# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/gfx/harfbuzz/moz.yaml
-# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/intl/icu/source/common/unicode/uvernum.h L63
-# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/ipc/chromium/src/third_party/libevent/configure.ac L8
-# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/media/libaom/config/aom_version.h L7 [old]
-# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/media/libjpeg/jconfig.h L7
-# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/media/libpng/png.h L281
-# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/media/libvpx/config/vpx_version.h L8
-# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/media/libwebp/moz.yaml L16, two versions listed newest chosen
-# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/modules/freetype2/include/freetype/freetype.h L5175
-# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/nsprpub/pr/include/prinit.h L35
-# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/third_party/dav1d/meson.build L26
-# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/third_party/pipewire/pipewire/version.h L49
-# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/taskcluster/kinds/toolchain/node.yml
-# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/taskcluster/kinds/toolchain/rust.yml
-# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/taskcluster/kinds/fetch/toolchains.yml
+# https://www.mozilla.org/en-US/firefox/151.0.4/system-requirements/
+# /var/tmp/portage/www-client/firefox-151.0.4/work/firefox-151.0.4/moz.configure
+# /var/tmp/portage/www-client/firefox-151.0.4/work/firefox-151.0.4/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41 [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
+# /var/tmp/portage/www-client/firefox-151.0.4/work/firefox-151.0.4/security/nss/lib/nss/nss.h
+# /var/tmp/portage/www-client/firefox-151.0.4/work/firefox-151.0.4/gfx/graphite2/include/graphite2/Font.h L31
+# /var/tmp/portage/www-client/firefox-151.0.4/work/firefox-151.0.4/gfx/harfbuzz/moz.yaml
+# /var/tmp/portage/www-client/firefox-151.0.4/work/firefox-151.0.4/intl/icu/source/common/unicode/uvernum.h L63
+# /var/tmp/portage/www-client/firefox-151.0.4/work/firefox-151.0.4/ipc/chromium/src/third_party/libevent/configure.ac L8
+# /var/tmp/portage/www-client/firefox-151.0.4/work/firefox-151.0.4/media/libaom/config/aom_version.h L7 [old]
+# /var/tmp/portage/www-client/firefox-151.0.4/work/firefox-151.0.4/media/libjpeg/jconfig.h L7
+# /var/tmp/portage/www-client/firefox-151.0.4/work/firefox-151.0.4/media/libpng/png.h L281
+# /var/tmp/portage/www-client/firefox-151.0.4/work/firefox-151.0.4/media/libvpx/config/vpx_version.h L8
+# /var/tmp/portage/www-client/firefox-151.0.4/work/firefox-151.0.4/media/libwebp/moz.yaml L16, live
+# /var/tmp/portage/www-client/firefox-151.0.4/work/firefox-151.0.4/modules/freetype2/include/freetype/freetype.h L5175
+# /var/tmp/portage/www-client/firefox-151.0.4/work/firefox-151.0.4/nsprpub/pr/include/prinit.h L35
+# /var/tmp/portage/www-client/firefox-151.0.4/work/firefox-151.0.4/third_party/dav1d/meson.build L26
+# /var/tmp/portage/www-client/firefox-151.0.4/work/firefox-151.0.4/third_party/pipewire/pipewire/version.h L49
+# /var/tmp/portage/www-client/firefox-151.0.4/work/firefox-151.0.4/taskcluster/kinds/toolchain/node.yml
+# /var/tmp/portage/www-client/firefox-151.0.4/work/firefox-151.0.4/taskcluster/kinds/toolchain/rust.yml
+# /var/tmp/portage/www-client/firefox-151.0.4/work/firefox-151.0.4/taskcluster/kinds/fetch/toolchains.yml
 #   Keyword searches:  cbindgen-, llvm-, nasm, pkgconf-, zlib
-# /var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3/taskcluster
+# /var/tmp/portage/www-client/firefox-151.0.4/work/firefox-151.0.4/taskcluster
 #   Keyword search:  gtk
 
 # Track http://ftp.mozilla.org/pub/firefox/releases/ for version updates.
@@ -96,7 +97,7 @@ unset __
 
 # To check every minor version or update MOZ_LANGS use the code below:
 __='
-PV="150.0.3"
+PV="151.0.4"
 wget -q -O - "http://ftp.mozilla.org/pub/firefox/releases/${PV}/linux-x86_64/xpi/" \
 	| grep "href.*linux-x86_64"  \
 	| cut -f 3 -d ">" \
@@ -113,7 +114,7 @@ unset __
 
 __='
 # For dependency versions, scan also with:
-SRC="/var/tmp/portage/www-client/firefox-150.0.3/work/firefox-150.0.3"
+SRC="/var/tmp/portage/www-client/firefox-151.0.4/work/firefox-151.0.4"
 grep -E \
 	-e "[0-9]+\.[0-9]+(\.[0-9]+)?" \
 	-e "dependency" \
@@ -178,7 +179,7 @@ RUSTFLAGS_HARDENED_USE_CASES="network sensitive-data untrusted-data web-browser"
 RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO MC NPD OOBA OOBR OOBW PE SO UAF UM TC"
 DBUS_PV="0.60"
 EBUILD_MAINTAINER_MODE=0
-FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-03.tar.xz"
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
 GTK3_PV="3.14.5"
@@ -194,7 +195,7 @@ NASM_PV="2.14.02"
 NODE_SLOT=22
 PYTHON_COMPAT=( "python3_"{10..13} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
-RUST_LIVE_TIMESTAMP="Apr 10, 2026 10:49:37 -0400" # Same as Rust 1.97.0 timestamp
+RUST_LIVE_TIMESTAMP="May 22, 2026 00:33:25 -0700" # Same as Rust 1.98.0 timestamp
 RUST_MAX_VER="9999"
 RUST_MIN_VER="1.90.0"
 RUST_NEEDS_LLVM=1 # Prune rustc for unused LLVM slots
@@ -242,28 +243,47 @@ declare -A CFLAGS_RDEPEND=(
 	["media-libs/libvpx"]=">=;-O1" # -O0 causes FPS to lag below 25 FPS.
 )
 
-MITIGATION_DATE="May 12, 2026" # Advisory date
-MITIGATION_LAST_UPDATE=1778580840 # From `date +%s -d "2026-05-12 03:14"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-45/"
+MITIGATION_DATE="Jun 2, 2026" # Advisory date
+MITIGATION_LAST_UPDATE=1780979880 # From `date +%s -d "2026-06-08 21:38"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-54/"
 SEVERITY_LABEL="Severity:"
 VULNERABILITIES_FIXED=(
-	# 150.0.3
-	"CVE-2026-8388;IBC;"
-	"CVE-2026-8389;JITM;"
-	"CVE-2026-8390;UAF;"
-	"CVE-2026-8391;;"
-	"CVE-2026-8401;SBE;"
+	# 151.0.3
+	"CVE-2026-10701;IBC;"
+	"CVE-2026-10702;JITM;"
 
-	# 150.0.2
-	"CVE-2026-8090;UAF;"
-	"CVE-2026-8092;MC, ACE;"
-	"CVE-2026-8093;MC, ACE;"
-
-	# 150.0.1
-	"CVE-2026-7320;IBC;"
-	"CVE-2026-7322;MC, ACE;"
-	"CVE-2026-7323;MC, ACE;"
-	"CVE-2026-7324;MC, ACE;"
+	# 151
+	"CVE-2026-8945;SBE;"
+	"CVE-2026-8946;IBC;"
+	"CVE-2026-8947;UAF;"
+	"CVE-2026-8948;SOPB;"
+	"CVE-2026-8949;IO;"
+	"CVE-2026-8950;SOPB;"
+	"CVE-2026-8951;SA;"
+	"CVE-2026-8952;PE;"
+	"CVE-2026-8953;SBE, UAF;"
+	"CVE-2026-8954;IBC;"
+	"CVE-2026-8955;PE;"
+	"CVE-2026-8956;IO;"
+	"CVE-2026-8957;PE;"
+	"CVE-2026-8958;ID, SBE;"
+	"CVE-2026-8959;SBE;"
+	"CVE-2026-8960;SA;"
+	"CVE-2026-8961;SA;"
+	"CVE-2026-8962;SB;"
+	"CVE-2026-8963;SA;"
+	"CVE-2026-8964;SA;"
+	"CVE-2026-8965;ID;"
+	"CVE-2026-8966;ID;"
+	"CVE-2026-8967;ID;"
+	"CVE-2026-8968;DoS;"
+	"CVE-2026-8969;SB;"
+	"CVE-2026-8970;PE;"
+	"CVE-2026-8971;SOPB;"
+	"CVE-2026-8972;PE;"
+	"CVE-2026-8973;MC, ACE;"
+	"CVE-2026-8974;MC, ACE;"
+	"CVE-2026-8975;MC, ACE;"
 )
 
 inherit cflags-depends cflags-hardened check-compiler-switch check-linker
@@ -534,13 +554,13 @@ CDEPEND="
 	${PATENT_CDEPENDS}
 	>=app-accessibility/at-spi2-core-2.46.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-2.42:2[${MULTILIB_USEDEP}]
-	>=dev-libs/nspr-4.38.2[${MULTILIB_USEDEP}]
-	>=dev-libs/nss-3.122.2[${MULTILIB_USEDEP}]
+	>=dev-libs/nspr-4.39.0[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.123.1[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.7.0[${MULTILIB_USEDEP}]
-	>=media-libs/freetype-2.14.2[${MULTILIB_USEDEP}]
-	>=sys-libs/zlib-1.3.2[${MULTILIB_USEDEP}]
+	>=media-libs/freetype-2.14.3[${MULTILIB_USEDEP}]
 	>=x11-libs/pango-1.22.0[${MULTILIB_USEDEP}]
 	>=x11-libs/pixman-0.40.0[${MULTILIB_USEDEP}]
+	>=virtual/zlib-1.3.2[${MULTILIB_USEDEP}]
 	dev-libs/expat[${MULTILIB_USEDEP}]
 	dev-libs/libffi[${MULTILIB_USEDEP}]
 	dev-libs/libffi:=
@@ -577,14 +597,14 @@ CDEPEND="
 		media-libs/libaom:=
 	)
 	system-harfbuzz? (
-		>=media-libs/harfbuzz-13.1.1:0[${MULTILIB_USEDEP}]
+		>=media-libs/harfbuzz-14.1.0:0[${MULTILIB_USEDEP}]
 		media-libs/harfbuzz:=
 		!wasm-sandbox? (
 			>=media-gfx/graphite2-1.3.14[${MULTILIB_USEDEP}]
 		)
 	)
 	system-icu? (
-		>=dev-libs/icu-78.2[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
+		>=dev-libs/icu-78.3[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 		dev-libs/icu:=
 	)
 	system-jpeg? (
@@ -1335,7 +1355,7 @@ eerror "Switch to live with \`eselect rust\`"
 		if (( ${merge_time} < ${compatible_time} )) ; then
 eerror
 eerror "Detected old live timestamp."
-eerror "Re-emerge ${pkg_name} or switch to Rust 1.97.0 or later."
+eerror "Re-emerge ${pkg_name} or switch to Rust 1.98.0 or later."
 eerror
 eerror "Current timestamp:  "$(date --date="@${merge_time}")
 eerror "Expected timestamp:  >= "$(date --date="@${compatible_time}")
@@ -1682,7 +1702,7 @@ ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
 
 	# Prevent YT stall prevention with clang with -Ofast.
 	# Prevent audio perma mute with gcc with -Ofast.
-	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-148.0-disable-broken-flags-js.patch"
+	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-151.0.4-disable-broken-flags-js.patch"
 
 	# Only partial patching was done because the distro doesn't support
 	# multilib Python.  Only native ABI is supported.  This means cbindgen
@@ -2891,10 +2911,8 @@ _src_install() {
 		rm -v "${ED}${MOZILLA_FIVE_HOME}/llvm-symbolizer" || die
 	fi
 
-	# Install policy (currently only used to disable application updates)
 	insinto "${MOZILLA_FIVE_HOME}/distribution"
 	newins "${FILESDIR}/distribution.ini" "distribution.ini"
-	newins "${FILESDIR}/disable-auto-update.policy.json" "policies.json"
 
 	# Install system-wide preferences
 	local PREFS_DIR="${MOZILLA_FIVE_HOME}/browser/defaults/preferences"

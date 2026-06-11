@@ -7,7 +7,7 @@ EAPI=8
 # This ebuild contains AI generated code and AI synthetic data.
 
 # D11, D12, D13, F36, F37, F38, F39, F40, F41, F42, U22, U23, U24
-# See /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/taskcluster/kinds/bootstrap/kind.yml
+# See /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/taskcluster/kinds/bootstrap/kind.yml
 
 # 115.12.0 -> 128.1.0
 # 128.1.0 -> 128.2.0
@@ -34,6 +34,7 @@ EAPI=8
 # 140.9.0 -> 140.9.1
 # 140.9.1 -> 140.10.1
 # 140.10.1 -> 140.10.2
+# 140.10.2 -> 140.11.0
 
 # SECURITY:  If this gets bumped, then dev-lang/spidermonkey should be bumped too with the same ESR version.
 
@@ -54,28 +55,28 @@ EAPI=8
 #
 # For dependency versioning, see also
 # https://firefox-source-docs.mozilla.org/setup/linux_build.html
-# https://www.mozilla.org/en-US/firefox/140.10.2/system-requirements/
-# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/moz.configure
-# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41  [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
-# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/security/nss/lib/nss/nss.h
-# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/gfx/graphite2/include/graphite2/Font.h L31
-# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/gfx/harfbuzz/moz.yaml
-# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/intl/icu/source/common/unicode/uvernum.h L63
-# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/ipc/chromium/src/third_party/libevent/configure.ac L8
-# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/media/libaom/config/aom_version.h L7 [old]
-# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/media/libjpeg/jconfig.h L7
-# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/media/libpng/png.h L281
-# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/media/libvpx/config/vpx_version.h L8
-# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/media/libwebp/moz.yaml L16, two versions listed, newest chosen
-# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/modules/freetype2/include/freetype/freetype.h L5223
-# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/nsprpub/pr/include/prinit.h L35
-# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/third_party/dav1d/meson.build L26
-# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/third_party/pipewire/pipewire/version.h L49
-# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/taskcluster/kinds/toolchain/node.yml
-# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/taskcluster/kinds/toolchain/rust.yml
-# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/taskcluster/kinds/fetch/toolchains.yml
+# https://www.mozilla.org/en-US/firefox/140.11.0/system-requirements/
+# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/moz.configure
+# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41  [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
+# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/security/nss/lib/nss/nss.h
+# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/gfx/graphite2/include/graphite2/Font.h L31
+# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/gfx/harfbuzz/moz.yaml
+# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/intl/icu/source/common/unicode/uvernum.h L63
+# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/ipc/chromium/src/third_party/libevent/configure.ac L8
+# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/media/libaom/config/aom_version.h L7 [old]
+# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/media/libjpeg/jconfig.h L7
+# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/media/libpng/png.h L281
+# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/media/libvpx/config/vpx_version.h L8
+# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/media/libwebp/moz.yaml L16, two versions listed, newest chosen
+# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/modules/freetype2/include/freetype/freetype.h L5175
+# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/nsprpub/pr/include/prinit.h L35
+# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/third_party/dav1d/meson.build L26
+# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/third_party/pipewire/pipewire/version.h L49
+# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/taskcluster/kinds/toolchain/node.yml
+# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/taskcluster/kinds/toolchain/rust.yml
+# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/taskcluster/kinds/fetch/toolchains.yml
 #   Keyword searches:  cbindgen-, llvm-, nasm, pkgconf-, zlib
-# /var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2/taskcluster
+# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/taskcluster
 #   Keyword search:  gtk
 
 # Due to versioning conflicts and ebuild assumptions, you cannot have stable and esr be the same version
@@ -94,7 +95,7 @@ unset __
 
 # To check every minor version or update MOZ_LANGS use the code below:
 __='
-PV="140.10.2"
+PV="140.11.0"
 wget -q -O - "http://ftp.mozilla.org/pub/firefox/releases/${PV}esr/linux-x86_64/xpi/" \
 	| grep "href.*linux-x86_64"  \
 	| cut -f 3 -d ">" \
@@ -111,7 +112,7 @@ unset __
 
 __='
 # For dependency versions, scan also with:
-SRC="/var/tmp/portage/www-client/firefox-140.10.2e/work/firefox-140.10.2"
+SRC="/var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0"
 grep -E \
 	-e "[0-9]+\.[0-9]+(\.[0-9]+)?" \
 	-e "dependency" \
@@ -237,21 +238,32 @@ declare -A CFLAGS_RDEPEND=(
 	["media-libs/libvpx"]=">=;-O1" # -O0 causes FPS to lag below 25 FPS.
 )
 
-MITIGATION_DATE="May 07, 2026" # Advisory date
-MITIGATION_LAST_UPDATE=1778179080 # From `date +%s -d "2026-05-07 11:38"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-27/"
+MITIGATION_DATE="May 19, 2026" # Advisory date
+MITIGATION_LAST_UPDATE=1779130680 # From `date +%s -d "2026-05-18 11:58"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-48"
 SEVERITY_LABEL="Severity:"
 VULNERABILITIES_FIXED=(
-	# 140.10.2
-	"CVE-2026-8090;UAF;"
-	"CVE-2026-8094;;"
-	"CVE-2026-8092;MC, ACE;"
-
-	# 140.10.1
-	"CVE-2026-7320;IBC;"
-	"CVE-2026-7321;SBE;"
-	"CVE-2026-7322;MC, ACE;"
-	"CVE-2026-7323;MC, ACE;"
+	# 140.11
+	"CVE-2026-8946;IBC;"
+	"CVE-2026-8388;IBC;"
+	"CVE-2026-8947;UAF;"
+	"CVE-2026-8391;;"
+	"CVE-2026-8401;SBE;"
+	"CVE-2026-8949;IO;"
+	"CVE-2026-8950;SOPB;"
+	"CVE-2026-8953;SBE, UAF;"
+	"CVE-2026-8954;IBC, IO;"
+	"CVE-2026-8955;PE;"
+	"CVE-2026-8956;IO;"
+	"CVE-2026-8957;PE;"
+	"CVE-2026-8958;ID, SBE;"
+	"CVE-2026-8959;SBE;"
+	"CVE-2026-8961;SA;"
+	"CVE-2026-8962;SB;"
+	"CVE-2026-8968;DoS;"
+	"CVE-2026-8970;PE;"
+	"CVE-2026-8974;MC, ACE;"
+	"CVE-2026-8975;MC, ACE;"
 )
 
 MOZ_LANGS=(
@@ -619,9 +631,9 @@ CDEPEND="
 	>=dev-libs/nspr-4.36.2[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.7.0[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.13.3[${MULTILIB_USEDEP}]
-	>=sys-libs/zlib-1.3.2[${MULTILIB_USEDEP}]
 	>=x11-libs/pango-1.22.0[${MULTILIB_USEDEP}]
 	>=x11-libs/pixman-0.36.0[${MULTILIB_USEDEP}]
+	>=virtual/zlib-1.3.2[${MULTILIB_USEDEP}]
 	dev-libs/expat[${MULTILIB_USEDEP}]
 	dev-libs/libffi[${MULTILIB_USEDEP}]
 	dev-libs/libffi:=
@@ -1153,6 +1165,24 @@ pkg_pretend() {
 	# Ensure we have enough disk space to compile
 		if use pgo || use debug ; then
 			CHECKREQS_DISK_BUILD="17000M"
+			if ! use clang ; then
+				if tc-is-gcc && ver_test "$(gcc-major-version)" -ge 16 && [[ -z "${I_KNOW_WHAT_I_AM_DOING}" ]] ; then
+eerror
+eerror "Firefox-140esr can't be compiled with +pgo using gcc >= 16. Use:"
+eerror
+eerror "  1) gcc < 16 instead, such as stable gcc-15.2.1,"
+eerror "  2) \"clang\" use flag to compile Firefox-140esr, or"
+eerror "  3) disable pgo via \"-pgo\" use flag."
+eerror
+eerror "Everything else works with gcc-16 except +pgo."
+eerror
+eerror "Follow Gentoo bug #975851 or upstream bug #2041879 for progress."
+eerror "To skip this check for testing purposes, export I_KNOW_WHAT_I_AM_DOING=1 env."
+eerror "Firefox-${PV} with gcc+pgo cannot be compiled with the detected gcc version: $(gcc-fullversion)"
+eerror
+					die
+				fi
+			fi
 		elif is-flagq '-flto*' ; then
 			CHECKREQS_DISK_BUILD="9900M"
 		else
@@ -1495,6 +1525,25 @@ einfo "Security vulnerabilities fixed:  ${MITIGATION_URI}"
 		if use pgo ; then
 			if ! has "userpriv" ${FEATURES} ; then
 ewarn "Building ${PN} with USE=pgo and FEATURES=-userpriv is not supported!"
+			fi
+
+			if ! use clang ; then
+				if tc-is-gcc && ver_test "$(gcc-major-version)" -ge 16 && [[ -z "${I_KNOW_WHAT_I_AM_DOING}" ]] ; then
+eerror
+eerror "Firefox-140esr can't be compiled with +pgo using gcc >= 16. Use:"
+eerror
+eerror "  1) gcc < 16 instead, such as stable gcc-15.2.1,"
+eerror "  2) \"clang\" use flag to compile Firefox-140esr, or"
+eerror "  3) disable pgo via \"-pgo\" use flag."
+eerror
+eerror "Everything else works with gcc-16, but +pgo doesn't."
+eerror
+eerror "Follow Gentoo bug #975851 or upstream bug #2041879 to follow progress."
+eerror "To skip this check for testing purposes, export I_KNOW_WHAT_I_AM_DOING=1 env."
+eerror "Firefox-${PV} with gcc+pgo cannot be compiled with the detected gcc version: $(gcc-fullversion)"
+eerror
+					die
+				fi
 			fi
 		fi
 
