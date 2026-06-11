@@ -50,7 +50,7 @@
     "redux": "4.2.1",
     "reselect": "4.1.8",
     "sortablejs": "1.15.0",
-    "tmp": "0.2.4",
+    "tmp": "0.2.6",
     "underscore": "1.13.8"
   },
   "devDependencies": {
@@ -75,6 +75,7 @@
     "rollup": "3.30.0",
     "rollup-plugin-visualizer": "5.9.0",
     "sass": "1.62.0",
+    "shell-quote": "1.8.4",
     "typescript": "5.0.4",
     "vite": "6.4.2"
   },

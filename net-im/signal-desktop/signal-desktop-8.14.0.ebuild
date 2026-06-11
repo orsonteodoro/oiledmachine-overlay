@@ -7,11 +7,11 @@ EAPI=8
 
 # To update use:
 # PATH=$(realpath "../../scripts")":${PATH}"
-# PNPM_UPDATER_PROJECT_ROOT="Signal-Desktop-8.11.0" pnpm_updater_update_locks.sh
+# PNPM_UPDATER_PROJECT_ROOT="Signal-Desktop-8.14.0" pnpm_updater_update_locks.sh
 
 # Ignore if error:
 # Could not detect abi for version ' + target + ' and runtime ' + runtime + '.  Updating "node-abi" might help solve this issue if it is a new release of ' + runtime)
-# https://github.com/signalapp/Signal-Desktop/blob/v8.2.1/CONTRIBUTING.md#known-issues
+# https://github.com/signalapp/Signal-Desktop/blob/v8.14.0/CONTRIBUTING.md#known-issues
 
 MY_PN="Signal-Desktop"
 MY_PN2="Signal"
@@ -40,10 +40,10 @@ ELECTRON_BUILDER_PV="26.0.14"
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
-	ELECTRON_APP_ELECTRON_PV="42.2.0" # Cr 148.0.7778.97, node 24.15.0
+	ELECTRON_APP_ELECTRON_PV="42.4.0" # Cr 148.0.7778.254, node 24.16.0
 else
 	# Upstream's choice
-	ELECTRON_APP_ELECTRON_PV="41.5.0" # Cr 146.0.7680.216, node 24.15.0
+	ELECTRON_APP_ELECTRON_PV="42.3.0" # Cr 148.0.7778.180, node 24.15.0
 fi
 
 NPM_INSTALL_ARGS=(
@@ -96,13 +96,13 @@ LICENSE="
 	AGPL-3
 "
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
-	# The fingerprints of 41.2.2 and 41.2.1 are the same.
+	# The fingerprints of 42.4.0 and 42.2.0 are the same.
 	LICENSE+="
 		electron-42.2.0-chromium.html
 	"
 else
 	LICENSE+="
-		electron-41.5.0-chromium.html
+		electron-42.3.0-chromium.html
 	"
 fi
 SLOT="0"
@@ -357,7 +357,8 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 				sed -i -e "s|vite: 5.4.21|vite: 6.4.2|g" "pnpm-lock.yaml" || die												# CVE-2026-39365; ZC, VS(ID); Moderate
 				sed -i -e "s|vite: 5.4.21(@types/node@22.13.4)(sass@1.62.0)|vite: 6.4.2|g" "pnpm-lock.yaml" || die								# CVE-2026-39365; ZC, VS(ID); Moderate
 
-				sed -i -e "s|tmp: 0.2.3|tmp: 0.2.4|g" "pnpm-lock.yaml" || die													# CVE-2025-54798; DT; Low
+				sed -i -e "s|tmp: 0.2.3|tmp: 0.2.6|g" "pnpm-lock.yaml" || die													# CVE-2025-54798; DT; Low
+																								# CVE-2026-44705; ZC, VS(ID); High
 				sed -i -e "s|lodash: 4.17.21|lodash: 4.18.0|g" "pnpm-lock.yaml" || die												# CVE-2025-13465; ZC, VS(DoS, DT), SS(DoS, DT, ID); Moderate
 				sed -i -e "s|lodash: 4.17.23|lodash: 4.18.0|g" "pnpm-lock.yaml" || die												# CVE-2026-4800; ZC, DoS, DT, ID; High
 																								# CVE-2026-2950; ZC, DT, ID; Moderate
@@ -379,6 +380,7 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 #				sed -i -e "s|brace-expansion: 1.1.11|brace-expansion: 5.0.4|g" "pnpm-lock.yaml" || die										# CVE-2025-5889; DoS; Low
 				sed -i -e "s|fast-uri: 3.1.0|fast-uri: 3.1.2|g" "pnpm-lock.yaml" || die												# CVE-2026-6321, ZC, DT; High
 																								# CVE-2026-6322, ZC, DT; High
+				sed -i -e "s|shell-quote: 1.8.3|shell-quote: 1.8.4|g" "pnpm-lock.yaml" || die											# CVE-2026-9277; VS(DoS, DT, ID); Critical
 			popd >/dev/null 2>&1 || die
 			pushd "danger" >/dev/null 2>&1 || die
 				sed -i -e "s|'@octokit/plugin-paginate-rest': 2.21.3|'@octokit/plugin-paginate-rest': 9.2.2|g" "pnpm-lock.yaml" || die						# CVE-2025-25288, DoS, Moderate
@@ -419,11 +421,11 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 																								#   @octokit/request
 																								#   @octokit/plugin-paginate-rest
 																								#   @octokit/request-error
-			sed -i -e "s|axios: 1.7.9|axios: 1.15.2|g" "pnpm-lock.yaml" || die													# CVE-2025-27152, ID, High
+			sed -i -e "s|axios: 1.7.9|axios: 1.16.0|g" "pnpm-lock.yaml" || die													# CVE-2025-27152, ID, High
 																								# CVE-2025-58754, ZC, DoS, High
-			sed -i -e "s|axios: 1.13.5(debug@4.3.7)|axios: 1.15.2|g" "pnpm-lock.yaml" || die											# CVE-2025-62718; ZC, VS(DT, ID), SS(DT, ID); Moderate
-			sed -i -e "s|axios: 1.15.0|axios: 1.15.2|g" "pnpm-lock.yaml" || die													# CVE-2025-62718; ZC, VS(DT, ID), SS(DT, ID); Moderate
-			sed -i -e "s|axios: 1.15.1|axios: 1.15.2|g" "pnpm-lock.yaml" || die													# CVE-2025-62718; ZC, VS(DT, ID), SS(DT, ID); Moderate
+			sed -i -e "s|axios: 1.13.5(debug@4.3.7)|axios: 1.16.0|g" "pnpm-lock.yaml" || die											# CVE-2025-62718; ZC, VS(DT, ID), SS(DT, ID); Moderate
+			sed -i -e "s|axios: 1.15.0|axios: 1.16.0|g" "pnpm-lock.yaml" || die													# CVE-2025-62718; ZC, VS(DT, ID), SS(DT, ID); Moderate
+			sed -i -e "s|axios: 1.15.1|axios: 1.16.0|g" "pnpm-lock.yaml" || die													# CVE-2025-62718; ZC, VS(DT, ID), SS(DT, ID); Moderate
 																								# CVE-2026-40175; ZC, DT, ID; Moderate
 																								# CVE-2026-42036; ZC, DoS; Moderate -
 																								# CVE-2026-42033; ZC, DT, ID; High
@@ -434,6 +436,12 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 																								# CVE-2026-42264; ZC, DT, ID; High
 																								# CVE-2026-42041; ZC, DT, ID; Moderate
 																								# CVE-2026-42040; ZC, DT; Low
+																								# CVE-2026-44494; ZC, DT, ID; High
+																								# CVE-2026-44487; ZC, VS(ID); High
+																								# CVE-2026-44492; ZC, ID; High
+																								# CVE-2026-44496; ZC, DoS; High
+																								# CVE-2026-44490; ZC, DoS, DT; Moderate
+																								# CVE-2026-44489; ZC, DT; Low
 #			sed -i -e "s|brace-expansion: 1.1.11|brace-expansion: 5.0.4|g" "pnpm-lock.yaml" || die											# CVE-2025-5889; DoS; Low
 #			sed -i -e "s|brace-expansion: 2.0.1|brace-expansion: 5.0.4|g" "pnpm-lock.yaml" || die											# CVE-2025-5889; DoS; Low
 #			sed -i -e "s|brace-expansion: 1.1.11|brace-expansion: 5.0.4|g" "sticker-creator/pnpm-lock.yaml" || die									# CVE-2025-5889; DoS; Low
@@ -466,8 +474,9 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 
 			sed -i -e "s|form-data: 4.0.1|form-data: 4.0.4|g" "pnpm-lock.yaml" || die												# CVE-2025-7783; VS(DT, ID), SS(DT, ID); Critical
 
-			sed -i -e "s|tmp: 0.0.33|tmp: 0.2.4|g" "pnpm-lock.yaml" || die														# CVE-2025-54798; DT; Low
-			sed -i -e "s|tmp: 0.2.3|tmp: 0.2.4|g" "pnpm-lock.yaml" || die														# CVE-2025-54798; DT; Low
+			sed -i -e "s|tmp: 0.0.33|tmp: 0.2.6|g" "pnpm-lock.yaml" || die														# CVE-2025-54798; DT; Low
+			sed -i -e "s|tmp: 0.2.3|tmp: 0.2.6|g" "pnpm-lock.yaml" || die														# CVE-2025-54798; DT; Low
+																								# CVE-2026-44705; ZC, VS(ID); High
 
 			sed -i -e "s|on-headers: 1.0.2|on-headers: 1.1.0|g" "pnpm-lock.yaml" || die												# CVE-2025-7339; DT, ID; Low
 
@@ -505,9 +514,15 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 			sed -i -e "s|glob: 10.4.5|glob: 10.5.0|g" "pnpm-lock.yaml" || die													# CVE-2025-64756; DoS, DT, ID, High
 			sed -i -e "s|glob: 7.2.3|glob: 10.5.0|g" "pnpm-lock.yaml" || die													# CVE-2025-64756; DoS, DT, ID, High
 			sed -i -e "s|glob: 8.1.0|glob: 10.5.0|g" "pnpm-lock.yaml" || die													# CVE-2025-64756; DoS, DT, ID, High
-			sed -i -e "s|axios: 1.12.0(debug@4.3.7)|axios: 1.15.2|g" "pnpm-lock.yaml" || die											# CVE-2026-25639; DoS, High
-			sed -i -e "s|axios: 1.13.5(debug@4.3.7)|axios: 1.15.2|g" "pnpm-lock.yaml" || die											# CVE-2025-62718; ZC, VS(DT, ID), SS(DT, ID); Moderate
+			sed -i -e "s|axios: 1.12.0(debug@4.3.7)|axios: 1.16.0|g" "pnpm-lock.yaml" || die											# CVE-2026-25639; DoS, High
+			sed -i -e "s|axios: 1.13.5(debug@4.3.7)|axios: 1.16.0|g" "pnpm-lock.yaml" || die											# CVE-2025-62718; ZC, VS(DT, ID), SS(DT, ID); Moderate
 																								# CVE-2026-40175; ZC, DT, ID; Moderate
+																								# CVE-2026-44494; ZC, DT, ID; High
+																								# CVE-2026-44487; ZC, VS(ID); High
+																								# CVE-2026-44492; ZC, ID; High
+																								# CVE-2026-44496; ZC, DoS; High
+																								# CVE-2026-44490; ZC, DoS, DT; Moderate
+																								# CVE-2026-44489; ZC, DT; Low
 			sed -i -e "s|'@isaacs/brace-expansion': 5.0.0|'@isaacs/brace-expansion': 5.0.1|g" "pnpm-lock.yaml" || die								# CVE-2026-25547; ZC, VS(DoS), High
 			sed -i -e "s|diff: 4.0.2|diff: 8.0.3|g" "pnpm-lock.yaml" || die														# CVE-2026-24001; DoS, Low
 			sed -i -e "s|diff: 4.0.4|diff: 8.0.3|g" "pnpm-lock.yaml" || die														# CVE-2026-24001; DoS, Low
@@ -520,7 +535,8 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 																								# CVE-2025-68157; DT, ID, Low
 			sed -i -e "s|jws: 3.2.2|jws: 3.2.3|g" "pnpm-lock.yaml" || die														# CVE-2025-65945; DT; High
 			sed -i -e "s|markdown-it: 14.1.0|markdown-it: 14.1.1|g" "pnpm-lock.yaml" || die												# CVE-2026-2327; VS(DoS); Moderate
-			sed -i -e "s|playwright: 1.54.2|playwright: 1.55.1|g" "pnpm-lock.yaml" || die												# CVE-2025-59288; VS(DoS, DT, ID), SS(DoS, DT, ID), High
+			sed -i -e "s|playwright: 1.54.2|playwright: 1.60.0|g" "pnpm-lock.yaml" || die												# CVE-2025-59288; VS(DoS, DT, ID), SS(DoS, DT, ID), High
+			sed -i -e "s|playwright: 1.55.1|playwright: 1.60.0|g" "pnpm-lock.yaml" || die												# CVE-2025-59288; VS(DoS, DT, ID), SS(DoS, DT, ID), High
 			sed -i -e "s|storybook: 8.4.4(bufferutil@4.0.9)(prettier@3.7.4)(utf-8-validate@5.0.10)|storybook: 8.6.17|g" "pnpm-lock.yaml" || die					# CVE-2025-68429, ZC, DoS, DT, ID, High
 			sed -i -e "s|minimatch: 3.1.2|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
 			sed -i -e "s|minimatch: 3.1.3|minimatch: 10.2.4|g" "pnpm-lock.yaml" || die												# CVE-2026-26996; ZC, VS(DoS), High
@@ -564,6 +580,7 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 			sed -i -e "s|ws: 8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)|ws: 8.20.1|g" "pnpm-lock.yaml" || die									# CVE-2026-45736; ID; Moderate
 			sed -i -e "s|ws: 7.5.10(bufferutil@4.0.9)(utf-8-validate@5.0.10)|ws: 8.20.1|g" "pnpm-lock.yaml" || die									# CVE-2026-45736; ID; Moderate
 			sed -i -e "s|ip-address: 9.0.5|ip-address: 10.1.1|g" "pnpm-lock.yaml" || die												# CVE-2026-42338; VS(DT, ID); Moderate
+			sed -i -e "s|shell-quote: 1.8.3|shell-quote: 1.8.4|g" "pnpm-lock.yaml" || die												# CVE-2026-9277; VS(DoS, DT, ID); Critical
 		}
 		patch_edits_pnpm
 
@@ -573,7 +590,7 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 				"@babel/runtime@7.26.10"
 				"@babel/helpers@7.26.10"
 #				"brace-expansion@5.0.4"
-				"tmp@0.2.4"
+				"tmp@0.2.6"
 				"minimatch@10.2.4"
 				"js-yaml@4.1.1"
 				"ajv@8.18.0"
@@ -595,6 +612,7 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 				"immutable@5.1.5"
 				"flatted@3.4.2"
 				"picomatch@4.0.4"
+				"shell-quote@1.8.4"
 			)
 			epnpm install "${deps[@]}" -D "${PNPM_INSTALL_ARGS[@]}"
 		popd >/dev/null 2>&1 || die
@@ -634,13 +652,13 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 			"js-yaml@4.1.1"
 			"ajv@8.18.0"
 			"glob@10.5.0"
-			"axios@1.15.2"
+			"axios@1.16.0"
 			"@isaacs/brace-expansion@5.0.1"
 			"markdown-it@14.1.1"
 			"diff@8.0.3"
 			"webpack@5.104.1"
 			"jws@3.2.2"
-			"playwright@1.55.1"
+			"playwright@1.60.0"
 			"storybook@8.6.17"
 			"uuid@14.0.0"
 			"follow-redirects@1.16.0"
@@ -658,7 +676,7 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 			"patch-package@8.0.0"
 			"webpack-dev-server@5.2.4"
 			"http-proxy-middleware@2.0.9"		# This must go after webpack-dev-server.
-			"tmp@0.2.4"
+			"tmp@0.2.6"
 			"on-headers@1.1.0"
 			"immutable@5.1.5"
 			"@tootallnate/once@3.0.1"
@@ -674,6 +692,7 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 
 			"node-abi@3.92.0"			# Fix build error
 			"ip-address@10.1.1"
+			"shell-quote@1.8.4"
 		)
 		epnpm install "${deps[@]}" -D "${PNPM_INSTALL_ARGS[@]}"
 
