@@ -129,7 +129,6 @@ src_prepare() {
 
 multilib_src_configure() {
 	cflags-hardened_append
-
 	export DSOFLAGS="${LDFLAGS}"
 
 	# Explicitly specify compiler wrt bug #524340
