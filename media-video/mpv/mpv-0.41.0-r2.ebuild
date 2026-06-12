@@ -1,4 +1,4 @@
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -27,7 +27,7 @@ if [[ "${PV}" == "9999" ]] ; then
 	inherit git-r3
 else
 	KEYWORDS="
-~amd64 ~arm64 ~arm64-macos ~amd64-linux ~x64-macos
+amd64 ~arm arm64 ~loong ~ppc ppc64 ~riscv x86
 	"
 	SRC_URI="
 https://github.com/mpv-player/mpv/archive/v${PV}.tar.gz
@@ -55,7 +55,7 @@ IUSE="
 ${PATENT_STATUS_IUSE[@]}
 +X +alsa aqua archive bluray cdda +cli coreaudio debug +drm dvb dvd +egl gamepad
 +iconv jack javascript jpeg lcms libcaca +libmpv +lua network nvenc openal
-pipewire pulseaudio rubberband sdl selinux sixel sndio soc test tools +uchardet
+pipewire pulseaudio rubberband sdl selinux sixel soc sndio soc test tools +uchardet
 vaapi vapoursynth vdpau vulkan wayland xv zimg zlib
 ebuild_revision_22
 "
@@ -235,6 +235,9 @@ COMMON_DEPEND="
 	sndio? (
 		>=media-sound/sndio-1.9.0:=
 	)
+	soc? (
+		>=media-video/ffmpeg-8.1:=[soc(-)]
+	)
 	vaapi? (
 		>=media-libs/libva-1.1.0:=[X?,drm(+)?,wayland?]
 		virtual/vaapi[patent_status_nonfree=]
@@ -243,6 +246,7 @@ COMMON_DEPEND="
 		>=media-libs/vapoursynth-56
 	)
 	vdpau? (
+		media-libs/libglvnd[X]
 		>=x11-libs/libvdpau-0.2
 	)
 	vulkan? (
@@ -257,6 +261,7 @@ COMMON_DEPEND="
 	X? (
 		>=x11-libs/libX11-1.0.0
 		>=x11-libs/libXext-1.0.0
+		x11-libs/libXfixes
 		>=x11-libs/libXpresent-1.0.0
 		>=x11-libs/libXrandr-1.4.0
 		>=x11-libs/libXScrnSaver-1.0.0
@@ -289,6 +294,11 @@ DEPEND="
 		dev-util/nvidia-cuda-toolkit:=
 		media-libs/nv-codec-headers:=
 	)
+	vaapi? (
+		egl? (
+			x11-libs/libdrm
+		)
+	)
 	vulkan? (
 		>=dev-util/vulkan-headers-1.3.238
 	)
@@ -310,6 +320,10 @@ BDEPEND="
 		dev-util/wayland-scanner
 	)
 "
+
+PATCHES=(
+	"${FILESDIR}/${PN}-0.41.0-v4l2request.patch"
+)
 
 pkg_pretend() {
 	if has_version "${CATEGORY}/${PN}[X,opengl]" && ! use egl ; then #953107
@@ -367,13 +381,16 @@ einfo "Skipping -DNDEBUG due to USE=test"
 		$(meson_feature sdl sdl2-video)
 		$(meson_feature sixel)
 		$(meson_feature sndio)
+		$(meson_feature soc v4l2request)
 		$(meson_feature uchardet)
 		$(meson_feature vaapi)
 		$(meson_feature vapoursynth)
 		$(meson_feature vdpau)
+		$(meson_feature vdpau gl-x11) # only needed for vdpau (bug #955122)
 		$(meson_feature vulkan)
 		$(meson_feature wayland)
 		$(meson_feature X x11)
+		$(meson_feature X x11-clipboard)
 		$(meson_feature xv)
 		$(meson_feature zimg)
 		$(meson_feature zlib)
@@ -382,11 +399,14 @@ einfo "Skipping -DNDEBUG due to USE=test"
 		$(meson_use test tests)
 		-Dbuild-date="false"
 		-Dcplugins="enabled"
-		-Dgl=$(use aqua || use egl || use libmpv && echo "enabled" || echo "disabled")
+		-Dgl=$(use aqua \
+			|| use egl \
+			|| use libmpv \
+			|| use vdpau \
+			&& echo enabled || echo disabled)
 		-Dlibavdevice="enabled"
 		-Dlua=$(usex lua "${ELUA}" "disabled")
 		-Dpdf-build="disabled"
-		-Dsdl2=$(use gamepad || use sdl && echo "enabled" || echo "disabled") #857156
 		-Dvapoursynth="disabled" # only available in overlays
 	)
 
@@ -405,6 +425,7 @@ einfo "Skipping -DNDEBUG due to USE=test"
 }
 
 src_test() {
+	unset LANGUAGE #954214
 	# ffmpeg tests are picky and easily break without necessarily
 	# meaning that there are runtime issues (bug #921091,#924276)
 	meson_src_test --no-suite "ffmpeg"
@@ -431,6 +452,12 @@ src_install() {
 		dodir "/usr/share/doc/${PF}/html"
 		mv "${ED}/usr/share/doc/"{"mpv","${PF}/html"}"/mpv.html" || die
 		mv "${ED}/usr/share/doc/"{"mpv","${PF}/examples"} || die
+	fi
+
+	# Prevent build-only ffnvcodec from leaking into the .pc (bug #971646)
+	if use libmpv && use nvenc; then
+		sed -Ee '/^Requires/s/ffnvcodec[^,]*,? ?//;s/, $//;/^Requires[^:]*: $/d' \
+			-i "${ED}"/usr/$(get_libdir)/pkgconfig/mpv.pc || die
 	fi
 
 	local GLOBIGNORE=*"/"*"build"*":"*"/"*"policy"*
