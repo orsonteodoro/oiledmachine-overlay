@@ -542,8 +542,8 @@ to use it this way to mitigate a sandbox breakout scenario.
 The recommended combo for defense in depth is 1 MAC (AppArmor/SELinux) +
 1 Sandbox (Firejail).  Firejail is used for attacker containment.  MAC is used
 as a breakout fallback to protect credentials.  The credential blacklist list is
-stored in kernel memory for the MAC, but for the sandboxes the blacklists are
-not and can be bypassed when breakout happens.
+stored in kernel memory for the MAC, but for the sandboxes blacklists are
+not in kernel memory and can be bypassed when breakout happens.
 
 Use the AI to help set up AppArmor and Firejail using the Firejail
 `--apparmor` sandbox flag and globals.local may also need to add
