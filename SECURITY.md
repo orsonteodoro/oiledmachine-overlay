@@ -534,7 +534,7 @@ noblacklist /home/johndoe/*.kdbx
 
 ### Protecting secrets in /etc/apparmor.d/abstractions/credentials.local with sys-apps/firejail
 
-You can use the --apparmor=<apparmor-profile> to accept the AppArmor profile, but the profile has to be loaded
+You can use the `--apparmor=<apparmor-profile>` to accept the AppArmor profile, but the profile has to be loaded
 and you cannot use /etc/firejail/globals.local to control credential access.  It is better
 to use it this way to mitigate sandbox breakout scenario.
 
