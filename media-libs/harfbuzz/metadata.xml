@@ -1,17 +1,96 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-	<maintainer type="project">
-		<email>office@gentoo.org</email>
-		<name>Gentoo Office project</name>
-	</maintainer>
-	<upstream>
-		<remote-id type="cpe">cpe:/a:harfbuzz_project:harfbuzz</remote-id>
-		<remote-id type="github">harfbuzz/harfbuzz</remote-id>
-	</upstream>
-	<use>
-		<flag name="experimental">Enable experimental APIs</flag>
-		<flag name="glib">Enable <pkg>dev-libs/glib</pkg> unicode functions</flag>
-		<flag name="graphite">Enable <pkg>media-gfx/graphite2</pkg> complementary shaper</flag>
-	</use>
+  <maintainer type="project">
+    <email>office@gentoo.org</email>
+    <name>Gentoo Office project</name>
+  </maintainer>
+  <upstream>
+    <remote-id type="cpe">cpe:/a:harfbuzz_project:harfbuzz</remote-id>
+    <remote-id type="github">harfbuzz/harfbuzz</remote-id>
+  </upstream>
+  <use>
+    <flag name="benchmark">
+      Enable benchmark tests
+    </flag>
+    <flag name="cairo">
+      Use Cairo
+    </flag>
+    <flag name="chafa">
+      Add hb-view for direct terminal graphics for text shaping and glyphs
+      support using Sixtel protocol, Kitty image protocol, iTerm2 inline Images.
+
+      Supported terminals:
+
+      foot
+      iTerm2
+      Kitty
+      mlterm
+      WezTerm
+      XTerm
+      Zellij
+    </flag>
+    <flag name="experimental">
+      Enable experimental API
+    </flag>
+    <flag name="fontations">
+      Adds memory safe font parsing using Rust to safely read metadata and
+      outlines without relying on FreeType (EXPERIMENTAL)
+    </flag>
+    <flag name="glib">
+      Enable Glib Unicode functions
+    </flag>
+    <flag name="gpu">
+      Enable GPU rasterization library
+    </flag>
+    <flag name="graphite">
+      Enable graphite2 complementary shaper
+    </flag>
+    <flag name="harfrust">
+      Enable Rust memory safe based text shaping also drops
+      fallback to Freetype and ICU. (EXPERIMENTAL)
+    </flag>
+    <flag name="icu">
+      Enable ICU library unicode functions
+    </flag>
+    <flag name="introspection">
+      Support Python or other bindings.
+    </flag>
+    <flag name="kbts">
+      Enable kb_text_shape backend (for non production benchmark testing and
+      feature evaluation)
+    </flag>
+    <flag name="png">
+      Use PNG library
+    </flag>
+    <flag name="ragel">
+      Regenerate Ragel generated C/C++ code.
+    </flag>
+    <flag name="raster">
+      Enable glyph rasterization library
+    </flag>
+    <flag name="subset">
+      Enable font subsetting and instancing library
+    </flag>
+    <flag name="system-icu">
+      Use the system-icu library.
+      Enabling increases the attack surface.
+    </flag>
+    <flag name="build_ragel">
+      Build the Ragel subproject for optimizing C++ from specifications
+      for OpenType text shaping or Unicode data processing.
+    </flag>
+    <flag name="truetype">
+      Support TrueType fonts using FreeType
+    </flag>
+    <flag name="utilities">
+      Build utilities
+    </flag>
+    <flag name="vector">
+      Enable glyph vector drawing library
+    </flag>
+    <flag name="zlib">
+      Use the zlib library for SVG color fonts
+    </flag>
+  </use>
 </pkgmetadata>

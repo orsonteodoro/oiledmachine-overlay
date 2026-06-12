@@ -1,0 +1,58 @@
+diff '--color=auto' -urp harfbuzz-14.2.1.orig/meson_options.txt harfbuzz-14.2.1/meson_options.txt
+--- harfbuzz-14.2.1.orig/meson_options.txt	2026-06-02 04:30:59.000000000 -0700
++++ harfbuzz-14.2.1/meson_options.txt	2026-06-11 21:26:53.781500811 -0700
+@@ -29,6 +29,8 @@ option('coretext', type: 'feature', valu
+   description: 'Enable CoreText shaper and font backend on Apple platforms')
+ option('harfrust', type: 'feature', value: 'disabled',
+   description: 'Enable HarfRust shaper backend')
++option('harfrust_lto', type: 'combo', choices: ['none', 'thin', 'fat'], value: 'none',
++  description: 'LTO level for HarfRust (none = better for security / reproducibility)')
+ option('kbts', type: 'feature', value: 'disabled',
+   description: 'Enable kb_text_shape backend')
+ option('wasm', type: 'feature', value: 'disabled',
+diff '--color=auto' -urp harfbuzz-14.2.1.orig/src/rust/meson.build harfbuzz-14.2.1/src/rust/meson.build
+--- harfbuzz-14.2.1.orig/src/rust/meson.build	2026-06-02 04:30:59.000000000 -0700
++++ harfbuzz-14.2.1/src/rust/meson.build	2026-06-11 21:28:31.294483060 -0700
+@@ -34,16 +34,26 @@ endif
+ 
+ buildtype = get_option('buildtype')
+ if buildtype == 'release' or buildtype == 'debugoptimized'
+-  cargo_args += [
+-    '-Z', 'build-std=std,panic_abort',
+-    '-Z', 'build-std-features=optimize_for_size',
+-  ]
+   cargo_args += ['--profile', buildtype]
+ endif
+ 
+ opt_level = get_option('optimization')
+ rust_flags += ' -C force-frame-pointers=yes -C force-unwind-tables=no -C opt-level=' + opt_level
+ 
++opt_level = get_option('optimization')
++rust_flags += ' -C opt-level=' + opt_level
++
++# Security focused defaults
++rust_flags += ' -C panic=abort'
++
++# LTO control (off by default for security/reproducibility)
++lto_setting = get_option('harfrust_lto')
++if lto_setting == 'thin'
++  rust_flags += ' -C lto=thin'
++elif lto_setting == 'fat'
++  rust_flags += ' -C lto=fat'
++endif
++
+ sources = [
+   'lib.rs',
+   'font.rs',
+@@ -61,8 +71,9 @@ harfbuzz_rust = custom_target(
+   command: [
+     cargo, 'build',
+     ] + cargo_args + [
+-    '-Z', 'unstable-options',
+-    '--artifact-dir', meson.current_build_dir(),
++    '&&', 'cp', '-f',
++          meson.current_build_dir() / buildtype / 'libharfbuzz_rust.a',
++          '@OUTPUT@'
+   ],
+   install: true,
+   install_dir: join_paths(get_option('prefix'), 'lib'),

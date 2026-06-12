@@ -1,0 +1,15 @@
+diff '--color=auto' -urp harfbuzz-14.2.1.orig/subprojects/kbts.wrap harfbuzz-14.2.1/subprojects/kbts.wrap
+--- harfbuzz-14.2.1.orig/subprojects/kbts.wrap	2026-06-02 04:30:59.000000000 -0700
++++ harfbuzz-14.2.1/subprojects/kbts.wrap	2026-06-11 19:16:10.985063627 -0700
+@@ -1,5 +1,5 @@
+-[wrap-git]
+-url = https://github.com/JimmyLefevre/kb.git
+-revision = ca6c9624dd7c6b774e6cec9901f3d8d998d6f62a
+-depth = 1
+-patch_directory = kbts
+\ No newline at end of file
++[wrap-file]
++directory = kb-ca6c962
++source_filename = kb-ca6c962.tar.gz
++source_hash = aa1fe39fdd67e2ffecdedc100c02bf1e273bed00772ce111302ebf9c88211c38
++patch_directory = kbts
