@@ -26,7 +26,6 @@ else
 
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
 
-	KEYWORDS="~amd64 ~x64-macos" # Based on download page
 	S="${WORKDIR}/${PN}-src-${SRC_PV}"
 	SRC_URI="
 		https://sqlite.org/2026/${PN}-src-${SRC_PV}.zip
@@ -95,8 +94,7 @@ else
 fi
 
 PATCHES=(
-	"${FILESDIR}/${PN}-3.47.2-hwtime.h-Don-t-use-rdtsc-on-i486.patch"
-	"${FILESDIR}/${PN}-3.51.3-test.patch"
+	"${FILESDIR}/${PN}-3.53.2-hwtime.h-Don-t-use-rdtsc-on-i486.patch"
 )
 
 erun() {
@@ -505,7 +503,6 @@ _src_compile() {
 			dbtotxt
 			index_usage
 			rbu
-			scrub
 			showdb
 			showjournal
 			showshm
@@ -513,7 +510,6 @@ _src_compile() {
 			showwal
 			sqldiff
 			sqlite3_analyzer
-			sqlite3_checker
 			sqlite3_expert
 			sqltclsh
 		)
@@ -627,7 +623,6 @@ multilib_src_install() {
 		install_tool dbtotxt sqlite3-db-to-txt
 		install_tool index_usage sqlite3-index-usage
 		install_tool rbu sqlite3-rbu
-		install_tool scrub sqlite3-scrub
 		install_tool showdb sqlite3-show-db
 		install_tool showjournal sqlite3-show-journal
 		install_tool showshm sqlite3-show-shm
@@ -635,7 +630,6 @@ multilib_src_install() {
 		install_tool showwal sqlite3-show-wal
 		install_tool sqldiff sqlite3-diff
 		install_tool sqlite3_analyzer sqlite3-analyzer
-		install_tool sqlite3_checker sqlite3-checker
 		install_tool sqlite3_expert sqlite3-expert
 		install_tool sqltclsh sqlite3-tclsh
 
