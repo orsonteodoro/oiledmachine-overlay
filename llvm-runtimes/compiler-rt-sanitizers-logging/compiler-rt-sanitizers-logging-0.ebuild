@@ -6,9 +6,9 @@ EAPI=8
 
 S="${WORKDIR}"
 
-DESCRIPTION="Enable/disable sanitizer system-wide"
+DESCRIPTION="Enable/disable sanitizer logging systemwide"
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 	+production
 	+gwp-asan
@@ -27,25 +27,33 @@ src_install() {
 	if use production ; then
 		cat \
 			"${FILESDIR}/50${PN}-envd" \
-			> \
+				> \
 			"${T}/50${PN}-envd" \
 			|| die
 		if use gwp-asan ; then
-			sed -i -e "s|#GWP_ASAN|GWP_ASAN|g" \
+			sed \
+				-i \
+				-e "s|#GWP_ASAN|GWP_ASAN|g" \
 				"${T}/50${PN}-envd" \
 				|| die
 		fi
 		local gwp_asan_sample_rate=${GWP_ASAN_SAMPLE_RATE:-1}
-		sed -i \
+		sed \
+			-i \
 			-e "s|@GWP_ASAN_SAMPLE_RATE@|${gwp_asan_sample_rate}|g" \
 			"${T}/50${PN}-envd" \
 			|| die
 		doenvd "${T}/50${PN}-envd"
 	else
-ewarn "USE=production is disabled.  This is a critical severity when sanitizers are used."
+ewarn
+ewarn "USE=production is disabled.  This may expose sensitive addresses and"
+ewarn "increase the chances of ASLR bypass."
+ewarn
 	fi
+ewarn
 ewarn "Do \`env-update;source /etc/profile\` to finish merging ${PN}"
 ewarn "Restart computer after changes done."
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

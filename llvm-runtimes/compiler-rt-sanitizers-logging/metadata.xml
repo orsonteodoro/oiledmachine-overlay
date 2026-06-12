@@ -8,6 +8,11 @@
   </maintainer>
   <!--
 
+  oiledmachine-overlay notes
+
+  This ebuild is provided to prevent sensitive address leak to mitigate ASLR
+  bypass.
+
   Build time environment variables:
 
   GWP_ASAN_SAMPLE_RATE:
