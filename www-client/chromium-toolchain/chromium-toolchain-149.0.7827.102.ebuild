@@ -23,8 +23,8 @@ GN_PV="0.2384" # See get_gn_ver.sh
 INSTALL_PREFIX="/usr/share/chromium/${PV%.*}.x"
 LIBCXX_USEDEP_SKIP=1
 # https://github.com/chromium/chromium/blob/149.0.7827.102/tools/clang/scripts/update.py#L38 \
-LLVM_COMMIT="20b6ec66" # without the g prefix
-LLVM_LIVE_TIMESTAMP="Fri, 27 Feb 2026 18:38:25 +0530" # Unvendored timestamp from https://github.com/llvm/llvm-project/commit/${LLVM_COMMIT}.patch
+LLVM_COMMIT="20b6ec66" # without the g prefix; Thu, 9 Apr 2026 18:28:25 +0200
+LLVM_LIVE_TIMESTAMP="Fri, 15 May 2026 18:39:29 +0000" # Unvendored timestamp for system-clang from https://github.com/llvm/llvm-project/commit/${LLVM_COMMIT}.patch
 LLVM_N_COMMITS="10931" # The number to the right of -init- in llvmorg-23-init-10931-g20b6ec66
 LLVM_OFFICIAL_SLOT="23" # Cr official slot
 LLVM_SUB_REV="8"
