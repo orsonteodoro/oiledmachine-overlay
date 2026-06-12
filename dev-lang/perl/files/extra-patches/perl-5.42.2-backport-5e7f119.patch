@@ -1,0 +1,19 @@
+# Original patch:  https://github.com/Perl/perl5/commit/5e7f119eb2bb1181be908701f22bf7068e722f1c.patch
+# NVD:  https://nvd.nist.gov/vuln/detail/CVE-2026-8376
+diff '--color=auto' -urp perl-5.42.2.orig/regcomp_study.c perl-5.42.2/regcomp_study.c
+--- perl-5.42.2.orig/regcomp_study.c	2026-01-18 09:50:04.000000000 -0800
++++ perl-5.42.2/regcomp_study.c	2026-06-12 15:57:51.803795102 -0700
+@@ -2770,6 +2770,13 @@ Perl_study_chunk(pTHX_
+                                                (U8 *) SvEND(data->last_found))
+                                 - (U8*)s;
+                         l -= old;
++
++                        if (l > 0 &&
++                            (mincount >= SSize_t_MAX / (SSize_t)l
++                             || old > SSize_t_MAX - mincount * (SSize_t)l)) {
++                            FAIL("Regexp out of space");
++                        }
++
+                         /* Get the added string: */
+                         last_str = newSVpvn_utf8(s  + old, l, UTF);
+                         last_chrs = UTF ? utf8_length((U8*)(s + old),

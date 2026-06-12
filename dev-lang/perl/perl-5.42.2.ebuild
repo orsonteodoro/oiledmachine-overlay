@@ -63,7 +63,10 @@ if [[ "${PV##*.}" != "9999" ]] && [[ "${PV/rc//}" == "${PV}" ]] ; then
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
 fi
 
-IUSE="berkdb perl_features_debug doc gdbm perl_features_ithreads minimal perl_features_quadmath"
+IUSE="
+berkdb perl_features_debug doc gdbm perl_features_ithreads minimal perl_features_quadmath
+ebuild_revision_2
+"
 
 RDEPEND="
 	berkdb? ( sys-libs/db:= )
@@ -443,6 +446,9 @@ src_prepare() {
 		# when -lsocket is used e.g. to get h_errno
 		rm_patch "*-nsl-and-cl*"
 	fi
+
+	# CVE-2026-8376 - HO, ZC, DoS, DT, ID
+	add_patch "${FILESDIR}/extra-patches/perl-5.42.2-backport-5e7f119.patch"
 
 	apply_patchdir
 
