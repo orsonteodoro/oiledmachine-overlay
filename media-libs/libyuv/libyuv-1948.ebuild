@@ -15,10 +15,10 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-# See https://chromium.googlesource.com/libyuv/libyuv/+log/refs/heads/main/README.chromium for activity
+# See https://github.com/lemenkov/libyuv/commits/main/README.chromium for activity
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CXX_STANDARD=17 # Compiler default
-EGIT_COMMIT="500f45652c459cfccd20f83f297eb66cb7b015cb"
+EGIT_COMMIT="3bdb3b94caaf12487af7c5f91f830ef0064be250"
 
 inherit cflags-hardened cmake libcxx-slot libstdcxx-slot multilib-minimal
 
@@ -36,7 +36,7 @@ LICENSE="
 	BSD
 	libyuv-PATENTS
 "
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${GIT_BRANCHES}
 system-gflags test
