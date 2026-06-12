@@ -515,6 +515,9 @@ src_install() {
 }
 
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (INTERACTIVE) 14.2.1 (20260611)
+# System apps:  passed
+# hb-shape <ttf-path> "السلام عليكم"  --font-funcs=fontations:  failed for fontations test
+# HB_SHAPER_LIST=harfrust hb-shape <ttf-path> "السلام عليكم":  failed for harfrust test
 
 # USE="cairo fontations glib gpu graphite harfrust icu introspection kbts png
 # raster subset truetype vector zlib -benchmark -chafa (-debug) -doc
