@@ -8,7 +8,7 @@ CFLAGS_HARDENED_CI_SANITIZERS="asan msan tsan ubsan"
 CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="18"
 CFLAGS_HARDENED_LANGS="asm c-lang"
 CFLAGS_HARDENED_USE_CASES="crypto network security-critical sensitive-data system-set untrusted-data"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF HO IO SO UM"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO BOR CE DF DOS HO IO MC NPD OOBR OOBW SC SO TA TC UAF UM"
 
 VERIFY_SIG_OPENPGP_KEY_PATH=/usr/share/openpgp-keys/openssl.org.asc
 inherit cflags-hardened edo flag-o-matic linux-info sysroot toolchain-funcs
@@ -27,17 +27,17 @@ if [[ ${PV} == *9999 ]] ; then
 else
 	inherit verify-sig
 	SRC_URI="
-		https://github.com/openssl/openssl/releases/download/${P}/${P}.tar.gz
+		https://github.com/openssl/openssl/releases/download/${MY_P}/${MY_P}.tar.gz
 		verify-sig? (
-			https://github.com/openssl/openssl/releases/download/${P}/${P}.tar.gz.asc
+			https://github.com/openssl/openssl/releases/download/${MY_P}/${MY_P}.tar.gz.asc
 		)
 	"
 
 	if [[ ${PV} != *_alpha* && ${PV} != *_beta* ]] ; then
-		KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~arm64-macos ~x64-macos ~x64-solaris"
+		KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
 	fi
 
-	BDEPEND="verify-sig? ( >=sec-keys/openpgp-keys-openssl-20240920 )"
+	BDEPEND="verify-sig? ( >=sec-keys/openpgp-keys-openssl-20260415 )"
 fi
 
 S="${WORKDIR}"/${MY_P}
@@ -69,8 +69,7 @@ MULTILIB_WRAPPED_HEADERS=(
 )
 
 PATCHES=(
-	"${FILESDIR}"/${PN}-3.5.5-ppc64.patch
-	"${FILESDIR}"/${PN}-3.5.5-ppc64-be.patch
+	"${FILESDIR}"/${PN}-4.0.1-x86-avx2.patch
 )
 
 pkg_setup() {
@@ -117,9 +116,6 @@ src_prepare() {
 		einfo "Disabling test '80-test_ssl_new.t' which is known to fail with FEATURES=network-sandbox ..."
 		rm test/recipes/80-test_ssl_new.t || die
 	fi
-
-	# Test fails depending on kernel configuration, bug #699134
-	rm test/recipes/30-test_afalg.t || die
 }
 
 _openssl_variant() {
@@ -144,6 +140,7 @@ openssl_is_default_variant() {
 }
 
 src_configure() {
+	cflags-hardened_append
 	# Keep this in sync with app-misc/c_rehash
 	SSL_CNF_DIR="/etc/ssl"
 
@@ -191,7 +188,6 @@ src_configure() {
 }
 
 openssl_src_configure() {
-	cflags-hardened_append
 	use_ssl() { usex $1 "enable-${2:-$1}" "no-${2:-$1}" " ${*:3}" ; }
 
 	local krb5=$(has_version app-crypt/mit-krb5 && echo "MIT" || echo "Heimdal")
@@ -306,10 +302,6 @@ openssl_src_install() {
 src_install() {
 	openssl_run_phase openssl_src_install
 	multilib_install_wrappers
-
-	# openssl installs perl version of c_rehash by default, but
-	# we provide a shell version via app-misc/c_rehash
-	rm "${ED}"/usr/bin/c_rehash || die
 
 	dodoc {AUTHORS,CHANGES,NEWS,README,README-PROVIDERS}.md doc/*.txt doc/${PN}-c-indent.el
 

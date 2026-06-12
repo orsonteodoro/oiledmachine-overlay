@@ -247,39 +247,7 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # cf-protection mutually exclusive flags.
 #
 # Valid values:
-# AFA - Arbitrary File Access
-# AFR - Arbitrary File Read
-# AFW - Arbitrary File Write
-# BO - Buffer Overflow
-# BOR - Buffer Overread
-# BU - Buffer Underflow
-# CE - Code Execution
-# CI - Code Injection or Command Injection
-# DOS - Denial Of Service
-# DF - Double Free
-# DP - Dangling Pointer
-# DT - Data Tampering
-# HO - Heap Overflow
-# ID - Information Disclosure
-# IO - Integer Overflow
-# ISD - Insecure Deserialization
-# IU - Integer Underflow
-# IL - Infinite Loop
-# MC - Memory Corruption
-# NPD - Null Pointer Dereference
-# OOBA - Out Of Bound Access
-# OOBR - Out Of Bound Read
-# OOBW - Out Of Bound Write
-# PE - Privilege Escalation
-# PT - Path Traversal
-# RC - Race Condition
-# REDOS - Regular Expression Denial of Service
-# SO - Stack Overflow
-# SYM - Symlink Attack
-# TA - Timing Attack
-# TC - Type Confusion
-# UAF - Use After Free
-# UM - Uninitalized Memory
+# See https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/vf.eclass
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_PROTECT_SPECTRUM_USER
 # @USER_VARIABLE

@@ -365,6 +365,9 @@ einfo "KEV = Known Exploited Vulnerabilities (CISA, U.S. Government Advisory)"
 # Equivalent to BSOD
 einfo "KP = Kernel Panic"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"LPE"($|" "|";"|",") ]] ; then
+einfo "LPE = Local Privilege Escalation"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"MBV"($|" "|";"|",") ]] ; then
 # Same as CWE-119
 einfo "MBV = Memory Bounds Violation (Off-by-One/Off-by-Any Read/Write, Heap/Stack Overread/Overwrite/Underread/Overwrite)"
@@ -529,6 +532,9 @@ einfo "SUF = Shift Underflow"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SYM"($|" "|";"|",") ]] ; then
 einfo "SYM = Symlink Attack"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"TA"($|" "|";"|",") ]] ; then
+einfo "TA = Timing Attack"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"TC"($|" "|";"|",") ]] ; then
 einfo "TC = Type Confusion"
