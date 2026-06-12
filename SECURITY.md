@@ -459,7 +459,8 @@ Summary table for credential theft mitigation
 
 While the focus of this writing is direct access to secrets, you may extend
 blacklist rules to prevent code injection or script hijack that leads to access
-to secrets as the secondary objective.
+to secrets as the secondary objective.  In other words, custom scripts should
+be made read only by either the sandbox or the MAC as defense in depth.
 
 ### Protecting secrets in /etc/sandbox.conf with sys-apps/sandbox
 
