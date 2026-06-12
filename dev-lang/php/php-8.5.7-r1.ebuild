@@ -38,7 +38,7 @@ LICENSE="PHP-3.01
 	unicode? ( BSD-2 LGPL-2.1 )"
 
 SLOT="$(ver_cut 1-2)"
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~x64-macos"
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~sparc ~x86 ~x64-macos"
 
 # We can build the following SAPIs in the given order.
 ALL_SAPIS=( embed cli cgi fpm apache2 phpdbg )
@@ -157,9 +157,7 @@ DEPEND="${COMMON_DEPEND}
 BDEPEND="virtual/pkgconfig"
 
 PATCHES=(
-	"${FILESDIR}/php-8.3.31-libgd-test-fixes.patch"
 	"${FILESDIR}/php-8.3.31-ipv6-printing-test-fix.patch"
-	"${FILESDIR}/php-8.5.6-libgd-test-fixes.patch"
 )
 
 PHP_MV="$(ver_cut 1)"
@@ -233,6 +231,11 @@ pkg_setup() {
 src_prepare() {
 	default
 
+	# In src_configure() we make several copies of the source tree, so
+	# it is extra worthwhile to delete the unused bundled copies of
+	# these libraries.
+	rm -r ext/gd/libgd ext/uri/uriparser ext/pcre/pcre2lib || die
+
 	# In php-8.x, the FPM pool configuration files have been split off
 	# of the main config. By default the pool config files go in
 	# e.g. /etc/php-fpm.d, which isn't slotted. So here we move the
@@ -290,13 +293,6 @@ src_prepare() {
 	if ! use cdb; then
 		rm ext/dba/tests/gh19706.phpt
 	fi
-
-	# Fixed upstream, but not in 8.5.5.
-	rm ext/openssl/tests/bug{74796,80770}.phpt || die
-	rm ext/openssl/tests/{sni_server.phpt,sni_server_key_cert.phpt} || die
-
-	# curl-8.18 issue, will go away on its own
-	rm ext/curl/tests/curl_setopt_CURLOPT_PREREQFUNCTION.phpt || die
 }
 
 src_configure() {
@@ -536,6 +532,12 @@ einfo "Detected compiler switch.  Disabling LTO."
 	our_conf+=(
 		--with-external-pcre
 		$(use_with jit pcre-jit)
+	)
+
+	# The URI extension is new in PHP 8.5, and always available. We
+	# insist that it use the system copy of dev-libs/uriparser.
+	our_conf+=(
+		--with-external-uriparser
 	)
 
 	# Catch CFLAGS problems
