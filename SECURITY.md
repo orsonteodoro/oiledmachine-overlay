@@ -551,6 +551,9 @@ Use the AI to help set up AppArmor and Firejail using the Firejail
 `--apparmor` sandbox flag and globals.local may also need to add
 the `apparmor` sandbox restriction for convenience.
 
+After changes are made, you need to verify the deny works by using `ls <path>`,
+`strings <path>`.
+
 ### Protecting secrets in /etc/apparmor.d/abstractions/credentials with AppArmor + emerge
 
 Ask this prompts to the AI for the answer:
@@ -569,6 +572,9 @@ a limited time.
 
 Everytime you edit the AppArmor profile, you need to reload the profile
 into kernel memory.
+
+After changes are made, you need to verify the deny works by using `ls <path>`,
+`strings <path>`.
 
 ## Threat model
 
