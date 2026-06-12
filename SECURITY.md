@@ -452,10 +452,11 @@ Summary table for credential theft mitigation
 | ---                                 | ---     | ---            | ---                                      | ---             | ---                |
 | sandbox.conf blacklists             | Sandbox | Easy           | During software installation with emerge | N               | N                  |
 | globals.local or `<app-name>.local` | Sandbox | Easy           | App runtime after emerge                 | N               | Y                  |
-| firejail-local                      | MAC     | Medium         | App runtime after emerge                 | Y               | N                  |
-| abstractions/credentials            | MAC     | High           | Any (emerge or app runtime)              | Y               | N                  |
+| firejail-local                      | MAC     | Medium         | App runtime after emerge                 | Y               | N [2]              |
+| abstractions/credentials            | MAC     | High           | Any (emerge or app runtime)              | Y               | N [2]              |
 
 [1] Persistence after sandboxed killed or bypassed by threat actor
+[2] It is possible but it can be abused to DoS the admin or other users in the system
 
 While the focus of this writing is direct access to secrets, you may extend
 blacklist rules to prevent code injection or script hijack that leads to access
