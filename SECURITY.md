@@ -436,7 +436,7 @@ inspired varieties), but it requires effort on your part.
 If it bypasses the sandbox (e.g. Copy Fail), it will not protect that case but
 will mitigate for others.
 
-Each subsection is ordered from most easiest to the most difficult.
+Each subsection is ordered from the most easiest to the most difficult.
 
 ### Protecting secrets in /etc/sandbox.conf with sys-apps/sandbox
 
