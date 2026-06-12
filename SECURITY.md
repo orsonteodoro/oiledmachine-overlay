@@ -550,11 +550,17 @@ Use the AI to help set it up AppArmor and Firejail using the Firejail
 
 ### Protecting secrets in /etc/apparmor.d/abstractions/credentials with AppArmor + emerge
 
-Ask this prompt to the AI for the answer:
+Ask this prompts to the AI for the answer:
 
 "How do I configure Gentoo emerge to use an AppArmor profile to block
 credentials against a supply chain attack using a credentals blacklist in
 /etc/apparmor.d/abstractions/credentials?"
+
+One reason why to do it this way per path is to easily whitelist the
+credentials.
+
+The other way is to blacklist it globally, but it is not easy to whitelist.
+You will need to comment out the rule to access the secret/credential.
 
 ## Threat model
 
