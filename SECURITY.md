@@ -448,12 +448,12 @@ in possesion during the breach.
 
 Summary table for credential theft mitigation
 
-| Blacklist                           | Type    | Learning curve | Limited scope                            | Persistence [1] |
-| ---                                 | ---     | ---            | ---                                      | ---             |
-| sandbox.conf blacklists             | Sandbox | Easy           | During software installation with emerge | N               |
-| globals.local or `<app-name>.local` | Sandbox | Easy           | App runtime after emerge                 | N               |
-| firejail-local                      | MAC     | Medium         | App runtime after emerge                 | Y               |
-| abstractions/credentials            | MAC     | High           | Any (emerge or app runtime)              | Y               |
+| Blacklist                           | Type    | Learning curve | Limited scope                            | Persistence [1] | Multiuser friendly |
+| ---                                 | ---     | ---            | ---                                      | ---             | ---                |
+| sandbox.conf blacklists             | Sandbox | Easy           | During software installation with emerge | N               | N                  |
+| globals.local or `<app-name>.local` | Sandbox | Easy           | App runtime after emerge                 | N               | Y                  |
+| firejail-local                      | MAC     | Medium         | App runtime after emerge                 | Y               | N                  |
+| abstractions/credentials            | MAC     | High           | Any (emerge or app runtime)              | Y               | N                  |
 
 [1] Persistence after sandboxed killed or bypassed by threat actor
 
