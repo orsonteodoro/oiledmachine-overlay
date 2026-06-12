@@ -539,11 +539,14 @@ AppArmor profile, but the profile has to be loaded and you cannot use
 `/etc/firejail/globals.local` to control credential access.  It is better
 to use it this way to mitigate sandbox breakout scenario.
 
-The recommended combo for defense in depth is 1 MAC (AppArmor/SELinux) + 1 Sandbox (Firejail).
-Firejail is used for attacker containment.  MAC is used as a breakout fallback to protect credentials.
-The credential list is stored in kernel memory for MAC, but for the sandboxes the blacklists are not.
+The recommended combo for defense in depth is 1 MAC (AppArmor/SELinux) +
+1 Sandbox (Firejail).  Firejail is used for attacker containment.  MAC is used
+as a breakout fallback to protect credentials.  The credential blacklist list is
+stored in kernel memory for the MAC, but for the sandboxes the blacklists are
+not and can be bypassed when breakout happens.
 
-Use the AI to help set it up AppArmor and Firejail using the Firejail `--apparmor` sandbox flag.
+Use the AI to help set it up AppArmor and Firejail using the Firejail
+`--apparmor` sandbox flag.
 
 ### Protecting secrets in /etc/apparmor.d/abstractions/credentials with AppArmor + emerge
 
