@@ -532,10 +532,11 @@ noblacklist /home/johndoe/*.kdbx
 
 ```
 
-### Protecting secrets in /etc/apparmor.d/abstractions/credentials.local with sys-apps/firejail
+### Protecting secrets in /etc/apparmor.d/local/firejail-local with sys-apps/firejail
 
-You can use the `--apparmor=<apparmor-profile>` to accept the AppArmor profile, but the profile has to be loaded
-and you cannot use /etc/firejail/globals.local to control credential access.  It is better
+You can use the `--apparmor` to accept the `/etc/apparmor.d/local/firejail-local`
+AppArmor profile, but the profile has to be loaded and you cannot use
+`/etc/firejail/globals.local` to control credential access.  It is better
 to use it this way to mitigate sandbox breakout scenario.
 
 The recommended combo for defense in depth is 1 MAC (AppArmor/SELinux) + 1 Sandbox (Firejail).
@@ -543,6 +544,7 @@ Firejail is used for attacker containment.  MAC is used as a breakout fallback t
 The credential list is stored in kernel memory for MAC, but for the sandboxes they are not.
 
 Use the AI to help set it up Apparmor with Firejail using Apparmor sandbox flag.
+
 
 ## Threat model
 
