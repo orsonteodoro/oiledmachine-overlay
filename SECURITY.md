@@ -457,6 +457,10 @@ Summary table for credential theft mitigation
 
 [1] Persistence after sandboxed killed or bypassed by threat actor
 
+While the focus of this writing is direct access to secrets, you may extend
+blacklist rules to prevent code injection or script hijack that leads to access
+to secrets as the secondary objective.
+
 ### Protecting secrets in /etc/sandbox.conf with sys-apps/sandbox
 
 Primary purpose:
