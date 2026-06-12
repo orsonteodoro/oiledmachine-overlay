@@ -1,4 +1,4 @@
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -11,11 +11,11 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO IO PE"
 inherit alternatives cflags-hardened flag-o-matic toolchain-funcs multilib multiprocessing
 
 PATCH_VER=1
-CROSS_VER=1.6.3
+CROSS_VER=1.6.4
 PATCH_BASE="perl-5.42.0-patches-${PATCH_VER}"
 PATCH_DEV=dilfridge
 
-DIST_AUTHOR=BOOK
+DIST_AUTHOR=SHAY
 
 # Greatest first, don't include yourself
 # Devel point-releases are not ABI-intercompatible, but stable point releases are
@@ -60,19 +60,16 @@ LICENSE="|| ( Artistic GPL-1+ )"
 SLOT="0/${SUBSLOT}"
 
 if [[ "${PV##*.}" != "9999" ]] && [[ "${PV/rc//}" == "${PV}" ]] ; then
-	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris"
+	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
 fi
 
-IUSE="
-berkdb perl_features_debug doc gdbm perl_features_ithreads minimal perl_features_quadmath
-ebuild_revision_11
-"
+IUSE="berkdb perl_features_debug doc gdbm perl_features_ithreads minimal perl_features_quadmath"
 
 RDEPEND="
 	berkdb? ( sys-libs/db:= )
 	gdbm? ( >=sys-libs/gdbm-1.8.3:= )
 	app-arch/bzip2
-	>=virtual/zlib-1.2.12
+	>=virtual/zlib-1.2.12:=
 	virtual/libcrypt:=
 "
 DEPEND="${RDEPEND}"
@@ -284,6 +281,10 @@ src_prepare_perlcross() {
 
 	# bug 794463, needs further analysis what is exactly wrong here
 	eapply "${FILESDIR}/perl-5.34.0-crossfit.patch"
+	# fix cross-compilation configure tests w/ lto
+	eapply "${FILESDIR}/perl-5.42.0-cross-no-lto.patch"
+	# https://github.com/arsv/perl-cross/pull/174
+	eapply "${FILESDIR}/perl-5.42.2-cross.patch"
 
 	# bug 604072
 	MAKEOPTS+=" -j1"
@@ -432,18 +433,6 @@ src_prepare() {
 	#		"https://bugs.debian.org/869122" "https://bugs.gentoo.org/634162"
 
 	# Backports from 5.42.0-votes.xml as of 2025-11-22
-	add_patch "${FILESDIR}/5.42.0/0001-newFOROP-fix-crash-when-optimizing-2-var-for-over-bu.patch" \
-		"100-newFOROP-fix-crash-when-optimizing-2-var-for-over-bu.patch" \
-		"Fix for keyword segfaulting when iterating over multiple values at a time" \
-		"https://bugs.gentoo.org/964379" "https://github.com/Perl/perl5/issues/23405"
-	add_patch "${FILESDIR}/5.42.0/0002-class.c-gracefully-handle-reader-writer-after-strict.patch" \
-		"101-class.c-gracefully-handle-reader-writer-after-strict.patch" \
-		"Gracefully handle reader definition after strict error" \
-		"https://github.com/Perl/perl5/issues/23511"
-	add_patch "${FILESDIR}/5.42.0/0003-use-5.41-affects-current-line-source-encoding.patch" \
-		"102-use-5.41-affects-current-line-source-encoding.patch" \
-		"5.41 use affects current line source::encoding" \
-		"https://github.com/Perl/perl5/issues/23881"
 	add_patch "${FILESDIR}/5.42.0/0004-Turn-off-POSIX-2008-locales-on-AIX.patch" \
 		"103-Turn-off-POSIX-2008-locales-on-AIX.patch" \
 		"Turn off POSIX 2008 locales on AIX" \
