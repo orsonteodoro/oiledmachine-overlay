@@ -459,7 +459,7 @@ Summary table for credential theft mitigation
 * [2] It is possible but it can be abused to DoS the admin or other users in the system
 
 While the focus of this writing is direct access to secrets, you may extend
-blacklist rules to prevent code injection or script hijack that leads to access
+blacklist rules to prevent script hijack that leads to snooping or access
 to secrets as the secondary objective.  In other words, custom scripts should
 be made read only by either the sandbox or the MAC as defense in depth.
 
