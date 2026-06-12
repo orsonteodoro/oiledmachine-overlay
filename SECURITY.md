@@ -429,10 +429,9 @@ See also https://docs.github.com/en/authentication/keeping-your-account-and-data
 
 ## Protecting secrets and credentials
 
-This overlay uses 2 sandboxes.  This ensures defense in depth protection in case
-one of the other fails because of quirk differences.  This will help mitigate
-against supply chain attacks leading to credential theft or sabotage (e.g.
-Shai-Hulud worm or inspired varieties), but it requires effort on your part.
+This overlay uses 2 sandboxes.  This will help mitigate against supply chain
+attacks leading to credential theft or sabotage (e.g. Shai-Hulud worm or
+inspired varieties), but it requires effort on your part.
 
 If it bypasses the sandbox (e.g. Copy Fail), it will not protect that case but
 will mitigate for others.
