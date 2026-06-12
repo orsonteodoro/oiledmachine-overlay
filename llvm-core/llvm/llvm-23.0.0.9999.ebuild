@@ -104,7 +104,7 @@ REQUIRED_USE+="
 	)
 "
 RDEPEND="
-	virtual/zlib:0=[${MULTILIB_USEDEP}]
+	virtual/zlib:=[${MULTILIB_USEDEP}]
 	binutils-plugin? (
 		>=sys-devel/binutils-2.31.1-r4:*[plugins]
 	)
@@ -257,7 +257,7 @@ python_check_deps() {
 	python_has_version -b "dev-python/sphinx[${PYTHON_USEDEP}]"
 }
 
-check_live_ebuild() {
+check_uptodate() {
 	local prod_targets=(
 		$(sed -n -e '/set(LLVM_ALL_TARGETS/,/)/p' CMakeLists.txt \
 			| tail -n +2 | head -n -1)
@@ -392,8 +392,8 @@ src_prepare() {
 	# Disable lit tests (we run them in dev-python/lit).
 	> "utils/lit/CMakeLists.txt" || die
 
-	# Verify that the live ebuild is up-to-date
-	check_live_ebuild
+	# Verify that the ebuild is up-to-date
+	check_uptodate
 
 	llvm.org_src_prepare
 
@@ -488,6 +488,7 @@ get_distribution_components() {
 			llvm-dwp
 			llvm-exegesis
 			llvm-extract
+			llvm-extract-bundle-entry
 			llvm-gpu-loader
 			llvm-gsymutil
 			llvm-ifs
@@ -675,7 +676,8 @@ einfo
 		-DLLVM_ENABLE_EH=ON
 		-DLLVM_ENABLE_RTTI=ON
 		-DLLVM_ENABLE_Z3_SOLVER=$(usex z3)
-		-DLLVM_ENABLE_ZSTD=$(usex zstd)
+		-DLLVM_ENABLE_ZLIB=FORCE_ON
+		-DLLVM_ENABLE_ZSTD=$(usex zstd FORCE_ON OFF)
 		-DLLVM_ENABLE_CURL=$(usex debuginfod)
 		-DLLVM_ENABLE_HTTPLIB=$(usex debuginfod)
 
@@ -683,7 +685,7 @@ einfo
 
 		-DPython3_EXECUTABLE="${PYTHON}"
 
-		# disable OCaml bindings (now in dev-ml/llvm-ocaml)
+		# disable OCaml bindings (now in dev-ml/llvm)
 		-DOCAMLFIND=NO
 	)
 
