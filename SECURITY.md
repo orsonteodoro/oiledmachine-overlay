@@ -443,8 +443,8 @@ corresponds to the last 2 subsections.
 The goal again is to make the credentials unreachable and unreadable.  The
 unreadable protects encrypted secrets which can be weaponized or create
 leverage for the threat actor.  A threat actor may later use quantum
-cracking or have both the keys and the cipher text in possesion during the
-breach.
+cracking or have or pretend to have the keys and the ciphertext in
+possesion during the breach.
 
 Summary table for credential theft mitigation
 
