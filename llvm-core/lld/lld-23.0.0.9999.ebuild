@@ -238,6 +238,11 @@ _src_configure() {
 	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
 	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
 
+	# https://gcc.gnu.org/PR121495 (bug #958469)
+	if use arm64 && tc-is-gcc && [[ $(gcc-major-version) -ge 14 ]] ; then
+		append-flags -mearly-ra=none
+	fi
+
 	use elibc_musl && append-ldflags -Wl,-z,stack-size=2097152
 
 	# For PGO
@@ -256,6 +261,7 @@ _src_configure() {
 		-DLLVM_ENABLE_ZSTD=$(usex zstd FORCE_ON OFF)
 		-DLLVM_TARGETS_TO_BUILD="${LLVM_TARGETS// /;}"
 	)
+
 	use test && mycmakeargs+=(
 		-DLLVM_BUILD_TESTS=ON
 		-DLLVM_EXTERNAL_LIT="${EPREFIX}/usr/bin/lit"
