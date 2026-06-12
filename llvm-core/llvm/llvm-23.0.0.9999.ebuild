@@ -312,7 +312,7 @@ check_distribution_components() {
 					LLVMCodeGenTypes)
 						;;
 					# used by lldb
-					LLVMDebuginfod)
+					LLVMDebuginfod|LLVMHTTP)
 						;;
 					# testing libraries
 					LLVMTestingAnnotations|LLVMTestingSupport)
@@ -442,6 +442,7 @@ get_distribution_components() {
 		out+=(
 			# library used by lldb
 			LLVMDebuginfod
+			LLVMHTTP
 
 			# utilities
 			llvm-tblgen
