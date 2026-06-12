@@ -537,7 +537,7 @@ noblacklist /home/johndoe/*.kdbx
 You can use the `--apparmor` to accept the `/etc/apparmor.d/local/firejail-local`
 AppArmor profile, but the profile has to be loaded and you cannot use
 `/etc/firejail/globals.local` to control credential access.  It is better
-to use it this way to mitigate sandbox breakout scenario.
+to use it this way to mitigate a sandbox breakout scenario.
 
 The recommended combo for defense in depth is 1 MAC (AppArmor/SELinux) +
 1 Sandbox (Firejail).  Firejail is used for attacker containment.  MAC is used
