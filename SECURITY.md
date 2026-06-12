@@ -455,13 +455,8 @@ Summary table for credential theft mitigation
 | firejail-local                      | MAC     | Medium         | App runtime after emerge                 | Y               | N [2]              |
 | abstractions/credentials            | MAC     | High           | Any (emerge or app runtime)              | Y               | N [2]              |
 
-<<<<<<< HEAD
 * [1] Persistence after sandboxed killed or bypassed by threat actor
 * [2] It is possible but it can be abused to DoS the admin or other users in the system
-=======
-[1] Persistence after sandboxed killed or bypassed by threat actor
-[2] It is possible but it can be abused to DoS the admin or other users in the system
->>>>>>> 3927458ed0617f31b68240154881c3bac0d8adbc
 
 While the focus of this writing is direct access to secrets, you may extend
 blacklist rules to prevent code injection or script hijack that leads to access
