@@ -514,8 +514,9 @@ src_install() {
 	fi
 }
 
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (INTERACTIVE) 14.2.1 (20260611)
-# System apps:  passed
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive/integration-testing) 14.2.1 (20260611)
+# mousepad:  passed
+# xfce4-terminal:  passed
 # hb-shape <ttf-path> "السلام عليكم"  --font-funcs=fontations:  failed for fontations test
 # HB_SHAPER_LIST=harfrust hb-shape <ttf-path> "السلام عليكم":  failed for harfrust test
 
