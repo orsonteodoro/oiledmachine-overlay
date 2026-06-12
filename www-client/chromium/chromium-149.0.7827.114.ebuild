@@ -11,7 +11,7 @@ EAPI=8
 
 # TODO:  test/verify and require system-clang for cromite and ungoogled-chromium builds.
 
-# D11, U22, U24
+# D11, D13, U22, U24, U26
 
 #
 # For security updates, check
@@ -250,7 +250,7 @@ LIBVA_PV="2.17.0"
 MESA_PV="20.3.5"
 ROLLUP_WASM_NODE_PV="4.57.1"
 QT6_PV="6.4.2"
-UNGOOGLED_CHROMIUM_PV="149.0.7827.53-1"
+UNGOOGLED_CHROMIUM_PV="149.0.7827.114-1"
 # Testing this V8 version to avoid breaking security.  The 13.6 series cause the \
 # mksnapshot "Return code is -11" error.  To fix it, it required to either \
 # disable v8 sandbox, or pointer compression and DrumBrake.  Before it was \
@@ -470,9 +470,9 @@ IUSE_CODECS=(
 	"+vpx"
 )
 
-MITIGATION_DATE="May 12, 2026" # Official annoucement (blog)
-MITIGATION_LAST_UPDATE=1780693469 # From `date +%s -d "2026-06-05 21:04:29 UTC"` From tag in GH or upstream repo
-MITIGATION_URI="https://chromereleases.googleblog.com/2026/06/stable-channel-update-for-desktop_0153744567.html"
+MITIGATION_DATE="Jun 11, 2026" # Official annoucement (blog)
+MITIGATION_LAST_UPDATE=1781114283 # From `date +%s -d "2026-06-10 17:58:03 UTC"` From tag in GH or upstream repo
+MITIGATION_URI="https://chromereleases.googleblog.com/2026/06/stable-channel-update-for-desktop_01962725236.html"
 VULNERABILITIES_FIXED=(
 	# 149.0.7827.114
 	"CVE-2026-12007;UAF;"
@@ -600,7 +600,7 @@ LLVM_COMPAT=(
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 LLVM_OFFICIAL_SLOT="23" # Cr official slot
-LIBCXX_SLOT_MIN="20"
+LIBCXX_SLOT_MIN="21"
 # For simplicity, the PGO profdata compatibility assumes the same as
 # LLVM_OFFICIAL_SLOT to LLVM_OFFICIAL_SLOT + 1.
 
@@ -1553,11 +1553,11 @@ COMMON_SNAPSHOT_DEPEND="
 		media-libs/fontconfig:=
 	)
 	system-freetype? (
-		>=media-libs/freetype-2.14.1[${MULTILIB_USEDEP}]
+		>=media-libs/freetype-2.14.3[${MULTILIB_USEDEP}]
 		media-libs/freetype:=
 	)
 	system-harfbuzz? (
-		>=media-libs/harfbuzz-14.0.0:0[${MULTILIB_USEDEP},icu(-)]
+		>=media-libs/harfbuzz-14.2.0:0[${MULTILIB_USEDEP},icu(-)]
 		media-libs/harfbuzz:=
 	)
 	system-highway? (
@@ -1617,7 +1617,7 @@ COMMON_SNAPSHOT_DEPEND="
 		dev-libs/libxslt:=
 	)
 	system-libyuv? (
-		>=media-libs/libyuv-1922[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
+		>=media-libs/libyuv-1924[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 		media-libs/libyuv:=
 	)
 	system-protobuf? (
@@ -3161,21 +3161,21 @@ einfo "Applying the distro patchset ..."
 			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr144-glibc-2.43.patch"
 			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr145-oauth2-client-switches.patch"
 			$(use ungoogled-chromium || echo "${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr145-revert-to-rollup-wasm.patch")
-			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr147-channel-aware-build.patch"
 			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr148-v8-fix-cfi-sanitizer-set-death-callback.patch"
+			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr149-channel-aware-build.patch"
 			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cross-compile.patch"
 		)
 
 	# Dedupe, oiledmachine-overlay changes preferred
 	# Update every major version
-		rm -f "${WORKDIR}/chromium-patches-${PATCH_VER}/toolchain/cr147-compiler.patch" || die "Fix versioning or remove patch"
+		rm -f "${WORKDIR}/chromium-patches-${PATCH_VER}/toolchain/cr149-compiler.patch" || die "Fix versioning or remove patch"
 	fi
 
 	local rust_pv=$("${RUSTC}" --version | cut -f 2 -d " " | cut -f 1 -d "-")
 einfo "rust_pv:  ${rust_pv}"
 	if ver_test "${rust_pv}" "-ge" "1.95.0" ; then
 einfo "Removing SupportedLaneCount"
-		rm -f "${WORKDIR}/chromium-patches-148-3/rust/cr146-fix-botched-bytemuck-roll.patch" || die "Fix versioning or remove patch"
+		rm -f "${WORKDIR}/chromium-patches-${PATCH_VER}/rust/cr146-fix-botched-bytemuck-roll.patch" || die "Fix versioning or remove patch"
 	else
 einfo "Adding SupportedLaneCount"
 	fi
