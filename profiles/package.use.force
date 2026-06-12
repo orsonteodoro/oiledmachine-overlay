@@ -39,3 +39,7 @@ gui-apps/noctalia-qs minimal
 
 # Prevent unprotected system with untested config
 sys-apps/firejail suid
+
+# Mitigate kernel address leaks leading to ASLR bypass
+# A guardrail for people who don't read or have rash tendencies
+llvm-runtimes/compiler-rt-sanitizers-logging production
