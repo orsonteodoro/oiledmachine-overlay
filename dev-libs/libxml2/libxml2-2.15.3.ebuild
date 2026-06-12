@@ -1,4 +1,4 @@
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -22,7 +22,7 @@ if [[ ${PV} == 9999 ]] ; then
 	inherit git-r3
 else
 	inherit gnome.org
-	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris"
+	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~arm64-macos ~x64-macos ~x64-solaris"
 fi
 
 S="${WORKDIR}/${PN}-${PV%_rc*}"
@@ -30,10 +30,7 @@ S="${WORKDIR}/${PN}-${PV%_rc*}"
 LICENSE="MIT"
 # see so_version = v_maj + v_min_compat for subslot
 SLOT="2/16"
-IUSE="
-doc icu python readline static-libs test
-ebuild_revision_5
-"
+IUSE="doc icu python readline static-libs test"
 RESTRICT="!test? ( test )"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
@@ -60,7 +57,7 @@ MULTILIB_CHOST_TOOLS=(
 )
 
 PATCHES=(
-	"${FILESDIR}"/libxml2-2.14.2-no-git.patch
+	"${FILESDIR}"/${PN}-2.14.2-no-git.patch
 )
 
 pkg_setup() {
