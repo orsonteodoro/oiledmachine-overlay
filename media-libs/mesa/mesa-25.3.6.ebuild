@@ -388,7 +388,7 @@ QA_WX_LOAD="
 	)
 "
 PATCHES=(
-#	"${FILESDIR}/mesa-25.2.4-headers.patch"
+	"${FILESDIR}/${PN}-25.3.3-wsl.patch"
 )
 
 llvm_check_deps() {
