@@ -884,3 +884,5 @@ pkg_postinst() {
 pkg_postrm() {
 	dual_scripts
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (INTERACTIVE) 5.42.2
