@@ -1,4 +1,4 @@
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -17,7 +17,6 @@ GENTOO_DEPEND_ON_PERL=no
 
 # bug #329479: git-remote-testgit is not multiple-version aware
 PYTHON_COMPAT=( python3_{11..14} )
-
 RUST_OPTIONAL=1
 inherit cflags-hardened flag-o-matic toolchain-funcs perl-module shell-completion optfeature
 inherit plocale python-single-r1 rust systemd meson
@@ -62,7 +61,7 @@ if [[ ${PV} != *9999 ]]; then
 	SRC_URI+=" doc? ( ${SRC_URI_KORG}/${PN}-htmldocs-${DOC_VER}.tar.${SRC_URI_SUFFIX} )"
 
 	if [[ ${PV} != *_rc* ]] ; then
-		KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ~ppc ppc64 ~riscv ~s390 ~sparc x86 ~arm64-macos ~x64-macos ~x64-solaris"
+		KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
 	fi
 fi
 
@@ -70,15 +69,12 @@ S="${WORKDIR}"/${MY_P}
 
 LICENSE="GPL-2"
 SLOT="0"
-IUSE="
-+curl cgi cvs doc keyring +gpg highlight +iconv +nls +pcre perforce +perl rust +safe-directory selinux subversion test tk +webdav xinetd
-ebuild_revision_10
-"
+IUSE="+curl cgi cvs doc keyring +gpg highlight +iconv +nls +pcre perforce +perl rust +safe-directory selinux subversion test tk +webdav xinetd"
 
 # Common to both DEPEND and RDEPEND
 DEPEND="
 	dev-libs/openssl:=
-	virtual/zlib
+	virtual/zlib:=
 	curl? (
 		net-misc/curl
 		webdav? ( dev-libs/expat )
@@ -165,13 +161,8 @@ PATCHES=(
 	# and the documentation mentions that it is a Gentoo addition.
 	"${FILESDIR}"/${PN}-2.50.0-diff-implement-config.diff.renames-copies-harder.patch
 
-	"${FILESDIR}"/${PN}-2.52.0-0001-rust-don-t-pass-quiet-to-cargo.patch
-	"${FILESDIR}"/${PN}-2.52.0-0002-rust-respect-CARGO-environment-variable.patch
-
-	# Backports for cross
-	"${FILESDIR}"/0001-meson-ignore-subprojects-.wraplock.patch
-	"${FILESDIR}"/0002-meson-only-detect-ICONV_OMITS_BOM-if-possible.patch
-	"${FILESDIR}"/0003-meson-use-is_cross_build-where-possible.patch
+	"${FILESDIR}"/${PN}-2.54.0-0001-rust-don-t-pass-quiet-to-cargo.patch
+	"${FILESDIR}"/${PN}-2.54.0-0002-rust-respect-CARGO-environment-variable.patch
 )
 
 pkg_setup() {
@@ -222,7 +213,6 @@ src_prepare() {
 
 src_configure() {
 	cflags-hardened_append
-
 	local contrib=(
 		completion
 		subtree
@@ -253,6 +243,8 @@ src_configure() {
 		$(meson_feature curl)
 		$(meson_feature cgi gitweb)
 		$(meson_feature webdav expat)
+		$(meson_feature tk gitk)
+		$(meson_feature tk git_gui)
 		$(meson_feature iconv)
 		$(meson_feature nls gettext)
 		$(meson_feature pcre pcre2)
@@ -293,18 +285,6 @@ src_configure() {
 	fi
 
 	meson_src_configure
-
-	if use tk ; then
-		local tkdir
-		for tkdir in git-gui gitk-git ; do
-			(
-				EMESON_SOURCE="${S}"/${tkdir}
-				BUILD_DIR="${WORKDIR}"/${tkdir}_build
-				emesonargs=()
-				meson_src_configure
-			)
-		done
-	fi
 }
 
 git_emake() {
@@ -336,17 +316,6 @@ git_emake() {
 
 src_compile() {
 	meson_src_compile
-
-	if use tk ; then
-		local tkdir
-		for tkdir in git-gui gitk-git ; do
-			(
-				EMESON_SOURCE="${S}"/${tkdir}
-				BUILD_DIR="${WORKDIR}"/${tkdir}_build
-				meson_src_compile
-			)
-		done
-	fi
 
 	if use doc ; then
 		# Workaround fragments that still use the Makefile and can't
@@ -465,17 +434,6 @@ src_install() {
 		newconfd "${FILESDIR}"/git-daemon.confd git-daemon
 		systemd_newunit "${FILESDIR}/git-daemon_at-r1.service" "git-daemon@.service"
 		systemd_dounit "${FILESDIR}/git-daemon.socket"
-	fi
-
-	if use tk ; then
-		local tkdir
-		for tkdir in git-gui gitk-git ; do
-			(
-				EMESON_SOURCE="${S}"/${tkdir}
-				BUILD_DIR="${WORKDIR}"/${tkdir}_build
-				meson_src_install
-			)
-		done
 	fi
 
 	perl_delete_localpod
