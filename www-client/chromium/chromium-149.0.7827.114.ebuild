@@ -109,7 +109,7 @@ EAPI=8
 # https://github.com/chromium/chromium/tree/149.0.7827.114/third_party/libsecret							# Stable
 # https://github.com/chromium/chromium/tree/149.0.7827.114/third_party/libusb								# Stable
 # https://github.com/chromium/chromium/tree/149.0.7827.114/third_party/libvpx								# Stable
-# https://github.com/chromium/chromium/tree/149.0.7827.114/third_party/libwebp								# Stable
+# https://github.com/chromium/chromium/tree/149.0.7827.114/third_party/libwebp								# Live but relaxed to use stable since distro doesn't provide live, used the version suggested in cpe prefix not the commit
 # https://github.com/chromium/chromium/blob/149.0.7827.114/third_party/libxml/linux/config.h#L86					# Stable
 # https://github.com/chromium/chromium/blob/149.0.7827.114/third_party/libxslt/linux/config.h#L116					# Stable
 # https://github.com/chromium/chromium/blob/149.0.7827.114/third_party/node/update_node_binaries#L18					# Stable, marked no for security-critical by upstream
@@ -121,7 +121,7 @@ EAPI=8
 # https://github.com/chromium/chromium/blob/149.0.7827.114/third_party/woff2/README.chromium						# Live
 # https://github.com/chromium/chromium/blob/149.0.7827.114/third_party/zlib/zlib.h#L40							# Stable
 # https://github.com/chromium/chromium/blob/149.0.7827.114/tools/rust/update_rust.py#L35						#
-#   https://github.com/rust-lang/rust/blob/6f54d591c3116ee7f8ce9321ddeca286810cc142/src/version						# Live
+#   https://github.com/rust-lang/rust/blob/4c4205163abcbd08948b3efab796c543ba1ea687/src/version						# Live
 # /usr/share/chromium/149.0.7827.114/sources/third_party/flac/BUILD.gn								L122	# Stable
 # /usr/share/chromium/149.0.7827.114/sources/third_party/fontconfig/src/fontconfig/fontconfig.h.in				L56     # Stable
 # /usr/share/chromium/149.0.7827.114/sources/third_party/freetype/src/CMakeLists.txt						L165	# Stable
@@ -1545,7 +1545,7 @@ COMMON_SNAPSHOT_DEPEND="
 		>=dev-libs/double-conversion-3.1.6[${MULTILIB_USEDEP}]
 	)
 	system-flatbuffers? (
-		=dev-libs/flatbuffers-25.12.19
+		~dev-libs/flatbuffers-25.12.19
 		dev-libs/flatbuffers:=
 	)
 	system-fontconfig? (
