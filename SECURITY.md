@@ -545,7 +545,7 @@ The credential list is stored in kernel memory for MAC, but for the sandboxes th
 
 Use the AI to help set it up AppArmor and Firejail using the Firejail `--apparmor` sandbox flag.
 
-## Protecting secrets in /etc/apparmor.d/abstractions/credentials with AppArmor + emerge
+### Protecting secrets in /etc/apparmor.d/abstractions/credentials with AppArmor + emerge
 
 Ask this prompt to the AI for the answer:
 
