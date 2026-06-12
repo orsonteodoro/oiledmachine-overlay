@@ -560,7 +560,12 @@ One reason why to do it this way per path is to easily whitelist the
 credentials.
 
 The other way is to blacklist it globally, but it is not easy to whitelist.
-You will need to comment out the rule to access the secret/credential.
+You will need to comment out the rule to access the secret/credential, but
+the tradeoff is it will expose the secret/credential too all the apps for
+a limited time.
+
+Everytime you edit the AppArmor profile, you need to reload the profile
+into kernel memory.
 
 ## Threat model
 
