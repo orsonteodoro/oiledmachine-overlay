@@ -436,7 +436,22 @@ inspired varieties), but it requires effort on your part.
 If it bypasses the sandbox (e.g. Copy Fail), it will not protect that case but
 will mitigate for others.
 
-Each subsection is ordered from the most easiest to the most difficult.
+Each subsection is ordered from the most easiest to the most difficult.  Some
+users will make tradeoffs.  Others will use more optimal mitigation which
+corresponds to the last 2 subsections.
+
+The goal again is to make the credentials unreachable and unreadable.  The
+unreadable protects encrypted secrets which can be weaponized or create
+leverage for the threat actor.
+
+Summary table for credential theft mitigation
+
+| Blacklist                           | Type    | Learning curve | Limited scope                            | Persistence after sandboxed killed by threat actor |
+| ---                                 | ---     | ---            | ---                                      | ---                                                |
+| sandbox.conf blacklists             | Sandbox | Easy           | During software installation with emerge | N                                                  |
+| globals.local or `<app-name>.local` | Sandbox | Easy           | App runtime after emerge                 | N                                                  |
+| firejail-local                      | MAC     | Medium         | App runtime after emerge                 | Y                                                  |
+| abstractions/credentials            | MAC     | High           | Any (emerge or app runtime)              | Y                                                  |
 
 ### Protecting secrets in /etc/sandbox.conf with sys-apps/sandbox
 
