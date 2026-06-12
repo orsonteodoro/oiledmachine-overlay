@@ -112,7 +112,8 @@ if [[ "${PV}" == "9999" ]] ; then
 	inherit git-r3
 else
 	KEYWORDS="
-~alpha amd64 ~arm arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc x86 ~x64-solaris
+~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc
+~x86 ~x64-solaris
 	"
 	SRC_URI="
 		https://archive.mesa3d.org/${MY_P}.tar.xz
@@ -129,7 +130,7 @@ SRC_URI+="
 "
 
 DESCRIPTION="OpenGL-like graphic library for Linux"
-HOMEPAGE="https://www.mesa3d.org/ https://mesa.freedesktop.org/"
+HOMEPAGE="https://www.mesa3d.org/"
 LICENSE="MIT SGI-B-2.0"
 RESTRICT="
 	!test? (
@@ -299,7 +300,7 @@ DEPEND="
 		dev-debug/valgrind
 	)
 	video_cards_d3d12? (
-		>=dev-util/directx-headers-1.618.1[${MULTILIB_USEDEP}]
+		>=dev-util/directx-headers-1.619.1[${MULTILIB_USEDEP}]
 	)
 	wayland? (
 		>=dev-libs/wayland-protocols-1.41
@@ -758,6 +759,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		$(meson_use opengl)
 		$(meson_use sysprof)
 		$(meson_use test build-tests)
+		-Dallow-broken-lto=true
 		-Db_ndebug=$(usex debug false true)
 		-Dexpat=enabled
 		-Dgallium-drivers=$(driver_list "${GALLIUM_DRIVERS[*]}")
