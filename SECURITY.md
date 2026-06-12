@@ -549,7 +549,7 @@ Use the AI to help set it up AppArmor and Firejail using the Firejail `--apparmo
 
 Ask this prompt to the AI for the answer:
 
-"How do I configure gentoo emerge to use an AppArmor profile to block
+"How do I configure Gentoo emerge to use an AppArmor profile to block
 credentials against a supply chain attack using a credentals blacklist in
 /etc/apparmor.d/abstractions/credentials?"
 
