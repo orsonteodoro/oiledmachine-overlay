@@ -6,7 +6,7 @@ EAPI=8
 # Add retpoline for kpcli
 CFLAGS_HARDENED_TRAPV=0
 CFLAGS_HARDENED_USE_CASES="crypto language-runtime security-critical sensitive-data system-set untrusted-data"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO IO PE"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="AFW BO BOR CE DF DOS HO IO NPD OOBW PE PT RC SB SYM"
 
 inherit alternatives cflags-hardened flag-o-matic toolchain-funcs multilib multiprocessing
 
