@@ -1,4 +1,4 @@
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -7,26 +7,29 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO ID IO OOBR UAF UM"
 
-inherit autotools cflags-hardened multilib-minimal
+VERIFY_SIG_OPENPGP_KEY_PATH=/usr/share/openpgp-keys/marcusmeissner.asc
+inherit autotools cflags-hardened multilib-minimal verify-sig
 
 DESCRIPTION="Library for parsing, editing, and saving EXIF data"
 HOMEPAGE="https://libexif.github.io/"
-SRC_URI="https://github.com/${PN}/${PN}/releases/download/v${PV}/${P}.tar.xz"
+SRC_URI="
+	https://github.com/${PN}/${PN}/releases/download/v${PV}/${P}.tar.xz
+	verify-sig? ( https://github.com/${PN}/${PN}/releases/download/v${PV}/${P}.tar.xz.asc )
+"
 
 LICENSE="LGPL-2+"
 SLOT="0"
-KEYWORDS="~alpha amd64 arm arm64 hppa ~loong ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x64-solaris"
-IUSE="
-doc nls
-ebuild_revision_11
-"
+KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~arm64-macos ~x64-macos ~x64-solaris"
+IUSE="doc nls"
 
 RDEPEND="nls? ( virtual/libintl )"
 DEPEND="${RDEPEND}"
 BDEPEND="
 	virtual/pkgconfig
 	doc? ( app-text/doxygen )
-	nls? ( sys-devel/gettext )"
+	nls? ( sys-devel/gettext )
+	verify-sig? ( sec-keys/openpgp-keys-marcusmeissner )
+"
 
 PATCHES=(
 	"${FILESDIR}"/${PN}-0.6.13-pkgconfig.patch
@@ -48,10 +51,13 @@ src_prepare() {
 
 multilib_src_configure() {
 	cflags-hardened_append
-	ECONF_SOURCE="${S}" econf \
-		$(multilib_native_use_enable doc docs) \
-		$(use_enable nls) \
+	local myeconfargs=(
+		$(multilib_native_use_enable doc docs)
+		$(use_enable nls)
 		--with-doc-dir="${EPREFIX}"/usr/share/doc/${PF}
+	)
+
+	ECONF_SOURCE="${S}" econf "${myeconfargs[@]}"
 }
 
 multilib_src_install() {
