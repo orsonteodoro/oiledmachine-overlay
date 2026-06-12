@@ -552,7 +552,7 @@ Use the AI to help set up AppArmor and Firejail using the Firejail
 the `apparmor` sandbox restriction for convenience.
 
 After changes are made, you need to verify the deny works by using `ls <path>`,
-`strings <path>`.
+`strings <path>`, or hex editor.
 
 ### Protecting secrets in /etc/apparmor.d/abstractions/credentials with AppArmor + emerge
 
@@ -574,7 +574,7 @@ Everytime you edit the AppArmor profile, you need to reload the profile
 into kernel memory.
 
 After changes are made, you need to verify the deny works by using `ls <path>`,
-`strings <path>`.
+`strings <path>`, or hex editor.
 
 ## Threat model
 
