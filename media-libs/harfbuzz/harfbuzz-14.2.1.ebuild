@@ -116,6 +116,9 @@ REQUIRED_USE="
 		thinlto
 		fatlto
 	)
+	fatlto? (
+		llvm_slot_20
+	)
 	fontations? (
 		^^ (
 			${LLVM_COMPAT[@]/#/llvm_slot_}
@@ -139,6 +142,9 @@ REQUIRED_USE="
 	)
 	test? (
 		utilities
+	)
+	thinlto? (
+		llvm_slot_20
 	)
 "
 
@@ -288,11 +294,6 @@ eerror "Switch Rust to >= ${RUST_MIN_VER}"
 }
 
 pkg_setup() {
-	if is_rust && ( use thinlto || use fatlto ) ; then
-ewarn "Using Rust may break LTS userland with LTO for ${CATEGORY}/${PN}."
-ewarn "To reduce the risk of runtime failure disable thinlto/fatlto USE flag."
-ewarn "LTO should only be used if the main LLVM compiler is 20."
-	fi
 	rust_pkg_setup
 	verify_rust_nightly
 	libcxx-slot_verify
@@ -352,7 +353,7 @@ multilib_src_configure() {
 
 	local lto="none"
 	use thinlto && lto="thin"
-	use thinlto && lto="fat"
+	use fatlto && lto="fat"
 
 	# Simplified only allow a few for security-critical.
 	local olast=$(get_olast)
@@ -386,7 +387,6 @@ multilib_src_configure() {
 		$(meson_native_use_feature harfrust) # Breaks during buildtime for abi_x86_32
 		$(meson_feature subset)
 		$(meson_feature test tests)
-		$(meson_feature thinlto harfrust_lto)
 		$(meson_feature truetype freetype)
 		$(meson_feature vector)
 		$(meson_feature zlib)
@@ -404,9 +404,22 @@ multilib_src_configure() {
 		-Dbuildtype=release
 		-Doptimization=${optimization}
 		-Dcoretext=disabled
-		-Dharfrust_lto=${lto}
 		-Dwasm=disabled
 	)
+
+	if is_rust && ( use fatlto || use thinlto ) && use llvm_slot_20 ; then
+# People will still insist to mix different IR versions.
+ewarn "Using Rust may break LTS userland with LTO for ${CATEGORY}/${PN}."
+ewarn "To reduce the risk of runtime failure disable thinlto and fatlto USE flags."
+ewarn "LTO should only be used if the main systemwide Clang compiler is 20."
+		emesonargs+=(
+			-Dharfrust_lto="${lto}"
+		)
+	else
+		emesonargs+=(
+			-Dharfrust_lto="none"
+		)
+	fi
 
 
 	if use ragel ; then
