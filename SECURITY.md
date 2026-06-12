@@ -545,8 +545,9 @@ as a breakout fallback to protect credentials.  The credential blacklist list is
 stored in kernel memory for the MAC, but for the sandboxes the blacklists are
 not and can be bypassed when breakout happens.
 
-Use the AI to help set it up AppArmor and Firejail using the Firejail
-`--apparmor` sandbox flag.
+Use the AI to help set up AppArmor and Firejail using the Firejail
+`--apparmor` sandbox flag and globals.local may also need to add
+the `apparmor` sandbox restriction for convenience.
 
 ### Protecting secrets in /etc/apparmor.d/abstractions/credentials with AppArmor + emerge
 
