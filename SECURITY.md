@@ -541,10 +541,17 @@ to use it this way to mitigate sandbox breakout scenario.
 
 The recommended combo for defense in depth is 1 MAC (AppArmor/SELinux) + 1 Sandbox (Firejail).
 Firejail is used for attacker containment.  MAC is used as a breakout fallback to protect credentials.
-The credential list is stored in kernel memory for MAC, but for the sandboxes they are not.
+The credential list is stored in kernel memory for MAC, but for the sandboxes the blacklists are not.
 
-Use the AI to help set it up Apparmor with Firejail using Apparmor sandbox flag.
+Use the AI to help set it up AppArmor and Firejail using the Firejail `--apparmor` sandbox flag.
 
+## Protecting secrets in /etc/apparmor.d/abstractions/credentials with AppArmor + emerge
+
+Ask this prompt to the AI for the answer:
+
+"How do I configure gentoo emerge to use an AppArmor profile to block
+credentials against a supply chain attack using a credentals blacklist in
+/etc/apparmor.d/abstractions/credentials?"
 
 ## Threat model
 
