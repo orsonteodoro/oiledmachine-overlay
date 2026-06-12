@@ -190,6 +190,9 @@ einfo "DI = Designed Insecurely"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"DL"($|" "|";"|",") ]] ; then
 einfo "DL = Deadlock"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"DLH"($|" "|";"|",") ]] ; then
+einfo "DLH = Dynamic Linker Hijacking"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("DoS"|"DOS")($|" "|";"|",") ]] ; then
 # Same as A
 einfo "DoS = Denial of Service"
