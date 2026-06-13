@@ -55,7 +55,7 @@ chkl_check_one_timestamp() {
 eerror
 eerror "Detected old live timestamp for live ebuild.  Do one of the following:"
 eerror
-eerror "Do \`emerge -a1ovuDN ${category_pn}-${pv};emerge -a1vO ${category_pn}-${pv}\`"
+eerror "Do \`emerge -a1ovuDN ${atom};emerge -a1vO ${atom}\`"
 eerror
 eerror "  or"
 eerror
@@ -106,7 +106,7 @@ chkl_check_many_timestamps() {
 chkl_check_one_live_ban() {
 	local atom="${1}" # dev-lang/rust-9999
 	if has_version "=${atom}" ; then
-eerror "Live is banned.  Downgrade ${atom} to LTS."
+eerror "The live is banned for ${atom}.  Downgrade ${atom} to LTS."
 		die
 	fi
 }
