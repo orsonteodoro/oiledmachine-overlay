@@ -27,7 +27,7 @@ _CHKL_ECLASS=1
 #
 # Example:
 # pkg_setup() {
-#	chkl_check_one "dev-lang/rust-9999" "May 22, 2026 00:33:25 -0700" "1"
+#	chkl_check_one "dev-lang/rust-9999" "May 22, 2026 00:33:25 -0700"
 # }
 #
 chkl_check_one_timestamp() {
@@ -39,27 +39,9 @@ chkl_check_one_timestamp() {
 	# 2026-06-10 17:58:03 UTC
 	local live_timestamp="${2}"
 
-	local fatal_if_missing_pkg="${3}"
-
-	if [[ "${fatal_if_missing_pkg}" == "1" || "${fatal_if_missing_pkg}" == "0" ]] ; then
-		:
-	else
-eerror "QA:  fatal_if_missing_pkg must be 1 or 0 in chkl_check_one()"
-		die
-	fi
-
-	if has_version "=${atom}" ; then
-		:
-	else
-		if (( ${fatal_if_missing} == 1 )) ; then
-eerror "Emerge ${atom} to continue."
-			die
-		fi
-	fi
-
 	local compatible_time=$(date --date="${live_timestamp}" "+%s")
 	local merge_time=$(cat "/var/db/pkg/${atom}/BUILD_TIME")
-	if (( ${merge_time} < ${compatible_time} )) ; then
+	if has_version "=${atom}" && (( ${merge_time} < ${compatible_time} )) ; then
 eerror
 eerror "Detected old live timestamp for live ebuild."
 eerror "Re-emerge ${category_pn}-${pv}."
@@ -77,8 +59,8 @@ eerror
 #
 # Example:
 # CHKL_TIMESTAMPS=(
-#	"dev-lang/rust-9999;May 22, 2026 00:33:25 -0700;1"
-#	"dev-lang/rust-bin-9999;May 22, 2026 00:33:25 -0700;1"
+#	"dev-lang/rust-9999;May 22, 2026 00:33:25 -0700"
+#	"dev-lang/rust-bin-9999;May 22, 2026 00:33:25 -0700"
 # )
 #
 # pkg_setup() {
@@ -90,8 +72,7 @@ chkl_check_many_timestamps() {
 	for row in "${CHKL_TIMESTAMPS[@]}" ; do
 		local atom=$(cut -f 1 -d ";")
 		local live_timestamp=$(cut -f 2 -d ";")
-		local fatal_if_missing_pkg=$(cut -f 3 -d ";")
-		chkl_check_one_timestamp "${atom}" "${live_timestamp}" "${fatal_if_missing_pkg}"
+		chkl_check_one_timestamp "${atom}" "${live_timestamp}"
 	done
 }
 
