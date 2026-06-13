@@ -100,22 +100,23 @@ EAPI=8
 # https://github.com/chromium/chromium/blob/149.0.7827.114/third_party/abseil-cpp/README.chromium					# Live
 # https://github.com/chromium/chromium/blob/149.0.7827.114/third_party/brotli/README.chromium						# Live
 # https://github.com/chromium/chromium/blob/149.0.7827.114/third_party/crc32c/README.chromium						# Stable
-# https://github.com/chromium/chromium/blob/149.0.7827.114/third_party/dav1d/version/vcs_version.h#L2					# Stable
+# https://github.com/chromium/chromium/blob/149.0.7827.114/third_party/dav1d/version/vcs_version.h#L2					# Live
 # https://github.com/chromium/chromium/tree/149.0.7827.114/third_party/flatbuffers							# Stable
 # https://github.com/chromium/chromium/tree/149.0.7827.114/third_party/highway								# Stable
-# https://github.com/chromium/chromium/tree/149.0.7827.114/third_party/jsoncpp								# Stable, use commit to obtain closest tag.  The submodule is a newer version than readme.
+# https://github.com/chromium/chromium/tree/149.0.7827.114/third_party/jsoncpp								# Stable used instead.  Both the submodule and version are old, but the submodule is newer.
 # https://github.com/chromium/chromium/blob/149.0.7827.114/third_party/libaom/source/config/config/aom_version.h#L19			# Stable
 # https://github.com/chromium/chromium/blob/149.0.7827.114/third_party/libpng/png.h#L288						# Stable
-# https://github.com/chromium/chromium/tree/149.0.7827.114/third_party/libsecret							# Stable
+# https://github.com/chromium/chromium/tree/149.0.7827.114/third_party/libsecret							# Stable used instead.  The revision is newer than the suggested version.
 # https://github.com/chromium/chromium/tree/149.0.7827.114/third_party/libusb								# Stable
-# https://github.com/chromium/chromium/tree/149.0.7827.114/third_party/libvpx								# Stable
-# https://github.com/chromium/chromium/tree/149.0.7827.114/third_party/libwebp								# Live but relaxed to use stable since distro doesn't provide live, used the version suggested in cpe prefix not the commit
-# https://github.com/chromium/chromium/blob/149.0.7827.114/third_party/libxml/linux/config.h#L86					# Stable
+# https://github.com/chromium/chromium/tree/149.0.7827.114/third_party/libvpx								# Live
+# https://github.com/chromium/chromium/tree/149.0.7827.114/third_party/libwebp								# Live, used the version suggested in cpe prefix not the commit
+# https://github.com/chromium/chromium/blob/149.0.7827.114/third_party/libxml/linux/config.h#L86					# Live
 # https://github.com/chromium/chromium/blob/149.0.7827.114/third_party/libxslt/linux/config.h#L116					# Stable
 # https://github.com/chromium/chromium/blob/149.0.7827.114/third_party/node/update_node_binaries#L18					# Stable, marked no for security-critical by upstream
 # https://github.com/chromium/chromium/tree/149.0.7827.114/third_party/re2								# Live.  Submodule is newer commit than readme.  Relaxed stable version used.
-# https://github.com/chromium/chromium/tree/149.0.7827.114/third_party/simdutf								# Stable.  The version listed is newer than the revision.  The version is used.
-# https://github.com/chromium/chromium/tree/149.0.7827.114/third_party/snappy								# Stable.  The submodule is newer than the version.git.revision listed in readme.
+# https://github.com/chromium/chromium/tree/149.0.7827.114/third_party/simdutf								# Stable used instead.  The version listed is newer than the revision, so the version is used.
+# https://github.com/chromium/chromium/tree/149.0.7827.114/third_party/snappy								# Stable used instead.  The submodule is newer than the version.git.revision listed in readme, but
+#																	# it is older than the latest commit tag.
 # https://github.com/chromium/chromium/tree/149.0.7827.114/third_party/spirv-headers							# Live.  Relaxed stable version used.
 # https://github.com/chromium/chromium/tree/149.0.7827.114/third_party/spirv-tools							# Live.  Relaxed stable version used.
 # https://github.com/chromium/chromium/blob/149.0.7827.114/third_party/woff2/README.chromium						# Live
@@ -123,15 +124,15 @@ EAPI=8
 # https://github.com/chromium/chromium/blob/149.0.7827.114/tools/rust/update_rust.py#L35						#
 #   https://github.com/rust-lang/rust/blob/4c4205163abcbd08948b3efab796c543ba1ea687/src/version						# Live
 # /usr/share/chromium/149.0.7827.114/sources/third_party/flac/BUILD.gn								L122	# Stable
-# /usr/share/chromium/149.0.7827.114/sources/third_party/fontconfig/src/fontconfig/fontconfig.h.in				L56     # Stable
-# /usr/share/chromium/149.0.7827.114/sources/third_party/freetype/src/CMakeLists.txt						L165	# Stable
-# /usr/share/chromium/149.0.7827.114/sources/third_party/harfbuzz/README.chromium							# Stable, Revision is newer than Version.  Revision used.
+# /usr/share/chromium/149.0.7827.114/sources/third_party/fontconfig/src/fontconfig/fontconfig.h.in				L56     # Stable used instead, upstream provided old version id
+# /usr/share/chromium/149.0.7827.114/sources/third_party/freetype/src/CMakeLists.txt						L165	# Live, the readme is discordian the commit is used instead
+# /usr/share/chromium/149.0.7827.114/sources/third_party/harfbuzz/README.chromium							# Stable used instead, upstream provided old revision than tagged.
 # /usr/share/chromium/149.0.7827.114/sources/third_party/icu/source/configure							L609	# Stable
 # /usr/share/chromium/149.0.7827.114/sources/third_party/libdrm/src/meson.build							L24	# Stable
 # /usr/share/chromium/149.0.7827.114/sources/third_party/libjpeg_turbo/src/jconfig.h						L7	# Stable
-# /usr/share/chromium/149.0.7827.114/sources/third_party/libyuv/README.chromium								# Live snapshotable, main branch
+# /usr/share/chromium/149.0.7827.114/sources/third_party/libyuv/README.chromium								# Live snapshot, main branch
 # /usr/share/chromium/149.0.7827.114/sources/third_party/openh264/src/meson.build						L2	# Stable
-# /usr/share/chromium/149.0.7827.114/sources/third_party/opus/README.chromium							L3	# Stable
+# /usr/share/chromium/149.0.7827.114/sources/third_party/opus/README.chromium							L3	# Stable used instead of suggested old commit
 #   https://gitlab.xiph.org/xiph/opus/-/commit/55513e81d8f606bd75d0ff773d2144e5f2a732f5							# Stable
 # /usr/share/chromium/149.0.7827.114/sources/third_party/zstd/README.chromium								# Live
 #   https://github.com/facebook/zstd/commit/3ae099b48dfcfe02b1b3ba81ab85457f8a922e9f							# Live
@@ -270,6 +271,40 @@ TEST_FONT="9c07d19d9c5ee1ff94f717e6fb17e0c8c354e6f9"
 # SHA512 about_credits.html fingerprint:
 LICENSE_FINGERPRINT_UNGOOGLED_CHROMIUM="6298026ee5a6c86198e8acca7653344b132a136012d19951e488deb0fc4c23d01011931b8d7ba65906b96da8fc905d221124b0b4d81b5db46cb7f8f7de415a3f"
 LICENSE_FINGERPRINT_VANILLA="9ee074cce03f2be95c790139e9bfffb551230b0bdb34134aad73a2969b8c0a581c0bd59f150138cb750a3632900f2b0949973737e47a7f71ef782cdfadfe73d3"
+
+# Mitigate flood the zone vulnerability.
+# If there is a live ebuild, it needs a check.
+# Ideally every one should get a live check because users can convert it to live ebuild in their local repo.
+# We triage the ones that upstream explicitl use of live followed by public ebuild ecosystem.
+# Most will use `emerge @system` or `emerge @world` but forget `emerge @live-rebuild`.
+CHKL_TIMESTAMPS=(
+# The timestamp policy is minimum requirements or what upstream provides even if upstream uses an old commit id.
+
+	"app-arch/snappy-9999;Sat, 17 Aug 2024 19:03:10 -0700"
+	"app-arch/brotli-9999;Fri, 13 Mar 2026 12:31:38 +0000"
+	"app-arch/zstd-9999;Tue, 17 Mar 2026 13:08:14 -0700"
+	"dev-cpp/abseil-cpp-9999;Tue, 21 Apr 2026 12:08:14 -0700"
+	"dev-cpp/highway-9999;Wed, 22 Apr 2026 09:17:05 -0700"
+	"dev-cpp/simdutf-9999;Fri, 21 Nov 2025 22:27:43 -0500"
+	"dev-libs/crc32c-9999;Fri, 1 Mar 2019 15:37:35 -0800"
+	"dev-libs/flatbuffers-9999;Mon, 15 Dec 2025 08:59:17 +0900"
+	"dev-libs/jsoncpp-9999;Wed, 12 Jan 2022 21:27:16 +0000"
+	"dev-libs/libxml2-9999;Mon, 15 Sep 2025 13:57:12 +0200"
+	"dev-libs/libxslt-9999;Sun, 30 Nov 2025 00:51:29 -0600"
+	"dev-libs/re2-9999;Fri, 19 May 2023 11:03:37 +0000"
+	"dev-lang/rust-9999;Fri, 27 Feb 2026 09:38:23 -0800"
+	"dev-lang/rust-bin-9999;Fri, 27 Feb 2026 09:38:23 -0800"
+	"media-libs/dav1d-9999;Wed, 29 Apr 2026 14:46:00 +0300"
+	"media-libs/freetype;Sun, 3 May 2026 13:21:19 -0400"
+	"media-libs/harfbuzz-9999;Mon, 27 Apr 2026 19:30:28 -0600"
+	"media-libs/libjpeg-turbo;Thu, 12 Dec 2024 15:39:26 -0500"
+	"media-libs/libwebp-9999;Mon, 22 Sep 2025 15:25:39 -0700"
+	"media-libs/libvpx-9999;Thu, 30 Apr 2026 12:42:58 -0400"
+	"media-libs/libyuv-9999;Thu, 9 Apr 2026 11:03:54 -0700"
+	"media-libs/woff2;Wed, 15 Apr 2026 15:38:51 -0700"
+	"net-libs/nodejs-99999999;Tue, 9 Dec 2025 08:12:29 +0000"
+	"x11-libs/libdrm-9999;Wed, 26 Jun 2024 10:13:31 +0200"
+)
 
 # One of the major sources of lag comes from dependencies
 # These are strict to match performance to competition or normal builds.
@@ -731,7 +766,7 @@ SYSTEM_USE=(
 # C++ needs LLVM 23.
 # Rust needs LLVM 22, but LLVM 23 is not allowed in rust.eclass
 # We avoid inheriting llvm and rust because the custom rust eclass mod breaks with LLVM 23 present in LLVM_COMPAT.
-inherit abseil-cpp cflags-depends cflags-hardened check-compiler-switch check-linker check-reqs chromium-2 dhms
+inherit abseil-cpp cflags-depends cflags-hardened check-compiler-switch check-linker check-reqs chkl chromium-2 dhms
 inherit desktop edo flag-o-matic flag-o-matic-om lcnr libcxx-slot libstdcxx-slot linux-info
 inherit multilib-minimal multiprocessing ninja-utils node pax-utils python-any-r1
 inherit re2 readme.gentoo-r1 systemd toolchain-funcs vf web-kernel-config xdg-utils
@@ -1538,7 +1573,7 @@ COMMON_SNAPSHOT_DEPEND="
 		dev-libs/crc32c:=
 	)
 	system-dav1d? (
-		>=media-libs/dav1d-1.5.3[${MULTILIB_USEDEP},8bit]
+		>=media-libs/dav1d-9999[${MULTILIB_USEDEP},8bit]
 		media-libs/dav1d:=
 	)
 	system-double-conversion? (
@@ -1549,15 +1584,15 @@ COMMON_SNAPSHOT_DEPEND="
 		dev-libs/flatbuffers:=
 	)
 	system-fontconfig? (
-		>=media-libs/fontconfig-2.17.1[${MULTILIB_USEDEP}]
+		>=media-libs/fontconfig-2.18.0[${MULTILIB_USEDEP}]
 		media-libs/fontconfig:=
 	)
 	system-freetype? (
-		>=media-libs/freetype-2.14.3[${MULTILIB_USEDEP}]
+		>=media-libs/freetype-9999[${MULTILIB_USEDEP}]
 		media-libs/freetype:=
 	)
 	system-harfbuzz? (
-		>=media-libs/harfbuzz-14.2.0:0[${MULTILIB_USEDEP},icu(-)]
+		>=media-libs/harfbuzz-14.2.1:0[${MULTILIB_USEDEP},icu(-)]
 		media-libs/harfbuzz:=
 	)
 	system-highway? (
@@ -1599,14 +1634,14 @@ COMMON_SNAPSHOT_DEPEND="
 		>=dev-libs/libusb-1.0.17[${MULTILIB_USEDEP}]
 	)
 	system-libvpx? (
-		>=media-libs/libvpx-1.16.0[${MULTILIB_USEDEP}]
+		>=media-libs/libvpx-9999[${MULTILIB_USEDEP}]
 	)
 	system-libwebp? (
-		>=media-libs/libwebp-1.6.0[${MULTILIB_USEDEP}]
+		>=media-libs/libwebp-9999[${MULTILIB_USEDEP}]
 		media-libs/libwebp:=
 	)
 	system-libxml? (
-		>=dev-libs/libxml2-2.16.0[${MULTILIB_USEDEP},icu]
+		>=dev-libs/libxml2-9999[${MULTILIB_USEDEP},icu]
 		dev-libs/libxml2:=
 	)
 	system-libxnvctrl? (
@@ -1648,6 +1683,7 @@ COMMON_SNAPSHOT_DEPEND="
 	)
 	system-woff2? (
 		>=media-libs/woff2-9999
+		media-libs/woff2:=
 	)
 	system-zlib? (
 		>=virtual/zlib-${ZLIB_PV}[${MULTILIB_USEDEP}]
@@ -2962,6 +2998,7 @@ ewarn "The default DNS servers and settings could weaken the privacy."
 
 einfo "RUSTC:  ${RUSTC}"
 	verify_compiler_flags_hardening
+	chkl_check_many_timestamps
 }
 
 src_unpack() {
@@ -3219,7 +3256,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-simd-defaults.patch"
 		"${FILESDIR}/extra-patches/${PN}-149.0.7827.114-build-config-compiler-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.45-libaom-optionalize-simd.patch"
-		"A${FILESDIR}/extra-patches/${PN}-137.0.7151.68-libvpx-optionalize-simd.patch"		# Fix missing symbols for disabled SIMD
+		"${FILESDIR}/extra-patches/${PN}-149.0.7827.114-libvpx-optionalize-simd.patch"		# Fix missing symbols for disabled SIMD
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-pdfium-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-148.0.7778.167-skia-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-perfetto-optionalize-simd.patch"
@@ -3251,7 +3288,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		)
 	else
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-148.0.7778.167-mold.patch"
+			"${FILESDIR}/extra-patches/${PN}-149.0.7827.114-mold.patch"
 		)
 	fi
 
