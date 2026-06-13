@@ -1682,11 +1682,23 @@ einfo "Forcing system allocator for ${command} (3)"
 		args="${ARGS[${key_command}]}"
 	fi
 
-	local profile_arg=""
+	local profile_headless_arg=""
+	local profile_wayland_arg=""
+	local profile_x11_arg=""
 	if [[ -e "${profile_path}" ]] ; then
-		profile_arg="--profile=${command}"
+		if [[ "${command}" =~ "firefox" ]] ; then
+			profile_headless_arg="--profile=firefox"
+			profile_wayland_arg="--profile=firefox-wayland"
+			profile_x11_arg="--profile=firefox-x11"
+		else
+			profile_headless_arg="--profile=${command}"
+			profile_wayland_arg="--profile=${command}"
+			profile_x11_arg="--profile=${command}"
+		fi
 	else
-		profile_arg="--noprofile"
+		profile_headless_arg="--profile=default"
+		profile_wayland_arg="--profile=default"
+		profile_arg="--profile=default"
 	fi
 
 	local pulse_arg=""
@@ -1714,14 +1726,16 @@ einfo "Forcing system allocator for ${command} (3)"
 		${wh_arg}
 		${seccomp_arg}
 		${landlock_arg}
-		${profile_arg}
 		${pulse_arg}
 		${oom_arg}
 		${args}
+		${profile_x11_arg}
 	)
 
 	local env_args=()
 	local ozone_args=()
+	local exe_wayland_args=()
+	local exe_x11_args=()
 	is_ozone=0
 
 	if is_chromium_app "${command}" ; then
@@ -1737,7 +1751,7 @@ einfo "Forcing system allocator for ${command} (3)"
 	fi
 	if (( ${is_ozone} == 1 )) ; then
 einfo "Detected CEF/Chromium.  Using ozone for Wayland."
-		ozone_args=(
+		exe_wayland_args+=(
 			--enable-features=UseOzonePlatform
 			--ozone-platform=wayland
 		)
@@ -1748,10 +1762,10 @@ einfo "Detected CEF/Chromium.  Using ozone for Wayland."
 		${allocator_args}
 		${seccomp_arg}
 		${landlock_arg}
-		${profile_arg}
 		${pulse_arg}
 		${oom_arg}
 		${args}
+		${profile_wayland_arg}
 	)
 
 	local all_args_headless=(
@@ -1759,10 +1773,41 @@ einfo "Detected CEF/Chromium.  Using ozone for Wayland."
 		${allocator_args}
 		${seccomp_arg}
 		${landlock_arg}
-		${profile_arg}
 		${oom_arg}
 		${args}
+		${profile_headless_arg}
 	)
+
+	# Experimental.  Ideally we want only 1 wrapper.
+	# The lockdown is not the optimal solution.
+	# You need a modded web browser with fingerprinting mitigations.
+	if [[ "${wrapper_name}" =~ ("chromium-lockdown"|"chromium-bin-lockdown"|"google-chrome-stable-lockdown"|"ungoogled-chromium-lockdown") ]] ; then
+		all_args_wayland+=(
+			--no3d
+		)
+		all_args_x11+=(
+			--no3d
+		)
+		exe_wayland_args+=(
+			--incognito
+		)
+		exe_x11_args+=(
+			--incognito
+		)
+	elif [[ "${wrapper_name}" =~ ("firefox-lockdown"|"firefox-bin-lockdown") ]] ; then
+		all_args_wayland+=(
+			--no3d
+		)
+		all_args_x11+=(
+			--no3d
+		)
+		exe_wayland_args+=(
+			-private-window # incognito equivalent
+		)
+		exe_x11_args+=(
+			-private-window # incognito equivalent
+		)
+	fi
 
 	# The root doesn't get Firejail because we need at least 1 user to
 	# unbreak a bad Firejail configuration and to not mess up the uptime
@@ -1787,9 +1832,9 @@ cat <<EOF > "${ED}/usr/local/${folder}/${wrapper_name}" || die
 if [[ "\${EUID}" == "0" || "\${EUID}" == "250" ]] ; then
 	"${exe_path}" "\$@"
 elif [[ -n "\${DISPLAY}" ]] ; then
-	exec firejail ${all_args_x11[@]} "${exe_path}" "\$@"
+	exec firejail ${all_args_x11[@]} "${exe_path}" ${exe_x11_args[@]} "\$@"
 else
-	exec firejail ${env_args[@]} ${all_args_wayland[@]} "${exe_path}" ${ozone_args[@]} "\$@"
+	exec firejail ${env_args[@]} ${all_args_wayland[@]} "${exe_path}" ${exe_wayland_args[@]} "\$@"
 fi
 EOF
 	}
@@ -1812,9 +1857,9 @@ if [[ "\${EUID}" == "0" || "\${EUID}" == "250" ]] ; then
 	"${exe_path}" "\$@"
 elif [[ -n "\${DISPLAY}" ]] ; then
 	xhost +si:localuser:\${USER}
-	exec firejail ${all_args_x11[@]} --env=XAUTHORITY="\${_XAUTHORITY}" "${exe_path}" "\$@"
+	exec firejail ${all_args_x11[@]} --env=XAUTHORITY="\${_XAUTHORITY}" "${exe_path}" ${exe_x11_args[@]} "\$@"
 else
-	exec firejail ${env_args[@]} ${all_args_wayland[@]} "${exe_path}" ${ozone_args[@]} "\$@"
+	exec firejail ${env_args[@]} ${all_args_wayland[@]} "${exe_path}" ${exe_wayland_args[@]} "\$@"
 fi
 EOF
 	}
@@ -1861,12 +1906,29 @@ ewarn "${command} is not found in standard paths.  Skipping wrapper creation for
 		fi
 	fi
 
-	if [[ "${command}" == "firefox" ]] ; then
+	# Regular = GPU acceleration + persistent profile
+	# Lockdown = incognito + no GPU acceleration
+	# This is not the optimal solution.
+	# You need a modded browser with fingerprinting mitigations.
+	if [[ "${command}" == "ungoogled-chromium" ]] ; then
+		_gen_one_wrapper "${command}" "ungoogled-chromium" "${exe_path}"
+		#_gen_one_wrapper "${command}" "ungoogled-chromium-lockdown" "${exe_path}"
+	elif [[ "${command}" == "google-chrome-stable" ]] ; then
+		_gen_one_wrapper "${command}" "google-chrome-stable" "${exe_path}"
+		#_gen_one_wrapper "${command}" "google-chrome-stable-lockdown" "${exe_path}"
+	elif [[ "${command}" == "chromium" ]] ; then
+		if has_version "www-client/chromium" ; then
+			_gen_one_wrapper "${command}" "chromium" "${exe_path}"
+			#_gen_one_wrapper "${command}" "chromium-lockdown" "${exe_path}"
+		fi
+	elif [[ "${command}" == "firefox" ]] ; then
 		if has_version "www-client/firefox" ; then
 			_gen_one_wrapper "${command}" "firefox" "${exe_path}"
+			#_gen_one_wrapper "${command}" "firefox-lockdown" "${exe_path}"
 		fi
 		if has_version "www-client/firefox-bin" ; then
 			_gen_one_wrapper "${command}" "firefox-bin" "/usr/bin/firefox-bin"
+			#_gen_one_wrapper "${command}" "firefox-bin-lockdown" "/usr/bin/firefox-bin"
 		fi
 	elif [[ "${command}" == "x-terminal-emulator" ]] ; then
 		local terms=(
@@ -2004,7 +2066,7 @@ einfo "DEBUG: commands ${commands[@]}"
 		local scope
 		scope=$(get_scope "${key_command}")
 
-# Move it to image foler
+# Move it to image folder
 		if use wrapper [[ -e "${exe_path}" || "${command}" == "x-terminal-emulator" ]] && ! [[ "${command}" =~ "-common" ]] && ! [[ "${command}" =~ "-wrapper" ]] && ! [[ "${scope}" =~ ("ban"|"blacklist"|"blacklisted") ]] ; then
 einfo "Adding ${command} profile with wrapper (1)"
 			#einfo "deps for ${command}:  ${deps[@]}"
