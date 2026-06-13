@@ -127,7 +127,7 @@ EAPI=8
 #   https://github.com/rust-lang/rust/blob/4c4205163abcbd08948b3efab796c543ba1ea687/src/version						# Live
 # /usr/share/chromium/149.0.7827.114/sources/third_party/flac/BUILD.gn								L122	# Stable
 # /usr/share/chromium/149.0.7827.114/sources/third_party/fontconfig/src/fontconfig/fontconfig.h.in				L56     # Stable used instead, upstream provided old version id
-# /usr/share/chromium/149.0.7827.114/sources/third_party/freetype/src/CMakeLists.txt						L165	# Live, the readme is discordian the commit is used instead
+# /usr/share/chromium/149.0.7827.114/sources/third_party/freetype/src/CMakeLists.txt						L165	# Live.  The readme is confusing.  The commit is used instead.
 # /usr/share/chromium/149.0.7827.114/sources/third_party/harfbuzz/README.chromium							# Stable used instead, upstream provided old revision than tagged.
 # /usr/share/chromium/149.0.7827.114/sources/third_party/icu/source/configure							L609	# Stable
 # /usr/share/chromium/149.0.7827.114/sources/third_party/libdrm/src/meson.build							L24	# Stable
