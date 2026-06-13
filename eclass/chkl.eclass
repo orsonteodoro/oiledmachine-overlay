@@ -43,8 +43,17 @@ chkl_check_one_timestamp() {
 	local merge_time=$(cat "/var/db/pkg/${atom}/BUILD_TIME")
 	if has_version "=${atom}" && (( ${merge_time} < ${compatible_time} )) ; then
 eerror
-eerror "Detected old live timestamp for live ebuild."
-eerror "Re-emerge ${category_pn}-${pv}."
+eerror "Detected old live timestamp for live ebuild.  Do one of the following:"
+eerror
+eerror "Do \`emerge -a1ovuDN ${category_pn}-${pv};emerge -a1vO ${category_pn}-${pv}\`"
+eerror
+eerror "  or"
+eerror
+eerror "\`emerge -a @live-rebuild\`."
+eerror
+eerror "  or"
+eerror
+eerror "Use a stable tagged version if the ebuild allows it."
 eerror
 eerror "Current timestamp:  "$(date --date="@${merge_time}")
 eerror "Expected timestamp:  >= "$(date --date="@${compatible_time}")
