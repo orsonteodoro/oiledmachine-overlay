@@ -97,9 +97,11 @@ EAPI=8
 # Additional DEPENDS versioning info:
 #
 # All links below except for node are marked security-critical by upstream.
+# For "stable used instead", the stable is rounded up to the minimum required to the one containing the commit.
+#
 # https://github.com/chromium/chromium/blob/149.0.7827.114/third_party/abseil-cpp/README.chromium					# Live
 # https://github.com/chromium/chromium/blob/149.0.7827.114/third_party/brotli/README.chromium						# Live
-# https://github.com/chromium/chromium/blob/149.0.7827.114/third_party/crc32c/README.chromium						# Stable
+# https://github.com/chromium/chromium/blob/149.0.7827.114/third_party/crc32c/README.chromium						# Stable used instead.  The commit id is newer than the suggested version but both are old.
 # https://github.com/chromium/chromium/blob/149.0.7827.114/third_party/dav1d/version/vcs_version.h#L2					# Live
 # https://github.com/chromium/chromium/tree/149.0.7827.114/third_party/flatbuffers							# Stable
 # https://github.com/chromium/chromium/tree/149.0.7827.114/third_party/highway								# Stable
