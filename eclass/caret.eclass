@@ -24,6 +24,14 @@
 # ^1.4.1       >= 1.4.1     && < 2.0.0
 # ^1.4.3.4     >= 1.4.3.4   && < 2.0.0.0
 
+case ${EAPI:-0} in
+	[8]) ;;
+	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
+esac
+
+if [[ -z ${_CARET_ECLASS} ]] ; then
+_CARET_ECLASS=1
+
 # @FUNCTION:  caret
 # @DESCRIPTION:
 # Generate an ebuild compatible expression for the ^ operator.
@@ -114,3 +122,5 @@ die ">= 5 periods is not supported for the ^ (caret) implementation."
 
 	echo "${output}"
 }
+
+fi

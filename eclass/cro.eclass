@@ -24,6 +24,14 @@
 # ~= 1.4.2.1   >= 1.4.2.1   && < 1.4.3.0
 # ~= 1.4.2.1.5 >= 1.4.2.1.5 && < 1.4.3.2.0
 
+case ${EAPI:-0} in
+	[8]) ;;
+	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
+esac
+
+if [[ -z ${_CRO_ECLASS} ]] ; then
+_CRO_ECLASS=1
+
 # @FUNCTION:  cro
 # @DESCRIPTION:
 # Generate an ebuild compatible expression for the ~= operator.
@@ -83,3 +91,5 @@ die "> 4 periods is not supported for the cro (compatibility release operator) i
 	fi
 	echo "${output}"
 }
+
+fi

@@ -23,6 +23,14 @@
 # ~1.4.1       >= 1.4.1     && < 1.5.0
 # ~1.4.3.4     >= 1.4.3.4   && < 1.4.4.0
 
+case ${EAPI:-0} in
+	[8]) ;;
+	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
+esac
+
+if [[ -z ${_TILDE_ECLASS} ]] ; then
+_TILDE_ECLASS=1
+
 # @FUNCTION:  tilde
 # @DESCRIPTION:
 # Generate an ebuild compatible expression for the ~ operator.
@@ -81,3 +89,5 @@ die "> 4 periods are not supported for the ~ (tilde) implementation."
 	fi
 	echo "${output}"
 }
+
+fi
