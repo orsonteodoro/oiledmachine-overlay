@@ -88,8 +88,8 @@ eerror
 chkl_check_many_timestamps() {
 	local row
 	for row in "${CHKL_TIMESTAMPS[@]}" ; do
-		local atom=$(cut -f 1 -d ";")
-		local live_timestamp=$(cut -f 2 -d ";")
+		local atom=$(echo "${row}" | cut -f 1 -d ";")
+		local live_timestamp=$(echo "${row}" | cut -f 2 -d ";")
 		chkl_check_one_timestamp "${atom}" "${live_timestamp}"
 	done
 }
