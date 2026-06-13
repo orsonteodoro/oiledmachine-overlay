@@ -275,7 +275,7 @@ LICENSE_FINGERPRINT_VANILLA="9ee074cce03f2be95c790139e9bfffb551230b0bdb34134aad7
 # Mitigate flood the zone vulnerability.
 # If there is a live ebuild, it needs a check.
 # Ideally every one should get a live check because users can convert it to live ebuild in their local repo.
-# We triage the ones that upstream explicitl use of live followed by public ebuild ecosystem.
+# We triage the ones that upstream explicitly uses for live followed by public ebuild ecosystem.
 # Most will use `emerge @system` or `emerge @world` but forget `emerge @live-rebuild`.
 CHKL_TIMESTAMPS=(
 # The timestamp policy is minimum requirements or what upstream provides even if upstream uses an old commit id.
