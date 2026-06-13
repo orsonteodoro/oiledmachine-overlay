@@ -1509,6 +1509,10 @@ COMMON_X_DEPEND="
 # virtual/zlib: https://bugs.gentoo.org/930365; -ng is not compatible.
 # We _could_ use the bundled minizip, but that's against policy.
 # The re2 version requirement has been relaxed because no live ebuild.
+#
+# For live commits in system-* sections, they are used when upstream explicitly
+# uses non-tagged and when no stable equivalent containing the commit exists.
+#
 COMMON_SNAPSHOT_DEPEND="
 	!headless? (
 		${LIBVA_DEPEND}
