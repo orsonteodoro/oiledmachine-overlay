@@ -113,7 +113,7 @@ EAPI=8
 # https://github.com/chromium/chromium/blob/149.0.7827.114/third_party/libxml/linux/config.h#L86					# Live
 # https://github.com/chromium/chromium/blob/149.0.7827.114/third_party/libxslt/linux/config.h#L116					# Stable
 # https://github.com/chromium/chromium/blob/149.0.7827.114/third_party/node/update_node_binaries#L18					# Stable, marked no for security-critical by upstream
-# https://github.com/chromium/chromium/tree/149.0.7827.114/third_party/re2								# Live.  Submodule is newer commit than readme.  Relaxed stable version used.
+# https://github.com/chromium/chromium/tree/149.0.7827.114/third_party/re2								# Live.  Submodule is newer commit than readme.
 # https://github.com/chromium/chromium/tree/149.0.7827.114/third_party/simdutf								# Stable used instead.  The version listed is newer than the revision, so the version is used.
 # https://github.com/chromium/chromium/tree/149.0.7827.114/third_party/snappy								# Stable used instead.  The submodule is newer than the version.git.revision listed in readme, but
 #																	# it is older than the latest commit tag.
@@ -291,7 +291,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/jsoncpp-9999;Wed, 12 Jan 2022 21:27:16 +0000"
 	"dev-libs/libxml2-9999;Mon, 15 Sep 2025 13:57:12 +0200"
 	"dev-libs/libxslt-9999;Sun, 30 Nov 2025 00:51:29 -0600"
-	"dev-libs/re2-9999;Fri, 19 May 2023 11:03:37 +0000"
+	"dev-libs/re2-9999;Thu, 22 Jan 2026 16:05:23 -0500"
 	"dev-lang/rust-9999;Fri, 27 Feb 2026 09:38:23 -0800"
 	"dev-lang/rust-bin-9999;Fri, 27 Feb 2026 09:38:23 -0800"
 	"media-libs/dav1d-9999;Wed, 29 Apr 2026 14:46:00 +0300"
