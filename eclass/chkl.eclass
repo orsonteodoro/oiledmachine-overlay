@@ -34,9 +34,18 @@ chkl_check_one_timestamp() {
 	local atom="${1}" # dev-lang/rust-9999
 
 	# From the git Date field in commit
+	#
 	# Acceptable formats:
-	# May 22, 2026 00:33:25 -0700
+	#
 	# 2026-06-10 17:58:03 UTC
+	# 2026-06-10 17:58:03 -0700
+	# Apr 28, 2026 14:53:32 -0700
+	# Tue, Apr 28, 2026 14:53:32 -0700
+	# May 22, 2026 00:33:25 -0700
+	# 2026/06/10 17:58:03
+	# 2026/06/10 17:58:03 -0700
+	# 2026/06/10 17:58:03 UTC-7
+	#
 	local live_timestamp="${2}"
 
 	local compatible_time=$(date --date="${live_timestamp}" "+%s")
