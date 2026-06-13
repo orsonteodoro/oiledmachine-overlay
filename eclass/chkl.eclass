@@ -48,6 +48,7 @@ chkl_check_one_timestamp() {
 	#
 	local live_timestamp="${2}"
 
+	has_version "=${atom}" || return
 	local compatible_time=$(date --date="${live_timestamp}" "+%s")
 	local merge_time=$(cat "/var/db/pkg/${atom}/BUILD_TIME")
 	if has_version "=${atom}" && (( ${merge_time} < ${compatible_time} )) ; then

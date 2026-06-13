@@ -119,12 +119,19 @@ EAPI=8
 # https://github.com/chromium/chromium/tree/149.0.7827.114/third_party/simdutf								# Stable used instead.  The version listed is newer than the revision, so the version is used.
 # https://github.com/chromium/chromium/tree/149.0.7827.114/third_party/snappy								# Stable used instead.  The submodule is newer than the version.git.revision listed in readme, but
 #																	# it is older than the latest commit tag.
+# https://github.com/chromium/chromium/blob/149.0.7827.114/third_party/sqlite/README.chromium						# Stable used instead.  Upstream uses custom fork.
 # https://github.com/chromium/chromium/tree/149.0.7827.114/third_party/spirv-headers							# Live.  Relaxed stable version used.
 # https://github.com/chromium/chromium/tree/149.0.7827.114/third_party/spirv-tools							# Live.  Relaxed stable version used.
+# https://github.com/chromium/chromium/tree/149.0.7827.114/third_party/wayland								# Stable
+# https://github.com/chromium/chromium/tree/149.0.7827.114/third_party/wayland-protocols						# Stable used instead.  The submodule is old.
 # https://github.com/chromium/chromium/blob/149.0.7827.114/third_party/woff2/README.chromium						# Live
 # https://github.com/chromium/chromium/blob/149.0.7827.114/third_party/zlib/zlib.h#L40							# Stable
 # https://github.com/chromium/chromium/blob/149.0.7827.114/tools/rust/update_rust.py#L35						#
+
+
 #   https://github.com/rust-lang/rust/blob/4c4205163abcbd08948b3efab796c543ba1ea687/src/version						# Live
+# /usr/share/chromium/149.0.7827.114/sources/third_party/expat/README.chromium								# Stable
+# /usr/share/chromium/149.0.7827.114/sources/third_party/ffmpeg/README.chromium								# Live but old
 # /usr/share/chromium/149.0.7827.114/sources/third_party/flac/BUILD.gn								L122	# Stable
 # /usr/share/chromium/149.0.7827.114/sources/third_party/fontconfig/src/fontconfig/fontconfig.h.in				L56     # Stable used instead, upstream provided old version id
 # /usr/share/chromium/149.0.7827.114/sources/third_party/freetype/src/CMakeLists.txt						L165	# Live.  The readme is confusing.  The commit is used instead.
@@ -133,6 +140,7 @@ EAPI=8
 # /usr/share/chromium/149.0.7827.114/sources/third_party/libdrm/src/meson.build							L24	# Stable
 # /usr/share/chromium/149.0.7827.114/sources/third_party/libjpeg_turbo/src/jconfig.h						L7	# Stable
 # /usr/share/chromium/149.0.7827.114/sources/third_party/libyuv/README.chromium								# Live snapshot, main branch
+# /usr/share/chromium/149.0.7827.114/sources/third_party/ninja/README.chromium								# Stable
 # /usr/share/chromium/149.0.7827.114/sources/third_party/openh264/src/meson.build						L2	# Stable
 # /usr/share/chromium/149.0.7827.114/sources/third_party/opus/README.chromium							L3	# Stable used instead of suggested old commit
 #   https://gitlab.xiph.org/xiph/opus/-/commit/55513e81d8f606bd75d0ff773d2144e5f2a732f5							# Stable
@@ -281,22 +289,44 @@ LICENSE_FINGERPRINT_VANILLA="9ee074cce03f2be95c790139e9bfffb551230b0bdb34134aad7
 # Most will use `emerge @system` or `emerge @world` but forget `emerge @live-rebuild`.
 CHKL_TIMESTAMPS=(
 # The timestamp policy is minimum requirements or what upstream provides even if upstream uses an old commit id.
-
-	"app-arch/snappy-9999;Sat, 17 Aug 2024 19:03:10 -0700"
+# All used live security-critical system packages must be verified.
+# All packages with live ebuilds must be verified.
 	"app-arch/brotli-9999;Fri, 13 Mar 2026 12:31:38 +0000"
+	"app-arch/snappy-9999;Sat, 17 Aug 2024 19:03:10 -0700"
 	"app-arch/zstd-9999;Tue, 17 Mar 2026 13:08:14 -0700"
+	"dev-build/ninja-9999;Sat, 11 May 2024 13:43:36 +0200"
 	"dev-cpp/abseil-cpp-9999;Tue, 21 Apr 2026 12:08:14 -0700"
 	"dev-cpp/highway-9999;Wed, 22 Apr 2026 09:17:05 -0700"
 	"dev-cpp/simdutf-9999;Fri, 21 Nov 2025 22:27:43 -0500"
+	"dev-db/sqlite-9999;Fri, 13 Mar 2026 10:38:09 +0000"
+	"dev-libs/expat-9999;Tue, 17 Mar 2026 18:16:28 +0100"
 	"dev-libs/crc32c-9999;Fri, 1 Mar 2019 15:37:35 -0800"
 	"dev-libs/flatbuffers-9999;Mon, 15 Dec 2025 08:59:17 +0900"
 	"dev-libs/jsoncpp-9999;Wed, 12 Jan 2022 21:27:16 +0000"
 	"dev-libs/libxml2-9999;Mon, 15 Sep 2025 13:57:12 +0200"
 	"dev-libs/libxslt-9999;Sun, 30 Nov 2025 00:51:29 -0600"
 	"dev-libs/re2-9999;Thu, 22 Jan 2026 16:05:23 -0500"
+	"dev-libs/wayland-9999;Sun, 6 Jul 2025 14:11:26 +0200"
 	"dev-lang/rust-9999;Fri, 27 Feb 2026 09:38:23 -0800"
 	"dev-lang/rust-bin-9999;Fri, 27 Feb 2026 09:38:23 -0800"
+	"dev-util/spirv-headers-9999;Thu, 30 Apr 2026 22:51:58 +0200"
+	"dev-util/spirv-tools-9999;Wed, 29 Apr 2026 15:51:06 -0700"
+	"llvm-core/clang-9999;Thu, 9 Apr 2026 18:28:25 +0200"
+	"llvm-core/clang-23.0.0.9999;Thu, 9 Apr 2026 18:28:25 +0200"
+	"llvm-core/lld-9999;Thu, 9 Apr 2026 18:28:25 +0200"
+	"llvm-core/lld-23.0.0.9999;Thu, 9 Apr 2026 18:28:25 +0200"
+	"llvm-core/llvm-9999;Thu, 9 Apr 2026 18:28:25 +0200"
+	"llvm-core/llvm-23.0.0.9999;Thu, 9 Apr 2026 18:28:25 +0200"
+	"llvm-runtimes/compiler-rt-9999;Thu, 9 Apr 2026 18:28:25 +0200"
+	"llvm-runtimes/compiler-rt-23.0.0.9999;Thu, 9 Apr 2026 18:28:25 +0200"
+	"llvm-runtimes/compiler-rt-sanitizers-9999;Thu, 9 Apr 2026 18:28:25 +0200"
+	"llvm-runtimes/compiler-rt-sanitizers-23.0.0.9999;Thu, 9 Apr 2026 18:28:25 +0200"
+	"llvm-runtimes/libcxx-9999;Thu, 9 Apr 2026 18:28:25 +0200"
+	"llvm-runtimes/libcxx-23.0.0.9999;Thu, 9 Apr 2026 18:28:25 +0200"
+	"llvm-runtimes/libcxxabi-9999;Thu, 9 Apr 2026 18:28:25 +0200"
+	"llvm-runtimes/libcxxabi-23.0.0.9999;Thu, 9 Apr 2026 18:28:25 +0200"
 	"media-libs/dav1d-9999;Wed, 29 Apr 2026 14:46:00 +0300"
+	"media-libs/flac-9999;Sat, 22 Oct 2022 13:01:34 +0200"
 	"media-libs/freetype-9999;Sun, 3 May 2026 13:21:19 -0400"
 	"media-libs/harfbuzz-9999;Mon, 27 Apr 2026 19:30:28 -0600"
 	"media-libs/libjpeg-turbo-9999;Thu, 12 Dec 2024 15:39:26 -0500"
@@ -304,8 +334,12 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libvpx-9999;Thu, 30 Apr 2026 12:42:58 -0400"
 	"media-libs/libyuv-9999;Thu, 9 Apr 2026 11:03:54 -0700"
 	"media-libs/woff2-9999;Wed, 15 Apr 2026 15:38:51 -0700"
+	"media-video/ffmpeg;Mon, 16 Mar 2026 12:40:32 +0200"
 	"net-libs/nodejs-99999999;Tue, 9 Dec 2025 08:12:29 +0000"
 	"x11-libs/libdrm-9999;Wed, 26 Jun 2024 10:13:31 +0200"
+)
+
+CHKL_BLACKLIST=(
 )
 
 # One of the major sources of lag comes from dependencies
@@ -1538,7 +1572,7 @@ COMMON_SNAPSHOT_DEPEND="
 		wayland? (
 			>=dev-libs/libffi-3.3[${MULTILIB_USEDEP}]
 			dev-libs/libffi:=
-			>=dev-libs/wayland-1.18.0[${MULTILIB_USEDEP}]
+			>=dev-libs/wayland-1.24.0[${MULTILIB_USEDEP}]
 			dev-libs/wayland:=
 			screencast? (
 				>=media-video/pipewire-0.3.65[${MULTILIB_USEDEP}]
@@ -1682,7 +1716,7 @@ COMMON_SNAPSHOT_DEPEND="
 		dev-util/spirv-tools:=
 	)
 	system-sqlite? (
-		>=dev-db/sqlite-3.50.4:3[${MULTILIB_USEDEP}]
+		>=dev-db/sqlite-3.51.3:3[${MULTILIB_USEDEP}]
 	)
 	system-vulkan-memory-allocator? (
 		>=media-libs/VulkanMemoryAllocator-3.0.0
@@ -1772,7 +1806,7 @@ COMMON_DEPEND="
 		)
 	)
 	${COMMON_SNAPSHOT_DEPEND}
-	>=dev-libs/expat-2.2.10[${MULTILIB_USEDEP}]
+	>=dev-libs/expat-2.7.5[${MULTILIB_USEDEP}]
 	dev-libs/expat:=
 	>=net-misc/curl-7.88.1[${MULTILIB_USEDEP},ssl]
 	>=sys-apps/dbus-1.12.24[${MULTILIB_USEDEP}]
@@ -1868,6 +1902,9 @@ DEPEND+="
 		system-spirv-headers? (
 			>=dev-util/spirv-headers-${VULKAN_PV}
 			dev-util/spirv-headers:=
+		)
+		wayland? (
+			>=dev-libs/wayland-protocols-1.46
 		)
 	)
 "
@@ -3005,6 +3042,7 @@ ewarn "The default DNS servers and settings could weaken the privacy."
 einfo "RUSTC:  ${RUSTC}"
 	verify_compiler_flags_hardening
 	chkl_check_many_timestamps
+	chkl_check_many_live_bans
 }
 
 src_unpack() {
@@ -3327,7 +3365,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	# Did you run "gclient sync"?
 			"${FILESDIR}/extra-patches/${PN}-117.0.5938.92-skip-rust-check.patch"
 
-			"${FILESDIR}/extra-patches/${PN}-146.0.7680.80-clang-paths.patch"
+			"A${FILESDIR}/extra-patches/${PN}-146.0.7680.80-clang-paths.patch"
 		)
 	fi
 
@@ -3928,6 +3966,11 @@ elog "Removing bundled binaries from source tree ..."
 	# The whitelist uses the right-most matching path component, so we need
 	# to whitelist from that point down.
 	#
+	# Missing libunwind
+	# Missing glslang
+	# Missing hunspell_dictionaries
+	# Missing nlohmann_json
+	# Missing wayland-protocols
 	local keeplibs=(
 	# This set is mostly unconditional by distro ebuild except for the ones
 	# with the use which were modified in this ebuild fork.
