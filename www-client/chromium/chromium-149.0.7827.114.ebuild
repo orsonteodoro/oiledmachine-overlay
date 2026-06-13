@@ -3085,7 +3085,7 @@ apply_distro_patchset_for_system_toolchain() {
 
 	# Unconditional patches for this category
 			local category_patches=( "${category}"*".patch" )
-			(( ${#category_patches[@]} -gt 0 )) && PATCHES+=( "${category}" )
+			(( ${#category_patches[@]} > 0 )) && PATCHES+=( "${category}" )
 
 	# Version-constrained subdirectories (e.g., llvm/lt-23/)
 			local constraint_dir
@@ -3217,9 +3217,9 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-use-memory-tagging.patch"
 		"${FILESDIR}/extra-patches/${PN}-148.0.7778.167-highway-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-simd-defaults.patch"
-		"${FILESDIR}/extra-patches/${PN}-145.0.7632.45-build-config-compiler-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-149.0.7827.114-build-config-compiler-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.45-libaom-optionalize-simd.patch"
-		"${FILESDIR}/extra-patches/${PN}-137.0.7151.68-libvpx-optionalize-simd.patch"		# Fix missing symbols for disabled SIMD
+		"A${FILESDIR}/extra-patches/${PN}-137.0.7151.68-libvpx-optionalize-simd.patch"		# Fix missing symbols for disabled SIMD
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-pdfium-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-148.0.7778.167-skia-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-perfetto-optionalize-simd.patch"
