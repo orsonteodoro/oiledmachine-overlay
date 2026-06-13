@@ -78,6 +78,7 @@ eerror
 # Example:
 # CHKL_TIMESTAMPS=(
 #	"dev-lang/rust-9999;May 22, 2026 00:33:25 -0700;1"
+#	"dev-lang/rust-bin-9999;May 22, 2026 00:33:25 -0700;1"
 # )
 #
 # pkg_setup() {
@@ -105,7 +106,7 @@ chkl_check_many_timestamps() {
 chkl_check_one_live_ban() {
 	local atom="${1}" # dev-lang/rust-9999
 	if has_version "=${atom}" ; then
-eerror "Live is banned.  Downgrade to LTS."
+eerror "Live is banned.  Downgrade ${atom} to LTS."
 		die
 	fi
 }
@@ -117,6 +118,7 @@ eerror "Live is banned.  Downgrade to LTS."
 # Example
 # CHKL_BLACKLIST=(
 #	"dev-lang/rust-9999"
+#	"dev-lang/rust-bin-9999"
 #	"x11-libs/cairo-9999"
 # )
 # pkg_setup() {
