@@ -63,13 +63,13 @@ EAPI=8
 # /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/gfx/harfbuzz/moz.yaml
 # /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/intl/icu/source/common/unicode/uvernum.h L63
 # /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/ipc/chromium/src/third_party/libevent/configure.ac L8
-# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/media/libaom/config/aom_version.h L7 [old]
 # /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/media/libjpeg/jconfig.h L7
 # /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/media/libpng/png.h L281
 # /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/media/libvpx/config/vpx_version.h L8
 # /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/media/libwebp/moz.yaml L16, two versions listed, newest chosen
 # /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/modules/freetype2/include/freetype/freetype.h L5175
 # /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/nsprpub/pr/include/prinit.h L35
+# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/third_party/aom/CHANGELOG
 # /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/third_party/dav1d/meson.build L26
 # /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/third_party/pipewire/pipewire/version.h L49
 # /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/taskcluster/kinds/toolchain/node.yml
@@ -199,9 +199,55 @@ RUST_MAX_VER="1.86.0"
 RUST_MIN_VER="1.86.0"
 RUST_NEEDS_LLVM=1 # Prune rustc for unused LLVM slots
 RUST_PV="${RUST_MIN_VER}"
-SPEECH_DISPATCHER_PV="0.11.4-r1"
+SPEECH_DISPATCHER_PV="0.12.1"
 XKBCOMMON_PV="0.4.1"
 VIRTUALX_REQUIRED="manual"
+
+# Mitigate flood the zone vulnerability.
+# If there is a live ebuild, it needs a check.
+# Ideally every one should get a live check because users can convert it to live ebuild in their local repo.
+# Most will use `emerge @system` or `emerge @world` but forget `emerge @live-rebuild`.
+CHKL_TIMESTAMPS=(
+# The timestamp and bump policy based on NVD or commit logs.  See vf.eclass for list of vulnerabilities.
+# Only security-critical packages and packages with live ebuilds are listed.
+	# Last vulnerability check 20260613
+	"app-accessibility/at-spi2-core-9999;Sat, 23 May 2026 08:21:47 -0500"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"app-accessibility/speech-dispatcher-9999;Tue, 6 May 2025 20:53:18 +0200"	# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/expat-9999;Tue, 26 May 2026 15:15:10 +0200"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/icu-9999;Mon, 10 Mar 2025 19:11:46 +0000"
+	"dev-libs/libevent-9999;Sat, 3 Aug 2019 14:32:21 +0300"
+	"dev-libs/libffi-9999;Thu, 10 Apr 2025 03:44:45 +0100"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/nspr-9999;10-May-2026 13:13"
+	"dev-libs/nss-9999;Thu, 23 Apr 2026 12:27:46 -0700"
+	"media-gfx/graphite2-9999;Wed, 1 Apr 2020 09:53:13 +0700"
+	"media-libs/dav1d-9999;Sun, 15 Dec 2024 21:16:21 +0100"
+	"media-libs/freetype-9999;Sun, 11 Aug 2024 20:30:23 +0200"
+	"media-libs/harfbuzz-9999;Mon, 28 Apr 2025 14:28:29 +0300"
+	"media-libs/fontconfig-9999;Wed, 24 Jun 2009 15:04:11 -0400"
+	"media-libs/libaom-9999;Fri, May 22, 2026 08:26:16 -0700"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libepoxy-9999;Tue, 12 Oct 2021 02:41:41 +0900"
+	"media-libs/libglvnd-9999;Tue, 12 Sep 2023 08:02:00 -0600"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libjpeg-turbo-9999;Sat, 14 Sep 2024 10:29:56 -0400"
+	"media-libs/libpng-9999;Wed, 15 Apr 2026 20:23:26 +0300"
+	"media-libs/libva-9999;Thu, 14 Sep 2023 04:04:13 -0400"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libvpx-9999;Fri, 10 Jan 2025 14:04:46 -0500"
+	"media-libs/libwebp-9999;Thu, 19 Dec 2024 17:17:50 -0800"
+	"media-libs/mesa-9999;Wed, 25 Feb 2026 16:54:24 +0100"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/openh264-9999;Mon, 10 Feb 2025 15:27:56 +0800"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-video/ffmpeg-9999;Thu, 19 Feb 2026 19:39:52 +0100"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-video/pipewire-9999;Wed, 2 Apr 2025 15:41:29 +0200"
+	"net-libs/nodejs-99999999;Mon, 11 May 2026 16:44:05 +0200"
+	"net-misc/connman-9999;2026-02-09 15:45:56 +0100"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"net-misc/networkmanager-9999;Thu, 12 Feb 2026 23:14:41 +0100"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"net-print/cups-9999;Fri, 17 Apr 2026 14:22:45 +0200"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"sys-apps/systemd-9999;Thu, 12 Mar 2026 17:12:46 +0000"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"x11-libs/cairo-9999;Sat, 8 Mar 2025 12:35:35 +0000"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"x11-libs/gdk-pixbuf-9999;Tue, 14 May 2024 22:15:41 -0400"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"x11-libs/libdrm-9999;Sat, 13 Jan 2024 10:37:07 +0100"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"x11-libs/pango-9999;Sun, 22 Mar 2026 21:54:26 -0400"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"x11-libs/pixman-9999;Wed, 2 Nov 2022 12:11:10 -0400"				# Bumped live/*DEPENDS to latest non-vulnerable
+)
+
 # Information about the bundled wasi toolchain from
 # https://github.com/WebAssembly/wasi-sdk/
 # For LLVM slot correspondence, see https://github.com/WebAssembly/wasi-sdk/tree/wasi-sdk-32/src
@@ -225,10 +271,10 @@ LLVM_COMPAT=(
 inherit ffmpeg
 FFMPEG_COMPAT_SLOTS=(
 	"${FFMPEG_COMPAT_SLOTS_8[@]}"
-	"${FFMPEG_COMPAT_SLOTS_7[@]}"
-	"${FFMPEG_COMPAT_SLOTS_6[@]}"
-	"${FFMPEG_COMPAT_SLOTS_5[@]}"
-	"${FFMPEG_COMPAT_SLOTS_4[@]}"
+	#"${FFMPEG_COMPAT_SLOTS_7[@]}"
+	#"${FFMPEG_COMPAT_SLOTS_6[@]}"
+	#"${FFMPEG_COMPAT_SLOTS_5[@]}"
+	#"${FFMPEG_COMPAT_SLOTS_4[@]}"
 )
 
 # One of the major sources of lag comes from dependencies.  These are strict to
@@ -374,7 +420,7 @@ MOZ_LANGS=(
 
 
 inherit cflags-depends cflags-hardened check-compiler-switch check-linker
-inherit check-reqs desktop dhms flag-o-matic flag-o-matic-om gnome2-utils lcnr libcxx-slot
+inherit check-reqs chkl desktop dhms flag-o-matic flag-o-matic-om gnome2-utils lcnr libcxx-slot
 inherit libstdcxx-slot linux-info llvm multilib-minimal multiprocessing
 inherit node optfeature pax-utils python-any-r1 readme.gentoo-r1 rust
 inherit rustflags-hardened toolchain-funcs virtualx vf web-kernel-config xdg
@@ -442,8 +488,8 @@ CODEC_IUSE="
 +opus
 +vpx
 "
-# Telemetry is the distro default.
-# Telemetry is disabled in the overlay for security reasons.
+# Enabled telemetry is the distro and upstream default.
+# Telemetry is disabled in the overlay to mitigate sensitive data harvesting or LotL weaponization.
 IUSE+="
 ${CODEC_IUSE}
 ${PATENT_STATUS[@]}
@@ -532,10 +578,10 @@ GAMEPAD_BDEPEND="
 UDEV_RDEPEND="
 	kernel_linux? (
 		systemd? (
-			>=sys-apps/systemd-217[${MULTILIB_USEDEP}]
+			>=sys-apps/systemd-259.4[${MULTILIB_USEDEP}]
 		)
 		!systemd? (
-			>=sys-apps/systemd-utils-217[${MULTILIB_USEDEP},udev]
+			>=sys-apps/systemd-utils-259.4[${MULTILIB_USEDEP},udev]
 		)
 	)
 "
@@ -591,7 +637,10 @@ gen_ffmpeg_royalty_free_depends_unislot() {
 }
 
 PATENT_CDEPENDS="
-	media-libs/mesa[${MULTILIB_USEDEP},patent_status_nonfree=]
+	>=media-libs/mesa-26.0.1[${MULTILIB_USEDEP},patent_status_nonfree=]
+	kernel_linux? (
+		>=media-libs/libglvnd-1.7.0[${MULTILIB_USEDEP}]
+	)
 	!patent_status_nonfree? (
 		|| (
 			$(gen_ffmpeg_royalty_free_depends_unislot)
@@ -625,23 +674,23 @@ RUST_CDEPEND="
 CDEPEND="
 	${FF_ONLY_DEPEND}
 	${PATENT_CDEPENDS}
-	>=app-accessibility/at-spi2-core-2.46.0:2[${MULTILIB_USEDEP}]
+	>=app-accessibility/at-spi2-core-2.58.6:2[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-2.42:2[${MULTILIB_USEDEP}]
-	>=dev-libs/nss-3.112.5[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.36.2[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.112.5[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.7.0[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.13.3[${MULTILIB_USEDEP}]
-	>=x11-libs/pango-1.22.0[${MULTILIB_USEDEP}]
-	>=x11-libs/pixman-0.36.0[${MULTILIB_USEDEP}]
+	>=x11-libs/pango-1.57.1[${MULTILIB_USEDEP}]
+	>=x11-libs/pixman-0.42.2[${MULTILIB_USEDEP}]
 	>=virtual/zlib-1.3.2[${MULTILIB_USEDEP}]
-	dev-libs/expat[${MULTILIB_USEDEP}]
-	dev-libs/libffi[${MULTILIB_USEDEP}]
+	>=dev-libs/expat-2.8.2[${MULTILIB_USEDEP}]
+	>=dev-libs/libffi-3.4.8[${MULTILIB_USEDEP}]
 	dev-libs/libffi:=
 	media-libs/alsa-lib[${MULTILIB_USEDEP}]
 	virtual/freedesktop-icon-theme
-	x11-libs/cairo
-	x11-libs/gdk-pixbuf:2[${MULTILIB_USEDEP}]
-	x11-libs/libdrm[${MULTILIB_USEDEP}]
+	>=x11-libs/cairo-1.18.4[${MULTILIB_USEDEP}]
+	>=x11-libs/gdk-pixbuf-2.42.10:2[${MULTILIB_USEDEP}]
+	>=x11-libs/libdrm-2.4.120[${MULTILIB_USEDEP}]
 	dbus? (
 		>=sys-apps/dbus-${DBUS_PV}[${MULTILIB_USEDEP}]
 	)
@@ -666,7 +715,7 @@ CDEPEND="
 	system-av1? (
 		>=media-libs/dav1d-1.5.1[${MULTILIB_USEDEP},8bit]
 		media-libs/dav1d:=
-		>=media-libs/libaom-1.0.0[${MULTILIB_USEDEP}]
+		>=media-libs/libaom-3.14.1[${MULTILIB_USEDEP}]
 		media-libs/libaom:=
 	)
 	system-harfbuzz? (
@@ -711,8 +760,8 @@ CDEPEND="
 	wifi? (
 		kernel_linux? (
 			|| (
-				>=net-misc/networkmanager-0.7[${MULTILIB_USEDEP}]
-				net-misc/connman[networkmanager]
+				>=net-misc/networkmanager-1.56.0[${MULTILIB_USEDEP}]
+				>=net-misc/connman-2.0[networkmanager]
 			)
 			>=sys-apps/dbus-${DBUS_PV}[${MULTILIB_USEDEP}]
 		)
@@ -741,7 +790,7 @@ RDEPEND+="
 	sys-kernel/mitigate-id
 	virtual/patent-status[patent_status_nonfree=]
 	cups? (
-		net-print/cups[${MULTILIB_USEDEP}]
+		>=net-print/cups-2.14.7[${MULTILIB_USEDEP}]
 	)
 	jack? (
 		virtual/jack[${MULTILIB_USEDEP}]
@@ -763,7 +812,7 @@ RDEPEND+="
 		app-crypt/libsecret[${MULTILIB_USEDEP}]
 	)
 	openh264? (
-		media-libs/openh264:*[${MULTILIB_USEDEP},plugin]
+		>=media-libs/openh264-2.6.0:*[${MULTILIB_USEDEP},plugin]
 	)
 	pulseaudio? (
 		|| (
@@ -790,7 +839,7 @@ RDEPEND+="
 		)
 	)
 	vaapi? (
-		media-libs/libva[${MULTILIB_USEDEP},drm(+),X?,wayland?]
+		>=media-libs/libva-2.20.0[${MULTILIB_USEDEP},drm(+),X?,wayland?]
 	)
 "
 
@@ -1709,6 +1758,7 @@ ewarn "Speech recognition (USE=webspeech) has not been confirmed working."
 	libcxx-slot_verify
 	libstdcxx-slot_verify
 	verify_compiler_flags_hardening
+	chkl_check_many_timestamps
 }
 
 src_unpack() {
