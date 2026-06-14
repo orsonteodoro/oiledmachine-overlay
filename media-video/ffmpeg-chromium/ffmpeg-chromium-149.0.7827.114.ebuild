@@ -171,7 +171,7 @@ SLOT="${PV%%.*}/${PV}"
 IUSE="
 	${CPU_FEATURES_MAP[@]%:*}
 	${FFMPEG_FLAG_MAP[@]%:*}
-	patent_status_nonfree
+	doc patent_status_nonfree
 "
 REQUIRED_USE="
 	${CPU_REQUIRED_USE}
@@ -209,10 +209,14 @@ BDEPEND="
 		>=dev-lang/nasm-2.13
 	)
 "
-
 PATCHES=(
 	"${FILESDIR}/${PN}-138-configure-enable-libopus.patch"
 	"${FILESDIR}/chromium.patch"
+)
+DOCS=(
+	"Changelog"
+	"README.chromium"
+	"README.md"
 )
 
 # This is how you reconstruct the tarball.
@@ -366,5 +370,19 @@ src_compile() {
 }
 
 src_install() {
-	emake V=1 DESTDIR="${D}" "install-libffmpeg"
+	# Bug with SLOT with emake
+	exeinto "/usr/$(get_libdir)/chromium/"
+	newexe "libffmpeg.so" "libffmpeg.so.${PV%%.*}"
+	docinto "licenses"
+	local L=(
+		"COPYING.GPLv2"
+		"COPYING.GPLv3"
+		"COPYING.LGPLv2.1"
+		"COPYING.LGPLv3"
+		"CREDITS"
+		"CREDITS.chromium"
+		"LICENSE.md"
+	)
+	dodoc "${L[@]}"
+	use doc && einstalldocs
 }
