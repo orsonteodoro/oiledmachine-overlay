@@ -19,6 +19,11 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]}"
 )
 
+DOCS_BUILDER="doxygen"
+DOCS_DIR=""
+
+PYTHON_COMPAT=( python3_{11..14} )
+
 inherit cflags-hardened cmake docs libcxx-slot libstdcxx-slot python-any-r1
 
 DESCRIPTION="Unicode validation and transcoding at billions of characters per second"
@@ -26,12 +31,9 @@ HOMEPAGE="https://simdutf.github.io/simdutf/"
 SRC_URI="https://github.com/${PN}/${PN}/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="|| ( Apache-2.0 MIT )"
-SLOT="0/25"
-KEYWORDS="amd64 ~arm arm64 ~loong ~ppc ~ppc64 ~riscv ~x86"
-IUSE="
-test
-ebuild_revision_10
-"
+SLOT="0/34"
+KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86"
+IUSE="test"
 RESTRICT="!test? ( test )"
 
 RDEPEND="
@@ -51,7 +53,7 @@ pkg_setup() {
 	libstdcxx-slot_verify
 }
 
-src_configure(){
+src_configure() {
 	cflags-hardened_append
 	local mycmakeargs+=(
 		-DSIMDUTF_TESTS=$(usex test)
