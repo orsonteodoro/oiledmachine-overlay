@@ -7649,30 +7649,23 @@ ewarn "Unbundling libs and lowering security"
 
 	# See https://github.com/chromium/chromium/blob/149.0.7827.114/media/media_options.gni#L19
 
-	if use bindist ; then
+	local proprietary_codecs=$(usex patent_status_nonfree "true" "false")
+	ffmpeg_branding=$(usex patent_status_nonfree "Chrome" "Chromium")
+	myconf_gn+=(
+		"ffmpeg_branding=\"${ffmpeg_branding}\""
+
 	#
 	# Distro maintainer notes:
 	#
 	# If this is set to false Chromium won't be able to load any proprietary codecs
 	# even if provided with an ffmpeg capable of H.264/AAC decoding.
 	#
+		"proprietary_codecs=${proprietary_codecs}"
+	)
+	if use bindist ; then
+		myconf_gn+=(
 	# Build ffmpeg as an external component (libffmpeg.so) that we can remove / substitute
-	#
-	#
-	# oiledmachine-overlay note:
-	#
-	# Bindist changes are reverted to free codecs only.
-	#
-		myconf_gn+=(
 			"is_component_ffmpeg=false"
-			"ffmpeg_branding=\"Chromium\""
-			"proprietary_codecs=false"
-		)
-	else
-		ffmpeg_branding="$(usex patent_status_nonfree Chrome Chromium)"
-		myconf_gn+=(
-			"ffmpeg_branding=\"${ffmpeg_branding}\""
-			"proprietary_codecs=$(usex patent_status_nonfree true false)"
 		)
 	fi
 
