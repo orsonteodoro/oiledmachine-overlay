@@ -12,7 +12,7 @@ PATENT_STATUS_IUSE=(
 	patent_status_nonfree
 )
 
-# Force FFmpeg 8.1 to mitigate vulnerabilities
+# Force FFmpeg live to mitigate vulnerabilities
 inherit ffmpeg
 FFMPEG_COMPAT_SLOTS=(
 	"${FFMPEG_COMPAT_SLOTS_8[@]}"
@@ -87,14 +87,14 @@ PATENT_STATUS_DEPEND="
 		!media-libs/libva
 		!x11-libs/libvdpau
 		|| (
-			>=media-video/ffmpeg-8.1:60.62.62[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
-			>=media-video/ffmpeg-8.1:0/60.62.62[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
+			>=media-video/ffmpeg-9999:60.62.62[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
+			>=media-video/ffmpeg-9999:0/60.62.62[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
 		)
 	)
 	patent_status_nonfree? (
 		|| (
-			>=media-video/ffmpeg-8.1:60.62.62[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
-			>=media-video/ffmpeg-8.1:0/60.62.62[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
+			>=media-video/ffmpeg-9999:60.62.62[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
+			>=media-video/ffmpeg-9999:0/60.62.62[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
 		)
 	)
 	media-video/ffmpeg:=
@@ -103,7 +103,7 @@ COMMON_DEPEND="
 	${PATENT_STATUS_DEPEND}
 	media-libs/libass:=[fontconfig]
 	>=media-libs/libplacebo-7.360.1:=[vulkan?]
-	>=media-video/ffmpeg-8.1:=[encode(+),threads(+),vaapi?,vdpau?]
+	>=media-video/ffmpeg-9999:=[encode(+),threads(+),vaapi?,vdpau?]
 	X? (
 		x11-libs/libX11
 		x11-libs/libXScrnSaver
