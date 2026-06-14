@@ -208,7 +208,8 @@ VIRTUALX_REQUIRED="manual"
 # Ideally every one should get a live check because users can convert it to live ebuild in their local repo.
 # Most will use `emerge @system` or `emerge @world` but forget `emerge @live-rebuild`.
 CHKL_TIMESTAMPS=(
-# The timestamp and bump policy based on NVD or commit logs.  See vf.eclass for list of vulnerabilities.
+# The timestamp and bump policy based on NVD or commit logs.
+# See vf.eclass for list of vulnerabilities.
 # Only security-critical packages and packages with live ebuilds are listed.
 	# Last vulnerability check 20260614
 	"app-accessibility/at-spi2-core-9999;Sat, 23 May 2026 08:21:47 -0500"		# Bumped live/*DEPENDS to latest non-vulnerable
@@ -216,7 +217,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/expat-9999;Tue, 26 May 2026 15:15:10 +0200"				# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/icu-9999;Mon, 10 Mar 2025 19:11:46 +0000"
 	"dev-libs/libevent-9999;Sat, 3 Aug 2019 14:32:21 +0300"
-	"dev-libs/libffi-9999;Thu, 10 Apr 2025 03:44:45 +0100"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/libffi-9999;Fri, 5 Jun 2026 18:10:53 +0800"				# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/nspr-9999;10-May-2026 13:13"
 	"dev-libs/nss-9999;Thu, 23 Apr 2026 12:27:46 -0700"
 	"media-gfx/graphite2-9999;Wed, 1 Apr 2020 09:53:13 +0700"
@@ -230,6 +231,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libglvnd-9999;Tue, 12 Sep 2023 08:02:00 -0600"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libjpeg-turbo-9999;Wed, 3 Jun 2026 09:43:18 -0400"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libpng-9999;Wed, 15 Apr 2026 20:23:26 +0300"
+	"media-libs/libpulse-9999;Thu, 7 Aug 2025 15:45:26 -0600"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libva-9999;Thu, 14 Sep 2023 04:04:13 -0400"				# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libvpx-9999;Fri, 10 Jan 2025 14:04:46 -0500"
 	"media-libs/libwebp-9999;Thu, 19 Dec 2024 17:17:50 -0800"
@@ -237,6 +239,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/openh264-9999;Mon, 10 Feb 2025 15:27:56 +0800"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-video/ffmpeg-9999;Thu, 19 Feb 2026 19:39:52 +0100"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-video/pipewire-9999;Wed, 2 Apr 2025 15:41:29 +0200"
+	"net-libs/libproxy-9999;Mon, 23 Feb 2026 10:30:16 -0600"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"net-libs/nodejs-99999999;Mon, 11 May 2026 16:44:05 +0200"
 	"net-misc/connman-9999;2026-02-09 15:45:56 +0100"				# Bumped live/*DEPENDS to latest non-vulnerable
 	"net-misc/networkmanager-9999;Thu, 12 Feb 2026 23:14:41 +0100"			# Bumped live/*DEPENDS to latest non-vulnerable
@@ -269,6 +272,7 @@ LLVM_COMPAT=(
 	# LLVM for Rust:  19 22
 )
 
+# Force FFmpeg 8.1 to mitigate vulnerabilities
 inherit ffmpeg
 FFMPEG_COMPAT_SLOTS=(
 	"${FFMPEG_COMPAT_SLOTS_8[@]}"
@@ -591,7 +595,7 @@ gen_ffmpeg_nonfree_depends_multislot() {
 	local s
 	for s in "${FFMPEG_COMPAT_SLOTS[@]}" ; do
 		echo "
-			media-video/ffmpeg:${s}[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
+			>=media-video/ffmpeg-8.1:${s}[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
 		"
 	done
 }
@@ -600,7 +604,7 @@ gen_ffmpeg_nonfree_depends_unislot() {
 	local s
 	for s in "${FFMPEG_COMPAT_SLOTS[@]}" ; do
 		echo "
-			media-video/ffmpeg:0/${s}[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
+			>=media-video/ffmpeg-8.1:0/${s}[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
 		"
 	done
 }
@@ -614,10 +618,10 @@ gen_ffmpeg_royalty_free_depends_multislot() {
 		echo "
 			(
 				!<dev-libs/openssl-3
-				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+				>=media-video/ffmpeg-8.1:${s}[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
 			)
 			(
-				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,-openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+				>=media-video/ffmpeg-8.1:${s}[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,-openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
 			)
 		"
 	done
@@ -628,10 +632,10 @@ gen_ffmpeg_royalty_free_depends_unislot() {
 		echo "
 			(
 				!<dev-libs/openssl-3
-				media-video/ffmpeg:0/${s}[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+				>=media-video/ffmpeg-8.1:0/${s}[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
 			)
 			(
-				media-video/ffmpeg:0/${s}[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,-openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+				>=media-video/ffmpeg-8.1:0/${s}[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,-openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
 			)
 		"
 	done
@@ -685,7 +689,7 @@ CDEPEND="
 	>=x11-libs/pixman-0.42.2[${MULTILIB_USEDEP}]
 	>=virtual/zlib-1.3.2[${MULTILIB_USEDEP}]
 	>=dev-libs/expat-2.8.2[${MULTILIB_USEDEP}]
-	>=dev-libs/libffi-3.4.8[${MULTILIB_USEDEP}]
+	>=dev-libs/libffi-9999[${MULTILIB_USEDEP}]
 	dev-libs/libffi:=
 	>=media-libs/alsa-lib-1.2.16[${MULTILIB_USEDEP}]
 	virtual/freedesktop-icon-theme
@@ -699,11 +703,11 @@ CDEPEND="
 		virtual/jack[${MULTILIB_USEDEP}]
 	)
 	libproxy? (
-		>=net-libs/libproxy-1[${MULTILIB_USEDEP}]
+		>=net-libs/libproxy-9999[${MULTILIB_USEDEP}]
 	)
 	pulseaudio? (
 		|| (
-			media-libs/libpulse[${MULTILIB_USEDEP}]
+			>=media-libs/libpulse-9999[${MULTILIB_USEDEP}]
 			>=media-sound/apulse-0.1.12-r4[${MULTILIB_USEDEP},sdk]
 		)
 	)
