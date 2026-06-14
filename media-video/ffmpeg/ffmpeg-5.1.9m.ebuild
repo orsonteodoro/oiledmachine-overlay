@@ -503,7 +503,6 @@ ${CPU_FEATURES_MAP[@]%:*}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${FFMPEG_ENCODER_FLAG_MAP[@]%:*}
 ${FFMPEG_FLAG_MAP[@]%:*}
-${FFMPEG_UNSLOTTED:+chromium}
 ${FFTOOLS[@]/#/+fftools_}
 ${PATENT_STATUS[@]}
 ${USE_LICENSES[@]}
@@ -650,7 +649,6 @@ PATENT_REQUIRED_USE="
 REQUIRED_USE+="
 	!libplacebo
 	${CPU_REQUIRED_USE}
-	${FFMPEG_UNSLOTTED:+chromium? ( opus )}
 	${PATENT_REQUIRED_USE}
 	${REQUIRED_USE_LICENSES}
 	!kernel_linux? (
@@ -1144,7 +1142,6 @@ PDEPEND+="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/chromium-r1.patch"
 	"${FILESDIR}/${PN}-5.1.2-get_cabac_inline_x86-32-bit.patch"
 	"${FILESDIR}/${PN}-6.0-libplacebo-remove-deprecated-field.patch"
 	"${FILESDIR}/${PN}-6.0-fix-lto-type-mismatch.patch"
@@ -1156,10 +1153,6 @@ PATCHES=(
 	"${FILESDIR}/extra-patches/${PN}-5.1.6-glslang-fix-configure-test.patch"
 	"${FILESDIR}/extra-patches/${PN}-6.1.3-svt-av1-backport-d1ed5c0.patch"
 )
-
-build_separate_libffmpeg() {
-	use opencl
-}
 
 get_av_device_ids() {
 	local types=(
@@ -1578,8 +1571,6 @@ src_prepare() {
 	# -fdiagnostics-color=auto gets appended after user flags which
 	# will ignore user's preference.
 	sed -i -e '/check_cflags -fdiagnostics-color=auto/d' configure || die
-
-	echo 'include $(SRC_PATH)/ffbuild/libffmpeg.mak' >> Makefile || die
 
 	# Handle *FLAGS here to avoid repeating for each ABI below (bug #923491)
 	LTO_FLAG=
@@ -2204,20 +2195,6 @@ einfo
 		${EXTRA_FFMPEG_CONF}
 	echo "${@}"
 	"${@}" || die
-
-	if multilib_is_native_abi && use chromium && build_separate_libffmpeg ; then
-einfo "Configuring for Chromium"
-		mkdir -p ../chromium || die
-		pushd ../chromium >/dev/null || die
-			set -- "${@}" \
-				--disable-shared \
-				--enable-static \
-				--enable-pic \
-				--disable-opencl
-			echo "${@}"
-			"${@}" || die
-		popd >/dev/null || die
-	fi
 }
 
 _adecode() {
@@ -3959,17 +3936,6 @@ _src_compile() {
 				emake V=1 tools/${i}$(get_exeext)
 			fi
 		done
-
-		if use chromium; then
-			if build_separate_libffmpeg; then
-einfo "Compiling for Chromium"
-				pushd ../chromium >/dev/null || die
-					emake V=1 libffmpeg
-				popd >/dev/null || die
-			else
-				emake V=1 libffmpeg
-			fi
-		fi
 	fi
 }
 
@@ -4090,21 +4056,6 @@ einfo "Running dobin tools/${i}$(get_exeext)"
 				fi
 			fi
 		done
-
-		if use chromium ; then
-			if build_separate_libffmpeg ; then
-einfo "Installing for Chromium"
-				pushd ../chromium >/dev/null || die
-					emake V=1 DESTDIR="${D}" install-libffmpeg
-				popd >/dev/null || die
-			else
-				emake V=1 DESTDIR="${D}" install-libffmpeg
-
-				# When not built separately, libffmpeg has no code of
-				# its own so this QA check raises a false positive.
-				QA_FLAGS_IGNORED+=" usr/$(get_libdir)/chromium/.*"
-			fi
-		fi
 	fi
 
 	if [[ "${lib_type}" == "shared" && "${SLOT%/*}" == "${FFMPEG_SUBSLOT}" ]] ; then

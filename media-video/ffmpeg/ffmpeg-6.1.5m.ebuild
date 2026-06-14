@@ -1630,9 +1630,6 @@ src_prepare() {
 	# will ignore user's preference.
 	sed -i -e '/check_cflags -fdiagnostics-color=auto/d' "configure" || die
 
-	ln -snf "${FILESDIR}/chromium.c" "chromium.c" || die
-	echo 'include $(SRC_PATH)/ffbuild/libffmpeg.mak' >> "Makefile" || die
-
 	# Handle *FLAGS here to avoid repeating for each ABI below (bug #923491)
 	LTO_FLAG=
 	if tc-is-lto ; then
@@ -4014,9 +4011,9 @@ _src_compile() {
 				emake V=1 tools/${i}$(get_exeext)
 			fi
 		done
-
-		use chromium &&
+		if in_iuse chromium && use chromium && multilib_is_native_abi ; then
 			emake V=1 libffmpeg
+		fi
 	fi
 }
 
@@ -4137,9 +4134,9 @@ einfo "Running dobin tools/${i}$(get_exeext)"
 				fi
 			fi
 		done
-
-		use chromium && \
+		if in_iuse chromium && use chromium && multilib_is_native_abi ; then
 			emake V=1 DESTDIR="${D}" install-libffmpeg
+		fi
 	fi
 
 	if [[ "${lib_type}" == "shared" && "${SLOT%/*}" == "${FFMPEG_SUBSLOT}" ]] ; then
