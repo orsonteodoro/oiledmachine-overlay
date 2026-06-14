@@ -71,7 +71,6 @@ RDEPEND+="
 		!media-plugins/gst-plugins-x264
 		!media-plugins/gst-plugins-x265
 		!media-video/amdgpu-pro-amf
-		!media-video/ffmpeg-chromium
 		!virtual/vaapi
 		!x11-libs/libvdpau
 	)
