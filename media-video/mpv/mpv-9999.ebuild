@@ -14,7 +14,7 @@ PATENT_STATUS_IUSE=(
 
 inherit ffmpeg
 FFMPEG_COMPAT_SLOTS=(
-	"${FFMPEG_COMPAT_SLOTS_7[@]}"
+	"${FFMPEG_COMPAT_SLOTS_8[@]}"
 )
 
 LUA_COMPAT=( lua5-1 luajit )
@@ -76,22 +76,23 @@ REQUIRED_USE="
 	vulkan? ( || ( X wayland ) )
 	xv? ( X )
 "
+
 RESTRICT="!test? ( test )"
-# FFmpeg 6.1
+# FFmpeg 8.1
 PATENT_STATUS_DEPEND="
 	virtual/patent-status[patent_status_nonfree=]
 	!patent_status_nonfree? (
 		!media-libs/libva
 		!x11-libs/libvdpau
 		|| (
-			media-video/ffmpeg:59.61.61[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
-			media-video/ffmpeg:0/59.61.61[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
+			media-video/ffmpeg:60.62.62[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
+			media-video/ffmpeg:0/60.62.62[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
 		)
 	)
 	patent_status_nonfree? (
 		|| (
-			media-video/ffmpeg:59.61.61[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
-			media-video/ffmpeg:0/59.61.61[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
+			media-video/ffmpeg:60.62.62[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
+			media-video/ffmpeg:0/60.62.62[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
 		)
 	)
 	media-video/ffmpeg:=
@@ -100,7 +101,7 @@ COMMON_DEPEND="
 	${PATENT_STATUS_DEPEND}
 	media-libs/libass:=[fontconfig]
 	>=media-libs/libplacebo-7.360.1:=[vulkan?]
-	>=media-video/ffmpeg-6.1:=[encode(+),threads(+),vaapi?,vdpau?]
+	>=media-video/ffmpeg-8.1:=[encode(+),threads(+),vaapi?,vdpau?]
 	X? (
 		x11-libs/libX11
 		x11-libs/libXScrnSaver
