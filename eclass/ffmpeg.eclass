@@ -56,6 +56,7 @@ FFMPEG_COMPAT_SLOTS_8=(
 # @DESCRIPTION:
 # Adds all FFmpeg LTS slots
 FFMPEG_COMPAT_SLOTS_LTS=(
+	"60.62.62" # 8, U26
 	"59.61.61" # 7, D13
 	"58.60.60" # 6, U24
 	"57.59.59" # 5, D12
