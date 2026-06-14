@@ -43,3 +43,6 @@ sys-apps/firejail suid
 # Mitigate kernel address leaks leading to ASLR bypass
 # A guardrail for people who don't read or have rash tendencies
 llvm-runtimes/compiler-rt-sanitizers-logging production
+
+# Guardrail to prevent broken emerge/autotools
+dev-libs/expat fallback-commit
