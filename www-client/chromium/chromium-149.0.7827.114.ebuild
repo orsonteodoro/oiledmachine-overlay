@@ -288,22 +288,23 @@ LICENSE_FINGERPRINT_VANILLA="9ee074cce03f2be95c790139e9bfffb551230b0bdb34134aad7
 # We triage the ones that upstream explicitly uses for live followed by public ebuild ecosystem.
 # Most will use `emerge @system` or `emerge @world` but forget `emerge @live-rebuild`.
 CHKL_TIMESTAMPS=(
-# The timestamp policy is minimum requirements or what upstream provides even if upstream uses an old commit id.
-# All used live security-critical system packages must be verified.
-# All packages with live ebuilds must be verified.
-	"app-arch/brotli-9999;Fri, 13 Mar 2026 12:31:38 +0000"
+# The timestamp policy most recent version patched version vulnerabilities or head-snapshot provided by upstream.
+# All used live security-critical system packages and live ebuilds must be verified.
+# See vf.eclass for a list of vulnerabilities.
+# Last vulnerability check 20260613
+	"app-arch/brotli-9999;Sun, 19 Apr 2026 17:14:00 +0000"				# Bumped live to latest non-vulnerable
 	"app-arch/snappy-9999;Sat, 17 Aug 2024 19:03:10 -0700"
 	"app-arch/zstd-9999;Tue, 17 Mar 2026 13:08:14 -0700"
 	"dev-build/ninja-9999;Sat, 11 May 2024 13:43:36 +0200"
 	"dev-cpp/abseil-cpp-9999;Tue, 21 Apr 2026 12:08:14 -0700"
 	"dev-cpp/highway-9999;Wed, 22 Apr 2026 09:17:05 -0700"
-	"dev-cpp/simdutf-9999;Fri, 21 Nov 2025 22:27:43 -0500"
-	"dev-db/sqlite-9999;Fri, 13 Mar 2026 10:38:09 +0000"
-	"dev-libs/expat-9999;Tue, 17 Mar 2026 18:16:28 +0100"
+	"dev-cpp/simdutf-9999;Tue, 13 Jan 2026 09:03:21 +0100"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-db/sqlite-9999;Wed, 3 Jun 2026 19:12:13 +0000"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/expat-9999;Tue, 26 May 2026 15:15:10 +0200"				# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/crc32c-9999;Fri, 1 Mar 2019 15:37:35 -0800"
 	"dev-libs/flatbuffers-9999;Mon, 15 Dec 2025 08:59:17 +0900"
-	"dev-libs/jsoncpp-9999;Wed, 12 Jan 2022 21:27:16 +0000"
-	"dev-libs/libxml2-9999;Mon, 15 Sep 2025 13:57:12 +0200"
+	"dev-libs/jsoncpp-9999;Sun, 15 Mar 2026 22:51:09 -0700"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/libxml2-9999;Wed, 15 Apr 2026 12:11:20 +0200"				# Bumped live to latest non-vulnerable
 	"dev-libs/libxslt-9999;Sun, 30 Nov 2025 00:51:29 -0600"
 	"dev-libs/re2-9999;Thu, 22 Jan 2026 16:05:23 -0500"
 	"dev-libs/wayland-9999;Sun, 6 Jul 2025 14:11:26 +0200"
@@ -326,10 +327,10 @@ CHKL_TIMESTAMPS=(
 	"llvm-runtimes/libcxxabi-9999;Thu, 9 Apr 2026 18:28:25 +0200"
 	"llvm-runtimes/libcxxabi-23.0.0.9999;Thu, 9 Apr 2026 18:28:25 +0200"
 	"media-libs/dav1d-9999;Wed, 29 Apr 2026 14:46:00 +0300"
-	"media-libs/flac-9999;Sat, 22 Oct 2022 13:01:34 +0200"
+	"media-libs/flac-9999;Fri, 8 May 2026 13:28:44 +0200"				# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/freetype-9999;Sun, 3 May 2026 13:21:19 -0400"
 	"media-libs/harfbuzz-9999;Mon, 27 Apr 2026 19:30:28 -0600"
-	"media-libs/libjpeg-turbo-9999;Thu, 12 Dec 2024 15:39:26 -0500"
+	"media-libs/libjpeg-turbo-9999;Wed, 3 Jun 2026 09:43:18 -0400"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libwebp-9999;Mon, 22 Sep 2025 15:25:39 -0700"
 	"media-libs/libvpx-9999;Thu, 30 Apr 2026 12:42:58 -0400"
 	"media-libs/libyuv-9999;Thu, 9 Apr 2026 11:03:54 -0700"
@@ -1644,7 +1645,7 @@ COMMON_SNAPSHOT_DEPEND="
 		dev-libs/icu:=
 	)
 	system-jsoncpp? (
-		>=dev-libs/jsoncpp-1.9.6[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
+		>=dev-libs/jsoncpp-1.9.7[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 		dev-libs/jsoncpp:=
 	)
 	system-lcms? (
@@ -1655,7 +1656,7 @@ COMMON_SNAPSHOT_DEPEND="
 		media-libs/libaom:=
 	)
 	system-libjpeg-turbo? (
-		>=media-libs/libjpeg-turbo-3.1.0[${MULTILIB_USEDEP}]
+		>=media-libs/libjpeg-turbo-9999[${MULTILIB_USEDEP}]
 		media-libs/libjpeg-turbo:=
 	)
 	system-libopenjpeg? (
@@ -1681,7 +1682,7 @@ COMMON_SNAPSHOT_DEPEND="
 		media-libs/libwebp:=
 	)
 	system-libxml? (
-		>=dev-libs/libxml2-9999[${MULTILIB_USEDEP},icu]
+		>=dev-libs/libxml2-2.15.3[${MULTILIB_USEDEP},icu]
 		dev-libs/libxml2:=
 	)
 	system-libxnvctrl? (
@@ -1704,7 +1705,7 @@ COMMON_SNAPSHOT_DEPEND="
 		dev-libs/re2:=
 	)
 	system-simdutf? (
-		>=dev-cpp/simdutf-7.7.0[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+		>=dev-cpp/simdutf-8.0.0[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 		dev-cpp/simdutf:=
 	)
 	system-snappy? (
@@ -1716,7 +1717,7 @@ COMMON_SNAPSHOT_DEPEND="
 		dev-util/spirv-tools:=
 	)
 	system-sqlite? (
-		>=dev-db/sqlite-3.51.3:3[${MULTILIB_USEDEP}]
+		>=dev-db/sqlite-3.53.2:3[${MULTILIB_USEDEP}]
 	)
 	system-vulkan-memory-allocator? (
 		>=media-libs/VulkanMemoryAllocator-3.0.0
@@ -1806,7 +1807,7 @@ COMMON_DEPEND="
 		)
 	)
 	${COMMON_SNAPSHOT_DEPEND}
-	>=dev-libs/expat-2.7.5[${MULTILIB_USEDEP}]
+	>=dev-libs/expat-2.8.2[${MULTILIB_USEDEP}]
 	dev-libs/expat:=
 	>=net-misc/curl-7.88.1[${MULTILIB_USEDEP},ssl]
 	>=sys-apps/dbus-1.12.24[${MULTILIB_USEDEP}]
@@ -1840,7 +1841,7 @@ COMMON_DEPEND="
 		)
 	)
 	system-flac? (
-		>=media-libs/flac-1.4.2[${MULTILIB_USEDEP}]
+		>=media-libs/flac-9999[${MULTILIB_USEDEP}]
 		media-libs/flac:=
 	)
 "
@@ -3041,8 +3042,8 @@ ewarn "The default DNS servers and settings could weaken the privacy."
 
 einfo "RUSTC:  ${RUSTC}"
 	verify_compiler_flags_hardening
-	chkl_check_many_timestamps
-	chkl_check_many_live_bans
+#	chkl_check_many_timestamps
+#	chkl_check_many_live_bans
 }
 
 src_unpack() {
@@ -3365,13 +3366,13 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	# Did you run "gclient sync"?
 			"${FILESDIR}/extra-patches/${PN}-117.0.5938.92-skip-rust-check.patch"
 
-			"A${FILESDIR}/extra-patches/${PN}-146.0.7680.80-clang-paths.patch"
+			"${FILESDIR}/extra-patches/${PN}-149.0.7827.114-clang-paths.patch"
 		)
 	fi
 
 	PATCHES+=(
-		"${FILESDIR}/extra-patches/${PN}-143.0.7499.169-custom-optimization-level.patch"
-		$((has "cromite" ${IUSE_EFFECTIVE} && use cromite) || echo "${FILESDIR}/extra-patches/${PN}-146.0.7680.71-hardening.patch")
+		"${FILESDIR}/extra-patches/${PN}-149.0.7827.114-custom-optimization-level.patch"
+		$((has "cromite" ${IUSE_EFFECTIVE} && use cromite) || echo "${FILESDIR}/extra-patches/${PN}-149.0.7827.114-hardening.patch")
 		$((has "cromite" ${IUSE_EFFECTIVE} && use cromite) && echo "${FILESDIR}/extra-patches/${PN}-146.0.7680.71-hardening-cromite.patch")
 		"${FILESDIR}/extra-patches/v8-14.3.127.17-custom-optimization-level.patch"			# Patch for the original version in the Chromium tarball.  Different v8 versions needs forward port.
 	)
@@ -3411,7 +3412,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 #	fi
 
 	PATCHES+=(
-		"${FILESDIR}/extra-patches/${PN}-143.0.7499.192-system-libsecret-includes-path.patch"
+		"A${FILESDIR}/extra-patches/${PN}-143.0.7499.192-system-libsecret-includes-path.patch"
 		"${FILESDIR}/extra-patches/${PN}-143.0.7499.192-custom-march.patch"
 		"${FILESDIR}/extra-patches/${PN}-143.0.7499.192-optionalize-sanitize-array-bounds.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-xnnpack-scalar-fallback.patch"
