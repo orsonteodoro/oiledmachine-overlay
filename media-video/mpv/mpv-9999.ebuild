@@ -36,12 +36,13 @@ HOMEPAGE="https://mpv.io/"
 
 LICENSE="LGPL-2.1+ GPL-2+ BSD ISC MIT" #506946
 SLOT="0/2" # soname
+# oiledmachine-overlay:  added vapoursynth
 IUSE+="
 	${PATENT_STATUS_IUSE[@]}
 	+X +alsa aqua archive bluray cdda +cli coreaudio +curl debug +drm
 	dvb dvd +egl gamepad +iconv jack javascript jpeg lcms libcaca
 	+libmpv +lua network nvenc openal pipewire pulseaudio rubberband sdl
-	selinux sixel sndio soc subrandr test tools +uchardet vaapi vdpau
+	selinux sixel sndio soc subrandr test tools +uchardet vaapi vapoursynth vdpau
 	+vulkan wayland xv zimg zlib
 	ebuild_revision_1
 "
@@ -78,7 +79,7 @@ REQUIRED_USE="
 "
 
 RESTRICT="!test? ( test )"
-# FFmpeg 8.1
+# oiledmachine-overlay:  Forced FFmpeg 8.1 for mitigation
 PATENT_STATUS_DEPEND="
 	virtual/patent-status[patent_status_nonfree=]
 	!patent_status_nonfree? (
@@ -157,6 +158,9 @@ COMMON_DEPEND="
 	vaapi? (
 		media-libs/libva:=[X?,drm(+)?,wayland?]
 		virtual/vaapi[patent_status_nonfree=]
+	)
+	vapoursynth? (
+		>=media-libs/vapoursynth-56
 	)
 	vdpau? (
 		media-libs/libglvnd[X]
@@ -294,6 +298,8 @@ src_configure() {
 		$(meson_feature soc v4l2request)
 		$(meson_feature vaapi)
 		$(meson_feature vdpau)
+
+		$(meson_feature vapoursynth)
 	)
 
 	meson_src_configure
