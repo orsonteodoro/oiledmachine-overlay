@@ -22,8 +22,10 @@ PYTHON_COMPAT=( python3_{11..14} )
 inherit cflags-hardened flag-o-matic lua-single meson optfeature pax-utils python-single-r1 xdg
 
 if [[ ${PV} == 9999 ]]; then
-	inherit git-r3
 	EGIT_REPO_URI="https://github.com/mpv-player/mpv.git"
+	FALLBACK_COMMIT="7d245fd100fc0d87edcc559b0676a326dc8c5801"
+	IUSE+=" fallback-commit"
+	inherit git-r3
 else
 	SRC_URI="https://github.com/mpv-player/mpv/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 	KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~x86"
@@ -34,7 +36,7 @@ HOMEPAGE="https://mpv.io/"
 
 LICENSE="LGPL-2.1+ GPL-2+ BSD ISC MIT" #506946
 SLOT="0/2" # soname
-IUSE="
+IUSE+="
 	${PATENT_STATUS_IUSE[@]}
 	+X +alsa aqua archive bluray cdda +cli coreaudio +curl debug +drm
 	dvb dvd +egl gamepad +iconv jack javascript jpeg lcms libcaca
@@ -201,6 +203,16 @@ PATCHES=(
 pkg_setup() {
 	use lua && lua-single_pkg_setup
 	python-single-r1_pkg_setup
+}
+
+src_unpack() {
+	if [[ ${PV} == 9999 ]]; then
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
 }
 
 src_configure() {
