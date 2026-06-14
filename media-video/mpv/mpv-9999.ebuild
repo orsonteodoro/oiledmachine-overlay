@@ -86,14 +86,14 @@ PATENT_STATUS_DEPEND="
 		!media-libs/libva
 		!x11-libs/libvdpau
 		|| (
-			media-video/ffmpeg:60.62.62[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
-			media-video/ffmpeg:0/60.62.62[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
+			>=media-video/ffmpeg-8.1:60.62.62[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
+			>=media-video/ffmpeg-8.1:0/60.62.62[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
 		)
 	)
 	patent_status_nonfree? (
 		|| (
-			media-video/ffmpeg:60.62.62[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
-			media-video/ffmpeg:0/60.62.62[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
+			>=media-video/ffmpeg-8.1:60.62.62[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
+			>=media-video/ffmpeg-8.1:0/60.62.62[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
 		)
 	)
 	media-video/ffmpeg:=
