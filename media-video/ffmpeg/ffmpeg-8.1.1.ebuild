@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# F44, G23
+
 #
 # Since FFmpeg ships several libraries, subslot is kind of limited here.  Most
 # consumers will use those three libraries, if a "less used" library changes its

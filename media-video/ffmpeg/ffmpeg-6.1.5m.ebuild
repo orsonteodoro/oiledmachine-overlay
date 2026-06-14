@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# U24
+
 # If the ebuild version has a m, the ebuild has changes to the install that
 # is ready for multislot install.
 
