@@ -304,6 +304,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/crc32c-9999;Fri, 1 Mar 2019 15:37:35 -0800"
 	"dev-libs/flatbuffers-9999;Mon, 15 Dec 2025 08:59:17 +0900"
 	"dev-libs/jsoncpp-9999;Sun, 15 Mar 2026 22:51:09 -0700"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/libffi-9999;Fri, 5 Jun 2026 18:10:53 +0800"				# Bumped live to latest non-vulnerable
 	"dev-libs/libxml2-9999;Wed, 15 Apr 2026 12:11:20 +0200"				# Bumped live to latest non-vulnerable
 	"dev-libs/libxslt-9999;Sun, 30 Nov 2025 00:51:29 -0600"
 	"dev-libs/re2-9999;Thu, 22 Jan 2026 16:05:23 -0500"
@@ -332,6 +333,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/freetype-9999;Sat, 9 May 2026 09:51:56 -0400"			# Bumped live to latest non-vulnerable
 	"media-libs/harfbuzz-9999;Mon, 27 Apr 2026 19:30:28 -0600"
 	"media-libs/libjpeg-turbo-9999;Wed, 3 Jun 2026 09:43:18 -0400"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libpulse-9999;Thu, 7 Aug 2025 15:45:26 -0600"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libwebp-9999;Fri, 22 May 2026 11:45:40 +0200"			# Bumped live to latest non-vulnerable
 	"media-libs/libvpx-9999;Thu, 30 Apr 2026 12:42:58 -0400"
 	"media-libs/libyuv-9999;Thu, 9 Apr 2026 11:03:54 -0700"
@@ -1565,7 +1567,7 @@ COMMON_SNAPSHOT_DEPEND="
 			virtual/krb5[${MULTILIB_USEDEP}]
 		)
 		pulseaudio? (
-			>=media-libs/libpulse-14.2[${MULTILIB_USEDEP}]
+			>=media-libs/libpulse-9999[${MULTILIB_USEDEP}]
 			media-libs/libpulse:=
 		)
 		vaapi? (
@@ -1573,7 +1575,7 @@ COMMON_SNAPSHOT_DEPEND="
 			media-libs/libva:=
 		)
 		wayland? (
-			>=dev-libs/libffi-3.3[${MULTILIB_USEDEP}]
+			>=dev-libs/libffi-9999[${MULTILIB_USEDEP}]
 			dev-libs/libffi:=
 			>=dev-libs/wayland-1.24.0[${MULTILIB_USEDEP}]
 			dev-libs/wayland:=
