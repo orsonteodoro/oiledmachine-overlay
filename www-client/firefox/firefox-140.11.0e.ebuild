@@ -210,7 +210,7 @@ VIRTUALX_REQUIRED="manual"
 CHKL_TIMESTAMPS=(
 # The timestamp and bump policy based on NVD or commit logs.  See vf.eclass for list of vulnerabilities.
 # Only security-critical packages and packages with live ebuilds are listed.
-	# Last vulnerability check 20260613
+	# Last vulnerability check 20260614
 	"app-accessibility/at-spi2-core-9999;Sat, 23 May 2026 08:21:47 -0500"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"app-accessibility/speech-dispatcher-9999;Tue, 6 May 2025 20:53:18 +0200"	# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/expat-9999;Tue, 26 May 2026 15:15:10 +0200"				# Bumped live/*DEPENDS to latest non-vulnerable
@@ -220,6 +220,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/nspr-9999;10-May-2026 13:13"
 	"dev-libs/nss-9999;Thu, 23 Apr 2026 12:27:46 -0700"
 	"media-gfx/graphite2-9999;Wed, 1 Apr 2020 09:53:13 +0700"
+	"media-libs/alsa-lib-9999;Mon, 1 Jun 2026 10:04:24 +0200"
 	"media-libs/dav1d-9999;Sun, 15 Dec 2024 21:16:21 +0100"
 	"media-libs/freetype-9999;Sun, 11 Aug 2024 20:30:23 +0200"
 	"media-libs/harfbuzz-9999;Mon, 28 Apr 2025 14:28:29 +0300"
@@ -239,7 +240,7 @@ CHKL_TIMESTAMPS=(
 	"net-libs/nodejs-99999999;Mon, 11 May 2026 16:44:05 +0200"
 	"net-misc/connman-9999;2026-02-09 15:45:56 +0100"				# Bumped live/*DEPENDS to latest non-vulnerable
 	"net-misc/networkmanager-9999;Thu, 12 Feb 2026 23:14:41 +0100"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"net-print/cups-9999;Fri, 17 Apr 2026 14:22:45 +0200"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"net-print/cups-9999;Fri, 12 Jun 2026 17:18:05 -0400"				# Bumped live/*DEPENDS to latest non-vulnerable
 	"sys-apps/systemd-9999;Thu, 12 Mar 2026 17:12:46 +0000"				# Bumped live/*DEPENDS to latest non-vulnerable
 	"x11-libs/cairo-9999;Sat, 8 Mar 2025 12:35:35 +0000"				# Bumped live/*DEPENDS to latest non-vulnerable
 	"x11-libs/gdk-pixbuf-9999;Tue, 14 May 2024 22:15:41 -0400"			# Bumped live/*DEPENDS to latest non-vulnerable
@@ -686,7 +687,7 @@ CDEPEND="
 	>=dev-libs/expat-2.8.2[${MULTILIB_USEDEP}]
 	>=dev-libs/libffi-3.4.8[${MULTILIB_USEDEP}]
 	dev-libs/libffi:=
-	media-libs/alsa-lib[${MULTILIB_USEDEP}]
+	>=media-libs/alsa-lib-1.2.16[${MULTILIB_USEDEP}]
 	virtual/freedesktop-icon-theme
 	>=x11-libs/cairo-1.18.4[${MULTILIB_USEDEP}]
 	>=x11-libs/gdk-pixbuf-2.42.10:2[${MULTILIB_USEDEP}]
@@ -790,7 +791,7 @@ RDEPEND+="
 	sys-kernel/mitigate-id
 	virtual/patent-status[patent_status_nonfree=]
 	cups? (
-		>=net-print/cups-2.14.7[${MULTILIB_USEDEP}]
+		>=net-print/cups-9999[${MULTILIB_USEDEP}]
 	)
 	jack? (
 		virtual/jack[${MULTILIB_USEDEP}]
