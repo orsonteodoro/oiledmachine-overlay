@@ -340,7 +340,6 @@ CHKL_TIMESTAMPS=(
 	"media-libs/woff2-9999;Wed, 15 Apr 2026 15:38:51 -0700"
 	"media-video/ffmpeg-9999;Thu, 11 Jun 2026 16:34:26 +0200"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-video/ffmpeg-9999m;Thu, 11 Jun 2026 16:34:26 +0200"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-video/ffmpeg-chromium-9999;Thu, 11 Jun 2026 16:34:26 +0200"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"net-libs/nodejs-99999999;Tue, 12 May 2026 05:17:56 -0400"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"net-print/cups-9999;Fri, 12 Jun 2026 17:18:05 -0400"				# Bumped live/*DEPENDS to latest non-vulnerable
 	"x11-libs/libdrm-9999;Wed, 26 Jun 2024 10:13:31 +0200"
