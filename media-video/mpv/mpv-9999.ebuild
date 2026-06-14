@@ -19,7 +19,7 @@ FFMPEG_COMPAT_SLOTS=(
 
 LUA_COMPAT=( lua5-1 luajit )
 PYTHON_COMPAT=( python3_{11..14} )
-inherit flag-o-matic lua-single meson optfeature pax-utils python-single-r1 xdg
+inherit cflags-hardened flag-o-matic lua-single meson optfeature pax-utils python-single-r1 xdg
 
 if [[ ${PV} == 9999 ]]; then
 	inherit git-r3
@@ -41,6 +41,7 @@ IUSE="
 	+libmpv +lua network nvenc openal pipewire pulseaudio rubberband sdl
 	selinux sixel sndio soc subrandr test tools +uchardet vaapi vdpau
 	+vulkan wayland xv zimg zlib
+	ebuild_revision_1
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
