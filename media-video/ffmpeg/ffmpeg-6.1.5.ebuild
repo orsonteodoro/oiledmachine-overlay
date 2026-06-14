@@ -4,7 +4,7 @@
 
 EAPI=8
 
-# 7.0.1 -> 7.0.2
+# 6.1.1 -> 6.1.2
 
 #
 # Since FFmpeg ships several libraries, subslot is kind of limited here.  Most
@@ -21,7 +21,7 @@ MY_PV="${PV/m/}"
 MY_P="${PN}-${MY_PV}"
 MY_PVR="${PVR/m/}"
 FFMPEG_REVISION="${MY_PV#*_p}"
-FFMPEG_SUBSLOT="59.61.61" # libavutil_major.libavcodec_major.libavformat_major
+FFMPEG_SUBSLOT="58.60.60" # libavutil_major.libavcodec_major.libavformat_major
 
 CFLAGS_HARDENED_ASSEMBLERS="gas inline nasm yasm"
 CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan lsan msan tsan ubsan"
@@ -29,10 +29,9 @@ CFLAGS_HARDENED_LANGS="asm c-lang"
 CFLAGS_HARDENED_SSP_LEVEL=3 # SSP all is upstream default
 CFLAGS_HARDENED_USE_CASES="network security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS HO IO MC NPD OOBR OOBW RC SO UAF"
-FFMPEG_SOC_PATCH="ffmpeg-rpi-7.0.patch"
+FFMPEG_SOC_PATCH="ffmpeg-rpi-6.1-r3.patch"
 N_SAMPLES=1
-NV_CODEC_HEADERS_PV="9.1.23.1"
-PYTHON_COMPAT=( "python3_"{12..13} ) # U24.10
+PYTHON_COMPAT=( "python3_12" ) # U24
 SCM=""
 TRAIN_SANDBOX_EXCEPTION_VAAPI=1
 UOPTS_SUPPORT_EBOLT=1
@@ -184,7 +183,6 @@ FFMPEG_FLAG_MAP=(
 	"lcms:lcms2"
 	"libass"
 	"libplacebo"
-	"libquirc"
 	"lv2"
 	"ocr:libtesseract"
 	"truetype:libfreetype"
@@ -211,14 +209,6 @@ PATENT_STATUS=(
 	"patent_status_nonfree"
 )
 
-PYTORCH_VERSIONS=(
-	"2.3.0"
-	"2.2.2"
-	"2.1.2"
-	"2.0.1"
-	"1.13.1"
-)
-
 USE_LICENSES=(
 	"gpl"
 	"nonfree"
@@ -227,7 +217,6 @@ USE_LICENSES=(
 
 USE_GPL_ONLY=(
 	"cdio"
-	"dvdvideo"
 	"frei0r"
 	"rubberband"
 	"vidstab"
@@ -396,6 +385,7 @@ CPU_FEATURES_MAP=(
 	${PPC_CPU_FEATURES[@]}
 	${X86_CPU_FEATURES[@]}
 )
+
 CPU_REQUIRED_USE="
 	${ARM_CPU_REQUIRED_USE}
 	${PPC_CPU_REQUIRED_USE}
@@ -536,16 +526,21 @@ ${FFMPEG_SOC_PATCH:+soc}
 ${FFTOOLS[@]/#/+fftools_}
 ${PATENT_STATUS[@]}
 ${USE_LICENSES[@]}
-alsa -clear-config-first cuda cuda-filters doc dvdvideo +encode gdbm
-liblensfun libqrencode mold openvino oss pgo +re-codecs sndio sr static-libs
-tensorflow test torch v4l wayland
+alsa -clear-config-first cuda cuda-filters doc +encode gdbm liblensfun
+mold openvino oss pgo +re-codecs sndio soc sr static-libs tensorflow test v4l
+wayland
 ebuild_revision_59
 "
 
+# x means plus.  There is a bug in the USE flag system where + is not recognized.
+# You can't go backwards if you relicense.  This is why it is mutex.
+#	^^ ( gpl2 lgpl2_1 )
+# The relicense covers copying the headers which may contain inline code.
+# The linking should be about the same.
+# See also https://www.gnu.org/licenses/gpl-faq.html#AllCompatibility
+
 # The distro has frei0r-plugins as GPL-2 only but source is actually GPL-2+, GPL-3+ [baltan.cpp], LGPL-2.1+ [nois0r.cpp].
 # The distro has libcdio as GPL-3 only but the source is GPL-3+, LGPL-2.1+.
-# The distro has libdvdnav as GPL-2 but the source is LGPL-2.1+, GPL-2+.
-# The distro has libdvdread GPL-2 GPL-3 but the source is GPL-2+ except for nav_print.c which is GPL-2.
 # The distro has rtmpdump as LGPL-2.1 tools? ( GPL-2 ) but the source is LGPL-2.1+ tools? ( GPL-2+ ).
 # The distro has rubberband as GPL-2 only but the source is GPL-2+.
 # The distro has samba as GPL-3 only but the source is GPL-3+.
@@ -554,11 +549,10 @@ ebuild_revision_59
 # The distro has x265 as GPL-2 only but the source is GPL-2+.
 # The distro has xvid as GPL-2 only but the source is GPL-2+.
 
-# configure puts libdvdnav and libdvdread both under GPL-2.
-
 # dav1d is BSD-2
 # MPL-2.0 is indirect compatible with the GPL-2, LGPL-2.1 -- with exceptions.  \
 #   For details see: https://www.gnu.org/licenses/license-list.html#MPL-2.0
+
 # GPL_REQUIRED_USE moved to LICENSE_REQUIRED_USE
 # FIXME: fix missing symbols with -re-codecs
 
@@ -721,11 +715,6 @@ REQUIRED_USE+="
 	gnutls? (
 		!openssl
 	)
-	libplacebo? (
-		sdl? (
-			vulkan
-		)
-	)
 	libv4l? (
 		v4l
 	)
@@ -803,22 +792,10 @@ if [[ -n "${FFMPEG_SOC_PATCH}" ]] ; then
 	"
 fi
 
-gen_pytorch_rdepend() {
-	local ver
-	for ver in ${PYTORCH_VERSIONS[@]} ; do
-		echo "
-			(
-				sys-devel/gcc[cxx]
-				~sci-ml/pytorch-${ver}[${PYTHON_SINGLE_USEDEP}]
-				~sci-ml/caffe2-${ver}[${PYTHON_SINGLE_USEDEP}]
-			)
-		"
-	done
-}
-
 # Only vaapi_x11 and vaapi_drm checks.  No vaapi_wayland checks in configure.
 # Update both !openssl and openssl USE flags.
 RDEPEND+="
+	${LICENSE_RDEPEND}
 	virtual/patent-status[patent_status_nonfree=]
 	!openssl? (
 		gnutls? (
@@ -864,15 +841,11 @@ RDEPEND+="
 			)
 		)
 	)
-	dav1d? (
-		>=media-libs/dav1d-0.5.0:0=[${MULTILIB_USEDEP}]
-	)
 	drm? (
 		x11-libs/libdrm[${MULTILIB_USEDEP}]
 	)
-	dvdvideo? (
-		>=media-libs/libdvdnav-6.1.1[${MULTILIB_USEDEP}]
-		>=media-libs/libdvdread-6.1.2[${MULTILIB_USEDEP}]
+	dav1d? (
+		>=media-libs/dav1d-0.5.0:0=[${MULTILIB_USEDEP}]
 	)
 	encode? (
 		amrenc? (
@@ -885,7 +858,7 @@ RDEPEND+="
 			>=media-sound/lame-3.99.5-r1[${MULTILIB_USEDEP}]
 		)
 		openh264? (
-			>=media-libs/openh264-1.3.0:=[${MULTILIB_USEDEP}]
+			>=media-libs/openh264-1.4.0-r1:=[${MULTILIB_USEDEP}]
 		)
 		rav1e? (
 			>=media-video/rav1e-0.5:=[capi]
@@ -987,13 +960,7 @@ RDEPEND+="
 		media-libs/lensfun
 	)
 	libplacebo? (
-		>=media-libs/libplacebo-4.192.0[$MULTILIB_USEDEP,vulkan?]
-	)
-	libquirc? (
-		media-libs/quirc[${MULTILIB_USEDEP}]
-	)
-	libqrencode? (
-		media-gfx/qrencode
+		>=media-libs/libplacebo-4.192.0[$MULTILIB_USEDEP]
 	)
 	librtmp? (
 		>=media-video/rtmpdump-2.4_p20131018[${MULTILIB_USEDEP}]
@@ -1086,14 +1053,10 @@ RDEPEND+="
 	)
 	svt-av1? (
 		>=media-libs/svt-av1-0.9.0[${MULTILIB_USEDEP}]
+		media-libs/svt-av1:=
 	)
 	tensorflow? (
 		>=sci-ml/tensorflow-2[${PYTHON_SINGLE_USEDEP}]
-	)
-	torch? (
-		|| (
-			$(gen_pytorch_rdepend)
-		)
 	)
 	truetype? (
 		>=media-libs/freetype-2.5.0.1:2[${MULTILIB_USEDEP}]
@@ -1120,7 +1083,7 @@ RDEPEND+="
 		>=media-libs/libvpx-1.4.0:=[${MULTILIB_USEDEP}]
 	)
 	vulkan? (
-		>=media-libs/vulkan-loader-1.3.277:=[${MULTILIB_USEDEP}]
+		>=media-libs/vulkan-loader-1.3.255:=[${MULTILIB_USEDEP}]
 		media-libs/vulkan-drivers[${MULTILIB_USEDEP}]
 	)
 	X? (
@@ -1221,18 +1184,20 @@ PDEPEND+="
 "
 PATCHES=(
 	"${FILESDIR}/chromium-r2.patch"
-#	"${FILESDIR}/${PN}-6.1-wint-conversion.patch"
-#	"${FILESDIR}/${PN}-6.0-fix-lto-type-mismatch.patch"
+	"${FILESDIR}/${PN}-6.1-wint-conversion.patch"
+	"${FILESDIR}/${PN}-6.0-fix-lto-type-mismatch.patch"
 	"${FILESDIR}/${PN}-6.1-opencl-parallel-gmake-fix.patch"
-##	"${FILESDIR}/${PN}-6.1-gcc-14.patch"
-#	"${FILESDIR}/${PN}-6.0.1-alignment.patch"
-#	"${FILESDIR}/${PN}-6.1.1-vulkan-rename.patch"
+	"${FILESDIR}/${PN}-6.1-gcc-14.patch"
+	"${FILESDIR}/${PN}-6.0.1-alignment.patch"
+	"${FILESDIR}/${PN}-6.1.1-wint-inconversion-libgcrypt.patch"
+	"${FILESDIR}/${PN}-6.1.1-amd-av1-vaapi.patch"
+
 #	"${FILESDIR}/${PN}-6.1.1-memory-leak.patch"
 	"${FILESDIR}/extra-patches/${PN}-5.1.2-allow-7regs.patch"			# Added by oiledmachine-overlay
 	"${FILESDIR}/extra-patches/${PN}-5.1.2-configure-non-free-options.patch"	# Added by oiledmachine-overlay
 	"${FILESDIR}/extra-patches/${PN}-4.4.4-no-m32-or-m64-for-nvcc.patch"
-	"${FILESDIR}/extra-patches/${PN}-7.1-add-includes-hwcontext_vulkan.patch"
-	"${FILESDIR}/extra-patches/${PN}-7.0.2-glslang-fix-configure-test.patch"
+	"${FILESDIR}/extra-patches/${PN}-5.1.6-glslang-fix-configure-test.patch"
+	"${FILESDIR}/extra-patches/${PN}-6.1.2-backport-5860a96.patch"
 	"${FILESDIR}/extra-patches/${PN}-6.1.3-svt-av1-backport-d1ed5c0.patch"
 )
 
@@ -1248,14 +1213,6 @@ get_av_device_ids() {
 			echo "FFMPEG_TRAINING_${t}_${i}"
 		done
 	done
-	if use tensorflow ; then
-		insinto "/usr/share/${PN}/scripts"
-		local L=(
-			"tf_sess_config.py"
-		)
-		doins ${L[@]}
-		fperms 0775 ${L[@]}
-	fi
 }
 
 get_video_sample_ids() {
@@ -1664,10 +1621,10 @@ src_prepare() {
 
 	# -fdiagnostics-color=auto gets appended after user flags which
 	# will ignore user's preference.
-	sed -i -e '/check_cflags -fdiagnostics-color=auto/d' configure || die
+	sed -i -e '/check_cflags -fdiagnostics-color=auto/d' "configure" || die
 
-	ln -snf "${FILESDIR}/chromium.c" chromium.c || die
-	echo 'include $(SRC_PATH)/ffbuild/libffmpeg.mak' >> Makefile || die
+	ln -snf "${FILESDIR}/chromium.c" "chromium.c" || die
+	echo 'include $(SRC_PATH)/ffbuild/libffmpeg.mak' >> "Makefile" || die
 
 	# Handle *FLAGS here to avoid repeating for each ABI below (bug #923491)
 	LTO_FLAG=
@@ -2029,18 +1986,6 @@ eerror
 		)
 	fi
 
-	if use dvdvideo ; then
-		myconf+=(
-			--enable-libdvdnav
-			--enable-libdvdread
-		)
-	else
-		myconf+=(
-			--disable-libdvdnav
-			--disable-libdvdread
-		)
-	fi
-
 	if use liblensfun && multilib_is_native_abi ; then
 		myconf+=(
 			$(use_enable liblensfun liblensfun)
@@ -2048,16 +1993,6 @@ eerror
 	else
 		myconf+=(
 			--disable-liblensfun
-		)
-	fi
-
-	if use libqrencode && multilib_is_native_abi ; then
-		myconf+=(
-			$(use_enable libqrencode libqrencode)
-		)
-	else
-		myconf+=(
-			--disable-libqrencode
 		)
 	fi
 
@@ -2118,16 +2053,6 @@ eerror
 	else
 		myconf+=(
 			--disable-libtensorflow
-		)
-	fi
-
-	if use torch && multilib_is_native_abi ; then
-		myconf+=(
-			$(use_enable torch libtorch)
-		)
-	else
-		myconf+=(
-			--disable-libtorch
 		)
 	fi
 

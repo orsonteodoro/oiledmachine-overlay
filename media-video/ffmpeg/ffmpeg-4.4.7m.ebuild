@@ -4,8 +4,9 @@
 
 EAPI=8
 
-#
-# Subslot: libavutil_major.libavcodec_major.libavformat_major
+# If the ebuild version has a m, the ebuild has changes to the install that
+# is ready for multislot install.
+
 #
 # Since FFmpeg ships several libraries, subslot is kind of limited here.  Most
 # consumers will use those three libraries, if a "less used" library changes its
@@ -20,6 +21,8 @@ EAPI=8
 MY_PV="${PV/m/}"
 MY_P="${PN}-${MY_PV}"
 MY_PVR="${PVR/m/}"
+FFMPEG_REVISION="${MY_PV#*_p}"
+FFMPEG_SUBSLOT="56.58.58" # libavutil_major.libavcodec_major.libavformat_major
 
 CFLAGS_HARDENED_ASSEMBLERS="gas inline nasm yasm"
 CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan lsan msan tsan ubsan"
@@ -27,8 +30,6 @@ CFLAGS_HARDENED_LANGS="asm c-lang"
 CFLAGS_HARDENED_SSP_LEVEL=3 # SSP all is upstream default
 CFLAGS_HARDENED_USE_CASES="network security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS HO IO MC NPD OOBR OOBW RC SO UAF"
-FFMPEG_REVISION="${MY_PV#*_p}"
-FFMPEG_SUBSLOT="56.58.58"
 N_SAMPLES=1
 PYTHON_COMPAT=( "python3_"{10..11} ) # U22
 SCM=""
@@ -97,6 +98,7 @@ FFMPEG_ENCODER_FLAG_MAP=(
 # or $(use_enable foo foo) if no :bar is set.
 # foo is added to IUSE.
 FFMPEG_FLAG_MAP=(
+	${FFMPEG_UNSLOTTED:+doc:^htmlpages}
 	"+bzip2:bzlib"
 	"cpudetection:runtime-cpudetect"
 	"debug"
@@ -133,9 +135,9 @@ FFMPEG_FLAG_MAP=(
 	"opengl"
 
 	# Indevs
+	"drm:libdrm"
 	"libv4l:libv4l2"
 	"pulseaudio:libpulse"
-	"libdrm"
 	"jack:libjack"
 
 	# Decoders
@@ -179,8 +181,8 @@ FFMPEG_FLAG_MAP=(
 	"glslang:libglslang"
 	"ladspa"
 	"libass"
-	"libtesseract"
 	"lv2"
+	"ocr:libtesseract"
 	"truetype:libfreetype"
 	"vidstab:libvidstab"
 	"rubberband:librubberband"
@@ -393,12 +395,18 @@ CPU_REQUIRED_USE="
 
 # +re-codecs is based on unpatched behavior to prevent breaking changes.
 
+if [[ "${PV}" =~ "m" ]] ; then
+	FFMPEG_UNSLOTTED=
+else
+	FFMPEG_UNSLOTTED=1
+fi
+
 inherit cflags-hardened check-compiler-switch cuda flag-o-matic flag-o-matic-om llvm multilib
 inherit multilib-minimal python-single-r1 toolchain-funcs uopts
 
 if [[ "${MY_PV#9999}" == "${MY_PV}" ]] ; then
 	KEYWORDS="
-~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86
+~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86
 	"
 fi
 if [[ "${MY_PV#9999}" != "${MY_PV}" ]] ; then
@@ -492,10 +500,11 @@ ${CPU_FEATURES_MAP[@]%:*}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${FFMPEG_ENCODER_FLAG_MAP[@]%:*}
 ${FFMPEG_FLAG_MAP[@]%:*}
+${FFMPEG_UNSLOTTED:+chromium}
 ${FFTOOLS[@]/#/+fftools_}
 ${PATENT_STATUS[@]}
 ${USE_LICENSES[@]}
-alsa chromium -clear-config-first cuda cuda-filters doc +encode gdbm liblensfun
+alsa -clear-config-first cuda cuda-filters doc +encode gdbm liblensfun
 mold openvino oss pgo +re-codecs sndio sr static-libs tensorflow test v4l
 wayland
 ebuild_revision_59
@@ -624,10 +633,10 @@ PATENT_REQUIRED_USE="
 	vaapi? (
 		patent_status_nonfree
 	)
-	vulkan? (
+	vdpau? (
 		patent_status_nonfree
 	)
-	vdpau? (
+	vulkan? (
 		patent_status_nonfree
 	)
 	x264? (
@@ -640,6 +649,7 @@ PATENT_REQUIRED_USE="
 
 REQUIRED_USE+="
 	${CPU_REQUIRED_USE}
+	${FFMPEG_UNSLOTTED:+chromium? ( opus )}
 	${PATENT_REQUIRED_USE}
 	${REQUIRED_USE_LICENSES}
 	!kernel_linux? (
@@ -800,6 +810,9 @@ RDEPEND+="
 	dav1d? (
 		>=media-libs/dav1d-0.4.0:0=[${MULTILIB_USEDEP}]
 	)
+	drm? (
+		x11-libs/libdrm[${MULTILIB_USEDEP}]
+	)
 	encode? (
 		amrenc? (
 			>=media-libs/vo-amrwbenc-0.1.2-r1[${MULTILIB_USEDEP}]
@@ -859,6 +872,7 @@ RDEPEND+="
 	)
 	glslang? (
 		dev-util/glslang:=[${MULTILIB_USEDEP}]
+		dev-util/spirv-tools:=[${MULTILIB_USEDEP}]
 	)
 	gme? (
 		>=media-libs/game-music-emu-0.6.0[${MULTILIB_USEDEP}]
@@ -899,9 +913,6 @@ RDEPEND+="
 	libcaca? (
 		>=media-libs/libcaca-0.99_beta18-r1[${MULTILIB_USEDEP}]
 	)
-	libdrm? (
-		x11-libs/libdrm[${MULTILIB_USEDEP}]
-	)
 	libilbc? (
 		>=media-libs/libilbc-2[${MULTILIB_USEDEP}]
 	)
@@ -913,9 +924,6 @@ RDEPEND+="
 	)
 	libsoxr? (
 		>=media-libs/soxr-0.1.0[${MULTILIB_USEDEP}]
-	)
-	libtesseract? (
-		>=app-text/tesseract-4.1.0-r1[${MULTILIB_USEDEP}]
 	)
 	libv4l? (
 		>=media-libs/libv4l-0.9.5[${MULTILIB_USEDEP}]
@@ -940,6 +948,9 @@ RDEPEND+="
 		elibc_glibc? (
 			sys-libs/glibc[nscd]
 		)
+	)
+	ocr? (
+		>=app-text/tesseract-4.1.0-r1[${MULTILIB_USEDEP}]
 	)
 	openal? (
 		>=media-libs/openal-1.15.1[${MULTILIB_USEDEP}]
@@ -1066,6 +1077,7 @@ DEPEND+="
 BDEPEND+="
 	>=dev-build/make-3.81
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
+	dev-util/patchelf
 	cpu_flags_x86_mmx? (
 		|| (
 			>=dev-lang/nasm-2.13
@@ -1093,6 +1105,14 @@ BDEPEND+="
 		)
 	)
 "
+if [[ "${FFMPEG_UNSLOTTED}" == "1" ]] ; then
+	BDEPEND+="
+		dev-lang/perl
+		doc? (
+			sys-apps/texinfo
+		)
+	"
+fi
 PDEPEND+="
 	pgo? (
 		media-video/ffmpeg[encode,${MULTILIB_USEDEP}]
@@ -1685,6 +1705,12 @@ _src_configure() {
 	local extra_libs=()
 	local myconf=()
 
+	if [[ -z ${FFMPEG_UNSLOTTED} ]]; then
+		conf+=(
+			--disable-doc
+		)
+	fi
+
 einfo "Configuring ${lib_type} with PGO_PHASE=${PGO_PHASE}"
 
 	if use clear-config-first ; then
@@ -2029,22 +2055,36 @@ einfo "Detected compiler switch.  Disabling LTO."
 		myconf+=(
 			--enable-cross-compile
 			--arch=$(tc-arch-kernel)
-			--cross-prefix=${CHOST}-
+			--cross-prefix="${CHOST}-"
 			--host-cc="$(tc-getBUILD_CC)"
 		)
-		case ${CHOST} in
-			*mingw32*)
+		case "${CHOST}" in
+			*"mingw32"*)
 				myconf+=(
 					--target-os=mingw32
 				)
 				;;
-			*linux*)
+			*"linux"*)
 				myconf+=(
 					--target-os=linux
 				)
 				;;
 		esac
 	fi
+
+	# Skipping tests is handled at configure-time.
+	local skip_tests=()
+
+	# zlib-ng is not bitexact w/ zlib producing mismatching md5sum (bug #965737)
+	has_version 'sys-libs/zlib-ng[compat]' &&
+		skip_tests+=(
+			"lavf-"{"apng"{"",".png"},"gray16be.png","png","rgb48be.png"}
+			"mov-mp4-frag-flush"
+			"vsynth"{"1","2","3"}-{"flashsv","mpng","zlib"}
+		)
+
+	(( ${#skip_tests[@]} )) \
+		&& myconf+=( --ignore-tests=$(IFS=,; echo "${skip_tests[*]}") )
 
 	# Doc
 	myconf+=(

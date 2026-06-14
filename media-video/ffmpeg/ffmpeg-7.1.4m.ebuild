@@ -4,8 +4,6 @@
 
 EAPI=8
 
-# 7.0.1 -> 7.0.2
-
 #
 # Since FFmpeg ships several libraries, subslot is kind of limited here.  Most
 # consumers will use those three libraries, if a "less used" library changes its
@@ -29,10 +27,10 @@ CFLAGS_HARDENED_LANGS="asm c-lang"
 CFLAGS_HARDENED_SSP_LEVEL=3 # SSP all is upstream default
 CFLAGS_HARDENED_USE_CASES="network security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS HO IO MC NPD OOBR OOBW RC SO UAF"
-FFMPEG_SOC_PATCH="ffmpeg-rpi-7.0.patch"
+FFMPEG_SOC_PATCH="ffmpeg-rpi-7.1.1.patch"
 N_SAMPLES=1
 NV_CODEC_HEADERS_PV="9.1.23.1"
-PYTHON_COMPAT=( "python3_"{12..13} ) # U24.10
+PYTHON_COMPAT=( "python3_"{13..14} ) # D13, F42, F43, U25
 SCM=""
 TRAIN_SANDBOX_EXCEPTION_VAAPI=1
 UOPTS_SUPPORT_EBOLT=1
@@ -80,6 +78,7 @@ FFMPEG_ENCODER_FLAG_MAP=(
 	"amrenc:libvo-amrwbenc"
 	"kvazaar:libkvazaar"
 	"libaom"
+	"libvvenc"
 	"mp3:libmp3lame"
 	"openh264:libopenh264"
 	"rav1e:librav1e"
@@ -152,6 +151,7 @@ FFMPEG_FLAG_MAP=(
 	"gme:libgme"
 	"gsm:libgsm"
 	"libaribb24"
+	"liblc3"
 	"mmal"
 	"modplug:libmodplug"
 	"opus:libopus"
@@ -396,6 +396,7 @@ CPU_FEATURES_MAP=(
 	${PPC_CPU_FEATURES[@]}
 	${X86_CPU_FEATURES[@]}
 )
+
 CPU_REQUIRED_USE="
 	${ARM_CPU_REQUIRED_USE}
 	${PPC_CPU_REQUIRED_USE}
@@ -422,8 +423,7 @@ inherit multilib-minimal python-single-r1 toolchain-funcs uopts
 
 if [[ "${MY_PV#9999}" == "${MY_PV}" ]] ; then
 	KEYWORDS="
-~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390
-~sparc ~x86
+~amd64 ~arm ~arm64 ~hppa ~loong ~m64k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86
 	"
 fi
 if [[ "${MY_PV#9999}" != "${MY_PV}" ]] ; then
@@ -537,8 +537,8 @@ ${FFTOOLS[@]/#/+fftools_}
 ${PATENT_STATUS[@]}
 ${USE_LICENSES[@]}
 alsa -clear-config-first cuda cuda-filters doc dvdvideo +encode gdbm
-liblensfun libqrencode mold openvino oss pgo +re-codecs sndio sr static-libs
-tensorflow test torch v4l wayland
+liblensfun libqrencode mold openvino oss pgo pipewire +re-codecs sndio sr
+static-libs tensorflow test torch v4l wayland
 ebuild_revision_59
 "
 
@@ -819,6 +819,7 @@ gen_pytorch_rdepend() {
 # Only vaapi_x11 and vaapi_drm checks.  No vaapi_wayland checks in configure.
 # Update both !openssl and openssl USE flags.
 RDEPEND+="
+	${LICENSE_RDEPEND}
 	virtual/patent-status[patent_status_nonfree=]
 	!openssl? (
 		gnutls? (
@@ -983,6 +984,9 @@ RDEPEND+="
 	libilbc? (
 		>=media-libs/libilbc-2[${MULTILIB_USEDEP}]
 	)
+	liblc3? (
+		>=media-sound/liblc3-1.1.0[$MULTILIB_USEDEP]
+	)
 	liblensfun? (
 		media-libs/lensfun
 	)
@@ -1003,6 +1007,9 @@ RDEPEND+="
 	)
 	libv4l? (
 		>=media-libs/libv4l-0.9.5[${MULTILIB_USEDEP}]
+	)
+	libvvenc? (
+		>=media-libs/vvenc-1.6.1
 	)
 	libxml2? (
 		dev-libs/libxml2:=[${MULTILIB_USEDEP}]
@@ -1233,7 +1240,6 @@ PATCHES=(
 	"${FILESDIR}/extra-patches/${PN}-4.4.4-no-m32-or-m64-for-nvcc.patch"
 	"${FILESDIR}/extra-patches/${PN}-7.1-add-includes-hwcontext_vulkan.patch"
 	"${FILESDIR}/extra-patches/${PN}-7.0.2-glslang-fix-configure-test.patch"
-	"${FILESDIR}/extra-patches/${PN}-6.1.3-svt-av1-backport-d1ed5c0.patch"
 )
 
 get_av_device_ids() {
