@@ -20,7 +20,13 @@ FFMPEG_COMPAT_SLOTS=(
 
 LUA_COMPAT=( lua5-1 luajit )
 PYTHON_COMPAT=( python3_{11..14} )
-inherit cflags-hardened flag-o-matic lua-single meson optfeature pax-utils python-single-r1 xdg
+
+CHKL_TIMESTAMPS=(
+	"media-video-9999;Thu, 11 Jun 2026 16:34:26 +0200"
+	"media-video-9999m;Thu, 11 Jun 2026 16:34:26 +0200"
+)
+
+inherit cflags-hardened chkl flag-o-matic lua-single meson optfeature pax-utils python-single-r1 xdg
 
 if [[ ${PV} == 9999 ]]; then
 	EGIT_REPO_URI="https://github.com/mpv-player/mpv.git"
@@ -212,6 +218,7 @@ pkg_setup() {
 }
 
 src_unpack() {
+	chkl_check_many_timestamps
 	if [[ ${PV} == 9999 ]]; then
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
