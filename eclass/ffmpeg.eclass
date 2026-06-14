@@ -67,7 +67,7 @@ FFMPEG_COMPAT_SLOTS_LTS=(
 # @DESCRIPTION:
 # Adds all FFmpeg rolling slots
 FFMPEG_COMPAT_SLOTS_ROLLING=(
-	"60.62.62" # 8, F44
+	"60.62.62" # 8, F44, G23
 	"59.61.61" # 7, F43
 )
 
