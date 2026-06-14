@@ -291,7 +291,7 @@ CHKL_TIMESTAMPS=(
 # The timestamp policy most recent version patched version vulnerabilities or head-snapshot provided by upstream.
 # All used live security-critical system packages and live ebuilds must be verified.
 # See vf.eclass for a list of vulnerabilities.
-# Last vulnerability check 20260613
+# Last vulnerability check 20260614
 	"app-arch/brotli-9999;Sun, 19 Apr 2026 17:14:00 +0000"				# Bumped live to latest non-vulnerable
 	"app-arch/snappy-9999;Sat, 17 Aug 2024 19:03:10 -0700"
 	"app-arch/zstd-9999;Tue, 17 Mar 2026 13:08:14 -0700"
@@ -307,7 +307,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/libxml2-9999;Wed, 15 Apr 2026 12:11:20 +0200"				# Bumped live to latest non-vulnerable
 	"dev-libs/libxslt-9999;Sun, 30 Nov 2025 00:51:29 -0600"
 	"dev-libs/re2-9999;Thu, 22 Jan 2026 16:05:23 -0500"
-	"dev-libs/wayland-9999;Sun, 6 Jul 2025 14:11:26 +0200"
+	"dev-libs/wayland-9999;Thu, 26 Mar 2026 16:38:38 +0800"				# Bumped live to latest non-vulnerable
 	"dev-lang/rust-9999;Fri, 27 Feb 2026 09:38:23 -0800"
 	"dev-lang/rust-bin-9999;Fri, 27 Feb 2026 09:38:23 -0800"
 	"dev-util/spirv-headers-9999;Thu, 30 Apr 2026 22:51:58 +0200"
@@ -326,17 +326,19 @@ CHKL_TIMESTAMPS=(
 	"llvm-runtimes/libcxx-23.0.0.9999;Thu, 9 Apr 2026 18:28:25 +0200"
 	"llvm-runtimes/libcxxabi-9999;Thu, 9 Apr 2026 18:28:25 +0200"
 	"llvm-runtimes/libcxxabi-23.0.0.9999;Thu, 9 Apr 2026 18:28:25 +0200"
+	"media-libs/alsa-lib-9999;Mon, 1 Jun 2026 10:04:24 +0200"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/dav1d-9999;Wed, 29 Apr 2026 14:46:00 +0300"
 	"media-libs/flac-9999;Fri, 8 May 2026 13:28:44 +0200"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/freetype-9999;Sun, 3 May 2026 13:21:19 -0400"
+	"media-libs/freetype-9999;Sat, 9 May 2026 09:51:56 -0400"			# Bumped live to latest non-vulnerable
 	"media-libs/harfbuzz-9999;Mon, 27 Apr 2026 19:30:28 -0600"
 	"media-libs/libjpeg-turbo-9999;Wed, 3 Jun 2026 09:43:18 -0400"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libwebp-9999;Mon, 22 Sep 2025 15:25:39 -0700"
+	"media-libs/libwebp-9999;Fri, 22 May 2026 11:45:40 +0200"			# Bumped live to latest non-vulnerable
 	"media-libs/libvpx-9999;Thu, 30 Apr 2026 12:42:58 -0400"
 	"media-libs/libyuv-9999;Thu, 9 Apr 2026 11:03:54 -0700"
 	"media-libs/woff2-9999;Wed, 15 Apr 2026 15:38:51 -0700"
 	"media-video/ffmpeg;Mon, 16 Mar 2026 12:40:32 +0200"
-	"net-libs/nodejs-99999999;Tue, 9 Dec 2025 08:12:29 +0000"
+	"net-libs/nodejs-99999999;Tue, 12 May 2026 05:17:56 -0400"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"net-print/cups-9999;Fri, 12 Jun 2026 17:18:05 -0400"				# Bumped live/*DEPENDS to latest non-vulnerable
 	"x11-libs/libdrm-9999;Wed, 26 Jun 2024 10:13:31 +0200"
 )
 
@@ -1553,7 +1555,7 @@ COMMON_SNAPSHOT_DEPEND="
 		${LIBVA_DEPEND}
 		>=dev-libs/glib-2.66.8:2[${MULTILIB_USEDEP}]
 		dev-libs/glib:=
-		>=media-libs/alsa-lib-1.2.4[${MULTILIB_USEDEP}]
+		>=media-libs/alsa-lib-1.2.16[${MULTILIB_USEDEP}]
 		media-libs/alsa-lib:=
 		>=sys-apps/pciutils-3.7.0[${MULTILIB_USEDEP}]
 		sys-apps/pciutils:=
@@ -1790,7 +1792,7 @@ COMMON_DEPEND="
 			app-accessibility/at-spi2-core:=
 		)
 		cups? (
-			>=net-print/cups-2.3.3[${MULTILIB_USEDEP}]
+			>=net-print/cups-9999[${MULTILIB_USEDEP}]
 			net-print/cups:=
 		)
 		qt6? (
@@ -1937,7 +1939,7 @@ BDEPEND+="
 	dev-lang/perl
 	dev-util/esbuild:${ESBUILD_PV}
 	dev-vcs/git
-	>=net-libs/nodejs-24.11.1:${NODE_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},inspector]
+	>=net-libs/nodejs-24.16.0:${NODE_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},inspector]
 	net-libs/nodejs:=
 	sys-apps/hwdata
 	sys-devel/flex
