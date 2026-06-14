@@ -229,7 +229,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libaom-9999;Fri, May 22, 2026 08:26:16 -0700"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libepoxy-9999;Tue, 12 Oct 2021 02:41:41 +0900"
 	"media-libs/libglvnd-9999;Tue, 12 Sep 2023 08:02:00 -0600"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libjpeg-turbo-9999;Sat, 14 Sep 2024 10:29:56 -0400"
+	"media-libs/libjpeg-turbo-9999;Wed, 3 Jun 2026 09:43:18 -0400"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libpng-9999;Wed, 15 Apr 2026 20:23:26 +0300"
 	"media-libs/libva-9999;Thu, 14 Sep 2023 04:04:13 -0400"				# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libvpx-9999;Thu, 8 Jan 2026 11:00:11 -0500"
@@ -658,7 +658,7 @@ CDEPEND="
 		dev-libs/icu:=
 	)
 	system-jpeg? (
-		>=media-libs/libjpeg-turbo-3.0.4[${MULTILIB_USEDEP}]
+		>=media-libs/libjpeg-turbo-9999[${MULTILIB_USEDEP}]
 		media-libs/libjpeg-turbo:=
 	)
 	system-libevent? (
