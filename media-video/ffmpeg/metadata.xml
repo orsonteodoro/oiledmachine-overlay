@@ -560,6 +560,10 @@
     <flag name="debug">
       Add debugging symbols
     </flag>
+    <flag name="drm">
+      Enables <pkg>x11-libs/libdrm</pkg> support for better screen grabbing and
+      hardware accelerated codecs.
+    </flag>
     <flag name="ebolt">
       Perform event based post link BOLT optimization.
     </flag>
@@ -616,10 +620,6 @@
     <flag name="libaribb24">
       Enables ARIB text and caption decoding via <pkg>media-libs/aribb24</pkg>.
     </flag>
-    <flag name="libdrm">
-      Enables <pkg>x11-libs/libdrm</pkg> support for better screen grabbing and
-      hardware accelerated codecs.
-    </flag>
     <flag name="libilbc">
       Enables iLBC de/encoding via <pkg>media-libs/libilbc</pkg>.
     </flag>
@@ -640,9 +640,6 @@
     </flag>
     <flag name="libsoxr">
       Enables audio resampling through <pkg>media-libs/soxr</pkg>.
-    </flag>
-    <flag name="libtesseract">
-      Enables the OCR filter via <pkg>app-text/tesseract</pkg>.
     </flag>
     <flag name="libqrencode">
       Enables qrencode filter to add QR code overlay over the current image/video
@@ -691,6 +688,9 @@
     <flag name="nvenc">
       Enables GPU accelerated encode for MJPEG-1, MJPEG-2, VC-1, H.264,
       H.265, VP8, VP9, AV1 if available on the GPU
+    </flag>
+    <flag name="ocr">
+      Enables the OCR filter via <pkg>app-text/tesseract</pkg>.
     </flag>
     <flag name="opencl">
       Enable OpenCL support

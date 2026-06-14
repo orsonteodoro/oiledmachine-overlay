@@ -1054,9 +1054,6 @@ RDEPEND+="
 	opencolorio? (
 		media-libs/opencolorio:=
 	)
-	ocr? (
-		app-text/tesseract:=[${MULTILIB_USEDEP}]
-	)
 	openal? (
 		>=media-libs/openal-1.15.1[${MULTILIB_USEDEP}]
 	)
