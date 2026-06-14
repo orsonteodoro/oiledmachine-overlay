@@ -1542,7 +1542,7 @@ src_unpack() {
 src_prepare() {
 	verify_subslot
 	if [[ "${MY_PV%_p*}" != "${MY_PV}" ]] ; then # Snapshot
-		export revision=git-N-${FFMPEG_REVISION}
+		export revision="git-N-${FFMPEG_REVISION}"
 	fi
 
 	eapply "${FILESDIR}/vmaf-models-default-path.patch"

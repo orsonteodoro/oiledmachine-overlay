@@ -1238,7 +1238,6 @@ PDEPEND+="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/chromium-r2.patch"
 #	"${FILESDIR}/${PN}-6.1-wint-conversion.patch"
 #	"${FILESDIR}/${PN}-6.0-fix-lto-type-mismatch.patch"
 	"${FILESDIR}/${PN}-6.1-opencl-parallel-gmake-fix.patch"
@@ -1681,11 +1680,14 @@ src_unpack() {
 src_prepare() {
 	verify_subslot
 	if [[ "${MY_PV%_p*}" != "${MY_PV}" ]] ; then # Snapshot
-		export revision=git-N-${FFMPEG_REVISION}
+		export revision="git-N-${FFMPEG_REVISION}"
 	fi
 
+	if in_iuse chromium && use chromium ; then
+		PATCHES+=( "${FILESDIR}/chromium-r3.patch" )
+	fi
 	if in_iuse soc && use soc ; then
-		eapply "${DISTDIR}/${FFMPEG_SOC_PATCH}"
+		PATCHES+=( "${DISTDIR}/${FFMPEG_SOC_PATCH}" )
 	fi
 
 	default
