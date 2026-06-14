@@ -338,7 +338,9 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libvpx-9999;Thu, 30 Apr 2026 12:42:58 -0400"
 	"media-libs/libyuv-9999;Thu, 9 Apr 2026 11:03:54 -0700"
 	"media-libs/woff2-9999;Wed, 15 Apr 2026 15:38:51 -0700"
-	"media-video/ffmpeg;Mon, 16 Mar 2026 12:40:32 +0200"
+	"media-video/ffmpeg-9999;Thu, 11 Jun 2026 16:34:26 +0200"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-video/ffmpeg-9999m;Thu, 11 Jun 2026 16:34:26 +0200"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-video/ffmpeg-chromium-9999;Thu, 11 Jun 2026 16:34:26 +0200"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"net-libs/nodejs-99999999;Tue, 12 May 2026 05:17:56 -0400"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"net-print/cups-9999;Fri, 12 Jun 2026 17:18:05 -0400"				# Bumped live/*DEPENDS to latest non-vulnerable
 	"x11-libs/libdrm-9999;Wed, 26 Jun 2024 10:13:31 +0200"
@@ -1149,9 +1151,11 @@ LIBCXX_REQUIRED_USE=(
 #		${LIBCXX_REQUIRED_USE[@]}
 #	)
 #		llvm_slot_22
+# system-ffmpeg is not ready on this overlay
 REQUIRED_USE+="
 	${PATENT_USE_FLAGS}
 	!drumbrake
+	!system-ffmpeg
 	!headless (
 		extensions
 		pdf
@@ -1346,6 +1350,7 @@ REQUIRED_USE+="
 	)
 	ffmpeg-chromium? (
 		bindist
+		patent_status_nonfree
 	)
 	miracleptr? (
 		partitionalloc
@@ -1516,8 +1521,8 @@ LIBVA_DEPEND="
 		virtual/vaapi[${MULTILIB_USEDEP},patent_status_nonfree=]
 		system-ffmpeg? (
 			|| (
-				media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
-				media-video/ffmpeg:0/${FFMPEG_SLOT}[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
+				>=media-video/ffmpeg-9999:${FFMPEG_SLOT}[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
+				>=media-video/ffmpeg-9999:0/${FFMPEG_SLOT}[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
 			)
 			media-video/ffmpeg:=
 		)
@@ -1761,14 +1766,14 @@ PATENT_STATUS_DEPEND="
 		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},patent_status_nonfree=]
 		patent_status_nonfree? (
 			|| (
-				media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
-				media-video/ffmpeg:0/${FFMPEG_SLOT}[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
+				>=media-video/ffmpeg-9999:${FFMPEG_SLOT}[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
+				>=media-video/ffmpeg-9999:0/${FFMPEG_SLOT}[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
 			)
 		)
 		!patent_status_nonfree? (
 			|| (
-				media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
-				media-video/ffmpeg:0/${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
+				>=media-video/ffmpeg-9999:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
+				>=media-video/ffmpeg-9999:0/${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
 			)
 		)
 		media-video/ffmpeg:=
@@ -1836,8 +1841,8 @@ COMMON_DEPEND="
 		|| (
 			(
 				|| (
-					media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-samba]
-					media-video/ffmpeg:0/${FFMPEG_SLOT}[${MULTILIB_USEDEP},-samba]
+					>=media-video/ffmpeg-9999:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-samba]
+					>=media-video/ffmpeg-9999:0/${FFMPEG_SLOT}[${MULTILIB_USEDEP},-samba]
 				)
 				media-video/ffmpeg:=
 			)
@@ -1887,7 +1892,7 @@ RDEPEND+="
 	)
 	bindist? (
 		ffmpeg-chromium? (
-			media-video/ffmpeg-chromium:${PV%%\.*}
+			>=media-video/ffmpeg-chromium-9999:${PV%%\.*}-${FFMPEG_SLOT}[patent_status_nonfree=]
 			media-video/ffmpeg-chromium:=
 		)
 	)
@@ -3416,15 +3421,15 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 #	fi
 
 	PATCHES+=(
-		"A${FILESDIR}/extra-patches/${PN}-143.0.7499.192-system-libsecret-includes-path.patch"
+#		"${FILESDIR}/extra-patches/${PN}-143.0.7499.192-system-libsecret-includes-path.patch"
 		"${FILESDIR}/extra-patches/${PN}-143.0.7499.192-custom-march.patch"
-		"${FILESDIR}/extra-patches/${PN}-143.0.7499.192-optionalize-sanitize-array-bounds.patch"
+		"${FILESDIR}/extra-patches/${PN}-149.0.7827.114-optionalize-sanitize-array-bounds.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-xnnpack-scalar-fallback.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-pdfium-system-deps.patch"
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.45-use-system-opus-alt.patch"
 #		$(use system-libpng && echo "${FILESDIR}/extra-patches/${PN}-144.0.7559.59-libpng-test-only.patch")
-		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-optionalize-clang-flags.patch"
-		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-optionalize-omit-frame-pointer.patch"
+		"${FILESDIR}/extra-patches/${PN}-149.0.7827.114-optionalize-clang-flags.patch"
+		"${FILESDIR}/extra-patches/${PN}-149.0.7827.114-optionalize-omit-frame-pointer.patch"
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.75-dedupe-use-system-zlib.patch" # It appears twice in cromite build
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-optionalize-clang-warning-suppression-mappings.patch"
 		"${FILESDIR}/extra-patches/${PN}-148.0.7778.167-system-clang-flags.patch"
@@ -8195,6 +8200,20 @@ _src_install() {
 	insinto "${CHROMIUM_HOME}"
 	doins "out/Release/"*".bin"
 	doins "out/Release/"*".pak"
+
+	if use bindist; then
+	# We built libffmpeg as a component library, but we can't distribute it
+	# with proprietary codec support. Remove it and make a symlink to the requested
+	# system library.
+		rm -f "out/Release/libffmpeg.so" \
+			|| die "Failed to remove bundled libffmpeg.so (with proprietary codecs)"
+	# Symlink the libffmpeg.so from either ffmpeg-chromium or ffmpeg[chromium].
+		einfo "Creating symlink to libffmpeg.so from $(usex ffmpeg-chromium ffmpeg-chromium ffmpeg[chromium])..."
+		local ffmpeg_suffix=$(usex ffmpeg-chromium ".${PV%%\.*}" "")
+		dosym \
+			"../chromium/libffmpeg.so${ffmpeg_suffix}" \
+			"/usr/$(get_libdir)/chromium-browser/libffmpeg.so"
+	fi
 
 	# oiledmachine-overlay notes - dropped section.  Bindist is static or vendored.
 

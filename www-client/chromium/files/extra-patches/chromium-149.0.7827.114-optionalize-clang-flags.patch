@@ -1,0 +1,43 @@
+--- a/build/config/compiler/BUILD.gn.orig	2026-06-14 09:57:36.105118297 -0700
++++ b/build/config/compiler/BUILD.gn	2026-06-14 10:07:49.002406467 -0700
+@@ -256,6 +256,9 @@ declare_args() {
+   use_mtune=""
+ 
+   use_sanitize_array_bounds = true
++
++  use_color_diagnostics = true
++  use_merge_all_constants = true
+ }
+ 
+ declare_args() {
+@@ -827,7 +830,9 @@ config("compiler") {
+   # ------------------------------------
+   if (is_clang) {
+     # Flags for diagnostics.
+-    cflags += [ "-fcolor-diagnostics" ]
++    if (use_color_diagnostics) {
++      cflags += [ "-fcolor-diagnostics" ]
++    }
+     if (!is_win) {
+       cflags += [ "-fdiagnostics-show-inlining-chain" ]
+     } else {
+@@ -844,7 +849,9 @@ config("compiler") {
+     # disabling this (https://bugs.llvm.org/show_bug.cgi?id=18538#c13),
+     # but for now it looks like our build might rely on it
+     # (https://crbug.com/829795).
+-    cflags += [ "-fmerge-all-constants" ]
++    if (use_merge_all_constants) {
++      cflags += [ "-fmerge-all-constants" ]
++    }
+ 
+     if (!use_sized_deallocation) {
+       if (is_win) {
+@@ -1511,7 +1518,7 @@ config("linker") {
+     }
+   }
+ 
+-  if (use_lld) {
++  if (use_lld && use_color_diagnostics) {
+     # TODO(thakis): Make the driver pass --color-diagnostics to the linker
+     # if -fcolor-diagnostics is passed to it, and pass -fcolor-diagnostics
+     # in ldflags instead.
