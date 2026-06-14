@@ -20,6 +20,9 @@ MY_P="${PN}-${MY_PV}"
 MY_PVR="${PVR/m/}"
 FFMPEG_REVISION="${MY_PV#*_p}"
 FFMPEG_SUBSLOT="60.62.62" # libavutil_major.libavcodec_major.libavformat_major
+# See https://github.com/FFmpeg/FFmpeg/blob/master/libavutil/version.h#L81
+# See https://github.com/FFmpeg/FFmpeg/blob/master/libavcodec/version_major.h
+# See https://github.com/FFmpeg/FFmpeg/blob/master/libavformat/version_major.h
 
 CFLAGS_HARDENED_ASSEMBLERS="gas inline nasm yasm"
 CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan lsan msan tsan ubsan"
@@ -334,6 +337,11 @@ PPC_CPU_REQUIRED_USE="
 	)
 "
 
+ARM64_CPU_FEATURES_RAW=(
+	"sme:sme"
+	"sme2:sme2"
+)
+
 X86_CPU_FEATURES_RAW=(
 	"aes:aesni"
 	"avx:avx"
@@ -443,6 +451,7 @@ if [[ "${MY_PV#9999}" == "${MY_PV}" ]] ; then
 	"
 fi
 if [[ "${MY_PV#9999}" != "${MY_PV}" ]] ; then
+	FALLBACK_COMMIT="417158195367ce9335521a23905234381c5d73d0"
 	EGIT_MIN_CLONE_TYPE="single"
 	EGIT_REPO_URI=(
 		https://git.ffmpeg.org/ffmpeg.git
@@ -1045,6 +1054,12 @@ RDEPEND+="
 	)
 	ocr? (
 		>=app-text/tesseract-4.1.0-r1[${MULTILIB_USEDEP}]
+	)
+	opencolorio? (
+		media-libs/opencolorio:=
+	)
+	ocr? (
+		app-text/tesseract:=[${MULTILIB_USEDEP}]
 	)
 	openal? (
 		>=media-libs/openal-1.15.1[${MULTILIB_USEDEP}]
