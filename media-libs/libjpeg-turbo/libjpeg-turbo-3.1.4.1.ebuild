@@ -16,6 +16,11 @@ UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/libjpeg-turbo.asc"
 
+# LTS
+LLVM_COMPAT=(
+	"llvm_slot_"{18..19}
+)
+
 _TRAINERS=(
 	"libjpeg_turbo_trainers_70_pct_quality_baseline"
 	"libjpeg_turbo_trainers_75_pct_quality_baseline"
@@ -78,18 +83,22 @@ LICENSE="
 		GPL-2-with-classpath-exception
 	)
 "
-SLOT="0/0.2"
+SLOT="0/0.3" # 0/0.{MAJOR_VERSION}
 RESTRICT="
 	!test? (
 		test
 	)
 "
-IUSE="
+IUSE+="
+${LLVM_COMPAT[@]}
 ${_TRAINERS[@]}
 +asm cpu_flags_arm_neon debug java test pgo static-libs
-ebuild_revision_40
+ebuild_revision_41
 "
 REQUIRED_USE="
+	?? (
+		${LLVM_COMPAT[@]}
+	)
 	pgo? (
 		libjpeg_turbo_trainers_decode
 		|| (
@@ -227,18 +236,32 @@ is_pgo_ready() {
 	return 0
 }
 
+get_llvm_slot() {
+	LLVM_SLOT=""
+	local x
+	for x in "${LLVM_COMPAT[@]/llvm_slot_}" ; do
+		if use "llvm_slot_${x}" ; then
+			LLVM_SLOT="${x}"
+			break
+		fi
+	done
+	echo "${LLVM_SLOT}"
+}
+
 pkg_setup() {
 	check-compiler-switch_start
+	LLVM_SLOT=$(get_llvm_slot)
+	[[ -z "${LLVM_SLOT}" ]] && LLVM_SLOT="19"
 ewarn
 ewarn "If the build fails for =${CATEGORY}/${PN}-${PVR}, do the following:"
 ewarn
 ewarn "eselect gcc set ${CHOST}-12"
 ewarn "source /etc/profile"
 ewarn
-ewarn "Contents of /etc/portage/env/clang-18.conf:"
-ewarn "CC=\"clang-18\""
-ewarn "CXX=\"clang++-18\""
-ewarn "CPP=\"clang-18 -E\""
+ewarn "Contents of /etc/portage/env/clang-${LLVM_SLOT}.conf:"
+ewarn "CC=\"clang-${LLVM_SLOT}\""
+ewarn "CXX=\"clang++-${LLVM_SLOT}\""
+ewarn "CPP=\"clang-${LLVM_SLOT} -E\""
 ewarn "AR=\"llvm-ar\""
 ewarn "NM=\"llvm-nm\""
 ewarn "OBJCOPY=\"llvm-objcopy\""
@@ -247,7 +270,7 @@ ewarn "READELF=\"llvm-readelf\""
 ewarn "STRIP=\"llvm-strip\""
 ewarn
 ewarn "Contents of /etc/portage/package.env:"
-ewarn "media-libs/libjpeg-turbo clang-18.conf"
+ewarn "media-libs/libjpeg-turbo clang-${LLVM_SLOT}.conf"
 ewarn
 ewarn "emerge -1vO =${CATEGORY}/${PN}-${PVR}"
 ewarn "eselect gcc set ${CHOST}-13 # Restore previous gcc slot for LTO/GPU packages"
@@ -267,6 +290,20 @@ ewarn "Install may fail.  \`emerge -C ${PN}\` then \`emerge -1 =${P}\`."
 ewarn "PGO may randomly fail with CFI.  Disable the pgo USE flag to fix it."
 ewarn
 	uopts_setup
+
+	if tc-is-clang ; then
+		LLVM_SLOT=$(get_llvm_slot)
+		if [[ -z "${LLVM_SLOT}" ]] ; then
+eerror
+eerror "You need to pick either llvm_slot_18 or llvm_slot_19 for USE flag or"
+eerror "change the CC=gcc and CXX=g++."
+eerror
+			die
+		fi
+		export PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/llvm|d" | tr $'\n' ":")
+		export PATH=$(echo "${PATH}" | sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin|g")
+einfo "PATH:  ${PATH}"
+	fi
 }
 
 src_unpack() {

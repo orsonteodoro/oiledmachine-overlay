@@ -3,6 +3,8 @@
 
 EAPI=8
 
+INTERNAL_VERSION="3.1.91" # https://github.com/libjpeg-turbo/libjpeg-turbo/blob/main/CMakeLists.txt#L17
+
 CFLAGS_HARDENED_ASSEMBLERS="nasm inline yasm"
 CFLAGS_HARDENED_CI_SANITIZERS="asan ubsan"
 CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="18"
@@ -56,18 +58,26 @@ UOPTS_BOLT_INST_ARGS=(
 inherit cflags-hardened check-compiler-switch cmake-multilib java-pkg-opt-2 flag-o-matic
 inherit flag-o-matic-om toolchain-funcs uopts verify-sig
 
-if [[ $(ver_cut 3) -lt "90" ]] ; then
-	KEYWORDS="
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="25b62127312b5df12a9d3ed4a000595d796bfb78"
+	EGIT_REPO_URI="https://github.com/libjpeg-turbo/libjpeg-turbo.git"
+	IUSE+=" fallback-commit"
+	inherit git-r3
+else
+	# Unkeyworded for test failures: https://github.com/libjpeg-turbo/libjpeg-turbo/issues/705
+	if [[ $(ver_cut 3) -lt "90" ]] ; then
+		KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390
 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris
+		"
+	fi
+	S="${WORKDIR}/${P}"
+	SRC_URI="
+https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/${PV}/${P}.tar.gz
+verify-sig? ( https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/${PV}/${P}.tar.gz.sig )
 	"
+#mirror://gentoo/libjpeg8_8d-2.debian.tar.gz
 fi
-S="${WORKDIR}/${P}"
-SRC_URI="
-	https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/${PV}/${P}.tar.gz
-	mirror://gentoo/libjpeg8_8d-2.debian.tar.gz
-	verify-sig? ( https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/${PV}/${P}.tar.gz.sig )
-"
 
 DESCRIPTION="MMX, SSE, and SSE2 SIMD accelerated JPEG library"
 HOMEPAGE="
@@ -306,24 +316,30 @@ einfo "PATH:  ${PATH}"
 }
 
 src_unpack() {
-	if use verify-sig ; then
-		verify-sig_verify_detached "${DISTDIR}/${P}.tar.gz"{"",".sig"}
-	fi
+	if [[ "${PV}" =~ "9999" ]] ; then
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		git-r3_fetch
+		git-r3_checkout
+	else
+		if use verify-sig ; then
+			verify-sig_verify_detached "${DISTDIR}/${P}.tar.gz"{"",".sig"}
+		fi
 
-	default
+		default
+	fi
 }
 
 src_prepare() {
 	local FILE
-	ln -snf ../debian/extra/*.c . || die
+#	ln -snf ../debian/extra/*.c . || die
 
-	for FILE in ../debian/extra/*.c; do
-		FILE=${FILE##*/}
-cat >> CMakeLists.txt <<-EOF || die
-add_executable(${FILE%.c} ${FILE})
-install(TARGETS ${FILE%.c})
-EOF
-	done
+#	for FILE in ../debian/extra/*.c; do
+#		FILE=${FILE##*/}
+#cat >> CMakeLists.txt <<-EOF || die
+#add_executable(${FILE%.c} ${FILE})
+#install(TARGETS ${FILE%.c})
+#EOF
+#	done
 
 	cmake_src_prepare
 	java-pkg-opt-2_src_prepare
@@ -618,14 +634,14 @@ multilib_src_install_all() {
 	local -a DOCS=( README.md ChangeLog.md )
 	einstalldocs
 
-	newdoc "${WORKDIR}"/debian/changelog changelog.debian
-	dobin "${WORKDIR}"/debian/extra/exifautotran
-	doman "${WORKDIR}"/debian/extra/*.[0-9]*
+#	newdoc "${WORKDIR}"/debian/changelog changelog.debian
+#	dobin "${WORKDIR}"/debian/extra/exifautotran
+#	doman "${WORKDIR}"/debian/extra/*.[0-9]*
 
 	if use java; then
+		newdoc java/README.md README-java.md
 		docinto html/java
-		dodoc -r "${S}"/java/doc/.
-		newdoc "${S}"/java/README README.java
+		dodoc -r java/doc/.
 	fi
 }
 
@@ -642,3 +658,6 @@ ewarn
 	fi
 	uopts_pkg_postinst
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (INTERACTIVE/integation-test) 25b6212 (20260613)
+# eog:  passed
