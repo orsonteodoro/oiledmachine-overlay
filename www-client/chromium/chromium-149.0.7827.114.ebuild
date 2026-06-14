@@ -1892,7 +1892,7 @@ RDEPEND+="
 	)
 	bindist? (
 		ffmpeg-chromium? (
-			>=media-video/ffmpeg-chromium-9999:${PV%%\.*}-${FFMPEG_SLOT}[patent_status_nonfree=]
+			media-video/ffmpeg-chromium:${PV%%\.*}[patent_status_nonfree=]
 			media-video/ffmpeg-chromium:=
 		)
 	)
@@ -8202,11 +8202,14 @@ _src_install() {
 	doins "out/Release/"*".pak"
 
 	if use bindist; then
-	# We built libffmpeg as a component library, but we can't distribute it
+	# Distro note:  We built libffmpeg as a component library, but we can't distribute it
 	# with proprietary codec support. Remove it and make a symlink to the requested
 	# system library.
+
+	# oiledmachine-overlay note:  You can build it without proprietary codecs.
+
 		rm -f "out/Release/libffmpeg.so" \
-			|| die "Failed to remove bundled libffmpeg.so (with proprietary codecs)"
+			|| die "Failed to remove bundled libffmpeg.so"
 	# Symlink the libffmpeg.so from either ffmpeg-chromium or ffmpeg[chromium].
 		einfo "Creating symlink to libffmpeg.so from $(usex ffmpeg-chromium ffmpeg-chromium ffmpeg[chromium])..."
 		local ffmpeg_suffix=$(usex ffmpeg-chromium ".${PV%%\.*}" "")
