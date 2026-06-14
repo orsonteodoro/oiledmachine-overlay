@@ -12,6 +12,7 @@ PATENT_STATUS_IUSE=(
 	patent_status_nonfree
 )
 
+# Force FFmpeg 8.1 to mitigate vulnerabilities
 inherit ffmpeg
 FFMPEG_COMPAT_SLOTS=(
 	"${FFMPEG_COMPAT_SLOTS_8[@]}"
