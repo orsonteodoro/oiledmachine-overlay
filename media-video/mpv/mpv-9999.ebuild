@@ -22,8 +22,10 @@ LUA_COMPAT=( lua5-1 luajit )
 PYTHON_COMPAT=( python3_{11..14} )
 
 CHKL_TIMESTAMPS=(
-	"media-video/ffmpeg-9999;Sun, 14 Jun 2026 20:15:19 -0700"
-	"media-video/ffmpeg-9999m;Sun, 14 Jun 2026 20:15:19 -0700"
+	# Last security check 20260614
+	"media-libs/libplacebo-9999;Mon, 1 Jun 2026 20:39:36 +0200"	# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-video/ffmpeg-9999;Sun, 14 Jun 2026 20:15:19 -0700"	# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-video/ffmpeg-9999m;Sun, 14 Jun 2026 20:15:19 -0700"	# Bumped live/*DEPENDS to latest non-vulnerable
 )
 
 inherit cflags-hardened chkl flag-o-matic lua-single meson optfeature pax-utils python-single-r1 xdg
@@ -108,7 +110,7 @@ PATENT_STATUS_DEPEND="
 COMMON_DEPEND="
 	${PATENT_STATUS_DEPEND}
 	media-libs/libass:=[fontconfig]
-	>=media-libs/libplacebo-7.360.1:=[vulkan?]
+	>=media-libs/libplacebo-9999:=[vulkan?]
 	>=media-video/ffmpeg-9999:=[encode(+),threads(+),vaapi?,vdpau?]
 	X? (
 		x11-libs/libX11
