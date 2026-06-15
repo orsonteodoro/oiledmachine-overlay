@@ -49,7 +49,7 @@
      configs -= [ "//build/config/compiler:chromium_code" ]
      configs += [ "//build/config/compiler:no_chromium_code" ]
 -    configs += [ ":libvpx_config" ]
-+    configs += [ ",:libvpx_config" ]
++    configs += [ ":libvpx_config" ]
      if (!is_win || is_clang) {
        cflags = [ "-msse2" ]
      }
