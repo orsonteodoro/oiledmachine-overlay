@@ -641,22 +641,12 @@
     <flag name="libsoxr">
       Enables audio resampling through <pkg>media-libs/soxr</pkg>.
     </flag>
-    <flag name="libqrencode">
-      Enables qrencode filter to add QR code overlay over the current image/video
-      frame.
-    </flag>
-    <flag name="libquirc">
-      Add support for QR code decoding.
-    </flag>
     <flag name="libv4l">
       Uses <pkg>media-libs/libv4l</pkg> for video4linux instead of direct calls.
       Adds support for more devices via the userspace library.
     </flag>
     <flag name="libvvenc">
       Add support for VVenC via <pkg>media-libs/vvenc</pkg>.
-    </flag>
-    <flag name="libxml2">
-      Uses <pkg>dev-libs/libxml2</pkg> to enable dash demuxing support.
     </flag>
     <flag name="lv2">
       Enables lv2 audio filter wrapper.
@@ -721,6 +711,16 @@
     </flag>
     <flag name="postproc">
       Build and install libpostproc.
+    </flag>
+    <flag name="rabbitmq">
+      Enable AMQP stream support via <pkg>net-libs/rabbitmq-c</pkg>
+    </flag>
+    <flag name="qrcode">
+      Enables qrencode filter to add QR code overlay over the current image/video
+      frame.
+    </flag>
+    <flag name="quirc">
+      Add support for QR code decoding.
     </flag>
     <flag name="qsv">
       Add support for accelerated H.264, H.265, JPEG, MPEG-2, VP8, VP9, VC-1,
@@ -879,6 +879,9 @@
     </flag>
     <flag name="x265">
       Enables HEVC encoding with <pkg>media-libs/x265</pkg>.
+    </flag>
+    <flag name="xml">
+      Uses <pkg>dev-libs/libxml2</pkg> to enable dash demuxing support.
     </flag>
     <flag name="xvid">
       Enables MPEG-4 ASP video encoding

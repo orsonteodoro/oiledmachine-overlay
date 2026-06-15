@@ -111,7 +111,6 @@ FFMPEG_FLAG_MAP=(
 	"gmp"
 	"hardcoded-tables"
 	"+iconv"
-	"libxml2"
 	"lzma"
 	"+network"
 	"opencl"
@@ -125,10 +124,8 @@ FFMPEG_FLAG_MAP=(
 	"vaapi"
 	"vdpau"
 	"vulkan"
-	"X:xlib"
-	"X:libxcb"
-	"X:libxcb-shm"
-	"X:libxcb-xfixes"
+	"X:libxcb,libxcb-shape,libxcb-shm,libxcb-xfixes,xlib"
+	"xml:libxml2"
 	"+zlib"
 
 	# libavdevice options
@@ -974,9 +971,6 @@ RDEPEND+="
 	libv4l? (
 		>=media-libs/libv4l-0.9.5[${MULTILIB_USEDEP}]
 	)
-	libxml2? (
-		dev-libs/libxml2:=[${MULTILIB_USEDEP}]
-	)
 	lv2? (
 		media-libs/lilv[${MULTILIB_USEDEP}]
 		media-libs/lv2[${MULTILIB_USEDEP}]
@@ -1094,6 +1088,9 @@ RDEPEND+="
 		>=x11-libs/libxcb-1.4:=[${MULTILIB_USEDEP}]
 		>=x11-libs/libXext-1.3.2[${MULTILIB_USEDEP}]
 		>=x11-libs/libXv-1.0.10[${MULTILIB_USEDEP}]
+	)
+	xml? (
+		dev-libs/libxml2:=[${MULTILIB_USEDEP}]
 	)
 	postproc? (
 		!media-libs/libpostproc

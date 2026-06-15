@@ -110,12 +110,12 @@ FFMPEG_FLAG_MAP=(
 	"gmp"
 	"hardcoded-tables"
 	"+iconv"
-	"libxml2"
 	"lzma"
 	"+network"
 	"opencl"
 	"opencolorio:^libopencolorio" # no multilib
 	"openssl"
+	"qrcode:libqrencode"
 	"rabbitmq:^librabbitmq" # no multilib
 	"rist:^librist" # no multilib
 	"samba:libsmbclient"
@@ -124,10 +124,8 @@ FFMPEG_FLAG_MAP=(
 	"vaapi"
 	"vdpau"
 	"vulkan:vulkan,vulkan-static"
-	"X:xlib"
-	"X:libxcb"
-	"X:libxcb-shm"
-	"X:libxcb-xfixes"
+	"X:libxcb,libxcb-shape,libxcb-shm,libxcb-xfixes,xlib"
+	"xml:libxml2"
 	"+zlib"
 
 	# libavdevice options
@@ -189,9 +187,9 @@ FFMPEG_FLAG_MAP=(
 	"lcms:lcms2"
 	"libass"
 	"libplacebo"
-	"libquirc"
 	"lv2"
 	"ocr:libtesseract"
+	"quirc:libquirc"
 	"truetype:libfreetype"
 	"truetype:libharfbuzz"
 	"vidstab:libvidstab"
@@ -551,7 +549,7 @@ ${FFTOOLS[@]/#/+fftools_}
 ${PATENT_STATUS[@]}
 ${USE_LICENSES[@]}
 alsa -clear-config-first cuda cuda-filters doc dvdvideo +encode gdbm
-liblensfun libqrencode mold openvino oss pgo pipewire +re-codecs sndio sr
+liblensfun mold openvino oss pgo pipewire +re-codecs sndio sr
 static-libs tensorflow test torch v4l wayland
 ebuild_revision_59
 "
@@ -1010,12 +1008,6 @@ RDEPEND+="
 	libplacebo? (
 		>=media-libs/libplacebo-5.229.0[$MULTILIB_USEDEP,vulkan?]
 	)
-	libquirc? (
-		media-libs/quirc[${MULTILIB_USEDEP}]
-	)
-	libqrencode? (
-		media-gfx/qrencode
-	)
 	librtmp? (
 		>=media-video/rtmpdump-2.4_p20131018[${MULTILIB_USEDEP}]
 	)
@@ -1027,9 +1019,6 @@ RDEPEND+="
 	)
 	libvvenc? (
 		>=media-libs/vvenc-1.6.1
-	)
-	libxml2? (
-		dev-libs/libxml2:=[${MULTILIB_USEDEP}]
 	)
 	lv2? (
 		media-libs/lilv[${MULTILIB_USEDEP}]
@@ -1051,6 +1040,9 @@ RDEPEND+="
 	)
 	ocr? (
 		>=app-text/tesseract-4.1.0-r1[${MULTILIB_USEDEP}]
+	)
+	opencolorio? (
+		media-libs/opencolorio:=
 	)
 	openal? (
 		>=media-libs/openal-1.15.1[${MULTILIB_USEDEP}]
@@ -1074,8 +1066,14 @@ RDEPEND+="
 	pulseaudio? (
 		media-libs/libpulse[${MULTILIB_USEDEP}]
 	)
+	qrcode? (
+		media-gfx/qrencode:=[${MULTILIB_USEDEP}]
+	)
 	qsv? (
 		media-libs/oneVPL[${MULTILIB_USEDEP}]
+	)
+	quirc? (
+		media-libs/quirc:=[${MULTILIB_USEDEP}]
 	)
 	rist? (
 		>=net-libs/librist-0.2.7[${MULTILIB_USEDEP}]
@@ -1156,6 +1154,9 @@ RDEPEND+="
 		>=x11-libs/libxcb-1.4:=[${MULTILIB_USEDEP}]
 		>=x11-libs/libXext-1.3.2[${MULTILIB_USEDEP}]
 		>=x11-libs/libXv-1.0.10[${MULTILIB_USEDEP}]
+	)
+	xml? (
+		dev-libs/libxml2:=[${MULTILIB_USEDEP}]
 	)
 	zeromq? (
 		>=net-libs/zeromq-4.2.1
@@ -2111,16 +2112,6 @@ eerror
 	else
 		myconf+=(
 			--disable-liblensfun
-		)
-	fi
-
-	if use libqrencode && multilib_is_native_abi ; then
-		myconf+=(
-			$(use_enable libqrencode libqrencode)
-		)
-	else
-		myconf+=(
-			--disable-libqrencode
 		)
 	fi
 
