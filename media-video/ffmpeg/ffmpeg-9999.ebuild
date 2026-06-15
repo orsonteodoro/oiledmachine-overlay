@@ -2267,7 +2267,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	# We use optflags, so that overrides them anyway.
 		--disable-optimizations
 	# bug #664158 \
-		--disable-libcelt
+	#	--disable-libcelt
 		"${myconf[@]}"
 	)
 
