@@ -1,0 +1,44 @@
+Title: Use FFmpeg live
+Author: Orson Teodoro <orsonteodoro@hotmail.com>
+Content-Type: text/plain
+Posted: 2026-06-14
+Revision: 0
+News-Item-Format: 2.0
+Display-If-Installed: media-video/ffmpeg
+
+
+Currently the stable FFmpeg is unpatched.  There was a reported 21 vulnerabilities
+found by AI many which normally be rated high severity.  One of them of which
+existed for decades.
+
+
+Classes of vulnerabilies:
+
+Stack overflow
+Heap overflow
+Integer overflow
+
+
+To use the live ebuild (8.x):
+
+Contents of /etc/portage/package.accept_keywords:
+=media-video/ffmpeg-9999::oiledmachine-overlay ~amd64 **   # For /usr/bin/ffmpeg
+=media-video/ffmpeg-9999m::oiledmachine-overlay ~amd64 **  # For multi-slotted dependencies
+
+Contents of /etc/portage/package.unmask:
+=media-video/ffmpeg-9999::oiledmachine-overlay
+=media-video/ffmpeg-9999m::oiledmachine-overlay
+
+
+Using the package manager to update:
+
+emerge -avuDN =media-video/ffmpeg-9999::oiledmachine-overlay
+
+  or
+
+emerge -avuDN =media-video/ffmpeg-9999m::oiledmachine-overlay
+
+
+To later update all live packages including this one:
+
+emerge -avuDN @live-rebuild
