@@ -42,3 +42,6 @@ emerge -avuDN =media-video/ffmpeg-9999m::oiledmachine-overlay
 To later update all live packages including this one:
 
 emerge -avuDN @live-rebuild
+
+There is currently a lot of incoming security updates for live so
+there is more benefit to use live than the stable tagged 8.x releases.
