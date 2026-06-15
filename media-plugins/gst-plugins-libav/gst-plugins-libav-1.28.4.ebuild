@@ -16,6 +16,7 @@ CFLAGS_HARDENED_USE_CASES="plugin security-critical untrusted-data"
 # Forced FFmpeg live for mitigation
 CHKL_TIMESTAMPS=(
 	"media-video/ffmpeg-9999;Mon, 15 Jun 2026 04:07:59 +0300"
+	"media-video/ffmpeg-9999m;Mon, 15 Jun 2026 04:07:59 +0300"
 )
 
 inherit cflags-hardened chkl gstreamer-meson
@@ -29,7 +30,7 @@ HOMEPAGE="https://gstreamer.freedesktop.org/modules/gst-libav.html"
 LICENSE="LGPL-2+"
 SLOT="1.0"
 IUSE="
-ebuild_revision_25
+ebuild_revision_27
 "
 RDEPEND="
 	>=dev-libs/glib-2.40.0:2[${MULTILIB_USEDEP}]
@@ -58,7 +59,7 @@ src_configure() {
 einfo "Using FFmpeg live multislot"
 			prefix="usr/lib/ffmpeg/58.60.60"
 		elif has_version "media-video/ffmpeg:0" ; then
-einfo "Using ffmpeg monoslot"
+einfo "Using FFmpeg monoslot"
 			prefix="usr"
 		fi
 		export PKG_CONFIG_PATH="/${prefix}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
