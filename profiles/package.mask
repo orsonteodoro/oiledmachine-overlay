@@ -165,3 +165,7 @@ media-plugins/gst-plugins-x265
 
 # Project needs code review or code audit
 gui-apps/windowpet
+
+# Unpatched vulnerabilities.  Use live ebuild for the same slot.
+=media-video/ffmpeg-8.0*
+=media-video/ffmpeg-8.1*
