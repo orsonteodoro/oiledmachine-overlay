@@ -84,13 +84,13 @@ exist in build files.
 | Rust 1.88.0                     | Available                             |                                                    |
 | Rust 1.89.0                     | Available                             | U22 (1.89.0), U24 (1.89.0)                         |
 | Rust 1.91.0                     | Not supported                         | G23 (1.91.0)                                       |
-| Rust 1.91.1 [C]                 | Available                             | U22 (1.91.1), U24 (1.91.1), U26 (1.91.1)           |
+| Rust 1.91.1                     | Available                             | U22 (1.91.1), U24 (1.91.1), U26 (1.91.1)           |
 | Rust 1.92.0                     | Available                             | U26 (1.92.0)                                       |
-| Rust 1.93.1                     | Available                             | G23 (1.93.1), U26 (1.93.1)                         |
+| Rust 1.93.1 [C]                 | Available                             | G23 (1.93.1), U26 (1.93.1)                         |
 | Rust 1.94.1                     | Available                             |                                                    |
-| Rust 1.95.0 [C]                 | Available                             | F43 (1.95.0)                                       |
-| Rust 1.96.0                     | Available                             | F44 (1.96.0)                                       |
-| Rust-9999 (1.97.0-nightly) [C]  | Limited support                       |                                                    |
+| Rust 1.95.0                     | Available                             | F43 (1.95.0)                                       |
+| Rust 1.96.0 [C]                 | Available                             | F44 (1.96.0)                                       |
+| Rust-9999 (1.98.0-nightly) [C]  | Limited support                       |                                                    |
 
 For non C/C++ langages (e.g. Python or JS) the Rust slot rules for version
 pinning are as follows:
@@ -102,7 +102,7 @@ pinning are as follows:
 - The bootstrap slots that are unassociated with any LTS distros are deprecated
   so packages need to use either the latest LTS slot or rolling slot.
 - The highest slot required by the lockfile should determine if the package is a
-  LTS Rust slot (<=1.91.1) or a rolling Rust slot (>1.91.1).
+  LTS Rust slot (<=1.93.1) or a rolling Rust slot (>1.93.1).
 - Rows marked [C] are the currently supported Rust slots for this scenario.
 
 Packages are pinned to a particular Rust slot for reproducible reasons and to
