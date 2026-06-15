@@ -82,7 +82,7 @@ FFMPEG_ENCODER_FLAG_MAP=(
 	"libaom"
 	"mp3:libmp3lame"
 	"openh264:libopenh264"
-	"rav1e:librav1e"
+	"rav1e:^librav1e" # no multilib
 	"snappy:libsnappy"
 	"svt-av1:libsvtav1"
 	"theora:libtheora"
@@ -98,6 +98,7 @@ FFMPEG_ENCODER_FLAG_MAP=(
 # or $(use_enable foo foo) if no :bar is set.
 # foo is added to IUSE.
 FFMPEG_FLAG_MAP=(
+	# [+]flag[:[^][!]opt1,...][@<v3|nonfree>]], ^ = native-only, ! = override
 	${FFMPEG_UNSLOTTED:+doc:^htmlpages}
 	"+bzip2:bzlib"
 	"cpudetection:runtime-cpudetect"
@@ -113,7 +114,8 @@ FFMPEG_FLAG_MAP=(
 	"opencl"
 	"openssl"
 	"+postproc"
-	"rist:librist"
+	"rabbitmq:^librabbitmq" # no multilib
+	"rist:^librist" # no multilib
 	"samba:libsmbclient"
 	"sdl:ffplay"
 	"sdl:sdl2"
@@ -1916,10 +1918,26 @@ eerror
 		fi
 	done
 
-	for i in "${ffuse[@]#+}" ; do
-		myconf+=(
-			$(use_enable ${i%:*} ${i#*:})
-		)
+	local row
+	for row in "${ffuse[@]#+}" ; do
+		local l="${row%:*}"
+		local r_raw="${row#*:}"
+		r="${r/^}"
+		if [[ "${r_raw}" =~ "^" ]] ; then
+			if multilib_is_native_abi ; then
+				myconf+=(
+					$(use_enable ${l} ${r})
+				)
+			else
+				myconf+=(
+					--disable-${r}
+				)
+			fi
+		else
+			myconf+=(
+				$(use_enable ${l} ${r})
+			)
+		fi
 	done
 
 	if use cuda-filters ; then
