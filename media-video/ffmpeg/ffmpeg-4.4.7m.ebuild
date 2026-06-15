@@ -1905,22 +1905,28 @@ eerror
 	for row in "${ffuse[@]#+}" ; do
 		local l="${row%:*}"
 		local r_raw="${row#*:}"
-		r="${r/^}"
-		if [[ "${r_raw}" =~ "^" ]] ; then
-			if multilib_is_native_abi ; then
-				myconf+=(
-					$(use_enable ${l} ${r})
-				)
+		IFS=','
+		local c_raw
+		for c_raw in ${r_raw} ; do
+			local c
+			c="${c_raw/^}"
+			if [[ "${col_raw}" =~ "^" ]] ; then
+				if multilib_is_native_abi ; then
+					myconf+=(
+						$(use_enable ${l} ${c})
+					)
+				else
+					myconf+=(
+						--disable-${c}
+					)
+				fi
 			else
 				myconf+=(
-					--disable-${r}
+					$(use_enable ${l} ${c})
 				)
 			fi
-		else
-			myconf+=(
-				$(use_enable ${l} ${r})
-			)
-		fi
+		done
+		IFS=$' \t\n'
 	done
 
 	if use cuda-filters ; then
