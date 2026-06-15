@@ -1,5 +1,20 @@
 --- a/build/config/compiler/compiler.gni.orig	2026-06-10 10:58:03.000000000 -0700
-+++ b/build/config/compiler/compiler.gni	2026-06-13 06:58:27.547233961 -0700
++++ b/build/config/compiler/compiler.gni	2026-06-15 00:46:26.988919586 -0700
+@@ -43,10 +43,10 @@ if (!defined(experimental_linker_path) |
+ if (!is_win && !is_mac && !is_ios) {
+   declare_args() {
+     # Link using mold instead of lld.
+-    use_mold =
+-        host_os == "linux" && !is_official_build &&
+-        experimental_linker_path == "" && is_a_target_toolchain &&
+-        current_cpu == "x64" && is_android
++    #use_mold =
++    #    host_os == "linux" && !is_official_build &&
++    #    experimental_linker_path == "" && is_a_target_toolchain &&
++    #    current_cpu == "x64" && is_android
+     # This should be !use_thin_lto, but there's a circular dependency
+     # between use_thin_lto and use_mold.
+     # is_a_target_toolchain restriction due to https://github.com/rui314/mold/issues/1571
 @@ -63,6 +63,10 @@ if (!defined(use_mold)) {
  }
  
@@ -12,7 +27,7 @@
    # In late bring-up on macOS (see docs/mac_lld.md).
    # Tentatively used on iOS, except in arm64e mode (not yet supported by lld).
 --- a/build/config/compiler/pgo/BUILD.gn.orig	2026-06-10 10:58:03.000000000 -0700
-+++ b/build/config/compiler/pgo/BUILD.gn	2026-06-13 06:58:00.776050363 -0700
++++ b/build/config/compiler/pgo/BUILD.gn	2026-06-15 00:45:38.874388529 -0700
 @@ -9,6 +9,10 @@ import("//build/config/compiler/pgo/pgo.
  import("//build/config/features.gni")
  import("//build/toolchain/toolchain.gni")
@@ -50,8 +65,8 @@
      }
    }
  }
---- a/build/config/compiler/BUILD.gn.orig	2026-06-12 23:49:34.883967983 -0700
-+++ b/build/config/compiler/BUILD.gn	2026-06-13 07:01:33.941549748 -0700
+--- a/build/config/compiler/BUILD.gn.orig	2026-06-15 00:38:55.382707178 -0700
++++ b/build/config/compiler/BUILD.gn	2026-06-15 00:45:38.874388529 -0700
 @@ -211,6 +211,8 @@ declare_args() {
    # away from the opt-in wexit_time_destructors config, and into the default
    # compiler config.
@@ -131,7 +146,7 @@
      }
    }
 --- a/third_party/instrumented_libs/noble/BUILD.gn.orig	2026-06-10 10:58:03.000000000 -0700
-+++ b/third_party/instrumented_libs/noble/BUILD.gn	2026-06-13 06:58:00.776050363 -0700
++++ b/third_party/instrumented_libs/noble/BUILD.gn	2026-06-15 00:45:38.874388529 -0700
 @@ -5,6 +5,10 @@
  import("//build/config/python.gni")
  import("//build/config/sanitizers/sanitizers.gni")

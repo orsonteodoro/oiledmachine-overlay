@@ -3341,7 +3341,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		)
 	else
 		PATCHES+=(
-			"A${FILESDIR}/extra-patches/${PN}-149.0.7827.114-mold.patch"
+			"${FILESDIR}/extra-patches/${PN}-149.0.7827.114-mold.patch"
 		)
 	fi
 
