@@ -464,7 +464,7 @@ else # Release
 		)
 	"
 	if [[ -n "${FFMPEG_SOC_PATCH}" ]] ; then
-		SRC_URI="
+		SRC_URI+="
 			soc? (
 				https://dev.gentoo.org/~chewi/distfiles/${FFMPEG_SOC_PATCH}
 			)

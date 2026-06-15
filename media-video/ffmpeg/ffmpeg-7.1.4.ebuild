@@ -33,7 +33,6 @@ FFMPEG_SOC_PATCH="ffmpeg-rpi-7.1.1.patch"
 N_SAMPLES=1
 NV_CODEC_HEADERS_PV="9.1.23.1"
 PYTHON_COMPAT=( "python3_"{13..14} ) # D13 = 3.13, F43 = 3.14
-SCM=""
 TRAIN_SANDBOX_EXCEPTION_VAAPI=1
 UOPTS_SUPPORT_EBOLT=1
 UOPTS_SUPPORT_EPGO=1
@@ -429,12 +428,9 @@ if [[ "${MY_PV#9999}" == "${MY_PV}" ]] ; then
 	".
 fi
 if [[ "${MY_PV#9999}" != "${MY_PV}" ]] ; then
-	SCM="git-r3"
 	EGIT_MIN_CLONE_TYPE="single"
 	EGIT_REPO_URI="https://git.ffmpeg.org/ffmpeg.git"
-fi
-if [[ "${MY_PV#9999}" != "${MY_PV}" ]] ; then
-	SRC_URI=""
+	inherit git-r3
 elif [[ "${MY_PV%_p*}" != "${MY_PV}" ]] ; then # Snapshot
 	SRC_URI="mirror://gentoo/${MY_P}.tar.xz"
 else # Release
@@ -447,7 +443,7 @@ else # Release
 		)
 	"
 	if [[ -n "${FFMPEG_SOC_PATCH}" ]] ; then
-		SRC_URI="
+		SRC_URI+="
 			soc? (
 				https://dev.gentoo.org/~chewi/distfiles/${FFMPEG_SOC_PATCH}
 			)
@@ -1652,6 +1648,18 @@ eerror $(printf "%30s : %-s" "Actual subslot" "${actual_subslot}")
 eerror $(printf "%30s : %-s" "Expected subslot" "${FFMPEG_SUBSLOT}")
 eerror
 		die
+	fi
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]]; then
+		git-r3_src_unpack
+	else
+		use verify-sig &&
+			verify-sig_verify_detached \
+				"${DISTDIR}/ffmpeg-${PV}.tar.xz"{"",".asc"} \
+				"${BROOT}/usr/share/openpgp-keys/ffmpeg.asc"
+		default
 	fi
 }
 
