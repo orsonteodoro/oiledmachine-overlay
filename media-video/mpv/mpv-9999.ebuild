@@ -22,8 +22,8 @@ LUA_COMPAT=( lua5-1 luajit )
 PYTHON_COMPAT=( python3_{11..14} )
 
 CHKL_TIMESTAMPS=(
-	"media-video-9999;Thu, 11 Jun 2026 16:34:26 +0200"
-	"media-video-9999m;Thu, 11 Jun 2026 16:34:26 +0200"
+	"media-video/ffmpeg-9999;Mon, 15 Jun 2026 09:24:51 +0800"
+	"media-video/ffmpeg-9999m;Mon, 15 Jun 2026 09:24:51 +0800"
 )
 
 inherit cflags-hardened chkl flag-o-matic lua-single meson optfeature pax-utils python-single-r1 xdg
