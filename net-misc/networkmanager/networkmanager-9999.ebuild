@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# This ebuild contains AI generated data.
+
 MY_PN="NetworkManager"
 
 CFLAGS_HARDENED_USE_CASES="security-critical daemon login network untrusted-data sensitive-data"
