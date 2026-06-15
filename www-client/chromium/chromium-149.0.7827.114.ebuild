@@ -192,8 +192,8 @@ TC_COUNT_EXPECTED_CLANG=429
 TC_COUNT_EXPECTED_GN=1085
 TC_COUNT_EXPECTED_RUST=7264
 SOURCES_COUNT_EXPECTED=551272
-CHROMIUM_EBUILD_MAINTAINER=1 # Also set GEN_ABOUT_CREDITS
-GEN_ABOUT_CREDITS=1
+CHROMIUM_EBUILD_MAINTAINER=0 # Also set GEN_ABOUT_CREDITS
+GEN_ABOUT_CREDITS=0
 
 ABSEIL_CPP_SLOT="20251021"
 ALLOW_MKSNAPSHOT=1 # Ebuild maintainer value.  Setting to a value other than 1 is untested.
@@ -279,7 +279,7 @@ OPENPOWER_PATCHES_COMMIT="a85b64f07b489b8c6fdb13ecf79c16c56c560fc6" # Same as PP
 TEST_FONT="9c07d19d9c5ee1ff94f717e6fb17e0c8c354e6f9"
 
 # SHA512 about_credits.html fingerprint:
-LICENSE_FINGERPRINT_UNGOOGLED_CHROMIUM="6298026ee5a6c86198e8acca7653344b132a136012d19951e488deb0fc4c23d01011931b8d7ba65906b96da8fc905d221124b0b4d81b5db46cb7f8f7de415a3f"
+LICENSE_FINGERPRINT_UNGOOGLED_CHROMIUM="57d61beed49d1de24f09ef3719e14f8ad1080c572a8e3699c7618d7d842f3352706045cc82e04eae33667209b28ff4c4ae1629c47ec705d20bcc2584d68b98e8"
 LICENSE_FINGERPRINT_VANILLA="5d1b185dbad626cd0e51af0d77d37acaacd9ef3a2f9b810ef45e90f6f51c85b364e6e24d1859da3894e1509f28602f6f5ed994021f21c3c8ee4910a981caa6c0"
 
 # Mitigate flood the zone vulnerability.
@@ -1151,7 +1151,11 @@ LIBCXX_REQUIRED_USE=(
 #	)
 #		llvm_slot_22
 # system-ffmpeg is not ready on this overlay
+# system-clang patches not ready yet
+# system-rust patches not ready yet
 REQUIRED_USE+="
+	!system-clang
+	!system-rust
 	${PATENT_USE_FLAGS}
 	!drumbrake
 	!system-ffmpeg
@@ -3333,7 +3337,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	if has "ungoogled-chromium" ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
 	# Same as USE="ungoogled-chromium cromite" or USE=ungoogled-chromium
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-148.0.7778.167-mold-ungoogled-chromium.patch"
+			"${FILESDIR}/extra-patches/${PN}-149.0.7827.114-mold-ungoogled-chromium.patch"
 		)
 	elif has "cromite" ${IUSE_EFFECTIVE} && use cromite ; then
 		PATCHES+=(
