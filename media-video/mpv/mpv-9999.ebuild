@@ -22,6 +22,9 @@ LUA_COMPAT=( lua5-1 luajit )
 PYTHON_COMPAT=( python3_{11..14} )
 
 CHKL_TIMESTAMPS=(
+	# The proper way to do this is to add all the live codecs and scan the commit history for vulnerability fixed.
+	# See https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/vf.eclass for a list of vulnerabilities.
+	# Currently, the packages that were triaged were the most widely used.
 	# Last security check 20260614
 	"media-libs/libplacebo-9999;Mon, 1 Jun 2026 20:39:36 +0200"	# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-video/ffmpeg-9999;Sun, 14 Jun 2026 20:15:19 -0700"	# Bumped live/*DEPENDS to latest non-vulnerable
@@ -368,3 +371,7 @@ pkg_postinst() {
 ewarn "The nscd service must be enabled and running for proper DNS resolution."
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive/integration-testing) 65a1852 live (20260614)
+# streaming audio:  passed
+# video test:  passed
