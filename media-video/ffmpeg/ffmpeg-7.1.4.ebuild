@@ -425,11 +425,19 @@ inherit multilib-minimal python-single-r1 toolchain-funcs uopts
 if [[ "${MY_PV#9999}" == "${MY_PV}" ]] ; then
 	KEYWORDS="
 ~amd64 ~arm ~arm64 ~hppa ~loong ~m64k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86
-	".
+	"
 fi
 if [[ "${MY_PV#9999}" != "${MY_PV}" ]] ; then
+	#FALLBACK_COMMIT=""
+	EGIT_CHECKOUT_DIR="${WORKDIR}/${MY_P}"
 	EGIT_MIN_CLONE_TYPE="single"
-	EGIT_REPO_URI="https://git.ffmpeg.org/ffmpeg.git"
+	EGIT_REPO_URI=(
+		https://git.ffmpeg.org/ffmpeg.git
+		https://github.com/FFmpeg/FFmpeg.git
+	)
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 	inherit git-r3
 elif [[ "${MY_PV%_p*}" != "${MY_PV}" ]] ; then # Snapshot
 	SRC_URI="mirror://gentoo/${MY_P}.tar.xz"
@@ -454,15 +462,6 @@ else # Release
 			sec-keys/openpgp-keys-ffmpeg
 		)
 	"
-
-	src_unpack() {
-		if use verify-sig; then
-			verify-sig_verify_detached \
-				"${DISTDIR}/${MY_P/_/-}.tar.xz"{"",".asc"} \
-				"/usr/share/openpgp-keys/ffmpeg.asc"
-		fi
-		default
-	}
 fi
 S="${WORKDIR}/${MY_P/_/-}"
 S_ORIG="${WORKDIR}/${MY_P/_/-}"
@@ -1653,12 +1652,16 @@ eerror
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]]; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
 		git-r3_src_unpack
 	else
-		use verify-sig &&
+		if use verify-sig ; then
 			verify-sig_verify_detached \
 				"${DISTDIR}/ffmpeg-${PV}.tar.xz"{"",".asc"} \
 				"${BROOT}/usr/share/openpgp-keys/ffmpeg.asc"
+		fi
 		default
 	fi
 }

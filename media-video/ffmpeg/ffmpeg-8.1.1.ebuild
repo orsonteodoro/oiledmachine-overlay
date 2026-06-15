@@ -450,12 +450,16 @@ if [[ "${MY_PV#9999}" == "${MY_PV}" ]] ; then
 	"
 fi
 if [[ "${MY_PV#9999}" != "${MY_PV}" ]] ; then
+	#FALLBACK_COMMIT=""
+	EGIT_CHECKOUT_DIR="${WORKDIR}/${MY_P}"
 	EGIT_MIN_CLONE_TYPE="single"
 	EGIT_REPO_URI=(
 		https://git.ffmpeg.org/ffmpeg.git
 		https://github.com/FFmpeg/FFmpeg.git
 	)
-	IUSE+=" fallback-commit"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 	inherit git-r3
 elif [[ "${MY_PV%_p*}" != "${MY_PV}" ]] ; then # Snapshot
 	SRC_URI="mirror://gentoo/${MY_P}.tar.xz"
@@ -1676,13 +1680,16 @@ eerror
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]]; then
-		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
 		git-r3_src_unpack
 	else
-		use verify-sig &&
+		if use verify-sig ; then
 			verify-sig_verify_detached \
 				"${DISTDIR}/ffmpeg-${PV}.tar.xz"{"",".asc"} \
 				"${BROOT}/usr/share/openpgp-keys/ffmpeg.asc"
+		fi
 		default
 	fi
 }
