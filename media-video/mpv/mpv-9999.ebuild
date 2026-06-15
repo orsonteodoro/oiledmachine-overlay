@@ -27,8 +27,8 @@ CHKL_TIMESTAMPS=(
 	# Currently, the packages that were triaged were the most widely used.
 	# Last security check 20260614
 	"media-libs/libplacebo-9999;Mon, 1 Jun 2026 20:39:36 +0200"	# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-video/ffmpeg-9999;Sun, 14 Jun 2026 20:15:19 -0700"	# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-video/ffmpeg-9999m;Sun, 14 Jun 2026 20:15:19 -0700"	# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-video/ffmpeg-9999;Mon, 15 Jun 2026 04:07:59 +0300"	# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-video/ffmpeg-9999m;Mon, 15 Jun 2026 04:07:59 +0300"	# Bumped live/*DEPENDS to latest non-vulnerable
 )
 
 inherit cflags-hardened chkl flag-o-matic lua-single meson optfeature pax-utils python-single-r1 xdg
@@ -56,7 +56,7 @@ IUSE+="
 	+libmpv +lua network nvenc openal pipewire pulseaudio rubberband sdl
 	selinux sixel sndio soc subrandr test tools +uchardet vaapi vapoursynth vdpau
 	+vulkan wayland xv zimg zlib
-	ebuild_revision_3
+	ebuild_revision_4
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
