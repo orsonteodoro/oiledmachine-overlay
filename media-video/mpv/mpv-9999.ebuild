@@ -51,7 +51,7 @@ IUSE+="
 	+libmpv +lua network nvenc openal pipewire pulseaudio rubberband sdl
 	selinux sixel sndio soc subrandr test tools +uchardet vaapi vapoursynth vdpau
 	+vulkan wayland xv zimg zlib
-	ebuild_revision_1
+	ebuild_revision_2
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
