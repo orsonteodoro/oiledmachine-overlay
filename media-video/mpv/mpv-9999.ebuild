@@ -19,7 +19,7 @@ FFMPEG_COMPAT_SLOTS=(
 )
 
 LUA_COMPAT=( lua5-1 luajit )
-PYTHON_COMPAT=( python3_{11..14} )
+PYTHON_COMPAT=( python3_{10..14} )
 
 CHKL_TIMESTAMPS=(
 	# The proper way to do this is to add all the live codecs and scan the commit history for vulnerability fixed.
@@ -56,7 +56,7 @@ IUSE+="
 	+libmpv +lua network nvenc openal pipewire pulseaudio rubberband sdl
 	selinux sixel sndio soc subrandr test tools +uchardet vaapi vapoursynth vdpau
 	+vulkan wayland xv zimg zlib
-	ebuild_revision_2
+	ebuild_revision_3
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
