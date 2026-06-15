@@ -13,7 +13,12 @@ MY_P="${MY_PN}-${MY_PV}"
 
 CFLAGS_HARDENED_USE_CASES="plugin security-critical untrusted-data"
 
-inherit cflags-hardened gstreamer-meson
+# Forced FFmpeg live for mitigation
+CHKL_TIMESTAMPS=(
+	"media-video/ffmpeg-9999;Mon, 15 Jun 2026 04:07:59 +0300"
+)
+
+inherit cflags-hardened chkl gstreamer-meson
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~x86"
 S="${WORKDIR}/${MY_P}"
@@ -24,7 +29,7 @@ HOMEPAGE="https://gstreamer.freedesktop.org/modules/gst-libav.html"
 LICENSE="LGPL-2+"
 SLOT="1.0"
 IUSE="
-ebuild_revision_23
+ebuild_revision_24
 "
 RDEPEND="
 	>=dev-libs/glib-2.40.0:2[${MULTILIB_USEDEP}]
@@ -34,10 +39,7 @@ RDEPEND="
 	~media-libs/gst-plugins-base-${MY_PV}:1.0[${MULTILIB_USEDEP}]
 	media-libs/gst-plugins-base:=
 	|| (
-		media-video/ffmpeg:58.60.60[${MULTILIB_USEDEP}]
-		media-video/ffmpeg:57.59.59[${MULTILIB_USEDEP}]
-		media-video/ffmpeg:56.58.58[${MULTILIB_USEDEP}]
-		<media-video/ffmpeg-7:0[${MULTILIB_USEDEP}]
+		>=media-video/ffmpeg-9999:60.62.62[${MULTILIB_USEDEP}]
 	)
 	media-video/ffmpeg:=
 "
@@ -48,6 +50,7 @@ BDEPEND="
 "
 
 src_configure() {
+	chkl_check_many_timestamps
 	local prefix=""
 	_configure() {
 		cflags-hardened_append
