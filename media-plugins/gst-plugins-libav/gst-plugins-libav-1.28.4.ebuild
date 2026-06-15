@@ -29,7 +29,7 @@ HOMEPAGE="https://gstreamer.freedesktop.org/modules/gst-libav.html"
 LICENSE="LGPL-2+"
 SLOT="1.0"
 IUSE="
-ebuild_revision_24
+ebuild_revision_25
 "
 RDEPEND="
 	>=dev-libs/glib-2.40.0:2[${MULTILIB_USEDEP}]
@@ -54,15 +54,9 @@ src_configure() {
 	local prefix=""
 	_configure() {
 		cflags-hardened_append
-		if has_version "media-video/ffmpeg:58.60.60" ; then # 6.1.x
-einfo "Using ffmpeg 6.1.x multislot"
+		if has_version "media-video/ffmpeg:60.62.62" ; then # 8.x
+einfo "Using FFmpeg live multislot"
 			prefix="usr/lib/ffmpeg/58.60.60"
-		elif has_version "media-video/ffmpeg:57.59.59" ; then # 5.1.x
-einfo "Using ffmpeg 5.1.x multislot"
-			prefix="usr/lib/ffmpeg/57.59.59"
-		elif has_version "media-video/ffmpeg:56.58.58" ; then # 4.4.x
-einfo "Using ffmpeg 4.4.x multislot"
-			prefix="usr/lib/ffmpeg/56.58.58"
 		elif has_version "media-video/ffmpeg:0" ; then
 einfo "Using ffmpeg monoslot"
 			prefix="usr"
@@ -79,12 +73,8 @@ src_install() {
 	_install() {
 		cd "${BUILD_DIR}" || die
 		gstreamer_multilib_src_install
-		if has_version "media-video/ffmpeg:58.60.60" ; then # 6.1.x
-			prefix="usr/lib/ffmpeg/58.60.60"
-		elif has_version "media-video/ffmpeg:57.59.59" ; then # 5.1.x
-			prefix="usr/lib/ffmpeg/57.59.59"
-		elif has_version "media-video/ffmpeg:56.58.58" ; then # 4.4.x
-			prefix="usr/lib/ffmpeg/56.58.58"
+		if has_version "media-video/ffmpeg:60.62.62" ; then # 8.x
+			prefix="usr/lib/ffmpeg/60.62.62"
 		else
 			prefix="usr"
 		fi
