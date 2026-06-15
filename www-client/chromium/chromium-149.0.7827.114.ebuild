@@ -280,7 +280,7 @@ TEST_FONT="9c07d19d9c5ee1ff94f717e6fb17e0c8c354e6f9"
 
 # SHA512 about_credits.html fingerprint:
 LICENSE_FINGERPRINT_UNGOOGLED_CHROMIUM="6298026ee5a6c86198e8acca7653344b132a136012d19951e488deb0fc4c23d01011931b8d7ba65906b96da8fc905d221124b0b4d81b5db46cb7f8f7de415a3f"
-LICENSE_FINGERPRINT_VANILLA="9ee074cce03f2be95c790139e9bfffb551230b0bdb34134aad73a2969b8c0a581c0bd59f150138cb750a3632900f2b0949973737e47a7f71ef782cdfadfe73d3"
+LICENSE_FINGERPRINT_VANILLA="5d1b185dbad626cd0e51af0d77d37acaacd9ef3a2f9b810ef45e90f6f51c85b364e6e24d1859da3894e1509f28602f6f5ed994021f21c3c8ee4910a981caa6c0"
 
 # Mitigate flood the zone vulnerability.
 # If there is a live ebuild, it needs a check.
@@ -7897,7 +7897,7 @@ einfo "  \`cp -a ${s}/out/Release/gen/components/resources/about_credits.html ${
 einfo
 einfo "Update ebuild with"
 einfo
-einfo "  LICENSE_FINGERPRINT_${flavor_var}=\"${fp}\""
+einfo "  LICENSE_FINGERPRINT${flavor_var}=\"${fp}\""
 einfo
 einfo "and with LICENSE variable updates.  When you are done updating, comment"
 einfo "out GEN_ABOUT_CREDITS."

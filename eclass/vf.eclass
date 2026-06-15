@@ -383,6 +383,9 @@ einfo "MC = Memory Corruption"
 # See also BGC, JITM, PGC
 einfo "MISCOMP = Miscompilation"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"MITM"($|" "|";"|",") ]] ; then
+einfo "MITM = Man In The Middle"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ML"($|" "|";"|",") ]] ; then
 einfo "ML = Memory Leak"
 		fi
