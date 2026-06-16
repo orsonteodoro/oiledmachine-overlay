@@ -9,7 +9,11 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO PE SO UAF"
 SUBSLOT="18"
 JAVA_PKG_OPT_USE="jdbc"
 
-inherit cflags-hardened check-compiler-switch systemd flag-o-matic prefix toolchain-funcs \
+CHKL_TIMESTAMPS=(
+	"net-misc/curl-9999;Mon, 15 Jun 2026 12:57:42 +0100"
+)
+
+inherit cflags-hardened check-compiler-switch chkl systemd flag-o-matic prefix toolchain-funcs \
 	multiprocessing java-pkg-opt-2 cmake pam
 
 DESCRIPTION="An enhanced, drop-in replacement for MySQL"
@@ -29,7 +33,9 @@ IUSE="aws-km +backup bindist columnstore cracklib debug extraengine galera innod
 	innodb-lzo innodb-snappy jdbc jemalloc kerberos latin1 mroonga
 	numa odbc oqgraph pam +perl profiling rocksdb selinux +server sphinx
 	sst-rsync sst-mariabackup static systemd systemtap s3 tcmalloc
-	test xml yassl"
+	test xml yassl
+ebuild_revision_1
+"
 
 RESTRICT="!bindist? ( bindist ) !test? ( test )"
 
@@ -85,7 +91,7 @@ COMMON_DEPEND="
 			dev-libs/judy:0=
 		)
 		pam? ( sys-libs/pam:0= )
-		s3? ( net-misc/curl )
+		s3? ( >=net-misc/curl-9999 )
 		systemd? ( sys-apps/systemd:= )
 	)
 	systemtap? ( >=dev-debug/systemtap-1.3:0= )
@@ -290,6 +296,7 @@ src_configure() {
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
+	chkl_check_many_timestamps
 
 	# bug #855233 (MDEV-11914, MDEV-25633) at least
 	filter-lto
