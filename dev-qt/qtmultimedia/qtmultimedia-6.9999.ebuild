@@ -8,6 +8,8 @@ CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CXX_STANDARD=17
 
+FALLBACK_COMMIT="85e7f50f8544cbe09a431e74751e683792aede17" # Wed, 27 May 2026 14:27:47 +1000
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
@@ -24,19 +26,16 @@ inherit cflags-hardened flag-o-matic libcxx-slot libstdcxx-slot qt6-build
 DESCRIPTION="Multimedia (audio, video, radio, camera) library for the Qt6 framework"
 
 if [[ ${QT6_BUILD_TYPE} == release ]]; then
-	KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~loong ~ppc ~ppc64 ~riscv ~x86"
+	KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~loong ~ppc64 ~riscv ~x86"
 fi
 
 IUSE="
 	+X alsa +dbus eglfs +ffmpeg gstreamer opengl pipewire pulseaudio
-	qml v4l vaapi vulkan wayland
-	ebuild_revision_9
+	qml +v4l vaapi vulkan wayland
 "
-# tst_qmediaplayerbackend hard requires qml, review in case becomes optional
 REQUIRED_USE="
 	|| ( ffmpeg gstreamer )
 	eglfs? ( ffmpeg opengl qml )
-	test? ( qml )
 	vaapi? ( ffmpeg opengl )
 "
 
@@ -78,6 +77,7 @@ RDEPEND="
 		~dev-qt/qtquick3d-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-qt/qtquick3d:=
 	)
+	vaapi? ( media-libs/libva:= )
 "
 DEPEND="
 	${RDEPEND}
@@ -103,6 +103,7 @@ CMAKE_SKIP_TESTS=(
 	tst_qmediaplayerbackend
 	tst_qsoundeffect
 	# may try to use v4l2 or hardware acceleration depending on availability
+	tst_qcamerabackend #972689
 	tst_qmediarecorderbackend
 	tst_qscreencapture_integration
 	tst_qscreencapturebackend
@@ -114,20 +115,23 @@ CMAKE_SKIP_TESTS=(
 	tst_qwindowcapturebackend
 )
 
-PATCHES=(
-	"${FILESDIR}"/${PN}-6.7.3-eigen-ppc-no-vsx.patch
-)
-
 pkg_setup() {
 	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 
+src_prepare() {
+	qt6-build_src_prepare
+
+	# test expects GStreamer to report an exact bitrate value, but
+	# this varies depending on version and Qt updates it only now
+	# and then (disabling permanently with a sed to avoid rebases)
+	sed -e '/bool validateBitRates = GST_CHECK_VERSION/s/= .*/= false;/' \
+		-i tests/auto/unit/plugins/multimedia/gstreamer/gstreamer_backend/tst_gstreamer_backend.cpp || die
+}
+
 src_configure() {
 	cflags-hardened_append
-	# eigen + ppc32 seems broken w/ -maltivec (forced by Qt, bug #943402)
-	use ppc && append-cppflags -DEIGEN_DONT_VECTORIZE
-
 	# normally passed by the build system, but needed for 32-on-64 chroots
 	use x86 && append-cppflags -DDISABLE_SIMD -DPFFFT_SIMD_DISABLE
 
