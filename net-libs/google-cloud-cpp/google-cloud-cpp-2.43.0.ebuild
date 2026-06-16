@@ -24,6 +24,12 @@ RE2_SLOT="20250512"
 GOOGLEAPIS_COMMIT="2193a2bfcecb92b92aad7a4d81baa428cafd7dfd"
 
 CHKL_TIMESTAMPS=(
+	"dev-libs/openssl-4.0.9999;Mon, 11 May 2026 16:29:47 +0200"
+	"dev-libs/openssl-3.6.9999;Mon, 11 May 2026 16:29:47 +0200"
+	"dev-libs/openssl-3.5.9999;Mon, 11 May 2026 16:29:47 +0200"
+	"dev-libs/openssl-3.4.9999;Mon, 11 May 2026 16:29:47 +0200"
+	"dev-libs/openssl-3.3.9999;Mon, 11 May 2026 16:29:47 +0200"
+	"dev-libs/openssl-3.0.9999;Mon, 11 May 2026 16:29:47 +0200"
 	"net-misc/curl-9999;Mon, 15 Jun 2026 12:57:42 +0100"
 )
 
@@ -51,7 +57,7 @@ SLOT="${PROTOBUF_CPP_SLOT}/"$(ver_cut "1-2" "${PV}")
 KEYWORDS="~amd64 ~x86"
 IUSE="
 test
-ebuild_revision_17
+ebuild_revision_19
 "
 # Tests need a GCP account
 RESTRICT="test"
