@@ -22,6 +22,15 @@ MUNIT_COMMIT_2="3cf9c79f3a76f313d560dedd5b47c0416a0fbb6e"
 NEVERBLEED_COMMIT="8a91f9be3438d70b7cd005f8e9dfb418894c5c06"
 URLPARSE_COMMIT="59b068a7618a256c6823b0b9801b61d1d04677a3"
 
+CHKL_TIMESTAMPS=(
+	"dev-libs/openssl-4.0.9999;Mon, 11 May 2026 16:29:47 +0200"
+	"dev-libs/openssl-3.6.9999;Mon, 11 May 2026 16:29:47 +0200"
+	"dev-libs/openssl-3.5.9999;Mon, 11 May 2026 16:29:47 +0200"
+	"dev-libs/openssl-3.4.9999;Mon, 11 May 2026 16:29:47 +0200"
+	"dev-libs/openssl-3.3.9999;Mon, 11 May 2026 16:29:47 +0200"
+	"dev-libs/openssl-3.0.9999;Mon, 11 May 2026 16:29:47 +0200"
+)
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX20[@]}"
@@ -32,8 +41,7 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}"
 )
 
-
-inherit cflags-hardened check-compiler-switch cmake dep-prepare flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal python-r1 ruby-single toolchain-funcs
+inherit cflags-hardened check-compiler-switch chkl cmake dep-prepare flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal python-r1 ruby-single toolchain-funcs
 
 KEYWORDS="
 ~amd64 ~arm64 ~x86
@@ -209,6 +217,7 @@ multilib_src_configure() {
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
+	chkl_check_many_timestamps
 
 	local so_c=$(grep -F "set(LT_CURRENT" "${S}/CMakeLists.txt" \
 		| grep -E -o "[0-9]+")
