@@ -9,7 +9,11 @@ LINK_HINTS_FN="surf-9999-link-hints.diff"
 PYTHON_COMPAT=( "python3_"{8..12} )
 SEARCHENGINES_FN="surf-git-20170323-webkit2-searchengines.diff"
 
-inherit flag-o-matic git-r3 multilib-minimal python-single-r1 toolchain-funcs
+CHKL_TIMESTAMPS=(
+	"net-misc/curl-9999;Mon, 15 Jun 2026 12:57:42 +0100"
+)
+
+inherit chkl flag-o-matic git-r3 multilib-minimal python-single-r1 toolchain-funcs
 
 EGIT_BRANCH="surf-webkit2"
 EGIT_COMMIT="48517e586cdc98bc1af7115674b554cc70c8bc2e"
@@ -66,7 +70,7 @@ alsa curl doc gtk3 gtk4 +geolocation mod_adblock mod_adblock_spam404
 mod_adblock_easylist mod_autoopen mod_link_hints mod_searchengines
 mod_simple_bookmarking_redux mpv tabbed update_adblock plumb -pointer-lock
 +pulseaudio savedconfig -smoothscrolling +url-bar +v4l +webgl
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE+="
 	^^ (
@@ -122,7 +126,7 @@ RDEPEND+="
 		media-plugins/gst-plugins-meta:1.0[pulseudio]
 	)
 	curl? (
-		net-misc/curl[${MULTILIB_USEDEP}]
+		>=net-misc/curl-9999[${MULTILIB_USEDEP}]
 		x11-terms/st
 	)
 	gtk3? (
@@ -512,6 +516,10 @@ LIBPREFIX = \$(PREFIX)/$(get_libdir)|g" \
 	if [[ "${num_abis}" != "1" ]] ; then
 		die "You can only install for one ABI"
 	fi
+}
+
+multilib_src_configure() {
+	chkl_check_many_timestamps
 }
 
 multilib_src_compile() {
