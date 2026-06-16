@@ -1,9 +1,11 @@
-# Copyright 2021-2026 Gentoo Authors
+# Copyright 2021-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
 CXX_STANDARD=17
+
+FALLBACK_COMMIT="c7e4e72dfec4aa200f1ec05d7667a2c5382e8c09" # Fri, 12 Jun 2026 21:06:43 +0000
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
