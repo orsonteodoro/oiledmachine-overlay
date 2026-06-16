@@ -12,6 +12,8 @@ CFLAGS_HARDENED_USE_CASES="copy-paste-password jit security-critical sensitive-d
 CFLAGS_HARDENED_VTABLE_VERIFY=1
 CXX_STANDARD=17
 
+FALLBACK_COMMIT="b30a54cf0d471ba6f5e63b8fd4014905ce280a6f" # Mon, 15 Jun 2026 10:55:49 +0200
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
@@ -35,7 +37,7 @@ if [[ ${QT6_BUILD_TYPE} == release ]]; then
 	KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~loong ~ppc ~ppc64 ~riscv ~x86"
 fi
 
-IUSE="accessibility +jit +network opengl qmlls +sql +ssl svg vulkan +widgets"
+IUSE+=" accessibility +jit +network opengl qmlls +sql +ssl svg vulkan +widgets"
 
 RDEPEND="
 	~dev-qt/qtbase-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},accessibility=,gui,network=,opengl=,sql?,ssl?,vulkan=,widgets=]

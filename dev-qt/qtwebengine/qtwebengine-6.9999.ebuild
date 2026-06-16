@@ -5,7 +5,6 @@ EAPI=8
 
 # This ebuild contains AI synthetic data.
 
-# 6.9.3 - Chromium 130.0.6723.192 (Jan 6, 2025, Week 1)
 # See also /var/tmp/portage/dev-qt/qtwebengine-<VER>/work/qtwebengine-everywhere-src-<VER>/src/3rdparty/chromium/chrome/VERSION
 
 CFLAGS_ASSEMBLERS="inline nasm"
@@ -15,6 +14,8 @@ CFLAGS_HARDENED_VTABLE_VERIFY=1
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF HO IO NPD OOBA OOBR OOBW PE RC SO UAF TC" # Based on Chromium
 CXX_STANDARD=17
 WEB_KERNEL_CONFIG_CHECK_YAMA=1
+
+FALLBACK_COMMIT="304a6e3e2cde13407dbd331186755352fb612113" # Mon, 15 Jun 2026 11:38:27 +0200
 
 # See https://github.com/qt/qtwebengine/tree/dev/src for submodule ID
 # See https://github.com/qt/qtwebengine-chromium/blob/2a0509e9310c9766abd231aad5b1708c8a56539a/chromium/chrome/VERSION
@@ -48,7 +49,7 @@ if [[ ${QT6_BUILD_TYPE} == release ]]; then
 	KEYWORDS="~amd64 ~arm64"
 fi
 
-IUSE="
+IUSE+="
 	accessibility +alsa bindist custom-cflags designer geolocation
 	+jumbo-build kerberos opengl +pdfium pulseaudio qml screencast
 	+system-icu vaapi vulkan webdriver +widgets

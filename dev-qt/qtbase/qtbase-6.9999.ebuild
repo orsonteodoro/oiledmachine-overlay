@@ -12,6 +12,8 @@ CFLAGS_HARDENED_VTABLE_VERIFY=1
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS OOBA"
 CXX_STANDARD=17
 
+FALLBACK_COMMIT="f0b594b3f3e8bf25d2b8d5358d8c41238ff32fec" # Fri, 29 Aug 2025 09:21:23 -0700
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
@@ -46,7 +48,7 @@ declare -gA QT6_IUSE=(
 
 	[optfeature]="nls" #810802
 )
-IUSE="${QT6_IUSE[*]}"
+IUSE+=" ${QT6_IUSE[*]}"
 REQUIRED_USE="
 	?? ( journald syslog )
 	$(
