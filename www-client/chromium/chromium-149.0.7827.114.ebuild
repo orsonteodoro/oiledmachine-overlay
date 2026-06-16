@@ -337,6 +337,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libwebp-9999"				# Bumped live to latest non-vulnerable
 	"media-libs/libvpx-9999"
 	"media-libs/libyuv-9999"
+	"media-libs/tiff-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/woff2-9999"
 	"media-video/ffmpeg-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-video/ffmpeg-9999m"				# Bumped live/*DEPENDS to latest non-vulnerable
@@ -1682,7 +1683,7 @@ COMMON_SNAPSHOT_DEPEND="
 		>=app-crypt/libsecret-0.18.2[${MULTILIB_USEDEP}]
 	)
 	system-libtiff? (
-		media-libs/tiff[${MULTILIB_USEDEP}]
+		>=media-libs/tiff-9999[${MULTILIB_USEDEP}]
 	)
 	system-libusb? (
 		>=dev-libs/libusb-1.0.17[${MULTILIB_USEDEP}]
