@@ -5,6 +5,8 @@ EAPI=8
 
 CXX_STANDARD=17
 
+FALLBACK_COMMIT="5f47b05daa5c35e7db858b6f89cc8f967e9d7a01" # Fri, 12 Jun 2026 21:06:36 +0000
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
@@ -14,8 +16,6 @@ inherit libcxx-compat
 LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
-
-FALLBACK_COMMIT="5f47b05daa5c35e7db858b6f89cc8f967e9d7a01" # Fri, 12 Jun 2026 21:06:36 +0000
 
 # match QDOC_SUPPORTED_CLANG_VERSIONS in src/qdoc/cmake/QDocConfiguration.cmake
 LLVM_COMPAT=( {17..22} )

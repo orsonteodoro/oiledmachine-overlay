@@ -5,6 +5,8 @@ EAPI=8
 
 CXX_STANDARD=17
 
+FALLBACK_COMMIT="af0d9c3e0dcd68176b5a5288a5192c12a2d8a188" # Mon, 15 Jun 2026 04:04:14 +0000
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
@@ -16,8 +18,6 @@ LLVM_COMPAT=(
 )
 
 inherit libcxx-slot libstdcxx-slot flag-o-matic qt6-build
-
-FALLBACK_COMMIT="af0d9c3e0dcd68176b5a5288a5192c12a2d8a188" # Mon, 15 Jun 2026 04:04:14 +0000
 
 DESCRIPTION="Qt APIs and Tools for Graphics Pipelines"
 

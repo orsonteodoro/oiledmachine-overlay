@@ -29,7 +29,7 @@ if [[ ${QT6_BUILD_TYPE} == release ]]; then
 	KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~loong ~ppc64 ~riscv ~x86"
 fi
 
-IUSE="
+IUSE+="
 	+X alsa +dbus eglfs +ffmpeg gstreamer opengl pipewire pulseaudio
 	qml +v4l vaapi vulkan wayland
 "

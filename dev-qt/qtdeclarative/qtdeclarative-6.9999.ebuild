@@ -11,6 +11,11 @@ CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="copy-paste-password jit security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VTABLE_VERIFY=1
 CXX_STANDARD=17
+PYTHON_COMPAT=( python3_{10..14} )
+QT6_HAS_STATIC_LIBS=1
+# behaves very badly when qtdeclarative is not already installed, also
+# other more minor issues (installs junk, sandbox/offscreen issues)
+QT6_RESTRICT_TESTS=1
 
 FALLBACK_COMMIT="b30a54cf0d471ba6f5e63b8fd4014905ce280a6f" # Mon, 15 Jun 2026 10:55:49 +0200
 
@@ -24,11 +29,6 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-PYTHON_COMPAT=( python3_{11..14} )
-QT6_HAS_STATIC_LIBS=1
-# behaves very badly when qtdeclarative is not already installed, also
-# other more minor issues (installs junk, sandbox/offscreen issues)
-QT6_RESTRICT_TESTS=1
 inherit cflags-hardened libcxx-slot libstdcxx-slot python-any-r1 qt6-build
 
 DESCRIPTION="Qt Declarative (Quick 2)"
