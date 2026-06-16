@@ -20,6 +20,14 @@ _SECURE_TIMESTAMP_ECLASS=1
 get_secure_timestamps() {
 	declare -A SECURE_TIMESTAMP
 	# Use `date --date="2026-04-06 08:00:12 +0000" +%s` to verify correctness
+# Normalization is required to prevent BASH to interpret the key as a mathematical expression.
+# Normalization rules for the key:
+# [a-zA-Z0-9] -> [a-zA-Z0-9]
+# - -> _
+# . -> _
+# / -> _
+# Normalization example:
+# dev-libs/openssl-4.0.9999 -> dev_libs_openssl_4_0_9999
 SECURE_TIMESTAMP["app_accessibility_at_spi2_core_9999"]="Sat, 23 May 2026 08:21:47 -0500"
 SECURE_TIMESTAMP["app_accessibility_speech_dispatcher_9999"]="Tue, 6 May 2025 20:53:18 +0200"
 SECURE_TIMESTAMP["app_arch_brotli_9999"]="Sun, 19 Apr 2026 17:14:00 +0000"
