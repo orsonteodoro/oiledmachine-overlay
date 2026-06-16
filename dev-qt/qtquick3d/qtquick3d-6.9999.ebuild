@@ -28,7 +28,10 @@ elif [[ ${QT6_BUILD_TYPE} == live ]]; then
 	EGIT_SUBMODULES=() # skip qtquick3d-assimp
 fi
 
-IUSE+=" opengl vulkan"
+IUSE+="
+opengl vulkan
+ebuild_revision_1
+"
 
 RDEPEND="
 	~dev-qt/qtbase-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},concurrent,gui,opengl=,vulkan=,widgets]
@@ -39,7 +42,7 @@ RDEPEND="
 	dev-qt/qtquicktimeline:=
 	~dev-qt/qtshadertools-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-qt/qtshadertools:=
-	media-libs/assimp[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=media-libs/assimp-6.0.5[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	media-libs/assimp:=
 	virtual/zlib:=
 "
