@@ -341,6 +341,7 @@ CHKL_TIMESTAMPS=(
 	"media-video/ffmpeg-9999;Mon, 15 Jun 2026 04:07:59 +0300"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-video/ffmpeg-9999m;Mon, 15 Jun 2026 04:07:59 +0300"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"net-libs/nodejs-99999999;Tue, 12 May 2026 05:17:56 -0400"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"net-misc/curl-9999;Mon, 15 Jun 2026 12:57:42 +0100"				# Bumped live/*DEPENDS to latest non-vulnerable
 	"net-print/cups-9999;Fri, 12 Jun 2026 17:18:05 -0400"				# Bumped live/*DEPENDS to latest non-vulnerable
 	"x11-libs/libdrm-9999;Wed, 26 Jun 2024 10:13:31 +0200"
 )
@@ -1821,7 +1822,7 @@ COMMON_DEPEND="
 	${COMMON_SNAPSHOT_DEPEND}
 	>=dev-libs/expat-2.8.2[${MULTILIB_USEDEP}]
 	dev-libs/expat:=
-	>=net-misc/curl-7.88.1[${MULTILIB_USEDEP},ssl]
+	>=net-misc/curl-9999[${MULTILIB_USEDEP},ssl]
 	>=sys-apps/dbus-1.12.24[${MULTILIB_USEDEP}]
 	sys-apps/dbus:=
 	>=sys-devel/gcc-${GCC_PV}
@@ -3054,7 +3055,7 @@ ewarn "The default DNS servers and settings could weaken the privacy."
 
 einfo "RUSTC:  ${RUSTC}"
 	verify_compiler_flags_hardening
-#	chkl_check_many_timestamps
+	chkl_check_many_timestamps
 #	chkl_check_many_live_bans
 }
 
