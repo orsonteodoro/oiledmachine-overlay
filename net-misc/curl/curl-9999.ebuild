@@ -17,9 +17,7 @@ CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="18"
 #CFLAGS_HARDENED_SANITIZERS_COMPAT="gcc" # llvm build failing with and without sanitizers.
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="security-critical network sensitive-data system-set untrusted-data"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO IO OOBR SO UAF"
-# CVE-2018-16840 - heap use-after-free (ASAN)
-# CVE-2017-8818 - out of bounds (UBSAN)
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE CRSH DF DOS HO ID II IO MITM OOBA OOBR OOBW SB SO SOPB UAF"
 
 VERIFY_SIG_OPENPGP_KEY_PATH=/usr/share/openpgp-keys/danielstenberg.asc
 inherit dot-a autotools cflags-hardened multilib-minimal multiprocessing prefix toolchain-funcs verify-sig
@@ -28,6 +26,10 @@ DESCRIPTION="A Client that groks URLs"
 HOMEPAGE="https://curl.se/"
 
 if [[ ${PV} == 9999 ]]; then
+	FALLBACK_COMMIT="678e63934cc4bd1941b20c5111d37a6e530d2a5d" # Mon, 15 Jun 2026 01:26:04 +0200
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 	inherit git-r3
 	EGIT_REPO_URI="https://github.com/curl/curl.git"
 else
@@ -46,8 +48,8 @@ fi
 
 LICENSE="BSD curl ISC test? ( BSD-4 )"
 SLOT="0"
-IUSE="+adns +alt-svc brotli debug ech +ftp gnutls gopher +hsts +http2 +http3 +httpsrr idn +imap kerberos ldap"
-IUSE+=" mbedtls +openssl +pop3 +psl +quic rtmp rustls samba sasl-scram +smtp ssh ssl static-libs test"
+IUSE+=" +adns +alt-svc brotli debug ech +ftp gnutls gopher +hsts +http2 +http3 +httpsrr idn +imap kerberos ldap"
+IUSE+=" mbedtls +openssl +pop3 +psl +quic rustls sasl-scram +smtp ssh ssl static-libs test"
 IUSE+=" telnet +tftp +websockets zstd"
 # These select the default tls implementation / which quic impl to use
 IUSE+=" curl_ssl_gnutls curl_ssl_mbedtls +curl_ssl_openssl curl_ssl_rustls"
@@ -59,22 +61,25 @@ RESTRICT="!test? ( test )"
 
 # To simplify dependency management in the ebuild we'll require c-ares for HTTPS RR (for now?).
 # HTTPS RR in cURL is a dependency for:
-# - ECH (requires patched openssl or gnutls currently, enabled with rustls)
+# - ECH (enabled with rustls, ossl 4.0+)
 # - Fetching the ALPN list which should provide a better HTTP/3 experience.
-
 # Only one default ssl / quic provider can be enabled
 # The default provider needs its USE satisfied
 # HTTP/3 and MultiSSL are mutually exclusive; it's not clear if MultiSSL offers any benefit at all in the modern day.
 # https://github.com/curl/curl/commit/65ece771f4602107d9cdd339dff4b420280a2c2e
 REQUIRED_USE="
-	ech? ( rustls )
+	ech? (
+		|| (
+			openssl
+			rustls
+		)
+	)
 	httpsrr? ( adns )
 	quic? (
 		^^ (
 			openssl
 			gnutls
 		)
-		!gnutls
 		!mbedtls
 		!rustls
 		http3
@@ -100,6 +105,7 @@ REQUIRED_USE="
 # - https://github.com/curl/curl/blob/master/docs/INTERNALS.md (core dependencies + minimum versions)
 # - https://github.com/curl/curl/blob/master/docs/HTTP3.md (example of a feature that moves quickly)
 # - https://github.com/curl/curl/blob/master/.github/workflows/http3-linux.yml (CI/CD for TCP/2)
+# - https://curl.se/dev/deprecate.html - good source of deprecation timelines, e.g. for OpenSSL 1.1.1
 # However 'supported' vs 'works' are two entirely different things; be sane but
 # don't be afraid to require a later version.
 # ngtcp2 = https://bugs.gentoo.org/912029 - can only build with one tls backend at a time.
@@ -117,7 +123,6 @@ RDEPEND="
 		gnutls? ( >=net-libs/ngtcp2-1.20.0-r1[gnutls,ssl,${MULTILIB_USEDEP}] )
 		openssl? ( >=net-libs/ngtcp2-1.20.0-r1[openssl,ssl,${MULTILIB_USEDEP}] )
 	)
-	rtmp? ( media-video/rtmpdump[${MULTILIB_USEDEP}] )
 	ssh? ( >=net-libs/libssh2-1.2.8[${MULTILIB_USEDEP}] )
 	sasl-scram? ( >=net-misc/gsasl-2.2.0[static-libs?,${MULTILIB_USEDEP}] )
 	ssl? (
@@ -131,7 +136,8 @@ RDEPEND="
 			net-libs/mbedtls:3=[${MULTILIB_USEDEP}]
 		)
 		openssl? (
-			>=dev-libs/openssl-1.0.2:=[static-libs?,${MULTILIB_USEDEP}]
+			ech? ( >=dev-libs/openssl-4.0.0_beta1:=[static-libs?,${MULTILIB_USEDEP}] )
+			>=dev-libs/openssl-3.0.0:=[static-libs?,${MULTILIB_USEDEP}]
 		)
 		rustls? (
 			>=net-libs/rustls-ffi-0.15.0:=[${MULTILIB_USEDEP}]
@@ -180,8 +186,19 @@ QA_CONFIG_IMPL_DECL_SKIP=(
 PATCHES=(
 	"${FILESDIR}/${PN}-prefix-6.patch"
 	"${FILESDIR}/${PN}-respect-cflags-3.patch"
-	"${FILESDIR}/${PN}-8.18.0-restore-heimdal.patch"
 )
+
+src_unpack() {
+	if [[ ${PV} == 9999 ]]; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+}
 
 src_prepare() {
 	default
@@ -276,9 +293,8 @@ multilib_src_configure() {
 		$(use_enable ldap ldaps)
 		$(use_enable ldap)
 		$(use_enable pop3)
-		$(use_enable samba smb)
+		--disable-smb # Removed upstream in late 2026
 		$(use_with ssh libssh2) # enables scp/sftp
-		$(use_with rtmp librtmp)
 		--enable-rtsp
 		$(use_enable smtp)
 		$(use_enable telnet)
@@ -317,7 +333,7 @@ multilib_src_configure() {
 		--enable-mime
 		--enable-negotiate-auth
 		--enable-netrc
-		--enable-ntlm
+		--disable-ntlm # To be removed late 2026
 		--enable-progress-meter
 		--enable-proxy
 		--enable-rt
@@ -407,6 +423,7 @@ multilib_src_test() {
 	# -k: keep test files after completion
 	# -am: automake style TAP output
 	# -p: print logs if test fails
+	# --retry: retry any failing tests up to 3 times; this is a band-aid for timing-dependent flakiness.
 	# Note: if needed, we can skip specific tests. See e.g. Fedora's packaging
 	# or just read https://github.com/curl/curl/tree/master/tests#run.
 	# Note: we don't run the testsuite for cross-compilation.
@@ -414,7 +431,8 @@ multilib_src_test() {
 	# this ends up breaking when nproc is huge (like -j80).
 	# The network sandbox causes tests 241 and 1083 to fail; these are typically skipped
 	# as most gentoo users don't have an 'ip6-localhost'
-	multilib_is_native_abi && emake test TFLAGS="-n -v -a -k -am -p -j$((2*$(get_makeopts_jobs))) !241 !1083"
+	multilib_is_native_abi && emake test TFLAGS="-n -v -a -k -am -p -j$((2*$(get_makeopts_jobs))) --retry=3 !241 !1083"
+	# TODO: enable python tests (make pytest).
 }
 
 multilib_src_install() {
