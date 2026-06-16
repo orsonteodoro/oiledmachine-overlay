@@ -10,7 +10,13 @@ SUBSLOT="18"
 JAVA_PKG_OPT_USE="jdbc"
 
 CHKL_TIMESTAMPS=(
-	"net-misc/curl-9999;Mon, 15 Jun 2026 12:57:42 +0100"
+	"dev-libs/openssl-4.0.9999"
+	"dev-libs/openssl-3.6.9999"
+	"dev-libs/openssl-3.5.9999"
+	"dev-libs/openssl-3.4.9999"
+	"dev-libs/openssl-3.3.9999"
+	"dev-libs/openssl-3.0.9999"
+	"net-misc/curl-9999"
 )
 
 inherit cflags-hardened check-compiler-switch chkl systemd flag-o-matic prefix toolchain-funcs \

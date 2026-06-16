@@ -23,14 +23,14 @@ NEVERBLEED_COMMIT="8a91f9be3438d70b7cd005f8e9dfb418894c5c06"
 URLPARSE_COMMIT="59b068a7618a256c6823b0b9801b61d1d04677a3"
 
 CHKL_TIMESTAMPS=(
-	"app-arch/brotli-9999;Sun, 19 Apr 2026 17:14:00 +0000"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/libxml2-9999;Wed, 15 Apr 2026 12:11:20 +0200"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/openssl-4.0.9999;Mon, 11 May 2026 16:29:47 +0200"
-	"dev-libs/openssl-3.6.9999;Mon, 11 May 2026 16:29:47 +0200"
-	"dev-libs/openssl-3.5.9999;Mon, 11 May 2026 16:29:47 +0200"
-	"dev-libs/openssl-3.4.9999;Mon, 11 May 2026 16:29:47 +0200"
-	"dev-libs/openssl-3.3.9999;Mon, 11 May 2026 16:29:47 +0200"
-	"dev-libs/openssl-3.0.9999;Mon, 11 May 2026 16:29:47 +0200"
+	"app-arch/brotli-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/libxml2-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/openssl-4.0.9999"
+	"dev-libs/openssl-3.6.9999"
+	"dev-libs/openssl-3.5.9999"
+	"dev-libs/openssl-3.4.9999"
+	"dev-libs/openssl-3.3.9999"
+	"dev-libs/openssl-3.0.9999"
 )
 
 inherit libstdcxx-compat

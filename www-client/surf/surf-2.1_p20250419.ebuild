@@ -10,7 +10,7 @@ PYTHON_COMPAT=( "python3_"{8..12} )
 SEARCHENGINES_FN="surf-git-20170323-webkit2-searchengines.diff"
 
 CHKL_TIMESTAMPS=(
-	"net-misc/curl-9999;Mon, 15 Jun 2026 12:57:42 +0100"
+	"net-misc/curl-9999"
 )
 
 inherit chkl flag-o-matic git-r3 multilib-minimal python-single-r1 toolchain-funcs

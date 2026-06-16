@@ -21,13 +21,21 @@ esac
 if [[ -z ${_CHKL_ECLASS} ]] ; then
 _CHKL_ECLASS=1
 
+inherit secure-timestamp
+
+# @ECLASS_VARIABLE: CHKL_NONFATAL
+# @USER_VARIABLE
+# @DESCRIPTION:
+# Change the error into warning.
+# Valid values:  1, 0, unset
+
 # @FUNCTION: chkl_check_one_timestamp
 # @DESCRIPTION:
 # Verify one package for timestamp
 #
 # Example:
 # pkg_setup() {
-#	chkl_check_one "dev-lang/rust-9999" "May 22, 2026 00:33:25 -0700"
+#	chkl_check_one "dev-lang/rust-9999"
 # }
 #
 chkl_check_one_timestamp() {
@@ -46,14 +54,35 @@ chkl_check_one_timestamp() {
 	# 2026/06/10 17:58:03 -0700
 	# 2026/06/10 17:58:03 UTC-7
 	#
-	local live_timestamp="${2}"
+	local k
+	k="${atom}"
+	k=$(echo "${k}" | sed -e "s|[/.-]|_|g")
+
+#einfo "DEBUG:  ${k}"
+	local t=$(get_secure_timestamps)
+	eval "${t}"
+	local live_timestamp=${SECURE_TIMESTAMP["${k}"]}
+	if [[ -z "${live_timestamp}" ]] ; then
+eerror "QA:  Missing live timestamp for ${atom}"
+		die
+	fi
 
 	has_version "=${atom}" || return
-	local compatible_time=$(date --date="${live_timestamp}" "+%s")
+	local non_vulernable_time=$(date --date="${live_timestamp}" "+%s")
 	local merge_time=$(cat "/var/db/pkg/${atom}/BUILD_TIME")
-	if has_version "=${atom}" && (( ${merge_time} < ${compatible_time} )) ; then
+#einfo "DEBUG:  merge_time:  "$(date --date="@${merge_time}")" (${merge_time}) for ${atom}"
+#einfo "DEBUG:  non_vulernable_time:  "$(date --date="@${non_vulernable_time}")" (${non_vulernable_time}) for ${atom}"
+	if has_version "=${atom}" && (( ${merge_time} >= ${non_vulernable_time} )) ; then
+einfo "Security timestamp for =${atom}:  PASSED"
+	elif has_version "=${atom}" ; then
+einfo "Security timestamp for =${atom}:  FAILED (OLD)"
+		if [[ "${CHKL_NONFATAL}" == "1" ]] ; then
+ewarn "Current timestamp:  "$(date --date="@${merge_time}")
+ewarn "Expected timestamp:  >= "$(date --date="@${non_vulernable_time}")
+			:
+		else
 eerror
-eerror "Detected old live timestamp for live ebuild.  Do one of the following:"
+eerror "Do one of the following:"
 eerror
 eerror "Do \`emerge -a1ovuDN ${atom};emerge -a1vO ${atom}\`"
 eerror
@@ -66,9 +95,10 @@ eerror
 eerror "Use a stable tagged version if the ebuild allows it."
 eerror
 eerror "Current timestamp:  "$(date --date="@${merge_time}")
-eerror "Expected timestamp:  >= "$(date --date="@${compatible_time}")
+eerror "Expected timestamp:  >= "$(date --date="@${non_vulernable_time}")
 eerror
-		die
+			die
+		fi
 	fi
 }
 
@@ -78,8 +108,8 @@ eerror
 #
 # Example:
 # CHKL_TIMESTAMPS=(
-#	"dev-lang/rust-9999;May 22, 2026 00:33:25 -0700"
-#	"dev-lang/rust-bin-9999;May 22, 2026 00:33:25 -0700"
+#	"dev-lang/rust-9999"
+#	"dev-lang/rust-bin-9999"
 # )
 #
 # pkg_setup() {
@@ -89,9 +119,8 @@ eerror
 chkl_check_many_timestamps() {
 	local row
 	for row in "${CHKL_TIMESTAMPS[@]}" ; do
-		local atom=$(echo "${row}" | cut -f 1 -d ";")
-		local live_timestamp=$(echo "${row}" | cut -f 2 -d ";")
-		chkl_check_one_timestamp "${atom}" "${live_timestamp}"
+		local atom=$(echo "${row}")
+		chkl_check_one_timestamp "${atom}"
 	done
 }
 
@@ -106,8 +135,12 @@ chkl_check_many_timestamps() {
 chkl_check_one_live_ban() {
 	local atom="${1}" # dev-lang/rust-9999
 	if has_version "=${atom}" ; then
+		if [[ "${CHKL_NONFATAL}" == "1" ]] ; then
+ewarn "The live is banned for ${atom}.  Downgrade ${atom} to LTS."
+		else
 eerror "The live is banned for ${atom}.  Downgrade ${atom} to LTS."
-		die
+			die
+		fi
 	fi
 }
 

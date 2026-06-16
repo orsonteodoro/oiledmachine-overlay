@@ -24,13 +24,13 @@ RE2_SLOT="20250512"
 GOOGLEAPIS_COMMIT="2193a2bfcecb92b92aad7a4d81baa428cafd7dfd"
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/openssl-4.0.9999;Mon, 11 May 2026 16:29:47 +0200"
-	"dev-libs/openssl-3.6.9999;Mon, 11 May 2026 16:29:47 +0200"
-	"dev-libs/openssl-3.5.9999;Mon, 11 May 2026 16:29:47 +0200"
-	"dev-libs/openssl-3.4.9999;Mon, 11 May 2026 16:29:47 +0200"
-	"dev-libs/openssl-3.3.9999;Mon, 11 May 2026 16:29:47 +0200"
-	"dev-libs/openssl-3.0.9999;Mon, 11 May 2026 16:29:47 +0200"
-	"net-misc/curl-9999;Mon, 15 Jun 2026 12:57:42 +0100"
+	"dev-libs/openssl-4.0.9999"
+	"dev-libs/openssl-3.6.9999"
+	"dev-libs/openssl-3.5.9999"
+	"dev-libs/openssl-3.4.9999"
+	"dev-libs/openssl-3.3.9999"
+	"dev-libs/openssl-3.0.9999"
+	"net-misc/curl-9999"
 )
 
 inherit libstdcxx-compat

@@ -15,8 +15,8 @@ CFLAGS_HARDENED_USE_CASES="plugin security-critical untrusted-data"
 
 # Forced FFmpeg live for mitigation
 CHKL_TIMESTAMPS=(
-	"media-video/ffmpeg-9999;Mon, 15 Jun 2026 04:07:59 +0300"
-	"media-video/ffmpeg-9999m;Mon, 15 Jun 2026 04:07:59 +0300"
+	"media-video/ffmpeg-9999"
+	"media-video/ffmpeg-9999m"
 )
 
 inherit cflags-hardened chkl gstreamer-meson

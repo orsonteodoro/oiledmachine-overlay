@@ -26,9 +26,9 @@ CHKL_TIMESTAMPS=(
 	# See https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/vf.eclass for a list of vulnerabilities.
 	# Currently, the packages that were triaged were the most widely used.
 	# Last security check 20260614
-	"media-libs/libplacebo-9999;Mon, 1 Jun 2026 20:39:36 +0200"	# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-video/ffmpeg-9999;Mon, 15 Jun 2026 04:07:59 +0300"	# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-video/ffmpeg-9999m;Mon, 15 Jun 2026 04:07:59 +0300"	# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libplacebo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-video/ffmpeg-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-video/ffmpeg-9999m"		# Bumped live/*DEPENDS to latest non-vulnerable
 )
 
 inherit cflags-hardened chkl flag-o-matic lua-single meson optfeature pax-utils python-single-r1 xdg

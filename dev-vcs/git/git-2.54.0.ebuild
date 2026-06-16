@@ -16,14 +16,14 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO IO PE SO"
 GENTOO_DEPEND_ON_PERL=no
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/openssl-4.0.9999;Mon, 11 May 2026 16:29:47 +0200"
-	"dev-libs/openssl-3.6.9999;Mon, 11 May 2026 16:29:47 +0200"
-	"dev-libs/openssl-3.5.9999;Mon, 11 May 2026 16:29:47 +0200"
-	"dev-libs/openssl-3.4.9999;Mon, 11 May 2026 16:29:47 +0200"
-	"dev-libs/openssl-3.3.9999;Mon, 11 May 2026 16:29:47 +0200"
-	"dev-libs/openssl-3.0.9999;Mon, 11 May 2026 16:29:47 +0200"
-	"net-misc/curl-9999;Mon, 15 Jun 2026 12:57:42 +0100"
-	"dev-libs/expat-9999;Sun, 31 May 2026 14:01:51 +0200"
+	"dev-libs/openssl-4.0.9999"
+	"dev-libs/openssl-3.6.9999"
+	"dev-libs/openssl-3.5.9999"
+	"dev-libs/openssl-3.4.9999"
+	"dev-libs/openssl-3.3.9999"
+	"dev-libs/openssl-3.0.9999"
+	"net-misc/curl-9999"
+	"dev-libs/expat-9999"
 )
 
 # bug #329479: git-remote-testgit is not multiple-version aware

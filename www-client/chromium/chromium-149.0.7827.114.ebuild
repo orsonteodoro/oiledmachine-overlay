@@ -292,58 +292,58 @@ CHKL_TIMESTAMPS=(
 # All used live security-critical system packages and live ebuilds must be verified.
 # See vf.eclass for a list of vulnerabilities.
 # Last vulnerability check 20260614
-	"app-arch/brotli-9999;Sun, 19 Apr 2026 17:14:00 +0000"				# Bumped live to latest non-vulnerable
-	"app-arch/snappy-9999;Sat, 17 Aug 2024 19:03:10 -0700"
-	"app-arch/zstd-9999;Tue, 17 Mar 2026 13:08:14 -0700"
-	"dev-build/ninja-9999;Sat, 11 May 2024 13:43:36 +0200"
-	"dev-cpp/abseil-cpp-9999;Tue, 21 Apr 2026 12:08:14 -0700"
-	"dev-cpp/highway-9999;Wed, 22 Apr 2026 09:17:05 -0700"
-	"dev-cpp/simdutf-9999;Tue, 13 Jan 2026 09:03:21 +0100"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-db/sqlite-9999;Wed, 3 Jun 2026 19:12:13 +0000"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/expat-9999;Tue, 26 May 2026 15:15:10 +0200"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/crc32c-9999;Fri, 1 Mar 2019 15:37:35 -0800"
-	"dev-libs/flatbuffers-9999;Mon, 15 Dec 2025 08:59:17 +0900"
-	"dev-libs/jsoncpp-9999;Sun, 15 Mar 2026 22:51:09 -0700"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/libffi-9999;Fri, 5 Jun 2026 18:10:53 +0800"				# Bumped live to latest non-vulnerable
-	"dev-libs/libxml2-9999;Wed, 15 Apr 2026 12:11:20 +0200"				# Bumped live to latest non-vulnerable
-	"dev-libs/libxslt-9999;Sun, 30 Nov 2025 00:51:29 -0600"
-	"dev-libs/re2-9999;Thu, 22 Jan 2026 16:05:23 -0500"
-	"dev-libs/wayland-9999;Thu, 26 Mar 2026 16:38:38 +0800"				# Bumped live to latest non-vulnerable
-	"dev-lang/rust-9999;Fri, 27 Feb 2026 09:38:23 -0800"
-	"dev-lang/rust-bin-9999;Fri, 27 Feb 2026 09:38:23 -0800"
-	"dev-util/spirv-headers-9999;Thu, 30 Apr 2026 22:51:58 +0200"
-	"dev-util/spirv-tools-9999;Wed, 29 Apr 2026 15:51:06 -0700"
-	"llvm-core/clang-9999;Thu, 9 Apr 2026 18:28:25 +0200"
-	"llvm-core/clang-23.0.0.9999;Thu, 9 Apr 2026 18:28:25 +0200"
-	"llvm-core/lld-9999;Thu, 9 Apr 2026 18:28:25 +0200"
-	"llvm-core/lld-23.0.0.9999;Thu, 9 Apr 2026 18:28:25 +0200"
-	"llvm-core/llvm-9999;Thu, 9 Apr 2026 18:28:25 +0200"
-	"llvm-core/llvm-23.0.0.9999;Thu, 9 Apr 2026 18:28:25 +0200"
-	"llvm-runtimes/compiler-rt-9999;Thu, 9 Apr 2026 18:28:25 +0200"
-	"llvm-runtimes/compiler-rt-23.0.0.9999;Thu, 9 Apr 2026 18:28:25 +0200"
-	"llvm-runtimes/compiler-rt-sanitizers-9999;Thu, 9 Apr 2026 18:28:25 +0200"
-	"llvm-runtimes/compiler-rt-sanitizers-23.0.0.9999;Thu, 9 Apr 2026 18:28:25 +0200"
-	"llvm-runtimes/libcxx-9999;Thu, 9 Apr 2026 18:28:25 +0200"
-	"llvm-runtimes/libcxx-23.0.0.9999;Thu, 9 Apr 2026 18:28:25 +0200"
-	"llvm-runtimes/libcxxabi-9999;Thu, 9 Apr 2026 18:28:25 +0200"
-	"llvm-runtimes/libcxxabi-23.0.0.9999;Thu, 9 Apr 2026 18:28:25 +0200"
-	"media-libs/alsa-lib-9999;Mon, 1 Jun 2026 10:04:24 +0200"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/dav1d-9999;Wed, 29 Apr 2026 14:46:00 +0300"
-	"media-libs/flac-9999;Fri, 8 May 2026 13:28:44 +0200"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/freetype-9999;Sat, 9 May 2026 09:51:56 -0400"			# Bumped live to latest non-vulnerable
-	"media-libs/harfbuzz-9999;Mon, 27 Apr 2026 19:30:28 -0600"
-	"media-libs/libjpeg-turbo-9999;Wed, 3 Jun 2026 09:43:18 -0400"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libpulse-9999;Thu, 7 Aug 2025 15:45:26 -0600"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libwebp-9999;Fri, 22 May 2026 11:45:40 +0200"			# Bumped live to latest non-vulnerable
-	"media-libs/libvpx-9999;Thu, 30 Apr 2026 12:42:58 -0400"
-	"media-libs/libyuv-9999;Thu, 9 Apr 2026 11:03:54 -0700"
-	"media-libs/woff2-9999;Wed, 15 Apr 2026 15:38:51 -0700"
-	"media-video/ffmpeg-9999;Mon, 15 Jun 2026 04:07:59 +0300"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-video/ffmpeg-9999m;Mon, 15 Jun 2026 04:07:59 +0300"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"net-libs/nodejs-99999999;Tue, 12 May 2026 05:17:56 -0400"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"net-misc/curl-9999;Mon, 15 Jun 2026 12:57:42 +0100"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"net-print/cups-9999;Fri, 12 Jun 2026 17:18:05 -0400"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"x11-libs/libdrm-9999;Wed, 26 Jun 2024 10:13:31 +0200"
+	"app-arch/brotli-9999"					# Bumped live to latest non-vulnerable
+	"app-arch/snappy-9999"
+	"app-arch/zstd-9999"
+	"dev-build/ninja-9999"
+	"dev-cpp/abseil-cpp-9999"
+	"dev-cpp/highway-9999"
+	"dev-cpp/simdutf-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-db/sqlite-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/expat-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/crc32c-9999"
+	"dev-libs/flatbuffers-9999"
+	"dev-libs/jsoncpp-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/libffi-9999"					# Bumped live to latest non-vulnerable
+	"dev-libs/libxml2-9999"					# Bumped live to latest non-vulnerable
+	"dev-libs/libxslt-9999"
+	"dev-libs/re2-9999"
+	"dev-libs/wayland-9999"					# Bumped live to latest non-vulnerable
+	"dev-lang/rust-9999"
+	"dev-lang/rust-bin-9999"
+	"dev-util/spirv-headers-9999"
+	"dev-util/spirv-tools-9999"
+	"llvm-core/clang-9999"
+	"llvm-core/clang-23.0.0.9999"
+	"llvm-core/lld-9999"
+	"llvm-core/lld-23.0.0.9999"
+	"llvm-core/llvm-9999"
+	"llvm-core/llvm-23.0.0.9999"
+	"llvm-runtimes/compiler-rt-9999"
+	"llvm-runtimes/compiler-rt-23.0.0.9999"
+	"llvm-runtimes/compiler-rt-sanitizers-9999"
+	"llvm-runtimes/compiler-rt-sanitizers-23.0.0.9999"
+	"llvm-runtimes/libcxx-9999"
+	"llvm-runtimes/libcxx-23.0.0.9999"
+	"llvm-runtimes/libcxxabi-9999"
+	"llvm-runtimes/libcxxabi-23.0.0.9999"
+	"media-libs/alsa-lib-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/dav1d-9999"
+	"media-libs/flac-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/freetype-9999"				# Bumped live to latest non-vulnerable
+	"media-libs/harfbuzz-9999"
+	"media-libs/libjpeg-turbo-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libpulse-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libwebp-9999"				# Bumped live to latest non-vulnerable
+	"media-libs/libvpx-9999"
+	"media-libs/libyuv-9999"
+	"media-libs/woff2-9999"
+	"media-video/ffmpeg-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-video/ffmpeg-9999m"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"net-libs/nodejs-99999999"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"net-misc/curl-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
+	"net-print/cups-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
+	"x11-libs/libdrm-9999"
 )
 
 CHKL_BLACKLIST=(

@@ -212,45 +212,45 @@ CHKL_TIMESTAMPS=(
 # See vf.eclass for list of vulnerabilities.
 # Only security-critical packages and packages with live ebuilds are listed.
 	# Last vulnerability check 20260614
-	"app-accessibility/at-spi2-core-9999;Sat, 23 May 2026 08:21:47 -0500"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"app-accessibility/speech-dispatcher-9999;Tue, 6 May 2025 20:53:18 +0200"	# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/expat-9999;Tue, 26 May 2026 15:15:10 +0200"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/icu-9999;Mon, 10 Mar 2025 19:11:46 +0000"
-	"dev-libs/libevent-9999;Sat, 3 Aug 2019 14:32:21 +0300"
-	"dev-libs/libffi-9999;Fri, 5 Jun 2026 18:10:53 +0800"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/nspr-9999;10-May-2026 13:13"
-	"dev-libs/nss-9999;Thu, 23 Apr 2026 12:27:46 -0700"
-	"media-gfx/graphite2-9999;Wed, 1 Apr 2020 09:53:13 +0700"
-	"media-libs/alsa-lib-9999;Mon, 1 Jun 2026 10:04:24 +0200"
-	"media-libs/dav1d-9999;Sun, 15 Dec 2024 21:16:21 +0100"
-	"media-libs/freetype-9999;Sun, 11 Aug 2024 20:30:23 +0200"
-	"media-libs/harfbuzz-9999;Mon, 28 Apr 2025 14:28:29 +0300"
-	"media-libs/fontconfig-9999;Wed, 24 Jun 2009 15:04:11 -0400"
-	"media-libs/libaom-9999;Fri, May 22, 2026 08:26:16 -0700"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libepoxy-9999;Tue, 12 Oct 2021 02:41:41 +0900"
-	"media-libs/libglvnd-9999;Tue, 12 Sep 2023 08:02:00 -0600"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libjpeg-turbo-9999;Wed, 3 Jun 2026 09:43:18 -0400"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libpng-9999;Wed, 15 Apr 2026 20:23:26 +0300"
-	"media-libs/libpulse-9999;Thu, 7 Aug 2025 15:45:26 -0600"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libva-9999;Thu, 14 Sep 2023 04:04:13 -0400"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libvpx-9999;Fri, 10 Jan 2025 14:04:46 -0500"
-	"media-libs/libwebp-9999;Thu, 19 Dec 2024 17:17:50 -0800"
-	"media-libs/mesa-9999;Wed, 25 Feb 2026 16:54:24 +0100"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/openh264-9999;Mon, 10 Feb 2025 15:27:56 +0800"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-video/ffmpeg-9999;Mon, 15 Jun 2026 04:07:59 +0300"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-video/ffmpeg-9999m;Mon, 15 Jun 2026 04:07:59 +0300"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-video/pipewire-9999;Wed, 2 Apr 2025 15:41:29 +0200"
-	"net-libs/libproxy-9999;Mon, 23 Feb 2026 10:30:16 -0600"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"net-libs/nodejs-99999999;Mon, 11 May 2026 16:44:05 +0200"
-	"net-misc/connman-9999;2026-02-09 15:45:56 +0100"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"net-misc/networkmanager-9999;Mon, 8 Jun 2026 13:17:41 +0200"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"net-print/cups-9999;Fri, 12 Jun 2026 17:18:05 -0400"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"sys-apps/systemd-9999;Thu, 12 Mar 2026 17:12:46 +0000"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"x11-libs/cairo-9999;Sat, 8 Mar 2025 12:35:35 +0000"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"x11-libs/gdk-pixbuf-9999;Tue, 14 May 2024 22:15:41 -0400"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"x11-libs/libdrm-9999;Sat, 13 Jan 2024 10:37:07 +0100"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"x11-libs/pango-9999;Sun, 22 Mar 2026 21:54:26 -0400"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"x11-libs/pixman-9999;Wed, 2 Nov 2022 12:11:10 -0400"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"app-accessibility/at-spi2-core-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"app-accessibility/speech-dispatcher-9999"	# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/expat-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/icu-9999"
+	"dev-libs/libevent-9999"
+	"dev-libs/libffi-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/nspr-9999"
+	"dev-libs/nss-9999"
+	"media-gfx/graphite2-9999"
+	"media-libs/alsa-lib-9999"
+	"media-libs/dav1d-9999"
+	"media-libs/freetype-9999"
+	"media-libs/harfbuzz-9999"
+	"media-libs/fontconfig-9999"
+	"media-libs/libaom-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libepoxy-9999"
+	"media-libs/libglvnd-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libjpeg-turbo-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libpng-9999"
+	"media-libs/libpulse-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libva-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libvpx-9999"
+	"media-libs/libwebp-9999"
+	"media-libs/mesa-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/openh264-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-video/ffmpeg-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-video/ffmpeg-9999m"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-video/pipewire-9999"
+	"net-libs/libproxy-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"net-libs/nodejs-99999999"
+	"net-misc/connman-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"net-misc/networkmanager-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"net-print/cups-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"sys-apps/systemd-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"x11-libs/cairo-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"x11-libs/gdk-pixbuf-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"x11-libs/libdrm-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"x11-libs/pango-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"x11-libs/pixman-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
 )
 
 # Information about the bundled wasi toolchain from
