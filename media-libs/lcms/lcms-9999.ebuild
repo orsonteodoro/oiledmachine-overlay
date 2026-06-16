@@ -6,12 +6,28 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO ID NPD OOBR OOBW"
 
+CHKL_TIMESTAMPS=(
+	"media-libs/libjpeg-turbo-9999;Wed, 3 Jun 2026 09:43:18 -0400"
+	"media-libs/tiff-9999;Sat, 6 Jun 2026 18:02:16 +0545"
+)
+
 inherit cflags-hardened meson-multilib
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="c481093af488fce7a01c7ccdf71951ac3ad81abb"
+	EGIT_BRANCH="master"
+	EGIT_REPO_URI="https://github.com/mm2/Little-CMS.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	S="${WORKDIR}/lcms2-${PV/_}"
+	SRC_URI="https://github.com/mm2/Little-CMS/releases/download/lcms${PV/_}/${PN}2-${PV/_}.tar.gz"
+fi
 
 DESCRIPTION="A lightweight, speed optimized color management engine"
 HOMEPAGE="https://www.littlecms.com/"
-SRC_URI="https://github.com/mm2/Little-CMS/releases/download/lcms${PV/_}/${PN}2-${PV/_}.tar.gz"
-S="${WORKDIR}/lcms2-${PV/_}"
 
 # GPL-3 for the threaded & fastfloat plugins, see meson_options.txt
 LICENSE="GPL-3 MIT"
@@ -23,10 +39,26 @@ IUSE="doc jpeg static-libs test tiff"
 RESTRICT="!test? ( test )"
 
 RDEPEND="
-	jpeg? ( media-libs/libjpeg-turbo:=[${MULTILIB_USEDEP}] )
-	tiff? ( >=media-libs/tiff-4.0.3-r6:=[${MULTILIB_USEDEP}] )
+	jpeg? (
+		>=media-libs/libjpeg-turbo-9999:=[${MULTILIB_USEDEP}]
+	)
+	tiff? (
+		>=media-libs/tiff-9999:=[${MULTILIB_USEDEP}]
+	)
 "
 DEPEND="${RDEPEND}"
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+}
 
 multilib_src_configure() {
 	cflags-hardened_append
