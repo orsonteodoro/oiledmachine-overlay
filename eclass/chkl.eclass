@@ -92,7 +92,11 @@ eerror "\`emerge -a @live-rebuild\`."
 eerror
 eerror "  or"
 eerror
-eerror "Use a stable tagged version if the ebuild allows it."
+eerror "Use a stable tagged version if the ebuild allows it"
+eerror
+eerror "  or"
+eerror
+eerror "Set CHKL_NONFATAL=1 per-package or as an environment-variable."
 eerror
 eerror "Current timestamp:  "$(date --date="@${merge_time}")
 eerror "Expected timestamp:  >= "$(date --date="@${non_vulernable_time}")
@@ -138,7 +142,8 @@ chkl_check_one_live_ban() {
 		if [[ "${CHKL_NONFATAL}" == "1" ]] ; then
 ewarn "The live is banned for ${atom}.  Downgrade ${atom} to LTS."
 		else
-eerror "The live is banned for ${atom}.  Downgrade ${atom} to LTS."
+eerror "The live is banned for ${atom}.  Downgrade ${atom} to LTS"
+eerror "or set CHKL_NONFATAL=1 per-package or as an environment-variable."
 			die
 		fi
 	fi
