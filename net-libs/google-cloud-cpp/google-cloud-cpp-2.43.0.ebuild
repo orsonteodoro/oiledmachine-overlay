@@ -23,6 +23,10 @@ RE2_SLOT="20250512"
 # From cmake/GoogleapisConfig.cmake \
 GOOGLEAPIS_COMMIT="2193a2bfcecb92b92aad7a4d81baa428cafd7dfd"
 
+CHKL_TIMESTAMPS=(
+	"net-misc/curl-9999;Mon, 15 Jun 2026 12:57:42 +0100"
+)
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
@@ -33,7 +37,7 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-inherit abseil-cpp cflags-hardened cmake grpc libcxx-slot libstdcxx-slot protobuf re2
+inherit abseil-cpp cflags-hardened chkl cmake grpc libcxx-slot libstdcxx-slot protobuf re2
 
 SRC_URI="
 https://github.com/GoogleCloudPlatform/google-cloud-cpp/archive/v${PV}.tar.gz -> ${P}.tar.gz
@@ -47,7 +51,7 @@ SLOT="${PROTOBUF_CPP_SLOT}/"$(ver_cut "1-2" "${PV}")
 KEYWORDS="~amd64 ~x86"
 IUSE="
 test
-ebuild_revision_16
+ebuild_revision_17
 "
 # Tests need a GCP account
 RESTRICT="test"
@@ -73,7 +77,7 @@ RDEPEND="
 		dev-libs/protobuf:=
 	)
 	>=dev-libs/crc32c-1.1.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=net-misc/curl-7.69.1
+	>=net-misc/curl-9999
 	>=virtual/zlib-1.2.11
 "
 DEPEND="
@@ -104,6 +108,7 @@ src_unpack() {
 
 src_configure() {
 	cflags-hardened_append
+	chkl_check_many_timestamps
 
 	abseil-cpp_src_configure
 	protobuf_src_configure
