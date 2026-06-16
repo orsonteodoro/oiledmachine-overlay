@@ -23,6 +23,8 @@ NEVERBLEED_COMMIT="8a91f9be3438d70b7cd005f8e9dfb418894c5c06"
 URLPARSE_COMMIT="59b068a7618a256c6823b0b9801b61d1d04677a3"
 
 CHKL_TIMESTAMPS=(
+	"app-arch/brotli-9999;Sun, 19 Apr 2026 17:14:00 +0000"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/libxml2-9999;Wed, 15 Apr 2026 12:11:20 +0200"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/openssl-4.0.9999;Mon, 11 May 2026 16:29:47 +0200"
 	"dev-libs/openssl-3.6.9999;Mon, 11 May 2026 16:29:47 +0200"
 	"dev-libs/openssl-3.5.9999;Mon, 11 May 2026 16:29:47 +0200"
@@ -107,7 +109,7 @@ SLOT="0/1.$((${SO_CURRENT} - ${SO_AGE}))"
 IUSE="
 -bpf debug doc +hpack-tools -http3 -mruby -neverbleed +jemalloc quic -static-libs
 systemd test +threads +utils +xml
-ebuild_revision_22
+ebuild_revision_23
 "
 REQUIRED_USE="
 	doc? (
@@ -149,7 +151,7 @@ RDEPEND="
 	)
 	utils? (
 		${SSL_DEPEND}
-		>=app-arch/brotli-1.0.9[${MULTILIB_USEDEP}]
+		>=app-arch/brotli-9999[${MULTILIB_USEDEP}]
 		>=dev-libs/libev-4.11[${MULTILIB_USEDEP}]
 		>=net-dns/c-ares-1.7.5:=[${MULTILIB_USEDEP}]
 		>=virtual/zlib-1.2.3[${MULTILIB_USEDEP}]
@@ -158,7 +160,7 @@ RDEPEND="
 		>=sys-apps/systemd-209
 	)
 	xml? (
-		>=dev-libs/libxml2-2.6.26:2[${MULTILIB_USEDEP}]
+		>=dev-libs/libxml2-2.15.3:2[${MULTILIB_USEDEP}]
 		dev-libs/libxml2:=
 	)
 "
