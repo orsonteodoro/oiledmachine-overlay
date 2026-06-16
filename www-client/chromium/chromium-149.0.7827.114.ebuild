@@ -332,6 +332,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/flac-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/freetype-9999"				# Bumped live to latest non-vulnerable
 	"media-libs/harfbuzz-9999"
+	"media-libs/lcms-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libjpeg-turbo-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libpulse-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libwebp-9999"				# Bumped live to latest non-vulnerable
@@ -1663,7 +1664,7 @@ COMMON_SNAPSHOT_DEPEND="
 		dev-libs/jsoncpp:=
 	)
 	system-lcms? (
-		media-libs/lcms[${MULTILIB_USEDEP}]
+		>=media-libs/lcms-9999[${MULTILIB_USEDEP}]
 	)
 	system-libaom? (
 		>=media-libs/libaom-3.13.3[${MULTILIB_USEDEP}]
