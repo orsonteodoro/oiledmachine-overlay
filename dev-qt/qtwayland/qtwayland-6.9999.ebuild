@@ -1,4 +1,4 @@
-# Copyright 2021-2026 Gentoo Authors
+# Copyright 2021-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -8,6 +8,8 @@ CFLAGS_HARDENED_LANGS="cxx"
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VTABLE_VERIFY=1
 CXX_STANDARD=17
+
+FALLBACK_COMMIT="4312cfc837823a0bde320f5ec86c2d959005bafa"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -27,10 +29,7 @@ if [[ ${QT6_BUILD_TYPE} == release ]]; then
 	KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~x86"
 fi
 
-IUSE="
-gnome qml
-ebuild_revision_9
-"
+IUSE+=" gnome qml"
 
 RDEPEND="
 	dev-libs/wayland
@@ -48,9 +47,7 @@ RDEPEND="
 		dev-qt/qtsvg:=
 	)
 "
-DEPEND="
-	${RDEPEND}
-"
+DEPEND="${RDEPEND}"
 BDEPEND="
 	dev-util/wayland-scanner
 "
