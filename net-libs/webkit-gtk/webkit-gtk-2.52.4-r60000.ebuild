@@ -86,10 +86,10 @@ CHECKREQS_DISK_BUILD="18G" # and even this might not be enough, bug #417307
 CMAKE_MAKEFILE_GENERATOR="ninja"
 # See https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Source/bmalloc/libpas/CMakeLists.txt#L5C5-L5C23
 CXX_STANDARD=23
-FONTCONFIG_PV="2.13.0"
-FREETYPE_PV="2.9.0"
-GSTREAMER_PV="1.20.0" # Upstream min is 1.16.2, but distro only offers 1.20
-HARFBUZZ_PV="2.7.4"
+FONTCONFIG_PV="2.18.0"	# Bumped to the latest non-vulnerable
+FREETYPE_PV="9999"	# Bumped to the latest non-vulnerable
+GSTREAMER_PV="1.28.4"	# Bumped to the latest non-vulnerable
+HARFBUZZ_PV="14.2.1"	# Bumped to the latest non-vulnerable
 LLVM_MAX_SLOT="21"
 MESA_PV="18.0.0_rc5"
 OCDM_WV="virtual/libc" # Placeholder
@@ -138,6 +138,21 @@ FFMPEG_COMPAT=(
 	"0/58.60.60" # 6.1
 	"0/57.59.59" # 5.1
 	"0/56.58.58" # 4.3
+)
+
+# TODO finish
+CHKL_TIMESTAMPS=(
+	"dev-libs/libxml2-9999;Wed, 15 Apr 2026 12:11:20 +0200"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/libxslt-9999;Tue, 25 Nov 2025 09:57:09 -0600"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/openssl-4.0.9999;Mon, 11 May 2026 16:29:47 +0200"
+	"dev-libs/openssl-3.6.9999;Mon, 11 May 2026 16:29:47 +0200"
+	"dev-libs/openssl-3.5.9999;Mon, 11 May 2026 16:29:47 +0200"
+	"dev-libs/openssl-3.4.9999;Mon, 11 May 2026 16:29:47 +0200"
+	"dev-libs/openssl-3.3.9999;Mon, 11 May 2026 16:29:47 +0200"
+	"dev-libs/openssl-3.0.9999;Mon, 11 May 2026 16:29:47 +0200"
+	"media-libs/freetype-9999;Sat, 9 May 2026 09:51:56 -0400"	# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/harfbuzz-9999;Mon, 27 Apr 2026 19:30:28 -0600"	# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libjpeg-turbo-9999;Wed, 3 Jun 2026 09:43:18 -0400"	# Bumped live/*DEPENDS to latest non-vulnerable
 )
 
 GLIB_VERSIONS=(
@@ -911,9 +926,9 @@ RDEPEND+="
 	dev-libs/libgcrypt:=
 	>=dev-libs/libtasn1-4.13[${MULTILIB_USEDEP}]
 	dev-libs/libtasn1:=
-	>=dev-libs/libxml2-2.9.13:2[${MULTILIB_USEDEP}]
+	>=dev-libs/libxml2-2.15.3:2[${MULTILIB_USEDEP}]
 	dev-libs/libxml2:=
-	>=dev-libs/libxslt-1.1.13[${MULTILIB_USEDEP}]
+	>=dev-libs/libxslt-1.1.44[${MULTILIB_USEDEP}]
 	>=gui-libs/gtk-4.4.0:4[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
 	gui-libs/gtk:=
 	>=media-libs/fontconfig-${FONTCONFIG_PV}:1.0[${MULTILIB_USEDEP}]
@@ -924,7 +939,7 @@ RDEPEND+="
 	media-libs/harfbuzz:=
 	>=media-libs/lcms-2.9[${MULTILIB_USEDEP}]
 	>=media-libs/libepoxy-1.5.4[${MULTILIB_USEDEP}]
-	media-libs/libjpeg-turbo[${MULTILIB_USEDEP}]
+	>=media-libs/libjpeg-turbo-9999[${MULTILIB_USEDEP}]
 	media-libs/libjpeg-turbo:=
 	>=media-libs/libpng-1.6.34:0[${MULTILIB_USEDEP}]
 	media-libs/libpng:=
@@ -1047,7 +1062,7 @@ RDEPEND+="
 		>=media-libs/alsa-lib-1.1.3[${MULTILIB_USEDEP}]
 		>=media-libs/libvpx-1.10.0[${MULTILIB_USEDEP}]
 		>=media-libs/opus-1.1[${MULTILIB_USEDEP}]
-		media-libs/openh264[${MULTILIB_USEDEP}]
+		>=media-libs/openh264-2.6.0[${MULTILIB_USEDEP}]
 	)
 	opengl? (
 		>=media-libs/mesa-${MESA_PV}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},egl(+)]
