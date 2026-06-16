@@ -1,0 +1,56 @@
+[package]
+name = "gst-plugin-burn"
+version.workspace = true
+authors = ["Sebastian Dröge <sebastian@centricular.com>"]
+repository.workspace = true
+license = "MPL-2.0 AND (MIT OR Apache-2.0)"
+description = "GStreamer Burn plugin"
+edition.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+glib.workspace = true
+gst = { workspace = true, features = ["v1_28"] }
+gst-base = { workspace = true, features = ["v1_28"] }
+gst-analytics = { workspace = true, features = ["v1_28"] }
+gst-video = { workspace = true, features = ["v1_28"] }
+burn = { version = "0.20", default-features = false }
+burn-store = { version = "0.20", default-features = false, features = ["std", "pytorch"] }
+dirs = { version = "6", optional = true }
+serde = { version = "1.0.192", default-features = false, features = ["derive", "alloc"] }
+byte-slice-cast = "1"
+itertools = "0.14"
+anyhow = "1"
+
+[build-dependencies]
+gst-plugin-version-helper.workspace = true
+
+[lib]
+name = "gstburn"
+crate-type = ["cdylib", "rlib"]
+path = "src/lib.rs"
+
+[features]
+static = []
+capi = []
+doc = []
+pretrained = ["burn/network", "dep:dirs"]
+cpu = ["burn/cpu"]
+vulkan = ["burn/vulkan"]
+ndarray = ["burn/ndarray"]
+default = ["pretrained", "ndarray"]
+
+[package.metadata.capi]
+min_version = "0.9.21"
+
+[package.metadata.capi.header]
+enabled = false
+
+[package.metadata.capi.library]
+install_subdir = "gstreamer-1.0"
+versioning = false
+import_library = false
+
+[package.metadata.capi.pkg_config]
+requires_private = "gstreamer-1.0, gstreamer-base-1.0, gstreamer-video-1.0, gstreamer-analytics-1.0, gobject-2.0, glib-2.0, gmodule-2.0"
+
