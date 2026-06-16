@@ -1,4 +1,4 @@
-# Copyright 2021-2026 Gentoo Authors
+# Copyright 2021-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -35,10 +35,7 @@ if [[ ${QT6_BUILD_TYPE} == release ]]; then
 	KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~loong ~ppc ~ppc64 ~riscv ~x86"
 fi
 
-IUSE="
-accessibility +jit +network opengl qmlls +sql +ssl svg vulkan +widgets
-ebuild_revision_10
-"
+IUSE="accessibility +jit +network opengl qmlls +sql +ssl svg vulkan +widgets"
 
 RDEPEND="
 	~dev-qt/qtbase-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},accessibility=,gui,network=,opengl=,sql?,ssl?,vulkan=,widgets=]
@@ -60,8 +57,7 @@ BDEPEND="
 "
 
 PATCHES=(
-	"${FILESDIR}/${PN}-6.10.1-QTBUG-142514.patch"
-	"${FILESDIR}/extra/${PN}-6.10.2-disable-assert.patch" # oiledmachine-overlay added
+#	"${FILESDIR}/extra/${PN}-6.10.2-disable-assert.patch" # oiledmachine-overlay added
 )
 
 pkg_setup() {
