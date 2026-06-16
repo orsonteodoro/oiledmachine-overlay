@@ -15,7 +15,9 @@ LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
 
-inherit libcxx-slot libstdcxx-slot qt6-build
+inherit libcxx-slot libstdcxx-slot flag-o-matic qt6-build
+
+FALLBACK_COMMIT="af0d9c3e0dcd68176b5a5288a5192c12a2d8a188" # Mon, 15 Jun 2026 04:04:14 +0000
 
 DESCRIPTION="Qt APIs and Tools for Graphics Pipelines"
 
@@ -32,4 +34,11 @@ DEPEND="${RDEPEND}"
 pkg_setup() {
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+}
+
+src_configure() {
+	# -Werror=odr violations between mismatching spirv.hpp (bug #972694)
+	filter-lto
+
+	qt6-build_src_configure
 }
