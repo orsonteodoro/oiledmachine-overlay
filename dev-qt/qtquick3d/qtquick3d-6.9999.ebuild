@@ -5,6 +5,8 @@ EAPI=8
 
 CXX_STANDARD=17
 
+FALLBACK_COMMIT="7b394f597d2b895623ad3dcf32d1ae23c6759850" # Sat, 13 Jun 2026 00:37:32 +0000
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	${LIBSTDCXX_COMPAT_STDCXX17[@]}
@@ -26,7 +28,7 @@ elif [[ ${QT6_BUILD_TYPE} == live ]]; then
 	EGIT_SUBMODULES=() # skip qtquick3d-assimp
 fi
 
-IUSE="opengl vulkan"
+IUSE+=" opengl vulkan"
 
 RDEPEND="
 	~dev-qt/qtbase-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},concurrent,gui,opengl=,vulkan=,widgets]
@@ -63,7 +65,6 @@ CMAKE_SKIP_TESTS=(
 PATCHES=(
 	"${FILESDIR}"/${PN}-6.6.2-gcc14.patch
 	"${FILESDIR}"/${PN}-6.6.2-x32abi.patch
-	"${FILESDIR}"/${PN}-6.9.2-assimp6.patch
 )
 
 pkg_setup() {
