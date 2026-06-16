@@ -38,7 +38,7 @@ LLVM_COMPAT=(
 
 PYTHON_COMPAT=( python3_{10..14} )
 inherit cflags-hardened check-reqs flag-o-matic libcxx-slot libstdcxx-slot multiprocessing optfeature
-inherit prefix python-any-r1 qt6-build toolchain-funcs
+inherit prefix python-any-r1 qt6-build toolchain-funcs web-kernel-config
 
 DESCRIPTION="Library for rendering dynamic web content in Qt6 C++ and QML applications"
 SRC_URI+="
