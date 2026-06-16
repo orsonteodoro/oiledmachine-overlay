@@ -41,6 +41,7 @@ SECURE_TIMESTAMP["app_accessibility_at_spi2_core_9999"]="Sat, 23 May 2026 08:21:
 SECURE_TIMESTAMP["app_accessibility_speech_dispatcher_9999"]="Tue, 6 May 2025 20:53:18 +0200"
 SECURE_TIMESTAMP["app_arch_brotli_9999"]="Sun, 19 Apr 2026 17:14:00 +0000"
 SECURE_TIMESTAMP["app_arch_snappy_9999"]="Sat, 17 Aug 2024 19:03:10 -0700"
+SECURE_TIMESTAMP["app_arch_xz_utils"]="Tue, 19 May 2026 12:34:53 +0300"
 SECURE_TIMESTAMP["app_arch_zstd_9999"]="Tue, 17 Mar 2026 13:08:14 -0700"
 SECURE_TIMESTAMP["dev_build_ninja_9999"]="Sat, 11 May 2024 13:43:36 +0200"
 SECURE_TIMESTAMP["dev_cpp_abseil_cpp_9999"]="Tue, 21 Apr 2026 12:08:14 -0700"
@@ -119,6 +120,7 @@ SECURE_TIMESTAMP["x11_libs_cairo_9999"]="Sat, 8 Mar 2025 12:35:35 +0000"
 SECURE_TIMESTAMP["x11_libs_gdk_pixbuf_9999"]="Tue, 14 May 2024 22:15:41 -0400"
 SECURE_TIMESTAMP["x11_libs_libdrm_9999"]="2026-04-06 08:00:12 +0000"
 SECURE_TIMESTAMP["x11_libs_pango_9999"]="Sun, 22 Mar 2026 21:54:26 -0400"
+SECURE_TIMESTAMP["x11_libs_pixman_9999"]="Wed, 2 Nov 2022 12:11:10 -0400"
 SECURE_TIMESTAMP["x11_libs_pixman_9999"]="Wed, 2 Nov 2022 12:11:10 -0400"
 	declare -p SECURE_TIMESTAMP
 }
