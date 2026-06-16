@@ -1,4 +1,4 @@
-# Copyright 2021-2026 Gentoo Authors
+# Copyright 2021-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -7,6 +7,8 @@ CFLAGS_HARDENED_ASSEMBLERS="inline"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CXX_STANDARD=17
+
+FALLBACK_COMMIT="f09ef2ddc2b2151af60aafa98262caa00e22bce0" # Mon, 15 Jun 2026 04:04:02 +0000
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -26,10 +28,7 @@ if [[ ${QT6_BUILD_TYPE} == release ]]; then
 	KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~loong ~ppc64 ~riscv ~x86"
 fi
 
-IUSE="
-mng
-ebuild_revision_9
-"
+IUSE+=" mng"
 
 RDEPEND="
 	~dev-qt/qtbase-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui]
