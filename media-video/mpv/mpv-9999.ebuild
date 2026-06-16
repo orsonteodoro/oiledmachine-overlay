@@ -35,7 +35,7 @@ inherit cflags-hardened chkl flag-o-matic lua-single meson optfeature pax-utils 
 
 if [[ ${PV} == 9999 ]]; then
 	EGIT_REPO_URI="https://github.com/mpv-player/mpv.git"
-	FALLBACK_COMMIT="7d245fd100fc0d87edcc559b0676a326dc8c5801"
+	FALLBACK_COMMIT="f88bcd25c705048f22dac8caba7846f0448f170a"
 	IUSE+=" fallback-commit"
 	inherit git-r3
 else
@@ -56,7 +56,7 @@ IUSE+="
 	+libmpv +lua network nvenc openal pipewire pulseaudio rubberband sdl
 	selinux sixel sndio soc subrandr test tools +uchardet vaapi vapoursynth vdpau
 	+vulkan wayland xv zimg zlib
-	ebuild_revision_4
+	ebuild_revision_5
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -312,6 +312,7 @@ src_configure() {
 		$(meson_feature vaapi)
 		$(meson_feature vdpau)
 
+		# oiledmachine-overlay changes
 		$(meson_feature vapoursynth)
 	)
 
@@ -373,5 +374,6 @@ ewarn "The nscd service must be enabled and running for proper DNS resolution."
 }
 
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive/integration-testing) 65a1852 live (20260614)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive/integration-testing) f88bcd2 live (20260616)
 # streaming audio:  passed
 # video test:  passed
