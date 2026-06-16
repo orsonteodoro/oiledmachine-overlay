@@ -15,10 +15,21 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO IO PE SO"
 
 GENTOO_DEPEND_ON_PERL=no
 
+CHKL_TIMESTAMPS=(
+	"dev-libs/openssl-4.0.9999;Mon, 11 May 2026 16:29:47 +0200"
+	"dev-libs/openssl-3.6.9999;Mon, 11 May 2026 16:29:47 +0200"
+	"dev-libs/openssl-3.5.9999;Mon, 11 May 2026 16:29:47 +0200"
+	"dev-libs/openssl-3.4.9999;Mon, 11 May 2026 16:29:47 +0200"
+	"dev-libs/openssl-3.3.9999;Mon, 11 May 2026 16:29:47 +0200"
+	"dev-libs/openssl-3.0.9999;Mon, 11 May 2026 16:29:47 +0200"
+	"net-misc/curl-9999;Mon, 15 Jun 2026 12:57:42 +0100"
+	"dev-libs/expat-9999;Sun, 31 May 2026 14:01:51 +0200"
+)
+
 # bug #329479: git-remote-testgit is not multiple-version aware
 PYTHON_COMPAT=( python3_{11..14} )
 RUST_OPTIONAL=1
-inherit cflags-hardened flag-o-matic toolchain-funcs perl-module shell-completion optfeature
+inherit cflags-hardened chkl flag-o-matic toolchain-funcs perl-module shell-completion optfeature
 inherit plocale python-single-r1 rust systemd meson
 
 PLOCALES="bg ca de es fr is it ko pt_PT ru sv vi zh_CN"
@@ -69,15 +80,18 @@ S="${WORKDIR}"/${MY_P}
 
 LICENSE="GPL-2"
 SLOT="0"
-IUSE="+curl cgi cvs doc keyring +gpg highlight +iconv +nls +pcre perforce +perl rust +safe-directory selinux subversion test tk +webdav xinetd"
+IUSE="
++curl cgi cvs doc keyring +gpg highlight +iconv +nls +pcre perforce +perl rust +safe-directory selinux subversion test tk +webdav xinetd
+ebuild_revision_1
+"
 
 # Common to both DEPEND and RDEPEND
 DEPEND="
 	dev-libs/openssl:=
 	virtual/zlib:=
 	curl? (
-		net-misc/curl
-		webdav? ( dev-libs/expat )
+		>=net-misc/curl-9999
+		webdav? ( >=dev-libs/expat-9999 )
 	)
 	keyring? (
 		app-crypt/libsecret
@@ -213,6 +227,7 @@ src_prepare() {
 
 src_configure() {
 	cflags-hardened_append
+	chkl_check_many_timestamps
 	local contrib=(
 		completion
 		subtree
