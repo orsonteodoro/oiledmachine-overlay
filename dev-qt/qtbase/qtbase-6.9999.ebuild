@@ -12,6 +12,13 @@ CFLAGS_HARDENED_VTABLE_VERIFY=1
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS OOBA"
 CXX_STANDARD=17
 
+#
+# The fallback commits for all qt* ebuilds in the oiledmachine-overlay are bump for these events:
+#
+# 1. Security vulnerability in qtsvg, qtbase, qtimageformats, qtmultimedia in recent commit history
+# 2. A new tagged release on distro overlay.  Currently at 6.11.1
+# 3. A new Chromium bump in qtwebengine.  Currently at 140.0.7339.225
+#
 FALLBACK_COMMIT="f0b594b3f3e8bf25d2b8d5358d8c41238ff32fec" # Fri, 29 Aug 2025 09:21:23 -0700
 
 inherit libstdcxx-compat
