@@ -1,4 +1,4 @@
-# Copyright 2023-2026 Gentoo Authors
+# Copyright 2023-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -23,21 +23,15 @@ if [[ ${QT6_BUILD_TYPE} == release ]]; then
 	KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~loong ~ppc ~ppc64 ~riscv ~x86"
 fi
 
-IUSE="+gui icu qml"
+IUSE+=" +gui icu qml"
 
 RDEPEND="
-	~dev-qt/qtbase-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui=,icu=,network,xml]
-	dev-qt/qtbase:=
-	icu? (
-		dev-libs/icu[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-libs/icu:=
-	)
+	~dev-qt/qtbase-${PV}:6[gui=,icu=,network,xml]
+	icu? ( dev-libs/icu:= )
 	!icu? ( virtual/libiconv )
 	qml? (
-		~dev-qt/qtdeclarative-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-qt/qtdeclarative:=
-		~dev-qt/qtshadertools-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-qt/qtshadertools:=
+		~dev-qt/qtdeclarative-${PV}:6
+		~dev-qt/qtshadertools-${PV}:6
 	)
 "
 DEPEND="${RDEPEND}"
