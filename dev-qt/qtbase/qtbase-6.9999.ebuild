@@ -15,7 +15,7 @@ CXX_STANDARD=17
 #
 # The fallback commits for all qt* ebuilds in the oiledmachine-overlay are bump for these events:
 #
-# 1. Security vulnerability in qtsvg, qtbase, qtimageformats, qtmultimedia in recent commit history
+# 1. A security vulnerability in security-critical packages such as qtsvg, qtbase, qtimageformats, qtmultimedia, qtwebengine in recent commit history
 # 2. A new tagged release on distro overlay.  Currently at 6.11.1
 # 3. A new Chromium bump in qtwebengine.  Currently at 140.0.7339.225
 #
