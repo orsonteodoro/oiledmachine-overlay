@@ -15,7 +15,10 @@ LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
 
-LLVM_COMPAT=( {17..21} ) # see .cmake.conf for minimum
+FALLBACK_COMMIT="5f47b05daa5c35e7db858b6f89cc8f967e9d7a01" # Fri, 12 Jun 2026 21:06:36 +0000
+
+# match QDOC_SUPPORTED_CLANG_VERSIONS in src/qdoc/cmake/QDocConfiguration.cmake
+LLVM_COMPAT=( {17..22} )
 LLVM_OPTIONAL=1
 
 # behaves very badly when qttools is not already installed, also
@@ -23,7 +26,7 @@ LLVM_OPTIONAL=1
 # and 3rdparty/ tries to FetchContent gtest)
 QT6_RESTRICT_TESTS=1
 
-inherit libcxx-slot libstdcxx-slot llvm-r2 optfeature qt6-build xdg
+inherit libcxx-slot libstdcxx-slot flag-o-matic llvm-r2 optfeature qt6-build xdg
 
 DESCRIPTION="Qt Tools Collection"
 
@@ -31,10 +34,10 @@ if [[ ${QT6_BUILD_TYPE} == release ]]; then
 	KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~loong ~ppc ~ppc64 ~riscv ~x86"
 fi
 
-IUSE="
-	+assistant designer distancefieldgenerator gles2-only +linguist
-	opengl pixeltool +qdbus qdoc qml qmlls qtattributionsscanner qtdiag
-	qtplugininfo vulkan +widgets zstd
+IUSE+="
+	+assistant designer distancefieldgenerator gles2-only kmap2qmap
+	+linguist opengl pixeltool +qdbus qdoc qml qmlls
+	qtattributionsscanner qtdiag qtplugininfo vulkan +widgets zstd
 "
 # note that some tools do not *require* widgets but will skip a sub-tool
 # if not enabled (e.g. linguist gives lrelease but not the GUI linguist6)
@@ -43,10 +46,7 @@ REQUIRED_USE="
 	designer? ( qml widgets )
 	distancefieldgenerator? ( qml widgets )
 	pixeltool? ( widgets )
-	qdoc? (
-		${LLVM_REQUIRED_USE}
-		qml
-	)
+	qdoc? ( qml ${LLVM_REQUIRED_USE} )
 	qmlls? ( assistant qml )
 "
 
@@ -60,7 +60,9 @@ RDEPEND="
 	designer? (
 		~dev-qt/qtbase-${PV}:6[network,xml,zstd=]
 		zstd? ( app-arch/zstd:= )
+		!<dev-qt/designer-5.15.18-r1:5
 	)
+	kmap2qmap? ( ~dev-qt/qtbase-${PV}:6[evdev] )
 	linguist? (
 		widgets? ( !dev-qt/linguist:5 )
 	)
@@ -106,6 +108,9 @@ src_prepare() {
 }
 
 src_configure() {
+	# validator.h:25:8: error: type 'struct Validator' ... [-Werror=odr]
+	use linguist && filter-lto
+
 	use qdoc && llvm_chost_setup
 
 	local mycmakeargs=(
@@ -116,6 +121,7 @@ src_configure() {
 		$(qt_feature assistant)
 		$(qt_feature designer)
 		$(qt_feature distancefieldgenerator)
+		$(qt_feature kmap2qmap)
 		$(qt_feature linguist)
 		$(qt_feature pixeltool)
 		$(qt_feature qdbus)
