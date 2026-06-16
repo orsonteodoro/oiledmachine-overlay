@@ -243,7 +243,7 @@ CHKL_TIMESTAMPS=(
 	"net-libs/libproxy-9999;Mon, 23 Feb 2026 10:30:16 -0600"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"net-libs/nodejs-99999999;Mon, 11 May 2026 16:44:05 +0200"
 	"net-misc/connman-9999;2026-02-09 15:45:56 +0100"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"net-misc/networkmanager-9999;Thu, 12 Feb 2026 23:14:41 +0100"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"net-misc/networkmanager-9999;Mon, 8 Jun 2026 13:17:41 +0200"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"net-print/cups-9999;Fri, 12 Jun 2026 17:18:05 -0400"				# Bumped live/*DEPENDS to latest non-vulnerable
 	"sys-apps/systemd-9999;Thu, 12 Mar 2026 17:12:46 +0000"				# Bumped live/*DEPENDS to latest non-vulnerable
 	"x11-libs/cairo-9999;Sat, 8 Mar 2025 12:35:35 +0000"				# Bumped live/*DEPENDS to latest non-vulnerable
@@ -766,7 +766,7 @@ CDEPEND="
 	wifi? (
 		kernel_linux? (
 			|| (
-				>=net-misc/networkmanager-1.56.0[${MULTILIB_USEDEP}]
+				>=net-misc/networkmanager-9999[${MULTILIB_USEDEP}]
 				>=net-misc/connman-2.0[networkmanager]
 			)
 			>=sys-apps/dbus-${DBUS_PV}[${MULTILIB_USEDEP}]
