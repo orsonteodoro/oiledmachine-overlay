@@ -18,9 +18,21 @@ CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="18"
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="security-critical network sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE CRSH DF DOS HO ID II IO MITM OOBA OOBR OOBW SB SO SOPB UAF"
-
 VERIFY_SIG_OPENPGP_KEY_PATH=/usr/share/openpgp-keys/danielstenberg.asc
-inherit dot-a autotools cflags-hardened multilib-minimal multiprocessing prefix toolchain-funcs verify-sig
+
+CHKL_TIMESTAMPS=(
+	"app-arch/brotli-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"app-arch/zstd-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/openssl-4.0.9999"
+	"dev-libs/openssl-3.6.9999"
+	"dev-libs/openssl-3.5.9999"
+	"dev-libs/openssl-3.4.9999"
+	"dev-libs/openssl-3.3.9999"
+	"dev-libs/openssl-3.0.9999"
+)
+
+inherit dot-a autotools cflags-hardened chkl multilib-minimal multiprocessing prefix toolchain-funcs verify-sig
+
 
 DESCRIPTION="A Client that groks URLs"
 HOMEPAGE="https://curl.se/"
@@ -110,9 +122,9 @@ REQUIRED_USE="
 # don't be afraid to require a later version.
 # ngtcp2 = https://bugs.gentoo.org/912029 - can only build with one tls backend at a time.
 RDEPEND="
-	>=virtual/zlib-1.2.5:=[${MULTILIB_USEDEP}]
+	>=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}]
 	adns? ( >=net-dns/c-ares-1.16.0:=[${MULTILIB_USEDEP}] )
-	brotli? ( app-arch/brotli:=[${MULTILIB_USEDEP}] )
+	brotli? ( >=app-arch/brotli-9999:=[${MULTILIB_USEDEP}] )
 	http2? ( >=net-libs/nghttp2-1.15.0:=[${MULTILIB_USEDEP}] )
 	http3? ( >=net-libs/nghttp3-1.1.0[${MULTILIB_USEDEP}] )
 	idn? ( >=net-dns/libidn2-2.0.0:=[static-libs?,${MULTILIB_USEDEP}] )
@@ -143,7 +155,7 @@ RDEPEND="
 			>=net-libs/rustls-ffi-0.15.0:=[${MULTILIB_USEDEP}]
 		)
 	)
-	zstd? ( app-arch/zstd:=[${MULTILIB_USEDEP}] )
+	zstd? ( >=app-arch/zstd-9999:=[${MULTILIB_USEDEP}] )
 "
 
 DEPEND="${RDEPEND}"
@@ -265,6 +277,7 @@ multilib_src_configure() {
 	local myconf=()
 
 	cflags-hardened_append
+	chkl_check_many_timestamps
 
 	myconf+=( --without-ca-fallback --with-ca-bundle="${EPREFIX}"/etc/ssl/certs/ca-certificates.crt  )
 	if use ssl; then

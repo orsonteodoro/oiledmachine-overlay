@@ -316,7 +316,7 @@ DEFAULT_GST_PLUGINS=(
 )
 
 inherit cflags-depends cflags-hardened check-compiler-switch check-linker
-inherit check-reqs cmake desktop dhms flag-o-matic flag-o-matic-om git-r3 gnome2
+inherit check-reqs chkl cmake desktop dhms flag-o-matic flag-o-matic-om git-r3 gnome2
 inherit lcnr libcxx-slot libstdcxx-slot linux-info llvm multilib-minimal
 inherit multiprocessing pax-utils python-single-r1 ruby-single toolchain-funcs
 inherit vf web-kernel-config
@@ -3122,6 +3122,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		'-fuse-ld=*'
 
 	cflags-hardened_append
+	chkl_check_many_timestamps
 
 	filter-flags "-fno-inline" # Verified to fix slowdown, slow scrolling, streaming issues
 
