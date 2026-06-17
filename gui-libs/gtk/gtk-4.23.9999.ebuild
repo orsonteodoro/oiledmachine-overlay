@@ -23,6 +23,7 @@ PYTHON_COMPAT=( python3_{10..14} )
 FALLBACK_COMMIT="3a3a3ffb99a391a909f7d759e580e5544a35b223" # Tue, 16 Jun 2026 14:34:00 -0400
 
 CHKL_TIMESTAMPS=(
+	"dev-libs/glib-2.89.9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"net-print/cups-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/harfbuzz-9999"		# Bumped live/*DEPENDS to latest precaution for non-vulnerable
 	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
@@ -30,7 +31,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/tiff-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 )
 
-inherit cflags-hardened flag-o-matic gnome.org gnome2-utils meson optfeature python-any-r1 toolchain-funcs virtualx xdg
+inherit cflags-hardened chkl flag-o-matic gnome.org gnome2-utils meson optfeature python-any-r1 toolchain-funcs virtualx xdg
 
 DESCRIPTION="GTK is a multi-platform toolkit for creating graphical user interfaces"
 HOMEPAGE="https://www.gtk.org/ https://gitlab.gnome.org/GNOME/gtk/"
@@ -124,7 +125,7 @@ BDEPEND="
 		')
 	)
 	dev-python/docutils
-	>=dev-libs/glib-2.82
+	~dev-libs/glib-2.89.9999:2
 	>=dev-util/gdbus-codegen-2.80.5-r1
 	dev-util/glib-utils
 	>=sys-devel/gettext-0.19.7
@@ -135,7 +136,7 @@ BDEPEND="
 		>=dev-util/wayland-scanner-1.24.0
 	)
 	test? (
-		dev-libs/glib:2
+		~dev-libs/glib-2.89.9999:2
 		media-fonts/cantarell
 		wayland? ( dev-libs/weston[headless] )
 	)
@@ -203,6 +204,8 @@ src_prepare() {
 
 src_configure() {
 	cflags-hardened_append
+	chkl_check_many_timestamps
+
 	use x86 && append-flags -DDISABLE_X64=1 #943705 https://gitlab.gnome.org/GNOME/gtk/-/issues/4173
 
 	local emesonargs=(
