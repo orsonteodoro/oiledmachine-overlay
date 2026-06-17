@@ -346,7 +346,8 @@ CHKL_TIMESTAMPS=(
 	"net-misc/curl-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
 	"net-print/cups-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
 	"x11-libs/cairo-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
-	"x11-libs/libdrm-9999"
+	"x11-libs/libdrm-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
+	"x11-libs/pango-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
 )
 
 CHKL_BLACKLIST=(
@@ -1799,7 +1800,8 @@ COMMON_DEPEND="
 		x11-libs/cairo:=
 		>=x11-libs/gdk-pixbuf-2.42.2:2[${MULTILIB_USEDEP}]
 		x11-libs/gdk-pixbuf:=
-		>=x11-libs/pango-1.46.2[${MULTILIB_USEDEP}]
+		>=x11-libs/libdrm-2.4.132[${MULTILIB_USEDEP}]
+		>=x11-libs/pango-1.57.1[${MULTILIB_USEDEP}]
 		x11-libs/pango:=
 		accessibility? (
 			>=app-accessibility/at-spi2-core-2.44.1:2[${MULTILIB_USEDEP}]

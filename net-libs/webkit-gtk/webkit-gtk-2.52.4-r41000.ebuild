@@ -157,6 +157,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libwebp-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libpng-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"x11-libs/libdrm-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 )
 
 GLIB_VERSIONS=(
@@ -967,7 +968,7 @@ RDEPEND+="
 		>=dev-libs/libmanette-0.2.4[${MULTILIB_USEDEP}]
 	)
 	gbm? (
-		>=x11-libs/libdrm-2.4.99[${MULTILIB_USEDEP}]
+		>=x11-libs/libdrm-2.4.132[${MULTILIB_USEDEP}]
 	)
 	geolocation? (
 		>=app-misc/geoclue-2.6.0:2.0

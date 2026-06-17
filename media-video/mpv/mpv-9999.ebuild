@@ -26,9 +26,11 @@ CHKL_TIMESTAMPS=(
 	# See https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/vf.eclass for a list of vulnerabilities.
 	# Currently, the packages that were triaged were the most widely used.
 	# Last security check 20260614
+	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libplacebo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-video/ffmpeg-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-video/ffmpeg-9999m"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"x11-libs/libdrm-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 )
 
 inherit cflags-hardened chkl flag-o-matic lua-single meson optfeature pax-utils python-single-r1 xdg
@@ -134,7 +136,7 @@ COMMON_DEPEND="
 	curl? ( net-misc/curl )
 	drm? (
 		media-libs/libdisplay-info:=
-		x11-libs/libdrm
+		>=x11-libs/libdrm-2.4.132
 		egl? ( media-libs/mesa[gbm(+)] )
 	)
 	dvd? ( media-libs/libdvdnav )
@@ -149,7 +151,7 @@ COMMON_DEPEND="
 	)
 	jack? ( virtual/jack )
 	javascript? ( dev-lang/mujs:= )
-	jpeg? ( media-libs/libjpeg-turbo:= )
+	jpeg? ( >=media-libs/libjpeg-turbo-9999:= )
 	lcms? ( media-libs/lcms:2 )
 	libcaca? ( media-libs/libcaca )
 	lua? ( ${LUA_DEPS} )
@@ -184,7 +186,7 @@ COMMON_DEPEND="
 		x11-libs/libxkbcommon
 	)
 	zimg? ( media-libs/zimg )
-	zlib? ( virtual/zlib:= )
+	zlib? ( >=virtual/zlib-1.3.2:= )
 "
 RDEPEND="
 	${COMMON_DEPEND}
@@ -197,7 +199,7 @@ DEPEND="
 	dvb? ( sys-kernel/linux-headers )
 	nvenc? ( media-libs/nv-codec-headers )
 	vaapi? (
-		egl? ( x11-libs/libdrm )
+		egl? ( >=x11-libs/libdrm-2.4.132 )
 	)
 	vulkan? (
 		dev-util/vulkan-headers

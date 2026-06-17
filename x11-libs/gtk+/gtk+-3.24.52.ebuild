@@ -10,6 +10,15 @@ CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data 
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS HO IO PE"
 
 GNOME_ORG_MODULE=gtk
+
+CHKL_TIMESTAMPS=(
+	"media-libs/fontconfig-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/harfbuzz-9999"		# Bumped live/*DEPENDS to latest precaution for non-vulnerable
+	"net-print/cups-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"x11-libs/cairo-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"x11-libs/pango-9999"			# Bumped live to latest non-vulnerable
+)
+
 inherit cflags-hardened check-compiler-switch gnome2 meson-multilib multilib toolchain-funcs virtualx
 
 DESCRIPTION="Gimp ToolKit +"
@@ -30,19 +39,19 @@ COMMON_DEPEND="
 	>=app-accessibility/at-spi2-core-2.46.0[introspection?,${MULTILIB_USEDEP}]
 	>=dev-libs/fribidi-0.19.7[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-2.57.2:2[${MULTILIB_USEDEP}]
-	media-libs/fontconfig[${MULTILIB_USEDEP}]
-	>=media-libs/harfbuzz-2.2.0:=
+	>=media-libs/fontconfig-2.18.1[${MULTILIB_USEDEP}]
+	>=media-libs/harfbuzz-9999:=
 	>=media-libs/libepoxy-1.4[X(+)?,egl(+),${MULTILIB_USEDEP}]
 	virtual/libintl[${MULTILIB_USEDEP}]
-	>=x11-libs/cairo-1.14[aqua?,glib,svg(+),X?,${MULTILIB_USEDEP}]
+	>=x11-libs/cairo-9999[aqua?,glib,svg(+),X?,${MULTILIB_USEDEP}]
 	>=x11-libs/gdk-pixbuf-2.30:2[introspection?,${MULTILIB_USEDEP}]
-	>=x11-libs/pango-1.44.0[introspection?,${MULTILIB_USEDEP}]
+	>=x11-libs/pango-1.57.1[introspection?,${MULTILIB_USEDEP}]
 	x11-misc/shared-mime-info
 
-	broadway? ( virtual/zlib:=[${MULTILIB_USEDEP}] )
+	broadway? ( >=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}] )
 	cloudproviders? ( net-libs/libcloudproviders[${MULTILIB_USEDEP}] )
 	colord? ( >=x11-misc/colord-0.1.9:0=[${MULTILIB_USEDEP}] )
-	cups? ( >=net-print/cups-2.0[${MULTILIB_USEDEP}] )
+	cups? ( >=net-print/cups-9999[${MULTILIB_USEDEP}] )
 	introspection? ( >=dev-libs/gobject-introspection-1.82.0-r2:= )
 	wayland? (
 		>=dev-libs/wayland-1.14.91[${MULTILIB_USEDEP}]

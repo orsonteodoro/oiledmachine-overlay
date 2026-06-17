@@ -30,6 +30,8 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libpng-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/tiff-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"x11-libs/cairo-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"x11-libs/libdrm-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"x11-libs/pango-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 )
 
 inherit cflags-hardened chkl flag-o-matic gnome.org gnome2-utils meson optfeature python-any-r1 toolchain-funcs virtualx xdg
@@ -54,7 +56,7 @@ IUSE+=" aqua broadway cloudproviders colord cups examples gstreamer gtk-doc +int
 COMMON_DEPEND="
 	~dev-libs/glib-2.89.9999:2
 	>=x11-libs/cairo-9999[aqua?,glib,svg(+),X?]
-	>=x11-libs/pango-1.57.0[introspection?]
+	>=x11-libs/pango-1.57.1[introspection?]
 	>=dev-libs/fribidi-1.0.6
 	>=media-libs/harfbuzz-9999:=
 	>=x11-libs/gdk-pixbuf-2.30:2[introspection?]
@@ -105,7 +107,7 @@ COMMON_DEPEND="
 "
 DEPEND="${COMMON_DEPEND}
 	kernel_linux? (
-		x11-libs/libdrm
+		>=x11-libs/libdrm-2.4.132
 		sys-kernel/linux-headers
 	)
 	sysprof? ( >=dev-util/sysprof-capture-3.40.1:4 )
