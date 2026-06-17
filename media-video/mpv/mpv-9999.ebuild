@@ -28,6 +28,7 @@ CHKL_TIMESTAMPS=(
 	# Last security check 20260614
 	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libplacebo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libva-9999"			# Bumped live/*DEPENDS to latest hardened
 	"media-video/ffmpeg-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-video/ffmpeg-9999m"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"x11-libs/libdrm-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
@@ -170,7 +171,7 @@ COMMON_DEPEND="
 	soc? ( >=media-video/ffmpeg-8.1:=[soc(-)] )
 	subrandr? ( >=media-libs/subrandr-1.1.0 )
 	vaapi? (
-		media-libs/libva:=[X?,drm(+)?,wayland?]
+		>=media-libs/libva-9999:=[X?,drm(+)?,wayland?]
 		virtual/vaapi[patent_status_nonfree=]
 	)
 	vapoursynth? (

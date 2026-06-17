@@ -257,7 +257,7 @@ GN_PV="0.2315"
 GTK3_PV="3.24.52"
 GTK4_PV="4.23.1"
 ESBUILD_PV="0.25.1"
-LIBVA_PV="2.17.0"
+LIBVA_PV="9999"
 MESA_PV="20.3.5"
 ROLLUP_WASM_NODE_PV="4.57.1"
 QT6_PV="9999"
@@ -336,6 +336,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libjpeg-turbo-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libpulse-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libwebp-9999"				# Bumped live to latest non-vulnerable
+	"media-libs/libva-9999"					# Bumped live/*DEPENDS to latest hardened
 	"media-libs/libvpx-9999"
 	"media-libs/libyuv-9999"
 	"media-libs/tiff-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
@@ -351,6 +352,7 @@ CHKL_TIMESTAMPS=(
 )
 
 CHKL_BLACKLIST=(
+	"x11-libs/libdrm-9999"
 )
 
 # One of the major sources of lag comes from dependencies

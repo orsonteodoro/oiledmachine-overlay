@@ -49,6 +49,13 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse2"
 )
 
+CHKL_TIMESTAMPS=(
+	"app-arch/zstd-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/expat-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libva-9999"		# Bumped live/*DEPENDS to latest hardened
+	"x11-libs/libdrm-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+)
+
 CRATES="
 	paste@1.0.14
 	proc-macro2@1.0.86
@@ -58,7 +65,7 @@ CRATES="
 	unicode-ident@1.0.12
 "
 
-LIBDRM_DEPSTRING=">=x11-libs/libdrm-2.4.121"
+LIBDRM_DEPSTRING=">=x11-libs/libdrm-2.4.132"
 LIBDRM_USEDEP="\
 video_cards_freedreno?,\
 video_cards_intel?,\
@@ -186,10 +193,10 @@ REQUIRED_USE="
 "
 RDEPEND="
 	${LIBDRM_DEPSTRING}[${LIBDRM_USEDEP}${MULTILIB_USEDEP}]
-	>=dev-libs/expat-2.1.0-r3[${MULTILIB_USEDEP}]
+	>=dev-libs/expat-9999[${MULTILIB_USEDEP}]
 	>=dev-util/spirv-tools-1.3.231.0[${MULTILIB_USEDEP}]
 	>=media-libs/libglvnd-1.3.2[X?,${MULTILIB_USEDEP}]
-	>=virtual/zlib-1.2.9[${MULTILIB_USEDEP}]
+	>=virtual/zlib-1.3.2[${MULTILIB_USEDEP}]
 	virtual/patent-status[patent_status_nonfree=]
 	llvm? (
 		video_cards_r600? (
@@ -214,7 +221,7 @@ RDEPEND="
 		sys-libs/libunwind[${MULTILIB_USEDEP}]
 	)
 	vaapi? (
-		>=media-libs/libva-1.7.3:=[${MULTILIB_USEDEP}]
+		>=media-libs/libva-9999:=[${MULTILIB_USEDEP}]
 	)
 	vdpau? (
 		>=x11-libs/libvdpau-1.5:=[${MULTILIB_USEDEP}]
@@ -244,7 +251,7 @@ RDEPEND="
 		x11-libs/xcb-util-keysyms[${MULTILIB_USEDEP}]
 	)
 	zstd? (
-		app-arch/zstd[${MULTILIB_USEDEP}]
+		>=app-arch/zstd-9999[${MULTILIB_USEDEP}]
 		app-arch/zstd:=
 	)
 "
@@ -625,6 +632,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 
 	cflags-hardened_append
+	chkl_check_many_timestamps
 
 	local platforms
 	use X && platforms+="x11"

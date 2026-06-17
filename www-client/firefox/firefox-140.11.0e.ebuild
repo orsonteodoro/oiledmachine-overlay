@@ -232,7 +232,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libjpeg-turbo-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libpng-9999"
 	"media-libs/libpulse-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libva-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libva-9999"				# Bumped live/*DEPENDS to latest hardened
 	"media-libs/libvpx-9999"
 	"media-libs/libwebp-9999"
 	"media-libs/mesa-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
@@ -845,7 +845,7 @@ RDEPEND+="
 		)
 	)
 	vaapi? (
-		>=media-libs/libva-2.20.0[${MULTILIB_USEDEP},drm(+),X?,wayland?]
+		>=media-libs/libva-9999[${MULTILIB_USEDEP},drm(+),X?,wayland?]
 	)
 "
 
