@@ -3,8 +3,17 @@
 
 EAPI=9
 
+MY_PN=${PN/-gpl}
+MY_P="${MY_PN}-${PV/_}"
+PVM=$(ver_cut 1-2)
+PVM_S=$(ver_rs 1-2 "")
+
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CXX_STANDARD=17
+
+# Use https://gitweb.gentoo.org/proj/codec/ghostscript-gpl-patches.git/ for patches
+# See 'index' branch for README
+MY_PATCHSET="ghostscript-gpl-10.04.0-patches.tar.xz"
 
 CHKL_TIMESTAMPS=(
 	"net-print/cups-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
@@ -28,27 +37,28 @@ LLVM_COMPAT=(
 
 inherit autotools cflags-hardened chkl flag-o-matic libcxx-slot libstdcxx-slot toolchain-funcs
 
-MY_PN=${PN/-gpl}
-MY_P="${MY_PN}-${PV/_}"
-PVM=$(ver_cut 1-2)
-PVM_S=$(ver_rs 1-2 "")
-
-# Use https://gitweb.gentoo.org/proj/codec/ghostscript-gpl-patches.git/ for patches
-# See 'index' branch for README
-MY_PATCHSET="ghostscript-gpl-10.04.0-patches.tar.xz"
-
-DESCRIPTION="Interpreter for the PostScript language and PDF"
-HOMEPAGE="https://ghostscript.com/ https://cgit.ghostscript.com/cgi-bin/cgit.cgi/ghostpdl.git/"
-SRC_URI="https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs${PVM_S}/${MY_P}.tar.xz"
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="b740cde68d4fa0d20e016fb5b6a7383590306dea"
+	EGIT_BRANCH="master"
+	EGIT_REPO_URI="https://cgit.ghostscript.com/ghostpdl.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	S="${WORKDIR}/${MY_P}"
+	SRC_URI="https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs${PVM_S}/${MY_P}.tar.xz"
+fi
 if [[ -n "${MY_PATCHSET}" ]] ; then
 	SRC_URI+=" https://dev.gentoo.org/~sam/distfiles/${CATEGORY}/${PN}/${MY_PATCHSET}"
 fi
-S="${WORKDIR}/${MY_P}"
 
+DESCRIPTION="Interpreter for the PostScript language and PDF"
+HOMEPAGE="https://ghostscript.com/ https://cgit.ghostscript.com/cgi-bin/cgit.cgi/ghostpdl.git/"
 LICENSE="AGPL-3 CPL-1.0"
 SLOT="0/$(ver_cut 1-2)"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
-IUSE="
+IUSE+="
 cups cpu_flags_arm_neon dbus gtk l10n_de static-libs unicode X
 ebuild_revision_2
 "
@@ -100,6 +110,18 @@ PATCHES=(
 pkg_setup() {
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
 }
 
 src_prepare() {
