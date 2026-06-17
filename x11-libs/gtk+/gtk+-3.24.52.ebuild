@@ -1,4 +1,4 @@
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -17,18 +17,14 @@ HOMEPAGE="https://www.gtk.org/"
 
 LICENSE="LGPL-2+"
 SLOT="3"
-IUSE="
-aqua broadway cloudproviders colord cups examples gtk-doc +introspection sysprof test vim-syntax wayland +X xinerama
-ebuild_revision_2
-"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~x64-solaris"
+IUSE="aqua broadway cloudproviders colord cups examples gtk-doc +introspection sysprof test vim-syntax wayland +X xinerama"
 REQUIRED_USE="
 	|| ( aqua wayland X )
 	test? ( X )
 	xinerama? ( X )
 "
 RESTRICT="!test? ( test )"
-
-KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-solaris"
 
 COMMON_DEPEND="
 	>=app-accessibility/at-spi2-core-2.46.0[introspection?,${MULTILIB_USEDEP}]
@@ -43,6 +39,7 @@ COMMON_DEPEND="
 	>=x11-libs/pango-1.44.0[introspection?,${MULTILIB_USEDEP}]
 	x11-misc/shared-mime-info
 
+	broadway? ( virtual/zlib:=[${MULTILIB_USEDEP}] )
 	cloudproviders? ( net-libs/libcloudproviders[${MULTILIB_USEDEP}] )
 	colord? ( >=x11-misc/colord-0.1.9:0=[${MULTILIB_USEDEP}] )
 	cups? ( >=net-print/cups-2.0[${MULTILIB_USEDEP}] )
@@ -82,9 +79,8 @@ PDEPEND="
 BDEPEND="
 	app-text/docbook-xml-dtd:4.1.2
 	app-text/docbook-xsl-stylesheets
-	dev-libs/gobject-introspection-common
 	dev-libs/libxslt
-	>=dev-util/gdbus-codegen-2.48
+	>=dev-util/gdbus-codegen-2.80.5-r1
 	dev-util/glib-utils
 	>=dev-build/gtk-doc-am-1.20
 	wayland? ( dev-util/wayland-scanner )
@@ -111,6 +107,8 @@ PATCHES=(
 	# https://bugs.gentoo.org/624960
 	"${FILESDIR}"/0001-gdk-add-a-poison-macro-to-hide-GDK_WINDOWING_.patch
 
+	"${FILESDIR}"/${P}-test-tree-relationships.patch
+
 	# oiledmachine-overlay added.  The result of adding -fstrict-flex-arrays=3.
 	"${FILESDIR}/gtk+-3.24.51-remove-struck-hack.patch"
 )
@@ -136,6 +134,9 @@ src_prepare() {
 			-e "/^xfails =/a 'border-image-excess-size.ui'," \
 			testsuite/reftests/meson.build || die
 	fi
+
+	# Don't use -Werror, bug #974693
+	sed -e '/-Werror=/d' -i meson.build || die
 }
 
 multilib_src_configure() {
@@ -178,7 +179,8 @@ multilib_src_compile() {
 }
 
 multilib_src_test() {
-	virtx dbus-run-session meson test -C "${BUILD_DIR}" --timeout-multiplier 4 || die
+	xdg_environment_reset
+	virtx dbus-run-session meson test -C "${BUILD_DIR}" --timeout-multiplier 4 --print-errorlogs || die
 }
 
 multilib_src_install() {
