@@ -101,7 +101,7 @@ VIDEO_CARDS=(
 
 # Bug
 inherit cargo
-inherit cflags-hardened check-compiler-switch flag-o-matic flag-o-matic-om
+inherit cflags-hardened check-compiler-switch chkl flag-o-matic flag-o-matic-om
 inherit libcxx-slot libstdcxx-slot llvm-r1 python-any-r1 linux-info meson-multilib
 inherit multilib-build toolchain-funcs uopts
 
