@@ -14,7 +14,7 @@
 # immediately accept the live alternative without reading the ebuild contents.
 
 case ${EAPI:-0} in
-	[8]) ;;
+	[89]) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 

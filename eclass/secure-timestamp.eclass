@@ -10,7 +10,7 @@
 # A collection of secure timestamps for live ebuilds for chkl.eclass
 
 case ${EAPI:-0} in
-	[8]) ;;
+	[89]) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
@@ -89,7 +89,7 @@ SECURE_TIMESTAMP["llvm_runtimes_libcxxabi_23_0_0_9999"]="Thu, 9 Apr 2026 18:28:2
 SECURE_TIMESTAMP["media_libs_alsa_lib_9999"]="Mon, 1 Jun 2026 10:04:24 +0200"
 SECURE_TIMESTAMP["media_libs_dav1d_9999"]="Mon, 27 Oct 2025 19:40:41 +0100"
 SECURE_TIMESTAMP["media_libs_flac_9999"]="Fri, 8 May 2026 13:28:44 +0200"
-SECURE_TIMESTAMP["media_libs_fontconfig_9999"]="Wed, 24 Jun 2009 15:04:11 -0400"
+SECURE_TIMESTAMP["media_libs_fontconfig_9999"]="Fri, 22 May 2026 13:56:36 -0500"
 SECURE_TIMESTAMP["media_libs_freetype_9999"]="Sat, 9 May 2026 09:51:56 -0400"
 SECURE_TIMESTAMP["media_libs_harfbuzz_9999"]="Thu, 11 Jun 2026 10:14:23 +0200"
 SECURE_TIMESTAMP["media_libs_lerc_9999"]="Thu, 30 Apr 2026 12:31:29 -0700"
@@ -106,11 +106,13 @@ SECURE_TIMESTAMP["media_libs_libvpx_9999"]="Wed, May 27, 2026 18:14:29"
 SECURE_TIMESTAMP["media_libs_libyuv_9999"]="Thu, 9 Apr 2026 11:03:54 -0700"
 SECURE_TIMESTAMP["media_libs_mesa_9999"]="Wed, 25 Feb 2026 16:54:24 +0100"
 SECURE_TIMESTAMP["media_libs_openh264_9999"]="Mon, 10 Feb 2025 15:27:56 +0800"
+SECURE_TIMESTAMP["media_libs_openjpeg_9999"]="Sun, 5 Apr 2026 13:25:27 +0200"
 SECURE_TIMESTAMP["media_libs_woff2_9999"]="Wed, 15 Apr 2026 15:38:51 -0700"
 SECURE_TIMESTAMP["media_gfx_graphite2_9999"]="Wed, 1 Apr 2020 09:53:13 +0700"
 SECURE_TIMESTAMP["media_video_ffmpeg_9999"]="Mon, 15 Jun 2026 04:07:59 +0300"
 SECURE_TIMESTAMP["media_video_ffmpeg_9999m"]="Mon, 15 Jun 2026 04:07:59 +0300"
 SECURE_TIMESTAMP["media_video_pipewire_9999"]="Wed, 2 Apr 2025 15:41:29 +0200"
+SECURE_TIMESTAMP["net_dns_libidn_9999"]="Tue, 16 Jun 2026 17:23:38 +0200"
 SECURE_TIMESTAMP["net_libs_libproxy_9999"]="Mon, 23 Feb 2026 10:30:16 -0600"
 SECURE_TIMESTAMP["net_libs_nodejs_99999999"]="Tue, 16 Jun 2026 12:29:30 -0400"
 SECURE_TIMESTAMP["net_misc_connman_9999"]="2026-02-09 15:45:56 +0100"

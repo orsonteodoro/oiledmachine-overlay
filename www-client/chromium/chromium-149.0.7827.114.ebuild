@@ -1640,7 +1640,7 @@ COMMON_SNAPSHOT_DEPEND="
 		dev-libs/flatbuffers:=
 	)
 	system-fontconfig? (
-		>=media-libs/fontconfig-2.18.0[${MULTILIB_USEDEP}]
+		>=media-libs/fontconfig-2.18.1[${MULTILIB_USEDEP}]
 		media-libs/fontconfig:=
 	)
 	system-freetype? (

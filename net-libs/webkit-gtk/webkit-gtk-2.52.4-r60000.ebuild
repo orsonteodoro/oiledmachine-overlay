@@ -86,7 +86,7 @@ CHECKREQS_DISK_BUILD="18G" # and even this might not be enough, bug #417307
 CMAKE_MAKEFILE_GENERATOR="ninja"
 # See https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Source/bmalloc/libpas/CMakeLists.txt#L5C5-L5C23
 CXX_STANDARD=23
-FONTCONFIG_PV="2.18.0"	# Bumped to the latest non-vulnerable
+FONTCONFIG_PV="2.18.1"	# Bumped to the latest non-vulnerable
 FREETYPE_PV="9999"	# Bumped to the latest non-vulnerable
 GSTREAMER_PV="1.28.4"	# Bumped to the latest non-vulnerable
 HARFBUZZ_PV="14.2.1"	# Bumped to the latest non-vulnerable

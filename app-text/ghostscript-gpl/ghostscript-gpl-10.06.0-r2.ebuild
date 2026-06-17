@@ -6,6 +6,16 @@ EAPI=9
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CXX_STANDARD=17
 
+CHKL_TIMESTAMPS=(
+	"net-print/cups-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libpng-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/fontconfig-9999"
+	"media-libs/freetype-9999"		# Bumped live to latest non-vulnerable
+	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/openjpeg-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/tiff-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+)
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
@@ -16,7 +26,7 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-inherit autotools cflags-hardened flag-o-matic libcxx-slot libstdcxx-slot toolchain-funcs
+inherit autotools cflags-hardened chkl flag-o-matic libcxx-slot libstdcxx-slot toolchain-funcs
 
 MY_PN=${PN/-gpl}
 MY_P="${MY_PN}-${PV/_}"
@@ -50,19 +60,19 @@ done
 
 DEPEND="
 	app-text/libpaper:=
-	media-libs/fontconfig
-	>=media-libs/freetype-2.4.9:2=
+	>=media-libs/fontconfig-2.18.1
+	>=media-libs/freetype-2.14.3:2=
 	>=media-libs/jbig2dec-0.19:=
-	>=media-libs/lcms-2.6:2
-	>=media-libs/libpng-1.6.2:=
-	media-libs/libjpeg-turbo:=
-	>=media-libs/openjpeg-2.1.0:2=
-	>=media-libs/tiff-4.0.1:=
-	>=virtual/zlib-1.2.7:=
-	cups? ( >=net-print/cups-1.3.8 )
-	dbus? ( sys-apps/dbus )
-	gtk? ( x11-libs/gtk+:3 )
-	unicode? ( net-dns/libidn:= )
+	>=media-libs/lcms-9999:2
+	>=media-libs/libpng-1.6.57:=
+	>=media-libs/libjpeg-turbo-9999:=
+	>=media-libs/openjpeg-9999:2=
+	>=media-libs/tiff-9999:=
+	>=virtual/zlib-1.3.2:=
+	cups? ( >=net-print/cups-9999 )
+	dbus? ( >=sys-apps/dbus-1.15.90 )
+	gtk? ( >=x11-libs/gtk+-3.24.52:3 )
+	unicode? ( >=net-dns/libidn-1.44:= )
 	X? ( x11-libs/libXt x11-libs/libXext )
 "
 BDEPEND="virtual/pkgconfig"
@@ -88,8 +98,8 @@ PATCHES=(
 )
 
 pkg_setup() {
-       libcxx-slot_verify
-       libstdcxx-slot_verify
+	libcxx-slot_verify
+	libstdcxx-slot_verify
 }
 
 src_prepare() {
@@ -154,6 +164,7 @@ src_configure() {
 	filter-lto
 
 	cflags-hardened_append
+	chkl_check_many_timestamps
 
 	# bug #971940
 	append-flags -fno-strict-aliasing
