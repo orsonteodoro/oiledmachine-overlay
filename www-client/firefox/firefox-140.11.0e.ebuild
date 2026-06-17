@@ -752,7 +752,7 @@ CDEPEND="
 		media-video/pipewire:=
 	)
 	system-png? (
-		>=media-libs/libpng-1.6.58:0[${MULTILIB_USEDEP},apng]
+		>=media-libs/libpng-1.6.57:0[${MULTILIB_USEDEP},apng]
 		media-libs/libpng:=
 	)
 	system-webp? (

@@ -1682,7 +1682,7 @@ COMMON_SNAPSHOT_DEPEND="
 		media-libs/openjpeg[${MULTILIB_USEDEP}]
 	)
 	system-libpng? (
-		>=media-libs/libpng-1.6.55[${MULTILIB_USEDEP}]
+		>=media-libs/libpng-1.6.57[${MULTILIB_USEDEP}]
 	)
 	system-libsecret? (
 		>=app-crypt/libsecret-0.18.2[${MULTILIB_USEDEP}]
