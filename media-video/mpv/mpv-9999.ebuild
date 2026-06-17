@@ -162,7 +162,7 @@ COMMON_DEPEND="
 		)
 	)
 	openal? ( media-libs/openal )
-	pipewire? ( media-video/pipewire:= )
+	pipewire? ( >=media-video/pipewire-9999:= )
 	pulseaudio? ( media-libs/libpulse )
 	rubberband? ( media-libs/rubberband:= )
 	sdl? ( media-libs/libsdl2[sound,threads(+),video] )

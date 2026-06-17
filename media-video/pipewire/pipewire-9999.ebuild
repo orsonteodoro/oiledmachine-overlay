@@ -3,8 +3,6 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="network untrusted-data"
-
 # 1. Please regularly check (even at the point of bumping) Fedora's packaging
 # for needed backports at https://src.fedoraproject.org/rpms/pipewire/tree/rawhide.
 #
@@ -29,16 +27,35 @@ PIPEWIRE_DOCS_VERSION="$(ver_cut 1-2).0"
 # Default to generating docs (inc. man pages) if no prebuilt; overridden later
 PIPEWIRE_DOCS_USEFLAG="+man"
 PYTHON_COMPAT=( python3_{11..14} )
-inherit cflags-hardened meson-multilib optfeature prefix python-any-r1 systemd tmpfiles udev
+
+CHKL_TIMESTAMPS=(
+	"media-video/ffmpeg-9999"
+	"dev-libs/openssl-4.0.9999"
+	"dev-libs/openssl-3.6.9999"
+	"dev-libs/openssl-3.5.9999"
+	"dev-libs/openssl-3.4.9999"
+	"dev-libs/openssl-3.3.9999"
+	"dev-libs/openssl-3.0.9999"
+)
+
+inherit cflags-hardened chkl meson-multilib optfeature prefix python-any-r1 systemd tmpfiles udev
 
 if [[ ${PV} == 9999 ]] ; then
+	FALLBACK_COMMIT="9a19091ac75a0dd57b289820183521b1b92b3c26"
 	PIPEWIRE_DOCS_PREBUILT=0
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/${PN}/${PN}.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 	inherit git-r3
 elif [[ ${PV} == *.9999 ]] ; then
+	FALLBACK_COMMIT=""
 	PIPEWIRE_DOCS_PREBUILT=0
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/${PN}/${PN}.git"
 	EGIT_BRANCH="${PV%.*}"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 	inherit git-r3
 else
 	if [[ ${PV} == *_p* ]] ; then
@@ -59,13 +76,12 @@ fi
 
 DESCRIPTION="Multimedia processing graphs"
 HOMEPAGE="https://pipewire.org/"
-SRC_URI+=" https://dev.gentoo.org/~sam/distfiles/${CATEGORY}/${PN}/${PN}-1.4.7-0001-don-t-include-standard-C-headers-inside-of-extern-C.patch.xz"
 
 LICENSE="MIT LGPL-2.1+ GPL-2"
 # ABI was broken in 0.3.42 for https://gitlab.freedesktop.org/pipewire/wireplumber/-/issues/49
 SLOT="0/0.4"
 IUSE="${PIPEWIRE_DOCS_USEFLAG} bluetooth elogind dbus doc echo-cancel extra ffmpeg fftw flatpak gstreamer gsettings"
-IUSE+=" ieee1394 jack-client jack-sdk libcamera liblc3 loudness lv2 modemmanager pipewire-alsa readline roc selinux"
+IUSE+=" ieee1394 jack-client jack-sdk libcamera loudness lv2 modemmanager pipewire-alsa readline roc selinux"
 IUSE+=" pulseaudio sound-server ssl system-service systemd test v4l X zeroconf"
 
 # Once replacing system JACK libraries is possible, it's likely that
@@ -125,6 +141,7 @@ RDEPEND="
 	bluetooth? (
 		dev-libs/glib
 		media-libs/fdk-aac
+		media-sound/liblc3
 		media-libs/libldac
 		media-libs/libfreeaptx
 		media-libs/opus
@@ -142,13 +159,13 @@ RDEPEND="
 		)
 	)
 	extra? ( >=media-libs/libsndfile-1.0.20 )
-	ffmpeg? ( media-video/ffmpeg:= )
+	ffmpeg? ( >=media-video/ffmpeg-9999:= )
 	fftw? ( sci-libs/fftw:3.0=[${MULTILIB_USEDEP}] )
 	flatpak? ( dev-libs/glib )
 	gstreamer? (
 		>=dev-libs/glib-2.32.0:2
-		>=media-libs/gstreamer-1.10.0:1.0
-		media-libs/gst-plugins-base:1.0
+		>=media-libs/gstreamer-1.28.4:1.0
+		>=media-libs/gst-plugins-base-1.28.4:1.0
 	)
 	gsettings? ( >=dev-libs/glib-2.26.0:2 )
 	ieee1394? ( media-libs/libffado[${MULTILIB_USEDEP}] )
@@ -158,11 +175,10 @@ RDEPEND="
 		!media-sound/jack2
 	)
 	libcamera? ( media-libs/libcamera:= )
-	liblc3? ( media-sound/liblc3 )
 	loudness? ( media-libs/libebur128:=[${MULTILIB_USEDEP}] )
 	lv2? ( media-libs/lilv )
 	modemmanager? ( >=net-misc/modemmanager-1.10.0 )
-	pipewire-alsa? ( >=media-libs/alsa-lib-1.2.10[${MULTILIB_USEDEP}] )
+	pipewire-alsa? ( >=media-libs/alsa-lib-1.2.16[${MULTILIB_USEDEP}] )
 	pulseaudio? ( media-libs/libpulse )
 	sound-server? ( !media-sound/pulseaudio-daemon )
 	roc? ( >=media-libs/roc-toolkit-0.4.0:= )
@@ -195,14 +211,23 @@ PDEPEND=">=media-video/wireplumber-0.5.2"
 
 PATCHES=(
 	"${FILESDIR}"/${PN}-0.3.25-enable-failed-mlock-warning.patch
-	"${FILESDIR}"/${PN}-1.4.6-no-automagic-ebur128.patch
-	"${FILESDIR}"/${PN}-1.4.6-no-automagic-fftw.patch
-	"${WORKDIR}"/${PN}-1.4.7-0001-don-t-include-standard-C-headers-inside-of-extern-C.patch
 )
 
 pkg_setup() {
 	if use doc || use man ; then
 		python-any-r1_pkg_setup
+	fi
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
 	fi
 }
 
@@ -217,6 +242,7 @@ src_prepare() {
 
 multilib_src_configure() {
 	cflags-hardened_append
+	chkl_check_many_timestamps
 	local logind=disabled
 	if multilib_is_native_abi ; then
 		if use systemd ; then
@@ -240,7 +266,7 @@ multilib_src_configure() {
 		$(meson_native_use_feature gstreamer)
 		$(meson_native_use_feature gstreamer gstreamer-device-provider)
 		$(meson_native_use_feature gsettings)
-		$(meson_native_use_feature systemd)
+		$(meson_native_use_feature systemd libsystemd)
 		-Dlogind=${logind}
 		-Dlogind-provider=$(usex systemd 'libsystemd' 'libelogind')
 
@@ -265,6 +291,7 @@ multilib_src_configure() {
 		$(meson_native_use_feature bluetooth bluez5-backend-hsphfpd)
 		$(meson_native_use_feature bluetooth bluez5-codec-aac)
 		$(meson_native_use_feature bluetooth bluez5-codec-aptx)
+		$(meson_native_use_feature bluetooth bluez5-codec-lc3)
 		$(meson_native_use_feature bluetooth bluez5-codec-ldac)
 		$(meson_native_use_feature bluetooth bluez5-codec-g722)
 		$(meson_native_use_feature bluetooth opus)
@@ -284,7 +311,6 @@ multilib_src_configure() {
 		-Devl=disabled # Matches upstream
 		-Dtest=disabled # fakesink and fakesource plugins
 		-Dbluez5-codec-lc3plus=disabled # unpackaged
-		$(meson_native_use_feature liblc3 bluez5-codec-lc3)
 		$(meson_feature loudness ebur128)
 		$(meson_feature fftw)
 		$(meson_native_use_feature lv2)
@@ -319,6 +345,9 @@ multilib_src_configure() {
 
 		# TODO
 		-Dsnap=disabled
+		-Donnxruntime=disabled
+		-Dbluez5-plc-spandsp=disabled
+		-Dbluez5-codec-ldac-dec=disabled
 	)
 
 	# This installs the schema file for pulseaudio-daemon, iff we are replacing
@@ -428,6 +457,19 @@ pkg_postinst() {
 			# https://gitlab.freedesktop.org/pipewire/pipewire/-/issues/3243
 			ewarn "Please restart KWin/Mutter after upgrading PipeWire."
 			ewarn "Screencasting may not work until you do."
+		fi
+
+		# Upgrading from a previous major version may require a restart (bug #964059)
+		if use sound-server && ver_test $(ver_cut 1-2 ${ver}) -lt $(ver_cut 1-2 ${PV}) ; then
+			ewarn "Please restart PipeWire after upgrading to a new major version:"
+			if use systemd ; then
+				ewarn " $ systemctl --user daemon-reload"
+				ewarn " $ systemctl restart --user pipewire.service"
+				ewarn " $ systemctl restart --user pipewire-pulse.service"
+				ewarn " $ systemctl restart --user wireplumber.service"
+			else
+				ewarn " $ gentoo-pipewire-launcher restart"
+			fi
 		fi
 
 		if ver_test ${ver} -le 0.3.66-r1 ; then
