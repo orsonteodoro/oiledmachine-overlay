@@ -50,7 +50,7 @@ IUSE+=" aqua broadway cloudproviders colord cups examples gstreamer gtk-doc +int
 #     on wd40 profiles with librsvg[tools]), bug #547710
 # NOTE: Support was added to build against both cups2 and cups3
 COMMON_DEPEND="
-	>=dev-libs/glib-2.84:2
+	~dev-libs/glib-2.89.9999:2
 	>=x11-libs/cairo-1.18.2[aqua?,glib,svg(+),X?]
 	>=x11-libs/pango-1.57.0[introspection?]
 	>=dev-libs/fribidi-1.0.6
