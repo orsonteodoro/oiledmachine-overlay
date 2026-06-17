@@ -17,6 +17,13 @@ esac
 if [[ -z ${_SECURE_TIMESTAMP_ECLASS} ]] ; then
 _SECURE_TIMESTAMP_ECLASS=1
 
+#
+# Bump policy:
+#
+# If the commit history list, Changelog*, NEWS fixes a vulnerability in
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/vf.eclass
+# the latest fix will be used as the latest secure timestamp.
+#
 get_secure_timestamps() {
 	declare -A SECURE_TIMESTAMP
 #
