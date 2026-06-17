@@ -1,7 +1,13 @@
-# Copyright 2023-2025 Gentoo Authors
+# Copyright 2023-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
+
+# We use the *live* unstable.  The stable is for binary packages.
+# Plus the unstable is ahead 1 month of security fixes.
+#   Stable 4.22.4: Apr 29, 2026 - Security lag time is 2 1/2 months
+# Unstable 4.23.1: May 29, 2026 - Security lag time is 1 1/2 months
+#   Live unstable: Jun 16, 2026 - Security lag time is less than 1 day
 
 # ASan does not work with f16c and introspection
 CFLAGS_HARDENED_ASSEMBLERS="inline"
@@ -12,8 +18,19 @@ CFLAGS_HARDENED_SANITIZERS_DISABLE=1 # Disabled because introspection needs revi
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data untrusted-data" # Harden password widget with retpoline
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS HO IO PE"
 
-PYTHON_COMPAT=( python3_{11..14} )
-inherit cflags-hardened gnome.org gnome2-utils meson optfeature python-any-r1 toolchain-funcs virtualx xdg
+PYTHON_COMPAT=( python3_{10..14} )
+
+FALLBACK_COMMIT="3a3a3ffb99a391a909f7d759e580e5544a35b223" # Tue, 16 Jun 2026 14:34:00 -0400
+
+CHKL_TIMESTAMPS=(
+	"net-print/cups-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/harfbuzz-9999"		# Bumped live/*DEPENDS to latest precaution for non-vulnerable
+	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libpng-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/tiff-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+)
+
+inherit cflags-hardened flag-o-matic gnome.org gnome2-utils meson optfeature python-any-r1 toolchain-funcs virtualx xdg
 
 DESCRIPTION="GTK is a multi-platform toolkit for creating graphical user interfaces"
 HOMEPAGE="https://www.gtk.org/ https://gitlab.gnome.org/GNOME/gtk/"
@@ -26,34 +43,31 @@ REQUIRED_USE="
 	test? ( introspection )
 "
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86"
-IUSE="
-aqua broadway cloudproviders colord cups examples gstreamer gtk-doc +introspection sysprof test vulkan wayland +X cpu_flags_x86_f16c
-ebuild_revision_9
-"
+IUSE+=" aqua broadway cloudproviders colord cups examples gstreamer gtk-doc +introspection sysprof test vulkan wayland +X cpu_flags_x86_f16c"
 
 # librsvg for svg icons and "!8541 Use librsvg for symbolics that we
 #     can't parse ourselves" (formerly a PDEPEND to avoid circular dep
 #     on wd40 profiles with librsvg[tools]), bug #547710
 # NOTE: Support was added to build against both cups2 and cups3
 COMMON_DEPEND="
-	>=dev-libs/glib-2.82:2
+	>=dev-libs/glib-2.84:2
 	>=x11-libs/cairo-1.18.2[aqua?,glib,svg(+),X?]
-	>=x11-libs/pango-1.56.0[introspection?]
+	>=x11-libs/pango-1.57.0[introspection?]
 	>=dev-libs/fribidi-1.0.6
-	>=media-libs/harfbuzz-8.4.0:=
+	>=media-libs/harfbuzz-9999:=
 	>=x11-libs/gdk-pixbuf-2.30:2[introspection?]
-	media-libs/libpng:=
-	media-libs/tiff:=
-	media-libs/libjpeg-turbo:=
+	>=media-libs/libpng-1.6.57:=
+	>=media-libs/tiff-9999:=
+	>=media-libs/libjpeg-turbo-9999:=
 	>=gnome-base/librsvg-2.48:2
 	>=media-libs/libepoxy-1.4[egl(+),X(+)?]
 	>=media-libs/graphene-1.10.0[introspection?]
 	app-text/iso-codes
 	x11-misc/shared-mime-info
 
-	cloudproviders? ( net-libs/libcloudproviders )
+	cloudproviders? ( >=net-libs/libcloudproviders-0.3.1 )
 	colord? ( >=x11-misc/colord-0.1.9:0= )
-	cups? ( >=net-print/cups-2.0 )
+	cups? ( >=net-print/cups-9999 )
 	examples? ( gnome-base/librsvg:2 )
 	gstreamer? (
 		>=media-libs/gstreamer-1.24.0:1.0
@@ -63,22 +77,20 @@ COMMON_DEPEND="
 			>=media-libs/gst-plugins-base-1.24.0:1.0[opengl]
 		)
 	)
-	introspection? (
-		>=dev-libs/gobject-introspection-1.84:=
-	)
+	introspection? ( >=dev-libs/gobject-introspection-1.84:= )
 	vulkan? (
 		>=media-libs/vulkan-loader-1.3:=[wayland?,X?]
-		media-libs/mesa[vulkan]
-	)
+		>=media-libs/mesa-23.0.4[vulkan]
+		)
 	wayland? (
 		>=dev-libs/wayland-1.24.0
 		>=dev-libs/wayland-protocols-1.44
-		media-libs/mesa[wayland]
+		>=media-libs/mesa-23.0.4[wayland]
 		>=x11-libs/libxkbcommon-0.2
 	)
 	X? (
 		media-libs/fontconfig
-		media-libs/mesa[X(+)]
+		>=media-libs/mesa-23.0.4[X(+)]
 		x11-libs/libX11
 		>=x11-libs/libXi-1.8
 		x11-libs/libXext
@@ -100,13 +112,11 @@ DEPEND="${COMMON_DEPEND}
 RDEPEND="${COMMON_DEPEND}
 	>=dev-util/gtk-update-icon-cache-3
 "
-# librsvg for svg icons (PDEPEND to avoid circular dep on wd40 profiles with librsvg[tools]), bug #547710
 PDEPEND="
 	>=x11-themes/adwaita-icon-theme-3.14
 "
 BDEPEND="
 	>=dev-build/meson-1.5.0
-	dev-libs/gobject-introspection-common
 	introspection? (
 		${PYTHON_DEPS}
 		$(python_gen_any_dep '
@@ -115,7 +125,7 @@ BDEPEND="
 	)
 	dev-python/docutils
 	>=dev-libs/glib-2.82
-	>=dev-util/gdbus-codegen-2.48
+	>=dev-util/gdbus-codegen-2.80.5-r1
 	dev-util/glib-utils
 	>=sys-devel/gettext-0.19.7
 	virtual/pkgconfig
@@ -136,9 +146,7 @@ PATCHES=(
 	# with USE="-wayland -X" to trick gtk into claiming that it wasn't built with
 	# such support.
 	# https://bugs.gentoo.org/624960
-	"${FILESDIR}/0001-gdk-add-a-poison-macro-to-hide-GDK_WINDOWING_ge_4.18.5.patch"
-
-	"${FILESDIR}/${P}-32-bit.patch"
+	"${FILESDIR}"/0001-gdk-add-a-poison-macro-to-hide-GDK_WINDOWING_ge_4.18.5.patch
 )
 
 python_check_deps() {
@@ -147,6 +155,29 @@ python_check_deps() {
 
 pkg_setup() {
 	use introspection && python-any-r1_pkg_setup
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+		local expected_pv=$(ver_cut "1-2" "${PV}")
+		if ! ( grep "version:" "${S}/meson.build" | head -n 1 | grep -q "${expected_pv}" ) ; then
+			local actual_pv=$(grep "version:" "${S}/meson.build" \
+				| head -n 1 \
+				| cut -f 2 -d "'" \
+				| cut -f 1-2 -d ".")
+eerror "QA:  Bump slot or change PV to ${actual_pv}.9999"
+eerror "QA:  Expected PV:  ${expected_pv}"
+eerror "QA:  Actual PV:  ${actual_pv}"
+			die
+		fi
+	else
+		unpack ${A}
+	fi
 }
 
 src_prepare() {
@@ -172,6 +203,8 @@ src_prepare() {
 
 src_configure() {
 	cflags-hardened_append
+	use x86 && append-flags -DDISABLE_X64=1 #943705 https://gitlab.gnome.org/GNOME/gtk/-/issues/4173
+
 	local emesonargs=(
 		# GDK backends
 		$(meson_use X x11-backend)
@@ -197,7 +230,6 @@ src_configure() {
 		# Expected to fail with GCC < 11
 		# See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=71993
 		$(meson_feature cpu_flags_x86_f16c f16c)
-
 		-Dandroid-runtime=disabled
 		# Introspection
 		$(meson_feature introspection)
@@ -265,11 +297,30 @@ src_test() {
 }
 
 src_install() {
+	local i src
+
 	meson_src_install
 
 	if use gtk-doc; then
-		mkdir -p "${ED}"/usr/share/gtk-doc/html/ || die
-		mv "${ED}"/usr/share/doc/{gtk4,gsk4,gdk4{,-wayland,-x11}} "${ED}"/usr/share/gtk-doc/html/ || die
+		mkdir -p "${ED}/usr/share/gtk-doc/html" || die
+
+		for dir in gdk4 gtk4 gsk4; do
+			src="${ED}/usr/share/doc/${dir}"
+			test -d "${src}" || die "Expected documentation directory ${src} not found"
+			mv -v "${src}" "${ED}/usr/share/gtk-doc/html" || die
+		done
+
+		if use X; then
+			src="${ED}/usr/share/doc/gdk4-x11"
+			test -d "${src}" || die "Expected X11 documentation ${src} not found"
+			mv -v "${src}" "${ED}/usr/share/gtk-doc/html" || die
+		fi
+
+		if use wayland; then
+			src="${ED}/usr/share/doc/gdk4-wayland"
+			test -d "${src}" || die "Expected Wayland documentation ${src} not found"
+			mv -v "${src}" "${ED}/usr/share/gtk-doc/html" || die
+		fi
 	fi
 }
 
