@@ -87,3 +87,6 @@ multilib_src_install_all() {
 
 	einstalldocs
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive/integration-test) 9515e7f live
+# Double emerge:  passed
