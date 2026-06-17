@@ -1,4 +1,4 @@
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -6,7 +6,13 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF"
 
-PYTHON_COMPAT=( python3_{11..14} )
+PYTHON_COMPAT=( python3_{10..14} )
+
+CHKL_TIMESTAMPS=(
+	"dev-libs/expat-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/freetype-9999"	# Bumped live/*DEPENDS to latest non-vulnerable
+)
+
 inherit cflags-hardened eapi9-ver multilib meson-multilib python-any-r1 readme.gentoo-r1
 
 DESCRIPTION="A library for configuring and customizing font access"
@@ -19,12 +25,9 @@ SRC_URI="
 LICENSE="MIT"
 SLOT="1.0"
 if ! [[ $(ver_cut 3) -ge 90 ]] ; then
-	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris"
+	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
 fi
-IUSE="
-doc nls test
-ebuild_revision_9
-"
+IUSE="doc nls test"
 RESTRICT="!test? ( test )"
 
 # - Check minimum freetype & other deps on bumps. See
@@ -41,8 +44,8 @@ RESTRICT="!test? ( test )"
 #   It might become an optional(?) runtime dep in future though. Who knows.
 #   Keep an eye on it.
 RDEPEND="
-	>=dev-libs/expat-2.1.0-r3[${MULTILIB_USEDEP}]
-	>=media-libs/freetype-2.9.1[${MULTILIB_USEDEP}]
+	>=dev-libs/expat-9999[${MULTILIB_USEDEP}]
+	>=media-libs/freetype-9999[${MULTILIB_USEDEP}]
 	virtual/libintl[${MULTILIB_USEDEP}]
 	!elibc_Darwin? ( !elibc_SunOS? ( sys-apps/util-linux[${MULTILIB_USEDEP}] ) )
 	elibc_Darwin? ( sys-libs/native-uuid )
@@ -54,7 +57,7 @@ DEPEND="
 "
 BDEPEND="
 	${PYTHON_DEPS}
-	>=dev-build/meson-1.6.1
+	>=dev-build/meson-1.11.0
 	dev-util/gperf
 	virtual/pkgconfig
 	doc? (
@@ -71,10 +74,8 @@ IDEPEND="app-eselect/eselect-fontconfig"
 PATCHES=(
 	# bug #130466 + make liberation default
 	"${FILESDIR}"/${PN}-2.14.0-latin-update.patch
-	# Avoid test failure (bubblewrap doesn't work within sandbox)
-	"${FILESDIR}"/${PN}-2.17.0-skip-bubblewrap-tests.patch
 	# Avoid network access and unpackaged pytest-tap
-	"${FILESDIR}"/${PN}-2.17.0-network-test.patch
+	"${FILESDIR}"/${PN}-2.18.1-network-test.patch
 	# Fix build failure with -ggdb3
 	"${FILESDIR}"/${PN}-2.17.0-macro-preprocess.patch
 
@@ -137,6 +138,7 @@ multilib_src_configure() {
 
 		$(meson_native_use_feature nls)
 		$(meson_feature test tests)
+		-Dtests-bwrap=disabled
 
 		-Dcache-build=disabled
 		-Dcache-dir="${EPREFIX}"/var/cache/fontconfig
