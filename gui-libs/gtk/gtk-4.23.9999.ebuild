@@ -29,6 +29,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libpng-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/tiff-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"x11-libs/cairo-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 )
 
 inherit cflags-hardened chkl flag-o-matic gnome.org gnome2-utils meson optfeature python-any-r1 toolchain-funcs virtualx xdg
@@ -52,7 +53,7 @@ IUSE+=" aqua broadway cloudproviders colord cups examples gstreamer gtk-doc +int
 # NOTE: Support was added to build against both cups2 and cups3
 COMMON_DEPEND="
 	~dev-libs/glib-2.89.9999:2
-	>=x11-libs/cairo-1.18.2[aqua?,glib,svg(+),X?]
+	>=x11-libs/cairo-9999[aqua?,glib,svg(+),X?]
 	>=x11-libs/pango-1.57.0[introspection?]
 	>=dev-libs/fribidi-1.0.6
 	>=media-libs/harfbuzz-9999:=

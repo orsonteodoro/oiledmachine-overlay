@@ -75,7 +75,7 @@ EAPI=8
 # media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
 
 API_VERSION="4.1"
-CAIRO_PV="1.16.0"
+CAIRO_PV="9999"
 CFLAGS_HARDENED_ASSEMBLERS="inline"
 CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan lsan msan tsan ubsan"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
@@ -1098,7 +1098,7 @@ RDEPEND+="
 		>=media-libs/freetype-${FREETYPE_PV}[${MULTILIB_USEDEP}]
 		>=media-libs/harfbuzz-${HARFBUZZ_PV}[${MULTILIB_USEDEP},icu(+)]
 		media-libs/harfbuzz:=
-		>=x11-libs/cairo-1.16[${MULTILIB_USEDEP},X?]
+		>=x11-libs/cairo-${CAIRO_PV}[${MULTILIB_USEDEP},X?]
 		x11-libs/cairo:=
 	)
 	wayland? (

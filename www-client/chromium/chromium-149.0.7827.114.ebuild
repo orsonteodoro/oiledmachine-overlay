@@ -345,6 +345,7 @@ CHKL_TIMESTAMPS=(
 	"net-libs/nodejs-99999999"				# Bumped live/*DEPENDS to latest non-vulnerable
 	"net-misc/curl-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
 	"net-print/cups-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
+	"x11-libs/cairo-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
 	"x11-libs/libdrm-9999"
 )
 
@@ -1794,7 +1795,7 @@ COMMON_DEPEND="
 			>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},wayland?,X?]
 			media-libs/mesa:=
 		)
-		>=x11-libs/cairo-1.16.0[${MULTILIB_USEDEP}]
+		>=x11-libs/cairo-9999[${MULTILIB_USEDEP}]
 		x11-libs/cairo:=
 		>=x11-libs/gdk-pixbuf-2.42.2:2[${MULTILIB_USEDEP}]
 		x11-libs/gdk-pixbuf:=

@@ -622,7 +622,7 @@ CDEPEND="
 	dev-libs/libffi:=
 	>=media-libs/alsa-lib-1.2.16[${MULTILIB_USEDEP}]
 	virtual/freedesktop-icon-theme
-	>=x11-libs/cairo-1.18.4[${MULTILIB_USEDEP}]
+	>=x11-libs/cairo-9999[${MULTILIB_USEDEP}]
 	>=x11-libs/gdk-pixbuf-2.42.10:2[${MULTILIB_USEDEP}]
 	>=x11-libs/libdrm-2.4.120[${MULTILIB_USEDEP}]
 	dbus? (
