@@ -28,15 +28,25 @@ UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=1
 
+CHKL_TIMESTAMPS=(
+	"media-libs/fontconfig-9999"
+	"media-libs/freetype-9999"	# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libpng-9999"	# Bumped live/*DEPENDS to latest non-vulnerable
+)
+
 inherit meson
-inherit check-compiler-switch cflags-hardened flag-o-matic multilib-minimal python-any-r1 toolchain-funcs uopts virtualx
+inherit check-compiler-switch cflags-hardened chkl flag-o-matic multilib-minimal python-any-r1 toolchain-funcs uopts virtualx
 
 if [[ "${PV}" == *"9999"* ]] ; then
-	inherit git-r3
+	FALLBACK_COMMIT="8e3ac5e404f45b92ea186ad7a776b5e5160f38ac"
+	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/cairo/cairo.git"
-	SRC_URI=""
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
 else
-	KEYWORDS="~amd64 ~amd64-linux ~arm64 ~x64-macos ~x86 ~x86-linux"
+	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
 	SRC_URI="https://gitlab.freedesktop.org/cairo/cairo/-/archive/${PV}/cairo-${PV}.tar.bz2"
 fi
 
@@ -70,10 +80,10 @@ REQUIRED_USE="
 "
 RDEPEND="
 	>=dev-libs/lzo-2.10:2[${MULTILIB_USEDEP}]
-	>=media-libs/fontconfig-2.15.0[${MULTILIB_USEDEP}]
-	>=media-libs/freetype-2.13.2:2[${MULTILIB_USEDEP},png]
-	>=media-libs/libpng-1.6.40:0=[${MULTILIB_USEDEP}]
-	>=sys-libs/zlib-1.2.13[${MULTILIB_USEDEP}]
+	>=media-libs/fontconfig-2.18.1[${MULTILIB_USEDEP}]
+	>=media-libs/freetype-9999:2[${MULTILIB_USEDEP},png]
+	>=media-libs/libpng-1.6.57:0=[${MULTILIB_USEDEP}]
+	>=sys-libs/zlib-1.3.2[${MULTILIB_USEDEP}]
 	>=x11-libs/pixman-0.43.4[${MULTILIB_USEDEP}]
 	debug? (
 		sys-libs/binutils-libs:0=[${MULTILIB_USEDEP}]
@@ -155,6 +165,18 @@ pkg_setup() {
 	fi
 }
 
+src_unpack() {
+	if [[ "${PV}" == *"9999"* ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+}
+
 src_prepare() {
 	default
 	prepare_abi() {
@@ -185,6 +207,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 
 	cflags-hardened_append
+	chkl_check_many_timestamps
 
         if tc-is-gcc && [[ "${PGO_PHASE}" == "PGO" ]] ; then
                 append-flags -Wno-error=coverage-mismatch
