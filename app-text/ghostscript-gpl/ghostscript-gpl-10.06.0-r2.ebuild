@@ -50,7 +50,7 @@ SLOT="0/$(ver_cut 1-2)"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
 IUSE="
 cups cpu_flags_arm_neon dbus gtk l10n_de static-libs unicode X
-ebuild_revision_1
+ebuild_revision_2
 "
 
 LANGS="ja ko zh-CN zh-TW"
@@ -61,7 +61,7 @@ done
 DEPEND="
 	app-text/libpaper:=
 	>=media-libs/fontconfig-2.18.1
-	>=media-libs/freetype-2.14.3:2=
+	>=media-libs/freetype-9999:2=
 	>=media-libs/jbig2dec-0.19:=
 	>=media-libs/lcms-9999:2
 	>=media-libs/libpng-1.6.57:=

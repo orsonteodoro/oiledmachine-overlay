@@ -613,7 +613,7 @@ CDEPEND="
 	>=dev-libs/nspr-4.39.0[${MULTILIB_USEDEP}]
 	>=dev-libs/nss-3.123.1[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.18.1[${MULTILIB_USEDEP}]
-	>=media-libs/freetype-2.14.3[${MULTILIB_USEDEP}]
+	>=media-libs/freetype-9999[${MULTILIB_USEDEP}]
 	>=x11-libs/pango-1.57.1[${MULTILIB_USEDEP}]
 	>=x11-libs/pixman-0.42.2[${MULTILIB_USEDEP}]
 	>=virtual/zlib-1.3.2[${MULTILIB_USEDEP}]
@@ -684,7 +684,7 @@ CDEPEND="
 		media-libs/libpng:=
 	)
 	system-webp? (
-		>=media-libs/libwebp-1.6.0:0[${MULTILIB_USEDEP}]
+		>=media-libs/libwebp-9999:0[${MULTILIB_USEDEP}]
 		media-libs/libwebp:=
 	)
 	valgrind? (

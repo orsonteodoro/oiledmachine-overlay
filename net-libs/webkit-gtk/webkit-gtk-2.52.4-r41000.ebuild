@@ -142,17 +142,20 @@ FFMPEG_COMPAT=(
 
 # TODO finish
 CHKL_TIMESTAMPS=(
-	"dev-libs/libxml2-9999;Wed, 15 Apr 2026 12:11:20 +0200"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/libxslt-9999;Tue, 25 Nov 2025 09:57:09 -0600"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/openssl-4.0.9999;Mon, 11 May 2026 16:29:47 +0200"
-	"dev-libs/openssl-3.6.9999;Mon, 11 May 2026 16:29:47 +0200"
-	"dev-libs/openssl-3.5.9999;Mon, 11 May 2026 16:29:47 +0200"
-	"dev-libs/openssl-3.4.9999;Mon, 11 May 2026 16:29:47 +0200"
-	"dev-libs/openssl-3.3.9999;Mon, 11 May 2026 16:29:47 +0200"
-	"dev-libs/openssl-3.0.9999;Mon, 11 May 2026 16:29:47 +0200"
-	"media-libs/freetype-9999;Sat, 9 May 2026 09:51:56 -0400"	# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/harfbuzz-9999;Mon, 27 Apr 2026 19:30:28 -0600"	# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libjpeg-turbo-9999;Wed, 3 Jun 2026 09:43:18 -0400"	# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/libxml2-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/libxslt-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/openssl-4.0.9999"
+	"dev-libs/openssl-3.6.9999"
+	"dev-libs/openssl-3.5.9999"
+	"dev-libs/openssl-3.4.9999"
+	"dev-libs/openssl-3.3.9999"
+	"dev-libs/openssl-3.0.9999"
+	"media-libs/fontconfig-9999"
+	"media-libs/freetype-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/harfbuzz-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libwebp-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libpng-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 )
 
 GLIB_VERSIONS=(
@@ -939,13 +942,13 @@ RDEPEND+="
 	>=media-libs/libepoxy-1.5.4[${MULTILIB_USEDEP}]
 	>=media-libs/libjpeg-turbo-9999[${MULTILIB_USEDEP}]
 	media-libs/libjpeg-turbo:=
-	>=media-libs/libpng-1.6.34:0[${MULTILIB_USEDEP}]
+	>=media-libs/libpng-1.6.57:0[${MULTILIB_USEDEP}]
 	media-libs/libpng:=
-	>=media-libs/libwebp-0.6.1[${MULTILIB_USEDEP}]
+	>=media-libs/libwebp-9999[${MULTILIB_USEDEP}]
 	media-libs/libwebp:=
 	>=net-libs/libsoup-3.0.0:3.0[${MULTILIB_USEDEP},introspection?]
 	net-libs/libsoup:=
-	>=virtual/zlib-1.2.11:0[${MULTILIB_USEDEP}]
+	>=virtual/zlib-1.3.2:0[${MULTILIB_USEDEP}]
 	virtual/zlib:=
 	>=x11-libs/cairo-${CAIRO_PV}[${MULTILIB_USEDEP},X?]
 	x11-libs/cairo:=
