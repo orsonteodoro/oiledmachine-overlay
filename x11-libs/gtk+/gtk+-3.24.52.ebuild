@@ -19,7 +19,7 @@ CHKL_TIMESTAMPS=(
 	"x11-libs/pango-9999"			# Bumped live to latest non-vulnerable
 )
 
-inherit cflags-hardened check-compiler-switch gnome2 meson-multilib multilib toolchain-funcs virtualx
+inherit cflags-hardened check-compiler-switch chkl gnome2 meson-multilib multilib toolchain-funcs virtualx
 
 DESCRIPTION="Gimp ToolKit +"
 HOMEPAGE="https://www.gtk.org/"
@@ -157,6 +157,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 
 	cflags-hardened_append
+	chkl_check_many_timestamps
 
 	local emesonargs=(
 		$(meson_use aqua quartz_backend)
