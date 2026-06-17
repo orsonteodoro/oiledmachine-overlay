@@ -58,7 +58,7 @@ fi
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${GNOME_ORG_MODULE}-${GNOME_ORG_PV}"
-	EGIT_REPO_URI="https://gitlab.gnome.org/GNOME/gtk.git"
+	EGIT_REPO_URI="https://gitlab.gnome.org/GNOME/${GNOME_ORG_MODULE}.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
 	fi
