@@ -3,9 +3,11 @@
 
 EAPI=8
 
+MY_PN="graphite"
+MY_P="${MY_PN}-${PV}"
+
 CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO UM"
-EGIT_COMMIT="80c52493ef42e6fe605a69dcddd2a691cd8a1380"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO UF OOBW UM"
 GENTOO_DEPEND_ON_PERL="no"
 PYTHON_COMPAT=( "python3_"{10..13} )
 
@@ -15,8 +17,10 @@ KEYWORDS="
 ~alpha amd64 arm arm64 hppa ~loong ~mips ppc ppc64 ~riscv ~s390 sparc x86
 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris
 "
-S="${WORKDIR}/graphite-${EGIT_COMMIT}"
-SRC_URI="https://github.com/silnrsi/graphite/archive/${EGIT_COMMIT}.tar.gz -> ${P}.tar.gz"
+S="${WORKDIR}/${MY_P}"
+SRC_URI="
+https://github.com/silnrsi/graphite/archive/refs/tags/${PV}.tar.gz -> ${P}.tar.gz
+"
 
 DESCRIPTION="Library providing rendering capabilities for complex non-Roman writing systems"
 HOMEPAGE="https://scripts.sil.org/cms/scripts/page.php?site_id=projects&item_id=graphite_home"
@@ -63,13 +67,11 @@ BDEPEND="
 PATCHES=(
 	"${FILESDIR}/${PN}-1.3.5-includes-libs-perl.patch"
 	"${FILESDIR}/${PN}-1.3.14-fix-cmake-files-libdir.patch"
-	"${FILESDIR}/${PN}-1.3.14-no-libtool-file.patch"
+	"${FILESDIR}/${PN}-1.3.15-no-libtool-file.patch"
 	"${FILESDIR}/${PN}-1.3.14-fix-nodefaultlibs-deux.patch"
 	"${FILESDIR}/${PN}-1.3.14-fix-nodefaultlibs.patch"
 	"${FILESDIR}/${PN}-1.3.5-fix-gcc-linking.patch"
-	"${FILESDIR}/${PN}-1.3.14-gcc15.patch"
-	"${FILESDIR}/${PN}-1.3.14_p20210810-cmake-minreqver-3.16.patch" # bug 951367, PR#92 + PR#97 pending
-	"${FILESDIR}/${PN}-1.3.14_p20210810-cmake-findpython3.patch" # TODO: upstream
+	"${FILESDIR}/${PN}-1.3.15-gcc15.patch"
 )
 
 pkg_setup() {

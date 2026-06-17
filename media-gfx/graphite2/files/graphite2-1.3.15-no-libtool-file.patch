@@ -1,0 +1,20 @@
+--- a/src/CMakeLists.txt.orig	2026-06-17 09:24:45.831861686 -0700
++++ b/src/CMakeLists.txt	2026-06-17 09:26:10.865265605 -0700
+@@ -113,7 +113,7 @@ if  (${CMAKE_SYSTEM_NAME} STREQUAL "Linu
+         nolib_test(stdc++ $<TARGET_SONAME_FILE:graphite2>)
+     endif ()
+     set(CMAKE_CXX_IMPLICIT_LINK_LIBRARIES "")
+-    if (BUILD_SHARED_LIBS)
++    if (BUILD_SHARED_LIBS AND FALSE)
+         CREATE_LIBTOOL_FILE(graphite2 "/lib${LIB_SUFFIX}")
+     endif()
+ endif()
+@@ -132,7 +132,7 @@ if  (${CMAKE_SYSTEM_NAME} STREQUAL "Darw
+         nolib_test(stdc++ $<TARGET_SONAME_FILE:graphite2>)
+     endif ()
+     set(CMAKE_CXX_IMPLICIT_LINK_LIBRARIES "")
+-    if (BUILD_SHARED_LIBS)
++    if (BUILD_SHARED_LIBS AND FALSE)
+         CREATE_LIBTOOL_FILE(graphite2 "/lib${LIB_SUFFIX}")
+     endif()
+ endif()

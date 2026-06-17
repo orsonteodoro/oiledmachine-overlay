@@ -1,0 +1,10 @@
+--- a/tests/featuremap/featuremaptest.cpp.orig	2026-05-31 14:03:26.000000000 -0700
++++ b/tests/featuremap/featuremaptest.cpp	2026-06-17 09:27:57.470010949 -0700
+@@ -6,6 +6,7 @@
+ #include <iostream>
+ #include <map>
+ #include <memory>
++#include <stdint.h>
+ #include <cstdint>
+ #include <string>
+ #include <vector>
