@@ -293,6 +293,7 @@ CHKL_TIMESTAMPS=(
 # See vf.eclass for a list of vulnerabilities.
 # Last vulnerability check 20260614
 	"app-arch/brotli-9999"					# Bumped live to latest non-vulnerable
+	"app-arch/bzip2-9999"
 	"app-arch/snappy-9999"
 	"app-arch/zstd-9999"
 	"dev-build/ninja-9999"
@@ -1835,7 +1836,7 @@ COMMON_DEPEND="
 	>=sys-devel/gcc-${GCC_PV}
 	>=virtual/zlib-${ZLIB_PV}[${MULTILIB_USEDEP},minizip]
 	virtual/zlib:=
-	app-arch/bzip2[${MULTILIB_USEDEP}]
+	>=app-arch/bzip2-9999[${MULTILIB_USEDEP}]
 	app-arch/bzip2:=
 	virtual/libc
 	bluetooth? (

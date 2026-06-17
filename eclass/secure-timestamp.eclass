@@ -40,6 +40,7 @@ get_secure_timestamps() {
 SECURE_TIMESTAMP["app_accessibility_at_spi2_core_9999"]="Sat, 23 May 2026 08:21:47 -0500"
 SECURE_TIMESTAMP["app_accessibility_speech_dispatcher_9999"]="Tue, 6 May 2025 20:53:18 +0200"
 SECURE_TIMESTAMP["app_arch_brotli_9999"]="Sun, 19 Apr 2026 17:14:00 +0000"
+SECURE_TIMESTAMP["app_arch_bzip2_9999"]="Thu, 11 Jun 2026 14:19:53 -0700"
 SECURE_TIMESTAMP["app_arch_libdeflate_9999"]="Thu, 4 Apr 2024 21:14:01 -0400"
 SECURE_TIMESTAMP["app_arch_snappy_9999"]="Sat, 17 Aug 2024 19:03:10 -0700"
 SECURE_TIMESTAMP["app_arch_xz_utils"]="Tue, 19 May 2026 12:34:53 +0300"
