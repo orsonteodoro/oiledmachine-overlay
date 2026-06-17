@@ -24,6 +24,13 @@ _SECURE_TIMESTAMP_ECLASS=1
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/vf.eclass
 # the latest fix will be used as the latest secure timestamp.
 #
+# If a package is being bump to the newest version has a secure-critical
+# dependency, each of the security-critical dependencies must be
+# reviewed from master/main or default branch for security fixes.  Both the
+# timestamp and the *DEPENDs must be updated.  The tagged release may
+# be used in *DEPEND if it contains all the security fixes; otherwise, the
+# live ebuild in *DEPENDs is used.
+#
 get_secure_timestamps() {
 	declare -A SECURE_TIMESTAMP
 #
