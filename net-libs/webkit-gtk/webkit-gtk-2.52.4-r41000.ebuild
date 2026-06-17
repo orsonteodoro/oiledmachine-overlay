@@ -153,6 +153,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/fontconfig-9999"
 	"media-libs/freetype-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/harfbuzz-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/lcms-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libwebp-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libpng-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
@@ -938,7 +939,7 @@ RDEPEND+="
 	media-libs/freetype:=
 	>=media-libs/harfbuzz-${HARFBUZZ_PV}[${MULTILIB_USEDEP},icu(+)]
 	media-libs/harfbuzz:=
-	>=media-libs/lcms-2.9[${MULTILIB_USEDEP}]
+	>=media-libs/lcms-9999[${MULTILIB_USEDEP}]
 	>=media-libs/libepoxy-1.5.4[${MULTILIB_USEDEP}]
 	>=media-libs/libjpeg-turbo-9999[${MULTILIB_USEDEP}]
 	media-libs/libjpeg-turbo:=
@@ -952,7 +953,7 @@ RDEPEND+="
 	virtual/zlib:=
 	>=x11-libs/cairo-${CAIRO_PV}[${MULTILIB_USEDEP},X?]
 	x11-libs/cairo:=
-	>=x11-libs/gtk+-3.22.0:3[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
+	>=x11-libs/gtk+-3.24.52:3[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
 	x11-libs/gtk+:=
 	sys-kernel/mitigate-id
 	virtual/patent-status[patent_status_nonfree=]

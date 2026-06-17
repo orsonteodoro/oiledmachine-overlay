@@ -254,13 +254,13 @@ fi
 GCC_PV="10.2.1" # Minimum
 CROMITE_PV="148.0.7778.168"
 GN_PV="0.2315"
-GTK3_PV="3.24.24"
-GTK4_PV="4.8.3"
+GTK3_PV="3.24.52"
+GTK4_PV="4.23.1"
 ESBUILD_PV="0.25.1"
 LIBVA_PV="2.17.0"
 MESA_PV="20.3.5"
 ROLLUP_WASM_NODE_PV="4.57.1"
-QT6_PV="6.4.2"
+QT6_PV="9999"
 UNGOOGLED_CHROMIUM_PV="149.0.7827.114-1"
 # Testing this V8 version to avoid breaking security.  The 13.6 series cause the \
 # mksnapshot "Return code is -11" error.  To fix it, it required to either \

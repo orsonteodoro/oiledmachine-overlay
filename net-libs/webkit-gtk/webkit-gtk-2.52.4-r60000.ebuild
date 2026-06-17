@@ -153,6 +153,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/fontconfig-9999"
 	"media-libs/freetype-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/harfbuzz-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/lcms-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libwebp-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libpng-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
@@ -932,7 +933,7 @@ RDEPEND+="
 	>=dev-libs/libxml2-2.15.3:2[${MULTILIB_USEDEP}]
 	dev-libs/libxml2:=
 	>=dev-libs/libxslt-1.1.44[${MULTILIB_USEDEP}]
-	>=gui-libs/gtk-4.4.0:4[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
+	>=gui-libs/gtk-4.23.1:4[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
 	gui-libs/gtk:=
 	>=media-libs/fontconfig-${FONTCONFIG_PV}:1.0[${MULTILIB_USEDEP}]
 	media-libs/fontconfig:=
@@ -940,7 +941,7 @@ RDEPEND+="
 	media-libs/freetype:=
 	>=media-libs/harfbuzz-${HARFBUZZ_PV}[${MULTILIB_USEDEP},icu(+)]
 	media-libs/harfbuzz:=
-	>=media-libs/lcms-2.9[${MULTILIB_USEDEP}]
+	>=media-libs/lcms-9999[${MULTILIB_USEDEP}]
 	>=media-libs/libepoxy-1.5.4[${MULTILIB_USEDEP}]
 	>=media-libs/libjpeg-turbo-9999[${MULTILIB_USEDEP}]
 	media-libs/libjpeg-turbo:=
@@ -2153,6 +2154,7 @@ verify_compiler_flags_hardening() {
 	"unconditional:dev-libs/libtasn1:untrusted-data"
 	"unconditional:dev-libs/libxml2:untrusted-data"
 	"unconditional:dev-libs/libxslt:untrusted-data"
+	"unconditional:gui-libs/gtk:sensitive-data"
 	"unconditional:media-libs/libpng:sensitive-data,untrusted-data"					# PII
 	"unconditional:media-libs/libwebp:sensitive-data,untrusted-data"				# PII
 	"unconditional:media-libs/fontconfig:untrusted-data"
@@ -2160,7 +2162,6 @@ verify_compiler_flags_hardening() {
 	"unconditional:media-libs/harfbuzz:attack-surface-risk,untrusted-data,sensitive-data"		# PII
 	"unconditional:media-libs/libjpeg-turbo:sensitive-data,untrusted-data"				# PII
 	"unconditional:virtual/zlib:untrusted-data"
-	"unconditional:x11-libs/gtk+:sensitive-data"
 
 	"aom:media-plugins/gst-plugins-aom:sensitive-data,untrusted-data"				# PII
 	"dash:media-plugins/gst-plugins-dash:untrusted-data"
