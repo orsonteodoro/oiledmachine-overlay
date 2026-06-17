@@ -451,7 +451,7 @@ if [[ "${MY_PV#9999}" == "${MY_PV}" ]] ; then
 	"
 fi
 if [[ "${MY_PV#9999}" != "${MY_PV}" ]] ; then
-	FALLBACK_COMMIT="30c6667dadb085a2c1b9a7b7fe859f758de7044c"
+	FALLBACK_COMMIT="a62d99692780431aeb8cc96665434d5ec3210985"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${MY_P}"
 	EGIT_MIN_CLONE_TYPE="single"
 	EGIT_REPO_URI=(
