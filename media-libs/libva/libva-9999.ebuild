@@ -1,4 +1,4 @@
-# Copyright 1999-2026 Gentoo Authors
+# Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -11,17 +11,21 @@ DESCRIPTION="Video Acceleration (VA) API for Linux"
 HOMEPAGE="https://github.com/intel/libva"
 
 if [[ ${PV} = *9999 ]] ; then
+	FALLBACK_COMMIT="ad64eb9b616d1b66afaf4cb9f0ea0b8e0ec1169c"
 	inherit git-r3
 	EGIT_BRANCH=master
+	if [[ "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 	EGIT_REPO_URI="https://github.com/intel/libva"
 else
 	SRC_URI="https://github.com/intel/libva/archive/${PV}.tar.gz -> ${P}.tar.gz"
-	KEYWORDS="amd64 ~arm ~arm64 ~loong ~mips ~ppc64 ~riscv x86"
+	KEYWORDS="~amd64 ~arm64 ~loong ~mips ~ppc64 ~riscv ~x86"
 fi
 
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1)"
-IUSE="glx wayland X"
+IUSE+=" glx wayland X"
 REQUIRED_USE="glx? ( X )"
 
 RDEPEND="
@@ -39,10 +43,7 @@ RDEPEND="
 		x11-libs/libxcb:=[${MULTILIB_USEDEP}]
 	)
 "
-DEPEND="
-	${RDEPEND}
-	X? ( x11-base/xorg-proto )
-"
+DEPEND="${RDEPEND}"
 BDEPEND="
 	wayland? ( dev-util/wayland-scanner )
 	virtual/pkgconfig
@@ -55,6 +56,18 @@ MULTILIB_WRAPPED_HEADERS=(
 	/usr/include/va/va_dricommon.h
 	/usr/include/va/va_glx.h
 )
+
+src_unpack() {
+	if [[ ${PV} = *9999 ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+}
 
 multilib_src_configure() {
 	cflags-hardened_append
