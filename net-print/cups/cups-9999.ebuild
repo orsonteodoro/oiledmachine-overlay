@@ -30,7 +30,12 @@ S="${WORKDIR}/${MY_P}"
 
 LICENSE="Apache-2.0"
 SLOT="0"
-IUSE="acl dbus debug kerberos openssl pam selinux static-libs systemd test usb X xinetd zeroconf"
+IUSE="acl dbus debug kerberos mdnsresponder-compat openssl pam selinux static-libs systemd test usb X xinetd zeroconf"
+REQUIRED_USE="
+	mdnsresponder-compat? (
+		zeroconf
+	)
+"
 
 RESTRICT="!test? ( test )"
 
@@ -57,7 +62,7 @@ COMMON_DEPEND="
 	usb? ( virtual/libusb:1 )
 	X? ( x11-misc/xdg-utils )
 	xinetd? ( sys-apps/xinetd )
-	zeroconf? ( >=net-dns/avahi-0.6.31-r2[dbus,${MULTILIB_USEDEP}] )
+	zeroconf? ( >=net-dns/avahi-0.6.31-r2[${MULTILIB_USEDEP},dbus,mdnsresponder-compat?] )
 "
 # if libcupsfilters is installed, more tests are run. They fail without at least one of the two formats enabled.
 DEPEND="
@@ -127,6 +132,16 @@ src_prepare() {
 	multilib_copy_sources
 }
 
+get_dnssd() {
+	if use mdnsresponder-compat ; then
+		echo "mdnsresponder"
+	elif use zeroconf ; then
+		echo "avahi"
+	else
+		echo "no"
+	fi
+}
+
 multilib_src_configure() {
 	cflags-hardened_append
 	export DSOFLAGS="${LDFLAGS}"
@@ -170,9 +185,11 @@ multilib_src_configure() {
 		--with-tls=$(usex openssl openssl gnutls)
 		$(use_with systemd ondemand systemd)
 		$(multilib_native_use_enable usb libusb)
-		$(use_with zeroconf dnssd avahi)
+		#$(use_with zeroconf dnssd avahi)
+		--with-dnssd=$(get_dnssd)
 		$(multilib_is_native_abi && echo --enable-libpaper || echo --disable-libpaper)
 	)
+
 
 	# Handle empty LINGUAS properly, bug #771162
 	if [[ -n "${LINGUAS+x}" ]] ; then
@@ -195,7 +212,9 @@ multilib_src_configure() {
 
 	sed -i -e "s:SERVERBIN.*:SERVERBIN = \"\$\(BUILDROOT\)${EPREFIX}/usr/libexec/cups\":" Makedefs || die
 	sed -i -e "s:#define CUPS_SERVERBIN.*:#define CUPS_SERVERBIN \"${EPREFIX}/usr/libexec/cups\":" config.h || die
-	sed -i -e "s:cups_serverbin=.*:cups_serverbin=\"${EPREFIX}/usr/libexec/cups\":" cups-config || die
+
+# TODO: review
+#	sed -i -e "s:cups_serverbin=.*:cups_serverbin=\"${EPREFIX}/usr/libexec/cups\":" cups-config || die
 
 	# Additional path corrections needed for prefix, see bug #597728
 	sed \
