@@ -35,7 +35,7 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
-	riscv? ( sys-kernel/linux-headers )
+	riscv? ( sys-kernel/linux-headers:= )
 "
 
 DOCS=( ANNOUNCE CHANGES libpng-manual.txt README TODO )
