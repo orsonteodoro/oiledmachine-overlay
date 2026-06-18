@@ -3,8 +3,6 @@
 
 EAPI=8
 
-APNG_REPO=libpng-apng # sometimes libpng-apng is more up to date
-APNG_VERSION="1.6.54"
 CFLAGS_HARDENED_ASSEMBLERS="gas inline"
 ##CFLAGS_HARDENED_CI_SANITIZERS="asan lsan msan ubsan" # Beta only
 CFLAGS_HARDENED_CI_SANITIZERS="asan lsan" # Before .travis.yml removal
@@ -14,6 +12,8 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO NPD MC OOBR SO UAF UM"
 
 inherit cflags-hardened check-compiler-switch dot-a libtool multilib-minimal
 
+APNG_REPO=libpng-apng # sometimes libpng-apng is more up to date
+APNG_VERSION="1.6.54"
 DESCRIPTION="Portable Network Graphics library"
 HOMEPAGE="https://www.libpng.org/"
 SRC_URI="
@@ -26,7 +26,7 @@ SRC_URI="
 
 LICENSE="libpng2"
 SLOT="0/16"
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
+KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~arm64-macos ~x64-macos ~x64-solaris"
 IUSE="apng cpu_flags_x86_sse static-libs test"
 RESTRICT="!test? ( test )"
 
