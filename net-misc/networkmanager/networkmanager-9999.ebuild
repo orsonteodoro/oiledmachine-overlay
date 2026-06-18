@@ -278,7 +278,7 @@ multilib_src_configure() {
 	# https://gitlab.freedesktop.org/NetworkManager/NetworkManager/-/merge_requests/2053
 	tc-is-clang && [[ $(clang-major-version) -lt 18 ]] && filter-lto
 
-	has_version "sys-apps/openrc[-bash]" || die "Re-emerge with sys-apps/openrc[bash]"
+	has_version "sys-apps/openrc[-bash]" && die "Re-emerge with sys-apps/openrc[bash]"
 
 	local caps=$(get_fcaps)
 einfo "caps:  ${caps}"
