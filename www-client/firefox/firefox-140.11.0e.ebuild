@@ -611,10 +611,10 @@ gen_ffmpeg_royalty_free_depends_multislot() {
 	echo "
 		(
 			!<dev-libs/openssl-3
-			=media-video/ffmpeg-9999m:=[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+			=media-video/ffmpeg-9999m[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
 		)
 		(
-			=media-video/ffmpeg-9999m:=[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,-openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+			=media-video/ffmpeg-9999m[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,-openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
 		)
 	"
 }
@@ -622,10 +622,10 @@ gen_ffmpeg_royalty_free_depends_unislot() {
 	echo "
 		(
 			!<dev-libs/openssl-3
-			=media-video/ffmpeg-9999:=[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+			=media-video/ffmpeg-9999[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
 		)
 		(
-			=media-video/ffmpeg-9999:=[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,-openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+			=media-video/ffmpeg-9999[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,-openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
 		)
 	"
 }
@@ -636,18 +636,18 @@ PATENT_CDEPENDS="
 		>=media-libs/libglvnd-1.7.0:=[${MULTILIB_USEDEP}]
 	)
 	!patent_status_nonfree? (
+		media-video/ffmpeg:=
 		|| (
 			$(gen_ffmpeg_royalty_free_depends_unislot)
 			$(gen_ffmpeg_royalty_free_depends_multislot)
 		)
-		media-video/ffmpeg:=
 	)
 	patent_status_nonfree? (
+		media-video/ffmpeg:=
 		|| (
 			$(gen_ffmpeg_nonfree_depends_unislot)
 			$(gen_ffmpeg_nonfree_depends_multislot)
 		)
-		media-video/ffmpeg:=
 		vaapi? (
 			virtual/vaapi:*[${MULTILIB_USEDEP},patent_status_nonfree=]
 		)
@@ -849,22 +849,9 @@ gen_llvm_bdepend() {
 		"
 	done
 }
-GCC_BDEPEND="
-	|| (
-		(
-			>=dev-lang/rust-1.76[${MULTILIB_USEDEP}]
-			dev-lang/rust:=
-		)
-		(
-			>=dev-lang/rust-bin-1.76[${MULTILIB_USEDEP}]
-			dev-lang/rust-bin:=
-		)
-	)
-"
 # The >=2.0 of mold is used for legal reasons.
 BDEPEND+="
 	$(gen_llvm_bdepend)
-	${GCC_BDEPEND}
 	${PYTHON_DEPS}
 	${RUST_CDEPEND}
 	=net-libs/nodejs-${NODE_SLOT%%.*}*
