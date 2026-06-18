@@ -1,15 +1,20 @@
-# Copyright 2022-2025 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 2022-2026 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
+
+# CI:  R8.10
+# Inferred from source:  D13 F43-F44 U26
+
+# CI should tag with v510-code-daily-linux-x86_64
 
 # Contains AI generated synthetic data in metadata.xml
 
 RELEASE_TYPE="release"
 VARIANT="stable"
 
-inherit blender-v5.0
+inherit blender-v5.1
 
 # For current version, see
 # https://download.blender.org/source/

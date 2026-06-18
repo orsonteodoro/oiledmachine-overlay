@@ -4,6 +4,12 @@
 
 EAPI=8
 
+# CI:  R8.10
+# Inferred from source:  D12 F39-F40 U24
+
+# CI tags with v450-code-daily-linux-x86_64
+
+# This ebuild contains AI generated inference info.
 # Contains AI generated synthetic data in metadata.xml
 
 RELEASE_TYPE="release"

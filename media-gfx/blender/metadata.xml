@@ -178,6 +178,9 @@
     <flag name="bullet">
       Enable Bullet (Physics Engine).
     </flag>
+    <flag name="cineon">
+      Enable Cineon and DPX image format support used in the film industry.
+    </flag>
     <flag name="collada">
       Add support for Collada interchange format through
       <pkg>media-libs/opencollada</pkg>.
@@ -363,6 +366,10 @@
     <flag name="tbb">
       Enables using TBB componenents which also may enable sculpt multithreading,
       Cycles, El'Beem, OpenImageDenoise, OpenVDB.
+    </flag>
+    <flag name="tbb-malloc-proxy">
+      Use the TBB malloc allocator replacing jemalloc as the performance
+      allocator.
     </flag>
     <flag name="test">
       Build the provided unit tests.
