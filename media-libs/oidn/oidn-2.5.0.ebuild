@@ -166,10 +166,10 @@ gen_clang_depends() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				=llvm-runtimes/clang-runtime-${s}*
-				llvm-core/clang:${s}
-				llvm-core/llvm:${s}
-				llvm-core/lld:${s}
+				=llvm-runtimes/clang-runtime-${s}*:=
+				=llvm-core/clang-${s}*:=
+				=llvm-core/llvm-${s}*:=
+				=llvm-core/lld-${s}*:=
 			)
 		"
 	done
@@ -185,14 +185,11 @@ gen_hip_depends() {
 		u="${u/./_}"
 		echo "
 			rocm_${u}? (
-				~dev-libs/rocm-comgr-${hip_version}:${s}[${LIBSTDCXX_USEDEP}]
-				dev-libs/rocm-comgr:=
-				~dev-libs/rocm-device-libs-${hip_version}:${s}
-				~dev-libs/rocr-runtime-${hip_version}:${s}[${LIBSTDCXX_USEDEP}]
-				dev-libs/rocr-runtime:=
-				~dev-util/hip-${hip_version}:${s}[${LIBSTDCXX_USEDEP},rocm]
-				dev-util/hip:=
-				~dev-util/rocminfo-${hip_version}:${s}
+				~dev-libs/rocm-comgr-${hip_version}:=[${LIBSTDCXX_USEDEP}]
+				~dev-libs/rocm-device-libs-${hip_version}:=
+				~dev-libs/rocr-runtime-${hip_version}:=[${LIBSTDCXX_USEDEP}]
+				~dev-util/hip-${hip_version}:=[${LIBSTDCXX_USEDEP},rocm]
+				~dev-util/rocminfo-${hip_version}:=
 			)
 		"
 	done
@@ -201,32 +198,24 @@ gen_hip_depends() {
 # See https://github.com/OpenImageDenoise/oidn/blob/v1.4.3/scripts/build.py
 RDEPEND+="
 	${PYTHON_DEPS}
-	(
-		>=dev-cpp/tbb-2021.5:${ONETBB_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-cpp/tbb:=
-	)
+	>=dev-cpp/tbb-2021.5:${ONETBB_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	virtual/libc
 	cuda? (
-		>=dev-util/nvidia-cuda-toolkit-12.8
-		dev-util/nvidia-cuda-toolkit:=
-		>=x11-drivers/nvidia-drivers-525.60.13
+		>=dev-util/nvidia-cuda-toolkit-12.8:=
+		>=x11-drivers/nvidia-drivers-525.60.13:=
 	)
 	rocm? (
 		$(gen_hip_depends)
-		dev-util/hip[${LIBSTDCXX_USEDEP},rocm]
-		dev-util/hip:=
+		dev-util/hip:=[${LIBSTDCXX_USEDEP},rocm]
 	)
 	sycl? (
-		>=sys-devel/DPC++-2023.10.26:0/7[aot?]
-		sys-devel/DPC++:=
-		dev-libs/level-zero[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-libs/level-zero:=
+		>=sys-devel/DPC++-2023.10.26:=[aot?]
+		dev-libs/level-zero:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 "
 DEPEND+="
 	${RDEPEND}
-	media-libs/openimageio[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cuda?]
-	media-libs/openimageio:=
+	media-libs/openimageio:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cuda?]
 "
 BDEPEND+="
 	${PYTHON_DEPS}
@@ -243,12 +232,11 @@ BDEPEND+="
 	rocm? (
 		(
 			$(gen_hip_depends)
-			sys-devel/llvm-roc:=
+			sys-devel/llvm-roc
 		)
 		>=dev-build/cmake-3.21
 		rocm_6_4? (
-			~sys-devel/llvm-roc-${HIP_6_4_VERSION}:0/6.4[${LIBSTDCXX_USEDEP}]
-			sys-devel/llvm-roc:=
+			~sys-devel/llvm-roc-${HIP_6_4_VERSION}[${LIBSTDCXX_USEDEP}]
 		)
 	)
 	sycl? (
