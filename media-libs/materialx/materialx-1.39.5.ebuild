@@ -11,20 +11,21 @@ CXX_STANDARD=17
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{10..14} ) # Relaxed requirements for Blender
 
 inherit cmake libcxx-slot libstdcxx-slot python-single-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="270b5cf2ae2be24a3b6ef4b0569f1c93038dda1d"
+	FALLBACK_COMMIT="7b64921ef1d42f2d57871e9d2c43dc11f041f26b"
+	EGIT_BRANCH="main"
 	MY_PN="${PN}"
 	MY_P="${MY_PN}-${PV}"
 	IUSE+=" fallback-commit"
@@ -95,11 +96,10 @@ REQUIRED_USE+="
 	)
 "
 RDEPEND+="
-	media-libs/openimageio[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	media-libs/openimageio:=
+	media-libs/openimageio:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	virtual/opengl
 	kernel_linux? (
-		x11-libs/libX11
+		x11-libs/libX11:=
 	)
 	python? (
 		$(python_gen_cond_dep '
@@ -107,10 +107,10 @@ RDEPEND+="
 		')
 	)
 	wayland? (
-		dev-libs/wayland
-		dev-libs/wayland-protocols
-		dev-util/wayland-scanner
-		x11-libs/libxkbcommon
+		dev-libs/wayland:=
+		dev-libs/wayland-protocols:=
+		dev-util/wayland-scanner:=
+		x11-libs/libxkbcommon:=
 	)
 "
 DEPEND+="
@@ -124,7 +124,6 @@ BDEPEND+="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/materialx-1.38.9-setup.py-fix-sandbox-violation.patch"
 )
 DOCS=( )
 
