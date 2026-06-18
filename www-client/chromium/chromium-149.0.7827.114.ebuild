@@ -1527,13 +1527,12 @@ fi
 
 LIBVA_DEPEND="
 	vaapi? (
-		>=media-libs/libva-${LIBVA_PV}[${MULTILIB_USEDEP},drm(+),wayland?,X?]
-		media-libs/libva:=
-		virtual/vaapi[${MULTILIB_USEDEP},patent_status_nonfree=]
+		>=media-libs/libva-${LIBVA_PV}:=[${MULTILIB_USEDEP},drm(+),wayland?,X?]
+		virtual/vaapi:=[${MULTILIB_USEDEP},patent_status_nonfree=]
 		system-ffmpeg? (
 			|| (
-				>=media-video/ffmpeg-9999:${FFMPEG_SLOT}[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
-				>=media-video/ffmpeg-9999:0/${FFMPEG_SLOT}[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
+				=media-video/ffmpeg-9999:=[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
+				=media-video/ffmpeg-9999m:=[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
 			)
 			media-video/ffmpeg:=
 		)
@@ -1541,24 +1540,15 @@ LIBVA_DEPEND="
 "
 
 COMMON_X_DEPEND="
-	>=x11-libs/libXi-1.7.10[${MULTILIB_USEDEP}]
-	x11-libs/libXi:=
-	>=x11-libs/libXcomposite-0.4.5[${MULTILIB_USEDEP}]
-	x11-libs/libXcomposite:=
-	>=x11-libs/libXcursor-1.2.0[${MULTILIB_USEDEP}]
-	x11-libs/libXcursor:=
-	>=x11-libs/libXdamage-1.1.5[${MULTILIB_USEDEP}]
-	x11-libs/libXdamage:=
-	>=x11-libs/libXfixes-5.0.3[${MULTILIB_USEDEP}]
-	x11-libs/libXfixes:=
-	>=x11-libs/libXrandr-1.5.1[${MULTILIB_USEDEP}]
-	x11-libs/libXrandr:=
-	>=x11-libs/libXrender-0.9.10[${MULTILIB_USEDEP}]
-	x11-libs/libXrender:=
-	>=x11-libs/libxshmfence-1.3[${MULTILIB_USEDEP}]
-	x11-libs/libxshmfence:=
-	>=x11-libs/libXtst-1.2.3[${MULTILIB_USEDEP}]
-	x11-libs/libXtst:=
+	>=x11-libs/libXi-1.7.10:=[${MULTILIB_USEDEP}]
+	>=x11-libs/libXcomposite-0.4.5:=[${MULTILIB_USEDEP}]
+	>=x11-libs/libXcursor-1.2.0:=[${MULTILIB_USEDEP}]
+	>=x11-libs/libXdamage-1.1.5:=[${MULTILIB_USEDEP}]
+	>=x11-libs/libXfixes-5.0.3:=[${MULTILIB_USEDEP}]
+	>=x11-libs/libXrandr-1.5.1:=[${MULTILIB_USEDEP}]
+	>=x11-libs/libXrender-0.9.10:=[${MULTILIB_USEDEP}]
+	>=x11-libs/libxshmfence-1.3:=[${MULTILIB_USEDEP}]
+	>=x11-libs/libXtst-1.2.3:=[${MULTILIB_USEDEP}]
 "
 
 # virtual/zlib: https://bugs.gentoo.org/930365; -ng is not compatible.
@@ -1571,198 +1561,157 @@ COMMON_X_DEPEND="
 COMMON_SNAPSHOT_DEPEND="
 	!headless? (
 		${LIBVA_DEPEND}
-		>=dev-libs/glib-2.66.8:2[${MULTILIB_USEDEP}]
-		dev-libs/glib:=
-		>=media-libs/alsa-lib-1.2.16[${MULTILIB_USEDEP}]
-		media-libs/alsa-lib:=
-		>=sys-apps/pciutils-3.7.0[${MULTILIB_USEDEP}]
-		sys-apps/pciutils:=
-		>=x11-libs/libxkbcommon-1.0.3[${MULTILIB_USEDEP}]
-		x11-libs/libxkbcommon:=
+		>=dev-libs/glib-2.66.8:=[${MULTILIB_USEDEP}]
+		>=media-libs/alsa-lib-1.2.16:=[${MULTILIB_USEDEP}]
+		>=sys-apps/pciutils-3.7.0:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libxkbcommon-1.0.3:=[${MULTILIB_USEDEP}]
 		kerberos? (
-			virtual/krb5[${MULTILIB_USEDEP}]
+			virtual/krb5:*[${MULTILIB_USEDEP}]
 		)
 		pulseaudio? (
-			>=media-libs/libpulse-9999[${MULTILIB_USEDEP}]
-			media-libs/libpulse:=
+			>=media-libs/libpulse-9999:=[${MULTILIB_USEDEP}]
 		)
 		vaapi? (
-			>=media-libs/libva-${LIBVA_PV}[${MULTILIB_USEDEP},wayland?,X?]
-			media-libs/libva:=
+			>=media-libs/libva-${LIBVA_PV}:=[${MULTILIB_USEDEP},wayland?,X?]
 		)
 		wayland? (
-			>=dev-libs/libffi-9999[${MULTILIB_USEDEP}]
-			dev-libs/libffi:=
-			>=dev-libs/wayland-1.24.0[${MULTILIB_USEDEP}]
-			dev-libs/wayland:=
+			>=dev-libs/libffi-9999:=[${MULTILIB_USEDEP}]
+			>=dev-libs/wayland-1.24.0:=[${MULTILIB_USEDEP}]
 			screencast? (
-				>=media-video/pipewire-0.3.65[${MULTILIB_USEDEP}]
-				media-video/pipewire:=
+				>=media-video/pipewire-0.3.65:=[${MULTILIB_USEDEP}]
 			)
 		)
 		X? (
-			>=x11-libs/libX11-1.7.2[${MULTILIB_USEDEP}]
-			x11-libs/libX11:=
-			>=x11-libs/libxcb-1.14[${MULTILIB_USEDEP}]
-			x11-libs/libxcb:=
-			>=x11-libs/libXext-1.3.3[${MULTILIB_USEDEP}]
-			x11-libs/libXext:=
+			>=x11-libs/libX11-1.7.2:=[${MULTILIB_USEDEP}]
+			>=x11-libs/libxcb-1.14:=[${MULTILIB_USEDEP}]
+			>=x11-libs/libXext-1.3.3:=[${MULTILIB_USEDEP}]
 		)
 	)
-	>=dev-libs/nss-3.61[${MULTILIB_USEDEP}]
-	dev-libs/nss:=
-	>=dev-libs/nspr-4.29[${MULTILIB_USEDEP}]
-	dev-libs/nspr:=
-	>=media-libs/mesa-${MESA_PV}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},gbm(+)]
-	media-libs/mesa:=
+	>=dev-libs/nss-3.61:=[${MULTILIB_USEDEP}]
+	>=dev-libs/nspr-4.29:=[${MULTILIB_USEDEP}]
+	>=media-libs/mesa-${MESA_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},gbm(+)]
 	patent_status_nonfree? (
 		system-openh264? (
-			>=media-libs/openh264-2.6.0[${MULTILIB_USEDEP}]
-			media-libs/openh264:=
+			>=media-libs/openh264-2.6.0:=[${MULTILIB_USEDEP}]
 		)
 	)
 	system-abseil-cpp? (
-		dev-cpp/abseil-cpp:20251021[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
-		dev-cpp/abseil-cpp:=
+		dev-cpp/abseil-cpp:20251021=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 	)
 	system-brotli? (
-		>=app-arch/brotli-9999[${MULTILIB_USEDEP}]
-		app-arch/brotli:=
+		>=app-arch/brotli-9999:=[${MULTILIB_USEDEP}]
 	)
 	system-crc32c? (
-		>=dev-libs/crc32c-1.1.0[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
-		dev-libs/crc32c:=
+		>=dev-libs/crc32c-1.1.0:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 	)
 	system-dav1d? (
-		>=media-libs/dav1d-9999[${MULTILIB_USEDEP},8bit]
-		media-libs/dav1d:=
+		>=media-libs/dav1d-9999:=[${MULTILIB_USEDEP},8bit]
 	)
 	system-double-conversion? (
-		>=dev-libs/double-conversion-3.1.6[${MULTILIB_USEDEP}]
+		>=dev-libs/double-conversion-3.1.6:=[${MULTILIB_USEDEP}]
 	)
 	system-flatbuffers? (
-		~dev-libs/flatbuffers-25.12.19
-		dev-libs/flatbuffers:=
+		~dev-libs/flatbuffers-25.12.19:=
 	)
 	system-fontconfig? (
-		>=media-libs/fontconfig-2.18.1[${MULTILIB_USEDEP}]
-		media-libs/fontconfig:=
+		>=media-libs/fontconfig-2.18.1:=[${MULTILIB_USEDEP}]
 	)
 	system-freetype? (
-		>=media-libs/freetype-9999[${MULTILIB_USEDEP}]
-		media-libs/freetype:=
+		>=media-libs/freetype-9999:=[${MULTILIB_USEDEP}]
 	)
 	system-harfbuzz? (
-		>=media-libs/harfbuzz-14.2.1:0[${MULTILIB_USEDEP},icu(-)]
-		media-libs/harfbuzz:=
+		>=media-libs/harfbuzz-14.2.1:=[${MULTILIB_USEDEP},icu(-)]
 	)
 	system-highway? (
-		>=dev-cpp/highway-1.4.0
-		dev-cpp/highway:=
+		>=dev-cpp/highway-1.4.0:=
 	)
 	system-icu? (
-		>=dev-libs/icu-78.2[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
-		dev-libs/icu:=
+		>=dev-libs/icu-78.2:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 	)
 	system-jsoncpp? (
-		>=dev-libs/jsoncpp-1.9.7[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
-		dev-libs/jsoncpp:=
+		>=dev-libs/jsoncpp-1.9.7:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 	)
 	system-lcms? (
-		>=media-libs/lcms-9999[${MULTILIB_USEDEP}]
+		>=media-libs/lcms-9999:=[${MULTILIB_USEDEP}]
 	)
 	system-libaom? (
-		>=media-libs/libaom-3.13.3[${MULTILIB_USEDEP}]
-		media-libs/libaom:=
+		>=media-libs/libaom-3.13.3:=[${MULTILIB_USEDEP}]
 	)
 	system-libjpeg-turbo? (
-		>=media-libs/libjpeg-turbo-9999[${MULTILIB_USEDEP}]
-		media-libs/libjpeg-turbo:=
+		>=media-libs/libjpeg-turbo-9999:=[${MULTILIB_USEDEP}]
 	)
 	system-libopenjpeg? (
-		media-libs/openjpeg[${MULTILIB_USEDEP}]
+		media-libs/openjpeg:=[${MULTILIB_USEDEP}]
 	)
 	system-libpng? (
-		>=media-libs/libpng-1.6.57[${MULTILIB_USEDEP}]
+		>=media-libs/libpng-1.6.57:=[${MULTILIB_USEDEP}]
 	)
 	system-libsecret? (
-		>=app-crypt/libsecret-0.18.2[${MULTILIB_USEDEP}]
+		>=app-crypt/libsecret-0.18.2:=[${MULTILIB_USEDEP}]
 	)
 	system-libtiff? (
-		>=media-libs/tiff-9999[${MULTILIB_USEDEP}]
+		>=media-libs/tiff-9999:=[${MULTILIB_USEDEP}]
 	)
 	system-libusb? (
-		>=dev-libs/libusb-1.0.17[${MULTILIB_USEDEP}]
+		>=dev-libs/libusb-1.0.17:=[${MULTILIB_USEDEP}]
 	)
 	system-libvpx? (
-		>=media-libs/libvpx-9999[${MULTILIB_USEDEP}]
+		>=media-libs/libvpx-9999:=[${MULTILIB_USEDEP}]
 	)
 	system-libwebp? (
-		>=media-libs/libwebp-9999[${MULTILIB_USEDEP}]
-		media-libs/libwebp:=
+		>=media-libs/libwebp-9999:=[${MULTILIB_USEDEP}]
 	)
 	system-libxml? (
-		>=dev-libs/libxml2-2.15.3[${MULTILIB_USEDEP},icu]
-		dev-libs/libxml2:=
+		>=dev-libs/libxml2-2.15.3:=[${MULTILIB_USEDEP},icu]
 	)
 	system-libxnvctrl? (
-		x11-drivers/nvidia-drivers
+		x11-drivers/nvidia-drivers:*
 	)
 	system-libxslt? (
-		>=dev-libs/libxslt-1.1.45[${MULTILIB_USEDEP}]
-		dev-libs/libxslt:=
+		>=dev-libs/libxslt-1.1.45:=[${MULTILIB_USEDEP}]
 	)
 	system-libyuv? (
-		>=media-libs/libyuv-1924[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
-		media-libs/libyuv:=
+		>=media-libs/libyuv-1924:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 	)
 	system-protobuf? (
 		dev-libs/protobuf:6/6.33[${MULTILIB_USEDEP}]
-		dev-libs/protobuf:=
 	)
 	system-re2? (
-		>=dev-libs/re2-0.2025.11.05:${RE2_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
-		dev-libs/re2:=
+		>=dev-libs/re2-0.2025.11.05:${RE2_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 	)
 	system-simdutf? (
-		>=dev-cpp/simdutf-8.0.0[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
-		dev-cpp/simdutf:=
+		>=dev-cpp/simdutf-8.0.0:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	)
 	system-snappy? (
-		>=app-arch/snappy-1.2.2[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
-		app-arch/snappy:=
+		>=app-arch/snappy-1.2.2:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 	)
 	system-spirv-tools? (
-		>=dev-util/spirv-tools-${VULKAN_PV}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
-		dev-util/spirv-tools:=
+		>=dev-util/spirv-tools-${VULKAN_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 	)
 	system-sqlite? (
-		>=dev-db/sqlite-3.53.2:3[${MULTILIB_USEDEP}]
+		>=dev-db/sqlite-3.53.2:=[${MULTILIB_USEDEP}]
 	)
 	system-vulkan-memory-allocator? (
-		>=media-libs/VulkanMemoryAllocator-3.0.0
+		>=media-libs/VulkanMemoryAllocator-3.0.0:=
 	)
 	system-woff2? (
-		>=media-libs/woff2-9999
-		media-libs/woff2:=
+		>=media-libs/woff2-9999:=
 	)
 	system-zlib? (
-		>=virtual/zlib-${ZLIB_PV}[${MULTILIB_USEDEP}]
-		virtual/zlib:=
+		>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}]
 	)
 	system-zstd? (
-		>=app-arch/zstd-9999[${MULTILIB_USEDEP}]
-		app-arch/zstd:=
+		>=app-arch/zstd-9999:=[${MULTILIB_USEDEP}]
 	)
 "
 
 # No multilib for this virtual/udev when it should be.
 VIRTUAL_UDEV="
 	systemd? (
-		>=sys-apps/systemd-252.5[${MULTILIB_USEDEP}]
+		>=sys-apps/systemd-252.5:=[${MULTILIB_USEDEP}]
 	)
 	!systemd? (
-		>=sys-apps/systemd-utils-252.5[${MULTILIB_USEDEP},udev]
+		>=sys-apps/systemd-utils-252.5:=[${MULTILIB_USEDEP},udev]
 	)
 "
 
@@ -1774,20 +1723,19 @@ PATENT_STATUS_DEPEND="
 		!media-video/ffmpeg-chromium
 	)
 	system-ffmpeg? (
-		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},patent_status_nonfree=]
+		>=media-libs/mesa-${MESA_PV}:=[${MULTILIB_USEDEP},patent_status_nonfree=]
 		patent_status_nonfree? (
 			|| (
-				>=media-video/ffmpeg-9999:${FFMPEG_SLOT}[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
-				>=media-video/ffmpeg-9999:0/${FFMPEG_SLOT}[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
+				=media-video/ffmpeg-9999:=[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
+				=media-video/ffmpeg-9999m:=[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
 			)
 		)
 		!patent_status_nonfree? (
 			|| (
-				>=media-video/ffmpeg-9999:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
-				>=media-video/ffmpeg-9999:0/${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
+				=media-video/ffmpeg-9999:=[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
+				=media-video/ffmpeg-9999m:=[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
 			)
 		)
-		media-video/ffmpeg:=
 	)
 "
 COMMON_DEPEND="
@@ -1795,28 +1743,21 @@ COMMON_DEPEND="
 	!headless? (
 		${VIRTUAL_UDEV}
 		(
-			>=media-libs/libglvnd-1.3.2[${MULTILIB_USEDEP},X?]
-			>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},wayland?,X?]
-			media-libs/mesa:=
+			>=media-libs/libglvnd-1.3.2:=[${MULTILIB_USEDEP},X?]
+			>=media-libs/mesa-${MESA_PV}:=[${MULTILIB_USEDEP},wayland?,X?]
 		)
-		>=x11-libs/cairo-9999[${MULTILIB_USEDEP}]
-		x11-libs/cairo:=
-		>=x11-libs/gdk-pixbuf-2.42.2:2[${MULTILIB_USEDEP}]
-		x11-libs/gdk-pixbuf:=
-		>=x11-libs/libdrm-2.4.132[${MULTILIB_USEDEP}]
-		>=x11-libs/pango-1.57.1[${MULTILIB_USEDEP}]
-		x11-libs/pango:=
+		>=x11-libs/cairo-9999:=[${MULTILIB_USEDEP}]
+		>=x11-libs/gdk-pixbuf-2.42.2:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libdrm-2.4.132:=[${MULTILIB_USEDEP}]
+		>=x11-libs/pango-1.57.1:=[${MULTILIB_USEDEP}]
 		accessibility? (
-			>=app-accessibility/at-spi2-core-2.44.1:2[${MULTILIB_USEDEP}]
-			app-accessibility/at-spi2-core:=
+			>=app-accessibility/at-spi2-core-2.44.1:=[${MULTILIB_USEDEP}]
 		)
 		cups? (
-			>=net-print/cups-9999[${MULTILIB_USEDEP}]
-			net-print/cups:=
+			>=net-print/cups-9999:=[${MULTILIB_USEDEP}]
 		)
 		qt6? (
-			>=dev-qt/qtbase-${QT6_PV}:6[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},widgets,X?]
-			dev-qt/qtbase:=
+			>=dev-qt/qtbase-${QT6_PV}:6=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},widgets,X?]
 		)
 		X? (
 			${COMMON_X_DEPEND}
@@ -1828,42 +1769,30 @@ COMMON_DEPEND="
 		)
 	)
 	${COMMON_SNAPSHOT_DEPEND}
-	>=dev-libs/expat-2.8.2[${MULTILIB_USEDEP}]
-	dev-libs/expat:=
-	>=net-misc/curl-9999[${MULTILIB_USEDEP},ssl]
-	>=sys-apps/dbus-1.12.24[${MULTILIB_USEDEP}]
-	sys-apps/dbus:=
-	>=sys-devel/gcc-${GCC_PV}
-	>=virtual/zlib-${ZLIB_PV}[${MULTILIB_USEDEP},minizip]
-	virtual/zlib:=
-	>=app-arch/bzip2-9999[${MULTILIB_USEDEP}]
-	app-arch/bzip2:=
-	virtual/libc
+	>=dev-libs/expat-2.8.2:=[${MULTILIB_USEDEP}]
+	>=net-misc/curl-9999:=[${MULTILIB_USEDEP},ssl]
+	>=sys-apps/dbus-1.12.24:=[${MULTILIB_USEDEP}]
+	>=sys-devel/gcc-${GCC_PV}:=
+	>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP},minizip]
+	>=app-arch/bzip2-9999:=[${MULTILIB_USEDEP}]
+	virtual/libc:=
 	bluetooth? (
-		>=net-wireless/bluez-5.55[${MULTILIB_USEDEP}]
+		>=net-wireless/bluez-5.55:=[${MULTILIB_USEDEP}]
 	)
 	elibc_glibc? (
-		>=sys-libs/glibc-2.31
+		>=sys-libs/glibc-2.31:=
 	)
 	system-ffmpeg? (
 		system-opus? (
-			>=media-libs/opus-1.6[${MULTILIB_USEDEP}]
-			media-libs/opus:=
+			>=media-libs/opus-1.6:=[${MULTILIB_USEDEP}]
 		)
 		|| (
-			(
-				|| (
-					>=media-video/ffmpeg-9999:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-samba]
-					>=media-video/ffmpeg-9999:0/${FFMPEG_SLOT}[${MULTILIB_USEDEP},-samba]
-				)
-				media-video/ffmpeg:=
-			)
-			>=net-fs/samba-4.5.10-r1[${MULTILIB_USEDEP},-debug(-)]
+			=media-video/ffmpeg-9999:=[${MULTILIB_USEDEP},-samba]
+			=media-video/ffmpeg-9999m:=[${MULTILIB_USEDEP},-samba]
 		)
 	)
 	system-flac? (
-		>=media-libs/flac-9999[${MULTILIB_USEDEP}]
-		media-libs/flac:=
+		>=media-libs/flac-9999:=[${MULTILIB_USEDEP}]
 	)
 "
 
@@ -1872,19 +1801,16 @@ COMMON_DEPEND="
 RDEPEND+="
 	${COMMON_DEPEND}
 	!www-client/chromium:0
-	>=www-client/chromium-common-2
-	sys-kernel/mitigate-id
-	virtual/ttf-fonts
-	virtual/patent-status[patent_status_nonfree=,patent_status_sponsored_ncp_nb=]
+	>=www-client/chromium-common-2:*
+	sys-kernel/mitigate-id:*
+	virtual/ttf-fonts:*
+	virtual/patent-status:*[patent_status_nonfree=,patent_status_sponsored_ncp_nb=]
 	!headless? (
 		qt6? (
-			>=dev-qt/qtbase-${QT6_PV}:6[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},gui,wayland?,X?]
-			dev-qt/qtbase:=
+			>=dev-qt/qtbase-${QT6_PV}:6=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},gui,wayland?,X?]
 			wayland? (
-				>=dev-qt/qtdeclarative-${QT6_PV}:6[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},opengl]
-				dev-qt/qtdeclarative:=
-				>=dev-qt/qtwayland-${QT6_PV}:6[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
-				dev-qt/qtwayland:=
+				>=dev-qt/qtdeclarative-${QT6_PV}:6=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},opengl]
+				>=dev-qt/qtwayland-${QT6_PV}:6=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 			)
 		)
 		|| (
@@ -1899,34 +1825,30 @@ RDEPEND+="
 		)
 	)
 	selinux? (
-		>=sys-libs/libselinux-3.1[${MULTILIB_USEDEP}]
-		sec-policy/selinux-chromium
+		>=sys-libs/libselinux-3.1:=[${MULTILIB_USEDEP}]
+		sec-policy/selinux-chromium:*
 	)
 	bindist? (
 		ffmpeg-chromium? (
 			media-video/ffmpeg-chromium:${PV%%\.*}[patent_status_nonfree=]
-			media-video/ffmpeg-chromium:=
 		)
 	)
 "
 DEPEND+="
 	${COMMON_DEPEND}
 	!headless? (
-		media-video/pipewire
+		media-video/pipewire:=
 		!gtk4? (
-			>=x11-libs/gtk+-${GTK3_PV}:3[${MULTILIB_USEDEP},wayland?,X?]
-			x11-libs/gtk+:=
+			>=x11-libs/gtk+-${GTK3_PV}:3=[${MULTILIB_USEDEP},wayland?,X?]
 		)
 		gtk4? (
-			>=gui-libs/gtk-${GTK4_PV}:4[wayland?,X?]
-			gui-libs/gtk:=
+			>=gui-libs/gtk-${GTK4_PV}:4=[wayland?,X?]
 		)
 		system-spirv-headers? (
-			>=dev-util/spirv-headers-${VULKAN_PV}
-			dev-util/spirv-headers:=
+			>=dev-util/spirv-headers-${VULKAN_PV}:=
 		)
 		wayland? (
-			>=dev-libs/wayland-protocols-1.46
+			>=dev-libs/wayland-protocols-1.46:=
 		)
 	)
 "

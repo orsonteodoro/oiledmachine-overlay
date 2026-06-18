@@ -27,7 +27,7 @@ HOMEPAGE="https://www.gtk.org/"
 LICENSE="LGPL-2+"
 SLOT="3"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~x64-solaris"
-IUSE="aqua broadway cloudproviders colord cups examples gtk-doc +introspection sysprof test vim-syntax wayland +X xinerama"
+IUSE+=" aqua broadway cloudproviders colord cups examples gtk-doc +introspection sysprof test vim-syntax wayland +X xinerama"
 REQUIRED_USE="
 	|| ( aqua wayland X )
 	test? ( X )
@@ -36,48 +36,48 @@ REQUIRED_USE="
 RESTRICT="!test? ( test )"
 
 COMMON_DEPEND="
-	>=app-accessibility/at-spi2-core-2.46.0[introspection?,${MULTILIB_USEDEP}]
-	>=dev-libs/fribidi-0.19.7[${MULTILIB_USEDEP}]
-	>=dev-libs/glib-2.57.2:2[${MULTILIB_USEDEP}]
-	>=media-libs/fontconfig-2.18.1[${MULTILIB_USEDEP}]
+	>=app-accessibility/at-spi2-core-2.46.0:=[introspection?,${MULTILIB_USEDEP}]
+	>=dev-libs/fribidi-0.19.7:=[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-2.57.2:=[${MULTILIB_USEDEP}]
+	>=media-libs/fontconfig-2.18.1:=[${MULTILIB_USEDEP}]
 	>=media-libs/harfbuzz-9999:=
-	>=media-libs/libepoxy-1.4[X(+)?,egl(+),${MULTILIB_USEDEP}]
-	virtual/libintl[${MULTILIB_USEDEP}]
-	>=x11-libs/cairo-9999[aqua?,glib,svg(+),X?,${MULTILIB_USEDEP}]
-	>=x11-libs/gdk-pixbuf-2.30:2[introspection?,${MULTILIB_USEDEP}]
-	>=x11-libs/pango-1.57.1[introspection?,${MULTILIB_USEDEP}]
-	x11-misc/shared-mime-info
+	>=media-libs/libepoxy-1.4:=[X(+)?,egl(+),${MULTILIB_USEDEP}]
+	virtual/libintl:*[${MULTILIB_USEDEP}]
+	>=x11-libs/cairo-9999:=[aqua?,glib,svg(+),X?,${MULTILIB_USEDEP}]
+	>=x11-libs/gdk-pixbuf-2.30:=[introspection?,${MULTILIB_USEDEP}]
+	>=x11-libs/pango-1.57.1:=[introspection?,${MULTILIB_USEDEP}]
+	x11-misc/shared-mime-info:=
 
 	broadway? ( >=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}] )
-	cloudproviders? ( net-libs/libcloudproviders[${MULTILIB_USEDEP}] )
-	colord? ( >=x11-misc/colord-0.1.9:0=[${MULTILIB_USEDEP}] )
-	cups? ( >=net-print/cups-9999[${MULTILIB_USEDEP}] )
+	cloudproviders? ( net-libs/libcloudproviders:=[${MULTILIB_USEDEP}] )
+	colord? ( >=x11-misc/colord-0.1.9:=[${MULTILIB_USEDEP}] )
+	cups? ( >=net-print/cups-9999:=[${MULTILIB_USEDEP}] )
 	introspection? ( >=dev-libs/gobject-introspection-1.82.0-r2:= )
 	wayland? (
-		>=dev-libs/wayland-1.14.91[${MULTILIB_USEDEP}]
-		>=dev-libs/wayland-protocols-1.32
-		media-libs/mesa[wayland,${MULTILIB_USEDEP}]
-		>=x11-libs/libxkbcommon-0.2[${MULTILIB_USEDEP}]
+		>=dev-libs/wayland-1.14.91:=[${MULTILIB_USEDEP}]
+		>=dev-libs/wayland-protocols-1.32:=
+		media-libs/mesa:=[wayland,${MULTILIB_USEDEP}]
+		>=x11-libs/libxkbcommon-0.2:=[${MULTILIB_USEDEP}]
 	)
 	X? (
-		media-libs/libglvnd[X(+),${MULTILIB_USEDEP}]
-		x11-libs/libX11[${MULTILIB_USEDEP}]
-		x11-libs/libXcomposite[${MULTILIB_USEDEP}]
-		x11-libs/libXcursor[${MULTILIB_USEDEP}]
-		x11-libs/libXdamage[${MULTILIB_USEDEP}]
-		x11-libs/libXext[${MULTILIB_USEDEP}]
-		x11-libs/libXfixes[${MULTILIB_USEDEP}]
-		>=x11-libs/libXi-1.8[${MULTILIB_USEDEP}]
-		>=x11-libs/libXrandr-1.5[${MULTILIB_USEDEP}]
-		xinerama? ( x11-libs/libXinerama[${MULTILIB_USEDEP}] )
+		media-libs/libglvnd:=[X(+),${MULTILIB_USEDEP}]
+		x11-libs/libX11:=[${MULTILIB_USEDEP}]
+		x11-libs/libXcomposite:=[${MULTILIB_USEDEP}]
+		x11-libs/libXcursor:=[${MULTILIB_USEDEP}]
+		x11-libs/libXdamage:=[${MULTILIB_USEDEP}]
+		x11-libs/libXext:=[${MULTILIB_USEDEP}]
+		x11-libs/libXfixes:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libXi-1.8:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libXrandr-1.5:=[${MULTILIB_USEDEP}]
+		xinerama? ( x11-libs/libXinerama:=[${MULTILIB_USEDEP}] )
 	)
 "
 DEPEND="${COMMON_DEPEND}
-	sysprof? ( >=dev-util/sysprof-capture-3.33.2:4[${MULTILIB_USEDEP}] )
-	X? ( x11-base/xorg-proto )
+	sysprof? ( >=dev-util/sysprof-capture-3.33.2:=[${MULTILIB_USEDEP}] )
+	X? ( x11-base/xorg-proto:= )
 "
 RDEPEND="${COMMON_DEPEND}
-	>=dev-util/gtk-update-icon-cache-3
+	>=dev-util/gtk-update-icon-cache-3:=
 "
 # librsvg for svg icons (PDEPEND to avoid circular dep), bug #547710
 PDEPEND="

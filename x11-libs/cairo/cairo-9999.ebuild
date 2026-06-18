@@ -66,7 +66,7 @@ LICENSE="
 #	test
 #"
 SLOT="0"
-IUSE="
+IUSE+="
 X aqua debug gles2-only gles3 +glib gtk-doc lzo opengl spectre test
 ebuild_revision_18
 "
@@ -79,26 +79,26 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	>=dev-libs/lzo-2.10:2[${MULTILIB_USEDEP}]
-	>=media-libs/fontconfig-2.18.1[${MULTILIB_USEDEP}]
-	>=media-libs/freetype-9999:2[${MULTILIB_USEDEP},png]
+	>=dev-libs/lzo-2.10:2=[${MULTILIB_USEDEP}]
+	>=media-libs/fontconfig-2.18.1:=[${MULTILIB_USEDEP}]
+	>=media-libs/freetype-9999:2=[${MULTILIB_USEDEP},png]
 	>=media-libs/libpng-1.6.57:0=[${MULTILIB_USEDEP}]
-	>=sys-libs/zlib-1.3.2[${MULTILIB_USEDEP}]
-	>=x11-libs/pixman-0.43.4[${MULTILIB_USEDEP}]
+	>=sys-libs/zlib-1.3.2:=[${MULTILIB_USEDEP}]
+	>=x11-libs/pixman-0.43.4:=[${MULTILIB_USEDEP}]
 	debug? (
 		sys-libs/binutils-libs:0=[${MULTILIB_USEDEP}]
 	)
 	glib? (
-		>=dev-libs/glib-2.80.3:2[${MULTILIB_USEDEP}]
+		>=dev-libs/glib-2.80.3:=[${MULTILIB_USEDEP}]
 	)
 	lzo? (
-		>=dev-libs/lzo-2.06-r1:2[${MULTILIB_USEDEP}]
+		>=dev-libs/lzo-2.06-r1:2=[${MULTILIB_USEDEP}]
 	)
 	X? (
-		>=x11-libs/libX11-1.8.10[${MULTILIB_USEDEP}]
+		>=x11-libs/libX11-1.8.10:=[${MULTILIB_USEDEP}]
 		>=x11-libs/libxcb-1.17.0:=[${MULTILIB_USEDEP}]
-		>=x11-libs/libXext-1.3.6[${MULTILIB_USEDEP}]
-		>=x11-libs/libXrender-0.9.11[${MULTILIB_USEDEP}]
+		>=x11-libs/libXext-1.3.6:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libXrender-0.9.11:=[${MULTILIB_USEDEP}]
 	)
 "
 TEST_DEPEND="
@@ -112,7 +112,7 @@ TEST_DEPEND="
 DEPEND="
 	${RDEPEND}
 	X? (
-		>=x11-base/xorg-proto-2024.1
+		>=x11-base/xorg-proto-2024.1:=
 	)
 "
 PDEPEND="

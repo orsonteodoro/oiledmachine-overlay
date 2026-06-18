@@ -35,7 +35,7 @@ S="${WORKDIR}/mysql"
 LICENSE="GPL-2 LGPL-2.1+"
 SLOT="$(ver_cut 1-2)/${SUBSLOT:-0}"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~ppc ~ppc64 ~riscv ~s390 ~x86"
-IUSE="+backup bindist columnstore cracklib debug extraengine galera innodb-lz4
+IUSE+=" +backup bindist columnstore cracklib debug extraengine galera innodb-lz4
 	innodb-lzo innodb-snappy jdbc jemalloc kerberos latin1 mroonga
 	numa odbc oqgraph pam +perl profiling rocksdb selinux +server sphinx
 	sst-rsync sst-mariabackup static systemd systemtap s3 tcmalloc
@@ -55,7 +55,7 @@ REQUIRED_USE="jdbc? ( extraengine server !static )
 COMMON_DEPEND="
 	dev-libs/libfmt:=
 	>=dev-libs/libpcre2-10.34:=
-	>=sys-apps/texinfo-4.7-r1
+	>=sys-apps/texinfo-4.7-r1:=
 	sys-libs/ncurses:0=
 	>=virtual/zlib-1.2.3:=
 	virtual/libcrypt:=
@@ -64,15 +64,15 @@ COMMON_DEPEND="
 		>=sys-libs/readline-4.1:0=
 	)
 	jemalloc? ( dev-libs/jemalloc:0= )
-	kerberos? ( virtual/krb5 )
+	kerberos? ( virtual/krb5:* )
 	kernel_linux? (
 		dev-libs/libaio:0=
 		sys-libs/liburing:=
 		sys-process/procps:0=
 	)
 	server? (
-		app-arch/bzip2
-		app-arch/xz-utils
+		app-arch/bzip2:=
+		app-arch/xz-utils:=
 		backup? ( app-arch/libarchive:0= )
 		columnstore? (
 			app-arch/snappy:=
@@ -84,17 +84,17 @@ COMMON_DEPEND="
 			odbc? ( dev-db/unixODBC:0= )
 			xml? ( dev-libs/libxml2:2= )
 		)
-		innodb-lz4? ( app-arch/lz4 )
-		innodb-lzo? ( dev-libs/lzo )
+		innodb-lz4? ( app-arch/lz4:= )
+		innodb-lzo? ( dev-libs/lzo:= )
 		innodb-snappy? ( app-arch/snappy:= )
-		mroonga? ( app-text/groonga-normalizer-mysql >=app-text/groonga-7.0.4 )
-		numa? ( sys-process/numactl )
+		mroonga? ( app-text/groonga-normalizer-mysql:= >=app-text/groonga-7.0.4:= )
+		numa? ( sys-process/numactl:= )
 		oqgraph? (
 			dev-libs/boost:=
 			dev-libs/judy:0=
 		)
 		pam? ( sys-libs/pam:0= )
-		s3? ( >=net-misc/curl-9999 )
+		s3? ( >=net-misc/curl-9999:= )
 		systemd? ( sys-apps/systemd:= )
 	)
 	systemtap? ( >=dev-debug/systemtap-1.3:0= )
@@ -113,9 +113,9 @@ BDEPEND="
 "
 DEPEND="${COMMON_DEPEND}
 	server? (
-		extraengine? ( jdbc? ( >=virtual/jdk-1.8 ) )
+		extraengine? ( jdbc? ( >=virtual/jdk-1.8:= ) )
 	)
-	static? ( sys-libs/ncurses[static-libs] )
+	static? ( sys-libs/ncurses:=[static-libs] )
 "
 RDEPEND="${COMMON_DEPEND}
 	!dev-db/mysql !dev-db/percona-server
@@ -132,23 +132,23 @@ RDEPEND="${COMMON_DEPEND}
 	!dev-db/mariadb:11.2
 	!dev-db/mariadb:11.3
 	!dev-db/mariadb:11.4
-	selinux? ( sec-policy/selinux-mysql )
+	selinux? ( sec-policy/selinux-mysql:* )
 	server? (
 		columnstore? (
-			dev-db/mariadb-connector-c
+			dev-db/mariadb-connector-c:=
 			!dev-libs/thrift
 		)
-		extraengine? ( jdbc? ( >=virtual/jre-1.8 ) )
+		extraengine? ( jdbc? ( >=virtual/jre-1.8:= ) )
 		galera? (
-			sys-apps/iproute2
-			=sys-cluster/galera-26*
-			sst-rsync? ( sys-process/lsof )
-			sst-mariabackup? ( net-misc/socat[ssl] )
+			sys-apps/iproute2:=
+			=sys-cluster/galera-26*:=
+			sst-rsync? ( sys-process/lsof:= )
+			sst-mariabackup? ( net-misc/socat:=[ssl] )
 		)
 		!prefix? (
-			acct-group/mysql
-			acct-user/mysql
-			dev-db/mysql-init-scripts
+			acct-group/mysql:*
+			acct-user/mysql:*
+			dev-db/mysql-init-scripts:*
 		)
 	)
 "

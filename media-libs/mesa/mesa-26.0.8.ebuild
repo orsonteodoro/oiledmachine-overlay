@@ -65,7 +65,7 @@ CRATES="
 	unicode-ident@1.0.12
 "
 
-LIBDRM_DEPSTRING=">=x11-libs/libdrm-2.4.132"
+LIBDRM_DEPSTRING=">=x11-libs/libdrm-2.4.132:="
 LIBDRM_USEDEP="\
 video_cards_freedreno?,\
 video_cards_intel?,\
@@ -191,70 +191,62 @@ REQUIRED_USE="
 "
 RDEPEND="
 	${LIBDRM_DEPSTRING}[${MULTILIB_USEDEP}]
-	>=dev-libs/expat-9999[${MULTILIB_USEDEP}]
-	>=dev-util/spirv-tools-1.3.231.0[${MULTILIB_USEDEP}]
-	>=media-libs/libglvnd-1.3.2[X?,${MULTILIB_USEDEP}]
-	>=virtual/zlib-1.3.2[${MULTILIB_USEDEP}]
-	virtual/patent-status[patent_status_nonfree=]
+	>=dev-libs/expat-9999:=[${MULTILIB_USEDEP}]
+	>=dev-util/spirv-tools-1.3.231.0:=[${MULTILIB_USEDEP}]
+	>=media-libs/libglvnd-1.3.2:=[X?,${MULTILIB_USEDEP}]
+	>=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}]
+	virtual/patent-status:*[patent_status_nonfree=]
 	llvm? (
 		video_cards_r600? (
-			virtual/libelf:0[${MULTILIB_USEDEP}]
-			virtual/libelf:=
+			virtual/libelf:=[${MULTILIB_USEDEP}]
 		)
 		video_cards_radeon? (
-			virtual/libelf:0[${MULTILIB_USEDEP}]
-			virtual/libelf:=
+			virtual/libelf:=[${MULTILIB_USEDEP}]
 		)
 	)
 	lm-sensors? (
-		sys-apps/lm-sensors[${MULTILIB_USEDEP}]
-		sys-apps/lm-sensors:=
+		sys-apps/lm-sensors:=[${MULTILIB_USEDEP}]
 	)
 	opencl? (
-		>=virtual/opencl-3
-		llvm-core/libclc[${LIBSTDCXX_USEDEP},spirv(-),video_cards_r600?,video_cards_radeonsi?]
-		virtual/libelf:0
-		virtual/libelf:=
+		>=virtual/opencl-3:=
+		llvm-core/libclc:=[${LIBSTDCXX_USEDEP},spirv(-),video_cards_r600?,video_cards_radeonsi?]
+		virtual/libelf:0=
 	)
 	unwind? (
-		sys-libs/libunwind[${MULTILIB_USEDEP}]
+		sys-libs/libunwind:=[${MULTILIB_USEDEP}]
 	)
 	vaapi? (
-		>=media-libs/libva-9999[${MULTILIB_USEDEP}]
+		>=media-libs/libva-9999:=[${MULTILIB_USEDEP}]
 	)
 	video_cards_i915? (
 		${LIBDRM_DEPSTRING}[video_cards_intel]
 	)
 	video_cards_radeonsi? (
 		${LIBDRM_DEPSTRING}[video_cards_amdgpu]
-		virtual/libelf:0[${MULTILIB_USEDEP}]
-		virtual/libelf:=
+		virtual/libelf:=[${MULTILIB_USEDEP}]
 	)
 	video_cards_zink? (
-		media-libs/vulkan-loader[${MULTILIB_USEDEP}]
-		media-libs/vulkan-loader:=
+		media-libs/vulkan-loader:=[${MULTILIB_USEDEP}]
 	)
 	vulkan? (
-		media-libs/libdisplay-info[${MULTILIB_USEDEP}]
-		media-libs/libdisplay-info:=
+		media-libs/libdisplay-info:=[${MULTILIB_USEDEP}]
 		virtual/libudev:=
 	)
 	wayland? (
-		>=dev-libs/wayland-1.18.0[${MULTILIB_USEDEP}]
+		>=dev-libs/wayland-1.18.0:=[${MULTILIB_USEDEP}]
 	)
 	X? (
-		>=x11-libs/libX11-1.8[${MULTILIB_USEDEP}]
-		>=x11-libs/libXext-1.3.2[${MULTILIB_USEDEP}]
-		>=x11-libs/libxcb-1.17[${MULTILIB_USEDEP}]
+		>=x11-libs/libX11-1.8:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libXext-1.3.2:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libxcb-1.17:=[${MULTILIB_USEDEP}]
 		>=x11-libs/libxcb-1.17:=
-		>=x11-libs/libxshmfence-1.1[${MULTILIB_USEDEP}]
-		>=x11-libs/libXxf86vm-1.1.3[${MULTILIB_USEDEP}]
-		x11-libs/libXfixes[${MULTILIB_USEDEP}]
-		x11-libs/xcb-util-keysyms[${MULTILIB_USEDEP}]
+		>=x11-libs/libxshmfence-1.1:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libXxf86vm-1.1.3:=[${MULTILIB_USEDEP}]
+		x11-libs/libXfixes:=[${MULTILIB_USEDEP}]
+		x11-libs/xcb-util-keysyms:=[${MULTILIB_USEDEP}]
 	)
 	zstd? (
-		>=app-arch/zstd-9999[${MULTILIB_USEDEP}]
-		app-arch/zstd:=
+		>=app-arch/zstd-9999:=[${MULTILIB_USEDEP}]
 	)
 "
 # Please keep the LLVM dependency block separate. Since LLVM is slotted, \
@@ -266,14 +258,11 @@ gen_llvm_depstr() {
 		echo "
 			llvm_slot_${s}? (
 				!opencl? (
-					llvm-core/llvm:${s}[${LLVM_USE_DEPS}]
-					llvm-core/llvm:=
+					=llvm-core/llvm-${s}*:=[${LLVM_USE_DEPS}]
 				)
 				opencl? (
-					dev-util/spirv-llvm-translator:${s}[${LIBSTDCXX_USEDEP}]
-					dev-util/spirv-llvm-translator:=
-					llvm-core/clang:${s}[${LLVM_USE_DEPS}]
-					llvm-core/clang:=
+					=dev-util/spirv-llvm-translator-${s}*:=[${LIBSTDCXX_USEDEP}]
+					=llvm-core/clang-${s}*:=[${LLVM_USE_DEPS}]
 				)
 			)
 		"
@@ -282,12 +271,10 @@ gen_llvm_depstr() {
 LLVM_DEPSTR="
 	$(gen_llvm_depstr)
 	!opencl? (
-		llvm-core/llvm[${LLVM_USE_DEPS}]
-		llvm-core/llvm:=
+		llvm-core/llvm:=[${LLVM_USE_DEPS}]
 	)
 	opencl? (
-		llvm-core/clang[${LLVM_USE_DEPS}]
-		llvm-core/clang:=
+		llvm-core/clang:=[${LLVM_USE_DEPS}]
 	)
 "
 RDEPEND="
@@ -300,20 +287,20 @@ unset {LLVM,PER_SLOT}_DEPSTR
 DEPEND="
 	${RDEPEND}
 	sysprof? (
-		>=dev-util/sysprof-capture-49.0[${MULTILIB_USEDEP}]
+		>=dev-util/sysprof-capture-49.0:=[${MULTILIB_USEDEP}]
 	)
 	valgrind? (
-		dev-debug/valgrind
+		dev-debug/valgrind:=
 	)
 	video_cards_d3d12? (
-		>=dev-util/directx-headers-1.618.1[${MULTILIB_USEDEP}]
+		>=dev-util/directx-headers-1.618.1:=[${MULTILIB_USEDEP}]
 	)
 	wayland? (
-		>=dev-libs/wayland-protocols-1.41
+		>=dev-libs/wayland-protocols-1.41:=
 	)
 	X? (
-		x11-base/xorg-proto
-		x11-libs/libXrandr[${MULTILIB_USEDEP}]
+		x11-base/xorg-proto:=
+		x11-libs/libXrandr:=[${MULTILIB_USEDEP}]
 	)
 "
 CLC_DEPSTRING="

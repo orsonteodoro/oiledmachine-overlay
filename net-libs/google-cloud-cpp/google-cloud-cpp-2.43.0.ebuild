@@ -55,41 +55,25 @@ HOMEPAGE="https://cloud.google.com/"
 LICENSE="Apache-2.0"
 SLOT="${PROTOBUF_CPP_SLOT}/"$(ver_cut "1-2" "${PV}")
 KEYWORDS="~amd64 ~x86"
-IUSE="
+IUSE+="
 test
 ebuild_revision_19
 "
 # Tests need a GCP account
 RESTRICT="test"
 RDEPEND="
-	(
-		>=dev-cpp/abseil-cpp-20240722.0:${ABSEIL_CPP_SLOT%.*}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx_standard_cxx17]
-		dev-cpp/abseil-cpp:=
-	)
-	(
-		>=dev-libs/openssl-1.1.1
-		dev-libs/openssl:=
-	)
-	(
-		>=dev-libs/re2-0.2025.07.22:${RE2_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-libs/re2:=
-	)
-	(
-		net-libs/grpc:${PROTOBUF_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx]
-		net-libs/grpc:=
-	)
-	(
-		dev-libs/protobuf:${PROTOBUF_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-libs/protobuf:=
-	)
-	>=dev-libs/crc32c-1.1.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=net-misc/curl-9999
-	>=virtual/zlib-1.2.11
+	>=dev-cpp/abseil-cpp-20240722.0:${ABSEIL_CPP_SLOT%.*}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx_standard_cxx17]
+	>=dev-libs/crc32c-1.1.2:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=net-misc/curl-9999:=
+	>=dev-libs/openssl-1.1.1:=
+	>=dev-libs/re2-0.2025.07.22:${RE2_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=virtual/zlib-1.2.11:=
+	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	net-libs/grpc:${PROTOBUF_CPP_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx]
 "
 DEPEND="
 	${RDEPEND}
-	>=dev-cpp/nlohmann_json-3.11.3
-	dev-cpp/nlohmann_json:=
+	>=dev-cpp/nlohmann_json-3.11.3:=
 "
 BDEPEND="
 	>=dev-cpp/gtest-1.16.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]

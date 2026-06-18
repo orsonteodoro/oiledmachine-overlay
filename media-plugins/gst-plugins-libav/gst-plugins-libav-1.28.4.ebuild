@@ -29,20 +29,17 @@ DESCRIPTION="A FFmpeg based GStreamer plugin"
 HOMEPAGE="https://gstreamer.freedesktop.org/modules/gst-libav.html"
 LICENSE="LGPL-2+"
 SLOT="1.0"
-IUSE="
+IUSE+="
 ebuild_revision_27
 "
 RDEPEND="
-	>=dev-libs/glib-2.40.0:2[${MULTILIB_USEDEP}]
-	dev-libs/glib:=
-	~media-libs/gstreamer-${MY_PV}:1.0[${MULTILIB_USEDEP}]
-	media-libs/gstreamer:=
-	~media-libs/gst-plugins-base-${MY_PV}:1.0[${MULTILIB_USEDEP}]
-	media-libs/gst-plugins-base:=
+	>=dev-libs/glib-2.40.0:=[${MULTILIB_USEDEP}]
+	~media-libs/gstreamer-${MY_PV}:1.0=[${MULTILIB_USEDEP}]
+	~media-libs/gst-plugins-base-${MY_PV}:1.0=[${MULTILIB_USEDEP}]
+	media-video/ffmpeg:=
 	|| (
 		>=media-video/ffmpeg-9999:60.62.62[${MULTILIB_USEDEP}]
 	)
-	media-video/ffmpeg:=
 "
 DEPEND="
 	${RDEPEND}

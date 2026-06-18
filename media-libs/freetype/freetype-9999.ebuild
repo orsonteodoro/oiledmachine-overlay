@@ -61,12 +61,20 @@ IUSE+=" X +adobe-cff brotli bzip2 +cleartype-hinting debug doc fontforge harfbuz
 
 RDEPEND="
 	>=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}]
-	brotli? ( >=app-arch/brotli-9999[${MULTILIB_USEDEP}] )
-	bzip2? ( >=app-arch/bzip2-9999[${MULTILIB_USEDEP}] )
-	png? ( >=media-libs/libpng-1.2.57:=[${MULTILIB_USEDEP}] )
+	brotli? (
+		>=app-arch/brotli-9999:=[${MULTILIB_USEDEP}]
+	)
+	bzip2? (
+		>=app-arch/bzip2-9999:=[${MULTILIB_USEDEP}]
+	)
+	png? (
+		>=media-libs/libpng-1.2.57:=[${MULTILIB_USEDEP}]
+	)
 	utils? (
-		svg? ( >=gnome-base/librsvg-2.59.2[${MULTILIB_USEDEP}] )
-		X? ( >=x11-libs/libX11-1.6.2[${MULTILIB_USEDEP}] )
+		svg? (
+			>=gnome-base/librsvg-2.59.2:=[${MULTILIB_USEDEP}]
+		)
+		X? ( >=x11-libs/libX11-1.6.2:=[${MULTILIB_USEDEP}] )
 	)
 "
 DEPEND="${RDEPEND}"

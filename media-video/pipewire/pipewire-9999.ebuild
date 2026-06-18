@@ -132,25 +132,25 @@ BDEPEND="
 #   - https://gitlab.freedesktop.org/pipewire/pipewire/-/merge_requests/1778
 #   - https://github.com/doxygen/doxygen/issues/9254
 RDEPEND="
-	acct-group/audio
-	acct-group/pipewire
-	media-libs/alsa-lib[${MULTILIB_USEDEP}]
+	acct-group/audio:*
+	acct-group/pipewire:*
+	media-libs/alsa-lib:=[${MULTILIB_USEDEP}]
 	sys-libs/ncurses:=[unicode(+)]
-	virtual/libintl[${MULTILIB_USEDEP}]
-	virtual/libudev[${MULTILIB_USEDEP}]
+	virtual/libintl:*[${MULTILIB_USEDEP}]
+	virtual/libudev:=[${MULTILIB_USEDEP}]
 	bluetooth? (
-		dev-libs/glib
-		media-libs/fdk-aac
-		media-sound/liblc3
-		media-libs/libldac
-		media-libs/libfreeaptx
-		media-libs/opus
-		media-libs/sbc
+		dev-libs/glib:=
+		media-libs/fdk-aac:=
+		media-sound/liblc3:=
+		media-libs/libldac:=
+		media-libs/libfreeaptx:=
+		media-libs/opus:=
+		media-libs/sbc:=
 		>=net-wireless/bluez-4.101:=
 		virtual/libusb:1
 	)
-	elogind? ( sys-auth/elogind )
-	dbus? ( sys-apps/dbus[${MULTILIB_USEDEP}] )
+	elogind? ( sys-auth/elogind:= )
+	dbus? ( sys-apps/dbus:=[${MULTILIB_USEDEP}] )
 	echo-cancel? (
 		media-libs/webrtc-audio-processing:=
 		|| (
@@ -158,42 +158,42 @@ RDEPEND="
 			>=media-libs/webrtc-audio-processing-1.2:1
 		)
 	)
-	extra? ( >=media-libs/libsndfile-1.0.20 )
+	extra? ( >=media-libs/libsndfile-1.0.20:= )
 	ffmpeg? ( >=media-video/ffmpeg-9999:= )
-	fftw? ( sci-libs/fftw:3.0=[${MULTILIB_USEDEP}] )
-	flatpak? ( dev-libs/glib )
+	fftw? ( sci-libs/fftw:=[${MULTILIB_USEDEP}] )
+	flatpak? ( dev-libs/glib:= )
 	gstreamer? (
-		>=dev-libs/glib-2.32.0:2
-		>=media-libs/gstreamer-1.28.4:1.0
-		>=media-libs/gst-plugins-base-1.28.4:1.0
+		>=dev-libs/glib-2.32.0:=
+		>=media-libs/gstreamer-1.28.4:=
+		>=media-libs/gst-plugins-base-1.28.4:=
 	)
-	gsettings? ( >=dev-libs/glib-2.26.0:2 )
-	ieee1394? ( media-libs/libffado[${MULTILIB_USEDEP}] )
-	jack-client? ( >=media-sound/jack2-1.9.10:2[dbus] )
+	gsettings? ( >=dev-libs/glib-2.26.0:= )
+	ieee1394? ( media-libs/libffado:=[${MULTILIB_USEDEP}] )
+	jack-client? ( >=media-sound/jack2-1.9.10:=[dbus] )
 	jack-sdk? (
 		!media-sound/jack-audio-connection-kit
 		!media-sound/jack2
 	)
 	libcamera? ( media-libs/libcamera:= )
 	loudness? ( media-libs/libebur128:=[${MULTILIB_USEDEP}] )
-	lv2? ( media-libs/lilv )
-	modemmanager? ( >=net-misc/modemmanager-1.10.0 )
-	pipewire-alsa? ( >=media-libs/alsa-lib-1.2.16[${MULTILIB_USEDEP}] )
-	pulseaudio? ( media-libs/libpulse )
+	lv2? ( media-libs/lilv:= )
+	modemmanager? ( >=net-misc/modemmanager-1.10.0:= )
+	pipewire-alsa? ( >=media-libs/alsa-lib-1.2.16:=[${MULTILIB_USEDEP}] )
+	pulseaudio? ( media-libs/libpulse:= )
 	sound-server? ( !media-sound/pulseaudio-daemon )
 	roc? ( >=media-libs/roc-toolkit-0.4.0:= )
 	readline? ( sys-libs/readline:= )
-	selinux? ( sys-libs/libselinux )
+	selinux? ( sys-libs/libselinux:* )
 	ssl? ( dev-libs/openssl:= )
-	systemd? ( sys-apps/systemd )
-	system-service? ( acct-user/pipewire )
-	v4l? ( media-libs/libv4l )
+	systemd? ( sys-apps/systemd:= )
+	system-service? ( acct-user/pipewire:* )
+	v4l? ( media-libs/libv4l:= )
 	X? (
-		media-libs/libcanberra
-		x11-libs/libX11
-		x11-libs/libXfixes
+		media-libs/libcanberra:=
+		x11-libs/libX11:=
+		x11-libs/libXfixes:=
 	)
-	zeroconf? ( net-dns/avahi )
+	zeroconf? ( net-dns/avahi:= )
 "
 
 DEPEND="${RDEPEND}"

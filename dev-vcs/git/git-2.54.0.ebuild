@@ -80,7 +80,7 @@ S="${WORKDIR}"/${MY_P}
 
 LICENSE="GPL-2"
 SLOT="0"
-IUSE="
+IUSE+="
 +curl cgi cvs doc keyring +gpg highlight +iconv +nls +pcre perforce +perl rust +safe-directory selinux subversion test tk +webdav xinetd
 ebuild_revision_2
 "
@@ -90,17 +90,27 @@ DEPEND="
 	dev-libs/openssl:=
 	virtual/zlib:=
 	curl? (
-		>=net-misc/curl-9999
-		webdav? ( >=dev-libs/expat-9999 )
+		>=net-misc/curl-9999:=
+		webdav? (
+			>=dev-libs/expat-9999:=
+		)
 	)
 	keyring? (
-		app-crypt/libsecret
-		dev-libs/glib:2
+		app-crypt/libsecret:=
+		=dev-libs/glib-2*:=
 	)
-	iconv? ( virtual/libiconv )
-	pcre? ( dev-libs/libpcre2:= )
-	perl? ( dev-lang/perl:=[-build(-)] )
-	tk? ( dev-lang/tk:= )
+	iconv? (
+		virtual/libiconv:=
+	)
+	pcre? (
+		dev-libs/libpcre2:=
+	)
+	perl? (
+		dev-lang/perl:=[-build(-)]
+	)
+	tk? (
+		dev-lang/tk:=
+	)
 "
 RDEPEND="
 	${DEPEND}

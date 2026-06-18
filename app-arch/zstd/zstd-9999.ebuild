@@ -8,13 +8,24 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO"
 
 inherit cflags-hardened check-compiler-switch flag-o-matic meson-multilib
 
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="5233c58e6ca0b1c4c6b353ad79649191ed195bdc"
+	EGIT_BRANCH="dev"
+	EGIT_REPO_URI="https://github.com/facebook/zstd.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	S="${WORKDIR}/${P}/build/meson"
+	SRC_URI="
+https://github.com/facebook/zstd/releases/download/v${PV}/${P}.tar.gz
+	"
+fi
+
 KEYWORDS="
 ~alpha amd64 arm arm64 hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86
 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris
-"
-S="${WORKDIR}/${P}/build/meson"
-SRC_URI="
-https://github.com/facebook/zstd/releases/download/v${PV}/${P}.tar.gz
 "
 
 DESCRIPTION="zstd fast compression library"
@@ -51,23 +62,35 @@ DEPEND="
 "
 
 MESON_PATCHES=(
-	# Workaround until Valgrind bugfix lands
-	"${FILESDIR}/${PN}-1.5.4-no-find-valgrind.patch"
 )
 
 PATCHES=(
-	"${FILESDIR}/${PN}-1.5.7-move-pragma-before-static.patch"
 )
 
 pkg_setup() {
 	check-compiler-switch_start
 }
 
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+		export S="${WORKDIR}/${P}/build/meson"
+	else
+		unpack ${A}
+	fi
+}
+
 src_prepare() {
 	cd "${WORKDIR}/${P}" || die
 	default
 	cd "${S}" || die
-	eapply "${MESON_PATCHES[@]}"
+	if (( ${#MESON_PATCHES[@]} > 0 )) ; then
+		eapply "${MESON_PATCHES[@]}"
+	fi
 }
 
 multilib_src_configure() {
@@ -102,3 +125,7 @@ EOF
 multilib_src_test() {
 	meson_src_test --timeout-multiplier=2
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 5233c58 (interactive)
+# Double emerge:  passed
+# Zstd compress/decompress with sha512sum comparison:  passed

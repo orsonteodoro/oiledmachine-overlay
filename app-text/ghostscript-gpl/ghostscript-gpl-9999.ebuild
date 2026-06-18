@@ -70,31 +70,31 @@ done
 
 DEPEND="
 	app-text/libpaper:=
-	>=media-libs/fontconfig-2.18.1
+	>=media-libs/fontconfig-2.18.1:=
 	>=media-libs/freetype-9999:2=
 	>=media-libs/jbig2dec-0.19:=
-	>=media-libs/lcms-9999:2
+	>=media-libs/lcms-9999:2=
 	>=media-libs/libpng-1.6.57:=
 	>=media-libs/libjpeg-turbo-9999:=
 	>=media-libs/openjpeg-9999:2=
 	>=media-libs/tiff-9999:=
 	>=virtual/zlib-1.3.2:=
-	cups? ( >=net-print/cups-9999 )
-	dbus? ( >=sys-apps/dbus-1.15.90 )
-	gtk? ( >=x11-libs/gtk+-3.24.52:3 )
+	cups? ( >=net-print/cups-9999:= )
+	dbus? ( >=sys-apps/dbus-1.15.90:= )
+	gtk? ( >=x11-libs/gtk+-3.24.52:3= )
 	unicode? ( >=net-dns/libidn-1.44:= )
-	X? ( x11-libs/libXt x11-libs/libXext )
+	X? ( x11-libs/libXt x11-libs/libXext:= )
 "
 BDEPEND="virtual/pkgconfig"
 # bug #844115 for newer poppler-data dep
 RDEPEND="
 	${DEPEND}
-	>=app-text/poppler-data-0.4.11-r2
-	>=media-fonts/urw-fonts-2.4.9
-	l10n_ja? ( media-fonts/kochi-substitute )
-	l10n_ko? ( media-fonts/baekmuk-fonts )
-	l10n_zh-CN? ( media-fonts/arphicfonts )
-	l10n_zh-TW? ( media-fonts/arphicfonts )
+	>=app-text/poppler-data-0.4.11-r2:=
+	>=media-fonts/urw-fonts-2.4.9:*
+	l10n_ja? ( media-fonts/kochi-substitute:* )
+	l10n_ko? ( media-fonts/baekmuk-fonts:* )
+	l10n_zh-CN? ( media-fonts/arphicfonts:* )
+	l10n_zh-TW? ( media-fonts/arphicfonts:* )
 "
 
 PATCHES=(

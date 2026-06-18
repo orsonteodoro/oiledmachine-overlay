@@ -110,54 +110,56 @@ SET_PROP_RDEPEND="
 
 RDEPEND+="
 	!sci-chemistry/surf
-	>=x11-misc/dmenu-4.7
-	app-shells/bash
-	dev-libs/glib:2[${MULTILIB_USEDEP}]
-	sys-apps/grep
-	x11-apps/xprop
-	x11-libs/libX11[${MULTILIB_USEDEP}]
+	>=x11-misc/dmenu-4.7:*
+	app-shells/bash:*
+	dev-libs/glib:=[${MULTILIB_USEDEP}]
+	sys-apps/grep:*
+	x11-apps/xprop:*
+	x11-libs/libX11:=[${MULTILIB_USEDEP}]
 	alsa? (
 		!media-plugins/gst-plugins-pulse
-		media-libs/gst-plugins-base:1.0[alsa]
-		media-plugins/gst-plugins-meta:1.0[-pulseaudio]
+		media-libs/gst-plugins-base:=[alsa]
+		media-plugins/gst-plugins-meta:*[-pulseaudio]
 	)
 	pulseaudio? (
-		media-libs/gst-plugins-base:1.0[-alsa]
-		media-plugins/gst-plugins-meta:1.0[pulseudio]
+		media-libs/gst-plugins-base:=[-alsa]
+		media-plugins/gst-plugins-meta:*[pulseudio]
 	)
 	curl? (
-		>=net-misc/curl-9999[${MULTILIB_USEDEP}]
-		x11-terms/st
+		>=net-misc/curl-9999:=[${MULTILIB_USEDEP}]
+		x11-terms/st:*
 	)
 	gtk3? (
-		app-crypt/gcr:0[gtk,${MULTILIB_USEDEP}]
-		>=net-libs/webkit-gtk-2.52.3:4.1[${MULTILIB_USEDEP},${PYTHON_SINGLE_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
-		x11-libs/gtk+:3[${MULTILIB_USEDEP},X]
+		app-crypt/gcr:0=[gtk,${MULTILIB_USEDEP}]
+		>=net-libs/webkit-gtk-2.52.3:4.1=[${MULTILIB_USEDEP},${PYTHON_SINGLE_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
+		x11-libs/gtk+:3=[${MULTILIB_USEDEP},X]
 	)
 	gtk4? (
 		|| (
 			(
-				app-crypt/gcr:4[gtk,${MULTILIB_USEDEP}]
-				gui-libs/gtk:4[X]
-				>=net-libs/webkit-gtk-2.52.3:6[${MULTILIB_USEDEP},${PYTHON_SINGLE_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
+				app-crypt/gcr:4=[gtk,${MULTILIB_USEDEP}]
+				gui-libs/gtk:4=[X]
+				>=net-libs/webkit-gtk-2.52.3:6=[${MULTILIB_USEDEP},${PYTHON_SINGLE_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
 			)
 		)
 	)
 	mod_adblock? (
 		${PYTHON_DEPS}
-		$(python_gen_cond_dep 'dev-python/future[${PYTHON_USEDEP}]')
+		$(python_gen_cond_dep '
+			dev-python/future:=[${PYTHON_USEDEP}]
+		')
 	)
 	mpv? (
-		media-video/mpv
+		media-video/mpv:*
 	)
 	plumb? (
-		x11-misc/xdg-utils
+		x11-misc/xdg-utils:*
 	)
 	tabbed? (
-		x11-misc/tabbed
+		x11-misc/tabbed:*
 	)
 	url-bar? (
-		sys-apps/sed
+		sys-apps/sed:*
 	)
 "
 DEPEND+="

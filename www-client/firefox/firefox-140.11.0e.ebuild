@@ -570,82 +570,70 @@ FF_ONLY_DEPEND="
 	!www-client/firefox:0
 	!www-client/firefox:rapid
 	selinux? (
-		sec-policy/selinux-mozilla
+		sec-policy/selinux-mozilla:*
 	)
 "
 GAMEPAD_BDEPEND="
 	kernel_linux? (
-		sys-kernel/linux-headers
+		sys-kernel/linux-headers:=
 	)
 "
 
-# Same as virtual/udev-217-r5 but with multilib changes.
-# Required for gamepad, or WebAuthn roaming authenticators (e.g. USB security key)
+# Same as virtual/udev-217-r5 but with multilib changes.  Udev is required for
+# gamepad, or WebAuthn roaming authenticators (e.g. USB security key)
 UDEV_RDEPEND="
 	kernel_linux? (
 		systemd? (
-			>=sys-apps/systemd-259.4[${MULTILIB_USEDEP}]
+			>=sys-apps/systemd-259.4:=[${MULTILIB_USEDEP}]
 		)
 		!systemd? (
-			>=sys-apps/systemd-utils-259.4[${MULTILIB_USEDEP},udev]
+			>=sys-apps/systemd-utils-259.4:=[${MULTILIB_USEDEP},udev]
 		)
 	)
 "
 
 gen_ffmpeg_nonfree_depends_multislot() {
-	local s
-	for s in "${FFMPEG_COMPAT_SLOTS[@]}" ; do
-		echo "
-			>=media-video/ffmpeg-9999:${s}[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
-		"
-	done
+	echo "
+		=media-video/ffmpeg-9999m:=[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
+	"
 }
 
 gen_ffmpeg_nonfree_depends_unislot() {
-	local s
-	for s in "${FFMPEG_COMPAT_SLOTS[@]}" ; do
-		echo "
-			>=media-video/ffmpeg-9999:0/${s}[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
-		"
-	done
+	echo "
+		=media-video/ffmpeg-9999:=[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
+	"
 }
 
 # vaapi, qsv, etc are disabled because some packages (especially the drivers)
 # cannot individually disable just the nonfree just like the mesa package.
 # It may inadvertantly touch the nonfree during runtime.
 gen_ffmpeg_royalty_free_depends_multislot() {
-	local s
-	for s in "${FFMPEG_COMPAT_SLOTS[@]}" ; do
-		echo "
-			(
-				!<dev-libs/openssl-3
-				>=media-video/ffmpeg-9999:${s}[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
-			)
-			(
-				>=media-video/ffmpeg-9999:${s}[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,-openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
-			)
-		"
-	done
+	echo "
+		(
+			!<dev-libs/openssl-3
+			=media-video/ffmpeg-9999m:=[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+		)
+		(
+			=media-video/ffmpeg-9999m:=[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,-openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+		)
+	"
 }
 gen_ffmpeg_royalty_free_depends_unislot() {
-	local s
-	for s in "${FFMPEG_COMPAT_SLOTS[@]}" ; do
-		echo "
-			(
-				!<dev-libs/openssl-3
-				>=media-video/ffmpeg-9999:0/${s}[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
-			)
-			(
-				>=media-video/ffmpeg-9999:0/${s}[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,-openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
-			)
-		"
-	done
+	echo "
+		(
+			!<dev-libs/openssl-3
+			=media-video/ffmpeg-9999:=[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+		)
+		(
+			=media-video/ffmpeg-9999:=[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,-openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+		)
+	"
 }
 
 PATENT_CDEPENDS="
-	>=media-libs/mesa-26.0.1[${MULTILIB_USEDEP},patent_status_nonfree=]
+	>=media-libs/mesa-26.0.1:=[${MULTILIB_USEDEP},patent_status_nonfree=]
 	kernel_linux? (
-		>=media-libs/libglvnd-1.7.0[${MULTILIB_USEDEP}]
+		>=media-libs/libglvnd-1.7.0:=[${MULTILIB_USEDEP}]
 	)
 	!patent_status_nonfree? (
 		|| (
@@ -661,7 +649,7 @@ PATENT_CDEPENDS="
 		)
 		media-video/ffmpeg:=
 		vaapi? (
-			virtual/vaapi[${MULTILIB_USEDEP},patent_status_nonfree=]
+			virtual/vaapi:*[${MULTILIB_USEDEP},patent_status_nonfree=]
 		)
 	)
 "
@@ -672,39 +660,34 @@ RUST_CDEPEND="
 			dev-lang/rust-bin:1.86.0[${MULTILIB_USEDEP}]
 		)
 	)
-	|| (
-		dev-lang/rust:=
-		dev-lang/rust-bin:=
-	)
 "
 CDEPEND="
 	${FF_ONLY_DEPEND}
 	${PATENT_CDEPENDS}
-	>=app-accessibility/at-spi2-core-2.58.6:2[${MULTILIB_USEDEP}]
-	>=dev-libs/glib-2.42:2[${MULTILIB_USEDEP}]
-	>=dev-libs/nspr-4.36.2[${MULTILIB_USEDEP}]
-	>=dev-libs/nss-3.112.5[${MULTILIB_USEDEP}]
-	>=media-libs/fontconfig-2.18.1[${MULTILIB_USEDEP}]
-	>=media-libs/freetype-9999[${MULTILIB_USEDEP}]
-	>=x11-libs/pango-1.57.1[${MULTILIB_USEDEP}]
-	>=x11-libs/pixman-0.42.2[${MULTILIB_USEDEP}]
-	>=virtual/zlib-1.3.2[${MULTILIB_USEDEP}]
-	>=dev-libs/expat-2.8.2[${MULTILIB_USEDEP}]
-	>=dev-libs/libffi-9999[${MULTILIB_USEDEP}]
-	dev-libs/libffi:=
-	>=media-libs/alsa-lib-1.2.16[${MULTILIB_USEDEP}]
-	virtual/freedesktop-icon-theme
-	>=x11-libs/cairo-9999[${MULTILIB_USEDEP}]
-	>=x11-libs/gdk-pixbuf-2.42.10:2[${MULTILIB_USEDEP}]
-	>=x11-libs/libdrm-2.4.120[${MULTILIB_USEDEP}]
+	>=app-accessibility/at-spi2-core-2.58.6:=[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-2.42:=[${MULTILIB_USEDEP}]
+	>=dev-libs/nspr-4.36.2:=[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.112.5:=[${MULTILIB_USEDEP}]
+	>=media-libs/fontconfig-2.18.1:=[${MULTILIB_USEDEP}]
+	>=media-libs/freetype-9999:=[${MULTILIB_USEDEP}]
+	>=x11-libs/pango-1.57.1:=[${MULTILIB_USEDEP}]
+	>=x11-libs/pixman-0.42.2:=[${MULTILIB_USEDEP}]
+	>=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}]
+	>=dev-libs/expat-2.8.2:=[${MULTILIB_USEDEP}]
+	>=dev-libs/libffi-9999:=[${MULTILIB_USEDEP}]
+	>=media-libs/alsa-lib-1.2.16:=[${MULTILIB_USEDEP}]
+	virtual/freedesktop-icon-theme:*
+	>=x11-libs/cairo-9999:=[${MULTILIB_USEDEP}]
+	>=x11-libs/gdk-pixbuf-2.42.10:=[${MULTILIB_USEDEP}]
+	>=x11-libs/libdrm-2.4.120:=[${MULTILIB_USEDEP}]
 	dbus? (
-		>=sys-apps/dbus-${DBUS_PV}[${MULTILIB_USEDEP}]
+		>=sys-apps/dbus-${DBUS_PV}:=[${MULTILIB_USEDEP}]
 	)
 	jack? (
-		virtual/jack[${MULTILIB_USEDEP}]
+		virtual/jack:*[${MULTILIB_USEDEP}]
 	)
 	libproxy? (
-		>=net-libs/libproxy-9999[${MULTILIB_USEDEP}]
+		>=net-libs/libproxy-9999:=[${MULTILIB_USEDEP}]
 	)
 	pulseaudio? (
 		|| (
@@ -713,55 +696,45 @@ CDEPEND="
 		)
 	)
 	selinux? (
-		sec-policy/selinux-mozilla
+		sec-policy/selinux-mozilla:*
 	)
 	sndio? (
-		>=media-sound/sndio-1.8.0-r1[${MULTILIB_USEDEP}]
+		>=media-sound/sndio-1.8.0-r1:=[${MULTILIB_USEDEP}]
 	)
 	system-av1? (
-		>=media-libs/dav1d-1.5.1[${MULTILIB_USEDEP},8bit]
-		media-libs/dav1d:=
-		>=media-libs/libaom-3.14.1[${MULTILIB_USEDEP}]
-		media-libs/libaom:=
+		>=media-libs/dav1d-1.5.1:=[${MULTILIB_USEDEP},8bit]
+		>=media-libs/libaom-3.14.1:=[${MULTILIB_USEDEP}]
 	)
 	system-harfbuzz? (
-		>=media-libs/harfbuzz-11.2.0:0[${MULTILIB_USEDEP}]
-		media-libs/harfbuzz:=
+		>=media-libs/harfbuzz-9999:=[${MULTILIB_USEDEP}]
 		!wasm-sandbox? (
-			>=media-gfx/graphite2-1.3.14[${MULTILIB_USEDEP}]
+			>=media-gfx/graphite2-1.3.15:=[${MULTILIB_USEDEP}]
 		)
 	)
 	system-icu? (
-		>=dev-libs/icu-77.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
-		dev-libs/icu:=
+		>=dev-libs/icu-77.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	)
 	system-jpeg? (
-		>=media-libs/libjpeg-turbo-9999[${MULTILIB_USEDEP}]
-		media-libs/libjpeg-turbo:=
+		>=media-libs/libjpeg-turbo-9999:=[${MULTILIB_USEDEP}]
 	)
 	system-libevent? (
-		>=dev-libs/libevent-2.1.12:0[${MULTILIB_USEDEP},threads(+)]
-		dev-libs/libevent:=
+		>=dev-libs/libevent-2.1.12:=[${MULTILIB_USEDEP},threads(+)]
 	)
 	system-libvpx? (
-		>=media-libs/libvpx-1.15.1:0[${MULTILIB_USEDEP},postproc]
-		media-libs/libvpx:=
+		>=media-libs/libvpx-1.15.1:=[${MULTILIB_USEDEP},postproc]
 	)
 	system-pipewire? (
-		>=media-video/pipewire-1.4.2[${MULTILIB_USEDEP}]
-		media-video/pipewire:=
+		>=media-video/pipewire-1.4.2:=[${MULTILIB_USEDEP}]
 	)
 	system-png? (
-		>=media-libs/libpng-1.6.57:0[${MULTILIB_USEDEP},apng]
-		media-libs/libpng:=
+		>=media-libs/libpng-1.6.57:=[${MULTILIB_USEDEP},apng]
 	)
 	system-webp? (
-		>=media-libs/libwebp-9999:0[${MULTILIB_USEDEP}]
-		media-libs/libwebp:=
+		>=media-libs/libwebp-9999:=[${MULTILIB_USEDEP}]
 	)
 	wayland? (
-		>=media-libs/libepoxy-1.5.10-r1
-		>=x11-libs/gtk+-${GTK3_PV}:3[${MULTILIB_USEDEP},wayland]
+		>=media-libs/libepoxy-1.5.10-r1:=
+		>=x11-libs/gtk+-${GTK3_PV}:3=[${MULTILIB_USEDEP},wayland]
 	)
 	wifi? (
 		kernel_linux? (
@@ -769,21 +742,20 @@ CDEPEND="
 				>=net-misc/networkmanager-9999[${MULTILIB_USEDEP}]
 				>=net-misc/connman-2.0[networkmanager]
 			)
-			>=sys-apps/dbus-${DBUS_PV}[${MULTILIB_USEDEP}]
+			>=sys-apps/dbus-${DBUS_PV}:=[${MULTILIB_USEDEP}]
 		)
 	)
 	X? (
-		>=x11-libs/gtk+-${GTK3_PV}:3[${MULTILIB_USEDEP},X]
-		>=x11-libs/libXrandr-1.4.0[${MULTILIB_USEDEP}]
-		virtual/opengl[${MULTILIB_USEDEP}]
-		x11-libs/cairo[${MULTILIB_USEDEP},X]
-		x11-libs/libX11[${MULTILIB_USEDEP}]
-		x11-libs/libXcomposite[${MULTILIB_USEDEP}]
-		x11-libs/libXdamage[${MULTILIB_USEDEP}]
-		x11-libs/libXext[${MULTILIB_USEDEP}]
-		x11-libs/libXfixes[${MULTILIB_USEDEP}]
-		x11-libs/libxcb[${MULTILIB_USEDEP}]
-		x11-libs/libxcb:=
+		>=x11-libs/gtk+-${GTK3_PV}:3=[${MULTILIB_USEDEP},X]
+		>=x11-libs/libXrandr-1.4.0:=[${MULTILIB_USEDEP}]
+		virtual/opengl:*[${MULTILIB_USEDEP}]
+		x11-libs/cairo:=[${MULTILIB_USEDEP},X]
+		x11-libs/libX11:=[${MULTILIB_USEDEP}]
+		x11-libs/libXcomposite:=[${MULTILIB_USEDEP}]
+		x11-libs/libXdamage:=[${MULTILIB_USEDEP}]
+		x11-libs/libXext:=[${MULTILIB_USEDEP}]
+		x11-libs/libXfixes:=[${MULTILIB_USEDEP}]
+		x11-libs/libxcb:=[${MULTILIB_USEDEP}]
 	)
 "
 
@@ -793,32 +765,32 @@ RDEPEND+="
 	${CDEPEND}
 	${UDEV_RDEPEND}
 	!www-client/firefox:rapid
-	sys-kernel/mitigate-id
-	virtual/patent-status[patent_status_nonfree=]
+	sys-kernel/mitigate-id:*
+	virtual/patent-status:*[patent_status_nonfree=]
 	cups? (
-		>=net-print/cups-9999[${MULTILIB_USEDEP}]
+		>=net-print/cups-9999:=[${MULTILIB_USEDEP}]
 	)
 	jack? (
-		virtual/jack[${MULTILIB_USEDEP}]
+		virtual/jack:*[${MULTILIB_USEDEP}]
 	)
 	libcanberra? (
 		!pulseaudio? (
 			alsa? (
-				media-libs/libcanberra[${MULTILIB_USEDEP},alsa]
+				media-libs/libcanberra:=[${MULTILIB_USEDEP},alsa]
 			)
 		)
 		pulseaudio? (
-			media-libs/libcanberra[${MULTILIB_USEDEP},pulseaudio]
+			media-libs/libcanberra:=[${MULTILIB_USEDEP},pulseaudio]
 		)
 	)
 	libnotify? (
-		x11-libs/libnotify
+		x11-libs/libnotify:=
 	)
 	libsecret? (
-		app-crypt/libsecret[${MULTILIB_USEDEP}]
+		app-crypt/libsecret:=[${MULTILIB_USEDEP}]
 	)
 	openh264? (
-		>=media-libs/openh264-2.6.0:*[${MULTILIB_USEDEP},plugin]
+		>=media-libs/openh264-2.6.0:=[${MULTILIB_USEDEP},plugin]
 	)
 	pulseaudio? (
 		|| (
@@ -845,22 +817,17 @@ RDEPEND+="
 		)
 	)
 	vaapi? (
-		>=media-libs/libva-9999[${MULTILIB_USEDEP},drm(+),X?,wayland?]
+		>=media-libs/libva-9999:=[${MULTILIB_USEDEP},drm(+),X?,wayland?]
 	)
 "
 
 DEPEND+="
 	${CDEPEND}
-	pulseaudio? (
-		|| (
-			>=media-sound/apulse-0.1.12-r4[${MULTILIB_USEDEP},sdk]
-			media-sound/pulseaudio[${MULTILIB_USEDEP}]
-		)
-	)
+	${GAMEPAD_DEPEND}
 	X? (
-		x11-base/xorg-proto
-		x11-libs/libICE[${MULTILIB_USEDEP}]
-		x11-libs/libSM[${MULTILIB_USEDEP}]
+		x11-base/xorg-proto:=
+		x11-libs/libICE:=[${MULTILIB_USEDEP}]
+		x11-libs/libSM:=[${MULTILIB_USEDEP}]
 	)
 "
 
@@ -869,16 +836,15 @@ gen_llvm_bdepend() {
 	for LLVM_SLOT in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${LLVM_SLOT}? (
-				llvm-core/clang:${LLVM_SLOT}[${MULTILIB_USEDEP}]
-				llvm-core/lld:${LLVM_SLOT}
-				llvm-core/llvm:${LLVM_SLOT}[${MULTILIB_USEDEP}]
+				=llvm-core/clang-${LLVM_SLOT}*:=[${MULTILIB_USEDEP}]
+				=llvm-core/lld-${LLVM_SLOT}*:=
+				=llvm-core/llvm-${LLVM_SLOT}*:=[${MULTILIB_USEDEP}]
 				pgo? (
-					=llvm-runtimes/compiler-rt-sanitizers-${LLVM_SLOT}*[${MULTILIB_USEDEP},profile]
-					llvm-runtimes/compiler-rt-sanitizers:=
+					=llvm-runtimes/compiler-rt-sanitizers-${LLVM_SLOT}*:=[${MULTILIB_USEDEP},profile]
 				)
 			)
 			wasm-sandbox? (
-				llvm-core/lld:${LLVM_SLOT}
+				=llvm-core/lld-${LLVM_SLOT}*:=
 			)
 		"
 	done
@@ -898,7 +864,6 @@ GCC_BDEPEND="
 # The >=2.0 of mold is used for legal reasons.
 BDEPEND+="
 	$(gen_llvm_bdepend)
-	${GAMEPAD_BDEPEND}
 	${GCC_BDEPEND}
 	${PYTHON_DEPS}
 	${RUST_CDEPEND}

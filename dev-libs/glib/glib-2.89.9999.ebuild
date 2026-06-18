@@ -2,6 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
+
+# See also libsysprof_api_version
+
 PYTHON_REQ_USE="xml(+)"
 PYTHON_COMPAT=( python3_{11..14} )
 
@@ -13,9 +16,9 @@ INTROSPECTION_BUILD_DIR="${WORKDIR}/${INTROSPECTION_P}-build"
 
 inherit dot-a eapi9-ver gnome.org gnome2-utils linux-info meson-multilib multilib python-any-r1 toolchain-funcs xdg
 
-FALLBACK_COMMIT="e7e0a18fbbf079c29c849d15d558aad45d96f530" # Tue, 16 Jun 2026 17:24:11 -0400
-
-if ! [[ "${PV}" =~ "9999" ]] ; then
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="bd3322219e6ed895d6f81e5a3c575e41a34875a5" # Tue, 16 Jun 2026 17:24:11 -0400
+else
 	SRC_URI="
 		${SRC_URI}
 	"
@@ -45,20 +48,20 @@ RESTRICT="!test? ( test )"
 RDEPEND="
 	!<dev-libs/gobject-introspection-${INTROSPECTION_PV}
 	!<dev-util/gdbus-codegen-${PV}
-	>=virtual/libiconv-0-r1[${MULTILIB_USEDEP}]
+	>=virtual/libiconv-0-r1:*[${MULTILIB_USEDEP}]
 	>=dev-libs/libpcre2-10.45:0=[${MULTILIB_USEDEP},unicode(+),static-libs?]
 	>=dev-libs/libffi-3.0.13-r1:=[${MULTILIB_USEDEP}]
-	>=virtual/zlib-1.3.2-r1:=[${MULTILIB_USEDEP}]
-	>=virtual/libintl-0-r2[${MULTILIB_USEDEP}]
-	kernel_linux? ( >=sys-apps/util-linux-2.23[${MULTILIB_USEDEP}] )
-	selinux? ( >=sys-libs/libselinux-2.2.2-r5[${MULTILIB_USEDEP}] )
-	xattr? ( !elibc_glibc? ( >=sys-apps/attr-2.4.47-r1[${MULTILIB_USEDEP}] ) )
-	elf? ( virtual/libelf:0= )
-	sysprof? ( >=dev-util/sysprof-capture-3.40.1:4[${MULTILIB_USEDEP}] )
+	>=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}]
+	>=virtual/libintl-0-r2:*[${MULTILIB_USEDEP}]
+	kernel_linux? ( >=sys-apps/util-linux-2.23:=[${MULTILIB_USEDEP}] )
+	selinux? ( >=sys-libs/libselinux-2.2.2-r5:=[${MULTILIB_USEDEP}] )
+	xattr? ( !elibc_glibc? ( >=sys-apps/attr-2.4.47-r1:=[${MULTILIB_USEDEP}] ) )
+	elf? ( virtual/libelf:= )
+	sysprof? ( dev-util/sysprof-capture:=[${MULTILIB_USEDEP}] )
 "
 DEPEND="
 	${RDEPEND}
-	systemtap? ( >=dev-debug/systemtap-1.3 )
+	systemtap? ( >=dev-debug/systemtap-1.3:= )
 "
 # libxml2 used for optional tests that get automatically skipped
 BDEPEND="

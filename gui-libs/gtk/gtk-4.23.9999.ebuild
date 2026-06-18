@@ -54,67 +54,67 @@ IUSE+=" aqua broadway cloudproviders colord cups examples gstreamer gtk-doc +int
 #     on wd40 profiles with librsvg[tools]), bug #547710
 # NOTE: Support was added to build against both cups2 and cups3
 COMMON_DEPEND="
-	~dev-libs/glib-2.89.9999:2
-	>=x11-libs/cairo-9999[aqua?,glib,svg(+),X?]
-	>=x11-libs/pango-1.57.1[introspection?]
-	>=dev-libs/fribidi-1.0.6
+	~dev-libs/glib-2.89.9999:=
+	>=x11-libs/cairo-9999:=[aqua?,glib,svg(+),X?]
+	>=x11-libs/pango-1.57.1:=[introspection?]
+	>=dev-libs/fribidi-1.0.6:=
 	>=media-libs/harfbuzz-9999:=
-	>=x11-libs/gdk-pixbuf-2.30:2[introspection?]
+	>=x11-libs/gdk-pixbuf-2.30:=[introspection?]
 	>=media-libs/libpng-1.6.57:=
 	>=media-libs/tiff-9999:=
 	>=media-libs/libjpeg-turbo-9999:=
-	>=gnome-base/librsvg-2.48:2
-	>=media-libs/libepoxy-1.4[egl(+),X(+)?]
-	>=media-libs/graphene-1.10.0[introspection?]
-	app-text/iso-codes
-	x11-misc/shared-mime-info
+	>=gnome-base/librsvg-2.48:=
+	>=media-libs/libepoxy-1.4:=[egl(+),X(+)?]
+	>=media-libs/graphene-1.10.0:=[introspection?]
+	app-text/iso-codes:=
+	x11-misc/shared-mime-info:=
 
-	cloudproviders? ( >=net-libs/libcloudproviders-0.3.1 )
-	colord? ( >=x11-misc/colord-0.1.9:0= )
-	cups? ( >=net-print/cups-9999 )
-	examples? ( gnome-base/librsvg:2 )
+	cloudproviders? ( >=net-libs/libcloudproviders-0.3.1:= )
+	colord? ( >=x11-misc/colord-0.1.9:= )
+	cups? ( >=net-print/cups-9999:= )
+	examples? ( gnome-base/librsvg:= )
 	gstreamer? (
-		>=media-libs/gstreamer-1.24.0:1.0
-		>=media-libs/gst-plugins-bad-1.24.0:1.0
+		>=media-libs/gstreamer-1.24.0:=
+		>=media-libs/gst-plugins-bad-1.24.0:=
 		|| (
-			>=media-libs/gst-plugins-base-1.24.0:1.0[gles2]
-			>=media-libs/gst-plugins-base-1.24.0:1.0[opengl]
+			>=media-libs/gst-plugins-base-1.24.0:=[gles2]
+			>=media-libs/gst-plugins-base-1.24.0:=[opengl]
 		)
 	)
 	introspection? ( >=dev-libs/gobject-introspection-1.84:= )
 	vulkan? (
 		>=media-libs/vulkan-loader-1.3:=[wayland?,X?]
-		>=media-libs/mesa-23.0.4[vulkan]
+		>=media-libs/mesa-23.0.4:=[vulkan]
 		)
 	wayland? (
-		>=dev-libs/wayland-1.24.0
-		>=dev-libs/wayland-protocols-1.44
-		>=media-libs/mesa-23.0.4[wayland]
-		>=x11-libs/libxkbcommon-0.2
+		>=dev-libs/wayland-1.24.0:=
+		>=dev-libs/wayland-protocols-1.44:=
+		>=media-libs/mesa-23.0.4:=[wayland]
+		>=x11-libs/libxkbcommon-0.2:=
 	)
 	X? (
-		media-libs/fontconfig
-		>=media-libs/mesa-23.0.4[X(+)]
-		x11-libs/libX11
-		>=x11-libs/libXi-1.8
-		x11-libs/libXext
-		>=x11-libs/libXrandr-1.5
-		x11-libs/libXcursor
-		x11-libs/libXfixes
-		x11-libs/libXdamage
-		x11-libs/libXinerama
+		media-libs/fontconfig:=
+		>=media-libs/mesa-23.0.4:=[X(+)]
+		x11-libs/libX11:=
+		>=x11-libs/libXi-1.8:=
+		x11-libs/libXext:=
+		>=x11-libs/libXrandr-1.5:=
+		x11-libs/libXcursor:=
+		x11-libs/libXfixes:=
+		x11-libs/libXdamage:=
+		x11-libs/libXinerama:=
 	)
 "
 DEPEND="${COMMON_DEPEND}
 	kernel_linux? (
-		>=x11-libs/libdrm-2.4.132
-		sys-kernel/linux-headers
+		>=x11-libs/libdrm-2.4.132:=
+		sys-kernel/linux-headers:=
 	)
-	sysprof? ( >=dev-util/sysprof-capture-3.40.1:4 )
-	X? ( x11-base/xorg-proto )
+	sysprof? ( >=dev-util/sysprof-capture-3.40.1:= )
+	X? ( x11-base/xorg-proto:= )
 "
 RDEPEND="${COMMON_DEPEND}
-	>=dev-util/gtk-update-icon-cache-3
+	>=dev-util/gtk-update-icon-cache-3:=
 "
 PDEPEND="
 	>=x11-themes/adwaita-icon-theme-3.14

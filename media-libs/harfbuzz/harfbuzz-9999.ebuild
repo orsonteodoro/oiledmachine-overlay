@@ -75,7 +75,11 @@ DESCRIPTION="An OpenType text shaping engine"
 HOMEPAGE="https://harfbuzz.github.io/"
 
 if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="ce1228bf5a337ebce438ab6658f13289688dd229"
 	EGIT_REPO_URI="https://github.com/harfbuzz/harfbuzz.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 	inherit git-r3
 else
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
@@ -153,46 +157,38 @@ REQUIRED_USE="
 
 RDEPEND="
 	cairo? (
-		>=x11-libs/cairo-9999[${MULTILIB_USEDEP}]
-		x11-libs/cairo:=
+		>=x11-libs/cairo-9999:=[${MULTILIB_USEDEP}]
 	)
 	chafa? (
-		>=media-gfx/chafa-1.14.0
-		media-gfx/chafa:=
+		>=media-gfx/chafa-1.14.0:=
 	)
 	glib? (
-		>=dev-libs/glib-2.80.0:2[${MULTILIB_USEDEP}]
+		>=dev-libs/glib-2.80.0:2=[${MULTILIB_USEDEP}]
 	)
 	graphite? (
-		>=media-gfx/graphite2-1.3.15[${MULTILIB_USEDEP}]
-		media-gfx/graphite2:=
+		>=media-gfx/graphite2-1.3.15:=[${MULTILIB_USEDEP}]
 	)
 	icu? (
 		system-icu? (
-			>=dev-libs/icu-9999[${MULTILIB_USEDEP}]
-			dev-libs/icu:=
+			>=dev-libs/icu-9999:=[${MULTILIB_USEDEP}]
 		)
 	)
 	introspection? (
-		>=dev-libs/gobject-introspection-1.82.0-r2
-		dev-libs/gobject-introspection:=
+		>=dev-libs/gobject-introspection-1.82.0-r2:=
 	)
 	png? (
-		>=media-libs/libpng-1.6.57[${MULTILIB_USEDEP}]
-		media-libs/libpng:=
+		>=media-libs/libpng-1.6.57:=[${MULTILIB_USEDEP}]
 	)
 	ragel? (
 		system-ragel? (
-			>=dev-util/ragel-${RAGEL_PV}
+			>=dev-util/ragel-${RAGEL_PV}:=
 		)
 	)
 	truetype? (
-		>=media-libs/freetype-9999:2[${MULTILIB_USEDEP}]
-		media-libs/freetype:=
+		>=media-libs/freetype-9999:2=[${MULTILIB_USEDEP}]
 	)
 	zlib? (
-		virtual/zlib[${MULTILIB_USEDEP}]
-		virtual/zlib:=
+		virtual/zlib:=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
