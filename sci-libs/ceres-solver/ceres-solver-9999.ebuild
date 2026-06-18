@@ -3,12 +3,23 @@
 
 EAPI=8
 
+CXX_STANDARD=17
 PYTHON_COMPAT=( python3_{10..12} )
 DOCS_BUILDER="sphinx"
 DOCS_DEPEND="dev-python/sphinx-rtd-theme"
 DOCS_DIR="docs/source"
 
-inherit cmake-multilib cuda flag-o-matic python-any-r1 docs
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	"${LIBCXX_COMPAT_RUST[@]/llvm_slot_}"
+)
+
+inherit cmake-multilib cuda flag-o-matic libcxx-slot libstdcxx-slot python-any-r1 docs
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="8a566fcc156322160b96f8ca5f0ff755241c2d33"
@@ -31,7 +42,10 @@ HOMEPAGE="
 LICENSE="sparse? ( BSD ) !sparse? ( LGPL-2.1 )"
 SLOT="0/1"
 KEYWORDS="amd64 ~x86"
-IUSE="examples cuda gflags lapack +schur sparse test"
+IUSE+="
+examples cuda gflags lapack +schur sparse test
+ebuild_revision_1
+"
 
 REQUIRED_USE="test? ( gflags ) sparse? ( lapack ) abi_x86_32? ( !sparse !lapack )"
 RESTRICT="!test? ( test )"
@@ -61,6 +75,12 @@ DOCS=( README.md VERSION )
 PATCHES=(
 	"${FILESDIR}/${PN}-2.0.0-system-mathjax.patch"
 )
+
+pkg_setup() {
+	libcxx-slot_verify
+	libstdcxx-slot_verify
+	python-any-r1_pkg_setup
+}
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
