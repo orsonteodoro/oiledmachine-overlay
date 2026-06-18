@@ -74,7 +74,7 @@ COMMON_DEPEND="
 	curl? ( >=net-misc/curl-9999:= )
 	gpg? ( dev-cpp/gpgmepp:= )
 	jpeg? ( >=media-libs/libjpeg-turbo-9999:= )
-	jpeg2k? ( >=media-libs/openjpeg-9999:= )
+	jpeg2k? ( >=media-libs/openjpeg-2.5.4-r1:= )
 	lcms? ( >=media-libs/lcms-9999:= )
 	nss? ( >=dev-libs/nss-3.125:= )
 	png? ( >=media-libs/libpng-1.6.57:0= )
@@ -193,6 +193,7 @@ src_configure() {
 	fix_mb_len_max
 	xdg_environment_reset
 	append-lfs-flags # bug #898506
+	chkl_check_many_live_bans
 
 	# giscanner is called if cairo and introspection are enabled.
 	# In that case, PKG_CONFIG must be defined.

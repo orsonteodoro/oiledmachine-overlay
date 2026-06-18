@@ -5,7 +5,13 @@ EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data security-critical"
 
-inherit cflags-hardened cmake-multilib flag-o-matic
+CHKL_TIMESTAMPS=(
+	"media-libs/lcms-9999"
+	"media-libs/libpng-9999"
+	"media-libs/tiff-9999"
+)
+
+inherit cflags-hardened chkl cmake-multilib flag-o-matic
 
 # Make sure that test data are not newer than release;
 # otherwise we will see "Found-But-No-Test" test failures!
@@ -27,10 +33,10 @@ IUSE="doc test"
 RESTRICT="!test? ( test )"
 
 RDEPEND="
-	media-libs/lcms:2
-	media-libs/libpng:0=
-	media-libs/tiff:=
-	virtual/zlib:=
+	>=media-libs/lcms-9999:2=
+	>=media-libs/libpng-1.6.57:0=
+	>=media-libs/tiff-9999:=
+	>=virtual/zlib-1.3.2:=
 "
 DEPEND="${RDEPEND}"
 BDEPEND="doc? ( app-text/doxygen )"
@@ -55,6 +61,7 @@ src_prepare() {
 multilib_src_configure() {
 	append-lfs-flags
 	cflags-hardened_append
+	chkl_check_many_live_bans
 
 	local mycmakeargs=(
 		-DBUILD_TESTING="$(multilib_native_usex test)"
