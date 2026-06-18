@@ -272,13 +272,13 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${OPENVDB_ABIS[@]}
 ${PATENT_STATUS_IUSE[@]}
 ${ROCM_SLOTS[@]}
-+X +abi12-compat +alembic aot -asan +boost +bullet +cineon +collada
++abi12-compat +alembic aot -asan +boost +bullet clang +cineon +collada
 +color-management -cpudetection +cuda +cycles +cycles-path-guiding +dds
--debug -dbus doc +draco +elbeem +embree +ffmpeg +fftw flac +gmp -hiprt +hydra
-+jack +jemalloc +jpeg2k -llvm -man +materialx +nanovdb +ndof +nls +nvcc +openal
+-debug -dbus doc +draco +elbeem +embree +ffmpeg +fftw flac gcc +gmp -hiprt +hydra
+icc +jack +jemalloc +jpeg2k -llvm -man +materialx +nanovdb +ndof +nls +nvcc +openal
 +opencl +openexr +openimagedenoise +openimageio +opensubdiv +openvdb
 +openxr -optix +osl +pdf +pipewire +potrace +pulseaudio release -rocm -sdl
-+sndfile sycl +tbb test +tiff +usd +uv-slim -valgrind +wayland +webp
++sndfile sycl +tbb test +tiff +usd +uv-slim -valgrind +wayland +webp +X
 ebuild_revision_37
 "
 # hip is default ON upstream.
@@ -491,6 +491,17 @@ REQUIRED_USE+="
 	^^ (
 		${OPENVDB_ABIS[@]}
 	)
+	^^ (
+		clang
+		gcc
+	)
+	asan? (
+		!icc
+		|| (
+			clang
+			gcc
+		)
+	)
 	build_creator? (
 		X
 	)
@@ -508,6 +519,12 @@ REQUIRED_USE+="
 	)
 	cycles? (
 		tbb
+		x86? (
+			|| (
+				clang
+				icc
+			)
+		)
 	)
 	sycl? (
 		cycles
@@ -1183,18 +1200,23 @@ BDEPEND+="
 	>=dev-cpp/yaml-cpp-0.7.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	virtual/pkgconfig
 	asan? (
-		|| (
+		clang? (
 			$(gen_asan_bdepend)
-			(
-				>=sys-devel/gcc-${GCC_MIN}[sanitizer]
-			)
 		)
+		gcc? (
+			>=sys-devel/gcc-${GCC_MIN}:=[sanitizer]
+		)
+	)
+	clang? (
+		>=llvm-core/clang-${CLANG_MIN}:=[${LIBSTDCXX_USEDEP}]
 	)
 	cycles? (
 		x86? (
-			|| (
-				>=llvm-core/clang-${CLANG_MIN}[${LIBSTDCXX_USEDEP}]
-				dev-lang/icc
+			clang? (
+				>=llvm-core/clang-${CLANG_MIN}:=[${LIBSTDCXX_USEDEP}]
+			)
+			icc? (
+				dev-lang/icc:=
 			)
 		)
 	)
@@ -1210,6 +1232,9 @@ BDEPEND+="
 		dev-texlive/texlive-latex
 		dev-texlive/texlive-latexextra
 	)
+	gcc? (
+		>=sys-devel/gcc-${GCC_MIN}:=
+	)
 	nls? (
 		sys-devel/gettext
 	)
@@ -1220,10 +1245,6 @@ BDEPEND+="
 	)
 	test? (
 		>=dev-libs/weston-14.0.2
-	)
-	|| (
-		>=sys-devel/gcc-${GCC_MIN}
-		>=llvm-core/clang-${CLANG_MIN}[${LIBSTDCXX_USEDEP}]
 	)
 "
 
