@@ -485,6 +485,13 @@ REQUIRED_USE+="
 		clang
 		gcc
 	)
+	asan? (
+		!icc
+		|| (
+			clang
+			gcc
+		)
+	)
 	build_creator? (
 		X
 	)
@@ -1186,13 +1193,6 @@ BDEPEND+="
 	>=dev-build/cmake-3.10
 	>=dev-cpp/yaml-cpp-0.8.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	virtual/pkgconfig
-	asan? (
-		!icc
-		|| (
-			clang
-			gcc
-		)
-	)
 	asan? (
 		clang? (
 			$(gen_asan_bdepend)
