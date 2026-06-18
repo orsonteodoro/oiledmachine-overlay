@@ -371,6 +371,7 @@ set_blender_compiler() {
 		_blender_set_rocm_compiler
 	elif in_iuse icc && use icc ; then
 ewarn "You must manually switch CC/CXX to the ICC compiler."
+		which icc >/dev/null 2>&1 || die "You must set the PATH to icc as a per-package environment variable."
 	elif [[ "${CC}" =~ "clang" ]] ; then
 		use clang || die "Enable the clang USE flag"
 		local s

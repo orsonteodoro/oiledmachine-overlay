@@ -476,7 +476,7 @@ pkg_setup() {
 	python-single-r1_pkg_setup
 
 	if use icc ; then
-		which icc >/dev/null 2>&1 || die "You must set the PATH to icc as a per-package envvar"
+		which icc >/dev/null 2>&1 || die "You must set the PATH to icc as a per-package environment variable."
 	fi
 
 	if use clang ; then
