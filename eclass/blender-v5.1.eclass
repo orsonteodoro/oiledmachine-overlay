@@ -100,7 +100,6 @@ CXX_STANDARD=17
 # For the max exclusive Python supported (and others), see \
 # https://github.com/blender/blender/blob/v5.1.2/build_files/build_environment/install_linux_packages.py#L693 \
 PYTHON_COMPAT=( "python3_"{13,14} ) # >= 3.13 for Numpy 2.x
-BOOST_PV="1.82"
 CLANG_MIN="18" # C++17
 FREETYPE_PV="2.13.3"
 GCC_MIN="11" # C++17
@@ -270,7 +269,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${OPENVDB_ABIS[@]}
 ${PATENT_STATUS_IUSE[@]}
 ${ROCM_SLOTS[@]}
-+X +abi12-compat +alembic aot -asan +boost +bullet +cineon +color-management
++X +abi12-compat +alembic aot -asan +bullet +cineon +color-management
 -cpudetection +cuda +cycles +cycles-path-guiding +dds -debug -dbus doc +draco
 +elbeem +embree +ffmpeg +fftw flac +gmp heif -hiprt +hydra +jack +jpeg2k -llvm -man
 +materialx +nanovdb +ndof +nls +nvcc +openal +opencl +openexr +openimagedenoise
@@ -470,13 +469,6 @@ REQUIRED_USE+="
 	$(gen_required_use_cuda_targets)
 	$(gen_required_use_rocm_targets)
 	${PATENT_STATUS_REQUIRED_USE}
-	!boost? (
-		!alembic
-		!color-management
-		!cycles
-		!nls
-		!openvdb
-	)
 	!tbb? (
 		!cycles
 		!elbeem
@@ -587,7 +579,6 @@ REQUIRED_USE+="
 		!test
 		!valgrind
 		alembic
-		boost
 		build_creator
 		bullet
 		color-management
@@ -923,13 +914,7 @@ RDEPEND+="
 	virtual/libintl:*
 	virtual/vulkan-drivers:=
 	alembic? (
-		>=media-gfx/alembic-1.8.3:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},boost(+),hdf(+)]
-	)
-	boost? (
-		>=dev-libs/boost-${BOOST_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},nls?,threads(+)]
-		usd? (
-			>=dev-libs/boost-${BOOST_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},nls?,threads(+),python]
-		)
+		>=media-gfx/alembic-1.8.3:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},hdf(+)]
 	)
 	color-management? (
 		>=dev-libs/expat-2.7.2:=
@@ -1452,7 +1437,6 @@ eerror "You must enable the wayland USE flag or uninstall wayland."
 		-DSUPPORT_SSE2_BUILD=$(usex cpu_flags_x86_sse2)
 		-DWITH_ALEMBIC=$(usex alembic)
 		-DWITH_ASSERT_ABORT=$(usex debug)
-		-DWITH_BOOST=$(usex boost)
 		-DWITH_BULLET=$(usex bullet)
 		-DWITH_COMPILER_ASAN=$(usex asan)
 		-DWITH_CPU_SSE=$(usex cpu_flags_x86_sse2)
