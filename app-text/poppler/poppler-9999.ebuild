@@ -8,6 +8,7 @@ CFLAGS_HARDENED_TRAPV="0" # Breaks during test suite
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO ID IO MC NPD OOBR OOBW SO UAF UM"
 CXX_STANDARD=20
+PYTHON_COMPAT=( python3_{11..15} )
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -21,13 +22,26 @@ LLVM_COMPAT=(
 
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
-PYTHON_COMPAT=( python3_{11..15} )
-inherit cflags-hardened check-compiler-switch cmake flag-o-matic flag-o-matic-om
+CHKL_TIMESTAMPS=(
+	"dev-libs/glib-2.89.9999"
+	"net-misc/curl-9999"
+	"media-libs/fontconfig-9999"
+	"media-libs/freetype-2.11"
+	"media-libs/lcms-9999"
+	"media-libs/openjpeg-9999"
+	"x11-libs/cairo-9999"
+)
+
+inherit cflags-hardened check-compiler-switch chkl cmake flag-o-matic flag-o-matic-om
 inherit libcxx-slot libstdcxx-slot python-any-r1 toolchain-funcs xdg-utils
 
 if [[ ${PV} == *9999* ]] ; then
-	inherit git-r3
+	FALLBACK_COMMIT="21b70b0d62807e270994f94302e323da4f0d776b"
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/poppler/poppler"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
 	SLOT="0/9999"
 else
 	VERIFY_SIG_OPENPGP_KEY_PATH=/usr/share/openpgp-keys/aacid.asc
@@ -37,7 +51,7 @@ else
 	SRC_URI="https://poppler.freedesktop.org/${P}.tar.xz"
 	SRC_URI+=" test? ( https://gitlab.freedesktop.org/poppler/test/-/archive/${TEST_COMMIT}/test-${TEST_COMMIT}.tar.bz2 -> ${PN}-test-${TEST_COMMIT}.tar.bz2 )"
 	SRC_URI+=" verify-sig? ( https://poppler.freedesktop.org/${P}.tar.xz.sig )"
-	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc x86 ~arm64-macos ~x64-macos ~x64-solaris"
+	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
 	SLOT="0/160"   # CHECK THIS WHEN BUMPING!!! SUBSLOT IS libpoppler.so SOVERSION
 fi
 
@@ -45,34 +59,34 @@ DESCRIPTION="PDF rendering library based on the xpdf-3.0 code base"
 HOMEPAGE="https://poppler.freedesktop.org/"
 
 LICENSE="GPL-2"
-IUSE="boost cairo cjk curl +cxx debug doc gpg +introspection +jpeg +jpeg2k +lcms nss png qt6 test tiff +utils"
+IUSE+=" boost cairo cjk curl +cxx debug doc gpg +introspection +jpeg +jpeg2k +lcms nss png qt6 test tiff +utils"
 RESTRICT="!test? ( test )"
 
 COMMON_DEPEND="
-	>=media-libs/fontconfig-2.15
-	>=media-libs/freetype-2.11
-	virtual/zlib:=
+	>=media-libs/fontconfig-2.18.1:=
+	>=media-libs/freetype-9999:=
+	>=virtual/zlib-1.3.2:=
 	cairo? (
-		>=dev-libs/glib-2.80:2
-		>=x11-libs/cairo-1.18
+		>=dev-libs/glib-2.89.9999:=
+		>=x11-libs/cairo-9999:=
 		introspection? ( >=dev-libs/gobject-introspection-1.82.0-r2:= )
 	)
-	curl? ( net-misc/curl )
+	curl? ( >=net-misc/curl-9999:= )
 	gpg? ( dev-cpp/gpgmepp:= )
-	jpeg? ( >=media-libs/libjpeg-turbo-1.1.0:= )
-	jpeg2k? ( >=media-libs/openjpeg-2.3.0-r1:2= )
-	lcms? ( media-libs/lcms:2 )
-	nss? ( >=dev-libs/nss-3.98 )
-	png? ( media-libs/libpng:0= )
-	qt6? ( dev-qt/qtbase:6[gui,xml] )
-	tiff? ( media-libs/tiff:= )
+	jpeg? ( >=media-libs/libjpeg-turbo-9999:= )
+	jpeg2k? ( >=media-libs/openjpeg-9999:= )
+	lcms? ( >=media-libs/lcms-9999:= )
+	nss? ( >=dev-libs/nss-3.125:= )
+	png? ( >=media-libs/libpng-1.6.57:0= )
+	qt6? ( dev-qt/qtbase:6=[gui,xml] )
+	tiff? ( >=media-libs/tiff-9999:= )
 "
 RDEPEND="${COMMON_DEPEND}
-	cjk? ( app-text/poppler-data )
+	cjk? ( app-text/poppler-data:= )
 "
 DEPEND="${COMMON_DEPEND}
-	boost? ( >=dev-libs/boost-1.83 )
-	test? ( qt6? ( dev-qt/qtbase:6[widgets] ) )
+	boost? ( >=dev-libs/boost-1.83:= )
+	test? ( qt6? ( dev-qt/qtbase:6=[widgets] ) )
 "
 BDEPEND="${PYTHON_DEPS}
 	>=dev-util/glib-utils-2.80
@@ -88,7 +102,7 @@ DOCS=( AUTHORS NEWS README.md README-XPDF )
 PATCHES=(
 	"${FILESDIR}/${PN}-26.05.0-qt-deps.patch"
 	"${FILESDIR}/${PN}-26.01.0-respect-cflags.patch"
-	"${FILESDIR}/${PN}-0.57.0-disable-internal-jpx.patch"
+#	"${FILESDIR}/${PN}-0.57.0-disable-internal-jpx.patch"
 )
 
 pkg_setup() {
@@ -99,6 +113,9 @@ pkg_setup() {
 
 src_unpack() {
 	if [[ ${PV} == *9999* ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
 		git-r3_src_unpack
 	elif use verify-sig ; then
 		verify-sig_verify_detached "${DISTDIR}"/${P}.tar.xz{,.sig}
