@@ -1444,7 +1444,7 @@ eerror "You must enable the wayland USE flag or uninstall wayland."
 		fi
 	fi
 
-	if has "materialx" ${IUSE_EFFECTIVE} use materialx ; then
+	if in_iuse materialx && use materialx ; then
 		fix-rpath_append "/usr/lib/materialx/$(get_libdir)"
 	fi
 

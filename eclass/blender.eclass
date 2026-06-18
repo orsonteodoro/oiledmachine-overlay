@@ -199,7 +199,7 @@ blender_pkg_pretend() {
 check_embree() {
 	# There is no standard embree ebuild.  Assume other repo or local copy.
 
-	if has "embree" ${IUSE_EFFECTIVE} && use embree ; then
+	if in_iuse embree && use embree ; then
 		# The default for EMBREE_FILTER_FUNCTION is ON in embree.
 		if grep -q -F -e "EMBREE_FILTER_FUNCTION=OFF" \
 			"${EROOT}/var/db/pkg/media-libs/embree-"*"/"*".ebuild" 2>/dev/null ; then
@@ -292,7 +292,7 @@ check_portable_dependencies() {
 	# Best way to make it portable is maybe chroot or by docker container.
 	# This way you keep system packages optimized, the container or chroot
 	# image is portable.
-	if has "build_portable" ${IUSE_EFFECTIVE} ; then
+	if in_iuse build_portable ; then
 		if use build_portable ; then
 			if [[ "${ABI}" == "x86" ]] ; then
 				if [[ "${CXXFLAGS}" =~ "march=x86-64" ]] ; then
@@ -362,14 +362,17 @@ ewarn
 set_blender_compiler() {
 	export CC="$(tc-getCC)"
 	export CXX="$(tc-getCXX)"
-	if has "cuda" ${IUSE_EFFECTIVE} && use cuda ; then
+	if in_iuse cuda && use cuda ; then
 	# Autoconfigure
 		unset CC
 		unset CXX
 		unset CPP
-	elif has "rocm" ${IUSE_EFFECTIVE} && use rocm ; then
+	elif in_iuse rocm && use rocm ; then
 		_blender_set_rocm_compiler
+	elif in_iuse icc && use icc ; then
+ewarn "You must manually switch CC/CXX to the ICC compiler."
 	elif [[ "${CC}" =~ "clang" ]] ; then
+		use clang || die "Enable the clang USE flag"
 		local s
 		for s in "${LLVM_COMPAT[@]}" ; do
 			if use "llvm_slot_${s}" ; then
@@ -380,6 +383,7 @@ set_blender_compiler() {
 			fi
 		done
 	else
+		use gcc || die "Enable the clang USE gcc"
 		local x
 		for x in "${GCC_COMPAT[@]}" ; do
 			if use "${x}" ; then
@@ -1134,7 +1138,7 @@ ewarn
 			"${ESYSROOT}/usr/share/metainfo/org.blender.Blender.metainfo.xml" \
 			|| die
 	fi
-	if use cycles && has "hiprt" ${IUSE_EFFECTIVE} && use hiprt ; then
+	if use cycles && in_iuse "hiprt" && use hiprt ; then
 einfo
 einfo "To enable HIP RT which is default off, go to"
 einfo "Edit > Preferences > System > Cycles Render Devices > HIP > HIP RT"

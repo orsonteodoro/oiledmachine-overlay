@@ -181,6 +181,9 @@
     <flag name="cineon">
       Enable Cineon and DPX image format support used in the film industry.
     </flag>
+    <flag name="clang">
+      Ensure that the binary requirements are met and proper rebuild for Clang.
+    </flag>
     <flag name="collada">
       Add support for Collada interchange format through
       <pkg>media-libs/opencollada</pkg>.
@@ -232,6 +235,9 @@
     <flag name="flac">
       Adds support for FLAC lossless audio support.
     </flag>
+    <flag name="gcc">
+      Ensure that the binary requirements are met and proper rebuild for GCC.
+    </flag>
     <flag name="gmp">
       Adds Intersect (Knife) and Intersect (Boolean) to Face Tools, and the
       ability to switch between fast and the default exact solver modes for
@@ -248,6 +254,9 @@
     <flag name="ffmpeg">
       Adds support for FFMPEG enabling internal FFMPEG codecs support and
       possibly external codec support if added.
+    </flag>
+    <flag name="icc">
+      Ensure that the binary requirements are met and proper rebuild for ICC.
     </flag>
     <flag name="rocm">
       Adds support for primarily AMD GPUs via the HIP render device with the
