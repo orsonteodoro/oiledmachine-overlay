@@ -44,7 +44,7 @@ SLOT="0/1"
 KEYWORDS="amd64 ~x86"
 IUSE+="
 examples cuda gflags lapack +schur sparse test
-ebuild_revision_1
+ebuild_revision_2
 "
 
 REQUIRED_USE="test? ( gflags ) sparse? ( lapack ) abi_x86_32? ( !sparse !lapack )"
@@ -56,16 +56,16 @@ BDEPEND="${PYTHON_DEPS}
 	doc? ( <dev-libs/mathjax-3 )
 "
 RDEPEND="
-	dev-cpp/glog[gflags?,${MULTILIB_USEDEP}]
+	dev-cpp/glog:=[gflags?,${MULTILIB_USEDEP}]
 	cuda? ( dev-util/nvidia-cuda-toolkit:= )
-	lapack? ( virtual/lapack )
+	lapack? ( virtual/lapack:* )
 	sparse? (
-		sci-libs/amd
-		sci-libs/camd
-		sci-libs/ccolamd
-		sci-libs/cholmod[metis(+)]
-		sci-libs/colamd
-		sci-libs/spqr
+		sci-libs/amd:=
+		sci-libs/camd:=
+		sci-libs/ccolamd:=
+		sci-libs/cholmod:=[metis(+)]
+		sci-libs/colamd:=
+		sci-libs/spqr:=
 	)
 "
 DEPEND="${RDEPEND}"
