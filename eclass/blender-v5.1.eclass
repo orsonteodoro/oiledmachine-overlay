@@ -912,7 +912,7 @@ RDEPEND+="
 	virtual/glu:*
 	virtual/jpeg:*
 	virtual/libintl:*
-	virtual/vulkan-drivers:=
+	virtual/vulkan:=
 	alembic? (
 		>=media-gfx/alembic-1.8.3:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},hdf(+)]
 	)
