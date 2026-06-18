@@ -62,7 +62,12 @@ COMMON_DEPEND="
 	usb? ( virtual/libusb:1 )
 	X? ( x11-misc/xdg-utils )
 	xinetd? ( sys-apps/xinetd )
-	zeroconf? ( >=net-dns/avahi-0.6.31-r2[${MULTILIB_USEDEP},dbus,mdnsresponder-compat?] )
+	>=net-dns/avahi-0.6.31-r2[${MULTILIB_USEDEP},dbus,mdnsresponder-compat?]
+"
+COMMON_DEPEND_NOTES="
+	zeroconf? (
+		>=net-dns/avahi-0.6.31-r2[${MULTILIB_USEDEP},dbus,mdnsresponder-compat?]
+	)
 "
 # if libcupsfilters is installed, more tests are run. They fail without at least one of the two formats enabled.
 DEPEND="
@@ -81,9 +86,9 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.4.1-user-AR.patch"
 )
 
-MULTILIB_CHOST_TOOLS=(
-	/usr/bin/cups-config
-)
+#MULTILIB_CHOST_TOOLS=(
+#	/usr/bin/cups-config
+#)
 
 pkg_setup() {
 	if use kernel_linux; then
@@ -117,6 +122,16 @@ pkg_setup() {
 	fi
 }
 
+get_dnssd() {
+	if use mdnsresponder-compat ; then
+		echo "mdnsresponder"
+	elif use zeroconf ; then
+		echo "avahi"
+	else
+		echo "no"
+	fi
+}
+
 src_prepare() {
 	default
 
@@ -128,23 +143,22 @@ src_prepare() {
 
 	AT_M4DIR="config-scripts" eautoreconf
 
+#	local dnssd=$(get_dnssd)
+#	if [[ "${dnssd}" == "no" ]] ; then
+#		sed -i -e "\|dnssd.o \\\\|d" \
+#			"backend/Makefile" \
+#			"cups/Makefile" \
+#			|| die
+#	fi
+
 	# Custom Makefiles
 	multilib_copy_sources
-}
-
-get_dnssd() {
-	if use mdnsresponder-compat ; then
-		echo "mdnsresponder"
-	elif use zeroconf ; then
-		echo "avahi"
-	else
-		echo "no"
-	fi
 }
 
 multilib_src_configure() {
 	cflags-hardened_append
 	export DSOFLAGS="${LDFLAGS}"
+
 
 	# Explicitly specify compiler wrt bug #524340
 	#
@@ -186,7 +200,7 @@ multilib_src_configure() {
 		$(use_with systemd ondemand systemd)
 		$(multilib_native_use_enable usb libusb)
 		#$(use_with zeroconf dnssd avahi)
-		--with-dnssd=$(get_dnssd)
+#		--with-dnssd=$(get_dnssd)
 		$(multilib_is_native_abi && echo --enable-libpaper || echo --disable-libpaper)
 	)
 
@@ -258,7 +272,7 @@ multilib_src_install() {
 		insinto /usr/$(get_libdir)/pkgconfig
 		doins cups.pc
 
-		dobin cups-config
+#		dobin cups-config
 	fi
 }
 
