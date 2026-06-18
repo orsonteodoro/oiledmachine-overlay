@@ -108,7 +108,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_SLOTS[@]}
 aot +apps +built-in-weights +clang cpu cuda doc gcc openimageio rocm sycl
-ebuild_revision_12
+ebuild_revision_13
 "
 gen_required_use_cuda_targets() {
 	local x
@@ -226,17 +226,17 @@ BDEPEND+="
 	)
 	cuda? (
 		>=dev-build/cmake-3.18
-		>=dev-util/nvidia-cuda-toolkit-12.8
+		>=dev-util/nvidia-cuda-toolkit-12.8:=
 		sys-devel/binutils[gold,plugins]
 	)
 	rocm? (
 		(
 			$(gen_hip_depends)
-			sys-devel/llvm-roc
+			sys-devel/llvm-roc:=
 		)
 		>=dev-build/cmake-3.21
 		rocm_6_4? (
-			~sys-devel/llvm-roc-${HIP_6_4_VERSION}[${LIBSTDCXX_USEDEP}]
+			~sys-devel/llvm-roc-${HIP_6_4_VERSION}:=[${LIBSTDCXX_USEDEP}]
 		)
 	)
 	sycl? (
