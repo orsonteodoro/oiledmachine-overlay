@@ -161,13 +161,11 @@ CHKL_TIMESTAMPS=(
 )
 
 GLIB_VERSIONS=(
-	"2.84.4"
-	"2.82.5"
+	"2.89.9999"
 )
 
 GOBJECT_INTROSPECTION_VERSIONS=(
-	"1.84"
-	"1.82"
+	"1.86"
 )
 
 LANGS=(
@@ -888,13 +886,7 @@ gen_glib_rdepend() {
 			(
 				~dev-util/glib-utils-${pv}:=
 				~dev-libs/glib-${pv}:=[${MULTILIB_USEDEP}]
-				introspection? (
-					=dev-libs/gobject-introspection-1.${minor}*:=[${PYTHON_SINGLE_USEDEP}]
-					=dev-libs/gobject-introspection-common-1.${minor}*:=
-				)
-				geolocation? (
-					~dev-util/gdbus-codegen-${pv}:=
-				)
+				~dev-util/gdbus-codegen-${pv}:=
 			)
 		"
 	done
