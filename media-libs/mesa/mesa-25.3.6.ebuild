@@ -331,10 +331,6 @@ BDEPEND="
 				dev-lang/rust-bin:1.86.0
 			)
 		)
-		|| (
-			dev-lang/rust:=
-			dev-lang/rust-bin:=
-		)
 	)
 	video_cards_asahi? (
 		${CLC_DEPSTRING}
@@ -363,10 +359,6 @@ BDEPEND="
 					dev-lang/rust:1.86.0
 					dev-lang/rust-bin:1.86.0
 				)
-			)
-			|| (
-				dev-lang/rust:=
-				dev-lang/rust-bin:=
 			)
 		)
 	)
