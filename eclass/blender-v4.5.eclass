@@ -273,12 +273,12 @@ ${OPENVDB_ABIS[@]}
 ${PATENT_STATUS_IUSE[@]}
 ${ROCM_SLOTS[@]}
 +abi12-compat +alembic aot -asan +boost +bullet clang +cineon +collada
-+color-management -cpudetection +cuda +cycles +cycles-path-guiding +dds
--debug -dbus doc +draco +elbeem +embree +ffmpeg +fftw flac gcc +gmp -hiprt +hydra
-icc +jack +jemalloc +jpeg2k -llvm -man +materialx +nanovdb +ndof +nls +nvcc +openal
-+opencl +openexr +openimagedenoise +openimageio +opensubdiv +openvdb
-+openxr -optix +osl +pdf +pipewire +potrace +pulseaudio release -rocm -sdl
-+sndfile sycl +tbb test +tiff +usd +uv-slim -valgrind +wayland +webp +X
++color-management -cpudetection +cuda +cycles +cycles-path-guiding +dds -debug
+-dbus doc +draco +elbeem +embree +ffmpeg +fftw flac gcc +gmp -hiprt +hydra icc
++jack +jemalloc +jpeg2k -llvm -man +materialx +nanovdb +ndof +nls +nvcc +openal
++opencl +openexr +openimagedenoise +openimageio +opensubdiv +openvdb +openxr
+-optix +osl +pdf +pipewire +potrace +pulseaudio release -rocm -sdl +sndfile sycl
++tbb test +tiff +usd +uv-slim -valgrind +wayland +webp +X
 ebuild_revision_37
 "
 # hip is default ON upstream.

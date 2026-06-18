@@ -21,14 +21,14 @@
 # Keep dates and links updated to speed up releases and decrease maintenance time cost.
 # No need to look past those dates.
 
-# Last change was Oct 20, 2025 for:
+# Last change was Mar 9, 2026 for:
 # https://github.com/blender/blender/blob/v5.1.2/build_files/build_environment/install_linux_packages.py
 
-# Last change was Oct 3, 2025 for:
+# Last change was Jan 28, 2026 for:
 # https://github.com/blender/blender/blob/v5.1.2/build_files/cmake/config/blender_release.cmake
 # used for REQUIRED_USE section.
 
-# Last change was Oct 7, 2025 for:
+# Last change was Jan 28, 2026 for:
 # https://github.com/blender/blender/blob/v5.1.2/build_files/build_environment/cmake/versions.cmake
 # used for *DEPENDs.
 
@@ -271,11 +271,11 @@ ${PATENT_STATUS_IUSE[@]}
 ${ROCM_SLOTS[@]}
 +abi12-compat +alembic aot -asan +bullet +cineon clang +color-management
 -cpudetection +cuda +cycles +cycles-path-guiding +dds -debug -dbus doc +draco
-+elbeem +embree +ffmpeg +fftw flac gcc +gmp heif -hiprt icc +hydra +jack +jpeg2k -llvm -man
-+materialx +nanovdb +ndof +nls +nvcc +openal +opencl +openexr +openimagedenoise
-+openimageio +opensubdiv +openvdb +openxr -optix +osl +pdf +pipewire +potrace
-+pulseaudio release -rocm +rubberband -sdl +sndfile sycl +tbb +tbb-malloc-proxy
-test +tiff +usd +uv-slim -valgrind +wayland +webp +X
++elbeem +embree +ffmpeg +fftw flac gcc +gmp heif -hiprt icc +hydra +jack +jpeg2k
+-llvm -man +materialx +nanovdb +ndof +nls +nvcc +openal +opencl +openexr
++openimagedenoise +openimageio +opensubdiv +openvdb +openxr -optix +osl +pdf
++pipewire +potrace +pulseaudio release -rocm +rubberband -sdl +sndfile sycl +tbb
++tbb-malloc-proxy test +tiff +usd +uv-slim -valgrind +wayland +webp +X
 ebuild_revision_37
 "
 # hip is default ON upstream.
