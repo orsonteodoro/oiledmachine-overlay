@@ -1168,7 +1168,8 @@ RDEPEND+="
 "
 DEPEND+="
 	${RDEPEND}
-	>=dev-cpp/eigen-3.3.7:3=
+	>=dev-cpp/eigen-3.3.7:=
+	>=dev-util/vulkan-headers-${VULKAN_PV}:=
 "
 BDEPEND+="
 	$(python_gen_cond_dep '
@@ -1180,8 +1181,6 @@ BDEPEND+="
 	')
 	>=dev-build/cmake-3.10
 	>=dev-cpp/yaml-cpp-0.7.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	dev-cpp/yaml-cpp:=
-	>=dev-util/vulkan-headers-${VULKAN_PV}
 	virtual/pkgconfig
 	asan? (
 		|| (
