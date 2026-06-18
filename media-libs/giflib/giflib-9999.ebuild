@@ -1,0 +1,106 @@
+# Copyright 1999-2025 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+inherit flag-o-matic multilib-minimal toolchain-funcs
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="a8e3114a81f0987a61d06a41c99fd7cc2d58232c"
+	EGIT_BRANCH="master"
+	EGIT_REPO_URI="https://git.code.sf.net/p/giflib/code giflib-code"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~x64-solaris"
+	SRC_URI="https://downloads.sourceforge.net/giflib/${P}.tar.gz"
+fi
+
+DESCRIPTION="Library to handle, display and manipulate GIF images"
+HOMEPAGE="https://sourceforge.net/projects/giflib/"
+
+LICENSE="MIT"
+SLOT="0/7"
+IUSE+=" doc static-libs"
+
+BDEPEND="
+	app-text/xmlto
+	doc? (
+		virtual/imagemagick-tools
+	)
+"
+
+PATCHES=(
+	"${FILESDIR}/giflib-a8e3114-verbose-tests.patch"
+)
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+}
+
+src_prepare() {
+	default
+
+	# We don't want docs to be built unconditionally
+	sed -i -e '/$(MAKE) -C doc/d' Makefile || die
+
+	multilib_copy_sources
+}
+
+multilib_src_compile() {
+	append-lfs-flags
+
+	emake \
+		AR="$(tc-getAR)" \
+		CC="$(tc-getCC)" \
+		CFLAGS="${CFLAGS} -std=gnu99 -fPIC" \
+		LDFLAGS="${LDFLAGS}" \
+		OFLAGS="" \
+		all
+
+	emake -C doc manpages
+	if use doc && multilib_is_native_abi; then
+		emake -C doc
+	fi
+}
+
+multilib_src_test() {
+	emake -j1 check
+}
+
+multilib_src_install() {
+	emake \
+		DESTDIR="${D}" \
+		PREFIX="${EPREFIX}/usr" \
+		LIBDIR="${EPREFIX}/usr/$(get_libdir)" \
+		install
+
+	if ! use static-libs ; then
+		find "${ED}" -name "*.a" -delete || die
+	fi
+
+	if use doc && multilib_is_native_abi; then
+		docinto html
+		dodoc doc/*.html
+	fi
+}
+
+multilib_src_install_all() {
+	local DOCS=( ChangeLog NEWS README.adoc TODO )
+	einstalldocs
+	if use doc ; then
+		docinto html
+		dodoc -r doc/{gifstandard,whatsinagif}
+	fi
+	mv "${ED}/usr/share/doc/giflib" "${ED}/usr/share/doc/${P}" || die
+}

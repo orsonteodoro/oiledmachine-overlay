@@ -1,0 +1,69 @@
+--- a/tests/makefile.orig	2026-06-18 08:31:20.199926884 -0700
++++ b/tests/makefile	2026-06-18 08:33:33.823847328 -0700
+@@ -44,13 +44,13 @@ GIFS := $(shell ls ../pic/*.gif)
+ # Test decompression and rendering by unpacking images,
+ # converting them to RGB, and comparing that result to a check file.
+ render-regress: $(GIF2RGB)
+-	@for test in $(GIFS); \
++	for test in $(GIFS); \
+ 	do \
+ 	    stem=`basename $${test} | sed -e "s/.gif$$//"`; \
+ 	    $(UTILS)/gif2rgb -1 <$${test} | ./cmpdiffer "gif2rgb: test of $${test}" $${stem}.rgb; \
+ 	done
+ render-rebuild: $(GIF2RGB)
+-	@for test in $(GIFS); do \
++	for test in $(GIFS); do \
+ 		stem=`basename $${test} | sed -e "s/.gif$$//"`; \
+ 		echo "Remaking $${stem}.rgb"; \
+ 		$(UTILS)/gif2rgb -1 -o $${stem}.rgb $${test}; \
+@@ -73,7 +73,7 @@ gifbuild-regress:
+ 	@rm -f $@.fire1.ico  $@.fire2.ico $@.fire2.gif
+ 
+ gifclrmp-regress:
+-	@for test in $(GIFS); \
++	for test in $(GIFS); \
+ 	do \
+ 	    stem=`basename $${test} | sed -e "s/.gif$$//"`; \
+ 	    if ! $(UTILS)/gifclrmp <$${test} > $@.$${stem}.regress 2>&1; \
+@@ -85,7 +85,7 @@ gifclrmp-regress:
+ 	done
+ 	@rm -f $@.*.regress
+ gifclrmp-rebuild:
+-	@for test in $(GIFS); do \
++	for test in $(GIFS); do \
+ 		stem=`basename $${test} | sed -e "s/.gif$$//"`; \
+ 		echo "Remaking $${stem}.map"; \
+ 		$(UTILS)/gifclrmp <$${test} >$${stem}.map; \
+@@ -98,7 +98,7 @@ gifecho-regress:
+ 	@$(UTILS)/gifecho -t "foobar" | $(UTILS)/gifbuild -d | ./tapdiffer "gifecho: Testing gifecho behavior" foobar.ico
+ 
+ giffilter-regress: $(GIF2RGB)
+-	@for test in $(GIFS); \
++	for test in $(GIFS); \
+ 	do \
+ 	    stem=`basename $${test} | sed -e "s/.gif$$//"`; \
+ 	    $(UTILS)/giffilter <$${test} | $(UTILS)/gif2rgb | ./cmpdiffer "giffiltr: copy of $${test}" "$${stem}.rgb"; \
+@@ -125,20 +125,20 @@ gifinto-regress:
+ 	@rm -f $@.giflib.tmp
+ 
+ gifsponge-regress: $(GIF2RGB)
+-	@for test in $(GIFS); \
++	for test in $(GIFS); \
+ 	do \
+ 	    stem=`basename $${test} | sed -e "s/.gif$$//"`; \
+ 	    $(UTILS)/gifsponge <$${test} | $(UTILS)/gif2rgb | ./cmpdiffer "gifsponge: sink of $${test}" $${stem}.rgb; \
+ 	done
+ 
+ giftext-regress:
+-	@for test in $(GIFS); \
++	for test in $(GIFS); \
+ 	do \
+ 	    stem=`basename $${test} | sed -e "s/.gif$$//"`; \
+ 	    $(UTILS)/giftext <$${test} | ./cmpdiffer "text dump of $${test}" $${stem}.dmp; \
+ 	done
+ giftext-rebuild:
+-	@for test in $(GIFS); do \
++	for test in $(GIFS); do \
+ 		stem=`basename $${test} | sed -e "s/.gif$$//"`; \
+ 		echo "Remaking $${stem}.dmp"; \
+ 		$(UTILS)/giftext <$${test} >$${stem}.dmp; \
