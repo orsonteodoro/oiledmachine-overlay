@@ -20,7 +20,7 @@ ONETBB_SLOT="0"
 OPENVDB_APIS=( {12..9} )
 OPENVDB_APIS_=( "${OPENVDB_APIS[@]/#/abi}" )
 OPENVDB_APIS_=( "${OPENVDB_APIS_[@]/%/-compat}" )
-PYTHON_COMPAT=( "python3_"{7..13} )
+PYTHON_COMPAT=( "python3_"{7..14} )
 QT5_PV="5.15"
 QT6_PV="6.6"
 TEST_OEXR_IMAGE_COMMIT="df16e765fee28a947244657cae3251959ae63c00" # committer-date:<=2024-05-01
@@ -138,7 +138,7 @@ ${CPU_FEATURES[@]%:*}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${OPENVDB_APIS_[@]}
 aom avif clang color-management cuda dds dicom +doc ffmpeg field3d fits
-gif gui heif icc j2c jpeg2k jxl opencv opengl openvdb png ptex +python qt5 +qt6 raw
+gcc gif gui heif icc j2c jpeg2k jxl opencv opengl openvdb png ptex +python qt5 +qt6 raw
 rav1e tbb tools +truetype wayland webp X
 ebuild_revision_45
 "
@@ -165,6 +165,11 @@ gen_llvm_required_use() {
 REQUIRED_USE="
 	$(gen_abi_compat_required_use)
 	$(gen_llvm_required_use)
+	^^ (
+		clang
+		gcc
+		icc
+	)
 	aom? (
 		avif
 	)
@@ -241,9 +246,7 @@ gen_openexr_pairs() {
 		echo "
 			(
 				~media-libs/openexr-${openexr_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-				media-libs/openexr:=
 				~dev-libs/imath-${imath_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-				dev-libs/imath:=
 			)
 		"
 	done
@@ -251,40 +254,25 @@ gen_openexr_pairs() {
 
 # Depends Mar 16, 2024
 RDEPEND+="
-	(
-		>=dev-libs/boost-1.53[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-libs/boost:=
-	)
-	(
-		>=dev-libs/libfmt-7.0.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-libs/libfmt:=
-	)
-	(
-		>=dev-libs/pugixml-1.8[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-libs/pugixml:=
-	)
-	(
-		>=media-libs/tiff-4.0:0
-		media-libs/tiff:=
-	)
-	(
-		>=virtual/zlib-1.2.7
-		virtual/zlib:=
-	)
-	>=dev-cpp/robin-map-0.6.2
-	>=media-libs/libjpeg-turbo-2.1
-	virtual/jpeg:0
+	>=dev-libs/boost-1.53:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-libs/libfmt-7.0.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-libs/pugixml-1.8:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=media-libs/tiff-4.0:=
+	>=virtual/zlib-1.2.7:=
+	>=dev-cpp/robin-map-0.6.2:=
+	>=media-libs/libjpeg-turbo-2.1:=
+	virtual/jpeg:*
 	color-management? (
-		>=media-libs/opencolorio-2.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		media-libs/opencolorio:=
+		>=media-libs/opencolorio-2.2:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	dds? (
-		>=media-libs/libsquish-1.13
+		>=media-libs/libsquish-1.13:=
 	)
 	dicom? (
-		>=sci-libs/dcmtk-3.6.1
+		>=sci-libs/dcmtk-3.6.1:=
 	)
 	ffmpeg? (
+		media-video/ffmpeg:=
 		|| (
 			media-video/ffmpeg:56.58.58
 			media-video/ffmpeg:57.59.59
@@ -298,132 +286,119 @@ RDEPEND+="
 			media-video/ffmpeg:0/59.61.61
 			media-video/ffmpeg:0/60.62.62
 		)
-		media-video/ffmpeg:=
 	)
 	field3d? (
-		>=media-libs/Field3D-1.7.3
-		media-libs/Field3D:=
+		>=media-libs/Field3D-1.7.3:=
 	)
 	fits? (
 		sci-libs/cfitsio:=
 	)
 	gif? (
-		>=media-libs/giflib-5.0:0
-		media-libs/giflib:=
+		>=media-libs/giflib-5.0:=
 	)
 	heif? (
-		>=media-libs/libheif-1.11[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV}]
+		>=media-libs/libheif-1.11:=[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV}]
 		avif? (
-			>=media-libs/libheif-1.11[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV},aom?,rav1e?]
+			>=media-libs/libheif-1.11:=[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV},aom?,rav1e?]
 		)
-		media-libs/libheif:=
 	)
 	j2c? (
-		>=media-libs/jph-0.21.2
-		media-libs/jph:=
+		>=media-libs/jph-0.21.2:=
 	)
 	jpeg2k? (
-		>=media-libs/openjpeg-2.0:2
-		media-libs/openjpeg:=
+		>=media-libs/openjpeg-2.0:=
 	)
 	jxl? (
-		>=media-libs/libjxl-0.10.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		media-libs/libjxl:=
+		>=media-libs/libjxl-0.10.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	opencv? (
-		>=media-libs/opencv-4[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		media-libs/opencv:=
+		>=media-libs/opencv-4:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	opengl? (
 		media-libs/glew:=
-		virtual/glu
-		virtual/opengl
+		virtual/glu:*
+		virtual/opengl:*
 	)
 	openvdb? (
 		abi12-compat? (
+			media-gfx/openvdb:=
 			|| (
 				=media-gfx/openvdb-14*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi12-compat]
 				=media-gfx/openvdb-13*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi12-compat]
 				=media-gfx/openvdb-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi12-compat]
 			)
-			media-gfx/openvdb:=
 		)
 		abi11-compat? (
+			media-gfx/openvdb:=
 			|| (
 				=media-gfx/openvdb-13*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi11-compat]
 				=media-gfx/openvdb-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi11-compat]
 				=media-gfx/openvdb-11*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi11-compat]
 			)
-			media-gfx/openvdb:=
 		)
 		abi10-compat? (
+			media-gfx/openvdb:=
 			|| (
 				=media-gfx/openvdb-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi10-compat]
 				=media-gfx/openvdb-11*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi10-compat]
 				=media-gfx/openvdb-10*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi10-compat]
 			)
-			media-gfx/openvdb:=
 		)
 		abi9-compat? (
+			media-gfx/openvdb:=
 			|| (
 				=media-gfx/openvdb-11*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi9-compat]
 				=media-gfx/openvdb-10*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi9-compat]
 				=media-gfx/openvdb-9*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi9-compat]
 			)
-			media-gfx/openvdb:=
 		)
 		tbb? (
-			>=dev-cpp/tbb-2021:${ONETBB_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-			dev-cpp/tbb:=
+			>=dev-cpp/tbb-2021:${ONETBB_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		)
 	)
 	png? (
-		>=media-libs/libpng-1.6.0:0
-		media-libs/libpng:=
+		>=media-libs/libpng-1.6.0:=
 	)
 	ptex? (
-		>=media-libs/ptex-2.3.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		media-libs/ptex:=
+		>=media-libs/ptex-2.3.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
 			>=dev-python/pybind11-2.7[${PYTHON_USEDEP}]
-			dev-libs/boost[${PYTHON_USEDEP},python]
-			dev-libs/boost:=
-			virtual/numpy[${PYTHON_USEDEP}]
+			dev-libs/boost:=[${PYTHON_USEDEP},python]
+			virtual/numpy:=[${PYTHON_USEDEP}]
 		')
 	)
 	qt5? (
-		>=dev-qt/qtcore-${QT5_PV}:5
-		>=dev-qt/qtgui-${QT5_PV}:5[wayland?,X?]
-		>=dev-qt/qtwidgets-${QT5_PV}:5[X?]
+		>=dev-qt/qtcore-${QT5_PV}:5=
+		>=dev-qt/qtgui-${QT5_PV}:5=[wayland?,X?]
+		>=dev-qt/qtwidgets-${QT5_PV}:5=[X?]
 		opengl? (
-			>=dev-qt/qtopengl-${QT5_PV}:5
+			>=dev-qt/qtopengl-${QT5_PV}:5=
 		)
 		wayland? (
-			>=dev-qt/qtwayland-${QT5_PV}:5
+			>=dev-qt/qtwayland-${QT5_PV}:5=
 		)
 	)
 	qt6? (
-		>=dev-qt/qtbase-${QT6_PV}:6[gui,opengl?,wayland?,widgets,X?]
+		>=dev-qt/qtbase-${QT6_PV}:6=[gui,opengl?,wayland?,widgets,X?]
 		wayland? (
-			>=dev-qt/qtdeclarative-${QT6_PV}:6[opengl]
-			>=dev-qt/qtwayland-${QT6_PV}:6
+			>=dev-qt/qtdeclarative-${QT6_PV}:6=[opengl]
+			>=dev-qt/qtwayland-${QT6_PV}:6=
 		)
 	)
 	raw? (
-		>=media-libs/libraw-0.20[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		media-libs/libraw:=
+		>=media-libs/libraw-0.20:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	truetype? (
-		>=media-libs/freetype-2.10.0:2
-		media-libs/freetype:=
+		>=media-libs/freetype-2.10.0:=
 	)
 	webp? (
-		>=media-libs/libwebp-1.1
-		media-libs/libwebp:=
+		>=media-libs/libwebp-1.1:=
 	)
+	media-libs/openexr:=
+	dev-libs/imath:=
 	|| (
 		$(gen_openexr_pairs)
 	)
@@ -436,23 +411,17 @@ gen_bdepend_clang() {
 	for s in "${LLVM_COMPAT[@]}" ; do
 		echo "
 			llvm_slot_${s}? (
-				llvm-core/clang:${s}
-				llvm-core/lld:${s}
-				llvm-core/llvm:${s}
+				=llvm-core/clang-${s}*:=
+				=llvm-core/lld-${s}*:=
+				=llvm-core/llvm-${s}*:=
 			)
 		"
 	done
 }
-BDEPEND_CLANG="
-	$(gen_bdepend_clang)
-"
-BDEPEND_ICC="
-	>=sys-devel/icc-13
-"
 BDEPEND+="
 	>=dev-build/cmake-3.18.2
 	clang? (
-		${BDEPEND_CLANG}
+		$(gen_bdepend_clang)
 	)
 	doc? (
 		app-text/doxygen
@@ -463,21 +432,19 @@ BDEPEND+="
 		dev-texlive/texlive-latexextra
 	)
 	icc? (
-		${BDEPEND_ICC}
+		>=sys-devel/icc-13:=
+	)
+	gcc? (
+		>=sys-devel/gcc-8.5:=
 	)
 	jpeg2k? (
 		app-arch/unzip
-	)
-	|| (
-		${BDEPEND_CLANG}
-		${BDEPEND_ICC}
-		>=sys-devel/gcc-8.5
 	)
 "
 DOCS=( "CHANGES.md" "CREDITS.md" "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-2.5.8.0-fits.patch"
-	"${FILESDIR}/${PN}-3.0.10.1-fix-tests.patch"
+	"${FILESDIR}/${PN}-3.1.14.1-fix-tests.patch"
 )
 
 _oiio_use() {
