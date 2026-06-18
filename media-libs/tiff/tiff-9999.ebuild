@@ -23,7 +23,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libwebp-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 )
 
-inherit libtool multilib-minimal verify-sig flag-o-matic
+inherit autotools libtool multilib-minimal verify-sig flag-o-matic
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="a94d1ded80b9b46327d3982a3c80043b29f23e2e" # Wed, 10 Jun 2026 10:24:40 +0000
@@ -117,6 +117,8 @@ src_unpack() {
 
 src_prepare() {
 	default
+
+	eautoreconf
 
 	# Added to fix cross-compilation
 	elibtoolize
