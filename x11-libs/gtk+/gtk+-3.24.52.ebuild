@@ -3,7 +3,7 @@
 
 EAPI=8
 
-# This ebuild applies a patch built from AI generated code.
+# This ebuild applies patches built from AI generated code.
 
 CFLAGS_HARDENED_LANGS="c-lang"
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data untrusted-data" # Add retpoline to password widget
@@ -118,8 +118,11 @@ PATCHES=(
 
 	"${FILESDIR}"/${P}-test-tree-relationships.patch
 
-	# oiledmachine-overlay added.  The result of adding -fstrict-flex-arrays=3.
-	"${FILESDIR}/gtk+-3.24.51-remove-struck-hack.patch"
+
+	# The result of adding -fstrict-flex-arrays=3.
+	"${FILESDIR}/gtk+-3.24.51-remove-struck-hack.patch"			# oiledmachine-overlay added
+
+	"${FILESDIR}/gtk+-3.24.52-cups-2.5-support.patch"			# oiledmachine-overlay added
 )
 
 pkg_setup() {

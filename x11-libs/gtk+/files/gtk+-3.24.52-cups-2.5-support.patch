@@ -1,0 +1,205 @@
+diff '--color=auto' -urp gtk-3.24.52.orig/modules/printbackends/cups/gtkcupsutils.c gtk-3.24.52/modules/printbackends/cups/gtkcupsutils.c
+--- gtk-3.24.52.orig/modules/printbackends/cups/gtkcupsutils.c	2026-03-22 19:24:49.000000000 -0700
++++ gtk-3.24.52/modules/printbackends/cups/gtkcupsutils.c	2026-06-18 01:48:17.486228268 -0700
+@@ -30,6 +30,35 @@
+ #include <fcntl.h>
+ #include <sys/socket.h>
+ 
++/* === CUPS 2.5+ / libcups3 compatibility === */
++#include <cups/cups.h>
++#include <cups/ipp.h>
++
++/* Suppress a flood of deprecation warnings */
++#if defined(__GNUC__) && (__GNUC__ >= 4)
++#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
++#endif
++
++/* Legacy IPP constant aliases (CUPS 2.5 removed many) */
++#if (CUPS_VERSION_MAJOR == 2 && CUPS_VERSION_MINOR >= 5) || CUPS_VERSION_MAJOR >= 3
++#define IPP_PRINT_JOB              IPP_OP_PRINT_JOB
++#define IPP_GET_JOB_ATTRIBUTES     IPP_OP_GET_JOB_ATTRIBUTES
++#define IPP_GET_PRINTER_ATTRIBUTES IPP_OP_GET_PRINTER_ATTRIBUTES
++#define CUPS_GET_DEFAULT           IPP_OP_CUPS_GET_DEFAULT
++#define CUPS_GET_PRINTERS          IPP_OP_GET_PRINTERS
++
++#define IPP_JOB_PENDING            IPP_JSTATE_PENDING
++#define IPP_JOB_HELD               IPP_JSTATE_HELD
++#define IPP_JOB_PROCESSING         IPP_JSTATE_PROCESSING
++#define IPP_JOB_STOPPED            IPP_JSTATE_STOPPED
++#define IPP_JOB_CANCELED           IPP_JSTATE_CANCELED
++#define IPP_JOB_ABORTED            IPP_JSTATE_ABORTED
++#define IPP_JOB_COMPLETED          IPP_JSTATE_COMPLETED
++
++#define IPP_OK_CONFLICT            IPP_STATUS_OK_CONFLICTING
++#define IPP_PRINTER_STOPPED        IPP_PSTATE_STOPPED
++#endif
++
+ typedef void (*GtkCupsRequestStateFunc) (GtkCupsRequest *request);
+ 
+ static void _connect            (GtkCupsRequest *request);
+@@ -63,39 +92,23 @@ struct _GtkCupsResult
+ #define _GTK_CUPS_MAX_ATTEMPTS 10 
+ #define _GTK_CUPS_MAX_CHUNK_SIZE 8192
+ 
++/* Compatibility layer for CUPS 2.5b (and older) */
+ #if CUPS_VERSION_MAJOR < 3
+-#define cupsGetEncryption() cupsEncryption()
+-#define cupsGetError() cupsLastError()
+-#define cupsGetServer() cupsServer()
+-#define cupsGetUser() cupsUser()
++
++#define cupsGetEncryption()   cupsEncryption()
++#define cupsGetError()        cupsLastError()
++#define cupsGetServer()       cupsServer()
++#define cupsGetUser()         cupsUser()
+ #define cupsLangGetName(lang) (lang)->language
+ 
+ #define httpAddrGetLength(http_address) httpAddrLength(http_address)
+-#define _httpConnect(host, port, addrlist, family, encryption, blocking, msec, cancel) httpConnect2(host, port, addrlist, family, encryption, blocking, msec, cancel)
+-#define httpConnectAgain(http_connection, connection_timeout, cancel_variable) (httpReconnect2(http_connection, connection_timeout, cancel_variable) == 0)
+-#define httpGetError(http_connection) httpError(http_connection)
+-#define httpGetLength(http_connection) httpGetLength2(http_connection)
+-#define httpRead(http_connection, data_buffer, maximal_length) httpRead2(http_connection, data_buffer, maximal_length)
+-#define httpSetBlocking(http_connection, blocking) httpBlocking(http_connection, blocking)
+-#define httpSetEncryption(http_connection, encryption_preference) httpEncryption(http_connection, encryption_preference)
+-#define httpWrite(http_connection, data_buffer, maximal_length) httpWrite2(http_connection, data_buffer, maximal_length)
+-
+-#define ippGetLength(ipp_message) ippLength(ipp_message)
+-#define ippGetPort() ippPort()
+-
+-#define HTTP_STATUS_ERROR HTTP_ERROR
+-#define HTTP_STATUS_CONTINUE HTTP_CONTINUE
+-#define HTTP_STATUS_OK HTTP_OK
+-#define HTTP_STATUS_UNAUTHORIZED HTTP_UNAUTHORIZED
+-#define HTTP_STATUS_UPGRADE_REQUIRED HTTP_UPGRADE_REQUIRED
+-
+-#define HTTP_ENCRYPTION_REQUIRED HTTP_ENCRYPT_REQUIRED
+-
+-#define IPP_STATE_ERROR IPP_ERROR
+-#define IPP_STATE_IDLE IPP_IDLE
+-#define IPP_STATE_DATA IPP_DATA
+-#else
+-#define _httpConnect(host, port, addrlist, family, encryption, blocking, msec, cancel) httpConnect(host, port, addrlist, family, encryption, blocking, msec, cancel)
++
++/* httpConnect / httpBlocking compatibility */
++#define _httpConnect(host, port, addrlist, family, encryption, blocking, timeout, cancel) \
++    httpConnect2(host, port, addrlist, family, encryption, blocking, timeout, cancel)
++
++#define httpSetBlocking(http, b) httpBlocking(http, b)
++
+ #endif
+ 
+ static GtkCupsRequestStateFunc post_states[] = {
+diff '--color=auto' -urp gtk-3.24.52.orig/modules/printbackends/cups/gtkprintbackendcups.c gtk-3.24.52/modules/printbackends/cups/gtkprintbackendcups.c
+--- gtk-3.24.52.orig/modules/printbackends/cups/gtkprintbackendcups.c	2026-03-22 19:24:49.000000000 -0700
++++ gtk-3.24.52/modules/printbackends/cups/gtkprintbackendcups.c	2026-06-18 01:53:36.260496052 -0700
+@@ -61,6 +61,15 @@
+ #include <colord.h>
+ #endif
+ 
++/* === CUPS 2.5+ / libcups3 compatibility === */
++#include <cups/cups.h>
++#include <cups/ipp.h>
++
++/* Suppress a flood of deprecation warnings */
++#if defined(__GNUC__) && (__GNUC__ >= 4)
++#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
++#endif
++
+ #if ((CUPS_VERSION_MAJOR == 2 && CUPS_VERSION_MINOR >= 2) || CUPS_VERSION_MAJOR > 2)
+ #define HAVE_CUPS_2_2
+ #endif
+@@ -93,39 +102,45 @@ typedef struct _GtkPrintBackendCupsClass
+ 
+ static GType print_backend_cups_type = 0;
+ 
++/* Compatibility layer for CUPS 2.5b (and older) */
+ #if CUPS_VERSION_MAJOR < 3
+-#define cupsGetServer() cupsServer()
+-#define cupsGetUser() cupsUser()
+ 
+-#define _httpConnect(host, port, addrlist, family, encryption, blocking, msec, cancel) httpConnect2(host, port, addrlist, family, encryption, blocking, msec, cancel)
++#define cupsGetEncryption()   cupsEncryption()
++#define cupsGetError()        cupsLastError()
++#define cupsGetServer()       cupsServer()
++#define cupsGetUser()         cupsUser()
++#define cupsLangGetName(lang) (lang)->language
++
++#define httpAddrGetLength(http_address) httpAddrLength(http_address)
++
++/* httpConnect / httpBlocking compatibility */
++#define _httpConnect(host, port, addrlist, family, encryption, blocking, timeout, cancel) \
++    httpConnect2(host, port, addrlist, family, encryption, blocking, timeout, cancel)
++
++#define httpSetBlocking(http, b) httpBlocking(http, b)
++
++#endif
++
++/* Compatibility for CUPS 2.5+ (old constants were removed) */
++#if (CUPS_VERSION_MAJOR == 2 && CUPS_VERSION_MINOR >= 5) || CUPS_VERSION_MAJOR >= 3
++
++#define IPP_PRINT_JOB              IPP_OP_PRINT_JOB
++#define IPP_GET_JOB_ATTRIBUTES     IPP_OP_GET_JOB_ATTRIBUTES
++#define IPP_GET_PRINTER_ATTRIBUTES IPP_OP_GET_PRINTER_ATTRIBUTES
++#define CUPS_GET_DEFAULT           IPP_OP_CUPS_GET_DEFAULT
++#define CUPS_GET_PRINTERS          IPP_OP_GET_PRINTERS
++
++#define IPP_JOB_PENDING            IPP_JSTATE_PENDING
++#define IPP_JOB_HELD               IPP_JSTATE_HELD
++#define IPP_JOB_PROCESSING         IPP_JSTATE_PROCESSING
++#define IPP_JOB_STOPPED            IPP_JSTATE_STOPPED
++#define IPP_JOB_CANCELED           IPP_JSTATE_CANCELED     /* note: CANCELED, not CANCELLED */
++#define IPP_JOB_ABORTED            IPP_JSTATE_ABORTED
++#define IPP_JOB_COMPLETED          IPP_JSTATE_COMPLETED
++
++#define IPP_OK_CONFLICT            IPP_STATUS_OK_CONFLICTING
++#define IPP_PRINTER_STOPPED        IPP_PSTATE_STOPPED
+ 
+-#define ippGetPort() ippPort()
+-#define ippGetNextAttribute(ipp_message) ippNextAttribute(ipp_message)
+-#define ippGetFirstAttribute(ipp_message) ippFirstAttribute(ipp_message)
+-
+-#define CUPS_PTYPE_REMOTE             CUPS_PRINTER_REMOTE
+-#define CUPS_PTYPE_DEFAULT            CUPS_PRINTER_DEFAULT
+-#define CUPS_PTYPE_REJECTING          CUPS_PRINTER_REJECTING
+-
+-#define IPP_OP_PRINT_JOB              IPP_PRINT_JOB
+-#define IPP_OP_GET_JOB_ATTRIBUTES     IPP_GET_JOB_ATTRIBUTES
+-#define IPP_OP_GET_PRINTER_ATTRIBUTES IPP_GET_PRINTER_ATTRIBUTES
+-#define IPP_OP_CUPS_GET_DEFAULT       CUPS_GET_DEFAULT
+-#define IPP_OP_CUPS_GET_PRINTERS      CUPS_GET_PRINTERS
+-
+-#define IPP_STATUS_OK_CONFLICTING     IPP_OK_CONFLICT
+-
+-#define IPP_PSTATE_STOPPED            IPP_PRINTER_STOPPED
+-
+-#define IPP_JSTATE_PENDING            IPP_JOB_PENDING
+-#define IPP_JSTATE_HELD               IPP_JOB_HELD
+-#define IPP_JSTATE_PROCESSING         IPP_JOB_PROCESSING
+-#define IPP_JSTATE_STOPPED            IPP_JOB_STOPPED
+-#define IPP_JSTATE_CANCELED           IPP_JOB_CANCELLED
+-#define IPP_JSTATE_ABORTED            IPP_JOB_ABORTED
+-#define IPP_JSTATE_COMPLETED          IPP_JOB_COMPLETED
+-#else
+-#define _httpConnect(host, port, addrlist, family, encryption, blocking, msec, cancel) httpConnect(host, port, addrlist, family, encryption, blocking, msec, cancel)
+ #endif
+ 
+ typedef void (* GtkPrintCupsResponseCallbackFunc) (GtkPrintBackend *print_backend,
+@@ -4142,7 +4157,7 @@ cups_request_ppd_cb (GtkPrintBackendCups
+       GTK_PRINTER_CUPS (printer)->avahi_browsed ||
+       (gtk_cups_result_is_error (result) &&
+        ((gtk_cups_result_get_error_type (result) == GTK_CUPS_ERROR_HTTP) &&
+-         (gtk_cups_result_get_error_status (result) == HTTP_NOT_FOUND))))
++         (gtk_cups_result_get_error_status (result) == HTTP_STATUS_NOT_FOUND))))
+     {
+       GtkPrinterCups *cups_printer = GTK_PRINTER_CUPS (printer);
+ 
+@@ -4152,7 +4167,7 @@ cups_request_ppd_cb (GtkPrintBackendCups
+       if (!cups_printer->avahi_browsed &&
+           (gtk_cups_result_is_error (result) &&
+            ((gtk_cups_result_get_error_type (result) == GTK_CUPS_ERROR_HTTP) &&
+-            (gtk_cups_result_get_error_status (result) == HTTP_NOT_FOUND))) &&
++            (gtk_cups_result_get_error_status (result) == HTTP_STATUS_NOT_FOUND))) &&
+           cups_printer->remote &&
+           !cups_printer->request_original_uri &&
+           cups_printer->original_device_uri != NULL &&
