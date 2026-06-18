@@ -27,7 +27,7 @@ KB_COMMIT="ca6c9624dd7c6b774e6cec9901f3d8d998d6f62a"
 RAGEL_PV="6.10"
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/glib-2.39.9999"
+	"dev-libs/glib-2.89.9999"
 	"dev-libs/icu-9999"
 	"x11-libs/cairo-9999"
 )
@@ -84,8 +84,11 @@ if [[ "${PV}" =~ "9999" ]] ; then
 else
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
 	SRC_URI="
-$(cargo_crate_uris ${CRATES})
 https://github.com/harfbuzz/harfbuzz/releases/download/${PV}/${P}.tar.xz
+	"
+fi
+SRC_URI+="
+	$(cargo_crate_uris ${CRATES})
 	kbts? (
 https://github.com/JimmyLefevre/kb/archive/${KB_COMMIT}.tar.gz
 	-> kb-${KB_COMMIT:0:7}.tar.gz
@@ -95,8 +98,7 @@ https://github.com/JimmyLefevre/kb/archive/${KB_COMMIT}.tar.gz
 https://www.colm.net/files/ragel/ragel-${RAGEL_PV}.tar.gz
 		)
 	)
-	"
-fi
+"
 
 LICENSE="
 	icu
