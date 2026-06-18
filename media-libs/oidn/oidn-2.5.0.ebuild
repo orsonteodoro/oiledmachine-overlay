@@ -3,22 +3,22 @@
 
 EAPI=8
 
-# RL8, U22
+# RL8, U22, U24
 
 # SSE4.1 hardware was released in 2008.
 # See scripts/build.py for release versioning.
 # Clang is more smoother multitask-wise.
 
 CMAKE_BUILD_TYPE="Release"
-COMPOSABLE_KERNEL_COMMIT="c79bf11148ac7abd7504f0e700b409b4c63a052c"
-CUTLASS_COMMIT="afa1772203677c5118fcd82537a9c8fefbcc7008"
+COMPOSABLE_KERNEL_COMMIT="3e6d21adeb33db1319899a3833113c9caf715358"
+CUTLASS_COMMIT="d55f6beeebb6df501a250dc82827db97660f06e0"
 CXX_STANDARD=11
 LLVM_SLOT="${LLVM_COMPAT[0]}"
 MKL_DNN_COMMIT="9bea36e6b8e341953f922ce5c6f5dbaca9179a86"
 OIDN_WEIGHTS_COMMIT="28883d1769d5930e13cf7f1676dd852bd81ed9e7"
 ONETBB_SLOT="0"
 ORG_GH="https://github.com/OpenImageDenoise"
-PYTHON_COMPAT=( "python3_"{8..12} )
+PYTHON_COMPAT=( "python3_"{8..14} )
 
 AMDGPU_TARGETS_COMPAT=(
 	"gfx902"
@@ -46,12 +46,12 @@ CUDA_TARGETS_COMPAT=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX11[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX11[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}"
 )
 
 inherit hip-versions
@@ -461,15 +461,15 @@ einfo "AMDGPU_TARGETS:  ${targets}"
 		local targets="$(get_cuda_targets)"
 einfo "CUDA_TARGETS:  ${targets}"
 		if use cuda_targets_sm_80 || use cuda_targets_sm_90 ; then
-			:;
+			:
 		else
-			sed -i -e "/cutlass_conv_sm80.cu/d" devices/cuda/CMakeLists.txt || die
+			sed -i -e "/cutlass_conv_sm80.cu/d" "devices/cuda/CMakeLists.txt" || die
 		fi
 		if use cuda_targets_sm_70 ; then
-			sed -i -e "/cutlass_conv_sm70.cu/d" devices/cuda/CMakeLists.txt || die
+			sed -i -e "/cutlass_conv_sm70.cu/d" "devices/cuda/CMakeLists.txt" || die
 		fi
 		if use cuda_targets_sm_75 ; then
-			sed -i -e "/cutlass_conv_sm75.cu/d" devices/cuda/CMakeLists.txt || die
+			sed -i -e "/cutlass_conv_sm75.cu/d" "devices/cuda/CMakeLists.txt" || die
 		fi
 	fi
 
@@ -488,11 +488,11 @@ src_install() {
 		rm -vrf "${ED}/usr/share/doc/oidn-${PV}/readme.pdf" || die
 	fi
 	use doc && einstalldocs
-	docinto licenses
+	docinto "licenses"
 	dodoc \
 		"LICENSE.txt" \
 		"third-party-programs.txt" \
-		"third-party-programs-oneDNN.txt" \
+		"third-party-programs-DPCPP.txt" \
 		"third-party-programs-oneTBB.txt"
 
 	# Generated when hip is enabled.
