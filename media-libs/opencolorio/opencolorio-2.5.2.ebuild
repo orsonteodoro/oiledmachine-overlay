@@ -14,23 +14,23 @@ EAPI=8
 #      |     ^~~~~~~~~~~~~~~~
 
 # For requirements, see
-# https://github.com/AcademySoftwareFoundation/OpenColorIO/blob/v2.4.2/docs/quick_start/installation.rst#building-from-source
+# https://github.com/AcademySoftwareFoundation/OpenColorIO/blob/v2.5.2/docs/quick_start/installation.rst#building-from-source
 # https://github.com/AcademySoftwareFoundation/openexr/blob/v3.4.0/MODULE.bazel
 
 # Works with older OIIO but need to force a version w/ OpenEXR 3
 
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 CXX_STANDARD=17
-PYTHON_COMPAT=( "python3_"{8..11} )
+PYTHON_COMPAT=( "python3_"{9..14} )
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
 CPU_FLAGS_ARM=(
@@ -90,9 +90,7 @@ gen_half_pairs_rdepend() {
 		echo "
 			(
 				~media-libs/openexr-${openexr_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-				media-libs/openexr:=
 				~dev-libs/imath-${imath_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-				dev-libs/imath:=
 			)
 		"
 	done
@@ -106,9 +104,7 @@ gen_imath_bdepend() {
 		echo "
 			(
 				~media-libs/openexr-${openexr_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-				media-libs/openexr:=
 				~dev-libs/imath-${imath_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-				dev-libs/imath:=
 			)
 		"
 	done
@@ -194,26 +190,20 @@ REQUIRED_USE="
 		cpu_flags_x86_avx512dq
 	)
 "
-# Depends update: Aug 31, 2023
+# Depends update:  Sep 29, 2025
 RDEPEND="
-	>=dev-cpp/yaml-cpp-0.7.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	dev-cpp/yaml-cpp:=
-	>=dev-cpp/pystring-1.1.3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	dev-cpp/pystring:=
-	>=dev-libs/expat-2.4.1
-	>=sys-libs/minizip-ng-3.0.7
-	>=virtual/zlib-1.2.13
-	dev-libs/tinyxml[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	dev-libs/tinyxml:=
-	dev-build/ninja
+	>=dev-cpp/yaml-cpp-0.8.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-cpp/pystring-1.1.3:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-libs/expat-2.6.0:=
+	>=sys-libs/minizip-ng-4.0.0:=
+	>=virtual/zlib-1.2.13:=
+	dev-libs/tinyxml:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	opengl? (
-		>=media-libs/openimageio-2.2.14[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		media-libs/openimageio:=
-		>=media-libs/lcms-2.2:2
-		media-libs/freeglut
-		media-libs/glew[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		media-libs/glew:=
-		virtual/opengl
+		>=media-libs/openimageio-2.2.14:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=media-libs/lcms-2.2:=
+		media-libs/freeglut:=
+		media-libs/glew:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		virtual/opengl:*
 	)
 	python? (
 		${PYTHON_DEPS}
@@ -221,6 +211,8 @@ RDEPEND="
 			>=dev-python/pybind11-2.9.2[${PYTHON_USEDEP}]
 		')
 	)
+	dev-libs/imath:=
+	media-libs/openexr:=
 	|| (
 		$(gen_half_pairs_rdepend)
 	)
@@ -235,25 +227,32 @@ BDEPEND="
 			dev-python/expandvars[${PYTHON_USEDEP}]
 			dev-python/recommonmark[${PYTHON_USEDEP}]
 			dev-python/six[${PYTHON_USEDEP}]
-			dev-python/sphinx[${PYTHON_USEDEP}]
+			<dev-python/sphinx-7.1.3[${PYTHON_USEDEP}]
 			dev-python/sphinx-press-theme[${PYTHON_USEDEP}]
 			dev-python/sphinx-tabs[${PYTHON_USEDEP}]
 			dev-python/testresources[${PYTHON_USEDEP}]
+			<dev-python/urllib3-3[${PYTHON_USEDEP}]
+			>=dev-python/docutils-0.22.4[${PYTHON_USEDEP}]
+			<dev-python/setuptools-83.0.0[${PYTHON_USEDEP}]
 		)
 		python? (
-			>=dev-python/setuptools-42[${PYTHON_USEDEP}]
+			>=dev-python/setuptools-82.0.1[${PYTHON_USEDEP}]
+			dev-python/wheel[${PYTHON_USEDEP}]
 		)
 		test? (
 			virtual/numpy[${PYTHON_USEDEP}]
 		)
 	')
 	>=dev-build/cmake-3.14
+	dev-build/ninja
 	virtual/pkgconfig
 	doc? (
 		app-text/doxygen
 	)
 	test? (
 		>=media-libs/osl-1.11
+		dev-libs/imath
+		media-libs/openexr
 		|| (
 			$(gen_imath_bdepend)
 		)
@@ -262,6 +261,7 @@ BDEPEND="
 PATCHES=(
 	"${FILESDIR}/${PN}-2.2.1-adjust-python-installation.patch"
 )
+DOCS=( "CHANGELOG.md" "README.md" )
 
 pkg_setup() {
 	check-compiler-switch_start
@@ -354,4 +354,12 @@ src_test() {
 		-j1
 	)
 	virtx cmake_src_test
+}
+
+src_install() {
+	cmake_src_install
+	use doc && einstalldocs
+	docinto "licenses"
+	dodoc "THIRD-PARTY.md"
+	dodoc "LICENSE"
 }

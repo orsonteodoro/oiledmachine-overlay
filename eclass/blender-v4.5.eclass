@@ -925,6 +925,7 @@ RDEPEND+="
 	color-management? (
 		>=dev-libs/expat-2.6.4:=
 		>=media-libs/opencolorio-2.4.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cpu_flags_x86_sse2?,python]
+		<media-libs/opencolorio-3.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cpu_flags_x86_sse2?,python]
 	)
 	cuda? (
 		cuda_targets_sm_50? (
