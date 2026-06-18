@@ -1841,6 +1841,7 @@ RDEPEND+="
 "
 DEPEND+="
 	${COMMON_DEPEND}
+	www-client/chromium-sources:${PV}=
 	!headless? (
 		media-video/pipewire:=
 		gtk3? (
@@ -1875,8 +1876,6 @@ BDEPEND+="
 	${PYTHON_DEPS}
 	app-alternatives/ninja
 	dev-util/patchutils
-	www-client/chromium-sources:${PV}
-	www-client/chromium-sources:=
 	>=app-arch/gzip-1.7
 	>=dev-util/gperf-3.2[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
@@ -1890,8 +1889,7 @@ BDEPEND+="
 	sys-apps/hwdata
 	sys-devel/flex
 	x11-misc/xdg-utils
-	www-client/chromium-toolchain:${PV%.*}.x[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cfi=,pgo=,system-clang=,system-rust=]
-	www-client/chromium-toolchain:=
+	www-client/chromium-toolchain:${PV%.*}.x=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cfi=,pgo=,system-clang=,system-rust=]
 	mold? (
 		>=sys-devel/mold-2.33.0[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},-system-mimalloc]
 	)
