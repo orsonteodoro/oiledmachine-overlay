@@ -1014,9 +1014,9 @@ ${PATENT_STATUS[@]}
 ${SYSTEM_USE[@]}
 +accessibility bindist bluetooth +cfi -cet +cups +css-hyphen
 -debug -drumbrake +encode +extensions ffmpeg-chromium firejail -force-unbundler
--gtk4 -gwp-asan -hangouts -headless +hidpi +jit +js-type-check +kerberos
+-gtk3 -gtk4 -gwp-asan -hangouts -headless +hidpi +jit +js-type-check +kerberos
 +miracleptr mold +mpris -official +partitionalloc pax-kernel +pdf pic +pgo
-+plugins +pre-check-vaapi +pulseaudio +reporting-api qt6 +rar +screencast
++plugins +pre-check-vaapi +pulseaudio +reporting-api -qt6 +rar +screencast
 selinux -system-clang -system-rust systemd test +v8-snapshot +wayland
 +webassembly -widevine +X
 ebuild_revision_41
@@ -1182,6 +1182,10 @@ REQUIRED_USE+="
 	)
 	!system-rust? (
 		!system-clang
+	)
+	?? (
+		gtk3
+		gtk4
 	)
 	partitionalloc
 	amd64? (
@@ -1376,6 +1380,7 @@ REQUIRED_USE+="
 		!mold
 		!system-clang
 		!system-rust
+		!gtk4
 		accessibility
 		css-hyphen
 		cups
@@ -1531,11 +1536,11 @@ LIBVA_DEPEND="
 		>=media-libs/libva-${LIBVA_PV}:=[${MULTILIB_USEDEP},drm(+),wayland?,X?]
 		virtual/vaapi:=[${MULTILIB_USEDEP},patent_status_nonfree=]
 		system-ffmpeg? (
-			|| (
-				=media-video/ffmpeg-9999:=[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
-				=media-video/ffmpeg-9999m:=[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
-			)
 			media-video/ffmpeg:=
+			|| (
+				=media-video/ffmpeg-9999[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
+				=media-video/ffmpeg-9999m[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
+			)
 		)
 	)
 "
@@ -1726,15 +1731,17 @@ PATENT_STATUS_DEPEND="
 	system-ffmpeg? (
 		>=media-libs/mesa-${MESA_PV}:=[${MULTILIB_USEDEP},patent_status_nonfree=]
 		patent_status_nonfree? (
+			media-video/ffmpeg:=
 			|| (
-				=media-video/ffmpeg-9999:=[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
-				=media-video/ffmpeg-9999m:=[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
+				=media-video/ffmpeg-9999[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
+				=media-video/ffmpeg-9999m[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
 			)
 		)
 		!patent_status_nonfree? (
+			media-video/ffmpeg:=
 			|| (
-				=media-video/ffmpeg-9999:=[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
-				=media-video/ffmpeg-9999m:=[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
+				=media-video/ffmpeg-9999[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
+				=media-video/ffmpeg-9999m[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
 			)
 		)
 	)
@@ -1787,9 +1794,10 @@ COMMON_DEPEND="
 		system-opus? (
 			>=media-libs/opus-1.6:=[${MULTILIB_USEDEP}]
 		)
+		media-video/ffmpeg:=
 		|| (
-			=media-video/ffmpeg-9999:=[${MULTILIB_USEDEP},-samba]
-			=media-video/ffmpeg-9999m:=[${MULTILIB_USEDEP},-samba]
+			=media-video/ffmpeg-9999[${MULTILIB_USEDEP},-samba]
+			=media-video/ffmpeg-9999m[${MULTILIB_USEDEP},-samba]
 		)
 	)
 	system-flac? (
@@ -1807,21 +1815,17 @@ RDEPEND+="
 	virtual/ttf-fonts:*
 	virtual/patent-status:*[patent_status_nonfree=,patent_status_sponsored_ncp_nb=]
 	!headless? (
+		gtk3? (
+			>=x11-libs/gtk+-${GTK3_PV}:3=[${MULTILIB_USEDEP},wayland?,X?]
+		)
+		gtk4? (
+			>=gui-libs/gtk-${GTK4_PV}:4=[wayland?,X?]
+		)
 		qt6? (
 			>=dev-qt/qtbase-${QT6_PV}:6=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},gui,wayland?,X?]
 			wayland? (
 				>=dev-qt/qtdeclarative-${QT6_PV}:6=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},opengl]
 				>=dev-qt/qtwayland-${QT6_PV}:6=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
-			)
-		)
-		|| (
-			(
-				>=gui-libs/gtk-${GTK4_PV}:4[wayland?,X?]
-				gui-libs/gtk:=
-			)
-			(
-				>=x11-libs/gtk+-${GTK3_PV}:3[${MULTILIB_USEDEP},wayland?,X?]
-				x11-libs/gtk+:=
 			)
 		)
 	)
@@ -1839,7 +1843,7 @@ DEPEND+="
 	${COMMON_DEPEND}
 	!headless? (
 		media-video/pipewire:=
-		!gtk4? (
+		gtk3? (
 			>=x11-libs/gtk+-${GTK3_PV}:3=[${MULTILIB_USEDEP},wayland?,X?]
 		)
 		gtk4? (
@@ -7509,10 +7513,18 @@ ewarn "Unbundling libs and lowering security"
 			"toolkit_views=false"
 		)
 	else
+		if use gtk4 ; then
+			myconf_gn+=(
+				"gtk_version=4"
+			)
+		elif use gtk3 ; then
+			myconf_gn+=(
+				"gtk_version=3"
+			)
+		fi
 		myconf_gn+=(
 			"enable_extensions=$(usex extensions true false)"
 			"enable_pdf=true" # required by chrome/browser/ui/lens:browser_tests and toolkit_views=true
-			"gtk_version=$(usex gtk4 4 3)"
 
 	# Link pulseaudio directly (DT_NEEDED) instead of using dlopen.
 	# It helps with the automated detection of ABI mismatches and prevents silent errors.
