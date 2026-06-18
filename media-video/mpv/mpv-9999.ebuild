@@ -39,7 +39,7 @@ inherit cflags-hardened chkl flag-o-matic lua-single meson optfeature pax-utils 
 
 if [[ ${PV} == 9999 ]]; then
 	EGIT_REPO_URI="https://github.com/mpv-player/mpv.git"
-	FALLBACK_COMMIT="f88bcd25c705048f22dac8caba7846f0448f170a"
+	FALLBACK_COMMIT="2d5dfb343aeac72e4ee7303dbf34347a0ff4425d"
 	IUSE+=" fallback-commit"
 	inherit git-r3
 else
@@ -60,7 +60,7 @@ IUSE+="
 	+libmpv +lua network nvenc openal pipewire pulseaudio rubberband sdl
 	selinux sixel sndio soc subrandr test tools +uchardet vaapi vapoursynth vdpau
 	+vulkan wayland xv zimg zlib
-	ebuild_revision_5
+	ebuild_revision_6
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
