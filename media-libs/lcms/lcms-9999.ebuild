@@ -14,7 +14,7 @@ CHKL_TIMESTAMPS=(
 inherit cflags-hardened meson-multilib
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="c481093af488fce7a01c7ccdf71951ac3ad81abb"
+	FALLBACK_COMMIT="76ffc49448b8bd6aa6a36c1f5869ab318831abb9"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/mm2/Little-CMS.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -35,7 +35,10 @@ SLOT="2"
 if [[ ${PV} != *_rc* ]] ; then
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
 fi
-IUSE="doc jpeg static-libs test tiff"
+IUSE="
+doc jpeg static-libs test tiff
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 RDEPEND="

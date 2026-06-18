@@ -111,6 +111,7 @@ SECURE_TIMESTAMP["media_libs_fontconfig_9999"]="Fri, 22 May 2026 13:56:36 -0500"
 SECURE_TIMESTAMP["media_libs_freetype_9999"]="Sat, 9 May 2026 09:51:56 -0400" # The 2.14.3 doesn't have the b6bcd217 OF check but the live does.
 SECURE_TIMESTAMP["media_libs_giflib_9999"]="2026-06-10 21:00:29"
 SECURE_TIMESTAMP["media_libs_harfbuzz_9999"]="Wed, 17 Jun 2026 10:04:23 +0200"
+SECURE_TIMESTAMP["media_libs_lcms_9999"]="Wed, 17 Jun 2026 08:02:07 +0200"
 SECURE_TIMESTAMP["media_libs_lerc_9999"]="Thu, 30 Apr 2026 12:31:29 -0700"
 SECURE_TIMESTAMP["media_libs_libaom_9999"]="Fri, May 22, 2026 08:26:16 -0700"
 SECURE_TIMESTAMP["media_libs_libepoxy_9999"]="Tue, 12 Oct 2021 02:41:41 +0900"
