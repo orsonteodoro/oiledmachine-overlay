@@ -340,6 +340,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libva-9999"					# Bumped live/*DEPENDS to latest hardened
 	"media-libs/libvpx-9999"
 	"media-libs/libyuv-9999"
+	"media-libs/openjpeg-9999"				# Bumped *DEPENDs to latest non-vulnerable
 	"media-libs/tiff-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/woff2-9999"
 	"media-video/ffmpeg-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
@@ -1641,7 +1642,7 @@ COMMON_SNAPSHOT_DEPEND="
 		>=media-libs/libjpeg-turbo-9999:=[${MULTILIB_USEDEP}]
 	)
 	system-libopenjpeg? (
-		media-libs/openjpeg:=[${MULTILIB_USEDEP}]
+		>=media-libs/openjpeg-2.5.4-r1:=[${MULTILIB_USEDEP}]
 	)
 	system-libpng? (
 		>=media-libs/libpng-1.6.57:=[${MULTILIB_USEDEP}]
