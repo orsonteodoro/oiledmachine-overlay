@@ -24,9 +24,9 @@ following reasons:
 - To reduce the init vulnerabilities.
 - To reduce maintenance burden.
 - The OpenRC scripts are more tested than the systemd.
-- We want to halt the mono distro trend were users are forced to use the popular
-  distro components.
-- We like to utilize the split-usr advantage in other ebuilds or kernel.
+- We want to halt the monolithic distro trend were users are forced and locked-in
+  to use the popular distro components.
+- We like to utilize the split-usr advantage of the mount flags.
 
 While merge-usr will be the only choice, users should be aware about the flaws in
 order to protect their systems.
