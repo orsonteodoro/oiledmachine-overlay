@@ -1,8 +1,8 @@
-Title: Use split-usr
+Title: Either use split-usr or use live systemd
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-06-14
-Revision: 1
+Revision: 2
 News-Item-Format: 2.0
 Display-If-Installed: sys-apps/baselayout
 Display-If-Installed: app-admin/eselect
@@ -42,3 +42,24 @@ systemd.
 It split-usr be supported as long as the distro supports it and projects support
 it, but it looks like they are likely to drop it in the future if the devs are
 all compromised by Fedoraization and that is the trend.
+
+
+Only do this if you are a systemd user:
+
+For live systemd, you need to hard unmask it.  The commit history for systemd
+reveals a vulnerability.  This is why live systemd is required on this overlay
+for security integrity.  To use the live systemd, the following need to be
+edited:
+
+Contents /etc/portage/package.accept_keywords:
+=sys-apps/systemd-9999:0/2::oiledmachine-overlay ~amd64 **
+
+Contents /etc/portage/package.mask:
+sys-apps/systemd::gentoo
+
+Contents /etc/portage/package.unmask:
+=sys-apps/systemd-9999:0/2::oiledmachine-overlay
+
+The distro is still stuck in v261 RC3 but it is already final v261.  The live
+ebuild with the security fix(es) (e.g. 17260a9) has the commits for v261
+systemd final.
