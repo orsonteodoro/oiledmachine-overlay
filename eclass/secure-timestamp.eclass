@@ -40,6 +40,9 @@ get_secure_timestamps() {
 #   date --date="2026-04-06 08:00:12 +0000" +%s		# Real world example
 #
 #
+# IMPORTANT:  There is a bug were the web interface landing date disagrees with the Date field of the commit.
+# Use the most recent push date or landing date instead.
+#
 # Normalization and sanitization is required to prevent BASH to interpret the key as a mathematical expression.
 #
 # Normalization rules for the key:
@@ -65,6 +68,7 @@ SECURE_TIMESTAMP["dev_cpp_abseil_cpp_9999"]="Tue, 21 Apr 2026 12:08:14 -0700"
 SECURE_TIMESTAMP["dev_cpp_highway_9999"]="Wed, 22 Apr 2026 09:17:05 -0700"
 SECURE_TIMESTAMP["dev_cpp_simdutf_9999"]="Tue, 13 Jan 2026 09:03:21 +0100"
 SECURE_TIMESTAMP["dev_db_sqlite_9999"]="Wed, 3 Jun 2026 19:12:13 +0000"
+SECURE_TIMESTAMP["dev_qt_qtbase_6_9999"]="Jun 19 2026 7:52 AM PDT"
 SECURE_TIMESTAMP["dev_libs_glib_2_89_9999"]="Fri, 5 Jun 2026 13:12:13 +0200"
 SECURE_TIMESTAMP["dev_libs_crc32c_9999"]="Fri, 1 Mar 2019 15:37:35 -0800"
 SECURE_TIMESTAMP["dev_libs_expat_9999"]="Jun 4, 2026"
@@ -148,7 +152,6 @@ SECURE_TIMESTAMP["x11_libs_libdrm_9999"]="2026-04-06 08:00:12 +0000"
 SECURE_TIMESTAMP["x11_libs_pango_9999"]="Sun, 22 Mar 2026 21:54:26 -0400"
 SECURE_TIMESTAMP["x11_libs_pixman_9999"]="Wed, 2 Nov 2022 12:11:10 -0400"
 SECURE_TIMESTAMP["x11_libs_pixman_9999"]="Wed, 2 Nov 2022 12:11:10 -0400"
-
 	declare -p SECURE_TIMESTAMP
 }
 
