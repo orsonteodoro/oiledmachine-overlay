@@ -1067,7 +1067,7 @@ RDEPEND+="
 	)
 	openvdb? (
 		>=dev-libs/c-blosc-1.21.1:=[zlib]
-		=media-gfx/openvdb-13*:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},blosc,nanovdb?,numpy]
+		=media-gfx/openvdb-13*:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},blosc,nanovdb?]
 	)
 	openxr? (
 		>=media-libs/openxr-1.1.53:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
