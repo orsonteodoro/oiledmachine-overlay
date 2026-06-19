@@ -38,7 +38,7 @@ maintainer may assume merge-usr layout and write fewer rules so the protection
 may be inadequate.
 
 If you use a split-usr, nothing needs to be done except for staying away from
-systemd.
+systemd and merge-usr.
 
 It split-usr be supported as long as the distro supports it and projects support
 it, but it looks like they are likely to drop it in the future if the devs are
