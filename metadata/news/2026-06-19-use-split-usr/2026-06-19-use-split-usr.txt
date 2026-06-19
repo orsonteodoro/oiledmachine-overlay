@@ -2,15 +2,17 @@ Title: Use split-usr
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-06-14
-Revision: 0
+Revision: 1
 News-Item-Format: 2.0
 Display-If-Installed: sys-apps/baselayout
 Display-If-Installed: app-admin/eselect
+Display-If-Installed: sys-apps/coreutils
 
-It is decided to reverse the decision to ban merge-usr.  systemd will be banned on
-this overlay.  Everything that uses the system USE flag will be hard banned.
+It is decided to reverse the decision to ban merge-usr.  systemd will allowed but
+unchecked in on this overlay.  We will require systemd be live.
 
-The reason why this overlay decided to ban systemd is for the following reasons:
+The reason why this overlay decided to make systemd a soft ban is for the
+following reasons:
 
 - It is using a memory unsafe language.
 - It increases the attack surface by preventing read only mount, nosuid, nodev
@@ -30,4 +32,9 @@ order to protect their systems.
 
 MAC (Mandatory Access Control) rules must be written more comprehensively.
 
+If you use a split-usr, nothing needs to be done except for staying away from
+systemd.
 
+It split-usr be supported as long as the distro supports it and projects support
+it, but it looks like they are likely to drop it in the future if the devs are
+all compromised and that is the trend.
