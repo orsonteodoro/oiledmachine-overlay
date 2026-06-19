@@ -384,4 +384,6 @@ maintainers are not backporting security fixes to stable tagged releases.  Some
 of these vulnerable tagged releases are years old without security backports or
 the security update lag is months old and never can keep up.  We also want to
 be able to switch between OpenRC and systemd for testing or as a production
-choice without issue.
+choice without issue.  Details to switch to both the merge-usr profile can
+be found at Gentoo Wiki's [merge-usr](https://wiki.gentoo.org/wiki/Merge-usr)
+page.
