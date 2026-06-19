@@ -44,8 +44,9 @@ to the .txt file at:
 
 * https://github.com/orsonteodoro/oiledmachine-overlay/tree/master/metadata/news
 
-The selected first 5 news items:
+The selected first news items:
 
+* 2026-06-19 - [Use merged-usr](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-06-19-use-merged-usr/2026-06-19-use-merged-usr.txt)
 * 2026-06-14 - [Use FFmpeg live](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-06-14-use-ffmpeg-live/2026-06-14-use-ffmpeg-live.txt)
 * 2026-06-02 - [Firejail env-max-count](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-06-02-firejail-maxenvs/2026-06-02-firejail-maxenvs.txt)
 * 2026-05-14 - [Rebuild the kernel against 0-day vulnerabilities (Fragnesia mitigation)](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-05-14-update-kernel/2026-05-14-update-kernel.txt)
