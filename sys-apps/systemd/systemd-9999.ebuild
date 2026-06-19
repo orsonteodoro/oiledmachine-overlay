@@ -143,9 +143,9 @@ RDEPEND="${COMMON_DEPEND}
 	>=sys-apps/baselayout-2.2:=
 	ukify? (
 		${PYTHON_DEPS}
-		$(python_gen_cond_dep "
+		$(python_gen_cond_dep '
 			dev-python/pefile[${PYTHON_USEDEP}]
-		")
+		')
 	)
 	selinux? (
 		sec-policy/selinux-base-policy:*[systemd]
@@ -198,7 +198,9 @@ BDEPEND="
 		dev-python/lxml[\${PYTHON_USEDEP}]
 		boot? (
 			>=dev-python/pyelftools-0.30[\${PYTHON_USEDEP}]
-			test? ( ${PEFILE_DEPEND} )
+			test? (
+				dev-python/pefile[\${PYTHON_USEDEP}]
+			)
 		)
 	")
 "
