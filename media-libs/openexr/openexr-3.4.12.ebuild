@@ -48,7 +48,7 @@ SLOT="0/32"
 IUSE="
 ${CPU_FLAGS_X86[@]}
 doc examples -large-stack +utils tbb test +threads
-ebuild_revision_23
+ebuild_revision_24
 "
 REQUIRED_USE="
 	doc? (
@@ -63,7 +63,7 @@ RESTRICT="
 RDEPEND="
 	>=app-arch/libdeflate-1.25:=[zlib(+)]
 	~dev-libs/imath-3.2.2:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=media-libs/openjph-0.21.0:=
+	>=media-libs/openjph-0.21.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	tbb? (
 		dev-cpp/tbb:=
 	)
