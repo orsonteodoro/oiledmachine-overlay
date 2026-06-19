@@ -297,17 +297,17 @@ Language defaults
 | gRPC >= 1.75.1 (3)                  | Fully supported                       |                                                          |
 | GTK 2 (4)                           | Not Supported                         |                                                          |
 | GTK 3                               | Fully supported                       |                                                          |
-| GTK 4                               | Fully supported                       |                                                          |
+| GTK 4 live                          | Fully supported                       |                                                          |
 | LocalAI (llama.cpp with CPU)        | Fully supported                       |                                                          |
 | LocalAI (llama.cpp with ROCm 7.0)   | WIP                                   |                                                          |
 | LocalAI (llama.cpp with CUDA 12.4)  | Not supported                         |                                                          |
 | LocalAI (llama.cpp with Vulkan)     | Fully supported                       |                                                          |
 | OpenGL <= 4.6                       | Fully supported                       |                                                          |
 | OpenCL <= 2.0                       | Fully supported                       |                                                          |
-| Ollama 0.18 (CPU)                   | Fully supported                       |                                                          |
-| Ollama 0.18 (ROCm)                  | Not supported                         |                                                          |
-| Ollama 0.18 (CUDA)                  | Not supported                         |                                                          |
-| Ollama 0.18 (Vulkan)                | Fully supported                       |                                                          |
+| Ollama 0.30.7 (CPU)                 | Fully supported                       |                                                          |
+| Ollama 0.30.7 (ROCm)                | Not supported                         |                                                          |
+| Ollama 0.30.7 (CUDA)                | Not supported                         |                                                          |
+| Ollama 0.30.7 (Vulkan)              | Fully supported                       |                                                          |
 | GCC OpenMP (CPU)                    | Fully supported                       |                                                          |
 | LLVM OpenMP (CPU)                   | Fully supported                       |                                                          |
 | LLVM OpenMP offload (CUDA)          | Available                             |                                                          |
@@ -368,3 +368,20 @@ Gentoo Prefix is not supported and deprecated on this overlay.
 
 The support status depends on the ebuild contributors ability to test, patch,
 and verify.
+
+USE flags support
+
+| USE flag  | Ebuild level of support |
+| ---       | ---                     |
+| split-usr | Not supported [1]       |
+
+[1] Before Jun 19, 2026, the overlay assumes split-usr but now merged-usr is
+required on this overlay.  To test if you are using split-usr do
+`ls -id /bin /usr/bin` if the id is not the same it is split.  The reason why is
+because the live systemd ebuild does not support split-usr, and this overlay
+wants to transition to live ebuilds for security hardening because ebuild
+maintainers are not backporting security fixes to stable tagged releases.  Some
+of these vulnerable tagged releases are years old without security backports or
+the security update lag is months old and never can keep up.  We also want to
+be able to switch between OpenRC and systemd for testing or as a production
+choice without issue.
