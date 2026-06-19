@@ -48,3 +48,4 @@ llvm-runtimes/compiler-rt-sanitizers-logging production
 app-arch/bzip2 fallback-commit
 app-arch/zstd fallback-commit
 dev-libs/expat fallback-commit
+sys-apps/systemd fallback-commit
