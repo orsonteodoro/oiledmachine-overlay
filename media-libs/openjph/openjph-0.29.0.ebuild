@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# This ebuild contains AI inference data.
+
 MY_PN="OpenJPH"
 MY_P="${MY_PN}-${PV}"
 
@@ -63,11 +65,12 @@ HOMEPAGE="
 LICENSE="
 	BSD-2
 "
-RESTRICT="mirror"
+RESTRICT="mirror test" # Not tested
 SLOT="0/"$(ver_cut 1-2 "${PV}")
 IUSE+="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_X86[@]}
+test tiff utils
 "
 REQUIRED_USE="
 	cpu_flags_x86_sse2? (
@@ -90,6 +93,9 @@ REQUIRED_USE="
 	)
 "
 RDEPEND+="
+	tiff? (
+		media-libs/tiff:=
+	)
 "
 DEPEND+="
 	${RDEPEND}
@@ -119,14 +125,19 @@ src_unpack() {
 src_configure() {
 	cflags-hardened_append
 	local mycmakeargs=(
-		-DOJPH_DISABLE_NEON=$(usex !cpu_flags_arm_neon)
-		-DOJPH_DISABLE_SSE=$(usex !cpu_flags_x86_sse)
-		-DOJPH_DISABLE_SSE2=$(usex !cpu_flags_x86_sse2)
-		-DOJPH_DISABLE_SSSE3=$(usex !cpu_flags_x86_ssse3)
-		-DOJPH_DISABLE_SSE4=$(usex !cpu_flags_x86_sse4)
+		-DOJPH_BUILD_EXECUTABLES=$(usex utils)
+		-DOJPH_BUILD_STREAM_EXPAND=OFF # For fuzzing
+		-DOJPH_BUILD_TESTS=$(usex test)
+		-DOJPH_ENABLE_TIFF_SUPPORT=$(usex tiff)
 		-DOJPH_DISABLE_AVX=$(usex !cpu_flags_x86_avx)
 		-DOJPH_DISABLE_AVX2=$(usex !cpu_flags_x86_avx2)
 		-DOJPH_DISABLE_AVX512=$(usex !cpu_flags_x86_avx512)
+		-DOJPH_DISABLE_NEON=$(usex !cpu_flags_arm_neon)
+		-DOJPH_DISABLE_SSE=$(usex !cpu_flags_x86_sse)
+		-DOJPH_DISABLE_SSE2=$(usex !cpu_flags_x86_sse2)
+		-DOJPH_DISABLE_SSE4=$(usex !cpu_flags_x86_sse4)
+		-DOJPH_DISABLE_SSSE3=$(usex !cpu_flags_x86_ssse3)
+
 	)
 	cmake_src_configure
 }

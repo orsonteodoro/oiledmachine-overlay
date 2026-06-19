@@ -10,4 +10,9 @@
     <bugs-to>https://github.com/aous72/OpenJPH/issues</bugs-to>
     <remote-id type="github">aous72/OpenJPH</remote-id>
   </upstream>
+  <use>
+    <flag name="utils">
+      Build tools for converting to and from j2c (JPEG 2000 Code Stream).
+    </flag>
+  </use>
 </pkgmetadata>
