@@ -84,7 +84,7 @@ ewarn "Expected timestamp:  >= "$(date --date="@${non_vulernable_time}")
 eerror
 eerror "Do one of the following:"
 eerror
-eerror "Do \`emerge -a1ovuDN ${atom} && emerge -a1vO ${atom}\`"
+eerror "Do \`emerge -a1ovuDN =${atom} && emerge -a1vO =${atom}\`"
 eerror
 eerror "  or"
 eerror
