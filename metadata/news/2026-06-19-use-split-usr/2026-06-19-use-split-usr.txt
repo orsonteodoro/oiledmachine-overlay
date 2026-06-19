@@ -37,4 +37,4 @@ systemd.
 
 It split-usr be supported as long as the distro supports it and projects support
 it, but it looks like they are likely to drop it in the future if the devs are
-all compromised and that is the trend.
+all compromised by Fedoraization and that is the trend.
