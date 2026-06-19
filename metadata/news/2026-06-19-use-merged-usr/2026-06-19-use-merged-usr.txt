@@ -20,7 +20,7 @@ Identifying if you are using split-usr:
 
   ls -id /bin /usr/bin
 
-This command will return two different IDs.
+This command will return two different IDs for a system using split-usr.
 
 
 Tradeoffs and benefits:
