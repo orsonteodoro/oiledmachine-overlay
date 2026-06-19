@@ -15,13 +15,12 @@ PYTHON_COMPAT=( "python3_"{10..12} ) # Based on Blender requiring Numpy 1.x
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LLVM_COMPAT_AX[@]}
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 LLVM_MAX_SLOT="18"
 
@@ -34,6 +33,25 @@ CPU_FLAGS_X86=(
 OPENEXR_V3_PV=(
 	# openexr:imath
 	#"3.4.0:9999"
+	"3.4.12:3.2.2"
+	"3.4.11:3.2.2"
+	"3.4.10:3.2.2"
+	"3.4.9:3.2.2"
+	"3.4.8:3.2.2"
+	"3.4.7:3.2.2"
+	"3.4.6:3.2.2"
+	"3.4.5:3.2.2"
+	"3.4.4:3.2.2"
+	"3.4.3:3.2.2"
+	"3.4.2:3.2.2"
+	"3.4.1:3.2.1"
+	"3.4.0:3.2.1"
+	"3.3.11:3.1.12"
+	"3.3.10:3.1.12"
+	"3.3.9:3.1.12"
+	"3.3.8:3.1.12"
+	"3.3.7:3.1.12"
+	"3.3.6:3.1.12"
 	"3.3.5:3.1.12"
 	"3.3.4:3.1.12"
 	"3.3.3:3.1.12"
