@@ -26,7 +26,7 @@ This command will return two different IDs for a system using split-usr.
 Tradeoffs and benefits:
 
 merge-usr benefits:
-- Simplification of MAC rules.
+- Simplification of MAC (Mandatory Access Control) rules for AppArmor or SELinux.
 - Easier and simplified bind mounts to mount as readonly.
 - Reduced security update lag with live system ebuild
 
