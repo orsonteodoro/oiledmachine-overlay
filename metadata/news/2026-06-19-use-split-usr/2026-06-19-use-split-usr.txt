@@ -2,11 +2,12 @@ Title: Either use split-usr or use live systemd
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-06-14
-Revision: 2
+Revision: 3
 News-Item-Format: 2.0
 Display-If-Installed: sys-apps/baselayout
 Display-If-Installed: app-admin/eselect
 Display-If-Installed: sys-apps/coreutils
+Display-If-Installed: sys-apps/systemd
 
 It is decided to reverse the decision to ban merge-usr.  systemd will allowed but
 unchecked in on this overlay.  We will require systemd be live.
