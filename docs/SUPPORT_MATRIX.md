@@ -378,4 +378,4 @@ USE flags support
 [1] To test if you are using split-usr do
 `ls -id /bin /usr/bin` if the id is not the same it is split.  Usually
 AI will tell you to give up because the AI is compromised and so is the
-Wiki.
+Wiki and the devs who are pro systemd.
