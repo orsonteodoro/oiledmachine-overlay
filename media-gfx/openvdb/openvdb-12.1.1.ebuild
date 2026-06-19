@@ -147,7 +147,7 @@ REQUIRED_USE+="
 "
 gen_openexr_pairs() {
 	local row
-	for row in ${OPENEXR_V3_PV[@]} ; do
+	for row in "${OPENEXR_V3_PV[@]}" ; do
 		local imath_pv="${row#*:}"
 		local openexr_pv="${row%:*}"
 		echo "
@@ -165,8 +165,6 @@ gen_openexr_pairs() {
 gen_ax_depend() {
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
-		local imath_pv="${row#*:}"
-		local openexr_pv="${row%:*}"
 		echo "
 			llvm_slot_${s}? (
 				=llvm-core/clang-${s}*:=
@@ -238,7 +236,7 @@ DEPEND+="
 "
 gen_llvm_bdepend() {
 	local s
-	for s in ${LLVM_COMPAT[@]} ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
 		echo "
 			llvm_slot_${s}? (
 				=llvm-core/clang-${s}*:=
