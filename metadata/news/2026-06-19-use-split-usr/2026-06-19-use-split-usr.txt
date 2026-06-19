@@ -1,0 +1,33 @@
+Title: Use split-usr
+Author: Orson Teodoro <orsonteodoro@hotmail.com>
+Content-Type: text/plain
+Posted: 2026-06-14
+Revision: 0
+News-Item-Format: 2.0
+Display-If-Installed: sys-apps/baselayout
+Display-If-Installed: app-admin/eselect
+
+It is decided to reverse the decision to ban merge-usr.  systemd will be banned on
+this overlay.  Everything that uses the system USE flag will be hard banned.
+
+The reason why this overlay decided to ban systemd is for the following reasons:
+
+- It is using a memory unsafe language.
+- It increases the attack surface by preventing read only mount, nosuid, nodev
+  mount flags.
+- Unpatched security commit backports in tagged releases by distro maintainers.
+- It is a performance first and not a security first project.  If it was security
+  first, it would have already been re-written in Rust.
+- To reduce the init vulnerabilities.
+- To reduce maintenance burden.
+- The OpenRC scripts are more tested than the systemd.
+- We want to halt the mono distro trend were users are forced to use the popular
+  distro components.
+- We like to utilize the split-usr advantage in other ebuilds or kernel.
+
+While merge-usr will be the only choice, users should be aware about the flaws in
+order to protect their systems.
+
+MAC (Mandatory Access Control) rules must be written more comprehensively.
+
+
