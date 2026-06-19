@@ -5,16 +5,19 @@ EAPI=8
 
 MY_PN="${PN^}"
 
+# Requirements:
+# https://github.com/AcademySoftwareFoundation/Imath/blob/v3.2.2/.github/workflows/ci_steps.yml#L205
+
 CXX_STANDARD=17
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
 PYTHON_COMPAT=( "python3_"{10..12} )
@@ -31,9 +34,9 @@ https://github.com/AcademySoftwareFoundation/${MY_PN}/archive/refs/tags/v${PV}.t
 DESCRIPTION="Imath basic math package"
 HOMEPAGE="https://imath.readthedocs.io"
 LICENSE="BSD"
-# For slotting, see https://github.com/AcademySoftwareFoundation/Imath/blob/v3.1.12/CMakeLists.txt#L41
+# For slotting, see https://github.com/AcademySoftwareFoundation/Imath/blob/v3.2.2/CMakeLists.txt#L41
 SLOT_MAJOR="${PV%%.*}"
-SO_VERSION="29"
+SO_VERSION="30"
 SLOT="${SLOT_MAJOR}/${SO_VERSION}"
 IUSE="
 doc large-stack python test
@@ -50,13 +53,12 @@ RESTRICT="
 	)
 "
 RDEPEND="
-	virtual/zlib
+	virtual/zlib:=
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
-			dev-libs/boost:=['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}",'python,${PYTHON_USEDEP}]
-			dev-libs/boost:=
-			virtual/numpy[${PYTHON_USEDEP}]
+			>=dev-libs/boost-1.82.0:=['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}",'python,${PYTHON_USEDEP}]
+			virtual/numpy:=[${PYTHON_USEDEP}]
 		')
 	)
 "
@@ -78,7 +80,7 @@ BDEPEND="
 	)
 "
 
-DOCS=( "CHANGES.md" "CONTRIBUTORS.md" "README.md" "SECURITY.md" )
+DOCS=( "CHANGES.md" "README.md" )
 
 PATCHES=(
 	"${FILESDIR}/${PN}-3.1.11-fix_cmake_module_export.patch"
