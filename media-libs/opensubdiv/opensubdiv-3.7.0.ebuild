@@ -37,20 +37,6 @@ CUDA_TARGETS_COMPAT=(
 	"compute_89"
 	"compute_90"
 )
-declare -A CUDA_TARGET_TO_COMPUTE=(
-	["compute_50"]="5.0"
-	["compute_52"]="5.2"
-	["compute_53"]="5.3"
-	["compute_60"]="6.0"
-	["compute_61"]="6.1"
-	["compute_62"]="6.2"
-	["compute_70"]="7.0"
-	["compute_75"]="7.5"
-	["compute_80"]="8.0"
-	["compute_86"]="8.6"
-	["compute_89"]="8.9"
-	["compute_90"]="90"
-)
 
 ONETBB_SLOT="0"
 PYTHON_COMPAT=( "python3_"{10..11} ) # U22 (3.10 - 3.11)
