@@ -6,7 +6,16 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="network security-critical sensitive-data server untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS HO IO NPD PT UAF"
 
-inherit autotools cflags-hardened eapi9-ver linux-info xdg multilib-minimal optfeature pam toolchain-funcs
+CHKL_TIMESTAMPS=(
+	"dev-libs/openssl-4.0.9999"
+	"dev-libs/openssl-3.6.9999"
+	"dev-libs/openssl-3.5.9999"
+	"dev-libs/openssl-3.4.9999"
+	"dev-libs/openssl-3.3.9999"
+	"dev-libs/openssl-3.0.9999"
+)
+
+inherit autotools cflags-hardened chkl eapi9-ver linux-info xdg multilib-minimal optfeature pam toolchain-funcs
 
 MY_PV="${PV/_beta/b}"
 MY_PV="${MY_PV/_rc/rc}"
@@ -14,9 +23,13 @@ MY_PV="${MY_PV/_p/op}"
 MY_P="${PN}-${MY_PV}"
 
 if [[ ${PV} == *9999 ]] ; then
-	inherit git-r3
-	EGIT_REPO_URI="https://github.com/OpenPrinting/cups.git"
+	FALLBACK_COMMIT="69d4be3e9e708383b560e0841523fda54f53611a"
 	[[ ${PV} != 9999 ]] && EGIT_BRANCH=branch-${PV/.9999}
+	EGIT_REPO_URI="https://github.com/OpenPrinting/cups.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
 else
 	SRC_URI="https://github.com/OpenPrinting/cups/releases/download/v${MY_PV}/cups-${MY_PV}-source.tar.gz"
 	if [[ ${PV} != *_beta* && ${PV} != *_rc* ]] ; then
@@ -30,7 +43,7 @@ S="${WORKDIR}/${MY_P}"
 
 LICENSE="Apache-2.0"
 SLOT="0"
-IUSE="acl dbus debug kerberos mdnsresponder-compat openssl pam selinux static-libs systemd test usb X xinetd zeroconf"
+IUSE+=" acl dbus debug kerberos mdnsresponder-compat openssl pam selinux static-libs systemd test usb X xinetd zeroconf"
 REQUIRED_USE="
 	mdnsresponder-compat? (
 		zeroconf
@@ -46,39 +59,40 @@ BDEPEND="
 "
 COMMON_DEPEND="
 	app-text/libpaper:=
-	virtual/zlib:=
+	>=virtual/zlib-1.3.2:=
 	acl? (
 		kernel_linux? (
-			sys-apps/acl
+			sys-apps/acl:=
 		)
 	)
-	dbus? ( >=sys-apps/dbus-1.6.18-r1[${MULTILIB_USEDEP}] )
-	kerberos? ( >=virtual/krb5-0-r1[${MULTILIB_USEDEP}] )
-	pam? ( sys-libs/pam )
+	dbus? ( >=sys-apps/dbus-1.6.18-r1:=[${MULTILIB_USEDEP}] )
+	kerberos? ( >=virtual/krb5-0-r1:*[${MULTILIB_USEDEP}] )
+	pam? ( sys-libs/pam:= )
 	!pam? ( virtual/libcrypt:= )
 	!openssl? ( >=net-libs/gnutls-2.12.23-r6:=[${MULTILIB_USEDEP}] )
 	openssl? ( dev-libs/openssl:=[${MULTILIB_USEDEP}] )
-	systemd? ( sys-apps/systemd )
-	usb? ( virtual/libusb:1 )
-	X? ( x11-misc/xdg-utils )
-	xinetd? ( sys-apps/xinetd )
-	>=net-dns/avahi-0.6.31-r2[${MULTILIB_USEDEP},dbus,mdnsresponder-compat?]
+	systemd? ( sys-apps/systemd:= )
+	usb? ( virtual/libusb:1= )
+	X? ( x11-misc/xdg-utils:= )
+	xinetd? ( sys-apps/xinetd:= )
+	>=net-dns/avahi-9999:=[${MULTILIB_USEDEP},dbus,mdnsresponder-compat?]
 "
+# The proper depends is conditional but above is unconditional.
 COMMON_DEPEND_NOTES="
 	zeroconf? (
-		>=net-dns/avahi-0.6.31-r2[${MULTILIB_USEDEP},dbus,mdnsresponder-compat?]
+		>=net-dns/avahi-9999[${MULTILIB_USEDEP},dbus,mdnsresponder-compat?]
 	)
 "
 # if libcupsfilters is installed, more tests are run. They fail without at least one of the two formats enabled.
 DEPEND="
 	${COMMON_DEPEND}
-	test? ( || ( net-print/libcupsfilters[jpeg] net-print/libcupsfilters[png] ) )
+	test? ( || ( net-print/libcupsfilters:=[jpeg] net-print/libcupsfilters:=[png] ) )
 "
 RDEPEND="
 	${COMMON_DEPEND}
-	acct-group/lp
-	acct-group/lpadmin
-	selinux? ( sec-policy/selinux-cups )
+	acct-group/lp:*
+	acct-group/lpadmin:*
+	selinux? ( sec-policy/selinux-cups:* )
 "
 
 PATCHES=(
@@ -122,6 +136,18 @@ pkg_setup() {
 	fi
 }
 
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+}
+
 get_dnssd() {
 	if use mdnsresponder-compat ; then
 		echo "mdnsresponder"
@@ -157,8 +183,9 @@ src_prepare() {
 
 multilib_src_configure() {
 	cflags-hardened_append
-	export DSOFLAGS="${LDFLAGS}"
+	chkl_check_many_timestamps
 
+	export DSOFLAGS="${LDFLAGS}"
 
 	# Explicitly specify compiler wrt bug #524340
 	#
