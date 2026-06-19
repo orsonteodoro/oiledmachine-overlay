@@ -12,12 +12,12 @@ CXX_STANDARD=17
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
 MESA_PV="22.0.1"
@@ -49,7 +49,7 @@ HOMEPAGE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-doc gles2 +system-jsoncpp wayland xcb +xlib
+doc clang gcc gles2 +system-jsoncpp wayland xcb +xlib
 "
 REQUIRED_USE+="
 	^^ (
@@ -57,38 +57,42 @@ REQUIRED_USE+="
 		xcb
 		xlib
 	)
+	^^ (
+		gcc
+		clang
+	)
 "
 RDEPEND+="
 	${PYTHON_DEPS}
-	media-libs/mesa[egl(+),libglvnd(+)]
-	media-libs/vulkan-drivers
-	>=media-libs/vulkan-loader-${VULKAN_PV}
-	virtual/libc
+	media-libs/mesa:=[egl(+),libglvnd(+)]
+	virtual/vulkan:*
+	>=media-libs/vulkan-loader-${VULKAN_PV}:=
+	virtual/libc:*
 	gles2? (
-		>=media-libs/mesa-${MESA_PV}[gles2(+),opengl]
+		>=media-libs/mesa-${MESA_PV}:=[gles2(+),opengl]
 	)
 	system-jsoncpp? (
-		>=dev-libs/jsoncpp-1.9.5
+		>=dev-libs/jsoncpp-1.9.5:=
 	)
 	wayland? (
-		>=dev-libs/wayland-1.20.0
-		>=dev-libs/wayland-protocols-1.25
-		>=dev-util/wayland-scanner-1.20.0
-		>=media-libs/mesa-${MESA_PV}[egl(+)]
+		>=dev-libs/wayland-1.20.0:=
+		>=dev-libs/wayland-protocols-1.25:=
+		>=dev-util/wayland-scanner-1.20.0:=
+		>=media-libs/mesa-${MESA_PV}:=[egl(+)]
 	)
 	xcb? (
-		>=x11-libs/libxcb-1.14
-		>=x11-libs/xcb-util-keysyms-0.4.0
-		>=x11-libs/xcb-util-wm-0.4.1
+		>=x11-libs/libxcb-1.14:=
+		>=x11-libs/xcb-util-keysyms-0.4.0:=
+		>=x11-libs/xcb-util-wm-0.4.1:=
 	)
 	xlib? (
-		>=x11-libs/libX11-1.7.5
-		x11-base/xorg-proto
+		>=x11-libs/libX11-1.7.5:=
+		x11-base/xorg-proto:=
 	)
 "
 RDEPEND+="
 	${DEPEND}
-	>=dev-util/vulkan-headers-${VULKAN_PV}
+	>=dev-util/vulkan-headers-${VULKAN_PV}:=
 "
 BDEPEND+="
 	${PYTHON_DEPS}
@@ -97,9 +101,11 @@ BDEPEND+="
 	')
 	>=dev-build/cmake-3.22.1
 	virtual/pkgconfig
-	|| (
-		>=llvm-core/clang-14.0
-		>=sys-devel/gcc-11.2.0
+	clang? (
+		>=llvm-core/clang-14.0:=
+	)
+	gcc? (
+		>=sys-devel/gcc-11.2.0:=
 	)
 "
 
@@ -113,6 +119,14 @@ src_configure() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
 	export CPP=$(tc-getCPP)
+
+	if tc-is-clang ; then
+		use clang || die "Enable the clang USE flag."
+	fi
+	if tc-is-gcc ; then
+		use gcc || die "Enable the gcc USE flag."
+	fi
+
 	mycmakeargs=(
 		-DBUILD_API_LAYERS=OFF
 		-DBUILD_CONFORMANCE_TESTS=OFF

@@ -1071,6 +1071,7 @@ RDEPEND+="
 	)
 	openxr? (
 		>=media-libs/openxr-1.1.53:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		<media-libs/openxr-2.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	optix? (
 		>=dev-libs/optix-8:=
