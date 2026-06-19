@@ -17,6 +17,8 @@ esac
 if [[ -z ${_SECURE_TIMESTAMP_ECLASS} ]] ; then
 _SECURE_TIMESTAMP_ECLASS=1
 
+# This ebuild contains AI inference clarification.
+
 #
 # Bump policy:
 #
