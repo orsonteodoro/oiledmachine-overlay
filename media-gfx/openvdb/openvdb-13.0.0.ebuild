@@ -130,21 +130,46 @@ REQUIRED_USE+="
 	)
 "
 gen_openexr_pairs() {
+	local g1=""
+	local g2=""
+	local g3=""
 	local row
 	for row in "${OPENEXR_V3_PV[@]}" ; do
 		local imath_pv="${row#*:}"
 		local openexr_pv="${row%:*}"
-		echo "
+		g1+="
 			(
-				openexr? (
-					~media-libs/openexr-${openexr_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-				)
-				imath-half? (
-					~dev-libs/imath-${imath_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-				)
+				~media-libs/openexr-${openexr_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+				~dev-libs/imath-${imath_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 			)
 		"
+		g2+="
+			~media-libs/openexr-${openexr_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		"
+		g3+="
+			~dev-libs/imath-${imath_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		"
 	done
+	echo "
+		openexr? (
+			imath-half? (
+				|| (
+					${g1}
+				)
+			)
+		)
+		openexr? (
+			|| (
+				${g2}
+			)
+		)
+		imath-half? (
+			|| (
+				${g3}
+			)
+		)
+
+	"
 }
 gen_ax_depend() {
 	local s
@@ -202,9 +227,7 @@ RDEPEND+="
 	imath-half? (
 		dev-libs/imath:=
 	)
-	|| (
-                $(gen_openexr_pairs)
-        )
+	$(gen_openexr_pairs)
 	!openexr? (
 		!imath-half? (
 			virtual/libc:*
