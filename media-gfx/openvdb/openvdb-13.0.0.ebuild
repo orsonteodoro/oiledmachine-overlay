@@ -2,16 +2,16 @@
 # Distributed under the terms of the GNU General Public License v2
 
 # Based on openvdb-7.1.0-r1.ebuild from the distro overlay
-# For abi versions, see https://github.com/AcademySoftwareFoundation/openvdb/blob/v12.1.1/CMakeLists.txt#L256
-# For deps versioning, see https://github.com/AcademySoftwareFoundation/openvdb/blob/v12.1.1/doc/dependencies.txt
-# For LLVM ax slots, see https://github.com/AcademySoftwareFoundation/openvdb/blob/v12.1.1/.github/workflows/ax.yml#L71
+# For abi versions, see https://github.com/AcademySoftwareFoundation/openvdb/blob/v13.0.0/CMakeLists.txt#L256
+# For deps versioning, see https://github.com/AcademySoftwareFoundation/openvdb/blob/v13.0.0/doc/dependencies.txt
+# For LLVM ax slots, see https://github.com/AcademySoftwareFoundation/openvdb/blob/v13.0.0/.github/workflows/ax.yml#L71
 # For OpenEXR to imath version correspondence, see https://github.com/AcademySoftwareFoundation/openexr/blob/v3.4.0/MODULE.bazel
 
 EAPI=8
 
 CXX_STANDARD=17
 ONETBB_SLOT="0"
-PYTHON_COMPAT=( "python3_"{10..12} ) # Based on Blender requiring Numpy 1.x
+PYTHON_COMPAT=( "python3_"{10..14} ) # Based on Blender
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -45,19 +45,6 @@ OPENEXR_V3_PV=(
 	"3.2.2:3.1.9"
 	"3.2.1:3.1.9"
 	"3.2.0:3.1.9"
-	"3.1.13:3.1.9"
-	"3.1.12:3.1.9"
-	"3.1.11:3.1.9"
-	"3.1.10:3.1.9"
-	"3.1.9:3.1.9"
-	"3.1.8:3.1.8"
-	"3.1.7:3.1.7"
-	"3.1.6:3.1.5"
-	"3.1.5:3.1.5"
-	"3.1.4:3.1.4"
-	"3.1.3:3.1.0"
-	"3.1.2:3.1.0"
-	"3.1.0:3.1.0"
 )
 
 VDB_UTILS=(
@@ -91,7 +78,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 -alembic ax +blosc clang cuda doc gcc icc -imath-half +jemalloc -jpeg -log4cplus
-+nanovdb -numpy -python +static-libs -tbbmalloc nanovdb -no-concurrent-malloc
++nanovdb -python +static-libs -tbbmalloc nanovdb -no-concurrent-malloc
 -openexr -png test -vdb_lod +vdb_print -vdb_render -vdb_view
 ebuild_revision_11
 "
@@ -119,9 +106,6 @@ REQUIRED_USE+="
 			${VDB_UTILS[@]}
 			test
 		)
-	)
-	numpy? (
-		python
 	)
 	python? (
 		${PYTHON_REQUIRED_USE}
@@ -159,7 +143,7 @@ gen_ax_depend() {
 }
 RDEPEND+="
 	>=dev-cpp/tbb-2021:${ONETBB_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=dev-libs/boost-1.80:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-libs/boost-1.82:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=virtual/zlib-1.2.7:=
 	ax? (
 		$(gen_ax_depend)
@@ -178,13 +162,9 @@ RDEPEND+="
 		$(python_gen_cond_dep '
 			>=dev-python/nanobind-2.0.0[${PYTHON_USEDEP}]
 			>=dev-python/pybind11-2.10.0[${PYTHON_USEDEP}]
-			numpy? (
-				virtual/numpy:=[${PYTHON_USEDEP}]
-			)
 		')
 	)
 	vdb_view? (
-		>=media-libs/glfw-3.1:=
 		>=media-libs/glfw-3.3:=
 		media-libs/glu:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		media-libs/mesa:=[egl(+)]
@@ -230,7 +210,7 @@ gen_llvm_bdepend() {
 	done
 }
 BDEPEND+="
-	>=dev-build/cmake-3.18
+	>=dev-build/cmake-3.24
 	>=sys-devel/bison-3.7.0
 	>=sys-devel/flex-2.6.4
 	dev-util/patchelf
@@ -417,7 +397,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 			-DPYOPENVDB_INSTALL_DIRECTORY="$(python_get_sitedir)"
 			-DPython_EXECUTABLE="${PYTHON}"
 			-DPython_INCLUDE_DIR="$(python_get_includedir)"
-			-DUSE_NUMPY=$(usex numpy)
 			-DVDB_PYTHON_INSTALL_DIRECTORY="$(python_get_sitedir)"
 		)
 	fi

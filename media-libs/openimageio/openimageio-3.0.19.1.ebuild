@@ -18,8 +18,6 @@ LIBSTDCXX_USEDEP_DEV="gcc_slot_skip(+)"
 LLVM_MAX_SLOT="19"
 ONETBB_SLOT="0"
 OPENVDB_APIS=( {12..9} )
-OPENVDB_APIS_=( "${OPENVDB_APIS[@]/#/abi}" )
-OPENVDB_APIS_=( "${OPENVDB_APIS_[@]/%/-compat}" )
 PYTHON_COMPAT=( "python3_"{7..13} )
 QT5_PV="5.15"
 QT6_PV="6.6"
@@ -136,22 +134,11 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FEATURES[@]%:*}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-${OPENVDB_APIS_[@]}
 aom avif clang color-management cuda dds dicom +doc ffmpeg field3d fits
 gcc gif gui heif icc j2c jpeg2k jxl opencv opengl openvdb png ptex +python qt5 +qt6 raw
 rav1e tbb tools +truetype wayland webp X
 ebuild_revision_45
 "
-gen_abi_compat_required_use() {
-	local s
-	for s in "${OPENVDB_APIS[@]}" ; do
-		echo "
-			abi${s}-compat? (
-				openvdb
-			)
-		"
-	done
-}
 gen_llvm_required_use() {
 	local s
 	for s in "${LLVM_COMPAT[@]}" ; do
@@ -163,7 +150,6 @@ gen_llvm_required_use() {
 	done
 }
 REQUIRED_USE="
-	$(gen_abi_compat_required_use)
 	$(gen_llvm_required_use)
 	^^ (
 		clang
@@ -217,9 +203,6 @@ REQUIRED_USE="
 		)
 	)
 	openvdb? (
-		^^ (
-			${OPENVDB_APIS_[@]}
-		)
 		tbb
 	)
 	python? (
@@ -320,38 +303,8 @@ RDEPEND+="
 		virtual/opengl:*
 	)
 	openvdb? (
-		abi12-compat? (
-			media-gfx/openvdb:=
-			|| (
-				=media-gfx/openvdb-14*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi12-compat]
-				=media-gfx/openvdb-13*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi12-compat]
-				=media-gfx/openvdb-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi12-compat]
-			)
-		)
-		abi11-compat? (
-			media-gfx/openvdb:=
-			|| (
-				=media-gfx/openvdb-13*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi11-compat]
-				=media-gfx/openvdb-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi11-compat]
-				=media-gfx/openvdb-11*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi11-compat]
-			)
-		)
-		abi10-compat? (
-			media-gfx/openvdb:=
-			|| (
-				=media-gfx/openvdb-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi10-compat]
-				=media-gfx/openvdb-11*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi10-compat]
-				=media-gfx/openvdb-10*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi10-compat]
-			)
-		)
-		abi9-compat? (
-			media-gfx/openvdb:=
-			|| (
-				=media-gfx/openvdb-11*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi9-compat]
-				=media-gfx/openvdb-10*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi9-compat]
-				=media-gfx/openvdb-9*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},abi9-compat]
-			)
-		)
+		media-gfx/openvdb:=
+		=media-gfx/openvdb-12*:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		tbb? (
 			>=dev-cpp/tbb-2021:${ONETBB_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		)

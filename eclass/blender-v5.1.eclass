@@ -163,15 +163,6 @@ FFMPEG_IUSE=(
 	"+xvid"
 )
 
-# Platform defaults based on CMakeList.txt
-OPENVDB_ABIS=(
-	"${OPENVDB_ABIS_MAJOR_VERS/#/abi}"
-)
-
-OPENVDB_ABIS=(
-	"${OPENVDB_ABIS[@]/%/-compat}"
-)
-
 OPENEXR_V3_PV=(
 	# openexr:imath
 	"3.3.5:3.1.12"
@@ -266,7 +257,6 @@ ${CPU_FLAGS_3_3[@]%:*}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${FFMPEG_IUSE[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-${OPENVDB_ABIS[@]}
 ${PATENT_STATUS_IUSE[@]}
 ${ROCM_SLOTS[@]}
 +abi12-compat +alembic aot -asan +bullet +cineon clang +color-management
@@ -479,9 +469,6 @@ REQUIRED_USE+="
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
 	^^ (
-		${OPENVDB_ABIS[@]}
-	)
-	^^ (
 		clang
 		gcc
 	)
@@ -569,9 +556,6 @@ REQUIRED_USE+="
 	openvdb? (
 		openexr
 		tbb
-		|| (
-			${OPENVDB_ABIS[@]}
-		)
 	)
 	optix? (
 		cuda
@@ -720,23 +704,20 @@ gen_oidn_depends() {
 }
 
 gen_oiio_depends() {
-	local s
-	for s in "${OPENVDB_ABIS[@]}" ; do
-		echo "
-			${s}? (
-				>=dev-cpp/robin-map-1.3.0:=
-				>=dev-libs/libfmt-12.1.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-				>=media-libs/openimageio-3.1.7.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,heif?,jpeg2k?,png,python,tools(+),webp?]
-				<media-libs/openimageio-3.2.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,heif?,jpeg2k?,png,python,tools(+),webp?]
-				heif? (
-					>=media-libs/libheif-1.20.2:=
-					libaom? (
-						>=media-libs/libheif-1.20.2:=[aom]
-					)
+	echo "
+		${s}? (
+			>=dev-cpp/robin-map-1.3.0:=
+			>=dev-libs/libfmt-12.1.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+			>=media-libs/openimageio-3.1.7.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},color-management?,heif?,jpeg2k?,png,python,tools(+),webp?]
+			<media-libs/openimageio-3.2.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},color-management?,heif?,jpeg2k?,png,python,tools(+),webp?]
+			heif? (
+				>=media-libs/libheif-1.20.2:=
+				libaom? (
+					>=media-libs/libheif-1.20.2:=[aom]
 				)
 			)
-		"
-	done
+		)
+	"
 }
 
 gen_openexr_pairs() {
@@ -1086,12 +1067,7 @@ RDEPEND+="
 	)
 	openvdb? (
 		>=dev-libs/c-blosc-1.21.1:=[zlib]
-		abi13-compat? (
-			media-gfx/openvdb:=
-			|| (
-				=media-gfx/openvdb-13*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},abi12-compat,blosc,nanovdb?,numpy]
-			)
-		)
+		=media-gfx/openvdb-13*:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},blosc,nanovdb?,numpy]
 	)
 	openxr? (
 		>=media-libs/openxr-1.1.53:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
@@ -1410,9 +1386,7 @@ eerror "You must enable the wayland USE flag or uninstall wayland."
 	fix_mb_len_max
 
 	local s="${OPENVDB_ABIS_MAJOR_VERS}"
-	if use "abi${s}-compat" ; then
-		append-cppflags -DOPENVDB_ABI_VERSION_NUMBER="${s}"
-	fi
+	append-cppflags -DOPENVDB_ABI_VERSION_NUMBER="${s}"
 
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_BINDIR:PATH="${EPREFIX}$(get_dest)"
