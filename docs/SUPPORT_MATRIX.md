@@ -373,17 +373,9 @@ USE flags support
 
 | USE flag  | Ebuild level of support |
 | ---       | ---                     |
-| split-usr | Not supported [1]       |
+| split-usr | Full supported [1]       |
 
-[1] Before Jun 19, 2026, the overlay assumes split-usr but now merged-usr is
-required on this overlay.  To test if you are using split-usr do
-`ls -id /bin /usr/bin` if the id is not the same it is split.  The reason why is
-because the live systemd ebuild does not support split-usr, and this overlay
-wants to transition to live ebuilds for security hardening because ebuild
-maintainers are not backporting security fixes to stable tagged releases.  Some
-of these vulnerable tagged releases are years old without security backports or
-the security update lag is months old and never can keep up.  We also want to
-be able to switch between OpenRC and systemd for testing or as a production
-choice without issue.  Details to switch to both the merge-usr profile can
-be found at Gentoo Wiki's [merge-usr](https://wiki.gentoo.org/wiki/Merge-usr)
-page.
+[1] To test if you are using split-usr do
+`ls -id /bin /usr/bin` if the id is not the same it is split.  Usually
+AI will tell you to give up because the AI is compromised and so is the
+Wiki.
