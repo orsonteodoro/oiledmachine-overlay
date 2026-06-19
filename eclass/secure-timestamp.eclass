@@ -133,6 +133,7 @@ SECURE_TIMESTAMP["media_gfx_graphite2_9999"]="Mon, 1 Jun 2026 03:21:42 +0700"
 SECURE_TIMESTAMP["media_video_ffmpeg_9999"]="Mon, 15 Jun 2026 03:24:14 +0300"
 SECURE_TIMESTAMP["media_video_ffmpeg_9999m"]="Mon, 15 Jun 2026 03:24:14 +0300"
 SECURE_TIMESTAMP["media_video_pipewire_9999"]="Tue, 9 Jun 2026 09:23:10 +0200"
+SECURE_TIMESTAMP["net_dns_avahi_9999"]="Fri, 19 Jun 2026 02:52:13 +0000"
 SECURE_TIMESTAMP["net_dns_libidn_9999"]="Tue, 16 Jun 2026 17:23:38 +0200"
 SECURE_TIMESTAMP["net_libs_libproxy_9999"]="Mon, 23 Feb 2026 10:30:16 -0600"
 SECURE_TIMESTAMP["net_libs_nodejs_99999999"]="Tue, 16 Jun 2026 12:29:30 -0400"
@@ -140,13 +141,14 @@ SECURE_TIMESTAMP["net_misc_connman_9999"]="2026-02-09 15:45:56 +0100"
 SECURE_TIMESTAMP["net_misc_curl_9999"]="Mon, 15 Jun 2026 12:57:42 +0100"
 SECURE_TIMESTAMP["net_misc_networkmanager_9999"]="Mon, 8 Jun 2026 13:17:41 +0200"
 SECURE_TIMESTAMP["net_print_cups_9999"]="Sat, 13 Jun 2026 12:21:46 -0400"
-SECURE_TIMESTAMP["sys_apps_systemd_9999"]="Thu, 12 Mar 2026 17:12:46 +0000"
+SECURE_TIMESTAMP["sys_apps_systemd_9999"]="Tue, 9 Jun 2026 10:36:58 +0530"
 SECURE_TIMESTAMP["x11_libs_cairo_9999"]="Wed, 6 May 2026 13:42:03 +0100"
 SECURE_TIMESTAMP["x11_libs_gdk_pixbuf_9999"]="Tue, 14 May 2024 22:15:41 -0400"
 SECURE_TIMESTAMP["x11_libs_libdrm_9999"]="2026-04-06 08:00:12 +0000"
 SECURE_TIMESTAMP["x11_libs_pango_9999"]="Sun, 22 Mar 2026 21:54:26 -0400"
 SECURE_TIMESTAMP["x11_libs_pixman_9999"]="Wed, 2 Nov 2022 12:11:10 -0400"
 SECURE_TIMESTAMP["x11_libs_pixman_9999"]="Wed, 2 Nov 2022 12:11:10 -0400"
+
 	declare -p SECURE_TIMESTAMP
 }
 
