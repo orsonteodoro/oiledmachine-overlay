@@ -2,7 +2,7 @@ Title: Use merged-usr
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-06-19
-Revision: 0
+Revision: 1
 News-Item-Format: 2.0
 Display-If-Installed: app-admin/eselect
 Display-If-Installed: sys-apps/baselayout
@@ -26,6 +26,7 @@ This command will return two different IDs for a system using split-usr.
 Tradeoffs and benefits:
 
 merge-usr benefits:
+- MAC security first policy
 - Simplification of MAC (Mandatory Access Control) rules for AppArmor or SELinux.
 - Easier and simplified bind mounts to mount as readonly.
 - Reduced security update lag with live system ebuild
@@ -36,12 +37,14 @@ merge-usr drawback:
 
 split-usr drawbacks:
 - A lot of bind mounts required.
-- More MAC profile complexity leading to improper security
+- More MAC profile complexity leading to improper or inadequate security
 - Possible privilege escalation if misconfiguration
 - Requires compatibility patches
 
 split-usr benefits
+- Base system security first policy
 - Easier recovery without complex mounting of /usr
+- Allowed to mount /usr as read-only, nodev, nosuid for privilege escalation mitigation
 
 
 Ask the AI for help convert from split-usr to merge-usr.
