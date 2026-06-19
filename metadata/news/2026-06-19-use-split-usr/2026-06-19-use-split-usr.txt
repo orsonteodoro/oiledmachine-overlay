@@ -33,9 +33,8 @@ order to protect their systems.
 
 MAC (Mandatory Access Control) rules must be written more comprehensively and
 reviewed for consistency for /bin, /sbin, /lib, /lib64, /usr/bin, /usr/sbin,
-/usr/lib, and /usr/lib64 must be written more comprehensively.  A MAC profile
-maintainer may assume merge-usr layout and write fewer rules so the protection
-may be inadequate.
+/usr/lib, and /usr/lib64.  A MAC profile maintainer may assume merge-usr layout
+and write fewer rules so the protection may be inadequate for split-usr.
 
 If you use a split-usr, nothing needs to be done except for staying away from
 systemd and merge-usr.
