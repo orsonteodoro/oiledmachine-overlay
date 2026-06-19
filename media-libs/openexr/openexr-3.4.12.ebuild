@@ -5,6 +5,8 @@ EAPI=8
 
 MY_PN="OpenEXR"
 
+# See also https://openexr.com/en/latest/install.html
+
 CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO IO UAF"
 CXX_STANDARD=17
@@ -45,7 +47,7 @@ LICENSE="BSD"
 SLOT="0/32"
 IUSE="
 ${CPU_FLAGS_X86[@]}
-doc examples -large-stack +utils test +threads
+doc examples -large-stack +utils tbb test +threads
 ebuild_revision_23
 "
 REQUIRED_USE="
@@ -59,15 +61,18 @@ RESTRICT="
 	)
 "
 RDEPEND="
-	>=app-arch/libdeflate-1.21[zlib(+)]
-	app-arch/libdeflate:=
-	~dev-libs/imath-3.1.12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	dev-libs/imath:=
+	>=app-arch/libdeflate-1.25:=[zlib(+)]
+	~dev-libs/imath-3.2.2:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=media-libs/openjph-0.21.0:=
+	tbb? (
+		dev-cpp/tbb:=
+	)
 "
 DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	>dev-build/cmake-3.14
 	virtual/pkgconfig
 	doc? (
 		sys-apps/help2man
@@ -76,13 +81,7 @@ BDEPEND="
 PATCHES=(
 	"${FILESDIR}/${PN}-3.2.1-bintests-iff-utils.patch"
 )
-DOCS=(
-	"CHANGES.md"
-	"GOVERNANCE.md"
-	"PATENTS"
-	"README.md"
-	"SECURITY.md"
-)
+DOCS=( "CHANGES.md" "README.md" )
 
 pkg_setup() {
 	libcxx-slot_verify
@@ -164,11 +163,13 @@ einfo "Update SLOT to ${so_ver}"
 		-DOPENEXR_ENABLE_THREADING="$(usex threads)"
 		-DOPENEXR_FORCE_INTERNAL_DEFLATE="no"
 		-DOPENEXR_FORCE_INTERNAL_IMATH="no"
+		-DOPENEXR_FORCE_INTERNAL_OPENJPH="no"
 		-DOPENEXR_INSTALL="yes"
 		-DOPENEXR_INSTALL_DOCS="$(usex doc)"
 		-DOPENEXR_INSTALL_PKG_CONFIG="yes"
 		-DOPENEXR_INSTALL_TOOLS="$(usex utils)"
 		-DOPENEXR_USE_CLANG_TIDY="no" # don't look for clang-tidy
+		-DOPENEXR_USE_TBB="$(usex tbb)"
 	)
 
 	if use test; then
@@ -201,4 +202,6 @@ src_test() {
 src_install() {
 	use examples && docompress -x "/usr/share/doc/${PF}/examples"
 	cmake_src_install
+	docinto "licenses"
+	dodoc "PATENTS"
 }
