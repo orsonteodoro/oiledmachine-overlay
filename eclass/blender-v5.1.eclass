@@ -705,7 +705,7 @@ gen_oidn_depends() {
 
 gen_oiio_depends() {
 	echo "
-		${s}? (
+		(
 			>=dev-cpp/robin-map-1.3.0:=
 			>=dev-libs/libfmt-12.1.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 			>=media-libs/openimageio-3.1.7.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},color-management?,heif?,jpeg2k?,png,python,tools(+),webp?]
