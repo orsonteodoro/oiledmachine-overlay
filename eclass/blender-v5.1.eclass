@@ -1082,6 +1082,7 @@ RDEPEND+="
 	)
 	opensubdiv? (
 		>=media-libs/opensubdiv-3.7.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cuda=,opencl=,opengl(+),tbb?]
+		<media-libs/opensubdiv-4.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cuda=,opencl=,opengl(+),tbb?]
 	)
 	openvdb? (
 		>=dev-libs/c-blosc-1.21.1:=[zlib]

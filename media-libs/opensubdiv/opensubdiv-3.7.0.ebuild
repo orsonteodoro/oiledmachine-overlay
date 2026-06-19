@@ -5,25 +5,53 @@ EAPI=8
 
 # U22
 
+# For deps, see https://github.com/PixarAnimationStudios/OpenSubdiv/blob/v3_7_0/README.md
+
+MY_PV=$(ver_rs "1-3" '_')
+
 # Some parts synced with opensubdiv-3.4.4-r2.
 CXX_STANDARD=14
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX14[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX14[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}"
 )
 
 CMAKE_MAKEFILE_GENERATOR="emake"
 CUDA_TARGETS_COMPAT=(
-	"sm_35"
-	"sm_50"
+	"compute_50"
+	"compute_52"
+	"compute_53"
+	"compute_60"
+	"compute_61"
+	"compute_62"
+	"compute_70"
+	"compute_75"
+	"compute_80"
+	"compute_86"
+	"compute_89"
+	"compute_90"
 )
-MY_PV=$(ver_rs "1-3" '_')
+declare -A CUDA_TARGET_TO_COMPUTE=(
+	["compute_50"]="5.0"
+	["compute_52"]="5.2"
+	["compute_53"]="5.3"
+	["compute_60"]="6.0"
+	["compute_61"]="6.1"
+	["compute_62"]="6.2"
+	["compute_70"]="7.0"
+	["compute_75"]="7.5"
+	["compute_80"]="8.0"
+	["compute_86"]="8.6"
+	["compute_89"]="8.9"
+	["compute_90"]="90"
+)
+
 ONETBB_SLOT="0"
 PYTHON_COMPAT=( "python3_"{10..11} ) # U22 (3.10 - 3.11)
 
@@ -52,13 +80,13 @@ SLOT="0"
 # test is default on upstream
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-cuda +doc +examples -glew +glfw +opencl +openmp +opengl +ptex +tbb test
+cuda doc +examples -glew +glfw +opencl +openmp +opengl +ptex +tbb test
 +tutorials +X
 ebuild_revision_6
 "
 gen_required_use_cuda_targets() {
 	local x
-	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+	for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
 		echo  "
 			cuda_targets_${x}? (
 				cuda
@@ -77,47 +105,77 @@ REQUIRED_USE="
 		glfw
 	)
 "
+CUDA_12_6_RDEPEND="
+	dev-util/nvidia-cuda-toolkit:=
+	|| (
+		=dev-util/nvidia-cuda-toolkit-12.6*
+	)
+	>=x11-drivers/nvidia-drivers-560.35.05:=
+"
 RDEPEND="
 	${PYTHON_DEPS}
-	cuda_targets_sm_35? (
-		=dev-util/nvidia-cuda-toolkit-11*
-		dev-util/nvidia-cuda-toolkit:=
+	cuda_targets_compute_50? (
+		${CUDA_12_6_RDEPEND}
 	)
-	cuda_targets_sm_50? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11*
-			=dev-util/nvidia-cuda-toolkit-12*
-		)
-		dev-util/nvidia-cuda-toolkit:=
+	cuda_targets_compute_52? (
+		${CUDA_12_6_RDEPEND}
+	)
+	cuda_targets_compute_53? (
+		${CUDA_12_6_RDEPEND}
+	)
+	cuda_targets_compute_60? (
+		${CUDA_12_6_RDEPEND}
+	)
+	cuda_targets_compute_61? (
+		${CUDA_12_6_RDEPEND}
+	)
+	cuda_targets_compute_62? (
+		${CUDA_12_6_RDEPEND}
+	)
+	cuda_targets_compute_70? (
+		${CUDA_12_6_RDEPEND}
+	)
+	cuda_targets_compute_75? (
+		${CUDA_12_6_RDEPEND}
+	)
+	cuda_targets_compute_80? (
+		${CUDA_12_6_RDEPEND}
+	)
+	cuda_targets_compute_86? (
+		${CUDA_12_6_RDEPEND}
+	)
+	cuda_targets_compute_89? (
+		${CUDA_12_6_RDEPEND}
+	)
+	cuda_targets_compute_90? (
+		${CUDA_12_6_RDEPEND}
 	)
 	glew? (
 		media-libs/glew:=
 	)
 	glfw? (
-		>=media-libs/glfw-3.3.3
-		media-libs/glfw:=
+		>=media-libs/glfw-3.3.3:=
 	)
 	opencl? (
-		virtual/opencl
+		virtual/opencl:*
 	)
 	ptex? (
-		>=media-libs/ptex-2.4.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		media-libs/ptex:=
-		>=virtual/zlib-1.2.13
+		>=media-libs/ptex-2.4.2:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=virtual/zlib-1.2.13:=
 	)
 	X? (
-		x11-libs/libX11
-		x11-libs/libXcursor
-		x11-libs/libXinerama
-		x11-libs/libXi
-		x11-libs/libXrandr
-		x11-libs/libXxf86vm
+		x11-libs/libX11:=
+		x11-libs/libXcursor:=
+		x11-libs/libXinerama:=
+		x11-libs/libXi:=
+		x11-libs/libXrandr:=
+		x11-libs/libXxf86vm:=
 	)
 "
 DEPEND="
 	${RDEPEND}
 	tbb? (
-		>=dev-cpp/tbb-2021.12.0:${ONETBB_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-cpp/tbb-2021.12.0:${ONETBB_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-cpp/tbb:=
 	)
 "
@@ -131,13 +189,14 @@ BDEPEND="
 		>=app-text/doxygen-1.14.0
 	)
 	cuda? (
-		sys-devel/gcc[cxx]
+		sys-devel/gcc:=[cxx]
 	)
 "
 PATCHES_=(
 	"${FILESDIR}/${PN}-3.6.0-use-gnuinstalldirs.patch"
 	"${FILESDIR}/${PN}-3.6.0-cudaflags.patch"
 )
+DOCS=( "README.md" )
 
 pkg_setup() {
 	check-compiler-switch_start
@@ -210,14 +269,16 @@ einfo "CXX:\t\t${CXX}"
 		mycmakeargs+=(
 			-DOSD_CUDA_NVCC_FLAGS="${cc_bin} ${OSD_CUDA_NVCC_FLAGS}"
 		)
-	elif has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
-		mycmakeargs+=(
-			-DOSD_CUDA_NVCC_FLAGS="${cc_bin} --gpu-architecture compute_50"
-		)
-	elif has_version "=dev-util/nvidia-cuda-toolkit-11*" ; then
-		mycmakeargs+=(
-			-DOSD_CUDA_NVCC_FLAGS="${cc_bin}"
-		)
+	elif has_version "=dev-util/nvidia-cuda-toolkit-12.6*" ; then
+		local x
+		for x in "${!CUDA_TARGET_TO_COMPUTE[@]}" ; do
+			if use "${x}" ; then
+				mycmakeargs+=(
+					-DOSD_CUDA_NVCC_FLAGS="${cc_bin} --gpu-architecture ${x}"
+				)
+				break
+			fi
+		done
 	fi
 
 	export LIBDIR=$(get_libdir)
@@ -248,6 +309,10 @@ src_test() {
 
 src_install() {
 	cmake_src_install
+	use doc && einstalldocs
+	docinto "licenses"
+	dodoc "NOTICE.txt"
+	dodoc "LICENSE.txt"
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  link-to-multislot-tbb
