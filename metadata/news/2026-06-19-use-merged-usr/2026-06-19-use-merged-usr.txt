@@ -1,0 +1,57 @@
+Title: Use merged-usr
+Author: Orson Teodoro <orsonteodoro@hotmail.com>
+Content-Type: text/plain
+Posted: 2026-06-19
+Revision: 0
+News-Item-Format: 2.0
+Display-If-Installed: app-admin/eselect
+Display-If-Installed: sys-apps/baselayout
+Display-If-Installed: sys-apps/coreutils
+
+The enabled split-usr USE flag is not supported on this overlay.
+Please use merged-usr instead.
+
+To convert from split-usr to merge-usr, see
+https://wiki.gentoo.org/wiki/Merge-usr
+
+The distro default is merge-usr for profile 23.0.
+
+Identifying if you are using split-usr:
+
+  ls -id /bin /usr/bin
+
+This command will return two different IDs.
+
+
+Tradeoffs and benefits:
+
+merge-usr benefits:
+- Simplification of MAC rules.
+- Easier and simplified bind mounts to mount as readonly.
+- Reduced security update lag with live system ebuild
+
+merge-usr drawback:
+- More executibles available to attacker once mounted
+- Increased attack surface
+
+split-usr drawbacks:
+- A lot of bind mounts required.
+- More MAC profile complexity leading to improper security
+- Possible privilege escalation if misconfiguration
+- Requires compatibility patches
+
+split-usr benefits
+- Easier recovery without complex mounting of /usr
+
+
+Ask the AI for help convert from split-usr to merge-usr.
+
+
+The reasons why the oiledmachine-overlay no longer supports split-usr:
+
+- Live ebuilds have a bigger security benefit for security compared to tagged
+  releases.
+- The live systemd ebuild requires merge-usr configuration.
+- merge-usr is the distro default for profile 23.0.
+- Easier switching and testing OpenRC and systemd of both init scripts and init
+  systems.
