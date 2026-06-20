@@ -45,7 +45,8 @@ _SECURE_TIMESTAMP_ECLASS=1
 # Before the xz-utils incident (Mar 29, 2024), performance regessions were not
 # an issue.  They are a big deal now because they may indicate a possible
 # supply chain attack.  In the xz-utils incident, a performance regression
-# lead to the discovery of a supply chain attack.
+# lead to the discovery of a supply chain attack.  The attacks typically
+# happen during build time not runtime after install.
 #
 # Rankings of supply chain attacks by language:
 #
