@@ -42,6 +42,7 @@
     </flag>
   </use>
   <upstream>
+    <changelog>https://github.com/libffi/libffi/blob/master/README.md#history</changelog>
     <remote-id type="cpe">cpe:/a:libffi_project:libffi</remote-id>
     <remote-id type="github">libffi/libffi</remote-id>
   </upstream>
