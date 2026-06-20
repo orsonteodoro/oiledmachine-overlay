@@ -21,12 +21,16 @@ LLVM_COMPAT=(
 LLVM_COMPAT=( {17..22} )
 LLVM_OPTIONAL=1
 
+CHKL_TIMESTAMPS=(
+	"app-arch/zstd-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+)
+
 # behaves very badly when qttools is not already installed, also
 # other issues to handle (clang tests flaky depending on version,
 # and 3rdparty/ tries to FetchContent gtest)
 QT6_RESTRICT_TESTS=1
 
-inherit libcxx-slot libstdcxx-slot flag-o-matic llvm-r2 optfeature qt6-build xdg
+inherit chkl libcxx-slot libstdcxx-slot flag-o-matic llvm-r2 optfeature qt6-build xdg
 
 DESCRIPTION="Qt Tools Collection"
 
@@ -51,23 +55,22 @@ REQUIRED_USE="
 "
 
 RDEPEND="
-	~dev-qt/qtbase-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},widgets?]
-	dev-qt/qtbase:=
+	~dev-qt/qtbase-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},widgets?]
 	assistant? (
-		~dev-qt/qtbase-${PV}:6[concurrent,network,sql,sqlite]
+		~dev-qt/qtbase-${PV}:6=[concurrent,network,sql,sqlite]
 		!dev-qt/assistant:5
 	)
 	designer? (
-		~dev-qt/qtbase-${PV}:6[network,xml,zstd=]
-		zstd? ( app-arch/zstd:= )
+		~dev-qt/qtbase-${PV}:6=[network,xml,zstd=]
+		zstd? ( >=app-arch/zstd-9999:= )
 		!<dev-qt/designer-5.15.18-r1:5
 	)
-	kmap2qmap? ( ~dev-qt/qtbase-${PV}:6[evdev] )
+	kmap2qmap? ( ~dev-qt/qtbase-${PV}:6=[evdev] )
 	linguist? (
 		widgets? ( !dev-qt/linguist:5 )
 	)
 	qdbus? (
-		~dev-qt/qtbase-${PV}:6[dbus,xml]
+		~dev-qt/qtbase-${PV}:6=[dbus,xml]
 		widgets? ( !dev-qt/qdbusviewer:5 )
 	)
 	qdoc? (
@@ -77,20 +80,18 @@ RDEPEND="
 		')
 	)
 	qml? (
-		~dev-qt/qtdeclarative-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},widgets?]
-		dev-qt/qtdeclarative:=
+		~dev-qt/qtdeclarative-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},widgets?]
 	)
 	qmlls? (
-		~dev-qt/qtdeclarative-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},qmlls]
-		dev-qt/qtdeclarative:=
+		~dev-qt/qtdeclarative-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},qmlls]
 	)
-	qtdiag? ( ~dev-qt/qtbase-${PV}:6[network,gles2-only=,vulkan=] )
-	widgets? ( ~dev-qt/qtbase-${PV}:6[opengl=] )
+	qtdiag? ( ~dev-qt/qtbase-${PV}:6=[network,gles2-only=,vulkan=] )
+	widgets? ( ~dev-qt/qtbase-${PV}:6=[opengl=] )
 "
 DEPEND="
 	${RDEPEND}
 	qtdiag? (
-		vulkan? ( dev-util/vulkan-headers )
+		vulkan? ( dev-util/vulkan-headers:= )
 	)
 "
 
@@ -108,6 +109,8 @@ src_prepare() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
+
 	# validator.h:25:8: error: type 'struct Validator' ... [-Werror=odr]
 	use linguist && filter-lto
 
