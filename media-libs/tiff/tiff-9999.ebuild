@@ -26,7 +26,7 @@ CHKL_TIMESTAMPS=(
 inherit autotools libtool multilib-minimal verify-sig flag-o-matic
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="a94d1ded80b9b46327d3982a3c80043b29f23e2e" # Wed, 10 Jun 2026 10:24:40 +0000
+	FALLBACK_COMMIT="6e92fdab4ecaf7f782559a7692a543baec63b03d" # Fri, 19 Jun 2026 15:56:50 +0200
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://gitlab.com/libtiff/libtiff.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -53,7 +53,10 @@ SLOT="0/6"
 if [[ ${PV} != *_rc* ]] ; then
 	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~arm64-macos ~x64-macos ~x64-solaris"
 fi
-IUSE="+cxx jbig jpeg lerc libdeflate lzma opengl static-libs test webp zlib zstd"
+IUSE="
++cxx jbig jpeg lerc libdeflate lzma opengl static-libs test webp zlib zstd
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 # lerc?( zlib ): bug #953883
