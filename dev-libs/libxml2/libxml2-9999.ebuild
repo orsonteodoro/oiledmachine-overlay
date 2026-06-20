@@ -13,12 +13,22 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO DF DOS FS HO IO MC NPD OOBA OOBR OOBW 
 
 PYTHON_COMPAT=( python3_{11..14} )
 PYTHON_REQ_USE="xml(+)"
-inherit cflags-hardened check-compiler-switch python-r1 meson-multilib
+
+CHKL_TIMESTAMPS=(
+	"dev-libs/icu-9999"
+)
+
+inherit cflags-hardened check-compiler-switch chkl python-r1 meson-multilib
 
 DESCRIPTION="XML C parser and toolkit"
 HOMEPAGE="https://gitlab.gnome.org/GNOME/libxml2/-/wikis/home"
 if [[ ${PV} == 9999 ]] ; then
+	FALLBACK_COMMIT="13a3df99ffe2521a903f270abb33aa7092b34147"
+	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://gitlab.gnome.org/GNOME/libxml2"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE=" fallback-commit"
+	fi
 	inherit git-r3
 else
 	inherit gnome.org
@@ -30,14 +40,14 @@ S="${WORKDIR}/${PN}-${PV%_rc*}"
 LICENSE="MIT"
 # see so_version = v_maj + v_min_compat for subslot
 SLOT="2/16"
-IUSE="doc icu python readline static-libs test"
+IUSE+=" doc icu python readline static-libs test"
 RESTRICT="!test? ( test )"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
 RDEPEND="
-	virtual/libiconv
-	>=virtual/zlib-1.2.8-r1:=[${MULTILIB_USEDEP}]
-	icu? ( >=dev-libs/icu-51.2-r1:=[${MULTILIB_USEDEP}] )
+	virtual/libiconv:*
+	>=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}]
+	icu? ( >=dev-libs/icu-9999:=[${MULTILIB_USEDEP}] )
 	python? ( ${PYTHON_DEPS} )
 	readline? ( sys-libs/readline:= )
 "
@@ -67,7 +77,11 @@ pkg_setup() {
 
 src_unpack() {
 	if [[ ${PV} == 9999 ]] ; then
-		git-r3_src_unpack
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
 	else
 		default
 	fi
@@ -105,6 +119,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 
 	cflags-hardened_append
+	chkl_check_many_timestamps
 
 	local emesonargs=(
 		-Ddefault_library=$(multilib_native_usex static-libs both shared)
@@ -183,3 +198,7 @@ pkg_postinst() {
 		fi
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  passed (interactive) 13a3df9 live (20260619)
+# Double emerge:  passed
+# xmllint --xpath "//maintainer[1]/email" metadata.xml:  passed

@@ -1669,7 +1669,7 @@ COMMON_SNAPSHOT_DEPEND="
 		>=media-libs/libwebp-9999:=[${MULTILIB_USEDEP}]
 	)
 	system-libxml? (
-		>=dev-libs/libxml2-2.15.3:=[${MULTILIB_USEDEP},icu]
+		>=dev-libs/libxml2-9999:=[${MULTILIB_USEDEP},icu]
 	)
 	system-libxnvctrl? (
 		x11-drivers/nvidia-drivers:*

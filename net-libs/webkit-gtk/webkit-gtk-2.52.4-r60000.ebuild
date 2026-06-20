@@ -913,7 +913,7 @@ RDEPEND+="
 	>=dev-libs/gmp-6.1.2:=[-pgo(-),${MULTILIB_USEDEP}]
 	>=dev-libs/libgcrypt-1.7.0:=[${MULTILIB_USEDEP}]
 	>=dev-libs/libtasn1-4.13:=[${MULTILIB_USEDEP}]
-	>=dev-libs/libxml2-2.15.3:=[${MULTILIB_USEDEP}]
+	>=dev-libs/libxml2-9999:=[${MULTILIB_USEDEP}]
 	>=dev-libs/libxslt-1.1.44:=[${MULTILIB_USEDEP}]
 	>=gui-libs/gtk-4.23.9999:4=[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
 	>=media-libs/fontconfig-${FONTCONFIG_PV}:=[${MULTILIB_USEDEP}]
