@@ -48,6 +48,7 @@ _SECURE_TIMESTAMP_ECLASS=1
 # lead to the discovery of a supply chain attack.
 #
 # Rankings of supply chain attacks by language:
+#
 # 1. JavaScript/Typescript
 # 2. Python
 # 3. Java
