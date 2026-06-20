@@ -41,7 +41,7 @@ x86 ~x64-macos ~x64-solaris
 fi
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="f23381d83cdd98199247adafc85851ce9c2e143f" # This commit is 2 performance regressions prior.
+	FALLBACK_COMMIT="f23381d83cdd98199247adafc85851ce9c2e143f" # This commit is a rollback before the performance regressions
 	EGIT_BRANCH="main"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
@@ -80,7 +80,7 @@ RESTRICT="
 SLOT="0/"$(ver_cut "1" "${PV}")
 IUSE+="
 debug doc examples static-libs test
-ebuild_revision_29
+ebuild_revision_31
 "
 BDEPEND+="
 	${PYTHON_DEPS}
@@ -180,9 +180,7 @@ src_prepare() {
 	prepare_abi() {
 		local lib_type
 		for lib_type in $(get_lib_types) ; do
-			einfo "Build type is ${lib_type}"
 			export S="${S_ORIG}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
-			einfo "Copying to ${S}"
 			cp -a "${S_ORIG}" "${S}" || die
 		done
 	}
