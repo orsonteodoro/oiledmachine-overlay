@@ -20,7 +20,7 @@ CXX_STANDARD=17 # 11 is minimum, 17 for protobuf
 PYTHON_COMPAT=( "python3_"{8..12} )
 
 CMAKE_PV="3.15"
-GSTREAMER_PV="1.16.2"
+GSTREAMER_PV="1.28.4"
 KLEIDICV_PV="0.5.0"
 QT5_PV="5.12.8"
 QT6_PV="6.2.4"
@@ -371,7 +371,20 @@ ROCM_SLOTS=(
 	"rocm_6_4"
 )
 
-inherit abseil-cpp cflags-hardened cuda java-pkg-opt-2 cmake-multilib flag-o-matic hip-versions
+CHKL_TIMESTAMPS=(
+	"app-arch/bzip2-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/glib-2.89.9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/wayland-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/harfbuzz-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/freetype-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libva-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libwebp-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/openjpeg-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/tiff-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+)
+
+inherit abseil-cpp cflags-hardened chkl cuda java-pkg-opt-2 cmake-multilib flag-o-matic hip-versions
 inherit libcxx-slot libstdcxx-slot protobuf python-single-r1 toolchain-funcs virtualx
 
 if [[ "${PV}" == *"9999"* ]] ; then
@@ -855,14 +868,8 @@ PATENT_STATUS_RDEPEND="
 		ffmpeg? (
 			media-video/ffmpeg:=
 			|| (
-				>=media-video/ffmpeg-4.4.6:56.58.58[${MULTILIB_USEDEP},libaom?,-openh264,-patent_status_nonfree,vpx?]
-				>=media-video/ffmpeg-4.4.6:0/56.58.58[${MULTILIB_USEDEP},libaom?,-openh264,-patent_status_nonfree,vpx?]
-
-				>=media-video/ffmpeg-6.1.4:58.60.60[${MULTILIB_USEDEP},libaom?,-openh264,-patent_status_nonfree,vpx?]
-				>=media-video/ffmpeg-6.1.4:0/58.60.60[${MULTILIB_USEDEP},libaom?,-openh264,-patent_status_nonfree,vpx?]
-
-				>=media-video/ffmpeg-4.4.6:56.58.58[${MULTILIB_USEDEP},libaom?,-openh264,-patent_status_nonfree,vpx?]
-				>=media-video/ffmpeg-4.4.6:0/56.58.58[${MULTILIB_USEDEP},libaom?,-openh264,-patent_status_nonfree,vpx?]
+				>=media-video/ffmpeg-9999[${MULTILIB_USEDEP},libaom?,-openh264,-patent_status_nonfree,vpx?]
+				>=media-video/ffmpeg-9999m[${MULTILIB_USEDEP},libaom?,-openh264,-patent_status_nonfree,vpx?]
 			)
 		)
 		gstreamer? (
@@ -873,8 +880,8 @@ PATENT_STATUS_RDEPEND="
 		ffmpeg? (
 			media-video/ffmpeg:=
 			|| (
-				media-video/ffmpeg:56.58.58[${MULTILIB_USEDEP},libaom?,openh264?,patent_status_nonfree,vpx?]
-				media-video/ffmpeg:0/56.58.58[${MULTILIB_USEDEP},libaom?,openh264?,patent_status_nonfree,vpx?]
+				>=media-video/ffmpeg-9999[${MULTILIB_USEDEP},libaom?,openh264?,patent_status_nonfree,vpx?]
+				>=media-video/ffmpeg-9999m[${MULTILIB_USEDEP},libaom?,openh264?,patent_status_nonfree,vpx?]
 			)
 		)
 		gstreamer? (
@@ -885,8 +892,8 @@ PATENT_STATUS_RDEPEND="
 # The Protobuf version requirement is relaxed.
 RDEPEND="
 	${PATENT_STATUS_RDEPEND}
-	>=app-arch/bzip2-1.0.8:=[${MULTILIB_USEDEP}]
-	>=virtual/zlib-1.3.1:=[${MULTILIB_USEDEP}]
+	>=app-arch/bzip2-9999:=[${MULTILIB_USEDEP}]
+	>=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}]
 	dev-libs/protobuf:=
 	|| (
 		dev-libs/protobuf:3/3.12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx_standard_cxx17]
@@ -911,8 +918,8 @@ RDEPEND="
 		>=sci-libs/hdf5-1.10.4:=
 	)
 	contribfreetype? (
-		>=media-libs/harfbuzz-2.6.4:=[${MULTILIB_USEDEP}]
-		>=media-libs/freetype-2.10.1:=[${MULTILIB_USEDEP}]
+		>=media-libs/harfbuzz-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/freetype-9999:=[${MULTILIB_USEDEP}]
 	)
 	contribovis? (
 		>=dev-games/ogre-1.12:=
@@ -937,8 +944,8 @@ RDEPEND="
 		>=media-libs/gst-plugins-base-${GSTREAMER_PV}:=[${MULTILIB_USEDEP}]
 	)
 	gtk3? (
-		>=dev-libs/glib-2.64.6:=[${MULTILIB_USEDEP}]
-		>=x11-libs/gtk+-3.24.18:3=[${MULTILIB_USEDEP}]
+		>=dev-libs/glib-2.89.9999:=[${MULTILIB_USEDEP}]
+		>=x11-libs/gtk+-3.24.52:3=[${MULTILIB_USEDEP}]
 	)
 	halide? (
 		dev-lang/halide:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
@@ -951,11 +958,11 @@ RDEPEND="
 		>=virtual/jre-1.8:*
 	)
 	jpeg? (
-		>=media-libs/libjpeg-turbo-3.1.2:=[${MULTILIB_USEDEP}]
+		>=media-libs/libjpeg-turbo-9999:=[${MULTILIB_USEDEP}]
 	)
 	jpeg2k? (
 		!jasper? (
-			>=media-libs/openjpeg-2.5.4:=[${MULTILIB_USEDEP}]
+			>=media-libs/openjpeg-2.5.4-r1:=[${MULTILIB_USEDEP}]
 		)
 		jasper? (
 			>=media-libs/jasper-1.900.1:=
@@ -992,7 +999,7 @@ RDEPEND="
 		>=sci-ml/openvino-2024.0.0:=
 	)
 	png? (
-		>=media-libs/libpng-1.6.53:=[${MULTILIB_USEDEP}]
+		>=media-libs/libpng-1.6.57:=[${MULTILIB_USEDEP}]
 	)
 	python? (
 		${PYTHON_DEPS}
@@ -1033,13 +1040,13 @@ RDEPEND="
 		>=dev-cpp/tbb-2022.1.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	)
 	tiff? (
-		>=media-libs/tiff-4.7.1:=[${MULTILIB_USEDEP}]
+		>=media-libs/tiff-9999:=[${MULTILIB_USEDEP}]
 	)
 	v4l? (
 		>=media-libs/libv4l-0.8.3:=[${MULTILIB_USEDEP}]
 	)
 	vaapi? (
-		>=media-libs/libva-2.7.0:=[${MULTILIB_USEDEP}]
+		>=media-libs/libva-9999:=[${MULTILIB_USEDEP}]
 	)
 	vtk? (
 		>=sci-libs/vtk-7.1.1:=[rendering,cuda=]
@@ -1050,11 +1057,11 @@ RDEPEND="
 	)
 	wayland? (
 		>=dev-libs/wayland-protocols-1.13:=
-		>=dev-libs/wayland-1.18.0:=[${MULTILIB_USEDEP}]
+		>=dev-libs/wayland-9999:=[${MULTILIB_USEDEP}]
 		>=x11-libs/libxkbcommon-0.10.0:=[${MULTILIB_USEDEP}]
 	)
 	webp? (
-		>=media-libs/libwebp-1.6.0:=[${MULTILIB_USEDEP}]
+		>=media-libs/libwebp-9999:=[${MULTILIB_USEDEP}]
 	)
 	xine? (
 		>=media-libs/xine-lib-1.2.9:=
@@ -1344,6 +1351,7 @@ multilib_src_configure() {
 	filter-lto
 
 	cflags-hardened_append
+	chkl_check_many_timestamps
 
 	# Protobuf version requirement relaxed
 	if has_version "dev-libs/protobuf:3/3.12" ; then

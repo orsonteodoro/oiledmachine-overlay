@@ -24,6 +24,7 @@ FALLBACK_COMMIT="3a3a3ffb99a391a909f7d759e580e5544a35b223" # Tue, 16 Jun 2026 14
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/glib-2.89.9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/wayland-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"net-print/cups-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/harfbuzz-9999"		# Bumped live/*DEPENDS to latest precaution for non-vulnerable
 	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
@@ -87,7 +88,7 @@ COMMON_DEPEND="
 		>=media-libs/mesa-23.0.4:=[vulkan]
 		)
 	wayland? (
-		>=dev-libs/wayland-1.24.0:=
+		>=dev-libs/wayland-9999:=
 		>=dev-libs/wayland-protocols-1.44:=
 		>=media-libs/mesa-23.0.4:=[wayland]
 		>=x11-libs/libxkbcommon-0.2:=

@@ -26,6 +26,7 @@ CHKL_TIMESTAMPS=(
 	# See https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/vf.eclass for a list of vulnerabilities.
 	# Currently, the packages that were triaged were the most widely used.
 	# Last security check 20260614
+	"dev-libs/wayland-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/lcms-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libplacebo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
@@ -185,7 +186,7 @@ COMMON_DEPEND="
 	)
 	vulkan? ( media-libs/vulkan-loader:=[X?,wayland?] )
 	wayland? (
-		>=dev-libs/wayland-1.23:=
+		>=dev-libs/wayland-9999:=
 		x11-libs/libxkbcommon:=
 	)
 	zimg? ( media-libs/zimg:= )

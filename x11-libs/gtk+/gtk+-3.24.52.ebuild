@@ -12,6 +12,7 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS HO IO PE"
 GNOME_ORG_MODULE=gtk
 
 CHKL_TIMESTAMPS=(
+	"dev-libs/wayland-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/fontconfig-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/harfbuzz-9999"		# Bumped live/*DEPENDS to latest precaution for non-vulnerable
 	"net-print/cups-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
@@ -54,7 +55,7 @@ COMMON_DEPEND="
 	cups? ( >=net-print/cups-9999:=[${MULTILIB_USEDEP}] )
 	introspection? ( >=dev-libs/gobject-introspection-1.82.0-r2:= )
 	wayland? (
-		>=dev-libs/wayland-1.14.91:=[${MULTILIB_USEDEP}]
+		>=dev-libs/wayland-9999:=[${MULTILIB_USEDEP}]
 		>=dev-libs/wayland-protocols-1.32:=
 		media-libs/mesa:=[wayland,${MULTILIB_USEDEP}]
 		>=x11-libs/libxkbcommon-0.2:=[${MULTILIB_USEDEP}]

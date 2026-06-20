@@ -135,9 +135,7 @@ LLVM_COMPAT=(
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 FFMPEG_COMPAT=(
-	"0/58.60.60" # 6.1
-	"0/57.59.59" # 5.1
-	"0/56.58.58" # 4.3
+	"0/60.62.62" # 8.x
 )
 
 # TODO finish
@@ -150,6 +148,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-3.4.9999"
 	"dev-libs/openssl-3.3.9999"
 	"dev-libs/openssl-3.0.9999"
+	"dev-libs/wayland-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/fontconfig-9999"
 	"media-libs/freetype-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/harfbuzz-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
@@ -1053,7 +1052,7 @@ RDEPEND+="
 		>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP},X?]
 	)
 	wayland? (
-		>=dev-libs/wayland-1.15.0:=[${MULTILIB_USEDEP}]
+		>=dev-libs/wayland-9999:=[${MULTILIB_USEDEP}]
 		>=dev-libs/wayland-protocols-1.15:=[${MULTILIB_USEDEP}]
 		>=media-libs/mesa-${MESA_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},egl(+)]
 	)

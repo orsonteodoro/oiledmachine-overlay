@@ -222,6 +222,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/libffi-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/nspr-9999"
 	"dev-libs/nss-9999"
+	"dev-libs/wayland-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-gfx/graphite2-9999"
 	"media-libs/alsa-lib-9999"
 	"media-libs/dav1d-9999"
@@ -665,6 +666,7 @@ CDEPEND="
 		dev-debug/valgrind:=
 	)
 	wayland? (
+		>=dev-libs/wayland-9999:=[${MULTILIB_USEDEP}]
 		>=media-libs/libepoxy-1.5.10-r1:=[${MULTILIB_USEDEP}]
 		>=x11-libs/gtk+-${GTK3_PV}:3=[${MULTILIB_USEDEP},wayland]
 	)

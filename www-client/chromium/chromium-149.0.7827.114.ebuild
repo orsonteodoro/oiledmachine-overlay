@@ -1582,7 +1582,7 @@ COMMON_SNAPSHOT_DEPEND="
 		)
 		wayland? (
 			>=dev-libs/libffi-9999:=[${MULTILIB_USEDEP}]
-			>=dev-libs/wayland-1.24.0:=[${MULTILIB_USEDEP}]
+			>=dev-libs/wayland-9999:=[${MULTILIB_USEDEP}]
 			screencast? (
 				>=media-video/pipewire-0.3.65:=[${MULTILIB_USEDEP}]
 			)
