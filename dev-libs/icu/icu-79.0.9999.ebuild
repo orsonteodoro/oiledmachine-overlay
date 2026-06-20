@@ -41,7 +41,7 @@ x86 ~x64-macos ~x64-solaris
 fi
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="f23381d83cdd98199247adafc85851ce9c2e143f" # This commit is a rollback before the performance regressions
+	FALLBACK_COMMIT="7b909a7d356c7dad8892fa002c89580fa1f38cbd"
 	EGIT_BRANCH="main"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
@@ -80,7 +80,7 @@ RESTRICT="
 SLOT="0/"$(ver_cut "1" "${PV}")
 IUSE+="
 debug doc examples static-libs test
-ebuild_revision_31
+ebuild_revision_33
 "
 BDEPEND+="
 	${PYTHON_DEPS}
