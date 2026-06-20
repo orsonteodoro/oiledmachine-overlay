@@ -41,6 +41,7 @@ CHKL_TIMESTAMPS=(
 	"app-arch/snappy-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/expat-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/icu-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/libxml2-9999"			# Bumped live to latest non-vulnerable
 	"media-libs/fontconfig-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/harfbuzz-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/lcms-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
@@ -73,7 +74,7 @@ REQUIRED_USE="
 RDEPEND="
 	>=app-arch/snappy-9999:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/expat-9999:=
-	dev-libs/libxml2:=[icu]
+	>=dev-libs/libxml2-9999:=[icu]
 	dev-libs/libxslt:=
 	dev-libs/nspr:=
 	dev-libs/nss:=
