@@ -36,19 +36,16 @@ fi
 IUSE+=" gnome qml"
 
 RDEPEND="
-	>=dev-libs/wayland-9999
-	~dev-qt/qtbase-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui,opengl,wayland]
-	dev-qt/qtbase:=
-	media-libs/libglvnd
-	x11-libs/libxkbcommon
+	>=dev-libs/wayland-9999:=
+	~dev-qt/qtbase-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui,opengl,wayland]
+	media-libs/libglvnd:=
+	x11-libs/libxkbcommon:=
 	qml? (
-		~dev-qt/qtdeclarative-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-qt/qtdeclarative:=
+		~dev-qt/qtdeclarative-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	gnome? (
-		~dev-qt/qtbase-${PV}:6[dbus]
-		~dev-qt/qtsvg-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-qt/qtsvg:=
+		~dev-qt/qtbase-${PV}:6=[dbus]
+		~dev-qt/qtsvg-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 "
 DEPEND="${RDEPEND}"
