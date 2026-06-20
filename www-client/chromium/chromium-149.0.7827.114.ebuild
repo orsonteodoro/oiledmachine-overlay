@@ -301,10 +301,11 @@ CHKL_TIMESTAMPS=(
 	"dev-cpp/highway-9999"
 	"dev-cpp/simdutf-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-db/sqlite-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/expat-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/crc32c-9999"
+	"dev-libs/expat-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/flatbuffers-9999"
 	"dev-libs/glib-2.89.9999"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/icu-79.0.9999"				# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/jsoncpp-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/libffi-9999"					# Bumped live to latest non-vulnerable
 	"dev-libs/libxml2-9999"					# Bumped live to latest non-vulnerable
@@ -1634,7 +1635,7 @@ COMMON_SNAPSHOT_DEPEND="
 		>=dev-cpp/highway-1.4.0:=
 	)
 	system-icu? (
-		>=dev-libs/icu-78.2:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
+		>=dev-libs/icu-79.0.9999:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 	)
 	system-jsoncpp? (
 		>=dev-libs/jsoncpp-1.9.7:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]

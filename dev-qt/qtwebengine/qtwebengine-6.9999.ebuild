@@ -41,7 +41,7 @@ CHKL_TIMESTAMPS=(
 	"app-arch/snappy-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/expat-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/glib-2.89.9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/icu-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/icu-79.0.9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/libxml2-9999"			# Bumped live to latest non-vulnerable
 	"media-libs/fontconfig-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/harfbuzz-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
@@ -134,7 +134,7 @@ RDEPEND="
 		media-video/pipewire:=
 	)
 	system-icu? (
-		>=dev-libs/icu-9999:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-libs/icu-79.0.9999:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	vaapi? ( >=media-libs/libva-9999:=[X] )
 "

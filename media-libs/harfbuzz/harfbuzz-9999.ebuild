@@ -28,7 +28,7 @@ RAGEL_PV="6.10"
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/glib-2.89.9999"
-	"dev-libs/icu-9999"
+	"dev-libs/icu-79.0.9999"
 	"x11-libs/cairo-9999"
 )
 
@@ -173,7 +173,7 @@ RDEPEND="
 	)
 	icu? (
 		system-icu? (
-			>=dev-libs/icu-9999:=[${MULTILIB_USEDEP}]
+			>=dev-libs/icu-79.0.9999:=[${MULTILIB_USEDEP}]
 		)
 	)
 	introspection? (

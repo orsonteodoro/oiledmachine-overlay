@@ -217,7 +217,7 @@ CHKL_TIMESTAMPS=(
 	"app-accessibility/at-spi2-core-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"app-accessibility/speech-dispatcher-9999"	# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/expat-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/icu-9999"
+	"dev-libs/icu-79.0.9999"
 	"dev-libs/libevent-9999"
 	"dev-libs/libffi-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/nspr-9999"
@@ -597,7 +597,7 @@ CDEPEND="
 	>=app-accessibility/at-spi2-core-2.58.6:=[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-2.42:=[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.39.0:=[${MULTILIB_USEDEP}]
-	>=dev-libs/nss-3.123.1:=[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.125:=[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.18.1:=[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-9999:=[${MULTILIB_USEDEP}]
 	>=x11-libs/pango-1.57.1:=[${MULTILIB_USEDEP}]
@@ -648,7 +648,7 @@ CDEPEND="
 		)
 	)
 	system-icu? (
-		>=dev-libs/icu-9999:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
+		>=dev-libs/icu-79.0.9999:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 	)
 	system-jpeg? (
 		>=media-libs/libjpeg-turbo-9999:=[${MULTILIB_USEDEP}]

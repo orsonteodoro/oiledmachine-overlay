@@ -18,7 +18,7 @@ LLVM_COMPAT=(
 )
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/icu-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/icu-79.0.9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 )
 
 inherit chkl libcxx-slot libstdcxx-slot qt6-build
@@ -36,7 +36,7 @@ ebuild_revision_1
 
 RDEPEND="
 	~dev-qt/qtbase-${PV}:6=[gui=,icu=,network,xml]
-	icu? ( >=dev-libs/icu-9999:= )
+	icu? ( >=dev-libs/icu-79.0.9999:= )
 	!icu? ( virtual/libiconv:= )
 	qml? (
 		~dev-qt/qtdeclarative-${PV}:6=

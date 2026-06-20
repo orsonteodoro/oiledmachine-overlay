@@ -140,6 +140,7 @@ FFMPEG_COMPAT=(
 
 # TODO finish
 CHKL_TIMESTAMPS=(
+	"dev-libs/icu-79.0.9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/libxml2-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/libxslt-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/openssl-4.0.9999"
@@ -909,7 +910,7 @@ gen_gobject_introspection_rdepend() {
 RDEPEND+="
 	${RDEPEND_PATENTS}
 	>=dev-db/sqlite-3.22.0:=[${MULTILIB_USEDEP}]
-	>=dev-libs/icu-70.1:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
+	>=dev-libs/icu-79.0.9999:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 	>=dev-libs/gmp-6.1.2:=[-pgo(-),${MULTILIB_USEDEP}]
 	>=dev-libs/libgcrypt-1.7.0:=[${MULTILIB_USEDEP}]
 	>=dev-libs/libtasn1-4.13:=[${MULTILIB_USEDEP}]

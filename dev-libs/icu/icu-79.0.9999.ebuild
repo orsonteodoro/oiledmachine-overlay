@@ -40,14 +40,25 @@ x86 ~x64-macos ~x64-solaris
 	"
 fi
 
-S="${WORKDIR}/${PN}/source"
-S_ORIG="${WORKDIR}/${PN}/source"
-SRC_URI="
-	https://github.com/unicode-org/icu/releases/download/release-${MY_PV/_/-}/icu4c-${MY_PV/-rc/rc}-sources.tgz
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="7b909a7d356c7dad8892fa002c89580fa1f38cbd"
+	EGIT_BRANCH="main"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback_commit"
+	fi
+	EGIT_REPO_URI="https://github.com/unicode-org/icu.git"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
+	inherit git-r3
+else
+	S="${WORKDIR}/${PN}/source"
+	S_ORIG="${WORKDIR}/${PN}/source"
+	SRC_URI="
+https://github.com/unicode-org/icu/releases/download/release-${MY_PV/_/-}/icu4c-${MY_PV/-rc/rc}-sources.tgz
 	verify-sig? (
-		https://github.com/unicode-org/icu/releases/download/release-${MY_PV/_/-}/icu4c-${MY_PV/-rc/rc}-sources.tgz.asc
+https://github.com/unicode-org/icu/releases/download/release-${MY_PV/_/-}/icu4c-${MY_PV/-rc/rc}-sources.tgz.asc
 	)
-"
+	"
+fi
 
 DESCRIPTION="International Components for Unicode"
 HOMEPAGE="https://icu.unicode.org/"
@@ -66,8 +77,8 @@ RESTRICT="
 		test
 	)
 "
-SLOT="0/${PV%.*}"
-IUSE="
+SLOT="0/"$(ver_cut "1" "${PV}")
+IUSE+="
 debug doc examples static-libs test
 ebuild_revision_27
 "
@@ -107,6 +118,30 @@ pkg_setup() {
 	python-any-r1_pkg_setup
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+		export S="${WORKDIR}/${P}/icu4c/source"
+		export S_ORIG="${WORKDIR}/${P}/icu4c/source"
+		local major_pv=$(grep -e "U_ICU_VERSION_MAJOR_NUM" "${S}/common/unicode/uvernum.h" | cut -f 3 -d " ")
+		local minor_pv=$(grep -e "U_ICU_VERSION_MINOR_NUM" "${S}/common/unicode/uvernum.h" | cut -f 3 -d " ")
+		local actual_pv="${major_pv}.${minor_pv}"
+		local expected_pv=$(ver_cut "1-2" "${PV}")
+		if ver_test "${actual_pv}" "-ne" "${expected_pv}" ; then
+eerror "QA:  Bump PV"
+eerror "QA:  Expected PV:  ${expected_pv}"
+eerror "QA:  Actual PV:  ${actual_pv}"
+			die
+		fi
+	else
+		unpack ${A}
+	fi
 }
 
 src_prepare() {

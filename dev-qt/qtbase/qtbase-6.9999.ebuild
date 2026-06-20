@@ -33,7 +33,7 @@ LLVM_COMPAT=(
 
 CHKL_TIMESTAMPS=(
 	"app-arch/brotli-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/icu-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/icu-79.0.9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
@@ -117,7 +117,7 @@ COMMON_DEPEND="
 	dev-libs/glib:=
 	dev-libs/libpcre2:=[pcre16,unicode(+)]
 	icu? (
-		>=dev-libs/icu-9999:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-libs/icu-79.0.9999:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	io-uring? ( sys-libs/liburing:= )
 	journald? ( >=sys-apps/systemd-9999:= )
