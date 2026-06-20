@@ -49,6 +49,7 @@ app-arch/bzip2 fallback-commit
 app-arch/zstd fallback-commit
 dev-libs/expat fallback-commit
 dev-libs/icu fallback-commit
+dev-libs/libffi fallback-commit
 dev-libs/libxml2 fallback-commit
 sys-apps/systemd fallback-commit
 

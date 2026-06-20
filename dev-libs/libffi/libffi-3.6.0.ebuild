@@ -5,7 +5,7 @@ EAPI=8
 
 # This ebuild uses AI inference for clarification/transparency.
 
-CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data sensitive-data"
+CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data sensitive-data system-set"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DR NPD"
 
 inherit cflags-hardened dot-a multilib-minimal preserve-libs
@@ -41,7 +41,7 @@ LICENSE="MIT"
 # with FEATURES="-preserved-libs" or another package manager if SONAME changes.
 SOVER="8" # SOVER = CURRENT - AGE, C:R:A in https://github.com/libffi/libffi/blob/master/libtool-version
 SLOT="0/${SOVER}" # SONAME=libffi.so.8
-IUSE="debug +exec-static-trampoline pax-kernel static-libs test"
+IUSE+=" debug +exec-static-trampoline pax-kernel static-libs test"
 
 RESTRICT="!test? ( test )"
 BDEPEND="test? ( dev-util/dejagnu )"
