@@ -74,6 +74,12 @@ COMMON_DEPEND="
 	colord? ( >=x11-misc/colord-0.1.9:= )
 	cups? ( >=net-print/cups-9999:= )
 	examples? ( gnome-base/librsvg:= )
+	elibc_glibc? (
+		>=sys-libs/glibc-2.43:=
+	)
+	elibc_musl? (
+		>=sys-libs/musl-1.2.6:=
+	)
 	gstreamer? (
 		>=media-libs/gstreamer-1.24.0:=
 		>=media-libs/gst-plugins-bad-1.24.0:=

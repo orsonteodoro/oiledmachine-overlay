@@ -21,7 +21,11 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-inherit cflags-hardened libcxx-slot libstdcxx-slot qt6-build
+CHKL_TIMESTAMPS=(
+	"dev-libs/wayland-9999" # Bumped live/*DEPENDS to latest non-vulnerable
+)
+
+inherit cflags-hardened chkl libcxx-slot libstdcxx-slot qt6-build
 
 DESCRIPTION="Toolbox for making Qt based Wayland compositors"
 
@@ -32,7 +36,7 @@ fi
 IUSE+=" gnome qml"
 
 RDEPEND="
-	dev-libs/wayland
+	>=dev-libs/wayland-9999
 	~dev-qt/qtbase-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui,opengl,wayland]
 	dev-qt/qtbase:=
 	media-libs/libglvnd
@@ -59,6 +63,7 @@ pkg_setup() {
 
 src_configure() {
 	cflags-hardened_append
+	chkl_check_many_timestamps
 	local mycmakeargs=(
 		$(cmake_use_find_package qml Qt6Quick)
 		$(qt_feature gnome wayland_decoration_adwaita)

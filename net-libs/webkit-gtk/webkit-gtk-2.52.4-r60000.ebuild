@@ -932,6 +932,12 @@ RDEPEND+="
 	avif? (
 		>=media-libs/libavif-0.9.0:=[${MULTILIB_USEDEP}]
 	)
+	elibc_glibc? (
+		>=sys-libs/glibc-2.43:=
+	)
+	elibc_musl? (
+		>=sys-libs/musl-1.2.6:=
+	)
 	flite? (
 		>=app-accessibility/flite-2.2:=[${MULTILIB_USEDEP}]
 	)

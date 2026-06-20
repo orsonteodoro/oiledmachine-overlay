@@ -606,12 +606,18 @@ CDEPEND="
 	>=dev-libs/expat-2.8.2:=[${MULTILIB_USEDEP}]
 	>=dev-libs/libffi-9999:=[${MULTILIB_USEDEP}]
 	>=media-libs/alsa-lib-1.2.16:=[${MULTILIB_USEDEP}]
-	virtual/freedesktop-icon-theme:*
 	>=x11-libs/cairo-9999:=[${MULTILIB_USEDEP}]
 	>=x11-libs/gdk-pixbuf-2.42.10:=[${MULTILIB_USEDEP}]
 	>=x11-libs/libdrm-2.4.120:=[${MULTILIB_USEDEP}]
+	virtual/freedesktop-icon-theme:*
 	dbus? (
 		>=sys-apps/dbus-${DBUS_PV}:=[${MULTILIB_USEDEP}]
+	)
+	elibc_glibc? (
+		>=sys-libs/glibc-2.43:=
+	)
+	elibc_musl? (
+		>=sys-libs/musl-1.2.6:=
 	)
 	jack? (
 		virtual/jack:*[${MULTILIB_USEDEP}]
@@ -642,7 +648,7 @@ CDEPEND="
 		)
 	)
 	system-icu? (
-		>=dev-libs/icu-78.3:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
+		>=dev-libs/icu-9999:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 	)
 	system-jpeg? (
 		>=media-libs/libjpeg-turbo-9999:=[${MULTILIB_USEDEP}]

@@ -24,6 +24,12 @@ ebuild_revision_35
 RDEPEND="
 	sys-libs/libseccomp
 	sys-libs/libcap
+	elibc_glibc? (
+		>=sys-libs/glibc-2.43:=
+	)
+	elibc_musl? (
+		>=sys-libs/musl-1.2.6:=
+	)
 	selinux? (
 		>=sys-libs/libselinux-2.1.9
 	)

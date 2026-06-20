@@ -338,6 +338,12 @@ RDEPEND+="
 	dbusproxy? (
 		>=sys-apps/xdg-dbus-proxy-0.1.2
 	)
+	elibc_glibc? (
+		>=sys-libs/glibc-2.43:=
+	)
+	elibc_musl? (
+		>=sys-libs/musl-1.2.6:=
+	)
 	hardened_malloc? (
 		dev-libs/hardened_malloc
 	)

@@ -17,7 +17,11 @@ LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
 
-inherit libcxx-slot libstdcxx-slot qt6-build
+CHKL_TIMESTAMPS=(
+	"dev-libs/icu-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+)
+
+inherit chkl libcxx-slot libstdcxx-slot qt6-build
 
 DESCRIPTION="Qt module containing the unsupported Qt 5 APIs"
 
@@ -31,12 +35,12 @@ ebuild_revision_1
 "
 
 RDEPEND="
-	~dev-qt/qtbase-${PV}:6[gui=,icu=,network,xml]
-	icu? ( dev-libs/icu:= )
-	!icu? ( virtual/libiconv )
+	~dev-qt/qtbase-${PV}:6=[gui=,icu=,network,xml]
+	icu? ( >=dev-libs/icu-9999:= )
+	!icu? ( virtual/libiconv:= )
 	qml? (
-		~dev-qt/qtdeclarative-${PV}:6
-		~dev-qt/qtshadertools-${PV}:6
+		~dev-qt/qtdeclarative-${PV}:6=
+		~dev-qt/qtshadertools-${PV}:6=
 	)
 "
 DEPEND="${RDEPEND}"
@@ -47,6 +51,7 @@ pkg_setup() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	local mycmakeargs=(
 		$(cmake_use_find_package qml Qt6Quick)
 	)

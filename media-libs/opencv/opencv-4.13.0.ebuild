@@ -380,6 +380,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/harfbuzz-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/freetype-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libpng-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libva-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libwebp-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/openjpeg-9999"		# Bumped live/*DEPENDS to latest non-vulnerable

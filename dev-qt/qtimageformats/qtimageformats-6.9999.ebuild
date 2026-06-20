@@ -20,6 +20,11 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
+CHKL_TIMESTAMPS=(
+	"media-libs/libwebp-9999"	# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/tiff-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+)
+
 inherit cflags-hardened libcxx-slot libstdcxx-slot qt6-build
 
 DESCRIPTION="Additional format plugins for the Qt image I/O system"
@@ -31,10 +36,9 @@ fi
 IUSE+=" mng"
 
 RDEPEND="
-	~dev-qt/qtbase-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui]
-	dev-qt/qtbase:=
-	media-libs/libwebp:=
-	media-libs/tiff:=
+	~dev-qt/qtbase-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui]
+	>=media-libs/libwebp-9999:=
+	>=media-libs/tiff-9999:=
 	mng? ( media-libs/libmng:= )
 "
 DEPEND="${RDEPEND}"

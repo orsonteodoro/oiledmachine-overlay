@@ -20,8 +20,19 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
+FFMPEG_COMPAT_SLOTS=(
+	"${FFMPEG_COMPAT_SLOTS_8[@]}"
+)
+
+CHKL_TIMESTAMPS=(
+	"dev-libs/glib-2.89.9999"
+	"media-video/ffmpeg-9999"
+	"media-video/ffmpeg-9999m"
+	"media-libs/libva-9999"
+)
+
 QT6_HAS_STATIC_LIBS=1
-inherit cflags-hardened flag-o-matic libcxx-slot libstdcxx-slot qt6-build
+inherit cflags-hardened chkl flag-o-matic ffmpeg libcxx-slot libstdcxx-slot qt6-build
 
 DESCRIPTION="Multimedia (audio, video, radio, camera) library for the Qt6 framework"
 
@@ -41,53 +52,49 @@ REQUIRED_USE="
 
 # dlopen/dbus: pipewire
 RDEPEND="
-	~dev-qt/qtbase-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},concurrent,gui,network,opengl=,vulkan=,widgets]
-	dev-qt/qtbase:=
+	~dev-qt/qtbase-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},concurrent,gui,network,opengl=,vulkan=,widgets]
 	alsa? (
-		!pulseaudio? ( media-libs/alsa-lib )
+		!pulseaudio? ( media-libs/alsa-lib:= )
 	)
 	ffmpeg? (
-		~dev-qt/qtbase-${PV}:6[X=,concurrent,eglfs=]
-		media-video/ffmpeg:=[vaapi?]
+		~dev-qt/qtbase-${PV}:6=[X=,concurrent,eglfs=]
+		>=media-video/ffmpeg-9999:=[vaapi?]
 		X? (
-			x11-libs/libX11
-			x11-libs/libXext
-			x11-libs/libXrandr
+			x11-libs/libX11:=
+			x11-libs/libXext:=
+			x11-libs/libXrandr:=
 		)
 	)
 	gstreamer? (
-		dev-libs/glib:2
-		media-libs/gst-plugins-bad:1.0
-		media-libs/gst-plugins-base:1.0
-		media-libs/gstreamer:1.0
+		>=dev-libs/glib-2.89.9999:=
+		>=media-libs/gst-plugins-bad-1.28.4:=
+		>=media-libs/gst-plugins-base-1.28.4:=
+		>=media-libs/gstreamer-1.28.4:=
 		opengl? (
-			~dev-qt/qtbase-${PV}:6[X?,wayland?]
-			media-libs/gst-plugins-base:1.0[X?,egl,opengl,wayland?]
+			~dev-qt/qtbase-${PV}:6=[X?,wayland?]
+			>=media-libs/gst-plugins-base-1.28.4:=[X?,egl,opengl,wayland?]
 		)
 	)
-	opengl? ( media-libs/libglvnd )
+	opengl? ( media-libs/libglvnd:= )
 	pipewire? (
-		~dev-qt/qtbase-${PV}:6[dbus?]
+		~dev-qt/qtbase-${PV}:6=[dbus?]
 		media-video/pipewire:=
 	)
-	pulseaudio? ( media-libs/libpulse )
+	pulseaudio? ( media-libs/libpulse:= )
 	qml? (
-		~dev-qt/qtdeclarative-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-qt/qtdeclarative:=
-		~dev-qt/qtquick3d-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-qt/qtquick3d:=
+		~dev-qt/qtdeclarative-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		~dev-qt/qtquick3d-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
-	vaapi? ( media-libs/libva:= )
+	vaapi? ( >=media-libs/libva-9999:= )
 "
 DEPEND="
 	${RDEPEND}
-	X? ( x11-base/xorg-proto )
-	v4l? ( sys-kernel/linux-headers )
-	vulkan? ( dev-util/vulkan-headers )
+	X? ( x11-base/xorg-proto:= )
+	v4l? ( sys-kernel/linux-headers:= )
+	vulkan? ( dev-util/vulkan-headers:= )
 "
 BDEPEND="
 	~dev-qt/qtshadertools-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	dev-qt/qtshadertools:=
 "
 
 CMAKE_SKIP_TESTS=(
@@ -132,6 +139,8 @@ src_prepare() {
 
 src_configure() {
 	cflags-hardened_append
+	chkl_check_many_timestamps
+	use ffmpeg && ffmpeg_src_configure
 	# normally passed by the build system, but needed for 32-on-64 chroots
 	use x86 && append-cppflags -DDISABLE_SIMD -DPFFFT_SIMD_DISABLE
 

@@ -40,17 +40,15 @@ fi
 IUSE+=" accessibility +jit +network opengl qmlls +sql +ssl svg vulkan +widgets"
 
 RDEPEND="
-	~dev-qt/qtbase-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},accessibility=,gui,network=,opengl=,sql?,ssl?,vulkan=,widgets=]
-	dev-qt/qtbase:=
-	qmlls? ( ~dev-qt/qtlanguageserver-${PV}:6 )
+	~dev-qt/qtbase-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},accessibility=,gui,network=,opengl=,sql?,ssl?,vulkan=,widgets=]
+	qmlls? ( ~dev-qt/qtlanguageserver-${PV}:6= )
 	svg? (
-		~dev-qt/qtsvg-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-qt/qtsvg:=
+		~dev-qt/qtsvg-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 "
 DEPEND="
 	${RDEPEND}
-	vulkan? ( dev-util/vulkan-headers )
+	vulkan? ( dev-util/vulkan-headers:= )
 "
 BDEPEND="
 	${PYTHON_DEPS}

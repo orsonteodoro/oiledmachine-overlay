@@ -304,6 +304,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/expat-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/crc32c-9999"
 	"dev-libs/flatbuffers-9999"
+	"dev-libs/glib-2.89.9999"				# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/jsoncpp-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/libffi-9999"					# Bumped live to latest non-vulnerable
 	"dev-libs/libxml2-9999"					# Bumped live to latest non-vulnerable
@@ -1567,7 +1568,7 @@ COMMON_X_DEPEND="
 COMMON_SNAPSHOT_DEPEND="
 	!headless? (
 		${LIBVA_DEPEND}
-		>=dev-libs/glib-2.66.8:=[${MULTILIB_USEDEP}]
+		>=dev-libs/glib-2.89.9999:=[${MULTILIB_USEDEP}]
 		>=media-libs/alsa-lib-1.2.16:=[${MULTILIB_USEDEP}]
 		>=sys-apps/pciutils-3.7.0:=[${MULTILIB_USEDEP}]
 		>=x11-libs/libxkbcommon-1.0.3:=[${MULTILIB_USEDEP}]
@@ -1788,7 +1789,7 @@ COMMON_DEPEND="
 		>=net-wireless/bluez-5.55:=[${MULTILIB_USEDEP}]
 	)
 	elibc_glibc? (
-		>=sys-libs/glibc-2.31:=
+		>=sys-libs/glibc-2.43:=
 	)
 	system-ffmpeg? (
 		system-opus? (

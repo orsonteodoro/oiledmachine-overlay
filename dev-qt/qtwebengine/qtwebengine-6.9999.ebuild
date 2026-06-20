@@ -14,6 +14,7 @@ CFLAGS_HARDENED_VTABLE_VERIFY=1
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF HO IO NPD OOBA OOBR OOBW PE RC SO UAF TC" # Based on Chromium
 CXX_STANDARD=17
 WEB_KERNEL_CONFIG_CHECK_YAMA=1
+PYTHON_COMPAT=( python3_{10..14} )
 
 FALLBACK_COMMIT="304a6e3e2cde13407dbd331186755352fb612113" # Mon, 15 Jun 2026 11:38:27 +0200
 
@@ -36,8 +37,17 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-PYTHON_COMPAT=( python3_{10..14} )
-inherit cflags-hardened check-reqs flag-o-matic libcxx-slot libstdcxx-slot multiprocessing optfeature
+CHKL_TIMESTAMPS=(
+	"app-arch/snappy-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/expat-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/icu-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/fontconfig-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/harfbuzz-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/lcms-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+)
+
+inherit cflags-hardened check-reqs chkl flag-o-matic libcxx-slot libstdcxx-slot multiprocessing optfeature
 inherit prefix python-any-r1 qt6-build toolchain-funcs web-kernel-config
 
 DESCRIPTION="Library for rendering dynamic web content in Qt6 C++ and QML applications"
@@ -61,84 +71,87 @@ REQUIRED_USE="
 
 # dlopen: krb5, libva, pciutils
 RDEPEND="
-	app-arch/snappy[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	app-arch/snappy:=
-	dev-libs/expat
+	>=app-arch/snappy-9999:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-libs/expat-9999:=
 	dev-libs/libxml2:=[icu]
-	dev-libs/libxslt
-	dev-libs/nspr
-	dev-libs/nss
-	~dev-qt/qtbase-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},accessibility=,gui,opengl=,ssl,vulkan?,widgets?]
-	dev-qt/qtbase:=
-	~dev-qt/qtdeclarative-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},widgets?]
-	dev-qt/qtdeclarative:=
-	~dev-qt/qtwebchannel-${PV}:6[qml?]
-	media-libs/fontconfig
-	media-libs/freetype
-	media-libs/harfbuzz:=
-	media-libs/lcms:2
-	media-libs/libjpeg-turbo:=
+	dev-libs/libxslt:=
+	dev-libs/nspr:=
+	dev-libs/nss:=
+	~dev-qt/qtbase-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},accessibility=,gui,opengl=,ssl,vulkan?,widgets?]
+	~dev-qt/qtdeclarative-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},widgets?]
+	~dev-qt/qtwebchannel-${PV}:6=[qml?]
+	>=media-libs/fontconfig-2.18.1:=
+	>=media-libs/freetype-9999:=
+	>=media-libs/harfbuzz-9999:=
+	>=media-libs/lcms-9999:=
+	>=media-libs/libjpeg-turbo-9999:=
 	media-libs/libpng:=
 	media-libs/libwebp:=
-	media-libs/mesa[gbm(+)]
+	media-libs/mesa:=[gbm(+)]
 	media-libs/openjpeg:2=
-	media-libs/opus
+	media-libs/opus:=
 	media-libs/tiff:=
-	sys-apps/dbus
-	sys-apps/pciutils
+	sys-apps/dbus:=
+	sys-apps/pciutils:=
 	virtual/libudev:=
 	virtual/minizip:=
 	virtual/zlib:=
-	x11-libs/libX11
-	x11-libs/libXcomposite
-	x11-libs/libXdamage
-	x11-libs/libXext
-	x11-libs/libXfixes
-	x11-libs/libXrandr
-	x11-libs/libXtst
-	x11-libs/libdrm
+	x11-libs/libX11:=
+	x11-libs/libXcomposite:=
+	x11-libs/libXdamage:=
+	x11-libs/libXext:=
+	x11-libs/libXfixes:=
+	x11-libs/libXrandr:=
+	x11-libs/libXtst:=
+	>=x11-libs/libdrm-2.4.120:=
 	x11-libs/libxcb:=
-	x11-libs/libxkbcommon
-	x11-libs/libxkbfile
-	alsa? ( media-libs/alsa-lib )
+	x11-libs/libxkbcommon:=
+	x11-libs/libxkbfile:=
+	alsa? ( media-libs/alsa-lib:= )
 	!bindist? ( >=media-libs/openh264-2.4:= )
 	designer? (
-		~dev-qt/qttools-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},designer]
-		dev-qt/qttools:=
+		~dev-qt/qttools-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},designer]
 	)
-	geolocation? ( ~dev-qt/qtpositioning-${PV}:6 )
-	kerberos? ( virtual/krb5 )
-	opengl? ( media-libs/libglvnd[X] )
-	pulseaudio? ( media-libs/libpulse[glib] )
+	elibc_glibc? (
+		>=sys-libs/glibc-2.43:=
+	)
+	elibc_musl? (
+		>=sys-libs/musl-1.2.6:=
+	)
+	geolocation? ( ~dev-qt/qtpositioning-${PV}:6= )
+	kerberos? ( virtual/krb5:= )
+	opengl? ( media-libs/libglvnd:=[X] )
+	pulseaudio? ( media-libs/libpulse:=[glib] )
 	screencast? (
-		dev-libs/glib:2
+		dev-libs/glib:=
 		media-video/pipewire:=
 	)
 	system-icu? (
-		dev-libs/icu[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-libs/icu:=
+		>=dev-libs/icu-9999:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	vaapi? ( media-libs/libva:=[X] )
 "
 DEPEND="
 	${RDEPEND}
 	|| (
-		sys-devel/gcc:*
+		sys-devel/gcc
 		llvm-runtimes/libatomic-stub
 	)
-	media-libs/libglvnd
-	x11-base/xorg-proto
-	x11-libs/libXcursor
-	x11-libs/libXi
-	x11-libs/libxshmfence
-	elibc_musl? ( sys-libs/queue-standalone )
-	screencast? ( media-libs/libepoxy[egl(+)] )
+	media-libs/libglvnd:=
+	x11-base/xorg-proto:=
+	x11-libs/libXcursor:=
+	x11-libs/libXi:=
+	x11-libs/libxshmfence:=
+	elibc_musl? ( sys-libs/queue-standalone:= )
+	screencast? ( media-libs/libepoxy:=[egl(+)] )
 	vaapi? (
-		vulkan? ( dev-util/vulkan-headers )
+		vulkan? ( dev-util/vulkan-headers:= )
 	)
 "
 BDEPEND="
-	$(python_gen_any_dep 'dev-python/html5lib[${PYTHON_USEDEP}]')
+	$(python_gen_any_dep '
+		dev-python/html5lib[${PYTHON_USEDEP}]
+	')
 	dev-util/gperf
 	net-libs/nodejs[icu,ssl]
 	sys-devel/bison
@@ -549,6 +562,7 @@ src_configure() {
 	append-ldflags -Wl,-z,noexecstack
 
 	cflags-hardened_append
+	chkl_check_many_timestamps
 
 	# Remove hardening flags that may slow things down
 	filter-flags "-fno-inline"
