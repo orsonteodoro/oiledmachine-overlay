@@ -40,6 +40,7 @@ LLVM_COMPAT=(
 CHKL_TIMESTAMPS=(
 	"app-arch/snappy-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/expat-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/glib-2.89.9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/icu-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/libxml2-9999"			# Bumped live to latest non-vulnerable
 	"media-libs/fontconfig-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
@@ -47,6 +48,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/lcms-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libpng-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libva-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libwebp-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/tiff-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/openh264-9999"		# Bumped live/*DEPENDS to latest hardened
@@ -80,8 +82,8 @@ RDEPEND="
 	>=dev-libs/expat-9999:=
 	>=dev-libs/libxml2-9999:=[icu]
 	dev-libs/libxslt:=
-	dev-libs/nspr:=
-	dev-libs/nss:=
+	>=dev-libs/nspr-4.38.2:=
+	>=dev-libs/nss-3.125:=
 	~dev-qt/qtbase-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},accessibility=,gui,opengl=,ssl,vulkan?,widgets?]
 	~dev-qt/qtdeclarative-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},widgets?]
 	~dev-qt/qtwebchannel-${PV}:6=[qml?]
@@ -128,13 +130,13 @@ RDEPEND="
 	opengl? ( media-libs/libglvnd:=[X] )
 	pulseaudio? ( media-libs/libpulse:=[glib] )
 	screencast? (
-		dev-libs/glib:=
+		>=dev-libs/glib-2.89.9999:=
 		media-video/pipewire:=
 	)
 	system-icu? (
 		>=dev-libs/icu-9999:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
-	vaapi? ( media-libs/libva:=[X] )
+	vaapi? ( >=media-libs/libva-9999:=[X] )
 "
 DEPEND="
 	${RDEPEND}

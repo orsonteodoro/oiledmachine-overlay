@@ -50,24 +50,24 @@ REQUIRED_USE+="
 "
 RDEPEND+="
 	>=sys-apps/keyutils-1.5.11-r1:=
-	>=dev-libs/libgcrypt-1.2.0:0
-	dev-libs/nss
-	sys-devel/gettext
+	>=dev-libs/libgcrypt-1.2.0:=
+	>=dev-libs/nss-3.125:=
+	sys-devel/gettext:=
 	gpg? (
-		app-crypt/gpgme
+		app-crypt/gpgme:=
 	)
 	gtk? (
-		x11-libs/gtk+:2
+		x11-libs/gtk+:2=
 	)
 	openssl? (
 		>=dev-libs/openssl-0.9.7:=
 	)
 	pam? (
-		sys-libs/pam
+		sys-libs/pam:=
 	)
 	pkcs11? (
 		>=dev-libs/openssl-0.9.7:=
-		>=dev-libs/pkcs11-helper-1.04
+		>=dev-libs/pkcs11-helper-1.04:=
 	)
 	python? (
 		${PYTHON_DEPS}
@@ -76,7 +76,7 @@ RDEPEND+="
 		')
 	)
 	tpm? (
-		app-crypt/trousers
+		app-crypt/trousers:=
 	)
 "
 DEPEND+="

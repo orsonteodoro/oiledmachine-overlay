@@ -89,7 +89,7 @@ LIBXI_PV="1.7.10"
 LIBXSCRNSAVER_PV="1.2.3" # Same as libxss1
 LIBXTST_PV="1.2.3"
 MESA_PV="20.3.5"
-NSS_PV="3.35"
+NSS_PV="3.125"
 PKG_ARCH="amd64" # It can be amd64, i386, all.
 # Before URI redirect.  Not SSL protected.  MITM attack possible.
 # From second line of https://www.spotify.com/us/download/linux/

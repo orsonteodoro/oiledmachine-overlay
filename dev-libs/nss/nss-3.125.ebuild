@@ -11,14 +11,16 @@ CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="crypto security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS HO NPD OOBR UAF TA"
 
+# For security fixes, see also https://firefox-source-docs.mozilla.org/security/nss/releases/index.html#mozilla-projects-nss-releases
+
 inherit cflags-hardened dot-a flag-o-matic multilib toolchain-funcs multilib-minimal
 
 NSPR_VER="4.38.2"
 RTM_NAME="NSS_${PV//./_}_RTM"
 
 # If the release is made in Github only, not released at the official archive.mozilla.org. These
-# Github-only tarballs have a different directory structure. Unfortunately more releases are
-# published through Github-only lately. Leave the variable empty for archive.mozilla.org release:
+# Github-only tarballs have a different directory structure. Leave the variable empty for
+# archive.mozilla.org release:
 # GH_ONLY_REL=
 GH_ONLY_REL=
 
@@ -46,9 +48,9 @@ RESTRICT="test"
 
 # pkg-config called by nss-config -> virtual/pkgconfig in RDEPEND
 RDEPEND="
-	>=dev-libs/nspr-${NSPR_VER}[${MULTILIB_USEDEP}]
-	>=dev-db/sqlite-3.8.2[${MULTILIB_USEDEP}]
-	>=virtual/zlib-1.2.8-r1:=[${MULTILIB_USEDEP}]
+	>=dev-libs/nspr-${NSPR_VER}:=[${MULTILIB_USEDEP}]
+	>=dev-db/sqlite-3.8.2:=[${MULTILIB_USEDEP}]
+	>=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}]
 	virtual/pkgconfig
 "
 DEPEND="${RDEPEND}"
@@ -322,7 +324,7 @@ multilib_src_install() {
 	dodir /usr/$(get_libdir)
 	cp -L */lib/*$(get_libname) "${ED}"/usr/$(get_libdir) || die "copying shared libs failed"
 	local i
-	for i in crmf freebl nssb nssckfw ; do
+	for i in freebl nssb nssckfw ; do
 		cp -L */lib/lib${i}.a "${ED}"/usr/$(get_libdir) || die "copying libs failed"
 	done
 

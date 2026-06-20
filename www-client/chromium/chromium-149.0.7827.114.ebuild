@@ -1595,8 +1595,8 @@ COMMON_SNAPSHOT_DEPEND="
 			>=x11-libs/libXext-1.3.3:=[${MULTILIB_USEDEP}]
 		)
 	)
-	>=dev-libs/nss-3.61:=[${MULTILIB_USEDEP}]
-	>=dev-libs/nspr-4.29:=[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.125:=[${MULTILIB_USEDEP}]
+	>=dev-libs/nspr-4.38.2:=[${MULTILIB_USEDEP}]
 	>=media-libs/mesa-${MESA_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},gbm(+)]
 	patent_status_nonfree? (
 		system-openh264? (

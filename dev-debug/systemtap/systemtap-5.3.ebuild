@@ -47,8 +47,8 @@ CDEPEND="
 	selinux? ( sys-libs/libselinux )
 	sqlite? ( dev-db/sqlite:3 )
 	ssl? (
-		dev-libs/nspr
-		dev-libs/nss
+		>=dev-libs/nspr-4.38.2
+		>=dev-libs/nss-3.125
 	)
 	zeroconf? ( net-dns/avahi )
 "

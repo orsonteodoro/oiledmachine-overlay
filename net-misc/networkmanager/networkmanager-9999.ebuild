@@ -91,8 +91,8 @@ COMMON_DEPEND="
 	)
 	nbft? ( >=sys-libs/libnvme-1.5 )
 	nss? (
-		dev-libs/nspr[${MULTILIB_USEDEP}]
-		>=dev-libs/nss-3.11[${MULTILIB_USEDEP}]
+		>=dev-libs/nspr-4.38.2[${MULTILIB_USEDEP}]
+		>=dev-libs/nss-3.125[${MULTILIB_USEDEP}]
 	)
 	ofono? ( net-misc/ofono )
 	ovs? ( >=dev-libs/jansson-2.7:= )
