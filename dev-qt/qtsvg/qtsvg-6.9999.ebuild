@@ -29,9 +29,8 @@ if [[ ${QT6_BUILD_TYPE} == release ]]; then
 fi
 
 RDEPEND="
-	~dev-qt/qtbase-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui,widgets]
-	dev-qt/qtbase:=
-	virtual/zlib:=
+	~dev-qt/qtbase-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui,widgets]
+	>=virtual/zlib-1.3.2:=
 "
 DEPEND="${RDEPEND}"
 
