@@ -6,9 +6,9 @@ EAPI=8
 # U22
 
 # For dependencies, see
-# https://github.com/PixarAnimationStudios/OpenUSD/blob/v25.08/VERSIONS.md
-# https://github.com/PixarAnimationStudios/OpenUSD/blob/v25.08/build_scripts/build_usd.py#L2019
-# https://github.com/PixarAnimationStudios/OpenUSD/blob/v25.08/build_scripts/build_usd.py#L763
+# https://github.com/PixarAnimationStudios/OpenUSD/blob/v26.05/VERSIONS.md
+# https://github.com/PixarAnimationStudios/OpenUSD/blob/v26.05/build_scripts/build_usd.py#L2019
+# https://github.com/PixarAnimationStudios/OpenUSD/blob/v26.05/build_scripts/build_usd.py#L763
 
 BOOST_PV="1.80.0"
 CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
@@ -62,7 +62,7 @@ OPENEXR_V3_PV=(
 	"3.1.13:3.1.9"
 )
 PYTHON_COMPAT=( "python3_"{8..13} )
-VULKAN_PV="1.3.296.0"
+VULKAN_PV="1.4.321.0"
 
 inherit cflags-hardened check-compiler-switch cmake libcxx-slot libstdcxx-slot
 inherit python-single-r1 flag-o-matic
@@ -97,13 +97,13 @@ LICENSE="
 	MIT
 	OpenUSD-23.11
 "
-# custom - https://github.com/PixarAnimationStudios/OpenUSD/blob/v25.08/pxr/usdImaging/usdImaging/drawModeStandin.cpp#L9
+# custom - https://github.com/PixarAnimationStudios/OpenUSD/blob/v26.05/pxr/usdImaging/usdImaging/drawModeStandin.cpp#L9
 # custom - search "In consideration of your agreement"
 # MIT - the distro MIT license template does not have all rights reserved.
 SLOT="0"
 # test USE flag is enabled upstream
 IUSE+="
--alembic -doc +draco -embree +examples -experimental +hdf5 hdstorm +imaging +jemalloc
+-alembic clang -doc +draco -embree +examples -experimental gcc +hdf5 hdstorm +imaging +jemalloc
 -materialx -monolithic -opencolorio +opengl -openimageio -openvdb openexr -osl
 -ptex +python +safety-over-speed -static-libs +tutorials -test +tools +usdview
 -vulkan
@@ -155,117 +155,109 @@ REQUIRED_USE+="
 "
 
 gen_openexr_pairs() {
+	local g1=""
 	local row
 	for row in ${OPENEXR_V3_PV[@]} ; do
 		local imath_pv="${row#*:}"
 		local openexr_pv="${row%:*}"
-		echo "
+		g1+="
 			(
 				~media-libs/openexr-${openexr_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-				media-libs/openexr:=
 				~dev-libs/imath-${imath_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-				dev-libs/imath:=
 			)
 		"
 	done
+	echo "
+	|| (
+		${g1}
+	)
+	"
 }
 
 # TODO experimental
+# Missing GraphViz
+# Missing RenderMan
 RDEPEND+="
-	>=virtual/zlib-1.2.11
-	>=dev-cpp/tbb-2021:${ONETBB_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	dev-cpp/tbb:=
+	>=dev-cpp/tbb-2021:${ONETBB_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=virtual/zlib-1.2.11:=
 	!python? (
-		>=dev-libs/boost-${BOOST_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-libs/boost:=
+		>=dev-libs/boost-${BOOST_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	alembic? (
-		>=media-gfx/alembic-1.8.5[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},hdf5?]
-		media-gfx/alembic:=
+		>=media-gfx/alembic-1.8.5:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},hdf5?]
 	)
 	draco? (
-		>=media-libs/draco-1.4.3
+		>=media-libs/draco-1.5.6:=
 	)
 	embree? (
-		>=media-libs/embree-3.2.2
+		>=media-libs/embree-4.3.3:=
 	)
 	hdf5? (
-		>=sci-libs/hdf5-1.10[cxx,hl]
+		>=sci-libs/hdf5-1.10:=[cxx,hl]
 	)
 	imaging? (
-		>=media-libs/opensubdiv-3.6.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		media-libs/opensubdiv:=
-		x11-libs/libX11
+		>=media-libs/opensubdiv-3.6.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		x11-libs/libX11:=
 	)
 	jemalloc? (
-		dev-libs/jemalloc-usd[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-libs/jemalloc-usd:=
+		dev-libs/jemalloc-usd:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	materialx? (
-		>=media-libs/materialx-1.39.3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		media-libs/materialx:=
+		>=media-libs/materialx-1.39.4:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	opencolorio? (
-		>=media-libs/opencolorio-2.2.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		media-libs/opencolorio:=
+		>=media-libs/opencolorio-2.2.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	openexr? (
-		|| (
-			$(gen_openexr_pairs)
-		)
+		media-libs/openexr:=
+		dev-libs/imath:=
+		$(gen_openexr_pairs)
 	)
 	opengl? (
-		>=media-libs/glew-2.0.0
+		>=media-libs/glew-2.0.0:=
 	)
 	openimageio? (
-		>=media-libs/libpng-1.6.29
-		>=media-libs/openimageio-2.5.16.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=media-libs/libpng-1.6.29:=
+		>=media-libs/openimageio-2.5.16.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		media-libs/openimageio:=
-		>=media-libs/tiff-4.0.7
-		virtual/jpeg
+		>=media-libs/tiff-4.0.7:=
+		virtual/jpeg:*
 	)
 	openvdb? (
-		>=dev-libs/c-blosc-1.17
-		>=media-gfx/openvdb-10.1.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		media-gfx/openvdb:=
+		>=dev-libs/c-blosc-1.17:=
+		>=media-gfx/openvdb-10.1.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	osl? (
-		>=media-libs/osl-1.13.11
+		>=media-libs/osl-1.13.11:=
 	)
 	ptex? (
-		>=media-libs/ptex-2.4.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		media-libs/ptex:=
+		>=media-libs/ptex-2.4.2:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
 			>=dev-libs/boost-'"${BOOST_PV}"'[${PYTHON_USEDEP},python]
+			>=dev-python/jinja2-3.1.2[${PYTHON_USEDEP}]
 			usdview? (
 				(
-					>=dev-python/pyside2-5.15.2.1[${PYTHON_USEDEP},quickcontrols2(+),script,scripttools]
-					dev-qt/qtquickcontrols2:5
+					>=dev-python/pyside2-6:=[${PYTHON_USEDEP},quickcontrols2(+),script,scripttools]
+					dev-qt/qtquickcontrols2:=
 				)
-				dev-python/pyside2-tools[${PYTHON_USEDEP},tools(+)]
-				dev-python/shiboken2[${PYTHON_USEDEP}]
 				opengl? (
 					>=dev-python/pyopengl-3.1.5[${PYTHON_USEDEP}]
 				)
 			)
 		')
-		>=dev-libs/boost-${BOOST_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-libs/boost:=
+		>=dev-libs/boost-${BOOST_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
         vulkan? (
-		>=dev-util/vulkan-headers-${VULKAN_PV}
+		>=dev-util/vulkan-headers-${VULKAN_PV}:=
 	)
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	$(python_gen_cond_dep '
-		>=dev-python/jinja2-3.1.2[${PYTHON_USEDEP}]
-	')
 	>=dev-build/cmake-3.26.5
 	>=sys-devel/bison-2.4.1
 	>=sys-devel/flex-2.5.39
@@ -275,17 +267,18 @@ BDEPEND+="
 	doc? (
 		>=app-text/doxygen-1.9.6[dot]
 	)
-	|| (
-		>=sys-devel/gcc-11
-		>=llvm-core/clang-16
+	gcc? (
+		>=sys-devel/gcc-11.5:=
+	)
+	clang? (
+		>=llvm-core/clang-16:=
 	)
 "
 PATCHES=(
 	"${FILESDIR}/algorithm.patch"
-	"${FILESDIR}/openusd-21.11-gcc-11-numeric_limits.patch"
 #	"${FILESDIR}/openusd-21.11-glibc-2.34.patch"
 #	"${FILESDIR}/openusd-21.11-clang-14-compat.patch"
-	"${FILESDIR}/openusd-21.11-use-whole-archive-for-lld.patch"
+	"${FILESDIR}/openusd-26.05-use-whole-archive-for-lld.patch"
 	"${FILESDIR}/openusd-25.08-replace-fix.patch"
 )
 DOCS=( "CHANGELOG.md" "README.md" )
@@ -335,7 +328,7 @@ ewarn "Uninstall ${PN} to avoid build failure the re-emerge ${PN}."
 			-DDRACO_ATTRIBUTE_VALUES_DEDUPLICATION_SUPPORTED=ON \
 			-DTBB_SUPPRESS_DEPRECATED_MESSAGES=1
 	fi
-        # See https://github.com/PixarAnimationStudios/OpenUSD/blob/v25.08/cmake/defaults/Options.cmake
+        # See https://github.com/PixarAnimationStudios/OpenUSD/blob/v26.05/cmake/defaults/Options.cmake
 	local mycmakeargs+=(
 		$(usex jemalloc "-DPXR_MALLOC_LIBRARY=${ESYSROOT}/usr/$(get_libdir)/${PN}/$(get_libdir)/libjemalloc.so" "")
 		$(usex usdview "-DPYSIDEUICBINARY:PATH=${S}/pyside2-uic" "")

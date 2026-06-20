@@ -1,0 +1,11 @@
+--- a/cmake/macros/Private.cmake.orig	2026-04-24 11:55:54.000000000 -0700
++++ b/cmake/macros/Private.cmake	2026-06-19 17:01:27.403681833 -0700
+@@ -918,7 +918,7 @@ function(_pxr_target_link_libraries NAME
+                 #
+                 list(APPEND final -WHOLEARCHIVE:$<TARGET_FILE:${lib}>)
+                 list(APPEND final ${lib})
+-            elseif(CMAKE_COMPILER_IS_GNUCXX OR EMSCRIPTEN)
++            elseif(CMAKE_COMPILER_IS_GNUCXX OR EMSCRIPTEN OR ((UNIX AND NOT APPLE) AND "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang"))
+                 list(APPEND final -Wl,--whole-archive ${lib} -Wl,--no-whole-archive)
+                 add_dependencies(${NAME} ${lib})
+             elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
