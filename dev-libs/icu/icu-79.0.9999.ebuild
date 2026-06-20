@@ -44,7 +44,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="f23381d83cdd98199247adafc85851ce9c2e143f" # This commit is 2 performance regressions prior.
 	EGIT_BRANCH="main"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
-		IUSE+=" fallback_commit"
+		IUSE+=" fallback-commit"
 	fi
 	EGIT_REPO_URI="https://github.com/unicode-org/icu.git"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
