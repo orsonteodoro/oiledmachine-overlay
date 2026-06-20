@@ -34,25 +34,19 @@ ebuild_revision_1
 "
 
 RDEPEND="
-	~dev-qt/qtbase-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},concurrent,gui,opengl=,vulkan=,widgets]
-	dev-qt/qtbase:=
-	~dev-qt/qtdeclarative-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	dev-qt/qtdeclarative:=
-	~dev-qt/qtquicktimeline-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	dev-qt/qtquicktimeline:=
-	~dev-qt/qtshadertools-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	dev-qt/qtshadertools:=
-	>=media-libs/assimp-6.0.5[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	media-libs/assimp:=
-	virtual/zlib:=
+	~dev-qt/qtbase-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},concurrent,gui,opengl=,vulkan=,widgets]
+	~dev-qt/qtdeclarative-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	~dev-qt/qtquicktimeline-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	~dev-qt/qtshadertools-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=media-libs/assimp-6.0.5:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=virtual/zlib-1.3.2:=
 "
 DEPEND="
 	${RDEPEND}
 	test? (
-		~dev-qt/qtbase-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},network]
-		dev-qt/qtbase:=
+		~dev-qt/qtbase-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},network]
 	)
-	vulkan? ( dev-util/vulkan-headers )
+	vulkan? ( dev-util/vulkan-headers:= )
 "
 BDEPEND="
 	~dev-qt/qtshadertools-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
