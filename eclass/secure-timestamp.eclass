@@ -37,7 +37,7 @@ _SECURE_TIMESTAMP_ECLASS=1
 # processing time is doubled or more, it is equivalent to a DoS on this overlay.
 # Backtrack the commit(s) back to the last known green checkmarks.  The green
 # checkmarks hints that the test at least was completable.  Also some repos
-# have performance bots that a performance regression exists.
+# have performance bots that notify that a performance regression exists.
 #
 get_secure_timestamps() {
 	declare -A SECURE_TIMESTAMP
