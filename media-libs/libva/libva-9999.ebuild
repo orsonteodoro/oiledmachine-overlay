@@ -5,7 +5,11 @@ EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 
-inherit cflags-hardened meson-multilib optfeature
+CHKL_TIMESTAMPS=(
+	"dev-libs/wayland-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+)
+
+inherit cflags-hardened chkl meson-multilib optfeature
 
 DESCRIPTION="Video Acceleration (VA) API for Linux"
 HOMEPAGE="https://github.com/intel/libva"
@@ -31,7 +35,7 @@ REQUIRED_USE="glx? ( X )"
 RDEPEND="
 	>=x11-libs/libdrm-2.4.75[${MULTILIB_USEDEP}]
 	wayland? (
-		>=dev-libs/wayland-1.11[${MULTILIB_USEDEP}]
+		>=dev-libs/wayland-9999[${MULTILIB_USEDEP}]
 	)
 	X? (
 		glx? (
@@ -71,6 +75,7 @@ src_unpack() {
 
 multilib_src_configure() {
 	cflags-hardened_append
+	chkl_check_many_timestamps
 	local emesonargs=(
 		-Ddriverdir="${EPREFIX}/usr/$(get_libdir)/va/drivers"
 		-Ddisable_drm=false
