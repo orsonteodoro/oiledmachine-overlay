@@ -98,34 +98,57 @@ RESTRICT="
 	)
 "
 gen_openexr_pairs() {
+	local g1=""
+	local g2=""
+	local g3=""
 	local row
-	for row in ${OPENEXR_V3_PV[@]} ; do
+	for row in "${OPENEXR_V3_PV[@]}" ; do
 		local imath_pv="${row#*:}"
 		local openexr_pv="${row%:*}"
-		echo "
+		g1+="
 			(
 				~media-libs/openexr-${openexr_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-				media-libs/openexr:=
 				~dev-libs/imath-${imath_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-				dev-libs/imath:=
 			)
 		"
+		g2+="
+			~media-libs/openexr-${openexr_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		"
+		g3+="
+			~dev-libs/imath-${imath_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		"
 	done
+	echo "
+		|| (
+			${g1}
+		)
+		|| (
+			${g2}
+		)
+		|| (
+			${g3}
+		)
+
+	"
 }
 gen_openexr_py_pairs() {
+	local g1=""
 	local row
-	for row in ${OPENEXR_V3_PV[@]} ; do
+	for row in "${OPENEXR_V3_PV[@]}" ; do
 		local imath_pv="${row#*:}"
 		local openexr_pv="${row%:*}"
-		echo "
+		g1+="
 			(
 				~media-libs/openexr-${openexr_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-				media-libs/openexr:=
 				~dev-libs/imath-${imath_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},python]
-				dev-libs/imath:=
 			)
 		"
 	done
+	echo "
+		|| (
+			${g1}
+		)
+	"
 }
 RDEPEND+="
 	${PYTHON_DEPS}
@@ -134,27 +157,27 @@ RDEPEND+="
 			>=sci-libs/hdf5-1.8.9:=[zlib(+)]
 			sci-libs/hdf5:=
 		)
-		>=virtual/zlib-1.3
+		>=virtual/zlib-1.3:=
 	)
 	python? (
 		$(python_gen_cond_dep '
-			>=dev-libs/boost-1.55.0[${PYTHON_USEDEP},python]
-			virtual/numpy[${PYTHON_USEDEP}]
+			>=dev-libs/boost-1.55.0:=[${PYTHON_USEDEP},python]
+			virtual/numpy:=[${PYTHON_USEDEP}]
 		')
-		>=dev-libs/boost-1.55.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		|| (
-			$(gen_openexr_py_pairs)
-		)
+		>=dev-libs/boost-1.55.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		media-libs/openexr:=
+		dev-libs/imath:=
+		$(gen_openexr_py_pairs)
 	)
-	|| (
-		$(gen_openexr_pairs)
-	)
+	media-libs/openexr:=
+	dev-libs/imath:=
+	$(gen_openexr_pairs)
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-build/cmake-3.13
+	>=dev-build/cmake-3.29
 	python? (
 		$(python_gen_cond_dep '
 			dev-python/setuptools[${PYTHON_USEDEP}]
@@ -163,7 +186,7 @@ BDEPEND+="
 "
 PATCHES=(
 )
-DOCS=( "ACKNOWLEDGEMENTS.txt" "FEEDBACK.txt" "NEWS.txt" "README.txt" )
+DOCS=( "FEEDBACK.txt" "NEWS.txt" "README.txt" )
 
 pkg_setup() {
 	python-single-r1_pkg_setup
@@ -196,4 +219,12 @@ src_configure() {
 # See https://github.com/alembic/alembic/issues/401
 src_test() {
 	cmake_src_test -j1
+}
+
+src_install() {
+	cmake_src_install
+	use doc && einstalldocs
+	docinto "licenses"
+	dodoc "THIRD-PARTY.txt"
+	dodoc "ACKNOWLEDGEMENTS.txt"
 }
