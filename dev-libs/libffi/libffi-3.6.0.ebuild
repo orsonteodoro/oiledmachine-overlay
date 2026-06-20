@@ -3,7 +3,7 @@
 
 EAPI=8
 
-# This ebuild contains AI inference for clarification.
+# This ebuild uses AI inference for clarification/transparency.
 
 CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data sensitive-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DR NPD"
