@@ -51,3 +51,6 @@ dev-libs/expat fallback-commit
 dev-libs/icu fallback-commit
 dev-libs/libxml2 fallback-commit
 sys-apps/systemd fallback-commit
+
+# Guardrails to mitigate ACE, PE, DT, ID
+dev-libs/libffi exec-static-trampoline
