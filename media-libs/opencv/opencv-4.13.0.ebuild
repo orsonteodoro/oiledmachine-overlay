@@ -9,6 +9,8 @@ EAPI=8
 # https://github.com/opencv/opencv/blob/4.13.0/modules/dnn/misc/tflite/schema_generated.h#L11
 # (The patch will allow for newer revisions.)
 
+# For python versions, see https://github.com/opencv/opencv/blob/4.13.0/modules/python/package/setup.py
+
 # For CUDA, check optical flow driver requirement.
 
 # For CUDA C++ standard, see also https://github.com/opencv/opencv/blob/4.13.0/cmake/OpenCVDetectCUDA.cmake#L154
@@ -17,7 +19,7 @@ CFLAGS_HARDENED_LANGS="asm c-lang"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data" # Biometrics TFA
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS HO IO UM NPD OOBR OOBW"
 CXX_STANDARD=17 # 11 is minimum, 17 for protobuf
-PYTHON_COMPAT=( "python3_"{8..12} )
+PYTHON_COMPAT=( "python3_"{8..14} )
 
 CMAKE_PV="3.15"
 GSTREAMER_PV="1.28.4"
