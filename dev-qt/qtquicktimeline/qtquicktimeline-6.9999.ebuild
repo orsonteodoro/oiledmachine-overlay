@@ -26,10 +26,8 @@ if [[ ${QT6_BUILD_TYPE} == release ]]; then
 fi
 
 RDEPEND="
-	~dev-qt/qtbase-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	dev-qt/qtbase:=
-	~dev-qt/qtdeclarative-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	dev-qt/qtdeclarative:=
+	~dev-qt/qtbase-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	~dev-qt/qtdeclarative-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 "
 DEPEND="${RDEPEND}"
 
