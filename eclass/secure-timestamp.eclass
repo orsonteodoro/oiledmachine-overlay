@@ -17,7 +17,7 @@ esac
 if [[ -z ${_SECURE_TIMESTAMP_ECLASS} ]] ; then
 _SECURE_TIMESTAMP_ECLASS=1
 
-# This ebuild contains AI inference clarification.
+# This ebuild contains AI inference clarification and info.
 
 #
 # Bump policy:
@@ -33,11 +33,26 @@ _SECURE_TIMESTAMP_ECLASS=1
 # be used in *DEPEND if it contains all the security fixes; otherwise, the
 # live ebuild in *DEPENDs is used.
 #
+#
+# Performance regressions and rollbacks:
+#
 # If the performance impact by a commit is 2x slower or feels that the
 # processing time is doubled or more, it is equivalent to a DoS on this overlay.
 # Backtrack the commit(s) back to the last known green checkmarks.  The green
 # checkmarks hints that the test at least was completable.  Also some repos
 # have performance bots that notify that a performance regression exists.
+#
+# Before the xz-utils incident (Mar 29, 2024), performance regessions were not
+# an issue.  They are a big deal now because they may indicate a possible
+# supply chain attack.  In the xz-utils incident, a performance regression
+# lead to the discovery of a supply chain attack.
+#
+# Rankings of supply chain attacks by language:
+# 1. JavaScript/Typescript
+# 2. Python
+# 3. Java
+# 4. Rust
+# 5. C/C++
 #
 get_secure_timestamps() {
 	declare -A SECURE_TIMESTAMP
