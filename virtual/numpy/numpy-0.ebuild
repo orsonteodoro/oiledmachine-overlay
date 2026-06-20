@@ -35,6 +35,15 @@ IUSE+="
 +lts
 ebuild_revision_1
 "
+REQUIRED_USE="
+	^^ (
+		python_targets_python3_10
+		python_targets_python3_11
+		python_targets_python3_12
+		python_targets_python3_13
+		python_targets_python3_14
+	)
+"
 RDEPEND+="
 	python_targets_python3_10? (
 		=dev-python/numpy-1.21*[${PYTHON_USEDEP}]
