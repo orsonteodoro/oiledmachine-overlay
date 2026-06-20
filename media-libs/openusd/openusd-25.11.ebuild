@@ -6,9 +6,9 @@ EAPI=8
 # U22
 
 # For dependencies, see
-# https://github.com/PixarAnimationStudios/OpenUSD/blob/v26.05/VERSIONS.md
-# https://github.com/PixarAnimationStudios/OpenUSD/blob/v26.05/build_scripts/build_usd.py#L2019
-# https://github.com/PixarAnimationStudios/OpenUSD/blob/v26.05/build_scripts/build_usd.py#L763
+# https://github.com/PixarAnimationStudios/OpenUSD/blob/v25.11/VERSIONS.md
+# https://github.com/PixarAnimationStudios/OpenUSD/blob/v25.11/build_scripts/build_usd.py#L2019
+# https://github.com/PixarAnimationStudios/OpenUSD/blob/v25.11/build_scripts/build_usd.py#L763
 
 BOOST_PV="1.80.0"
 CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
@@ -61,7 +61,7 @@ OPENEXR_V3_PV=(
 	"3.2.0:3.1.9"
 	"3.1.13:3.1.9"
 )
-PYTHON_COMPAT=( "python3_"{9..14} )
+PYTHON_COMPAT=( "python3_"{9..13} )
 VULKAN_PV="1.4.321.0"
 
 inherit cflags-hardened check-compiler-switch cmake libcxx-slot libstdcxx-slot
@@ -97,7 +97,7 @@ LICENSE="
 	MIT
 	OpenUSD-23.11
 "
-# custom - https://github.com/PixarAnimationStudios/OpenUSD/blob/v26.05/pxr/usdImaging/usdImaging/drawModeStandin.cpp#L9
+# custom - https://github.com/PixarAnimationStudios/OpenUSD/blob/v25.11/pxr/usdImaging/usdImaging/drawModeStandin.cpp#L9
 # custom - search "In consideration of your agreement"
 # MIT - the distro MIT license template does not have all rights reserved.
 SLOT="0"
@@ -178,7 +178,7 @@ gen_openexr_pairs() {
 # Missing GraphViz
 # Missing RenderMan
 RDEPEND+="
-	>=dev-cpp/tbb-2021:${ONETBB_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-cpp/tbb-2021.9:${ONETBB_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=virtual/zlib-1.2.11:=
 	!python? (
 		>=dev-libs/boost-${BOOST_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
@@ -203,7 +203,7 @@ RDEPEND+="
 		dev-libs/jemalloc-usd:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	materialx? (
-		>=media-libs/materialx-1.39.4:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=media-libs/materialx-1.39.3:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	opencolorio? (
 		>=media-libs/opencolorio-2.2.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
@@ -325,7 +325,7 @@ ewarn "Uninstall ${PN} to avoid build failure the re-emerge ${PN}."
 			-DDRACO_ATTRIBUTE_VALUES_DEDUPLICATION_SUPPORTED=ON \
 			-DTBB_SUPPRESS_DEPRECATED_MESSAGES=1
 	fi
-        # See https://github.com/PixarAnimationStudios/OpenUSD/blob/v26.05/cmake/defaults/Options.cmake
+        # See https://github.com/PixarAnimationStudios/OpenUSD/blob/v25.11/cmake/defaults/Options.cmake
 	local mycmakeargs+=(
 		$(usex jemalloc "-DPXR_MALLOC_LIBRARY=${ESYSROOT}/usr/$(get_libdir)/${PN}/$(get_libdir)/libjemalloc.so" "")
 		$(usex usdview "-DPYSIDEUICBINARY:PATH=${S}/pyside2-uic" "")
