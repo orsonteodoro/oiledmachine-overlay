@@ -50,11 +50,11 @@ _SECURE_TIMESTAMP_ECLASS=1
 #
 # Rankings of supply chain attacks by language:
 #
-# 1. JavaScript/Typescript
+# 1. JavaScript / Typescript
 # 2. Python
 # 3. Java
 # 4. Rust
-# 5. C/C++
+# 5. C / C++
 #
 get_secure_timestamps() {
 	declare -A SECURE_TIMESTAMP
