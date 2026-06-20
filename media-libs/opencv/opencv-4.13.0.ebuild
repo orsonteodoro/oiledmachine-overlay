@@ -25,34 +25,47 @@ KLEIDICV_PV="0.5.0"
 QT5_PV="5.12.8"
 QT6_PV="6.2.4"
 
-OPENEXR2_PV=(
-	"2.5.10"
-	"2.5.9"
-	"2.5.8"
-	"2.5.7"
-	"2.4.3"
-	"2.4.2"
-	"2.4.1"
-	"2.4.0"
-	"2.3.0"
-)
-
 OPENEXR3_PV=(
-	"3.1.12"
-	"3.1.11"
-	"3.1.10"
-	"3.1.9"
-	"3.1.8"
-	"3.1.7"
-	"3.1.6"
-	"3.1.5"
-	"3.1.4"
-	"3.1.3"
-	"3.0.5"
-	"3.0.4"
-	"3.0.3"
-	"3.0.2"
-	"3.0.1"
+	"3.4.12:3.2.2"
+	"3.4.11:3.2.2"
+	"3.4.10:3.2.2"
+	"3.4.9:3.2.2"
+	"3.4.8:3.2.2"
+	"3.4.7:3.2.2"
+	"3.4.6:3.2.2"
+	"3.4.5:3.2.2"
+	"3.4.4:3.2.2"
+	"3.4.3:3.2.2"
+	"3.4.2:3.2.2"
+	"3.4.1:3.2.1"
+	"3.4.0:3.2.1"
+	"3.3.11:3.1.12"
+	"3.3.10:3.1.12"
+	"3.3.9:3.1.12"
+	"3.3.8:3.1.12"
+	"3.3.7:3.1.12"
+	"3.3.6:3.1.12"
+	"3.3.5:3.1.12"
+	"3.3.4:3.1.12"
+	"3.3.3:3.1.12"
+	"3.3.2:3.1.12"
+	"3.3.1:3.1.12"
+	"3.3.0:3.1.11"
+	"3.2.4:3.1.10"
+	"3.2.3:3.1.10"
+	"3.2.2:3.1.9"
+	"3.2.1:3.1.9"
+	"3.2.0:3.1.9"
+	"3.1.13:3.1.9"
+	"3.1.12:3.1.9"
+	"3.1.11:3.1.9"
+	"3.1.10:3.1.9"
+	"3.1.9:3.1.9"
+	"3.1.8:3.1.8"
+	"3.1.7:3.1.7"
+	"3.1.6:3.1.5"
+	"3.1.5:3.1.5"
+	"3.1.4:3.1.4"
 )
 
 _CXX_STANDARD=(
@@ -759,27 +772,23 @@ REQUIRED_USE+="
 	)
 "
 gen_openexr_rdepend() {
-	local ver
-	for ver in "${OPENEXR2_PV[@]}" ; do
-		echo "
+	local g1=""
+	local row
+	for row in "${OPENEXR3_PV[@]}" ; do
+		local imath_pv="${row#*:}"
+		local openexr_pv="${row%:*}"
+		g1+="
 			(
-				~dev-libs/imath-${ver}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-				dev-libs/imath:=
-				~media-libs/openexr-${ver}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-				media-libs/openexr:=
+				~dev-libs/imath-${imath_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+				~media-libs/openexr-${openexr_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 			)
 		"
 	done
-	for ver in "${OPENEXR3_PV[@]}" ; do
-		echo "
-			(
-				~dev-libs/imath-${ver}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-				dev-libs/imath:=
-				~media-libs/openexr-${ver}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-				media-libs/openexr:=
-			)
-		"
-	done
+	echo "
+		|| (
+			${g1}
+		)
+	"
 }
 CUDA_12_6_DEPEND="
 	(
@@ -788,7 +797,6 @@ CUDA_12_6_DEPEND="
 		virtual/cuda-compiler:0/12.6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		cudnn? (
 			>=dev-libs/cudnn-8.8
-			dev-libs/cudnn:=
 		)
 	)
 "
@@ -799,7 +807,6 @@ CUDA_12_8_DEPEND="
 		virtual/cuda-compiler:0/12.8[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		cudnn? (
 			>=dev-libs/cudnn-8.8
-			dev-libs/cudnn:=
 		)
 	)
 "
@@ -810,18 +817,21 @@ CUDA_12_9_DEPEND="
 		virtual/cuda-compiler:0/12.9[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		cudnn? (
 			>=dev-libs/cudnn-8.8
-			dev-libs/cudnn:=
 		)
 	)
 "
 CUDA_DEPEND="
+		dev-util/nvidia-cuda-toolkit:=
+		virtual/cuda-compiler:=
+		x11-drivers/nvidia-drivers:=
+		cudnn? (
+			dev-libs/cudnn:=
+		)
 		|| (
 			${CUDA_12_6_DEPEND}
 			${CUDA_12_8_DEPEND}
 			${CUDA_12_9_DEPEND}
 		)
-		dev-util/nvidia-cuda-toolkit:=
-		virtual/cuda-compiler:=
 "
 # For ffmpeg version, see \
 # https://github.com/opencv/opencv_3rdparty/blob/ea9240e39bc0d6a69d2b1f0ba4513bdc7612a41e/ffmpeg/download_src.sh#L24	# FFmpeg 4.x
@@ -831,19 +841,19 @@ gen_rocm_rdepend() {
 	local s
 	for s in "${ROCM_SLOTS[@]}" ; do
 		local slot="${s/rocm_}"
-		slot="0/${slot/_/.}"
+		slot="${slot/_/.}"
 		echo "
 			${s}? (
-				sci-libs/MIVisionX:${slot}
-				sci-libs/MIVisionX:=
+				=sci-libs/MIVisionX-${slot}*:=
 			)
 		"
 	done
 }
 PATENT_STATUS_RDEPEND="
-	virtual/patent-status[patent_status_nonfree=]
+	virtual/patent-status:*[patent_status_nonfree=]
 	!patent_status_nonfree? (
 		ffmpeg? (
+			media-video/ffmpeg:=
 			|| (
 				>=media-video/ffmpeg-4.4.6:56.58.58[${MULTILIB_USEDEP},libaom?,-openh264,-patent_status_nonfree,vpx?]
 				>=media-video/ffmpeg-4.4.6:0/56.58.58[${MULTILIB_USEDEP},libaom?,-openh264,-patent_status_nonfree,vpx?]
@@ -854,255 +864,226 @@ PATENT_STATUS_RDEPEND="
 				>=media-video/ffmpeg-4.4.6:56.58.58[${MULTILIB_USEDEP},libaom?,-openh264,-patent_status_nonfree,vpx?]
 				>=media-video/ffmpeg-4.4.6:0/56.58.58[${MULTILIB_USEDEP},libaom?,-openh264,-patent_status_nonfree,vpx?]
 			)
-			media-video/ffmpeg:=
 		)
 		gstreamer? (
-			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},mpeg?,-patent_status_nonfree,-vaapi,vpx?,-x264,-x265]
+			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:*[${MULTILIB_USEDEP},mpeg?,-patent_status_nonfree,-vaapi,vpx?,-x264,-x265]
 		)
 	)
 	patent_status_nonfree? (
 		ffmpeg? (
+			media-video/ffmpeg:=
 			|| (
 				media-video/ffmpeg:56.58.58[${MULTILIB_USEDEP},libaom?,openh264?,patent_status_nonfree,vpx?]
 				media-video/ffmpeg:0/56.58.58[${MULTILIB_USEDEP},libaom?,openh264?,patent_status_nonfree,vpx?]
 			)
-			media-video/ffmpeg:=
 		)
 		gstreamer? (
-			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},mpeg?,patent_status_nonfree,vaapi?,vpx?,x264?,x265?]
+			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:*[${MULTILIB_USEDEP},mpeg?,patent_status_nonfree,vaapi?,vpx?,x264?,x265?]
 		)
 	)
 "
 # The Protobuf version requirement is relaxed.
 RDEPEND="
 	${PATENT_STATUS_RDEPEND}
-	>=app-arch/bzip2-1.0.8[${MULTILIB_USEDEP}]
-	>=virtual/zlib-1.3.1[${MULTILIB_USEDEP}]
+	>=app-arch/bzip2-1.0.8:=[${MULTILIB_USEDEP}]
+	>=virtual/zlib-1.3.1:=[${MULTILIB_USEDEP}]
+	dev-libs/protobuf:=
 	|| (
 		dev-libs/protobuf:3/3.12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx_standard_cxx17]
 		dev-libs/protobuf:3/3.21[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx_standard_cxx17]
 	)
-	dev-libs/protobuf:=
 	atlas? (
-		>=sci-libs/atlas-3.10.3
+		>=sci-libs/atlas-3.10.3:=
 	)
 	avif? (
-		>=media-libs/libavif-0.9.3[${MULTILIB_USEDEP}]
+		>=media-libs/libavif-0.9.3:=[${MULTILIB_USEDEP}]
 	)
 	cuda? (
 		${CUDA_DEPEND}
-		>=x11-drivers/nvidia-drivers-450.51
+		>=x11-drivers/nvidia-drivers-450.51:=
 	)
 	contribdnn? (
 		system-flatbuffers? (
-			=dev-libs/flatbuffers-25.9*:0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-			dev-libs/flatbuffers:=
+			=dev-libs/flatbuffers-25.9*:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		)
 	)
 	contribhdf? (
-		>=sci-libs/hdf5-1.10.4:0
-		sci-libs/hdf5:=
+		>=sci-libs/hdf5-1.10.4:=
 	)
 	contribfreetype? (
-		(
-			>=media-libs/harfbuzz-2.6.4:0[${MULTILIB_USEDEP}]
-			media-libs/harfbuzz:=
-		)
-		>=media-libs/freetype-2.10.1:2[${MULTILIB_USEDEP}]
+		>=media-libs/harfbuzz-2.6.4:=[${MULTILIB_USEDEP}]
+		>=media-libs/freetype-2.10.1:=[${MULTILIB_USEDEP}]
 	)
 	contribovis? (
-		>=dev-games/ogre-1.12:0
-		dev-games/ogre:=
+		>=dev-games/ogre-1.12:=
 	)
 	ffmpeg? (
-		media-video/ffmpeg[${MULTILIB_USEDEP}]
-		media-video/ffmpeg:=
+		media-video/ffmpeg:=[${MULTILIB_USEDEP}]
 	)
 	gdal? (
-		>=sci-libs/gdal-3.0.4:0
-		sci-libs/gdal:=
+		>=sci-libs/gdal-3.0.4:=
 	)
 	gflags? (
-		>=dev-cpp/gflags-2.2.2:0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
-		dev-cpp/gflags:=
+		>=dev-cpp/gflags-2.2.2:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	)
 	glog? (
-		>=dev-cpp/glog-0.4.0:0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
-		dev-cpp/glog:=
+		>=dev-cpp/glog-0.4.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	)
 	gphoto2? (
-		>=media-libs/libgphoto2-2.5.24:0[${MULTILIB_USEDEP}]
-		media-libs/libgphoto2:=
+		>=media-libs/libgphoto2-2.5.24:=[${MULTILIB_USEDEP}]
 	)
 	gstreamer? (
-		>=media-libs/gstreamer-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
-		>=media-libs/gst-plugins-base-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
+		>=media-libs/gstreamer-${GSTREAMER_PV}:=[${MULTILIB_USEDEP}]
+		>=media-libs/gst-plugins-base-${GSTREAMER_PV}:=[${MULTILIB_USEDEP}]
 	)
 	gtk3? (
-		>=dev-libs/glib-2.64.6:2[${MULTILIB_USEDEP}]
-		>=x11-libs/gtk+-3.24.18:3[${MULTILIB_USEDEP}]
+		>=dev-libs/glib-2.64.6:=[${MULTILIB_USEDEP}]
+		>=x11-libs/gtk+-3.24.18:3=[${MULTILIB_USEDEP}]
 	)
 	halide? (
-		dev-lang/halide[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
-		dev-lang/halide:=
+		dev-lang/halide:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	)
 	ieee1394? (
-		(
-			>=media-libs/libdc1394-2.2.6:2[${MULTILIB_USEDEP}]
-			media-libs/libdc1394:=
-		)
-		>=sys-libs/libraw1394-2.1.2:0[${MULTILIB_USEDEP}]
+		>=media-libs/libdc1394-2.2.6:=[${MULTILIB_USEDEP}]
+		>=sys-libs/libraw1394-2.1.2:=[${MULTILIB_USEDEP}]
 	)
 	java? (
 		>=virtual/jre-1.8:*
 	)
 	jpeg? (
-		>=media-libs/libjpeg-turbo-3.1.2:0[${MULTILIB_USEDEP}]
-		media-libs/libjpeg-turbo:=
+		>=media-libs/libjpeg-turbo-3.1.2:=[${MULTILIB_USEDEP}]
 	)
 	jpeg2k? (
 		!jasper? (
-			>=media-libs/openjpeg-2.5.4:2[${MULTILIB_USEDEP}]
-			media-libs/openjpeg:=
+			>=media-libs/openjpeg-2.5.4:=[${MULTILIB_USEDEP}]
 		)
 		jasper? (
-			>=media-libs/jasper-1.900.1:0
-			media-libs/jasper:=
+			>=media-libs/jasper-1.900.1:=
 		)
 	)
 	jpegxl? (
-		media-libs/libjxl[${MULTILIB_USEDEP}]
+		media-libs/libjxl:=[${MULTILIB_USEDEP}]
 	)
 	lapack? (
-		>=virtual/lapack-3.9.0[eselect-ldso]
-		virtual/cblas[eselect-ldso]
-		virtual/lapacke[eselect-ldso]
+		>=virtual/lapack-3.9.0:=[eselect-ldso]
+		virtual/cblas:*[eselect-ldso]
+		virtual/lapacke:*[eselect-ldso]
 	)
 	mkl? (
-		>=sci-libs/mkl-2020.0.166
+		>=sci-libs/mkl-2020.0.166:=
 	)
 	openblas? (
-		>=sci-libs/openblas-0.3.8
+		>=sci-libs/openblas-0.3.8:=
 	)
 	opencl? (
-		virtual/opencl[${MULTILIB_USEDEP}]
-		dev-util/opencl-headers
+		virtual/opencl:*[${MULTILIB_USEDEP}]
+		dev-util/opencl-headers:=
 	)
 	openexr? (
-		|| (
-			$(gen_openexr_rdepend)
-		)
 		dev-libs/imath:=
 		media-libs/openexr:=
+		$(gen_openexr_rdepend)
 	)
 	opengl? (
-		virtual/opengl[${MULTILIB_USEDEP}]
-		virtual/glu[${MULTILIB_USEDEP}]
+		virtual/opengl:*[${MULTILIB_USEDEP}]
+		virtual/glu:*[${MULTILIB_USEDEP}]
 	)
 	openvino? (
-		>=sci-ml/openvino-2024.0.0
+		>=sci-ml/openvino-2024.0.0:=
 	)
 	png? (
-		>=media-libs/libpng-1.6.53:0[${MULTILIB_USEDEP}]
-		media-libs/libpng:=
+		>=media-libs/libpng-1.6.53:=[${MULTILIB_USEDEP}]
 	)
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
-			virtual/numpy[${PYTHON_USEDEP}]
+			virtual/numpy:=[${PYTHON_USEDEP}]
 		')
 		openvino? (
-			>=sci-ml/openvino-2024.0.0[${PYTHON_SINGLE_USEDEP}]
+			>=sci-ml/openvino-2024.0.0:=[${PYTHON_SINGLE_USEDEP}]
 		)
 	)
 	qt5? (
-		>=dev-qt/qtgui-${QT5_PV}:5
-		>=dev-qt/qtwidgets-${QT5_PV}:5
-		>=dev-qt/qttest-${QT5_PV}:5
-		>=dev-qt/qtconcurrent-${QT5_PV}:5
+		>=dev-qt/qtgui-${QT5_PV}:5=
+		>=dev-qt/qtwidgets-${QT5_PV}:5=
+		>=dev-qt/qttest-${QT5_PV}:5=
+		>=dev-qt/qtconcurrent-${QT5_PV}:5=
 		opengl? (
-			>=dev-qt/qtopengl-${QT5_PV}:5
+			>=dev-qt/qtopengl-${QT5_PV}:5=
 		)
 	)
 	!qt5? (
 		qt6? (
-			>=dev-qt/qtbase-${QT6_PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui,widgets,concurrent,opengl?]
-			dev-qt/qtbase:=
+			>=dev-qt/qtbase-${QT6_PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui,widgets,concurrent,opengl?]
 		)
 	)
 	quirc? (
-		>=media-libs/quirc-1.1:0
+		>=media-libs/quirc-1.1:=
 	)
 	rocm? (
-		|| (
-			$(gen_rocm_rdepend)
-		)
+		$(gen_rocm_rdepend)
 	)
 	spng? (
-		>=media-libs/libspng-0.7.4[${MULTILIB_USEDEP}]
+		>=media-libs/libspng-0.7.4:=[${MULTILIB_USEDEP}]
 	)
 	tesseract? (
-		>=app-text/tesseract-4.1.1:0[opencl=,${MULTILIB_USEDEP}]
+		>=app-text/tesseract-4.1.1:=[opencl=,${MULTILIB_USEDEP}]
 	)
 	tbb? (
-		>=dev-cpp/tbb-2022.1.0:0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
-		dev-cpp/tbb:=
+		>=dev-cpp/tbb-2022.1.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	)
 	tiff? (
-		>=media-libs/tiff-4.7.1:0[${MULTILIB_USEDEP}]
-		media-libs/tiff:=
+		>=media-libs/tiff-4.7.1:=[${MULTILIB_USEDEP}]
 	)
 	v4l? (
-		>=media-libs/libv4l-0.8.3:0[${MULTILIB_USEDEP}]
+		>=media-libs/libv4l-0.8.3:=[${MULTILIB_USEDEP}]
 	)
 	vaapi? (
-		>=media-libs/libva-2.7.0:0[${MULTILIB_USEDEP}]
+		>=media-libs/libva-2.7.0:=[${MULTILIB_USEDEP}]
 	)
 	vtk? (
-		>=sci-libs/vtk-7.1.1:0[rendering,cuda=]
-		sci-libs/vtk:=
+		>=sci-libs/vtk-7.1.1:=[rendering,cuda=]
 	)
 	vulkan? (
-		media-libs/vulkan-drivers[${MULTILIB_USEDEP}]
-		media-libs/vulkan-loader[${MULTILIB_USEDEP}]
+		virtual/vulkan:=[${MULTILIB_USEDEP}]
+		media-libs/vulkan-loader:*[${MULTILIB_USEDEP}]
 	)
 	wayland? (
-		>=dev-libs/wayland-protocols-1.13
-		>=dev-libs/wayland-1.18.0[${MULTILIB_USEDEP}]
-		>=x11-libs/libxkbcommon-0.10.0[${MULTILIB_USEDEP}]
+		>=dev-libs/wayland-protocols-1.13:=
+		>=dev-libs/wayland-1.18.0:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libxkbcommon-0.10.0:=[${MULTILIB_USEDEP}]
 	)
 	webp? (
-		>=media-libs/libwebp-1.6.0:0[${MULTILIB_USEDEP}]
-		media-libs/libwebp:=
+		>=media-libs/libwebp-1.6.0:=[${MULTILIB_USEDEP}]
 	)
 	xine? (
-		>=media-libs/xine-lib-1.2.9:1
+		>=media-libs/xine-lib-1.2.9:=
 	)
 	xvfb? (
-		x11-base/xorg-server
+		x11-base/xorg-server:=
 	)
 "
 DEPEND="
 	${RDEPEND}
 	eigen? (
-		>=dev-cpp/eigen-3.3.8-r1:3
+		>=dev-cpp/eigen-3.3.8-r1:3=
 	)
 	java? (
 		>=virtual/jdk-1.8:*
 	)
 	vulkan? (
-		dev-util/vulkan-headers
+		dev-util/vulkan-headers:=
 	)
 	xvfb? (
-		x11-base/xorg-proto
+		x11-base/xorg-proto:=
 	)
 "
 # TODO gstreamer dependencies
 DEPEND+="
 	test? (
 		gstreamer? (
-			>=media-plugins/gst-plugins-jpeg-${GSTREAMER_PV}[${MULTILIB_USEDEP}]
-			>=media-plugins/gst-plugins-x264-${GSTREAMER_PV}[${MULTILIB_USEDEP}]
+			>=media-plugins/gst-plugins-jpeg-${GSTREAMER_PV}:=[${MULTILIB_USEDEP}]
+			>=media-plugins/gst-plugins-x264-${GSTREAMER_PV}:=[${MULTILIB_USEDEP}]
 		)
 	)
 "
