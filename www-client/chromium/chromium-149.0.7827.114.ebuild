@@ -341,6 +341,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libva-9999"					# Bumped live/*DEPENDS to latest hardened
 	"media-libs/libvpx-9999"
 	"media-libs/libyuv-9999"
+	"media-libs/openh264-9999"				# Bumped live/*DEPENDS to latest hardened
 	"media-libs/openjpeg-9999"				# Bumped *DEPENDs to latest non-vulnerable
 	"media-libs/tiff-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/woff2-9999"

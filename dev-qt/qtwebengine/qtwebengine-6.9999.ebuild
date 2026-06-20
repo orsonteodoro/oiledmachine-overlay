@@ -46,6 +46,10 @@ CHKL_TIMESTAMPS=(
 	"media-libs/harfbuzz-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/lcms-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libpng-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libwebp-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/tiff-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/openh264-9999"		# Bumped live/*DEPENDS to latest hardened
 )
 
 inherit cflags-hardened check-reqs chkl flag-o-matic libcxx-slot libstdcxx-slot multiprocessing optfeature
@@ -86,12 +90,12 @@ RDEPEND="
 	>=media-libs/harfbuzz-9999:=
 	>=media-libs/lcms-9999:=
 	>=media-libs/libjpeg-turbo-9999:=
-	media-libs/libpng:=
-	media-libs/libwebp:=
+	>=media-libs/libpng-1.6.57:=
+	>=media-libs/libwebp-9999:=
 	media-libs/mesa:=[gbm(+)]
 	media-libs/openjpeg:2=
 	media-libs/opus:=
-	media-libs/tiff:=
+	>=media-libs/tiff-9999:=
 	sys-apps/dbus:=
 	sys-apps/pciutils:=
 	virtual/libudev:=
@@ -109,7 +113,7 @@ RDEPEND="
 	x11-libs/libxkbcommon:=
 	x11-libs/libxkbfile:=
 	alsa? ( media-libs/alsa-lib:= )
-	!bindist? ( >=media-libs/openh264-2.4:= )
+	!bindist? ( >=media-libs/openh264-2.6.0:= )
 	designer? (
 		~dev-qt/qttools-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},designer]
 	)
