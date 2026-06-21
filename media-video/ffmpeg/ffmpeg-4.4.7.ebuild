@@ -1022,7 +1022,7 @@ RDEPEND+="
 		>=net-libs/librist-9999:=[${MULTILIB_USEDEP}]
 	)
 	rubberband? (
-		>=media-libs/rubberband-1.8.1-r1:=[${MULTILIB_USEDEP}]
+		>=media-libs/rubberband-4.0.0:=[${MULTILIB_USEDEP}]
 	)
 	samba? (
 		>=net-fs/samba-3.6.23-r1:=[${MULTILIB_USEDEP},client]
