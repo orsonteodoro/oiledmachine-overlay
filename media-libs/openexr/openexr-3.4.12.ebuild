@@ -61,9 +61,9 @@ RESTRICT="
 	)
 "
 RDEPEND="
-	>=app-arch/libdeflate-1.25:=[zlib(+)]
+	>=app-arch/libdeflate-1.23:=[zlib(+)]
 	~dev-libs/imath-3.2.2:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=media-libs/openjph-0.21.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=media-libs/openjph-0.30.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	tbb? (
 		dev-cpp/tbb:=
 	)

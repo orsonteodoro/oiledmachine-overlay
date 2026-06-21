@@ -80,7 +80,7 @@ RDEPEND="
 		>=media-libs/lerc-9999:=[${MULTILIB_USEDEP}]
 	)
 	libdeflate? (
-		>=app-arch/libdeflate-1.21:=[${MULTILIB_USEDEP}]
+		>=app-arch/libdeflate-1.23:=[${MULTILIB_USEDEP}]
 	)
 	lzma? (
 		>=app-arch/xz-utils-5.0.5-r1[${MULTILIB_USEDEP}]
@@ -93,7 +93,7 @@ RDEPEND="
 		>=media-libs/libwebp-9999:=[${MULTILIB_USEDEP}]
 	)
 	zlib? (
-		>=virtual/zlib-1.3.1:=[${MULTILIB_USEDEP}]
+		>=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}]
 	)
 	zstd? (
 		>=app-arch/zstd-9999:=[${MULTILIB_USEDEP}]
