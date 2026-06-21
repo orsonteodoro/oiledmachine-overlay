@@ -104,7 +104,7 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${PATENT_STATUS[@]}
-mp3 opus svt-av1 theora vorbis vpx x264
+lame opus svt-av1 theora vorbis vpx x264
 ebuild_revision_28
 "
 REQUIRED_USE="
@@ -119,14 +119,14 @@ PATENT_STATUS_RDEPEND="
 	virtual/patent-status[patent_status_nonfree=]
 	!patent_status_nonfree? (
 		|| (
-			media-video/ffmpeg:58.60.60[encode,mp3?,opus?,-patent_status_nonfree,svt-av1?,theora?,vorbis?,vpx?,-x264]
-			media-video/ffmpeg:0/58.60.60[encode,mp3?,opus?,-patent_status_nonfree,svt-av1?,theora?,vorbis?,vpx?,-x264]
+			media-video/ffmpeg:58.60.60[encode,lame?,opus?,-patent_status_nonfree,svt-av1?,theora?,vorbis?,vpx?,-x264]
+			media-video/ffmpeg:0/58.60.60[encode,lame?,opus?,-patent_status_nonfree,svt-av1?,theora?,vorbis?,vpx?,-x264]
 		)
 	)
 	patent_status_nonfree? (
 		|| (
-			media-video/ffmpeg:58.60.60[encode,mp3?,opus?,patent_status_nonfree,svt-av1?,theora?,vorbis?,vpx?,x264?]
-			media-video/ffmpeg:0/58.60.60[encode,mp3?,opus?,patent_status_nonfree,svt-av1?,theora?,vorbis?,vpx?,x264?]
+			media-video/ffmpeg:58.60.60[encode,lame?,opus?,patent_status_nonfree,svt-av1?,theora?,vorbis?,vpx?,x264?]
+			media-video/ffmpeg:0/58.60.60[encode,lame?,opus?,patent_status_nonfree,svt-av1?,theora?,vorbis?,vpx?,x264?]
 		)
 	)
 "

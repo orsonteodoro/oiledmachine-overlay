@@ -129,7 +129,7 @@ media-video/ffmpeg libaribb24
 media-video/ffmpeg libilbc
 
 # The lame ebuild and the lame repo is not up to date on security patches so the mp3 USE flag is disabled.
-media-video/ffmpeg mp3
+media-video/ffmpeg lame
 
 # EOL project with security issues
 media-video/ffmpeg qsv

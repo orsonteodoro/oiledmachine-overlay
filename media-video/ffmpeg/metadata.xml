@@ -614,6 +614,9 @@
     <flag name="kvazaar">
       Enables <pkg>media-libs/kvazaar</pkg> based HEVC encoder.
     </flag>
+    <flag name="lame">
+      Enables MP3 encoding support.
+    </flag>
     <flag name="libaom">
       Enables <pkg>media-libs/libaom</pkg> based AV1 codec support.
     </flag>

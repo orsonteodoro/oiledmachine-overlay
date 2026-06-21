@@ -44,7 +44,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 # Assume X and not Wayland since libsdl2 is not supported.
 IUSE+="
 ${PATENT_STATUS_IUSE[@]}
-alsa frei0r jack jpeg mp3 nvenc opencv opus oss pulseaudio rtaudio rubberband
+alsa frei0r jack jpeg lame nvenc opencv opus oss pulseaudio rtaudio rubberband
 sox vaapi vidstab vorbis vpx x264 x265
 ebuild_revision_5
 "
@@ -96,7 +96,7 @@ REQUIRED_USE="
 		rtaudio
 	)
 	|| (
-		mp3
+		lame
 		opus
 		vorbis
 	)
@@ -110,10 +110,10 @@ REQUIRED_USE="
 PATENT_STATUS_RDEPEND="
 	virtual/patent-status[patent_status_nonfree=]
 	!patent_status_nonfree? (
-		>=media-video/ffmpeg-4.4.1[encode,mp3?,-nvenc,-patent_status_nonfree,-vaapi,vpx?,-x264,-x265]
+		>=media-video/ffmpeg-4.4.1[encode,lame?,-nvenc,-patent_status_nonfree,-vaapi,vpx?,-x264,-x265]
 	)
 	patent_status_nonfree? (
-		>=media-video/ffmpeg-4.4.1[encode,mp3?,nvenc?,patent_status_nonfree,vaapi?,vpx?,x264?,x265?]
+		>=media-video/ffmpeg-4.4.1[encode,lame?,nvenc?,patent_status_nonfree,vaapi?,vpx?,x264?,x265?]
 	)
 "
 RDEPEND+="

@@ -79,9 +79,9 @@ FFMPEG_ENCODER_FLAG_MAP=(
 	"amf"
 	"amrenc:libvo-amrwbenc"
 	"kvazaar:libkvazaar"
+	"lame:libmp3lame"
 	"libaom"
 	"libvvenc"
-	"mp3:libmp3lame"
 	"openh264:libopenh264"
 	"rav1e:^librav1e" # no multilib
 	"snappy:libsnappy"
@@ -950,7 +950,7 @@ RDEPEND+="
 		kvazaar? (
 			>=media-libs/kvazaar-9999:=[${MULTILIB_USEDEP}]
 		)
-		mp3? (
+		lame? (
 			>=media-sound/lame-3.99.5-r1:=[${MULTILIB_USEDEP}]
 		)
 		openh264? (

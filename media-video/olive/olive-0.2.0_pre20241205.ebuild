@@ -74,7 +74,7 @@ SLOT="0/${MY_PV}"
 #
 IUSE+="
 ${PATENT_STATUS_IUSE[@]}
-alsa doc glslang jack +jpeg2k +mp3 +opus oss +png qt5 qt6 test srt +svt-av1 +theora
+alsa doc glslang jack +jpeg2k +lame +opus oss +png qt5 qt6 test srt +svt-av1 +theora
 +truetype +vorbis wayland +webp X +xvid x264 x265
 ebuild_revision_5
 "
@@ -97,7 +97,7 @@ REQUIRED_USE="
 		qt6
 	)
 	|| (
-		mp3
+		lame
 		opus
 		vorbis
 	)
@@ -123,24 +123,24 @@ PATENT_STATUS_RDEPEND="
 	virtual/patent-status[patent_status_nonfree=]
 	!patent_status_nonfree? (
 		|| (
-			media-video/ffmpeg:58.60.60[glslang=,jpeg2k?,mp3?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
-			media-video/ffmpeg:57.59.59[glslang=,jpeg2k?,mp3?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
-			media-video/ffmpeg:56.58.58[glslang=,jpeg2k?,mp3?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
+			media-video/ffmpeg:58.60.60[glslang=,jpeg2k?,lame?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
+			media-video/ffmpeg:57.59.59[glslang=,jpeg2k?,lame?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
+			media-video/ffmpeg:56.58.58[glslang=,jpeg2k?,lame?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
 
-			media-video/ffmpeg:0/58.60.60[glslang=,jpeg2k?,mp3?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
-			media-video/ffmpeg:0/57.59.59[glslang=,jpeg2k?,mp3?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
-			media-video/ffmpeg:0/56.58.58[glslang=,jpeg2k?,mp3?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
+			media-video/ffmpeg:0/58.60.60[glslang=,jpeg2k?,lame?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
+			media-video/ffmpeg:0/57.59.59[glslang=,jpeg2k?,lame?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
+			media-video/ffmpeg:0/56.58.58[glslang=,jpeg2k?,lame?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
 		)
 	)
 	patent_status_nonfree? (
 		|| (
-			media-video/ffmpeg:58.60.60[glslang=,jpeg2k?,mp3?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
-			media-video/ffmpeg:57.59.59[glslang=,jpeg2k?,mp3?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
-			media-video/ffmpeg:56.58.58[glslang=,jpeg2k?,mp3?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
+			media-video/ffmpeg:58.60.60[glslang=,jpeg2k?,lame?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
+			media-video/ffmpeg:57.59.59[glslang=,jpeg2k?,lame?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
+			media-video/ffmpeg:56.58.58[glslang=,jpeg2k?,lame?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
 
-			media-video/ffmpeg:0/58.60.60[glslang=,jpeg2k?,mp3?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
-			media-video/ffmpeg:0/57.59.59[glslang=,jpeg2k?,mp3?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
-			media-video/ffmpeg:0/56.58.58[glslang=,jpeg2k?,mp3?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
+			media-video/ffmpeg:0/58.60.60[glslang=,jpeg2k?,lame?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
+			media-video/ffmpeg:0/57.59.59[glslang=,jpeg2k?,lame?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
+			media-video/ffmpeg:0/56.58.58[glslang=,jpeg2k?,lame?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
 		)
 		x264? (
 			media-video/ffmpeg[gpl]
