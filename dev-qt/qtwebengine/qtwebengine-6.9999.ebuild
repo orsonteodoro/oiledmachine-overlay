@@ -52,8 +52,9 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libpng-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libva-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libwebp-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/tiff-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/openh264-9999"		# Bumped live/*DEPENDS to latest hardened
+	"media-libs/opus-9999"			# Bumped live/*DEPENDS to latest hardened
+	"media-libs/tiff-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 )
 
 inherit cflags-hardened check-reqs chkl flag-o-matic libcxx-slot libstdcxx-slot multiprocessing optfeature
