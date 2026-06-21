@@ -134,7 +134,7 @@ RDEPEND="
 		>=sys-libs/musl-1.2.6:=
 	)
 	geolocation? ( ~dev-qt/qtpositioning-${PV}:6= )
-	kerberos? ( virtual/krb5:= )
+	kerberos? ( virtual/krb5:* )
 	opengl? ( media-libs/libglvnd:=[X] )
 	pulseaudio? ( media-libs/libpulse:=[glib] )
 	screencast? (
