@@ -164,8 +164,8 @@ RDEPEND="
 	ffmpeg? (
 		media-libs/ffmpeg:=
 		|| (
-			>=media-libs/ffmpeg-9999[amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
-			>=media-libs/ffmpeg-9999m[amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
+			>=media-libs/ffmpeg-9999[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
+			>=media-libs/ffmpeg-9999m[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
 		)
 	)
 	gdk-pixbuf? (
