@@ -54,7 +54,7 @@ REQUIRED_USE="
 RDEPEND="
 	~dev-qt/qtbase-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},concurrent,gui,network,opengl=,vulkan=,widgets]
 	alsa? (
-		!pulseaudio? ( media-libs/alsa-lib:= )
+		!pulseaudio? ( >=media-libs/alsa-lib-1.2.16.1:= )
 	)
 	ffmpeg? (
 		~dev-qt/qtbase-${PV}:6=[X=,concurrent,eglfs=]

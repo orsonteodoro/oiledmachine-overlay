@@ -130,7 +130,7 @@ COMMON_DEPEND="
 		x11-libs/libXrandr:=
 		xv? ( x11-libs/libXv:= )
 	)
-	alsa? ( media-libs/alsa-lib:= )
+	alsa? ( >=media-libs/alsa-lib-1.2.16.1:= )
 	archive? ( app-arch/libarchive:= )
 	bluray? ( media-libs/libbluray:= )
 	cdda? (

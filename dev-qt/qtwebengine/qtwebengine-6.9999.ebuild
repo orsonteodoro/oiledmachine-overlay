@@ -105,7 +105,7 @@ RDEPEND="
 	sys-apps/pciutils:=
 	virtual/libudev:=
 	virtual/minizip:=
-	virtual/zlib:=
+	>=virtual/zlib-1.3.2:=
 	x11-libs/libX11:=
 	x11-libs/libXcomposite:=
 	x11-libs/libXdamage:=
@@ -117,7 +117,7 @@ RDEPEND="
 	x11-libs/libxcb:=
 	x11-libs/libxkbcommon:=
 	x11-libs/libxkbfile:=
-	alsa? ( media-libs/alsa-lib:= )
+	alsa? ( >=media-libs/alsa-lib-1.2.16.1:= )
 	!bindist? ( >=media-libs/openh264-2.6.0:= )
 	designer? (
 		~dev-qt/qttools-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},designer]

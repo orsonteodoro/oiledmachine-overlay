@@ -135,7 +135,7 @@ BDEPEND="
 RDEPEND="
 	acct-group/audio:*
 	acct-group/pipewire:*
-	media-libs/alsa-lib:=[${MULTILIB_USEDEP}]
+	>=media-libs/alsa-lib-1.2.16.1:=[${MULTILIB_USEDEP}]
 	sys-libs/ncurses:=[unicode(+)]
 	virtual/libintl:*[${MULTILIB_USEDEP}]
 	virtual/libudev:=[${MULTILIB_USEDEP}]

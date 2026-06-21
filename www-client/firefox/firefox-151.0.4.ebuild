@@ -224,7 +224,6 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/nss-9999"
 	"dev-libs/wayland-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-gfx/graphite2-9999"
-	"media-libs/alsa-lib-9999"
 	"media-libs/dav1d-9999"
 	"media-libs/freetype-9999"
 	"media-libs/harfbuzz-9999"
@@ -605,7 +604,7 @@ CDEPEND="
 	>=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}]
 	>=dev-libs/expat-2.8.2:=[${MULTILIB_USEDEP}]
 	>=dev-libs/libffi-9999:=[${MULTILIB_USEDEP}]
-	>=media-libs/alsa-lib-1.2.16:=[${MULTILIB_USEDEP}]
+	>=media-libs/alsa-lib-1.2.16.1:=[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-9999:=[${MULTILIB_USEDEP}]
 	>=x11-libs/gdk-pixbuf-2.42.10:=[${MULTILIB_USEDEP}]
 	>=x11-libs/libdrm-2.4.120:=[${MULTILIB_USEDEP}]

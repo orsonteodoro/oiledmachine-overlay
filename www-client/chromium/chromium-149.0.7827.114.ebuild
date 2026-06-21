@@ -330,7 +330,6 @@ CHKL_TIMESTAMPS=(
 	"llvm-runtimes/libcxx-23.0.0.9999"
 	"llvm-runtimes/libcxxabi-9999"
 	"llvm-runtimes/libcxxabi-23.0.0.9999"
-	"media-libs/alsa-lib-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/dav1d-9999"
 	"media-libs/flac-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/freetype-9999"				# Bumped live to latest non-vulnerable
@@ -1571,7 +1570,7 @@ COMMON_SNAPSHOT_DEPEND="
 	!headless? (
 		${LIBVA_DEPEND}
 		>=dev-libs/glib-2.89.9999:=[${MULTILIB_USEDEP}]
-		>=media-libs/alsa-lib-1.2.16:=[${MULTILIB_USEDEP}]
+		>=media-libs/alsa-lib-1.2.16.1:=[${MULTILIB_USEDEP}]
 		>=sys-apps/pciutils-3.7.0:=[${MULTILIB_USEDEP}]
 		>=x11-libs/libxkbcommon-1.0.3:=[${MULTILIB_USEDEP}]
 		kerberos? (
