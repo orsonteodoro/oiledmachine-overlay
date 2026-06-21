@@ -37,7 +37,7 @@ LICENSE="
 "
 # all-rights-reserved - driver/linux/knem_hal.h
 SLOT="0"
-IUSE="
+IUSE+="
 compress debug modules sign-modules
 ebuild_revision_4
 "
