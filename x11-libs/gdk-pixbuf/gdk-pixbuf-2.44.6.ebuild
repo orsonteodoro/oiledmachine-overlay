@@ -9,10 +9,16 @@ CFLAGS_HARDENED_LANGS="c-lang"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO IU MC NPD OOBR OOBW SO"
 
-inherit cflags-hardened gnome.org gnome2-utils meson-multilib multilib xdg
+inherit cflags-hardened chkl gnome.org gnome2-utils meson-multilib multilib xdg
 
 MULTILIB_CHOST_TOOLS=(
 	"/usr/bin/gdk-pixbuf-query-loaders$(get_exeext)"
+)
+
+CHKL_TIMESTAMPS=(
+	"dev-libs/glib-2.89.9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/tiff-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 )
 
 KEYWORDS="
@@ -25,7 +31,7 @@ HOMEPAGE="https://gitlab.gnome.org/GNOME/gdk-pixbuf"
 LICENSE="LGPL-2.1+"
 SLOT="2"
 IUSE="
-gtk-doc +introspection gif jpeg test tiff
++glycin gtk-doc +introspection gif jpeg png test tiff
 ebuild_revision_20
 "
 RESTRICT="
@@ -36,17 +42,25 @@ RESTRICT="
 # TODO: For windows/darwin support: shared-mime-info conditional,
 # native_windows_loaders option review
 DEPEND="
-	>=dev-libs/glib-2.56.0:2[${MULTILIB_USEDEP}]
-	>=media-libs/libpng-1.4:0=[${MULTILIB_USEDEP}]
-	x11-misc/shared-mime-info
+	>=dev-libs/glib-2.89.9999:=[${MULTILIB_USEDEP}]
+	x11-misc/shared-mime-info:=
+	!glycin? (
+		png? (
+			>=media-libs/libpng-1.6.57:=[${MULTILIB_USEDEP}]
+		)
+		jpeg? (
+			>=media-libs/libjpeg-turbo-9999:=[${MULTILIB_USEDEP}]
+		)
+		tiff? (
+			>=media-libs/tiff-9999:=[${MULTILIB_USEDEP}]
+		)
+	)
+	glycin? (
+		>=media-libs/glycin-2.0.1:=[introspection?]
+		media-libs/glycin-loaders:=
+	)
 	introspection? (
-		>=dev-libs/gobject-introspection-1.54:=
-	)
-	jpeg? (
-		media-libs/libjpeg-turbo:=[${MULTILIB_USEDEP}]
-	)
-	tiff? (
-		>=media-libs/tiff-3.9.2:=[${MULTILIB_USEDEP}]
+		>=dev-libs/gobject-introspection-1.86.0:=
 	)
 "
 RDEPEND="
@@ -56,11 +70,11 @@ BDEPEND="
 	>=sys-devel/gettext-0.19.8
 	app-text/docbook-xsl-stylesheets
 	app-text/docbook-xml-dtd:4.3
-	dev-libs/glib:2
+	dev-libs/glib
 	dev-libs/libxslt
 	dev-python/docutils
 	dev-util/glib-utils
-	virtual/pkgconfig
+	virtual/pkgconfig:*
 	gtk-doc? (
 		>=dev-util/gi-docgen-2021.1
 	)
@@ -73,10 +87,12 @@ src_prepare() {
 
 multilib_src_configure() {
 	cflags-hardened_append
+	chkl_check_many_timestamps
 	local emesonargs=(
 		$(meson_feature gif)
-		$(meson_feature tiff)
 		$(meson_feature jpeg)
+		$(meson_feature png)
+		$(meson_feature tiff)
 		$(meson_native_use_bool gtk-doc gtk_doc)
 		$(meson_native_use_feature introspection)
 		$(meson_native_true man)

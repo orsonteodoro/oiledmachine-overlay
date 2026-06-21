@@ -10,4 +10,9 @@
     <remote-id type="cpe">cpe:/a:gnome:gdk-pixbuf</remote-id>
     <remote-id type="gnome-gitlab">GNOME/gdk-pixbuf</remote-id>
   </upstream>
+  <use>
+    <flag name="glycin">
+      Enable the sandboxed image loader.
+    </flag>
+  </use>
 </pkgmetadata>
