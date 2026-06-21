@@ -150,13 +150,18 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-3.3.9999"
 	"dev-libs/openssl-3.0.9999"
 	"dev-libs/wayland-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"gui-libs/gtk-4.23.9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/dav1d-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/fontconfig-9999"
 	"media-libs/freetype-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/harfbuzz-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/lcms-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libjxl-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libwebp-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libpng-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/opus-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"x11-libs/cairo-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"x11-libs/libdrm-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 )
 
@@ -1010,7 +1015,7 @@ RDEPEND+="
 		)
 	)
 	jpegxl? (
-		>=media-libs/libjxl-0.7.0:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
+		>=media-libs/libjxl-9999:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 	)
 	libbacktrace? (
 		sys-libs/libbacktrace:=[${MULTILIB_USEDEP}]

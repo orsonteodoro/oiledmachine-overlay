@@ -398,7 +398,43 @@ else
 	FFMPEG_UNSLOTTED=1
 fi
 
-inherit cflags-hardened check-compiler-switch cuda flag-o-matic flag-o-matic-om llvm multilib
+CHKL_TIMESTAMPS=(
+	"app-arch/bzip2-9999"
+	"app-text/tesseract-9999"
+	"dev-libs/fribidi-9999"
+	"dev-libs/gmp-9999"
+	"dev-libs/libxml2-9999"
+	"dev-libs/openssl-4.0.9999"
+	"dev-libs/openssl-3.6.9999"
+	"dev-libs/openssl-3.5.9999"
+	"dev-libs/openssl-3.4.9999"
+	"dev-libs/openssl-3.3.9999"
+	"dev-libs/openssl-3.0.9999"
+	"gnome-base/librsvg-9999"
+	"media-libs/chromaprint-9999"
+	"media-libs/dav1d-9999"
+	"media-libs/fontconfig-9999"
+	"media-libs/kvazaar-9999"
+	"media-libs/lensfun-9999"
+	"media-libs/libaom-9999"
+	"media-libs/libcaca-9999"
+	"media-libs/libpulse-9999"
+	"media-libs/libva-9999"
+	"media-libs/libvpx-9999"
+	"media-libs/libwebp-9999"
+	"media-libs/openh264-9999"
+	"media-libs/opus-9999"
+	"media-libs/speex-9999"
+	"media-libs/vo-amrwbenc-9999"
+	"media-libs/x264-9999"
+	"media-libs/x265-9999"
+	"media-video/rav1e-9999"
+	"net-libs/librist-9999"
+	"net-libs/libssh-9999"
+	"x11-libs/cairo-9999"
+)
+
+inherit cflags-hardened check-compiler-switch chkl cuda flag-o-matic flag-o-matic-om llvm multilib
 inherit multilib-minimal python-single-r1 toolchain-funcs uopts
 
 if [[ "${MY_PV#9999}" == "${MY_PV}" ]] ; then
@@ -648,7 +684,9 @@ PATENT_REQUIRED_USE="
 	)
 "
 
+# The lame ebuild and the lame repo is not up to date on security patches so the mp3 USE flag is disabled.
 REQUIRED_USE+="
+	!mp3
 	${CPU_REQUIRED_USE}
 	${PATENT_REQUIRED_USE}
 	${REQUIRED_USE_LICENSES}
@@ -762,313 +800,320 @@ REQUIRED_USE+="
 # Only vaapi_x11 and vaapi_drm checks.  No vaapi_wayland checks in configure.
 # Update both !openssl and openssl USE flags.
 RDEPEND+="
-	virtual/patent-status[patent_status_nonfree=]
+	virtual/patent-status:*[patent_status_nonfree=]
 	!openssl? (
 		gnutls? (
-			>=net-libs/gnutls-2.12.23-r6:=[${MULTILIB_USEDEP}]
+			>=net-libs/gnutls-3.8.13:=[${MULTILIB_USEDEP}]
 		)
 	)
 	alsa? (
-		>=media-libs/alsa-lib-1.0.27.2[${MULTILIB_USEDEP}]
+		>=media-libs/alsa-lib-1.0.27.2:=[${MULTILIB_USEDEP}]
 	)
 	amf? (
 		media-video/amdgpu-pro-amf:=
 	)
 	amr? (
-		>=media-libs/opencore-amr-0.1.3-r1[${MULTILIB_USEDEP}]
+		>=media-libs/opencore-amr-0.1.3-r1:=[${MULTILIB_USEDEP}]
 	)
 	bluray? (
 		>=media-libs/libbluray-0.3.0-r1:=[${MULTILIB_USEDEP}]
 	)
 	bs2b? (
-		>=media-libs/libbs2b-3.1.0-r1[${MULTILIB_USEDEP}]
+		>=media-libs/libbs2b-3.1.0-r1:=[${MULTILIB_USEDEP}]
 	)
 	bzip2? (
-		>=app-arch/bzip2-1.0.6-r4[${MULTILIB_USEDEP}]
+		>=app-arch/bzip2-9999:=[${MULTILIB_USEDEP}]
 	)
 	cdio? (
-		>=dev-libs/libcdio-paranoia-0.90_p1-r1[${MULTILIB_USEDEP}]
+		>=dev-libs/libcdio-paranoia-0.90_p1-r1:=[${MULTILIB_USEDEP}]
 	)
 	chromaprint? (
-		>=media-libs/chromaprint-1.2-r1[${MULTILIB_USEDEP}]
+		>=media-libs/chromaprint-9999:=[${MULTILIB_USEDEP}]
 	)
 	codec2? (
-		media-libs/codec2[${MULTILIB_USEDEP}]
+		media-libs/codec2:=[${MULTILIB_USEDEP}]
 	)
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
-		x11-drivers/nvidia-drivers
+		x11-drivers/nvidia-drivers:=
 	)
 	cuda-nvcc? (
 		cuda_targets_sm_60? (
+			dev-util/nvidia-cuda-toolkit:=
 			|| (
-				=dev-util/nvidia-cuda-toolkit-11*:=
-				=dev-util/nvidia-cuda-toolkit-12*:=
+				=dev-util/nvidia-cuda-toolkit-11*
+				=dev-util/nvidia-cuda-toolkit-12*
 			)
 		)
 	)
 	dav1d? (
-		>=media-libs/dav1d-0.4.0:0=[${MULTILIB_USEDEP}]
+		>=media-libs/dav1d-9999:=[${MULTILIB_USEDEP}]
 	)
 	drm? (
-		x11-libs/libdrm[${MULTILIB_USEDEP}]
+		>=x11-libs/libdrm-2.4.120:=[${MULTILIB_USEDEP}]
+	)
+	elibc_glibc? (
+		>=sys-libs/glibc-2.43:=
+	)
+	elibc_musl? (
+		>=sys-libs/musl-1.2.6:=
 	)
 	encode? (
 		amrenc? (
-			>=media-libs/vo-amrwbenc-0.1.2-r1[${MULTILIB_USEDEP}]
+			>=media-libs/vo-amrwbenc-9999:=[${MULTILIB_USEDEP}]
 		)
 		kvazaar? (
-			>=media-libs/kvazaar-1.2.0[${MULTILIB_USEDEP}]
+			>=media-libs/kvazaar-9999:=[${MULTILIB_USEDEP}]
 		)
 		mp3? (
-			>=media-sound/lame-3.99.5-r1[${MULTILIB_USEDEP}]
+			>=media-sound/lame-3.99.5-r1:=[${MULTILIB_USEDEP}]
 		)
 		openh264? (
-			>=media-libs/openh264-1.4.0-r1:=[${MULTILIB_USEDEP}]
+			>=media-libs/openh264-2.6.0-r1:=[${MULTILIB_USEDEP}]
 		)
 		rav1e? (
-			>=media-video/rav1e-0.4:=[capi]
+			>=media-video/rav1e-9999:=[capi]
 		)
 		snappy? (
-			>=app-arch/snappy-1.1.2-r1:=[${MULTILIB_USEDEP}]
+			>=app-arch/snappy-1.2.2:=[${MULTILIB_USEDEP}]
 		)
 		theora? (
-			>=media-libs/libogg-1.3.0[${MULTILIB_USEDEP}]
-			>=media-libs/libtheora-1.1.1[${MULTILIB_USEDEP},encode]
+			>=media-libs/libogg-1.3.0:=[${MULTILIB_USEDEP}]
+			>=media-libs/libtheora-1.1.1:=[${MULTILIB_USEDEP},encode]
 		)
 		twolame? (
-			>=media-sound/twolame-0.3.13-r1[${MULTILIB_USEDEP}]
+			>=media-sound/twolame-0.4.0:=[${MULTILIB_USEDEP}]
 		)
 		webp? (
-			>=media-libs/libwebp-0.3.0:=[${MULTILIB_USEDEP}]
+			>=media-libs/libwebp-9999:=[${MULTILIB_USEDEP}]
 		)
 		x264? (
-			>=media-libs/x264-0.0.20130506:=[${MULTILIB_USEDEP}]
+			>=media-libs/x264-9999:=[${MULTILIB_USEDEP}]
 		)
 		x265? (
-			>=media-libs/x265-1.6:=[${MULTILIB_USEDEP}]
+			>=media-libs/x265-9999:=[${MULTILIB_USEDEP}]
 		)
 		xvid? (
-			>=media-libs/xvid-1.3.2-r1[${MULTILIB_USEDEP}]
+			>=media-libs/xvid-1.3.5:=[${MULTILIB_USEDEP}]
 		)
 	)
 	fdk? (
-		>=media-libs/fdk-aac-0.1.3:=[${MULTILIB_USEDEP}]
+		>=media-libs/fdk-aac-2.0.3:=[${MULTILIB_USEDEP}]
 	)
 	flite? (
-		>=app-accessibility/flite-1.4-r4[${MULTILIB_USEDEP}]
+		>=app-accessibility/flite-1.4-r4:=[${MULTILIB_USEDEP}]
 	)
 	fontconfig? (
-		>=media-libs/fontconfig-2.10.92[${MULTILIB_USEDEP}]
+		>=media-libs/fontconfig-2.18.1:=[${MULTILIB_USEDEP}]
 	)
 	frei0r? (
-		media-plugins/frei0r-plugins[${MULTILIB_USEDEP}]
+		>=media-plugins/frei0r-plugins-3.2.1:=[${MULTILIB_USEDEP}]
 	)
 	fribidi? (
-		>=dev-libs/fribidi-0.19.6[${MULTILIB_USEDEP}]
+		>=dev-libs/fribidi-9999:=[${MULTILIB_USEDEP}]
 	)
 	gcrypt? (
-		>=dev-libs/libgcrypt-1.6:0=[${MULTILIB_USEDEP}]
+		>=dev-libs/libgcrypt-1.6:=[${MULTILIB_USEDEP}]
 	)
 	glslang? (
 		dev-util/glslang:=[${MULTILIB_USEDEP}]
 	)
 	gme? (
-		>=media-libs/game-music-emu-0.6.0[${MULTILIB_USEDEP}]
+		>=media-libs/game-music-emu-0.6.5:=[${MULTILIB_USEDEP}]
 	)
 	gmp? (
-		>=dev-libs/gmp-6:0=[${MULTILIB_USEDEP}]
+		>=dev-libs/gmp-9999:=[${MULTILIB_USEDEP}]
 	)
 	gsm? (
-		>=media-sound/gsm-1.0.13-r1[${MULTILIB_USEDEP}]
+		>=media-sound/gsm-1.0.13-r1:=[${MULTILIB_USEDEP}]
 	)
 	iconv? (
-		>=virtual/libiconv-0-r1[${MULTILIB_USEDEP}]
+		>=virtual/libiconv-0-r1:*[${MULTILIB_USEDEP}]
 	)
 	iec61883? (
-		>=media-libs/libiec61883-1.2.0-r1[${MULTILIB_USEDEP}]
-		>=sys-libs/libavc1394-0.5.4-r1[${MULTILIB_USEDEP}]
-		>=sys-libs/libraw1394-2.1.0-r1[${MULTILIB_USEDEP}]
+		>=media-libs/libiec61883-1.2.0-r1:=[${MULTILIB_USEDEP}]
+		>=sys-libs/libavc1394-0.5.4-r1:=[${MULTILIB_USEDEP}]
+		>=sys-libs/libraw1394-2.1.0-r1:=[${MULTILIB_USEDEP}]
 	)
 	ieee1394? (
-		>=media-libs/libdc1394-2.2.1:2=[${MULTILIB_USEDEP}]
-		>=sys-libs/libraw1394-2.1.0-r1[${MULTILIB_USEDEP}]
+		>=media-libs/libdc1394-2.2.1:=[${MULTILIB_USEDEP}]
+		>=sys-libs/libraw1394-2.1.0-r1:=[${MULTILIB_USEDEP}]
 	)
 	jack? (
-		virtual/jack[${MULTILIB_USEDEP}]
+		virtual/jack:*[${MULTILIB_USEDEP}]
 	)
 	jpeg2k? (
-		>=media-libs/openjpeg-2:2[${MULTILIB_USEDEP}]
+		>=media-libs/openjpeg-2.5.4-r1:=[${MULTILIB_USEDEP}]
 	)
 	libaom? (
-		>=media-libs/libaom-1.0.0-r1:=[${MULTILIB_USEDEP}]
+		>=media-libs/libaom-3.14.1:=[${MULTILIB_USEDEP}]
 	)
 	libaribb24? (
-		>=media-libs/aribb24-1.0.3-r2[${MULTILIB_USEDEP}]
+		>=media-libs/aribb24-1.0.3-r2:=[${MULTILIB_USEDEP}]
 	)
 	libass? (
 		>=media-libs/libass-0.10.2:=[${MULTILIB_USEDEP}]
 	)
 	libcaca? (
-		>=media-libs/libcaca-0.99_beta18-r1[${MULTILIB_USEDEP}]
+		>=media-libs/libcaca-9999:=[${MULTILIB_USEDEP}]
 	)
 	libilbc? (
-		>=media-libs/libilbc-2[${MULTILIB_USEDEP}]
+		>=media-libs/libilbc-2:=[${MULTILIB_USEDEP}]
 	)
 	liblensfun? (
-		media-libs/lensfun
+		>=media-libs/lensfun-9999:=
 	)
 	librtmp? (
-		>=media-video/rtmpdump-2.4_p20131018[${MULTILIB_USEDEP}]
+		>=media-video/rtmpdump-2.4_p20131018:=[${MULTILIB_USEDEP}]
 	)
 	libsoxr? (
-		>=media-libs/soxr-0.1.0[${MULTILIB_USEDEP}]
+		>=media-libs/soxr-0.1.0:=[${MULTILIB_USEDEP}]
 	)
 	libv4l? (
-		>=media-libs/libv4l-0.9.5[${MULTILIB_USEDEP}]
+		>=media-libs/libv4l-0.9.5:=[${MULTILIB_USEDEP}]
 	)
 	lv2? (
-		media-libs/lilv[${MULTILIB_USEDEP}]
-		media-libs/lv2[${MULTILIB_USEDEP}]
+		media-libs/lilv:=[${MULTILIB_USEDEP}]
+		media-libs/lv2:=[${MULTILIB_USEDEP}]
 	)
 	lzma? (
-		>=app-arch/xz-utils-5.0.5-r1[${MULTILIB_USEDEP}]
+		>=app-arch/xz-utils-5.0.5-r1:=[${MULTILIB_USEDEP}]
 	)
 	mmal? (
-		media-libs/raspberrypi-userland
+		media-libs/raspberrypi-userland:=
 	)
 	modplug? (
-		>=media-libs/libmodplug-0.8.8.4-r1[${MULTILIB_USEDEP}]
+		>=media-libs/libmodplug-0.8.8.4-r1:=[${MULTILIB_USEDEP}]
 	)
 	network? (
 		elibc_glibc? (
-			sys-libs/glibc[nscd]
+			>=sys-libs/glibc-2.43:=[nscd]
 		)
 	)
 	ocr? (
-		>=app-text/tesseract-4.1.0-r1[${MULTILIB_USEDEP}]
+		>=app-text/tesseract-9999:=[${MULTILIB_USEDEP}]
 	)
 	openal? (
-		>=media-libs/openal-1.15.1[${MULTILIB_USEDEP}]
+		>=media-libs/openal-1.25.2:=[${MULTILIB_USEDEP}]
 	)
 	opencl? (
-		virtual/opencl[${MULTILIB_USEDEP}]
+		virtual/opencl:*[${MULTILIB_USEDEP}]
 	)
 	opengl? (
-		>=virtual/opengl-7.0-r1[${MULTILIB_USEDEP}]
+		>=virtual/opengl-7.0-r1:=[${MULTILIB_USEDEP}]
 	)
 	openssl? (
-		>=dev-libs/openssl-3.0.0_beta2:0=[${MULTILIB_USEDEP}]
+		>=dev-libs/openssl-3.0.0_beta2:=[${MULTILIB_USEDEP}]
 	)
 	openvino? (
-		>=sci-ml/openvino-2020.1[${PYTHON_SINGLE_USEDEP}]
-		<sci-ml/openvino-2022[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/openvino-2020.1:=[${PYTHON_SINGLE_USEDEP}]
+		<sci-ml/openvino-2022:=[${PYTHON_SINGLE_USEDEP}]
 	)
 	opus? (
-		>=media-libs/opus-1.0.2-r2[${MULTILIB_USEDEP}]
+		>=media-libs/opus-9999:=[${MULTILIB_USEDEP}]
 	)
 	pulseaudio? (
-		>=media-sound/pulseaudio-2.1-r1[${MULTILIB_USEDEP},gdbm?]
+		>=media-libs/libpulse-9999:=[${MULTILIB_USEDEP},gdbm?]
 	)
 	qsv? (
-		media-libs/intel-mediasdk[${MULTILIB_USEDEP}]
+		media-libs/intel-mediasdk:=[${MULTILIB_USEDEP}]
 	)
 	rist? (
-		>=net-libs/librist-0.2[${MULTILIB_USEDEP}]
+		>=net-libs/librist-9999:=[${MULTILIB_USEDEP}]
 	)
 	rubberband? (
-		>=media-libs/rubberband-1.8.1-r1[${MULTILIB_USEDEP}]
+		>=media-libs/rubberband-1.8.1-r1:=[${MULTILIB_USEDEP}]
 	)
 	samba? (
-		>=net-fs/samba-3.6.23-r1[${MULTILIB_USEDEP},client]
+		>=net-fs/samba-3.6.23-r1:=[${MULTILIB_USEDEP},client]
 	)
 	sdl? (
-		<media-libs/libsdl2-3[${MULTILIB_USEDEP},sound,threads(+),video,wayland?,X?]
+		<media-libs/libsdl2-3:=[${MULTILIB_USEDEP},sound,threads(+),video,wayland?,X?]
 	)
 	sndio? (
 		media-sound/sndio:=[${MULTILIB_USEDEP}]
 	)
 	speex? (
-		>=media-libs/speex-1.2_rc1-r1[${MULTILIB_USEDEP}]
+		>=media-libs/speex-9999:=[${MULTILIB_USEDEP}]
 	)
 	srt? (
 		>=net-libs/srt-1.3.0:=[${MULTILIB_USEDEP}]
 	)
 	ssh? (
-		>=net-libs/libssh-0.5.5:=[${MULTILIB_USEDEP},sftp]
+		>=net-libs/libssh-9999:=[${MULTILIB_USEDEP},sftp]
 	)
 	svg? (
-		gnome-base/librsvg:2=[${MULTILIB_USEDEP}]
-		x11-libs/cairo[${MULTILIB_USEDEP}]
+		>=gnome-base/librsvg-9999:=[${MULTILIB_USEDEP}]
+		>=x11-libs/cairo-9999:=[${MULTILIB_USEDEP}]
 	)
 	svt-av1? (
-		>=media-libs/svt-av1-0.8.4[${MULTILIB_USEDEP}]
+		>=media-libs/svt-av1-0.8.4:=[${MULTILIB_USEDEP}]
 	)
 	tensorflow? (
-		>=sci-ml/tensorflow-2[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/tensorflow-2:=[${PYTHON_SINGLE_USEDEP}]
 	)
 	truetype? (
-		>=media-libs/freetype-2.5.0.1:2[${MULTILIB_USEDEP}]
+		>=media-libs/freetype-9999:=[${MULTILIB_USEDEP}]
 	)
 	vaapi? (
-		>=media-libs/libva-1.2.1-r1:0=[${MULTILIB_USEDEP},drm(+),X?]
-		virtual/vaapi[${MULTILIB_USEDEP},patent_status_nonfree=]
+		>=media-libs/libva-9999:=[${MULTILIB_USEDEP},drm(+),X?]
+		virtual/vaapi:*[${MULTILIB_USEDEP},patent_status_nonfree=]
 	)
 	vdpau? (
-		>=x11-libs/libvdpau-0.7[${MULTILIB_USEDEP}]
+		>=x11-libs/libvdpau-0.7:=[${MULTILIB_USEDEP}]
 	)
 	vidstab? (
-		>=media-libs/vidstab-1.1.0[${MULTILIB_USEDEP}]
+		>=media-libs/vidstab-1.1.0:=[${MULTILIB_USEDEP}]
 	)
 	vmaf? (
-		media-libs/libvmaf[${MULTILIB_USEDEP}]
+		media-libs/libvmaf:=[${MULTILIB_USEDEP}]
 	)
 	vorbis? (
-		>=media-libs/libvorbis-1.3.3-r1[${MULTILIB_USEDEP}]
-		>=media-libs/libogg-1.3.0[${MULTILIB_USEDEP}]
+		>=media-libs/libvorbis-1.3.3-r1:=[${MULTILIB_USEDEP}]
+		>=media-libs/libogg-1.3.0:=[${MULTILIB_USEDEP}]
 	)
 	vpx? (
-		>=media-libs/libvpx-1.4.0:=[${MULTILIB_USEDEP}]
+		>=media-libs/libvpx-9999:=[${MULTILIB_USEDEP}]
 	)
 	vulkan? (
 		>=media-libs/vulkan-loader-1.1.97:=[${MULTILIB_USEDEP}]
-		media-libs/vulkan-drivers[${MULTILIB_USEDEP}]
+		virtual/vulkan:*[${MULTILIB_USEDEP}]
 	)
 	X? (
-		>=x11-libs/libX11-1.6.2[${MULTILIB_USEDEP}]
+		>=x11-libs/libX11-1.6.2:=[${MULTILIB_USEDEP}]
 		>=x11-libs/libxcb-1.4:=[${MULTILIB_USEDEP}]
-		>=x11-libs/libXext-1.3.2[${MULTILIB_USEDEP}]
-		>=x11-libs/libXv-1.0.10[${MULTILIB_USEDEP}]
+		>=x11-libs/libXext-1.3.2:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libXv-1.0.10:=[${MULTILIB_USEDEP}]
 	)
 	xml? (
-		dev-libs/libxml2:=[${MULTILIB_USEDEP}]
+		>=dev-libs/libxml2-9999:=[${MULTILIB_USEDEP}]
 	)
 	zeromq? (
-		>=net-libs/zeromq-4.1.6
+		>=net-libs/zeromq-4.1.6:=
 	)
 	zimg? (
 		>=media-libs/zimg-2.7.4:=[${MULTILIB_USEDEP}]
 	)
 	zlib? (
-		>=virtual/zlib-1.2.8-r1[${MULTILIB_USEDEP}]
+		>=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}]
 	)
 	zvbi? (
-		>=media-libs/zvbi-0.2.35[${MULTILIB_USEDEP}]
+		>=media-libs/zvbi-0.2.35:=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND+="
 	amf? (
-		media-libs/amf-headers
+		media-libs/amf-headers:=
 	)
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
 		media-libs/nv-codec-headers:=
 	)
 	ladspa? (
-		>=media-libs/ladspa-sdk-1.13-r2[${MULTILIB_USEDEP}]
+		>=media-libs/ladspa-sdk-1.13-r2:=[${MULTILIB_USEDEP}]
 	)
 	v4l? (
-		sys-kernel/linux-headers
+		sys-kernel/linux-headers:=
 	)
 "
 # += for verify-sig above
@@ -1807,6 +1852,7 @@ eerror
 		append_all -fno-sanitize=cfi-icall # Prevent illegal instruction with ffprobe
 	fi
 	cflags-hardened_append
+	chkl_check_many_timestamps
 	# Let build scripts apply hardening flags for correct
 	# disabling/enablement order.
 	filter-flags \
