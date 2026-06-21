@@ -876,7 +876,7 @@ BDEPEND+="
 		>=dev-lang/nasm-${NASM_PV}
 	)
 	mold? (
-		>=sys-devel/mold-2.0
+		>=sys-devel/mold-2.41.0
 	)
 	pgo? (
 		X? (

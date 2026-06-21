@@ -41,8 +41,8 @@ HOMEPAGE="https://github.com/orsonteodoro/psdoom-ng"
 LICENSE="GPL-2"
 SLOT="0"
 IUSE+="
-bash-completion cloudfoundry flac fluidsynth kms libsamplerate png psdoom-wads
-sdl2mixer sound vorbis X wayland
+bash-completion bfd clang cloudfoundry flac fluidsynth gcc kms libsamplerate lld
+mold png psdoom-wads sdl2mixer sound vorbis X wayland
 ebuild_revision_1
 "
 REQUIRED_USE="
@@ -50,6 +50,15 @@ REQUIRED_USE="
 		kms
 		wayland
 		X
+	)
+	^^ (
+		bfd
+		lld
+		mold
+	)
+	^^ (
+		clang
+		gcc
 	)
 	libsamplerate? (
 		sound
@@ -95,14 +104,20 @@ BDEPEND="
 	dev-build/autoconf
 	dev-build/make
 	virtual/pkgconfig
-	|| (
-		llvm-core/lld
-		sys-devel/binutils
-		sys-devel/mold
+	bfd? (
+		sys-devel/binutils:=
 	)
-	|| (
-		sys-devel/gcc
-		llvm-core/clang
+	clang? (
+		llvm-core/clang:=
+	)
+	gcc? (
+		sys-devel/gcc:=
+	)
+	lld? (
+		llvm-core/lld:=
+	)
+	mold? (
+		>=sys-devel/mold-2.41.0:=
 	)
 "
 PATCHES=(
@@ -129,6 +144,24 @@ src_prepare() {
 }
 
 src_configure(){
+	if is-flagq '-fuse-ld=bfd' ; then
+		use bfd || die "Enable the bfd USE flag."
+	fi
+	if is-flagq '-fuse-ld=lld' ; then
+		use lld || die "Enable the lld USE flag."
+	fi
+	if is-flagq '-fuse-ld=mold' ; then
+		use mold || die "Enable the mold USE flag."
+	fi
+	if ! is-flagq '-fuse-ld=bfd' && ! is-flagq '-fuse-ld=lld' && ! is-flagq '-fuse-ld=mold' ; then
+		use bfd || die "Enable the bfd USE flag."
+	fi
+	if tc-is-gcc ; then
+		use gcc || die "Enable the gcc USE flag."
+	fi
+	if tc-is-clang ; then
+		use clang || die "Enable the clang USE flag."
+	fi
 	local myconf=(
 		$(use_enable bash-completion)
 		$(use_enable cloudfoundry)

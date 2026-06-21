@@ -1264,7 +1264,7 @@ BDEPEND+="
 		sys-apps/texinfo
 	)
 	mold? (
-		>=sys-devel/mold-2.0
+		>=sys-devel/mold-2.41.0
 	)
 	test? (
 		app-alternatives/bc

@@ -1893,7 +1893,7 @@ BDEPEND+="
 	x11-misc/xdg-utils
 	www-client/chromium-toolchain:${PV%.*}.x=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cfi=,pgo=,system-clang=,system-rust=]
 	mold? (
-		>=sys-devel/mold-2.33.0[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},-system-mimalloc]
+		>=sys-devel/mold-2.41.0[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},-system-mimalloc]
 	)
 	system-rust? (
 		>=dev-util/bindgen-0.72.1

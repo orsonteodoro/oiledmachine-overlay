@@ -28,9 +28,23 @@ UOPTS_SUPPORT_TPGO=1
 ACORN_PV="8.16.0"
 AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 COREPACK_PV="0.34.6"
-NGHTTP2_PV="1.61.0"
+NGHTTP2_PV="9999"
 NPM_PV="10.8.2" # See https://github.com/nodejs/node/blob/v20.20.2/deps/npm/package.json
 WRK_PV="1.2.1" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
+
+CHKL_TIMESTAMPS=(
+	"app-arch/brotli-9999"
+	"dev-libs/icu-79.0.9999"
+	"dev-libs/libuv-9999"
+	"dev-libs/openssl-4.0.9999"
+	"dev-libs/openssl-3.6.9999"
+	"dev-libs/openssl-3.5.9999"
+	"dev-libs/openssl-3.4.9999"
+	"dev-libs/openssl-3.3.9999"
+	"dev-libs/openssl-3.0.9999"
+	"net-dns/c-ares-9999"
+	"net-libs/nghttp2-9999"
+)
 
 _TRAINERS=(
 	"abort_controller"
@@ -97,7 +111,7 @@ LLVM_COMPAT=(
 LIBCXX_USEDEP_DEV="llvm_slot_skip(+)"
 
 inherit bash-completion-r1 cflags-hardened check-compiler-switch check-linker
-inherit flag-o-matic flag-o-matic-om lcnr libcxx-slot libstdcxx-slot
+inherit chkl flag-o-matic flag-o-matic-om lcnr libcxx-slot libstdcxx-slot
 inherit linux-info multiprocessing ninja-utils pax-utils python-any-r1
 inherit sandbox-changes toolchain-funcs uopts xdg-utils
 
@@ -171,20 +185,17 @@ REQUIRED_USE+="
 "
 RDEPEND+="
 	!net-libs/nodejs:0
-	>=app-arch/brotli-1.1.0
-	>=app-eselect/eselect-nodejs-20230521
-	>=dev-libs/libuv-1.47.0
-	>=net-dns/c-ares-1.34.6
-	>=net-libs/nghttp2-${NGHTTP2_PV}
-	>=virtual/zlib-1.3.1
-	sys-kernel/mitigate-id
+	>=app-arch/brotli-9999:=
+	>=dev-libs/libuv-9999:=
+	>=net-dns/c-ares-9999:=
+	>=net-libs/nghttp2-${NGHTTP2_PV}:=
+	>=virtual/zlib-1.3.2:=
+	sys-kernel/mitigate-id:*
 	system-icu? (
-		>=dev-libs/icu-78.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-libs/icu:=
+		>=dev-libs/icu-79.0.9999:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	system-ssl? (
-		>=dev-libs/openssl-3.0.19:0[asm?,fips?]
-		dev-libs/openssl:=
+		>=dev-libs/openssl-3.0.19:=[asm?,fips?]
 	)
 "
 DEPEND+="
@@ -196,8 +207,7 @@ BDEPEND+="
 	sys-apps/coreutils
 	virtual/pkgconfig
 	mold? (
-		>=sys-devel/mold-2.0[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV}]
-		sys-devel/mold:=
+		>=sys-devel/mold-2.41.0:=[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV}]
 	)
 	pax-kernel? (
 		sys-apps/elfix
@@ -656,6 +666,7 @@ eerror "To use mold, enable the mold USE flag."
 	fi
 
 	cflags-hardened_append
+	chkl_check_many_timestamps
 
 	if ! use asm && ! use system-ssl ; then
 		myconf+=( --openssl-no-asm )

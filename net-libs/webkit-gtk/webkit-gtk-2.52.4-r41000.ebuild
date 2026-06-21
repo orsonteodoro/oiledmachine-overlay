@@ -1113,7 +1113,7 @@ BDEPEND+="
 		dev-util/gi-docgen
 	)
 	mold? (
-		>=sys-devel/mold-2.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=sys-devel/mold-2.41.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		sys-devel/mold:=
 	)
 "

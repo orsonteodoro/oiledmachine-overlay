@@ -552,7 +552,7 @@ BDEPEND+="
 		$(gen_bdepend_lld)
 	)
 	mold? (
-		sys-devel/mold
+		>=sys-devel/mold-2.41.0
 	)
 	mono? (
 		app-portage/gentoolkit
