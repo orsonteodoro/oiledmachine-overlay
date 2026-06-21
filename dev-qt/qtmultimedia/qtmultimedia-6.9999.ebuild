@@ -26,9 +26,10 @@ FFMPEG_COMPAT_SLOTS=(
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/glib-2.89.9999"
+	"media-libs/libpulse-9999"
+	"media-libs/libva-9999"
 	"media-video/ffmpeg-9999"
 	"media-video/ffmpeg-9999m"
-	"media-libs/libva-9999"
 )
 
 QT6_HAS_STATIC_LIBS=1
@@ -80,7 +81,7 @@ RDEPEND="
 		~dev-qt/qtbase-${PV}:6=[dbus?]
 		media-video/pipewire:=
 	)
-	pulseaudio? ( media-libs/libpulse:= )
+	pulseaudio? ( >=media-libs/libpulse-9999:= )
 	qml? (
 		~dev-qt/qtdeclarative-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		~dev-qt/qtquick3d-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]

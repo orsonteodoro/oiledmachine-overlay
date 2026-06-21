@@ -29,6 +29,7 @@ PIPEWIRE_DOCS_USEFLAG="+man"
 PYTHON_COMPAT=( python3_{11..14} )
 
 CHKL_TIMESTAMPS=(
+	"media-libs/libpulse-9999"
 	"media-libs/opus-9999"
 	"media-video/ffmpeg-9999"
 	"dev-libs/openssl-4.0.9999"
@@ -180,7 +181,7 @@ RDEPEND="
 	lv2? ( media-libs/lilv:= )
 	modemmanager? ( >=net-misc/modemmanager-1.10.0:= )
 	pipewire-alsa? ( >=media-libs/alsa-lib-1.2.16:=[${MULTILIB_USEDEP}] )
-	pulseaudio? ( media-libs/libpulse:= )
+	pulseaudio? ( >=media-libs/libpulse-9999:= )
 	sound-server? ( !media-sound/pulseaudio-daemon )
 	roc? ( >=media-libs/roc-toolkit-0.4.0:= )
 	readline? ( sys-libs/readline:= )

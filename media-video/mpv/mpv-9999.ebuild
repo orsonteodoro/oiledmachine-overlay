@@ -30,6 +30,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/lcms-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libplacebo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libpulse-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libva-9999"			# Bumped live/*DEPENDS to latest hardened
 	"media-video/ffmpeg-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-video/ffmpeg-9999m"		# Bumped live/*DEPENDS to latest non-vulnerable
@@ -166,7 +167,7 @@ COMMON_DEPEND="
 	)
 	openal? ( media-libs/openal:= )
 	pipewire? ( >=media-video/pipewire-9999:= )
-	pulseaudio? ( media-libs/libpulse:= )
+	pulseaudio? ( >=media-libs/libpulse-9999:= )
 	rubberband? ( media-libs/rubberband:= )
 	sdl? ( media-libs/libsdl2:=[sound,threads(+),video] )
 	sixel? ( media-libs/libsixel:= )

@@ -55,12 +55,13 @@ CHKL_TIMESTAMPS=(
 	"media-libs/lcms-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libpng-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libpulse-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libva-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libwebp-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/openh264-9999"		# Bumped live/*DEPENDS to latest hardened
 	"media-libs/opus-9999"			# Bumped live/*DEPENDS to latest hardened
-	"media-video/pipewire-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/tiff-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-video/pipewire-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 )
 
 inherit cflags-hardened check-reqs chkl flag-o-matic libcxx-slot libstdcxx-slot multiprocessing optfeature
@@ -137,7 +138,7 @@ RDEPEND="
 	geolocation? ( ~dev-qt/qtpositioning-${PV}:6= )
 	kerberos? ( virtual/krb5:* )
 	opengl? ( media-libs/libglvnd:=[X] )
-	pulseaudio? ( media-libs/libpulse:=[glib] )
+	pulseaudio? ( >=media-libs/libpulse-9999:=[glib] )
 	screencast? (
 		>=dev-libs/glib-2.89.9999:=
 		>=media-video/pipewire-9999:=
