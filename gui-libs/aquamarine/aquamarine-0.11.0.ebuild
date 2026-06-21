@@ -15,7 +15,14 @@ LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}
 )
 
-inherit cmake libcxx-slot libstdcxx-slot
+CHKL_TIMESTAMPS=(
+	"dev-libs/libffi-9999"		# Bumped *DEPEND/live to latest non-vulnerable
+	"dev-libs/wayland-9999"		# Bumped *DEPEND/live to latest non-vulnerable
+	"x11-libs/cairo-9999"		# Bumped *DEPEND/live to latest non-vulnerable
+	"x11-libs/pango-9999"		# Bumped *DEPEND/live to latest non-vulnerable
+)
+
+inherit chkl cmake libcxx-slot libstdcxx-slot
 
 DESCRIPTION="Aquamarine is a very light linux rendering backend library"
 HOMEPAGE="https://github.com/hyprwm/aquamarine"
@@ -34,28 +41,26 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 # Upstream states that the simpleWindow test is broken, see bug 936653
 RESTRICT="test"
 RDEPEND="
-	>=dev-libs/libinput-1.29.2
-	dev-libs/libffi
-	dev-libs/wayland
-	>=dev-util/hyprwayland-scanner-0.4.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	dev-util/hyprwayland-scanner:=
-	>=gui-libs/hyprutils-0.8.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	gui-libs/hyprutils:=
+	>=dev-libs/libinput-1.29.2:=
+	>=dev-libs/libffi-9999:=
+	>=dev-libs/wayland-9999:=
+	>=dev-util/hyprwayland-scanner-0.4.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=gui-libs/hyprutils-0.8.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	media-libs/libdisplay-info:=
-	media-libs/libglvnd
-	media-libs/mesa[opengl]
-	sys-apps/hwdata
-	>=sys-auth/seatd-0.9.2
-	x11-libs/cairo
-	>=x11-libs/libdrm-2.4.131
-	x11-libs/libxkbcommon
-	x11-libs/pango
-	>=x11-libs/pixman-0.46.4
-	virtual/libudev
+	media-libs/libglvnd:=
+	media-libs/mesa:=[opengl]
+	sys-apps/hwdata:=
+	>=sys-auth/seatd-0.9.2:=
+	>=x11-libs/cairo-9999:=
+	>=x11-libs/libdrm-2.4.131:=
+	x11-libs/libxkbcommon:=
+	>=x11-libs/pango-1.57.1:=
+	>=x11-libs/pixman-0.42.2:=
+	virtual/libudev:=
 "
 DEPEND="
 	${RDEPEND}
-	dev-libs/wayland-protocols
+	dev-libs/wayland-protocols:=
 "
 
 BDEPEND="
@@ -72,4 +77,9 @@ pkg_setup() {
 src_prepare() {
 	sed -i "/add_compile_options(-O3)/d" "${S}/CMakeLists.txt" || die
 	cmake_src_prepare
+}
+
+src_configure() {
+	chkl_check_many_timestamps
+	cmake_src_configure
 }

@@ -10,6 +10,13 @@ RUST_MAX_VER="1.95.0"
 RUST_MIN_VER="1.95.0" # LLVM 22.1
 RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data"
 
+CHKL_TIMESTAMPS=(
+	"sys-apps/systemd-9999"		# Bumped *DEPEND/live to latest non-vulnerable
+	"x11-libs/cairo-9999"		# Bumped *DEPEND/live to latest non-vulnerable
+	"x11-libs/pango-9999"		# Bumped *DEPEND/live to latest non-vulnerable
+	"dev-libs/wayland-9999"		# Bumped *DEPEND/live to latest non-vulnerable
+)
+
 declare -A GIT_CRATES=(
 [smithay-drm-extras]="https://github.com/Smithay/smithay;ff5fa7df392cecfba049ffed55cdaa4e98a8e7ef;smithay-%commit%/smithay-drm-extras" # 0.1.0
 [smithay]="https://github.com/Smithay/smithay;ff5fa7df392cecfba049ffed55cdaa4e98a8e7ef;smithay-%commit%" # 0.7.0
@@ -501,7 +508,7 @@ zvariant_derive-5.12.0
 zvariant_utils-3.4.0
 "
 
-inherit cargo rustflags-hardened
+inherit cargo chkl rustflags-hardened
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${PV}"
@@ -523,19 +530,19 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+=" systemd"
 RDEPEND+="
-	dev-libs/libinput
-	dev-libs/wayland
-	media-libs/libdisplay-info
-	media-libs/libglvnd
-	media-libs/mesa
-	media-video/pipewire
-	sys-apps/dbus
-	sys-auth/seatd
-	x11-libs/cairo
-	x11-libs/libxkbcommon
-	x11-libs/pango
+	dev-libs/libinput:=
+	>=dev-libs/wayland-9999:=
+	media-libs/libdisplay-info:=
+	media-libs/libglvnd:=
+	media-libs/mesa:=
+	media-video/pipewire:=
+	sys-apps/dbus:=
+	sys-auth/seatd:=
+	>=x11-libs/cairo-9999:=
+	x11-libs/libxkbcommon:=
+	>=x11-libs/pango-1.57.1:=
 	systemd? (
-		sys-apps/systemd
+		>=sys-apps/systemd-9999:=
 	)
 "
 DEPEND+="
@@ -562,6 +569,7 @@ src_unpack() {
 
 src_configure() {
 	rustflags-hardened_append
+	chkl_check_many_timestamps
 	export CARGO_TERM_VERBOSE="true"
 }
 

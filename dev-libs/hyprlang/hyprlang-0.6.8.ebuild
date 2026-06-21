@@ -8,12 +8,12 @@ CXX_STANDARD=23
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX23[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX23[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}"
 )
 
 inherit cflags-hardened cmake libcxx-slot libstdcxx-slot toolchain-funcs
@@ -29,8 +29,7 @@ IUSE+="
 ebuild_revision_1
 "
 RDEPEND="
-	>=gui-libs/hyprutils-0.7.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	gui-libs/hyprutils:=
+	>=gui-libs/hyprutils-0.7.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}

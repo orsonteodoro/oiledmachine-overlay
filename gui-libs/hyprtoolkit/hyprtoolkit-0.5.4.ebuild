@@ -7,17 +7,24 @@ CXX_STANDARD=23
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX23[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX23[@]}"
 )
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}"
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
-inherit cmake libcxx-slot libstdcxx-slot
+CHKL_TIMESTAMPS=(
+	"dev-libs/glib-2.89.9999"	# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/wayland-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"x11-libs/cairo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"x11-libs/libdrm-9999"		# Bumped live to latest non-vulnerable
+)
+
+inherit chkl cmake libcxx-slot libstdcxx-slot
 
 DESCRIPTION="A modern C++ Wayland-native GUI toolkit"
 HOMEPAGE="https://github.com/hyprwm/hyprtoolkit"
@@ -45,30 +52,26 @@ BDEPEND="
 		dev-cpp/gtest
 	)
 "
-DEPEND="
-	>=dev-libs/hyprgraphics-0.5.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	dev-libs/hyprgraphics:=
-	>=dev-libs/hyprlang-0.6.8[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	dev-libs/hyprlang:=
-	>=gui-libs/aquamarine-0.10.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	gui-libs/aquamarine:=
-	>=gui-libs/hyprutils-0.11.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	gui-libs/hyprutils:=
-	dev-libs/glib:2
-	>=dev-libs/iniparser-4.2.6
-	>=dev-libs/wayland-1.24.0
-	>=dev-libs/wayland-protocols-1.47
-	media-libs/libglvnd
-	>=x11-libs/cairo-1.18.4
-	>=x11-libs/libdrm-2.4.131
-	>=x11-libs/libxkbcommon-1.11.0
-	>=x11-libs/pango-1.57.0
-	>=x11-libs/pixman-0.46.4
-"
 RDEPEND="
-	${DEPEND}
-	>=dev-util/hyprwayland-scanner-0.4.5[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=dev-util/wayland-scanner-1.24.0
+	>=dev-libs/glib-2.89.9999:=
+	>=dev-libs/hyprgraphics-0.5.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-libs/hyprlang-0.6.8:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-libs/iniparser-4.2.6:=
+	>=dev-libs/wayland-9999:=
+	>=dev-libs/wayland-protocols-1.47:=
+	>=gui-libs/aquamarine-0.10.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=gui-libs/hyprutils-0.11.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=x11-libs/cairo-9999:=
+	>=x11-libs/libdrm-2.4.120:=
+	>=x11-libs/libxkbcommon-1.11.0:=
+	>=x11-libs/pango-1.57.0:=
+	>=x11-libs/pixman-0.42.2:=
+	media-libs/libglvnd:=
+"
+DEPEND="
+	${RDEPEND}
+	>=dev-util/hyprwayland-scanner-0.4.5:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-util/wayland-scanner-1.24.0:=
 "
 BDEPEND="
 	dev-cpp/gtest[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
@@ -82,6 +85,7 @@ pkg_setup() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	local mycmakeargs=(
 		-DBUILD_TESTING=$(usex test)
 	)

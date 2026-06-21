@@ -135,7 +135,7 @@ BDEPEND="
 		')
 	)
 	dev-python/docutils
-	~dev-libs/glib-2.89.9999:2
+	~dev-libs/glib-2.89.9999
 	>=dev-util/gdbus-codegen-2.80.5-r1
 	dev-util/glib-utils
 	>=sys-devel/gettext-0.19.7
@@ -146,7 +146,7 @@ BDEPEND="
 		>=dev-util/wayland-scanner-1.24.0
 	)
 	test? (
-		~dev-libs/glib-2.89.9999:2
+		~dev-libs/glib-2.89.9999
 		media-fonts/cantarell
 		wayland? ( dev-libs/weston[headless] )
 	)

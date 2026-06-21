@@ -1757,7 +1757,7 @@ COMMON_DEPEND="
 			>=media-libs/mesa-${MESA_PV}:=[${MULTILIB_USEDEP},wayland?,X?]
 		)
 		>=x11-libs/cairo-9999:=[${MULTILIB_USEDEP}]
-		>=x11-libs/gdk-pixbuf-2.42.2:=[${MULTILIB_USEDEP}]
+		>=x11-libs/gdk-pixbuf-2.44.6:=[${MULTILIB_USEDEP}]
 		>=x11-libs/libdrm-2.4.132:=[${MULTILIB_USEDEP}]
 		>=x11-libs/pango-1.57.1:=[${MULTILIB_USEDEP}]
 		accessibility? (

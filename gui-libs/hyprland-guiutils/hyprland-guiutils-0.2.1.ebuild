@@ -7,15 +7,21 @@ CXX_STANDARD=23
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX23[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX23[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}"
 )
 
-inherit cmake libcxx-slot libstdcxx-slot
+CHKL_TIMESTAMPS=(
+	"dev-libs/glib-2.89.9999"	# Bumped live/*DEPENDS to latest non-vulnerable
+	"x11-libs/cairo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"x11-libs/libdrm-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+)
+
+inherit chkl cmake libcxx-slot libstdcxx-slot
 
 if [[ "${PV}" =~ "9999" ]]; then
 	inherit git-r3
@@ -31,21 +37,17 @@ LICENSE="BSD"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 RDEPEND="
 	!gui-libs/hyprland-qtutils
-	gui-libs/aquamarine[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=gui-libs/hyprtoolkit-0.4.0
-	>=gui-libs/hyprutils-0.2.4[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	gui-libs/hyprutils:=
-	dev-libs/glib:2
-	dev-libs/glib:=
-	>=dev-libs/hyprlang-0.6.0
-	dev-libs/hyprlang[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	dev-libs/hyprlang:=
-	dev-libs/hyprgraphics[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	dev-libs/hyprgraphics:=
-	x11-libs/cairo
-	x11-libs/libdrm
-	x11-libs/libxkbcommon
-	x11-libs/pixman
+	gui-libs/aquamarine:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=gui-libs/hyprtoolkit-0.4.0:=
+	>=gui-libs/hyprutils-0.2.4:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-libs/glib-2.89.9999:=
+	>=dev-libs/hyprlang-0.6.0:=
+	dev-libs/hyprlang:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	dev-libs/hyprgraphics:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=x11-libs/cairo-9999:=
+	>=x11-libs/libdrm-2.4.120:=
+	x11-libs/libxkbcommon:=
+	>=x11-libs/pixman-0.42.2:=
 "
 DEPEND="
 	${RDEPEND}
@@ -58,4 +60,9 @@ BDEPEND="
 pkg_setup() {
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+}
+
+src_configure() {
+	chkl_check_many_timestamps
+	cmake_src_configure
 }

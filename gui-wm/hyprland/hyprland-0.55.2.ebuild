@@ -27,7 +27,17 @@ LLVM_COMPAT=(
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)" # Skip placeholder
 
-inherit abseil-cpp cflags-hardened check-compiler-switch cmake libcxx-slot libstdcxx-slot optfeature python-single-r1 toolchain-funcs re2
+CHKL_TIMESTAMPS=(
+	"dev-libs/glib-2.89.9999"	# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/wayland-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/lcms-9999"		# Bumped live to latest non-vulnerable
+	"x11-libs/cairo-9999"		# Bumped live to latest non-vulnerable
+	"x11-libs/libdrm-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"x11-libs/pango-9999"		# Bumped live to latest non-vulnerable
+	"x11-libs/pixman-9999"		# Bumped live to latest non-vulnerable
+)
+
+inherit abseil-cpp cflags-hardened check-compiler-switch chkl cmake libcxx-slot libstdcxx-slot optfeature python-single-r1 toolchain-funcs re2
 
 DESCRIPTION="A dynamic tiling Wayland compositor that doesn't sacrifice on its looks"
 HOMEPAGE="https://github.com/hyprwm/Hyprland"
@@ -46,15 +56,21 @@ fi
 
 LICENSE="BSD"
 SLOT="0"
-IUSE="
+IUSE+="
 ${GCC_COMPAT[@]}
-legacy-renderer -guiutils systemd test X
+clang gcc legacy-renderer -guiutils systemd test X
 ebuild_revision_30
+"
+REQUIRED_USE="
+	^^ (
+		clang
+		gcc
+	)
 "
 # hyprpm (hyprland plugin manager) requires the dependencies at runtime
 # so that it can clone, compile and install plugins.
 HYPRPM_RDEPEND="
-	>=dev-vcs/git-2.51.0
+	>=dev-vcs/git-2.51.0:=
 "
 # Relaxed re2 version requirement.  Originally slot 11
 # glib was not mentioned in build files
@@ -62,78 +78,66 @@ HYPRPM_RDEPEND="
 # glib version is relaxed
 RDEPEND="
 	${HYPRPM_RDEPEND}
-	>=dev-cpp/muParser-2.3.5[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	dev-cpp/muParser:=
-	>=dev-cpp/tomlplusplus-3.4.0[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
-	dev-cpp/tomlplusplus:=
-	>=dev-libs/hyprlang-0.6.8[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	dev-libs/hyprlang:=
-	>=dev-libs/hyprgraphics-0.5.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	dev-libs/hyprgraphics:=
+	>=dev-cpp/muParser-2.3.5:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-cpp/tomlplusplus-3.4.0:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+	>=dev-libs/hyprlang-0.6.8:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-libs/hyprgraphics-0.5.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/libinput-1.31.2:=
-	dev-libs/re2:${RE2_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
-	dev-libs/re2:=
-	>=dev-libs/udis86-1.7.2
-	>=dev-libs/wayland-1.25.0
-	>=gui-libs/aquamarine-0.11.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	gui-libs/aquamarine:=
-	>=gui-libs/hyprcursor-0.1.13[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	gui-libs/hyprcursor:=
-	>=gui-libs/hyprutils-0.13.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	gui-libs/hyprutils:=
-	>=gui-libs/hyprwire-0.3.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	gui-libs/hyprwire:=
-	>=media-libs/lcms-2.19.1
-	>=media-libs/libglvnd-1.7.0
-	>=media-libs/mesa-26.0.6
-	>=x11-libs/cairo-1.18.4
-	>=x11-libs/libdrm-2.4.133
-	>=x11-libs/libXcursor-1.2.3
-	>=x11-libs/libxkbcommon-1.13.1
-	>=x11-libs/pango-1.57.1
-	>=x11-libs/pixman-0.46.4
-	dev-lang/lua:5.5
-	dev-lang/lua:=
-	dev-libs/glib:2
-	dev-libs/glib:=
-	dev-util/glslang
-	sys-apps/util-linux
-	>=sys-apps/pciutils-3.10.0
+	dev-libs/re2:${RE2_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+	>=dev-libs/udis86-1.7.2:=
+	>=dev-libs/wayland-9999:=
+	>=gui-libs/aquamarine-0.11.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=gui-libs/hyprcursor-0.1.13:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=gui-libs/hyprutils-0.13.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=gui-libs/hyprwire-0.3.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=media-libs/lcms-9999:=
+	>=media-libs/libglvnd-1.7.0:=
+	>=media-libs/mesa-26.0.6:=
+	>=x11-libs/cairo-9999:=
+	>=x11-libs/libdrm-2.4.120:=
+	>=x11-libs/libXcursor-1.2.3:=
+	>=x11-libs/libxkbcommon-1.13.1:=
+	>=x11-libs/pango-1.57.1:=
+	>=x11-libs/pixman-0.42.2:=
+	dev-lang/lua:5.5=
+	>=dev-libs/glib-2.89.9999:=
+	dev-util/glslang:=
+	sys-apps/util-linux:=
+	>=sys-apps/pciutils-3.10.0:=
 	guiutils? (
-		gui-libs/hyprland-guiutils[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		gui-libs/hyprland-guiutils:=
+		gui-libs/hyprland-guiutils:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	X? (
 		>=x11-libs/libxcb-1.17.0:0=
-		>=x11-libs/libXdmcp-1.1.5
-		>=x11-libs/xcb-util-errors-1.0.1
-		>=x11-libs/xcb-util-renderutil-0.3.10
-		>=x11-libs/xcb-util-wm-0.4.2
-		>=x11-base/xwayland-24.1.11
+		>=x11-libs/libXdmcp-1.1.5:=
+		>=x11-libs/xcb-util-errors-1.0.1:=
+		>=x11-libs/xcb-util-renderutil-0.3.10:=
+		>=x11-libs/xcb-util-wm-0.4.2:=
+		>=x11-base/xwayland-24.1.11:=
 	)
 "
 DEPEND="
 	${RDEPEND}
-	>=dev-cpp/glaze-7.6.0
-	dev-cpp/glaze:=
-	>=dev-libs/hyprland-protocols-0.6.4
-	>=dev-libs/wayland-protocols-1.48
+	>=dev-cpp/glaze-7.6.0:=
+	>=dev-libs/hyprland-protocols-0.6.4:=
+	>=dev-libs/wayland-protocols-1.48:=
 "
 BDEPEND="
 	>=dev-build/cmake-4.3.2
 	>=dev-util/hyprwayland-scanner-0.4.5[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	dev-util/hyprwayland-scanner:=
 	>=dev-util/wayland-scanner-1.24.0
 	virtual/pkgconfig
+	clang? (
+		>=llvm-core/clang-17:=
+	)
+	gcc? (
+		>=sys-devel/gcc-14:=
+	)
 	test? (
 		>=app-misc/jq-1.8.1
 		>=dev-cpp/gtest-1.17.0[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 		x11-apps/xeyes
 		x11-terms/kitty
-	)
-	|| (
-		>=sys-devel/gcc-14
-		>=llvm-core/clang-17
 	)
 "
 
@@ -178,9 +182,16 @@ src_prepare() {
 }
 
 src_configure() {
+	if tc-is-clang ; then
+		use clang || die "Enable the clang USE flag"
+	fi
+	if tc-is-gcc ; then
+		use gcc || die "Enable the gcc USE flag"
+	fi
 	cflags-hardened_append
 	abseil-cpp_src_configure
 	re2_src_configure
+	chkl_check_many_timestamps
 	local mycmakeargs=(
 		-DNO_SYSTEMD=$(usex !systemd)
 		-DNO_XWAYLAND=$(usex !X)

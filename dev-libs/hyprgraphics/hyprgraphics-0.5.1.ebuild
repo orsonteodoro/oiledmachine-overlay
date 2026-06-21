@@ -8,16 +8,28 @@ CXX_STANDARD=26
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX26[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX26[@]}"
 )
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX26[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX26[@]/llvm_slot_}"
 )
 
-inherit cflags-hardened cmake libcxx-slot libstdcxx-slot
-LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
+CHKL_TIMESTAMPS=(
+	"gnome-base/librsvg-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libheif-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libjxl-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libspng-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libwebp-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"x11-libs/cairo-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"x11-libs/libdrm-9999"			# Bumped live to latest non-vulnerable
+	"x11-libs/pixman-9999"			# Bumped live to latest non-vulnerable
+)
+
+inherit chkl cflags-hardened cmake libcxx-slot libstdcxx-slot
 
 DESCRIPTION="Hyprland graphics / resource utilities"
 HOMEPAGE="https://github.com/hyprwm/hyprgraphics"
@@ -30,24 +42,19 @@ IUSE+="
 ebuild_revision_2
 "
 RDEPEND="
-	>=gnome-base/librsvg-2.61.4
-	>=gui-libs/hyprutils-0.1.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	gui-libs/hyprutils:=
-	>=x11-libs/libdrm-2.4.131
-	>=x11-libs/pango-1.57.1
-	>=media-libs/libglvnd-1.7.0
-	media-libs/libheif[${LIBSTDCXX_USEDEP_LTS}]
-	media-libs/libheif:=
-	>=media-libs/libjpeg-turbo-3.1.4.1
-	media-libs/libjpeg-turbo:=
-	>=media-libs/libjxl-0.11.2[${LIBSTDCXX_USEDEP_LTS}]
-	media-libs/libjxl:=
-	media-libs/libspng
-	>=media-libs/libwebp-1.6.0
-	media-libs/libwebp:=
-	>=sys-apps/file-5.47
-	>=x11-libs/cairo-1.18.4
-	>=x11-libs/pixman-0.46.4
+	>=gnome-base/librsvg-9999:=
+	>=gui-libs/hyprutils-0.1.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=x11-libs/libdrm-2.4.120:=
+	>=x11-libs/pango-1.57.1:=
+	>=media-libs/libglvnd-1.7.0:=
+	>=media-libs/libheif-1.23.0:=[${LIBSTDCXX_USEDEP_LTS}]
+	>=media-libs/libjpeg-turbo-9999:=
+	>=media-libs/libjxl-9999:=[${LIBSTDCXX_USEDEP_LTS}]
+	>=media-libs/libspng-0.7.4:=
+	>=media-libs/libwebp-9999:=
+	>=sys-apps/file-5.47:=
+	>=x11-libs/cairo-9999:=
+	>=x11-libs/pixman-0.42.2:=
 "
 DEPEND="
 	${RDEPEND}
@@ -64,5 +71,6 @@ pkg_setup() {
 
 src_configure() {
 	cflags-hardened_append
+	chkl_check_many_timestamps
 	cmake_src_configure
 }

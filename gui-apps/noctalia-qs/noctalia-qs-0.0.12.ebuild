@@ -110,42 +110,38 @@ REQUIRED_USE="
 
 RDEPEND="
 	!gui-apps/quickshell
-	dev-qt/qtbase:6[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV},dbus?,gui,vulkan,wayland?,widgets,X?]
-	dev-qt/qtbase:=
-	dev-qt/qtdeclarative:6[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV},vulkan,widgets]
-	dev-qt/qtdeclarative:=
-	dev-qt/qtsvg:6[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV}]
-	dev-qt/qtsvg:=
+	dev-qt/qtbase:6=[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV},dbus?,gui,vulkan,wayland?,widgets,X?]
+	dev-qt/qtdeclarative:6=[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV},vulkan,widgets]
+	dev-qt/qtsvg:6=[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV}]
 	bluetooth? (
-		net-wireless/bluez
+		net-wireless/bluez:=
 	)
 	jemalloc? (
-		dev-libs/jemalloc
+		dev-libs/jemalloc:=
 	)
 	networkmanager? (
-		net-misc/networkmanager
+		net-misc/networkmanager:=
 	)
 	pam? (
-		sys-libs/pam
+		sys-libs/pam:=
 	)
 	pipewire? (
-		media-video/pipewire
+		media-video/pipewire:=
 	)
 	policykit? (
-		dev-libs/glib
-		sys-auth/polkit
+		dev-libs/glib:=
+		sys-auth/polkit:=
 	)
 	screencopy? (
-		media-libs/mesa
-		x11-libs/libdrm
+		media-libs/mesa:=
+		x11-libs/libdrm:=
 	)
 	wayland? (
-		dev-libs/wayland
-		dev-qt/qtwayland:6[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV}]
-		dev-qt/qtwayland:=
+		dev-libs/wayland:=
+		dev-qt/qtwayland:6=[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV}]
 	)
 	X? (
-		x11-libs/libxcb
+		x11-libs/libxcb:=
 	)
 "
 DEPEND="
@@ -158,8 +154,7 @@ BDEPEND="
 	dev-build/cmake
 	dev-build/ninja
 	dev-cpp/cli11
-	dev-qt/qtshadertools:6[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV}]
-	dev-qt/qtshadertools:=
+	dev-qt/qtshadertools:6=[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV}]
 	dev-util/spirv-tools
 	virtual/pkgconfig
 	crash-handler? (

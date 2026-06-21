@@ -625,13 +625,13 @@ doc
 ebuild_revision_3
 "
 RDEPEND+="
-	>=gui-libs/gtk-4.12:4
-	>=gui-libs/gtk4-layer-shell-1.0
-	>=gui-libs/gtksourceview-5
-	>=media-libs/libpulse-8
-	>=media-video/pipewire-0.3
-	>=sci-libs/fftw-3
-	virtual/libudev
+	>=gui-libs/gtk-4.12:4=
+	>=gui-libs/gtk4-layer-shell-1.0:=
+	>=gui-libs/gtksourceview-5:=
+	>=media-libs/libpulse-8:=
+	>=media-video/pipewire-0.3:=
+	>=sci-libs/fftw-3:=
+	virtual/libudev:=
 "
 DEPEND+="
 	${RDEPEND}

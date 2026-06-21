@@ -9,15 +9,21 @@ CXX_STANDARD=23
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX23[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX23[@]}"
 )
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}"
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
+
+CHKL_TIMESTAMPS=(
+	"dev-libs/libffi-9999"		# Bumped live to latest non-vulnerable
+	"dev-libs/pugixml-9999"		# Bumped live to latest non-vulnerable
+	"x11-libs/pixman-9999"		# Bumped live to latest non-vulnerable
+)
 
 inherit cmake libcxx-slot libstdcxx-slot
 
@@ -44,12 +50,10 @@ test
 ebuild_revision_1
 "
 RDEPEND="
-	>=gui-libs/hyprutils-0.11.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	gui-libs/hyprutils:=
-	>=dev-libs/libffi-3.5.2
-	x11-libs/pixman
-	>=dev-libs/pugixml-1.15[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
-	dev-libs/pugixml:=
+	>=dev-libs/libffi-9999:=
+	>=dev-libs/pugixml-1.16:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+	>=gui-libs/hyprutils-0.11.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=x11-libs/pixman-0.42.2:=
 "
 DEPEND="
 	${RDEPEND}

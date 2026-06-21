@@ -44,29 +44,23 @@ REQUIRED_USE="
 "
 RDEPEND="
 	${PYTHON_DEPS}
-	dev-util/wayland-scanner
-	media-gfx/imagemagick
-	net-misc/wget
+	dev-util/wayland-scanner:=
+	media-gfx/imagemagick:=
+	net-misc/wget:=
 	calendar? (
-		gnome-extra/evolution-data-server[introspection]
-		dev-libs/libical[introspection]
-		dev-libs/glib:2[introspection]
-		dev-libs/glib:=
-		net-libs/libsoup:3.0[introspection]
-		net-libs/libsoup:=
-		dev-libs/json-glib[introspection]
-		dev-libs/gobject-introspection
+		gnome-extra/evolution-data-server:=[introspection]
+		dev-libs/libical:=[introspection]
+		dev-libs/glib:=[introspection]
+		net-libs/libsoup:3.0=[introspection]
+		dev-libs/json-glib:=[introspection]
+		dev-libs/gobject-introspection:=
 	)
 "
 DEPEND+="
 	${RDEPEND}
-	(
-		!gui-apps/quickshell
-		gui-apps/noctalia-qs:${SLOT}[wayland?,X?]
-		gui-apps/noctalia-qs:=
-	)
-	dev-qt/qtbase:6[gui,wayland?,X?]
-	dev-qt/qtbase:=
+	!gui-apps/quickshell
+	dev-qt/qtbase:6=[gui,wayland?,X?]
+	gui-apps/noctalia-qs:${SLOT}[wayland?,X?]
 "
 
 src_unpack() {

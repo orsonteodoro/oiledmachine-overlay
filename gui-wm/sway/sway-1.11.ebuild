@@ -6,7 +6,15 @@ EAPI=8
 CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=3
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data untrusted-data"
 
-inherit cflags-hardened fcaps meson optfeature
+CHKL_TIMESTAMPS=(
+	"dev-libs/wayland-9999"		# Bumped *DEPEND/live to latest non-vulnerable
+	"x11-libs/cairo-9999"		# Bumped *DEPEND/live to latest non-vulnerable
+	"x11-libs/gdk-pixbuf-9999"	# Bumped *DEPEND/live to latest non-vulnerable
+	"x11-libs/pango-9999"		# Bumped *DEPEND/live to latest non-vulnerable
+	"sys-apps/systemd-9999"		# Bumped *DEPEND/live to latest non-vulnerable
+)
+
+inherit cflags-hardened chkl fcaps meson optfeature
 
 DESCRIPTION="i3-compatible Wayland window manager"
 HOMEPAGE="https://swaywm.org"
@@ -24,56 +32,72 @@ fi
 LICENSE="MIT"
 SLOT="0"
 IUSE="
-+man +swaybar +swaynag tray wallpapers X
+basu elogind +man +swaybar +swaynag systemd tray wallpapers X
 ebuild_revision_18
 "
 REQUIRED_USE="
+	|| (
+		systemd
+		elogind
+		basu
+	)
 	tray? (
 		swaybar
+		|| (
+			systemd
+			elogind
+			basu
+		)
 	)
 "
 
 DEPEND="
-	>=dev-libs/json-c-0.13:0=
-	>=dev-libs/libinput-1.21.0:0=
-	>=dev-libs/wayland-1.20.0
-	>=x11-libs/libxkbcommon-1.5.0:0=
+	>=dev-libs/json-c-0.13:=
+	>=dev-libs/libinput-1.21.0:=
+	>=dev-libs/wayland-1.20.0:=
+	>=x11-libs/libxkbcommon-1.5.0:=
 	sys-auth/seatd:=
-	dev-libs/libpcre2
-	x11-libs/cairo
-	x11-libs/pango
-	x11-libs/pixman
-	media-libs/libglvnd
-	virtual/libudev
+	dev-libs/libpcre2:=
+	>=x11-libs/cairo-9999:=
+	>=x11-libs/pango-1.57.1:=
+	>=x11-libs/pixman-0.42.2:=
+	media-libs/libglvnd:=
+	virtual/libudev:=
 	swaybar? (
-		x11-libs/gdk-pixbuf:2
+		>=x11-libs/gdk-pixbuf-2.44.6:=
 	)
 	tray? (
-		|| (
-			sys-apps/systemd
-			sys-auth/elogind
-			sys-libs/basu
+		systemd? (
+			>=sys-apps/systemd-9999:=
+		)
+		elogind? (
+			sys-auth/elogind:=
+		)
+		basu? (
+			sys-libs/basu:=
 		)
 	)
 	wallpapers? (
-		gui-apps/swaybg[gdk-pixbuf(+)]
+		gui-apps/swaybg:=[gdk-pixbuf(+)]
 	)
 	X? (
-		x11-libs/libxcb:0=
-		x11-libs/xcb-util-wm
+		x11-libs/libxcb:=
+		x11-libs/xcb-util-wm:=
 	)
 "
 # x11-libs/xcb-util-wm needed for xcb-iccm
 if [[ "${PV}" == "9999" ]]; then
-	DEPEND+="~gui-libs/wlroots-9999:=[X=]"
+	DEPEND+="
+		~gui-libs/wlroots-9999:=[X=]
+	"
 else
 	DEPEND+="
-		gui-libs/wlroots:0.19[X=]
+		gui-libs/wlroots:0.19=[X=]
 	"
 fi
 RDEPEND="
 	${DEPEND}
-	x11-misc/xkeyboard-config
+	x11-misc/xkeyboard-config:=
 "
 BDEPEND="
 	>=dev-libs/wayland-protocols-1.24
@@ -100,6 +124,7 @@ FILECAPS=(
 
 src_configure() {
 	cflags-hardened_append
+	chkl_check_many_timestamps
 	local emesonargs=(
 		$(meson_feature man man-pages)
 		$(meson_feature swaybar gdk-pixbuf)
