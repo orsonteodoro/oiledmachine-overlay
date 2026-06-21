@@ -1025,7 +1025,7 @@ RDEPEND+="
 		>=dev-libs/libevent-2.1.8:=[${MULTILIB_USEDEP}]
 		>=media-libs/alsa-lib-1.1.3:=[${MULTILIB_USEDEP}]
 		>=media-libs/libvpx-1.10.0:=[${MULTILIB_USEDEP}]
-		>=media-libs/opus-1.1:=[${MULTILIB_USEDEP}]
+		>=media-libs/opus-9999:=[${MULTILIB_USEDEP}]
 		>=media-libs/openh264-2.6.0:=[${MULTILIB_USEDEP}]
 	)
 	opengl? (

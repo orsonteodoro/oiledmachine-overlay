@@ -17,7 +17,11 @@ LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
 
-inherit libcxx-slot libstdcxx-slot flag-o-matic qt6-build
+CHKL_TIMESTAMPS=(
+	"dev-qt/qtbase-6.9999"		# Bumped live to latest non-vulnerable
+)
+
+inherit chkl libcxx-slot libstdcxx-slot flag-o-matic qt6-build
 
 DESCRIPTION="Qt APIs and Tools for Graphics Pipelines"
 
@@ -36,6 +40,7 @@ pkg_setup() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	# -Werror=odr violations between mismatching spirv.hpp (bug #972694)
 	filter-lto
 

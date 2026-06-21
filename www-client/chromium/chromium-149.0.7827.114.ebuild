@@ -1795,7 +1795,7 @@ COMMON_DEPEND="
 	)
 	system-ffmpeg? (
 		system-opus? (
-			>=media-libs/opus-1.6:=[${MULTILIB_USEDEP}]
+			>=media-libs/opus-9999:=[${MULTILIB_USEDEP}]
 		)
 		media-video/ffmpeg:=
 		|| (

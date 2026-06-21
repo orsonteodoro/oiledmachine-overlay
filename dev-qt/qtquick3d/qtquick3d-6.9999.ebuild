@@ -4,6 +4,7 @@
 EAPI=8
 
 CXX_STANDARD=17
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
 
 FALLBACK_COMMIT="7b394f597d2b895623ad3dcf32d1ae23c6759850" # Sat, 13 Jun 2026 00:37:32 +0000
 
@@ -17,8 +18,14 @@ LLVM_COMPAT=(
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 )
 
+CHKL_TIMESTAMPS=(
+	"dev-qt/qtbase-6.9999"			# Bumped live/ to latest non-vulnerable
+	"dev-qt/qtdeclarative-6.9999"		# Bumped live/ to latest non-vulnerable
+)
+
+
 QT6_HAS_STATIC_LIBS=1
-inherit libcxx-slot libstdcxx-slot qt6-build
+inherit cflags-hardened chkl libcxx-slot libstdcxx-slot qt6-build
 
 DESCRIPTION="Qt module and API for defining 3D content in Qt QuickTools"
 
@@ -70,6 +77,9 @@ pkg_setup() {
 }
 
 src_configure() {
+	cflags-hardened_append
+	chkl_check_many_timestamps
+
 	local mycmakeargs=(
 		# TODO: if someone wants it, openxr should likely have its own
 		# USE and be packaged rather than use the bundled copy (if use

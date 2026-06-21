@@ -29,6 +29,7 @@ PIPEWIRE_DOCS_USEFLAG="+man"
 PYTHON_COMPAT=( python3_{11..14} )
 
 CHKL_TIMESTAMPS=(
+	"media-libs/opus-9999"
 	"media-video/ffmpeg-9999"
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
@@ -144,7 +145,7 @@ RDEPEND="
 		media-sound/liblc3:=
 		media-libs/libldac:=
 		media-libs/libfreeaptx:=
-		media-libs/opus:=
+		>=media-libs/opus-9999:=
 		media-libs/sbc:=
 		>=net-wireless/bluez-4.101:=
 		virtual/libusb:1

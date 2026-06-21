@@ -22,7 +22,9 @@ LLVM_COMPAT=( {17..22} )
 LLVM_OPTIONAL=1
 
 CHKL_TIMESTAMPS=(
-	"app-arch/zstd-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"app-arch/zstd-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-qt/qtbase-6.9999"			# Bumped live to latest non-vulnerable
+	"dev-qt/qtdeclarative-6.9999"		# Bumped live to latest non-vulnerable
 )
 
 # behaves very badly when qttools is not already installed, also

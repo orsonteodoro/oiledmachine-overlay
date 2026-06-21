@@ -29,7 +29,12 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-inherit cflags-hardened libcxx-slot libstdcxx-slot python-any-r1 qt6-build
+CHKL_TIMESTAMPS=(
+	"dev-qt/qtbase-6.9999"		# Bumped live to latest non-vulnerable
+	"dev-qt/qtsvg-6.9999"		# Bumped live to latest non-vulnerable
+)
+
+inherit cflags-hardened chkl libcxx-slot libstdcxx-slot python-any-r1 qt6-build
 
 DESCRIPTION="Qt Declarative (Quick 2)"
 
@@ -67,6 +72,7 @@ pkg_setup() {
 
 src_configure() {
 	cflags-hardened_append
+	chkl_check_many_timestamps
 
 	# oiledmachine-overlay:  Breaks build
 	# src/qml/jsruntime/qv4vtable_p.h:174:17: error: non-constant condition for static assertion

@@ -43,6 +43,8 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/glib-2.89.9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/icu-79.0.9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/libxml2-9999"			# Bumped live to latest non-vulnerable
+	"dev-qt/qtbase-6.9999"			# Bumped live to latest non-vulnerable
+	"dev-qt/qtdeclarative-6.9999"		# Bumped live to latest non-vulnerable
 	"media-libs/fontconfig-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/harfbuzz-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/lcms-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
@@ -95,8 +97,8 @@ RDEPEND="
 	>=media-libs/libpng-1.6.57:=
 	>=media-libs/libwebp-9999:=
 	media-libs/mesa:=[gbm(+)]
-	media-libs/openjpeg:2=
-	media-libs/opus:=
+	>=media-libs/openjpeg-2.5.4-r1:=
+	>=media-libs/opus-9999:=
 	>=media-libs/tiff-9999:=
 	sys-apps/dbus:=
 	sys-apps/pciutils:=

@@ -21,11 +21,12 @@ LLVM_COMPAT=(
 )
 
 CHKL_TIMESTAMPS=(
+	"dev-qt/qtbase-6.9999"		# Bumped live to latest non-vulnerable
 	"media-libs/libwebp-9999"	# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/tiff-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 )
 
-inherit cflags-hardened libcxx-slot libstdcxx-slot qt6-build
+inherit cflags-hardened chkl libcxx-slot libstdcxx-slot qt6-build
 
 DESCRIPTION="Additional format plugins for the Qt image I/O system"
 
@@ -56,6 +57,7 @@ pkg_setup() {
 
 src_configure() {
 	cflags-hardened_append
+	chkl_check_many_timestamps
 	local mycmakeargs=(
 		-DQT_FEATURE_jasper=OFF
 		$(qt_feature mng)

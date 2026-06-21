@@ -20,7 +20,11 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-inherit cflags-hardened libcxx-slot libstdcxx-slot qt6-build toolchain-funcs
+CHKL_TIMESTAMPS=(
+	"dev-qt/qtbase-qtsvg-6.9999"		# Bumped live to latest non-vulnerable
+)
+
+inherit cflags-hardened chkl libcxx-slot libstdcxx-slot qt6-build toolchain-funcs
 
 DESCRIPTION="SVG rendering library for the Qt6 framework"
 
@@ -41,6 +45,7 @@ pkg_setup() {
 
 src_configure() {
 	cflags-hardened_append
+	chkl_check_many_timestamps
 	qt6-build_src_configure
 }
 

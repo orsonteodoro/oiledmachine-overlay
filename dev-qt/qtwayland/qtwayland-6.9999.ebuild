@@ -22,7 +22,10 @@ LLVM_COMPAT=(
 )
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/wayland-9999" # Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-qt/qtbase-6.9999"			# Bumped live to latest non-vulnerable
+	"dev-qt/qtdeclarative-6.9999"		# Bumped live to latest non-vulnerable
+	"dev-qt/qtsvg-6.9999"			# Bumped live to latest non-vulnerable
+	"dev-libs/wayland-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 )
 
 inherit cflags-hardened chkl libcxx-slot libstdcxx-slot qt6-build
