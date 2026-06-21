@@ -67,7 +67,7 @@ RDEPEND="
 	tools? ( >=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}] )
 	tiff? ( >=media-libs/tiff-9999:=[${MULTILIB_USEDEP}] )
 	webp? ( >=media-libs/libwebp-9999:=[${MULTILIB_USEDEP}] )
-	y4m? ( >=media-libs/libyuv-9999:= )
+	y4m? ( >=media-libs/libyuv-1947:= )
 	zlib? ( >=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}] )
 	!<media-plugins/imlib2_loaders-${PV}
 "

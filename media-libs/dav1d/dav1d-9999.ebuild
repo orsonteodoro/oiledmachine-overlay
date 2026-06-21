@@ -7,7 +7,12 @@ CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS IO"
 
 if [[ "${PV}" == "9999" ]]; then
+	FALLBACK_COMMIT="14c73c7db38eebfd3202146b76a1ad4df90dd3a2"
+	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://code.videolan.org/videolan/dav1d"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 	inherit git-r3
 else
 	SRC_URI="https://downloads.videolan.org/pub/videolan/dav1d/${PV}/${P}.tar.xz"
@@ -18,18 +23,20 @@ inherit cflags-hardened meson-multilib
 
 DESCRIPTION="dav1d is an AV1 Decoder :)"
 HOMEPAGE="https://code.videolan.org/videolan/dav1d"
-
 LICENSE="BSD-2"
 # Check SONAME on version bumps!
 SLOT="0/7"
-IUSE="
+IUSE+="
 +8bit +10bit +asm test xxhash
 ebuild_revision_10
 "
 RESTRICT="!test? ( test )"
-
+DEPEND="
+	xxhash? (
+		dev-libs/xxhash:=
+	)
+"
 ASM_DEPEND=">=dev-lang/nasm-2.15.05"
-DEPEND="xxhash? ( dev-libs/xxhash )"
 BDEPEND="
 	asm? (
 		abi_x86_32? ( ${ASM_DEPEND} )
@@ -38,6 +45,18 @@ BDEPEND="
 "
 
 DOCS=( README.md doc/PATENTS THANKS.md )
+
+src_unpack() {
+	if [[ "${PV}" == "9999" ]]; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+			git-r3_fetch
+			git-r3_checkout
+		fi
+	else
+		unpack ${A}
+	fi
+}
 
 multilib_src_configure() {
 	cflags-hardened_append

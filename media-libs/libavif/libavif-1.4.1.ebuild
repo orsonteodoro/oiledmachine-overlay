@@ -5,7 +5,16 @@ EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 
-inherit cflags-hardened cmake-multilib gnome2-utils
+CHKL_TIMESTAMPS=(
+	"dev-libs/glib-2.89.9999"
+	"media-libs/dav1d-9999"
+	"media-libs/libjpeg-turbo-9999"
+	"media-libs/libpng-9999"
+	"media-libs/libyuv-9999"
+	"x11-libs/gdk-pixbuf-9999"
+)
+
+inherit cflags-hardened chkl cmake-multilib gnome2-utils
 
 ARGPARSE_COMMIT="ee74d1b53bd680748af14e737378de57e2a0a954"
 DESCRIPTION="Library for encoding and decoding .avif files"
@@ -32,29 +41,29 @@ RESTRICT="!test? ( test )"
 REQUIRED_USE="|| ( aom dav1d )"
 
 DEPEND="
-	media-libs/libjpeg-turbo:=[${MULTILIB_USEDEP}]
-	media-libs/libpng:=[${MULTILIB_USEDEP}]
+	>=media-libs/libjpeg-turbo-9999:=[${MULTILIB_USEDEP}]
+	>=media-libs/libpng-1.6.57:=[${MULTILIB_USEDEP}]
 	aom? ( >=media-libs/libaom-3.3.0:=[${MULTILIB_USEDEP}] )
-	dav1d? ( >=media-libs/dav1d-1.0.0:=[${MULTILIB_USEDEP}] )
-	extras? (
-		test? (
-			dev-cpp/gtest
-			media-gfx/imagemagick[lcms]
-		)
-	)
+	dav1d? ( >=media-libs/dav1d-9999:=[${MULTILIB_USEDEP}] )
 	gdk-pixbuf? (
-		dev-libs/glib:2[${MULTILIB_USEDEP}]
-		x11-libs/gdk-pixbuf:2[${MULTILIB_USEDEP}]
+		>=dev-libs/glib-2.89.9999:=[${MULTILIB_USEDEP}]
+		>=x11-libs/gdk-pixbuf-2.44.6:=[${MULTILIB_USEDEP}]
 	)
 	rav1e? ( >=media-video/rav1e-0.5.1:=[capi] )
 	svt-av1? ( >=media-libs/svt-av1-0.9.1:= )
-	libyuv? ( media-libs/libyuv:= )
+	libyuv? ( >=media-libs/libyuv-1947:= )
 "
 RDEPEND="
 	${DEPEND}
 "
 BDEPEND="
 	virtual/pkgconfig
+	extras? (
+		test? (
+			dev-cpp/gtest
+			media-gfx/imagemagick[lcms]
+		)
+	)
 "
 
 src_prepare() {
@@ -69,6 +78,7 @@ src_prepare() {
 
 multilib_src_configure() {
 	cflags-hardened_append
+	chkl_check_many_timestamps
 	local mycmakeargs=(
 		-DBUILD_SHARED_LIBS=ON
 		-DAVIF_CODEC_LIBGAV1=OFF

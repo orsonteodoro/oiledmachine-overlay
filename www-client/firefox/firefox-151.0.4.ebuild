@@ -637,7 +637,7 @@ CDEPEND="
 		>=media-sound/sndio-1.8.0-r1:=[${MULTILIB_USEDEP}]
 	)
 	system-av1? (
-		>=media-libs/dav1d-1.5.3:=[${MULTILIB_USEDEP},8bit]
+		>=media-libs/dav1d-9999:=[${MULTILIB_USEDEP},8bit]
 		>=media-libs/libaom-3.14.1:=[${MULTILIB_USEDEP}]
 	)
 	system-harfbuzz? (

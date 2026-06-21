@@ -159,7 +159,7 @@ RDEPEND="
 		>=app-arch/brotli-9999:=[${MULTILIB_USEDEP}]
 	)
 	dav1d? (
-		>=media-libs/dav1d-1.5.1:=[${MULTILIB_USEDEP}]
+		>=media-libs/dav1d-9999:=[${MULTILIB_USEDEP}]
 	)
 	ffmpeg? (
 		media-libs/ffmpeg:=

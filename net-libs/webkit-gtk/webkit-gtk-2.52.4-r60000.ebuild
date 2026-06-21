@@ -971,7 +971,7 @@ RDEPEND+="
 		)
 		dav1d? (
 			>=media-plugins/gst-plugins-rs-0.6.0:=[${MULTILIB_USEDEP},dav1d]
-			media-libs/dav1d:=[${MULTILIB_USEDEP},8bit]
+			>=media-libs/dav1d-9999:=[${MULTILIB_USEDEP},8bit]
 		)
 		g722? (
 			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:*[${MULTILIB_USEDEP},ffmpeg]

@@ -1679,7 +1679,7 @@ COMMON_SNAPSHOT_DEPEND="
 		>=dev-libs/libxslt-1.1.44:=[${MULTILIB_USEDEP}]
 	)
 	system-libyuv? (
-		>=media-libs/libyuv-1924:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
+		>=media-libs/libyuv-1947:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 	)
 	system-protobuf? (
 		dev-libs/protobuf:6/6.33[${MULTILIB_USEDEP}]
