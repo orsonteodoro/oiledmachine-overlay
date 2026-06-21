@@ -21,6 +21,11 @@ PATENT_STATUS_USE=(
 	"patent_status_nonfree"
 )
 
+# For FFmpeg live for mitigation
+FFMPEG_COMPAT_SLOTS=(
+	"${FFMPEG_COMPAT_SLOTS_8[@]}"
+)
+
 CHKL_TIMESTAMPS=(
 	"app-arch/brotli-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/dav1d-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
@@ -274,6 +279,7 @@ pkg_setup() {
 multilib_src_configure() {
 	cflags-hardened_append
 	chkl_check_many_timestamps
+	ffmpeg_src_configure
 	local mycmakeargs=(
 		$(cmake_use_find_package doxygen Doxygen)
 		-DBUILD_DEVELOPMENT_TOOLS=$(usex devel-tools)
