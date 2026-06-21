@@ -24,7 +24,7 @@ VIDEO_CARDS=(
 inherit abseil-cpp cmake grpc linux-info protobuf re2 xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	IUSE="
+	IUSE+="
 		fallback-commit
 	"
 	EGIT_REPO_URI="https://github.com/Syllo/${PN}.git"

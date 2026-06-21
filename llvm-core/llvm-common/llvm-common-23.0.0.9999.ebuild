@@ -36,7 +36,7 @@ LICENSE="
 	UoI-NCSA
 "
 SLOT="0"
-IUSE="
+IUSE+="
 ${LLVM_EBUILDS_LLVM23_REVISION}
 emacs
 ebuild_revision_1

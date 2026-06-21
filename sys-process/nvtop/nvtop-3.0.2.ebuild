@@ -19,7 +19,7 @@ VIDEO_CARDS=(
 inherit cmake linux-info xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	IUSE="
+	IUSE+="
 		fallback-commit
 	"
 	EGIT_REPO_URI="https://github.com/Syllo/${PN}.git"

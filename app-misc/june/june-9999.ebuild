@@ -14,7 +14,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/mezbaul-h/june.git"
 	FALLBACK_COMMIT="cecf18673b430ffaf94398cc1a26bad92e19bb94" # Aug 12, 2024
-	IUSE=" fallback-commit"
+	IUSE+=" fallback-commit"
 	inherit git-r3
 else
 	KEYWORDS="~amd64"

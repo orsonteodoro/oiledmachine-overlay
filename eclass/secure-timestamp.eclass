@@ -161,6 +161,7 @@ SECURE_TIMESTAMP["media_libs_libplacebo_9999"]="Mon, 1 Jun 2026 20:39:36 +0200"
 SECURE_TIMESTAMP["media_libs_libpng_9999"]="Wed, 15 Apr 2026 20:23:26 +0300"
 SECURE_TIMESTAMP["media_libs_libpulse_9999"]="Sep 13, 2025"
 SECURE_TIMESTAMP["media_libs_libwebp_9999"]="Fri, 22 May 2026 11:45:40 +0200"
+SECURE_TIMESTAMP["media_libs_spng_9999"]="May 8, 2023 6:45 AM PDT"
 SECURE_TIMESTAMP["media_libs_libva_9999"]="Apr 13, 2026"
 SECURE_TIMESTAMP["media_libs_libvpx_9999"]="Wed, May 27, 2026 18:14:29"
 SECURE_TIMESTAMP["media_libs_libyuv_9999"]="Thu, 9 Apr 2026 11:03:54 -0700"
@@ -196,6 +197,7 @@ SECURE_TIMESTAMP["x11_libs_gdk_pixbuf_9999"]="Mon, 30 Mar 2026 9:55:53 AM PDT"
 SECURE_TIMESTAMP["x11_libs_libdrm_9999"]="2026-04-06 08:00:12 +0000"
 SECURE_TIMESTAMP["x11_libs_pango_9999"]="Sun, 22 Mar 2026 21:54:26 -0400"
 SECURE_TIMESTAMP["x11_libs_pixman_9999"]="Wed, 2 Nov 2022 12:11:10 -0400"
+
 	declare -p SECURE_TIMESTAMP
 }
 

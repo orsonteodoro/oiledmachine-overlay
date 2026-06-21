@@ -25,7 +25,7 @@ CHKL_TIMESTAMPS=(
 	"x11-libs/pixman-9999"		# Bumped live to latest non-vulnerable
 )
 
-inherit cmake libcxx-slot libstdcxx-slot
+inherit chkl cmake libcxx-slot libstdcxx-slot
 
 if [[ "${PV}" =~ "9999" ]]; then
 	EGIT_REPO_URI="https://github.com/hyprwm/${PN^}.git"
@@ -72,6 +72,7 @@ pkg_setup() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	local mycmakeargs=(
 		-DBUILD_TESTING=$(usex test)
 	)

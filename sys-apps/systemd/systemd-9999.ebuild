@@ -36,7 +36,7 @@ HOMEPAGE="https://systemd.io/"
 
 LICENSE="GPL-2 LGPL-2.1 MIT public-domain"
 SLOT="0/2"
-IUSE="
+IUSE+="
 	acl apparmor audit boot bpf cryptsetup curl +dns-over-tls elfutils
 	fido2 +gcrypt gnutls homed idn importd +kernel-install +kmod +libarchive +lz4 lzma
 	+openssl pam passwdqc pcre pkcs11 policykit pwquality qrcode remote

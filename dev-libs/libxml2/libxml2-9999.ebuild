@@ -28,7 +28,7 @@ if [[ ${PV} == 9999 ]] ; then
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://gitlab.gnome.org/GNOME/libxml2"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
-		IUSE=" fallback-commit"
+		IUSE+=" fallback-commit"
 	fi
 	inherit git-r3
 else

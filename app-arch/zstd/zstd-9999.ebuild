@@ -37,7 +37,7 @@ LICENSE="
 	)
 "
 SLOT="0/1"
-IUSE="
+IUSE+="
 +lzma lz4 static-libs test zlib
 ebuild_revision_42
 "

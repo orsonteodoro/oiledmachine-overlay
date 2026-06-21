@@ -31,7 +31,7 @@ HOMEPAGE="
 "
 LICENSE="MIT"
 SLOT="0/4" # 4 = stable, Qt Quickshell based; 5 = pre-alpha GLES based
-IUSE="
+IUSE+="
 calendar wayland X
 ebuild_revision_3
 "

@@ -41,7 +41,7 @@ LICENSE="GPL-3+"
 #KEYWORDS="~amd64 ~x86" # Cannot build simple hello world.  Project is likely pre-alpha.
 HOMEPAGE="https://github.com/enigma-dev/RadialGM"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
-IUSE="
+IUSE+="
 doc
 ebuild_revision_10
 "

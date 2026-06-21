@@ -28,7 +28,7 @@ RESTRICT="
 	)
 "
 SLOT="0"
-IUSE=" dev"
+IUSE+=" dev"
 RDEPEND="
 	>=dev-python/click-6.0[${PYTHON_USEDEP}]
 	>=dev-python/scipy-0.17.0[${PYTHON_USEDEP}]

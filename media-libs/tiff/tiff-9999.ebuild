@@ -53,7 +53,7 @@ SLOT="0/6"
 if [[ ${PV} != *_rc* ]] ; then
 	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~arm64-macos ~x64-macos ~x64-solaris"
 fi
-IUSE="
+IUSE+="
 +cxx jbig jpeg lerc libdeflate lzma opengl static-libs test webp zlib zstd
 ebuild_revision_1
 "

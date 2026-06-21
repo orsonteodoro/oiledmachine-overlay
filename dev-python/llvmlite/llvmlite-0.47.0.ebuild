@@ -42,7 +42,7 @@ LICENSE="
 	BSD-2
 "
 SLOT="0"
-IUSE="
+IUSE+="
 ebuild_revision_6
 "
 REQUIRED_USE+="

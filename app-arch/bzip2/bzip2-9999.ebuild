@@ -38,7 +38,7 @@ HOMEPAGE="https://gitlab.com/bzip2/bzip2"
 LICENSE="BZIP2"
 SLOT="0/1" # subslot = SONAME
 
-IUSE="
+IUSE+="
 static static-libs
 ebuild_revision_2
 "
