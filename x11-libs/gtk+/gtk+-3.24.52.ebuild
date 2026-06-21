@@ -12,6 +12,7 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS HO IO PE"
 GNOME_ORG_MODULE=gtk
 
 CHKL_TIMESTAMPS=(
+	"dev-libs/libxslt-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/wayland-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/fontconfig-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/harfbuzz-9999"		# Bumped live/*DEPENDS to latest precaution for non-vulnerable
@@ -95,7 +96,7 @@ PDEPEND="
 BDEPEND="
 	app-text/docbook-xml-dtd:4.1.2
 	app-text/docbook-xsl-stylesheets
-	dev-libs/libxslt
+	>=dev-libs/libxslt-1.1.44
 	>=dev-util/gdbus-codegen-2.80.5-r1
 	dev-util/glib-utils
 	>=dev-build/gtk-doc-am-1.20

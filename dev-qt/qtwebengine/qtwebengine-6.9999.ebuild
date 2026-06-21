@@ -47,6 +47,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/glib-2.89.9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/icu-79.0.9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/libxml2-9999"			# Bumped live to latest non-vulnerable
+	"dev-libs/libxslt-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-qt/qtbase-6.9999"			# Bumped live to latest non-vulnerable
 	"dev-qt/qtdeclarative-6.9999"		# Bumped live to latest non-vulnerable
 	"media-libs/fontconfig-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
@@ -89,7 +90,7 @@ RDEPEND="
 	>=app-arch/snappy-9999:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/expat-9999:=
 	>=dev-libs/libxml2-9999:=[icu]
-	dev-libs/libxslt:=
+	>=dev-libs/libxslt-1.1.44:=
 	>=dev-libs/nspr-4.38.2:=
 	>=dev-libs/nss-3.125:=
 	~dev-qt/qtbase-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},accessibility=,gui,opengl=,ssl,vulkan?,widgets?]

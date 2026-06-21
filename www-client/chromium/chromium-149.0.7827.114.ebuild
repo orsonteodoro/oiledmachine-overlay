@@ -1676,7 +1676,7 @@ COMMON_SNAPSHOT_DEPEND="
 		x11-drivers/nvidia-drivers:*
 	)
 	system-libxslt? (
-		>=dev-libs/libxslt-1.1.45:=[${MULTILIB_USEDEP}]
+		>=dev-libs/libxslt-1.1.44:=[${MULTILIB_USEDEP}]
 	)
 	system-libyuv? (
 		>=media-libs/libyuv-1924:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
