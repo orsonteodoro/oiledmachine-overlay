@@ -5,7 +5,11 @@ EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 
-inherit cflags-hardened cmake
+CHKL_TIMESTAMPS=(
+	"app-arch/brotli-9999"
+)
+
+inherit cflags-hardened chkl cmake
 
 DESCRIPTION="Encode/decode WOFF2 font format"
 HOMEPAGE="https://github.com/google/woff2"
@@ -18,7 +22,7 @@ IUSE="
 ebuild_revision_10
 "
 
-RDEPEND="app-arch/brotli:="
+RDEPEND=">=app-arch/brotli-9999:="
 DEPEND="${RDEPEND}"
 BDEPEND="virtual/pkgconfig"
 
@@ -30,6 +34,7 @@ PATCHES=(
 
 src_configure() {
 	cflags-hardened_append
+	chkl_check_many_timestamps
 	local mycmakeargs=(
 		-DCMAKE_SKIP_RPATH=ON # needed, causes QA warnings otherwise
 		-DCANONICAL_PREFIXES=ON #661942
