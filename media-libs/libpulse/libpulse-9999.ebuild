@@ -6,7 +6,10 @@ EAPI="7"
 MY_PV="${PV/_pre*}"
 MY_P="pulseaudio-${MY_PV}"
 
-inherit bash-completion-r1 flag-o-matic gnome2-utils meson-multilib optfeature systemd udev
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="CRSH DOS DF H MC ML PE OOB RC SYM"
+
+inherit bash-completion-r1 cflags-hardened flag-o-matic gnome2-utils meson-multilib optfeature systemd udev
 
 DESCRIPTION="Libraries for PulseAudio clients"
 HOMEPAGE="https://www.freedesktop.org/wiki/Software/PulseAudio/"
@@ -104,6 +107,7 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	cflags-hardened_append
 	append-ldflags $(test-flags-CCLD -Wl,--undefined-version)
 
 	local emesonargs=(
