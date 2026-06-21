@@ -46,7 +46,7 @@ COMMON_DEPEND="
 	>=media-libs/libepoxy-1.4:=[X(+)?,egl(+),${MULTILIB_USEDEP}]
 	virtual/libintl:*[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-9999:=[aqua?,glib,svg(+),X?,${MULTILIB_USEDEP}]
-	>=x11-libs/gdk-pixbuf-2.30:=[introspection?,${MULTILIB_USEDEP}]
+	>=x11-libs/gdk-pixbuf-2.44.6:=[introspection?,${MULTILIB_USEDEP}]
 	>=x11-libs/pango-1.57.1:=[introspection?,${MULTILIB_USEDEP}]
 	x11-misc/shared-mime-info:=
 
@@ -103,7 +103,7 @@ BDEPEND="
 	wayland? ( dev-util/wayland-scanner )
 	>=sys-devel/gettext-0.19.7
 	virtual/pkgconfig
-	x11-libs/gdk-pixbuf:2
+	>=x11-libs/gdk-pixbuf-2.44.6:=
 	gtk-doc? (
 		app-text/docbook-xml-dtd:4.3
 		>=dev-util/gtk-doc-1.20

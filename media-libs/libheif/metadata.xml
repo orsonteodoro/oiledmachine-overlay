@@ -19,6 +19,9 @@
     <flag name="dav1d">
       Support optimized decoding for AVIF images.
     </flag>
+    <flag name="devel-tools">
+      Build development tools
+    </flag>
     <flag name="gdk-pixbuf">
       Enable the <pkg>x11-libs/gdk-pixbuf</pkg> plugin
     </flag>

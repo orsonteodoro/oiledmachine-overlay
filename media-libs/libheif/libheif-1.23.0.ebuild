@@ -4,7 +4,7 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO DOS"
 CXX_STANDARD=20
 
 inherit libstdcxx-compat
@@ -21,7 +21,29 @@ PATENT_STATUS_USE=(
 	"patent_status_nonfree"
 )
 
-inherit cflags-hardened cmake-multilib gnome2-utils libcxx-slot libstdcxx-slot
+CHKL_TIMESTAMPS=(
+	"app-arch/brotli-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/dav1d-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/ffmpeg-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/ffmpeg-9999m"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/kvazaar-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libaom-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libde265-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libwebp-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/tiff-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/openh264-9999"		# Bumped live/*DEPENDS to latest hardened
+	"media-libs/openjph-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/svt-av1-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/uvg266-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/vvdec-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/vvenc-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/x264-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/x265-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-video/rav1e-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+)
+
+inherit cflags-hardened chkl cmake-multilib ffmpeg gnome2-utils libcxx-slot libstdcxx-slot
 inherit multilib-minimal xdg
 
 if [[ ${PV} == *9999* ]] ; then
@@ -54,10 +76,10 @@ FFMPEG_HW_ACCEL_DECODE_H265_USE=(
 	"vdpau"
 	"vulkan"
 )
-IUSE="
+IUSE+="
 ${FFMPEG_HW_ACCEL_DECODE_H265_USE[@]}
 ${PATENT_STATUS_USE[@]}
-avif +aom -brotli -dav1d doc -doxygen +examples -ffmpeg +gdk-pixbuf -header-compression
+avif +aom -brotli -dav1d devel-tools doc -doxygen +examples -ffmpeg +gdk-pixbuf -header-compression
 jpeg -jpeg2k -kvazaar -heic -htj2k -libde265 -openh264 -rav1e +libsharpyuv
 -system-libsharpyuv -svt-av1 test +threads -uncompressed -uvg266 -vvc
 -vvenc -webcodecs -x264 -x265
@@ -122,73 +144,76 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	media-libs/libpng:0[${MULTILIB_USEDEP}]
-	media-libs/libpng:=[${MULTILIB_USEDEP}]
-	media-libs/tiff:=[${MULTILIB_USEDEP}]
-	virtual/patent-status[patent_status_nonfree?]
+	>=media-libs/libpng-1.6.57:=[${MULTILIB_USEDEP}]
+	>=media-libs/tiff-9999:=[${MULTILIB_USEDEP}]
+	virtual/patent-status:*[patent_status_nonfree?]
 	aom? (
-		>=media-libs/libaom-2.0.0:=[${MULTILIB_USEDEP}]
+		>=media-libs/libaom-3.14.1:=[${MULTILIB_USEDEP}]
 	)
 	brotli? (
-		app-arch/brotli:=[${MULTILIB_USEDEP}]
+		>=app-arch/brotli-9999:=[${MULTILIB_USEDEP}]
 	)
 	dav1d? (
-		media-libs/dav1d:=[${MULTILIB_USEDEP}]
+		>=media-libs/dav1d-1.5.1:=[${MULTILIB_USEDEP}]
 	)
 	ffmpeg? (
-		media-libs/ffmpeg:=[amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
+		media-libs/ffmpeg:=
+		|| (
+			>=media-libs/ffmpeg-9999[amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
+			>=media-libs/ffmpeg-9999m[amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
+		)
 	)
 	gdk-pixbuf? (
-		x11-libs/gdk-pixbuf[${MULTILIB_USEDEP}]
+		>=x11-libs/gdk-pixbuf-2.44.6[${MULTILIB_USEDEP}]
 	)
 	header-compression? (
-		virtual/zlib:=[${MULTILIB_USEDEP}]
+		>=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}]
 	)
 	htj2k? (
-		media-libs/openjpeg:=[${MULTILIB_USEDEP}]
-		media-libs/openjph:=[${MULTILIB_USEDEP}]
+		>=media-libs/openjpeg-2.5.4-r1:=[${MULTILIB_USEDEP}]
+		>=media-libs/openjph-0.29.0:=[${MULTILIB_USEDEP}]
 	)
 	jpeg? (
-		media-libs/libjpeg-turbo:=[${MULTILIB_USEDEP}]
+		>=media-libs/libjpeg-turbo-9999:=[${MULTILIB_USEDEP}]
 	)
 	jpeg2k? (
-		media-libs/openjpeg:=[${MULTILIB_USEDEP}]
+		>=media-libs/openjpeg-2.5.4-r1:=[${MULTILIB_USEDEP}]
 	)
 	kvazaar? (
-		media-libs/kvazaar:=[${MULTILIB_USEDEP}]
+		>=media-libs/kvazaar-9999:=[${MULTILIB_USEDEP}]
 	)
 	libde265? (
-		media-libs/libde265[${MULTILIB_USEDEP}]
+		>=media-libs/libde265-1.1.1[${MULTILIB_USEDEP}]
 	)
 	libsharpyuv? (
-		media-libs/libwebp:=[${MULTILIB_USEDEP}]
+		>=media-libs/libwebp-9999:=[${MULTILIB_USEDEP}]
 	)
 	openh264? (
-		media-libs/openh264:=[${MULTILIB_USEDEP}]
+		>=media-libs/openh264-2.6.0:=[${MULTILIB_USEDEP}]
 	)
 	rav1e? (
-		media-video/rav1e:=
+		>=media-video/rav1e-9999:=
 	)
 	svt-av1? (
-		media-libs/svt-av1:=[${MULTILIB_USEDEP}]
+		>=media-libs/svt-av1-9999:=[${MULTILIB_USEDEP}]
 	)
 	uncompressed? (
-		virtual/zlib:=[${MULTILIB_USEDEP}]
+		>=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}]
 	)
 	vvc? (
-		media-libs/vvdec:=[${MULTILIB_USEDEP}]
+		>=media-libs/vvdec-9999:=[${MULTILIB_USEDEP}]
 	)
 	vvenc? (
-		media-libs/vvenc:=[${MULTILIB_USEDEP}]
+		>=media-libs/vvenc-9999:=[${MULTILIB_USEDEP}]
 	)
 	uvg266? (
-		media-libs/uvg266:=[${MULTILIB_USEDEP}]
+		>=media-libs/uvg266-9999:=[${MULTILIB_USEDEP}]
 	)
 	x264? (
-		media-libs/x264:=[${MULTILIB_USEDEP}]
+		>=media-libs/x264-0.0.20221005:=[${MULTILIB_USEDEP}]
 	)
 	x265? (
-		media-libs/x265:=[${MULTILIB_USEDEP}]
+		>=media-libs/x265-9999:=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
@@ -232,9 +257,9 @@ warn_use_flag_non_default() {
 # The patent status or recognition of software patents varies per country.
 	local x
 	for x in "${L[@]}" ; do
-		local u="${u%:*}"
-		local dv="${u#*:}"
-		if ! use "${u}" && [[ "${dv}" == "ON" ]] ; then
+		local u="${x%:*}"
+		local dv="${x#*:}"
+		if in_iuse "${u}" && ! use "${u}" && [[ "${dv}" == "ON" ]] ; then
 ewarn "${u} is default ON upstream but set OFF by default in the ebuild."
 		fi
 	done
@@ -248,8 +273,10 @@ pkg_setup() {
 
 multilib_src_configure() {
 	cflags-hardened_append
+	chkl_check_many_timestamps
 	local mycmakeargs=(
 		$(cmake_use_find_package doxygen Doxygen)
+		-DBUILD_DEVELOPMENT_TOOLS=$(usex devel-tools)
 		-DBUILD_DOCUMENTATION=$(usex doxygen)
 		-DBUILD_TESTING=$(usex test)
 		-DENABLE_PLUGIN_LOADING="true"

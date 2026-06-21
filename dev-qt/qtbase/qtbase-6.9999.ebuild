@@ -163,7 +163,7 @@ COMMON_DEPEND="
 		widgets? (
 			cups? ( >=net-print/cups-9999:= )
 			gtk? (
-				x11-libs/gdk-pixbuf:=
+				>=x11-libs/gdk-pixbuf-2.44.6:=
 				>=x11-libs/gtk+-3.24.41-r1:3=[X?,wayland?]
 				>=x11-libs/pango-1.57.1:=
 			)

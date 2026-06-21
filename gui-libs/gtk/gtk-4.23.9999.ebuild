@@ -60,7 +60,7 @@ COMMON_DEPEND="
 	>=x11-libs/pango-1.57.1:=[introspection?]
 	>=dev-libs/fribidi-1.0.6:=
 	>=media-libs/harfbuzz-9999:=
-	>=x11-libs/gdk-pixbuf-2.30:=[introspection?]
+	>=x11-libs/gdk-pixbuf-2.44.6:=[introspection?]
 	>=media-libs/libpng-1.6.57:=
 	>=media-libs/tiff-9999:=
 	>=media-libs/libjpeg-turbo-9999:=
