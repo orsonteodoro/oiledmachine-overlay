@@ -27,6 +27,10 @@ CHROMIUM_VENDORED_TIMESTAMP="Wed, 24 Sep 2025 16:45:28 -0700"
 CHROMIUM_BROWSER_VER="149.0.7827.114"
 CHROMIUM_BROWSER_TIMESTAMP="Wed, 10 Jun 2026 10:58:03 -0700"
 
+# For current commit, see https://github.com/qt/qtwebengine/tree/dev/src
+# For version https://github.com/qt/qtwebengine-chromium/blob/2a0509e9310c9766abd231aad5b1708c8a56539a/chromium/third_party/node/README.chromium
+NODE_SLOT="22"
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
@@ -54,6 +58,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libwebp-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/openh264-9999"		# Bumped live/*DEPENDS to latest hardened
 	"media-libs/opus-9999"			# Bumped live/*DEPENDS to latest hardened
+	"media-video/pipewire-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/tiff-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 )
 
@@ -134,7 +139,7 @@ RDEPEND="
 	pulseaudio? ( media-libs/libpulse:=[glib] )
 	screencast? (
 		>=dev-libs/glib-2.89.9999:=
-		media-video/pipewire:=
+		>=media-video/pipewire-9999:=
 	)
 	system-icu? (
 		>=dev-libs/icu-79.0.9999:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
@@ -163,7 +168,7 @@ BDEPEND="
 		dev-python/html5lib[${PYTHON_USEDEP}]
 	')
 	dev-util/gperf
-	net-libs/nodejs[icu,ssl]
+	net-libs/nodejs:${NODE_SLOT}[icu,ssl]
 	sys-devel/bison
 	sys-devel/flex
 "
@@ -473,6 +478,10 @@ ewarn
 }
 
 src_configure() {
+	export PATH="/usr/lib/node/${NODE_SLOT}/bin:${PATH}"
+einfo "PATH:  ${PATH}"
+	node --version || die
+
 	local mycmakeargs=(
 		$(qt_feature pdfium qtpdf_build)
 		$(use pdfium && qt_feature qml qtpdf_quick_build)
