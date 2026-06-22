@@ -591,7 +591,7 @@ DEPEND+="
 		>=app-arch/zstd-${ZSTD_PV}
 	)
 	vulkan? (
-		media-libs/vulkan-drivers
+		virtual/vulkan
 		!volk? (
 			media-libs/vulkan-loader[X]
 			layers? (

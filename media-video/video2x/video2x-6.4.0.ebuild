@@ -349,7 +349,7 @@ RDEPEND+="
 	>=dev-util/glslang-1.3.268.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-util/glslang:=
 	>=media-libs/vulkan-loader-${VULKAN_PV}
-	media-libs/vulkan-drivers
+	virtual/vulkan
 	media-libs/libplacebo[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV},glslang,vulkan]
 	media-libs/libplacebo:=
 	system-boost? (

@@ -78,7 +78,7 @@ RDEPEND+="
 		virtual/pillow[${PYTHON_USEDEP}]
 	')
 	media-libs/opencv[${PYTHON_SINGLE_USEDEP},python]
-	media-libs/vulkan-drivers
+	virtual/vulkan
 	media-libs/vulkan-loader
 "
 DEPEND+="

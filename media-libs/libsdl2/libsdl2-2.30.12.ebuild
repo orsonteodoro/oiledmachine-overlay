@@ -277,7 +277,7 @@ RDEPEND="
 		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},gles2(+)]
 	)
 	vulkan? (
-		media-libs/vulkan-drivers[${MULTILIB_USEDEP}]
+		virtual/vulkan[${MULTILIB_USEDEP}]
 		media-libs/vulkan-loader[${MULTILIB_USEDEP}]
 	)
 "

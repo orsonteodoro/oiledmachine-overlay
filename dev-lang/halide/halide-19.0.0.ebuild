@@ -157,7 +157,7 @@ RDEPEND+="
 		)
 	')
 	>=media-libs/vulkan-loader-${VULKAN_HEADERS_PV}
-	media-libs/vulkan-drivers
+	virtual/vulkan
 	serialization? (
 		>=dev-libs/flatbuffers-23.5.26[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-libs/flatbuffers:=

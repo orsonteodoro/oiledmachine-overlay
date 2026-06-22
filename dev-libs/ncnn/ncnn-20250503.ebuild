@@ -311,7 +311,7 @@ RDEPEND="
 	vulkan? (
 		dev-util/glslang[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-util/glslang:=
-		media-libs/vulkan-drivers
+		virtual/vulkan
 		media-libs/vulkan-loader
 	)
 "

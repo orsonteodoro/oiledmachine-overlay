@@ -126,7 +126,7 @@ IUSE+="
 	ebuild_revision_24
 "
 RDEPEND+="
-	media-libs/vulkan-drivers
+	virtual/vulkan
 	media-libs/vulkan-loader
 	custom-models? (
 		media-gfx/upscayl-custom-models
