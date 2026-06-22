@@ -24,7 +24,9 @@ URLPARSE_COMMIT="59b068a7618a256c6823b0b9801b61d1d04677a3"
 
 CHKL_TIMESTAMPS=(
 	"app-arch/brotli-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/libbpf-9999"		# Bumped *DEPENDS to latest non-vulnerable
 	"dev-libs/libxml2-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/jansson-9999"
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
@@ -32,6 +34,8 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-3.3.9999"
 	"dev-libs/openssl-3.0.9999"
 	"net-dns/c-ares-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"net-libs/nghttp3-9999"		# Bumped *DEPENDs to latest non-vulnerable
+	"net-libs/ngtcp2-9999"		# Bumped *DEPENDs to latest non-vulnerable
 )
 
 inherit libstdcxx-compat
@@ -134,7 +138,7 @@ SSL_DEPEND="
 "
 RDEPEND="
 	bpf? (
-		>=dev-libs/libbpf-1.7.0:=
+		>=dev-libs/libbpf-9999:=
 	)
 	hpack-tools? (
 		>=dev-libs/jansson-2.14.1:=
