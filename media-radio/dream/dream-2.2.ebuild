@@ -96,7 +96,7 @@ RDEPEND+="
 		media-libs/portaudio
 	)
 	pulseaudio? (
-		media-sound/pulseaudio
+		media-libs/libpulse
 	)
 	qt5? (
 		dev-qt/qtcore:${QT_PV}

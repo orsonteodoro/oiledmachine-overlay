@@ -649,7 +649,7 @@ RDEPEND+="
 		sys-process/procps
 	)
 	pulseaudio? (
-		media-sound/pulseaudio[dbus?]
+		media-libs/libpulse[dbus?]
 		sound-forwarding? (
 			media-libs/libpulse
 		)

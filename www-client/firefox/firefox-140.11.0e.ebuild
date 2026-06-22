@@ -801,7 +801,7 @@ RDEPEND+="
 	)
 	pulseaudio? (
 		|| (
-			media-sound/pulseaudio[${MULTILIB_USEDEP}]
+			media-libs/libpulse[${MULTILIB_USEDEP}]
 			>=media-sound/apulse-0.1.12-r4[${MULTILIB_USEDEP}]
 		)
 	)

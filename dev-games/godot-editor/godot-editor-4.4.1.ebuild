@@ -460,7 +460,7 @@ DEPEND+="
 	media-libs/flac
 	media-libs/libpng
 	media-libs/libsndfile
-        media-sound/pulseaudio
+        media-libs/libpulse
 	net-libs/libasyncns
 	sys-apps/tcp-wrappers
 	sys-apps/util-linux

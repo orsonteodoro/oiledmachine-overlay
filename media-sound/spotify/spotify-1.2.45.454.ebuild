@@ -260,7 +260,7 @@ OPTIONAL_RDEPENDS_UNLISTED="
 		)
 	)
 	pulseaudio? (
-		>=media-sound/pulseaudio-14.2
+		>=media-libs/libpulse-14.2
 	)
 	vaapi? (
 		>=media-libs/libva-2.17.0[drm(+),wayland?,X?]

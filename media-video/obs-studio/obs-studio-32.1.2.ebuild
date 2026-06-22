@@ -593,7 +593,7 @@ RDEPEND_LIBOBS="
 	>=sys-apps/dbus-1.14.10
 	sys-apps/util-linux
 	pulseaudio? (
-		>=media-sound/pulseaudio-16.1
+		>=media-libs/libpulse-16.1
 	)
 "
 DEPEND_LIBOBS="

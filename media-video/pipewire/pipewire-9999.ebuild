@@ -512,6 +512,7 @@ pkg_postinst() {
 				ewarn
 			fi
 
+			has_version 'media-sound/pulseaudio' && ewarn "media-sound/pulseaudio needs to be removed."
 			if use sound-server && ( has_version 'media-sound/pulseaudio[daemon]' || has_version 'media-sound/pulseaudio-daemon' ) ; then
 				elog
 				elog "This ebuild auto-enables PulseAudio replacement. Because of that, users"
