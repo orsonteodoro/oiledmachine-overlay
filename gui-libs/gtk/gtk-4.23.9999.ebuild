@@ -23,6 +23,7 @@ PYTHON_COMPAT=( python3_{10..14} )
 FALLBACK_COMMIT="3a3a3ffb99a391a909f7d759e580e5544a35b223" # Tue, 16 Jun 2026 14:34:00 -0400
 
 CHKL_TIMESTAMPS=(
+	"dev-libs/fribidi-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/glib-2.89.9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/wayland-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"net-print/cups-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
@@ -58,7 +59,7 @@ COMMON_DEPEND="
 	~dev-libs/glib-2.89.9999:=
 	>=x11-libs/cairo-9999:=[aqua?,glib,svg(+),X?]
 	>=x11-libs/pango-1.57.1:=[introspection?]
-	>=dev-libs/fribidi-1.0.6:=
+	>=dev-libs/fribidi-9999:=
 	>=media-libs/harfbuzz-9999:=
 	>=x11-libs/gdk-pixbuf-2.44.6:=[introspection?]
 	>=media-libs/libpng-1.6.57:=

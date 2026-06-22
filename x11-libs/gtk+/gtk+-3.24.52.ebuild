@@ -12,6 +12,7 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS HO IO PE"
 GNOME_ORG_MODULE=gtk
 
 CHKL_TIMESTAMPS=(
+	"dev-libs/fribidi-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/libxslt-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/wayland-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/fontconfig-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
@@ -39,7 +40,7 @@ RESTRICT="!test? ( test )"
 
 COMMON_DEPEND="
 	>=app-accessibility/at-spi2-core-2.46.0:=[introspection?,${MULTILIB_USEDEP}]
-	>=dev-libs/fribidi-0.19.7:=[${MULTILIB_USEDEP}]
+	>=dev-libs/fribidi-9999:=[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-2.57.2:=[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.18.1:=[${MULTILIB_USEDEP}]
 	>=media-libs/harfbuzz-9999:=
