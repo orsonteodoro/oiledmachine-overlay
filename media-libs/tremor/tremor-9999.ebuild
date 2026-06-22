@@ -5,16 +5,22 @@ EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 
-inherit autotools cflags-hardened multilib-minimal
+CHKL_TIMESTAMPS=(
+	"media-libs/libogg-9999"
+)
+
+inherit autotools cflags-hardened chkl multilib-minimal
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	EGIT_BRANCH="master"
+	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://gitlab.xiph.org/xiph/tremor.git"
 	FALLBACK_COMMIT="820fb3237ea81af44c9cc468c8b4e20128e3e5ad"
-	KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
-	IUSE+=" fallback-commit"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 	inherit git-r3
 else
+	KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
 	SRC_URI="
 	"
 	die "FIXME"
@@ -26,10 +32,10 @@ LICENSE="BSD"
 SLOT="0"
 IUSE+="
 low-accuracy
-ebuild_revision_23
+ebuild_revision_24
 "
 RDEPEND="
-	>=media-libs/libogg-1.3.0:=[${MULTILIB_USEDEP}]
+	>=media-libs/libogg-9999:=[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
@@ -49,7 +55,9 @@ src_prepare() {
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
-		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
 		git-r3_fetch
 		git-r3_checkout
 	else
@@ -59,6 +67,7 @@ src_unpack() {
 
 multilib_src_configure() {
 	cflags-hardened_append
+	chkl_check_many_timestamps
 	ECONF_SOURCE="${S}" \
 	econf $(use_enable low-accuracy)
 }
