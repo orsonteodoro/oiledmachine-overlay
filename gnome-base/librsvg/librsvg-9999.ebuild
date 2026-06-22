@@ -569,7 +569,6 @@ src_unpack() {
 		unpack ${A}
 	fi
 
-/var/tmp/portage/gnome-base/librsvg-9999/work/librsvg-9999/Cargo.lock
 	local actual_cargo_lock_fingerprint=$(sha512sum "${S}/Cargo.lock" | cut -f 1 -d " ")
 	local expected_cargo_lock_fingerprint="6ad49d90e5d63d90bf4b3f6b158e8525ad10e46b81ab43f6daea932be03a958162c9d0d1283d78f790ba20167a614a1193a089f4a071fdb0fbb5a4a53432048d"
 	if [[ "${actual_cargo_lock_fingerprint}" != "${expected_cargo_lock_fingerprint}" ]] ; then
