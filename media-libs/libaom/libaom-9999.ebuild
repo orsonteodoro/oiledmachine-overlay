@@ -82,8 +82,10 @@ inherit aocc cflags-hardened check-compiler-switch cmake-multilib flag-o-matic f
 inherit libcxx-slot libstdcxx-slot multiprocessing python-single-r1 toolchain-funcs uopts
 
 if [[ "${PV}" == *"9999"* ]]; then
-	inherit git-r3
+	FALLBACK_COMMIT="48d85cee071eb0599c536d840a78fef426d0d49f"
+	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://aomedia.googlesource.com/aom"
+	inherit git-r3
 else
 	KEYWORDS="~amd64 ~arm ~arm-linux ~arm64 ~arm64-linux ~mips ~x86 ~x86-linux ~x86-macos"
 	S="${WORKDIR}/${P}"
@@ -124,10 +126,15 @@ ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
-+asm chromium debug doc +examples -highway lossless pgo static-libs test
++asm chromium clang debug doc +examples gcc -highway lossless pgo static-libs test
 ebuild_revision_49
 "
 REQUIRED_USE="
+	^^ (
+		aocc
+		clang
+		gcc
+	)
 	arm64? (
 		cpu_flags_arm_neon
 	)
@@ -248,21 +255,22 @@ BDEPEND+="
 	)
 "
 PDEPEND="
+	clang? (
+		>=llvm-core/clang-${CLANG_MIN_SLOT}:=
+	)
 	pgo? (
 		media-video/ffmpeg[${MULTILIB_USEDEP},encode,libaom]
 	)
-	|| (
-		>=sys-devel/gcc-${GCC_MIN_SLOT}
-		>=llvm-core/clang-${CLANG_MIN_SLOT}
+	gcc? (
+		>=sys-devel/gcc-${GCC_MIN_SLOT}:=
 	)
 "
 PATCHES=(
 #	"${FILESDIR}/${PN}-2.0.1-aom_sadXXXxh-are-ssse3.patch"
-	"${FILESDIR}/${PN}-3.1.2-cfi-rework.patch"
+	"${FILESDIR}/${PN}-48d85ce-cfi-rework.patch"
 	"${FILESDIR}/${PN}-3.4.0-posix-c-source-ftello.patch"
-	"${FILESDIR}/${PN}-3.7.0-allow-fortify-source.patch"
+	"${FILESDIR}/${PN}-48d85ce-allow-fortify-source.patch"
 	"${FILESDIR}/${PN}-3.8.1-tests-parallel.patch"
-	"${FILESDIR}/${PN}-3.13.0-highway-linker-language-cxx.patch"
 )
 
 # The PATENTS file is required to be distributed with this package bug #682214.
@@ -411,6 +419,18 @@ get_lib_types() {
 	use static-libs && echo "static"
 }
 
+src_unpack() {
+	if [[ "${PV}" == *"9999"* ]]; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+}
+
 src_prepare() {
 	export CMAKE_USE_DIR="${S}"
 	cd "${CMAKE_USE_DIR}" || die
@@ -515,6 +535,12 @@ _src_configure_compiler() {
 		export CC=$(tc-getCC)
 		export CXX=$(tc-getCXX)
 		export CPP="${CC} -E"
+		if tc-is-clang ; then
+			use clang || die "Enable the clang USE flag"
+		fi
+		if tc-is-gcc ; then
+			use gcc || die "Enable the gcc USE flag"
+		fi
 	fi
 	strip-unsupported-flags
 }
