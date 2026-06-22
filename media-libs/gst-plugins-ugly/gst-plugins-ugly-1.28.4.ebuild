@@ -22,13 +22,12 @@ nls orc
 ebuild_revision_26
 "
 RDEPEND="
-	~media-libs/gst-plugins-base-${PV}:${SLOT}[${MULTILIB_USEDEP}]
-	media-libs/gst-plugins-base:=
+	~media-libs/gst-plugins-base-${PV}:${SLOT}=[${MULTILIB_USEDEP}]
 	nls? (
-		sys-devel/gettext[${MULTILIB_USEDEP}]
+		sys-devel/gettext:=[${MULTILIB_USEDEP}]
 	)
 	orc? (
-		>=dev-lang/orc-0.4.16
+		>=dev-lang/orc-0.4.42:=
 	)
 "
 DEPEND="

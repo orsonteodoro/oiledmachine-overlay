@@ -19,7 +19,14 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="IU"
 # DT = Data Tampering
 # ID = Information Disclosure
 
-inherit cflags-hardened gstreamer-meson vf
+CHKL_TIMESTAMPS=(
+	"dev-libs/elfutils-9999"
+	"dev-libs/glib-2.89.9999"
+	"sys-libs/libcap-9999"
+	"sys-libs/libunwind-9999"
+)
+
+inherit cflags-hardened chkl gstreamer-meson vf
 
 KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~m68k ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86
@@ -36,20 +43,19 @@ IUSE="
 ebuild_revision_27
 "
 RDEPEND="
-	>=dev-libs/glib-2.64.0:2[${MULTILIB_USEDEP}]
-	dev-libs/glib:=
+	>=dev-libs/glib-2.89.9999:=[${MULTILIB_USEDEP}]
 	caps? (
-		sys-libs/libcap[${MULTILIB_USEDEP}]
+		>=sys-libs/libcap-9999:=[${MULTILIB_USEDEP}]
 	)
 	introspection? (
-		dev-libs/gobject-introspection:=
+		>=dev-libs/gobject-introspection-1.86.0:=
 	)
 	nls? (
-		sys-devel/gettext[${MULTILIB_USEDEP}]
+		sys-devel/gettext:=[${MULTILIB_USEDEP}]
 	)
 	unwind? (
-		sys-libs/libunwind[${MULTILIB_USEDEP}]
-		dev-libs/elfutils[${MULTILIB_USEDEP}]
+		>=dev-libs/elfutils-9999:=[${MULTILIB_USEDEP}]
+		>=sys-libs/libunwind-9999:=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
@@ -75,6 +81,7 @@ einfo "Security vulnerabilities fixed:  ${MITIGATION_URI}"
 
 multilib_src_configure() {
 	cflags-hardened_append
+	chkl_check_many_timestamps
 	local emesonargs=(
 		$(meson_feature "unwind" "libunwind")
 		$(meson_feature "unwind" "libdw")

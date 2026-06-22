@@ -25,18 +25,26 @@ CFLAGS_HARDENED_USE_CASES="network security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE BO SO"
 GST_ORG_MODULE="gst-plugins-bad"
 PATENT_STATUS=(
-	patent_status_nonfree
+	"patent_status_nonfree"
 )
 VIDEO_CARDS=(
-	video_cards_amdgpu
-	video_cards_r600
-	video_cards_radeonsi
-	video_cards_nouveau
-	video_cards_nvidia
-	video_cards_intel
+	"video_cards_amdgpu"
+	"video_cards_r600"
+	"video_cards_radeonsi"
+	"video_cards_nouveau"
+	"video_cards_nvidia"
+	"video_cards_intel"
 )
 
-inherit cflags-hardened gstreamer-meson
+CHKL_TIMESTAMPS=(
+	"app-arch/bzip2-9999"
+	"dev-libs/glib-2.89.9999"
+	"dev-libs/wayland-9999"
+	"media-libs/libva-9999"
+	"x11-libs/libdrm-9999"
+)
+
+inherit cflags-hardened chkl gstreamer-meson
 
 KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~m68k ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86
@@ -116,100 +124,79 @@ PATENT_STATUS_RDEPEND="
 		!media-video/amdgpu-pro-amf
 		!virtual/vaapi
 	)
-	virtual/patent-status[patent_status_nonfree=]
+	virtual/patent-status:*[patent_status_nonfree=]
 "
 RDEPEND="
 	${PATENT_STATUS_RDEPEND}
 	!media-plugins/gst-plugins-va
 	!media-plugins/gst-transcoder
-	>=dev-libs/glib-2.64.0:2[${MULTILIB_USEDEP}]
-	dev-libs/glib:=
-	~media-libs/gstreamer-${PV}:${SLOT}[${MULTILIB_USEDEP},introspection?]
-	media-libs/gstreamer:=
-	~media-libs/gst-plugins-base-${PV}:${SLOT}[${MULTILIB_USEDEP},introspection?]
-	media-libs/gst-plugins-base:=
+	>=dev-libs/glib-2.89.9999:=[${MULTILIB_USEDEP}]
+	~media-libs/gstreamer-${PV}:${SLOT}=[${MULTILIB_USEDEP},introspection?]
+	~media-libs/gst-plugins-base-${PV}:${SLOT}=[${MULTILIB_USEDEP},introspection?]
 	amf? (
-		media-libs/amf-headers
-		media-video/amdgpu-pro-amf[video_cards_amdgpu?]
+		media-libs/amf-headers:=
+		media-video/amdgpu-pro-amf:=[video_cards_amdgpu?]
 	)
 	bzip2? (
-		app-arch/bzip2[${MULTILIB_USEDEP}]
+		>=app-arch/bzip2-9999:=[${MULTILIB_USEDEP}]
 	)
 	introspection? (
-		dev-libs/gobject-introspection:=
+		>=dev-libs/gobject-introspection-1.86.0:=
 	)
 	nls? (
-		sys-devel/gettext[${MULTILIB_USEDEP}]
+		sys-devel/gettext:=[${MULTILIB_USEDEP}]
 	)
 	nvcodec? (
-		dev-libs/glib:2[${MULTILIB_USEDEP}]
-		dev-libs/glib:=
+		>=dev-libs/glib-2.89.9999:=[${MULTILIB_USEDEP}]
 		dev-util/nvidia-cuda-toolkit:=
-		x11-drivers/nvidia-drivers[${MULTILIB_USEDEP}]
-		x11-drivers/nvidia-drivers:=
+		x11-drivers/nvidia-drivers:=[${MULTILIB_USEDEP}]
 	)
 	orc? (
-		>=dev-lang/orc-0.4.17[${MULTILIB_USEDEP}]
+		>=dev-lang/orc-0.4.42:=[${MULTILIB_USEDEP}]
 	)
 	qsv? (
 		msdk? (
-			media-libs/intel-mediasdk[${MULTILIB_USEDEP},wayland?,X?]
+			media-libs/intel-mediasdk:=[${MULTILIB_USEDEP},wayland?,X?]
 		)
 		onevpl? (
-			media-libs/libvpl[${MULTILIB_USEDEP}]
-			media-libs/oneVPL-cpu
+			media-libs/libvpl:=[${MULTILIB_USEDEP}]
+			media-libs/oneVPL-cpu:=
 			video_cards_intel? (
-				media-libs/vpl-gpu-rt
+				media-libs/vpl-gpu-rt:=
 			)
 		)
 	)
 	vaapi? (
-		media-libs/libva[${MULTILIB_USEDEP},wayland?,X?]
-		media-libs/libva:=
-		virtual/vaapi[video_cards_amdgpu?,video_cards_r600?,video_cards_radeonsi?,video_cards_intel?,video_cards_nouveau?,video_cards_nvidia?]
+		>=media-libs/libva-9999:=[${MULTILIB_USEDEP},wayland?,X?]
+		virtual/vaapi:*[video_cards_amdgpu?,video_cards_r600?,video_cards_radeonsi?,video_cards_intel?,video_cards_nouveau?,video_cards_nvidia?]
 		udev? (
-			dev-libs/libgudev[${MULTILIB_USEDEP}]
+			dev-libs/libgudev:=[${MULTILIB_USEDEP}]
 		)
 	)
 	vnc? (
 		X? (
-			x11-libs/libX11[${MULTILIB_USEDEP}]
+			x11-libs/libX11:=[${MULTILIB_USEDEP}]
 		)
 	)
 	vulkan? (
-		media-libs/vulkan-drivers[${MULTILIB_USEDEP}]
-		media-libs/vulkan-loader[${MULTILIB_USEDEP},wayland?,X?]
-		video_cards_amdgpu? (
-			media-libs/mesa[video_cards_radeonsi,vulkan]
-		)
-		video_cards_intel? (
-			media-libs/mesa[video_cards_intel,vulkan]
-		)
-		video_cards_nouveau? (
-			media-libs/mesa[video_cards_intel,nouveau]
-		)
-		video_cards_nvidia? (
-			>=x11-drivers/nvidia-drivers-390.132
-		)
-		video_cards_radeonsi? (
-			media-libs/mesa[video_cards_radeonsi,vulkan]
-		)
+		virtual/vulkan:*[${MULTILIB_USEDEP}]
+		media-libs/vulkan-loader:=[${MULTILIB_USEDEP},wayland?,X?]
 	)
 	wayland? (
-		>=dev-libs/wayland-1.15[${MULTILIB_USEDEP}]
-		>=dev-libs/wayland-protocols-1.44
-		>=x11-libs/libdrm-2.4.104[${MULTILIB_USEDEP}]
+		>=dev-libs/wayland-9999:=[${MULTILIB_USEDEP}]
+		>=dev-libs/wayland-protocols-1.44:=
+		>=x11-libs/libdrm-2.4.132:=[${MULTILIB_USEDEP}]
 	)
 	X? (
-		>=x11-libs/libxcb-1.10[${MULTILIB_USEDEP}]
-		x11-libs/libX11[${MULTILIB_USEDEP}]
-		x11-libs/libxkbcommon[${MULTILIB_USEDEP}]
+		>=x11-libs/libxcb-1.10:=[${MULTILIB_USEDEP}]
+		x11-libs/libX11:=[${MULTILIB_USEDEP}]
+		x11-libs/libxkbcommon:=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
 	${RDEPEND}
 	vulkan? (
-		dev-util/vulkan-headers
+		dev-util/vulkan-headers:=
 	)
 "
 BDEPEND="
@@ -228,6 +215,7 @@ src_prepare() {
 
 multilib_src_configure() {
 	cflags-hardened_append
+	chkl_check_many_timestamps
 	GST_PLUGINS_NOAUTO="amfcodec bz2 codec2json hls lcevcdecoder lcevcencoder ipcpipeline librfb msdk nvcodec qsv shm va vulkan wayland webrtc webrtcdsp x11"
 	local emesonargs=(
 		$(meson_feature "amf" "amfcodec")

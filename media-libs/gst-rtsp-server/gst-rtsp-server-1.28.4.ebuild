@@ -10,7 +10,11 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="network security-critical server untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO"
 
-inherit cflags-hardened check-compiler-switch flag-o-matic gstreamer-meson
+CHKL_TIMESTAMPS=(
+	"dev-libs/glib-2.89.9999"
+)
+
+inherit cflags-hardened check-compiler-switch chkl flag-o-matic gstreamer-meson
 
 KEYWORDS="~amd64 ~arm64 ~x86"
 
@@ -22,22 +26,16 @@ examples +introspection static-libs
 ebuild_revision_28
 "
 RDEPEND="
-	>=media-libs/gstreamer-${PV}:${SLOT}[${MULTILIB_USEDEP},introspection?]
-	media-libs/gstreamer:=
-	>=media-libs/gst-plugins-base-${PV}:${SLOT}[${MULTILIB_USEDEP},introspection?]
-	media-libs/gst-plugins-base:=
-	>=media-libs/gst-plugins-good-${PV}:${SLOT}[${MULTILIB_USEDEP}]
-	media-libs/gst-plugins-good:=
-	>=media-plugins/gst-plugins-srtp-${PV}:${SLOT}[${MULTILIB_USEDEP}]
-	media-plugins/gst-plugins-srtp:=
-	dev-libs/glib:2[${MULTILIB_USEDEP}]
-	dev-libs/glib:=
+	>=media-libs/gstreamer-${PV}:${SLOT}=[${MULTILIB_USEDEP},introspection?]
+	>=media-libs/gst-plugins-base-${PV}:${SLOT}=[${MULTILIB_USEDEP},introspection?]
+	>=media-libs/gst-plugins-good-${PV}:${SLOT}=[${MULTILIB_USEDEP}]
+	>=media-plugins/gst-plugins-srtp-${PV}:${SLOT}=[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-2.89.9999:=[${MULTILIB_USEDEP}]
 	examples? (
-		>=dev-libs/libcgroup-0.26
+		>=dev-libs/libcgroup-0.26:=
 	)
 	introspection? (
-		>=dev-libs/gobject-introspection-1.31.1
-		dev-libs/gobject-introspection:=
+		>=dev-libs/gobject-introspection-1.86.0:=
 	)
 "
 DEPEND="
@@ -61,6 +59,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 
 	cflags-hardened_append
+	chkl_check_many_timestamps
 	local emesonargs=(
 		-Dintrospection=$(multilib_native_usex introspection "enabled" "disabled")
 	)

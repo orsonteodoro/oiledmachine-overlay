@@ -140,6 +140,7 @@ FFMPEG_COMPAT=(
 
 # TODO finish
 CHKL_TIMESTAMPS=(
+	"dev-libs/glib-2.89.9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/icu-79.0.9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/libxml2-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/libxslt-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
@@ -157,8 +158,9 @@ CHKL_TIMESTAMPS=(
 	"media-libs/lcms-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libjxl-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libwebp-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libpng-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libvpx-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libwebp-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/opus-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"x11-libs/cairo-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"x11-libs/libdrm-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
@@ -1003,7 +1005,7 @@ RDEPEND+="
 		)
 	)
 	introspection? (
-		>=dev-libs/gobject-introspection-1.56.1:=[${PYTHON_SINGLE_USEDEP}]
+		>=dev-libs/gobject-introspection-1.86.0:=[${PYTHON_SINGLE_USEDEP}]
 		|| (
 			$(gen_gobject_introspection_rdepend)
 		)
@@ -1029,7 +1031,7 @@ RDEPEND+="
 	libwebrtc? (
 		>=dev-libs/libevent-2.1.8:=[${MULTILIB_USEDEP}]
 		>=media-libs/alsa-lib-1.2.16.1:=[${MULTILIB_USEDEP}]
-		>=media-libs/libvpx-1.10.0:=[${MULTILIB_USEDEP}]
+		>=media-libs/libvpx-9999:=[${MULTILIB_USEDEP}]
 		>=media-libs/opus-9999:=[${MULTILIB_USEDEP}]
 		>=media-libs/openh264-2.6.0:=[${MULTILIB_USEDEP}]
 	)

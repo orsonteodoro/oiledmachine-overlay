@@ -466,7 +466,11 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libaom-9999"
 	"media-libs/libcaca-9999"
 	"media-libs/libjxl-9999"
+	"media-libs/libogg-9999"
+	"media-libs/libpulse-9999"
+	"media-libs/libtheora-9999"
 	"media-libs/libva-9999"
+	"media-libs/libvorbis-9999"
 	"media-libs/libvpx-9999"
 	"media-libs/libwebp-9999"
 	"media-libs/openh264-9999"
@@ -963,8 +967,8 @@ RDEPEND+="
 			>=app-arch/snappy-1.2.2:=[${MULTILIB_USEDEP}]
 		)
 		theora? (
-			>=media-libs/libogg-1.3.0:=[${MULTILIB_USEDEP}]
-			>=media-libs/libtheora-1.1.1:=[${MULTILIB_USEDEP},encode]
+			>=media-libs/libogg-9999:=[${MULTILIB_USEDEP}]
+			>=media-libs/libtheora-9999:=[${MULTILIB_USEDEP},encode]
 		)
 		twolame? (
 			>=media-sound/twolame-0.4.0:=[${MULTILIB_USEDEP}]
@@ -1191,8 +1195,8 @@ RDEPEND+="
 		>=media-libs/libvmaf-2.0.0:=[${MULTILIB_USEDEP}]
 	)
 	vorbis? (
-		>=media-libs/libvorbis-1.3.3-r1:=[${MULTILIB_USEDEP}]
-		>=media-libs/libogg-1.3.0:=[${MULTILIB_USEDEP}]
+		>=media-libs/libvorbis-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/libogg-9999:=[${MULTILIB_USEDEP}]
 	)
 	vpx? (
 		>=media-libs/libvpx-9999:=[${MULTILIB_USEDEP}]

@@ -61,7 +61,7 @@ COMMON_DEPEND="
 	elibc_musl? (
 		>=sys-libs/musl-1.2.6:=
 	)
-	introspection? ( >=dev-libs/gobject-introspection-1.82.0-r2:= )
+	introspection? ( >=dev-libs/gobject-introspection-1.86.0:= )
 	wayland? (
 		>=dev-libs/wayland-9999:=[${MULTILIB_USEDEP}]
 		>=dev-libs/wayland-protocols-1.32:=
@@ -90,7 +90,7 @@ RDEPEND="${COMMON_DEPEND}
 "
 # librsvg for svg icons (PDEPEND to avoid circular dep), bug #547710
 PDEPEND="
-	gnome-base/librsvg[${MULTILIB_USEDEP}]
+	>=gnome-base/librsvg-9999[${MULTILIB_USEDEP}]
 	>=x11-themes/adwaita-icon-theme-3.14
 	vim-syntax? ( app-vim/gtk-syntax )
 "

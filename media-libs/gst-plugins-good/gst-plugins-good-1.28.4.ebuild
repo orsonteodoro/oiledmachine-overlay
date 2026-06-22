@@ -18,7 +18,12 @@ GST_ORG_MODULE="gst-plugins-good"
 #VULNERABILITIES_FIXED=(
 #)
 
-inherit cflags-hardened gstreamer-meson vf
+CHKL_TIMESTAMPS=(
+	"app-arch/bzip2-9999"
+	"dev-libs/glib-2.89.9999"
+)
+
+inherit cflags-hardened chkl gstreamer-meson vf
 
 KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~m68k ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86
@@ -33,17 +38,15 @@ nls +orc
 ebuild_revision_28
 "
 RDEPEND="
-	>=dev-libs/glib-2.64.0:2[${MULTILIB_USEDEP}]
-	dev-libs/glib:=
-	app-arch/bzip2[${MULTILIB_USEDEP}]
-	virtual/zlib[${MULTILIB_USEDEP}]
-	~media-libs/gst-plugins-base-${PV}:${SLOT}[${MULTILIB_USEDEP}]
-	media-libs/gst-plugins-base:=
+	>=dev-libs/glib-2.89.9999:=[${MULTILIB_USEDEP}]
+	>=app-arch/bzip2-9999:=[${MULTILIB_USEDEP}]
+	>=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}]
+	~media-libs/gst-plugins-base-${PV}:${SLOT}=[${MULTILIB_USEDEP}]
 	nls? (
-		sys-devel/gettext[${MULTILIB_USEDEP}]
+		sys-devel/gettext:=[${MULTILIB_USEDEP}]
 	)
 	orc? (
-		>=dev-lang/orc-0.4.17[${MULTILIB_USEDEP}]
+		>=dev-lang/orc-0.4.42:=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
@@ -67,6 +70,7 @@ einfo "Security vulnerabilities fixed:  ${MITIGATION_URI}"
 
 multilib_src_configure() {
 	cflags-hardened_append
+	chkl_check_many_timestamps
 	# gst/matroska can use bzip2
 	GST_PLUGINS_NOAUTO="bz2"
 	local emesonargs=(

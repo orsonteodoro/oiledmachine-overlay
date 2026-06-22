@@ -27,6 +27,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/glib-2.89.9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/wayland-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"net-print/cups-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"gnome-base/librsvg-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/harfbuzz-9999"		# Bumped live/*DEPENDS to latest precaution for non-vulnerable
 	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libpng-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
@@ -74,7 +75,7 @@ COMMON_DEPEND="
 	cloudproviders? ( >=net-libs/libcloudproviders-0.3.1:= )
 	colord? ( >=x11-misc/colord-0.1.9:= )
 	cups? ( >=net-print/cups-9999:= )
-	examples? ( gnome-base/librsvg:= )
+	examples? ( >=gnome-base/librsvg-9999:= )
 	elibc_glibc? (
 		>=sys-libs/glibc-2.43:=
 	)
@@ -89,7 +90,7 @@ COMMON_DEPEND="
 			>=media-libs/gst-plugins-base-1.24.0:=[opengl]
 		)
 	)
-	introspection? ( >=dev-libs/gobject-introspection-1.84:= )
+	introspection? ( >=dev-libs/gobject-introspection-1.86.0:= )
 	vulkan? (
 		>=media-libs/vulkan-loader-1.3:=[wayland?,X?]
 		>=media-libs/mesa-23.0.4:=[vulkan]

@@ -24,9 +24,11 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libjxl-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libspng-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libwebp-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"sys-apps/file-9999"
 	"x11-libs/cairo-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"x11-libs/libdrm-9999"			# Bumped live to latest non-vulnerable
-	"x11-libs/pixman-9999"			# Bumped live to latest non-vulnerable
+	"x11-libs/libdrm-9999"
+	"x11-libs/pixman-9999"
+	"x11-libs/pango-9999"
 )
 
 inherit chkl cflags-hardened cmake libcxx-slot libstdcxx-slot
@@ -52,7 +54,7 @@ RDEPEND="
 	>=media-libs/libjxl-9999:=[${LIBSTDCXX_USEDEP_LTS}]
 	>=media-libs/libspng-0.7.4:=
 	>=media-libs/libwebp-9999:=
-	>=sys-apps/file-5.47:=
+	>=sys-apps/file-5.48:=
 	>=x11-libs/cairo-9999:=
 	>=x11-libs/pixman-0.42.2:=
 "

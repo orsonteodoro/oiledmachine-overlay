@@ -43,7 +43,18 @@ GST_ORG_MODULE="gst-plugins-base"
 #VULNERABILITIES_FIXED=(
 #)
 
-inherit cflags-hardened flag-o-matic gstreamer-meson vf
+CHKL_TIMESTAMPS=(
+	"dev-libs/wayland-9999"
+	"media-libs/libpng-9999"
+	"media-libs/libjpeg-turbo-9999"
+	"media-libs/libogg-9999"
+	"media-libs/libtheora-9999"
+	"media-libs/libvorbis-9999"
+	"media-libs/tremor-9999"
+	"x11-libs/libdrm-9999"
+)
+
+inherit cflags-hardened chkl flag-o-matic gstreamer-meson vf
 
 KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~m68k ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86
@@ -100,26 +111,24 @@ REQUIRED_USE="
 # USE=egl (platform independent header used only, thus no MULTILIB_USEDEP);
 # provides dmabuf based upload/download/eglimage options
 GL_DEPS="
-	>=media-libs/graphene-1.4.0[${MULTILIB_USEDEP}]
-	>=media-libs/libpng-1.0:0[${MULTILIB_USEDEP}]
-	media-libs/libpng:=
-	media-libs/libjpeg-turbo:0[${MULTILIB_USEDEP}]
-	media-libs/libjpeg-turbo:=
+	>=media-libs/graphene-1.4.0:=[${MULTILIB_USEDEP}]
+	>=media-libs/libpng-1.6.57:=[${MULTILIB_USEDEP}]
+	>=media-libs/libjpeg-turbo-9999:=[${MULTILIB_USEDEP}]
 	egl? (
-		>=x11-libs/libdrm-2.4.98
+		>=x11-libs/libdrm-2.4.132:=
 	)
 	gbm? (
-		>=dev-libs/libgudev-147[${MULTILIB_USEDEP}]
-		>=x11-libs/libdrm-2.4.98[${MULTILIB_USEDEP}]
+		>=dev-libs/libgudev-147:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libdrm-2.4.132:=[${MULTILIB_USEDEP}]
 	)
 	wayland? (
-		>=dev-libs/wayland-1.11[${MULTILIB_USEDEP}]
-		>=dev-libs/wayland-protocols-1.15
+		>=dev-libs/wayland-9999:=[${MULTILIB_USEDEP}]
+		>=dev-libs/wayland-protocols-1.15:=
 	)
 
-	>=media-libs/mesa-22.3[${MULTILIB_USEDEP},egl(+)?,gbm(+)?,wayland?]
+	>=media-libs/mesa-22.3:=[${MULTILIB_USEDEP},egl(+)?,gbm(+)?,wayland?]
 	gles2? (
-		>=media-libs/mesa-22.3[${MULTILIB_USEDEP},gles2(+),opengl]
+		>=media-libs/mesa-22.3:=[${MULTILIB_USEDEP},gles2(+),opengl]
 	)
 	media-libs/mesa:=
 "
@@ -128,54 +137,53 @@ GL_DEPS="
 # >=media-libs/graphene-1.4.0[${MULTILIB_USEDEP}]
 
 RDEPEND="
-	>=dev-libs/glib-2.64.0:2[${MULTILIB_USEDEP}]
-	dev-libs/glib:=
-	app-text/iso-codes
-	virtual/zlib[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-2.64.0:=[${MULTILIB_USEDEP}]
+	app-text/iso-codes:=
+	>=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}]
 	alsa? (
-		>=media-libs/alsa-lib-0.9.1[${MULTILIB_USEDEP}]
+		>=media-libs/alsa-lib-1.2.16.1:=[${MULTILIB_USEDEP}]
 	)
 	gles2? (
 		${GL_DEPS}
 	)
 	introspection? (
-		dev-libs/gobject-introspection:=
+		>=dev-libs/gobject-introspection-1.86.0:=
 	)
 	ivorbis? (
-		>=media-libs/tremor-0_pre20180316[${MULTILIB_USEDEP}]
+		>=media-libs/tremor-9999:=[${MULTILIB_USEDEP}]
 	)
 	nls? (
-		sys-devel/gettext[${MULTILIB_USEDEP}]
+		sys-devel/gettext:=[${MULTILIB_USEDEP}]
 	)
 	ogg? (
-		>=media-libs/libogg-1.0[${MULTILIB_USEDEP}]
+		>=media-libs/libogg-9999:=[${MULTILIB_USEDEP}]
 	)
 	opengl? (
 		${GL_DEPS}
 	)
 	orc? (
-		>=dev-lang/orc-0.4.24[${MULTILIB_USEDEP}]
+		>=dev-lang/orc-0.4.42:=[${MULTILIB_USEDEP}]
 	)
 	pango? (
-		>=x11-libs/pango-1.22.0[${MULTILIB_USEDEP}]
+		>=x11-libs/pango-1.57.1:=[${MULTILIB_USEDEP}]
 	)
 	theora? (
-		>=media-libs/libtheora-1.1[${MULTILIB_USEDEP},encode]
+		>=media-libs/libtheora-9999:=[${MULTILIB_USEDEP},encode]
 	)
 	vorbis? (
-		>=media-libs/libvorbis-1.3.1[${MULTILIB_USEDEP}]
+		>=media-libs/libvorbis-9999:=[${MULTILIB_USEDEP}]
 	)
 	X? (
-		x11-libs/libX11[${MULTILIB_USEDEP}]
-		x11-libs/libXext[${MULTILIB_USEDEP}]
-		x11-libs/libXv[${MULTILIB_USEDEP}]
+		x11-libs/libX11:=[${MULTILIB_USEDEP}]
+		x11-libs/libXext:=[${MULTILIB_USEDEP}]
+		x11-libs/libXv:=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
 	${RDEPEND}
-	dev-util/glib-utils
+	dev-util/glib-utils:=
 	X? (
-		x11-base/xorg-proto
+		x11-base/xorg-proto:=
 	)
 "
 
@@ -195,6 +203,7 @@ einfo "Security vulnerabilities fixed:  ${MITIGATION_URI}"
 
 multilib_src_configure() {
 	cflags-hardened_append
+	chkl_check_many_timestamps
 	filter-flags -mno-sse -mno-sse2 -mno-sse4.1 #610340
 
 	# opus: split to media-plugins/gst-plugins-opus
