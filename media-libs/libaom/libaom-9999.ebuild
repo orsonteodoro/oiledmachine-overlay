@@ -85,6 +85,9 @@ if [[ "${PV}" == *"9999"* ]]; then
 	FALLBACK_COMMIT="48d85cee071eb0599c536d840a78fef426d0d49f"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://aomedia.googlesource.com/aom"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 	inherit git-r3
 else
 	KEYWORDS="~amd64 ~arm ~arm-linux ~arm64 ~arm64-linux ~mips ~x86 ~x86-linux ~x86-macos"
@@ -120,7 +123,7 @@ RESTRICT="
 	strip
 "
 SLOT="0/3" # current - age
-IUSE="
+IUSE+="
 ${_TRAINERS[@]}
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}

@@ -33,18 +33,28 @@ _TRAINERS="
 inherit aocc cflags-hardened check-compiler-switch flag-o-matic flag-o-matic-om llvm multilib-minimal
 inherit python-single-r1 toolchain-funcs uopts
 
-KEYWORDS="
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="572f663c893499db9e7f69bb2fec821eae6b1c40"
+	EGIT_BRANCH="main"
+	EGIT_REPO_URI="https://chromium.googlesource.com/webm/libvpx"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	KEYWORDS="
 ~amd64 ~amd64-linux ~amd64-macos ~arm64 ~arm ~arm-linux ~arm64 ~loong ~mips
 ~ppc64 ~ppc64-linux ~sparc ~x86 ~x86-linux ~x86-macos
-"
+	"
+	SRC_URI="
+https://github.com/webmproject/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
+	test? (
+https://dev.gentoo.org/~juippis/distfiles/${P}-testdata.tar.xz
+	)
+	"
+fi
 S="${WORKDIR}/${P}"
 S_ORIG="${WORKDIR}/${P}"
-SRC_URI="
-	https://github.com/webmproject/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
-	test? (
-		https://dev.gentoo.org/~juippis/distfiles/${P}-testdata.tar.xz
-	)
-"
 
 # proj/chromium-tools.git/generate-libvpx-test-tarball.sh
 
@@ -52,7 +62,7 @@ DESCRIPTION="WebM VP8 and VP9 Codec SDK"
 HOMEPAGE="https://www.webmproject.org"
 LICENSE="BSD libvpx-PATENTS"
 SLOT="0/12"
-IUSE="
+IUSE+="
 ${_TRAINERS[@]}
 ${CPU_FLAGS_PPC[@]}
 chromium doc +examples +highbitdepth pgo postproc static-libs svc test +threads
@@ -426,6 +436,18 @@ pkg_setup() {
 		llvm_pkg_setup
 	fi
 	uopts_setup
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
 }
 
 src_prepare() {
