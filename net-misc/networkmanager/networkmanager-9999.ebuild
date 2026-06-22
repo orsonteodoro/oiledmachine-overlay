@@ -15,7 +15,7 @@ inherit cflags-hardened linux-info meson-multilib fcaps flag-o-matic python-any-
 	readme.gentoo-r1 systemd toolchain-funcs udev vala virtualx
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="87a770046073581bc65fddf6e39cf5678cbfd57c"
+	FALLBACK_COMMIT="1a206b55ebf6117078e2d247830357229dbf2fd0"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/NetworkManager/NetworkManager.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -43,6 +43,7 @@ audit bluetooth clat +concheck connection-sharing debug dhclient dhcpcd doc elog
 gnutls +introspection iptables iwd libedit +modemmanager nbft +nss
 nftables ofono ovs policykit +ppp psl resolvconf selinux syslog systemd teamd
 test +tools vala +wext +wifi
+ebuild_revision_1
 "
 RESTRICT="!test? ( test )"
 
