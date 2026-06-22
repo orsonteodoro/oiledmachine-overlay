@@ -11,7 +11,7 @@ main() {
 		exit 1
 	fi
 
-	local d_src_root="/var/tmp/portage/${CATEGORY}/${PN}-${VER}/work/${PN}-${VER}"
+	local d_src_root="/var/tmp/portage/${CATEGORY}/${PN}-${VER}/work/${PN}-${PN}-${VER}"
 	local d_dest="${OVERLAY_PATH}/${CATEGORY}/${PN}/files/${VER}"
 	pushd "${d_src_root}"
 		for x in $(find . -name "Cargo.*") ; do

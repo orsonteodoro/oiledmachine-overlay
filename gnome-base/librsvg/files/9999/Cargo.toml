@@ -7,7 +7,7 @@ render SVG icons. Outside of GNOME, other desktop environments use it
 for similar purposes. Wikimedia uses it for Wikipedia's SVG diagrams.
 """
 license = "LGPL-2.1-or-later"
-homepage = "https://wiki.gnome.org/Projects/LibRsvg"
+homepage = "https://gnome.pages.gitlab.gnome.org/librsvg/devel-docs/"
 repository = "https://gitlab.gnome.org/GNOME/librsvg/"
 categories = ["graphics", "multimedia::images", "rendering::data-formats"]
 keywords = ["svg", "cairo"]
@@ -21,6 +21,7 @@ overflow-checks = true
 [workspace]
 members = [
     "ci",
+    "fuzz",
     "gdk-pixbuf-loader",
     "librsvg-c",
     "librsvg-rebind/librsvg-rebind",
@@ -30,7 +31,7 @@ members = [
     "rsvg-bench",
 ]
 default-members = ["rsvg", "rsvg_convert"]
-exclude = ["afl-fuzz", "librsvg-rebind/gir", "fuzz"]
+exclude = ["afl-fuzz", "librsvg-rebind/gir"]
 resolver = "3"
 
 [workspace.dependencies]
