@@ -31,6 +31,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-3.4.9999"
 	"dev-libs/openssl-3.3.9999"
 	"dev-libs/openssl-3.0.9999"
+	"net-dns/c-ares-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 )
 
 inherit libstdcxx-compat
@@ -151,7 +152,7 @@ RDEPEND="
 		${SSL_DEPEND}
 		>=app-arch/brotli-9999:=[${MULTILIB_USEDEP}]
 		>=dev-libs/libev-4.11:=[${MULTILIB_USEDEP}]
-		>=net-dns/c-ares-1.7.5:=[${MULTILIB_USEDEP}]
+		>=net-dns/c-ares-9999:=[${MULTILIB_USEDEP}]
 		>=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}]
 	)
 	systemd? (
