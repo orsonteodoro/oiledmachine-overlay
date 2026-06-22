@@ -43,13 +43,21 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}"
 )
 
+
+
 inherit cflags-hardened check-compiler-switch chkl cmake dep-prepare flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal python-r1 ruby-single toolchain-funcs
 
-KEYWORDS="
+if [[ "${PV}" == "9999" ]] ; then
+	FALLBACK_COMMIT="c3c47b7ee1861cc201a90c4a8d5b4ecfde8129dc"
+	EGIT_BRANCH="master"
+	EGIT_REPO_URI="https://github.com/nghttp2/nghttp2.git"
+	inherit git-r3
+else
+	KEYWORDS="
 ~amd64 ~arm64 ~x86
-"
-S="${WORKDIR}/${P}"
-SRC_URI="
+	"
+	S="${WORKDIR}/${P}"
+	SRC_URI="
 https://github.com/nghttp2/nghttp2/releases/download/v${PV}/${P}.tar.xz
 https://github.com/ngtcp2/urlparse/archive/${URLPARSE_COMMIT}.tar.gz
 	-> urlparse-${URLPARSE_COMMIT:0:7}.tar.gz
@@ -69,7 +77,9 @@ https://github.com/tatsuhiro-t/neverbleed/archive/${NEVERBLEED_COMMIT}.tar.gz
 https://github.com/ngtcp2/munit/archive/${MUNIT_COMMIT_1}.tar.gz
 	-> munit-${MUNIT_COMMIT_1:0:7}.tar.gz
 	)
-"
+	"
+fi
+
 
 DESCRIPTION="HTTP/2 C Library"
 HOMEPAGE="https://nghttp2.org/"
@@ -118,7 +128,7 @@ REQUIRED_USE="
 "
 SSL_DEPEND="
 	>=dev-libs/libevent-2.0.8:=[${MULTILIB_USEDEP},ssl]
-	>=net-libs/ngtcp2-1.17.0:=[${MULTILIB_USEDEP},openssl]
+	>=net-libs/ngtcp2-1.23.0:=[${MULTILIB_USEDEP},openssl]
 	>=dev-libs/openssl-1.1.1w:=[${MULTILIB_USEDEP},-bindist(-)]
 "
 RDEPEND="
@@ -126,29 +136,29 @@ RDEPEND="
 		>=dev-libs/libbpf-1.7.0:=
 	)
 	hpack-tools? (
-		>=dev-libs/jansson-2.5:=
+		>=dev-libs/jansson-2.14.1:=
 	)
 	http3? (
-		>=net-libs/nghttp3-1.11.0:=[${MULTILIB_USEDEP}]
+		>=net-libs/nghttp3-1.16.0:=[${MULTILIB_USEDEP}]
 	)
 	jemalloc? (
 		dev-libs/jemalloc:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	)
 	quic? (
-		>=net-libs/ngtcp2-1.15.0:=[${MULTILIB_USEDEP}]
+		>=net-libs/ngtcp2-1.23.0:=[${MULTILIB_USEDEP}]
 	)
 	utils? (
 		${SSL_DEPEND}
 		>=app-arch/brotli-9999:=[${MULTILIB_USEDEP}]
 		>=dev-libs/libev-4.11:=[${MULTILIB_USEDEP}]
 		>=net-dns/c-ares-1.7.5:=[${MULTILIB_USEDEP}]
-		>=virtual/zlib-1.2.3:=[${MULTILIB_USEDEP}]
+		>=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}]
 	)
 	systemd? (
-		>=sys-apps/systemd-209:=
+		>=sys-apps/systemd-9999:=
 	)
 	xml? (
-		>=dev-libs/libxml2-2.15.3:=[${MULTILIB_USEDEP}]
+		>=dev-libs/libxml2-9999:=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
@@ -170,7 +180,6 @@ BDEPEND="
 
 pkg_setup() {
 	check-compiler-switch_start
-	ruby-single_setup
 	python_setup
 	if tc-is-clang && use http3 && ! use bpf ; then
 ewarn "bpf is default ON upstream if clang ON, http3 ON"
@@ -180,18 +189,26 @@ ewarn "bpf is default ON upstream if clang ON, http3 ON"
 }
 
 src_unpack() {
-	unpack ${A}
-	dep_prepare_mv "${WORKDIR}/urlparse-${URLPARSE_COMMIT}" "${S}/third-party/urlparse"
-	dep_prepare_mv "${WORKDIR}/http-parser-${HTTP_PARSER_COMMIT}" "${S}/third-party/urlparse/http-parser"
-	dep_prepare_mv "${WORKDIR}/munit-${MUNIT_COMMIT_2}" "${S}/third-party/urlparse/munit"
-	if use mruby ; then
-		dep_prepare_mv "${WORKDIR}/mruby-${MRUBY_COMMIT}" "${S}/third-party/mruby"
-	fi
-	if use neverbleed ; then
-		dep_prepare_mv "${WORKDIR}/neverbleed-${NEVERBLEED_COMMIT}" "${S}/third-party/neverbleed"
-	fi
-	if use test ; then
-		dep_prepare_mv "${WORKDIR}/munit-${MUNIT_COMMIT_1}" "${S}/tests/munit"
+	if [[ "${PV}" == "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+		dep_prepare_mv "${WORKDIR}/urlparse-${URLPARSE_COMMIT}" "${S}/third-party/urlparse"
+		dep_prepare_mv "${WORKDIR}/http-parser-${HTTP_PARSER_COMMIT}" "${S}/third-party/urlparse/http-parser"
+		dep_prepare_mv "${WORKDIR}/munit-${MUNIT_COMMIT_2}" "${S}/third-party/urlparse/munit"
+		if use mruby ; then
+			dep_prepare_mv "${WORKDIR}/mruby-${MRUBY_COMMIT}" "${S}/third-party/mruby"
+		fi
+		if use neverbleed ; then
+			dep_prepare_mv "${WORKDIR}/neverbleed-${NEVERBLEED_COMMIT}" "${S}/third-party/neverbleed"
+		fi
+		if use test ; then
+			dep_prepare_mv "${WORKDIR}/munit-${MUNIT_COMMIT_1}" "${S}/tests/munit"
+		fi
 	fi
 }
 
