@@ -4,6 +4,7 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE CRSH DOS HO ML SO"
 
 inherit cflags-hardened meson-multilib
 
