@@ -13,12 +13,11 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
 DESCRIPTION="Audio/Video Transport Protocol (AVTP) plugin for GStreamer"
 IUSE="
-ebuild_revision_22
+ebuild_revision_23
 "
 RDEPEND="
-	>=net-libs/libavtp-0.2.0[${MULTILIB_USEDEP}]
-	~media-libs/gst-plugins-base-${PV}:1.0[${MULTILIB_USEDEP}]
-	media-libs/gst-plugins-base:=
+	>=net-libs/libavtp-0.2.0:=[${MULTILIB_USEDEP}]
+	~media-libs/gst-plugins-base-${PV}:=[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
