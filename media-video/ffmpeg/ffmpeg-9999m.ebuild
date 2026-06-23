@@ -471,6 +471,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/openh264-9999"
 	"media-libs/opus-9999"
 	"media-libs/speex-9999"
+	"media-libs/svt-av1-9999"
 	"media-libs/vo-amrwbenc-9999"
 	"media-libs/vvenc-9999"
 	"media-libs/x264-9999"
@@ -478,11 +479,12 @@ CHKL_TIMESTAMPS=(
 	"media-video/rav1e-9999"
 	"net-libs/librist-9999"
 	"net-libs/libssh-9999"
+	"net-libs/srt-9999"
 	"x11-libs/cairo-9999"
 )
 
 inherit cflags-hardened check-compiler-switch chkl cuda flag-o-matic flag-o-matic-om llvm multilib
-inherit multilib-minimal python-single-r1 toolchain-funcs udev uopts
+inherit multilib-minimal python-single-r1 secure-version toolchain-funcs udev uopts
 
 if [[ "${MY_PV#9999}" == "${MY_PV}" ]] ; then
 	KEYWORDS="
@@ -902,7 +904,7 @@ RDEPEND+="
 		>=app-arch/bzip2-9999:=[${MULTILIB_USEDEP}]
 	)
 	cairo? (
-		>=x11-libs/cairo-9999:=[${MULTILIB_USEDEP}]
+		>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP}]
 	)
 	cdio? (
 		>=dev-libs/libcdio-paranoia-0.90_p1-r1:=[${MULTILIB_USEDEP}]
@@ -1106,7 +1108,7 @@ RDEPEND+="
 		media-libs/libglvnd:=[X,${MULTILIB_USEDEP}]
 	)
 	openssl? (
-		>=dev-libs/openssl-3.0.0_beta2:=[${MULTILIB_USEDEP}]
+		${OPENSSL_RDEPEND}
 	)
 	openvino? (
 		>=sci-ml/openvino-2020.1:=[${PYTHON_SINGLE_USEDEP}]
@@ -1146,20 +1148,20 @@ RDEPEND+="
 		media-sound/sndio:=[${MULTILIB_USEDEP}]
 	)
 	speex? (
-		>=media-libs/speex-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/speex-${SPEEX_PV}:=[${MULTILIB_USEDEP}]
 	)
 	srt? (
-		>=net-libs/srt-1.3.0:=[${MULTILIB_USEDEP}]
+		>=net-libs/srt-${SRT_PV}:=[${MULTILIB_USEDEP}]
 	)
 	ssh? (
 		>=net-libs/libssh-9999:=[${MULTILIB_USEDEP},sftp]
 	)
 	svg? (
-		>=gnome-base/librsvg-9999:=[${MULTILIB_USEDEP}]
-		>=x11-libs/cairo-9999:=[${MULTILIB_USEDEP}]
+		>=gnome-base/librsvg-${LIBRSVG_PV}:=[${MULTILIB_USEDEP}]
+		>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP}]
 	)
 	svt-av1? (
-		>=media-libs/svt-av1-0.9.0:=[${MULTILIB_USEDEP}]
+		>=media-libs/svt-av1-${SVT_AV1_PV}:=[${MULTILIB_USEDEP}]
 	)
 	tensorflow? (
 		>=sci-ml/tensorflow-2:=[${PYTHON_SINGLE_USEDEP}]
@@ -1173,8 +1175,8 @@ RDEPEND+="
 		)
 	)
 	truetype? (
-		>=media-libs/freetype-9999:=[${MULTILIB_USEDEP}]
-		>=media-libs/harfbuzz-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/freetype-${FREETYPE_PV}:=[${MULTILIB_USEDEP}]
+		>=media-libs/harfbuzz-${HARFBUZZ_PV}:=[${MULTILIB_USEDEP}]
 	)
 	vaapi? (
 		>=media-libs/libva-9999:=[${MULTILIB_USEDEP},drm(+),X?]

@@ -149,4 +149,43 @@ ZBAR_PV=${ZBAR_PV:-"0.23.93"}
 ZXING_CPP_PV=${ZXING_CPP_PV:-"9999"}
 ZVBI_PV=${ZVBI_PV:-"0.2.44"}
 
+if [[ -n "${_MULTILIB_BUILD_ECLASS}" ]] ; then
+	OPENSSL_RDEPEND="
+		dev-libs/openssl:=[${MULTILIB_USEDEP}]
+		|| (
+			~dev-libs/openssl-4.0.9999[${MULTILIB_USEDEP}]
+			~dev-libs/openssl-3.6.9999[${MULTILIB_USEDEP}]
+			~dev-libs/openssl-3.5.9999[${MULTILIB_USEDEP}]
+			~dev-libs/openssl-3.4.9999[${MULTILIB_USEDEP}]
+			~dev-libs/openssl-3.3.9999[${MULTILIB_USEDEP}]
+			~dev-libs/openssl-3.0.9999[${MULTILIB_USEDEP}]
+			~dev-libs/openssl-${OPENSSL_PV_4_0_PV}[${MULTILIB_USEDEP}]
+			~dev-libs/openssl-${OPENSSL_PV_3_6_PV}[${MULTILIB_USEDEP}]
+			~dev-libs/openssl-${OPENSSL_PV_3_5_PV}[${MULTILIB_USEDEP}]
+			~dev-libs/openssl-${OPENSSL_PV_3_4_PV}[${MULTILIB_USEDEP}]
+			~dev-libs/openssl-${OPENSSL_PV_3_3_PV}[${MULTILIB_USEDEP}]
+			~dev-libs/openssl-${OPENSSL_PV_3_0_PV}[${MULTILIB_USEDEP}]
+		)
+	"
+else
+	OPENSSL_RDEPEND="
+		dev-libs/openssl:=
+		|| (
+			~dev-libs/openssl-4.0.9999
+			~dev-libs/openssl-3.6.9999
+			~dev-libs/openssl-3.5.9999
+			~dev-libs/openssl-3.4.9999
+			~dev-libs/openssl-3.3.9999
+			~dev-libs/openssl-3.0.9999
+			~dev-libs/openssl-${OPENSSL_PV_4_0_PV}
+			~dev-libs/openssl-${OPENSSL_PV_3_6_PV}
+			~dev-libs/openssl-${OPENSSL_PV_3_5_PV}
+			~dev-libs/openssl-${OPENSSL_PV_3_4_PV}
+			~dev-libs/openssl-${OPENSSL_PV_3_3_PV}
+			~dev-libs/openssl-${OPENSSL_PV_3_0_PV}
+		)
+	"
+fi
+
+
 fi
