@@ -6,14 +6,26 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-good"
 
-inherit cflags-hardened gstreamer-meson
+CHKL_TIMESTAMPS=(
+	"dev-libs/libxml2-9999"
+	"dev-libs/libgcrypt-9999"
+	"dev-libs/nettle-9999"
+	"dev-libs/openssl-4.0.9999"
+	"dev-libs/openssl-3.6.9999"
+	"dev-libs/openssl-3.5.9999"
+	"dev-libs/openssl-3.4.9999"
+	"dev-libs/openssl-3.3.9999"
+	"dev-libs/openssl-3.0.9999"
+)
+
+inherit cflags-hardened chkl secure-version gstreamer-meson
 
 KEYWORDS="~amd64 ~arm64"
 
 DESCRIPTION="Adaptive demuxer plugins for GStreamer"
 IUSE="
 libgcrypt nettle openssl
-ebuild_revision_23
+ebuild_revision_24
 "
 REQUIRED_USE="
 	|| (
@@ -23,15 +35,15 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	>=dev-libs/libxml2-2.8:=[${MULTILIB_USEDEP}]
+	>=dev-libs/libxml2-${LIBXML2_PV}:=[${MULTILIB_USEDEP}]
 	libgcrypt? (
-		dev-libs/libgcrypt:=[${MULTILIB_USEDEP}]
+		>=dev-libs/libgcrypt-${LIBGCRYPT_PV}:=[${MULTILIB_USEDEP}]
 	)
 	nettle? (
-		>=dev-libs/nettle-3.0:=[${MULTILIB_USEDEP}]
+		>=dev-libs/nettle-${NETTLE_PV}:=[${MULTILIB_USEDEP}]
 	)
 	openssl? (
-		dev-libs/openssl:=[${MULTILIB_USEDEP}]
+		${OPENSSL_RDEPEND}
 	)
 "
 DEPEND="
@@ -39,14 +51,11 @@ DEPEND="
 "
 RDEPEND="
 	${RDEPEND}
-	net-libs/libsoup:=
-	|| (
-		net-libs/libsoup:3.0
-		net-libs/libsoup:2.4
-	)
+	>=net-libs/libsoup-${LIBSOUP_PV}:=
 "
 
 multilib_src_configure() {
+	chkl_check_many_timestamps
 	cflags-hardened_append
 	local emesonargs=(
 		-Dhls-crypto="nettle"
