@@ -9,27 +9,25 @@ CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-good"
 GST_PLUGINS_ENABLED="v4l2"
 
-inherit cflags-hardened gstreamer-meson
+inherit cflags-hardened secure-version gstreamer-meson
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~m68k ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 
 DESCRIPTION="V4L2 source/sink plugin for GStreamer"
 IUSE="
 udev
-ebuild_revision_22
+ebuild_revision_23
 "
 RDEPEND="
-	~media-libs/gst-plugins-base-${PV}:${SLOT}[${MULTILIB_USEDEP}]
-	media-libs/gst-plugins-base:=
-	media-libs/libv4l[${MULTILIB_USEDEP}]
+	~media-libs/gst-plugins-base-${PV}:=[${MULTILIB_USEDEP}]
+	>=media-libs/libv4l-${LIBV4L_PV}:=[${MULTILIB_USEDEP}]
 	udev? (
-		>=dev-libs/libgudev-147[${MULTILIB_USEDEP}]
-		dev-libs/libgudev:=
+		>=dev-libs/libgudev-147:=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
 	${RDEPEND}
-	virtual/os-headers
+	virtual/os-headers:*
 "
 
 multilib_src_configure() {
