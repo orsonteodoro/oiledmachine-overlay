@@ -23,18 +23,15 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	>=dev-libs/libxml2-2.8[${MULTILIB_USEDEP}]
+	>=dev-libs/libxml2-2.8:=[${MULTILIB_USEDEP}]
 	libgcrypt? (
-		dev-libs/libgcrypt[${MULTILIB_USEDEP}]
-		dev-libs/libgcrypt:=
+		dev-libs/libgcrypt:=[${MULTILIB_USEDEP}]
 	)
 	nettle? (
-		>=dev-libs/nettle-3.0:0[${MULTILIB_USEDEP}]
-		dev-libs/nettle:=
+		>=dev-libs/nettle-3.0:=[${MULTILIB_USEDEP}]
 	)
 	openssl? (
-		dev-libs/openssl[${MULTILIB_USEDEP}]
-		dev-libs/openssl:=
+		dev-libs/openssl:=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
@@ -42,11 +39,11 @@ DEPEND="
 "
 RDEPEND="
 	${RDEPEND}
+	net-libs/libsoup:=
 	|| (
 		net-libs/libsoup:3.0
 		net-libs/libsoup:2.4
 	)
-	net-libs/libsoup:=
 "
 
 multilib_src_configure() {

@@ -217,6 +217,7 @@ CHKL_TIMESTAMPS=(
 	"app-accessibility/at-spi2-core-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"app-accessibility/speech-dispatcher-9999"	# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/expat-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/glib-2.89.9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/icu-79.0.9999"
 	"dev-libs/libevent-9999"
 	"dev-libs/libffi-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
@@ -594,7 +595,7 @@ CDEPEND="
 	${FF_ONLY_DEPEND}
 	${PATENT_CDEPENDS}
 	>=app-accessibility/at-spi2-core-2.58.6:=[${MULTILIB_USEDEP}]
-	>=dev-libs/glib-2.42:=[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-2.89.9999:=[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.39.0:=[${MULTILIB_USEDEP}]
 	>=dev-libs/nss-3.125:=[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.18.1:=[${MULTILIB_USEDEP}]
@@ -688,7 +689,7 @@ CDEPEND="
 		>=x11-libs/gtk+-${GTK3_PV}:3=[${MULTILIB_USEDEP},X]
 		>=x11-libs/libXrandr-1.4.0:=[${MULTILIB_USEDEP}]
 		virtual/opengl:*[${MULTILIB_USEDEP}]
-		x11-libs/cairo:=[${MULTILIB_USEDEP},X]
+		>=x11-libs/cairo-9999:=[${MULTILIB_USEDEP},X]
 		x11-libs/libX11:=[${MULTILIB_USEDEP}]
 		x11-libs/libXcomposite:=[${MULTILIB_USEDEP}]
 		x11-libs/libXdamage:=[${MULTILIB_USEDEP}]

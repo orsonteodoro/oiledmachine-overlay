@@ -17,7 +17,7 @@ INTROSPECTION_BUILD_DIR="${WORKDIR}/${INTROSPECTION_P}-build"
 inherit dot-a eapi9-ver gnome.org gnome2-utils linux-info meson-multilib multilib python-any-r1 toolchain-funcs xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="bd3322219e6ed895d6f81e5a3c575e41a34875a5" # Tue, 16 Jun 2026 17:24:11 -0400
+	FALLBACK_COMMIT="bd3322219e6ed895d6f81e5a3c575e41a34875a5" # Landed on Jun 17, 2026 1:40:48 PM PDT
 else
 	SRC_URI="
 		${SRC_URI}

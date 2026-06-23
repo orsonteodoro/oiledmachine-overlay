@@ -33,7 +33,7 @@ MY_PV="${PV}"
 
 RUSTFLAGS_HARDENED_USE_CASES="multithreaded-confidential network p2p plugin secure-critical sensitive-data server untrusted-data"
 EXPECTED_BUILD_FILES_FINGERPRINT="disable"
-GOBJECT_INTROSPECTION_PV="1.74.0"
+GOBJECT_INTROSPECTION_PV="1.86.0"
 GST_PV="${MY_PV}"
 LLVM_COMPAT=( 22 ) # For clang-sys ; slot must be updated when rust slot is changed
 LLVM_MAX_SLOT="22"
@@ -115,6 +115,30 @@ MODULES=(
 PATENT_STATUS_IUSE=(
 	"patent_status_nonfree"
 )
+
+CHKL_TIMESTAMPS=(
+	"dev-libs/glib-2.89.9999"
+	"dev-libs/libsodium-9999"
+	"dev-libs/openssl-4.0.9999"
+	"dev-libs/openssl-3.6.9999"
+	"dev-libs/openssl-3.5.9999"
+	"dev-libs/openssl-3.4.9999"
+	"dev-libs/openssl-3.3.9999"
+	"dev-libs/openssl-3.0.9999"
+	"gui-libs/gtk-4.23.9999"
+	"media-libs/dav1d-9999"
+	"media-libs/fontconfig-9999"
+	"media-libs/freetype-9999"
+	"media-libs/harfbuzz-9999"
+	"media-libs/libwebp-9999"
+	"media-libs/vvdec-9999"
+	"media-sound/csound-9999"
+	"x11-libs/cairo-9999"
+	"x11-libs/pango-9999"
+)
+
+inherit chkl rustflags-hardened flag-o-matic lcnr llvm meson multilib-minimal
+inherit python-any-r1 rust sandbox-changes toolchain-funcs
 
 if [[ "${MY_PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -1286,9 +1310,6 @@ declare -A GIT_CRATES=(
 	fi
 fi
 
-inherit rustflags-hardened flag-o-matic lcnr llvm meson multilib-minimal
-inherit python-any-r1 rust sandbox-changes
-
 DESCRIPTION="Various GStreamer plugins written in Rust"
 HOMEPAGE="https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs"
 CARGO_THIRD_PARTY_PACKAGES="
@@ -1311,7 +1332,7 @@ IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${MODULES[@]}
 ${PATENT_STATUS_IUSE[@]}
-aom doc nvcodec qsv openh264 rav1e system-libsodium vaapi vpx vulkan x264 x265
+aom clang doc gcc nvcodec qsv openh264 rav1e system-libsodium vaapi vpx vulkan x264 x265
 webrtc-aws webrtc-livekit
 ebuild_revision_54
 "
@@ -1529,6 +1550,10 @@ REQUIRED_USE+="
 	^^ (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
+	^^ (
+		clang
+		gcc
+	)
 	webrtc? (
 		${WEBRTC_AV1_ENCODERS_REQUIRED_USE}
 		${WEBRTC_H264_ENCODERS_REQUIRED_USE}
@@ -1560,14 +1585,13 @@ REQUIRED_USE+="
 # openssl requirement relaxed CI uses 3.0.8
 #	>=dev-libs/libgit2-1.5
 CARGO_BINDINGS_DEPENDS_GLIB="
-	>=dev-libs/glib-2.62:2[${MULTILIB_USEDEP}]
-	dev-libs/glib:=
-	>=dev-libs/gobject-introspection-${GOBJECT_INTROSPECTION_PV}
+	>=dev-libs/glib-2.89.9999:=[${MULTILIB_USEDEP}]
+	>=dev-libs/gobject-introspection-${GOBJECT_INTROSPECTION_PV}:=
 	elibc_glibc? (
-		>=sys-libs/glibc-2.36
+		>=sys-libs/glibc-2.43:=
 	)
 	elibc_musl? (
-		>=sys-libs/musl-1.1.24
+		>=sys-libs/musl-1.2.6:=
 	)
 "
 CARGO_BINDINGS_DEPENDS_GOBJECT_SYS="
@@ -1575,124 +1599,113 @@ CARGO_BINDINGS_DEPENDS_GOBJECT_SYS="
 "
 CARGO_BINDINGS_DEPENDS_CAIRO="
 	${CARGO_BINDINGS_DEPENDS_GOBJECT_SYS}
-	>=dev-libs/gobject-introspection-${GOBJECT_INTROSPECTION_PV}
-	>=x11-libs/cairo-1.14[${MULTILIB_USEDEP}]
+	>=dev-libs/gobject-introspection-${GOBJECT_INTROSPECTION_PV}:=
+	>=x11-libs/cairo-9999:=[${MULTILIB_USEDEP}]
 "
 CARGO_BINDINGS_DEPENDS_PANGO="
 	${CARGO_BINDINGS_DEPENDS_GOBJECT_SYS}
-	>=x11-libs/pango-1.40[${MULTILIB_USEDEP},introspection]
+	>=x11-libs/pango-1.57.1:=[${MULTILIB_USEDEP},introspection]
 "
 CARGO_BINDINGS_DEPENDS_GTK4="
 	${CARGO_BINDINGS_DEPENDS_CAIRO}
 	${CARGO_BINDINGS_DEPENDS_PANGO}
-	>=gui-libs/gtk-4.6:4[introspection,gstreamer]
+	>=gui-libs/gtk-4.23.9999:4=[introspection,gstreamer]
 	gui-libs/gtk:=
-	>=media-libs/graphene-1.10[introspection]
-	>=x11-libs/gdk-pixbuf-2.36.8[introspection]
+	>=media-libs/graphene-1.10:=[introspection]
+	>=x11-libs/gdk-pixbuf-2.36.8:=[introspection]
 "
 
 PATENT_STATUS_RDEPEND="
-	virtual/patent-status[patent_status_nonfree=]
+	virtual/patent-status:*[patent_status_nonfree=]
 "
 RDEPEND+="
 	${CARGO_BINDINGS_DEPENDS_GLIB}
 	${PATENT_STATUS_RDEPEND}
-	~media-plugins/gst-plugins-meta-${GST_PV}:1.0[${MULTILIB_USEDEP}]
-	media-plugins/gst-plugins-meta:=
+	~media-plugins/gst-plugins-meta-${GST_PV}:=[${MULTILIB_USEDEP}]
 	analytics? (
-		>=media-plugins/gst-plugins-analyticsoverlay-${GST_PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-analyticsoverlay:=
+		~media-plugins/gst-plugins-analyticsoverlay-${GST_PV}:=[${MULTILIB_USEDEP}]
 	)
 	aws? (
-		>=dev-libs/openssl-1.1[${MULTILIB_USEDEP}]
+		>=dev-libs/openssl-1.1:=[${MULTILIB_USEDEP}]
 	)
 	closedcaption? (
 		${CARGO_BINDINGS_DEPENDS_CAIRO}
 		${CARGO_BINDINGS_DEPENDS_PANGO}
 	)
 	csound? (
-		>=media-sound/csound-6.18.1[${MULTILIB_USEDEP}]
+		>=media-sound/csound-9999:=[${MULTILIB_USEDEP}]
 	)
 	dav1d? (
-		>=media-libs/dav1d-1.3[${MULTILIB_USEDEP}]
-		media-libs/dav1d:=
+		>=media-libs/dav1d-9999:=[${MULTILIB_USEDEP}]
+	)
+	elibc_glibc? (
+		>=sys-libs/glibc-2.43:=
+	)
+	elibc_musl? (
+		>=sys-libs/musl-1.2.6:=
 	)
 	gtk4? (
 		${CARGO_BINDINGS_DEPENDS_GTK4}
-		>=media-libs/gst-plugins-base-${GST_PV}:1.0[${MULTILIB_USEDEP},opengl]
-		media-libs/gst-plugins-base:=
+		~media-libs/gst-plugins-base-${GST_PV}:=[${MULTILIB_USEDEP},opengl]
 	)
 	onvif? (
 		${CARGO_BINDINGS_DEPENDS_CAIRO}
 		${CARGO_BINDINGS_DEPENDS_PANGO}
 	)
 	skia? (
-		media-libs/fontconfig[${MULTILIB_USEDEP}]
-		media-libs/freetype[${MULTILIB_USEDEP}]
-		media-libs/harfbuzz[${MULTILIB_USEDEP}]
+		>=media-libs/fontconfig-2.18.1:=[${MULTILIB_USEDEP}]
+		>=media-libs/freetype-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/harfbuzz-9999:=[${MULTILIB_USEDEP}]
 	)
 	system-libsodium? (
-		>=dev-libs/libsodium-1.0.18[${MULTILIB_USEDEP}]
+		>=dev-libs/libsodium-9999:=[${MULTILIB_USEDEP}]
 	)
 	videofx? (
 		${CARGO_BINDINGS_DEPENDS_CAIRO}
 	)
 	webp? (
-		>=media-libs/libwebp-1.2.4[${MULTILIB_USEDEP}]
+		>=media-libs/libwebp-9999:=[${MULTILIB_USEDEP}]
 	)
 	webrtc? (
-		~media-plugins/gst-plugins-opus-${GST_PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-opus:=
-		~media-plugins/gst-plugins-rtp-${GST_PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-rtp:=
+		~media-plugins/gst-plugins-opus-${GST_PV}:=[${MULTILIB_USEDEP}]
+		~media-plugins/gst-plugins-rtp-${GST_PV}:=[${MULTILIB_USEDEP}]
 		aom? (
-			~media-plugins/gst-plugins-aom-${GST_PV}:1.0[${MULTILIB_USEDEP}]
-			media-plugins/gst-plugins-aom:=
+			~media-plugins/gst-plugins-aom-${GST_PV}:=[${MULTILIB_USEDEP}]
 		)
 		nvcodec? (
-			~media-plugins/gst-plugins-bad-${GST_PV}:1.0[${MULTILIB_USEDEP},nvcodec]
-			media-plugins/gst-plugins-bad:=
+			~media-plugins/gst-plugins-bad-${GST_PV}:=[${MULTILIB_USEDEP},nvcodec]
 		)
 		openh264? (
-			~media-plugins/gst-plugins-openh264-${GST_PV}:1.0[${MULTILIB_USEDEP}]
-			media-plugins/gst-plugins-openh264:=
+			~media-plugins/gst-plugins-openh264-${GST_PV}:=[${MULTILIB_USEDEP}]
 		)
 		qsv? (
-			~media-plugins/gst-plugins-bad-${GST_PV}:1.0[${MULTILIB_USEDEP},qsv]
-			media-plugins/gst-plugins-bad:=
+			~media-plugins/gst-plugins-bad-${GST_PV}:=[${MULTILIB_USEDEP},qsv]
 		)
 		rav1e? (
 			${CARGO_BINDINGS_DEPENDS_CAIRO}
-			~media-plugins/gst-plugins-rav1e-${GST_PV}:1.0[${MULTILIB_USEDEP}]
-			media-plugins/gst-plugins-rav1e:=
+			~media-plugins/gst-plugins-rav1e-${GST_PV}:=[${MULTILIB_USEDEP}]
 		)
 		vaapi? (
-			>=media-plugins/gst-plugins-bad-${GST_PV}:1.0[${MULTILIB_USEDEP},vaapi]
-			media-plugins/gst-plugins-bad:=
+			~media-plugins/gst-plugins-bad-${GST_PV}:=[${MULTILIB_USEDEP},vaapi]
 		)
 		vpx? (
-			~media-plugins/gst-plugins-vpx-${GST_PV}:1.0[${MULTILIB_USEDEP}]
-			media-plugins/gst-plugins-vpx:=
+			~media-plugins/gst-plugins-vpx-${GST_PV}:=[${MULTILIB_USEDEP}]
 		)
 		vulkan? (
-			~media-plugins/gst-plugins-bad-${GST_PV}:1.0[${MULTILIB_USEDEP},vulkan,vulkan-video]
-			media-plugins/gst-plugins-bad:=
+			~media-plugins/gst-plugins-bad-${GST_PV}:=[${MULTILIB_USEDEP},vulkan,vulkan-video]
 		)
 		x264? (
-			~media-plugins/gst-plugins-x264-${GST_PV}:1.0[${MULTILIB_USEDEP}]
-			media-plugins/gst-plugins-x264:=
+			~media-plugins/gst-plugins-x264-${GST_PV}:=[${MULTILIB_USEDEP}]
 		)
 		x265? (
-			~media-plugins/gst-plugins-x265-${GST_PV}:1.0[${MULTILIB_USEDEP}]
-			media-plugins/gst-plugins-x265:=
+			~media-plugins/gst-plugins-x265-${GST_PV}:=[${MULTILIB_USEDEP}]
 		)
 	)
 	webrtchttp? (
-		~media-plugins/gst-plugins-webrtc-${GST_PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-webrtc:=
+		~media-plugins/gst-plugins-webrtc-${GST_PV}:=[${MULTILIB_USEDEP}]
 	)
 	vvdec? (
-		>=media-libs/vvdec-3.0[${MULTILIB_USEDEP}]
+		>=media-libs/vvdec-9999:=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND+="
@@ -1702,13 +1715,11 @@ DEPEND+="
 # Expanded here because the virtual system is broken for multilib.
 gen_llvm_bdepend() {
 	local s
-	for s in ${LLVM_COMPAT[@]} ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
 		echo "
 			llvm_slot_${s}? (
 				llvm-core/clang:${s}[${MULTILIB_USEDEP}]
-				llvm-core/clang:=
 				llvm-core/llvm:${s}[${MULTILIB_USEDEP}]
-				llvm-core/llvm:=
 			)
 		"
 	done
@@ -1720,10 +1731,6 @@ RUST1_BDEPEND="
 			dev-lang/rust-bin:1.95.0[${MULTILIB_USEDEP}]
 		)
 	)
-	|| (
-		dev-lang/rust:=
-		dev-lang/rust-bin:=
-	)
 "
 RUST_BDEPEND="
 	llvm_slot_22? (
@@ -1732,23 +1739,25 @@ RUST_BDEPEND="
 			dev-lang/rust:1.95.0[${MULTILIB_USEDEP}]
 		)
 	)
-	|| (
-		dev-lang/rust-bin:=
-		dev-lang/rust:=
-	)
 "
 BDEPEND+="
 	${RUST_BDEPEND}
+	llvm-core/llvm:=
 	$(gen_llvm_bdepend)
 	>=dev-build/meson-1.1
 	>=dev-util/cargo-c-0.9.21
 	>=dev-util/pkgconf-1.8.1[${MULTILIB_USEDEP},pkg-config(+)]
 	>=sys-devel/binutils-2.40
-	>=sys-devel/gcc-12.2.0
 	doc? (
 		$(python_gen_any_dep '
 			dev-python/hotdoc[${PYTHON_USEDEP}]
 		')
+	)
+	clang? (
+		llvm-core/clang:=
+	)
+	gcc? (
+		>=sys-devel/gcc-12.2.0:=
 	)
 "
 PATCHES=(
@@ -1891,6 +1900,14 @@ multilib_src_configure() {
 einfo "LLVM SLOT:  ${LLVM_MAX_SLOT}"
 	"${RUSTC}" --version || die
 
+	if tc-is-clang ; then
+		use clang || die "Enable the clang USE flag."
+	fi
+
+	if tc-is-gcc ; then
+		use gcc || die "Enable the gcc USE flag."
+	fi
+
 	export CSOUND_LIB_DIR="${ESYSROOT}/usr/$(get_libdir)"
 
 	local emesonargs=()
@@ -1911,6 +1928,7 @@ einfo "LLVM SLOT:  ${LLVM_MAX_SLOT}"
 einfo "emesonargs:  ${emesonargs[@]}"
 
 	rustflags-hardened_append
+	chkl_check_many_timestamps
 	meson_src_configure
 }
 

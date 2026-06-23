@@ -6,7 +6,16 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="plugin network untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 
-inherit cflags-hardened gstreamer-meson
+CHKL_TIMESTAMPS=(
+	"dev-libs/openssl-4.0.9999"
+	"dev-libs/openssl-3.6.9999"
+	"dev-libs/openssl-3.5.9999"
+	"dev-libs/openssl-3.4.9999"
+	"dev-libs/openssl-3.3.9999"
+	"dev-libs/openssl-3.0.9999"
+)
+
+inherit cflags-hardened chkl gstreamer-meson
 
 KEYWORDS="~amd64 ~arm64 ~x86"
 
@@ -24,14 +33,13 @@ REQUIRED_USE="
 "
 RDEPEND="
 	libgcrypt? (
-		dev-libs/libgcrypt[${MULTILIB_USEDEP}]
+		dev-libs/libgcrypt:=[${MULTILIB_USEDEP}]
 	)
 	nettle? (
-		>=dev-libs/nettle-3.0:0[${MULTILIB_USEDEP}]
-		dev-libs/nettle:=
+		>=dev-libs/nettle-3.0:=[${MULTILIB_USEDEP}]
 	)
 	openssl? (
-		dev-libs/openssl[${MULTILIB_USEDEP}]
+		dev-libs/openssl:=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
@@ -50,6 +58,7 @@ src_prepare() {
 
 multilib_src_configure() {
 	cflags-hardened_append
+	chkl_check_many_timestamps
 	local crypto_provider
 	if use libgcrypt ; then
 		crypto_provider="libcrypt"
