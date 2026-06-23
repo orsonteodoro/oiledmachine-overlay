@@ -7,20 +7,19 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 
-inherit cflags-hardened flag-o-matic gstreamer-meson
+inherit cflags-hardened flag-o-matic secure-version gstreamer-meson
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
 
 DESCRIPTION="ONNX neural network plugin for GStreamer"
 IUSE+="
-ebuild_revision_23
+ebuild_revision_24
 "
 RDEPEND="
 	$(python_gen_any_dep '
-		>=sci-ml/onnxruntime-1.16.1[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/onnxruntime-'${ONNXRUNTIME_PV}':=[${PYTHON_SINGLE_USEDEP}]
 	')
-	~media-libs/gst-plugins-base-${PV}:${SLOT}[${MULTILIB_USEDEP}]
-	media-libs/gst-plugins-base:=
+	~media-libs/gst-plugins-base-${PV}:=[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${REPEND}
