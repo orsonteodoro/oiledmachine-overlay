@@ -19,7 +19,7 @@ IUSE="
 ebuild_revision_23
 "
 RDEPEND="
-	>=media-libs/vo-amrwbenc-${VO_AMRWBENC}:=[${MULTILIB_USEDEP}]
+	>=media-libs/vo-amrwbenc-${VO_AMRWBENC_PV}:=[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}

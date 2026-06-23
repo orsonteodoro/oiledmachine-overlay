@@ -37,7 +37,14 @@ RDEPEND="
 	>=dev-libs/glib-${GLIB_PV}:=[${MULTILIB_USEDEP}]
 	~media-libs/gstreamer-${MY_PV}:=[${MULTILIB_USEDEP}]
 	~media-libs/gst-plugins-base-${MY_PV}:=[${MULTILIB_USEDEP}]
-	${FFMPEG_SECURITY_CRITICAL_RDEPEND}
+	media-video/ffmpeg:=
+	|| (
+		~media-video/ffmpeg-9999[${MULTILIB_USEDEP}]
+		~media-video/ffmpeg-9999m[${MULTILIB_USEDEP}]
+
+		~media-video/ffmpeg-8.1.2[${MULTILIB_USEDEP}]
+		~media-video/ffmpeg-8.1.2m[${MULTILIB_USEDEP}]
+	)
 "
 DEPEND="
 	${RDEPEND}

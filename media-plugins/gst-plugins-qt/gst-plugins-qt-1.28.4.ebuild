@@ -34,7 +34,7 @@ RDEPEND="
 	dev-qt/qtcore:5=
 	dev-qt/qtdeclarative:5=
 	dev-qt/qtgui:5=[wayland?,X?]
-	~dev-qt/linguist-${s}:=
+	dev-qt/linguist:5=
 	egl? (
 		dev-qt/qtgui:5=[eglfs]
 		>=media-libs/mesa-${MESA_PV}:=
