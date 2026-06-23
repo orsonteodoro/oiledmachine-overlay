@@ -51,7 +51,7 @@ fluidsynth gme gsm hls http jack jpeg jpeg2k lame libass libcaca libvisual midi
 mp3 modplug mpeg nvcodec ogg openal openh264 opus oss speex png pulseaudio qsv
 rav1e rtmp sndio sndfile svg taglib theora v4l vaapi vcd vorbis vpx vulkan
 vvc wavpack wildmidi webp X x264 x265
-ebuild_revision_1
+ebuild_revision_2
 "
 PATENT_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -135,257 +135,190 @@ REQUIRED_USE="
 
 PATENT_RDEPEND="
 	!patent_status_nonfree? (
-		media-libs/gst-plugins-bad[-nvcodec,-qsv,-vaapi,-vulkan-video]
+		media-libs/gst-plugins-bad:=[-nvcodec,-qsv,-vaapi,-vulkan-video]
 	)
-	virtual/patent-status[patent_status_nonfree=]
+	virtual/patent-status:*[patent_status_nonfree=]
 "
 
 RDEPEND="
 	${PATENT_RDEPEND}
-	~media-libs/gstreamer-${PV}:1.0[${MULTILIB_USEDEP}]
-	media-libs/gstreamer:=
-	~media-libs/gst-plugins-base-${PV}:1.0[${MULTILIB_USEDEP},alsa?,ogg?,theora?,vorbis?,X?]
-	media-libs/gst-plugins-base:=
-	~media-libs/gst-plugins-good-${PV}:1.0[${MULTILIB_USEDEP}]
-	media-libs/gst-plugins-good:=
+	~media-libs/gstreamer-${PV}:=[${MULTILIB_USEDEP}]
+	~media-libs/gst-plugins-base-${PV}:=[${MULTILIB_USEDEP},alsa?,ogg?,theora?,vorbis?,X?]
+	~media-libs/gst-plugins-good-${PV}:=[${MULTILIB_USEDEP}]
 	a52? (
-		~media-plugins/gst-plugins-a52dec-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-a52dec:=
+		~media-plugins/gst-plugins-a52dec-${PV}:=[${MULTILIB_USEDEP}]
         )
 	aalib? (
-		~media-plugins/gst-plugins-aalib-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-aalib:=
+		~media-plugins/gst-plugins-aalib-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	aac? (
-		~media-plugins/gst-plugins-faac-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-faac:=
-		~media-plugins/gst-plugins-faad-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-faad:=
+		~media-plugins/gst-plugins-faac-${PV}:=[${MULTILIB_USEDEP}]
+		~media-plugins/gst-plugins-faad-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	aom? (
-		~media-plugins/gst-plugins-aom-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-aom:=
+		~media-plugins/gst-plugins-aom-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	cdda? (
 		|| (
-			~media-plugins/gst-plugins-cdparanoia-${PV}:1.0[${MULTILIB_USEDEP}]
-			media-plugins/gst-plugins-cdparanoia:=
-			~media-plugins/gst-plugins-cdio-${PV}:1.0[${MULTILIB_USEDEP}]
-			media-plugins/gst-plugins-cdio:=
+			~media-plugins/gst-plugins-cdparanoia-${PV}:=[${MULTILIB_USEDEP}]
+			~media-plugins/gst-plugins-cdio-${PV}:=[${MULTILIB_USEDEP}]
 		)
 	)
 	dav1d? (
-		~media-plugins/gst-plugins-rs-${PV}:1.0[${MULTILIB_USEDEP},dav1d]
-		media-plugins/gst-plugins-rs:=
+		~media-plugins/gst-plugins-rs-${PV}:=[${MULTILIB_USEDEP},dav1d]
 	)
 	dash? (
-		~media-plugins/gst-plugins-dash-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-dash:=
+		~media-plugins/gst-plugins-dash-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	dts? (
-		~media-plugins/gst-plugins-dts-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-dts:=
+		~media-plugins/gst-plugins-dts-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	dv? (
-		~media-plugins/gst-plugins-dv-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-dv:=
+		~media-plugins/gst-plugins-dv-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	dvb? (
-		~media-plugins/gst-plugins-dvb-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-dvb:=
-		~media-libs/gst-plugins-bad-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-libs/gst-plugins-bad:=
+		~media-plugins/gst-plugins-dvb-${PV}:=[${MULTILIB_USEDEP}]
+		~media-libs/gst-plugins-bad-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	dvd? (
-		~media-libs/gst-plugins-ugly-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-libs/gst-plugins-ugly:=
-		~media-plugins/gst-plugins-a52dec-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-a52dec:=
-		~media-plugins/gst-plugins-dvdread-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-dvdread:=
-		~media-plugins/gst-plugins-mpeg2dec-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-mpeg2dec:=
-		~media-plugins/gst-plugins-resindvd-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-resindvd:=
+		~media-libs/gst-plugins-ugly-${PV}:=[${MULTILIB_USEDEP}]
+		~media-plugins/gst-plugins-a52dec-${PV}:=[${MULTILIB_USEDEP}]
+		~media-plugins/gst-plugins-dvdread-${PV}:=[${MULTILIB_USEDEP}]
+		~media-plugins/gst-plugins-mpeg2dec-${PV}:=[${MULTILIB_USEDEP}]
+		~media-plugins/gst-plugins-resindvd-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	fdk? (
-		~media-plugins/gst-plugins-fdkaac-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-fdkaac:=
+		~media-plugins/gst-plugins-fdkaac-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	ffmpeg? (
-		~media-plugins/gst-plugins-libav-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-libav:=
+		~media-plugins/gst-plugins-libav-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	flac? (
-		~media-plugins/gst-plugins-flac-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-flac:=
+		~media-plugins/gst-plugins-flac-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	gme? (
-		~media-plugins/gst-plugins-gme-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-gme:=
+		~media-plugins/gst-plugins-gme-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	hls? (
-		~media-plugins/gst-plugins-hls-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-hls:=
+		~media-plugins/gst-plugins-hls-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	http? (
-		~media-plugins/gst-plugins-soup-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-soup:=
+		~media-plugins/gst-plugins-soup-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	jack? (
-		~media-plugins/gst-plugins-jack-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-jack:=
+		~media-plugins/gst-plugins-jack-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	jpeg? (
-		~media-plugins/gst-plugins-jpeg-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-jpeg:=
+		~media-plugins/gst-plugins-jpeg-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	jpeg2k? (
-		~media-plugins/gst-plugins-openjpeg-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-openjpeg:=
+		~media-plugins/gst-plugins-openjpeg-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	lame? (
-		~media-plugins/gst-plugins-lame-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-lame:=
+		~media-plugins/gst-plugins-lame-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	libass? (
-		~media-plugins/gst-plugins-assrender-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-assrender:=
+		~media-plugins/gst-plugins-assrender-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	libcaca? (
-		~media-plugins/gst-plugins-libcaca-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-libcaca:=
+		~media-plugins/gst-plugins-libcaca-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	libvisual? (
-		~media-plugins/gst-plugins-libvisual-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-libvisual:=
+		~media-plugins/gst-plugins-libvisual-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	midi? (
 		fluidsynth? (
-			~media-plugins/gst-plugins-fluidsynth-${PV}:1.0[${MULTILIB_USEDEP}]
-			media-plugins/gst-plugins-fluidsynth:=
+			~media-plugins/gst-plugins-fluidsynth-${PV}:=[${MULTILIB_USEDEP}]
 		)
 		wildmidi? (
-			~media-plugins/gst-plugins-wildmidi-${PV}:1.0
-			media-plugins/gst-plugins-wildmidi:=
+			~media-plugins/gst-plugins-wildmidi-${PV}:=
 		)
 	)
 	modplug? (
-		~media-plugins/gst-plugins-modplug-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-modplug:=
+		~media-plugins/gst-plugins-modplug-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	mp3? (
-		~media-libs/gst-plugins-ugly-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-libs/gst-plugins-ugly:=
-		~media-plugins/gst-plugins-mpg123-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-mpg123:=
+		~media-libs/gst-plugins-ugly-${PV}:=[${MULTILIB_USEDEP}]
+		~media-plugins/gst-plugins-mpg123-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	mpeg? (
-		~media-plugins/gst-plugins-mpeg2dec-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-mpeg2dec:=
-		~media-plugins/gst-plugins-mpeg2enc-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-mpeg2enc:=
+		~media-plugins/gst-plugins-mpeg2dec-${PV}:=[${MULTILIB_USEDEP}]
+		~media-plugins/gst-plugins-mpeg2enc-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	nvcodec? (
-		~media-plugins/gst-plugins-bad-${PV}:1.0[${MULTILIB_USEDEP},nvcodec]
-		media-plugins/gst-plugins-bad:=
+		~media-plugins/gst-plugins-bad-${PV}:=[${MULTILIB_USEDEP},nvcodec]
 	)
 	openal? (
-		~media-plugins/gst-plugins-openal-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-openal:=
+		~media-plugins/gst-plugins-openal-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	openh264? (
-		~media-plugins/gst-plugins-openh264-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-openh264:=
+		~media-plugins/gst-plugins-openh264-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	opus? (
-		~media-plugins/gst-plugins-opus-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-opus:=
+		~media-plugins/gst-plugins-opus-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	oss? (
-		~media-plugins/gst-plugins-oss-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-oss:=
+		~media-plugins/gst-plugins-oss-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	png? (
-		~media-plugins/gst-plugins-libpng-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-libpng:=
+		~media-plugins/gst-plugins-libpng-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	pulseaudio? (
-		~media-plugins/gst-plugins-pulse-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-pulse:=
+		~media-plugins/gst-plugins-pulse-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	qsv? (
-		~media-plugins/gst-plugins-bad-${PV}:1.0[${MULTILIB_USEDEP},qsv,video_cards_intel?]
-		media-plugins/gst-plugins-bad:=
+		~media-plugins/gst-plugins-bad-${PV}:=[${MULTILIB_USEDEP},qsv,video_cards_intel?]
 	)
 	rav1e? (
-		~media-plugins/gst-plugins-rs-${PV}:1.0[${MULTILIB_USEDEP},rav1e]
-		media-plugins/gst-plugins-rs:=
+		~media-plugins/gst-plugins-rs-${PV}:=[${MULTILIB_USEDEP},rav1e]
 	)
 	rtmp? (
-		~media-plugins/gst-plugins-rtmp-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-rtmp:=
+		~media-plugins/gst-plugins-rtmp-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	sndfile? (
-		~media-plugins/gst-plugins-sndfile-${PV}:0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-sndfile:=
+		~media-plugins/gst-plugins-sndfile-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	sndio? (
-		~media-plugins/gst-plugins-sndio-1.24.0:0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-sndio:=
+		~media-plugins/gst-plugins-sndio-1.24.0:=[${MULTILIB_USEDEP}]
 	)
 	speex? (
-		~media-plugins/gst-plugins-speex-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-speex:=
+		~media-plugins/gst-plugins-speex-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	svg? (
-		~media-plugins/gst-plugins-rsvg-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-rsvg:=
+		~media-plugins/gst-plugins-rsvg-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	taglib? (
-		~media-plugins/gst-plugins-taglib-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-taglib:=
+		~media-plugins/gst-plugins-taglib-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	v4l? (
-		~media-plugins/gst-plugins-v4l2-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-v4l2:=
+		~media-plugins/gst-plugins-v4l2-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	vaapi? (
-		~media-plugins/gst-plugins-bad-${PV}:1.0[${MULTILIB_USEDEP},vaapi,video_cards_amdgpu?,video_cards_r600?,video_cards_radeonsi?,video_cards_intel?,video_cards_nouveau?,video_cards_nvidia?]
-		media-plugins/gst-plugins-bad:=
+		~media-plugins/gst-plugins-bad-${PV}:=[${MULTILIB_USEDEP},vaapi,video_cards_amdgpu?,video_cards_r600?,video_cards_radeonsi?,video_cards_intel?,video_cards_nouveau?,video_cards_nvidia?]
 	)
 	vcd? (
-		~media-plugins/gst-plugins-mpeg2dec-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-mpeg2dec:=
-		~media-plugins/gst-plugins-mplex-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-mplex:=
+		~media-plugins/gst-plugins-mpeg2dec-${PV}:=[${MULTILIB_USEDEP}]
+		~media-plugins/gst-plugins-mplex-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	vpx? (
-		~media-plugins/gst-plugins-vpx-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-vpx:=
+		~media-plugins/gst-plugins-vpx-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	vulkan? (
-		~media-libs/gst-plugins-bad-${PV}:1.0[vulkan,vulkan-video]
-		media-libs/gst-plugins-bad:=
+		~media-libs/gst-plugins-bad-${PV}:=[vulkan,vulkan-video]
 	)
 	vvc? (
-		~media-plugins/gst-plugins-vvdec-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-vvdec:=
+		~media-plugins/gst-plugins-vvdec-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	wavpack? (
-		~media-plugins/gst-plugins-wavpack-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-wavpack:=
+		~media-plugins/gst-plugins-wavpack-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	webp? (
-		~media-plugins/gst-plugins-webp-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-webp:=
+		~media-plugins/gst-plugins-webp-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	x264? (
-		~media-plugins/gst-plugins-x264-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-x264:=
+		~media-plugins/gst-plugins-x264-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	x265? (
-		~media-plugins/gst-plugins-x265-${PV}:1.0[${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-x265:=
+		~media-plugins/gst-plugins-x265-${PV}:=[${MULTILIB_USEDEP}]
 	)
 "
