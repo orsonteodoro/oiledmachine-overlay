@@ -23,7 +23,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/glib-2.89.9999"
 )
 
-inherit cflags-hardened chkl gstreamer-meson vf
+inherit cflags-hardened chkl secure-version vf gstreamer-meson
 
 KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~m68k ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86
@@ -35,18 +35,18 @@ HOMEPAGE="https://gstreamer.freedesktop.org/"
 LICENSE="LGPL-2.1+"
 IUSE="
 nls +orc
-ebuild_revision_28
+ebuild_revision_29
 "
 RDEPEND="
-	>=dev-libs/glib-2.89.9999:=[${MULTILIB_USEDEP}]
-	>=app-arch/bzip2-9999:=[${MULTILIB_USEDEP}]
-	>=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-${GLIB_PV}:=[${MULTILIB_USEDEP}]
+	>=app-arch/bzip2-${BZIP2_PV}:=[${MULTILIB_USEDEP}]
+	>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}]
 	~media-libs/gst-plugins-base-${PV}:${SLOT}=[${MULTILIB_USEDEP}]
 	nls? (
 		sys-devel/gettext:=[${MULTILIB_USEDEP}]
 	)
 	orc? (
-		>=dev-lang/orc-0.4.42:=[${MULTILIB_USEDEP}]
+		>=dev-lang/orc-${ORC_PV}:=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
