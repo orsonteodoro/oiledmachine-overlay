@@ -6,16 +6,16 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 
-inherit cflags-hardened gstreamer-meson
+inherit cflags-hardened secure-version gstreamer-meson
 
 KEYWORDS="~amd64 ~arm64"
 
 DESCRIPTION="Bar codes detection in video streams for GStreamer"
 IUSE="
-ebuild_revision_22
+ebuild_revision_23
 "
 RDEPEND="
-	>=media-gfx/zbar-0.23.1[${MULTILIB_USEDEP}]
+	>=media-gfx/zbar-${ZBAR_PV}:=[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
