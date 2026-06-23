@@ -12,11 +12,10 @@ inherit cflags-hardened gstreamer-meson
 
 DESCRIPTION="Sid decoder plugin for GStreamer"
 IUSE="
-ebuild_revision_22
+ebuild_revision_23
 "
 RDEPEND="
-	media-libs/libsidplay:1[${MULTILIB_USEDEP}]
-	media-libs/libsidplay:=
+	>=media-libs/libsidplay-1.36:1=[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
