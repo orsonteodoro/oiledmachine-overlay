@@ -9,25 +9,29 @@ GST_ORG_MODULE="gst-plugins-bad"
 GST_PLUGINS_BUILD_DIR="mdns"
 GST_PLUGINS_ENABLED="microdns"
 
-inherit cflags-hardened gstreamer-meson
+CHKL_TIMESTAMPS=(
+	"net-libs/libmicrodns-9999"
+)
+
+inherit cflags-hardened chkl secure-version gstreamer-meson
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
 DESCRIPTION="A device provider plugin and RTSP server discovery for GStreamer"
 IUSE="
-ebuild_revision_22
+ebuild_revision_23
 "
 # Force libmicrodns-0.2.0 to avoid critical vulnerability
 RDEPEND="
-	>=net-libs/libmicrodns-0.2.0
-	~media-libs/gst-plugins-base-${PV}:1.0[${MULTILIB_USEDEP}]
-	media-libs/gst-plugins-base:=
+	>=net-libs/libmicrodns-${LIBMICRODNS_PV}:=
+	~media-libs/gst-plugins-base-${PV}:=[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
 "
 
 multilib_src_configure() {
+	chkl_check_many_timestamps
 	cflags-hardened_append
 	gstreamer_multilib_src_configure
 }
