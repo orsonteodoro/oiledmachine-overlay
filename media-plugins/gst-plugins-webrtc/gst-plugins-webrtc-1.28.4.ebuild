@@ -14,18 +14,14 @@ KEYWORDS="~amd64 ~arm64"
 
 DESCRIPTION="WebRTC plugins for GStreamer"
 IUSE="
-ebuild_revision_24
+ebuild_revision_25
 "
 RDEPEND="
-	~media-plugins/gst-plugins-dtls-${PV}:1.0[${MULTILIB_USEDEP}]
-	media-plugins/gst-plugins-dtls:=
-	~media-plugins/gst-plugins-sctp-${PV}:1.0[${MULTILIB_USEDEP}]
-	media-plugins/gst-plugins-sctp:=
-	~media-plugins/gst-plugins-srtp-${PV}:1.0[${MULTILIB_USEDEP}]
-	media-plugins/gst-plugins-srtp:=
-	>=media-libs/webrtc-audio-processing-1.0:1[${MULTILIB_USEDEP}]
-	media-libs/webrtc-audio-processing:=
-	>=net-libs/libnice-0.1.23[${MULTILIB_USEDEP}]
+	~media-plugins/gst-plugins-dtls-${PV}:=[${MULTILIB_USEDEP}]
+	~media-plugins/gst-plugins-sctp-${PV}:=[${MULTILIB_USEDEP}]
+	~media-plugins/gst-plugins-srtp-${PV}:=[${MULTILIB_USEDEP}]
+	>=media-libs/webrtc-audio-processing-1.0:=[${MULTILIB_USEDEP}]
+	>=net-libs/libnice-0.1.23:=[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
