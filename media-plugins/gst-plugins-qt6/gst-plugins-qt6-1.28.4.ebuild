@@ -9,28 +9,24 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-good"
 GST_PLUGINS_ENABLED="qt6"
-QT6_SUBSLOTS=(
-	"6.9.3"
-	"6.9.2"
-	"6.9.1"
-	"6.9.0"
-	"6.8.2"
-	"6.8.1"
-	"6.8.0"
-	"6.7.3"
-	"6.7.2"
-	"6.7.1"
-	"6.7.0"
+
+inherit secure-version
+
+CHKL_TIMESTAMPS=(
+	"dev-qt/qtbase-${QTBASE6_PV}"
+	"dev-qt/qtdeclarative-${QTDECLARATIVE6_PV}"
+	"dev-qt/qttools-${QTTOOLS6_PV}"
+	"dev-qt/qtwayland-${QTWAYLAND6_PV}"
 )
 
-inherit cflags-hardened gstreamer-meson
+inherit cflags-hardened chkl gstreamer-meson
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x86-linux"
 
 DESCRIPTION="A Qt6 video sink plugin for GStreamer"
 IUSE="
 egl wayland +X
-ebuild_revision_23
+ebuild_revision_24
 "
 REQUIRED_USE="
 	|| (
@@ -39,38 +35,17 @@ REQUIRED_USE="
 		X
 	)
 "
-gen_qt6_rdepend() {
-	local s
-	for s in ${QT6_SUBSLOTS[@]} ; do
-		echo "
-			(
-				dev-qt/qtbase:6/${s}[gui,wayland?,X?]
-				dev-qt/qtdeclarative:6/${s}
-				dev-qt/qttools:6/${s}[linguist,qml]
-				egl? (
-					dev-qt/qtbase:6/${s}[eglfs]
-					media-libs/mesa:=
-				)
-				wayland? (
-					dev-qt/qtwayland:6/${s}[qml]
-					dev-qt/qtwayland:=
-				)
-			)
-		"
-	done
-}
 RDEPEND="
-	|| (
-		$(gen_qt6_rdepend)
+	>=dev-qt/qtbase-${QTBASE6_PV}:6=[gui,wayland?,X?]
+	>=dev-qt/qtdeclarative-${QTDECLARATIVE6_PV}:6=
+	>=dev-qt/qttools-${QTTOOLS6_PV}:6=[linguist,qml]
+	~media-libs/gst-plugins-base-${PV}:=[opengl,wayland?,X?]
+	egl? (
+		media-libs/mesa:=
 	)
-	dev-qt/qtbase:=
-	dev-qt/qtdeclarative:=
-	dev-qt/qttools:=
-	~media-libs/gst-plugins-base-${PV}:1.0[opengl,wayland?,X?]
-	media-libs/gst-plugins-base:=
 	wayland? (
-		media-libs/gst-plugins-base[wayland]
-		dev-qt/qtwayland:=
+		media-libs/gst-plugins-base:=[wayland]
+		>=dev-qt/qtwayland-${QTWAYLAND6_PV}:6=
 	)
 "
 DEPEND="
@@ -78,6 +53,7 @@ DEPEND="
 "
 
 multilib_src_configure() {
+	chkl_check_many_timestamps
 	cflags-hardened_append
 	local emesonargs=(
 		-Dqt-egl=$(usex egl "enabled" "disabled")
