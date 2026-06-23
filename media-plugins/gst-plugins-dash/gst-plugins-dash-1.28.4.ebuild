@@ -6,16 +6,20 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="plugin network untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 
-inherit cflags-hardened gstreamer-meson
+CHKL_TIMESTAMPS=(
+	"dev-libs/libxml2-9999"
+)
+
+inherit cflags-hardened chkl secure-version gstreamer-meson
 
 KEYWORDS="~amd64 ~arm64 ~x86"
 
 DESCRIPTION="MPEG-DASH plugin for GStreamer"
 IUSE="
-ebuild_revision_22
+ebuild_revision_23
 "
 RDEPEND="
-	>=dev-libs/libxml2-2.8[${MULTILIB_USEDEP}]
+	>=dev-libs/libxml2-${LIBXML2_PV}:=[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
@@ -30,6 +34,7 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	chkl_check_many_timestamps
 	cflags-hardened_append
 	gstreamer_multilib_src_configure
 }
