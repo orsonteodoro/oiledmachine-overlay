@@ -15,23 +15,23 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-3.0.9999"
 )
 
-inherit cflags-hardened chkl gstreamer-meson
+inherit cflags-hardened chkl secure-version gstreamer-meson
 
 KEYWORDS="~amd64 ~arm64 ~x86"
 
 DESCRIPTION="DTLS encoder/decoder with SRTP support plugin for GStreamer"
 IUSE="
-ebuild_revision_22
+ebuild_revision_23
 "
 RDEPEND="
-	>=dev-libs/openssl-1.0.1:=[${MULTILIB_USEDEP}]
+	${OPENSSL_RDEPEND}
 "
 DEPEND="
 	${RDEPEND}
 "
 
 multilib_src_configure() {
-	cflags-hardened_append
 	chkl_check_many_timestamps
+	cflags-hardened_append
 	gstreamer_multilib_src_configure
 }
