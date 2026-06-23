@@ -6,19 +6,17 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-base"
 
-inherit cflags-hardened gstreamer-meson
+inherit cflags-hardened secure-version gstreamer-meson
 
 KEYWORDS="~alpha ~amd64 ~arm64 ~hppa ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
 
 DESCRIPTION="Visualization elements for GStreamer"
 IUSE="
-ebuild_revision_22
+ebuild_revision_23
 "
 RDEPEND="
-	>=media-libs/libvisual-0.4.0:0.4[${MULTILIB_USEDEP}]
-	media-libs/libvisual:=
-	>=media-plugins/libvisual-plugins-0.4.0:0.4[${MULTILIB_USEDEP}]
-	media-plugins/libvisual-plugins:=
+	>=media-libs/libvisual-${LIBVISUAL_0_4_PV}:0.4=[${MULTILIB_USEDEP}]
+	>=media-plugins/libvisual-plugins-${LIBVISUAL_0_4_PV}:0.4=[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
