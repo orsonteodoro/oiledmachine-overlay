@@ -12,10 +12,10 @@ inherit cflags-hardened gstreamer-meson
 
 DESCRIPTION="MPEG2 decoder plugin for GStreamer"
 IUSE="
-ebuild_revision_22
+ebuild_revision_23
 "
 RDEPEND="
-	>=media-libs/libmpeg2-0.4.0[${MULTILIB_USEDEP}]
+	>=media-libs/libmpeg2-0.4.0:=[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
