@@ -8,6 +8,7 @@ GST_ORG_MODULE="gst-plugins-bad"
 
 CHKL_TIMESTAMPS=(
 	"media-libs/opencv-4.9999"
+	"media-libs/opencv-5.9999"
 )
 
 inherit cflags-hardened chkl secure-version gstreamer-meson
@@ -19,8 +20,11 @@ IUSE="
 ebuild_revision_24
 "
 RDEPEND="
-	${OPENCV4_RDEPEND}
-	>=media-libs/opencv-4.0.0:=[${MULTILIB_USEDEP},contrib,contribdnn]
+	media-libs/opencv:=[${MULTILIB_USEDEP},contrib,contribdnn]
+	|| (
+		~media-libs/opencv-${OPENCV4_PV}[${MULTILIB_USEDEP},contrib,contribdnn]
+		~media-libs/opencv-${OPENCV5_PV}[${MULTILIB_USEDEP},contrib,contribdnn]
+	)
 "
 DEPEND="
 	${RDEPEND}

@@ -17,7 +17,14 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-inherit cmake-multilib docs libcxx-slot libstdcxx-slot 
+CHKL_TIMESTAMPS=(
+	"media-libs/gavl-9999"
+	"media-libs/opencv-4.9999"
+	"media-libs/opencv-5.9999"
+	"x11-libs/cairo-9999"
+)
+
+inherit chkl docs libcxx-slot libstdcxx-slot secure-version cmake-multilib
 
 DESCRIPTION="A minimalistic plugin API for video effects"
 HOMEPAGE="https://www.dyne.org/software/frei0r/"
@@ -30,13 +37,14 @@ KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~loong ~ppc ~ppc64 ~riscv ~x86"
 IUSE="doc +facedetect +scale0tilt"
 
 RDEPEND="
-	x11-libs/cairo[${MULTILIB_USEDEP}]
+	>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP}]
 	facedetect? (
-		>=media-libs/opencv-2.3.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},contrib,contribdnn,features2d,${MULTILIB_USEDEP}]
-		media-libs/opencv:=
+		media-libs/opencv:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},contrib,contribdnn,features2d]
+		~media-libs/opencv-${OPENCV4_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},contrib,contribdnn,features2d]
+		~media-libs/opencv-${OPENCV5_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},contrib,contribdnn,features2d]
 	)
 	scale0tilt? (
-		>=media-libs/gavl-1.2.0[${MULTILIB_USEDEP}]
+		>=media-libs/gavl-${GAVL_PV}:=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
@@ -66,6 +74,7 @@ src_prepare() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	local mycmakeargs=(
 		-DWITHOUT_OPENCV=$(usex !facedetect)
 		-DWITHOUT_GAVL=$(usex !scale0tilt)
