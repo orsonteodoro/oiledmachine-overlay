@@ -8,7 +8,7 @@ GST_ORG_MODULE="gst-plugins-good"
 GST_PLUGINS_BUILD_DIR="amrnb amrwbdec"
 GST_PLUGINS_ENABLED="amrnb amrwbdec"
 
-inherit cflags-hardened gstreamer-meson
+inherit cflags-hardened secure-version gstreamer-meson
 
 #KEYWORDS="~amd64 ~arm64 ~x86"
 
@@ -16,10 +16,10 @@ DESCRIPTION="AMRNB encoder/decoder and AMRWB decoder plugin for GStreamer"
 HOMEPAGE="https://gstreamer.freedesktop.org/"
 LICENSE="GPL-2"
 IUSE="
-ebuild_revision_22
+ebuild_revision_23
 "
 RDEPEND="
-	>=media-libs/opencore-amr-0.1.3[${MULTILIB_USEDEP}]
+	>=media-libs/opencore-amr-${OPENCORE_AMR_PV}:=[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
