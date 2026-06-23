@@ -1624,7 +1624,21 @@ RDEPEND+="
 		~media-plugins/gst-plugins-analyticsoverlay-${GST_PV}:=[${MULTILIB_USEDEP}]
 	)
 	aws? (
-		${OPENSSL_RDEPEND}
+		dev-libs/openssl:=[${MULTILIB_USEDEP}]
+		|| (
+			~dev-libs/openssl-4.0.9999
+			~dev-libs/openssl-3.6.9999
+			~dev-libs/openssl-3.5.9999
+			~dev-libs/openssl-3.4.9999
+			~dev-libs/openssl-3.3.9999
+			~dev-libs/openssl-3.0.9999
+			~dev-libs/openssl-${OPENSSL_PV_4_0_PV}
+			~dev-libs/openssl-${OPENSSL_PV_3_6_PV}
+			~dev-libs/openssl-${OPENSSL_PV_3_5_PV}
+			~dev-libs/openssl-${OPENSSL_PV_3_4_PV}
+			~dev-libs/openssl-${OPENSSL_PV_3_3_PV}
+			~dev-libs/openssl-${OPENSSL_PV_3_0_PV}
+		)
 	)
 	closedcaption? (
 		${CARGO_BINDINGS_DEPENDS_CAIRO}
