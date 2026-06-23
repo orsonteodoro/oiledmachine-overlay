@@ -6,21 +6,20 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-ugly"
 
-inherit cflags-hardened gstreamer-meson
+inherit cflags-hardened secure-version gstreamer-meson
 
 #KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
 
 DESCRIPTION="ATSC A/52 audio decoder plugin for GStreamer"
 IUSE="
 +orc
-ebuild_revision_23
+ebuild_revision_24
 "
 RDEPEND="
-	media-libs/a52dec[${MULTILIB_USEDEP}]
-	media-libs/gst-plugins-ugly:1.0[${MULTILIB_USEDEP},orc?]
-	media-libs/gst-plugins-ugly:=
+	media-libs/a52dec:=[${MULTILIB_USEDEP}]
+	media-libs/gst-plugins-ugly:=[${MULTILIB_USEDEP},orc?]
 	orc? (
-		>=dev-lang/orc-0.4.16[${MULTILIB_USEDEP}]
+		>=dev-lang/orc-${ORC_PV}:=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
