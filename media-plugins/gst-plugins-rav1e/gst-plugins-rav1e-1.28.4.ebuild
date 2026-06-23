@@ -10,11 +10,10 @@ DESCRIPTION="A redirect ebuild for gst-plugins-rav1e"
 LICENSE="metapackage"
 SLOT="1.0"
 IUSE="
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND="
-	~media-libs/gst-plugins-rs-${PV}:1.0[rav1e]
-	media-libs/gst-plugins-rs:=
+	~media-libs/gst-plugins-rs-${PV}:=[rav1e]
 "
 DEPEND="
 	${RDEPEND}
