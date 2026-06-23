@@ -8,17 +8,16 @@ GST_ORG_MODULE="gst-plugins-good"
 GST_PLUGINS_BUILD_DIR="gdk_pixbuf"
 GST_PLUGINS_ENABLED="gdk-pixbuf"
 
-inherit cflags-hardened gstreamer-meson
+inherit cflags-hardened secure-version gstreamer-meson
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc x86"
 
 DESCRIPTION="Image decoder, overlay and sink plugin for GStreamer"
 IUSE="
-ebuild_revision_22
+ebuild_revision_23
 "
 RDEPEND="
-	>=x11-libs/gdk-pixbuf-2.8.0:2[${MULTILIB_USEDEP}]
-	x11-libs/gdk-pixbuf:=
+	>=x11-libs/gdk-pixbuf-${GDK_PIXBUF_PV}:=[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
