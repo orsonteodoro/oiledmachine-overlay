@@ -12,14 +12,12 @@ KEYWORDS="~amd64 ~arm64"
 
 DESCRIPTION="aalib text console plugin for GStreamer"
 IUSE="
-ebuild_revision_23
+ebuild_revision_24
 "
 RDEPEND="
-	media-libs/aalib[${MULTILIB_USEDEP}]
-	~media-libs/gst-plugins-good-${PV}:1.0[${MULTILIB_USEDEP}]
-	media-libs/gst-plugins-good:=
-	~media-libs/gst-plugins-base-${PV}:1.0[${MULTILIB_USEDEP}]
-	media-libs/gst-plugins-base:=
+	media-libs/aalib:=[${MULTILIB_USEDEP}]
+	~media-libs/gst-plugins-good-${PV}:=[${MULTILIB_USEDEP}]
+	~media-libs/gst-plugins-base-${PV}:=[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
