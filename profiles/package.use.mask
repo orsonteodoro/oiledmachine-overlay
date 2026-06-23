@@ -115,12 +115,24 @@ sys-kernel/ot-sources -debug
 # Disabled unreviewed or defuct dependencies for security.
 # We want to reduce the attack surface if any.
 # They are disabled because of new red team methods, lack of fuzzing evidence, or lacking AI security code review.
+# Close these to prevent decades old vulnerability discovery typically by AI or threat actors that use AI.
 
 # The amr repo has not been updated since 2014 without security review so disabled.
 media-video/ffmpeg amr
 
+# The repo has not been updated since 2013 without security review so disabled.
+media-video/ffmpeg bs2b
+
 # The gsm repo has not been updated for more than 8 years without security review so disabled.
 media-video/ffmpeg gsm
+
+# Dependencies are not updated
+# libraw1394 repo not updated since 10 years ago
+media-video/ffmpeg iec61883
+
+# Dependencies are not updated
+# libraw1394 repo not updated since 10 years ago
+media-video/ffmpeg ieee1394
 
 # The aribb24 repo has not been updated for more than 11 years without security review so disabled.
 media-video/ffmpeg libaribb24
@@ -131,9 +143,11 @@ media-video/ffmpeg libilbc
 # The lame ebuild and the lame repo is not up to date on security patches so the mp3 USE flag is disabled.
 media-video/ffmpeg lame
 
+# The soxr repo has not been updated for more than 8 years without security review so disabled.
+media-video/ffmpeg libsoxr
+
 # The qrencode repo has not been updated for more than 6 years without security review so disabled.
 media-video/ffmpeg qrcode
 
 # EOL project with security issues
 media-video/ffmpeg qsv
-

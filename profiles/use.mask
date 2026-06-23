@@ -34,3 +34,5 @@ gcc_slot_9_1
 # EOL
 jemalloc
 
+# Last release is almost 5 years ago
+ladspa
