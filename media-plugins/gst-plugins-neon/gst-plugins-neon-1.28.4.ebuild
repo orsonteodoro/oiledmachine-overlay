@@ -12,11 +12,11 @@ KEYWORDS="~alpha ~amd64 ~arm64 ~ppc ~ppc64 ~x86"
 
 DESCRIPTION="HTTP client source plugin for GStreamer"
 IUSE="
-ebuild_revision_22
+ebuild_revision_23
 "
 RDEPEND="
-	>=net-libs/neon-0.27[${MULTILIB_USEDEP}]
-	<=net-libs/neon-0.33.99[${MULTILIB_USEDEP}]
+	>=net-libs/neon-0.27:=[${MULTILIB_USEDEP}]
+	<net-libs/neon-0.31.100:=[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
