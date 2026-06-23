@@ -7,6 +7,8 @@ CFLAGS_HARDENED_USE_CASES="plugin network untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 
 CHKL_TIMESTAMPS=(
+	"dev-libs/libgcrypt-9999"
+	"dev-libs/nettle-9999"
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
@@ -15,14 +17,14 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-3.0.9999"
 )
 
-inherit cflags-hardened chkl gstreamer-meson
+inherit cflags-hardened chkl secure-version gstreamer-meson
 
 KEYWORDS="~amd64 ~arm64 ~x86"
 
 DESCRIPTION="HTTP live streaming plugin for GStreamer"
 IUSE="
 libgcrypt nettle openssl
-ebuild_revision_22
+ebuild_revision_23
 "
 REQUIRED_USE="
 	|| (
@@ -33,13 +35,13 @@ REQUIRED_USE="
 "
 RDEPEND="
 	libgcrypt? (
-		dev-libs/libgcrypt:=[${MULTILIB_USEDEP}]
+		>=dev-libs/libgcrypt-${LIBGCRYPT_PV}:=[${MULTILIB_USEDEP}]
 	)
 	nettle? (
-		>=dev-libs/nettle-3.0:=[${MULTILIB_USEDEP}]
+		>=dev-libs/nettle-${NETTLE_PV}:=[${MULTILIB_USEDEP}]
 	)
 	openssl? (
-		dev-libs/openssl:=[${MULTILIB_USEDEP}]
+		${OPENSSL_RDEPEND}
 	)
 "
 DEPEND="
@@ -57,8 +59,8 @@ src_prepare() {
 }
 
 multilib_src_configure() {
-	cflags-hardened_append
 	chkl_check_many_timestamps
+	cflags-hardened_append
 	local crypto_provider
 	if use libgcrypt ; then
 		crypto_provider="libcrypt"
