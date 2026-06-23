@@ -6,17 +6,16 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 
-inherit cflags-hardened gstreamer-meson
+inherit cflags-hardened secure-version gstreamer-meson
 
 KEYWORDS="~amd64 ~arm64"
 
 DESCRIPTION="Color management correction GStreamer plugins"
 IUSE="
-ebuild_revision_22
+ebuild_revision_23
 "
 RDEPEND="
-	>=media-libs/lcms-2.7:2[${MULTILIB_USEDEP}]
-	media-libs/lcms:=
+	>=media-libs/lcms-${LCMS_PV}:=[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
