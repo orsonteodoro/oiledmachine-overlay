@@ -58,7 +58,7 @@ src_configure() {
 	_configure() {
 		cflags-hardened_append
 		if has_version "media-video/ffmpeg:60.62.62" ; then # 8.x
-einfo "Using FFmpeg live multislot"
+einfo "Using FFmpeg multislot"
 			prefix="usr/lib/ffmpeg/58.60.60"
 		elif has_version "media-video/ffmpeg:0" ; then
 einfo "Using FFmpeg monoslot"
