@@ -7,26 +7,25 @@ CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-good"
 GST_PLUGINS_BUILD_DIR="ximage"
 
-inherit cflags-hardened gstreamer-meson
+inherit cflags-hardened secure-version gstreamer-meson
 
 KEYWORDS="~amd64 ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
 DESCRIPTION="X11 video capture stream plugin for GStreamer"
 IUSE="
-ebuild_revision_22
+ebuild_revision_23
 "
 RDEPEND="
-	x11-libs/libX11[${MULTILIB_USEDEP}]
-	x11-libs/libXdamage[${MULTILIB_USEDEP}]
-	x11-libs/libXext[${MULTILIB_USEDEP}]
-	x11-libs/libXfixes[${MULTILIB_USEDEP}]
-	x11-libs/libXtst[${MULTILIB_USEDEP}]
-	~media-libs/gst-plugins-base-${PV}:${SLOT}[${MULTILIB_USEDEP}]
-	media-libs/gst-plugins-base:=
+	>=x11-libs/libX11-${LIBX11_PV}:=[${MULTILIB_USEDEP}]
+	x11-libs/libXdamage:=[${MULTILIB_USEDEP}]
+	>=x11-libs/libXext-${LIBXEXT_PV}:=[${MULTILIB_USEDEP}]
+	>=x11-libs/libXfixes-${LIBXFIXES_PV}:=[${MULTILIB_USEDEP}]
+	>=x11-libs/libXtst-${LIBXTST_PV}:=[${MULTILIB_USEDEP}]
+	~media-libs/gst-plugins-base-${PV}:=[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
-	x11-base/xorg-proto
+	x11-base/xorg-proto:=
 "
 
 multilib_src_configure() {
