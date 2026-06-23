@@ -6,23 +6,27 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-ugly"
 
-inherit cflags-hardened gstreamer-meson
+CHKL_TIMESTAMPS=(
+	"dev-libs/libcdio-9999"
+)
+
+inherit cflags-hardened chkl secure-version gstreamer-meson
 
 #KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
 
 DESCRIPTION="A libcdio based CD Digital Audio (CDDA) source plugin for GStreamer"
 IUSE="
-ebuild_revision_22
+ebuild_revision_23
 "
 RDEPEND="
-	>=dev-libs/libcdio-0.76[${MULTILIB_USEDEP}]
-	dev-libs/libcdio:=
+	>=dev-libs/libcdio-${LIBCDIO_PV}:=[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
 "
 
 multilib_src_configure() {
+	chkl_check_many_timestamps
 	cflags-hardened_append
 	local emesonargs=(
 		-Dgpl=enabled
