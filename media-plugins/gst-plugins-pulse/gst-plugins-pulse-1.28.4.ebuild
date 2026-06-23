@@ -6,24 +6,28 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="network plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-good"
 
-inherit cflags-hardened gstreamer-meson
+CHKL_TIMESTAMPS=(
+	"media-libs/libpulse-9999"
+)
+
+inherit cflags-hardened chkl secure-version gstreamer-meson
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
 
 DESCRIPTION="PulseAudio sound server plugin for GStreamer"
 IUSE="
-ebuild_revision_23
+ebuild_revision_24
 "
 RDEPEND="
-	>=media-libs/libpulse-2.0[${MULTILIB_USEDEP}]
-	~media-libs/gst-plugins-base-${PV}:${SLOT}[${MULTILIB_USEDEP}]
-	media-libs/gst-plugins-base:=
+	>=media-libs/libpulse-${LIBPULSE_PV}:=[${MULTILIB_USEDEP}]
+	~media-libs/gst-plugins-base-${PV}:=[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
 "
 
 multilib_src_configure() {
+	chkl_check_many_timestamps
 	cflags-hardened_append
 	gstreamer_multilib_src_configure
 }
