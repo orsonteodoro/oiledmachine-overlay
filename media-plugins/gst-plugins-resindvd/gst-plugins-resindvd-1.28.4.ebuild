@@ -6,25 +6,29 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 
-inherit cflags-hardened gstreamer-meson
+CHKL_TIMESTAMPS=(
+	"media-libs/libdvdnav-9999"
+	"media-libs/libdvdread-9999"
+)
+
+inherit cflags-hardened chkl secure-version gstreamer-meson
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
 
 DESCRIPTION="DVD playback support plugin for GStreamer"
 IUSE="
-ebuild_revision_22
+ebuild_revision_23
 "
 RDEPEND="
-	>=media-libs/libdvdnav-4.1.2[${MULTILIB_USEDEP}]
-	media-libs/libdvdnav:=
-	>=media-libs/libdvdread-4.1.2[${MULTILIB_USEDEP}]
-	media-libs/libdvdread:=
+	>=media-libs/libdvdnav-${LIBDVDNAV_PV}:=[${MULTILIB_USEDEP}]
+	>=media-libs/libdvdread-${LIBDVDREAD_PV}:=[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
 "
 
 multilib_src_configure() {
+	chkl_check_many_timestamps
 	cflags-hardened_append
 	local emesonargs=(
 		-Dgpl=enabled
