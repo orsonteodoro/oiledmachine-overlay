@@ -7,7 +7,11 @@ CFLAGS_HARDENED_USE_CASES="plugin sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="SO"
 GST_ORG_MODULE="gst-plugins-base"
 
-inherit cflags-hardened gstreamer-meson
+CHKL_TIMESTAMPS=(
+	"media-libs/opus-9999"
+)
+
+inherit cflags-hardened chkl secure-version gstreamer-meson
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
 # Everything below is for building opusparse from gst-plugins-bad. Once it moves into -base, all below can be removed
@@ -15,16 +19,14 @@ SRC_URI+=" https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad
 
 DESCRIPTION="Opus audio parser plugin for GStreamer"
 IUSE="
-ebuild_revision_23
+ebuild_revision_24
 "
 CDEPEND="
-	>=media-libs/opus-0.9.4[${MULTILIB_USEDEP}]
-	media-libs/opus:=
+	>=media-libs/opus-${OPUS_PV}:=[${MULTILIB_USEDEP}]
 "
 RDEPEND="
 	${CDEPEND}
-	~media-libs/gst-plugins-base-${PV}:${SLOT}[${MULTILIB_USEDEP},ogg]
-	media-libs/gst-plugins-base:=
+	~media-libs/gst-plugins-base-${PV}:=[${MULTILIB_USEDEP},ogg]
 "
 DEPEND="
 	${CDEPEND}
@@ -45,6 +47,7 @@ in_bdir() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	cflags-hardened_append
 	S="${WORKDIR}/gst-plugins-base-${PV}" \
 	multilib_foreach_abi gstreamer_multilib_src_configure
