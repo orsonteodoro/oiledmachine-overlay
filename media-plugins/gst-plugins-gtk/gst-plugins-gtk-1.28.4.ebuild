@@ -15,7 +15,7 @@ CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-good"
 GST_PLUGINS_ENABLED="gtk3"
 
-inherit cflags-hardened gstreamer-meson
+inherit cflags-hardened secure-version gstreamer-meson
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x86-linux"
 
@@ -23,17 +23,14 @@ DESCRIPTION="Video sink plugin for GStreamer that renders to a GtkWidget"
 # Keep default IUSE mirrored with gst-plugins-base
 IUSE="
 +egl +gles2 opengl wayland +X
-ebuild_revision_22
+ebuild_revision_23
 "
 GL_DEPS="
-	>=x11-libs/gtk+-3.15:3[X?,wayland?,${MULTILIB_USEDEP}]
-	x11-libs/gtk+:=
+	>=x11-libs/gtk+-${GTK3_PV}:3=[X?,wayland?,${MULTILIB_USEDEP}]
 "
 RDEPEND="
-	>=x11-libs/gtk+-3.15:3[${MULTILIB_USEDEP}]
-	x11-libs/gtk+:=
-	~media-libs/gst-plugins-base-${PV}:${SLOT}[${MULTILIB_USEDEP},egl=,gles2=,opengl=,wayland=,X=]
-	media-libs/gst-plugins-base:=
+	>=x11-libs/gtk+-${GTK3_PV}:3=[${MULTILIB_USEDEP}]
+	~media-libs/gst-plugins-base-${PV}:=[${MULTILIB_USEDEP},egl=,gles2=,opengl=,wayland=,X=]
 	gles2? (
 		${GL_DEPS}
 	)
