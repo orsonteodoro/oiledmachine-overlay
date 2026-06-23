@@ -10,11 +10,10 @@ DESCRIPTION="A redirect ebuild for gst-plugins-speechmatics"
 LICENSE="metapackage"
 SLOT="1.0"
 IUSE="
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND="
-	~media-libs/gst-plugins-rs-${PV}:1.0[speechmatics]
-	media-libs/gst-plugins-rs:=
+	~media-libs/gst-plugins-rs-${PV}:=[speechmatics]
 "
 DEPEND="
 	${RDEPEND}
