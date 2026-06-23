@@ -9,44 +9,53 @@ EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
+
+inherit secure-version
+
+# See https://github.com/WebKit/WebKit/blob/wpewebkit-2.53.3/Source/cmake/OptionsWPE.cmake
+# Force the latest for security
 WEBKIT_APIS=(
-	"2.0;2.40.1"
-	"1.1;2.33.1"
-	"1.0;2.28.0"
+	"2.0;${WEBKIT_GTK_PV}"
+	"1.1;${WEBKIT_GTK_PV}"
 )
 
-inherit cflags-hardened gstreamer-meson
+CHKL_TIMESTAMPS=(
+	"dev-libs/glib-2.89.9999"
+	"dev-libs/wayland-9999"
+	"dev-libs/libxkbcommon-9999"
+)
+
+inherit cflags-hardened chkl gstreamer-meson
 
 #KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
 DESCRIPTION="WPE Web browser plugin for GStreamer"
 IUSE="
-ebuild_revision_22
+ebuild_revision_23
 "
 gen_wpe_rdepend() {
 	local row
-	for row in ${WEBKIT_APIS[@]} ; do
+	for row in "${WEBKIT_APIS[@]}" ; do
 		local api_ver="${row%;*}"
 		local wpe_ver="${row#*;}"
 		echo "
 			(
-				>=gui-libs/wpebackend-fdo-1.8:${api_ver}
-				gui-libs/wpebackend-fdo:=
 				>=net-libs/wpe-webkit-${wpe_ver}:${api_ver}
-				net-libs/wpe-webkit:=
+				>=gui-libs/wpebackend-fdo-1.8:${api_ver}
 				gui-libs/libwpe:${api_ver}
-				gui-libs/libwpe:=
 			)
 		"
 	done
 }
 RDEPEND="
-	>=x11-libs/libxkbcommon-0.8
-	dev-libs/glib:2
-	dev-libs/glib:=
-	dev-libs/wayland
-	~media-libs/gst-plugins-base-${PV}:1.0
-	media-libs/gst-plugins-base:=
+	>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=
+	>=dev-libs/glib-${GLIB_PV}:=
+	>=dev-libs/wayland-${WAYLAND_PV}:=
+	~media-libs/gst-plugins-base-${PV}:=
+
+	gui-libs/wpebackend-fdo:=
+	gui-libs/libwpe:=
+	net-libs/wpe-webkit:=
 	|| (
 		$(gen_wpe_rdepend)
 	)
@@ -56,6 +65,7 @@ DEPEND="
 "
 
 multilib_src_configure() {
+	chkl_check_many_timestamps
 	cflags-hardened_append
 	gstreamer_multilib_src_configure
 }
