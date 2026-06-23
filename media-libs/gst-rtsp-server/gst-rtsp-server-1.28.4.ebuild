@@ -12,9 +12,10 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO"
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/glib-2.89.9999"
+	"dev-libs/libcgroup-9999"
 )
 
-inherit cflags-hardened check-compiler-switch chkl flag-o-matic gstreamer-meson
+inherit cflags-hardened check-compiler-switch chkl flag-o-matic secure-version gstreamer-meson
 
 KEYWORDS="~amd64 ~arm64 ~x86"
 
@@ -23,19 +24,19 @@ HOMEPAGE="https://gstreamer.freedesktop.org/modules/gst-rtsp-server.html"
 LICENSE="LGPL-2+"
 IUSE="
 examples +introspection static-libs
-ebuild_revision_28
+ebuild_revision_29
 "
 RDEPEND="
 	>=media-libs/gstreamer-${PV}:${SLOT}=[${MULTILIB_USEDEP},introspection?]
 	>=media-libs/gst-plugins-base-${PV}:${SLOT}=[${MULTILIB_USEDEP},introspection?]
 	>=media-libs/gst-plugins-good-${PV}:${SLOT}=[${MULTILIB_USEDEP}]
 	>=media-plugins/gst-plugins-srtp-${PV}:${SLOT}=[${MULTILIB_USEDEP}]
-	>=dev-libs/glib-2.89.9999:=[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-${GLIB_PV}:=[${MULTILIB_USEDEP}]
 	examples? (
-		>=dev-libs/libcgroup-0.26:=
+		>=dev-libs/libcgroup-${LIBCGROUP_PV}:=
 	)
 	introspection? (
-		>=dev-libs/gobject-introspection-1.86.0:=
+		>=dev-libs/gobject-introspection-${GOBJECT_INTROSPECTION_PV}:=
 	)
 "
 DEPEND="
