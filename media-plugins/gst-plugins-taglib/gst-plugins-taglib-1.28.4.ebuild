@@ -6,16 +6,16 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="plugin sensitive-data untrusted-data"
 GST_ORG_MODULE="gst-plugins-good"
 
-inherit cflags-hardened gstreamer-meson
+inherit cflags-hardened secure-version gstreamer-meson
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
 
 DESCRIPTION="ID3v2/APEv2 tagger plugin for GStreamer"
 IUSE="
-ebuild_revision_23
+ebuild_revision_24
 "
 RDEPEND="
-	>=media-libs/taglib-1.5[${MULTILIB_USEDEP}]
+	>=media-libs/taglib-${TAGLIB_PV}:=[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
