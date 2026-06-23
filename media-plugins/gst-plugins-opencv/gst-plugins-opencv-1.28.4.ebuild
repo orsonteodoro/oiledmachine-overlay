@@ -6,17 +6,21 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="plugin sensitive-data untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 
-inherit cflags-hardened gstreamer-meson
+CHKL_TIMESTAMPS=(
+	"media-libs/opencv-4.9999"
+)
+
+inherit cflags-hardened chkl secure-version gstreamer-meson
 
 KEYWORDS="~amd64 ~arm64 ~x86"
 
 DESCRIPTION="OpenCV elements for GStreamer"
 IUSE="
-ebuild_revision_23
+ebuild_revision_24
 "
 RDEPEND="
-	>=media-libs/opencv-4.0.0[${MULTILIB_USEDEP},contrib,contribdnn]
-	media-libs/opencv:=
+	${OPENCV4_RDEPEND}
+	>=media-libs/opencv-4.0.0:=[${MULTILIB_USEDEP},contrib,contribdnn]
 "
 DEPEND="
 	${RDEPEND}
@@ -26,6 +30,7 @@ PATCHES=(
 )
 
 multilib_src_configure() {
+	chkl_check_many_timestamps
 	cflags-hardened_append
 	local emesonargs=(
 		# We need to disable here to avoid colliding w/ gst-plugins-bad
