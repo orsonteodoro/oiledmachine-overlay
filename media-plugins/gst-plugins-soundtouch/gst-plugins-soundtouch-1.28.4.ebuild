@@ -12,10 +12,10 @@ KEYWORDS="~amd64 ~arm64 ~x86"
 
 DESCRIPTION="Beats-per-minute detection and pitch controlling plugin for GStreamer"
 IUSE="
-ebuild_revision_22
+ebuild_revision_23
 "
 RDEPEND="
-	>=media-libs/libsoundtouch-1.4[${MULTILIB_USEDEP}]
+	>=media-libs/libsoundtouch-1.4:=[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
