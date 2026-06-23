@@ -15,11 +15,12 @@ CFLAGS_HARDENED_USE_CASES="plugin security-critical untrusted-data"
 
 # Forced FFmpeg live for mitigation
 CHKL_TIMESTAMPS=(
+	"dev-libs/glib-2.89.9999"
 	"media-video/ffmpeg-9999"
 	"media-video/ffmpeg-9999m"
 )
 
-inherit cflags-hardened chkl gstreamer-meson
+inherit cflags-hardened chkl secure-version gstreamer-meson
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~x86"
 S="${WORKDIR}/${MY_P}"
@@ -30,16 +31,13 @@ HOMEPAGE="https://gstreamer.freedesktop.org/modules/gst-libav.html"
 LICENSE="LGPL-2+"
 SLOT="1.0"
 IUSE+="
-ebuild_revision_27
+ebuild_revision_28
 "
 RDEPEND="
-	>=dev-libs/glib-2.40.0:=[${MULTILIB_USEDEP}]
-	~media-libs/gstreamer-${MY_PV}:1.0=[${MULTILIB_USEDEP}]
-	~media-libs/gst-plugins-base-${MY_PV}:1.0=[${MULTILIB_USEDEP}]
-	media-video/ffmpeg:=
-	|| (
-		>=media-video/ffmpeg-9999:60.62.62[${MULTILIB_USEDEP}]
-	)
+	>=dev-libs/glib-${GLIB_PV}:=[${MULTILIB_USEDEP}]
+	~media-libs/gstreamer-${MY_PV}:=[${MULTILIB_USEDEP}]
+	~media-libs/gst-plugins-base-${MY_PV}:=[${MULTILIB_USEDEP}]
+	${FFMPEG_SECURITY_CRITICAL_RDEPEND}
 "
 DEPEND="
 	${RDEPEND}
