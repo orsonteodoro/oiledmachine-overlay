@@ -1,0 +1,11 @@
+--- a/CMakeLists.txt.orig	2026-06-23 12:29:12.623172131 -0700
++++ b/CMakeLists.txt	2026-06-23 12:30:01.021694519 -0700
+@@ -1610,7 +1610,7 @@ endif()
+ 
+ if(HAVE_OPENJPEG)
+   status("    JPEG 2000:" OpenJPEG_FOUND
+-      THEN "OpenJPEG (ver ${OPENJPEG_VERSION})"
++      THEN "OpenJPEG (ver ${OPENJPEG_MAJOR_VERSION}.${OPENJPEG_MINOR_VERSION}.${OPENJPEG_BUILD_VERSION})"
+       ELSE "build (ver ${OPENJPEG_VERSION})"
+   )
+ elseif(HAVE_JASPER)

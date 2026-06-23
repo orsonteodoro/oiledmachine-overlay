@@ -1,0 +1,13 @@
+--- a/cmake/OpenCVDownload.cmake.orig	2026-06-23 16:19:24.169503842 -0700
++++ b/cmake/OpenCVDownload.cmake	2026-06-23 16:34:19.934156034 -0700
+@@ -191,8 +191,10 @@ function(ocv_download)
+     string(TOLOWER "${DL_ID}" __id)
+     string(REGEX REPLACE "[^a-zA-Z0-9_/ ]" "_" __id "${__id}")
+     set(CACHE_CANDIDATE "${OPENCV_DOWNLOAD_PATH}/${__id}/${DL_HASH}-${DL_FILENAME}")
++    message(STATUS "DEBUG:  CACHE_CANDIDATE: ${CACHE_CANDIDATE} (1)")
+   else()
+     set(CACHE_CANDIDATE "${OPENCV_DOWNLOAD_PATH}/${DL_HASH}-${DL_FILENAME}")
++    message(STATUS "DEBUG:  CACHE_CANDIDATE: ${CACHE_CANDIDATE} (2)")
+   endif()
+   if(EXISTS "${CACHE_CANDIDATE}")
+     ocv_download_log("#check_md5 \"${CACHE_CANDIDATE}\"")

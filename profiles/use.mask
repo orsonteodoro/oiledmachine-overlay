@@ -32,7 +32,13 @@ ycmd-44
 gcc_slot_9_1
 
 # EOL
+glog
+
+# EOL
 jemalloc
 
-# Last release is almost 5 years ago
+# The last release was almost 5 years ago.
 ladspa
+
+# The last release of libraw1394 was in 2016.
+ieee1394

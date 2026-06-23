@@ -123,31 +123,31 @@ media-video/ffmpeg amr
 # The repo has not been updated since 2013 without security review so disabled.
 media-video/ffmpeg bs2b
 
-# The gsm repo has not been updated for more than 8 years without security review so disabled.
-media-video/ffmpeg gsm
-
 # Dependencies are not updated
 # libraw1394 repo not updated since 10 years ago
 media-video/ffmpeg iec61883
 
 # Dependencies are not updated
-# libraw1394 repo not updated since 10 years ago
+# libraw1394 repo not updated since 2016 without a recent security review so disabled.
 media-video/ffmpeg ieee1394
 
-# The aribb24 repo has not been updated for more than 11 years without security review so disabled.
+# The aribb24 repo has not been updated since 2016 without a recent security review so disabled.
 media-video/ffmpeg libaribb24
 
-# The libilbc repo has not been updated for more than 4 years without security review so disabled.
+# The libilbc repo has not been updated since 2021 without a recent security review so disabled.
 media-video/ffmpeg libilbc
 
 # The lame ebuild and the lame repo is not up to date on security patches so the mp3 USE flag is disabled.
 media-video/ffmpeg lame
 
-# The soxr repo has not been updated for more than 8 years without security review so disabled.
+# The soxr repo has not been released in 2018 without a recent security review so disabled.
 media-video/ffmpeg libsoxr
 
-# The qrencode repo has not been updated for more than 6 years without security review so disabled.
+# The qrencode repo has not been updated since 2020 without a recent security review so disabled.
 media-video/ffmpeg qrcode
 
 # EOL project with security issues
 media-video/ffmpeg qsv
+
+# The atlas hasn't released since 2016 without a recent security review so disabled
+media-libs/opencv atlas

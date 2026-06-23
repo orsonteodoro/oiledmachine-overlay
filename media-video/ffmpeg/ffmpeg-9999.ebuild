@@ -1032,7 +1032,7 @@ RDEPEND+="
 		>=dev-libs/gmp-${GMP_PV}:=[${MULTILIB_USEDEP}]
 	)
 	gsm? (
-		>=media-sound/gsm-1.0.13-r1:=[${MULTILIB_USEDEP}]
+		>=media-sound/gsm-${GSM_PV}:=[${MULTILIB_USEDEP}]
 	)
 	iconv? (
 		>=virtual/libiconv-0-r1:*[${MULTILIB_USEDEP}]

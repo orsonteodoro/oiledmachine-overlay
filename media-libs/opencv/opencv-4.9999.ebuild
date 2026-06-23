@@ -6,14 +6,14 @@ EAPI=8
 # U20, U22, U24
 
 # For the flatbuffers version restriction, see
-# https://github.com/opencv/opencv/blob/4.13.0/modules/dnn/misc/tflite/schema_generated.h#L11
+# https://github.com/opencv/opencv/blob/4.x/modules/dnn/misc/tflite/schema_generated.h#L11
 # (The patch will allow for newer revisions.)
 
-# For python versions, see https://github.com/opencv/opencv/blob/4.13.0/modules/python/package/setup.py
+# For python versions, see https://github.com/opencv/opencv/blob/4.x/modules/python/package/setup.py
 
 # For CUDA, check optical flow driver requirement.
 
-# For CUDA C++ standard, see also https://github.com/opencv/opencv/blob/4.13.0/cmake/OpenCVDetectCUDA.cmake#L154
+# For CUDA C++ standard, see also https://github.com/opencv/opencv/blob/4.x/cmake/OpenCVDetectCUDA.cmake#L154
 CFLAGS_HARDENED_ASSEMBLERS="inline nasm yasm"
 CFLAGS_HARDENED_LANGS="asm c-lang"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data" # Biometrics TFA
@@ -21,11 +21,13 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS HO IO UM NPD OOBR OOBW"
 CXX_STANDARD=17 # 11 is minimum, 17 for protobuf
 PYTHON_COMPAT=( "python3_"{8..14} )
 
+inherit secure-version
+
 CMAKE_PV="3.15"
 GSTREAMER_PV="1.28.4"
 KLEIDICV_PV="0.5.0"
 QT5_PV="5.12.8"
-QT6_PV="6.2.4"
+QT6_PV="${QTBASE6_PV}"
 
 OPENEXR3_PV=(
 	"3.4.12:3.2.2"
@@ -375,69 +377,89 @@ ROCM_SLOTS=(
 
 CHKL_TIMESTAMPS=(
 	"app-arch/bzip2-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"app-text/tesseract-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-games/ogre-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/glib-2.89.9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"dev-libs/wayland-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/harfbuzz-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/freetype-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libavif-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libjxl-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libpng-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libva-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/libwebp-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/openjpeg-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/tiff-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"sci-libs/gdal-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"sci-libs/openblas-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"sci-ml/openvino-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"x11-base/xorg-server-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"x11-libs/libxkbcommon-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 )
 
 inherit abseil-cpp cflags-hardened chkl cuda java-pkg-opt-2 cmake-multilib flag-o-matic hip-versions
 inherit libcxx-slot libstdcxx-slot protobuf python-single-r1 toolchain-funcs virtualx
 
 if [[ "${PV}" == *"9999"* ]] ; then
-	inherit git-r3
+	FALLBACK_COMMIT="639fd5d07a7a71434deb038b5fa02ac7631ac2ab"
+	EGIT_BRANCH="4.x"
 	EGIT_REPO_URI="https://github.com/${PN}/${PN}.git"
-else
-	# From ocv_download()
-	ADE_PV="0.1.2e"									# See https://github.com/opencv/opencv/blob/4.13.0/modules/gapi/cmake/DownloadADE.cmake#L2	# Replace raw with blob for commit id
-	DNN_SAMPLES_FACE_DETECTOR_COMMIT="b2bfc75f6aea5b1f834ff0f0b865a7c18ff1459f"	# See https://github.com/opencv/opencv_extra/blob/4.13.0/testdata/dnn/download_models.py#L389
-	FACE_ALIGNMENT_COMMIT="8afa57abc8229d611c4937165d20e2a2d9fc5a12"		# See https://github.com/opencv/opencv_contrib/blob/4.13.0/modules/face/CMakeLists.txt#L11
-	NVIDIA_OPTICAL_FLOW_COMMIT="edb50da3cf849840d680249aa6dbef248ebce2ca"		# See https://github.com/opencv/opencv_contrib/blob/4.13.0/modules/cudaoptflow/CMakeLists.txt#L12
-	QRCODE_COMMIT="a8b69ccc738421293254aec5ddb38bd523503252"			# See https://github.com/opencv/opencv_contrib/blob/4.13.0/modules/wechat_qrcode/CMakeLists.txt#L15
-	XFEATURES2D_BOOSTDESC_COMMIT="34e4206aef44d50e6bbcd0ab06354b52e7466d26"		# See https://github.com/opencv/opencv_contrib/blob/4.13.0/modules/xfeatures2d/cmake/download_boostdesc.cmake#L2
-	XFEATURES2D_VGG_COMMIT="fccf7cd6a4b12079f73bbfb21745f9babcd4eb1d"		# See https://github.com/opencv/opencv_contrib/blob/4.13.0/modules/xfeatures2d/cmake/download_vgg.cmake#L2
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
 
+else
 	KEYWORDS="~amd64 ~arm64 ~riscv"
-	SRC_URI="
+	CONTRIB_PV="${PV}"
+	SRC_URI+="
 		https://github.com/${PN}/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz
-		https://github.com/opencv/ade/archive/v${ADE_PV}.tar.gz -> ade-${ADE_PV}.tar.gz
-		contrib? (
-			https://github.com/${PN}/${PN}_contrib/archive/${PV}.tar.gz -> ${PN}_contrib-${PV}.tar.gz
-			contribxfeatures2d? (
-				https://github.com/${PN}/${PN}_3rdparty/archive/${XFEATURES2D_BOOSTDESC_COMMIT}.tar.gz
-					-> ${PN}_3rdparty-${XFEATURES2D_BOOSTDESC_COMMIT}.tar.gz
-				https://github.com/${PN}/${PN}_3rdparty/archive/${XFEATURES2D_VGG_COMMIT}.tar.gz
-					-> ${PN}_3rdparty-${XFEATURES2D_VGG_COMMIT}.tar.gz
-			)
-			contribdnn? (
-				https://github.com/${PN}/${PN}_3rdparty/archive/${FACE_ALIGNMENT_COMMIT}.tar.gz
-					-> ${PN}_3rdparty-${FACE_ALIGNMENT_COMMIT}.tar.gz
-			)
-			cuda? (
-				https://github.com/NVIDIA/NVIDIAOpticalFlowSDK/archive/${NVIDIA_OPTICAL_FLOW_COMMIT}.tar.gz
-					-> NVIDIAOpticalFlowSDK-${NVIDIA_OPTICAL_FLOW_COMMIT}.tar.gz
-			)
-			dnnsamples? (
-				https://github.com/${PN}/${PN}_3rdparty/archive/${QRCODE_COMMIT}.tar.gz
-					-> ${PN}_3rdparty-${QRCODE_COMMIT}.tar.gz
-				https://github.com/${PN}/${PN}_3rdparty/archive/${DNN_SAMPLES_FACE_DETECTOR_COMMIT}.tar.gz
-					-> ${PN}_3rdparty-${DNN_SAMPLES_FACE_DETECTOR_COMMIT}.tar.gz
-			)
-			kleidicv? (
-				https://gitlab.arm.com/kleidi/kleidicv/-/archive/${KLEIDICV_PV}/kleidicv-${KLEIDICV_PV}.tar.gz
-			)
-		)
-		test? (
-			https://github.com/${PN}/${PN}_extra/archive/refs/tags/${PV}.tar.gz -> ${PN}_extra-${PV}.tar.gz
-		)
 	"
 fi
+# From ocv_download()
+ADE_PV="0.1.2e"									# See https://github.com/opencv/opencv/blob/4.x/modules/gapi/cmake/DownloadADE.cmake#L2	# Replace raw with blob for commit id
+CONTRIB_PV="4.13.0"
+EXTRA_PV="4.13.0"
+DNN_SAMPLES_FACE_DETECTOR_COMMIT="b2bfc75f6aea5b1f834ff0f0b865a7c18ff1459f"	# See https://github.com/opencv/opencv_extra/blob/4.x/testdata/dnn/download_models.py#L389
+FACE_ALIGNMENT_COMMIT="8afa57abc8229d611c4937165d20e2a2d9fc5a12"		# See https://github.com/opencv/opencv_contrib/blob/4.x/modules/face/CMakeLists.txt#L11
+NVIDIA_OPTICAL_FLOW_COMMIT="edb50da3cf849840d680249aa6dbef248ebce2ca"		# See https://github.com/opencv/opencv_contrib/blob/4.x/modules/cudaoptflow/CMakeLists.txt#L12
+QRCODE_COMMIT="a8b69ccc738421293254aec5ddb38bd523503252"			# See https://github.com/opencv/opencv_contrib/blob/4.x/modules/wechat_qrcode/CMakeLists.txt#L15
+XFEATURES2D_BOOSTDESC_COMMIT="34e4206aef44d50e6bbcd0ab06354b52e7466d26"		# See https://github.com/opencv/opencv_contrib/blob/4.x/modules/xfeatures2d/cmake/download_boostdesc.cmake#L2
+XFEATURES2D_VGG_COMMIT="fccf7cd6a4b12079f73bbfb21745f9babcd4eb1d"		# See https://github.com/opencv/opencv_contrib/blob/4.x/modules/xfeatures2d/cmake/download_vgg.cmake#L2
+SRC_URI+="
+	https://github.com/opencv/ade/archive/v${ADE_PV}.zip -> ade-${ADE_PV}.zip
+	contrib? (
+		https://github.com/${PN}/${PN}_contrib/archive/${CONTRIB_PV}.tar.gz -> ${PN}_contrib-${CONTRIB_PV}.tar.gz
+		contribxfeatures2d? (
+			https://github.com/${PN}/${PN}_3rdparty/archive/${XFEATURES2D_BOOSTDESC_COMMIT}.tar.gz
+				-> ${PN}_3rdparty-${XFEATURES2D_BOOSTDESC_COMMIT}.tar.gz
+			https://github.com/${PN}/${PN}_3rdparty/archive/${XFEATURES2D_VGG_COMMIT}.tar.gz
+				-> ${PN}_3rdparty-${XFEATURES2D_VGG_COMMIT}.tar.gz
+		)
+		contribdnn? (
+			https://github.com/${PN}/${PN}_3rdparty/archive/${FACE_ALIGNMENT_COMMIT}.tar.gz
+				-> ${PN}_3rdparty-${FACE_ALIGNMENT_COMMIT}.tar.gz
+		)
+		cuda? (
+			https://github.com/NVIDIA/NVIDIAOpticalFlowSDK/archive/${NVIDIA_OPTICAL_FLOW_COMMIT}.tar.gz
+				-> NVIDIAOpticalFlowSDK-${NVIDIA_OPTICAL_FLOW_COMMIT}.tar.gz
+		)
+		dnnsamples? (
+			https://github.com/${PN}/${PN}_3rdparty/archive/${QRCODE_COMMIT}.tar.gz
+				-> ${PN}_3rdparty-${QRCODE_COMMIT}.tar.gz
+			https://github.com/${PN}/${PN}_3rdparty/archive/${DNN_SAMPLES_FACE_DETECTOR_COMMIT}.tar.gz
+				-> ${PN}_3rdparty-${DNN_SAMPLES_FACE_DETECTOR_COMMIT}.tar.gz
+		)
+		kleidicv? (
+			https://gitlab.arm.com/kleidi/kleidicv/-/archive/${KLEIDICV_PV}/kleidicv-${KLEIDICV_PV}.tar.gz
+		)
+	)
+	test? (
+		https://github.com/${PN}/${PN}_extra/archive/refs/tags/${PV}.tar.gz -> ${PN}_extra-${EXTRA_PV}.tar.gz
+	)
+"
+
 
 DESCRIPTION="A collection of algorithms and sample code for various computer vision problems"
 HOMEPAGE="https://opencv.org"
@@ -450,7 +472,7 @@ RESTRICT="
 SLOT="0/${PV}" # subslot = libopencv* soname version
 # We assume not cross-compiling options enabled.
 # general options
-IUSE="
+IUSE+="
 	${_CXX_STANDARD[@]}
 	${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 	${PATENT_STATUS_IUSE[@]}
@@ -571,6 +593,7 @@ REQUIRED_USE="
 	)
 	contribdnn? (
 		contrib
+		protobuf
 	)
 	contribfreetype? (
 		contrib
@@ -852,7 +875,7 @@ CUDA_DEPEND="
 # For ffmpeg version, see \
 # https://github.com/opencv/opencv_3rdparty/blob/ea9240e39bc0d6a69d2b1f0ba4513bdc7612a41e/ffmpeg/download_src.sh#L24	# FFmpeg 4.x
 # For the commit above, see
-# https://github.com/opencv/opencv/blob/4.13.0/3rdparty/ffmpeg/ffmpeg.cmake#L3
+# https://github.com/opencv/opencv/blob/4.x/3rdparty/ffmpeg/ffmpeg.cmake#L3
 gen_rocm_rdepend() {
 	local s
 	for s in "${ROCM_SLOTS[@]}" ; do
@@ -895,8 +918,8 @@ PATENT_STATUS_RDEPEND="
 # The Protobuf version requirement is relaxed.
 RDEPEND="
 	${PATENT_STATUS_RDEPEND}
-	>=app-arch/bzip2-9999:=[${MULTILIB_USEDEP}]
-	>=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}]
+	>=app-arch/bzip2-${BZIP2_PV}:=[${MULTILIB_USEDEP}]
+	>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}]
 	dev-libs/protobuf:=
 	|| (
 		dev-libs/protobuf:3/3.12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx_standard_cxx17]
@@ -906,7 +929,7 @@ RDEPEND="
 		>=sci-libs/atlas-3.10.3:=
 	)
 	avif? (
-		>=media-libs/libavif-0.9.3:=[${MULTILIB_USEDEP}]
+		>=media-libs/libavif-${LIBAVIF_PV}:=[${MULTILIB_USEDEP}]
 	)
 	cuda? (
 		${CUDA_DEPEND}
@@ -921,17 +944,17 @@ RDEPEND="
 		>=sci-libs/hdf5-1.10.4:=
 	)
 	contribfreetype? (
-		>=media-libs/harfbuzz-9999:=[${MULTILIB_USEDEP}]
-		>=media-libs/freetype-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/harfbuzz-${HARFBUZZ_PV}:=[${MULTILIB_USEDEP}]
+		>=media-libs/freetype-${FREETYPE_PV}:=[${MULTILIB_USEDEP}]
 	)
 	contribovis? (
-		>=dev-games/ogre-1.12:=
+		>=dev-games/ogre-${OGRE_PV}:=
 	)
 	ffmpeg? (
 		media-video/ffmpeg:=[${MULTILIB_USEDEP}]
 	)
 	gdal? (
-		>=sci-libs/gdal-3.0.4:=
+		>=sci-libs/gdal-${GDAL_PV}:=
 	)
 	gflags? (
 		>=dev-cpp/gflags-2.2.2:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
@@ -940,15 +963,15 @@ RDEPEND="
 		>=dev-cpp/glog-0.4.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	)
 	gphoto2? (
-		>=media-libs/libgphoto2-2.5.24:=[${MULTILIB_USEDEP}]
+		>=media-libs/libgphoto2-${LIBGPHOTO2_PV}:=[${MULTILIB_USEDEP}]
 	)
 	gstreamer? (
 		>=media-libs/gstreamer-${GSTREAMER_PV}:=[${MULTILIB_USEDEP}]
 		>=media-libs/gst-plugins-base-${GSTREAMER_PV}:=[${MULTILIB_USEDEP}]
 	)
 	gtk3? (
-		>=dev-libs/glib-2.89.9999:=[${MULTILIB_USEDEP}]
-		>=x11-libs/gtk+-3.24.52:3=[${MULTILIB_USEDEP}]
+		>=dev-libs/glib-${GLIB_PV}:=[${MULTILIB_USEDEP}]
+		>=x11-libs/gtk+-${GTK3_PV}:3=[${MULTILIB_USEDEP}]
 	)
 	halide? (
 		dev-lang/halide:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
@@ -961,18 +984,18 @@ RDEPEND="
 		>=virtual/jre-1.8:*
 	)
 	jpeg? (
-		>=media-libs/libjpeg-turbo-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:=[${MULTILIB_USEDEP}]
 	)
 	jpeg2k? (
 		!jasper? (
-			>=media-libs/openjpeg-2.5.4-r1:=[${MULTILIB_USEDEP}]
+			>=media-libs/openjpeg-${OPENJPEG_PV}:=[${MULTILIB_USEDEP}]
 		)
 		jasper? (
 			>=media-libs/jasper-1.900.1:=
 		)
 	)
 	jpegxl? (
-		media-libs/libjxl:=[${MULTILIB_USEDEP}]
+		>=media-libs/libjxl-${LIBJXL_PV}:=[${MULTILIB_USEDEP}]
 	)
 	lapack? (
 		>=virtual/lapack-3.9.0:=[eselect-ldso]
@@ -983,7 +1006,7 @@ RDEPEND="
 		>=sci-libs/mkl-2020.0.166:=
 	)
 	openblas? (
-		>=sci-libs/openblas-0.3.8:=
+		>=sci-libs/openblas-${OPENBLAS_PV}:=
 	)
 	opencl? (
 		virtual/opencl:*[${MULTILIB_USEDEP}]
@@ -999,10 +1022,10 @@ RDEPEND="
 		virtual/glu:*[${MULTILIB_USEDEP}]
 	)
 	openvino? (
-		>=sci-ml/openvino-2024.0.0:=
+		>=sci-ml/openvino-${OPENVINO_PV}:=
 	)
 	png? (
-		>=media-libs/libpng-1.6.57:=[${MULTILIB_USEDEP}]
+		>=media-libs/libpng-${LIBPNG_PV}:=[${MULTILIB_USEDEP}]
 	)
 	python? (
 		${PYTHON_DEPS}
@@ -1010,7 +1033,7 @@ RDEPEND="
 			virtual/numpy:=[${PYTHON_USEDEP}]
 		')
 		openvino? (
-			>=sci-ml/openvino-2024.0.0:=[${PYTHON_SINGLE_USEDEP}]
+			>=sci-ml/openvino-${OPENVINO_PV}:=[${PYTHON_SINGLE_USEDEP}]
 		)
 	)
 	qt5? (
@@ -1028,49 +1051,49 @@ RDEPEND="
 		)
 	)
 	quirc? (
-		>=media-libs/quirc-1.1:=
+		>=media-libs/quirc-${QUIRC_PV}:=
 	)
 	rocm? (
 		$(gen_rocm_rdepend)
 	)
 	spng? (
-		>=media-libs/libspng-0.7.4:=[${MULTILIB_USEDEP}]
+		>=media-libs/libspng-${LIBSPNG_PV}:=[${MULTILIB_USEDEP}]
 	)
 	tesseract? (
-		>=app-text/tesseract-4.1.1:=[opencl=,${MULTILIB_USEDEP}]
+		>=app-text/tesseract-${TESSERACT_PV}:=[opencl=,${MULTILIB_USEDEP}]
 	)
 	tbb? (
 		>=dev-cpp/tbb-2022.1.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	)
 	tiff? (
-		>=media-libs/tiff-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/tiff-${TIFF_PV}:=[${MULTILIB_USEDEP}]
 	)
 	v4l? (
 		>=media-libs/libv4l-0.8.3:=[${MULTILIB_USEDEP}]
 	)
 	vaapi? (
-		>=media-libs/libva-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/libva-${LIBVA_PV}:=[${MULTILIB_USEDEP}]
 	)
 	vtk? (
 		>=sci-libs/vtk-7.1.1:=[rendering,cuda=]
 	)
 	vulkan? (
+		>=media-libs/vulkan-loader-${VULKAN_LOADER_PV}:=[${MULTILIB_USEDEP}]
 		virtual/vulkan:=[${MULTILIB_USEDEP}]
-		media-libs/vulkan-loader:*[${MULTILIB_USEDEP}]
 	)
 	wayland? (
 		>=dev-libs/wayland-protocols-1.13:=
-		>=dev-libs/wayland-9999:=[${MULTILIB_USEDEP}]
-		>=x11-libs/libxkbcommon-0.10.0:=[${MULTILIB_USEDEP}]
+		>=dev-libs/wayland-${WAYLAND_PV}:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=[${MULTILIB_USEDEP}]
 	)
 	webp? (
-		>=media-libs/libwebp-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/libwebp-${LIBWEBP_PV}:=[${MULTILIB_USEDEP}]
 	)
 	xine? (
 		>=media-libs/xine-lib-1.2.9:=
 	)
 	xvfb? (
-		x11-base/xorg-server:=
+		>=x11-base/xorg-server-${XORG_SERVER_PV}:=
 	)
 "
 DEPEND="
@@ -1118,18 +1141,19 @@ PATCHES=(
 	"${FILESDIR}/${PN}-3.4.1-cuda-add-relaxed-constexpr.patch"
 	"${FILESDIR}/${PN}-4.1.2-opencl-license.patch"
 	"${FILESDIR}/${PN}-4.4.0-disable-native-cpuflag-detect.patch"
-	"${FILESDIR}/${PN}-4.12.0-link-with-cblas-for-lapack.patch"
+	"${FILESDIR}/${PN}-639fd5d-link-with-cblas-for-lapack.patch"
 #	"${FILESDIR}/${PN}-4.8.1-use-system-flatbuffers.patch"
 	"${FILESDIR}/${PN}-4.8.1-use-system-opencl.patch"
 	"${FILESDIR}/${PN}-4.9.0-drop-python2-detection.patch"
-	"${FILESDIR}/${PN}-4.11.0-ade-0.1.2e.tar.gz.patch"
-	"${FILESDIR}/${PN}-4.9.0-cmake-cleanup.patch"
+#	"${FILESDIR}/${PN}-4.11.0-ade-0.1.2e.tar.gz.patch"
+	"${FILESDIR}/${PN}-639fd5d-cmake-cleanup.patch"
 	# TODO applied in src_prepare
-	# "${FILESDIR}/${PN}_contrib-${PV}-rgbd.patch"
+	# "${FILESDIR}/${PN}_contrib-${CONTRIB_PV}-rgbd.patch"
 	# "${FILESDIR}/${PN}_contrib-4.8.1-NVIDIAOpticalFlowSDK-2.0.tar.gz.patch"
 	"${FILESDIR}/${PN}-4.9.0-openvx-paths.patch" # oiledmachine-overlay change
 	"${FILESDIR}/${PN}-4.10.0-vulkan-libdirs.patch"
 	"${FILESDIR}/${PN}-4.10.0-halide-libdirs.patch"
+	"${FILESDIR}/debug-download.patch"
 )
 
 cuda_get_cuda_compiler() {
@@ -1190,6 +1214,19 @@ pkg_setup() {
 	libstdcxx-slot_verify
 }
 
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+		unpack ${A}
+	else
+		unpack ${A}
+	fi
+}
+
 src_prepare() {
 	local file
 	cmake_src_prepare
@@ -1234,7 +1271,7 @@ src_prepare() {
 		|| die
 
 	if use contrib ; then
-		cd "${WORKDIR}/${PN}_contrib-${PV}" || die
+		cd "${WORKDIR}/${PN}_contrib-${CONTRIB_PV}" || die
 		eapply "${FILESDIR}/${PN}_contrib-4.8.1-rgbd.patch"
 		eapply "${FILESDIR}/${PN}_contrib-4.8.1-NVIDIAOpticalFlowSDK-2.0.tar.gz.patch"
 		if has_version ">=dev-util/nvidia-cuda-toolkit-12.4" && use cuda ; then
@@ -1243,21 +1280,21 @@ src_prepare() {
 		fi
 		cd "${S}" || die
 
-		! use contribcvv && { rm -R "${WORKDIR}/${PN}_contrib-${PV}/modules/cvv" || die; }
-		# ! use contribdnn && { rm -R "${WORKDIR}/${PN}_contrib-${PV}/modules/dnn" || die; }
-		! use contribfreetype && { rm -R "${WORKDIR}/${PN}_contrib-${PV}/modules/freetype" || die; }
-		! use contribhdf && { rm -R "${WORKDIR}/${PN}_contrib-${PV}/modules/hdf" || die; }
-		! use contribovis && { rm -R "${WORKDIR}/${PN}_contrib-${PV}/modules/ovis" || die; }
-		! use contribsfm && { rm -R "${WORKDIR}/${PN}_contrib-${PV}/modules/sfm" || die; }
-		! use contribxfeatures2d && { rm -R "${WORKDIR}/${PN}_contrib-${PV}/modules/xfeatures2d" || die; }
+		! use contribcvv && { rm -R "${WORKDIR}/${PN}_contrib-${CONTRIB_PV}/modules/cvv" || die; }
+		# ! use contribdnn && { rm -R "${WORKDIR}/${PN}_contrib-${CONTRIB_PV}/modules/dnn" || die; }
+		! use contribfreetype && { rm -R "${WORKDIR}/${PN}_contrib-${CONTRIB_PV}/modules/freetype" || die; }
+		! use contribhdf && { rm -R "${WORKDIR}/${PN}_contrib-${CONTRIB_PV}/modules/hdf" || die; }
+		! use contribovis && { rm -R "${WORKDIR}/${PN}_contrib-${CONTRIB_PV}/modules/ovis" || die; }
+		! use contribsfm && { rm -R "${WORKDIR}/${PN}_contrib-${CONTRIB_PV}/modules/sfm" || die; }
+		! use contribxfeatures2d && { rm -R "${WORKDIR}/${PN}_contrib-${CONTRIB_PV}/modules/xfeatures2d" || die; }
 	fi
 
 	mkdir -p "${S}/.cache/ade" || die
-	local s2=$(md5sum "${DISTDIR}/ade-${ADE_PV}.tar.gz" \
+	local s2=$(md5sum "${DISTDIR}/ade-${ADE_PV}.zip" \
 		| cut -f 1 -d " ")
 	cp \
-		"${DISTDIR}/ade-${ADE_PV}.tar.gz" \
-		"${S}/.cache/ade/${s2}-v${ADE_PV}.tar.gz" \
+		"${DISTDIR}/ade-${ADE_PV}.zip" \
+		"${S}/.cache/ade/${s2}-v${ADE_PV}.zip" \
 		|| die
 
 	if use dnnsamples ; then
@@ -1280,7 +1317,7 @@ src_prepare() {
 	if use contribxfeatures2d ; then
 		cp \
 			"${WORKDIR}/${PN}_3rdparty-${XFEATURES2D_BOOSTDESC_COMMIT}/"*".i" \
-			"${WORKDIR}/${PN}_contrib-${PV}/modules/xfeatures2d/src/" \
+			"${WORKDIR}/${PN}_contrib-${CONTRIB_PV}/modules/xfeatures2d/src/" \
 			|| die
 		mkdir -p "${S}/.cache/xfeatures2d/boostdesc" || die
 		for file in "${WORKDIR}/${PN}_3rdparty-${XFEATURES2D_BOOSTDESC_COMMIT}/"*".i" ; do
@@ -1295,7 +1332,7 @@ src_prepare() {
 
 		cp \
 			"${WORKDIR}/${PN}_3rdparty-${XFEATURES2D_VGG_COMMIT}/"*".i" \
-			"${WORKDIR}/${PN}_contrib-${PV}/modules/xfeatures2d/src/" \
+			"${WORKDIR}/${PN}_contrib-${CONTRIB_PV}/modules/xfeatures2d/src/" \
 			|| die
 		mkdir -p "${S}/.cache/xfeatures2d/vgg" || die
 		for file in "${WORKDIR}/${PN}_3rdparty-${XFEATURES2D_VGG_COMMIT}/"*".i" ; do
@@ -1310,13 +1347,13 @@ src_prepare() {
 
 	if use contribdnn ; then
 		mkdir -p "${S}/.cache/data" || die
-		mkdir -p "${WORKDIR}/${PN}_extra-${PV}/testdata/cv/face/" || die
+		mkdir -p "${WORKDIR}/${PN}_extra-${EXTRA_PV}/testdata/cv/face/" || die
 		file="face_landmark_model.dat"
 		local s2=$(md5sum "${WORKDIR}/${PN}_3rdparty-${FACE_ALIGNMENT_COMMIT}/${file}" \
 			| cut -f 1 -d " ")
 		cp \
 			"${WORKDIR}/${PN}_3rdparty-${FACE_ALIGNMENT_COMMIT}/${file}" \
-			"${WORKDIR}/${PN}_extra-${PV}/testdata/cv/face/" \
+			"${WORKDIR}/${PN}_extra-${EXTRA_PV}/testdata/cv/face/" \
 			|| die
 		mv \
 			"${WORKDIR}/${PN}_3rdparty-${FACE_ALIGNMENT_COMMIT}/${file}" \
@@ -1440,7 +1477,7 @@ multilib_src_configure() {
 		-DOPENCV_DOWNLOAD_TRIES_LIST="0"
 		-DOPENCV_ENABLE_MEMORY_SANITIZER=$(usex debug)
 		-DOPENCV_ENABLE_NONFREE=$(usex non-free)
-		-DOPENCV_EXTRA_MODULES_PATH=$(usex contrib "${WORKDIR}/${PN}_contrib-${PV}/modules" "")
+		-DOPENCV_EXTRA_MODULES_PATH=$(usex contrib "${WORKDIR}/${PN}_contrib-${CONTRIB_PV}/modules" "")
 		-DOPENCV_GENERATE_PKGCONFIG=ON
 		-DOPENCV_SAMPLES_BIN_INSTALL_PATH="libexec/${PN}/bin/samples"
 	# NOTE do this so testprograms do not fail TODO adjust path in code \
@@ -1764,7 +1801,7 @@ eerror "OpenVINO is not supported for ${ARCH}"
 		# opencv tests assume to be build in Release mode
 		CMAKE_BUILD_TYPE="Release"
 		mycmakeargs+=(
-			-DOPENCV_TEST_DATA_PATH="${WORKDIR}/${PN}_extra-${PV}/testdata"
+			-DOPENCV_TEST_DATA_PATH="${WORKDIR}/${PN}_extra-${EXTRA_PV}/testdata"
 		)
 		if use vtk ; then
 			mycmakeargs+=(
@@ -1863,7 +1900,7 @@ multilib_src_test() {
 		export LIBGL_ALWAYS_SOFTWARE=true # A workaround for zink warnings
 		export OPENCV_CORE_PLUGIN_PATH="${BUILD_DIR}/lib"
 		export OPENCV_DNN_PLUGIN_PATH="${BUILD_DIR}/lib"
-		export OPENCV_TEST_DATA_PATH="${WORKDIR}/${PN}_extra-${PV}/testdata"
+		export OPENCV_TEST_DATA_PATH="${WORKDIR}/${PN}_extra-${EXTRA_PV}/testdata"
 		export OPENCV_VIDEOIO_PLUGIN_PATH="${BUILD_DIR}/lib"
 		results=()
 		for test in "${BUILD_DIR}/bin/opencv_test_"* ; do
