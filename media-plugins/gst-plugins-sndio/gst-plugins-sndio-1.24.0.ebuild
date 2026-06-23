@@ -7,7 +7,11 @@ MY_P="gstreamer1-plugins-sndio-${PV}"
 
 CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
 
-inherit cflags-hardened toolchain-funcs
+CHKL_TIMESTAMPS=(
+	"media-sound/sndio-9999"
+)
+
+inherit cflags-hardened chkl secure-version toolchain-funcs
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${MY_P}"
@@ -21,18 +25,18 @@ HOMEPAGE="https://github.com/BSDKaffee/gstreamer1-plugins-sndio"
 LICENSE="ISC"
 SLOT="0"
 IUSE="
-ebuild_revision_22
+ebuild_revision_23
 "
 RDEPEND="
-	media-libs/gst-plugins-base:1.0
+	>=media-sound/sndio-${SNDIO_PV}:=
 	media-libs/gst-plugins-base:=
-	media-sound/sndio:=
 "
 DEPEND="
 	${RDEPEND}
 "
 
 multilib_src_configure() {
+	chkl_check_many_timestamps
 	cflags-hardened_append
 	gstreamer_multilib_src_configure
 }
