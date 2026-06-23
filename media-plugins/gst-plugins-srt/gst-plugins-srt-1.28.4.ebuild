@@ -6,17 +6,20 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="network plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 
-inherit cflags-hardened gstreamer-meson
+CHKL_TIMESTAMPS=(
+	"net-libs/srt-9999"
+)
+
+inherit cflags-hardened chkl secure-version gstreamer-meson
 
 KEYWORDS="~amd64 ~arm64"
 
 DESCRIPTION="Secure reliable transport (SRT) transfer plugin for GStreamer"
 IUSE="
-ebuild_revision_22
+ebuild_revision_23
 "
 RDEPEND="
-	>=net-libs/srt-1.3.0[${MULTILIB_USEDEP}]
-	net-libs/srt:=
+	>=net-libs/srt-${SRT_PV}:=[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
@@ -26,6 +29,7 @@ BDEPEND="
 "
 
 multilib_src_configure() {
+	chkl_check_many_timestamps
 	cflags-hardened_append
 	gstreamer_multilib_src_configure
 }
