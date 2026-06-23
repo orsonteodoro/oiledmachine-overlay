@@ -7,18 +7,17 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 
-inherit cflags-hardened gstreamer-meson
+inherit cflags-hardened secure-version gstreamer-meson
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
 DESCRIPTION="libgme, a video game music file emulator, decoder plugin for GStreamer"
 IUSE="
-ebuild_revision_22
+ebuild_revision_23
 "
 RDEPEND="
-	media-libs/game-music-emu[${MULTILIB_USEDEP}]
-	~media-libs/gst-plugins-base-${PV}:1.0[${MULTILIB_USEDEP}]
-	media-libs/gst-plugins-base:=
+	>=media-libs/game-music-emu-${GAME_MUSIC_EMU_PV}:=[${MULTILIB_USEDEP}]
+	~media-libs/gst-plugins-base-${PV}:=[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
