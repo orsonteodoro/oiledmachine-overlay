@@ -33,7 +33,6 @@ MY_PV="${PV}"
 
 RUSTFLAGS_HARDENED_USE_CASES="multithreaded-confidential network p2p plugin secure-critical sensitive-data server untrusted-data"
 EXPECTED_BUILD_FILES_FINGERPRINT="disable"
-GOBJECT_INTROSPECTION_PV="1.86.0"
 GST_PV="${MY_PV}"
 LLVM_COMPAT=( 22 ) # For clang-sys ; slot must be updated when rust slot is changed
 LLVM_MAX_SLOT="22"
@@ -137,8 +136,8 @@ CHKL_TIMESTAMPS=(
 	"x11-libs/pango-9999"
 )
 
-inherit chkl rustflags-hardened flag-o-matic lcnr llvm meson multilib-minimal
-inherit python-any-r1 rust sandbox-changes toolchain-funcs
+inherit chkl rustflags-hardened flag-o-matic lcnr llvm meson
+inherit python-any-r1 rust sandbox-changes toolchain-funcs secure-version multilib-minimal
 
 if [[ "${MY_PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -1334,7 +1333,7 @@ ${MODULES[@]}
 ${PATENT_STATUS_IUSE[@]}
 aom clang doc gcc nvcodec qsv openh264 rav1e system-libsodium vaapi vpx vulkan x264 x265
 webrtc-aws webrtc-livekit
-ebuild_revision_54
+ebuild_revision_55
 "
 WEBRTC_AV1_ENCODERS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -1585,13 +1584,13 @@ REQUIRED_USE+="
 # openssl requirement relaxed CI uses 3.0.8
 #	>=dev-libs/libgit2-1.5
 CARGO_BINDINGS_DEPENDS_GLIB="
-	>=dev-libs/glib-2.89.9999:=[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-${GLIB_PV}:=[${MULTILIB_USEDEP}]
 	>=dev-libs/gobject-introspection-${GOBJECT_INTROSPECTION_PV}:=
 	elibc_glibc? (
-		>=sys-libs/glibc-2.43:=
+		>=sys-libs/glibc-${GLIBC_PV}:=
 	)
 	elibc_musl? (
-		>=sys-libs/musl-1.2.6:=
+		>=sys-libs/musl-${MUSL_PV}:=
 	)
 "
 CARGO_BINDINGS_DEPENDS_GOBJECT_SYS="
@@ -1600,19 +1599,18 @@ CARGO_BINDINGS_DEPENDS_GOBJECT_SYS="
 CARGO_BINDINGS_DEPENDS_CAIRO="
 	${CARGO_BINDINGS_DEPENDS_GOBJECT_SYS}
 	>=dev-libs/gobject-introspection-${GOBJECT_INTROSPECTION_PV}:=
-	>=x11-libs/cairo-9999:=[${MULTILIB_USEDEP}]
+	>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP}]
 "
 CARGO_BINDINGS_DEPENDS_PANGO="
 	${CARGO_BINDINGS_DEPENDS_GOBJECT_SYS}
-	>=x11-libs/pango-1.57.1:=[${MULTILIB_USEDEP},introspection]
+	>=x11-libs/pango-${PANGO_PV}:=[${MULTILIB_USEDEP},introspection]
 "
 CARGO_BINDINGS_DEPENDS_GTK4="
 	${CARGO_BINDINGS_DEPENDS_CAIRO}
 	${CARGO_BINDINGS_DEPENDS_PANGO}
-	>=gui-libs/gtk-4.23.9999:4=[introspection,gstreamer]
-	gui-libs/gtk:=
+	>=gui-libs/gtk-${GTK4_PV}:4=[introspection,gstreamer]
 	>=media-libs/graphene-1.10:=[introspection]
-	>=x11-libs/gdk-pixbuf-2.36.8:=[introspection]
+	>=x11-libs/gdk-pixbuf-${GDK_PIXBUF_PV}:=[introspection]
 "
 
 PATENT_STATUS_RDEPEND="
@@ -1626,23 +1624,23 @@ RDEPEND+="
 		~media-plugins/gst-plugins-analyticsoverlay-${GST_PV}:=[${MULTILIB_USEDEP}]
 	)
 	aws? (
-		>=dev-libs/openssl-1.1:=[${MULTILIB_USEDEP}]
+		${OPENSSL_RDEPEND}
 	)
 	closedcaption? (
 		${CARGO_BINDINGS_DEPENDS_CAIRO}
 		${CARGO_BINDINGS_DEPENDS_PANGO}
 	)
 	csound? (
-		>=media-sound/csound-9999:=[${MULTILIB_USEDEP}]
+		>=media-sound/csound-${CSOUND_PV}:=[${MULTILIB_USEDEP}]
 	)
 	dav1d? (
-		>=media-libs/dav1d-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/dav1d-${DAV1D_PV}:=[${MULTILIB_USEDEP}]
 	)
 	elibc_glibc? (
-		>=sys-libs/glibc-2.43:=
+		>=sys-libs/glibc-${GLIBC_PV}:=
 	)
 	elibc_musl? (
-		>=sys-libs/musl-1.2.6:=
+		>=sys-libs/musl-${MUSL_PV}:=
 	)
 	gtk4? (
 		${CARGO_BINDINGS_DEPENDS_GTK4}
@@ -1653,18 +1651,18 @@ RDEPEND+="
 		${CARGO_BINDINGS_DEPENDS_PANGO}
 	)
 	skia? (
-		>=media-libs/fontconfig-2.18.1:=[${MULTILIB_USEDEP}]
-		>=media-libs/freetype-9999:=[${MULTILIB_USEDEP}]
-		>=media-libs/harfbuzz-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/fontconfig-${FONTCONFIG_PV}:=[${MULTILIB_USEDEP}]
+		>=media-libs/freetype-${FREETYPE_PV}:=[${MULTILIB_USEDEP}]
+		>=media-libs/harfbuzz-${HARFBUZZ_PV}:=[${MULTILIB_USEDEP}]
 	)
 	system-libsodium? (
-		>=dev-libs/libsodium-9999:=[${MULTILIB_USEDEP}]
+		>=dev-libs/libsodium-${LIBSODIUM_PV}:=[${MULTILIB_USEDEP}]
 	)
 	videofx? (
 		${CARGO_BINDINGS_DEPENDS_CAIRO}
 	)
 	webp? (
-		>=media-libs/libwebp-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/libwebp-${LIBWEBP_PV}:=[${MULTILIB_USEDEP}]
 	)
 	webrtc? (
 		~media-plugins/gst-plugins-opus-${GST_PV}:=[${MULTILIB_USEDEP}]
@@ -1705,7 +1703,7 @@ RDEPEND+="
 		~media-plugins/gst-plugins-webrtc-${GST_PV}:=[${MULTILIB_USEDEP}]
 	)
 	vvdec? (
-		>=media-libs/vvdec-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/vvdec-${VVDEC_PV}:=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND+="
@@ -1927,8 +1925,8 @@ einfo "LLVM SLOT:  ${LLVM_MAX_SLOT}"
 
 einfo "emesonargs:  ${emesonargs[@]}"
 
-	rustflags-hardened_append
 	chkl_check_many_timestamps
+	rustflags-hardened_append
 	meson_src_configure
 }
 
