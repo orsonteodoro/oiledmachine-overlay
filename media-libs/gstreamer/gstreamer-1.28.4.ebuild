@@ -26,7 +26,7 @@ CHKL_TIMESTAMPS=(
 	"sys-libs/libunwind-9999"
 )
 
-inherit cflags-hardened chkl gstreamer-meson vf
+inherit cflags-hardened chkl secure-version vf gstreamer-meson
 
 KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~m68k ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86
@@ -40,22 +40,22 @@ LICENSE="LGPL-2+"
 SLOT="1.0"
 IUSE="
 +caps +introspection nls unwind
-ebuild_revision_27
+ebuild_revision_28
 "
 RDEPEND="
-	>=dev-libs/glib-2.89.9999:=[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-${GLIB_PV}:=[${MULTILIB_USEDEP}]
 	caps? (
-		>=sys-libs/libcap-9999:=[${MULTILIB_USEDEP}]
+		>=sys-libs/libcap-${LIBCAP_PV}:=[${MULTILIB_USEDEP}]
 	)
 	introspection? (
-		>=dev-libs/gobject-introspection-1.86.0:=
+		>=dev-libs/gobject-introspection-${GOBJECT_INTROSPECTION_PV}:=
 	)
 	nls? (
 		sys-devel/gettext:=[${MULTILIB_USEDEP}]
 	)
 	unwind? (
-		>=dev-libs/elfutils-9999:=[${MULTILIB_USEDEP}]
-		>=sys-libs/libunwind-9999:=[${MULTILIB_USEDEP}]
+		>=dev-libs/elfutils-${ELFUTILS_PV}:=[${MULTILIB_USEDEP}]
+		>=sys-libs/libunwind-${LIBUNWIND_PV}:=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
