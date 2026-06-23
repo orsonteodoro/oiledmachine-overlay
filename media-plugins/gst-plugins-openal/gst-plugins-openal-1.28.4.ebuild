@@ -7,18 +7,17 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 
-inherit cflags-hardened gstreamer-meson
+inherit cflags-hardened secure-version gstreamer-meson
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
 DESCRIPTION="OpenAL plugin for GStreamer"
 IUSE="
-ebuild_revision_22
+ebuild_revision_23
 "
 RDEPEND="
-	>=media-libs/openal-1.14[${MULTILIB_USEDEP}]
-	~media-libs/gst-plugins-base-${PV}:1.0[${MULTILIB_USEDEP}]
-	media-libs/gst-plugins-base:=
+	>=media-libs/openal-${OPENAL_PV}:=[${MULTILIB_USEDEP}]
+	~media-libs/gst-plugins-base-${PV}:=[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
