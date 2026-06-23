@@ -6,17 +6,20 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="plugin security-critical sensitive-data untrusted-data"
 GST_ORG_MODULE="gst-plugins-good"
 
-inherit cflags-hardened gstreamer-meson
+CHKL_TIMESTAMPS=(
+	"media-libs/libvpx-9999"
+)
+
+inherit cflags-hardened chkl secure-version gstreamer-meson
 
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86"
 
 DESCRIPTION="VP8/VP9 video encoder/decoder plugin for GStreamer"
 IUSE="
-ebuild_revision_23
+ebuild_revision_24
 "
 RDEPEND="
-	>=media-libs/libvpx-1.7.0[${MULTILIB_USEDEP}]
-	media-libs/libvpx:=
+	>=media-libs/libvpx-${LIBVPX_PV}:=[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
@@ -27,5 +30,6 @@ BDEPEND="
 
 multilib_src_configure() {
 	cflags-hardened_append
+	chkl_check_many_timestamps
 	gstreamer_multilib_src_configure
 }
