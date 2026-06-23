@@ -51,10 +51,11 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libtheora-9999"
 	"media-libs/libvorbis-9999"
 	"media-libs/tremor-9999"
+	"media-libs/mesa-9999"
 	"x11-libs/libdrm-9999"
 )
 
-inherit cflags-hardened chkl flag-o-matic gstreamer-meson vf
+inherit cflags-hardened chkl flag-o-matic secure-version vf gstreamer-meson
 
 KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~m68k ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86
@@ -67,7 +68,7 @@ LICENSE="GPL-2+ LGPL-2+"
 IUSE="
 alsa +egl gbm +gles2 +introspection ivorbis nls +ogg opengl +orc +pango theora
 +vorbis wayland +X
-ebuild_revision_28
+ebuild_revision_29
 "
 GL_REQUIRED_USE="
 	|| (
@@ -112,23 +113,23 @@ REQUIRED_USE="
 # provides dmabuf based upload/download/eglimage options
 GL_DEPS="
 	>=media-libs/graphene-1.4.0:=[${MULTILIB_USEDEP}]
-	>=media-libs/libpng-1.6.57:=[${MULTILIB_USEDEP}]
-	>=media-libs/libjpeg-turbo-9999:=[${MULTILIB_USEDEP}]
+	>=media-libs/libpng-${LIBPNG_PV}:=[${MULTILIB_USEDEP}]
+	>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:=[${MULTILIB_USEDEP}]
 	egl? (
-		>=x11-libs/libdrm-2.4.132:=
+		>=x11-libs/libdrm-${LIBDRM_PV}:=
 	)
 	gbm? (
 		>=dev-libs/libgudev-147:=[${MULTILIB_USEDEP}]
-		>=x11-libs/libdrm-2.4.132:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libdrm-${LIBDRM_PV}:=[${MULTILIB_USEDEP}]
 	)
 	wayland? (
-		>=dev-libs/wayland-9999:=[${MULTILIB_USEDEP}]
+		>=dev-libs/wayland-${WAYLAND_PV}:=[${MULTILIB_USEDEP}]
 		>=dev-libs/wayland-protocols-1.15:=
 	)
 
-	>=media-libs/mesa-22.3:=[${MULTILIB_USEDEP},egl(+)?,gbm(+)?,wayland?]
+	>=media-libs/mesa-${MESA_PV}:=[${MULTILIB_USEDEP},egl(+)?,gbm(+)?,wayland?]
 	gles2? (
-		>=media-libs/mesa-22.3:=[${MULTILIB_USEDEP},gles2(+),opengl]
+		>=media-libs/mesa-${MESA_PV}:=[${MULTILIB_USEDEP},gles2(+),opengl]
 	)
 	media-libs/mesa:=
 "
@@ -137,41 +138,41 @@ GL_DEPS="
 # >=media-libs/graphene-1.4.0[${MULTILIB_USEDEP}]
 
 RDEPEND="
-	>=dev-libs/glib-2.64.0:=[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-${GLIB_PV}:=[${MULTILIB_USEDEP}]
 	app-text/iso-codes:=
-	>=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}]
+	>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}]
 	alsa? (
-		>=media-libs/alsa-lib-1.2.16.1:=[${MULTILIB_USEDEP}]
+		>=media-libs/alsa-lib-${ALSA_LIB_PV}:=[${MULTILIB_USEDEP}]
 	)
 	gles2? (
 		${GL_DEPS}
 	)
 	introspection? (
-		>=dev-libs/gobject-introspection-1.86.0:=
+		>=dev-libs/gobject-introspection-${GOBJECT_INTROSPECTION_PV}:=
 	)
 	ivorbis? (
-		>=media-libs/tremor-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/tremor-${TREMOR_PV}:=[${MULTILIB_USEDEP}]
 	)
 	nls? (
 		sys-devel/gettext:=[${MULTILIB_USEDEP}]
 	)
 	ogg? (
-		>=media-libs/libogg-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/libogg-${LIBOGG_PV}:=[${MULTILIB_USEDEP}]
 	)
 	opengl? (
 		${GL_DEPS}
 	)
 	orc? (
-		>=dev-lang/orc-0.4.42:=[${MULTILIB_USEDEP}]
+		>=dev-lang/orc-${ORC_PV}:=[${MULTILIB_USEDEP}]
 	)
 	pango? (
-		>=x11-libs/pango-1.57.1:=[${MULTILIB_USEDEP}]
+		>=x11-libs/pango-${PANGO_PV}:=[${MULTILIB_USEDEP}]
 	)
 	theora? (
-		>=media-libs/libtheora-9999:=[${MULTILIB_USEDEP},encode]
+		>=media-libs/libtheora-${LIBTHEORA_PV}:=[${MULTILIB_USEDEP},encode]
 	)
 	vorbis? (
-		>=media-libs/libvorbis-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/libvorbis-${LIBVORBIS_PV}:=[${MULTILIB_USEDEP}]
 	)
 	X? (
 		x11-libs/libX11:=[${MULTILIB_USEDEP}]
