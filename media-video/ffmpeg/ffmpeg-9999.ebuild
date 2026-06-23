@@ -19,7 +19,7 @@ MY_PV="${PV/m/}"
 MY_P="${PN}-${MY_PV}"
 MY_PVR="${PVR/m/}"
 FFMPEG_REVISION="${MY_PV#*_p}"
-FFMPEG_SUBSLOT="60.62.62" # libavutil_major.libavcodec_major.libavformat_major
+FFMPEG_SUBSLOT="61.63.63" # libavutil_major.libavcodec_major.libavformat_major
 # See https://github.com/FFmpeg/FFmpeg/blob/master/libavutil/version.h#L81
 # See https://github.com/FFmpeg/FFmpeg/blob/master/libavcodec/version_major.h
 # See https://github.com/FFmpeg/FFmpeg/blob/master/libavformat/version_major.h
@@ -512,7 +512,7 @@ if [[ "${MY_PV#9999}" == "${MY_PV}" ]] ; then
 	"
 fi
 if [[ "${MY_PV#9999}" != "${MY_PV}" ]] ; then
-	FALLBACK_COMMIT="a62d99692780431aeb8cc96665434d5ec3210985"
+	FALLBACK_COMMIT="927ffd0930fa3f7a948d4ed30c67bd518f9549ce"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${MY_P}"
 	EGIT_MIN_CLONE_TYPE="single"
 	EGIT_REPO_URI=(
