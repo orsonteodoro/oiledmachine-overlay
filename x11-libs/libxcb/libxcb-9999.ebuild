@@ -3,14 +3,17 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="sensitive-data"
 PYTHON_COMPAT=( python3_{10..14} )
 PYTHON_REQ_USE="xml(+)"
 
 XORG_MULTILIB=yes
 XORG_DOC=doc
 
-inherit cflags-hardened python-any-r1 xorg-3
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="4d6e1c8fffaf811cf4d0e68ff3bc6f50e62c32c7"
+fi
+
+inherit python-any-r1 xorg-3
 
 DESCRIPTION="X C-language Bindings library"
 HOMEPAGE="https://xcb.freedesktop.org/ https://gitlab.freedesktop.org/xorg/lib/libxcb"
@@ -20,16 +23,16 @@ KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390
 IUSE="doc selinux test +xkb"
 RESTRICT="!test? ( test )"
 
-XCB_PROTO_DEP=">=x11-base/xcb-proto-${PV}"
+XCB_PROTO_DEP=">=x11-base/xcb-proto-${PV}:="
 RDEPEND="
-	>=x11-libs/libXau-1.0.7-r1[${MULTILIB_USEDEP}]
-	>=x11-libs/libXdmcp-1.1.1-r1[${MULTILIB_USEDEP}]
+	>=x11-libs/libXau-1.0.7-r1:=[${MULTILIB_USEDEP}]
+	>=x11-libs/libXdmcp-1.1.1-r1:=[${MULTILIB_USEDEP}]
 "
 DEPEND="${RDEPEND}
-	x11-base/xorg-proto
+	x11-base/xorg-proto:=
 	${XCB_PROTO_DEP}
-	elibc_Darwin? ( dev-libs/libpthread-stubs )
-	test? ( dev-libs/check[${MULTILIB_USEDEP}] )
+	elibc_Darwin? ( dev-libs/libpthread-stubs:= )
+	test? ( dev-libs/check:=[${MULTILIB_USEDEP}] )
 "
 # Note: ${PYTHON_USEDEP} needs to go verbatim
 BDEPEND="${PYTHON_DEPS}
@@ -48,7 +51,6 @@ pkg_setup() {
 }
 
 src_configure() {
-	cflags-hardened_append
 	local XORG_CONFIGURE_OPTIONS=(
 		$(use_enable doc devel-docs)
 		$(use_enable selinux)
