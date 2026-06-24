@@ -11,7 +11,16 @@ CFLAGS_HARDENED_LANGS="c-lang"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO"
 
-inherit cflags-hardened flag-o-matic gnome2-utils meson-multilib xdg
+CHKL_TIMESTAMPS=(
+	"dev-libs/fribidi-9999"
+	"dev-libs/glib-2.89.9999"
+	"media-libs/freetype-9999"
+	"media-libs/harfbuzz-9999"
+	"x11-libs/cairo-9999"
+	"x11-libs/libX11-9999"
+)
+
+inherit cflags-hardened flag-o-matic chkl gnome2-utils meson-multilib secure-version xdg
 
 DESCRIPTION="Internationalized text layout and rendering library"
 HOMEPAGE="https://www.gtk.org/docs/architecture/pango https://gitlab.gnome.org/GNOME/pango"
@@ -29,17 +38,17 @@ REQUIRED_USE="gtk-doc? ( introspection )"
 RESTRICT="!test? ( test )"
 
 RDEPEND="
-	>=dev-libs/glib-2.82:2[${MULTILIB_USEDEP}]
-	>=dev-libs/fribidi-1.0.6[${MULTILIB_USEDEP}]
-	>=media-libs/harfbuzz-8.4.0:=[glib(+),introspection?,truetype(+),${MULTILIB_USEDEP}]
-	>=media-libs/fontconfig-2.17.0:1.0[${MULTILIB_USEDEP}]
-	>=x11-libs/cairo-1.18.0[X?,${MULTILIB_USEDEP}]
-	>=media-libs/freetype-2.5.0.1:2[harfbuzz,png,${MULTILIB_USEDEP}]
-	introspection? ( >=dev-libs/gobject-introspection-1.83.2:= )
+	>=dev-libs/glib-${GLIB_PV}:=[${MULTILIB_USEDEP}]
+	>=dev-libs/fribidi-${FRIBIDI_PV}:=[${MULTILIB_USEDEP}]
+	>=media-libs/harfbuzz-${HARFBUZZ_PV}:=[glib(+),introspection?,truetype(+),${MULTILIB_USEDEP}]
+	>=media-libs/fontconfig-${FONTCONFIG_PV}:=[${MULTILIB_USEDEP}]
+	>=x11-libs/cairo-${CAIRO_PV}:=[X?,${MULTILIB_USEDEP}]
+	>=media-libs/freetype-${FREETYPE_PV}:=[harfbuzz,png,${MULTILIB_USEDEP}]
+	introspection? ( >=dev-libs/gobject-introspection-${GOBJECT_INTROSPECTION_PV}:= )
 	X? (
-		>=x11-libs/libX11-1.6.2[${MULTILIB_USEDEP}]
-		>=x11-libs/libXft-2.3.1-r1[${MULTILIB_USEDEP}]
-		>=x11-libs/libXrender-0.9.8[${MULTILIB_USEDEP}]
+		>=x11-libs/libX11-${LIBX11_PV}:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libXft-${LIBXFT_PV}:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libXrender-${LIBXRENDER_PV}:=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="${RDEPEND}
@@ -74,6 +83,7 @@ multilib_src_configure() {
 		append-cflags -DG_DISABLE_CAST_CHECKS
 	fi
 
+	chkl_check_many_timestamps
 	cflags-hardened_append
 
 	local emesonargs=(
