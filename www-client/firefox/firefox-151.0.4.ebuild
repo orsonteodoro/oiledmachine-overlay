@@ -701,7 +701,7 @@ CDEPEND="
 	${PATENT_CDEPENDS}
 	>=app-accessibility/at-spi2-core-${AT_SPI2_CORE_PV}:=[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-${GLIB_PV}:=[${MULTILIB_USEDEP}]
-	>=dev-libs/nspr-4.39.0:=[${MULTILIB_USEDEP}]
+	>=dev-libs/nspr-${NSPR_PV}:=[${MULTILIB_USEDEP}]
 	>=dev-libs/nss-${NSS_PV}:=[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-${FONTCONFIG_PV}:=[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-${FREETYPE_PV}:=[${MULTILIB_USEDEP}]

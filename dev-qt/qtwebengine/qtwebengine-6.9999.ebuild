@@ -42,30 +42,35 @@ LLVM_COMPAT=(
 )
 
 CHKL_TIMESTAMPS=(
-	"app-arch/snappy-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/expat-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/glib-2.89.9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/icu-79.0.9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/libxml2-9999"			# Bumped live to latest non-vulnerable
-	"dev-libs/libxslt-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-qt/qtbase-6.9999"			# Bumped live to latest non-vulnerable
-	"dev-qt/qtdeclarative-6.9999"		# Bumped live to latest non-vulnerable
-	"media-libs/fontconfig-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/harfbuzz-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/lcms-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libpng-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libpulse-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libva-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libwebp-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/openh264-9999"		# Bumped live/*DEPENDS to latest hardened
-	"media-libs/opus-9999"			# Bumped live/*DEPENDS to latest hardened
-	"media-libs/tiff-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-video/pipewire-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"app-arch/snappy-9999"
+	"dev-libs/expat-9999"
+	"dev-libs/glib-2.89.9999"
+	"dev-libs/icu-79.0.9999"
+	"dev-libs/libxml2-9999"
+	"dev-libs/libxslt-9999"
+	"dev-qt/qtbase-6.9999"
+	"dev-qt/qtdeclarative-6.9999"
+	"media-libs/fontconfig-9999"
+	"media-libs/harfbuzz-9999"
+	"media-libs/lcms-9999"
+	"media-libs/libjpeg-turbo-9999"
+	"media-libs/libpng-9999"
+	"media-libs/libpulse-9999"
+	"media-libs/libva-9999"
+	"media-libs/libwebp-9999"
+	"media-libs/mesa-9999"
+	"media-libs/openh264-9999"
+	"media-libs/opus-9999"
+	"media-libs/tiff-9999"
+	"media-video/pipewire-9999"
+	"x11-libs/libX11-9999"
+	"x11-libs/libxcb-9999"
+	"x11-libs/libXcursor-9999"
+	"x11-libs/libxkbcommon-9999"
 )
 
 inherit cflags-hardened check-reqs chkl flag-o-matic libcxx-slot libstdcxx-slot multiprocessing optfeature
-inherit prefix python-any-r1 qt6-build toolchain-funcs web-kernel-config
+inherit prefix python-any-r1 qt6-build secure-version toolchain-funcs web-kernel-config
 
 DESCRIPTION="Library for rendering dynamic web content in Qt6 C++ and QML applications"
 SRC_URI+="
@@ -77,89 +82,95 @@ if [[ ${QT6_BUILD_TYPE} == release ]]; then
 fi
 
 IUSE+="
-	accessibility +alsa bindist custom-cflags designer geolocation
+	accessibility +alsa clang bindist custom-cflags designer gcc geolocation
 	+jumbo-build kerberos opengl +pdfium pulseaudio qml screencast
 	+system-icu vaapi vulkan webdriver +widgets
 "
 REQUIRED_USE="
+	^^ (
+		gcc
+		clang
+	)
 	designer? ( qml widgets )
 	test? ( widgets )
 "
 
 # dlopen: krb5, libva, pciutils
 RDEPEND="
-	>=app-arch/snappy-9999:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=dev-libs/expat-9999:=
-	>=dev-libs/libxml2-9999:=[icu]
-	>=dev-libs/libxslt-1.1.44:=
-	>=dev-libs/nspr-4.38.2:=
-	>=dev-libs/nss-3.125:=
+	>=app-arch/snappy-${SNAPPY_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-libs/expat-${EXPAT_PV}:=
+	>=dev-libs/libxml2-${LIBXML2_PV}:=[icu]
+	>=dev-libs/libxslt-${LIBXSLT_PV}:=
+	>=dev-libs/nspr-${NSPR_PV}:=
+	>=dev-libs/nss-${NSS_PV}:=
 	~dev-qt/qtbase-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},accessibility=,gui,opengl=,ssl,vulkan?,widgets?]
 	~dev-qt/qtdeclarative-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},widgets?]
 	~dev-qt/qtwebchannel-${PV}:6=[qml?]
-	>=media-libs/fontconfig-2.18.1:=
-	>=media-libs/freetype-9999:=
-	>=media-libs/harfbuzz-9999:=
-	>=media-libs/lcms-9999:=
-	>=media-libs/libjpeg-turbo-9999:=
-	>=media-libs/libpng-1.6.57:=
-	>=media-libs/libwebp-9999:=
-	media-libs/mesa:=[gbm(+)]
-	>=media-libs/openjpeg-2.5.4-r1:=
-	>=media-libs/opus-9999:=
-	>=media-libs/tiff-9999:=
+	>=media-libs/fontconfig-${FONTCONFIG_PV}:=
+	>=media-libs/freetype-${FREETYPE_PV}:=
+	>=media-libs/harfbuzz-${HARFBUZZ_PV}:=
+	>=media-libs/lcms-${LCMS_PV}:=
+	>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:=
+	>=media-libs/libpng-${LIBPNG_PV}:=
+	>=media-libs/libwebp-${LIBWEBP_PV}:=
+	>=media-libs/mesa-${MESA_PV}:=[gbm(+)]
+	>=media-libs/openjpeg-${OPENJPEG_PV}:=
+	>=media-libs/opus-${OPUS_PV}:=
+	>=media-libs/tiff-${TIFF_PV}:=
 	sys-apps/dbus:=
 	sys-apps/pciutils:=
 	virtual/libudev:=
 	virtual/minizip:=
-	>=virtual/zlib-1.3.2:=
-	x11-libs/libX11:=
+	>=virtual/zlib-${ZLIB_PV}:=
+	>=x11-libs/libX11-${LIBX11_PV}:=
 	x11-libs/libXcomposite:=
 	x11-libs/libXdamage:=
-	x11-libs/libXext:=
-	x11-libs/libXfixes:=
-	x11-libs/libXrandr:=
-	x11-libs/libXtst:=
-	>=x11-libs/libdrm-2.4.120:=
-	x11-libs/libxcb:=
-	x11-libs/libxkbcommon:=
-	x11-libs/libxkbfile:=
-	alsa? ( >=media-libs/alsa-lib-1.2.16.1:= )
-	!bindist? ( >=media-libs/openh264-2.6.0:= )
+	>=x11-libs/libXext-${LIBXEXT_PV}:=
+	>=x11-libs/libXfixes-${LIBXFIXES_PV}:=
+	>=x11-libs/libXrandr-${LIBXRANDR_PV}:=
+	>=x11-libs/libXtst-${LIBXTST_PV}:=
+	>=x11-libs/libdrm-${LIBDRM_PV}:=
+	>=x11-libs/libxcb-${LIBXCB_PV}:=
+	>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=
+	>=x11-libs/libxkbfile-${LIBXKBFILE_PV}:=
+	alsa? ( >=media-libs/alsa-lib-${ALSA_LIB_PV}:= )
+	!bindist? ( >=media-libs/openh264-${OPENH264_PV}:= )
 	designer? (
 		~dev-qt/qttools-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},designer]
 	)
 	elibc_glibc? (
-		>=sys-libs/glibc-2.43:=
+		>=sys-libs/glibc-${GLIBC_PV}:=
 	)
 	elibc_musl? (
-		>=sys-libs/musl-1.2.6:=
+		>=sys-libs/musl-${MUSL_PV}:=
 	)
 	geolocation? ( ~dev-qt/qtpositioning-${PV}:6= )
 	kerberos? ( virtual/krb5:* )
 	opengl? ( media-libs/libglvnd:=[X] )
-	pulseaudio? ( >=media-libs/libpulse-9999:=[glib] )
+	pulseaudio? ( >=media-libs/libpulse-${LIBPULSE_PV}:=[glib] )
 	screencast? (
-		>=dev-libs/glib-2.89.9999:=
-		>=media-video/pipewire-9999:=
+		>=dev-libs/glib-${GLIB_PV}:=
+		>=media-video/pipewire-${PIPEWIRE_PV}:=
 	)
 	system-icu? (
-		>=dev-libs/icu-79.0.9999:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-libs/icu-${ICU_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
-	vaapi? ( >=media-libs/libva-9999:=[X] )
+	vaapi? ( >=media-libs/libva-${LIBVA_PV}:=[X] )
 "
 DEPEND="
 	${RDEPEND}
-	|| (
-		sys-devel/gcc
-		llvm-runtimes/libatomic-stub
-	)
 	media-libs/libglvnd:=
 	x11-base/xorg-proto:=
-	x11-libs/libXcursor:=
-	x11-libs/libXi:=
-	x11-libs/libxshmfence:=
+	>=x11-libs/libXcursor-${LIBXCURSOR_PV}:=
+	>=x11-libs/libXi-${LIBXI_PV}:=
+	>=x11-libs/libxshmfence-${LIBXSHMFENCE_PV}:=
+	clang? (
+		llvm-runtimes/libatomic-stub:=
+	)
 	elibc_musl? ( sys-libs/queue-standalone:= )
+	gcc? (
+		sys-devel/gcc:=
+	)
 	screencast? ( media-libs/libepoxy:=[egl(+)] )
 	vaapi? (
 		vulkan? ( dev-util/vulkan-headers:= )
@@ -483,6 +494,13 @@ src_configure() {
 	export PATH="/usr/lib/node/${NODE_SLOT}/bin:${PATH}"
 einfo "PATH:  ${PATH}"
 	node --version || die
+
+	if tc-is-clang ; then
+		use clang || die "Enable the clang USE flag."
+	fi
+	if tc-is-gcc ; then
+		use gcc || die "Enable the gcc USE flag."
+	fi
 
 	local mycmakeargs=(
 		$(qt_feature pdfium qtpdf_build)
