@@ -28,16 +28,22 @@ LLVM_COMPAT=(
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)" # Skip placeholder
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/glib-2.89.9999"	# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/wayland-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/lcms-9999"		# Bumped live to latest non-vulnerable
-	"x11-libs/cairo-9999"		# Bumped live to latest non-vulnerable
-	"x11-libs/libdrm-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"x11-libs/pango-9999"		# Bumped live to latest non-vulnerable
-	"x11-libs/pixman-9999"		# Bumped live to latest non-vulnerable
+	"dev-cpp/muParser-9999"
+	"dev-cpp/tomlplusplus-9999"
+	"dev-libs/glib-2.89.9999"
+	"dev-libs/wayland-9999"
+	"media-libs/lcms-9999"
+	"media-libs/mesa-9999"
+	"x11-libs/cairo-9999"
+	"x11-libs/libdrm-9999"
+	"x11-libs/pango-9999"
+	"x11-libs/pixman-9999"
+	"x11-libs/libxcb-9999"
+	"x11-libs/libXcursor-9999"
+	"x11-libs/libxkbcommon-9999"
 )
 
-inherit abseil-cpp cflags-hardened check-compiler-switch chkl cmake libcxx-slot libstdcxx-slot optfeature python-single-r1 toolchain-funcs re2
+inherit abseil-cpp cflags-hardened check-compiler-switch chkl cmake libcxx-slot libstdcxx-slot optfeature python-single-r1 re2 secure-version toolchain-funcs
 
 DESCRIPTION="A dynamic tiling Wayland compositor that doesn't sacrifice on its looks"
 HOMEPAGE="https://github.com/hyprwm/Hyprland"
@@ -78,29 +84,29 @@ HYPRPM_RDEPEND="
 # glib version is relaxed
 RDEPEND="
 	${HYPRPM_RDEPEND}
-	>=dev-cpp/muParser-2.3.5:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=dev-cpp/tomlplusplus-3.4.0:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+	>=dev-cpp/muParser-${MUPARSER_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-cpp/tomlplusplus-${TOMLPLUSPLUS_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	>=dev-libs/hyprlang-0.6.8:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/hyprgraphics-0.5.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/libinput-1.31.2:=
 	dev-libs/re2:${RE2_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	>=dev-libs/udis86-1.7.2:=
-	>=dev-libs/wayland-9999:=
+	>=dev-libs/wayland-${WAYLAND_PV}:=
 	>=gui-libs/aquamarine-0.11.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=gui-libs/hyprcursor-0.1.13:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=gui-libs/hyprutils-0.13.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=gui-libs/hyprwire-0.3.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=media-libs/lcms-9999:=
+	>=media-libs/lcms-${LCMS_PV}:=
 	>=media-libs/libglvnd-1.7.0:=
-	>=media-libs/mesa-26.0.6:=
-	>=x11-libs/cairo-9999:=
-	>=x11-libs/libdrm-2.4.120:=
-	>=x11-libs/libXcursor-1.2.3:=
-	>=x11-libs/libxkbcommon-1.13.1:=
-	>=x11-libs/pango-1.57.1:=
-	>=x11-libs/pixman-0.42.2:=
+	>=media-libs/mesa-${MESA_PV}:=
+	>=x11-libs/cairo-${CAIRO_PV}:=
+	>=x11-libs/libdrm-${LIBDRM_PV}:=
+	>=x11-libs/libXcursor-${LIBXCURSOR_PV}:=
+	>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=
+	>=x11-libs/pango-${PANGO_PV}:=
+	>=x11-libs/pixman-${PIXMAN_PV}:=
 	dev-lang/lua:5.5=
-	>=dev-libs/glib-2.89.9999:=
+	>=dev-libs/glib-${GLIB_PV}:=
 	dev-util/glslang:=
 	sys-apps/util-linux:=
 	>=sys-apps/pciutils-3.10.0:=
@@ -108,7 +114,7 @@ RDEPEND="
 		gui-libs/hyprland-guiutils:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	X? (
-		>=x11-libs/libxcb-1.17.0:0=
+		>=x11-libs/libxcb-${LIBXCB_PV}:0=
 		>=x11-libs/libXdmcp-1.1.5:=
 		>=x11-libs/xcb-util-errors-1.0.1:=
 		>=x11-libs/xcb-util-renderutil-0.3.10:=
