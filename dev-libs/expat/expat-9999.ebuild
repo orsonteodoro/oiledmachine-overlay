@@ -15,7 +15,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/libexpat/libexpat.git"
-	FALLBACK_COMMIT="a18aceeb340b1975f3338af8e088490f0d4d6c19"
+	FALLBACK_COMMIT="11cd58eb92dd8ebd85e018eabb7357ee28fec1c7"
 	IUSE+=" +fallback-commit" # We do not want to brick the @system set.
 	inherit git-r3
 else
@@ -28,6 +28,7 @@ SLOT="0"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~arm64-macos ~x64-macos ~x64-solaris"
 IUSE+="
 examples static-libs test unicode
+ebuild_revision_1
 "
 RESTRICT="!test? ( test )"
 BDEPEND="unicode? ( ${AUTOTOOLS_DEPEND} )"
@@ -141,5 +142,6 @@ multilib_src_install_all() {
 }
 
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (INTERACTIVE/integration-test) a18aceeb
-# Double emerge with autotools - passed
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (INTERACTIVE/integration-test) 11cd58eb 20260624
+# Double emerge (emerge -1vO expat && emerge -1vO expat) with autotools - passed
 # Firefox - passed

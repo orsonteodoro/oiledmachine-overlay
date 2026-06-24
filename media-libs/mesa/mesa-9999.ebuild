@@ -50,22 +50,48 @@ CPU_FLAGS_X86=(
 )
 
 CHKL_TIMESTAMPS=(
-	"app-arch/zstd-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/expat-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libva-9999"		# Bumped live/*DEPENDS to latest hardened
-	"x11-libs/libdrm-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"app-arch/zstd-9999"
+	"dev-libs/expat-9999"
+	"media-libs/libva-9999"
+	"media-libs/vulkan-loader-9999"
+	"x11-libs/libdrm-9999"
+	"x11-libs/libX11-9999"
+	"x11-libs/libxcb-9999"
 )
 
 CRATES="
-	paste@1.0.14
-	proc-macro2@1.0.86
-	quote@1.0.35
-	rustc-hash@2.1.1
-	syn@2.0.87
-	unicode-ident@1.0.12
+bitflags-2.9.1
+cfg-if-1.0.0
+equivalent-1.0.1
+errno-0.3.12
+hashbrown-0.14.1
+indexmap-2.2.6
+libc-0.2.185
+log-0.4.27
+once_cell-1.8.0
+paste-1.0.14
+pest-2.8.0
+pest_derive-2.8.0
+pest_generator-2.8.0
+pest_meta-2.8.0
+proc-macro2-1.0.86
+quote-1.0.35
+remain-0.2.12
+roxmltree-0.20.0
+rustc-hash-2.1.1
+rustix-1.1.4
+syn-2.0.87
+thiserror-2.0.11
+thiserror-impl-2.0.11
+ucd-trie-0.1.6
+unicode-ident-1.0.12
+windows-link-0.2.0
+windows-sys-0.61.1
+xml-1.2.1
+zerocopy-0.8.13
+zerocopy-derive-0.8.13
 "
 
-LIBDRM_DEPSTRING=">=x11-libs/libdrm-2.4.132:="
 LIBDRM_USEDEP="\
 video_cards_freedreno?,\
 video_cards_intel?,\
@@ -103,7 +129,7 @@ VIDEO_CARDS=(
 inherit cargo
 inherit cflags-hardened check-compiler-switch chkl flag-o-matic flag-o-matic-om
 inherit libcxx-slot libstdcxx-slot llvm-r1 python-any-r1 linux-info meson-multilib
-inherit multilib-build toolchain-funcs uopts
+inherit multilib-build secure-version toolchain-funcs uopts
 
 LLVM_USE_DEPS="llvm_targets_AMDGPU(+),${MULTILIB_USEDEP}"
 
@@ -115,7 +141,12 @@ done
 unset card
 
 if [[ "${PV}" == "9999" ]] ; then
+	FALLBACK_COMMIT="34b4e94f9f182337fa3754d01625dd7f917d400f"
+	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/mesa/mesa.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 	inherit git-r3
 else
 	KEYWORDS="
@@ -137,7 +168,7 @@ SRC_URI+="
 "
 
 DESCRIPTION="OpenGL-like graphic library for Linux"
-HOMEPAGE="https://www.mesa3d.org/ https://mesa.freedesktop.org/"
+HOMEPAGE="https://www.mesa3d.org/"
 LICENSE="MIT SGI-B-2.0"
 RESTRICT="
 	!test? (
@@ -189,19 +220,20 @@ REQUIRED_USE="
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
 "
+LIBDRM_DEPSTRING=">=x11-libs/libdrm-${LIBDRM_PV}:="
 RDEPEND="
 	${LIBDRM_DEPSTRING}[${MULTILIB_USEDEP}]
-	>=dev-libs/expat-9999:=[${MULTILIB_USEDEP}]
+	>=dev-libs/expat-${EXPAT_PV}:=[${MULTILIB_USEDEP}]
 	>=dev-util/spirv-tools-1.3.231.0:=[${MULTILIB_USEDEP}]
 	>=media-libs/libglvnd-1.3.2:=[X?,${MULTILIB_USEDEP}]
-	>=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}]
+	>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}]
 	virtual/patent-status:*[patent_status_nonfree=]
 	llvm? (
 		video_cards_r600? (
-			virtual/libelf:=[${MULTILIB_USEDEP}]
+			virtual/libelf:0=[${MULTILIB_USEDEP}]
 		)
 		video_cards_radeon? (
-			virtual/libelf:=[${MULTILIB_USEDEP}]
+			virtual/libelf:0=[${MULTILIB_USEDEP}]
 		)
 	)
 	lm-sensors? (
@@ -216,37 +248,36 @@ RDEPEND="
 		sys-libs/libunwind:=[${MULTILIB_USEDEP}]
 	)
 	vaapi? (
-		>=media-libs/libva-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/libva-${LIBVA_PV}:=[${MULTILIB_USEDEP}]
 	)
 	video_cards_i915? (
 		${LIBDRM_DEPSTRING}[video_cards_intel]
 	)
 	video_cards_radeonsi? (
 		${LIBDRM_DEPSTRING}[video_cards_amdgpu]
-		virtual/libelf:=[${MULTILIB_USEDEP}]
+		virtual/libelf:0=[${MULTILIB_USEDEP}]
 	)
 	video_cards_zink? (
-		media-libs/vulkan-loader:=[${MULTILIB_USEDEP}]
+		>=media-libs/vulkan-loader-${VULKAN_LOADER_PV}:=[${MULTILIB_USEDEP}]
 	)
 	vulkan? (
 		media-libs/libdisplay-info:=[${MULTILIB_USEDEP}]
 		virtual/libudev:=
 	)
 	wayland? (
-		>=dev-libs/wayland-1.18.0:=[${MULTILIB_USEDEP}]
+		>=dev-libs/wayland-${WAYLAND_PV}:=[${MULTILIB_USEDEP}]
 	)
 	X? (
-		>=x11-libs/libX11-1.8:=[${MULTILIB_USEDEP}]
-		>=x11-libs/libXext-1.3.2:=[${MULTILIB_USEDEP}]
-		>=x11-libs/libxcb-1.17:=[${MULTILIB_USEDEP}]
-		>=x11-libs/libxcb-1.17:=
+		>=x11-libs/libX11-${LIBX11_PV}:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libXext-${LIBXEXT_PV}:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libxcb-${LIBXCB_PV}:=[${MULTILIB_USEDEP}]
 		>=x11-libs/libxshmfence-1.1:=[${MULTILIB_USEDEP}]
-		>=x11-libs/libXxf86vm-1.1.3:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libXxf86vm-${LIBXXF86VM_PV}:=[${MULTILIB_USEDEP}]
 		x11-libs/libXfixes:=[${MULTILIB_USEDEP}]
 		x11-libs/xcb-util-keysyms:=[${MULTILIB_USEDEP}]
 	)
 	zstd? (
-		>=app-arch/zstd-9999:=[${MULTILIB_USEDEP}]
+		>=app-arch/zstd-${ZSTD_PV}:=[${MULTILIB_USEDEP}]
 	)
 "
 # Please keep the LLVM dependency block separate. Since LLVM is slotted, \
@@ -293,14 +324,14 @@ DEPEND="
 		dev-debug/valgrind:=
 	)
 	video_cards_d3d12? (
-		>=dev-util/directx-headers-1.618.1:=[${MULTILIB_USEDEP}]
+		>=dev-util/directx-headers-1.619.1:=[${MULTILIB_USEDEP}]
 	)
 	wayland? (
 		>=dev-libs/wayland-protocols-1.41:=
 	)
 	X? (
 		x11-base/xorg-proto:=
-		x11-libs/libXrandr:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libXrandr-${LIBXRANDR_PV}:=[${MULTILIB_USEDEP}]
 	)
 "
 CLC_DEPSTRING="
@@ -373,9 +404,6 @@ QA_WX_LOAD="
 		usr/lib/libGLX_mesa.so.0.0.0
 	)
 "
-PATCHES=(
-#	"${FILESDIR}/mesa-25.2.4-headers.patch"
-)
 
 llvm_check_deps() {
 	if use opencl ; then
@@ -516,9 +544,30 @@ einfo "PATH=${PATH} (after)"
 
 src_unpack() {
 	if [[ "${PV}" == "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
 		git-r3_src_unpack
 	else
 		unpack "${MY_P}.tar.xz"
+	fi
+
+	local expected_fingerprint="dbde9ad7162745f7ff66b42b6af28b91178fb6555c000f479a05f6bb76619b60ee6a10a5251cb841ec70683fad43328827844003fe9559e9ace456cd78deb59d"
+	local actual_fingerprint
+	pushd "${S}/subprojects/" >/dev/null 2>&1 || die
+		actual_fingerprint=$(sha512sum $(grep -l -r -e ".crates.io") | cut -f 1 -d " " | sort | sha512sum | cut -f 1 -d " ")
+	popd >/dev/null 2>&1 || die
+
+	if [[ "${actual_fingerprint}" != "${expected_fingerprint}" ]] ; then
+eerror "QA:  Detected CRATES inconsistency."
+eerror "QA:  Actual CRATES list:"
+eerror
+grep -e "source_filename" $(grep -l -r -e "crates.io" ./) | cut -f 3 -d " " | sed -e "s|.tar.gz||g" | sort | uniq
+eerror
+eerror "Expected fingerprint:  ${expected_fingerprint}"
+eerror "Actual fingerprint:  ${actual_fingerprint}"
+eerror
+		die
 	fi
 
 	# We need this because we cannot tell meson to use DISTDIR yet
@@ -745,6 +794,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		$(meson_use opengl)
 		$(meson_use sysprof)
 		$(meson_use test build-tests)
+		-Dallow-broken-lto=true
 		-Db_ndebug=$(usex debug false true)
 		-Dexpat=enabled
 		-Dgallium-drivers=$(driver_list "${GALLIUM_DRIVERS[*]}")
