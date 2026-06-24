@@ -277,10 +277,10 @@ LLVM_COMPAT=(
 inherit ffmpeg
 FFMPEG_COMPAT_SLOTS=(
 	"${FFMPEG_COMPAT_SLOTS_8[@]}"
-	#"${FFMPEG_COMPAT_SLOTS_7[@]}"
-	#"${FFMPEG_COMPAT_SLOTS_6[@]}"
-	#"${FFMPEG_COMPAT_SLOTS_5[@]}"
-	#"${FFMPEG_COMPAT_SLOTS_4[@]}"
+	"${FFMPEG_COMPAT_SLOTS_7[@]}"
+	"${FFMPEG_COMPAT_SLOTS_6[@]}"
+	"${FFMPEG_COMPAT_SLOTS_5[@]}"
+	"${FFMPEG_COMPAT_SLOTS_4[@]}"
 )
 
 # One of the major sources of lag comes from dependencies.  These are strict to
@@ -612,13 +612,25 @@ UDEV_RDEPEND="
 
 gen_ffmpeg_nonfree_depends_multislot() {
 	echo "
-		=media-video/ffmpeg-9999m:=[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
+		=media-video/ffmpeg-9999m[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
+		~media-video/ffmpeg-${FFMPEG_8_1_PV}m[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
+		~media-video/ffmpeg-${FFMPEG_8_0_PV}m[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
+		~media-video/ffmpeg-${FFMPEG_7_1_PV}m[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
+		~media-video/ffmpeg-${FFMPEG_6_1_PV}m[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
+		~media-video/ffmpeg-${FFMPEG_5_1_PV}m[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
+		~media-video/ffmpeg-${FFMPEG_4_4_PV}m[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
 	"
 }
 
 gen_ffmpeg_nonfree_depends_unislot() {
 	echo "
-		=media-video/ffmpeg-9999:=[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
+		=media-video/ffmpeg-9999[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
+		~media-video/ffmpeg-${FFMPEG_8_1_PV}[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
+		~media-video/ffmpeg-${FFMPEG_8_0_PV}[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
+		~media-video/ffmpeg-${FFMPEG_7_1_PV}[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
+		~media-video/ffmpeg-${FFMPEG_6_1_PV}[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
+		~media-video/ffmpeg-${FFMPEG_5_1_PV}[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
+		~media-video/ffmpeg-${FFMPEG_4_4_PV}[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
 	"
 }
 
@@ -634,6 +646,54 @@ gen_ffmpeg_royalty_free_depends_multislot() {
 		(
 			=media-video/ffmpeg-9999m[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,-openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
 		)
+
+		(
+			!<dev-libs/openssl-3
+			=media-video/ffmpeg-${FFMPEG_8_1_PV}m[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+		)
+		(
+			=media-video/ffmpeg-${FFMPEG_8_1_PV}m[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,-openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+		)
+
+		(
+			!<dev-libs/openssl-3
+			=media-video/ffmpeg-${FFMPEG_8_0_PV}m[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+		)
+		(
+			=media-video/ffmpeg-${FFMPEG_8_0_PV}m[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,-openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+		)
+
+		(
+			!<dev-libs/openssl-3
+			=media-video/ffmpeg-${FFMPEG_7_1_PV}m[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+		)
+		(
+			=media-video/ffmpeg-${FFMPEG_7_1_PV}m[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,-openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+		)
+
+		(
+			!<dev-libs/openssl-3
+			=media-video/ffmpeg-${FFMPEG_6_1_PV}m[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+		)
+		(
+			=media-video/ffmpeg-${FFMPEG_6_1_PV}m[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,-openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+		)
+
+		(
+			!<dev-libs/openssl-3
+			=media-video/ffmpeg-${FFMPEG_5_1_PV}m[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+		)
+		(
+			=media-video/ffmpeg-${FFMPEG_5_1_PV}m[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,-openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+		)
+
+		(
+			!<dev-libs/openssl-3
+			=media-video/ffmpeg-${FFMPEG_4_4_PV}m[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+		)
+		(
+			=media-video/ffmpeg-${FFMPEG_4_4_PV}m[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,-openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+		)
 	"
 }
 gen_ffmpeg_royalty_free_depends_unislot() {
@@ -644,6 +704,54 @@ gen_ffmpeg_royalty_free_depends_unislot() {
 		)
 		(
 			=media-video/ffmpeg-9999[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,-openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+		)
+
+		(
+			!<dev-libs/openssl-3
+			=media-video/ffmpeg-${FFMPEG_8_1_PV}[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+		)
+		(
+			=media-video/ffmpeg-${FFMPEG_8_1_PV}[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,-openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+		)
+
+		(
+			!<dev-libs/openssl-3
+			=media-video/ffmpeg-${FFMPEG_8_0_PV}[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+		)
+		(
+			=media-video/ffmpeg-${FFMPEG_8_0_PV}[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,-openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+		)
+
+		(
+			!<dev-libs/openssl-3
+			=media-video/ffmpeg-${FFMPEG_7_1_PV}[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+		)
+		(
+			=media-video/ffmpeg-${FFMPEG_7_1_PV}[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,-openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+		)
+
+		(
+			!<dev-libs/openssl-3
+			=media-video/ffmpeg-${FFMPEG_6_1_PV}[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+		)
+		(
+			=media-video/ffmpeg-${FFMPEG_6_1_PV}[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,-openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+		)
+
+		(
+			!<dev-libs/openssl-3
+			=media-video/ffmpeg-${FFMPEG_5_1_PV}[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+		)
+		(
+			=media-video/ffmpeg-${FFMPEG_5_1_PV}[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,-openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+		)
+
+		(
+			!<dev-libs/openssl-3
+			=media-video/ffmpeg-${FFMPEG_4_4_PV}[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+		)
+		(
+			=media-video/ffmpeg-${FFMPEG_4_4_PV}[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,-openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
 		)
 	"
 }
