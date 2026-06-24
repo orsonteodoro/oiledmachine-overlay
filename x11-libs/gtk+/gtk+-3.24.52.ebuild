@@ -12,17 +12,18 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS HO IO PE"
 GNOME_ORG_MODULE=gtk
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/fribidi-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/libxslt-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/wayland-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/fontconfig-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/harfbuzz-9999"		# Bumped live/*DEPENDS to latest precaution for non-vulnerable
-	"net-print/cups-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"x11-libs/cairo-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"x11-libs/pango-9999"			# Bumped live to latest non-vulnerable
+	"dev-libs/fribidi-9999"
+	"dev-libs/libxslt-9999"
+	"dev-libs/wayland-9999"
+	"media-libs/fontconfig-9999"
+	"media-libs/harfbuzz-9999"
+	"net-print/cups-9999"
+	"x11-libs/cairo-9999"
+	"x11-libs/pango-9999"
+	"x11-misc/colord-9999"
 )
 
-inherit cflags-hardened check-compiler-switch chkl gnome2 meson-multilib multilib toolchain-funcs virtualx
+inherit cflags-hardened check-compiler-switch chkl gnome2 meson-multilib multilib secure-version toolchain-funcs virtualx
 
 DESCRIPTION="Gimp ToolKit +"
 HOMEPAGE="https://www.gtk.org/"
@@ -39,46 +40,46 @@ REQUIRED_USE="
 RESTRICT="!test? ( test )"
 
 COMMON_DEPEND="
-	>=app-accessibility/at-spi2-core-2.46.0:=[introspection?,${MULTILIB_USEDEP}]
-	>=dev-libs/fribidi-9999:=[${MULTILIB_USEDEP}]
-	>=dev-libs/glib-2.57.2:=[${MULTILIB_USEDEP}]
-	>=media-libs/fontconfig-2.18.1:=[${MULTILIB_USEDEP}]
-	>=media-libs/harfbuzz-9999:=
+	>=app-accessibility/at-spi2-core-${AT_SPI2_CORE_PV}:=[introspection?,${MULTILIB_USEDEP}]
+	>=dev-libs/fribidi-${FRIBIDI_PV}:=[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-${GLIB_PV}:=[${MULTILIB_USEDEP}]
+	>=media-libs/fontconfig-${FONTCONFIG_PV}:=[${MULTILIB_USEDEP}]
+	>=media-libs/harfbuzz-${HARFBUZZ_PV}:=
 	>=media-libs/libepoxy-1.4:=[X(+)?,egl(+),${MULTILIB_USEDEP}]
 	virtual/libintl:*[${MULTILIB_USEDEP}]
-	>=x11-libs/cairo-9999:=[aqua?,glib,svg(+),X?,${MULTILIB_USEDEP}]
-	>=x11-libs/gdk-pixbuf-2.44.6:=[introspection?,${MULTILIB_USEDEP}]
-	>=x11-libs/pango-1.57.1:=[introspection?,${MULTILIB_USEDEP}]
+	>=x11-libs/cairo-${CAIRO_PV}:=[aqua?,glib,svg(+),X?,${MULTILIB_USEDEP}]
+	>=x11-libs/gdk-pixbuf-${GDK_PIXBUF_PV}:=[introspection?,${MULTILIB_USEDEP}]
+	>=x11-libs/pango-${PANGO_PV}:=[introspection?,${MULTILIB_USEDEP}]
 	x11-misc/shared-mime-info:=
 
-	broadway? ( >=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}] )
-	cloudproviders? ( net-libs/libcloudproviders:=[${MULTILIB_USEDEP}] )
-	colord? ( >=x11-misc/colord-0.1.9:=[${MULTILIB_USEDEP}] )
-	cups? ( >=net-print/cups-9999:=[${MULTILIB_USEDEP}] )
+	broadway? ( >=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}] )
+	cloudproviders? ( >=net-libs/libcloudproviders-${LIBCLOUDPROVIDERS_PV}:=[${MULTILIB_USEDEP}] )
+	colord? ( >=x11-misc/colord-${COLORD_PV}:=[${MULTILIB_USEDEP}] )
+	cups? ( >=net-print/cups-${CUPS_PV}:=[${MULTILIB_USEDEP}] )
 	elibc_glibc? (
-		>=sys-libs/glibc-2.43:=
+		>=sys-libs/glibc-${GLIBC_PV}:=
 	)
 	elibc_musl? (
-		>=sys-libs/musl-1.2.6:=
+		>=sys-libs/musl-${MUSL_PV}:=
 	)
-	introspection? ( >=dev-libs/gobject-introspection-1.86.0:= )
+	introspection? ( >=dev-libs/gobject-introspection-${GOBJECT_INTROSPECTION_PV}:= )
 	wayland? (
-		>=dev-libs/wayland-9999:=[${MULTILIB_USEDEP}]
+		>=dev-libs/wayland-${WAYLAND_PV}:=[${MULTILIB_USEDEP}]
 		>=dev-libs/wayland-protocols-1.32:=
-		media-libs/mesa:=[wayland,${MULTILIB_USEDEP}]
-		>=x11-libs/libxkbcommon-0.2:=[${MULTILIB_USEDEP}]
+		>=media-libs/mesa-${MESA_PV}:=[wayland,${MULTILIB_USEDEP}]
+		>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=[${MULTILIB_USEDEP}]
 	)
 	X? (
 		media-libs/libglvnd:=[X(+),${MULTILIB_USEDEP}]
-		x11-libs/libX11:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libX11-${LIBX11_PV}:=[${MULTILIB_USEDEP}]
 		x11-libs/libXcomposite:=[${MULTILIB_USEDEP}]
-		x11-libs/libXcursor:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libXcursor-${LIBXCURSOR_PV}:=[${MULTILIB_USEDEP}]
 		x11-libs/libXdamage:=[${MULTILIB_USEDEP}]
-		x11-libs/libXext:=[${MULTILIB_USEDEP}]
-		x11-libs/libXfixes:=[${MULTILIB_USEDEP}]
-		>=x11-libs/libXi-1.8:=[${MULTILIB_USEDEP}]
-		>=x11-libs/libXrandr-1.5:=[${MULTILIB_USEDEP}]
-		xinerama? ( x11-libs/libXinerama:=[${MULTILIB_USEDEP}] )
+		>=x11-libs/libXext-${LIBXEXT_PV}:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libXfixes-${LIBXFIXES_PV}:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libXi-${LIBXI_PV}:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libXrandr-${LIBXRANDR_PV}:=[${MULTILIB_USEDEP}]
+		xinerama? ( >=x11-libs/libXinerama-${LIBXINERAMA_PV}:=[${MULTILIB_USEDEP}] )
 	)
 "
 DEPEND="${COMMON_DEPEND}
@@ -90,7 +91,7 @@ RDEPEND="${COMMON_DEPEND}
 "
 # librsvg for svg icons (PDEPEND to avoid circular dep), bug #547710
 PDEPEND="
-	>=gnome-base/librsvg-9999[${MULTILIB_USEDEP}]
+	>=gnome-base/librsvg-${LIBRSVG_PV}[${MULTILIB_USEDEP}]
 	>=x11-themes/adwaita-icon-theme-3.14
 	vim-syntax? ( app-vim/gtk-syntax )
 "
