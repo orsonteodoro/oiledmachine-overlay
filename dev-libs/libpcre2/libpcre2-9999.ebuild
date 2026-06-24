@@ -3,6 +3,8 @@
 
 EAPI=8
 
+MY_P="pcre2-${PV/_rc/-RC}"
+
 # Breaks /usr/lib64/qt6/libexec/moc
 CFLAGS_HARDENED_ASSEMBLERS="inline"
 CFLAGS_HARDENED_CI_SANITIZERS="asan ubsan"
@@ -17,40 +19,51 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS"
 
 # https://pcre2project.github.io/pcre2/project/security/
 VERIFY_SIG_OPENPGP_KEY_PATH=/usr/share/openpgp-keys/nicholaswilson.asc
-inherit cflags-hardened check-compiler-switch dot-a libtool multilib multilib-minimal toolchain-funcs verify-sig
 
-MY_P="pcre2-${PV/_rc/-RC}"
+inherit autotools cflags-hardened check-compiler-switch dot-a libtool multilib multilib-minimal secure-version toolchain-funcs verify-sig
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="ff92e0b9cea5b5ae3af12ba930d03556684f098b"
+	EGIT_BRANCH="main"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/${MY_P}"
+	EGIT_REPO_URI="https://github.com/PCRE2Project/pcre2.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	SRC_URI="
+		https://github.com/PCRE2Project/pcre2/releases/download/${MY_P}/${MY_P}.tar.bz2
+		https://ftp.pcre.org/pub/pcre/${MY_P}.tar.bz2
+		verify-sig? ( https://github.com/PCRE2Project/pcre2/releases/download/${MY_P}/${MY_P}.tar.bz2.sig )
+	"
+fi
 
 DESCRIPTION="Perl-compatible regular expression library"
 HOMEPAGE="https://pcre2project.github.io/pcre2/ https://www.pcre.org/"
-SRC_URI="
-	https://github.com/PCRE2Project/pcre2/releases/download/${MY_P}/${MY_P}.tar.bz2
-	https://ftp.pcre.org/pub/pcre/${MY_P}.tar.bz2
-	verify-sig? ( https://github.com/PCRE2Project/pcre2/releases/download/${MY_P}/${MY_P}.tar.bz2.sig )
-"
-
 S="${WORKDIR}/${MY_P}"
 
 LICENSE="BSD"
-SLOT="0/3" # libpcre2-posix.so version
+SOVER="3"
+SLOT="0/${SOVER}" # libpcre2-posix.so version
 if [[ ${PV} != *_rc* ]] ; then
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris"
 fi
-IUSE="
+IUSE+="
 bzip2 +jit libedit +pcre16 +pcre32 +readline static-libs unicode valgrind zlib
-ebuild_revision_12
+ebuild_revision_13
 "
 REQUIRED_USE="?? ( libedit readline )"
 
 RDEPEND="
-	bzip2? ( app-arch/bzip2 )
-	libedit? ( dev-libs/libedit )
+	bzip2? ( >=app-arch/bzip2-${BZIP2_PV}:= )
+	libedit? ( dev-libs/libedit:= )
 	readline? ( sys-libs/readline:= )
-	zlib? ( virtual/zlib )
+	zlib? ( >=virtual/zlib-${ZLIB_PV}:= )
 "
 DEPEND="
 	${RDEPEND}
-	valgrind? ( dev-debug/valgrind )
+	valgrind? ( dev-debug/valgrind:= )
 "
 BDEPEND="
 	virtual/pkgconfig
@@ -62,17 +75,44 @@ MULTILIB_CHOST_TOOLS=(
 )
 
 PATCHES=(
-	"${FILESDIR}"/${PN}-10.10-000-Fix-multilib.patch
-	"${FILESDIR}"/${PN}-10.47-riscv.patch
 )
 
 pkg_setup() {
 	check-compiler-switch_start
 }
 
+verify_sover() {
+	which grep || return
+	grep --version || return
+	local c=$(grep -e "libpcre2_posix_version" "${S}/configure.ac" | head -n 1 | cut -f 2 -d "[" | sed -r -e "s|[])]||g" | cut -f 1 -d ":")
+	local a=$(grep -e "libpcre2_posix_version" "${S}/configure.ac" | head -n 1 | cut -f 2 -d "[" | sed -r -e "s|[])]||g" | cut -f 3 -d ":")
+	local actual_sover=$(( ${c} - ${a} ))
+	local expected_sover="${SOVER}"
+	if ver_test "${actual_sover}" "-ne" "${expected_sover}" ; then
+eerror "QA:  Update the SOVER."
+eerror "QA:  Actual sover:  ${actual_sover}"
+eerror "QA:  Expected sover:  ${expected_sover}"
+		die
+	fi
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+	verify_sover
+}
+
 src_prepare() {
 	default
 
+	eautoreconf
 	elibtoolize
 }
 

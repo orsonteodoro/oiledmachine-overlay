@@ -31,11 +31,8 @@ ycmd-44
 # EOL from upsteam
 gcc_slot_9_1
 
-# EOL
+# EOL, Mar 2025
 glog
-
-# EOL
-jemalloc
 
 # The last release was almost 5 years ago.
 ladspa

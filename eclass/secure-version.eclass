@@ -17,6 +17,10 @@ _SECURE_VERSION_ECLASS=1
 
 # The ebuild name has precedence for naming rules for ease in conversion.
 
+# 215 rows unconditional
+# 126 rows marked 9999 (58.6% are unstabled)
+# 89 rows marked tagged (41.3% are stable tagged)
+
 # Ebuilds or users can override this
 
 AT_SPI2_CORE_PV=${AT_SPI2_CORE_PV:-"9999"}
@@ -71,6 +75,7 @@ HARFBUZZ_PV=${HARFBUZZ_PV:-"9999"}
 HIGHWAY_PV=${HIGHWAY_PV:-"9999"}
 ICU_PV=${ICU_PV:-"79.0.9999"}
 JACK2_PV=${JACK2_PV:-"1.9.22"}
+JANSSON_PV=${JANSSON_PV:-"9999"}
 JEMALLOC_PV=${JEMALLOC_PV:-"9999"}
 JSON_GLIB_PV=${JSON_GLIB_PV:-"1.10.0"}
 JSONCPP_PV=${JSONCPP_PV:-"1.9.7"}

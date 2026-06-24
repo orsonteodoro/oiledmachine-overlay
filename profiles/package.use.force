@@ -52,6 +52,7 @@ dev-libs/icu fallback-commit
 dev-libs/libffi fallback-commit
 dev-libs/libxml2 fallback-commit
 sys-apps/systemd fallback-commit
+dev-libs/libpcre2 fallback-commit
 
 # Guardrails to mitigate ACE, PE, DT, ID for USE="-* " abuse
 dev-libs/libffi exec-static-trampoline

@@ -1,0 +1,32 @@
+--- a/pcre2-config.in.orig	2026-06-24 00:54:25.955145907 -0700
++++ b/pcre2-config.in	2026-06-24 07:04:09.174542076 -0700
+@@ -28,29 +28,8 @@ if test $# -eq 0; then
+ fi
+ 
+ libR=
+-case `uname -s` in
+-  *SunOS*)
+-  libR=" -R@libdir@"
+-  ;;
+-  *BSD*)
+-  libR=" -Wl,-R@libdir@"
+-  ;;
+-esac
+ 
+ libS=
+-case "@libdir@" in
+-  # system locations on Linux, no -L needed
+-  /usr/lib|/usr/lib32|/usr/lib64|/usr/lib/*-gnu*)
+-  ;;
+-  /lib|/lib32|/lib64|/lib/*-gnu*)
+-  ;;
+-  # system locations on AIX and Solaris, no -L needed
+-  /usr/lib/64|/usr/lib/amd*|/usr/lib/sparc*|/usr/lib/ppc*)
+-  ;;
+-  *)
+-  libS="-L@libdir@"
+-  ;;
+-esac
+ 
+ while test $# -gt 0; do
+   case "$1" in
