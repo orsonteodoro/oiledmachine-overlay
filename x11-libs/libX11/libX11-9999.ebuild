@@ -10,13 +10,21 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS IO OOBR OOBW PE"
 XORG_DOC=doc
 XORG_MULTILIB=yes
 
-inherit cflags-hardened toolchain-funcs xorg-3
+CHKL_TIMESTAMPS=(
+	"x11-libs/libxcb-9999"
+)
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="b10abf6b99d5acf846c26f305f1a14a86360a96c"
+fi
+
+inherit cflags-hardened chkl secure-version toolchain-funcs xorg-3
 
 # Note: please bump this with x11-misc/compose-tables
 DESCRIPTION="X.Org X11 library"
 
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~x64-macos"
-IUSE="test"
+IUSE+=" test"
 RESTRICT="!test? ( test )"
 
 # HACK: libX11 produces .pc files that depend on xproto.pc. When libX11
@@ -25,7 +33,7 @@ RESTRICT="!test? ( test )"
 #       needed. Until a "build-against-depend" option is available in
 #       ebuilds, we RDEPEND on xproto. See bug #903707 and others.
 RDEPEND="
-	>=x11-libs/libxcb-1.11.1[${MULTILIB_USEDEP}]
+	>=x11-libs/libxcb-${LIBXCB_PV}[${MULTILIB_USEDEP}]
 	x11-misc/compose-tables
 	x11-base/xorg-proto
 "
@@ -35,6 +43,7 @@ DEPEND="${RDEPEND}
 BDEPEND="test? ( dev-lang/perl )"
 
 src_configure() {
+	chkl_check_many_timestamps
 	cflags-hardened_append
 	local XORG_CONFIGURE_OPTIONS=(
 		$(use_with doc xmlto)
