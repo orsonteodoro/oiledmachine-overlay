@@ -238,8 +238,6 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libwebp-9999"
 	"media-libs/mesa-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-libs/openh264-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-video/ffmpeg-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-video/ffmpeg-9999m"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"media-video/pipewire-9999"
 	"net-libs/libproxy-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
 	"net-libs/nodejs-99999999"
@@ -529,7 +527,6 @@ UDEV_RDEPEND="
 
 gen_ffmpeg_nonfree_depends_multislot() {
 	echo "
-		=media-video/ffmpeg-9999m[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
 		~media-video/ffmpeg-${FFMPEG_8_1_PV}m[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
 		~media-video/ffmpeg-${FFMPEG_8_0_PV}m[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
 		~media-video/ffmpeg-${FFMPEG_7_1_PV}m[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
@@ -541,7 +538,6 @@ gen_ffmpeg_nonfree_depends_multislot() {
 
 gen_ffmpeg_nonfree_depends_unislot() {
 	echo "
-		=media-video/ffmpeg-9999[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
 		~media-video/ffmpeg-${FFMPEG_8_1_PV}[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
 		~media-video/ffmpeg-${FFMPEG_8_0_PV}[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
 		~media-video/ffmpeg-${FFMPEG_7_1_PV}[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
@@ -556,14 +552,6 @@ gen_ffmpeg_nonfree_depends_unislot() {
 # It may inadvertantly touch the nonfree during runtime.
 gen_ffmpeg_royalty_free_depends_multislot() {
 	echo "
-		(
-			!<dev-libs/openssl-3
-			=media-video/ffmpeg-9999m[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
-		)
-		(
-			=media-video/ffmpeg-9999m[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,-openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
-		)
-
 		(
 			!<dev-libs/openssl-3
 			=media-video/ffmpeg-${FFMPEG_8_1_PV}m[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
@@ -615,14 +603,6 @@ gen_ffmpeg_royalty_free_depends_multislot() {
 }
 gen_ffmpeg_royalty_free_depends_unislot() {
 	echo "
-		(
-			!<dev-libs/openssl-3
-			=media-video/ffmpeg-9999[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
-		)
-		(
-			=media-video/ffmpeg-9999[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,-openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
-		)
-
 		(
 			!<dev-libs/openssl-3
 			=media-video/ffmpeg-${FFMPEG_8_1_PV}[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
