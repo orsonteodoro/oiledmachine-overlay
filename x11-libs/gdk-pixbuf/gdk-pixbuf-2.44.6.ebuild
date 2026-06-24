@@ -9,7 +9,7 @@ CFLAGS_HARDENED_LANGS="c-lang"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO IU MC NPD OOBR OOBW SO"
 
-inherit cflags-hardened chkl gnome.org gnome2-utils meson-multilib multilib xdg
+inherit cflags-hardened chkl gnome.org gnome2-utils meson-multilib multilib secure-version xdg
 
 MULTILIB_CHOST_TOOLS=(
 	"/usr/bin/gdk-pixbuf-query-loaders$(get_exeext)"
@@ -42,17 +42,17 @@ RESTRICT="
 # TODO: For windows/darwin support: shared-mime-info conditional,
 # native_windows_loaders option review
 DEPEND="
-	>=dev-libs/glib-2.89.9999:=[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-${GLIB_PV}:=[${MULTILIB_USEDEP}]
 	x11-misc/shared-mime-info:=
 	!glycin? (
 		png? (
-			>=media-libs/libpng-1.6.57:=[${MULTILIB_USEDEP}]
+			>=media-libs/libpng-${LIBPNG_PV}:=[${MULTILIB_USEDEP}]
 		)
 		jpeg? (
-			>=media-libs/libjpeg-turbo-9999:=[${MULTILIB_USEDEP}]
+			>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:=[${MULTILIB_USEDEP}]
 		)
 		tiff? (
-			>=media-libs/tiff-9999:=[${MULTILIB_USEDEP}]
+			>=media-libs/tiff-${TIFF_PV}:=[${MULTILIB_USEDEP}]
 		)
 	)
 	glycin? (
@@ -60,7 +60,7 @@ DEPEND="
 		media-libs/glycin-loaders:=
 	)
 	introspection? (
-		>=dev-libs/gobject-introspection-1.86.0:=
+		>=dev-libs/gobject-introspection-${GOBJECT_INTROSPECTION_PV}:=
 	)
 "
 RDEPEND="
@@ -86,8 +86,8 @@ src_prepare() {
 }
 
 multilib_src_configure() {
-	cflags-hardened_append
 	chkl_check_many_timestamps
+	cflags-hardened_append
 	local emesonargs=(
 		$(meson_feature gif)
 		$(meson_feature jpeg)
