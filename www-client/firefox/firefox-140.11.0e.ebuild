@@ -182,7 +182,6 @@ FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-10.tar.xz"
 FIREFOX_LOONG_PATCHSET="firefox-139-loong-patches-02.tar.xz"
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
-GTK3_PV="3.24.52"
 LICENSE_FINGERPRINT="\
 3a915297c46fab65a036d83b2dda3eef36cf85c0745a49fdc4c49c551238120c\
 b2b93007ec5f5804b7d77c7b453a813b49ceca6a41901b81a1f49bf49e98d4fd\
@@ -200,7 +199,6 @@ RUST_MIN_VER="1.86.0"
 RUST_NEEDS_LLVM=1 # Prune rustc for unused LLVM slots
 RUST_PV="${RUST_MIN_VER}"
 SPEECH_DISPATCHER_PV="0.12.1"
-XKBCOMMON_PV="0.4.1"
 VIRTUALX_REQUIRED="manual"
 
 # Mitigate flood the zone vulnerability.
@@ -252,6 +250,7 @@ CHKL_TIMESTAMPS=(
 	"x11-libs/libdrm-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
 	"x11-libs/pango-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
 	"x11-libs/pixman-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"x11-libs/libX11-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
 )
 
 # Information about the bundled wasi toolchain from
@@ -430,7 +429,7 @@ inherit cflags-depends cflags-hardened check-compiler-switch check-linker
 inherit check-reqs chkl desktop dhms flag-o-matic flag-o-matic-om gnome2-utils lcnr libcxx-slot
 inherit libstdcxx-slot linux-info llvm multilib-minimal multiprocessing
 inherit node optfeature pax-utils python-any-r1 readme.gentoo-r1 rust
-inherit rustflags-hardened toolchain-funcs virtualx vf web-kernel-config xdg
+inherit rustflags-hardened secure-version toolchain-funcs virtualx vf web-kernel-config xdg
 
 KEYWORDS="amd64 arm64 ~loong ~ppc64 ~riscv ~x86"
 S="${WORKDIR}/${PN}-${PV/e}"
@@ -495,11 +494,21 @@ CODEC_IUSE="
 +opus
 +vpx
 "
+PULSEAUDIO_IMPL=(
+	"apulse"
+	"libpulse"
+)
+WIFI_IMPL=(
+	"connman"
+	"networkmanager"
+)
 # Enabled telemetry is the distro and upstream default.
 # Telemetry is disabled in the overlay to mitigate sensitive data harvesting or LotL weaponization.
 IUSE+="
 ${CODEC_IUSE}
 ${PATENT_STATUS[@]}
+${PULSEAUDIO_IMPL[@]/+}
+${WIFI_IMPL[@]/+}
 alsa cups +dbus debug eme-free firejail +hardened -hwaccel jack +jemalloc
 +jit libcanberra libnotify libproxy libsecret mold +pgo
 +pulseaudio rust-simd selinux sndio speech +system-av1
@@ -545,6 +554,11 @@ REQUIRED_USE="
 			pulseaudio
 		)
 	)
+	pulseaudio? (
+		|| (
+			${PULSEAUDIO_IMPL[@]}
+		)
+	)
 	rust-simd? (
 		!llvm_slot_19
 	)
@@ -556,6 +570,9 @@ REQUIRED_USE="
 	)
 	wifi? (
 		dbus
+		|| (
+			${WIFI_IMPL[@]}
+		)
 	)
 	|| (
 		alsa
@@ -665,104 +682,108 @@ RUST_CDEPEND="
 CDEPEND="
 	${FF_ONLY_DEPEND}
 	${PATENT_CDEPENDS}
-	>=app-accessibility/at-spi2-core-2.58.6:=[${MULTILIB_USEDEP}]
-	>=dev-libs/glib-2.89.9999:=[${MULTILIB_USEDEP}]
+	>=app-accessibility/at-spi2-core-${AT_SPI2_CORE_PV}:=[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-${GLIB_PV}:=[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.38.2:=[${MULTILIB_USEDEP}]
-	>=dev-libs/nss-3.125:=[${MULTILIB_USEDEP}]
-	>=media-libs/fontconfig-2.18.1:=[${MULTILIB_USEDEP}]
-	>=media-libs/freetype-9999:=[${MULTILIB_USEDEP}]
-	>=x11-libs/pango-1.57.1:=[${MULTILIB_USEDEP}]
-	>=x11-libs/pixman-0.42.2:=[${MULTILIB_USEDEP}]
-	>=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}]
-	>=dev-libs/expat-2.8.2:=[${MULTILIB_USEDEP}]
-	>=dev-libs/libffi-9999:=[${MULTILIB_USEDEP}]
-	>=media-libs/alsa-lib-1.2.16.1:=[${MULTILIB_USEDEP}]
-	>=x11-libs/cairo-9999:=[${MULTILIB_USEDEP}]
-	>=x11-libs/gdk-pixbuf-2.44.6:=[${MULTILIB_USEDEP}]
-	>=x11-libs/libdrm-2.4.120:=[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-${NSS_PV}:=[${MULTILIB_USEDEP}]
+	>=media-libs/fontconfig-${FONTCONFIG}:=[${MULTILIB_USEDEP}]
+	>=media-libs/freetype-${FREETYPE_PV}:=[${MULTILIB_USEDEP}]
+	>=x11-libs/pango-${PANGO_PV}:=[${MULTILIB_USEDEP}]
+	>=x11-libs/pixman-${PIXMAN_PV}:=[${MULTILIB_USEDEP}]
+	>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}]
+	>=dev-libs/expat-${EXPAT_PV}:=[${MULTILIB_USEDEP}]
+	>=dev-libs/libffi-${LIBFFI_PV}:=[${MULTILIB_USEDEP}]
+	>=media-libs/alsa-lib-${ALSA_LIB_PV}:=[${MULTILIB_USEDEP}]
+	>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP}]
+	>=x11-libs/gdk-pixbuf-${GDK_PIXBUF_PV}:=[${MULTILIB_USEDEP}]
+	>=x11-libs/libdrm-${LIBDRM_PV}:=[${MULTILIB_USEDEP}]
 	virtual/freedesktop-icon-theme:*
 	dbus? (
 		>=sys-apps/dbus-${DBUS_PV}:=[${MULTILIB_USEDEP}]
 	)
 	elibc_glibc? (
-		>=sys-libs/glibc-2.43:=
+		>=sys-libs/glibc-${GLIBC_PV}:=
 	)
 	elibc_musl? (
-		>=sys-libs/musl-1.2.6:=
+		>=sys-libs/musl-${MUSL_PV}:=
 	)
 	jack? (
 		virtual/jack:*[${MULTILIB_USEDEP}]
 	)
 	libproxy? (
-		>=net-libs/libproxy-9999:=[${MULTILIB_USEDEP}]
+		>=net-libs/libproxy-${LIBPROXY_PV}:=[${MULTILIB_USEDEP}]
 	)
 	pulseaudio? (
-		|| (
-			>=media-libs/libpulse-9999[${MULTILIB_USEDEP}]
-			>=media-sound/apulse-0.1.12-r4[${MULTILIB_USEDEP},sdk]
+		apulse? (
+			>=media-sound/apulse-0.1.12-r4:=[${MULTILIB_USEDEP},sdk]
+		)
+		libpulse? (
+			>=media-libs/libpulse-${LIBPULSE_PV}:=[${MULTILIB_USEDEP}]
 		)
 	)
 	selinux? (
 		sec-policy/selinux-mozilla:*
 	)
 	sndio? (
-		>=media-sound/sndio-1.8.0-r1:=[${MULTILIB_USEDEP}]
+		>=media-sound/sndio-${SNDIO_PV}:=[${MULTILIB_USEDEP}]
 	)
 	system-av1? (
-		>=media-libs/dav1d-9999:=[${MULTILIB_USEDEP},8bit]
-		>=media-libs/libaom-3.14.1:=[${MULTILIB_USEDEP}]
+		>=media-libs/dav1d-${DAV1D_PV}:=[${MULTILIB_USEDEP},8bit]
+		>=media-libs/libaom-${LIBAOM_PV}:=[${MULTILIB_USEDEP}]
 	)
 	system-harfbuzz? (
-		>=media-libs/harfbuzz-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/harfbuzz-${HARFBUZZ_PV}:=[${MULTILIB_USEDEP}]
 		!wasm-sandbox? (
-			>=media-gfx/graphite2-1.3.15:=[${MULTILIB_USEDEP}]
+			>=media-gfx/graphite2-${GRAPHITE2_PV}:=[${MULTILIB_USEDEP}]
 		)
 	)
 	system-icu? (
-		>=dev-libs/icu-79.0.9999:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		>=dev-libs/icu-${ICU_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	)
 	system-jpeg? (
-		>=media-libs/libjpeg-turbo-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:=[${MULTILIB_USEDEP}]
 	)
 	system-libevent? (
-		>=dev-libs/libevent-2.1.12:=[${MULTILIB_USEDEP},threads(+)]
+		>=dev-libs/libevent-${LIBEVENT_PV}:=[${MULTILIB_USEDEP},threads(+)]
 	)
 	system-libvpx? (
-		>=media-libs/libvpx-1.15.1:=[${MULTILIB_USEDEP},postproc]
+		>=media-libs/libvpx-${LIBVPX_PV}:=[${MULTILIB_USEDEP},postproc]
 	)
 	system-pipewire? (
-		>=media-video/pipewire-1.4.2:=[${MULTILIB_USEDEP}]
+		>=media-video/pipewire-${PIPEWIRE_PV}:=[${MULTILIB_USEDEP}]
 	)
 	system-png? (
-		>=media-libs/libpng-1.6.57:=[${MULTILIB_USEDEP},apng]
+		>=media-libs/libpng-${LIBPNG_PV}:=[${MULTILIB_USEDEP},apng]
 	)
 	system-webp? (
-		>=media-libs/libwebp-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/libwebp-${LIBWEBP_PV}:=[${MULTILIB_USEDEP}]
 	)
 	wayland? (
-		>=dev-libs/wayland-9999:=[${MULTILIB_USEDEP}]
+		>=dev-libs/wayland-${WAYLAND_PV}:=[${MULTILIB_USEDEP}]
 		>=media-libs/libepoxy-1.5.10-r1:=[${MULTILIB_USEDEP}]
 		>=x11-libs/gtk+-${GTK3_PV}:3=[${MULTILIB_USEDEP},wayland]
 	)
 	wifi? (
 		kernel_linux? (
-			|| (
-				>=net-misc/networkmanager-9999[${MULTILIB_USEDEP}]
-				>=net-misc/connman-2.0[networkmanager]
+			connman? (
+				>=net-misc/connman-2.0:=[networkmanager]
+			)
+			networkmanager? (
+				>=net-misc/networkmanager-${NETWORKMANAGER_PV}:=[${MULTILIB_USEDEP}]
 			)
 			>=sys-apps/dbus-${DBUS_PV}:=[${MULTILIB_USEDEP}]
 		)
 	)
 	X? (
 		>=x11-libs/gtk+-${GTK3_PV}:3=[${MULTILIB_USEDEP},X]
-		>=x11-libs/libXrandr-1.4.0:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libXrandr-${LIBXRANDR_PV}:=[${MULTILIB_USEDEP}]
 		virtual/opengl:*[${MULTILIB_USEDEP}]
-		>=x11-libs/cairo-9999:=[${MULTILIB_USEDEP},X]
-		x11-libs/libX11:=[${MULTILIB_USEDEP}]
+		>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP},X]
+		>=x11-libs/libX11-${LIBX11_PV}:=[${MULTILIB_USEDEP}]
 		x11-libs/libXcomposite:=[${MULTILIB_USEDEP}]
 		x11-libs/libXdamage:=[${MULTILIB_USEDEP}]
-		x11-libs/libXext:=[${MULTILIB_USEDEP}]
-		x11-libs/libXfixes:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libXext-${LIBXEXT_PV}:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libXfixes-${LIBXFIXES_PV}:=[${MULTILIB_USEDEP}]
 		x11-libs/libxcb:=[${MULTILIB_USEDEP}]
 	)
 "
@@ -776,7 +797,7 @@ RDEPEND+="
 	sys-kernel/mitigate-id:*
 	virtual/patent-status:*[patent_status_nonfree=]
 	cups? (
-		>=net-print/cups-9999:=[${MULTILIB_USEDEP}]
+		>=net-print/cups-${CUPS_PV}:=[${MULTILIB_USEDEP}]
 	)
 	jack? (
 		virtual/jack:*[${MULTILIB_USEDEP}]
@@ -798,12 +819,14 @@ RDEPEND+="
 		app-crypt/libsecret:=[${MULTILIB_USEDEP}]
 	)
 	openh264? (
-		>=media-libs/openh264-2.6.0:=[${MULTILIB_USEDEP},plugin]
+		>=media-libs/openh264-${OPENH264_PV}:=[${MULTILIB_USEDEP},plugin]
 	)
 	pulseaudio? (
-		|| (
-			media-libs/libpulse[${MULTILIB_USEDEP}]
-			>=media-sound/apulse-0.1.12-r4[${MULTILIB_USEDEP}]
+		apulse? (
+			>=media-sound/apulse-0.1.12-r4:=[${MULTILIB_USEDEP}]
+		)
+		libpulse? (
+			>=media-libs/libpulse-${LIBPULSE_PV}:=[${MULTILIB_USEDEP}]
 		)
 	)
 	speech? (
@@ -825,7 +848,7 @@ RDEPEND+="
 		)
 	)
 	vaapi? (
-		>=media-libs/libva-9999:=[${MULTILIB_USEDEP},drm(+),X?,wayland?]
+		>=media-libs/libva-${LIBVA_PV}:=[${MULTILIB_USEDEP},drm(+),X?,wayland?]
 	)
 "
 

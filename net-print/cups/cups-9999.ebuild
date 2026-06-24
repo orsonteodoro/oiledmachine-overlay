@@ -15,7 +15,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-3.0.9999"
 )
 
-inherit autotools cflags-hardened chkl eapi9-ver linux-info xdg multilib-minimal optfeature pam toolchain-funcs
+inherit autotools cflags-hardened chkl eapi9-ver linux-info xdg multilib-minimal optfeature pam secure-version toolchain-funcs
 
 MY_PV="${PV/_beta/b}"
 MY_PV="${MY_PV/_rc/rc}"
@@ -23,7 +23,7 @@ MY_PV="${MY_PV/_p/op}"
 MY_P="${PN}-${MY_PV}"
 
 if [[ ${PV} == *9999 ]] ; then
-	FALLBACK_COMMIT="69d4be3e9e708383b560e0841523fda54f53611a"
+	FALLBACK_COMMIT="12bae4cdb93d44c6ea26cdefa65779d546d13b54"
 	[[ ${PV} != 9999 ]] && EGIT_BRANCH=branch-${PV/.9999}
 	EGIT_REPO_URI="https://github.com/OpenPrinting/cups.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -43,7 +43,10 @@ S="${WORKDIR}/${MY_P}"
 
 LICENSE="Apache-2.0"
 SLOT="0"
-IUSE+=" acl dbus debug kerberos mdnsresponder-compat openssl pam selinux static-libs systemd test usb X xinetd zeroconf"
+IUSE+="
+acl dbus debug kerberos mdnsresponder-compat openssl pam selinux static-libs systemd test usb X xinetd zeroconf
+ebuild_revision_2
+"
 REQUIRED_USE="
 	mdnsresponder-compat? (
 		zeroconf
@@ -59,28 +62,36 @@ BDEPEND="
 "
 COMMON_DEPEND="
 	app-text/libpaper:=
-	>=virtual/zlib-1.3.2:=
+	>=virtual/zlib-${ZLIB_PV}:=
 	acl? (
 		kernel_linux? (
 			sys-apps/acl:=
 		)
 	)
 	dbus? ( >=sys-apps/dbus-1.6.18-r1:=[${MULTILIB_USEDEP}] )
+	elibc_glibc? (
+		>=sys-libs/glibc-${GLIBC_PV}:=
+	)
+	elibc_musl? (
+		>=sys-libs/musl-${MUSL_PV}:=
+	)
 	kerberos? ( >=virtual/krb5-0-r1:*[${MULTILIB_USEDEP}] )
 	pam? ( sys-libs/pam:= )
 	!pam? ( virtual/libcrypt:= )
-	!openssl? ( >=net-libs/gnutls-2.12.23-r6:=[${MULTILIB_USEDEP}] )
-	openssl? ( dev-libs/openssl:=[${MULTILIB_USEDEP}] )
-	systemd? ( sys-apps/systemd:= )
-	usb? ( virtual/libusb:1= )
+	!openssl? ( >=net-libs/gnutls-${GNUTLS_PV}:=[${MULTILIB_USEDEP}] )
+	openssl? (
+		${OPENSSL_RDEPEND}
+	)
+	systemd? ( >=sys-apps/systemd-${SYSTEMD_PV}:= )
+	usb? ( >=virtual/libusb-1:= )
 	X? ( x11-misc/xdg-utils:= )
 	xinetd? ( sys-apps/xinetd:= )
-	>=net-dns/avahi-9999:=[${MULTILIB_USEDEP},dbus,mdnsresponder-compat?]
+	>=net-dns/avahi-${AVAHI_PV}:=[${MULTILIB_USEDEP},dbus,mdnsresponder-compat?]
 "
 # The proper depends is conditional but above is unconditional.
 COMMON_DEPEND_NOTES="
 	zeroconf? (
-		>=net-dns/avahi-9999[${MULTILIB_USEDEP},dbus,mdnsresponder-compat?]
+		>=net-dns/avahi-${AVAHI_PV}[${MULTILIB_USEDEP},dbus,mdnsresponder-compat?]
 	)
 "
 # if libcupsfilters is installed, more tests are run. They fail without at least one of the two formats enabled.

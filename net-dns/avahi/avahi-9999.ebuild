@@ -9,14 +9,16 @@ PYTHON_REQ_USE="gdbm"
 CHKL_TIMESTAMPS=(
 	"dev-libs/expat-9999"
 	"dev-libs/glib-2.89.9999"
+	"dev-libs/libevent-9999"
 	"dev-qt/qtbase-6.9999"
 	"sys-apps/systemd-9999"
+	"sys-libs/libcap-9999"
 )
 
-inherit autotools chkl multilib-minimal python-single-r1 systemd
+inherit autotools chkl multilib-minimal python-single-r1 secure-version systemd
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="16fe942a4226204ab613d9b477c8db93b3cee0b4"
+	FALLBACK_COMMIT="92b659633ef0019f3202f00c9573cbfcf010630c"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
 	fi
@@ -34,7 +36,10 @@ HOMEPAGE="https://avahi.org/"
 LICENSE="LGPL-2.1"
 SLOT="0"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~mips ppc ppc64 ~riscv ~s390 ~sparc x86"
-IUSE+=" autoipd bookmarks +dbus doc gdbm gtk howl-compat +introspection mdnsresponder-compat nls python qt6 selinux systemd test"
+IUSE+="
+autoipd bookmarks +dbus doc gdbm gtk howl-compat +introspection mdnsresponder-compat nls python qt6 selinux systemd test
+ebuild_revision_1
+"
 
 REQUIRED_USE="
 	bookmarks? ( python )
@@ -47,15 +52,15 @@ REQUIRED_USE="
 RESTRICT="!test? ( test )"
 
 DEPEND="
-	>=dev-libs/expat-9999:=
-	>=dev-libs/glib-2.89.9999:2=[${MULTILIB_USEDEP}]
+	>=dev-libs/expat-${EXPAT_PV}:=
+	>=dev-libs/glib-${GLIB_PV}:2=[${MULTILIB_USEDEP}]
 	dev-libs/libdaemon:=
-	dev-libs/libevent:=[${MULTILIB_USEDEP}]
+	>=dev-libs/libevent-${LIBEVENT_PV}:=[${MULTILIB_USEDEP}]
 	dbus? ( sys-apps/dbus:=[${MULTILIB_USEDEP}] )
 	gdbm? ( sys-libs/gdbm:=[${MULTILIB_USEDEP}] )
-	gtk?  ( >=x11-libs/gtk+-3.24.52:3=[${MULTILIB_USEDEP}] )
-	introspection? ( >=dev-libs/gobject-introspection-1.82.0-r2:= )
-	kernel_linux? ( sys-libs/libcap:= )
+	gtk?  ( >=x11-libs/gtk+-${GTK3_PV}:3=[${MULTILIB_USEDEP}] )
+	introspection? ( >=dev-libs/gobject-introspection-${GOBJECT_INTROSPECTION_PV}:= )
+	kernel_linux? ( >=sys-libs/libcap-${LIBCAP_PV}:= )
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
@@ -64,8 +69,8 @@ DEPEND="
 			introspection? ( dev-python/pygobject:3[${PYTHON_USEDEP}] )
 		')
 	)
-	qt6? ( >=dev-qt/qtbase-6.9999:6= )
-	systemd? ( >=sys-apps/systemd-9999:=[${MULTILIB_USEDEP}] )
+	qt6? ( >=dev-qt/qtbase-${QTBASE6_PV}:6= )
+	systemd? ( >=sys-apps/systemd-${SYSTEMD_PV}:=[${MULTILIB_USEDEP}] )
 "
 RDEPEND="${DEPEND}
 	acct-user/avahi:*
