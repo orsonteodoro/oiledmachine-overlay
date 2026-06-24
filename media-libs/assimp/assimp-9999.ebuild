@@ -17,10 +17,24 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-inherit cflags-hardened check-compiler-switch cmake-multilib flag-o-matic libcxx-slot libstdcxx-slot
+CHKL_TIMESTAMPS=(
+	"x11-libs/libX11-9999"
+)
 
-KEYWORDS="~amd64 ~arm64"
-SRC_URI="https://github.com/${PN}/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+inherit cflags-hardened check-compiler-switch chkl flag-o-matic libcxx-slot libstdcxx-slot secure-version cmake-multilib
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="3be4095a48a7ea8782a624710d9408fdf30c0376"
+	EGIT_BRANCH="master"
+	EGIT_REPO_URI="https://github.com/assimp/assimp.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	KEYWORDS="~amd64 ~arm64"
+	SRC_URI="https://github.com/${PN}/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+fi
 
 DESCRIPTION="Importer library to import assets from 3D files"
 HOMEPAGE="https://github.com/assimp/assimp"
@@ -43,17 +57,17 @@ RESTRICT="
 		test
 	)
 "
-SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE="
+SLOT="0/"$(ver_cut "1-2" "${PV}")
+IUSE+="
 samples static-libs test
 ebuild_revision_21
 "
 RDEPEND="
-	virtual/zlib[${MULTILIB_USEDEP},minizip]
+	>=virtual/zlib-${ZLIB_PV}[${MULTILIB_USEDEP},minizip]
 	samples? (
 		media-libs/freeglut[${MULTILIB_USEDEP}]
 		virtual/opengl[${MULTILIB_USEDEP}]
-		x11-libs/libX11[${MULTILIB_USEDEP}]
+		>=x11-libs/libX11-${LIBX11_PV}[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
@@ -79,6 +93,18 @@ pkg_setup() {
 	libstdcxx-slot_verify
 }
 
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+}
+
 src_prepare() {
 	if use x86 ; then
 		eapply "${FILESDIR}/${PN}-5.2.4-drop-failing-tests-for-abi_x86_32.patch"
@@ -94,6 +120,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
 
+	chkl_check_many_timestamps
 	cflags-hardened_append
 	local mycmakeargs=(
 		-DASSIMP_ASAN=OFF
