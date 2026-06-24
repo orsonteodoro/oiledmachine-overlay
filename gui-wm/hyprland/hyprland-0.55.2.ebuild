@@ -64,7 +64,7 @@ LICENSE="BSD"
 SLOT="0"
 IUSE+="
 ${GCC_COMPAT[@]}
-clang gcc legacy-renderer -guiutils systemd test X
+clang gcc lcms legacy-renderer -guiutils systemd test X
 ebuild_revision_30
 "
 REQUIRED_USE="
@@ -96,7 +96,9 @@ RDEPEND="
 	>=gui-libs/hyprcursor-0.1.13:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=gui-libs/hyprutils-0.13.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=gui-libs/hyprwire-0.3.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=media-libs/lcms-${LCMS_PV}:=
+	lcms? (
+		>=media-libs/lcms-${LCMS_PV}:=
+	)
 	>=media-libs/libglvnd-1.7.0:=
 	>=media-libs/mesa-${MESA_PV}:=
 	>=x11-libs/cairo-${CAIRO_PV}:=
@@ -148,6 +150,7 @@ BDEPEND="
 "
 
 pkg_setup() {
+	use lcms || ewarn "Disabling the lcms USE flag is experimental.  Enable if build fails."
 	check-compiler-switch_start
 	[[ "${MERGE_TYPE}" == "binary" ]] && return
 
