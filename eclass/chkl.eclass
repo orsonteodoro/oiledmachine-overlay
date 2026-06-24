@@ -84,7 +84,11 @@ ewarn "Expected timestamp:  >= "$(date --date="@${non_vulernable_time}")
 eerror
 eerror "Do one of the following:"
 eerror
-eerror "Do \`emerge -a1ovuDN =${atom} && emerge -a1vO =${atom}\`"
+eerror "\`emerge emerge -a1vO =${atom}\` for recent merges"
+eerror
+eerror "  or"
+eerror
+eerror "\`emerge -a1ovuDN =${atom} && emerge -a1vO =${atom}\` for unrecent merges"
 eerror
 eerror "  or"
 eerror
@@ -92,7 +96,7 @@ eerror "\`emerge -a @live-rebuild\`."
 eerror
 eerror "  or"
 eerror
-eerror "Use a stable tagged version if the ebuild allows it"
+eerror "Emerge a stable tagged version if the ebuild allows it"
 eerror
 eerror "  or"
 eerror
