@@ -19,7 +19,7 @@ CXX_STANDARD=17
 # 2. A new tagged release on distro overlay.  Currently at 6.11.1
 # 3. A new Chromium bump in qtwebengine.  Currently at 140.0.7339.225
 #
-FALLBACK_COMMIT="161fd701156250592ab8e489cc42106c3da9f93f" # Jun 19, 2026 9:06 AM PDT
+FALLBACK_COMMIT="77b9e0051aeecaa62b5b6fa2607fec3cb2f92631"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -35,7 +35,10 @@ CHKL_TIMESTAMPS=(
 	"app-accessibility/at-spi2-core-9999"
 	"app-arch/brotli-9999"
 	"app-arch/libarchive-9999"
+	"dev-db/sqlite-9999"
+	"dev-libs/glib-9999"
 	"dev-libs/icu-79.0.9999"
+	"dev-libs/libpcre2-9999"
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
@@ -48,6 +51,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/freetype-9999"
 	"media-libs/libjpeg-turbo-9999"
 	"media-libs/libpng-9999"
+	"media-libs/mesa-9999"
 	"net-libs/libproxy-9999"
 	"net-print/cups-9999"
 	"sys-apps/systemd-9999"
@@ -84,7 +88,7 @@ declare -gA QT6_IUSE=(
 )
 IUSE+="
 ${QT6_IUSE[*]}
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	?? ( journald syslog )
@@ -123,7 +127,7 @@ COMMON_DEPEND="
 	app-crypt/libb2:=
 	dev-libs/double-conversion:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/glib-${GLIB_PV}:=
-	dev-libs/libpcre2:=[pcre16,unicode(+)]
+	>=dev-libs/libpcre2-${LIBPCRE2_PV}:=[pcre16,unicode(+)]
 	icu? (
 		>=dev-libs/icu-${ICU_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
@@ -281,8 +285,8 @@ src_prepare() {
 }
 
 src_configure() {
-	cflags-hardened_append
 	chkl_check_many_timestamps
+	cflags-hardened_append
 
 	if use gtk; then
 		# defang automagic dependencies (bug #624960)
