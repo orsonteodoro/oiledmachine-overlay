@@ -17,8 +17,12 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/wayland-9999"
 	"media-libs/fontconfig-9999"
 	"media-libs/harfbuzz-9999"
+	"media-libs/mesa-9999"
 	"net-print/cups-9999"
 	"x11-libs/cairo-9999"
+	"x11-libs/libX11-9999"
+	"x11-libs/libxkbcommon-9999"
+	"x11-libs/libXcursor-9999"
 	"x11-libs/pango-9999"
 	"x11-misc/colord-9999"
 )
