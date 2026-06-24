@@ -4,25 +4,35 @@
 EAPI=8
 
 if [[ ${PV} = *9999* ]]; then
+	FALLBACK_COMMIT="95c36fb641e4186cc0daa7ff902f6b1902032de3"
 	GIT_ECLASS="git-r3"
 	EGIT_REPO_URI="https://github.com/xkbcommon/${PN}"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 else
 	SRC_URI="https://github.com/xkbcommon/libxkbcommon/archive/refs/tags/xkbcommon-${PV}.tar.gz -> ${P}.tar.gz"
-	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~mips ppc ppc64 ~riscv ~s390 ~sparc x86"
+	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 	S="${WORKDIR}/libxkbcommon-xkbcommon-${PV}"
 fi
 
 CFLAGS_HARDENED_USE_CASES="sensitive-data"
-PYTHON_COMPAT=( python3_{11..14} )
+PYTHON_COMPAT=( python3_{10..14} )
 
-inherit bash-completion-r1 cflags-hardened meson-multilib ${GIT_ECLASS} python-any-r1 virtualx
+CHKL_TIMESTAMPS=(
+	"dev-libs/libxml2-9999"
+	"dev-libs/wayland-9999"
+	"x11-libs/libxcb-9999"
+)
+
+inherit bash-completion-r1 cflags-hardened chkl meson-multilib ${GIT_ECLASS} python-any-r1 secure-version virtualx
 
 DESCRIPTION="Keymap handling library for toolkits and window systems"
 HOMEPAGE="https://xkbcommon.org/ https://github.com/xkbcommon/libxkbcommon/"
 LICENSE="MIT"
 SLOT="0"
 
-IUSE="doc static-libs test tools wayland X"
+IUSE+=" doc static-libs test tools wayland X"
 RESTRICT="!test? ( test )"
 
 BDEPEND="
@@ -35,15 +45,15 @@ BDEPEND="
 	tools? ( wayland? ( dev-util/wayland-scanner ) )
 "
 RDEPEND="
-	X? ( >=x11-libs/libxcb-1.10:=[${MULTILIB_USEDEP}] )
-	tools? ( wayland? ( >=dev-libs/wayland-1.2.0[${MULTILIB_USEDEP}] ) )
-	dev-libs/libxml2:=[${MULTILIB_USEDEP}]
-	x11-misc/compose-tables
-	x11-misc/xkeyboard-config
+	X? ( >=x11-libs/libxcb-${LIBXCB_PV}:=[${MULTILIB_USEDEP}] )
+	tools? ( wayland? ( >=dev-libs/wayland-${WAYLAND_PV}:=[${MULTILIB_USEDEP}] ) )
+	>=dev-libs/libxml2-${LIBXML2_PV}:=[${MULTILIB_USEDEP}]
+	x11-misc/compose-tables:=
+	x11-misc/xkeyboard-config:=
 "
 DEPEND="${RDEPEND}
-	X? ( x11-base/xorg-proto )
-	tools? ( wayland? ( >=dev-libs/wayland-protocols-1.15 ) )
+	X? ( x11-base/xorg-proto:= )
+	tools? ( wayland? ( >=dev-libs/wayland-protocols-1.15:= ) )
 "
 
 pkg_setup() {
@@ -52,7 +62,20 @@ pkg_setup() {
 	fi
 }
 
+src_unpack() {
+	if [[ ${PV} = *9999* ]]; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+}
+
 multilib_src_configure() {
+	chkl_check_many_timestamps
 	cflags-hardened_append
 	local emesonargs=(
 		-Ddefault_library="$(usex static-libs both shared)"
