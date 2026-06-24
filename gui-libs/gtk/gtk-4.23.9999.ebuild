@@ -23,21 +23,26 @@ PYTHON_COMPAT=( python3_{10..14} )
 FALLBACK_COMMIT="3a3a3ffb99a391a909f7d759e580e5544a35b223" # Tue, 16 Jun 2026 14:34:00 -0400
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/fribidi-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/glib-2.89.9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/wayland-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"net-print/cups-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"gnome-base/librsvg-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/harfbuzz-9999"		# Bumped live/*DEPENDS to latest precaution for non-vulnerable
-	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libpng-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/tiff-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"x11-libs/cairo-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"x11-libs/libdrm-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"x11-libs/pango-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/fribidi-9999"
+	"dev-libs/glib-2.89.9999"
+	"dev-libs/wayland-9999"
+	"net-print/cups-9999"
+	"gnome-base/librsvg-9999"
+	"media-libs/harfbuzz-9999"
+	"media-libs/libjpeg-turbo-9999"
+	"media-libs/libpng-9999"
+	"media-libs/mesa-9999"
+	"media-libs/tiff-9999"
+	"media-libs/vulkan-loader-9999"
+	"x11-libs/cairo-9999"
+	"x11-libs/libdrm-9999"
+	"x11-libs/libX11-9999"
+	"x11-libs/libXcursor-9999"
+	"x11-libs/libxkbcommon-9999"
+	"x11-libs/pango-9999"
 )
 
-inherit cflags-hardened chkl flag-o-matic gnome.org gnome2-utils meson optfeature python-any-r1 toolchain-funcs virtualx xdg
+inherit cflags-hardened chkl flag-o-matic gnome.org gnome2-utils meson optfeature python-any-r1 secure-version toolchain-funcs virtualx xdg
 
 DESCRIPTION="GTK is a multi-platform toolkit for creating graphical user interfaces"
 HOMEPAGE="https://www.gtk.org/ https://gitlab.gnome.org/GNOME/gtk/"
@@ -57,30 +62,30 @@ IUSE+=" aqua broadway cloudproviders colord cups examples gstreamer gtk-doc +int
 #     on wd40 profiles with librsvg[tools]), bug #547710
 # NOTE: Support was added to build against both cups2 and cups3
 COMMON_DEPEND="
-	~dev-libs/glib-2.89.9999:=
-	>=x11-libs/cairo-9999:=[aqua?,glib,svg(+),X?]
-	>=x11-libs/pango-1.57.1:=[introspection?]
-	>=dev-libs/fribidi-9999:=
-	>=media-libs/harfbuzz-9999:=
-	>=x11-libs/gdk-pixbuf-2.44.6:=[introspection?]
-	>=media-libs/libpng-1.6.57:=
-	>=media-libs/tiff-9999:=
-	>=media-libs/libjpeg-turbo-9999:=
-	>=gnome-base/librsvg-2.48:=
+	~dev-libs/glib-${GLIB_PV}:=
+	>=x11-libs/cairo-${CAIRO_PV}:=[aqua?,glib,svg(+),X?]
+	>=x11-libs/pango-${PANGO_PV}:=[introspection?]
+	>=dev-libs/fribidi-${FRIBIDI_PV}:=
+	>=media-libs/harfbuzz-${HARFBUZZ_PV}:=
+	>=x11-libs/gdk-pixbuf-${GDK_PIXBUF_PV}:=[introspection?]
+	>=media-libs/libpng-${LIBPNG_PV}:=
+	>=media-libs/tiff-${TIFF_PV}:=
+	>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:=
+	>=gnome-base/librsvg-${LIBRSVG_PV}:=
 	>=media-libs/libepoxy-1.4:=[egl(+),X(+)?]
 	>=media-libs/graphene-1.10.0:=[introspection?]
 	app-text/iso-codes:=
 	x11-misc/shared-mime-info:=
 
-	cloudproviders? ( >=net-libs/libcloudproviders-0.3.1:= )
-	colord? ( >=x11-misc/colord-0.1.9:= )
-	cups? ( >=net-print/cups-9999:= )
-	examples? ( >=gnome-base/librsvg-9999:= )
+	cloudproviders? ( >=net-libs/libcloudproviders-${LIBCLOUDPROVIDERS_PV}:= )
+	colord? ( >=x11-misc/colord-${COLORD_PV}:= )
+	cups? ( >=net-print/cups-${CUPS_PV}:= )
+	examples? ( >=gnome-base/librsvg-${LIBRSVG_PV}:= )
 	elibc_glibc? (
-		>=sys-libs/glibc-2.43:=
+		>=sys-libs/glibc-${GLIBC_PV}:=
 	)
 	elibc_musl? (
-		>=sys-libs/musl-1.2.6:=
+		>=sys-libs/musl-${MUSL_PV}:=
 	)
 	gstreamer? (
 		>=media-libs/gstreamer-1.24.0:=
@@ -90,33 +95,33 @@ COMMON_DEPEND="
 			>=media-libs/gst-plugins-base-1.24.0:=[opengl]
 		)
 	)
-	introspection? ( >=dev-libs/gobject-introspection-1.86.0:= )
+	introspection? ( >=dev-libs/gobject-introspection-${GOBJECT_INTROSPECTION_PV}:= )
 	vulkan? (
-		>=media-libs/vulkan-loader-1.3:=[wayland?,X?]
-		>=media-libs/mesa-23.0.4:=[vulkan]
+		>=media-libs/vulkan-loader-${VULKAN_LOADER_PV}:=[wayland?,X?]
+		>=media-libs/mesa-${MESA_PV}:=[vulkan]
 		)
 	wayland? (
-		>=dev-libs/wayland-9999:=
+		>=dev-libs/wayland-${WAYLAND_PV}:=
 		>=dev-libs/wayland-protocols-1.44:=
-		>=media-libs/mesa-23.0.4:=[wayland]
-		>=x11-libs/libxkbcommon-0.2:=
+		>=media-libs/mesa-${MESA_PV}:=[wayland]
+		>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=
 	)
 	X? (
-		media-libs/fontconfig:=
-		>=media-libs/mesa-23.0.4:=[X(+)]
-		x11-libs/libX11:=
-		>=x11-libs/libXi-1.8:=
-		x11-libs/libXext:=
-		>=x11-libs/libXrandr-1.5:=
-		x11-libs/libXcursor:=
-		x11-libs/libXfixes:=
+		>=media-libs/fontconfig-${FONTCONFIG_PV}:=
+		>=media-libs/mesa-${MESA_PV}:=[X(+)]
+		>=x11-libs/libX11-${LIBX11_PV}:=
+		>=x11-libs/libXi-${LIBXI_PV}:=
+		>=x11-libs/libXext-${LIBXEXT_PV}:=
+		>=x11-libs/libXrandr-${LIBXRANDR_PV}:=
+		>=x11-libs/libXcursor-${LIBXCURSOR_PV}:=
+		>=x11-libs/libXfixes-${LIBXFIXES_PV}:=
 		x11-libs/libXdamage:=
-		x11-libs/libXinerama:=
+		>=x11-libs/libXinerama-${LIBXINERAMA_PV}:=
 	)
 "
 DEPEND="${COMMON_DEPEND}
 	kernel_linux? (
-		>=x11-libs/libdrm-2.4.132:=
+		>=x11-libs/libdrm-${LIBDRM_PV}:=
 		sys-kernel/linux-headers:=
 	)
 	sysprof? ( >=dev-util/sysprof-capture-3.40.1:= )
