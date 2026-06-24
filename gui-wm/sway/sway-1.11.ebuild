@@ -7,14 +7,17 @@ CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=3
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data untrusted-data"
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/wayland-9999"		# Bumped *DEPEND/live to latest non-vulnerable
-	"x11-libs/cairo-9999"		# Bumped *DEPEND/live to latest non-vulnerable
-	"x11-libs/gdk-pixbuf-9999"	# Bumped *DEPEND/live to latest non-vulnerable
-	"x11-libs/pango-9999"		# Bumped *DEPEND/live to latest non-vulnerable
-	"sys-apps/systemd-9999"		# Bumped *DEPEND/live to latest non-vulnerable
+	"dev-libs/libpcre2-9999"
+	"dev-libs/wayland-9999"
+	"sys-apps/systemd-9999"
+	"x11-libs/cairo-9999"
+	"x11-libs/gdk-pixbuf-9999"
+	"x11-libs/libxkbcommon-9999"
+	"x11-libs/pango-9999"
+	"x11-libs/libxcb-9999"
 )
 
-inherit cflags-hardened chkl fcaps meson optfeature
+inherit cflags-hardened chkl fcaps meson optfeature secure-version
 
 DESCRIPTION="i3-compatible Wayland window manager"
 HOMEPAGE="https://swaywm.org"
@@ -54,21 +57,21 @@ REQUIRED_USE="
 DEPEND="
 	>=dev-libs/json-c-0.13:=
 	>=dev-libs/libinput-1.21.0:=
-	>=dev-libs/wayland-1.20.0:=
-	>=x11-libs/libxkbcommon-1.5.0:=
+	>=dev-libs/wayland-${WAYLAND_PV}:=
+	>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=
 	sys-auth/seatd:=
-	dev-libs/libpcre2:=
-	>=x11-libs/cairo-9999:=
-	>=x11-libs/pango-1.57.1:=
-	>=x11-libs/pixman-0.42.2:=
+	>=dev-libs/libpcre2-${LIBPCRE2_PV}:=
+	>=x11-libs/cairo-${CAIRO_PV}:=
+	>=x11-libs/pango-${PANGO_PV}:=
+	>=x11-libs/pixman-${PIXMAN_PV}:=
 	media-libs/libglvnd:=
 	virtual/libudev:=
 	swaybar? (
-		>=x11-libs/gdk-pixbuf-2.44.6:=
+		>=x11-libs/gdk-pixbuf-${GDK_PIXBUF_PV}:=
 	)
 	tray? (
 		systemd? (
-			>=sys-apps/systemd-9999:=
+			>=sys-apps/systemd-${SYSTEMD_PV}:=
 		)
 		elogind? (
 			sys-auth/elogind:=
@@ -78,10 +81,10 @@ DEPEND="
 		)
 	)
 	wallpapers? (
-		gui-apps/swaybg:=[gdk-pixbuf(+)]
+		>=gui-apps/swaybg-${SWAYBG_PV}:=[gdk-pixbuf(+)]
 	)
 	X? (
-		x11-libs/libxcb:=
+		>=x11-libs/libxcb-${LIBXCB_PV}:=
 		x11-libs/xcb-util-wm:=
 	)
 "
@@ -123,8 +126,8 @@ FILECAPS=(
 )
 
 src_configure() {
-	cflags-hardened_append
 	chkl_check_many_timestamps
+	cflags-hardened_append
 	local emesonargs=(
 		$(meson_feature man man-pages)
 		$(meson_feature swaybar gdk-pixbuf)

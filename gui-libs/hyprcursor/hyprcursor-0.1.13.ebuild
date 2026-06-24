@@ -7,22 +7,23 @@ CXX_STANDARD=23
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX23[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX23[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}"
 )
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/libzip-9999"		# Bumped *DEPEND/live to latest non-vulnerable
-	"gnome-base/librsvg-9999"	# Bumped *DEPEND/live to latest non-vulnerable
-	"x11-libs/cairo-9999"		# Bumped *DEPEND/live to latest non-vulnerable
+	"dev-cpp/tomlplusplus-9999"
+	"dev-libs/libzip-9999"
+	"gnome-base/librsvg-9999"
+	"x11-libs/cairo-9999"
 )
 
-inherit chkl cmake libcxx-slot libstdcxx-slot
+inherit chkl cmake libcxx-slot libstdcxx-slot secure-version
 
 DESCRIPTION="The hyprland cursor format, library and utilities"
 HOMEPAGE="https://github.com/hyprwm/hyprcursor"
@@ -43,11 +44,14 @@ SLOT="0"
 RESTRICT="test"
 
 RDEPEND="
-	dev-cpp/tomlplusplus:=[${LIBSTDCXX_USEDEP_LTS}]
+	>=dev-cpp/tomlplusplus-${TOMLPLUSPLUS_PV}:=[${LIBSTDCXX_USEDEP_LTS}]
 	>=dev-libs/hyprlang-0.4.2:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=dev-libs/libzip-9999:=
-	>=gnome-base/librsvg-9999:=
-	>=x11-libs/cairo-9999:=
+	>=dev-libs/libzip-${LIBZIP_PV}:=
+	>=gnome-base/librsvg-${LIBRSVG_PV}:=
+	>=x11-libs/cairo-${CAIRO_PV}:=
+"
+DEPEND="
+	${RDEPEND}
 "
 BDEPEND="
 	virtual/pkgconfig

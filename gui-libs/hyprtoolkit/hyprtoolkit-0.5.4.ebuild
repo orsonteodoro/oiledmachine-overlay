@@ -18,13 +18,15 @@ LLVM_COMPAT=(
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/glib-2.89.9999"	# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/wayland-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"x11-libs/cairo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"x11-libs/libdrm-9999"		# Bumped live to latest non-vulnerable
+	"dev-libs/glib-2.89.9999"
+	"dev-libs/wayland-9999"
+	"x11-libs/cairo-9999"
+	"x11-libs/libdrm-9999"
+	"x11-libs/libxkbcommon-9999"
+	"x11-libs/pixman-9999"
 )
 
-inherit chkl cmake libcxx-slot libstdcxx-slot
+inherit chkl cmake libcxx-slot libstdcxx-slot secure-version
 
 DESCRIPTION="A modern C++ Wayland-native GUI toolkit"
 HOMEPAGE="https://github.com/hyprwm/hyprtoolkit"
@@ -53,19 +55,19 @@ BDEPEND="
 	)
 "
 RDEPEND="
-	>=dev-libs/glib-2.89.9999:=
+	>=dev-libs/glib-${GLIB_PV}:=
 	>=dev-libs/hyprgraphics-0.5.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/hyprlang-0.6.8:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=dev-libs/iniparser-4.2.6:=
-	>=dev-libs/wayland-9999:=
+	>=dev-libs/iniparser-${INIPARSER_PV}:=
+	>=dev-libs/wayland-${WAYLAND_PV}:=
 	>=dev-libs/wayland-protocols-1.47:=
 	>=gui-libs/aquamarine-0.10.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=gui-libs/hyprutils-0.11.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=x11-libs/cairo-9999:=
-	>=x11-libs/libdrm-2.4.120:=
-	>=x11-libs/libxkbcommon-1.11.0:=
-	>=x11-libs/pango-1.57.0:=
-	>=x11-libs/pixman-0.42.2:=
+	>=x11-libs/cairo-${CAIRO_PV}:=
+	>=x11-libs/libdrm-${LIBDRM_PV}:=
+	>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=
+	>=x11-libs/pango-${PANGO_PV}:=
+	>=x11-libs/pixman-${PIXMAN_PV}:=
 	media-libs/libglvnd:=
 "
 DEPEND="

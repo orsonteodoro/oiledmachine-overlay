@@ -18,10 +18,10 @@ LLVM_COMPAT=(
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
 CHKL_TIMESTAMPS=(
-	"x11-libs/pixman-9999"		# Bumped live to latest non-vulnerable
+	"x11-libs/pixman-9999"
 )
 
-inherit chkl cmake libcxx-slot libstdcxx-slot
+inherit chkl cmake libcxx-slot libstdcxx-slot secure-version
 
 DESCRIPTION="Hyprland utilities library used across the ecosystem"
 HOMEPAGE="https://github.com/hyprwm/hyprutils"
@@ -40,7 +40,7 @@ LICENSE="BSD"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 
 DEPEND="
-	>=x11-libs/pixman-0.42.2:=
+	>=x11-libs/pixman-${PIXMAN_PV}:=
 "
 RDEPEND="
 	${DEPEND}

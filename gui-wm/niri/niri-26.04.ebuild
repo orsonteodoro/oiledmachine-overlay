@@ -11,10 +11,11 @@ RUST_MIN_VER="1.95.0" # LLVM 22.1
 RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data"
 
 CHKL_TIMESTAMPS=(
-	"sys-apps/systemd-9999"		# Bumped *DEPEND/live to latest non-vulnerable
-	"x11-libs/cairo-9999"		# Bumped *DEPEND/live to latest non-vulnerable
-	"x11-libs/pango-9999"		# Bumped *DEPEND/live to latest non-vulnerable
-	"dev-libs/wayland-9999"		# Bumped *DEPEND/live to latest non-vulnerable
+	"dev-libs/wayland-9999"
+	"sys-apps/systemd-9999"
+	"x11-libs/cairo-9999"
+	"x11-libs/libxkbcommon-9999"
+	"x11-libs/pango-9999"
 )
 
 declare -A GIT_CRATES=(
@@ -508,7 +509,7 @@ zvariant_derive-5.12.0
 zvariant_utils-3.4.0
 "
 
-inherit cargo chkl rustflags-hardened
+inherit cargo chkl rustflags-hardened secure-version
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${PV}"
@@ -531,18 +532,18 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+=" systemd"
 RDEPEND+="
 	dev-libs/libinput:=
-	>=dev-libs/wayland-9999:=
+	>=dev-libs/wayland-${WAYLAND_PV}:=
 	media-libs/libdisplay-info:=
 	media-libs/libglvnd:=
-	media-libs/mesa:=
-	media-video/pipewire:=
+	>=media-libs/mesa-${MESA_PV}:=
+	>=media-video/pipewire-${PIPEWIRE_PV}:=
 	sys-apps/dbus:=
 	sys-auth/seatd:=
-	>=x11-libs/cairo-9999:=
-	x11-libs/libxkbcommon:=
-	>=x11-libs/pango-1.57.1:=
+	>=x11-libs/cairo-${CAIRO_PV}:=
+	>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=
+	>=x11-libs/pango-${PANGO_PV}:=
 	systemd? (
-		>=sys-apps/systemd-9999:=
+		>=sys-apps/systemd-${SYSTEMD_PV}:=
 	)
 "
 DEPEND+="
@@ -568,8 +569,8 @@ src_unpack() {
 }
 
 src_configure() {
-	rustflags-hardened_append
 	chkl_check_many_timestamps
+	rustflags-hardened_append
 	export CARGO_TERM_VERBOSE="true"
 }
 

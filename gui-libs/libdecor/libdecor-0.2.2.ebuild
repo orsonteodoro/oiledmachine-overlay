@@ -9,12 +9,14 @@ WAYLAND_PV="9999"
 WAYLAND_PROTOCOLS_PV="1.32"
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/wayland-9999"		# Bumped *DEPENDS/live to latest non-vulnerable
-	"x11-libs/cairo-9999"		# Bumped *DEPENDS/live to latest non-vulnerable
-	"x11-libs/pango-9999"		# Bumped *DEPENDS/live to latest non-vulnerable
+	"dev-libs/wayland-9999"
+	"media-libs/mesa-9999"
+	"x11-libs/cairo-9999"
+	"x11-libs/libxkbcommon-9999"
+	"x11-libs/pango-9999"
 )
 
-inherit chkl meson-multilib
+inherit chkl meson-multilib secure-version
 
 if [[ "${PV}" == "9999" ]]; then
 	inherit git-r3
@@ -33,18 +35,18 @@ SLOT="0"
 IUSE="+dbus examples +gtk"
 RDEPEND="
 	>=dev-libs/wayland-${WAYLAND_PV}:=
-	>=dev-libs/wayland-protocols-${WAYLAND_PROTOCOLS_PV}:=
-	>=x11-libs/cairo-9999:=
-	>=x11-libs/gtk+-3.24.52:3=
-	>=x11-libs/pango-1.57.1:=
+	>=dev-libs/wayland-protocols-1.15:=
+	>=x11-libs/cairo-${CAIRO_PV}:=
+	>=x11-libs/gtk+-${GTK3_PV}:3=
+	>=x11-libs/pango-${PANGO_PV}:=
 	dbus? (
 		>=sys-apps/dbus-1.12.20:=
 	)
 	examples? (
 		>=dev-libs/wayland-${WAYLAND_PV}:=
-		>=media-libs/mesa-21.0.2:=[egl(+)]
+		>=media-libs/mesa-${MESA_PV}:=[egl(+)]
 		virtual/opengl:*
-		>=x11-libs/libxkbcommon-1.3.0:=
+		>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=
 	)
 "
 DEPEND="

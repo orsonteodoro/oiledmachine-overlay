@@ -197,10 +197,10 @@ src_configure() {
 	if tc-is-gcc ; then
 		use gcc || die "Enable the gcc USE flag"
 	fi
+	chkl_check_many_timestamps
 	cflags-hardened_append
 	abseil-cpp_src_configure
 	re2_src_configure
-	chkl_check_many_timestamps
 	local mycmakeargs=(
 		-DNO_SYSTEMD=$(usex !systemd)
 		-DNO_XWAYLAND=$(usex !X)

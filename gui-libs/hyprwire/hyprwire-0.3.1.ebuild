@@ -20,12 +20,12 @@ LLVM_COMPAT=(
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/libffi-9999"		# Bumped live to latest non-vulnerable
-	"dev-libs/pugixml-9999"		# Bumped live to latest non-vulnerable
-	"x11-libs/pixman-9999"		# Bumped live to latest non-vulnerable
+	"dev-libs/libffi-9999"
+	"dev-libs/pugixml-9999"
+	"x11-libs/pixman-9999"
 )
 
-inherit chkl cmake libcxx-slot libstdcxx-slot
+inherit chkl cmake libcxx-slot libstdcxx-slot secure-version
 
 if [[ "${PV}" =~ "9999" ]]; then
 	EGIT_REPO_URI="https://github.com/hyprwm/${PN^}.git"
@@ -50,10 +50,10 @@ test
 ebuild_revision_1
 "
 RDEPEND="
-	>=dev-libs/libffi-9999:=
-	>=dev-libs/pugixml-1.16:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+	>=dev-libs/libffi-${LIBFFI_PV}:=
+	>=dev-libs/pugixml-${PUGIXML_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	>=gui-libs/hyprutils-0.11.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=x11-libs/pixman-0.42.2:=
+	>=x11-libs/pixman-${PIXMAN_PV}:=
 "
 DEPEND="
 	${RDEPEND}

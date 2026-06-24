@@ -16,13 +16,18 @@ LLVM_COMPAT=(
 )
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/libffi-9999"		# Bumped *DEPEND/live to latest non-vulnerable
-	"dev-libs/wayland-9999"		# Bumped *DEPEND/live to latest non-vulnerable
-	"x11-libs/cairo-9999"		# Bumped *DEPEND/live to latest non-vulnerable
-	"x11-libs/pango-9999"		# Bumped *DEPEND/live to latest non-vulnerable
+	"dev-libs/libffi-9999"
+	"dev-libs/libinput-9999"
+	"dev-libs/wayland-9999"
+	"media-libs/libdisplay-info-9999"
+	"media-libs/mesa-9999"
+	"x11-libs/cairo-9999"
+	"x11-libs/libxkbcommon-9999"
+	"x11-libs/pango-9999"
+	"x11-libs/pixman-9999"
 )
 
-inherit chkl cmake libcxx-slot libstdcxx-slot
+inherit chkl cmake libcxx-slot libstdcxx-slot secure-version
 
 DESCRIPTION="Aquamarine is a very light linux rendering backend library"
 HOMEPAGE="https://github.com/hyprwm/aquamarine"
@@ -41,21 +46,21 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 # Upstream states that the simpleWindow test is broken, see bug 936653
 RESTRICT="test"
 RDEPEND="
-	>=dev-libs/libinput-1.29.2:=
-	>=dev-libs/libffi-9999:=
-	>=dev-libs/wayland-9999:=
+	>=dev-libs/libinput-${LIBINPUT_PV}:=
+	>=dev-libs/libffi-${LIBFFI_PV}:=
+	>=dev-libs/wayland-${WAYLAND_PV}:=
 	>=dev-util/hyprwayland-scanner-0.4.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=gui-libs/hyprutils-0.8.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	media-libs/libdisplay-info:=
+	>=media-libs/libdisplay-info-${LIBDISPLAY_INFO_PV}:=
 	media-libs/libglvnd:=
-	media-libs/mesa:=[opengl]
+	>=media-libs/mesa-${MESA_PV}:=[opengl]
 	sys-apps/hwdata:=
 	>=sys-auth/seatd-0.9.2:=
-	>=x11-libs/cairo-9999:=
-	>=x11-libs/libdrm-2.4.131:=
-	x11-libs/libxkbcommon:=
-	>=x11-libs/pango-1.57.1:=
-	>=x11-libs/pixman-0.42.2:=
+	>=x11-libs/cairo-${CAIRO_PV}:=
+	>=x11-libs/libdrm-${LIBDRM_PV}:=
+	>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=
+	>=x11-libs/pango-${PANGO_PV}:=
+	>=x11-libs/pixman-${PIXMAN_PV}:=
 	virtual/libudev:=
 "
 DEPEND="

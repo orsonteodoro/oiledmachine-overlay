@@ -18,20 +18,20 @@ LLVM_COMPAT=(
 )
 
 CHKL_TIMESTAMPS=(
-	"gnome-base/librsvg-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libheif-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libjxl-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libspng-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libwebp-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"gnome-base/librsvg-9999"
+	"media-libs/libheif-9999"
+	"media-libs/libjpeg-turbo-9999"
+	"media-libs/libjxl-9999"
+	"media-libs/libspng-9999"
+	"media-libs/libwebp-9999"
 	"sys-apps/file-9999"
-	"x11-libs/cairo-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"x11-libs/cairo-9999"
 	"x11-libs/libdrm-9999"
 	"x11-libs/pixman-9999"
 	"x11-libs/pango-9999"
 )
 
-inherit chkl cflags-hardened cmake libcxx-slot libstdcxx-slot
+inherit chkl cflags-hardened cmake libcxx-slot libstdcxx-slot secure-version
 
 DESCRIPTION="Hyprland graphics / resource utilities"
 HOMEPAGE="https://github.com/hyprwm/hyprgraphics"
@@ -44,19 +44,19 @@ IUSE+="
 ebuild_revision_2
 "
 RDEPEND="
-	>=gnome-base/librsvg-9999:=
+	>=gnome-base/librsvg-${LIBRSVG_PV}:=
 	>=gui-libs/hyprutils-0.1.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=x11-libs/libdrm-2.4.120:=
-	>=x11-libs/pango-1.57.1:=
+	>=x11-libs/libdrm-${LIBDRM_PV}:=
+	>=x11-libs/pango-${PANGO_PV}:=
 	>=media-libs/libglvnd-1.7.0:=
-	>=media-libs/libheif-1.23.0:=[${LIBSTDCXX_USEDEP_LTS}]
-	>=media-libs/libjpeg-turbo-9999:=
-	>=media-libs/libjxl-9999:=[${LIBSTDCXX_USEDEP_LTS}]
-	>=media-libs/libspng-0.7.4:=
-	>=media-libs/libwebp-9999:=
-	>=sys-apps/file-5.48:=
-	>=x11-libs/cairo-9999:=
-	>=x11-libs/pixman-0.42.2:=
+	>=media-libs/libheif-${LIBHEIF_PV}:=[${LIBSTDCXX_USEDEP_LTS}]
+	>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:=
+	>=media-libs/libjxl-${LIBJXL_PV}:=[${LIBSTDCXX_USEDEP_LTS}]
+	>=media-libs/libspng-${LIBSPNG_PV}:=
+	>=media-libs/libwebp-${LIBWEBP_PV}:=
+	>=sys-apps/file-${FILE_PV}:=
+	>=x11-libs/cairo-${CAIRO_PV}:=
+	>=x11-libs/pixman-${PIXMAN_PV}:=
 "
 DEPEND="
 	${RDEPEND}
