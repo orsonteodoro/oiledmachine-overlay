@@ -32,28 +32,34 @@ LLVM_COMPAT=(
 )
 
 CHKL_TIMESTAMPS=(
-	"app-arch/brotli-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/icu-79.0.9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"app-accessibility/at-spi2-core-9999"
+	"app-arch/brotli-9999"
+	"app-arch/libarchive-9999"
+	"dev-libs/icu-79.0.9999"
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
 	"dev-libs/openssl-3.4.9999"
 	"dev-libs/openssl-3.3.9999"
 	"dev-libs/openssl-3.0.9999"
-	"dev-libs/wayland-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/fontconfig-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/harfbuzz-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/freetype-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libpng-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"net-print/cups-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"sys-apps/systemd-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"x11-libs/libdrm-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"x11-libs/pango-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/wayland-9999"
+	"media-libs/fontconfig-9999"
+	"media-libs/harfbuzz-9999"
+	"media-libs/freetype-9999"
+	"media-libs/libjpeg-turbo-9999"
+	"media-libs/libpng-9999"
+	"net-libs/libproxy-9999"
+	"net-print/cups-9999"
+	"sys-apps/systemd-9999"
+	"x11-libs/libdrm-9999"
+	"x11-libs/libX11-9999"
+	"x11-libs/libxcb-9999"
+	"x11-libs/libxkbcommon-9999"
+	"x11-libs/pango-9999"
 )
 
 QT6_HAS_STATIC_LIBS=1
-inherit cflags-hardened chkl flag-o-matic libcxx-slot libstdcxx-slot qt6-build toolchain-funcs
+inherit cflags-hardened chkl flag-o-matic libcxx-slot libstdcxx-slot secure-version toolchain-funcs qt6-build
 
 DESCRIPTION="Cross-platform application development framework"
 
@@ -107,50 +113,52 @@ REQUIRED_USE="
 # - qtsql (src/plugins/sqldrivers/configure.cmake)
 # nolink: renderdoc, systemd
 COMMON_DEPEND="
-	>=virtual/zlib-1.3.2:=
-	ssl? ( dev-libs/openssl:= )
+	>=virtual/zlib-${ZLIB_PV}:=
+	ssl? (
+		${OPENSSL_RDEPEND}
+	)
 	udev? ( virtual/libudev:= )
-	zstd? ( app-arch/zstd:= )
+	zstd? ( >=app-arch/zstd-${ZSTD_PV}:= )
 
 	app-crypt/libb2:=
 	dev-libs/double-conversion:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	dev-libs/glib:=
+	>=dev-libs/glib-${GLIB_PV}:=
 	dev-libs/libpcre2:=[pcre16,unicode(+)]
 	icu? (
-		>=dev-libs/icu-79.0.9999:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-libs/icu-${ICU_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	io-uring? ( sys-libs/liburing:= )
-	journald? ( >=sys-apps/systemd-9999:= )
+	journald? ( >=sys-apps/systemd-${SYSTEMD_PV}:= )
 
 	dbus? ( sys-apps/dbus:= )
 	elibc_glibc? (
-		>=sys-libs/glibc-2.43:=
+		>=sys-libs/glibc-${GLIBC_PV}:=
 	)
 	elibc_musl? (
-		>=sys-libs/musl-1.2.6:=
+		>=sys-libs/musl-${MUSL_PV}:=
 	)
 	gui? (
 		dev-libs/md4c:=
-		>=media-libs/fontconfig-2.18.1:=
-		>=media-libs/freetype-9999:=
-		>=media-libs/harfbuzz-9999:=
-		>=media-libs/libjpeg-turbo-9999:=
-		>=media-libs/libpng-1.6.57:=
-		>=x11-libs/libdrm-2.4.120:=
-		x11-libs/libxkbcommon:=[X?]
+		>=media-libs/fontconfig-${FONTCONFIG_PV}:=
+		>=media-libs/freetype-${FREETYPE_PV}:=
+		>=media-libs/harfbuzz-${HARFBUZZ_PV}:=
+		>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:=
+		>=media-libs/libpng-${LIBPNG_PV}:=
+		>=x11-libs/libdrm-${LIBDRM_PV}:=
+		>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=[X?]
 		X? (
 			x11-libs/libICE:=
 			x11-libs/libSM:=
-			x11-libs/libX11:=
-			x11-libs/libxcb:=
+			>=x11-libs/libX11-${LIBX11_PV}:=
+			>=x11-libs/libxcb-${LIBXCB_PV}:=
 			x11-libs/xcb-util-cursor:=
 			x11-libs/xcb-util-image:=
 			x11-libs/xcb-util-keysyms:=
 			x11-libs/xcb-util-renderutil:=
 			x11-libs/xcb-util-wm:=
 		)
-		accessibility? ( app-accessibility/at-spi2-core:= )
-		eglfs? ( media-libs/mesa:=[gbm(+)] )
+		accessibility? ( >=app-accessibility/at-spi2-core-${AT_SPI2_CORE_PV}:= )
+		eglfs? ( >=media-libs/mesa-${MESA_PV}:=[gbm(+)] )
 		evdev? ( sys-libs/mtdev:= )
 		libinput? ( dev-libs/libinput:= )
 		opengl? (
@@ -158,21 +166,21 @@ COMMON_DEPEND="
 			!gles2-only? ( media-libs/libglvnd:=[X?] )
 		)
 		renderdoc? ( media-gfx/renderdoc:= )
-		tslib? ( x11-libs/tslib:= )
-		wayland? ( >=dev-libs/wayland-9999:= )
+		tslib? ( >=x11-libs/tslib-${TSLIB_PV}:= )
+		wayland? ( >=dev-libs/wayland-${WAYLAND_PV}:= )
 		widgets? (
-			cups? ( >=net-print/cups-9999:= )
+			cups? ( >=net-print/cups-${CUPS_PV}:= )
 			gtk? (
-				>=x11-libs/gdk-pixbuf-2.44.6:=
-				>=x11-libs/gtk+-3.24.41-r1:3=[X?,wayland?]
-				>=x11-libs/pango-1.57.1:=
+				>=x11-libs/gdk-pixbuf-${GDK_PIXBUF_PV}:=
+				>=x11-libs/gtk+-${GTK3_PV}:3=[X?,wayland?]
+				>=x11-libs/pango-${PANGO_PV}:=
 			)
 		)
 	)
 	network? (
-		brotli? ( >=app-arch/brotli-9999:= )
+		brotli? ( >=app-arch/brotli-${BROTLI_PV}:= )
 		gssapi? ( virtual/krb5:* )
-		libproxy? ( net-libs/libproxy:= )
+		libproxy? ( >=net-libs/libproxy-${LIBPROXY_PV}:= )
 	)
 	sql? (
 		mysql? (
@@ -181,7 +189,7 @@ COMMON_DEPEND="
 		oci8? ( dev-db/oracle-instantclient:=[sdk] )
 		odbc? ( dev-db/unixODBC:= )
 		postgres? ( dev-db/postgresql:* )
-		sqlite? ( dev-db/sqlite:3 )
+		sqlite? ( >=dev-db/sqlite-${SQLITE_PV}:3 )
 	)
 "
 # wrt blockers: users do not always depclean regularly and outdated
@@ -237,7 +245,7 @@ DEPEND="
 "
 # libarchive[zstd] is indirectly used by cmake (bug #910392)
 BDEPEND="
-	zstd? ( app-arch/libarchive[zstd] )
+	zstd? ( >=app-arch/libarchive-${LIBARCHIVE_PV}[zstd] )
 "
 PDEPEND="
 	nls? ( ~dev-qt/qttranslations-${PV}:6 )
