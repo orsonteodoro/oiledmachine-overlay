@@ -26,7 +26,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/tiff-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 )
 
-inherit cflags-hardened chkl libcxx-slot libstdcxx-slot qt6-build
+inherit cflags-hardened chkl libcxx-slot libstdcxx-slot secure-version qt6-build
 
 DESCRIPTION="Additional format plugins for the Qt image I/O system"
 
@@ -38,8 +38,8 @@ IUSE+=" mng"
 
 RDEPEND="
 	~dev-qt/qtbase-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui]
-	>=media-libs/libwebp-9999:=
-	>=media-libs/tiff-9999:=
+	>=media-libs/libwebp-${LIBWEBP_PV}:=
+	>=media-libs/tiff-${TIFF_PV}:=
 	mng? ( media-libs/libmng:= )
 "
 DEPEND="${RDEPEND}"
@@ -56,8 +56,8 @@ pkg_setup() {
 }
 
 src_configure() {
-	cflags-hardened_append
 	chkl_check_many_timestamps
+	cflags-hardened_append
 	local mycmakeargs=(
 		-DQT_FEATURE_jasper=OFF
 		$(qt_feature mng)

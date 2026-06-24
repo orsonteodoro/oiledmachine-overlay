@@ -8,18 +8,18 @@ CXX_STANDARD=17
 FALLBACK_COMMIT="c7e4e72dfec4aa200f1ec05d7667a2c5382e8c09" # Fri, 12 Jun 2026 21:06:43 +0000
 
 CHKL_TIMESTAMPS=(
-	"dev-qt/qtbase-6.9999"			# Bumped live/ to latest non-vulnerable
-	"dev-qt/qtdeclarative-6.9999"		# Bumped live/ to latest non-vulnerable
+	"dev-qt/qtbase-6.9999"
+	"dev-qt/qtdeclarative-6.9999"
 )
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
 inherit chkl libcxx-slot libstdcxx-slot qt6-build

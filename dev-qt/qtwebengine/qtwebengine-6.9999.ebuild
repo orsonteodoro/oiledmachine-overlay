@@ -491,6 +491,7 @@ ewarn
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	export PATH="/usr/lib/node/${NODE_SLOT}/bin:${PATH}"
 einfo "PATH:  ${PATH}"
 	node --version || die
@@ -601,7 +602,6 @@ einfo "PATH:  ${PATH}"
 	append-ldflags -Wl,-z,noexecstack
 
 	cflags-hardened_append
-	chkl_check_many_timestamps
 
 	# Remove hardening flags that may slow things down
 	filter-flags "-fno-inline"

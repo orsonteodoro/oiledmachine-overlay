@@ -71,8 +71,8 @@ pkg_setup() {
 }
 
 src_configure() {
-	cflags-hardened_append
 	chkl_check_many_timestamps
+	cflags-hardened_append
 
 	# oiledmachine-overlay:  Breaks build
 	# src/qml/jsruntime/qv4vtable_p.h:174:17: error: non-constant condition for static assertion

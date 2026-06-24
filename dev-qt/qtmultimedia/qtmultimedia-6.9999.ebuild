@@ -26,14 +26,16 @@ FFMPEG_COMPAT_SLOTS=(
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/glib-2.89.9999"
+	"dev-qt/qtbase-6.9999"
 	"media-libs/libpulse-9999"
 	"media-libs/libva-9999"
 	"media-video/ffmpeg-9999"
 	"media-video/ffmpeg-9999m"
+	"x11-libs/libX11-9999"
 )
 
 QT6_HAS_STATIC_LIBS=1
-inherit cflags-hardened chkl flag-o-matic ffmpeg libcxx-slot libstdcxx-slot qt6-build
+inherit cflags-hardened chkl flag-o-matic ffmpeg libcxx-slot libstdcxx-slot secure-version qt6-build
 
 DESCRIPTION="Multimedia (audio, video, radio, camera) library for the Qt6 framework"
 
@@ -55,38 +57,38 @@ REQUIRED_USE="
 RDEPEND="
 	~dev-qt/qtbase-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},concurrent,gui,network,opengl=,vulkan=,widgets]
 	alsa? (
-		!pulseaudio? ( >=media-libs/alsa-lib-1.2.16.1:= )
+		!pulseaudio? ( >=media-libs/alsa-lib-${ALSA_LIB_PV}:= )
 	)
 	ffmpeg? (
 		~dev-qt/qtbase-${PV}:6=[X=,concurrent,eglfs=]
 		>=media-video/ffmpeg-9999:=[vaapi?]
 		X? (
-			x11-libs/libX11:=
-			x11-libs/libXext:=
-			x11-libs/libXrandr:=
+			>=x11-libs/libX11-${LIBX11_PV}:=
+			>=x11-libs/libXext-${LIBXEXT_PV}:=
+			>=x11-libs/libXrandr-${LIBXRANDR_PV}:=
 		)
 	)
 	gstreamer? (
-		>=dev-libs/glib-2.89.9999:=
-		>=media-libs/gst-plugins-bad-1.28.4:=
-		>=media-libs/gst-plugins-base-1.28.4:=
-		>=media-libs/gstreamer-1.28.4:=
+		>=dev-libs/glib-${GLIB_PV}:=
+		>=media-libs/gst-plugins-bad-${GSTREAMER_PV}:=
+		>=media-libs/gst-plugins-base-${GSTREAMER_PV}:=
+		>=media-libs/gstreamer-${GSTREAMER_PV}:=
 		opengl? (
 			~dev-qt/qtbase-${PV}:6=[X?,wayland?]
-			>=media-libs/gst-plugins-base-1.28.4:=[X?,egl,opengl,wayland?]
+			>=media-libs/gst-plugins-base-${GSTREAMER_PV}:=[X?,egl,opengl,wayland?]
 		)
 	)
 	opengl? ( media-libs/libglvnd:= )
 	pipewire? (
 		~dev-qt/qtbase-${PV}:6=[dbus?]
-		media-video/pipewire:=
+		>=media-video/pipewire-${PIPEWIRE_PV}:=
 	)
-	pulseaudio? ( >=media-libs/libpulse-9999:= )
+	pulseaudio? ( >=media-libs/libpulse-${LIBPULSE_PV}:= )
 	qml? (
 		~dev-qt/qtdeclarative-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		~dev-qt/qtquick3d-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
-	vaapi? ( >=media-libs/libva-9999:= )
+	vaapi? ( >=media-libs/libva-${LIBVA_PV}:= )
 "
 DEPEND="
 	${RDEPEND}
@@ -139,8 +141,8 @@ src_prepare() {
 }
 
 src_configure() {
-	cflags-hardened_append
 	chkl_check_many_timestamps
+	cflags-hardened_append
 	use ffmpeg && ffmpeg_src_configure
 	# normally passed by the build system, but needed for 32-on-64 chroots
 	use x86 && append-cppflags -DDISABLE_SIMD -DPFFFT_SIMD_DISABLE

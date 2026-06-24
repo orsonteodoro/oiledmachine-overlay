@@ -21,10 +21,10 @@ LLVM_COMPAT=(
 )
 
 CHKL_TIMESTAMPS=(
-	"dev-qt/qtbase-qtsvg-6.9999"		# Bumped live to latest non-vulnerable
+	"dev-qt/qtbase-qtsvg-6.9999"
 )
 
-inherit cflags-hardened chkl libcxx-slot libstdcxx-slot qt6-build toolchain-funcs
+inherit cflags-hardened chkl libcxx-slot libstdcxx-slot qt6-build secure-version toolchain-funcs
 
 DESCRIPTION="SVG rendering library for the Qt6 framework"
 
@@ -34,7 +34,7 @@ fi
 
 RDEPEND="
 	~dev-qt/qtbase-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui,widgets]
-	>=virtual/zlib-1.3.2:=
+	>=virtual/zlib-${ZLIB_PV}:=
 "
 DEPEND="${RDEPEND}"
 
@@ -44,8 +44,8 @@ pkg_setup() {
 }
 
 src_configure() {
-	cflags-hardened_append
 	chkl_check_many_timestamps
+	cflags-hardened_append
 	qt6-build_src_configure
 }
 

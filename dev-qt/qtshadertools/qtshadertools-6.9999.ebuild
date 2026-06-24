@@ -9,16 +9,16 @@ FALLBACK_COMMIT="af0d9c3e0dcd68176b5a5288a5192c12a2d8a188" # Mon, 15 Jun 2026 04
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
 CHKL_TIMESTAMPS=(
-	"dev-qt/qtbase-6.9999"		# Bumped live to latest non-vulnerable
+	"dev-qt/qtbase-6.9999"
 )
 
 inherit chkl libcxx-slot libstdcxx-slot flag-o-matic qt6-build

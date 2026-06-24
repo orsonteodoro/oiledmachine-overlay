@@ -9,12 +9,12 @@ FALLBACK_COMMIT="5f47b05daa5c35e7db858b6f89cc8f967e9d7a01" # Fri, 12 Jun 2026 21
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
 # match QDOC_SUPPORTED_CLANG_VERSIONS in src/qdoc/cmake/QDocConfiguration.cmake
@@ -22,9 +22,9 @@ LLVM_COMPAT=( {17..22} )
 LLVM_OPTIONAL=1
 
 CHKL_TIMESTAMPS=(
-	"app-arch/zstd-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-qt/qtbase-6.9999"			# Bumped live to latest non-vulnerable
-	"dev-qt/qtdeclarative-6.9999"		# Bumped live to latest non-vulnerable
+	"app-arch/zstd-9999"
+	"dev-qt/qtbase-6.9999"
+	"dev-qt/qtdeclarative-6.9999"
 )
 
 # behaves very badly when qttools is not already installed, also
@@ -32,7 +32,7 @@ CHKL_TIMESTAMPS=(
 # and 3rdparty/ tries to FetchContent gtest)
 QT6_RESTRICT_TESTS=1
 
-inherit chkl libcxx-slot libstdcxx-slot flag-o-matic llvm-r2 optfeature qt6-build xdg
+inherit chkl libcxx-slot libstdcxx-slot flag-o-matic llvm-r2 optfeature qt6-build secure-version xdg
 
 DESCRIPTION="Qt Tools Collection"
 
@@ -64,7 +64,7 @@ RDEPEND="
 	)
 	designer? (
 		~dev-qt/qtbase-${PV}:6=[network,xml,zstd=]
-		zstd? ( >=app-arch/zstd-9999:= )
+		zstd? ( >=app-arch/zstd-${ZSTD_PV}:= )
 		!<dev-qt/designer-5.15.18-r1:5
 	)
 	kmap2qmap? ( ~dev-qt/qtbase-${PV}:6=[evdev] )

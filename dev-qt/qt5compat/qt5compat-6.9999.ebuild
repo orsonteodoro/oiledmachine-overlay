@@ -9,19 +9,20 @@ FALLBACK_COMMIT="8c177c8ae0d00daf9c5dae7954fc15bdf6bab153" # Fri, 12 Jun 2026 21
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/icu-79.0.9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/icu-79.0.9999"
+	"dev-qt/qtbase-6.9999"
 )
 
-inherit chkl libcxx-slot libstdcxx-slot qt6-build
+inherit chkl libcxx-slot libstdcxx-slot secure-version qt6-build
 
 DESCRIPTION="Qt module containing the unsupported Qt 5 APIs"
 
@@ -36,7 +37,7 @@ ebuild_revision_1
 
 RDEPEND="
 	~dev-qt/qtbase-${PV}:6=[gui=,icu=,network,xml]
-	icu? ( >=dev-libs/icu-79.0.9999:= )
+	icu? ( >=dev-libs/icu-${ICU_PV}:= )
 	!icu? ( virtual/libiconv:= )
 	qml? (
 		~dev-qt/qtdeclarative-${PV}:6=
