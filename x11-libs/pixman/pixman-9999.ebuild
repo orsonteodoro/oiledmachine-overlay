@@ -15,17 +15,19 @@ inherit cflags-hardened flag-o-matic ${GIT_ECLASS} meson-multilib multiprocessin
 
 DESCRIPTION="Low-level pixel manipulation routines"
 HOMEPAGE="http://www.pixman.org/ https://gitlab.freedesktop.org/pixman/pixman/"
-if [[ ${PV} != 9999* ]]; then
-	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris"
+if [[ ${PV} == 9999* ]]; then
+	FALLBACK_COMMIT="14735ced17e0053abbb925f9cf18c05ed9f52378"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+else
+	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
 	SRC_URI="https://www.x.org/releases/individual/lib/${P}.tar.xz"
 fi
 
 LICENSE="MIT"
 SLOT="0"
-IUSE="
-cpu_flags_ppc_altivec cpu_flags_arm_neon loongson2f cpu_flags_x86_mmxext cpu_flags_x86_sse2 cpu_flags_x86_ssse3 static-libs test
-ebuild_revision_7
-"
+IUSE+=" cpu_flags_ppc_altivec cpu_flags_arm_neon loongson2f cpu_flags_x86_mmxext cpu_flags_x86_sse2 cpu_flags_x86_ssse3 static-libs test"
 RESTRICT="!test? ( test )"
 
 pkg_pretend() {
@@ -34,6 +36,18 @@ pkg_pretend() {
 
 pkg_setup() {
 	[[ ${MERGE_TYPE} != binary ]] && use test && tc-check-openmp
+}
+
+src_unpack() {
+	if [[ ${PV} == 9999* ]]; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
 }
 
 multilib_src_configure() {
@@ -57,8 +71,6 @@ multilib_src_configure() {
 		-Ddemos=disabled
 		-Dgtk=disabled
 		-Dlibpng=disabled
-		 # explicitly disable RVV due to https://bugs.gentoo.org/95938
-		-Drvv=disabled
 	)
 
 	if [[ ${ABI} == arm64 ]]; then
