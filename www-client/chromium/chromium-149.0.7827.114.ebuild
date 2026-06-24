@@ -251,16 +251,14 @@ if [[ -n "${CHROMIUM_LTO_CFI_WINDOW}" ]]; then
     CHROMIUM_LTO_CFI_END=${CHROMIUM_LTO_CFI_WINDOW#*-}
 fi
 
+inherit multilib-build secure-version
+
 GCC_PV="10.2.1" # Minimum
 CROMITE_PV="148.0.7778.168"
 GN_PV="0.2315"
-GTK3_PV="3.24.52"
-GTK4_PV="4.23.1"
 ESBUILD_PV="0.25.1"
-LIBVA_PV="9999"
-MESA_PV="20.3.5"
 ROLLUP_WASM_NODE_PV="4.57.1"
-QT6_PV="9999"
+QT6_PV="${QTBASE6_PV}"
 UNGOOGLED_CHROMIUM_PV="149.0.7827.114-1"
 # Testing this V8 version to avoid breaking security.  The 13.6 series cause the \
 # mksnapshot "Return code is -11" error.  To fix it, it required to either \
@@ -269,7 +267,6 @@ UNGOOGLED_CHROMIUM_PV="149.0.7827.114-1"
 # to fix a compile error when DrumBrake is enabled. \
 #V8_PV="13.7.152.7" # About the same as the latest Chromium beta release.
 VULKAN_PV="1.4.350"
-ZLIB_PV="1.3.2"
 
 COPIUM_COMMIT="b00f26bb5e0781020da5f830981472a142c6baf1"
 CROMITE_HASH="cb3baf14f52eb4365d017f640f85310735c19b79" # Not the same as the tagged commit but from the commit message
@@ -292,26 +289,28 @@ CHKL_TIMESTAMPS=(
 # All used live security-critical system packages and live ebuilds must be verified.
 # See vf.eclass for a list of vulnerabilities.
 # Last vulnerability check 20260614
-	"app-arch/brotli-9999"					# Bumped live to latest non-vulnerable
+	"app-accessibility/at-spi2-core-9999"
+	"app-arch/brotli-9999"
 	"app-arch/bzip2-9999"
 	"app-arch/snappy-9999"
 	"app-arch/zstd-9999"
 	"dev-build/ninja-9999"
 	"dev-cpp/abseil-cpp-9999"
 	"dev-cpp/highway-9999"
-	"dev-cpp/simdutf-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-db/sqlite-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-cpp/simdutf-9999"
+	"dev-db/sqlite-9999"
 	"dev-libs/crc32c-9999"
-	"dev-libs/expat-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/expat-9999"
 	"dev-libs/flatbuffers-9999"
-	"dev-libs/glib-2.89.9999"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/icu-79.0.9999"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/jsoncpp-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/libffi-9999"					# Bumped live to latest non-vulnerable
-	"dev-libs/libxml2-9999"					# Bumped live to latest non-vulnerable
+	"dev-libs/glib-2.89.9999"
+	"dev-libs/icu-79.0.9999"
+	"dev-libs/jsoncpp-9999"
+	"dev-libs/libffi-9999"
+	"dev-libs/libusb-9999"
+	"dev-libs/libxml2-9999"
 	"dev-libs/libxslt-9999"
 	"dev-libs/re2-9999"
-	"dev-libs/wayland-9999"					# Bumped live to latest non-vulnerable
+	"dev-libs/wayland-9999"
 	"dev-lang/rust-9999"
 	"dev-lang/rust-bin-9999"
 	"dev-util/spirv-headers-9999"
@@ -331,28 +330,34 @@ CHKL_TIMESTAMPS=(
 	"llvm-runtimes/libcxxabi-9999"
 	"llvm-runtimes/libcxxabi-23.0.0.9999"
 	"media-libs/dav1d-9999"
-	"media-libs/flac-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/freetype-9999"				# Bumped live to latest non-vulnerable
+	"media-libs/flac-9999"
+	"media-libs/freetype-9999"
 	"media-libs/harfbuzz-9999"
-	"media-libs/lcms-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libjpeg-turbo-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libpulse-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libwebp-9999"				# Bumped live to latest non-vulnerable
-	"media-libs/libva-9999"					# Bumped live/*DEPENDS to latest hardened
+	"media-libs/lcms-9999"
+	"media-libs/libaom-9999"
+	"media-libs/libjpeg-turbo-9999"
+	"media-libs/libpulse-9999"
+	"media-libs/libwebp-9999"
+	"media-libs/libva-9999"
 	"media-libs/libvpx-9999"
 	"media-libs/libyuv-9999"
-	"media-libs/openh264-9999"				# Bumped live/*DEPENDS to latest hardened
-	"media-libs/openjpeg-9999"				# Bumped *DEPENDs to latest non-vulnerable
-	"media-libs/tiff-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/openh264-9999"
+	"media-libs/openjpeg-9999"
+	"media-video/pipewire-9999"
+	"media-libs/tiff-9999"
 	"media-libs/woff2-9999"
-	"media-video/ffmpeg-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-video/ffmpeg-9999m"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"net-libs/nodejs-99999999"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"net-misc/curl-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
-	"net-print/cups-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
-	"x11-libs/cairo-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
-	"x11-libs/libdrm-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
-	"x11-libs/pango-9999"					# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-video/ffmpeg-9999"
+	"media-video/ffmpeg-9999m"
+	"net-libs/nodejs-99999999"
+	"net-misc/curl-9999"
+	"net-print/cups-9999"
+	"x11-libs/cairo-9999"
+	"x11-libs/libdrm-9999"
+	"x11-libs/libX11-9999"
+	"x11-libs/libxcb-9999"
+	"x11-libs/libXcursor-9999"
+	"x11-libs/libXext-9999"
+	"x11-libs/pango-9999"
 )
 
 CHKL_BLACKLIST=(
@@ -1538,25 +1543,40 @@ LIBVA_DEPEND="
 		>=media-libs/libva-${LIBVA_PV}:=[${MULTILIB_USEDEP},drm(+),wayland?,X?]
 		virtual/vaapi:=[${MULTILIB_USEDEP},patent_status_nonfree=]
 		system-ffmpeg? (
-			media-video/ffmpeg:=
+			media-video/ffmpeg:=[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
 			|| (
-				=media-video/ffmpeg-9999[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
-				=media-video/ffmpeg-9999m[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
+				~media-video/ffmpeg-${FFMPEG_8_1_PV}[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
+				~media-video/ffmpeg-${FFMPEG_8_1_PV}m[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
+
+				~media-video/ffmpeg-${FFMPEG_8_0_PV}[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
+				~media-video/ffmpeg-${FFMPEG_8_0_PV}m[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
+
+				~media-video/ffmpeg-${FFMPEG_7_1_PV}[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
+				~media-video/ffmpeg-${FFMPEG_7_1_PV}m[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
+
+				~media-video/ffmpeg-${FFMPEG_6_1_PV}[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
+				~media-video/ffmpeg-${FFMPEG_6_1_PV}m[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
+
+				~media-video/ffmpeg-${FFMPEG_5_1_PV}[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
+				~media-video/ffmpeg-${FFMPEG_5_1_PV}m[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
+
+				~media-video/ffmpeg-${FFMPEG_4_4_PV}[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
+				~media-video/ffmpeg-${FFMPEG_4_4_PV}m[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
 			)
 		)
 	)
 "
 
 COMMON_X_DEPEND="
-	>=x11-libs/libXi-1.7.10:=[${MULTILIB_USEDEP}]
+	>=x11-libs/libXi-${LIBXI_PV}:=[${MULTILIB_USEDEP}]
 	>=x11-libs/libXcomposite-0.4.5:=[${MULTILIB_USEDEP}]
-	>=x11-libs/libXcursor-1.2.0:=[${MULTILIB_USEDEP}]
+	>=x11-libs/libXcursor-${LIBXCURSOR_PV}:=[${MULTILIB_USEDEP}]
 	>=x11-libs/libXdamage-1.1.5:=[${MULTILIB_USEDEP}]
-	>=x11-libs/libXfixes-5.0.3:=[${MULTILIB_USEDEP}]
-	>=x11-libs/libXrandr-1.5.1:=[${MULTILIB_USEDEP}]
-	>=x11-libs/libXrender-0.9.10:=[${MULTILIB_USEDEP}]
-	>=x11-libs/libxshmfence-1.3:=[${MULTILIB_USEDEP}]
-	>=x11-libs/libXtst-1.2.3:=[${MULTILIB_USEDEP}]
+	>=x11-libs/libXfixes-${LIBXFIXES_PV}:=[${MULTILIB_USEDEP}]
+	>=x11-libs/libXrandr-${LIBXRANDR_PV}:=[${MULTILIB_USEDEP}]
+	>=x11-libs/libXrender-${LIBXRENDER_PV}:=[${MULTILIB_USEDEP}]
+	>=x11-libs/libxshmfence-${LIBXSHMFENCE_PV}:=[${MULTILIB_USEDEP}]
+	>=x11-libs/libXtst-${LIBXTST_PV}:=[${MULTILIB_USEDEP}]
 "
 
 # virtual/zlib: https://bugs.gentoo.org/930365; -ng is not compatible.
@@ -1569,51 +1589,51 @@ COMMON_X_DEPEND="
 COMMON_SNAPSHOT_DEPEND="
 	!headless? (
 		${LIBVA_DEPEND}
-		>=dev-libs/glib-2.89.9999:=[${MULTILIB_USEDEP}]
-		>=media-libs/alsa-lib-1.2.16.1:=[${MULTILIB_USEDEP}]
+		>=dev-libs/glib-${GLIB_PV}:=[${MULTILIB_USEDEP}]
+		>=media-libs/alsa-lib-${ALSA_LIB_PV}:=[${MULTILIB_USEDEP}]
 		>=sys-apps/pciutils-3.7.0:=[${MULTILIB_USEDEP}]
-		>=x11-libs/libxkbcommon-1.0.3:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=[${MULTILIB_USEDEP}]
 		kerberos? (
 			virtual/krb5:*[${MULTILIB_USEDEP}]
 		)
 		pulseaudio? (
-			>=media-libs/libpulse-9999:=[${MULTILIB_USEDEP}]
+			>=media-libs/libpulse-${LIBPULSE_PV}:=[${MULTILIB_USEDEP}]
 		)
 		vaapi? (
 			>=media-libs/libva-${LIBVA_PV}:=[${MULTILIB_USEDEP},wayland?,X?]
 		)
 		wayland? (
-			>=dev-libs/libffi-9999:=[${MULTILIB_USEDEP}]
-			>=dev-libs/wayland-9999:=[${MULTILIB_USEDEP}]
+			>=dev-libs/libffi-${LIBFFI_PV}:=[${MULTILIB_USEDEP}]
+			>=dev-libs/wayland-${WAYLAND_PV}:=[${MULTILIB_USEDEP}]
 			screencast? (
-				>=media-video/pipewire-0.3.65:=[${MULTILIB_USEDEP}]
+				>=media-video/pipewire-${PIPEWIRE_PV}:=[${MULTILIB_USEDEP}]
 			)
 		)
 		X? (
-			>=x11-libs/libX11-1.7.2:=[${MULTILIB_USEDEP}]
-			>=x11-libs/libxcb-1.14:=[${MULTILIB_USEDEP}]
-			>=x11-libs/libXext-1.3.3:=[${MULTILIB_USEDEP}]
+			>=x11-libs/libX11-${LIBX11_PV}:=[${MULTILIB_USEDEP}]
+			>=x11-libs/libxcb-${LIBXCB_PV}:=[${MULTILIB_USEDEP}]
+			>=x11-libs/libXext-${LIBXEXT_PV}:=[${MULTILIB_USEDEP}]
 		)
 	)
-	>=dev-libs/nss-3.125:=[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-${NSS_PV}:=[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.38.2:=[${MULTILIB_USEDEP}]
 	>=media-libs/mesa-${MESA_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},gbm(+)]
 	patent_status_nonfree? (
 		system-openh264? (
-			>=media-libs/openh264-2.6.0:=[${MULTILIB_USEDEP}]
+			>=media-libs/openh264-${OPENH264_PV}:=[${MULTILIB_USEDEP}]
 		)
 	)
 	system-abseil-cpp? (
 		dev-cpp/abseil-cpp:20251021=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 	)
 	system-brotli? (
-		>=app-arch/brotli-9999:=[${MULTILIB_USEDEP}]
+		>=app-arch/brotli-${BROTLI_PV}:=[${MULTILIB_USEDEP}]
 	)
 	system-crc32c? (
 		>=dev-libs/crc32c-1.1.0:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 	)
 	system-dav1d? (
-		>=media-libs/dav1d-9999:=[${MULTILIB_USEDEP},8bit]
+		>=media-libs/dav1d-${DAV1D_PV}:=[${MULTILIB_USEDEP},8bit]
 	)
 	system-double-conversion? (
 		>=dev-libs/double-conversion-3.1.6:=[${MULTILIB_USEDEP}]
@@ -1622,64 +1642,64 @@ COMMON_SNAPSHOT_DEPEND="
 		~dev-libs/flatbuffers-25.12.19:=
 	)
 	system-fontconfig? (
-		>=media-libs/fontconfig-2.18.1:=[${MULTILIB_USEDEP}]
+		>=media-libs/fontconfig-${FONTCONFIG_PV}:=[${MULTILIB_USEDEP}]
 	)
 	system-freetype? (
-		>=media-libs/freetype-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/freetype-${FREETYPE_PV}:=[${MULTILIB_USEDEP}]
 	)
 	system-harfbuzz? (
-		>=media-libs/harfbuzz-14.2.1:=[${MULTILIB_USEDEP},icu(-)]
+		>=media-libs/harfbuzz-${HARFBUZZ_PV}:=[${MULTILIB_USEDEP},icu(-)]
 	)
 	system-highway? (
-		>=dev-cpp/highway-1.4.0:=
+		>=dev-cpp/highway-${HIGHWAY_PV}:=
 	)
 	system-icu? (
-		>=dev-libs/icu-79.0.9999:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
+		>=dev-libs/icu-${ICU_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 	)
 	system-jsoncpp? (
-		>=dev-libs/jsoncpp-1.9.7:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
+		>=dev-libs/jsoncpp-${JSONCPP_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 	)
 	system-lcms? (
-		>=media-libs/lcms-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/lcms-${LCMS_PV}:=[${MULTILIB_USEDEP}]
 	)
 	system-libaom? (
-		>=media-libs/libaom-3.13.3:=[${MULTILIB_USEDEP}]
+		>=media-libs/libaom-${LIBAOM_PV}:=[${MULTILIB_USEDEP}]
 	)
 	system-libjpeg-turbo? (
-		>=media-libs/libjpeg-turbo-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:=[${MULTILIB_USEDEP}]
 	)
 	system-libopenjpeg? (
-		>=media-libs/openjpeg-2.5.4-r1:=[${MULTILIB_USEDEP}]
+		>=media-libs/openjpeg-${OPENJPEG_PV}:=[${MULTILIB_USEDEP}]
 	)
 	system-libpng? (
-		>=media-libs/libpng-1.6.57:=[${MULTILIB_USEDEP}]
+		>=media-libs/libpng-${LIBPNG_PV}:=[${MULTILIB_USEDEP}]
 	)
 	system-libsecret? (
-		>=app-crypt/libsecret-0.18.2:=[${MULTILIB_USEDEP}]
+		>=app-crypt/libsecret-${LIBSECRET_PV}:=[${MULTILIB_USEDEP}]
 	)
 	system-libtiff? (
-		>=media-libs/tiff-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/tiff-${TIFF_PV}:=[${MULTILIB_USEDEP}]
 	)
 	system-libusb? (
-		>=dev-libs/libusb-1.0.17:=[${MULTILIB_USEDEP}]
+		>=dev-libs/libusb-${LIBUSB_PV}:=[${MULTILIB_USEDEP}]
 	)
 	system-libvpx? (
-		>=media-libs/libvpx-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/libvpx-${LIBVPX_PV}:=[${MULTILIB_USEDEP}]
 	)
 	system-libwebp? (
-		>=media-libs/libwebp-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/libwebp-${LIBWEBP_PV}:=[${MULTILIB_USEDEP}]
 	)
 	system-libxml? (
-		>=dev-libs/libxml2-9999:=[${MULTILIB_USEDEP},icu]
+		>=dev-libs/libxml2-${LIBXML2_PV}:=[${MULTILIB_USEDEP},icu]
 	)
 	system-libxnvctrl? (
 		x11-drivers/nvidia-drivers:*
 	)
 	system-libxslt? (
-		>=dev-libs/libxslt-1.1.44:=[${MULTILIB_USEDEP}]
+		>=dev-libs/libxslt-${LIBXSLT_PV}:=[${MULTILIB_USEDEP}]
 	)
 	system-libyuv? (
-		>=media-libs/libyuv-1947:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
+		>=media-libs/libyuv-${LIBYUV_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 	)
 	system-protobuf? (
 		dev-libs/protobuf:6/6.33[${MULTILIB_USEDEP}]
@@ -1697,29 +1717,29 @@ COMMON_SNAPSHOT_DEPEND="
 		>=dev-util/spirv-tools-${VULKAN_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 	)
 	system-sqlite? (
-		>=dev-db/sqlite-3.53.2:=[${MULTILIB_USEDEP}]
+		>=dev-db/sqlite-${SQLITE_PV}:=[${MULTILIB_USEDEP}]
 	)
 	system-vulkan-memory-allocator? (
-		>=media-libs/VulkanMemoryAllocator-3.0.0:=
+		>=media-libs/VulkanMemoryAllocator-${VULKANMEMORYALLOCATOR_PV}:=
 	)
 	system-woff2? (
-		>=media-libs/woff2-9999:=
+		>=media-libs/woff2-${WOFF2_PV}:=
 	)
 	system-zlib? (
 		>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}]
 	)
 	system-zstd? (
-		>=app-arch/zstd-9999:=[${MULTILIB_USEDEP}]
+		>=app-arch/zstd-${ZSTD_PV}:=[${MULTILIB_USEDEP}]
 	)
 "
 
 # No multilib for this virtual/udev when it should be.
 VIRTUAL_UDEV="
 	systemd? (
-		>=sys-apps/systemd-252.5:=[${MULTILIB_USEDEP}]
+		>=sys-apps/systemd-${SYSTEMD_PV}:=[${MULTILIB_USEDEP}]
 	)
 	!systemd? (
-		>=sys-apps/systemd-utils-252.5:=[${MULTILIB_USEDEP},udev]
+		>=sys-apps/systemd-utils-260.1-r1:=[${MULTILIB_USEDEP},udev]
 	)
 "
 
@@ -1733,17 +1753,44 @@ PATENT_STATUS_DEPEND="
 	system-ffmpeg? (
 		>=media-libs/mesa-${MESA_PV}:=[${MULTILIB_USEDEP},patent_status_nonfree=]
 		patent_status_nonfree? (
-			media-video/ffmpeg:=
+			media-video/ffmpeg:=[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
 			|| (
-				=media-video/ffmpeg-9999[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
-				=media-video/ffmpeg-9999m[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
+				~media-video/ffmpeg-${FFMPEG_8_0_PV}[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
+				~media-video/ffmpeg-${FFMPEG_8_0_PV}m[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
+
+				~media-video/ffmpeg-${FFMPEG_7_1_PV}[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
+				~media-video/ffmpeg-${FFMPEG_7_1_PV}m[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
+
+				~media-video/ffmpeg-${FFMPEG_6_1_PV}[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
+				~media-video/ffmpeg-${FFMPEG_6_1_PV}m[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
+
+				~media-video/ffmpeg-${FFMPEG_5_1_PV}[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
+				~media-video/ffmpeg-${FFMPEG_5_1_PV}m[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
+
+				~media-video/ffmpeg-${FFMPEG_4_4_PV}[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
+				~media-video/ffmpeg-${FFMPEG_4_4_PV}m[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
 			)
 		)
 		!patent_status_nonfree? (
-			media-video/ffmpeg:=
+			media-video/ffmpeg:=[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
 			|| (
-				=media-video/ffmpeg-9999[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
-				=media-video/ffmpeg-9999m[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
+				~media-video/ffmpeg-${FFMPEG_8_1_PV}[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
+				~media-video/ffmpeg-${FFMPEG_8_1_PV}m[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
+
+				~media-video/ffmpeg-${FFMPEG_8_0_PV}[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
+				~media-video/ffmpeg-${FFMPEG_8_0_PV}m[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
+
+				~media-video/ffmpeg-${FFMPEG_7_1_PV}[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
+				~media-video/ffmpeg-${FFMPEG_7_1_PV}m[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
+
+				~media-video/ffmpeg-${FFMPEG_6_1_PV}[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
+				~media-video/ffmpeg-${FFMPEG_6_1_PV}m[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
+
+				~media-video/ffmpeg-${FFMPEG_5_1_PV}[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
+				~media-video/ffmpeg-${FFMPEG_5_1_PV}m[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
+
+				~media-video/ffmpeg-${FFMPEG_4_4_PV}[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
+				~media-video/ffmpeg-${FFMPEG_4_4_PV}m[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
 			)
 		)
 	)
@@ -1756,15 +1803,15 @@ COMMON_DEPEND="
 			>=media-libs/libglvnd-1.3.2:=[${MULTILIB_USEDEP},X?]
 			>=media-libs/mesa-${MESA_PV}:=[${MULTILIB_USEDEP},wayland?,X?]
 		)
-		>=x11-libs/cairo-9999:=[${MULTILIB_USEDEP}]
-		>=x11-libs/gdk-pixbuf-2.44.6:=[${MULTILIB_USEDEP}]
-		>=x11-libs/libdrm-2.4.132:=[${MULTILIB_USEDEP}]
-		>=x11-libs/pango-1.57.1:=[${MULTILIB_USEDEP}]
+		>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP}]
+		>=x11-libs/gdk-pixbuf-${GDK_PIXBUF_PV}:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libdrm-${LIBDRM_PV}:=[${MULTILIB_USEDEP}]
+		>=x11-libs/pango-${PANGO_PV}:=[${MULTILIB_USEDEP}]
 		accessibility? (
-			>=app-accessibility/at-spi2-core-2.44.1:=[${MULTILIB_USEDEP}]
+			>=app-accessibility/at-spi2-core-${AT_SPI2_CORE_PV}:=[${MULTILIB_USEDEP}]
 		)
 		cups? (
-			>=net-print/cups-9999:=[${MULTILIB_USEDEP}]
+			>=net-print/cups-${CUPS_PV}:=[${MULTILIB_USEDEP}]
 		)
 		qt6? (
 			>=dev-qt/qtbase-${QT6_PV}:6=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},widgets,X?]
@@ -1774,36 +1821,39 @@ COMMON_DEPEND="
 		)
 		wayland? (
 			screencast? (
-				media-video/pipewire:=
+				>=media-video/pipewire-${PIPEWIRE_PV}:=
 			)
 		)
 	)
 	${COMMON_SNAPSHOT_DEPEND}
-	>=dev-libs/expat-2.8.2:=[${MULTILIB_USEDEP}]
-	>=net-misc/curl-9999:=[${MULTILIB_USEDEP},ssl]
+	>=dev-libs/expat-${EXPAT_PV}:=[${MULTILIB_USEDEP}]
+	>=net-misc/curl-${CURL_PV}:=[${MULTILIB_USEDEP},ssl]
 	>=sys-apps/dbus-1.12.24:=[${MULTILIB_USEDEP}]
 	>=sys-devel/gcc-${GCC_PV}:=
 	>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP},minizip]
-	>=app-arch/bzip2-9999:=[${MULTILIB_USEDEP}]
+	>=app-arch/bzip2-${BZIP2_PV}:=[${MULTILIB_USEDEP}]
 	virtual/libc:=
 	bluetooth? (
-		>=net-wireless/bluez-5.55:=[${MULTILIB_USEDEP}]
+		>=net-wireless/bluez-${BLUEZ_PV}:=[${MULTILIB_USEDEP}]
 	)
 	elibc_glibc? (
-		>=sys-libs/glibc-2.43:=
+		>=sys-libs/glibc-${GLIBC_PV}:=
 	)
 	system-ffmpeg? (
 		system-opus? (
-			>=media-libs/opus-9999:=[${MULTILIB_USEDEP}]
+			>=media-libs/opus-${OPUS_PV}:=[${MULTILIB_USEDEP}]
 		)
 		media-video/ffmpeg:=
 		|| (
-			=media-video/ffmpeg-9999[${MULTILIB_USEDEP},-samba]
-			=media-video/ffmpeg-9999m[${MULTILIB_USEDEP},-samba]
+			~media-video/ffmpeg-9999[${MULTILIB_USEDEP},-samba]
+			~media-video/ffmpeg-9999m[${MULTILIB_USEDEP},-samba]
+
+			~media-video/ffmpeg-8.1.2[${MULTILIB_USEDEP},-samba]
+			~media-video/ffmpeg-8.1.2m[${MULTILIB_USEDEP},-samba]
 		)
 	)
 	system-flac? (
-		>=media-libs/flac-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/flac-${FLAC_PV}:=[${MULTILIB_USEDEP}]
 	)
 "
 
