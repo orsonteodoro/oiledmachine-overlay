@@ -11,11 +11,16 @@ CFLAGS_HARDENED_USE_CASES="security-critical daemon login network untrusted-data
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CRSH DOS ID II PE USI"
 PYTHON_COMPAT=( python3_{10..14} )
 
-inherit cflags-hardened linux-info meson-multilib fcaps flag-o-matic python-any-r1 \
-	readme.gentoo-r1 systemd toolchain-funcs udev vala virtualx
+CHKL_TIMESTAMPS=(
+	"dev-libs/jansson-9999"
+	"sys-apps/systemd-9999"
+)
+
+inherit cflags-hardened chkl linux-info meson-multilib fcaps flag-o-matic python-any-r1 \
+	readme.gentoo-r1 secure-version systemd toolchain-funcs udev vala virtualx
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="1a206b55ebf6117078e2d247830357229dbf2fd0"
+	FALLBACK_COMMIT="b4d2d2dfc7f8d83c7f80a63db7ced0bec9ce5623"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/NetworkManager/NetworkManager.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -39,11 +44,11 @@ SLOT="0"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86"
 
 IUSE+="
-audit bluetooth clat +concheck connection-sharing debug dhclient dhcpcd doc elogind
-gnutls +introspection iptables iwd libedit +modemmanager nbft +nss
+arping audit bluetooth clat +concheck connection-sharing debug dhclient dhcpcd doc elogind
+gnutls iputils +introspection iptables iwd libedit +modemmanager nbft +nss
 nftables ofono ovs policykit +ppp psl resolvconf selinux syslog systemd teamd
 test +tools vala +wext +wifi
-ebuild_revision_1
+ebuild_revision_2
 "
 RESTRICT="!test? ( test )"
 
@@ -57,82 +62,88 @@ REQUIRED_USE="
 	vala? ( introspection )
 	wext? ( wifi )
 	^^ ( gnutls nss )
+	^^ (
+		arping
+		iputils
+	)
 	?? ( elogind systemd )
 	?? ( dhclient dhcpcd )
 	?? ( syslog systemd )
 "
 
 COMMON_DEPEND="
-	sys-apps/util-linux[${MULTILIB_USEDEP}]
+	sys-apps/util-linux:=[${MULTILIB_USEDEP}]
 	>=virtual/libudev-175:=[${MULTILIB_USEDEP}]
-	sys-apps/dbus[${MULTILIB_USEDEP}]
-	net-libs/libndp
-	>=dev-libs/glib-2.42:2[${MULTILIB_USEDEP}]
-	audit? ( sys-process/audit )
-	bluetooth? ( >=net-wireless/bluez-5:= )
+	sys-apps/dbus:=[${MULTILIB_USEDEP}]
+	net-libs/libndp:=
+	>=dev-libs/glib-${GLIB_PV}:=[${MULTILIB_USEDEP}]
+	audit? ( sys-process/audit:= )
+	bluetooth? ( >=net-wireless/bluez-${BLUEZ_PV}:= )
 	clat? (
-		>=dev-libs/libbpf-1.3.0
+		>=dev-libs/libbpf-1.3.0:=
 	)
-	concheck? ( net-misc/curl )
+	concheck? ( net-misc/curl:= )
 	connection-sharing? (
-		net-dns/dnsmasq[dbus,dhcp]
-		iptables? ( net-firewall/iptables )
-		nftables? ( net-firewall/nftables )
+		net-dns/dnsmasq:=[dbus,dhcp]
+		iptables? ( net-firewall/iptables:= )
+		nftables? ( net-firewall/nftables:= )
 	)
-	dhclient? ( >=net-misc/dhcp-4[client] )
-	dhcpcd? ( >=net-misc/dhcpcd-9.3.3 )
-	elogind? ( >=sys-auth/elogind-219 )
+	dhclient? ( >=net-misc/dhcp-4:=[client] )
+	dhcpcd? ( >=net-misc/dhcpcd-9.3.3:= )
+	elogind? ( >=sys-auth/elogind-219:= )
 	gnutls? (
-		>=net-libs/gnutls-2.12:=[${MULTILIB_USEDEP}]
+		>=net-libs/gnutls-${GNUTLS_PV}:=[${MULTILIB_USEDEP}]
 	)
-	introspection? ( >=dev-libs/gobject-introspection-1.82.0-r2:= )
+	introspection? ( >=dev-libs/gobject-introspection-${GOBJECT_INTROSPECTION_PV}:= )
 	modemmanager? (
-		net-misc/mobile-broadband-provider-info
+		net-misc/mobile-broadband-provider-info:=
 		>=net-misc/modemmanager-0.7.991:0=
 	)
-	nbft? ( >=sys-libs/libnvme-1.5 )
+	nbft? ( >=sys-libs/libnvme-1.5:= )
 	nss? (
-		>=dev-libs/nspr-4.38.2[${MULTILIB_USEDEP}]
-		>=dev-libs/nss-3.125[${MULTILIB_USEDEP}]
+		>=dev-libs/nspr-${NSPR_PV}:=[${MULTILIB_USEDEP}]
+		>=dev-libs/nss-${NSS_PV}:=[${MULTILIB_USEDEP}]
 	)
-	ofono? ( net-misc/ofono )
-	ovs? ( >=dev-libs/jansson-2.7:= )
-	policykit? ( >=sys-auth/polkit-0.106 )
+	ofono? ( net-misc/ofono:= )
+	ovs? ( >=dev-libs/jansson-${JANSSON_PV}:= )
+	policykit? ( >=sys-auth/polkit-0.106:= )
 	ppp? ( >=net-dialup/ppp-2.4.5:=[ipv6(+)] )
-	psl? ( net-libs/libpsl )
-	resolvconf? ( virtual/resolvconf )
+	psl? ( net-libs/libpsl:= )
+	resolvconf? ( virtual/resolvconf:* )
 	selinux? (
-		sec-policy/selinux-networkmanager
-		sys-libs/libselinux
+		sec-policy/selinux-networkmanager:*
+		sys-libs/libselinux:=
 	)
-	systemd? ( >=sys-apps/systemd-209:0= )
+	systemd? ( >=sys-apps/systemd-${SYSTEMD_PV}:= )
 	teamd? (
-		>=dev-libs/jansson-2.7:=
-		>=net-misc/libteam-1.9
+		>=dev-libs/jansson-${JANSSON_PV}:=
+		>=net-misc/libteam-1.9:=
 	)
 	tools? (
-		>=dev-libs/jansson-2.7:=
-		>=dev-libs/newt-0.52.15
-		libedit? ( dev-libs/libedit )
+		>=dev-libs/jansson-${JANSSON_PV}:=
+		>=dev-libs/newt-0.52.15:=
+		libedit? ( dev-libs/libedit:= )
 		!libedit? ( sys-libs/readline:= )
 	)
 "
 RDEPEND="${COMMON_DEPEND}
-	acct-group/plugdev
-	|| (
-		net-misc/iputils[arping(+)]
-		net-analyzer/arping
+	acct-group/plugdev:*
+	arping? (
+		net-analyzer/arping:=
+	)
+	iputils? (
+		net-misc/iputils:=[arping(+)]
 	)
 	wifi? (
-		!iwd? ( >=net-wireless/wpa_supplicant-0.7.3-r3[dbus] )
-		iwd? ( net-wireless/iwd )
+		!iwd? ( >=net-wireless/wpa_supplicant-0.7.3-r3:=[dbus] )
+		iwd? ( net-wireless/iwd:= )
 	)
 "
 DEPEND="${COMMON_DEPEND}
-	>=sys-kernel/linux-headers-3.18
-	net-libs/libndp[${MULTILIB_USEDEP}]
-	ppp? ( elibc_musl? ( net-libs/ppp-defs ) )
-	test? ( >=dev-libs/jansson-2.7 )
+	>=sys-kernel/linux-headers-3.18:=
+	net-libs/libndp:=[${MULTILIB_USEDEP}]
+	ppp? ( elibc_musl? ( net-libs/ppp-defs:= ) )
+	test? ( >=dev-libs/jansson-${JANSSON_PV}:= )
 "
 BDEPEND="
 	app-text/docbook-xsl-stylesheets
@@ -270,6 +281,7 @@ eerror "QA: NM_CAPS:  ${NM_CAPS}"
 }
 
 multilib_src_configure() {
+	chkl_check_many_timestamps
 	cflags-hardened_append
 	# Workaround for LLD on musl systems (bug #959603)
 	append-ldflags $(test-flags-CCLD -Wl,--undefined-version)
