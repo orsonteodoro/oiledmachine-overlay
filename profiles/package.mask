@@ -176,3 +176,7 @@ media-plugins/gst-plugins-ladspa
 media-plugins/gst-plugins-mpeg2enc
 media-plugins/gst-plugins-musepack
 media-plugins/gst-plugins-voaacenc
+
+# It may violate the Fail-Secure cybersecurity principle.
+# It is unknown how much of the code violates the principle.
+media-libs/lcms
