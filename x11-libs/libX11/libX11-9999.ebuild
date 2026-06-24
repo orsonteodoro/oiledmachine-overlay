@@ -24,7 +24,10 @@ inherit cflags-hardened chkl secure-version toolchain-funcs xorg-3
 DESCRIPTION="X.Org X11 library"
 
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~x64-macos"
-IUSE+=" test"
+IUSE+="
+test
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 # HACK: libX11 produces .pc files that depend on xproto.pc. When libX11
@@ -33,12 +36,12 @@ RESTRICT="!test? ( test )"
 #       needed. Until a "build-against-depend" option is available in
 #       ebuilds, we RDEPEND on xproto. See bug #903707 and others.
 RDEPEND="
-	>=x11-libs/libxcb-${LIBXCB_PV}[${MULTILIB_USEDEP}]
-	x11-misc/compose-tables
-	x11-base/xorg-proto
+	>=x11-libs/libxcb-${LIBXCB_PV}:=[${MULTILIB_USEDEP}]
+	x11-misc/compose-tables:=
+	x11-base/xorg-proto:=
 "
 DEPEND="${RDEPEND}
-	x11-libs/xtrans
+	x11-libs/xtrans:=
 "
 BDEPEND="test? ( dev-lang/perl )"
 
