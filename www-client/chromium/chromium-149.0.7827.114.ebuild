@@ -346,8 +346,6 @@ CHKL_TIMESTAMPS=(
 	"media-video/pipewire-9999"
 	"media-libs/tiff-9999"
 	"media-libs/woff2-9999"
-	"media-video/ffmpeg-9999"
-	"media-video/ffmpeg-9999m"
 	"net-libs/nodejs-99999999"
 	"net-misc/curl-9999"
 	"net-print/cups-9999"
@@ -1755,6 +1753,9 @@ PATENT_STATUS_DEPEND="
 		patent_status_nonfree? (
 			media-video/ffmpeg:=[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
 			|| (
+				~media-video/ffmpeg-${FFMPEG_8_1_PV}[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
+				~media-video/ffmpeg-${FFMPEG_8_1_PV}m[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
+
 				~media-video/ffmpeg-${FFMPEG_8_0_PV}[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
 				~media-video/ffmpeg-${FFMPEG_8_0_PV}m[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
 
@@ -1845,11 +1846,23 @@ COMMON_DEPEND="
 		)
 		media-video/ffmpeg:=
 		|| (
-			~media-video/ffmpeg-9999[${MULTILIB_USEDEP},-samba]
-			~media-video/ffmpeg-9999m[${MULTILIB_USEDEP},-samba]
+			~media-video/ffmpeg-${FFMPEG_8_1_PV}[${MULTILIB_USEDEP}]
+			~media-video/ffmpeg-${FFMPEG_8_1_PV}m[${MULTILIB_USEDEP}]
 
-			~media-video/ffmpeg-8.1.2[${MULTILIB_USEDEP},-samba]
-			~media-video/ffmpeg-8.1.2m[${MULTILIB_USEDEP},-samba]
+			~media-video/ffmpeg-${FFMPEG_8_0_PV}[${MULTILIB_USEDEP}]
+			~media-video/ffmpeg-${FFMPEG_8_0_PV}m[${MULTILIB_USEDEP}]
+
+			~media-video/ffmpeg-${FFMPEG_7_1_PV}[${MULTILIB_USEDEP}]
+			~media-video/ffmpeg-${FFMPEG_7_1_PV}m[${MULTILIB_USEDEP}]
+
+			~media-video/ffmpeg-${FFMPEG_6_1_PV}[${MULTILIB_USEDEP}]
+			~media-video/ffmpeg-${FFMPEG_6_1_PV}m[${MULTILIB_USEDEP}]
+
+			~media-video/ffmpeg-${FFMPEG_5_1_PV}[${MULTILIB_USEDEP}]
+			~media-video/ffmpeg-${FFMPEG_5_1_PV}m[${MULTILIB_USEDEP}]
+
+			~media-video/ffmpeg-${FFMPEG_4_4_PV}[${MULTILIB_USEDEP}]
+			~media-video/ffmpeg-${FFMPEG_4_4_PV}m[${MULTILIB_USEDEP}]
 		)
 	)
 	system-flac? (
