@@ -8,7 +8,7 @@ CFLAGS_HARDENED_TRAPV="0" # Breaks during test suite
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO ID IO MC NPD OOBR OOBW SO UAF UM"
 CXX_STANDARD=20
-PYTHON_COMPAT=( python3_{11..15} )
+PYTHON_COMPAT=( python3_{10..15} )
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -24,16 +24,18 @@ LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/glib-2.89.9999"
+	"dev-qt/qtbase-6.9999"
 	"net-misc/curl-9999"
-	"media-libs/fontconfig-9999"
-	"media-libs/freetype-2.11"
+	"media-libs/freetype-9999"
 	"media-libs/lcms-9999"
+	"media-libs/libjpeg-turbo-9999"
 	"media-libs/openjpeg-9999"
+	"media-libs/tiff-9999"
 	"x11-libs/cairo-9999"
 )
 
 inherit cflags-hardened check-compiler-switch chkl cmake flag-o-matic flag-o-matic-om
-inherit libcxx-slot libstdcxx-slot python-any-r1 toolchain-funcs xdg-utils
+inherit libcxx-slot libstdcxx-slot python-any-r1 secure-version toolchain-funcs xdg-utils
 
 if [[ ${PV} == *9999* ]] ; then
 	FALLBACK_COMMIT="21b70b0d62807e270994f94302e323da4f0d776b"
@@ -63,30 +65,30 @@ IUSE+=" boost cairo cjk curl +cxx debug doc gpg +introspection +jpeg +jpeg2k +lc
 RESTRICT="!test? ( test )"
 
 COMMON_DEPEND="
-	>=media-libs/fontconfig-2.18.1:=
-	>=media-libs/freetype-9999:=
-	>=virtual/zlib-1.3.2:=
+	>=media-libs/fontconfig-${FONTCONFIG_PV}:=
+	>=media-libs/freetype-${FREETYPE_PV}:=
+	>=virtual/zlib-${ZLIB_PV}:=
 	cairo? (
-		>=dev-libs/glib-2.89.9999:=
-		>=x11-libs/cairo-9999:=
-		introspection? ( >=dev-libs/gobject-introspection-1.82.0-r2:= )
+		>=dev-libs/glib-${GLIB_PV}:=
+		>=x11-libs/cairo-${CAIRO_PV}:=
+		introspection? ( >=dev-libs/gobject-introspection-${GOBJECT_INTROSPECTION_PV}:= )
 	)
-	curl? ( >=net-misc/curl-9999:= )
+	curl? ( >=net-misc/curl-${CURL_PV}:= )
 	gpg? ( dev-cpp/gpgmepp:= )
-	jpeg? ( >=media-libs/libjpeg-turbo-9999:= )
-	jpeg2k? ( >=media-libs/openjpeg-2.5.4-r1:= )
-	lcms? ( >=media-libs/lcms-9999:= )
-	nss? ( >=dev-libs/nss-3.125:= )
-	png? ( >=media-libs/libpng-1.6.57:0= )
-	qt6? ( dev-qt/qtbase:6=[gui,xml] )
-	tiff? ( >=media-libs/tiff-9999:= )
+	jpeg? ( >=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:= )
+	jpeg2k? ( >=media-libs/openjpeg-${OPENJPEG_PV}:= )
+	lcms? ( >=media-libs/lcms-${LCMS_PV}:= )
+	nss? ( >=dev-libs/nss-${NSS_PV}:= )
+	png? ( >=media-libs/libpng-${LIBPNG_PV}:= )
+	qt6? ( >=dev-qt/qtbase-${QTBASE6_PV}:6=[gui,xml] )
+	tiff? ( >=media-libs/tiff-${TIFF_PV}:= )
 "
 RDEPEND="${COMMON_DEPEND}
 	cjk? ( app-text/poppler-data:= )
 "
 DEPEND="${COMMON_DEPEND}
 	boost? ( >=dev-libs/boost-1.83:= )
-	test? ( qt6? ( dev-qt/qtbase:6=[widgets] ) )
+	test? ( qt6? ( >=dev-qt/qtbase-${QTBASE6_PV}:6=[widgets] ) )
 "
 BDEPEND="${PYTHON_DEPS}
 	>=dev-util/glib-utils-2.80
@@ -189,11 +191,11 @@ src_prepare() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	cflags-hardened_append
 	fix_mb_len_max
 	xdg_environment_reset
 	append-lfs-flags # bug #898506
-	chkl_check_many_live_bans
 
 	# giscanner is called if cairo and introspection are enabled.
 	# In that case, PKG_CONFIG must be defined.
