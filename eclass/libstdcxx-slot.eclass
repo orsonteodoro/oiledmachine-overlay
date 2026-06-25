@@ -267,7 +267,7 @@ eerror "READELF=\"readelf\""
 eerror "STRIP=\"strip\""
 eerror
 eerror "Contents of /etc/portage/package.env:"
-eerror "${CATEGORY}/${PN} gcc-${slot}.conf"
+eerror "${CATEGORY}/${PN} gcc-${expected_slot}.conf"
 eerror
 }
 
