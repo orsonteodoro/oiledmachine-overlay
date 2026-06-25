@@ -9,7 +9,7 @@ GCC_COMPAT=(
 	"gcc_slot_12_5"
 	"gcc_slot_13_4"
 	"gcc_slot_14_3"
-	"gcc_slot_15_2"
+	"gcc_slot_15_3"
 	"gcc_slot_16_1"
 )
 
@@ -88,19 +88,19 @@ REQUIRED_USE="
 		|| (
 			gcc_slot_13_4
 			gcc_slot_14_3
-			gcc_slot_15_2
+			gcc_slot_15_3
 			gcc_slot_16_1
 		)
 	)
 	cxx_standard_cxx23? (
 		|| (
-			gcc_slot_15_2
+			gcc_slot_15_3
 			gcc_slot_16_1
 		)
 	)
 	cxx_standard_cxx26? (
 		|| (
-			gcc_slot_15_2
+			gcc_slot_15_3
 			gcc_slot_16_1
 		)
 	)
@@ -118,8 +118,8 @@ RDEPEND="
 	gcc_slot_14_3? (
 		>=sys-devel/gcc-14.3:14
 	)
-	gcc_slot_15_2? (
-		>=sys-devel/gcc-15.2:15
+	gcc_slot_15_3? (
+		>=sys-devel/gcc-15.3:15
 	)
 	gcc_slot_16_1? (
 		>=sys-devel/gcc-16.0.9999:16
