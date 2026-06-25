@@ -175,6 +175,14 @@ CLANG_21_1_6="210106"
 CLANG_21_1_7="210107"
 CLANG_21_1_8="210108"
 CLANG_22_1_0="220100"
+CLANG_22_1_1="220101"
+CLANG_22_1_2="220102"
+CLANG_22_1_3="220103"
+CLANG_22_1_4="220104"
+CLANG_22_1_5="220105"
+CLANG_22_1_6="220106"
+CLANG_22_1_7="220107"
+CLANG_22_1_8="220108"
 
 # @ECLASS_VARIABLE: _ALL_LLVM_COMPAT
 # @DESCRIPTION:
@@ -184,6 +192,14 @@ _ALL_LLVM_COMPAT=(
 	{11..22}
 )
 _ALL_LLVM_COMPAT2=(
+	"22_1_8"
+	"22_1_7"
+	"22_1_6"
+	"22_1_5"
+	"22_1_4"
+	"22_1_3"
+	"22_1_2"
+	"22_1_1"
 	"22_1_0"
 	"21_1_8"
 	"21_1_7"
@@ -420,7 +436,7 @@ libcxx-slot_verify() {
 	local x
 	for x in ${_ALL_LLVM_COMPAT[@]} ; do
 		if [[ ${LLVM_COMPAT[@]} =~ (^|" ")"llvm_slot_${x}"($|" ") ]] ; then
-			if ver_test "${llvm_slot}" -ne "${x}" && has "llvm_slot_${x}" ${IUSE} && use "llvm_slot_${x}" ; then
+			if ver_test "${llvm_slot}" -ne "${x}" && in_iuse "llvm_slot_${x}" && use "llvm_slot_${x}" ; then
 				_switch_clang_to_continue_message ${x%_*}
 				die
 			fi

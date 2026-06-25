@@ -128,20 +128,21 @@ GCC_15_1="3.4.34"
 GCC_15_2="3.4.34"
 GCC_15_3="3.4.34"
 GCC_16_1="3.4.35"
+GCC_17_1="3.4.36"
 
 # @ECLASS_VARIABLE: _ALL_GCC_COMPAT
 # @DESCRIPTION:
 # All GCC point versions available by distro repo.
 # Live is not supported
+# Only the earliest $(ver_cut 1-2 ${GCC_X_Y}) bump need to be shown to reduce unnecessary rebuilds for libstdc++ compatibility.
 _ALL_GCC_COMPAT=(
 	"16_1"
-	"15_3"
-	"15_2"
+	"15_2" # Alias for 15_1, 15_3
 	"15_1"
-	"14_3"
+	"14_3" # Alias for 14_1, 14_2
 	"14_2"
 	"14_1"
-	"13_4"
+	"13_4" # Alias for 13_2, 13_3
 	"13_3"
 	"13_2"
 	"13_1"
@@ -151,7 +152,7 @@ _ALL_GCC_COMPAT=(
 	"12_3"
 	"12_2"
 	"12_2"
-	"11_5"
+	"11_5" # Alias for 11_1, 11_2, 11_3, 11_4
 	"11_4"
 	"11_3"
 	"11_2"
@@ -247,11 +248,13 @@ eerror
 _switch_gcc_to_continue_message2() {
 	local expected_slot="${1}"
 	local actual_slot="${2}"
+	local lang="${3}"
 eerror
-eerror "Detected CC/CXX inconsistency between CC/CXX compiler and C++ standard library (libstdc++)."
+eerror "Detected C/CXX inconsistency between CC/CXX compiler and C++ standard library (libstdc++)."
 eerror
 eerror "CC/CXX compiler slot:  ${actual_slot}"
 eerror "C++ standard library slot:  ${expected_slot}"
+eerror "Target language:  ${lang}"
 eerror
 eerror "You must do the following to continue:"
 eerror
@@ -268,6 +271,9 @@ eerror "STRIP=\"strip\""
 eerror
 eerror "Contents of /etc/portage/package.env:"
 eerror "${CATEGORY}/${PN} gcc-${expected_slot}.conf"
+eerror
+eerror
+eerror "Also you must have a consistent matching gcc_slot_* USE flag for ${CATEGORY}/${P}."
 eerror
 }
 
@@ -292,7 +298,7 @@ libstdcxx-slot_verify() {
 		if [[ ${GCC_COMPAT[@]} =~ (^|" ")"gcc_slot_${x}"($|" ") ]] ; then
 			local k="GCC_${x/./_}"
 			local expected_libstdcxx_ver="${!k}"
-			if ver_test "${actual_libstdcxx_ver}" -ne "${expected_libstdcxx_ver}" && has "gcc_slot_${x}" ${IUSE} && use "gcc_slot_${x}" ; then
+			if ver_test "${actual_libstdcxx_ver}" -ne "${expected_libstdcxx_ver}" && in_iuse "gcc_slot_${x}" && use "gcc_slot_${x}" ; then
 				_switch_gcc_to_continue_message ${x%_*}
 				die
 			fi
@@ -329,8 +335,8 @@ libstdcxx-slot_verify() {
 	for x in ${_ALL_GCC_COMPAT[@]} ; do
 		if [[ ${GCC_COMPAT[@]} =~ (^|" ")"gcc_slot_${x}"($|" ") ]] ; then
 			local expected_cc_ver="${x/_/.}"
-			if tc-is-gcc && ver_test "${actual_cc_ver}" "-ne" "${expected_cc_ver}" && has "gcc_slot_${x}" ${IUSE} && use "gcc_slot_${x}" ; then
-				_switch_gcc_to_continue_message2 "${x%_*}" "${actual_cc_ver%%.*}"
+			if tc-is-gcc && ver_test "${actual_cc_ver}" "-ne" "${expected_cc_ver}" && in_iuse "gcc_slot_${x}" && use "gcc_slot_${x}" ; then
+				_switch_gcc_to_continue_message2 "${x%_*}" "${actual_cc_ver%%.*}" "CC"
 				die
 			fi
 		fi
@@ -339,8 +345,8 @@ libstdcxx-slot_verify() {
 	for x in ${_ALL_GCC_COMPAT[@]} ; do
 		if [[ ${GCC_COMPAT[@]} =~ (^|" ")"gcc_slot_${x}"($|" ") ]] ; then
 			local expected_cxx_ver="${x/_/.}"
-			if tc-is-gcc && ver_test "${actual_cxx_ver}" "-ne" "${expected_cxx_ver}" && has "gcc_slot_${x}" ${IUSE} && use "gcc_slot_${x}" ; then
-				_switch_gcc_to_continue_message2 "${x%_*}" "${actual_cxx_ver%%.*}"
+			if tc-is-gcc && ver_test "${actual_cxx_ver}" "-ne" "${expected_cxx_ver}" && in_iuse "gcc_slot_${x}" && use "gcc_slot_${x}" ; then
+				_switch_gcc_to_continue_message2 "${x%_*}" "${actual_cxx_ver%%.*}" "CXX"
 				die
 			fi
 		fi
