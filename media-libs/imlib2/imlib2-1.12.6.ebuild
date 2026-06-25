@@ -8,21 +8,25 @@ CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO IO SO"
 
 CHKL_TIMESTAMPS=(
-	"app-arch/bzip2-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"gnome-base/librsvg-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/freetype-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/giflib-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libavif-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libheif-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libjxl-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libpng-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libyuv-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libwebp-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/tiff-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"app-arch/bzip2-9999"
+	"gnome-base/librsvg-9999"
+	"media-libs/freetype-9999"
+	"media-libs/giflib-9999"
+	"media-libs/libavif-9999"
+	"media-libs/libheif-9999"
+	"media-libs/libid3tag-9999"
+	"media-libs/libjpeg-turbo-9999"
+	"media-libs/libjxl-9999"
+	"media-libs/libpng-9999"
+	"media-libs/libraw-9999"
+	"media-libs/libyuv-9999"
+	"media-libs/libwebp-9999"
+	"media-libs/tiff-9999"
+	"x11-libs/libX11-9999"
+	"x11-libs/libxcb-9999"
 )
 
-inherit cflags-hardened check-compiler-switch flag-o-matic libtool multilib-minimal toolchain-funcs
+inherit cflags-hardened check-compiler-switch flag-o-matic libtool secure-version toolchain-funcs multilib-minimal
 
 DESCRIPTION="Version 2 of an advanced replacement library for libraries like libXpm"
 HOMEPAGE="https://www.enlightenment.org/
@@ -41,34 +45,31 @@ ebuild_revision_20
 
 REQUIRED_USE="shm? ( X )"
 
-# For xz-utils, we don't force a more recent one.  Users can decide.
-# It is preferred to blacklist or delete it from the system.
-# On the other OS, the remediation strategy was to never use again if compromised.
 RDEPEND="
 	X? (
-		x11-libs/libX11:=[${MULTILIB_USEDEP}]
-		x11-libs/libXext:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libX11-${LIBX11_PV}:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libXext-${LIBXEXT_PV}:=[${MULTILIB_USEDEP}]
 	)
-	shm? ( x11-libs/libxcb:=[${MULTILIB_USEDEP}] )
-	avif? ( >=media-libs/libavif-9999:=[${MULTILIB_USEDEP}] )
-	bzip2? ( >=app-arch/bzip2-9999:=[${MULTILIB_USEDEP}] )
-	eps? ( >=app-text/libspectre-0.2.11:= )
-	gif? ( >=media-libs/giflib-9999:=[${MULTILIB_USEDEP}] )
-	heif? ( >=media-libs/libheif-1.23.0:=[${MULTILIB_USEDEP}] )
-	jpeg2k? ( >=media-libs/openjpeg-2.5.4-r1:=[${MULTILIB_USEDEP}] )
-	jpeg? ( >=media-libs/libjpeg-turbo-9999:=[${MULTILIB_USEDEP}] )
-	jpegxl? ( >=media-libs/libjxl-0.11.2:=[${MULTILIB_USEDEP}] )
-	lzma? ( app-arch/xz-utils:=[${MULTILIB_USEDEP}] )
-	text? ( >=media-libs/freetype-9999:=[${MULTILIB_USEDEP}] )
-	mp3? ( >=media-libs/libid3tag-9999:=[${MULTILIB_USEDEP}] )
-	png? ( >=media-libs/libpng-1.6.57:=[${MULTILIB_USEDEP}] )
-	raw? ( >=media-libs/libraw-9999:=[${MULTILIB_USEDEP}] )
-	svg? ( >=gnome-base/librsvg-9999:=[${MULTILIB_USEDEP}] )
-	tools? ( >=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}] )
-	tiff? ( >=media-libs/tiff-9999:=[${MULTILIB_USEDEP}] )
-	webp? ( >=media-libs/libwebp-9999:=[${MULTILIB_USEDEP}] )
-	y4m? ( >=media-libs/libyuv-1947:= )
-	zlib? ( >=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}] )
+	shm? ( >=x11-libs/libxcb-${LIBXCB_PV}:=[${MULTILIB_USEDEP}] )
+	avif? ( >=media-libs/libavif-${LIBAVIF_PV}:=[${MULTILIB_USEDEP}] )
+	bzip2? ( >=app-arch/bzip2-${BZIP2_PV}:=[${MULTILIB_USEDEP}] )
+	eps? ( >=app-text/libspectre-${LIBSPECTRE_PV}:= )
+	gif? ( >=media-libs/giflib-${GIFLIB_PV}:=[${MULTILIB_USEDEP}] )
+	heif? ( >=media-libs/libheif-${LIBHEIF_PV}:=[${MULTILIB_USEDEP}] )
+	jpeg2k? ( >=media-libs/openjpeg-${OPENJPEG_PV}:=[${MULTILIB_USEDEP}] )
+	jpeg? ( >=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:=[${MULTILIB_USEDEP}] )
+	jpegxl? ( >=media-libs/libjxl-${LIBJXL_PV}:=[${MULTILIB_USEDEP}] )
+	lzma? ( >=app-arch/xz-utils-${XZ_UTILS_PV}:=[${MULTILIB_USEDEP}] )
+	text? ( >=media-libs/freetype-${FREETYPE_PV}:=[${MULTILIB_USEDEP}] )
+	mp3? ( >=media-libs/libid3tag-${LIBID3TAG_PV}:=[${MULTILIB_USEDEP}] )
+	png? ( >=media-libs/libpng-${LIBPNG_PV}:=[${MULTILIB_USEDEP}] )
+	raw? ( >=media-libs/libraw-${LIBRAW_PV}:=[${MULTILIB_USEDEP}] )
+	svg? ( >=gnome-base/librsvg-${LIBRSVG_PV}:=[${MULTILIB_USEDEP}] )
+	tools? ( >=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}] )
+	tiff? ( >=media-libs/tiff-${TIFF_PV}:=[${MULTILIB_USEDEP}] )
+	webp? ( >=media-libs/libwebp-${LIBWEBP_PV}:=[${MULTILIB_USEDEP}] )
+	y4m? ( >=media-libs/libyuv-${LIBYUV_PV}:= )
+	zlib? ( >=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}] )
 	!<media-plugins/imlib2_loaders-${PV}
 "
 DEPEND="${RDEPEND}
