@@ -19,7 +19,9 @@
     <flag name="bug-testing">
       - ASLR
       - Little runtime penalty so fast during testing in your own projects.
-      - Sample based guard pages to catch heap based buffer overflows in your own projects.
+      - Sample based guard pages not comprehensive heap mitigation.
+      - It is primarily to test if your project or others are affected by a
+        heap overflow vulnerability.
     </flag>
     <flag name="balanced">
       - ASLR
