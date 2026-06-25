@@ -75,7 +75,6 @@ EAPI=8
 # media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
 
 API_VERSION="4.1"
-CAIRO_PV="9999"
 CFLAGS_HARDENED_ASSEMBLERS="inline"
 CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan lsan msan tsan ubsan"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
@@ -86,12 +85,7 @@ CHECKREQS_DISK_BUILD="18G" # and even this might not be enough, bug #417307
 CMAKE_MAKEFILE_GENERATOR="ninja"
 # See https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Source/bmalloc/libpas/CMakeLists.txt#L5C5-L5C23
 CXX_STANDARD=23
-FONTCONFIG_PV="2.18.1"	# Bumped to the latest non-vulnerable
-FREETYPE_PV="9999"	# Bumped to the latest non-vulnerable
-GSTREAMER_PV="1.28.4"	# Bumped to the latest non-vulnerable
-HARFBUZZ_PV="14.2.1"	# Bumped to the latest non-vulnerable
 LLVM_MAX_SLOT="21"
-MESA_PV="18.0.0_rc5"
 OCDM_WV="virtual/libc:*" # Placeholder
 PYTHON_COMPAT=( "python3_"{10..14} )
 SELECTED_LTO="" # global var not const
@@ -140,38 +134,37 @@ FFMPEG_COMPAT=(
 
 # TODO finish
 CHKL_TIMESTAMPS=(
-	"dev-libs/glib-2.89.9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/icu-79.0.9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/libxml2-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/libxslt-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/glib-2.89.9999"
+	"dev-libs/gmp-9999"
+	"dev-libs/icu-79.0.9999"
+	"dev-libs/libevent-9999"
+	"dev-libs/libxml2-9999"
+	"dev-libs/libxslt-9999"
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
 	"dev-libs/openssl-3.4.9999"
 	"dev-libs/openssl-3.3.9999"
 	"dev-libs/openssl-3.0.9999"
-	"dev-libs/wayland-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/dav1d-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/wayland-9999"
+	"media-libs/dav1d-9999"
 	"media-libs/fontconfig-9999"
-	"media-libs/freetype-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/harfbuzz-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/lcms-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libjxl-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libpng-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libvpx-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libwebp-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/opus-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"x11-libs/cairo-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"x11-libs/libdrm-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-)
-
-GLIB_VERSIONS=(
-	"2.89.9999"
-)
-
-GOBJECT_INTROSPECTION_VERSIONS=(
-	"1.86"
+	"media-libs/freetype-9999"
+	"media-libs/harfbuzz-9999"
+	"media-libs/lcms-9999"
+	"media-libs/libavif-9999"
+	"media-libs/libjpeg-turbo-9999"
+	"media-libs/libjxl-9999"
+	"media-libs/libpng-9999"
+	"media-libs/libvpx-9999"
+	"media-libs/libwebp-9999"
+	"media-libs/openh264-9999"
+	"media-libs/opus-9999"
+	"media-libs/woff2-9999"
+	"sys-libs/libseccomp-9999"
+	"x11-libs/cairo-9999"
+	"x11-libs/libdrm-9999"
+	"x11-libs/libX11-9999"
 )
 
 LANGS=(
@@ -322,7 +315,7 @@ DEFAULT_GST_PLUGINS=(
 inherit cflags-depends cflags-hardened check-compiler-switch check-linker
 inherit check-reqs chkl cmake desktop dhms flag-o-matic flag-o-matic-om git-r3 gnome2
 inherit lcnr libcxx-slot libstdcxx-slot linux-info llvm multilib-minimal
-inherit multiprocessing pax-utils python-single-r1 ruby-single toolchain-funcs
+inherit multiprocessing pax-utils python-single-r1 ruby-single secure-version toolchain-funcs
 inherit vf web-kernel-config
 
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~s390 ~sparc ~riscv ~x86"
@@ -646,13 +639,13 @@ ${MSE_ACODECS[@]}
 ${MSE_VCODECS[@]}
 ${PATENT_STATUS[@]}
 
-aqua +avif -bmalloc -cache-partitioning clang dash debug +doc -eme +flite
--gamepad +gbm +geolocation gles2 gnome-keyring +gstreamer gstwebrtc
-+introspection +javascript +jit +journald +jpegxl +libpas -librice +lcms -libbacktrace
-+libhyphen -libwebrtc -mediarecorder -mediastream +microphone +minibrowser mold
-+opengl openmp -seccomp +speech-synthesis -spell -system-malloc test thunder
-+variation-fonts wayland +webassembly -webdriver +webgl webm-eme -webrtc webvtt
--webxr +woff2 +X
+aqua +avif -bmalloc -cache-partitioning clang dash debug +doc elogind -eme
++flite -gamepad +gbm +geolocation gles2 gnome-keyring +gstreamer gstwebrtc
++introspection +javascript +jit +journald +jpegxl +libpas -librice +lcms
+-libbacktrace +libhyphen -libwebrtc -mediarecorder -mediastream +microphone
++minibrowser mold +opengl openmp -seccomp +speech-synthesis -spell
+-system-malloc systemd test thunder +variation-fonts wayland +webassembly
+-webdriver +webgl webm-eme -webrtc webvtt -webxr +woff2 +X
 ebuild_revision_40
 "
 
@@ -790,6 +783,12 @@ REQUIRED_USE+="
 	hls? (
 		gstreamer
 	)
+	journald? (
+		|| (
+			elogind
+			systemd
+		)
+	)
 	librice? (
 		gstwebrtc
 	)
@@ -883,68 +882,41 @@ gen_depend_llvm() {
 	done
 }
 
-gen_glib_rdepend() {
-	local pv
-	for pv in ${GLIB_VERSIONS[@]} ; do
-		local minor="${pv#*.}"
-		minor="${minor%.*}"
-		echo "
-			(
-				~dev-util/glib-utils-${pv}:=
-				~dev-libs/glib-${pv}:=[${MULTILIB_USEDEP}]
-				~dev-util/gdbus-codegen-${pv}:=
-			)
-		"
-	done
-}
-
-gen_gobject_introspection_rdepend() {
-	local pv
-	for pv in ${GOBJECT_INTROSPECTION_VERSIONS[@]} ; do
-		echo "
-			(
-				introspection? (
-					=dev-libs/gobject-introspection-${pv}*:=[${PYTHON_SINGLE_USEDEP}]
-					=dev-libs/gobject-introspection-common-${pv}*:=
-				)
-			)
-		"
-	done
-}
-
 # librice bumped to 4.0.0 for patches
 RDEPEND+="
 	${RDEPEND_PATENTS}
-	>=dev-db/sqlite-3.22.0:=[${MULTILIB_USEDEP}]
-	>=dev-libs/icu-79.0.9999:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
-	>=dev-libs/gmp-6.1.2:=[-pgo(-),${MULTILIB_USEDEP}]
-	>=dev-libs/libgcrypt-1.7.0:=[${MULTILIB_USEDEP}]
+	>=dev-db/sqlite-${SQLITE_PV}:=[${MULTILIB_USEDEP}]
+	>=dev-libs/icu-${ICU_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
+	>=dev-libs/gmp-${GMP_PV}:=[-pgo(-),${MULTILIB_USEDEP}]
+	>=dev-libs/libgcrypt-${LIBGCRYPT_PV}:=[${MULTILIB_USEDEP}]
 	>=dev-libs/libtasn1-4.13:=[${MULTILIB_USEDEP}]
-	>=dev-libs/libxml2-9999:=[${MULTILIB_USEDEP}]
-	>=dev-libs/libxslt-1.1.44:=[${MULTILIB_USEDEP}]
+	>=dev-libs/libxml2-${LIBXML2_PV}:=[${MULTILIB_USEDEP}]
+	>=dev-libs/libxslt-${LIBXSLT_PV}:=[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-${FONTCONFIG_PV}:=[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-${FREETYPE_PV}:=[${MULTILIB_USEDEP}]
 	>=media-libs/harfbuzz-${HARFBUZZ_PV}:=[${MULTILIB_USEDEP},icu(+)]
-	>=media-libs/lcms-9999:=[${MULTILIB_USEDEP}]
+	>=media-libs/lcms-${LCMS_PV}:=[${MULTILIB_USEDEP}]
 	>=media-libs/libepoxy-1.5.4:=[${MULTILIB_USEDEP}]
-	>=media-libs/libjpeg-turbo-9999:=[${MULTILIB_USEDEP}]
-	>=media-libs/libpng-1.6.57:=[${MULTILIB_USEDEP}]
-	>=media-libs/libwebp-9999:=[${MULTILIB_USEDEP}]
+	>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:=[${MULTILIB_USEDEP}]
+	>=media-libs/libpng-${LIBPNG_PV}:=[${MULTILIB_USEDEP}]
+	>=media-libs/libwebp-${LIBWEBP_PV}:=[${MULTILIB_USEDEP}]
 	>=net-libs/libsoup-3.0.0:=[${MULTILIB_USEDEP},introspection?]
 	>=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP},X?]
-	>=x11-libs/gtk+-3.24.52:3=[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
-	x11-libs/gtk+:=
+	>=x11-libs/gtk+-${GTK3_PV}:3=[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
 	sys-kernel/mitigate-id:*
 	virtual/patent-status:*[patent_status_nonfree=]
+	~dev-util/glib-utils-${GLIB_PV}:=
+	~dev-libs/glib-${GLIB_PV}:=[${MULTILIB_USEDEP}]
+	~dev-util/gdbus-codegen-${GLIB_PV}:=
 	avif? (
-		>=media-libs/libavif-0.9.0:=[${MULTILIB_USEDEP}]
+		>=media-libs/libavif-${LIBAVIF_PV}:=[${MULTILIB_USEDEP}]
 	)
 	elibc_glibc? (
-		>=sys-libs/glibc-2.43:=
+		>=sys-libs/glibc-${GLIBC_PV}:=
 	)
 	elibc_musl? (
-		>=sys-libs/musl-1.2.6:=
+		>=sys-libs/musl-${MUSL_PV}:=
 	)
 	flite? (
 		>=app-accessibility/flite-2.2:=[${MULTILIB_USEDEP}]
@@ -953,7 +925,7 @@ RDEPEND+="
 		>=dev-libs/libmanette-0.2.4:=[${MULTILIB_USEDEP}]
 	)
 	gbm? (
-		>=x11-libs/libdrm-2.4.132:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libdrm-${LIBDRM_PV}:=[${MULTILIB_USEDEP}]
 	)
 	geolocation? (
 		>=app-misc/geoclue-2.6.0:=
@@ -962,7 +934,7 @@ RDEPEND+="
 		>=media-libs/mesa-${MESA_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},egl(+),gles2(+),opengl]
 	)
 	gnome-keyring? (
-		>=app-crypt/libsecret-0.18.6:=[${MULTILIB_USEDEP}]
+		>=app-crypt/libsecret-${LIBSECRET_PV}:=[${MULTILIB_USEDEP}]
 	)
 	gstreamer? (
 		>=media-libs/gst-plugins-bad-${GSTREAMER_PV}:=[${MULTILIB_USEDEP}]
@@ -977,8 +949,8 @@ RDEPEND+="
 			>=media-plugins/gst-plugins-dash-${GSTREAMER_PV}:=[${MULTILIB_USEDEP}]
 		)
 		dav1d? (
-			>=media-plugins/gst-plugins-rs-0.6.0:=[${MULTILIB_USEDEP},dav1d]
-			>=media-libs/dav1d-9999:=[${MULTILIB_USEDEP},8bit]
+			>=media-plugins/gst-plugins-rs-${GSTREAMER_PV}:=[${MULTILIB_USEDEP},dav1d]
+			>=media-libs/dav1d-${DAV1D_PV}:=[${MULTILIB_USEDEP},8bit]
 		)
 		g722? (
 			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:*[${MULTILIB_USEDEP},ffmpeg]
@@ -1001,39 +973,39 @@ RDEPEND+="
 			virtual/vaapi:=[${MULTILIB_USEDEP},patent_status_nonfree=]
 		)
 		webvtt? (
-			>=media-plugins/gst-plugins-rs-0.6.0:=[${MULTILIB_USEDEP},closedcaption]
+			>=media-plugins/gst-plugins-rs-${GSTREAMER_PV}:=[${MULTILIB_USEDEP},closedcaption]
 		)
 	)
 	introspection? (
-		>=dev-libs/gobject-introspection-1.86.0:=[${PYTHON_SINGLE_USEDEP}]
-		|| (
-			$(gen_gobject_introspection_rdepend)
-		)
+		>=dev-libs/gobject-introspection-${GOBJECT_INTROSPECTION_PV}:=[${PYTHON_SINGLE_USEDEP}]
+		>=dev-libs/gobject-introspection-common-${GOBJECT_INTROSPECTION_PV}:=
 	)
 	journald? (
-		|| (
-			>=sys-apps/systemd-245.4:=[${MULTILIB_USEDEP}]
+		elogind? (
 			sys-auth/elogind:=
+		)
+		systemd? (
+			>=sys-apps/systemd-${SYSTEMD_PV}:=[${MULTILIB_USEDEP}]
 		)
 	)
 	jpegxl? (
-		>=media-libs/libjxl-9999:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
+		>=media-libs/libjxl-${LIBJXL_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 	)
 	libbacktrace? (
-		sys-libs/libbacktrace:=[${MULTILIB_USEDEP}]
+		>=sys-libs/libbacktrace-${LIBBACKTRACE_PV}:=[${MULTILIB_USEDEP}]
 	)
 	libhyphen? (
-		>=dev-libs/hyphen-2.8.8:=[${MULTILIB_USEDEP}]
+		>=dev-libs/hyphen-${HYPHEN_PV}:=[${MULTILIB_USEDEP}]
 	)
 	librice? (
 		>=net-libs/librice-0.4.0:=[${MULTILIB_USEDEP}]
 	)
 	libwebrtc? (
-		>=dev-libs/libevent-2.1.8:=[${MULTILIB_USEDEP}]
-		>=media-libs/alsa-lib-1.2.16.1:=[${MULTILIB_USEDEP}]
-		>=media-libs/libvpx-9999:=[${MULTILIB_USEDEP}]
-		>=media-libs/opus-9999:=[${MULTILIB_USEDEP}]
-		>=media-libs/openh264-2.6.0:=[${MULTILIB_USEDEP}]
+		>=dev-libs/libevent-${LIBEVENT_PV}:=[${MULTILIB_USEDEP}]
+		>=media-libs/alsa-lib-${ALSA_LIB_PV}:=[${MULTILIB_USEDEP}]
+		>=media-libs/libvpx-${LIBVPX_PV}:=[${MULTILIB_USEDEP}]
+		>=media-libs/opus-${OPUS_PV}:=[${MULTILIB_USEDEP}]
+		>=media-libs/openh264-${OPENH264_PV}:=[${MULTILIB_USEDEP}]
 	)
 	opengl? (
 		>=media-libs/mesa-${MESA_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},egl(+)]
@@ -1043,9 +1015,9 @@ RDEPEND+="
 		$(gen_depend_llvm)
 	)
 	seccomp? (
-		>=sys-apps/bubblewrap-0.3.1:=
+		>=sys-apps/bubblewrap-${BUBBLEWRAP_PV}:=
 		>=sys-apps/xdg-dbus-proxy-0.1.2:=
-		>=sys-libs/libseccomp-0.9.0:=[${MULTILIB_USEDEP}]
+		>=sys-libs/libseccomp-${LIBSECCOMP_PV}:=[${MULTILIB_USEDEP}]
 	)
 	speech-synthesis? (
 		>=app-accessibility/flite-2.2:=[${MULTILIB_USEDEP}]
@@ -1065,7 +1037,7 @@ RDEPEND+="
 		>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP},X?]
 	)
 	wayland? (
-		>=dev-libs/wayland-9999:=[${MULTILIB_USEDEP}]
+		>=dev-libs/wayland-${WAYLAND_PV}:=[${MULTILIB_USEDEP}]
 		>=dev-libs/wayland-protocols-1.15:=[${MULTILIB_USEDEP}]
 		>=media-libs/mesa-${MESA_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},egl(+)]
 	)
@@ -1076,13 +1048,10 @@ RDEPEND+="
 		>=media-libs/openxr-1.0.20:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	)
 	woff2? (
-		>=media-libs/woff2-1.0.2:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
+		>=media-libs/woff2-${WOFF2_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 	)
 	X? (
-		>=x11-libs/libX11-1.6.4:=[${MULTILIB_USEDEP}]
-	)
-	|| (
-		$(gen_glib_rdepend)
+		>=x11-libs/libX11-${LIBX11_PV}:=[${MULTILIB_USEDEP}]
 	)
 "
 # For ${OCDM_WV}, \
@@ -2419,6 +2388,7 @@ src_configure() {
 }
 
 _src_configure() {
+	chkl_check_many_timestamps
 	local total_ram=$(free | grep "Mem:" | sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ")
 	local total_ram_gib=$("${EPYTHON}" -c "print(round(${total_ram} / (1024*1024)))" )
 	local total_swap=$(free | grep "Swap:" | sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ")
@@ -3077,7 +3047,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 		'-fuse-ld=*'
 
 	cflags-hardened_append
-	chkl_check_many_timestamps
 
 	filter-flags "-fno-inline" # Verified to fix slowdown, slow scrolling, streaming issues
 
