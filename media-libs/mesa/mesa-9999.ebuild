@@ -52,6 +52,7 @@ CPU_FLAGS_X86=(
 CHKL_TIMESTAMPS=(
 	"app-arch/zstd-9999"
 	"dev-libs/expat-9999"
+	"media-libs/libdisplay-info-9999"
 	"media-libs/libva-9999"
 	"media-libs/vulkan-loader-9999"
 	"x11-libs/libdrm-9999"
@@ -261,7 +262,7 @@ RDEPEND="
 		>=media-libs/vulkan-loader-${VULKAN_LOADER_PV}:=[${MULTILIB_USEDEP}]
 	)
 	vulkan? (
-		media-libs/libdisplay-info:=[${MULTILIB_USEDEP}]
+		>=media-libs/libdisplay-info-${LIBDISPLAY_INFO_PV}:=[${MULTILIB_USEDEP}]
 		virtual/libudev:=
 	)
 	wayland? (

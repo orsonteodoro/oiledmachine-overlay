@@ -12,6 +12,7 @@ RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data"
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/wayland-9999"
+	"media-libs/libdisplay-info-9999"
 	"sys-apps/systemd-9999"
 	"x11-libs/cairo-9999"
 	"x11-libs/libxkbcommon-9999"
@@ -533,7 +534,7 @@ IUSE+=" systemd"
 RDEPEND+="
 	dev-libs/libinput:=
 	>=dev-libs/wayland-${WAYLAND_PV}:=
-	media-libs/libdisplay-info:=
+	>=media-libs/libdisplay-info-${LIBDISPLAY_INFO_PV}:=
 	media-libs/libglvnd:=
 	>=media-libs/mesa-${MESA_PV}:=
 	>=media-video/pipewire-${PIPEWIRE_PV}:=

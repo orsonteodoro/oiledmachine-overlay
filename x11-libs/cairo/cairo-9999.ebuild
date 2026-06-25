@@ -112,7 +112,7 @@ TEST_DEPEND="
 	>=app-text/ghostscript-gpl-${GHOSTSCRIPT_GPL_PV}
 	>=gnome-base/librsvg-${LIBRSVG_PV}
 	spectre? (
-		>=app-text/libspectre-0.2.12
+		>=app-text/libspectre-${LIBSPECTRE_PV}
 	)
 "
 DEPEND="
