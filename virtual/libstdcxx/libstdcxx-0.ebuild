@@ -58,6 +58,7 @@ REQUIRED_USE="
 			gcc_slot_12_5
 			gcc_slot_13_4
 			gcc_slot_14_3
+			gcc_slot_15_3
 		)
 	)
 	cxx_standard_cxx03? (
@@ -66,6 +67,7 @@ REQUIRED_USE="
 			gcc_slot_12_5
 			gcc_slot_13_4
 			gcc_slot_14_3
+			gcc_slot_15_3
 		)
 	)
 	cxx_standard_cxx11? (
@@ -74,6 +76,7 @@ REQUIRED_USE="
 			gcc_slot_12_5
 			gcc_slot_13_4
 			gcc_slot_14_3
+			gcc_slot_15_3
 		)
 	)
 	cxx_standard_cxx17? (
@@ -82,6 +85,7 @@ REQUIRED_USE="
 			gcc_slot_12_5
 			gcc_slot_13_4
 			gcc_slot_14_3
+			gcc_slot_15_3
 		)
 	)
 	cxx_standard_cxx20? (
