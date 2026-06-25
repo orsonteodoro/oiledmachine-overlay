@@ -7,17 +7,21 @@ CXX_STANDARD=23
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX23[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX23[@]}"
 )
 
 inherit libstdcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}"
 )
 
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
-inherit cmake libstdcxx-slot toolchain-funcs
+CHKL_TIMESTAMPS=(
+	"dev-libs/pugixml-9999"
+)
+
+inherit chkl cmake libstdcxx-slot secure-version toolchain-funcs
 
 DESCRIPTION="A Hyprland implementation of wayland-scanner, in and for C++"
 HOMEPAGE="https://github.com/hyprwm/hyprwayland-scanner/"
@@ -34,8 +38,7 @@ LICENSE="BSD"
 SLOT="0"
 
 RDEPEND="
-	>=dev-libs/pugixml-1.15[${LIBSTDCXX_USEDEP_LTS}]
-	dev-libs/pugixml:=
+	>=dev-libs/pugixml-${PUGIXML_PV}:=[${LIBSTDCXX_USEDEP_LTS}]
 "
 DEPEND="
 	${RDEPEND}
@@ -69,4 +72,9 @@ eerror
 	fi
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+}
+
+src_configure() {
+	chkl_check_many_timestamps
+	cmake_src_configure
 }
