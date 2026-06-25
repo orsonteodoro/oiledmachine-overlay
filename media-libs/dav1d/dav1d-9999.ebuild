@@ -50,9 +50,9 @@ src_unpack() {
 	if [[ "${PV}" == "9999" ]]; then
 		if in_iuse fallback-commit && use fallback-commit ; then
 			EGIT_COMMIT="${FALLBACK_COMMIT}"
-			git-r3_fetch
-			git-r3_checkout
 		fi
+		git-r3_fetch
+		git-r3_checkout
 	else
 		unpack ${A}
 	fi
