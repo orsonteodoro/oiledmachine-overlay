@@ -137,7 +137,8 @@ GCC_17_1="3.4.36"
 # Only the earliest $(ver_cut 1-2 ${GCC_X_Y}) bump need to be shown to reduce unnecessary rebuilds for libstdc++ compatibility.
 _ALL_GCC_COMPAT=(
 	"16_1"
-	"15_2" # Alias for 15_1, 15_3
+	"15_3" # Alias for 15_1, 15_2
+	"15_2"
 	"15_1"
 	"14_3" # Alias for 14_1, 14_2
 	"14_2"
@@ -246,9 +247,10 @@ eerror
 # @DESCRIPTION:
 # Request CC/CXX changes message
 _switch_gcc_to_continue_message2() {
-	local expected_slot="${1}"
-	local actual_slot="${2}"
-	local lang="${3}"
+	local expected_slot_raw="${1}"
+	local expected_slot="${2}"
+	local actual_slot="${3}"
+	local lang="${4}"
 eerror
 eerror "Detected C/CXX inconsistency between CC/CXX compiler and C++ standard library (libstdc++)."
 eerror
@@ -272,8 +274,9 @@ eerror
 eerror "Contents of /etc/portage/package.env:"
 eerror "${CATEGORY}/${PN} gcc-${expected_slot}.conf"
 eerror
-eerror
-eerror "Also you must have a consistent matching gcc_slot_* USE flag for ${CATEGORY}/${P}."
+eerror "You are requesting the gcc_slot_${expected_slot_raw} USE flag for"
+eerror "${CATEGORY}/${P}. You must ensure consistency between the USE flag and"
+eerror "the CC/CXX environment variables."
 eerror
 }
 
@@ -336,7 +339,17 @@ libstdcxx-slot_verify() {
 		if [[ ${GCC_COMPAT[@]} =~ (^|" ")"gcc_slot_${x}"($|" ") ]] ; then
 			local expected_cc_ver="${x/_/.}"
 			if tc-is-gcc && ver_test "${actual_cc_ver}" "-ne" "${expected_cc_ver}" && in_iuse "gcc_slot_${x}" && use "gcc_slot_${x}" ; then
-				_switch_gcc_to_continue_message2 "${x%_*}" "${actual_cc_ver%%.*}" "CC"
+eerror
+eerror "Detected inconsistency between actual_cc_ver and expected_cc_ver"
+eerror
+eerror "actual_cc_ver:  ${actual_cc_ver}"
+eerror "expected_cc_ver:  ${expected_cc_ver}"
+eerror
+eerror "Compiler version:"
+${CC}  --version
+eerror
+eerror
+				_switch_gcc_to_continue_message2 "${x}" "${x%_*}" "${actual_cc_ver%%.*}" "CC"
 				die
 			fi
 		fi
@@ -346,7 +359,16 @@ libstdcxx-slot_verify() {
 		if [[ ${GCC_COMPAT[@]} =~ (^|" ")"gcc_slot_${x}"($|" ") ]] ; then
 			local expected_cxx_ver="${x/_/.}"
 			if tc-is-gcc && ver_test "${actual_cxx_ver}" "-ne" "${expected_cxx_ver}" && in_iuse "gcc_slot_${x}" && use "gcc_slot_${x}" ; then
-				_switch_gcc_to_continue_message2 "${x%_*}" "${actual_cxx_ver%%.*}" "CXX"
+eerror
+eerror "Detected inconsistency between actual_cc_ver and expected_cc_ver"
+eerror
+eerror "actual_cxx_ver:  ${actual_cxx_ver}"
+eerror "expected_cxx_ver:  ${expected_cxx_ver}"
+eerror
+eerror "Compiler version:"
+${CXX}  --version
+eerror
+				_switch_gcc_to_continue_message2 "${x}" "${x%_*}" "${actual_cxx_ver%%.*}" "CXX"
 				die
 			fi
 		fi
