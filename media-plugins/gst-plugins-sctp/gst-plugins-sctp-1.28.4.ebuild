@@ -14,11 +14,6 @@ DESCRIPTION="SCTP plugins for GStreamer"
 IUSE="
 ebuild_revision_22
 "
-RDEPEND="
-"
-DEPEND="
-	${RDEPEND}
-"
 
 multilib_src_configure() {
 	cflags-hardened_append
