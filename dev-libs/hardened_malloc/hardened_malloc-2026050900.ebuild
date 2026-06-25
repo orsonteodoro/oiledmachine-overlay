@@ -5,6 +5,7 @@
 EAPI=8
 
 CXX_STANDARD=17
+# -std=c17
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
