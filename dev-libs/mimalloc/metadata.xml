@@ -12,7 +12,28 @@
     <name>Sam James</name>
   </maintainer>
   <use>
-    <flag name="guarded">Enable guarded mode</flag>
+    <flag name="performance-critical">
+      - ASLR
+      - No guard page mitigation
+    </flag>
+    <flag name="bug-testing">
+      - ASLR
+      - Little runtime penalty so fast during testing in your own projects.
+      - Sample based guard pages to catch heap based buffer overflows in your own projects.
+    </flag>
+    <flag name="balanced">
+      - ASLR
+      - Guard pages for metadata only
+      - UAF mitigation
+      - Heap corruption mitigation
+    </flag>
+    <flag name="security-critical">
+      - ASLR
+      - Every page guarded
+      - Guard pages for metadata also
+      - UAF mitigation
+      - Heap corruption mitigation
+    </flag>
   </use>
   <upstream>
     <remote-id type="github">microsoft/mimalloc</remote-id>
