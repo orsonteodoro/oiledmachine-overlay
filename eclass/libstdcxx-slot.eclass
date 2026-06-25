@@ -126,6 +126,7 @@ GCC_14_2="3.4.33"
 GCC_14_3="3.4.33"
 GCC_15_1="3.4.34"
 GCC_15_2="3.4.34"
+GCC_15_3="3.4.34"
 GCC_16_1="3.4.35"
 
 # @ECLASS_VARIABLE: _ALL_GCC_COMPAT
@@ -134,6 +135,7 @@ GCC_16_1="3.4.35"
 # Live is not supported
 _ALL_GCC_COMPAT=(
 	"16_1"
+	"15_3"
 	"15_2"
 	"15_1"
 	"14_3"
