@@ -26,18 +26,32 @@ CHKL_TIMESTAMPS=(
 	# See https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/vf.eclass for a list of vulnerabilities.
 	# Currently, the packages that were triaged were the most widely used.
 	# Last security check 20260614
-	"dev-libs/wayland-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/lcms-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libplacebo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libpulse-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libva-9999"			# Bumped live/*DEPENDS to latest hardened
-	"media-video/ffmpeg-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-video/ffmpeg-9999m"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"x11-libs/libdrm-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"app-arch/libarchive-9999"
+	"dev-libs/libcdio-9999"
+	"dev-libs/libcdio-paranoia-9999"
+	"dev-lang/mujs-9999"
+	"dev-libs/wayland-9999"
+	"media-libs/lcms-9999"
+	"media-libs/libdisplay-info-9999"
+	"media-libs/libjpeg-turbo-9999"
+	"media-libs/libplacebo-9999"
+	"media-libs/libpulse-9999"
+	"media-libs/libsdl2-9999"
+	"media-libs/libva-9999"
+	"media-libs/mesa-9999"
+	"media-libs/subrandr-9999"
+	"media-libs/vulkan-loader-9999"
+	"media-sound/sndio-9999"
+	"media-video/ffmpeg-9999"
+	"media-video/ffmpeg-9999m"
+	"media-video/pipewire-9999"
+	"net-misc/curl-9999"
+	"x11-libs/libdrm-9999"
+	"x11-libs/libxkbcommon-9999"
+	"x11-libs/libX11-9999"
 )
 
-inherit cflags-hardened chkl flag-o-matic lua-single meson optfeature pax-utils python-single-r1 xdg
+inherit cflags-hardened chkl flag-o-matic lua-single meson optfeature pax-utils python-single-r1 secure-version xdg
 
 if [[ ${PV} == 9999 ]]; then
 	EGIT_REPO_URI="https://github.com/mpv-player/mpv.git"
@@ -99,99 +113,153 @@ REQUIRED_USE="
 RESTRICT="!test? ( test )"
 # oiledmachine-overlay:  Forced FFmpeg 8.1 for mitigation
 PATENT_STATUS_DEPEND="
-	virtual/patent-status[patent_status_nonfree=]
+	virtual/patent-status:*[patent_status_nonfree=]
 	!patent_status_nonfree? (
 		!media-libs/libva
 		!x11-libs/libvdpau
-		media-video/ffmpeg:=
+		media-video/ffmpeg:=[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
 		|| (
 			=media-video/ffmpeg-9999m[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
 			=media-video/ffmpeg-9999[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
+
+			=media-video/ffmpeg-${FFMPEG_8_1_PV}m[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
+			=media-video/ffmpeg-${FFMPEG_8_1_PV}[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
+
+			=media-video/ffmpeg-${FFMPEG_8_0_PV}m[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
+			=media-video/ffmpeg-${FFMPEG_8_0_PV}[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
+
+			=media-video/ffmpeg-${FFMPEG_7_1_PV}m[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
+			=media-video/ffmpeg-${FFMPEG_7_1_PV}[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
+
+			=media-video/ffmpeg-${FFMPEG_6_1_PV}m[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
+			=media-video/ffmpeg-${FFMPEG_6_1_PV}[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
+
+			=media-video/ffmpeg-${FFMPEG_5_1_PV}m[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
+			=media-video/ffmpeg-${FFMPEG_5_1_PV}[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
+
+			=media-video/ffmpeg-${FFMPEG_4_4_PV}m[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
+			=media-video/ffmpeg-${FFMPEG_4_4_PV}[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
 		)
 	)
 	patent_status_nonfree? (
-		media-video/ffmpeg:=
+		media-video/ffmpeg:=[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
 		|| (
 			=media-video/ffmpeg-9999m[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
 			=media-video/ffmpeg-9999[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
+
+			~media-video/ffmpeg-${FFMPEG_8_1_PV}m[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
+			~media-video/ffmpeg-${FFMPEG_8_1_PV}9999[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
+
+			~media-video/ffmpeg-${FFMPEG_8_0_PV}m[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
+			~media-video/ffmpeg-${FFMPEG_8_0_PV}9999[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
+
+			~media-video/ffmpeg-${FFMPEG_7_1_PV}m[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
+			~media-video/ffmpeg-${FFMPEG_7_1_PV}9999[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
+
+			~media-video/ffmpeg-${FFMPEG_6_1_PV}m[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
+			~media-video/ffmpeg-${FFMPEG_6_1_PV}9999[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
+
+			~media-video/ffmpeg-${FFMPEG_5_1_PV}m[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
+			~media-video/ffmpeg-${FFMPEG_5_1_PV}9999[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
+
+			~media-video/ffmpeg-${FFMPEG_4_4_PV}m[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
+			~media-video/ffmpeg-${FFMPEG_4_4_PV}9999[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
 		)
 	)
 "
 COMMON_DEPEND="
 	${PATENT_STATUS_DEPEND}
-	media-libs/libass:=[fontconfig]
-	>=media-libs/libplacebo-9999:=[vulkan?]
-	>=media-video/ffmpeg-9999:=[encode(+),threads(+),vaapi?,vdpau?]
+	>=media-libs/libass-${LIBASS_PV}:=[fontconfig]
+	>=media-libs/libplacebo-${LIBPLACEBO_PV}:=[vulkan?]
+	media-video/ffmpeg:=[encode(+),threads(+),vaapi?,vdpau?]
 	X? (
-		x11-libs/libX11:=
+		>=x11-libs/libX11-${LIBX11_PV}:=
 		x11-libs/libXScrnSaver:=
-		x11-libs/libXext:=
-		x11-libs/libXfixes:=
-		x11-libs/libXpresent:=
-		x11-libs/libXrandr:=
-		xv? ( x11-libs/libXv:= )
+		>=x11-libs/libXext-${LIBXEXT_PV}:=
+		>=x11-libs/libXfixes-${LIBXFIXES_PV}:=
+		>=x11-libs/libXpresent-${LIBXPRESENT_PV}:=
+		>=x11-libs/libXrandr-${LIBXRANDR_PV}:=
+		xv? ( >=x11-libs/libXv-${LIBXV_PV}:= )
 	)
-	alsa? ( >=media-libs/alsa-lib-1.2.16.1:= )
-	archive? ( app-arch/libarchive:= )
-	bluray? ( media-libs/libbluray:= )
+	alsa? ( >=media-libs/alsa-lib-${ALSA_LIB_PV}:= )
+	archive? ( >=app-arch/libarchive-${LIBARCHIVE_PV}:= )
+	bluray? ( >=media-libs/libbluray-${LIBBLURAY_PV}:= )
 	cdda? (
-		dev-libs/libcdio-paranoia:=
-		dev-libs/libcdio:=
+		>=dev-libs/libcdio-paranoia-${LIBCDIO_PARANOIA_PV}:=
+		>=dev-libs/libcdio-${LIBCDIO_PV}:=
 	)
-	curl? ( net-misc/curl:= )
+	curl? ( >=net-misc/curl-${CURL_PV}:= )
 	drm? (
-		media-libs/libdisplay-info:=
-		>=x11-libs/libdrm-2.4.132:=
-		egl? ( media-libs/mesa:=[gbm(+)] )
+		>=media-libs/libdisplay-info-${LIBDISPLAY_INFO_PV}:=
+		>=x11-libs/libdrm-${LIBDRM_PV}:=
+		egl? ( >=media-libs/mesa-${MESA_PV}:=[gbm(+)] )
 	)
-	dvd? ( media-libs/libdvdnav:= )
+	dvd? ( >=media-libs/libdvdnav-${LIBDVDNAV_PV}:= )
 	egl? (
 		media-libs/libglvnd:=
-		media-libs/libplacebo:=[opengl]
+		>=media-libs/libplacebo-${LIBPLACEBO_PV}:=[opengl]
 	)
-	gamepad? ( media-libs/libsdl2:=[joystick] )
+	gamepad? ( >=media-libs/libsdl2-${LIBSDL2_PV}:=[joystick] )
 	iconv? (
 		virtual/libiconv:*
-		uchardet? ( app-i18n/uchardet:= )
+		uchardet? ( >=app-i18n/uchardet-${UCHARDET_PV}:= )
 	)
 	jack? ( virtual/jack:* )
-	javascript? ( dev-lang/mujs:= )
-	jpeg? ( >=media-libs/libjpeg-turbo-9999:= )
-	lcms? ( >=media-libs/lcms-9999:= )
-	libcaca? ( media-libs/libcaca:= )
+	javascript? ( >=dev-lang/mujs-${MUJS_PV}:= )
+	jpeg? ( >=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:= )
+	lcms? ( >=media-libs/lcms-${LCMS_PV}:= )
+	libcaca? ( >=media-libs/libcaca-${LIBCACA_PV}:= )
 	lua? ( ${LUA_DEPS} )
 	network? (
 		elibc_glibc? (
-			sys-libs/glibc:=[nscd]
+			>=sys-libs/glibc-${GLIBC_PV}:=[nscd]
 		)
 	)
-	openal? ( media-libs/openal:= )
-	pipewire? ( >=media-video/pipewire-9999:= )
-	pulseaudio? ( >=media-libs/libpulse-9999:= )
-	rubberband? ( media-libs/rubberband:= )
-	sdl? ( media-libs/libsdl2:=[sound,threads(+),video] )
-	sixel? ( media-libs/libsixel:= )
-	sndio? ( media-sound/sndio:= )
-	soc? ( >=media-video/ffmpeg-8.1:=[soc(-)] )
-	subrandr? ( >=media-libs/subrandr-1.1.0:= )
+	openal? ( >=media-libs/openal-${OPENAL_PV}:= )
+	pipewire? ( >=media-video/pipewire-${PIPEWIRE_PV}:= )
+	pulseaudio? ( >=media-libs/libpulse-${LIBPULSE_PV}:= )
+	rubberband? ( >=media-libs/rubberband-${RUBBERBAND_PV}:= )
+	sdl? ( >=media-libs/libsdl2-${LIBSDL2_PV}:=[sound,threads(+),video] )
+	sixel? ( >=media-libs/libsixel-${LIBSIXEL_PV}:= )
+	sndio? ( >=media-sound/sndio-${SNDIO_PV}:= )
+	soc? (
+		media-video/ffmpeg:=[soc(-)]
+		|| (
+			=media-video/ffmpeg-9999[soc(-)]
+			=media-video/ffmpeg-9999m[soc(-)]
+
+			~media-video/ffmpeg-${FFMPEG_8_1_PV}[soc(-)]
+			~media-video/ffmpeg-${FFMPEG_8_1_PV}m[soc(-)]
+
+			~media-video/ffmpeg-${FFMPEG_8_0_PV}[soc(-)]
+			~media-video/ffmpeg-${FFMPEG_8_0_PV}m[soc(-)]
+
+			~media-video/ffmpeg-${FFMPEG_7_1_PV}[soc(-)]
+			~media-video/ffmpeg-${FFMPEG_7_1_PV}m[soc(-)]
+
+			~media-video/ffmpeg-${FFMPEG_6_1_PV}[soc(-)]
+			~media-video/ffmpeg-${FFMPEG_6_1_PV}m[soc(-)]
+		)
+	)
+	subrandr? ( >=media-libs/subrandr-${SUBRANDR_PV}:= )
 	vaapi? (
-		>=media-libs/libva-9999:=[X?,drm(+)?,wayland?]
+		>=media-libs/libva-${LIBVA_PV}:=[X?,drm(+)?,wayland?]
 		virtual/vaapi:*[patent_status_nonfree=]
 	)
 	vapoursynth? (
-		>=media-libs/vapoursynth-56:=
+		>=media-libs/vapoursynth-${VAPORSYNTH_PV}:=
 	)
 	vdpau? (
 		media-libs/libglvnd:=[X]
 		x11-libs/libvdpau:=
 	)
-	vulkan? ( media-libs/vulkan-loader:=[X?,wayland?] )
+	vulkan? ( >=media-libs/vulkan-loader-${VULKAN_LOADER_PV}:=[X?,wayland?] )
 	wayland? (
-		>=dev-libs/wayland-9999:=
-		x11-libs/libxkbcommon:=
+		>=dev-libs/wayland-${WAYLAND_PV}:=
+		>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=
 	)
-	zimg? ( media-libs/zimg:= )
-	zlib? ( >=virtual/zlib-1.3.2:= )
+	zimg? ( >=media-libs/zimg-${ZIMG_PV}:= )
+	zlib? ( >=virtual/zlib-${ZLIB_PV}:= )
 "
 RDEPEND="
 	${COMMON_DEPEND}
@@ -204,7 +272,7 @@ DEPEND="
 	dvb? ( sys-kernel/linux-headers:= )
 	nvenc? ( media-libs/nv-codec-headers:= )
 	vaapi? (
-		egl? ( >=x11-libs/libdrm-2.4.132:= )
+		egl? ( >=x11-libs/libdrm-${LIBDRM_PV}:= )
 	)
 	vulkan? (
 		dev-util/vulkan-headers:=
