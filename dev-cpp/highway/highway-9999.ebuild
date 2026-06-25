@@ -74,8 +74,13 @@ LLVM_COMPAT=(
 inherit cflags-hardened check-compiler-switch cmake-multilib flag-o-matic libcxx-slot libstdcxx-slot toolchain-funcs
 
 if [[ "${PV}" == *"9999"* ]]; then
-	inherit git-r3
+	FALLBACK_COMMIT="9c291a8bb4e4704880de6dadf1a24d8aa6f0eb36"
+	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/google/highway.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
 else
 	SRC_URI="
 https://github.com/google/highway/archive/refs/tags/${PV}.tar.gz
@@ -235,6 +240,18 @@ pkg_setup() {
 	check-compiler-switch_start
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+}
+
+src_unpack() {
+	if [[ "${PV}" == *"9999"* ]]; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
 }
 
 _configure_cpu_flags_arm() {
@@ -421,7 +438,7 @@ _configure_cpu_flags_x86() {
 		)
 	fi
 
-	use cpu_flags_x86_avx10_2 || append-flags -mno-avx10.2
+	use cpu_flags_x86_avx10_2 || append-flags $(test-flags-CXX "-mno-avx10.2")
 	if ! use cpu_flags_x86_avx10_2 ; then
 		disabled_cpu_flags+=(
 			"HWY_AVX10_2"
