@@ -7,7 +7,7 @@ EAPI=8
 
 RUST_MAX_VER="1.93.1"
 RUST_MIN_VER="1.93.1"
-RUSTFLAGS_HARDENED_USE_CASES="security-critical untrusted-data sensitive-data"
+RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 
 CRATES="
 addr2line-0.25.1
