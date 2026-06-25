@@ -1,9 +1,7 @@
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
-
-# U 22.04
 
 # Breaks during linking dev-util/hyprwayland-scanner
 #CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
@@ -23,50 +21,47 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-inherit cflags-hardened check-compiler-switch cmake-multilib flag-o-matic
-inherit libcxx-slot libstdcxx-slot
+inherit cflags-hardened check-compiler-switch cmake libcxx-slot libstdcxx-slot
 
-KEYWORDS="
-~amd64 ~arm64 ~x86
-"
-S="${WORKDIR}/${PN}-$(ver_cut 1-2 ${PV})"
-# The release tarball doesn't have testing
-SRC_URI="
-https://github.com/zeux/pugixml/archive/refs/tags/v1.15.tar.gz
-	-> ${P}.tar.gz
-"
+if [[ ${PV} == *9999 ]] ; then
+	FALLBACK_COMMIT="27b68329de32cf9c601ca8eb6c588fd639960c40"
+	EGIT_BRANCH="master"
+	EGIT_REPO_URI="https://github.com/zeux/pugixml.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	# Use non-release tarball for tests
+	# TODO: ask upstream to include tests in release tarballs?
+	SRC_URI="https://github.com/zeux/${PN}/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz"
+	KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~ppc ~ppc64 ~riscv ~sparc ~x86"
+fi
 
 DESCRIPTION="Light-weight, simple, and fast XML parser for C++ with XPath support"
-HOMEPAGE="
-	https://pugixml.org/
-	https://github.com/zeux/pugixml/
-"
+HOMEPAGE="https://pugixml.org/ https://github.com/zeux/pugixml"
+
 LICENSE="MIT"
-IUSE+="
-doc static-libs test
-ebuild_revision_38
-"
-SLOT="0/$(ver_cut 1-2 ${PV})"
-DEPEND+="
-	virtual/libc
-"
-RDEPEND+="
-	${DEPEND}
-"
-BDEPEND+="
-	|| (
-		>=llvm-core/clang-14.0
-		>=sys-devel/gcc-11.2.0
-	)
-	>=dev-build/cmake-3.5
-"
-RESTRICT="mirror"
-DOCS=( "docs" "readme.txt" )
+SLOT="0"
+IUSE="test"
+RESTRICT="!test? ( test )"
 
 pkg_setup() {
 	check-compiler-switch_start
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+}
+
+src_unpack() {
+	if [[ ${PV} == *9999 ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
 }
 
 src_configure() {
@@ -78,12 +73,11 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 
 	cflags-hardened_append
+
 	local mycmakeargs=(
-		-DBUILD_SHARED_LIBS=ON
-		-DPUGIXML_BUILD_SHARED_AND_STATIC_LIBS=$(usex static-libs)
-		-DPUGIXML_BUILD_TESTS=$(usex test)
+		-DPUGIXML_BUILD_TESTS=$(usex test ON OFF)
 	)
-	cmake-multilib_src_configure
+	cmake_src_configure
 }
 
 src_install() {
