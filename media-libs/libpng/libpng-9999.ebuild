@@ -22,13 +22,13 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	fi
 	inherit git-r3
 else
-	SRC_URI="
+	SRC_URI+="
 https://downloads.sourceforge.net/${PN}/${P}.tar.xz
 	"
 fi
 APNG_REPO=libpng-apng # sometimes libpng-apng is more up to date
 APNG_VERSION="1.6.58" # See https://sourceforge.net/projects/libpng-apng/files/libpng16/
-SRC_URI="
+SRC_URI+="
 	apng? (
 https://downloads.sourceforge.net/${APNG_REPO}/${PN}$(ver_rs 1-2 '' $(ver_cut 1-2 ${APNG_VERSION}))/${PV}/${PN}-${APNG_VERSION}-apng.patch.gz -> ${PN}-${APNG_VERSION}-${APNG_REPO}-apng.patch.gz
 https://downloads.sourceforge.net/${APNG_REPO}/${PN}$(ver_rs 1-2 '' $(ver_cut 1-2 ${APNG_VERSION}))/${PN}-${APNG_VERSION}-apng.patch.gz -> ${PN}-${APNG_VERSION}-${APNG_REPO}-apng.patch.gz
@@ -69,7 +69,9 @@ src_unpack() {
 		fi
 		git-r3_fetch
 		git-r3_checkout
-		unpack ${A}
+		if [[ -n "${A}" ]] ; then
+			unpack ${A}
+		fi
 	else
 		unpack ${A}
 	fi
