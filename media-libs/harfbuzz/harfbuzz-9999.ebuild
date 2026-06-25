@@ -3,15 +3,15 @@
 
 EAPI=8
 
-# This ebuild used AI inference for help.
-# This ebuild uses a patches that uses AI generated code.
-# This ebuild contains AI generated code.
+# This ebuild fork used AI inference for help.
+# This ebuild fork uses a patches that uses AI generated code.
+# This ebuild fork contains AI generated code.
 
 CXX_STANDARD=17
 CFLAGS_HARDENED_LANGS="c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO NPD"
-EXPECTED_CARGO_HASH="1d3ee783a0a481ccfaecee85bd5d8ca8ed73e0896fd9959853499b0b2eebcec9f534a4ea4b58b2f0380b6e7990212b55239cc45fadfbc176feee27e42c5a2b8f"
+EXPECTED_CARGO_HASH="3cab8b6daf33cceed328b4efd7bea3fd4a4e26bb940532b13ce33a522a1dadc80bb2d85c0e61c4cd178ccb777ac26dd492b2cc9b01cec2f700d04de9e5a118e5"
 PYTHON_COMPAT=( python3_{10..14} )
 RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO NPD"
@@ -40,18 +40,19 @@ CRATES_DISABLED="
 harfbuzz_rust-0.0.0
 "
 
-# From "./convert-cargo-lock.sh 14.2.1"
+# From "./convert-cargo-lock.sh 9999"
 CRATES="
 bitflags-2.13.0
 bytemuck-1.25.0
 bytemuck_derive-1.10.2
 font-types-0.11.3
 font-types-0.12.0
-harfrust-0.8.4
+harfrust-0.10.0
+once_cell-1.21.4
 proc-macro2-1.0.106
-quote-1.0.45
+quote-1.0.46
 read-fonts-0.39.2
-read-fonts-0.40.1
+read-fonts-0.40.2
 skrifa-0.43.2
 smallvec-1.15.2
 syn-2.0.118
@@ -75,7 +76,7 @@ DESCRIPTION="An OpenType text shaping engine"
 HOMEPAGE="https://harfbuzz.github.io/"
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="ce1228bf5a337ebce438ab6658f13289688dd229"
+	FALLBACK_COMMIT="f2210d5787230f542a1b2035322134b0b686c0ae"
 	EGIT_REPO_URI="https://github.com/harfbuzz/harfbuzz.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
@@ -108,13 +109,14 @@ LICENSE="
 # 0.9.18 introduced the harfbuzz-icu split; bug #472416
 # 3.0.0 dropped some unstable APIs; bug #813705
 # 6.0.0 changed libharfbuzz-subset.so ABI
-SLOT="0/6.0.0"
+ABI_VERSION="6"
+SLOT="0/${ABI_VERSION}.0.0"
 
 IUSE+="
 -benchmark +cairo +chafa debug doc -experimental -fatlto -fontations +glib +gpu
 +graphite -harfrust +icu +kbts +png +raster +ragel +subset -system-icu -system-ragel
 +introspection test -thinlto +truetype +utilities +vector +zlib
-ebuild_revision_1
+ebuild_revision_2
 "
 RESTRICT="
 	!test? (
@@ -309,16 +311,26 @@ src_unpack() {
 		git-r3_fetch
 		git-r3_checkout
 
+#die
 		local actual_cargo_hash=$(sha512sum "${S}/src/rust/Cargo.toml" | cut -f 1 -d " ")
 		local expected_cargo_hash="${EXPECTED_CARGO_HASH}"
 		if [[ "${actual_cargo_hash}" != "${expected_cargo_hash}" ]] ; then
 eerror "QA:  Update cargo crates"
-eerror "QA:  Expected cargo hash:  ${actual_cargo_hash}"
-eerror "QA:  Actual cargo hash:  ${expected_cargo_hash}"
+eerror "QA:  Expected cargo hash:  ${expected_cargo_hash}"
+eerror "QA:  Actual cargo hash:  ${actual_cargo_hash}"
 			die
 		fi
 	else
 		unpack ${A}
+	fi
+
+	local actual_abi_version=$(grep -r -e "hb_version_int" "${S}/meson.build" | head -n 1 | cut -f 3 -d " " | cut -c 1)
+	local expected_abi_version="${ABI_VERSION}"
+	if ver_test "${actual_abi_version}" "-ne" "${expected_abi_version}" ; then
+eerror "QA:  Update the ABI_VERSION"
+eerror "QA:  Actual ABI_VERSION:  ${actual_abi_version}"
+eerror "QA:  Expected ABI_VERSION:  ${expected_abi_version}"
+		die
 	fi
 
 	cargo_src_unpack
