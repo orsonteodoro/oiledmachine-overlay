@@ -4,13 +4,14 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data"
+
 CHKL_TIMESTAMPS=(
 	"dev-libs/libffi-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
 )
 
-inherit cflags-hardened chkl meson-multilib
+inherit cflags-hardened chkl secure-version meson-multilib
 
-if [[ ${PV} = *9999* ]]; then
+if [[ "${PV}" =~ "9999" ]]; then
 	FALLBACK_COMMIT="165504a90edd7d6e51dd42d11f9dd0e8c9384609"
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/wayland/wayland.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -41,7 +42,7 @@ BDEPEND="
 	)
 "
 DEPEND="
-	>=dev-libs/libffi-9999:=[${MULTILIB_USEDEP}]
+	>=dev-libs/libffi-${LIBFFI_PV}:=[${MULTILIB_USEDEP}]
 "
 RDEPEND="
 	${DEPEND}
@@ -49,20 +50,20 @@ RDEPEND="
 "
 
 src_unpack() {
-	if [[ ${PV} = *9999* ]]; then
+	if [[ "${PV}" =~ "9999" ]]; then
 		if in_iuse fallback-commit && use fallback-commit ; then
 			EGIT_COMMIT="${FALLBACK_COMMIT}"
-			git-r3_fetch
-			git-r3_checkout
 		fi
+		git-r3_fetch
+		git-r3_checkout
 	else
 		unpack ${A}
 	fi
 }
 
 multilib_src_configure() {
-	cflags-hardened_append
 	chkl_check_many_timestamps
+	cflags-hardened_append
 	local emesonargs=(
 		$(meson_native_use_bool doc documentation)
 		$(meson_native_true dtd_validation)
