@@ -17,25 +17,47 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-inherit cflags-hardened cmake-multilib gnome2-utils libcxx-slot libstdcxx-slot
+CHKL_TIMESTAMPS=(
+	"app-arch/brotli-9999"
+	"dev-cpp/highway-9999"
+	"dev-libs/glib-2.89.9999"
+	"media-libs/lcms-9999"
+	"media-libs/libjpeg-turbo-9999"
+	"media-libs/libpng-9999"
+	"media-libs/giflib-9999"
+	"media-libs/openexr-9999"
+)
 
-# This changes frequently.  Please check the testdata submodule when bumping.
-TESTDATA_COMMIT="ff8d743aaba05b3014f17e5475e576242fa979fc"
+inherit cflags-hardened chkl cmake-multilib gnome2-utils libcxx-slot libstdcxx-slot secure-version
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="455bed37c28423257a0082788a05eb912c03d5f1"
+	EGIT_COMMIT="main"
+	EGIT_FALLBACK_URI="https://github.com/libjxl/libjxl.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ppc64 ~riscv ~sparc x86"
+	# This changes frequently.  Please check the testdata submodule when bumping.
+	TESTDATA_COMMIT="ff8d743aaba05b3014f17e5475e576242fa979fc"
+	SRC_URI="
+https://github.com/libjxl/libjxl/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+	test? (
+https://github.com/libjxl/testdata/archive/${TESTDATA_COMMIT}.tar.gz
+	-> ${PN}-testdata-${TESTDATA_COMMIT}.tar.gz
+	)
+	"
+fi
+
 DESCRIPTION="JPEG XL image format reference implementation"
 HOMEPAGE="https://github.com/libjxl/libjxl/"
-SRC_URI="
-	https://github.com/libjxl/libjxl/archive/refs/tags/v${PV}.tar.gz
-		-> ${P}.tar.gz
-	test? (
-		https://github.com/libjxl/testdata/archive/${TESTDATA_COMMIT}.tar.gz
-			-> ${PN}-testdata-${TESTDATA_COMMIT}.tar.gz
-	)
-"
 
 LICENSE="BSD"
-SLOT="0/$(ver_cut 1-2)"
-KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ppc64 ~riscv ~sparc x86"
-IUSE="
+SLOT="0/"$(ver_cut "1-2" "${PV}")
+IUSE+="
 +gdk-pixbuf gif jpeg openexr +png test
 ebuild_revision_10
 "
@@ -43,32 +65,28 @@ REQUIRED_USE="test? ( png )"
 RESTRICT="!test? ( test )"
 
 DEPEND="
-	app-arch/brotli:=[${MULTILIB_USEDEP}]
-	>=dev-cpp/highway-1.0.7[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
-	dev-cpp/highway:=
-	>=media-libs/lcms-2.13:2[${MULTILIB_USEDEP}]
+	>=app-arch/brotli-${BROTLI_PV}:=[${MULTILIB_USEDEP}]
+	>=dev-cpp/highway-${HIGHWAY_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	>=media-libs/lcms-${LCMS_PV}:2[${MULTILIB_USEDEP}]
 	gdk-pixbuf? (
-		dev-libs/glib:2
-		x11-libs/gdk-pixbuf:2
+		>=dev-libs/glib-${GLIB_PV}:=
+		>=x11-libs/gdk-pixbuf-${GDK_PIXBUF_PV}:=
 	)
-	gif? ( media-libs/giflib:=[${MULTILIB_USEDEP}] )
-	jpeg? ( media-libs/libjpeg-turbo:=[${MULTILIB_USEDEP}] )
+	gif? ( >=media-libs/giflib-${GIFLIB_PV}:=[${MULTILIB_USEDEP}] )
+	jpeg? ( >=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:=[${MULTILIB_USEDEP}] )
 	openexr? (
-		media-libs/openexr[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		media-libs/openexr:=
+		>=media-libs/openexr-${OPENEXR_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
-	png? ( media-libs/libpng:=[${MULTILIB_USEDEP}] )
+	png? ( >=media-libs/libpng-${LIBPNG_PV}:=[${MULTILIB_USEDEP}] )
 "
 RDEPEND="
 	${DEPEND}
-	>=x11-misc/shared-mime-info-2.2
+	>=x11-misc/shared-mime-info-2.2:=
 "
 DEPEND+="
 	test? (
-		dev-cpp/gtest[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},${MULTILIB_USEDEP}]
-		dev-cpp/gtest:=
-		>=dev-cpp/highway-1.0.7[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},${MULTILIB_USEDEP},test]
-		dev-cpp/highway:=
+		dev-cpp/gtest:=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},${MULTILIB_USEDEP}]
+		>=dev-cpp/highway-${HIGHWAY_PV}:=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},${MULTILIB_USEDEP},test]
 	)
 "
 BDEPEND="
@@ -80,7 +98,20 @@ pkg_setup() {
 	libstdcxx-slot_verify
 }
 
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+}
+
 multilib_src_configure() {
+	chkl_check_many_timestamps
 	cflags-hardened_append
 	local mycmakeargs=(
 		-DJPEGXL_ENABLE_BENCHMARK=OFF
