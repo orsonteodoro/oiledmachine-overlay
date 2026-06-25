@@ -7,20 +7,42 @@ EAPI=8
 # dev-perl/Alien-caca needs to be patched/bump if vulnerabilities are fixed for
 # same version as this one.
 
+if ! [[ "${PV}" =~ "9999" ]] ; then
+	MY_PV="0.99.beta20"
+	MY_P="${PN}-${MY_PV}"
+fi
+
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO HO"
-EGIT_COMMIT="f42aa68fc798db63b7b2a789ae8cf5b90b57b752"
 JAVA_SLOT="1.8"
-PYTHON_COMPAT=( "python3_"{8..11} )
+PYTHON_COMPAT=( "python3_"{10..14} )
 
-inherit autotools cflags-hardened check-compiler-switch flag-o-matic mono-env java-pkg-opt-2 multilib-minimal
-inherit python-r1 virtualx
+CHKL_TIMESTAMPS=(
+	"x11-libs/libX11-9999"
+)
 
-# Live/snapshots ebuilds do not get KEYWORDed
-S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
-SRC_URI="
-https://github.com/cacalabs/libcaca/archive/${EGIT_COMMIT}.tar.gz
+inherit autotools cflags-hardened check-compiler-switch chkl flag-o-matic
+inherit mono-env java-pkg-opt-2 multilib-minimal python-r1 secure-version
+inherit virtualx
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="7c8e3338a1bda8a34297d16ac546c43548e4864d"
+	EGIT_BRANCH="main"
+	EGIT_REPO_URI="https://github.com/cacalabs/libcaca.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	SRC_URI="" # To prevent the mono-env eclass from downloading.
+	inherit git-r3
+else
+	S="${WORKDIR}/${P}"
+	SRC_URI+="
+https://github.com/cacalabs/libcaca/archive/refs/tags/v${MY_PV}.tar.gz
+https://github.com/cacalabs/libcaca/archive/${MY_P}.tar.gz
 	-> ${P}.tar.gz
+	"
+fi
+SRC_URI+="
 https://github.com/cacalabs/libcaca/commit/afacac2cf7dfad8015c059a96046d9c2fa34632f.patch
 	-> libcaca-pr70-afacac2.patch
 https://github.com/cacalabs/libcaca/commit/f57b0d65cfaac5f1fbdc75458170e102f57a8dfa.patch
@@ -46,12 +68,12 @@ LICENSE="
 	WTFPL-2
 "
 
-IUSE="
+IUSE+="
 256-colors-ncurses cxx doc examples imlib java mono ncurses network opengl perl
 php python ruby slang static-libs test truetype X
 ebuild_revision_24
 "
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0/"$(ver_cut "1-2" "${PV}")
 REQUIRED_USE+="
 	256-colors-ncurses? (
 		ncurses
@@ -93,45 +115,45 @@ REQUIRED_USE+="
 "
 RDEPEND+="
 	imlib? (
-		>=media-libs/imlib2-1.4.6-r2[${MULTILIB_USEDEP}]
+		>=media-libs/imlib2-1.4.6-r2:=[${MULTILIB_USEDEP}]
 	)
 	java? (
-		virtual/jre:${JAVA_SLOT}
+		virtual/jre:${JAVA_SLOT}=
 	)
 	mono? (
-		dev-lang/mono
+		dev-lang/mono:=
 	)
 	ncurses? (
-		>=sys-libs/ncurses-5.9-r3:0=[${MULTILIB_USEDEP}]
+		>=sys-libs/ncurses-5.9-r3:=[${MULTILIB_USEDEP}]
 	)
 	opengl? (
-		>=media-libs/freeglut-2.8.1[${MULTILIB_USEDEP}]
-		>=virtual/glu-9.0-r1[${MULTILIB_USEDEP}]
-		>=virtual/opengl-7.0-r1[${MULTILIB_USEDEP}]
+		>=media-libs/freeglut-2.8.1:=[${MULTILIB_USEDEP}]
+		>=virtual/glu-9.0-r1:*[${MULTILIB_USEDEP}]
+		>=virtual/opengl-7.0-r1:*[${MULTILIB_USEDEP}]
 		truetype? (
-			>=media-libs/ftgl-2.1.3_rc5
+			>=media-libs/ftgl-2.1.3_rc5:=
 		)
 	)
 	python? (
 		${PYTHON_DEPS}
 		examples? (
 			$(python_gen_cond_dep '
-				virtual/pillow[${PYTHON_USEDEP}]
+				virtual/pillow:=[${PYTHON_USEDEP}]
 			')
 		)
 	)
 	slang? (
-		>=sys-libs/slang-2.2.4-r1[${MULTILIB_USEDEP}]
+		>=sys-libs/slang-2.2.4-r1:=[${MULTILIB_USEDEP}]
 	)
 	X? (
-		>=x11-libs/libX11-1.6.2[${MULTILIB_USEDEP}]
-		>=x11-libs/libXt-1.1.4[${MULTILIB_USEDEP}]
+		>=x11-libs/libX11-${LIBX11_PV}:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libXt-${LIBXT_PV}:=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND+="
 	${RDEPEND}
 	java? (
-		virtual/jdk:${JAVA_SLOT}
+		virtual/jdk:${JAVA_SLOT}=
 	)
 "
 # The internal term caca is 0.91 and incomplete but the latest is 3.1.0.
@@ -205,7 +227,18 @@ pkg_setup() {
 }
 
 src_unpack() {
-	default
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+		if [[ -n "${A}" ]] ; then
+			unpack ${A}
+		fi
+	else
+		unpack ${A}
+	fi
 }
 
 src_prepare() {
@@ -266,6 +299,7 @@ multilib_src_configure() {
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
+	chkl_check_many_timestamps
 
 	replace-flags '-O*' '-O2'
 	if use 256-colors-ncurses ; then
