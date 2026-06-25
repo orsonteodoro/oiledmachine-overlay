@@ -359,9 +359,9 @@ RDEPEND+="
 	mimalloc? (
 		dev-libs/mimalloc:=
 		|| (
-			~dev-libs/mimalloc-${MIMALLOC3_PV}[hardened]
-			~dev-libs/mimalloc-${MIMALLOC2_PV}[hardened]
-			~dev-libs/mimalloc-${MIMALLOC1_PV}[hardened]
+			~dev-libs/mimalloc-${MIMALLOC3_PV}
+			~dev-libs/mimalloc-${MIMALLOC2_PV}
+			~dev-libs/mimalloc-${MIMALLOC1_PV}
 		)
 	)
 	selinux? (
