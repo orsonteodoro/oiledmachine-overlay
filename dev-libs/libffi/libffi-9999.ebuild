@@ -17,7 +17,7 @@ DESCRIPTION="Portable, high level programming interface to various calling conve
 HOMEPAGE="https://sourceware.org/libffi/"
 
 if [[ ${PV} == 9999 ]] ; then
-	FALLBACK_COMMIT="918ca8edddbf542d9034d8e58931edfea036ecca"
+	FALLBACK_COMMIT="c93f9428d17cde4eb35517b58feeae6fb43aba5b"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/libffi/libffi"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -41,7 +41,10 @@ LICENSE="MIT"
 # with FEATURES="-preserved-libs" or another package manager if SONAME changes.
 SOVER="8" # SOVER = CURRENT - AGE, C:R:A in https://github.com/libffi/libffi/blob/master/libtool-version
 SLOT="0/${SOVER}" # SONAME=libffi.so.8
-IUSE+=" debug +exec-static-trampoline pax-kernel static-libs test"
+IUSE+="
+debug +exec-static-trampoline pax-kernel static-libs test
+ebuild_revision_1
+"
 
 RESTRICT="!test? ( test )"
 BDEPEND="test? ( dev-util/dejagnu )"
