@@ -356,11 +356,13 @@ _rust_set_globals() {
 					)
 				else
 eerror
+eerror "QA error:"
+eerror
 eerror "${FUNCNAME}:  No Rust slots were found for LLVM slot ${llvm_slot} for"
 eerror "${CATEGORY}/${P} ebuild."
 eerror
 eerror "The RUST_MIN_VER (inclusive) and RUST_MAX_VER (inclusive) range is"
-eerror "missing LLVM_SLOT ${llvm_slot}."
+eerror "missing LLVM_SLOT ${llvm_slot} in ${CATEGORY}/${PN}."
 eerror
 eerror "Either change LLVM_COMPAT to exclude LLVM_SLOT ${llvm_slot} or change"
 eerror "the RUST_MIN_VER or RUST_MAX_VER to include a Rust release that was"

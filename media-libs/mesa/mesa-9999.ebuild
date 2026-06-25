@@ -18,7 +18,7 @@ CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="AFW BO BOR DLH DOS IO NPD OOBA SYM"
 CXX_STANDARD=17
 PYTHON_COMPAT=( "python3_"{10..13} )
-RUST_MAX_VER="1.86.0" # Inclusive
+RUST_MAX_VER="1.94.1" # Inclusive
 RUST_MIN_VER="1.81.0"
 RUST_MULTILIB=1
 RUST_NEEDS_LLVM=1 # Prune rustc if LLVM slot not selected
@@ -362,6 +362,12 @@ BDEPEND="
 			|| (
 				dev-lang/rust:1.86.0
 				dev-lang/rust-bin:1.86.0
+			)
+		)
+		llvm_slot_21? (
+			|| (
+				dev-lang/rust:1.94.1
+				dev-lang/rust-bin:1.94.1
 			)
 		)
 	)
