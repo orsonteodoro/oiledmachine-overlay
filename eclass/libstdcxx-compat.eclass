@@ -321,12 +321,17 @@ LIBSTDCXX_COMPAT_STDCXX17=(
 # )
 #
 LIBSTDCXX_COMPAT_STDCXX20=(
-	#"gcc_slot_11_5" # Support -std=c++20 (Observed in downstream projects)
+	#"gcc_slot_11_5" # Support -std=c++20.  Defaults:  U22 # (Observed in downstream projects but very rare)
+	#"gcc_slot_12_5" # Support -std=c++20.  Defaults:  D12
+
 	"gcc_slot_13_4" # Support -std=c++20.  Defaults:  U24
 	"gcc_slot_14_3" # Support -std=c++20.  Defaults:  D13
-	"gcc_slot_15_3" # Support -std=c++20.  Defaults:  F43
-	"gcc_slot_16_1" # Support -std=c++20.  Defaults:  F44, G23
+	"gcc_slot_15_3" # Support -std=c++20.  Defaults:  F43, U26
+	"gcc_slot_16_1" # Support -std=c++20.  Defaults:  F44
 )
+
+# After this point we use rolling distro/compiler IDs to better represent
+# rolling packages and their rolling CI / developer environments.
 
 # GCC_COMPAT template for -std=c++23 projects
 #
@@ -343,7 +348,7 @@ LIBSTDCXX_COMPAT_STDCXX20=(
 #
 LIBSTDCXX_COMPAT_STDCXX23=(
 	"gcc_slot_15_3" # Support -std=c++23 (Observed in downstream projects).  Defaults:  F43
-	"gcc_slot_16_1" # Support -std=c++23.  Defaults:  F44, G23
+	"gcc_slot_16_1" # Support -std=c++23.  Defaults:  F44
 )
 
 # GCC_COMPAT template for -std=c++26 projects
@@ -361,7 +366,7 @@ LIBSTDCXX_COMPAT_STDCXX23=(
 #
 LIBSTDCXX_COMPAT_STDCXX26=(
 	"gcc_slot_15_3" # Support -std=c++26 (Observed in downstream projects).  Defaults:  F43
-	"gcc_slot_16_1" # Support -std=c++26.  Defaults:  F44, G23
+	"gcc_slot_16_1" # Support -std=c++26.  Defaults:  F44
 )
 
 fi
