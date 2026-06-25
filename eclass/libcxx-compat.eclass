@@ -52,69 +52,69 @@ _LIBCXX_COMPAT_ECLASS=1
 #
 
 LIBCXX_COMPAT_CXX11_CUDA_12_6=(
-        "llvm_slot_18"
+	"llvm_slot_18"
 )
 
 LIBCXX_COMPAT_CXX11_CUDA_12_8=(
-        "llvm_slot_18"
-        "llvm_slot_19"
+	"llvm_slot_18"
+	"llvm_slot_19"
 )
 
 LIBCXX_COMPAT_CXX11_CUDA_12_9=(
-        "llvm_slot_18"
-        "llvm_slot_19"
+	"llvm_slot_18"
+	"llvm_slot_19"
 )
 
 LIBCXX_COMPAT_CXX14_CUDA_12_6=(
-        "llvm_slot_18"
+	"llvm_slot_18"
 )
 
 LIBCXX_COMPAT_CXX14_CUDA_12_8=(
-        "llvm_slot_18"
-        "llvm_slot_19"
+	"llvm_slot_18"
+	"llvm_slot_19"
 )
 
 LIBCXX_COMPAT_CXX14_CUDA_12_9=(
-        "llvm_slot_18"
-        "llvm_slot_19"
+	"llvm_slot_18"
+	"llvm_slot_19"
 )
 
 # For latest CUDA 12
 LIBCXX_COMPAT_CXX17_CUDA_12=(
-        "llvm_slot_18" # c++17 or earlier compatible
-        "llvm_slot_19" # c++17 or earlier compatible
+	"llvm_slot_18" # c++17 or earlier compatible
+	"llvm_slot_19" # c++17 or earlier compatible
 )
 
 LIBCXX_COMPAT_CXX17_CUDA_12_6=(
-        "llvm_slot_18"
+	"llvm_slot_18"
 )
 
 LIBCXX_COMPAT_CXX17_CUDA_12_8=(
-        "llvm_slot_18"
-        "llvm_slot_19"
+	"llvm_slot_18"
+	"llvm_slot_19"
 )
 
 LIBCXX_COMPAT_CXX17_CUDA_12_9=(
-        "llvm_slot_18"
-        "llvm_slot_19"
+	"llvm_slot_18"
+	"llvm_slot_19"
 )
 
 # For latest 12 on a c++11 or earlier project
 LIBCXX_COMPAT_CXX11_CUDA=(
-        "llvm_slot_18" # Support CUDA 12.6, 12.8, 12.9
-        "llvm_slot_19" # Support CUDA 12.8, 12.9
+	"llvm_slot_18" # Support CUDA 12.6, 12.8, 12.9
+	"llvm_slot_19" # Support CUDA 12.8, 12.9
 )
 
 # For latest CUDA 12 on a c++14 or earlier project
 LIBCXX_COMPAT_CXX14_CUDA=(
-        "llvm_slot_18" # Support CUDA 12.6, 12.8, 12.9
-        "llvm_slot_19" # Support CUDA 12.8, 12.9
+	"llvm_slot_18" # Support CUDA 12.6, 12.8, 12.9
+	"llvm_slot_19" # Support CUDA 12.8, 12.9
 )
 
 # For latest CUDA 12 on a c++17 or earlier project
 LIBCXX_COMPAT_CXX17_CUDA=(
-        "llvm_slot_18" # Support CUDA 12.6, 12.8, 12.9
-        "llvm_slot_19" # Support CUDA 12.8, 12.9
+	"llvm_slot_18" # Support CUDA 12.6, 12.8, 12.9
+	"llvm_slot_19" # Support CUDA 12.8, 12.9
 )
 
 # LLVM_COMPAT templates for ROCm
@@ -128,16 +128,16 @@ LIBCXX_COMPAT_CXX17_CUDA=(
 # )
 #
 LIBCXX_COMPAT_CXX17_ROCM_6_4=(
-        "llvm_slot_19"
+	"llvm_slot_19"
 )
 
 LIBCXX_COMPAT_CXX17_ROCM_7_0=(
-        "llvm_slot_19"
+	"llvm_slot_19"
 )
 
 # For secure releases only
 LIBCXX_COMPAT_CXX17_ROCM=(
-        "llvm_slot_19"
+	"llvm_slot_19"
 )
 
 #
@@ -148,16 +148,16 @@ LIBCXX_COMPAT_CXX17_ROCM=(
 #
 
 LIBCXX_COMPAT_CXX17_GPU=(
-        "llvm_slot_18" # Support CUDA 12.6, 12.8, 12.9
-        "llvm_slot_19" # Support CUDA 12.8, 12.9; ROCm 6.4, 7.0
+	"llvm_slot_18" # Support CUDA 12.6, 12.8, 12.9
+	"llvm_slot_19" # Support CUDA 12.8, 12.9; ROCm 6.4, 7.0
 )
 
 LIBCXX_COMPAT_CXX20_GPU=(
-        "llvm_slot_18" # Support CUDA 12.6, 12.8, 12.9
-        "llvm_slot_19" # Support CUDA 12.8, 12.9; ROCm 6.4, 7.0
+	"llvm_slot_18" # Support CUDA 12.6, 12.8, 12.9
+	"llvm_slot_19" # Support CUDA 12.8, 12.9; ROCm 6.4, 7.0
 )
 
-# LLVM_COMPAT template for desktop based LTS distros
+# LIBCXX_COMPAT_LTS template for desktop based LTS distros
 #
 # Status:  Production ready
 #
@@ -168,8 +168,24 @@ LIBCXX_COMPAT_CXX20_GPU=(
 # )
 #
 LIBCXX_COMPAT_LTS=(
-        "llvm_slot_18" # Support U24
-        "llvm_slot_19" # Support D13
+	"llvm_slot_18" # Support U24
+	"llvm_slot_19" # Support D13
+	"llvm_slot_21" # Support U26
+)
+
+# LIBCXX_COMPAT_ROLLING template for desktop based LTS distros
+#
+# Status:  Production ready
+#
+# Example:
+#
+# LLVM_COMPAT=(
+#     ${LIBCXX_COMPAT_ROLLING[@]/llvm_slot_}
+# )
+#
+LIBCXX_COMPAT_ROLLING=(
+	"llvm_slot_21" # Support F43
+	"llvm_slot_22" # Support F44, G23
 )
 
 # LLVM_COMPAT template for Rust with LTS compilers
@@ -185,8 +201,9 @@ LIBCXX_COMPAT_LTS=(
 # )
 #
 LIBCXX_COMPAT_RUST_LTS=(
-        "llvm_slot_18"
-        "llvm_slot_19"
+	"llvm_slot_18"
+	"llvm_slot_19"
+	"llvm_slot_21"
 )
 
 # LLVM_COMPAT template for Rust with Rolling compilers
@@ -202,8 +219,8 @@ LIBCXX_COMPAT_RUST_LTS=(
 # )
 #
 LIBCXX_COMPAT_RUST_ROLLING=(
-        "llvm_slot_20"
-        "llvm_slot_21"
+	"llvm_slot_21"
+	"llvm_slot_22"
 )
 
 # LLVM_COMPAT template for Rust with both LTS and Rolling compilers
@@ -217,10 +234,10 @@ LIBCXX_COMPAT_RUST_ROLLING=(
 # )
 #
 LIBCXX_COMPAT_RUST=(
-        "llvm_slot_18"
-        "llvm_slot_19"
-        "llvm_slot_20"
-        "llvm_slot_21"
+	"llvm_slot_18"
+	"llvm_slot_19"
+	"llvm_slot_21"
+	"llvm_slot_22"
 )
 
 # LLVM_COMPAT template for -std=c++98 projects
@@ -236,6 +253,7 @@ LIBCXX_COMPAT_RUST=(
 LIBCXX_COMPAT_STDCXX98=(
 	"llvm_slot_18" # Support -std=c++98
 	"llvm_slot_19" # Support -std=c++98
+	"llvm_slot_21" # Support -std=c++98
 )
 
 # LLVM_COMPAT template for -std=c++03 projects
@@ -251,6 +269,7 @@ LIBCXX_COMPAT_STDCXX98=(
 LIBCXX_COMPAT_STDCXX03=(
 	"llvm_slot_18" # Support -std=c++03
 	"llvm_slot_19" # Support -std=c++03
+	"llvm_slot_21" # Support -std=c++03
 )
 
 # LLVM_COMPAT template for -std=c++11 projects
@@ -266,6 +285,7 @@ LIBCXX_COMPAT_STDCXX03=(
 LIBCXX_COMPAT_STDCXX11=(
 	"llvm_slot_18" # Support -std=c++11
 	"llvm_slot_19" # Support -std=c++11
+	"llvm_slot_21" # Support -std=c++11
 )
 
 # LLVM_COMPAT template for -std=c++14 projects
@@ -281,6 +301,7 @@ LIBCXX_COMPAT_STDCXX11=(
 LIBCXX_COMPAT_STDCXX14=(
 	"llvm_slot_18" # Support -std=c++14
 	"llvm_slot_19" # Support -std=c++14
+	"llvm_slot_21" # Support -std=c++14
 )
 
 # LLVM_COMPAT template for -std=c++17 projects or the compiler default
@@ -299,9 +320,8 @@ LIBCXX_COMPAT_STDCXX14=(
 LIBCXX_COMPAT_STDCXX17=(
 # Set to LTS distros equivalent to reduce misalignment in dependencies
 	"llvm_slot_18" # Support -std=c++17.  Defaults:  U24
-	"llvm_slot_19" # Support -std=c++17.  Defaults:  D13, F41
-	#"llvm_slot_20" # Support -std=c++17.  Defaults:  G23, F42.  Disable to align with ROCm 6.4, 7.0 and to avoid multiple LLVM loaded bug.
-	#"llvm_slot_21" # Support -std=c++17.  Defaults:  F43
+	"llvm_slot_19" # Support -std=c++17.  Defaults:  D13
+	"llvm_slot_21" # Support -std=c++17.  Defaults:  U26, F43; Available:  D13
 )
 
 # LLVM_COMPAT template for -std=c++20 projects or the compiler default
@@ -318,9 +338,8 @@ LIBCXX_COMPAT_STDCXX17=(
 # )
 #
 LIBCXX_COMPAT_STDCXX20=(
-	"llvm_slot_20" # Support -std=c++20.  Availability:  F43, G23
-	"llvm_slot_21" # Support -std=c++20.  Availability:  G23
-	"llvm_slot_22" # Support -std=c++20.  Availability:  G23
+	"llvm_slot_21" # Support -std=c++20.  Defaults:  U26, F43; Available:  D13
+	"llvm_slot_22" # Support -std=c++20.  Defaults:  F44, G23
 )
 
 # LLVM_COMPAT template for -std=c++23 projects or the compiler default
@@ -337,8 +356,8 @@ LIBCXX_COMPAT_STDCXX20=(
 # )
 #
 LIBCXX_COMPAT_STDCXX23=(
-	"llvm_slot_21" # Support -std=c++23.  Availability:  G23
-	"llvm_slot_22" # Support -std=c++23.  Availability:  G23
+	"llvm_slot_21" # Support -std=c++23.  Defaults:  U26, F43; Available:  D13
+	"llvm_slot_22" # Support -std=c++23.  Defaults:  F44, G23
 )
 
 # LLVM_COMPAT template for -std=c++26 projects or the compiler default
@@ -355,8 +374,8 @@ LIBCXX_COMPAT_STDCXX23=(
 # )
 #
 LIBCXX_COMPAT_STDCXX26=(
-	"llvm_slot_21" # Support -std=c++26.  Availability:  G23
-	"llvm_slot_22" # Support -std=c++26.  Availability:  G23
+	"llvm_slot_21" # Support -std=c++26.  Defaults:  U26, F43; Available:  D13
+	"llvm_slot_22" # Support -std=c++26.  Defaults:  F44, G23
 )
 
 fi
