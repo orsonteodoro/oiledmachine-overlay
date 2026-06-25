@@ -357,7 +357,7 @@ RDEPEND+="
 		>=dev-libs/hardened_malloc-${HARDENED_MALLOC_PV}:=
 	)
 	mimalloc? (
-		dev-libs/mimalloc:=[hardened]
+		dev-libs/mimalloc:=
 		|| (
 			~dev-libs/mimalloc-${MIMALLOC3_PV}[hardened]
 			~dev-libs/mimalloc-${MIMALLOC2_PV}[hardened]
