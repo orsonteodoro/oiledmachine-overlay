@@ -93,7 +93,7 @@ DESCRIPTION="Performance-portable, length-agnostic SIMD with runtime dispatch"
 HOMEPAGE="https://github.com/google/highway"
 LICENSE="Apache-2.0"
 SLOT="0"
-IUSE="
+IUSE+="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}

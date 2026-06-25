@@ -40,7 +40,7 @@ HOMEPAGE="http://www.sfml-dev.org"
 LICENSE="ZLIB"
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE="
+IUSE+="
 ${USE_DOTNET}
 developer mono nupkg
 "

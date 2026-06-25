@@ -285,7 +285,7 @@ LICENSE+="
 "
 RESTRICT="mirror" # Speed up downloads
 SLOT="0/"$(ver_cut "1-2" "${PV}")
-IUSE="+capi"
+IUSE+=" +capi"
 
 ASM_DEP=">=dev-lang/nasm-2.15"
 BDEPEND="

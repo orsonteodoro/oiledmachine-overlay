@@ -43,7 +43,7 @@ HOMEPAGE="https://pugixml.org/ https://github.com/zeux/pugixml"
 
 LICENSE="MIT"
 SLOT="0"
-IUSE="test"
+IUSE+=" test"
 RESTRICT="!test? ( test )"
 
 pkg_setup() {
