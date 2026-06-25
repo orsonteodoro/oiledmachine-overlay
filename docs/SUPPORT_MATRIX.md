@@ -63,8 +63,8 @@ exist in build files.
 | Clang 18                        | Fully supported                       | U24 (18.0)                                         |
 | Clang 19                        | Supported                             | D13 (19.0)                                         |
 | Clang 20                        | Available                             |                                                    |
-| Clang 21                        | Available                             | F43 (21.1.8), F44 (21.1.8), G23 (21.1.8), U26 (21.1.8d) |
-| Clang 22                        | Available                             |                                                    |
+| Clang 21                        | Available                             | F43 (21.1.8), F44 (21.1.8), U26 (21.1.8d)          |
+| Clang 22                        | Available                             | G23 (22.1.8)                                       |
 | Clang 23                        | Limited support                       |                                                    |
 | Cython 0.29.37.1                | Fully supported                       | D12 (0.29.32), U22 (0.29)                          |
 | Cython 3.0.12                   | Fully Supported                       | D13 (3.0.11), U24 (3.0.8)                          |
@@ -74,7 +74,7 @@ exist in build files.
 | GCC 12                          | Fully supported                       | D12 (12.2)                                         |
 | GCC 13                          | Fully supported                       | U24 (13.2)                                         |
 | GCC 14                          | Partially Supported                   | D13 (14.2)                                         |
-| GCC 15                          | Fully supported                       | F43 (15.2.1), G23 (15.2.1), U26 (15.2.0)           |
+| GCC 15                          | Fully supported                       | F43 (15.2.1), G23 (15.3.0), U26 (15.2.0)           |
 | GCC 16			  | Not Supported                         | F44 (16.1.1)                                       |
 | Rust 1.63.0                     | Not supported                         | D12 (1.63.0)                                       |
 | Rust 1.74.1                     | Available                             |                                                    |
