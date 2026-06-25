@@ -247,7 +247,11 @@ CHROMIUM_APPS=(
 	"spotify"
 )
 
-inherit cflags-hardened flag-o-matic libcxx-slot linux-info python-single-r1 toolchain-funcs
+CHKL_TIMESTAMPS=(
+	"sys-libs/libselinux-9999"
+)
+
+inherit cflags-hardened chkl flag-o-matic libcxx-slot linux-info python-single-r1 secure-version toolchain-funcs
 inherit virtualx
 
 gen_clang_bdepend() {
@@ -291,9 +295,9 @@ ${FIREJAIL_PROFILES_IUSE[@]}
 ${HARDENED_ALLOCATORS_IUSE[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 -apparmor +chroot clang contrib +dbusproxy +file-transfer +globalcfg
-landlock +network +private-home -private-lib selfrando -selinux +suid
+landlock +network +private-home -private-lib -selinux +suid
 test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xcsecurity xvfb
-ebuild_revision_139
+ebuild_revision_140
 "
 REQUIRED_USE+="
 	!test
@@ -329,52 +333,57 @@ REQUIRED_USE+="
 "
 RDEPEND+="
 	!sys-apps/firejail-lts
+	>=sys-libs/libseccomp-${LIBSECCOMP_PV}:=
 	apparmor? (
-		>=sys-libs/libapparmor-2.13.3
+		sys-libs/libapparmor:=
+		|| (
+			~sys-libs/libapparmor-${LIBAPPARMOR_5_0_PV}
+			~sys-libs/libapparmor-${LIBAPPARMOR_4_1_PV}
+		)
 	)
 	contrib? (
 		${PYTHON_DEPS}
 	)
 	dbusproxy? (
-		>=sys-apps/xdg-dbus-proxy-0.1.2
+		>=sys-apps/xdg-dbus-proxy-0.1.2:=
 	)
 	elibc_glibc? (
-		>=sys-libs/glibc-2.43:=
+		>=sys-libs/glibc-${GLIBC_PV}:=
 	)
 	elibc_musl? (
-		>=sys-libs/musl-1.2.6:=
+		>=sys-libs/musl-${MUSL_PV}:=
 	)
 	hardened_malloc? (
-		dev-libs/hardened_malloc
+		>=dev-libs/hardened_malloc-${HARDENED_MALLOC_PV}:=
 	)
 	mimalloc? (
-		dev-libs/mimalloc[hardened]
-	)
-	selfrando? (
-		dev-cpp/selfrando
+		dev-libs/mimalloc:=[hardened]
+		|| (
+			~dev-libs/mimalloc-${MIMALLOC3_PV}[hardened]
+			~dev-libs/mimalloc-${MIMALLOC2_PV}[hardened]
+			~dev-libs/mimalloc-${MIMALLOC1_PV}[hardened]
+		)
 	)
 	selinux? (
-		>=sys-libs/libselinux-8.1.0
+		>=sys-libs/libselinux-${LIBSELINUX_PV}:=
 	)
 	X? (
-		x11-base/xorg-server[-suid,xcsecurity?,xvfb?]
+		x11-base/xorg-server:=[-suid,xcsecurity?,xvfb?]
 	)
 	xpra? (
-		x11-wm/xpra[${PYTHON_SINGLE_USEDEP},X,avif,client,cython,firejail,gtk3,jpeg,rencodeplus,server,webp]
+		x11-wm/xpra:=[${PYTHON_SINGLE_USEDEP},X,avif,client,cython,firejail,gtk3,jpeg,rencodeplus,server,webp]
 		|| (
-			=x11-wm/xpra-6*
-			=x11-wm/xpra-5*
+			=x11-wm/xpra-6*[${PYTHON_SINGLE_USEDEP},X,avif,client,cython,firejail,gtk3,jpeg,rencodeplus,server,webp]
+			=x11-wm/xpra-5*[${PYTHON_SINGLE_USEDEP},X,avif,client,cython,firejail,gtk3,jpeg,rencodeplus,server,webp]
 		)
-		x11-wm/xpra:=
-		x11-base/xorg-server
+		x11-base/xorg-server:=
 	)
 	xephyr? (
-		x11-base/xorg-server[xephyr?]
+		x11-base/xorg-server:=[xephyr?]
 	)
 "
 DEPEND+="
 	${RDEPEND}
-	>=sys-libs/libseccomp-2.4.3
 "
 BDEPEND+="
 	$(gen_clang_bdepend)
@@ -773,16 +782,6 @@ src_unpack() {
 	fi
 }
 
-get_selfrando_arch() {
-	if [[ "${ARCH}" == "amd64" ]] ; then
-		echo "x86_64"
-	elif [[ "${ARCH}" == "arm64" ]] ; then
-		echo "arm64"
-	else
-		die "ARCH=${ARCH} is not supported by Selfrando"
-	fi
-}
-
 src_prepare() {
 	default
 
@@ -810,29 +809,17 @@ src_prepare() {
 
 	local ldflags=""
 	local cflags=""
-	if use selfrando ; then
-		filter-flags '-fuse-ld=*'
-einfo "Adding Selfrando flags"
-		export SR_CFLAGS="-ffunction-sections -fPIC -fuse-ld=bfd"
-		export SR_CXXFLAGS="${SR_CFLAGS}"
-		SR_BIN="/usr/lib/selfrando/bin"
-		SR_LIBDIR="/usr/lib/selfrando/bin/$(get_selfrando_arch)"
-	# Never add SR_BIN to PATH.  Only do it with -B arg.
-		[[ -e "${SR_BIN}/traplinker" ]] || die
-		export SR_LDFLAGS="-B${SR_BIN} -Wl,-rpath,${SR_LIBDIR} -Wl,--gc-sections -Wl,-fuse-ld=bfd"
-		cflags="${SR_CFLAGS}"
-		ldflags="${SR_LDFLAGS}"
-	else
+
 einfo "Adding shuffle-sections ROP mitigation flags"
-		cflags="-ffunction-sections"
-		if tc-ld-is-lld ; then
-			ldflags="-Wl,--shuffle-sections=0"
-		elif tc-ld-is-mold ; then
-			ldflags="-Wl,--shuffle-sections"
-		else
+	cflags="-ffunction-sections"
+	if tc-ld-is-lld ; then
+		ldflags="-Wl,--shuffle-sections=0"
+	elif tc-ld-is-mold ; then
+		ldflags="-Wl,--shuffle-sections"
+	else
 ewarn "Use LLD or mold for ROP mitigation"
-		fi
 	fi
+
 	[[ -n "${cflags}" ]] && append-flags ${cflags}
 	[[ -n "${ldflags}" ]] && append-flags ${ldflags}
 
@@ -987,6 +974,8 @@ _src_configure() {
 
 src_configure()
 {
+	chkl_check_many_timestamps
+
 	# Make _FORTIFY_SOURCE=2 work
 	replace-flags "-O0" "-O1"
 
@@ -1002,13 +991,6 @@ _src_compile() {
 	emake CC="$(tc-getCC)"
 	if [[ "${impl}" == "test" ]] ; then
 		DESTDIR="${D}" emake install
-	fi
-	if use selfrando ; then
-		grep -e "-static" "${T}/build.log" && die "Add -Wl,-z,norelro to SR_LDFLAGS"
-		if readelf -x .txtrp "${S}_release/src/firejail/firejail" | grep -q "was not dumped" ; then
-eerror "Selfrando verification failed"
-			die
-		fi
 	fi
 }
 

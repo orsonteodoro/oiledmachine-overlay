@@ -30,7 +30,7 @@ diff '--color=auto' -urp firejail-0.9.80.orig/etc/profile-a-l/feh.profile fireja
  apparmor
  caps.drop all
 -ipc-namespace
-+ipc-namespace # Verified 20260525
++#ipc-namespace # Disabling this line by adding # is required to set the wallpaper which is a common use case, verified 202606224
  machine-id
  net none
  no3d
