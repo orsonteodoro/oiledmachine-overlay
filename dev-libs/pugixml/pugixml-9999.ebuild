@@ -21,7 +21,7 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-inherit cflags-hardened check-compiler-switch cmake libcxx-slot libstdcxx-slot
+inherit cflags-hardened check-compiler-switch cmake-multilib libcxx-slot libstdcxx-slot
 
 if [[ ${PV} == *9999 ]] ; then
 	FALLBACK_COMMIT="27b68329de32cf9c601ca8eb6c588fd639960c40"
@@ -77,7 +77,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	local mycmakeargs=(
 		-DPUGIXML_BUILD_TESTS=$(usex test ON OFF)
 	)
-	cmake_src_configure
+	cmake-multilib_src_configure
 }
 
 src_install() {
