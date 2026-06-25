@@ -27,7 +27,7 @@ HOMEPAGE="https://fribidi.org/"
 LICENSE="LGPL-2.1+"
 SLOT="0"
 
-IUSE=+" doc test"
+IUSE+=" doc test"
 RESTRICT="!test? ( test )"
 
 BDEPEND="virtual/pkgconfig"
