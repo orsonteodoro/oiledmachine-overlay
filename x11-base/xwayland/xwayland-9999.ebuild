@@ -7,6 +7,12 @@ CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CRSH DP HO ID MC OOBW PE SO UAF"
 
 CHKL_TIMESTAMPS=(
+	"dev-libs/openssl-4.0.9999"
+	"dev-libs/openssl-3.6.9999"
+	"dev-libs/openssl-3.5.9999"
+	"dev-libs/openssl-3.4.9999"
+	"dev-libs/openssl-3.3.9999"
+	"dev-libs/openssl-3.0.9999"
 	"dev-libs/wayland-9999"
 	"sys-apps/systemd-9999"
 	"sys-libs/libunwind-9999"
