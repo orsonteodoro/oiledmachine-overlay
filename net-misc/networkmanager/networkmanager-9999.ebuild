@@ -13,7 +13,13 @@ PYTHON_COMPAT=( python3_{10..14} )
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/jansson-9999"
+	"net-misc/curl-9999"
+	"net-misc/dhcpcd-9999"
+	"sys-auth/polkit-9999"
 	"sys-apps/systemd-9999"
+	"sys-auth/elogind-257.9999"
+	"sys-libs/libselinux-9999"
+	"sys-process/audit-9999"
 )
 
 inherit cflags-hardened chkl linux-info meson-multilib fcaps flag-o-matic python-any-r1 \
@@ -44,7 +50,7 @@ SLOT="0"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86"
 
 IUSE+="
-arping audit bluetooth clat +concheck connection-sharing debug dhclient dhcpcd doc elogind
+arping audit bluetooth clat +concheck connection-sharing debug dhcpcd doc elogind
 gnutls iputils +introspection iptables iwd libedit +modemmanager nbft +nss
 nftables ofono ovs policykit +ppp psl resolvconf selinux syslog systemd teamd
 test +tools vala +wext +wifi
@@ -67,30 +73,30 @@ REQUIRED_USE="
 		iputils
 	)
 	?? ( elogind systemd )
-	?? ( dhclient dhcpcd )
 	?? ( syslog systemd )
 "
 
+# net-misc/dhcp is EOL
 COMMON_DEPEND="
+	!net-misc/dhcp
 	sys-apps/util-linux:=[${MULTILIB_USEDEP}]
 	>=virtual/libudev-175:=[${MULTILIB_USEDEP}]
 	sys-apps/dbus:=[${MULTILIB_USEDEP}]
 	net-libs/libndp:=
 	>=dev-libs/glib-${GLIB_PV}:=[${MULTILIB_USEDEP}]
-	audit? ( sys-process/audit:= )
+	audit? ( >=sys-process/audit-${AUDIT_PV}:= )
 	bluetooth? ( >=net-wireless/bluez-${BLUEZ_PV}:= )
 	clat? (
 		>=dev-libs/libbpf-1.3.0:=
 	)
-	concheck? ( net-misc/curl:= )
+	concheck? ( >=net-misc/curl-${CURL_PV}:= )
 	connection-sharing? (
 		net-dns/dnsmasq:=[dbus,dhcp]
 		iptables? ( net-firewall/iptables:= )
 		nftables? ( net-firewall/nftables:= )
 	)
-	dhclient? ( >=net-misc/dhcp-4:=[client] )
-	dhcpcd? ( >=net-misc/dhcpcd-9.3.3:= )
-	elogind? ( >=sys-auth/elogind-219:= )
+	dhcpcd? ( >=net-misc/dhcpcd-${DHCPCD_PV}:= )
+	elogind? ( >=sys-auth/elogind-${ELOGIND_PV}:= )
 	gnutls? (
 		>=net-libs/gnutls-${GNUTLS_PV}:=[${MULTILIB_USEDEP}]
 	)
@@ -99,20 +105,20 @@ COMMON_DEPEND="
 		net-misc/mobile-broadband-provider-info:=
 		>=net-misc/modemmanager-0.7.991:0=
 	)
-	nbft? ( >=sys-libs/libnvme-1.5:= )
+	nbft? ( >=sys-libs/libnvme-${LIBNVME_PV}:= )
 	nss? (
 		>=dev-libs/nspr-${NSPR_PV}:=[${MULTILIB_USEDEP}]
 		>=dev-libs/nss-${NSS_PV}:=[${MULTILIB_USEDEP}]
 	)
 	ofono? ( net-misc/ofono:= )
 	ovs? ( >=dev-libs/jansson-${JANSSON_PV}:= )
-	policykit? ( >=sys-auth/polkit-0.106:= )
+	policykit? ( >=sys-auth/polkit-${POLKIT_PV}:= )
 	ppp? ( >=net-dialup/ppp-2.4.5:=[ipv6(+)] )
 	psl? ( net-libs/libpsl:= )
 	resolvconf? ( virtual/resolvconf:* )
 	selinux? (
 		sec-policy/selinux-networkmanager:*
-		sys-libs/libselinux:=
+		>=sys-libs/libselinux-${LIBSELINUX_PV}:=
 	)
 	systemd? ( >=sys-apps/systemd-${SYSTEMD_PV}:= )
 	teamd? (
@@ -135,8 +141,8 @@ RDEPEND="${COMMON_DEPEND}
 		net-misc/iputils:=[arping(+)]
 	)
 	wifi? (
-		!iwd? ( >=net-wireless/wpa_supplicant-0.7.3-r3:=[dbus] )
-		iwd? ( net-wireless/iwd:= )
+		!iwd? ( >=net-wireless/wpa_supplicant-${WPA_SUPPLICANT_PV}:=[dbus] )
+		iwd? ( >=net-wireless/iwd-${IWD_PV}:= )
 	)
 "
 DEPEND="${COMMON_DEPEND}
@@ -152,14 +158,14 @@ BDEPEND="
 	>=sys-devel/gettext-0.17
 	virtual/pkgconfig
 	doc? (
-		dev-libs/libxslt
+		>=dev-libs/libxslt-${LIBXSLT_PV}
 		dev-util/gtk-doc
 		app-text/docbook-xml-dtd:4.1.2
 	)
 	introspection? (
 		$(python_gen_any_dep 'dev-python/pygobject:3[${PYTHON_USEDEP}]')
-		dev-lang/perl
-		dev-libs/libxslt
+		>=dev-lang/perl-${PERL_PV}
+		>=dev-libs/libxslt-${LIBXSLT_PV}
 	)
 	vala? ( $(vala_depend) )
 	test? (
@@ -357,7 +363,6 @@ einfo "caps:  ${caps}"
 		-Dconfig_dns_rc_manager_default=auto
 
 		# dhcp clients
-		$(meson_nm_program dhclient "" /sbin/dhclient)
 		$(meson_nm_program dhcpcd "" /sbin/dhcpcd)
 
 		# miscellaneous
@@ -406,9 +411,7 @@ einfo "caps:  ${caps}"
 		emesonargs+=( -Dconfig_logging_backend_default=default )
 	fi
 
-	if multilib_is_native_abi && use dhclient; then
-		emesonargs+=( -Dconfig_dhcp_default=dhclient )
-	elif multilib_is_native_abi && use dhcpcd; then
+	if multilib_is_native_abi && use dhcpcd; then
 		emesonargs+=( -Dconfig_dhcp_default=dhcpcd )
 	else
 		emesonargs+=( -Dconfig_dhcp_default=internal )
@@ -536,16 +539,14 @@ pkg_postinst() {
 		ewarn "value to '0'."
 	fi
 
-	if use dhclient || use dhcpcd; then
-		ewarn "You have enabled USE=dhclient and/or USE=dhcpcd, but NetworkManager since"
+	if use dhcpcd; then
+		ewarn "You have enabled USE=dhcpcd, but NetworkManager since"
 		ewarn "version 1.20 defaults to the internal DHCP client. If the internal client"
 		ewarn "works for you, and you're happy with, the alternative USE flags can be"
-		ewarn "disabled. If you want to use dhclient or dhcpcd, then you need to tweak"
+		ewarn "disabled. If you want to use dhcpcd, then you need to tweak"
 		ewarn "the main.dhcp configuration option to use one of them instead of internal."
 		# https://gitlab.freedesktop.org/NetworkManager/NetworkManager/-/merge_requests/1988
 		ewarn
-		ewarn "Note that dhclient has been deprecated and support for that will be removed"
-		ewarn "in a future release."
 	fi
 
 	local caps=$(get_fcaps)

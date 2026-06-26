@@ -151,3 +151,6 @@ media-video/ffmpeg qsv
 
 # The atlas hasn't released since 2016 without a recent security review so disabled
 media-libs/opencv atlas
+
+# EOL
+net-misc/networkmanager dhclient
