@@ -300,7 +300,10 @@ multilib_src_configure() {
 	has_version "sys-apps/openrc[-bash]" && die "Re-emerge with sys-apps/openrc[bash]"
 
 	local caps=$(get_fcaps)
+	local nm_caps=${NM_CAPS:-"default"}
+einfo "NM_CAPS:  ${nm_caps}"
 einfo "caps:  ${caps}"
+einfo "See metadata.xml to set NM_CAPS to futher reduce attacker capabilities"
 	if use systemd ; then
 		caps=$(echo "${caps}" | tr "," " " | tr "[a-z]" "[A-Z]" | sed -e "s|=ep$||g")
 		sed -i -e "s|CAP_NET_ADMIN CAP_DAC_OVERRIDE CAP_NET_RAW CAP_BPF CAP_NET_BIND_SERVICE CAP_SETGID CAP_SETUID CAP_SYS_MODULE CAP_AUDIT_WRITE CAP_KILL CAP_SYS_CHROOT|${caps}|g" \
