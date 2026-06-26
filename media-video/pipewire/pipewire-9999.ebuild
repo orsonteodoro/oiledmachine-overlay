@@ -26,24 +26,32 @@ PIPEWIRE_DOCS_PREBUILT_DEV=sam
 PIPEWIRE_DOCS_VERSION="$(ver_cut 1-2).0"
 # Default to generating docs (inc. man pages) if no prebuilt; overridden later
 PIPEWIRE_DOCS_USEFLAG="+man"
-PYTHON_COMPAT=( python3_{11..14} )
+PYTHON_COMPAT=( python3_{10..14} )
 
 CHKL_TIMESTAMPS=(
-	"media-libs/libpulse-9999"
-	"media-libs/opus-9999"
-	"media-video/ffmpeg-9999"
+	"dev-libs/glib-2.89.9999"
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
 	"dev-libs/openssl-3.4.9999"
 	"dev-libs/openssl-3.3.9999"
 	"dev-libs/openssl-3.0.9999"
+	"sys-auth/elogind-9999"
+	"sys-apps/dbus-9999"
+	"sys-apps/systemd-9999"
+	"media-libs/libpulse-9999"
+	"media-libs/libsndfile-9999"
+	"media-libs/opus-9999"
+	"media-video/ffmpeg-9999"
+	"net-dns/avahi-9999"
+	"net-wireless/bluez-9999"
+	"x11-libs/libX11-9999"
 )
 
-inherit cflags-hardened chkl meson-multilib optfeature prefix python-any-r1 systemd tmpfiles udev
+inherit cflags-hardened chkl meson-multilib optfeature prefix python-any-r1 systemd tmpfiles secure-version udev
 
 if [[ ${PV} == 9999 ]] ; then
-	FALLBACK_COMMIT="9a19091ac75a0dd57b289820183521b1b92b3c26"
+	FALLBACK_COMMIT="a389a553e3ea7c21ff7b3cb9d5ac11023d5e54e8"
 	PIPEWIRE_DOCS_PREBUILT=0
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/${PN}/${PN}.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -85,6 +93,7 @@ SLOT="0/0.4"
 IUSE+=" ${PIPEWIRE_DOCS_USEFLAG} bluetooth elogind dbus doc echo-cancel extra ffmpeg fftw flatpak gstreamer gsettings"
 IUSE+=" ieee1394 jack-client jack-sdk libcamera loudness lv2 modemmanager pipewire-alsa readline roc selinux"
 IUSE+=" pulseaudio sound-server ssl system-service systemd test v4l X zeroconf"
+IUSE+=" ebuild_revision_1"
 
 # Once replacing system JACK libraries is possible, it's likely that
 # jack-client IUSE will need blocking to avoid users accidentally
@@ -136,23 +145,23 @@ BDEPEND="
 RDEPEND="
 	acct-group/audio:*
 	acct-group/pipewire:*
-	>=media-libs/alsa-lib-1.2.16.1:=[${MULTILIB_USEDEP}]
+	>=media-libs/alsa-lib-${ALSA_LIB_PV}:=[${MULTILIB_USEDEP}]
 	sys-libs/ncurses:=[unicode(+)]
 	virtual/libintl:*[${MULTILIB_USEDEP}]
 	virtual/libudev:=[${MULTILIB_USEDEP}]
 	bluetooth? (
-		dev-libs/glib:=
-		media-libs/fdk-aac:=
-		media-sound/liblc3:=
+		>=dev-libs/glib-${GLIB_PV}:=
+		>=media-libs/fdk-aac-${FDK_AAC_PV}:=
+		>=media-sound/liblc3-${LIBLC3_PV}:=
 		media-libs/libldac:=
 		media-libs/libfreeaptx:=
-		>=media-libs/opus-9999:=
+		>=media-libs/opus-${OPUS_PV}:=
 		media-libs/sbc:=
-		>=net-wireless/bluez-4.101:=
-		virtual/libusb:1
+		>=net-wireless/bluez-${BLUEZ_PV}:=
+		virtual/libusb:1=
 	)
-	elogind? ( sys-auth/elogind:= )
-	dbus? ( sys-apps/dbus:=[${MULTILIB_USEDEP}] )
+	elogind? ( >=sys-auth/elogind-${ELOGIND_PV}:= )
+	dbus? ( >=sys-apps/dbus-${DBUS_PV}:=[${MULTILIB_USEDEP}] )
 	echo-cancel? (
 		media-libs/webrtc-audio-processing:=
 		|| (
@@ -160,42 +169,63 @@ RDEPEND="
 			>=media-libs/webrtc-audio-processing-1.2:1
 		)
 	)
-	extra? ( >=media-libs/libsndfile-1.0.20:= )
-	ffmpeg? ( >=media-video/ffmpeg-9999:= )
-	fftw? ( sci-libs/fftw:=[${MULTILIB_USEDEP}] )
-	flatpak? ( dev-libs/glib:= )
-	gstreamer? (
-		>=dev-libs/glib-2.32.0:=
-		>=media-libs/gstreamer-1.28.4:=
-		>=media-libs/gst-plugins-base-1.28.4:=
+	extra? ( >=media-libs/libsndfile-${LIBSNDFILE_PV}:= )
+	ffmpeg? (
+		media-video/ffmpeg:=
+		|| (
+			~media-video/ffmpeg-${FFMPEG_8_1_PV}
+			~media-video/ffmpeg-${FFMPEG_8_1_PV}m
+
+			~media-video/ffmpeg-${FFMPEG_8_0_PV}
+			~media-video/ffmpeg-${FFMPEG_8_0_PV}m
+
+			~media-video/ffmpeg-${FFMPEG_7_1_PV}
+			~media-video/ffmpeg-${FFMPEG_7_1_PV}m
+
+			~media-video/ffmpeg-${FFMPEG_6_1_PV}
+			~media-video/ffmpeg-${FFMPEG_6_1_PV}m
+
+			~media-video/ffmpeg-${FFMPEG_5_1_PV}
+			~media-video/ffmpeg-${FFMPEG_5_1_PV}m
+
+			~media-video/ffmpeg-${FFMPEG_4_4_PV}
+			~media-video/ffmpeg-${FFMPEG_4_4_PV}m
+		)
 	)
-	gsettings? ( >=dev-libs/glib-2.26.0:= )
+	fftw? ( sci-libs/fftw:=[${MULTILIB_USEDEP}] )
+	flatpak? ( >=dev-libs/glib-${GLIB_PV}:= )
+	gstreamer? (
+		>=dev-libs/glib-${GLIB_PV}:=
+		>=media-libs/gstreamer-${GSTREAMER_PV}:=
+		>=media-libs/gst-plugins-base-${GSTREAMER_PV}:=
+	)
+	gsettings? ( >=dev-libs/glib-${GLIB_PV}:= )
 	ieee1394? ( media-libs/libffado:=[${MULTILIB_USEDEP}] )
-	jack-client? ( >=media-sound/jack2-1.9.10:=[dbus] )
+	jack-client? ( >=media-sound/jack2-${JACK2_PV}:=[dbus] )
 	jack-sdk? (
 		!media-sound/jack-audio-connection-kit
 		!media-sound/jack2
 	)
-	libcamera? ( media-libs/libcamera:= )
+	libcamera? ( >=media-libs/libcamera-${LIBCAMERA_PV}:= )
 	loudness? ( media-libs/libebur128:=[${MULTILIB_USEDEP}] )
-	lv2? ( media-libs/lilv:= )
+	lv2? ( >=media-libs/lilv-${LILV_PV}:= )
 	modemmanager? ( >=net-misc/modemmanager-1.10.0:= )
-	pipewire-alsa? ( >=media-libs/alsa-lib-1.2.16:=[${MULTILIB_USEDEP}] )
-	pulseaudio? ( >=media-libs/libpulse-9999:= )
+	pipewire-alsa? ( >=media-libs/alsa-lib-${ALSA_LIB_PV}:=[${MULTILIB_USEDEP}] )
+	pulseaudio? ( >=media-libs/libpulse-${LIBPULSE_PV}:= )
 	sound-server? ( !media-sound/pulseaudio-daemon )
 	roc? ( >=media-libs/roc-toolkit-0.4.0:= )
 	readline? ( sys-libs/readline:= )
-	selinux? ( sys-libs/libselinux:* )
-	ssl? ( dev-libs/openssl:= )
-	systemd? ( sys-apps/systemd:= )
+	selinux? ( >=sys-libs/libselinux-${LIBSELINUX_PV}:= )
+	ssl? ( ${OPENSSL_RDEPEND} )
+	systemd? ( >=sys-apps/systemd-${SYSTEMD_PV}:= )
 	system-service? ( acct-user/pipewire:* )
-	v4l? ( media-libs/libv4l:= )
+	v4l? ( >=media-libs/libv4l-${LIBV4L_PV}:= )
 	X? (
 		media-libs/libcanberra:=
-		x11-libs/libX11:=
-		x11-libs/libXfixes:=
+		>=x11-libs/libX11-${LIBX11_PV}:=
+		>=x11-libs/libXfixes-${LIBXFIXES_PV}:=
 	)
-	zeroconf? ( net-dns/avahi:= )
+	zeroconf? ( >=net-dns/avahi-${AVAHI_PV}:= )
 "
 
 DEPEND="${RDEPEND}"
