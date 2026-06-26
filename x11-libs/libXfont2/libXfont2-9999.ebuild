@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# See also https://cgit.freedesktop.org/xorg/lib/libXfont
+
 XORG_DOC=doc
 XORG_PACKAGE_NAME=libxfont
 
