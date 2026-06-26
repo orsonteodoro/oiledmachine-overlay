@@ -371,7 +371,7 @@ RDEPEND+="
 		>=sys-libs/libselinux-${LIBSELINUX_PV}:=
 	)
 	X? (
-		x11-base/xorg-server:=[-suid,xcsecurity?,xvfb?]
+		>=x11-base/xorg-server-${XORG_SERVER_PV}:=[-suid,xcsecurity?,xvfb?]
 	)
 	xpra? (
 		x11-wm/xpra:=[${PYTHON_SINGLE_USEDEP},X,avif,client,cython,firejail,gtk3,jpeg,rencodeplus,server,webp]
@@ -379,10 +379,9 @@ RDEPEND+="
 			=x11-wm/xpra-6*[${PYTHON_SINGLE_USEDEP},X,avif,client,cython,firejail,gtk3,jpeg,rencodeplus,server,webp]
 			=x11-wm/xpra-5*[${PYTHON_SINGLE_USEDEP},X,avif,client,cython,firejail,gtk3,jpeg,rencodeplus,server,webp]
 		)
-		x11-base/xorg-server:=
 	)
 	xephyr? (
-		x11-base/xorg-server:=[xephyr?]
+		>=x11-base/xorg-server-${XORG_SERVER_PV}:=[xephyr?]
 	)
 "
 DEPEND+="
@@ -392,11 +391,11 @@ BDEPEND+="
 	$(gen_clang_bdepend)
 	>=sys-devel/gcc-12
 	test? (
-		>=app-arch/xz-utils-5.2.4
+		>=app-arch/xz-utils-${XZ_UTILS_PV}
 		>=dev-tcltk/expect-5.45.4
 	)
 	test-x11? (
-		x11-base/xorg-server[xvfb]
+		>=x11-base/xorg-server-${XORG_SERVER_PV}[xvfb]
 		x11-apps/xhost
 	)
 "
