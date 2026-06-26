@@ -194,11 +194,10 @@ NASM_PV="2.14.02"
 NODE_SLOT=22
 PYTHON_COMPAT=( "python3_"{10..13} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
-RUST_MAX_VER="1.86.0"
+RUST_MAX_VER="1.94.1"
 RUST_MIN_VER="1.86.0"
 RUST_NEEDS_LLVM=1 # Prune rustc for unused LLVM slots
 RUST_PV="${RUST_MIN_VER}"
-SPEECH_DISPATCHER_PV="0.12.1"
 VIRTUALX_REQUIRED="manual"
 
 # Mitigate flood the zone vulnerability.
@@ -210,45 +209,45 @@ CHKL_TIMESTAMPS=(
 # See vf.eclass for list of vulnerabilities.
 # Only security-critical packages and packages with live ebuilds are listed.
 	# Last vulnerability check 20260614
-	"app-accessibility/at-spi2-core-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"app-accessibility/speech-dispatcher-9999"	# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/expat-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/glib-2.89.9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"app-accessibility/at-spi2-core-9999"
+	"app-accessibility/speech-dispatcher-9999"
+	"dev-libs/expat-9999"
+	"dev-libs/glib-2.89.9999"
 	"dev-libs/icu-79.0.9999"
 	"dev-libs/libevent-9999"
-	"dev-libs/libffi-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/libffi-9999"
 	"dev-libs/nspr-9999"
 	"dev-libs/nss-9999"
-	"dev-libs/wayland-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/wayland-9999"
 	"media-gfx/graphite2-9999"
 	"media-libs/dav1d-9999"
 	"media-libs/freetype-9999"
 	"media-libs/harfbuzz-9999"
 	"media-libs/fontconfig-9999"
-	"media-libs/libaom-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libaom-9999"
 	"media-libs/libepoxy-9999"
-	"media-libs/libglvnd-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libjpeg-turbo-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/libglvnd-9999"
+	"media-libs/libjpeg-turbo-9999"
 	"media-libs/libpng-9999"
-	"media-libs/libpulse-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libva-9999"				# Bumped live/*DEPENDS to latest hardened
+	"media-libs/libpulse-9999"
+	"media-libs/libva-9999"
 	"media-libs/libvpx-9999"
 	"media-libs/libwebp-9999"
-	"media-libs/mesa-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/openh264-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/mesa-9999"
+	"media-libs/openh264-9999"
 	"media-video/pipewire-9999"
-	"net-libs/libproxy-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"net-libs/libproxy-9999"
 	"net-libs/nodejs-99999999"
-	"net-misc/connman-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"net-misc/networkmanager-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"net-print/cups-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"sys-apps/systemd-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"x11-libs/cairo-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"x11-libs/gdk-pixbuf-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"x11-libs/libdrm-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"x11-libs/pango-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"x11-libs/pixman-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
-	"x11-libs/libX11-9999"				# Bumped live/*DEPENDS to latest non-vulnerable
+	"net-misc/connman-9999"
+	"net-misc/networkmanager-9999"
+	"net-print/cups-9999"
+	"sys-apps/systemd-9999"
+	"x11-libs/cairo-9999"
+	"x11-libs/gdk-pixbuf-9999"
+	"x11-libs/libdrm-9999"
+	"x11-libs/pango-9999"
+	"x11-libs/pixman-9999"
+	"x11-libs/libX11-9999"
 )
 
 # Information about the bundled wasi toolchain from
@@ -256,6 +255,7 @@ CHKL_TIMESTAMPS=(
 # For LLVM slot correspondence, see https://github.com/WebAssembly/wasi-sdk/tree/wasi-sdk-32/src
 declare -A WASI_SLOTS=(
 	["19"]="25.0"
+	["21"]="30.0"
 )
 
 inherit libstdcxx-compat
@@ -266,12 +266,11 @@ GCC_COMPAT=(
 inherit libcxx-compat
 LLVM_COMPAT=(
 #	"${LIBCXX_COMPAT_RUST_LTS[@]/llvm_slot_}" # 18, 19
-	19 # Based on LLVM LTS slots for LTS distros
+	19 21 # Based on LLVM LTS slots for LTS distros
 	# LLVM for compiler:  19 20 23
 	# LLVM for Rust:  19 22
 )
 
-# Force FFmpeg live to mitigate vulnerabilities
 inherit ffmpeg
 FFMPEG_COMPAT_SLOTS=(
 	"${FFMPEG_COMPAT_SLOTS_8[@]}"
@@ -453,10 +452,16 @@ SRC_URI="
 			llvm_slot_19? (
 				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SLOTS[19]%.*}/wasi-sdk-${WASI_SLOTS[19]}-x86_64-linux.tar.gz
 			)
+			llvm_slot_21? (
+				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SLOTS[21]%.*}/wasi-sdk-${WASI_SLOTS[21]}-x86_64-linux.tar.gz
+			)
 		)
 		arm64? (
 			llvm_slot_19? (
 				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SLOTS[19]%.*}/wasi-sdk-${WASI_SLOTS[19]}-arm64-linux.tar.gz
+			)
+			llvm_slot_21? (
+				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SLOTS[21]%.*}/wasi-sdk-${WASI_SLOTS[21]}-arm64-linux.tar.gz
 			)
 		)
 	)
@@ -766,6 +771,12 @@ RUST_CDEPEND="
 			dev-lang/rust-bin:1.86.0[${MULTILIB_USEDEP}]
 		)
 	)
+	llvm_slot_21? (
+		|| (
+			dev-lang/rust:1.94.1[${MULTILIB_USEDEP}]
+			dev-lang/rust-bin:1.94.1[${MULTILIB_USEDEP}]
+		)
+	)
 "
 CDEPEND="
 	${FF_ONLY_DEPEND}
@@ -904,7 +915,7 @@ RDEPEND+="
 		x11-libs/libnotify:=
 	)
 	libsecret? (
-		app-crypt/libsecret:=[${MULTILIB_USEDEP}]
+		>=app-crypt/libsecret-${LIBSECRET_PV}:=[${MULTILIB_USEDEP}]
 	)
 	openh264? (
 		>=media-libs/openh264-${OPENH264_PV}:=[${MULTILIB_USEDEP},plugin]
@@ -918,6 +929,7 @@ RDEPEND+="
 		)
 	)
 	speech? (
+		>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}:=
 		!pulseaudio? (
 			alsa? (
 				|| (
@@ -945,14 +957,14 @@ DEPEND+="
 	${GAMEPAD_DEPEND}
 	X? (
 		x11-base/xorg-proto:=
-		x11-libs/libICE:=[${MULTILIB_USEDEP}]
-		x11-libs/libSM:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libICE-${LIBICE_PV}:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libSM-${LIBSM_PV}:=[${MULTILIB_USEDEP}]
 	)
 "
 
 gen_llvm_bdepend() {
 	local LLVM_SLOT
-	for LLVM_SLOT in ${LLVM_COMPAT[@]} ; do
+	for LLVM_SLOT in "${LLVM_COMPAT[@]}" ; do
 		echo "
 			llvm_slot_${LLVM_SLOT}? (
 				=llvm-core/clang-${LLVM_SLOT}*:=[${MULTILIB_USEDEP}]
@@ -968,19 +980,17 @@ gen_llvm_bdepend() {
 		"
 	done
 }
-# The >=2.0 of mold is used for legal reasons.
 BDEPEND+="
 	$(gen_llvm_bdepend)
 	${PYTHON_DEPS}
 	${RUST_CDEPEND}
 	=net-libs/nodejs-${NODE_SLOT%%.*}*
-	>=dev-lang/perl-5.006
+	>=dev-lang/perl-${PERL_PV}
 	>=dev-util/cbindgen-0.27.0
 	>=dev-util/pkgconf-1.8.0[${MULTILIB_USEDEP},pkg-config(+)]
 	app-alternatives/awk
 	app-arch/unzip
 	app-arch/zip
-	app-eselect/eselect-nodejs
 	!elibc_glibc? (
 		dev-lang/rust[${MULTILIB_USEDEP}]
 	)
@@ -988,19 +998,18 @@ BDEPEND+="
 		>=dev-lang/nasm-${NASM_PV}
 	)
 	mold? (
-		>=sys-devel/mold-2.41.0
+		>=sys-devel/mold-${MOLD_PV}
 	)
 	pgo? (
-		X? (
-			sys-devel/gettext
-			x11-base/xorg-server[xvfb]
-			x11-apps/xhost
-		)
 		wayland? (
 			gui-wm/tinywl
-			x11-misc/xkeyboard-config
+			>=x11-misc/xkeyboard-config-${XKEYBOARD_CONFIG_PV}
 		)
-
+		X? (
+			sys-devel/gettext
+			>=x11-base/xorg-server-${XORG_SERVER_PV}[xvfb]
+			x11-apps/xhost
+		)
 	)
 	x86? (
 		>=dev-lang/nasm-${NASM_PV}
@@ -1008,11 +1017,11 @@ BDEPEND+="
 "
 PDEPEND+="
 	firejail? (
-		sys-apps/firejail[X?]
+		>=sys-apps/firejail-${FIREJAIL_PV}[X?]
 	)
 	screencast? (
-		>=media-video/pipewire-0.3.52[${MULTILIB_USEDEP}]
-		sys-apps/xdg-desktop-portal
+		>=media-video/pipewire-${PIPEWIRE_PV}[${MULTILIB_USEDEP}]
+		>=sys-apps/xdg-desktop-portal-${XDG_DESKTOP_PORTAL_PV}
 	)
 "
 
@@ -2352,7 +2361,7 @@ _set_cc() {
 	# Disabling jumbo-build requires clang
 	if false && ( tc-is-clang || use debug ) ; then
 		local x
-		for x in ${LLVM_COMPAT[@]} ; do
+		for x in "${LLVM_COMPAT[@]}" ; do
 			if use "llvm_slot_${x}" ; then
 				export LLVM_SLOT=${x}
 				break

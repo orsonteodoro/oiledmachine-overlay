@@ -80,7 +80,7 @@ get_secure_timestamps() {
 #   dev-libs/openssl-4.0.9999 -> dev_libs_openssl_4_0_9999
 #
 SECURE_TIMESTAMP["app_accessibility_at_spi2_core_9999"]="Apr 29, 2026 8:10:31 AM PDT"
-SECURE_TIMESTAMP["app_accessibility_speech_dispatcher_9999"]="Tue, 6 May 2025 20:53:18 +0200"
+SECURE_TIMESTAMP["app_accessibility_speech_dispatcher_9999"]="May 3, 2026 5:56 PM PDT"
 SECURE_TIMESTAMP["app_accessibility_whisper_cpp_9999"]="Jun 19, 2026 2:53 AM PDT"
 SECURE_TIMESTAMP["app_arch_brotli_9999"]="Sun, 30 Apr 2026 10:19 AM PDT"
 SECURE_TIMESTAMP["app_arch_bzip2_9999"]="Thu, 28 May 2026 19:31:28 +0200"
@@ -275,6 +275,7 @@ SECURE_TIMESTAMP["sci_libs_gdal_9999"]="Jun 22, 2026 1:11 PM PDT"
 SECURE_TIMESTAMP["sci_libs_openblas_9999"]="Jun 23, 2026 11:56 AM PDT"
 SECURE_TIMESTAMP["sci_ml_openvino_9999"]="Jun 22, 2026 1:59 AM PDT"
 SECURE_TIMESTAMP["sys_apps_file_9999"]="Jun 7, 2026 4:44 PM PDT"
+SECURE_TIMESTAMP["sys_apps_firejail_9999"]="May 1, 2026 4:49 AM PDT"
 SECURE_TIMESTAMP["sys_apps_dbus_9999"]="Aug 11, 2025 8:30:12 AM PDT"
 SECURE_TIMESTAMP["sys_apps_systemd_9999"]="Tue, 9 Jun 2026 10:36:58 +0530"
 SECURE_TIMESTAMP["sys_auth_elogind_257_9999"]="May 8, 2026 1:52 AM PDT"
