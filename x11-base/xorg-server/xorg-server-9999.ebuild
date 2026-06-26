@@ -218,8 +218,10 @@ ewarn
 ewarn "SECURITY NOTICE"
 ewarn
 ewarn "${PN} and associated packages have inadequate process isolation, so"
-ewarn "the blast radius is extended for keyboard snooping or screen grabs for"
-ewarn "for the compromised process.  Use either the following for remediation:"
+ewarn "the blast radius is extended for the compromised process with known"
+ewarn "keyboard snooping or screen grabs capabilities for the threat actor."
+ewarn "Users that use the show password feature are also affected."
+ewarn "Use either the following for remediation:"
 ewarn
 ewarn "1. Use pure Wayland for full remediation"
 ewarn "2. Use Wayland + Xwayland for partial remediation"
