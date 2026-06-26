@@ -4,7 +4,7 @@
 EAPI=8
 
 # The stable is missing some commits.
-# This ebuild fork used AI for clarification.
+# This ebuild fork used AI for clarification or vulnerability detailed analysis.
 
 CFLAGS_HARDENED_ASSEMBLERS="gas inline"
 CFLAGS_HARDENED_LANG="asm c-lang"
@@ -221,10 +221,11 @@ ewarn "${PN} and associated packages have inadequate process isolation, so"
 ewarn "the blast radius is extended for keyboard snooping or screen grabs for"
 ewarn "for the compromised process.  Use either the following for remediation:"
 ewarn
-ewarn "1. Use Wayland + Xwayland"
-ewarn "2. Firejail + Xephyr"
-ewarn "3. Firejail + Xpra"
-ewarn "4. Firejail + Xpra + Xephyr"
+ewarn "1. Use pure Wayland for full remediation"
+ewarn "2. Use Wayland + Xwayland for partial remediation"
+ewarn "3. Firejail + Xephyr"
+ewarn "4. Firejail + Xpra"
+ewarn "5. Firejail + Xpra + Xephyr"
 ewarn
 }
 
