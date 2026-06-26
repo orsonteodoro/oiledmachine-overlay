@@ -1,0 +1,12 @@
+diff '--color=auto' -urp ffmpeg-9999.orig/fftools/ffplay_renderer.c ffmpeg-9999/fftools/ffplay_renderer.c
+--- ffmpeg-9999.orig/fftools/ffplay_renderer.c	2026-06-26 14:49:59.660351474 -0700
++++ ffmpeg-9999/fftools/ffplay_renderer.c	2026-06-26 14:51:51.732796249 -0700
+@@ -23,6 +23,8 @@
+ #include "ffplay_renderer.h"
+ 
+ #if (SDL_VERSION_ATLEAST(2, 0, 6) && CONFIG_LIBPLACEBO)
++#include <libavutil/hwcontext.h>
++#include <libavutil/hwcontext_vulkan.h>
+ #define HAVE_VULKAN_RENDERER 1
+ #else
+ #define HAVE_VULKAN_RENDERER 0
