@@ -6,7 +6,12 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO"
 
-inherit cflags-hardened check-compiler-switch flag-o-matic meson-multilib
+CHKL_TIMESTAMPS=(
+	"app-arch/xz-utils-9999"
+	"app-arch/lz4-9999"
+)
+
+inherit cflags-hardened check-compiler-switch chkl flag-o-matic meson-multilib secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="5233c58e6ca0b1c4c6b353ad79649191ed195bdc"
@@ -48,13 +53,13 @@ RESTRICT="
 "
 RDEPEND="
 	lzma? (
-		app-arch/xz-utils
+		>=app-arch/xz-utils-${XZ_UTILS_PV}
 	)
 	lz4? (
-		app-arch/lz4:=
+		>=app-arch/lz4-${LZ4_PV}:=
 	)
 	zlib? (
-		virtual/zlib
+		>=virtual/zlib-${ZLIB_PV}:=
 	)
 "
 DEPEND="
@@ -101,7 +106,9 @@ einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
 
+	chkl_check_many_timestamps
 	cflags-hardened_append
+
 	local native_file="${T}/meson.${CHOST}.${ABI}.ini.local"
 	# This replaces the no-find-valgrind patch once bugfix lands in a meson
 	# release + we can BDEPEND on it (https://github.com/mesonbuild/meson/pull/11372)
