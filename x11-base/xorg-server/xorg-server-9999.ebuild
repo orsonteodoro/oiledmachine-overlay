@@ -1,93 +1,114 @@
-# Copyright 1999-2026 Gentoo Authors
+# Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
+
+# The stable is missing some commits.
 
 CFLAGS_HARDENED_ASSEMBLERS="gas inline"
 CFLAGS_HARDENED_LANG="asm c-lang"
 CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS IU OOBA OOBR OOBW PE UAF"
 
-inherit cflags-hardened flag-o-matic xorg-meson
+CHKL_TIMESTAMPS=(
+	"dev-libs/openssl-4.0.9999"
+	"dev-libs/openssl-3.6.9999"
+	"dev-libs/openssl-3.5.9999"
+	"dev-libs/openssl-3.4.9999"
+	"dev-libs/openssl-3.3.9999"
+	"dev-libs/openssl-3.0.9999"
+	"media-libs/libglvnd-9999"
+	"media-libs/mesa-9999"
+	"sys-apps/dbus-9999"
+	"sys-apps/systemd-9999"
+	"sys-auth/elogind-257.9999"
+	"sys-auth/pambase-999999999"
+	"sys-libs/libselinux-9999"
+	"sys-libs/libunwind-9999"
+	"sys-process/audit-9999"
+	"x11-libs/libX11-9999"
+	"x11-libs/libxcb-9999"
+	"x11-libs/libxcvt-9999"
+	"x11-libs/libXfont2-9999"
+	"x11-libs/pixman-9999"
+)
 
+inherit cflags-hardened chkl flag-o-matic secure-version xorg-meson
 EGIT_REPO_URI="https://gitlab.freedesktop.org/xorg/xserver.git"
 
 DESCRIPTION="X.Org X servers"
 SLOT="0/${PV}"
 if [[ ${PV} != 9999* ]]; then
-	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86"
+	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 fi
 
 IUSE_SERVERS="xephyr xnest xorg xvfb"
-IUSE="
-${IUSE_SERVERS} debug +elogind minimal selinux suid systemd test +udev unwind xcsecurity
-ebuild_revision_8
-"
+IUSE="${IUSE_SERVERS} debug +elogind minimal selinux suid systemd test +udev unwind xcsecurity"
 RESTRICT="!test? ( test )"
 
 CDEPEND="
-	media-libs/libglvnd[X]
-	dev-libs/libbsd
-	dev-libs/openssl:0=
-	>=x11-apps/iceauth-1.0.2
-	>=x11-apps/xauth-1.0.3
-	x11-apps/xkbcomp
-	>=x11-libs/libdrm-2.4.89
-	>=x11-libs/libpciaccess-0.12.901
-	>=x11-libs/libXau-1.0.4
-	>=x11-libs/libXdmcp-1.0.2
-	>=x11-libs/libXfont2-2.0.1
-	>=x11-libs/libxkbfile-1.0.4
-	>=x11-libs/libxshmfence-1.1
-	>=x11-libs/pixman-0.27.2
-	>=x11-misc/xbitmaps-1.0.1
-	>=x11-misc/xkeyboard-config-2.4.1-r3
+	${OPENSSL_RDEPEND}
+	>=media-libs/libglvnd-${LIBGLVND_PV}:=[X]
+	>=dev-libs/libbsd-${LIBBSD_PV}:=
+	>=x11-apps/iceauth-${ICEAUTH_PV}:=
+	>=x11-apps/xauth-${XAUTH_PV}:=
+	x11-apps/xkbcomp:=
+	>=x11-libs/libdrm-${LIBDRM_PV}:=
+	>=x11-libs/libpciaccess-${LIBPCIACCESS_PV}:=
+	>=x11-libs/libXau-1.0.4:=
+	>=x11-libs/libXdmcp-1.0.2:=
+	>=x11-libs/libXfont2-${LIBXFONT2_PV}:=
+	>=x11-libs/libxkbfile-${LIBXKBFILE_PV}:=
+	>=x11-libs/libxshmfence-${LIBXSHMFENCE_PV}:=
+	>=x11-libs/pixman-${PIXMAN_PV}:=
+	>=x11-misc/xbitmaps-1.0.1:=
+	>=x11-misc/xkeyboard-config-${XKEYBOARD_CONFIG_PV}:=
 	xorg? (
-		>=x11-libs/libxcvt-0.1.0
+		>=x11-libs/libxcvt-${LIBXCVT_PV}:=
 	)
 	xnest? (
-		>=x11-libs/libXext-1.0.99.4
-		>=x11-libs/libX11-1.1.5
+		>=x11-libs/libXext-${LIBXEXT_PV}:=
+		>=x11-libs/libX11-${LIBX11_PV}:=
 	)
 	xephyr? (
-		x11-libs/libxcb
-		x11-libs/xcb-util
-		x11-libs/xcb-util-image
-		x11-libs/xcb-util-keysyms
-		x11-libs/xcb-util-renderutil
-		x11-libs/xcb-util-wm
+		>=x11-libs/libxcb-${LIBXCB_PV}:=
+		x11-libs/xcb-util:=
+		x11-libs/xcb-util-image:=
+		x11-libs/xcb-util-keysyms:=
+		x11-libs/xcb-util-renderutil:=
+		x11-libs/xcb-util-wm:=
 	)
 	!minimal? (
-		>=media-libs/mesa-18[X(+),egl(+),gbm(+)]
-		>=media-libs/libepoxy-1.5.4[X,egl(+)]
+		>=media-libs/mesa-${MESA_PV}:=[X(+),egl(+),gbm(+)]
+		>=media-libs/libepoxy-1.5.4:=[X,egl(+)]
 	)
 	udev? ( virtual/libudev:= )
-	unwind? ( sys-libs/libunwind:= )
+	unwind? ( >=sys-libs/libunwind-${LIBUNWIND_PV}:= )
 	selinux? (
-		sys-process/audit
-		sys-libs/libselinux:=
+		>=sys-process/audit-${AUDIT_PV}:=
+		>=sys-libs/libselinux-${LIBSELINUX_PV}:=
 	)
 	systemd? (
-		sys-apps/dbus
-		sys-apps/systemd
+		>=sys-apps/dbus-${DBUS_PV}:=
+		>=sys-apps/systemd-${SYSTEMD_PV}:=
 	)
 	elogind? (
-		sys-apps/dbus
-		sys-auth/elogind[pam]
-		sys-auth/pambase[elogind]
+		>=sys-apps/dbus-${DBUS_PV}:=
+		>=sys-auth/elogind-${ELOGIND_PV}:=[pam]
+		>=sys-auth/pambase-${PAMBASE_PV}:=[elogind]
 	)
 	!!x11-drivers/nvidia-drivers[-libglvnd(+)]
 "
 DEPEND="${CDEPEND}
-	>=x11-base/xorg-proto-2021.4.99.2
-	>=x11-libs/xtrans-1.3.5
-	media-fonts/font-util
-	test? ( >=x11-libs/libxcvt-0.1.0 )
+	>=x11-base/xorg-proto-2024.1:=
+	>=x11-libs/xtrans-${XTRANS_PV}:=
+	media-fonts/font-util:=
+	test? ( >=x11-libs/libxcvt-${LIBXCVT_PV}:= )
 "
 RDEPEND="${CDEPEND}
-	!systemd? ( gui-libs/display-manager-init )
-	selinux? ( sec-policy/selinux-xserver )
-	xorg? ( >=x11-apps/xinit-1.3.3-r1 )
+	!systemd? ( gui-libs/display-manager-init:= )
+	selinux? ( sec-policy/selinux-xserver:* )
+	xorg? ( >=x11-apps/xinit-${XINIT_PV}:= )
 "
 BDEPEND="
 	app-alternatives/lex
@@ -101,22 +122,19 @@ REQUIRED_USE="!minimal? (
 	elogind? ( udev )
 	?? ( elogind systemd )"
 
-UPSTREAMED_PATCHES=(
-)
-
 PATCHES=(
 	"${UPSTREAMED_PATCHES[@]}"
 	"${FILESDIR}"/${PN}-1.12-unloadsubmodule.patch
-	# needed for new eselect-opengl, bug #541232
-	"${FILESDIR}"/${PN}-1.18-support-multiple-Files-sections.patch
-	# pending upstream backport, bug #885763
-	"${FILESDIR}"/${PN}-21.1.10-c99.patch
 )
 
 src_configure() {
+	chkl_check_many_timestamps
+
 	# bug #835653
 	use x86 && replace-flags -Os -O2
 	use x86 && replace-flags -Oz -O2
+
+	use debug && EMESON_BUILDTYPE=debug
 
 	cflags-hardened_append
 
@@ -126,7 +144,6 @@ src_configure() {
 	local XORG_CONFIGURE_OPTIONS=(
 		--localstatedir "${EPREFIX}/var"
 		--sysconfdir "${EPREFIX}/etc/X11"
-		-Dbuildtype=$(usex debug debug plain)
 		-Db_ndebug=$(usex debug false true)
 		$(meson_use !minimal dri1)
 		$(meson_use !minimal dri2)
@@ -149,7 +166,6 @@ src_configure() {
 		-Dhal=false
 		-Dlinux_acpi=false
 		-Dlinux_apm=false
-		-Dsecure-rpc=false
 		-Dsha1=libcrypto
 		-Dxkb_output_dir="${EPREFIX}/var/lib/xkb"
 	)
