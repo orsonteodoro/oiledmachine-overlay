@@ -4,6 +4,7 @@
 EAPI=8
 
 # The stable is missing some commits.
+# This ebuild fork used AI for clarification.
 
 CFLAGS_HARDENED_ASSEMBLERS="gas inline"
 CFLAGS_HARDENED_LANG="asm c-lang"
@@ -210,6 +211,21 @@ src_install() {
 	# install the @x11-module-rebuild set for Portage
 	insinto /usr/share/portage/config/sets
 	newins "${FILESDIR}"/xorg-sets.conf xorg.conf
+}
+
+pkg_postinst() {
+ewarn
+ewarn "SECURITY NOTICE"
+ewarn
+ewarn "${PN} and associated packages have inadequate process isolation, so"
+ewarn "the blast radius is extended for keyboard snooping or screen grabs for"
+ewarn "for the compromised process.  Use either the following for remediation:"
+ewarn
+ewarn "1. Use Wayland + Xwayland"
+ewarn "2. Firejail + Xephyr"
+ewarn "3. Firejail + Xpra"
+ewarn "4. Firejail + Xpra + Xephyr"
+ewarn
 }
 
 pkg_postrm() {
