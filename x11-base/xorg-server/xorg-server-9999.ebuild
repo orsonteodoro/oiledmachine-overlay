@@ -223,9 +223,9 @@ ewarn "for the compromised process.  Use either the following for remediation:"
 ewarn
 ewarn "1. Use pure Wayland for full remediation"
 ewarn "2. Use Wayland + Xwayland for partial remediation"
-ewarn "3. Firejail + Xephyr"
-ewarn "4. Firejail + Xpra"
-ewarn "5. Firejail + Xpra + Xephyr"
+ewarn "3. Use Firejail + Xephyr"
+ewarn "4. Use Firejail + Xpra"
+ewarn "5. Use Firejail + either Xpra or Xephyr depending on the app"
 ewarn
 }
 
