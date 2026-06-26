@@ -84,7 +84,7 @@ ewarn "Expected timestamp:  >= "$(date --date="@${non_vulernable_time}")
 eerror
 eerror "Do one of the following:"
 eerror
-eerror "\`emerge emerge -a1vO =${atom}\` for recent merges"
+eerror "\`emerge -a1vO =${atom}\` for recent merges"
 eerror
 eerror "  or"
 eerror
