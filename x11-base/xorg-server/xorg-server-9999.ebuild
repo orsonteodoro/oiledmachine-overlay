@@ -8,7 +8,7 @@ EAPI=8
 
 CFLAGS_HARDENED_ASSEMBLERS="gas inline"
 CFLAGS_HARDENED_LANG="asm c-lang"
-CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data security-critical"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO BU BOR CE CRSH DOS DT DBZ DP HO ID IL IPI IU LPE MC ML OOBA OOBR OOBW PE RC RCE SO UAF"
 
 CHKL_TIMESTAMPS=(
@@ -44,7 +44,10 @@ if [[ ${PV} != 9999* ]]; then
 fi
 
 IUSE_SERVERS="xephyr xnest xorg xvfb"
-IUSE="${IUSE_SERVERS} debug +elogind minimal selinux suid systemd test +udev unwind xcsecurity"
+IUSE="
+${IUSE_SERVERS} debug +elogind minimal selinux suid systemd test +udev unwind xcsecurity
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 CDEPEND="
