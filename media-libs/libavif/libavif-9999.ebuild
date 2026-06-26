@@ -8,52 +8,60 @@ CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CHKL_TIMESTAMPS=(
 	"dev-libs/glib-2.89.9999"
 	"media-libs/dav1d-9999"
+	"media-libs/libaom-9999"
 	"media-libs/libjpeg-turbo-9999"
 	"media-libs/libpng-9999"
 	"media-libs/libyuv-9999"
+	"media-libs/svt-av1-9999"
+	"media-gfx/imagemagick-9999"
+	"media-video/rav1e-9999"
 	"x11-libs/gdk-pixbuf-9999"
 )
 
-inherit cflags-hardened chkl cmake-multilib gnome2-utils
+inherit cflags-hardened chkl cmake-multilib gnome2-utils secure-version
 
-ARGPARSE_COMMIT="ee74d1b53bd680748af14e737378de57e2a0a954"
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="ea160ac56df44c571cd5781cbc24b2aeb1419b46"
+	EGIT_BRANCH="main"
+	EGIT_REPO_URI="https://github.com/AOMediaCodec/libavif.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	SLOT="0/${PV}"
+	inherit git-r3
+else
+	# See bug #822336 re subslot
+	# See LIBRARY_VERSION_MAJOR, LIBRARY_VERSION_MINOR in CMakeLists.txt
+	SLOT="0/16.4"
+	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
+	SRC_URI="
+https://github.com/AOMediaCodec/libavif/archive/v${PV}.tar.gz
+	-> ${P}.tar.gz
+	"
+fi
+
 DESCRIPTION="Library for encoding and decoding .avif files"
 HOMEPAGE="https://github.com/AOMediaCodec/libavif"
-SRC_URI="
-	https://github.com/AOMediaCodec/libavif/archive/v${PV}.tar.gz
-		-> ${P}.tar.gz
-	extras? (
-		https://github.com/kmurray/libargparse/archive/${ARGPARSE_COMMIT}.tar.gz
-			-> libargparse-${ARGPARSE_COMMIT}.tar.gz
-	)
-"
-
 LICENSE="
 	BSD-2
-	extras? ( MIT )
 "
-# See bug #822336 re subslot
-SLOT="0/16.3"
-KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~mips ~ppc ppc64 ~riscv ~sparc x86"
-IUSE="+aom dav1d examples extras gdk-pixbuf rav1e svt-av1 libyuv test"
+
+IUSE+=" +aom dav1d examples extras gdk-pixbuf rav1e svt-av1 libyuv test"
 RESTRICT="!test? ( test )"
 REQUIRED_USE="|| ( aom dav1d )"
 
 DEPEND="
-	>=media-libs/libjpeg-turbo-9999:=[${MULTILIB_USEDEP}]
-	>=media-libs/libpng-1.6.57:=[${MULTILIB_USEDEP}]
-	aom? ( >=media-libs/libaom-3.3.0:=[${MULTILIB_USEDEP}] )
-	dav1d? ( >=media-libs/dav1d-9999:=[${MULTILIB_USEDEP}] )
+	>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:=[${MULTILIB_USEDEP}]
+	>=media-libs/libpng-${LIBPNG_PV}:=[${MULTILIB_USEDEP}]
+	aom? ( >=media-libs/libaom-${LIBAOM_PV}:=[${MULTILIB_USEDEP}] )
+	dav1d? ( >=media-libs/dav1d-${DAV1D_PV}:=[${MULTILIB_USEDEP}] )
 	gdk-pixbuf? (
-		>=dev-libs/glib-2.89.9999:=[${MULTILIB_USEDEP}]
-		>=x11-libs/gdk-pixbuf-2.44.6:=[${MULTILIB_USEDEP}]
+		>=dev-libs/glib-${GLIB_PV}:=[${MULTILIB_USEDEP}]
+		>=x11-libs/gdk-pixbuf-${GDK_PIXBUF_PV}:=[${MULTILIB_USEDEP}]
 	)
-	rav1e? ( >=media-video/rav1e-0.5.1:=[capi] )
-	svt-av1? (
-		<media-libs/svt-av1-4
-		>=media-libs/svt-av1-0.9.1:=
-	)
-	libyuv? ( >=media-libs/libyuv-1947:= )
+	rav1e? ( >=media-video/rav1e-${RAV1E_PV}:=[capi] )
+	svt-av1? ( >=media-libs/svt-av1-${SVT_AV1_PV}:= )
+	libyuv? ( >=media-libs/libyuv-${LIBYUV_PV}:= )
 "
 RDEPEND="
 	${DEPEND}
@@ -63,19 +71,25 @@ BDEPEND="
 	extras? (
 		test? (
 			dev-cpp/gtest
-			media-gfx/imagemagick[lcms]
+			>=media-gfx/imagemagick-${IMAGEMAGICK_PV}[lcms]
 		)
 	)
 "
 
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+}
+
 src_prepare() {
 	cmake_src_prepare
-
-	# Bug: https://bugs.gentoo.org/951614
-	if use extras; then
-		mv "${WORKDIR}/libargparse-${ARGPARSE_COMMIT}" "${S}/ext/libargparse" ||
-			die "mv failed"
-	fi
 }
 
 multilib_src_configure() {
@@ -90,6 +104,7 @@ multilib_src_configure() {
 		-DAVIF_CODEC_DAV1D=$(usex dav1d SYSTEM OFF)
 		-DAVIF_ZLIBPNG=SYSTEM
 		-DAVIF_JPEG=SYSTEM
+		-DAVIF_LIBYUV=$(usex libyuv SYSTEM OFF)
 
 		-DAVIF_BUILD_GDK_PIXBUF=$(usex gdk-pixbuf ON OFF)
 
@@ -100,18 +115,17 @@ multilib_src_configure() {
 		mycmakeargs+=(
 			-DAVIF_CODEC_RAV1E=$(usex rav1e SYSTEM OFF)
 			-DAVIF_CODEC_SVT=$(usex svt-av1 SYSTEM OFF)
-			-DAVIF_LIBYUV=$(usex libyuv SYSTEM OFF)
 
 			-DAVIF_BUILD_EXAMPLES=$(usex examples ON OFF)
 			-DAVIF_BUILD_APPS=$(usex extras ON OFF)
 			-DAVIF_BUILD_TESTS=$(usex test ON OFF)
+			-DAVIF_ENABLE_GTEST=$(usex extras $(usex test ON OFF) OFF)
 			-DAVIF_GTEST=$(usex extras $(usex test SYSTEM OFF) OFF)
 		)
 	else
 		mycmakeargs+=(
 			-DAVIF_CODEC_RAV1E=OFF
 			-DAVIF_CODEC_SVT=OFF
-			-DAVIF_LIBYUV=OFF
 
 			-DAVIF_BUILD_EXAMPLES=OFF
 			-DAVIF_BUILD_APPS=OFF
