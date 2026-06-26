@@ -703,7 +703,6 @@ PATENT_REQUIRED_USE="
 
 # The lame ebuild and the lame repo is not up to date on security patches so the mp3 USE flag is disabled.
 REQUIRED_USE+="
-	!mp3
 	${CPU_REQUIRED_USE}
 	${PATENT_REQUIRED_USE}
 	${REQUIRED_USE_LICENSES}
