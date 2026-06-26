@@ -74,7 +74,7 @@ DEPEND="
 "
 RDEPEND="
 	${COMMON_DEPEND}
-	>=x11-apps/xkbcomp-${LIBXKBCOMP_PV}:=
+	>=x11-apps/xkbcomp-${XKBCOMP_PV}:=
 
 	libei? ( >=sys-apps/xdg-desktop-portal-${XDG_DESKTOP_PORTAL_PV}:= )
 	selinux? ( sec-policy/selinux-xserver:* )

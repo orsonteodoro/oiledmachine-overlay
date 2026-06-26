@@ -53,11 +53,11 @@ CDEPEND="
 	>=dev-libs/libbsd-${LIBBSD_PV}:=
 	>=x11-apps/iceauth-${ICEAUTH_PV}:=
 	>=x11-apps/xauth-${XAUTH_PV}:=
-	x11-apps/xkbcomp:=
+	>=x11-apps/xkbcomp-${XKBCOMP_PV}:=
 	>=x11-libs/libdrm-${LIBDRM_PV}:=
 	>=x11-libs/libpciaccess-${LIBPCIACCESS_PV}:=
 	>=x11-libs/libXau-1.0.4:=
-	>=x11-libs/libXdmcp-1.0.2:=
+	>=x11-libs/libXdmcp-${LIBXDMCP_PV}:=
 	>=x11-libs/libXfont2-${LIBXFONT2_PV}:=
 	>=x11-libs/libxkbfile-${LIBXKBFILE_PV}:=
 	>=x11-libs/libxshmfence-${LIBXSHMFENCE_PV}:=
