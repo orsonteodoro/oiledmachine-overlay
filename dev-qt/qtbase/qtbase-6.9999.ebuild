@@ -36,7 +36,7 @@ CHKL_TIMESTAMPS=(
 	"app-arch/brotli-9999"
 	"app-arch/libarchive-9999"
 	"dev-db/sqlite-9999"
-	"dev-libs/glib-9999"
+	"dev-libs/glib-2.89.9999"
 	"dev-libs/icu-79.0.9999"
 	"dev-libs/libpcre2-9999"
 	"dev-libs/openssl-4.0.9999"
