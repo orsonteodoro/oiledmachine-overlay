@@ -182,7 +182,7 @@ media-plugins/gst-plugins-voaacenc
 media-libs/lcms
 
 # Lacks fully patched vulnerability coverage.
-# - Misses under-reported commits
+# - Misses underreported vulnerabilities that been patched but no CVE filing made (e.g. internally fuzzed and patched)
 # - Over-reliance on CVE instead of manual commit review with critical thinking
 # - Misses silent patches that later become vulnerability annoucements
 dev-qt/qtwebengine
