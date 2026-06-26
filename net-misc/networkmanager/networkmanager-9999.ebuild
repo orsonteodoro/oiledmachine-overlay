@@ -20,7 +20,7 @@ inherit cflags-hardened chkl linux-info meson-multilib fcaps flag-o-matic python
 	readme.gentoo-r1 secure-version systemd toolchain-funcs udev vala virtualx
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="b4d2d2dfc7f8d83c7f80a63db7ced0bec9ce5623"
+	FALLBACK_COMMIT="b92182f10fc86b9f11e1f6747810bd465b6ed903"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/NetworkManager/NetworkManager.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
