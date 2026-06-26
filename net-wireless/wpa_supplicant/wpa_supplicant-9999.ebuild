@@ -6,7 +6,7 @@ EAPI=8
 # See also https://git.w1.fi/cgit/hostap/
 
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY=""
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="AB CRSH DOS CE HO IA IL IO IU IV ML NPD OOBR PE"
 
 CHKL_TIMESTAMPS=(
 	"sys-apps/dbus-9999"

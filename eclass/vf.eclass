@@ -92,6 +92,9 @@ einfo
 # Same as DoS
 einfo "A = Availability Impacted"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AB"($|" "|";"|",") ]] ; then
+einfo "AB = Authentication Bypass"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ABO"($|" "|";"|",") ]] ; then
 # Adjacent buffer integrity compromised
 # BO is taken so ABO is used
@@ -99,6 +102,9 @@ einfo "ABO = Adjacent Buffer Overrun"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ACE"($|" "|";"|",") ]] ; then
 einfo "ACE = Arbitrary Code Execution"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ACP"($|" "|";"|",") ]] ; then
+einfo "ACP = Attack Chain Primitive"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AE"($|" "|";"|",") ]] ; then
 # Alias for ITW.
@@ -110,9 +116,6 @@ einfo "AE = Actively Exploited" # More formal
 # Not necessarily KEV.
 # See also KEV
 einfo "AEITW = Actively Exploited In The Wild" # Most formal
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ACP"($|" "|";"|",") ]] ; then
-einfo "ACP = Attack Chain Primitive"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AFA"($|" "|";"|",") ]] ; then
 einfo "AFA = Arbitrary File Access"
@@ -242,6 +245,9 @@ einfo "HWF = Hardware Fault"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"I"($|" "|";"|",") ]] ; then
 # Same as DT
 einfo "I = Integrity Impacted"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IA"($|" "|";"|",") ]] ; then
+einfo "IA = Improper Authentication"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IAC"($|" "|";"|",") ]] ; then
 einfo "IAC = Improper Access Control"
