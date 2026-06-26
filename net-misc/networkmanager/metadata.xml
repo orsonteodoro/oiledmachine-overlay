@@ -24,6 +24,13 @@
   # An example of default converted into custom
   NM_CAPS="cap_net_admin,cap_dac_override,cap_net_raw,cap_bpf,cap_net_bind_service,cap_setgid,cap_setuid,cap_sys_module,cap_audit_write,cap_kill,cap_sys_chroot=ep"
 
+
+  A sample of /etc/portage/env/networkmanager.conf:
+  NM_CAPS="home"
+
+  A sample of /etc/portage/package.env:
+  net-misc/networkmanager networkmanager.conf
+
   -->
   ]]>
   <use>
