@@ -8,22 +8,44 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY_LIBARCHIVE="CE DOS HO IO MC NPD OOBA OOBR PT RC UAF UB"
 
-inherit cflags-hardened libtool multilib-minimal toolchain-funcs verify-sig
+CHKL_TIMESTAMPS=(
+	"app-arch/bzip2-9999"
+	"app-arch/lz4-9999"
+	"app-arch/xz-utils-9999"
+	"dev-libs/expat-9999"
+	"dev-libs/libxml2-9999"
+	"dev-libs/nettle-9999"
+	"app-arch/zstd-9999"
+)
+
+inherit cflags-hardened libtool multilib-minimal secure-version toolchain-funcs verify-sig
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="1a778f9c10e736b472b09ec55243f6d5fe1c7776"
+	EGIT_BRANCH="master"
+	EGIT_REPO_URI="https://github.com/libarchive/libarchive.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	SRC_URI="
+	https://www.libarchive.de/downloads/${P}.tar.xz
+	verify-sig? ( https://www.libarchive.de/downloads/${P}.tar.xz.asc )
+	"
+fi
 
 DESCRIPTION="Multi-format archive and compression library"
 HOMEPAGE="
 	https://www.libarchive.org/
 	https://github.com/libarchive/libarchive/
 "
-SRC_URI="
-	https://www.libarchive.de/downloads/${P}.tar.xz
-	verify-sig? ( https://www.libarchive.de/downloads/${P}.tar.xz.asc )
-"
 
 LICENSE="BSD BSD-2 BSD-4 public-domain"
-SLOT="0/13"
+SOVER="13"
+SLOT="0/${SOVER}"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris"
-IUSE="
+IUSE+="
 	acl blake2 +bzip2 +e2fsprogs expat +iconv lz4 +lzma lzo nettle
 	static-libs test xattr +zstd
 	ebuild_revision_14
@@ -31,33 +53,33 @@ IUSE="
 RESTRICT="!test? ( test )"
 
 RDEPEND="
-	virtual/zlib:=[${MULTILIB_USEDEP}]
-	acl? ( virtual/acl:=[${MULTILIB_USEDEP}] )
-	blake2? ( app-crypt/libb2:=[${MULTILIB_USEDEP}] )
-	bzip2? ( app-arch/bzip2:=[${MULTILIB_USEDEP}] )
-	expat? ( dev-libs/expat:=[${MULTILIB_USEDEP}] )
-	!expat? ( dev-libs/libxml2:=[${MULTILIB_USEDEP}] )
-	iconv? ( virtual/libiconv:=[${MULTILIB_USEDEP}] )
-	dev-libs/openssl:=[${MULTILIB_USEDEP}]
-	lz4? ( >=app-arch/lz4-0_p131:=[${MULTILIB_USEDEP}] )
-	lzma? ( >=app-arch/xz-utils-5.2.5-r1:=[${MULTILIB_USEDEP}] )
+	${OPENSSL_RDEPEND}
+	>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}]
+	acl? ( virtual/acl:*[${MULTILIB_USEDEP}] )
+	blake2? ( >=app-crypt/libb2-${LIBB2_PV}:=[${MULTILIB_USEDEP}] )
+	bzip2? ( >=app-arch/bzip2-${BZIP2_PV}:=[${MULTILIB_USEDEP}] )
+	expat? ( >=dev-libs/expat-${EXPAT_PV}:=[${MULTILIB_USEDEP}] )
+	!expat? ( >=dev-libs/libxml2-${LIBXML2_PV}:=[${MULTILIB_USEDEP}] )
+	iconv? ( virtual/libiconv:*[${MULTILIB_USEDEP}] )
+	lz4? ( >=app-arch/lz4-${LZ4_PV}:=[${MULTILIB_USEDEP}] )
+	lzma? ( >=app-arch/xz-utils-${XZ_UTILS_PV}:=[${MULTILIB_USEDEP}] )
 	lzo? ( >=dev-libs/lzo-2:=[${MULTILIB_USEDEP}] )
-	nettle? ( dev-libs/nettle:=[${MULTILIB_USEDEP}] )
-	zstd? ( app-arch/zstd:=[${MULTILIB_USEDEP}] )
+	nettle? ( >=dev-libs/nettle-${NETTLE_PV}:=[${MULTILIB_USEDEP}] )
+	zstd? ( >=app-arch/zstd-${ZSTD_PV}:=[${MULTILIB_USEDEP}] )
 "
 DEPEND="${RDEPEND}
 	kernel_linux? (
 		virtual/os-headers
-		e2fsprogs? ( sys-fs/e2fsprogs[${MULTILIB_USEDEP}] )
+		e2fsprogs? ( sys-fs/e2fsprogs:=[${MULTILIB_USEDEP}] )
 	)
 	test? (
-		app-arch/lrzip
-		app-arch/lz4
-		app-arch/lzip
-		app-arch/lzop
-		app-arch/xz-utils
-		app-arch/zstd
-		lzma? ( app-arch/xz-utils[extra-filters(+)] )
+		app-arch/lrzip:=
+		>=app-arch/lz4-${LZ4_PV}:=
+		app-arch/lzip:=
+		app-arch/lzop:=
+		>=app-arch/xz-utils-${XZ_UTILS_PV}:=
+		>=app-arch/zstd-${ZSTD_PV}:=
+		lzma? ( >=app-arch/xz-utils-${XZ_UTILS_PV}:=[extra-filters(+)] )
 	)
 "
 BDEPEND="
@@ -82,7 +104,7 @@ PATCHES=(
 
 	# oiledmachine-overlay:  Prevent error related to -fstrict-flex-arrays=3 with cmake
 	# Test with configure phase of opencv ebuild
-	"${FILESDIR}/libarchive-3.8.1-remove-struct-hack.patch"
+	"${FILESDIR}/libarchive-1a778f9-remove-struct-hack.patch"
 )
 
 src_prepare() {
@@ -93,6 +115,7 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	chkl_check_many_timestamps
 	cflags-hardened_append
 
 	export ac_cv_header_ext2fs_ext2_fs_h=$(usex e2fsprogs) #354923

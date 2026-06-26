@@ -1,0 +1,106 @@
+diff '--color=auto' -urp libarchive-9999.orig/libarchive/archive_read_open_filename.c libarchive-9999/libarchive/archive_read_open_filename.c
+--- libarchive-9999.orig/libarchive/archive_read_open_filename.c	2026-06-26 16:00:18.434912605 -0700
++++ libarchive-9999/libarchive/archive_read_open_filename.c	2026-06-26 16:01:05.361630078 -0700
+@@ -82,8 +82,14 @@ struct read_file_data {
+ 	char	 use_lseek;
+ 	enum fnt_e { FNT_STDIN, FNT_MBS, FNT_WCS } filename_type;
+ 	union {
+-		char	 m[1];/* MBS filename. */
+-		wchar_t	 w[1];/* WCS filename. */
++          struct {
++            char _padding[0];  /* Dummy to allow flexible array in this struct */
++            char    m[];  /* MBS filename */
++          } mbs;
++          struct {
++            char _padding[0];  /* Dummy to allow flexible array in this struct */
++            wchar_t w[];  /* WCS filename */
++          } wcs;
+ 	} filename; /* Must be last! */
+ };
+ 
+@@ -132,7 +138,7 @@ archive_read_open_filenames(struct archi
+ 		mine = calloc(1, sizeof(*mine) + len);
+ 		if (mine == NULL)
+ 			goto no_memory;
+-		memcpy(mine->filename.m, filename, len + 1);
++		memcpy(mine->filename.mbs.m, filename, len + 1);
+ 		mine->block_size = block_size;
+ 		mine->fd = -1;
+ 		mine->buffer = NULL;
+@@ -195,7 +201,7 @@ archive_read_open_filenames_w(struct arc
+ 		} else {
+ #if defined(_WIN32) && !defined(__CYGWIN__)
+ 			mine->filename_type = FNT_WCS;
+-			wcscpy(mine->filename.w, wfilename);
++			wcscpy(mine->filename.wcs.w, wfilename);
+ #else
+ 			/*
+ 			 * POSIX system does not support a wchar_t interface for
+@@ -219,7 +225,7 @@ archive_read_open_filenames_w(struct arc
+ 				return (ARCHIVE_FATAL);
+ 			}
+ 			mine->filename_type = FNT_MBS;
+-			strcpy(mine->filename.m, fn.s);
++			strcpy(mine->filename.mbs.m, fn.s);
+ 			archive_string_free(&fn);
+ #endif
+ 		}
+@@ -291,7 +297,7 @@ file_open(struct archive *a, void *clien
+ #endif
+ 		filename = "";
+ 	} else if (mine->filename_type == FNT_MBS) {
+-		filename = mine->filename.m;
++		filename = mine->filename.mbs.m;
+ 		fd = open(filename, O_RDONLY | O_BINARY | O_CLOEXEC);
+ 		__archive_ensure_cloexec_flag(fd);
+ 		if (fd < 0) {
+@@ -301,7 +307,7 @@ file_open(struct archive *a, void *clien
+ 		}
+ 	} else {
+ #if defined(_WIN32) && !defined(__CYGWIN__)
+-		wfilename = mine->filename.w;
++		wfilename = mine->filename.wcs.w;
+ 		fd = _wopen(wfilename, O_RDONLY | O_BINARY);
+ 		if (fd < 0 && errno == ENOENT) {
+ 			wchar_t *fullpath;
+@@ -456,10 +462,10 @@ file_read(struct archive *a, void *clien
+ 				    "Error reading stdin");
+ 			else if (mine->filename_type == FNT_MBS)
+ 				archive_set_error(a, errno,
+-				    "Error reading '%s'", mine->filename.m);
++				    "Error reading '%s'", mine->filename.mbs.m);
+ 			else
+ 				archive_set_error(a, errno,
+-				    "Error reading '%ls'", mine->filename.w);
++				    "Error reading '%ls'", mine->filename.wcs.w);
+ 		}
+ 		return (bytes_read);
+ 	}
+@@ -529,10 +535,10 @@ file_skip_lseek(struct archive *a, void
+ 		archive_set_error(a, errno, "Error seeking in stdin");
+ 	else if (mine->filename_type == FNT_MBS)
+ 		archive_set_error(a, errno, "Error seeking in '%s'",
+-		    mine->filename.m);
++		    mine->filename.mbs.m);
+ 	else
+ 		archive_set_error(a, errno, "Error seeking in '%ls'",
+-		    mine->filename.w);
++		    mine->filename.wcs.w);
+ 	return (-1);
+ }
+ 
+@@ -589,10 +595,10 @@ err:
+ 		archive_set_error(a, errno, "Error seeking in stdin");
+ 	else if (mine->filename_type == FNT_MBS)
+ 		archive_set_error(a, errno, "Error seeking in '%s'",
+-		    mine->filename.m);
++		    mine->filename.mbs.m);
+ 	else
+ 		archive_set_error(a, errno, "Error seeking in '%ls'",
+-		    mine->filename.w);
++		    mine->filename.wcs.w);
+ 	return (ARCHIVE_FATAL);
+ }
+ 
+Only in libarchive-9999/libarchive: archive_read_open_filename.c.orig
+Only in libarchive-9999/libarchive: archive_read_open_filename.c.rej
