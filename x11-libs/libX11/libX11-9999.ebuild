@@ -3,10 +3,12 @@
 
 EAPI=8
 
+# This ebuild fork partly uses AI inference for vulnerability detail analysis.
+
 # Add retpoline for end-to-end copy-paste
 CFLAGS_HARDENED_LANGS="c-lang"
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data untrusted-data"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS IO OOBR OOBW PE"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS IO IPI OOBR OOBW PE"
 XORG_DOC=doc
 XORG_MULTILIB=yes
 
