@@ -1,0 +1,187 @@
+diff '--color=auto' -urp firejail-9999.orig/etc/profile-a-l/default.profile firejail-9999/etc/profile-a-l/default.profile
+--- firejail-9999.orig/etc/profile-a-l/default.profile	2026-06-25 21:49:44.811622792 -0700
++++ firejail-9999/etc/profile-a-l/default.profile	2026-06-25 21:50:05.155004488 -0700
+@@ -9,7 +9,7 @@ include globals.local
+ # depending on your usage, you can enable some of the commands below:
+ 
+ include disable-common.inc
+-#include disable-devel.inc
++include disable-devel.inc # Prevent bypass of disable-common.inc
+ #include disable-exec.inc
+ #include disable-interpreters.inc
+ include disable-programs.inc
+diff '--color=auto' -urp firejail-9999.orig/etc/profile-a-l/eo-common.profile firejail-9999/etc/profile-a-l/eo-common.profile
+--- firejail-9999.orig/etc/profile-a-l/eo-common.profile	2026-06-25 21:49:44.831622184 -0700
++++ firejail-9999/etc/profile-a-l/eo-common.profile	2026-06-25 21:50:05.155004488 -0700
+@@ -27,7 +27,7 @@ include whitelist-var-common.inc
+ 
+ apparmor
+ caps.drop all
+-ipc-namespace
++@IPC_NAMESPACE_FIX@ipc-namespace # Add "#" If using xpra (less secure).  Remove "#" if using xephyr (move secure).  Verified 20260525
+ machine-id
+ net none
+ no3d
+diff '--color=auto' -urp firejail-9999.orig/etc/profile-a-l/feh.profile firejail-9999/etc/profile-a-l/feh.profile
+--- firejail-9999.orig/etc/profile-a-l/feh.profile	2026-06-25 21:49:44.835622063 -0700
++++ firejail-9999/etc/profile-a-l/feh.profile	2026-06-25 21:50:05.155004488 -0700
+@@ -25,7 +25,7 @@ include whitelist-runuser-common.inc
+ 
+ apparmor
+ caps.drop all
+-ipc-namespace
++#ipc-namespace # Disabling this line by adding # is required to set the wallpaper which is a common use case, verified 202606224
+ machine-id
+ net none
+ no3d
+diff '--color=auto' -urp firejail-9999.orig/etc/profile-a-l/file.profile firejail-9999/etc/profile-a-l/file.profile
+--- firejail-9999.orig/etc/profile-a-l/file.profile	2026-06-25 21:49:44.835622063 -0700
++++ firejail-9999/etc/profile-a-l/file.profile	2026-06-25 21:50:05.155004488 -0700
+@@ -36,7 +36,7 @@ x11 none
+ private-cache
+ private-dev
+ #private-etc alternatives,localtime,magic,magic.mgc
+-#private-lib file,libarchive.so.*,libfakeroot,libmagic.so.*,libseccomp.so.*
++private-lib file,libarchive.so.*,libfakeroot,libmagic.so.*,libseccomp.so.* # More secure, verified 20260525
+ 
+ dbus-user none
+ dbus-system none
+diff '--color=auto' -urp firejail-9999.orig/etc/profile-a-l/firefox-wayland.profile firejail-9999/etc/profile-a-l/firefox-wayland.profile
+--- firejail-9999.orig/etc/profile-a-l/firefox-wayland.profile	2026-06-25 21:49:44.839621941 -0700
++++ firejail-9999/etc/profile-a-l/firefox-wayland.profile	2026-06-25 21:50:05.155004488 -0700
+@@ -6,5 +6,7 @@ include firefox-wayland.local
+ # added by included profile
+ #include globals.local
+ 
++whitelist ${RUNUSER}/wayland-1
++
+ # Redirect
+ include firefox.profile
+Only in firejail-9999/etc/profile-a-l: inkscape.profile.orig
+Only in firejail-9999/etc/profile-a-l: inkscape.profile.rej
+diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/man.profile firejail-9999/etc/profile-m-z/man.profile
+--- firejail-9999.orig/etc/profile-m-z/man.profile	2026-06-25 21:49:44.899620117 -0700
++++ firejail-9999/etc/profile-m-z/man.profile	2026-06-25 21:51:57.779581591 -0700
+@@ -22,15 +22,15 @@ include disable-interpreters.inc
+ include disable-programs.inc
+ include disable-xdg.inc
+ 
+-#mkdir ${HOME}/.local/share/man
+-#whitelist ${HOME}/.local/share/man
+-#whitelist ${HOME}/.manpath
++#mkdir ${HOME}/.local/share/man # Verified 20260525
++#whitelist ${HOME}/.local/share/man # Verified 20260525
++#whitelist ${HOME}/.manpath # Verified 20260525
+ whitelist /usr/share/groff
+ whitelist /usr/share/info
+ whitelist /usr/share/lintian
+ whitelist /usr/share/man
+ whitelist /var/cache/man
+-#include whitelist-common.inc
++#include whitelist-common.inc # Verified 20260525
+ include whitelist-runuser-common.inc
+ include whitelist-usr-share-common.inc
+ include whitelist-var-common.inc
+@@ -56,16 +56,16 @@ tracelog
+ x11 none
+ 
+ disable-mnt
+-#private-bin apropos,bash,cat,catman,col,gpreconv,groff,grotty,gunzip,gzip,less,man,most,nroff,preconv,sed,sh,tbl,tr,troff,whatis,which,xtotroff,zcat,zsoelim
++private-bin apropos,bash,cat,catman,col,gpreconv,groff,grotty,gunzip,gzip,less,man,most,nroff,preconv,sed,sh,tbl,tr,troff,whatis,which,xtotroff,zcat,zsoelim,manpager,bzip2  # Verified 20260525
+ private-cache
+ private-dev
+-private-etc @x11,groff,man_db.conf,manpath.config,sysless,terminfo
+-#private-tmp
++private-etc @x11,groff,man_db.conf,manpath.config,sysless,terminfo	# Verified 20260525
++private-tmp								# Verified 20260525
+ 
+ dbus-user none
+ dbus-system none
+ 
+ memory-deny-write-execute
+ read-only ${HOME}
+-#read-only /tmp # breaks mandoc (see #4927)
++read-only /tmp # breaks mandoc (see #4927)				# Verified 20260525
+ restrict-namespaces
+Only in firejail-9999/etc/profile-m-z: man.profile.orig
+Only in firejail-9999/etc/profile-m-z: man.profile.rej
+diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/mpv.profile firejail-9999/etc/profile-m-z/mpv.profile
+--- firejail-9999.orig/etc/profile-m-z/mpv.profile	2026-06-25 21:49:44.907619874 -0700
++++ firejail-9999/etc/profile-m-z/mpv.profile	2026-06-25 21:50:05.155004488 -0700
+@@ -76,7 +76,7 @@ include whitelist-var-common.inc
+ apparmor
+ caps.drop all
+ netfilter
+-nogroups
++#nogroups # Breaks streaming, verified 20260525
+ noinput
+ nonewprivs
+ noroot
+diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/nano.profile firejail-9999/etc/profile-m-z/nano.profile
+--- firejail-9999.orig/etc/profile-m-z/nano.profile	2026-06-25 21:49:44.915619632 -0700
++++ firejail-9999/etc/profile-m-z/nano.profile	2026-06-25 21:50:05.155004488 -0700
+@@ -51,7 +51,7 @@ x11 none
+ private-bin nano,rnano
+ private-cache
+ private-dev
+-private-etc nanorc
++private-etc nanorc,terminfo
+ 
+ dbus-user none
+ dbus-system none
+diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/pavucontrol.profile firejail-9999/etc/profile-m-z/pavucontrol.profile
+--- firejail-9999.orig/etc/profile-m-z/pavucontrol.profile	2026-06-25 21:49:44.927619266 -0700
++++ firejail-9999/etc/profile-m-z/pavucontrol.profile	2026-06-25 21:50:05.155004488 -0700
+@@ -41,7 +41,7 @@ seccomp
+ tracelog
+ 
+ disable-mnt
+-private-bin pavucontrol
++private-bin pavucontrol,pulseaudio
+ private-cache
+ private-dev
+ private-etc avahi
+diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/signal-desktop.profile firejail-9999/etc/profile-m-z/signal-desktop.profile
+--- firejail-9999.orig/etc/profile-m-z/signal-desktop.profile	2026-06-25 21:49:44.951618537 -0700
++++ firejail-9999/etc/profile-m-z/signal-desktop.profile	2026-06-25 21:50:05.155004488 -0700
+@@ -36,6 +36,7 @@ dbus-user.talk org.freedesktop.secrets
+ dbus-user.talk org.mozilla.*
+ 
+ ignore dbus-user none
++ignore nogroups # Verified 20260525
+ 
+ # Redirect
+ include electron-common.profile
+diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/spotify.profile firejail-9999/etc/profile-m-z/spotify.profile
+--- firejail-9999.orig/etc/profile-m-z/spotify.profile	2026-06-25 21:49:44.955618415 -0700
++++ firejail-9999/etc/profile-m-z/spotify.profile	2026-06-25 21:50:05.155004488 -0700
+@@ -33,7 +33,7 @@ include whitelist-var-common.inc
+ caps.drop all
+ netfilter
+ nodvd
+-nogroups
++#nogroups
+ noinput
+ nonewprivs
+ noprinters
+@@ -50,7 +50,7 @@ private-dev
+ # If you want to see album covers or want to use the radio, add 'ignore private-etc' to your spotify.local.
+ private-etc @tls-ca,host.conf,spotify-adblock
+ private-srv none
+-private-tmp
++#private-tmp
+ 
+ dbus-user filter
+ dbus-user.own org.mpris.MediaPlayer2.spotify
+diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/tar.profile firejail-9999/etc/profile-m-z/tar.profile
+--- firejail-9999.orig/etc/profile-m-z/tar.profile	2026-06-25 21:49:44.959618294 -0700
++++ firejail-9999/etc/profile-m-z/tar.profile	2026-06-25 21:50:05.155004488 -0700
+@@ -17,7 +17,7 @@ ignore include disable-shell.inc
+ # all capabilities this is automatically read-only.
+ noblacklist /var/lib/pacman
+ 
+-#private-lib libfakeroot,liblzma.so.*,libreadline.so.*
++private-lib libfakeroot,liblzma.so.*,libreadline.so.* # More secure, verified 20260525
+ # Debian based distributions need this for 'dpkg --unpack' (incl. synaptic)
+ writable-var
+ 

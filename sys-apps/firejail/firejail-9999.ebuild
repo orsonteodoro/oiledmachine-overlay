@@ -61,7 +61,7 @@ HARDENED_ALLOCATORS_IUSE=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_LTS[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_LTS[@]/llvm_slot_}"
 )
 
 declare -A _PATH_CORRECTION=(
@@ -256,7 +256,7 @@ inherit virtualx
 
 gen_clang_bdepend() {
 	local s
-	for s in ${LLVM_COMPAT[@]} ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
 		echo "
 		llvm_slot_${s}? (
 			llvm-core/clang:${s}
@@ -271,12 +271,15 @@ gen_clang_bdepend() {
 }
 
 if [[ "${PV}" =~ "9999" ]]; then
-	inherit git-r3
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/netblue30/firejail.git"
-	FIREJAIL_FALLBACK_COMMIT="1a576d15a9339b8f70ae3056e2413e58931072d5" # Jan 17, 2025 # working
-#	FIREJAIL_FALLBACK_COMMIT="897f12dd88c1add667ecb211b61b6126a49c7065" # Sep 1, 2024 # working
-	IUSE+=" fallback-commit"
+	FALLBACK_COMMIT="8baad2bebfb96f1bd082c6bd270bb3907ef41833"
+#	FALLBACK_COMMIT="1a576d15a9339b8f70ae3056e2413e58931072d5" # Jan 17, 2025 # working
+#	FALLBACK_COMMIT="897f12dd88c1add667ecb211b61b6126a49c7065" # Sep 1, 2024 # working
+	if [[ "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
 else
 	KEYWORDS="amd64 ~arm ~arm64 ~x86"
 	SRC_URI="
@@ -404,7 +407,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-0.9.80-manpage-nocompress.patch"
 #	"${FILESDIR}/extra-patches/${PN}-009110a-disable-xcsecurity.patch"
 #	"${FILESDIR}/extra-patches/${PN}-009110a-disable-xcsecurity-usage.patch"
-	"${FILESDIR}/extra-patches/${PN}-0.9.80-profile-fixes.patch"
+	"${FILESDIR}/extra-patches/${PN}-8baad2b-profile-fixes.patch"
 	"${FILESDIR}/extra-patches/${PN}-3bbc6b5-private-bin-no-local-default-yes.patch" # Fix all wrappers and mpv
 	"${FILESDIR}/extra-patches/${PN}-1b2d18e-default-res.patch"
 	"${FILESDIR}/extra-patches/${PN}-0.9.80-inc-profile-changes.patch"
@@ -440,7 +443,7 @@ get_supported_commands() {
 is_x_blacklisted() {
 	local arg="${1}"
 	local y
-	for y in ${X_BLACKLIST[@]} ; do
+	for y in "${X_BLACKLIST[@]}" ; do
 		if [[ "${arg}" == "${y}" ]] ; then
 			return 0
 		fi
@@ -451,7 +454,7 @@ is_x_blacklisted() {
 is_x_headless_compat() {
 	local arg="${1}"
 	local y
-	for y in ${X_HEADLESS_COMPAT[@]} ; do
+	for y in "${X_HEADLESS_COMPAT[@]}" ; do
 		if [[ "${arg}" == "${y}" ]] ; then
 			return 0
 		fi
@@ -462,7 +465,7 @@ is_x_headless_compat() {
 is_xephyr_only() {
 	local arg="${1}"
 	local y
-	for y in ${X_XEPHYR_ONLY[@]} ; do
+	for y in "${X_XEPHYR_ONLY[@]}" ; do
 		if [[ "${arg}" == "${y}" ]] ; then
 			return 0
 		fi
@@ -473,7 +476,7 @@ is_xephyr_only() {
 is_xpra_only() {
 	local arg="${1}"
 	local y
-	for y in ${X_XPRA_ONLY[@]} ; do
+	for y in "${X_XPRA_ONLY[@]}" ; do
 		if [[ "${arg}" == "${y}" ]] ; then
 			return 0
 		fi
@@ -484,7 +487,7 @@ is_xpra_only() {
 is_chromium_app() {
 	local arg="${1}"
 	local y
-	for y in ${CHROMIUM_APPS[@]} ; do
+	for y in "${CHROMIUM_APPS[@]}" ; do
 		if [[ "${arg}" == "${y}" ]] ; then
 			return 0
 		fi
@@ -708,7 +711,7 @@ get_x11_compat() {
 pkg_setup() {
 	check_kernel_config
 	if use test && [[ "${TEST_SET}" == "full" ]] ; then
-		if has userpriv $FEATURES ; then
+		if has userpriv ${FEATURES} ; then
 eerror
 eerror "You need to add FEATURES=\"\${FEATURES} -userpriv\" to complete testing"
 eerror "in your per-package envvars"
@@ -774,7 +777,9 @@ einfo "Editing ${f}:  /usr/share/doc/firejail -> ${ED}/usr/share/doc/firejail-${
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
-		use fallback-commit && EGIT_COMMIT="${FIREJAIL_FALLBACK_COMMIT}"
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
 		git-r3_fetch
 		git-r3_checkout
 	else
@@ -845,11 +850,13 @@ ewarn "Use LLD or mold for ROP mitigation"
 				-e "s/(-O2|-ggdb)//g" {} + \
 				|| die
 
+einfo "CWD:  "$(pwd)
 	# Fix up hardcoded paths to templates and docs
 	local files=$(grep \
 		-E \
 		-l \
-		-r '/usr/share/doc/firejail([^-]|$)' \
+		-r \
+		'/usr/share/doc/firejail([^-]|$)' \
 		"RELNOTES" \
 		"src/man/" \
 		"etc/profile"*"/" \
@@ -857,6 +864,7 @@ ewarn "Use LLD or mold for ROP mitigation"
 		|| die)
 	local file
 	for file in ${files[@]} ; do
+einfo "Processing:  ${file}"
 		sed -i -r \
 			-e "s:/usr/share/doc/firejail([^-]|\$):/usr/share/doc/${PF}\1:" \
 			"${file}" \
@@ -966,10 +974,10 @@ _src_configure() {
 		$(use_enable suid)
 		$(use_enable userns)
 		$(use_enable X x11)
-		${test_opts[@]}
+		"${test_opts[@]}"
 	)
 
-	econf ${myconf[@]}
+	econf "${myconf[@]}"
 }
 
 src_configure()
@@ -1073,10 +1081,11 @@ restore_env()
 			| cut -f 1 -d "=")
 		[[ "${k}" =~ "PORTAGE_REPOSITORIES" ]] && k="PORTAGE_REPOSITORIES"
 		[[ "${k}" =~ "PORTAGE_COLORMAP" ]] && k="PORTAGE_COLORMAP"
-		for w in ${WHITELIST_READONLY[@]} ; do
+		local w
+		for w in "${WHITELIST_READONLY[@]}" ; do
 			[[ "${k}" == "${w}" ]] && allow=0
 		done
-		v=$(echo "${l}" | cut -f 2- -d "=")
+		local v=$(echo "${l}" | cut -f 2- -d "=")
 		(( ${allow} == 1 )) && export ${k}="${v}"
 	done < "${T}/env.txt"
 	export IFS=$' \t\n'
@@ -1119,14 +1128,15 @@ wipe_env()
 		[[ "${n}" =~ "PORTAGE_COLORMAP" ]] && n="PORTAGE_COLORMAP"
 		local allow=1
 		local w
-		for w in ${whitelist[@]} ${WHITELIST_READONLY[@]} ; do
+		for w in "${whitelist[@]}" "${WHITELIST_READONLY[@]}" ; do
 			[[ "${n}" == "${w}" ]] && allow=0
 		done
 		(( ${allow} == 1 )) && envs+=( "${n}" )
 	done < "${T}/env-dump.txt"
 	export IFS=$' \t\n'
 
-	for n in ${envs[@]} ; do
+	local n
+	for n in "${envs[@]}" ; do
 		unset ${n}
 	done
 }
@@ -1215,7 +1225,7 @@ einfo "LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\""
 	save_env
 
 if true ; then
-	for x in ${profile_tests[@]} ${basic_tests[@]} ${misc_tests[@]} ; do
+	for x in "${profile_tests[@]}" "${basic_tests[@]}" "${misc_tests[@]}" ; do
 einfo "Testing ${x}"
 		wipe_env
 		make ${x} 2>&1 >"${T}/test.log"
@@ -1257,7 +1267,7 @@ fi
 			test-apps-x11-xorg
 			test-filters
 		)
-		for x in ${x11_tests[@]} ; do
+		for x in "${x11_tests[@]}" ; do
 			cd "${BUILD_DIR}" || die
 einfo "Testing ${x}"
 cat <<EOF > "${BUILD_DIR}/run.sh"
@@ -1383,7 +1393,7 @@ einfo "Generating wrapper for ${wrapper_name}"
 	is_x11_compat() {
 		local arg="${1}"
 		local x
-		for x in ${X11_COMPAT[@]} ; do
+		for x in "${X11_COMPAT[@]}" ; do
 			if [[ "${arg}" == "${x}" ]] ; then
 				return 0
 			fi
@@ -1420,7 +1430,7 @@ eerror
 
 	local preferred_fallback=""
 	local x
-	for x in ${X_FALLBACKS[@]} ; do
+	for x in "${X_FALLBACKS[@]}" ; do
 		local fallback_profile=${x%:*}
 		local x_backend=${x#*:}
 		if [[ "${key_command}" =~ "${fallback_profile}" ]] ; then
@@ -1432,7 +1442,7 @@ eerror
 	is_xephyr_only() {
 		local arg="${1}"
 		local y
-		for y in ${X_XEPHYR_ONLY[@]} ; do
+		for y in "${X_XEPHYR_ONLY[@]}" ; do
 			if [[ "${arg}" == "${y}" ]] ; then
 				return 0
 			fi
@@ -1443,7 +1453,7 @@ eerror
 	is_xpra_only() {
 		local arg="${1}"
 		local y
-		for y in ${X_XPRA_ONLY[@]} ; do
+		for y in "${X_XPRA_ONLY[@]}" ; do
 			if [[ "${arg}" == "${y}" ]] ; then
 				return 0
 			fi
@@ -1528,7 +1538,7 @@ ewarn
 	local allocator_args_mimalloc=""
 	local allocator_args_hardened_malloc=""
 	local s
-	for s in ${LLVM_COMPAT[@]} ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
 		if use "llvm_slot_${s}" && has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[scudo]" ; then
 			if [[ "${SCUDO_FREE_IMMEDIATE[${key_command}]}" != "1" ]] ; then
 				allocator_args_scudo+=" --env=SCUDO_OPTIONS='quarantine_size_kb=256:quarantine_max_chunk_size=2048:thread_local_quarantine_size_kb=64' "
@@ -1572,7 +1582,7 @@ einfo "Forcing system allocator for ${command} (3)"
 	fi
 
 	local x
-	for x in ${PROFILE_NEEDS_SYSTEM_ALLOCATOR[@]} ; do
+	for x in "${PROFILE_NEEDS_SYSTEM_ALLOCATOR[@]}" ; do
 		if [[ "${key_command}" == "firefox" ]] && has_version "www-client/firefox" && ! has_version "www-client/firefox[jemalloc]" ; then
 			:
 		elif [[ "${key_command}" == "chromium" ]] && has_version "www-client/chromium" && ! has_version "www-client/chromium[partitionalloc]" ; then
@@ -1808,7 +1818,7 @@ if [[ "\${EUID}" == "0" ]] ; then
 	"${exe_path}" "\$@"
 else
 	echo "DEBUG:  Protecting ${command} with Firejail"
-	exec firejail ${all_args_headless[@]} "${exe_path}" "\$@"
+	exec firejail "${all_args_headless[@]}" "${exe_path}" "\$@"
 fi
 EOF
 	}
@@ -1820,9 +1830,9 @@ cat <<EOF > "${ED}/usr/local/${folder}/${wrapper_name}" || die
 if [[ "\${EUID}" == "0" || "\${EUID}" == "250" ]] ; then
 	"${exe_path}" "\$@"
 elif [[ -n "\${DISPLAY}" ]] ; then
-	exec firejail ${all_args_x11[@]} "${exe_path}" ${exe_x11_args[@]} "\$@"
+	exec firejail "${all_args_x11[@]}" "${exe_path}" "${exe_x11_args[@]}" "\$@"
 else
-	exec firejail ${env_args[@]} ${all_args_wayland[@]} "${exe_path}" ${exe_wayland_args[@]} "\$@"
+	exec firejail "${env_args[@]}" "${all_args_wayland[@]}" "${exe_path}" "${exe_wayland_args[@]}" "\$@"
 fi
 EOF
 	}
@@ -1845,9 +1855,9 @@ if [[ "\${EUID}" == "0" || "\${EUID}" == "250" ]] ; then
 	"${exe_path}" "\$@"
 elif [[ -n "\${DISPLAY}" ]] ; then
 	xhost +si:localuser:\${USER}
-	exec firejail ${all_args_x11[@]} --env=XAUTHORITY="\${_XAUTHORITY}" "${exe_path}" ${exe_x11_args[@]} "\$@"
+	exec firejail "${all_args_x11[@]}" --env=XAUTHORITY="\${_XAUTHORITY}" "${exe_path}" "${exe_x11_args[@]}" "\$@"
 else
-	exec firejail ${env_args[@]} ${all_args_wayland[@]} "${exe_path}" ${exe_wayland_args[@]} "\$@"
+	exec firejail "${env_args[@]}" "${all_args_wayland[@]}" "${exe_path}" "${exe_wayland_args[@]}" "\$@"
 fi
 EOF
 	}
@@ -1947,7 +1957,7 @@ ewarn "${command} is not found in standard paths.  Skipping wrapper creation for
 			"zutty"
 		)
 		local command
-		for command in ${terms[@]} ; do
+		for command in "${terms[@]}" ; do
 			local exe_path=""
 			if [[ -n "${PATH_CORRECTION[${command}]}" ]] ; then
 				exe_path="${PATH_CORRECTION[${command}]}"
@@ -2029,7 +2039,7 @@ _install_profiles() {
 einfo "DEBUG: commands ${commands[@]}"
 
 	local command
-	for command in ${commands[@]} ; do
+	for command in "${commands[@]}" ; do
 		local src
 		local dest
 		src=$(find "${T}/profiles" -name "${command}.profile" \
