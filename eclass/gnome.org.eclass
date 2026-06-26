@@ -55,17 +55,8 @@ fi
 # See https://discourse.gnome.org/t/new-gnome-versioning-scheme/4235
 : "${GNOME_ORG_PV:=$(ver_rs 1- .)}"
 
-if [[ "${PV}" =~ "9999" ]] ; then
-	EGIT_BRANCH="main"
-	EGIT_CHECKOUT_DIR="${WORKDIR}/${GNOME_ORG_MODULE}-${GNOME_ORG_PV}"
-	EGIT_REPO_URI="https://gitlab.gnome.org/GNOME/${GNOME_ORG_MODULE}.git"
-	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
-		IUSE+=" fallback-commit"
-	fi
-	inherit git-r3
-else
+if [[ ! "${PV}" =~ "9999" ]] ; then
 	SRC_URI="mirror://gnome/sources/${GNOME_ORG_MODULE}/${GNOME_ORG_RELEASE}/${GNOME_ORG_MODULE}-${GNOME_ORG_PV}.tar.${GNOME_TARBALL_SUFFIX}"
-
 	S="${WORKDIR}/${GNOME_ORG_MODULE}-${GNOME_ORG_PV}"
 fi
 
