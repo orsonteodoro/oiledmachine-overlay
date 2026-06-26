@@ -181,5 +181,8 @@ media-plugins/gst-plugins-voaacenc
 # It is unknown how much of the code violates the principle.
 media-libs/lcms
 
-# Lacks fully patched vulnerability coverage
+# Lacks fully patched vulnerability coverage.
+# - Misses under-reported commits
+# - Over-reliance on CVE instead of manual commit review with critical thinking
+# - Misses silent patches that later become vulnerability annoucements
 dev-qt/qtwebengine
