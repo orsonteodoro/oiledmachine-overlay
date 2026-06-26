@@ -143,6 +143,9 @@ einfo "BO = Buffer Overflow"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"BOR"($|" "|";"|",") ]] ; then
 einfo "BOR = Buffer Overread"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"BU"($|" "|";"|",") ]] ; then
+einfo "BU = Buffer Underflow"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"C"($|" "|";"|",") ]] ; then
 # Same as ID
 einfo "C = Confidentiality Impacted"
@@ -200,6 +203,9 @@ einfo "DLH = Dynamic Linker Hijacking"
 # Same as A
 einfo "DoS = Denial of Service"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"DP"($|" "|";"|",") ]] ; then
+einfo "DP = Dangling Pointer"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"DR"($|" "|";"|",") ]] ; then
 # DT
 einfo "DR = Data Race"
@@ -253,7 +259,14 @@ einfo "IA = Improper Authentication"
 einfo "IAC = Improper Access Control"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IBC"($|" "|";"|",") ]] ; then
+# Deprecated
 einfo "IBC = Incorrect Boundary Conditions"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IBCH"($|" "|";"|",") ]] ; then
+einfo "IBCH = Incorrect Bounds Check"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IBCO"($|" "|";"|",") ]] ; then
+einfo "IBCO = Incorrect Boundary Condition"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IB"($|" "|";"|",") ]] ; then
 einfo "IB = Integrity Bypass"
@@ -320,6 +333,9 @@ einfo "IOOB = Index Out Of Bounds"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IP"($|" "|";"|",") ]] ; then
 einfo "IP = Improper Permissions"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IPI"($|" "|";"|",") ]] ; then
+einfo "IPI = Inadequate Process Isolation"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IR"($|" "|";"|",") ]] ; then
 einfo "IR = Infinite Recursion"
