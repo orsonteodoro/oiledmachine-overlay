@@ -13,7 +13,7 @@
   Build-time environment variables
 
   NM_CAPS - set the needed capabilities.
-  Valid settings:  default, moderate, minimal, <custom>
+  Valid settings:  default, home, minimal, <custom>
 
   Examples:
 
