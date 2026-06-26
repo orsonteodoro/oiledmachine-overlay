@@ -1709,7 +1709,7 @@ COMMON_SNAPSHOT_DEPEND="
 		>=dev-cpp/simdutf-8.0.0:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	)
 	system-snappy? (
-		>=app-arch/snappy-1.2.2:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
+		>=app-arch/snappy-${SNAPPY_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 	)
 	system-spirv-tools? (
 		>=dev-util/spirv-tools-${VULKAN_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
@@ -1895,7 +1895,7 @@ RDEPEND+="
 		)
 	)
 	selinux? (
-		>=sys-libs/libselinux-3.1:=[${MULTILIB_USEDEP}]
+		>=sys-libs/libselinux-${LIBSELINUX_PV}:=[${MULTILIB_USEDEP}]
 		sec-policy/selinux-chromium:*
 	)
 	bindist? (
@@ -1926,7 +1926,7 @@ DEPEND+="
 
 PDEPEND+="
 	firejail? (
-		sys-apps/firejail[X?]
+		>=sys-apps/firejail-${FIREJAIL_PV}[X?]
 	)
 "
 
@@ -1946,7 +1946,7 @@ BDEPEND+="
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	>=sys-devel/bison-2.4.3
 	app-alternatives/lex
-	dev-lang/perl
+	>=dev-lang/perl-${PERL_PV}
 	dev-util/esbuild:${ESBUILD_PV}
 	dev-vcs/git
 	>=net-libs/nodejs-24.16.0:${NODE_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},inspector]
@@ -1956,7 +1956,7 @@ BDEPEND+="
 	x11-misc/xdg-utils
 	www-client/chromium-toolchain:${PV%.*}.x=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cfi=,pgo=,system-clang=,system-rust=]
 	mold? (
-		>=sys-devel/mold-2.41.0[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},-system-mimalloc]
+		>=sys-devel/mold-${MOLD_PV}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},-system-mimalloc]
 	)
 	system-rust? (
 		>=dev-util/bindgen-0.72.1
