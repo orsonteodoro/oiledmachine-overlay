@@ -56,6 +56,7 @@ dev-libs/libpcre2 fallback-commit
 
 # Guardrail to mitigate unseen memory corruption vulnerability from dev code
 dev-libs/jemalloc fallback-commit
+dev-libs/jemalloc-usd fallback-commit
 
 # Guardrails to mitigate ACE, PE, DT, ID for USE="-* " abuse
 dev-libs/libffi exec-static-trampoline
