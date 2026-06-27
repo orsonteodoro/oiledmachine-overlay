@@ -9,13 +9,13 @@ CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DF HO IO UAF UM"
 
 CHKL_TIMESTAMPS=(
-	"media-libs/giflib-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libpng-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/tiff-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/giflib-9999"
+	"media-libs/libjpeg-turbo-9999"
+	"media-libs/libpng-9999"
+	"media-libs/tiff-9999"
 )
 
-inherit autotools cflags-hardened check-compiler-switch chkl multilib-minimal
+inherit autotools cflags-hardened check-compiler-switch chkl multilib-minimal secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="add5156cb23d8c2742ced4198be578b570f50c88"
@@ -46,20 +46,20 @@ ebuild_revision_10
 # TODO: dev-lang/swig bindings in swig/ subdirectory
 RDEPEND="
 	gif? (
-		>=media-libs/giflib-9999:=
+		>=media-libs/giflib-${GIFLIB_PV}:=
 	)
 	jpeg? (
-		>=media-libs/libjpeg-turbo-9999:=
+		>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:=
 	)
 	opengl? (
-		media-libs/freeglut:=
+		>=media-libs/freeglut-${FREEGLUT_PV}:=
 		virtual/opengl:*
 	)
 	png? (
-		>=media-libs/libpng-1.6.57:=
+		>=media-libs/libpng-${LIBPNG_PV}:=
 	)
 	tiff? (
-		>=media-libs/tiff-9999:=
+		>=media-libs/tiff-${TIFF_PV}:=
 	)
 "
 DEPEND="${RDEPEND}"
@@ -99,8 +99,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
 
-	cflags-hardened_append
 	chkl_check_many_timestamps
+	cflags-hardened_append
 
 	local args=(
 		--enable-libwebpmux
