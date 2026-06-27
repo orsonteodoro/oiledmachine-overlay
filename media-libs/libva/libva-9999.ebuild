@@ -6,10 +6,12 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/wayland-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/wayland-9999"
+	"x11-libs/libX11-9999"
+	"x11-libs/libxcb-9999"
 )
 
-inherit cflags-hardened chkl meson-multilib optfeature
+inherit cflags-hardened chkl meson-multilib optfeature secure-version
 
 DESCRIPTION="Video Acceleration (VA) API for Linux"
 HOMEPAGE="https://github.com/intel/libva"
@@ -33,18 +35,18 @@ IUSE+=" glx wayland X"
 REQUIRED_USE="glx? ( X )"
 
 RDEPEND="
-	>=x11-libs/libdrm-2.4.75[${MULTILIB_USEDEP}]
+	>=x11-libs/libdrm-${LIBDRM_PV}:=[${MULTILIB_USEDEP}]
 	wayland? (
-		>=dev-libs/wayland-9999[${MULTILIB_USEDEP}]
+		>=dev-libs/wayland-${WAYLAND_PV}:=[${MULTILIB_USEDEP}]
 	)
 	X? (
 		glx? (
-			media-libs/libglvnd[X?,${MULTILIB_USEDEP}]
+			>=media-libs/libglvnd-${LIBGLVND_PV}:=[X?,${MULTILIB_USEDEP}]
 		)
-		>=x11-libs/libX11-1.6.2[${MULTILIB_USEDEP}]
-		>=x11-libs/libXext-1.3.2[${MULTILIB_USEDEP}]
-		>=x11-libs/libXfixes-5.0.1[${MULTILIB_USEDEP}]
-		x11-libs/libxcb:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libX11-${LIBX11_PV}:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libXext-${LIBXEXT_PV}:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libXfixes-${LIBXFIXES_PV}:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libxcb-${LIBXCB_PV}:=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="${RDEPEND}"
@@ -74,8 +76,8 @@ src_unpack() {
 }
 
 multilib_src_configure() {
-	cflags-hardened_append
 	chkl_check_many_timestamps
+	cflags-hardened_append
 	local emesonargs=(
 		-Ddriverdir="${EPREFIX}/usr/$(get_libdir)/va/drivers"
 		-Ddisable_drm=false
