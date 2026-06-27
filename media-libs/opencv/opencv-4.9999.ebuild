@@ -24,7 +24,6 @@ PYTHON_COMPAT=( "python3_"{8..14} )
 inherit secure-version
 
 CMAKE_PV="3.15"
-GSTREAMER_PV="1.28.4"
 KLEIDICV_PV="0.5.0"
 QT5_PV="5.12.8"
 QT6_PV="${QTBASE6_PV}"
@@ -376,26 +375,26 @@ ROCM_SLOTS=(
 )
 
 CHKL_TIMESTAMPS=(
-	"app-arch/bzip2-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"app-text/tesseract-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-games/ogre-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/glib-2.89.9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/wayland-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/harfbuzz-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/freetype-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libavif-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libjxl-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libpng-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libva-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libwebp-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/openjpeg-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/tiff-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"sci-libs/gdal-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"sci-libs/openblas-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"sci-ml/openvino-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"x11-base/xorg-server-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"x11-libs/libxkbcommon-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"app-arch/bzip2-9999"
+	"app-text/tesseract-9999"
+	"dev-games/ogre-9999"
+	"dev-libs/glib-2.89.9999"
+	"dev-libs/wayland-9999"
+	"media-libs/harfbuzz-9999"
+	"media-libs/freetype-9999"
+	"media-libs/libavif-9999"
+	"media-libs/libjpeg-turbo-9999"
+	"media-libs/libjxl-9999"
+	"media-libs/libpng-9999"
+	"media-libs/libva-9999"
+	"media-libs/libwebp-9999"
+	"media-libs/openjpeg-9999"
+	"media-libs/tiff-9999"
+	"sci-libs/gdal-9999"
+	"sci-libs/openblas-9999"
+	"sci-ml/openvino-9999"
+	"x11-base/xorg-server-9999"
+	"x11-libs/libxkbcommon-9999"
 )
 
 inherit abseil-cpp cflags-hardened chkl cuda java-pkg-opt-2 cmake-multilib flag-o-matic hip-versions
@@ -1069,7 +1068,7 @@ RDEPEND="
 		>=media-libs/tiff-${TIFF_PV}:=[${MULTILIB_USEDEP}]
 	)
 	v4l? (
-		>=media-libs/libv4l-0.8.3:=[${MULTILIB_USEDEP}]
+		>=media-libs/libv4l-${LIBV4L_PV}:=[${MULTILIB_USEDEP}]
 	)
 	vaapi? (
 		>=media-libs/libva-${LIBVA_PV}:=[${MULTILIB_USEDEP}]
