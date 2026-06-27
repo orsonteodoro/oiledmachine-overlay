@@ -42,6 +42,7 @@
 # buffer overflow
 # corruption
 # crash
+# dbz
 # deadlock
 # divide by zero
 # double free
@@ -51,8 +52,10 @@
 # infinite loop
 # integer overflow
 # underflow
+# memory corruption
 # memory leak
 # null pointer dereference
+# oob
 # off by one
 # out of bounds
 # overflow
