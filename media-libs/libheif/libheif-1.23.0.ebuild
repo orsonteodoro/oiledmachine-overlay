@@ -297,8 +297,8 @@ pkg_setup() {
 }
 
 multilib_src_configure() {
-	cflags-hardened_append
 	chkl_check_many_timestamps
+	cflags-hardened_append
 	ffmpeg_src_configure
 	local mycmakeargs=(
 		$(cmake_use_find_package doxygen Doxygen)
