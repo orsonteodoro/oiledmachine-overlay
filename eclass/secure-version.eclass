@@ -36,7 +36,7 @@
 # languages.
 #
 #
-# These are vulnerable keywords that are scanned from the commit log section
+# These are vulnerable or hint keywords that are scanned from the commit log section
 # of the web interface:
 #
 # bounds
@@ -56,6 +56,7 @@
 # underflow
 # memory corruption
 # memory leak
+# mitigation
 # null pointer dereference
 # oob
 # off by one
