@@ -44,7 +44,8 @@ inherit autotools cflags-hardened chkl flag-o-matic libcxx-slot libstdcxx-slot t
 if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="acb40bf22255eb9f76460d79031715ff4f49f312"
 	EGIT_BRANCH="master"
-	EGIT_REPO_URI="https://cgit.ghostscript.com/ghostpdl.git"
+	#EGIT_REPO_URI="https://cgit.ghostscript.com/ghostpdl.git" # Stuck before downloading
+	EGIT_REPO_URI="https://github.com/ArtifexSoftware/ghostpdl.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
 	fi
