@@ -22,28 +22,49 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-inherit gnuconfig libtool flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal toolchain-funcs verify-sig
+CHKL_TIMESTAMPS=(
+	"app-arch/xz-utils-9999"
+)
+
+inherit gnuconfig libtool flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal secure-version toolchain-funcs verify-sig
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_REVISION="05ed7e126732"
+	if [[ -n "${FALLBACK_REVISION}" ]] ; then
+		IUSE+=" fallback-revision"
+	fi
+	inherit mercurial
+else
+	SRC_URI+="
+https://gmplib.org/download/gmp/${MY_P}.tar.xz
+mirror://gnu/${PN}/${MY_P}.tar.xz
+	verify-sig? (
+https://gmplib.org/download/gmp/${MY_P}.tar.xz.sig
+	)
+	"
+fi
+SRC_URI+="
+	doc? (
+https://gmplib.org/${PN}-man-${MANUAL_PV}.pdf
+	)
+"
 
 DESCRIPTION="Library for arbitrary-precision arithmetic on different type of numbers"
 HOMEPAGE="https://gmplib.org/"
-SRC_URI="
-	https://gmplib.org/download/gmp/${MY_P}.tar.xz
-	mirror://gnu/${PN}/${MY_P}.tar.xz
-	doc? ( https://gmplib.org/${PN}-man-${MANUAL_PV}.pdf )
-	verify-sig? ( https://gmplib.org/download/gmp/${MY_P}.tar.xz.sig )
-"
 S="${WORKDIR}"/${MY_P%a}
 
 LICENSE="|| ( LGPL-3+ GPL-2+ )"
 # The subslot reflects the C & C++ SONAMEs.
-SLOT="0/10.4"
+SOVER="10.4"
+SLOT="0/${SOVER}"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
-IUSE="+asm doc +cpudetection +cxx pic static-libs"
+IUSE+=" +asm doc +cpudetection +cxx pic static-libs"
 REQUIRED_USE="cpudetection? ( asm )"
 RESTRICT="!cpudetection? ( bindist )"
 
 BDEPEND="
-	app-arch/xz-utils
+	>=app-arch/xz-utils-${XZ_UTILS_PV}
+	>=dev-vcs/mercurial-${MERCURIAL_PV}
 	sys-devel/m4
 	verify-sig? ( sec-keys/openpgp-keys-gmp )
 "
@@ -62,6 +83,20 @@ PATCHES=(
 pkg_setup() {
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EHG_REVISION="${FALLBACK_REVISION}"
+		fi
+		mercurial_src_unpack
+		if [[ -n "${A}" ]] ; then
+			unpack ${A}
+		fi
+	else
+		unpack ${A}
+	fi
 }
 
 pkg_pretend() {
