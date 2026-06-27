@@ -75,7 +75,7 @@
 # not attacker controlled, it is not considered vulnerability but still
 # we take precaution since we do not fully understand the code or how
 # a threat actor may abuse it.  So, we presume by default that it is a
-# vulnerability.
+# security vulnerability.
 #
 #
 # Skips or ignored vulnerable commits
