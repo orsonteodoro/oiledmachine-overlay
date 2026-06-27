@@ -20,7 +20,7 @@ CFLAGS_HARDENED_VTABLE_VERIFY="1"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS DT ID OOBR PE PT UAF"
 CXX_STANDARD=20
 LTO_TYPE="none" # Global var
-PYTHON_COMPAT=( "python3_"{11..13} ) # See configure
+PYTHON_COMPAT=( "python3_"{10..13} ) # See configure
 PYTHON_REQ_USE="threads(+)"
 TPGO_CONFIGURE_DONT_SET_FLAGS=1
 UOPTS_SUPPORT_EBOLT=0
@@ -31,8 +31,6 @@ UOPTS_SUPPORT_TPGO=1
 ACORN_PV="8.16.0"
 AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 COREPACK_PV="0.35.0"
-NGHTTP2_PV="9999"
-NGHTTP3_PV="1.16.0"
 NPM_PV="11.13.0" # See https://github.com/nodejs/node/blob/v26.2.0/deps/npm/package.json
 WRK_PV="1.2.1" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 
@@ -114,7 +112,7 @@ LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 inherit bash-completion-r1 cflags-hardened check-compiler-switch check-linker
 inherit chkl flag-o-matic flag-o-matic-om lcnr libcxx-slot libstdcxx-slot
 inherit linux-info multiprocessing ninja-utils pax-utils python-any-r1
-inherit sandbox-changes toolchain-funcs uopts xdg-utils
+inherit sandbox-changes secure-version toolchain-funcs uopts xdg-utils
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/node-v${PV}"
@@ -186,17 +184,26 @@ REQUIRED_USE+="
 "
 RDEPEND+="
 	!net-libs/nodejs:0
-	>=app-arch/brotli-9999:=
-	>=dev-libs/libuv-9999:=
-	>=net-dns/c-ares-9999:=
+	>=app-arch/brotli-${BROTLI_PV}:=
+	>=dev-libs/libuv-${LIBUV_PV}:=
+	>=net-dns/c-ares-${C_ARES_PV}:=
 	>=net-libs/nghttp2-${NGHTTP2_PV}:=
-	>=virtual/zlib-1.3.2:=
+	>=virtual/zlib-${ZLIB_PV}:=
 	sys-kernel/mitigate-id:*
 	system-icu? (
-		>=dev-libs/icu-79.0.9999:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+		>=dev-libs/icu-${ICU_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	)
 	system-ssl? (
-		>=dev-libs/openssl-3.5.6:=[asm?,fips?]
+		dev-libs/openssl:=[asm?,fips?]
+		|| (
+			=dev-libs/openssl-4.0.9999[asm?,fips?]
+			=dev-libs/openssl-3.6.9999[asm?,fips?]
+			=dev-libs/openssl-3.5.9999[asm?,fips?]
+
+			~dev-libs/openssl-${OPENSSL_PV_4_0_PV}[asm?,fips?]
+			~dev-libs/openssl-${OPENSSL_PV_3_6_PV}[asm?,fips?]
+			~dev-libs/openssl-${OPENSSL_PV_3_5_PV}[asm?,fips?]
+		)
 	)
 "
 DEPEND+="
@@ -208,7 +215,7 @@ BDEPEND+="
 	sys-apps/coreutils
 	virtual/pkgconfig
 	mold? (
-		>=sys-devel/mold-2.41.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=sys-devel/mold-${MOLD_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	pax-kernel? (
 		sys-apps/elfix
@@ -219,7 +226,7 @@ BDEPEND+="
 		)
 	)
 	test? (
-		net-misc/curl
+		>=net-misc/curl-${CURL_PV}
 	)
 "
 PDEPEND+="
