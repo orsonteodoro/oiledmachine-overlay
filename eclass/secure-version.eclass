@@ -36,7 +36,8 @@
 # languages.
 #
 #
-# The keywords scan of the commit logs that we catch on quick evaluation are:
+# These are vulnerable keywords that are scanned from the commit log section
+# of the web interface:
 #
 # bounds
 # buffer overflow
@@ -46,6 +47,7 @@
 # deadlock
 # divide by zero
 # double free
+# fix wiping
 # harden
 # heap overflow
 # leak
@@ -66,16 +68,17 @@
 # use after free
 # undefined behavior (ub)
 # uninitalized [ub]
+# uninitalized memory
 # uninitalized variable [ub]
 #
 #
-# What is an is not a vulnerability
+# What is and is not a vulnerability
 #
-# Not all of these keywords are actually vulnerabilities.  If the bug is
-# not attacker controlled, it is not considered vulnerability but still
-# we take precaution since we do not fully understand the code or how
-# a threat actor may abuse it.  So, we presume by default that it is a
-# security vulnerability.
+# Not all of these keywords are actually vulnerabilities.  If the bug does
+# not have an associated attacker controlled input directly or indirectly, it is
+# not considered vulnerability, but we still take precaution since we do not
+# fully understand the code or how a threat actor may abuse it.  So, we presume
+# by default that it is a security vulnerability.
 #
 #
 # Skips or ignored vulnerable commits
