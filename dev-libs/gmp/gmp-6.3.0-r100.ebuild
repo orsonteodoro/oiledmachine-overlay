@@ -73,10 +73,14 @@ RESTRICT="!cpudetection? ( bindist )"
 
 BDEPEND="
 	>=app-arch/xz-utils-${XZ_UTILS_PV}
-	>=dev-vcs/mercurial-${MERCURIAL_PV}
 	sys-devel/m4
 	verify-sig? ( sec-keys/openpgp-keys-gmp )
 "
+if [[ "${PV}" =~ "9999" ]] ; then
+	BDEPEND+="
+		>=dev-vcs/mercurial-${MERCURIAL_PV}
+	"
+fi
 
 DOCS=( AUTHORS ChangeLog NEWS README doc/configuration doc/isa_abi_headache )
 HTML_DOCS=( doc )
