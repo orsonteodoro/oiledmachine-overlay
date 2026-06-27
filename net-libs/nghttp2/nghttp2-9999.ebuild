@@ -23,19 +23,22 @@ NEVERBLEED_COMMIT="8a91f9be3438d70b7cd005f8e9dfb418894c5c06"
 URLPARSE_COMMIT="59b068a7618a256c6823b0b9801b61d1d04677a3"
 
 CHKL_TIMESTAMPS=(
-	"app-arch/brotli-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"dev-libs/libbpf-9999"		# Bumped *DEPENDS to latest non-vulnerable
-	"dev-libs/libxml2-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"app-arch/brotli-9999"
+	"dev-libs/libbpf-9999"
+	"dev-libs/libxml2-9999"
 	"dev-libs/jansson-9999"
+	"dev-libs/jemalloc-9999"
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
 	"dev-libs/openssl-3.4.9999"
 	"dev-libs/openssl-3.3.9999"
 	"dev-libs/openssl-3.0.9999"
-	"net-dns/c-ares-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"net-libs/nghttp3-9999"		# Bumped *DEPENDs to latest non-vulnerable
-	"net-libs/ngtcp2-9999"		# Bumped *DEPENDs to latest non-vulnerable
+	"net-dns/c-ares-9999"
+	"net-libs/nghttp2-9999"
+	"net-libs/nghttp3-9999"
+	"net-libs/ngtcp2-9999"
+	"sys-apps/systemd-9999"
 )
 
 inherit libstdcxx-compat
@@ -50,7 +53,7 @@ LLVM_COMPAT=(
 
 
 
-inherit cflags-hardened check-compiler-switch chkl cmake dep-prepare flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal python-r1 ruby-single toolchain-funcs
+inherit cflags-hardened check-compiler-switch chkl cmake dep-prepare flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal python-r1 ruby-single secure-version toolchain-funcs
 
 if [[ "${PV}" == "9999" ]] ; then
 	FALLBACK_COMMIT="c3c47b7ee1861cc201a90c4a8d5b4ecfde8129dc"
@@ -132,38 +135,39 @@ REQUIRED_USE="
 	)
 "
 SSL_DEPEND="
+	dev-libs/openssl:=[${MULTILIB_USEDEP},-bindist(-)]
+	${OPENSSL_DEPEND}
 	>=dev-libs/libevent-2.0.8:=[${MULTILIB_USEDEP},ssl]
-	>=net-libs/ngtcp2-1.23.0:=[${MULTILIB_USEDEP},openssl]
-	>=dev-libs/openssl-1.1.1w:=[${MULTILIB_USEDEP},-bindist(-)]
+	>=net-libs/ngtcp2-${NGTCP2_PV}:=[${MULTILIB_USEDEP},openssl]
 "
 RDEPEND="
 	bpf? (
-		>=dev-libs/libbpf-9999:=
+		>=dev-libs/libbpf-${LIBBPF_PV}:=
 	)
 	hpack-tools? (
-		>=dev-libs/jansson-2.14.1:=
+		>=dev-libs/jansson-${JANSSON_PV}:=
 	)
 	http3? (
-		>=net-libs/nghttp3-1.16.0:=[${MULTILIB_USEDEP}]
+		>=net-libs/nghttp3-${NGHTTP3_PV}:=[${MULTILIB_USEDEP}]
 	)
 	jemalloc? (
-		dev-libs/jemalloc:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		>=dev-libs/jemalloc-${JEMALLOC_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	)
 	quic? (
-		>=net-libs/ngtcp2-1.23.0:=[${MULTILIB_USEDEP}]
+		>=net-libs/ngtcp2-${NGTCP2_PV}:=[${MULTILIB_USEDEP}]
 	)
 	utils? (
 		${SSL_DEPEND}
-		>=app-arch/brotli-9999:=[${MULTILIB_USEDEP}]
-		>=dev-libs/libev-4.11:=[${MULTILIB_USEDEP}]
-		>=net-dns/c-ares-9999:=[${MULTILIB_USEDEP}]
-		>=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}]
+		>=app-arch/brotli-${BROTLI_PV}:=[${MULTILIB_USEDEP}]
+		>=dev-libs/libev-${LIBEV_PV}:=[${MULTILIB_USEDEP}]
+		>=net-dns/c-ares-${C_ARES_PV}:=[${MULTILIB_USEDEP}]
+		>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}]
 	)
 	systemd? (
-		>=sys-apps/systemd-9999:=
+		>=sys-apps/systemd-${SYSTEMD_PV}:=
 	)
 	xml? (
-		>=dev-libs/libxml2-9999:=[${MULTILIB_USEDEP}]
+		>=dev-libs/libxml2-${LIBXML2_PV}:=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
