@@ -6,7 +6,7 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data"
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/libffi-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/libffi-9999"
 )
 
 inherit cflags-hardened chkl secure-version meson-multilib
