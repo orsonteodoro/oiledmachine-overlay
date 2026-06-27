@@ -85,6 +85,14 @@ pkg_setup() {
 	libstdcxx-slot_verify
 }
 
+pkg_pretend() {
+	if use cpudetection && ! use amd64 && ! use x86 ; then
+		elog "Using generic C implementation on non-amd64/x86 with USE=cpudetection"
+		elog "--enable-fat is a no-op on alternative arches."
+		elog "To obtain an optimized build, set USE=-cpudetection, but binpkgs should not then be made."
+	fi
+}
+
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
 		if in_iuse fallback-commit && use fallback-commit ; then
@@ -95,22 +103,9 @@ src_unpack() {
 			unpack ${A}
 		fi
 	else
+		use verify-sig && verify-sig_verify_detached "${DISTDIR}"/${MY_P}.tar.xz{,.sig}
 		unpack ${A}
 	fi
-}
-
-pkg_pretend() {
-	if use cpudetection && ! use amd64 && ! use x86 ; then
-		elog "Using generic C implementation on non-amd64/x86 with USE=cpudetection"
-		elog "--enable-fat is a no-op on alternative arches."
-		elog "To obtain an optimized build, set USE=-cpudetection, but binpkgs should not then be made."
-	fi
-}
-
-src_unpack() {
-	use verify-sig && verify-sig_verify_detached "${DISTDIR}"/${MY_P}.tar.xz{,.sig}
-
-	default
 }
 
 src_prepare() {
