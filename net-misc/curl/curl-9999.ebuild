@@ -21,8 +21,14 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE CRSH DF DOS HO ID II IO MITM OOBA O
 VERIFY_SIG_OPENPGP_KEY_PATH=/usr/share/openpgp-keys/danielstenberg.asc
 
 CHKL_TIMESTAMPS=(
-	"app-arch/brotli-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"app-arch/zstd-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"app-arch/brotli-9999"
+	"app-arch/zstd-9999"
+	"net-libs/libssh2-9999"
+	"net-libs/mbedtls-9999"
+	"net-libs/nghttp2-9999"
+	"net-libs/rustls-ffi-9999"
+	"net-dns/c-ares-9999"
+	"net-nds/openldap-9999"
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
@@ -31,7 +37,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-3.0.9999"
 )
 
-inherit dot-a autotools cflags-hardened chkl multilib-minimal multiprocessing prefix toolchain-funcs verify-sig
+inherit dot-a autotools cflags-hardened chkl multilib-minimal multiprocessing prefix secure-version toolchain-funcs verify-sig
 
 
 DESCRIPTION="A Client that groks URLs"
@@ -122,40 +128,46 @@ REQUIRED_USE="
 # don't be afraid to require a later version.
 # ngtcp2 = https://bugs.gentoo.org/912029 - can only build with one tls backend at a time.
 RDEPEND="
-	>=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}]
-	adns? ( >=net-dns/c-ares-1.16.0:=[${MULTILIB_USEDEP}] )
-	brotli? ( >=app-arch/brotli-9999:=[${MULTILIB_USEDEP}] )
-	http2? ( >=net-libs/nghttp2-1.15.0:=[${MULTILIB_USEDEP}] )
-	http3? ( >=net-libs/nghttp3-1.1.0:=[${MULTILIB_USEDEP}] )
-	idn? ( >=net-dns/libidn2-2.0.0:=[static-libs?,${MULTILIB_USEDEP}] )
+	>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}]
+	adns? ( >=net-dns/c-ares-${C_ARES_PV}:=[${MULTILIB_USEDEP}] )
+	brotli? ( >=app-arch/brotli-${BROTLI_PV}:=[${MULTILIB_USEDEP}] )
+	http2? ( >=net-libs/nghttp2-${NGHTTP2_PV}:=[${MULTILIB_USEDEP}] )
+	http3? ( >=net-libs/nghttp3-${NGHTTP3_PV}:=[${MULTILIB_USEDEP}] )
+	idn? ( >=net-dns/libidn2-${LIBIDN2_PV}:=[static-libs?,${MULTILIB_USEDEP}] )
 	kerberos? ( >=virtual/krb5-0-r1:*[${MULTILIB_USEDEP}] )
-	ldap? ( >=net-nds/openldap-2.0.0:=[static-libs?,${MULTILIB_USEDEP}] )
+	ldap? ( >=net-nds/openldap-${OPENLDAP_PV}:=[static-libs?,${MULTILIB_USEDEP}] )
 	psl? ( net-libs/libpsl:=[${MULTILIB_USEDEP}] )
 	quic? (
-		gnutls? ( >=net-libs/ngtcp2-1.20.0-r1:=[gnutls,ssl,${MULTILIB_USEDEP}] )
-		openssl? ( >=net-libs/ngtcp2-1.20.0-r1:=[openssl,ssl,${MULTILIB_USEDEP}] )
+		gnutls? ( >=net-libs/ngtcp2-${NGTCP2_PV}:=[gnutls,ssl,${MULTILIB_USEDEP}] )
+		openssl? ( >=net-libs/ngtcp2-${NGTCP2_PV}:=[openssl,ssl,${MULTILIB_USEDEP}] )
 	)
-	ssh? ( >=net-libs/libssh2-1.2.8:=[${MULTILIB_USEDEP}] )
-	sasl-scram? ( >=net-misc/gsasl-2.2.0:=[static-libs?,${MULTILIB_USEDEP}] )
+	ssh? ( >=net-libs/libssh2-${LIBSSH2_PV}:=[${MULTILIB_USEDEP}] )
+	sasl-scram? ( >=net-misc/gsasl-${GSASL_PV}:=[static-libs?,${MULTILIB_USEDEP}] )
 	ssl? (
 		gnutls? (
 			app-misc/ca-certificates:*
-			>=net-libs/gnutls-3.1.10:=[static-libs?,${MULTILIB_USEDEP}]
-			dev-libs/nettle:=[${MULTILIB_USEDEP}]
+			>=net-libs/gnutls-${GNUTLS_PV}:=[static-libs?,${MULTILIB_USEDEP}]
+			>=dev-libs/nettle-${NETTLE_PV}:=[${MULTILIB_USEDEP}]
 		)
 		mbedtls? (
 			app-misc/ca-certificates:*
-			net-libs/mbedtls:3=[${MULTILIB_USEDEP}]
+			>=net-libs/mbedtls-${MBEDTLS_PV}:3=[${MULTILIB_USEDEP}]
 		)
 		openssl? (
-			ech? ( >=dev-libs/openssl-4.0.0_beta1:=[static-libs?,${MULTILIB_USEDEP}] )
-			>=dev-libs/openssl-3.0.0:=[static-libs?,${MULTILIB_USEDEP}]
+			dev-libs/openssl:=[${MULTILIB_USEDEP},static-libs?]
+			${OPENSSL_RDEPEND}
+			ech? (
+				|| (
+					=dev-libs/openssl-4.0.9999[static-libs?,${MULTILIB_USEDEP}]
+					~dev-libs/openssl-${OPENSSL_PV_4_0_PV}[static-libs?,${MULTILIB_USEDEP}]
+				)
+			)
 		)
 		rustls? (
-			>=net-libs/rustls-ffi-0.15.0:=[${MULTILIB_USEDEP}]
+			>=net-libs/rustls-ffi-${RUSTLS_FFI_PV}:=[${MULTILIB_USEDEP}]
 		)
 	)
-	zstd? ( >=app-arch/zstd-9999:=[${MULTILIB_USEDEP}] )
+	zstd? ( >=app-arch/zstd-${ZSTD_PV}:=[${MULTILIB_USEDEP}] )
 "
 
 DEPEND="${RDEPEND}"
