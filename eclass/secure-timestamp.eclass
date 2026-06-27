@@ -177,6 +177,7 @@ SECURE_TIMESTAMP["media_libs_freetype_9999"]="Sat, 9 May 2026 09:51:56 -0400" # 
 SECURE_TIMESTAMP["media_libs_gavl_9999"]="Jan 26, 2026 1:24 PM PST"
 SECURE_TIMESTAMP["media_libs_giflib_9999"]="2026-06-11 10:01:15"
 SECURE_TIMESTAMP["media_libs_harfbuzz_9999"]="Wed, 17 Jun 2026 10:04:23 +0200"
+SECURE_TIMESTAMP["media_libs_jbig2dec_9999"]="Jul 15, 2024 7:38 AM PDT"
 SECURE_TIMESTAMP["media_libs_kvazaar_9999"]="Mar 6, 2026 2:53 AM PST"
 SECURE_TIMESTAMP["media_libs_lcms_9999"]="Wed, 17 Jun 2026 08:02:07 +0200"
 SECURE_TIMESTAMP["media_libs_lensfun_9999"]="Nov 16, 2025 10:32 AM PST"

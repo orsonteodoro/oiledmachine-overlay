@@ -16,13 +16,17 @@ CXX_STANDARD=17
 MY_PATCHSET="ghostscript-gpl-10.04.0-patches.tar.xz"
 
 CHKL_TIMESTAMPS=(
-	"net-print/cups-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libpng-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"net-print/cups-9999"
+	"media-libs/lcms-9999"
+	"media-libs/libpng-9999"
 	"media-libs/fontconfig-9999"
-	"media-libs/freetype-9999"		# Bumped live to latest non-vulnerable
-	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/openjpeg-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/tiff-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"media-libs/freetype-9999"
+	"media-libs/jbig2dec-9999"
+	"media-libs/libjpeg-turbo-9999"
+	"media-libs/openjpeg-9999"
+	"media-libs/tiff-9999"
+	"sys-apps/dbus-9999"
+	"x11-libs/libXt-9999"
 )
 
 inherit libstdcxx-compat
@@ -35,7 +39,7 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-inherit autotools cflags-hardened chkl flag-o-matic libcxx-slot libstdcxx-slot toolchain-funcs
+inherit autotools cflags-hardened chkl flag-o-matic libcxx-slot libstdcxx-slot toolchain-funcs secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="b740cde68d4fa0d20e016fb5b6a7383590306dea"
@@ -70,20 +74,23 @@ done
 
 DEPEND="
 	app-text/libpaper:=
-	>=media-libs/fontconfig-2.18.1:=
-	>=media-libs/freetype-9999:2=
-	>=media-libs/jbig2dec-0.19:=
-	>=media-libs/lcms-9999:2=
-	>=media-libs/libpng-1.6.57:=
-	>=media-libs/libjpeg-turbo-9999:=
-	>=media-libs/openjpeg-9999:2=
-	>=media-libs/tiff-9999:=
-	>=virtual/zlib-1.3.2:=
-	cups? ( >=net-print/cups-9999:= )
-	dbus? ( >=sys-apps/dbus-1.15.90:= )
-	gtk? ( >=x11-libs/gtk+-3.24.52:3= )
-	unicode? ( >=net-dns/libidn-1.44:= )
-	X? ( x11-libs/libXt x11-libs/libXext:= )
+	>=media-libs/fontconfig-${FONTCONFIG_PV}:=
+	>=media-libs/freetype-${FREETYPE_PV}:=
+	>=media-libs/jbig2dec-${JBIG2DEC_PV}:=
+	>=media-libs/lcms-${LCMS_PV}:=
+	>=media-libs/libpng-${LIBPNG_PV}:=
+	>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:=
+	>=media-libs/openjpeg-${OPENJPEG_PV}:=
+	>=media-libs/tiff-${TIFF_PV}:=
+	>=virtual/zlib-${ZLIB_PV}:=
+	cups? ( >=net-print/cups-${CUPS_PV}:= )
+	dbus? ( >=sys-apps/dbus-${DBUS_PV}:= )
+	gtk? ( >=x11-libs/gtk+-${GTK3_PV}:3= )
+	unicode? ( >=net-dns/libidn-${LIBIDN_PV}:= )
+	X? (
+		>=x11-libs/libXt-${LIBXT_PV}:=
+		>=x11-libs/libXext-${LIBXEXT_PV}:=
+	)
 "
 BDEPEND="virtual/pkgconfig"
 # bug #844115 for newer poppler-data dep
@@ -182,11 +189,11 @@ src_prepare() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
+	cflags-hardened_append
+
 	# Unsupported upstream, bug #884841
 	filter-lto
-
-	cflags-hardened_append
-	chkl_check_many_timestamps
 
 	# bug #971940
 	append-flags -fno-strict-aliasing
