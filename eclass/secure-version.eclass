@@ -14,6 +14,82 @@
 # The reason why this ebuild exist because the ebuild maintainers do not like to
 # take out the trash or are unhygentic about security.
 
+# For a list of possible vulnerabilities see:
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/vf.eclass
+
+# Most are low level vulnerabilities.  For a list of high level vulnerabilies
+# see "High level vulnerabilities monitored" section in
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/docs/EBUILD_PACKAGE_DEVEL_GUIDE.md
+
+#
+# Quality control notes:
+#
+# Scope
+#
+# Each repo is inspected at the head/tip.  We inspect from today to early 2010s
+# decade for vulnerabilies in the commit logs.  This ebuild is for *DEPENDs.
+# For commits see secure-timestamp instead.  Both secure-timestamp and
+# secure-version work together and use the same logic when finding possible
+# vulnerable code.  We are interested vulnerabilities that happen during
+# runtime or after install.  Also, most of these are dependencies of
+# high to security critical packages and are from C/C++ or from memory unsafe
+# languages.
+#
+#
+# The keywords scan of the commit logs that we catch on quick evaluation are:
+#
+# bounds
+# buffer overflow
+# corruption
+# crash
+# deadlock
+# divide by zero
+# double free
+# harden
+# heap overflow
+# leak
+# infinite loop
+# integer overflow
+# underflow
+# memory leak
+# null pointer dereference
+# off by one
+# out of bounds
+# overflow
+# segfault
+# stack overflow
+# uaf
+# ub
+# use after free
+# undefined behavior (ub)
+# uninitalized [ub]
+# uninitalized variable [ub]
+#
+#
+# What is an is not a vulnerability
+#
+# Not all of these keywords are actually vulnerabilities.  If the bug is
+# not attacker controlled, it is not considered vulnerability but still
+# we take precaution since we do not fully understand the code or how
+# a threat actor may abuse it.  So, we presume by default that it is a
+# vulnerability.
+#
+#
+# Skips or ignored vulnerable commits
+#
+# If the possible vulnerability is not Linux, it is ignored.
+# If the vulnerability happens in the test code, it is ignored.
+#
+#
+# Explanation of live ebuild and not latest stable
+#
+# Some may find it uncomfortable with live packages (9999), the fact is that
+# *most* projects do not make a tagged security fixes within a week or two.
+# Only a few actually release a tagged security release for general
+# availability.  Some of these vulnerabilies are considered high to critical
+# severity.
+#
+
 if [[ -z "${_SECURE_VERSION_ECLASS}" ]] ; then
 _SECURE_VERSION_ECLASS=1
 
