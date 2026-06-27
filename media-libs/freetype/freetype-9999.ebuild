@@ -7,12 +7,15 @@ CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO IO SO UAF UM"
 
 CHKL_TIMESTAMPS=(
-	"app-arch/brotli-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"app-arch/bzip2-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"gnome-base/librsvg-9999"	# Bumped live/*DEPENDS to latest non-vulnerable
+	"app-arch/brotli-9999"
+	"app-arch/bzip2-9999"
+	"gnome-base/librsvg-9999"
+	"gnome-base/librsvg-9999"
+	"media-libs/libpng-9999"
+	"x11-libs/libX11-9999"
 )
 
-inherit autotools cflags-hardened check-compiler-switch chkl libtool multilib-minimal toolchain-funcs
+inherit autotools cflags-hardened check-compiler-switch chkl libtool multilib-minimal secure-version toolchain-funcs
 
 DESCRIPTION="High-quality and portable font engine"
 HOMEPAGE="https://www.freetype.org/"
@@ -60,28 +63,28 @@ SLOT="2"
 IUSE+=" X +adobe-cff brotli bzip2 +cleartype-hinting debug doc fontforge harfbuzz +png static-libs svg utils"
 
 RDEPEND="
-	>=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}]
+	>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}]
 	brotli? (
-		>=app-arch/brotli-9999:=[${MULTILIB_USEDEP}]
+		>=app-arch/brotli-${BROTLI_PV}:=[${MULTILIB_USEDEP}]
 	)
 	bzip2? (
-		>=app-arch/bzip2-9999:=[${MULTILIB_USEDEP}]
+		>=app-arch/bzip2-${BZIP2_PV}:=[${MULTILIB_USEDEP}]
 	)
 	png? (
-		>=media-libs/libpng-1.2.57:=[${MULTILIB_USEDEP}]
+		>=media-libs/libpng-${LIBPNG_PV}:=[${MULTILIB_USEDEP}]
 	)
 	utils? (
 		svg? (
-			>=gnome-base/librsvg-2.59.2:=[${MULTILIB_USEDEP}]
+			>=gnome-base/librsvg-${LIBRSVG_PV}:=[${MULTILIB_USEDEP}]
 		)
-		X? ( >=x11-libs/libX11-1.6.2:=[${MULTILIB_USEDEP}] )
+		X? ( >=x11-libs/libX11-${LIBX11_PV}:=[${MULTILIB_USEDEP}] )
 	)
 "
 DEPEND="${RDEPEND}"
 BDEPEND+="
 	virtual/pkgconfig
 "
-PDEPEND="harfbuzz? ( >=media-libs/harfbuzz-1.3.0[truetype,${MULTILIB_USEDEP}] )"
+PDEPEND="harfbuzz? ( >=media-libs/harfbuzz-${HARFBUZZ_PV}[${MULTILIB_USEDEP},truetype] )"
 
 pkg_setup() {
 	check-compiler-switch_start
@@ -221,8 +224,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
 
-	cflags-hardened_append
 	chkl_check_many_timestamps
+	cflags-hardened_append
 
 	export GNUMAKE=gmake
 
