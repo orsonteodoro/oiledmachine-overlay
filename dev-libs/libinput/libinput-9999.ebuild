@@ -36,14 +36,14 @@ REQUIRED_USE="lua? ( ${LUA_REQUIRED_USE} )"
 RDEPEND="
 	lua? ( ${LUA_DEPS} )
 	input_devices_wacom? ( >=dev-libs/libwacom-2.15:= )
-	>=dev-libs/libevdev-1.9.902
-	>=sys-libs/mtdev-1.1
+	>=dev-libs/libevdev-1.9.902:=
+	>=sys-libs/mtdev-1.1:=
 	virtual/libudev:=
-	virtual/udev
+	virtual/udev:*
 "
 DEPEND="
 	${RDEPEND}
-	test? ( >=dev-libs/check-0.9.10 )
+	test? ( >=dev-libs/check-0.9.10:= )
 "
 BDEPEND="
 	virtual/pkgconfig
