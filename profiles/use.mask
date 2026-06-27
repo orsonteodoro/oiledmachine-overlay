@@ -34,7 +34,7 @@ gcc_slot_9_1
 # EOL, Mar 2025
 glog
 
-# The last release was almost 5 years ago.
+# The last release was in 2021.
 ladspa
 
 # The last release of libraw1394 was in 2016.
@@ -43,3 +43,6 @@ ieee1394
 # It may violate the Fail-Secure cybersecurity principle.
 # It is unknown how much of the code violates the principle.
 lcms
+
+# The last release of libmng was in 2015.
+mng

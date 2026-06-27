@@ -154,3 +154,6 @@ media-libs/opencv atlas
 
 # EOL
 net-misc/networkmanager dhclient
+
+# Unmaintained dependency, last release was in 2015
+dev-qt/qtimageformats mng

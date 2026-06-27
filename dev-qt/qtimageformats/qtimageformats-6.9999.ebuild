@@ -21,9 +21,9 @@ LLVM_COMPAT=(
 )
 
 CHKL_TIMESTAMPS=(
-	"dev-qt/qtbase-6.9999"		# Bumped live to latest non-vulnerable
-	"media-libs/libwebp-9999"	# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/tiff-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-qt/qtbase-6.9999"
+	"media-libs/libwebp-9999"
+	"media-libs/tiff-9999"
 )
 
 inherit cflags-hardened chkl libcxx-slot libstdcxx-slot secure-version qt6-build

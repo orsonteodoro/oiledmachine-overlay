@@ -30,8 +30,8 @@ LLVM_COMPAT=(
 )
 
 CHKL_TIMESTAMPS=(
-	"dev-qt/qtbase-6.9999"		# Bumped live to latest non-vulnerable
-	"dev-qt/qtsvg-6.9999"		# Bumped live to latest non-vulnerable
+	"dev-qt/qtbase-6.9999"
+	"dev-qt/qtsvg-6.9999"
 )
 
 inherit cflags-hardened chkl libcxx-slot libstdcxx-slot python-any-r1 qt6-build
