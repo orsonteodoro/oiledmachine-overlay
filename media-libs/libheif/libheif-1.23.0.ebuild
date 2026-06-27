@@ -27,29 +27,30 @@ FFMPEG_COMPAT_SLOTS=(
 )
 
 CHKL_TIMESTAMPS=(
-	"app-arch/brotli-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/dav1d-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/ffmpeg-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/ffmpeg-9999m"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/kvazaar-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libaom-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libde265-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libwebp-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/tiff-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/openh264-9999"		# Bumped live/*DEPENDS to latest hardened
-	"media-libs/openjph-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/svt-av1-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/uvg266-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/vvdec-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/vvenc-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/x264-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/x265-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-video/rav1e-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
+	"app-arch/brotli-9999"
+	"media-libs/dav1d-9999"
+	"media-libs/ffmpeg-9999"
+	"media-libs/ffmpeg-9999m"
+	"media-libs/kvazaar-9999"
+	"media-libs/libaom-9999"
+	"media-libs/libde265-9999"
+	"media-libs/libjpeg-turbo-9999"
+	"media-libs/libpng-9999"
+	"media-libs/libwebp-9999"
+	"media-libs/tiff-9999"
+	"media-libs/openh264-9999"
+	"media-libs/openjph-9999"
+	"media-libs/svt-av1-9999"
+	"media-libs/uvg266-9999"
+	"media-libs/vvdec-9999"
+	"media-libs/vvenc-9999"
+	"media-libs/x264-9999"
+	"media-libs/x265-9999"
+	"media-video/rav1e-9999"
 )
 
 inherit cflags-hardened chkl cmake-multilib ffmpeg gnome2-utils libcxx-slot libstdcxx-slot
-inherit multilib-minimal xdg
+inherit multilib-minimal secure-version xdg
 
 if [[ ${PV} == *9999* ]] ; then
 	EGIT_REPO_URI="https://github.com/strukturag/libheif.git"
@@ -149,76 +150,95 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	>=media-libs/libpng-1.6.57:=[${MULTILIB_USEDEP}]
-	>=media-libs/tiff-9999:=[${MULTILIB_USEDEP}]
+	>=media-libs/libpng-${LIBPNG_PV}:=[${MULTILIB_USEDEP}]
+	>=media-libs/tiff-${TIFF_PV}:=[${MULTILIB_USEDEP}]
 	virtual/patent-status:*[patent_status_nonfree?]
 	aom? (
-		>=media-libs/libaom-3.14.1:=[${MULTILIB_USEDEP}]
+		>=media-libs/libaom-${LIBAOM_PV}:=[${MULTILIB_USEDEP}]
 	)
 	brotli? (
-		>=app-arch/brotli-9999:=[${MULTILIB_USEDEP}]
+		>=app-arch/brotli-${BROTLI_PV}:=[${MULTILIB_USEDEP}]
 	)
 	dav1d? (
-		>=media-libs/dav1d-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/dav1d-${DAV1D_PV}:=[${MULTILIB_USEDEP}]
 	)
 	ffmpeg? (
-		media-libs/ffmpeg:=
+		media-libs/ffmpeg:=[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
 		|| (
-			>=media-libs/ffmpeg-9999[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
-			>=media-libs/ffmpeg-9999m[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
+			=media-libs/ffmpeg-9999[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
+			=media-libs/ffmpeg-9999m[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
+
+			~media-libs/ffmpeg-${FFMPEG_8_1_PV}[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
+			~media-libs/ffmpeg-${FFMPEG_8_1_PV}m[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
+
+			~media-libs/ffmpeg-${FFMPEG_8_0_PV}[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
+			~media-libs/ffmpeg-${FFMPEG_8_0_PV}m[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
+
+			~media-libs/ffmpeg-${FFMPEG_7_1_PV}[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
+			~media-libs/ffmpeg-${FFMPEG_7_1_PV}m[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
+
+			~media-libs/ffmpeg-${FFMPEG_6_1_PV}[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
+			~media-libs/ffmpeg-${FFMPEG_6_1_PV}m[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
+
+			~media-libs/ffmpeg-${FFMPEG_5_1_PV}[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
+			~media-libs/ffmpeg-${FFMPEG_5_1_PV}m[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
+
+			~media-libs/ffmpeg-${FFMPEG_4_4_PV}[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
+			~media-libs/ffmpeg-${FFMPEG_4_4_PV}m[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
+
 		)
 	)
 	gdk-pixbuf? (
-		>=x11-libs/gdk-pixbuf-2.44.6[${MULTILIB_USEDEP}]
+		>=x11-libs/gdk-pixbuf-${GDK_PIXBUF_PV}:=[${MULTILIB_USEDEP}]
 	)
 	header-compression? (
-		>=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}]
+		>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}]
 	)
 	htj2k? (
-		>=media-libs/openjpeg-2.5.4-r1:=[${MULTILIB_USEDEP}]
-		>=media-libs/openjph-0.29.0:=[${MULTILIB_USEDEP}]
+		>=media-libs/openjpeg-${OPENJPEG_PV}:=[${MULTILIB_USEDEP}]
+		>=media-libs/openjph-${OPENJPH_PV}:=[${MULTILIB_USEDEP}]
 	)
 	jpeg? (
-		>=media-libs/libjpeg-turbo-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:=[${MULTILIB_USEDEP}]
 	)
 	jpeg2k? (
-		>=media-libs/openjpeg-2.5.4-r1:=[${MULTILIB_USEDEP}]
+		>=media-libs/openjpeg-${OPENJPEG_PV}:=[${MULTILIB_USEDEP}]
 	)
 	kvazaar? (
-		>=media-libs/kvazaar-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/kvazaar-${KVAZAAR_PV}:=[${MULTILIB_USEDEP}]
 	)
 	libde265? (
-		>=media-libs/libde265-1.1.1[${MULTILIB_USEDEP}]
+		>=media-libs/libde265-${LIBDE265_PV}:=[${MULTILIB_USEDEP}]
 	)
 	libsharpyuv? (
-		>=media-libs/libwebp-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/libwebp-${LIBWEBP_PV}:=[${MULTILIB_USEDEP}]
 	)
 	openh264? (
-		>=media-libs/openh264-2.6.0:=[${MULTILIB_USEDEP}]
+		>=media-libs/openh264-${OPENH264_PV}:=[${MULTILIB_USEDEP}]
 	)
 	rav1e? (
-		>=media-video/rav1e-9999:=
+		>=media-video/rav1e-${RAV1E_PV}:=
 	)
 	svt-av1? (
-		>=media-libs/svt-av1-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/svt-av1-${SVT_AV1_PV}:=[${MULTILIB_USEDEP}]
 	)
 	uncompressed? (
-		>=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}]
+		>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}]
 	)
 	vvc? (
-		>=media-libs/vvdec-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/vvdec-${VVDEC_PV}:=[${MULTILIB_USEDEP}]
 	)
 	vvenc? (
-		>=media-libs/vvenc-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/vvenc-${VVENC_PV}:=[${MULTILIB_USEDEP}]
 	)
 	uvg266? (
 		>=media-libs/uvg266-9999:=[${MULTILIB_USEDEP}]
 	)
 	x264? (
-		>=media-libs/x264-0.0.20221005:=[${MULTILIB_USEDEP}]
+		>=media-libs/x264-${X264_PV}:=[${MULTILIB_USEDEP}]
 	)
 	x265? (
-		>=media-libs/x265-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/x265-${X265_PV}:=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
