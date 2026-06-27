@@ -88,9 +88,9 @@
 #
 # Some may find it uncomfortable with live packages (9999), the fact is that
 # *most* projects do not make a tagged security fixes within a week or two.
-# Only a few actually release a tagged security release for general
-# availability.  Some of these vulnerabilies are considered high to critical
-# severity.
+# Only a few actually release time acceptable tagged security release for
+# general availability.  Some of these vulnerabilies are considered high to
+# critical severity.
 #
 
 if [[ -z "${_SECURE_VERSION_ECLASS}" ]] ; then
