@@ -21,11 +21,6 @@ PATENT_STATUS_USE=(
 	"patent_status_nonfree"
 )
 
-# For FFmpeg live for mitigation
-FFMPEG_COMPAT_SLOTS=(
-	"${FFMPEG_COMPAT_SLOTS_8[@]}"
-)
-
 CHKL_TIMESTAMPS=(
 	"app-arch/brotli-9999"
 	"media-libs/dav1d-9999"
@@ -51,6 +46,11 @@ CHKL_TIMESTAMPS=(
 
 inherit cflags-hardened chkl cmake-multilib ffmpeg gnome2-utils libcxx-slot libstdcxx-slot
 inherit multilib-minimal secure-version xdg
+
+# For FFmpeg live for mitigation
+FFMPEG_COMPAT_SLOTS=(
+	"${FFMPEG_COMPAT_SLOTS_8[@]}"
+)
 
 if [[ ${PV} == *9999* ]] ; then
 	EGIT_REPO_URI="https://github.com/strukturag/libheif.git"

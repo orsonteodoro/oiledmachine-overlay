@@ -104,7 +104,7 @@ ffmpeg_src_configure() {
 	local _FFMPEG_SLOT=""
 
 	if [[ -z "${FFMPEG_COMPAT_SLOTS[@]}" ]] ; then
-eerror "QA:  FFMPEG_COMPAT_SLOTS must be defined."
+eerror "QA:  FFMPEG_COMPAT_SLOTS must be defined and place after inherit ffmpeg"
 		die
 	fi
 
