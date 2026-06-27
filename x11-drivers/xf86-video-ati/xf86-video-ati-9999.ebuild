@@ -19,7 +19,10 @@ fi
 DESCRIPTION="ATI video driver"
 HOMEPAGE="https://www.x.org/wiki/ati/"
 
-IUSE="udev"
+IUSE+="
+udev
+ebuild_revision_1
+"
 
 RDEPEND="
 	>=media-libs/mesa-${MESA_PV}:=

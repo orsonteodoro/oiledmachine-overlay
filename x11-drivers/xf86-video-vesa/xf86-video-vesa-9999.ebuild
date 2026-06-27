@@ -3,7 +3,7 @@
 
 EAPI=8
 
-inherit linux-info xorg-3
+inherit linux-info secure-version xorg-3
 
 DESCRIPTION="Generic VESA video driver"
 KEYWORDS="-* ~alpha amd64 x86"

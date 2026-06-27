@@ -4,6 +4,7 @@
 EAPI=8
 
 XORG_DRI=always
+
 inherit secure-version xorg-3
 
 DESCRIPTION="VMware SVGA video driver"
@@ -15,3 +16,7 @@ RDEPEND="
 		<media-libs/mesa-25.2:=[xa]
 	)"
 DEPEND="${RDEPEND}"
+
+src_configure() {
+	xorg-3_src_configure
+}

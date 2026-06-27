@@ -15,7 +15,9 @@ fi
 
 DESCRIPTION="Accelerated Open Source driver for AMDGPU cards"
 
-IUSE="udev"
+IUSE+="
+udev
+"
 
 RDEPEND=">=x11-libs/libdrm-${LIBDRM_PV}:=[video_cards_amdgpu]
 	>=x11-base/xorg-server-${XORG_SERVER_PV}:=[-minimal]

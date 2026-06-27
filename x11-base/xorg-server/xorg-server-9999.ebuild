@@ -45,8 +45,8 @@ fi
 
 IUSE_SERVERS="xephyr xnest xorg xvfb"
 IUSE="
-${IUSE_SERVERS} debug +elogind minimal selinux suid systemd test +udev unwind xcsecurity
-ebuild_revision_1
+${IUSE_SERVERS} debug +elogind minimal pciaccess selinux suid systemd test +udev unwind xcsecurity
+ebuild_revision_2
 "
 RESTRICT="!test? ( test )"
 
@@ -58,7 +58,6 @@ CDEPEND="
 	>=x11-apps/xauth-${XAUTH_PV}:=
 	>=x11-apps/xkbcomp-${XKBCOMP_PV}:=
 	>=x11-libs/libdrm-${LIBDRM_PV}:=
-	>=x11-libs/libpciaccess-${LIBPCIACCESS_PV}:=
 	>=x11-libs/libXau-1.0.4:=
 	>=x11-libs/libXdmcp-${LIBXDMCP_PV}:=
 	>=x11-libs/libXfont2-${LIBXFONT2_PV}:=
@@ -67,6 +66,12 @@ CDEPEND="
 	>=x11-libs/pixman-${PIXMAN_PV}:=
 	>=x11-misc/xbitmaps-1.0.1:=
 	>=x11-misc/xkeyboard-config-${XKEYBOARD_CONFIG_PV}:=
+	!pciaccess? (
+		!x11-libs/libpciaccess
+	)
+	pciaccess? (
+		>=x11-libs/libpciaccess-${LIBPCIACCESS_PV}:=
+	)
 	xorg? (
 		>=x11-libs/libxcvt-${LIBXCVT_PV}:=
 	)
@@ -154,6 +159,7 @@ src_configure() {
 		$(meson_use !minimal dri3)
 		$(meson_use !minimal glamor)
 		$(meson_use !minimal glx)
+		$(meson_use pciaccess)
 		$(meson_use udev)
 		$(meson_use udev udev_kms)
 		$(meson_use unwind libunwind)
