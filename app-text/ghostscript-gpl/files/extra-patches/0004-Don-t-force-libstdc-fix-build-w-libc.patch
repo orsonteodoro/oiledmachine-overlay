@@ -1,0 +1,21 @@
+diff '--color=auto' -urp ghostscript-gpl-9999.orig/configure.ac ghostscript-gpl-9999/configure.ac
+--- ghostscript-gpl-9999.orig/configure.ac	2026-06-27 14:19:12.912810374 -0700
++++ ghostscript-gpl-9999/configure.ac	2026-06-27 14:21:19.156986499 -0700
+@@ -932,7 +932,7 @@ if test x$with_tesseract != xno; then
+         CXXFLAGS_TO_USE=""
+ 
+         AC_MSG_CHECKING([supported C++ compiler flags])
+-        for flag in "-std=c++17 -stdlib=libstdc++" "-std=c++17" "-stdlib=libstdc++" ; do
++        for flag in "-std=c++17" ; do
+           CXXFLAGS="$CXXFLAGS $flag"
+ 
+           AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
+@@ -1097,7 +1097,7 @@ if test x$with_tesseract != xno; then
+       OCR_DEVS_WARNING_LINE1="Disabling tesseract (OCR devices) as no working C++ compiler"
+     else
+       save_cxxflags="$CXXFLAGS"
+-      cxxflags_to_try="-stdlib=libstdc++"
++      cxxflags_to_try=""
+       CXXFLAGS_TO_USE=""
+ 
+       AC_MSG_CHECKING([supported C++ compiler flags])

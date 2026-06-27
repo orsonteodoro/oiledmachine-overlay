@@ -16,6 +16,7 @@ CXX_STANDARD=17
 MY_PATCHSET="ghostscript-gpl-10.04.0-patches.tar.xz"
 
 CHKL_TIMESTAMPS=(
+	"app-text/tesseract-9999"
 	"net-print/cups-9999"
 	"media-libs/lcms-9999"
 	"media-libs/libpng-9999"
@@ -26,7 +27,6 @@ CHKL_TIMESTAMPS=(
 	"media-libs/openjpeg-9999"
 	"media-libs/tiff-9999"
 	"sys-apps/dbus-9999"
-	"x11-libs/libXt-9999"
 )
 
 inherit libstdcxx-compat
@@ -52,7 +52,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 else
 	S="${WORKDIR}/${MY_P}"
-	SRC_URI="https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs${PVM_S}/${MY_P}.tar.xz"
+	SRC_URI+="https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs${PVM_S}/${MY_P}.tar.xz"
 fi
 if [[ -n "${MY_PATCHSET}" ]] ; then
 	SRC_URI+=" https://dev.gentoo.org/~sam/distfiles/${CATEGORY}/${PN}/${MY_PATCHSET}"
@@ -64,7 +64,7 @@ LICENSE="AGPL-3 CPL-1.0"
 SLOT="0/$(ver_cut 1-2)"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
 IUSE+="
-cups cpu_flags_arm_neon dbus gtk l10n_de static-libs unicode X
+cups cpu_flags_arm_neon dbus gtk l10n_de openmp static-libs tesseract unicode X
 ebuild_revision_3
 "
 
@@ -87,6 +87,7 @@ DEPEND="
 	cups? ( >=net-print/cups-${CUPS_PV}:= )
 	dbus? ( >=sys-apps/dbus-${DBUS_PV}:= )
 	gtk? ( >=x11-libs/gtk+-${GTK3_PV}:3= )
+	tesseract? ( >=app-text/tesseract-${TESSERACT_PV}:= )
 	unicode? ( >=net-dns/libidn-${LIBIDN_PV}:= )
 	X? (
 		>=x11-libs/libXt-${LIBXT_PV}:=
@@ -106,16 +107,18 @@ RDEPEND="
 "
 
 PATCHES=(
-	"${FILESDIR}"/${PN}-10.03.1-arm64-neon-tesseract.patch
 	"${FILESDIR}"/${PN}-10.06.0-tesseract-fPIC.patch
-	"${FILESDIR}"/${PN}-10.06.0-32-bit.patch
 	"${FILESDIR}"/${PN}-10.06.0-arm-brotli.patch
-	"${FILESDIR}"/${PN}-10.06.0-bool-confusion.patch
-	"${FILESDIR}"/${PN}-10.06.0-gcc-14.patch
 	"${FILESDIR}"/${PN}-10.06.0-stdint.patch
+	"${FILESDIR}"/${PN}-10.06.0-openmp.patch
 )
 
+pkg_pretend() {
+	[[ ${MERGE_TYPE} != binary ]] && use openmp && tc-check-openmp
+}
+
 pkg_setup() {
+	[[ ${MERGE_TYPE} != binary ]] && use openmp && tc-check-openmp
 	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
@@ -127,6 +130,9 @@ src_unpack() {
 		fi
 		git-r3_fetch
 		git-r3_checkout
+		if [[ -n "${A}" ]] ; then
+			unpack ${A}
+		fi
 	else
 		unpack ${A}
 	fi
@@ -134,11 +140,20 @@ src_unpack() {
 
 src_prepare() {
 	if [[ -n ${MY_PATCHSET} ]] ; then
+		cat "${FILESDIR}/extra-patches/0004-Don-t-force-libstdc-fix-build-w-libc.patch" > "${WORKDIR}/${MY_PATCHSET%%.tar*}/0004-Don-t-force-libstdc-fix-build-w-libc.patch" || die
 		# apply various patches, many borrowed from Fedora
 		# https://src.fedoraproject.org/rpms/ghostscript
 		# and Debian
 		# https://salsa.debian.org/printing-team/ghostscript/-/tree/debian/latest/debian/patches
-		eapply "${WORKDIR}"/${MY_PATCHSET%%.tar*}
+		local L=(
+"0001-Make-sure-dvipdf-is-being-run-securely.patch"
+"0002-Allow-the-build-timestamp-to-be-externally-set.patch"
+"0003-Fix-docdir-for-Gentoo.patch"
+"0004-Don-t-force-libstdc-fix-build-w-libc.patch"
+		)
+		for x in "${L[@]}" ; do
+			eapply "${WORKDIR}/${MY_PATCHSET%%.tar*}/${x}"
+		done
 	fi
 
 	default
@@ -202,6 +217,9 @@ src_configure() {
 	# bug #899952
 	append-lfs-flags
 
+	# bug #973234
+	use openmp && append-flags -fopenmp || filter-flags -fopenmp*
+
 	local FONTPATH
 	for path in \
 		"${EPREFIX}"/usr/share/fonts/urw-fonts \
@@ -237,6 +255,7 @@ src_configure() {
 		$(use_enable gtk) \
 		$(use_enable cpu_flags_arm_neon neon) \
 		$(use_with cups pdftoraster) \
+		$(use_with tesseract) \
 		$(use_with unicode libidn) \
 		$(use_with X x) \
 		DARWIN_LDFLAGS_SO_PREFIX="${EPREFIX}/usr/lib/" \
