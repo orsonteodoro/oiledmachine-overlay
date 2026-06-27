@@ -14,10 +14,10 @@ RUSTFLAGS_HARDENED_USE_CASES="untrusted-data"
 RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS NPD OOBR PT"
 
 DISABLED_CRATES="
-librsvg-c-2.62.1
+librsvg-c-2.62.90
 pixbufloader-svg-0.0.1
-rsvg-bench-2.62.1
-rsvg_convert-2.62.1
+rsvg-bench-2.62.90
+rsvg_convert-2.62.90
 rsvg-fuzz-0.0.0
 "
 
@@ -26,6 +26,7 @@ adler2-2.0.1
 aes-0.8.4
 ahash-0.8.12
 aho-corasick-1.1.4
+alloca-0.4.0
 android_system_properties-0.1.5
 anes-0.1.6
 anstream-1.0.0
@@ -46,9 +47,8 @@ bit-vec-0.8.0
 block-0.1.6
 block-buffer-0.10.4
 block-padding-0.3.3
-bstr-1.12.1
+bstr-1.12.3
 bumpalo-3.20.3
-bytecount-0.6.9
 bytemuck-1.25.0
 byteorder-1.5.0
 byteorder-lite-0.1.0
@@ -61,6 +61,7 @@ cbc-0.1.2
 cc-1.2.65
 cfg-expr-0.20.8
 cfg-if-1.0.4
+chacha20-0.10.1
 chrono-0.4.45
 ci-0.0.0
 ciborium-0.2.2
@@ -76,17 +77,18 @@ colorchoice-1.0.5
 color_quant-1.1.0
 core-foundation-sys-0.8.7
 cpufeatures-0.2.17
+cpufeatures-0.3.0
 crc32fast-1.5.0
-criterion-0.7.0
-criterion-plot-0.6.0
+criterion-0.8.2
+criterion-plot-0.8.2
 crossbeam-deque-0.8.6
 crossbeam-epoch-0.9.18
 crossbeam-utils-0.8.21
 crunchy-0.2.4
 crypto-common-0.1.7
-cssparser-0.35.0
-cssparser-color-0.3.0
-cssparser-macros-0.6.1
+cssparser-0.37.0
+cssparser-color-0.5.0
+cssparser-macros-0.7.0
 data-url-0.3.2
 dav1d-0.11.1
 dav1d-sys-0.8.3
@@ -116,7 +118,6 @@ flate2-1.1.9
 float-cmp-0.10.0
 fnv-1.0.7
 form_urlencoded-1.2.2
-futf-0.1.5
 futures-channel-0.3.32
 futures-core-0.3.32
 futures-executor-0.3.32
@@ -124,7 +125,6 @@ futures-io-0.3.32
 futures-macro-0.3.32
 futures-task-0.3.32
 futures-util-0.3.32
-fxhash-0.2.1
 gdk-pixbuf-0.22.0
 gdk-pixbuf-sys-0.22.0
 generic-array-0.14.7
@@ -137,24 +137,10 @@ gio-unix-0.22.6
 gio-unix-sys-0.22.0
 gio-win32-0.22.6
 gio-win32-sys-0.22.0
-glam-0.14.0
-glam-0.15.2
-glam-0.16.0
-glam-0.17.3
-glam-0.18.0
-glam-0.19.0
-glam-0.20.5
-glam-0.21.3
-glam-0.22.0
-glam-0.23.0
-glam-0.24.2
-glam-0.25.0
-glam-0.27.0
-glam-0.28.0
-glam-0.29.3
 glam-0.30.10
 glam-0.31.1
 glam-0.32.1
+glam-0.33.1
 glib-0.22.7
 glib-macros-0.22.6
 glib-sys-0.22.6
@@ -180,20 +166,20 @@ indexmap-2.14.0
 inout-0.1.4
 is_terminal_polyfill-1.70.2
 itertools-0.13.0
-itertools-0.14.0
+itertools-0.15.0
 itoa-1.0.18
 jiff-0.2.29
 jiff-static-0.2.29
 jiff-tzdb-0.1.6
 jiff-tzdb-platform-0.1.3
 jobserver-0.1.34
-js-sys-0.3.102
+js-sys-0.3.103
 language-tags-0.3.2
 lazy_static-1.5.0
 libc-0.2.186
 libfuzzer-sys-0.4.13
 libloading-0.8.9
-librsvg-2.62.1
+librsvg-2.63.0-beta.0
 librsvg-rebind-0.3.0
 librsvg-rebind-sys-0.3.0
 linux-raw-sys-0.12.1
@@ -201,10 +187,9 @@ litemap-0.8.2
 locale_config-0.3.0
 lock_api-0.4.14
 log-0.4.33
-lopdf-0.38.0
-mac-0.1.1
+lopdf-0.42.0
 malloc_buf-0.0.6
-markup5ever-0.35.0
+markup5ever-0.39.0
 matches-0.1.10
 matrixmultiply-0.3.10
 md-5-0.10.6
@@ -212,12 +197,11 @@ memchr-2.8.2
 miniz_oxide-0.8.9
 moxcms-0.8.1
 mp4parse-0.17.0
-mutants-0.0.3
-nalgebra-0.34.2
+mutants-0.0.4
+nalgebra-0.35.0
 nalgebra-macros-0.3.0
 new_debug_unreachable-1.0.6
 nom-8.0.0
-nom_locate-5.0.0
 normalize-line-endings-0.3.0
 num-bigint-0.4.6
 num-complex-0.4.6
@@ -232,19 +216,18 @@ objc_id-0.1.1
 once_cell-1.21.4
 once_cell_polyfill-1.70.2
 oorandom-11.1.5
+page_size-0.6.0
 pango-0.22.6
 pangocairo-0.22.0
 pangocairo-sys-0.22.0
 pango-sys-0.22.0
 parking_lot-0.12.5
 parking_lot_core-0.9.12
-paste-1.0.15
 percent-encoding-2.3.2
-phf-0.11.3
-phf_codegen-0.11.3
-phf_generator-0.11.3
-phf_macros-0.11.3
-phf_shared-0.11.3
+phf-0.13.1
+phf_codegen-0.13.1
+phf_generator-0.13.1
+phf_macros-0.13.1
 phf_shared-0.13.1
 pin-project-lite-0.2.17
 pkg-config-0.3.33
@@ -270,10 +253,10 @@ pxfm-0.1.29
 quick-error-1.2.3
 quick-error-2.0.1
 quote-1.0.46
-rand-0.8.6
+rand-0.10.1
 rand-0.9.4
 rand_chacha-0.9.0
-rand_core-0.6.4
+rand_core-0.10.1
 rand_core-0.9.5
 rand_xorshift-0.4.0
 rangemap-1.7.1
@@ -288,14 +271,15 @@ regex-1.12.4
 regex-automata-0.4.14
 regex-syntax-0.8.11
 rgb-0.8.53
+rustc-hash-2.1.2
 rustc_version-0.4.1
 rustix-1.1.4
 rustversion-1.0.22
 rusty-fork-0.3.1
-safe_arch-0.7.4
+safe_arch-1.0.0
 same-file-1.0.6
 scopeguard-1.2.0
-selectors-0.31.0
+selectors-0.38.0
 semver-1.0.28
 serde-1.0.228
 serde_core-1.0.228
@@ -306,16 +290,15 @@ servo_arc-0.4.3
 sha2-0.10.9
 shell-words-1.1.1
 shlex-2.0.1
-simba-0.9.1
+simba-0.10.0
 simd-adler32-0.3.9
 siphasher-1.0.3
 slab-0.4.12
 smallvec-1.15.2
 stable_deref_trait-1.2.1
 static_assertions-1.1.0
-string_cache-0.8.9
 string_cache-0.9.0
-string_cache_codegen-0.5.4
+string_cache_codegen-0.6.1
 stringprep-0.1.5
 strsim-0.11.1
 syn-2.0.118
@@ -323,13 +306,13 @@ synstructure-0.13.2
 system-deps-7.0.8
 target-lexicon-0.13.5
 tempfile-3.27.0
-tendril-0.4.3
+tendril-0.5.0
 termtree-0.5.1
 thiserror-2.0.18
 thiserror-impl-2.0.18
-time-0.3.49
+time-0.3.51
 time-core-0.1.9
-time-macros-0.2.29
+time-macros-0.2.30
 tinystr-0.8.3
 tinytemplate-1.2.1
 tinyvec-1.11.0
@@ -354,14 +337,14 @@ version-compare-0.2.1
 wait-timeout-0.2.1
 walkdir-2.5.0
 wasip2-1.0.4+wasi-0.2.12
-wasm-bindgen-0.2.125
-wasm-bindgen-macro-0.2.125
-wasm-bindgen-macro-support-0.2.125
-wasm-bindgen-shared-0.2.125
-web_atoms-0.1.3
-web-sys-0.3.102
+wasm-bindgen-0.2.126
+wasm-bindgen-macro-0.2.126
+wasm-bindgen-macro-support-0.2.126
+wasm-bindgen-shared-0.2.126
+web_atoms-0.2.5
+web-sys-0.3.103
 weezl-0.1.12
-wide-0.7.33
+wide-1.5.0
 winapi-0.3.9
 winapi-i686-pc-windows-gnu-0.4.0
 winapi-util-0.1.11
@@ -376,7 +359,7 @@ windows-sys-0.61.2
 winnow-1.0.3
 wit-bindgen-0.57.1
 writeable-0.6.3
-xml5ever-0.35.0
+xml5ever-0.39.0
 yansi-1.0.1
 yeslogic-fontconfig-sys-6.0.1
 yoke-0.8.3
@@ -393,7 +376,7 @@ zune-core-0.5.1
 zune-jpeg-0.5.15
 "
 
-PYTHON_COMPAT=( python3_{11..14} )
+PYTHON_COMPAT=( python3_{10..14} )
 
 RUST_MAX_VER="1.95.0"
 RUST_MIN_VER="1.95.0" # LLVM 22.1
@@ -410,10 +393,10 @@ CHKL_TIMESTAMPS=(
 	"x11-libs/pango-9999"
 )
 
-inherit cargo cflags-hardened chkl gnome2 meson-multilib python-any-r1 rustflags-hardened rust-toolchain vala
+inherit cargo cflags-hardened chkl gnome2 meson-multilib python-any-r1 rustflags-hardened rust-toolchain secure-version vala
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="b4665c05e636c1f7eacc2f71e35f3ebfc777a18a"
+	FALLBACK_COMMIT="1a830b1e34bab5c69aec7c5cf86812376b4e53e2"
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/librsvg-librsvg-${MY_PV}"
 	EGIT_REPO_URI="https://gitlab.gnome.org/GNOME/librsvg.git"
@@ -442,11 +425,12 @@ LICENSE+="
 	Unicode-3.0
 "
 
+# It is not clear if major version, so version, gnome 2/3/4 compatibility, glib compatibility
 SLOT="2"
 
 IUSE+="
 avif gtk-doc +introspection +pixbuf-loader test +vala
-ebuild_revision_17
+ebuild_revision_18
 "
 RESTRICT="
 	!test? (
@@ -460,21 +444,21 @@ REQUIRED_USE="
 "
 
 RDEPEND="
-	>=x11-libs/cairo-9999:=[glib,svg(+),${MULTILIB_USEDEP}]
-	>=media-libs/freetype-9999:=[${MULTILIB_USEDEP}]
+	>=x11-libs/cairo-${CAIRO_PV}:=[glib,svg(+),${MULTILIB_USEDEP}]
+	>=media-libs/freetype-${FREETYPE_PV}:=[${MULTILIB_USEDEP}]
 	pixbuf-loader? (
-		>=x11-libs/gdk-pixbuf-2.44.6:=[introspection?,${MULTILIB_USEDEP}]
+		>=x11-libs/gdk-pixbuf-${GDK_PIXBUF_PV}:=[introspection?,${MULTILIB_USEDEP}]
 	)
 	!pixbuf-loader? (
 		>=media-libs/glycin-loaders-2.1.1:=[svg]
 	)
-	>=dev-libs/glib-2.89.9999:=[${MULTILIB_USEDEP}]
-	>=media-libs/harfbuzz-9999:=[${MULTILIB_USEDEP}]
-	>=dev-libs/libxml2-9999:=[${MULTILIB_USEDEP}]
-	>=x11-libs/pango-1.57.1:=[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-${GLIB_PV}:=[${MULTILIB_USEDEP}]
+	>=media-libs/harfbuzz-${HARFBUZZ_PV}:=[${MULTILIB_USEDEP}]
+	>=dev-libs/libxml2-${LIBXML2_PV}:=[${MULTILIB_USEDEP}]
+	>=x11-libs/pango-${PANGO_PV}:=[${MULTILIB_USEDEP}]
 
-	avif? ( >=media-libs/dav1d-9999:=[${MULTILIB_USEDEP}] )
-	introspection? ( >=dev-libs/gobject-introspection-1.86.0:= )
+	avif? ( >=media-libs/dav1d-${DAV1D_PV}:=[${MULTILIB_USEDEP}] )
+	introspection? ( >=dev-libs/gobject-introspection-${GOBJECT_INTROSPECTION_PV}:= )
 "
 DEPEND="${RDEPEND}"
 # jq is not required but used to suggest default.
@@ -569,15 +553,18 @@ src_unpack() {
 		unpack ${A}
 	fi
 
+#	die
+
 	local actual_cargo_lock_fingerprint=$(sha512sum "${S}/Cargo.lock" | cut -f 1 -d " ")
-	local expected_cargo_lock_fingerprint="6ad49d90e5d63d90bf4b3f6b158e8525ad10e46b81ab43f6daea932be03a958162c9d0d1283d78f790ba20167a614a1193a089f4a071fdb0fbb5a4a53432048d"
+	local expected_cargo_lock_fingerprint="c1f53203f4b274f2d5be9c57775a738dcb1eaaf9bde5252ce4688a60fb0de38bfa8dabe73b7768e621b7aef5b5d890d1545840582e56e53a5e969b25f469bba2"
 	if [[ "${actual_cargo_lock_fingerprint}" != "${expected_cargo_lock_fingerprint}" ]] ; then
-eerror "QA:  Update the cargo lockfile."
+eerror "QA:  Update the cargo lockfile fingerprint and the lockfile/cargo sections."
 eerror "The cargo fingerprint doesn't match.  Use the fallback-commit to continue."
+eerror "Actual cargo lockfile fingerprint:  ${actual_cargo_lock_fingerprint}"
+eerror "Expected cargo lockfile fingerprint:  ${expected_cargo_lock_fingerprint}"
 		die
 	fi
 
-#	die
 	cargo_src_unpack
 	cp -aT "${FILESDIR}/${PV}" "${S}" || die
 }
