@@ -46,7 +46,7 @@ fi
 IUSE_SERVERS="xephyr xnest xorg xvfb"
 IUSE="
 ${IUSE_SERVERS} debug +elogind minimal pciaccess selinux suid systemd test +udev unwind xcsecurity
-ebuild_revision_2
+ebuild_revision_4
 "
 RESTRICT="!test? ( test )"
 
@@ -134,6 +134,7 @@ REQUIRED_USE="!minimal? (
 PATCHES=(
 	"${UPSTREAMED_PATCHES[@]}"
 	"${FILESDIR}"/${PN}-1.12-unloadsubmodule.patch
+	"${FILESDIR}"/${PN}-035ff561-optionalize-pci_device_is_boot_display.patch # oiledmachine-overlay patch
 )
 
 src_configure() {
@@ -146,6 +147,14 @@ src_configure() {
 	use debug && EMESON_BUILDTYPE=debug
 
 	cflags-hardened_append
+
+	local use_pci_device_is_boot_display_stub=1
+	if has_version ">=x11-libs/libpciaccess-0.19" ; then
+		use_pci_device_is_boot_display_stub=0
+	fi
+	sed -i -e "s|@USE_PCI_DEVICE_IS_BOOT_DISPLAY_STUB@|${use_pci_device_is_boot_display_stub}|g" \
+		"${S}/hw/xfree86/common/xf86platformBus.h" \
+		|| die
 
 	# localstatedir is used for the log location; we need to override the default
 	#	from ebuild.sh

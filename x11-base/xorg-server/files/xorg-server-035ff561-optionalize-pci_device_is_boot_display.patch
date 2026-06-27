@@ -1,0 +1,17 @@
+diff '--color=auto' -urp xorg-server-9999.orig/hw/xfree86/common/xf86platformBus.h xorg-server-9999/hw/xfree86/common/xf86platformBus.h
+--- xorg-server-9999.orig/hw/xfree86/common/xf86platformBus.h	2026-06-26 19:33:50.927506533 -0700
++++ xorg-server-9999/hw/xfree86/common/xf86platformBus.h	2026-06-26 19:35:41.112109403 -0700
+@@ -165,11 +165,13 @@ static inline void xf86MergeOutputClassO
+ 
+ #endif
+ 
++#if @USE_PCI_DEVICE_IS_BOOT_DISPLAY_STUB@
+ #ifndef HAVE_PCI_DEVICE_IS_BOOT_DISPLAY
+ static inline Bool pci_device_is_boot_display(struct pci_device *dev)
+ {
+     return FALSE;
+ }
+ #endif
++#endif
+ 
+ #endif
