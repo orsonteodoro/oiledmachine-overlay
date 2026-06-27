@@ -62,10 +62,10 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 else
 	SRC_URI="https://github.com/jemalloc/jemalloc/releases/download/${PV}/${P}.tar.bz2"
+	S="${WORKDIR}/${MY_PN}-${PV}"
 fi
 
 KEYWORDS+=" ~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
-S="${WORKDIR}/${MY_PN}-${PV}"
 
 DESCRIPTION="USD support for Jemalloc, a general-purpose scalable concurrent allocator"
 HOMEPAGE="
