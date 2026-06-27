@@ -91,6 +91,7 @@ multilib_src_configure() {
 	cflags-hardened_append
 	local emesonargs=(
 		$(meson_feature gif)
+		$(meson_feature glycin)
 		$(meson_feature jpeg)
 		$(meson_feature png)
 		$(meson_feature tiff)
