@@ -43,8 +43,19 @@ UOPTS_SUPPORT_TPGO=1
 inherit autotools cflags-hardened check-compiler-switch flag-o-matic libcxx-slot
 inherit libstdcxx-slot multilib-minimal uopts
 
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="9c1a484e1de990678986b5e4a6c7768dba25e0b2" # 158/158 greeen checkmarks
+	EGIT_BRANCH="dev"
+	EGIT_REPO_URI="https://github.com/jemalloc/jemalloc.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	SRC_URI="https://github.com/jemalloc/jemalloc/releases/download/${PV}/${P}.tar.bz2"
+fi
+
 KEYWORDS+=" ~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
-SRC_URI="https://github.com/jemalloc/jemalloc/releases/download/${PV}/${P}.tar.bz2"
 
 DESCRIPTION="A general-purpose scalable concurrent allocator"
 HOMEPAGE="
@@ -63,7 +74,8 @@ LICENSE="
 # BSD-2 - COPYING
 # GPL-3+ - build-aux/config.guess
 # HPND - build-aux/install-sh
-SLOT="0/2"
+SOVER="2"
+SLOT="0/${SOVER}"
 IUSE+="
 ${TRAINERS[@]}
 custom-cflags debug lazy-lock prof static-libs stats test xmalloc
@@ -97,6 +109,26 @@ eerror "FEATURES=\"${FEATURES} -userpriv\" needs to be added as a per-package en
 	fi
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+	local actual_sover=$(grep -e "^rev=" "${S}/configure.ac" | cut -f 2 -d "=")
+	local expected_sover="${SOVER}"
+	if ver_test "${actual_sover}" "-ne" "${expected_sover}" ; then
+eerror "QA:  Update the SOVER in the ebuild."
+eerror "QA:  Actual sover:  ${actual_sover}"
+eerror "QA:  Expected sover:  ${expected_sover}"
+		die
+	fi
 }
 
 src_prepare() {
