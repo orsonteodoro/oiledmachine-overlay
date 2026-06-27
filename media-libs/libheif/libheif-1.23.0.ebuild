@@ -29,8 +29,6 @@ FFMPEG_COMPAT_SLOTS=(
 CHKL_TIMESTAMPS=(
 	"app-arch/brotli-9999"
 	"media-libs/dav1d-9999"
-	"media-libs/ffmpeg-9999"
-	"media-libs/ffmpeg-9999m"
 	"media-libs/kvazaar-9999"
 	"media-libs/libaom-9999"
 	"media-libs/libde265-9999"
@@ -46,6 +44,8 @@ CHKL_TIMESTAMPS=(
 	"media-libs/vvenc-9999"
 	"media-libs/x264-9999"
 	"media-libs/x265-9999"
+	"media-video/ffmpeg-9999"
+	"media-video/ffmpeg-9999m"
 	"media-video/rav1e-9999"
 )
 
@@ -163,28 +163,28 @@ RDEPEND="
 		>=media-libs/dav1d-${DAV1D_PV}:=[${MULTILIB_USEDEP}]
 	)
 	ffmpeg? (
-		media-libs/ffmpeg:=[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
+		media-video/ffmpeg:=[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
 		|| (
-			=media-libs/ffmpeg-9999[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
-			=media-libs/ffmpeg-9999m[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
+			=media-video/ffmpeg-9999[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
+			=media-video/ffmpeg-9999m[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
 
-			~media-libs/ffmpeg-${FFMPEG_8_1_PV}[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
-			~media-libs/ffmpeg-${FFMPEG_8_1_PV}m[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
+			~media-video/ffmpeg-${FFMPEG_8_1_PV}[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
+			~media-video/ffmpeg-${FFMPEG_8_1_PV}m[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
 
-			~media-libs/ffmpeg-${FFMPEG_8_0_PV}[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
-			~media-libs/ffmpeg-${FFMPEG_8_0_PV}m[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
+			~media-video/ffmpeg-${FFMPEG_8_0_PV}[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
+			~media-video/ffmpeg-${FFMPEG_8_0_PV}m[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
 
-			~media-libs/ffmpeg-${FFMPEG_7_1_PV}[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
-			~media-libs/ffmpeg-${FFMPEG_7_1_PV}m[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
+			~media-video/ffmpeg-${FFMPEG_7_1_PV}[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
+			~media-video/ffmpeg-${FFMPEG_7_1_PV}m[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
 
-			~media-libs/ffmpeg-${FFMPEG_6_1_PV}[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
-			~media-libs/ffmpeg-${FFMPEG_6_1_PV}m[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
+			~media-video/ffmpeg-${FFMPEG_6_1_PV}[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
+			~media-video/ffmpeg-${FFMPEG_6_1_PV}m[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
 
-			~media-libs/ffmpeg-${FFMPEG_5_1_PV}[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
-			~media-libs/ffmpeg-${FFMPEG_5_1_PV}m[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
+			~media-video/ffmpeg-${FFMPEG_5_1_PV}[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
+			~media-video/ffmpeg-${FFMPEG_5_1_PV}m[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
 
-			~media-libs/ffmpeg-${FFMPEG_4_4_PV}[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
-			~media-libs/ffmpeg-${FFMPEG_4_4_PV}m[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
+			~media-video/ffmpeg-${FFMPEG_4_4_PV}[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
+			~media-video/ffmpeg-${FFMPEG_4_4_PV}m[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
 
 		)
 	)
