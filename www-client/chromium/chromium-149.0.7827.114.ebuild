@@ -349,6 +349,7 @@ CHKL_TIMESTAMPS=(
 	"net-libs/nodejs-99999999"
 	"net-misc/curl-9999"
 	"net-print/cups-9999"
+	"sys-apps/dbus-9999"
 	"x11-libs/cairo-9999"
 	"x11-libs/libdrm-9999"
 	"x11-libs/libX11-9999"
@@ -1634,7 +1635,7 @@ COMMON_SNAPSHOT_DEPEND="
 		>=media-libs/dav1d-${DAV1D_PV}:=[${MULTILIB_USEDEP},8bit]
 	)
 	system-double-conversion? (
-		>=dev-libs/double-conversion-3.1.6:=[${MULTILIB_USEDEP}]
+		>=dev-libs/double-conversion-${DOUBLE_CONVERSION_PV}:=[${MULTILIB_USEDEP}]
 	)
 	system-flatbuffers? (
 		~dev-libs/flatbuffers-25.12.19:=
@@ -1801,7 +1802,7 @@ COMMON_DEPEND="
 	!headless? (
 		${VIRTUAL_UDEV}
 		(
-			>=media-libs/libglvnd-1.3.2:=[${MULTILIB_USEDEP},X?]
+			>=media-libs/libglvnd-${LIBGLVND_PV}:=[${MULTILIB_USEDEP},X?]
 			>=media-libs/mesa-${MESA_PV}:=[${MULTILIB_USEDEP},wayland?,X?]
 		)
 		>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP}]
@@ -1829,7 +1830,7 @@ COMMON_DEPEND="
 	${COMMON_SNAPSHOT_DEPEND}
 	>=dev-libs/expat-${EXPAT_PV}:=[${MULTILIB_USEDEP}]
 	>=net-misc/curl-${CURL_PV}:=[${MULTILIB_USEDEP},ssl]
-	>=sys-apps/dbus-1.12.24:=[${MULTILIB_USEDEP}]
+	>=sys-apps/dbus-${DBUS_PV}:=[${MULTILIB_USEDEP}]
 	>=sys-devel/gcc-${GCC_PV}:=
 	>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP},minizip]
 	>=app-arch/bzip2-${BZIP2_PV}:=[${MULTILIB_USEDEP}]
