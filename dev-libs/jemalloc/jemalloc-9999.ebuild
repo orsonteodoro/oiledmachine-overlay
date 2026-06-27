@@ -305,7 +305,9 @@ multilib_src_test() {
 
 multilib_src_install() {
 	# Copy man file which the Makefile looks for
-	cp "${S}/doc/jemalloc.3" "${BUILD_DIR}/doc" || die
+	if [[ -e "${S}/doc/jemalloc.3" ]] ; then
+		cp "${S}/doc/jemalloc.3" "${BUILD_DIR}/doc" || die
+	fi
 	emake DESTDIR="${D}" install
 	uopts_src_install
 }
