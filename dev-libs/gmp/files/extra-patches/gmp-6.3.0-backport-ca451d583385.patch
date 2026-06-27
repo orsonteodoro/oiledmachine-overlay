@@ -1,0 +1,21 @@
+Fix BMI detection
+Source https://gmplib.org/repo/gmp/rev/ca451d583385
+diff '--color=auto' -urp gmp-6.3.0.orig/mpn/x86_64/fat/fat.c gmp-6.3.0/mpn/x86_64/fat/fat.c
+--- gmp-6.3.0.orig/mpn/x86_64/fat/fat.c	2023-07-29 06:42:16.000000000 -0700
++++ gmp-6.3.0/mpn/x86_64/fat/fat.c	2026-06-27 10:15:26.759540935 -0700
+@@ -375,6 +375,7 @@ __gmpn_cpuvec_init (void)
+ 	      CPUVEC_SETUP_core2;
+ 	      CPUVEC_SETUP_coreinhm;
+ 	      CPUVEC_SETUP_coreisbr;
++               __gmpn_cpuid (dummy_string, 7);
+ 	      if ((dummy_string[0 + BMI2_BIT / 8] & (1 << (BMI2_BIT % 8))) == 0)
+ 		break;
+ 	      CPUVEC_SETUP_coreihwl;
+@@ -388,6 +389,7 @@ __gmpn_cpuvec_init (void)
+ 	      CPUVEC_SETUP_core2;
+ 	      CPUVEC_SETUP_coreinhm;
+ 	      CPUVEC_SETUP_coreisbr;
++              __gmpn_cpuid (dummy_string, 7);
+ 	      if ((dummy_string[0 + BMI2_BIT / 8] & (1 << (BMI2_BIT % 8))) == 0)
+ 		break;
+ 	      if (gmp_workaround_skylake_cpuid_bug ())

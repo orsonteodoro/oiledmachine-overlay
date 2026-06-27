@@ -3,6 +3,9 @@
 
 EAPI=8
 
+# r0   - r99: distro patches
+# r100 - r999: oiledmachine-overlay-patches
+
 MY_PV=${PV/_p*}
 MY_PV=${MY_PV/_/-}
 MY_P=${PN}-${MY_PV}
@@ -29,7 +32,9 @@ CHKL_TIMESTAMPS=(
 inherit gnuconfig libtool flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal secure-version toolchain-funcs verify-sig
 
 if [[ "${PV}" =~ "9999" ]] ; then
+	# The server is very poor quality, overloaded, or overly restrictive.
 	FALLBACK_REVISION="05ed7e126732"
+	EHG_REPO_URI="https://gmplib.org/repo/gmp"
 	if [[ -n "${FALLBACK_REVISION}" ]] ; then
 		IUSE+=" fallback-revision"
 	fi
@@ -48,6 +53,10 @@ SRC_URI+="
 https://gmplib.org/${PN}-man-${MANUAL_PV}.pdf
 	)
 "
+PATCHES=(
+	"${FILESDIR}/extra-patches/gmp-6.3.0-backport-b06ade444025.patch"
+	"${FILESDIR}/extra-patches/gmp-6.3.0-backport-ca451d583385.patch"
+)
 
 DESCRIPTION="Library for arbitrary-precision arithmetic on different type of numbers"
 HOMEPAGE="https://gmplib.org/"

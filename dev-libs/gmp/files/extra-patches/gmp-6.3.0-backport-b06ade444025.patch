@@ -1,0 +1,32 @@
+Fix NPD, UB
+Source https://gmplib.org/repo/gmp/rev/b06ade444025
+
+diff '--color=auto' -urp gmp-6.3.0.orig/mini-gmp/ChangeLog gmp-6.3.0/mini-gmp/ChangeLog
+--- gmp-6.3.0.orig/mini-gmp/ChangeLog	2023-07-29 06:42:16.000000000 -0700
++++ gmp-6.3.0/mini-gmp/ChangeLog	2026-06-27 10:08:31.092183685 -0700
+@@ -1,3 +1,9 @@
++2025-08-27  Niels Möller  <nisse@lysator.liu.se>
++
++	* mini-gmp.c (mpz_import): Return early when count == 0, to avoid
++	undefined behavior with pointer arithmetic, if the corresponding
++	src pointer is NULL. Reported by Bruno Haible.
++
+ 2023-07-20  Niels Möller  <nisse@lysator.liu.se>
+ 
+ 	* mini-gmp.c (gmp_umullo_limb): New macro, to avoid unintended
+diff '--color=auto' -urp gmp-6.3.0.orig/mini-gmp/mini-gmp.c gmp-6.3.0/mini-gmp/mini-gmp.c
+--- gmp-6.3.0.orig/mini-gmp/mini-gmp.c	2023-07-29 06:42:16.000000000 -0700
++++ gmp-6.3.0/mini-gmp/mini-gmp.c	2026-06-27 10:09:44.517949770 -0700
+@@ -4476,6 +4476,12 @@ mpz_import (mpz_t r, size_t count, int o
+   assert (order == 1 || order == -1);
+   assert (endian >= -1 && endian <= 1);
+ 
++  if (count == 0)
++    {
++      r->_mp_size = 0;
++      return;
++    }
++
+   if (endian == 0)
+     endian = gmp_detect_endian ();
+ 
