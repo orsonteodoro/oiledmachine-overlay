@@ -16,9 +16,10 @@ MULTILIB_CHOST_TOOLS=(
 )
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/glib-2.89.9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/libjpeg-turbo-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/tiff-9999"			# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/glib-2.89.9999"
+	"media-libs/libjpeg-turbo-9999"
+	"media-libs/libpng-9999"
+	"media-libs/tiff-9999"
 )
 
 KEYWORDS="
@@ -70,8 +71,8 @@ BDEPEND="
 	>=sys-devel/gettext-0.19.8
 	app-text/docbook-xsl-stylesheets
 	app-text/docbook-xml-dtd:4.3
-	dev-libs/glib
-	dev-libs/libxslt
+	>=dev-libs/glib-${GLIB_PV}
+	>=dev-libs/libxslt-${LIBXSLT_PV}
 	dev-python/docutils
 	dev-util/glib-utils
 	virtual/pkgconfig:*
