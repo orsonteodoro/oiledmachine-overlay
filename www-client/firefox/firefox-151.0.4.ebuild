@@ -509,7 +509,7 @@ GAMEPAD_BDEPEND="
 UDEV_RDEPEND="
 	kernel_linux? (
 		systemd? (
-			>=sys-apps/systemd-259.4:=[${MULTILIB_USEDEP}]
+			>=sys-apps/systemd-${SYSTEMD_PV}:=[${MULTILIB_USEDEP}]
 		)
 		!systemd? (
 			>=sys-apps/systemd-utils-259.4:=[${MULTILIB_USEDEP},udev]
@@ -646,9 +646,9 @@ gen_ffmpeg_royalty_free_depends_unislot() {
 }
 
 PATENT_CDEPENDS="
-	>=media-libs/mesa-25.3.6:=[${MULTILIB_USEDEP},patent_status_nonfree=]
+	>=media-libs/mesa-${MESA_PV}:=[${MULTILIB_USEDEP},patent_status_nonfree=]
 	kernel_linux? (
-		>=media-libs/libglvnd-1.7.0:=[${MULTILIB_USEDEP}]
+		>=media-libs/libglvnd-${LIBGLVND_PV}:=[${MULTILIB_USEDEP}]
 	)
 	!patent_status_nonfree? (
 		media-video/ffmpeg:=
