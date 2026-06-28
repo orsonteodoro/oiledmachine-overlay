@@ -232,7 +232,7 @@ RDEPEND="
 		>=media-libs/vvenc-${VVENC_PV}:=[${MULTILIB_USEDEP}]
 	)
 	uvg266? (
-		>=media-libs/uvg266-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/uvg266-${UVG266_PV}:=[${MULTILIB_USEDEP}]
 	)
 	x264? (
 		>=media-libs/x264-${X264_PV}:=[${MULTILIB_USEDEP}]
