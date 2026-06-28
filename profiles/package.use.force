@@ -53,6 +53,8 @@ dev-libs/libffi fallback-commit
 dev-libs/libxml2 fallback-commit
 sys-apps/systemd fallback-commit
 dev-libs/libpcre2 fallback-commit
+net-misc/wget fallback-commit
+net-misc/wget2 fallback-commit
 
 # Guardrail to mitigate unseen memory corruption vulnerability from dev code
 dev-libs/jemalloc fallback-commit

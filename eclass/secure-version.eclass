@@ -408,6 +408,7 @@ XKBCOMP_PV=${XKBCOMP_PV:-"1.5.0"}
 XORG_SERVER_PV=${XORG_SERVER_PV:-"9999"}
 WPA_SUPPLICANT_PV=${WPA_SUPPLICANT_PV:-"9999"}
 WGET_PV=${WGET_PV:-"9999"}
+WGET2_PV=${WGET_PV:-"9999"}
 XTRANS_PV=${XTRANS_PV:-"1.5.1"}
 XVID_PV=${XVID_PV:-"1.3.5"}
 XZ_UTILS_PV=${XZ_UTILS_PV:-"9999"}
@@ -419,8 +420,8 @@ ZSTD_PV=${ZSTD_PV:-"9999"}
 ZXING_CPP_PV=${ZXING_CPP_PV:-"9999"}
 ZVBI_PV=${ZVBI_PV:-"0.2.44"}
 
-
 if [[ -n "${_MULTILIB_BUILD_ECLASS}" ]] ; then
+# Deprecated.  Use secure-version_gen_openssl_depends
 	OPENSSL_RDEPEND="
 		dev-libs/openssl:=[${MULTILIB_USEDEP}]
 		|| (
@@ -439,6 +440,7 @@ if [[ -n "${_MULTILIB_BUILD_ECLASS}" ]] ; then
 		)
 	"
 else
+# Deprecated.  Use secure-version_gen_openssl_depends
 	OPENSSL_RDEPEND="
 		dev-libs/openssl:=
 		|| (
@@ -457,9 +459,12 @@ else
 		)
 	"
 fi
+
+# Deprecated.  Use secure-version_gen_openssl_depends
 OPENSSL_DEPEND="
 	${OPENSSL_RDEPEND}
 "
+
 secure-version_gen_openssl_depends() {
 	local range="${1}" # 1, 3.0-4.0
 	local usedep="${2}"
@@ -470,7 +475,10 @@ secure-version_gen_openssl_depends() {
 	"
 	local l=""
 	local r=""
-	if [[ "${range}" =~ "-" ]] ; then
+	if [[ -z "${range}" ]] ; then
+		l="3.0"
+		r="4.0"
+	elif [[ "${range}" =~ "-" ]] ; then
 		l="${range%-*}"
 		r="${range#*-}"
 	else
