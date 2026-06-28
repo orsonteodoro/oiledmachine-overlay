@@ -62,6 +62,7 @@
 # off by one
 # out of bounds
 # overflow
+# reject [Fail-Secure hints]
 # segfault
 # stack overflow
 # uaf
