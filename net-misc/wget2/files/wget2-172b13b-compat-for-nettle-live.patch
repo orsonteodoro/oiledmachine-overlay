@@ -1,0 +1,11 @@
+--- a/libwget/hashfile.c.orig	2026-06-28 00:25:06.601053419 -0700
++++ b/libwget/hashfile.c	2026-06-28 00:45:26.116629000 -0700
+@@ -511,7 +511,7 @@ int wget_hash(wget_hash_hd *handle, cons
+ 
+ int wget_hash_deinit(wget_hash_hd **handle, void *digest)
+ {
+-	(*handle)->hash->digest((*handle)->context, (*handle)->hash->digest_size, digest);
++	(*handle)->hash->digest((*handle)->context, digest);
+ 	xfree((*handle)->context);
+ 	xfree(*handle);
+ 	return WGET_E_SUCCESS;
