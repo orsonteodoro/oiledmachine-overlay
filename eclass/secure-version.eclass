@@ -27,12 +27,13 @@
 # Scope
 #
 # Each repo is inspected at the head/tip.  We inspect from today to early 2010s
-# decade for vulnerabilies in the commit logs.  This ebuild is for *DEPENDs.
-# For commits see secure-timestamp instead.  Both secure-timestamp and
+# decade for vulnerabilies in the commit logs.  This eclass applies to the *DEPENDs
+# sections.  If you are interested in knowing which live commits are secure, see
+# secure-timestamp instead.  Both secure-timestamp and
 # secure-version work together and use the same logic when finding possible
 # vulnerable code.  We are interested vulnerabilities that happen during
-# runtime or after install.  Also, most of these are dependencies of
-# high to security critical packages and are from C/C++ or from memory unsafe
+# runtime or after install.  Also, most of these are dependencies are
+# high to security-critical C/C++ based packages or from memory unsafe
 # languages.
 #
 #
