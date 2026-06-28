@@ -460,10 +460,11 @@ fi
 OPENSSL_DEPEND="
 	${OPENSSL_RDEPEND}
 "
-secure_version_gen_openssl_depends() {
+secure-version_gen_openssl_depends() {
 	local range="${1}" # 1, 3.0-4.0
 	local usedep="${2}"
-	echo "
+	local o=""
+	o+="
 		dev-libs/openssl:=${usedep}
 		|| (
 	"
@@ -488,15 +489,24 @@ secure_version_gen_openssl_depends() {
 	for x in "${L[@]}" ; do
 		if ver_test "${l}" "-le" "${x}" && ver_test "${x}" "-le" "${r}" ; then
 			local t="OPENSSL_PV_${x/./_}_PV"
-			echo "
+			o+="
 				~dev-libs/openssl-${x}.9999${usedep}
 				~dev-libs/openssl-${!t}${usedep}
 			"
 		fi
 	done
-	echo "
+	o+="
 		)
 	"
+
+	local output=""
+	if declare -f secure-version_replace_dep ; then
+		output=$(secure-version_replace_dep)
+	else
+		output="${o}"
+	fi
+#einfo "${output}"
+	echo "${output}"
 }
 
 fi
