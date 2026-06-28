@@ -80,7 +80,7 @@ COMMON_DEPEND="
 	!pam? ( virtual/libcrypt:= )
 	!openssl? ( >=net-libs/gnutls-${GNUTLS_PV}:=[${MULTILIB_USEDEP}] )
 	openssl? (
-		${OPENSSL_RDEPEND}
+		$(secure-version_gen_openssl_depends '' '[${MULTILIB_USEDEP}]')
 	)
 	systemd? ( >=sys-apps/systemd-${SYSTEMD_PV}:= )
 	usb? ( >=virtual/libusb-1:= )

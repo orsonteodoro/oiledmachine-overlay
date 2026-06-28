@@ -48,7 +48,7 @@ REQUIRED_USE="
 "
 
 DEPEND="
-	${OPENSSL_DEPEND}
+	$(secure-version_gen_openssl_depends)
 	dbus? ( >=sys-apps/dbus-${DBUS_PV}:= )
 	kernel_linux? (
 		>=dev-libs/libnl-3.2:3=

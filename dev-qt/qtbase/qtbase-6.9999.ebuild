@@ -119,7 +119,7 @@ REQUIRED_USE="
 COMMON_DEPEND="
 	>=virtual/zlib-${ZLIB_PV}:=
 	ssl? (
-		${OPENSSL_RDEPEND}
+		$(secure-version_gen_openssl_depends )
 	)
 	udev? ( virtual/libudev:= )
 	zstd? ( >=app-arch/zstd-${ZSTD_PV}:= )

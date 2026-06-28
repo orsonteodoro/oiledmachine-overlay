@@ -47,7 +47,7 @@ IUSE+=" libei selinux systemd test unwind xcsecurity"
 RESTRICT="!test? ( test )"
 
 COMMON_DEPEND="
-	${OPENSSL_DEPEND}
+	$(secure-version_gen_openssl_depends)
 	>=dev-libs/libbsd-${LIBBSD_PV}:=
 	>=dev-libs/wayland-${WAYLAND_PV}:=
 	>=dev-libs/wayland-protocols-1.34:=

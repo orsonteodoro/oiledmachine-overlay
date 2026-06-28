@@ -51,7 +51,7 @@ ebuild_revision_4
 RESTRICT="!test? ( test )"
 
 CDEPEND="
-	${OPENSSL_RDEPEND}
+	$(secure-version_gen_openssl_depends)
 	>=media-libs/libglvnd-${LIBGLVND_PV}:=[X]
 	>=dev-libs/libbsd-${LIBBSD_PV}:=
 	>=x11-apps/iceauth-${ICEAUTH_PV}:=

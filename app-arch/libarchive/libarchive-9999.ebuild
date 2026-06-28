@@ -53,7 +53,7 @@ IUSE+="
 RESTRICT="!test? ( test )"
 
 RDEPEND="
-	${OPENSSL_RDEPEND}
+	$(secure-version_gen_openssl_depends '' '[${MULTILIB_USEDEP}]')
 	>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}]
 	acl? ( virtual/acl:*[${MULTILIB_USEDEP}] )
 	blake2? ( >=app-crypt/libb2-${LIBB2_PV}:=[${MULTILIB_USEDEP}] )

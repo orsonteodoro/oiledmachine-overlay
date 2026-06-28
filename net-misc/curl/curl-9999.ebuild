@@ -154,13 +154,9 @@ RDEPEND="
 			>=net-libs/mbedtls-${MBEDTLS_PV}:3=[${MULTILIB_USEDEP}]
 		)
 		openssl? (
-			dev-libs/openssl:=[${MULTILIB_USEDEP},static-libs?]
-			${OPENSSL_RDEPEND}
+			$(secure-version_gen_openssl_depends '' '[static-libs?,${MULTILIB_USEDEP}]')
 			ech? (
-				|| (
-					=dev-libs/openssl-4.0.9999[static-libs?,${MULTILIB_USEDEP}]
-					~dev-libs/openssl-${OPENSSL_PV_4_0_PV}[static-libs?,${MULTILIB_USEDEP}]
-				)
+				$(secure-version_gen_openssl_depends '4.0' '[static-libs?,${MULTILIB_USEDEP}]')
 			)
 		)
 		rustls? (

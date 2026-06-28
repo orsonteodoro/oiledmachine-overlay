@@ -420,56 +420,11 @@ ZSTD_PV=${ZSTD_PV:-"9999"}
 ZXING_CPP_PV=${ZXING_CPP_PV:-"9999"}
 ZVBI_PV=${ZVBI_PV:-"0.2.44"}
 
-if [[ -n "${_MULTILIB_BUILD_ECLASS}" ]] ; then
-# Deprecated.  Use secure-version_gen_openssl_depends
-	OPENSSL_RDEPEND="
-		dev-libs/openssl:=[${MULTILIB_USEDEP}]
-		|| (
-			~dev-libs/openssl-4.0.9999[${MULTILIB_USEDEP}]
-			~dev-libs/openssl-3.6.9999[${MULTILIB_USEDEP}]
-			~dev-libs/openssl-3.5.9999[${MULTILIB_USEDEP}]
-			~dev-libs/openssl-3.4.9999[${MULTILIB_USEDEP}]
-			~dev-libs/openssl-3.3.9999[${MULTILIB_USEDEP}]
-			~dev-libs/openssl-3.0.9999[${MULTILIB_USEDEP}]
-			~dev-libs/openssl-${OPENSSL_PV_4_0_PV}[${MULTILIB_USEDEP}]
-			~dev-libs/openssl-${OPENSSL_PV_3_6_PV}[${MULTILIB_USEDEP}]
-			~dev-libs/openssl-${OPENSSL_PV_3_5_PV}[${MULTILIB_USEDEP}]
-			~dev-libs/openssl-${OPENSSL_PV_3_4_PV}[${MULTILIB_USEDEP}]
-			~dev-libs/openssl-${OPENSSL_PV_3_3_PV}[${MULTILIB_USEDEP}]
-			~dev-libs/openssl-${OPENSSL_PV_3_0_PV}[${MULTILIB_USEDEP}]
-		)
-	"
-else
-# Deprecated.  Use secure-version_gen_openssl_depends
-	OPENSSL_RDEPEND="
-		dev-libs/openssl:=
-		|| (
-			~dev-libs/openssl-4.0.9999
-			~dev-libs/openssl-3.6.9999
-			~dev-libs/openssl-3.5.9999
-			~dev-libs/openssl-3.4.9999
-			~dev-libs/openssl-3.3.9999
-			~dev-libs/openssl-3.0.9999
-			~dev-libs/openssl-${OPENSSL_PV_4_0_PV}
-			~dev-libs/openssl-${OPENSSL_PV_3_6_PV}
-			~dev-libs/openssl-${OPENSSL_PV_3_5_PV}
-			~dev-libs/openssl-${OPENSSL_PV_3_4_PV}
-			~dev-libs/openssl-${OPENSSL_PV_3_3_PV}
-			~dev-libs/openssl-${OPENSSL_PV_3_0_PV}
-		)
-	"
-fi
-
-# Deprecated.  Use secure-version_gen_openssl_depends
-OPENSSL_DEPEND="
-	${OPENSSL_RDEPEND}
-"
-
 secure-version_gen_openssl_depends() {
 	local range="${1}" # 1, 3.0-4.0
 	local usedep="${2}"
-	local o=""
-	o+="
+	local t=""
+	t+="
 		dev-libs/openssl:=${usedep}
 		|| (
 	"
@@ -481,6 +436,9 @@ secure-version_gen_openssl_depends() {
 	elif [[ "${range}" =~ "-" ]] ; then
 		l="${range%-*}"
 		r="${range#*-}"
+		if [[ -z "${r}" ]] ; then
+			r="4.0"
+		fi
 	else
 		l="${range}"
 		r="${range}"
@@ -496,23 +454,24 @@ secure-version_gen_openssl_depends() {
 	local x
 	for x in "${L[@]}" ; do
 		if ver_test "${l}" "-le" "${x}" && ver_test "${x}" "-le" "${r}" ; then
-			local t="OPENSSL_PV_${x/./_}_PV"
-			o+="
+			local u="OPENSSL_PV_${x/./_}_PV"
+			t+="
 				~dev-libs/openssl-${x}.9999${usedep}
-				~dev-libs/openssl-${!t}${usedep}
+				~dev-libs/openssl-${!u}${usedep}
 			"
 		fi
 	done
-	o+="
+	t+="
 		)
 	"
 
 	local output=""
-	if declare -f secure-version_replace_dep ; then
-		output=$(secure-version_replace_dep)
+	if [[ "${_MULTILIB_BUILD_ECLASS}" == "1" ]] ; then
+                t2="${t//\$\{MULTILIB_USEDEP\}/${MULTILIB_USEDEP}}"
 	else
-		output="${o}"
+		t2="${t}"
 	fi
+	output="${t2}"
 #einfo "${output}"
 	echo "${output}"
 }

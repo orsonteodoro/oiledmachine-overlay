@@ -1624,7 +1624,7 @@ RDEPEND+="
 		~media-plugins/gst-plugins-analyticsoverlay-${GST_PV}:=[${MULTILIB_USEDEP}]
 	)
 	aws? (
-		${OPENSSL_RDEPEND}
+		$(secure-version_gen_openssl_depends '' '[${MULTILIB_USEDEP}]')
 	)
 	closedcaption? (
 		${CARGO_BINDINGS_DEPENDS_CAIRO}

@@ -1019,7 +1019,7 @@ RDEPEND+="
 		>=virtual/opengl-7.0-r1:=[${MULTILIB_USEDEP}]
 	)
 	openssl? (
-		${OPENSSL_RDEPEND}
+		$(secure-version_gen_openssl_depends '' '[${MULTILIB_USEDEP}]')
 	)
 	openvino? (
 		>=sci-ml/openvino-2020.1:=[${PYTHON_SINGLE_USEDEP}]

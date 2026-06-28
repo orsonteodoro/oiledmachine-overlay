@@ -25,7 +25,7 @@ IUSE="
 ebuild_revision_24
 "
 RDEPEND="
-	${OPENSSL_RDEPEND}
+	$(secure-version_gen_openssl_depends '' '[${MULTILIB_USEDEP}]')
 	~media-libs/gst-plugins-base-${PV}:=[${MULTILIB_USEDEP}]
 "
 DEPEND="

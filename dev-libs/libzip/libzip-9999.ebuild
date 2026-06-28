@@ -54,7 +54,7 @@ DEPEND="
 			>=net-libs/gnutls-${GNUTLS_PV}:=
 		)
 		!gnutls? (
-			${OPENSSL_RDEPEND}
+			$(secure-version_gen_openssl_depends)
 		)
 	)
 	zstd? ( >=app-arch/zstd-${ZSTD_PV}:= )

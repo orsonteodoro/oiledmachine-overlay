@@ -135,8 +135,7 @@ REQUIRED_USE="
 	)
 "
 SSL_DEPEND="
-	dev-libs/openssl:=[${MULTILIB_USEDEP},-bindist(-)]
-	${OPENSSL_DEPEND}
+	$(secure-version_gen_openssl_depends '' '[-bindist(-),${MULTILIB_USEDEP}]')
 	>=dev-libs/libevent-2.0.8:=[${MULTILIB_USEDEP},ssl]
 	>=net-libs/ngtcp2-${NGTCP2_PV}:=[${MULTILIB_USEDEP},openssl]
 "

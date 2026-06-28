@@ -46,7 +46,7 @@ RDEPEND="
 	!gcrypt? (
 		mbedtls? ( >=net-libs/mbedtls-${MBEDTLS_PV}:0=[${MULTILIB_USEDEP}] )
 		!mbedtls? (
-			${OPENSSL_RDEPEND}
+			$(secure-version_gen_openssl_depends '' '[${MULTILIB_USEDEP}]')
 		)
 	)
 	zlib? ( >=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}] )

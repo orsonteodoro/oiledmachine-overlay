@@ -43,7 +43,7 @@ RDEPEND="
 		>=dev-libs/nettle-${NETTLE_PV}:=[${MULTILIB_USEDEP}]
 	)
 	openssl? (
-		${OPENSSL_RDEPEND}
+		$(secure-version_gen_openssl_depends '' '[${MULTILIB_USEDEP}]')
 	)
 "
 DEPEND="

@@ -216,7 +216,7 @@ RDEPEND="
 	roc? ( >=media-libs/roc-toolkit-0.4.0:= )
 	readline? ( sys-libs/readline:= )
 	selinux? ( >=sys-libs/libselinux-${LIBSELINUX_PV}:= )
-	ssl? ( ${OPENSSL_RDEPEND} )
+	ssl? ( $(secure-version_gen_openssl_depends) )
 	systemd? ( >=sys-apps/systemd-${SYSTEMD_PV}:= )
 	system-service? ( acct-user/pipewire:* )
 	v4l? ( >=media-libs/libv4l-${LIBV4L_PV}:= )
