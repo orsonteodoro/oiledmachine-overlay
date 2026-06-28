@@ -3,9 +3,18 @@
 
 EAPI=8
 
-# 58.60.60 - 6.1.x
-# 57.59.59 - 5.1.x
-# 56.58.58 - 4.4.x
+#
+# Supported FFmpeg versions supported for this ebuild:
+#
+# 61.63.63 - live
+# 60.62.62 - 8.0 (U26), 8.1 (F44)
+# 59.61.61 - 7.1 (D13, F43)
+# 0 - 7.1, 8.0, 8.1, live
+#
+# Support is based on CI testing and security updates.
+#
+
+# For version see:  https://github.com/GStreamer/gstreamer/blob/1.28.4/subprojects/FFmpeg.wrap
 
 MY_PN="gst-libav"
 MY_PV="$(ver_cut 1-3)"
@@ -37,14 +46,7 @@ RDEPEND="
 	>=dev-libs/glib-${GLIB_PV}:=[${MULTILIB_USEDEP}]
 	~media-libs/gstreamer-${MY_PV}:=[${MULTILIB_USEDEP}]
 	~media-libs/gst-plugins-base-${MY_PV}:=[${MULTILIB_USEDEP}]
-	media-video/ffmpeg:=
-	|| (
-		~media-video/ffmpeg-9999[${MULTILIB_USEDEP}]
-		~media-video/ffmpeg-9999m[${MULTILIB_USEDEP}]
-
-		~media-video/ffmpeg-8.1.2[${MULTILIB_USEDEP}]
-		~media-video/ffmpeg-8.1.2m[${MULTILIB_USEDEP}]
-	)
+	$(secure-version_gen_ffmpeg_depends '7.1-' '[${MULTILIB_USEDEP}]')
 "
 DEPEND="
 	${RDEPEND}
@@ -52,17 +54,41 @@ DEPEND="
 BDEPEND="
 "
 
+get_ffmpeg_prefix() {
+	local L=(
+		"61.63.63" # live
+		"60.62.62" # 8.0, 8.1
+		"59.61.61" # 7.1, same slot used by upstream
+		"0" # monoslot
+	)
+	prefix=""
+	local x
+	for x in "${L[@]}" ; do
+		if has_version "media-video/ffmpeg:${x}" ; then # 8.x
+			if [[ "${x}" == "0" ]] ; then
+einfo "Using FFmpeg monoslot"
+				prefix="usr"
+			else
+einfo "Using FFmpeg multislot"
+				prefix="usr/lib/ffmpeg/${x}"
+			fi
+			break
+		fi
+	done
+	[[ -z "${prefix}" ]] && die "You must install >= ffmpeg 7.1"
+	echo "${prefix}"
+}
+
 src_configure() {
 	chkl_check_many_timestamps
 	local prefix=""
 	_configure() {
 		cflags-hardened_append
-		if has_version "media-video/ffmpeg:60.62.62" ; then # 8.x
-einfo "Using FFmpeg multislot"
-			prefix="usr/lib/ffmpeg/58.60.60"
-		elif has_version "media-video/ffmpeg:0" ; then
-einfo "Using FFmpeg monoslot"
-			prefix="usr"
+		prefix=$(get_ffmpeg_prefix)
+		if [[ "${prefix}" == "usr" ]] && has_version "<media-video/ffmpeg-7.1:0" ; then
+eerror "Monoslotted FFmpeg < 7.1 is not supported.  Emerge a FFmpeg 7.1 or"
+eerror "later multislot or update the FFmpeg monoslot to >= 7.1."
+			die
 		fi
 		export PKG_CONFIG_PATH="/${prefix}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
 einfo "PKG_CONFIG_PATH:  ${PKG_CONFIG_PATH}"
@@ -76,11 +102,7 @@ src_install() {
 	_install() {
 		cd "${BUILD_DIR}" || die
 		gstreamer_multilib_src_install
-		if has_version "media-video/ffmpeg:60.62.62" ; then # 8.x
-			prefix="usr/lib/ffmpeg/60.62.62"
-		else
-			prefix="usr"
-		fi
+		prefix=$(get_ffmpeg_prefix)
 		local x
 		for x in $(ls "${ED}/usr/$(get_libdir)/gstreamer-1.0/"*".so"* ) ; do
 			[[ -L "${x}" ]] && continue

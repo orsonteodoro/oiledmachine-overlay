@@ -147,12 +147,13 @@ FAAC_PV=${FAAC_PV:-"9999"}
 FAAD2_PV=${FAAD2_PV:-"9999"}
 FDK_AAC_PV=${FDK_AAC_PV:-"2.0.3"}
 FFMPEG_PV=${FFMPEG_PV:-"8.1.2"}
-FFMPEG_4_4_PV=${FFMPEG_PV:-"4.4.8"}
-FFMPEG_5_1_PV=${FFMPEG_PV:-"5.1.10"}
-FFMPEG_6_1_PV=${FFMPEG_PV:-"6.1.6"}
-FFMPEG_7_1_PV=${FFMPEG_PV:-"7.1.5"}
-FFMPEG_8_0_PV=${FFMPEG_PV:-"8.0.3"}
-FFMPEG_8_1_PV=${FFMPEG_PV:-"8.1.2"}
+FFMPEG_9999_PV=${FFMPEG_9999_PV:-"9999"}
+FFMPEG_4_4_PV=${FFMPEG_4_4_PV:-"4.4.8"}
+FFMPEG_5_1_PV=${FFMPEG_5_1_PV:-"5.1.10"}
+FFMPEG_6_1_PV=${FFMPEG_6_1_PV:-"6.1.6"}
+FFMPEG_7_1_PV=${FFMPEG_7_1_PV:-"7.1.5"}
+FFMPEG_8_0_PV=${FFMPEG_8_0_PV:-"8.0.3"}
+FFMPEG_8_1_PV=${FFMPEG_8_1_PV:-"8.1.2"}
 FILE_PV=${FILE_PV:-"5.48"}
 FIREJAIL_PV=${FIREJAIL_PV:-"9999"}
 FLITE_PV=${FLITE_PV:-"2.2"}
@@ -421,8 +422,8 @@ ZXING_CPP_PV=${ZXING_CPP_PV:-"9999"}
 ZVBI_PV=${ZVBI_PV:-"0.2.44"}
 
 secure-version_gen_openssl_depends() {
-	local range="${1}" # 1, 3.0-4.0
-	local usedep="${2}"
+	local range="${1}" # 1, 3.0-4.0, 3.0-, <empty string>
+	local usedep="${2}" # [${MULTILIB_USEDEP}], <empty string>
 	local t=""
 	t+="
 		dev-libs/openssl:=${usedep}
@@ -466,11 +467,101 @@ secure-version_gen_openssl_depends() {
 	"
 
 	local output=""
+	local t2=""
+
 	if [[ "${_MULTILIB_BUILD_ECLASS}" == "1" ]] ; then
                 t2="${t//\$\{MULTILIB_USEDEP\}/${MULTILIB_USEDEP}}"
 	else
 		t2="${t}"
 	fi
+
+	output="${t2}"
+#einfo "${output}"
+	echo "${output}"
+}
+
+secure-version_gen_ffmpeg_depends() {
+	local range="${1}" # 4.4, 4.4-8.1, 4.4-s, 4.4-r, 4.4-l, 4.4-, <empty string>
+	local usedep="${2}" # [lame], [${MULTILIB_USEDEP}], [${MULTILIB_USEDEP},${PYTHON_SINGLE_USEEP},lame], <empty string>
+	local t=""
+	t+="
+		media-video/ffmpeg:=${usedep}
+		|| (
+	"
+	local l=""
+	local r=""
+	if [[ -z "${range}" ]] ; then
+	# Slots used in any distro releases
+		l="4.4"
+		r="9999"
+	elif [[ "${range}" == "s" ]] ; then
+	# Slots used in LTS distro releases
+		l="4.4"
+		r="8.0"
+	elif [[ "${range}" == "r" ]] ; then
+	# Slots used in rolling distro releases
+		l="8.1"
+		r="8.1"
+	elif [[ "${range}" == "l" ]] ; then
+	# Slots used in live distro releases
+		l="9999"
+		r="9999"
+	elif [[ "${range}" =~ "-" ]] ; then
+		l="${range%-*}"
+		r="${range#*-}"
+		if [[ "${r}" == "r" ]] ; then
+	# Slot used in rolling distro releases
+			r="8.1"
+		elif [[ "${r}" == "s" ]] ; then
+	# Slot used in LTS distro releases
+			r="8.0"
+		elif [[ -z "${r}" ]] ; then
+	# Slot used in live distro releases
+			r="9999"
+		fi
+	else
+		l="${range}"
+		r="${range}"
+	fi
+	local L=(
+		"9999"
+		"8.1"
+		"8.0"
+		"7.1"
+		"6.1"
+		"5.1"
+		"4.4"
+	)
+	local x
+	for x in "${L[@]}" ; do
+		if ver_test "${l}" "-le" "${x}" && ver_test "${x}" "-le" "${r}" ; then
+			local u="FFMPEG_${x/./_}_PV"
+#einfo "${u} ${x} ${!u}"
+			t+="
+				~media-video/ffmpeg-${!u}${usedep}
+				~media-video/ffmpeg-${!u}m${usedep}
+			"
+		fi
+	done
+	t+="
+		)
+	"
+
+	local output=""
+	local t2=""
+
+	if [[ "${_MULTILIB_BUILD_ECLASS}" == "1" ]] ; then
+                t2="${t//\$\{MULTILIB_USEDEP\}/${MULTILIB_USEDEP}}"
+	else
+		t2="${t}"
+	fi
+
+	if [[ "${_PYTHON_SINGLE_R1_ECLASS}" == "1" ]] ; then
+                t2="${t2//\$\{PYTHON_SINGLE_USEDEP\}/${PYTHON_SINGLE_USEDEP}}"
+	else
+		t2="${t2}"
+	fi
+
 	output="${t2}"
 #einfo "${output}"
 	echo "${output}"
