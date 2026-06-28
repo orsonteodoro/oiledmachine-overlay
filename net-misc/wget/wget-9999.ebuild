@@ -161,7 +161,7 @@ src_unpack() {
 src_prepare() {
 	default
 	./bootstrap \
-		$(usex !nls "" "--skip-po") \
+		$(usex nls "" "--skip-po") \
 		|| die
 	sed -i -e "s:/usr/local/etc:${EPREFIX}/etc:g" "doc/"{"sample.wgetrc","wget.texi"} || die
 }
