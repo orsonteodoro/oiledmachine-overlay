@@ -3,6 +3,9 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="security-critical system-set untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="AW CRSH IV MC PT SO"
+
 CHKL_TIMESTAMPS=(
 	"app-arch/brotli-9999"
 	"app-arch/bzip2-9999"
@@ -38,7 +41,10 @@ HOMEPAGE="https://gitlab.com/gnuwget/wget2"
 # LGPL for libwget
 LICENSE="GPL-3+ LGPL-3+"
 SLOT="0/0" # subslot = libwget.so version
-IUSE+=" brotli bzip2 doc +gnutls gpgme +http2 idn lzip lzma nls pcre psl +ssl test xattr zlib"
+IUSE+="
+brotli bzip2 doc +gnutls gpgme +http2 idn lzip lzma nls pcre psl +ssl test xattr zlib
+ebuild_revision_1
+"
 
 RDEPEND="
 	brotli? ( >=app-arch/brotli-${BROTLI_PV}:= )
