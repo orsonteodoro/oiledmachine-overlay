@@ -8,6 +8,10 @@ EAPI=8
 
 # For Cr version correspondance, see https://releases.electronjs.org/releases.json for version details.
 
+# To update:
+# PATH=$(realpath ../../scripts)":${PATH}"
+# NPM_UPDATER_VERSIONS="2.15.1" npm_updater_update_locks.sh
+
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 NPM_AUDIT_FATAL=0
 NPM_INSTALL_PATH="/opt/${PN}"
@@ -17,11 +21,13 @@ ELECTRON_APP_LOCKFILE_EXACT_VERSIONS_ONLY=1
 ELECTRON_APP_MODE="npm"
 ELECTRON_APP_REACT_PV="18.3.1"
 NODE_ENV="development"
-NODE_SLOT="20"
+NODE_SLOT="24" # Same as Electron 42.4.1
+
+inherit secure-version
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="41.2.1" # Cr 146.0.7680.188, node 24.14.1
+	ELECTRON_APP_ELECTRON_PV="${ELECTRON_PV}" # 42.4.1, Cr 148.0.7778.271, node 24.17.0
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="27.3.10" # Cr 118.0.5993.159, node 18.17.1
@@ -136,8 +142,8 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=net-libs/nodejs-${NODE_SLOT}:${NODE_SLOT}
-	>=net-libs/nodejs-${NODE_SLOT}[npm]
+	>=net-libs/nodejs-${NODEJS_22_PV}:${NODE_SLOT}
+	>=net-libs/nodejs-${NODEJS_22_PV}[npm]
 	virtual/pkgconfig
 "
 PDEPEND+="
