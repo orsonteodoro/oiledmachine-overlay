@@ -31,8 +31,8 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	fi
 	inherit git-r3
 else
-	KEYWORDS="~amd64"
-	SRC_URI="FIXME"
+	KEYWORDS="~amd64 ~arm64 ~loong ~x86"
+	SRC_URI="mirror://gnu/wget/${P}.tar.gz"
 fi
 
 DESCRIPTION="GNU Wget2 is a file and recursive website downloader"
