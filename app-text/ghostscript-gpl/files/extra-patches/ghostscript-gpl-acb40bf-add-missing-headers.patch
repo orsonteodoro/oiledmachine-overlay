@@ -1,0 +1,30 @@
+--- a/base/gsicc_create.c.orig	2026-06-27 19:18:12.559793831 -0700
++++ b/base/gsicc_create.c	2026-06-27 19:27:48.474436120 -0700
+@@ -121,6 +121,7 @@ Note: All profile data must be encoded a
+ #include "string_.h"
+ #include "gsmemory.h"
+ #include "gx.h"
++#include <limits.h>
+ #include <gp.h>
+ 
+ #include "gxgstate.h"
+--- a/gpdl/pngtop.c.orig	2026-06-27 19:30:55.540796498 -0700
++++ b/gpdl/pngtop.c	2026-06-27 19:38:42.966701149 -0700
+@@ -27,6 +27,7 @@
+ #include "plmain.h"
+ #include "png_.h"
+ #include "setjmp_.h"
++#include <stdint.h>
+ 
+ /* Forward decls */
+ 
+--- a/gpdl/jpgtop.c.orig	2026-06-27 21:11:25.723013160 -0700
++++ b/gpdl/jpgtop.c	2026-06-27 21:15:29.463694947 -0700
+@@ -28,6 +28,7 @@
+ #include "jpeglib.h"
+ #include "setjmp_.h"
+ #include "sjpeg.h"
++#include <stdint.h>
+ 
+ /* Forward decls */
+ 

@@ -111,6 +111,9 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-10.06.0-arm-brotli.patch
 	"${FILESDIR}"/${PN}-10.06.0-stdint.patch
 	"${FILESDIR}"/${PN}-10.06.0-openmp.patch
+
+	# oiledmachine-overlay set
+	"${FILESDIR}"/extra-patches/${PN}-acb40bf-add-missing-headers.patch
 )
 
 pkg_pretend() {
