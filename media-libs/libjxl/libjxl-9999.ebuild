@@ -33,7 +33,7 @@ inherit cflags-hardened chkl cmake-multilib gnome2-utils libcxx-slot libstdcxx-s
 if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="455bed37c28423257a0082788a05eb912c03d5f1"
 	EGIT_COMMIT="main"
-	EGIT_FALLBACK_URI="https://github.com/libjxl/libjxl.git"
+	EGIT_REPO_URI="https://github.com/libjxl/libjxl.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
 	fi
