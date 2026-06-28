@@ -515,6 +515,9 @@ secure-version_gen_ffmpeg_depends() {
 		elif [[ "${r}" == "s" ]] ; then
 	# Slot used in LTS distro releases
 			r="8.0"
+		elif [[ "${r}" == "l" ]] ; then
+	# Slot used in live distro releases
+			r="9999"
 		elif [[ -z "${r}" ]] ; then
 	# Slot used in live distro releases
 			r="9999"
