@@ -56,7 +56,11 @@ RDEPEND="
 "
 DEPEND="${RDEPEND}"
 BDEPEND="
-	doc? ( virtual/texi2dvi )
+
+	doc? (
+		media-gfx/fig2dev
+		virtual/texi2dvi
+	)
 	verify-sig? ( sec-keys/openpgp-keys-gnupg )
 "
 
@@ -115,6 +119,12 @@ eerror "QA:  Expected sover:  ${expected_sover}"
 src_prepare() {
 	default
 	eautoreconf
+#	if ! use doc ; then
+#		sed -i -e "s|fig2dev|true|g" \
+#			"doc/Makefile.am" \
+#			"doc/Makefile.in" \
+#			|| die
+#	fi
 }
 
 src_configure() {
@@ -171,6 +181,7 @@ multilib_src_configure() {
 		$(use_enable cpu_flags_x86_sse4_1 sse41-support)
 		# required for sys-power/suspend[crypt], bug 751568
 		$(use_enable static-libs static)
+		$(use_enable doc)
 
 		# disabled due to various applications requiring privileges
 		# after libgcrypt drops them (bug #468616)
