@@ -1542,26 +1542,7 @@ LIBVA_DEPEND="
 		>=media-libs/libva-${LIBVA_PV}:=[${MULTILIB_USEDEP},drm(+),wayland?,X?]
 		virtual/vaapi:=[${MULTILIB_USEDEP},patent_status_nonfree=]
 		system-ffmpeg? (
-			media-video/ffmpeg:=[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
-			|| (
-				~media-video/ffmpeg-${FFMPEG_8_1_PV}[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
-				~media-video/ffmpeg-${FFMPEG_8_1_PV}m[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
-
-				~media-video/ffmpeg-${FFMPEG_8_0_PV}[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
-				~media-video/ffmpeg-${FFMPEG_8_0_PV}m[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
-
-				~media-video/ffmpeg-${FFMPEG_7_1_PV}[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
-				~media-video/ffmpeg-${FFMPEG_7_1_PV}m[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
-
-				~media-video/ffmpeg-${FFMPEG_6_1_PV}[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
-				~media-video/ffmpeg-${FFMPEG_6_1_PV}m[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
-
-				~media-video/ffmpeg-${FFMPEG_5_1_PV}[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
-				~media-video/ffmpeg-${FFMPEG_5_1_PV}m[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
-
-				~media-video/ffmpeg-${FFMPEG_4_4_PV}[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
-				~media-video/ffmpeg-${FFMPEG_4_4_PV}m[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
-			)
+			$(secure-version_gen_ffmpeg_depends '8.0' '[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]' 'single')
 		)
 	)
 "
@@ -1752,48 +1733,10 @@ PATENT_STATUS_DEPEND="
 	system-ffmpeg? (
 		>=media-libs/mesa-${MESA_PV}:=[${MULTILIB_USEDEP},patent_status_nonfree=]
 		patent_status_nonfree? (
-			media-video/ffmpeg:=[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
-			|| (
-				~media-video/ffmpeg-${FFMPEG_8_1_PV}[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
-				~media-video/ffmpeg-${FFMPEG_8_1_PV}m[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
-
-				~media-video/ffmpeg-${FFMPEG_8_0_PV}[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
-				~media-video/ffmpeg-${FFMPEG_8_0_PV}m[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
-
-				~media-video/ffmpeg-${FFMPEG_7_1_PV}[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
-				~media-video/ffmpeg-${FFMPEG_7_1_PV}m[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
-
-				~media-video/ffmpeg-${FFMPEG_6_1_PV}[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
-				~media-video/ffmpeg-${FFMPEG_6_1_PV}m[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
-
-				~media-video/ffmpeg-${FFMPEG_5_1_PV}[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
-				~media-video/ffmpeg-${FFMPEG_5_1_PV}m[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
-
-				~media-video/ffmpeg-${FFMPEG_4_4_PV}[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
-				~media-video/ffmpeg-${FFMPEG_4_4_PV}m[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
-			)
+			$(secure-version_gen_ffmpeg_depends '8.0' '[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]' 'single')
 		)
 		!patent_status_nonfree? (
-			media-video/ffmpeg:=[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
-			|| (
-				~media-video/ffmpeg-${FFMPEG_8_1_PV}[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
-				~media-video/ffmpeg-${FFMPEG_8_1_PV}m[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
-
-				~media-video/ffmpeg-${FFMPEG_8_0_PV}[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
-				~media-video/ffmpeg-${FFMPEG_8_0_PV}m[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
-
-				~media-video/ffmpeg-${FFMPEG_7_1_PV}[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
-				~media-video/ffmpeg-${FFMPEG_7_1_PV}m[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
-
-				~media-video/ffmpeg-${FFMPEG_6_1_PV}[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
-				~media-video/ffmpeg-${FFMPEG_6_1_PV}m[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
-
-				~media-video/ffmpeg-${FFMPEG_5_1_PV}[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
-				~media-video/ffmpeg-${FFMPEG_5_1_PV}m[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
-
-				~media-video/ffmpeg-${FFMPEG_4_4_PV}[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
-				~media-video/ffmpeg-${FFMPEG_4_4_PV}m[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
-			)
+			$(secure-version_gen_ffmpeg_depends '8.0' '[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]' 'single')
 		)
 	)
 "
@@ -1845,26 +1788,7 @@ COMMON_DEPEND="
 		system-opus? (
 			>=media-libs/opus-${OPUS_PV}:=[${MULTILIB_USEDEP}]
 		)
-		media-video/ffmpeg:=
-		|| (
-			~media-video/ffmpeg-${FFMPEG_8_1_PV}[${MULTILIB_USEDEP}]
-			~media-video/ffmpeg-${FFMPEG_8_1_PV}m[${MULTILIB_USEDEP}]
-
-			~media-video/ffmpeg-${FFMPEG_8_0_PV}[${MULTILIB_USEDEP}]
-			~media-video/ffmpeg-${FFMPEG_8_0_PV}m[${MULTILIB_USEDEP}]
-
-			~media-video/ffmpeg-${FFMPEG_7_1_PV}[${MULTILIB_USEDEP}]
-			~media-video/ffmpeg-${FFMPEG_7_1_PV}m[${MULTILIB_USEDEP}]
-
-			~media-video/ffmpeg-${FFMPEG_6_1_PV}[${MULTILIB_USEDEP}]
-			~media-video/ffmpeg-${FFMPEG_6_1_PV}m[${MULTILIB_USEDEP}]
-
-			~media-video/ffmpeg-${FFMPEG_5_1_PV}[${MULTILIB_USEDEP}]
-			~media-video/ffmpeg-${FFMPEG_5_1_PV}m[${MULTILIB_USEDEP}]
-
-			~media-video/ffmpeg-${FFMPEG_4_4_PV}[${MULTILIB_USEDEP}]
-			~media-video/ffmpeg-${FFMPEG_4_4_PV}m[${MULTILIB_USEDEP}]
-		)
+		$(secure-version_gen_ffmpeg_depends '8.0' '[${MULTILIB_USEDEP}]' 'single')
 	)
 	system-flac? (
 		>=media-libs/flac-${FLAC_PV}:=[${MULTILIB_USEDEP}]

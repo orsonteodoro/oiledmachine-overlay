@@ -47,9 +47,12 @@ CHKL_TIMESTAMPS=(
 inherit cflags-hardened chkl cmake-multilib ffmpeg gnome2-utils libcxx-slot libstdcxx-slot
 inherit multilib-minimal secure-version xdg
 
-# For FFmpeg live for mitigation
 FFMPEG_COMPAT_SLOTS=(
 	"${FFMPEG_COMPAT_SLOTS_8[@]}"
+	"${FFMPEG_COMPAT_SLOTS_7[@]}"
+	"${FFMPEG_COMPAT_SLOTS_6[@]}"
+	"${FFMPEG_COMPAT_SLOTS_5[@]}"
+	"${FFMPEG_COMPAT_SLOTS_4[@]}"
 )
 
 if [[ ${PV} == *9999* ]] ; then
@@ -163,30 +166,7 @@ RDEPEND="
 		>=media-libs/dav1d-${DAV1D_PV}:=[${MULTILIB_USEDEP}]
 	)
 	ffmpeg? (
-		media-video/ffmpeg:=[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
-		|| (
-			=media-video/ffmpeg-9999[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
-			=media-video/ffmpeg-9999m[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
-
-			~media-video/ffmpeg-${FFMPEG_8_1_PV}[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
-			~media-video/ffmpeg-${FFMPEG_8_1_PV}m[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
-
-			~media-video/ffmpeg-${FFMPEG_8_0_PV}[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
-			~media-video/ffmpeg-${FFMPEG_8_0_PV}m[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
-
-			~media-video/ffmpeg-${FFMPEG_7_1_PV}[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
-			~media-video/ffmpeg-${FFMPEG_7_1_PV}m[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
-
-			~media-video/ffmpeg-${FFMPEG_6_1_PV}[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
-			~media-video/ffmpeg-${FFMPEG_6_1_PV}m[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
-
-			~media-video/ffmpeg-${FFMPEG_5_1_PV}[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
-			~media-video/ffmpeg-${FFMPEG_5_1_PV}m[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
-
-			~media-video/ffmpeg-${FFMPEG_4_4_PV}[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
-			~media-video/ffmpeg-${FFMPEG_4_4_PV}m[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]
-
-		)
+		$(secure-version_gen_ffmpeg_depends '' '[${MULTILIB_USEDEP},amf?,cuda?,nvdec?,vaapi?,vdpau?,vulkan?]')
 	)
 	gdk-pixbuf? (
 		>=x11-libs/gdk-pixbuf-${GDK_PIXBUF_PV}:=[${MULTILIB_USEDEP}]

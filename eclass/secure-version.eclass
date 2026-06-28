@@ -487,6 +487,7 @@ secure-version_gen_openssl_depends() {
 secure-version_gen_ffmpeg_depends() {
 	local range="${1}" # 4.4, 4.4-8.1, 4.4-s, 4.4-r, 4.4-l, 4.4-, <empty string>
 	local usedep="${2}" # [lame], [${MULTILIB_USEDEP}], [${MULTILIB_USEDEP},${PYTHON_SINGLE_USEEP},lame], <empty string>
+	local slot_mode="${3}" # single, multi, any, <empty string>
 	local t=""
 	t+="
 		media-video/ffmpeg:=${usedep}
@@ -544,10 +545,20 @@ secure-version_gen_ffmpeg_depends() {
 		if ver_test "${l}" "-le" "${x}" && ver_test "${x}" "-le" "${r}" ; then
 			local u="FFMPEG_${x/./_}_PV"
 #einfo "${u} ${x} ${!u}"
-			t+="
-				~media-video/ffmpeg-${!u}${usedep}
-				~media-video/ffmpeg-${!u}m${usedep}
-			"
+			if [[ "${slot_mode}" == "single" ]] ; then
+				t+="
+					~media-video/ffmpeg-${!u}${usedep}
+				"
+			elif [[ "${slot_mode}" == "multi" ]] ; then
+				t+="
+					~media-video/ffmpeg-${!u}m${usedep}
+				"
+			else
+				t+="
+					~media-video/ffmpeg-${!u}${usedep}
+					~media-video/ffmpeg-${!u}m${usedep}
+				"
+			fi
 		fi
 	done
 	t+="

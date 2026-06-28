@@ -366,8 +366,11 @@ _MULTILIB_WRAPPED_HEADERS=( # {{{
 
 inherit ffmpeg
 FFMPEG_COMPAT_SLOTS=(
-	"${FFMPEG_COMPAT_SLOTS_4[@]}" # U20, U22
+	"${FFMPEG_COMPAT_SLOTS_4[@]}" # U22
+	"${FFMPEG_COMPAT_SLOTS_5[@]}" # D12
 	"${FFMPEG_COMPAT_SLOTS_6[@]}" # U24
+	"${FFMPEG_COMPAT_SLOTS_7[@]}" # D13
+	"${FFMPEG_COMPAT_SLOTS_8[@]}" # U26
 )
 
 ROCM_SLOTS=(
@@ -891,11 +894,7 @@ PATENT_STATUS_RDEPEND="
 	virtual/patent-status:*[patent_status_nonfree=]
 	!patent_status_nonfree? (
 		ffmpeg? (
-			media-video/ffmpeg:=
-			|| (
-				>=media-video/ffmpeg-9999[${MULTILIB_USEDEP},libaom?,-openh264,-patent_status_nonfree,vpx?]
-				>=media-video/ffmpeg-9999m[${MULTILIB_USEDEP},libaom?,-openh264,-patent_status_nonfree,vpx?]
-			)
+			$(secure-version_gen_ffmpeg_depends '' '[${MULTILIB_USEDEP},libaom?,-openh264,-patent_status_nonfree,vpx?]')
 		)
 		gstreamer? (
 			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:*[${MULTILIB_USEDEP},mpeg?,-patent_status_nonfree,-vaapi,vpx?,-x264,-x265]
@@ -903,11 +902,7 @@ PATENT_STATUS_RDEPEND="
 	)
 	patent_status_nonfree? (
 		ffmpeg? (
-			media-video/ffmpeg:=
-			|| (
-				>=media-video/ffmpeg-9999[${MULTILIB_USEDEP},libaom?,openh264?,patent_status_nonfree,vpx?]
-				>=media-video/ffmpeg-9999m[${MULTILIB_USEDEP},libaom?,openh264?,patent_status_nonfree,vpx?]
-			)
+			$(secure-version_gen_ffmpeg_depends '' '[${MULTILIB_USEDEP},libaom?,openh264?,patent_status_nonfree,vpx?]')
 		)
 		gstreamer? (
 			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:*[${MULTILIB_USEDEP},mpeg?,patent_status_nonfree,vaapi?,vpx?,x264?,x265?]
@@ -950,7 +945,7 @@ RDEPEND="
 		>=dev-games/ogre-${OGRE_PV}:=
 	)
 	ffmpeg? (
-		media-video/ffmpeg:=[${MULTILIB_USEDEP}]
+		$(secure-version_gen_ffmpeg_depends '' '[${MULTILIB_USEDEP}]')
 	)
 	gdal? (
 		>=sci-libs/gdal-${GDAL_PV}:=

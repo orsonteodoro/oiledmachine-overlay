@@ -61,7 +61,7 @@ RDEPEND="
 	)
 	ffmpeg? (
 		~dev-qt/qtbase-${PV}:6=[X=,concurrent,eglfs=]
-		>=media-video/ffmpeg-9999:=[vaapi?]
+		$(secure-version_gen_ffmpeg_depends '' '[vaapi?]')
 		X? (
 			>=x11-libs/libX11-${LIBX11_PV}:=
 			>=x11-libs/libXext-${LIBXEXT_PV}:=

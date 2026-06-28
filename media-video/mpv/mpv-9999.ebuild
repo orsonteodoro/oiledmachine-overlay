@@ -117,61 +117,17 @@ PATENT_STATUS_DEPEND="
 	!patent_status_nonfree? (
 		!media-libs/libva
 		!x11-libs/libvdpau
-		media-video/ffmpeg:=[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
-		|| (
-			=media-video/ffmpeg-9999m[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
-			=media-video/ffmpeg-9999[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
-
-			=media-video/ffmpeg-${FFMPEG_8_1_PV}m[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
-			=media-video/ffmpeg-${FFMPEG_8_1_PV}[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
-
-			=media-video/ffmpeg-${FFMPEG_8_0_PV}m[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
-			=media-video/ffmpeg-${FFMPEG_8_0_PV}[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
-
-			=media-video/ffmpeg-${FFMPEG_7_1_PV}m[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
-			=media-video/ffmpeg-${FFMPEG_7_1_PV}[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
-
-			=media-video/ffmpeg-${FFMPEG_6_1_PV}m[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
-			=media-video/ffmpeg-${FFMPEG_6_1_PV}[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
-
-			=media-video/ffmpeg-${FFMPEG_5_1_PV}m[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
-			=media-video/ffmpeg-${FFMPEG_5_1_PV}[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
-
-			=media-video/ffmpeg-${FFMPEG_4_4_PV}m[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
-			=media-video/ffmpeg-${FFMPEG_4_4_PV}[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
-		)
+		$(secure-version_gen_ffmpeg_depends '' '[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]')
 	)
 	patent_status_nonfree? (
-		media-video/ffmpeg:=[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
-		|| (
-			=media-video/ffmpeg-9999m[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
-			=media-video/ffmpeg-9999[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
-
-			~media-video/ffmpeg-${FFMPEG_8_1_PV}m[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
-			~media-video/ffmpeg-${FFMPEG_8_1_PV}9999[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
-
-			~media-video/ffmpeg-${FFMPEG_8_0_PV}m[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
-			~media-video/ffmpeg-${FFMPEG_8_0_PV}9999[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
-
-			~media-video/ffmpeg-${FFMPEG_7_1_PV}m[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
-			~media-video/ffmpeg-${FFMPEG_7_1_PV}9999[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
-
-			~media-video/ffmpeg-${FFMPEG_6_1_PV}m[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
-			~media-video/ffmpeg-${FFMPEG_6_1_PV}9999[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
-
-			~media-video/ffmpeg-${FFMPEG_5_1_PV}m[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
-			~media-video/ffmpeg-${FFMPEG_5_1_PV}9999[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
-
-			~media-video/ffmpeg-${FFMPEG_4_4_PV}m[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
-			~media-video/ffmpeg-${FFMPEG_4_4_PV}9999[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
-		)
+		$(secure-version_gen_ffmpeg_depends '' '[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]')
 	)
 "
 COMMON_DEPEND="
 	${PATENT_STATUS_DEPEND}
 	>=media-libs/libass-${LIBASS_PV}:=[fontconfig]
 	>=media-libs/libplacebo-${LIBPLACEBO_PV}:=[vulkan?]
-	media-video/ffmpeg:=[encode(+),threads(+),vaapi?,vdpau?]
+	$(secure-version_gen_ffmpeg_depends '' '[encode(+),threads(+),vaapi?,vdpau?]')
 	X? (
 		>=x11-libs/libX11-${LIBX11_PV}:=
 		x11-libs/libXScrnSaver:=
@@ -223,23 +179,7 @@ COMMON_DEPEND="
 	sixel? ( >=media-libs/libsixel-${LIBSIXEL_PV}:= )
 	sndio? ( >=media-sound/sndio-${SNDIO_PV}:= )
 	soc? (
-		media-video/ffmpeg:=[soc(-)]
-		|| (
-			=media-video/ffmpeg-9999[soc(-)]
-			=media-video/ffmpeg-9999m[soc(-)]
-
-			~media-video/ffmpeg-${FFMPEG_8_1_PV}[soc(-)]
-			~media-video/ffmpeg-${FFMPEG_8_1_PV}m[soc(-)]
-
-			~media-video/ffmpeg-${FFMPEG_8_0_PV}[soc(-)]
-			~media-video/ffmpeg-${FFMPEG_8_0_PV}m[soc(-)]
-
-			~media-video/ffmpeg-${FFMPEG_7_1_PV}[soc(-)]
-			~media-video/ffmpeg-${FFMPEG_7_1_PV}m[soc(-)]
-
-			~media-video/ffmpeg-${FFMPEG_6_1_PV}[soc(-)]
-			~media-video/ffmpeg-${FFMPEG_6_1_PV}m[soc(-)]
-		)
+		$(secure-version_gen_ffmpeg_depends '8.1-' '[soc(-)]')
 	)
 	subrandr? ( >=media-libs/subrandr-${SUBRANDR_PV}:= )
 	vaapi? (

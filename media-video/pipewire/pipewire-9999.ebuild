@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# FIXME:  Update for FFmpeg multislot
+
 # 1. Please regularly check (even at the point of bumping) Fedora's packaging
 # for needed backports at https://src.fedoraproject.org/rpms/pipewire/tree/rawhide.
 #
@@ -171,26 +173,7 @@ RDEPEND="
 	)
 	extra? ( >=media-libs/libsndfile-${LIBSNDFILE_PV}:= )
 	ffmpeg? (
-		media-video/ffmpeg:=
-		|| (
-			~media-video/ffmpeg-${FFMPEG_8_1_PV}
-			~media-video/ffmpeg-${FFMPEG_8_1_PV}m
-
-			~media-video/ffmpeg-${FFMPEG_8_0_PV}
-			~media-video/ffmpeg-${FFMPEG_8_0_PV}m
-
-			~media-video/ffmpeg-${FFMPEG_7_1_PV}
-			~media-video/ffmpeg-${FFMPEG_7_1_PV}m
-
-			~media-video/ffmpeg-${FFMPEG_6_1_PV}
-			~media-video/ffmpeg-${FFMPEG_6_1_PV}m
-
-			~media-video/ffmpeg-${FFMPEG_5_1_PV}
-			~media-video/ffmpeg-${FFMPEG_5_1_PV}m
-
-			~media-video/ffmpeg-${FFMPEG_4_4_PV}
-			~media-video/ffmpeg-${FFMPEG_4_4_PV}m
-		)
+		$(secure-version_gen_ffmpeg_depends '' '' 'single')
 	)
 	fftw? ( sci-libs/fftw:=[${MULTILIB_USEDEP}] )
 	flatpak? ( >=dev-libs/glib-${GLIB_PV}:= )
