@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# This ebuild fork used AI to partly resolve an issue.
+
 CFLAGS_HARDENED_ASSEMBLERS="gas inline"
 CFLAGS_HARDENED_USE_CASES="security-critical system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS SO"
@@ -11,12 +13,28 @@ PYTHON_COMPAT=( "python3_"{10..13} )
 QA_CONFIG_IMPL_DECL_SKIP=( "unreachable" "MIN" "alignof" "static_assert" "fpurge" )
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/wget.asc"
 
-inherit cflags-hardened check-compiler-switch flag-o-matic python-any-r1 toolchain-funcs unpacker verify-sig
+CHKL_TIMESTAMPS=(
+	"dev-libs/libpcre2-9999"
+	"app-arch/xz-utils-9999"
+)
+
+inherit autotools cflags-hardened check-compiler-switch chkl flag-o-matic python-any-r1 sandbox-changes secure-version toolchain-funcs unpacker verify-sig
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="6b303917ab8318d7a5002831a6f0628f63de8633"
+	EGIT_BRANCH="master"
+	EGIT_REPO_URI="https://https.git.savannah.gnu.org/git/wget.git"
+	if [[ "${PV}" =~ "9999" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	SRC_URI="mirror://gnu/wget/${P}.tar.lz"
+	SRC_URI+=" verify-sig? ( mirror://gnu/wget/${P}.tar.lz.sig )"
+fi
 
 DESCRIPTION="Network utility to retrieve files from the WWW"
 HOMEPAGE="https://www.gnu.org/software/wget/"
-SRC_URI="mirror://gnu/wget/${P}.tar.lz"
-SRC_URI+=" verify-sig? ( mirror://gnu/wget/${P}.tar.lz.sig )"
 
 LICENSE="GPL-3+"
 SLOT="0"
@@ -24,7 +42,7 @@ KEYWORDS="
 ~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc
 x86 ~arm64-macos ~x64-macos ~x64-solaris
 "
-IUSE="
+IUSE+="
 cookie-check debug gnutls idn libproxy metalink nls ntlm pcre +ssl static
 test uuid zlib
 ebuild_revision_20
@@ -52,7 +70,7 @@ LIB_DEPEND="
 		net-libs/libpsl
 	)
 	idn? (
-		>=net-dns/libidn2-0.14:=[static-libs(+)]
+		>=net-dns/libidn2-${LIBIDN2_PV}:=[static-libs(+)]
 	)
 	libproxy? (
 		net-libs/libproxy
@@ -62,22 +80,21 @@ LIB_DEPEND="
 		media-libs/libmetalink
 	)
 	pcre? (
-		dev-libs/libpcre2[static-libs(+)]
+		>=dev-libs/libpcre2-${LIBPCRE2_PV}[static-libs(+)]
 	)
 	ssl? (
 		!gnutls? (
-			dev-libs/openssl:=[static-libs(+)]
+			$(secure-version_gen_openssl_depends '3.0-4.0' '[static-libs(+)]')
 		)
 		gnutls? (
-			net-libs/gnutls:=[static-libs(+)]
+			>=net-libs/gnutls-${GNUTLS_PV}:=[static-libs(+)]
 		)
 	)
 	uuid? (
 		sys-apps/util-linux[static-libs(+)]
 	)
 	zlib? (
-		virtual/zlib[static-libs(+)]
-		virtual/zlib:=
+		>=virtual/zlib-${ZLIB_PV}:=[static-libs(+)]
 	)
 "
 RDEPEND="
@@ -93,8 +110,8 @@ DEPEND="
 "
 BDEPEND="
 	$(unpacker_src_uri_depends)
-	app-arch/xz-utils
-	dev-lang/perl
+	>=app-arch/xz-utils-${XZ_UTILS_PV}
+	>=dev-lang/perl-${PERL_PV}
 	sys-apps/texinfo
 	virtual/pkgconfig
 	nls? (
@@ -116,15 +133,36 @@ DOCS=( "AUTHORS" "MAILING-LIST" "NEWS" "README" )
 pkg_setup() {
 	check-compiler-switch_start
 	python-any-r1_pkg_setup
+	if use nls ; then
+		sandbox-changes_no_network_sandbox "To download translations"
+	fi
 }
 
 src_unpack() {
-	use verify-sig && verify-sig_verify_detached "${DISTDIR}/${P}.tar.lz"{"",".sig"}
-	unpacker "${P}.tar.lz"
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+	# IMO the security is verify-sig pattern is wrong.  If the server is
+	# compromised, you are using the attacker controlled signature and
+	# attacker controlled tarball.  The both pieces should be indepdenent.
+	# The proper way is to have the distro keep the copy of the signature
+	# on their server(s).  You cannot have wget devs have the signature
+	# because of the possibility of a compromised wget ftp key or
+	# compromised wget web infra.
+		use verify-sig && verify-sig_verify_detached "${DISTDIR}/${P}.tar.lz"{"",".sig"}
+		unpacker "${P}.tar.lz"
+	fi
 }
 
 src_prepare() {
 	default
+	./bootstrap \
+		$(usex !nls "" "--skip-po") \
+		|| die
 	sed -i -e "s:/usr/local/etc:${EPREFIX}/etc:g" "doc/"{"sample.wgetrc","wget.texi"} || die
 }
 
@@ -136,7 +174,9 @@ einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
 
+	chkl_check_many_timestamps
 	cflags-hardened_append
+
 	# Fix compilation on Solaris, we need filio.h for FIONBIO as used in
 	# the included gnutls -- force ioctl.h to include this header
 	[[ "${CHOST}" == *"-solaris"* ]] && append-cppflags -DBSD_COMP=1
@@ -175,4 +215,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	)
 
 	econf "${myeconfargs[@]}"
+	if ! use nls ; then
+		sed -i -e "s|po gnulib_po util|po util|g" Makefile || die
+	fi
 }

@@ -276,6 +276,7 @@ SECURE_TIMESTAMP["net_misc_connman_9999"]="2026-02-09 15:45:56 +0100"
 SECURE_TIMESTAMP["net_misc_curl_9999"]="Mon, 15 Jun 2026 12:57:42 +0100"
 SECURE_TIMESTAMP["net_misc_dhcpcd_9999"]="Jun 22 2026 1:14 PM PDT"
 SECURE_TIMESTAMP["net_misc_networkmanager_9999"]="Jun 25, 2026 1:47:21 AM PDT"
+SECURE_TIMESTAMP["net_misc_wget_9999"]="2026-06-20 10:32:56 +0000"
 SECURE_TIMESTAMP["net_nds_openldap_9999"]="Jun 8, 2026 8:56 AM PDT"
 SECURE_TIMESTAMP["net_print_cups_9999"]="Jun 23, 2026 7:40 AM PDT"
 SECURE_TIMESTAMP["net_wireless_bluez_9999"]="Jun 16, 2026 2:06 PM PDT"
@@ -310,6 +311,7 @@ SECURE_TIMESTAMP["x11_libs_pango_9999"]="Jun 1, 2026 3:30 PM PDT"
 SECURE_TIMESTAMP["x11_libs_pixman_9999"]="Aug 1, 2025 9:38:49 AM PDT"
 SECURE_TIMESTAMP["x11_misc_colord_9999"]="Feb 2, 2026 1:31 AM PST"
 
+#SECURE_TIMESTAMP[""]=""
 	declare -p SECURE_TIMESTAMP
 }
 

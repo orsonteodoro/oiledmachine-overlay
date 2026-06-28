@@ -407,6 +407,7 @@ XINIT_PV=${XINIT_PV:-"1.4.1"}
 XKBCOMP_PV=${XKBCOMP_PV:-"1.5.0"}
 XORG_SERVER_PV=${XORG_SERVER_PV:-"9999"}
 WPA_SUPPLICANT_PV=${WPA_SUPPLICANT_PV:-"9999"}
+WGET_PV=${WGET_PV:-"9999"}
 XTRANS_PV=${XTRANS_PV:-"1.5.1"}
 XVID_PV=${XVID_PV:-"1.3.5"}
 XZ_UTILS_PV=${XZ_UTILS_PV:-"9999"}
@@ -459,6 +460,43 @@ fi
 OPENSSL_DEPEND="
 	${OPENSSL_RDEPEND}
 "
-
+secure_version_gen_openssl_depends() {
+	local range="${1}" # 1, 3.0-4.0
+	local usedep="${2}"
+	echo "
+		dev-libs/openssl:=${usedep}
+		|| (
+	"
+	local l=""
+	local r=""
+	if [[ "${range}" =~ "-" ]] ; then
+		l="${range%-*}"
+		r="${range#*-}"
+	else
+		l="${range}"
+		r="${range}"
+	fi
+	local L=(
+		"4.0"
+		"3.6"
+		"3.5"
+		"3.4"
+		"3.3"
+		"3.0"
+	)
+	local x
+	for x in "${L[@]}" ; do
+		if ver_test "${l}" "-le" "${x}" && ver_test "${x}" "-le" "${r}" ; then
+			local t="OPENSSL_PV_${x/./_}_PV"
+			echo "
+				~dev-libs/openssl-${x}.9999${usedep}
+				~dev-libs/openssl-${!t}${usedep}
+			"
+		fi
+	done
+	echo "
+		)
+	"
+}
 
 fi
