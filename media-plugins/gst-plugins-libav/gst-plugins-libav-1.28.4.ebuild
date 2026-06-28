@@ -58,8 +58,10 @@ get_ffmpeg_prefix() {
 	local L=(
 		"61.63.63" # live
 		"60.62.62" # 8.0, 8.1
-		"59.61.61" # 7.1, same slot used by upstream
-		"0" # monoslot
+		"59.61.61" # 7.1, same version used by upstream
+		"0/61.63.63" # live
+		"0/60.62.62" # 8.0, 8.1
+		"0/59.61.61" # 7.1, same version used by upstream
 	)
 	prefix=""
 	local x
