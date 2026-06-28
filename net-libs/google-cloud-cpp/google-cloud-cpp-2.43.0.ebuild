@@ -24,6 +24,7 @@ RE2_SLOT="20250512"
 GOOGLEAPIS_COMMIT="2193a2bfcecb92b92aad7a4d81baa428cafd7dfd"
 
 CHKL_TIMESTAMPS=(
+	"dev-cpp/nlohmann_json-9999"
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
@@ -43,7 +44,7 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-inherit abseil-cpp cflags-hardened chkl cmake grpc libcxx-slot libstdcxx-slot protobuf re2
+inherit abseil-cpp cflags-hardened chkl cmake grpc libcxx-slot libstdcxx-slot protobuf re2 secure-version
 
 SRC_URI="
 https://github.com/GoogleCloudPlatform/google-cloud-cpp/archive/v${PV}.tar.gz -> ${P}.tar.gz
@@ -64,16 +65,16 @@ RESTRICT="test"
 RDEPEND="
 	>=dev-cpp/abseil-cpp-20240722.0:${ABSEIL_CPP_SLOT%.*}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx_standard_cxx17]
 	>=dev-libs/crc32c-1.1.2:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=net-misc/curl-9999:=
-	>=dev-libs/openssl-1.1.1:=
+	>=net-misc/curl-${CURL_PV}:=
+	$(secure-version_gen_openssl_depends)
 	>=dev-libs/re2-0.2025.07.22:${RE2_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=virtual/zlib-1.2.11:=
+	>=virtual/zlib-${ZLIB_PV}:=
 	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	net-libs/grpc:${PROTOBUF_CPP_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx]
 "
 DEPEND="
 	${RDEPEND}
-	>=dev-cpp/nlohmann_json-3.11.3:=
+	>=dev-cpp/nlohmann_json-${NLOHMANN_JSON_PV}:=
 "
 BDEPEND="
 	>=dev-cpp/gtest-1.16.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
