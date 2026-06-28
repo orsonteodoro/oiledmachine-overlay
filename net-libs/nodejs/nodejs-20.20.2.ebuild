@@ -194,22 +194,7 @@ RDEPEND+="
 		>=dev-libs/icu-${ICU_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	system-ssl? (
-		dev-libs/openssl:=[asm?,fips?]
-		|| (
-			=dev-libs/openssl-4.0.9999[asm?,fips?]
-			=dev-libs/openssl-3.6.9999[asm?,fips?]
-			=dev-libs/openssl-3.5.9999[asm?,fips?]
-			=dev-libs/openssl-3.4.9999[asm?,fips?]
-			=dev-libs/openssl-3.3.9999[asm?,fips?]
-			=dev-libs/openssl-3.0.9999[asm?,fips?]
-
-			~dev-libs/openssl-${OPENSSL_PV_4_0_PV}[asm?,fips?]
-			~dev-libs/openssl-${OPENSSL_PV_3_6_PV}[asm?,fips?]
-			~dev-libs/openssl-${OPENSSL_PV_3_5_PV}[asm?,fips?]
-			~dev-libs/openssl-${OPENSSL_PV_3_4_PV}[asm?,fips?]
-			~dev-libs/openssl-${OPENSSL_PV_3_3_PV}[asm?,fips?]
-			~dev-libs/openssl-${OPENSSL_PV_3_0_PV}[asm?,fips?]
-		)
+		$(secure-version_gen_openssl_depends '' '[asm?,fips?]')
 	)
 "
 DEPEND+="
