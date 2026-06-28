@@ -16,21 +16,24 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO IO PE SO"
 GENTOO_DEPEND_ON_PERL=no
 
 CHKL_TIMESTAMPS=(
+	"dev-libs/expat-9999"
+	"dev-libs/glib-9999"
+	"dev-libs/libpcre2-9999"
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
 	"dev-libs/openssl-3.4.9999"
 	"dev-libs/openssl-3.3.9999"
 	"dev-libs/openssl-3.0.9999"
+	"dev-vcs/subversion-9999"
 	"net-misc/curl-9999"
-	"dev-libs/expat-9999"
 )
 
 # bug #329479: git-remote-testgit is not multiple-version aware
-PYTHON_COMPAT=( python3_{11..14} )
+PYTHON_COMPAT=( python3_{10..14} )
 RUST_OPTIONAL=1
 inherit cflags-hardened chkl flag-o-matic toolchain-funcs perl-module shell-completion optfeature
-inherit plocale python-single-r1 rust systemd meson
+inherit plocale python-single-r1 rust secure-version systemd meson
 
 PLOCALES="bg ca de es fr is it ko pt_PT ru sv vi zh_CN"
 
@@ -87,26 +90,26 @@ ebuild_revision_2
 
 # Common to both DEPEND and RDEPEND
 DEPEND="
-	dev-libs/openssl:=
-	virtual/zlib:=
+	$(secure-version_gen_openssl_depends)
+	>=virtual/zlib-${ZLIB_PV}:=
 	curl? (
-		>=net-misc/curl-9999:=
+		>=net-misc/curl-${CURL_PV}:=
 		webdav? (
-			>=dev-libs/expat-9999:=
+			>=dev-libs/expat-${EXPAT_PV}:=
 		)
 	)
 	keyring? (
-		app-crypt/libsecret:=
-		=dev-libs/glib-2*:=
+		>=app-crypt/libsecret-${LIBSECRET_PV}:=
+		>=dev-libs/glib-${GLIB_PV}:=
 	)
 	iconv? (
 		virtual/libiconv:=
 	)
 	pcre? (
-		dev-libs/libpcre2:=
+		>=dev-libs/libpcre2-${LIBPCRE2_PV}:=
 	)
 	perl? (
-		dev-lang/perl:=[-build(-)]
+		>=dev-lang/perl-${PERL_PV}:=[-build(-)]
 	)
 	tk? (
 		dev-lang/tk:=
@@ -130,13 +133,13 @@ RDEPEND="
 			dev-perl/DBD-SQLite
 		)
 		subversion? (
-			dev-vcs/subversion[-dso(-),perl]
+			>=dev-vcs/subversion-${SUBVERSION_PV}[-dso(-),perl]
 			dev-perl/libwww-perl
 			dev-perl/TermReadKey
 		)
 	)
 	perforce? ( ${PYTHON_DEPS} )
-	selinux? ( sec-policy/selinux-git )
+	selinux? ( sec-policy/selinux-git:* )
 "
 
 # This is how info docs are created with Git:
@@ -236,8 +239,8 @@ src_prepare() {
 }
 
 src_configure() {
-	cflags-hardened_append
 	chkl_check_many_timestamps
+	cflags-hardened_append
 	local contrib=(
 		completion
 		subtree
