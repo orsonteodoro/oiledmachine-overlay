@@ -119,12 +119,6 @@ eerror "QA:  Expected sover:  ${expected_sover}"
 src_prepare() {
 	default
 	eautoreconf
-#	if ! use doc ; then
-#		sed -i -e "s|fig2dev|true|g" \
-#			"doc/Makefile.am" \
-#			"doc/Makefile.in" \
-#			|| die
-#	fi
 }
 
 src_configure() {
