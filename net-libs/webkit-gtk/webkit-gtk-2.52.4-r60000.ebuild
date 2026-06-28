@@ -957,7 +957,7 @@ RDEPEND+="
 			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:*[${MULTILIB_USEDEP},ffmpeg]
 		)
 		gstwebrtc? (
-			>=dev-libs/openssl-3:=[${MULTILIB_USEDEP}]
+			$(secure-version_gen_openssl_depends '' '[${MULTILIB_USEDEP}]')
 			>=media-plugins/gst-plugins-webrtc-${GSTREAMER_PV}:=[${MULTILIB_USEDEP}]
 		)
 		hls? (
