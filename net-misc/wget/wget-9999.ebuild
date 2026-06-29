@@ -153,6 +153,17 @@ src_unpack() {
 	# on their server(s).  You cannot have wget devs have the signature
 	# because of the possibility of a compromised wget ftp key or
 	# compromised wget web infra.
+	#
+	# The proper fix is to place the verify-sigs (${P}.tar.lz.sig) in
+	# the files/${P}.tar.lz.sig folder or in another repo with independent
+	# contributors under similiar layout
+	# ({CATEGORY}/${PN}/${P}.tar.lz.sig).  If upstream is attacked
+	# by supply chain attack, then the sig is not affected.  However if a
+	# contributor is working for both upstream and the distro, it is not
+	# proper isolation.  The type of vulnerability is maybe improper
+	# security design or improper implementation for verify-sig on the
+	# distro.
+	#
 		use verify-sig && verify-sig_verify_detached "${DISTDIR}/${P}.tar.lz"{"",".sig"}
 		unpacker "${P}.tar.lz"
 	fi
