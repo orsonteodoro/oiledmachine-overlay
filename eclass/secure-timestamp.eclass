@@ -2,9 +2,9 @@
 # Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# @ECLASS: chkl.eclass
+# @ECLASS: secure-timestamp.eclass
 # @MAINTAINER: Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS: 7 8
+# @SUPPORTED_EAPIS: 8 9
 # @BLURB: secure timestamps
 # @DESCRIPTION:
 # A collection of secure timestamps for live ebuilds for chkl.eclass

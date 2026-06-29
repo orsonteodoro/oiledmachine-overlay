@@ -4,7 +4,7 @@
 
 # @ECLASS: secure-versions.eclass
 # @MAINTAINER: Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS: 7 8
+# @SUPPORTED_EAPIS: 8 9
 # @BLURB: secure versions
 # @DESCRIPTION:
 # Install *only* secure versions in security-critical systems typically for C/C++ programs.
@@ -98,6 +98,11 @@
 # general availability.  Some of these vulnerabilies are considered high to
 # critical severity.
 #
+
+case ${EAPI:-0} in
+	[89]) ;;
+	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
+esac
 
 if [[ -z "${_SECURE_VERSION_ECLASS}" ]] ; then
 _SECURE_VERSION_ECLASS=1

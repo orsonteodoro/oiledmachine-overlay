@@ -4,7 +4,7 @@
 
 # @ECLASS: chkl.eclass
 # @MAINTAINER: Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS: 7 8
+# @SUPPORTED_EAPIS: 8 9
 # @BLURB: check live appropriateness
 # @DESCRIPTION:
 # Check if live is appropriate in the security context.
