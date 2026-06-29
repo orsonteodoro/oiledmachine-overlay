@@ -17,7 +17,7 @@ GENTOO_DEPEND_ON_PERL=no
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/expat-9999"
-	"dev-libs/glib-9999"
+	"dev-libs/glib-2.89.9999"
 	"dev-libs/libpcre2-9999"
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
