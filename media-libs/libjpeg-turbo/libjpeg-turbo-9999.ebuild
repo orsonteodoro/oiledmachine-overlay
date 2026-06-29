@@ -59,7 +59,7 @@ inherit cflags-hardened check-compiler-switch cmake-multilib java-pkg-opt-2 flag
 inherit flag-o-matic-om toolchain-funcs uopts verify-sig
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="25b62127312b5df12a9d3ed4a000595d796bfb78"
+	FALLBACK_COMMIT="01d607bd618334ccb5bfdd7e1891dda11d58036c"
 	EGIT_REPO_URI="https://github.com/libjpeg-turbo/libjpeg-turbo.git"
 	IUSE+=" fallback-commit"
 	inherit git-r3
@@ -197,7 +197,7 @@ BDEPEND+="
 		${ASM_DEPEND}
 	)
 	verify-sig? (
-		sec-keys/openpgp-keys-libjpeg-turbo
+		sec-keys/openpgp-keys-libjpeg-turbo:*
 	)
 "
 DEPEND="
