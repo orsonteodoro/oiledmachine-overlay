@@ -486,7 +486,13 @@ NPM_UNINSTALL_ARGS=(
 	"--prefer-offline"
 )
 
-inherit cargo desktop edo lcnr npm python-single-r1 rust node-sharp webkitgtk-stable xdg
+CHKL_TIMESTAMPS=(
+	"app-accessibility/at-spi2-core-9999"
+	"dev-libs/glib-2.89.9999"
+	"x11-libs/cairo-9999"
+)
+
+inherit cargo chkl desktop edo lcnr npm python-single-r1 rust node-sharp secure-version secure-version-node webkitgtk-stable xdg
 
 KEYWORDS="~amd64 ~arm64"
 SRC_URI="
@@ -665,26 +671,33 @@ gen_webkit_depend() {
 		"
 	done
 }
+RUST_BINDINGS_DEPEND_DISABLED="
+	>=net-libs/libsoup-${LIBSOUP2_PV}:2.4[introspection]
+"
 RUST_BINDINGS_DEPEND="
-	>=app-accessibility/at-spi2-core-2.35.1[introspection]
-	>=dev-libs/glib-2.48:2
-	>=dev-libs/gobject-introspection-1.64.0
-	>=net-libs/libsoup-2.70.0:2.4[introspection]
-	>=x11-libs/cairo-1.14
-	>=x11-libs/gdk-pixbuf-2.32[introspection]
-	>=x11-libs/gtk+-3.18:3[introspection,wayland?,X?]
-	>=x11-libs/pango-1.38[introspection]
+	>=app-accessibility/at-spi2-core-${AT_SPI2_CORE_PV}:=[introspection]
+	>=dev-libs/glib-${GLIB_PV}:=
+	>=dev-libs/gobject-introspection-${GOBJECT_INTROSPECTION_PV}:=
+	>=x11-libs/cairo-${CAIRO_PV}:=
+	>=x11-libs/gdk-pixbuf-${GDK_PIXBUF_PV}:=[introspection]
+	>=x11-libs/gtk+-${GTK3_PV}:3=[introspection,wayland?,X?]
+	>=x11-libs/pango-${PANGO_PV}:=[introspection]
 	elibc_glibc? (
-		>=sys-libs/glibc-2.31
+		>=sys-libs/glibc-${GLIBC_PV}:=
 	)
 	elibc_musl? (
-		>=sys-libs/musl-1.1.24
+		>=sys-libs/musl-${MUSL_PV}:=
 	)
 	tray? (
 		|| (
 			>=dev-libs/libappindicator-12.10.1_p20200408:3
 			>=dev-libs/libayatana-appindicator-0.5.4
 		)
+	)
+
+	net-libs/webkit-gtk:=[javascript,jit,introspection,wayland?,webassembly,X?,webgl]
+	voice-recognition? (
+		net-libs/webkit-gtk:=[microphone]
 	)
 	|| (
 		$(gen_webkit_depend)
@@ -893,8 +906,22 @@ npm_update_lock_install_post() {
 		)
 		enpm install "${pkgs[@]}" -P "${NPM_INSTALL_ARGS[@]}"
 		pkgs=(
-			"next@^15.5.15"										# CVE-2025-29927; DT, ID		# --prefer-offline is broken
+			"next@^${NODE_NEXT_PV}"									# CVE-2025-29927; DT, ID		# --prefer-offline is broken
+														# CVE-2026-44578; ZC, ID; High
 														# GHSA-q4gf-8mx6-v5v3; ZC, DoS; High
+														# CVE-2026-44581; DT, ID; Moderate
+														# CVE-2026-44582; DT; Low
+														# CVE-2026-44577; ZC, DoS; Moderate
+														# CVE-2026-44572; ZC, DoS; Low
+														# CVE-2026-44580; DoS, DT; Moderate
+														# GHSA-8h8q-6873-q5fj; ZC, DoS; High
+														# CVE-2026-44578; ZC, ID; High
+														# CVE-2026-44576; ZC, DoS, DT; Moderate
+														# CVE-2026-44579; ZC, DoS; High
+														# CVE-2026-44575; ZC, ID; High
+														# CVE-2026-45109; ZC, ID; High
+														# CVE-2026-44574; DT, ID; High
+														# CVE-2026-44573; ZC DT; High
 		)
 		enpm install "${pkgs[@]}" -P --legacy-peer-deps
 
@@ -998,6 +1025,7 @@ EOF
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	if ! has_version "dev-util/sccache" ; then
 einfo "Disabling sccache support"
 		unset RUSTC_WRAPPER
