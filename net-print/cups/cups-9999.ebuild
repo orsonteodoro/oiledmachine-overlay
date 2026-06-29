@@ -45,7 +45,7 @@ LICENSE="Apache-2.0"
 SLOT="0"
 IUSE+="
 acl dbus debug kerberos mdnsresponder-compat openssl pam selinux static-libs systemd test usb X xinetd zeroconf
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	mdnsresponder-compat? (
