@@ -173,8 +173,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
 
-	cflags-hardened_append
 	chkl_check_many_timestamps
+	cflags-hardened_append
 
 	local emesonargs=(
 		$(meson_use aqua quartz_backend)
