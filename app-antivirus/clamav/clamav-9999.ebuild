@@ -4,7 +4,7 @@
 
 EAPI=8
 
-# U24
+# D12, U24
 
 # The lockfile should be updated once a week for security reasons.
 
@@ -50,21 +50,24 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF HO UAF"
 GENERATE_LOCKFILE=0
 MITIGATION_DATE="Jun 18, 2025"
 MITIGATION_URI="https://blog.clamav.net/2025/06/clamav-143-and-109-security-patch.html"
-PYTHON_COMPAT=( "python3_"{10..12} ) # CI uses 3.8
-RUST_MAX_VER="1.91.1" # LLVM 21.1
-RUST_MIN_VER="1.91.1" # LLVM 21.1
+PYTHON_COMPAT=( "python3_"{12,13} ) # CI versions
+RUST_MAX_VER="1.93.1" # LLVM 21.1
+RUST_MIN_VER="1.93.1" # LLVM 21.1
 RUSTFLAGS_HARDENED_USE_CASES="jit network security-critical sensitive-data untrusted-data"
 RUSTFLAGS_HARDENED_TOLERANCE="4.0"
 
-CURL_PV="7.68.0"
 PYTEST_PV="7.2.0"
 
 VULNERABILITIES_FIXED=(
-	"CVE-2026-20031;ZC, DoS;Medium"
-	"CVE-2026-25541;VS(DoS);Medium" # Same as RUSTSEC-2026-0007
 )
 
-# From "./convert-cargo-lock.sh 1.4.4 1.4.4" \
+declare -A GIT_CRATES=(
+# QA: Manually remove ?tag=1.2.4
+[clam-sigutil]="https://github.com/Cisco-Talos/clamav-signature-util;7cfeb7f630ce472239f5b0a794b62df7f592acc7;clamav-signature-util-%commit%" # 1.2.4
+[onenote_parser]="https://github.com/Cisco-Talos/onenote.rs;29c08532252b917543ff268284f926f30876bb79;onenote.rs-%commit%" # 0.3.1
+)
+
+# From "./convert-cargo-lock.sh 9999 9999" \
 CRATES="
 adler2-2.0.1
 adler32-1.2.0
@@ -72,35 +75,48 @@ aho-corasick-1.1.4
 aligned-0.4.3
 aligned-vec-0.6.4
 android_system_properties-0.1.5
-anyhow-1.0.102
+anstream-1.0.0
+anstyle-1.0.14
+anstyle-parse-1.0.0
+anstyle-query-1.1.5
+anstyle-wincon-3.0.11
+anyhow-1.0.103
 arbitrary-1.4.2
 arg_enum_proc_macro-0.3.4
-arrayvec-0.7.6
+arrayvec-0.7.7
 as-slice-0.2.1
-autocfg-1.5.0
+autocfg-1.5.1
 av1-grain-0.2.5
-avif-serialize-0.8.8
+avif-serialize-0.8.9
 av-scenechange-0.14.1
 base64-0.21.7
 bindgen-0.65.1
 bit_field-0.10.3
 bitflags-1.3.2
-bitflags-2.11.1
+bitflags-2.13.0
+bit-set-0.5.3
 bitstream-io-4.10.0
+bit-vec-0.6.3
 block-buffer-0.10.4
-built-0.8.0
-bumpalo-3.20.2
+built-0.8.1
+bumpalo-3.20.3
 bytemuck-1.25.0
 byteorder-1.5.0
 byteorder-lite-0.1.0
-bytes-1.11.1
+bytes-1.12.0
 bzip2-rs-0.1.2
 cbindgen-0.25.0
-cc-1.2.61
+cc-1.2.65
 cexpr-0.6.0
 cfg-if-1.0.4
-chrono-0.4.44
+change-case-0.2.0
+chrono-0.4.45
 clang-sys-1.8.1
+clap-4.6.1
+clap_builder-4.6.0
+clap_derive-4.6.1
+clap_lex-1.1.0
+colorchoice-1.0.5
 color_quant-1.1.0
 core-foundation-sys-0.8.7
 cpufeatures-0.2.17
@@ -112,65 +128,88 @@ crunchy-0.2.4
 crypto-common-0.1.7
 delharc-0.6.1
 digest-0.10.7
-either-1.15.0
+displaydoc-0.2.6
+downcast-rs-2.0.2
+either-1.16.0
+either_n-0.2.0
 encoding_rs-0.8.35
+enumflags2-0.7.12
+enumflags2_derive-0.7.12
 enum-primitive-derive-0.2.2
+enum-variants-strings-0.3.0
+enum-variants-strings-derive-0.3.0
 equator-0.4.2
 equator-macro-0.4.2
 equivalent-1.0.2
 errno-0.3.14
 exr-1.74.0
+fancy-regex-0.3.5
 fastrand-2.4.1
 fax-0.2.7
 fdeflate-0.3.7
+filetime-0.2.29
 find-msvc-tools-0.1.9
 flate2-1.1.9
-foldhash-0.1.5
+flexi_logger-0.30.2
+foreign-types-0.3.2
+foreign-types-shared-0.1.1
+form_urlencoded-1.2.2
 futures-core-0.3.32
 futures-task-0.3.32
 futures-util-0.3.32
 generic-array-0.14.7
 getrandom-0.3.4
-getrandom-0.4.2
+getrandom-0.4.3
 gif-0.14.2
 glob-0.3.3
 half-2.7.1
 hashbrown-0.12.3
-hashbrown-0.15.5
-hashbrown-0.17.0
+hashbrown-0.17.1
 heck-0.4.1
 heck-0.5.0
 hex-0.4.3
 hex-literal-0.4.1
+hex-literal-1.1.0
 home-0.5.12
+humantime-2.3.0
 iana-time-zone-0.1.65
 iana-time-zone-haiku-0.1.2
-id-arena-2.3.0
+icu_collections-2.2.0
+icu_locale_core-2.2.0
+icu_normalizer-2.2.0
+icu_normalizer_data-2.2.0
+icu_properties-2.2.0
+icu_properties_data-2.2.0
+icu_provider-2.2.0
+idna-1.1.0
+idna_adapter-1.2.2
 image-0.25.10
 image-webp-0.2.4
-imgref-1.12.1
+imgref-1.12.2
 indexmap-1.9.3
 indexmap-2.14.0
 inflate-0.4.5
 interpolate_name-0.2.4
+is_terminal_polyfill-1.70.2
 itertools-0.10.5
 itertools-0.14.0
 itoa-1.0.18
 jobserver-0.1.34
-js-sys-0.3.97
+js-sys-0.3.103
 lazycell-1.3.0
 lazy_static-1.5.0
-leb128fmt-0.1.0
 lebe-0.5.3
 libc-0.2.186
-libfuzzer-sys-0.4.12
+libfuzzer-sys-0.4.13
 libloading-0.8.9
 linux-raw-sys-0.12.1
 linux-raw-sys-0.4.15
-log-0.4.29
+litemap-0.8.2
+log-0.4.33
 loop9-0.1.5
 maybe-rayon-0.1.1
-memchr-2.8.0
+md5-0.7.0
+memchr-2.8.2
 minimal-lexical-0.2.1
 miniz_oxide-0.8.9
 moxcms-0.8.1
@@ -178,7 +217,8 @@ new_debug_unreachable-1.0.6
 nom-7.1.3
 nom-8.0.0
 noop_proc_macro-0.3.0
-no_std_io2-0.9.3
+no_std_io2-0.9.4
+nu-ansi-term-0.50.3
 num-bigint-0.4.6
 num-complex-0.4.6
 num-derive-0.4.2
@@ -186,21 +226,28 @@ num-integer-0.1.46
 num-rational-0.4.2
 num-traits-0.2.19
 once_cell-1.21.4
+once_cell_polyfill-1.70.2
+openssl-0.10.81
+openssl-macros-0.1.1
+openssl-sys-0.9.117
 paste-1.0.15
 pastey-0.1.1
 peeking_take_while-0.1.2
+percent-encoding-2.3.2
 pin-project-lite-0.2.17
+pkg-config-0.3.33
 png-0.18.1
+potential_utf-0.1.5
 ppv-lite86-0.2.21
 prettyplease-0.2.37
 primal-check-0.3.4
 proc-macro2-1.0.106
-profiling-1.0.17
-profiling-procmacros-1.0.17
+profiling-1.0.18
+profiling-procmacros-1.0.18
 pxfm-0.1.29
 qoi-0.4.1
 quick-error-2.0.1
-quote-1.0.45
+quote-1.0.46
 rand-0.9.4
 rand_chacha-0.9.0
 rand_core-0.9.5
@@ -210,9 +257,9 @@ rayon-1.12.0
 rayon-core-1.13.0
 r-efi-5.3.0
 r-efi-6.0.0
-regex-1.12.3
+regex-1.12.4
 regex-automata-0.4.14
-regex-syntax-0.8.10
+regex-syntax-0.8.11
 rgb-0.8.53
 rustc-hash-1.1.0
 rustdct-0.7.1
@@ -220,47 +267,56 @@ rustfft-6.4.1
 rustix-0.38.44
 rustix-1.1.4
 rustversion-1.0.22
-semver-1.0.28
+ruzstd-0.8.3
 serde-1.0.228
 serde_core-1.0.228
 serde_derive-1.0.228
-serde_json-1.0.149
+serde_json-1.0.150
 sha1-0.10.6
 sha2-0.10.9
 shlex-1.3.0
+shlex-2.0.1
 simd-adler32-0.3.9
 simd_helpers-0.1.0
 slab-0.4.12
-smallvec-1.15.1
+smallvec-1.15.2
 stable_deref_trait-1.2.1
 strength_reduce-0.2.4
+string-cases-0.2.0
+strsim-0.11.1
+strum-0.27.2
+strum_macros-0.27.2
 syn-1.0.109
-syn-2.0.117
+syn-2.0.118
+synstructure-0.13.2
+tar-0.4.46
 tempfile-3.27.0
 thiserror-1.0.69
 thiserror-2.0.18
 thiserror-impl-1.0.69
 thiserror-impl-2.0.18
 tiff-0.11.3
+tinystr-0.8.3
 tinyvec-1.11.0
+tinyvec_macros-0.1.1
 toml-0.5.11
 transpose-0.2.3
-typenum-1.20.0
+twox-hash-2.1.2
+typenum-1.20.1
 unicode-ident-1.0.24
-unicode-segmentation-1.13.2
-unicode-xid-0.2.6
-uuid-1.23.1
+unicode-segmentation-1.13.3
+url-2.5.8
+utf8_iter-1.0.4
+utf8parse-0.2.2
+uuid-1.23.4
+vcpkg-0.2.15
 version_check-0.9.5
 v_frame-0.3.9
-wasip2-1.0.3+wasi-0.2.9
-wasip3-0.4.0+wasi-0.3.0-rc-2026-01-06
-wasm-bindgen-0.2.120
-wasm-bindgen-macro-0.2.120
-wasm-bindgen-macro-support-0.2.120
-wasm-bindgen-shared-0.2.120
-wasm-encoder-0.244.0
-wasm-metadata-0.244.0
-wasmparser-0.244.0
+wasip2-1.0.4+wasi-0.2.12
+wasm-bindgen-0.2.126
+wasm-bindgen-macro-0.2.126
+wasm-bindgen-macro-support-0.2.126
+wasm-bindgen-shared-0.2.126
 weezl-0.1.12
 which-4.4.2
 widestring-1.2.1
@@ -281,36 +337,57 @@ windows-targets-0.52.6
 windows_x86_64_gnu-0.52.6
 windows_x86_64_gnullvm-0.52.6
 windows_x86_64_msvc-0.52.6
-wit-bindgen-0.51.0
 wit-bindgen-0.57.1
-wit-bindgen-core-0.51.0
-wit-bindgen-rust-0.51.0
-wit-bindgen-rust-macro-0.51.0
-wit-component-0.244.0
-wit-parser-0.244.0
+writeable-0.6.3
+xattr-1.6.1
 y4m-0.8.0
-zerocopy-0.8.48
-zerocopy-derive-0.8.48
+yoke-0.8.3
+yoke-derive-0.8.2
+zerocopy-0.8.52
+zerocopy-derive-0.8.52
+zerofrom-0.1.8
+zerofrom-derive-0.1.7
+zerotrie-0.2.4
+zerovec-0.11.6
+zerovec-derive-0.11.3
 zmij-1.0.21
 zune-core-0.5.1
 zune-inflate-0.2.54
 zune-jpeg-0.5.15
 "
 
-declare -A GIT_CRATES=(
-[onenote_parser]="https://github.com/Cisco-Talos/onenote.rs;29c08532252b917543ff268284f926f30876bb79;onenote.rs-%commit%" # 0.3.1
+CHKL_TIMESTAMPS=(
+	"app-arch/bzip2-9999"
+	"dev-libs/json-c-9999"
+	"dev-libs/libmspack-9999"
+	"dev-libs/libpcre2-9999"
+	"dev-libs/libxml2-9999"
+	"net-misc/curl-9999"
 )
 
 inherit cargo cflags-hardened cmake eapi9-ver flag-o-matic lcnr llvm optfeature
-inherit python-any-r1 rustflags-hardened sandbox-changes systemd tmpfiles toolchain-funcs vf
+inherit python-any-r1 rustflags-hardened sandbox-changes secure-version systemd tmpfiles toolchain-funcs vf
 
-if ! [[ "${PV}" =~ "_rc" ]] ; then
-	KEYWORDS="~amd64 ~arm64 ~arm64-macos"
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="5ecb5b0732a13f0afe65899227947a16d0f2c99e"
+	EGIT_BRANCH="main"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/clamav-${MY_P}"
+	EGIT_REPO_URI="https://github.com/Cisco-Talos/clamav.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	if ! [[ "${PV}" =~ "_rc" ]] ; then
+		KEYWORDS="~amd64 ~arm64 ~arm64-macos"
+	fi
+	SRC_URI+="
+https://github.com/Cisco-Talos/clamav/archive/refs/tags/${MY_P}.tar.gz
+	"
 fi
 S="${WORKDIR}/clamav-${MY_P}"
-SRC_URI="
+SRC_URI+="
 $(cargo_crate_uris ${CRATES})
-https://github.com/Cisco-Talos/clamav/archive/refs/tags/${MY_P}.tar.gz
 "
 
 DESCRIPTION="Clam Anti-Virus Scanner"
@@ -381,8 +458,8 @@ RESTRICT="
 #		test
 #	)
 #"
-SLOT="0/lts" # sts or lts
-IUSE="
+SLOT="0/live" # sts or lts or live
+IUSE+="
 doc clamonacc +clamapp custom-cflags experimental jit libclamav-only man milter rar
 selinux +system-mspack systemd test valgrind
 ebuild_revision_50
@@ -405,29 +482,31 @@ REQUIRED_USE="
 "
 CDEPEND="
 	!libclamav-only? (
-		>=net-misc/curl-${CURL_PV}
+		>=net-misc/curl-${CURL_PV}:=
 	)
-	>=app-arch/bzip2-1.0.8
-	>=dev-libs/openssl-1.1.1f:=
-	>=dev-libs/json-c-0.15:=
-	>=dev-libs/libltdl-2.4.6
-	>=dev-libs/libpcre2-8.39:=
-	>=dev-libs/libxml2-2.9.10
-	>=virtual/zlib-1.2.1:=
-	acct-group/clamav
-	acct-user/clamav
-	virtual/libiconv
+	>=app-arch/bzip2-${BZIP2_PV}
+	$(secure-version_gen_openssl_depends)
+	>=dev-libs/json-c-${JSON_C_PV}:=
+	>=dev-libs/libltdl-2.4.6:=
+	>=dev-libs/libpcre2-${LIBPCRE2_PV}:=
+	>=dev-libs/libxml2-${LIBXML2_PV}
+	>=virtual/zlib-${ZLIB_PV}:=
+	acct-group/clamav:*
+	acct-user/clamav:*
+	virtual/libiconv:*
 	clamapp? (
-		>=net-misc/curl-${CURL_PV}
-		>=sys-libs/ncurses-6.2:=
+		>=net-misc/curl-${CURL_PV}:=
+		>=sys-libs/ncurses-${NCURSES_PV}:=
 	)
 	elibc_glibc? (
-		>=sys-libs/glibc-2.31
+		>=sys-libs/glibc-${GLIBC_PV}:=
 	)
 	elibc_musl? (
-		sys-libs/fts-standalone
+		>=sys-libs/musl-${MUSL_PV}:=
+		sys-libs/fts-standalone:=
 	)
 	jit? (
+		llvm-core/llvm:=
 		|| (
 			llvm-core/llvm:14
 		)
@@ -436,15 +515,10 @@ CDEPEND="
 		>=mail-filter/libmilter-8.15.2:=
 	)
 	rar? (
-		>=app-arch/unrar-6.1.5
+		>=app-arch/unrar-${UNRAR_PV}:=
 	)
 	system-mspack? (
-		>=dev-libs/libmspack-0.10.1_alpha
-	)
-	test? (
-		$(python_gen_any_dep '
-			>=dev-python/pytest-7.2.0[${PYTHON_USEDEP}]
-		')
+		>=dev-libs/libmspack-${LIBMSPACK_PV}:=
 	)
 "
 BDEPEND="
@@ -462,17 +536,16 @@ BDEPEND="
 		)
 	)
 	|| (
-		dev-lang/rust-bin:1.91.1
-		dev-lang/rust:1.91.1
-	)
-	|| (
-		dev-lang/rust-bin:=
-		dev-lang/rust:=
+		dev-lang/rust-bin:1.93.1
+		dev-lang/rust:1.93.1
 	)
 "
 DEPEND="
 	${CDEPEND}
 	test? (
+		$(python_gen_any_dep '
+			>=dev-python/pytest-7.2.0[${PYTHON_USEDEP}]
+		')
 		>=dev-libs/check-0.10.0
 	)
 "
@@ -480,7 +553,7 @@ DEPEND="
 RDEPEND="
 	${CDEPEND}
 	selinux? (
-		sec-policy/selinux-clamav
+		sec-policy/selinux-clamav:*
 	)
 "
 
@@ -489,7 +562,7 @@ python_check_deps() {
 }
 
 pkg_setup() {
-einfo "This LTS release is supported up to Aug 15, 2028."
+einfo "This is the regular rolling release."
 	if use test && ! [[ "${FEATURES}" =~ "userpriv" ]] ; then
 eerror "USE=test requires FEATURES=\"${FEATURES} userpriv\""
 		die
@@ -530,8 +603,30 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.4.1-pointer-types.patch"
 )
 
+_unpack_sources() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+einfo "Unpacking live sources"
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+einfo "Unpacking tarball sources"
+		unpack "${MY_P}.tar.gz"
+	fi
+	local expected_cargo_lock_fingerprint="e661abc800bc4ccb77caecac40a965b9aa150c5e10afc2af7d950c5a54955dd8a3879d3e5ce8cbede38c2d2ec66dcc65dcab1445e868fe72128bba38cb98acce"
+	local actual_cargo_lock_fingerprint=$(sha512sum "${S}/Cargo.lock" | cut -f 1 -d " ")
+	if [[ "${actual_cargo_lock_fingerprint}" != "${expected_cargo_lock_fingerprint}" ]] ; then
+eerror "QA:  Update cargo lockfile and fingerprint for offline install."
+eerror "QA:  Actual Cargo.lock fingerprint:  ${actual_cargo_lock_fingerprint}"
+eerror "QA:  Expected Cargo.lock fingerprint:  ${expected_cargo_lock_fingerprint}"
+		die
+	fi
+}
+
 _lockfile_gen_unpack() {
-	unpack "${MY_P}.tar.gz"
+	_unpack_sources
 	cd "${S}" || die
 einfo "Generating lockfile"
 	rm Cargo.lock
@@ -540,7 +635,7 @@ einfo "Generating lockfile"
 }
 
 _production_unpack() {
-	unpack "${MY_P}.tar.gz"
+	_unpack_sources
 	cargo_src_unpack
 
 einfo "Replacing with updated Cargo.lock"
@@ -548,11 +643,9 @@ einfo "Replacing with updated Cargo.lock"
 }
 
 src_unpack() {
-	default
-#	die
-
 	# Uncomment before running convert-cargo-lock.sh
 	# Follow the comments below the convert-cargo-lock.sh output when done generating the cargo list.
+	#_unpack_sources
 	#die
 
 	if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then

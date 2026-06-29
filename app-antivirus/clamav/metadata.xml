@@ -76,8 +76,9 @@
       Unislotted
     </slot>
     <subslots>
-      sts - short term support
-      lts - long term support
+      sts  - short term support
+      live - development sources
+      lts  - long term support
     </subslots>
   </slots>
 </pkgmetadata>
