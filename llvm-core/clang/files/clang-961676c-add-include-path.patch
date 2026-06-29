@@ -1,0 +1,14 @@
+--- a/lib/Driver/ToolChains/Gnu.cpp.orig	2026-06-29 03:18:22.367517285 -0700
++++ b/lib/Driver/ToolChains/Gnu.cpp	2026-06-29 03:21:59.904969921 -0700
+@@ -3222,6 +3222,11 @@ void Generic_GCC::AddMultilibIncludeArgs
+                               Twine(LibPath) + "/../" + GCCTriple.str() +
+                                   "/include");
+ 
++  // For stddef.h on Gentoo
++  StringRef InstallDir = GCCInstallation.getInstallPath();
++  addSystemInclude(DriverArgs, CC1Args,
++                   InstallDir.str() + "/include");
++
+   const auto &Callback = GCCInstallation.getMultilibs().includeDirsCallback();
+   if (Callback) {
+     for (const auto &Path : Callback(GCCInstallation.getMultilib()))

@@ -391,7 +391,7 @@ src_prepare() {
 	eapply -p2 "${FILESDIR}/${PN}-17.0.0.9999-stdatomic-force.patch"
 
 	#use pgo && \
-	eapply "${FILESDIR}/clang-16.0.0.9999-add-include-path.patch"
+	eapply "${FILESDIR}/${PN}-961676c-add-include-path.patch"
 
 	eapply_hardened
 
@@ -600,7 +600,10 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 
 	# Workaround for bug #968756 (gcc PR123588)
-	tc-is-gcc && [[ $(gcc-major-version) -eq 16 ]] && local -x CXXFLAGS="${CXXFLAGS} -fno-tree-vectorize"
+	if tc-is-gcc ; then
+		local major_pv=$(gcc --version 2>&1 | tr "[[:space:]]" " " | cut -f 3 -d " " | cut -f 1 -d ".")
+		[[ "${major_pv}" -eq 16 ]] && local -x CXXFLAGS="${CXXFLAGS} -fno-tree-vectorize"
+	fi
 
 	# LLVM can have very high memory consumption while linking,
 	# exhausting the limit on 32-bit linker executable
