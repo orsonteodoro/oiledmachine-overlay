@@ -21,7 +21,7 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-inherit bash-completion-r1 check-compiler-switch flag-o-matic llvm.org
+inherit bash-completion-r1 check-compiler-switch flag-o-matic llvm.org multilib
 
 KEYWORDS="
 ~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux
@@ -39,7 +39,7 @@ IUSE+="
 ${LLVM_EBUILDS_LLVM18_REVISION}
 bootstrap-prefix cet default-compiler-rt default-libcxx default-lld
 llvm-libunwind hardened
-ebuild_revision_3
+ebuild_revision_5
 "
 PDEPEND="
 	!default-compiler-rt? (

@@ -23,7 +23,7 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-inherit bash-completion-r1 check-compiler-switch flag-o-matic elisp-common llvm.org
+inherit bash-completion-r1 check-compiler-switch flag-o-matic elisp-common llvm.org multilib
 
 KEYWORDS="
 amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv ~sparc x86 ~arm64-macos ~x64-macos
@@ -40,7 +40,7 @@ IUSE+="
 ${LLVM_EBUILDS_LLVM21_REVISION}
 bootstrap-prefix cet default-compiler-rt default-libcxx default-lld
 llvm-libunwind emacs hardened
-ebuild_revision_3
+ebuild_revision_5
 "
 # Enforce clang-runtime USE flags on clang-runtime as well to aid transition
 PDEPEND="
@@ -309,6 +309,7 @@ src_install() {
 	# elif __GENTOO_HAS_FEATURE(numerical_stability_sanitizer)
 	# elif __GENTOO_HAS_FEATURE(realtime_sanitizer)
 	# elif __GENTOO_HAS_FEATURE(thread_sanitizer)
+	# elif defined(_GENTOO_NO_FORTIFY_SOURCE)
 	# else
 	#  define _FORTIFY_SOURCE ${fortify_level}
 	# endif
