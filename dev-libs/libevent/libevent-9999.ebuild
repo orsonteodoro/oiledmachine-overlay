@@ -90,6 +90,8 @@ multilib_src_configure() {
 		-DEVENT__DISABLE_OPENSSL=$(usex ssl OFF ON)
 		-DEVENT__LIBRARY_TYPE=$(usex static-libs BOTH SHARED)
 		-DCMAKE_DEBUG_POSTFIX=""
+		-DCMAKE_DISABLE_FIND_PACKAGE_MbedTLS=$(usex mbedtls OFF ON)
+		-DCMAKE_DISABLE_FIND_PACKAGE_OpenSSL=$(usex ssl OFF ON)
 	)
 	cmake_src_configure
 }
