@@ -64,6 +64,7 @@ VULNERABILITIES_FIXED=(
 )
 
 # QA:  When updating the lockfiles
+# Fix for CVE-2026-46671 (GHSA-4j5m-wc25-pvh7)
 # 1. Edit libclamav_rust/Cargo.toml
 # 2. Change to onenote_parser = "1.1.1"
 # 3. cd libclamav_rust
