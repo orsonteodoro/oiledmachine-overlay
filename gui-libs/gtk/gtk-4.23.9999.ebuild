@@ -88,11 +88,11 @@ COMMON_DEPEND="
 		>=sys-libs/musl-${MUSL_PV}:=
 	)
 	gstreamer? (
-		>=media-libs/gstreamer-1.24.0:=
-		>=media-libs/gst-plugins-bad-1.24.0:=
+		>=media-libs/gstreamer-${GSTREAMER_PV}:=
+		>=media-libs/gst-plugins-bad-${GSTREAMER_PV}:=
 		|| (
-			>=media-libs/gst-plugins-base-1.24.0:=[gles2]
-			>=media-libs/gst-plugins-base-1.24.0:=[opengl]
+			>=media-libs/gst-plugins-base-${GSTREAMER_PV}[gles2]
+			>=media-libs/gst-plugins-base-${GSTREAMER_PV}[opengl]
 		)
 	)
 	introspection? ( >=dev-libs/gobject-introspection-${GOBJECT_INTROSPECTION_PV}:= )
@@ -142,7 +142,7 @@ BDEPEND="
 		')
 	)
 	dev-python/docutils
-	~dev-libs/glib-2.89.9999
+	~dev-libs/glib-${GLIB_PV}
 	>=dev-util/gdbus-codegen-2.80.5-r1
 	dev-util/glib-utils
 	>=sys-devel/gettext-0.19.7
@@ -153,7 +153,7 @@ BDEPEND="
 		>=dev-util/wayland-scanner-1.24.0
 	)
 	test? (
-		~dev-libs/glib-2.89.9999
+		~dev-libs/glib-${GLIB_PV}
 		media-fonts/cantarell
 		wayland? ( dev-libs/weston[headless] )
 	)
@@ -220,8 +220,8 @@ src_prepare() {
 }
 
 src_configure() {
-	cflags-hardened_append
 	chkl_check_many_timestamps
+	cflags-hardened_append
 
 	use x86 && append-flags -DDISABLE_X64=1 #943705 https://gitlab.gnome.org/GNOME/gtk/-/issues/4173
 
