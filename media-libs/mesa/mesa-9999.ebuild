@@ -142,7 +142,7 @@ done
 unset card
 
 if [[ "${PV}" == "9999" ]] ; then
-	FALLBACK_COMMIT="34b4e94f9f182337fa3754d01625dd7f917d400f"
+	FALLBACK_COMMIT="7bf9ff93892d5e164507730961342470cdff8813"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/mesa/mesa.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -184,7 +184,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
 asahi debug +llvm lm-sensors opencl +opengl +proprietary-codecs +shader-cache
 sysprof test unwind vaapi valgrind vulkan wayland +X +zstd
-ebuild_revision_29
+ebuild_revision_30
 "
 REQUIRED_USE="
 	video_cards_i915? (
