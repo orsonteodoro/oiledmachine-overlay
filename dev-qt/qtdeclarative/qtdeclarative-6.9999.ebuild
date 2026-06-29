@@ -17,7 +17,7 @@ QT6_HAS_STATIC_LIBS=1
 # other more minor issues (installs junk, sandbox/offscreen issues)
 QT6_RESTRICT_TESTS=1
 
-FALLBACK_COMMIT="b30a54cf0d471ba6f5e63b8fd4014905ce280a6f" # Mon, 15 Jun 2026 10:55:49 +0200
+FALLBACK_COMMIT="9f87c42f5fe92f03ec7b36866d326a1a82da213a"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -42,7 +42,10 @@ if [[ ${QT6_BUILD_TYPE} == release ]]; then
 	KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~loong ~ppc ~ppc64 ~riscv ~x86"
 fi
 
-IUSE+=" accessibility +jit +network opengl qmlls +sql +ssl svg vulkan +widgets"
+IUSE+="
+accessibility +jit +network opengl qmlls +sql +ssl svg vulkan +widgets
+ebuild_revision_1
+"
 
 RDEPEND="
 	~dev-qt/qtbase-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},accessibility=,gui,network=,opengl=,sql?,ssl?,vulkan=,widgets=]
