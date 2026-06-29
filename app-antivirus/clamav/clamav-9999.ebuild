@@ -655,8 +655,8 @@ einfo "Replacing with updated Cargo.lock"
 src_unpack() {
 	# Uncomment before running convert-cargo-lock.sh
 	# Follow the comments below the convert-cargo-lock.sh output when done generating the cargo list.
-	_unpack_sources
-	die
+	#_unpack_sources
+	#die
 
 	if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
 		_lockfile_gen_unpack
