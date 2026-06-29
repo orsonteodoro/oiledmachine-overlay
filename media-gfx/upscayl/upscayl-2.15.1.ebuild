@@ -130,7 +130,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 	custom-models firejail
-	ebuild_revision_26
+	ebuild_revision_27
 "
 RDEPEND+="
 	virtual/vulkan
@@ -166,6 +166,7 @@ npm_update_lock_audit_post() {
 	# --prefer-offline is broken
 	enpm install -D "electron@${ELECTRON_APP_ELECTRON_PV}"
 
+einfo "QA:  Manually remove node_modules/next/node_modules/postcss from package-lock.json"
 	patch_lockfile() {
 		# DoS = Denial of Service
 		# DT = Data Tampering
