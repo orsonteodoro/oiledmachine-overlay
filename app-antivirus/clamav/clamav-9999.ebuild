@@ -6,6 +6,8 @@ EAPI=8
 
 # D12, U24
 
+# This ebuild fork uses AI interfence for security fix.
+
 # The lockfile should be updated once a week for security reasons.
 
 # Upstream are working on updating clamav's LLVM bytecode interpreter to work
@@ -61,10 +63,17 @@ PYTEST_PV="7.2.0"
 VULNERABILITIES_FIXED=(
 )
 
+# QA:  When updating the lockfiles
+# 1. Edit libclamav_rust/Cargo.toml
+# 2. Change to onenote_parser = "1.1.1"
+# 3. cd libclamav_rust
+# 4. cargo update -p onenote_parser
+# 5. cd ..
+# 6. cargo generate-lockfile
+# 7. cargo audit
 declare -A GIT_CRATES=(
 # QA: Manually remove ?tag=1.2.4
 [clam-sigutil]="https://github.com/Cisco-Talos/clamav-signature-util;7cfeb7f630ce472239f5b0a794b62df7f592acc7;clamav-signature-util-%commit%" # 1.2.4
-[onenote_parser]="https://github.com/Cisco-Talos/onenote.rs;29c08532252b917543ff268284f926f30876bb79;onenote.rs-%commit%" # 0.3.1
 )
 
 # From "./convert-cargo-lock.sh 9999 9999" \
@@ -135,7 +144,7 @@ either_n-0.2.0
 encoding_rs-0.8.35
 enumflags2-0.7.12
 enumflags2_derive-0.7.12
-enum-primitive-derive-0.2.2
+enum-primitive-derive-0.3.0
 enum-variants-strings-0.3.0
 enum-variants-strings-derive-0.3.0
 equator-0.4.2
@@ -191,7 +200,6 @@ indexmap-2.14.0
 inflate-0.4.5
 interpolate_name-0.2.4
 is_terminal_polyfill-1.70.2
-itertools-0.10.5
 itertools-0.14.0
 itoa-1.0.18
 jobserver-0.1.34
@@ -227,6 +235,7 @@ num-rational-0.4.2
 num-traits-0.2.19
 once_cell-1.21.4
 once_cell_polyfill-1.70.2
+onenote_parser-1.1.1
 openssl-0.10.81
 openssl-macros-0.1.1
 openssl-sys-0.9.117
@@ -268,6 +277,7 @@ rustix-0.38.44
 rustix-1.1.4
 rustversion-1.0.22
 ruzstd-0.8.3
+sanitise-file-name-1.0.0
 serde-1.0.228
 serde_core-1.0.228
 serde_derive-1.0.228
@@ -462,7 +472,7 @@ SLOT="0/live" # sts or lts or live
 IUSE+="
 doc clamonacc +clamapp custom-cflags experimental jit libclamav-only man milter rar
 selinux +system-mspack systemd test valgrind
-ebuild_revision_50
+ebuild_revision_51
 "
 REQUIRED_USE="
 	clamonacc? (
@@ -645,8 +655,8 @@ einfo "Replacing with updated Cargo.lock"
 src_unpack() {
 	# Uncomment before running convert-cargo-lock.sh
 	# Follow the comments below the convert-cargo-lock.sh output when done generating the cargo list.
-	#_unpack_sources
-	#die
+	_unpack_sources
+	die
 
 	if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
 		_lockfile_gen_unpack

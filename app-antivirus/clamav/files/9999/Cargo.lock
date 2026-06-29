@@ -395,7 +395,7 @@ dependencies = [
  "hex",
  "hex-literal 1.1.0",
  "humantime",
- "itertools 0.14.0",
+ "itertools",
  "log",
  "num-derive",
  "num-traits",
@@ -631,13 +631,13 @@ dependencies = [
 
 [[package]]
 name = "enum-primitive-derive"
-version = "0.2.2"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c375b9c5eadb68d0a6efee2999fef292f45854c3444c86f09d8ab086ba942b0e"
+checksum = "ba7795da175654fe16979af73f81f26a8ea27638d8d9823d317016888a63dc4c"
 dependencies = [
  "num-traits",
  "quote",
- "syn 1.0.109",
+ "syn 2.0.118",
 ]
 
 [[package]]
@@ -1183,15 +1183,6 @@ checksum = "a6cb138bb79a146c1bd460005623e142ef0181e3d0219cb493e02f7d08a35695"
 
 [[package]]
 name = "itertools"
-version = "0.10.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b0fd2260e829bddf4cb6ea802289de2f86d6a7a690192fbe91b3f46e0f2c8473"
-dependencies = [
- "either",
-]
-
-[[package]]
-name = "itertools"
 version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2b192c782037fadd9cfa75548310488aabdbf3d2da73885b31bd0abd03351285"
@@ -1473,16 +1464,17 @@ checksum = "384b8ab6d37215f3c5301a95a4accb5d64aa607f1fcb26a11b5303878451b4fe"
 
 [[package]]
 name = "onenote_parser"
-version = "0.3.1"
-source = "git+https://github.com/Cisco-Talos/onenote.rs.git?branch=CLAM-2329-new-from-slice#29c08532252b917543ff268284f926f30876bb79"
+version = "1.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ec8c03e23e2dff7a559bcb91adb17468fb9376b132e17a2789fba19efea34984"
 dependencies = [
  "bytes",
  "encoding_rs",
  "enum-primitive-derive",
- "itertools 0.10.5",
+ "itertools",
  "num-traits",
- "paste",
- "thiserror 1.0.69",
+ "sanitise-file-name",
+ "thiserror 2.0.18",
  "uuid",
  "widestring",
 ]
@@ -1725,7 +1717,7 @@ dependencies = [
  "built",
  "cfg-if",
  "interpolate_name",
- "itertools 0.14.0",
+ "itertools",
  "libc",
  "libfuzzer-sys",
  "log",
@@ -1883,6 +1875,12 @@ checksum = "a7c1c839d570d835527c9a5e4db7cb2198683a988cb9d7293fc8674e6bd58fc8"
 dependencies = [
  "twox-hash",
 ]
+
+[[package]]
+name = "sanitise-file-name"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "19d36299972b96b8ae7e8f04ecbf75fb41a27bf3781af00abcf57609774cb911"
 
 [[package]]
 name = "serde"
