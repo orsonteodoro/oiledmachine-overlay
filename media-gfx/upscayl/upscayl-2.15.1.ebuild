@@ -130,7 +130,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 	custom-models firejail
-	ebuild_revision_25
+	ebuild_revision_26
 "
 RDEPEND+="
 	virtual/vulkan
@@ -253,6 +253,15 @@ npm_update_lock_audit_post() {
 
 		sed -i -e "s|\"@opentelemetry/core\": \"2.2.0\"|\"@opentelemetry/core\": \"^${NODE_OPENTELEMETRY_CORE_PV}\"|g" "package-lock.json" || die	# CVE-2026-54285; ZC, DoS; Moderate
 		sed -i -e "s|\"@opentelemetry/core\": \"2.5.1\"|\"@opentelemetry/core\": \"^${NODE_OPENTELEMETRY_CORE_PV}\"|g" "package-lock.json" || die	# CVE-2026-54285; ZC, DoS; Moderate
+
+		sed -i -e "s|\"postcss\": \"^8.4.47\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die					# CVE-2026-41305; DT, ID; Moderate
+		sed -i -e "s|\"postcss\": \"^8.4.31\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die					# CVE-2026-41305; DT, ID; Moderate
+		sed -i -e "s|\"postcss\": \"8.4.31\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die						# CVE-2026-41305; DT, ID; Moderate
+		sed -i -e "s|\"postcss\": \"^8.4.21\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die					# CVE-2026-41305; DT, ID; Moderate
+		sed -i -e "s|\"postcss\": \"^8.2.14\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die					# CVE-2026-41305; DT, ID; Moderate
+		sed -i -e "s|\"postcss\": \"^8.1.0\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die						# CVE-2026-41305; DT, ID; Moderate
+		sed -i -e "s|\"postcss\": \"^8.0.0\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die						# CVE-2026-41305; DT, ID; Moderate
+		sed -i -e "s|\"postcss\": \">=8.0.9\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die					# CVE-2026-41305; DT, ID; Moderate
 	}
 	patch_lockfile
 	local pkgs
@@ -266,11 +275,12 @@ npm_update_lock_audit_post() {
 		"@xmldom/xmldom@^0.8.12"
 		"@tootallnate/once@^3.0.1"
 		"@opentelemetry/core@^${NODE_OPENTELEMETRY_CORE_PV}"
+		"postcss@^${NODE_POSTCSS_PV}"
 	)
 	enpm install -D "${pkgs[@]}"
 
 	pkgs=(
-		"@babel/runtime@7.26.10"
+		"@babel/runtime@^7.26.10"
 		"glob@^10.5.0"
 		"undici@^${NODE_UNDICI_PV}"
 		"protobufjs@^${NODE_24_PROTOBUFJS_PV}"
