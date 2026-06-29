@@ -62,3 +62,6 @@ dev-libs/jemalloc-usd fallback-commit
 
 # Guardrails to mitigate ACE, PE, DT, ID for USE="-* " abuse
 dev-libs/libffi exec-static-trampoline
+
+# Unmaintained dependency
+media-libs/tiff jbig
