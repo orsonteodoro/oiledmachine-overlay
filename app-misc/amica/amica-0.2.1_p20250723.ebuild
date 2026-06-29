@@ -492,7 +492,7 @@ CHKL_TIMESTAMPS=(
 	"x11-libs/cairo-9999"
 )
 
-inherit cargo chkl desktop edo lcnr npm python-single-r1 rust node-sharp secure-version secure-version-node webkitgtk-stable xdg
+inherit cargo chkl desktop edo lcnr npm python-single-r1 rust node-sharp secure-version secure-version-node xdg
 
 KEYWORDS="~amd64 ~arm64"
 SRC_URI="
@@ -649,27 +649,24 @@ REQUIRED_USE="
 	)
 "
 gen_webkit_depend() {
-	local s
-	for s in "${WEBKITGTK_STABLE[@]}" ; do
 	# TODO:  add audio minimum requirement for webkit-gtk for tts/stt
 	# onnxruntime-web needs webassembly
-		echo "
-			(
-				=net-libs/webkit-gtk-${s}*:4[javascript,jit,introspection,wayland?,webassembly,X?,webgl]
-		"
+	echo "
+		(
+			~net-libs/webkit-gtk-${WEBKIT_GTK_STABLE_PV}:4[javascript,jit,introspection,wayland?,webassembly,X?,webgl]
+	"
 
 	# tts - voice synthesis
-		echo "
-		"
+	echo "
+	"
 
 	# stt - voice recognition
-		echo "
-				voice-recognition? (
-					=net-libs/webkit-gtk-${s}*:4[microphone]
-				)
+	echo "
+			voice-recognition? (
+				~net-libs/webkit-gtk-${WEBKIT_GTK_STABLE_PV}:4[microphone]
 			)
-		"
-	done
+		)
+	"
 }
 RUST_BINDINGS_DEPEND_DISABLED="
 	>=net-libs/libsoup-${LIBSOUP2_PV}:2.4[introspection]
@@ -695,9 +692,9 @@ RUST_BINDINGS_DEPEND="
 		)
 	)
 
-	net-libs/webkit-gtk:=[javascript,jit,introspection,wayland?,webassembly,X?,webgl]
+	net-libs/webkit-gtk:4=[javascript,jit,introspection,wayland?,webassembly,X?,webgl]
 	voice-recognition? (
-		net-libs/webkit-gtk:=[microphone]
+		net-libs/webkit-gtk:4=[microphone]
 	)
 	|| (
 		$(gen_webkit_depend)

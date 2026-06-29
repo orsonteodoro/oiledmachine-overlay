@@ -17,6 +17,7 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
+# DEPRECATED.  Use stable-version's WEBKIT_GTK_STABLE_PV instead.
 # Even numbers only and the latest for security reasons
 WEBKITGTK_STABLE=(
         "2.52"
