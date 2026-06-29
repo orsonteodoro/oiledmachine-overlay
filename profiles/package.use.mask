@@ -157,3 +157,6 @@ net-misc/networkmanager dhclient
 
 # Unmaintained dependency, last release was in 2015
 dev-qt/qtimageformats mng
+
+# Unmaintained dependency
+media-libs/tiff jbig
