@@ -365,7 +365,7 @@ CHKL_TIMESTAMPS=(
 	"net-misc/curl-9999"
 )
 
-inherit cargo cflags-hardened cmake eapi9-ver flag-o-matic lcnr llvm optfeature
+inherit cargo cflags-hardened chkl cmake eapi9-ver flag-o-matic lcnr llvm optfeature
 inherit python-any-r1 rustflags-hardened sandbox-changes secure-version systemd tmpfiles toolchain-funcs vf
 
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -703,6 +703,8 @@ eerror
 }
 
 src_configure() {
+	chkl_check_many_timestamps
+
 	use elibc_musl && append-ldflags -lfts
 	use ppc64 && append-flags -mminimal-toc
 
@@ -714,6 +716,7 @@ src_configure() {
 			'-mtune=*'
 		replace-flags '-O*' '-O3'
 	fi
+
 	cflags-hardened_append
 	rustflags-hardened_append
 
