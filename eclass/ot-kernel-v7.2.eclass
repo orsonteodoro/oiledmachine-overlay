@@ -21,6 +21,8 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
+# See also https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/
+
 # For *DEPENDs, see
 # https://github.com/torvalds/linux/blob/master/Documentation/process/changes.rst
 # https://github.com/torvalds/linux/blob/v7.2/Documentation/process/changes.rst
@@ -389,6 +391,20 @@ bbrv2 bbrv3 build c2tcp +cet -clang deepcc -debug doc -dwarf4 -dwarf5
 orca pgo prjc qt5 qt6 +retpoline rt -rust scx shadowcallstack symlink tresor tresor_prompt
 tresor_sysfs zen-sauce
 "
+
+if [[ "${PV}" =~ "9999" ]] ; then
+# Vanilla sources only
+	REQUIRED_USE+="
+		!genpatches
+		!genpatches_1510
+		!nest
+		!rt
+		!tresor
+		!tresor_prompt
+		!tresor_sysfs
+		!zen-sauce
+	"
+fi
 
 REQUIRED_USE+="
 	?? (

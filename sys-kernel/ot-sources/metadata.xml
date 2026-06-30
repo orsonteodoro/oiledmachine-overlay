@@ -198,7 +198,19 @@
 		    TRESOR (x86-64) [5]			D
 		    zen-sauce				A
 
-    Ebuild support for live is temporarily down but may change in the future.
+    7.2 (Live)					
+		    -rt	(RT_PREEMPT)			D
+		    Clang PGO				D
+		    genpatches				D
+		    kernel_compiler_patch		D
+		    Nest				D
+		    Project C				D
+		    TCP BBR v2 [5]			D
+		    TCP BBR v3 [5]			D
+		    TRESOR (AES-NI) [5]			D
+		    TRESOR (x86) [5]			D
+		    TRESOR (x86-64) [5]			D
+		    zen-sauce				D
 
 
     [1] Kernel LTS provides security updates and bugfixes, but doesn't extend to
@@ -246,7 +258,8 @@
 
     Recommended slot use cases
 
-     7.0:  Debugging team, enthusiast gaming, virtualization, containers, best
+     7.2:  Daily security updates, developer testing
+ 7.0/7.1:  Debugging team, enthusiast gaming, virtualization, containers, best
            rolling experience, AI/ML testing and development
     6.18:  Debugging team, new hardware gaming, AI/ML testing and development,
            virtualization, containers, DSS testing

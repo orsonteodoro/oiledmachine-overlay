@@ -6,8 +6,10 @@ EAPI=8
 # Contains AI generated synthetic data in metadata.xml.
 # Contains patches derived from AI generated code.
 
-GENPATCHES_FALLBACK_COMMIT="4d22cd24ec825388ef8b0dd320b2994064491536" # 2025-05-11 15:41:55 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="7586ac7c340c3672f116052c1d150f134810965b" # 2025-05-23 09:47:43 -0700
+# See also https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/
+
+GENPATCHES_FALLBACK_COMMIT="d4fa92430e875432c3a61bb3abd9b6e68ea9fcbd" # 2026-06-04 18:26:32 -0400
+LINUX_SOURCES_FALLBACK_COMMIT="dc59e4fea9d83f03bad6bddf3fa2e52491777482" # 2026-06-28 12:01:31 -0700
 RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See

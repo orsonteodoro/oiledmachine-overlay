@@ -53,6 +53,8 @@
 #	https://github.com/torvalds/linux/compare/v6.0...samitolvanen:kcfi-v5
 # kernel_compiler_patch:
 #	https://github.com/graysky2/kernel_compiler_patch
+# Linux kernel sources (live):
+#       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/
 # Multigenerational LRU:
 #	https://github.com/torvalds/linux/compare/v5.15...zen-kernel:5.15/lru
 #	https://github.com/torvalds/linux/compare/v6.0...zen-kernel:6.0/mglru
