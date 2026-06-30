@@ -277,6 +277,7 @@ RUST_SLOTS=(
 )
 RUST_MAX_VER="1.94.1" # Inclusive
 RUST_MIN_VER="1.81.0" # Inclusive
+RUST_NEEDS_LLVM=1 # Prune rustc for unused LLVM slots
 PPC_FLAGS=(
 	"cpu_flags_ppc_476fpe"
 	"cpu_flags_ppc_altivec"
