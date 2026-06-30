@@ -160,3 +160,6 @@ dev-qt/qtimageformats mng
 
 # Unmaintained dependency
 media-libs/tiff jbig
+
+# Only vanilla allowed
+=sys-kernel/ot-sources-7.2.0.9999 genpatches genpatches_1510 nest rt tresor tresor_prompt tresor_sysfs zen-sauce
