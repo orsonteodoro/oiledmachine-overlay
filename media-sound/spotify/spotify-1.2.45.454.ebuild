@@ -215,7 +215,7 @@ RESTRICT="binchecks mirror strip"
 SLOT="0/${DEFAULT_CONFIGURATION}"
 IUSE+="
 ${COREUTILS_IMPLS[@]}
-clang emoji ffmpeg gcc firejail wayland +X
+clang emoji ffmpeg gcc firejail libnotify wayland +X
 ebuild_revision_5
 "
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -254,18 +254,18 @@ RDEPEND+="
 	>=media-libs/mesa-${MESA_PV}:=[wayland?,X?]
 	>=net-libs/libssh2-${LIBSSH2_PV}:=
 	>=net-libs/nghttp2-${NGHTTP2_PV}:=
+	>=net-libs/gnutls-${GNUTLS_PV}
 	>=net-print/cups-${CUPS_PV}:=
 	>=sys-apps/dbus-${DBUS_PV}:=
+	>=sys-devel/gcc-${GCC_PV}:=
+	>=sys-libs/glibc-${GLIBC_PV}:=
 	>=x11-libs/cairo-${CAIRO_PV}:=
 	>=x11-libs/libdrm-${LIBDRM_PV}:=
 	>=x11-libs/pango-${PANGO_PV}:=
 	>=x11-libs/gtk+-${GTK3_PV}:3=[wayland?,X?]
-	>=sys-devel/gcc-${GCC_PV}:=
-	>=sys-libs/glibc-${GLIBC_PV}:=
 	>=virtual/zlib-${ZLIB_PV}:=
-	dev-libs/libdbusmenu
-	>=net-libs/gnutls-${GNUTLS_PV}
 	>=x11-libs/gdk-pixbuf-${GDK_PIXBUF_PV}
+	dev-libs/libdbusmenu
 	emoji? (
 		>=media-libs/fontconfig-${FONTCONFIG_PV}:=
 		>=media-libs/freetype-${FREETYPE_PV}:=[png]
@@ -279,6 +279,9 @@ RDEPEND+="
 	)
 	ffmpeg? (
 		$(secure-version_gen_ffmpeg_depends '6.0-8.0' '' 'single')
+	)
+	libnotify? (
+		x11-libs/libnotify
 	)
 	X? (
 		>=x11-libs/libX11-${LIBX11_PV}:=
@@ -317,13 +320,13 @@ BDEPEND+="
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	BDEPEND+="
-		app-crypt/gnupg[ssl]
+		>=app-crypt/gnupg-${GNUPG_PV}[ssl]
 	"
 else
 	BDEPEND+="
-		app-crypt/gnupg
+		>=app-crypt/gnupg-${GNUPG_PV}
 		verify-gpg-key? (
-			app-crypt/gnupg[ssl]
+			>=app-crypt/gnupg-${GNUPG_PV}[ssl]
 		)
 	"
 fi

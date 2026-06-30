@@ -151,7 +151,7 @@ declare -A atabs=(
 
 COREUTILS_IMPLS=(
 	"+coreutils"
-	"sys-apps/uutils-coreutils"
+	"uutils-coreutils"
 )
 
 CHKL_TIMESTAMPS=(
@@ -216,7 +216,7 @@ RESTRICT="binchecks mirror strip"
 SLOT="0/${DEFAULT_CONFIGURATION}"
 IUSE+="
 ${COREUTILS_IMPLS[@]}
-clang emoji ffmpeg gcc firejail wayland +X
+clang emoji ffmpeg gcc firejail libnotify wayland +X
 ebuild_revision_5
 "
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -253,20 +253,21 @@ RDEPEND+="
 	>=media-libs/alsa-lib-${ALSA_LIB_PV}:=
 	>=media-libs/harfbuzz-${HARFBUZZ_PV}:=
 	>=media-libs/mesa-${MESA_PV}:=[wayland?,X?]
+	>=net-libs/gnutls-${GNUTLS_PV}
 	>=net-libs/libssh2-${LIBSSH2_PV}:=
 	>=net-libs/nghttp2-${NGHTTP2_PV}:=
 	>=net-print/cups-${CUPS_PV}:=
 	>=sys-apps/dbus-${DBUS_PV}:=
+	>=sys-devel/gcc-${GCC_PV}:=
+	>=sys-libs/glibc-${GLIBC_PV}:=
+	>=virtual/zlib-${ZLIB_PV}:=
 	>=x11-libs/cairo-${CAIRO_PV}:=
 	>=x11-libs/libdrm-${LIBDRM_PV}:=
 	>=x11-libs/pango-${PANGO_PV}:=
 	>=x11-libs/gtk+-${GTK3_PV}:3=[wayland?,X?]
-	>=sys-devel/gcc-${GCC_PV}:=
-	>=sys-libs/glibc-${GLIBC_PV}:=
-	>=virtual/zlib-${ZLIB_PV}:=
-x	dev-libs/libdbusmenu
-	>=net-libs/gnutls-${GNUTLS_PV}
 	>=x11-libs/gdk-pixbuf-${GDK_PIXBUF_PV}
+	dev-libs/libdbusmenu
+	virtual/udev:*
 	emoji? (
 		>=media-libs/fontconfig-${FONTCONFIG_PV}:=
 		>=media-libs/freetype-${FREETYPE_PV}:=[png]
@@ -281,6 +282,9 @@ x	dev-libs/libdbusmenu
 	ffmpeg? (
 		$(secure-version_gen_ffmpeg_depends '6.0-8.0' '' 'single')
 	)
+	libnotify? (
+		x11-libs/libnotify
+	)
 	X? (
 		>=x11-libs/libX11-${LIBX11_PV}:=
 		>=x11-libs/libXcomposite-0.4.5:=
@@ -289,8 +293,6 @@ x	dev-libs/libdbusmenu
 		>=x11-libs/libXfixes-${LIBXFIXES_PV}:=
 		>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=
 		>=x11-libs/libXrandr-${LIBXRANDR_PV}:=
-		>=x11-libs/libSM-${LIBSM_PV}:=
-		>=x11-libs/libICE-${LIBICE_PV}:=
 		>=x11-libs/libxcb-${LIBXCB_PV}:=
 	)
 	$(secure-version_gen_openssl_depends '3.0-3.6')
@@ -318,13 +320,13 @@ BDEPEND+="
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	BDEPEND+="
-		app-crypt/gnupg[ssl]
+		>=app-crypt/gnupg-${GNUPG_PV}[ssl]
 	"
 else
 	BDEPEND+="
-		app-crypt/gnupg
+		>=app-crypt/gnupg-${GNUPG_PV}
 		verify-gpg-key? (
-			app-crypt/gnupg[ssl]
+			>=app-crypt/gnupg-${GNUPG_PV}[ssl]
 		)
 	"
 fi
