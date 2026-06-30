@@ -147,9 +147,6 @@ BBRV3_BASE_URI="https://github.com/google/bbr/commit/"
 BMQ_FN="${BMQ_FN:-v${KV_MAJOR_MINOR}_bmq${PATCH_BMQ_VER}.patch}"
 BMQ_BASE_URI="https://gitlab.com/alfredchen/bmq/raw/master/${KV_MAJOR_MINOR}/"
 BMQ_SRC_URI="${BMQ_BASE_URI}${BMQ_FN}"
-CFI_BASE_URI="https://github.com/torvalds/linux/commit/"
-CK_BASE_URI="https://github.com/torvalds/linux/commit/"
-CLANG_PGO_FN="clang-pgo-v9.patch"
 
 if [[ -n "${C2TCP_VER}" ]] ; then
 	C2TCP_FN="linux-${C2TCP_KV//./-}-orca-c2tcp-${C2TCP_EXTRA}.patch"
@@ -160,6 +157,15 @@ if [[ -n "${C2TCP_VER}" ]] ; then
 			-> copyright.c2tcp.${C2TCP_COMMIT:0:7}
 	"
 fi
+
+CFI_BASE_URI="https://github.com/torvalds/linux/commit/"
+CK_BASE_URI="https://github.com/torvalds/linux/commit/"
+CLANG_PGO_FN="clang-pgo-v9.patch"
+
+COREUTILS_IMPL=(
+	"+coreutils"
+	"uutils-coreutils"
+)
 
 GCC_PKG="sys-devel/gcc"
 GENPATCHES_URI_BASE_URI="https://gitweb.gentoo.org/proj/linux-patches.git/snapshot/"
@@ -2356,6 +2362,7 @@ CHKL_TIMESTAMPS+=(
 	"sys-apps/coreutils-9999"
 	"sys-apps/findutils-9999"
 	"sys-apps/util-linux-9999"
+	"sys-apps/uutils-coreutils-9999"
 	"sys-kernel/linux-firmware-99999999"
 	"sys-process/procps-9999"
 )
@@ -2450,6 +2457,7 @@ SLOT=${SLOT:-${PV}}
 
 # Upstream keeps reiserfs
 IUSE+="
+${COREUTILS_IMPL[@]/+}
 ${EBUILD_REV}
 ${TRAINERS[@]/#/ot_kernel_trainers_}
 big-endian bzip2 cpu_flags_arm_thumb cuda gost graphicsmagick gtk gzip imagemagick
@@ -2537,6 +2545,9 @@ BDEPEND+="
 	>=sys-apps/util-linux-${UTIL_LINUX_PV}
 	dev-util/patchutils
 	>=sys-apps/findutils-${FINDUTILS_PV}
+	coreutils? (
+		>=sys-apps/coreutils-${CORETUTILS_PV}
+	)
 	imagemagick? (
 		>=media-gfx/imagemagick-${IMAGEMAGICK_PV}
 		>=app-crypt/rhash-${RHASH_PV}
@@ -2547,6 +2558,9 @@ BDEPEND+="
 	graphicsmagick? (
 		>=media-gfx/graphicsmagick-${GRAPHICSMAGICK_PV}[imagemagick]
 		>=app-crypt/rhash-${RHASH_PV}
+	)
+	uutils-coreutils? (
+		>=sys-apps/uutils-coreutils-${UUTILS_COREUTILS}
 	)
 "
 
@@ -2567,7 +2581,6 @@ fi
 # Replace net-analyzer/traceroute
 # Deprecate sys-kernel/gostcrypt-linux-crypto
 PDEPEND+="
-	>=sys-apps/coreutils-${COREUTILS_PV}
 	>=sys-apps/grep-${GREP_PV}[pcre]
 	gost? (
 		sys-kernel/gostcrypt-linux-crypto
@@ -16031,6 +16044,18 @@ eerror "QTCORE_PV is not the same version as Qt5Widgets"
 # Run menuconfig
 ot-kernel_src_configure() {
 	chkl_check_many_timestamps
+	if has_version "sys-apps/uutils-coreutils" ; then
+		if ! use uutils-coreutils ; then
+eerror "Detected sys-apps/uutils-coreutils.  The uutils-coreutils USE flag must be enabled for ${CATEGORY}/${PN}."
+			die
+		fi
+	fi
+	if has_version "sys-apps/coreutils" ; then
+		if ! use coreutils ; then
+eerror "Detected sys-apps/coreutils.  The uutils-coreutils USE flag must be enabled for ${CATEGORY}/${PN}."
+			die
+		fi
+	fi
 	ot-kernel_is_build || return
 	local env_path
 	for env_path in $(ot-kernel_get_envs) ; do
