@@ -14,8 +14,8 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
-if [[ -z "${_SECURE_VERSION_NODE_ECLASS}" ]] ; then
-_SECURE_VERSION_NODE_ECLASS=1
+if [[ -z "${_SECURE_VERSION_PYTHON_ECLASS}" ]] ; then
+_SECURE_VERSION_PYTHON_ECLASS=1
 
 # You must prefix your entry with PYTHON_
 
