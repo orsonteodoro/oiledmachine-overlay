@@ -220,6 +220,18 @@ einfo "DR = Data Race"
 # Same as I
 einfo "DT = Data Tampering"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"DZ"($|" "|";"|",") ]] ; then
+#
+# Synonyms:
+#
+# Dead drop
+# Drop server
+# Exfiltration directory
+# Staging area
+# Staging directory
+#
+einfo "DZ = Drop Zone"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("EM"|"EMA")($|" "|";"|",") ]] ; then
 # CVSS 3.1 - AV:P/PR:N/UI:N/C:H
 einfo "EMA = Evil Maid Attack"
