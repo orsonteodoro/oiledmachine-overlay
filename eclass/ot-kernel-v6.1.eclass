@@ -554,8 +554,9 @@ gen_rust_cdepend() {
 # We add more binutils/llvm/gcc checks because the distro and other popular
 # overlays don't delete their older ebuilds.
 #
-# BUILD_DEPEND means either during emerge time or post installation like in the
-# 90s to early 2000s.
+# BUILD_DEPEND means either requirements fulfillment during emerge time or post
+# installation like in the 90s to early 2000s as in you install it in
+# /usr/src/linux then build in that directory directly.
 #
 BUILD_DEPEND+="
 	${KCP_RDEPEND}
