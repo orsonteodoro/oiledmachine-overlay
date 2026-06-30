@@ -2466,6 +2466,9 @@ xz zstd
 "
 
 REQUIRED_USE+="
+	^^ (
+		${COREUTILS_IMPL[@]/+}
+	)
 	ot_kernel_trainers_2d? (
 		pgo
 	)
