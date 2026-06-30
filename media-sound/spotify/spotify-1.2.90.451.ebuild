@@ -71,25 +71,11 @@ EAPI=8
 
 # Found in Recommends: section of stable requirements.
 # For ffmpeg:0/x.y.z, y must be <= 59.
-ALSA_LIB="1.1.3"
-ATK_PV="2.26.2"
 BUILD_ID_AMD64="gb094aab0" # Change this after every bump
-CAIRO_PV="1.16.0"
 CLANG_PV="17"
 DEFAULT_CONFIGURATION="stable"
 FFMPEG_SLOT="0/58.60.60" # Same as 6.0 in chromium tarball [do not use]
-FONTCONFIG_PV="2.15.0" # Use vendored list for versioning
-FREETYPE_PV="2.13.2" # Use vendored list for versioning
 GCC_PV="10.2.1"
-GLIB_PV="2.56.4"
-GLIBC_PV="2.30"
-GTK3_PV="3.22.30"
-GTK4_PV="4.8.3"
-LIBXI_PV="1.7.10"
-LIBXSCRNSAVER_PV="1.2.3" # Same as libxss1
-LIBXTST_PV="1.2.3"
-MESA_PV="20.3.5"
-NSS_PV="3.125"
 PKG_ARCH="amd64" # It can be amd64, i386, all.
 # Before URI redirect.  Not SSL protected.  MITM attack possible.
 # From second line of https://www.spotify.com/us/download/linux/
@@ -163,7 +149,37 @@ declare -A atabs=(
 	["sha512"]="\t"
 )
 
-inherit desktop flag-o-matic gnome2-utils sandbox-changes toolchain-funcs unpacker xdg
+COREUTILS_IMPLS=(
+	"+coreutils"
+	"sys-apps/uutils-coreutils"
+)
+
+CHKL_TIMESTAMPS=(
+	"app-accessibility/at-spi2-core-9999"
+	"app-arch/brotli-9999"
+	"app-arch/zstd-9999"
+	"app-crypt/rhash-9999"
+	"dev-libs/expat-9999"
+	"dev-libs/glib-2.89.9999"
+	"dev-libs/nettle-9999"
+	"media-libs/freetype-9999"
+	"media-libs/harfbuzz-9999"
+	"media-libs/mesa-9999"
+	"net-libs/libssh2-9999"
+	"net-libs/nghttp2-9999"
+	"net-misc/wget-9999"
+	"net-print/cups-9999"
+	"sys-apps/coreutils-9999"
+	"sys-apps/dbus-9999"
+	"sys-apps/firejail-9999"
+	"sys-apps/uutils-coreutils-9999"
+	"x11-libs/cairo-9999"
+	"x11-libs/libX11-9999"
+	"x11-libs/libxkbcommon-9999"
+	"x11-libs/libxcb-9999"
+)
+
+inherit chkl desktop flag-o-matic gnome2-utils sandbox-changes toolchain-funcs unpacker secure-version xdg
 
 #KEYWORDS="~amd64" # KEYWORDS, aka ready for testing, is off until the illegal instruction is fixed.
 S="${WORKDIR}"
@@ -199,7 +215,8 @@ LICENSE="
 RESTRICT="binchecks mirror strip"
 SLOT="0/${DEFAULT_CONFIGURATION}"
 IUSE+="
-emoji ffmpeg firejail bluetooth libnotify pulseaudio vaapi wayland zenity +X
+${COREUTILS_IMPLS[@]}
+clang emoji ffmpeg gcc firejail wayland +X
 ebuild_revision_5
 "
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -214,45 +231,46 @@ else
 fi
 
 REQUIRED_USE+="
+	^^ (
+		${COREUTILS_IMPLS[@]/+}
+	)
 	|| (
 		wayland
 		X
 	)
 "
 
-gen_ffmpeg_depends() {
-	echo "
-		|| (
-			!firejail? (
-				media-video/ffmpeg:56.58.58
-			)
-	"
-	local s
-	for s in ${FFMPEG_COMPAT[@]} ; do
-		echo "
-			media-video/ffmpeg:${s}
-		"
-	done
-	echo "
-		)
-	"
-}
-
-OPTIONAL_RDEPENDS_LISTED="
-	ffmpeg? (
-		$(gen_ffmpeg_depends)
-	)
-	libnotify? (
-		>=x11-libs/libnotify-0.7.7
-	)
-"
-
-# Not listed in URLs
-OPTIONAL_RDEPENDS_UNLISTED="
+RDEPEND+="
+	>=app-accessibility/at-spi2-core-${AT_SPI2_CORE_PV}:=
+	>=dev-libs/libayatana-appindicator-0.5.3:=
+	>=app-arch/brotli-${BROTLI_PV}:=
+	>=app-arch/zstd-${ZSTD_PV}:=
+	>=dev-libs/expat-${EXPAT_PV}:=
+	>=dev-libs/glib-${GLIB_PV}:=
+	>=dev-libs/nettle-${NETTLE_PV}:=
+	>=dev-libs/nss-${NSS_PV}:=
+	>=dev-libs/nspr-${NSPR_PV}:=
+	>=media-libs/alsa-lib-${ALSA_LIB_PV}:=
+	>=media-libs/harfbuzz-${HARFBUZZ_PV}:=
+	>=media-libs/mesa-${MESA_PV}:=[wayland?,X?]
+	>=net-libs/libssh2-${LIBSSH2_PV}:=
+	>=net-libs/nghttp2-${NGHTTP2_PV}:=
+	>=net-print/cups-${CUPS_PV}:=
+	>=sys-apps/dbus-${DBUS_PV}:=
+	>=x11-libs/cairo-${CAIRO_PV}:=
+	>=x11-libs/libdrm-${LIBDRM_PV}:=
+	>=x11-libs/pango-${PANGO_PV}:=
+	>=x11-libs/gtk+-${GTK3_PV}:3=[wayland?,X?]
+	>=sys-devel/gcc-${GCC_PV}:=
+	>=sys-libs/glibc-${GLIBC_PV}:=
+	>=virtual/zlib-${ZLIB_PV}:=
+	dev-libs/libdbusmenu
+	>=net-libs/gnutls-${GNUTLS_PV}
+	>=x11-libs/gdk-pixbuf-${GDK_PIXBUF_PV}
 	emoji? (
-		>=media-libs/fontconfig-${FONTCONFIG_PV}
-		>=media-libs/freetype-${FREETYPE_PV}[png]
-		>=x11-libs/cairo-${CAIRO_PV}
+		>=media-libs/fontconfig-${FONTCONFIG_PV}:=
+		>=media-libs/freetype-${FREETYPE_PV}:=[png]
+		>=x11-libs/cairo-${CAIRO_PV}:=
 		|| (
 			media-fonts/noto-color-emoji
 			media-fonts/noto-color-emoji-bin
@@ -260,190 +278,40 @@ OPTIONAL_RDEPENDS_UNLISTED="
 			media-fonts/twemoji
 		)
 	)
-	pulseaudio? (
-		>=media-libs/libpulse-14.2
-	)
-	vaapi? (
-		>=media-libs/libva-2.17.0[drm(+),wayland?,X?]
-		virtual/vaapi
-	)
-	zenity? (
-		>=gnome-extra/zenity-3.32.0
-	)
-"
-# zenity is not in generated_package_lists.
-
-# START CEF DEPENDS
-# Some *DEPENDs below are copy pasted and based on the cef-bin ebuild.
-
-# *DEPENDs based on install-build-deps.sh's common_lib_list and lib_list variables.
-
-# For details see:
-# https://github.com/chromium/chromium/blob/146.0.7680.179/build/install-build-deps.py#L329
-
-# The version is obtained in src_prepare
-
-CHROMIUM_CDEPEND="
-	>=app-accessibility/at-spi2-atk-2.38.0
-	>=dev-libs/glib-${GLIB_PV}:2
-	>=dev-libs/libevdev-1.11.0
-	>=dev-libs/libffi-3.3
-	>=dev-libs/nss-${NSS_PV}
-	>=media-libs/alsa-lib-${ALSA_LIB}
-	>=media-libs/mesa-${MESA_PV}[gbm(+),wayland?,X?]
-	>=sys-apps/dbus-1.12.24
-	>=sys-apps/pciutils-3.7.0
-	>=sys-apps/util-linux-2.36.1
-	>=sys-libs/glibc-${GLIBC_PV}
-	>=sys-libs/libcap-2.44
-	>=sys-libs/pam-1.4.0
-	>=x11-libs/cairo-${CAIRO_PV}
-	>=x11-libs/gtk+-${GTK3_PV}:3[wayland?,X?]
-	>=x11-libs/libdrm-2.4.115
-	bluetooth? (
-		>=net-wireless/bluez-5.55
-	)
-	wayland? (
-		>=dev-libs/wayland-1.18.0:=
+	ffmpeg? (
+		$(secure-version_gen_ffmpeg_depends '6.0-8.0' '' 'single')
 	)
 	X? (
-		>=x11-libs/libXtst-${LIBXTST_PV}
+		>=x11-libs/libX11-${LIBX11_PV}:=
+		>=x11-libs/libXcomposite-0.4.5:=
+		>=x11-libs/libXdamage-1.1.5:=
+		>=x11-libs/libXext-${LIBXEXT_PV}:=
+		>=x11-libs/libXfixes-${LIBXFIXES_PV}:=
+		>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=
+		>=x11-libs/libXrandr-${LIBXRANDR_PV}:=
+		>=x11-libs/libSM-${LIBSM_PV}:=
+		>=x11-libs/libICE-${LIBICE_PV}:=
+		>=x11-libs/libxcb-${LIBXCB_PV}:=
 	)
+	$(secure-version_gen_openssl_depends '3.0-3.6')
 "
-# For libdrm use vendored list for versioning
-
-# Possibly Nth level dependencies, but not direct.
-UNLISTED_RDEPEND="
-	>=media-libs/mesa-${MESA_PV}[egl(+),wayland?,X?]
-	>=x11-libs/libxkbcommon-1.0.3
-	>=dev-libs/fribidi-1.0.8
-	>=dev-libs/gmp-6.2.1
-	>=dev-libs/libbsd-0.11.3
-	>=dev-libs/libtasn1-4.16.0
-	>=dev-libs/libunistring-0.9.10
-	>=dev-libs/nettle-3.7.3
-	>=media-libs/harfbuzz-8.5.0
-	>=media-libs/libglvnd-1.3.2
-"
-# For harfbuzz use vendored list for versioning
-#
-
-# Not listed as either direct or Nth level library
-# Also the feature may not be present or reachable.
-#UNLISTED_CR_RDEPEND_DROPPED="
-#	>=app-accessibility/speech-dispatcher-0.11.4
-#	>=dev-db/sqlite-3.34.1
-#	>=dev-libs/libappindicator-12.10
-#	gnome-keyring? (
-#		>=gnome-base/gnome-keyring-3.12.0
-#	)
-#"
-# libappindicator and gnome-keyring not in generated_package_lists.
-
-OPTIONAL_RDEPEND="
-	>=media-libs/vulkan-loader-1.3.224.0
-"
-
-# cups is required or it will segfault.
-CHROMIUM_RDEPEND="
-	${CHROMIUM_CDEPEND}
-	${OPTIONAL_RDEPEND}
-	${UNLISTED_RDEPEND}
-	>=dev-libs/atk-${ATK_PV}
-	>=dev-libs/expat-2.2.10
-	>=dev-libs/libpcre-8.39:3
-	>=dev-libs/libpcre2-10.36
-	>=dev-libs/nspr-4.29
-	>=media-libs/fontconfig-${FONTCONFIG_PV}
-	>=media-libs/freetype-${FREETYPE_PV}
-	>=media-libs/libpng-1.6.37
-	>=net-print/cups-2.3.3
-	>=sys-devel/gcc-${GCC_PV}[cxx(+)]
-	>=x11-libs/pango-1.46.2
-	>=x11-libs/pixman-0.40.0
-	X? (
-		>=x11-libs/libX11-1.7.2
-		>=x11-libs/libXau-1.0.9
-		>=x11-libs/libXcomposite-0.4.5
-		>=x11-libs/libXcursor-1.2.0
-		>=x11-libs/libXdamage-1.1.5
-		>=x11-libs/libXdmcp-1.1.2
-		>=x11-libs/libXext-1.3.3
-		>=x11-libs/libXfixes-5.0.3
-		>=x11-libs/libXi-${LIBXI_PV}
-		>=x11-libs/libXinerama-1.1.4
-		>=x11-libs/libXrandr-1.5.1
-		>=x11-libs/libXrender-0.9.10
-		>=x11-libs/libxcb-1.14
-	)
-"
-
-CEFCLIENT_RDEPEND_NOT_LISTED="
-	>=x11-libs/gtk+-${GTK3_PV}:3[wayland?,X?]
-"
-
-CEFCLIENT_RDEPEND="
-	>=dev-libs/glib-${GLIB_PV}:2
-	>=x11-libs/libXi-${LIBXI_PV}
-"
-
-RDEPEND+="
-	${CEFCLIENT_RDEPEND}
-	${CHROMIUM_RDEPEND}
-"
-PDEPEND+="
-	sys-apps/firejail[X?]
-"
-
-# END CEF DEPENDS
-
-
-# gcc contains libatomic.so.1
-# mesa contains libgbm.so.1
-# Sourced from http://repository.spotify.com/dists/testing/non-free/binary-amd64/Packages
-#	>=gnome-base/gconf-3.2.6
-RDEPEND+="
-	${OPTIONAL_RDEPENDS_LISTED}
-	${OPTIONAL_RDEPENDS_UNLISTED}
-	>=dev-libs/atk-${ATK_PV}
-	>=dev-libs/glib-${GLIB_PV}:2
-	>=dev-libs/libayatana-appindicator-0.5.3
-	>=dev-libs/nss-${NSS_PV}
-	>=media-libs/alsa-lib-${ALSA_LIB}
-	>=media-libs/mesa-${MESA_PV}[wayland?,X?]
-	>=net-misc/curl-7.88.1[ssl,gnutls]
-	>=x11-libs/gtk+-${GTK3_PV}:3[wayland?,X?]
-	>=x11-misc/xdg-utils-1.1.1
-	>=sys-devel/gcc-${GCC_PV}
-	>=sys-libs/glibc-${GLIBC_PV}
-	X? (
-		>=x11-libs/libXScrnSaver-${LIBXSCRNSAVER_PV}
-		>=x11-libs/libxshmfence-1.3
-		>=x11-libs/libXtst-${LIBXTST_PV}
-	)
-	|| (
-		=dev-libs/openssl-3*:0/3
-		>=dev-libs/openssl-1.1.1n:0/1.1
-		~dev-libs/openssl-1.0.2:0
-	)
-"
-# libayatana-appindicator is not in generated_package_lists but in Packages file.
-# gconf, xdg-utils not in generated_package_lists.
-
-#RDEPEND_LISTED_BUT_NOT_LINKED="
-#	>=x11-libs/libXScrnSaver-${LIBXSCRNSAVER_PV}
-#	>=x11-libs/libXtst-${LIBXTST_PV}
-#"
 
 BDEPEND+="
 	app-arch/gzip
-	app-crypt/rhash
-	net-misc/wget
-	sys-apps/coreutils
+	>=app-crypt/rhash-${RHASH_PV}
+	>=net-misc/wget-${WGET_PV}
+	coreutils? (
+		>=sys-apps/coreutils-${COREUTILS_PV}
+	)
+	uutils-coreutils? (
+		>=sys-apps/uutils-coreutils-${UUTILS_COREUTILS_PV}
+	)
 	wayland? (
-		|| (
-			>=sys-devel/gcc-${GCC_PV}
-			>=llvm-core/clang-${CLANG_PV}
+		clang? (
+			>=llvm-core/clang-${CLANG_PV}:=
+		)
+		gcc? (
+			>=sys-devel/gcc-${GCC_PV}:=
 		)
 	)
 "
@@ -460,6 +328,10 @@ else
 		)
 	"
 fi
+
+PDEPEND+="
+	>=sys-apps/firejail-${FIREJAIL_PV}
+"
 
 pkg_setup() {
 ewarn "A newer processor may be required to use this version."
@@ -1069,6 +941,10 @@ ewarn
 ewarn "  Update *DEPENDs."
 ewarn
 	fi
+}
+
+src_configure() {
+	chkl_check_many_timestamps
 }
 
 src_compile() {
