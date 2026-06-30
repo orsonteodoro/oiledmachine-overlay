@@ -63,7 +63,7 @@ RDEPEND="
 	hardlink? ( >=dev-libs/libpcre2-${LIBPCRE2_PV}:= )
 	ncurses? (
 		>=sys-libs/ncurses-${NCURSES_PV}:=[unicode(+)?]
-		magic? ( sys-apps/file:= )
+		magic? ( >=sys-apps/file-${FILE_PV}:= )
 	)
 	nls? ( virtual/libintl:*[${MULTILIB_USEDEP}] )
 	pam? ( sys-libs/pam:= )
