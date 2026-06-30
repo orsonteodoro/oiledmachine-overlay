@@ -450,7 +450,7 @@ multilib_src_install_all() {
 		# Users who wish to truly have a no-suid su can strip it out
 		# via e.g. Portage's suidctl or some other hook.
 		# See bug #832092
-		fperms u+s /bin/su
+		fperms u+s /usr/bin/su
 	fi
 
 	if use uuidd; then
