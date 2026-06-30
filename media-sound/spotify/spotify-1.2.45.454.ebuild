@@ -304,7 +304,7 @@ RDEPEND+="
 		x11-libs/libxshmfence
 		x11-libs/libXtst
 	)
-	$(secure-version_gen_openssl_depends '3.0-3.6')
+	$(secure-version_gen_openssl_depends)
 "
 
 BDEPEND+="
@@ -951,6 +951,12 @@ ewarn
 
 src_configure() {
 	chkl_check_many_timestamps
+	if tc-is-clang ; then
+		use clang || die "You must enable the clang USE flag."
+	fi
+	if tc-is-gcc ; then
+		use gcc || die "You must enable the gcc USE flag."
+	fi
 }
 
 src_compile() {
