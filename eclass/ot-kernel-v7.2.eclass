@@ -1073,8 +1073,12 @@ ewarn "series."
 ewarn
 
 ewarn
-ewarn "You are using the live kernel sources.  This may result in data loss,"
-ewarn "data format incompatibilities, or vulnerabilities."
+ewarn "CAUTION"
+ewarn
+ewarn "You are using the live kernel sources.  This may result in DATA LOSS,"
+ewarn "data format INCOMPATIBILITIES, flip/flopping on security decisions,"
+ewarn "or INTRODUCE VULNERABLE CODE as in inappropriate performance-critical"
+ewarn "code in a security-security context."
 ewarn
 ewarn "The live sources is intended for people that want to submit commits or"
 ewarn "patches to upstream, to use security fixes, for ebuild maintainers or"
