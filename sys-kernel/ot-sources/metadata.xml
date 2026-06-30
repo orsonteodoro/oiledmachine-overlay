@@ -259,6 +259,9 @@
     Recommended slot use cases
 
      7.2:  Daily security updates, developer testing
+           Use the live with caution.  The live (9999) release may mess up your
+           data or result in data loss if the developers make a mistake.  Be
+           mindful of that.
  7.0/7.1:  Debugging team, enthusiast gaming, virtualization, containers, best
            rolling experience, AI/ML testing and development
     6.18:  Debugging team, new hardware gaming, AI/ML testing and development,
