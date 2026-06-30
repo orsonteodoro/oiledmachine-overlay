@@ -196,7 +196,7 @@ EXTRAVERSION="-ot"
 GCC_PV="5.1"
 # Only LTS compiler slots allowed to avoid issues with closed source or
 # out-of-source drivers
-GCC_MAX_SLOT="14"
+GCC_MAX_SLOT="15"
 GCC_MIN_SLOT="11"
 GCC_MIN_KCP_GENPATCHES_AMD64=10
 GCC_MIN_KCP_GRAYSKY2_AMD64=10
@@ -207,15 +207,15 @@ KMOD_PV="13"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 18, 19
-) # Based on scripts/min-tool-version.sh
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19, 21
+)
 
-LLVM_MAX_SLOT="19"
+LLVM_MAX_SLOT="21"
 LLVM_MIN_SLOT="18"
 LLVM_MIN_KCFI_ARM64=16
 LLVM_MIN_KCFI_AMD64=16
@@ -330,34 +330,18 @@ RISCV_FLAGS=(
 )
 declare -A RUST_PV_TO_LLVM_SLOT=(
 # Capped by LLVM_COMPAT
+	["str_1_94_1"]="21"
 	["str_1_86_0"]="19"
-	["str_1_85_1"]="19"
-	["str_1_85_0"]="19"
-	["str_1_84_1"]="19"
-	["str_1_84_0"]="19"
-	["str_1_83_0"]="19"
-	["str_1_82_0"]="19"
 	["str_1_81_0"]="18"
-	["str_1_80_1"]="18"
-	["str_1_79_0"]="18"
-	["str_1_78_0"]="18"
 )
 RUST_SLOTS=(
 	# It may need the -Z flag for sanitizers.
-	"1.86.0"
-	"1.85.1"
-	"1.85.0"
-	"1.84.1"
-	"1.84.0"
-	"1.83.0"
-	"1.82.0"
-	"1.81.0"
-	"1.80.1"
-	"1.79.0"
-	"1.78.0"
+	"1.94.1" # LLVM 21
+	"1.86.0" # LLVM 19
+	"1.81.0" # LLVM 18
 )
-RUST_MAX_VER="1.81.0" # Inclusive
-RUST_MIN_VER="1.78.0"
+RUST_MAX_VER="1.94.1" # Inclusive
+RUST_MIN_VER="1.81.0" # Inclusive
 X86_FLAGS=(
 # See also
 # arch/x86/Kconfig.assembler
@@ -530,10 +514,8 @@ _seq() {
 }
 
 gen_kcfi_rdepend() {
-	local min=${LLVM_MIN_SLOT}
-	local max=${LLVM_MAX_SLOT}
 	local s
-	for s in $(_seq ${min} ${max}) ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
 		echo "
 		llvm_slot_${s}? (
 			llvm-core/clang:${s}=
@@ -544,10 +526,8 @@ gen_kcfi_rdepend() {
 }
 
 gen_shadowcallstack_rdepend() {
-	local min=${LLVM_MIN_SLOT}
-	local max=${LLVM_MAX_SLOT}
 	local s
-	for s in $(_seq ${min} ${max}) ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
 		echo "
 		llvm_slot_${s}? (
 			=llvm-runtimes/clang-runtime-${s}*:=[compiler-rt,sanitize]
@@ -562,10 +542,8 @@ gen_shadowcallstack_rdepend() {
 }
 
 gen_lto_rdepend() {
-	local min=${LLVM_MIN_SLOT}
-	local max=${LLVM_MAX_SLOT}
 	local s
-	for s in $(_seq ${min} ${max}) ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
 		echo "
 		llvm_slot_${s}? (
 			=llvm-runtimes/clang-runtime-${s}*:=
@@ -578,10 +556,8 @@ gen_lto_rdepend() {
 }
 
 gen_clang_pgo_rdepend() {
-	local min=${LLVM_MIN_SLOT}
-	local max=${LLVM_MAX_SLOT}
 	local s
-	for s in $(_seq ${min} ${max}) ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
 		echo "
 		llvm_slot_${s}? (
 			=llvm-runtimes/clang-runtime-${s}*:=
@@ -593,10 +569,8 @@ gen_clang_pgo_rdepend() {
 }
 
 gen_clang_llvm_pair() {
-	local min=${LLVM_MIN_SLOT}
-	local max=${LLVM_MAX_SLOT}
 	local s
-	for s in $(_seq ${min} ${max}) ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
 		echo "
 		llvm_slot_${s}? (
 			llvm-core/clang:${s}=
@@ -607,10 +581,8 @@ gen_clang_llvm_pair() {
 }
 
 gen_clang_lld() {
-	local min=${LLVM_MIN_SLOT}
-	local max=${LLVM_MAX_SLOT}
 	local s
-	for s in $(_seq ${min} ${max}) ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
 		echo "
 		llvm_slot_${s}? (
 			llvm-core/clang:${s}=
@@ -622,11 +594,9 @@ gen_clang_lld() {
 }
 
 gen_clang_debug_zstd_pair() {
-	local min=${LLVM_MIN_SLOT}
-	local max=${LLVM_MAX_SLOT}
 	local usedep="${3}"
 	local s
-	for s in $(_seq ${min} ${max}) ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
 		echo "
 		llvm_slot_${s}? (
 			llvm-core/clang:${s}=
@@ -671,8 +641,8 @@ gen_rust_cdepend() {
 				llvm-core/clang:${llvm_slot}=
 				llvm-core/llvm:${llvm_slot}=
 				|| (
-					=dev-lang/rust-${s}[rust-src]
-					=dev-lang/rust-bin-${s}[rust-src]
+					~dev-lang/rust-${s}[rust-src]
+					~dev-lang/rust-bin-${s}[rust-src]
 				)
 			)
 		"
