@@ -678,9 +678,9 @@ REQUIRED_USE+="
 	)
 "
 DEPEND="
-	>=dev-libs/libbpf-1.2.2
+	>=dev-libs/libbpf-1.2.2:=
 	dev-libs/libbpf:=
-	sys-libs/libseccomp
+	sys-libs/libseccomp:=
 	virtual/libelf:=
 	virtual/zlib:=
 "
@@ -700,33 +700,22 @@ BDEPEND="
 			dev-libs/protobuf:6/6.33[llvm_slot_19?,protoc(+)]
 		)
 	)
-	dev-cpp/abseil-cpp:=
-	dev-libs/protobuf:=
-	virtual/pkgconfig
+	virtual/pkgconfig:*
 	llvm_slot_19? (
-		llvm-core/clang:19[llvm_targets_BPF(-)]
-		llvm-core/clang:=
-		llvm-core/llvm:19[llvm_targets_BPF(-)]
-		llvm-core/llvm:=
+		llvm-core/clang:19=[llvm_targets_BPF(-)]
+		llvm-core/llvm:19=[llvm_targets_BPF(-)]
 	)
 	llvm_slot_21? (
-		llvm-core/clang:21[llvm_targets_BPF(-)]
-		llvm-core/clang:=
-		llvm-core/llvm:21[llvm_targets_BPF(-)]
-		llvm-core/llvm:=
+		llvm-core/clang:21=[llvm_targets_BPF(-)]
+		llvm-core/llvm:21=[llvm_targets_BPF(-)]
 		|| (
 			dev-lang/rust:1.94.1
 			dev-lang/rust-bin:1.94.1
 		)
 	)
-	|| (
-		dev-lang/rust:=
-		dev-lang/rust-bin:=
-	)
 "
 PDEPEND="
 	~sys-kernel/scx-loader-${PV}
-	sys-kernel/scx-loader:=
 "
 CONFIG_CHECK="
 	~BPF
