@@ -84,6 +84,7 @@ SECURE_TIMESTAMP["app_accessibility_speech_dispatcher_9999"]="May 3, 2026 5:56 P
 SECURE_TIMESTAMP["app_accessibility_whisper_cpp_9999"]="Jun 19, 2026 2:53 AM PDT"
 SECURE_TIMESTAMP["app_arch_brotli_9999"]="Sun, 30 Apr 2026 10:19 AM PDT"
 SECURE_TIMESTAMP["app_arch_bzip2_9999"]="Jun 22 2026 00:37:44 +0200"
+SECURE_TIMESTAMP["app_arch_gzip_9999"]="2026-04-18 09:21:50 -0700"
 SECURE_TIMESTAMP["app_arch_libarchive_9999"]="Jun 27, 2026 9:03 AM PST"
 SECURE_TIMESTAMP["app_arch_libdeflate_9999"]="May 16, 2026 9:28 PM PDT"
 SECURE_TIMESTAMP["app_arch_lz4_9999"]="Jun 1, 2026 3:21 PM PDT"
@@ -332,7 +333,6 @@ SECURE_TIMESTAMP["x11_libs_pango_9999"]="Jun 1, 2026 3:30 PM PDT"
 SECURE_TIMESTAMP["x11_libs_pixman_9999"]="Aug 1, 2025 9:38:49 AM PDT"
 SECURE_TIMESTAMP["x11_misc_colord_9999"]="Feb 2, 2026 1:31 AM PST"
 
-#SECURE_TIMESTAMP[""]=""
 	declare -p SECURE_TIMESTAMP
 }
 

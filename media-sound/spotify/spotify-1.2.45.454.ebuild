@@ -308,9 +308,9 @@ RDEPEND+="
 "
 
 BDEPEND+="
-	app-arch/gzip
 	>=app-crypt/rhash-${RHASH_PV}
 	>=net-misc/wget-${WGET_PV}
+	app-alternatives/gzip
 	coreutils? (
 		>=sys-apps/coreutils-${COREUTILS_PV}
 	)
