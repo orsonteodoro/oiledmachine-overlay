@@ -2549,7 +2549,7 @@ BDEPEND+="
 	dev-util/patchutils
 	>=sys-apps/findutils-${FINDUTILS_PV}
 	coreutils? (
-		>=sys-apps/coreutils-${CORETUTILS_PV}
+		>=sys-apps/coreutils-${COREUTILS_PV}
 	)
 	imagemagick? (
 		>=media-gfx/imagemagick-${IMAGEMAGICK_PV}
@@ -2563,7 +2563,7 @@ BDEPEND+="
 		>=app-crypt/rhash-${RHASH_PV}
 	)
 	uutils-coreutils? (
-		>=sys-apps/uutils-coreutils-${UUTILS_COREUTILS}
+		>=sys-apps/uutils-coreutils-${UUTILS_COREUTILS_PV}
 	)
 "
 
