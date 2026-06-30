@@ -103,7 +103,7 @@ SANDBOX_IUSE=(
 )
 
 CHKL_TIMESTAMPS=(
-	"sys-kernel/ot-sources-7.2.9999"
+	"sys-kernel/ot-sources-7.2.0.9999"
 	"sys-kernel/linux-firmware-99999999"
 )
 
