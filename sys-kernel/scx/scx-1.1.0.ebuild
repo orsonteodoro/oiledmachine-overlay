@@ -30,8 +30,8 @@ GENERATE_LOCKFILE=0
 # Both llvm_slot_19 and llvm_slot_21 must be specified.
 LLVM_COMPAT=( 19 21 )
 # RUST_*_VER will be pinned to meet cargo lockfile requirements.
-RUST_MAX_VER="1.91.1"
-RUST_MIN_VER="1.91.1" # LLVM 21.1
+RUST_MAX_VER="1.94.1" # LLVM 21.1
+RUST_MIN_VER="1.94.1" # LLVM 21.1
 DISABLED_CRATES="
 scx_arena_selftests-1.1.0
 scx_bpf_unittests-1.1.0
@@ -715,8 +715,8 @@ BDEPEND="
 		llvm-core/llvm:21[llvm_targets_BPF(-)]
 		llvm-core/llvm:=
 		|| (
-			dev-lang/rust:1.91.1
-			dev-lang/rust-bin:1.91.1
+			dev-lang/rust:1.94.1
+			dev-lang/rust-bin:1.94.1
 		)
 	)
 	|| (
