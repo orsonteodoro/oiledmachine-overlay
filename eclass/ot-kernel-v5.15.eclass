@@ -317,6 +317,17 @@ X86_FLAGS=(
 )
 ZEN_KV="5.15.0"
 
+CHKL_TIMESTAMPS=(
+	"app-shells/bash-9999"
+	"sys-apps/util-linux-9999"
+	"sys-devel/binutils-9999"
+	"dev-libs/glib-2.89.9999"
+	"app-arch/lz4-9999"
+	"app-arch/xz-utils-"
+)
+
+inherit chkl ot-kernel libcxx-slot libstdcxx-slot
+
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 # clang is default OFF based on https://github.com/torvalds/linux/blob/v5.15/Documentation/process/changes.rst
 IUSE+="
@@ -402,8 +413,6 @@ if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
 	REQUIRED_USE+="
 	"
 fi
-
-inherit ot-kernel libcxx-slot libstdcxx-slot
 
 LICENSE+=" GPL-2" # kernel_compiler_patch
 LICENSE+=" GPL-2" # -O3 patch

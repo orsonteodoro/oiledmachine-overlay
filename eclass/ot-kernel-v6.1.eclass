@@ -306,6 +306,17 @@ ZEN_KV="6.1.0"
 
 # KCFI merged in 6.1
 
+CHKL_TIMESTAMPS=(
+	"app-shells/bash-9999"
+	"sys-apps/util-linux-9999"
+	"sys-devel/binutils-9999"
+	"dev-libs/glib-2.89.9999"
+	"app-arch/lz4-9999"
+	"app-arch/xz-utils-"
+)
+
+inherit chkl ot-kernel libcxx-slot libstdcxx-slot
+
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 # CET default ON based on CI.
 # clang is default OFF based on https://github.com/torvalds/linux/blob/v6.1/Documentation/process/changes.rst
@@ -383,8 +394,6 @@ if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
 	REQUIRED_USE+="
 	"
 fi
-
-inherit ot-kernel libcxx-slot libstdcxx-slot
 
 LICENSE+=" GPL-2" # kernel_compiler_patch
 LICENSE+=" GPL-2" # -O3 patch

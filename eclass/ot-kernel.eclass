@@ -2348,7 +2348,7 @@ fi
 ZEN_MUQSS_BASE_URI="https://github.com/torvalds/linux/commit/"
 ZEN_SAUCE_BASE_URI="https://github.com/torvalds/linux/commit/"
 
-CHKL_TIMESTAMPS=(
+CHKL_TIMESTAMPS+=(
 	"app-crypt/rhash-9999"
 	"media-gfx/graphicsmagick-9999"
 	"net-misc/curl-9999"

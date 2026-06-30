@@ -363,6 +363,17 @@ X86_FLAGS=(
 )
 ZEN_KV="6.18.0"
 
+CHKL_TIMESTAMPS=(
+	"app-shells/bash-9999"
+	"sys-apps/util-linux-9999"
+	"sys-devel/binutils-9999"
+	"dev-libs/glib-2.89.9999"
+	"app-arch/lz4-9999"
+	"app-arch/xz-utils-"
+)
+
+inherit chkl ot-kernel libcxx-slot libstdcxx-slot
+
 if ! [[ "${PV}" =~ "9999" ]] ; then
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 fi
@@ -470,8 +481,6 @@ if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
 fi
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
-
-inherit ot-kernel libcxx-slot libstdcxx-slot
 
 LICENSE+=" GPL-2" # kernel_compiler_patch
 LICENSE+=" GPL-2" # -O3 patch
