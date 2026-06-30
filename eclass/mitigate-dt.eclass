@@ -21,6 +21,8 @@ esac
 if [[ -z ${_MITIGATE_DT_ECLASS} ]] ; then
 _MITIGATE_DT_ECLASS=1
 
+inherit secure-version
+
 _mitigate_dt_set_globals() {
 	FIRMWARE_VENDOR=${FIRMWARE_VENDOR:-""}
 	if [[ -e "/proc/cpuinfo" ]] ; then
@@ -971,10 +973,10 @@ _mitigate_dt_auto() {
 	gen_patched_kernel_list "6.17"
 
 	if [[ "${FIRMWARE_VENDOR}" == "amd" ]] ; then
-		gen_linux_firmware_ge 20251030
+		gen_linux_firmware_ge ${LINUX_FIRMWARE_PV}
 	fi
 	if [[ "${FIRMWARE_VENDOR}" == "intel" ]] ; then
-		gen_intel_microcode_ge 20260512
+		gen_intel_microcode_ge ${INTEL_MICROCODE_PV}
 	fi
 }
 

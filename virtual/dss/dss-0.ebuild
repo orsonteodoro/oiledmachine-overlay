@@ -11,9 +11,6 @@ EAPI=8
 # TODO package:
 # prowler
 
-# Zero-tolerance policy for kernel
-CPU_MITIGATION_AMD_MICROCODE_TIMESTAMP="2025-10-30 17:23:31 -0500" # Based on commit date with patch >= ucode version on advisory
-
 ANTIVIRUS_IUSE=(
 	"clamav"
 )
@@ -60,7 +57,6 @@ IDS_IUSE=(
 KERNEL_IUSE=(
 	"custom-kernel"
 	"gentoo-sources"
-	"git-sources"
 	"ot-sources"
 	"vanilla-sources"
 )
@@ -106,7 +102,12 @@ SANDBOX_IUSE=(
 	"firejail"
 )
 
-inherit verify-binutils
+CHKL_TIMESTAMPS=(
+	"sys-kernel/ot-sources-7.2.9999"
+	"sys-kernel/linux-firmware-99999999"
+)
+
+inherit chkl secure-timestamp secure-version verify-binutils
 
 DESCRIPTION="Requirements for security-critical secure data storage"
 KEYWORDS="~amd64 ~arm64"
@@ -134,7 +135,6 @@ ebuild_revision_10
 # Temporarly disable most kernel flavors until Dirty Frag 0-day mitigation is verified or patched upstream.
 REQUIRED_USE="
 	!custom-kernel
-	!git-sources
 	!vanilla-sources
 	^^ (
 		${PROFILES_IUSE[@]}
@@ -160,10 +160,6 @@ REQUIRED_USE="
 		production
 	)
 	custom-kernel? (
-		!compliant
-		flexible
-	)
-	git-sources? (
 		!compliant
 		flexible
 	)
@@ -266,7 +262,6 @@ REQUIRED_USE="
 		|| (
 			custom-kernel
 			gentoo-sources
-			git-sources
 			ot-sources
 			vanilla-sources
 		)
@@ -365,7 +360,6 @@ REQUIRED_USE="
 		|| (
 			custom-kernel
 			gentoo-sources
-			git-sources
 			ot-sources
 			vanilla-sources
 		)
@@ -544,10 +538,10 @@ FIREWALL_DEPENDS="
 # Mitigate against transient execution CPU vulnerabilities.
 FIRMWARE_DEPENDS="
 	intel-microcode? (
-		>=sys-firmware/intel-microcode-20260512
+		>=sys-firmware/intel-microcode-${INTEL_MICROCODE_PV}
 	)
 	linux-firmware? (
-		>=sys-kernel/linux-firmware-20251030
+		>=sys-kernel/linux-firmware-${LINUX_FIRMWARE_PV}
 	)
 "
 
@@ -610,34 +604,29 @@ LOGGER_DEPENDS="
 #
 KERNEL_DEPENDS="
 	gentoo-sources? (
-		|| (
-			~sys-kernel/gentoo-sources-7.0.12
-			~sys-kernel/gentoo-sources-6.18.35
-			~sys-kernel/gentoo-sources-6.12.93
-		)
 		sys-kernel/gentoo-sources:=
-	)
-	git-sources? (
 		|| (
-			~sys-kernel/git-sources-7.1_rc7
+			~sys-kernel/gentoo-sources-${LINUX_KERNEL_7_1_PV}
+			~sys-kernel/gentoo-sources-${LINUX_KERNEL_6_18_PV}
+			~sys-kernel/gentoo-sources-${LINUX_KERNEL_6_12_PV}
 		)
-		sys-kernel/git-sources:=
 	)
 	ot-sources? (
-		|| (
-			~sys-kernel/ot-sources-7.0.12
-			~sys-kernel/ot-sources-6.18.35
-			~sys-kernel/ot-sources-6.12.93
-		)
 		sys-kernel/ot-sources:=
+		|| (
+			~sys-kernel/ot-sources-7.2.9999
+			~sys-kernel/ot-sources-${LINUX_KERNEL_7_1_PV}
+			~sys-kernel/ot-sources-${LINUX_KERNEL_6_18_PV}
+			~sys-kernel/ot-sources-${LINUX_KERNEL_6_12_PV}
+		)
 	)
 	vanilla-sources? (
-		|| (
-			~sys-kernel/vanilla-sources-7.0.12
-			~sys-kernel/vanilla-sources-6.18.35
-			~sys-kernel/vanilla-sources-6.12.93
-		)
 		sys-kernel/vanilla-sources:=
+		|| (
+			~sys-kernel/vanilla-sources-${LINUX_KERNEL_7_1_PV}
+			~sys-kernel/vanilla-sources-${LINUX_KERNEL_6_18_PV}
+			~sys-kernel/vanilla-sources-${LINUX_KERNEL_6_12_PV}
+		)
 	)
 "
 
@@ -782,21 +771,8 @@ eerror "Valid optimization levels for security-critical data security:  -O1, -O2
 		die
 	fi
 
-	if use linux-firmware && has_version "=sys-kernel/linux-firmware-99999999" ; then
-		local merged_timestamp=$(cat $(realpath "/var/db/pkg/sys-kernel/linux-firmware-99999999/BUILD_TIME"))
-		local cpu_mitigation_amd_microcode_timestamp=$(date --date "${CPU_MITIGATION_AMD_MICROCODE_TIMESTAMP}" +%s)
-		if (( ${merged_timestamp} < ${patched_vulernability_timestamp} )) ; then
-			local merged_timestamp_str=$(date --date="@${merged_timestamp}")
-			local cpu_mitigation_amd_microcode_timestamp_str=$(date --date="@${cpu_mitigation_amd_microcode_timestamp}")
-eerror
-eerror "Your live sys-kernel/linux-firmware is out of date for CPU microcode mitigations."
-eerror "Re-emerge sys-kernel/linux-firmware to continue."
-eerror
-eerror "Live ebuild merged timestamp:  ${merged_timestamp_str}"
-eerror "Patched vulernability timestamp:  ${cpu_mitigation_amd_microcode_timestamp_str}"
-eerror
-			die
-		fi
+	if use linux-firmware ; then
+		chkl_check_many_timestamps
 	fi
 
 	verify-binutils_check

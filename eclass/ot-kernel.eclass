@@ -289,8 +289,6 @@ else
 	)
 fi
 
-LINUX_FIRMWARE_PV="20251030" # Based on latest available patch level cross referenced to the μcode column.
-LINUX_FIRMWARE_TIMESTAMP="2025-10-30 17:23:31 -0500" # Same as above from the git log.
 LINUX_REPO_URI="https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 
 MULTIGEN_LRU_BASE_URI="https://github.com/torvalds/linux/compare/${MULTIGEN_LRU_COMMITS}"
@@ -2345,8 +2343,20 @@ fi
 ZEN_MUQSS_BASE_URI="https://github.com/torvalds/linux/commit/"
 ZEN_SAUCE_BASE_URI="https://github.com/torvalds/linux/commit/"
 
+CHKL_TIMESTAMPS=(
+	"app-crypt/rhash-9999"
+	"media-gfx/graphicsmagick-9999"
+	"net-misc/curl-9999"
+	"net-misc/iputils-99999999"
+	"sys-apps/coreutils-9999"
+	"sys-apps/findutils-9999"
+	"sys-apps/util-linux-9999"
+	"sys-kernel/linux-firmware-99999999"
+	"sys-process/procps-9999"
+)
+
 inherit check-reqs dhms flag-o-matic multiprocessing python-single-r1 ot-kernel-kutils ot-kernel-pkgflags
-inherit ot-kernel-driver-bundle sandbox-changes security-scan toolchain-funcs vf
+inherit ot-kernel-driver-bundle sandbox-changes secure-version secure-version-python security-scan toolchain-funcs vf
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
@@ -2519,19 +2529,19 @@ DEPEND+="
 # lscpu needs sys-apps/util-linux
 BDEPEND+="
 	${PYTHON_DEPS}
+	>=sys-apps/util-linux-${UTIL_LINUX_PV}
 	dev-util/patchutils
-	sys-apps/findutils
-	sys-apps/util-linux
+	>=sys-apps/findutils-${FINDUTILS_PV}
 	imagemagick? (
-		media-gfx/imagemagick
-		app-crypt/rhash
+		>=media-gfx/imagemagick-${IMAGEMAGICK_PV}
+		>=app-crypt/rhash-${RHASH_PV}
 	)
 	intel-microcode? (
 		>=sys-firmware/intel-microcode-${INTEL_MICROCODE_PV}
 	)
 	graphicsmagick? (
-		media-gfx/graphicsmagick[imagemagick]
-		app-crypt/rhash
+		>=media-gfx/graphicsmagick-${GRAPHICSMAGICK_PV}[imagemagick]
+		>=app-crypt/rhash-${RHASH_PV}
 	)
 "
 
@@ -2546,21 +2556,26 @@ if [[ -n "${C2TCP_VER}" ]] ; then
 	"
 fi
 
+# TODO:
+# Replace/remove unmaintained dependencies
+# Replace net-p2p/ctorrent
+# Replace net-analyzer/traceroute
+# Deprecate sys-kernel/gostcrypt-linux-crypto
 PDEPEND+="
-	sys-apps/coreutils
-	sys-apps/grep[pcre]
+	>=sys-apps/coreutils-${COREUTILS_PV}
+	>=sys-apps/grep-${GREP_PV}[pcre]
 	gost? (
 		sys-kernel/gostcrypt-linux-crypto
 	)
 	ot_kernel_trainers_2d? (
-		sys-apps/findutils
-		sys-process/procps
-		x11-misc/xscreensaver[X]
+		>=sys-apps/findutils-${FINDUTILS_PV}
+		>=sys-process/procps-${PROCPS_PV}
+		>=x11-misc/xscreensaver-${XSCREENSAVER_PV}[X]
 	)
 	ot_kernel_trainers_3d? (
-		sys-apps/findutils
-		sys-process/procps
-		x11-misc/xscreensaver[X,opengl]
+		>=sys-apps/findutils-${FINDUTILS_PV}
+		>=sys-process/procps-${PROCPS_PV}
+		>=x11-misc/xscreensaver-${XSCREENSAVER_PV}[X,opengl]
 		virtual/opengl
 	)
 	ot_kernel_trainers_crypto_std? (
@@ -2585,45 +2600,46 @@ PDEPEND+="
 		${PGT_CRYPTO_DEPEND}
 	)
 	ot_kernel_trainers_emerge1? (
-		sys-apps/findutils
+		>=sys-apps/findutils-${FINDUTILS_PV}
 	)
 	ot_kernel_trainers_filesystem? (
-		sys-apps/findutils
+		>=sys-apps/findutils-${FINDUTILS_PV}
 	)
 	ot_kernel_trainers_memory? (
 		${PYTHON_DEPS}
-		sys-apps/util-linux
-		sys-process/procps
+		>=sys-apps/util-linux-${UTIL_LINUX_PV}
+		>=sys-process/procps-${PROCPS_PV}
 	)
 	ot_kernel_trainers_network? (
 		net-analyzer/traceroute
-		net-misc/curl
-		net-misc/iputils
+		>=net-misc/curl-${CURL_PV}
+		>=net-misc/iputils-${IPUTILS_PV}
 	)
 	ot_kernel_trainers_p2p? (
 		net-p2p/ctorrent
-		sys-apps/util-linux
-		sys-process/procps
+		>=sys-apps/util-linux-${UTIL_LINUX_PV}
+		>=sys-process/procps-${PROCPS_PV}
 	)
 	ot_kernel_trainers_webcam? (
-		media-libs/libv4l[utils]
-		media-video/ffmpeg[encode,v4l]
+		>=media-libs/libv4l-${LIBV4L_PV}[utils]
+		$(secure-version_gen_ffmpeg_depends '' '[encode,v4l]')
 	)
 	ot_kernel_trainers_yt? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
-			dev-python/selenium[${PYTHON_USEDEP}]
+			>=dev-python/selenium-'${PYTHON_SELENIUM_PV}'[${PYTHON_USEDEP}]
 		')
 		|| (
 			(
-				www-client/chromium
+				>=www-client/chromium-${CHROMIUM_PV}
 			)
 			(
-				www-client/google-chrome
-				www-apps/chromedriver-bin
+				>=www-client/google-chrome-${GOOGLE_CHROME_PV}
+				>=www-apps/chromedriver-bin-${GOOGLE_CHROME_PV}
 			)
 			(
-				www-client/firefox[geckodriver]
+				>=www-client/firefox-${FIREFOX_ESR_PV}
+				>=net-misc/geckodriver-${GECKODRIVER_PV}
 			)
 		)
 	)
@@ -5034,7 +5050,7 @@ ot-kernel_check_firmware() {
 	[[ "${OT_KERNEL_CHECK_FIRMWARE_VULNERABILITY_FIXES:-1}" == "1" ]] || return
 	if has_version "=sys-kernel/linux-firmware-99999999" ; then
 		local current_firmware_update=$(cat "${EROOT}/var/db/pkg/sys-kernel/linux-firmware"*"/BUILD_TIME")
-		local fix_firmware_date=$(date -d "${LINUX_FIRMWARE_TIMESTAMP}" "+%s")
+		local fix_firmware_date=$(date -d "${LINUX_FIRMWARE_PV}" "+%s")
 		if (( ${current_firmware_update} < ${fix_firmware_date} )) ; then
 eerror
 eerror "Re-emerge =sys-kernel/linux-firmware-99999999 for CPU microcode security"
@@ -15691,7 +15707,6 @@ ot-kernel_add_disable_debug_excludes() {
 # Mitigates 0-day by disabling affected modules, but only if the vulnerability is non-essential.
 # The proposed mitigation for both Copy Fail and Dirty Frag was to disable affected modules.
 ot-kernel_disable_affected_modules() {
-	# Dirty Frag mitigation
 	:
 }
 
@@ -15699,35 +15714,7 @@ ot-kernel_disable_affected_modules() {
 # @DESCRIPTION:
 # Verify applied mitigation early
 ot-kernel_verify_mitigation_early() {
-	if has "genpatches" ${IUSE_EFFECTIVE} && ot-kernel_use "genpatches" ; then
-		if [[ "${GENPATCHES_BLACKLIST}" =~ "1500" ]] ; then
-eerror "Detected GENPATCHES_BLACKLIST containing 1500 associated with Fragnesia mitigation.  Remove 1500 to continue."
-			die
-		fi
-		if ver_test "${KV_MAJOR_MINOR}" -eq "7.0" && ver_test "${PV}" "-ge" "7.0.7" ; then
-			:
-		elif ver_test "${KV_MAJOR_MINOR}" -eq "6.18" && ver_test "${PV}" "-ge" "6.18.30" ; then
-			:
-		elif ver_test "${KV_MAJOR_MINOR}" -eq "6.12" && ver_test "${PV}" "-ge" "6.12.88" ; then
-			:
-		elif ver_test "${KV_MAJOR_MINOR}" -eq "6.6" && ver_test "${PV}" "-ge" "6.6.138" ; then
-			:
-		elif ver_test "${KV_MAJOR_MINOR}" -eq "6.1" && ver_test "${PV}" "-ge" "6.1.172" ; then
-			:
-		elif ver_test "${KV_MAJOR_MINOR}" -eq "5.15" && ver_test "${PV}" "-ge" "5.15.206" ; then
-			:
-		elif ver_test "${KV_MAJOR_MINOR}" -eq "5.10" && ver_test "${PV}" "-ge" "5.10.255" ; then
-			:
-		else
-eerror "Your kernel sources is too old and not mitigated for Fragnesia.  Use the latest point release."
-			die
-		fi
-	else
-eerror "env file path:  /etc/portage/ot-sources/${KV_MAJOR_MINOR}/${OT_KERNEL_EXTRAVERSION}/${OT_KERNEL_ARCH}/env"
-eerror "USE=genpatches must be to added per-package package.env to mitigate the Fragnesia."
-eerror "OT_KERNEL_USE=genpatches must be added to the per profile env file to mitigate the Fragnesia."
-		die
-	fi
+	:
 }
 
 # @FUNCTION: ot-kernel_verify_mitigation_late
@@ -16038,6 +16025,7 @@ eerror "QTCORE_PV is not the same version as Qt5Widgets"
 # @DESCRIPTION:
 # Run menuconfig
 ot-kernel_src_configure() {
+	chkl_check_many_timestamps
 	ot-kernel_is_build || return
 	local env_path
 	for env_path in $(ot-kernel_get_envs) ; do

@@ -33,8 +33,11 @@ esac
 # TODO:  Update patchsets
 # TODO:  Update versions
 
+inherit secure-version
+
 # PV is for 9999 (live) context check
 MY_PV="${PV}" # ver_test context
+
 # AMDGPU_FIRMWARE_RELEASE_DATE is based on firmware names from
 # https://elixir.bootlin.com/linux/v6.6.108/source/drivers/gpu/drm/amd/display/include/dal_types.h	DCN 3.2.1
 # https://elixir.bootlin.com/linux/v6.6.108/source/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c		VCN 4.0.4
@@ -312,7 +315,7 @@ PPC_FLAGS=(
 	"cpu_flags_ppc_altivec"
 )
 QT5_PV="5.15"
-QT6_PV="6.4"
+QT6_PV="${QTBASE6_PV}"
 RISCV_FLAGS=(
 	"+cpu_flags_riscv_v"
 )
@@ -387,9 +390,7 @@ nest orca pgo prjc qt5 qt6 +retpoline rock-dkms rt -rust shadowcallstack symlink
 tresor_prompt tresor_sysfs zen-sauce
 "
 
-# genpatches is required for Fragnesia mitigation.
 REQUIRED_USE+="
-	genpatches
 	?? (
 		qt5
 		qt6
@@ -508,10 +509,8 @@ gen_kcfi_rdepend() {
 	for s in $(_seq ${min} ${max}) ; do
 		echo "
 		llvm_slot_${s}? (
-			llvm-core/clang:${s}
-			llvm-core/clang:=
-			llvm-core/llvm:${s}
-			llvm-core/llvm:=
+			llvm-core/clang:${s}=
+			llvm-core/llvm:${s}=
 		)
 		     "
 	done
@@ -524,18 +523,12 @@ gen_shadowcallstack_rdepend() {
 	for s in $(_seq ${min} ${max}) ; do
 		echo "
 		llvm_slot_${s}? (
-			=llvm-runtimes/clang-runtime-${s}*[compiler-rt,sanitize]
-			llvm-runtimes/clang-runtime:=
-			=llvm-runtimes/compiler-rt-${s}*
-			llvm-runtimes/compiler-rt:=
-			=llvm-runtimes/compiler-rt-sanitizers-${s}*[shadowcallstack?]
-			llvm-runtimes/compiler-rt-sanitizers:=
-			llvm-core/clang:${s}
-			llvm-core/clang:=
-			llvm-core/lld:${s}
-			llvm-core/lld:=
-			llvm-core/llvm:${s}
-			llvm-core/llvm:=
+			=llvm-runtimes/clang-runtime-${s}*:=[compiler-rt,sanitize]
+			=llvm-runtimes/compiler-rt-${s}*:=
+			=llvm-runtimes/compiler-rt-sanitizers-${s}*:=[shadowcallstack?]
+			llvm-core/clang:${s}=
+			llvm-core/lld:${s}=
+			llvm-core/llvm:${s}=
 		)
 		     "
 	done
@@ -548,14 +541,10 @@ gen_lto_rdepend() {
 	for s in $(_seq ${min} ${max}) ; do
 		echo "
 		llvm_slot_${s}? (
-			=llvm-runtimes/clang-runtime-${s}*
-			llvm-runtimes/clang-runtime:=
-			llvm-core/clang:${s}
-			llvm-core/clang:=
-			llvm-core/lld:${s}
-			llvm-core/lld:=
-			llvm-core/llvm:${s}
-			llvm-core/llvm:=
+			=llvm-runtimes/clang-runtime-${s}*:=
+			llvm-core/clang:${s}=
+			llvm-core/lld:${s}=
+			llvm-core/llvm:${s}=
 		)
 		     "
 	done
@@ -568,12 +557,9 @@ gen_clang_pgo_rdepend() {
 	for s in $(_seq ${min} ${max}) ; do
 		echo "
 		llvm_slot_${s}? (
-			=llvm-runtimes/clang-runtime-${s}*
-			llvm-runtimes/clang-runtime:=
-			llvm-core/clang:${s}
-			llvm-core/clang:=
-			llvm-core/llvm:${s}
-			llvm-core/llvm:=
+			=llvm-runtimes/clang-runtime-${s}*:=
+			llvm-core/clang:${s}=
+			llvm-core/llvm:${s}=
 		)
 		     "
 	done
@@ -586,10 +572,8 @@ gen_clang_llvm_pair() {
 	for s in $(_seq ${min} ${max}) ; do
 		echo "
 		llvm_slot_${s}? (
-			llvm-core/clang:${s}
-			llvm-core/clang:=
-			llvm-core/llvm:${s}
-			llvm-core/llvm:=
+			llvm-core/clang:${s}=
+			llvm-core/llvm:${s}=
 		)
 		     "
 	done
@@ -602,12 +586,9 @@ gen_clang_lld() {
 	for s in $(_seq ${min} ${max}) ; do
 		echo "
 		llvm_slot_${s}? (
-			llvm-core/clang:${s}
-			llvm-core/clang:=
-			llvm-core/lld:${s}
-			llvm-core/lld:=
-			llvm-core/llvm:${s}
-			llvm-core/llvm:=
+			llvm-core/clang:${s}=
+			llvm-core/lld:${s}=
+			llvm-core/llvm:${s}=
 		)
 		     "
 	done
@@ -621,10 +602,8 @@ gen_clang_debug_zstd_pair() {
 	for s in $(_seq ${min} ${max}) ; do
 		echo "
 		llvm_slot_${s}? (
-			llvm-core/clang:${s}
-			llvm-core/clang:=
-			llvm-core/llvm:${s}[zstd]
-			llvm-core/llvm:=
+			llvm-core/clang:${s}=
+			llvm-core/llvm:${s}=[zstd]
 		)
 		     "
 	done
@@ -665,15 +644,11 @@ gen_rust_cdepend() {
 		local llvm_slot=${RUST_PV_TO_LLVM_SLOT["${key}"]}
 		echo "
 			llvm_slot_${llvm_slot}?	(
-				llvm-core/clang:${llvm_slot}
-				llvm-core/clang:=
-				llvm-core/llvm:${llvm_slot}
-				llvm-core/llvm:=
+				llvm-core/clang:${llvm_slot}=
+				llvm-core/llvm:${llvm_slot}=
 				|| (
 					=dev-lang/rust-${s}[rust-src]
-					dev-lang/rust:=
 					=dev-lang/rust-bin-${s}[rust-src]
-					dev-lang/rust-bin:=
 				)
 			)
 		"
@@ -690,60 +665,53 @@ gen_rust_cdepend() {
 # We add more binutils/llvm/gcc checks because the distro and other popular
 # overlays don't delete their older ebuilds.
 #
-CDEPEND+="
+# BUILD_DEPEND means either during emerge time or post installation like in the
+# 90s to early 2000s.
+#
+BUILD_DEPEND+="
 	${KCP_RDEPEND}
-	>=app-shells/bash-4.2
-	>=dev-lang/perl-5
-	>=sys-apps/util-linux-2.10o
-	>=sys-devel/bc-1.06.95
-	>=sys-devel/binutils-2.25
-	>=sys-devel/bison-2.0
-	>=sys-devel/flex-2.5.35
-	>=dev-build/make-3.82
-	app-arch/cpio
-	dev-util/pkgconf
-	sys-apps/grep[pcre]
-	virtual/libelf
-	virtual/pkgconfig
-	arm64? (
-		big-endian? (
-			!clang? (
-				sys-devel/binutils
-			)
-			clang? (
-				$(gen_clang_lld)
-			)
-		)
+	>=app-shells/bash-${BASH_PV}:=
+	>=dev-build/make-3.82:=
+	>=dev-lang/perl-${PERL_PV}:=
+	>=sys-apps/util-linux-${UTIL_LINUX_PV}:=
+	>=sys-devel/bison-2.0:=
+	>=sys-devel/flex-2.5.35:=
+	app-alternatives/bc:*
+	app-alternatives/cpio:*
+	dev-util/pkgconf:=
+	sys-apps/grep:=[pcre]
+	virtual/libelf:=
+	virtual/pkgconfig:*
+	!clang? (
+		>=sys-devel/binutils-${BINUTILS_PV}:=
 	)
 	bzip2? (
-		app-arch/bzip2
+		app-alternatives/bzip2:*
 	)
 	cet? (
 		!clang? (
-			>=sys-devel/binutils-2.29
-			>=sys-devel/gcc-9
+			>=sys-devel/gcc-9:=
 		)
 		clang? (
 			$(gen_clang_lld)
 		)
 	)
+	clang? (
+		$(gen_clang_lld)
+	)
 	cpu_flags_arm_bti? (
 		arm64? (
 			!clang? (
-				>=sys-devel/gcc-10.1
+				>=sys-devel/gcc-10.1:=
 			)
 			clang? (
 				$(gen_clang_llvm_pair)
 			)
 		)
 	)
-	cpu_flags_arm_lse? (
-		>=sys-devel/binutils-2.25
-	)
 	cpu_flags_arm_mte? (
-		>=sys-devel/binutils-2.33
 		!clang? (
-			>=sys-devel/gcc-10.1
+			>=sys-devel/gcc-10.1:=
 		)
 		clang? (
 			$(gen_clang_llvm_pair)
@@ -751,17 +719,13 @@ CDEPEND+="
 	)
 	cpu_flags_arm_pac? (
 		arm64? (
-			>=sys-devel/binutils-2.33.1
 			!clang? (
-				>=sys-devel/gcc-9.1
+				>=sys-devel/gcc-9.1:=
 			)
 			clang? (
 				$(gen_clang_llvm_pair)
 			)
 		)
-	)
-	cpu_flags_arm_tlbi? (
-		>=sys-devel/binutils-2.30
 	)
 	cpu_flags_arm_v4? (
 		clang? (
@@ -773,75 +737,28 @@ CDEPEND+="
 			$(gen_clang_llvm_pair)
 		)
 	)
-	cpu_flags_ppc_476fpe? (
-		>=sys-devel/binutils-2.25
-	)
-	cpu_flags_riscv_v? (
-		!clang? (
-			>=sys-devel/binutils-2.38
-		)
-		clang? (
-			$(gen_clang_lld)
-		)
-	)
-	cpu_flags_x86_aes? (
-		>=sys-devel/binutils-2.19
-	)
-	cpu_flags_x86_avx? (
-		>=sys-devel/binutils-2.19
-	)
-	cpu_flags_x86_avx2? (
-		>=sys-devel/binutils-2.22
-	)
-	cpu_flags_x86_avx512bw? (
-		>=sys-devel/binutils-2.25
-	)
 	cpu_flags_x86_gfni? (
 		!clang? (
-			>=sys-devel/binutils-2.30
-			>=sys-devel/gcc-6
+			>=sys-devel/gcc-6:=
 		)
-	)
-	cpu_flags_x86_pclmul? (
-		>=sys-devel/binutils-2.19
-	)
-	cpu_flags_x86_sha? (
-		>=sys-devel/binutils-2.24
-	)
-	cpu_flags_x86_sha256? (
-		>=sys-devel/binutils-2.24
-	)
-	cpu_flags_x86_sse2? (
-		>=sys-devel/binutils-2.11
-	)
-	cpu_flags_x86_sse4_2? (
-		>=sys-devel/binutils-2.18
-	)
-	cpu_flags_x86_ssse3? (
-		>=sys-devel/binutils-2.17
 	)
 	cpu_flags_x86_tpause? (
 		!clang? (
-			>=sys-devel/binutils-2.31.1
-			>=sys-devel/gcc-9
+			>=sys-devel/gcc-9:=
 		)
-	)
-	cpu_flags_x86_vpclmulqdq? (
-		>=sys-devel/binutils-2.19
 	)
 	debug? (
 		(
 			!clang? (
-				>=sys-devel/gcc-5
+				>=sys-devel/gcc-5:=
 			)
 			clang? (
 				$(gen_clang_llvm_pair)
 			)
-			>=sys-devel/binutils-2.26
 		)
 		zstd? (
 			!clang? (
-				>=sys-devel/gcc-13[zstd]
+				>=sys-devel/gcc-13:=[zstd]
 			)
 			clang? (
 				$(gen_clang_debug_zstd_pair)
@@ -850,108 +767,90 @@ CDEPEND+="
 	)
 	dwarf4? (
 		!clang? (
-			>=sys-devel/binutils-2.35.2
-			>=sys-devel/gcc-4.5
+			>=sys-devel/gcc-4.5:=
 		)
 		clang? (
 			$(gen_clang_llvm_pair)
 		)
-		>=dev-debug/gdb-7.0
+		>=dev-debug/gdb-7.0:=
 	)
 	dwarf5? (
 		!clang? (
-			>=sys-devel/binutils-2.35.2
-			>=sys-devel/gcc-5
-			riscv? (
-				>=sys-devel/binutils-2.42
-			)
+			>=sys-devel/gcc-5:=
 		)
 		clang? (
 			$(gen_clang_llvm_pair)
 		)
-		>=dev-debug/gdb-8.0
+		>=dev-debug/gdb-8.0:=
 	)
 	dwarf-auto? (
-		!clang? (
-			>=sys-devel/binutils-2.35.2
-			riscv? (
-				>=sys-devel/binutils-2.42
-			)
-		)
-		>=dev-debug/gdb-8.0
+		>=dev-debug/gdb-8.0:=
 	)
 	expoline? (
 		!clang? (
 			s390? (
-				>=sys-devel/gcc-7.4.0
+				>=sys-devel/gcc-7.4.0:=
 			)
 		)
 	)
 	gtk? (
-		dev-libs/glib:2
-		gnome-base/libglade:2.0
-		x11-libs/gtk+:2
+		>=dev-libs/glib-${GLIB_PV}:=
+		gnome-base/libglade:=
+		x11-libs/gtk+:2=
 	)
 	gzip? (
-		>=sys-apps/kmod-${KMOD_PV}[zlib]
-		app-arch/gzip
+		>=sys-apps/kmod-${KMOD_PV}:=[zlib]
+		app-alternatives/gzip:*
 	)
 	lz4? (
-		app-arch/lz4
+		>=app-arch/lz4-${LZ4_PV}:=
 	)
 	lzma? (
-		app-arch/xz-utils
+		>=app-arch/xz-utils-${XZ_UTILS_PV}:=
 	)
 	lzo? (
-		app-arch/lzop
+		app-arch/lzop:=
 	)
 	ncurses? (
-		sys-libs/ncurses
+		>=sys-libs/ncurses-${NCURSES_PV}:=
 	)
 	openssl? (
-		>=dev-libs/openssl-1.0.0
+		$(secure-version_gen_openssl_depends)
 	)
 	qt5? (
-		>=dev-qt/qtcore-${QT5_PV}:5
-		>=dev-qt/qtgui-${QT5_PV}:5
-		>=dev-qt/qtwidgets-${QT5_PV}:5
+		>=dev-qt/qtcore-${QT5_PV}:5=
+		>=dev-qt/qtgui-${QT5_PV}:5=
+		>=dev-qt/qtwidgets-${QT5_PV}:5=
 	)
 	qt6? (
-		>=dev-qt/qtcore-${QT6_PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-qt/qtcore:=
-		>=dev-qt/qtgui-${QT6_PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-qt/qtgui:=
-		>=dev-qt/qtwidgets-${QT6_PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-qt/qtwidgets:=
+		>=dev-qt/qtcore-${QT6_PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-qt/qtgui-${QT6_PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-qt/qtwidgets-${QT6_PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	rust? (
-		>=dev-util/bindgen-0.65.1
-		>=dev-util/pahole-1.27[${PYTHON_SINGLE_USEDEP}]
+		>=dev-util/bindgen-0.65.1:=
+		>=dev-util/pahole-1.27:=[${PYTHON_SINGLE_USEDEP}]
 		|| (
 			$(gen_rust_cdepend)
 		)
-		|| (
-			dev-lang/rust:=
-			dev-lang/rust-bin:=
-		)
 	)
 	xz? (
-		>=sys-apps/kmod-${KMOD_PV}[lzma]
-		app-arch/xz-utils
+		>=sys-apps/kmod-${KMOD_PV}:=[lzma]
+		>=app-arch/xz-utils-${XZ_UTILS_PV}:=
 	)
 	zstd? (
-		>=sys-apps/kmod-${KMOD_PV}[zstd]
-		app-arch/zstd
+		>=sys-apps/kmod-${KMOD_PV}:=[zstd]
+		>=app-arch/zstd-${ZSTD_PV}:=
 	)
 
 	linux-firmware? (
-		>=sys-kernel/linux-firmware-${AMD_SEV_FIRMWARE_RELEASE_DATE}
-		>=sys-kernel/linux-firmware-${AMDGPU_FIRMWARE_RELEASE_DATE}
-		>=sys-kernel/linux-firmware-${ATH_FIRMWARE_RELEASE_DATE}
-		>=sys-kernel/linux-firmware-${RTL_BT_FIRMWARE_RELEASE_DATE}
-		>=sys-kernel/linux-firmware-${RTL8XXXU_FIRMWARE_RELEASE_DATE}
-		>=sys-kernel/linux-firmware-${RTLWIFI_FIRMWARE_RELEASE_DATE}
-		>=sys-kernel/linux-firmware-${RTW_FIRMWARE_RELEASE_DATE}
+		>=sys-kernel/linux-firmware-${AMD_SEV_FIRMWARE_RELEASE_DATE}:=
+		>=sys-kernel/linux-firmware-${AMDGPU_FIRMWARE_RELEASE_DATE}:=
+		>=sys-kernel/linux-firmware-${ATH_FIRMWARE_RELEASE_DATE}:=
+		>=sys-kernel/linux-firmware-${RTL_BT_FIRMWARE_RELEASE_DATE}:=
+		>=sys-kernel/linux-firmware-${RTL8XXXU_FIRMWARE_RELEASE_DATE}:=
+		>=sys-kernel/linux-firmware-${RTLWIFI_FIRMWARE_RELEASE_DATE}:=
+		>=sys-kernel/linux-firmware-${RTW_FIRMWARE_RELEASE_DATE}:=
 	)
 	lto? (
 		$(gen_lto_rdepend)
@@ -974,7 +873,7 @@ CDEPEND+="
 	)
 	retpoline? (
 		!clang? (
-			>=sys-devel/gcc-7.3.0
+			>=sys-devel/gcc-7.3.0:=
 		)
 		clang? (
 			$(gen_clang_llvm_pair)
@@ -983,7 +882,7 @@ CDEPEND+="
 	shadowcallstack? (
 		arm64? (
 			!clang? (
-				>=sys-devel/gcc-12.1
+				>=sys-devel/gcc-12.1:=
 			)
 			clang? (
 				$(gen_shadowcallstack_rdepend)
@@ -994,7 +893,7 @@ CDEPEND+="
 
 RDEPEND+="
 	!build? (
-		${CDEPEND}
+		${BUILD_DEPEND}
 	)
 "
 if ! [[ "${PV}" =~ "9999" ]] ; then
@@ -1009,7 +908,7 @@ DEPEND+="
 
 BDEPEND+="
 	build? (
-		${CDEPEND}
+		${BUILD_DEPEND}
 	)
 	doc? (
 		$(python_gen_cond_dep '
