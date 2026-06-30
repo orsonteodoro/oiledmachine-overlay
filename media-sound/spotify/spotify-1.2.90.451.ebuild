@@ -242,11 +242,11 @@ REQUIRED_USE+="
 
 RDEPEND+="
 	>=app-accessibility/at-spi2-core-${AT_SPI2_CORE_PV}:=
-	>=dev-libs/libayatana-appindicator-0.5.3:=
 	>=app-arch/brotli-${BROTLI_PV}:=
 	>=app-arch/zstd-${ZSTD_PV}:=
 	>=dev-libs/expat-${EXPAT_PV}:=
 	>=dev-libs/glib-${GLIB_PV}:=
+	>=dev-libs/libayatana-appindicator-0.5.3:=
 	>=dev-libs/nettle-${NETTLE_PV}:=
 	>=dev-libs/nss-${NSS_PV}:=
 	>=dev-libs/nspr-${NSPR_PV}:=
@@ -264,7 +264,7 @@ RDEPEND+="
 	>=sys-devel/gcc-${GCC_PV}:=
 	>=sys-libs/glibc-${GLIBC_PV}:=
 	>=virtual/zlib-${ZLIB_PV}:=
-	dev-libs/libdbusmenu
+x	dev-libs/libdbusmenu
 	>=net-libs/gnutls-${GNUTLS_PV}
 	>=x11-libs/gdk-pixbuf-${GDK_PIXBUF_PV}
 	emoji? (
