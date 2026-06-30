@@ -240,6 +240,11 @@ REQUIRED_USE+="
 	)
 "
 
+# Listed as required but not detected
+# x11-misc/xdg-utils
+# x11-libs/libXScrnSaver
+# x11-libs/libxshmfence
+# x11-libs/libXtst
 RDEPEND+="
 	>=app-accessibility/at-spi2-core-${AT_SPI2_CORE_PV}:=
 	>=app-arch/brotli-${BROTLI_PV}:=
@@ -268,6 +273,7 @@ RDEPEND+="
 	>=x11-libs/gdk-pixbuf-${GDK_PIXBUF_PV}
 	dev-libs/libdbusmenu
 	virtual/udev:*
+	x11-misc/xdg-utils
 	emoji? (
 		>=media-libs/fontconfig-${FONTCONFIG_PV}:=
 		>=media-libs/freetype-${FREETYPE_PV}:=[png]
@@ -280,10 +286,10 @@ RDEPEND+="
 		)
 	)
 	ffmpeg? (
-		$(secure-version_gen_ffmpeg_depends '6.0-8.0' '' 'single')
+		$(secure-version_gen_ffmpeg_depends '4.0-7.1' '' 'single')
 	)
 	libnotify? (
-		x11-libs/libnotify
+		x11-libs/libnotify:=
 	)
 	X? (
 		>=x11-libs/libX11-${LIBX11_PV}:=
@@ -294,6 +300,9 @@ RDEPEND+="
 		>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=
 		>=x11-libs/libXrandr-${LIBXRANDR_PV}:=
 		>=x11-libs/libxcb-${LIBXCB_PV}:=
+		x11-libs/libXScrnSaver
+		x11-libs/libxshmfence
+		x11-libs/libXtst
 	)
 	$(secure-version_gen_openssl_depends '3.0-3.6')
 "
