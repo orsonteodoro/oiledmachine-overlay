@@ -316,13 +316,14 @@ einfo "IL = Infinite Loop"
 einfo "IMPRREL = Improper Release"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"INJECT"($|" "|";"|",") ]] ; then
-# Broader category includes
+# Broader category includes or any type of injection
 # Code injection (code execution)
 #  - SQL injection
 #  - Interpreter injection
 #  - Shell injection
 # JavaScript injection (XSS, information disclosure)
 # JIT injection (ASLR bypass)
+# Log Injection
 einfo "INJECT = Injection"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IO"($|" "|";"|",") ]] ; then
@@ -392,6 +393,9 @@ einfo "KP = Kernel Panic"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"LPE"($|" "|";"|",") ]] ; then
 einfo "LPE = Local Privilege Escalation"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"LI"($|" "|";"|",") ]] ; then
+einfo "LI = Log Injection"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"MBV"($|" "|";"|",") ]] ; then
 # Same as CWE-119
