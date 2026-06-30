@@ -57,23 +57,23 @@ IUSE+=" audit build caps +cramfs cryptsetup fdformat +hardlink kill +logger magi
 RDEPEND="
 	virtual/libcrypt:=
 	audit? ( >=sys-process/audit-${AUDIT_PV}:= )
-	caps? ( sys-libs/libcap-ng )
+	caps? ( sys-libs/libcap-ng:= )
 	cramfs? ( >=virtual/zlib-${ZLIB_PV}:= )
-	cryptsetup? ( >=sys-fs/cryptsetup-2.1.0 )
+	cryptsetup? ( >=sys-fs/cryptsetup-2.1.0:= )
 	hardlink? ( >=dev-libs/libpcre2-${LIBPCRE2_PV}:= )
 	ncurses? (
 		>=sys-libs/ncurses-${NCURSES_PV}:=[unicode(+)?]
-		magic? ( sys-apps/file:0= )
+		magic? ( sys-apps/file:= )
 	)
-	nls? ( virtual/libintl[${MULTILIB_USEDEP}] )
-	pam? ( sys-libs/pam )
+	nls? ( virtual/libintl:*[${MULTILIB_USEDEP}] )
+	pam? ( sys-libs/pam:= )
 	python? ( ${PYTHON_DEPS} )
-	readline? ( sys-libs/readline:0= )
-	rtas? ( sys-libs/librtas )
-	selinux? ( >=sys-libs/libselinux-${LIBSELINUX_PV}[${MULTILIB_USEDEP}] )
-	slang? ( sys-libs/slang )
+	readline? ( sys-libs/readline:= )
+	rtas? ( sys-libs/librtas:= )
+	selinux? ( >=sys-libs/libselinux-${LIBSELINUX_PV}:=[${MULTILIB_USEDEP}] )
+	slang? ( sys-libs/slang:= )
 	!build? (
-		systemd? ( >=sys-apps/systemd-${SYSTEMD_PV} )
+		systemd? ( >=sys-apps/systemd-${SYSTEMD_PV}:= )
 		udev? ( virtual/libudev:= )
 	)
 "
@@ -88,8 +88,8 @@ BDEPEND="
 "
 DEPEND="
 	${RDEPEND}
-	virtual/os-headers
-	acct-group/root
+	virtual/os-headers:*
+	acct-group/root:*
 "
 RDEPEND+="
 	hardlink? ( !app-arch/hardlink )
@@ -103,9 +103,9 @@ RDEPEND+="
 		!>=sys-apps/shadow-4.7-r2[su]
 	)
 	uuidd? (
-		acct-user/uuidd
-		selinux? ( sec-policy/selinux-uuidd )
-		systemd? ( virtual/tmpfiles )
+		acct-user/uuidd:*
+		selinux? ( sec-policy/selinux-uuidd:* )
+		systemd? ( virtual/tmpfiles:* )
 	)
 	!net-wireless/rfkill
 "
