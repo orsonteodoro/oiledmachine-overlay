@@ -100,6 +100,9 @@ einfo "AB = Authentication Bypass"
 # BO is taken so ABO is used
 einfo "ABO = Adjacent Buffer Overrun"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ACB"($|" "|";"|",") ]] ; then
+einfo "ACB = Access Control Bypass"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ACE"($|" "|";"|",") ]] ; then
 einfo "ACE = Arbitrary Code Execution"
 		fi
@@ -145,6 +148,9 @@ einfo "BOR = Buffer Overread"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"BU"($|" "|";"|",") ]] ; then
 einfo "BU = Buffer Underflow"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"BUR"($|" "|";"|",") ]] ; then
+einfo "BUR = Buffer Underread"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"C"($|" "|";"|",") ]] ; then
 # Same as ID
