@@ -312,7 +312,7 @@ CHKL_TIMESTAMPS=(
 	"sys-devel/binutils-9999"
 	"dev-libs/glib-2.89.9999"
 	"app-arch/lz4-9999"
-	"app-arch/xz-utils-"
+	"app-arch/xz-utils-9999"
 )
 
 inherit chkl ot-kernel libcxx-slot libstdcxx-slot
