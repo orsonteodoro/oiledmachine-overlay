@@ -318,7 +318,7 @@ SECURE_TIMESTAMP["sys_libs_libunwind_9999"]="Jun 19, 2026 9:44 AM PDT"
 
 # Tracks AMD µcode security annoucements
 # 2025-07-29 - AMD-SB-3023, AMD-SB-3023, AMD-SB-3027
-SECURE_TIMESTAMP["sys_kernel_linux-firmware_99999999"]="2025-07-29 10:21:29 -0500"
+SECURE_TIMESTAMP["sys_kernel_linux_firmware_99999999"]="2025-07-29 10:21:29 -0500"
 
 SECURE_TIMESTAMP["x11_base_xorg_server_9999"]="2026-06-08 02:12:00 +0000"
 SECURE_TIMESTAMP["x11_libs_libX11_9999"]="Apr 15, 2026 1:18:31 AM PDT"
