@@ -28,6 +28,15 @@
       and after.),  cfi (builds sucessfully, but needs testing of it
       actually working), plausable-deniable-dmcrypt-plain (in development)
 
+    For the experimental ebuild it is supposed to address 2 design issues
+    which both Dracut and Genkernel suffer from.
+    Implementation 1:  Both Dracut and Genkernel suffer from a design flaw
+    that it decreases the search space in multiple dimensions which
+    accelerates cracking.  The direct approach by both is the design flaw.
+    Implementation 2:  The correct implementation will increases the
+    location space possibilities for the key instead of reducing it which
+    is a design flaw both present in both Dracut an Genkernel.
+
     When switching between 4.2.x and older versions, The /dev/disk/by-id/
     entries may change.  This means that you need to adjust the kernel
     parameters to the correct identifiers.
