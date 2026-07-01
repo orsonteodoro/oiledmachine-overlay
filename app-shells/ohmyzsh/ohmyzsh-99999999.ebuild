@@ -25,8 +25,7 @@ if [[ "${PV}" =~ "99999999" ]] ; then
 	inherit git-r3
 fi
 
-DESCRIPTION="A delightful community-driven framework for managing your zsh \
-configuration that includes optional plugins and themes."
+DESCRIPTION="A framework for managing your zsh configuration with optional plugins and themes"
 HOMEPAGE="
 http://ohmyz.sh/
 https://github.com/ohmyzsh/ohmyzsh
