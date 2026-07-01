@@ -3327,25 +3327,31 @@ einfo "Applying patchsets for -${extraversion}"
 einfo
 		apply_all_patchsets
 		cd "${BUILD_DIR}" || die
-einfo "Setting the EXTRALEVEL for the -${extraversion} build"
+
+einfo "Setting the EXTRAVERSION for the -${extraversion} build"
 		if [[ "${PV}" =~ "9999" ]] ; then
-			local rc_pv=""
-			sed -i -r -e "s|EXTRAVERSION =[ rc0-9-]+\$|EXTRAVERSION = ${rc_pv}-${extraversion}|g" \
-				"Makefile" || die
+			sed -i -r \
+				-e "s|EXTRAVERSION =[ rc0-9-]+\$|EXTRAVERSION = -${extraversion}|g" \
+				"Makefile" \
+				|| die
 		elif [[ "${PV}" =~ "_rc" ]] ; then
-			rc_pv="-${RC_PV}"
-			sed -i -r -e "s|EXTRAVERSION =[ rc0-9-]+\$|EXTRAVERSION = ${rc_pv}-${extraversion}|g" \
-				"Makefile" || die
+			sed -i -r \
+				-e "s|EXTRAVERSION =[ rc0-9-]+\$|EXTRAVERSION = -${RC_PV}-${extraversion}|g" \
+				"Makefile" \
+				|| die
 		else
-			sed -i -e "s|EXTRAVERSION =\$|EXTRAVERSION = -${extraversion}|g" \
-				"Makefile" || die
+			sed -i \
+				-e "s|EXTRAVERSION =\$|EXTRAVERSION = -${extraversion}|g" \
+				"Makefile" \
+				|| die
 		fi
 
 		if [[ "${PV}" =~ "9999" ]] ; then
 einfo "Setting the SUBLEVEL to 9999"
-			local rc_pv=""
-			sed -i -r -e "s|SUBLEVEL = [0-9]+\$|SUBLEVEL = 9999|g" \
-				"Makefile" || die
+			sed -i -r \
+				-e "s|SUBLEVEL = [0-9]+\$|SUBLEVEL = 9999|g" \
+				"Makefile" \
+				|| die
 		fi
 
 		if ! use debug && ! ot-kernel_use "debug" ; then
@@ -16576,8 +16582,11 @@ ot_kernel_fix_kernel_release() {
 	# The file generated is missing the arch so replace it with ours.
 	# Add for genkernel because mrproper erases it
 	mkdir -p "include/config" || die
-	echo "${UPSTREAM_PV}-${extraversion}-${arch}" \
-		> include/config/kernel.release || die
+	echo \
+		"${UPSTREAM_PV}-${extraversion}-${arch}" \
+			> \
+		"include/config/kernel.release" \
+		|| die
 }
 
 # @FUNCTION: ot-kernel_fix_certs_permissions
@@ -16596,7 +16605,7 @@ ot-kernel_fix_certs_permissions() {
 ot-kernel_install_genkernel_required() {
 	if ! [[ "${OT_KERNEL_INSTALL_SOURCE_CODE:-1}" =~ ("1"|"y") ]] ; then
 		# No longer building (binary only)
-		rm -rf arch/um/scripts/Makefile.rules
+		rm -f "arch/um/scripts/Makefile.rules"
 	fi
 
 	cd "${BUILD_DIR}" || die

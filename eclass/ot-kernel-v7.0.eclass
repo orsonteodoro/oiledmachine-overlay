@@ -39,18 +39,34 @@ esac
 
 inherit secure-version
 
+# Using -r1 in ot-sources-7.0.1-r1.ebuild is not allowed.
+# Using _p20260704 in ot-sources-7.0.1_p20260704.ebuild is not allowed.
+# It creates confusion and increases complexity between
+# 1. /usr/src/ot-sources-${UPSTREAM_PV}-${EXTRAVERSION} install path
+# 2. /usr/src/ot-sources-${UPSTREAM_PV}-${EXTRAVERSION}/include/config/kernel.release
+# 3. /usr/src/ot-sources-${UPSTREAM_PV}-${EXTRAVERSION}/Makefile
+# 4. ver_cut contexts
+[[ "${PVR}" =~ "-r" ]] && die "Package revision is disallowed."
+[[ "${PV}" =~ "_p" ]] && die "Post revision is disallowed."
+
+KV_MAJOR=$(ver_cut "1" "${PV}")
+KV_MAJOR_MINOR=$(ver_cut "1-2" "${PV}")
+
 # PV is for 9999 (live) context check
 # MY_PV is in ver_test context
-if [[ "${PV}" =~ "9999" ]] ; then
-	# It must appear as 7.0.9999
-	MY_PV=$(ver_cut "1-3" "${PV}")
-elif [[ "${PV}" =~ "_rc" ]] ; then
-	# It must appear as 7.0_rc1.
-	#RC_PV="rc2"
-	MY_PV=$(ver_cut "1-3" "${PV}")"_${RC_PV}"
+# UPSTREAM_PV appears in file context.
+if [[ "${PV}" =~ "_rc" ]] ; then
+	# ot-sources-7.0_rc1.ebuild
+	RC_PV=$(ver_cut 4 "${PV}")
+	MY_PV="${KV_MAJOR_MINOR}_${RC_PV}"		# 7.0_rc1
+	UPSTREAM_PV="${KV_MAJOR_MINOR}-${RC_PV}"	# 7.0-rc1
 else
+	# ot-sources-7.0.9999.ebuild
+	# ot-sources-7.0.ebuild
+	# ot-sources-7.0.1.ebuild
 	RC_PV=""
-	MY_PV="${PV}" # ver_test context
+	MY_PV="${PV}" #					# 7.0, 7.0.1, 7.0.9999
+	UPSTREAM_PV="${PV}"				# 7.0, 7.0.1, 7.0.9999
 fi
 
 #GENPATCHES_FALLBACK_COMMIT="acbfddfa35863bb536010294d1284ee857b9e13b" # 2023-10-08 10:56:26 -0400
@@ -81,14 +97,6 @@ RTW_FIRMWARE_RELEASE_DATE="20250630" # Based on latest added rtw8922a_fw-4 bin d
 #
 # This also means that each vendor will have an early release or late release
 # of their devices' firmware.
-KV_MAJOR=$(ver_cut "1" "${MY_PV}")
-KV_MAJOR_MINOR=$(ver_cut "1-2" "${MY_PV}")
-if ver_test "${MY_PV}" "-eq" "${KV_MAJOR_MINOR}" ; then
-	# Normalize versioning
-	UPSTREAM_PV="${KV_MAJOR_MINOR}.0" # file context
-else
-	UPSTREAM_PV="${MY_PV/_/-}" # file context
-fi
 
 ARM_FLAGS=(
 # Some are default ON for security reasons or bug avoidance.
