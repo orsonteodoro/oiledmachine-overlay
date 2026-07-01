@@ -28,14 +28,20 @@
       and after.),  cfi (builds sucessfully, but needs testing of it
       actually working), plausable-deniable-dmcrypt-plain (in development)
 
-    For the experimental ebuild it is supposed to address 2 design issues
+    For the experimental ebuild it is supposed to address 3 design issues
     which both Dracut and Genkernel suffer from.
     Implementation 1:  Both Dracut and Genkernel suffer from a design flaw
     that it decreases the search space in multiple dimensions which
-    accelerates cracking.  The direct approach by both is the design flaw.
+    accelerates cracking.  The direct approach and coercing the user into
+    this directness is the design flaw by both which helps the threat actor.
     Implementation 2:  The correct implementation will increases the
     location space possibilities for the key instead of reducing it which
     is a design flaw both present in both Dracut an Genkernel.
+    Implementation 3:  The proper implementation should not lead
+    immediately to rubberhose attack.  This is either a bootloader issue
+    or init script issue or both.  By default, the init process should
+    use the de-escalated option first instead of the unlock option which
+    is an immediate rubberhose cryptoanalysis.
 
     When switching between 4.2.x and older versions, The /dev/disk/by-id/
     entries may change.  This means that you need to adjust the kernel
