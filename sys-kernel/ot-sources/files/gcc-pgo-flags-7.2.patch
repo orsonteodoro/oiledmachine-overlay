@@ -1,0 +1,117 @@
+--- a/Makefile.orig	2026-06-30 16:53:28.048252903 -0700
++++ b/Makefile	2026-06-30 17:11:36.363504033 -0700
+@@ -1162,12 +1162,75 @@ endif
+ # Ensure compilers do not transform certain loops into calls to wcslen()
+ KBUILD_CFLAGS += -fno-builtin-wcslen
+ 
++CFLAGS_GCOV	:=
++CFLAGS_GCOV_DEFAULT	:= 1
++
++ifeq ($(GCC_PGO_PHASE),GCC_PDI)
++CFLAGS_GCOV	:= -fprofile-arcs -fno-tree-loop-im
++CFLAGS_GCOV_DEFAULT	= 0
++endif
++
++ifeq ($(GCC_PGO_PHASE),GCC_PGI)
++CFLAGS_GCOV	:= -fprofile-generate -fno-tree-loop-im
++CFLAGS_GCOV_DEFAULT	= 0
++endif
++
++ifeq ($(GCC_PGO_PHASE),GCC_PGO_CFG)
++CFLAGS_GCOV	:= -fprofile-arcs -fno-tree-loop-im
++CFLAGS_GCOV_DEFAULT	= 0
++endif
++
++ifeq ($(GCC_PGO_PHASE),GCC_PDO)
++KCFLAGS	:= -fbranch-probabilities -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
++CFLAGS_GCOV_DEFAULT	= 0
++endif
++
++ifeq ($(GCC_PGO_PHASE),GCC_PGO)
++KCFLAGS	:= -fprofile-use -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
++CFLAGS_GCOV_DEFAULT	= 0
++endif
++
++ifeq ($(GCC_PGO_PHASE),GCC_PGO_CFG)
++KCFLAGS	:= -fprofile-use -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
++CFLAGS_GCOV_DEFAULT	= 0
++endif
++
++ifeq ($(CFLAGS_GCOV_DEFAULT),1)
+ CFLAGS_GCOV	:= -fprofile-arcs -ftest-coverage
+-ifdef CONFIG_CC_IS_GCC
+-CFLAGS_GCOV	+= -fno-tree-loop-im
++endif
++
+ # Use atomic counter updates to avoid concurrent-access crashes in GCOV.
+ # Only enable if -fprofile-update=prefer-atomic does not introduce new
+ # undefined symbols (e.g. libatomic calls that the kernel cannot link).
++ifeq ($(GCC_PGO_PHASE),GCC_PDI)
++CFLAGS_GCOV	+= $(call try-run,\
++	echo 'long long x; void f(void){x++;}' | \
++	$(CC) $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS) -w -fprofile-arcs \
++	-ftest-coverage -x c - -c -o "$$TMP.base" && \
++	echo 'long long x; void f(void){x++;}' | \
++	$(CC) $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS) -w -fprofile-arcs \
++	-ftest-coverage -fprofile-update=prefer-atomic \
++	-x c - -c -o "$$TMP" && \
++	$(NM) "$$TMP.base" | grep ' U ' > "$$TMP.ubase" || true ; \
++	$(NM) "$$TMP" | grep ' U ' > "$$TMP.utest" || true ; \
++	cmp -s "$$TMP.ubase" "$$TMP.utest",\
++	-fprofile-update=prefer-atomic)
++endif
++ifeq ($(GCC_PGO_PHASE),GCC_PGI)
++CFLAGS_GCOV	+= $(call try-run,\
++	echo 'long long x; void f(void){x++;}' | \
++	$(CC) $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS) -w -fprofile-generate \
++	-ftest-coverage -x c - -c -o "$$TMP.base" && \
++	echo 'long long x; void f(void){x++;}' | \
++	$(CC) $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS) -w -fprofile-generate \
++	-ftest-coverage -fprofile-update=prefer-atomic \
++	-x c - -c -o "$$TMP" && \
++	$(NM) "$$TMP.base" | grep ' U ' > "$$TMP.ubase" || true ; \
++	$(NM) "$$TMP" | grep ' U ' > "$$TMP.utest" || true ; \
++	cmp -s "$$TMP.ubase" "$$TMP.utest",\
++	-fprofile-update=prefer-atomic)
++endif
++ifeq ($(GCC_PGO_PHASE),GCC_PGO_CFG)
+ CFLAGS_GCOV	+= $(call try-run,\
+ 	echo 'long long x; void f(void){x++;}' | \
+ 	$(CC) $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS) -w -fprofile-arcs \
+@@ -1181,6 +1244,24 @@ CFLAGS_GCOV	+= $(call try-run,\
+ 	cmp -s "$$TMP.ubase" "$$TMP.utest",\
+ 	-fprofile-update=prefer-atomic)
+ endif
++ifeq ($(CFLAGS_GCOV_DEFAULT),1)
++CFLAGS_GCOV	+= $(call try-run,\
++	echo 'long long x; void f(void){x++;}' | \
++	$(CC) $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS) -w -fprofile-arcs \
++	-ftest-coverage -x c - -c -o "$$TMP.base" && \
++	echo 'long long x; void f(void){x++;}' | \
++	$(CC) $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS) -w -fprofile-arcs \
++	-ftest-coverage -fprofile-update=prefer-atomic \
++	-x c - -c -o "$$TMP" && \
++	$(NM) "$$TMP.base" | grep ' U ' > "$$TMP.ubase" || true ; \
++	$(NM) "$$TMP" | grep ' U ' > "$$TMP.utest" || true ; \
++	cmp -s "$$TMP.ubase" "$$TMP.utest",\
++	-fprofile-update=prefer-atomic)
++endif
++
++#$(info "GCC_PGO_PHASE:  ${GCC_PGO_PHASE}")
++#$(info "CFLAGS_GCOV:  ${CFLAGS_GCOV}")
++
+ export CFLAGS_GCOV
+ 
+ # change __FILE__ to the relative path to the source directory
+--- a/kernel/gcov/Makefile.orig	2026-06-30 16:58:04.583936046 -0700
++++ b/kernel/gcov/Makefile	2026-06-30 17:00:14.848019802 -0700
+@@ -1,4 +1,9 @@
+ # SPDX-License-Identifier: GPL-2.0
++
++ifeq ($(GCC_PGO_PHASE),GCC_PGI)
++GCOV_PROFILE := n
++endif
++
+ ccflags-y := -DSRCTREE='"$(srctree)"' -DOBJTREE='"$(objtree)"'
+ 
+ obj-y := base.o fs.o

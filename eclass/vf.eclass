@@ -302,6 +302,10 @@ einfo "ICP = Insecure Coding Practices"
 # Same as C
 einfo "ID = Information Disclosure"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IIO"($|" "|";"|",") ]] ; then
+# Same as OOOI (Out of Order Initalization)
+einfo "IIO = Improper Initalization Order"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ISD"($|" "|";"|",") ]] ; then
 einfo "ISD = Insecure Deserialization"
 		fi
@@ -460,8 +464,12 @@ einfo "OOBR = Out Of Bounds Read"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"OOBW"($|" "|";"|",") ]] ; then
 einfo "OOBW = Out Of Bounds Write"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"OOR"($|" "|";"|",") ]] ; then
-einfo "OOR = Out Of Range Access"
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"OOOI"($|" "|";"|",") ]] ; then
+# Same as IIO (Improper Initalization Order)
+einfo "OOOI = Out Of Order Initalization"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"OORA"($|" "|";"|",") ]] ; then
+einfo "OORA = Out Of Range Access"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"PC"($|" "|";"|",") ]] ; then
 einfo "PC = Pointer Corruption"
