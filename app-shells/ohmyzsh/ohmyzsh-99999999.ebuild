@@ -4,39 +4,25 @@
 EAPI=8
 
 EMOJI_LANG_DEFAULT=${EMOJI_LANG_DEFAULT:-"en"}
-# GEN_EBUILD="1" # Uncomment to auto generate parts of the ebuild
-MISSING_DEPENDS=() # Global variable
-PYTHON_COMPAT=( python3_{10..11} )
-RDEPEND_COMMON_ALIASES=() # Global variable
-RUBY_OPTIONAL=1
-USE_RUBY="ruby32"
 ZSH_DEST="/usr/share/zsh/site-contrib/${PN}"
-ZSH_EDEST="${EPREFIX}${ZSH_DEST}"
+ZSH_EDEST="${ZSH_DEST}"
 ZSH_TEMPLATE="templates/zshrc.zsh-template"
 
-inherit python-r1 ruby-ng sandbox-changes
+CHKL_TIMESTAMPS=(
+	"app-shells/zsh-9999"
+)
+
+inherit chkl secure-version
 
 if [[ "${PV}" =~ "99999999" ]] ; then
+	FALLBACK_COMMIT="65749801cf4c3b1f3c79a20001909d72dadd307f"
 	EGIT_REPO_URI="https://github.com/ohmyzsh/ohmyzsh.git"
 	EGIT_BRANCH="master"
-	FALLBACK_COMMIT="668ca3a32dae5ff5d164fc3be565f1e2ece248db" # May 3, 2024
-	FALLBACK_COMMIT_DATE="May 3, 2024"
-	inherit git-r3
-	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${PN}-${PV}"
-else
-	A_URL="https://github.com/ohmyzsh/ohmyzsh/archive/${FN_SRC}"
-	EGIT_COMMIT="668ca3a32dae5ff5d164fc3be565f1e2ece248db" # May 3, 2024
-	EGIT_COMMIT_DATE="May 3, 2024"
-	FN_SRC="${EGIT_COMMIT}.zip"
-	FN_DST="${P}-${EGIT_COMMIT:0:7}.zip"
-	P_URL="https://github.com/ohmyzsh/ohmyzsh/tree/${EGIT_COMMIT}"
-	# Live ebuilds do not get keyworded.
-	RESTRICT+=" fetch"
-	S="${WORKDIR}/${PN//-/}-${EGIT_COMMIT}"
-	SRC_URI="${A_URL} -> ${FN_DST}"
-	# Probably needs to be done because the archive contains the UNICODE data file.
-	# It should be addressed upstream to get rid of emoji-data.txt.
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
 fi
 
 DESCRIPTION="A delightful community-driven framework for managing your zsh \
@@ -46,118 +32,32 @@ http://ohmyz.sh/
 https://github.com/ohmyzsh/ohmyzsh
 "
 LICENSE="
-	MIT
+	(
+		all-rights-reserved
+		Apache-2.0
+	)
+	(
+		all-rights-reserved
+		GPL-2+
+	)
+	(
+		all-rights-reserved
+		MIT
+	)
 	Apache-2.0
+	BSD
+	BSD-2
+	GPL-2
+	GPL-2+
+	GPL-3
+	GPL-3+
+	ISC
+	MIT
+	MPL-2.0
 	unicode
 	Unicode-DFS-2016
-	omz_plugins_aliases? (
-		MIT
-	)
-	omz_plugins_bazel? (
-		all-rights-reserved
-		Apache-2.0
-	)
-	omz_plugins_coffee? (
-		BSD
-	)
-	omz_plugins_docker? (
-		BSD
-	)
-	omz_plugins_dotnet? (
-		all-rights-reserved
-		MIT
-	)
-	omz_plugins_fd? (
-		BSD
-	)
-	omz_plugins_geeknote? (
-		GPL-3+
-	)
-	omz_plugins_git-escape-magic? (
-		BSD-2
-	)
-	omz_plugins_gitfast? (
-		GPL-2
-		GPL-2+
-	)
-	omz_plugins_gradle? (
-		MIT
-	)
-	omz_plugins_grunt? (
-		MIT
-	)
-	omz_plugins_gulp? (
-		MIT
-	)
-	omz_plugins_history-substring-search? (
-		BSD
-	)
-	omz_plugins_httpie? (
-		BSD
-	)
-	omz_plugins_ipfs? (
-		MIT
-	)
-	omz_plugins_iterm2? (
-		GPL-2+
-	)
-	omz_plugins_kitchen? (
-		BSD
-	)
-	omz_plugins_kube-ps1? (
-		Apache-2.0
-	)
-	omz_plugins_lando? (
-		MIT
-	)
-	omz_plugins_macos? (
-		MIT
-	)
-	omz_plugins_pass? (
-		all-rights-reserved
-		GPL-2+
-	)
-	omz_plugins_per-directory-history? (
-		ZLIB
-	)
-	omz_plugins_ripgrep? (
-		BSD
-	)
-	omz_plugins_scala? (
-		BSD
-	)
-	omz_plugins_sfdx? (
-		Apache-2.0
-	)
-	omz_plugins_shrink-path? (
-		WTFPL-2
-	)
-	omz_plugins_taskwarrior? (
-		MIT
-	)
-	omz_plugins_term_tab? (
-		GPL-2+
-	)
-	omz_plugins_wd? (
-		MIT
-	)
-	omz_plugins_yarn? (
-		BSD
-	)
-	omz_plugins_z? (
-		MIT
-		WTFPL-2
-	)
-	omz_plugins_zbell? (
-		ISC
-	)
-	omz_plugins_zsh-interactive-cd? (
-		MPL-2.0
-	)
-	omz_plugins_zsh-navigation-tools? (
-		GPL-3
-		MIT
-	)
+	WTFPL-2
+	ZLIB
 "
 
 # tools/install.sh - Apache-2.0
@@ -166,1763 +66,40 @@ LICENSE="
 # The GPL-2+ does not have all rights reserved in the license template.
 
 SLOT="0"
-OMZSH_THEMES=(
-	"3den"
-	"Soliah"
-	"adben"
-	"af-magic"
-	"afowler"
-	"agnoster"
-	"alanpeabody"
-	"amuse"
-	"apple"
-	"arrow"
-	"aussiegeek"
-	"avit"
-	"awesomepanda"
-	"bira"
-	"blinks"
-	"bureau"
-	"candy-kingdom"
-	"candy"
-	"clean"
-	"cloud"
-	"crcandy"
-	"crunch"
-	"cypher"
-	"dallas"
-	"darkblood"
-	"daveverwer"
-	"dieter"
-	"dogenpunk"
-	"dpoggi"
-	"dst"
-	"dstufft"
-	"duellj"
-	"eastwood"
-	"edvardm"
-	"emotty"
-	"essembeh"
-	"evan"
-	"fino-time"
-	"fino"
-	"fishy"
-	"flazz"
-	"fletcherm"
-	"fox"
-	"frisk"
-	"frontcube"
-	"funky"
-	"fwalch"
-	"gallifrey"
-	"gallois"
-	"garyblessington"
-	"gentoo"
-	"geoffgarside"
-	"gianu"
-	"gnzh"
-	"gozilla"
-	"half-life"
-	"humza"
-	"imajes"
-	"intheloop"
-	"itchy"
-	"jaischeema"
-	"jbergantine"
-	"jispwoso"
-	"jnrowe"
-	"jonathan"
-	"josh"
-	"jreese"
-	"jtriley"
-	"juanghurtado"
-	"junkfood"
-	"kafeitu"
-	"kardan"
-	"kennethreitz"
-	"kiwi"
-	"kolo"
-	"kphoen"
-	"lambda"
-	"linuxonly"
-	"lukerandall"
-	"macovsky-ruby"
-	"macovsky"
-	"maran"
-	"mgutz"
-	"mh"
-	"michelebologna"
-	"mikeh"
-	"miloshadzic"
-	"minimal"
-	"mira"
-	"mlh"
-	"mortalscumbag"
-	"mrtazz"
-	"murilasso"
-	"muse"
-	"nanotech"
-	"nebirhos"
-	"nicoulaj"
-	"norm"
-	"obraun"
-	"oldgallois"
-	"peepcode"
-	"philips"
-	"pmcgee"
-	"pygmalion-virtualenv"
-	"pygmalion"
-	"random"
-	"re5et"
-	"refined"
-	"rgm"
-	"risto"
-	"rixius"
-	"rkj-repos"
-	"rkj"
-	"robbyrussell"
-	"sammy"
-	"simonoff"
-	"simple"
-	"skaro"
-	"smt"
-	"sonicradish"
-	"sorin"
-	"sporty_256"
-	"steeef"
-	"strug"
-	"sunaku"
-	"sunrise"
-	"superjarin"
-	"suvash"
-	"takashiyoshida"
-	"terminalparty"
-	"theunraveler"
-	"tjkirch"
-	"tjkirch_mod"
-	"tonotdo"
-	"trapd00r"
-	"wedisagree"
-	"wezmx"
-	"wezm"
-	"wuffers"
-	"xiong-chiamiov-plus"
-	"xiong-chiamiov"
-	"ys"
-	"zhann"
-)
-OMZSH_PLUGINS=(
-	"1password"
-	"adb"
-	"ag"
-	"alias-finder"
-	"aliases"
-	"ansible"
-	"ant"
-	"apache2-macports"
-	"arcanist"
-	"archlinux"
-	"argocd"
-	"asdf"
-	"autoenv"
-	"autojump"
-	"autopep8"
-	"aws"
-	"azure"
-	"battery"
-	"bazel"
-	"bbedit"
-	"bedtools"
-	"bgnotify"
-	"bower"
-	"branch"
-	"brew"
-	"bridgetown"
-	"bun"
-	"bundler"
-	"cabal"
-	"cake"
-	"cakephp3"
-	"capistrano"
-	"cask"
-	"catimg"
-	"celery"
-	"charm"
-	"chruby"
-	"chucknorris"
-	"cloudfoundry"
-	"codeclimate"
-	"coffee"
-	"colemak"
-	"colored-man-pages"
-	"colorize"
-	"command-not-found"
-	"common-aliases"
-	"compleat"
-	"composer"
-	"copybuffer"
-	"copyfile"
-	"copypath"
-	"cp"
-	"cpanm"
-	"dash"
-	"dbt"
-	"debian"
-	"deno"
-	"dircycle"
-	"direnv"
-	"dirhistory"
-	"dirpersist"
-	"dnf"
-	"dnote"
-	"docker"
-	"docker-compose"
-	"docker-machine"
-	"doctl"
-	"dotenv"
-	"dotnet"
-	"droplr"
-	"drush"
-	"eecms"
-	"emacs"
-	"ember-cli"
-	"emoji"
-	"emoji-clock"
-	"emotty"
-	"encode64"
-	"extract"
-	"eza"
-	"fabric"
-	"fancy-ctrl-z"
-	"fasd"
-	"fastfile"
-	"fbterm"
-	"fd"
-	"fig"
-	"firewalld"
-	"flutter"
-	"fluxcd"
-	"fnm"
-	"forklift"
-	"fossil"
-	"frontend-search"
-	"fzf"
-	"gas"
-	"gatsby"
-	"gcloud"
-	"geeknote"
-	"gem"
-	"genpass"
-	"gh"
-	"git"
-	"git-auto-fetch"
-	"git-commit"
-	"git-escape-magic"
-	"git-extras"
-	"git-flow"
-	"git-flow-avh"
-	"git-hubflow"
-	"git-lfs"
-	"git-prompt"
-	"gitfast"
-	"github"
-	"gitignore"
-	"glassfish"
-	"globalias"
-	"gnu-utils"
-	"golang"
-	"gpg-agent"
-	"gradle"
-	"grails"
-	"grc"
-	"grunt"
-	"gulp"
-	"hanami"
-	"hasura"
-	"helm"
-	"heroku"
-	"heroku-alias"
-	"history"
-	"history-substring-search"
-	"hitchhiker"
-	"hitokoto"
-	"homestead"
-	"httpie"
-	"invoke"
-	"ionic"
-	"ipfs"
-	"isodate"
-	"istioctl"
-	"iterm2"
-	"jake-node"
-	"jenv"
-	"jfrog"
-	"jhbuild"
-	"jira"
-	"jruby"
-	"jsontools"
-	"juju"
-	"jump"
-	"kate"
-	"keychain"
-	"kind"
-	"kitchen"
-	"kn"
-	"knife"
-	"knife_ssh"
-	"kops"
-	"kube-ps1"
-	"kubectl"
-	"kubectx"
-	"lando"
-	"laravel"
-	"laravel4"
-	"laravel5"
-	"last-working-dir"
-	"lein"
-	"lighthouse"
-	"lol"
-	"lpass"
-	"lxd"
-	"macos"
-	"macports"
-	"magic-enter"
-	"man"
-	"marked2"
-	"marktext"
-	"mercurial"
-	"meteor"
-	"microk8s"
-	"minikube"
-	"mise"
-	"mix"
-	"mix-fast"
-	"mongo-atlas"
-	"mongocli"
-	"mosh"
-	"multipass"
-	"mvn"
-	"mysql-macports"
-	"n98-magerun"
-	"nanoc"
-	"nats"
-	"ng"
-	"nmap"
-	"node"
-	"nodenv"
-	"nomad"
-	"npm"
-	"nvm"
-	"oc"
-	"octozen"
-	"operator-sdk"
-	"otp"
-	"pass"
-	"paver"
-	"pep8"
-	"per-directory-history"
-	"percol"
-	"perl"
-	"perms"
-	"phing"
-	"pip"
-	"pipenv"
-	"pj"
-	"please"
-	"pm2"
-	"pod"
-	"podman"
-	"poetry"
-	"poetry-env"
-	"postgres"
-	"pow"
-	"powder"
-	"powify"
-	"pre-commit"
-	"profiles"
-	"pyenv"
-	"pylint"
-	"python"
-	"qodana"
-	"qrcode"
-	"rails"
-	"rake"
-	"rake-fast"
-	"rand-quote"
-	"rbenv"
-	"rbfu"
-	"rbw"
-	"react-native"
-	"rebar"
-	"redis-cli"
-	"repo"
-	"ripgrep"
-	"ros"
-	"rsync"
-	"rtx"
-	"ruby"
-	"rust"
-	"rvm"
-	"safe-paste"
-	"salt"
-	"samtools"
-	"sbt"
-	"scala"
-	"scd"
-	"screen"
-	"scw"
-	"sdk"
-	"sfdx"
-	"sfffe"
-	"shell-proxy"
-	"shrink-path"
-	"sigstore"
-	"singlechar"
-	"skaffold"
-	"snap"
-	"spring"
-	"sprunge"
-	"ssh"
-	"ssh-agent"
-	"stack"
-	"starship"
-	"stripe"
-	"sublime"
-	"sublime-merge"
-	"sudo"
-	"supervisor"
-	"suse"
-	"svcat"
-	"svn"
-	"svn-fast-info"
-	"swiftpm"
-	"symfony"
-	"symfony2"
-	"systemadmin"
-	"systemd"
-	"taskwarrior"
-	"term_tab"
-	"terminitor"
-	"terraform"
-	"textastic"
-	"textmate"
-	"thefuck"
-	"themes"
-	"thor"
-	"tig"
-	"timer"
-	"tmux"
-	"tmux-cssh"
-	"tmuxinator"
-	"toolbox"
-	"torrent"
-	"transfer"
-	"tugboat"
-	"ubuntu"
-	"ufw"
-	"universalarchive"
-	"urltools"
-	"vagrant"
-	"vagrant-prompt"
-	"vault"
-	"vi-mode"
-	"vim-interaction"
-	"virtualenv"
-	"virtualenvwrapper"
-	"volta"
-	"vscode"
-	"vundle"
-	"wakeonlan"
-	"watson"
-	"wd"
-	"web-search"
-	"wp-cli"
-	"xcode"
-	"yarn"
-	"yii"
-	"yii2"
-	"yum"
-	"z"
-	"zbell"
-	"zeus"
-	"zoxide"
-	"zsh-interactive-cd"
-	"zsh-navigation-tools"
-)
-IUSE+="
-${OMZSH_THEMES[@]/#/-omz_themes_}
-${OMZSH_PLUGINS[@]/#/-omz_plugins_}
 
-bzr clipboard curl emoji update-emoji-data java git gpg mercurial nodejs
-powerline perlbrew php python ruby rust subversion sudo tmux uri wayland wget X
-
-7zip ace bzip2 deb gzip lrzip lz4 lzip lzma lzo lzw unzip rar rpm tar xz zip
-zstd
-"
-REQUIRED_USE+="
-	curl? (
-		|| (
-			omz_plugins_extract
-			omz_plugins_archlinux
-			omz_plugins_composer
-			omz_plugins_gitfast
-			omz_plugins_github
-			omz_plugins_gitignore
-			omz_plugins_hitokoto
-			omz_plugins_lol
-			omz_plugins_octozen
-			omz_plugins_perl
-			omz_plugins_pip
-			omz_plugins_rand-quote
-			omz_plugins_singlechar
-			omz_plugins_sprunge
-			omz_plugins_systemadmin
-			omz_plugins_transfer
-		)
-	)
-	deb? (
-		gzip
-		bzip2
-		lzma
-		tar
-		xz
-	)
-	gpg? (
-		|| (
-			omz_plugins_archlinux
-			omz_plugins_gpg-agent
-			omz_plugins_otp
-			omz_plugins_pass
-		)
-	)
-	update-emoji-data? (
-		omz_plugins_emoji
-	)
-	omz_themes_agnoster? (
-		powerline
-	)
-	omz_themes_emotty? (
-		powerline
-	)
-	omz_themes_amuse? (
-		powerline
-	)
-	omz_plugins_coffee? (
-		clipboard
-	)
-	omz_plugins_copybuffer? (
-		clipboard
-	)
-	omz_plugins_copyfile? (
-		clipboard
-	)
-	omz_plugins_emoji-clock? (
-		emoji
-	)
-	omz_plugins_emoji? (
-		emoji
-	)
-	omz_plugins_emotty? (
-		!update-emoji-data
-		emoji
-		omz_plugins_emoji
-	)
-	omz_plugins_git? (
-		git
-	)
-	omz_plugins_github? (
-		git
-	)
-	omz_plugins_git-auto-fetch? (
-		git
-	)
-	omz_plugins_git-commit? (
-		git
-	)
-	omz_plugins_git-extras? (
-		git
-	)
-	omz_plugins_git-flow? (
-		git
-	)
-	omz_plugins_git-flow-avh? (
-		git
-	)
-	omz_plugins_git-hubflow? (
-		git
-	)
-	omz_plugins_git-prompt? (
-		git
-		python
-	)
-	omz_plugins_gitfast? (
-		git
-	)
-	omz_plugins_history-substring-search? (
-		git
-	)
-	omz_plugins_magic-enter? (
-		git
-	)
-	omz_plugins_jenv? (
-		java
-	)
-	omz_plugins_mercurial? (
-		mercurial
-	)
-	omz_plugins_node? (
-		nodejs
-	)
-	omz_plugins_svn? (
-		subversion
-	)
-	omz_plugins_svn-fast-info? (
-		subversion
-	)
-	omz_plugins_apache2-macports? (
-		sudo
-	)
-	omz_plugins_debian? (
-		sudo
-	)
-	omz_plugins_dnf? (
-		sudo
-	)
-	omz_plugins_drush? (
-		sudo
-	)
-	omz_plugins_firewalld? (
-		sudo
-	)
-	omz_plugins_archlinux? (
-		sudo
-	)
-	omz_plugins_macports? (
-		sudo
-	)
-	omz_plugins_mysql-macports? (
-		sudo
-	)
-	omz_plugins_nmap? (
-		sudo
-	)
-	omz_plugins_rake? (
-		sudo
-	)
-	omz_plugins_singlechar? (
-		sudo
-	)
-	omz_plugins_sudo? (
-		sudo
-	)
-	omz_plugins_suse? (
-		sudo
-	)
-	omz_plugins_systemd? (
-		sudo
-	)
-	omz_plugins_systemadmin? (
-		sudo
-	)
-	omz_plugins_ubuntu? (
-		sudo
-	)
-	omz_plugins_universalarchive? (
-		7zip
-		bzip2
-		gzip
-		lzma
-		lzo
-		lzw
-		rar
-		xz
-		zip
-		zstd
-	)
-	omz_plugins_xcode? (
-		sudo
-	)
-	omz_plugins_yum? (
-		sudo
-	)
-	omz_plugins_archlinux? (
-		gpg
-	)
-	omz_plugins_gpg-agent? (
-		gpg
-	)
-	omz_plugins_otp? (
-		gpg
-	)
-	omz_plugins_pass? (
-		gpg
-	)
-	omz_plugins_transfer? (
-		gpg
-	)
-	omz_plugins_common-aliases? (
-		ace
-		rar
-		zip
-	)
-	omz_plugins_emoji-clock? (
-		emoji
-	)
-	omz_plugins_extract? (
-		|| (
-			7zip
-			bzip2
-			deb
-			gzip
-			lrzip
-			lz4
-			lzip
-			lzma
-			lzw
-			unzip
-			rar
-			rpm
-			xz
-			zstd
-		)
-	)
-	omz_plugins_archlinux? (
-		curl
-	)
-	omz_plugins_octozen? (
-		curl
-	)
-	omz_plugins_composer? (
-		curl
-	)
-	omz_plugins_gitfast? (
-		curl
-	)
-	omz_plugins_github? (
-		curl
-	)
-	omz_plugins_gitignore? (
-		curl
-	)
-	omz_plugins_hitokoto? (
-		curl
-	)
-	omz_plugins_lol? (
-		curl
-	)
-	omz_plugins_macos? (
-		curl
-	)
-	omz_plugins_perl? (
-		curl
-	)
-	omz_plugins_pip? (
-		curl
-	)
-	omz_plugins_rand-quote? (
-		curl
-	)
-	omz_plugins_singlechar? (
-		curl
-	)
-	omz_plugins_sprunge? (
-		curl
-	)
-	omz_plugins_systemadmin? (
-		curl
-	)
-	omz_plugins_transfer? (
-		curl
-	)
-	omz_plugins_chruby? (
-		ruby
-	)
-	omz_plugins_ruby? (
-		ruby
-	)
-	omz_plugins_rbenv? (
-		ruby
-	)
-	omz_plugins_rust? (
-		rust
-	)
-	omz_plugins_composer? (
-		php
-	)
-	omz_plugins_eecms? (
-		php
-	)
-	omz_plugins_laravel? (
-		php
-	)
-	omz_plugins_laravel4? (
-		php
-	)
-	omz_plugins_laravel5? (
-		php
-	)
-	omz_plugins_symfony? (
-		php
-	)
-	omz_plugins_symfony2? (
-		php
-	)
-	omz_plugins_aliases? (
-		python
-	)
-	omz_plugins_jsontools? (
-		|| (
-			python
-			nodejs
-			ruby
-		)
-	)
-	omz_plugins_urltools? (
-		|| (
-			python
-			nodejs
-			php
-			ruby
-		)
-	)
-	omz_plugins_pyenv? (
-		python
-	)
-	omz_plugins_python? (
-		python
-	)
-	omz_plugins_salt? (
-		python
-	)
-	omz_plugins_shell-proxy? (
-		python
-	)
-	omz_themes_adben? (
-		wget
-	)
-	python? (
-		${PYTHON_REQUIRED_USE}
-	)
-	wget? (
-		|| (
-			omz_plugins_n98-magerun
-			omz_plugins_singlechar
-		)
-	)
-
-	omz_plugins_apache2-macports? (
-		kernel_Darwin
-	)
-	omz_plugins_brew? (
-		kernel_Darwin
-	)
-	omz_plugins_dash? (
-		kernel_Darwin
-	)
-	omz_plugins_droplr? (
-		kernel_Darwin
-	)
-	omz_plugins_forklift? (
-		kernel_Darwin
-	)
-	omz_plugins_iterm2? (
-		kernel_Darwin
-	)
-	omz_plugins_macports? (
-		kernel_Darwin
-	)
-	omz_plugins_marked2? (
-		kernel_Darwin
-	)
-	omz_plugins_mysql-macports? (
-		kernel_Darwin
-	)
-	omz_plugins_macos? (
-		kernel_Darwin
-	)
-	omz_plugins_postgres? (
-		kernel_Darwin
-	)
-	omz_plugins_pow? (
-		kernel_Darwin
-	)
-	omz_plugins_swiftpm? (
-		kernel_Darwin
-	)
-	omz_plugins_textastic? (
-		kernel_Darwin
-	)
-	omz_plugins_textmate? (
-		kernel_Darwin
-	)
-	omz_plugins_xcode? (
-		kernel_Darwin
-	)
-"
-if [[ -z "${OMZ_CHM_VIEWER}" ]] ; then
-	RDEPEND_COMMON_ALIASES+=(
-		app-text/xchm
-	)
-fi
-if [[ -z "${OMZ_PDF_VIEWER}" ]] ; then
-	RDEPEND_COMMON_ALIASES+=(
-		app-text/acroread
-	)
-fi
-if [[ -z "${OMZ_PS_VIEWER}" ]] ; then
-	RDEPEND_COMMON_ALIASES+=(
-		app-text/gv
-	)
-fi
-if [[ -z "${OMZ_DVI_VIEWER}" ]] ; then
-	RDEPEND_COMMON_ALIASES+=(
-		app-text/xdvik
-	)
-fi
-if [[ -z "${OMZ_DJVU_VIEWER}" ]] ; then
-	RDEPEND_COMMON_ALIASES+=(
-		app-text/djview
-	)
-fi
-if [[ -z "${OMZ_MEDIA_PLAYER}" ]] ; then
-	RDEPEND_COMMON_ALIASES+=(
-		media-video/mplayer
-	)
-fi
-
-#	omz_plugins_django? (
-#		dev-python/django[${PYTHON_USEDEP}]
-#)
-ruby_add_rdepend "
-	omz_plugins_bundler? (
-		dev-ruby/bundler
-	)
-	omz_plugins_capistrano? (
-		dev-ruby/capistrano
-	)
-	omz_plugins_chruby? (
-		dev-ruby/chruby
-	)
-	omz_plugins_gem? (
-		virtual/rubygems
-	)
-	omz_plugins_rake? (
-		dev-ruby/rake
-	)
-	omz_plugins_rake-fast? (
-		dev-ruby/rake
-	)
-	omz_plugins_rbenv? (
-		dev-ruby/rbenv
-	)
-	omz_plugins_rvm? (
-		dev-ruby/rvm
-	)
-	omz_plugins_thor? (
-		dev-ruby/thor
-	)
-"
-PLUGINS_RDEPEND="
-	omz_plugins_1password? (
-		>=app-misc/1password-cli-2
-	)
-	omz_plugins_adb? (
-		dev-util/android-tools
-	)
-	omz_plugins_ag? (
-		app-misc/ag
-	)
-	omz_plugins_ansible? (
-		app-admin/ansible
-	)
-	omz_plugins_ant? (
-		dev-java/ant
-	)
-	omz_plugins_arcanist? (
-		dev-util/arcanist
-	)
-	omz_plugins_archlinux? (
-		sys-apps/pacman
-	)
-	omz_plugins_autojump? (
-		app-shells/autojump
-	)
-	omz_plugins_autopep8? (
-		dev-python/autopep8[${PYTHON_USEDEP}]
-	)
-	omz_plugins_aws? (
-		dev-python/awscli[${PYTHON_USEDEP}]
-	)
-	omz_plugins_azure? (
-		app-misc/jq
-	)
-	omz_plugins_battery? (
-		sys-power/acpi
-	)
-	omz_plugins_bazel? (
-		dev-build/bazel
-	)
-	omz_plugins_bedtools? (
-		sci-biology/bedtools
-	)
-	omz_plugins_bgnotify? (
-		X? (
-			x11-apps/xprop
-		)
-		|| (
-			x11-libs/libnotify
-			kde-apps/kdialog
-		)
-	)
-	omz_plugins_bower? (
-		dev-nodejs/bower
-	)
-	omz_plugins_cabal? (
-		dev-haskell/cabal
-	)
-	omz_plugins_cask? (
-		app-emacs/cask
-	)
-	omz_plugins_catimg? (
-		media-gfx/imagemagick[png]
-	)
-	omz_plugins_celery? (
-		dev-python/celery[${PYTHON_USEDEP}]
-	)
-	omz_plugins_chucknorris? (
-		games-misc/fortune-mod
-	)
-	omz_plugins_colorize? (
-		dev-python/pygments[${PYTHON_USEDEP}]
-	)
-	omz_plugins_colored-man-pages? (
-		sys-apps/groff
-	)
-	omz_plugins_common-aliases? (
-		${RDEPEND_COMMON_ALIASES[@]}
-		sys-process/procps
-		dev-python/pygments[${PYTHON_USEDEP}]
-	)
-	omz_plugins_composer? (
-		dev-php/composer
-	)
-	omz_plugins_cpanm? (
-		dev-perl/App-cpanminus
-	)
-	omz_plugins_debian? (
-		app-arch/dpkg
-	)
-	omz_plugins_deno? (
-		net-libs/deno
-	)
-	omz_plugins_direnv? (
-		dev-util/direnv
-	)
-	omz_plugins_docker? (
-		app-containers/docker
-	)
-	omz_plugins_docker-compose? (
-		app-emulation/docker-compose
-	)
-	omz_plugins_docker-machine? (
-		app-emulation/docker-machine
-	)
-	omz_plugins_doctl? (
-		app-admin/doctl
-	)
-	omz_plugins_dotnet? (
-		|| (
-			dev-dotnet/dotnet-sdk-bin
-		)
-	)
-	omz_plugins_drush? (
-		app-admin/drush
-	)
-	omz_plugins_encode64? (
-		sys-apps/coreutils
-	)
-	omz_plugins_emacs? (
-		>=app-editors/emacs-24.0
-	)
-	omz_plugins_eza? (
-		sys-apps/eza
-	)
-	omz_plugins_fasd? (
-		app-misc/fasd
-	)
-	omz_plugins_fabric? (
-		dev-python/fabric[${PYTHON_USEDEP}]
-	)
-	omz_plugins_fbterm? (
-		app-i18n/fbterm
-	)
-	omz_plugins_fd? (
-		sys-apps/fd
-	)
-	omz_plugins_firewalld? (
-		net-firewall/firewalld
-	)
-	omz_plugins_flutter? (
-		dev-util/flutter
-	)
-	omz_plugins_fnm? (
-		dev-util/fnm
-	)
-	omz_plugins_fossil? (
-		dev-vcs/fossil
-	)
-	omz_plugins_fzf? (
-		app-shells/fzf
-	)
-	omz_plugins_gcloud? (
-		app-misc/google-cloud-sdk
-	)
-	omz_plugins_geeknote? (
-		app-misc/geeknote
-	)
-	omz_plugins_github? (
-		dev-vcs/hub
-	)
-	omz_plugins_git-extras? (
-		dev-vcs/git-extras
-	)
-	omz_plugins_git-lfs? (
-		dev-vcs/git-lfs
-	)
-	omz_plugins_gh? (
-		dev-util/github-cli
-	)
-	omz_plugins_gnu-utils? (
-		sys-apps/coreutils
-	)
-	omz_plugins_golang? (
-		dev-lang/go
-	)
-	omz_plugins_globalias? (
-		sys-apps/grep[pcre]
-	)
-	omz_plugins_gradle? (
-		dev-java/gradle-bin
-	)
-	omz_plugins_grc? (
-		app-misc/grc
-	)
-	omz_plugins_helm? (
-		app-admin/helm
-	)
-	omz_plugins_heroku? (
-		dev-util/heroku-cli
-	)
-	omz_plugins_history-substring-search? (
-		app-editors/emacs
-	)
-	omz_plugins_hitchhiker? (
-		games-misc/cowsay
-		games-misc/fortune-mod
-	)
-	omz_plugins_httpie? (
-		net-misc/httpie
-	)
-	omz_plugins_invoke? (
-		dev-python/invoke[${PYTHON_USEDEP}]
-	)
-	omz_plugins_ipfs? (
-		net-p2p/go-ipfs
-	)
-	omz_plugins_jira? (
-		dev-python/jira[${PYTHON_USEDEP}]
-	)
-	omz_plugins_jfrog? (
-		dev-util/jfrog-cli
-	)
-	omz_plugins_juju? (
-		app-admin/juju
-	)
-	omz_plugins_kate? (
-		kde-apps/kate
-	)
-	omz_plugins_keychain? (
-		net-misc/keychain
-	)
-	omz_plugins_kops? (
-		sys-cluster/kops
-	)
-	omz_plugins_kube-ps1? (
-		sys-cluster/kubernetes
-	)
-	omz_plugins_kubectx? (
-		app-admin/kubectx
-	)
-	omz_plugins_lein? (
-		dev-java/leiningen-bin
-	)
-	omz_plugins_lol? (
-		sys-process/procps
-	)
-	omz_plugins_lpass? (
-		app-admin/lastpass-cli
-	)
-	omz_plugins_lxd? (
-		app-containers/lxd
-	)
-	omz_plugins_man? (
-		virtual/man
-	)
-	omz_plugins_minikube? (
-		sys-cluster/minikube
-	)
-	omz_plugins_mix? (
-		dev-lang/elixir
-	)
-	omz_plugins_mix-fast? (
-		dev-lang/elixir
-	)
-	omz_plugins_mongocli? (
-		dev-db/mongodb
-	)
-	omz_plugins_mvn? (
-		dev-java/maven-bin
-		sys-apps/grep[pcre]
-	)
-	omz_plugins_nanoc? (
-		www-apps/nanoc
-	)
-	omz_plugins_nats? (
-		|| (
-			net-misc/natscli
-		)
-	)
-	omz_plugins_nmap? (
-		net-analyzer/nmap
-	)
-	omz_plugins_nomad? (
-		sys-cluster/nomad
-	)
-	omz_plugins_npm? (
-		net-libs/nodejs[npm]
-	)
-	omz_plugins_otp? (
-		sys-auth/oath-toolkit
-	)
-	omz_plugins_oc? (
-		|| (
-			app-admin/openshift-client-tools
-			app-emulation/openshift-cli
-			sys-cluster/openshift-client-bin
-		)
-	)
-	omz_plugins_pass? (
-		app-admin/pass
-	)
-	omz_plugins_paver? (
-		dev-python/paver[${PYTHON_USEDEP}]
-	)
-	omz_plugins_percol? (
-		app-shells/percol
-	)
-	omz_plugins_pep8? (
-		dev-python/pep8[${PYTHON_USEDEP}]
-	)
-	omz_plugins_perl? (
-		dev-lang/perl
-		sys-apps/grep[pcre]
-		perlbrew? (
-			dev-perl/App-perlbrew
-		)
-	)
-	omz_plugins_phing? (
-		dev-php/phing
-	)
-	omz_plugins_pip? (
-		dev-python/pip[${PYTHON_USEDEP}]
-	)
-	omz_plugins_pipenv? (
-		dev-python/pipenv[${PYTHON_USEDEP}]
-	)
-	omz_plugins_pm2? (
-		sys-process/pm2
-	)
-	omz_plugins_podman? (
-		app-containers/podman
-	)
-	omz_plugins_poetry? (
-		dev-python/poetry[${PYTHON_USEDEP}]
-	)
-	omz_plugins_postgres? (
-		dev-db/postgresql
-	)
-	omz_plugins_pow? (
-		sys-process/lsof
-	)
-	omz_plugins_pre-commit? (
-		$(python_gen_any_dep '
-			dev-vcs/pre-commit[${PYTHON_SINGLE_USEDEP}]
-		')
-	)
-	omz_plugins_pylint? (
-		dev-python/pylint[${PYTHON_USEDEP}]
-	)
-	omz_plugins_rails? (
-		|| (
-			dev-lang/ruby
-			dev-ruby/rails[ruby_targets_ruby32?]
-			dev-ruby/rake[ruby_targets_ruby32?]
-		)
-	)
-	omz_plugins_rand-quote? (
-		net-misc/curl
-	)
-	omz_plugins_rbw? (
-		app-admin/rbw
-	)
-	omz_plugins_rebar? (
-		dev-util/rebar3
-	)
-	omz_plugins_redis-cli? (
-		dev-db/redis
-	)
-	omz_plugins_repo? (
-		dev-vcs/repo
-	)
-	omz_plugins_ripgrep? (
-		sys-apps/ripgrep
-	)
-	omz_plugins_ros? (
-		dev-lisp/roswell
-	)
-	omz_plugins_rsync? (
-		net-misc/rsync
-	)
-	omz_plugins_ruby? (
-		dev-lang/ruby
-		dev-ruby/rubygems[ruby_targets_ruby32?]
-	)
-	omz_plugins_salt? (
-		app-admin/salt
-		dev-lang/python
-	)
-	omz_plugins_samtools? (
-		sci-biology/samtools
-	)
-	omz_plugins_sbt? (
-		|| (
-			dev-java/sbt
-			dev-java/sbt-bin
-		)
-	)
-	omz_plugins_scala? (
-		dev-lang/scala
-	)
-	omz_plugins_screen? (
-		app-misc/screen
-	)
-	omz_plugins_scw? (
-		app-admin/scaleway-cli
-	)
-	omz_plugins_sfffe? (
-		sys-apps/ack
-	)
-	omz_plugins_sigstore? (
-		app-containers/cosign
-	)
-	omz_plugins_snap? (
-		app-containers/snapd
-	)
-	omz_plugins_ssh? (
-		virtual/ssh
-	)
-	omz_plugins_ssh-agent? (
-		virtual/ssh
-	)
-	omz_plugins_stack? (
-		dev-haskell/stack
-	)
-	omz_plugins_starship? (
-		app-shells/starship
-	)
-	omz_plugins_stripe? (
-		dev-util/stripe-cli
-	)
-	omz_plugins_sublime? (
-		app-editors/sublime-text
-	)
-	omz_plugins_sublime-merge? (
-		dev-vcs/sublime-merge
-	)
-	omz_plugins_supervisor? (
-		app-admin/supervisor
-	)
-	omz_plugins_suse? (
-		sys-apps/zypper
-	)
-	omz_plugins_svn-fast-info? (
-		>=dev-vcs/subversion-1.6
-	)
-	omz_plugins_systemadmin? (
-		app-alternatives/awk
-		net-analyzer/tcpdump
-		sys-apps/net-tools
-		sys-process/procps
-		|| (
-			sys-apps/iproute2
-			sys-apps/net-tools
-		)
-	)
-	omz_plugins_systemd? (
-		sys-apps/systemd
-	)
-	omz_plugins_symfony? (
-		dev-php/symfony-console
-	)
-	omz_plugins_symfony2? (
-		dev-php/symfony-console
-	)
-	omz_plugins_taskwarrior? (
-		app-misc/task
-	)
-	omz_plugins_terraform? (
-		app-admin/terraform
-	)
-	omz_plugins_thefuck? (
-		app-shells/thefuck
-	)
-	omz_plugins_tig? (
-		dev-vcs/tig
-	)
-	omz_plugins_tmux? (
-		app-misc/tmux
-	)
-	omz_plugins_toolbox? (
-		app-containers/toolbox
-	)
-	omz_plugins_ubuntu? (
-		sys-apps/apt
-	)
-	omz_plugins_ufw? (
-		net-firewall/ufw
-	)
-	omz_plugins_vagrant? (
-		app-emulation/vagrant
-	)
-	omz_plugins_vagrant-prompt? (
-		app-emulation/vagrant
-	)
-	omz_plugins_vim-interaction? (
-		app-editors/gvim
-	)
-	omz_plugins_virtualenvwrapper? (
-		dev-python/virtualenvwrapper[${PYTHON_USEDEP}]
-	)
-	omz_plugins_vscode? (
-		|| (
-			app-editors/visual-studio-code
-			app-editors/visual-studio-code-bin
-			app-editors/vscode
-			app-editors/vscode-bin
-		)
-	)
-	omz_plugins_vundle? (
-		app-editors/vim
-	)
-	omz_plugins_wakeonlan? (
-		net-misc/wakeonlan
-	)
-	omz_plugins_watson? (
-		dev-python/td-watson[${PYTHON_USEDEP}]
-	)
-	omz_plugins_wp-cli? (
-		app-admin/wp-cli
-	)
-	omz_plugins_zsh-interactive-cd? (
-		app-shells/fzf
-	)
-	omz_plugins_zsh-navigation-tools? (
-		sys-process/procps
-	)
-	omz_plugins_zoxide? (
-		app-shells/zoxide
-	)
-"
-THEMES_RDEPEND="
-	omz_themes_adben? ( games-misc/fortune-mod )
-"
-CDEPEND="
-	>=app-shells/zsh-4.3.9
+EMOJI_DEPENDS="
+	>=dev-lang/perl-${PERL_PV}
+	dev-perl/Path-Class
 "
 RDEPEND+="
-	${CDEPEND}
-	${PLUGINS_RDEPEND}
+	${EMOJI_DEPENDS}
 	${PYTHON_DEPS}
-	${THEMES_RDEPEND}
-	app-alternatives/awk
-	sys-apps/grep
-	x11-misc/xdg-utils
-	7zip? (
-		app-arch/p7zip
-	)
-	ace? (
-		app-arch/unace
-	)
-	bzr? (
-		dev-vcs/bzr
-	)
-	clipboard? (
-		tmux? (
-			app-misc/tmux
-		)
-		wayland? (
-			gui-apps/wl-clipboard
-		)
-		X? (
-			|| (
-				x11-misc/xclip
-				x11-misc/xsel
-			)
-		)
-	)
-	deb? (
-		sys-devel/binutils
-	)
-	emoji? (
-		|| (
-			media-fonts/noto-color-emoji
-			media-fonts/noto-color-emoji-bin
-			media-fonts/noto-emoji
-			media-fonts/emojione-color-font
-			media-fonts/symbola
-			media-fonts/twemoji-color-font
-			media-fonts/unifont
-		)
-	)
-	git? (
-		dev-vcs/git
-	)
-	gpg? (
-		app-crypt/gnupg
-	)
-	java? (
-		virtual/jre
-	)
-	bzip2? (
-		app-arch/bzip2
-	)
-	gzip? (
-		app-arch/pigz
-	)
-	lrzip? (
-		app-arch/lrzip
-	)
-	lz4? (
-		app-arch/lz4
-		)
-	lzip? (
-		app-arch/lzip
-	)
-	lzma? (
-		app-arch/xz-utils
-	)
-	lzo? (
-		app-arch/lzop
-	)
-	lzw? (
-		app-arch/ncompress
-	)
-	mercurial? (
-		dev-vcs/mercurial
-	)
-	nodejs? (
-		net-libs/nodejs
-	)
-	php? (
-		dev-lang/php
-	)
-        powerline? (
-		media-fonts/powerline-symbols
-	)
-	python? (
-		${PYTHON_DEPS}
-	)
-	rar? (
-		app-arch/unrar
-	)
-	rpm? (
-		app-arch/cpio
-		app-arch/rpm
-	)
-	ruby? (
-		$(ruby_implementations_depend)
-	)
-	rust? (
-		|| (
-			dev-lang/rust
-			dev-lang/rust-bin
-		)
-	)
-	subversion? (
-		dev-vcs/subversion
-	)
-	sudo? (
-		app-admin/sudo
-	)
-	tar? (
-		app-arch/tar
-	)
-	unzip? (
-		app-arch/unzip
-	)
-	wget? (
-		net-misc/wget
-	)
-	xz? (
-		app-arch/xz-utils
-	)
-	zip? (
-		app-arch/unzip
-		app-arch/zip
-	)
-	zstd? (
-		app-arch/zstd
-	)
+	>=app-shells/zsh-${ZSH_PV}:=
+	app-alternatives/awk:*
+	>=sys-apps/grep-${GREP_PV}:=
+	x11-misc/xdg-utils:=
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	${CDEPEND}
-	net-misc/wget
-	omz_plugins_emoji? (
-		dev-lang/perl
-		dev-perl/Path-Class
-	)
-	update-emoji-data? (
-		dev-perl/Text-Unaccent
-		dev-perl/XML-LibXML
-	)
+	>=app-shells/zsh-${ZSH_PV}
 "
 
 pkg_setup() {
-	if use update-emoji-data ; then
-		sandbox-changes_no_network_sandbox "Update emoji data"
-	fi
-	if use ruby ; then
-		ruby-ng_pkg_setup
-	fi
-	python_setup
-}
-
-pkg_nofetch() {
-	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
-	# The restriction is here because of plugins/emoji/emoji-data.txt
-einfo
-einfo "You must also read and agree to the licenses:"
-einfo "  https://www.unicode.org/license.html"
-einfo "  http://www.unicode.org/copyright.html"
-einfo "Before downloading ${P}."
-einfo
-einfo "If you agree, you may download ${FN_SRC}"
-einfo "from oh-my-zsh's GitHub page located at ${P_URL}"
-einfo "which the download URL should be ${A_URL}"
-einfo "and rename it to ${FN_DST} and place them in ${distdir}"
-einfo "or you can \`wget -O ${distdir}/${FN_DST} ${A_URL}\`"
-einfo
+	:
 }
 
 src_unpack() {
 	if [[ "${PV}" =~ "99999999" ]] ; then
 		if use fallback-commit ; then
 			EGIT_COMMIT="${FALLBACK_COMMIT}"
-einfo "Fallback commit date:  ${FALLBACK_COMMIT_DATE}"
 		fi
 		git-r3_fetch
 		git-r3_checkout
-	else
-einfo "Snapshot date:  ${EGIT_COMMIT_DATE}"
-		unpack ${A}
 	fi
 
 	cd "${S}" || die
-
-	if use update-emoji-data ; then
-		eapply \
-"${FILESDIR}/oh-my-zsh-emoji-plugin-update-for-emoji-updater-perl-script-for-international-support-and-emoji-13_x-support.patch"
-		einfo "update-emoji-data USE flag is experimental, and"
-		einfo "It's not an official patch."
-	fi
-
-	if use update-emoji-data ; then
-		pushd "${S}/plugins/emoji" >/dev/null 2>&1 || die
-			perl "update_emoji.pl" "${EMOJI_LANG_DEFAULT}" || die
-		popd >/dev/null 2>&1 || die
-	fi
-
-	local plugins=$(ls -1 "${S}/plugins" \
-		| tr "\n" " " \
-		| fold -w 80 -s \
-		| sed -e "s| $||g")
-	local n
-	for n in ${plugins} ; do
-		local x
-		local found=0
-		for x in $(echo "${PLUGINS_RDEPEND}" \
-			| tr " " "\n" \
-			| grep -E -o -e "omz_plugins_[^ ?]+" \
-			| sed -e "s|omz_plugins_||g") ; do
-			if [[ "${n}" == "${x}" ]] ; then
-				found=1
-			fi
-		done
-		if (( ${found} == 0 )) ; then
-			MISSING_DEPENDS+=( "${n}" )
-		fi
-	done
-	if [[ -n "${GEN_EBUILD}" && "${GEN_EBUILD}" == 1 ]] ; then
-		einfo "Please update the following:"
-
-		einfo "OMZSH_PLUGINS:"
-		echo -e "${plugins}"
-
-		echo
-		echo
-		echo
-
-		einfo "OMZSH_THEMES:"
-		local themes=$(ls -1 "${S}/themes" \
-			| tr "\n" " " \
-			| sed -e "s|.zsh-theme||g" -e "s|wezm[+]|wezmx|g" \
-			| fold -w 80 -s \
-			| sed -e "s| $||g")
-		echo -e "${themes}"
-
-		echo
-		echo
-		echo
-
-		einfo "\${REPO_DIR}/profiles/desc/omz_plugins.desc"
-
-		for n in ${plugins} ; do
-			echo "${n} - Installs the ${n} plugin."
-		done
-
-		echo
-		echo
-		echo
-
-		einfo "\${REPO_DIR}/profiles/desc/omz_themes.desc"
-
-		for n in ${themes} ; do
-			echo "${n} - Adds the ${n} theme."
-		done
-
-		echo
-		echo
-		echo
-
-		einfo "Missing PLUGINS_RDEPEND for"
-		for n in ${MISSING_DEPENDS[@]} ; do
-			echo "${n}"
-		done
-		die
-	fi
 }
 
 src_prepare() {
@@ -1950,103 +127,48 @@ src_prepare() {
 		"${S}/${ZSH_TEMPLATE}" \
 		|| die
 
-	if use omz_plugins_common-aliases ; then
-		if [[ -n "${OMZ_CHM_VIEWER}" ]] ; then
-			sed -i \
-				-e "s|xchm|${OMZ_CHM_VIEWER}|" \
-				"${S}/plugins/common-aliases/common-aliases.plugin.zsh" \
-				|| die
-		fi
-		if [[ -n "${OMZ_PDF_VIEWER}" ]] ; then
-			sed -i \
-				-e "s|acroread|${OMZ_PDF_VIEWER}|" \
-				"${S}/plugins/common-aliases/common-aliases.plugin.zsh" \
-				|| die
-		fi
-		if [[ -n "${OMZ_PS_VIEWER}" ]] ; then
-			sed -i \
-				-e "s|gv|${OMZ_PS_VIEWER}|" \
-				"${S}/plugins/common-aliases/common-aliases.plugin.zsh" \
-				|| die
-		fi
-		if [[ -n "${OMZ_DJVU_VIEWER}" ]] ; then
-			sed -i \
-				-e "s|djview|${OMZ_DJVU_VIEWER}|" \
-				"${S}/plugins/common-aliases/common-aliases.plugin.zsh" \
-				|| die
-		fi
-		if [[ -n "${OMZ_DVI_VIEWER}" ]] ; then
-			sed -i \
-				-e "s|xdvi|${OMZ_DVI_VIEWER}|" \
-				"${S}/plugins/common-aliases/common-aliases.plugin.zsh" \
-				|| die
-		fi
-		if [[ -n "${OMZ_MEDIA_PLAYER}" ]] ; then
-			sed -i \
-				-e "s|mplayer|${OMZ_MEDIA_PLAYER}|" \
-				"${S}/plugins/common-aliases/common-aliases.plugin.zsh" \
-				|| die
-		fi
+	if [[ -n "${OMZ_CHM_VIEWER}" ]] ; then
+		sed -i \
+			-e "s|xchm|${OMZ_CHM_VIEWER}|" \
+			"${S}/plugins/common-aliases/common-aliases.plugin.zsh" \
+			|| die
+	fi
+	if [[ -n "${OMZ_PDF_VIEWER}" ]] ; then
+		sed -i \
+			-e "s|acroread|${OMZ_PDF_VIEWER}|" \
+			"${S}/plugins/common-aliases/common-aliases.plugin.zsh" \
+			|| die
+	fi
+	if [[ -n "${OMZ_PS_VIEWER}" ]] ; then
+		sed -i \
+			-e "s|gv|${OMZ_PS_VIEWER}|" \
+			"${S}/plugins/common-aliases/common-aliases.plugin.zsh" \
+			|| die
+	fi
+	if [[ -n "${OMZ_DJVU_VIEWER}" ]] ; then
+		sed -i \
+			-e "s|djview|${OMZ_DJVU_VIEWER}|" \
+			"${S}/plugins/common-aliases/common-aliases.plugin.zsh" \
+			|| die
+	fi
+	if [[ -n "${OMZ_DVI_VIEWER}" ]] ; then
+		sed -i \
+			-e "s|xdvi|${OMZ_DVI_VIEWER}|" \
+			"${S}/plugins/common-aliases/common-aliases.plugin.zsh" \
+			|| die
+	fi
+	if [[ -n "${OMZ_MEDIA_PLAYER}" ]] ; then
+		sed -i \
+			-e "s|mplayer|${OMZ_MEDIA_PLAYER}|" \
+			"${S}/plugins/common-aliases/common-aliases.plugin.zsh" \
+			|| die
 	fi
 
-	if use omz_plugins_gem ; then
-		ewarn "The omz_plugins_gem requires modding."
-	fi
-
-	if use omz_plugins_salt ; then
-		sed -i -e "s|python2|python3|" "${S}/plugins/salt/_salt" || die
-	fi
-
-	REQ_THEMES=$(echo "${USE}" \
-		| grep -E -o -e "omz_themes_[^ ]+")
-	mv themes themes.trash
-	mkdir themes
-	for theme in ${REQ_THEMES} ; do
-		#einfo "${theme}"
-		theme=${theme//omz_themes_/}
-		theme=${theme//wezmx/wezm+}
-		TRASH="themes.trash"
-		if [ -f ${TRASH}/${theme}.zsh-theme ] ; then
-			#einfo "Keeping ${theme}..."
-			cp -a ${TRASH}/${theme}.zsh-theme themes/ \
-			  || die #for some reason mv doesn't work as expected
-		else
-			eerror "${theme} doesn't exist"
-			die
-		fi
-	done
-
-	REQ_PLUGINS=$(echo "$USE" \
-		| grep -E -o -e "omz_plugins_[^ ]+")
-	mv plugins plugins.trash
-	mkdir plugins
-	for plugin in ${REQ_PLUGINS} ; do
-		plugin="${plugin//omz_plugins_/}"
-		TRASH="plugins.trash"
-		if [ -d "${TRASH}/${plugin}" ] ; then
-			#einfo "Keeping ${plugin}..."
-			cp -a "${TRASH}/${plugin}" "plugins/" || die
-		else
-			eerror "${plugin} doesn't exist"
-			die
-		fi
-	done
-
-	rm -rf themes.trash
-	rm -rf plugins.trash
+	sed -i -e "s|python2|python3|" "${S}/plugins/salt/_salt" || die
 }
 
 src_configure() {
-	# Extra checks for Prefix
-	if ! which stat >/dev/null 2>&1 ; then
-		ewarn "stat missing.  Emerge sys-apps/coreutils"
-	fi
-	if ! which find >/dev/null 2>&1 ; then
-		ewarn "find missing.  Emerge sys-apps/findutils"
-	fi
-	if ! which sed >/dev/null 2>&1 ; then
-		ewarn "sed missing.  Emerge sys-apps/sed"
-	fi
+	chkl_check_many_timestamps
 }
 
 src_install() {
@@ -2060,14 +182,398 @@ pkg_postinst() {
 	einfo "to your ~/.zshrc."
 	einfo
 
-	if (( ${#MISSING_DEPENDS[@]} > 0 )) ; then
-		# Too many too add and inspect =(
-ewarn
-ewarn "The following have not yet had their dependencies added to the ebuild"
-ewarn "and may require manual installation:"
-ewarn
-		echo "${MISSING_DEPENDS[@]/#/omz_plugins_}" | fold -w 80 -s
+	optfeature_header "Install optional packages:"
+
+	optfeature "adben theme support" "games-misc/fortune-mod"
+	optfeature "adben theme support" "net-misc/wget"
+	optfeature "adben theme support" "dev-vcs/subversion"
+	optfeature "agnoster theme support" "media-fonts/powerline-symbols"
+	optfeature "agnoster theme support" "dev-vcs/bzr"
+	optfeature "agnoster theme support" "dev-vcs/git"
+	optfeature "amuse theme support" "media-fonts/powerline-symbols"
+	optfeature "apple theme support" "dev-vcs/cvs"
+	optfeature "apple theme support" "dev-vcs/git"
+	optfeature "apple theme support" "dev-vcs/subversion"
+	optfeature "avit theme support" "dev-vcs/git"
+	optfeature "bureau theme support" "dev-vcs/git"
+	optfeature "dogenpunk theme support" "dev-vcs/git"
+	optfeature "eastwood theme support" "dev-vcs/git"
+	optfeature "emotty theme support" "media-fonts/powerline-symbols"
+	optfeature "emotty theme support" "dev-vcs/git"
+	optfeature "frisk theme support" "dev-vcs/bzr"
+	optfeature "gallois theme support" "dev-vcs/git"
+	optfeature "gentoo theme support" "dev-vcs/cvs"
+	optfeature "gentoo theme support" "dev-vcs/git"
+	optfeature "gentoo theme support" "dev-vcs/subversion"
+	optfeature "half-life theme support" "dev-vcs/git"
+	optfeature "half-life theme support" "dev-vcs/subversion"
+	optfeature "kiwi theme support" "dev-vcs/subversion"
+	optfeature "kolo theme support" "dev-vcs/subversion"
+	optfeature "nicoulaj theme support" "dev-vcs/bzr"
+	optfeature "michelebologna theme support" "dev-vcs/git"
+	optfeature "minimal theme support" "dev-vcs/subversion"
+	optfeature "mortalscumbag theme support" "dev-vcs/git"
+	optfeature "oldgallois theme support" "dev-vcs/git"
+	optfeature "peepcode theme support" "dev-vcs/git"
+	optfeature "refined theme support" "dev-vcs/bzr"
+	optfeature "rjk-repos theme support" "dev-vcs/bzr"
+	optfeature "smt theme support" "dev-vcs/git"
+	optfeature "Soliah theme support" "dev-vcs/git"
+	optfeature "steeef theme support" "dev-vcs/git"
+	optfeature "steeef theme support" "dev-vcs/subversion"
+	optfeature "sunrise theme support" "dev-vcs/git"
+	optfeature "wedisagree theme support" "dev-vcs/git"
+	optfeature "ys theme support" "dev-vcs/subversion"
+	optfeature "zhann theme support" "dev-vcs/git"
+	optfeature "zhann theme support" "dev-vcs/subversion"
+
+	optfeature "1password plugin support" "=app-misc/1password-cli-2"
+	optfeature "adb plugin support" "dev-util/android-tools"
+	optfeature "ag plugin support" "app-misc/ag"
+	optfeature "aliases plugin support" "dev-lang/python"
+	optfeature "ansible plugin support" "app-admin/ansible"
+	optfeature "ant plugin support" "dev-java/ant"
+	optfeature "arcanist plugin support" "dev-util/arcanist"
+	optfeature "archlinux plugin support" "app-admin/sudo"
+	optfeature "archlinux plugin support" "app-crypt/gnupg"
+	optfeature "archlinux plugin support" "net-misc/curl"
+	optfeature "archlinux plugin support" "sys-apps/pacman"
+	optfeature "autojump plugin support" "app-shells/autojump"
+	optfeature "autopep8 plugin support" "dev-python/autopep8[${PYTHON_USEDEP}]"
+	optfeature "aws plugin support" "dev-python/awscli[${PYTHON_USEDEP}]"
+	optfeature "azure plugin support" "app-misc/jq"
+	optfeature "battery plugin support" "sys-power/acpi"
+	optfeature "bazel plugin support" "dev-build/bazel"
+	optfeature "bazel plugin support" "dev-libs/openssl"
+	optfeature "bedtools plugin support" "sci-biology/bedtools"
+	optfeature "bgnotify with X support" "x11-apps/xprop"
+	optfeature "bgnotify with dialog support" "x11-libs/libnotify"
+	optfeature "bgnotify with dialog support" "kde-apps/kdialog"
+	optfeature "bower plugin support" "dev-nodejs/bower"
+	optfeature "bundler plugin support" "dev-ruby/bundler"
+	optfeature "cabal plugin support" "dev-haskell/cabal"
+	optfeature "capistrano plugin support" "dev-ruby/capistrano"
+	optfeature "cask plugin support" "app-emacs/cask"
+	optfeature "catimg plugin support" "media-gfx/imagemagick[png]"
+	optfeature "celery plugin support" "dev-python/celery[${PYTHON_USEDEP}]"
+	optfeature "chruby plugin support" "dev-lang/ruby"
+	optfeature "chruby plugin support" "dev-ruby/chruby"
+	optfeature "chucknorris plugin support" "games-misc/fortune-mod"
+	optfeature "coffee plugin support for tmux clipboard" "app-misc/tmux"
+	optfeature "coffee plugin support for wayland clipboard" "gui-apps/wl-clipboard"
+	optfeature "coffee plugin support for x11 clipboard" "x11-misc/xclip"
+	optfeature "coffee plugin support for x11 clipboard" "x11-misc/xsel"
+	optfeature "colored-man-pages plugin support" "sys-apps/groff"
+	optfeature "colorize plugin support" "dev-python/pygments[${PYTHON_USEDEP}]"
+	optfeature "composer plugin support" "dev-lang/php"
+	optfeature "composer plugin support" "net-misc/curl"
+	optfeature "composer plugin support" "dev-php/composer"
+	optfeature "common-aliases plugin support" "sys-process/procps"
+	optfeature "common-aliases plugin support" "dev-python/pygments"
+	optfeature "common-aliases plugin support for ace" "app-arch/unace"
+	optfeature "common-aliases plugin support for chm viewer" "app-text/xchm"
+	optfeature "common-aliases plugin support for pdf viewer" "app-text/acroread"
+	optfeature "common-aliases plugin support for ps viewer" "app-text/gv"
+	optfeature "common-aliases plugin support for dvi viewer" "app-text/xdvik"
+	optfeature "common-aliases plugin support for djvu viewer" "app-text/djview"
+	optfeature "common-aliases plugin support for media player" "media-video/mplayer"
+	optfeature "common-aliases plugin support for rar" "app-arch/unrar"
+	optfeature "common-aliases plugin support for zip" "app-arch/unzip"
+	optfeature "common-aliases plugin support for zip" "app-arch/zip"
+	optfeature "copybuffer plugin support for tmux clipboard" "app-misc/tmux"
+	optfeature "copybuffer plugin support for wayland clipboard" "gui-apps/wl-clipboard"
+	optfeature "copybuffer plugin support for x11 clipboard" "x11-misc/xclip"
+	optfeature "copybuffer plugin support for x11 clipboard" "x11-misc/xsel"
+	optfeature "copyfile plugin support for tmux clipboard" "app-misc/tmux"
+	optfeature "copyfile plugin support for wayland clipboard" "gui-apps/wl-clipboard"
+	optfeature "copyfile plugin support for x11 clipboard" "x11-misc/xclip"
+	optfeature "copyfile plugin support for x11 clipboard" "x11-misc/xsel"
+	optfeature "cpanm plugin support" "dev-perl/App-cpanminus"
+	optfeature "debian plugin support" "app-admin/sudo"
+	optfeature "debian plugin support" "app-arch/dpkg"
+	optfeature "deno plugin support" "net-libs/deno"
+	optfeature "direnv plugin support" "dev-util/direnv"
+	optfeature "django plugin support" "dev-python/django[${PYTHON_USEDEP}]"
+	optfeature "dnf plugin support" "app-admin/sudo"
+	optfeature "docker plugin support" "app-containers/docker"
+	optfeature "docker-compose plugin support" "app-emulation/docker-compose"
+	optfeature "docker-machine plugin support" "app-emulation/docker-machine"
+	optfeature "doctl plugin support" "app-admin/doctl"
+	optfeature "dotnet plugin support" "dev-dotnet/dotnet-sdk-bin"
+	optfeature "drush plugin support" "app-admin/drush"
+	optfeature "drush plugin support" "app-admin/sudo"
+	optfeature "eecms plugin support" "dev-lang/php"
+	optfeature "emacs plugin support" ">=app-editors/emacs-24.0"
+	optfeature "emoji plugin support" "media-fonts/noto-color-emoji"
+	optfeature "emoji plugin support" "media-fonts/noto-color-emoji-bin"
+	optfeature "emoji plugin support" "media-fonts/noto-emoji"
+	optfeature "emoji plugin support" "media-fonts/emojione-color-font"
+	optfeature "emoji plugin support" "media-fonts/symbola"
+	optfeature "emoji plugin support" "media-fonts/twemoji-color-font"
+	optfeature "emoji plugin support" "media-fonts/unifont"
+	optfeature "emoji-clock plugin support" "media-fonts/noto-color-emoji"
+	optfeature "emoji-clock plugin support" "media-fonts/noto-color-emoji-bin"
+	optfeature "emoji-clock plugin support" "media-fonts/noto-emoji"
+	optfeature "emoji-clock plugin support" "media-fonts/emojione-color-font"
+	optfeature "emoji-clock plugin support" "media-fonts/symbola"
+	optfeature "emoji-clock plugin support" "media-fonts/twemoji-color-font"
+	optfeature "emoji-clock plugin support" "media-fonts/unifont"
+	optfeature "emotty plugin support" "media-fonts/noto-color-emoji"
+	optfeature "emotty plugin support" "media-fonts/noto-color-emoji-bin"
+	optfeature "emotty plugin support" "media-fonts/noto-emoji"
+	optfeature "emotty plugin support" "media-fonts/emojione-color-font"
+	optfeature "emotty plugin support" "media-fonts/symbola"
+	optfeature "emotty plugin support" "media-fonts/twemoji-color-font"
+	optfeature "emotty plugin support" "media-fonts/unifont"
+	optfeature "encode64 plugin support" "sys-apps/coreutils"
+	optfeature "extract plugin support" "net-misc/curl"
+	optfeature "extract plugin support for 7zip" "app-arch/p7zip"
+	optfeature "extract plugin support for bzip2" "app-arch/bzip2"
+	optfeature "extract plugin support for deb" "app-arch/bzip2"
+	optfeature "extract plugin support for deb" "app-arch/pigz"
+	optfeature "extract plugin support for deb" "app-arch/xz-utils"
+	optfeature "extract plugin support for deb" "app-arch/tar"
+	optfeature "extract plugin support for deb" "sys-devel/binutils"
+	optfeature "extract plugin support for gzip" "app-arch/pigz"
+	optfeature "extract plugin support for lrzip" "app-arch/lrzip"
+	optfeature "extract plugin support for lz4" "app-arch/lz4"
+	optfeature "extract plugin support for lzip" "app-arch/lzip"
+	optfeature "extract plugin support for lzma" "app-arch/xz-utils"
+	optfeature "extract plugin support for lzw" "app-arch/ncompress"
+	optfeature "extract plugin support for unzip" "app-arch/unzip"
+	optfeature "extract plugin support for rar" "app-arch/unrar"
+	optfeature "extract plugin support for rpm" "app-arch/cpio"
+	optfeature "extract plugin support for rpm" "app-arch/rpm"
+	optfeature "extract plugin support for xz" "app-arch/xz-utils"
+	optfeature "extract plugin support for zstd" "app-arch/zstd"
+	optfeature "eza plugin support" "sys-apps/eza"
+	optfeature "fabric plugin support" "dev-python/fabric[${PYTHON_USEDEP}]"
+	optfeature "fasd plugin support" "app-misc/fasd"
+	optfeature "fbterm plugin support" "app-i18n/fbterm"
+	optfeature "fd plugin support" "sys-apps/fd"
+	optfeature "firewalld plugin support" "app-admin/sudo"
+	optfeature "firewalld plugin support" "net-firewall/firewalld"
+	optfeature "flutter plugin support" "dev-util/flutter"
+	optfeature "fnm plugin support" "dev-util/fnm"
+	optfeature "fossil plugin support" "dev-vcs/fossil"
+	optfeature "fzf plugin support" "app-shells/fzf"
+	optfeature "gcloud plugin support" "app-misc/google-cloud-sdk"
+	optfeature "gh plugin support" "dev-util/github-cli"
+	optfeature "geeknote plugin support" "app-misc/geeknote"
+	optfeature "gem plugin support" "virtual/rubygems"
+	optfeature "git plugin support" "dev-vcs/git"
+	optfeature "git-auto-fetch plugin support" "dev-vcs/git"
+	optfeature "git-commit plugin support" "dev-vcs/git"
+	optfeature "git-extras plugin support" "dev-vcs/git"
+	optfeature "git-extras plugin support" "dev-vcs/git-extras"
+	optfeature "git-flow plugin support" "dev-vcs/git"
+	optfeature "git-flow-avh plugin support" "dev-vcs/git"
+	optfeature "git-hubflow plugin support" "dev-vcs/git"
+	optfeature "git-lfs plugin support" "dev-vcs/git-lfs"
+	optfeature "git-prompt plugin support" "dev-lang/python"
+	optfeature "git-prompt plugin support" "dev-vcs/git"
+	optfeature "gitfast plugin support" "dev-vcs/git"
+	optfeature "gitfast plugin support" "net-misc/curl"
+	optfeature "github plugin support" "dev-vcs/git"
+	optfeature "github plugin support" "dev-vcs/hub"
+	optfeature "github plugin support" "net-misc/curl"
+	optfeature "gitignore plugin support" "net-misc/curl"
+	optfeature "globalias plugin support" "sys-apps/grep[pcre]"
+	optfeature "gnu-utils plugin support" "sys-apps/coreutils"
+	optfeature "golang plugin support" "dev-lang/go"
+	optfeature "gpg-agent plugin support" "app-crypt/gnupg"
+	optfeature "gradle plugin support" "dev-java/gradle-bin"
+	optfeature "grc plugin support" "app-misc/grc"
+	optfeature "helm plugin support" "app-admin/helm"
+	optfeature "heroku plugin support" "dev-util/heroku-cli"
+	optfeature "history-substring-search plugin support" "app-editors/emacs"
+	optfeature "history-substring-search plugin support" "dev-vcs/git"
+	optfeature "hitchhiker plugin support" "games-misc/cowsay"
+	optfeature "hitchhiker plugin support" "games-misc/fortune-mod"
+	optfeature "hitokoto plugin support" "net-misc/curl"
+	optfeature "httpie plugin support" "net-misc/httpie"
+	optfeature "invoke plugin support" "dev-python/invoke[${PYTHON_USEDEP}]"
+	optfeature "ipfs plugin support" "net-p2p/go-ipfs"
+	optfeature "jenv plugin support" "virtual/jre"
+	optfeature "jfrog plugin support" "dev-util/jfrog-cli"
+	optfeature "jira plugin support" "dev-python/jira[${PYTHON_USEDEP}]"
+	optfeature "jsontools plugin support" "dev-lang/python"
+	optfeature "jsontools plugin support" "dev-lang/ruby"
+	optfeature "jsontools plugin support" "net-libs/nodejs"
+	optfeature "juju plugin support" "app-admin/juju"
+	optfeature "kate plugin support" "kde-apps/kate"
+	optfeature "keychain plugin support" "net-misc/keychain"
+	optfeature "kube-ps1 plugin support" "sys-cluster/kubernetes"
+	optfeature "kubectx plugin support" "app-admin/kubectx"
+	optfeature "kops plugin support" "sys-cluster/kops"
+	optfeature "laravel plugin support" "dev-lang/php"
+	optfeature "laravel4 plugin support" "dev-lang/php"
+	optfeature "laravel5 plugin support" "dev-lang/php"
+	optfeature "lein plugin support" "dev-java/leiningen-bin"
+	optfeature "lol plugin support" "net-misc/curl"
+	optfeature "lol plugin support" "sys-process/procps"
+	optfeature "lpass plugin support" "app-admin/lastpass-cli"
+	optfeature "lxd plugin support" "app-containers/lxd"
+	optfeature "man plugin support" "virtual/man"
+	optfeature "magic-enter plugin support" "dev-vcs/git"
+	optfeature "minikube plugin support" "sys-cluster/minikube"
+	optfeature "mix plugin support" "dev-lang/elixir"
+	optfeature "mix-fast plugin support" "dev-lang/elixir"
+	optfeature "mercurial plugin support" "dev-vcs/mercurial"
+	optfeature "mongocli plugin support" "dev-db/mongodb"
+	optfeature "mvn plugin support" "dev-java/maven-bin"
+	optfeature "mvn plugin support" "sys-apps/grep[pcre]"
+	optfeature "n98-magerun plugin support" "net-misc/wget"
+	optfeature "nanoc plugin support" "www-apps/nanoc"
+	optfeature "nats plugin support" "net-misc/natscli"
+	optfeature "nmap plugin support" "app-admin/sudo"
+	optfeature "nmap plugin support" "net-analyzer/nmap"
+	optfeature "node plugin support" "net-libs/nodejs"
+	optfeature "nomad plugin support" "sys-cluster/nomad"
+	optfeature "npm plugin support" "net-libs/nodejs[npm]"
+	optfeature "oc plugin support" "app-admin/openshift-client-tools"
+	optfeature "oc plugin support" "app-emulation/openshift-cli"
+	optfeature "oc plugin support" "sys-cluster/openshift-client-bin"
+	optfeature "octozen plugin support" "net-misc/curl"
+	optfeature "otp plugin support" "app-crypt/gnupg"
+	optfeature "otp plugin support" "sys-auth/oath-toolkit"
+	optfeature "pass plugin support" "app-admin/pass"
+	optfeature "pass plugin support" "app-crypt/gnupg"
+	optfeature "paver plugin support" "dev-python/paver[${PYTHON_USEDEP}]"
+	optfeature "pep8 plugin support" "dev-python/pep8[${PYTHON_USEDEP}]"
+	optfeature "percol plugin support" "app-shells/percol"
+	optfeature "perl plugin support" "dev-lang/perl"
+	optfeature "perl plugin support" "net-misc/curl"
+	optfeature "perl plugin support" "sys-apps/grep[pcre]"
+	optfeature "perl plugin support with perlbrew support" "dev-perl/App-perlbrew"
+	optfeature "pip plugin support" "dev-python/pip[${PYTHON_USEDEP}]"
+	optfeature "pip plugin support" "net-misc/curl"
+	optfeature "pipenv plugin support" "dev-python/pipenv[${PYTHON_USEDEP}]"
+	optfeature "phing plugin support" "dev-php/phing"
+	optfeature "pip plugin support" "net-misc/curl"
+	optfeature "pm2 plugin support" "sys-process/pm2"
+	optfeature "podman plugin support" "app-containers/podman"
+	optfeature "poetry plugin support" "dev-python/poetry[${PYTHON_USEDEP}]"
+	optfeature "pre-commit plugin support" "dev-vcs/pre-commit[${PYTHON_SINGLE_USEDEP}]"
+	optfeature "pyenv plugin support" "dev-lang/python"
+	optfeature "pylint plugin support" "dev-python/pylint[${PYTHON_USEDEP}]"
+	optfeature "python plugin support" "dev-lang/python"
+	optfeature "rails plugin support" "dev-lang/ruby"
+	optfeature "rails plugin support" "dev-ruby/rails[ruby_targets_ruby32?]"
+	optfeature "rails plugin support" "dev-ruby/rake[ruby_targets_ruby32?]"
+	optfeature "rake plugin support" "app-admin/sudo"
+	optfeature "rake plugin support" "dev-ruby/rake"
+	optfeature "rake-fast plugin support" "dev-ruby/rake"
+	optfeature "rand-quote plugin support" "net-misc/curl"
+	optfeature "rbenv plugin support" "dev-lang/ruby"
+	optfeature "rbenv plugin support" "dev-ruby/rbenv"
+	optfeature "rbw plugin support" "app-admin/rbw"
+	optfeature "rebar plugin support" "dev-util/rebar3"
+	optfeature "redis-cli plugin support" "dev-db/redis"
+	optfeature "repo plugin support" "dev-vcs/repo"
+	optfeature "ripgrep plugin support" "sys-apps/ripgrep"
+	optfeature "ros plugin support" "dev-lisp/roswell"
+	optfeature "rsync plugin support" "net-misc/rsync"
+	optfeature "ruby plugin support" "dev-lang/ruby"
+	optfeature "ruby plugin support" "dev-ruby/rubygems[ruby_targets_ruby32?]"
+	optfeature "rust plugin support" "dev-lang/rust-bin"
+	optfeature "rust plugin support" "dev-lang/rust"
+	optfeature "rvm plugin support" "dev-ruby/rvm"
+	optfeature "samtools plugin support" "sci-biology/samtools"
+	optfeature "salt plugin support" "app-admin/salt"
+	optfeature "salt plugin support" "dev-lang/python"
+	optfeature "sbt plugin support" "dev-java/sbt"
+	optfeature "sbt plugin support" "dev-java/sbt-bin"
+	optfeature "screen plugin support" "app-misc/screen"
+	optfeature "scala plugin support" "dev-lang/scala"
+	optfeature "scw plugin support" "app-admin/scaleway-cli"
+	optfeature "sfffe plugin support" "sys-apps/ack"
+	optfeature "shell-proxy plugin support" "dev-lang/python"
+	optfeature "sigstore plugin support" "app-containers/cosign"
+	optfeature "singlechar plugin support" "app-admin/sudo"
+	optfeature "singlechar plugin support" "net-misc/curl"
+	optfeature "singlechar plugin support" "net-misc/wget"
+	optfeature "snap plugin support" "app-containers/snapd"
+	optfeature "sprunge plugin support" "net-misc/curl"
+	optfeature "ssh plugin support" "virtual/ssh"
+	optfeature "ssh-agent plugin support" "virtual/ssh"
+	optfeature "stack plugin support" "dev-haskell/stack"
+	optfeature "starship plugin support" "app-shells/starship"
+	optfeature "stripe plugin support" "dev-util/stripe-cli"
+	optfeature "sublime plugin support" "app-editors/sublime-text"
+	optfeature "sublime-merge plugin support" "dev-vcs/sublime-merge"
+	optfeature "sudo plugin support" "app-admin/sudo"
+	optfeature "supervisor plugin support" "app-admin/supervisor"
+	optfeature "suse plugin support" "app-admin/sudo"
+	optfeature "suse plugin support" "sys-apps/zypper"
+	optfeature "svn plugin support" "dev-vcs/subversion"
+	optfeature "svn-fast-info plugin support" "dev-vcs/subversion"
+	optfeature "symfony plugin support" "dev-lang/php"
+	optfeature "symfony plugin support" "dev-php/symfony-console"
+	optfeature "symfony2 plugin support" "dev-lang/php"
+	optfeature "symfony2 plugin support" "dev-php/symfony-console"
+	optfeature "systemadmin plugin support" "app-alternatives/awk"
+	optfeature "systemadmin plugin support" "net-analyzer/tcpdump"
+	optfeature "systemadmin plugin support" "sys-apps/net-tools"
+	optfeature "systemadmin plugin support" "sys-process/procps"
+	optfeature "systemadmin plugin support for ping" "sys-apps/iproute2"  # for ping?
+	optfeature "systemadmin plugin support for ping" "sys-apps/net-tools" # for ping?
+	optfeature "systemd plugin support" "app-admin/sudo"
+	optfeature "systemd plugin support" "sys-apps/systemd"
+	optfeature "systemadmin plugin support" "app-admin/sudo"
+	optfeature "systemadmin plugin support" "net-misc/curl"
+	optfeature "taskwarrior plugin support" "app-misc/task"
+	optfeature "terraform plugin support" "app-admin/terraform"
+	optfeature "tig plugin support" "dev-vcs/tig"
+	optfeature "thefuck plugin support" "app-shells/thefuck"
+	optfeature "thor plugin support" "dev-ruby/thor"
+	optfeature "tmux plugin support" "app-misc/tmux"
+	optfeature "toolbox plugin support" "app-containers/toolbox"
+	optfeature "transfer plugin support" "app-crypt/gnupg"
+	optfeature "transfer plugin support" "net-misc/curl"
+	optfeature "ubuntu plugin support" "app-admin/sudo"
+	optfeature "ubuntu plugin support" "sys-apps/apt"
+	optfeature "ufw plugin support" "net-firewall/ufw"
+	optfeature "universalarchive plugin support for 7zip" "app-arch/p7zip"
+	optfeature "universalarchive plugin support for bzip2" "app-arch/bzip2"
+	optfeature "universalarchive plugin support for gzip" "app-arch/pigz"
+	optfeature "universalarchive plugin support for lzma" "app-arch/xz-utils"
+	optfeature "universalarchive plugin support for lzo" "app-arch/lzop"
+	optfeature "universalarchive plugin support for lzw" "app-arch/ncompress"
+	optfeature "universalarchive plugin support for rar" "app-arch/unrar"
+	optfeature "universalarchive plugin support for xz" "app-arch/xz-utils"
+	optfeature "universalarchive plugin support for zip" "app-arch/unzip"
+	optfeature "universalarchive plugin support for zip" "app-arch/zip"
+	optfeature "universalarchive plugin support for zstd" "app-arch/zstd"
+	optfeature "urltools plugin support" "dev-lang/php"
+	optfeature "urltools plugin support" "dev-lang/python"
+	optfeature "urltools plugin support" "dev-lang/ruby"
+	optfeature "urltools plugin support" "net-libs/nodejs"
+	optfeature "vagrant plugin support" "app-emulation/vagrant"
+	optfeature "vagrant-prompt" "app-emulation/vagrant"
+	optfeature "vim-interaction plugin support" "app-editors/gvim"
+	optfeature "virtualenvwrapper plugin support" "dev-python/virtualenvwrapper[${PYTHON_USEDEP}]"
+	optfeature "vscode plugin support" "app-editors/visual-studio-code"
+	optfeature "vscode plugin support" "app-editors/visual-studio-code-bin"
+	optfeature "vscode plugin support" "app-editors/vscode"
+	optfeature "vscode plugin support" "app-editors/vscode-bin"
+	optfeature "vundle plugin support" "app-editors/vim"
+	optfeature "wakeonlan plugin support" "net-misc/wakeonlan"
+	optfeature "watson plugin support" "dev-python/td-watson[${PYTHON_USEDEP}]"
+	optfeature "wp-cli plugin support" "app-admin/wp-cli"
+	optfeature "yum plugin support" "app-admin/sudo"
+	optfeature "zoxide plugin support" "app-shells/zoxide"
+	optfeature "zsh-interactive-cd plugin support" "app-shells/fzf"
+	optfeature "zsh-navigation-tools plugin support" "dev-vcs/subversion"
+
+	if use kernel_Darwin ; then
+		optfeature "apache2-macports plugin support" "app-admin/sudo"
+		optfeature "macos plugin support" "net-misc/curl"
+		optfeature "postgres plugin support" "dev-db/postgresql"
+		optfeature "pow plugin support" "sys-process/lsof"
+		optfeature "xcode plugin support" "app-admin/sudo"
 	fi
+ewarn "Installing unnecessary packages increases the chances of a successful living off the land (LotL) attack."
 }
 
 # OILEDMACHINE-OVERLAY-META-MOD-TYPE:  ebuild

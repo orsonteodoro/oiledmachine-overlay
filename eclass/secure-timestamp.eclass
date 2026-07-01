@@ -94,6 +94,7 @@ SECURE_TIMESTAMP["app_arch_zstd_9999"]="Mar 17, 2026 4:16 PM PDT"
 SECURE_TIMESTAMP["app_crypt_rhash_9999"]="Apr 9, 2026 2:16 PM PDT"
 SECURE_TIMESTAMP["app_i18n_uchardet_9999"]="Jun 7, 2025 4:35:44 PM PDT"
 SECURE_TIMESTAMP["app_shells_bash_9999"]="2026-06-10 08:56:30 -0400"
+SECURE_TIMESTAMP["app_shells_zsh_9999"]="Jun 9, 2026 8:20 PM PDT"
 SECURE_TIMESTAMP["app_text_ghostscript_gpl"]="2026-06-24 13:03:32 +0100"
 SECURE_TIMESTAMP["app_text_tesseract_9999"]="Feb 9 2026 3:36 AM PST"
 SECURE_TIMESTAMP["dev_build_ninja_9999"]="Sat, 11 May 2024 13:43:36 +0200"
@@ -335,7 +336,6 @@ SECURE_TIMESTAMP["x11_libs_pango_9999"]="Jun 1, 2026 3:30 PM PDT"
 SECURE_TIMESTAMP["x11_libs_pixman_9999"]="Aug 1, 2025 9:38:49 AM PDT"
 SECURE_TIMESTAMP["x11_misc_colord_9999"]="Feb 2, 2026 1:31 AM PST"
 
-#SECURE_TIMESTAMP[""]=""
 	declare -p SECURE_TIMESTAMP
 }
 
