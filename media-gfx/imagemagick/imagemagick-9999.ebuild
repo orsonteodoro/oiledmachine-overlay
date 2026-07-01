@@ -1,4 +1,4 @@
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -18,33 +18,66 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-inherit autotools cflags-hardened flag-o-matic libcxx-slot libstdcxx-slot
-inherit perl-functions toolchain-funcs
+GENTOO_DEPEND_ON_PERL="no"
+QA_PKGCONFIG_VERSION=$(ver_cut 1-3)
 
-if [[ "${PV}" == "9999" ]] ; then
+CHKL_TIMESTAMPS=(
+	"app-arch/bzip2-9999"
+	"app-arch/xz-utils-9999"
+	"app-text/ghostscript-gpl-9999"
+	"dev-libs/libxml2-9999"
+	"gnome-base/librsvg-9999"
+	"media-libs/freetype-9999"
+	"media-libs/libheif-9999"
+	"media-libs/libjpeg-turbo-9999"
+	"media-libs/libjxl-9999"
+	"media-libs/libpng-9999"
+	"media-libs/libraw-9999"
+	"media-libs/libwebp-9999"
+	"dev-libs/libzip-9999"
+	"media-libs/openexr-9999"
+	"media-libs/tiff-9999"
+)
+
+inherit autotools cflags-hardened chkl flag-o-matic perl-module secure-version toolchain-funcs
+
+DESCRIPTION="A collection of tools and libraries for many image formats"
+HOMEPAGE="https://imagemagick.org"
+
+if [[ ${PV} == 9999 ]] ; then
+	FALLBACK_COMMIT="92b961a5040d9bddb4054dcc72a7bde67190c89e"
+	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/ImageMagick/ImageMagick.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 	inherit git-r3
 	MY_P="imagemagick-9999"
 else
+	VERIFY_SIG_OPENPGP_KEY_PATH=/usr/share/openpgp-keys/imagemagick.asc
+	inherit verify-sig
+
 	MY_PV="$(ver_rs 3 '-')"
 	MY_P="ImageMagick-${MY_PV}"
-	SRC_URI="mirror://imagemagick/${MY_P}.tar.xz"
-	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris"
+	SRC_URI="
+		mirror://imagemagick/${MY_P}.tar.xz
+		verify-sig? ( mirror://imagemagick/${MY_P}.tar.xz.asc )
+	"
+
+	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
+	BDEPEND="verify-sig? ( sec-keys/openpgp-keys-imagemagick )"
 fi
 
 S="${WORKDIR}/${MY_P}"
-
-DESCRIPTION="A collection of tools and libraries for many image formats"
-HOMEPAGE="https://imagemagick.org/index.php"
 
 LICENSE="imagemagick"
 # Please check this on bumps, SONAME is often not updated! Use abidiff on old/new.
 # If ABI is broken, change the bit after the '-'.
 SLOT="0/$(ver_cut 1-3)-18"
-IUSE="
-bzip2 corefonts +cxx djvu fftw fontconfig fpx graphviz hardened hdri heif jbig jpeg jpeg2k jpegxl lcms lqr lzma opencl openexr openmp pango perl +png postscript q32 q8 raw static-libs svg test tiff truetype webp wmf X xml zip zlib
-ebuild_revision_10
-"
+IUSE+=" bzip2 corefonts +cxx djvu fftw fontconfig fpx graphviz hardened hdri heif"
+IUSE+=" jbig jpeg jpeg2k jpegxl lcms lqr lzma opencl openexr openmp pango perl ${GENTOO_PERL_USESTRING}"
+IUSE+=" +png postscript q32 q8 raw static-libs svg test tiff truetype webp wmf"
+IUSE+=" X xml zip zlib"
 
 REQUIRED_USE="
 	corefonts? ( truetype )
@@ -54,60 +87,60 @@ REQUIRED_USE="
 
 RESTRICT="!test? ( test )"
 
-RDEPEND_DISABLED="
-	heif? ( media-libs/libheif:=[x265] )
-"
 RDEPEND="
 	!media-gfx/graphicsmagick[imagemagick]
-	dev-libs/libltdl
-	bzip2? ( app-arch/bzip2 )
-	corefonts? ( media-fonts/corefonts )
-	djvu? ( app-text/djvu )
-	fftw? ( sci-libs/fftw:3.0 )
-	fontconfig? ( media-libs/fontconfig )
-	fpx? ( >=media-libs/libfpx-1.3.0-r1 )
-	graphviz? ( media-gfx/graphviz )
-	heif? ( media-libs/libheif:= )
+	dev-libs/libltdl:=
+	bzip2? ( >=app-arch/bzip2-${BZIP2_PV}:= )
+	corefonts? ( media-fonts/corefonts:= )
+	djvu? ( app-text/djvu:= )
+	fftw? ( sci-libs/fftw:= )
+	fontconfig? ( >=media-libs/fontconfig-${FONTCONFIG_PV}:= )
+	fpx? ( >=media-libs/libfpx-1.3.0-r1:= )
+	graphviz? ( media-gfx/graphviz:= )
+	heif? ( >=media-libs/libheif-${LIBHEIF_PV}:=[x265] )
 	jbig? ( >=media-libs/jbigkit-2:= )
-	jpeg? ( media-libs/libjpeg-turbo:= )
-	jpeg2k? ( >=media-libs/openjpeg-2.1.0:2 )
-	jpegxl? ( >=media-libs/libjxl-0.6:= )
-	lcms? ( media-libs/lcms:2= )
-	lqr? ( media-libs/liblqr )
-	opencl? ( virtual/opencl )
-	openexr? ( media-libs/openexr:0= )
-	pango? ( x11-libs/pango )
-	perl? ( >=dev-lang/perl-5.8.8:= )
-	png? ( media-libs/libpng:= )
-	postscript? ( app-text/ghostscript-gpl:= )
-	raw? ( media-libs/libraw:= )
+	jpeg? ( >=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:= )
+	jpeg2k? ( >=media-libs/openjpeg-${OPENJPEG_PV}:= )
+	jpegxl? ( >=media-libs/libjxl-${LIBJXL_PV}:= )
+	lcms? ( >=media-libs/lcms-${LCMS_PV}:= )
+	lqr? ( media-libs/liblqr:= )
+	opencl? ( virtual/opencl:* )
+	openexr? ( >=media-libs/openexr-${OPENEXR_PV}:= )
+	pango? ( >=x11-libs/pango-${PANGO_PV}:= )
+	perl? (
+		${GENTOO_PERL_DEPSTRING}
+		>=dev-lang/perl-${PERL_PV}:=
+	)
+	png? ( >=media-libs/libpng-${LIBPNG_PV}:= )
+	postscript? ( >=app-text/ghostscript-gpl-${GHOSTSCRIPT_GPL_PV}:= )
+	raw? ( >=media-libs/libraw-${LIBRAW_PV}:= )
 	svg? (
-		gnome-base/librsvg
-		media-gfx/potrace
+		>=gnome-base/librsvg-${LIBRSVG_PV}:=
+		media-gfx/potrace:=
 	)
-	tiff? ( media-libs/tiff:= )
+	tiff? ( >=media-libs/tiff-${TIFF_PV}:= )
 	truetype? (
-		media-fonts/urw-fonts
-		>=media-libs/freetype-2
+		media-fonts/urw-fonts:=
+		>=media-libs/freetype-${FREETYPE_PV}:=
 	)
-	webp? ( media-libs/libwebp:= )
-	wmf? ( media-libs/libwmf )
+	webp? ( >=media-libs/libwebp-${LIBWEBP_PV}:= )
+	wmf? ( media-libs/libwmf:= )
 	X? (
-		x11-libs/libICE
-		x11-libs/libSM
-		x11-libs/libXext
-		x11-libs/libXt
+		>=x11-libs/libICE-${LIBICE_PV}:=
+		>=x11-libs/libSM-${LIBSM_PV}:=
+		>=x11-libs/libXext-${LIBXEXT_PV}:=
+		>=x11-libs/libXt-${LIBXT_PV}:=
 	)
-	xml? ( dev-libs/libxml2:= )
-	lzma? ( app-arch/xz-utils )
-	zip? ( dev-libs/libzip:= )
-	zlib? ( virtual/zlib:= )
+	xml? ( >=dev-libs/libxml2-${LIBXML2_PV}:= )
+	lzma? ( >=app-arch/xz-utils-${XZ_UTILS_PV}:= )
+	zip? ( >=dev-libs/libzip-${LIBZIP_PV}:= )
+	zlib? ( >=virtual/zlib-${ZLIB_PV}:= )
 "
 DEPEND="
 	${RDEPEND}
-	X? ( x11-base/xorg-proto )
+	X? ( x11-base/xorg-proto:= )
 "
-BDEPEND="virtual/pkgconfig"
+BDEPEND+=" virtual/pkgconfig"
 
 PATCHES=(
 	"${FILESDIR}/${PN}-9999-nocputuning.patch"
@@ -123,6 +156,19 @@ pkg_setup() {
 	libstdcxx-slot_verify
 }
 
+src_unpack() {
+	if [[ ${PV} == 9999 ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+	# TODO: add verify
+		unpack ${A}
+	fi
+}
+
 src_prepare() {
 	default
 
@@ -130,41 +176,34 @@ src_prepare() {
 	eautoreconf
 
 	# For testsuite, see bug #500580#c3
-	local ati_cards mesa_cards nvidia_cards render_cards
 	shopt -s nullglob
-	ati_cards=$(echo -n /dev/ati/card*)
-	for card in ${ati_cards[@]} ; do
-		addpredict "${card}"
-	done
-	mesa_cards=$(echo -n /dev/dri/card*)
-	for card in ${mesa_cards[@]} ; do
-		addpredict "${card}"
-	done
-	nvidia_cards=$(echo -n /dev/nvidia*)
-	for card in ${nvidia_cards[@]} ; do
-		addpredict "${card}"
-	done
-	render_cards=$(echo -n /dev/dri/renderD128*)
-	for card in ${render_cards[@]} ; do
+	for card in /dev/{{ati,dri}/card,nvidia,dri/renderD128}*; do
 		addpredict "${card}"
 	done
 	shopt -u nullglob
 	addpredict /dev/nvidiactl
+
+	if use hardened ; then
+		# https://github.com/ImageMagick/ImageMagick/issues/8646 (bug #971784)
+		sed -i -e 's:not ok:ok:' tests/cli-svg.tap || die
+	fi
 }
 
 src_configure() {
+	chkl_check_many_timestamps
+
 	local depth=16
 	use q8 && depth=8
 	use q32 && depth=32
 
 	use perl && perl_check_env
 
+	cflags-hardened_append
+
 	[[ ${CHOST} == *-solaris* ]] && append-ldflags -lnsl -lsocket
 
 	# Workaround for bug #941208 (gcc PR117100)
 	tc-is-gcc && [[ $(gcc-major-version) == 13 ]] && append-flags -fno-unswitch-loops
-
-	cflags-hardened_append
 
 	local myeconfargs=(
 		$(use_enable static-libs static)
@@ -224,6 +263,11 @@ src_configure() {
 	CONFIG_SHELL="${BROOT}"/bin/bash econf "${myeconfargs[@]}"
 }
 
+src_compile() {
+	# Avoid perl-module_src_compile
+	default
+}
+
 src_test() {
 	# Install default (unrestricted) policy in $HOME for test suite, bug #664238
 	local _im_local_config_home="${HOME}/.config/ImageMagick"
@@ -258,13 +302,15 @@ src_install() {
 	einstalldocs
 
 	if use perl; then
-		find "${ED}" -type f -name perllocal.pod -exec rm -f {} +
-		find "${ED}" -depth -mindepth 1 -type d -empty -exec rm -rf {} +
+		find "${ED}" -type f -name perllocal.pod -exec rm -f {} + || die
+		find "${ED}" -depth -mindepth 1 -type d -empty -exec rm -rf {} + || die
 	fi
 
-	find "${ED}" -name '*.la' -exec sed -i -e "/^dependency_libs/s:=.*:='':" {} +
 	# .la files in parent are not needed, keep plugin .la files
 	find "${ED}"/usr/$(get_libdir)/ -maxdepth 1 -name "*.la" -delete || die
+
+	# https://github.com/gentoo/gentoo/pull/37716#discussion_r1696713348
+	find "${ED}" -name '*.la' -exec sed -i -e "/^dependency_libs/s:=.*:='':" {} + || die
 
 	if use opencl; then
 		cat <<-EOF > "${T}"/99${PN}
