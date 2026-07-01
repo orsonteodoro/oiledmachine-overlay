@@ -614,7 +614,7 @@ KERNEL_DEPENDS="
 	ot-sources? (
 		sys-kernel/ot-sources:=
 		|| (
-			~sys-kernel/ot-sources-7.2.0.9999
+			~sys-kernel/ot-sources-7.2.9999
 			~sys-kernel/ot-sources-${LINUX_KERNEL_7_1_PV}
 			~sys-kernel/ot-sources-${LINUX_KERNEL_6_18_PV}
 			~sys-kernel/ot-sources-${LINUX_KERNEL_6_12_PV}

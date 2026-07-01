@@ -3327,18 +3327,27 @@ einfo "Applying patchsets for -${extraversion}"
 einfo
 		apply_all_patchsets
 		cd "${BUILD_DIR}" || die
-einfo "Setting the extra version for the -${extraversion} build"
+einfo "Setting the EXTRALEVEL for the -${extraversion} build"
 		if [[ "${PV}" =~ "9999" ]] ; then
 			local rc_pv=""
-			if [[ -n "${RC_PV}" ]] ; then
-				rc_pv="-${RC_PV}"
-			fi
-			sed -i -e "s|EXTRAVERSION = ${rc_pv}\$|EXTRAVERSION = ${rc_pv}-${extraversion}|g" \
+			sed -i -r -e "s|EXTRAVERSION =[ rc0-9-]+\$|EXTRAVERSION = ${rc_pv}-${extraversion}|g" \
+				"Makefile" || die
+		elif [[ "${PV}" =~ "_rc" ]] ; then
+			rc_pv="-${RC_PV}"
+			sed -i -r -e "s|EXTRAVERSION =[ rc0-9-]+\$|EXTRAVERSION = ${rc_pv}-${extraversion}|g" \
 				"Makefile" || die
 		else
 			sed -i -e "s|EXTRAVERSION =\$|EXTRAVERSION = -${extraversion}|g" \
 				"Makefile" || die
 		fi
+
+		if [[ "${PV}" =~ "9999" ]] ; then
+einfo "Setting the SUBLEVEL to 9999"
+			local rc_pv=""
+			sed -i -r -e "s|SUBLEVEL = [0-9]+\$|SUBLEVEL = 9999|g" \
+				"Makefile" || die
+		fi
+
 		if ! use debug && ! ot-kernel_use "debug" ; then
 			chmod +x "disable_debug" || die
 		fi
