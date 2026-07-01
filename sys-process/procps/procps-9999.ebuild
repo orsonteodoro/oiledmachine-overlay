@@ -104,8 +104,6 @@ src_prepare() {
 multilib_src_configure() {
 	chkl_check_many_timestamps
 
-	export MAKEOPTS="-j1"
-
 	# http://www.freelists.org/post/procps/PATCH-enable-transparent-large-file-support
 	# bug #471102
 	append-lfs-flags
