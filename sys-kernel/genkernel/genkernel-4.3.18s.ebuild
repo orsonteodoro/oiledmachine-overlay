@@ -4,7 +4,7 @@
 
 EAPI=8
 
-# EXPERIMENTAL VERSION (UNSTABLE / NOT RECOMMENDED)
+# STABLE VERSION (RECOMMENDED)
 
 # The reuse of revision r7 was used so that newer bumps
 # do not interfere with an ongoing patch update for a stable working build.
@@ -21,7 +21,7 @@ EAPI=8
 # genkernel-VERSION     -> normal genkernel release
 
 # The original version of this ebuild is 4.2.6-r1::gentoo
-# modified with subdir_mount, entry, llvm, pgo changes.  Revision
+# modified with subdir_mount, crypt_root_plain, llvm, pgo changes.  Revision
 # bumps may change on the oiledmachine-overlay.
 
 # Updated from changes from genkernel-4.3.17-r2.ebuild
@@ -47,15 +47,15 @@ LLVM_LTO_SLOTS=( {18..11} )
 LLVM_CFI_ARM64_SLOTS=( {18..12} )
 LLVM_CFI_X86_SLOTS=( {18..13} )
 LLVM_PGO_SLOTS=( {18..13} )
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{10..14} )
 
 inherit bash-completion-r1 flag-o-matic python-single-r1
 
 # Whenever you bump a GKPKG, check if you have to move
 # or add new patches!
+VERSION_B2="5.4.2"
 VERSION_BCACHE_TOOLS="1.1_p20230217"
-# boost-1.84.0 needs dev-build/b2 packaged
-VERSION_BOOST="1.79.0"
+VERSION_BOOST="1.90.0"
 VERSION_BTRFS_PROGS="6.7.1"
 VERSION_BUSYBOX="1.36.1"
 VERSION_COREUTILS="9.4"
@@ -64,7 +64,7 @@ VERSION_DMRAID="1.0.0.rc16-3"
 VERSION_DROPBEAR="2022.83"
 VERSION_EUDEV="3.2.14"
 VERSION_EXPAT="2.5.0"
-VERSION_E2FSPROGS="1.47.0"
+VERSION_E2FSPROGS="1.47.3"
 VERSION_FUSE="2.9.9"
 # gnupg-2.x needs several new deps packaged
 VERSION_GPG="1.4.23"
@@ -104,6 +104,7 @@ COMMON_URI="
 	https://boostorg.jfrog.io/artifactory/main/release/${VERSION_BOOST}/source/boost_${VERSION_BOOST//./_}.tar.bz2
 	https://www.kernel.org/pub/linux/kernel/people/kdave/btrfs-progs/btrfs-progs-v${VERSION_BTRFS_PROGS}.tar.xz
 	https://www.busybox.net/downloads/busybox-${VERSION_BUSYBOX}.tar.bz2
+	https://github.com/bfgroup/b2/archive/refs/tags/${VERSION_B2}.tar.gz -> b2-${VERSION_B2}.tar.gz
 	mirror://gnu/coreutils/coreutils-${VERSION_COREUTILS}.tar.xz
 	https://www.kernel.org/pub/linux/utils/cryptsetup/v$(ver_cut 1-2 ${VERSION_CRYPTSETUP})/cryptsetup-${VERSION_CRYPTSETUP}.tar.xz
 	https://people.redhat.com/~heinzm/sw/dmraid/src/dmraid-${VERSION_DMRAID}.tar.bz2
@@ -135,14 +136,6 @@ COMMON_URI="
 	https://zlib.net/zlib-${VERSION_ZLIB}.tar.gz
 	https://github.com/facebook/zstd/archive/v${VERSION_ZSTD}.tar.gz -> zstd-${VERSION_ZSTD}.tar.gz
 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/keyutils.git/snapshot/keyutils-${VERSION_KEYUTILS}.tar.gz
-
-	steghide? (
-		https://www.ijg.org/files/jpegsrc.v${VERSION_LIBJPEG}.tar.gz
-		mirror://sourceforge/mcrypt/libmcrypt-${VERSION_LIBMCRYPT}.tar.gz
-		mirror://sourceforge/mcrypt/mcrypt-${VERSION_MCRYPT}.tar.gz
-		mirror://sourceforge/mhash/mhash-${VERSION_MHASH}.tar.gz
-		mirror://sourceforge/steghide/steghide-${VERSION_STEGHIDE}.tar.bz2
-	)
 "
 
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -152,7 +145,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 		${COMMON_URI}
 	"
 else
-	#KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
+	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 	SRC_URI="
 		${COMMON_URI}
 		https://dev.gentoo.org/~bkohler/dist/${MY_P}.tar.xz
@@ -164,28 +157,16 @@ DESCRIPTION="Gentoo automatic kernel building scripts"
 HOMEPAGE="https://wiki.gentoo.org/wiki/Genkernel https://gitweb.gentoo.org/proj/genkernel.git/"
 LICENSE="
 	GPL-2
-	entry? (
-		GPL-2
-		Linux-syscall-note
-	)
-	steghide? (
-		GPL-2
-		BSD
-		IJG
-		LGPL-2.1
-		ZLIB
-	)
 "
 RESTRICT=""
-SLOT="0/experimental"
+SLOT="0/stable"
 IUSE+=" ibm +firmware systemd"
-IUSE+=" entry"					# Added by oteodoro.
+IUSE+=" crypt_root_plain"			# Added by oteodoro.
 IUSE+=" subdir_mount"				# Added by the muslx32 overlay.
 IUSE+=" +llvm +lto cfi shadowcallstack"		# Added by the oiledmachine-overlay.
 # Added by the oiledmachine-overlay. \
 IUSE+="
 	clang-pgo
-	steghide
 	sudo
 	pgo-custom
 	genkernel_trainers_crypto
@@ -245,9 +226,6 @@ REQUIRED_USE+="
 	)
 	shadowcallstack? (
 		cfi
-	)
-	steghide? (
-		entry
 	)
 "
 gen_scs_exclusion() {
@@ -339,20 +317,21 @@ DEPEND="
 RDEPEND+="
 	${PYTHON_DEPS}
 	>=app-misc/pax-utils-1.2.2
+	app-alternatives/bc
 	app-alternatives/cpio
+	app-alternatives/yacc
+	app-alternatives/lex
 	app-portage/elt-patches
 	app-portage/portage-utils
 	app-text/asciidoc
 	dev-build/cmake
-	dev-util/gperf
-	sys-apps/sandbox
 	dev-build/autoconf
 	dev-build/autoconf-archive
 	dev-build/automake
-	app-alternatives/bc
-	app-alternatives/yacc
-	app-alternatives/lex
+	dev-build/cmake
 	dev-build/libtool
+	dev-util/gperf
+	sys-apps/sandbox
 	virtual/pkgconfig
 	elibc_glibc? (
 		sys-libs/glibc[static-libs(+)]
@@ -469,11 +448,6 @@ src_unpack() {
 
 src_prepare() {
 	default
-eerror
-eerror "This particular ebuild revision is for development only.  Use the stable"
-eerror "later revisions instead."
-eerror
-	die
 
 	if [[ "${PV}" =~ "9999" ]] ; then
 		einfo "Updating version tag"
@@ -492,29 +466,8 @@ eerror
 		eapply "${FILESDIR}/${PN}-4.1.2-subdir-mount.patch" # oiledmachine-overlay patch
 	fi
 
-	if use entry ; then
-		# Technically, one can't have plausable deniability because the packages are
-		# named libgcrypt or cryptsetup or crypt anything.  One would have to
-		# obfuscate or strip everything without crypt or the ciphers or anything
-		# related.  This patch will try to fix the facade issue (aka immediate password
-		# prompt) and the encrypted device referencing issue (destroying the plausable
-		# deniability of plain).
-		eapply "${FILESDIR}/${PN}-4.3.6-entry-r1.patch" # oiledmachine-overlay patch
+	if use crypt_root_plain ; then
 		eapply "${FILESDIR}/${PN}-4.3.8-dmcrypt-plain-support-v3.patch" # oiledmachine-overlay patch
-		eapply "${FILESDIR}/${PN}-4.3.6-fallback.patch" # oiledmachine-overlay patch
-		ewarn
-		ewarn "The entry USE flag is in testing."
-		ewarn
-		ewarn "DO NOT USE until you have filled out and edited the missing settings,"
-		ewarn "and have a full understanding of the patch itself."
-		ewarn
-		eerror
-		eerror "Complete emerge is stopped as safeguard.  Please wait for the finished"
-		eerror "patch or fork ebuild.  The patch may result in data loss if there is"
-		eerror "no backup bootdisk built with =genkernel-4.2.6-r2[crypt_root_plain]"
-		eerror "for this experimental release."
-		eerror
-		die
 	fi
 
 	if use llvm ; then
@@ -682,7 +635,7 @@ elog "by Genkernel 3.x just in case things go wrong."
 ewarn
 ewarn "You must load all modules by adding \"gk.hw.use-modules_load=1\" from"
 ewarn "the kernel parameter list for grub or have the drivers built in to use"
-ewarn " the kernel with the entry USE flag."
+ewarn " the kernel with the crypt_root_plain USE flag."
 ewarn
 
 ewarn
@@ -729,24 +682,14 @@ ewarn
 	fi
 
 ewarn
-ewarn "Entry is currently in development but will announce when it is ready."
-ewarn "It is pre-alpha quality at this time."
-ewarn
-ewarn "Access though the crypt_root_plain is provided as a fallback until"
-ewarn "entry is production ready.  It is recommended to use genkernel-4.2.6-r2"
-ewarn "or the highest revision instead."
+ewarn "The current crypt_root_plain will be deprecated for security reasons."
+ewarn "It will be announced later when the replacement is ready and require"
+ewarn "upgrading."
 ewarn
 
-	if use steghide ; then
 ewarn
-ewarn "The steghide requires you manually embed the payload into a compatible"
-ewarn "audio or image asset.  Only decode supported."
-ewarn
-	fi
-
-ewarn
-ewarn "This version with oiledmachine-overlay patches has not been tested."
-ewarn "Do not use at this time.  Use 4.2.3 instead."
+ewarn "This version with oiledmachine-overlay PGO patches are still being"
+ewarn "tested, but booting is working."
 ewarn
 
 ewarn
@@ -761,4 +704,3 @@ ewarn
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  ebuild, pgo, lto, patch-additions
-# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
