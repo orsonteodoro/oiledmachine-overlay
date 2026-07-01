@@ -1097,7 +1097,7 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
     [20] Can mitigate DoS (Denial of Service)
     [21a] auto detected based on installed userland packages
     [21b] bfp
-    [21c] auto detected based on installed userland packages
+    [21c] auto detected based on installed userland packages and it will enable lockdown LSM.
     [21d] integrity,selinux,bpf
     [21e] landlock,yama,bpf
     [21f] landlock,lockdown,yama,integrity,bpf
