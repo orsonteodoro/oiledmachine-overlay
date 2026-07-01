@@ -307,6 +307,7 @@ SECURE_TIMESTAMP["sys_apps_uutils_coreutils_9999"]="Jun 28, 2026 4:33 AM PDT"
 SECURE_TIMESTAMP["sys_auth_elogind_257_9999"]="May 8, 2026 1:52 AM PDT"
 SECURE_TIMESTAMP["sys_auth_pambase_999999999"]="Nov 4, 2025 1:38 AM PST"
 SECURE_TIMESTAMP["sys_auth_polkit_9999"]="May 11, 2026 9:29 AM PDT"
+SECURE_TIMESTAMP["sys_devel_binutils_9999"]="2026-06-29" # Rounded up
 SECURE_TIMESTAMP["sys_kernel_ot_sources_7_2_0_9999"]="2026-06-28 12:01:31 -0700"
 SECURE_TIMESTAMP["sys_process_audit_9999"]="May 10, 2026 7:54 AM PDT"
 SECURE_TIMESTAMP["sys_libs_libbacktrace_9999"]="Feb 10, 2025 3:04 PM PST"
@@ -333,6 +334,7 @@ SECURE_TIMESTAMP["x11_libs_pango_9999"]="Jun 1, 2026 3:30 PM PDT"
 SECURE_TIMESTAMP["x11_libs_pixman_9999"]="Aug 1, 2025 9:38:49 AM PDT"
 SECURE_TIMESTAMP["x11_misc_colord_9999"]="Feb 2, 2026 1:31 AM PST"
 
+SECURE_TIMESTAMP[""]=""
 	declare -p SECURE_TIMESTAMP
 }
 
