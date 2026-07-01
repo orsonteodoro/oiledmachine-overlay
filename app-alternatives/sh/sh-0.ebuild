@@ -1,0 +1,66 @@
+# Copyright 2022-2025 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+CHKL_TIMESTAMPS=(
+	"app-shells/bash-9999"
+	"app-shells/dash-9999"
+	"app-shells/ksh-9999"
+#	"app-shells/mksh-9999"
+	"sys-apps/busybox-9999"
+)
+
+inherit chkl secure-version
+
+ALTERNATIVES=(
+	"bash:>=app-shells/bash-${BASH_PV}:="
+	"busybox:>=sys-apps/busybox-${BUSYBOX_PV}:="
+	"dash:>=app-shells/dash-${DASH_PV}:="
+	"ksh:>=app-shells/ksh-${KSH_PV}:="
+	"lksh:app-shells/mksh:=[lksh]"
+	"mksh:app-shells/mksh:="
+)
+
+inherit app-alternatives
+
+DESCRIPTION="/bin/sh (POSIX shell) symlink"
+KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~arm64-macos ~x64-macos ~x64-solaris"
+
+RDEPEND="
+	!app-eselect/eselect-sh
+"
+
+pkg_setup() {
+	if [[ -z ${ROOT} ]] && use busybox ; then
+		# Needed to avoid busybox preferring internal applets over PATH lookups.
+		# https://web.archive.org/web/20221206223848/https://busybox.net/FAQ.html#standalone_shell.
+		if busybox bbconfig | grep -q "CONFIG_FEATURE_SH_STANDALONE=y" ; then
+			ewarn "busybox is configured with CONFIG_FEATURE_SH_STANDALONE=y!"
+			ewarn "This is not a safe configuration for busybox as /bin/sh."
+			ewarn "Please use savedconfig to disable CONFIG_FEATURE_SH_STANDALONE on busybox."
+			die "Aborting due to unsafe Busybox configuration (CONFIG_FEATURE_SH_STANDALONE=y)!"
+		fi
+	fi
+}
+
+src_configure() {
+	chkl_check_many_timestamps
+}
+
+src_install() {
+	dosym "$(get_alternative)" /bin/sh || die
+}
+
+pkg_postinst() {
+	use "lksh" ewarn "SECURITY NOTICE:  app-shells/mksh for USE=lksh is refusing AI, which implies no independent AI security audits.  Do not use in a security-critical system."
+	use "mksh" ewarn "SECURITY NOTICE:  app-shells/mksh for USE=mksh is refusing AI, which implies no independent AI security audits.  Do not use in a security-critical system."
+}
+
+pkg_postrm() {
+	# make sure we don't leave the user without /bin/sh, since it's not
+	# been owned by any other package
+	if [[ ! -h ${EROOT}/bin/sh ]]; then
+		ln -s bash "${EROOT}/bin/sh" || die
+	fi
+}

@@ -163,3 +163,18 @@ media-libs/tiff jbig
 
 # Only vanilla allowed
 =sys-kernel/ot-sources-7.2.0.9999 genpatches genpatches_1510 nest rt tresor tresor_prompt tresor_sysfs zen-sauce
+
+
+# Harden app-alternatives/* against FAFO developers.
+
+# Blocked missing security backport from gpg live.
+app-alternatives/gpg freepg
+
+# Blocked for using the unsafe keyword without fuzzer as a security-critical package.
+app-alternatives/gpg sequoia
+
+# Blocked for banning AI, or refusal of independent AI security audits.
+app-alternatives/sh lksh mksh
+
+# Repo of dependency has not been updated since 2015 which hasn't had a security review.
+app-alternatives/bzip2 pbzip2
