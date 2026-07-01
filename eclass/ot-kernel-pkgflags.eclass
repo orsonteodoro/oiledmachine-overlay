@@ -8454,7 +8454,7 @@ _ot-kernel-pkgflags_cpu_pmu_events_perf() {
 				     grep -q -E -e "^CONFIG_PPC_83xx=y" "${path_config}" \
 				&& ! grep -q -E -e "^CONFIG_FSL_EMB_PERF_EVENT=y" "${path_config}" \
 				&& ! tc-is-cross-compiler \
-				&& ( cat /proc/cpuinfo | grep -E -q -e "(e300c3|e300c4)" ) \
+				&& ( cat "/proc/cpuinfo" | grep -E -q -e "(e300c3|e300c4)" ) \
 			)
 		then
 			ot-kernel_y_configopt "CONFIG_PPC_8xx_PERF_EVENT"

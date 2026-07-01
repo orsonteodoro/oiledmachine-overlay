@@ -210,7 +210,6 @@ EXCLUDE_SCS=(
 	"sparc"
 	"x86"
 )
-EXTRAVERSION="-ot"
 GCC_PV="8.1"
 # Only LTS compiler slots allowed to avoid issues with closed source or
 # out-of-source drivers

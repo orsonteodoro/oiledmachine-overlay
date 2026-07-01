@@ -1719,10 +1719,10 @@ dump_profraw() {
 		profraw_spath="/sys/kernel/debug/pgo/profraw" # old patch
 	fi
 	[[ -e "${profraw_spath}" ]] || return
-	local arch=$(cat /proc/version | cut -f 3 -d " ")
+	local arch=$(cat "/proc/version" | cut -f 3 -d " ")
 	arch="${arch##*-}"
-	local extraversion=$(cat /proc/version | cut -f 3 -d " " | sed -e "s|-${arch}||g" | cut -f 2- -d "-")
-	local version=$(cat /proc/version | cut -f 3 -d " " | cut -f 1 -d "-")
+	local extraversion=$(cat "/proc/version" | cut -f 3 -d " " | sed -e "s|-${arch}||g" | cut -f 2- -d "-")
+	local version=$(cat "/proc/version" | cut -f 3 -d " " | cut -f 1 -d "-")
 	[[ "${version}" != "${MY_PV}" ]] && return
 	local profraw_dpath="${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/llvm/vmlinux.profraw"
 	if [[ "${FORCE_PGO_PHASE}" =~ ("PGI"|"PG0") ]] ; then
@@ -1758,10 +1758,10 @@ dump_gcda() {
 	local s
 	[[ -e "/sys/kernel/debug/gcov/var" ]] || return
 	cd "/sys/kernel/debug/gcov" || die
-	local arch=$(cat /proc/version | cut -f 3 -d " ")
+	local arch=$(cat "/proc/version" | cut -f 3 -d " ")
 	arch="${arch##*-}"
-	local extraversion=$(cat /proc/version | cut -f 3 -d " " | sed -e "s|-${arch}||g" | cut -f 2- -d "-")
-	local version=$(cat /proc/version | cut -f 3 -d " " | cut -f 1 -d "-")
+	local extraversion=$(cat "/proc/version" | cut -f 3 -d " " | sed -e "s|-${arch}||g" | cut -f 2- -d "-")
+	local version=$(cat "/proc/version" | cut -f 3 -d " " | cut -f 1 -d "-")
 	[[ "${version}" != "${MY_PV}" ]] && return
 	if [[ "${FORCE_PGO_PHASE}" =~ ("PGI"|"PG0") ]] ; then
 		rm -rf "${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/gcc"
@@ -2606,9 +2606,9 @@ einfo "OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER:  ${kcp_provider}"
 		local gcc_major_pv=$(ver_cut "1" "${gcc_slot}")
 		local gcc_pv=$(best_version "${GCC_PKG}:${gcc_major_pv}" | sed -r -e "s|${GCC_PKG}-||" -e "s|-r[0-9]+||")
 		local clang_pv=$(best_version "llvm-core/clang:${llvm_slot}" | sed -r -e "s|llvm-core/clang-||" -e "s|-r[0-9]+||")
-		#local vendor_id=$(cat /proc/cpuinfo | grep vendor_id | head -n 1 | cut -f 2 -d ":" | sed -E -e "s|[ ]+||g")
-		#local cpu_family=$(printf "%02x" $(cat /proc/cpuinfo | grep -F -e "cpu family" | head -n 1 | grep -E -o "[0-9]+"))
-		#local cpu_model=$(printf "%02x" $(cat /proc/cpuinfo | grep -F -e "model" | head -n 1 | grep -E -o "[0-9]+"))
+		#local vendor_id=$(cat "/proc/cpuinfo" | grep vendor_id | head -n 1 | cut -f 2 -d ":" | sed -E -e "s|[ ]+||g")
+		#local cpu_family=$(printf "%02x" $(cat "/proc/cpuinfo" | grep -F -e "cpu family" | head -n 1 | grep -E -o "[0-9]+"))
+		#local cpu_model=$(printf "%02x" $(cat "/proc/cpuinfo" | grep -F -e "model" | head -n 1 | grep -E -o "[0-9]+"))
 einfo
 einfo "llvm_slot:\t${llvm_slot}"
 einfo "gcc_slot:\t${gcc_slot}"
@@ -5942,7 +5942,7 @@ ot-kernel_set_kconfig_l1tf_mitigations() {
 		if tc-is-cross-compiler ; then
 			family=6
 		else
-			family=$(cat /proc/cpuinfo \
+			family=$(cat "/proc/cpuinfo" \
 				| grep "cpu family" \
 				| grep -Eo "[0-9]+" \
 				| head -n 1)
@@ -13224,7 +13224,7 @@ ot-kernel_set_kconfig_amdgpu_override_mask() {
 	if [[ "${AMDGPU_OVERDRIVE}" == "1" ]] ; then
 		if [[ -e "/sys/module/amdgpu/parameters/ppfeaturemask" ]] ; then
 ewarn "Enabling overdrive on the amdgpu driver."
-			local current_value=$(cat /sys/module/amdgpu/parameters/ppfeaturemask)
+			local current_value=$(cat "/sys/module/amdgpu/parameters/ppfeaturemask")
 			local pp_override_mask="0x00004000"
 			local result=$((${current_value} | ${pp_override_mask}))
 # https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/amd/include/amd_shared.h#L222
@@ -13236,7 +13236,7 @@ ewarn "Enabling overdrive on the amdgpu driver."
 	elif [[ "${AMDGPU_OVERDRIVE}" == "0" ]] ; then
 		if [[ -e "/sys/module/amdgpu/parameters/ppfeaturemask" ]] ; then
 einfo "Disabling overdrive on the amdgpu driver."
-			local current_value=$(cat /sys/module/amdgpu/parameters/ppfeaturemask)
+			local current_value=$(cat "/sys/module/amdgpu/parameters/ppfeaturemask")
 			local pp_override_mask="0x00004000"
 			local result=$((${current_value} & ~${pp_override_mask}))
 			result=$((${result} & 0xffffffff)) # Truncate to 32 bits
