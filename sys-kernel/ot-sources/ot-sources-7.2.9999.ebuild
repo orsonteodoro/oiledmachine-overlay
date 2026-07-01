@@ -9,7 +9,7 @@ EAPI=8
 # See also https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/
 
 GENPATCHES_FALLBACK_COMMIT="d4fa92430e875432c3a61bb3abd9b6e68ea9fcbd" # 2026-06-04 18:26:32 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="dc59e4fea9d83f03bad6bddf3fa2e52491777482" # 2026-06-28 12:01:31 -0700
+LINUX_SOURCES_FALLBACK_COMMIT="665159e246749578d4e4bfe106ee3b74edcdab18" # 2026-06-30 17:50:44 -1000
 RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
