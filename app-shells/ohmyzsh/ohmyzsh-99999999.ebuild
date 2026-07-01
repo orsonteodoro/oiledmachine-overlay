@@ -12,7 +12,7 @@ CHKL_TIMESTAMPS=(
 	"app-shells/zsh-9999"
 )
 
-inherit chkl secure-version
+inherit chkl optfeature secure-version
 
 if [[ "${PV}" =~ "99999999" ]] ; then
 	FALLBACK_COMMIT="65749801cf4c3b1f3c79a20001909d72dadd307f"
