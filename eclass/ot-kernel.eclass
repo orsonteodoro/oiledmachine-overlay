@@ -3168,7 +3168,7 @@ einfo "Canceling Reiser4"
 # Patch the kernel a bit
 ot-kernel_src_prepare() {
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	export BUILD_DIR_MASTER="${WORKDIR}/linux-${UPSTREAM_PV}-${EXTRAVERSION}"
+	export BUILD_DIR_MASTER="${WORKDIR}/linux-${UPSTREAM_PV}-${EXTRAVERSION}" # No hyphen prefix for EXTRAVERSION
 	export BUILD_DIR="${WORKDIR}/linux-${UPSTREAM_PV}-${EXTRAVERSION}"
 
 	cd "${BUILD_DIR}" || die
@@ -3264,7 +3264,7 @@ einfo "Copying disable_debug to ${BUILD_DIR}"
 		ot-kernel_load_config
 		check_zen_tune_deps
 		[[ "${OT_KERNEL_DISABLE}" == "1" ]] && continue
-		local extraversion="${OT_KERNEL_EXTRAVERSION}"
+		local extraversion="${OT_KERNEL_EXTRAVERSION}" # No hyphen prefix for OT_KERNEL_EXTRAVERSION
 		local arch="${OT_KERNEL_ARCH}" # ARCH in raw form.
 
 		if use pgo ; then
