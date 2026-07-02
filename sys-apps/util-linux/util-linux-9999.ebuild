@@ -530,5 +530,5 @@ pkg_postinst() {
 	fi
 }
 
-# OILEDMACHINE-OVERLAY-TEST:  passed
+# OILEDMACHINE-OVERLAY-TEST:  passed (interactive) f9baae0 20260701
 # Boot time split-usr agetty test:  passed
