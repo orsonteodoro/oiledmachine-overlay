@@ -2,7 +2,7 @@ Title: Split-usr users, update util-linux and others
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-07-01
-Revision: 4
+Revision: 5
 News-Item-Format: 2.0
 Display-If-Installed: sys-apps/util-linux
 Display-If-Installed: sys-apps/firejail
@@ -15,8 +15,9 @@ not well tested for this use case.
 IMPORTANT:  If you are merge-usr or live systemd user, you do not need to worry.
 You do not need to follow these steps.
 
-IMPORTANT:  If you are a split-usr and haven't rebooted,  You need to sync
-update the repo (emaint sync -A) to avoid increasing the remediation cost.
+IMPORTANT:  If you are a split-usr and haven't rebooted, you need to sync
+update the repo (emaint sync -A) and emerge -1vO sys-apps/util-linux immediately
+with the split-usr fix to avoid increasing the remediation cost.
 
 To fix the issue, you need to use rescuecd like SystemRescue (formerly
 SystemRescueCd).  If you have an updated WiFi device, it is strongly recommended
