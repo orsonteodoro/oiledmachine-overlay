@@ -31,6 +31,11 @@ FALLBACK_COMMIT="cf0dd9763b4eca643bcfdf6ee40f2f39dfde9c33"
 
 inherit cflags-hardened check-compiler-switch chkl gnome2 meson-multilib multilib secure-version toolchain-funcs virtualx
 
+if [[ "${PV}" =~ "9999" ]] ; then
+	EGIT_BRANCH="gtk-3-24"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
+fi
+
 DESCRIPTION="Gimp ToolKit +"
 HOMEPAGE="https://www.gtk.org/"
 
@@ -131,9 +136,6 @@ PATCHES=(
 	# such support.
 	# https://bugs.gentoo.org/624960
 	"${FILESDIR}"/0001-gdk-add-a-poison-macro-to-hide-GDK_WINDOWING_.patch
-
-	"${FILESDIR}"/${P}-test-tree-relationships.patch
-
 
 	# The result of adding -fstrict-flex-arrays=3.
 	"${FILESDIR}/gtk+-3.24.51-remove-struck-hack.patch"			# oiledmachine-overlay added
