@@ -166,6 +166,7 @@ SECURE_TIMESTAMP["dev_util_spirv_tools_9999"]="Wed, 29 Apr 2026 15:51:06 -0700"
 SECURE_TIMESTAMP["dev_vcs_subversion_9999"]="May 30, 2026, 1:40 PM PDT"
 SECURE_TIMESTAMP["dev_vcs_mercurial_9999"]="Tue, 17 Mar 2026 18:37:39 +0000"
 SECURE_TIMESTAMP["gnome_base_librsvg_9999"]="Fri, Jun 19, 2026 3:34:38 PM PDT"
+SECURE_TIMESTAMP["gui_libs_gtk_4_23_9999"]="Jun 29, 2026 2:08:23 PM PDT"
 SECURE_TIMESTAMP["llvm_core_clang_9999"]="Thu, 9 Apr 2026 18:28:25 +0200"
 SECURE_TIMESTAMP["llvm_core_clang_23_0_0_9999"]="Thu, 9 Apr 2026 18:28:25 +0200"
 SECURE_TIMESTAMP["llvm_core_lld_9999"]="Thu, 9 Apr 2026 18:28:25 +0200"
@@ -342,7 +343,6 @@ SECURE_TIMESTAMP["x11_libs_pango_9999"]="Jun 1, 2026 3:30 PM PDT"
 SECURE_TIMESTAMP["x11_libs_pixman_9999"]="Aug 1, 2025 9:38:49 AM PDT"
 SECURE_TIMESTAMP["x11_misc_colord_9999"]="Feb 2, 2026 1:31 AM PST"
 
-#SECURE_TIMESTAMP[""]=""
 
 	declare -p SECURE_TIMESTAMP
 }
