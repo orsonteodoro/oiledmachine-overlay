@@ -178,6 +178,8 @@ Step 6:  Reinstall xinit
 
 emerge -1vO xinit
 
+This will fix the autodetected configure time paths.
+
 This should fully restore back your system.
 
 
