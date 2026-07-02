@@ -26,9 +26,17 @@ to update the latest SystemRescue for driver compatibility.
 Step 1:  mount and chroot
 
 1.  Boot into system with SystemRescue CD.
-2   mkdir /mnt/gentoo
-2.  Run the mount script:
-Contents of rescue-mount.sh
+
+2.  Decrypt the device
+
+3.  mkdir /mnt/gentoo
+
+4.  Log in the WiFi
+
+5.  Copy /etc/resolv.conf to /mnt/gentoo/etc
+
+6.  Run the mount script:
+Contents of rescue-mount.sh:
 #!/bin/bash
 mount --types proc /proc /mnt/gentoo/proc
 mount --rbind /sys /mnt/gentoo/sys
@@ -37,7 +45,8 @@ mount --rbind /dev /mnt/gentoo/dev
 mount --make-rslave /mnt/gentoo/dev
 mount --bind /run /mnt/gentoo/run
 mount --make-slave /mnt/gentoo/run
-3. Chroot:  chroot /mnt/gentoo /bin/bash
+
+7. Chroot:  chroot /mnt/gentoo /bin/bash
 
 
 Step 2:
