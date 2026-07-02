@@ -3,13 +3,15 @@
 
 EAPI=8
 
+# This ebuild uses AI inference to help fix split-usr.
+
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="ACB AW BO BOR BUR CE DC DOS DZ ID IO LI PE RC SB"
 
 PYTHON_COMPAT=( python3_{10..14} )
 TMPFILES_OPTIONAL=1
 
-inherit cflags-hardened chkl pam python-r1 meson-multilib secure-version tmpfiles toolchain-funcs
+inherit cflags-hardened chkl pam python-r1 meson-multilib secure-version tmpfiles toolchain-funcs usr-ldscript
 
 CHKL_TIMESTAMPS=(
 	"sys-process/audit-9999"
@@ -50,7 +52,11 @@ S="${WORKDIR}/${MY_P}"
 # are in order as listed in that file.
 LICENSE="GPL-2+ GPL-1+ GPL-2 GPL-2+ GPL-3+ LGPL-2.1+ MIT BSD-2 BSD EUPL-1.2 public-domain"
 SLOT="0"
-IUSE+=" audit build caps +cramfs cryptsetup fdformat +hardlink kill +logger magic ncurses nls pam python +readline rtas selinux slang static-libs +su +suid systemd test tty-helpers udev unicode uuidd"
+# oiledmachine-overlay: added split-usr
+IUSE+="
+audit build caps +cramfs cryptsetup fdformat +hardlink kill +logger magic ncurses nls pam python +readline rtas selinux slang split-usr static-libs +su +suid systemd test tty-helpers udev unicode uuidd
+ebuild_revision_1
+"
 
 # Most lib deps here are related to programs rather than our libs,
 # so we rarely need to specify ${MULTILIB_USEDEP}.
@@ -331,6 +337,17 @@ multilib_src_configure() {
 		#$(use_enable uuidd libuuid-force-uuidd)
 	)
 
+	# oiledmachine-overlay:  added split-usr fix
+	# It is silly that the distro gives me a broken ebuild without split-usr fix.
+	# They should just delete the split-usr use flag if they are not going to maintain it.
+	# Instead they should delete merged-usr and Fedoraization of the distro.
+	if use split-usr ; then
+		emesonargs+=(
+			-Dbindir=/bin
+			-Dsbindir=/sbin
+		)
+	fi
+
 	# TODO: udev (which seems to be controlled by just the systemd option right now?)
 	if use build ; then
 		emesonargs+=(
@@ -428,6 +445,23 @@ multilib_src_install() {
 	fi
 
 	meson_src_install
+
+	# oiledmachine-overlay:  added split-usr fix
+	if use split-usr && use static-libs ; then
+einfo "Using split-usr"
+		local L
+		L=(
+			"uuid"
+			"blkid"
+			"fdisk"
+			"mount"
+			"smartcols"
+		)
+		for x in "${L[@]}" ; do
+	# Explicitly move dev files/links to /usr while keeping runtime links in root
+			gen_usr_ldscript -a "${x}"
+		done
+	fi
 }
 
 multilib_src_install_all() {
@@ -450,7 +484,11 @@ multilib_src_install_all() {
 		# Users who wish to truly have a no-suid su can strip it out
 		# via e.g. Portage's suidctl or some other hook.
 		# See bug #832092
-		fperms u+s /usr/bin/su
+		if use split-usr ; then
+			fperms u+s /bin/su
+		else
+			fperms u+s /usr/bin/su
+		fi
 	fi
 
 	if use uuidd; then
@@ -470,6 +508,11 @@ multilib_src_install_all() {
 	local minor=$(ver_cut 2 ${ver})
 	local release=$(ver_cut 3 ${ver})
 	export QA_PKGCONFIG_VERSION="${major}.${minor}.${release:-0}"
+
+	mv \
+		"${ED}/usr/share/doc/util-linux" \
+		"${ED}/usr/share/doc/${P}" \
+		|| die
 }
 
 pkg_postinst() {
