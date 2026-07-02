@@ -2,7 +2,7 @@ Title: Split-usr users, update util-linux and others
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-07-01
-Revision: 5
+Revision: 6
 News-Item-Format: 2.0
 Display-If-Installed: sys-apps/util-linux
 Display-If-Installed: sys-apps/firejail
