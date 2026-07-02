@@ -529,3 +529,6 @@ pkg_postinst() {
 		tmpfiles_process uuidd-tmpfiles.conf
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  passed
+# Boot time split-usr agetty test:  passed
