@@ -20,16 +20,28 @@ c0bc9f1bf399ba16d53f92193e5d990a75a9ef73d7820ef9c72b639205575f10\
 
 inherit toolchain-funcs
 
-KEYWORDS="~amd64"
-SRC_URI="
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="44dbc6809d05b8f2addc483f882e670db0b6b8e9"
+	EGIT_BRANCH="master"
+	EGIT_REPO_URI="https://git.suckless.org/dwm"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	KEYWORDS="~amd64"
+	SRC_URI="
 https://dl.suckless.org/${PN}/${DWM_FN}
-mod_fibonacci? (
-	${FIBONACCI_DFN}
-)
-mod_rotatestack? (
-	${ROTATESTACK_DFN}
-)
-"
+	"
+fi
+	SRC_URI+="
+	mod_fibonacci? (
+${FIBONACCI_DFN}
+	)
+	mod_rotatestack? (
+${ROTATESTACK_DFN}
+	)
+	"
 
 DESCRIPTION="A dynamic window manager for X11"
 HOMEPAGE="https://dwm.suckless.org/"
@@ -42,7 +54,7 @@ LICENSE="
 		all-rights-reserved
 	)
 "
-IUSE="
+IUSE+="
 	mod_fibonacci
 	mod_rotatestack
 	mod_sizehintsoff
@@ -112,6 +124,22 @@ einfo
 	fi
 }
 
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+		if [[ -n "${A}" ]] ; then
+			unpack ${A}
+		fi
+	else
+		unpack ${A}
+	fi
+	die
+}
+
 src_prepare() {
 	default
 	if use mod_fibonacci ; then
@@ -126,7 +154,7 @@ src_prepare() {
 			"config.def.h" \
 			|| die
 	fi
-	eapply "${FILESDIR}/dwm-6.1-no-emoji-title-crash.patch"
+	#eapply "${FILESDIR}/dwm-6.1-no-emoji-title-crash.patch" # Obsolete
 	sed -i \
 		-e "s/ -Os / /" \
 		-e "/^\(LDFLAGS\|CFLAGS\|CPPFLAGS\)/{s| = | += |g;s|-s ||g}" \
@@ -137,9 +165,7 @@ src_prepare() {
 
 	if use savedconfig ; then
 		if [[ -z "${SAVEDCONFIG_PATH}" ]] ; then
-eerror
 eerror "You must define SAVEDCONFIG_PATH as the abspath to a personal config.h."
-eerror
 			die
 		fi
 		cat \
@@ -147,6 +173,11 @@ eerror
 			> \
 			"config.h" \
 			|| die
+		if ! grep -r -e "refreshrate" "${SAVEDCONFIG_PATH}" ; then
+eerror "You must define refresh rate in ${SAVEDCONFIG_PATH}."
+eerror "See https://git.suckless.org/dwm/file/config.def.h.html for details"
+			die
+		fi
 	fi
 	if use mod_sizehintsoff && [[ -e "${S}/config.h" ]] ; then
 		sed -i \
