@@ -12,7 +12,7 @@ There is a serious issue with sys-apps/util-linux for split-usr.  The live
 ebuild was carefully not released with split-usr adjustments by the distro and
 not well tested for this use case.
 
-IMPORTANT:  If you are merge-usr or live systemd user, You do not need to worry.
+IMPORTANT:  If you are merge-usr or live systemd user, you do not need to worry.
 You do not need to follow these steps.
 
 IMPORTANT:  If you are a split-usr and haven't rebooted,  You need to sync
