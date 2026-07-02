@@ -10,10 +10,13 @@ PYTHON_COMPAT=( "python3_"{8..12} )
 SEARCHENGINES_FN="surf-git-20170323-webkit2-searchengines.diff"
 
 CHKL_TIMESTAMPS=(
+	"app-shells/bash-9999"
 	"net-misc/curl-9999"
+	"gui-libs/gtk-4.23.9999"
+	"x11-libs/gtk+-3.24.9999"
 )
 
-inherit chkl flag-o-matic git-r3 multilib-minimal python-single-r1 toolchain-funcs
+inherit chkl flag-o-matic git-r3 multilib-minimal python-single-r1 secure-version toolchain-funcs
 
 EGIT_BRANCH="surf-webkit2"
 EGIT_COMMIT="48517e586cdc98bc1af7115674b554cc70c8bc2e"
@@ -110,36 +113,36 @@ SET_PROP_RDEPEND="
 
 RDEPEND+="
 	!sci-chemistry/surf
-	>=x11-misc/dmenu-4.7:*
-	app-shells/bash:*
+	>=x11-misc/dmenu-${DMENU_PV}:=
+	>=app-shells/bash-${BASH_PV}:=
 	dev-libs/glib:=[${MULTILIB_USEDEP}]
-	sys-apps/grep:*
-	x11-apps/xprop:*
+	>=sys-apps/grep-${GREP_PV}:=
+	>=x11-apps/xprop-${XPROP_PV}:=
 	x11-libs/libX11:=[${MULTILIB_USEDEP}]
 	alsa? (
 		!media-plugins/gst-plugins-pulse
-		media-libs/gst-plugins-base:=[alsa]
-		media-plugins/gst-plugins-meta:*[-pulseaudio]
+		>=media-libs/gst-plugins-base-${GSTREAMER_PV}:=[alsa]
+		>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:*[-pulseaudio]
 	)
 	pulseaudio? (
-		media-libs/gst-plugins-base:=[-alsa]
-		media-plugins/gst-plugins-meta:*[pulseudio]
+		>=media-libs/gst-plugins-base-${GSTREAMER_PV}:=[-alsa]
+		>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:*[pulseudio]
 	)
 	curl? (
-		>=net-misc/curl-9999:=[${MULTILIB_USEDEP}]
+		>=net-misc/curl-${CURL_PV}:=[${MULTILIB_USEDEP}]
 		x11-terms/st:*
 	)
 	gtk3? (
 		app-crypt/gcr:0=[gtk,${MULTILIB_USEDEP}]
-		>=net-libs/webkit-gtk-2.52.3:4.1=[${MULTILIB_USEDEP},${PYTHON_SINGLE_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
-		x11-libs/gtk+:3=[${MULTILIB_USEDEP},X]
+		>=net-libs/webkit-gtk-${WEBKIT_GTK_PV}:4.1=[${MULTILIB_USEDEP},${PYTHON_SINGLE_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
+		>=x11-libs/gtk+-${GTK3_PV}:3=[${MULTILIB_USEDEP},X]
 	)
 	gtk4? (
 		|| (
 			(
 				app-crypt/gcr:4=[gtk,${MULTILIB_USEDEP}]
-				gui-libs/gtk:4=[X]
-				>=net-libs/webkit-gtk-2.52.3:6=[${MULTILIB_USEDEP},${PYTHON_SINGLE_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
+				>=gui-libs/gtk-${GTK4_PV}:4=[X]
+				>=net-libs/webkit-gtk-${WEBKIT_GTK_PV}:6=[${MULTILIB_USEDEP},${PYTHON_SINGLE_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
 			)
 		)
 	)
@@ -150,16 +153,16 @@ RDEPEND+="
 		')
 	)
 	mpv? (
-		media-video/mpv:*
+		>=media-video/mpv-${MPV_PV}:=
 	)
 	plumb? (
-		x11-misc/xdg-utils:*
+		>=x11-misc/xdg-utils-${XDG_UTILS_PV}:=
 	)
 	tabbed? (
-		x11-misc/tabbed:*
+		>=x11-misc/tabbed-${TABBED_PV}:=
 	)
 	url-bar? (
-		sys-apps/sed:*
+		>=sys-apps/sed-${SED_PV}:=
 	)
 "
 DEPEND+="

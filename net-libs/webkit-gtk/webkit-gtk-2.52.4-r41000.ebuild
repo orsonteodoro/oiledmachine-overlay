@@ -165,6 +165,7 @@ CHKL_TIMESTAMPS=(
 	"x11-libs/cairo-9999"
 	"x11-libs/libdrm-9999"
 	"x11-libs/libX11-9999"
+	"x11-libs/gtk+-3.24.9999"
 )
 
 LANGS=(

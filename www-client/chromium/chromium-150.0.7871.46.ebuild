@@ -352,6 +352,7 @@ CHKL_TIMESTAMPS=(
 	"net-print/cups-9999"
 	"sys-apps/dbus-9999"
 	"x11-libs/cairo-9999"
+	"x11-libs/gtk+-3.24.9999"
 	"x11-libs/libdrm-9999"
 	"x11-libs/libX11-9999"
 	"x11-libs/libxcb-9999"
@@ -3545,7 +3546,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	#   lib.unstripped/libEGL.so
 		PATCHES+=(
 			"${FILESDIR}/extra-patches/${PN}-92-clang-toolchain-1.patch"
-			"${FILESDIR}/extra-patches/${PN}-92-clang-toolchain-2.patch"
+			#"${FILESDIR}/extra-patches/${PN}-92-clang-toolchain-2.patch" # Obsolete
 		)
 	fi
 
@@ -3561,7 +3562,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-use-memory-tagging.patch"
 		"${FILESDIR}/extra-patches/${PN}-148.0.7778.167-highway-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-simd-defaults.patch"
-		"${FILESDIR}/extra-patches/${PN}-149.0.7827.114-build-config-compiler-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-150.0.7871.46-build-config-compiler-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.45-libaom-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-149.0.7827.114-libvpx-optionalize-simd.patch"		# Fix missing symbols for disabled SIMD
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-pdfium-optionalize-simd.patch"

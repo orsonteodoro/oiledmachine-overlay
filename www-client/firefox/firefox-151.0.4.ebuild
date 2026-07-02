@@ -246,6 +246,7 @@ CHKL_TIMESTAMPS=(
 	"sys-apps/systemd-9999"
 	"x11-libs/cairo-9999"
 	"x11-libs/gdk-pixbuf-9999"
+	"x11-libs/gtk+-3.24.9999"
 	"x11-libs/libdrm-9999"
 	"x11-libs/pango-9999"
 	"x11-libs/pixman-9999"

@@ -55,6 +55,7 @@ CHKL_TIMESTAMPS=(
 	"net-libs/libproxy-9999"
 	"net-print/cups-9999"
 	"sys-apps/systemd-9999"
+	"x11-libs/gtk+-3.24.9999"
 	"x11-libs/libdrm-9999"
 	"x11-libs/libX11-9999"
 	"x11-libs/libxcb-9999"

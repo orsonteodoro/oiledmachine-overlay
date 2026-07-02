@@ -12,6 +12,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/wayland-9999"
 	"media-libs/mesa-9999"
 	"x11-libs/cairo-9999"
+	"x11-libs/gtk+-3.24.9999"
 	"x11-libs/libxkbcommon-9999"
 	"x11-libs/pango-9999"
 )

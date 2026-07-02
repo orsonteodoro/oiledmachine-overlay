@@ -490,6 +490,7 @@ CHKL_TIMESTAMPS=(
 	"app-accessibility/at-spi2-core-9999"
 	"dev-libs/glib-2.89.9999"
 	"x11-libs/cairo-9999"
+	"x11-libs/gtk+-3.24.9999"
 )
 
 inherit cargo chkl desktop edo lcnr npm python-single-r1 rust node-sharp secure-version secure-version-node xdg

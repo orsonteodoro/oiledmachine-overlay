@@ -13,6 +13,7 @@ CHKL_TIMESTAMPS=(
 	"dev-qt/qtbase-6.9999"
 	"sys-apps/systemd-9999"
 	"sys-libs/libcap-9999"
+	"x11-libs/gtk+-3.24.9999"
 )
 
 inherit autotools chkl multilib-minimal python-single-r1 secure-version systemd

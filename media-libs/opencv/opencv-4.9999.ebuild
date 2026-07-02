@@ -398,6 +398,7 @@ CHKL_TIMESTAMPS=(
 	"sci-ml/openvino-9999"
 	"x11-base/xorg-server-9999"
 	"x11-libs/libxkbcommon-9999"
+	"x11-libs/gtk+-3.24.9999"
 )
 
 inherit abseil-cpp cflags-hardened chkl cuda java-pkg-opt-2 cmake-multilib flag-o-matic hip-versions

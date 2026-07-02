@@ -176,6 +176,7 @@ CHKL_TIMESTAMPS=(
 	"x11-libs/libX11-9999"
 	"x11-libs/libxkbcommon-9999"
 	"x11-libs/libxcb-9999"
+	"x11-libs/gtk+-3.24.9999"
 )
 
 inherit chkl desktop flag-o-matic gnome2-utils sandbox-changes toolchain-funcs unpacker secure-version xdg

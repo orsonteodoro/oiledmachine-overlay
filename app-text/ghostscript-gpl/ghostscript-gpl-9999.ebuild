@@ -27,6 +27,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/openjpeg-9999"
 	"media-libs/tiff-9999"
 	"sys-apps/dbus-9999"
+	"x11-libs/gtk+-3.24.9999"
 )
 
 inherit libstdcxx-compat
