@@ -57,6 +57,7 @@ IDS_IUSE=(
 KERNEL_IUSE=(
 	"custom-kernel"
 	"gentoo-sources"
+	"linux-next"
 	"ot-sources"
 	"vanilla-sources"
 )
@@ -103,8 +104,9 @@ SANDBOX_IUSE=(
 )
 
 CHKL_TIMESTAMPS=(
-	"sys-kernel/ot-sources-7.2.0.9999"
+	"sys-kernel/linux-next-9999"
 	"sys-kernel/linux-firmware-99999999"
+	"sys-kernel/ot-sources-7.2.9999"
 )
 
 inherit chkl secure-timestamp secure-version verify-binutils
@@ -134,8 +136,6 @@ ebuild_revision_10
 "
 # Temporarly disable most kernel flavors until Dirty Frag 0-day mitigation is verified or patched upstream.
 REQUIRED_USE="
-	!custom-kernel
-	!vanilla-sources
 	^^ (
 		${PROFILES_IUSE[@]}
 	)
@@ -609,6 +609,12 @@ KERNEL_DEPENDS="
 			~sys-kernel/gentoo-sources-${LINUX_KERNEL_7_1_PV}
 			~sys-kernel/gentoo-sources-${LINUX_KERNEL_6_18_PV}
 			~sys-kernel/gentoo-sources-${LINUX_KERNEL_6_12_PV}
+		)
+	)
+	linux-next? (
+		sys-kernel/linux-next:=
+		|| (
+			~sys-kernel/linux-next-9999
 		)
 	)
 	ot-sources? (
