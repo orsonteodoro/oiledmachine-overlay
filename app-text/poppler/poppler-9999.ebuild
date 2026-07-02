@@ -38,7 +38,7 @@ inherit cflags-hardened check-compiler-switch chkl cmake flag-o-matic flag-o-mat
 inherit libcxx-slot libstdcxx-slot python-any-r1 secure-version toolchain-funcs xdg-utils
 
 if [[ ${PV} == *9999* ]] ; then
-	FALLBACK_COMMIT="21b70b0d62807e270994f94302e323da4f0d776b"
+	FALLBACK_COMMIT="0f212b125bdbf3080ce881133f0875ac7b6a1e03"
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/poppler/poppler"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
@@ -61,7 +61,10 @@ DESCRIPTION="PDF rendering library based on the xpdf-3.0 code base"
 HOMEPAGE="https://poppler.freedesktop.org/"
 
 LICENSE="GPL-2"
-IUSE+=" boost cairo cjk curl +cxx debug doc gpg +introspection +jpeg +jpeg2k +lcms nss png qt6 test tiff +utils"
+IUSE+="
+boost cairo cjk curl +cxx debug doc gpg +introspection +jpeg +jpeg2k +lcms nss png qt6 test tiff +utils
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 COMMON_DEPEND="
