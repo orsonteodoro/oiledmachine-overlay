@@ -512,7 +512,7 @@ if [[ "${MY_PV#9999}" == "${MY_PV}" ]] ; then
 	"
 fi
 if [[ "${MY_PV#9999}" != "${MY_PV}" ]] ; then
-	FALLBACK_COMMIT="0a44e7ddc18d6ec58b23cad7b56f2ca0217f8768"
+	FALLBACK_COMMIT="884c05605933ec960681da22232daa6baba1182b"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${MY_P}"
 	EGIT_MIN_CLONE_TYPE="single"
 	EGIT_REPO_URI=(
@@ -618,7 +618,7 @@ ${USE_LICENSES[@]}
 alsa -clear-config-first cuda cuda-filters doc dvdvideo +encode gdbm
 liblensfun mold openvino oss pgo pipewire +re-codecs sndio sr
 static-libs tensorflow test torch v4l wayland
-ebuild_revision_66
+ebuild_revision_67
 "
 
 # The distro has frei0r-plugins as GPL-2 only but source is actually GPL-2+, GPL-3+ [baltan.cpp], LGPL-2.1+ [nois0r.cpp].
