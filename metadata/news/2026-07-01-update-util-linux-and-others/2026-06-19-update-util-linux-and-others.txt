@@ -53,7 +53,7 @@ Step 2:
 Either sync update the oiledmachine-overlay repo or make a local copy of util-linux.
 
 To make a local repo either read https://wiki.gentoo.org/wiki/Creating_an_ebuild_repository
-or ask the AI.  You need to copy the util-linux an make changes below.
+or ask the AI.  You need to copy the util-linux and apply changes below:
 
 Modify the ebuild to have the following:
 
