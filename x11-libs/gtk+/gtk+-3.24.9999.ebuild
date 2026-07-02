@@ -27,6 +27,8 @@ CHKL_TIMESTAMPS=(
 	"x11-misc/colord-9999"
 )
 
+FALLBACK_COMMIT="cf0dd9763b4eca643bcfdf6ee40f2f39dfde9c33"
+
 inherit cflags-hardened check-compiler-switch chkl gnome2 meson-multilib multilib secure-version toolchain-funcs virtualx
 
 DESCRIPTION="Gimp ToolKit +"
