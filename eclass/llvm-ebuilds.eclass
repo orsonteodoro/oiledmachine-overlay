@@ -38,8 +38,8 @@ esac
 # F = number of failed sanitizer checks (red checkmarks).
 # S = score
 #
-# p_1 = -10 per day passed
-# p_2 = -100 per sanitizer fail
+# p_1 = -100 per day passed
+# p_2 = -1000 per sanitizer fail
 # p_3 = +5 points per checkmarks above 100
 # p_4 = -5 points per checkmarks below 100
 # P = If days passed >= 8 then - 100000, else 0
