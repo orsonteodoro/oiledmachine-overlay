@@ -27,13 +27,13 @@ ebuild_revision_1
 
 BDEPEND="
 	${PYTHON_DEPS}
-	llvm-core/clang:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP}]
+	>=llvm-core/clang-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP}]
 	spirv? (
 		dev-util/spirv-llvm-translator:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP}]
 	)
 "
 
-LLVM_COMPONENTS=( libclc )
+LLVM_COMPONENTS=( "libclc" )
 llvm.org_set_globals
 
 pkg_setup() {
