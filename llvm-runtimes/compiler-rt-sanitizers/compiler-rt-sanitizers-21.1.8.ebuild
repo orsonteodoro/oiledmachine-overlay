@@ -51,7 +51,7 @@ IUSE+="
 ${LLVM_EBUILDS_LLVM21_REVISION}
 +abi_x86_32 abi_x86_64 +clang +ctx-profile debug hexagon +libfuzzer +memprof
 +orc +profile test +xray
-ebuild_revision_18
+ebuild_revision_19
 "
 # sanitizer targets, keep in sync with config-ix.cmake
 # NB: ubsan, scudo deliberately match two entries
@@ -404,6 +404,9 @@ pkg_setup() {
 
 src_prepare() {
 	sed -i -e 's:-Werror::' lib/tsan/go/buildgo.sh || die
+
+	# builds freestanding code
+	filter-flags "-fstack-protector*"
 
 	local flag
 	for flag in "${SANITIZER_FLAGS[@]}"; do
