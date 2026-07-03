@@ -60,20 +60,18 @@ ${LLVM_EBUILDS_LLVM17_REVISION}
 ebuild_revision_5
 "
 DEPEND="
-	llvm-core/llvm:${LLVM_MAJOR}
+	llvm-core/llvm:${LLVM_MAJOR}=
 "
 BDEPEND="
 	>=dev-build/cmake-3.16
 	clang? (
-		llvm-core/clang:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP}]
-		llvm-core/clang:=
+		llvm-core/clang:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP}]
 	)
 	test? (
 		$(python_gen_any_dep "
-			>=dev-python/lit-15[\${PYTHON_USEDEP}]
+			>=dev-python/lit-${LLVM_MAJOR}[\${PYTHON_USEDEP}]
 		")
-		=llvm-core/clang-${LLVM_VERSION}*:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP}]
-		llvm-core/clang:=
+		~llvm-core/clang-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP}]
 	)
 	!test? (
 		${PYTHON_DEPS}
