@@ -3,6 +3,11 @@
 
 EAPI=8
 
+_LLVM_TARGETS=(
+	"llvm_targets_AMDGPU"
+	"llvm_targets_NVPTX"
+)
+
 inherit check-compiler-switch flag-o-matic multilib multilib-build
 
 KEYWORDS="
@@ -15,9 +20,9 @@ HOMEPAGE="https://clang.llvm.org/"
 LICENSE="public-domain"
 SLOT="${PV}"
 IUSE="
+${_LLVM_TARGETS[@]}
 +compiler-rt default-compiler-rt default-libcxx default-lld libcxx
 llvm-libunwind offload openmp polly pstl +sanitize
-llvm_targets_AMDGPU llvm_targets_NVPTX
 ebuild_revision_1
 "
 REQUIRED_USE="

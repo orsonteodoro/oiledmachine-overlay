@@ -3,8 +3,6 @@
 
 EAPI=8
 
-# Last update:  2024-03-18
-
 inherit multilib multilib-build
 
 KEYWORDS="
