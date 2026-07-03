@@ -66,25 +66,22 @@ RDEPEND="
 "
 DEPEND+="
 	${RDEPEND}
-	llvm-core/llvm:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP_LTS}]
-	llvm-core/llvm:=
+	>=llvm-core/llvm-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP_LTS}]
 "
 BDEPEND+="
 	!test? (
 		${PYTHON_DEPS}
 	)
 	clang? (
-		llvm-core/clang:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP_LTS}]
-		llvm-core/clang:=
-		llvm-core/clang-linker-config:${LLVM_MAJOR}
-		llvm-core/clang-linker-config:=
-		llvm-runtimes/clang-rtlib-config:${LLVM_MAJOR}
-		llvm-runtimes/clang-rtlib-config:=
-		llvm-runtimes/clang-unwindlib-config:${LLVM_MAJOR}
-		llvm-runtimes/clang-unwindlib-config:=
+		>=llvm-core/clang-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP_LTS}]
+		llvm-core/clang-linker-config:${LLVM_MAJOR}=
+		llvm-runtimes/clang-rtlib-config:${LLVM_MAJOR}=
+		llvm-runtimes/clang-unwindlib-config:${LLVM_MAJOR}=
 	)
 	test? (
-		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
+		$(python_gen_any_dep "
+			>=dev-python/lit-${LLVM_MAJOR}[\${PYTHON_USEDEP}]
+		")
 	)
 "
 # Don't strip CFI from .so files
