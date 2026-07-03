@@ -232,7 +232,7 @@ RDEPEND="
 	)
 	offload? (
 		>=dev-libs/libffi-${LIBFFI_PV}:=[${MULTILIB_USEDEP}]
-		~llvm-core/llvm-${LLVM_VERSION}:=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		~llvm-core/llvm-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	)
 	remote-offloading? (
 		net-libs/grpc:=
@@ -251,7 +251,7 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-lang/perl-${PERL_PV}
-	~llvm-core/lld-${LLVM_VERSION}:${LLVM_SLOT}=
+	~llvm-core/lld-${LLVM_VERSION}:${LLVM_MAJOR}=
 	offload? (
 		llvm_targets_NVPTX? (
 			~llvm-core/clang-${LLVM_VERSION}:=[${LIBSTDCXX_USEDEP}]

@@ -325,7 +325,7 @@ RDEPEND="
 	offload? (
 		!llvm-runtimes/offload
 		>=dev-libs/libffi-${LIBFFI_PV}:=[${MULTILIB_USEDEP}]
-		~llvm-core/llvm-${LLVM_VERSION}:=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		~llvm-core/llvm-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		cuda? ( ~llvm-runtimes/openmp-nvptx64-nvidia-cuda-${PV} )
 		level-zero? ( ~llvm-runtimes/openmp-spirv64-intel-${PV} )
 		rocm? ( ~llvm-runtimes/openmp-amdgcn-amd-amdhsa-${PV} )
@@ -354,7 +354,7 @@ DEPEND="
 # - llvm-core/clang provides the compiler to run tests
 BDEPEND="
 	>=dev-lang/perl-${PERL_PV}
-	~llvm-core/lld-${LLVM_VERSION}:${LLVM_SLOT}=
+	~llvm-core/lld-${LLVM_VERSION}:${LLVM_MAJOR}=
 	clang? (
 		~llvm-core/clang-${LLVM_VERSION}:=[${LIBSTDCXX_USEDEP}]
 	)
