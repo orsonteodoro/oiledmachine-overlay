@@ -191,7 +191,7 @@ gen_rdepend() {
 	local f
 	for f in "${ALL_LLVM_TARGET_FLAGS[@]}" ; do
 		echo  "
-			~llvm-core/llvm-${PV}:${LLVM_MAJOR}=[${f}=]
+			~llvm-core/llvm-${LLVM_VERSION}:${LLVM_MAJOR}=[${f}=]
 		"
 	done
 }
@@ -201,7 +201,7 @@ gen_pdepend() {
 	local f
 	for f in "${ALL_LLVM_TARGET_FLAGS[@]}" ; do
 		echo  "
-			>=llvm-core/lld-${LLVM_MAJOR}:${LLVM_MAJOR}[${f}=]
+			~llvm-core/lld-${LLVM_VERSION}:${LLVM_MAJOR}[${f}=]
 		"
 	done
 }
