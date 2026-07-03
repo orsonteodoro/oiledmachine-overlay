@@ -55,19 +55,15 @@ ${LLVM_EBUILDS_LLVM17_REVISION}
 REQUIRED_USE="
 "
 RDEPEND="
-	llvm-core/clang:${SLOT}[${LIBSTDCXX_USEDEP}]
-	llvm-core/clang:=
-	llvm-core/llvm:${SLOT}[${LIBSTDCXX_USEDEP}]
-	llvm-core/llvm:=
+	llvm-core/clang:${LLVM_SLOT}=[${LIBSTDCXX_USEDEP}]
+	llvm-core/llvm:${LLVM_SLOT}=[${LIBSTDCXX_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	llvm-core/clang:${SLOT}[${LIBSTDCXX_USEDEP}]
-	llvm-core/clang:=
-	llvm-core/llvm:${SLOT}[${LIBSTDCXX_USEDEP}]
-	llvm-core/llvm:=
+	llvm-core/clang:${LLVM_SLOT}=[${LIBSTDCXX_USEDEP}]
+	llvm-core/llvm:${LLVM_SLOT}=[${LIBSTDCXX_USEDEP}]
 "
 RESTRICT="
 "
