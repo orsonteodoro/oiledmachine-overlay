@@ -30,7 +30,17 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-inherit check-compiler-switch cmake dhms libstdcxx-slot llvm.org multilib-minimal pax-utils python-any-r1 toolchain-funcs
+CHKL_TIMESTAMPS=(
+	"app-arch/zstd-9999"
+	"dev-cpp/cpp-httplib-9999"
+	"dev-libs/jemalloc-9999"
+	"dev-libs/libffi-9999"
+	"dev-libs/libxml2-9999"
+	"net-misc/curl-9999"
+	"sys-devel/binutils-9999"
+)
+
+inherit check-compiler-switch chkl cmake dhms libstdcxx-slot llvm.org multilib-minimal pax-utils python-any-r1 secure-version toolchain-funcs
 inherit flag-o-matic git-r3 ninja-utils
 
 KEYWORDS="
@@ -109,59 +119,59 @@ REQUIRED_USE+="
 	)
 "
 RDEPEND="
-	virtual/zlib:0=[${MULTILIB_USEDEP}]
+	>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}]
 	binutils-plugin? (
-		>=sys-devel/binutils-2.31.1-r4:*[plugins]
+		>=sys-devel/binutils-${BINUTILS_PV}:=[plugins]
 	)
 	debuginfod? (
-		dev-cpp/cpp-httplib:=
-		net-misc/curl:=
+		>=dev-cpp/cpp-httplib-${CPP_HTTPLIB_PV}:=
+		>=net-misc/curl-${CURL_PV}:=
 	)
 	exegesis? (
 		dev-libs/libpfm:=
 	)
 	jemalloc? (
-		dev-libs/jemalloc
+		>=dev-libs/jemalloc-${JEMALLOC_PV}:=
 	)
 	libedit? (
-		dev-libs/libedit:0=[${MULTILIB_USEDEP}]
+		dev-libs/libedit:=[${MULTILIB_USEDEP}]
 	)
 	libffi? (
-		>=dev-libs/libffi-3.0.13-r1:0=[${MULTILIB_USEDEP}]
+		>=dev-libs/libffi-${LIBFFI_PV}:=[${MULTILIB_USEDEP}]
 	)
 	ncurses? (
-		>=sys-libs/ncurses-5.9-r3:0=[${MULTILIB_USEDEP}]
+		>=sys-libs/ncurses-${NCURSES_PV}:=[${MULTILIB_USEDEP}]
 	)
 	tcmalloc? (
-		dev-util/google-perftools
+		>=dev-util/google-perftools-${GOOGLE_PERFTOOLS_PV}:=[${MULTILIB_USEDEP}]
 	)
 	xml? (
-		dev-libs/libxml2:2=[${MULTILIB_USEDEP}]
+		>=dev-libs/libxml2-${LIBXML2_PV}:=[${MULTILIB_USEDEP}]
 	)
 	z3? (
-		>=sci-mathematics/z3-4.7.1:0=[${MULTILIB_USEDEP}]
+		>=sci-mathematics/z3-4.7.1:=[${MULTILIB_USEDEP}]
 	)
 	zstd? (
-		app-arch/zstd:=[${MULTILIB_USEDEP}]
+		>=app-arch/zstd-${ZSTD_PV}:=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
 	${RDEPEND}
 	binutils-plugin? (
-		sys-libs/binutils-libs
+		>=sys-libs/binutils-libs-${BINUTILS_PV}:=
 	)
 "
 BDEPEND="
 	${PYTHON_DEPS}
 	>=dev-build/cmake-3.16
-	dev-lang/perl
+	>=dev-lang/perl-${PERL_PV}
 	sys-devel/gnuconfig
 	kernel_Darwin? (
 		<llvm-runtimes/libcxx-${LLVM_VERSION}.9999
 		>=sys-devel/binutils-apple-5.1
 	)
 	libffi? (
-		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
+		virtual/pkgconfig:*[${MULTILIB_USEDEP}]
 	)
 "
 # There are no file collisions between these versions but having :0
@@ -173,7 +183,6 @@ RDEPEND="
 PDEPEND="
 	llvm-core/llvm-common
 	llvm-core/llvm-toolchain-symlinks:${LLVM_MAJOR}
-	llvm-core/llvm-toolchain-symlinks:=
 	binutils-plugin? (
 		>=llvm-core/llvmgold-${LLVM_MAJOR}
 	)
@@ -563,7 +572,7 @@ get_distribution_components() {
 }
 
 src_configure() {
-	:
+	chkl_check_many_timestamps
 }
 
 _src_configure_compiler() {
