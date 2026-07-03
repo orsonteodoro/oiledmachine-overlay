@@ -17,6 +17,7 @@ SLOT="${PV%%.*}"
 IUSE="
 +compiler-rt default-compiler-rt default-libcxx default-lld libcxx
 llvm-libunwind offload openmp polly pstl +sanitize
+ebuild_revision_1
 "
 REQUIRED_USE="
 	sanitize? (
@@ -50,6 +51,12 @@ RDEPEND="
 		llvm-runtimes/openmp:=
 		offload? (
 			>=llvm-runtimes/offload-${PV}
+			llvm_targets_AMDGPU? (
+				>=llvm-runtimes/offload-${PV}[clang,llvm_targets_AMDGPU(-)]
+			)
+			llvm_targets_NVPTX? (
+				>=llvm-runtimes/offload-${PV}[clang,llvm_targets_NVPTX(-)]
+			)
 		)
 	)
 	polly? (

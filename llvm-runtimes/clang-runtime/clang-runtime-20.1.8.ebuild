@@ -18,6 +18,7 @@ SLOT="${PV%%.*}"
 IUSE="
 +compiler-rt default-compiler-rt default-libcxx default-lld libcxx
 llvm-libunwind offload openmp polly pstl +sanitize
+ebuild_revision_1
 "
 REQUIRED_USE="
 	sanitize? (

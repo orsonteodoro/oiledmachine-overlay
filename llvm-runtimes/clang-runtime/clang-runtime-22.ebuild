@@ -6,7 +6,7 @@ EAPI=8
 inherit check-compiler-switch flag-o-matic multilib multilib-build
 
 KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos
+amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv ~sparc x86 ~arm64-macos ~x64-macos
 "
 S="${WORKDIR}"
 
@@ -18,6 +18,7 @@ IUSE="
 +compiler-rt default-compiler-rt default-libcxx default-lld libcxx
 llvm-libunwind offload openmp polly pstl +sanitize
 llvm_targets_AMDGPU llvm_targets_NVPTX
+ebuild_revision_1
 "
 REQUIRED_USE="
 	sanitize? (
@@ -52,10 +53,10 @@ RDEPEND="
 		offload? (
 			>=llvm-runtimes/offload-${PV}
 			llvm_targets_AMDGPU? (
-				>=llvm-runtimes/openmp-amdgcn-${PV}
+				>=llvm-runtimes/openmp-amdgcn-amd-amdhsa-${PV}
 			)
 			llvm_targets_NVPTX? (
-				>=llvm-runtimes/openmp-nvptx64-${PV}
+				>=llvm-runtimes/openmp-nvptx64-nvidia-cuda-${PV}
 			)
 		)
 	)

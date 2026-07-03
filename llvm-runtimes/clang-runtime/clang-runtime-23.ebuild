@@ -17,7 +17,8 @@ SLOT="${PV}"
 IUSE="
 +compiler-rt default-compiler-rt default-libcxx default-lld libcxx
 llvm-libunwind offload openmp polly pstl +sanitize
-llvm_targets_AMDGPU llvm_targets_NVPTX
+llvm_targets_AMDGPU llvm_targets_NVPTX llvm_targets_SPIRV
+ebuild_revision_1
 "
 REQUIRED_USE="
 	sanitize? (
@@ -47,15 +48,18 @@ RDEPEND="
 		>=llvm-runtimes/libcxx-${PV}[${MULTILIB_USEDEP}]
 	)
 	openmp? (
-		>=llvm-runtimes/openmp-${PV}[${MULTILIB_USEDEP}]
+		>=llvm-runtimes/openmp-${PV}[${MULTILIB_USEDEP},offload?]
 		llvm-runtimes/openmp:=
 		offload? (
 			>=llvm-runtimes/offload-${PV}
 			llvm_targets_AMDGPU? (
-				>=llvm-runtimes/openmp-amdgcn-${PV}
+				>=llvm-runtimes/openmp-${PV}[rocm(-)]
 			)
 			llvm_targets_NVPTX? (
-				>=llvm-runtimes/openmp-nvptx64-${PV}
+				>=llvm-runtimes/openmp-${PV}[cuda(-)]
+			)
+			llvm_targets_SPIRV? (
+				>=llvm-runtimes/openmp-${PV}[level-zero(-)]
 			)
 		)
 	)
