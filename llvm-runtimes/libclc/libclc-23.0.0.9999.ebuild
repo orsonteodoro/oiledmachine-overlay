@@ -4,7 +4,6 @@
 EAPI=8
 
 CXX_STANDARD=17
-LLVM_COMPAT=( 23 )
 PYTHON_COMPAT=( python3_{11..14} )
 
 # Align libstdcxx to avoid symbol issues
@@ -31,7 +30,7 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-inherit cmake libstdcxx-slot llvm.org llvm-r1 multibuild python-any-r1
+inherit cmake libstdcxx-slot llvm.org multibuild python-any-r1
 
 DESCRIPTION="OpenCL C library"
 HOMEPAGE="https://libclc.llvm.org/"
@@ -46,7 +45,7 @@ RESTRICT="!test? ( test )"
 
 BDEPEND="
 	${PYTHON_DEPS}
-	llvm-core/clang:23[${LIBSTDCXX_USEDEP}]
+	llvm-core/clang:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP}]
 	llvm-core/clang:=
 	spirv? (
 		dev-util/spirv-llvm-translator:23[${LIBSTDCXX_USEDEP}]
@@ -63,8 +62,6 @@ LLVM_COMPONENTS=( libclc )
 llvm.org_set_globals
 
 pkg_setup() {
-	llvm-r1_pkg_setup
-	python-any-r1_pkg_setup
 	libstdcxx-slot_verify
 }
 
@@ -90,6 +87,7 @@ src_configure() {
 
 my_configure() {
 	local mycmakeargs=(
+		-DLLVM_ROOT="${ESYSROOT}/usr/lib/llvm/${LLVM_MAJOR}"
 		-DCMAKE_CLC_COMPILER="$(type -P clang-${LLVM_MAJOR})"
 		-DLLVM_DEFAULT_TARGET_TRIPLE="${MULTIBUILD_VARIANT}"
 		-DLLVM_INCLUDE_TESTS="$(usex test)"

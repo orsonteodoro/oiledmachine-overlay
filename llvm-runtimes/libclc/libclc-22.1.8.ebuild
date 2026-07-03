@@ -4,7 +4,6 @@
 EAPI=8
 
 CXX_STANDARD=17
-LLVM_COMPAT=( 22 )
 PYTHON_COMPAT=( python3_{11..14} )
 
 # Align libstdcxx to avoid symbol issues
@@ -13,14 +12,14 @@ GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
-inherit cmake libstdcxx-slot llvm.org llvm-r1 python-any-r1
+inherit cmake libstdcxx-slot llvm.org python-any-r1
 
 DESCRIPTION="OpenCL C library"
 HOMEPAGE="https://libclc.llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( MIT BSD )"
 SLOT="0"
-KEYWORDS="~amd64 ~arm ~arm64 ~loong ~riscv ~x86"
+KEYWORDS="amd64 arm arm64 ~loong ~riscv x86"
 IUSE="
 +spirv video_cards_nvidia video_cards_r600 video_cards_radeonsi
 ebuild_revision_1
@@ -28,7 +27,7 @@ ebuild_revision_1
 
 BDEPEND="
 	${PYTHON_DEPS}
-	llvm-core/clang:22[${LIBSTDCXX_USEDEP}]
+	llvm-core/clang:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP}]
 	llvm-core/clang:=
 	spirv? (
 		dev-util/spirv-llvm-translator:22[${LIBSTDCXX_USEDEP}]
@@ -40,8 +39,6 @@ LLVM_COMPONENTS=( libclc )
 llvm.org_set_globals
 
 pkg_setup() {
-	llvm-r1_pkg_setup
-	python-any-r1_pkg_setup
 	libstdcxx-slot_verify
 }
 
@@ -71,6 +68,7 @@ src_configure() {
 
 	libclc_targets=${libclc_targets[*]}
 	local mycmakeargs=(
+		-DLLVM_ROOT="${ESYSROOT}/usr/lib/llvm/${LLVM_MAJOR}"
 		-DLIBCLC_TARGETS_TO_BUILD="${libclc_targets// /;}"
 	)
 	cmake_src_configure
