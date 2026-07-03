@@ -51,7 +51,7 @@ GCC_COMPAT=(
 
 inherit llvm-ebuilds
 inherit abseil-cpp cmake-multilib crossdev flag-o-matic grpc libstdcxx-slot llvm.org llvm-utils protobuf python-single-r1
-inherit re2 toolchain-funcs
+inherit re2 secure-version toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
 llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
@@ -309,10 +309,10 @@ RDEPEND="
 		${PYTHON_DEPS}
 	)
 	hwloc? (
-		>=sys-apps/hwloc-2.5:0[${MULTILIB_USEDEP}]
-		sys-apps/hwloc:=
+		>=sys-apps/hwloc-2.5:=[${MULTILIB_USEDEP}]
 	)
 	llvm_targets_NVPTX? (
+		dev-util/nvidia-cuda-toolkit:=
 		|| (
 			${CUDA_11_8_RDEPEND}
 			${CUDA_12_3_RDEPEND}
@@ -321,24 +321,21 @@ RDEPEND="
 			${CUDA_12_6_RDEPEND}
 			${CUDA_12_8_RDEPEND}
 		)
-		dev-util/nvidia-cuda-toolkit:=
 	)
 	offload? (
 		!llvm-runtimes/offload
-		dev-libs/libffi[${MULTILIB_USEDEP}]
-		dev-libs/libffi:=
-		~llvm-core/llvm-${PV}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
-		llvm-core/llvm:=
+		>=dev-libs/libffi-${LIBFFI_PV}:=[${MULTILIB_USEDEP}]
+		~llvm-core/llvm-${LLVM_VERSION}:=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		cuda? ( ~llvm-runtimes/openmp-nvptx64-nvidia-cuda-${PV} )
 		level-zero? ( ~llvm-runtimes/openmp-spirv64-intel-${PV} )
 		rocm? ( ~llvm-runtimes/openmp-amdgcn-amd-amdhsa-${PV} )
 	)
 	remote-offloading? (
+		net-libs/grpc:=
 		|| (
 			net-libs/grpc:3/1.30[${LIBSTDCXX_USEDEP},cxx]
 			net-libs/grpc:3/1.51[${LIBSTDCXX_USEDEP},cxx]
 		)
-		net-libs/grpc:=
 	)
 "
 DEPEND="
@@ -356,9 +353,10 @@ DEPEND="
 # - llvm-core/llvm provide test utils (e.g. FileCheck)
 # - llvm-core/clang provides the compiler to run tests
 BDEPEND="
-	dev-lang/perl
+	>=dev-lang/perl-${PERL_PV}
+	>=llvm-core/lld-${LLVM_VERSION}:${LLVM_SLOT}=
 	clang? (
-		llvm-core/clang
+		>=llvm-core/clang-${LLVM_VERSION}:=[${LIBSTDCXX_USEDEP}]
 	)
 	gdb-plugin? (
 		${PYTHON_DEPS}
@@ -368,11 +366,11 @@ BDEPEND="
 	)
 	test? (
 		${PYTHON_DEPS}
-		$(python_gen_cond_dep '
-			dev-python/lit[${PYTHON_USEDEP}]
-		')
-		llvm-core/clang:${LLVM_MAJOR}
-		llvm-core/llvm:${LLVM_MAJOR}
+		$(python_gen_cond_dep "
+			>=dev-python/lit-${LLVM_MAJOR}[\${PYTHON_USEDEP}]
+		")
+		>=llvm-core/clang-${LLVM_VERSION}:${LLVM_MAJOR}=
+		>=llvm-core/llvm-${LLVM_VERSION}:${LLVM_MAJOR}=
 	)
 "
 LLVM_COMPONENTS=(
