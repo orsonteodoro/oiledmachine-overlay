@@ -420,8 +420,13 @@ einfo "LPE = Local Privilege Escalation"
 einfo "LI = Log Injection"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"MBV"($|" "|";"|",") ]] ; then
+# Deprecated
+# See also ObO, Ob1, ObIO, OE, BOR, BUR
+# Includes heap/stack overread/overwrite/underread/overwrite
+# Includes off-by-one read/write
+# Includes reads/writes by incorrect offset
 # Same as CWE-119
-einfo "MBV = Memory Bounds Violation (Off-by-One/Off-by-Any Read/Write, Heap/Stack Overread/Overwrite/Underread/Overwrite)"
+einfo "MBV = Memory Bounds Violation"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"MC"($|" "|";"|",") ]] ; then
 # Use for RAM storage
@@ -448,6 +453,19 @@ einfo "NPE = Null Pointer Exception"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"NSS"($|" "|";"|",") ]] ; then
 einfo "NSS = Not Sufficiently Secure"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("Ob1"|"OB1")($|" "|";"|",") ]] ; then
+einfo "Ob1 = Off-by-one"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("ObO"|"OBO")($|" "|";"|",") ]] ; then
+einfo "ObO = Off-by-one"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"OE"($|" "|";"|",") ]] ; then
+# Same as incorrect offset
+# Same as incorrect arbitrary offset
+# Same as off-by-some
+# Same as off-by-any
+einfo "OE = Offset Error"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"OF"($|" "|";"|",") ]] ; then
 einfo "OF = Overflow"
