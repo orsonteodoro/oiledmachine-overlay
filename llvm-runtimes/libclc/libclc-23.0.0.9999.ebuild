@@ -45,16 +45,14 @@ RESTRICT="!test? ( test )"
 
 BDEPEND="
 	${PYTHON_DEPS}
-	llvm-core/clang:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP}]
-	llvm-core/clang:=
+	llvm-core/clang:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP}]
 	spirv? (
-		dev-util/spirv-llvm-translator:23[${LIBSTDCXX_USEDEP}]
-		dev-util/spirv-llvm-translator:=
+		dev-util/spirv-llvm-translator:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP}]
 	)
 	test? (
-		$(python_gen_any_dep '
-			dev-python/lit[${PYTHON_USEDEP}]
-		')
+		$(python_gen_any_dep "
+			>=dev-python/lit-${LLVM_MAJOR}[\${PYTHON_USEDEP}]
+		")
 	)
 "
 

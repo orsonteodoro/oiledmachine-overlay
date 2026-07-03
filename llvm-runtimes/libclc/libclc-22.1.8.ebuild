@@ -27,11 +27,9 @@ ebuild_revision_1
 
 BDEPEND="
 	${PYTHON_DEPS}
-	llvm-core/clang:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP}]
-	llvm-core/clang:=
+	llvm-core/clang:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP}]
 	spirv? (
-		dev-util/spirv-llvm-translator:22[${LIBSTDCXX_USEDEP}]
-		dev-util/spirv-llvm-translator:=
+		dev-util/spirv-llvm-translator:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP}]
 	)
 "
 
