@@ -354,9 +354,9 @@ DEPEND="
 # - llvm-core/clang provides the compiler to run tests
 BDEPEND="
 	>=dev-lang/perl-${PERL_PV}
-	>=llvm-core/lld-${LLVM_VERSION}:${LLVM_SLOT}=
+	~llvm-core/lld-${LLVM_VERSION}:${LLVM_SLOT}=
 	clang? (
-		>=llvm-core/clang-${LLVM_VERSION}:=[${LIBSTDCXX_USEDEP}]
+		~llvm-core/clang-${LLVM_VERSION}:=[${LIBSTDCXX_USEDEP}]
 	)
 	gdb-plugin? (
 		${PYTHON_DEPS}
@@ -369,8 +369,8 @@ BDEPEND="
 		$(python_gen_cond_dep "
 			>=dev-python/lit-${LLVM_MAJOR}[\${PYTHON_USEDEP}]
 		")
-		>=llvm-core/clang-${LLVM_VERSION}:${LLVM_MAJOR}=
-		>=llvm-core/llvm-${LLVM_VERSION}:${LLVM_MAJOR}=
+		~llvm-core/clang-${LLVM_VERSION}:${LLVM_MAJOR}=
+		~llvm-core/llvm-${LLVM_VERSION}:${LLVM_MAJOR}=
 	)
 "
 LLVM_COMPONENTS=(

@@ -251,10 +251,10 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-lang/perl-${PERL_PV}
-	>=llvm-core/lld-${LLVM_VERSION}:${LLVM_SLOT}=
+	~llvm-core/lld-${LLVM_VERSION}:${LLVM_SLOT}=
 	offload? (
 		llvm_targets_NVPTX? (
-			>=llvm-core/clang-${LLVM_VERSION}:=[${LIBSTDCXX_USEDEP}]
+			~llvm-core/clang-${LLVM_VERSION}:=[${LIBSTDCXX_USEDEP}]
 		)
 		virtual/pkgconfig
 	)
@@ -263,7 +263,7 @@ BDEPEND="
 		$(python_gen_cond_dep "
 			>=dev-python/lit-${LLVM_SLOT}[\${PYTHON_USEDEP}]
 		")
-		>=llvm-core/clang-${LLVM_VERSION}:${LLVM_SLOT}:=
+		~llvm-core/clang-${LLVM_VERSION}:${LLVM_SLOT}:=
 	)
 "
 LLVM_COMPONENTS=(
