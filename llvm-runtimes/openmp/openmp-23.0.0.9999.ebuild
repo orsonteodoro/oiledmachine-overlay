@@ -473,7 +473,7 @@ multilib_src_configure() {
 		-DLIBOMP_OMPD_GDB_SUPPORT=$(multilib_native_usex gdb-plugin)
 		-DLIBOMP_OMPT_SUPPORT=$(usex ompt)
 		-DLIBOMP_USE_HWLOC=$(usex hwloc)
-		-DLLVM_VERSION_MAJOR="${PV%%.*}"
+		-DLLVM_VERSION_MAJOR="${LLVM_MAJOR}"
 		-DLLVM_LIBDIR_SUFFIX="${libdir#lib}"
 		-DLLVM_BINARY_DIR="${BROOT}/usr/lib/llvm/${LLVM_MAJOR}"
 

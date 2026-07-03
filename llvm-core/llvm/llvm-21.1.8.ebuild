@@ -164,7 +164,7 @@ BDEPEND="
 	>=dev-lang/perl-${PERL_PV}
 	sys-devel/gnuconfig
 	kernel_Darwin? (
-		<llvm-runtimes/libcxx-${LLVM_VERSION}.9999
+		<llvm-runtimes/libcxx-${LLVM_VERSION_CANONICAL}.9999
 	)
 	libffi? (
 		virtual/pkgconfig:*[${MULTILIB_USEDEP}]

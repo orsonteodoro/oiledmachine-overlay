@@ -175,7 +175,7 @@ BDEPEND="
 		')
 	)
 	kernel_Darwin? (
-		<llvm-runtimes/libcxx-${LLVM_VERSION}.9999
+		<llvm-runtimes/libcxx-${LLVM_VERSION_CANONICAL}.9999
 		>=sys-devel/binutils-apple-5.1
 	)
 	libffi? (
