@@ -352,9 +352,9 @@ BDEPEND="
 	)
 	test? (
 		${PYTHON_DEPS}
-		$(python_gen_cond_dep '
-			dev-python/lit[${PYTHON_USEDEP}]
-		')
+		$(python_gen_cond_dep "
+			>=dev-python/lit-${LLVM_MAJOR}[\${PYTHON_USEDEP}]
+		")
 		~llvm-core/clang-${LLVM_VERSION}:${LLVM_MAJOR}=
 	)
 "
