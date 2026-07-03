@@ -378,6 +378,9 @@ einfo "IRoR = Improper Release of Resources"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("IRMEM")($|" "|";"|",") ]] ; then
 einfo "IRRES = Improper Release of Resources"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IPB"($|" "|";"|",") ]] ; then
+einfo "IPB = Incorrect Parsing Behavior"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IS"($|" "|";"|",") ]] ; then
 einfo "IS = Insufficient Sanitiation"
 		fi
