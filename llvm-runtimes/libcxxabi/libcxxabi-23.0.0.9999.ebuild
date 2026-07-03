@@ -98,13 +98,12 @@ PATCHES=(
 LLVM_COMPONENTS=(
 	"runtimes"
 	"libcxx"{"abi",""}
-	"llvm/cmake"
+	"llvm/"{"cmake","utils"}
 	"cmake"
 )
 LLVM_TEST_COMPONENTS=(
 	"libc"
 	"llvm/include/llvm/"{"Demangle","Testing"}
-	"llvm/utils/llvm-lit"
 )
 llvm.org_set_globals
 

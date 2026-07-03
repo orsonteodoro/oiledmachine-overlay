@@ -41,7 +41,9 @@ unset -f _llvm_set_globals
 inherit cflags-hardened check-compiler-switch cmake-multilib crossdev flag-o-matic libcxx-slot libstdcxx-slot llvm.org llvm-utils python-any-r1 toolchain-funcs
 
 LLVM_MAX_SLOT="${LLVM_MAJOR}"
-KEYWORDS="~amd64 ~arm ~arm64 ~loong ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos"
+KEYWORDS="
+amd64 arm arm64 ~loong ~riscv ~sparc x86 ~arm64-macos ~x64-macos
+"
 
 DESCRIPTION="Low level support for a standard C++ library"
 HOMEPAGE="https://libcxxabi.llvm.org/"
