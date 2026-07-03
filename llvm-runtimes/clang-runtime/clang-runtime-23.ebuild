@@ -51,7 +51,6 @@ RDEPEND="
 		>=llvm-runtimes/openmp-${PV}[${MULTILIB_USEDEP},offload?]
 		llvm-runtimes/openmp:=
 		offload? (
-			>=llvm-runtimes/offload-${PV}
 			llvm_targets_AMDGPU? (
 				>=llvm-runtimes/openmp-${PV}[rocm(-)]
 			)
