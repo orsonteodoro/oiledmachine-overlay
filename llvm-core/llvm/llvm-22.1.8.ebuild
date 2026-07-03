@@ -6,7 +6,7 @@ EAPI=8
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 CXX_STANDARD=17
@@ -224,10 +224,10 @@ einfo
 einfo "To remove the hard USE mask for llvm_targets_*, do:"
 einfo
 	local t
-	for t in ${ALL_LLVM_TARGET_FLAGS[@]} ; do
+	for t in "${ALL_LLVM_TARGET_FLAGS[@]}" ; do
 echo "echo \"${CATEGORY}/${PN} -${t}\" >> ${EROOT}/etc/portage/profile/package.use.force"
 	done
-	for t in ${ALL_LLVM_EXPERIMENTAL_TARGETS[@]/#/llvm_targets_} ; do
+	for t in "${ALL_LLVM_EXPERIMENTAL_TARGETS[@]/#/llvm_targets_}" ; do
 echo "echo \"${CATEGORY}/${PN} -${t}\" >> ${EROOT}/etc/portage/profile/package.use.mask"
 	done
 einfo
