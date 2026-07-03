@@ -132,9 +132,8 @@ ${PASSWORD_MANAGER_IUSE[@]}
 ${PROFILES_IUSE[@]}
 ${SANDBOX_IUSE[@]}
 +enforce
-ebuild_revision_10
+ebuild_revision_11
 "
-# Temporarly disable most kernel flavors until Dirty Frag 0-day mitigation is verified or patched upstream.
 REQUIRED_USE="
 	^^ (
 		${PROFILES_IUSE[@]}
