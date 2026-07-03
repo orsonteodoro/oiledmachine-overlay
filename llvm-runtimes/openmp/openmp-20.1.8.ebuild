@@ -51,7 +51,7 @@ GCC_COMPAT=(
 )
 
 inherit llvm-ebuilds
-inherit abseil-cpp cmake-multilib flag-o-matic grpc libstdcxx-slot linux-info llvm.org llvm-utils protobuf python-single-r1
+inherit abseil-cpp cmake-multilib flag-o-matic grpc libstdcxx-slot llvm.org llvm-utils protobuf python-single-r1
 inherit re2 toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -372,25 +372,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-17.0.0.9999-sover-suffix.patch"
 #	"${FILESDIR}/${PN}-19.0.0.9999-libffi.patch"
 )
-
-kernel_pds_check() {
-	if use kernel_linux \
-		&& kernel_is -lt 4 15 \
-		&& kernel_is -ge 4 13 ; then
-		local CONFIG_CHECK="~!SCHED_PDS"
-		local ERROR_SCHED_PDS="\
-PDS scheduler versions >= 0.98c < 0.98i (e.g. used in kernels >= 4.13-pf11
-< 4.14-pf9) do not implement sched_yield() call which may result in horrible
-performance problems with libomp. If you are using one of the specified
-kernel versions, you may want to disable the PDS scheduler."
-
-		check_extra_config
-	fi
-}
-
-pkg_pretend() {
-	kernel_pds_check
-}
 
 pkg_setup() {
 ewarn "You may need to uninstall =libomp-${PV} first if merge is unsuccessful."
