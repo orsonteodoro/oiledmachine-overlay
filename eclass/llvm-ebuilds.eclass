@@ -40,8 +40,8 @@ esac
 #
 # p_1 = -100 per day passed
 # p_2 = -1000 per sanitizer fail
-# p_3 = +5 points per checkmarks above 100
-# p_4 = -5 points per checkmarks below 100
+# p_3 = +10 points per checkmarks above 100
+# p_4 = -10 points per checkmarks below 100
 # P = If days passed >= 8 then - 100000, else 0
 # S = 10000 + p_1*D + p_2*B + p_3*C + p_4*F + P
 #
