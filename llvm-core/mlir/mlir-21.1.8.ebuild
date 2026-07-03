@@ -59,6 +59,11 @@ DEPEND="
 "
 BDEPEND="
 	~llvm-core/clang-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP}]
+	test? (
+		$(python_gen_cond_dep "
+			>=dev-python/lit-${LLVM_VERSION}[\${PYTHON_USEDEP}]
+		")
+	)
 "
 RESTRICT="
 "
@@ -73,7 +78,7 @@ PATCHES=(
 )
 
 python_check_deps() {
-	python_has_version "dev-python/lit[${PYTHON_USEDEP}]"
+	python_has_version ">=dev-python/lit-${LLVM_VERSION}[${PYTHON_USEDEP}]"
 }
 
 pkg_setup() {

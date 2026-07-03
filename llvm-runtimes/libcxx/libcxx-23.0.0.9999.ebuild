@@ -102,7 +102,7 @@ BDEPEND+="
 	)
 	test? (
 		$(python_gen_any_dep "
-			>=dev-python/lit-${LLVM_MAJOR}[\${PYTHON_USEDEP}]
+			>=dev-python/lit-${LLVM_VERSION}[\${PYTHON_USEDEP}]
 		")
 		>=dev-build/cmake-3.16
 		>=llvm-core/clang-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP_LTS}]

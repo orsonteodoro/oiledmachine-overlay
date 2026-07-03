@@ -121,7 +121,7 @@ BDEPEND="
 	test? (
 		>=dev-build/cmake-3.16
 		$(python_gen_cond_dep "
-			>=dev-python/lit-${LLVM_MAJOR}[\${PYTHON_USEDEP}]
+			>=dev-python/lit-${LLVM_VERSION}[\${PYTHON_USEDEP}]
 		")
 	)
 "
@@ -152,7 +152,7 @@ gen_rdepend() {
 RDEPEND+=" "$(gen_rdepend)
 
 python_check_deps() {
-	python_has_version ">=dev-python/lit-${PV}[${PYTHON_USEDEP}]"
+	python_has_version ">=dev-python/lit-${LLVM_VERSION}[${PYTHON_USEDEP}]"
 }
 
 pkg_setup() {

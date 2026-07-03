@@ -65,7 +65,7 @@ BDEPEND="
 	)
 	test? (
 		$(python_gen_any_dep "
-			>=dev-python/lit-${LLVM_MAJOR}[\${PYTHON_USEDEP}]
+			>=dev-python/lit-${LLVM_VERSION}[\${PYTHON_USEDEP}]
 		")
 	)
 "
@@ -89,7 +89,7 @@ llvm.org_set_globals
 
 python_check_deps() {
 	use test || return 0
-	python_has_version "dev-python/lit[${PYTHON_USEDEP}]"
+	python_has_version ">=dev-python/lit-${LLVM_VERSION}[${PYTHON_USEDEP}]"
 }
 
 pkg_setup() {

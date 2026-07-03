@@ -284,7 +284,7 @@ RDEPEND="
 		~llvm-core/llvm-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	)
 	remote-offloading? (
-		net-libs/grpc:=
+		net-libs/grpc:=[${LIBSTDCXX_USEDEP},cxx]
 		|| (
 			net-libs/grpc:3/1.30[${LIBSTDCXX_USEDEP},cxx]
 			net-libs/grpc:3/1.51[${LIBSTDCXX_USEDEP},cxx]
@@ -310,7 +310,7 @@ BDEPEND="
 	test? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep "
-			>=dev-python/lit-${LLVM_MAJOR}[\${PYTHON_USEDEP}]
+			>=dev-python/lit-${LLVM_VERSION}[\${PYTHON_USEDEP}]
 		")
 		~llvm-core/clang-${LLVM_VERSION}:${LLVM_MAJOR}=
 	)

@@ -51,7 +51,7 @@ BDEPEND="
 	)
 	test? (
 		$(python_gen_any_dep "
-			>=dev-python/lit-${LLVM_MAJOR}[\${PYTHON_USEDEP}]
+			>=dev-python/lit-${LLVM_VERSION}[\${PYTHON_USEDEP}]
 		")
 	)
 "
