@@ -182,6 +182,7 @@ LLVM_COMPONENTS=(
 	"bolt"
 	"cmake"
 	"third-party"
+	"utils/docs"
 )
 LLVM_MANPAGES=1
 LLVM_USE_TARGETS="provide"
