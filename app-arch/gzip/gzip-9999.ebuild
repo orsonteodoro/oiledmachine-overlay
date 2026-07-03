@@ -34,7 +34,7 @@ SLOT="0"
 if [[ ${PV} != *_p* ]] ; then
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
 fi
-IUSE+=" pic static"
+IUSE+=" doc pic static"
 
 BDEPEND="verify-sig? ( sec-keys/openpgp-keys-gzip )"
 RDEPEND="!app-arch/pigz[symlink(-)]"
@@ -82,8 +82,15 @@ src_configure() {
 src_install() {
 	default
 
-	docinto txt
-	dodoc algorithm.doc gzip.doc
+	if use doc ; then
+		docinto txt
+		dodoc algorithm.doc
+
+		docinto texi
+		dodoc doc/gzip.texi
+
+		doinfo doc/gzip.info
+	fi
 
 	# Avoid conflict with app-arch/ncompress
 	rm "${ED}"/usr/bin/uncompress || die
