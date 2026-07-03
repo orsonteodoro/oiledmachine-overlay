@@ -24,13 +24,13 @@ unset -f _llvm_set_globals
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX23[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX23[@]}"
 )
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}"
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
@@ -77,33 +77,28 @@ ebuild_revision_21
 "
 RDEPEND="
 	!libcxxabi? (
-		>=sys-devel/gcc-4.7[cxx]
-		sys-devel/gcc:=
+		>=sys-devel/gcc-4.7:=[cxx]
 	)
 	libcxxabi? (
-		~llvm-runtimes/libcxxabi-${PV}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},static-libs?]
-		llvm-runtimes/libcxxabi:=
+		~llvm-runtimes/libcxxabi-${LLVM_VERSION}:=[${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},static-libs?]
 	)
 "
 DEPEND="
 	${RDEPEND}
-	llvm-core/llvm:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP_LTS}]
-	llvm-core/llvm:=
+	>=llvm-core/llvm-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP_LTS}]
 "
 BDEPEND+="
 	dev-util/patchutils
-	sys-devel/gcc
+	sys-devel/gcc:=
 	clang? (
-		llvm-core/clang:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP_LTS}]
-		llvm-core/clang:=
+		>=llvm-core/clang-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP_LTS}]
 	)
 	test? (
-		$(python_gen_any_dep '
-			dev-python/lit[${PYTHON_USEDEP}]
-		')
+		$(python_gen_any_dep "
+			>=dev-python/lit-${LLVM_MAJOR}[\${PYTHON_USEDEP}]
+		")
 		>=dev-build/cmake-3.16
-		>=llvm-core/clang-3.9.0[${LIBSTDCXX_USEDEP_LTS}]
-		llvm-core/clang:=
+		>=llvm-core/clang-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP_LTS}]
 		dev-debug/gdb[python]
 	)
 "
