@@ -55,15 +55,14 @@ ${LLVM_EBUILDS_LLVM19_REVISION}
 REQUIRED_USE="
 "
 RDEPEND="
-	llvm-core/clang:${LLVM_SLOT}=[${LIBSTDCXX_USEDEP}]
-	llvm-core/llvm:${LLVM_SLOT}=[${LIBSTDCXX_USEDEP}]
+	~llvm-core/clang-${LLVM_VERSION}:${LLVM_SLOT}=[${LIBSTDCXX_USEDEP}]
+	~llvm-core/llvm-${LLVM_VERSION}:${LLVM_SLOT}=[${LIBSTDCXX_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	llvm-core/clang:${LLVM_SLOT}=[${LIBSTDCXX_USEDEP}]
-	llvm-core/llvm:${LLVM_SLOT}=[${LIBSTDCXX_USEDEP}]
+	~llvm-core/clang-${LLVM_VERSION}:${LLVM_SLOT}=[${LIBSTDCXX_USEDEP}]
 "
 RESTRICT="
 "
