@@ -43,7 +43,7 @@ RDEPEND="
 		~llvm-core/pstl-${PV}:${SLOT}
 	)
 
-	llvm-core/clang-common:
+	llvm-core/clang-common
 
 	~llvm-core/clang-linker-config-${SLOT}:${SLOT}
 	~llvm-runtimes/clang-rtlib-config-${SLOT}:${SLOT}
