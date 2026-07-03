@@ -191,7 +191,6 @@ RDEPEND="
 PDEPEND="
 	llvm-core/llvm-common
 	llvm-core/llvm-toolchain-symlinks:${LLVM_MAJOR}
-	llvm-core/llvm-toolchain-symlinks:=
 	binutils-plugin? (
 		>=llvm-core/llvmgold-${LLVM_MAJOR}
 	)
