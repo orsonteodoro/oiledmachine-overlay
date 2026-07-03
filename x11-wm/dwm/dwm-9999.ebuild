@@ -145,7 +145,6 @@ src_unpack() {
 	else
 		unpack ${A}
 	fi
-	die
 }
 
 src_prepare() {
