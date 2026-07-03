@@ -53,22 +53,21 @@ PDEPEND="
 	!default-lld? (
 		sys-devel/binutils
 	)
-	llvm-runtimes/clang-runtime[default-compiler-rt(-)?,default-libcxx(-)?,default-lld(-)?,llvm-libunwind(-)?]
+	>=llvm-runtimes/clang-runtime-${LLVM_MAJOR}:${LLVM_MAJOR}[default-compiler-rt(-)?,default-libcxx(-)?,default-lld(-)?,llvm-libunwind(-)?]
 	default-compiler-rt? (
 		!llvm-libunwind? (
 			sys-libs/libunwind[static-libs]
 		)
-		llvm-runtimes/clang-runtime:${LLVM_MAJOR}[compiler-rt]
-		llvm-runtimes/clang-runtime:=
+		>=llvm-runtimes/clang-runtime-${LLVM_MAJOR}:${LLVM_MAJOR}[compiler-rt]
 		llvm-libunwind? (
-			llvm-runtimes/libunwind[static-libs]
+			>=llvm-runtimes/libunwind-${LLVM_VERSION}[static-libs]
 		)
 	)
 	default-libcxx? (
-		>=llvm-runtimes/libcxx-${PV}[static-libs]
+		>=llvm-runtimes/libcxx-${LLVM_VERSION}[static-libs]
 	)
 	default-lld? (
-		llvm-core/lld
+		>=llvm-core/lld-${LLVM_VERSION}
 	)
 	emacs? (
 		>=app-editors/emacs-26.3:*

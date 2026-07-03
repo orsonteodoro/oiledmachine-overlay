@@ -326,9 +326,17 @@ RDEPEND="
 		!llvm-runtimes/offload
 		>=dev-libs/libffi-${LIBFFI_PV}:=[${MULTILIB_USEDEP}]
 		~llvm-core/llvm-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
-		cuda? ( ~llvm-runtimes/openmp-nvptx64-nvidia-cuda-${PV} )
-		level-zero? ( ~llvm-runtimes/openmp-spirv64-intel-${PV} )
-		rocm? ( ~llvm-runtimes/openmp-amdgcn-amd-amdhsa-${PV} )
+		cuda? (
+			~llvm-runtimes/openmp-nvptx64-nvidia-cuda-${PV}
+		)
+		level-zero? (
+			~llvm-runtimes/openmp-spirv64-intel-${PV}
+			dev-libs/level-zero:=
+		)
+		rocm? (
+			~llvm-runtimes/openmp-amdgcn-amd-amdhsa-${PV}
+			dev-libs/rocr-runtime:=
+		)
 	)
 	remote-offloading? (
 		net-libs/grpc:=
@@ -340,13 +348,6 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
-	hwloc? ( >=sys-apps/hwloc-2.5:0=[${MULTILIB_USEDEP}] )
-	offload? (
-		dev-libs/libffi:=
-		~llvm-core/llvm-${PV}
-		level-zero? ( dev-libs/level-zero:= )
-		rocm? ( dev-libs/rocr-runtime:= )
-	)
 "
 # Tests:
 # - dev-python/lit provides the test runner

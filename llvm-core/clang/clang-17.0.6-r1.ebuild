@@ -130,14 +130,14 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	${PYTHON_DEPS}
-	>=llvm-core/clang-common-${PV}:=
+	>=llvm-core/clang-common-${LLVM_VERSION}:=
 	static-analyzer? (
 		>=dev-lang/perl-${PERL_PV}:=
 	)
 	xml? (
 		>=dev-libs/libxml2-${LIBXML2_PV}:=[${MULTILIB_USEDEP}]
 	)
-	~llvm-core/llvm-${PV}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},debug=]
+	~llvm-core/llvm-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},debug=]
 "
 
 DEPEND="
@@ -153,7 +153,7 @@ BDEPEND="
 		')
 	)
 	test? (
-		~llvm-core/lld-${PV}:=[${LIBSTDCXX_USEDEP}]
+		~llvm-core/lld-${LLVM_VERSION}:=[${LIBSTDCXX_USEDEP}]
 	)
 	xml? (
 		virtual/pkgconfig[${MULTILIB_USEDEP}]
@@ -161,7 +161,7 @@ BDEPEND="
 "
 PDEPEND+="
 	llvm-core/clang-toolchain-symlinks:${LLVM_MAJOR}
-	~llvm-runtimes/clang-runtime-${PV}
+	~llvm-runtimes/clang-runtime-${LLVM_VERSION}
 "
 RESTRICT="
 	!test? (

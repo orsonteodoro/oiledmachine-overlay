@@ -51,21 +51,20 @@ PDEPEND="
 	!default-lld? (
 		sys-devel/binutils
 	)
-	llvm-core/clang:*
 	default-compiler-rt? (
 		!llvm-libunwind? (
 			sys-libs/libunwind[static-libs]
 		)
-		llvm-runtimes/clang-runtime[compiler-rt]
+		>=llvm-runtimes/clang-runtime-${LLVM_VERSION}:${LLVM_MAJOR}[compiler-rt]
 		llvm-libunwind? (
-			llvm-runtimes/libunwind[static-libs]
+			>=llvm-runtimes/libunwind-${LLVM_VERSION}[static-libs]
 		)
 	)
 	default-libcxx? (
-		>=llvm-runtimes/libcxx-${PV}[static-libs]
+		>=llvm-runtimes/libcxx-${LLVM_VERSION}[static-libs]
 	)
 	default-lld? (
-		llvm-core/lld
+		>=llvm-core/lld-${LLVM_VERSION}
 	)
 "
 IDEPEND="

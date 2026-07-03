@@ -178,7 +178,7 @@ RDEPEND="
 	!llvm-core/llvm:0
 "
 PDEPEND="
-	llvm-core/llvm-common
+	>=llvm-core/llvm-common-${LLVM_VERSION}
 	llvm-core/llvm-toolchain-symlinks:${LLVM_MAJOR}
 	binutils-plugin? (
 		>=llvm-core/llvmgold-${LLVM_MAJOR}
