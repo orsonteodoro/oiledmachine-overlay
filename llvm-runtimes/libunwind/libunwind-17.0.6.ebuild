@@ -53,17 +53,19 @@ REQUIRED_USE="
 RDEPEND="
 "
 DEPEND="
-	llvm-core/llvm:${LLVM_MAJOR}
+	>=llvm-core/llvm-${LLVM_VERSION}:${LLVM_MAJOR}=
 "
 BDEPEND="
 	!test? (
 		${PYTHON_DEPS}
 	)
 	clang? (
-		llvm-core/clang:${LLVM_MAJOR}
+		>=llvm-core/clang-${LLVM_VERSION}:${LLVM_MAJOR}=
 	)
 	test? (
-		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
+		$(python_gen_any_dep "
+			>=dev-python/lit-${LLVM_MAJOR}[\${PYTHON_USEDEP}]
+		")
 	)
 "
 RESTRICT="
