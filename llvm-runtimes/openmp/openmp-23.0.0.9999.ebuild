@@ -50,7 +50,7 @@ GCC_COMPAT=(
 )
 
 inherit llvm-ebuilds
-inherit abseil-cpp cmake-multilib flag-o-matic grpc libstdcxx-slot linux-info llvm.org llvm-utils protobuf python-single-r1
+inherit abseil-cpp cmake-multilib crossdev flag-o-matic grpc libstdcxx-slot llvm.org llvm-utils protobuf python-single-r1
 inherit re2 toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -66,7 +66,7 @@ else
 #	"
 fi
 
-DESCRIPTION="OpenMP runtime library for LLVM/clang compiler"
+DESCRIPTION="OpenMP runtime libraries for LLVM/clang compiler"
 HOMEPAGE="https://openmp.llvm.org"
 LICENSE="
 	Apache-2.0-with-LLVM-exceptions
@@ -84,7 +84,7 @@ SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_EBUILDS_LLVM23_REVISION}
-cuda +debug gdb-plugin hwloc offload ompt remote-offloading test llvm_targets_NVPTX
++clang cuda +debug gdb-plugin hwloc level-zero offload ompt remote-offloading rocm test llvm_targets_NVPTX
 ebuild_revision_11
 "
 gen_cuda_required_use() {
@@ -324,10 +324,14 @@ RDEPEND="
 		dev-util/nvidia-cuda-toolkit:=
 	)
 	offload? (
+		!llvm-runtimes/offload
 		dev-libs/libffi[${MULTILIB_USEDEP}]
 		dev-libs/libffi:=
 		~llvm-core/llvm-${PV}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		llvm-core/llvm:=
+		cuda? ( ~llvm-runtimes/openmp-nvptx64-nvidia-cuda-${PV} )
+		level-zero? ( ~llvm-runtimes/openmp-spirv64-intel-${PV} )
+		rocm? ( ~llvm-runtimes/openmp-amdgcn-amd-amdhsa-${PV} )
 	)
 	remote-offloading? (
 		|| (
@@ -337,21 +341,29 @@ RDEPEND="
 		net-libs/grpc:=
 	)
 "
+DEPEND="
+	${RDEPEND}
+	hwloc? ( >=sys-apps/hwloc-2.5:0=[${MULTILIB_USEDEP}] )
+	offload? (
+		dev-libs/libffi:=
+		~llvm-core/llvm-${PV}
+		level-zero? ( dev-libs/level-zero:= )
+		rocm? ( dev-libs/rocr-runtime:= )
+	)
+"
 # Tests:
 # - dev-python/lit provides the test runner
 # - llvm-core/llvm provide test utils (e.g. FileCheck)
 # - llvm-core/clang provides the compiler to run tests
-DEPEND="
-	${RDEPEND}
-"
 BDEPEND="
 	dev-lang/perl
-	llvm-core/lld:${PV%%.*}
+	clang? (
+		llvm-core/clang
+	)
+	gdb-plugin? (
+		${PYTHON_DEPS}
+	)
 	offload? (
-		llvm_targets_NVPTX? (
-			llvm-core/clang[${LIBSTDCXX_USEDEP}]
-			llvm-core/clang:=
-		)
 		virtual/pkgconfig
 	)
 	test? (
@@ -366,8 +378,10 @@ BDEPEND="
 LLVM_COMPONENTS=(
 	"runtimes"
 	"openmp"
+	"offload"
 	"cmake"
-	"llvm/"{"cmake","include","utils/llvm-lit"}
+	"libc"
+	"llvm/"{"cmake","include","utils"}
 	"third-party/unittest"
 )
 llvm.org_set_globals
@@ -391,8 +405,17 @@ kernel versions, you may want to disable the PDS scheduler."
 	fi
 }
 
+MULTILIB_WRAPPED_HEADERS=(
+	/usr/include/offload/OffloadPrint.hpp
+	/usr/include/offload/OffloadAPI.h
+)
+
 pkg_pretend() {
-	kernel_pds_check
+	if [[ ${LLVM_ALLOW_GPU_TESTING} ]]; then
+		ewarn "LLVM_ALLOW_GPU_TESTING set.  This package will run tests against your"
+		ewarn "GPU if it is supported.  Note that these tests may be flaky, fail or"
+		ewarn "hang, or even cause your GPU to crash (requiring a reboot)."
+	fi
 }
 
 pkg_setup() {
@@ -427,6 +450,17 @@ gen_nvptx_list() {
 }
 
 multilib_src_configure() {
+	if use clang && ! is_crosspkg; then
+		# Only do this conditionally to allow overriding with
+		# e.g. CC=clang-13 in case of breakage
+		if ! tc-is-clang ; then
+			local -x CC=${CHOST}-clang
+			local -x CXX=${CHOST}-clang++
+		fi
+
+		strip-unsupported-flags
+	fi
+
 	use offload && llvm_prepend_path "${LLVM_MAJOR}"
 
 	# LTO causes issues in other packages building, #870127
@@ -443,6 +477,9 @@ multilib_src_configure() {
 
 	local libdir="$(get_libdir)"
 	local mycmakeargs=(
+		-DLLVM_LIBDIR_SUFFIX="${libdir#lib}"
+		-DLLVM_BINARY_DIR="${BROOT}/usr/lib/llvm/${LLVM_MAJOR}"
+
 		-DLLVM_ENABLE_RUNTIMES=openmp
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}"
 	# Disable unnecessary hack copying stuff back to srcdir. \
@@ -459,6 +496,9 @@ multilib_src_configure() {
 		-DLIBOMP_HEADERS_INSTALL_PATH="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/include"
 
 		-DPython3_EXECUTABLE="${PYTHON}"
+
+		# this breaks building static target libs
+		-DBUILD_SHARED_LIBS=OFF
 	)
 
 	if use offload && has "${CHOST%%-*}" "aarch64" "powerpc64le" "x86_64" ; then
@@ -494,6 +534,38 @@ eerror
 			-DLIBOMPTARGET_BUILD_CUDA_PLUGIN=OFF
 			-DLIBOMPTARGET_ENABLE_EXPERIMENTAL_REMOTE_PLUGIN=OFF
 			-DOPENMP_ENABLE_LIBOMPTARGET=OFF
+		)
+	fi
+
+	if multilib_is_native_abi && use offload; then
+		local ffi_cflags=$($(tc-getPKG_CONFIG) --cflags-only-I libffi)
+		local ffi_ldflags=$($(tc-getPKG_CONFIG) --libs-only-L libffi)
+		local plugins="host"
+
+		if has "${CHOST%%-*}" aarch64 powerpc64le x86_64; then
+			if use rocm; then
+				plugins+=";amdgpu"
+			fi
+			if use cuda; then
+				plugins+=";cuda"
+			fi
+			if use level-zero; then
+				plugins+=";level_zero"
+			fi
+		fi
+
+		mycmakeargs+=(
+			-DLLVM_ENABLE_RUNTIMES="openmp;offload"
+			-DOFFLOAD_INCLUDE_TESTS=$(usex test)
+			-DLIBOMPTARGET_PLUGINS_TO_BUILD="${plugins}"
+			-DLIBOMPTARGET_OMPT_SUPPORT="$(usex ompt)"
+		)
+
+		[[ ! ${LLVM_ALLOW_GPU_TESTING} ]] && mycmakeargs+=(
+			# prevent trying to access the GPU
+			-DLIBOMPTARGET_AMDGPU_ARCH=LIBOMPTARGET_AMDGPU_ARCH-NOTFOUND
+			-DLIBOMPTARGET_NVPTX_ARCH=LIBOMPTARGET_NVPTX_ARCH-NOTFOUND
+			-DLIBOMPTARGET_OFFLOAD_ARCH=LIBOMPTARGET_OFFLOAD_ARCH-NOTFOUND
 		)
 	fi
 
@@ -536,5 +608,9 @@ eerror
 multilib_src_test() {
 	# Respect TMPDIR!
 	local -x LIT_PRESERVES_TMP=1
-	cmake_build check-openmp
+	local targets=( check-openmp )
+	if multilib_is_native_abi && use offload; then
+		targets+=( check-offload check-offload-unit )
+	fi
+	cmake_build "${targets[@]}"
 }
