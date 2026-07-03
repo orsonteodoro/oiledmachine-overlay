@@ -27,39 +27,39 @@ REQUIRED_USE="
 "
 
 RDEPEND="
-	llvm-core/clang-common:=
-	~llvm-core/clang-linker-config-${SLOT}:${SLOT}=[default-lld(-)?]
-	~llvm-runtimes/clang-rtlib-config-${SLOT}:${SLOT}=[default-compiler-rt(-)?]
-	~llvm-runtimes/clang-unwindlib-config-${SLOT}:${SLOT}=[default-compiler-rt(-)?,llvm-libunwind(-)?]
-	~llvm-runtimes/clang-stdlib-config-${SLOT}:${SLOT}=[default-libcxx(-)?]
+	llvm-core/clang-common
+	~llvm-core/clang-linker-config-${SLOT}:${SLOT}[default-lld(-)?]
+	~llvm-runtimes/clang-rtlib-config-${SLOT}:${SLOT}[default-compiler-rt(-)?]
+	~llvm-runtimes/clang-unwindlib-config-${SLOT}:${SLOT}[default-compiler-rt(-)?,llvm-libunwind(-)?]
+	~llvm-runtimes/clang-stdlib-config-${SLOT}:${SLOT}[default-libcxx(-)?]
 	compiler-rt? (
-		=llvm-runtimes/compiler-rt-${PV}*:${SLOT}=[abi_x86_32(+)?,abi_x86_64(+)?]
+		=llvm-runtimes/compiler-rt-${PV}*:${SLOT}[abi_x86_32(+)?,abi_x86_64(+)?]
 		sanitize? (
-			=llvm-runtimes/compiler-rt-sanitizers-${PV}*:${SLOT}=[abi_x86_32(+)?,abi_x86_64(+)?]
+			=llvm-runtimes/compiler-rt-sanitizers-${PV}*:${SLOT}[abi_x86_32(+)?,abi_x86_64(+)?]
 		)
 	)
 	libcxx? (
-		>=llvm-runtimes/libcxx-${PV}:=[${MULTILIB_USEDEP}]
+		>=llvm-runtimes/libcxx-${PV}[${MULTILIB_USEDEP}]
 	)
 	openmp? (
-		>=llvm-runtimes/openmp-${PV}:=[${MULTILIB_USEDEP},offload?]
+		>=llvm-runtimes/openmp-${PV}[${MULTILIB_USEDEP},offload?]
 		offload? (
 			llvm_targets_AMDGPU? (
-				>=llvm-runtimes/openmp-${PV}:=[rocm(-)]
+				>=llvm-runtimes/openmp-${PV}[rocm(-)]
 			)
 			llvm_targets_NVPTX? (
-				>=llvm-runtimes/openmp-${PV}:=[cuda(-)]
+				>=llvm-runtimes/openmp-${PV}[cuda(-)]
 			)
 			llvm_targets_SPIRV? (
-				>=llvm-runtimes/openmp-${PV}:=[level-zero(-)]
+				>=llvm-runtimes/openmp-${PV}[level-zero(-)]
 			)
 		)
 	)
 	polly? (
-		=llvm-core/polly-${PV}*:${PV}=
+		=llvm-core/polly-${PV}*:${PV}
 	)
 	pstl? (
-		=llvm-core/pstl-${PV}*:${PV}=
+		=llvm-core/pstl-${PV}*:${PV}
 	)
 "
 
