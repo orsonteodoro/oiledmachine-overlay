@@ -27,34 +27,30 @@ REQUIRED_USE="
 "
 RDEPEND="
 	compiler-rt? (
-		~llvm-runtimes/compiler-rt-${PV}:${SLOT}[abi_x86_32(+)?,abi_x86_64(+)?]
-		llvm-runtimes/compiler-rt:=
+		~llvm-runtimes/compiler-rt-${PV}:${SLOT}=[abi_x86_32(+)?,abi_x86_64(+)?]
 		sanitize? (
-			~llvm-runtimes/compiler-rt-sanitizers-${PV}:${SLOT}[abi_x86_32(+)?,abi_x86_64(+)?]
-			llvm-runtimes/compiler-rt-sanitizers:=
+			~llvm-runtimes/compiler-rt-sanitizers-${PV}:${SLOT}=[abi_x86_32(+)?,abi_x86_64(+)?]
 		)
 	)
 	libcxx? (
-		>=llvm-runtimes/libcxx-${PV}[${MULTILIB_USEDEP}]
+		>=llvm-runtimes/libcxx-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	openmp? (
-		llvm-runtimes/openmp:${PV%%.*}[${MULTILIB_USEDEP}]
-		llvm-runtimes/openmp:=
+		>=llvm-runtimes/openmp-${PV}:=[${MULTILIB_USEDEP}]
 		offload? (
-			>=llvm-runtimes/offload-${PV}
+			>=llvm-runtimes/offload-${PV}:=
 		)
 	)
 	pstl? (
-		llvm-core/pstl:${PV%%.*}
-		llvm-core/pstl:=
+		~llvm-core/pstl-${PV}:${SLOT}=
 	)
 
-	llvm-core/clang-common
+	llvm-core/clang-common:=
 
-	~llvm-core/clang-linker-config-${SLOT}
-	~llvm-runtimes/clang-rtlib-config-${SLOT}
-	~llvm-runtimes/clang-unwindlib-config-${SLOT}
-	~llvm-runtimes/clang-stdlib-config-${SLOT}
+	~llvm-core/clang-linker-config-${SLOT}:${SLOT}=
+	~llvm-runtimes/clang-rtlib-config-${SLOT}:${SLOT}=
+	~llvm-runtimes/clang-unwindlib-config-${SLOT}:${SLOT}=
+	~llvm-runtimes/clang-stdlib-config-${SLOT}:${SLOT}=
 "
 
 _doclang_cfg() {

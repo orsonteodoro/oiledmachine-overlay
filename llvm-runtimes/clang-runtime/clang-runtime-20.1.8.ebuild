@@ -27,58 +27,51 @@ REQUIRED_USE="
 "
 
 RDEPEND="
-	llvm-core/clang-common
+	llvm-core/clang-common:=
 	!default-compiler-rt? (
-		sys-devel/gcc
+		sys-devel/gcc:=
 	)
 	!default-libcxx? (
-		sys-devel/gcc
+		sys-devel/gcc:=
 	)
 	!default-lld? (
-		sys-devel/binutils
+		sys-devel/binutils:=
 	)
 	compiler-rt? (
-		~llvm-runtimes/compiler-rt-${PV}:${SLOT}[abi_x86_32(+)?,abi_x86_64(+)?]
-		llvm-runtimes/compiler-rt:=
+		~llvm-runtimes/compiler-rt-${PV}:${SLOT}=[abi_x86_32(+)?,abi_x86_64(+)?]
 		sanitize? (
-			~llvm-runtimes/compiler-rt-sanitizers-${PV}:${SLOT}[abi_x86_32(+)?,abi_x86_64(+)?]
-			llvm-runtimes/compiler-rt-sanitizers:=
+			~llvm-runtimes/compiler-rt-sanitizers-${PV}:${SLOT}=[abi_x86_32(+)?,abi_x86_64(+)?]
 		)
 	)
 	default-compiler-rt? (
-		~llvm-runtimes/compiler-rt-${PV}:${SLOT}[abi_x86_32(+)?,abi_x86_64(+)?]
-		llvm-runtimes/compiler-rt:=
+		~llvm-runtimes/compiler-rt-${PV}:${SLOT}=[abi_x86_32(+)?,abi_x86_64(+)?]
 		!llvm-libunwind? (
-			sys-libs/libunwind[static-libs]
+			sys-libs/libunwind:=[static-libs]
 		)
 		llvm-libunwind? (
-			llvm-runtimes/libunwind[static-libs]
+			>=llvm-runtimes/libunwind-${PV}:=[static-libs]
 		)
 	)
 	default-libcxx? (
-		>=llvm-runtimes/libcxx-${PV}[static-libs]
+		>=llvm-runtimes/libcxx-${PV}:=[static-libs]
 	)
 	default-lld? (
-		~llvm-core/lld-${PV}
-		llvm-core/lld:=
+		~llvm-core/lld-${PV}:${SLOT}=
 	)
 	libcxx? (
-		>=llvm-runtimes/libcxx-${PV}[${MULTILIB_USEDEP}]
+		>=llvm-runtimes/libcxx-${PV}:=[${MULTILIB_USEDEP}]
 	)
 	openmp? (
-		>=llvm-runtimes/openmp-${PV}[${MULTILIB_USEDEP}]
-		llvm-runtimes/openmp:=
+		>=llvm-runtimes/openmp-${PV}:=[${MULTILIB_USEDEP}]
 		offload? (
-			>=llvm-runtimes/offload-${PV}
+			>=llvm-runtimes/offload-${PV}:=
 		)
 	)
 	polly? (
-		~llvm-core/polly-${PV}
-		llvm-core/polly:=
+		~llvm-core/polly-${PV}:${SLOT}=
 	)
 	pstl? (
-		llvm-core/pstl:${PV%%.*}
-		llvm-core/pstl:=
+		~llvm-core/pstl-${PV}:${SLOT}=
 	)
 "
 
