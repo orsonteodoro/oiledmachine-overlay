@@ -42,6 +42,8 @@ esac
 # p_2 = -1000 per sanitizer fail
 # p_3 = +10 points per checkmarks above 100
 # p_4 = -10 points per checkmarks below 100
+# B = number of benefit CI/CD checkmarks that are above 100
+# C = number of cost CI/CD checkmarks that are below 100
 # P = If days passed >= 8 then - 100000, else 0
 # S = 10000 + p_1*D + p_2*B + p_3*C + p_4*F + P
 #
