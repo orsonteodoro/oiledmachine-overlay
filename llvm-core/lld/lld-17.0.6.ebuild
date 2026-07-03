@@ -30,7 +30,11 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot llvm llvm.org llvm-utils python-single-r1 toolchain-funcs
+CHKL_TIMESTAMPS=(
+	"app-arch/zstd-9999"
+)
+
+inherit check-compiler-switch chkl cmake flag-o-matic libstdcxx-slot llvm llvm.org llvm-utils python-single-r1 secure-version toolchain-funcs
 
 KEYWORDS="
 amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv ~sparc x86 ~arm64-macos
@@ -103,19 +107,17 @@ REQUIRED_USE+="
 "
 RDEPEND="
 	!llvm-core/lld:0
-	virtual/zlib:=
+	>=virtual/zlib-${ZLIB_PV}:=
 	zstd? (
-		app-arch/zstd:=
+		>=app-arch/zstd-${ZSTD_PV}:=
 	)
-	~llvm-core/llvm-${PV}[${LIBSTDCXX_USEDEP},debug=,zstd=]
-	llvm-core/llvm:=
+	~llvm-core/llvm-${PV}:=[${LIBSTDCXX_USEDEP},debug=,zstd=]
 "
 DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	~llvm-core/llvm-${PV}:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP}]
-	llvm-core/llvm:=
+	~llvm-core/llvm-${PV}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP}]
 	test? (
 		>=dev-build/cmake-3.16
 		$(python_gen_cond_dep "
@@ -124,7 +126,7 @@ BDEPEND="
 	)
 "
 PDEPEND="
-	>=llvm-core/lld-toolchain-symlinks-16-r2:${LLVM_MAJOR}
+	llvm-core/lld-toolchain-symlinks:${LLVM_MAJOR}
 "
 RESTRICT="
 	!test? (
@@ -221,7 +223,7 @@ src_prepare() {
 }
 
 src_configure() {
-	:
+	chkl_check_many_timestamps
 }
 
 _src_configure_compiler() {
