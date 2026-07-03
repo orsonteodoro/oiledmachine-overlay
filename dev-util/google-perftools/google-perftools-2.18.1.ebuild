@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# This ebuild fork contains AI synthetic data.
+
 MY_P="gperftools-${PV}"
 
 CXX_STANDARD=17
