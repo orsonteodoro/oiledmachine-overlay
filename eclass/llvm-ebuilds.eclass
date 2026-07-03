@@ -14,17 +14,45 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
-# For deterministic builds and working patches.
-# Commits with green checkmarks used.
-# The llvm 20.0.0git should be newer (>= Sep 24, 2024 [3dbd929e]) for chromium 131.0.6778.69 with 94/96 green checkmarks.
-LLVM_EBUILDS_LLVM23_FALLBACK_COMMIT="961676c019c5fa8e1e87019571899e2a357c5742" # May 15, 2026 (50 / 50 green checkmarks)
+# The algorithm to pick the fallback-commit has changed on Jul 2, 2026.
+
+# This section is AI assisted to better explain the formula.
+
+#
+# My AI prompt:
+#
+# i need a custom scoring function coefficients that uses S = D + N + F,
+# where S is the score, D=days passed from today limited to 7 days, N for number
+# of green checkmarks in CI/CD with 100 as baseline, F for failed sanitizers
+# remaining. if the D is 8 or more the penalty is heavy. If the F is not zero it
+# is a heavy penalty.
+#
+# If you ask the AI for the answer, it is garbage they are giving complex
+# answers but still give useful facts to craft the custom score function.
+# Intuitively, you know which one is the best commit in the 7 days.
+# The most elegant one by AI uses a predefined budget of 1000 and decreases it.
+#
+# It is based on the GitHub CI/CD results:
+# D = number of days passed since today.
+# N = number of green checkmarks.
+# F = number of failed sanitizer checks (red checkmarks).
+# S = score
+#
+# p_1 = -10 per day passed
+# p_2 = -100 per sanitizer fail
+# p_3 = +5 points per checkmarks above 100
+# p_4 = -5 points per checkmarks below 100
+# P = If days passed >= 8 then - 100000, else 0
+# S = 10000 + p_1*D + p_2*B + p_3*C + p_4*F + P
+#
+LLVM_EBUILDS_LLVM23_FALLBACK_COMMIT="ad35cfed2d2bd8a373ced8bd7d91e1505ba99d17" # Jun 27, 2026 (109 / 118 green checkmarks)
 LLVM_EBUILDS_LLVM20_FALLBACK_COMMIT="1df28554bd6264d44aa2ce12e5a2fc29f61bb027" # Dec 6, 2024 (63 / 63 green checkmarks)
 LLVM_EBUILDS_LLVM19_FALLBACK_COMMIT="5b4000dc58572d08754f0b2199c2046871ec8507" # Jun 26, 2024 (72 / 72 green checkmarks)
 LLVM_EBUILDS_LLVM18_FALLBACK_COMMIT="2b033a32ea1b45c773158f67b48623ceffbb153d" # Feb 14, 2024 (42 / 43 green checkmarks)
 LLVM_EBUILDS_LLVM19_BRANCH="main"
 LLVM_EBUILDS_LLVM18_BRANCH="release/18.x"
 LLVM_EBUILDS_LLVM17_BRANCH="release/17.x"
-LLVM_EBUILDS_LLVM23_REVISION="llvm23_revision_1"
+LLVM_EBUILDS_LLVM23_REVISION="llvm23_revision_2"
 
 if [[ -z "${_LLVM_EBUILDS_ECLASS}" ]] ; then
 
