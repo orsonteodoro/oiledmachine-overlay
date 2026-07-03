@@ -311,7 +311,7 @@ RDEPEND+="
 BDEPEND+="
 	>=app-crypt/rhash-${RHASH_PV}
 	>=net-misc/wget-${WGET_PV}
-	app-alternatives/gzip
+	app-alternatives/gzip:*
 	coreutils? (
 		>=sys-apps/coreutils-${COREUTILS_PV}
 	)
