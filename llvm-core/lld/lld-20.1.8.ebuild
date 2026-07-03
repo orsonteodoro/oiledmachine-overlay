@@ -6,7 +6,7 @@ EAPI=8
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 CXX_STANDARD=17
@@ -111,17 +111,17 @@ RDEPEND="
 	zstd? (
 		>=app-arch/zstd-${ZSTD_PV}:=
 	)
-	~llvm-core/llvm-${PV}:=[${LIBSTDCXX_USEDEP},debug=,zstd=]
+	~llvm-core/llvm-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP},debug=,zstd=]
 "
 DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	~llvm-core/llvm-${PV}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP}]
+	~llvm-core/llvm-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP}]
 	test? (
 		>=dev-build/cmake-3.16
 		$(python_gen_cond_dep "
-			dev-python/lit[\${PYTHON_USEDEP}]
+			>=dev-python/lit-${LLVM_MAJOR}[\${PYTHON_USEDEP}]
 		")
 	)
 "
@@ -143,9 +143,9 @@ llvm.org_set_globals
 
 gen_rdepend() {
 	local f
-	for f in ${ALL_LLVM_TARGET_FLAGS[@]} ; do
+	for f in "${ALL_LLVM_TARGET_FLAGS[@]}" ; do
 		echo  "
-			~llvm-core/llvm-${PV}:${LLVM_MAJOR}=[${f}=]
+			~llvm-core/llvm-${LLVM_VERSION}:${LLVM_MAJOR}=[${f}=]
 		"
 	done
 }
@@ -164,10 +164,10 @@ einfo
 einfo "To remove the hard USE mask for llvm_targets_*, do:"
 einfo
 	local t
-	for t in ${ALL_LLVM_TARGET_FLAGS[@]} ; do
+	for t in "${ALL_LLVM_TARGET_FLAGS[@]}" ; do
 echo "echo \"${CATEGORY}/${PN} -${t}\" >> ${EROOT}/etc/portage/profile/package.use.force"
 	done
-	for t in ${ALL_LLVM_EXPERIMENTAL_TARGETS[@]/#/llvm_targets_} ; do
+	for t in "${ALL_LLVM_EXPERIMENTAL_TARGETS[@]/#/llvm_targets_}" ; do
 echo "echo \"${CATEGORY}/${PN} -${t}\" >> ${EROOT}/etc/portage/profile/package.use.mask"
 	done
 einfo
