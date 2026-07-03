@@ -390,21 +390,6 @@ PATCHES=(
 #	"${FILESDIR}/${PN}-19.0.0.9999-libffi.patch"
 )
 
-kernel_pds_check() {
-	if use kernel_linux \
-		&& kernel_is -lt 4 15 \
-		&& kernel_is -ge 4 13 ; then
-		local CONFIG_CHECK="~!SCHED_PDS"
-		local ERROR_SCHED_PDS="\
-PDS scheduler versions >= 0.98c < 0.98i (e.g. used in kernels >= 4.13-pf11
-< 4.14-pf9) do not implement sched_yield() call which may result in horrible
-performance problems with libomp. If you are using one of the specified
-kernel versions, you may want to disable the PDS scheduler."
-
-		check_extra_config
-	fi
-}
-
 MULTILIB_WRAPPED_HEADERS=(
 	/usr/include/offload/OffloadPrint.hpp
 	/usr/include/offload/OffloadAPI.h
