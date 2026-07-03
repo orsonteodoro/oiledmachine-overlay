@@ -28,7 +28,7 @@ CHKL_TIMESTAMPS=(
 	"x11-libs/libX11-9999"
 )
 
-inherit chkl toolchain-funcs secure-version
+inherit chkl toolchain-funcs secure-version optfeature
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="44dbc6809d05b8f2addc483f882e670db0b6b8e9"
@@ -256,6 +256,8 @@ einfo "Alt shift j  - rotate clockwise or rotate inward"
 einfo "Alt shift k  - rotate counter-clockwise or rotate outward"
 einfo
 	fi
+	optfeature_header "Install optional packages:"
+	optfeature "App launcher and configurable clock" "x11-misc/dmenu"
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
