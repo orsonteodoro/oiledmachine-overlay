@@ -155,7 +155,7 @@ BDEPEND="
 "
 PDEPEND+="
 	llvm-core/clang-toolchain-symlinks:${LLVM_MAJOR}
-	~llvm-runtimes/clang-runtime-${LLVM_VERSION}
+	~llvm-runtimes/clang-runtime-${LLVM_VERSION}:${LLVM_MAJOR}
 "
 RESTRICT="
 	!test? (
