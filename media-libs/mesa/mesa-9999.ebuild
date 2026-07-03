@@ -242,7 +242,7 @@ RDEPEND="
 	)
 	opencl? (
 		>=virtual/opencl-3:=
-		llvm-core/libclc:=[${LIBSTDCXX_USEDEP},spirv(-),video_cards_r600?,video_cards_radeonsi?]
+		llvm-runtimes/libclc:=[${LIBSTDCXX_USEDEP},spirv(-),video_cards_r600?,video_cards_radeonsi?]
 		virtual/libelf:0=
 	)
 	unwind? (
