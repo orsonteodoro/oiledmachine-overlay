@@ -30,8 +30,12 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-inherit check-compiler-switch cmake dhms flag-o-matic git-r3 hip-versions libstdcxx-slot llvm.org multilib
-inherit multilib-minimal ninja-utils prefix python-single-r1 toolchain-funcs
+CHKL_TIMESTAMPS=(
+	"dev-libs/libxml2-9999"
+)
+
+inherit check-compiler-switch chkl cmake dhms flag-o-matic git-r3 hip-versions libstdcxx-slot llvm.org multilib
+inherit multilib-minimal ninja-utils prefix python-single-r1 secure-version toolchain-funcs
 
 #KEYWORDS="
 #~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos
@@ -126,16 +130,14 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	${PYTHON_DEPS}
-	>=llvm-core/clang-common-${PV}
+	>=llvm-core/clang-common-${PV}:=
 	static-analyzer? (
-		dev-lang/perl:*
+		>=dev-lang/perl-${PERL_PV}:=
 	)
 	xml? (
-		dev-libs/libxml2:2[${MULTILIB_USEDEP}]
-		dev-libs/libxml2:=
+		>=dev-libs/libxml2-${LIBXML2_PV}:=[${MULTILIB_USEDEP}]
 	)
-	~llvm-core/llvm-${PV}:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},debug=]
-	llvm-core/llvm:=
+	~llvm-core/llvm-${PV}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},debug=]
 "
 
 DEPEND="
@@ -145,18 +147,15 @@ BDEPEND="
 	${PYTHON_DEPS}
 	>=dev-build/cmake-3.16
 	test? (
-		~llvm-core/lld-${PV}[${LIBSTDCXX_USEDEP}]
-		llvm-core/lld:=
+		~llvm-core/lld-${PV}:=[${LIBSTDCXX_USEDEP}]
 	)
 	xml? (
-		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
+		virtual/pkgconfig[${MULTILIB_USEDEP}]
 	)
 "
 PDEPEND+="
-	llvm-core/clang-toolchain-symlinks:${LLVM_MAJOR}
-	llvm-core/clang-toolchain-symlinks:=
-	llvm-runtimes/clang-runtime:${LLVM_MAJOR}
-	llvm-runtimes/clang-runtime:=
+	llvm-core/clang-toolchain-symlinks:${LLVM_MAJOR}=
+	~llvm-runtimes/clang-runtime-${PV}:=
 "
 RESTRICT="
 	!test? (
@@ -579,7 +578,9 @@ get_distribution_components() {
 	printf "%s${sep}" "${out[@]}"
 }
 
-src_configure() { :; }
+src_configure() {
+	chkl_check_many_timestamps
+}
 
 _gcc_fullversion() {
 	gcc --version | head -n 1 | grep -o -E -e "[0-9_p.]+" | head -n 1
