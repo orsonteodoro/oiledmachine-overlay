@@ -50,19 +50,19 @@ ${LLVM_EBUILDS_LLVM22_REVISION}
 REQUIRED_USE="
 "
 RDEPEND="
-	llvm-runtimes/openmp:${LLVM_MAJOR}=[offload?]
-	llvm-core/clang:${LLVM_MAJOR}=
-	llvm-core/llvm:${LLVM_MAJOR}=
-	llvm-core/mlir:${LLVM_MAJOR}=
+	>=llvm-runtimes/openmp-${LLVM_VERSION}:${LLVM_MAJOR}=[offload?]
+	~llvm-core/clang-${LLVM_VERSION}:${LLVM_MAJOR}=
+	~llvm-core/llvm-${LLVM_VERSION}:${LLVM_MAJOR}=
+	~llvm-core/mlir-${LLVM_VERSION}:${LLVM_MAJOR}=
 "
 DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
 	test? (
-		$(python_gen_any_dep '
-			dev-python/lit[${PYTHON_USEDEP}]
-		')
+		$(python_gen_any_dep "
+			>=dev-python/lit-${LLVM_MAJOR}[\${PYTHON_USEDEP}]
+		")
 	)
 "
 RESTRICT="
