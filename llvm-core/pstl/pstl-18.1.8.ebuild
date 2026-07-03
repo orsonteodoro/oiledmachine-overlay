@@ -61,12 +61,12 @@ ebuild_revision_6
 "
 RDEPEND="
 	openmp? (
-		>=llvm-runtimes/openmp-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP}]
+		>=llvm-runtimes/openmp-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
 	${RDEPEND}
-	>=llvm-core/llvm-${LLVM_VERSION}:${LLVM_MAJOR}=
+	>=llvm-core/llvm-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 "
 BDEPEND+="
 	>=dev-build/cmake-3.20.0
@@ -74,7 +74,7 @@ BDEPEND+="
 		$(python_gen_any_dep "
 			>=dev-python/lit-${LLVM_VERSION}[\${PYTHON_USEDEP}]
 		")
-		>=llvm-core/clang-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP}]
+		>=llvm-core/clang-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	)
 "
 PATCHES=(
