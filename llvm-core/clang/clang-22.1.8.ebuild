@@ -34,7 +34,7 @@ inherit check-compiler-switch cmake dhms flag-o-matic git-r3 hip-versions libstd
 inherit multilib-minimal ninja-utils prefix python-single-r1 toolchain-funcs
 
 KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos
+amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv ~sparc x86 ~arm64-macos ~x64-macos
 "
 
 DESCRIPTION="C language family frontend for LLVM"
@@ -136,7 +136,6 @@ RDEPEND+="
 	)
 	~llvm-core/llvm-${PV}:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},debug=]
 	llvm-core/llvm:=
-	!<llvm-core/llvm-22.1.0-r2:22
 "
 
 DEPEND="
@@ -156,7 +155,7 @@ BDEPEND="
 PDEPEND+="
 	llvm-core/clang-toolchain-symlinks:${LLVM_MAJOR}
 	llvm-core/clang-toolchain-symlinks:=
-	llvm-runtimes/clang-runtime:${LLVM_MAJOR}
+	~llvm-runtimes/clang-runtime-${PV}
 	llvm-runtimes/clang-runtime:=
 "
 RESTRICT="
@@ -434,10 +433,6 @@ check_distribution_components() {
 					docs-clang-html|docs-clang-tools-html)
 						use doc || continue
 						;;
-					# built only with tests
-					c-index-test)
-						continue
-						;;
 				esac
 
 				all_targets+=( "${l}" )
@@ -495,7 +490,6 @@ get_distribution_components() {
 		ppc-htm-resource-headers
 		ppc-resource-headers
 		riscv-resource-headers
-		spirv-resource-headers
 		systemz-resource-headers
 		utility-resource-headers
 		ve-resource-headers
@@ -515,19 +509,22 @@ get_distribution_components() {
 			libclang-python-bindings
 
 			# tools
+			amdgpu-arch
+			c-index-test
 			clang
 			clang-format
 			clang-installapi
 			clang-linker-wrapper
 			clang-nvlink-wrapper
 			clang-offload-bundler
+			clang-offload-packager
 			clang-refactor
 			clang-repl
 			clang-scan-deps
 			clang-sycl-linker
 			diagtool
 			hmaptool
-			offload-arch
+			nvptx-arch
 
 			# needed for cross-compiling Clang
 			clang-tblgen
@@ -595,12 +592,6 @@ _src_configure() {
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
-	fi
-
-	# Workaround for bug #968756 (gcc PR123588)
-	if tc-is-gcc ; then
-		local major_pv=$(gcc --version 2>&1 | tr "[[:space:]]" " " | cut -f 3 -d " " | cut -f 1 -d ".")
-		[[ "${major_pv}" -eq 16 ]] && local -x CXXFLAGS="${CXXFLAGS} -fno-tree-vectorize"
 	fi
 
 	# LLVM can have very high memory consumption while linking,
@@ -701,7 +692,7 @@ einfo
 		-DCLANG_DEFAULT_PIE_ON_LINUX=$(usex pie)
 
 		-DCLANG_ENABLE_LIBXML2=$(usex xml)
-		-DCLANG_ENABLE_OBJC_REWRITER=ON
+		-DCLANG_ENABLE_ARCMT=$(usex static-analyzer)
 		-DCLANG_ENABLE_STATIC_ANALYZER=$(usex static-analyzer)
 		# TODO: CLANG_ENABLE_HLSL?
 

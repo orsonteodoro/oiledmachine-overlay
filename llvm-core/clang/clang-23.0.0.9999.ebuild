@@ -167,6 +167,7 @@ LLVM_COMPONENTS=(
 	"clang"
 	"clang-tools-extra"
 	"cmake"
+	"utils/docs"
 )
 LLVM_MANPAGES=1
 LLVM_TEST_COMPONENTS=(
@@ -553,6 +554,7 @@ get_distribution_components() {
 				modularize
 				pp-trace
 			)
+			use kernel_Darwin && out+=( ClangdXPCLib )
 		fi
 
 		if llvm_are_manpages_built; then
