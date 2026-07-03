@@ -26,7 +26,7 @@ unset -f _llvm_set_globals
 inherit bash-completion-r1 check-compiler-switch flag-o-matic elisp-common llvm.org multilib
 
 KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos
+amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv ~sparc x86 ~arm64-macos ~x64-macos
 "
 
 DESCRIPTION="Common files shared between multiple slots of clang"
