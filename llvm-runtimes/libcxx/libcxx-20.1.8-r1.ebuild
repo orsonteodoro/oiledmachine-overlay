@@ -51,7 +51,7 @@ PYTHON_COMPAT=( "python3_"{13..14} )
 inherit check-compiler-switch cflags-hardened cmake-multilib crossdev flag-o-matic libcxx-slot libstdcxx-slot llvm.org llvm-utils python-any-r1 toolchain-funcs
 
 KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos
+amd64 arm arm64 ~loong ~riscv ~sparc x86 ~arm64-macos ~x64-macos
 "
 
 SRC_URI+="
@@ -77,7 +77,7 @@ SLOT="0"
 IUSE+="
 ${LLVM_EBUILDS_LLVM20_REVISION}
 clang +libcxxabi +static-libs test +threads
-ebuild_revision_19
+ebuild_revision_21
 "
 RDEPEND="
 	!libcxxabi? (
@@ -277,6 +277,13 @@ einfo "Detected compiler switch.  Disabling LTO."
 		)
 	fi
 
+	if ! has_version -b sys-devel/gcc; then
+	# Since this package is merged before llvm-runtimes/clang-stdlib-config,
+	# clang will attempt to use libstdc++ for the C++ compiler check, and will
+	# fail if it is missing.
+		mycmakeargs+=( -DCMAKE_CXX_COMPILER_WORKS=1 )
+	fi
+
 	if is_crosspkg ; then
 	# Needed to target built libc headers
 		local -x CFLAGS="${CFLAGS} -isystem ${ESYSROOT}/usr/${CTARGET}/usr/include"
@@ -289,6 +296,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/${CTARGET}/usr"
 		)
 	fi
+
 	if use test; then
 		local clang_path=$(type -P "${CHOST:+${CHOST}-}clang" 2>/dev/null)
 		[[ -n "${clang_path}" ]] || die "Unable to find ${CHOST}-clang for tests"
@@ -389,7 +397,7 @@ src_install() {
 	# Since we've replaced libc++.{a,so} with ldscripts, we have to
 	# install the extra symlinks.
 			if [[ "${CHOST}" != *"-darwin"* ]] ; then
-				is_crosspkg && into "/usr/${CTARGET}"
+				is_crosspkg && into "/usr/${CTARGET}/usr"
 				dolib.so "lib/libc++_shared.so"
 				use static-libs && dolib.a "lib/libc++_static.a"
 			fi

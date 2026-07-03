@@ -76,7 +76,7 @@ SLOT="0"
 IUSE+="
 ${LLVM_EBUILDS_LLVM19_REVISION}
 clang +libcxxabi +static-libs test +threads
-ebuild_revision_19
+ebuild_revision_21
 "
 RDEPEND="
 	!libcxxabi? (
@@ -249,6 +249,18 @@ einfo "Detected compiler switch.  Disabling LTO."
 		)
 	fi
 
+	if is_crosspkg; then
+		# Needed to target built libc headers
+		local -x CFLAGS="${CFLAGS} -isystem ${ESYSROOT}/usr/${CTARGET}/usr/include"
+		mycmakeargs+=(
+			# Without this, the compiler will compile a test program
+			# and fail due to no builtins.
+			-DCMAKE_C_COMPILER_WORKS=1
+			-DCMAKE_CXX_COMPILER_WORKS=1
+			# Install inside the cross sysroot.
+			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/${CTARGET}/usr"
+		)
+	fi
 	if use test ; then
 		local clang_path=$(type -P "${CHOST:+${CHOST}-}clang" 2>/dev/null)
 		[[ -n "${clang_path}" ]] || die "Unable to find ${CHOST}-clang for tests"
@@ -344,6 +356,7 @@ src_install() {
 	# Since we've replaced libc++.{a,so} with ldscripts, we have to
 	# install the extra symlinks.
 			if [[ "${CHOST}" != *"-darwin"* ]] ; then
+				is_crosspkg && into "/usr/${CTARGET}/usr"
 				dolib.so "lib/libc++_shared.so"
 				use static-libs && dolib.a "lib/libc++_static.a"
 			fi

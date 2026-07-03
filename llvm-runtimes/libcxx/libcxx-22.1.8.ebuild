@@ -51,7 +51,7 @@ PYTHON_COMPAT=( "python3_"{13..14} )
 inherit check-compiler-switch cflags-hardened cmake-multilib crossdev flag-o-matic libcxx-slot libstdcxx-slot llvm.org llvm-utils python-any-r1 toolchain-funcs
 
 KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos
+amd64 arm arm64 ~loong ~riscv ~sparc x86 ~arm64-macos ~x64-macos
 "
 
 SRC_URI+="
@@ -77,7 +77,7 @@ SLOT="0"
 IUSE+="
 ${LLVM_EBUILDS_LLVM22_REVISION}
 clang +libcxxabi +static-libs test +threads
-ebuild_revision_19
+ebuild_revision_21
 "
 RDEPEND="
 	!libcxxabi? (
@@ -405,7 +405,7 @@ src_install() {
 	# install the extra symlinks.
 			if [[ "${CHOST}" != *"-darwin"* ]] ; then
 				local libdir=$(get_libdir)
-				is_crosspkg && into "/usr/${CTARGET}"
+				is_crosspkg && into "/usr/${CTARGET}/usr"
 				dolib.so "${libdir}/libc++_shared.so"
 				use static-libs && dolib.a "${libdir}/libc++_static.a"
 			fi

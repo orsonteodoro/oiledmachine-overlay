@@ -38,7 +38,7 @@ LLVM_COMPONENTS=(
 	"runtimes"
 	"libcxx"{"","abi"}
 	"libc"
-	"llvm/"{"cmake","utils/llvm-lit"}
+	"llvm/"{"cmake","utils"}
 	"cmake"
 )
 
@@ -77,7 +77,7 @@ SLOT="0"
 IUSE+="
 ${LLVM_EBUILDS_LLVM23_REVISION}
 clang +libcxxabi +static-libs test +threads
-ebuild_revision_19
+ebuild_revision_21
 "
 RDEPEND="
 	!libcxxabi? (
@@ -326,8 +326,6 @@ src_test() {
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			local -x LIT_PRESERVES_TMP=1
-	# https://github.com/llvm/llvm-project/issues/153940
-			local -x LIT_XFAIL="libcxx/gdb/gdb_pretty_printer_test.sh.cpp"
 			cmake_build "libcxx-test-suite-install-cxx"
 			if [[ "${CHOST}" != *"-darwin"* ]] ; then
 				local libdir=$(get_libdir)
@@ -396,7 +394,7 @@ src_install() {
 	# install the extra symlinks.
 			if [[ "${CHOST}" != *"-darwin"* ]] ; then
 				local libdir=$(get_libdir)
-				is_crosspkg && into "/usr/${CTARGET}"
+				is_crosspkg && into "/usr/${CTARGET}/usr"
 				dolib.so "${libdir}/libc++_shared.so"
 				use static-libs && dolib.a "${libdir}/libc++_static.a"
 			fi

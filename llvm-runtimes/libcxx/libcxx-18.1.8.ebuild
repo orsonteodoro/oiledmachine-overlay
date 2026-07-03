@@ -73,7 +73,7 @@ SLOT="0"
 IUSE+="
 ${LLVM_EBUILDS_LLVM18_REVISION}
 clang +libcxxabi +static-libs test +threads
-ebuild_revision_19
+ebuild_revision_21
 "
 RDEPEND="
 	!libcxxabi? (

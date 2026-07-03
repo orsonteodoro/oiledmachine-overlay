@@ -77,7 +77,7 @@ SLOT="0"
 IUSE+="
 ${LLVM_EBUILDS_LLVM21_REVISION}
 clang +libcxxabi +static-libs test +threads
-ebuild_revision_19
+ebuild_revision_21
 "
 RDEPEND="
 	!libcxxabi? (
@@ -389,7 +389,7 @@ src_install() {
 	# Since we've replaced libc++.{a,so} with ldscripts, we have to
 	# install the extra symlinks.
 			if [[ "${CHOST}" != *"-darwin"* ]] ; then
-				is_crosspkg && into "/usr/${CTARGET}"
+				is_crosspkg && into "/usr/${CTARGET}/usr"
 				dolib.so "lib/libc++_shared.so"
 				use static-libs && dolib.a "lib/libc++_static.a"
 			fi
