@@ -145,7 +145,7 @@ gen_rdepend() {
 	local f
 	for f in "${ALL_LLVM_TARGET_FLAGS[@]}" ; do
 		echo  "
-			~llvm-core/llvm-${LLVM_VERSION}:${LLVM_MAJOR}=[${f}=]
+			~llvm-core/llvm-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP},${f}=]
 		"
 	done
 }
