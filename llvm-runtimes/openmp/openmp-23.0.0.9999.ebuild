@@ -370,8 +370,8 @@ BDEPEND="
 		$(python_gen_cond_dep "
 			>=dev-python/lit-${LLVM_VERSION}[\${PYTHON_USEDEP}]
 		")
-		~llvm-core/clang-${LLVM_VERSION}:${LLVM_MAJOR}=
-		~llvm-core/llvm-${LLVM_VERSION}:${LLVM_MAJOR}=
+		~llvm-core/clang-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		~llvm-core/llvm-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	)
 "
 LLVM_COMPONENTS=(
