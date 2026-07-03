@@ -27,7 +27,7 @@ _llvm_set_globals
 unset -f _llvm_set_globals
 
 CXX_STANDARD=17
-LLVM_SLOT="${PV%%.*}"
+LLVM_MAJOR="${PV%%.*}"
 PYTHON_COMPAT=( "python3_"{12..14} )
 
 inherit flag-o-matic cmake-multilib linux-info libstdcxx-slot llvm llvm.org
@@ -55,14 +55,14 @@ ${LLVM_EBUILDS_LLVM17_REVISION}
 REQUIRED_USE="
 "
 RDEPEND="
-	~llvm-core/clang-${LLVM_VERSION}:${LLVM_SLOT}=[${LIBSTDCXX_USEDEP}]
-	~llvm-core/llvm-${LLVM_VERSION}:${LLVM_SLOT}=[${LIBSTDCXX_USEDEP}]
+	~llvm-core/clang-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP}]
+	~llvm-core/llvm-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	~llvm-core/clang-${LLVM_VERSION}:${LLVM_SLOT}=[${LIBSTDCXX_USEDEP}]
+	~llvm-core/clang-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP}]
 "
 RESTRICT="
 "
@@ -82,7 +82,7 @@ python_check_deps() {
 
 pkg_setup() {
 	python-single-r1_pkg_setup
-	LLVM_MAX_SLOT="${LLVM_SLOT}"
+	LLVM_MAX_SLOT="${LLVM_MAJOR}"
 	llvm_pkg_setup
 	libstdcxx-slot_verify
 }
@@ -93,13 +93,13 @@ src_prepare() {
 
 multilib_src_configure() {
 	# Disallow newer clangs versions when producing .o files.
-	einfo "LLVM_SLOT=${LLVM_SLOT}"
+	einfo "LLVM_MAJOR=${LLVM_MAJOR}"
 	einfo "PATH=${PATH} (before)"
 	export PATH=$(echo "${PATH}" \
 		| tr ":" "\n" \
 		| sed -E -e "/llvm\/[0-9]+/d" \
 		| tr "\n" ":" \
-		| sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${LLVM_SLOT}/bin|g")
+		| sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${LLVM_MAJOR}/bin|g")
 	einfo "PATH=${PATH} (after)"
 
 	if ! [[ -e "/usr/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/libLLVMCodeGenTypes.a" ]] ; then
