@@ -29,8 +29,7 @@ inherit check-compiler-switch cmake-multilib crossdev flag-o-matic llvm.org llvm
 inherit toolchain-funcs
 
 KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~arm64-macos
-~x64-macos
+amd64 arm arm64 ~loong ~mips ~ppc ppc64 ~riscv ~sparc x86 ~arm64-macos ~x64-macos
 "
 
 DESCRIPTION="C++ runtime stack unwinder from LLVM"
@@ -46,7 +45,7 @@ SLOT="0"
 IUSE+="
 ${LLVM_EBUILDS_LLVM20_REVISION}
 +clang debug static-libs test
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE="
 	test? (
@@ -117,6 +116,12 @@ multilib_src_configure() {
 	# https://github.com/llvm/llvm-project/issues/56825
 	# also separately bug #863917
 	filter-lto
+
+	# Workaround for bgo #961153.
+	# TODO: Fix the multilib.eclass, so it sets CTARGET properly.
+	if ! is_crosspkg; then
+		export CTARGET="${CHOST}"
+	fi
 
 	if use clang ; then
 		local -x CC="${CTARGET}-clang-${LLVM_MAJOR}"

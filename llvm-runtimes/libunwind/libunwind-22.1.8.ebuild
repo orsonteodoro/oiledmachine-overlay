@@ -29,7 +29,7 @@ inherit check-compiler-switch cmake-multilib crossdev flag-o-matic llvm.org llvm
 inherit toolchain-funcs
 
 KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos
+amd64 arm arm64 ~loong ~mips ~ppc ppc64 ~riscv ~sparc x86 ~arm64-macos ~x64-macos
 "
 
 DESCRIPTION="C++ runtime stack unwinder from LLVM"
