@@ -1,5 +1,5 @@
 # Copyright 2022-2025 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -51,7 +51,7 @@ IUSE+="
 ${LLVM_EBUILDS_LLVM19_REVISION}
 +abi_x86_32 abi_x86_64 +clang +ctx-profile debug hexagon +libfuzzer +memprof
 +orc +profile test +xray
-ebuild_revision_16
+ebuild_revision_18
 "
 # sanitizer targets, keep in sync with config-ix.cmake
 # NB: ubsan, scudo deliberately match two entries
@@ -348,7 +348,7 @@ LLVM_COMPONENTS=(
 	"cmake"
 	"llvm/cmake"
 )
-LLVM_PATCHSET="${PV}-r1"
+LLVM_PATCHSET="${PV}-r3"
 LLVM_TEST_COMPONENTS=(
 	"llvm/include/llvm/ProfileData"
 	"llvm/lib/Testing/Support"

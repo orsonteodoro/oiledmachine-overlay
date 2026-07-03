@@ -1,5 +1,5 @@
 # Copyright 2022-2025 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -51,7 +51,7 @@ IUSE+="
 ${LLVM_EBUILDS_LLVM17_REVISION}
 +abi_x86_32 abi_x86_64 +clang +debug hexagon +libfuzzer +memprof +orc +profile
 test +xray
-ebuild_revision_15
+ebuild_revision_18
 "
 # sanitizer targets, keep in sync with config-ix.cmake
 # NB: ubsan, scudo deliberately match two entries
@@ -319,12 +319,9 @@ BDEPEND="
 		net-libs/libtirpc
 	)
 	test? (
-		!!<sys-apps/sandbox-2.13
 		$(python_gen_any_dep "
 			>=dev-python/lit-15[\${PYTHON_USEDEP}]
 		")
-		=llvm-runtimes/compiler-rt-${LLVM_VERSION%%.*}*[${LIBSTDCXX_USEDEP}]
-		llvm-runtimes/compiler-rt:=
 		~llvm-core/clang-${LLVM_VERSION}:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP}]
 		llvm-core/clang:=
 	)
@@ -348,7 +345,7 @@ LLVM_COMPONENTS=(
 	"cmake"
 	"llvm/cmake"
 )
-LLVM_PATCHSET="${PV}-r4"
+LLVM_PATCHSET="${PV}-r5"
 LLVM_TEST_COMPONENTS=(
 	"llvm/lib/Testing/Support"
 	"third-party"
@@ -400,6 +397,9 @@ pkg_setup() {
 src_prepare() {
 	sed -i -e 's:-Werror::' lib/tsan/go/buildgo.sh || die
 
+	# builds freestanding code
+	filter-flags -fstack-protector*
+
 	local flag
 	for flag in "${SANITIZER_FLAGS[@]}"; do
 		if ! use "${flag}"; then
@@ -415,6 +415,9 @@ src_prepare() {
 		"cmake/config-ix.cmake" \
 		|| die
 
+	# bug #926330
+	sed -i -e '/-Wthread-safety/d' CMakeLists.txt cmake/config-ix.cmake || die
+
 	# TODO: fix these tests to be skipped upstream
 	if use asan && ! use profile; then
 		rm test/asan/TestCases/asan_and_llvm_coverage_test.cpp || die
@@ -423,8 +426,19 @@ src_prepare() {
 		> test/cfi/CMakeLists.txt || die
 	fi
 
-
 	if has_version ">=sys-libs/glibc-2.40" ; then
+		# https://github.com/llvm/llvm-project/issues/100877
+		rm "test/asan/TestCases/Linux/printf-fortify-5.c" || die
+	fi
+
+	if has_version -b ">=sys-libs/glibc-2.38"; then
+		# On glibc 2.38, the "nohang" test fails by... hanging.
+		# "fixed" in llvm 19.
+		# https://github.com/google/sanitizers/issues/1733
+		# https://github.com/llvm/llvm-project/commit/deebf6b312227e028dd3258b162306b9cdb21cf7
+		rm "test/tsan/getline_nohang.cpp" || die
+	fi
+	if has_version ">=sys-libs/glibc-2.40"; then
 		# https://github.com/llvm/llvm-project/issues/100877
 		rm "test/asan/TestCases/Linux/printf-fortify-5.c" || die
 	fi

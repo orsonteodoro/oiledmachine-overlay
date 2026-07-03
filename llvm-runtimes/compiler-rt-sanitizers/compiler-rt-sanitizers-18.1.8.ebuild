@@ -1,5 +1,5 @@
 # Copyright 2022-2025 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -34,7 +34,7 @@ inherit check-compiler-switch check-reqs cmake flag-o-matic flag-o-matic-om libs
 
 LLVM_MAX_SLOT=${LLVM_MAJOR}
 KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv ~x86 ~amd64-linux ~ppc-macos ~x64-macos
+amd64 arm arm64 ~loong ~mips ppc64 ~riscv x86 ~x64-macos
 "
 
 DESCRIPTION="Compiler runtime libraries for clang (sanitizers & xray)"
@@ -51,7 +51,7 @@ IUSE+="
 ${LLVM_EBUILDS_LLVM18_REVISION}
 +abi_x86_32 abi_x86_64 +clang +debug hexagon +libfuzzer +memprof +orc +profile
 test +xray
-ebuild_revision_16
+ebuild_revision_18
 "
 # sanitizer targets, keep in sync with config-ix.cmake
 # NB: ubsan, scudo deliberately match two entries
@@ -348,7 +348,7 @@ LLVM_COMPONENTS=(
 	"cmake"
 	"llvm/cmake"
 )
-LLVM_PATCHSET="${PV}-r7"
+LLVM_PATCHSET="${PV}-r8"
 LLVM_TEST_COMPONENTS=(
 	"llvm/lib/Testing/Support"
 	"third-party"
@@ -396,6 +396,9 @@ pkg_setup() {
 src_prepare() {
 	sed -i -e 's:-Werror::' lib/tsan/go/buildgo.sh || die
 
+	# builds freestanding code
+	filter-flags -fstack-protector*
+
 	local flag
 	for flag in "${SANITIZER_FLAGS[@]}"; do
 		if ! use "${flag}"; then
@@ -407,10 +410,18 @@ src_prepare() {
 
 	# TODO: fix these tests to be skipped upstream
 	if use asan && ! use profile; then
-		rm test/asan/TestCases/asan_and_llvm_coverage_test.cpp || die
+		rm "test/asan/TestCases/asan_and_llvm_coverage_test.cpp" || die
 	fi
 	if use ubsan && ! use cfi; then
-		> test/cfi/CMakeLists.txt || die
+		> "test/cfi/CMakeLists.txt" || die
+	fi
+
+	if has_version -b ">=sys-libs/glibc-2.38"; then
+		# On glibc 2.38, the "nohang" test fails by... hanging.
+		# "fixed" in llvm 19.
+		# https://github.com/google/sanitizers/issues/1733
+		# https://github.com/llvm/llvm-project/commit/deebf6b312227e028dd3258b162306b9cdb21cf7
+		rm "test/tsan/getline_nohang.cpp" || die
 	fi
 
 	llvm.org_src_prepare

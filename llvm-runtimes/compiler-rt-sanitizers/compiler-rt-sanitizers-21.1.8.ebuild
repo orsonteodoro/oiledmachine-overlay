@@ -1,5 +1,5 @@
 # Copyright 2022-2025 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -34,8 +34,7 @@ inherit check-compiler-switch check-reqs cmake flag-o-matic flag-o-matic-om libs
 
 LLVM_MAX_SLOT=${LLVM_MAJOR}
 KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~mips ~ppc64 ~riscv ~x86 ~amd64-linux ~ppc-macos
-~x64-macos
+amd64 arm arm64 ~loong ~mips ppc64 ~riscv x86 ~x64-macos
 "
 
 DESCRIPTION="Compiler runtime libraries for clang (sanitizers & xray)"
@@ -52,7 +51,7 @@ IUSE+="
 ${LLVM_EBUILDS_LLVM21_REVISION}
 +abi_x86_32 abi_x86_64 +clang +ctx-profile debug hexagon +libfuzzer +memprof
 +orc +profile test +xray
-ebuild_revision_15
+ebuild_revision_18
 "
 # sanitizer targets, keep in sync with config-ix.cmake
 # NB: ubsan, scudo deliberately match two entries
@@ -362,6 +361,7 @@ LLVM_TEST_COMPONENTS=(
 	"llvm/lib/Testing/Support"
 	"third-party"
 )
+LLVM_PATCHSET="${PV}"
 llvm.org_set_globals
 
 python_check_deps() {
@@ -541,11 +541,9 @@ einfo "Detected compiler switch.  Disabling LTO."
 	cmake_src_configure
 
 	if use test; then
-		local sys_dest=( "${BUILD_DIR}/lib/clang/${LLVM_MAJOR}/lib/"* )
-		[[ ! -e "${sys_dest}" ]] && die "Unable to find ${sys_dest}"
-		[[ "${#sys_dest[@]}" -ne 1 ]] && die "Non-deterministic compiler-rt install: ${sys_dest[*]}"
-		local sys_dir=( "${EPREFIX}/usr/lib/clang/${LLVM_MAJOR}/lib/${sys_dest##*/}" )
-		[[ ! -e "${sys_dir}" ]] && die "${sys_dir} is missing"
+		local sys_dir=( "${EPREFIX}/usr/lib/clang/${LLVM_MAJOR}/lib/"* )
+		[[ -e "${sys_dir}" ]] || die "Unable to find ${sys_dir}"
+		[[ "${#sys_dir[@]}" -eq 1 ]] || die "Non-deterministic compiler-rt install: ${sys_dir[*]}"
 
 		# copy clang over since resource_dir is located relatively to binary
 		# therefore, we can put our new libraries in it
@@ -554,7 +552,10 @@ einfo "Detected compiler switch.  Disabling LTO."
 			"${BUILD_DIR}/lib/llvm/${LLVM_MAJOR}/bin/" || die
 		cp "${EPREFIX}/usr/lib/clang/${LLVM_MAJOR}/include/"*".h" \
 			"${BUILD_DIR}/lib/clang/${LLVM_MAJOR}/include/" || die
-		cp "${sys_dir}/"*"builtins"*".a" "${sys_dest}/" || die
+
+		cp "${sys_dir}/"*"builtins"*".a" \
+			"${BUILD_DIR}/lib/clang/${LLVM_MAJOR}/lib/${sys_dir##*/}/" || die
+
 		# we also need LLVMgold.so for gold-based tests
 		if [[ -f "${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/LLVMgold.so" ]]; then
 			ln -s "${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/LLVMgold.so" \

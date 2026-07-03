@@ -1,5 +1,5 @@
 # Copyright 2022-2025 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -34,7 +34,7 @@ inherit check-compiler-switch check-reqs cmake flag-o-matic flag-o-matic-om libs
 
 LLVM_MAX_SLOT=${LLVM_MAJOR}
 KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~mips ~ppc64 ~riscv ~x86 ~x64-macos
+amd64 arm arm64 ~loong ~mips ppc64 ~riscv x86 ~x64-macos
 "
 
 DESCRIPTION="Compiler runtime libraries for clang (sanitizers & xray)"
@@ -51,7 +51,7 @@ IUSE+="
 ${LLVM_EBUILDS_LLVM22_REVISION}
 +abi_x86_32 abi_x86_64 +clang +ctx-profile debug hexagon +libfuzzer +memprof
 +orc +profile test +xray
-ebuild_revision_15
+ebuild_revision_18
 "
 # sanitizer targets, keep in sync with config-ix.cmake
 # NB: ubsan, scudo deliberately match two entries
@@ -361,6 +361,7 @@ LLVM_TEST_COMPONENTS=(
 	"llvm/lib/Testing/Support"
 	"third-party"
 )
+LLVM_PATCHSET="22.1.7"
 llvm.org_set_globals
 
 python_check_deps() {
