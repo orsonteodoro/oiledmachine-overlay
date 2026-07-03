@@ -380,7 +380,7 @@ inherit cargo cflags-hardened chkl cmake eapi9-ver flag-o-matic lcnr llvm optfea
 inherit python-any-r1 rustflags-hardened sandbox-changes secure-version systemd tmpfiles toolchain-funcs vf
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="5ecb5b0732a13f0afe65899227947a16d0f2c99e"
+	FALLBACK_COMMIT="67a02aa2352c5628d261cca97244bac6ba9ab461"
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/clamav-${MY_P}"
 	EGIT_REPO_URI="https://github.com/Cisco-Talos/clamav.git"
@@ -473,7 +473,7 @@ SLOT="0/live" # sts or lts or live
 IUSE+="
 doc clamonacc +clamapp custom-cflags experimental jit libclamav-only man milter rar
 selinux +system-mspack systemd test valgrind
-ebuild_revision_51
+ebuild_revision_52
 "
 REQUIRED_USE="
 	clamonacc? (
