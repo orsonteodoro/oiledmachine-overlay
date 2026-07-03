@@ -303,27 +303,23 @@ RDEPEND="
 	llvm-runtimes/compiler-rt-sanitizers-logging
 "
 DEPEND="
-	llvm-core/llvm:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP}]
-	llvm-core/llvm:=
-	virtual/libcrypt[abi_x86_32(-)?,abi_x86_64(-)?]
+	llvm-core/llvm:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP}]
+	virtual/libcrypt:=[abi_x86_32(-)?,abi_x86_64(-)?]
 "
 BDEPEND="
 	>=dev-build/cmake-3.16
 	clang? (
-		llvm-core/clang:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP}]
-		llvm-core/clang:=
-		llvm-runtimes/compiler-rt:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP}]
-		llvm-runtimes/compiler-rt:=
+		llvm-core/clang:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP}]
+		llvm-runtimes/compiler-rt:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP}]
 	)
 	elibc_glibc? (
 		net-libs/libtirpc
 	)
 	test? (
 		$(python_gen_any_dep "
-			>=dev-python/lit-15[\${PYTHON_USEDEP}]
+			>=dev-python/lit-${LLVM_MAJOR}[\${PYTHON_USEDEP}]
 		")
-		~llvm-core/clang-${LLVM_VERSION}:${LLVM_MAJOR}[${LIBSTDCXX_USEDEP}]
-		llvm-core/clang:=
+		~llvm-core/clang-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP}]
 	)
 	!test? (
 		${PYTHON_DEPS}
