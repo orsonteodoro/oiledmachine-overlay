@@ -38,6 +38,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/libxml2-9999"
 	"net-misc/curl-9999"
 	"sys-devel/binutils-9999"
+	"sys-libs/binutils-libs-9999"
 )
 
 inherit check-compiler-switch chkl cmake dhms libstdcxx-slot llvm.org multilib-minimal pax-utils python-any-r1 secure-version toolchain-funcs
