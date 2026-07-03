@@ -18,7 +18,17 @@ SHA512_ROTATESTACK="\
 c0bc9f1bf399ba16d53f92193e5d990a75a9ef73d7820ef9c72b639205575f10\
 "
 
-inherit toolchain-funcs
+MODS_LIST=(
+	"mod_fibonacci"
+	"mod_rotatestack"
+	"mod_sizehintsoff"
+)
+
+CHKL_TIMESTAMPS=(
+	"x11-libs/libX11-9999"
+)
+
+inherit chkl toolchain-funcs secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="44dbc6809d05b8f2addc483f882e670db0b6b8e9"
@@ -55,26 +65,24 @@ LICENSE="
 	)
 "
 IUSE+="
-	mod_fibonacci
-	mod_rotatestack
-	mod_sizehintsoff
-	savedconfig
-	xinerama
+${MODS_LIST[@]}
+savedconfig xinerama
+ebuild_revision_1
 "
 RESTRICT="fetch"
 SLOT="0"
 RDEPEND="
-	>=x11-libs/libXft-2.3.5
-	media-libs/fontconfig
-	x11-libs/libX11
+	>=x11-libs/libXft-${LIBXFT_PV}:=
+	>=media-libs/fontconfig-${FONTCONFIG_PV}:=
+	>=x11-libs/libX11-${LIBX11_PV}:=
 	xinerama? (
-		x11-libs/libXinerama
+		>=x11-libs/libXinerama-${LIBXINERAMA_PV}:=
 	)
 "
 DEPEND="
 	${RDEPEND}
 	xinerama? (
-		x11-base/xorg-proto
+		x11-base/xorg-proto:=
 	)
 "
 
@@ -185,6 +193,10 @@ eerror "See https://git.suckless.org/dwm/file/config.def.h.html for details"
 			"config.h" \
 			|| die
 	fi
+}
+
+src_configure() {
+	chkl_check_many_timestamps
 }
 
 src_compile() {
