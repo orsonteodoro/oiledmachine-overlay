@@ -178,3 +178,6 @@ app-alternatives/sh lksh mksh
 
 # Repo of dependency has not been updated since 2015 which hasn't had a security review.
 app-alternatives/bzip2 pbzip2
+
+# Dependency has not made a release since 2009
+media-sound/pulseaudio-daemon asyncns
