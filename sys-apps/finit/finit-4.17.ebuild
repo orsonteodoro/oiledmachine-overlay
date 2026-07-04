@@ -6,7 +6,16 @@ EAPI=8
 
 # U22, U24
 
-inherit autotools flag-o-matic
+CHKL_TIMESTAMPS=(
+	"app-shells/dash-9999"
+	"sys-apps/busybox-9999"
+	"sys-apps/dbus-9999"
+	"sys-apps/kmod-9999"
+	"sys-apps/util-linux-9999"
+	"sys-process/procps-9999"
+)
+
+inherit autotools chkl flag-o-matic secure-version
 
 S="${WORKDIR}/${P}"
 SRC_URI="
@@ -67,43 +76,41 @@ INIT_SYSTEMS_DEPENDS="
 "
 # sys-apps/util-linux - for getty.conf contrib, swapoff
 # sys-apps/kbd - for keymap.conf in contrib
-LIBITE_PV="2.2.0"
-LIBUEV_PV="2.2.0"
 RDEPEND+="
 	${INIT_SYSTEMS_DEPENDS}
-	>=dev-libs/libite-${LIBITE_PV}
-	>=dev-libs/libuev-${LIBUEV_PV}
-	app-alternatives/sh
-	sys-apps/kbd
-	sys-apps/shadow
-	sys-apps/util-linux
-	sys-process/procps
-	sys-apps/finit-d
+	>=dev-libs/libite-${LIBITE_PV}:=
+	>=dev-libs/libuev-${LIBUEV_PV}:=
+	app-alternatives/sh:*
+	>=sys-apps/kbd-${KBD_PV}:=
+	>=sys-apps/shadow-${SHADOW_PV}:=
+	>=sys-apps/util-linux-${UTIL_LINUX_PV}:=
+	>=sys-process/procps-${PROCPS_PV}:=
+	sys-apps/finit-d:*
 	alsa? (
-		media-sound/alsa-utils
+		>=media-sound/alsa-utils-${ALSA_UTILS_PV}:=
 	)
 	bash-completion? (
-		>=app-shells/bash-completion-2.0
+		>=app-shells/bash-completion-2.0:=
 	)
 	dash? (
-		app-shells/dash[libedit]
+		>=app-shells/dash-${DASH_PV}:=[libedit]
 	)
 	dbus? (
-		sys-apps/dbus
+		>=sys-apps/dbus-${DBUS_PV}:=
 	)
 	mdev? (
-		sys-apps/busybox[mdev]
+		>=sys-apps/busybox-${BUSYBOX_PV}:=[mdev]
 	)
 	modules-load? (
-		sys-apps/kmod
+		>=sys-apps/kmod-${KMOD_PV}:=
 	)
 	udev? (
-		sys-apps/systemd-utils[udev]
+		sys-apps/systemd-utils:=[udev]
 	)
 "
 DEPEND+="
 	${RDEPEND}
-	sys-kernel/linux-headers
+	sys-kernel/linux-headers:=
 "
 BDEPEND+="
 	>=dev-build/autoconf-2.71
@@ -116,7 +123,7 @@ BDEPEND+="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-4.12-override-bshell.patch"
+	"${FILESDIR}/${PN}-4.17-override-bshell.patch"
 )
 
 pkg_setup() {
@@ -155,6 +162,8 @@ einfo "Using /bin/sh as the default init shell."
 }
 
 src_configure() {
+	chkl_check_many_timestamps
+
 	eautoreconf
 
 	replace-flags '-O*' '-O3'
