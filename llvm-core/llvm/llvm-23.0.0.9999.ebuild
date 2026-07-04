@@ -191,6 +191,7 @@ LLVM_COMPONENTS=(
 	"llvm"
 	"bolt"
 	"cmake"
+	"libc"
 	"third-party"
 	"utils/docs"
 )

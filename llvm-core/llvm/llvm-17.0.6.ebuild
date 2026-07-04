@@ -205,11 +205,9 @@ PATCHES=(
 )
 LLVM_COMPONENTS=(
 	"llvm"
-	"libc"
 	"bolt"
 	"cmake"
 	"third-party"
-	"utils/docs"
 )
 LLVM_MANPAGES=1
 LLVM_PATCHSET="${PV}-r4"
