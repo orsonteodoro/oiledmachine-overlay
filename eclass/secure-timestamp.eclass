@@ -333,8 +333,11 @@ SECURE_TIMESTAMP["sys_libs_libselinux_9999"]="Jun 10, 2026 7:43 AM PDT"
 SECURE_TIMESTAMP["sys_libs_libunwind_9999"]="Jun 19, 2026 9:44 AM PDT"
 
 # Tracks AMD µcode security annoucements
-# 2025-07-29 - AMD-SB-3023, AMD-SB-3023, AMD-SB-3027
-SECURE_TIMESTAMP["sys_kernel_linux_firmware_99999999"]="2025-07-29 10:21:29 -0500"
+# Repo date fix - Advisories
+# 2025-07-29 - AMD-SB-3023, AMD-SB-3023, AMD-SB-3027 for ucode update (for fixing CPU bugs on consumer or enterprise)
+# 2021-09-12 to 2025-12-23 - AMD-SB-3023 for SEV update (for protecting guests VM on enterprise/cloud CPUs)
+# The AI recommends latest SEV FW build to mitigate CacheWarp.
+SECURE_TIMESTAMP["sys_kernel_linux_firmware_99999999"]="2026-06-24 11:52:55 -0500"
 
 SECURE_TIMESTAMP["sys_process_procps_9999"]="Mar 26, 2026 4:03:17 AM PDT"
 SECURE_TIMESTAMP["x11_base_xorg_server_9999"]="2026-06-08 02:12:00 +0000"
