@@ -521,7 +521,7 @@ secure-version_gen_openssl_depends() {
 		"3.5"
 		"3.4"
 		# EOL 3.3 is EOL
-		"3.3"
+		"3.0"
 	)
 	local x
 	for x in "${L[@]}" ; do
