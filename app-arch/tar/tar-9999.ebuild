@@ -87,6 +87,15 @@ src_unpack() {
 	fi
 }
 
+src_prepare() {
+	default
+	if [[ -n "${EVCS_OFFLINE}" ]] && use nls ; then
+eerror "The nls USE flag must be disabled for EVCS_OFFLINE=1 to work properly."
+		die
+	fi
+	./bootstrap $(usex nls "" "--skip-po") || die
+}
+
 src_configure() {
 	cflags-hardened_append
 	# -fanalyzer doesn't make sense for us in ebuilds, as it's for static analysis
