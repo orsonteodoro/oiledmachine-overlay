@@ -20,7 +20,7 @@ CHKL_TIMESTAMPS=(
 inherit cflags-hardened chkl cmake-multilib secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="db0d10736af3229888e377819a36dd3a75f29314"
+	FALLBACK_COMMIT="3b8d6dd246345adac7029ff8676c04ceef535057"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/libssh2/libssh2"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -39,7 +39,7 @@ SLOT="0"
 KEYWORDS=""
 IUSE+="
 gcrypt mbedtls test zlib
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="?? ( gcrypt mbedtls )"
 RESTRICT="!test? ( test )"
