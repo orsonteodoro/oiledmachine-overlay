@@ -97,6 +97,10 @@ src_unpack() {
 src_prepare() {
 	default
 
+	if [[ -n "${EVCS_OFFLINE}" ]] && use nls ; then
+eerror "The nls USE flag must be disabled for EVCS_OFFLINE=1 to work properly for ${CATEGORY}/${P}."
+		die
+	fi
 	local bootstrap_opts=(
 		--gnulib-srcdir="${S}/gnulib"
 		--no-bootstrap-sync

@@ -18,7 +18,7 @@ CHKL_TIMESTAMPS=(
 	"app-arch/xz-utils-9999"
 )
 
-inherit autotools cflags-hardened check-compiler-switch chkl flag-o-matic python-any-r1 sandbox-changes secure-version toolchain-funcs unpacker verify-sig
+inherit autotools cflags-hardened check-compiler-switch chkl flag-o-matic python-any-r1 secure-version toolchain-funcs unpacker verify-sig
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="f76978a51ba9365e7ecaed96c1cfb73197a38ca2"
@@ -133,9 +133,6 @@ DOCS=( "AUTHORS" "MAILING-LIST" "NEWS" "README" )
 pkg_setup() {
 	check-compiler-switch_start
 	python-any-r1_pkg_setup
-	if use nls ; then
-		sandbox-changes_no_network_sandbox "To download translations"
-	fi
 }
 
 src_unpack() {
@@ -171,9 +168,11 @@ src_unpack() {
 
 src_prepare() {
 	default
-	./bootstrap \
-		$(usex nls "" "--skip-po") \
-		|| die
+	if [[ -n "${EVCS_OFFLINE}" ]] && use nls ; then
+eerror "The nls USE flag must be disabled for EVCS_OFFLINE=1 to work properly for ${CATEGORY}/${P}."
+		die
+	fi
+	./bootstrap $(usex nls "" "--skip-po") || die
 	sed -i -e "s:/usr/local/etc:${EPREFIX}/etc:g" "doc/"{"sample.wgetrc","wget.texi"} || die
 }
 

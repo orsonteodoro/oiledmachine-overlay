@@ -44,6 +44,10 @@ QA_CONFIG_IMPL_DECL_SKIP=(
 
 src_prepare() {
 	default
+	if [[ -n "${EVCS_OFFLINE}" ]] && use nls ; then
+eerror "The nls USE flag must be disabled for EVCS_OFFLINE=1 to work properly for ${CATEGORY}/${P}."
+		die
+	fi
 	./bootstrap $(usex nls "" "--skip-po") || die
 }
 
