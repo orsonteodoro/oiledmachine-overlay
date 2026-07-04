@@ -138,6 +138,7 @@ SECURE_TIMESTAMP["dev_libs_libcgroup"]="Mar 19, 2026 12:08 PM PDT"
 SECURE_TIMESTAMP["dev_libs_libffi_9999"]="Jun 21, 2026 3:28 PM PDT"
 SECURE_TIMESTAMP["dev_libs_libgcrypt_9999"]="Apr 16, 2026 6:13 PM PDT"
 SECURE_TIMESTAMP["dev_libs_libinput_9999"]="Jun 10, 2026 6:17:53 PM PDT"
+SECURE_TIMESTAMP["dev_libs_libliftoff_9999"]="May 15, 2025 8:25:35 PM PDT"
 SECURE_TIMESTAMP["dev_libs_libmspack_9999"]="Jun 15 2026 9:33 AM PDT"
 SECURE_TIMESTAMP["dev_libs_libpcre2_9999"]="Mar 3, 2026 1:25 PM PST"
 SECURE_TIMESTAMP["dev_libs_libsodium_9999"]="Apr 9, 2026 1:17 PM PDT"
@@ -347,6 +348,7 @@ SECURE_TIMESTAMP["sys_kernel_linux_firmware_99999999"]="2026-06-24 11:52:55 -050
 
 SECURE_TIMESTAMP["sys_process_procps_9999"]="Mar 26, 2026 4:03:17 AM PDT"
 SECURE_TIMESTAMP["x11_base_xorg_server_9999"]="2026-06-08 02:12:00 +0000"
+SECURE_TIMESTAMP["x11_base_xwayland_9999"]="2026-06-08 02:12:00 +0000" # Keep timestamp the same as xorg-server for simplified remediation
 SECURE_TIMESTAMP["x11_libs_libX11_9999"]="Apr 15, 2026 1:18:31 AM PDT"
 SECURE_TIMESTAMP["x11_libs_libxcb_9999"]="Jul 29, 2025 4:20:59 PM PDT"
 SECURE_TIMESTAMP["x11_libs_libXcursor_9999"]="2026-01-04 03:00:04 +0100"
