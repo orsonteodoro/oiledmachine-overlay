@@ -18,7 +18,7 @@ CHKL_TIMESTAMPS=(
 	"app-arch/zstd-9999"
 )
 
-inherit autotools cflags-hardened libtool multilib-minimal secure-version toolchain-funcs verify-sig
+inherit autotools cflags-hardened chkl libtool multilib-minimal secure-version toolchain-funcs verify-sig
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="41a72e555332418c63c0ec75c180295a95611ade"
@@ -48,7 +48,7 @@ KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390
 IUSE+="
 	acl blake2 +bzip2 +e2fsprogs expat +iconv lz4 +lzma lzo nettle
 	static-libs test xattr +zstd
-	ebuild_revision_16
+	ebuild_revision_17
 "
 RESTRICT="!test? ( test )"
 
@@ -106,6 +106,27 @@ PATCHES=(
 	# Test with configure phase of opencv ebuild
 	"${FILESDIR}/libarchive-1a778f9-remove-struct-hack.patch"
 )
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+	# TODO add verify-sig
+		unpack ${A}
+	fi
+	local actual_sover=$(grep "math.*INTERFACE_VERSION" "${S}/CMakeLists.txt" | head -n 1 | grep -E -o -e "[0-9]+")
+	local expected_sover="${SOVER}"
+	if ver_test "${actual_sover}" "-ne" "${expected_sover}" ; then
+eerror "QA:  Update the SOVER in the ebuild."
+eerror "Actual SOVER:  ${actual_sover}"
+eerror "Expected SOVER:  ${expected_sover}"
+		die
+	fi
+}
 
 src_prepare() {
 	default
