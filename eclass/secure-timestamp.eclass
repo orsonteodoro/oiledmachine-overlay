@@ -332,6 +332,7 @@ SECURE_TIMESTAMP["sys_devel_binutils_9999"]="2026-06-29" # Rounded up
 SECURE_TIMESTAMP["sys_kernel_linux_next_9999"]="2026-07-03 18:55:34 -1000"
 SECURE_TIMESTAMP["sys_kernel_ot_sources_7_2_9999"]="2026-07-03 18:55:34 -1000"
 SECURE_TIMESTAMP["sys_process_audit_9999"]="May 10, 2026 7:54 AM PDT"
+SECURE_TIMESTAMP["sys_libs_binutils_libs_9999"]="2026-06-29" # Same as binutils
 SECURE_TIMESTAMP["sys_libs_libbacktrace_9999"]="Feb 10, 2025 3:04 PM PST"
 SECURE_TIMESTAMP["sys_libs_libcap_9999"]="Jun 19, 2026 06:04:20 -0700"
 SECURE_TIMESTAMP["sys_libs_libseccomp_9999"]="Jan 23, 2025 4:35 PM PST"
@@ -364,7 +365,6 @@ SECURE_TIMESTAMP["x11_libs_pango_9999"]="Jun 1, 2026 3:30 PM PDT"
 SECURE_TIMESTAMP["x11_libs_pixman_9999"]="Aug 1, 2025 9:38:49 AM PDT"
 SECURE_TIMESTAMP["x11_misc_colord_9999"]="Feb 2, 2026 1:31 AM PST"
 
-#SECURE_TIMESTAMP[""]=""
 
 	declare -p SECURE_TIMESTAMP
 }
