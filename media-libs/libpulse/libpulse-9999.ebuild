@@ -1,7 +1,7 @@
 # Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="7"
+EAPI="8"
 
 MY_PV="${PV/_pre*}"
 MY_P="pulseaudio-${MY_PV}"
@@ -9,7 +9,16 @@ MY_P="pulseaudio-${MY_PV}"
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CRSH DOS DF H MC ML PE OOB RC SYM"
 
-inherit bash-completion-r1 cflags-hardened flag-o-matic gnome2-utils meson-multilib optfeature systemd udev
+CHKL_TIMESTAMPS=(
+	"dev-libs/glib-2.89.9999"
+	"media-libs/libsndfile-9999"
+	"sys-apps/dbus-9999"
+	"sys-apps/systemd-9999"
+	"x11-libs/libX11-9999"
+	"x11-libs/libxcb-9999"
+)
+
+inherit bash-completion-r1 cflags-hardened chkl flag-o-matic gnome2-utils meson-multilib optfeature secure-version systemd udev
 
 DESCRIPTION="Libraries for PulseAudio clients"
 HOMEPAGE="https://www.freedesktop.org/wiki/Software/PulseAudio/"
@@ -31,25 +40,28 @@ fi
 LICENSE="LGPL-2.1+"
 
 SLOT="0"
-IUSE+=" +asyncns dbus doc +glib gtk selinux systemd test valgrind X"
+IUSE+="
++asyncns dbus doc +glib gtk pipewire pulseaudio-daemon selinux systemd test valgrind X
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 # NOTE: libpcre needed in some cases, bug #472228
 # TODO: libatomic_ops is only needed on some architectures and conditions, and then at runtime too
 RDEPEND="
 	dev-libs/libatomic_ops:=
-	>=media-libs/libsndfile-1.0.20:=[${MULTILIB_USEDEP}]
+	>=media-libs/libsndfile-${LIBSNDFILE_PV}:=[${MULTILIB_USEDEP}]
 	asyncns? ( >=net-libs/libasyncns-0.1:=[${MULTILIB_USEDEP}] )
-	dbus? ( >=sys-apps/dbus-1.4.12:=[${MULTILIB_USEDEP}] )
+	dbus? ( >=sys-apps/dbus-${DBUS_PV}:=[${MULTILIB_USEDEP}] )
 	elibc_mingw? ( dev-libs/libpcre:= )
-	glib? ( >=dev-libs/glib-2.28.0:=[${MULTILIB_USEDEP}] )
-	gtk? ( x11-libs/gtk+:3= )
+	glib? ( >=dev-libs/glib-${GLIB_PV}:=[${MULTILIB_USEDEP}] )
+	gtk? ( >=x11-libs/gtk+-${GTK3_PV}:3= )
 	selinux? ( sec-policy/selinux-pulseaudio:* )
-	systemd? ( sys-apps/systemd:= )
+	systemd? ( >=sys-apps/systemd-${SYSTEMD_PV}:= )
 	valgrind? ( dev-debug/valgrind:= )
 	X? (
-		x11-libs/libX11:=[${MULTILIB_USEDEP}]
-		>=x11-libs/libxcb-1.6:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libX11-${LIBX11_PV}:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libxcb-${LIBXCB_PV}:=[${MULTILIB_USEDEP}]
 	)
 	!<media-sound/pulseaudio-16.1
 	!<media-sound/pulseaudio-daemon-16.99.1
@@ -62,7 +74,7 @@ DEPEND="${RDEPEND}
 
 # pulseaudio ships a bundled xmltoman, which uses XML::Parser
 BDEPEND="
-	dev-lang/perl
+	>=dev-lang/perl-${PERL_PV}
 	dev-perl/XML-Parser
 	sys-devel/gettext
 	sys-devel/m4
@@ -72,8 +84,10 @@ BDEPEND="
 	doc? ( app-text/doxygen )
 "
 PDEPEND="
-	|| (
-		media-video/pipewire[sound-server(+)]
+	pipewire? (
+		>=media-video/pipewire-${PIPEWIRE_PV}[sound-server(+)]
+	)
+	pulseaudio-daemon? (
 		media-sound/pulseaudio-daemon
 	)
 "
@@ -107,6 +121,7 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	chkl_check_many_timestamps
 	cflags-hardened_append
 	append-ldflags $(test-flags-CCLD -Wl,--undefined-version)
 
