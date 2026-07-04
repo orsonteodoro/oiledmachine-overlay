@@ -70,12 +70,12 @@ DEPEND="
 	>=dev-libs/libpcre2-${LIBPCRE2_PV}:=
 	>=dev-libs/wayland-${WAYLAND_PV}:=
 	>=gui-libs/wlroots-${WLROOTS_PV}:=[X=]
+	>=media-libs/libglvnd-${LIBGLVND_PV}:=
 	>=sys-auth/seatd-${SEATD_PV}:=
 	>=x11-libs/cairo-${CAIRO_PV}:=
 	>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=
 	>=x11-libs/pango-${PANGO_PV}:=
 	>=x11-libs/pixman-${PIXMAN_PV}:=
-	media-libs/libglvnd:=
 	virtual/libudev:=
 	swaybar? (
 		>=x11-libs/gdk-pixbuf-${GDK_PIXBUF_PV}:=
