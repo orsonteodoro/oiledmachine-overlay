@@ -5,7 +5,7 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO IO UAF"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO BOR CE CRSH DOS HO IO IR MC ML NPD OF OOBA PE UAF"
 
 # EPGO (custom pgo training) disabled for simplification reasons.
 UOPTS_SUPPORT_EPGO=0
@@ -13,11 +13,31 @@ UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_TPGO=1
 UOPTS_SUPPORT_TBOLT=1
 
-inherit cflags-hardened check-compiler-switch flag-o-matic multilib multilib-minimal toolchain-funcs uopts
+# Choices for live:
+# fossil (official)
+# git (official mirror)
+VCS="git"
+
+CHKL_TIMESTAMPS=(
+	"dev-libs/icu-79.0.9999"
+	"sys-libs/readline-9999"
+)
+
+inherit cflags-hardened check-compiler-switch chkl edo flag-o-matic multilib multilib-minimal secure-version toolchain-funcs uopts
 
 # On version updates, make sure to read the forum (https://sqlite.org/forum/forum)
 # for hints regarding test failures, backports, etc.
-if [[ "${PV}" == "9999" ]] ; then
+if [[ "${PV}" == "9999" && "${VCS}" == "git" ]] ; then
+	FALLBACK_COMMIT="c9a90ce1ece31b8ba9b81353dd5b852962705144"
+	EGIT_BRANCH="master"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/${PN}"
+	EGIT_REPO_URI="https://github.com/sqlite/sqlite.git"
+	S="${WORKDIR}/${PN}"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+elif [[ "${PV}" == "9999" && "${VCS}" == "fossil" ]] ; then
 	S="${WORKDIR}/${PN}"
 else
 	printf -v SRC_PV "%u%02u%02u%02u" $(ver_rs 1- " ")
@@ -44,7 +64,7 @@ RESTRICT="
 	)
 "
 SLOT="3"
-IUSE="
+IUSE+="
 debug doc icu +readline static-libs tcl test test-full tools
 ebuild_revision_28
 "
@@ -57,19 +77,15 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	virtual/zlib[${MULTILIB_USEDEP}]
-	virtual/zlib:=
+	>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}]
 	icu? (
-		dev-libs/icu[${MULTILIB_USEDEP}]
-		dev-libs/icu:=
+		>=dev-libs/icu-${ICU_PV}:=[${MULTILIB_USEDEP}]
 	)
 	readline? (
-		sys-libs/readline[${MULTILIB_USEDEP}]
-		sys-libs/readline:=
+		>=sys-libs/readline-${READLINE_PV}:=[${MULTILIB_USEDEP}]
 	)
 	tcl? (
-		dev-lang/tcl[${MULTILIB_USEDEP},threads]
-		dev-lang/tcl:=
+		dev-lang/tcl:=[${MULTILIB_USEDEP},threads]
 	)
 	tools? (
 		dev-lang/tcl:=
@@ -78,12 +94,16 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 	test? (
-		>=dev-lang/tcl-8.6:0[${MULTILIB_USEDEP}]
+		>=dev-lang/tcl-8.6:=[${MULTILIB_USEDEP}]
 	)
 "
 BDEPEND="
 "
-if [[ "${PV}" == "9999" ]] ; then
+if [[ "${PV}" == "9999" && "${VCS}" == "git" ]] ; then
+	BDEPEND+="
+		dev-vcs/git
+	"
+elif [[ "${PV}" == "9999" && "${VCS}" == "fossil" ]] ; then
 	BDEPEND+="
 		dev-vcs/fossil
 	"
@@ -94,13 +114,7 @@ else
 fi
 
 PATCHES=(
-	"${FILESDIR}/${PN}-3.53.2-hwtime.h-Don-t-use-rdtsc-on-i486.patch"
 )
-
-erun() {
-	einfo "${@}"
-	${@}
-}
 
 _fossil_fetch() {
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
@@ -122,25 +136,21 @@ eerror
 		fi
 	else
 		if [[ ! -f "${distdir}/fossil-src/${repo_id}/${repo_id}.fossil" ]] ; then
-			erun \
-			fossil clone \
+			edo fossil clone \
 				--verbose \
 				"${repo_uri}" \
-				"${repo_id}.fossil" \
-				|| die
+				"${repo_id}.fossil"
 			echo
 		else
 			cp -p \
 				"${distdir}/fossil-src/${repo_id}/${repo_id}.fossil" \
 				. \
 				|| die
-			erun \
-			fossil pull \
+			edo fossil pull \
 				--repository \
 				"${repo_id}.fossil" \
 				--verbose \
-				"${repo_uri}" \
-				|| die
+				"${repo_uri}"
 			echo
 		fi
 
@@ -185,12 +195,10 @@ eerror
 	mkdir "${target_directory}" || die
 	pushd "${target_directory}" > /dev/null || die
 
-	erun \
-	fossil open \
+	edo fossil open \
 		--quiet \
 		"${T}/fossil/${repo_id}/${repo_id}.fossil" \
-		"${branch_or_commit}" \
-		|| die
+		"${branch_or_commit}"
 	echo
 
 	popd > /dev/null || die
@@ -213,7 +221,13 @@ pkg_setup() {
 }
 
 src_unpack() {
-	if [[ "${PV}" == "9999" ]] ; then
+	if [[ "${PV}" == "9999" && "${VCS}" == "git" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	elif [[ "${PV}" == "9999" && "${VCS}" == "fossil" ]] ; then
 		fossil_fetch \
 			"sqlite" \
 			"https://sqlite.org/src" \
@@ -243,7 +257,9 @@ src_prepare() {
 	multilib_foreach_abi prepare_abi
 }
 
-src_configure() { :; }
+src_configure() {
+	:
+}
 
 _src_configure_compiler() {
 	export CC=$(tc-getCC)
@@ -252,6 +268,8 @@ _src_configure_compiler() {
 }
 
 _src_configure() {
+	chkl_check_many_timestamps
+
         export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
 	cd "${BUILD_DIR}" || die
 	uopts_src_configure
@@ -318,6 +336,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	# https://sqlite.org/fts5.html
 	append-cppflags -DSQLITE_ENABLE_FTS3 -DSQLITE_ENABLE_FTS3_PARENTHESIS
 	options+=(
+		--enable-fts4
 		--enable-fts5
 	)
 
@@ -569,7 +588,11 @@ ewarn "Skipping tests due to root permissions"
 
 	emake tclextension
 	if [[ "${mode}" == "default" ]] ; then
-		emake -Onone $(usex test-full 'xdevtest' 'test')
+		if multilib_is_native_abi ; then
+			emake -Onone $(usex test-full 'xdevtest' 'test')
+		else
+			emake srctree-check fuzztest sourcetest ${TESTPROGS} testrunner
+		fi
 	elif [[ "${mode}" == "pgo" ]] ; then
 # With PGO, only common the common use cases are used.
 # This is to prevent increasing junk or wasted space in the cache.

@@ -110,7 +110,7 @@ SECURE_TIMESTAMP["dev_cpp_muParser_9999"]="Apr 10, 2026 2:18 PM PDT"
 SECURE_TIMESTAMP["dev_cpp_nlohmann_json_9999"]="Jan 12, 2026 1:17 AM PST"
 SECURE_TIMESTAMP["dev_cpp_simdutf_9999"]="Jan 13, 2026 12:30 PST"
 SECURE_TIMESTAMP["dev_cpp_tomlplusplus_9999"]="Mar 23, 2026 8:33 AM PDT"
-SECURE_TIMESTAMP["dev_db_sqlite_9999"]="Jun 23, 2026 1:12 PM PDT"
+SECURE_TIMESTAMP["dev_db_sqlite_9999"]="Jul 3, 2026 1:26 PM PDT"
 SECURE_TIMESTAMP["dev_qt_qtbase_6_9999"]="Jun 19, 2026 9:06 AM PDT"
 SECURE_TIMESTAMP["dev_qt_qtdeclarative_6_9999"]="Jun 25, 2026 10:10 PM PDT"
 SECURE_TIMESTAMP["dev_qt_qtmultimedia_6_9999"]="Jun 25, 2026 3:28 AM PDT"
@@ -331,6 +331,7 @@ SECURE_TIMESTAMP["sys_libs_libcap_9999"]="Jun 19, 2026 06:04:20 -0700"
 SECURE_TIMESTAMP["sys_libs_libseccomp_9999"]="Jan 23, 2025 4:35 PM PST"
 SECURE_TIMESTAMP["sys_libs_libselinux_9999"]="Jun 10, 2026 7:43 AM PDT"
 SECURE_TIMESTAMP["sys_libs_libunwind_9999"]="Jun 19, 2026 9:44 AM PDT"
+SECURE_TIMESTAMP["sys_libs_readline_9999"]="2025-12-10 11:36:18 -0500"
 
 # Tracks AMD µcode security annoucements
 # Repo date fix - Advisories

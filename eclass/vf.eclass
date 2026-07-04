@@ -123,6 +123,9 @@ einfo "AEITW = Actively Exploited In The Wild" # Most formal
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AFA"($|" "|";"|",") ]] ; then
 einfo "AFA = Arbitrary File Access"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AFO"($|" "|";"|",") ]] ; then
+einfo "AFO = Arbitrary File Overwrite"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AFR"($|" "|";"|",") ]] ; then
 einfo "AFR = Arbitrary File Read"
 		fi
@@ -357,6 +360,9 @@ einfo "IOOB = Index Out Of Bounds"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IP"($|" "|";"|",") ]] ; then
 einfo "IP = Improper Permissions"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IPB"($|" "|";"|",") ]] ; then
+einfo "IPB = Incorrect Parsing Behavior"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IPI"($|" "|";"|",") ]] ; then
 einfo "IPI = Inadequate Process Isolation"
 		fi
@@ -377,9 +383,6 @@ einfo "IRoR = Improper Release of Resources"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("IRMEM")($|" "|";"|",") ]] ; then
 einfo "IRRES = Improper Release of Resources"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IPB"($|" "|";"|",") ]] ; then
-einfo "IPB = Incorrect Parsing Behavior"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IS"($|" "|";"|",") ]] ; then
 einfo "IS = Insufficient Sanitiation"
