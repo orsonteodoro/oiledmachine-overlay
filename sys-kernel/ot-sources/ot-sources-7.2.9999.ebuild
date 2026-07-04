@@ -9,7 +9,7 @@ EAPI=8
 # See also https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/
 
 GENPATCHES_FALLBACK_COMMIT="d4fa92430e875432c3a61bb3abd9b6e68ea9fcbd" # 2026-06-04 18:26:32 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="71dfdfb0209b43dfd6f494f84f5548e4cfd18cb5" # 2026-07-03 05:48:05 -1000
+LINUX_SOURCES_FALLBACK_COMMIT="1e9cdc2ea15adf4a821eefedabf6c0c8cf0b6a55" # 2026-07-03 18:55:34 -1000 @ Merge tag 'v7.2-rc1-smb3-server-fixes' of git://git.samba.org/ksmbd
 RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
