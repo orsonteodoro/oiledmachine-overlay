@@ -108,18 +108,16 @@ BDEPEND="
 	>=dev-build/meson-1.3
 	virtual/pkgconfig
 "
-if [[ "${PV}" == "9999" ]]; then
+if [[ ${PV} == 9999 ]]; then
 	BDEPEND+="
-		man? (
-			~app-text/scdoc-9999
-		)
+		~app-text/scdoc-9999
 	"
 else
 	BDEPEND+="
-		man? (
-			>=app-text/scdoc-1.9.3
-		)
+		>=app-text/scdoc-1.11.3
+		verify-sig? ( sec-keys/openpgp-keys-emersion )
 	"
+	VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/emersion.asc"
 fi
 
 FILECAPS=(
