@@ -20,11 +20,14 @@ PROFILES_REQUIRED_USE="${PROFILES_REQUIRED_USE//+/}"
 inherit check-compiler-switch cmake flag-o-matic git-r3
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	IUSE+=" fallback-commit"
+	FALLBACK_COMMIT="72895d05c9219e04960ebc7862aae2b017aed954" # May 21, 2024
 	EGIT_REPO_URI="https://github.com/icculus/mojoshader.git"
 	EGIT_COMMIT="HEAD"
-	FALLBACK_COMMIT="72895d05c9219e04960ebc7862aae2b017aed954" # May 21, 2024
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 	S="${WORKDIR}/${P}"
+	inherit git-r3
 else
 	KEYWORDS="~amd64 ~arm64"
 	S="${WORKDIR}/${P}"
@@ -78,7 +81,9 @@ pkg_setup() {
 }
 
 unpack_live() {
-	use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+	if in_iuse fallback-commit && use fallback-commit ; then
+		EGIT_COMMIT="${FALLBACK_COMMIT}"
+	fi
 	git-r3_fetch
 	git-r3_checkout
 	local build_files=(

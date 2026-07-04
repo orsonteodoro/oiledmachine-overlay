@@ -3,14 +3,26 @@
 
 EAPI=8
 
-inherit git-r3
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="0fbb2e48e07218c5a2776100a4c708b21cb06688"
+	EGIT_REPO_URI="https://github.com/b4b4r07/emoji-cli.git"
+	EGIT_BRANCH="master"
+	EGIT_COMMIT="HEAD"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	KEYWORDS="~amd64"
+	die "FIXME"
+fi
 
 DESCRIPTION="Emoji completion on the command line"
 LICENSE="MIT"
 HOMEPAGE="https://github.com/b4b4r07/emoji-cli"
-KEYWORDS="~amd64"
 SLOT="0"
-IUSE="doc fallback-commit fzf peco percol"
+IUSE+=" doc fallback-commit fzf peco percol"
 REQUIRED_USE="
 	^^ (
 		fzf
@@ -38,10 +50,9 @@ RESTRICT="mirror"
 DOCS=( CHANGELOG.md README.md )
 
 src_unpack() {
-	EGIT_REPO_URI="https://github.com/b4b4r07/emoji-cli.git"
-	EGIT_BRANCH="master"
-	EGIT_COMMIT="HEAD"
-	use fallback-commit && EGIT_COMMIT="0fbb2e48e07218c5a2776100a4c708b21cb06688"
+	if in_iuse fallback-commit && use fallback-commit ; then
+		EGIT_COMMIT="${FALLBACK_COMMIT}"
+	fi
 	git-r3_fetch
 	git-r3_checkout
 }

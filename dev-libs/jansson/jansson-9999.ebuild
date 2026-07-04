@@ -27,7 +27,7 @@ LICENSE="MIT"
 SOVER="4"
 SLOT="0/${SOVER}"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~x64-macos"
-IUSE="doc static-libs"
+IUSE+=" doc static-libs"
 
 BDEPEND="
 	dev-build/autoconf-archive

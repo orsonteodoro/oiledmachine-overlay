@@ -71,7 +71,7 @@ ebuild_revision_4
 
 LANGS="ja ko zh-CN zh-TW"
 for X in ${LANGS} ; do
-	IUSE="${IUSE} l10n_${X}"
+	IUSE+=" l10n_${X}"
 done
 
 DEPEND="

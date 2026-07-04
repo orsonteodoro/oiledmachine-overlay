@@ -34,6 +34,9 @@ if [[ ${PV} = 9999 ]]; then
 	FALLBACK_COMMIT="b096704c0d42c5e784deb781a07b23cfb5286a82" # Same as libpulse ebuild
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/pulseaudio/pulseaudio"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 	inherit git-r3
 else
 	SRC_URI="https://freedesktop.org/software/pulseaudio/releases/${MY_P}.tar.xz"
@@ -53,7 +56,7 @@ SLOT="0"
 # +alsa-plugin as discussed in bug #519530
 # TODO: Find out why webrtc-aec is + prefixed - there's already the always available speexdsp-aec
 # NOTE: The current ebuild sets +X almost certainly just for the pulseaudio.desktop file
-IUSE="+alsa +alsa-plugin aptx +asyncns bluetooth dbus elogind equalizer fftw +gdbm +glib gstreamer jack ldac lirc
+IUSE+=" +alsa +alsa-plugin aptx +asyncns bluetooth dbus elogind equalizer fftw +gdbm +glib gstreamer jack ldac lirc
 ofono-headset +orc oss selinux sox ssl systemd system-wide tcpd test +udev valgrind +webrtc-aec +X zeroconf"
 
 RESTRICT="!test? ( test )"

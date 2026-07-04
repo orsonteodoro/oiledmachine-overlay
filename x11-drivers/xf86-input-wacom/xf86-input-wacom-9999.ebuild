@@ -13,6 +13,9 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="2d8e0f866e6f901434ea1c551a3d44f6c4576a41"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/linuxwacom/xf86-input-wacom.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 	inherit git-r3
 else
 	SRC_URI="https://github.com/linuxwacom/${PN}/releases/download/${P}/${P}.tar.bz2"
@@ -23,7 +26,7 @@ HOMEPAGE="https://linuxwacom.github.io/"
 
 LICENSE="GPL-2+"
 KEYWORDS="~alpha amd64 arm arm64 ~loong ppc ppc64 ~riscv ~sparc x86"
-IUSE="test"
+IUSE+=" test"
 RESTRICT="!test? ( test )"
 
 RDEPEND="

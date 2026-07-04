@@ -27,7 +27,7 @@ HOMEPAGE="https://github.com/p2rkw/xf86-input-mtrack"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="amd64 ~arm x86"
-IUSE="debug"
+IUSE+=" debug"
 
 RDEPEND="
 	>=sys-libs/mtdev-1.0:=

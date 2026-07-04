@@ -44,7 +44,7 @@ LICENSE="
 #
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE="
+IUSE+="
 debugger developer test
 
 +fallback-commit
