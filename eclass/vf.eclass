@@ -176,6 +176,9 @@ einfo "CJ = Clickjack"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"CP"($|" "|";"|",") ]] ; then
 einfo "CP = Corrupt Pointer"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"CRLF"($|" "|";"|",") ]] ; then
+einfo "CRLF = CR/LF Injection"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"CRSH"($|" "|";"|",") ]] ; then
 einfo "CRSH = Crash"
 		fi
@@ -260,6 +263,9 @@ einfo "HC = Heap Corruption"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"HF"($|" "|";"|",") ]] ; then
 einfo "HF = Hardware Fault"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"HHI"($|" "|";"|",") ]] ; then
+einfo "HHI = HTTP Header Injection"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"HL"($|" "|";"|",") ]] ; then
 einfo "HL = Hard Lockup"
 		fi
@@ -291,6 +297,9 @@ einfo "IBCO = Incorrect Boundary Condition"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IB"($|" "|";"|",") ]] ; then
 einfo "IB = Integrity Bypass"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ICV"($|" "|";"|",") ]] ; then
+einfo "ICV = Insufficient Certificate Validation"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("IbD"|"IBD")($|" "|";"|",") ]] ; then
 einfo "IbD = Insecure by Design"
@@ -342,6 +351,7 @@ einfo "IMPRREL = Improper Release"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"INJECT"($|" "|";"|",") ]] ; then
 # Broader category includes or any type of injection
+# CR/LF injection
 # Code injection (code execution)
 #  - SQL injection
 #  - Interpreter injection
