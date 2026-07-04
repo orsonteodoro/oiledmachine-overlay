@@ -7,8 +7,12 @@ CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=3
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data untrusted-data"
 
 CHKL_TIMESTAMPS=(
+	"dev-libs/libinput-9999"
 	"dev-libs/libpcre2-9999"
+	"dev-libs/json-c-9999"
 	"dev-libs/wayland-9999"
+	"sys-auth/elogind-257.9999"
+	"sys-auth/seatd-9999"
 	"sys-apps/systemd-9999"
 	"x11-libs/cairo-9999"
 	"x11-libs/gdk-pixbuf-9999"
@@ -23,8 +27,13 @@ DESCRIPTION="i3-compatible Wayland window manager"
 HOMEPAGE="https://swaywm.org"
 
 if [[ "${PV}" == "9999" ]]; then
-	inherit git-r3
+	FALLBACK_COMMIT="f3b64311045c3241ac6be3fd293dff8bfd55b6d4"
+	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/swaywm/${PN}.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
 else
 	MY_PV=${PV/_rc/-rc}
 	KEYWORDS="amd64 arm64 ~loong ~ppc64 ~riscv x86"
@@ -34,9 +43,9 @@ fi
 
 LICENSE="MIT"
 SLOT="0"
-IUSE="
+IUSE+="
 basu elogind +man +swaybar +swaynag systemd tray wallpapers X
-ebuild_revision_18
+ebuild_revision_19
 "
 REQUIRED_USE="
 	|| (
@@ -54,14 +63,16 @@ REQUIRED_USE="
 	)
 "
 
+# x11-libs/xcb-util-wm is needed for xcb-iccm
 DEPEND="
-	>=dev-libs/json-c-0.13:=
-	>=dev-libs/libinput-1.21.0:=
-	>=dev-libs/wayland-${WAYLAND_PV}:=
-	>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=
-	sys-auth/seatd:=
+	>=dev-libs/json-c-${JSON_C_PV}:=
+	>=dev-libs/libinput-${LIBINPUT_PV}:=
 	>=dev-libs/libpcre2-${LIBPCRE2_PV}:=
+	>=dev-libs/wayland-${WAYLAND_PV}:=
+	>=gui-libs/wlroots-${WLROOTS_PV}:=[X=]
+	>=sys-auth/seatd-${SEATD_PV}:=
 	>=x11-libs/cairo-${CAIRO_PV}:=
+	>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=
 	>=x11-libs/pango-${PANGO_PV}:=
 	>=x11-libs/pixman-${PIXMAN_PV}:=
 	media-libs/libglvnd:=
@@ -74,7 +85,7 @@ DEPEND="
 			>=sys-apps/systemd-${SYSTEMD_PV}:=
 		)
 		elogind? (
-			sys-auth/elogind:=
+			>=sys-auth/elogind-${ELOGIND_PV}:=
 		)
 		basu? (
 			sys-libs/basu:=
@@ -88,16 +99,6 @@ DEPEND="
 		x11-libs/xcb-util-wm:=
 	)
 "
-# x11-libs/xcb-util-wm needed for xcb-iccm
-if [[ "${PV}" == "9999" ]]; then
-	DEPEND+="
-		~gui-libs/wlroots-9999:=[X=]
-	"
-else
-	DEPEND+="
-		gui-libs/wlroots:0.19=[X=]
-	"
-fi
 RDEPEND="
 	${DEPEND}
 	x11-misc/xkeyboard-config:=
@@ -124,6 +125,18 @@ fi
 FILECAPS=(
 	cap_sys_nice "usr/bin/${PN}" # bug 919298
 )
+
+src_unpack() {
+	if [[ "${PV}" == "9999" ]]; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+}
 
 src_configure() {
 	chkl_check_many_timestamps
