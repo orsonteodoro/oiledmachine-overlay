@@ -124,7 +124,7 @@ COMMON_DEPEND="
 	)
 	systemd? ( >=sys-apps/systemd-${SYSTEMD_PV}:= )
 	tcpd? ( sys-apps/tcp-wrappers:= )
-	udev? ( >=virtual/udev-143:=[hwdb(+)] )
+	udev? ( >=virtual/udev-143:*[hwdb(+)] )
 	valgrind? ( dev-debug/valgrind:= )
 	webrtc-aec? ( >=media-libs/webrtc-audio-processing-1.3:= )
 	X? (
@@ -155,8 +155,8 @@ RDEPEND="
 		acct-group/pulse-access:*
 	)
 	bluetooth? (
-		ldac? ( media-plugins/gst-plugins-ldac:= )
-		aptx? ( media-plugins/gst-plugins-openaptx:= )
+		ldac? ( >=media-plugins/gst-plugins-ldac-${GSTREAMER_PV}:= )
+		aptx? ( >=media-plugins/gst-plugins-openaptx-${GSTREAMER_PV}:= )
 	)
 	!media-video/pipewire:=[sound-server(+)]
 "
@@ -164,18 +164,18 @@ unset gstreamer_deps
 
 # This is a PDEPEND to avoid a circular dep
 PDEPEND="
-	alsa? ( alsa-plugin? ( >=media-plugins/alsa-plugins-1.0.27-r1[pulseaudio] ) )
+	alsa? ( alsa-plugin? ( >=media-plugins/alsa-plugins-${ALSA_PLUGINS_PV}[pulseaudio] ) )
 "
 
 BDEPEND="
-	dev-lang/perl
+	>=dev-lang/perl-${PERL_PV}
 	dev-perl/XML-Parser
 	sys-devel/gettext
 	sys-devel/m4
 	virtual/libiconv
 	virtual/libintl
 	virtual/pkgconfig
-	orc? ( >=dev-lang/orc-0.4.15 )
+	orc? ( >=dev-lang/orc-${ORC_PV} )
 	system-wide? ( dev-util/unifdef )
 "
 
