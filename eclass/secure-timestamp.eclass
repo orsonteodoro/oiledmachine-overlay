@@ -149,12 +149,16 @@ SECURE_TIMESTAMP["dev_libs_libzip_9999"]="Jun 9, 2026 1:27 AM PDT"
 SECURE_TIMESTAMP["dev_libs_nettle_9999"]="May 8, 2026 6:29 AM PDT"
 SECURE_TIMESTAMP["dev_libs_nspr_9999"]="05-May-2026 13:21"
 SECURE_TIMESTAMP["dev_libs_nss_9999"]="Thu, 23 Apr 2026 12:28:50 -0700"
-SECURE_TIMESTAMP["dev_libs_openssl_4_0_9999"]="Mon, 18 Jun 2026 6:13 AM PDT"
-SECURE_TIMESTAMP["dev_libs_openssl_3_6_9999"]="Mon, 18 Jun 2026 6:13 AM PDT"
-SECURE_TIMESTAMP["dev_libs_openssl_3_5_9999"]="Mon, 18 Jun 2026 6:13 AM PDT"
-SECURE_TIMESTAMP["dev_libs_openssl_3_4_9999"]="Mon, 18 Jun 2026 6:13 AM PDT"
-SECURE_TIMESTAMP["dev_libs_openssl_3_3_9999"]="Mon, 18 Jun 2026 6:13 AM PDT"
-SECURE_TIMESTAMP["dev_libs_openssl_3_0_9999"]="Mon, 18 Jun 2026 6:13 AM PDT"
+
+# For EOL dates, see
+# https://openssl-library.org/source/
+# https://openssl-library.org/policies/releasestrat/index.html
+SECURE_TIMESTAMP["dev_libs_openssl_4_0_9999"]="Jun 28, 2026 10:54 AM PDT"
+SECURE_TIMESTAMP["dev_libs_openssl_3_6_9999"]="Jun 28, 2026 10:56 AM PDT"
+SECURE_TIMESTAMP["dev_libs_openssl_3_5_9999"]="Jun 28, 2026 10:59 AM PDT"
+SECURE_TIMESTAMP["dev_libs_openssl_3_4_9999"]="Jul 3, 2026 13:37 PM PDT"
+SECURE_TIMESTAMP["dev_libs_openssl_3_0_9999"]="Jul 3, 2026 12:38 PM PDT"
+
 SECURE_TIMESTAMP["dev_libs_pugixml_9999"]="Jun 15, 2026 1:38 PM PDT"
 SECURE_TIMESTAMP["dev_libs_re2_9999"]="Thu, 22 Jan 2026 16:05:23 -0500"
 SECURE_TIMESTAMP["dev_libs_wayland_9999"]="Mar 26, 2026 1:38:38 AM PDT"
