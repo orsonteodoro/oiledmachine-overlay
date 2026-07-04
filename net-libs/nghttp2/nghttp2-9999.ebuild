@@ -32,7 +32,6 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
 	"dev-libs/openssl-3.4.9999"
-	"dev-libs/openssl-3.3.9999"
 	"dev-libs/openssl-3.0.9999"
 	"net-dns/c-ares-9999"
 	"net-libs/nghttp2-9999"
