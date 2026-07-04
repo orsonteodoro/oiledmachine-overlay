@@ -60,8 +60,8 @@ src_prepare() {
 
 multilib_src_configure() {
 	append-lfs-flags
+	chkl_check_many_timestamps
 	cflags-hardened_append
-	chkl_check_many_live_bans
 
 	local mycmakeargs=(
 		-DBUILD_TESTING="$(multilib_native_usex test)"
