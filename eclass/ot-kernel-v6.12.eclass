@@ -78,6 +78,7 @@ AMD_SEV_FIRMWARE_RELEASE_DATE="20230828" # Based on amd_sev_fam19h_model1xh file
 AMDGPU_FIRMWARE_RELEASE_DATE="20241203" # Based on vcn 5.0.0 and dcn 4.0.1 and gc_12_0_1 first presence
 ATH_FIRMWARE_RELEASE_DATE="20241010" # Based on presence of latest added board-2 (QCN9274) file in https://github.com/torvalds/linux/blob/v6.12/drivers/net/wireless/ath/ath12k/hw.c
 RTL_BT_FIRMWARE_RELEASE_DATE="20250106" # Based on rtl8723cs_xx_config bin referenced in https://github.com/torvalds/linux/blob/v6.12/drivers/bluetooth/btrtl.c
+RTL8192DU_FIRMWARE_RELEASE_DATE="20241010" # Based on added from rtl8192du bin https://github.com/torvalds/linux/blob/v6.11/drivers/net/wireless/realtek/rtlwifi/rtl8192du/sw.c
 RTL8XXXU_FIRMWARE_RELEASE_DATE="20230517" # Based on latest added rtl8192fufw bin from https://github.com/torvalds/linux/blob/v6.12/drivers/net/wireless/realtek/rtl8xxxu/
 RTLWIFI_FIRMWARE_RELEASE_DATE="20241010" # Based on latest added rtl8192dufw bin from https://github.com/torvalds/linux/blob/v6.12/drivers/net/wireless/realtek/rtlwifi/
 RTW_FIRMWARE_RELEASE_DATE="20240826" # Based on latest added rtw8922a_fw-1 bin driver from https://github.com/torvalds/linux/blob/v6.12/drivers/net/wireless/realtek/rtw89
@@ -853,6 +854,7 @@ BUILD_DEPEND+="
 		>=sys-kernel/linux-firmware-${AMDGPU_FIRMWARE_RELEASE_DATE}:=
 		>=sys-kernel/linux-firmware-${ATH_FIRMWARE_RELEASE_DATE}:=
 		>=sys-kernel/linux-firmware-${RTL_BT_FIRMWARE_RELEASE_DATE}:=
+		>=sys-kernel/linux-firmware-${RTL8192DU_FIRMWARE_RELEASE_DATE}:=
 		>=sys-kernel/linux-firmware-${RTL8XXXU_FIRMWARE_RELEASE_DATE}:=
 		>=sys-kernel/linux-firmware-${RTLWIFI_FIRMWARE_RELEASE_DATE}:=
 		>=sys-kernel/linux-firmware-${RTW_FIRMWARE_RELEASE_DATE}:=

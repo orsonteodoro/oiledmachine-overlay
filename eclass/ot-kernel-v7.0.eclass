@@ -79,12 +79,13 @@ fi
 # TODO update section
 KERNEL_RELEASE_DATE="20251130"
 # The timestamps are supposed to reflect maximum coverage for the set.
-AMD_SEV_FIRMWARE_RELEASE_DATE="20230828" # Based on amd_sev_fam19h_model1xh file first presence
+AMD_SEV_FIRMWARE_RELEASE_DATE="20230828" # Based on latest mitigation
 AMDGPU_FIRMWARE_RELEASE_DATE="20250620" # Based on vcn 5.0.1 and dcn 4.0.1 and gc_12_0_1 first presence
 AMDXDNA_FIRMWARE_RELEASE_DATE="20241203" # Based on npu.sbin first presence
 ATH_FIRMWARE_RELEASE_DATE="20241010" # Based on presence of latest added board-2 (QCN9274) file in https://github.com/torvalds/linux/blob/v7.0/drivers/net/wireless/ath/ath12k/hw.c
 IVPU_FIRMWARE_RELEASE_DATE="20250307" # Based on presence of added vpu_37xx_v1 bin referenced in https://github.com/torvalds/linux/blob/v7.0/drivers/accel/ivpu/ivpu_fw.c
 RTL_BT_FIRMWARE_RELEASE_DATE="20250106" # Based on rtl8723cs_xx_config bin referenced in https://github.com/torvalds/linux/blob/v7.0/drivers/bluetooth/btrtl.c
+RTL8192DU_FIRMWARE_RELEASE_DATE="20241010" # Based on added from rtl8192du bin https://github.com/torvalds/linux/blob/v6.11/drivers/net/wireless/realtek/rtlwifi/rtl8192du/sw.c
 RTL8XXXU_FIRMWARE_RELEASE_DATE="20230517" # Based on latest added rtl8192fufw bin from https://github.com/torvalds/linux/blob/v7.0/drivers/net/wireless/realtek/rtl8xxxu/
 RTLWIFI_FIRMWARE_RELEASE_DATE="20241010" # Based on latest added rtl8192dufw bin from https://github.com/torvalds/linux/blob/v7.0/drivers/net/wireless/realtek/rtlwifi/
 RTW_FIRMWARE_RELEASE_DATE="20250630" # Based on latest added rtw8922a_fw-4 bin drivers from https://github.com/torvalds/linux/blob/v7.0/drivers/net/wireless/realtek/rtw89
@@ -868,6 +869,7 @@ BUILD_DEPEND+="
 		>=sys-kernel/linux-firmware-${ATH_FIRMWARE_RELEASE_DATE}:=
 		>=sys-kernel/linux-firmware-${IVPU_FIRMWARE_RELEASE_DATE}:=
 		>=sys-kernel/linux-firmware-${RTL_BT_FIRMWARE_RELEASE_DATE}:=
+		>=sys-kernel/linux-firmware-${RTL8192DU_FIRMWARE_RELEASE_DATE}:=
 		>=sys-kernel/linux-firmware-${RTL8XXXU_FIRMWARE_RELEASE_DATE}:=
 		>=sys-kernel/linux-firmware-${RTLWIFI_FIRMWARE_RELEASE_DATE}:=
 		>=sys-kernel/linux-firmware-${RTW_FIRMWARE_RELEASE_DATE}:=

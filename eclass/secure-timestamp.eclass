@@ -341,13 +341,24 @@ SECURE_TIMESTAMP["sys_libs_libselinux_9999"]="Jun 10, 2026 7:43 AM PDT"
 SECURE_TIMESTAMP["sys_libs_libunwind_9999"]="Jun 19, 2026 9:44 AM PDT"
 SECURE_TIMESTAMP["sys_libs_readline_9999"]="2025-12-10 11:36:18 -0500"
 
-# Tracks AMD µcode security annoucements
+#
+# The linux-firmware timestamp currently tracks AMD µcode an SEV security annoucements.
+#
+# Types of updates
+#
+# SEV update - for protecting guest (Confidential Virtual Machines) CVMs on enterprise/cloud CPUs
+# µcode update - for fixing CPU bugs on consumer or enterprise grade CPUs
+#
 # Repo date fix - Advisories
-# 2026-06-24 to 2021-09-12 - AMD-SB-3023 multiple security mitigations with SEV update (for protecting guests VM on enterprise/cloud CPUs)
-# 2025-07-29 - AMD-SB-3023, AMD-SB-3027 (StackWarp) security mitigation with µcode update (for fixing CPU bugs on consumer or enterprise)
+# 2025-02-20 to 2021-09-12 - AMD-SB-3023 multiple security mitigations with SEV update
+# 2023-08-28 - 2021-09-12 - AMD-SB-3016 security mitigation with SEV update
+# 2025-07-29 - AMD-SB-3023, AMD-SB-3027 (StackWarp) security mitigation with µcode update
 # 2023-07-24 - AMD-SB-3005 (CacheWarp) security mitigation for µcode an SEV update
-# The AI recommends latest SEV FW build to mitigate CacheWarp.
-SECURE_TIMESTAMP["sys_kernel_linux_firmware_99999999"]="2026-06-24 11:52:55 -0500"
+# The AI recommends latest SEV FW build to mitigate CacheWarp and StackWarp.
+# Date used is based on min version that remediates it.
+# The minimal version is chosen to mitigate the costs or damages in testing in production, DoS, or bricking.
+#
+SECURE_TIMESTAMP["sys_kernel_linux_firmware_99999999"]="2025-07-29 12:12:18 -0600"
 
 SECURE_TIMESTAMP["sys_process_procps_9999"]="Mar 26, 2026 4:03:17 AM PDT"
 SECURE_TIMESTAMP["x11_base_xorg_server_9999"]="2026-06-08 02:12:00 +0000"
