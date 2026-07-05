@@ -6,10 +6,26 @@ EAPI=8
 CFLAGS_HARDENED_PIE=1
 CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 
-inherit bash-completion-r1 cflags-hardened linux-info meson
+CHKL_TIMESTAMPS=(
+	"sys-libs/libcap-9999"
+	"sys-libs/libselinux-9999"
+)
 
-KEYWORDS="amd64 arm arm64 ~loong ppc ppc64 ~riscv x86"
-SRC_URI="https://github.com/containers/${PN}/releases/download/v${PV}/${P}.tar.xz"
+inherit bash-completion-r1 cflags-hardened chkl linux-info meson secure-version
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="2f55bae38468d0c50cf5df87b1e481e882b63acb"
+	EGIT_BRANCH="main"
+	EGIT_REPO_URI="https://github.com/containers/bubblewrap.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	KEYWORDS="amd64 arm arm64 ~loong ppc ppc64 ~riscv x86"
+	SRC_URI="https://github.com/containers/${PN}/releases/download/v${PV}/${P}.tar.xz"
+fi
+
 
 DESCRIPTION="Unprivileged sandboxing tool, namespaces-powered chroot-like solution"
 HOMEPAGE="https://github.com/containers/bubblewrap/"
@@ -17,21 +33,21 @@ LICENSE="LGPL-2+"
 # tests require root privileges
 RESTRICT="test"
 SLOT="0"
-IUSE="
+IUSE+="
 selinux suid
 ebuild_revision_35
 "
 RDEPEND="
-	sys-libs/libseccomp
-	sys-libs/libcap
+	>=sys-libs/libseccomp-${LIBSECCOMP_PV}:=
+	>=sys-libs/libcap-${LIBCAP_PV}:=
 	elibc_glibc? (
-		>=sys-libs/glibc-2.43:=
+		>=sys-libs/glibc-${GLIBC_PV}:=
 	)
 	elibc_musl? (
-		>=sys-libs/musl-1.2.6:=
+		>=sys-libs/musl-${MUSL_PV}:=
 	)
 	selinux? (
-		>=sys-libs/libselinux-2.1.9
+		>=sys-libs/libselinux-${LIBSELINUX_PV}:=
 	)
 "
 DEPEND="
@@ -51,7 +67,21 @@ pkg_setup() {
 	fi
 }
 
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		# TODO:  add verify-sig
+		unpack ${A}
+	fi
+}
+
 src_configure() {
+	chkl_check_many_timestamps
 	cflags-hardened_append
 	local emesonargs=(
 		$(meson_feature selinux)
