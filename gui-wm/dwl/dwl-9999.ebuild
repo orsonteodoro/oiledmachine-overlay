@@ -125,9 +125,8 @@ src_install() {
 
 pkg_postinst() {
 	optfeature_header "Install optional packages:"
-	optfeature "Menu bar" "gui-apps/wmenu"
-	optfeature "Terminal" "gui-apps/foot"
-	optfeature "Menu bar" "dev-libs/bemenu"
+	optfeature "Menu bar like dmenu" "gui-apps/wmenu"
+	optfeature "Terminal like st" "gui-apps/foot"
 }
 
 # OILEDMACHINE-OVERLAY-TEST:  passed (interactive) d41ecb7 (20260704)
