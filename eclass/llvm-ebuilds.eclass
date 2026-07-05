@@ -49,10 +49,10 @@ esac
 # F = number of failed sanitizer checks (red checkmarks).
 # S = score
 #
-# p_1 = -100 per day passed
+# p_1 = -10 per day passed
 # p_2 = -1000 per sanitizer fail
-# p_3 = +10 points per checkmarks above 100
-# p_4 = -10 points per checkmarks below 100
+# p_3 = +50 points per gained checkmarks above 100.  if 109 green checkmarks, then s_b [subscore of benefit] = 50*(109-100)
+# p_4 = -50 points per lost checkmarks below 100.  if 76 green checkmarks, then s_c [subscore of cost] = -50*(100-76)
 # B = number of benefit CI/CD checkmarks that are above 100
 # C = number of cost CI/CD checkmarks that are below 100
 # P = If days passed >= 8 then - 100000, else 0
