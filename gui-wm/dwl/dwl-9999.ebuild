@@ -15,7 +15,7 @@ CHKL_TIMESTAMPS=(
 	"x11-libs/libxkbcommon-9999"
 )
 
-inherit cflags-hardened chkl savedconfig secure-version toolchain-funcs
+inherit cflags-hardened chkl optfeature savedconfig secure-version toolchain-funcs
 
 if [[ ${PV} == 9999 ]]; then
 	FALLBACK_COMMIT="d41ecb745cc94fbb48e93af01f5fd5d0b2488945"
@@ -82,6 +82,7 @@ src_unpack() {
 		# TODO:  add verify-sig
 		unpack ${A}
 	fi
+die
 }
 
 src_prepare() {
@@ -106,3 +107,11 @@ src_install() {
 
 	save_config config.h
 }
+
+pkg_postinst() {
+	optfeature_header "Install optional packages:"
+	optfeature "Menu bar" "gui-apps/wmenu"
+	optfeature "Terminal" "gui-apps/foot"
+}
+
+# OILEDMACHINE-OVERLAY-TEST:  passed (interactive) d41ecb7 (20260704)
