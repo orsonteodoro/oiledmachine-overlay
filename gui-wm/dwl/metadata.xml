@@ -13,4 +13,22 @@
     <upstream>
         <remote-id type="codeberg">dwl/dwl</remote-id>
     </upstream>
+    <!--
+
+    oiledmachine-overlay notes:
+
+    Build time environment variables:
+
+    (These only apply when savedconfig is disabled.)
+
+    DWL_SHELL - Sets the shell command
+    Default:  /bin/sh
+
+    DWL_TERMINAL - Sets the terminal to use
+    Default:  foot
+
+    DWL_MENU - Sets the menu command to use
+    Default:  wmenu-run
+
+    -->
 </pkgmetadata>

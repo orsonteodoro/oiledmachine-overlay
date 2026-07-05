@@ -1,0 +1,17 @@
+--- a/config.def.h.orig	2026-07-04 21:40:33.934267640 -0700
++++ b/config.def.h	2026-07-04 21:47:28.971150631 -0700
+@@ -112,11 +112,11 @@ static const enum libinput_config_tap_bu
+ 	{ MODKEY|WLR_MODIFIER_CTRL|WLR_MODIFIER_SHIFT,SKEY,toggletag, {.ui = 1 << TAG} }
+ 
+ /* helper for spawning shell commands in the pre dwm-5.0 fashion */
+-#define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
++#define SHCMD(cmd) { .v = (const char*[]){ "@DWL_SHELL@", "-c", cmd, NULL } }
+ 
+ /* commands */
+-static const char *termcmd[] = { "foot", NULL };
+-static const char *menucmd[] = { "wmenu-run", NULL };
++static const char *termcmd[] = { "@DWL_TERMINAL@", NULL };
++static const char *menucmd[] = { "@DWL_MENU@", NULL };
+ 
+ static const Key keys[] = {
+ 	/* Note that Shift changes certain key codes: 2 -> at, etc. */

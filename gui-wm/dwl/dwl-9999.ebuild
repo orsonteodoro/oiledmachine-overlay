@@ -82,11 +82,14 @@ src_unpack() {
 		# TODO:  add verify-sig
 		unpack ${A}
 	fi
-die
 }
 
 src_prepare() {
-	restore_config config.h
+	if use savedconfig ; then
+		restore_config config.h
+	else
+		eapply "${FILESDIR}/dwl-d41ecb7-optionalize-external-commands.patch"
+	fi
 
 	default
 }
@@ -94,6 +97,14 @@ src_prepare() {
 src_configure() {
 	chkl_check_many_timestamps
 	cflags-hardened_append
+	local dwl_menu=${DWL_MENU:-"wmenu-run"}
+	local dwl_terminal=${DWL_TERMINAL:-"foot"}
+	local dwl_shell=${DWL_SHELL:-"/bin/sh"}
+	if ! use savedconfig ; then
+		sed -i -e "s|@DWL_MENU@|${dwl_menu}|g" "${S}/config.def.h" || die
+		sed -i -e "s|@DWL_TERMINAL@|${dwl_terminal}|" "${S}/config.def.h" || die
+		sed -i -e "s|@DWL_SHELL@|${dwl_shell}|" "${S}/config.def.h" || die
+	fi
 }
 
 src_compile() {
