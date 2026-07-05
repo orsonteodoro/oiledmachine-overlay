@@ -104,6 +104,10 @@ src_configure() {
 		sed -i -e "s|@DWL_MENU@|${dwl_menu}|g" "${S}/config.def.h" || die
 		sed -i -e "s|@DWL_TERMINAL@|${dwl_terminal}|" "${S}/config.def.h" || die
 		sed -i -e "s|@DWL_SHELL@|${dwl_shell}|" "${S}/config.def.h" || die
+einfo "DWL_MENU:  ${dwl_menu}"
+einfo "DWL_TERMINAL:  ${dwl_terminal}"
+einfo "DWL_SHELL:  ${dwl_shell}"
+einfo "See metadata.xml to set up these per-package environment variables."
 	fi
 }
 
@@ -123,6 +127,7 @@ pkg_postinst() {
 	optfeature_header "Install optional packages:"
 	optfeature "Menu bar" "gui-apps/wmenu"
 	optfeature "Terminal" "gui-apps/foot"
+	optfeature "Menu bar" "dev-libs/bemenu"
 }
 
 # OILEDMACHINE-OVERLAY-TEST:  passed (interactive) d41ecb7 (20260704)

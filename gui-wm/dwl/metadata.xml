@@ -17,6 +17,7 @@
 
     oiledmachine-overlay notes:
 
+
     Build time environment variables:
 
     (These only apply when savedconfig is disabled.)
@@ -29,6 +30,16 @@
 
     DWL_MENU - Sets the menu command to use
     Default:  wmenu-run
+
+
+    Examples:
+
+    Contents of /etc/portage/env/dwl.conf:
+    DWL_TERMINAL="xfce4-terminal"
+    DWL_MENU="bemenu"
+
+    Contents of /etc/portage/package.env:
+    gui-wm/dwl dwl.conf
 
     -->
 </pkgmetadata>
