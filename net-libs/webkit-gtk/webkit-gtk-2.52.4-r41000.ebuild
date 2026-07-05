@@ -160,6 +160,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/openh264-9999"
 	"media-libs/opus-9999"
 	"media-libs/woff2-9999"
+	"sys-apps/bubblewrap-9999"
 	"sys-libs/libseccomp-9999"
 	"x11-libs/cairo-9999"
 	"x11-libs/libdrm-9999"
@@ -860,8 +861,8 @@ RDEPEND_PATENTS="
 	>=media-libs/mesa-${MESA_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},patent_status_nonfree=]
 	!patent_status_nonfree? (
 		gstreamer? (
-			media-plugins/gst-plugins-meta:*[-nvcodec,-qsv,-vaapi,-vulkan]
-			media-libs/gst-plugins-bad:=[-nvcodec,-qsv,-vaapi,-vulkan-video]
+			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:*[-nvcodec,-qsv,-vaapi,-vulkan]
+			>=media-libs/gst-plugins-bad-${GSTREAMER_PV}:=[-nvcodec,-qsv,-vaapi,-vulkan-video]
 		)
 	)
 "
@@ -928,7 +929,7 @@ RDEPEND+="
 		>=x11-libs/libdrm-${LIBDRM_PV}:=[${MULTILIB_USEDEP}]
 	)
 	geolocation? (
-		>=app-misc/geoclue-2.6.0:=
+		>=app-misc/geoclue-${GEOCLUE_PV}:=
 	)
 	gles2? (
 		>=media-libs/mesa-${MESA_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},egl(+),gles2(+),opengl]
@@ -1020,18 +1021,16 @@ RDEPEND+="
 		>=sys-libs/libseccomp-${LIBSECCOMP_PV}:=[${MULTILIB_USEDEP}]
 	)
 	speech-synthesis? (
-		>=app-accessibility/flite-2.2:=[${MULTILIB_USEDEP}]
+		>=app-accessibility/flite-${FLITE_PV}:=[${MULTILIB_USEDEP}]
 	)
 	spell? (
 		>=app-text/enchant-1.6.0:=[${MULTILIB_USEDEP}]
-		app-text/enchant:=
 	)
 	thunder? (
 		net-libs/Thunder:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	)
 	variation-fonts? (
 		>=media-libs/fontconfig-${FONTCONFIG_PV}:=[${MULTILIB_USEDEP}]
-		media-libs/fontconfig:=
 		>=media-libs/freetype-${FREETYPE_PV}:=[${MULTILIB_USEDEP}]
 		>=media-libs/harfbuzz-${HARFBUZZ_PV}:=[${MULTILIB_USEDEP},icu(+)]
 		>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP},X?]
@@ -1066,12 +1065,11 @@ BDEPEND+="
 	${PYTHON_DEPS}
 	${RUBY_DEPS}
 	>=app-accessibility/at-spi2-core-2.5.3[${MULTILIB_USEDEP}]
-	>=dev-lang/perl-5.10.0
+	>=dev-lang/perl-${PERL_PV}
 	>=dev-lang/python-2.7
 	>=dev-lang/ruby-1.9
 	>=dev-build/cmake-3.20
-	>=dev-util/gperf-3.0.1[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
-	dev-util/gperf:=
+	>=dev-util/gperf-3.0.1:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	>=sys-devel/gettext-0.19.8.1[${MULTILIB_USEDEP}]
 	virtual/perl-Carp
@@ -1084,8 +1082,7 @@ BDEPEND+="
 		dev-util/gi-docgen
 	)
 	mold? (
-		>=sys-devel/mold-2.41.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		sys-devel/mold:=
+		>=sys-devel/mold-${MOLD_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 "
 #	test? (
