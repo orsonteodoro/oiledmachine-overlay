@@ -300,7 +300,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 -apparmor +chroot clang contrib +dbusproxy +file-transfer +globalcfg
 landlock +network +private-home -private-lib -selinux +suid
 test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xcsecurity xvfb
-ebuild_revision_140
+ebuild_revision_141
 "
 REQUIRED_USE+="
 	!test
@@ -1716,19 +1716,6 @@ einfo "Forcing system allocator for ${command} (3)"
 		oom_arg="--oom=${OOM[${key_command}]}"
 	fi
 
-	local all_args_x11=(
-		${apparmor_arg}
-		${x11_arg}
-		${allocator_args}
-		${wh_arg}
-		${seccomp_arg}
-		${landlock_arg}
-		${pulse_arg}
-		${oom_arg}
-		${args}
-		${profile_x11_arg}
-	)
-
 	local env_args=()
 	local ozone_args=()
 	local exe_wayland_args=()
@@ -1754,7 +1741,22 @@ einfo "Detected CEF/Chromium.  Using ozone for Wayland."
 		)
 	fi
 
+	local all_args_x11=(
+		${env_args[@]}
+		${apparmor_arg}
+		${x11_arg}
+		${allocator_args}
+		${wh_arg}
+		${seccomp_arg}
+		${landlock_arg}
+		${pulse_arg}
+		${oom_arg}
+		${args}
+		${profile_x11_arg}
+	)
+
 	local all_args_wayland=(
+		${env_args[@]}
 		${apparmor_arg}
 		${allocator_args}
 		${seccomp_arg}
@@ -1766,6 +1768,7 @@ einfo "Detected CEF/Chromium.  Using ozone for Wayland."
 	)
 
 	local all_args_headless=(
+		${env_args[@]}
 		${apparmor_arg}
 		${allocator_args}
 		${seccomp_arg}
@@ -1831,7 +1834,7 @@ if [[ "\${EUID}" == "0" || "\${EUID}" == "250" ]] ; then
 elif [[ -n "\${DISPLAY}" ]] ; then
 	exec firejail "${all_args_x11[@]}" "${exe_path}" "${exe_x11_args[@]}" "\$@"
 else
-	exec firejail "${env_args[@]}" "${all_args_wayland[@]}" "${exe_path}" "${exe_wayland_args[@]}" "\$@"
+	exec firejail "${all_args_wayland[@]}" "${exe_path}" "${exe_wayland_args[@]}" "\$@"
 fi
 EOF
 	}
@@ -1856,7 +1859,7 @@ elif [[ -n "\${DISPLAY}" ]] ; then
 	xhost +si:localuser:\${USER}
 	exec firejail "${all_args_x11[@]}" --env=XAUTHORITY="\${_XAUTHORITY}" "${exe_path}" "${exe_x11_args[@]}" "\$@"
 else
-	exec firejail "${env_args[@]}" "${all_args_wayland[@]}" "${exe_path}" "${exe_wayland_args[@]}" "\$@"
+	exec firejail "${all_args_wayland[@]}" "${exe_path}" "${exe_wayland_args[@]}" "\$@"
 fi
 EOF
 	}
@@ -2159,7 +2162,7 @@ einfo "Updating config for non-suid mode"
 	fi
 
 	dodir "/usr/share/${PN}"
-	mv "${ED}/usr/share/doc/firejail-0.9.80/profile.template" "${ED}/usr/share/${PN}"
+	mv "${ED}/usr/share/doc/firejail-${PV}/profile.template" "${ED}/usr/share/${PN}" || die
 }
 
 pkg_postinst() {
