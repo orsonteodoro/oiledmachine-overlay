@@ -796,7 +796,7 @@ BUILD_DEPEND+="
 		clang? (
 			$(gen_clang_llvm_pair)
 		)
-		>=dev-debug/gdb-7.0:=
+		>=dev-debug/gdb-7.2:=
 	)
 	dwarf5? (
 		!clang? (
@@ -860,8 +860,8 @@ BUILD_DEPEND+="
 		)
 	)
 	rust? (
-		>=dev-util/bindgen-0.65.1:=
-		>=dev-util/pahole-1.27:=[${PYTHON_SINGLE_USEDEP}]
+		>=dev-util/bindgen-0.71.1:=
+		>=dev-util/pahole-1.26:=[${PYTHON_SINGLE_USEDEP}]
 		|| (
 			$(gen_rust_cdepend)
 		)
@@ -1468,7 +1468,7 @@ ot-kernel_check_versions() {
 	_ot-kernel_check_versions "app-arch/tar" "1.28" ""
 	_ot-kernel_check_versions "dev-embedded/u-boot-tools" "2017.01" "" # mkimage
 	_ot-kernel_check_versions "dev-util/global" "6.6.5" "" # gtags
-	_ot-kernel_check_versions "dev-util/pahole" "1.22" "CONFIG_DEBUG_INFO_BTF"
+	_ot-kernel_check_versions "dev-util/pahole" "1.26" "CONFIG_DEBUG_INFO_BTF"
 	_ot-kernel_check_versions "net-dialup/ppp" "2.4.0" "CONFIG_PPP"
 	_ot-kernel_check_versions "net-firewall/iptables" "1.4.2" "CONFIG_NETFILTER"
 	_ot-kernel_check_versions "net-fs/nfs-utils" "1.0.5" "NFS_FS"

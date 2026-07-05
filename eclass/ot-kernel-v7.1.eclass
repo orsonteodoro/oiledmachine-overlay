@@ -779,7 +779,7 @@ BUILD_DEPEND+="
 		clang? (
 			$(gen_clang_llvm_pair)
 		)
-		>=dev-debug/gdb-7.0:=
+		>=dev-debug/gdb-7.2:=
 	)
 	dwarf5? (
 		!clang? (
@@ -843,8 +843,8 @@ BUILD_DEPEND+="
 		)
 	)
 	rust? (
-		>=dev-util/bindgen-0.65.1:=
-		>=dev-util/pahole-1.27:=[${PYTHON_SINGLE_USEDEP}]
+		>=dev-util/bindgen-0.71.1:=
+		>=dev-util/pahole-1.22:=[${PYTHON_SINGLE_USEDEP}]
 		|| (
 			$(gen_rust_cdepend)
 		)

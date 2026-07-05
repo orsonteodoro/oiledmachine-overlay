@@ -550,9 +550,9 @@ gen_shadowcallstack_rdepend() {
 			=llvm-runtimes/clang-runtime-${s}*:=[compiler-rt,sanitize]
 			=llvm-runtimes/compiler-rt-${s}*:=
 			=llvm-runtimes/compiler-rt-sanitizers-${s}*:=[shadowcallstack?]
-			llvm-core/clang:${s}:=
-			llvm-core/lld:${s}:=
-			llvm-core/llvm:${s}:=
+			llvm-core/clang:${s}=
+			llvm-core/lld:${s}=
+			llvm-core/llvm:${s}=
 		)
 		     "
 	done
