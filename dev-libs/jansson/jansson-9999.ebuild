@@ -35,7 +35,7 @@ BDEPEND="
 "
 
 PATCHES=(
-	"${FILESDIR}"/jansson-2.14.1-default-symver-test.patch
+	"${FILESDIR}"/jansson-a8b3c59-default-symver-test.patch
 )
 
 src_prepare() {

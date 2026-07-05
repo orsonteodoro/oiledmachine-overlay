@@ -1,0 +1,45 @@
+diff '--color=auto' -urp jansson-9999.orig/configure.ac jansson-9999/configure.ac
+--- jansson-9999.orig/configure.ac	2026-07-04 22:39:29.640754014 -0700
++++ jansson-9999/configure.ac	2026-07-04 22:43:55.558107943 -0700
+@@ -27,6 +27,9 @@ AC_TYPE_LONG_LONG_INT
+ 
+ AC_C_BIGENDIAN
+ 
++jansson_soversion="4"
++AC_SUBST([jansson_soversion])
++
+ AC_C_INLINE
+ case $ac_cv_c_inline in
+     yes) json_inline=inline;;
+@@ -135,16 +138,10 @@ AC_SUBST(JSON_BSYMBOLIC_LDFLAGS)
+ 
+ # Enable symbol versioning on GNU libc
+ JSON_SYMVER_LDFLAGS=
+-AC_CHECK_DECL([__GLIBC__], [
+-    saved_LDFLAGS="$LDFLAGS"
+-    LDFLAGS="$LDFLAGS -Wl,--default-symver"
+-    AC_MSG_CHECKING([whether the linker accepts -Wl,--default-symver])
+-    AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[]])],
+-        [AC_MSG_RESULT([yes])
+-         JSON_SYMVER_LDFLAGS=-Wl,--default-symver],
+-        [AC_MSG_RESULT([no])])
+-    LDFLAGS="$saved_LDFLAGS"
+-])
++AC_CHECK_DECL([__GLIBC__],
++  [AX_CHECK_LINK_FLAG([-Wl,--default-symver],
++    [JSON_SYMVER_LDFLAGS=-Wl,--default-symver],
++    [JSON_SYMVER_LDFLAGS=-Wl,--version-script,$ac_abs_confdir/jansson.sym])])
+ AC_SUBST([JSON_SYMVER_LDFLAGS])
+ 
+ AC_ARG_ENABLE([dtoa],
+@@ -186,6 +183,7 @@ AC_SUBST([AM_CFLAGS])
+ 
+ AC_CONFIG_FILES([
+         jansson.pc
++	jansson.sym
+         Makefile
+         doc/Makefile
+         src/Makefile
+Only in jansson-9999: configure.ac.orig
+Only in jansson-9999: configure.ac.rej
+Only in jansson-9999: jansson.sym.in
