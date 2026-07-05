@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# This ebuild fork contains a patch with AI generated recommended fix.
+
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data untrusted-data" # Add retpoline to password widget
 
 CHKL_TIMESTAMPS=(
@@ -65,7 +67,8 @@ BDEPEND="
 	virtual/pkgconfig
 "
 PATCHES=(
-#	"${FILESDIR}/dwl-a2d03cf-use-wlroots-live.patch"
+	"${FILESDIR}/dwl-d41ecb7-use-wlroots-live.patch"
+	"${FILESDIR}/dwl-d41ecb7-dwl.c-use-wlroots-live.patch"
 )
 
 src_unpack() {

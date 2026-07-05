@@ -1,0 +1,11 @@
+--- a/dwl.c.orig	2026-07-04 20:41:00.312214410 -0700
++++ b/dwl.c	2026-07-04 20:42:36.704092111 -0700
+@@ -2584,7 +2584,7 @@ setup(void)
+ 	wlr_server_decoration_manager_set_default_mode(
+ 			wlr_server_decoration_manager_create(dpy),
+ 			WLR_SERVER_DECORATION_MANAGER_MODE_SERVER);
+-	xdg_decoration_mgr = wlr_xdg_decoration_manager_v1_create(dpy);
++	xdg_decoration_mgr = wlr_xdg_decoration_manager_v1_create(dpy, 1);
+ 	wl_signal_add(&xdg_decoration_mgr->events.new_toplevel_decoration, &new_xdg_decoration);
+ 
+ 	pointer_constraints = wlr_pointer_constraints_v1_create(dpy);

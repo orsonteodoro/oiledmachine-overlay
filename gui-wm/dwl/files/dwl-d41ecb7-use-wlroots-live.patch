@@ -1,0 +1,13 @@
+--- a/config.mk.orig	2026-07-04 20:38:37.941352671 -0700
++++ b/config.mk	2026-07-04 20:39:20.373950978 -0700
+@@ -8,8 +8,8 @@ PREFIX = /usr/local
+ MANDIR = $(PREFIX)/share/man
+ DATADIR = $(PREFIX)/share
+ 
+-WLR_INCS = `$(PKG_CONFIG) --cflags wlroots-0.20`
+-WLR_LIBS = `$(PKG_CONFIG) --libs wlroots-0.20`
++WLR_INCS = `$(PKG_CONFIG) --cflags wlroots-0.21`
++WLR_LIBS = `$(PKG_CONFIG) --libs wlroots-0.21`
+ 
+ # Allow using an alternative wlroots installation
+ # This has to have all the includes required by wlroots, e.g:
