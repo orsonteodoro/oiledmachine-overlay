@@ -43,3 +43,17 @@ diff '--color=auto' -urp jansson-9999.orig/configure.ac jansson-9999/configure.a
 Only in jansson-9999: configure.ac.orig
 Only in jansson-9999: configure.ac.rej
 Only in jansson-9999: jansson.sym.in
+--- /dev/null
++++ b/jansson.sym.in
+@@ -0,0 +1,8 @@
++JANSSON_@jansson_soversion@ {
++	global:
++		json_*;
++		jansson_*;
++	local:
++		*;
++};
++
+-- 
+2.42.0
+
