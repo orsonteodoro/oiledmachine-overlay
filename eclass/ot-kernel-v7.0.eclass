@@ -79,7 +79,8 @@ fi
 # TODO update section
 KERNEL_RELEASE_DATE="20251130"
 # The timestamps are supposed to reflect maximum coverage for the set.
-AMD_SEV_FIRMWARE_RELEASE_DATE="20230828" # Based on latest mitigation
+AMD_SEV_FIRMWARE_RELEASE_DATE="${LINUX_FIRMWARE_AMD_SEV_PV}" # Based on security update
+AMD_UCODE_FIRMWARE_RELEASE_DATE="${LINUX_FIRMWARE_AMD_UCODE_PV}" # Based on security update
 AMDGPU_FIRMWARE_RELEASE_DATE="20250620" # Based on vcn 5.0.1 and dcn 4.0.1 and gc_12_0_1 first presence
 AMDXDNA_FIRMWARE_RELEASE_DATE="20241203" # Based on npu.sbin first presence
 ATH_FIRMWARE_RELEASE_DATE="20241010" # Based on presence of latest added board-2 (QCN9274) file in https://github.com/torvalds/linux/blob/v7.0/drivers/net/wireless/ath/ath12k/hw.c
@@ -864,6 +865,7 @@ BUILD_DEPEND+="
 
 	linux-firmware? (
 		>=sys-kernel/linux-firmware-${AMD_SEV_FIRMWARE_RELEASE_DATE}:=
+		>=sys-kernel/linux-firmware-${AMD_UCODE_FIRMWARE_RELEASE_DATE}:=
 		>=sys-kernel/linux-firmware-${AMDGPU_FIRMWARE_RELEASE_DATE}:=
 		>=sys-kernel/linux-firmware-${AMDXDNA_FIRMWARE_RELEASE_DATE}:=
 		>=sys-kernel/linux-firmware-${ATH_FIRMWARE_RELEASE_DATE}:=

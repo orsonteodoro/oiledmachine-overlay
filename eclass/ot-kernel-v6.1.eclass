@@ -69,7 +69,8 @@ fi
 # and linux-firmware firmware upload date
 KERNEL_RELEASE_DATE="20221211"
 # The timestamps are supposed to reflect maximum coverage for the set.
-AMD_SEV_FIRMWARE_RELEASE_DATE="20210912" # Based on amd_sev_fam19h_model0xh file first presence
+AMD_SEV_FIRMWARE_RELEASE_DATE="${LINUX_FIRMWARE_AMD_SEV_PV}" # Based on security update
+AMD_UCODE_FIRMWARE_RELEASE_DATE="${LINUX_FIRMWARE_AMD_UCODE_PV}" # Based on security update
 AMDGPU_FIRMWARE_RELEASE_DATE="20230330" # Based on gc_11_0_4 file first presence
 ATH_FIRMWARE_RELEASE_DATE="20220424" # Based on presence of latest added board-2 (WCN6750) file in https://github.com/torvalds/linux/blob/v6.1/drivers/net/wireless/ath/ath11k/core.c
 RTL_BT_FIRMWARE_RELEASE_DATE="20220318" # Based on rtl8852bu_fw bin referenced in https://github.com/torvalds/linux/blob/v6.1/drivers/bluetooth/btrtl.c
@@ -748,6 +749,7 @@ BUILD_DEPEND+="
 
 	linux-firmware? (
 		>=sys-kernel/linux-firmware-${AMD_SEV_FIRMWARE_RELEASE_DATE}:=
+		>=sys-kernel/linux-firmware-${AMD_UCODE_FIRMWARE_RELEASE_DATE}:=
 		>=sys-kernel/linux-firmware-${AMDGPU_FIRMWARE_RELEASE_DATE}:=
 		>=sys-kernel/linux-firmware-${ATH_FIRMWARE_RELEASE_DATE}:=
 		>=sys-kernel/linux-firmware-${RTL_BT_FIRMWARE_RELEASE_DATE}:=
