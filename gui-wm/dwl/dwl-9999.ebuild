@@ -16,8 +16,8 @@ CHKL_TIMESTAMPS=(
 inherit cflags-hardened chkl savedconfig secure-version toolchain-funcs
 
 if [[ ${PV} == 9999 ]]; then
-	FALLBACK_COMMIT="a2d03cf6188350005dbdaac12f3b0fbc4d60c567"
-	EGIT_BRANCH="main"
+	FALLBACK_COMMIT="d41ecb745cc94fbb48e93af01f5fd5d0b2488945"
+	EGIT_BRANCH="wlroots-next"
 	EGIT_REPO_URI="https://codeberg.org/dwl/dwl.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
@@ -64,6 +64,9 @@ BDEPEND="
 	>=dev-util/wayland-scanner-1.23
 	virtual/pkgconfig
 "
+PATCHES=(
+#	"${FILESDIR}/dwl-a2d03cf-use-wlroots-live.patch"
+)
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
