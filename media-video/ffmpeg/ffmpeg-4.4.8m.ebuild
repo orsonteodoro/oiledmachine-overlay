@@ -1133,7 +1133,6 @@ DEPEND+="
 	)
 	v4l? (
 		sys-kernel/linux-headers:=
-,
 	)
 "
 # += for verify-sig above
