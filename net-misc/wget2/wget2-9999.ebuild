@@ -22,7 +22,7 @@ CHKL_TIMESTAMPS=(
 inherit autotools cflags-hardened chkl secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="172b13b0ef52a3b075d6a236207c8d3870a2c415"
+	FALLBACK_COMMIT="2118e98e9ed9caa0e4277ea2c7c3439bd817b2cc"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://gitlab.com/gnuwget/wget2.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -42,7 +42,7 @@ LICENSE="GPL-3+ LGPL-3+"
 SLOT="0/0" # subslot = libwget.so version
 IUSE+="
 brotli bzip2 doc +gnutls gpgme +http2 idn lzip lzma nls pcre psl +ssl test xattr zlib
-ebuild_revision_1
+ebuild_revision_2
 "
 
 RDEPEND="
