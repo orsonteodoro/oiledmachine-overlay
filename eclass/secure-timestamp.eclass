@@ -337,7 +337,7 @@ SECURE_TIMESTAMP["sys_libs_binutils_libs_9999"]="2026-06-29" # Same as binutils
 SECURE_TIMESTAMP["sys_libs_libbacktrace_9999"]="Feb 10, 2025 3:04 PM PST"
 SECURE_TIMESTAMP["sys_libs_libcap_9999"]="Jun 19, 2026 06:04:20 -0700"
 SECURE_TIMESTAMP["sys_libs_libseccomp_9999"]="Jan 23, 2025 4:35 PM PST"
-SECURE_TIMESTAMP["sys_libs_libselinux_9999"]="Jun 10, 2026 7:43 AM PDT"
+SECURE_TIMESTAMP["sys_libs_libselinux_9999"]="Jun 23, 2026 6:50 AM PDT"
 SECURE_TIMESTAMP["sys_libs_libunwind_9999"]="Jun 19, 2026 9:44 AM PDT"
 SECURE_TIMESTAMP["sys_libs_readline_9999"]="2025-12-10 11:36:18 -0500"
 
