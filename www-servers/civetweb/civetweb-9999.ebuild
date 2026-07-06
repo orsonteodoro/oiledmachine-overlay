@@ -54,14 +54,34 @@ LUA_5_4_MIN="5.4.3"
 # Building with 5.1 is broken.
 LUA_COMPAT=( "lua5-"{1..4} )
 
-inherit cflags-hardened check-compiler-switch cmake flag-o-matic libcxx-slot libstdcxx-slot lua multilib-minimal sandbox-changes
+CHKL_TIMESTAMPS=(
+	"dev-db/sqlite-9999"
+	"dev-libs/openssl-4.0.9999"
+	"dev-libs/openssl-3.6.9999"
+	"dev-libs/openssl-3.5.9999"
+	"dev-libs/openssl-3.4.9999"
+	"dev-libs/openssl-3.0.9999"
+)
+
+inherit cflags-hardened check-compiler-switch chkl cmake flag-o-matic libcxx-slot libstdcxx-slot lua multilib-minimal sandbox-changes secure-version
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="588860e30721bf5453b0440c390865a8e85dcae5"
+	EGIT_BRANCH="master"
+	EGIT_REPO_URI="https://github.com/civetweb/civetweb.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	SRC_URI="
+https://github.com/civetweb/civetweb/archive/v${PV}.tar.gz
+	-> ${P}.tar.gz
+	"
+fi
 
 KEYWORDS="~amd64 ~ppc ~x86"
 S="${WORKDIR}/civetweb-${PV}"
-SRC_URI="
-https://github.com/civetweb/civetweb/archive/v${PV}.tar.gz
-	-> ${P}.tar.gz
-"
 
 DESCRIPTION="CivetWeb is an embedded C++ web server"
 HOMEPAGE="https://github.com/civetweb/civetweb"
@@ -118,25 +138,30 @@ gen_lua_targets() {
 	done
 }
 RDEPEND+="
-	>=dev-db/sqlite-3.8.9:3[${MULTILIB_USEDEP}]
-	virtual/libc
+	>=dev-db/sqlite-${SQLITE_PV}:=[${MULTILIB_USEDEP}]
+	elibc_glibc? (
+		>=sys-libs/glibc-${GLIBC_PV}:=
+	)
+	elibc_musl? (
+		>=sys-libs/musl-${MUSL_PV}:=
+	)
+	lua? (
+		$(gen_lua_targets)
+		${LUA_DEPS}
+		>=dev-db/sqlite-${SQLITE_PV}:=[static-libs?]
+		>=dev-lua/luafilesystem-1.6.3:=[${LUA_USEDEP}]
+		>=dev-lua/luasqlite3-0.9.3:=[${LUA_USEDEP},static-libs?]
+		>=dev-lua/luaxml-1.8:=[${LUA_USEDEP}]
+	)
 	ssl? (
-		>=dev-libs/openssl-1.0[${MULTILIB_USEDEP}]
+		$(secure-version_gen_openssl_depends '' '[${MULTILIB_USEDEP}]')
 	)
 	zlib? (
-		sys-libs/zlib[${MULTILIB_USEDEP}]
+		>=sys-libs/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND+="
 	${RDEPEND}
-	lua? (
-		$(gen_lua_targets)
-		${LUA_DEPS}
-		>=dev-db/sqlite-0.1.2[static-libs?]
-		>=dev-lua/luafilesystem-1.6.3[${LUA_USEDEP}]
-		>=dev-lua/luasqlite3-0.9.3[${LUA_USEDEP},static-libs?]
-		>=dev-lua/luaxml-1.8[${LUA_USEDEP}]
-	)
 "
 BDEPEND+="
 	>=dev-build/cmake-3.3.0
@@ -206,6 +231,18 @@ get_lib_types() {
 		echo "static"
 	fi
 	echo "shared"
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
 }
 
 src_prepare() {
@@ -364,6 +401,7 @@ einfo "LUA:  OFF (ABI=${ABI})"
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	configure_abi() {
 		local lib_type
 		for lib_type in $(get_lib_types) ; do
