@@ -208,7 +208,7 @@ RDEPEND+="
 		>=app-arch/libarchive-${LIBARCHIVE_PV}:=[${MULTILIB_USEDEP}]
 	)
 	exif? (
-		>=media-libs/libexif-0.6.24:=[${MULTILIB_USEDEP}]
+		>=media-libs/libexif-${LIBEXIF_PV}:=[${MULTILIB_USEDEP}]
 	)
 	fftw? (
 		>=sci-libs/fftw-3.3.8:=[${MULTILIB_USEDEP}]
