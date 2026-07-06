@@ -9,6 +9,7 @@ KEYWORDS="
 amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv sparc x86 ~amd64-linux
 ~arm64-macos ~ppc-macos ~x64-macos
 "
+S="${WORKDIR}"
 
 DESCRIPTION="A meta-ebuild for the Clang runtime libraries"
 HOMEPAGE="https://clang.llvm.org/"

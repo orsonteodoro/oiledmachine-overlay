@@ -8,6 +8,7 @@ inherit multilib multilib-build toolchain-funcs
 KEYWORDS="
 amd64 arm arm64 ~loong ppc ppc64 ~riscv ~sparc x86 ~arm64-macos ~x64-macos
 "
+S="${WORKDIR}"
 
 DESCRIPTION="A meta-ebuild for the Clang runtime libraries"
 HOMEPAGE="https://clang.llvm.org/"
