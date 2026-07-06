@@ -16,8 +16,9 @@ LLVM_SLOT="${PV%%.*}"
 PROTOBUF_CPP_SLOT="3"
 PYTHON_COMPAT=( "python3_"{13..14} )
 
-# For NVPTX, see https://github.com/llvm/llvm-project/blob/main/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L57C1-L64C1
-# For CUDA sdk versions, see https://github.com/llvm/llvm-project/blob/main/clang/include/clang/Basic/Cuda.h#L41
+# For NVPTX, see https://github.com/llvm/llvm-project/blob/llvmorg-20.1.8/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L57C1-L64C1
+# For CUDA sdk versions, see https://github.com/llvm/llvm-project/blob/llvmorg-20.1.8/clang/include/clang/Basic/Cuda.h#L41
+# See also https://github.com/llvm/llvm-project/blob/llvmorg-20.1.8/clang/lib/CodeGen/CGOpenMPRuntimeGPU.cpp#L2269
 CUDA_TARGETS_COMPAT=(
 	"auto"
 	"sm_35"

@@ -13,8 +13,9 @@ CXX_STANDARD=17
 LLVM_SLOT="${PV%%.*}"
 PYTHON_COMPAT=( "python3_"{12..14} )
 
-# For NVPTX, see https://github.com/llvm/llvm-project/blob/release/18.x/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L61
-# For CUDA sdk versions, see https://github.com/llvm/llvm-project/blob/release/18.x/clang/include/clang/Basic/Cuda.h
+# For NVPTX, see https://github.com/llvm/llvm-project/blob/llvmorg-17.0.6/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L61
+# For CUDA sdk versions, see https://github.com/llvm/llvm-project/blob/llvmorg-17.0.6/clang/include/clang/Basic/Cuda.h
+# See also https://github.com/llvm/llvm-project/blob/llvmorg-17.0.6/clang/lib/CodeGen/CGOpenMPRuntimeGPU.cpp#L3561
 CUDA_TARGETS_COMPAT=(
 	"auto"
 	"sm_35"
@@ -33,7 +34,6 @@ CUDA_TARGETS_COMPAT=(
 	"sm_87"
 	"sm_89"
 	"sm_90"
-	"sm_90a"
 )
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -206,12 +206,6 @@ RDEPEND="
 		)
 	)
 	cuda_targets_sm_90? (
-		|| (
-			${CUDA_11_8_RDEPEND}
-			${CUDA_12_3_RDEPEND}
-		)
-	)
-	cuda_targets_sm_90a? (
 		|| (
 			${CUDA_11_8_RDEPEND}
 			${CUDA_12_3_RDEPEND}

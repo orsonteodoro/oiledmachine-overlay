@@ -13,8 +13,9 @@ CXX_STANDARD=17
 LLVM_SLOT="${PV%%.*}"
 PYTHON_COMPAT=( "python3_"{12..14} )
 
-# For NVPTX, see https://github.com/llvm/llvm-project/blob/release/18.x/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L61
-# For CUDA sdk versions, see https://github.com/llvm/llvm-project/blob/release/18.x/clang/include/clang/Basic/Cuda.h
+# For NVPTX, see https://github.com/llvm/llvm-project/blob/llvmorg-18.1.8/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L62
+# For CUDA sdk versions, see https://github.com/llvm/llvm-project/blob/llvmorg-18.1.8/clang/include/clang/Basic/Cuda.h
+# See also https://github.com/llvm/llvm-project/blob/llvmorg-18.1.8/clang/lib/CodeGen/CGOpenMPRuntimeGPU.cpp#L3453
 CUDA_TARGETS_COMPAT=(
 	"auto"
 	"sm_35"

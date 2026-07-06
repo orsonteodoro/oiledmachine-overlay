@@ -15,8 +15,10 @@ CXX_STANDARD=17
 LLVM_SLOT="${PV%%.*}"
 PYTHON_COMPAT=( "python3_"{13..14} )
 
-# For NVPTX, see https://github.com/llvm/llvm-project/blob/main/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L57C1-L64C1
-# For CUDA sdk versions, see https://github.com/llvm/llvm-project/blob/main/clang/include/clang/Basic/Cuda.h#L41
+# For NVPTX, see https://github.com/llvm/llvm-project/blob/llvmorg-22.1.8/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L57C1-L64C1
+# For CUDA sdk versions, see https://github.com/llvm/llvm-project/blob/llvmorg-22.1.8/clang/include/clang/Basic/Cuda.h#L41
+# See also https://github.com/llvm/llvm-project/blob/llvmorg-22.1.8/clang/include/clang/Basic/OffloadArch.h#L21
+# See also https://github.com/llvm/llvm-project/blob/llvmorg-22.1.8/clang/lib/CodeGen/CGOpenMPRuntimeGPU.cpp#L2269
 CUDA_TARGETS_COMPAT=(
 	"auto"
 	"sm_35"
@@ -33,6 +35,7 @@ CUDA_TARGETS_COMPAT=(
 	"sm_80"
 	"sm_86"
 	"sm_87"
+	"sm_88"
 	"sm_89"
 	"sm_90"
 	"sm_90a"
@@ -40,8 +43,14 @@ CUDA_TARGETS_COMPAT=(
 	"sm_100a"
 	"sm_101"
 	"sm_101a"
+	"sm_103"
+	"sm_103a"
+	"sm_110"
+	"sm_110a"
 	"sm_120"
 	"sm_120a"
+	"sm_121"
+	"sm_121a"
 )
 
 inherit libstdcxx-compat
@@ -153,6 +162,20 @@ CUDA_12_8_RDEPEND="
 		virtual/cuda-compiler:0/12.8[${LIBSTDCXX_USEDEP}]
 	)
 "
+CUDA_12_9_RDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-12.9*
+		>=dev-util/nvidia-cuda-toolkit-575.57
+		virtual/cuda-compiler:0/12.9[${LIBSTDCXX_USEDEP}]
+	)
+"
+CUDA_13_0_RDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-13.0*
+		>=dev-util/nvidia-cuda-toolkit-580.95
+		virtual/cuda-compiler:0/13.0[${LIBSTDCXX_USEDEP}]
+	)
+"
 RDEPEND="
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
@@ -172,6 +195,7 @@ RDEPEND="
 			${CUDA_12_5_RDEPEND}
 			${CUDA_12_6_RDEPEND}
 			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
 		)
 	)
 	cuda_targets_sm_52? (
@@ -182,6 +206,7 @@ RDEPEND="
 			${CUDA_12_5_RDEPEND}
 			${CUDA_12_6_RDEPEND}
 			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
 		)
 	)
 	cuda_targets_sm_53? (
@@ -192,6 +217,7 @@ RDEPEND="
 			${CUDA_12_5_RDEPEND}
 			${CUDA_12_6_RDEPEND}
 			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
 		)
 	)
 	cuda_targets_sm_60? (
@@ -202,6 +228,7 @@ RDEPEND="
 			${CUDA_12_5_RDEPEND}
 			${CUDA_12_6_RDEPEND}
 			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
 		)
 	)
 	cuda_targets_sm_61? (
@@ -212,6 +239,7 @@ RDEPEND="
 			${CUDA_12_5_RDEPEND}
 			${CUDA_12_6_RDEPEND}
 			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
 		)
 	)
 	cuda_targets_sm_62? (
@@ -222,6 +250,7 @@ RDEPEND="
 			${CUDA_12_5_RDEPEND}
 			${CUDA_12_6_RDEPEND}
 			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
 		)
 	)
 	cuda_targets_sm_70? (
@@ -232,6 +261,7 @@ RDEPEND="
 			${CUDA_12_5_RDEPEND}
 			${CUDA_12_6_RDEPEND}
 			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
 		)
 	)
 	cuda_targets_sm_72? (
@@ -242,6 +272,7 @@ RDEPEND="
 			${CUDA_12_5_RDEPEND}
 			${CUDA_12_6_RDEPEND}
 			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
 		)
 	)
 	cuda_targets_sm_75? (
@@ -252,6 +283,8 @@ RDEPEND="
 			${CUDA_12_5_RDEPEND}
 			${CUDA_12_6_RDEPEND}
 			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
 		)
 	)
 	cuda_targets_sm_80? (
@@ -262,6 +295,8 @@ RDEPEND="
 			${CUDA_12_5_RDEPEND}
 			${CUDA_12_6_RDEPEND}
 			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
 		)
 	)
 	cuda_targets_sm_86? (
@@ -272,6 +307,8 @@ RDEPEND="
 			${CUDA_12_5_RDEPEND}
 			${CUDA_12_6_RDEPEND}
 			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
 		)
 	)
 	cuda_targets_sm_87? (
@@ -282,6 +319,13 @@ RDEPEND="
 			${CUDA_12_5_RDEPEND}
 			${CUDA_12_6_RDEPEND}
 			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+		)
+	)
+	cuda_targets_sm_88? (
+		|| (
+			${CUDA_13_0_RDEPEND}
 		)
 	)
 	cuda_targets_sm_89? (
@@ -292,6 +336,8 @@ RDEPEND="
 			${CUDA_12_5_RDEPEND}
 			${CUDA_12_6_RDEPEND}
 			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
 		)
 	)
 	cuda_targets_sm_90? (
@@ -302,6 +348,86 @@ RDEPEND="
 			${CUDA_12_5_RDEPEND}
 			${CUDA_12_6_RDEPEND}
 			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+		)
+	)
+	cuda_targets_sm_100? (
+		|| (
+			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+		)
+	)
+	cuda_targets_sm_100a? (
+		|| (
+			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+		)
+	)
+	cuda_targets_sm_101? (
+		|| (
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+		)
+	)
+	cuda_targets_sm_101a? (
+		|| (
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+		)
+	)
+	cuda_targets_sm_103? (
+		|| (
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+		)
+	)
+	cuda_targets_sm_103a? (
+		|| (
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+		)
+	)
+	cuda_targets_sm_110? (
+		|| (
+			${CUDA_13_0_RDEPEND}
+		)
+	)
+	cuda_targets_sm_110a? (
+		|| (
+			${CUDA_13_0_RDEPEND}
+		)
+	)
+	cuda_targets_sm_120? (
+		|| (
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+		)
+	)
+	cuda_targets_sm_120a? (
+		|| (
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+		)
+	)
+	cuda_targets_sm_121? (
+		|| (
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+		)
+	)
+	cuda_targets_sm_121a? (
+		|| (
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
 		)
 	)
 	gdb-plugin? (
@@ -319,6 +445,8 @@ RDEPEND="
 			${CUDA_12_5_RDEPEND}
 			${CUDA_12_6_RDEPEND}
 			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
 		)
 	)
 	offload? (

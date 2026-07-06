@@ -15,8 +15,10 @@ CXX_STANDARD=17
 LLVM_SLOT="${PV%%.*}"
 PYTHON_COMPAT=( "python3_"{13..14} )
 
-# For NVPTX, see https://github.com/llvm/llvm-project/blob/main/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L57C1-L64C1
-# For CUDA sdk versions, see https://github.com/llvm/llvm-project/blob/main/clang/include/clang/Basic/Cuda.h#L41
+# For NVPTX, see https://github.com/llvm/llvm-project/blob/llvmorg-21.1.8/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L57C1-L64C1
+# For CUDA sdk versions, see https://github.com/llvm/llvm-project/blob/llvmorg-21.1.8/clang/include/clang/Basic/Cuda.h#L41
+# See also https://github.com/llvm/llvm-project/blob/llvmorg-21.1.8/clang/include/clang/Basic/OffloadArch.h#L21
+# See also https://github.com/llvm/llvm-project/blob/llvmorg-21.1.8/clang/lib/CodeGen/CGOpenMPRuntimeGPU.cpp#L2269
 CUDA_TARGETS_COMPAT=(
 	"auto"
 	"sm_35"
@@ -301,6 +303,38 @@ RDEPEND="
 			${CUDA_12_4_RDEPEND}
 			${CUDA_12_5_RDEPEND}
 			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+		)
+	)
+	cuda_targets_sm_100? (
+		|| (
+			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+		)
+	)
+	cuda_targets_sm_100a? (
+		|| (
+			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+		)
+	)
+	cuda_targets_sm_101? (
+		|| (
+			${CUDA_12_8_RDEPEND}
+		)
+	)
+	cuda_targets_sm_101a? (
+		|| (
+			${CUDA_12_8_RDEPEND}
+		)
+	)
+	cuda_targets_sm_120? (
+		|| (
+			${CUDA_12_8_RDEPEND}
+		)
+	)
+	cuda_targets_sm_120a? (
+		|| (
 			${CUDA_12_8_RDEPEND}
 		)
 	)
