@@ -52,9 +52,30 @@ PATENT_STATUS_IUSE=(
 	"patent_status_nonfree"
 )
 
-inherit cflags-hardened check-compiler-switch flag-o-matic libcxx-slot
+CHKL_TIMESTAMPS=(
+	"app-arch/libarchive-9999"
+	"app-text/poppler-9999"
+	"dev-cpp/highway-9999"
+	"dev-libs/expat-9999"
+	"dev-libs/glib-2.89.9999"
+	"dev-libs/libffi-9999"
+	"gnome-base/librsvg-9999"
+	"media-gfx/imagemagick-9999"
+	"media-gfx/graphicsmagick-9999"
+	"media-libs/lcms-9999"
+	"media-libs/libjpeg-turbo-9999"
+	"media-libs/libpng-9999"
+	"media-libs/libraw-9999"
+	"media-libs/libspng-9999"
+	"media-libs/libwebp-9999"
+	"media-libs/openexr-9999"
+	"media-libs/tiff-9999"
+	"x11-libs/cairo-9999"
+)
+
+inherit cflags-hardened check-compiler-switch chkl flag-o-matic libcxx-slot
 inherit libstdcxx-slot llvm meson-multilib multilib-minimal python-r1
-inherit toolchain-funcs vala
+inherit secure-version toolchain-funcs vala
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/libvips-${PV}"
@@ -82,7 +103,7 @@ ${PATENT_STATUS_IUSE[@]}
 +jpeg2k +jpegxl +lcms +matio -nifti +openexr +openslide +orc
 +pango +png +poppler +python +ppm -raw -spng +svg test +tiff
 -uhdr +vala +webp +zlib
-ebuild_revision_51
+ebuild_revision_52
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -144,29 +165,25 @@ REQUIRED_USE="
 "
 # It requires <= c++11 for linking
 PATENT_STATUS_RDEPEND="
-	virtual/patent-status[patent_status_nonfree=]
+	virtual/patent-status:*[patent_status_nonfree=]
 	!patent_status_nonfree? (
 		avif? (
-			>=media-libs/libheif-1.7.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
-			<media-libs/libheif-1.19.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
-			media-libs/libheif:=
+			>=media-libs/libheif-1.7.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
+			<media-libs/libheif-1.19.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
 		)
 		heic? (
-			>=media-libs/libheif-1.7.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
-			<media-libs/libheif-1.19.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
-			media-libs/libheif:=
+			>=media-libs/libheif-1.7.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
+			<media-libs/libheif-1.19.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
 		)
 	)
 	patent_status_nonfree? (
 		avif? (
-			>=media-libs/libheif-1.7.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
-			<media-libs/libheif-1.19.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
-			media-libs/libheif:=
+			>=media-libs/libheif-1.7.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
+			<media-libs/libheif-1.19.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
 		)
 		heic? (
-			>=media-libs/libheif-1.7.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
-			<media-libs/libheif-1.19.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
-			media-libs/libheif:=
+			>=media-libs/libheif-1.7.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
+			<media-libs/libheif-1.19.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
 		)
 	)
 "
@@ -174,132 +191,125 @@ PATENT_STATUS_RDEPEND="
 RDEPEND+="
 	${PATENT_STATUS_RDEPEND}
 	${PYTHON_DEPS}
-	$(python_gen_any_dep '
-		>=dev-libs/gobject-introspection-1.72.0[${PYTHON_SINGLE_USEDEP}]
-	')
-	>=dev-libs/glib-2.72.4:2[${MULTILIB_USEDEP}]
-	>=dev-libs/expat-2.4.7[${MULTILIB_USEDEP}]
-	>=dev-libs/libffi-3.4.2[${MULTILIB_USEDEP}]
-	>=sci-libs/gsl-2.7.1
+	$(python_gen_any_dep "
+		>=dev-libs/gobject-introspection-${GOBJECT_INTROSPECTION_PV}[\${PYTHON_SINGLE_USEDEP}]
+	")
+	>=dev-libs/glib-${GLIB_PV}:=[${MULTILIB_USEDEP}]
+	>=dev-libs/expat-${EXPAT_PV}:=[${MULTILIB_USEDEP}]
+	>=dev-libs/libffi-${LIBFFI_PV}:=[${MULTILIB_USEDEP}]
+	>=sci-libs/gsl-2.7.1:=
 	cairo? (
-		>=x11-libs/cairo-1.16.0[${MULTILIB_USEDEP}]
+		>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP}]
 	)
 	cgif? (
-		>=media-libs/cgif-0.2.0[${MULTILIB_USEDEP}]
+		>=media-libs/cgif-0.2.0:=[${MULTILIB_USEDEP}]
 	)
 	dzi? (
-		>=app-arch/libarchive-3.6.0[${MULTILIB_USEDEP}]
+		>=app-arch/libarchive-${LIBARCHIVE_PV}:=[${MULTILIB_USEDEP}]
 	)
 	exif? (
-		>=media-libs/libexif-0.6.24[${MULTILIB_USEDEP}]
+		>=media-libs/libexif-0.6.24:=[${MULTILIB_USEDEP}]
 	)
 	fftw? (
-		>=sci-libs/fftw-3.3.8:3.0[${MULTILIB_USEDEP}]
+		>=sci-libs/fftw-3.3.8:=[${MULTILIB_USEDEP}]
 	)
 	fits? (
-		>=sci-libs/cfitsio-4.0.0[${MULTILIB_USEDEP}]
+		>=sci-libs/cfitsio-4.0.0:=[${MULTILIB_USEDEP}]
 	)
 	fontconfig? (
-		>=media-libs/fontconfig-2.13.1[${MULTILIB_USEDEP}]
+		>=media-libs/fontconfig-${FONTCONFIG_PV}:=[${MULTILIB_USEDEP}]
 	)
 	gif? (
-		media-libs/libnsgif[${MULTILIB_USEDEP}]
+		media-libs/libnsgif:=[${MULTILIB_USEDEP}]
 	)
 	highway? (
-		>=dev-cpp/highway-0.16.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cpu_flags_x86_avx=,cpu_flags_x86_avx512bw=,cpu_flags_x86_avx512bf16=,cpu_flags_x86_avx512fp16=,cpu_flags_x86_ssse3=]
+		>=dev-cpp/highway-${HIGHWAY_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cpu_flags_x86_avx=,cpu_flags_x86_avx512bw=,cpu_flags_x86_avx512bf16=,cpu_flags_x86_avx512fp16=,cpu_flags_x86_ssse3=]
 		cpu_flags_x86_avx10_2? (
-			>=dev-cpp/highway-1.3.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cpu_flags_x86_avx=,cpu_flags_x86_avx10_2=,cpu_flags_x86_avx512bw=,cpu_flags_x86_avx512bf16=,cpu_flags_x86_avx512fp16=,cpu_flags_x86_ssse3=]
+			>=dev-cpp/highway-${HIGHWAY_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cpu_flags_x86_avx=,cpu_flags_x86_avx10_2=,cpu_flags_x86_avx512bw=,cpu_flags_x86_avx512bf16=,cpu_flags_x86_avx512fp16=,cpu_flags_x86_ssse3=]
 		)
-		dev-cpp/highway:=
 	)
 	imagemagick? (
 		!graphicsmagick? (
-			>=media-gfx/imagemagick-6.9.11.60[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx?,jpeg?,jpeg2k?,jpegxl?,lcms?,pango?,png?,svg?,tiff?,webp?,zlib?]
-			media-gfx/imagemagick:=
+			>=media-gfx/imagemagick-${IMAGEMAGICK_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx?,jpeg?,jpeg2k?,jpegxl?,lcms?,pango?,png?,svg?,tiff?,webp?,zlib?]
 			avif? (
-				media-gfx/imagemagick[heif]
+				>=media-gfx/imagemagick-${IMAGEMAGICK_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx?,heif,jpeg?,jpeg2k?,jpegxl?,lcms?,pango?,png?,svg?,tiff?,webp?,zlib?]
 			)
 			heic? (
-				media-gfx/imagemagick[heif]
+				>=media-gfx/imagemagick-${IMAGEMAGICK_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx?,heif,jpeg?,jpeg2k?,jpegxl?,lcms?,pango?,png?,svg?,tiff?,webp?,zlib?]
 			)
 		)
 		graphicsmagick? (
-			>=media-gfx/graphicsmagick-1.4[cxx?,jpeg?,jpeg2k?,jpegxl?,lcms?,png?,tiff?,webp?,zlib?]
+			>=media-gfx/graphicsmagick-${GRAPHICSMAGICK_PV}:=[cxx?,jpeg?,jpeg2k?,jpegxl?,lcms?,png?,tiff?,webp?,zlib?]
 			avif? (
-				media-gfx/graphicsmagick[heif]
+				>=media-gfx/graphicsmagick-${GRAPHICSMAGICK_PV}:=[cxx?,heif,jpeg?,jpeg2k?,jpegxl?,lcms?,png?,tiff?,webp?,zlib?]
 			)
 			heic? (
-				media-gfx/graphicsmagick[heif]
+				>=media-gfx/graphicsmagick-${GRAPHICSMAGICK_PV}:=[cxx?,heif,jpeg?,jpeg2k?,jpegxl?,lcms?,png?,tiff?,webp?,zlib?]
 			)
 		)
 	)
 	imagequant? (
-		>=media-gfx/libimagequant-2.17.0
+		>=media-gfx/libimagequant-2.17.0:=
 	)
 	jpeg? (
-		media-libs/libjpeg-turbo[${MULTILIB_USEDEP}]
+		>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:=[${MULTILIB_USEDEP}]
 	)
 	jpeg2k? (
-		>=media-libs/openjpeg-2.4.0[${MULTILIB_USEDEP}]
+		>=media-libs/openjpeg-${OPENJPEG_PV}:=[${MULTILIB_USEDEP}]
 	)
 	jpegxl? (
-		>=media-libs/libjxl-0.11.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
-		media-libs/libjxl:=
+		>=media-libs/libjxl-0.11.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	)
 	lcms? (
-		>=media-libs/lcms-2.12[${MULTILIB_USEDEP}]
+		>=media-libs/lcms-${LCMS_PV}:=[${MULTILIB_USEDEP}]
 	)
 	raw? (
-		>=media-libs/libraw-0.14
+		>=media-libs/libraw-${LIBRAW_PV}:=
 	)
 	matio? (
-		>=sci-libs/matio-1.5.21[${MULTILIB_USEDEP}]
+		>=sci-libs/matio-1.5.21:=[${MULTILIB_USEDEP}]
 	)
 	nifti? (
-		media-libs/nifti_clib[${MULTILIB_USEDEP}]
+		media-libs/nifti_clib:=[${MULTILIB_USEDEP}]
 	)
 	openexr? (
-		>=media-libs/openexr-2.5.7[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
-		media-libs/openexr:=
+		>=media-libs/openexr-${OPENEXR_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	)
 	openslide? (
-		>=media-libs/openslide-3.4.0[${MULTILIB_USEDEP}]
+		>=media-libs/openslide-3.4.0:=[${MULTILIB_USEDEP}]
 	)
 	orc? (
-		>=dev-lang/orc-0.4.32[${MULTILIB_USEDEP}]
+		>=dev-lang/orc-${ORC_PV}:=[${MULTILIB_USEDEP}]
 	)
 	png? (
-		>=media-libs/libpng-1.2.9:0[${MULTILIB_USEDEP}]
-		media-libs/libpng:=
+		>=media-libs/libpng-${LIBPNG_PV}:=[${MULTILIB_USEDEP}]
 	)
 	spng? (
-		>=media-libs/libspng-0.7[${MULTILIB_USEDEP}]
+		>=media-libs/libspng-${LIBSPNG_PV}:=[${MULTILIB_USEDEP}]
 	)
 	pango? (
-		>=x11-libs/pango-1.50.6[${MULTILIB_USEDEP}]
+		>=x11-libs/pango-${PANGO_PV}:=[${MULTILIB_USEDEP}]
 	)
 	poppler? (
-		>=app-text/poppler-22.02.0[${LIBSTDCXX_USEDEP_DEV},${MULTILIB_USEDEP},cairo,introspection]
-		app-text/poppler:=
+		>=app-text/poppler-${POPPLER_PV}:=[${LIBSTDCXX_USEDEP_DEV},${MULTILIB_USEDEP},cairo,introspection]
 	)
 	svg? (
-		>=gnome-base/librsvg-2.52.5[${MULTILIB_USEDEP}]
+		>=gnome-base/librsvg-${LIBRSVG_PV}:=[${MULTILIB_USEDEP}]
 	)
 	tiff? (
-		>=media-libs/tiff-4.3.0:0[${MULTILIB_USEDEP}]
-		media-libs/tiff:=
+		>=media-libs/tiff-${TIFF_PV}:=[${MULTILIB_USEDEP}]
 	)
 	uhdr? (
-		media-libs/libultrahdr
+		media-libs/libultrahdr:=
 	)
 	vala? (
-		>=dev-lang/vala-0.56.0
+		>=dev-lang/vala-0.56.0:=
 	)
 	webp? (
-		>=media-libs/libwebp-1.2.2[${MULTILIB_USEDEP}]
+		>=media-libs/libwebp-${LIBWEBP_PV}:=[${MULTILIB_USEDEP}]
 	)
 	zlib? (
-		>=virtual/zlib-1.2.11[${MULTILIB_USEDEP}]
+		>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}]
 	)
 "
 PATCHES=(
@@ -319,14 +329,11 @@ gen_llvm_bdepend()
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				llvm-core/clang:${s}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
-				llvm-core/clang:=
-				llvm-core/lld:${s}[${LIBSTDCXX_USEDEP}]
-				llvm-core/lld:=
-				llvm-core/llvm:${s}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
-				llvm-core/llvm:=
+				llvm-core/clang:${s}=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+				llvm-core/lld:${s}=[${LIBSTDCXX_USEDEP}]
+				llvm-core/llvm:${s}=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 				fuzz-testing? (
-					llvm-runtimes/openmp:${s}[${MULTILIB_USEDEP}]
+					llvm-runtimes/openmp:=[${MULTILIB_USEDEP}]
 				)
 			)
 		"
@@ -340,20 +347,15 @@ gen_llvm_test_bdepend()
 		echo "
 			llvm_slot_${s}? (
 				!fuzz-testing? (
-					=llvm-runtimes/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt]
+					=llvm-runtimes/clang-runtime-${s}*:=[${MULTILIB_USEDEP},compiler-rt]
 				)
-				llvm-core/clang:${s}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
-				llvm-core/clang:=
-				llvm-core/lld:${s}[${LIBSTDCXX_USEDEP}]
-				llvm-core/lld:=
-				llvm-core/llvm:${s}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
-				llvm-core/llvm:=
+				llvm-core/clang:${s}=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+				llvm-core/lld:${s}=[${LIBSTDCXX_USEDEP}]
+				llvm-core/llvm:${s}=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 				fuzz-testing? (
-					=llvm-runtimes/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
-					=llvm-runtimes/compiler-rt-sanitizers-${s}*[${LIBSTDCXX_USEDEP},libfuzzer,asan,ubsan]
-					llvm-runtimes/compiler-rt-sanitizers:=
-					llvm-runtimes/openmp:${s}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
-					llvm-runtimes/openmp:=
+					=llvm-runtimes/clang-runtime-${s}*:=[${MULTILIB_USEDEP},compiler-rt,sanitize]
+					=llvm-runtimes/compiler-rt-sanitizers-${s}*:=[${LIBSTDCXX_USEDEP},libfuzzer,asan,ubsan]
+					llvm-runtimes/openmp:=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 				)
 			)
 		"
@@ -375,9 +377,7 @@ BDEPEND+="
 		>=app-text/doxygen-1.9.1
 	)
 	fuzz-testing? (
-		|| (
-			$(gen_llvm_bdepend)
-		)
+		$(gen_llvm_bdepend)
 	)
 	gtk-doc? (
 		>=app-text/docbook-xml-dtd-4.5:4.5
@@ -810,6 +810,8 @@ einfo "Adding release flags"
 }
 
 src_configure() {
+	chkl_check_many_timestamps
+
 	local configuration
 	for configuration in $(get_configurations) ; do
 		multilib_foreach_abi src_configure_abi
