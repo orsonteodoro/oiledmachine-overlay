@@ -24,7 +24,7 @@ CHKL_TIMESTAMPS=(
 inherit cflags-hardened chkl meson secure-version
 
 if [[ ${PV} == "9999" ]] ; then
-	FALLBACK_COMMIT="https://gitlab.freedesktop.org/xorg/xserver.git"
+	FALLBACK_COMMIT="9babe7e7f687b0342c8ab726d01a658d590d7c54"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/xorg/xserver.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -42,7 +42,10 @@ HOMEPAGE="https://www.x.org/wiki/ https://gitlab.freedesktop.org/xorg/xserver/xo
 LICENSE="MIT"
 SLOT="0"
 
-IUSE+=" libei selinux systemd test unwind xcsecurity"
+IUSE+="
+libei selinux systemd test unwind xcsecurity
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 COMMON_DEPEND="
