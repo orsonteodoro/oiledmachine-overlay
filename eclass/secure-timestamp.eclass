@@ -369,8 +369,8 @@ SECURE_TIMESTAMP["sys_libs_readline_9999"]="2025-12-10 11:36:18 -0500"
 # 2023-08-28 - 2021-09-12 - AMD-SB-3016 security mitigation with SEV update
 # 2025-07-29 - AMD-SB-3023, AMD-SB-3027 (StackWarp) security mitigation with µcode update
 # 2023-07-24 - AMD-SB-3005 (CacheWarp) security mitigation for µcode an SEV update
-# The AI recommends latest SEV FW build to mitigate CacheWarp and StackWarp.
-# Date used is based on min version that remediates it.
+# The AI recommends the latest SEV FW build to mitigate CacheWarp and StackWarp.
+# The ate used is based on minimum version available on the repo that remediates it.
 # The minimal version is chosen to mitigate the costs or damages in testing in production, DoS, or bricking.
 #
 
