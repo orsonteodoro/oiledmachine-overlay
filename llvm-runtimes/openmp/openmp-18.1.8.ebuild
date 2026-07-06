@@ -106,20 +106,21 @@ REQUIRED_USE="
 CUDA_11_8_RDEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-11.8*
-		>=dev-util/nvidia-cuda-toolkit-520.61
+		>=x11-drivers/nvidia-drivers-520.61
 		virtual/cuda-compiler:0/11.8[${LIBSTDCXX_USEDEP}]
 	)
 "
 CUDA_12_3_RDEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.3*
-		>=dev-util/nvidia-cuda-toolkit-545.23
+		>=x11-drivers/nvidia-drivers-545.23
 		virtual/cuda-compiler:0/12.3[${LIBSTDCXX_USEDEP}]
 	)
 "
 RDEPEND="
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
+		x11-drivers/nvidia-drivers:=
 		virtual/cuda-compiler:=
 	)
 	cuda_targets_sm_35? (
@@ -225,7 +226,6 @@ RDEPEND="
 		>=sys-apps/hwloc-2.5:=[${MULTILIB_USEDEP}]
 	)
 	llvm_targets_NVPTX? (
-		dev-util/nvidia-cuda-toolkit:=
 		|| (
 			${CUDA_11_8_RDEPEND}
 			${CUDA_12_3_RDEPEND}

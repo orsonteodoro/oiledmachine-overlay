@@ -116,48 +116,49 @@ REQUIRED_USE="
 CUDA_11_8_RDEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-11.8*
-		>=dev-util/nvidia-cuda-toolkit-520.61
+		>=x11-drivers/nvidia-drivers-520.61
 		virtual/cuda-compiler:0/11.8[${LIBSTDCXX_USEDEP}]
 	)
 "
 CUDA_12_3_RDEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.3*
-		>=dev-util/nvidia-cuda-toolkit-545.23
+		>=x11-drivers/nvidia-drivers-545.23
 		virtual/cuda-compiler:0/12.3[${LIBSTDCXX_USEDEP}]
 	)
 "
 CUDA_12_4_RDEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.4*
-		>=dev-util/nvidia-cuda-toolkit-550.54
+		>=x11-drivers/nvidia-drivers-550.54
 		virtual/cuda-compiler:0/12.4[${LIBSTDCXX_USEDEP}]
 	)
 "
 CUDA_12_5_RDEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.5*
-		>=dev-util/nvidia-cuda-toolkit-555.42
+		>=x11-drivers/nvidia-drivers-555.42
 		virtual/cuda-compiler:0/12.5[${LIBSTDCXX_USEDEP}]
 	)
 "
 CUDA_12_6_RDEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.6*
-		>=dev-util/nvidia-cuda-toolkit-560.35
+		>=x11-drivers/nvidia-drivers-560.35
 		virtual/cuda-compiler:0/12.6[${LIBSTDCXX_USEDEP}]
 	)
 "
 CUDA_12_8_RDEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.8*
-		>=dev-util/nvidia-cuda-toolkit-570.124
+		>=x11-drivers/nvidia-drivers-570.124
 		virtual/cuda-compiler:0/12.8[${LIBSTDCXX_USEDEP}]
 	)
 "
 RDEPEND="
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
+		x11-drivers/nvidia-drivers:=
 		virtual/cuda-compiler:=
 	)
 	cuda_targets_sm_35? (
@@ -345,7 +346,6 @@ RDEPEND="
 		>=sys-apps/hwloc-2.5:=[${MULTILIB_USEDEP}]
 	)
 	llvm_targets_NVPTX? (
-		dev-util/nvidia-cuda-toolkit:=
 		|| (
 			${CUDA_11_8_RDEPEND}
 			${CUDA_12_3_RDEPEND}
