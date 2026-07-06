@@ -38,6 +38,7 @@ inherit ot-kernel-v7.2
 # OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.0.7 (20260514) with builder profile with -O2 and -march=native, KFENCE on, KCFI on, UBSAN on, -D_FORTIFY_SOURCE on
 # OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.2.9999 665159e (20260701) with builder profile with -O2 and -march=native, KFENCE on, KCFI on, UBSAN on, -D_FORTIFY_SOURCE on
 # OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.2.9999 87320be (20260702) with builder profile with -O2 and -march=native, KFENCE on, KCFI on, UBSAN on, -D_FORTIFY_SOURCE on, apparmor LSM on, capability LSM on, landlock LSM on, yama LSM on
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.2.9999 f105f36 (20260705) with builder profile with -O2 and -march=native, KFENCE on, KCFI on, UBSAN on, -D_FORTIFY_SOURCE on, apparmor LSM on, capability LSM on, landlock LSM on, yama LSM on
 
 # OILEDMACHINE-OVERLAY-TEST:  N/A
 
