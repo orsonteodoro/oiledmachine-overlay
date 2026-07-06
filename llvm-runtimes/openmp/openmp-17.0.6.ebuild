@@ -70,7 +70,7 @@ RESTRICT="
 		test
 	)
 "
-SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
+SLOT="0/${LLVM_SOABI}"
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_EBUILDS_LLVM17_REVISION}
@@ -338,18 +338,14 @@ multilib_src_configure() {
 	local ffi_cflags=$($(tc-getPKG_CONFIG) --cflags-only-I "libffi")
 	local ffi_ldflags=$($(tc-getPKG_CONFIG) --libs-only-L "libffi")
 	local mycmakeargs=(
-		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}"
 	# Disable unnecessary hack copying stuff back to srcdir. \
 		-DLIBOMP_COPY_EXPORTS=OFF
-		-DLIBOMP_HEADERS_INSTALL_PATH="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/include"
 		-DLIBOMP_INSTALL_ALIASES=ON # For binary packages
 		-DLIBOMP_OMPD_GDB_SUPPORT=$(multilib_native_usex gdb-plugin)
 		-DLIBOMP_OMPT_SUPPORT=$(usex ompt)
 		-DLIBOMP_USE_HWLOC=$(usex hwloc)
 		-DLLVM_VERSION_MAJOR="${LLVM_MAJOR}"
 		-DOPENMP_LIBDIR_SUFFIX="${libdir#lib}"
-
-		-DLIBOMP_HEADERS_INSTALL_PATH="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/include"
 
 		-DPython3_EXECUTABLE="${PYTHON}"
 

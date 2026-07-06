@@ -95,7 +95,7 @@ RESTRICT="
 		test
 	)
 "
-SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
+SLOT="0/${LLVM_SOABI}"
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_EBUILDS_LLVM23_REVISION}
@@ -705,10 +705,8 @@ multilib_src_configure() {
 		-DLLVM_BINARY_DIR="${BROOT}/usr/lib/llvm/${LLVM_MAJOR}"
 
 		-DLLVM_ENABLE_RUNTIMES=openmp
-		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}"
 	# Disable unnecessary hack copying stuff back to srcdir. \
 		-DLIBOMP_COPY_EXPORTS=OFF
-		-DLIBOMP_HEADERS_INSTALL_PATH="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/include"
 		-DLIBOMP_INSTALL_ALIASES=ON # For binary packages
 		-DLIBOMP_OMPD_GDB_SUPPORT=$(multilib_native_usex gdb-plugin)
 		-DLIBOMP_OMPT_SUPPORT=$(usex ompt)
@@ -716,8 +714,6 @@ multilib_src_configure() {
 		-DLLVM_VERSION_MAJOR="${LLVM_MAJOR}"
 		-DLLVM_LIBDIR_SUFFIX="${libdir#lib}"
 		-DLLVM_BINARY_DIR="${BROOT}/usr/lib/llvm/${LLVM_MAJOR}"
-
-		-DLIBOMP_HEADERS_INSTALL_PATH="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/include"
 
 		-DPython3_EXECUTABLE="${PYTHON}"
 
