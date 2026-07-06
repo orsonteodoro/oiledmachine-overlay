@@ -350,6 +350,7 @@ SECURE_TIMESTAMP["sys_libs_readline_9999"]="2025-12-10 11:36:18 -0500"
 # 2025-06-30 - security
 # 2025-06-19 - crash
 # 2025-03-10 - overflow
+# 2021-10-25 - uninitialized
 # 2021-09-19 - memory leak
 # 2021-03-03 - deadlock
 #
@@ -366,8 +367,6 @@ SECURE_TIMESTAMP["sys_libs_readline_9999"]="2025-12-10 11:36:18 -0500"
 # The AI recommends latest SEV FW build to mitigate CacheWarp and StackWarp.
 # Date used is based on min version that remediates it.
 # The minimal version is chosen to mitigate the costs or damages in testing in production, DoS, or bricking.
-#
-# 2026-05-16 - AMDGPU - DMCUB
 #
 
 SECURE_TIMESTAMP["sys_kernel_linux_firmware_99999999"]="2026-05-16 22:15:36 +0000"
