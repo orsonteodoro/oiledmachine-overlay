@@ -55,11 +55,11 @@ SLOT="${PV%%.*}"
 IUSE+="
 ${LLVM_EBUILDS_LLVM20_REVISION}
 -openmp test
-ebuild_revision_6
+ebuild_revision_7
 "
 RDEPEND="
 	openmp? (
-		>=llvm-runtimes/openmp-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		>=llvm-runtimes/openmp-${LLVM_VERSION}:=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
