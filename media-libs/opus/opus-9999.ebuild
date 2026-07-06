@@ -15,6 +15,8 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse"
 )
 
+OPUS_DATA_ID="a5177ec6fb7d15058e99e57029746100121f68e4890b1467d4094aa336b6013e"
+
 inherit cflags-hardened check-compiler-switch flag-o-matic meson-multilib python-any-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -29,9 +31,11 @@ else
 	KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86
 	"
-	SRC_URI="https://downloads.xiph.org/releases/opus/${P}.tar.gz"
+	SRC_URI+=" https://downloads.xiph.org/releases/opus/${P}.tar.gz"
 fi
-
+SRC_URI+="
+	https://media.xiph.org/opus/models/opus_data-${OPUS_DATA_ID}.tar.gz
+"
 
 DESCRIPTION="Open codec for interactive speech and music transmission over the Internet"
 HOMEPAGE="https://opus-codec.org/"
@@ -80,9 +84,23 @@ src_unpack() {
 		fi
 		git-r3_fetch
 		git-r3_checkout
+
+		if [[ -n "${A}" ]] ; then
+			unpack ${A}
+		fi
 	else
 		unpack ${A}
 	fi
+
+	local expected_id="${OPUS_DATA_ID}"
+	local actual_id=$(grep -r -e "download_model.sh" "${S}/autogen.sh" | cut -f 2 -d '"')
+	if ! grep -r -e "${expected_id}" "${S}/autogen.sh" ; then
+eerror "QA:  Update OPUS_DATA_ID"
+eerror "Expected OPUS_DATA_ID:  ${expected_id}"
+eerror "Actual OPUS_DATA_ID:  ${actual_id}"
+		die
+	fi
+	mv "dnn/"* "${S}/dnn" || die
 }
 
 multilib_src_configure() {
