@@ -306,6 +306,38 @@ RDEPEND="
 			${CUDA_12_8_RDEPEND}
 		)
 	)
+	cuda_targets_sm_100? (
+		|| (
+			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+		)
+	)
+	cuda_targets_sm_100a? (
+		|| (
+			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+		)
+	)
+	cuda_targets_sm_101? (
+		|| (
+			${CUDA_12_8_RDEPEND}
+		)
+	)
+	cuda_targets_sm_101a? (
+		|| (
+			${CUDA_12_8_RDEPEND}
+		)
+	)
+	cuda_targets_sm_120? (
+		|| (
+			${CUDA_12_8_RDEPEND}
+		)
+	)
+	cuda_targets_sm_120a? (
+		|| (
+			${CUDA_12_8_RDEPEND}
+		)
+	)
 	gdb-plugin? (
 		${PYTHON_DEPS}
 	)
