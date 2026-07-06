@@ -348,7 +348,8 @@ SECURE_TIMESTAMP["sys_libs_readline_9999"]="2025-12-10 11:36:18 -0500"
 # repo date - security issue keywords:
 #
 # 2026-05-16 - bound
-# 2026-05-14 for enterprise, 2025-10-09 for consumer - secur
+# 2026-03-03 - corrupt
+# 2025-10-09 (consumer), 2026-05-14 (enterprise) - secur
 # 2025-06-19 - crash
 # 2025-03-10 - overflow
 # 2023-11-27 - malicious
@@ -361,7 +362,6 @@ SECURE_TIMESTAMP["sys_libs_readline_9999"]="2025-12-10 11:36:18 -0500"
 # 2021-03-03 - deadlock
 # 2021-01-07 - cve
 # 2018-12-10 - hanging
-# 2018-02-01 - corrupt
 # 2012-02-19 - hangs
 # 2010-08-04 - dereference, null pointer
 #
