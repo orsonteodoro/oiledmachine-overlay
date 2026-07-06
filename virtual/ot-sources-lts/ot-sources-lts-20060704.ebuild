@@ -6,6 +6,9 @@
 # (Long Term Support) versions.
 
 EAPI=8
+
+inherit secure-version
+
 DESCRIPTION="Virtual for the ot-sources LTS ebuilds for"
 KEYWORDS="
 ~alpha ~amd64 ~arm ~hppa ~loong ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86
@@ -16,22 +19,22 @@ ebuild_revision_1
 "
 RDEPEND="
 	5_10? (
-		~sys-kernel/ot-sources-5.10.259
+		~sys-kernel/ot-sources-${LINUX_KERNEL_5_10_PV}
 	)
 	5_15? (
-		~sys-kernel/ot-sources-5.15.210
+		~sys-kernel/ot-sources-${LINUX_KERNEL_5_15_PV}
 	)
 	6_1? (
-		~sys-kernel/ot-sources-6.1.176
+		~sys-kernel/ot-sources-${LINUX_KERNEL_6_1_PV}
 	)
 	6_6? (
-		~sys-kernel/ot-sources-6.6.143
+		~sys-kernel/ot-sources-${LINUX_KERNEL_6_6_PV}
 	)
 	6_12? (
-		~sys-kernel/ot-sources-6.12.94
+		~sys-kernel/ot-sources-${LINUX_KERNEL_6_12_PV}
 	)
 	6_18? (
-		~sys-kernel/ot-sources-6.18.37
+		~sys-kernel/ot-sources-${LINUX_KERNEL_6_18_PV}
 	)
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"

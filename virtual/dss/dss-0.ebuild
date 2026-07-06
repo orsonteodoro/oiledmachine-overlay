@@ -57,6 +57,7 @@ IDS_IUSE=(
 KERNEL_IUSE=(
 	"custom-kernel"
 	"gentoo-sources"
+	"git-sources"
 	"linux-next"
 	"ot-sources"
 	"vanilla-sources"
@@ -132,7 +133,7 @@ ${PASSWORD_MANAGER_IUSE[@]}
 ${PROFILES_IUSE[@]}
 ${SANDBOX_IUSE[@]}
 +enforce
-ebuild_revision_13
+ebuild_revision_14
 "
 REQUIRED_USE="
 	^^ (
@@ -608,6 +609,12 @@ KERNEL_DEPENDS="
 			~sys-kernel/gentoo-sources-${LINUX_KERNEL_7_1_PV}
 			~sys-kernel/gentoo-sources-${LINUX_KERNEL_6_18_PV}
 			~sys-kernel/gentoo-sources-${LINUX_KERNEL_6_12_PV}
+		)
+	)
+	git-sources? (
+		sys-kernel/git-sources:=
+		|| (
+			~sys-kernel/git-sources-${LINUX_KERNEL_7_2_RC_PV}
 		)
 	)
 	linux-next? (
