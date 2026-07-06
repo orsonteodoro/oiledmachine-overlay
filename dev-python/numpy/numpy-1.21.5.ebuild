@@ -50,7 +50,7 @@ LICENSE="BSD"
 SLOT="0"
 IUSE="
 doc lapack linter release test
-ebuild_revision_7
+ebuild_revision_8
 "
 
 RDEPEND="

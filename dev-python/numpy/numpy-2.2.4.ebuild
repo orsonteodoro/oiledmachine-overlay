@@ -49,7 +49,7 @@ SLOT="0/2"
 # is barely supported anyway, see bug #914358.
 IUSE="
 all big-endian build ci ci32 doc -lapack linter release test
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE="
 	all? (

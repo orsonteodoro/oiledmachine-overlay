@@ -51,7 +51,7 @@ SLOT="0"
 # is barely supported anyway, see bug #914358.
 IUSE="
 build doc -lapack linter release test
-ebuild_revision_7
+ebuild_revision_8
 "
 
 RDEPEND="
