@@ -350,9 +350,12 @@ SECURE_TIMESTAMP["sys_libs_readline_9999"]="2025-12-10 11:36:18 -0500"
 # 2025-06-30 - security
 # 2025-06-19 - crash
 # 2025-03-10 - overflow
+# 2023-11-27 - malicious
 # 2021-10-25 - uninitialized
 # 2021-09-19 - memory leak
 # 2021-03-03 - deadlock
+# 2018-02-01 - corrupt
+# 2010-08-04 - dereference, null pointer
 #
 # Types of updates
 #
