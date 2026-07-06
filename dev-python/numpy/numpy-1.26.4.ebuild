@@ -10,20 +10,33 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="AFW BO CE DOS IL ISD NPD SYM"
 CYTHON_SLOT="3.0"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="meson-python"
+DL_SOURCE=${DL_SOURCE:-"git"}
 EPYTEST_XDIST=1
 FORTRAN_NEEDED="lapack"
 PYTHON_COMPAT=( "python3_12" ) # Forced for binary packages
 PYTHON_REQ_USE="threads(+)"
 
+QA_CONFIG_IMPL_DECL_SKIP=(
+	# https://bugs.gentoo.org/925367
+	vrndq_f32
+)
+
 inherit cflags-hardened cython distutils-r1 flag-o-matic fortran-2 toolchain-funcs
 
 if [[ ${PV} != *_[rab]* ]] ; then
-	KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86"
+	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86"
 fi
-SRC_URI+="
-https://github.com/numpy/numpy/archive/refs/tags/v${PV}.tar.gz
-	-> ${P}.gh.tar.gz
-"
+
+# Use pypi or git for submodules
+if [[ "${DL_SOURCE}" == "git" ]] ; then
+	EGIT_COMMIT="v${PV}"
+	EGIT_REPO_URI="https://github.com/numpy/numpy.git"
+	inherit git-r3
+elif [[ "${DL_SOURCE}" == "pypi" ]] ; then
+	inherit pypy
+else
+	die "DL_SOURCE must be git or pypi"
+fi
 
 DESCRIPTION="Fast array and numerical Python library"
 HOMEPAGE="
@@ -114,7 +127,20 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.1.2-disable-generate-manifest.patch" # unbreak ModuleNotFoundError: No module named 'distutils.msvccompiler' with distutils 74.x
 )
 
+src_unpack() {
+	if [[ "${DL_SOURCE}" == "git" ]] ; then
+		git-r3_fetch
+		git-r3_checkout
+	elif [[ "${DL_SOURCE}" == "pypy" ]] ; then
+		pypi_src_unpack
+	fi
+}
+
 python_prepare_all() {
+	# bug #922457
+	filter-lto
+	# https://github.com/numpy/numpy/issues/25004
+
 	append-flags -fno-strict-aliasing
 
 	distutils-r1_python_prepare_all

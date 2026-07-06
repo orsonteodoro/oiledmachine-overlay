@@ -11,6 +11,7 @@ CYTHON_SLOT="3.0"
 EPYTEST_XDIST=1
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="meson-python"
+DL_SOURCE=${DL_SOURCE:-"git"}
 FORTRAN_NEEDED="lapack"
 PYTHON_COMPAT=( "python3_13" ) # Forced for binary packages
 PYTHON_REQ_USE="threads(+)"
@@ -23,10 +24,17 @@ QA_CONFIG_IMPL_DECL_SKIP=(
 inherit cflags-hardened cython distutils-r1 flag-o-matic fortran-2
 
 KEYWORDS="~alpha amd64 ~arm arm64 hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86"
-SRC_URI+="
-https://github.com/numpy/numpy/archive/refs/tags/v${PV}.tar.gz
-	-> ${P}.gh.tar.gz
-"
+
+# Use pypi or git for submodules
+if [[ "${DL_SOURCE}" == "git" ]] ; then
+	EGIT_COMMIT="v${PV}"
+	EGIT_REPO_URI="https://github.com/numpy/numpy.git"
+	inherit git-r3
+elif [[ "${DL_SOURCE}" == "pypi" ]] ; then
+	inherit pypy
+else
+	die "DL_SOURCE must be git or pypi"
+fi
 
 DESCRIPTION="Fast array and numerical Python library"
 HOMEPAGE="
@@ -134,6 +142,15 @@ BDEPEND="
 "
 
 distutils_enable_tests "pytest"
+
+src_unpack() {
+	if [[ "${DL_SOURCE}" == "git" ]] ; then
+		git-r3_fetch
+		git-r3_checkout
+	elif [[ "${DL_SOURCE}" == "pypy" ]] ; then
+		pypi_src_unpack
+	fi
+}
 
 python_prepare_all() {
 	local PATCHES=(
