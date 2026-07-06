@@ -342,7 +342,16 @@ SECURE_TIMESTAMP["sys_libs_libunwind_9999"]="Jun 19, 2026 9:44 AM PDT"
 SECURE_TIMESTAMP["sys_libs_readline_9999"]="2025-12-10 11:36:18 -0500"
 
 #
-# The linux-firmware timestamp currently tracks AMD µcode an SEV security annoucements.
+# The linux-firmware timestamp currently tracks based on vulnerability keyword search.
+#
+# repo date - security issue keywords:
+#
+# 2026-05-16 - bound
+# 2025-06-30 - security
+# 2025-06-19 - crash
+# 2025-03-10 - overflow
+# 2021-09-19 - memory leak
+# 2021-03-03 - deadlock
 #
 # Types of updates
 #
@@ -358,7 +367,10 @@ SECURE_TIMESTAMP["sys_libs_readline_9999"]="2025-12-10 11:36:18 -0500"
 # Date used is based on min version that remediates it.
 # The minimal version is chosen to mitigate the costs or damages in testing in production, DoS, or bricking.
 #
-SECURE_TIMESTAMP["sys_kernel_linux_firmware_99999999"]="2025-07-29 12:12:18 -0600"
+# 2026-05-16 - AMDGPU - DMCUB
+#
+
+SECURE_TIMESTAMP["sys_kernel_linux_firmware_99999999"]="2026-05-16 22:15:36 +0000"
 
 SECURE_TIMESTAMP["sys_process_procps_9999"]="Mar 26, 2026 4:03:17 AM PDT"
 SECURE_TIMESTAMP["x11_base_xorg_server_9999"]="2026-06-08 02:12:00 +0000"

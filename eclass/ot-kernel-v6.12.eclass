@@ -68,16 +68,16 @@ fi
 #GENPATCHES_FALLBACK_COMMIT="acbfddfa35863bb536010294d1284ee857b9e13b" # 2023-10-08 10:56:26 -0400
 #LINUX_SOURCES_FALLBACK_COMMIT="8bc9e6515183935fa0cccaf67455c439afe4982b" # 2023-10-31 18:50:13 -1000
 # AMDGPU_FIRMWARE_RELEASE_DATE is based on firmware names from
-# https://elixir.bootlin.com/linux/v6.12.49/source/drivers/gpu/drm/amd/display/include/dal_types.h	DCN 4.0.1
-# https://elixir.bootlin.com/linux/v6.12.49/source/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c		VCN 5.0.0
-# https://elixir.bootlin.com/linux/v6.12.49/source/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c		the last gfx version for gc_12_0_1 and others with .bin reference
+# https://elixir.bootlin.com/linux/v6.12.94/source/drivers/gpu/drm/amd/display/include/dal_types.h	DCN 4.0.1
+# https://elixir.bootlin.com/linux/v6.12.94/source/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c		VCN 5.0.0
+# https://elixir.bootlin.com/linux/v6.12.94/source/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c		the last gfx version for gc_12_0_1 and others with .bin reference
 # and linux-firmware firmware upload date
 KERNEL_RELEASE_DATE="20241117"
 # The timestamps are supposed to reflect maximum coverage for the set.
 AMD_SEV_FIRMWARE_RELEASE_DATE="${LINUX_FIRMWARE_AMD_SEV_PV}" # Based on security update
 AMD_UCODE_FIRMWARE_RELEASE_DATE="${LINUX_FIRMWARE_AMD_UCODE_PV}" # Based on security update
-AMDGPU_FIRMWARE_RELEASE_DATE="20241203" # Based on vcn 5.0.0 and dcn 4.0.1 and gc_12_0_1 first presence
-ATH_FIRMWARE_RELEASE_DATE="20241010" # Based on presence of latest added board-2 (QCN9274) file in https://github.com/torvalds/linux/blob/v6.12/drivers/net/wireless/ath/ath12k/hw.c
+AMDGPU_FIRMWARE_RELEASE_DATE="20260516" # Based on security update.  IBC (checked, 2026-05-05), IOOB (checked, 2026-05-16), OF (checked, 2025-03-10)
+ATH_FIRMWARE_RELEASE_DATE="20241010" # Based on presence of firmware-2.bin (QCN9274) file in https://github.com/torvalds/linux/blob/v6.12/drivers/net/wireless/ath/ath12k/hw.c
 RTL_BT_FIRMWARE_RELEASE_DATE="20250106" # Based on rtl8723cs_xx_config bin referenced in https://github.com/torvalds/linux/blob/v6.12/drivers/bluetooth/btrtl.c
 RTL8192DU_FIRMWARE_RELEASE_DATE="20241010" # Based on added from rtl8192du bin https://github.com/torvalds/linux/blob/v6.11/drivers/net/wireless/realtek/rtlwifi/rtl8192du/sw.c
 RTL8XXXU_FIRMWARE_RELEASE_DATE="20230517" # Based on latest added rtl8192fufw bin from https://github.com/torvalds/linux/blob/v6.12/drivers/net/wireless/realtek/rtl8xxxu/

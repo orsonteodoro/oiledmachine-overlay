@@ -61,15 +61,15 @@ else
 fi
 
 # AMDGPU_FIRMWARE_RELEASE_DATE is based on firmware names from
-# https://elixir.bootlin.com/linux/v5.15.193/source/drivers/gpu/drm/amd/display/include/dal_types.h	DCN 3.1
-# https://elixir.bootlin.com/linux/v5.15.193/source/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c		yellow_carp_vcn
-# https://elixir.bootlin.com/linux/v5.15.193/source/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c		the last gfx version for cyan_skillfish2 and others with .bin reference
+# https://elixir.bootlin.com/linux/v5.15.210/source/drivers/gpu/drm/amd/display/include/dal_types.h	DCN 3.1
+# https://elixir.bootlin.com/linux/v5.15.210/source/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c		yellow_carp_vcn
+# https://elixir.bootlin.com/linux/v5.15.210/source/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c		the last gfx version for cyan_skillfish2 and others with .bin reference
 # and linux-firmware firmware upload date
 KERNEL_RELEASE_DATE="20211031"
 # The timestamps are supposed to reflect maximum coverage for the set.
 AMD_SEV_FIRMWARE_RELEASE_DATE="${LINUX_FIRMWARE_AMD_SEV_PV}" # Based on security update
 AMD_UCODE_FIRMWARE_RELEASE_DATE="${LINUX_FIRMWARE_AMD_UCODE_PV}" # Based on security update
-AMDGPU_FIRMWARE_RELEASE_DATE="20211112" # Based on cyan_skillfish2 first file presence
+AMDGPU_FIRMWARE_RELEASE_DATE="20260516" # Based on security update.  CRSH (2024-09-03), IBC (checked, 2026-05-05), IOOB (checked, 2026-05-16), OF (checked, 2025-03-10)
 ATH_FIRMWARE_RELEASE_DATE="20220307" # Based on presence of latest added board (WCN6855) file in https://github.com/torvalds/linux/blob/v5.15/drivers/net/wireless/ath/ath11k/core.c
 RTL_BT_FIRMWARE_RELEASE_DATE="20201230" # Based on rtl8852au_fw bin reference in https://github.com/torvalds/linux/blob/v5.15/drivers/bluetooth/btrtl.c
 RTL8XXXU_FIRMWARE_RELEASE_DATE="20160203" # Based on latest added rtl8192eu_nic bin from https://github.com/torvalds/linux/blob/v5.15/drivers/net/wireless/realtek/rtl8xxxu/

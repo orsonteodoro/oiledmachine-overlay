@@ -69,7 +69,7 @@ KERNEL_RELEASE_DATE="20201213"
 # The timestamps are supposed to reflect maximum coverage for the set.
 AMD_SEV_FIRMWARE_RELEASE_DATE="${LINUX_FIRMWARE_AMD_SEV_PV}" # Based on security update
 AMD_UCODE_FIRMWARE_RELEASE_DATE="${LINUX_FIRMWARE_AMD_UCODE_PV}" # Based on security update
-AMDGPU_FIRMWARE_RELEASE_DATE="20210322" # Based on navy_flounder vcn first file presence
+AMDGPU_FIRMWARE_RELEASE_DATE="20240903" # Based on security update.  CRSH (2024-09-03)
 ATH_FIRMWARE_RELEASE_DATE="20201023" # Based on presence of latest added board (QCA6390) file in https://github.com/torvalds/linux/blob/v5.10/drivers/net/wireless/ath/ath11k/core.c
 RTL_BT_FIRMWARE_RELEASE_DATE="20240822" # Based on rtl8723bs_config bin referenced in https://github.com/torvalds/linux/blob/v5.10/drivers/bluetooth/btrtl.c
 RTL8XXXU_FIRMWARE_RELEASE_DATE="20160203" # Based on latest added rtl8192eu_nic bin from https://github.com/torvalds/linux/blob/v5.10/drivers/net/wireless/realtek/rtl8xxxu/
