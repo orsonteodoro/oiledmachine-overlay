@@ -21,12 +21,12 @@ esac
 #
 # Commit snapshot quality comparison on Jul 4, 2026
 #
-# Source                 | Commit ID  | Date     | Checkmarks | Sanitizer test fails | Sanitizer checks | llvm-clang-pauth pass | llvm-clang-pac-ret pass | libc-asan passed |
-# -----------------------|------------|----------|------------|----------------------|------------------|-----------------------|-------------------------|------------------|
-# chromium-toolchain     | 20b6ec66   | 20260409 | 70/82      | 1                    | 8                | 1                     | 1                       | 2                |
-# distro                 | 49de424f   | 20260628 | 76/87      | 3                    | 10               | 1                     | 1                       | 2                |
-# distro                 | 6d4cd34d   | 20260605 | 76/91      | 2                    | 9                | 0                     | 0                       | 2                |
-# oiledmachine-overlay   | ad35cfed   | 20260627 | 109/118    | 0                    | 15               | 1                     | 1                       | 2                |
+# | Source                 | Commit ID  | Date     | Checkmarks | Sanitizer test fails | Sanitizer checks | llvm-clang-pauth pass | llvm-clang-pac-ret pass | libc-asan passed |
+# | -----------------------|------------|----------|------------|----------------------|------------------|-----------------------|-------------------------|------------------|
+# | chromium-toolchain     | 20b6ec66   | 20260409 | 70/82      | 1                    | 8                | 1                     | 1                       | 2                |
+# | distro                 | 49de424f   | 20260628 | 76/87      | 3                    | 10               | 1                     | 1                       | 2                |
+# | distro                 | 6d4cd34d   | 20260605 | 76/91      | 2                    | 9                | 0                     | 0                       | 2                |
+# | oiledmachine-overlay   | ad35cfed   | 20260627 | 109/118    | 0                    | 15               | 1                     | 1                       | 2                |
 #
 
 #
@@ -38,7 +38,7 @@ esac
 # remaining. if the D is 8 or more the penalty is heavy. If the F is not zero it
 # is a heavy penalty.
 #
-# If you ask the AI for the answer, it is garbage they are giving complex
+# If you ask the AI for the answer, it is garbage.  They are giving complex
 # answers but still give useful facts to craft the custom score function.
 # Intuitively, you know which one is the best commit in the 7 days.
 # The most elegant one by AI uses a predefined budget of 1000 and decreases it.
