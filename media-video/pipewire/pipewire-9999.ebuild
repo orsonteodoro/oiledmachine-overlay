@@ -51,19 +51,16 @@ CHKL_TIMESTAMPS=(
 
 inherit cflags-hardened chkl meson-multilib optfeature prefix python-any-r1 systemd tmpfiles secure-version udev
 
-if [[ ${PV} == 9999 ]] ; then
-	FALLBACK_COMMIT="a389a553e3ea7c21ff7b3cb9d5ac11023d5e54e8"
-	PIPEWIRE_DOCS_PREBUILT=0
-	EGIT_REPO_URI="https://gitlab.freedesktop.org/${PN}/${PN}.git"
-	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
-		IUSE+=" fallback-commit"
+if [[ ${PV} =~ 9999 ]] ; then
+	if [[ "${PV}" == 9999 ]] ; then
+		FALLBACK_COMMIT="47a3479490ff0cda6149d6941dc5e8bae2ab6b43"
+		EGIT_BRANCH="master"
 	fi
-	inherit git-r3
-elif [[ ${PV} == *.9999 ]] ; then
-	FALLBACK_COMMIT=""
-	PIPEWIRE_DOCS_PREBUILT=0
+	if [[ "${PV}" == *.9999 ]] ; then
+		EGIT_BRANCH="${PV%.*}"
+	fi
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/${PN}/${PN}.git"
-	EGIT_BRANCH="${PV%.*}"
+	PIPEWIRE_DOCS_PREBUILT=0
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
 	fi
@@ -94,7 +91,7 @@ SLOT="0/0.4"
 IUSE+=" ${PIPEWIRE_DOCS_USEFLAG} bluetooth elogind dbus doc echo-cancel extra ffmpeg fftw flatpak gstreamer gsettings"
 IUSE+=" ieee1394 jack-client jack-sdk libcamera loudness lv2 modemmanager pipewire-alsa readline roc selinux"
 IUSE+=" pulseaudio sound-server ssl system-service systemd test v4l X zeroconf"
-IUSE+=" ebuild_revision_1"
+IUSE+=" ebuild_revision_2"
 
 # Once replacing system JACK libraries is possible, it's likely that
 # jack-client IUSE will need blocking to avoid users accidentally
