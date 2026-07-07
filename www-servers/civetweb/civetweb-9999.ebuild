@@ -302,10 +302,10 @@ _configure() {
 	export PKG_CONFIG_PATH="${ESYSROOT}/usr/share/pkgconfig"
 
 	local mycmakeargs=(
-		$(usex c_standard_cxx98 '-DCIVETWEB_C_STANDARD=c98' '')
-		$(usex c_standard_cxx99 '-DCIVETWEB_C_STANDARD=c99' '')
-		$(usex c_standard_cxx11 '-DCIVETWEB_C_STANDARD=c11' '')
-		$(usex c_standard_cxx17 '-DCIVETWEB_C_STANDARD=c17' '')
+		$(usex c_standard_c98 '-DCIVETWEB_C_STANDARD=c98' '')
+		$(usex c_standard_c99 '-DCIVETWEB_C_STANDARD=c99' '')
+		$(usex c_standard_c11 '-DCIVETWEB_C_STANDARD=c11' '')
+		$(usex c_standard_c17 '-DCIVETWEB_C_STANDARD=c17' '')
 		$(usex cxx_standard_cxx98 '-DCIVETWEB_CXX_STANDARD=c++98' '')
 		$(usex cxx_standard_cxx11 '-DCIVETWEB_CXX_STANDARD=c++11' '')
 		$(usex cxx_standard_cxx14 '-DCIVETWEB_CXX_STANDARD=c++14' '')
