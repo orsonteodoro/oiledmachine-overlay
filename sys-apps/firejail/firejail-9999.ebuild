@@ -300,7 +300,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 -apparmor +chroot clang contrib +dbusproxy +file-transfer +globalcfg
 landlock +network +private-home -private-lib -selinux +suid
 test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xcsecurity xvfb
-ebuild_revision_141
+ebuild_revision_142
 "
 REQUIRED_USE+="
 	!test
@@ -1832,9 +1832,9 @@ cat <<EOF > "${ED}/usr/local/${folder}/${wrapper_name}" || die
 if [[ "\${EUID}" == "0" || "\${EUID}" == "250" ]] ; then
 	"${exe_path}" "\$@"
 elif [[ -n "\${DISPLAY}" ]] ; then
-	exec firejail "${all_args_x11[@]}" "${exe_path}" "${exe_x11_args[@]}" "\$@"
+	exec firejail "${all_args_x11[@]}" "${exe_path}" ${exe_x11_args[@]} "\$@"
 else
-	exec firejail "${all_args_wayland[@]}" "${exe_path}" "${exe_wayland_args[@]}" "\$@"
+	exec firejail "${all_args_wayland[@]}" "${exe_path}" ${exe_wayland_args[@]} "\$@"
 fi
 EOF
 	}
@@ -1857,9 +1857,9 @@ if [[ "\${EUID}" == "0" || "\${EUID}" == "250" ]] ; then
 	"${exe_path}" "\$@"
 elif [[ -n "\${DISPLAY}" ]] ; then
 	xhost +si:localuser:\${USER}
-	exec firejail "${all_args_x11[@]}" --env=XAUTHORITY="\${_XAUTHORITY}" "${exe_path}" "${exe_x11_args[@]}" "\$@"
+	exec firejail "${all_args_x11[@]}" --env=XAUTHORITY="\${_XAUTHORITY}" "${exe_path}" ${exe_x11_args[@]} "\$@"
 else
-	exec firejail "${all_args_wayland[@]}" "${exe_path}" "${exe_wayland_args[@]}" "\$@"
+	exec firejail "${all_args_wayland[@]}" "${exe_path}" ${exe_wayland_args[@]} "\$@"
 fi
 EOF
 	}
