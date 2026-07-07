@@ -29,6 +29,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libjxl-9999"
 	"media-libs/libpng-9999"
 	"media-libs/libwebp-9999"
+	"media-libs/libwmf-9999"
 	"media-libs/openexr-9999"
 	"media-libs/tiff-9999"
 	"sys-libs/libunwind-9999"
@@ -135,7 +136,7 @@ COMMON_DEPEND="
 	udev? ( >=dev-libs/libgudev-167:= )
 	unwind? ( >=sys-libs/libunwind-${LIBUNWIND_PV}:= )
 	webp? ( >=media-libs/libwebp-${LIBWEBP_PV}:= )
-	wmf? ( >=media-libs/libwmf-0.2.8:=[X?] )
+	wmf? ( >=media-libs/libwmf-${LIBWMF_PV}:=[X?] )
 	X? (
 		>=x11-libs/libX11-${LIBX11_PV}:=
 		>=x11-libs/libXcursor-${LIBXCURSOR_PV}:=
