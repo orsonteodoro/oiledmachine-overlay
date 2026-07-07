@@ -42,11 +42,15 @@ REQUIRED_USE="
 		X
 	)
 "
+# TODO:  test other icons
 RDEPEND="
 	${PYTHON_DEPS}
 	dev-util/wayland-scanner:=
 	media-gfx/imagemagick:=
 	net-misc/wget:=
+	|| (
+		x11-themes/papirus-icon-theme
+	)
 	calendar? (
 		gnome-extra/evolution-data-server:=[introspection]
 		dev-libs/libical:=[introspection]
