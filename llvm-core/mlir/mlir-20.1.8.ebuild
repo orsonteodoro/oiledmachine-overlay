@@ -51,14 +51,14 @@ ${LLVM_EBUILDS_LLVM20_REVISION}
 REQUIRED_USE="
 "
 RDEPEND="
-	~llvm-core/clang-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP}]
-	~llvm-core/llvm-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP}]
+	~llvm-core/clang-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	~llvm-core/llvm-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	~llvm-core/clang-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP}]
+	~llvm-core/clang-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	test? (
 		$(python_gen_cond_dep "
 			>=dev-python/lit-${LLVM_VERSION}[\${PYTHON_USEDEP}]
