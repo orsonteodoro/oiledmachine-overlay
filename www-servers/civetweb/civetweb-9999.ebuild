@@ -93,7 +93,7 @@ ${_CXX_STANDARD[@]}
 ${LUA_COMPAT[@]/#/lua_targets_}
 +asan +cgi -cxx +caching debug doc -duktape +ipv6 -lua -serve_no_files
 +server_executable -server_stats +ssl static-libs -test -websockets -zlib
-ebuild_revision_23
+ebuild_revision_24
 "
 REQUIRED_USE+="
 	lua? (
@@ -178,6 +178,7 @@ PATCHES=(
 	"${FILESDIR}/civetweb-1.13-disable-pedantic-errors.patch"
 	"${FILESDIR}/civetweb-1.13-change-cmake-for-lua-dependencies-v3.patch"
 	"${FILESDIR}/civetweb-1.13-disable-fvisibility-for-c.patch"
+	"${FILESDIR}/civetweb-588860e-fixes.patch"
 )
 
 pkg_setup() {
@@ -424,14 +425,6 @@ src_configure() {
 	multilib_foreach_abi configure_abi
 }
 
-_compile() {
-	cd "${BUILD_DIR}" || die
-	SUFFIX="_${ABI}_${ESTSH_LIB_TYPE}"
-	if multilib_is_native_abi && use lua ; then
-		SUFFIX+="_${ELUA}"
-	fi
-}
-
 src_compile() {
 	compile_abi() {
 		local lib_type
@@ -448,7 +441,7 @@ src_compile() {
 				export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 				export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 				cd "${BUILD_DIR}" || die
-				_compile
+				cmake_src_compile
 			fi
 		done
 	}
