@@ -48,7 +48,7 @@ KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390
 IUSE+="
 	acl blake2 +bzip2 +e2fsprogs expat +iconv lz4 +lzma lzo nettle
 	static-libs test xattr +zstd
-	ebuild_revision_17
+	ebuild_revision_18
 "
 RESTRICT="!test? ( test )"
 
@@ -101,10 +101,6 @@ PATCHES=(
 	# https://github.com/libarchive/libarchive/issues/2069
 	# (we can simply update the command since we don't support old lrzip)
 	"${FILESDIR}/${PN}-3.7.2-lrzip.patch"
-
-	# oiledmachine-overlay:  Prevent error related to -fstrict-flex-arrays=3 with cmake
-	# Test with configure phase of opencv ebuild
-	"${FILESDIR}/libarchive-1a778f9-remove-struct-hack.patch"
 )
 
 src_unpack() {
