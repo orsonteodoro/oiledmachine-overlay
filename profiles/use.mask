@@ -46,3 +46,6 @@ lcms
 
 # The last release of libmng was in 2015.
 mng
+
+# The last release of aalib was in 2001.
+aalib

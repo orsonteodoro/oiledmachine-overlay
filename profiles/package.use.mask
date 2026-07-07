@@ -184,3 +184,6 @@ media-sound/pulseaudio-daemon asyncns
 
 # Dependency not updated since 2013
 media-gfx/gimp mng
+
+# Dependency has not made a release since 2001
+media-gfx/gimp aalib
