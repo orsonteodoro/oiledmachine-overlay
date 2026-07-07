@@ -17,7 +17,7 @@ LICENSE="
 	BSD-2
 "
 RESTRICT="mirror"
-SLOT_MAJOR="10" # See https://github.com/yarnpkg/berry/blob/%40yarnpkg/cli/4.15.0/yarn.lock#L5
+SLOT_MAJOR="10" # See https://github.com/yarnpkg/berry/blob/%40yarnpkg/cli/4.17.0/yarn.lock#L5
 SLOT="${SLOT_MAJOR}/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 +ssl
