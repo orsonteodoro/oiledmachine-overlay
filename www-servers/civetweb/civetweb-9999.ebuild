@@ -66,7 +66,7 @@ CHKL_TIMESTAMPS=(
 inherit cflags-hardened check-compiler-switch chkl cmake flag-o-matic libcxx-slot libstdcxx-slot lua multilib-minimal sandbox-changes secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="588860e30721bf5453b0440c390865a8e85dcae5"
+	FALLBACK_COMMIT="d110e8731c6aa0fcd04504deb449bdb773cfb9da"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/civetweb/civetweb.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -93,7 +93,7 @@ ${_CXX_STANDARD[@]}
 ${LUA_COMPAT[@]/#/lua_targets_}
 +asan +cgi -cxx +caching debug doc -duktape +ipv6 -lua -serve_no_files
 +server_executable -server_stats +ssl static-libs -test -websockets -zlib
-ebuild_revision_24
+ebuild_revision_26
 "
 REQUIRED_USE+="
 	lua? (
@@ -178,7 +178,6 @@ PATCHES=(
 	"${FILESDIR}/civetweb-1.13-disable-pedantic-errors.patch"
 	"${FILESDIR}/civetweb-1.13-change-cmake-for-lua-dependencies-v3.patch"
 	"${FILESDIR}/civetweb-1.13-disable-fvisibility-for-c.patch"
-	"${FILESDIR}/civetweb-588860e-fixes.patch"
 )
 
 pkg_setup() {
