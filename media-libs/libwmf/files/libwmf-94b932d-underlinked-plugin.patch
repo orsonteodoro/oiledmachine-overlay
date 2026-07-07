@@ -1,0 +1,47 @@
+diff '--color=auto' -urp libwmf-9999.orig/configure.ac libwmf-9999/configure.ac
+--- libwmf-9999.orig/configure.ac	2026-07-07 13:31:26.853762337 -0700
++++ libwmf-9999/configure.ac	2026-07-07 13:32:29.106522960 -0700
+@@ -287,6 +287,8 @@ fi
+ 
+ AM_CONDITIONAL(LIBWMF_OPT_X,[ test "x$no_x" != "xyes" ])
+ 
++AC_SUBST(WMF_X_LDFLAGS)
++
+ dnl (2) expat/libxml2 {-lexpat/-lxml2}
+ 
+ WMF_XML_DIR=""
+diff '--color=auto' -urp libwmf-9999.orig/src/ipa/Makefile.am libwmf-9999/src/ipa/Makefile.am
+--- libwmf-9999.orig/src/ipa/Makefile.am	2026-07-07 13:31:26.999123362 -0700
++++ libwmf-9999/src/ipa/Makefile.am	2026-07-07 13:32:29.108456402 -0700
+@@ -17,7 +17,7 @@ AM_CPPFLAGS += \
+ noinst_LTLIBRARIES = libipa.la
+ 
+ libipa_la_SOURCES = eps.c fig.c svg.c xgd.c x.c ipa.c plot.c foreign.c
+-
++libipa_la_LIBADD = $(WMF_X_LDFLAGS)
+ libipa_la_LDFLAGS =
+ 
+ IPAHEADERS = \
+diff '--color=auto' -urp libwmf-9999.orig/src/Makefile.am libwmf-9999/src/Makefile.am
+--- libwmf-9999.orig/src/Makefile.am	2026-07-07 13:31:26.977758567 -0700
++++ libwmf-9999/src/Makefile.am	2026-07-07 13:33:20.893026442 -0700
+@@ -58,7 +58,7 @@ else
+ LIBGD = extra/gd/libgd.la
+ endif
+ 
+-libwmf_la_LIBADD = ipa/libipa.la libwmflite.la $(LIBGD) $(LIBTRIO) @WMF_DEP_LIBS@
++libwmf_la_LIBADD = ipa/libipa.la libwmflite.la $(LIBGD) $(LIBTRIO) @WMF_DEP_LIBS@ $(FT2_LIBS)
+ 
+ libwmf_la_LDFLAGS = \
+ 	-no-undefined \
+@@ -72,7 +72,7 @@ loader_LTLIBRARIES = $(GDK_PIXBUF_PLUGIN
+ 
+ io_wmf_la_SOURCES = io-wmf.c
+ 
+-io_wmf_la_LIBADD = libwmf.la libwmflite.la @GDK_PIXBUF_LIBS@
++io_wmf_la_LIBADD = libwmf.la libwmflite.la @GDK_PIXBUF_LIBS@ @WMF_X_LDFLAGS@
+ 
+ io_wmf_la_LDFLAGS = -no-undefined -module -avoid-version
+ 
+Only in libwmf-9999/src: Makefile.am.orig
+Only in libwmf-9999/src: Makefile.am.rej
