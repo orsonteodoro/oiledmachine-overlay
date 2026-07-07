@@ -59,12 +59,12 @@ STABLE_DIFFUSION_MODEL_RDEPEND="
 		>=dev-python/shapely-1.7.1[${PYTHON_USEDEP}]
 		dev-python/psutil[${PYTHON_USEDEP}]
 		dev-python/scipy[${PYTHON_USEDEP}]
-		net-misc/gdown[${PYTHON_USEDEP}]
+		net-misc/gdown:=[${PYTHON_USEDEP}]
 
 
-		>=sci-libs/paddlepaddle-2.4.0[${PYTHON_USEDEP}]
-		>=sci-libs/paddle2onnx-0.6[${PYTHON_USEDEP}]
-		>=sci-libs/paddlenlp-2.0.8[${PYTHON_USEDEP}]
+		>=sci-libs/paddlepaddle-2.4.0:=[${PYTHON_USEDEP}]
+		>=sci-libs/paddle2onnx-0.6:=[${PYTHON_USEDEP}]
+		>=sci-libs/paddlenlp-2.0.8:=[${PYTHON_USEDEP}]
 
 		(
 			>=dev-python/monai-0.9.1[${PYTHON_USEDEP}]
@@ -77,25 +77,25 @@ STABLE_DIFFUSION_MODEL_RDEPEND="
 		>=dev-python/rsa-4.7[${PYTHON_USEDEP}]
 		>=dev-python/seaborn-0.11.0[${PYTHON_USEDEP}]
 		>=dev-python/scikit-image-0.19.2[${PYTHON_USEDEP}]
-		>=virtual/pillow-8.3.2[${PYTHON_USEDEP}]
-		virtual/numpy[${PYTHON_USEDEP}]
+		>=virtual/pillow-8.3.2:*[${PYTHON_USEDEP}]
+		virtual/numpy:=[${PYTHON_USEDEP}]
 	')
 		(
-		>=sci-ml/tensorflow-2.5[${PYTHON_SINGLE_USEDEP}]
-		<sci-ml/tensorflow-2.12[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/tensorflow-2.5:=[${PYTHON_SINGLE_USEDEP}]
+		<sci-ml/tensorflow-2.12:=[${PYTHON_SINGLE_USEDEP}]
 	)
 	>=dev-python/controlnet-aux-0.0.6[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/diffusers-0.9.0[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/diffusers-0.23.0[${PYTHON_SINGLE_USEDEP}]
-	>=sci-ml/huggingface-hub-0.9.1[${PYTHON_SINGLE_USEDEP}]
-	>=sci-ml/openvino-2022.2.0[${PYTHON_SINGLE_USEDEP}]
-	>=sci-ml/pytorch-1.13.1[${PYTHON_SINGLE_USEDEP}]
-	>=sci-ml/tensorflow-datasets-4.2.0[${PYTHON_SINGLE_USEDEP}]
-	>=sci-ml/torchmetrics-0.11.0[${PYTHON_SINGLE_USEDEP}]
-	>=sci-ml/torchvision-0.14.1[${PYTHON_SINGLE_USEDEP}]
-	>=sci-ml/transformers-4.38.0[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/huggingface-hub-0.9.1:=[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/openvino-2022.2.0:=[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/pytorch-1.13.1:=[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/tensorflow-datasets-4.2.0:=[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/torchmetrics-0.11.0:=[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/torchvision-0.14.1:=[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/transformers-4.38.0:=[${PYTHON_SINGLE_USEDEP}]
 	dev-python/pytorch-lightning[${PYTHON_SINGLE_USEDEP}]
-	media-libs/opencv[${PYTHON_SINGLE_USEDEP},python]
+	media-libs/opencv:=[${PYTHON_SINGLE_USEDEP},python]
 "
 PLUGIN_RDEPEND="
 	$(python_gen_cond_dep '
@@ -103,14 +103,14 @@ PLUGIN_RDEPEND="
 		>=dev-python/streamlit-1.30.0[${PYTHON_USEDEP}]
 		>=dev-python/tqdm-4.64.0[${PYTHON_USEDEP}]
 		>=dev-python/watchdog-2.1.9[${PYTHON_USEDEP}]
-		>=sci-ml/safetensors-0.4.1[${PYTHON_USEDEP}]
+		>=sci-ml/safetensors-0.4.1:=[${PYTHON_USEDEP}]
 	')
 	>=dev-python/controlnet-aux-0.0.6[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/diffusers-0.22.0[${PYTHON_SINGLE_USEDEP}]
-	>=sci-ml/transformers-4.38.0[${PYTHON_SINGLE_USEDEP}]
-	sci-ml/accelerate[${PYTHON_SINGLE_USEDEP}]
-	sci-ml/huggingface-hub[${PYTHON_SINGLE_USEDEP}]
-	sci-ml/openvino[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/transformers-4.38.0:=[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/accelerate:=[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/huggingface-hub:=[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/openvino:=[${PYTHON_SINGLE_USEDEP}]
 "
 #	${STABLE_DIFFUSION_MODEL_RDEPEND}
 RDEPEND+="
@@ -121,17 +121,17 @@ RDEPEND+="
 		dev-python/scikit-image[${PYTHON_USEDEP}]
 		dev-python/scipy[${PYTHON_USEDEP}]
 		dev-python/typing[${PYTHON_USEDEP}]
-		media-gfx/gimp:0/3
-		net-misc/gdown[${PYTHON_USEDEP}]
-		virtual/numpy[${PYTHON_USEDEP}]
+		>=media-gfx/gimp-3:=
+		net-misc/gdown:=[${PYTHON_USEDEP}]
+		virtual/numpy:=[${PYTHON_USEDEP}]
 	')
 	${PLUGIN_RDEPEND}
 	>=dev-python/controlnet-aux-0.0.6[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/timm-0.4.5[${PYTHON_SINGLE_USEDEP}]
 	dev-python/diffusers[${PYTHON_SINGLE_USEDEP}]
-	media-libs/opencv[${PYTHON_SINGLE_USEDEP},python]
-	sci-ml/openvino[${PYTHON_SINGLE_USEDEP}]
-	sci-ml/transformers[${PYTHON_SINGLE_USEDEP}]
+	media-libs/opencv:=[${PYTHON_SINGLE_USEDEP},python]
+	sci-ml/openvino:=[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/transformers:=[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
