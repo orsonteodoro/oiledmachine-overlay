@@ -11,7 +11,12 @@ CFLAGS_HARDENED_USE_CASES="crypto network security-critical sensitive-data syste
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO BOR CE DF DOS HO IO MC NPD OOBR OOBW SC SO TA TC UAF UM"
 
 VERIFY_SIG_OPENPGP_KEY_PATH=/usr/share/openpgp-keys/openssl.org.asc
-inherit cflags-hardened edo flag-o-matic linux-info toolchain-funcs
+
+CHKL_TIMESTAMPS=(
+	"sys-process/procps-9999"
+)
+
+inherit cflags-hardened chkl edo flag-o-matic linux-info toolchain-funcs
 inherit multilib multilib-minimal multiprocessing preserve-libs
 inherit secure-version
 
@@ -21,9 +26,12 @@ HOMEPAGE="https://openssl-library.org/"
 MY_P=${P/_/-}
 
 if [[ ${PV} == *9999 ]] ; then
+	FALLBACK_COMMIT="26c03cfc880de1e6973d8a1bbf47f1bd78ae74bf"
 	[[ ${PV} == *.*.9999 ]] && EGIT_BRANCH="openssl-${PV%%.9999}"
 	EGIT_REPO_URI="https://github.com/openssl/openssl.git"
-
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 	inherit git-r3
 else
 	inherit verify-sig
@@ -58,7 +66,7 @@ BDEPEND+="
 	test? (
 		sys-apps/diffutils
 		app-alternatives/bc
-		sys-process/procps
+		>=sys-process/procps-${PROCPS_PV}
 	)
 "
 DEPEND="${COMMON_DEPEND}"
@@ -119,6 +127,7 @@ src_prepare() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	cflags-hardened_append
 	# Keep this in sync with app-misc/c_rehash
 	SSL_CNF_DIR="/etc/ssl"
