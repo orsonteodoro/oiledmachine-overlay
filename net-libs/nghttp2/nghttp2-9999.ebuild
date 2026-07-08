@@ -5,11 +5,13 @@ EAPI=8
 
 # U24
 
+# AI inference is used to fix security tags.
+
 CFLAGS_ASSEMBLERS="gas"
 CFLAGS_HARDENED_CI_SANITIZERS="asan ubsan"
 CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="18"
 CFLAGS_HARDENED_CI_SANITIZERS_GCC_COMPAT="14"
-CFLAGS_HARDENED_USE_CASES="network"
+CFLAGS_HARDENED_USE_CASES="security-critical network sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DF DOS UAF"
 CXX_STANDARD=20
 PYTHON_COMPAT=( "python3_"{10..12} )
@@ -126,7 +128,7 @@ SLOT="0/1.$((${SO_CURRENT} - ${SO_AGE}))"
 IUSE+="
 -bpf debug doc +hpack-tools -http3 -mruby -neverbleed +jemalloc quic -static-libs
 systemd test +threads +utils +xml
-ebuild_revision_23
+ebuild_revision_24
 "
 REQUIRED_USE="
 	doc? (
