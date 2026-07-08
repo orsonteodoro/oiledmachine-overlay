@@ -431,7 +431,6 @@ _src_configure_compiler() {
 }
 
 _src_configure() {
-	chkl_check_many_timestamps
 	uopts_src_configure
 
 	check-compiler-switch_end
