@@ -254,7 +254,7 @@ pkg_postinst() {
 		ewarn "Removing the following broken symlinks:"
 		ewarn "$(find -L "${EROOT}"/etc/ssl/certs/ -type l -printf '%p -> %l\n' -delete)"
 	fi
-ewarn "You must complete the update with etc-update"
+ewarn "You must complete the ${CATEGORY}/${P} update with etc-update"
 }
 
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 20260601 (test date 20260708)
