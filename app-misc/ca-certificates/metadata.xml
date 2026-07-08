@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="project">
+    <email>base-system@gentoo.org</email>
+    <name>Gentoo Base System</name>
+  </maintainer>
+  <use>
+    <flag name="cacert">
+      Include root/class3 certs from CAcert (https://www.cacert.org/)
+    </flag>
+    <flag name="certdata-latest">
+      Use the NSS latest certdata.txt (for the most up-to-date certificate changes, consumer apps)
+    </flag>
+    <flag name="certdata-esr">
+      Use the NSS ESR certdata.txt (distro preference, enterprise and server environments)
+    </flag>
+    <flag name="certdata-live">
+      Use the NSS live snapshot of certdata.txt (oiledmachine-overlay
+      preference) for the fastest changes/revocations
+    </flag>
+  </use>
+</pkgmetadata>
