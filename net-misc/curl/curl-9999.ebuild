@@ -145,12 +145,12 @@ RDEPEND="
 	sasl-scram? ( >=net-misc/gsasl-${GSASL_PV}:=[static-libs?,${MULTILIB_USEDEP}] )
 	ssl? (
 		gnutls? (
-			app-misc/ca-certificates:*
+			>=app-misc/ca-certificates-${CA_CERTIFICATES_PV}:*
 			>=net-libs/gnutls-${GNUTLS_PV}:=[static-libs?,${MULTILIB_USEDEP}]
 			>=dev-libs/nettle-${NETTLE_PV}:=[${MULTILIB_USEDEP}]
 		)
 		mbedtls? (
-			app-misc/ca-certificates:*
+			>=app-misc/ca-certificates-${CA_CERTIFICATES_PV}:*
 			>=net-libs/mbedtls-${MBEDTLS_PV}:3=[${MULTILIB_USEDEP}]
 		)
 		openssl? (
