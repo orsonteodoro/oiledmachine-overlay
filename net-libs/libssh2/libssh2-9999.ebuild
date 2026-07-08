@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="network security-critical sensitive-data untrusted-data web-browser"
+CFLAGS_HARDENED_USE_CASES="network security-critical sensitive-data untrusted-data web-browser" # CEF
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS ID IO OOBA OOBR OOBW"
 
 CHKL_TIMESTAMPS=(
