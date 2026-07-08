@@ -21,7 +21,7 @@
 
 EAPI=8
 
-# This ebuild fork uses AI for clarification and USE description
+# This ebuild fork uses AI for clarification, USE description, testing
 
 PYTHON_COMPAT=( python3_{10..14} )
 
@@ -258,5 +258,12 @@ pkg_postinst() {
 ewarn "You must complete the ${CATEGORY}/${P} update with etc-update"
 }
 
-# OILEDMACHINE-OVERLAY-TEST:  PASSED 20260601 (test date 20260708)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 20260601 (test date 20260708)
 # curl -I https://google.com :: passed
+# curl -vI https://google.com :: passed
+# curl -vI https://cacert.org :: passed
+# openssl verify /usr/share/ca-certificates/cacert.org/cacert.org_class1.crt :: passed
+# openssl verify /usr/share/ca-certificates/cacert.org/cacert.org_class3.crt :: passed
+# openssl verify $(ls /usr/share/ca-certificates/mozilla/*) :: passed
+# ls -1 /etc/ssl/certs | wc -l :: 244, passed
+# ls -1 /usr/share/ca-certificates/* | wc -l :: 124, passed
