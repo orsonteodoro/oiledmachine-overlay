@@ -48,7 +48,11 @@ TRAINERS=(
 	"mono_trainers_mcs"
 )
 
-inherit autotools cflags-hardened check-compiler-switch check-reqs lcnr linux-info mono-env pax-utils
+CHKL_TIMESTAMPS=(
+	"app-crypt/mit-krb5-9999"
+)
+
+inherit autotools cflags-hardened check-compiler-switch check-reqs chkl lcnr linux-info mono-env pax-utils
 inherit multilib-minimal sandbox-changes secure-version toolchain-funcs uopts
 
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 -riscv ~x86 ~amd64-linux"
@@ -229,18 +233,18 @@ REQUIRED_USE+="
 	$(gen_trainers_required_use)
 "
 DEPEND+="
-	app-crypt/mit-krb5[${MULTILIB_USEDEP}]
-	>=virtual/zlib-${ZLIB_PV}[${MULTILIB_USEDEP}]
+	>=app-crypt/mit-krb5-${MIT_KRB5_PV}:=[${MULTILIB_USEDEP}]
+	>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}]
 	!minimal? (
-		>=dev-dotnet/libgdiplus-6.0.2
+		>=dev-dotnet/libgdiplus-6.0.2:=
 	)
 	nls? (
-		sys-devel/gettext
+		sys-devel/gettext:=
 	)
 "
 RDEPEND+="
 	${DEPEND}
-	app-misc/ca-certificates
+	>=app-misc/ca-certificates-${CA_CERTIFICATES_PV}:=
 "
 BDEPEND+="
 	dev-util/yacc
@@ -439,6 +443,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
 
+	chkl_check_many_timestamps
 	cflags-hardened_append
 
 	if tc-is-gcc && [[ "${PGO_PHASE}" == "PGO" ]] ; then
