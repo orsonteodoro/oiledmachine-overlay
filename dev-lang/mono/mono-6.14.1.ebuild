@@ -31,7 +31,7 @@ UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=1
 
-JEMALLOC_PV="5.3.0" # 5.0.1 (circa 2018) was the upstream selected.
+JEMALLOC_COMMIT="9c1a484e1de990678986b5e4a6c7768dba25e0b2"
 
 BENCHMARKDOTNET_COMMIT="96ed005c57605cb8f005b6941c4d83453912eb75"
 DEBIANSHOOTOUTMONO_COMMIT="3fde2ced806c1fe7eed81120a40d99474fa009f0"
@@ -49,14 +49,14 @@ TRAINERS=(
 )
 
 inherit autotools cflags-hardened check-compiler-switch check-reqs lcnr linux-info mono-env pax-utils
-inherit multilib-minimal sandbox-changes toolchain-funcs uopts
+inherit multilib-minimal sandbox-changes secure-version toolchain-funcs uopts
 
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 -riscv ~x86 ~amd64-linux"
 SRC_URI="
 https://dl.winehq.org/mono/sources/mono/mono-${PV}.tar.xz
 jemalloc? (
-	https://github.com/jemalloc/jemalloc/archive/refs/tags/${JEMALLOC_PV}.tar.gz
-		-> jemalloc-${JEMALLOC_PV}.tar.gz
+	https://github.com/jemalloc/jemalloc/archive/${JEMALLOC_COMMIT}.tar.gz
+		-> jemalloc-${JEMALLOC_COMMIT:0:7}.tar.gz
 )
 mono_trainers_acceptance_tests_coreclr? (
 	https://github.com/mono/coreclr/archive/${MONO_CORECLR_COMMIT}.tar.gz
@@ -207,7 +207,7 @@ IUSE+="
 ${TRAINERS[@]}
 doc jemalloc jemalloc-assert jemalloc-custom-cflags jemalloc-default minimal nls
 pax-kernel xen
-ebuild_revision_29
+ebuild_revision_30
 "
 REQUIRED_USE+="
 	jemalloc-assert? (
@@ -230,7 +230,7 @@ REQUIRED_USE+="
 "
 DEPEND+="
 	app-crypt/mit-krb5[${MULTILIB_USEDEP}]
-	virtual/zlib[${MULTILIB_USEDEP}]
+	>=virtual/zlib-${ZLIB_PV}[${MULTILIB_USEDEP}]
 	!minimal? (
 		>=dev-dotnet/libgdiplus-6.0.2
 	)
@@ -323,9 +323,9 @@ ewarn
 src_unpack() {
 	unpack "${P}.tar.xz"
 	if use jemalloc ; then
-		unpack "jemalloc-${JEMALLOC_PV}.tar.gz"
+		unpack "jemalloc-${JEMALLOC_COMMIT:0:7}.tar.gz"
 		mv \
-			"${WORKDIR}/jemalloc-${JEMALLOC_PV}" \
+			"${WORKDIR}/jemalloc-${JEMALLOC_COMMIT}" \
 			"${S}/mono/utils/jemalloc/jemalloc" \
 			|| die
 	fi
@@ -421,6 +421,7 @@ src_prepare() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	:
 }
 
