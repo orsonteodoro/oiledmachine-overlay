@@ -21,6 +21,8 @@
 
 EAPI=8
 
+# This ebuild fork uses AI for clarification and USE description
+
 PYTHON_COMPAT=( python3_{10..14} )
 
 # For releases, see also https://sources.debian.org/src/ca-certificates/
