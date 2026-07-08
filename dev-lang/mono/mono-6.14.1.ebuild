@@ -420,10 +420,7 @@ src_prepare() {
 	multilib_foreach_abi prepare_abi
 }
 
-src_configure() {
-	chkl_check_many_timestamps
-	:
-}
+src_configure() { :; }
 
 _src_configure_compiler() {
 	# Forced gcc to avoid potential jemalloc build issues
@@ -434,6 +431,7 @@ _src_configure_compiler() {
 }
 
 _src_configure() {
+	chkl_check_many_timestamps
 	uopts_src_configure
 
 	check-compiler-switch_end
