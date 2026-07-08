@@ -75,7 +75,7 @@ SLOT="0/1" # subslot = SONAME
 IUSE="
 ${_TRAINERS[@]}
 minizip minizip-utils pgo static-libs
-ebuild_revision_30
+ebuild_revision_31
 "
 REQUIRED_USE="
 	pgo? (
@@ -399,13 +399,7 @@ eerror "Remove all cfi flags from ${flag}"
 		fi
 	done
 
-	# We just want the basic well tested ones for now.
 	cflags-hardened_append
-
-	# Removed untested flags
-	filter-flags \
-		"-f*cf-protection=*" \
-		"-f*hardened"
 
 	if use pgo && tc-is-gcc && train_meets_requirements && [[  "${PGO_PHASE}" == "PGO" ]] ; then
 		if use minizip ; then
