@@ -13,6 +13,7 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO BOR CE DF DOS HO IO MC NPD OOBR OOBW S
 VERIFY_SIG_OPENPGP_KEY_PATH=/usr/share/openpgp-keys/openssl.org.asc
 inherit cflags-hardened edo flag-o-matic linux-info toolchain-funcs
 inherit multilib multilib-minimal multiprocessing preserve-libs
+inherit secure-version
 
 DESCRIPTION="Robust, full-featured Open Source Toolkit for the Transport Layer Security (TLS)"
 HOMEPAGE="https://openssl-library.org/"
@@ -49,10 +50,10 @@ RESTRICT="!test? ( test )"
 
 COMMON_DEPEND="
 	!<net-misc/openssh-9.2_p1-r3
-	tls-compression? ( >=virtual/zlib-1.2.8-r1:=[static-libs(+)?,${MULTILIB_USEDEP}] )
+	tls-compression? ( >=virtual/zlib-${ZLIB_PV}:=[static-libs(+)?,${MULTILIB_USEDEP}] )
 "
 BDEPEND+="
-	>=dev-lang/perl-5
+	>=dev-lang/perl-${PERL_PV}
 	sctp? ( >=net-misc/lksctp-tools-1.0.12 )
 	test? (
 		sys-apps/diffutils
@@ -62,7 +63,7 @@ BDEPEND+="
 "
 DEPEND="${COMMON_DEPEND}"
 RDEPEND="${COMMON_DEPEND}"
-PDEPEND="app-misc/ca-certificates"
+PDEPEND=">=app-misc/ca-certificates-${CA_CERTIFICATES_PV}"
 
 MULTILIB_WRAPPED_HEADERS=(
 	/usr/include/openssl/configuration.h
