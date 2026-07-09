@@ -12,6 +12,8 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO ID IO MC NPD OOBR OOBW SO UA
 CXX_STANDARD=23
 PYTHON_COMPAT=( python3_{10..15} )
 
+TEST_COMMIT="b85e4d1ce75636b3e727555a9d31da34ad771c1c"
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX23[@]}"
@@ -51,13 +53,12 @@ else
 	VERIFY_SIG_OPENPGP_KEY_PATH=/usr/share/openpgp-keys/aacid.asc
 	inherit verify-sig
 
-	TEST_COMMIT="b85e4d1ce75636b3e727555a9d31da34ad771c1c"
 	SRC_URI="https://poppler.freedesktop.org/${P}.tar.xz"
-	SRC_URI+=" test? ( https://gitlab.freedesktop.org/poppler/test/-/archive/${TEST_COMMIT}/test-${TEST_COMMIT}.tar.bz2 -> ${PN}-test-${TEST_COMMIT}.tar.bz2 )"
 	SRC_URI+=" verify-sig? ( https://poppler.freedesktop.org/${P}.tar.xz.sig )"
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
 	SLOT="0/160"   # CHECK THIS WHEN BUMPING!!! SUBSLOT IS libpoppler.so SOVERSION
 fi
+SRC_URI+=" test? ( https://gitlab.freedesktop.org/poppler/test/-/archive/${TEST_COMMIT}/test-${TEST_COMMIT}.tar.bz2 -> ${PN}-test-${TEST_COMMIT}.tar.bz2 )"
 
 DESCRIPTION="PDF rendering library based on the xpdf-3.0 code base"
 HOMEPAGE="https://poppler.freedesktop.org/"
@@ -124,6 +125,9 @@ src_unpack() {
 			EGIT_COMMIT="${FALLBACK_COMMIT}"
 		fi
 		git-r3_src_unpack
+		if [[ -n "${A}" ]] ; then
+			unpack ${A}
+		fi
 	elif use verify-sig ; then
 		verify-sig_verify_detached "${DISTDIR}"/${P}.tar.xz{,.sig}
 	fi
