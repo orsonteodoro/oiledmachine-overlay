@@ -175,6 +175,10 @@
     <flag name="matroska">
       Adds support for the Matroska container format.
     </flag>
+    <flag name="mmap">
+      Add support for fast memory transfers between client and server on same host.
+      Disable to hardened against privilege escalation and information disclosure.
+    </flag>
     <flag name="mdns">
       Enables multicast DNS for easier device discovery.
     </flag>
@@ -324,6 +328,9 @@
     <flag name="tiff">
       Add support for TIFF images.
     </flag>
+    <flag name="torch">
+      Add support for image filters.
+    </flag>
     <flag name="twolame">
       Adds MPEG Audio Layer 2 (MP2) encoding support.
     </flag>
@@ -387,6 +394,9 @@
     </flag>
     <flag name="yaml">
       Adds support for yaml encoding for JSON/YAML clients.
+    </flag>
+    <flag name="xdummy">
+      Adds support to allow non-root to access X11 server.
     </flag>
     <flag name="zeroconf">
       Resolves LAN IP address to computer name.

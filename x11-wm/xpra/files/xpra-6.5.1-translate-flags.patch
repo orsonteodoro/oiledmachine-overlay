@@ -1,0 +1,54 @@
+diff '--color=auto' -urp xpra-6.5.1.orig/setup.py xpra-6.5.1/setup.py
+--- xpra-6.5.1.orig/setup.py	2026-07-08 20:53:52.201386148 -0700
++++ xpra-6.5.1/setup.py	2026-07-08 20:55:05.214761083 -0700
+@@ -862,6 +862,11 @@ def install_dev_env_command() -> list[st
+     print(" please submit a patch")
+     return []
+ 
++def has_value_from_keywords(kw, key, value):
++    values = kw.get(key)
++    while values and value in values:
++        return True
++    return False
+ 
+ def install_repo(repo_variant="") -> None:
+     if not LINUX:
+@@ -1513,6 +1518,36 @@ def exec_pkgconfig(*pkgs_options, **ekw)
+         print(f"adding LDFLAGS={LDFLAGS}")
+     add_pkgconfig_tokens(kw, CFLAGS, "extra_compile_args")
+     add_pkgconfig_tokens(kw, LDFLAGS, "extra_link_args")
++    has_retpoline=False
++    # Translate flags
++    if os.environ.get("CC", "").find("clang")>=0:
++        for k in ['extra_compile_args', 'extra_link_args']:
++            if has_value_from_keywords(kw, k, '-mindirect-branch=thunk'):
++                remove_from_keywords(kw, k, "-mindirect-branch=thunk")
++                remove_from_keywords(kw, k, "-mindirect-branch-register")
++                add_to_keywords(kw, k, '-mretpoline')
++            if has_value_from_keywords(kw, k, '-flto=thin'):
++                remove_from_keywords(kw, k, "-flto=thin")
++                add_to_keywords(kw, k, '-flto')
++            if has_value_from_keywords(kw, k, '-flto=auto'):
++                remove_from_keywords(kw, k, "-flto=auto")
++                add_to_keywords(kw, k, '-flto')
++            for x in range(1,256):
++                if has_value_from_keywords(kw, k, "-flto=%s" % x):
++                    remove_from_keywords(kw, k, "-flto=%s" % x)
++                    add_to_keywords(kw, k, '-flto')
++    else:
++        for k in ['extra_compile_args', 'extra_link_args']:
++            if has_value_from_keywords(kw, k, '-mindirect-branch=thunk'):
++                remove_from_keywords(kw, k, "-mretpoline")
++                add_to_keywords(kw, k, '-mindirect-branch=thunk')
++                add_to_keywords(kw, k, '-mindirect-branch-register')
++            if has_value_from_keywords(kw, k, '-flto=thin'):
++                remove_from_keywords(kw, k, "-flto=thin")
++                add_to_keywords(kw, k, '-flto')
++            if has_value_from_keywords(kw, k, '-fuse-ld=thin'):
++                remove_from_keywords(kw, k, "-fuse-ld=bfd")
++                add_to_keywords(kw, k, '-fuse-ld=bfd')
+     # add_to_keywords(kw, 'include_dirs', '.')
+     if debug_ENABLED and WIN32 and MINGW_PREFIX:
+         add_to_keywords(kw, 'extra_compile_args', "-DDEBUG")
+Only in xpra-6.5.1: setup.py.orig
+Only in xpra-6.5.1: setup.py.rej

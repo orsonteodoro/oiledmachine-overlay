@@ -1,0 +1,14 @@
+diff '--color=auto' -urp xpra-6.5.1.orig/setup.py xpra-6.5.1/setup.py
+--- xpra-6.5.1.orig/setup.py	2026-07-08 20:56:16.813934870 -0700
++++ xpra-6.5.1/setup.py	2026-07-08 20:57:03.803228767 -0700
+@@ -1441,7 +1441,7 @@ def add_pkgconfig(kw: dict, *pkgs_option
+             print(f"pkg_config_cmd={pkg_config_cmd}")
+         r, pkg_config_out, err = get_status_output(pkg_config_cmd)
+         if r!=0:
+-            raise ValueError("ERROR: call to %r failed (err=%s)" % (shlex.join(pkg_config_cmd), err))
++            print("ERROR: call to %r failed (err=%s)" % (shlex.join(pkg_config_cmd), err))
+         if verbose_ENABLED:
+             print(f"pkg-config output: {pkg_config_out!r}")
+         add_pkgconfig_tokens(kw, pkg_config_out, add_to)
+Only in xpra-6.5.1: setup.py.orig
+Only in xpra-6.5.1: setup.py.rej

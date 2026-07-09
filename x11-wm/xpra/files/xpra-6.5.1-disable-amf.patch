@@ -1,0 +1,27 @@
+diff '--color=auto' -urp xpra-6.5.1.orig/setup.py xpra-6.5.1/setup.py
+--- xpra-6.5.1.orig/setup.py	2026-07-08 20:58:28.249947162 -0700
++++ xpra-6.5.1/setup.py	2026-07-08 20:59:14.999468557 -0700
+@@ -322,8 +322,8 @@ avif_decoder_ENABLED    = avif_ENABLED
+ vpx_ENABLED             = DEFAULT and pkg_config_version("1.7", "vpx") and BITS==64
+ vpx_encoder_ENABLED     = vpx_ENABLED
+ vpx_decoder_ENABLED     = vpx_ENABLED
+-amf_ENABLED             = pkg_config_version("1.0", "amf") or has_header_file("AMF/components/VideoEncoderVCE.h")
+-amf_encoder_ENABLED     = amf_ENABLED
++amf_ENABLED             = False
++amf_encoder_ENABLED     = False
+ mf_decoder_ENABLED      = DEFAULT and WIN32
+ remote_encoder_ENABLED  = DEFAULT
+ # opencv currently broken on 32-bit windows (crashes on load):
+@@ -3087,8 +3087,8 @@ toggle_packages(pytorch_ENABLED, "xpra.c
+ toggle_packages(vpx_encoder_ENABLED or vpx_decoder_ENABLED, "xpra.codecs.vpx")
+ tace(vpx_encoder_ENABLED, "xpra.codecs.vpx.encoder", "vpx")
+ tace(vpx_decoder_ENABLED, "xpra.codecs.vpx.decoder", "vpx")
+-toggle_packages(amf_ENABLED, "xpra.codecs.amf")
+-if amf_ENABLED:
++toggle_packages(False, "xpra.codecs.amf")
++if False:
+     try:
+         amf_kwargs = pkgconfig("amf")
+     except ValueError:
+Only in xpra-6.5.1: setup.py.orig
+Only in xpra-6.5.1: setup.py.rej

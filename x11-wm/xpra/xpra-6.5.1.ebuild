@@ -8,6 +8,9 @@ EAPI=8
 # Min supported:  U16, D11
 # EOL Q1 2025, See https://github.com/Xpra-org/xpra/wiki/Versions
 
+# TODO:
+# 6.2.5 -> 6.5.1 update features
+
 MY_PV="$(ver_cut 1-4)"
 
 CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan"
@@ -19,10 +22,33 @@ DISTUTILS_USE_PEP517="setuptools"
 PATENT_STATUS_IUSE=(
 	"patent_status_nonfree"
 )
-PYTHON_COMPAT=( "python3_"{11,12} ) # See pyproject.toml but disagrees in https://github.com/Xpra-org/xpra/blob/v6.3/.github/workflows/build.yml#L15
+PYTHON_COMPAT=( "python3_"{10..14} ) # See pyproject.toml but disagrees in https://github.com/Xpra-org/xpra/blob/v6.5/.github/workflows/build.yml#L15
 
-inherit cflags-hardened cuda cython distutils-r1 flag-o-matic linux-info prefix
-inherit tmpfiles udev user-info xdg
+CHKL_TIMESTAMPS=(
+	"app-arch/brotli-9999"
+	"dev-libs/glib-2.89.9999"
+	"gnome-base/librsvg-9999"
+	"media-libs/libavif-9999"
+	"media-libs/libjpeg-turbo-9999"
+	"media-libs/libpulse-9999"
+	"media-libs/libwebp-9999"
+	"media-libs/libva-9999"
+	"media-libs/libvpx-9999"
+	"media-libs/mesa-9999"
+	"media-libs/opencv-4.9999"
+	"media-libs/openh264-9999"
+	"net-dns/avahi-9999"
+	"net-print/cups-9999"
+	"sys-apps/dbus-9999"
+	"sys-apps/systemd-9999"
+	"sys-process/procps-9999"
+	"x11-base/xorg-server-9999"
+	"x11-libs/libX11-9999"
+	"x11-libs/gtk+-3.24.9999"
+)
+
+inherit cflags-hardened chkl cuda cython distutils-r1 flag-o-matic linux-info prefix
+inherit secure-version tmpfiles udev user-info xdg
 
 SRC_URI="
 https://github.com/Xpra-org/xpra/archive/refs/tags/v${PV}.tar.gz
@@ -55,41 +81,28 @@ aac alsa aom flac jack lame matroska mp3 ogg opus oss pulseaudio speex vorbis
 wavpack
 )
 
-CUDA_TARGETS_COMPAT=(
-	sm_52
-	sm_53
-	sm_60
-	sm_61
-	sm_62
-	sm_70
-	sm_75
-	sm_80
-	sm_86
-	sm_90 # Added by ebuild
-)
-
+# wireshark disabled by default for security.
 IUSE+="
-${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${GSTREAMER_IUSE[@]}
 ${PATENT_STATUS_IUSE[@]}
 
-aes amf appindicator +audio +avahi avif brotli -cityhash +client +clipboard
+aes amf appindicator +audio +avahi avif brotli +cairo -cityhash clang +client +clipboard
 cpu-percent +csc_cython csc_libyuv cuda +cuda_rebuild +cups cups-forwarding
-+cython -cythonize-more +dbus +doc -drm evdi firejail gnome-shell +gtk3 gssapi
-html5-client html5_gzip html5_brotli +http ibus jpeg kerberos +keyboard-layout
-keycloak ldap ldap3 +lz4 lzo +mdns mysql +netdev +notifications -nvdec nvenc
++cython -cythonize-more +dbus +doc -drm evdi firejail gcc gnome-shell +gtk3 gssapi
+html5-client html5_gzip html5_brotli +http ibus ism jpeg kerberos +keyboard-layout
+keycloak ldap ldap3 +lz4 lzo +mdns +mmap mysql +netdev +notifications -nvdec nvenc
 nvfbc nvjpeg +opengl +openh264 openrc osmesa otp +pam pinentry png proc +proxy
--pyglet pyinotify qrencode +quic -qt6 remote-encoder -rencode +rencodeplus +rfb
-sd_listen selinux +server +socks sound-forwarding spng sql sqlite +ssh sshpass
+-pyglet pyinotify +torch qrencode +quic -qt6 remote-encoder -rencode +rencodeplus +rfb
+sd_listen selinux +server +socks sound-forwarding sql sqlite +ssh sshpass
 +ssl systemd +tcp-wrappers test tiff -tk u2f -uinput +v4l2 vaapi vpx vsock
-wayland +webcam webcam-forwarding webp +websockets +X x264 +xdg +xinput yaml
-zeroconf zlib
+wayland +webcam webcam-forwarding webp +websockets +websockets-browser-cookie
+-wireshark +X x264 +xdg xdummy +xinput +yaml zeroconf zlib
 ebuild_revision_26
 "
 # Upstream enables uinput by default.  Disabled because ebuild exists.
 # Upstream enables drm by default.  Disabled because unfinished.
 
-# See https://github.com/Xpra-org/xpra/blob/v5.0.4/docs/Build/Dependencies.md
+# See https://github.com/Xpra-org/xpra/blob/v6.5.1/docs/Build/Dependencies.md
 CLIENT_OPTIONS="
 	client? (
 		|| (
@@ -149,17 +162,6 @@ SERVER_OPTIONS="
 	)
 "
 
-gen_required_use_cuda_targets() {
-	local x
-	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
-		echo "
-			cuda_targets_${x}? (
-				cuda
-			)
-		"
-	done
-}
-
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
 		!aac
@@ -196,7 +198,6 @@ PATENT_STATUS_REQUIRED_USE="
 # LIMD # ATM, GEN 5-12
 # LID # C2M, GEN 5-9
 REQUIRED_USE+="
-	$(gen_required_use_cuda_targets)
 	${CLIENT_OPTIONS}
 	${PATENT_STATUS_REQUIRED_USE}
 	${SERVER_OPTIONS}
@@ -204,6 +205,10 @@ REQUIRED_USE+="
 	cython
 	gtk3
 	rencodeplus
+	^^ (
+		clang
+		gcc
+	)
 	audio? (
 		pulseaudio
 	)
@@ -219,9 +224,6 @@ REQUIRED_USE+="
 		)
 	)
 	cuda? (
-		^^ (
-			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-		)
 		|| (
 			nvenc
 			nvfbc
@@ -267,32 +269,6 @@ REQUIRED_USE+="
 	notifications? (
 		dbus
 	)
-	nvenc? (
-		|| (
-			cuda_targets_sm_52
-			cuda_targets_sm_53
-			cuda_targets_sm_60
-			cuda_targets_sm_61
-			cuda_targets_sm_62
-			cuda_targets_sm_70
-			cuda_targets_sm_75
-			cuda_targets_sm_86
-		)
-	)
-	nvfbc? (
-		|| (
-			cuda_targets_sm_52
-			cuda_targets_sm_61
-			cuda_targets_sm_75
-			cuda_targets_sm_86
-			cuda_targets_sm_90
-		)
-	)
-	nvjpeg? (
-		|| (
-			cuda_targets_sm_80
-		)
-	)
 	opengl? (
 		client
 	)
@@ -334,9 +310,9 @@ RENCODE_PV="1.0.6"
 # See https://github.com/Xpra-org/xpra/blob/v6.2.1/docs/Build/Dependencies.md for the full list.
 
 PILLOW_DEPEND="
-	$(python_gen_cond_dep '
-		virtual/pillow[${PYTHON_USEDEP},jpeg?,tiff?,webp?,zlib?]
-	')
+	$(python_gen_cond_dep "
+		virtual/pillow[\${PYTHON_USEDEP},jpeg?,tiff?,webp?,zlib?]
+	")
 "
 
 PYOPENGL_VER=(
@@ -349,11 +325,9 @@ gen_opengl_rdepend() {
 		local impl
 		for impl in ${PYTHON_COMPAT[@]} ; do
 			echo "
-				(
-					python_single_target_${impl}? (
-						~dev-python/pyopengl-${s}[python_targets_${impl}(-)]
-						~dev-python/pyopengl-accelerate-${s}[python_targets_${impl}(-)]
-					)
+				python_single_target_${impl}? (
+					~dev-python/pyopengl-${s}[python_targets_${impl}(-)]
+					~dev-python/pyopengl-accelerate-${s}[python_targets_${impl}(-)]
 				)
 			"
 		done
@@ -361,35 +335,35 @@ gen_opengl_rdepend() {
 }
 
 PATENT_STATUS_RDEPEND="
-	virtual/patent-status[patent_status_nonfree=]
+	virtual/patent-status:*[patent_status_nonfree=]
 	!patent_status_nonfree? (
-		media-libs/gst-plugins-bad:1.0[-amf]
-		media-plugins/gst-plugins-meta:1.0[aom?,ogg?,-vaapi,vpx?,-x264]
+		>=media-libs/gst-plugins-bad-${GSTREAMER_PV}:=[-amf]
+		>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:=[aom?,ogg?,-vaapi,vpx?,-x264]
 		audio? (
 			!media-plugins/gst-plugins-faac
 			!media-plugins/gst-plugins-faad
-			media-plugins/gst-plugins-meta:1.0[-aac,alsa?,flac?,jack?,lame?,mp3?,ogg?,opus?,oss?,-patent_status_nonfree,pulseaudio?,speex?,vorbis?,wavpack?]
+			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:=[-aac,alsa?,flac?,jack?,lame?,mp3?,ogg?,opus?,oss?,-patent_status_nonfree,pulseaudio?,speex?,vorbis?,wavpack?]
 		)
 		nvdec? (
-			media-libs/gst-plugins-bad[-nvcodec]
-			media-plugins/gst-plugins-meta:1.0[-nvcodec]
+			>=media-libs/gst-plugins-bad-${GSTREAMER_PV}:=[-nvcodec]
+			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:=[-nvcodec]
 		)
 		nvenc? (
-			media-libs/gst-plugins-bad[-nvcodec]
-			media-plugins/gst-plugins-meta:1.0[-nvcodec]
+			>=media-libs/gst-plugins-bad-${GSTREAMER_PV}:=[-nvcodec]
+			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:=[-nvcodec]
 		)
 	)
 	patent_status_nonfree? (
-		media-libs/gst-plugins-bad:1.0[amf?]
-		media-plugins/gst-plugins-meta:1.0[aom?,ogg?,vaapi?,vpx?,x264?]
+		>=media-libs/gst-plugins-bad-${GSTREAMER_PV}:=[amf?]
+		>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:=[aom?,ogg?,vaapi?,vpx?,x264?]
 		audio? (
-			media-plugins/gst-plugins-meta:1.0[aac?,alsa?,flac?,jack?,lame?,mp3?,ogg?,opus?,oss?,patent_status_nonfree,pulseaudio?,speex?,vorbis?,wavpack?]
+			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:=[aac?,alsa?,flac?,jack?,lame?,mp3?,ogg?,opus?,oss?,patent_status_nonfree,pulseaudio?,speex?,vorbis?,wavpack?]
 		)
 		nvdec? (
-			media-plugins/gst-plugins-meta:1.0[nvcodec]
+			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:=[nvcodec]
 		)
 		nvenc? (
-			media-plugins/gst-plugins-meta:1.0[nvcodec]
+			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:=[nvcodec]
 		)
 	)
 "
@@ -400,360 +374,343 @@ PATENT_STATUS_RDEPEND="
 # https://developer.nvidia.com/nvidia-video-codec-sdk/download
 # https://developer.nvidia.com/video-codec-sdk-archive
 RDEPEND+="
-	$(python_gen_cond_dep '
-		dev-python/pygobject[${PYTHON_USEDEP}]
+	${PATENT_STATUS_RDEPEND}
+	$(python_gen_cond_dep "
+		dev-python/pygobject[\${PYTHON_USEDEP}]
 		aes? (
-			dev-python/cryptography[${PYTHON_USEDEP}]
+			dev-python/cryptography[\${PYTHON_USEDEP}]
 		)
 		audio? (
-			dev-python/gst-python:1.0[${PYTHON_USEDEP}]
+			dev-python/gst-python[\${PYTHON_USEDEP}]
 		)
 		avahi? (
-			dev-python/netifaces[${PYTHON_USEDEP}]
-			net-dns/avahi[${PYTHON_USEDEP},python]
+			dev-python/netifaces:=[\${PYTHON_USEDEP}]
+			>=net-dns/avahi-${AVAHI_PV}:=[\${PYTHON_USEDEP},python]
 		)
 		brotli? (
-			app-arch/brotli[${PYTHON_USEDEP}]
+			>=app-arch/brotli-${BROTLI_PV}:=[\${PYTHON_USEDEP}]
+		)
+		cairo? (
+			>=dev-python/pycairo-1.20.0[\${PYTHON_USEDEP}]
 		)
 		cpu-percent? (
-			dev-python/psutil[${PYTHON_USEDEP}]
+			dev-python/psutil[\${PYTHON_USEDEP}]
 		)
 		cups? (
-			dev-python/pycups[${PYTHON_USEDEP}]
+			dev-python/pycups[\${PYTHON_USEDEP}]
 		)
 		dbus? (
-			dev-python/dbus-python[${PYTHON_USEDEP}]
+			dev-python/dbus-python[\${PYTHON_USEDEP}]
 		)
 		gssapi? (
-			dev-python/gssapi[${PYTHON_USEDEP}]
+			dev-python/gssapi[\${PYTHON_USEDEP}]
 		)
 		gtk3? (
-			>=dev-python/pycairo-1.20.0[${PYTHON_USEDEP}]
-			dev-python/pygobject:3[${PYTHON_USEDEP},cairo]
+			dev-python/pygobject:=[\${PYTHON_USEDEP},cairo]
 		)
 		ibus? (
-			app-i18n/ibus[${PYTHON_USEDEP},gtk3]
+			app-i18n/ibus:=[\${PYTHON_USEDEP},gtk3]
 		)
 		kerberos? (
-			dev-python/pykerberos[${PYTHON_USEDEP}]
+			dev-python/pykerberos[\${PYTHON_USEDEP}]
 		)
 		keycloak? (
-			dev-python/oauthlib[${PYTHON_USEDEP}]
+			dev-python/oauthlib[\${PYTHON_USEDEP}]
 		)
 		ldap? (
-			dev-python/python-ldap[${PYTHON_USEDEP}]
+			dev-python/python-ldap[\${PYTHON_USEDEP}]
 		)
 		ldap3? (
-			dev-python/ldap3[${PYTHON_USEDEP}]
+			dev-python/ldap3[\${PYTHON_USEDEP}]
 		)
 		lz4? (
-			>=dev-python/lz4-4.0.2[${PYTHON_USEDEP}]
+			>=dev-python/lz4-4.0.2[\${PYTHON_USEDEP}]
 		)
 		lzo? (
-			>=dev-python/python-lzo-0.7.0[${PYTHON_USEDEP}]
+			>=dev-python/python-lzo-0.7.0[\${PYTHON_USEDEP}]
 		)
 		mysql? (
-			dev-python/mysql-connector-python[${PYTHON_USEDEP}]
+			dev-python/mysql-connector-python[\${PYTHON_USEDEP}]
 		)
 		nvenc? (
-			>=dev-python/pycuda-'${PYCUDA_PV}'[${PYTHON_USEDEP}]
+			>=dev-python/pycuda-${PYCUDA_PV}[\${PYTHON_USEDEP}]
 			>=dev-util/nvidia-cuda-toolkit-5:=
 			>=media-video/nvidia-video-codec-sdk-10
-			dev-python/pynvml[${PYTHON_USEDEP}]
-			virtual/numpy[${PYTHON_USEDEP}]
+			dev-python/pynvml[\${PYTHON_USEDEP}]
+			virtual/numpy:=[\${PYTHON_USEDEP}]
 		)
 		nvfbc? (
-			>=dev-python/pycuda-'${PYCUDA_PV}'[${PYTHON_USEDEP}]
+			>=dev-python/pycuda-${PYCUDA_PV}[\${PYTHON_USEDEP}]
 			>=dev-util/nvidia-cuda-toolkit-11:=
-			virtual/numpy[${PYTHON_USEDEP}]
+			virtual/numpy:=[\${PYTHON_USEDEP}]
 		)
 		nvjpeg? (
-			>=dev-python/pycuda-'${PYCUDA_PV}'[${PYTHON_USEDEP}]
+			>=dev-python/pycuda-${PYCUDA_PV}[\${PYTHON_USEDEP}]
 		        >=dev-util/nvidia-cuda-toolkit-10:=
-			virtual/numpy[${PYTHON_USEDEP}]
+			virtual/numpy:=[\${PYTHON_USEDEP}]
 		)
 		otp? (
-			dev-python/pyotp[${PYTHON_USEDEP}]
+			dev-python/pyotp[\${PYTHON_USEDEP}]
 		)
 		proxy? (
-			dev-python/setproctitle[${PYTHON_USEDEP}]
+			dev-python/setproctitle[\${PYTHON_USEDEP}]
 		)
 		pyglet? (
-			dev-python/pyglet[${PYTHON_USEDEP}]
+			dev-python/pyglet[\${PYTHON_USEDEP}]
 		)
 		qrencode? (
-			media-gfx/qrencode[${PYTHON_USEDEP}]
+			media-gfx/qrencode[\${PYTHON_USEDEP}]
 		)
 		qt6? (
-			dev-python/pyqt6[${PYTHON_USEDEP}]
+			dev-python/pyqt6[\${PYTHON_USEDEP}]
 		)
 		quic? (
-			dev-python/aioquic[${PYTHON_USEDEP}]
+			dev-python/aioquic[\${PYTHON_USEDEP}]
 		)
 		rencode? (
-			>=dev-python/rencode-'${RENCODE_PV}'[${PYTHON_USEDEP}]
+			>=dev-python/rencode-${RENCODE_PV}[\${PYTHON_USEDEP}]
 		)
 		sql? (
-			dev-python/sqlalchemy[${PYTHON_USEDEP}]
+			dev-python/sqlalchemy[\${PYTHON_USEDEP}]
 		)
 		server? (
 			pyinotify? (
-				dev-python/pyinotify[${PYTHON_USEDEP}]
+				dev-python/pyinotify[\${PYTHON_USEDEP}]
 			)
 		)
 		socks? (
-			dev-python/PySocks[${PYTHON_USEDEP}]
+			dev-python/PySocks[\${PYTHON_USEDEP}]
 		)
 		ssh? (
-			dev-python/dnspython[${PYTHON_USEDEP}]
+			dev-python/dnspython[\${PYTHON_USEDEP}]
 			sshpass? (
-				net-misc/sshpass
+				net-misc/sshpass:=
 			)
 			|| (
 				(
-					dev-python/bcrypt[${PYTHON_USEDEP}]
-					dev-python/paramiko[${PYTHON_USEDEP}]
+					dev-python/bcrypt[\${PYTHON_USEDEP}]
+					dev-python/paramiko[\${PYTHON_USEDEP}]
 				)
-				virtual/ssh
+				virtual/ssh:*
 			)
 		)
 		tk? (
 			dev-lang/python[tk]
 		)
 		u2f? (
-			>=dev-python/pyu2f-0.1.5[${PYTHON_USEDEP}]
-			dev-python/cryptography[${PYTHON_USEDEP}]
+			>=dev-python/pyu2f-0.1.5[\${PYTHON_USEDEP}]
+			dev-python/cryptography[\${PYTHON_USEDEP}]
 		)
 		uinput? (
-			>=dev-python/python-uinput-0.11.2[${PYTHON_USEDEP}]
+			>=dev-python/python-uinput-0.11.2[\${PYTHON_USEDEP}]
 		)
 		webcam? (
 			pyinotify? (
-				dev-python/pyinotify[${PYTHON_USEDEP}]
+				dev-python/pyinotify[\${PYTHON_USEDEP}]
 			)
 		)
 		websockets? (
-			dev-python/websockify[${PYTHON_USEDEP}]
+			dev-python/websockify[\${PYTHON_USEDEP}]
+		)
+		websockets-browser-cookie? (
+			dev-python/browser-cookie3[\${PYTHON_USEDEP}]
+			dev-python/keyring[\${PYTHON_USEDEP}]
+			dev-python/pbkdf2[\${PYTHON_USEDEP}]
+			dev-python/pyaes[\${PYTHON_USEDEP}]
 		)
 		xdg? (
-			dev-python/pyxdg[${PYTHON_USEDEP}]
-			x11-misc/xdg-utils
+			dev-python/pyxdg[\${PYTHON_USEDEP}]
+			x11-misc/xdg-utils:=
 		)
 		yaml? (
-			dev-python/pyyaml[${PYTHON_USEDEP}]
+			dev-python/pyyaml[\${PYTHON_USEDEP}]
 		)
 		zeroconf? (
-			dev-python/zeroconf[${PYTHON_USEDEP}]
+			dev-python/zeroconf[\${PYTHON_USEDEP}]
 		)
-	')
-	acct-group/xpra
-	app-admin/sudo
-	dev-lang/python[sqlite?,ssl?]
-	dev-libs/gobject-introspection
-	dev-libs/glib[dbus?]
+	")
+	acct-group/xpra:*
+	app-admin/sudo:=
+	dev-lang/python:=[sqlite?,ssl?]
+	>=dev-libs/gobject-introspection-${GOBJECT_INTROSPECTION_PV}:=
+	>=dev-libs/glib-${GLIB_PV}:=[dbus?]
 	appindicator? (
-		dev-libs/libappindicator[introspection]
-		gnome-base/librsvg[introspection]
+		dev-libs/libappindicator:=[introspection]
+		>=gnome-base/librsvg-${LIBRSVG_PV}:=[introspection]
 	)
 	audio? (
-		media-libs/gst-plugins-bad:1.0[introspection]
-		media-libs/gst-plugins-base:1.0[introspection]
-		media-libs/gstreamer:1.0[introspection]
+		>=media-libs/gst-plugins-bad-${GSTREAMER_PV}:=[introspection]
+		>=media-libs/gst-plugins-base-${GSTREAMER_PV}:=[introspection]
+		>=media-libs/gstreamer-${GSTREAMER_PV}:=[introspection]
 		matroska? (
-			media-libs/gst-plugins-good:1.0
+			>=media-libs/gst-plugins-good-${GSTREAMER_PV}:=
 		)
 	)
 	avif? (
-		>=media-libs/libavif-0.9
-	)
-	cuda_targets_sm_52? (
-		>=dev-util/nvidia-cuda-toolkit-6.5:=
-	)
-	cuda_targets_sm_53? (
-		>=dev-util/nvidia-cuda-toolkit-6.5:=
-	)
-	cuda_targets_sm_60? (
-		>=dev-util/nvidia-cuda-toolkit-8:=
-	)
-	cuda_targets_sm_61? (
-		>=dev-util/nvidia-cuda-toolkit-8:=
-	)
-	cuda_targets_sm_62? (
-		>=dev-util/nvidia-cuda-toolkit-8:=
-	)
-	cuda_targets_sm_70? (
-		>=dev-util/nvidia-cuda-toolkit-9:=
-	)
-	cuda_targets_sm_75? (
-		>=dev-util/nvidia-cuda-toolkit-10:=
-	)
-	cuda_targets_sm_80? (
-		>=dev-util/nvidia-cuda-toolkit-10:=
-	)
-	cuda_targets_sm_86? (
-		>=dev-util/nvidia-cuda-toolkit-11.1:=
-	)
-	cuda_targets_sm_90? (
-		>=dev-util/nvidia-cuda-toolkit-11.8:=
+		>=media-libs/libavif-${LIBAVIF_PV}:=
 	)
 	csc_libyuv? (
-		media-libs/libyuv
+		>=media-libs/libyuv-${LIBYUV_PV}:=
 	)
 	cups? (
 		cups-forwarding? (
-			net-print/cups
-			net-print/cups-filters
-			net-print/cups-pdf
+			>=net-print/cups-${CUPS_PV}:=
+			net-print/cups-filters:=
+			net-print/cups-pdf:=
 		)
 	)
 	dbus? (
-		sys-apps/dbus[X?]
+		>=sys-apps/dbus-${DBUS_PV}:=[X?]
 	)
 	drm? (
-		>=x11-libs/libdrm-2.4
+		>=x11-libs/libdrm-${LIBDRM_PV}:=
 	)
 	evdi? (
-		>=x11-drivers/evdi-1.9
+		>=x11-drivers/evdi-1.9:=
 	)
 	gnome-shell? (
-		gnome-extra/gnome-shell-extension-appindicator
-		gnome-extra/gnome-shell-extension-topicons-plus
+		gnome-extra/gnome-shell-extension-appindicator:=
+		gnome-extra/gnome-shell-extension-topicons-plus:=
 	)
 	gtk3? (
-		dev-libs/gobject-introspection
-		x11-libs/gtk+:3[wayland?,X?,introspection]
-		x11-libs/pango[introspection]
+		>=dev-libs/gobject-introspection-${GOBJECT_INTROSPECTION_PV}:=
+		>=x11-libs/gtk+-${GTK3_PV}:3=[wayland?,X?,introspection]
+		>=x11-libs/pango-${PANGO_PV}:=[introspection]
 	)
 	html5-client? (
-		www-apps/xpra-html5
+		www-apps/xpra-html5:*
 	)
 	jpeg? (
 		${PILLOW_DEPEND}
-		>=media-libs/libjpeg-turbo-1.4
+		>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:=
 	)
 	opengl? (
-		x11-base/xorg-drivers[video_cards_dummy]
+		x11-base/xorg-drivers:=[video_cards_dummy]
 		client? (
-			|| (
-				$(gen_opengl_rdepend)
-			)
+			$(gen_opengl_rdepend)
 			dev-python/pyopengl:=
 			dev-python/pyopengl-accelerate:=
 		)
 		server? (
-			media-libs/mesa[osmesa?]
+			>=media-libs/mesa-${MESA_PV}:=[osmesa?]
 		)
 	)
 	openh264? (
-		media-libs/openh264
+		>=media-libs/openh264-${OPENH264_PV}:=
 	)
 	openrc? (
-		sys-apps/net-tools
-		sys-apps/openrc[bash]
+		sys-apps/net-tools:=
+		sys-apps/openrc:=[bash]
 	)
 	pam? (
-		sys-libs/pam[selinux?]
+		sys-libs/pam:=[selinux?]
 	)
 	pinentry? (
-		app-crypt/pinentry[gtk]
+		app-crypt/pinentry:=[gtk]
 	)
 	png? (
 		${PILLOW_DEPEND}
 	)
 	proc? (
-		sys-process/procps
+		>=sys-process/procps-${PROCPS_PV}:=
 	)
 	pulseaudio? (
-		media-libs/libpulse[dbus?]
+		>=media-libs/libpulse-${LIBPULSE_PV}:=[dbus?]
 		sound-forwarding? (
-			media-libs/libpulse
+			>=media-libs/libpulse-${LIBPULSE_PV}:=
 		)
 	)
 	server? (
-		x11-base/xorg-server[-minimal,xvfb]
-		x11-drivers/xf86-input-void
-		x11-themes/adwaita-icon-theme
-	)
-	spng? (
-		>=media-libs/libspng-0.7
+		>=x11-base/xorg-server-${XORG_SERVER_PV}:=[-minimal,xvfb]
+		x11-drivers/xf86-input-void:=
+		x11-themes/adwaita-icon-theme:=
 	)
 	systemd? (
-		sys-apps/systemd
+		>=sys-apps/systemd-${SYSTEMD_PV}:=
 	)
 	tcp-wrappers? (
-		sys-apps/tcp-wrappers
+		sys-apps/tcp-wrappers:=
 	)
 	tiff? (
 		${PILLOW_DEPEND}
 	)
+	torch? (
+		sci-ml/pytorch:=[${PYTHON_SINGLE_USEDEP}]
+	)
 	v4l2? (
-		sys-kernel/linux-headers
+		sys-kernel/linux-headers:=
 	)
 	vaapi? (
-		>=media-libs/libva-2.1.0[drm(+),X?,wayland?]
-		virtual/vaapi
+		>=media-libs/libva-${LIBVA_PV}:=[drm(+),X?,wayland?]
+		virtual/vaapi:*
 	)
 	vpx? (
-		>=media-libs/libvpx-1.7
+		>=media-libs/libvpx-${LIBVPX_PV}:=
 	)
 	vsock? (
-		sys-kernel/linux-headers
+		sys-kernel/linux-headers:=
 	)
 	webcam? (
 		client? (
-			>=media-libs/opencv-2.0[${PYTHON_SINGLE_USEDEP},python]
+			~media-libs/opencv-${OPENCV4_PV}:=[${PYTHON_SINGLE_USEDEP},python]
 		)
 		webcam-forwarding? (
 			kernel_linux? (
-				media-video/v4l2loopback
+				media-video/v4l2loopback:=
 			)
 		)
 	)
 	webp? (
 		${PILLOW_DEPEND}
-		>=media-libs/libwebp-0.5
+		>=media-libs/libwebp-${LIBWEBP_PV}:=
 	)
 	X? (
-		x11-libs/libX11
-		x11-libs/libXcomposite
-		x11-libs/libXdamage
-		x11-libs/libXfixes
-		x11-libs/libXi
-		x11-libs/libxkbfile
-		x11-libs/libXrandr
-		x11-libs/libXres
-		x11-libs/libXtst
+		>=x11-base/xorg-server-${XORG_SERVER_PV}:=[xvfb]
+		>=x11-libs/libX11-${LIBX11_PV}:=
+		x11-libs/libXcomposite:=
+		x11-libs/libXdamage:=
+		>=x11-libs/libXfixes-${LIBXFIXES_PV}:=
+		>=x11-libs/libXi-${LIBXI_PV}:=
+		>=x11-libs/libxkbfile-${LIBXKBFILE_PV}:=
+		>=x11-libs/libXrandr-${LIBXRANDR_PV}:=
+		x11-libs/libXres:=
+		>=x11-libs/libXtst-${LIBXTST_PV}:=
+		xdummy? (
+			x11-drivers/xf86-video-dummy:=
+		)
 	)
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	$(python_gen_cond_dep '
+	$(python_gen_cond_dep "
 		cython? (
-			>=dev-python/cython-3.0.0_alpha11[${PYTHON_USEDEP}]
-			=dev-python/cython-3*
-			dev-python/cython:=
+			>=dev-python/cython-3.0.0_alpha11[\${PYTHON_USEDEP}]
+			=dev-python/cython-3*:=
+			dev-python/xxhash
 		)
 		test? (
-			>=dev-python/rencode-'${RENCODE_PV}'[${PYTHON_USEDEP}]
-			dev-python/cryptography[${PYTHON_USEDEP}]
-			virtual/numpy[${PYTHON_USEDEP}]
+			>=dev-python/rencode-${RENCODE_PV}[\${PYTHON_USEDEP}]
+			dev-python/cryptography[\${PYTHON_USEDEP}]
+			virtual/numpy:=[\${PYTHON_USEDEP}]
 			client? (
-				sys-libs/zlib
+				>=virtual/zlib-${ZLIB_PV}
 				X? (
 					x11-misc/xclip
 				)
 			)
 		)
-	')
+	")
 	virtual/pkgconfig
+	clang? (
+		llvm-core/clang:=
+	)
 	doc? (
 		app-text/pandoc
 	)
-	|| (
-		sys-devel/gcc[cxx]
-		llvm-core/clang
+	gcc? (
+		sys-devel/gcc:=[cxx]
 	)
 "
 RESTRICT="mirror"
@@ -762,12 +719,18 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.0.4_ignore-gentoo-no-compile.patch"
 	"${FILESDIR}/${PN}-4.3-openrc-init-fix-v3.patch"
 	"${FILESDIR}/${PN}-4.1.3-change-init-config-path.patch"
-	"${FILESDIR}/${PN}-5.0.4-udev-path.patch"
-	"${FILESDIR}/${PN}-6.0-translate-flags.patch"
-	"${FILESDIR}/${PN}-6.3-pkgconfig-warn.patch"
+	"${FILESDIR}/${PN}-6.5.1-udev-path.patch"
+	"${FILESDIR}/${PN}-6.5.1-translate-flags.patch"
+	"${FILESDIR}/${PN}-6.5.1-pkgconfig-warn.patch"
 )
 
 pkg_setup() {
+	if tc-is-gcc ; then
+		use gcc || die "Enable the gcc USE flag to continue."
+	fi
+	if tc-is-clang ; then
+		use clang || die "Enable the clang USE flag to continue."
+	fi
 	if use nvenc ; then
 einfo
 einfo "The nvenc USE flag has not been tested.  It is left for ebuild"
@@ -855,7 +818,7 @@ src_prepare() {
 	fi
 
 	if ! use amf ; then
-		eapply "${FILESDIR}/${PN}-6.3.2-disable-amf.patch"
+		eapply "${FILESDIR}/${PN}-6.5.1-disable-amf.patch"
 	fi
 }
 
@@ -904,6 +867,7 @@ python_configure() {
 }
 
 python_configure_all() {
+	chkl_check_many_timestamps
 	cflags-hardened_append
 	if use evdi && [[ ! -e "${ESYSROOT}/usr/$(get_libdir)/pkgconfig/evdi.pc" ]] ; then
 eerror
@@ -919,9 +883,11 @@ eerror
 		"setup.py" \
 		|| die
 
+	# For switches, see https://github.com/Xpra-org/xpra/blob/v6.5.1/setup.py#L429
 	DISTUTILS_ARGS=(
 		$(use_with amf)
 		$(use_with amf amf_encoder)
+		#$(use_with aom)
 		$(use_with audio)
 		$(use_with audio gstreamer_audio)
 		$(use_with avif)
@@ -936,6 +902,7 @@ eerror
 		$(use_with nvenc cuda_kernels)
 		$(use_with nvjpeg nvjpeg_decoder)
 		$(use_with nvjpeg nvjpeg_encoder)
+		$(use_with cairo)
 		$(use_with cityhash)
 		$(use_with csc_cython)
 		$(use_with csc_libyuv)
@@ -943,16 +910,19 @@ eerror
 		$(use_with cups printing)
 		$(use_with dbus)
 		$(use_with evdi)
+		$(use_with ism ism_ext)
 		$(use_with jpeg jpeg_decoder)
 		$(use_with jpeg jpeg_encoder)
 		$(use_with keyboard-layout keyboard)
 		$(use_with lz4)
 		$(use_with mdns)
+		$(use_with mmap)
 		$(use_with notifications)
 		$(use_with nvdec)
 		$(use_with nvenc)
 		$(use_with nvfbc)
 		$(use_with opengl)
+		$(use_with openh264)
 		$(use_with pam)
 		$(use_with proc)
 		$(use_with proxy)
@@ -965,31 +935,38 @@ eerror
 		$(use_with server)
 		$(use_with server service)
 		$(use_with server shadow)
-		$(use_with spng spng_decoder)
-		$(use_with spng spng_encoder)
 		$(use_with sd_listen)
+		$(use_with ssl)
 		$(use_with tk tk_client)
+		$(use_with torch pytorch)
 		$(use_with uinput)
 		$(use_with vpx)
 		$(use_with vsock)
 		$(use_with v4l2)
+		$(use_with wayland wayland_client)
+		$(use_with wayland wayland_server)
 		$(use_with webcam)
+		$(use_with websockets)
+		$(use_with websockets-browser-cookie websockets_browser_cookie)
 		$(use_with webp)
+		$(use_with wireshark)
 		$(use_with X argb)
 		$(use_with X x11)
 		$(use_with x264 enc_x264)
 		$(use_with xdg xdg_open)
+		$(use_with xdummy Xdummy)
 		$(use_with xinput)
 		$(use_with yaml)
 		--with-keyboard
 #		--with-strict
 		--with-verbose
+		--without-cython_freethreading # mitigate RC, TOCTOU
 		--without-example
 		--without-debug
-		--without-openh264 # missing wels folder
+		--without-mf_decoder
+		--without-peercred
 		--without-PIC
 		--without-warn
-		--without-Xdummy
 	)
 
 	if use cythonize-more ; then
