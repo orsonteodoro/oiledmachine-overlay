@@ -21,7 +21,7 @@ CHKL_TIMESTAMPS=(
 inherit autotools cflags-hardened chkl libtool multilib-minimal secure-version toolchain-funcs verify-sig
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="41a72e555332418c63c0ec75c180295a95611ade"
+	FALLBACK_COMMIT="40a71c83823e731986ad2bbc739bfc0ce5875a9b"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/libarchive/libarchive.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -48,7 +48,7 @@ KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390
 IUSE+="
 	acl blake2 +bzip2 +e2fsprogs expat +iconv lz4 +lzma lzo nettle
 	static-libs test xattr +zstd
-	ebuild_revision_18
+	ebuild_revision_19
 "
 RESTRICT="!test? ( test )"
 
