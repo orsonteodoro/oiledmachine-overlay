@@ -3624,7 +3624,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	if in_iuse "ungoogled-chromium" && use ungoogled-chromium ; then
 	# Same as USE="ungoogled-chromium cromite" or USE=ungoogled-chromium
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-149.0.7827.114-mold-ungoogled-chromium.patch"
+			"${FILESDIR}/extra-patches/${PN}-150.0.7871.114-mold-ungoogled-chromium.patch"
 		)
 	elif in_iuse "cromite" && use cromite ; then
 		PATCHES+=(
