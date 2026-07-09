@@ -16,10 +16,10 @@ CXX_STANDARD=17
 WEB_KERNEL_CONFIG_CHECK_YAMA=1
 PYTHON_COMPAT=( python3_{10..14} )
 
-FALLBACK_COMMIT="68848f491fda502dad2f06bda57cb99b595591e3"
+FALLBACK_COMMIT="aaaf79fab7de86144d7927ae3e916796b93bc73d"
 
 # See https://github.com/qt/qtwebengine/tree/dev/src for submodule ID
-# See https://github.com/qt/qtwebengine-chromium/blob/2a0509e9310c9766abd231aad5b1708c8a56539a/chromium/chrome/VERSION
+# See https://github.com/qt/qtwebengine-chromium/blob/99290379f4e2d629c96219b3d6afbd9bc6bcfb65/chromium/chrome/VERSION
 CHROMIUM_VENDORED_VER="140.0.7339.225"
 CHROMIUM_VENDORED_TIMESTAMP="Wed, 24 Sep 2025 16:45:28 -0700"
 
