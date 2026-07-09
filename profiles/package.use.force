@@ -56,6 +56,7 @@ sys-apps/coreutils fallback-commit
 sys-apps/systemd fallback-commit
 sys-apps/util-linux fallback-commit
 dev-libs/libpcre2 fallback-commit
+sys-libs/pam fallback-commit
 net-misc/wget fallback-commit
 net-misc/wget2 fallback-commit
 

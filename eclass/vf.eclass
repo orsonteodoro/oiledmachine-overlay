@@ -123,6 +123,9 @@ einfo "AEITW = Actively Exploited In The Wild" # Most formal
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AFA"($|" "|";"|",") ]] ; then
 einfo "AFA = Arbitrary File Access"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AFC"($|" "|";"|",") ]] ; then
+einfo "AFC = Arbitrary File Create"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AFO"($|" "|";"|",") ]] ; then
 einfo "AFO = Arbitrary File Overwrite"
 		fi

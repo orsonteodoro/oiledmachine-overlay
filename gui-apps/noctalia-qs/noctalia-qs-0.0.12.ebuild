@@ -22,7 +22,20 @@ LLVM_COMPAT=(
 )
 LIBCXX_USEDEP_DEV="llvm_slot_skip(+)"
 
-inherit branding cflags-hardened cmake libcxx-slot libstdcxx-slot
+CHKL_TIMESTAMPS=(
+	"dev-libs/glib-2.89.9999"
+	"dev-libs/wayland-9999"
+	"dev-qt/qtbase-6.9999"
+	"dev-qt/qtdeclarative-6.9999"
+	"media-libs/mesa-9999"
+	"media-video/pipewire-9999"
+	"net-wireless/bluez-9999"
+	"net-misc/networkmanager-9999"
+	"sys-libs/pam-9999"
+	"x11-libs/libxcb-9999"
+)
+
+inherit branding cflags-hardened chkl cmake libcxx-slot libstdcxx-slot secure-version
 
 if [[ "${PV}" =~ "9999" ]]; then
 	EGIT_BRANCH="master"
@@ -110,58 +123,60 @@ REQUIRED_USE="
 
 RDEPEND="
 	!gui-apps/quickshell
-	dev-qt/qtbase:6=[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV},dbus?,gui,vulkan,wayland?,widgets,X?]
-	dev-qt/qtdeclarative:6=[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV},vulkan,widgets]
+	>=dev-qt/qtbase-${QTBASE6_PV}:6=[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV},dbus?,gui,vulkan,wayland?,widgets,X?]
+	>=dev-qt/qtdeclarative-${QTDECLARATIVE6_PV}:6=[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV},vulkan,widgets]
 	dev-qt/qtsvg:6=[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV}]
 	bluetooth? (
-		net-wireless/bluez:=
+		>=net-wireless/bluez-${BLUEZ_PV}:=
 	)
 	jemalloc? (
-		dev-libs/jemalloc:=
+		>=dev-libs/jemalloc-${JEMALLOC_PV}:=
 	)
 	networkmanager? (
-		net-misc/networkmanager:=
+		>=net-misc/networkmanager-${NETWORKMANAGER_PV}:=
 	)
 	pam? (
-		sys-libs/pam:=
+		>=sys-libs/pam-${PAM_PV}:=
 	)
 	pipewire? (
-		media-video/pipewire:=
+		>=media-video/pipewire-${PIPEWIRE_PV}:=
 	)
 	policykit? (
-		dev-libs/glib:=
+		>=dev-libs/glib-${GLIB_PV}:=
 		sys-auth/polkit:=
 	)
 	screencopy? (
-		media-libs/mesa:=
-		x11-libs/libdrm:=
+		>=media-libs/mesa-${MESA_PV}:=
+		>=x11-libs/libdrm-${LIBDRM_PV}:=
 	)
 	wayland? (
-		dev-libs/wayland:=
+		>=dev-libs/wayland-${WAYLAND_PV}:=
 		dev-qt/qtwayland:6=[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV}]
 	)
 	X? (
-		x11-libs/libxcb:=
+		>=x11-libs/libxcb-${LIBXCB_PV}:=
 	)
 "
 DEPEND="
 	${RDEPEND}
+	dev-cpp/cli11:=
+	crash-handler? (
+		dev-cpp/cpptrace:=[unwind]
+	)
 	screencopy? (
 		dev-util/vulkan-headers:=
+	)
+	wayland? (
+		dev-libs/wayland-protocols:=
 	)
 "
 BDEPEND="
 	dev-build/cmake
 	dev-build/ninja
-	dev-cpp/cli11
 	dev-qt/qtshadertools:6=[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV}]
 	dev-util/spirv-tools
 	virtual/pkgconfig
-	crash-handler? (
-		dev-cpp/cpptrace[unwind]
-	)
 	wayland? (
-		dev-libs/wayland-protocols
 		dev-util/wayland-scanner
 	)
 "
@@ -201,6 +216,7 @@ src_unpack() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	cflags-hardened_append
 	# Hyprland controls all Hyprland sub-features as a group.
 	# i3 controls I3 / Sway IPC.
