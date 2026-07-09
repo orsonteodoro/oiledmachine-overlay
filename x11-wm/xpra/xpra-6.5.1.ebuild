@@ -292,6 +292,7 @@ REQUIRED_USE+="
 		rencode
 	)
 	X? (
+		cairo
 		gtk3
 	)
 	zeroconf? (
