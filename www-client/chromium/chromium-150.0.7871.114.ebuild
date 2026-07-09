@@ -192,7 +192,7 @@ EAPI=8
 # Use `USE="-system-clang -system-rust" ebuild chromium-toolchain-150.0.7871.114.ebuild digest clean unpack prepare compile install merge` to obtain numbers.
 TC_COUNT_EXPECTED_CLANG=429
 TC_COUNT_EXPECTED_GN=1127
-TC_COUNT_EXPECTED_RUST=7264
+TC_COUNT_EXPECTED_RUST=7267
 SOURCES_COUNT_EXPECTED=565541
 CHROMIUM_EBUILD_MAINTAINER=1 # Also set GEN_ABOUT_CREDITS
 GEN_ABOUT_CREDITS=1
@@ -3628,11 +3628,11 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		)
 	elif in_iuse "cromite" && use cromite ; then
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-148.0.7778.167-mold.patch"
+			"${FILESDIR}/extra-patches/${PN}-150.0.7871.114-mold.patch"
 		)
 	else
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-149.0.7827.114-mold.patch"
+			"${FILESDIR}/extra-patches/${PN}-150.0.7871.114-mold.patch"
 		)
 	fi
 
