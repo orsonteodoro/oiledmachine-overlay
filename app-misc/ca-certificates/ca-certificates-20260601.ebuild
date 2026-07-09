@@ -185,6 +185,8 @@ einfo "PRECOMPILED:  ${PRECOMPILED}"
 		[[ -e "${d}/nssckbi.h" ]] || die
 		local l
 		local expected_size
+
+	# Check integrity of certdata.txt
 		l=$(wc -c "${d}/certdata.txt" | cut -f 1 -d " ")
 		(( ${l} == 0 )) && die
 		expected_size=1330761
@@ -194,11 +196,21 @@ einfo "PRECOMPILED:  ${PRECOMPILED}"
 		(( ${l} > ${expected_size} + ${t} )) && die "Integrity failed for upper bounds of ${d}/certdata.txt"
 		(( ${l} < ${expected_size} - ${t} )) && die "Integrity failed for lower bounds of ${d}/certdata.txt"
 		# Percent change between rolling and ESR is 7.8%
+
+	# Check integrity of nssckbi.h
 		l=$(wc -c "${d}/nssckbi.h" | cut -f 1 -d " ")
 		(( ${l} == 0 )) && die
 		expected_size=2504
 		(( ${l} != ${expected_size} )) && die "Atomic copy and integrity failed for ${d}/nssckbi.h"
 		# Percent change between rolling and ESR is 0%
+
+	# Cheap integrity check of certdata.txt content
+		grep -q -e "Mozilla Builtin Roots" "${d}/certdata.txt" || die "Integrity failed for start of ${d}/certdata.txt"
+		grep -q -e "SecureSign Root CA16" "${d}/certdata.txt" || die "Integrity failed for end of ${d}/certdata.txt"
+
+	# Cheap integrity check of nssckbi.h content
+		grep -q -e "#ifndef NSSCKBI_H" "${d}/nssckbi.h" || die "Integrity failed for start of ${d}/nssckbi.h"
+		grep -q -e "#endif" "${d}/nssckbi.h" || die "Integrity failed for end of ${d}/nssckbi.h"
 	else
 		local commit_id=$(get_certdata_commit)
 		local certdata_flavor=$(get_certdata_desc)
