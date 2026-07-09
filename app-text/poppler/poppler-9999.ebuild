@@ -3,21 +3,23 @@
 
 EAPI=8
 
+# This ebuild fork uses an AI suggested workaround.
+
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_TRAPV="0" # Breaks during test suite
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO ID IO MC NPD OOBR OOBW SO UAF UM"
-CXX_STANDARD=20
+CXX_STANDARD=23
 PYTHON_COMPAT=( python3_{10..15} )
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX20[@]}"
+	"${LIBSTDCXX_COMPAT_STDCXX23[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}"
+	"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}"
 )
 
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
@@ -210,6 +212,7 @@ src_configure() {
 		-DBUILD_QT6_TESTS=$(usex test $(usex qt6))
 		-DBUILD_CPP_TESTS=$(usex test)
 		-DBUILD_MANUAL_TESTS=$(usex test)
+		-DCMAKE_CXX_SCAN_FOR_MODULES=OFF			# oiledmachine-overlay added
 		-DTESTDATADIR="${WORKDIR}"/test-${TEST_COMMIT}
 		-DRUN_GPERF_IF_PRESENT=OFF
 		-DENABLE_BOOST="$(usex boost)"
