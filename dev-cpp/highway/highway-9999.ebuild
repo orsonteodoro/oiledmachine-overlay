@@ -74,7 +74,7 @@ LLVM_COMPAT=(
 inherit cflags-hardened check-compiler-switch cmake-multilib flag-o-matic libcxx-slot libstdcxx-slot toolchain-funcs
 
 if [[ "${PV}" == *"9999"* ]]; then
-	FALLBACK_COMMIT="9c291a8bb4e4704880de6dadf1a24d8aa6f0eb36"
+	FALLBACK_COMMIT="9d5b12611fcfe145f988771c45e7bae9f78cb7fa"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/google/highway.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -100,7 +100,7 @@ ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
 test
-ebuild_revision_22
+ebuild_revision_23
 "
 REQUIRED_USE="
 	cpu_flags_ppc_power8-vector? (
