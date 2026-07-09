@@ -96,9 +96,9 @@
 #
 # Some may find it uncomfortable with live packages (9999), the fact is that
 # *most* projects do not make a tagged security fixes within a week or two.
-# Only a few actually release time acceptable tagged security release for
-# general availability.  Some of these vulnerabilies are considered high to
-# critical severity.
+# Only a few actually release a proper acceptable time tagged security
+# release for general availability.  Some of these vulnerabilies are
+# considered high to critical severity.
 #
 
 case ${EAPI:-0} in
