@@ -143,6 +143,19 @@ X_HEADLESS_COMPAT=(
 	"vmware"
 )
 
+# Use cases:
+# Automation
+# Background tasks
+# GUI apps on a remote host without a monitor via SSH
+X_HEADLESS_ONLY=(
+)
+
+# Use cases:
+# Console only apps that have annoying Xpra noise.
+X_NONE_ONLY=(
+	"ollama"
+)
+
 X_XEPHYR_ONLY=(
 )
 
@@ -300,7 +313,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 -apparmor +chroot clang contrib +dbusproxy +file-transfer +globalcfg
 landlock +network +private-home -private-lib -selinux +suid
 test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xcsecurity xvfb
-ebuild_revision_143
+ebuild_revision_144
 "
 REQUIRED_USE+="
 	!test
@@ -443,6 +456,28 @@ is_x_blacklisted() {
 	local arg="${1}"
 	local y
 	for y in "${X_BLACKLIST[@]}" ; do
+		if [[ "${arg}" == "${y}" ]] ; then
+			return 0
+		fi
+	done
+	return 1
+}
+
+is_x_headless_only() {
+	local arg="${1}"
+	local y
+	for y in "${X_HEADLESS_ONLY[@]}" ; do
+		if [[ "${arg}" == "${y}" ]] ; then
+			return 0
+		fi
+	done
+	return 1
+}
+
+is_x_none_only() {
+	local arg="${1}"
+	local y
+	for y in "${X_NONE_ONLY[@]}" ; do
 		if [[ "${arg}" == "${y}" ]] ; then
 			return 0
 		fi
@@ -1508,6 +1543,16 @@ einfo "Forcing xephyr for ${key_command}"
 ewarn "Uncaught x11_arg case for ${command}.  Ignore the warning if it is a console app."
 	fi
 
+	if is_x_headless_only "${command}" ; then
+		x11_arg="--x11=xvfb"
+		x11_sandbox="headless"
+	fi
+
+	if is_x_none_only "${command}" ; then
+		x11_arg="--x11=none"
+		x11_sandbox="none"
+	fi
+
 	if [[ "${x11_sandbox}" == "xephyr" ]] ; then
 		if [[ -z "${XEPHYR_WH[${key_command}]}" ]] ; then
 ewarn
@@ -1741,6 +1786,7 @@ einfo "Detected CEF/Chromium.  Using ozone for Wayland."
 		)
 	fi
 
+	# Also includes xvfb sandbox use case
 	local all_args_x11=(
 		${env_args[@]}
 		${apparmor_arg}
@@ -1767,7 +1813,8 @@ einfo "Detected CEF/Chromium.  Using ozone for Wayland."
 		${profile_wayland_arg}
 	)
 
-	local all_args_headless=(
+	# No X11 sandbox
+	local all_args_none=(
 		${env_args[@]}
 		${apparmor_arg}
 		${allocator_args}
@@ -1813,14 +1860,24 @@ einfo "Detected CEF/Chromium.  Using ozone for Wayland."
 	# unbreak a bad Firejail configuration and to not mess up the uptime
 	# score.
 
-	gen_node_package_manager_wrapper() {
+	gen_headless_wrapper() {
 cat <<EOF > "${ED}/usr/local/${folder}/${wrapper_name}" || die
 #!/bin/bash
 if [[ "\${EUID}" == "0" ]] ; then
 	"${exe_path}" "\$@"
 else
-	echo "DEBUG:  Protecting ${command} with Firejail"
-	exec firejail ${all_args_headless[@]} "${exe_path}" "\$@"
+	exec firejail ${all_args_x11[@]} "${exe_path}" "\$@"
+fi
+EOF
+	}
+
+	gen_none_wrapper() {
+cat <<EOF > "${ED}/usr/local/${folder}/${wrapper_name}" || die
+#!/bin/bash
+if [[ "\${EUID}" == "0" ]] ; then
+	"${exe_path}" "\$@"
+else
+	exec firejail ${all_args_none[@]} "${exe_path}" "\$@"
 fi
 EOF
 	}
@@ -1865,9 +1922,14 @@ EOF
 	}
 
 	if (( ${is_allowed_wrapper} == 1 )) ; then
-		if [[ "${x11_sandbox}" == "xorg" ]] ; then
+		if [[ "${x11_sandbox}" == "headless" ]] ; then
+			gen_headless_wrapper
+		elif [[ "${x11_sandbox}" == "none" ]] ; then
+			gen_none_wrapper
+		elif [[ "${x11_sandbox}" == "xorg" ]] ; then
 			gen_xcsecurity_wrapper
 		else
+	# Includes x11_sandbox == none
 			gen_x11_wrapper
 		fi
 
