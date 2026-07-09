@@ -17,7 +17,12 @@
     </flag>
     <flag name="certdata-live">
       Use the NSS live snapshot of certdata.txt (oiledmachine-overlay
-      preference) for the fastest changes/revocations
+      preference) for nearly fastest changes/revocations to certs and trust
+      bits.
+    </flag>
+    <flag name="certdata-live-af">
+      Use the NSS live certdata.txt for the fastest changes/revocations for
+      certs and trust bits.
     </flag>
   </use>
 </pkgmetadata>

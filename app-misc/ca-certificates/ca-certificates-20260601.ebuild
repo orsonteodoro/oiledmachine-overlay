@@ -36,9 +36,10 @@ NSS_FLAVORS=(
 	"certdata-esr"
 	"certdata-latest"
 	"+certdata-live"
+	"certdata-live-af"
 )
 
-inherit edo prefix python-any-r1
+inherit edo prefix python-any-r1 sandbox-changes
 
 # Compile from source ourselves.
 PRECOMPILED=false
@@ -115,6 +116,10 @@ pkg_setup() {
 	if ! ${PRECOMPILED} ; then
 		python-any-r1_pkg_setup
 	fi
+
+	if use certdata-live-af ; then
+		sandbox-changes_no_network_sandbox "To be able to download a live copy of certdata.txt"
+	fi
 }
 
 get_certdata_commit() {
@@ -158,12 +163,50 @@ einfo "PRECOMPILED:  ${PRECOMPILED}"
 
 	local d="${S}/${PN}/mozilla"
 	mkdir -p "${d}" || die
-	local commit_id=$(get_certdata_commit)
-	local certdata_flavor=$(get_certdata_desc)
+
+	if use certdata-live-af ; then
+		local certdata_uri="https://github.com/mozilla/nss/raw/refs/heads/master/lib/ckfw/builtins/certdata.txt"
+		local nssckbi_uri="https://github.com/mozilla/nss/raw/refs/heads/master/lib/ckfw/builtins/nssckbi.h"
+		if which curl >/dev/null 2>&1 ; then
+			has_version "net-misc/curl[ssl]" || die "Fix USE flags for curl"
+			curl -L -o "${d}/certdata.txt" "${certdata_uri}" || die
+			curl -L -o "${d}/nssckbi.h" "${nssckbi_uri}" || die
+		elif which wget2 >/dev/null 2>&1 ; then
+			has_version "net-misc/wget2[ssl]" || die "Fix USE flags for wget2"
+			wget2 -O "${d}/certdata.txt" "${certdata_uri}" || die
+			wget2 -O "${d}/nssckbi.h" "${nssckbi_uri}" || die
+		elif which wget >/dev/null 2>&1 ; then
+			has_version "net-misc/wget2[ssl]" || die "Fix USE flags for wget"
+			wget -O "${d}/certdata.txt" "${certdata_uri}" || die
+			wget -O "${d}/nssckbi.h" "${nssckbi_uri}" || die
+		fi
+	# Mitigate catastropic security bypass and DoS
+		[[ -e "${d}/certdata.txt" ]] || die
+		[[ -e "${d}/nssckbi.h" ]] || die
+		local l
+		local expected_size
+		l=$(wc -c "${d}/certdata.txt" | cut -f 1 -d " ")
+		(( ${l} == 0 )) && die
+		expected_size=1330761
+		(( ${l} != ${expected_size} )) && ewarn "Atomic copy failure is possible for ${d}/certdata.txt"
+		local t=$(python -c "print(int(${expected_size}*0.078))")
+		[[ -z "${t}" ]] && die "t is empty"
+		(( ${l} > ${expected_size} + ${t} )) && die "Integrity failed for upper bounds of ${d}/certdata.txt"
+		(( ${l} < ${expected_size} - ${t} )) && die "Integrity failed for lower bounds of ${d}/certdata.txt"
+		# Percent change between rolling and ESR is 7.8%
+		l=$(wc -c "${d}/nssckbi.h" | cut -f 1 -d " ")
+		(( ${l} == 0 )) && die
+		expected_size=2504
+		(( ${l} != ${expected_size} )) && die "Atomic copy and integrity failed for ${d}/nssckbi.h"
+		# Percent change between rolling and ESR is 0%
+	else
+		local commit_id=$(get_certdata_commit)
+		local certdata_flavor=$(get_certdata_desc)
 einfo "certdata.txt commit id:  ${commit_id}"
 einfo "certdata.txt flavor:  ${certdata_flavor}"
-	cat "${DISTDIR}/certdata-${commit_id:0:7}.txt" -> "${d}/certdata.txt" || die
-	cat "${DISTDIR}/nssckbi-${commit_id:0:7}.h" > "${d}/nssckbi.h" || die
+		cat "${DISTDIR}/certdata-${commit_id:0:7}.txt" -> "${d}/certdata.txt" || die
+		cat "${DISTDIR}/nssckbi-${commit_id:0:7}.h" > "${d}/nssckbi.h" || die
+	fi
 }
 
 src_prepare() {
