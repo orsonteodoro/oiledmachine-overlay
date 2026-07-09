@@ -99,7 +99,7 @@ ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
-test
+examples test
 ebuild_revision_23
 "
 REQUIRED_USE="
@@ -462,6 +462,7 @@ eerror "Detected compiler switch.  Removing LTO."
 		-DHWY_CMAKE_ARM7=$(usex cpu_flags_arm_neon)
 		-DHWY_CMAKE_SSE2=$(usex cpu_flags_x86_sse2)
 		-DHWY_CMAKE_RVV=$(usex cpu_flags_riscv_v)
+		-DHWY_ENABLE_EXAMPLES=$(usex examples)
 		-DHWY_WARNINGS_ARE_ERRORS=OFF
 	)
 

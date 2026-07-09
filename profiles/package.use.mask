@@ -188,3 +188,6 @@ dev-qt/qtwebengine mng
 
 # Dependency has not made a release since 2001
 media-gfx/gimp aalib
+
+# Fails to build
+dev-cpp/highway examples
