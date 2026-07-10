@@ -1,0 +1,175 @@
+diff '--color=auto' -urp webkitgtk-2.52.5.orig/Source/cmake/GStreamerChecks.cmake webkitgtk-2.52.5/Source/cmake/GStreamerChecks.cmake
+--- webkitgtk-2.52.5.orig/Source/cmake/GStreamerChecks.cmake	2026-07-09 00:12:42.328791600 -0700
++++ webkitgtk-2.52.5/Source/cmake/GStreamerChecks.cmake	2026-07-10 16:12:53.408970946 -0700
+@@ -62,7 +62,7 @@ if (ENABLE_MEDIA_STREAM AND ENABLE_WEB_R
+         endif ()
+ 
+         if (USE_LIBRICE)
+-            find_package(Rice 0.1.1 COMPONENTS Io Proto)
++            find_package(Rice 0.4.2 COMPONENTS Io Proto)
+             if (NOT Rice_Io_FOUND OR NOT Rice_Proto_FOUND)
+                 message(FATAL_ERROR "librice-{io,proto} is needed for USE_LIBRICE.")
+             endif ()
+diff '--color=auto' -urp webkitgtk-2.52.5.orig/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceAgent.cpp webkitgtk-2.52.5/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceAgent.cpp
+--- webkitgtk-2.52.5.orig/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceAgent.cpp	2026-07-10 16:12:25.679010445 -0700
++++ webkitgtk-2.52.5/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceAgent.cpp	2026-07-10 16:12:51.415606133 -0700
+@@ -108,11 +108,7 @@ typedef struct _WebKitGstIceAgentPrivate
+     String turnServer;
+ 
+     HashSet<URL> turnServers;
+-#if RICE_CHECK_VERSION(0, 4, 0)
+     Vector<GUniquePtr<RiceTurnConfig>> turnConfigs;
+-#else
+-    Vector<GRefPtr<RiceTurnConfig>> turnConfigs;
+-#endif
+ 
+     GRefPtr<GSource> recvSource;
+     bool forceRelay { false };
+@@ -265,7 +261,7 @@ static void webkitGstWebRTCIceAgentAddRi
+     GRefPtr<RiceTlsConfig> tlsConfig;
+     if (isTurns)
+         tlsConfig = adoptGRef(rice_tls_config_new_openssl(relayTransport));
+-#if RICE_CHECK_VERSION(0, 4, 0)
++
+     GUniquePtr<RiceTurnConfig> config(rice_turn_config_new(relayTransport, riceAddress.get(), credentials.get()));
+     rice_turn_config_add_address_family(config.get(), RICE_ADDRESS_FAMILY_IPV4);
+     rice_turn_config_add_address_family(config.get(), RICE_ADDRESS_FAMILY_IPV6);
+@@ -275,14 +271,6 @@ static void webkitGstWebRTCIceAgentAddRi
+     rice_turn_config_add_supported_integrity(config.get(), RICE_INTEGRITY_ALGORITHM_SHA256);
+     if (tlsConfig)
+         rice_turn_config_set_tls_config(config.get(), tlsConfig.get());
+-#else
+-    const std::array<RiceAddressFamily, 2> families = { RICE_ADDRESS_FAMILY_IPV4, RICE_ADDRESS_FAMILY_IPV6 };
+-    auto config = adoptGRef(rice_turn_config_new(relayTransport, riceAddress.get(), credentials.get(),
+-#if RICE_CHECK_VERSION(0, 3, 0)
+-        RICE_TRANSPORT_TYPE_UDP,
+-#endif
+-        families.size(), families.data(), tlsConfig.leakRef()));
+-#endif // RICE_CHECK_VERSION(0, 4, 0)
+     agent->priv->turnConfigs.append(WTF::move(config));
+ }
+ 
+@@ -829,7 +817,6 @@ const GRefPtr<RiceAgent>& webkitGstWebRT
+     return agent->priv->agent;
+ }
+ 
+-#if RICE_CHECK_VERSION(0, 4, 0)
+ Vector<GUniquePtr<RiceTurnConfig>> webkitGstWebRTCIceAgentGetTurnConfigs(WebKitGstIceAgent* agent)
+ {
+     Vector<GUniquePtr<RiceTurnConfig>> result;
+@@ -839,17 +826,6 @@ Vector<GUniquePtr<RiceTurnConfig>> webki
+ 
+     return result;
+ }
+-#else
+-Vector<GRefPtr<RiceTurnConfig>> webkitGstWebRTCIceAgentGetTurnConfigs(WebKitGstIceAgent* agent)
+-{
+-    Vector<GRefPtr<RiceTurnConfig>> result;
+-    result.reserveInitialCapacity(agent->priv->turnConfigs.size());
+-    for (const auto& config : agent->priv->turnConfigs)
+-        result.append(GRefPtr(config));
+-
+-    return result;
+-}
+-#endif
+ 
+ RiceGatherResult webkitGstWebRTCIceAgentGatherSocketAddresses(WebKitGstIceAgent* agent, unsigned streamId)
+ {
+Only in webkitgtk-2.52.5/Source/WebCore/Modules/mediastream/gstreamer: GStreamerIceAgent.cpp.orig
+diff '--color=auto' -urp webkitgtk-2.52.5.orig/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceAgent.h webkitgtk-2.52.5/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceAgent.h
+--- webkitgtk-2.52.5.orig/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceAgent.h	2026-07-10 16:12:26.322001953 -0700
++++ webkitgtk-2.52.5/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceAgent.h	2026-07-10 16:12:51.415812909 -0700
+@@ -117,11 +117,7 @@ WebKitGstIceAgent* webkitGstWebRTCCreate
+ 
+ const GRefPtr<RiceAgent>& webkitGstWebRTCIceAgentGetRiceAgent(WebKitGstIceAgent*);
+ 
+-#if RICE_CHECK_VERSION(0, 4, 0)
+ Vector<GUniquePtr<RiceTurnConfig>> webkitGstWebRTCIceAgentGetTurnConfigs(WebKitGstIceAgent*);
+-#else
+-Vector<GRefPtr<RiceTurnConfig>> webkitGstWebRTCIceAgentGetTurnConfigs(WebKitGstIceAgent*);
+-#endif
+ 
+ WebCore::RiceGatherResult webkitGstWebRTCIceAgentGatherSocketAddresses(WebKitGstIceAgent*, unsigned);
+ 
+diff '--color=auto' -urp webkitgtk-2.52.5.orig/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceStream.cpp webkitgtk-2.52.5/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceStream.cpp
+--- webkitgtk-2.52.5.orig/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceStream.cpp	2026-07-10 16:12:26.322639115 -0700
++++ webkitgtk-2.52.5/Source/WebCore/Modules/mediastream/gstreamer/GStreamerIceStream.cpp	2026-07-10 16:12:51.415906920 -0700
+@@ -199,13 +199,9 @@ static gboolean webkitGstWebRTCIceStream
+     auto turnAddressDataStorage = turnAddressValues.span();
+ 
+     Vector<RiceTurnConfig*> turnConfigValues;
+-    for (auto& config : turnConfigs) {
+-#if RICE_CHECK_VERSION(0, 4, 0)
++    for (auto& config : turnConfigs)
+         turnConfigValues.append(rice_turn_config_copy(config.get()));
+-#else
+-        turnConfigValues.append(config.ref());
+-#endif
+-    }
++
+     auto turnConfigDataStorage = turnConfigValues.releaseBuffer();
+ 
+     auto component = adoptGRef(rice_stream_get_component(stream->priv->riceStream.get(), 1));
+Only in webkitgtk-2.52.5/Source/WebCore/Modules/mediastream/gstreamer: GStreamerIceStream.cpp.orig
+diff '--color=auto' -urp webkitgtk-2.52.5.orig/Source/WebCore/platform/rice/GRefPtrRice.h webkitgtk-2.52.5/Source/WebCore/platform/rice/GRefPtrRice.h
+--- webkitgtk-2.52.5.orig/Source/WebCore/platform/rice/GRefPtrRice.h	2026-07-09 00:12:42.156795300 -0700
++++ webkitgtk-2.52.5/Source/WebCore/platform/rice/GRefPtrRice.h	2026-07-10 16:13:24.461316160 -0700
+@@ -34,10 +34,6 @@ WTF_DEFINE_GREF_TRAITS_INLINE(RiceUdpSoc
+ WTF_DEFINE_GREF_TRAITS_INLINE(RiceTlsConfig, rice_tls_config_ref, rice_tls_config_unref)
+ WTF_DEFINE_GREF_TRAITS_INLINE(RiceTcpListener, rice_tcp_listener_ref, rice_tcp_listener_unref)
+ 
+-#if !RICE_CHECK_VERSION(0, 4, 0)
+-WTF_DEFINE_GREF_TRAITS_INLINE(RiceTurnConfig, rice_turn_config_ref, rice_turn_config_unref)
+-#endif
+-
+ } // namespace WTF
+ 
+ #endif // USE(LIBRICE)
+Only in webkitgtk-2.52.5/Source/WebCore/platform/rice: GRefPtrRice.h.rej
+diff '--color=auto' -urp webkitgtk-2.52.5.orig/Source/WebCore/platform/rice/GUniquePtrRice.h webkitgtk-2.52.5/Source/WebCore/platform/rice/GUniquePtrRice.h
+--- webkitgtk-2.52.5.orig/Source/WebCore/platform/rice/GUniquePtrRice.h	2026-07-09 00:12:42.156795300 -0700
++++ webkitgtk-2.52.5/Source/WebCore/platform/rice/GUniquePtrRice.h	2026-07-10 16:12:53.408730335 -0700
+@@ -30,9 +30,7 @@ namespace WTF {
+ WTF_DEFINE_GPTR_DELETER(RiceAddress, rice_address_free)
+ WTF_DEFINE_GPTR_DELETER(RiceCandidate, rice_candidate_free)
+ WTF_DEFINE_GPTR_DELETER(RiceCredentials, rice_credentials_free)
+-#if RICE_CHECK_VERSION(0, 4, 0)
+ WTF_DEFINE_GPTR_DELETER(RiceTurnConfig, rice_turn_config_free)
+-#endif
+ 
+ }
+ 
+diff '--color=auto' -urp webkitgtk-2.52.5.orig/Source/WebKit/NetworkProcess/webrtc/rice/RiceBackend.cpp webkitgtk-2.52.5/Source/WebKit/NetworkProcess/webrtc/rice/RiceBackend.cpp
+--- webkitgtk-2.52.5.orig/Source/WebKit/NetworkProcess/webrtc/rice/RiceBackend.cpp	2026-07-10 16:12:26.326283511 -0700
++++ webkitgtk-2.52.5/Source/WebKit/NetworkProcess/webrtc/rice/RiceBackend.cpp	2026-07-10 16:12:53.408852439 -0700
+@@ -434,15 +434,13 @@ const RiceAddress* RiceBackend::ensureRi
+     return result.get();
+ }
+ 
+-void RiceBackend::setSocketTypeOfService([[maybe_unused]] unsigned streamId, [[maybe_unused]] unsigned value)
++void RiceBackend::setSocketTypeOfService(unsigned streamId, unsigned value)
+ {
+-#if RICE_CHECK_VERSION(0, 2, 2)
+     auto sockets = getSocketsForStream(streamId);
+     if (!sockets) [[unlikely]]
+         return;
+ 
+     rice_sockets_set_tos(sockets.get(), value);
+-#endif
+ }
+ 
+ struct SocketAllocationData {
+@@ -504,13 +502,11 @@ void RiceBackend::removeSocket(unsigned
+ 
+ void RiceBackend::configureSocketBufferSizes()
+ {
+-#if RICE_CHECK_VERSION(0, 2, 2)
+     // Setting same librice socket size options as LibWebRTC. 1MB for incoming streams and 256Kb for outgoing streams.
+     static const uint32_t receiveBufferSize = 1048576;
+     static const uint32_t sendBufferSize = 262144;
+     for (auto& data : m_sockets.values())
+         rice_sockets_set_buffer_sizes(data.sockets.get(), sendBufferSize, receiveBufferSize);
+-#endif
+ }
+ 
+ } // namespace WebKit

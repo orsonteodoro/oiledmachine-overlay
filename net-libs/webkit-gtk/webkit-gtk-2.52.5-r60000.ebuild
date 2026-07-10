@@ -1082,7 +1082,6 @@ _PATCHES=(
 	"${FILESDIR}/2.48.3-fix-ftbfs-riscv64.patch"
 	"${FILESDIR}/2.50.4-disable-native-simd-on-riscv.patch"
 	"${FILESDIR}/2.50.4-prefer-pthread.patch"
-	"${FILESDIR}/2.50.5-DFGBasicBlockInlines-gcc16.patch"
 	"${FILESDIR}/2.50.5-EventTarget-gcc16.patch"
 	"${FILESDIR}/2.52.1-documentloader-eventloop-h.patch"
 
@@ -1092,8 +1091,8 @@ _PATCHES=(
 	# It was not applied to other tags (webkitgtk-2.52.3) because the librice was not widely packaged.
 	# There was indication of a test crashed because of commit.  The crash may be resolved with the closed issue.
 	"${FILESDIR}/extra-patches/${PN}-e6516c9-sockets-tos-configuration-support.patch"
-	"${FILESDIR}/extra-patches/${PN}-37b8d10-turn-improvements.patch"
-	"${FILESDIR}/extra-patches/${PN}-7cb396c-remove-pre-librice-0.4.x.patch"
+	"${FILESDIR}/extra-patches/${PN}-2.52.5-turn-improvements.patch"
+	"${FILESDIR}/extra-patches/${PN}-2.52.5-remove-pre-librice-0.4.x.patch"
 )
 
 _set_clang() {
