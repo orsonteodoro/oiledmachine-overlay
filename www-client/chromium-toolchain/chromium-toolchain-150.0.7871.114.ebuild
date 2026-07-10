@@ -14,7 +14,7 @@ inherit dhms
 # clang = c++17
 # compiler-rt = c++17
 # compiler-rt-sanitizers = c++17
-# gn = c++23
+# gn = c++20
 # libcxx = c++23
 # lld = c++17
 # llvm = c++17
