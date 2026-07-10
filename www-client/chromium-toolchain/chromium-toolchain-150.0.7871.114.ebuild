@@ -18,7 +18,7 @@ inherit dhms
 # llvm = c++17
 CXX_STANDARD=23 # Same as libcxx and chromium.
 # For commit history, see https://gn.googlesource.com/gn/+log
-# For pinned see https://github.com/chromium/chromium/blob/150.0.7871.114/DEPS#L557
+# For the pinned gn version associated with a specific Chromium release, see https://github.com/chromium/chromium/blob/150.0.7871.114/DEPS#L557
 # The latest gn commit is used to try to resolve a memory leak.
 GN_COMMIT="d2f537b1e397daa13e02a8085feb32f5ad7c5dec"
 GN_PV="0.2463" # See get_gn_ver.sh to obtain the version.
