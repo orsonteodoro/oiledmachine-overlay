@@ -205,7 +205,7 @@ SLOT="${PV%.*}.x"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +cfi +pgo -system-clang -system-rust
-ebuild_revision_28
+ebuild_revision_29
 "
 REQUIRED_USE="
 	^^ (
@@ -406,7 +406,14 @@ src_unpack() {
 	fi
 }
 
+src_prepare() {
+	default
+}
+
 src_configure() {
+	# Try to limit memory usage
+	sed -i -e "s|'-g'|'-g0'|g" "${S}/gn/build/gen.py" || die
+
 	if use system-clang ; then
 		local s
 		for s in "${LLVM_COMPAT[@]}" ; do
