@@ -8152,7 +8152,15 @@ einfo "Configuring ungoogled-chromium..."
 einfo "Configuring Chromium..."
 	fi
 
-	set -- gn gen --args="${myconf_gn[*]}${EXTRA_GN:+ ${EXTRA_GN}}" "out/Release"
+	local gn_worker_threads=$(lscpu 2>&1 \
+		| grep "Thread(s) per core:" \
+		| head -n 1 \
+		| sed -r -e "s|[[:space:]]+| |g" \
+		| cut -f 2 -d ":" \
+		| sed -e "s| ||g")
+	local gn_processes=$(get_nproc)
+
+	set -- gn gen --args="${myconf_gn[*]}${EXTRA_GN:+ ${EXTRA_GN}}" "out/Release" --threads=${gn_worker_threads} -j ${gn_processes}
 
 	echo "$@"
 	"$@" || die "Failed to configure Chromium"
