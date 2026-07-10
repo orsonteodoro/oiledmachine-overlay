@@ -191,7 +191,7 @@ EAPI=8
 
 # Use `USE="-system-clang -system-rust" ebuild chromium-toolchain-150.0.7871.114.ebuild digest clean unpack prepare compile install merge` to obtain numbers.
 TC_COUNT_EXPECTED_CLANG=429
-TC_COUNT_EXPECTED_GN=1074
+TC_COUNT_EXPECTED_GN=1155
 TC_COUNT_EXPECTED_RUST=7267
 SOURCES_COUNT_EXPECTED=565541
 CHROMIUM_EBUILD_MAINTAINER=1 # Also set GEN_ABOUT_CREDITS
@@ -279,7 +279,7 @@ TEST_FONT="9c07d19d9c5ee1ff94f717e6fb17e0c8c354e6f9"
 
 # SHA512 about_credits.html fingerprint:
 LICENSE_FINGERPRINT_UNGOOGLED_CHROMIUM="57d61beed49d1de24f09ef3719e14f8ad1080c572a8e3699c7618d7d842f3352706045cc82e04eae33667209b28ff4c4ae1629c47ec705d20bcc2584d68b98e8"
-LICENSE_FINGERPRINT_VANILLA="5d1b185dbad626cd0e51af0d77d37acaacd9ef3a2f9b810ef45e90f6f51c85b364e6e24d1859da3894e1509f28602f6f5ed994021f21c3c8ee4910a981caa6c0"
+LICENSE_FINGERPRINT_VANILLA="1c5d4851276da0d51a5e97ea49987fb1d7b11c2094dbe3fc4238770154245a1373fc639b5c6839e21de1757d5cfae3728135f52fd8c0a2d52fcd3e65ba398212"
 
 # Mitigate flood the zone vulnerability.
 # If there is a live ebuild, it needs a check.
@@ -3763,7 +3763,8 @@ einfo "Removing SupportedLaneCount"
 		)
 	fi
 
-	sed -i -e "/expand_directory_allowlist/d" "${S}/.gn" || die
+	# Prevent memory leak or infinite/uncontrolled recursion
+	#sed -i -e "/expand_directory_allowlist/d" "${S}/.gn" || die
 }
 
 is_cromite_patch_non_fatal() {
@@ -5349,13 +5350,14 @@ eerror "QA:  Update LLVM_SLOT in setup_system_clang_paths()"
 
 
 	[[ -z "${RUST_SLOT}" ]] && die "QA:  RUST_SLOT is not initalized."
-	export BINDGEN_EXTRA_CLANG_ARGS="-I${EPREFIX}/usr/lib/clang/${LLVM_SLOT}/include"
+
 	myconf_gn+=(
 	# From M127 we need to provide a location for libclang and the clang
 	# resource dir so that bindgen can find them
+	# Referenced in ${WORKDIR}/chromium-patches-150-1/toolchain/cr149-bindgen-libclang-paths.patch (distro patchset)
 		"bindgen_libclang_path=\"$(get_bindgen_libclang_path)\""
 		"bindgen_clang_resource_dir=\"${EPREFIX}/usr/lib/clang/${LLVM_SLOT}/include\""
-		#"bindgen_extra_clang_args=[\"-I${EPREFIX}/usr/lib/clang/${LLVM_SLOT}/include\"]"
+		"bindgen_extra_clang_args=[\"-I${EPREFIX}/usr/lib/clang/${LLVM_SLOT}/include\"]"
 
 		"clang_base_path=\"${EPREFIX}/usr/lib/clang/${LLVM_SLOT}/\""
 		"custom_toolchain=\"//build/toolchain/linux/unbundle:default\""
@@ -5363,7 +5365,7 @@ eerror "QA:  Update LLVM_SLOT in setup_system_clang_paths()"
 		"rust_sysroot_absolute=\"$(get_rust_sysroot_absolute)\""
 		"rustc_version=\"${RUST_SLOT}\""
 
-	# Silence
+	# Silenced
 	# The expected Rust version is [...] but the actual version is None
 		#"use_chromium_rust_toolchain=false"
 	)
