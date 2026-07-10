@@ -12,14 +12,16 @@ inherit dhms
 # clang = c++17
 # compiler-rt = c++17
 # compiler-rt-sanitizers = c++17
-# gn = c++20
+# gn = c++23
 # libcxx = c++23
 # lld = c++17
 # llvm = c++17
 CXX_STANDARD=23 # Same as libcxx and chromium.
-# https://github.com/chromium/chromium/blob/146.0.7680.164/DEPS#L557
-GN_COMMIT="304bbef6c7e9a86630c12986b99c8654eb7fe648"
-GN_PV="0.2324" # See get_gn_ver.sh; The 0.2407 (3357c4f), associated with in 150.0.7871.114, has a memory leak.
+# For commit history, see https://gn.googlesource.com/gn/+log
+# For pinned see https://github.com/chromium/chromium/blob/150.0.7871.114/DEPS#L557
+# The latest gn commit is used to try to resolve a memory leak.
+GN_COMMIT="d2f537b1e397daa13e02a8085feb32f5ad7c5dec"
+GN_PV="0.2463" # See get_gn_ver.sh to obtain the version.
 INSTALL_PREFIX="/usr/share/chromium/${PV%.*}.x"
 LIBCXX_USEDEP_SKIP=1
 # https://github.com/chromium/chromium/blob/150.0.7871.114/tools/clang/scripts/update.py#L38 \
@@ -205,7 +207,7 @@ SLOT="${PV%.*}.x"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +cfi +pgo -system-clang -system-rust
-ebuild_revision_30
+ebuild_revision_31
 "
 REQUIRED_USE="
 	^^ (
