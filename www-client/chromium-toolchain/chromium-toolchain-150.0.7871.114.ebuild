@@ -17,9 +17,9 @@ inherit dhms
 # lld = c++17
 # llvm = c++17
 CXX_STANDARD=23 # Same as libcxx and chromium.
-# https://github.com/chromium/chromium/blob/150.0.7871.114/DEPS#L557
-GN_COMMIT="3357c4f51b1a9e676378c695dd9c7e9911c35ee6"
-GN_PV="0.2407" # See get_gn_ver.sh
+# https://github.com/chromium/chromium/blob/146.0.7680.164/DEPS#L557
+GN_COMMIT="304bbef6c7e9a86630c12986b99c8654eb7fe648"
+GN_PV="0.2324" # See get_gn_ver.sh; The 0.2407 (3357c4f), associated with in 150.0.7871.114, has a memory leak.
 INSTALL_PREFIX="/usr/share/chromium/${PV%.*}.x"
 LIBCXX_USEDEP_SKIP=1
 # https://github.com/chromium/chromium/blob/150.0.7871.114/tools/clang/scripts/update.py#L38 \

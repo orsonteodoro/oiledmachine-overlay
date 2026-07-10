@@ -191,7 +191,7 @@ EAPI=8
 
 # Use `USE="-system-clang -system-rust" ebuild chromium-toolchain-150.0.7871.114.ebuild digest clean unpack prepare compile install merge` to obtain numbers.
 TC_COUNT_EXPECTED_CLANG=429
-TC_COUNT_EXPECTED_GN=1127
+TC_COUNT_EXPECTED_GN=1074
 TC_COUNT_EXPECTED_RUST=7267
 SOURCES_COUNT_EXPECTED=565541
 CHROMIUM_EBUILD_MAINTAINER=1 # Also set GEN_ABOUT_CREDITS
@@ -261,7 +261,7 @@ GN_PV="0.2315"
 ESBUILD_PV="0.25.1"
 ROLLUP_WASM_NODE_PV="4.57.1"
 QT6_PV="${QTBASE6_PV}"
-UNGOOGLED_CHROMIUM_PV="150.0.7871.100-1"
+UNGOOGLED_CHROMIUM_PV="150.0.7871.114-1"
 # Testing this V8 version to avoid breaking security.  The 13.6 series cause the \
 # mksnapshot "Return code is -11" error.  To fix it, it required to either \
 # disable v8 sandbox, or pointer compression and DrumBrake.  Before it was \
@@ -5347,12 +5347,13 @@ eerror "QA:  Update LLVM_SLOT in setup_system_clang_paths()"
 
 
 	[[ -z "${RUST_SLOT}" ]] && die "QA:  RUST_SLOT is not initalized."
+	export BINDGEN_EXTRA_CLANG_ARGS="-I${EPREFIX}/usr/lib/clang/${LLVM_SLOT}/include"
 	myconf_gn+=(
 	# From M127 we need to provide a location for libclang and the clang
 	# resource dir so that bindgen can find them
 		"bindgen_libclang_path=\"$(get_bindgen_libclang_path)\""
 		"bindgen_clang_resource_dir=\"${EPREFIX}/usr/lib/clang/${LLVM_SLOT}/include\""
-		"bindgen_extra_clang_args=[\"-I${EPREFIX}/usr/lib/clang/${LLVM_SLOT}/include\"]"
+		#"bindgen_extra_clang_args=[\"-I${EPREFIX}/usr/lib/clang/${LLVM_SLOT}/include\"]"
 
 		"clang_base_path=\"${EPREFIX}/usr/lib/clang/${LLVM_SLOT}/\""
 		"custom_toolchain=\"//build/toolchain/linux/unbundle:default\""
