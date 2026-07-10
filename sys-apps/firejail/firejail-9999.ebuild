@@ -313,7 +313,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 -apparmor +chroot clang contrib +dbusproxy +file-transfer +globalcfg
 landlock +network +private-home -private-lib -selinux +suid
 test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xcsecurity xvfb
-ebuild_revision_144
+ebuild_revision_145
 "
 REQUIRED_USE+="
 	!test
@@ -1860,10 +1860,12 @@ einfo "Detected CEF/Chromium.  Using ozone for Wayland."
 	# unbreak a bad Firejail configuration and to not mess up the uptime
 	# score.
 
+	# EUID = 0:  root
+	# EUID = 250:  portage
 	gen_headless_wrapper() {
 cat <<EOF > "${ED}/usr/local/${folder}/${wrapper_name}" || die
 #!/bin/bash
-if [[ "\${EUID}" == "0" ]] ; then
+if [[ "\${EUID}" == "0" || "\${EUID}" == "250" ]] ; then
 	"${exe_path}" "\$@"
 else
 	exec firejail ${all_args_x11[@]} "${exe_path}" "\$@"
@@ -1874,7 +1876,7 @@ EOF
 	gen_none_wrapper() {
 cat <<EOF > "${ED}/usr/local/${folder}/${wrapper_name}" || die
 #!/bin/bash
-if [[ "\${EUID}" == "0" ]] ; then
+if [[ "\${EUID}" == "0" || "\${EUID}" == "250" ]] ; then
 	"${exe_path}" "\$@"
 else
 	exec firejail ${all_args_none[@]} "${exe_path}" "\$@"
