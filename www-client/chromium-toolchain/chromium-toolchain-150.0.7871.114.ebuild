@@ -14,16 +14,15 @@ inherit dhms
 # clang = c++17
 # compiler-rt = c++17
 # compiler-rt-sanitizers = c++17
-# gn = c++20
+# gn = c++23
 # libcxx = c++23
 # lld = c++17
 # llvm = c++17
 CXX_STANDARD=23 # Same as libcxx and chromium.
 # For commit history, see https://gn.googlesource.com/gn/+log
 # For the pinned gn version associated with a specific Chromium release, see https://github.com/chromium/chromium/blob/150.0.7871.114/DEPS#L557
-# Commit ID is rolled back to the addition of expand_directory
-GN_COMMIT="42ace47bb426ca9705175d866bb9bdf168d5535f"
-GN_PV="0.2361" # See get_gn_ver.sh to obtain the version.
+GN_COMMIT="3357c4f51b1a9e676378c695dd9c7e9911c35ee6"
+GN_PV="0.2407" # See get_gn_ver.sh to obtain the version.
 GN_USE_GIT=1
 INSTALL_PREFIX="/usr/share/chromium/${PV%.*}.x"
 LIBCXX_USEDEP_SKIP=1
@@ -221,7 +220,7 @@ SLOT="${PV%.*}.x"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +cfi +pgo -system-clang -system-rust
-ebuild_revision_33
+ebuild_revision_35
 "
 REQUIRED_USE="
 	^^ (
@@ -432,6 +431,10 @@ src_unpack() {
 
 src_prepare() {
 	default
+
+	pushd "${WORKDIR}/gn" >/dev/null 2>&1 || die
+		eapply "${FILESDIR}/gn-3357c4f-prevent-expand-directory-loops.patch"
+	popd >/dev/null 2>&1 || die
 }
 
 src_configure() {

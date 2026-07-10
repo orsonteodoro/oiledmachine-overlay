@@ -3,8 +3,7 @@
 main() {
 	# Commit from https://gn.googlesource.com/gn/+log
 	# See also https://github.com/chromium/chromium/blob/150.0.7871.114/DEPS#L557
-	# Roll back to the first introduction of expand_directory
-	GN_COMMIT=${GN_COMMIT:-"42ace47bb426ca9705175d866bb9bdf168d5535f"}
+	GN_COMMIT=${GN_COMMIT:-"3357c4f51b1a9e676378c695dd9c7e9911c35ee6"}
 	echo "GN_COMMIT: ${GN_COMMIT}"
 
 	if ! [[ -e "gn" ]] ; then
