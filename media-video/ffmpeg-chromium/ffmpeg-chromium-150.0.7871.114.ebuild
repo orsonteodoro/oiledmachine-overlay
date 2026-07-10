@@ -14,9 +14,9 @@ CFLAGS_HARDENED_SSP_LEVEL=3 # SSP all is upstream default
 CFLAGS_HARDENED_USE_CASES="network security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS HO IO MC NPD OOBR OOBW RC SO UAF"
 
-# Referenced in ffmpeg_revision in https://github.com/chromium/chromium/blob/149.0.7827.114/DEPS#L519
-# Referenced in ffmpeg submodule in https://github.com/chromium/chromium/tree/149.0.7827.114/third_party
-COMMIT="f45bab87ce4c5fafc67fd53fcde777578d01bfa0" # FFmpeg submodule commit id.
+# Referenced in ffmpeg_revision in https://github.com/chromium/chromium/blob/150.0.7871.114/DEPS#L519
+# Referenced in ffmpeg submodule in https://github.com/chromium/chromium/tree/150.0.7871.114/third_party
+COMMIT="ad41607c61898cf7150e0fb20fe4bbabd44922a3" # FFmpeg submodule commit id.
 
 # Options to use as use_enable in the foo[:bar] form.
 # This will feed configure with $(use_enable foo bar)
@@ -153,7 +153,13 @@ CPU_REQUIRED_USE="
 	${X86_CPU_REQUIRED_USE}
 "
 
-inherit cflags-hardened flag-o-matic toolchain-funcs
+CHKL_TIMESTAMPS=(
+	"media-libs/opus-9999"
+	"media-libs/libva-9999"
+	"media-libs/vulkan-loader-9999"
+)
+
+inherit cflags-hardened chkl flag-o-matic secure-version toolchain-funcs
 
 DESCRIPTION="Chromium's fork of FFmpeg with reduced attack surface"
 HOMEPAGE="https://ffmpeg.org/"
@@ -184,25 +190,25 @@ REQUIRED_USE="
 "
 
 RDEPEND="
-	>=media-libs/opus-1.0.2-r2
+	>=media-libs/opus-${OPUS_PV}:=
 	nvenc? (
-		>=media-libs/nv-codec-headers-11.1.5.3
+		>=media-libs/nv-codec-headers-11.1.5.3:=
 	)
 	vaapi? (
-		>=media-libs/libva-1.2.1-r1:0=
+		>=media-libs/libva-${LIBVA_PV}:=
 	)
 	vdpau? (
-		>=x11-libs/libvdpau-0.7
+		>=x11-libs/libvdpau-0.7:=
 	)
 	vulkan? (
-		>=media-libs/vulkan-loader-1.3.277:=
+		>=media-libs/vulkan-loader-${VULKAN_LOADER_PV}:=
 	)
 "
 DEPEND="
 	${RDEPEND}
-	www-client/chromium-sources:${PV}
+	~www-client/chromium-sources-${PV}:=
 	vulkan? (
-		>=dev-util/vulkan-headers-1.3.277
+		>=dev-util/vulkan-headers-1.3.277:=
 	)
 "
 BDEPEND="
@@ -235,6 +241,7 @@ src_prepare() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	cflags-hardened_append
 
 	local myconf=( )
