@@ -6,6 +6,8 @@ EAPI=8
 
 # Add `www-client/chromium-toolchain -llvm_slot_23` to `/etc/portage/profile/package.use.mask` to bypass the distro's FAFO hard mask guardrail.
 
+# To get expected numbers, do `USE="-system-clang -system-rust" ebuild chromium-toolchain-150.0.7871.114.ebuild digest clean unpack prepare compile install merge`
+
 inherit dhms
 
 # chromium = c11, c++23
@@ -19,9 +21,10 @@ inherit dhms
 CXX_STANDARD=23 # Same as libcxx and chromium.
 # For commit history, see https://gn.googlesource.com/gn/+log
 # For the pinned gn version associated with a specific Chromium release, see https://github.com/chromium/chromium/blob/150.0.7871.114/DEPS#L557
-# The latest gn commit is used to try to resolve a memory leak.
-GN_COMMIT="d2f537b1e397daa13e02a8085feb32f5ad7c5dec"
-GN_PV="0.2463" # See get_gn_ver.sh to obtain the version.
+# Commit ID is rolled back to the addition of expand_directory
+GN_COMMIT="42ace47bb426ca9705175d866bb9bdf168d5535f"
+GN_PV="0.2361" # See get_gn_ver.sh to obtain the version.
+GN_USE_GIT=1
 INSTALL_PREFIX="/usr/share/chromium/${PV%.*}.x"
 LIBCXX_USEDEP_SKIP=1
 # https://github.com/chromium/chromium/blob/150.0.7871.114/tools/clang/scripts/update.py#L38 \
@@ -69,11 +72,22 @@ fi
 
 inherit check-compiler-switch edo flag-o-matic flag-o-matic-om libcxx-slot libstdcxx-slot multilib-minimal ninja-utils toolchain-funcs
 
-KEYWORDS="~amd64"
-S="${WORKDIR}"
-SRC_URI="
+if [[ "${GN_USE_GIT}" == "1" ]] ; then
+	EGIT_CHECKOUT_DIR="${WORKDIR}/gn"
+	EGIT_COMMIT="${GN_COMMIT}"
+	EGIT_BRANCH="main"
+	EGIT_REPO_URI="https://gn.googlesource.com/gn"
+	inherit git-r3
+else
+	SRC_URI+="
 https://gn.googlesource.com/gn/+archive/${GN_COMMIT}.tar.gz
 	-> gn-${GN_COMMIT:0:7}.tar.gz
+	"
+fi
+
+KEYWORDS="~amd64"
+S="${WORKDIR}"
+SRC_URI+="
 	!system-clang? (
 		amd64? (
 https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/clang-${VENDORED_CLANG_VER}.tar.xz
@@ -207,7 +221,7 @@ SLOT="${PV%.*}.x"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +cfi +pgo -system-clang -system-rust
-ebuild_revision_31
+ebuild_revision_33
 "
 REQUIRED_USE="
 	^^ (
@@ -381,9 +395,17 @@ pkg_setup() {
 }
 
 src_unpack() {
-	mkdir -p "${WORKDIR}/gn" || die
+	if [[ "${GN_USE_GIT}" == "1" ]] ; then
+		cd "${WORKDIR}" || die
+		git-r3_fetch
+		git-r3_checkout
+	else
+		mkdir -p "${WORKDIR}/gn" || die
+		pushd "${WORKDIR}/gn" >/dev/null 2>&1 || die
+			unpack "gn-${GN_COMMIT:0:7}.tar.gz"
+		popd >/dev/null 2>&1 || die
+	fi
 	pushd "${WORKDIR}/gn" >/dev/null 2>&1 || die
-		unpack "gn-${GN_COMMIT:0:7}.tar.gz"
 		echo "${GN_PV}-${GN_COMMIT}" > gn-ver.txt || die
 	popd >/dev/null 2>&1 || die
 
