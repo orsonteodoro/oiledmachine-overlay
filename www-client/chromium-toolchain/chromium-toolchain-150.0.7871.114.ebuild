@@ -205,7 +205,7 @@ SLOT="${PV%.*}.x"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +cfi +pgo -system-clang -system-rust
-ebuild_revision_29
+ebuild_revision_30
 "
 REQUIRED_USE="
 	^^ (
