@@ -194,8 +194,8 @@ TC_COUNT_EXPECTED_CLANG=429
 TC_COUNT_EXPECTED_GN=1155
 TC_COUNT_EXPECTED_RUST=7267
 SOURCES_COUNT_EXPECTED=565541
-CHROMIUM_EBUILD_MAINTAINER=1 # Also set GEN_ABOUT_CREDITS
-GEN_ABOUT_CREDITS=1
+CHROMIUM_EBUILD_MAINTAINER=0 # Also set GEN_ABOUT_CREDITS
+GEN_ABOUT_CREDITS=0
 
 ABSEIL_CPP_SLOT="20251021"
 ALLOW_MKSNAPSHOT=1 # Ebuild maintainer value.  Setting to a value other than 1 is untested.
@@ -278,7 +278,7 @@ OPENPOWER_PATCHES_COMMIT="a85b64f07b489b8c6fdb13ecf79c16c56c560fc6" # Same as PP
 TEST_FONT="9c07d19d9c5ee1ff94f717e6fb17e0c8c354e6f9"
 
 # SHA512 about_credits.html fingerprint:
-LICENSE_FINGERPRINT_UNGOOGLED_CHROMIUM="57d61beed49d1de24f09ef3719e14f8ad1080c572a8e3699c7618d7d842f3352706045cc82e04eae33667209b28ff4c4ae1629c47ec705d20bcc2584d68b98e8"
+LICENSE_FINGERPRINT_UNGOOGLED_CHROMIUM="cd0b235fd0117386c34cd1467c731767c511cdab13f62cbe9629d0952b583383146985c8ddbc173f8fb40524cfdbdba9df80e8cdc54c209da30a6e11ac7d5d6e"
 LICENSE_FINGERPRINT_VANILLA="1c5d4851276da0d51a5e97ea49987fb1d7b11c2094dbe3fc4238770154245a1373fc639b5c6839e21de1757d5cfae3728135f52fd8c0a2d52fcd3e65ba398212"
 
 # Mitigate flood the zone vulnerability.
@@ -3762,9 +3762,6 @@ einfo "Removing SupportedLaneCount"
 			"${FILESDIR}/extra-patches/${PN}-147-rust-1.95-bytemuck.patch"
 		)
 	fi
-
-	# Prevent memory leak or infinite/uncontrolled recursion
-	#sed -i -e "/expand_directory_allowlist/d" "${S}/.gn" || die
 }
 
 is_cromite_patch_non_fatal() {
