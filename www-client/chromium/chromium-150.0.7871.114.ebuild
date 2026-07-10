@@ -3762,6 +3762,8 @@ einfo "Removing SupportedLaneCount"
 			"${FILESDIR}/extra-patches/${PN}-147-rust-1.95-bytemuck.patch"
 		)
 	fi
+
+	sed -i -e "/expand_directory_allowlist/d" "${S}/.gn" || die
 }
 
 is_cromite_patch_non_fatal() {
