@@ -313,7 +313,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 -apparmor +chroot clang contrib +dbusproxy +file-transfer +globalcfg
 landlock +network +private-home -private-lib -selinux +suid
 test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xcsecurity xvfb
-ebuild_revision_145
+ebuild_revision_146
 "
 REQUIRED_USE+="
 	!test
@@ -1762,6 +1762,9 @@ einfo "Forcing system allocator for ${command} (3)"
 	fi
 
 	local env_args=()
+	local env_args_none=()
+	local env_args_wayland=()
+	local env_args_x11=()
 	local ozone_args=()
 	local exe_wayland_args=()
 	local exe_x11_args=()
@@ -1774,7 +1777,7 @@ einfo "Forcing system allocator for ${command} (3)"
 	fi
 
 	if [[ "${command}" == "spotify" ]] ; then
-		env_args=(
+		env_args_wayland+=(
 			--env=LD_PRELOAD="/usr/lib64/spotify-xstub.so"
 		)
 	fi
@@ -1789,6 +1792,7 @@ einfo "Detected CEF/Chromium.  Using ozone for Wayland."
 	# Also includes xvfb sandbox use case
 	local all_args_x11=(
 		${env_args[@]}
+		${env_args_x11[@]}
 		${apparmor_arg}
 		${x11_arg}
 		${allocator_args}
@@ -1803,6 +1807,7 @@ einfo "Detected CEF/Chromium.  Using ozone for Wayland."
 
 	local all_args_wayland=(
 		${env_args[@]}
+		${env_args_wayland[@]}
 		${apparmor_arg}
 		${allocator_args}
 		${seccomp_arg}
@@ -1816,6 +1821,7 @@ einfo "Detected CEF/Chromium.  Using ozone for Wayland."
 	# No X11 sandbox
 	local all_args_none=(
 		${env_args[@]}
+		${env_args_none[@]}
 		${apparmor_arg}
 		${allocator_args}
 		${seccomp_arg}
