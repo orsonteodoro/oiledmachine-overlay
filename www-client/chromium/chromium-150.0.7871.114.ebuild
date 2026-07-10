@@ -8070,6 +8070,17 @@ ewarn "The system-re2 USE flag is experimental with multislot re2.  Consider dis
 	fi
 }
 
+_configure_env() {
+	# Prevent a possible source of high memory use for gn.
+	local L=(
+		$(compgen -A variable \
+			| grep '_PV$' \
+			| sed -e '/GCC_PV/d' \
+		)
+	)
+	unset -v ${L[@]}
+}
+
 _src_configure() {
 	local s
 	s=$(_get_s)
@@ -8102,6 +8113,7 @@ ewarn "Actual GiB per core:  ${actual_gib_per_core} GiB"
 
 	local myconf_gn=()
 
+	_configure_env
 	_configure_compiler_common
 	_configure_build_system
 
