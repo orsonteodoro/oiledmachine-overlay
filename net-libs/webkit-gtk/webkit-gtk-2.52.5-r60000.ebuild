@@ -11,7 +11,7 @@ EAPI=8
 
 # -r revision notes
 # -rabcde
-# ab = WEBKITGTK_API_VERSION version (4.1)
+# ab = WEBKITGTK_API_VERSION version (6.0)
 # c = reserved
 # de = ebuild revision
 
@@ -74,7 +74,7 @@ EAPI=8
 # Do not use trunk!
 # media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
 
-API_VERSION="4.1"
+API_VERSION="6.0"
 CFLAGS_HARDENED_ASSEMBLERS="inline"
 CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan lsan msan tsan ubsan"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
@@ -93,10 +93,10 @@ SLOT_MAJOR=$(ver_cut 1 "${API_VERSION}")
 # See Source/cmake/OptionsGTK.cmake
 # CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
 # SO_VERSION = C - A
-# WEBKITGTK_API_VERSION is 4.1
-SO_CURRENT="21"
+# WEBKITGTK_API_VERSION is 6.0
+SO_CURRENT="20"
 #SO_REVISION="5"
-SO_AGE="21"
+SO_AGE="16"
 SO_VERSION=$(( ${SO_CURRENT} - ${SO_AGE} ))
 USE_RUBY=" ruby32 ruby33"
 WK_PAGE_SIZE=64 # global var not const
@@ -120,13 +120,13 @@ inherit libstdcxx-compat
 GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX23[@]}"
 )
-LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}" # 21
 )
-LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
+LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
 FFMPEG_COMPAT=(
 	"0/60.62.62" # 8.x
@@ -146,6 +146,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-3.4.9999"
 	"dev-libs/openssl-3.0.9999"
 	"dev-libs/wayland-9999"
+	"gui-libs/gtk-4.23.9999"
 	"media-libs/dav1d-9999"
 	"media-libs/fontconfig-9999"
 	"media-libs/freetype-9999"
@@ -155,8 +156,8 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libjpeg-turbo-9999"
 	"media-libs/libjxl-9999"
 	"media-libs/libpng-9999"
-	"media-libs/libvpx-9999"
 	"media-libs/libwebp-9999"
+	"media-libs/libvpx-9999"
 	"media-libs/openh264-9999"
 	"media-libs/opus-9999"
 	"media-libs/woff2-9999"
@@ -165,7 +166,6 @@ CHKL_TIMESTAMPS=(
 	"x11-libs/cairo-9999"
 	"x11-libs/libdrm-9999"
 	"x11-libs/libX11-9999"
-	"x11-libs/gtk+-3.24.9999"
 )
 
 LANGS=(
@@ -223,26 +223,11 @@ LANGS=(
 	"zh_CN"
 )
 
-MITIGATION_DATE="Jun 2, 2026"
-MITIGATION_LAST_UPDATE=1780351280 # From `date +%s -d "2026-06-02 01:01:20 +0300"` from tag in GH for this version
-MITIGATION_URI="https://webkitgtk.org/security/WSA-2026-0003.html"
+MITIGATION_DATE="Jul 9, 2026"
+MITIGATION_LAST_UPDATE=1783586280 # From `date +%s -d "2026-07-09 01:38 AM PDT"` from tag in GH for this version
+MITIGATION_URI="https://webkitgtk.org/2026/07/09/webkitgtk2.52.5-released.html"
 VULNERABILITIES_FIXED=(
-	"CVE-2026-28847;CRSH, DoS;"
-	"CVE-2026-28883;CRSH, DoS;"
-	"CVE-2026-28901;CRSH, DoS;"
-	"CVE-2026-28902;CRSH, DoS;"
-	"CVE-2026-28903;CRSH, DoS;"
-	"CVE-2026-28904;CRSH, DoS;"
-	"CVE-2026-28905;CRSH, DoS;"
-	"CVE-2026-28907;ISPE;"
-	"CVE-2026-28942;CRSH, DoS;"
-	"CVE-2026-28946;CRSH, DoS;"
-	"CVE-2026-28947;CRSH, DoS;"
-	"CVE-2026-28953;CRSH, DoS;"
-	"CVE-2026-28955;CRSH, DoS;"
-	"CVE-2026-28958;ID;"
-	"CVE-2026-43658;CRSH, DoS;"
-	"CVE-2026-43660;ISPE;"
+	";CRSH;"
 )
 
 PATENT_STATUS=(
@@ -337,7 +322,7 @@ SRC_URI="
 "
 S="${WORKDIR}/webkitgtk-${PV}"
 
-DESCRIPTION="Open source web browser engine (GTK+3 with HTTP/2 support)"
+DESCRIPTION="Open source web browser engine (GTK 4 with HTTP/2 support)"
 HOMEPAGE="https://www.webkitgtk.org"
 LICENSE_DROMAEO="
 	(
@@ -614,7 +599,7 @@ LICENSE="
 # distributes these browsers with unicode licensed data without
 # restrictions.
 RESTRICT="test"
-SLOT="${API_VERSION}/${SO_VERSION}"
+SLOT="${API_VERSION%.*}/${SO_VERSION}"
 # SLOT=4.1/0  GTK3 SOUP3 (r41000)
 # SLOT=6/4    GTK4 SOUP3 (r60000)
 
@@ -893,6 +878,7 @@ RDEPEND+="
 	>=dev-libs/libtasn1-4.13:=[${MULTILIB_USEDEP}]
 	>=dev-libs/libxml2-${LIBXML2_PV}:=[${MULTILIB_USEDEP}]
 	>=dev-libs/libxslt-${LIBXSLT_PV}:=[${MULTILIB_USEDEP}]
+	>=gui-libs/gtk-${GTK4_PV}:4=[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
 	>=media-libs/fontconfig-${FONTCONFIG_PV}:=[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-${FREETYPE_PV}:=[${MULTILIB_USEDEP}]
 	>=media-libs/harfbuzz-${HARFBUZZ_PV}:=[${MULTILIB_USEDEP},icu(+)]
@@ -901,10 +887,9 @@ RDEPEND+="
 	>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:=[${MULTILIB_USEDEP}]
 	>=media-libs/libpng-${LIBPNG_PV}:=[${MULTILIB_USEDEP}]
 	>=media-libs/libwebp-${LIBWEBP_PV}:=[${MULTILIB_USEDEP}]
-	>=net-libs/libsoup-3.0.0:=[${MULTILIB_USEDEP},introspection?]
-	>=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}]
+	>=net-libs/libsoup-${LIBSOUP3_PV}:=[${MULTILIB_USEDEP},introspection?]
+	>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP},X?]
-	>=x11-libs/gtk+-${GTK3_PV}:3=[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
 	sys-kernel/mitigate-id:*
 	virtual/patent-status:*[patent_status_nonfree=]
 	~dev-util/glib-utils-${GLIB_PV}:=
@@ -1788,6 +1773,7 @@ ewarn "Chosen page size:  ${page_size}"
 ewarn
 	fi
 
+
 	if ! tc-is-cross-compiler && [[ "${page_size}" == "kconfig" ]] ; then
 		# Use the exact page size
 		page_size=$(_get_actual_page_size)
@@ -2079,6 +2065,7 @@ verify_compiler_flags_hardening() {
 	"unconditional:dev-libs/libtasn1:untrusted-data"
 	"unconditional:dev-libs/libxml2:untrusted-data"
 	"unconditional:dev-libs/libxslt:untrusted-data"
+	"unconditional:gui-libs/gtk:sensitive-data"
 	"unconditional:media-libs/libpng:sensitive-data,untrusted-data"					# PII
 	"unconditional:media-libs/libwebp:sensitive-data,untrusted-data"				# PII
 	"unconditional:media-libs/fontconfig:untrusted-data"
@@ -2086,7 +2073,6 @@ verify_compiler_flags_hardening() {
 	"unconditional:media-libs/harfbuzz:attack-surface-risk,untrusted-data,sensitive-data"		# PII
 	"unconditional:media-libs/libjpeg-turbo:sensitive-data,untrusted-data"				# PII
 	"unconditional:virtual/zlib:untrusted-data"
-	"unconditional:x11-libs/gtk+:sensitive-data"
 
 	"aom:media-plugins/gst-plugins-aom:sensitive-data,untrusted-data"				# PII
 	"dash:media-plugins/gst-plugins-dash:untrusted-data"
@@ -2236,6 +2222,10 @@ pkg_setup() {
 	else
 		export OSHIT=0
 	fi
+ewarn
+ewarn "GTK 4 is default OFF upstream, but forced ON this ebuild."
+ewarn "It is currently not recommended due to rendering bug(s)."
+ewarn
 einfo "This is the stable branch."
 	if [[ -n "${MITIGATION_URI}" ]] ; then
 einfo "Security advisory date:  ${MITIGATION_DATE}"
@@ -2544,11 +2534,10 @@ ewarn
 		-DUSE_GBM=$(usex gbm)
 		-DUSE_GSTREAMER_TRANSCODER=$(usex mediarecorder)
 		-DUSE_GSTREAMER_WEBRTC=$(usex gstwebrtc)
-		-DUSE_GTK4=OFF
+		-DUSE_GTK4=ON
 		-DUSE_JPEGXL=$(usex jpegxl)
 		-DUSE_LIBDRM=$(usex gbm)
 		-DUSE_LIBHYPHEN=$(usex libhyphen)
-		-DUSE_LIBRICE=$(usex librice)
 		-DUSE_LCMS=$(usex lcms)
 		-DUSE_LIBBACKTRACE=$(usex libbacktrace)
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
@@ -3150,6 +3139,13 @@ eerror
 	if [[ "${ABI}" == "x86" ]] ; then
 		mycmakeargs+=( -DFORCE_32BIT=ON )
 	fi
+
+	# Anything less than -O2 may break rendering.
+	# GCC -O1:  pas_generic_large_free_heap.h:140:1: error: inlining failed in call to 'always_inline'
+	# Clang -Os:  slower than expected rendering.
+	# Forced >= -O3 to be about same relative performance to other browser engines.
+	# -O2 feels like C- grade relative other browser engines.
+
 
 	filter-flags '-ffast-math'
 
