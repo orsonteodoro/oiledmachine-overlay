@@ -8160,7 +8160,7 @@ einfo "Configuring Chromium..."
 		| sed -e "s| ||g")
 	local gn_processes=$(get_nproc)
 
-	set -- gn gen --args="${myconf_gn[*]}${EXTRA_GN:+ ${EXTRA_GN}}" "out/Release" --threads=${gn_worker_threads} -j ${gn_processes}
+	set -- gn gen --threads=${gn_worker_threads} --args="${myconf_gn[*]}${EXTRA_GN:+ ${EXTRA_GN}}" "out/Release"
 
 	echo "$@"
 	"$@" || die "Failed to configure Chromium"
