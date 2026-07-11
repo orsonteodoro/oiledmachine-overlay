@@ -19,7 +19,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-3.0.9999"
 )
 
-inherit autotools flag-o-matic python-any-r1 systemd toolchain-funcs multilib-minimal secure-version
+inherit autotools cflags-hardened flag-o-matic python-any-r1 systemd toolchain-funcs multilib-minimal secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="690cbe7d9b6d095cbeb77fe3e4d0c910f97bbb3e"
@@ -41,7 +41,10 @@ S=${WORKDIR}/${MY_P}/src
 LICENSE="openafs-krb5-a BSD MIT OPENLDAP BSD-2 HPND BSD-4 ISC RSA CC-BY-SA-3.0 || ( BSD-2 GPL-2+ )"
 SLOT="0"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~mips ppc ppc64 ~riscv ~s390 ~sparc x86"
-IUSE+=" cpu_flags_x86_aes doc +keyutils lmdb nls openldap +pkinit selinux test xinetd"
+IUSE+="
+cpu_flags_x86_aes doc +keyutils lmdb nls openldap +pkinit selinux test xinetd
+ebuild_revision_1
+"
 
 RESTRICT="!test? ( test )"
 
