@@ -3,7 +3,7 @@
 
 EAPI="8"
 
-# For downloads, see ESRs in https://ftp.mozilla.org/pub/firefox/releases/
+# For downloads, see 140 ESRs in https://ftp.mozilla.org/pub/firefox/releases/
 
 # See also
 # /var/tmp/portage/dev-lang/spidermonkey-140.12.0/work/firefox-140.12.0/taskcluster/kinds/fetch/toolchains.yml
