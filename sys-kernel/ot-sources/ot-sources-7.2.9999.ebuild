@@ -9,7 +9,7 @@ EAPI=8
 # See also https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/
 
 GENPATCHES_FALLBACK_COMMIT="d4fa92430e875432c3a61bb3abd9b6e68ea9fcbd" # 2026-06-04 18:26:32 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="2c7c88a412aa6d09cd04b414211b4ef8553b5309" # 2026-07-09 08:26:51 -0700 @ Merge tag 'net-7.2-rc3'
+LINUX_SOURCES_FALLBACK_COMMIT="dd3210c47e8d3ac6b4e9141fc68acc03b38c0ba3" # 2026-07-10 19:07:24 -0700 @ Merge tag 'regulator-fix-v7.2-rc2'
 RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
