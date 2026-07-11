@@ -38,11 +38,10 @@ LUA_COMPAT=( "luajit" )
 MAKEOPTS="-j1"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-CEF_PV="95" # See https://github.com/obsproject/obs-browser/blob/a776dd6a1a0ded4a8a723f2f572f3f8a9707f5a8/CMakeLists.txt#L12
-LIBVA_PV="2.20.0"
-LIBX11_PV="1.8.7"
-MESA_PV="24.0.5"
-QT6_PV="6.4.2"
+inherit secure-version
+
+# For CEF version, See https://github.com/obsproject/obs-browser/blob/a776dd6a1a0ded4a8a723f2f572f3f8a9707f5a8/CMakeLists.txt#L12
+QT6_PV="${QTBASE6_PV}"
 QT6_SLOT=$(ver_cut "1" "${QT6_PV}")
 SWIG_PV="4.2.0"
 
@@ -55,11 +54,13 @@ inherit libstdcxx-compat
 GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
 )
+LIBCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit ffmpeg
 FFMPEG_COMPAT_SLOTS=(
@@ -67,10 +68,32 @@ FFMPEG_COMPAT_SLOTS=(
 )
 
 PATENT_STATUS_IUSE=(
-	patent_status_nonfree
+	"patent_status_nonfree"
 )
 
-inherit cmake dep-prepare flag-o-matic git-r3 lcnr libcxx-slot libstdcxx-slot lua-single multilib python-single-r1 xdg-utils
+CHKL_TIMESTAMPS=(
+	"dev-cpp/nlohmann_json-9999"
+	"dev-libs/glib-2.89.9999"
+	"dev-libs/jansson-9999"
+	"dev-libs/wayland-9999"
+	"dev-qt/qtbase-6.9999"
+	"dev-qt/qtsvg-6.9999"
+	"media-libs/libva-9999"
+	"media-libs/rnnoise-9999"
+	"media-libs/x264-9999"
+	"media-sound/sndio-9999"
+	"media-video/pipewire-9999"
+	"net-misc/curl-9999"
+	"net-libs/cef-9999"
+	"net-libs/cef-bin-9999"
+	"net-libs/librist-9999"
+	"net-libs/srt-9999"
+	"x11-libs/libX11-9999"
+	"x11-libs/libxcb-9999"
+	"x11-libs/libxkbcommon-9999"
+)
+
+inherit chkl cmake dep-prepare flag-o-matic git-r3 lcnr libcxx-slot libstdcxx-slot lua-single multilib python-single-r1 xdg-utils
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_COMMIT="${PV}"
@@ -250,11 +273,11 @@ REQUIRED_USE+="
 gen_ffmpeg_depend() {
 	local use_deps="${1}"
 	echo "
+		media-video/ffmpeg:=
 		|| (
 			media-video/ffmpeg:58.60.60[${use_deps}]
 			media-video/ffmpeg:0/58.60.60[${use_deps}]
 		)
-		media-video/ffmpeg:=
 	"
 }
 
@@ -264,43 +287,42 @@ RDEPEND_FFMPEG="
 
 RDEPEND_LIBX11="
 	kernel_linux? (
-	        >=x11-libs/libX11-${LIBX11_PV}
+	        >=x11-libs/libX11-${LIBX11_PV}:=
 	)
 "
 
 RDEPEND_LIBXCB="
-        >=x11-libs/libxcb-1.14
+        >=x11-libs/libxcb-${LIBXCB_PV}:=
 "
 
 RDEPEND_JANSSON="
-	>=dev-libs/jansson-2.13.1
+	>=dev-libs/jansson-${JANSSON_PV}:=
 "
 
 RDEPEND_WAYLAND="
 	wayland? (
-		>=dev-libs/wayland-1.34
-		>=x11-libs/libxkbcommon-1.6.0
+		>=dev-libs/wayland-${WAYLAND_PV}:=
+		>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=
 	)
 "
 
 RDEPEND_ZLIB="
-	>=virtual/zlib-1.3
+	>=virtual/zlib-${ZLIB_PV}:=
 "
 
 RDEPEND_PLUGINS_AJA="
 	aja? (
 		${RDEPEND_LIBX11}
-		media-libs/ntv2
+		media-libs/ntv2:=
 		qt6? (
-			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui,widgets,X]
-			dev-qt/qtbase:=
+			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui,widgets,X]
 		)
 	)
 "
 
 RDEPEND_PLUGINS_RNNOISE="
 	rnnoise? (
-		media-libs/rnnoise
+		>=media-libs/rnnoise-${RNNOISE_PV}:=
 	)
 "
 
@@ -308,7 +330,7 @@ RDEPEND_PLUGINS_RNNOISE="
 RDEPEND_PLUGINS_SNDIO="
 	sndio? (
 		${RDEPEND_LIBOBS}
-		>=media-sound/sndio-1.9.0
+		>=media-sound/sndio-${SNDIO_PV}:=
 	)
 "
 
@@ -317,8 +339,7 @@ RDEPEND_PLUGINS_DECKLINK_CAPTIONS="
 	decklink? (
 		${RDEPEND_LIBX11}
 		qt6? (
-			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},widgets,X]
-			dev-qt/qtbase:=
+			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},widgets,X]
 		)
 	)
 "
@@ -328,8 +349,7 @@ RDEPEND_PLUGINS_DECKLINK_OUTPUT_UI="
 	decklink? (
 		${RDEPEND_LIBX11}
 		qt6? (
-			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui,widgets,X]
-			dev-qt/qtbase:=
+			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui,widgets,X]
 		)
 	)
 "
@@ -346,8 +366,7 @@ RDEPEND_PLUGINS_DECKLINK="
 RDEPEND_PLUGINS_FRONTEND_TOOLS="
 	${RDEPEND_LIBX11}
 	qt6? (
-		>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui,widgets,X]
-		dev-qt/qtbase:=
+		>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui,widgets,X]
 	)
 "
 
@@ -357,15 +376,14 @@ RDEPEND_PLUGINS_LINUX_CAPTURE="
 	${RDEPEND_LIBOBS}
 	${RDEPEND_LIBX11}
 	${RDEPEND_LIBXCB}
-        >=x11-libs/libXcomposite-0.4.5
-        >=x11-libs/libXfixes-6.0.0
-        >=x11-libs/libXinerama-1.1.4
-        >=x11-libs/libXrandr-1.5.2
+        >=x11-libs/libXcomposite-0.4.5:=
+        >=x11-libs/libXfixes-${LIBXFIXES_PV}:=
+        >=x11-libs/libXinerama-${LIBXINERAMA_PV}:=
+        >=x11-libs/libXrandr-${LIBXRANDR_PV}:=
 	pipewire? (
-		>=dev-libs/glib-2.80.0:2
-		dev-libs/glib:=
-		>=media-video/pipewire-1.0.5
-		>=x11-libs/libdrm-2.4.120
+		>=dev-libs/glib-${GLIB_PV}:=
+		>=media-video/pipewire-${PIPEWIRE_PV}:=
+		>=x11-libs/libdrm-${LIBDRM_PV}:=
 	)
 "
 
@@ -384,62 +402,52 @@ PATENT_STATUS_FFMPEG_DEPEND="
 	)
 	patent_status_nonfree? (
 		fdk? (
-			>=media-libs/fdk-aac-2.0.2
-			media-libs/fdk-aac:=
+			>=media-libs/fdk-aac-${FDK_AAC_PV}:=
 		)
 		mpegts? (
-			>=net-libs/librist-0.2.10
-			>=net-libs/srt-1.5.3
+			>=net-libs/librist-${LIBRIST_PV}:=
+			>=net-libs/srt-${SRT_PV}:=
 		)
 		nvenc? (
 			$(gen_ffmpeg_depend 'nvenc,patent_status_nonfree')
-			>=media-libs/nv-codec-headers-12
-			media-libs/nv-codec-headers:=
+			>=media-libs/nv-codec-headers-12:=
 		)
 		vaapi? (
 			$(gen_ffmpeg_depend 'patent_status_nonfree,vaapi')
-			>=media-libs/libva-${LIBVA_PV}[X,wayland?]
-			virtual/vaapi[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},patent_status_nonfree]
+			>=media-libs/libva-${LIBVA_PV}:=[X,wayland?]
+			virtual/vaapi:*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},patent_status_nonfree]
 		)
 		x264? (
 			$(gen_ffmpeg_depend 'patent_status_nonfree,x264')
-			>=media-libs/x264-0.0.20210613
+			>=media-libs/x264-${X264_PV}:=
 		)
 	)
 
 "
 RDEPEND_PLUGINS_OBS_FFMPEG="
 	${PATENT_STATUS_FFMPEG_DEPEND}
-	>=sys-apps/pciutils-3.10.0
-	x11-libs/libdrm
+	>=sys-apps/pciutils-3.10.0:=
+	>=x11-libs/libdrm-${LIBDRM_PV}:=
 "
 
 RDEPEND_CURL="
-	>=net-misc/curl-8.5.0
+	>=net-misc/curl-${CURL_PV}:=
 "
 
 RDEPEND_PLUGINS_OBS_OUTPUTS="
 	${RDEPEND_LIBOBS}
 	${RDEPEND_ZLIB}
-	>=net-libs/mbedtls-2.28.8
-	net-libs/mbedtls:=
+	>=net-libs/mbedtls-${MBEDTLS_3_PV}:3=
 "
 
 RDEPEND_PLUGINS_OBS_BROWSER="
 	browser? (
 		qt6? (
-			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},widgets,X]
-			dev-qt/qtbase:=
+			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},widgets,X]
 		)
 		|| (
-			(
-				>=net-libs/cef-bin-${CEF_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-				net-libs/cef-bin:=
-			)
-			(
-				>=net-libs/cef-${CEF_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-				net-libs/cef:=
-			)
+			>=net-libs/cef-bin-${CEF_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+			>=net-libs/cef-${CEF_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		)
 	)
 "
@@ -448,7 +456,7 @@ RDEPEND_PLUGINS_OBS_BROWSER="
 RDEPEND_PLUGINS_QSV="
 	qsv? (
 		elibc_glibc? (
-			>=media-libs/libvpl-2.9
+			>=media-libs/libvpl-2.9:=
 			|| (
 				media-libs/oneVPL-cpu
 				>=media-libs/intel-mediasdk-23.2.2
@@ -456,7 +464,7 @@ RDEPEND_PLUGINS_QSV="
 			)
 		)
 		elibc_mingw? (
-			dev-util/mingw64-runtime
+			dev-util/mingw64-runtime:=
 		)
 	)
 "
@@ -472,29 +480,25 @@ RDEPEND_PLUGINS_VST="
 	vst? (
 		${RDEPEND_LIBOBS}
 		qt6? (
-			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},widgets,X]
-			dev-qt/qtbase:=
+			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},widgets,X]
 		)
 	)
 "
 
 RDEPEND_PLUGINS_WEBSOCKET="
 	websocket? (
-		>=dev-cpp/asio-1.28.1
-		>=dev-cpp/websocketpp-0.8.2
-		>=dev-libs/qr-code-generator-1.8.0
+		>=dev-cpp/asio-1.28.1:=
+		>=dev-cpp/websocketpp-0.8.2:=
+		>=dev-libs/qr-code-generator-1.8.0:=
 		qt6? (
-			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},network,widgets]
-			dev-qt/qtbase:=
-			>=dev-qt/qtsvg-${QT6_PV}:${QT6_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-			dev-qt/qtsvg:=
+			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},network,widgets]
+			>=dev-qt/qtsvg-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		)
 	)
 "
 DEPEND_PLUGINS_WEBSOCKET="
 	websocket? (
-		>=dev-cpp/nlohmann_json-3.11.3
-		dev-cpp/nlohmann_json:=
+		>=dev-cpp/nlohmann_json-${NLOHMANN_JSON_PV}:=
 	)
 "
 
@@ -503,7 +507,7 @@ RDEPEND_PLUGINS_WEBRTC="
 	webrtc? (
 		${RDEPEND_CURL}
 		${RDEPEND_LIBOBS}
-		>=dev-libs/libdatachannel-0.20.1[nice,media-transport,websocket]
+		>=dev-libs/libdatachannel-${LIBDATACHANNEL_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},nice,media-transport,websocket]
 	)
 "
 
@@ -543,26 +547,25 @@ RDEPEND_PLUGINS="
 	${RDEPEND_PLUGINS_WEBRTC}
 	${RDEPEND_PLUGINS_X264}
 	alsa? (
-		>=media-libs/alsa-lib-1.2.11
+		>=media-libs/alsa-lib-1.2.11:=
 	)
 	freetype? (
-		>=media-libs/fontconfig-2.15.0
-		>=media-libs/freetype-2.13.2
+		>=media-libs/fontconfig-2.15.0:=
+		>=media-libs/freetype-2.13.2:=
 	)
 	jack? (
-		virtual/jack
+		virtual/jack:*
 	)
 	speexdsp? (
-		>=media-libs/speexdsp-1.2.1
+		>=media-libs/speexdsp-1.2.1:=
 	)
 	v4l2? (
 		${RDEPEND_FFMPEG}
-		>=media-libs/libv4l-1.26.1[utils]
-		virtual/udev
+		>=media-libs/libv4l-1.26.1:=[utils]
+		virtual/udev:*
 	)
 	vlc? (
-		>=media-video/vlc-3.0.20
-		media-video/vlc:=
+		>=media-video/vlc-3.0.20:=
 	)
 "
 DEPEND_PLUGINS="
@@ -574,12 +577,9 @@ DEPEND_PLUGINS="
 # They were mentioned in the original ebuild.
 RDEPEND_UNSOURCED="
 	qt6? (
-		>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},sql]
-		dev-qt/qtbase:=
-		>=dev-qt/qtdeclarative-${QT6_PV}:${QT6_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-qt/qtdeclarative:=
-		>=dev-qt/qtmultimedia-${QT6_PV}:${QT6_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-qt/qtmultimedia:=
+		>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},sql]
+		>=dev-qt/qtdeclarative-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-qt/qtmultimedia-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 "
 
@@ -590,10 +590,10 @@ RDEPEND_LIBOBS="
 	${RDEPEND_LIBX11}
 	${RDEPEND_LIBXCB}
 	${RDEPEND_ZLIB}
-	>=sys-apps/dbus-1.14.10
-	sys-apps/util-linux
+	>=sys-apps/dbus-1.14.10:=
+	sys-apps/util-linux:=
 	pulseaudio? (
-		>=media-libs/libpulse-16.1
+		>=media-libs/libpulse-16.1:=
 	)
 "
 DEPEND_LIBOBS="
@@ -603,13 +603,12 @@ DEPEND_LIBOBS="
 
 RDEPEND_WHATSNEW="
 	whatsnew? (
-		net-libs/mbedtls
+		>=net-libs/mbedtls-${MBEDTLS_3_PV}:3=
 	)
 "
 DEPEND_WHATSNEW="
 	whatsnew? (
-		>=dev-cpp/nlohmann_json-3.11.3
-		dev-cpp/nlohmann_json:=
+		>=dev-cpp/nlohmann_json-${NLOHMANN_JSON_PV}:=
 	)
 "
 
@@ -621,15 +620,11 @@ RDEPEND_UI="
 	${RDEPEND_LIBOBS}
 	${RDEPEND_WHATSNEW}
 	qt6? (
-		>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},dbus,gui,network,wayland?,widgets,X,xml]
-		dev-qt/qtbase:=
-		>=dev-qt/qtsvg-${QT6_PV}:${QT6_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-qt/qtsvg:=
+		>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},dbus,gui,network,wayland?,widgets,X,xml]
+		>=dev-qt/qtsvg-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		wayland? (
-			>=dev-qt/qtdeclarative-${QT6_PV}:${QT6_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opengl]
-			dev-qt/qtdeclarative:=
-			>=dev-qt/qtwayland-${QT6_PV}:${QT6_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-			dev-qt/qtwayland:=
+			>=dev-qt/qtdeclarative-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opengl]
+			>=dev-qt/qtwayland-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		)
 	)
 "
@@ -645,17 +640,15 @@ RDEPEND_DEPS_LIBFF="
 
 # Found in multiple CMakeLists.txt
 RDEPEND_MESA="
-	>=media-libs/mesa-${MESA_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	media-libs/mesa:=
+	>=media-libs/mesa-${MESA_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 "
 
 # See deps/glad/CMakeLists.txt
 RDEPEND_GLAD="
 	${RDEPEND_MESA}
 	${RDEPEND_LIBX11}
-	>=media-libs/libglvnd-1.7.0
-	>=media-libs/mesa-${MESA_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},egl(+)]
-	media-libs/mesa:=
+	>=media-libs/libglvnd-1.7.0:=
+	>=media-libs/mesa-${MESA_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},egl(+)]
 "
 
 # See libobs-opengl/CMakeLists.txt
@@ -672,7 +665,7 @@ RDEPEND_LIBOBS_OPENGL="
 RDEPEND_DEPS_OBS_SCRIPTING="
 	${RDEPEND_LIBOBS}
 	lua? (
-		>=dev-lang/luajit-2.1.0:2
+		>=dev-lang/luajit-2.1.0:2=
 	)
 	python? (
 		${PYTHON_DEPS}
@@ -725,19 +718,16 @@ BDEPEND+="
 	>=dev-build/cmake-3.28.3
 	>=dev-util/pkgconf-1.8.0[pkg-config(+)]
 	lua? (
-		>=dev-lang/swig-${SWIG_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-lang/swig:=
+		>=dev-lang/swig-${SWIG_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	python? (
 		${PYTHON_DEPS}
-		>=dev-lang/swig-${SWIG_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-lang/swig:=
+		>=dev-lang/swig-${SWIG_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	test? (
 		>=dev-util/cmocka-1.1.7
 		websocket? (
-			>=dev-libs/boost-1.83.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-			dev-libs/boost:=
+			>=dev-libs/boost-1.83.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		)
 	)
 "
@@ -1040,6 +1030,7 @@ gen_rtmp_services() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
 	export CPP=$(tc-getCPP)
