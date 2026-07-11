@@ -44,7 +44,7 @@ DESCRIPTION="GNU Image Manipulation Program"
 HOMEPAGE="https://www.gimp.org/"
 
 if [[ ${PV} == 9999 ]]; then
-	FALLBACK_COMMIT="1e9510a74e2bb489bfd36d024d1dfb6808fae003"
+	FALLBACK_COMMIT="7e4cecbc71344ae96da6e1ec78c88bf1a59f0156"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://gitlab.gnome.org/GNOME/gimp.git"
 	inherit git-r3
@@ -71,7 +71,10 @@ fi
 LICENSE="GPL-3+ LGPL-3+"
 SLOT="0/${MAJOR_VERSION}"
 
-IUSE="X aalib alsa bash-completion doc fits gnome heif javascript jpeg2k jpegxl lua mng openexr openmp postscript test udev unwind vala vector-icons wayland webp wmf xpm"
+IUSE="
+X aalib alsa bash-completion doc fits gnome heif javascript jpeg2k jpegxl lua mng openexr openmp postscript test udev unwind vala vector-icons wayland webp wmf xpm
+ebuild_revision_1
+"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 	lua? ( ${LUA_REQUIRED_USE} )
