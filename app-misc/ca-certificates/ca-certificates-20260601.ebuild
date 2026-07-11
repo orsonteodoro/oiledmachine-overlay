@@ -31,6 +31,7 @@ PYTHON_COMPAT=( python3_{10..14} )
 NSS_LIVE_COMMIT="3729152fcc02ead350034bff2061a802610c11ee" # Jun 11, 2026 (NSS master) # oiledmachine-overlay preference
 NSS_ESR_COMMIT="6e2ba79aada69c4f7d8dca95e93fcfe0248319aa" # Apr 22, 2026 (NSS 3.112.5) # distro preference
 NSS_LATEST_COMMIT="3729152fcc02ead350034bff2061a802610c11ee" # Jun 11, 2026 (NSS 3.125)
+# Apr 9, 2026 (b646e2b, NSS 3.123 beta1) # https://wiki.mozilla.org/CA/Included_Certificates
 
 NSS_FLAVORS=(
 	"certdata-esr"
