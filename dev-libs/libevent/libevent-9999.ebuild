@@ -11,7 +11,6 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-3.5.9999"
 	"dev-libs/openssl-3.4.9999"
 	"dev-libs/openssl-3.0.9999"
-	"net-libs/mbedtls-9999"
 )
 
 inherit cmake-multilib chkl secure-version
@@ -53,7 +52,13 @@ IUSE+="
 RESTRICT="test"
 
 DEPEND="
-	mbedtls? ( >=net-libs/mbedtls-${MBEDTLS_PV}:3=[${MULTILIB_USEDEP}] )
+	mbedtls? (
+		net-libs/mbedtls:=[${MULTILIB_USEDEP}]
+		|| (
+			>=net-libs/mbedtls-${MBEDTLS_3_PV}:3[${MULTILIB_USEDEP}]
+			>=net-libs/mbedtls-${MBEDTLS_4_PV}:4[${MULTILIB_USEDEP}]
+		)
+	)
 	ssl? (
 		$(secure-version_gen_openssl_depends '' '[${MULTILIB_USEDEP}]')
 	)
