@@ -110,7 +110,7 @@ CHKL_TIMESTAMPS=(
 	"sys-kernel/ot-sources-7.2.9999"
 )
 
-inherit chkl secure-timestamp secure-version verify-binutils
+inherit chkl dss secure-timestamp secure-version verify-binutils
 
 DESCRIPTION="Requirements for security-critical secure data storage"
 KEYWORDS="~amd64 ~arm64"
@@ -603,6 +603,7 @@ LOGGER_DEPENDS="
 # should be reconfigured to use it.
 #
 KERNEL_DEPENDS="
+	$(gen_render_kernels_list_v2)
 	gentoo-sources? (
 		sys-kernel/gentoo-sources:=
 		|| (
