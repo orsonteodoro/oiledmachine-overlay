@@ -5,14 +5,38 @@ EAPI=8
 
 # U 22.04
 
-inherit cmake
+CFLAGS_HARDENED_USE_CASES="network security-critical sensitive-data untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="CRSH DP RC UAF"
+
+CXX_STANDARD=17
+
+LIBJUICE_COMMIT="3c40a3545b6b1b62c7adee7f8f2bd58aa290afd6"
+LIBSRTP_COMMIT="24b3bf8f19b6f5ab4cd2bcceb4f4064efca86fd5"
+NLOHMANN_JSON_COMMIT="55f93686c01528224f448c19128836e7df245f72"
+PLOG_COMMIT="94899e0b926ac1b0f4750bfbd495167b4a6ae9ef"
+USRSCTP_COMMIT="fec583d54493f879d2ae44a743423bf8a04371ab"
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
+)
+
+CHKL_TIMESTAMPS=(
+	"dev-libs/openssl-4.0.9999"
+	"dev-libs/openssl-3.6.9999"
+	"dev-libs/openssl-3.5.9999"
+	"dev-libs/openssl-3.4.9999"
+	"dev-libs/openssl-3.0.9999"
+)
+
+inherit cflags-hardened chkl cmake libcxx-slot libstdcxx-slot secure-version
 
 KEYWORDS="amd64"
-LIBJUICE_COMMIT="0b6f958baba55e1a4eb31ec2137f62b2e07382ae"
-LIBSRTP_COMMIT="a566a9cfcd619e8327784aa7cff4a1276dc1e895"
-NLOHMANN_JSON_COMMIT="9cca280a4d0ccf0c08f47a99aa71d1b0e52f8d03"
-PLOG_COMMIT="e21baecd4753f14da64ede979c5a19302618b752"
-USRSCTP_COMMIT="ebb18adac6501bad4501b1f6dccb67a1c85cc299"
 SRC_URI="
 https://github.com/paullouisageneau/libdatachannel/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -60,31 +84,36 @@ REQUIRED_USE="
 "
 RDEPEND="
 	nice? (
-		>=net-libs/libnice-0.1.18
+		>=net-libs/libnice-0.1.18:=
 	)
 	openssl? (
-		>=dev-libs/openssl-1.1.0
+		$(secure-version_gen_openssl_depends)
 	)
 	system-plog? (
-		>=dev-cpp/plog-1.1.10
+		>=dev-cpp/plog-1.1.10:=
 	)
 	system-srtp? (
-		>=net-libs/libsrtp-2.5.0
+		>=net-libs/libsrtp-${LIBSRTP_2_PV}:2=
 	)
 	system-usrsctp? (
-		>=net-libs/usrsctp-0.9.5.0
+		>=net-libs/usrsctp-0.9.5.0:=
 	)
 "
 DEPEND="
 	${RDEPEND}
 	examples? (
-		>=dev-cpp/nlohmann_json-3.11.3
+		>=dev-cpp/nlohmann_json-${NLOHMANN_JSON_PV}:=
 	)
 "
 BDEPEND="
-	>=dev-build/cmake-3.12
+	>=dev-build/cmake-3.13
 	virtual/pkgconfig
 "
+
+pkg_setup() {
+	libcxx-slot_append
+	libstdcxx-slot_append
+}
 
 src_unpack() {
 	unpack ${A}
@@ -123,6 +152,8 @@ src_unpack() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
+	cflags-hardened_append
 	if use gnutls && ! use nettle ; then
 ewarn "Upstream has nettle default ON when gnutls is ON"
 	fi
