@@ -24,7 +24,6 @@ CHKL_TIMESTAMPS=(
 	"app-arch/brotli-9999"
 	"app-arch/zstd-9999"
 	"net-libs/libssh2-9999"
-	"net-libs/mbedtls-9999"
 	"net-libs/nghttp2-9999"
 	"net-libs/rustls-ffi-9999"
 	"net-dns/c-ares-9999"
@@ -151,7 +150,11 @@ RDEPEND="
 		)
 		mbedtls? (
 			>=app-misc/ca-certificates-${CA_CERTIFICATES_PV}:*
-			>=net-libs/mbedtls-${MBEDTLS_PV}:3=[${MULTILIB_USEDEP}]
+			net-libs/mbedtls:=[${MULTILIB_USEDEP}]
+			|| (
+				>=net-libs/mbedtls-${MBEDTLS_3_PV}:3=[${MULTILIB_USEDEP}]
+				>=net-libs/mbedtls-${MBEDTLS_4_PV}:4=[${MULTILIB_USEDEP}]
+			)
 		)
 		openssl? (
 			$(secure-version_gen_openssl_depends '' '[static-libs?,${MULTILIB_USEDEP}]')

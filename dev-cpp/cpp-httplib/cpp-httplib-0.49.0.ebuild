@@ -15,7 +15,6 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-3.5.9999"
 	"dev-libs/openssl-3.4.9999"
 	"dev-libs/openssl-3.0.9999"
-	"net-libs/mbedtls-9999"
 	"app-arch/zstd-9999"
 )
 
@@ -51,7 +50,7 @@ RDEPEND="
 		>=app-arch/brotli-${BROTLI_PV}:=[${MULTILIB_USEDEP}]
 	)
 	ssl? (
-		mbedtls? ( >=net-libs/mbedtls-${MBEDTLS_PV}:3=[${MULTILIB_USEDEP}] )
+		mbedtls? ( >=net-libs/mbedtls-${MBEDTLS_3_PV}:3=[${MULTILIB_USEDEP}] )
 		!mbedtls? (
 			$(secure-version_gen_openssl_depends '' '[${MULTILIB_USEDEP}]')
 		)

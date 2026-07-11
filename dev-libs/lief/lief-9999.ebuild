@@ -19,15 +19,19 @@ LLVM_COMPAT=(
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="standalone"
 MY_PN="LIEF"
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{12..14} )
 
-inherit cmake edo distutils-r1 libcxx-slot libstdcxx-slot
+CHKL_TIMESTAMPS=(
+	"dev-cpp/nlohmann_json-9999"
+)
+
+inherit cmake chkl edo distutils-r1 libcxx-slot libstdcxx-slot secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/lief-project/LIEF.git"
-	FALLBACK_COMMIT="441bb4620bc7242a822b7cb4419c965d76119f6b" # Dec 10, 2024
+	FALLBACK_COMMIT="45bb1b0db17caf04e6c0a2a1cd166ad425a60731"
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
 	inherit git-r3
@@ -60,40 +64,40 @@ ebuild_revision_1
 "
 RDEPEND+="
 	system-nanobind? (
-		>=dev-python/nanobind-2.4.0[${PYTHON_USEDEP}]
+		>=dev-python/nanobind-2.13.0[${PYTHON_USEDEP}]
 	)
 	system-expected? (
-		>=dev-cpp/tl-expected-1.1.0
+		>=dev-cpp/tl-expected-1.3.1
 	)
 	system-frozen? (
-		>=dev-cpp/frozen-1.2.0
+		>=dev-cpp/frozen-9999
 	)
 	system-spdlog? (
-		>=dev-libs/spdlog-1.14.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-libs/spdlog-1.17.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	system-mbedtls? (
-		>=net-libs/mbedtls-3.6.1
+		>=net-libs/mbedtls-${MBEDTLS_4_PV}:4=
 	)
 "
 DEPEND+="
 	${RDEPEND}
 	system-nlohmann-json? (
-		>=dev-cpp/nlohmann_json-3.11.2
+		>=dev-cpp/nlohmann_json-${NLOHMANN_JSON_PV}:=
 	)
 	system-utfcpp? (
-		>=dev-libs/utfcpp-4.0.5
+		>=dev-libs/utfcpp-4.0.9:=
 	)
 "
 BDEPEND+="
 	>=dev-build/cmake-3.24
 	python? (
-		>=dev-python/build-1.2.1[${PYTHON_USEDEP}]
-		>=dev-python/pathspec-0.12.1[${PYTHON_USEDEP}]
-		>=dev-python/pydantic-2.8.2[${PYTHON_USEDEP}]
-		>=dev-python/scikit-build-core-0.9.8[${PYTHON_USEDEP}]
-		>=dev-python/setuptools-70.2.0[${PYTHON_USEDEP}]
-		>=dev-python/tomli-2.0.1[${PYTHON_USEDEP}]
-		>=dev-python/wheel-0.43.0[${PYTHON_USEDEP}]
+		>=dev-python/build-1.4.0[${PYTHON_USEDEP}]
+		>=dev-python/pathspec-1.0.3[${PYTHON_USEDEP}]
+		>=dev-python/pydantic-2.12.5[${PYTHON_USEDEP}]
+		>=dev-python/scikit-build-core-0.11.6[${PYTHON_USEDEP}]
+		>=dev-python/setuptools-80.9.0[${PYTHON_USEDEP}]
+		>=dev-python/tomli-2.4.0[${PYTHON_USEDEP}]
+		>=dev-python/wheel-0.46.3[${PYTHON_USEDEP}]
 	)
 	doc? (
 		dev-python/sphinx[${PYTHON_USEDEP}]
@@ -101,9 +105,6 @@ BDEPEND+="
 	)
 "
 DOCS=( "CHANGELOG" "README.md" )
-_PATCHES=(
-	"${FILESDIR}/${PN}-0.16.0-libdir.patch"
-)
 
 pkg_setup() {
 	python_setup
@@ -178,6 +179,7 @@ python_configure_all() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	distutils-r1_src_configure
 }
 
