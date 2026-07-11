@@ -187,7 +187,7 @@ all_rdepend() {
 		fi
 	fi
 }
-all_rdepend
+#all_rdepend
 
 # Prevent password keyboard snooping, show password screen grabs
 BANNED_RDEPEND="
@@ -195,22 +195,25 @@ BANNED_RDEPEND="
 	!x11-base/xlibre
 "
 
+#			$(gen_render_kernels_list ${MULTISLOT_LATEST_KERNEL_RELEASE[@]})
 RDEPEND="
 	enforce? (
 		${BANNED_RDEPEND}
 		!sys-kernel/rock-dkms
 		!sys-kernel/rocm-sources
 		!custom-kernel? (
-			$(gen_render_kernels_list ${MULTISLOT_LATEST_KERNEL_RELEASE[@]})
+			$(gen_render_kernels_list_v2)
 		)
 		video_cards_nvidia? (
-			|| (
-				>=x11-drivers/nvidia-drivers-565.57.01:0/565
-				>=x11-drivers/nvidia-drivers-550.127.05:0/550
-				>=x11-drivers/nvidia-drivers-535.216.01:0/535
-				>=x11-drivers/nvidia-drivers-470.256.02:0/470
-			)
 			x11-drivers/nvidia-drivers:=
+			!x11-drivers/nvidia-drivers:0/390
+			!x11-drivers/nvidia-drivers:0/470
+			|| (
+				>=x11-drivers/nvidia-drivers-610.43.03:0/610
+				>=x11-drivers/nvidia-drivers-595.84:0/595
+				>=x11-drivers/nvidia-drivers-580.173.02:0/580
+				>=x11-drivers/nvidia-drivers-535.309.01:0/535
+			)
 		)
 	)
 "
