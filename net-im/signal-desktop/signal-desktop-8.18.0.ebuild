@@ -7,7 +7,7 @@ EAPI=8
 
 # To update use:
 # PATH=$(realpath "../../scripts")":${PATH}"
-# PNPM_UPDATER_PROJECT_ROOT="Signal-Desktop-8.14.0" pnpm_updater_update_locks.sh
+# PNPM_UPDATER_PROJECT_ROOT="Signal-Desktop-8.18.0" pnpm_updater_update_locks.sh
 
 # Ignore if error:
 # Could not detect abi for version ' + target + ' and runtime ' + runtime + '.  Updating "node-abi" might help solve this issue if it is a new release of ' + runtime)
@@ -35,12 +35,14 @@ RUST_MIN_VER="1.91.1" # llvm-21.1.  Rust is required for @swc/core@1.10.16
 RUST_PV="${RUST_MIN_VER}"
 #export CI="true" # Avoid error during `pnpm install -P`
 
+inherit secure-version secure-version-node
+
 AT_TYPES_NODE_PV="24.12.0"
-ELECTRON_BUILDER_PV="26.0.14"
+ELECTRON_BUILDER_PV="26.11.1"
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
-	ELECTRON_APP_ELECTRON_PV="42.4.0" # Cr 148.0.7778.254, node 24.16.0
+	ELECTRON_APP_ELECTRON_PV="${ELECTRON_PV}"
 else
 	# Upstream's choice
 	ELECTRON_APP_ELECTRON_PV="42.3.0" # Cr 148.0.7778.180, node 24.15.0
@@ -106,7 +108,7 @@ else
 	"
 fi
 SLOT="0"
-KEYWORDS="-* amd64"
+#KEYWORDS="-* amd64" # Unfinished update
 RESTRICT="splitdebug binchecks strip mirror" # Prevent slow down and snooping
 IUSE+="
 firejail wayland X
@@ -115,18 +117,14 @@ ebuild_revision_80
 # RRDEPEND already added from electron-app
 RDEPEND+="
 	!net-im/signal-desktop-bin
-	>=media-fonts/noto-emoji-20231130
-	media-libs/libpulse
+	>=media-fonts/noto-emoji-20231130:=
+	>=media-libs/libpulse-${LIBPULSE_PV}:=
 "
 BDEPEND+="
-	>=net-libs/nodejs-24.15.0:${NODE_SLOT}[webassembly(+)]
+	>=net-libs/nodejs-${NODEJS_24_PV}:${NODE_SLOT}=[webassembly(+)]
 	|| (
 		dev-lang/rust:${RUST_PV}
 		dev-lang/rust-bin:${RUST_PV}
-	)
-	|| (
-		dev-lang/rust:=
-		dev-lang/rust-bin:=
 	)
 "
 PDEPEND+="
@@ -177,7 +175,7 @@ eerror "Rust ${RUST_PV} required for @swc/core"
 pnpm_unpack_post() {
 einfo "DEBUG:  Called pnpm_unpack_post()"
 	sed -i -e "s|postinstall|disabled_postinstall|g" "${S}/package.json" || die
-	eapply "${FILESDIR}/${PN}-7.90.0-tar-minimumReleaseAgeExclude.patch"
+	eapply "${FILESDIR}/${PN}-8.18.0-tar-minimumReleaseAgeExclude.patch"
 #	sed -i -e "s|patchedDependencies|disabledPatchedDependencies|g" "${S}/package.json" || die
 #	sed -i -e "\|@types/fabric@4.5.3|d" "${S}/package.json" || die
 #	sed -i -e "\|fabric@4.6.0|d" "${S}/package.json" || die
@@ -190,7 +188,7 @@ src_unpack() {
 		cd "${S}" || die
 
 #		sed -i -e "s|patchedDependencies|disabledPatchedDependencies|g" "${S}/package.json" || die
-		eapply "${FILESDIR}/${PN}-7.90.0-tar-minimumReleaseAgeExclude.patch"
+		eapply "${FILESDIR}/${PN}-8.18.0-tar-minimumReleaseAgeExclude.patch"
 
 einfo "DEBUG:  Applying sed based patches..."
 #		sed -i -e "\|@types/fabric@4.5.3|d" "${S}/package.json" || die
