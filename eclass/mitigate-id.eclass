@@ -718,8 +718,21 @@ eerror
 	done
 
 	for pv in "${MULTISLOT_LATEST_KERNEL_RELEASE[@]}" ; do
+		local dots="${pv//[^.]}"
+		n_dots=${#dots}
 		[[ "${pv}" =~ "rc" ]] && continue
 		for x in "${FLAVORS_POINT_RELEASE[@]}" ; do
+			if (( ${n_dots} == 2 )) && (( ${pv##*.} >= 1 )) ; then
+				# if 7.1.1 or newer:
+				#   delete 7.1_rc*, 7.1, 7.1_p*, 7.1.0, 7.1.0_p*
+				eol_list+="
+					!=${x}-${pv%.*}_rc*
+					!~${x}-${pv%.*}
+					!=${x}-${pv%.*}_p*
+					!~${x}-${pv%.*}.0
+					!=${x}-${pv%.*}.0_p*
+				"
+			fi
 			for y in $(_seq 1 ${pv##*.}) ; do
 				eol_list+="
 					!~${x}-${pv%.*}.${y}
@@ -727,6 +740,18 @@ eerror
 			done
 		done
 		for x in "${FLAVORS_POST_3C_RELEASE[@]}" ; do
+			local _pv=$(ver_cut 1-3 "${pv}")
+			if (( ${n_dots} == 2 )) && (( ${_pv##*.} >= 1 )) ; then
+				# if 7.1.1_p0 or newer:
+				#   delete 7.1_rc*, 7.1, 7.1_p*, 7.1.0, 7.1.0_p*
+				eol_list+="
+					!=${x}-${pv%.*}_rc*
+					!~${x}-${pv%.*}
+					!=${x}-${pv%.*}_p*
+					!~${x}-${pv%.*}.0
+					!=${x}-${pv%.*}.0_p*
+				"
+			fi
 			for y in $(_seq 1 ${pv##*.}) ; do
 				eol_list+="
 					!=${x}-${pv%.*}.${y}_p*
