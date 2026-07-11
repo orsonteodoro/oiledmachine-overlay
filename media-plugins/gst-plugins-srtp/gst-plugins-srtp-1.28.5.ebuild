@@ -7,7 +7,7 @@ CFLAGS_HARDENED_USE_CASES="network plugin security-critical untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 
 CHKL_TIMESTAMPS=(
-	"net-libs/libsrtp-9999"
+	"net-libs/libsrtp-2.9999"
 )
 
 inherit cflags-hardened chkl secure-version gstreamer-meson
@@ -16,10 +16,10 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~x86"
 
 DESCRIPTION="SRTP encoder/decoder plugin for GStreamer"
 IUSE="
-ebuild_revision_23
+ebuild_revision_24
 "
 RDEPEND="
-	>=net-libs/libsrtp-${LIBSRTP_PV}:=[${MULTILIB_USEDEP}]
+	>=net-libs/libsrtp-${LIBSRTP_2_PV}:2=[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
