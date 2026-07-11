@@ -13,7 +13,6 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-3.5.9999"
 	"dev-libs/openssl-3.4.9999"
 	"dev-libs/openssl-3.0.9999"
-	"net-libs/mbedtls-9999"
 )
 
 inherit cflags-hardened chkl cmake-multilib secure-version
@@ -40,13 +39,18 @@ IUSE+="
 gcrypt mbedtls test zlib
 ebuild_revision_7
 "
-REQUIRED_USE="?? ( gcrypt mbedtls )"
+REQUIRED_USE="
+	!mbedtls
+	?? ( gcrypt mbedtls )
+"
 RESTRICT="!test? ( test )"
 
 RDEPEND="
 	gcrypt? ( >=dev-libs/libgcrypt-${LIBGCRYPT_PV}:0[${MULTILIB_USEDEP}] )
 	!gcrypt? (
-		mbedtls? ( >=net-libs/mbedtls-${MBEDTLS_PV}:0=[${MULTILIB_USEDEP}] )
+		mbedtls? (
+			>=net-libs/mbedtls-${MBEDTLS_3_PV}:3=[${MULTILIB_USEDEP}]
+		)
 		!mbedtls? (
 			$(secure-version_gen_openssl_depends '' '[${MULTILIB_USEDEP}]')
 		)

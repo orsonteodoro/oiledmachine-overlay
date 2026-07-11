@@ -7,7 +7,12 @@ CFLAGS_HARDENED_ASSEMBLERS="inline"
 CFLAGS_HARDENED_LANGS="asm c-lang"
 CFLAGS_HARDENED_USE_CASES="network"
 
-inherit cflags-hardened meson-multilib
+CHKL_TIMESTAMPS=(
+	"dev-libs/cJSON-9999"
+	"dev-libs/nettle-9999"
+)
+
+inherit cflags-hardened chkl meson-multilib secure-version
 
 DESCRIPTION="Library for Reliable Internet Stream Transport (RIST) protocol"
 HOMEPAGE="https://code.videolan.org/rist/librist"
@@ -35,20 +40,18 @@ REQUIRED_USE="
 "
 
 RDEPEND="
-	dev-libs/cJSON[${MULTILIB_USEDEP}]
+	>=dev-libs/cJSON-${CJSON_PV}:=[${MULTILIB_USEDEP}]
 	gnutls? (
-		net-libs/gnutls[${MULTILIB_USEDEP}]
+		>=net-libs/gnutls-${GNUTLS_PV}:=[${MULTILIB_USEDEP}]
 	)
 	mbedtls? (
-		net-libs/mbedtls:3[${MULTILIB_USEDEP}]
-		net-libs/mbedtls:=
+		>=net-libs/mbedtls-${MBEDTLS_3_PV}:3=[${MULTILIB_USEDEP}]
 	)
 	nettle? (
-		dev-libs/nettle[${MULTILIB_USEDEP}]
+		>=dev-libs/nettle-${NETTLE_PV}:=[${MULTILIB_USEDEP}]
 	)
 	tools? (
-		net-libs/libmicrohttpd[${MULTILIB_USEDEP}]
-		net-libs/libmicrohttpd:=
+		>=net-libs/libmicrohttpd-${LIBMICROHTTPD_PV}:=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
@@ -66,6 +69,7 @@ PATCHES=(
 )
 
 src_configure() {
+	chkl_check_many_timestamps
 	cflags-hardened_append
 	local emesonargs=(
 		$(meson_use gnutls use_gnutls)
