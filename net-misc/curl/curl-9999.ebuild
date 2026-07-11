@@ -152,8 +152,8 @@ RDEPEND="
 			>=app-misc/ca-certificates-${CA_CERTIFICATES_PV}:*
 			net-libs/mbedtls:=[${MULTILIB_USEDEP}]
 			|| (
-				>=net-libs/mbedtls-${MBEDTLS_3_PV}:3=[${MULTILIB_USEDEP}]
-				>=net-libs/mbedtls-${MBEDTLS_4_PV}:4=[${MULTILIB_USEDEP}]
+				>=net-libs/mbedtls-${MBEDTLS_3_PV}:3[${MULTILIB_USEDEP}]
+				>=net-libs/mbedtls-${MBEDTLS_4_PV}:4[${MULTILIB_USEDEP}]
 			)
 		)
 		openssl? (

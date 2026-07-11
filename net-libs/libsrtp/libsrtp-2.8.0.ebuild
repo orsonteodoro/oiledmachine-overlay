@@ -45,7 +45,7 @@ RDEPEND="
 	mbedtls? (
 		net-libs/mbedtls:=[${MULTILIB_USEDEP}]
 		|| (
-			>=net-libs/mbedtls-${MBEDTLS_3_PV}:3=[${MULTILIB_USEDEP}]
+			>=net-libs/mbedtls-${MBEDTLS_3_PV}:3[${MULTILIB_USEDEP}]
 		)
 	)
 	nss? (
