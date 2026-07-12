@@ -63,7 +63,7 @@ samples static-libs test
 ebuild_revision_23
 "
 RDEPEND="
-	>=virtual/zlib-${ZLIB_PV}[${MULTILIB_USEDEP},minizip]
+	>=sys-libs/zlib-${ZLIB_PV}[${MULTILIB_USEDEP},minizip]
 	samples? (
 		media-libs/freeglut[${MULTILIB_USEDEP}]
 		virtual/opengl[${MULTILIB_USEDEP}]
