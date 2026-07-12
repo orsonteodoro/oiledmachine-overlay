@@ -13,8 +13,6 @@ inherit secure-version
 CLIPPER2_PV="1.3.0"
 DOTNET_SDK_PV="8.0"
 DOTNET_SDK_SLOT="8.0"
-ENET_PV="1.3.18" # Upstream uses live
-EMBREE_PV="4.3.1"
 EMSCRIPTEN_PV="3.1.64"
 EMSCRIPTEN_SLOT="19-3.1" # ${LLVM_SLOT}-$(ver_cut 1-2 ${EMSCRIPTEN_PV})
 GCC_PV="11.4.0" # Unverified because logs deleted
