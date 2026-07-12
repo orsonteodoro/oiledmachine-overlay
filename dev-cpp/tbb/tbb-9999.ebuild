@@ -53,7 +53,7 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-2021.9.0-ppc.patch
 	"${FILESDIR}"/${PN}-2021.13.0-test-atomics.patch
 	"${FILESDIR}"/${PN}-2022.0.0_do-not-fortify-source.patch
-	"${FILESDIR}"/${PN}-0e2d2c0-no-clobber-hardened.patch
+	#"${FILESDIR}"/${PN}-0e2d2c0-no-clobber-hardened.patch # Disable FAFO edit by distro
 	"${FILESDIR}"/${PN}-2022.3.0-cmake.patch
 )
 
