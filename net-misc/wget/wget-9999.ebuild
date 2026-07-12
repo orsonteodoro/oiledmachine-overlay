@@ -21,7 +21,7 @@ CHKL_TIMESTAMPS=(
 inherit autotools cflags-hardened check-compiler-switch chkl flag-o-matic python-any-r1 secure-version toolchain-funcs unpacker verify-sig
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="f76978a51ba9365e7ecaed96c1cfb73197a38ca2"
+	FALLBACK_COMMIT="705e9e3a749f9f0430c1fad9892227c210c66dee"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://https.git.savannah.gnu.org/git/wget.git"
 	if [[ "${PV}" =~ "9999" ]] ; then
