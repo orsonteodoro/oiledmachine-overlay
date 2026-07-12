@@ -18,7 +18,7 @@ CHKL_TIMESTAMPS=(
 	"sys-apps/systemd-9999"
 )
 
-inherit cflags-hardened chkl python-r1 systemd secure-version toolchain-funcs
+inherit autotools cflags-hardened chkl python-r1 systemd secure-version toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="7d0902d531800ef93ed4239b44c355481910217d"
@@ -61,6 +61,23 @@ BDEPEND="
 	sys-apps/help2man
 	>=sys-devel/gettext-0.19.8
 	virtual/pkgconfig"
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+}
+
+src_prepare() {
+	default
+	eautoreconf
+}
 
 src_configure() {
 	chkl_check_many_timestamps
