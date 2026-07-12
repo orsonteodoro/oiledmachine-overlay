@@ -194,3 +194,6 @@ dev-cpp/highway examples
 
 # The ao dependency's repo has not been updated since 2020.  The last release was in 2016.
 app-accessibility/speech-dispatcher ao
+
+# The last release of the dependency was in 2017.
+x11-libs/cairo lzo

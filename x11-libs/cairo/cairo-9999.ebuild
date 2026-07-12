@@ -85,7 +85,7 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	>=dev-libs/lzo-2.10:=[${MULTILIB_USEDEP}]
+	>=dev-libs/lzo-${LZO_PV}:=[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-${FONTCONFIG_PV}:=[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-${FREETYPE_PV}:=[${MULTILIB_USEDEP},png]
 	>=media-libs/libpng-${LIBPNG_PV}:=[${MULTILIB_USEDEP}]
@@ -98,7 +98,7 @@ RDEPEND="
 		>=dev-libs/glib-${GLIB_PV}:=[${MULTILIB_USEDEP}]
 	)
 	lzo? (
-		>=dev-libs/lzo-2.06-r1:=[${MULTILIB_USEDEP}]
+		>=dev-libs/lzo-${LZO_PV}:=[${MULTILIB_USEDEP}]
 	)
 	X? (
 		>=x11-libs/libX11-${LIBX11_PV}:=[${MULTILIB_USEDEP}]
