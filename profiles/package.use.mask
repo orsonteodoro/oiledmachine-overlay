@@ -191,3 +191,6 @@ media-gfx/gimp aalib
 
 # Fails to build
 dev-cpp/highway examples
+
+# The ao dependency's repo has not been updated since 2020.  The last release was in 2016.
+app-accessibility/speech-dispatcher ao

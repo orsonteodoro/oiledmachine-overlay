@@ -80,6 +80,7 @@ get_secure_timestamps() {
 #   dev-libs/openssl-4.0.9999 -> dev_libs_openssl_4_0_9999
 #
 SECURE_TIMESTAMP["app_accessibility_at_spi2_core_9999"]="Apr 29, 2026 8:10:31 AM PDT"
+SECURE_TIMESTAMP["app_accessibility_espeak_ng_9999"]="Jan 20, 2025 2:21 AM PST"
 SECURE_TIMESTAMP["app_accessibility_speech_dispatcher_9999"]="May 3, 2026 5:56 PM PDT"
 SECURE_TIMESTAMP["app_accessibility_whisper_cpp_9999"]="Jun 19, 2026 2:53 AM PDT"
 SECURE_TIMESTAMP["app_arch_brotli_9999"]="Sun, 30 Apr 2026 10:19 AM PDT"
@@ -123,6 +124,7 @@ SECURE_TIMESTAMP["dev_qt_qtwebengine_6_9999"]="Jul 10, 2026 5:03 AM PDT"
 SECURE_TIMESTAMP["dev_games_ogre_9999"]="Jun 19, 2026 10:03 AM PDT"
 SECURE_TIMESTAMP["dev_games_recastnavigation_9999"]="Feb 26, 2026 11:16 PM PST"
 SECURE_TIMESTAMP["dev_libs_crc32c_9999"]="Fri, 1 Mar 2019 15:37:35 -0800"
+SECURE_TIMESTAMP["dev_libs_dotconf_9999"]="Apr 5, 2024 11:51 AM PDT"
 SECURE_TIMESTAMP["dev_libs_glib_2_89_9999"]="Jun 23, 2026 7:04:21 AM PDT"
 SECURE_TIMESTAMP["dev_libs_gmp_9999"]="Wed, 27 Aug 2025 08:08:18 +0200"
 SECURE_TIMESTAMP["dev_libs_elfutils_9999"]="Sun, 21 Jun 2026 08:41:18 -0700"
@@ -422,6 +424,7 @@ SECURE_TIMESTAMP["x11_libs_pixman_9999"]="Aug 1, 2025 9:38:49 AM PDT"
 SECURE_TIMESTAMP["x11_misc_colord_9999"]="Feb 2, 2026 1:31 AM PST"
 
 #SECURE_TIMESTAMP["_9999"]=""
+#SECURE_TIMESTAMP[""]=""
 
 	declare -p SECURE_TIMESTAMP
 }
