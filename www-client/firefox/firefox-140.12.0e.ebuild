@@ -778,6 +778,7 @@ RDEPEND+="
 		>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}:=
 		!pulseaudio? (
 			alsa? (
+				>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}:=[alsa]
 				|| (
 					>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}[alsa,espeak]
 					>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}[alsa,espeak]
@@ -786,6 +787,7 @@ RDEPEND+="
 			)
 		)
 		pulseaudio? (
+			>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}:=[pulseaudio]
 			|| (
 				>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}[espeak,pulseaudio]
 				>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}[espeak,pulseaudio]
