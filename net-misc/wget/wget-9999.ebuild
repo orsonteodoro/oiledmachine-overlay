@@ -45,7 +45,7 @@ x86 ~arm64-macos ~x64-macos ~x64-solaris
 IUSE+="
 cookie-check debug gnutls idn libproxy metalink nls ntlm pcre +ssl static
 test uuid zlib
-ebuild_revision_23
+ebuild_revision_24
 "
 REQUIRED_USE="
 	ntlm? (
