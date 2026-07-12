@@ -8,8 +8,10 @@ EAPI=8
 CXX_STANDARD=17 # Compiler default
 CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF HO IO SO"
-LIBFLAC_SONAME="11"
-LIBFLACXX_SONAME="14"
+
+# For distro comment, it is wrong.  That is what happens when you do not verify.
+LIBFLAC_SONAME="14"
+LIBFLACXX_SONAME="11"
 
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_avx"
@@ -26,15 +28,30 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_RUST[@]/llvm_slot_}"
 )
 
-inherit autotools cflags-hardened check-compiler-switch flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal toolchain-funcs
+CHKL_TIMESTAMPS=(
+	"media-libs/libogg-9999"
+)
 
-KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
+inherit autotools cflags-hardened check-compiler-switch chkl flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal secure-version toolchain-funcs
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="b430c3a58b64b70642ab5c72c36084dd4083d165"
+	EGIT_BRANCH="master"
+	EGIT_REPO_URI="https://github.com/xiph/flac.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
+	SRC_URI="
+https://github.com/xiph/flac/releases/download/${PV}/${P}.tar.xz
+https://downloads.xiph.org/releases/${PN}/${P}.tar.xz
+	"
+fi
+
 S="${WORKDIR}/${P}"
 S_orig="${WORKDIR}/${P}"
-SRC_URI="
-	https://github.com/xiph/flac/releases/download/${PV}/${P}.tar.xz
-	https://downloads.xiph.org/releases/${PN}/${P}.tar.xz
-"
 
 DESCRIPTION="free lossless audio encoder and decoder"
 HOMEPAGE="https://xiph.org/flac/"
@@ -44,8 +61,8 @@ LICENSE="
 	GPL-2
 	LGPL-2.1
 "
-SLOT="0/${LIBFLAC_SONAME}-${LIBFLACXX_SONAME}"
-IUSE="
+SLOT="0/${LIBFLACXX_SONAME}-${LIBFLAC_SONAME}" # The distro comment is wrong.  Either way, the changes are now quirk compatible with distro prebuilts.
+IUSE+="
 ${CPU_FLAGS_X86[@]}
 +cxx debug ogg static-libs
 ebuild_revision_36
@@ -58,7 +75,7 @@ REQUIRED_USE="
 "
 RDEPEND="
 	ogg? (
-		>=media-libs/libogg-1.3.5[${MULTILIB_USEDEP}]
+		>=media-libs/libogg-${LIBOGG_PV}:=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
@@ -88,8 +105,42 @@ pkg_setup() {
 	libstdcxx-slot_verify
 }
 
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+	local actual_sover
+	local expected_sover
+
+	actual_sover=$(grep -E -o -r -e "-version-info [0-9]+" "${S}/src/libFLAC/Makefile.am" | cut -f 2 -d " ")
+	expected_sover="${LIBFLAC_SONAME}"
+	if ver_test "${actual_sover}" "-ne" "${expected_sover}" ; then
+eerror "QA:  Update LIBFLAC_SONAME in ebuild"
+eerror "Actual SOVER:  ${actual_sover}"
+eerror "Expected SOVER:  ${expected_sover}"
+		die
+	fi
+
+	actual_sover=$(grep -E -o -r -e "-version-info [0-9]+" "${S}/src/libFLAC++/Makefile.am" | cut -f 2 -d " ")
+	expected_sover="${LIBFLACXX_SONAME}"
+	if ver_test "${actual_sover}" "-ne" "${expected_sover}" ; then
+eerror "QA:  Update LIBFLACXX_SONAME in ebuild"
+eerror "Actual SOVER:  ${actual_sover}"
+eerror "Expected SOVER:  ${expected_sover}"
+		die
+	fi
+}
+
 src_prepare() {
 	default
+
+	./autogen.sh || die
 
 	# Assumes we are using the hardened toolchain.
 	#use hardened && eapply "${FILESDIR}/flac-1.3.3-pie.patch"
@@ -126,6 +177,9 @@ has_sanitizer() {
 
 _src_configure() {
 	check-compiler-switch_end
+
+	chkl_check_many_timestamps
+
 	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
 	# Prevent static-libs IR mismatch.
 einfo "Detected compiler switch.  Disabling LTO."
