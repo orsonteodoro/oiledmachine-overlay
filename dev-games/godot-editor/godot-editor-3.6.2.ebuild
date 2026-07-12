@@ -59,8 +59,33 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse"
 )
 
+CHKL_TIMESTAMPS=(
+	"app-accessibility/speech-dispatcher-9999"
+	"app-arch/bzip2-9999"
+	"app-arch/zstd-9999"
+	"dev-games/recastnavigation-9999"
+	"dev-libs/libpcre2-9999"
+	"media-libs/embree-9999"
+	"media-libs/flac-9999"
+	"media-libs/freetype-9999"
+	"media-libs/libogg-9999"
+	"media-libs/libpng-9999"
+	"media-libs/libpulse-9999"
+	"media-libs/libsndfile-9999"
+	"media-libs/libtheora-9999"
+	"media-libs/libvorbis-9999"
+	"media-libs/libvpx-9999"
+	"media-libs/libwebp-9999"
+	"media-libs/opus-9999"
+	"sys-apps/dbus-9999"
+	"sys-apps/util-linux-9999"
+	"x11-libs/libX11-9999"
+	"x11-libs/libxcb-9999"
+	"x11-libs/libXcursor-9999"
+)
+
 inherit godot-3.6
-inherit cflags-hardened desktop flag-o-matic edo libstdcxx-slot llvm python-any-r1 sandbox-changes scons-utils toolchain-funcs virtualx
+inherit cflags-hardened chkl desktop flag-o-matic edo libstdcxx-slot llvm python-any-r1 sandbox-changes scons-utils toolchain-funcs virtualx
 
 SRC_URI="
 	https://github.com/godotengine/${MY_PN}/archive/${PV}-${STATUS}.tar.gz -> ${MY_P}.tar.gz
@@ -171,7 +196,7 @@ IUSE_AUDIO="
 IUSE_BUILD="
 ${CPU_FLAGS_X86[@]}
 ${SANITIZERS[@]}
-clang debug jit lld lto mold portable
+clang debug gcc jit lld lto mold portable
 sanitize-in-production +visual-script
 "
 IUSE_CONTAINERS_CODECS_FORMATS="
@@ -189,11 +214,11 @@ IUSE_LIBS="
 +freetype +navigation +opengl +opensimplex +pcre2 +squish
 "
 IUSE_NET="
-ca-certs-relax +enet +jsonrpc +mbedtls +text-server-adv
++enet +jsonrpc +mbedtls +text-server-adv
 +upnp +webrtc +websocket
 "
 IUSE_SCRIPTING="
-csharp-external-editor +gdscript +gdnative gdscript_lsp -mono monodevelop vscode
++gdscript +gdnative gdscript_lsp -mono vscode
 "
 IUSE_SYSTEM="
 system-bullet system-embree system-enet system-freetype
@@ -226,6 +251,10 @@ REQUIRED_USE+="
 	opengl
 	pcre2
 	svg
+	^^ (
+		clang
+		gcc
+	)
 	clang? (
 		^^ (
 			${LLVM_COMPAT[@]/#/llvm_slot_}
@@ -234,12 +263,8 @@ REQUIRED_USE+="
 	cpu_flags_x86_sse2? (
 		cpu_flags_x86_sse
 	)
-	csharp-external-editor? (
+	vscode? (
 		mono
-		|| (
-			monodevelop
-			vscode
-		)
 	)
 	gdscript_lsp? (
 		jsonrpc
@@ -297,9 +322,6 @@ REQUIRED_USE+="
 			pulseaudio
 		)
 	)
-	vscode? (
-		csharp-external-editor
-	)
 	?? (
 		asan
 		hwasan
@@ -311,12 +333,9 @@ gen_cdepend_lto_llvm() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				llvm-core/clang:${s}[${LIBSTDCXX_USEDEP}]
-				llvm-core/clang:=
-				llvm-core/lld:${s}[${LIBSTDCXX_USEDEP}]
-				llvm-core/lld:=
-				llvm-core/llvm:${s}[${LIBSTDCXX_USEDEP}]
-				llvm-core/llvm:=
+				llvm-core/clang:${s}=[${LIBSTDCXX_USEDEP}]
+				llvm-core/lld:${s}=[${LIBSTDCXX_USEDEP}]
+				llvm-core/llvm:${s}=[${LIBSTDCXX_USEDEP}]
 			)
 		"
 	done
@@ -328,13 +347,10 @@ gen_clang_sanitizer() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				=llvm-runtimes/clang-runtime-${s}[compiler-rt,sanitize]
-				=llvm-runtimes/compiler-rt-sanitizers-${s}*[${LIBSTDCXX_USEDEP},${san_type}]
-				llvm-runtimes/compiler-rt-sanitizers:=
-				llvm-core/clang:${s}[${LIBSTDCXX_USEDEP}]
-				llvm-core/clang:=
-				llvm-core/llvm:${s}[${LIBSTDCXX_USEDEP}]
-				llvm-core/llvm:=
+				=llvm-runtimes/clang-runtime-${s}:=[compiler-rt,sanitize]
+				=llvm-runtimes/compiler-rt-sanitizers-${s}*:=[${LIBSTDCXX_USEDEP},${san_type}]
+				llvm-core/clang:${s}=[${LIBSTDCXX_USEDEP}]
+				llvm-core/llvm:${s}=[${LIBSTDCXX_USEDEP}]
 			)
 		"
 	done
@@ -345,7 +361,7 @@ gen_cdepend_sanitizers() {
 		echo "
 			${a}? (
 				!clang? (
-					sys-devel/gcc[sanitize]
+					sys-devel/gcc:=[sanitize]
 				)
 				clang? (
 					$(gen_clang_sanitizer ${a})
@@ -362,17 +378,14 @@ CDEPEND+="
 	${CDEPEND_SANITIZER}
 	!dev-games/godot
 	mono? (
-		(
-			>=dev-lang/mono-${MONO_PV}
-			dev-lang/mono:=
-		)
-		>=dev-dotnet/dotnet-sdk-bin-${DOTNET_SDK_PV}:${DOTNET_SDK_SLOT}
+		>=dev-lang/mono-${MONO_PV}:=
+		>=dev-dotnet/dotnet-sdk-bin-${DOTNET_SDK_PV}:${DOTNET_SDK_SLOT}=
 	)
 "
 CDEPEND_CLANG="
 	clang? (
 		!lto? (
-			llvm-core/clang
+			llvm-core/clang:=
 		)
 		lto? (
 			$(gen_cdepend_lto_llvm)
@@ -381,62 +394,58 @@ CDEPEND_CLANG="
 "
 CDEPEND_GCC="
 	!clang? (
-		>=sys-devel/gcc-${GCC_PV}
+		>=sys-devel/gcc-${GCC_PV}:=
 	)
 "
 DEPEND+="
 	${PYTHON_DEPS}
 	${CDEPEND}
-        >=media-libs/freetype-${FREETYPE_PV}
-	>=media-libs/libogg-${LIBOGG_PV}
-	>=media-libs/libvorbis-${LIBVORBIS_PV}
-	>=virtual/zlib-${ZLIB_PV}
-	app-arch/bzip2
-	dev-libs/libbsd
-	media-libs/alsa-lib
-	media-libs/flac
-	media-libs/libpng
-	media-libs/libsndfile
-        media-libs/libpulse
-	net-libs/libasyncns
-	sys-apps/tcp-wrappers
-	sys-apps/util-linux
-	x11-libs/libICE
-	x11-libs/libSM
-	x11-libs/libXau
-	x11-libs/libXcursor
-	x11-libs/libXdmcp
-	x11-libs/libXext
-	x11-libs/libXfixes
-	x11-libs/libXi
-        x11-libs/libXinerama
-	x11-libs/libXrandr
-	x11-libs/libXrender
-	x11-libs/libXtst
-	x11-libs/libXxf86vm
-	x11-libs/libX11
-	x11-libs/libxcb
-	x11-libs/libxshmfence
+        >=media-libs/freetype-${FREETYPE_PV}:=
+	>=media-libs/libogg-${LIBOGG_PV}:=
+	>=media-libs/libvorbis-${LIBVORBIS_PV}:=
+	>=virtual/zlib-${ZLIB_PV}:=
+	>=app-arch/bzip2-${BZIP2_PV}:=
+	>=dev-libs/libbsd-${LIBBSD_PV}:=
+	>=media-libs/alsa-lib-${ALSA_LIB_PV}:=
+	>=media-libs/flac-${FLAC_PV}:=
+	>=media-libs/libpng-${LIBPNG_PV}:=
+	>=media-libs/libsndfile-${LIBSNDFILE_PV}:=
+	>=media-libs/libpulse-${LIBPULSE_PV}:=
+	net-libs/libasyncns:=
+	sys-apps/tcp-wrappers:=
+	>=sys-apps/util-linux-${UTIL_LINUX_PV}:=
+	>=x11-libs/libICE-${LIBICE_PV}:=
+	>=x11-libs/libSM-${LIBSM_PV}:=
+	x11-libs/libXau:=
+	>=x11-libs/libXcursor-${LIBXCURSOR_PV}:=
+	>=x11-libs/libXdmcp-${LIBXDMCP_PV}:=
+	>=x11-libs/libXext-${LIBXEXT_PV}:=
+	>=x11-libs/libXfixes-${LIBXFIXES_PV}:=
+	>=x11-libs/libXi-${LIBXI_PV}:=
+	>=x11-libs/libXinerama-${LIBXINERAMA_PV}:=
+	>=x11-libs/libXrandr-${LIBXRANDR_PV}:=
+	>=x11-libs/libXrender-${LIBXRENDER_PV}:=
+	>=x11-libs/libXtst-${LIBXTST_PV}:=
+	>=x11-libs/libXxf86vm-${LIBXXF86VM_PV}:=
+	>=x11-libs/libX11-${LIBX11_PV}:=
+	>=x11-libs/libxcb-${LIBXCB_PV}:=
+	>=x11-libs/libxshmfence-${LIBXSHMFENCE_PV}:=
 	!portable? (
-		!ca-certs-relax? (
-			>=app-misc/ca-certificates-${CA_CERTIFICATES_PV}[cacert]
-		)
-		ca-certs-relax? (
-			app-misc/ca-certificates[cacert]
-		)
+		>=app-misc/ca-certificates-${CA_CERTIFICATES_PV}:=[cacert]
 	)
 	dbus? (
-		sys-apps/dbus
+		>=sys-apps/dbus-${DBUS_PV}:=
 	)
         gamepad? (
-		virtual/libudev
+		virtual/libudev:=
 	)
 	opengl? (
-		virtual/opengl
+		virtual/opengl:*
 	)
 	speech? (
 		!pulseaudio? (
 			alsa? (
+				>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}:=[alsa]
 				|| (
 					>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}[alsa,espeak]
 					>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}[alsa,espeak]
@@ -445,6 +454,7 @@ DEPEND+="
 			)
 		)
 		pulseaudio? (
+			>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}:=[pulseaudio]
 			|| (
 				>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}[espeak,pulseaudio]
 				>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}[espeak,pulseaudio]
@@ -453,83 +463,68 @@ DEPEND+="
 		)
 	)
 	system-bullet? (
-		>=sci-physics/bullet-${BULLET_PV}
+		>=sci-physics/bullet-${BULLET_PV}:=
 	)
 	system-enet? (
-		>=net-libs/enet-${ENET_PV}
+		>=net-libs/enet-${ENET_PV}:=
 	)
 	system-embree? (
-		>=media-libs/embree-${EMBREE_PV}
+		>=media-libs/embree-${EMBREE_PV}:=
 	)
 	system-freetype? (
-		>=media-libs/freetype-${FREETYPE_PV}
+		>=media-libs/freetype-${FREETYPE_PV}:=
 	)
 	system-libogg? (
-		>=media-libs/libogg-${LIBOGG_PV}
+		>=media-libs/libogg-${LIBOGG_PV}:=
 	)
 	system-libpng? (
-		>=media-libs/libpng-${LIBPNG_PV}
+		>=media-libs/libpng-${LIBPNG_PV}:=
 	)
 	system-libtheora? (
-		>=media-libs/libtheora-${LIBTHEORA_PV}
+		>=media-libs/libtheora-${LIBTHEORA_PV}:=
 	)
 	system-libvorbis? (
-		>=media-libs/libvorbis-${LIBVORBIS_PV}
+		>=media-libs/libvorbis-${LIBVORBIS_PV}:=
 	)
 	system-libvpx? (
-		>=media-libs/libvpx-${LIBVPX_PV}
+		>=media-libs/libvpx-${LIBVPX_PV}:=
 	)
 	system-libwebp? (
-		>=media-libs/libwebp-${LIBWEBP_PV}
+		>=media-libs/libwebp-${LIBWEBP_PV}:=
 	)
 	system-mbedtls? (
-		>=net-libs/mbedtls-${MBEDTLS_PV}
+		>=net-libs/mbedtls-${MBEDTLS_3_PV}:3=
 	)
 	system-miniupnpc? (
-		>=net-libs/miniupnpc-${MINIUPNPC_PV}
+		>=net-libs/miniupnpc-${MINIUPNPC_PV}:=
 	)
 	system-opus? (
-		>=media-libs/opus-${OPUS_PV}
+		>=media-libs/opus-${OPUS_PV}:=
 	)
 	system-pcre2? (
-		>=dev-libs/libpcre2-${LIBPCRE2_PV}[jit?]
+		>=dev-libs/libpcre2-${LIBPCRE2_PV}:=[jit?]
 	)
 	system-recastnavigation? (
-		>=dev-games/recastnavigation-${RECASTNAVIGATION_PV}
+		>=dev-games/recastnavigation-${RECASTNAVIGATION_PV}:=
 	)
 	system-squish? (
-		>=dev-libs/squish-${SQUISH_PV}
+		>=dev-libs/squish-${SQUISH_PV}:=
 	)
 	system-wslay? (
-		>=net-libs/wslay-${WSLAY_PV}
+		>=net-libs/wslay-${WSLAY_PV}:=
 	)
 	system-xatlas? (
-		media-libs/xatlas
+		media-libs/xatlas:=
 	)
 	system-zlib? (
-		>=virtual/zlib-${ZLIB_PV}
+		>=virtual/zlib-${ZLIB_PV}:=
 	)
 	system-zstd? (
-		>=app-arch/zstd-${ZSTD_PV}
+		>=app-arch/zstd-${ZSTD_PV}:=
 	)
 "
 RDEPEND+="
 	${DEPEND}
-	mono? (
-		csharp-external-editor? (
-			|| (
-				monodevelop? (
-					|| (
-						dev-dotnet/monodevelop-bin
-						dev-dotnet/dotdevelop
-					)
-				)
-				vscode? (
-					app-editors/vscode
-				)
-			)
-		)
-	)
 "
 gen_bdepend_lld() {
 	local s
@@ -548,6 +543,12 @@ BDEPEND+="
 		>=dev-build/scons-4.7.0[${PYTHON_USEDEP}]
 	')
 	>=dev-util/pkgconf-${PKGCONF_PV}[pkg-config(+)]
+	clang? (
+		${CDEPEND_CLANG}
+	)
+	gcc? (
+		${CDEPEND_GCC}
+	)
 	lld? (
 		$(gen_bdepend_lld)
 	)
@@ -558,10 +559,6 @@ BDEPEND+="
 		app-portage/gentoolkit
 		x11-base/xorg-server[xvfb]
 		x11-apps/xhost
-	)
-	|| (
-		${CDEPEND_CLANG}
-		${CDEPEND_GCC}
 	)
 "
 PATCHES=(
@@ -772,6 +769,7 @@ warn_missing_texture_format() {
 
 src_configure() {
 	default
+	chkl_check_many_timestamps
 	warn_missing_texture_format
 
 	if tc-is-gcc ; then
@@ -1281,7 +1279,7 @@ src_install() {
 }
 
 pkg_postinst() {
-	if use csharp-external-editor ; then
+	if use vscode ; then
 einfo
 einfo "Instructions in setting up the external editor can be found at:"
 einfo
