@@ -79,7 +79,6 @@ CHKL_TIMESTAMPS=(
 	"dev-games/recastnavigation-9999"
 	"dev-libs/icu-79.0.9999"
 	"dev-libs/libpcre2-9999"
-	"media-libs/embree-9999"
 	"media-libs/flac-9999"
 	"media-libs/freetype-9999"
 	"media-libs/harfbuzz-9999"
