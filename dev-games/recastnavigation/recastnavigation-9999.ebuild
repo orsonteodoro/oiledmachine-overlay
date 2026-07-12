@@ -3,17 +3,27 @@
 
 EAPI=8
 
-# U22.04.2
+CXX_STANDARD=20
 
-EXPECTED_FINGERPRINT="disable"
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX20[@]}"
+)
 
-inherit check-compiler-switch cmake flag-o-matic git-r3 multilib-minimal toolchain-funcs
+inherit libcxx-compat
+LLVM_COMPAT=(
+	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}"
+)
 
-if [[ ${PV} =~ "99999999" ]] ; then
-	IUSE+=" fallback-commit"
+inherit check-compiler-switch cmake flag-o-matic git-r3 libcxx-slot libstdcxx-slot multilib-minimal toolchain-funcs
+
+if [[ ${PV} =~ "9999" ]] ; then
+	FALLBACK_COMMIT="9f4ce64458dfae86e1239c525ddc219c4e9e06f1"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/recastnavigation/recastnavigation.git"
-	FALLBACK_COMMIT="6dc1667f580357e8a2154c28b7867bea7e8ad3a7" # May 21, 2023
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 	S="${WORKDIR}/${P}"
 else
 	KEYWORDS="~amd64 ~arm64"
@@ -27,7 +37,8 @@ fi
 DESCRIPTION="Navigation-mesh Toolset for Games"
 HOMEPAGE="https://github.com/memononen/recastnavigation"
 LICENSE="ZLIB"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SOVER="1"
+SLOT="0/${SOVER}"
 # Upstream has test ON by default.
 IUSE+="
 debug +demo -dt-polyref64 -dt-virtual-queryfilter +examples static-libs test
@@ -42,22 +53,15 @@ REQUIRED_USE+="
 		)
 	)
 "
-CDEPEND+="
-	>=sys-devel/gcc-11.2.0
-"
 RDEPEND+="
-	virtual/libc
+	virtual/libc:*
 	demo? (
 		>=media-libs/libsdl2-2.0.20[${MULTILIB_USEDEP},haptic,opengl,wayland?,X?]
-		virtual/opengl[${MULTILIB_USEDEP}]
+		virtual/opengl:*[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND+="
 	${RDEPEND}
-	|| (
-		>=sys-devel/gcc-11.2.0
-		>=llvm-core/clang-14.0
-	)
 "
 BDEPEND+="
 	>=dev-build/cmake-3.22.1
@@ -69,13 +73,9 @@ pkg_setup() {
 	export CXX=$(tc-getCXX)
 	export CPP=$(tc-getCPP)
 	strip-unsupported-flags
-	if tc-is-gcc ; then
-		local gcc_pv=$(gcc-fullversion)
-		if ver_test "${gcc_pv}" -lt "8.0" ; then
-eerror "You need at least gcc 8.0 to compile."
-			die
-		fi
-	fi
+
+	libcxx-slot_verify
+	libstdcxx-slot_verify
 
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
@@ -89,37 +89,23 @@ get_lib_type() {
 	echo "shared"
 }
 
-_unpack_live() {
-	use fallback-commit && export EGIT_COMMIT="${FALLBACK_COMMIT}"
-	git-r3_fetch
-	git-r3_checkout
-	local filelist=(
-		$(find "${S}" -name "CMakeLists.txt" -o -name "*.cmake")
-	)
-	local actual_fingerprint=$(cat ${filelist[@]} \
-		| sha512sum \
-		| cut -f 1 -d " ")
-	if [[ "${EXPECTED_FINGERPRINT}" == "disable" ]] ; then
-		:
-	elif [[ "${actual_fingerprint}" != "${EXPECTED_FINGERPRINT}" ]] ; then
-eerror
-eerror "Actual build files fingerprint:\t${actual_fingerprint}"
-eerror "Expected build files fingerprint:\t${EXPECTED_FINGERPRINT}"
-eerror
-eerror "Detected a change in build files that is indicative of a new option,"
-eerror "*DEPENDs, IUSE, KEYWORDS."
-eerror
-eerror "Notify the ebuild maintainer to update this ebuild."
-eerror
-		die
-	fi
-}
-
 src_unpack() {
-	if [[ "${PV}" =~ "99999999" ]] ; then
-		_unpack_live
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			export EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
 	else
 		unpack ${A}
+	fi
+	local actual_sover=$(grep -r -e "SOVERSION" "${S}/CMakeLists.txt" | cut -f 2 -d " " | sed -e "s|)||g")
+	local expected_sover="${SOVER}"
+	if ver_test "${actual_sover}" "-ne" "${expected_sover}" ; then
+eerror "QA:  Update SOVER in ebuild"
+eerror "Actual SOVER:  ${actual_sover}"
+eerror "Expected SOVER:  ${expected_sover}"
+		die
 	fi
 }
 
