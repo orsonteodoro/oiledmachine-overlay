@@ -161,6 +161,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/opus-9999"
 	"media-libs/woff2-9999"
 	"sys-apps/bubblewrap-9999"
+	"sys-auth/elogind-257.9999"
 	"sys-libs/libseccomp-9999"
 	"x11-libs/cairo-9999"
 	"x11-libs/libdrm-9999"
@@ -968,7 +969,7 @@ RDEPEND+="
 	)
 	journald? (
 		elogind? (
-			sys-auth/elogind:=
+			>=sys-auth/elogind-${ELOGIND_PV}:=
 		)
 		systemd? (
 			>=sys-apps/systemd-${SYSTEMD_PV}:=[${MULTILIB_USEDEP}]

@@ -37,7 +37,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-3.5.9999"
 	"dev-libs/openssl-3.4.9999"
 	"dev-libs/openssl-3.0.9999"
-	"sys-auth/elogind-9999"
+	"sys-auth/elogind-257.9999"
 	"sys-apps/dbus-9999"
 	"sys-apps/systemd-9999"
 	"media-libs/libpulse-9999"
