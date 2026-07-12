@@ -38,10 +38,12 @@ CHKL_TIMESTAMPS=(
 inherit branding cflags-hardened chkl cmake libcxx-slot libstdcxx-slot secure-version
 
 if [[ "${PV}" =~ "9999" ]]; then
+	FALLBACK_COMMIT="606adedbfea92caba306730edd0f6adba4acf310"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/noctalia-dev/noctalia-qs.git"
-	FALLBACK_COMMIT="e7224b756dcd10eec040df818a4c7a0fda5d6eff"
-	IUSE+=" fallback-commit"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 	inherit git-r3
 else
 	KEYWORDS="~amd64"
@@ -55,7 +57,7 @@ HOMEPAGE="
 	https://github.com/noctalia-dev/noctalia-qs
 "
 LICENSE="LGPL-3"
-SLOT="0/4"
+SLOT="0/4" # Only for Noctalia 4.x
 IUSE+="
 +bluetooth +crash-handler +dbus +dwl +hyprland +hyprland-ipc +greetd +i3
 +jemalloc +layer-shell +mpris +networkmanager +niri +niri-ipc +notifications
@@ -207,7 +209,9 @@ ewarn "You forgot to add the i3 in USE flag to ${PN} for Sway support."
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]]; then
-		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
 		git-r3_fetch
 		git-r3_checkout
 	else
