@@ -120,6 +120,7 @@ SECURE_TIMESTAMP["dev_qt_qtsvg_6_9999"]="Jun 10, 2026 3:18 AM PDT"
 SECURE_TIMESTAMP["dev_qt_qtwayland_6_9999"]="Mar 3, 2026 6:45 AM PST"
 SECURE_TIMESTAMP["dev_qt_qtwebengine_6_9999"]="Jul 10, 2026 5:03 AM PDT"
 SECURE_TIMESTAMP["dev_games_ogre_9999"]="Jun 19, 2026 10:03 AM PDT"
+SECURE_TIMESTAMP["dev_games_recastnavigation_9999"]="Feb 26, 2026 11:16 PM PST"
 SECURE_TIMESTAMP["dev_libs_crc32c_9999"]="Fri, 1 Mar 2019 15:37:35 -0800"
 SECURE_TIMESTAMP["dev_libs_glib_2_89_9999"]="Jun 23, 2026 7:04:21 AM PDT"
 SECURE_TIMESTAMP["dev_libs_gmp_9999"]="Wed, 27 Aug 2025 08:08:18 +0200"
@@ -158,7 +159,7 @@ SECURE_TIMESTAMP["dev_libs_nss_9999"]="Thu, 23 Apr 2026 12:28:50 -0700"
 # For EOL dates, see
 # https://openssl-library.org/source/
 # https://openssl-library.org/policies/releasestrat/index.html
-SECURE_TIMESTAMP["dev_libs_openssl_4_0_9999"]="Jul 10, 2026 8:48 AM PDT"
+SECURE_TIMESTAMP["dev_libs_openssl_4_0_9999"]="Jul 10, 2026 8:51 AM PDT"
 SECURE_TIMESTAMP["dev_libs_openssl_3_6_9999"]="Jul 10, 2026 8:48 AM PDT"
 SECURE_TIMESTAMP["dev_libs_openssl_3_5_9999"]="Jul 10, 2026 8:48 AM PDT"
 SECURE_TIMESTAMP["dev_libs_openssl_3_4_9999"]="Jul 10, 2026 8:48 AM PDT"
