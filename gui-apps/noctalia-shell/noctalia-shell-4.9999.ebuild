@@ -11,10 +11,12 @@ PYTHON_COMPAT=( "python3_"{12..14} )
 inherit optfeature python-single-r1
 
 if [[ "${PV}" =~ "9999" ]]; then
+	FALLBACK_COMMIT="a48885b9fec485c903c955749a7da6e30147cd38"
 	EGIT_BRANCH="legacy-v4"
 	EGIT_REPO_URI="https://github.com/noctalia-dev/noctalia-shell.git"
-	FALLBACK_COMMIT="3abfa1fc09b62dc4cdeeb7b787886f075696f0b7" # May 13, 2026
-	IUSE+=" fallback-commit"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 	inherit git-r3
 else
 	KEYWORDS="~amd64"
@@ -69,7 +71,9 @@ DEPEND+="
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]]; then
-		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
 		git-r3_fetch
 		git-r3_checkout
 	else
