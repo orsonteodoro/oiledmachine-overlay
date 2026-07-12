@@ -323,10 +323,6 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <flag name="camera">
       Enables camera support on non-native platforms.
     </flag>
-    <flag name="ca-certs-relax">
-      Remove version restriction for ca-certificates because of slow distro
-      release.
-    </flag>
     <flag name="clang">
       Compiles the software using clang and LLVM.
     </flag>
