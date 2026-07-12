@@ -8,7 +8,15 @@ EAPI=8
 
 PYTHON_COMPAT=( "python3_"{12..14} )
 
-inherit optfeature python-single-r1
+CHKL_TIMESTAMPS=(
+	"dev-libs/glib-2.89.9999"
+	"dev-qt/qtbase-6.9999"
+	"gui-apps/noctalia-qs-9999"
+	"media-gfx/imagemagick-9999"
+	"net-misc/wget-9999"
+)
+
+inherit chkl optfeature secure-version python-single-r1
 
 if [[ "${PV}" =~ "9999" ]]; then
 	FALLBACK_COMMIT="a48885b9fec485c903c955749a7da6e30147cd38"
@@ -47,26 +55,28 @@ REQUIRED_USE="
 # TODO:  test other icons
 RDEPEND="
 	${PYTHON_DEPS}
-	dev-util/wayland-scanner:=
-	media-gfx/imagemagick:=
-	net-misc/wget:=
+	!gui-apps/quickshell
+	>=gui-apps/noctalia-qs-${NOCTALIA_QS_PV}:${SLOT}[wayland?,X?]
+	>=dev-qt/qtbase-${QTBASE6_PV}:6=[gui,wayland?,X?]
+	>=media-gfx/imagemagick-${IMAGEMAGICK_PV}:=
+	>=net-misc/wget-${WGET_PV}:=
 	|| (
 		x11-themes/papirus-icon-theme
 	)
 	calendar? (
 		gnome-extra/evolution-data-server:=[introspection]
 		dev-libs/libical:=[introspection]
-		dev-libs/glib:=[introspection]
-		net-libs/libsoup:3.0=[introspection]
-		dev-libs/json-glib:=[introspection]
-		dev-libs/gobject-introspection:=
+		>=dev-libs/glib-${GLIB_PV}:=[introspection]
+		>=net-libs/libsoup-${LIBSOUP3_PV}:3.0=[introspection]
+		>=dev-libs/json-glib-${JSON_GLIB_PV}:=[introspection]
+		>=dev-libs/gobject-introspection-${GOBJECT_INTROSPECTION_PV}:=
 	)
 "
 DEPEND+="
 	${RDEPEND}
-	!gui-apps/quickshell
-	dev-qt/qtbase:6=[gui,wayland?,X?]
-	gui-apps/noctalia-qs:${SLOT}[wayland?,X?]
+"
+BDEPEND+="
+	dev-util/wayland-scanner:=
 "
 
 src_unpack() {
@@ -79,6 +89,10 @@ src_unpack() {
 	else
 		unpack ${A}
 	fi
+}
+
+src_configure() {
+	chkl_check_many_timestamps
 }
 
 src_install() {
