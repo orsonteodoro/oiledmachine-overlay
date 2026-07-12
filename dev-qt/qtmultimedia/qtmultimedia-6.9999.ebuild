@@ -20,10 +20,6 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-FFMPEG_COMPAT_SLOTS=(
-	"${FFMPEG_COMPAT_SLOTS_8[@]}"
-)
-
 CHKL_TIMESTAMPS=(
 	"dev-libs/glib-2.89.9999"
 	"dev-qt/qtbase-6.9999"
@@ -36,6 +32,10 @@ CHKL_TIMESTAMPS=(
 
 QT6_HAS_STATIC_LIBS=1
 inherit cflags-hardened chkl flag-o-matic ffmpeg libcxx-slot libstdcxx-slot secure-version qt6-build
+
+FFMPEG_COMPAT_SLOTS=(
+	"${FFMPEG_COMPAT_SLOTS_8[@]}"
+)
 
 DESCRIPTION="Multimedia (audio, video, radio, camera) library for the Qt6 framework"
 
