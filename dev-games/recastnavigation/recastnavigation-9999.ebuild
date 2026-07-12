@@ -3,6 +3,8 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
+
 CXX_STANDARD=20
 
 inherit libstdcxx-compat
@@ -15,7 +17,11 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}"
 )
 
-inherit check-compiler-switch cmake flag-o-matic git-r3 libcxx-slot libstdcxx-slot multilib-minimal toolchain-funcs
+CHKL_TIMESTAMPS=(
+	"media-libs/libsdl2-9999"
+)
+
+inherit cflags-hardened check-compiler-switch chkl cmake flag-o-matic git-r3 libcxx-slot libstdcxx-slot multilib-minimal secure-version toolchain-funcs
 
 if [[ ${PV} =~ "9999" ]] ; then
 	FALLBACK_COMMIT="9f4ce64458dfae86e1239c525ddc219c4e9e06f1"
@@ -56,7 +62,7 @@ REQUIRED_USE+="
 RDEPEND+="
 	virtual/libc:*
 	demo? (
-		>=media-libs/libsdl2-2.0.20[${MULTILIB_USEDEP},haptic,opengl,wayland?,X?]
+		>=media-libs/libsdl2-${LIBSDL2_PV}:=[${MULTILIB_USEDEP},haptic,opengl,wayland?,X?]
 		virtual/opengl:*[${MULTILIB_USEDEP}]
 	)
 "
@@ -132,6 +138,9 @@ src_configure() {
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
+
+	chkl_check_many_timestamps
+	cflags-hardened_append
 
 	configure_abi() {
 		local lib_type
