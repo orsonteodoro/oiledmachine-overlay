@@ -8,7 +8,7 @@ EAPI=8
 # 15.0.1 -xCOMMON-AVX512
 
 # For requirements see
-# https://github.com/RenderKit/embree/blob/v4.4.0/scripts/cmake-presets/os.json
+# https://github.com/RenderKit/embree/tree/v4.4.1#linux-and-macos
 
 ARM_CPU_FLAGS=(
 	"neon:neon"
@@ -17,8 +17,6 @@ ARM_CPU_FLAGS=(
 CLANG_PV="14"
 GCC_PV="11"
 CMAKE_BUILD_TYPE="Release"
-EGIT_COMMIT="4.3.2-blender"
-IMAGEMAGICK_PV="6.9.11.60"
 ONETBB_SLOT="0"
 PANDOC_PV="2.9.2.1"
 PYTHON_COMPAT=( "python3_"{10..12} )
@@ -45,11 +43,16 @@ CPU_FLAGS=(
 	${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
 )
 
-inherit check-compiler-switch cmake flag-o-matic linux-info python-r1 sandbox-changes toolchain-funcs uopts
+CHKL_TIMESTAMPS=(
+	"dev-cpp/tbb-9999"
+	"media-libs/glfw-9999"
+)
+
+inherit check-compiler-switch chkl cmake flag-o-matic linux-info python-r1 sandbox-changes secure-version toolchain-funcs uopts
 
 S="${WORKDIR}/embree-${PV}"
 SRC_URI="
-https://github.com/RenderKit/embree/archive/refs/tags/v${EGIT_COMMIT}.tar.gz
+https://github.com/RenderKit/embree/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 
@@ -83,6 +86,7 @@ REQUIRED_USE+="
 	^^ (
 		clang
 		gcc
+		sycl
 	)
 	cpu_flags_x86_sse4_2? (
 		cpu_flags_x86_sse2
@@ -125,26 +129,29 @@ REQUIRED_USE+="
 # https://github.com/embree/embree/blob/v3.13.4/common/cmake/check_isa.cpp
 # See .gitlab-ci.yml (track: release-linux-x64-Release)
 RDEPEND+="
-	>=media-libs/glfw-3.3.6
-	dev-libs/level-zero
-	virtual/opengl
+	>=dev-libs/level-zero-${LEVEL_ZERO_PV}:=
+	>=media-libs/glfw-${GLFW_PV}:=
+	virtual/opengl:*
 	tbb? (
-		>=dev-cpp/tbb-2021.12.0:${ONETBB_SLOT}
-		dev-cpp/tbb:=
+		>=dev-cpp/tbb-${TBB_PV}:=
 	)
 "
 DEPEND+="
 	${RDEPEND}
 "
+# The overlay don't support DPC++ because part of the stack is closed source.
 # For DPC++ version, see "oneAPI DPC++/C++ Compiler" row in README.md
+# For SOVERSION, see
+# https://github.com/intel/llvm/blob/v6.2.0/sycl/CMakeLists.txt#L93
+# https://github.com/intel/llvm/blob/nightly-2025-10-31/sycl/CMakeLists.txt#L93
 BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-build/cmake-3.23.0
 	>=dev-python/sympy-1.9[${PYTHON_USEDEP}]
-	virtual/numpy[${PYTHON_USEDEP}]
+	virtual/numpy:=[${PYTHON_USEDEP}]
 	virtual/pkgconfig
 	clang? (
-		>=llvm-core/clang-${CLANG_PV}
+		>=llvm-core/clang-${CLANG_PV}:=
 	)
 	doc? (
 		>=app-text/pandoc-${PANDOC_PV}
@@ -159,17 +166,22 @@ BDEPEND+="
 		>=media-gfx/xfig-3.2.8
 	)
 	gcc? (
-		>=sys-devel/gcc-${GCC_PV}
+		>=sys-devel/gcc-${GCC_PV}:=
 	)
 	ispc? (
-		>=dev-lang/ispc-1.23.0
+		>=dev-lang/ispc-1.22.0:=
 	)
 	pgo? (
 		x11-base/xorg-server[xvfb]
 		x11-apps/xhost
 	)
 	sycl? (
-		>=sys-devel/DPC++-2023.10.26:0/7
+		sys-devel/DPC++:=
+		|| (
+			>=sys-devel/DPC++-6.2.0:0/8
+			=sys-devel/DPC++-2024*:0/8
+			=sys-devel/DPC++-2025*:0/8
+		)
 	)
 	test? (
 		>=dev-cpp/benchmark-1.6.1
@@ -193,6 +205,14 @@ pkg_setup() {
 			&& ! grep -q "sse2" "${BROOT}/proc/cpuinfo" ; then
 			ewarn "You need a CPU with at least sse2 support."
 		fi
+	fi
+
+	if use sycl ; then
+		:
+	elif tc-is-clang ; then
+		use clang || die "Enable the clang USE flag to continue"
+	elif tc-is-gcc ; then
+		use gcc || die "Enable the gcc USE flag to continue"
 	fi
 
 	# This resolves multiple installed compilers or multiple version scenario.
@@ -263,6 +283,7 @@ _src_configure_compiler() {
 }
 
 _src_configure() {
+	chkl_check_many_timestamps
 einfo
 einfo "PGO PHASE:  ${PGO_PHASE}"
 einfo
