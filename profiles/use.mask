@@ -49,3 +49,6 @@ mng
 
 # The last release of aalib was in 2001.
 aalib
+
+# The last release was in 2017.
+lzo
