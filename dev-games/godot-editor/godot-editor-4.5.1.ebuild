@@ -883,6 +883,7 @@ src_configure() {
 eerror "Switch to >=sys-devel/gcc-${GCC_PV}"
 			die
 		fi
+		use gcc || die "Enable the gcc USE flag to continue"
 	fi
 	if tc-is-clang ; then
 		local clang_pv=$(clang-fullversion)
@@ -891,6 +892,7 @@ eerror "Switch to >=sys-devel/gcc-${GCC_PV}"
 eerror "Switch to >=llvm-core/clang-${clang_pv_min}"
 			die
 		fi
+		use clang || die "Enable the clang USE flag to continue"
 	fi
 	if use portable ; then
 		strip-flags
