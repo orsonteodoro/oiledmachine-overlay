@@ -21,7 +21,7 @@ fi
 inherit cflags-hardened check-compiler-switch multilib-minimal
 
 if [[ ${PV} == 9999 ]] ; then
-	FALLBACK_COMMIT="f153ef257a8e8901d8f8ed96fd1a2467806e8755"
+	FALLBACK_COMMIT="f5dfc96063fef2d9c5446d0733867d899ef9b942"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://sourceware.org/git/bzip2"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -40,7 +40,7 @@ SLOT="0/1" # subslot = SONAME
 
 IUSE+="
 static static-libs
-ebuild_revision_3
+ebuild_revision_4
 "
 PDEPEND="
 	app-alternatives/bzip2
