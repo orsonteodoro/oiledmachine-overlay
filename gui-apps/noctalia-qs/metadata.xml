@@ -24,7 +24,7 @@
       Enable <pkg>gui-libs/greetd</pkg> integration
     </flag>
     <flag name="hyprland">
-      Enable hyprland specific integrations
+      Enable hyprland specific integrations such as the click to switch workspaces widget
     </flag>
     <flag name="hyprland-ipc">
       Enable Hyprland IPC support.
