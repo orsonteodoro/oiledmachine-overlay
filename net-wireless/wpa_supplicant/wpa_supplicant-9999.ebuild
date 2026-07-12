@@ -3,15 +3,16 @@
 
 EAPI=8
 
-# See also https://git.w1.fi/cgit/hostap/
+# See also https://git.w1.fi/cgit/hostap/log/
 
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="AB CRSH DOS CE HO IA IL IO IU IV ML NPD OOBR PE"
 
 CHKL_TIMESTAMPS=(
-	"sys-apps/dbus-9999"
 	"dev-qt/qtbase-6.9999"
 	"dev-qt/qtsvg-6.9999"
+	"sys-apps/dbus-9999"
+	"sys-libs/readline-9999"
 )
 
 inherit cflags-hardened chkl desktop linux-info qmake-utils readme.gentoo-r1 secure-version systemd toolchain-funcs
@@ -21,7 +22,7 @@ HOMEPAGE="https://w1.fi/wpa_supplicant/"
 LICENSE="|| ( GPL-2 BSD )"
 
 if [ "${PV}" = "9999" ]; then
-	FALLBACK_COMMIT="890d573a18647feb71b08031a2bda41682ed3c6e"
+	FALLBACK_COMMIT="74718c75f668f3436b95122bb99bfc71f40e63ce"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://w1.fi/hostap.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -34,7 +35,10 @@ else
 fi
 
 SLOT="0"
-IUSE+=" +ap broadcom-sta dbus eap-sim eapol-test +fils gui macsec +mbo +mesh p2p privsep readline selinux smartcard tkip uncommon-eap-types wep wps"
+IUSE+="
++ap broadcom-sta dbus eap-sim eapol-test +fils gui macsec +mbo +mesh p2p privsep readline selinux smartcard tkip uncommon-eap-types wep wps
+ebuild_revision_1
+"
 
 # CONFIG_PRIVSEP=y does not have sufficient support for the new driver
 # interface functions used for MACsec, so this combination cannot be used
@@ -51,8 +55,8 @@ DEPEND="
 	$(secure-version_gen_openssl_depends)
 	dbus? ( >=sys-apps/dbus-${DBUS_PV}:= )
 	kernel_linux? (
-		>=dev-libs/libnl-3.2:3=
-		eap-sim? ( sys-apps/pcsc-lite:= )
+		>=dev-libs/libnl-${LIBNL_PV}:=
+		eap-sim? ( >=sys-apps/pcsc-lite-${PCSC_LITE_PV}:= )
 	)
 	!kernel_linux? ( net-libs/libpcap:= )
 	gui? (
@@ -60,8 +64,8 @@ DEPEND="
 		>=dev-qt/qtsvg-${QTBASE6_PV}:6=
 	)
 	readline? (
-		sys-libs/ncurses:0=
-		sys-libs/readline:0=
+		>=sys-libs/ncurses-${NCURSES_PV}:=
+		>=sys-libs/readline-${READLINE_PV}:=
 	)
 "
 RDEPEND="${DEPEND}
