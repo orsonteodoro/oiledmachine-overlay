@@ -246,7 +246,13 @@ SECURE_TIMESTAMP["media_libs_libvpx_9999"]="Wed, May 27, 2026 18:14:29"
 SECURE_TIMESTAMP["media_libs_libyuv_9999"]="Jun 05, 2026 6:38 PM PDT"
 SECURE_TIMESTAMP["media_libs_libwmf_9999"]="May 15, 2026 12:51 AM PDT"
 SECURE_TIMESTAMP["media_libs_lv2_9999"]="Sep 28, 2025 4:27 PM PDT"
-SECURE_TIMESTAMP["media_libs_mesa_9999"]="2026-07-12 12:21:54 +00:00" # Use the commit's feed to get the timestamp because the commit log HTML interface is inconsistent.
+
+# Use the commit's feed to get the monotonic timestamp because the commit log
+# HTML interface is inconsistent.
+# The feed is buried at the 3 dots top right of the commit log.
+# https://gitlab.freedesktop.org/mesa/mesa/-/commits/main?format=atom
+SECURE_TIMESTAMP["media_libs_mesa_9999"]="2026-07-12 12:21:54 +00:00"
+
 SECURE_TIMESTAMP["media_libs_opencv_4_9999"]="Jun 20, 2026 3:01 AM PDT"
 SECURE_TIMESTAMP["media_libs_opencv_5_9999"]="Jun 21, 2026 4:39 PM PDT"
 SECURE_TIMESTAMP["media_libs_openexr_9999"]="Jun 22, 2026 6:25 AM PDT"
