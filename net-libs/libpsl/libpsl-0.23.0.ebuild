@@ -11,7 +11,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/icu-79.0.9999"
 )
 
-inherit chkl meson-multilib python-any-r1 secure-version
+inherit cflags-hardened chkl meson-multilib python-any-r1 secure-version
 
 DESCRIPTION="C library for the Public Suffix List"
 HOMEPAGE="https://github.com/rockdaboot/libpsl"
@@ -20,7 +20,10 @@ SRC_URI="https://github.com/rockdaboot/${PN}/releases/download/${PV}/${P}.tar.gz
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~arm64-macos ~x64-macos ~x64-solaris"
-IUSE="icu +idn test static-libs"
+IUSE="
+icu +idn test static-libs
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 RDEPEND="
