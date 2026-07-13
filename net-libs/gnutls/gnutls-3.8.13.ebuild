@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# This ebuild fork uses AI inference for clarification and synthetic data.
+
 # 32-bit breaks with asan and ubsan sanitizers on
 CFLAGS_HARDENED_ASSEMBLERS="gas inline"
 CFLAGS_HARDENED_CI_SANITIZERS="asan lsan ubsan"
@@ -113,6 +115,21 @@ multilib_src_configure() {
 	# Prevent static-libs IR mismatch.
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
+	fi
+
+	if use tls-heartbeat ; then
+ewarn "TLS heartbeat extension:  Y"
+ewarn "Estimated CVSS severity:  5.0-7.5"
+ewarn "Vulnerable build:  Y"
+ewarn "Denial of Service:  Y"
+ewarn "Information disclosure:  Y"
+ewarn "Disable the tls-heartbeat USE flag for ${CATEGORY}/${P} to harden the build."
+	else
+einfo "TLS heartbeat extension:  N"
+einfo "Estimated CVSS severity:  0.0"
+einfo "Vulnerable build:  N"
+einfo "Denial of Service:  N"
+einfo "Information disclosure:  N"
 	fi
 
 	cflags-hardened_append
