@@ -3,12 +3,12 @@ VER=${@}
 
 main() {
 	if [[ -z "${VER}" ]] ; then
-		echo "Arg 1 must set to the scx version"
+		echo "Arg 1 must set to the scx-loader version"
 		exit 1
 	fi
 
-	local d_src_root="/var/tmp/portage/sys-kernel/scx-${VER}/work/scx-${VER}"
-	local d_dest="/usr/local/oiledmachine-overlay/sys-kernel/scx/files/${VER}"
+	local d_src_root="/var/tmp/portage/sys-kernel/scx-loader-${VER}/work/scx-loader-${VER}"
+	local d_dest="/usr/local/oiledmachine-overlay/sys-kernel/scx-loader/files/${VER}"
 	pushd "${d_src_root}"
 		for x in $(find . -name "Cargo.*") ; do
 			local d=$(dirname "${x}")

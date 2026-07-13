@@ -365,7 +365,7 @@ SECURE_TIMESTAMP["sys_libs_libcap_9999"]="Jun 19, 2026 06:04:20 -0700"
 SECURE_TIMESTAMP["sys_libs_libseccomp_9999"]="Jan 23, 2025 4:35 PM PST"
 SECURE_TIMESTAMP["sys_libs_libselinux_9999"]="Jun 23, 2026 6:50 AM PDT"
 SECURE_TIMESTAMP["sys_libs_libunwind_9999"]="Jun 19, 2026 9:44 AM PDT"
-SECURE_TIMESTAMP["sys_libs_readline_9999"]="2025-12-10 11:36:18 -0500"
+SECURE_TIMESTAMP["sys_libs_readline_9999"]="2025-12-10 8:10 AM PST"
 SECURE_TIMESTAMP["sys_libs_pam_9999"]="Jun 30, 2026 3:00 AM PDT"
 
 #

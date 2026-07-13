@@ -1,0 +1,39 @@
+[package]
+name = "scx_loader"
+version = "1.1.2"
+authors = ["Vladislav Nepogodin <vnepogodin@cachyos.org>"]
+edition = "2021"
+description = "DBUS on-demand loader of sched-ext schedulers"
+license = "GPL-2.0-only"
+
+[dependencies]
+anyhow = "1.0.103"
+clap = { version = "4.6.1", features = ["derive", "env", "unicode", "wrap_help"] }
+colored = "3.1.1"
+ctrlc = { version = "3.5", features = ["termination"] }
+log = "0.4.33"
+nix = { features = ["process", "signal"], default-features = false, version = "0.31.3" }
+serde = { version = "1.0.228", features = ["derive"] }
+sysinfo = "0.39.5"
+tokio = { version = "1.52.3", features = ["macros", "sync", "rt-multi-thread", "process"] }
+tokio-util = "0.7.18"
+toml = "1.1.2"
+zbus = { version = "5.16.0", features = ["tokio"], default-features = false }
+zbus_polkit = { version = "5.0.0", features = ["tokio"], default-features = false }
+zvariant = "5.12"
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "scx_loader"
+path = "src/main.rs"
+
+[package.metadata.install-files]
+# [verbose name] -> { target = "src location", dest = "destination with annotated env vars" }
+dbus-policy = { target = "configs/org.scx.Loader.conf", dest = "$datadir/dbus-1/system.d/org.scx.Loader.conf" }
+dbus-interface = { target = "configs/org.scx.Loader.xml", dest = "$datadir/dbus-1/interfaces/org.scx.Loader.xml" }
+polkit-policy = { target = "configs/org.scx.Loader.policy", dest = "$datadir/polkit-1/actions/org.scx.Loader.policy" }
+example-config = { target = "configs/scx_loader.toml", dest = "$datadir/scx_loader/config.toml" }
+dbus-service = { target = "services/org.scx.Loader.service", dest = "$datadir/dbus-1/system-services/org.scx.Loader.service" }
+systemd-service = { target = "services/scx_loader.service", dest = "$libdir/systemd/system/scx_loader.service" }

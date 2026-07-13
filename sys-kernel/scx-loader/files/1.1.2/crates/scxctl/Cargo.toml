@@ -1,0 +1,20 @@
+[[bin]]
+name = "scxctl"
+
+[package]
+name = "scxctl"
+version = "1.1.2"
+edition = "2021"
+description = "A cli dbus client for scx_loader"
+authors = ["Joe Maples <joe@maples.dev>"]
+repository = "https://github.com/sched-ext/scx-loader"
+readme = "README.md"
+keywords = ["linux", "scx", "scx_scheds", "scx_loader", "sched_ext"]
+categories = ["command-line-utilities"]
+license = "GPL-2.0-only"
+
+[dependencies]
+clap = { version = "4.6.1", features = ["derive"] }
+colored = "3.1.1"
+zbus = "5.16.0"
+scx_loader = { path = "../scx_loader", version="1.1.2" }
