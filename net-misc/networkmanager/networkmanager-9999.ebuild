@@ -122,7 +122,7 @@ COMMON_DEPEND="
 	ovs? ( >=dev-libs/jansson-${JANSSON_PV}:= )
 	policykit? ( >=sys-auth/polkit-${POLKIT_PV}:= )
 	ppp? ( >=net-dialup/ppp-2.4.5:=[ipv6(+)] )
-	psl? ( net-libs/libpsl:= )
+	psl? ( >=net-libs/libpsl-${LIBPSL_PV}:= )
 	resolvconf? ( virtual/resolvconf:* )
 	selinux? (
 		sec-policy/selinux-networkmanager:*
