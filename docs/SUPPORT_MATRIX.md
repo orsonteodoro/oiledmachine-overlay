@@ -88,9 +88,9 @@ exist in build files.
 | Rust 1.92.0                     | Available                             | U26 (1.92.0)                                       |
 | Rust 1.93.1 [C]                 | Available                             | G23 (1.93.1), U26 (1.93.1)                         |
 | Rust 1.94.1                     | Available                             |                                                    |
-| Rust 1.95.0                     | Available                             | F43 (1.95.0)                                       |
-| Rust 1.96.0 [C]                 | Available                             | F44 (1.96.0)                                       |
-| Rust-9999 (1.98.0-nightly) [C]  | Limited support                       |                                                    |
+| Rust 1.95.0                     | Available                             |                                                    |
+| Rust 1.96.1 [C]                 | Available                             | F43 (1.96.1), F44 (1.96.1)                         |
+| Rust-9999 (1.99.0-nightly) [C]  | Limited support                       |                                                    |
 
 For non C/C++ langages (e.g. Python or JS) the Rust slot rules for version
 pinning are as follows:
