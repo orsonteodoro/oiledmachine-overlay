@@ -13,12 +13,20 @@ PYTHON_COMPAT=( python3_{10..14} )
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/jansson-9999"
+	"dev-libs/libbpf-9999"
+	"dev-libs/libedit-99999999"
+	"dev-libs/newt-9999"
+	"net-firewall/iptables-9999"
+	"net-firewall/nftables-9999"
 	"net-misc/curl-9999"
 	"net-misc/dhcpcd-9999"
+	"net-misc/iputils-99999999"
 	"sys-auth/polkit-9999"
+	"sys-apps/dbus-9999"
 	"sys-apps/systemd-9999"
 	"sys-auth/elogind-257.9999"
 	"sys-libs/libselinux-9999"
+	"sys-libs/readline-9999"
 	"sys-process/audit-9999"
 )
 
@@ -81,19 +89,19 @@ COMMON_DEPEND="
 	!net-misc/dhcp
 	sys-apps/util-linux:=[${MULTILIB_USEDEP}]
 	>=virtual/libudev-175:=[${MULTILIB_USEDEP}]
-	sys-apps/dbus:=[${MULTILIB_USEDEP}]
-	net-libs/libndp:=
+	>=sys-apps/dbus-${DBUS_PV}:=[${MULTILIB_USEDEP}]
+	>=net-libs/libndp-${LIBNDP_PV}:=
 	>=dev-libs/glib-${GLIB_PV}:=[${MULTILIB_USEDEP}]
 	audit? ( >=sys-process/audit-${AUDIT_PV}:= )
 	bluetooth? ( >=net-wireless/bluez-${BLUEZ_PV}:= )
 	clat? (
-		>=dev-libs/libbpf-1.3.0:=
+		>=dev-libs/libbpf-${LIBBPF_PV}:=
 	)
 	concheck? ( >=net-misc/curl-${CURL_PV}:= )
 	connection-sharing? (
-		net-dns/dnsmasq:=[dbus,dhcp]
-		iptables? ( net-firewall/iptables:= )
-		nftables? ( net-firewall/nftables:= )
+		>=net-dns/dnsmasq-${DNSMASQ_PV}:=[dbus,dhcp]
+		iptables? ( >=net-firewall/iptables-${IPTABLES_PV}:= )
+		nftables? ( >=net-firewall/nftables-${NFTABLES_PV}:= )
 	)
 	dhcpcd? ( >=net-misc/dhcpcd-${DHCPCD_PV}:= )
 	elogind? ( >=sys-auth/elogind-${ELOGIND_PV}:= )
@@ -110,7 +118,7 @@ COMMON_DEPEND="
 		>=dev-libs/nspr-${NSPR_PV}:=[${MULTILIB_USEDEP}]
 		>=dev-libs/nss-${NSS_PV}:=[${MULTILIB_USEDEP}]
 	)
-	ofono? ( net-misc/ofono:= )
+	ofono? ( >=net-misc/ofono-${OFONO_PV}:= )
 	ovs? ( >=dev-libs/jansson-${JANSSON_PV}:= )
 	policykit? ( >=sys-auth/polkit-${POLKIT_PV}:= )
 	ppp? ( >=net-dialup/ppp-2.4.5:=[ipv6(+)] )
@@ -123,26 +131,32 @@ COMMON_DEPEND="
 	systemd? ( >=sys-apps/systemd-${SYSTEMD_PV}:= )
 	teamd? (
 		>=dev-libs/jansson-${JANSSON_PV}:=
-		>=net-misc/libteam-1.9:=
+		>=net-misc/libteam-${LIBTEAM_PV}:=
 	)
 	tools? (
 		>=dev-libs/jansson-${JANSSON_PV}:=
-		>=dev-libs/newt-0.52.15:=
-		libedit? ( dev-libs/libedit:= )
-		!libedit? ( sys-libs/readline:= )
+		>=dev-libs/newt-${NEWT_PV}:=
+		libedit? ( >=dev-libs/libedit-${LIBEDIT_PV}:= )
+		!libedit? ( >=sys-libs/readline-${READLINE_PV}:= )
 	)
 "
 RDEPEND="${COMMON_DEPEND}
 	acct-group/plugdev:*
 	arping? (
-		net-analyzer/arping:=
+		>=net-analyzer/arping-${ARPING_PV}:=
 	)
 	iputils? (
-		net-misc/iputils:=[arping(+)]
+		>=net-misc/iputils-${IPUTILS_PV}:=[arping(+)]
 	)
 	wifi? (
-		!iwd? ( >=net-wireless/wpa_supplicant-${WPA_SUPPLICANT_PV}:=[dbus] )
-		iwd? ( >=net-wireless/iwd-${IWD_PV}:= )
+		!iwd? (
+			!net-wireless/iwd
+			>=net-wireless/wpa_supplicant-${WPA_SUPPLICANT_PV}:=[dbus]
+		)
+		iwd? (
+			!net-wireless/wpa_supplicant
+			>=net-wireless/iwd-${IWD_PV}:=
+		)
 	)
 "
 DEPEND="${COMMON_DEPEND}
