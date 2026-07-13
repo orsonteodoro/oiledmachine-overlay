@@ -133,7 +133,7 @@ ${PASSWORD_MANAGER_IUSE[@]}
 ${PROFILES_IUSE[@]}
 ${SANDBOX_IUSE[@]}
 +enforce
-ebuild_revision_17
+ebuild_revision_18
 "
 REQUIRED_USE="
 	^^ (

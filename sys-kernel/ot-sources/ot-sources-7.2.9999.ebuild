@@ -9,14 +9,14 @@ EAPI=8
 # See also https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/
 
 GENPATCHES_FALLBACK_COMMIT="d4fa92430e875432c3a61bb3abd9b6e68ea9fcbd" # 2026-06-04 18:26:32 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="dd3210c47e8d3ac6b4e9141fc68acc03b38c0ba3" # 2026-07-10 19:07:24 -0700 @ Merge tag 'regulator-fix-v7.2-rc2'
+LINUX_SOURCES_FALLBACK_COMMIT="940d91caf09cc849ac514043bbf5c0e1b43aea0b" # 2026-07-12 12:43:26 -0700 @ Merge tag 'staging-7.2-rc3'
 RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
 # https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=7.2
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
-EBUILD_REV="ebuild_revision_5"
+EBUILD_REV="ebuild_revision_6"
 GENPATCHES_VER="live" # can be live only when 9999
 PATCH_PROJC_VER="7.1-r0"
 PATCH_RT_VER="7.1.1-rt2"
