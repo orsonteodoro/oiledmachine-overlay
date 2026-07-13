@@ -1,0 +1,13 @@
+diff '--color=auto' -urp mbedtls-4.2.0.orig/library/CMakeLists.txt mbedtls-4.2.0/library/CMakeLists.txt
+--- mbedtls-4.2.0.orig/library/CMakeLists.txt	2026-07-02 08:11:00.201813700 -0700
++++ mbedtls-4.2.0/library/CMakeLists.txt	2026-07-12 17:45:37.756845746 -0700
+@@ -253,7 +253,8 @@ foreach(target IN LISTS target_libraries
+         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+-        PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)
++        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
++    )
+ endforeach(target)
+ 
+ set(lib_target "${MBEDTLS_TARGET_PREFIX}lib")

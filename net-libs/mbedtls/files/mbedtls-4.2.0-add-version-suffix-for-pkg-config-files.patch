@@ -1,0 +1,63 @@
+diff '--color=auto' -urp mbedtls-4.2.0.orig/pkgconfig/CMakeLists.txt mbedtls-4.2.0/pkgconfig/CMakeLists.txt
+--- mbedtls-4.2.0.orig/pkgconfig/CMakeLists.txt	2026-06-23 13:06:19.541093300 -0700
++++ mbedtls-4.2.0/pkgconfig/CMakeLists.txt	2026-07-12 17:59:48.132448848 -0700
+@@ -8,18 +8,18 @@ if(NOT DISABLE_PACKAGE_CONFIG_AND_INSTAL
+   set(PKGCONFIG_PROJECT_DESCRIPTION "Mbed TLS is a C library that implements cryptographic primitives, X.509 certificate manipulation and the SSL/TLS and DTLS protocols. Its small code footprint makes it suitable for embedded systems.")
+   set(PKGCONFIG_PROJECT_HOMEPAGE_URL "https://www.trustedfirmware.org/projects/mbed-tls/")
+ 
+-  configure_file(mbedcrypto.pc.in mbedcrypto.pc @ONLY)
++  configure_file(mbedcrypto.pc.in mbedcrypto${PROJECT_VERSION_MAJOR}.pc @ONLY)
+     install(FILES
+-    ${CMAKE_CURRENT_BINARY_DIR}/mbedcrypto.pc
++    ${CMAKE_CURRENT_BINARY_DIR}/mbedcrypto${PROJECT_VERSION_MAJOR}.pc
+     DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+ 
+-  configure_file(mbedtls.pc.in mbedtls.pc @ONLY)
++  configure_file(mbedtls.pc.in mbedtls${PROJECT_VERSION_MAJOR}.pc @ONLY)
+     install(FILES
+-    ${CMAKE_CURRENT_BINARY_DIR}/mbedtls.pc
++    ${CMAKE_CURRENT_BINARY_DIR}/mbedtls${PROJECT_VERSION_MAJOR}.pc
+     DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+ 
+-  configure_file(mbedx509.pc.in mbedx509.pc @ONLY)
++  configure_file(mbedx509.pc.in mbedx509${PROJECT_VERSION_MAJOR}.pc @ONLY)
+     install(FILES
+-    ${CMAKE_CURRENT_BINARY_DIR}/mbedx509.pc
++    ${CMAKE_CURRENT_BINARY_DIR}/mbedx509${PROJECT_VERSION_MAJOR}.pc
+     DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+ endif()
+diff '--color=auto' -urp mbedtls-4.2.0.orig/pkgconfig/mbedcrypto.pc.in mbedtls-4.2.0/pkgconfig/mbedcrypto.pc.in
+--- mbedtls-4.2.0.orig/pkgconfig/mbedcrypto.pc.in	2026-07-02 08:11:00.220127300 -0700
++++ mbedtls-4.2.0/pkgconfig/mbedcrypto.pc.in	2026-07-12 18:00:46.385354334 -0700
+@@ -7,4 +7,4 @@ Description: @PKGCONFIG_PROJECT_DESCRIPT
+ URL: @PKGCONFIG_PROJECT_HOMEPAGE_URL@
+ Version: @PROJECT_VERSION@
+ Cflags: -I"${includedir}"
+-Libs: -L"${libdir}" -ltfpsacrypto
++Libs: -L"${libdir}" -ltfpsacrypto@PROJECT_VERSION_MAJOR@
+Only in mbedtls-4.2.0/pkgconfig: mbedcrypto.pc.in.orig
+Only in mbedtls-4.2.0/pkgconfig: mbedcrypto.pc.in.rej
+diff '--color=auto' -urp mbedtls-4.2.0.orig/pkgconfig/mbedtls.pc.in mbedtls-4.2.0/pkgconfig/mbedtls.pc.in
+--- mbedtls-4.2.0.orig/pkgconfig/mbedtls.pc.in	2026-06-23 13:06:19.541480000 -0700
++++ mbedtls-4.2.0/pkgconfig/mbedtls.pc.in	2026-07-12 17:59:48.132795657 -0700
+@@ -6,6 +6,6 @@ Name: @PROJECT_NAME@
+ Description: @PKGCONFIG_PROJECT_DESCRIPTION@
+ URL: @PKGCONFIG_PROJECT_HOMEPAGE_URL@
+ Version: @PROJECT_VERSION@
+-Requires.private: mbedcrypto mbedx509
++Requires.private: mbedcrypto@PROJECT_VERSION_MAJOR@ mbedx509@PROJECT_VERSION_MAJOR@
+ Cflags: -I"${includedir}"
+-Libs: -L"${libdir}" -lmbedtls
++Libs: -L"${libdir}" -lmbedtls@PROJECT_VERSION_MAJOR@
+diff '--color=auto' -urp mbedtls-4.2.0.orig/pkgconfig/mbedx509.pc.in mbedtls-4.2.0/pkgconfig/mbedx509.pc.in
+--- mbedtls-4.2.0.orig/pkgconfig/mbedx509.pc.in	2026-06-23 13:06:19.541717300 -0700
++++ mbedtls-4.2.0/pkgconfig/mbedx509.pc.in	2026-07-12 17:59:48.132882349 -0700
+@@ -6,6 +6,6 @@ Name: @PROJECT_NAME@
+ Description: @PKGCONFIG_PROJECT_DESCRIPTION@
+ URL: @PKGCONFIG_PROJECT_HOMEPAGE_URL@
+ Version: @PROJECT_VERSION@
+-Requires.private: mbedcrypto
++Requires.private: mbedcrypto@PROJECT_VERSION_MAJOR@
+ Cflags: -I"${includedir}"
+-Libs: -L"${libdir}" -lmbedx509
++Libs: -L"${libdir}" -lmbedx509@PROJECT_VERSION_MAJOR@

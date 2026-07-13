@@ -1,0 +1,75 @@
+diff '--color=auto' -urp mbedtls-4.2.0.orig/CMakeLists.txt mbedtls-4.2.0/CMakeLists.txt
+--- mbedtls-4.2.0.orig/CMakeLists.txt	2026-07-12 17:48:18.350480253 -0700
++++ mbedtls-4.2.0/CMakeLists.txt	2026-07-12 17:49:05.718540991 -0700
+@@ -543,7 +543,7 @@ if(NOT DISABLE_PACKAGE_CONFIG_AND_INSTAL
+     install(
+         FILES "${CMAKE_CURRENT_BINARY_DIR}/cmake/MbedTLSConfig.cmake"
+               "${CMAKE_CURRENT_BINARY_DIR}/cmake/MbedTLSConfigVersion.cmake"
+-        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/MbedTLS")
++        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/MbedTLS-${PROJECT_VERSION_MAJOR}")
+ 
+     export(
+         EXPORT MbedTLSTargets
+@@ -553,7 +553,7 @@ if(NOT DISABLE_PACKAGE_CONFIG_AND_INSTAL
+     install(
+         EXPORT MbedTLSTargets
+         NAMESPACE MbedTLS::
+-        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/MbedTLS"
++        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/MbedTLS-${PROJECT_VERSION_MAJOR}"
+         FILE "MbedTLSTargets.cmake")
+ 
+     if(CMAKE_VERSION VERSION_GREATER 3.15 OR CMAKE_VERSION VERSION_EQUAL 3.15)
+diff '--color=auto' -urp mbedtls-4.2.0.orig/library/CMakeLists.txt mbedtls-4.2.0/library/CMakeLists.txt
+--- mbedtls-4.2.0.orig/library/CMakeLists.txt	2026-07-12 17:48:18.363289063 -0700
++++ mbedtls-4.2.0/library/CMakeLists.txt	2026-07-12 17:52:23.296637531 -0700
+@@ -194,13 +194,13 @@ if(USE_STATIC_MBEDTLS_LIBRARY)
+     add_library(${mbedx509_static_target} STATIC ${src_x509})
+     set_base_compile_options(${mbedx509_static_target})
+     target_compile_options(${mbedx509_static_target} PRIVATE ${LIBS_C_FLAGS})
+-    set_target_properties(${mbedx509_static_target} PROPERTIES OUTPUT_NAME mbedx509)
++    set_target_properties(${mbedx509_static_target} PROPERTIES OUTPUT_NAME mbedx509${PROJECT_VERSION_MAJOR})
+     target_link_libraries(${mbedx509_static_target} PUBLIC ${libs} ${tfpsacrypto_static_target})
+ 
+     add_library(${mbedtls_static_target} STATIC ${src_tls})
+     set_base_compile_options(${mbedtls_static_target})
+     target_compile_options(${mbedtls_static_target} PRIVATE ${LIBS_C_FLAGS})
+-    set_target_properties(${mbedtls_static_target} PROPERTIES OUTPUT_NAME mbedtls)
++    set_target_properties(${mbedtls_static_target} PROPERTIES OUTPUT_NAME mbedtls${PROJECT_VERSION_MAJOR})
+     target_link_libraries(${mbedtls_static_target} PUBLIC ${libs} ${mbedx509_static_target})
+ 
+     if(GEN_FILES)
+@@ -216,12 +216,14 @@ if(USE_SHARED_MBEDTLS_LIBRARY)
+     set_base_compile_options(${mbedx509_target})
+     target_compile_options(${mbedx509_target} PRIVATE ${LIBS_C_FLAGS})
+     set_target_properties(${mbedx509_target} PROPERTIES VERSION ${MBEDTLS_VERSION} SOVERSION ${MBEDTLS_X509_SOVERSION})
++    set_target_properties(${mbedx509_target} PROPERTIES OUTPUT_NAME mbedx509${PROJECT_VERSION_MAJOR})
+     target_link_libraries(${mbedx509_target} PUBLIC ${libs} ${tfpsacrypto_target})
+ 
+     add_library(${mbedtls_target} SHARED ${src_tls})
+     set_base_compile_options(${mbedtls_target})
+     target_compile_options(${mbedtls_target} PRIVATE ${LIBS_C_FLAGS})
+     set_target_properties(${mbedtls_target} PROPERTIES VERSION ${MBEDTLS_VERSION} SOVERSION ${MBEDTLS_TLS_SOVERSION})
++    set_target_properties(${mbedtls_target} PROPERTIES OUTPUT_NAME mbedtls${PROJECT_VERSION_MAJOR})
+     target_link_libraries(${mbedtls_target} PUBLIC ${libs} ${mbedx509_target})
+ 
+     if(GEN_FILES)
+diff '--color=auto' -urp mbedtls-4.2.0.orig/tf-psa-crypto/core/CMakeLists.txt mbedtls-4.2.0/tf-psa-crypto/core/CMakeLists.txt
+--- mbedtls-4.2.0.orig/tf-psa-crypto/core/CMakeLists.txt	2026-06-23 13:06:39.923974000 -0700
++++ mbedtls-4.2.0/tf-psa-crypto/core/CMakeLists.txt	2026-07-12 17:57:56.342558757 -0700
+@@ -115,7 +115,7 @@ if(USE_STATIC_TF_PSA_CRYPTO_LIBRARY)
+         ${target_objects})
+     tf_psa_crypto_set_base_compile_options(${tfpsacrypto_static_target})
+     tf_psa_crypto_set_extra_compile_options(${tfpsacrypto_static_target})
+-    set_target_properties(${tfpsacrypto_static_target} PROPERTIES OUTPUT_NAME tfpsacrypto)
++    set_target_properties(${tfpsacrypto_static_target} PROPERTIES OUTPUT_NAME tfpsacrypto${PROJECT_VERSION_MAJOR})
+     target_link_libraries(${tfpsacrypto_static_target} PUBLIC ${libs})
+ 
+     if(GEN_FILES)
+@@ -139,6 +139,7 @@ if(USE_SHARED_TF_PSA_CRYPTO_LIBRARY)
+     tf_psa_crypto_set_base_compile_options(${tfpsacrypto_target})
+     tf_psa_crypto_set_extra_compile_options(${tfpsacrypto_target})
+     set_target_properties(${tfpsacrypto_target} PROPERTIES VERSION ${TF_PSA_CRYPTO_VERSION} SOVERSION ${TF_PSA_CRYPTO_SOVERSION})
++    set_target_properties(${tfpsacrypto_target} PROPERTIES OUTPUT_NAME tfpsacrypto${PROJECT_VERSION_MAJOR})
+     target_link_libraries(${tfpsacrypto_target} PUBLIC ${libs})
+ 
+     if(GEN_FILES)

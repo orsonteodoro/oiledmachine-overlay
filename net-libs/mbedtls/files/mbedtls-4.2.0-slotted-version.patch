@@ -1,0 +1,172 @@
+diff '--color=auto' -urp mbedtls-4.2.0.orig/CMakeLists.txt mbedtls-4.2.0/CMakeLists.txt
+--- mbedtls-4.2.0.orig/CMakeLists.txt	2026-07-12 18:54:25.583501748 -0700
++++ mbedtls-4.2.0/CMakeLists.txt	2026-07-12 18:54:41.761586173 -0700
+@@ -81,6 +81,12 @@ else()
+ endif()
+ 
+ option(DISABLE_PACKAGE_CONFIG_AND_INSTALL "Disable package configuration, target export and installation" ${MBEDTLS_AS_SUBPROJECT})
++option(ENABLE_SLOTTED_VERSION "Enable slotted installation in order to install multiple versions of Mbed TLS" OFF)
++
++set(VERSION_SUFFIX "")
++if(ENABLE_SLOTTED_VERSION)
++    set(VERSION_SUFFIX "-${PROJECT_VERSION_MAJOR}")
++endif()
+ 
+ if (CMAKE_C_SIMULATE_ID)
+     set(COMPILER_ID ${CMAKE_C_SIMULATE_ID})
+diff '--color=auto' -urp mbedtls-4.2.0.orig/library/CMakeLists.txt mbedtls-4.2.0/library/CMakeLists.txt
+--- mbedtls-4.2.0.orig/library/CMakeLists.txt	2026-07-12 18:54:25.584050361 -0700
++++ mbedtls-4.2.0/library/CMakeLists.txt	2026-07-12 19:00:46.037510797 -0700
+@@ -194,13 +194,13 @@ if(USE_STATIC_MBEDTLS_LIBRARY)
+     add_library(${mbedx509_static_target} STATIC ${src_x509})
+     set_base_compile_options(${mbedx509_static_target})
+     target_compile_options(${mbedx509_static_target} PRIVATE ${LIBS_C_FLAGS})
+-    set_target_properties(${mbedx509_static_target} PROPERTIES OUTPUT_NAME mbedx509${PROJECT_VERSION_MAJOR})
++    set_target_properties(${mbedx509_static_target} PROPERTIES OUTPUT_NAME mbedx509${VERSION_SUFFIX})
+     target_link_libraries(${mbedx509_static_target} PUBLIC ${libs} ${tfpsacrypto_static_target})
+ 
+     add_library(${mbedtls_static_target} STATIC ${src_tls})
+     set_base_compile_options(${mbedtls_static_target})
+     target_compile_options(${mbedtls_static_target} PRIVATE ${LIBS_C_FLAGS})
+-    set_target_properties(${mbedtls_static_target} PROPERTIES OUTPUT_NAME mbedtls${PROJECT_VERSION_MAJOR})
++    set_target_properties(${mbedtls_static_target} PROPERTIES OUTPUT_NAME mbedtls${VERSION_SUFFIX})
+     target_link_libraries(${mbedtls_static_target} PUBLIC ${libs} ${mbedx509_static_target})
+ 
+     if(GEN_FILES)
+@@ -216,14 +216,14 @@ if(USE_SHARED_MBEDTLS_LIBRARY)
+     set_base_compile_options(${mbedx509_target})
+     target_compile_options(${mbedx509_target} PRIVATE ${LIBS_C_FLAGS})
+     set_target_properties(${mbedx509_target} PROPERTIES VERSION ${MBEDTLS_VERSION} SOVERSION ${MBEDTLS_X509_SOVERSION})
+-    set_target_properties(${mbedx509_target} PROPERTIES OUTPUT_NAME mbedx509${PROJECT_VERSION_MAJOR})
++    set_target_properties(${mbedx509_target} PROPERTIES OUTPUT_NAME mbedx509${VERSION_SUFFIX})
+     target_link_libraries(${mbedx509_target} PUBLIC ${libs} ${tfpsacrypto_target})
+ 
+     add_library(${mbedtls_target} SHARED ${src_tls})
+     set_base_compile_options(${mbedtls_target})
+     target_compile_options(${mbedtls_target} PRIVATE ${LIBS_C_FLAGS})
+     set_target_properties(${mbedtls_target} PROPERTIES VERSION ${MBEDTLS_VERSION} SOVERSION ${MBEDTLS_TLS_SOVERSION})
+-    set_target_properties(${mbedtls_target} PROPERTIES OUTPUT_NAME mbedtls${PROJECT_VERSION_MAJOR})
++    set_target_properties(${mbedtls_target} PROPERTIES OUTPUT_NAME mbedtls${VERSION_SUFFIX})
+     target_link_libraries(${mbedtls_target} PUBLIC ${libs} ${mbedx509_target})
+ 
+     if(GEN_FILES)
+@@ -351,27 +351,27 @@ foreach(target IN LISTS tf_psa_crypto_li
+                       $<TARGET_LINKER_FILE_NAME:${target}>
+               COMMAND ${CMAKE_COMMAND} -E create_symlink
+                       $<TARGET_FILE_NAME:${target}>
+-                      libmbedcrypto.so.${MBEDTLS_VERSION}
++                      libmbedcrypto${VERSION_SUFFIX}.so.${MBEDTLS_VERSION}
+               COMMAND ${CMAKE_COMMAND} -E create_symlink
+-                      libmbedcrypto.so.${MBEDTLS_VERSION}
+-                      libmbedcrypto.so.${MBEDTLS_CRYPTO_SOVERSION}
++                      libmbedcrypto${VERSION_SUFFIX}.so.${MBEDTLS_VERSION}
++                      libmbedcrypto${VERSION_SUFFIX}.so.${MBEDTLS_CRYPTO_SOVERSION}
+               COMMAND ${CMAKE_COMMAND} -E create_symlink
+-                      libmbedcrypto.so.${MBEDTLS_CRYPTO_SOVERSION}
+-                      libmbedcrypto.so
++                      libmbedcrypto${VERSION_SUFFIX}.so.${MBEDTLS_CRYPTO_SOVERSION}
++                      libmbedcrypto${VERSION_SUFFIX}.so
+             )
+             install(FILES $<TARGET_FILE:${target}>
+                     DESTINATION ${CMAKE_INSTALL_LIBDIR}
+-                    RENAME "libmbedcrypto.so.${MBEDTLS_VERSION}"
++                    RENAME "libmbedcrypto${VERSION_SUFFIX}.so.${MBEDTLS_VERSION}"
+             )
+             install(CODE "
+                 set(_libdir \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}\")
+ 
+                 execute_process(COMMAND \"\${CMAKE_COMMAND}\" -E create_symlink
+-                                \"libmbedcrypto.so.${MBEDTLS_VERSION}\"
+-                                \${_libdir}/libmbedcrypto.so.${MBEDTLS_CRYPTO_SOVERSION})
++                                \"libmbedcrypto${VERSION_SUFFIX}.so.${MBEDTLS_VERSION}\"
++                                \${_libdir}/libmbedcrypto${VERSION_SUFFIX}.so.${MBEDTLS_CRYPTO_SOVERSION})
+                 execute_process(COMMAND \"\${CMAKE_COMMAND}\" -E create_symlink
+-                                \"libmbedcrypto.so.${MBEDTLS_CRYPTO_SOVERSION}\"
+-                                \${_libdir}/libmbedcrypto.so)
++                                \"libmbedcrypto${VERSION_SUFFIX}.so.${MBEDTLS_CRYPTO_SOVERSION}\"
++                                \${_libdir}/libmbedcrypto${VERSION_SUFFIX}.so)
+             ")
+         endif()
+     endif()
+diff '--color=auto' -urp mbedtls-4.2.0.orig/pkgconfig/CMakeLists.txt mbedtls-4.2.0/pkgconfig/CMakeLists.txt
+--- mbedtls-4.2.0.orig/pkgconfig/CMakeLists.txt	2026-07-12 18:54:25.592285247 -0700
++++ mbedtls-4.2.0/pkgconfig/CMakeLists.txt	2026-07-12 18:54:41.762044254 -0700
+@@ -8,18 +8,18 @@ if(NOT DISABLE_PACKAGE_CONFIG_AND_INSTAL
+   set(PKGCONFIG_PROJECT_DESCRIPTION "Mbed TLS is a C library that implements cryptographic primitives, X.509 certificate manipulation and the SSL/TLS and DTLS protocols. Its small code footprint makes it suitable for embedded systems.")
+   set(PKGCONFIG_PROJECT_HOMEPAGE_URL "https://www.trustedfirmware.org/projects/mbed-tls/")
+ 
+-  configure_file(mbedcrypto.pc.in mbedcrypto${PROJECT_VERSION_MAJOR}.pc @ONLY)
++  configure_file(mbedcrypto.pc.in mbedcrypto${VERSION_SUFFIX}.pc @ONLY)
+     install(FILES
+-    ${CMAKE_CURRENT_BINARY_DIR}/mbedcrypto${PROJECT_VERSION_MAJOR}.pc
++    ${CMAKE_CURRENT_BINARY_DIR}/mbedcrypto${VERSION_SUFFIX}.pc
+     DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+ 
+-  configure_file(mbedtls.pc.in mbedtls${PROJECT_VERSION_MAJOR}.pc @ONLY)
++  configure_file(mbedtls.pc.in mbedtls${VERSION_SUFFIX}.pc @ONLY)
+     install(FILES
+-    ${CMAKE_CURRENT_BINARY_DIR}/mbedtls${PROJECT_VERSION_MAJOR}.pc
++    ${CMAKE_CURRENT_BINARY_DIR}/mbedtls${VERSION_SUFFIX}.pc
+     DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+ 
+-  configure_file(mbedx509.pc.in mbedx509${PROJECT_VERSION_MAJOR}.pc @ONLY)
++  configure_file(mbedx509.pc.in mbedx509${VERSION_SUFFIX}.pc @ONLY)
+     install(FILES
+-    ${CMAKE_CURRENT_BINARY_DIR}/mbedx509${PROJECT_VERSION_MAJOR}.pc
++    ${CMAKE_CURRENT_BINARY_DIR}/mbedx509${VERSION_SUFFIX}.pc
+     DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+ endif()
+diff '--color=auto' -urp mbedtls-4.2.0.orig/pkgconfig/mbedcrypto.pc.in mbedtls-4.2.0/pkgconfig/mbedcrypto.pc.in
+--- mbedtls-4.2.0.orig/pkgconfig/mbedcrypto.pc.in	2026-07-12 18:54:25.592720530 -0700
++++ mbedtls-4.2.0/pkgconfig/mbedcrypto.pc.in	2026-07-12 18:54:41.762152521 -0700
+@@ -7,4 +7,4 @@ Description: @PKGCONFIG_PROJECT_DESCRIPT
+ URL: @PKGCONFIG_PROJECT_HOMEPAGE_URL@
+ Version: @PROJECT_VERSION@
+ Cflags: -I"${includedir}"
+-Libs: -L"${libdir}" -ltfpsacrypto@PROJECT_VERSION_MAJOR@
++Libs: -L"${libdir}" -ltfpsacrypto@VERSION_SUFFIX@
+diff '--color=auto' -urp mbedtls-4.2.0.orig/pkgconfig/mbedtls.pc.in mbedtls-4.2.0/pkgconfig/mbedtls.pc.in
+--- mbedtls-4.2.0.orig/pkgconfig/mbedtls.pc.in	2026-07-12 18:54:25.593052108 -0700
++++ mbedtls-4.2.0/pkgconfig/mbedtls.pc.in	2026-07-12 18:54:41.762251568 -0700
+@@ -6,6 +6,6 @@ Name: @PROJECT_NAME@
+ Description: @PKGCONFIG_PROJECT_DESCRIPTION@
+ URL: @PKGCONFIG_PROJECT_HOMEPAGE_URL@
+ Version: @PROJECT_VERSION@
+-Requires.private: mbedcrypto@PROJECT_VERSION_MAJOR@ mbedx509@PROJECT_VERSION_MAJOR@
++Requires.private: mbedcrypto@VERSION_SUFFIX@ mbedx509@VERSION_SUFFIX@
+ Cflags: -I"${includedir}"
+-Libs: -L"${libdir}" -lmbedtls@PROJECT_VERSION_MAJOR@
++Libs: -L"${libdir}" -lmbedtls@VERSION_SUFFIX@
+diff '--color=auto' -urp mbedtls-4.2.0.orig/pkgconfig/mbedx509.pc.in mbedtls-4.2.0/pkgconfig/mbedx509.pc.in
+--- mbedtls-4.2.0.orig/pkgconfig/mbedx509.pc.in	2026-07-12 18:54:25.593364971 -0700
++++ mbedtls-4.2.0/pkgconfig/mbedx509.pc.in	2026-07-12 18:54:41.762345722 -0700
+@@ -6,6 +6,6 @@ Name: @PROJECT_NAME@
+ Description: @PKGCONFIG_PROJECT_DESCRIPTION@
+ URL: @PKGCONFIG_PROJECT_HOMEPAGE_URL@
+ Version: @PROJECT_VERSION@
+-Requires.private: mbedcrypto@PROJECT_VERSION_MAJOR@
++Requires.private: mbedcrypto@VERSION_SUFFIX@
+ Cflags: -I"${includedir}"
+-Libs: -L"${libdir}" -lmbedx509@PROJECT_VERSION_MAJOR@
++Libs: -L"${libdir}" -lmbedx509@VERSION_SUFFIX@
+diff '--color=auto' -urp mbedtls-4.2.0.orig/tf-psa-crypto/core/CMakeLists.txt mbedtls-4.2.0/tf-psa-crypto/core/CMakeLists.txt
+--- mbedtls-4.2.0.orig/tf-psa-crypto/core/CMakeLists.txt	2026-07-12 18:54:25.584462054 -0700
++++ mbedtls-4.2.0/tf-psa-crypto/core/CMakeLists.txt	2026-07-12 18:54:41.762466536 -0700
+@@ -115,7 +115,7 @@ if(USE_STATIC_TF_PSA_CRYPTO_LIBRARY)
+         ${target_objects})
+     tf_psa_crypto_set_base_compile_options(${tfpsacrypto_static_target})
+     tf_psa_crypto_set_extra_compile_options(${tfpsacrypto_static_target})
+-    set_target_properties(${tfpsacrypto_static_target} PROPERTIES OUTPUT_NAME tfpsacrypto${PROJECT_VERSION_MAJOR})
++    set_target_properties(${tfpsacrypto_static_target} PROPERTIES OUTPUT_NAME tfpsacrypto${VERSION_SUFFIX})
+     target_link_libraries(${tfpsacrypto_static_target} PUBLIC ${libs})
+ 
+     if(GEN_FILES)
+@@ -139,7 +139,7 @@ if(USE_SHARED_TF_PSA_CRYPTO_LIBRARY)
+     tf_psa_crypto_set_base_compile_options(${tfpsacrypto_target})
+     tf_psa_crypto_set_extra_compile_options(${tfpsacrypto_target})
+     set_target_properties(${tfpsacrypto_target} PROPERTIES VERSION ${TF_PSA_CRYPTO_VERSION} SOVERSION ${TF_PSA_CRYPTO_SOVERSION})
+-    set_target_properties(${tfpsacrypto_target} PROPERTIES OUTPUT_NAME tfpsacrypto${PROJECT_VERSION_MAJOR})
++    set_target_properties(${tfpsacrypto_target} PROPERTIES OUTPUT_NAME tfpsacrypto${VERSION_SUFFIX})
+     target_link_libraries(${tfpsacrypto_target} PUBLIC ${libs})
+ 
+     if(GEN_FILES)
