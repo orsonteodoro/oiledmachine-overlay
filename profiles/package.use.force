@@ -69,3 +69,6 @@ dev-libs/libffi exec-static-trampoline
 
 # CI/CD verified 18/18 green checkmarks
 www-servers/civetweb fallback-commit
+
+# Guardrail to mitigate critical severity CVE-2026-8924
+net-misc/curl psl

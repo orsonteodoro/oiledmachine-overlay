@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# AI inference is used to clarify purpose of USE flags and description.
+
 # Maintainers should subscribe to the 'curl-distros' ML for backports etc
 # https://daniel.haxx.se/blog/2024/03/25/curl-distro-report/
 # https://lists.haxx.se/listinfo/curl-distros
@@ -135,7 +137,7 @@ RDEPEND="
 	idn? ( >=net-dns/libidn2-${LIBIDN2_PV}:=[static-libs?,${MULTILIB_USEDEP}] )
 	kerberos? ( >=virtual/krb5-0-r1:*[${MULTILIB_USEDEP}] )
 	ldap? ( >=net-nds/openldap-${OPENLDAP_PV}:=[static-libs?,${MULTILIB_USEDEP}] )
-	psl? ( net-libs/libpsl:=[${MULTILIB_USEDEP}] )
+	psl? ( >=net-libs/libpsl-${LIBPSL_PV}:=[${MULTILIB_USEDEP}] )
 	quic? (
 		gnutls? ( >=net-libs/ngtcp2-${NGTCP2_PV}:=[gnutls,ssl,${MULTILIB_USEDEP}] )
 		openssl? ( >=net-libs/ngtcp2-${NGTCP2_PV}:=[openssl,ssl,${MULTILIB_USEDEP}] )

@@ -52,8 +52,9 @@
       Enable the progress meter
     </flag>
     <flag name="psl">
-      Enable Public Suffix List (PSL) support. See
-      https://daniel.haxx.se/blog/2024/01/10/psl-in-curl/.
+      Use the Public Suffix List (PSL) for mitigation against super-cookie
+      attacks that lead to persistent tracking or session hijacking.
+      Enabling remediates CVE-2026-8924, but disabling reducing overhead.
     </flag>
     <flag name="quic">
       Enable support for QUIC (RFC 9000); a UDP-based protocol intended to

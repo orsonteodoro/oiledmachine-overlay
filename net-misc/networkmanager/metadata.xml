@@ -48,7 +48,7 @@
     <flag name="ofono">Use <pkg>net-misc/ofono</pkg> for telephony support.</flag>
     <flag name="ovs">Enable OpenVSwitch support</flag>
     <flag name="ppp">Enable support for mobile broadband and PPPoE connections using <pkg>net-dialup/ppp</pkg></flag>
-    <flag name="psl">Use public suffix list via <pkg>net-libs/libpsl</pkg></flag>
+    <flag name="psl">Enable to use only public DNS search domain.  Disable to use internal DNS search domain.  Both apply to custom hostnames on host scenario.</pkg></flag>
     <flag name="resolvconf">Use <pkg>net-dns/openresolv</pkg> for managing DNS information in /etc/resolv.conf. Generally, a symlink to /run/NetworkManager/resolv.conf is simpler. On systems running systemd-resolved, disable this flag and create a symlink to /run/systemd/resolve/stub-resolv.conf.</flag>
     <flag name="teamd">Enable Teamd control support</flag>
     <flag name="tools">Build cli tools such as nmcli, nmtui and nm_cloud_setup</flag>
