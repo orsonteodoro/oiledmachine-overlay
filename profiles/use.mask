@@ -52,3 +52,6 @@ aalib
 
 # FAFO guardrail to mitigate information disclosure and denial of service
 tls-heartbeat
+
+# Repo not updated since 2020
+gpm
