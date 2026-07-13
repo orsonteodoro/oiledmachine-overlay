@@ -1,0 +1,68 @@
+[package]
+name = "scx_utils"
+version = "1.1.2"
+edition = "2021"
+authors = ["Tejun Heo <tj@kernel.org>"]
+license = "GPL-2.0-only"
+repository = "https://github.com/sched-ext/scx"
+description = "Utilities for sched_ext schedulers"
+
+[dependencies]
+anyhow = "1"
+bitvec = { version = "1", features = ["serde"] }
+bindgen = ">=0.69"
+clap = { version = "4", features = ["derive", "env", "unicode", "wrap_help"] }
+glob = "0.3"
+hex = "0.4"
+lazy_static = "1"
+libbpf-cargo = "=0.26.2"
+libbpf-rs = "=0.26.2"
+log = "0.4"
+nvml-wrapper = { version = "0.12", optional = true }
+nvml-wrapper-sys = { version = "0.9", optional = true }
+paste = "1"
+regex = "1"
+ruzstd = "0.8"
+scx_stats = { path = "../scx_stats", version = "1.1.2" }
+serde = { version = "1", features = ["derive"] }
+sscanf = "0.5"
+tar = "0.4"
+walkdir = "2"
+version-compare = "0.2"
+zbus = { version = "5", optional = true }
+num = "0.4"
+tempfile = "3"
+tracing = "0.1"
+tracing-subscriber = "0.3"
+libc = "0.2"
+nix = { version = "0.31", features = ["resource"] }
+
+scx_cargo = { path = "../scx_cargo", version = "1.1.2", optional = true }
+
+[build-dependencies]
+anyhow = "1"
+bindgen = ">=0.69"
+glob = "0.3"
+lazy_static = "1"
+libbpf-cargo = "=0.26.2"
+ruzstd = "0.8"
+scx_cargo = { path = "../scx_cargo", version = "1.1.2" }
+sscanf = "0.5"
+tar = "0.4"
+tempfile = "3"
+version-compare = "0.2"
+walkdir = "2"
+
+[features]
+default = []
+gpu-topology = ["dep:nvml-wrapper", "dep:nvml-wrapper-sys"]
+autopower = ["dep:zbus"]
+deprecated-build-support = ["dep:scx_cargo"]
+testutils = []
+
+[[example]]
+name = "mangolog"
+crate-type = ["bin"]
+
+[lints.clippy]
+not_unsafe_ptr_arg_deref = "allow"
