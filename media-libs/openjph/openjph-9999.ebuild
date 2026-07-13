@@ -37,13 +37,17 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}"
 )
 
-inherit cmake cflags-hardened libcxx-slot libstdcxx-slot
+CHKL_TIMESTAMPS=(
+	"media-libs/tiff-9999"
+)
+
+inherit cflags-hardened chkl cmake libcxx-slot libstdcxx-slot secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/aous72/OpenJPH.git"
-	FALLBACK_COMMIT="ecc624ea003a0c747f96f531afc28f0cc369504f" # Jun 16, 2026
+	FALLBACK_COMMIT="9ab2e54590ffdf82647da75ea3350e38d2b4c19d"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
 	fi
@@ -66,7 +70,7 @@ LICENSE="
 	BSD-2
 "
 RESTRICT="mirror test" # Not tested
-SLOT="0/"$(ver_cut 1-2 "${PV}")
+SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_X86[@]}
@@ -94,7 +98,7 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	tiff? (
-		media-libs/tiff:=
+		>=media-libs/tiff-${TIFF_PV}:=
 	)
 "
 DEPEND+="
@@ -123,6 +127,7 @@ src_unpack() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	cflags-hardened_append
 	local mycmakeargs=(
 		-DOJPH_BUILD_EXECUTABLES=$(usex utils)
