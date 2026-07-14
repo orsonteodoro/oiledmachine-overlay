@@ -13508,7 +13508,7 @@ ot-kernel_set_debugger() {
 	ot-kernel_unset_configopt "CONFIG_DEBUG_KERNEL"
 	ot-kernel_unset_configopt "CONFIG_DEBUG_INFO"
 	ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT"
-	ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_CDWARF4"
+	ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_DWARF4"
 	ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_DWARF5"
 	if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.18" ; then
 		ot-kernel_y_configopt "CONFIG_DEBUG_INFO_NONE"

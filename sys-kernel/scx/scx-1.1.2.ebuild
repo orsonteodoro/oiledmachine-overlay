@@ -941,52 +941,214 @@ PDEPEND="
 	~sys-kernel/scx-loader-${PV}
 "
 
-# Do not change the order for lower maintenace time cost.
-CONFIG_CHECK="
-	~BPF
-	~BPF_SYSCALL
-	~BPF_JIT
-	~DEBUG_INFO
-	~DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT
-	~DEBUG_INFO_BTF
-	~BPF_JIT_ALWAYS_ON
-	~BPF_JIT_DEFAULT_ON
-	~SCHED_CLASS_EXT
+setup_kernel_config_production() {
+	# CONFIG_BPF_JIT=y for scx enablement
+	CONFIG_CHECK="
+		~NET
+		~BPF
+		~BPF_SYSCALL
+		~BPF_JIT
+		~DEBUG_INFO
+		~DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT
+		~DEBUG_INFO_DWARF4
+		~DEBUG_INFO_DWARF5
+		~DEBUG_INFO_BTF
+		~BPF_JIT_ALWAYS_ON
+		~BPF_JIT_DEFAULT_ON
+	"
+	WARNING_BPF="CONFIG_NET=y is required for scx enablement."
+	WARNING_BPF="CONFIG_BPF=y is required for scx enablement."
+	WARNING_BPF_SYSCALL="CONFIG_BPF_SYSCALL=y is required for scx enablement."
+	WARNING_BPF_JIT="CONFIG_BPF_JIT=y is required for scx enablement."
+	WARNING_DEBUG_INFO="CONFIG_DEBUG_INFO=y is required for scx enablement."
+	WARNING_DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT="Either CONFIG_DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT=y, CONFIG_DEBUG_INFO_DWARF4=y, or CONFIG_DEBUG_INFO_DWARF5=y is required for scx enablement."
+	WARNING_DEBUG_INFO_DWARF4="Either CONFIG_DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT=y, CONFIG_DEBUG_INFO_DWARF4=y, or CONFIG_DEBUG_INFO_DWARF5=y is required for scx enablement."
+	WARNING_DEBUG_INFO_DWARF5="Either CONFIG_DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT=y, CONFIG_DEBUG_INFO_DWARF4=y, or CONFIG_DEBUG_INFO_DWARF5=y is required for scx enablement."
+	WARNING_DEBUG_INFO_BTF="CONFIG_DEBUG_INFO_BTF=y is required for scx enablement."
+	WARNING_BPF_JIT_ALWAYS_ON="CONFIG_BPF_JIT_ALWAYS_ON=y is required for scx enablement."
+	WARNING_BPF_JIT_DEFAULT_ON="CONFIG_BPF_JIT_DEFAULT_ON=y is required for scx enablement."
 
-	~KALLSYMS_ALL
+	# SCHED_CLASS_EXT=y for scx enablement
+	CONFIG_CHECK="
+		~SCHED_CLASS_EXT
+	"
+	WARNING_SCHED_CLASS_EXT="CONFIG_SCHED_CLASS_EXT=y is required for scx enablement."
+	check_extra_config
 
-	~FUNCTION_TRACER
+	# CONFIG_DEBUG_INFO=y and dependency config for scx enablement
+	CONFIG_CHECK="
+		~DEBUG_INFO
+		~!DEBUG_INFO_SPLIT
+		~!DEBUG_INFO_REDUCED
+		~!COMPILE_TEST
+		~DEBUG_INFO_BTF
+	"
+	WARNING_DEBUG_INFO="CONFIG_DEBUG_INFO=y is required for scx enablement."
+	WARNING_DEBUG_INFO_SPLIT="An unset CONFIG_DEBUG_INFO_SPLIT is required for scx enablement."
+	WARNING_DEBUG_INFO_REDUCED="An unset CONFIG_DEBUG_INFO_REDUCED is required for scx enablement."
+	WARNING_COMPILE_TEST="An unset CONFIG_COMPILE_TEST is required for scx enablement."
+	WARNING_DEBUG_INFO_BTF="CONFIG_DEBUG_INFO_BTF is required for scx enablement."
+	check_extra_config
 
-	~SCHED_DEBUG
+	CONFIG_CHECK="
+		~DEBUG_KERNEL
+		~KALLSYMS_ALL
+	"
+	WARNING_DEBUG_KERNEL="CONFIG_DEBUG_KERNEL=y is required for scx_p2dq enablement."
+	WARNING_KALLSYMS_ALL="CONFIG_KALLSYMS_ALL=y is required for scx_p2dq enablement."
+	check_extra_config
 
-	~NUMA
-	~NUMA_BALANCING
-	~SCHED_AUTOGROUP
-	~SCHED_CORE
-	~SCHED_MC
+	CONFIG_CHECK="
+		~DEBUG_INFO_REDUCED
+	"
+	WARNING_DEBUG_INFO_REDUCED="CONFIG_DEBUG_INFO_REDUCED=y is required for scx enablement on arm64."
+	check_extra_config
 
-	~PREEMPT
-	~PREEMPT_DYNAMIC
+	CONFIG_CHECK="
+		~FUNCTION_TRACER
+		~FUTEX
+	"
+	WARNING_FUNCTION_TRACER="CONFIG_FUNCTION_TRACER=y is required for scx_lavd enablement and timeslice gain for scx_lavd and better systemwide throughput."
+	WARNING_FUTEX="CONFIG_FUTEX=y is required for scx_lavd enablement."
+	check_extra_config
 
-	~DEBUG_LOCKDEP
-	~DEBUG_ATOMIC_SLEEP
-	~PROVE_LOCKING
+	# CONFIG_TRACING=y and dependency config for scx enablement
+	# CONFIG_FTRACE=y and dependency config for scx enablement
+	CONFIG_CHECK="
+		~TRACE_IRQFLAGS_SUPPORT
+		~STACKTRACE_SUPPORT
+		~TRACING_SUPPORT
+		~FTRACE
+	"
+	WARNING_TRACE_IRQFLAGS_SUPPORT="CONFIG_TRACE_IRQFLAGS_SUPPORT=y is required for scx enablement."
+	WARNING_STACKTRACE_SUPPORT="CONFIG_STACKTRACE_SUPPORT=y is required for scx enablement."
+	WARNING_TRACING_SUPPORT="CONFIG_TRACING_SUPPORT=y is required for scx enablement."
+	WARNING_FTRACE="CONFIG_FTRACE=y is required for scx enablement."
+	check_extra_config
 
-	~BPF_EVENTS=y
-	~FTRACE_SYSCALLS=y
-	~DYNAMIC_FTRACE=y
-	~KPROBES=y
-	~KPROBE_EVENTS=y
-	~UPROBES=y
-	~UPROBE_EVENTS=y
-	~DEBUG_FS=y
+	# KPROBES=y and dependency config for scx enablement
+	CONFIG_CHECK="
+		~KPROBES
+		~KPROBE_EVENTS
+		~PERF_EVENTS
+		~MMU
+		~UPROBE_EVENTS
+		~BPF_EVENTS
+		~TRACING
+		~TRACEPOINTS
+	"
+	WARNING_KPROBES="CONFIG_KPROBES=y is required for scx enablement."
+	WARNING_KPROBE_EVENTS="CONFIG_KPROBE_EVENTS=y is required for scx enablement."
+	WARNING_PERF_EVENTS="CONFIG_PERF_EVENTS=y is required for scx enablement."
+	WARNING_MMU="CONFIG_MMU=y is required for scx enablement."
+	WARNING_UPROBE_EVENTS="CONFIG_UPROBE_EVENTS=y is required for scx enablement."
+	WARNING_BPF_EVENTS="CONFIG_BPF_EVENTS=y is required for scx enablement."
+	WARNING_TRACING="CONFIG_TRACING=y is required for scx enablement."
+	WARNING_TRACEPOINTS="CONFIG_TRACEPOINTS=y is required for scx enablement."
+	check_extra_config
 
-	~IKHEADERS=y
-	~IKCONFIG_PROC=y
-	~IKCONFIG=y
+	CONFIG_CHECK="
+		~EXPERT
+		~PROC_FS
+		~PROC_SYSCTL
+		~SYSFS
+	"
+	WARNING_EXPERT="CONFIG_EXPERT=y is required for utils."
+	WARNING_PROC_FS="CONFIG_PROC_FS=y is required for utils."
+	WARNING_PROC_SYSCTL="CONFIG_PROC_SYSCTL=y is required for utils."
+	WARNING_SYSFS="CONFIG_SYSFS=y is required for utils."
+	check_extra_config
 
-	~FTRACE
-"
+	CONFIG_CHECK="
+		~IKHEADERS
+		~IKCONFIG_PROC
+		~IKCONFIG
+	"
+	WARNING_IKHEADERS="CONFIG_IKHEADERS=y is required for avoiding warnings for \`scx_lavd --performance\`."
+	WARNING_IKCONFIG_PROC="CONFIG_IKCONFIG_PROC=y is required for avoiding warnings for \`scx_lavd --performance\`."
+	WARNING_IKCONFIG="CONFIG_IKCONFIG=y is required for avoiding warnings for \`scx_lavd --performance\`."
+	check_extra_config
+
+	CONFIG_CHECK="
+		~!LTO
+		~PAHOLE_HAS_LANG_EXCLUDE
+	"
+	WARNING_LTO="An unset CONFIG_LTO is required for scx support."
+	WARNING_PAHOLE_HAS_LANG_EXCLUDE="CONFIG_PAHOLE_HAS_LANG_EXCLUDE=y is required for scx support."
+	check_extra_config
+
+}
+
+setup_kernel_config_debug() {
+	CONFIG_CHECK="
+		~SCHED_DEBUG
+	"
+	WARNING_SCHED_DEBUG="CONFIG_SCHED_DEBUG=y is required for 6.15 and earlier kernels for scheduling debugging."
+	check_extra_config
+
+	CONFIG_CHECK="
+		~NUMA
+		~NUMA_BALANCING
+		~SCHED_AUTOGROUP
+		~SCHED_CORE
+		~SCHED_MC
+	"
+	WARNING_NUMA="CONFIG_NUMA=y is required for increased code coverage feature testing."
+	WARNING_NUMA_BALANCING="CONFIG_NUMA_BALANCING=y is required for increased code coverage feature testing."
+	WARNING_SCHED_AUTOGROUP="CONFIG_SCHED_AUTOGROUP=y is required for increased code coverage feature testing."
+	WARNING_SCHED_CORE="CONFIG_SCHED_CORE=y is required for increased code coverage feature testing."
+	WARNING_SCHED_MC="CONFIG_SCHED_MC=y is required for increased code coverage feature testing."
+	check_extra_config
+
+	CONFIG_CHECK="
+		~PREEMPT
+		~PREEMPT_DYNAMIC
+	"
+	WARNING_PREEMPT="CONFIG_PREEMPT=y is required for testing coverage."
+	WARNING_PREEMPT_DYNAMIC="CONFIG_PREEMPT_DYNAMIC=y is required for testing coverage."
+	check_extra_config
+
+	CONFIG_CHECK="
+		~DEBUG_LOCKDEP
+		~DEBUG_ATOMIC_SLEEP
+		~PROVE_LOCKING
+	"
+	WARNING_DEBUG_LOCKDEP="CONFIG_DEBUG_LOCKDEP=y is required for additional debugging info."
+	WARNING_DEBUG_ATOMIC_SLEEP="CONFIG_DEBUG_ATOMIC_SLEEP=y is required for additional debugging info."
+	WARNING_PROVE_LOCKING="CONFIG_PROVE_LOCKING=y is required for additional debugging info."
+	check_extra_config
+
+	CONFIG_CHECK="
+		~BPF_EVENTS
+		~FTRACE_SYSCALLS
+		~DYNAMIC_FTRACE
+		~KPROBES
+		~KPROBE_EVENTS
+		~UPROBES
+		~UPROBE_EVENTS
+		~DEBUG_FS
+	"
+	WARNING_BPF_EVENTS="CONFIG_BPF_EVENTS=y is required for additional debug info."
+	WARNING_FTRACE_SYSCALLS="CONFIG_FTRACE_SYSCALLS=y is required for additional debug info."
+	WARNING_DYNAMIC_FTRACE="CONFIG_DYNAMIC_FTRACE=y is required for additional debug info."
+	WARNING_KPROBES="CONFIG_KPROBES=y is required for additional debug info."
+	WARNING_KPROBE_EVENTS="CONFIG_KPROBE_EVENTS=y is required for additional debug info."
+	WARNING_UPROBES="CONFIG_UPROBES=y is required for additional debug info."
+	WARNING_UPROBE_EVENTS="CONFIG_UPROBE_EVENTS=y is required for additional debug info."
+	WARNING_DEBUG_FS="CONFIG_DEBUG_FS=y is required for additional debug info."
+	check_extra_config
+
+	CONFIG_CHECK="
+		~IKHEADERS
+		~IKCONFIG_PROC
+		~IKCONFIG
+	"
+	WARNING_IKHEADERS="CONFIG_IKHEADERS=y is required for accessing kernel config headers at runtime."
+	WARNING_IKCONFIG_PROC="CONFIG_IKCONFIG_PROC=y is required for accessing kernel config headers at runtime."
+	WARNING_IKCONFIG="CONFIG_IKCONFIG=y is required for accessing kernel config headers at runtime."
+	check_extra_config
+
+}
 
 QA_PREBUILT="/usr/bin/vmlinux_docify"
 PATCHES=(
@@ -994,7 +1156,13 @@ PATCHES=(
 )
 
 pkg_setup() {
+	setup_kernel_config
 	linux-info_pkg_setup
+
+	setup_kernel_config_production
+	if use debug ; then
+		setup_kernel_config_debug
+	fi
 
 	# Sanitize and manually add to avoid llvm*.eclass side-effects.
 	PATH=$(echo "${PATH}" | tr ":" "\n" | sed -e "\|/usr/lib/llvm/|d" | tr "\n" ":")
