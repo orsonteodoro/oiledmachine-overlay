@@ -432,6 +432,10 @@ check_distribution_components() {
 					docs-clang-html|docs-clang-tools-html)
 						use doc || continue
 						;;
+					# built only with tests
+					c-index-test)
+						continue
+						;;
 				esac
 
 				all_targets+=( "${l}" )
@@ -489,6 +493,7 @@ get_distribution_components() {
 		ppc-htm-resource-headers
 		ppc-resource-headers
 		riscv-resource-headers
+		spirv-resource-headers
 		systemz-resource-headers
 		utility-resource-headers
 		ve-resource-headers
@@ -508,22 +513,19 @@ get_distribution_components() {
 			libclang-python-bindings
 
 			# tools
-			amdgpu-arch
-			c-index-test
 			clang
 			clang-format
 			clang-installapi
 			clang-linker-wrapper
 			clang-nvlink-wrapper
 			clang-offload-bundler
-			clang-offload-packager
 			clang-refactor
 			clang-repl
 			clang-scan-deps
 			clang-sycl-linker
 			diagtool
 			hmaptool
-			nvptx-arch
+			offload-arch
 
 			# needed for cross-compiling Clang
 			clang-tblgen
@@ -547,6 +549,8 @@ get_distribution_components() {
 				modularize
 				pp-trace
 			)
+
+			use kernel_Darwin && out+=( ClangdXPCLib )
 		fi
 
 		if llvm_are_manpages_built; then

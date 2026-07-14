@@ -548,6 +548,8 @@ get_distribution_components() {
 				modularize
 				pp-trace
 			)
+
+			use kernel_Darwin && out+=( ClangdXPCLib )
 		fi
 
 		if llvm_are_manpages_built; then
