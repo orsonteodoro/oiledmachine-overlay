@@ -181,7 +181,6 @@ FFMPEG_FLAG_MAP=(
 	"frei0r"
 	"vmaf:libvmaf"
 	"fribidi:libfribidi"
-	"glslang:libglslang"
 	"fontconfig"
 	"ladspa"
 	"lcms:lcms2"
@@ -194,7 +193,6 @@ FFMPEG_FLAG_MAP=(
 	"truetype:libharfbuzz"
 	"vidstab:libvidstab"
 	"rubberband:librubberband"
-	"shaderc:libshaderc"
 	"whisper"
 	"zeromq:libzmq"
 	"zimg:libzimg"
@@ -792,10 +790,6 @@ REQUIRED_USE+="
 	fftools_cws2fws? (
 		zlib
 	)
-	glslang? (
-		!shaderc
-		vulkan
-	)
 	gnutls? (
 		!openssl
 	)
@@ -820,10 +814,6 @@ REQUIRED_USE+="
 		|| (
 			${_TRAINERS[@]}
 		)
-	)
-	shaderc? (
-		!glslang
-		vulkan
 	)
 	test? (
 		encode
@@ -1020,10 +1010,6 @@ RDEPEND+="
 	gcrypt? (
 		>=dev-libs/libgcrypt-${LIBGCRYPT_PV}:=[${MULTILIB_USEDEP}]
 	)
-	glslang? (
-		dev-util/glslang:=[${MULTILIB_USEDEP}]
-		dev-util/spirv-tools:=[${MULTILIB_USEDEP}]
-	)
 	gme? (
 		>=media-libs/game-music-emu-${GAME_MUSIC_EMU_PV}:=[${MULTILIB_USEDEP}]
 	)
@@ -1159,9 +1145,6 @@ RDEPEND+="
 	)
 	sdl? (
 		<media-libs/libsdl2-3:=[${MULTILIB_USEDEP},sound,threads(+),video,wayland?,X?]
-	)
-	shaderc? (
-		>=media-libs/shaderc-2019.1:=[${MULTILIB_USEDEP}]
 	)
 	sndio? (
 		>=media-sound/sndio-${SNDIO_PV}:=[${MULTILIB_USEDEP}]
@@ -1331,7 +1314,6 @@ PATCHES=(
 	"${FILESDIR}/extra-patches/${PN}-5.1.2-configure-non-free-options.patch"	# Added by oiledmachine-overlay
 	"${FILESDIR}/extra-patches/${PN}-4.4.4-no-m32-or-m64-for-nvcc.patch"
 	"${FILESDIR}/extra-patches/${PN}-19035c3-add-includes-hwcontext_vulkan.patch"
-#	"${FILESDIR}/extra-patches/${PN}-8.0.1-glslang-fix-configure-test.patch"
 )
 
 get_av_device_ids() {
