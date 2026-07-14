@@ -158,3 +158,5 @@ src_install() {
 
 	pax-mark m "${CHROME_HOME}/chrome"
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 150.0.7871.124 (interactive testing, 20260714)
