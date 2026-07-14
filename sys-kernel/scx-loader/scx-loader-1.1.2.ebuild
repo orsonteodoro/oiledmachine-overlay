@@ -6,6 +6,7 @@ EAPI=8
 LLVM_COMPAT=( 22 )
 RUST_MAX_VER="1.96.1" # LLVM 22.1
 RUST_MIN_VER="1.96.1" # LLVM 22.1
+RUST_NEEDS_LLVM=1 # Prune rustc for unused LLVM slots
 CRATES="
 anstream-1.0.0
 anstyle-1.0.14
