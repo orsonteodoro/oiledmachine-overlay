@@ -25,17 +25,16 @@ inherit secure-version
 
 _mitigate_dt_set_globals() {
 	FIRMWARE_VENDOR=${FIRMWARE_VENDOR:-""}
-	if [[ -e "/proc/cpuinfo" ]] ; then
-		while read -r line ; do
-			if [[ "${line}" =~ "AuthenticAMD" ]] ; then
-				FIRMWARE_VENDOR="amd"
-				break
-			fi
-			if [[ "${line}" =~ "GenuineIntel" ]] ; then
-				FIRMWARE_VENDOR="intel"
-				break
-			fi
-		done < "/proc/cpuinfo"
+	if [[ -z "${FIRMWARE_VENDOR}" ]] ; then
+ewarn "FIRMWARE_VENDOR is unset."
+ewarn "Set FIRMWARE_VENDOR in /etc/portage/make.conf"
+ewarn "Valid values:  amd, intel, misc"
+	fi
+	if [[ "${FIRMWARE_VENDOR}" == "amd" ]] ; then
+		FIRMWARE_VENDOR="amd"
+	fi
+	if [[ "${FIRMWARE_VENDOR}" == "intel" ]] ; then
+		FIRMWARE_VENDOR="intel"
 	fi
 }
 

@@ -130,7 +130,7 @@ VIDEO_CARDS=(
 )
 IUSE+="
 ${VIDEO_CARDS[@]}
-ebuild_revision_8
+ebuild_revision_10
 "
 REQUIRED_USE="
 zero-tolerance
