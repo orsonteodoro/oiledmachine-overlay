@@ -195,11 +195,11 @@ NASM_PV="2.14.02"
 NODE_SLOT=22
 PYTHON_COMPAT=( "python3_"{10..13} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
-RUST_LIVE_TIMESTAMP="May 22, 2026 00:33:25 -0700" # Same as Rust 1.98.0 timestamp
 RUST_MAX_VER="9999"
 RUST_MIN_VER="1.94.1"
 RUST_NEEDS_LLVM=1 # Prune rustc for unused LLVM slots
-RUST_NIGHTLY_PV="1.98.0"
+RUST_NIGHTLY_PV="1.99.0"
+RUST_NIGHTLY_TIMESTAMP="Jul 5, 2026 8:11 AM PDT" # Same as Rust 1.99.0 timestamp
 RUST_PV="${RUST_MIN_VER}"
 VIRTUALX_REQUIRED="pgo"
 
@@ -1305,7 +1305,7 @@ eerror "Switch to live with \`eselect rust\`"
 	fi
 
 	if "${RUSTC}" --version | grep -q -e "nightly" ; then
-		local compatible_time=$(date --date="${RUST_LIVE_TIMESTAMP}" "+%s")
+		local compatible_time=$(date --date="${RUST_NIGHTLY_TIMESTAMP}" "+%s")
 
 		local merge_time
 		local pkg_name
