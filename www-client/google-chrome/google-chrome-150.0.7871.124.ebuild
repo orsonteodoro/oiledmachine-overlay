@@ -18,6 +18,7 @@ CHKL_TIMESTAMPS=(
 	"net-print/cups-9999"
 	"sys-apps/dbus-9999"
 	"sys-libs/libcap-9999"
+	"sys-libs/libselinux-9999"
 	"x11-libs/cairo-9999"
 	"x11-libs/gtk+-3.24.9999"
 	"x11-libs/libX11-9999"
