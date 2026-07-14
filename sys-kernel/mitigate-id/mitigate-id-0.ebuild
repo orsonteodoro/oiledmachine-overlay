@@ -152,62 +152,6 @@ BDEPEND="
 	>=sys-apps/util-linux-${UTIL_LINUX_PV}
 "
 
-check_kernel_version() {
-	local driver_name="${1}"
-	shift
-	local cve="${1}"
-	shift
-	local PATCHED_VERSIONS=( ${@} )
-	if ! tc-is-cross-compiler && use custom-kernel ; then
-		local required_version="${kv}"
-		local prev_kernel_dir="${KERNEL_DIR}"
-		local FOUND_VERSIONS_MAKEFILES=(
-			$(grep -l "EXTRAVERSION" $(ls "/usr/src/"*"/Makefile"))
-		)
-		local makefile_path
-		for makefile_path in ${FOUND_VERSIONS_MAKEFILES[@]} ; do
-			unset KV_FULL
-			local pv_major=$(grep "VERSION =" "${makefile_path}" | head -n 1 | grep -E -oe "[0-9]+")
-			local pv_minor=$(grep "PATCHLEVEL =" "${makefile_path}" | head -n 1 | grep -E -oe "[0-9]+")
-			local pv_patch=$(grep "SUBLEVEL =" "${makefile_path}" | head -n 1 | grep -E -oe "[0-9]+")
-			local pv_extraversion=$(grep "EXTRAVERSION =" "${makefile_path}" | head -n 1 | cut -f 2 -d "=" | sed -E -e "s|[ ]+||g")
-			local found_version="${pv_major}.${pv_minor}.${pv_patch}"
-	# linux-info's get_version() is spammy.
-
-			local vulnerable=1
-
-	# Last version of patched versions
-			local patched_version=${PATCHED_VERSIONS[-1]}
-			if ! is_eol "${found_version}" && ver_test ${found_version} -ge ${patched_version} ; then
-				vulnerable=0
-			fi
-
-	# Check LTS versions
-			local patched_version
-			for patched_version in ${PATCHED_VERSIONS[@]} ; do
-				if is_lts ${patched_version} ; then
-					local s1=$(ver_cut 1-2 ${found_version})
-					local s2=$(ver_cut 1-2 ${patched_version})
-					if ver_test ${s1} -eq ${s2} && [[ "${patched_version}" =~ "V" ]] ; then
-						vulnerable=1
-						break
-					elif ver_test ${s1} -eq ${s2} && ver_test ${found_version} -ge ${patched_version} ; then
-						vulnerable=0
-						break
-					fi
-				fi
-			done
-
-			if (( ${vulnerable} == 1 )) ; then
-ewarn "${cve}:  not mitigated, component name - ${driver_name}, found version - ${found_version}"
-			else
-einfo "${cve}:  mitigated, component name - ${driver_name}, found version - ${found_version}"
-			fi
-		done
-		KERNEL_DIR="${prev_kernel_dir}"
-	fi
-}
-
 pkg_setup() {
 	# ver_cut output
 	# 1: 6
