@@ -987,15 +987,15 @@ setup_kernel_config_production() {
 	WARNING_DEBUG_INFO_SPLIT="An unset CONFIG_DEBUG_INFO_SPLIT is required for scx enablement."
 	WARNING_DEBUG_INFO_REDUCED="An unset CONFIG_DEBUG_INFO_REDUCED is required for scx enablement."
 	WARNING_COMPILE_TEST="An unset CONFIG_COMPILE_TEST is required for scx enablement."
-	WARNING_DEBUG_INFO_BTF="CONFIG_DEBUG_INFO_BTF is required for scx enablement."
+	WARNING_DEBUG_INFO_BTF="CONFIG_DEBUG_INFO_BTF=y is required for scx enablement."
 	check_extra_config
 
 	CONFIG_CHECK="
 		~DEBUG_KERNEL
 		~KALLSYMS_ALL
 	"
-	WARNING_DEBUG_KERNEL="CONFIG_DEBUG_KERNEL=y is required for scx_p2dq enablement."
-	WARNING_KALLSYMS_ALL="CONFIG_KALLSYMS_ALL=y is required for scx_p2dq enablement."
+	WARNING_DEBUG_KERNEL="CONFIG_DEBUG_KERNEL=y is required for scx_p2dq, scx_layered, scxtop."
+	WARNING_KALLSYMS_ALL="CONFIG_KALLSYMS_ALL=y is required for scx_p2dq, scx_layered, scxtop."
 	check_extra_config
 
 	CONFIG_CHECK="
@@ -1113,9 +1113,9 @@ setup_kernel_config_debug() {
 		~DEBUG_ATOMIC_SLEEP
 		~PROVE_LOCKING
 	"
-	WARNING_DEBUG_LOCKDEP="CONFIG_DEBUG_LOCKDEP=y is required for additional debugging info."
-	WARNING_DEBUG_ATOMIC_SLEEP="CONFIG_DEBUG_ATOMIC_SLEEP=y is required for additional debugging info."
-	WARNING_PROVE_LOCKING="CONFIG_PROVE_LOCKING=y is required for additional debugging info."
+	WARNING_DEBUG_LOCKDEP="CONFIG_DEBUG_LOCKDEP=y is required for additional debugging info for deadlock analysis."
+	WARNING_DEBUG_ATOMIC_SLEEP="CONFIG_DEBUG_ATOMIC_SLEEP=y is required for additional debugging info for deadlock analysis."
+	WARNING_PROVE_LOCKING="CONFIG_PROVE_LOCKING=y is required for additional debugging info for deadlock analysis."
 	check_extra_config
 
 	CONFIG_CHECK="
@@ -1143,11 +1143,10 @@ setup_kernel_config_debug() {
 		~IKCONFIG_PROC
 		~IKCONFIG
 	"
-	WARNING_IKHEADERS="CONFIG_IKHEADERS=y is required for accessing kernel config headers at runtime."
-	WARNING_IKCONFIG_PROC="CONFIG_IKCONFIG_PROC=y is required for accessing kernel config headers at runtime."
-	WARNING_IKCONFIG="CONFIG_IKCONFIG=y is required for accessing kernel config headers at runtime."
+	WARNING_IKHEADERS="CONFIG_IKHEADERS=y is required for scx to access kernel config headers at runtime."
+	WARNING_IKCONFIG_PROC="CONFIG_IKCONFIG_PROC=y is required for scx to access kernel config headers at runtime."
+	WARNING_IKCONFIG="CONFIG_IKCONFIG=y is required for scx to access kernel config headers at runtime."
 	check_extra_config
-
 }
 
 QA_PREBUILT="/usr/bin/vmlinux_docify"
