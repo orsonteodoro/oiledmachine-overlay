@@ -34,7 +34,7 @@ EOL_VERSIONS=(
 
 CHKL_TIMESTAMPS=(
 	"sys-kernel/linux-next-9999"
-	"sys-kernel/ot-sources-7.12.9999"
+	"sys-kernel/ot-sources-7.2.9999"
 	"sys-kernel/raspberrypi-image-9999"
 	"sys-kernel/vanilla-kernel-6.1.9999"
 	"sys-kernel/vanilla-kernel-6.6.9999"
