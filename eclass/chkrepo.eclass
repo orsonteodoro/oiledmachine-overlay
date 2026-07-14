@@ -37,7 +37,7 @@ chkrepo_check_one_repo_id() {
 	k=$(echo "${k}" | sed -e "s|[/.-]|_|g")
 
 	has_version "${atom}" || return
-	local actual_repo_id=$(cat "/var/db/pkg/${atom}"*"/repository")
+	local actual_repo_id=$(cat "/var/db/pkg/${atom}"*"/repository" | head -n 1)
 	if [[ "${actual_repo_id}" != "${expected_repo_id}" ]] ; then
 eerror
 eerror "${atom} is using the wrong ebuild from the wrong repo."
