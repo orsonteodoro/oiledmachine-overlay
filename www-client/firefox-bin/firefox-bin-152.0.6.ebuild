@@ -382,3 +382,5 @@ pkg_postinst() {
 	# optfeature "ffmpeg-based audio/video codec support, required for HTML5 video rendering" media-video/ffmpeg
 	optfeature "desktop notifications" x11-libs/libnotify
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 152.0.6 (interactive, 20260714)
