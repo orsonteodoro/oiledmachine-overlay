@@ -229,9 +229,9 @@ IUSE+="
 	bpf
 	custom-kernel
 	+enforce
-	firmware
+	intel-microcode
+	linux-firmware
 	kvm
-	+zero-tolerance
 	ebuild_revision_9
 "
 # The !custom-kernel is required for RDEPEND to work properly to download the
@@ -245,198 +245,197 @@ REQUIRED_USE="
 	)
 	auto? (
 		!custom-kernel
-		firmware
 	)
 
 	cpu_target_x86_apollo_lake? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_denverton? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_snow_ridge_bts? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_snow_ridge? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_parker_ridge? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_elkhart_lake? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_arizona_beach? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_jasper_lake? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_alder_lake_n? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_gemini_lake? (
-		firmware
+		intel-microcode
 	)
 
 	cpu_target_x86_arrandale? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_clarkdale? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_gladden? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_lynnfield? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_bakerville? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_sandy_bridge? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_ivy_bridge? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_haswell? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_broadwell? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_hewitt_lake? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_skylake? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_kaby_lake_gen7? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_amber_lake_gen8? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_coffee_lake_gen8? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_kaby_lake_gen8? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_whiskey_lake? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_coffee_lake_gen9? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_comet_lake? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_amber_lake_gen10? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_ice_lake? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_rocket_lake? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_tiger_lake? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_alder_lake? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_raptor_lake_gen13? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_raptor_lake_gen14? (
-		firmware
+		intel-microcode
 	)
 
 	cpu_target_x86_purley_refresh? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_cedar_island? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_greenlow? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_tatlow? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_comet_lake? (
-		firmware
+		intel-microcode
 	)
 
 	cpu_target_x86_cascade_lake? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_cooper_lake? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_sapphire_rapids? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_sapphire_rapids_edge_enhanced? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_granite_rapids? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_emerald_rapids? (
-		firmware
+		intel-microcode
 	)
 
 	cpu_target_x86_catlow_golden_cove? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_catlow_raptor_cove? (
-		firmware
+		intel-microcode
 	)
 
 	cpu_target_x86_cedar_island? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_whitley? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_idaville? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_meteor_lake? (
-		firmware
+		intel-microcode
 	)
 
 	cpu_target_x86_zen_2? (
-		firmware
+		linux-firmware
 	)
 
 	cpu_target_x86_naples? (
-		firmware
+		linux-firmware
 	)
 	cpu_target_x86_rome? (
-		firmware
+		linux-firmware
 	)
 	cpu_target_x86_milan? (
-		firmware
+		linux-firmware
 	)
 	cpu_target_x86_milan-x? (
-		firmware
+		linux-firmware
 	)
 	cpu_target_x86_genoa? (
-		firmware
+		linux-firmware
 	)
 	cpu_target_x86_genoa-x? (
-		firmware
+		linux-firmware
 	)
 	cpu_target_x86_bergamo? (
-		firmware
+		linux-firmware
 	)
 	cpu_target_x86_siena? (
-		firmware
+		linux-firmware
 	)
 
 	|| (
@@ -827,20 +826,6 @@ eerror
 #einfo "${o}"
 }
 
-gen_linux_firmware_ge() {
-	local arg="${1}"
-	if ver_test ${arg} -gt ${_LINUX_FIRMWARE_PV} ; then
-		_LINUX_FIRMWARE_PV=${arg}
-	fi
-}
-
-gen_intel_microcode_ge() {
-	local arg="${1}"
-	if ver_test ${arg} -gt ${_INTEL_MICROCODE_PV} ; then
-		_INTEL_MICROCODE_PV=${arg}
-	fi
-}
-
 _use() {
 	local arg="${1}"
 	local L=(
@@ -1016,7 +1001,7 @@ eerror
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against Spectre.
 _mitigate_id_verify_mitigation_spectre() {
-	if use firmware ; then
+	if use intel-microcode ; then
 		if \
 			   use cpu_target_x86_apollo_lake \
 			|| use cpu_target_x86_denverton \
@@ -1225,7 +1210,7 @@ eerror
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against Spectre-NG.
 _mitigate_id_verify_mitigation_spectre_ng() {
-	if use firmware ; then
+	if use intel-micocode ; then
 		if \
 			   use cpu_target_x86_gemini_lake \
 			|| use cpu_target_x86_haswell \
@@ -1393,7 +1378,7 @@ eerror
 # Check the kernel config flags and kernel command line to mitigate against Spectre-BHI.
 _mitigate_id_verify_mitigation_bhi() {
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.9" ; then
-		if use firmware ; then
+		if use intel-microcode ; then
 			if \
 				   use cpu_target_x86_alder_lake \
 				|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
@@ -1459,7 +1444,7 @@ eerror
 # Check the kernel config flags and kernel command line to mitigate against Foreshadow.
 _mitigate_id_verify_mitigation_foreshadow() {
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "4.19" ; then
-		if use firmware ; then
+		if use intel-microcode ; then
 			if \
 				   use cpu_target_x86_arrandale \
 				|| use cpu_target_x86_clarkdale \
@@ -1574,7 +1559,7 @@ _mitigate_id_verify_mitigation_rfds() {
 	fi
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.9" ; then
 		if \
-			use firmware \
+			use intel-microcode \
 				&& \
 			( \
 				   use cpu_target_x86_apollo_lake \
@@ -1653,7 +1638,7 @@ _mitigate_id_verify_mitigation_downfall() {
 		local x
 		for x in ${L[@]} ; do
 			if \
-				use firmware \
+				use intel-microcode \
 					&& \
 				( \
 					use "${x}" \
@@ -1747,7 +1732,7 @@ eerror "No mitigation against Retbleed for 32-bit x86.  Use only 64-bit instead.
 # Check the kernel config flags and kernel command line to mitigate against Zenbleed.
 _mitigate_id_verify_mitigation_zenbleed() {
 	if \
-		use firmware \
+		use linux-firmware \
 			&& \
 		( \
 			   use cpu_target_x86_rome \
@@ -1781,7 +1766,7 @@ ewarn "A BIOS firmware update is required for non datacenter CPU models for Zenb
 # Check the kernel config flags and kernel command line to mitigate against CROSSTalk.
 _mitigate_id_verify_mitigation_crosstalk() {
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.8" ; then
-		if use firmware ; then
+		if use intel-microcode ; then
 			if \
 				   use cpu_target_x86_skylake \
 				|| use cpu_target_x86_kaby_lake_gen7 \
@@ -1845,7 +1830,7 @@ eerror
 _mitigate_id_verify_mitigation_inception() {
 	local ver
 	if \
-		use firmware\
+		use linux-firmware \
 			&& \
 		( \
 			   use cpu_target_x86_milan \
@@ -1865,7 +1850,7 @@ eerror ">=sys-kernel/linux-firmware-20230724 is required for INCEPTION mitigatio
 		fi
 	fi
 	if \
-		use firmware\
+		use linux-firmware \
 			&& \
 		( \
 			   use cpu_target_x86_genoa \
@@ -1929,7 +1914,7 @@ ewarn "A BIOS firmware update is required for non datacenters for INCEPTION miti
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against ZombieLoad v2.
 _mitigate_id_verify_mitigation_zombieload_v2() {
-	if use firmware ; then
+	if use intel-microcode ; then
 		if \
 			   use cpu_target_x86_skylake \
 			|| use cpu_target_x86_kaby_lake_gen7 \
@@ -2081,7 +2066,7 @@ _mitigate_id_verify_mitigation_spectre_rsb() {
 # The MDSUM column was not processed and missing.
 _mitigate_id_verify_mitigation_mds() {
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.2" ; then
-		if use firmware ; then
+		if use intel-microcode ; then
 			if \
 				   use cpu_target_x86_haswell \
 				|| use cpu_target_x86_broadwell \
@@ -2150,7 +2135,7 @@ eerror
 # Check the kernel config flags and kernel command line to mitigate against MMIO Stale Data.
 _mitigate_id_verify_mitigation_mmio_stale_data() {
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.19" ; then
-		if use firmware ; then
+		if use intel-microcode ; then
 			if \
 				   use cpu_target_x86_snow_ridge_bts \
 				|| use cpu_target_x86_snow_ridge \
@@ -2229,7 +2214,7 @@ eerror
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against Reptar.
 _mitigate_id_verify_mitigation_reptar() {
-	if use firmware ; then
+	if use intel-microcode ; then
 		if \
 			   use cpu_target_x86_ice_lake \
 			|| use cpu_target_x86_tiger_lake \
@@ -2466,7 +2451,7 @@ _mitigate_id_verify_mitigation_platypus() {
 	fi
 	if [[ "${ARCH}" =~ ("amd64"|"x86") ]] ; then
 		if \
-			use firmware \
+			use intel-microcode \
 				&& \
 			( \
 				   use cpu_target_x86_skylake \
@@ -3097,7 +3082,6 @@ _mitigate_id_verify_mitigation_cve_2023_49141() {
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against CVE-2020-13844
 _mitigate_id_verify_mitigation_sls() {
-	use zero-tolerance || return
 # NVD says a53 but the UG1186 doc disagrees
 # arm64 - harden-sls - gcc 12.1, clang 12
 # x86 - harden-sls - gcc 11.3, clang 15

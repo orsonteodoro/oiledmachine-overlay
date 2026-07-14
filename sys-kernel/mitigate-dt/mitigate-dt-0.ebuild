@@ -6,9 +6,6 @@ EAPI=8
 
 # Security:  update every kernel version bump
 
-_INTEL_MICROCODE_PV=0
-_LINUX_FIRMWARE_PV=0
-
 LTS_VERSIONS=("5.10" "5.15" "6.1" "6.6" "6.12" "6.18")
 ACTIVE_VERSIONS=("5.10" "5.15" "6.1" "6.6" "6.12" "6.18" "6.19" "7.1" "7.2")
 STABLE_OR_MAINLINE_VERSIONS=("7.1" "7.2")
@@ -44,7 +41,6 @@ CHKL_TIMESTAMPS=(
 
 inherit secure-version
 
-# For zero-tolerance mode
 MULTISLOT_LATEST_KERNEL_RELEASE=("${LINUX_KERNEL_5_10_PV}" "${LINUX_KERNEL_5_15_PV}" "${LINUX_KERNEL_6_1_PV}" "${LINUX_KERNEL_6_6_PV}" "${LINUX_KERNEL_6_12_PV}" "${LINUX_KERNEL_6_18_PV}" "${LINUX_KERNEL_7_1_PV}" "${LINUX_KERNEL_7_2_RC_PV}")
 
 inherit chkl mitigate-dt toolchain-funcs
@@ -68,7 +64,6 @@ ${VIDEO_CARDS[@]}
 ebuild_revision_10
 "
 REQUIRED_USE="
-zero-tolerance
 "
 # CE - Code Execution
 # DoS - Denial of Service (CVSS A:H)
@@ -132,8 +127,11 @@ RDEPEND="
 if [[ "${FIRMWARE_VENDOR}" == "intel" ]] ; then
 	RDEPEND+="
 		enforce? (
-			firmware? (
-				>=sys-firmware/intel-microcode-${_INTEL_MICROCODE_PV}
+			intel-microcode? (
+				>=sys-firmware/intel-microcode-${INTEL_MICROCODE_PV}
+			)
+			linux-firmware? (
+				>=sys-kernel/linux-firmware-${LINUX_FIRMWARE_PV}
 			)
 		)
 	"
@@ -141,8 +139,8 @@ fi
 if [[ "${FIRMWARE_VENDOR}" == "amd" ]] ; then
 	RDEPEND+="
 		enforce? (
-			firmware? (
-				>=sys-kernel/linux-firmware-${_LINUX_FIRMWARE_PV}
+			linux-firmware? (
+				>=sys-kernel/linux-firmware-${LINUX_FIRMWARE_PV}
 			)
 		)
 	"
@@ -232,56 +230,52 @@ verify_disable_ksm_for_one_kernel() {
 }
 
 verify_disable_ksm() {
-	if use zero-tolerance ; then
-		local prev_kernel_dir="${KERNEL_DIR}"
-		local L=(
-			$(grep -l "EXTRAVERSION" $(ls "/usr/src/"*"/Makefile"))
-		)
-		local x
-		for x in ${L[@]} ; do
-			unset KV_FULL
-			local pv_major=$(grep "VERSION =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
-			local pv_minor=$(grep "PATCHLEVEL =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
-			local pv_patch=$(grep "SUBLEVEL =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
-			local pv_extraversion=$(grep "EXTRAVERSION =" "${x}" | head -n 1 | cut -f 2 -d "=" | sed -E -e "s|[ ]+||g")
+	local prev_kernel_dir="${KERNEL_DIR}"
+	local L=(
+		$(grep -l "EXTRAVERSION" $(ls "/usr/src/"*"/Makefile"))
+	)
+	local x
+	for x in ${L[@]} ; do
+		unset KV_FULL
+		local pv_major=$(grep "VERSION =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
+		local pv_minor=$(grep "PATCHLEVEL =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
+		local pv_patch=$(grep "SUBLEVEL =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
+		local pv_extraversion=$(grep "EXTRAVERSION =" "${x}" | head -n 1 | cut -f 2 -d "=" | sed -E -e "s|[ ]+||g")
 einfo
 einfo "Verifying CONFIG_KSM=n settings for ${pv_major}.${pv_minor}.${pv_patch}${pv_extraversion}"
-			KERNEL_DIR=$(dirname "${x}")
-			verify_disable_ksm_for_one_kernel
-		done
-		KERNEL_DIR="${prev_kernel_dir}"
-	fi
+		KERNEL_DIR=$(dirname "${x}")
+		verify_disable_ksm_for_one_kernel
+	done
+	KERNEL_DIR="${prev_kernel_dir}"
 }
 
 check_zero_tolerance() {
 	use custom-kernel || return
-	if use zero-tolerance ; then
-		local prev_kernel_dir="${KERNEL_DIR}"
-		local L=(
-			$(grep -l "EXTRAVERSION" $(ls "/usr/src/"*"/Makefile"))
-		)
-		local x
-		for x in ${L[@]} ; do
-			unset KV_FULL
-			local pv_major=$(grep "VERSION =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
-			local pv_minor=$(grep "PATCHLEVEL =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
-			local pv_patch=$(grep "SUBLEVEL =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
-			local pv_extraversion=$(grep "EXTRAVERSION =" "${x}" | head -n 1 | cut -f 2 -d "=" | sed -E -e "s|[ ]+||g")
+	local prev_kernel_dir="${KERNEL_DIR}"
+	local L=(
+		$(grep -l "EXTRAVERSION" $(ls "/usr/src/"*"/Makefile"))
+	)
+	local x
+	for x in ${L[@]} ; do
+		unset KV_FULL
+		local pv_major=$(grep "VERSION =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
+		local pv_minor=$(grep "PATCHLEVEL =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
+		local pv_patch=$(grep "SUBLEVEL =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
+		local pv_extraversion=$(grep "EXTRAVERSION =" "${x}" | head -n 1 | cut -f 2 -d "=" | sed -E -e "s|[ ]+||g")
 
-			local latest_version
-			for latest_version in ${MULTISLOT_LATEST_KERNEL_RELEASE[@]} ; do
-				local s1=$(ver_cut 1-2 "${latest_version}")
-				local s2="${pv_major}.${pv_minor}"
-				if is_eol "${pv_major}.${pv_minor}" ; then
+		local latest_version
+		for latest_version in ${MULTISLOT_LATEST_KERNEL_RELEASE[@]} ; do
+			local s1=$(ver_cut 1-2 "${latest_version}")
+			local s2="${pv_major}.${pv_minor}"
+			if is_eol "${pv_major}.${pv_minor}" ; then
 eerror "${pv_major}.${pv_minor}.${pv_patch}${extra_version} is EOL should be unemerged."
-				elif ver_test "${s1}" -eq "${s2}" && ver_test "${pv_major}.${pv_minor}.${pv_patch}" -lt "${latest_version}" ; then
+			elif ver_test "${s1}" -eq "${s2}" && ver_test "${pv_major}.${pv_minor}.${pv_patch}" -lt "${latest_version}" ; then
 eerror "${pv_major}.${pv_minor}.${pv_patch}${extra_version} failed zero-tolerance and should be unemerged."
-				fi
-			done
-
+			fi
 		done
-		KERNEL_DIR="${prev_kernel_dir}"
-	fi
+
+	done
+	KERNEL_DIR="${prev_kernel_dir}"
 }
 
 pkg_setup() {

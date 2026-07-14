@@ -113,154 +113,154 @@ IUSE+="
 	auto
 	custom-kernel
 	+enforce
-	firmware
+	intel-microcode
+	linux-firmware
 	kvm
-	+zero-tolerance
 	ebuild_revision_0
 "
 REQUIRED_USE="
 	cpu_target_x86_arrandale? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_clarkdale? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_gladden? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_lynnfield? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_bakerville? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_nehalem? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_nehalem? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_westmere? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_sandy_bridge? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_ivy_bridge? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_haswell? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_broadwell? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_hewitt_lake? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_skylake? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_kaby_lake_gen7? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_amber_lake_gen8? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_coffee_lake_gen8? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_kaby_lake_gen8? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_ice_lake? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_sapphire_rapids? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_sapphire_rapids_edge_enhanced? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_tiger_lake? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_sapphire_rapids? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_alder_lake? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_catlow_golden_cove? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_rocket_lake? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_raptor_lake_gen13? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_raptor_lake_gen14? (
-		firmware
+		intel-microcode
 	)
 
 	cpu_target_x86_purley_refresh? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_cedar_island? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_greenlow? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_tatlow? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_whiskey_lake? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_coffee_lake_gen9? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_comet_lake? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_cooper_lake? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_emerald_rapids? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_meteor_lake? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_idaville? (
-		firmware
+		intel-microcode
 	)
 
 	cpu_target_x86_milan? (
-		firmware
+		linux-firmware
 	)
 	cpu_target_x86_milan-x? (
-		firmware
+		linux-firmware
 	)
 	cpu_target_x86_genoa? (
-		firmware
+		linux-firmware
 	)
 	cpu_target_x86_genoa-x? (
-		firmware
+		linux-firmware
 	)
 	cpu_target_x86_bergamo? (
-		firmware
+		linux-firmware
 	)
 	cpu_target_x86_naples? (
-		firmware
+		linux-firmware
 	)
 	cpu_target_x86_rome? (
-		firmware
+		linux-firmware
 	)
 	cpu_target_x86_siena? (
-		firmware
+		linux-firmware
 	)
 
 	|| (
@@ -723,7 +723,7 @@ _check_kernel_cmdline() {
 # Check the kernel config flags and kernel command line to mitigate against Foreshadow.
 _mitigate_dt_verify_mitigation_foreshadow() {
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "4.19" ; then
-		if use firmware ; then
+		if use intel-microcode ; then
 			if \
 				   use cpu_target_x86_arrandale \
 				|| use cpu_target_x86_clarkdale \
@@ -862,7 +862,7 @@ _mitigate_dt_verify_mitigation_tecra() {
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against Reptar.
 _mitigate_dt_verify_mitigation_reptar() {
-	if use firmware ; then
+	if use intel-microcode ; then
 		if \
 			   use cpu_target_x86_ice_lake \
 			|| use cpu_target_x86_tiger_lake \
@@ -927,7 +927,7 @@ ewarn "A BIOS firmware update is required for non datacenter for Sinkclose mitig
 # Check the kernel config flags and kernel command line to mitigate against CacheWarp, also known as the CacheWarp attack or the "AMD INVD Instruction Security Vulnerability".
 _mitigate_dt_verify_mitigation_cachewarp() {
 	if \
-		use firmware\
+		use intel-microcode \
 			&& \
 		( \
 			   use cpu_target_x86_milan \

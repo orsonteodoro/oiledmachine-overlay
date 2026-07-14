@@ -117,129 +117,128 @@ IUSE+="
 	auto
 	custom-kernel
 	+enforce
-	firmware
-	xen
-	+zero-tolerance
+	intel-microcode
+	linux-firmware
 	ebuild_revision_3
 "
 REQUIRED_USE="
 	cpu_target_x86_ice_lake? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_sapphire_rapids? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_sapphire_rapids_edge_enhanced? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_snow_ridge? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_parker_ridge? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_elkhart_lake? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_jasper_lake? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_skylake? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_tiger_lake? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_alder_lake? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_catlow_golden_cove? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_rocket_lake? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_raptor_lake_gen13? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_raptor_lake_gen14? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_alder_lake_n? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_cooper_lake? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_idaville? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_whitley? (
-		firmware
+		intel-microcode
 	)
 
 
 	cpu_target_x86_purley_refresh? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_cedar_island? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_greenlow? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_tatlow? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_kaby_lake_gen7? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_kaby_lake_gen8? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_whiskey_lake? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_coffee_lake_gen8? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_coffee_lake_gen9? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_comet_lake? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_rocket_lake? (
-		firmware
+		intel-microcode
 	)
 	cpu_target_x86_meteor_lake? (
-		firmware
+		intel-microcode
 	)
 
 
 	cpu_target_x86_naples? (
-		firmware
+		linux-firmware
 	)
 	cpu_target_x86_rome? (
-		firmware
+		linux-firmware
 	)
 	cpu_target_x86_milan? (
-		firmware
+		linux-firmware
 	)
 	cpu_target_x86_milan-x? (
-		firmware
+		linux-firmware
 	)
 	cpu_target_x86_genoa? (
-		firmware
+		linux-firmware
 	)
 	cpu_target_x86_genoa-x? (
-		firmware
+		linux-firmware
 	)
 	cpu_target_x86_bergamo? (
-		firmware
+		linux-firmware
 	)
 	cpu_target_x86_siena? (
-		firmware
+		linux-firmware
 	)
 	|| (
 		${ACTIVE_VERSIONS[@]/./_}
@@ -630,27 +629,6 @@ eerror
 #einfo "${o}"
 }
 
-gen_linux_firmware_ge() {
-	local arg="${1}"
-	if ver_test ${arg} -gt ${_LINUX_FIRMWARE_PV} ; then
-		_LINUX_FIRMWARE_PV=${arg}
-	fi
-}
-
-gen_intel_microcode_ge() {
-	local arg="${1}"
-	if ver_test ${arg} -gt ${_INTEL_MICROCODE_PV} ; then
-		_INTEL_MICROCODE_PV=${arg}
-	fi
-}
-
-gen_xen_ge() {
-	local arg="${1}"
-	if ver_test ${arg} -gt ${_XEN_PV} ; then
-		_XEN_PV=${arg}
-	fi
-}
-
 _use() {
 	local arg="${1}"
 	local L=(
@@ -906,7 +884,7 @@ ewarn "A BIOS firmware update is required for non datacenter for Sinkclose mitig
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against Reptar.
 _mitigate_dos_verify_mitigation_reptar() {
-	if use firmware ; then
+	if use intel-microcode ; then
 		if \
 			   use cpu_target_x86_ice_lake \
 			|| use cpu_target_x86_tiger_lake \
