@@ -940,17 +940,52 @@ BDEPEND="
 PDEPEND="
 	~sys-kernel/scx-loader-${PV}
 "
+
+# Do not change the order for lower maintenace time cost.
 CONFIG_CHECK="
 	~BPF
-	~BPF_EVENTS
+	~BPF_SYSCALL
 	~BPF_JIT
+	~DEBUG_INFO
+	~DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT
+	~DEBUG_INFO_BTF
 	~BPF_JIT_ALWAYS_ON
 	~BPF_JIT_DEFAULT_ON
-	~BPF_SYSCALL
-	~DEBUG_INFO_BTF
-	~FTRACE
-	~KALLSYMS_ALL
 	~SCHED_CLASS_EXT
+
+	~KALLSYMS_ALL
+
+	~FUNCTION_TRACER
+
+	~SCHED_DEBUG
+
+	~NUMA
+	~NUMA_BALANCING
+	~SCHED_AUTOGROUP
+	~SCHED_CORE
+	~SCHED_MC
+
+	~PREEMPT
+	~PREEMPT_DYNAMIC
+
+	~DEBUG_LOCKDEP
+	~DEBUG_ATOMIC_SLEEP
+	~PROVE_LOCKING
+
+	~BPF_EVENTS=y
+	~FTRACE_SYSCALLS=y
+	~DYNAMIC_FTRACE=y
+	~KPROBES=y
+	~KPROBE_EVENTS=y
+	~UPROBES=y
+	~UPROBE_EVENTS=y
+	~DEBUG_FS=y
+
+	~IKHEADERS=y
+	~IKCONFIG_PROC=y
+	~IKCONFIG=y
+
+	~FTRACE
 "
 
 QA_PREBUILT="/usr/bin/vmlinux_docify"
@@ -1102,11 +1137,18 @@ einfo "Installing schedulers"
 	local sched
 	for sched in "scheds/rust/scx_"* ; do
 einfo "Installing ${sched#scheds/rust/}"
-		dobin "target/"*"/${configuration}/${sched#scheds/rust}"
+		dobin "target/${configuration}/${sched#scheds/rust}"
 	done
 
 einfo "Installing tools"
-	dobin "target/"*"/${configuration}/"{"scx"{"cash","top"},"vmlinux_docify"}
+	dobin "target/${configuration}/vmlinux_docify"
+	dobin "target/${configuration}/scxtop"
+	dobin "target/${configuration}/scx-forge-agent"
+
+	if use debug ; then
+		exeinto "/usr/$(get_libdir)"
+		doexe "target/${configuration}/libscx_stats_derive.so"
+	fi
 
 	dodoc "README.md"
 
