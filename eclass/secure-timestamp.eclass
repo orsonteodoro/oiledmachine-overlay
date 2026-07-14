@@ -372,9 +372,10 @@ SECURE_TIMESTAMP["sys_libs_pam_9999"]="Jun 30, 2026 3:00 AM PDT"
 # The linux-firmware timestamp currently tracks based on vulnerability keyword
 # search.
 #
-# repo date - security issue keywords:
+# repo date  - security or release quality issue keywords:
 #
 # 2026-05-16 - bound
+# 2026-03-25 - page fault [it it unknown if hard/soft fault but it is assumed that all are hard faults or are fatal errors]
 # 2026-03-03 - corrupt
 # 2025-10-09 (consumer), 2026-05-14 (enterprise) - secur
 # 2025-06-19 - crash
@@ -392,16 +393,17 @@ SECURE_TIMESTAMP["sys_libs_pam_9999"]="Jun 30, 2026 3:00 AM PDT"
 # 2012-02-19 - hangs
 # 2010-08-04 - dereference, null pointer
 #
-# Types of updates
+# Types of firmware updates
 #
 # SEV update - for protecting guest (Confidential Virtual Machines) CVMs on enterprise/cloud CPUs
 # µcode update - for fixing CPU bugs on consumer or enterprise grade CPUs
 #
 # Repo date fix - Advisories
+#
 # 2025-02-20 to 2021-09-12 - AMD-SB-3023 multiple security mitigations with SEV update
-# 2023-08-28 - 2021-09-12 - AMD-SB-3016 security mitigation with SEV update
-# 2025-07-29 - AMD-SB-3023, AMD-SB-3027 (StackWarp) security mitigation with µcode update
-# 2023-07-24 - AMD-SB-3005 (CacheWarp) security mitigation for µcode an SEV update
+# 2023-08-28 to 2021-09-12 - AMD-SB-3016 security mitigation with SEV update
+# 2025-07-29               - AMD-SB-3023, AMD-SB-3027 (StackWarp) security mitigation with µcode update
+# 2023-07-24               - AMD-SB-3005 (CacheWarp) security mitigation for µcode an SEV update
 # The AI recommends the latest SEV FW build to mitigate CacheWarp and StackWarp.
 # The ate used is based on minimum version available on the repo that remediates it.
 # The minimal version is chosen to mitigate the costs or damages in testing in production, DoS, or bricking.
