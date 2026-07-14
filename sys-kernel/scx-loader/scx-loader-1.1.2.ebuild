@@ -171,8 +171,25 @@ LICENSE="GPL-2"
 LICENSE+=" MIT MPL-2.0 Unicode-3.0 ZLIB"
 SLOT="0"
 KEYWORDS="amd64"
-
-RDEPEND="~sys-kernel/scx-${PV}"
+IUSE+="
+${LLVM_COMPAT[@]/#/llvm_slot_}
+"
+REQUIRED_USE="
+	|| (
+		${LLVM_COMPAT[@]/#/llvm_slot_}
+	)
+"
+RDEPEND="~sys-kernel/scx-${PV}:="
+BDEPEND="
+	llvm_slot_22? (
+                llvm-core/clang:22=[llvm_targets_BPF(-)]
+                llvm-core/llvm:22=[llvm_targets_BPF(-)]
+		|| (
+			dev-lang/rust-bin:1.96.1
+			dev-lang/rust:1.96.1
+		)
+	)
+"
 
 QA_PREBUILT="
 	usr/bin/scx_loader

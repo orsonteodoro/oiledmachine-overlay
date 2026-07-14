@@ -24,14 +24,14 @@ EAPI=8
 # Ideally both should be aligned but not possible, but the package will still build.
 # LLVM 19 - Required for protobuf-cpp 3.21.12 (LTS on D12/U24).
 #           Required for Linux kernel built with Clang 19 (LTS on D13)
-# LLVM 21 - Required for Rust 1.91.1 (U24 has Rust 1.91.1 but not LLVM 21, but rust-bin uses LLVM 21)
+# LLVM 22 - Required for Rust 1.96.1 (Same as CI testing for lavd)
 
 GENERATE_LOCKFILE=0
-# Both llvm_slot_19 and llvm_slot_21 must be specified.
-LLVM_COMPAT=( 19 21 )
+# Both llvm_slot_19 and llvm_slot_22 must be specified.
+LLVM_COMPAT=( 19 22 )
 # RUST_*_VER will be pinned to meet cargo lockfile requirements.
-RUST_MAX_VER="1.94.1" # LLVM 21.1
-RUST_MIN_VER="1.94.1" # LLVM 21.1
+RUST_MAX_VER="1.96.1" # LLVM 22.1
+RUST_MIN_VER="1.96.1" # LLVM 22.1
 DISABLED_CRATES="
 scx_arena_selftests-1.1.2
 scx_mitosis-1.1.2
@@ -888,12 +888,12 @@ SLOT="0"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +lto
-ebuild_revision_10
+ebuild_revision_11
 "
 # Both LLVM slots are required as discussed above.
 REQUIRED_USE+="
 	llvm_slot_19
-	llvm_slot_21
+	llvm_slot_22
 	|| (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
@@ -926,12 +926,12 @@ BDEPEND="
 		llvm-core/clang:19=[llvm_targets_BPF(-)]
 		llvm-core/llvm:19=[llvm_targets_BPF(-)]
 	)
-	llvm_slot_21? (
-		llvm-core/clang:21=[llvm_targets_BPF(-)]
-		llvm-core/llvm:21=[llvm_targets_BPF(-)]
+	llvm_slot_22? (
+		llvm-core/clang:22=[llvm_targets_BPF(-)]
+		llvm-core/llvm:22=[llvm_targets_BPF(-)]
 		|| (
-			dev-lang/rust:1.94.1
-			dev-lang/rust-bin:1.94.1
+			dev-lang/rust:1.96.1
+			dev-lang/rust-bin:1.96.1
 		)
 	)
 "
@@ -963,7 +963,7 @@ pkg_setup() {
 	PATH=$(echo "${PATH}" | tr ":" "\n" | sed -e "\|/usr/lib/llvm/|d" | tr "\n" ":")
 	PATH=$(echo "${PATH}" | sed -e "s|/opt/bin:|/opt/bin:/usr/lib/llvm/19/bin:|g")
 	export PATH=$(echo "${PATH}" | sed -e "s|/opt/bin:|/opt/bin:/usr/lib/llvm/21/bin:|g")
-	export LLVM_SLOT="21"
+	export LLVM_SLOT="22"
 einfo "PATH:  ${PATH}"
 einfo "LLVM_SLOT:  ${LLVM_SLOT}"
 
