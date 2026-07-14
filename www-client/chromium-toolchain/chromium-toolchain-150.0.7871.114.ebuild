@@ -27,19 +27,22 @@ GN_USE_GIT=1
 INSTALL_PREFIX="/usr/share/chromium/${PV%.*}.x"
 LIBCXX_USEDEP_SKIP=1
 # https://github.com/chromium/chromium/blob/150.0.7871.114/tools/clang/scripts/update.py#L38 \
-LLVM_COMMIT="20b6ec66" # without the g prefix; Thu, 9 Apr 2026 18:28:25 +0200
-LLVM_LIVE_TIMESTAMP="Fri, 15 May 2026 18:39:29 +0000" # Unvendored timestamp for system-clang from https://github.com/llvm/llvm-project/commit/${LLVM_COMMIT}.patch
-LLVM_N_COMMITS="10931" # The number to the right of -init- in llvmorg-23-init-10931-g20b6ec66
-LLVM_OFFICIAL_SLOT="23" # Cr official slot
-LLVM_SUB_REV="11"
-LLVM_SLOT_UNSTABLE="23" # Comment out if using stable slot
-LLVM_SLOT_LIVE="1"
+LLVM_SYSTEM_SLOT="23" # Comment out if using stable slot
+LLVM_SYSTEM_SLOT_LIVE="1"
+LLVM_SYSTEM_TIMESTAMP_LIVE="Fri, 15 May 2026 18:39:29 +0000" # Unvendored timestamp for system-clang from https://github.com/llvm/llvm-project/commit/${LLVM_VENDORED_COMMIT}.patch
+LLVM_VENDORED_COMMIT="20b6ec66" # without the g prefix; Thu, 9 Apr 2026 18:28:25 +0200
+LLVM_VENDORED_N_COMMITS="10931" # The number to the right of -init- in llvmorg-23-init-10931-g20b6ec66
+LLVM_VENDORED_SLOT="23" # Cr official slot
+LLVM_VENDORED_SUB_REV="11"
 # https://github.com/chromium/chromium/blob/150.0.7871.114/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
-RUST_LIVE_TIMESTAMP="May 22, 2026 00:33:25 -0700" # Same as Rust 1.98.0 timestamp
-RUST_COMMIT="4c4205163abcbd08948b3efab796c543ba1ea687" # Vendored commit
-RUST_SUB_REV="5"
-RUST_VENDORED_VER="1.96.0" # See https://github.com/rust-lang/rust/blob/4c4205163abcbd08948b3efab796c543ba1ea687/src/version
+RUST_SYSTEM_LIVE_TIMESTAMP="Jul 5, 2026 8:11 AM PDT" # Same as Rust 1.99.0 timestamp
+RUST_SYSTEM_LIVE_VER="1.99.0"
+RUST_SYSTEM_LIVE_LLVM_SLOT="22"
+RUST_SYSTEM_LIVE_LLVM_COMMIT="52ed14fcd56afc30f9cccd8ca8ce237c2eef7e04"
+RUST_VENDORED_COMMIT="4c4205163abcbd08948b3efab796c543ba1ea687" # Vendored commit
+RUST_VENDORED_SUB_REV="5"
+RUST_VENDORED_VER="1.96.0" # For see https://github.com/rust-lang/rust/blob/4c4205163abcbd08948b3efab796c543ba1ea687/src/version
 # Upstream uses 1.96.0 corresponding to LLVM 22.1
 # This ebuild assumes 1.98.0 (live 9999) corresponding to llvm 22 to reduce build time.
 # For the LLVM version used for Rust snapshot, see https://github.com/rust-lang/rust/blob/4c4205163abcbd08948b3efab796c543ba1ea687/.gitmodules#L28
@@ -47,8 +50,8 @@ RUST_VENDORED_VER="1.96.0" # See https://github.com/rust-lang/rust/blob/4c420516
 RUST_MAX_VER="9999" # Inclusive
 RUST_MIN_VER="9999" # Corresponds to llvm-22.1
 RUST_PV="${RUST_MIN_VER}"
-VENDORED_CLANG_VER="llvmorg-${LLVM_OFFICIAL_SLOT}-init-${LLVM_N_COMMITS}-g${LLVM_COMMIT:0:8}-${LLVM_SUB_REV}"
-VENDORED_RUST_VER="${RUST_COMMIT}-${RUST_SUB_REV}"
+VENDORED_CLANG_VER="llvmorg-${LLVM_VENDORED_SLOT}-init-${LLVM_VENDORED_N_COMMITS}-g${LLVM_VENDORED_COMMIT:0:8}-${LLVM_VENDORED_SUB_REV}"
+VENDORED_RUST_VER="${RUST_VENDORED_COMMIT}-${RUST_VENDORED_SUB_REV}"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -63,7 +66,7 @@ LLVM_COMPAT=(
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
-if [[ "${LLVM_SLOT_LIVE}" -eq "1" ]] ; then
+if [[ "${LLVM_SYSTEM_SLOT_LIVE}" -eq "1" ]] ; then
 	USE_FALLBACK_COMMIT=",fallback-commit"
 else
 	USE_FALLBACK_COMMIT=""
@@ -90,13 +93,13 @@ SRC_URI+="
 	!system-clang? (
 		amd64? (
 https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/clang-${VENDORED_CLANG_VER}.tar.xz
-	-> chromium-${PV%%\.*}-${LLVM_COMMIT:0:7}-${LLVM_SUB_REV}-clang-linux-x64.tar.xz
+	-> chromium-${PV%%\.*}-${LLVM_VENDORED_COMMIT:0:7}-${LLVM_VENDORED_SUB_REV}-clang-linux-x64.tar.xz
 		)
 	)
 	!system-rust? (
 		amd64? (
 https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/rust-toolchain-${VENDORED_RUST_VER}-${VENDORED_CLANG_VER%-*}.tar.xz
-	-> chromium-${PV%%\.*}-${RUST_COMMIT:0:7}-${RUST_SUB_REV}-rust-linux-x64.tar.xz
+	-> chromium-${PV%%\.*}-${RUST_VENDORED_COMMIT:0:7}-${RUST_VENDORED_SUB_REV}-rust-linux-x64.tar.xz
 		)
 	)
 "
@@ -231,29 +234,29 @@ REQUIRED_USE="
 RDEPEND+="
 	!www-client/chromium-toolchain:0
 	system-clang? (
-		=llvm-runtimes/compiler-rt-${LLVM_OFFICIAL_SLOT}*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}${USE_FALLBACK_COMMIT}]
+		=llvm-runtimes/compiler-rt-${LLVM_VENDORED_SLOT}*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}${USE_FALLBACK_COMMIT}]
 		llvm-runtimes/compiler-rt:=
-		=llvm-runtimes/clang-runtime-${LLVM_OFFICIAL_SLOT}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
+		=llvm-runtimes/clang-runtime-${LLVM_VENDORED_SLOT}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 		llvm-runtimes/clang-runtime:=
-		llvm-core/clang:${LLVM_OFFICIAL_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}${USE_FALLBACK_COMMIT}]
+		llvm-core/clang:${LLVM_VENDORED_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}${USE_FALLBACK_COMMIT}]
 		llvm-core/clang:=
-		llvm-core/lld:${LLVM_OFFICIAL_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}${USE_FALLBACK_COMMIT}]
+		llvm-core/lld:${LLVM_VENDORED_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}${USE_FALLBACK_COMMIT}]
 		llvm-core/lld:=
-		llvm-core/llvm:${LLVM_OFFICIAL_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}${USE_FALLBACK_COMMIT}]
+		llvm-core/llvm:${LLVM_VENDORED_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}${USE_FALLBACK_COMMIT}]
 		llvm-core/llvm:=
 
-		>=llvm-runtimes/libcxx-${LLVM_OFFICIAL_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},libcxxabi${USE_FALLBACK_COMMIT}]
+		>=llvm-runtimes/libcxx-${LLVM_VENDORED_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},libcxxabi${USE_FALLBACK_COMMIT}]
 		llvm-runtimes/libcxx:=
 
-		>=llvm-runtimes/libcxxabi-${LLVM_OFFICIAL_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}${USE_FALLBACK_COMMIT}]
+		>=llvm-runtimes/libcxxabi-${LLVM_VENDORED_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}${USE_FALLBACK_COMMIT}]
 		llvm-runtimes/libcxxabi:=
 
 		cfi? (
-			=llvm-runtimes/compiler-rt-sanitizers-${LLVM_OFFICIAL_SLOT}*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},cfi${USE_FALLBACK_COMMIT}]
+			=llvm-runtimes/compiler-rt-sanitizers-${LLVM_VENDORED_SLOT}*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},cfi${USE_FALLBACK_COMMIT}]
 			llvm-runtimes/compiler-rt-sanitizers:=
 		)
 		pgo? (
-			=llvm-runtimes/compiler-rt-sanitizers-${LLVM_OFFICIAL_SLOT}*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},profile${USE_FALLBACK_COMMIT}]
+			=llvm-runtimes/compiler-rt-sanitizers-${LLVM_VENDORED_SLOT}*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},profile${USE_FALLBACK_COMMIT}]
 			llvm-runtimes/compiler-rt-sanitizers:=
 		)
 	)
@@ -286,7 +289,7 @@ eerror "Switch to live with \`eselect rust\`"
 	fi
 
 	if "${RUSTC}" --version | grep -q -e "nightly" ; then
-		local compatible_time=$(date --date="${RUST_LIVE_TIMESTAMP}" "+%s")
+		local compatible_time=$(date --date="${RUST_SYSTEM_LIVE_TIMESTAMP}" "+%s")
 
 		local merge_time
 		local pkg_name
@@ -300,7 +303,7 @@ eerror "Switch to live with \`eselect rust\`"
 		if (( ${merge_time} < ${compatible_time} )) ; then
 eerror
 eerror "Detected old live timestamp."
-eerror "Re-emerge ${pkg_name} or switch to Rust ${RUST_VENDORED_VER} or later."
+eerror "Re-emerge ${pkg_name} or switch to Rust ${RUST_SYSTEM_LIVE_VER} or later."
 eerror
 eerror "Current timestamp:  "$(date --date="@${merge_time}")
 eerror "Expected timestamp:  >= "$(date --date="@${compatible_time}")
@@ -317,8 +320,8 @@ eerror "Switch Rust to >= ${RUST_MIN_VER}"
 }
 
 verify_clang() {
-	if [[ -n "${LLVM_SLOT_UNSTABLE}" ]] ; then
-		local upstream_timestamp=$(date --date="${LLVM_LIVE_TIMESTAMP}" "+%s")
+	if [[ -n "${LLVM_SYSTEM_SLOT}" ]] ; then
+		local upstream_timestamp=$(date --date="${LLVM_SYSTEM_TIMESTAMP_LIVE}" "+%s")
 		local L=(
 			"llvm-core/clang"
 			"llvm-core/llvm"
@@ -330,12 +333,12 @@ verify_clang() {
 		)
 		local pkg
 		for pkg in "${L[@]}" ; do
-			if ! ls "/var/db/pkg/${pkg}-${LLVM_SLOT_UNSTABLE}"* >/dev/null 2>&1 ; then
+			if ! ls "/var/db/pkg/${pkg}-${LLVM_SYSTEM_SLOT}"* >/dev/null 2>&1 ; then
 eerror "${pkg} is not installed."
-eerror "Disable the system-clang USE flag or emerge =${pkg}-${LLVM_SLOT_UNSTABLE}*."
+eerror "Disable the system-clang USE flag or emerge =${pkg}-${LLVM_SYSTEM_SLOT}*."
 				die
 			fi
-			local pkg_timestamp=$(cat "/var/db/pkg/${pkg}-${LLVM_SLOT_UNSTABLE}"*"/BUILD_TIME")
+			local pkg_timestamp=$(cat "/var/db/pkg/${pkg}-${LLVM_SYSTEM_SLOT}"*"/BUILD_TIME")
 			if (( ${pkg_timestamp} < ${upstream_timestamp} )) ; then
 eerror
 eerror "Detected old live timestamp."
@@ -412,7 +415,7 @@ src_unpack() {
 		mkdir -p "${WORKDIR}/clang" || die
 		pushd "${WORKDIR}/clang" >/dev/null 2>&1 || die
 			if [[ "${ARCH}" == "amd64" ]] ; then
-				unpack "chromium-${PV%%\.*}-${LLVM_COMMIT:0:7}-${LLVM_SUB_REV}-clang-linux-x64.tar.xz"
+				unpack "chromium-${PV%%\.*}-${LLVM_VENDORED_COMMIT:0:7}-${LLVM_VENDORED_SUB_REV}-clang-linux-x64.tar.xz"
 			fi
 			echo "${VENDORED_CLANG_VER}" > "clang-ver.txt" || die
 		popd >/dev/null 2>&1 || die
@@ -422,7 +425,7 @@ src_unpack() {
 		mkdir -p "${WORKDIR}/rust" || die
 		pushd "${WORKDIR}/rust" >/dev/null 2>&1 || die
 			if [[ "${ARCH}" == "amd64" ]] ; then
-				unpack "chromium-${PV%%\.*}-${RUST_COMMIT:0:7}-${RUST_SUB_REV}-rust-linux-x64.tar.xz"
+				unpack "chromium-${PV%%\.*}-${RUST_VENDORED_COMMIT:0:7}-${RUST_VENDORED_SUB_REV}-rust-linux-x64.tar.xz"
 			fi
 			echo "${VENDORED_RUST_VER}" > "rust-ver.txt" || die
 		popd >/dev/null 2>&1 || die
@@ -558,9 +561,9 @@ einfo "Detected compiler switch.  Disabling LTO."
 		local rust_commit=$("${RUSTC}" --version | cut -f 3 -d " " | cut -f 1 -d "-" | sed -e "s|[(]||g")	# Rust commit
 		#local parens_content=$("${RUSTC}" --version | cut -f 3- -d " ")					# Parenthesis content
 		local rust_sub_ver="0"											# Rust sub revision, placeholder
-		local llvm_major_pv="22"										# LLVM major version, from RUST_REPO/.gitmodules
+		local llvm_major_pv="${RUST_SYSTEM_LIVE_LLVM_SLOT}"							# LLVM major version, from RUST_REPO/.gitmodules
 		local llvm_n_commits="0"										# LLVM N commits, placeholder
-		local llvm_commit="41f177ed26a5252a30ea6090a4da66ce0a96bf44"						# LLVM 8 digit commit, placeholder, from RUST_REPO/src/llvm-project
+		local llvm_commit="${RUST_SYSTEM_LIVE_LLVM_COMMIT}"							# LLVM 8 digit commit, placeholder, from RUST_REPO/src/llvm-project
 	# Sample:  rustc 1.95.0 7d8ebe3128fc87f3da1ad64240e63ccf07b8f0bd (7d8ebe3128fc87f3da1ad64240e63ccf07b8f0bd-3-llvmorg-23-init-2224-g5bd8dadb chromium)
 		echo "rustc ${rust_pv} ${rust_commit} (${rust_commit}-${rust_sub_ver}-llvmorg-${llvm_major_pv}-init-${llvm_n_commits}-g${llvm_commit:0:8})" > "${WORKDIR}/rust/VERSION" || die
 		echo "rustc ${rust_pv} ${rust_commit} (${rust_commit}-${rust_sub_ver}-llvmorg-${llvm_major_pv}-init-${llvm_n_commits}-g${llvm_commit:0:8})" > "${WORKDIR}/rust/INSTALLED_VERSION" || die
