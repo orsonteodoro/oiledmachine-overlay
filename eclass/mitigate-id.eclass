@@ -546,6 +546,7 @@ gen_patched_kernel_driver_list() {
 }
 
 FLAVORS=(
+	"sys-kernel/asahi-kernel" # 7.0.12_p1
 	"sys-kernel/asahi-sources" # 7.0.9_p2
 	"sys-kernel/cachyos-kernel" # 7.0.12-r1, 7.0.12, 7.0.12_p1, 7.2_rc1_p1, 7.2_rc2
 	"sys-kernel/cachyos-kernel-bin" # 7.1.2-r2, 7.0.12
@@ -597,6 +598,7 @@ FLAVORS_POINT_RELEASE=(
 )
 
 FLAVORS_POST_3C_RELEASE=(
+	"sys-kernel/asahi-kernel"
 	"sys-kernel/asahi-sources"
 	"sys-kernel/cachyos-kernel"
 	"sys-kernel/gentoo-kernel"
