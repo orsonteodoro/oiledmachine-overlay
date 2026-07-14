@@ -3,6 +3,8 @@
 
 EAPI=8
 
+WEB_KERNEL_CONFIG_CHECK_YAMA=1
+
 CHROMIUM_LANGS="af am ar bg bn ca cs da de el en-GB es es-419 et fa fi fil fr gu he
 	hi hr hu id it ja kn ko lt lv ml mr ms nb nl pl pt-BR pt-PT ro ru sk sl sr
 	sv sw ta te th tr uk ur vi zh-CN zh-TW"
@@ -26,7 +28,7 @@ CHKL_TIMESTAMPS=(
 	"x11-libs/libxkbcommon-9999"
 )
 
-inherit chkl chromium-2 desktop pax-utils secure-version unpacker xdg
+inherit chkl chromium-2 desktop pax-utils secure-version unpacker web-kernel-config xdg
 
 DESCRIPTION="The web browser from Google"
 HOMEPAGE="https://www.google.com/chrome/"
@@ -109,6 +111,7 @@ pkg_pretend() {
 
 pkg_setup() {
 	chromium_suid_sandbox_check_kernel_config
+	web-kernel-config_setup
 }
 
 src_unpack() {

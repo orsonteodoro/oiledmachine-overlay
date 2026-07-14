@@ -44,7 +44,7 @@ CHKL_TIMESTAMPS=(
 	"x11-libs/libXcursor-9999"
 )
 
-inherit chkl desktop linux-info optfeature pax-utils secure-version xdg
+inherit chkl desktop linux-info optfeature pax-utils secure-version web-kernel-config xdg
 
 MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/releases/${MOZ_PV}"
 
@@ -194,6 +194,7 @@ pkg_setup() {
 	WARNING_SECCOMP="CONFIG_SECCOMP not set! This system will be unable to play DRM-protected content."
 
 	linux-info_pkg_setup
+	web-kernel-config_setup
 }
 
 src_unpack() {
