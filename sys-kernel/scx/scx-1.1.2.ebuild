@@ -966,6 +966,8 @@ pkg_setup() {
 	PATH=$(echo "${PATH}" | sed -e "s|/opt/bin:|/opt/bin:/usr/lib/llvm/${LLVM_SLOT_PROTOBUF}/bin:|g")
 	export PATH=$(echo "${PATH}" | sed -e "s|/opt/bin:|/opt/bin:/usr/lib/llvm/${LLVM_SLOT_SCX}/bin:|g")
 	export LLVM_SLOT="${LLVM_SLOT_SCX}"
+	export CLANG_PATH=$(which clang-${LLVM_SLOT_SCX})
+einfo "CLANG_PATH:  ${CLANG_PATH}"
 einfo "PATH:  ${PATH}"
 einfo "LLVM_SLOT:  ${LLVM_SLOT}"
 
