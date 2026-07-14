@@ -28,7 +28,9 @@ EAPI=8
 
 GENERATE_LOCKFILE=0
 # Both llvm_slot_19 and llvm_slot_22 must be specified.
-LLVM_COMPAT=( 19 22 )
+LLVM_SLOT_PROTOBUF=19
+LLVM_SLOT_SCX=22
+LLVM_COMPAT=( ${LLVM_SLOT_PROTOBUF} ${LLVM_SLOT_SCX} )
 # RUST_*_VER will be pinned to meet cargo lockfile requirements.
 RUST_MAX_VER="1.96.1" # LLVM 22.1
 RUST_MIN_VER="1.96.1" # LLVM 22.1
@@ -892,8 +894,8 @@ ebuild_revision_11
 "
 # Both LLVM slots are required as discussed above.
 REQUIRED_USE+="
-	llvm_slot_19
-	llvm_slot_22
+	llvm_slot_${LLVM_SLOT_PROTOBUF}
+	llvm_slot_${LLVM_SLOT_SCX}
 	|| (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
@@ -922,13 +924,13 @@ BDEPEND="
 		)
 	)
 	virtual/pkgconfig:*
-	llvm_slot_19? (
-		llvm-core/clang:19=[llvm_targets_BPF(-)]
-		llvm-core/llvm:19=[llvm_targets_BPF(-)]
+	llvm_slot_${LLVM_SLOT_PROTOBUF}? (
+		llvm-core/clang:${LLVM_SLOT_PROTOBUF}=[llvm_targets_BPF(-)]
+		llvm-core/llvm:${LLVM_SLOT_PROTOBUF}=[llvm_targets_BPF(-)]
 	)
-	llvm_slot_22? (
-		llvm-core/clang:22=[llvm_targets_BPF(-)]
-		llvm-core/llvm:22=[llvm_targets_BPF(-)]
+	llvm_slot_${LLVM_SLOT_SCX}? (
+		llvm-core/clang:${LLVM_SLOT_SCX}=[llvm_targets_BPF(-)]
+		llvm-core/llvm:${LLVM_SLOT_SCX}=[llvm_targets_BPF(-)]
 		|| (
 			dev-lang/rust:1.96.1
 			dev-lang/rust-bin:1.96.1
@@ -961,9 +963,9 @@ pkg_setup() {
 
 	# Sanitize and manually add to avoid llvm*.eclass side-effects.
 	PATH=$(echo "${PATH}" | tr ":" "\n" | sed -e "\|/usr/lib/llvm/|d" | tr "\n" ":")
-	PATH=$(echo "${PATH}" | sed -e "s|/opt/bin:|/opt/bin:/usr/lib/llvm/19/bin:|g")
-	export PATH=$(echo "${PATH}" | sed -e "s|/opt/bin:|/opt/bin:/usr/lib/llvm/21/bin:|g")
-	export LLVM_SLOT="22"
+	PATH=$(echo "${PATH}" | sed -e "s|/opt/bin:|/opt/bin:/usr/lib/llvm/${LLVM_SLOT_PROTOBUF}/bin:|g")
+	export PATH=$(echo "${PATH}" | sed -e "s|/opt/bin:|/opt/bin:/usr/lib/llvm/${LLVM_SLOT_SCX}/bin:|g")
+	export LLVM_SLOT="${LLVM_SLOT_SCX}"
 einfo "PATH:  ${PATH}"
 einfo "LLVM_SLOT:  ${LLVM_SLOT}"
 
