@@ -6,77 +6,6 @@ EAPI=8
 
 # Security:  update every kernel version bump
 
-declare -A _ALL_VERSIONS=(
-["_0"]="EOL"
-["_1"]="EOL"
-["_2"]="EOL"
-["_3"]="EOL"
-["_4_0"]="EOL"
-["_4_1"]="EOL"
-["_4_2"]="EOL"
-["_4_3"]="EOL"
-["_4_4"]="EOL"
-["_4_5"]="EOL"
-["_4_6"]="EOL"
-["_4_7"]="EOL"
-["_4_8"]="EOL"
-["_4_8"]="EOL"
-["_4_9"]="EOL"
-["_4_10"]="EOL"
-["_4_11"]="EOL"
-["_4_12"]="EOL"
-["_4_13"]="EOL"
-["_4_14"]="EOL"
-["_4_15"]="EOL"
-["_4_16"]="EOL"
-["_4_17"]="EOL"
-["_4_18"]="EOL"
-["_4_19"]="EOL"
-["_4_20"]="EOL"
-["_5_0"]="EOL"
-["_5_1"]="EOL"
-["_5_2"]="EOL"
-["_5_3"]="EOL"
-["_5_4"]="EOL"
-["_5_5"]="EOL"
-["_5_6"]="EOL"
-["_5_7"]="EOL"
-["_5_8"]="EOL"
-["_5_9"]="EOL"
-["_5_10"]="5.10"
-["_5_11"]="EOL"
-["_5_12"]="EOL"
-["_5_13"]="EOL"
-["_5_14"]="EOL"
-["_5_15"]="5.15"
-["_5_16"]="EOL"
-["_5_17"]="EOL"
-["_5_18"]="EOL"
-["_5_19"]="EOL"
-["_6_0"]="EOL"
-["_6_1"]="6.1"
-["_6_2"]="EOL"
-["_6_3"]="EOL"
-["_6_4"]="EOL"
-["_6_5"]="EOL"
-["_6_6"]="6.6"
-["_6_7"]="EOL"
-["_6_8"]="EOL"
-["_6_9"]="EOL"
-["_6_10"]="EOL"
-["_6_11"]="EOL"
-["_6_12"]="6.12"
-["_6_13"]="EOL"
-["_6_14"]="EOL"
-["_6_15"]="EOL"
-["_6_16"]="EOL"
-["_6_17"]="EOL"
-["_6_18"]="6.18"
-["_6_19"]="EOL"
-["_7_0"]="EOL"
-["_7_1"]="7.1"
-["_7_2"]="7.2_rc0"
-)
 _INTEL_MICROCODE_PV=0
 _LINUX_FIRMWARE_PV=0
 
@@ -103,12 +32,22 @@ EOL_VERSIONS=(
 	"6.0" "6.2" "6.3" "6.4" "6.5" "6.7" "6.8" "6.9" "6.10" "6.11" "6.13" "6.14" "6.15" "6.16" "6.17" "6.19" "7.0"
 )
 
+CHKL_TIMESTAMPS=(
+	"sys-kernel/linux-next-9999"
+	"sys-kernel/ot-sources-7.12.9999"
+	"sys-kernel/raspberrypi-image-9999"
+	"sys-kernel/vanilla-kernel-6.1.9999"
+	"sys-kernel/vanilla-kernel-6.6.9999"
+	"sys-kernel/vanilla-kernel-6.12.9999"
+	"sys-kernel/vanilla-kernel-6.18.9999"
+)
+
 inherit secure-version
 
 # For zero-tolerance mode
 MULTISLOT_LATEST_KERNEL_RELEASE=("${LINUX_KERNEL_5_10_PV}" "${LINUX_KERNEL_5_15_PV}" "${LINUX_KERNEL_6_1_PV}" "${LINUX_KERNEL_6_6_PV}" "${LINUX_KERNEL_6_12_PV}" "${LINUX_KERNEL_6_18_PV}" "${LINUX_KERNEL_7_1_PV}" "${LINUX_KERNEL_7_2_RC_PV}")
 
-inherit mitigate-id toolchain-funcs verify-binutils
+inherit chkl mitigate-id toolchain-funcs verify-binutils
 
 # Add RDEPEND+=" sys-kernel/mitigate-id" to downstream package if the downstream ebuild uses:
 # JavaScript
@@ -179,15 +118,6 @@ zero-tolerance
 # those.  The other reason why we prune them is because they may leak sensitive
 # debug info (ID) in plain text.
 #
-all_rdepend() {
-	mitigate_id_rdepend
-	if ! _use custom-kernel ; then
-		if _use zero-tolerance ; then
-			gen_zero_tolerance_kernel_list ${MULTISLOT_LATEST_KERNEL_RELEASE[@]}
-		fi
-	fi
-}
-#all_rdepend
 
 # Prevent password keyboard snooping, show password screen grabs
 BANNED_RDEPEND="
@@ -195,7 +125,6 @@ BANNED_RDEPEND="
 	!x11-base/xlibre
 "
 
-#			$(gen_render_kernels_list ${MULTISLOT_LATEST_KERNEL_RELEASE[@]})
 RDEPEND="
 	enforce? (
 		${BANNED_RDEPEND}
@@ -312,6 +241,11 @@ pkg_setup() {
 	use enforce || return
 	mitigate-id_pkg_setup
 ewarn "This ebuild is a Work In Progress (WIP) and may be renamed."
+}
+
+src_configure() {
+	use enforce || ewarn "The USE enforce flag is disabled."
+	chkl_check_many_timestamps
 }
 
 src_compile() {
