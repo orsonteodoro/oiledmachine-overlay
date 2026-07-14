@@ -53,6 +53,9 @@ DEPEND="
 "
 BDEPEND="
 "
+PATCHES=(
+	"${FILESDIR}/gst-plugins-libav-1.28.5-cond-support-for-v410.patch"
+)
 
 get_ffmpeg_prefix() {
 	local L=(

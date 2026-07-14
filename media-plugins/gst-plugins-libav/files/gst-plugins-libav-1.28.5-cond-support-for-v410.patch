@@ -1,0 +1,40 @@
+--- a/ext/libav/gstavvidenc.c.orig	2026-07-13 21:53:02.616497202 -0700
++++ b/ext/libav/gstavvidenc.c	2026-07-13 21:58:47.553939998 -0700
+@@ -1032,10 +1032,13 @@ gst_ffmpegvidenc_register (GstPlugin * p
+     /* no quasi codecs, please */
+     if (in_plugin->id == AV_CODEC_ID_RAWVIDEO ||
+         in_plugin->id == AV_CODEC_ID_V210 ||
+-        in_plugin->id == AV_CODEC_ID_V210X ||
+-        in_plugin->id == AV_CODEC_ID_V308 ||
+-        in_plugin->id == AV_CODEC_ID_V408 ||
+-        in_plugin->id == AV_CODEC_ID_V410 || in_plugin->id == AV_CODEC_ID_R210
++        in_plugin->id == AV_CODEC_ID_V210X
++#if LIBAVCODEC_VERSION_MAJOR < 63
++        || in_plugin->id == AV_CODEC_ID_V308
++        || in_plugin->id == AV_CODEC_ID_V408
++        || in_plugin->id == AV_CODEC_ID_V410
++#endif
++        || in_plugin->id == AV_CODEC_ID_R210
+ #if LIBAVCODEC_VERSION_MAJOR < 61
+         || in_plugin->id == AV_CODEC_ID_AYUV
+ #endif
+--- a/ext/libav/gstavviddec.c.orig	2026-07-13 21:55:59.826223612 -0700
++++ b/ext/libav/gstavviddec.c	2026-07-13 21:57:50.526971810 -0700
+@@ -2999,10 +2999,13 @@ gst_ffmpegviddec_register (GstPlugin * p
+     /* no quasi codecs, please */
+     if (in_plugin->id == AV_CODEC_ID_RAWVIDEO ||
+         in_plugin->id == AV_CODEC_ID_V210 ||
+-        in_plugin->id == AV_CODEC_ID_V210X ||
+-        in_plugin->id == AV_CODEC_ID_V308 ||
+-        in_plugin->id == AV_CODEC_ID_V408 ||
+-        in_plugin->id == AV_CODEC_ID_V410 || in_plugin->id == AV_CODEC_ID_R210
++        in_plugin->id == AV_CODEC_ID_V210X
++#if LIBAVCODEC_VERSION_MAJOR < 63
++        || in_plugin->id == AV_CODEC_ID_V308
++        || in_plugin->id == AV_CODEC_ID_V408
++        || in_plugin->id == AV_CODEC_ID_V410
++#endif
++        || in_plugin->id == AV_CODEC_ID_R210
+ #if LIBAVCODEC_VERSION_MAJOR < 61
+         || in_plugin->id == AV_CODEC_ID_AYUV
+ #endif
