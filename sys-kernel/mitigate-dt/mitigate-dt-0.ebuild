@@ -30,6 +30,7 @@ EOL_VERSIONS=(
 )
 
 CHKL_TIMESTAMPS=(
+	"sys-apps/util-linux-9999"
 	"sys-kernel/linux-next-9999"
 	"sys-kernel/ot-sources-7.2.9999"
 	"sys-kernel/raspberrypi-image-9999"
@@ -111,6 +112,12 @@ RDEPEND="
 		!custom-kernel? (
 			$(gen_render_kernels_list_v2)
 		)
+		intel-microcode? (
+			>=sys-firmware/intel-microcode-${INTEL_MICROCODE_PV}
+		)
+		linux-firmware? (
+			>=sys-kernel/linux-firmware-${LINUX_FIRMWARE_PV}
+		)
 		video_cards_nvidia? (
 			x11-drivers/nvidia-drivers:=
 			!x11-drivers/nvidia-drivers:0/390
@@ -124,29 +131,8 @@ RDEPEND="
 		)
 	)
 "
-if [[ "${FIRMWARE_VENDOR}" == "intel" ]] ; then
-	RDEPEND+="
-		enforce? (
-			intel-microcode? (
-				>=sys-firmware/intel-microcode-${INTEL_MICROCODE_PV}
-			)
-			linux-firmware? (
-				>=sys-kernel/linux-firmware-${LINUX_FIRMWARE_PV}
-			)
-		)
-	"
-fi
-if [[ "${FIRMWARE_VENDOR}" == "amd" ]] ; then
-	RDEPEND+="
-		enforce? (
-			linux-firmware? (
-				>=sys-kernel/linux-firmware-${LINUX_FIRMWARE_PV}
-			)
-		)
-	"
-fi
 BDEPEND="
-	sys-apps/util-linux
+	>=sys-apps/util-linux-${UTIL_LINUX_PV}
 "
 
 check_kernel_version() {
