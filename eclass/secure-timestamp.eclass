@@ -380,7 +380,7 @@ SECURE_TIMESTAMP["sys_libs_pam_9999"]="Jun 30, 2026 3:00 AM PDT"
 # repo date  - security or release quality issue keywords:
 #
 # 2026-05-16 - bound
-# 2026-03-25 - page fault [it it unknown if hard/soft fault but it is assumed that all are hard faults or are fatal errors]
+# 2026-03-25 - page fault [it is unknown if it is a hard/soft fault but it is assumed that all are hard faults or result in fatal errors]
 # 2026-03-03 - corrupt
 # 2025-10-09 (consumer), 2026-05-14 (enterprise) - secur
 # 2025-06-19 - crash
