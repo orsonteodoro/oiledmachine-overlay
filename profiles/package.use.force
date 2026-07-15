@@ -73,3 +73,6 @@ www-servers/civetweb fallback-commit
 
 # Guardrail to mitigate critical severity CVE-2026-8924
 net-misc/curl psl
+
+# Last update of the dependency was in 2021
+dev-lang/php argon2
