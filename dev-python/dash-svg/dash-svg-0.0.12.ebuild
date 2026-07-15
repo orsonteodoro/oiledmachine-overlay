@@ -108,7 +108,9 @@ npm_update_lock_audit_post() {
 
 		sed -i -e "s|\"pbkdf2\": \"^3.1.2\"|\"pbkdf2\": \"^3.1.3\"|" "package-lock.json" || die
 		sed -i -e "s|\"http-proxy-middleware\": \"^1.0.3\"|\"http-proxy-middleware\": \"^2.0.8\"|g" "package-lock.json" || die
-		sed -i -e "s|\"undici\": \"^6.19.5\"|\"undici\": \"^6.21.2\"|g" "package-lock.json" || die
+		sed -i -e "s|\"undici\": \"^6.19.5\"|\"undici\": \"^7.28.0\"|g" "package-lock.json" || die
+		sed -i -e "s|\"undici\": \"^6.25.0\"|\"undici\": \"^7.28.0\"|g" "package-lock.json" || die
+		sed -i -e "s|\"undici\": \"^7.19.0\"|\"undici\": \"^7.28.0\"|g" "package-lock.json" || die
 
 		sed -i -e "s|\"tmp\": \"^0.0.33\"|\"tmp\": \"^0.2.4\"|g" "package-lock.json" || die
 		sed -i -e "s|\"koa\": \"^2.5.3\"|\"koa\": \"^2.16.2\"|g" "package-lock.json" || die
@@ -161,7 +163,13 @@ npm_update_lock_audit_post() {
 								# CVE-2025-6545; ZC, VS(DT, ID), SS(DoS, DT, ID); Critical
 		"http-proxy-middleware@^2.0.8"			# CVE-2025-32996; DoS; Moderate
 		"koa@^2.16.1"					# CVE-2025-32379; DoS, DT, ID; Moderate
-		"undici@^6.21.2"				# CVE-2025-47279; DoS; Low
+		"undici@^7.28.0"				# CVE-2025-47279; DoS; Low
+								# CVE-2026-9697; ZC, DoS, DT; High
+								# CVE-2026-6734; DoS, DT, ID; High
+								# CVE-2026-9678; ZC, ID; Moderate
+								# CVE-2026-9679; ZC, DT; Moderate
+								# CVE-2026-11525; ZC, DT; Low
+								# CVE-2026-6733; ZC, DT; Low
 
 		"tmp@^0.2.4"					# CVE-2025-54798; DT; Low
 		"koa@^2.16.2"					# CVE-2025-8129; DT
