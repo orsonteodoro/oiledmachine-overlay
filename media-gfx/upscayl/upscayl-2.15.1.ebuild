@@ -27,7 +27,7 @@ inherit secure-version
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="${ELECTRON_PV}" # 42.4.1, Cr 148.0.7778.271, node 24.17.0
+	ELECTRON_APP_ELECTRON_PV="${ELECTRON_PV}"
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="27.3.10" # Cr 118.0.5993.159, node 18.17.1
@@ -159,140 +159,24 @@ pkg_setup() {
 }
 
 npm_update_lock_install_post() {
-	enpm uninstall "@types/electron"
+	:
+	#enpm uninstall "@types/electron"
 }
 
 npm_update_lock_audit_post() {
 	# --prefer-offline is broken
 	enpm install -D "electron@${ELECTRON_APP_ELECTRON_PV}"
 
+	enpm audit fix --force
 einfo "QA:  Manually remove node_modules/next/node_modules/postcss from package-lock.json"
-	patch_lockfile() {
-		# DoS = Denial of Service
-		# DT = Data Tampering
-		# ID = Information Disclosure
-		# SS = Subsequent System (Indirect attack)
-		# VS = Vulnerable System (Direct attack)
-		sed -i -e "s|\"@babel/runtime\": \"^7.5.5\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die					# CVE-2025-27789; DoS; Medium
-		sed -i -e "s|\"@babel/runtime\": \"^7.8.7\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die					# CVE-2025-27789; DoS; Medium
-		sed -i -e "s|\"@babel/runtime\": \"^7.12.0\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die					# CVE-2025-27789; DoS; Medium
-		sed -i -e "s|\"@babel/runtime\": \"^7.12.5\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die					# CVE-2025-27789; DoS; Medium
-		sed -i -e "s|\"@babel/runtime\": \"^7.18.3\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die					# CVE-2025-27789; DoS; Medium
-
-		sed -i -e "s|\"undici\": \"^6.21.2\"|\"undici\": \"^${NODE_UNDICI_PV}\"|g" "package-lock.json" || die						# CVE-2026-22036; ZC, DoS; Moderdate
-		sed -i -e "s|\"undici\": \"^6.21.1\"|\"undici\": \"^${NODE_UNDICI_PV}\"|g" "package-lock.json" || die						# CVE-2025-47279; DoS; Low
-		sed -i -e "s|\"undici\": \"6.21.2\"|\"undici\": \"^${NODE_UNDICI_PV}\"|g" "package-lock.json" || die						# CVE-2026-22036; ZC, DoS; Moderdate
-		sed -i -e "s|\"undici\": \"6.19.7\"|\"undici\": \"^${NODE_UNDICI_PV}\"|g" "package-lock.json" || die						# CVE-2025-22150; DT, ID; Medium
-																				# CVE-2025-47279; DoS; Low
-																				# CVE-2026-11525; ZC, DT; Low
-																				# CVE-2026-9679; ZC, DT; Moderate
-																				# CVE-2026-12151; ZC, DoS; High
-
-		sed -i -e "s|\"next\": \"^14.2.10\"|\"next\": \"^${NODE_NEXT_PV}\"|g" "package-lock.json" || die						# CVE-2025-29927; DT, ID; Critical
-		sed -i -e "s|\"next\": \"^14.2.25\"|\"next\": \"^${NODE_NEXT_PV}\"|g" "package-lock.json" || die						# CVE-2025-48068; VS(ID), SS(ID); Low
-		sed -i -e "s|\"next\": \"^14.2.32\"|\"next\": \"^${NODE_NEXT_PV}\"|g" "package-lock.json" || die						# CVE-2025-48068; VS(ID), SS(ID); Low
-																				# CVE-2025-48068; VS(ID), SS(ID); Low
-																				# CVE-2025-30218; VS(ID)
-																				# CVE-2026-44578; ZC, ID; High
-																				# GHSA-h25m-26qc-wcjf; DoS; High
-																				# GHSA-5j59-xgg2-r9c4; DoS; High
-																				# GHSA-mwv6-3258-q52c; ZC, DoS; High
-
-		sed -i -e "s|\"next\": \"^14.2.30\"|\"next\": \"^15.0.8\"|g" "package-lock.json" || die								# CVE-2025-57752; ID; Medium
-																				# CVE-2025-57822; DT, ID; Medium
-																				# CVE-2025-55173; DT, Medium
-
-		sed -i -e "s|\"form-data\": \"^4.0.0\"|\"form-data\": \"^${NODE_FORM_DATA_PV}\"|g" "package-lock.json" || die					# CVE-2025-7783; VS(DT, ID), SS(DT, ID); Critical
-																				# CVE-2026-12143; ZC, VS(DT); High
-		sed -i -e "s|\"tmp\": \"^0.2.0\"|\"tmp\": \"^${NODE_TMP_PV}\"|g" "package-lock.json" || die							# CVE-2025-54798; DT; Low
-																				# CVE-2026-44705; PT, VS(ID); High
-
-		sed -i -e "s|\"tar\": \"^6.1.12\"|\"tar\": \"^7.5.7\"|g" "package-lock.json" || die								# CVE-2026-23950; DoS, DT, ID; High
-																				# CVE-2026-24842; DT, ID; High
-																				# CVE-2026-23745; VS(DT, ID), SS(DT, ID)
-		sed -i -e "s|\"glob\": \"^10.3.10\"|\"glob\": \"^10.5.0\"|g" "package-lock.json" || die								# CVE-2025-64756; DoS, DT, ID; High
-		sed -i -e "s|\"glob\": \"10.3.10\"|\"glob\": \"^10.5.0\"|g" "package-lock.json" || die								# CVE-2025-64756; DoS, DT, ID; High
-
-		sed -i -e "s|\"protobufjs\": \"^7.2.5\"|\"protobufjs\": \"^${NODE_24_PROTOBUFJS_PV}\"|g" "package-lock.json" || die				# CVE-2026-41242; VS(DoS, DT, ID), SS(DoS, DT, ID); Critical
-		sed -i -e "s|\"protobufjs\": \"^7.3.0\"|\"protobufjs\": \"^${NODE_24_PROTOBUFJS_PV}\"|g" "package-lock.json" || die				# CVE-2026-41242; VS(DoS, DT, ID), SS(DoS, DT, ID); Critical
-																				# CVE-2026-44291; ZC, DoS, DT, ID; High
-																				# CVE-2026-44294; ZC, DoS; Moderate
-																				# CVE-2026-44289; ZC, DoS; High
-																				# CVE-2026-44290; ZC, DoS; High
-																				# CVE-2026-44288; ZC, DT; Moderate
-																				# CVE-2026-44292; ZC, DT; Moderate
-																				# CVE-2026-44293; VS(DoS, DT, ID); High
-																				# CVE-2026-45740; ZC, DoS; Moderate
-																				# CVE-2026-54269; ZC, DoS; Moderate
-
-		sed -i -e "s|\"@protobufjs/utf8\": \"^1.1.0\"|\"@protobufjs/utf8\": \"^${NODE_24_PROTOBUFJS_UTF8_PV}\"|g" "package-lock.json" || die		# CVE-2026-44288; ZC, DT; Moderate
-
-		sed -i -e "s|\"lodash\": \"^4.17.15\"|\"lodash\": \"^4.18.0\"|g" "package-lock.json" || die							# CVE-2026-4800; ZC, DoS, DT, ID; High
-		sed -i -e "s|\"lodash\": \"^4.17.21\"|\"lodash\": \"^4.18.0\"|g" "package-lock.json" || die							# CVE-2026-4800; ZC, DoS, DT, ID; High
-																				# CVE-2026-2950; ZC, DT, ID; Moderate
-
-		sed -i -e "s|\"@xmldom/xmldom\": \"^0.8.8\"|\"@xmldom/xmldom\": \"^0.8.12\"|g" "package-lock.json" || die					# CVE-2026-34601; ZC, DT; High
-		sed -i -e "s|\"dompurify\": \"^3.3.1\"|\"dompurify\": \"^${NODE_DOMPURIFY_PV}\"|g" "package-lock.json" || die					# GHSA-h8r8-wccr-v5f2; ZC, SS(DoS, DT, ID); Moderate
-																				# GHSA-39q2-94rc-95cp; VS(DT, ID); Moderate
-																				# GHSA-cjmm-f4jc-qw8r; SS(DT, ID); Moderate
-																				# GHSA-cj63-jhhr-wcxv; VS(DT, ID), SS(DT, ID); Moderate
-																				# CVE-2026-0540; SS(DT, ID); Moderate
-																				# CVE-2026-49458; DT, ID; Moderate
-																				# CVE-2026-49978; SS(DT, ID); Moderate
-																				# GHSA-76mc-f452-cxcm; DT, ID; Moderate
-																				# GHSA-cmwh-pvxp-8882; SS(DT, ID); Moderate
-																				# GHSA-vxr8-fq34-vvx9; SS(DT, ID); Low
-																				# GHSA-gvmj-g25r-r7wr; SS(DT, ID); Low
-																				# GHSA-x4vx-rjvf-j5p4
-																				# CVE-2026-49459; DT, ID; Moderate
-		sed -i -e "s|\"@tootallnate/once\": \"2\"|\"@tootallnate/once\": \"^3.0.1\"|g" "package-lock.json" || die					# CVE-2026-3449; DoS; Low
-
-		sed -i -e "s|\"js-yaml\": \"^4.1.0\"|\"js-yaml\": \"^${NODE_JS_YAML_PV}\"|g" "package-lock.json" || die						# CVE-2026-53550; ZC, DoS; Moderate
-		sed -i -e "s|\"js-yaml\": \"^3.13.1\"|\"js-yaml\": \"^${NODE_JS_YAML_PV}\"|g" "package-lock.json" || die					# CVE-2026-53550; ZC, DoS; Moderate
-		sed -i -e "s|\"@grpc/grpc-js\": \"~1.9.0\"|\"@grpc/grpc-js\": \"^${NODE_24_GRPC_GRPC_JS_PV}\"|g" "package-lock.json" || die			# CVE-2026-48068; ZC, DoS; High
-																				# CVE-2026-48069; ZC, DoS; High
-
-		sed -i -e "s|\"@opentelemetry/core\": \"2.2.0\"|\"@opentelemetry/core\": \"^${NODE_OPENTELEMETRY_CORE_PV}\"|g" "package-lock.json" || die	# CVE-2026-54285; ZC, DoS; Moderate
-		sed -i -e "s|\"@opentelemetry/core\": \"2.5.1\"|\"@opentelemetry/core\": \"^${NODE_OPENTELEMETRY_CORE_PV}\"|g" "package-lock.json" || die	# CVE-2026-54285; ZC, DoS; Moderate
-
-		sed -i -e "s|\"postcss\": \"^8.4.47\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die					# CVE-2026-41305; DT, ID; Moderate
-		sed -i -e "s|\"postcss\": \"^8.4.31\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die					# CVE-2026-41305; DT, ID; Moderate
-		sed -i -e "s|\"postcss\": \"8.4.31\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die						# CVE-2026-41305; DT, ID; Moderate
-		sed -i -e "s|\"postcss\": \"^8.4.21\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die					# CVE-2026-41305; DT, ID; Moderate
-		sed -i -e "s|\"postcss\": \"^8.2.14\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die					# CVE-2026-41305; DT, ID; Moderate
-		sed -i -e "s|\"postcss\": \"^8.1.0\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die						# CVE-2026-41305; DT, ID; Moderate
-		sed -i -e "s|\"postcss\": \"^8.0.0\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die						# CVE-2026-41305; DT, ID; Moderate
-		sed -i -e "s|\"postcss\": \">=8.0.9\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die					# CVE-2026-41305; DT, ID; Moderate
-	}
-	patch_lockfile
 	local pkgs
-	pkgs=(
-		"undici@^${NODE_UNDICI_PV}"
-		"next@^${NODE_NEXT_PV}"
-		"form-data@^${NODE_FORM_DATA_PV}"
-		"tmp@^${NODE_TMP_PV}"
-		"tar@^7.5.7"
-		"glob@^10.5.0"
-		"@xmldom/xmldom@^0.8.12"
-		"@tootallnate/once@^3.0.1"
-		"@opentelemetry/core@^${NODE_OPENTELEMETRY_CORE_PV}"
-		"postcss@^${NODE_POSTCSS_PV}"
-	)
-	enpm install -D "${pkgs[@]}"
+#	pkgs=(
+#	)
+#	enpm install -D "${pkgs[@]}"
 
-	pkgs=(
-		"@babel/runtime@^7.26.10"
-		"glob@^10.5.0"
-		"undici@^${NODE_UNDICI_PV}"
-		"protobufjs@^${NODE_24_PROTOBUFJS_PV}"
-		"lodash@^4.18.0"
-		"dompurify@^${NODE_DOMPURIFY_PV}"
-		#"@protobufjs/utf8@^${NODE_24_PROTOBUFJS_UTF8_PV}"
-		"js-yaml@^${NODE_JS_YAML_PV}"
-		"@grpc/grpc-js@^${NODE_24_GRPC_GRPC_JS_PV}"
-	)
-	enpm install -P "${pkgs[@]}" --prefer-offline
-	patch_lockfile
+#	pkgs=(
+#	)
+#	enpm install -P "${pkgs[@]}" --prefer-offline
 }
 
 src_compile() {
