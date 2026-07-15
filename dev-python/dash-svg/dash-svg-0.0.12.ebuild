@@ -12,7 +12,7 @@ EAPI=8
 # NPM_UPDATER_VERSIONS="0.0.12" npm_updater_update_locks.sh
 
 DISTUTILS_USE_PEP517="setuptools"
-NODE_SLOT="20" # Upstream uses node 12.  14, 18 works
+NODE_SLOT="24" # Upstream uses node 12.  14, 18 works
 NPM_AUDIT_FATAL=0
 NPM_SLOT=2 # Limited by React 16.14.0.
 NPM_TARBALL="${P}.tar.gz"
@@ -20,7 +20,7 @@ PYTHON_COMPAT=( "python3_"{10..12} ) # Lists up to 3.12
 REACT_PV="16.14.0" # Supports up to node 14 used for testing.  node 14 uses npm 6.14.18 which is lockfile v1.
 #REACT_PV="18.3.1" # Supports up to node 17
 
-inherit distutils-r1 edo npm
+inherit distutils-r1 edo npm secure-version
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${P}"
@@ -52,7 +52,7 @@ DEPEND+="
 BDEPEND+="
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
-	net-libs/nodejs:${NODE_SLOT}[webassembly(+)]
+	>=net-libs/nodejs-${NODEJS_24_PV}:${NODE_SLOT}[webassembly(+)]
 	sys-apps/npm:${NPM_SLOT}
 	test? (
 		dev-python/multiprocess[${PYTHON_USEDEP}]
@@ -75,55 +75,6 @@ npm_unpack_post() {
 }
 
 npm_update_lock_audit_post() {
-	localfile_edits() {
-		sed -i -e "s|\"loader-utils\": \"^1.1.0\"|\"loader-utils\": \"^1.4.2\"|g" "package-lock.json" || die
-		sed -i -e "s|\"loader-utils\": \"^1.2.3\"|\"loader-utils\": \"^1.4.2\"|g" "package-lock.json" || die
-		sed -i -e "s|\"loader-utils\": \"1.2.3\"|\"loader-utils\": \"^1.4.2\"|g" "package-lock.json" || die
-
-		sed -i -e "s|\"braces\": \"~3.0.2\"|\"braces\": \"^3.0.3\"|g" "package-lock.json" || die
-		sed -i -e "s|\"braces\": \"^2.3.2\"|\"braces\": \"^3.0.3\"|g" "package-lock.json" || die
-		sed -i -e "s|\"braces\": \"^2.3.1\"|\"braces\": \"^3.0.3\"|g" "package-lock.json" || die
-
-		sed -i -e "s|\"ansi-regex\": \"^4.1.0\"|\"ansi-regex\": \"^4.1.1\"|g" "package-lock.json" || die
-		sed -i -e "s|\"ansi-regex\": \"^3.0.0\"|\"ansi-regex\": \"^4.1.1\"|g" "package-lock.json" || die
-		sed -i -e "s|\"ansi-regex\": \"^2.0.0\"|\"ansi-regex\": \"^4.1.1\"|g" "package-lock.json" || die
-
-		sed -i -e "s|\"postcss\": \"^7.0.32\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die
-		sed -i -e "s|\"postcss\": \"^7.0.14\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die
-		sed -i -e "s|\"postcss\": \"^7.0.5\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die
-		sed -i -e "s|\"postcss\": \"^7.0.6\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die
-
-		sed -i -e "s|\"tough-cookie\": \"~2.5.0\"|\"tough-cookie\": \"^4.1.3\"|g" "package-lock.json" || die
-		sed -i -e "s|\"tough-cookie\": \"^2.3.3\"|\"tough-cookie\": \"^4.1.3\"|g" "package-lock.json" || die
-
-#		sed -i -e "s|\"got\": \"^6.7.1\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die
-
-		# Use v8 which is backwards compatible with v1 lockfile
-		sed -i -e "s|\"npm\": \"^6.1.0\"|\"npm\": \"^8.12.2\"|g" "package-lock.json" || die
-
-#		sed -i -e "s|\"ip\": \"1.1.5\"|\"ip\": \"^1.1.9\"|g" "package-lock.json" || die
-#		sed -i -e "s|\"ip\": \"^1.1.5\"|\"ip\": \"^1.1.9\"|g" "package-lock.json" || die
-
-		sed -i -e "s|\"cheerio\": \"^0.22.0\"|\"cheerio\": \"^1.0.0\"|g" "package-lock.json" || die
-
-		sed -i -e "s|\"pbkdf2\": \"^3.1.2\"|\"pbkdf2\": \"^3.1.3\"|" "package-lock.json" || die
-		sed -i -e "s|\"http-proxy-middleware\": \"^1.0.3\"|\"http-proxy-middleware\": \"^2.0.8\"|g" "package-lock.json" || die
-		sed -i -e "s|\"undici\": \"^6.19.5\"|\"undici\": \"^7.28.0\"|g" "package-lock.json" || die
-		sed -i -e "s|\"undici\": \"^6.25.0\"|\"undici\": \"^7.28.0\"|g" "package-lock.json" || die
-		sed -i -e "s|\"undici\": \"^7.19.0\"|\"undici\": \"^7.28.0\"|g" "package-lock.json" || die
-
-		sed -i -e "s|\"tmp\": \"^0.0.33\"|\"tmp\": \"^0.2.4\"|g" "package-lock.json" || die
-		sed -i -e "s|\"koa\": \"^2.5.3\"|\"koa\": \"^2.16.2\"|g" "package-lock.json" || die
-		sed -i -e "s|\"koa\": \"^2.16.1\"|\"koa\": \"^2.16.2\"|g" "package-lock.json" || die
-
-		sed -i -e "s|\"flatted\": \"^2.0.0\"|\"flatted\": \"^3.4.2\"|g" "package-lock.json" || die
-		sed -i -e "s|\"flatted\": \"^3.2.9\"|\"flatted\": \"^3.4.2\"|g" "package-lock.json" || die
-
-		sed -i -e "s|\"serialize-javascript\": \"^4.0.0\"|\"serialize-javascript\": \"^7.0.5\"|g" "package-lock.json" || die
-		sed -i -e "s|\"serialize-javascript\": \"^6.0.2\"|\"serialize-javascript\": \"^7.0.5\"|g" "package-lock.json" || die
-	}
-	localfile_edits
-
 	# CE = Code Execution
 	# DoS = Denial of Service
 	# DT = Data Tampering
@@ -171,12 +122,19 @@ npm_update_lock_audit_post() {
 								# CVE-2026-11525; ZC, DT; Low
 								# CVE-2026-6733; ZC, DT; Low
 
-		"tmp@^0.2.4"					# CVE-2025-54798; DT; Low
+		"tmp@^0.2.6"					# CVE-2025-54798; DT; Low
+								# CVE-2026-44705; ZC, VS(ID); High
 		"koa@^2.16.2"					# CVE-2025-8129; DT
 		"flatted@^3.4.2"				# CVE-2026-33228; ZC, VS(DoS, DT, ID); High
 		"serialize-javascript@^7.0.5"			# CVE-2024-11831; DT, ID; Moderate
 								# CVE-2026-34043; ZC, DoS; Moderate
 								# GHSA-5c6j-r48x-rmvq; CE, VS(DoS, DT, ID); High
+
+		"ws@^7.5.11"					# CVE-2026-48779; ZC, DoS; High
+
+		"js-yaml@^3.15.0"				# CVE-2026-53550; ZC, DoS; Moderate
+		"@babel/plugin-transform-modules-systemjs@^7.29.4"	# CVE-2026-44728; DoS, DT, ID; High
+		"@babel/core@^7.29.6"				# CVE-2026-49356; ID; Low
 	)
 	enpm install "${pkgs[@]}" -D --prefer-offline
 
@@ -189,8 +147,6 @@ npm_update_lock_audit_post() {
 	enpm uninstall "${pkgs[@]}" -D --prefer-offline
 
 	# Reapply
-
-	localfile_edits
 
 	enpm dedupe
 
