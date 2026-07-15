@@ -9,7 +9,7 @@ EAPI=8
 
 # To update lockfile:
 # PATH=$(realpath ../../scripts)":${PATH}"
-# NPM_UPDATER_VERSIONS="5.1.3" npm_updater_update_locks.sh
+# NPM_UPDATER_VERSIONS="5.1.4" npm_updater_update_locks.sh
 
 MY_PN="${PN^}"
 
@@ -20,12 +20,14 @@ ELECTRON_APP_APPIMAGE_ARCHIVE_NAME="${MY_PN}_${PV}.AppImage"
 ELECTRON_APP_AT_TYPES_NODE_PV="22.14.0"
 ELECTRON_APP_MODE="npm"
 NODE_ENV="development"
-NODE_SLOT="${ELECTRON_APP_AT_TYPES_NODE_PV%%.*}"
+NODE_SLOT="24" # Same as Electron
 NPM_AUDIT_FATAL=0
+
+inherit secure-version
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="41.2.1" # Cr 146.0.7680.188, node 24.14.1
+	ELECTRON_APP_ELECTRON_PV="${ELECTRON_PV}"
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="40.8.3" # Cr 144.0.7559.236, node 24.14.0
@@ -171,8 +173,8 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+=" ebuild_revision_20"
 BDEPEND+="
-	>=net-libs/nodejs-${NODE_SLOT}:${NODE_SLOT}[webassembly(+)]
-	>=net-libs/nodejs-${NODE_SLOT}[npm,webassembly(+)]
+	>=net-libs/nodejs-${NODEJS_24_PV}:${NODE_SLOT}[webassembly(+)]
+	>=net-libs/nodejs-${NODEJS_24_PV}[npm,webassembly(+)]
 "
 
 npm_update_lock_install_post() {
@@ -228,7 +230,7 @@ src_unpack() {
 		_npm_setup_offline_cache
 
 		rm -vf package-lock.json
-		enpm install -D "typescript@5.6.3" # Fix build issue
+		enpm install -D "typescript@5.8.3" # Fix build issue with 5.6.3
 		enpm install "${NPM_INSTALL_ARGS[@]}"
 
 		npm_update_lock_install_post
