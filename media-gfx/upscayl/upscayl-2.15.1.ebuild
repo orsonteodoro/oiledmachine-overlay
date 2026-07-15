@@ -130,7 +130,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 	custom-models firejail
-	ebuild_revision_27
+	ebuild_revision_28
 "
 RDEPEND+="
 	virtual/vulkan
@@ -164,6 +164,8 @@ npm_update_lock_audit_post() {
 
 	enpm audit fix --force
 einfo "QA:  Manually remove node_modules/next/node_modules/postcss from package-lock.json"
+
+	# Required pinned versions
 	local pkgs
 	pkgs=(
 		"electron-builder@^24.13.3"
