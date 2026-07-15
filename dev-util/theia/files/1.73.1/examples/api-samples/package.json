@@ -1,0 +1,74 @@
+{
+  "private": true,
+  "name": "@theia/api-samples",
+  "version": "1.73.1",
+  "description": "Theia - Example code to demonstrate Theia API",
+  "dependencies": {
+    "@hono/node-server": "^1.19.14",
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@theia/ai-chat": "1.73.1",
+    "@theia/ai-chat-ui": "1.73.1",
+    "@theia/ai-code-completion": "1.73.1",
+    "@theia/ai-core": "1.73.1",
+    "@theia/ai-mcp": "1.73.1",
+    "@theia/ai-mcp-server": "1.73.1",
+    "@theia/core": "1.73.1",
+    "@theia/file-search": "1.73.1",
+    "@theia/filesystem": "1.73.1",
+    "@theia/monaco": "1.73.1",
+    "@theia/monaco-editor-core": "1.108.201",
+    "@theia/output": "1.73.1",
+    "@theia/ovsx-client": "1.73.1",
+    "@theia/search-in-workspace": "1.73.1",
+    "@theia/test": "1.73.1",
+    "@theia/toolbar": "1.73.1",
+    "@theia/vsx-registry": "1.73.1",
+    "@theia/workspace": "1.73.1",
+    "body-parser": "^2.3.0",
+    "dompurify": "^3.4.7",
+    "hono": "^4.12.23",
+    "qs": "^6.15.3",
+    "zod": "^4.4.3"
+  },
+  "theiaExtensions": [
+    {
+      "frontend": "lib/browser/api-samples-frontend-module",
+      "backend": "lib/node/api-samples-backend-module"
+    },
+    {
+      "electronMain": "lib/electron-main/update/sample-updater-main-module",
+      "frontendElectron": "lib/electron-browser/updater/sample-updater-frontend-module"
+    },
+    {
+      "frontendOnly": "lib/browser-only/api-samples-frontend-only-module"
+    },
+    {
+      "frontendPreload": "lib/browser/api-samples-preload-module"
+    }
+  ],
+  "keywords": [
+    "theia-extension"
+  ],
+  "license": "EPL-2.0 OR GPL-2.0-only WITH Classpath-exception-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eclipse-theia/theia.git"
+  },
+  "bugs": {
+    "url": "https://github.com/eclipse-theia/theia/issues"
+  },
+  "homepage": "https://github.com/eclipse-theia/theia",
+  "files": [
+    "lib",
+    "src"
+  ],
+  "scripts": {
+    "lint": "theiaext lint",
+    "build": "theiaext build",
+    "watch": "theiaext watch",
+    "clean": "theiaext clean"
+  },
+  "devDependencies": {
+    "@theia/ext-scripts": "1.73.1"
+  }
+}
