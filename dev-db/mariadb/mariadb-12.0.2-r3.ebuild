@@ -229,6 +229,7 @@ src_prepare() {
 	eapply "${WORKDIR}"/mariadb-patches
 	eapply "${FILESDIR}"/${PN}-10.6.12-gcc-13.patch
 	eapply "${FILESDIR}"/${PN}-wsrep-gcc-15.patch
+	eapply "${FILESDIR}"/${PN}-12.0.2-fix_boost_system.patch
 
 	eapply_user
 
@@ -372,7 +373,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DWITH_UNITTEST=OFF
 		-DWITHOUT_CLIENTLIBS=YES
 		-DCLIENT_PLUGIN_AUTH_GSSAPI_CLIENT=OFF
-		-DCLIENT_PLUGIN_CACHING_SHA2_PASSWORD=$(usex test DYNAMIC OFF)
+		-DCLIENT_PLUGIN_CACHING_SHA2_PASSWORD=OFF
 		-DCLIENT_PLUGIN_CLIENT_ED25519=$(usex test DYNAMIC OFF)
 		-DCLIENT_PLUGIN_DIALOG=$(usex test DYNAMIC OFF)
 		-DCLIENT_PLUGIN_MYSQL_CLEAR_PASSWORD=STATIC
@@ -464,7 +465,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		elif ! use latin1 ; then
 			mycmakeargs+=(
 				-DDEFAULT_CHARSET=utf8mb4
-				-DDEFAULT_COLLATION=utf8mb4_unicode_520_ci
+				-DDEFAULT_COLLATION=utf8mb4_uca1400_ai_ci
 			)
 		else
 			mycmakeargs+=(
@@ -598,18 +599,11 @@ src_test() {
 		"innodb_gis.gis;MDEV-25095;Known rounding error with latest AMD processors"
 		"main.gis;MDEV-25095;Known rounding error with latest AMD processors"
 
-		# Fails in network-sandbox which contains only "lo" interface
-		"main.func_json;MDEV-38057;Fails in network-sandbox"
-
 		# Some tests are unable to retrieve HW address
 		"spider.*;MDEV-37098;Fails with network sandbox"
 
 		# issue introduced in 11.8.2
 		"main.mysqld--help-aria;MDEV-36668;broken test regex"
-
-		# This issue will be fixed in next release
-		# see also https://github.com/MariaDB/server/pull/4429
-		"main.func_regexp_pcre;MDEV-38046;Fails with PCRE2 10.47"
 	)
 
 	use latin1 || disabled_tests+=(
