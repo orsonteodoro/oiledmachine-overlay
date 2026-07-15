@@ -302,6 +302,9 @@ Language defaults
 | LocalAI (llama.cpp with ROCm 7.0)   | WIP                                   |                                                          |
 | LocalAI (llama.cpp with CUDA 12.4)  | Not supported                         |                                                          |
 | LocalAI (llama.cpp with Vulkan)     | Fully supported                       |                                                          |
+| Node.js 22                          | Available                             |                                                          |
+| Node.js 24                          | Fully supported                       |                                                          |
+| Node.js 26                          | Available                             |                                                          |
 | OpenGL <= 4.6                       | Fully supported                       |                                                          |
 | OpenCL <= 2.0                       | Fully supported                       |                                                          |
 | Ollama 0.30.7 (CPU)                 | Fully supported                       |                                                          |
