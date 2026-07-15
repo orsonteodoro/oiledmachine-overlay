@@ -158,11 +158,6 @@ pkg_setup() {
 	npm_pkg_setup
 }
 
-npm_update_lock_install_post() {
-	:
-	#enpm uninstall "@types/electron"
-}
-
 npm_update_lock_audit_post() {
 	# --prefer-offline is broken
 	enpm install -D "electron@${ELECTRON_APP_ELECTRON_PV}"
@@ -170,13 +165,11 @@ npm_update_lock_audit_post() {
 	enpm audit fix --force
 einfo "QA:  Manually remove node_modules/next/node_modules/postcss from package-lock.json"
 	local pkgs
-#	pkgs=(
-#	)
-#	enpm install -D "${pkgs[@]}"
-
-#	pkgs=(
-#	)
-#	enpm install -P "${pkgs[@]}" --prefer-offline
+	pkgs=(
+		"electron-builder@^24.13.3"
+		"next@^15.5.19"
+	)
+	enpm install -D "${pkgs[@]}" "${NPM_INSTALL_ARGS[@]}"
 }
 
 src_compile() {
@@ -261,3 +254,4 @@ ewarn "You need vulkan drivers to use ${PN}."
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20260228, Electron 40.6.1)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20260419, Electron 41.2.1)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20260419, Electron 42.5.0)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20260715, Electron 43.1.1)
