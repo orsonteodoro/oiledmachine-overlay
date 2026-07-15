@@ -25,6 +25,7 @@ EAPI=8
 # 2.1.46 -> 2.1.48
 # 2.1.48 -> 2.1.52
 # 2.1.52 - > 2.2.0
+# 2.2.0 -> 2.2.10
 
 # Ebuild using React 19
 
@@ -42,7 +43,7 @@ EAPI=8
 # Generate the lockfile as follows:
 #
 #   PATH=$(realpath "../../scripts")":${PATH}"
-#   PNPM_UPDATER_VERSIONS="2.2.0" pnpm_updater_update_locks.sh
+#   PNPM_UPDATER_VERSIONS="2.2.10" pnpm_updater_update_locks.sh
 #
 
 # U22, U24, D12
@@ -58,6 +59,8 @@ EAPI=8
 MY_PN="${PN}"		# LobeHub
 MY_PN2="${PN,,}"	# lobehub
 
+inherit secure-version secure-version-node
+
 # See also https://github.com/vercel/next.js/blob/v15.1.6/.github/workflows/build_and_test.yml#L328
 _ELECTRON_DEP_ROUTE="secure"
 NODE_SHARP_USE="exif lcms webp"
@@ -68,8 +71,8 @@ PNPM_DEDUPE=0 # Still debugging
 PNPM_SLOT="9"
 POSTGRESQL_PORT="5432"
 POSTGRESQL_SLOT="17"
-RUST_MAX_VER="1.91.1" # Inclusive
-RUST_MIN_VER="1.91.1" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0 for next.js 15.3.3 dependency of @swc/core 1.11.24 \
+RUST_MAX_VER="1.93.1" # Inclusive
+RUST_MIN_VER="1.93.1" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0 for next.js 15.3.3 dependency of @swc/core 1.11.24 \
 # Obtained from https://github.com/swc-project/swc/blob/v1.15.8/rust-toolchain \
 # Obtained from commit from committer-date:2025-05-06 GH search \
 # Obtained from https://github.com/rust-lang/rust/blob/<commit-id>/RELEASES.md
@@ -81,7 +84,7 @@ VIPS_PV="8.18.0"
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
-	ELECTRON_APP_ELECTRON_PV="42.2.0" # Cr 148.0.7778.97, node 24.15.0
+	ELECTRON_APP_ELECTRON_PV="${ELECTRON_PV}"
 else
 #https://github.com/lobehub/lobehub/blob/v2.2.0/apps/desktop/package.json#L70
 	# Upstream's choice
@@ -321,15 +324,11 @@ DEPEND+="
 BDEPEND+="
 	>=sys-apps/pnpm-10.20.0:${PNPM_SLOT}
 	>=sys-apps/npm-10.8.2:${NPM_SLOT}
-	net-libs/nodejs:${NODE_SLOT}[corepack,npm]
+	>=net-libs/nodejs-${NODEJS_24_PV}:${NODE_SLOT}[corepack,npm]
 	net-libs/nodejs:=
 	|| (
 		dev-lang/rust:${RUST_PV}
 		dev-lang/rust-bin:${RUST_PV}
-	)
-	|| (
-		dev-lang/rust:=
-		dev-lang/rust-bin:=
 	)
 "
 PDEPEND+="
@@ -546,26 +545,10 @@ pnpm_unpack_post() {
 	gen_git_tag "${S}" "v${PV}"
 
 	local pnpm_pv=$(pnpm --version)
-	# better-auth is bumped to 1.5.6 to avoid runtime authentication issues.
-	# All versions directly below are pinned versions using same version as
-	# better-auth's lockfile to avoid build and runtime issues.
-	# Too update most values, see https://github.com/better-auth/better-auth/blob/v1.6.11/pnpm-lock.yaml
-	sed -i \
-		-e "s|\"@types/react\": \"19.2.13\"|\"@types/react\": \"19.2.14\"|g" \
-		-e "s|\"@types/react-dom\": \"^19.2.3\"|\"@types/react-dom\": \"19.2.3\"|g" \
-		-e "s|\"better-auth\": \"1.4.6\"|\"better-auth\": \"1.6.11\"|g" \
-		-e "s|\"better-call\": \"1.1.8\"|\"better-call\": \"1.3.5\"|g" \
-		-e "s|\"drizzle-kit\": \"^0.31.8\"|\"drizzle-kit\": \"0.31.9\"|g" \
-		-e "s|\"drizzle-orm\": \"^0.45.1\"|\"drizzle-orm\": \"0.45.2\"|g" \
-		-e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.7.0\"|g" \
-		-e "s|\"pg\": \"^8.17.2\"|\"pg\": \"8.19.0\"|g" \
-		"package.json" \
-		|| die
-
-	sed -i \
-		-e "s|npm@11.1.0|npm@${pnpm_pv}|g" \
-		"package.json" \
-		|| die
+	# To update most values, see https://github.com/better-auth/better-auth/blob/v1.6.11/pnpm-lock.yaml
+#	sed -i \
+#		"package.json" \
+#		|| die
 
 	sed -i -e "s|bunx|npx|g" "apps/cli/package.json" || die
 	sed -i -e "s|bun|pnpm|g" "apps/cli/package.json" || die
@@ -584,62 +567,18 @@ pnpm_unpack_post() {
 	eapply "${FILESDIR}/${PN}-2.1.33-use-e965-xlsx.patch"
 	if use pwa ; then
 		eapply "${FILESDIR}/${MY_PN2}-2.1.34-hardcoded-paths.patch"
-		eapply "${FILESDIR}/${PN}-2.2.0-postgresjs-driver-support.patch"
+#		eapply "${FILESDIR}/${PN}-2.2.0-postgresjs-driver-support.patch"
 		eapply "${FILESDIR}/${PN}-2.1.44-docker-cjs-multidriver-support.patch"
 	fi
 
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 	# Fixes to unmet peer or missing references
 		pkgs=(
-			"@next/bundle-analyzer@^${NEXTJS_PV}"
-
-	# Pin better-auth and dependencies
-			"drizzle-kit@0.31.9"
-			"@types/react@19.2.14"
-			"@types/react-dom@19.2.3"
 		)
-		epnpm add -D ${pkgs[@]}
+#		epnpm add -D ${pkgs[@]}
 		pkgs=(
-			"next@${NEXTJS_PV}"								# CVE-2025-29927; ZC, DoS, DT, ID; Critical
-													# CVE-2026-29057; ZC, DT, ID; Moderate
-													# CVE-2026-27979; ZC, DoS; Moderate
-													# CVE-2026-27980; ZC, DoS; Moderate
-													# CVE-2026-27978; VS(DT); Moderate
-													# CVE-2026-27977; DT, ID; Low
-													# GHSA-q4gf-8mx6-v5v3; ZC, DoS; High
-													# CVE-2026-44578; ZC, ID; High
-													# CVE-2026-44579; ZC, DoS; High
-													# CVE-2026-44573; ZC, ID; High
-													# CVE-2026-44579; ZC, DoS; High
-													# CVE-2026-44575; ZC, ID; High
-													# CVE-2026-44581; DT, ID; Moderate
-													# CVE-2026-44574; DT, ID; High
-													# CVE-2026-44582; DT; Low
-													# CVE-2026-44577; ZC, DoS; Moderate
-													# CVE-2026-44576; ZC, DT, ID; Moderate
-													# CVE-2026-44580; DT, ID; Moderate
-													# CVE-2026-44572; ZC, DoS; Low
-													# GHSA-8h8q-6873-q5fj; ZC, DoS; High
-													# CVE-2026-45109; ZC, ID; High
-			"svix@1.84.1"
-
-	# Pin better-auth and dependencies
-			"drizzle-orm@0.45.2"
-			"better-auth@1.6.11"
-			"fast-xml-parser@5.7.0"
-			"pg@8.19.0"
-
-	# Reverse depends or transitive dependencies of better-auth
-			"@better-auth/passkey@1.6.0"							# Same version as better-auth
-			"@better-auth/expo@1.6.0"							# Same version as better-auth
-
-	# pg alternative
-			"postgres@3.4.9"
-
-	# For sharp
-			"node-addon-api@8.7.0"
 		)
-		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
+#		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 	fi
 }
 
@@ -648,11 +587,6 @@ pnpm_install_post() {
 		pushd "apps/desktop" >/dev/null 2>&1 || die
 einfo "Generating lockfile for lobehub-desktop-dev"
 			sed -i -e "/lockfile=false/d" ".npmrc" || die
-			epnpm install "${PNPM_INSTALL_ARGS[@]}"
-			epnpm install --lockfile-only
-		popd >/dev/null 2>&1 || die
-		pushd "apps/device-gateway" >/dev/null 2>&1 || die
-einfo "Generating lockfile @lobechat/device-gateway"
 			epnpm install "${PNPM_INSTALL_ARGS[@]}"
 			epnpm install --lockfile-only
 		popd >/dev/null 2>&1 || die
@@ -666,10 +600,6 @@ einfo "Generating lockfile for @lobehub/cli"
 		pushd "apps/desktop" >/dev/null 2>&1 || die
 einfo "Unpacking lobehub-desktop-dev"
 			sed -i -e "/lockfile=false/d" ".npmrc" || die
-			epnpm install "${PNPM_INSTALL_ARGS[@]}"
-		popd >/dev/null 2>&1 || die
-		pushd "apps/device-gateway" >/dev/null 2>&1 || die
-einfo "Unpacking @lobechat/device-gateway"
 			epnpm install "${PNPM_INSTALL_ARGS[@]}"
 		popd >/dev/null 2>&1 || die
 		pushd "apps/cli" >/dev/null 2>&1 || die
@@ -687,148 +617,14 @@ einfo "Unpacking @lobehub/cli"
 pnpm_audit_post() {
 	local pkgs
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
-		pnpm_patch_lockfile() {
-			sed -i -e "s|\"vitest\": ^3.2.4|\"vitest\": 3.2.4|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|\"vitest\": \"^3.2.4\"|\"vitest\": \"3.2.4\"|g" "package.json" || die
-		}
-		pnpm_patch_lockfile
 		pkgs=(
-			"vitest@3.2.4"
 		)
-		epnpm add -D ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}						# CVE-2025-24964; DoS, DT, ID; Critical
-		pnpm_patch_lockfile
+#		epnpm add -D ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}						# CVE-2025-24964; DoS, DT, ID; Critical
 	fi
 }
 
 pnpm_dedupe_post() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
-ewarn "QA:  Manually change to hono: specifier: ^4.12.21 version: 4.12.21 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove form-data@2.3.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove form-data@2.5.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove path-to-regexp@0.1.13 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove path-to-regexp@8.2.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove tough-cookie@2.5.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove qs@6.5.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove axios@1.13.6 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove axios@1.15.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually change axios@1.15.0 to axios@1.15.2 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-
-ewarn "QA:  Manually remove ai@4.3.19 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @tootallnate/once@2.0.1 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove serialize-javascript@6.0.2 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-
-#ewarn "QA:  Manually remove undici@6.21.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually change undici: 6.21.3 to undici: 7.24.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-
-ewarn "QA:  Manually remove file-type@16.5.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"	# CVE-2026-31808; ZC, DoS; Moderate
-ewarn "QA:  Manually remove file-type@21.3.2 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change file-type: 16.5.4 to file-type: 21.3.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change file-type: 21.3.2 to file-type: 21.3.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-
-ewarn "QA:  Manually remove bn.js@4.12.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-
-#ewarn "QA:  Manually remove ajv@6.14.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove ajv@8.12.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove ajv-formats@2.1.1 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change ajv@8.12.0 to ajv@8.20.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change ajv: 8.18.0 to ajv: 8.20.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change ajv-formats: 2.1.1(ajv@8.12.0) to ajv-formats: 3.0.1(ajv@8.20.0) from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove ajv-formats@2.1.1(ajv@8.18.0) from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-
-ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-
-ewarn "QA:  Manually remove minimatch@3.1.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove minimatch@5.1.9 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove minimatch@9.0.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove minimatch@9.0.9 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove minimatch@10.2.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove minimatch@<10.2.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually change from minimatch@x.y.z to minimatch@10.2.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-
-# ignore section because of pnpm override
-# 5.4.2 -> 5.5.6
-#ewarn "QA:  Manually remove fast-xml-parser@4.5.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove fast-xml-parser@4.5.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove fast-xml-parser@5.2.5 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove fast-xml-parser@5.3.6 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove fast-xml-parser@5.3.8 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove fast-xml-parser@5.4.1 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually change fast-xml-parser: 4.x, 5.x, or earlier to fast-xml-parser: 5.7.0 depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove fast-xml-parser: 5.4.1 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove fast-xml-parser: 5.5.5 or earlier in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-
-ewarn "QA:  Manually remove jsondiffpatch@0.6.0 from ${S}/package-lock.json"
-#ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually change @apidevtools/json-schema-ref-parser@11.1.0 to @apidevtools/json-schema-ref-parser@11.2.0 ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove esbuild@0.18.20 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove esbuild@0.19.12 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove esbuild@0.25.12 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove esbuild@0.27.7 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove esbuild@0.27.4 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change (esbuild@0.19.12) to (esbuild@0.28.0) and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change esbuild: 0.27.7 to esbuild: 0.28.0 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change esbuild@0.25.12 to esbuild@0.28.0 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove esbuild@0.21.4 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-##ewarn "QA:  Manually remove esbuild@0.21.5 and arch implementations from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove <esbuild-0.28.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change from esbuild@0.25.12 to esbuild@0.28.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-
-#ewarn "QA:  Manually change esbuild: to specifier: 0.28.0 version: 0.28.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml ${S}/package.json"
-##ewarn "QA:  Manually change esbuild: 0.21.4 references to esbuild: 0.25.0"
-##ewarn "QA:  Manually change esbuild: 0.21.5 references to esbuild: 0.25.0"
-##ewarn "QA:  Manually change esbuild: 0.18.20 references to esbuild: 0.25.0"
-#ewarn "QA:  Manually remove @babel/core@7.23.6 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove @babel/runtime@7.23.6 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/core@4.2.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/auth-token@3.0.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/endpoint@7.0.6 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/graphql@5.0.6 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/request@6.2.8 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/request-error@3.0.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/rest@19.0.13 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/tsconfig@1.0.2 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/types@9.3.2 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@6.1.2 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove @octokit/plugin-request-log@1.0.4 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/plugin-rest-endpoint-methods@7.2.3 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove js-yaml@4.1.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-
-#ewarn "QA:  Manually change '@babel/core': 7.23.6 references to '@babel/core': 7.28.5 for ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually change '@babel/runtime': 7.28.2 references to '@babel/runtime': 7.28.4 for ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually change '@octokit/rest': 19.0.13 references to '@octokit/rest': 20.1.2 for ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-
-##ewarn "QA:  Manually change '@octokit/auth-token': 3.0.4 to '@octokit/auth-token': 4.0.0 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-##ewarn "QA:  Manually change '@octokit/graphql': 5.0.6 to '@octokit/graphql': 7.1.1 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-##ewarn "QA:  Manually change '@octokit/request': 6.2.8 to '@octokit/request': 8.4.1 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-##ewarn "QA:  Manually change '@octokit/request-error': 3.0.3 to '@octokit/request-error': 5.1.1 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-##ewarn "QA:  Manually change '@octokit/types': 9.3.2 to '@octokit/types': 13.10.0 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-
-#ewarn "QA:  Manually change @octokit/rest@20.1.2(encoding@0.1.13) references to @octokit/rest@20.1.2 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-
-#ewarn "QA:  Manually remove regenerator-runtime@0.14.1 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove tmp@0.0.33 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually change tmp: 0.0.33 references to tmp: 0.2.4 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually dedupe @babel/helper-module-transforms in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change to ai@5.0.52(zod@3.25.76) for @upstash/workflow depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove electron@34.5.8 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove electron@39.8.8 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove electron@39.8.10 in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change electron specifier to 42.2.0 and version to 42.2.0 for packages/electron-client-ipc depends in ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-
-ewarn "QA:  Manually change electron to 42.2.0 in ${S}/apps/desktop/pnpm-lock.yaml"
-ewarn "QA:  Manually change multiple electron: to specifier: 42.2.0 and version: 42.2.0 in ${S}/apps/desktop/pnpm-lock.yaml"
-ewarn "QA:  Manually change electron: 41.3.0 to electron: 42.2.0 in ${S}/apps/desktop/pnpm-lock.yaml"
-ewarn "QA:  Manually change \"electron\": \"41.3.0\" to \"electron\": \"42.2.0\" in ${S}/apps/desktop/package.json"
-ewarn "QA:  Manually remove tar@6.2.1 in ${S}/apps/desktop/pnpm-lock.yaml"
-
-#ewarn "QA:  Manually change postcss from 8.4.31 to 8.5.10 in ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually change postcss from ^8.4.31 to 8.5.10 in ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove postcss@8.4.31 in ${S}/pnpm-lock.yaml"
-#ewarn "QA:  Manually remove file-type@21.3.2 in ${S}/pnpm-lock.yaml"
-
-ewarn "QA:  Manually change '@opentelemetry/auto-instrumentations-node': specifier: 0.75.0 version: 0.75.0 in ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @opentelemetry/auto-instrumentations-node@0.67.3 in ${S}/pnpm-lock.yaml"
-
 		# DoS = Denial of Service
 		# DT = Data Tampering
 		# ID = Information Disclosure
@@ -836,228 +632,33 @@ ewarn "QA:  Manually remove @opentelemetry/auto-instrumentations-node@0.67.3 in 
 		# ZC = Zero Click Attack (AV:N, PR:N, UI:N)
 		# CE = Code Execution
 
-		pnpm_patch_lockfile() {
-			sed -i -e "s|'@apidevtools/json-schema-ref-parser': 11.1.0|'@apidevtools/json-schema-ref-parser': 11.2.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.25.12|esbuild: 0.28.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.18.20|esbuild: 0.28.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.19.12|esbuild: 0.28.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.21.4|esbuild: 0.28.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.21.5|esbuild: 0.28.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.23.1|esbuild: 0.28.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: 0.24.2|esbuild: 0.28.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|esbuild: '>=0.12 <1'|esbuild: 0.28.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|snowflake-sdk: 2.0.3|snowflake-sdk: 2.0.4|g" "pnpm-lock.yaml" || die
-
-			sed -i -e "s|'@babel/runtime': 7.23.6|'@babel/runtime': 7.28.2|g" "pnpm-lock.yaml" || die
-
-	# xlsx-republish or @e965/xlsx can be used as a drop in replacement of xlsx
-			sed -i -e "s|\"xlsx\": \"^0.18.5\"|\"@e965/xlsx\": \"^0.20.3\"|g" "packages/file-loaders/package.json" || die
-
-			sed -i -e "s|tmp: 0.0.33|tmp: 0.2.4|g" "pnpm-lock.yaml" || die
-
-			sed -i -e "s|minimatch: 10.2.4|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|minimatch: 9.0.9|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|minimatch: 9.0.6|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|minimatch: 9.0.3|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|minimatch: 5.1.9|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|minimatch: 5.1.7|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|minimatch: 3.1.5|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|minimatch: 3.1.3|minimatch: 10.2.5|g" "pnpm-lock.yaml" || die
-
-			sed -i -e "s|bn.js: 4.12.3|bn.js: 5.2.3|g" "pnpm-lock.yaml" || die
-
-			sed -i -e "s|jsondiffpatch: 0.6.0|jsondiffpatch: 0.7.2|g" "pnpm-lock.yaml" || die
-
-			sed -i -e "s|ajv: 8.12.0|ajv: 8.18.0|g" "pnpm-lock.yaml" || die			# CVE-2025-69873; ZC, DoS; Moderate
-			sed -i -e "s|ajv: 6.14.0|ajv: 8.18.0|g" "pnpm-lock.yaml" || die			# CVE-2025-69873; ZC, DoS; Moderate
-
-			sed -i -e "s|js-yaml: 4.1.0|js-yaml: 4.1.1|g" "pnpm-lock.yaml" || die
-
-			sed -i -e "s|ai: 4.3.19(react@19.2.4)(zod@3.25.76)|ai: 5.0.52|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|'@octokit/rest': 19.0.13(encoding@0.1.13)|'@octokit/rest': 20.1.2|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|tar: 7.5.9|tar: 7.5.15|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|tar: 7.5.11|tar: 7.5.15|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|tar: 6.2.1|tar: 7.5.15|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|tar: 6.2.1|tar: 7.5.15|g" "apps/desktop/pnpm-lock.yaml" || die
-			sed -i -e "s|hono: 4.12.3|hono: 4.12.21|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|hono: 4.12.7|hono: 4.12.21|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|hono: '>=3.9.0'|hono: 4.12.21|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|hono: ^4|hono: 4.12.21|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|hono: ^4|hono: 4.12.21|g" "apps/desktop/pnpm-lock.yaml" || die
-			sed -i -e "s|'@hono/node-server': 1.19.10(hono@4.12.7)|'@hono/node-server': 1.19.14(hono@4.12.21)|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|'@tootallnate/once': 2.0.0|'@tootallnate/once': 3.0.1|g" "pnpm-lock.yaml" || die
-
-			sed -i -e "s|serialize-javascript: 6.0.2|serialize-javascript: 7.0.5|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|undici: 6.21.3|undici: 7.24.5|g" "pnpm-lock.yaml" || die
-
-			sed -i -e "s|fast-xml-parser: 5.4.1|fast-xml-parser: 5.7.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 5.4.2|fast-xml-parser: 5.7.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 5.2.5|fast-xml-parser: 5.7.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 5.3.6|fast-xml-parser: 5.7.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 4.5.4|fast-xml-parser: 5.7.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.7.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|fast-xml-parser: 4.5.3|fast-xml-parser: 5.7.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"5.7.0\"|g" "package.json" || die
-
-			sed -i -e "s|form-data: 2.3.3|form-data: 4.0.5|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|form-data: 2.5.5|form-data: 4.0.5|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|tough-cookie: 2.5.0|tough-cookie: 4.1.4|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|tough-cookie: 4.1.4|tough-cookie: 4.1.4|g" "pnpm-lock.yaml" || die
-
-			sed -i -e "s|path-to-regexp: 0.1.13|path-to-regexp: 8.4.2|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|path-to-regexp: 8.2.0|path-to-regexp: 8.4.2|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|path-to-regexp: 8.4.0|path-to-regexp: 8.4.2|g" "pnpm-lock.yaml" || die
-
-			sed -i -e "s|qs: 6.5.5|qs: 6.15.1|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|qs: 6.14.2|qs: 6.15.1|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|axios: 1.13.6(debug@4.4.3)|axios: 1.15.2(debug@4.4.3)|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|axios: 1.15.0(debug@4.4.3)|axios: 1.15.2(debug@4.4.3)|g" "pnpm-lock.yaml" || die
-
-			sed -i -e "s|\"fast-xml-parser\": \"5.5.6\"|\"fast-xml-parser\": \"5.7.0\"|" "package.json" || die # Fix inconsistency or possible false positive
-			sed -i -e "s|file-type: 21.3.2|file-type: 21.3.4|" "apps/desktop/pnpm-lock.yaml" || die
-			sed -i -e "s|file-type: 16.5.4|file-type: 21.3.4|" "apps/desktop/pnpm-lock.yaml" || die
-			sed -i -e "s|file-type: 16.5.4|file-type: 21.3.4|" "apps/cli/pnpm-lock.yaml" || die
-
-			sed -i -e "s|postcss: ^8.5.1|postcss: 8.5.15|" "pnpm-lock.yaml" || die
-			sed -i -e "s|postcss: ^8.4.31|postcss: 8.5.15|" "pnpm-lock.yaml" || die
-			sed -i -e "s|postcss: ^8.4.31|postcss: 8.5.15|" "pnpm-lock.yaml" || die
-			sed -i -e "s|postcss: 8.4.31|postcss: 8.5.15|" "pnpm-lock.yaml" || die
-			sed -i -e "s|postcss: ^8.4.20|postcss: 8.5.15|" "pnpm-lock.yaml" || die
-			sed -i -e "s|postcss: ^8.4.12|postcss: 8.5.15|" "pnpm-lock.yaml" || die
-			sed -i -e "s|postcss: ^8.3.5|postcss: 8.5.15|" "pnpm-lock.yaml" || die
-			sed -i -e "s|postcss: ^8.3.3|postcss: 8.5.15|" "apps/cli/pnpm-lock.yaml" || die
-
-			sed -i -e "s|'@tootallnate/once': 2.0.1|'@tootallnate/once': 3.0.1|" "pnpm-lock.yaml" || die
-
-			sed -i -e "s|uuid: 9.0.1|uuid: 14.0.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|uuid: 8.3.2|uuid: 14.0.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|uuid: 10.0.0|uuid: 14.0.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|uuid: 11.1.1|uuid: 14.0.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|uuid: 13.0.2|uuid: 14.0.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|uuid: 14.0.0|uuid: 14.0.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|uuid: 3.4.0|uuid: 14.0.0|g" "pnpm-lock.yaml" || die
-
-			sed -i -e "s|uuid: 13.0.2|uuid: 14.0.0|g" "apps/cli/pnpm-lock.yaml" || die
-
-			sed -i -e "s|uuid: 13.0.2|uuid: 14.0.0|g" "apps/desktop/pnpm-lock.yaml" || die
-			sed -i -e "s|uuid: 14.0.0|uuid: 14.0.0|g" "apps/desktop/pnpm-lock.yaml" || die
-		}
-
-		pnpm_patch_lockfile
-
 		local pkgs
 
 		pushd "apps/desktop" >/dev/null 2>&1 || die
 			pkgs=(
-				"file-type@21.3.4"
-				"tar@7.5.15"								# GHSA-qffp-2rhf-9h96; VS(DT, ID), SS(DT, ID)
-													# CVE-2026-31802; ZC, VS(DT), SS(DT), High
-													# CVE-2026-23745; VS(DT, ID), SS(DT, ID)
-													# CVE-2026-24842; DT, ID; High
-													# CVE-2026-23950; RC, DoS, DT, ID; High
-													# CVE-2026-26960; DT, ID; High
-													# CVE-2026-29786; VS(DoS, DT), SS(DoS, DT); High
 			)
-			epnpm add -D ${pkgs[@]}
+#			epnpm add -D ${pkgs[@]}
 		popd >/dev/null 2>&1 || die
 
 		pushd "apps/cli" >/dev/null 2>&1 || die
 			pkgs=(
-				"file-type@21.3.4"
 			)
-			epnpm add -D ${pkgs[@]}
+#			epnpm add -D ${pkgs[@]}
 		popd >/dev/null 2>&1 || die
 
 		pkgs=(
-			"@apidevtools/json-schema-ref-parser@11.2.0"					# CVE-2024-29651; DoS, DT, ID; High
 
-			"esbuild@0.28.0"								# GHSA-67mh-4wv8-2f99; DI; Moderate
-
-			"@e965/xlsx"									# CVE-2024-22363; DoS; High
-													# CVE-2023-30533; DoS, DT, ID; High
-
-			"jsondiffpatch@0.7.2"								# CVE-2025-9910; VS(DT, ID); Moderate
-			"ai@5.0.52"									# CVE-2025-48985; DT; Low
-			"@langchain/community@1.1.18"							# CVE-2026-27795; ID; Moderate
-													# CVE-2026-26019; ID; Moderate
-													# CVE-2026-25528; ID; Moderate for langsmith dep of @langchain/community and langchain
-			"electron@${ELECTRON_APP_ELECTRON_PV}"						# CVE-2025-55305; DoS, DT, ID; Moderate
-			"minimatch@10.2.5"								# CVE-2026-26996: ZC, DoS; High
-													# CVE-2026-27903; ZC, DoS; High
-													# CVE-2026-27904; ZC, DoS; High
-			"undici@7.24.5"									# CVE-2026-2229; ZC, DoS, High
-													# CVE-2026-1526; ZC, DoS, High
-													# CVE-2026-1525; ZC, DT, ID; Moderate
-													# CVE-2026-22036; ZC, DoS; Moderate
-													# CVE-2026-1527; DT, ID; Moderate
-													# CVE-2026-1528; ZC, DoS; High
-			"fast-xml-parser@5.7.0"								# CVE-2026-25896; ZC, EBR, DT, ID; Critical
-													# CVE-2026-26278; ZC, DoS; High
-													# CVE-2026-27942; ZC, VS(DoS); Low		# >= 5.3.8 or >= 4.5.4
-													# CVE-2026-33036; ZC, DoS; High
-													# CVE-2026-33349; ZC, DoS; Moderate
-													# CVE-2026-41650; DT, ID; Moderate		# Testing bump.  May break pinned.  Working 5.5.7
-													# CVE-2026-44665; ZC, VS(DT); High
-													# CVE-2026-44664; DT, ID; Moderate
-			"form-data@4.0.5"								# CVE-2025-7783; ZC, VS(DT, ID), SS(DT, ID); Critical
-			"tough-cookie@4.1.4"								# CVE-2023-26136; ZC, DT, ID; Moderate
-			"path-to-regexp@8.4.2"								# CVE-2026-4926; ZC, DoS; High
-													# CVE-2026-4923; ZC, DoS; Moderate
-			"qs@6.15.1"									# CVE-2025-15284; ZC, VS(DoS), SS(DoS); Moderate
-			"axios@1.15.2"									# CVE-2025-62718; ZC, VS(DT, ID), SS(DT, ID); Moderate
-													# CVE-2026-40175; ZC, DT, ID; Moderate
-													# CVE-2026-42044; ZC, DT, ID; Moderate
-													# CVE-2026-42264; ZC, DT, ID; High
-			"postcss@8.5.15"								# CVE-2026-41305; DT, ID; Moderate
-			"uuid@14.0.0"									# CVE-2026-41907; ZC, VS(DT); Moderate
-			"@opentelemetry/auto-instrumentations-node@0.75.0"				# CVE-2026-44902; ZC, DoS; High
 		)
-		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
+		#epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 
 		pkgs=(
-			"snowflake-sdk@2.0.4"								# CVE-2025-24791; DT, ID; Medium
-													# CVE-2025-46328; DoS, DT, ID; High
-			"tmp@0.2.4"									# CVE-2025-54798; DT; Low
-
-			"@octokit/rest@20.1.2"								# Bump to remove octokit 4.x vulnerabilities
-			"minimatch@10.2.5"								# CVE-2026-26996: ZC, DoS; High
-													# CVE-2026-27903; ZC, DoS; High
-													# CVE-2026-27904; ZC, DoS; High
-			"bn.js@5.2.3"									# CVE-2026-2739: DoS; Moderate
-			"js-yaml@4.1.1"									# CVE-2025-64718: ZC, DT; Moderate
-			"tar@7.5.15"									# GHSA-qffp-2rhf-9h96; VS(DT, ID), SS(DT, ID)
-													# CVE-2026-31802; ZC, VS(DT), SS(DT), High
-													# CVE-2026-23745; VS(DT, ID), SS(DT, ID)
-													# CVE-2026-24842; DT, ID; High
-													# CVE-2026-23950; RC, DoS, DT, ID; High
-													# CVE-2026-26960; DT, ID; High
-													# CVE-2026-29786; VS(DoS, DT), SS(DoS, DT); High
-			"@hono/node-server@1.19.14"							# CVE-2026-29087; ZC, ID; High
-													# CVE-2026-39406; ZC, ID; Moderate
-			"hono@4.12.21"									# CVE-2026-29045; ZC, ID; High
-													# CVE-2026-29085; DT, ID; Moderate
-													# CVE-2026-29086; DT, ID; Moderate
-													# GHSA-v8w9-8mx6-g223; ZC, DT, ID; Moderate
-													# CVE-2026-39409; ZC, ID; Moderate
-													# CVE-2026-39408; DT; Moderate
-													# CVE-2026-39407; ZC, ID; Moderate
-													# GHSA-26pp-8wgv-hjvm; ZC, DoS; Moderate
-													# GHSA-458j-xx4x-4375; ZC, DT; Moderate
-													# CVE-2026-39410; DT, ID; Moderate
-													# CVE-2026-44459; DT, ID; Low
-													# CVE-2026-44458; DT; Moderate
-													# CVE-2026-44455; DT, ID; Moderate
-			"@tootallnate/once@3.0.1"							# CVE-2026-3449; DoS; Low
-			"serialize-javascript@7.0.5"							# GHSA-5c6j-r48x-rmvq; CE, DoS, DT, ID; High
-													# CVE-2026-34043; ZC, DoS; Moderate
 		)
-		epnpm add -D ${pkgs[@]}
+#		epnpm add -D ${pkgs[@]}
 
 		NODE_ADDON_API_INSTALL_ARGS=( "-P" )
 		NODE_GYP_INSTALL_ARGS=( "-D" )
-		epnpm add -D "@types/sharp" ${NPM_INSTALL_ARGS[@]}
+		#epnpm add -D "@types/sharp" ${NPM_INSTALL_ARGS[@]}
 		node-sharp_pnpm_lockfile_add_sharp
-		pnpm_patch_lockfile
 
 		# Copy all lockfiles
 		mkdir -p "${WORKDIR}/lockfile-image"
@@ -1122,10 +723,6 @@ src_unpack() {
 				epnpm install "${PNPM_INSTALL_ARGS[@]}"
 			popd >/dev/null 2>&1 || die
 		fi
-
-		pushd "apps/device-gateway" >/dev/null 2>&1 || die
-			epnpm install "${PNPM_INSTALL_ARGS[@]}"
-		popd >/dev/null 2>&1 || die
 
 		pushd "apps/cli" >/dev/null 2>&1 || die
 			sed -i -e "/lockfile=false/d" ".npmrc" || die
