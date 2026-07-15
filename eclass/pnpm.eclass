@@ -156,7 +156,14 @@ _PNPM_PKG_SETUP_CALLED=0
 # @ECLASS_VARIABLE: PNPM_AUDIT_FIX_ARGS
 # @DESCRIPTION:
 # This variable is an array.
-# Global arguments to append to `pnpm audit --fix`
+# Global arguments to append to the end of `pnpm audit --fix ${PNPM_AUDIT_FIX_ARGS[@]}`
+
+# @ECLASS_VARIABLE: PNPM_AUDIT_FIX_ARG
+# @DESCRIPTION:
+# Set the default arg for npm audit --fix=${PNPM_AUDIT_FIX_ARG}
+# Valid values:  update, override
+# override was the default in pnpm 10.
+# update is the eclass default if unset.
 
 # @ECLASS_VARIABLE: PNPM_DEDUPE_ARGS
 # @DESCRIPTION:
@@ -294,11 +301,16 @@ einfo "Hydrating pnpm..."
 	export PATH=".:${HOME}/.cache/node/corepack/v1/pnpm/${pnpm_pv}/bin:${PATH}"
 	if [[ -e "${HOME}/.cache/node/corepack/v1/pnpm/${pnpm_pv}/bin/pnpm.cjs" ]] ; then
 		ln -sf "${HOME}/.cache/node/corepack/v1/pnpm/${pnpm_pv}/bin/pnpm"{".cjs",""} || die
+		chmod +x "${HOME}/.cache/node/corepack/v1/pnpm/${pnpm_pv}/bin/pnpm.cjs" || die
 	fi
 	local pnpm_pv=$(pnpm --version)
 	local node_pv=$(node --version)
 einfo "pnpm version:  ${pnpm_pv}"
 einfo "Node.js version:  ${node_pv}"
+
+	if ver_test "${pnpm_pv}" "-ge" "11" && [[ -z "${PNPM_AUDIT_FIX_ARG}" ]] ; then
+		export PNPM_AUDIT_FIX_ARG="update"
+	fi
 
 	pnpm_network_settings
 
@@ -413,7 +425,15 @@ pnpm_src_unpack() {
 			pnpm_audit_pre
 		fi
 		if [[ "${PNPM_AUDIT_FIX:-1}" == "1" ]] ; then
-			edo pnpm audit --fix "${PNPM_AUDIT_FIX_ARGS[@]}"
+			local pnpm_pv=$(pnpm --version)
+			pnpm audit --help
+			if ver_test "${pnpm_pv}" "-ge" "11" ; then
+				if [[ -n "${PNPM_AUDIT_FIX_ARG}" ]] ; then
+					edo pnpm audit --fix=${PNPM_AUDIT_FIX_ARG} "${PNPM_AUDIT_FIX_ARGS[@]}"
+				else
+					edo pnpm audit --fix "${PNPM_AUDIT_FIX_ARGS[@]}"
+				fi
+			fi
 		fi
 		if declare -f pnpm_audit_post >/dev/null 2>&1 ; then
 			pnpm_audit_post

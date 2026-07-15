@@ -86,9 +86,9 @@ exist in build files.
 | Rust 1.91.0                     | Not supported                         | G23 (1.91.0)                                       |
 | Rust 1.91.1                     | Available                             | U22 (1.91.1), U24 (1.91.1), U26 (1.91.1)           |
 | Rust 1.92.0                     | Available                             | U26 (1.92.0)                                       |
-| Rust 1.93.1 [C]                 | Available                             | G23 (1.93.1), U26 (1.93.1)                         |
+| Rust 1.93.1 [C]                 | Available                             | U26 (1.93.1)                                       |
 | Rust 1.94.1                     | Available                             |                                                    |
-| Rust 1.95.0                     | Available                             |                                                    |
+| Rust 1.95.0                     | Available                             | G23 (1.95.0)                                       |
 | Rust 1.96.1 [C]                 | Available                             | F43 (1.96.1), F44 (1.96.1)                         |
 | Rust-9999 (1.99.0-nightly) [C]  | Limited support                       |                                                    |
 
