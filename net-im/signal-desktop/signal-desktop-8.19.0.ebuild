@@ -85,7 +85,7 @@ QA_PREBUILT="
 	opt/Signal/swiftshader/libGLESv2.so
 "
 
-inherit electron-app lcnr pax-utils pnpm rust unpacker xdg
+inherit edo electron-app lcnr pax-utils pnpm npm rust unpacker xdg
 
 S="${WORKDIR}/${MY_PN}-${PV}"
 SRC_URI="
@@ -120,7 +120,7 @@ SLOT="0"
 RESTRICT="splitdebug binchecks strip mirror" # Prevent slow down and snooping
 IUSE+="
 firejail wayland X
-ebuild_revision_81
+ebuild_revision_84
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -169,6 +169,7 @@ get_deps() {
 
 pkg_setup() {
 	pnpm_pkg_setup
+	npm_pkg_setup
 	rust_pkg_setup
 	if has_version "dev-lang/rust-bin:${RUST_PV}" ; then
 		rust_prepend_path "${RUST_PV}" "binary"
@@ -206,7 +207,6 @@ einfo "DEBUG:  Called pnpm_unpack_post()"
 		eapply "${FILESDIR}/${PN}-8.19.0-project-files-changes.patch"
 		echo "loglevel: debug" >> "${S}/pnpm-workspace.yaml" || die
 	fi
-	rm -rf "${S}/packages/windows-ucv" || true
 
 einfo "Increasing verbosity to debug"
 	ALREADY_PATCHED=1
@@ -218,9 +218,12 @@ pnpm_unpack_post() {
 
 src_unpack() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
-		pnpm_hydrate
 		unpack "${P}.tar.gz"
 		#die
+		pnpm_hydrate
+
+		# Prevent fatal ELIFECYCLE with windows-ucv
+		npm_hydrate
 		cd "${S}" || die
 
 		_apply_patches
@@ -248,6 +251,9 @@ src_unpack() {
 		# VS = Vulnerable System (Direct attack)
 		# ZC = Zero Click Attack (AV:N, PR:N, UI:N)
 		# RCE = Remote Code Execution
+
+ewarn "QA:  toolsets must be removed from package.json"
+ewarn "QA:  mac, mas, masDev, nsis, win sections must be removed from package.json"
 
 ewarn "QA:  Manually remove picomatch@2.3.1 in ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove jws@3.2.2 from ${S}/pnpm-lock.yaml"
@@ -317,6 +323,7 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 		popd >/dev/null 2>&1 || die
 		deps=(
 			"fabric@4.6.0" # Pinned version required
+			"electron-builder@26.15.6" # Pinned version required
 		)
 		epnpm install "${deps[@]}" -D -w "${PNPM_INSTALL_ARGS[@]}"
 
@@ -353,7 +360,6 @@ einfo "Copying lockfiles"
 einfo "Updating lockfile done."
 		exit 0
 	else
-		export ELECTRON_SKIP_BINARY_DOWNLOAD=1
 		export ELECTRON_BUILDER_CACHE="${HOME}/.cache/electron-builder"
 		export ELECTRON_CACHE="${HOME}/.cache/electron"
 		export ELECTRON_CUSTOM_DIR="v${ELECTRON_APP_ELECTRON_PV}"
@@ -373,6 +379,11 @@ src_configure() {
 src_compile() {
 	pnpm_hydrate
 
+	# Required to avoid:
+	# ERROR: spawn npm ENOENT
+	npm_hydrate
+
+	export ELECTRON_USE_REMOTE_CHECKSUMS=0
 	# The zip gets wiped for some reason in src_unpack.
 	electron-app_cp_electron
 
@@ -381,17 +392,22 @@ src_compile() {
 	gen_git_tag "${S}" "v${PV}"
 
 	epnpm run "build:emoji-data"
-	epnpm run "build-linux"
 
-	electron-builder \
+	# Same as `epnpm run "build-linux"`
+	run-s build:policy-files generate build:rolldown:prod
+	export NODE_OPTIONS="--import=tsx"
+	export SIGNAL_ENV="production"
+	edo electron-builder \
 		$(electron-app_get_electron_platarch_args) \
 		-l "dir" \
-		|| die
+		--config.extraMetadata.environment=${SIGNAL_ENV} \
+		--publish=never
 
 	# All the node package managers make errors non-fatal.
 	# This is why we do these custom checks below.
 #	grep -q -e "⨯" "${T}/build.log" && die "Detected error"
 	[[ -e "dist/linux-unpacked/signal-desktop" ]] || die "Build failed"
+	grep -q -e "ENOENT" "${T}/build.log" && die "Build failed"
 }
 
 src_install() {

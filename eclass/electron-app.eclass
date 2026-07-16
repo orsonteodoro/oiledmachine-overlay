@@ -1088,6 +1088,7 @@ electron-app_gen_electron_uris() {
 # Copies the electron tarball for offline install.
 electron-app_cp_electron() {
 	#export ELECTRON_SKIP_BINARY_DOWNLOAD=${ELECTRON_SKIP_BINARY_DOWNLOAD:-1}
+	export ELECTRON_DOWNLOAD_CACHE_MODE=3 # https://www.jsdocs.io/package/@electron/get#ElectronDownloadCacheMode
 	export ELECTRON_BUILDER_CACHE="${HOME}/.cache/electron-builder"
 	export ELECTRON_CACHE="${HOME}/.cache/electron"
 	mkdir -p "${ELECTRON_CACHE}" || die
@@ -1108,12 +1109,14 @@ electron-app_cp_electron() {
 #
 	export ELECTRON_CUSTOM_DIR=${ELECTRON_CUSTOM_DIR:-"${ELECTRON_APP_ELECTRON_PV}"}
 
-	cp -a \
+	cat \
 		"${DISTDIR}/${fn}" \
+			> \
 		"${ELECTRON_CACHE}/${fn}" \
 		|| die
-	cp -a \
+	cat \
 		"${DISTDIR}/electron-SHASUMS256.txt.${ELECTRON_APP_ELECTRON_PV}" \
+			> \
 		"${ELECTRON_CACHE}/SHASUMS256.txt" \
 		|| die
 }

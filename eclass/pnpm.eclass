@@ -377,8 +377,6 @@ einfo "PNPM_CACHE_FOLDER:  ${PNPM_CACHE_FOLDER}"
 # @DESCRIPTION:
 # Unpacks a pnpm application.
 pnpm_src_unpack() {
-	pnpm_hydrate
-
 	if [[ "${PV}" =~ "9999" ]] ; then
 		:
 	elif [[ -n "${PNPM_TARBALL}" ]] ; then
@@ -386,6 +384,9 @@ pnpm_src_unpack() {
 	else
 		unpack "${P}.tar.gz"
 	fi
+
+	# Must be placed after unpack to prevent unpack wiping the environment state of pnpm_hydrate.
+	pnpm_hydrate
 
 	cd "${S}" || die
 	if [[ "${PNPM_OFFLINE}" == "1" ]] ; then
