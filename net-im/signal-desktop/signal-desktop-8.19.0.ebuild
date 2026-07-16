@@ -309,12 +309,16 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 
 		epnpm dedupe
 
-	# Re-add missing dependencies
+	# Re-add missing or pinned dependencies
 		pushd "danger" >/dev/null 2>&1 || die
 			deps=(
 			)
 			#epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
 		popd >/dev/null 2>&1 || die
+		deps=(
+			"fabric@4.6.0" # Pinned version required
+		)
+		epnpm install "${deps[@]}" -D -w "${PNPM_INSTALL_ARGS[@]}"
 
 		sed -i -e "s|disabled_postinstall|postinstall|g" "package.json" || die
 
