@@ -204,11 +204,11 @@ _apply_patches() {
 einfo "DEBUG:  Called pnpm_unpack_post()"
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		eapply "${FILESDIR}/${PN}-8.19.0-project-files-changes.patch"
+		echo "loglevel: debug" >> "${S}/pnpm-workspace.yaml" || die
 	fi
 	rm -rf "${S}/packages/windows-ucv" || true
 
 einfo "Increasing verbosity to debug"
-	echo "loglevel: debug" >> "${S}/pnpm-workspace.yaml" || die
 	ALREADY_PATCHED=1
 }
 
