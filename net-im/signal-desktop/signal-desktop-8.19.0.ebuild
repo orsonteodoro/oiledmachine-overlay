@@ -8,11 +8,11 @@ EAPI=8
 
 # To update use:
 # PATH=$(realpath "../../scripts")":${PATH}"
-# PNPM_UPDATER_PROJECT_ROOT="Signal-Desktop-8.18.0" pnpm_updater_update_locks.sh
+# PNPM_UPDATER_PROJECT_ROOT="Signal-Desktop-8.19.0" pnpm_updater_update_locks.sh
 
 # Ignore if error:
 # Could not detect abi for version ' + target + ' and runtime ' + runtime + '.  Updating "node-abi" might help solve this issue if it is a new release of ' + runtime)
-# https://github.com/signalapp/Signal-Desktop/blob/v8.14.0/CONTRIBUTING.md#known-issues
+# https://github.com/signalapp/Signal-Desktop/blob/v8.19.0/CONTRIBUTING.md#known-issues
 
 MY_PN="Signal-Desktop"
 MY_PN2="Signal"
@@ -190,15 +190,20 @@ einfo "DEBUG:  Deleting old electron changes suggested by pnpm audit --fix"
 	sed -i -e "\|patches/fabric|d" "${S}/pnpm-workspace.yaml" || die
 }
 
-pnpm_unpack_post() {
+_apply_patches() {
+	[[ "${ALREADY_PATCHED}" == "1" ]] && return
+	[[ "${PNPM_UPDATE_LOCK}" == "1" ]] || return
 einfo "DEBUG:  Called pnpm_unpack_post()"
-	sed -i -e "s|postinstall|disabled_postinstall|g" "${S}/package.json" || die
-	eapply "${FILESDIR}/${PN}-8.18.0-tar-minimumReleaseAgeExclude.patch"
-	sed -i -e "s|minimumReleaseAgeStrict: true|minimumReleaseAgeStrict: false|g" "${S}/pnpm-workspace.yaml" || die
-	sed -i -e "\|minimumReleaseAge:|d" "${S}/pnpm-workspace.yaml" || die
-#	sed -i -e "s|patchedDependencies|disabledPatchedDependencies|g" "${S}/package.json" || die
-#	sed -i -e "\|@types/fabric@4.5.3|d" "${S}/package.json" || die
-#	sed -i -e "\|fabric@4.6.0|d" "${S}/package.json" || die
+	eapply "${FILESDIR}/${PN}-8.19.0-pnpm-workspace-changes.patch"
+#einfo "DEBUG:  Applying sed based patches..."
+#	sed -i -e "s|postinstall|disabled_postinstall|g" "${S}/package.json" || die
+#	sed -i -e "s|minimumReleaseAgeStrict: true|minimumReleaseAgeStrict: false|g" "${S}/pnpm-workspace.yaml" || die
+#	sed -i -e "\|minimumReleaseAge:|d" "${S}/pnpm-workspace.yaml" || die
+	ALREADY_PATCHED=1
+}
+
+pnpm_unpack_post() {
+	_apply_patches
 }
 
 src_unpack() {
@@ -207,15 +212,7 @@ src_unpack() {
 		unpack "${P}.tar.gz"
 		cd "${S}" || die
 
-#		sed -i -e "s|patchedDependencies|disabledPatchedDependencies|g" "${S}/package.json" || die
-		eapply "${FILESDIR}/${PN}-8.18.0-tar-minimumReleaseAgeExclude.patch"
-
-einfo "DEBUG:  Applying sed based patches..."
-#		sed -i -e "\|@types/fabric@4.5.3|d" "${S}/package.json" || die
-#		sed -i -e "\|fabric@4.6.0|d" "${S}/package.json" || die
-		sed -i -e "s|postinstall|disabled_postinstall|g" "package.json" || die
-		sed -i -e "s|minimumReleaseAgeStrict: true|minimumReleaseAgeStrict: false|g" "pnpm-workspace.yaml" || die
-		sed -i -e "\|minimumReleaseAge:|d" "${S}/pnpm-workspace.yaml" || die
+		_apply_patches
 
 	# The package contains multiple pnpm-lock.yaml.
 		local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
@@ -336,6 +333,7 @@ einfo "Copying lockfiles"
 				cp -av "${d}/pnpm-lock.yaml" "${WORKDIR}/lockfile-image/${d}" || die
 			fi
 		done
+		cp -av "pnpm-workspace.yaml" "${WORKDIR}/lockfile-image" || die
 
 		grep -e "TypeError:" "${T}/build.log" && die "Detected error.  Retry."
 		#_pnpm_check_errors

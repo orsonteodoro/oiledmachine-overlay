@@ -1,0 +1,13 @@
+{
+  "name": "@signalapp/desktop-danger",
+  "packageManager": "pnpm@11.5.2",
+  "scripts": {
+    "danger:local": "pnpm exec danger local --dangerfile ../dangerfile.mjs --base main",
+    "danger:ci": "pnpm exec danger ci --dangerfile ../dangerfile.mjs --base origin/main"
+  },
+  "devDependencies": {
+    "danger": "13.0.10",
+    "js-yaml": "4.1.1",
+    "semver": "7.7.4"
+  }
+}

@@ -1,0 +1,204 @@
+saveExact: true
+blockExoticSubdeps: true
+minimumReleaseAgeExclude:
+  - '@indutny/protopiler'
+  - '@signalapp/libsignal-client'
+  - '@signalapp/*'
+  - '@storybook/core'
+  - '@storybook/theming'
+  - '@xmldom/xmldom'
+  - ajv
+  - basic-ftp
+  - tar
+  - electron@43.1.1
+  - fabric
+  - immutable
+  - minimatch
+  - node-forge
+  - path-to-regexp
+  - picomatch
+  - sax
+  - serialize-javascript
+  - storybook
+  - svgo
+  - got@11.8.5
+  - cross-spawn@6.0.6
+  - '@remix-run/router@1.23.2'
+  - react-router@6.30.2
+  - diff@8.0.3
+  - webpack@5.104.1
+  - webpack@5.104.0
+  - qs@6.14.2
+  - fabric@7.2.0
+  - serialize-javascript@7.0.3
+  - qs@6.14.1
+  - brace-expansion@1.1.13
+  - brace-expansion@2.0.3
+  - brace-expansion@5.0.5
+  - yaml@1.10.3
+  - electron@39.8.1
+  - ip-address@10.1.1
+  - serialize-javascript@7.0.5
+  - uuid@11.1.1
+  - uuid@13.0.1
+  - qs@6.15.2
+  - react-router@6.30.4
+  - brace-expansion@5.0.6
+  - joi@17.13.4
+  - joi@18.2.1
+  - esbuild@0.28.1
+  - fabric@7.4.0
+  - tar@7.5.16
+  - js-yaml@3.15.0
+  - js-yaml@4.1.2
+  - '@babel/core@7.29.1'
+lockfileIncludeTarballUrl: true
+verifyDepsBeforeRun: prompt
+verifyStoreIntegrity: true
+
+packages:
+  - 'packages/*'
+  - 'sticker-creator'
+
+publicHoistPattern:
+  - '*eslint-*'
+
+minimumReleaseAgeIgnoreMissingTime: false
+minimumReleaseAgeStrict: false
+
+trustPolicy: no-downgrade
+trustPolicyExclude:
+  - '@octokit/endpoint@9.0.6'
+  - '@swc/core@1.10.16'
+  - 'chokidar@4.0.3'
+  - 'react-redux@9.2.0'
+  - 'reselect@5.1.1'
+  - 'rollup@3.30.0'
+  - 'semver@5.7.2 || 6.3.1'
+  - 'undici-types@6.21.0'
+  - 'vite@4.5.14'
+
+overrides:
+  '@electron/rebuild>node-gyp': '12.4.0'
+  'canvas': '-'
+  'jsdom': '-'
+  'react-popper@2.3.0>react-dom': '19.2.4'
+  'react-popper@2.3.0>react': '19.2.4'
+  'thenify-all>thenify': '3.3.1'
+  'danger@13.0.10>undici': '6.27.0'
+  '@babel/core@<=7.29.0': ^7.29.1
+  '@remix-run/router@<=1.23.1': ^1.23.2
+  brace-expansion@<1.1.13: ^1.1.13
+  brace-expansion@>=2.0.0 <2.0.3: ^2.0.3
+  brace-expansion@>=4.0.0 <5.0.5: ^5.0.5
+  brace-expansion@>=5.0.0 <5.0.6: ^5.0.6
+  cross-spawn@<6.0.6: ^6.0.6
+  diff@>=6.0.0 <8.0.3: ^8.0.3
+  electron@<39.8.1: ^39.8.1
+  esbuild@>=0.27.3 <0.28.1: ^0.28.1
+  fabric@<7.2.0: ^7.2.0
+  fabric@<7.4.0: ^7.4.0
+  got@<11.8.5: ^11.8.5
+  ip-address@<=10.1.0: ^10.1.1
+  joi@<17.13.4: ^17.13.4
+  joi@>=18.0.0 <18.2.1: ^18.2.1
+  js-yaml@<3.15.0: ^3.15.0
+  js-yaml@>=4.0.0 <=4.1.1: ^4.1.2
+  qs@<6.14.1: ^6.14.1
+  qs@>=6.11.1 <=6.15.1: ^6.15.2
+  qs@>=6.7.0 <=6.14.1: ^6.14.2
+  react-router@>=6.0.0 <6.30.2: ^6.30.2
+  react-router@>=6.7.0 <6.30.4: ^6.30.4
+  serialize-javascript@<=7.0.2: ^7.0.3
+  serialize-javascript@>=5.0.0 <7.0.5: ^7.0.5
+  tar@<=7.5.15: ^7.5.16
+  uuid@<11.1.1: ^11.1.1
+  uuid@>=13.0.0 <13.0.1: ^13.0.1
+  webpack@>=5.49.0 <5.104.0: ^5.104.0
+  webpack@>=5.49.0 <=5.104.0: ^5.104.1
+  yaml@>=1.0.0 <1.10.3: ^1.10.3
+
+allowUnusedPatches: false
+ignorePatchFailures: false
+patchedDependencies:
+  # Note: Prefer adding without version so that pnpm attempts to re-apply the patch after an upgrade
+  '@electron/universal': 'patches/@electron__universal.patch'
+  '@napi-rs/canvas@0.1.61': 'patches/@napi-rs__canvas@0.1.61.patch'
+  '@types/chai': 'patches/@types__chai.patch'
+  '@types/fabric@4.5.3': 'patches/@types+fabric+4.5.3.patch'
+  '@vitest/expect@2.0.5': 'patches/@vitest+expect+2.0.5.patch'
+  'app-builder-lib': 'patches/app-builder-lib.patch'
+  'casual@1.6.2': 'patches/casual+1.6.2.patch'
+  'dmg-builder': 'patches/dmg-builder.patch'
+  'fs-xattr': 'patches/fs-xattr.patch'
+  'growing-file@0.1.3': 'patches/growing-file+0.1.3.patch'
+  'node-fetch@3.3.2': 'patches/node-fetch@3.3.2.patch'
+  'playwright-core': 'patches/playwright-core.patch'
+  'qrcode-generator': 'patches/qrcode-generator.patch'
+  'tsx': 'patches/tsx.patch'
+  'zod@4.3.6': 'patches/zod@4.3.6.patch'
+
+strictDepBuilds: true
+allowBuilds:
+  # Enabled Builds: Use specific version
+  #   ex: 'package@0.0.0': true
+  '@indutny/mac-screen-share@1.0.13': true
+  '@indutny/simple-windows-notifications@2.0.16': true
+  '@parcel/watcher@2.5.6': true
+  '@signalapp/libsignal-client@0.92.2': true # duplicate package
+  '@signalapp/libsignal-client@0.96.4': true
+  '@signalapp/ringrtc@2.69.4': true
+  '@signalapp/sqlcipher@3.3.9': true
+  '@signalapp/windows-ucv@1.0.1': true
+  '@swc/core@1.10.16': true
+  '@tailwindcss/oxide@4.3.0': true
+  'electron@23.3.13': false # duplicate package
+  'electron@42.3.0': false # duplicate package
+  'electron@43.1.1': true
+  'fs-xattr@0.4.0': true
+
+  # Disabled Builds: Use wildcard version
+  #   ex: 'package': false
+  'bufferutil': false
+  'core-js': false
+  'electron-winstaller': false
+  'es5-ext': false
+  'esbuild': false
+  'utf-8-validate': false
+  '@signalapp/ringrtc': true
+
+dedupePeers: true
+dedupePeerDependents: true
+strictPeerDependencies: true
+peerDependencyRules:
+  allowedVersions:
+    '@storybook/instrumenter@8.6.14>storybook': '8.4.4'
+    '@storybook/instrumenter@8.6.15>storybook': '8.4.4'
+    '@storybook/test@8.6.15>storybook': '8.4.4'
+    '@storybook/test@8.6.14>storybook': '8.4.4'
+    '@storybook/addon-interactions@8.6.14>storybook': '8.4.4'
+    '@formatjs/intl@4.1.4>typescript': '6.0.3'
+    'react-intl@10.1.0>typescript': '6.0.3'
+    '@storybook/react@8.4.4>@storybook/test': '8.6.15'
+    'stylelint-use-logical-spec@5.0.1>stylelint': '17.11.1'
+    'react-popper@2.3.0>react': '18.3.1'
+    'react-popper@2.3.0>react-dom': '18.3.1'
+
+allowedDeprecatedVersions:
+  '@humanwhocodes/config-array': '0.11.14'
+  '@humanwhocodes/object-schema': '2.0.3'
+  '@xmldom/xmldom': '0.8.10'
+  'boolean': '3.2.0'
+  'deep-diff': '0.3.8'
+  'eslint': '8.38.0'
+  'expect-playwright': '0.8.0'
+  'glob': '10.5.0 || 7.2.3'
+  'inflight': '1.0.6'
+  'jest-playwright-preset': '4.0.0'
+  'jest-process-manager': '0.4.0'
+  'lodash.isequal': '4.5.0'
+  'node-domexception': '1.0.0'
+  'rimraf': '2.6.3 || 3.0.2'
+  'uuid': '8.3.2 || 9.0.1'
+  'whatwg-encoding': '2.0.0'
+  'yaeti': '0.0.6'
