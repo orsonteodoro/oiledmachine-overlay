@@ -120,7 +120,7 @@ SLOT="0"
 RESTRICT="splitdebug binchecks strip mirror" # Prevent slow down and snooping
 IUSE+="
 firejail wayland X
-ebuild_revision_84
+ebuild_revision_85
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -254,6 +254,10 @@ src_unpack() {
 
 ewarn "QA:  toolsets must be removed from package.json"
 ewarn "QA:  mac, mas, masDev, nsis, win sections must be removed from package.json"
+ewarn "QA:  Remove fabric@<7.2.0: ^7.2.0 and fabric@<7.4.0: ^7.4.0 from override section in pnpm-lock.yaml"
+ewarn "QA:  Remove fabric@7.2.0 and fabric@7.4.0 from minimumReleaseAgeExclude: section in pnpm-workspace.yaml"
+ewarn "QA:  Remove electron@<39.8.1: ^39.8.1 from override section in pnpm-lock.yaml"
+ewarn "QA:  Remove electron@39.8.1 from minimumReleaseAgeExclude: section in pnpm-workspace.yaml"
 
 ewarn "QA:  Manually remove picomatch@2.3.1 in ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove jws@3.2.2 from ${S}/pnpm-lock.yaml"
