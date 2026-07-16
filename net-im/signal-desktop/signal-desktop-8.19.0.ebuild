@@ -5,6 +5,7 @@ EAPI=8
 
 # TODO fork @signalapp/libsignal-client for custom hardening
 # This ebuild uses AI for synthetic data or estimations.
+# This ebuild uses suggestions from AI to build on Linux.
 
 # To update use:
 # PATH=$(realpath "../../scripts")":${PATH}"
