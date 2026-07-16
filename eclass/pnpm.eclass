@@ -412,7 +412,9 @@ pnpm_src_unpack() {
 			".npmrc" \
 			|| die
 	fi
-	pnpm config set lockfile true || die
+	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
+		pnpm config set lockfile true || die
+	fi
 	epnpm install "${PNPM_INSTALL_ARGS[@]}"
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		epnpm install --lockfile-only

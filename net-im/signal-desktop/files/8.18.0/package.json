@@ -15,7 +15,7 @@
   "browserslist": "last 1 chrome versions",
   "main": "bundles/main.js",
   "scripts": {
-    "disabled_postinstall": "pnpm run build:acknowledgments && pnpm run electron:install-app-deps",
+    "postinstall": "pnpm run build:acknowledgments && pnpm run electron:install-app-deps",
     "postuninstall": "pnpm run build:acknowledgments",
     "start": "electron .",
     "generate": "run-s generate:phase-0 generate:phase-1",
