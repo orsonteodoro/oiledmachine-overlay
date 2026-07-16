@@ -1,0 +1,156 @@
+--- a/package.json.orig	2026-07-15 15:58:07.000000000 -0700
++++ b/package.json	2026-07-15 22:08:55.290994712 -0700
+@@ -126,7 +126,6 @@
+     "@signalapp/ringrtc": "2.69.7",
+     "@signalapp/sqlcipher": "3.3.9",
+     "@signalapp/types": "workspace:*",
+-    "@signalapp/windows-ucv": "workspace:*",
+     "google-libphonenumber": "3.2.44"
+   },
+   "devDependencies": {
+@@ -617,7 +616,6 @@
+       "node_modules/@signalapp/libsignal-client/prebuilds/${platform}-${arch}/*.node",
+       "!node_modules/@signalapp/ringrtc/scripts/*",
+       "node_modules/@signalapp/ringrtc/build/${platform}/*${arch}*.node",
+-      "node_modules/@signalapp/windows-ucv/build/Release/*.node",
+       "node_modules/@signalapp/mute-state-change/build/Release/*.node",
+       "node_modules/@indutny/simple-windows-notifications/prebuilds/${platform}-${arch}/*.node",
+       "node_modules/@indutny/mac-screen-share/prebuilds/${platform}-${arch}/*.node",
+--- a/pnpm-workspace.yaml.orig	2026-07-15 15:58:07.000000000 -0700
++++ b/pnpm-workspace.yaml	2026-07-15 23:10:16.621099738 -0700
+@@ -1,5 +1,26 @@
+ saveExact: true
+ blockExoticSubdeps: true
++minimumReleaseAgeExclude:
++  - '@indutny/protopiler'
++  - '@signalapp/libsignal-client'
++  - '@signalapp/*'
++  - '@storybook/core'
++  - '@storybook/theming'
++  - '@xmldom/xmldom'
++  - ajv
++  - basic-ftp
++  - tar
++  - electron@43.1.1
++  - fabric
++  - immutable
++  - minimatch
++  - node-forge
++  - path-to-regexp
++  - picomatch
++  - sax
++  - serialize-javascript
++  - storybook
++  - svgo
+ lockfileIncludeTarballUrl: true
+ verifyDepsBeforeRun: prompt
+ verifyStoreIntegrity: true
+@@ -11,12 +32,8 @@ packages:
+ publicHoistPattern:
+   - '*eslint-*'
+ 
+-minimumReleaseAge: 4320
+ minimumReleaseAgeIgnoreMissingTime: false
+-minimumReleaseAgeStrict: true
+-minimumReleaseAgeExclude:
+-  - '@signalapp/*'
+-  - 'electron'
++minimumReleaseAgeStrict: false
+ 
+ trustPolicy: no-downgrade
+ trustPolicyExclude:
+@@ -30,18 +47,6 @@ trustPolicyExclude:
+   - 'undici-types@6.21.0'
+   - 'vite@4.5.14'
+ 
+-auditConfig:
+-  ignoreGhsas:
+-    - GHSA-3xgq-45jj-v275 # react-devtools > cross-spawn
+-    - GHSA-hfvx-25r5-qc3w # fabric (toSVG)
+-    - GHSA-5c6j-r48x-rmvq # @storybook/addon-webpack5-compiler-swc > serialize-javascript
+-    - GHSA-532v-xpq5-8h95 # react-devtools > electron
+-    - GHSA-8337-3p73-46f4 # react-devtools > electron
+-    - GHSA-jjp3-mq3x-295m # react-devtools > electron
+-    - GHSA-9wfr-w7mm-pc7f # react-devtools > electron
+-    - GHSA-c27g-q93r-2cwf # sticker-creator > vite
+-    - GHSA-2w69-qvjg-hvjx # sticker-creator > @remix-run/router
+-
+ overrides:
+   '@electron/rebuild>node-gyp': '12.4.0'
+   'canvas': '-'
+@@ -63,7 +68,6 @@ patchedDependencies:
+   'app-builder-lib': 'patches/app-builder-lib.patch'
+   'casual@1.6.2': 'patches/casual+1.6.2.patch'
+   'dmg-builder': 'patches/dmg-builder.patch'
+-  'fabric@4.6.0': 'patches/fabric+4.6.0.patch'
+   'fs-xattr': 'patches/fs-xattr.patch'
+   'growing-file@0.1.3': 'patches/growing-file+0.1.3.patch'
+   'node-fetch@3.3.2': 'patches/node-fetch@3.3.2.patch'
+@@ -83,11 +87,18 @@ allowBuilds:
+   '@signalapp/libsignal-client@0.96.4': true
+   '@signalapp/ringrtc@2.69.4': true
+   '@signalapp/sqlcipher@3.3.9': true
+-  '@signalapp/windows-ucv@1.0.1': true
++  '@signalapp/windows-ucv@1.0.1': false
+   '@swc/core@1.10.16': true
+   '@tailwindcss/oxide@4.3.0': true
+   'electron@23.3.13': false # duplicate package
+-  'electron@42.3.0': true
++  'electron@23.3.14': false # duplicate package
++  'electron@28.3.2': false # duplicate package
++  'electron@35.7.5': false # duplicate package
++  'electron@38.8.6': false # duplicate package
++  'electron@39.8.5': false # duplicate package
++  'electron@39.8.10': false # duplicate package
++  'electron@42.3.0': false # duplicate package
++  'electron@43.1.1': true
+   'fs-xattr@0.4.0': true
+ 
+   # Disabled Builds: Use wildcard version
+@@ -102,7 +113,7 @@ allowBuilds:
+ 
+ dedupePeers: true
+ dedupePeerDependents: true
+-strictPeerDependencies: true
++strictPeerDependencies: false
+ peerDependencyRules:
+   allowedVersions:
+     '@storybook/instrumenter@8.6.14>storybook': '8.4.4'
+--- a/pnpm-lock.yaml.orig	2026-07-15 15:58:07.000000000 -0700
++++ b/pnpm-lock.yaml	2026-07-15 22:09:50.461942075 -0700
+@@ -59,9 +59,6 @@ importers:
+       '@signalapp/types':
+         specifier: workspace:*
+         version: link:packages/types
+-      '@signalapp/windows-ucv':
+-        specifier: workspace:*
+-        version: link:packages/windows-ucv
+       google-libphonenumber:
+         specifier: 3.2.44
+         version: 3.2.44
+@@ -747,25 +744,6 @@ importers:
+         specifier: 0.22.3
+         version: 0.22.3(@arethetypeswrong/core@0.18.4)(@typescript/native-preview@7.0.0-dev.20260515.1)(oxc-resolver@11.19.1)(publint@0.3.21)(tsx@4.21.0)(typescript@6.0.3)
+ 
+-  packages/windows-ucv:
+-    dependencies:
+-      bindings:
+-        specifier: 1.5.0
+-        version: 1.5.0
+-      node-addon-api:
+-        specifier: 8.8.0
+-        version: 8.8.0
+-    devDependencies:
+-      '@types/bindings':
+-        specifier: 1.5.5
+-        version: 1.5.5
+-      '@types/node':
+-        specifier: 24.12.0
+-        version: 24.12.0
+-      typescript:
+-        specifier: 6.0.3
+-        version: 6.0.3
+-
+   sticker-creator:
+     dependencies:
+       '@indutny/emoji-picker-react':

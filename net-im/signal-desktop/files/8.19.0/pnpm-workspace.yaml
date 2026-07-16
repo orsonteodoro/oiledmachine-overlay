@@ -149,10 +149,11 @@ allowBuilds:
   '@signalapp/libsignal-client@0.96.4': true
   '@signalapp/ringrtc@2.69.4': true
   '@signalapp/sqlcipher@3.3.9': true
-  '@signalapp/windows-ucv@1.0.1': true
+  '@signalapp/windows-ucv@1.0.1': false
   '@swc/core@1.10.16': true
   '@tailwindcss/oxide@4.3.0': true
   'electron@23.3.13': false # duplicate package
+  'electron@39.8.10': false # duplicate package
   'electron@42.3.0': false # duplicate package
   'electron@43.1.1': true
   'fs-xattr@0.4.0': true
@@ -169,7 +170,7 @@ allowBuilds:
 
 dedupePeers: true
 dedupePeerDependents: true
-strictPeerDependencies: true
+strictPeerDependencies: false
 peerDependencyRules:
   allowedVersions:
     '@storybook/instrumenter@8.6.14>storybook': '8.4.4'
@@ -202,3 +203,4 @@ allowedDeprecatedVersions:
   'uuid': '8.3.2 || 9.0.1'
   'whatwg-encoding': '2.0.0'
   'yaeti': '0.0.6'
+loglevel: debug

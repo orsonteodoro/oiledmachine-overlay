@@ -24,6 +24,8 @@ MY_PN2="Signal"
 # Use the newer Electron to increase mitigation with vendor static libs.
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 ELECTRON_APP_REQUIRES_MITIGATE_ID_CHECK="1"
+PNPM_FIREJAIL=0
+PNPM_AUDIT_FIX=0
 NPM_SLOT="3"
 PNPM_AUDIT_FIX_ARG="override" # Avoid [ELIFECYCLE] Command failed.
 PNPM_SLOT="9"
@@ -36,6 +38,9 @@ RUST_MIN_VER="1.91.1" # llvm-21.1.  Rust is required for @swc/core@1.10.16
 
 RUST_PV="${RUST_MIN_VER}"
 #export CI="true" # Avoid error during `pnpm install -P`
+
+PNPM_INSTALL_ARGS=(
+)
 
 inherit secure-version secure-version-node
 
@@ -114,7 +119,7 @@ SLOT="0"
 RESTRICT="splitdebug binchecks strip mirror" # Prevent slow down and snooping
 IUSE+="
 firejail wayland X
-ebuild_revision_80
+ebuild_revision_81
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -177,6 +182,9 @@ eerror "Rust ${RUST_PV} required for @swc/core"
 	# Prevent error when doing `pnpm audit --fix=update`
 	# FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
 	export NODE_OPTIONS="--max-old-space-size=4096"
+
+	export NPM_CONFIG_LOGLEVEL="verbose"
+	export NPM_CONFIG_NODE_GYP="echo"
 }
 
 pnpm_audit_post() {
@@ -192,13 +200,14 @@ einfo "DEBUG:  Deleting old electron changes suggested by pnpm audit --fix"
 
 _apply_patches() {
 	[[ "${ALREADY_PATCHED}" == "1" ]] && return
-	[[ "${PNPM_UPDATE_LOCK}" == "1" ]] || return
 einfo "DEBUG:  Called pnpm_unpack_post()"
-	eapply "${FILESDIR}/${PN}-8.19.0-pnpm-workspace-changes.patch"
-#einfo "DEBUG:  Applying sed based patches..."
-#	sed -i -e "s|postinstall|disabled_postinstall|g" "${S}/package.json" || die
-#	sed -i -e "s|minimumReleaseAgeStrict: true|minimumReleaseAgeStrict: false|g" "${S}/pnpm-workspace.yaml" || die
-#	sed -i -e "\|minimumReleaseAge:|d" "${S}/pnpm-workspace.yaml" || die
+	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
+		eapply "${FILESDIR}/${PN}-8.19.0-project-files-changes.patch"
+	fi
+	rm -rf "${S}/packages/windows-ucv" || true
+
+einfo "Increasing verbosity to debug"
+	echo "loglevel: debug" >> "${S}/pnpm-workspace.yaml" || die
 	ALREADY_PATCHED=1
 }
 
@@ -210,6 +219,7 @@ src_unpack() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		pnpm_hydrate
 		unpack "${P}.tar.gz"
+		#die
 		cd "${S}" || die
 
 		_apply_patches
@@ -261,9 +271,7 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 	# The pinned version of fabric is required.
 	# The pinned version of minimatch is required.
 
-einfo "DEBUG: A"
 		epnpm audit --fix=${PNPM_AUDIT_FIX_ARG}
-einfo "DEBUG: B"
 		pnpm_audit_post
 
 		local deps=()
@@ -294,11 +302,11 @@ einfo "DEBUG: B"
 
 		deps=(
 	# Required for custom version bump
-			#"electron@${ELECTRON_APP_ELECTRON_PV}"
+			"electron@${ELECTRON_APP_ELECTRON_PV}"
 		)
-		#epnpm install "${deps[@]}" -D -w "${PNPM_INSTALL_ARGS[@]}"
+		epnpm install "${deps[@]}" -D -w "${PNPM_INSTALL_ARGS[@]}"
 
-		#epnpm dedupe
+		epnpm dedupe
 
 	# Re-add missing dependencies
 		pushd "danger" >/dev/null 2>&1 || die

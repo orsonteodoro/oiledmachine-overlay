@@ -258,7 +258,7 @@ ewarn "Firejail:  OFF"
 	fi
 
 einfo "Running:\t\t${sandbox_launcher[@]} pnpm $@"
-	${sandbox_launcher[@]} pnpm "$@" || die
+	${sandbox_launcher[@]} pnpm $@ || die
 }
 
 # @FUNCTION: pnpm_network_settings
@@ -415,7 +415,7 @@ pnpm_src_unpack() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		pnpm config set lockfile true || die
 	fi
-	epnpm install "${PNPM_INSTALL_ARGS[@]}"
+	epnpm install ${PNPM_INSTALL_ARGS[@]}
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		epnpm install --lockfile-only
 	fi
@@ -431,9 +431,9 @@ pnpm_src_unpack() {
 			pnpm audit --help
 			if ver_test "${pnpm_pv}" "-ge" "11" ; then
 				if [[ -n "${PNPM_AUDIT_FIX_ARG}" ]] ; then
-					edo pnpm audit --fix=${PNPM_AUDIT_FIX_ARG} "${PNPM_AUDIT_FIX_ARGS[@]}"
+					edo pnpm audit --fix=${PNPM_AUDIT_FIX_ARG} ${PNPM_AUDIT_FIX_ARGS[@]}
 				else
-					edo pnpm audit --fix "${PNPM_AUDIT_FIX_ARGS[@]}"
+					edo pnpm audit --fix ${PNPM_AUDIT_FIX_ARGS[@]}
 				fi
 			fi
 		fi
@@ -441,7 +441,7 @@ pnpm_src_unpack() {
 			pnpm_audit_post
 		fi
 		if [[ "${PNPM_DEDUPE:-1}" == "1" ]] ; then
-			edo pnpm dedupe "${PNPM_DEDUPE_ARGS[@]}"
+			edo pnpm dedupe ${PNPM_DEDUPE_ARGS[@]}
 		fi
 		if declare -f pnpm_dedupe_post >/dev/null 2>&1 ; then
 			pnpm_dedupe_post

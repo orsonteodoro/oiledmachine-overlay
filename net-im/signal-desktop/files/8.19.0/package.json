@@ -126,7 +126,6 @@
     "@signalapp/ringrtc": "2.69.7",
     "@signalapp/sqlcipher": "3.3.9",
     "@signalapp/types": "workspace:*",
-    "@signalapp/windows-ucv": "workspace:*",
     "google-libphonenumber": "3.2.44"
   },
   "devDependencies": {
@@ -238,7 +237,7 @@
     "debug": "4.4.3",
     "direction": "2.0.1",
     "dom-accessibility-api": "0.7.1",
-    "electron": "42.3.0",
+    "electron": "43.1.1",
     "electron-builder": "26.11.1",
     "electron-mocha": "13.1.0",
     "emoji-regex-xs": "2.0.1",
@@ -617,7 +616,6 @@
       "node_modules/@signalapp/libsignal-client/prebuilds/${platform}-${arch}/*.node",
       "!node_modules/@signalapp/ringrtc/scripts/*",
       "node_modules/@signalapp/ringrtc/build/${platform}/*${arch}*.node",
-      "node_modules/@signalapp/windows-ucv/build/Release/*.node",
       "node_modules/@signalapp/mute-state-change/build/Release/*.node",
       "node_modules/@indutny/simple-windows-notifications/prebuilds/${platform}-${arch}/*.node",
       "node_modules/@indutny/mac-screen-share/prebuilds/${platform}-${arch}/*.node",
