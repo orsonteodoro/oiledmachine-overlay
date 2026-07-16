@@ -217,13 +217,14 @@ pnpm_unpack_post() {
 }
 
 src_unpack() {
+	pnpm_hydrate
+
+	# Prevent fatal [ELIFECYCLE] Command failed with windows-ucv preinstall
+	npm_hydrate
+
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		unpack "${P}.tar.gz"
 		#die
-		pnpm_hydrate
-
-		# Prevent fatal ELIFECYCLE with windows-ucv
-		npm_hydrate
 		cd "${S}" || die
 
 		_apply_patches
