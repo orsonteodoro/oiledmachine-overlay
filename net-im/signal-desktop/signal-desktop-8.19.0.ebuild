@@ -183,8 +183,8 @@ eerror "Rust ${RUST_PV} required for @swc/core"
 	# FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
 	export NODE_OPTIONS="--max-old-space-size=4096"
 
-	export NPM_CONFIG_LOGLEVEL="verbose"
-	export NPM_CONFIG_NODE_GYP="echo"
+	#export NPM_CONFIG_LOGLEVEL="verbose"
+	#export NPM_CONFIG_NODE_GYP="echo"
 }
 
 pnpm_audit_post() {
@@ -203,7 +203,7 @@ _apply_patches() {
 einfo "DEBUG:  Called pnpm_unpack_post()"
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		eapply "${FILESDIR}/${PN}-8.19.0-project-files-changes.patch"
-		echo "loglevel: debug" >> "${S}/pnpm-workspace.yaml" || die
+		#echo "loglevel: debug" >> "${S}/pnpm-workspace.yaml" || die
 	fi
 
 einfo "Increasing verbosity to debug"
@@ -254,9 +254,9 @@ src_unpack() {
 ewarn "QA:  toolsets must be removed from package.json"
 ewarn "QA:  mac, mas, masDev, nsis, win sections must be removed from package.json"
 ewarn "QA:  Remove fabric@<7.2.0: ^7.2.0 and fabric@<7.4.0: ^7.4.0 from override section in pnpm-lock.yaml"
-ewarn "QA:  Remove fabric@7.2.0 and fabric@7.4.0 from minimumReleaseAgeExclude: section in pnpm-workspace.yaml"
+ewarn "QA:  Remove fabric@7.2.0 and fabric@7.4.0 from minimumReleaseAgeExclude: and in overrides: sections in pnpm-workspace.yaml"
 ewarn "QA:  Remove electron@<39.8.1: ^39.8.1 from override section in pnpm-lock.yaml"
-ewarn "QA:  Remove electron@39.8.1 from minimumReleaseAgeExclude: section in pnpm-workspace.yaml"
+ewarn "QA:  Remove electron@39.8.1 from minimumReleaseAgeExclude: and in overrides: sections section in pnpm-workspace.yaml"
 
 ewarn "QA:  Manually remove picomatch@2.3.1 in ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove jws@3.2.2 from ${S}/pnpm-lock.yaml"
@@ -329,6 +329,11 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 			"electron-builder@26.15.6" # Pinned version required
 		)
 		epnpm install "${deps[@]}" -D -w "${PNPM_INSTALL_ARGS[@]}"
+
+		deps=(
+			"file-uri-to-path@1.0.0" # Set as production dependency required
+		)
+		epnpm install "${deps[@]}" -P -w "${PNPM_INSTALL_ARGS[@]}"
 
 		sed -i -e "s|disabled_postinstall|postinstall|g" "package.json" || die
 
