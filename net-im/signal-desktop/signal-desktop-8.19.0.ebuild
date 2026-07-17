@@ -26,7 +26,8 @@ MY_PN2="Signal"
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 ELECTRON_APP_REQUIRES_MITIGATE_ID_CHECK="1"
 NPM_SLOT="3"
-PNPM_AUDIT_FIX_ARG="override" # Avoid [ELIFECYCLE] Command failed.
+PNPM_AUDIT_FIX=0 # Vulnerabilities are manually individually patched to prevent runtime breakage
+#PNPM_AUDIT_FIX_ARG="override" # Avoid [ELIFECYCLE] Command failed.
 PNPM_SLOT="9"
 NODE_SLOT="24" # Upstream uses 24.14.0 from .nvmrc
 NODE_ENV="development"
@@ -188,16 +189,17 @@ eerror "Rust ${RUST_PV} required for @swc/core"
 }
 
 pnpm_audit_post() {
-einfo "DEBUG:  Fixing audit changes"
-einfo "DEBUG:  Deleting old electron changes suggested by pnpm audit --fix"
+	:
+#einfo "DEBUG:  Fixing audit changes"
+#einfo "DEBUG:  Deleting old electron changes suggested by pnpm audit --fix"
 # Required to prevent:
 # [ERR_PNPM_NO_MATCHING_VERSION] No matching version found for electron@^23.3.14 while fetching it
-	sed -i -e "\|23.3.14|d" "${S}/pnpm-workspace.yaml" || die
-	sed -i -e "\|28.3.2|d" "${S}/pnpm-workspace.yaml" || die
-	sed -i -e "\|35.7.5|d" "${S}/pnpm-workspace.yaml" || die
-	sed -i -e "\|38.8.6|d" "${S}/pnpm-workspace.yaml" || die
-	sed -i -e "\|39.8.5|d" "${S}/pnpm-workspace.yaml" || die
-	sed -i -e "\|patches/fabric|d" "${S}/pnpm-workspace.yaml" || die
+#	sed -i -e "\|23.3.14|d" "${S}/pnpm-workspace.yaml" || die
+#	sed -i -e "\|28.3.2|d" "${S}/pnpm-workspace.yaml" || die
+#	sed -i -e "\|35.7.5|d" "${S}/pnpm-workspace.yaml" || die
+#	sed -i -e "\|38.8.6|d" "${S}/pnpm-workspace.yaml" || die
+#	sed -i -e "\|39.8.5|d" "${S}/pnpm-workspace.yaml" || die
+#	sed -i -e "\|patches/fabric|d" "${S}/pnpm-workspace.yaml" || die
 }
 
 _apply_patches() {
@@ -283,35 +285,50 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 	# The pinned version of fabric is required.
 	# The pinned version of minimatch is required.
 
-		epnpm audit --fix=${PNPM_AUDIT_FIX_ARG}
-		pnpm_audit_post
+	#############################
+	# Vulnerability fixes section
+	#############################
 
 		local deps=()
 		pushd "sticker-creator" >/dev/null 2>&1 || die
 			deps=(
+				"@babel/core@7.29.6"
+				"@babel/runtime@7.26.10"
+				"@remix-run/router@1.23.2"
+				"esbuild@0.25.0"
+				"flatted@3.4.2"
+				"immutable@4.3.8"
+				"js-yaml@4.2.0"
+				"picomatch@2.3.2"
+				"postcss@8.5.10"
+				"react-router@6.30.2"
+				"rollup@3.30.0"
+				"shell-quote@1.8.4"
+				"vite@6.4.3"
 			)
-			#epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
-			deps=(
-			)
-			#epnpm install "${deps[@]}" -D "${PNPM_INSTALL_ARGS[@]}"
+			epnpm install "${deps[@]}" -D "${PNPM_INSTALL_ARGS[@]}"
 		popd >/dev/null 2>&1 || die
 
 		pushd "danger" >/dev/null 2>&1 || die
 			deps=(
+				"js-yaml@4.2.0"
+				"jws@3.2.3"
+				"qs@6.15.2"
 			)
-			#epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
+			epnpm install "${deps[@]}" -D "${PNPM_INSTALL_ARGS[@]}"
 		popd >/dev/null 2>&1 || die
 
 		deps=(
+			"@babel/core@7.29.6"
+			"js-yaml@4.2.0"
+			"uuid@13.0.1"
+			"webpack@5.104.1"
 		)
-		#epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
-		deps=(
-		)
-		#epnpm install "${deps[@]}" -D "${PNPM_INSTALL_ARGS[@]}"
+		epnpm install "${deps[@]}" -D -w "${PNPM_INSTALL_ARGS[@]}"
 
-		epnpm audit --fix=${PNPM_AUDIT_FIX_ARG} "${PNPM_AUDIT_FIX_ARGS[@]}" || true
-		pnpm_audit_post
-
+	#############################
+	# Custom version bumps
+	#############################
 		deps=(
 	# Required for custom version bump
 			"electron@${ELECTRON_APP_ELECTRON_PV}"
@@ -320,20 +337,17 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 
 		epnpm dedupe
 
-	# Re-add missing or pinned dependencies
-		pushd "danger" >/dev/null 2>&1 || die
-			deps=(
-			)
-			#epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
-		popd >/dev/null 2>&1 || die
+	#############################################################
+	# Pinned dependencies or add dependency as production section
+	#############################################################
 		deps=(
-			"fabric@4.6.0" # Pinned version required
-			"electron-builder@26.15.6" # Pinned version required
+			"fabric@4.6.0"			# Pinned version required
+			"electron-builder@26.15.6"	# Pinned version required
 		)
 		epnpm install "${deps[@]}" -D -w "${PNPM_INSTALL_ARGS[@]}"
 
 		deps=(
-			"file-uri-to-path@1.0.0" # Set as production dependency required
+			"file-uri-to-path@1.0.0"	# Set as production dependency required
 		)
 		epnpm install "${deps[@]}" -P -w "${PNPM_INSTALL_ARGS[@]}"
 
