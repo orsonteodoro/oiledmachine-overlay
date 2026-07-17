@@ -197,3 +197,6 @@ app-accessibility/speech-dispatcher ao
 
 # The last release of the dependency was in 2017.
 x11-libs/cairo lzo
+
+# The oniguruma package is either EOL or suspended
+app-misc/jq oniguruma
