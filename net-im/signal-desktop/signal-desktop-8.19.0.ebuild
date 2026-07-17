@@ -190,6 +190,8 @@ eerror "Rust ${RUST_PV} required for @swc/core"
 pnpm_audit_post() {
 einfo "DEBUG:  Fixing audit changes"
 einfo "DEBUG:  Deleting old electron changes suggested by pnpm audit --fix"
+# Required to prevent:
+# [ERR_PNPM_NO_MATCHING_VERSION] No matching version found for electron@^23.3.14 while fetching it
 	sed -i -e "\|23.3.14|d" "${S}/pnpm-workspace.yaml" || die
 	sed -i -e "\|28.3.2|d" "${S}/pnpm-workspace.yaml" || die
 	sed -i -e "\|35.7.5|d" "${S}/pnpm-workspace.yaml" || die
@@ -371,6 +373,8 @@ einfo "Updating lockfile done."
 		export ELECTRON_BUILDER_CACHE="${HOME}/.cache/electron-builder"
 		export ELECTRON_CACHE="${HOME}/.cache/electron"
 		export ELECTRON_CUSTOM_DIR="v${ELECTRON_APP_ELECTRON_PV}"
+		#unpack "${P}.tar.gz"
+		#die
 		pnpm_src_unpack
 		get_deps
 	fi
