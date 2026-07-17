@@ -40,7 +40,7 @@ CHKL_TIMESTAMPS+=(
 	"x11-libs/libxcb-9999"
 )
 
-inherit chromium-2 desktop linux-info secure-version web-kernel-config
+inherit chkl chromium-2 desktop linux-info secure-version web-kernel-config
 
 #
 # Hidden Rust dependency:
