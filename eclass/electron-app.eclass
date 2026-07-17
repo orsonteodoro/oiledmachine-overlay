@@ -24,7 +24,23 @@ esac
 
 WEB_KERNEL_CONFIG_CHECK_YAMA=1
 
-inherit chromium-2 desktop linux-info web-kernel-config
+CHKL_TIMESTAMPS+=(
+	"app-accessibility/at-spi2-core-9999"
+	"app-misc/jq-9999"
+	"dev-libs/expat-9999"
+	"dev-libs/glib-2.89.9999"
+	"dev-libs/wayland-9999"
+	"media-libs/libpulse-9999"
+	"media-libs/mesa-9999"
+	"net-misc/wget-9999"
+	"net-print/cups-9999"
+	"sys-apps/dbus-9999"
+	"x11-libs/libX11-9999"
+	"x11-libs/gtk+-3.24.9999"
+	"x11-libs/libxcb-9999"
+)
+
+inherit chromium-2 desktop linux-info secure-version web-kernel-config
 
 #
 # Hidden Rust dependency:
@@ -297,7 +313,7 @@ if [[ "${ELECTRON_APP_FEATURE_APPINDICATOR}" == "1" ]] ; then
 	ELECTRON_APP_IUSE_OPTIONAL+=" app-indicator"
 	ELECTRON_APP_OPTIONAL_DEPEND+="
 		app-indicator? (
-			dev-libs/libappindicator:3
+			dev-libs/libappindicator:3=
 		)
 	"
 fi
@@ -306,7 +322,7 @@ if [[ "${ELECTRON_APP_FEATURE_GLOBAL_MENU_BAR}" == "1" ]] ; then
 	ELECTRON_APP_IUSE_OPTIONAL+=" global-menu-bar"
 	ELECTRON_APP_OPTIONAL_DEPEND+="
 		global-menu-bar? (
-			dev-libs/libdbusmenu
+			dev-libs/libdbusmenu:=
 		)
 	"
 fi
@@ -315,7 +331,7 @@ if [[ "${ELECTRON_APP_FEATURE_GNOME_KEYRING}" == "1" ]] ; then
 	ELECTRON_APP_IUSE_OPTIONAL+=" gnome-keyring"
 	ELECTRON_APP_CR_OPTIONAL_DEPEND+="
 		gnome-keyring? (
-			gnome-base/gnome-keyring[pam]
+			gnome-base/gnome-keyring:=[pam]
 		)
 	"
 fi
@@ -324,7 +340,7 @@ if [[ "${ELECTRON_APP_FEATURE_LIBSECRET}" == "1" ]] ; then
 	ELECTRON_APP_IUSE_OPTIONAL+=" libsecret"
 	ELECTRON_APP_CR_OPTIONAL_DEPEND+="
 		libsecret? (
-			app-crypt/libsecret
+			app-crypt/libsecret:=
 		)
 	"
 fi
@@ -333,7 +349,7 @@ if [[ "${ELECTRON_APP_FEATURE_PULSEAUDIO}" == "1" ]] ; then
 	ELECTRON_APP_IUSE_OPTIONAL+=" pulseaudio"
 	ELECTRON_APP_CR_OPTIONAL_DEPEND+="
 		pulseaudio? (
-			media-sound/pulseaudio
+			>=media-libs/libpulse-${LIBPULSE_PV}:=
 		)
 	"
 fi
@@ -342,7 +358,7 @@ if [[ "${ELECTRON_APP_FEATURE_UNITY}" == "1" ]] ; then
 	ELECTRON_APP_IUSE_OPTIONAL+=" unity"
 	ELECTRON_APP_OPTIONAL_DEPEND+="
 		unity? (
-			dev-libs/libunity
+			dev-libs/libunity:=
 		)
 	"
 fi
@@ -352,8 +368,8 @@ if [[ "${ELECTRON_APP_FEATURE_VAAPI}" == "1" ]] ; then
 	ELECTRON_APP_IUSE_OPTIONAL+=" vaapi"
 	ELECTRON_APP_OPTIONAL_DEPEND+="
 		vaapi? (
-			media-libs/libva[drm(+),X?,wayland?]
-			virtual/vaapi
+			media-libs/libva:=[drm(+),X?,wayland?]
+			virtual/vaapi:*
 		)
 	"
 fi
@@ -378,56 +394,61 @@ fi
 # restrictions below in all *DEPENDs section.
 CHROMIUM_DEPEND="
 	${ELECTRON_APP_CR_OPTIONAL_DEPEND}
-	app-accessibility/speech-dispatcher
-	dev-db/sqlite:3
+	>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}:=
+	>=dev-db/sqlite-${SQLITE_PV}:=
 "
 # Use readelf -d <path> | grep 'NEEDED' instead of ldd to obtain list.
 # Place refrences in *.node files in ebuilds instead of eclass unless it is used widely.
 # TODO review ELECTRON_APP_OPTIONAL_DEPEND, CHROMIUM_DEPEND:
 COMMON_DEPEND="
-	app-accessibility/at-spi2-core:2
-	dev-libs/expat
-	dev-libs/glib:2
-	dev-libs/nspr
-	dev-libs/nss
-	media-libs/alsa-lib
-	media-libs/mesa[egl(+),gbm(+)]
-	net-print/cups
-	sys-apps/dbus
+	>=app-accessibility/at-spi2-core-${AT_SPI2_CORE_PV}:=
+	>=dev-libs/expat-${EXPAT_PV}:=
+	>=dev-libs/glib-${GLIB_PV}:=
+	>=dev-libs/nspr-${NSPR_PV}:=
+	>=dev-libs/nss-${NSS_PV}:=
+	>=media-libs/alsa-lib-${ALSA_LIB_PV}:=
+	>=media-libs/mesa-${MESA_PV}:=[egl(+),gbm(+)]
+	>=net-print/cups-${CUPS_PV}:=
+	>=sys-apps/dbus-${DBUS_PV}:=
 	sys-devel/gcc[cxx(+)]
-	sys-libs/glibc
+	>=sys-libs/glibc-${GLIBC_PV}:=
 	virtual/ttf-fonts
 	virtual/udev
-	x11-libs/cairo
-	x11-libs/gtk+:3[wayland?,X?]
-	x11-libs/pango
+	>=x11-libs/cairo-${CAIRO_PV}:=
+	>=x11-libs/gtk+-${GTK3_PV}:3=[wayland?,X?]
+	>=x11-libs/pango-${PANGO_PV}:=
 	wayland? (
-		dev-libs/wayland
+		>=dev-libs/wayland-${WAYLAND_PV}:=
 	)
 	X? (
-		x11-libs/libX11
-		x11-libs/libxcb
-		x11-libs/libXcomposite
-		x11-libs/libXdamage
-		x11-libs/libXext
-		x11-libs/libXfixes
-		x11-libs/libxkbcommon
-		x11-libs/libXrandr
+		>=x11-libs/libX11-${LIBX11_PV}:=
+		>=x11-libs/libxcb-${LIBXCB_PV}:=
+		x11-libs/libXcomposite:=
+		x11-libs/libXdamage:=
+		>=x11-libs/libXext-${LIBXEXT_PV}:=
+		>=x11-libs/libXfixes-${LIBXFIXES_PV}:=
+		>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=
+		>=x11-libs/libXrandr-${LIBXRANDR_PV}:=
 	)
 "
 
-if [[ -n "${ELECTRON_APP_ELECTRON_PV}" ]] \
-	&& \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_PV}") \
-			-ge \
-		"${ELECTRON_APP_ELECTRON_PV_SUPPORTED}" \
-; then
-	: # E20, E21, E22, E23 supported upstream
-else
-	if [[ "${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON}" == "0" ]] ; then
+if [[ -n "${ELECTRON_APP_ELECTRON_PV}" ]] ; then
+	if ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_PV}") "-ge" "40" ; then
+		COMMON_DEPEND+="
+			>=net-libs/nodejs-${NODEJS_24_PV}:24=
+		"
+	elif ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_PV}") "-ge" "35" ; then
+		COMMON_DEPEND+="
+			>=net-libs/nodejs-${NODEJS_22_PV}:22=
+		"
+	else
+		local pkg="Electron"
 eerror
-eerror "Found:  ${ELECTRON_APP_ELECTRON_PV}"
-eerror "Supported:  >=${ELECTRON_APP_ELECTRON_PV_SUPPORTED}"
+eerror "Your ${pkg} based app is not supported."
+eerror "The ${pkg} version (ELECTRON_APP_ELECTRON_PV) requirements are as follows:"
+eerror
+eerror "${CATEGORY}/${PN} requires ${pkg} version:  ${ELECTRON_APP_ELECTRON_PV}"
+eerror "The supported ${pkg} version supported by LTS/Rolling Node.js:  >= 35"
 eerror
 eerror "Electron should be updated to one of the latest Long Term Support (LTS)"
 eerror "series versions or else it likely contains critical CVE security"
@@ -437,511 +458,143 @@ eerror
 fi
 
 # See https://github.com/angular/angular/blob/4.0.x/package.json
-if [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge "2.0" \
-	&& \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -le "2.4" \
-) ; then
-	COMMON_DEPEND+="
-		>=net-libs/nodejs-5.4.1
-		<net-libs/nodejs-7
-	"
-elif [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge "4.0" \
-	&& \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -le "4.4" \
-) ; then
-	COMMON_DEPEND+="
-		>=net-libs/nodejs-6.9.5
-		<net-libs/nodejs-7
-	"
-elif [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge "5.0" \
-	&& \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -le "6.0" \
-) ; then
-	COMMON_DEPEND+="
-		>=net-libs/nodejs-8.9.1
-		<net-libs/nodejs-9
-	"
-elif [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge "6.1" \
-	&& \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -le "8.2" \
-) ; then
-	COMMON_DEPEND+="
-		>=net-libs/nodejs-10.9.0
-		<net-libs/nodejs-11
-	"
-elif [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge "9.0" \
-	&& \
-	ver_test $(ver_cut 1   "${ELECTRON_APP_ANGULAR_PV}") -le "11.2.8" \
-) ; then
-	COMMON_DEPEND+="
-		>=net-libs/nodejs-10.9.0
-		<net-libs/nodejs-13
-	"
-elif [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge "11.2.9" \
-	&& \
-	ver_test $(ver_cut 1   "${ELECTRON_APP_ANGULAR_PV}") -le "11.2.14" \
-) ; then
-	COMMON_DEPEND+="
-		>=net-libs/nodejs-10.19.0
-		<net-libs/nodejs-16
-	"
-elif [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge "12.0.0" \
-	&& \
-	ver_test $(ver_cut 1   "${ELECTRON_APP_ANGULAR_PV}") -le "12.2.11" \
-) ; then
-	COMMON_DEPEND+="
-		|| (
-			>=net-libs/nodejs-12.20.0:12
-			>=net-libs/nodejs-14:14
-		)
-	"
-elif [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge "13" \
-	&& \
-	ver_test $(ver_cut 1   "${ELECTRON_APP_ANGULAR_PV}") -lt "14" \
-) ; then
-	COMMON_DEPEND+="
-		|| (
-			>=net-libs/nodejs-12.20.0:12
-			>=net-libs/nodejs-14.15:14
-			>=net-libs/nodejs-16.10.0:16
-		)
-	"
-elif [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge "14" \
-	&& \
-	ver_test $(ver_cut 1   "${ELECTRON_APP_ANGULAR_PV}") -lt "15" \
-) ; then
-	COMMON_DEPEND+="
-		|| (
-			>=net-libs/nodejs-14.15:14
-			>=net-libs/nodejs-16.10.0:16
-		)
-	"
-elif [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge "15" \
-	&& \
-	ver_test $(ver_cut 1   "${ELECTRON_APP_ANGULAR_PV}") -lt "16" \
-) ; then
-	COMMON_DEPEND+="
-		|| (
-			>=net-libs/nodejs-14.20:14
-			>=net-libs/nodejs-16.13.0:16
-			>=net-libs/nodejs-18.10.0:16
-		)
-	"
-elif [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge "16" \
-	&& \
-	ver_test $(ver_cut 1   "${ELECTRON_APP_ANGULAR_PV}") -le "9999" \
-) ; then
-	COMMON_DEPEND+="
-		|| (
-			>=net-libs/nodejs-16.14.0:16
-			>=net-libs/nodejs-18.10.0:16
-		)
-	"
+if [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] ; then
+	if ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") "-ge" "22" ; then
+		COMMON_DEPEND+="
+			>=net-libs/nodejs-${NODEJS_24_PV}:24=
+		"
+	elif ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") "-ge" "19.0" ; then
+		COMMON_DEPEND+="
+			>=net-libs/nodejs-${NODEJS_22_PV}:22=
+		"
+	else
+		local pkg="Angular"
+eerror
+eerror "Your ${pkg} based app is not supported."
+eerror "The ${pkg} version (ELECTRON_APP_ANGULAR_PV) requirements are as follows:"
+eerror
+eerror "${CATEGORY}/${PN} requires ${pkg} version:  ${ELECTRON_APP_ANGULAR_PV}"
+eerror "The supported ${pkg} version supported by LTS/Rolling Node.js:  >= 19"
+eerror
+		die
+	fi
 fi
 
 # See https://github.com/facebook/react/blob/master/package.json
-if [[ "${ELECTRON_APP_REACT_PV}" == "ignore" ]] ; then
+if [[ "${ELECTRON_APP_REACT_PV}" == "ignore" ]] ; then # Deprecated value
 	:
-elif [[ -n "${ELECTRON_APP_REACT_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_PV}") -ge "0.3" \
-	&& \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_PV}") -le "0.13" \
-) ; then
-	COMMON_DEPEND+="
-		>=net-libs/nodejs-0.10.0
-	"
-elif [[ -n "${ELECTRON_APP_REACT_PV}" ]] \
-	&& \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_PV}") -eq "0.14" \
-; then
-	COMMON_DEPEND+="
-		>=net-libs/nodejs-4
-		<net-libs/nodejs-5
-	"
-elif [[ -n "${ELECTRON_APP_REACT_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_PV}") -ge "15.0" \
-	&& \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_PV}") -le "15.6" \
-) ; then
-	COMMON_DEPEND+="
-		>=net-libs/nodejs-4
-		<net-libs/nodejs-8
-	"
-elif [[ -n "${ELECTRON_APP_REACT_PV}" ]] \
-	&& \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_PV}") -eq "16.3" \
-; then
-	COMMON_DEPEND+="
-		>=net-libs/nodejs-8
-		<net-libs/nodejs-11
-	"
-elif [[ -n "${ELECTRON_APP_REACT_PV}" ]] \
-	&& \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_PV}") -eq "16.4" \
-; then
-	COMMON_DEPEND+="
-		>=net-libs/nodejs-8
-		<net-libs/nodejs-10
-	"
-elif [[ -n "${ELECTRON_APP_REACT_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_PV}") -ge "16.8.3" \
-	&& \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_PV}") -le "16.8.6" \
-) ; then
-	COMMON_DEPEND+="
-		>=net-libs/nodejs-8
-		<net-libs/nodejs-12
-	"
-elif [[ -n "${ELECTRON_APP_REACT_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_PV}") -ge "16.13.0" \
-	&& \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_PV}") -le "16.13.1" \
-) ; then
-	COMMON_DEPEND+="
-		>=net-libs/nodejs-8
-		<net-libs/nodejs-14
-	"
-elif [[ -n "${ELECTRON_APP_REACT_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_PV}") -ge "16.14.0" \
-	&& \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_PV}") -lt "18" \
-) ; then
-	COMMON_DEPEND+="
-		>=net-libs/nodejs-8
-		<net-libs/nodejs-15
-	"
-elif [[ -n "${ELECTRON_APP_REACT_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_PV}") -ge "18" \
-	&& \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_PV}") -lt "18" \
-) ; then
-	COMMON_DEPEND+="
-		>=net-libs/nodejs-12.17
-		<net-libs/nodejs-18
-	"
-elif [[ -n "${ELECTRON_APP_REACT_PV}" ]] \
-	&& \
-	ver_test $(ver_cut 1 "${ELECTRON_APP_REACT_PV}") -ge "9999" \
-; then
-	COMMON_DEPEND+="
-		>=net-libs/nodejs-16
-		<net-libs/nodejs-21
-	"
+elif [[ -n "${ELECTRON_APP_REACT_PV}" ]] ; then
+		local pkg="React"
+eerror
+eerror "Your ${pkg} based app is not supported on stable tagged release."
+eerror "The ${pkg} version (ELECTRON_APP_REACT_PV) requirements are as follows:"
+eerror
+eerror "${CATEGORY}/${PN} requires ${pkg} version:  ${ELECTRON_APP_REACT_PV}"
+eerror "The supported ${pkg} version supported by LTS/Rolling Node.js:  live"
+eerror
+	die
 fi
 
 # See https://github.com/microsoft/TypeScript/blob/v2.0.7/package.json
-if [[ -n "${ELECTRON_APP_TYPESCRIPT_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_TYPESCRIPT_PV}") -ge "2.0" \
-	&& \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_TYPESCRIPT_PV}") -le "2.1.4" \
-) ; then
-	COMMON_DEPEND+="
-		>=net-libs/nodejs-0.8.0
-	"
-elif [[ -n "${ELECTRON_APP_TYPESCRIPT_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_TYPESCRIPT_PV}") -ge "2.1.5" \
-	&& \
-	ver_test $(ver_cut 1 "${ELECTRON_APP_TYPESCRIPT_PV}")   -lt "5.0.2" \
-) ; then
-	COMMON_DEPEND+="
-		>=net-libs/nodejs-4.2.0
-	"
-elif [[ -n "${ELECTRON_APP_TYPESCRIPT_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_TYPESCRIPT_PV}") -ge "5.0.2" \
-	&& \
-	ver_test $(ver_cut 1 "${ELECTRON_APP_TYPESCRIPT_PV}")   -le "5.0.4" \
-) ; then
-	COMMON_DEPEND+="
-		>=net-libs/nodejs-12.20
-	"
-elif [[ -n "${ELECTRON_APP_TYPESCRIPT_PV}" ]] && \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_TYPESCRIPT_PV}") -gt "5.0.4" \
-; then
-	COMMON_DEPEND+="
-		>=net-libs/nodejs-14.17
-	"
+if [[ -n "${ELECTRON_APP_TYPESCRIPT_PV}" ]] ; then
+	if ver_test $(ver_cut 1-2 "${ELECTRON_APP_TYPESCRIPT_PV}") "-ge" "6.0" ; then
+		COMMON_DEPEND+="
+			>=net-libs/nodejs-${NODEJS_24_PV}:24:=
+		"
+	elif ver_test $(ver_cut 1-2 "${ELECTRON_APP_TYPESCRIPT_PV}") "-ge" "5.6" ; then
+		COMMON_DEPEND+="
+			>=net-libs/nodejs-${NODEJS_22_PV}:22:=
+		"
+	else
+		local pkg="TypeScript"
+eerror
+eerror "Your ${pkg} based app is not supported."
+eerror "The ${pkg} version (ELECTRON_APP_TYPESCRIPT_PV) requirements are as follows:"
+eerror
+eerror "${CATEGORY}/${PN} requires ${pkg} version:  ${ELECTRON_APP_TYPESCRIPT_PV}"
+eerror "The supported ${pkg} version supported by LTS/Rolling Node.js:  >= 5.6"
+eerror
+	fi
 fi
 
 # See https://github.com/facebook/react-native/blob/0.63-stable/package.json
-if [[ -n "${ELECTRON_APP_REACT_NATIVE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -ge "0.13" \
-	&& \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -le "0.55" \
-) ; then
-	COMMON_DEPEND+="" # doesn't say
-elif [[ -n "${ELECTRON_APP_REACT_NATIVE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -ge "0.13" \
-	&& \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -le "0.55" \
-) ; then
-	COMMON_DEPEND+="
-		>=net-libs/nodejs-4
-	"
-elif [[ -n "${ELECTRON_APP_REACT_NATIVE_PV}" ]] \
-	&& \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -eq "0.56" \
-; then
-	COMMON_DEPEND+="
-		>=net-libs/nodejs-8
-	"
-elif [[ -n "${ELECTRON_APP_REACT_NATIVE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -ge "0.57" \
-	&& \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -le "0.62" \
-) ; then
-	COMMON_DEPEND+="
-		>=net-libs/nodejs-8.3
-	"
-elif [[ -n "${ELECTRON_APP_REACT_NATIVE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -ge "0.63" \
-	&& \
-	ver_test $(ver_cut 1   "${ELECTRON_APP_REACT_NATIVE_PV}") -lt "0.64" \
-) ; then
-	COMMON_DEPEND+="
-		>=net-libs/nodejs-10
-	"
-elif [[ -n "${ELECTRON_APP_REACT_NATIVE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -ge "0.64" \
-	&& \
-	ver_test $(ver_cut 1   "${ELECTRON_APP_REACT_NATIVE_PV}") -le "0.67" ) \
-; then
-	COMMON_DEPEND+="
-		>=net-libs/nodejs-12
-	"
-elif [[ -n "${ELECTRON_APP_REACT_NATIVE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -ge "0.68" \
-	&& \
-	ver_test $(ver_cut 1   "${ELECTRON_APP_REACT_NATIVE_PV}") -le "0.71.12" \
-) ; then
-	COMMON_DEPEND+="
-		>=net-libs/nodejs-14
-	"
-elif [[ -n "${ELECTRON_APP_REACT_NATIVE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -gt "0.71.12" \
-	&& \
-	ver_test $(ver_cut 1   "${ELECTRON_APP_REACT_NATIVE_PV}") -le "9999" \
-) ; then
-	# Same as react 18.2.0
-	COMMON_DEPEND+="
-		>=net-libs/nodejs-12.17
-		<net-libs/nodejs-18
-	"
+if [[ -n "${ELECTRON_APP_REACT_NATIVE_PV}" ]] ; then
+	if ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") "-ge" "0.81" ; then
+		COMMON_DEPEND+="
+			>=net-libs/nodejs-${NODEJS_22_PV}:22=
+		"
+	else
+		local pkg="React Native"
+eerror
+eerror "Your ${pkg} based app is not supported."
+eerror "The ${pkg} version (ELECTRON_APP_REACT_NATIVE_PV) requirements are as follows:"
+eerror
+eerror "${CATEGORY}/${PN} requires ${pkg} version:  ${ELECTRON_APP_REACT_NATIVE_PV}"
+eerror "The supported ${pkg} version supported by LTS/Rolling Node.js:  >= 0.81"
+eerror
+	fi
 fi
 
 # See https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/node
 # in the v13/index.d.ts, where v13 is a particular node version.
 # For @types/node
-if [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
-	&& \
-	ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq "0" \
-; then
-	COMMON_DEPEND+=" =net-libs/nodejs-0*"
-elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
-	&& \
-	ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq "4" \
-; then
-	COMMON_DEPEND+=" =net-libs/nodejs-4*"
-elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
-	&& \
-	ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq "6" \
-; then
-	COMMON_DEPEND+=" =net-libs/nodejs-6*"
-elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
-	&& \
-	ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq "7" \
-; then
-	COMMON_DEPEND+=" =net-libs/nodejs-7*"
-elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
-	&& \
-	ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq "8" \
-; then
-	COMMON_DEPEND+=" =net-libs/nodejs-8*"
-elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
-	&& \
-	ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq "9" \
-; then
-	COMMON_DEPEND+=" =net-libs/nodejs-9*"
-elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
-	&& \
-	ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq "10" \
-; then
-	COMMON_DEPEND+=" =net-libs/nodejs-10*"
-elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
-	&& \
-	ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq "11" \
-; then
-	COMMON_DEPEND+=" =net-libs/nodejs-11*"
-elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
-	&& \
-	ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq "12" \
-; then
-	COMMON_DEPEND+=" =net-libs/nodejs-12*"
-elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
-	&& \
-	ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq "13" \
-; then
-	COMMON_DEPEND+=" =net-libs/nodejs-13*"
-elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
-	&& \
-	ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq "14" \
-; then
-	COMMON_DEPEND+=" =net-libs/nodejs-14*"
-elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
-	&& \
-	ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq "15" \
-; then
-	COMMON_DEPEND+=" =net-libs/nodejs-15*"
-elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
-	&& \
-	ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq "16" \
-; then
-	COMMON_DEPEND+=" =net-libs/nodejs-16*"
-elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
-	&& \
-	ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq "17" \
-; then
-	COMMON_DEPEND+=" =net-libs/nodejs-17*"
-elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
-	&& \
-	ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq "18" \
-; then
-	COMMON_DEPEND+=" =net-libs/nodejs-18*"
+if [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] ; then
+	if ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") "-ge" "26" ; then
+		COMMON_DEPEND+="
+			>=net-libs/nodejs-${NODEJS_26_PV}:26=
+		"
+	elif ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") "-ge" "24" ; then
+		COMMON_DEPEND+="
+			>=net-libs/nodejs-${NODEJS_24_PV}:24=
+		"
+	elif ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") "-ge" "22" ; then
+		COMMON_DEPEND+="
+			>=net-libs/nodejs-${NODEJS_22_PV}:22=
+		"
+	else
+		local pkg="@types/node"
+eerror
+eerror "Your ${pkg} based app is not supported."
+eerror "The ${pkg} version (ELECTRON_APP_AT_TYPES_NODE_PV) requirements are as follows:"
+eerror
+eerror "${CATEGORY}/${PN} requires ${pkg} version:  ${ELECTRON_APP_AT_TYPES_NODE_PV}"
+eerror "The supported ${pkg} version supported by LTS/Rolling Node.js:  >= 22"
+eerror
+	fi
 fi
 
 # https://github.com/vuejs/vue/blob/v2.7.10/package.json
-# https://github.com/vuejs/core/blob/v3.3.9/package.json
-# Some are based on @types/node
-if [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge "0.6.0" \
-	&& \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le "0.11.10" \
-) ; then
-	COMMON_DEPEND+=" =net-libs/nodejs-0.10*" # .travis.yml
-elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge "0.12.0" \
-	&& \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le "0.12.0" \
-) ; then
-	COMMON_DEPEND+=" net-libs/iojs" # doesn't say
-elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge "0.12.1" \
-	&& \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le "0.12.1" \
-) ; then
-	COMMON_DEPEND+=" ~net-libs/iojs-2.0.1" # .travis.yml
-elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge "0.12.2" \
-	&& \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le "0.12.2" \
-) ; then
-	COMMON_DEPEND+=" " # doesn't say
-elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge "0.12.0" \
-	&& \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le "1.0.8" \
-) ; then
-	COMMON_DEPEND+=" ~net-libs/iojs-2.0.1" # .travis.yml
-elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge "1.0.9" \
-	&& \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le "1.0.17" \
-) ; then
-	COMMON_DEPEND+=" =net-libs/nodejs-4*" # based on circle.yml
-elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge "1.0.18" \
-	&& \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le "1.0.28" \
-) ; then
-	COMMON_DEPEND+=" =net-libs/nodejs-5*" # based on circle.yml
-elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge "2.0.0" \
-	&& \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le "2.4.4" \
-) ; then
-	COMMON_DEPEND+=" =net-libs/nodejs-6*" # based on circle.yml
-elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge "2.5.0" \
-	&& \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le "2.5.22" \
-) ; then
-	# based on @types/node restriction
-	COMMON_DEPEND+=" =net-libs/nodejs-8*" # ^8.0.33 ; they did the testing in node6 in <=2.5.7
-elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge "2.6.0" \
-	&& \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le "2.6.10" \
-) ; then
-	# based on @types/node restriction
-	COMMON_DEPEND+=" =net-libs/nodejs-10*" # ^10.12.18
-elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge "2.6.11" \
-	&& \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le "2.6.14" \
-) ; then
-	# based on @types/node restriction
-	# dev branch
-	COMMON_DEPEND+=" =net-libs/nodejs-12*" # ^12.12.0
-elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge "2.7" \
-	&& \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le "2.7.15" \
-) ; then
-	# based on @types/node restriction
-	# dev branch
-	COMMON_DEPEND+=" =net-libs/nodejs-17*" # ^17.0.41
-elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge "3.0" \
-	&& \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le "3.2.6" \
-) ; then
-	COMMON_DEPEND+=" >=net-libs/nodejs-10"
-elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge "3.2.7" \
-	&& \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le "3.2.37" \
-) ; then
-	COMMON_DEPEND+=" >=net-libs/nodejs-16.5"
-elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge "3.2.38" \
-	&& \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le "3.3.4" \
-) ; then
-	COMMON_DEPEND+=" >=net-libs/nodejs-16.11"
-elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge "3.3.5" ; then
-	COMMON_DEPEND+=" >=net-libs/nodejs-18.12"
+if [[ -n "${ELECTRON_APP_VUE_PV}" ]] ; then
+	local pkg="Vue 2"
+eerror
+eerror "Your ${pkg} based app is no longer supported."
+eerror "The supported ${pkg} version supported by LTS/Rolling Node.js:  EOL (End Of Life)"
+eerror
+	fi
 fi
 
-if [[ -n "${ELECTRON_APP_VUE_CORE_PV}" ]] &&
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_CORE_PV}") -eq "3.0.0" \
-; then
-	COMMON_DEPEND+=" =net-libs/nodejs-10*"
-elif [[ -n "${ELECTRON_APP_VUE_CORE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_CORE_PV}") -ge "3.0.1" \
-	&& \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_CORE_PV}") -lt "3.2" \
-) ; then
-	COMMON_DEPEND+=" =net-libs/nodejs-14*" # ^14.10.1
-elif [[ -n "${ELECTRON_APP_VUE_CORE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_CORE_PV}") -ge "3.2" ) \
-; then
-	COMMON_DEPEND+=" =net-libs/nodejs-16*" # ^16.4.7
+# https://github.com/vuejs/core/blob/v3.3.9/package.json
+if [[ -n "${ELECTRON_APP_VUE_CORE_PV}" ]] ; then
+	if ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_CORE_PV}") -eq "3.5.4" ; then
+		COMMON_DEPEND+="
+			>=net-libs/nodejs-${NODEJS_22_PV}:22=
+		"
+	else
+		local pkg="Vue.js"
+eerror
+eerror "Your ${pkg} based app is not supported."
+eerror "The ${pkg} version (ELECTRON_APP_AT_TYPES_NODE_PV) requirements are as follows:"
+eerror
+eerror "${CATEGORY}/${PN} requires ${pkg} version:  ${ELECTRON_APP_AT_TYPES_NODE_PV}"
+eerror "The supported ${pkg} version supported by LTS/Rolling Node.js:  >= 3.5.4"
+eerror
+	fi
 fi
 
 if [[ "${ELECTRON_APP_USES_UGC_TEXT}" == "1" || "${ELECTRON_APP_REQUIRES_MITIGATE_ID_CHECK}" == "1" ]] ; then
 	RDEPEND+="
-		sys-kernel/mitigate-id
+		sys-kernel/mitigate-dt:*
+		sys-kernel/mitigate-id:*
 	"
 fi
 
@@ -955,17 +608,17 @@ DEPEND+="
 
 if (( ${EAPI} == 7 )) ; then
 	BDEPEND+="
-		app-misc/jq
-		net-misc/wget
-		sys-apps/file
-		sys-apps/grep[pcre]
+		>=app-misc/jq-${JQ_PV}
+		>=net-misc/wget-${WGET_PV}
+		>=sys-apps/file-${FILE_PV}
+		>=sys-apps/grep-${GREP_PV}[pcre]
 	"
 else
 	DEPEND+="
-		app-misc/jq
-		net-misc/wget
-		sys-apps/file
-		sys-apps/grep[pcre]
+		>=app-misc/jq-${JQ_PV}
+		>=net-misc/wget-${WGET_PV}
+		>=sys-apps/file-${FILE_PV}
+		>=sys-apps/grep-${GREP_PV}[pcre]
 	"
 fi
 
@@ -1431,4 +1084,5 @@ electron-app_pkg_setup() {
 	chromium_suid_sandbox_check_kernel_config
 	_electron-app_kernel_config_performance
 	_electron-app_verify_compiler_flags_hardening
+	chkl_check_many_timestamps
 }
