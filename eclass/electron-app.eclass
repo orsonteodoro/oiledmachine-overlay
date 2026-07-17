@@ -412,8 +412,8 @@ COMMON_DEPEND="
 	>=sys-apps/dbus-${DBUS_PV}:=
 	sys-devel/gcc[cxx(+)]
 	>=sys-libs/glibc-${GLIBC_PV}:=
-	virtual/ttf-fonts
-	virtual/udev
+	virtual/ttf-fonts:*
+	virtual/udev:*
 	>=x11-libs/cairo-${CAIRO_PV}:=
 	>=x11-libs/gtk+-${GTK3_PV}:3=[wayland?,X?]
 	>=x11-libs/pango-${PANGO_PV}:=
@@ -570,7 +570,6 @@ eerror
 eerror "Your ${pkg} based app is no longer supported."
 eerror "The supported ${pkg} version supported by LTS/Rolling Node.js:  EOL (End Of Life)"
 eerror
-	fi
 fi
 
 # https://github.com/vuejs/core/blob/v3.3.9/package.json
