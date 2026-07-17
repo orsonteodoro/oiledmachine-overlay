@@ -83,6 +83,7 @@ SECURE_TIMESTAMP["app_accessibility_at_spi2_core_9999"]="Apr 29, 2026 8:10:31 AM
 SECURE_TIMESTAMP["app_accessibility_espeak_ng_9999"]="Jan 20, 2025 2:21 AM PST"
 SECURE_TIMESTAMP["app_accessibility_speech_dispatcher_9999"]="May 3, 2026 5:56 PM PDT"
 SECURE_TIMESTAMP["app_accessibility_whisper_cpp_9999"]="Jun 19, 2026 2:53 AM PDT"
+SECURE_TIMESTAMP["app_misc_jq_9999"]="Jul 1, 2026 10:45 PM PDT"
 SECURE_TIMESTAMP["app_arch_brotli_9999"]="Sun, 30 Apr 2026 10:19 AM PDT"
 SECURE_TIMESTAMP["app_arch_bzip2_9999"]="2026-07-12 00:14:43 +0200"
 SECURE_TIMESTAMP["app_arch_cpio_9999"]="2025-05-29 08:28:33 +0300"
@@ -435,7 +436,6 @@ SECURE_TIMESTAMP["x11_libs_pango_9999"]="Jun 1, 2026 3:30 PM PDT"
 SECURE_TIMESTAMP["x11_libs_pixman_9999"]="Aug 1, 2025 9:38:49 AM PDT"
 SECURE_TIMESTAMP["x11_misc_colord_9999"]="Feb 2, 2026 1:31 AM PST"
 
-#SECURE_TIMESTAMP[""]=""
 #SECURE_TIMESTAMP[""]=""
 
 	declare -p SECURE_TIMESTAMP
