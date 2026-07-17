@@ -25,8 +25,6 @@ MY_PN2="Signal"
 # Use the newer Electron to increase mitigation with vendor static libs.
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 ELECTRON_APP_REQUIRES_MITIGATE_ID_CHECK="1"
-PNPM_FIREJAIL=0
-PNPM_AUDIT_FIX=0
 NPM_SLOT="3"
 PNPM_AUDIT_FIX_ARG="override" # Avoid [ELIFECYCLE] Command failed.
 PNPM_SLOT="9"
@@ -120,7 +118,7 @@ SLOT="0"
 RESTRICT="splitdebug binchecks strip mirror" # Prevent slow down and snooping
 IUSE+="
 firejail wayland X
-ebuild_revision_85
+ebuild_revision_86
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="

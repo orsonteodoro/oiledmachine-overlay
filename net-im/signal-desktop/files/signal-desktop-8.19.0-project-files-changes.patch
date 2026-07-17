@@ -1,5 +1,5 @@
 --- a/package.json.orig	2026-07-15 15:58:07.000000000 -0700
-+++ b/package.json	2026-07-16 15:43:05.770637787 -0700
++++ b/package.json	2026-07-16 19:03:13.412158544 -0700
 @@ -363,7 +363,6 @@
        ],
        "mergeASARs": true,
@@ -8,6 +8,16 @@
        "releaseInfo": {
          "vendor": {
            "minOSVersion": "21.0.1"
+@@ -520,9 +519,6 @@
+         }
+       ]
+     },
+-    "toolsets": {
+-      "appimage": "1.0.3"
+-    },
+     "deb": {
+       "depends": [
+         "libnotify4",
 --- a/pnpm-workspace.yaml.orig	2026-07-15 15:58:07.000000000 -0700
 +++ b/pnpm-workspace.yaml	2026-07-16 13:44:21.806548139 -0700
 @@ -1,5 +1,25 @@
