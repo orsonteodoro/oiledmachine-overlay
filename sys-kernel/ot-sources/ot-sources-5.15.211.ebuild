@@ -9,7 +9,7 @@ EAPI=8
 EBUILD_REV="ebuild_revision_12"
 GENPATCHES_VER="225"
 PATCH_PROJC_VER="5.15-r2"
-PATCH_RT_VER="5.15.209-rt96"
+PATCH_RT_VER="5.15.211-rt97"
 
 inherit ot-kernel-v5.15
 

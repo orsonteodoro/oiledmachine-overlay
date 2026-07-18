@@ -9,7 +9,8 @@ EAPI=8
 # See also https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/
 
 GENPATCHES_FALLBACK_COMMIT="d4fa92430e875432c3a61bb3abd9b6e68ea9fcbd" # 2026-06-04 18:26:32 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="7059bdf4f04a3e14f4fafb3ac35fdca913e3e21a" # 2026-07-14 09:10:27 -0700 @ Merge tag 'for-7.2-rc3-tag'
+LINUX_SOURCES_FALLBACK_COMMIT="1229e2e57a5c2980ccd457b9b53ea0eed5a22ab3" # Jul 17, 2026 9:41PM PDT @ Merge tag 'for-7.2-rc3-tag'
+#LINUX_SOURCES_FALLBACK_COMMIT="7059bdf4f04a3e14f4fafb3ac35fdca913e3e21a" # 2026-07-14 09:10:27 -0700 @ Merge tag 'for-7.2-rc3-tag'
 RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
@@ -19,7 +20,7 @@ RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi
 EBUILD_REV="ebuild_revision_7"
 GENPATCHES_VER="live" # can be live only when 9999
 PATCH_PROJC_VER="7.1-r0"
-PATCH_RT_VER="7.1.1-rt2"
+PATCH_RT_VER="7.2-rc2-rt1"
 
 inherit ot-kernel-v7.2
 
