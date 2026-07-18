@@ -146,7 +146,7 @@ SLOT="0"
 RESTRICT="splitdebug binchecks strip mirror" # Prevent slow down and snooping
 IUSE+="
 firejail wayland +X
-ebuild_revision_92
+ebuild_revision_93
 "
 REQUIRED_USE+="
 	|| (
@@ -341,6 +341,19 @@ src_unpack() {
 
 		sed -i -e "s|disabled_postinstall|postinstall|g" "package.json" || die
 
+	#############################################################
+	# Final fixes
+	#############################################################
+	# pnpm is sloppy/inconsistent.  It is fixed but missed some spots that offends Dependabot that it is strict about.
+		patch_build_files() {
+			sed -i -e "s|\"@babel/core\": \"7.29.0\"|\"@babel/core\": \"7.29.6\"|g" "${S}/package.json" || die
+			sed -i -e "s|\"js-yaml\": \"4.1.1\"|\"js-yaml\": \"4.2.0\"|g" "${S}/package.json" || die
+			sed -i -e "s|\"js-yaml\": \"4.1.1\"|\"js-yaml\": \"4.2.0\"|g" "${S}/danger/package.json" || die
+			sed -i -e "s|\"uuid\": \"13.0.0\"|\"uuid\": \"13.0.1\"|g" "${S}/package.json" || die
+			sed -i -e "s|\"webpack\": \"5.96.1\"|\"webpack\": \"5.104.1\"|g" "${S}/package.json" || die
+		}
+
+		patch_build_files
 
 einfo "Copying lockfiles"
 		mkdir -p "${WORKDIR}/lockfile-image" || die

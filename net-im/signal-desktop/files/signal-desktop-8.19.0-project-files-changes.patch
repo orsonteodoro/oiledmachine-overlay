@@ -20,7 +20,7 @@
          "libnotify4",
 --- a/pnpm-workspace.yaml.orig	2026-07-15 15:58:07.000000000 -0700
 +++ b/pnpm-workspace.yaml	2026-07-18 10:38:30.208976430 -0700
-@@ -1,77 +1,74 @@
+@@ -1,77 +1,71 @@
 -saveExact: true
 -blockExoticSubdeps: true
 -lockfileIncludeTarballUrl: true
@@ -57,7 +57,6 @@
 +  - '@storybook/theming@8.6.18'
 +  - '@xmldom/xmldom@0.9.10'
 +  - 'ajv@8.18.0'
-+  #- 'basic-ftp'
 +  - 'tar@7.5.16'
 +  - 'electron@43.1.1'
 +  - 'electron-builder@26.0.14'
@@ -66,8 +65,6 @@
 +  - 'immutable@4.3.8'
 +  - 'js-yaml@4.2.0'
 +  - 'jws@3.2.3'
-+  #- 'node-forge'
-+  #- 'path-to-regexp'
 +  - 'picomatch@2.3.2'
 +  - 'postcss@8.5.10'
 +  - 'react-router@6.30.4'
@@ -169,7 +166,7 @@
    '@tailwindcss/oxide@4.3.0': true
    'electron@23.3.13': false # duplicate package
    'electron@42.3.0': true
-@@ -99,39 +96,76 @@ allowBuilds:
+@@ -99,39 +96,78 @@ allowBuilds:
    'esbuild': false
    'utf-8-validate': false
    '@signalapp/ringrtc': true
@@ -208,6 +205,7 @@
 +  '@vitejs/plugin-react@3.1.0>postcss': '8.5.10'
 +  '@vitejs/plugin-react@3.1.0>rollup': '3.30.0'
 +  '@vitejs/plugin-react@3.1.0>vite': '6.4.3'
++  'danger@13.0.10>js-yaml': '4.2.0'
 +  'danger@13.0.10>jws': '3.2.3'
 +  'danger@13.0.10>qs': '6.15.2'
 +  'danger@13.0.10>undici': '6.27.0'
@@ -219,6 +217,7 @@
 +  'eslint-config-airbnb-typescript-prettier@5.0.0>js-yaml': '4.2.0'
 +  'eslint-config-airbnb-typescript-prettier@5.0.0>picomatch': '2.3.2'
 +  'eslint-plugin-react@7.32.2>js-yaml': '4.2.0'
++  'js-yaml': '4.2.0'
 +  'npm-run-all2@8.0.4>shell-quote': '1.8.4'
 +  'react-redux@8.0.5>@babel/runtime': '7.26.10'
 +  'react-router-dom@6.10.0>@remix-run/router': '1.23.2'
