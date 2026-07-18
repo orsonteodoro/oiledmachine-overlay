@@ -1,4 +1,4 @@
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -35,6 +35,7 @@ RUST_MAX_VER="1.91.1" # Inclusive
 RUST_MIN_VER="1.91.1" # llvm-21.1.  Rust is required for @swc/core@1.10.16
 # https://github.com/rust-lang/rust/commits/main/src/version		# nightly-2024-10-07
 # https://github.com/swc-project/swc/blob/v1.10.16/rust-toolchain	# Find date at or before 2024-10-07
+VIRTUALX_REQUIRED="manual"
 
 RUST_PV="${RUST_MIN_VER}"
 #export CI="true" # Avoid error during `pnpm install -P`
@@ -84,7 +85,7 @@ QA_PREBUILT="
 	opt/Signal/swiftshader/libGLESv2.so
 "
 
-inherit edo electron-app lcnr pax-utils pnpm npm rust unpacker xdg
+inherit edo electron-app lcnr pax-utils pnpm npm rust unpacker virtualx xdg
 
 S="${WORKDIR}/${MY_PN}-${PV}"
 SRC_URI="
@@ -130,10 +131,15 @@ RDEPEND+="
 BDEPEND+="
 	>=net-libs/nodejs-${NODEJS_24_PV}:${NODE_SLOT}=[webassembly(+)]
 	>=sys-apps/pnpm-11:9
-	x11-misc/xvfb-run
 	|| (
 		dev-lang/rust:${RUST_PV}
 		dev-lang/rust-bin:${RUST_PV}
+	)
+	X? (
+		${VIRTUALX_DEPEND}
+	)
+	wayland? (
+		gui-wm/tinywl
 	)
 "
 PDEPEND+="
@@ -413,6 +419,34 @@ src_configure() {
 	export SIGNAL_ENV="production"
 }
 
+virtwl() {
+	debug-print-function "${FUNCNAME}" "$@"
+
+	(( ${#} < 1 )) && die "${FUNCNAME} needs at least one argument"
+	if [[ -n "${XDG_RUNTIME_DIR}" ]] ; then
+eerror "${FUNCNAME} needs XDG_RUNTIME_DIR to be set; try xdg_environment_reset"
+		die
+	fi
+	tinywl -h >/dev/null || die 'tinywl -h failed'
+
+	local VIRTWL
+	local VIRTWL_PID
+	coproc VIRTWL { \
+		WLR_BACKENDS="headless" \
+		exec tinywl -s 'echo $WAYLAND_DISPLAY; read _; kill $PPID'; \
+	}
+	local -x WAYLAND_DISPLAY
+	read WAYLAND_DISPLAY <&${VIRTWL[0]}
+
+	debug-print "${FUNCNAME}: $@"
+	"$@"
+	local r=${?}
+
+	[[ -n "${VIRTWL_PID}" ]] || die "tinywl exited unexpectedly"
+	exec {VIRTWL[0]}<&- {VIRTWL[1]}>&-
+	return ${r}
+}
+
 src_compile() {
 	pnpm_hydrate
 
@@ -431,7 +465,21 @@ src_compile() {
 	epnpm run "build:emoji-data"
 
 	# This is required to avoid load time issue.
-	edo xvfb-run --auto-servernum pnpm run build:preload-cache
+	addpredict "/dev/dri"
+	addpredict "/dev/nvidia0"
+	addpredict "/dev/nvidiactl"
+	addpredict "/dev/nvidia-uvm"
+	addpredict "/dev/nvidia-uvm-tools"
+	addpredict "/dev/nvidia-caps"
+	addpredict "/dev/ati/card"
+	addpredict "/dev/dri/card"
+	addpredict "/dev/dri/card0"
+	addpredict "/dev/dri/renderD128"
+	if [[ -n "${DISPLAY}" ]] ; then
+		virtx pnpm run build:preload-cache
+	else
+		virtwl pnpm run build:preload-cache
+	fi
 
 	# Same as `epnpm run "build-linux"`
 	run-s build:policy-files generate build:rolldown:prod
