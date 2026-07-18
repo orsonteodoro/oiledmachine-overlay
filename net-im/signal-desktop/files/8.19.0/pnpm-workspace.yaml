@@ -65,5 +65,4 @@ allowBuilds:
 # Bans or rollbacks
 overrides:
   'canvas': '-' # Deny
-  'electron@<42.3.0': '-'
   'jsdom': '-' # Deny referencing canvas package
