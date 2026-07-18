@@ -57,8 +57,8 @@
  
    .:
 --- a/pnpm-workspace.yaml.orig	2026-07-15 15:58:07.000000000 -0700
-+++ b/pnpm-workspace.yaml	2026-07-17 15:46:13.840992539 -0700
-@@ -1,77 +1,39 @@
++++ b/pnpm-workspace.yaml	2026-07-17 18:35:40.066255868 -0700
+@@ -1,77 +1,38 @@
 -saveExact: true
 -blockExoticSubdeps: true
 -lockfileIncludeTarballUrl: true
@@ -166,17 +166,11 @@
  strictDepBuilds: true
  allowBuilds:
    # Enabled Builds: Use specific version
-@@ -89,6 +47,7 @@ allowBuilds:
-   'electron@23.3.13': false # duplicate package
-   'electron@42.3.0': true
-   'fs-xattr@0.4.0': true
-+  'canvas@2.11.2': false # For generating lockfile
- 
-   # Disabled Builds: Use wildcard version
-   #   ex: 'package': false
-@@ -100,38 +59,6 @@ allowBuilds:
+@@ -99,39 +60,10 @@ allowBuilds:
+   'esbuild': false
    'utf-8-validate': false
    '@signalapp/ringrtc': true
++  'canvas@2.11.2': false # For generating lockfile
  
 -dedupePeers: true
 -dedupePeerDependents: true
@@ -216,4 +210,5 @@
 +# Bans or rollbacks
 +overrides:
 +  'canvas': '-' # Deny
++  'electron@<42.3.0': '-'
 +  'jsdom': '-' # Deny referencing canvas package

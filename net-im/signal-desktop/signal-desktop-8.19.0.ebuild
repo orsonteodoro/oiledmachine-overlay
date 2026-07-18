@@ -119,7 +119,7 @@ SLOT="0"
 RESTRICT="splitdebug binchecks strip mirror" # Prevent slow down and snooping
 IUSE+="
 firejail wayland X
-ebuild_revision_87
+ebuild_revision_88
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -302,6 +302,7 @@ ewarn "QA:  Manually remove electron<38.8.6 from ${S}/pnpm-lock.yaml"
 			deps=(
 				"js-yaml@4.2.0"
 				"jws@3.2.3"
+				"picomatch@2.3.2"
 				"qs@6.15.2"
 			)
 			epnpm install "${deps[@]}" -D "${PNPM_INSTALL_ARGS[@]}"
@@ -309,12 +310,15 @@ ewarn "QA:  Manually remove electron<38.8.6 from ${S}/pnpm-lock.yaml"
 
 		deps=(
 			"@babel/core@7.29.6"
+			"esbuild@0.28.1"
 			"form-data@2.5.4"
 			"got@11.8.5"
+			"ip-address@10.1.1"
 			"js-yaml@4.2.0"
-			"serialize-javascript@7.0.3"
+			"qs@6.15.2"
+			"serialize-javascript@7.0.5"
 			"tough-cookie@4.1.3"
-			"undici@6.24.0"
+			"undici@6.27.0"
 			"uuid@13.0.1"
 			"webpack@5.104.1"
 		)
