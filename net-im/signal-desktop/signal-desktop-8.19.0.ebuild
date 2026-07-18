@@ -119,7 +119,7 @@ SLOT="0"
 RESTRICT="splitdebug binchecks strip mirror" # Prevent slow down and snooping
 IUSE+="
 firejail wayland X
-ebuild_revision_86
+ebuild_revision_87
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -262,24 +262,7 @@ ewarn "QA:  Remove fabric@7.2.0 and fabric@7.4.0 from minimumReleaseAgeExclude: 
 ewarn "QA:  Remove electron@<39.8.1: ^39.8.1 from override section in pnpm-lock.yaml"
 ewarn "QA:  Remove electron@39.8.1 from minimumReleaseAgeExclude: and in overrides: sections section in pnpm-workspace.yaml"
 
-ewarn "QA:  Manually remove picomatch@2.3.1 in ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove jws@3.2.2 from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change jws@3.2.2 to jws@3.2.3 from ${S}/package.json and ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove patch-package from ${S}/package.json and ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@9.2.2 from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2 to 11.4.4-cjs.2 in ${S}/pnpm-lock.yaml and in ${S}/package.json"
-ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2(@octokit/core@5.2.2) to 11.4.4-cjs.2(@octokit/core@5.2.2) in ${S}/pnpm-lock.yaml"
-
-ewarn "QA:  Manually remove picomatch@2.3.1 from ${S}/sticker-creator/pnpm-lock.yaml"
-ewarn "QA:  Manually remove immutable@4.3.7 from ${S}/sticker-creator/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @remix-run/router@1.23.1 from ${S}/sticker-creator/pnpm-lock.yaml"
-ewarn "QA:  Manually remove @remix-run/router@1.5.0 from ${S}/sticker-creator/pnpm-lock.yaml"
-ewarn "QA:  Manually remove ajv@6.12.6 from ${S}/sticker-creator/pnpm-lock.yaml"
-ewarn "QA:  Manually remove react-router@6.10.0 from ${S}/sticker-creator/pnpm-lock.yaml"
-
-ewarn "QA:  Manually remove jws@3.2.2 from ${S}/danger/pnpm-lock.yaml"
-ewarn "QA:  Manually remove picomatch@2.3.1 from ${S}/danger/pnpm-lock.yaml"
-ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually remove electron<38.8.6 from ${S}/pnpm-lock.yaml"
 
 	# The brace-expansion version changes breaks build.
 	# The pinned version of fabric is required.
@@ -307,6 +290,12 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 				"vite@6.4.3"
 			)
 			epnpm install "${deps[@]}" -D "${PNPM_INSTALL_ARGS[@]}"
+			deps=(
+				"@babel/runtime@7.26.10"
+				"@remix-run/router@1.23.2"
+				"react-router@6.30.4"
+			)
+			epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
 		popd >/dev/null 2>&1 || die
 
 		pushd "danger" >/dev/null 2>&1 || die
@@ -320,11 +309,23 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 
 		deps=(
 			"@babel/core@7.29.6"
+			"form-data@2.5.4"
+			"got@11.8.5"
 			"js-yaml@4.2.0"
+			"serialize-javascript@7.0.3"
+			"tough-cookie@4.1.3"
+			"undici@6.24.0"
 			"uuid@13.0.1"
 			"webpack@5.104.1"
 		)
 		epnpm install "${deps[@]}" -D -w "${PNPM_INSTALL_ARGS[@]}"
+
+		deps=(
+			"@remix-run/router@1.23.2"
+			"react-router@6.30.4"
+			"tar@7.5.16"
+		)
+		epnpm install "${deps[@]}" -P -w "${PNPM_INSTALL_ARGS[@]}"
 
 	#############################
 	# Custom version bumps
@@ -342,7 +343,7 @@ ewarn "QA:  Manually remove qs@6.14.0 from ${S}/danger/pnpm-lock.yaml"
 	#############################################################
 		deps=(
 			"fabric@4.6.0"			# Pinned version required
-			"electron-builder@26.15.6"	# Pinned version required
+			"electron-builder@26.0.14"	# Pinned version required
 		)
 		epnpm install "${deps[@]}" -D -w "${PNPM_INSTALL_ARGS[@]}"
 
@@ -434,6 +435,7 @@ src_compile() {
 #	grep -q -e "⨯" "${T}/build.log" && die "Detected error"
 	[[ -e "dist/linux-unpacked/signal-desktop" ]] || die "Build failed"
 	grep -q -e "ENOENT" "${T}/build.log" && die "Build failed"
+	grep -q -e "Error: No native build was found" "${T}/build.log" && die "Build failed"
 }
 
 src_install() {

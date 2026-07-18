@@ -57,8 +57,8 @@
  
    .:
 --- a/pnpm-workspace.yaml.orig	2026-07-15 15:58:07.000000000 -0700
-+++ b/pnpm-workspace.yaml	2026-07-17 14:17:43.407347107 -0700
-@@ -1,77 +1,35 @@
++++ b/pnpm-workspace.yaml	2026-07-17 15:46:13.840992539 -0700
+@@ -1,77 +1,39 @@
 -saveExact: true
 -blockExoticSubdeps: true
 -lockfileIncludeTarballUrl: true
@@ -133,31 +133,34 @@
 -  'tsx': 'patches/tsx.patch'
 -  'zod@4.3.6': 'patches/zod@4.3.6.patch'
 +allowedDeprecatedVersions:
-+  'glob': '7.2.3 || 10.5.0'
-+  'inflight': '1.0.6'
-+  'uuid': '3.4.0 || 8.3.2 || 9.0.1'
-+  'lodash.isequal': '4.5.0'
-+  'rimraf': '3.0.2 || 2.6.3'
-+  'expect-playwright': '0.8.0'
-+  'jest-playwright-preset': '4.0.0'
-+  'jest-process-manager': '0.4.0'
-+  'boolean': '3.2.0'
-+  'abab': '2.0.6'
-+  'request': '2.88.2'
-+  'har-validator': '5.1.5'
-+  'w3c-hr-time': '1.0.2'
-+  'domexception': '1.0.1'
-+  'request-promise-native': '1.0.9'
-+  'tar': '6.2.1'
-+  'npmlog': '5.0.1'
-+  'gauge': '3.0.2'
-+  'are-we-there-yet': '2.0.0'
-+  'whatwg-encoding': '1.0.5 || 2.0.0'
-+  'node-domexception': '1.0.0'
-+  'deep-diff': '0.3.8'
-+  'eslint': '8.38.0'
 +  '@humanwhocodes/config-array': '0.11.14'
 +  '@humanwhocodes/object-schema': '2.0.3'
++  '@npmcli/move-file': '2.0.1'
++  'abab': '2.0.6'
++  'are-we-there-yet': '2.0.0'
++  'boolean': '3.2.0'
++  'eslint': '8.38.0'
++  'expect-playwright': '0.8.0'
++  'form-data': '2.5.4'
++  'deep-diff': '0.3.8'
++  'domexception': '1.0.1'
++  'gauge': '3.0.2'
++  'glob': '7.2.3 || 8.1.0 || 10.5.0'
++  'har-validator': '5.1.5'
++  'has-own': '1.0.1'
++  'inflight': '1.0.6'
++  'jest-playwright-preset': '4.0.0'
++  'jest-process-manager': '0.4.0'
++  'lodash.isequal': '4.5.0'
++  'node-domexception': '1.0.0'
++  'npmlog': '5.0.1'
++  'request': '2.88.2'
++  'request-promise-native': '1.0.9'
++  'rimraf': '3.0.2 || 2.6.3'
++  'tar': '6.2.1'
++  'uuid': '3.4.0 || 8.3.2 || 9.0.1'
++  'w3c-hr-time': '1.0.2'
++  'whatwg-encoding': '1.0.5 || 2.0.0'
  
 +blockExoticSubdeps: false
  strictDepBuilds: true
@@ -167,15 +170,14 @@
    'electron@23.3.13': false # duplicate package
    'electron@42.3.0': true
    'fs-xattr@0.4.0': true
-+  'canvas@2.11.2': true # For generating lockfile
++  'canvas@2.11.2': false # For generating lockfile
  
    # Disabled Builds: Use wildcard version
    #   ex: 'package': false
-@@ -99,39 +58,3 @@ allowBuilds:
-   'esbuild': false
+@@ -100,38 +59,6 @@ allowBuilds:
    'utf-8-validate': false
    '@signalapp/ringrtc': true
--
+ 
 -dedupePeers: true
 -dedupePeerDependents: true
 -strictPeerDependencies: true
@@ -211,3 +213,7 @@
 -  'uuid': '8.3.2 || 9.0.1'
 -  'whatwg-encoding': '2.0.0'
 -  'yaeti': '0.0.6'
++# Bans or rollbacks
++overrides:
++  'canvas': '-' # Deny
++  'jsdom': '-' # Deny referencing canvas package

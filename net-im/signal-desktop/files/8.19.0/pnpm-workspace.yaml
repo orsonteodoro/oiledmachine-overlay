@@ -3,31 +3,34 @@ packages:
   - 'sticker-creator'
 
 allowedDeprecatedVersions:
-  'glob': '7.2.3 || 10.5.0'
-  'inflight': '1.0.6'
-  'uuid': '3.4.0 || 8.3.2 || 9.0.1'
-  'lodash.isequal': '4.5.0'
-  'rimraf': '3.0.2 || 2.6.3'
-  'expect-playwright': '0.8.0'
-  'jest-playwright-preset': '4.0.0'
-  'jest-process-manager': '0.4.0'
-  'boolean': '3.2.0'
-  'abab': '2.0.6'
-  'request': '2.88.2'
-  'har-validator': '5.1.5'
-  'w3c-hr-time': '1.0.2'
-  'domexception': '1.0.1'
-  'request-promise-native': '1.0.9'
-  'tar': '6.2.1'
-  'npmlog': '5.0.1'
-  'gauge': '3.0.2'
-  'are-we-there-yet': '2.0.0'
-  'whatwg-encoding': '1.0.5 || 2.0.0'
-  'node-domexception': '1.0.0'
-  'deep-diff': '0.3.8'
-  'eslint': '8.38.0'
   '@humanwhocodes/config-array': '0.11.14'
   '@humanwhocodes/object-schema': '2.0.3'
+  '@npmcli/move-file': '2.0.1'
+  'abab': '2.0.6'
+  'are-we-there-yet': '2.0.0'
+  'boolean': '3.2.0'
+  'eslint': '8.38.0'
+  'expect-playwright': '0.8.0'
+  'form-data': '2.5.4'
+  'deep-diff': '0.3.8'
+  'domexception': '1.0.1'
+  'gauge': '3.0.2'
+  'glob': '7.2.3 || 8.1.0 || 10.5.0'
+  'har-validator': '5.1.5'
+  'has-own': '1.0.1'
+  'inflight': '1.0.6'
+  'jest-playwright-preset': '4.0.0'
+  'jest-process-manager': '0.4.0'
+  'lodash.isequal': '4.5.0'
+  'node-domexception': '1.0.0'
+  'npmlog': '5.0.1'
+  'request': '2.88.2'
+  'request-promise-native': '1.0.9'
+  'rimraf': '3.0.2 || 2.6.3'
+  'tar': '6.2.1'
+  'uuid': '3.4.0 || 8.3.2 || 9.0.1'
+  'w3c-hr-time': '1.0.2'
+  'whatwg-encoding': '1.0.5 || 2.0.0'
 
 blockExoticSubdeps: false
 strictDepBuilds: true
@@ -47,7 +50,7 @@ allowBuilds:
   'electron@23.3.13': false # duplicate package
   'electron@42.3.0': true
   'fs-xattr@0.4.0': true
-  'canvas@2.11.2': true # For generating lockfile
+  'canvas@2.11.2': false # For generating lockfile
 
   # Disabled Builds: Use wildcard version
   #   ex: 'package': false
@@ -58,3 +61,7 @@ allowBuilds:
   'esbuild': false
   'utf-8-validate': false
   '@signalapp/ringrtc': true
+
+# Bans or rollbaks
+overrides:
+  'canvas': '-' # Deny
