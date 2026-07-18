@@ -174,29 +174,6 @@ _PNPM_PKG_SETUP_CALLED=0
 # @DESCRIPTION:
 # The project root containing the pnpm-lock.yaml file.
 
-# @ECLASS_VARIABLE: PNPM_FIREJAIL
-# @USER_VARIABLE
-# @DESCRIPTION:
-# Use the Firejail sandbox to mitigate against credentials and secrets theft.
-# Requires manual configuration of pnpm.local or globals.local.
-# Valid values:  1, 0, auto, unset (same as auto)
-
-#
-# Sandbox comparison in pnpm context
-#
-# Package               | Primary purpose                    |
-# ---                   | ---                                |
-# sys-apps/sandbox      | Protect the live system [6]        |
-# sys-apps/firejail [1] | Prevent credential theft[4],       |
-#                       | unify[5] access control to secrets |
-#
-# [1] oiledmachine-overlay ebuild only
-# [4] Downloads are required in src_unpack phase for tagged releases requiring FEATURES=-network-sandbox.
-#     Supply chain attack exfiltration is a trending issue in the mid 2020s era.
-# [5] Centralized management of visibility or access to secrets/credentials for sandboxed apps.
-# [6] from catastrophic changes or mistakes
-#
-
 # @FUNCTION: pnpm_check_network_sandbox
 # @DESCRIPTION:
 # Check the network sandbox.
@@ -222,43 +199,8 @@ eerror
 # Wrapper for the pnpm command.
 epnpm() {
 einfo "Current directory:\t${PWD}"
-
-	# Use Firejail's pnpm.local or globals.local to protect credentials/secrets.
-	local sandbox_launcher=()
-	if [[ -n "${PNPM_FIREJAIL}" ]] ; then
-		if [[ "${PNPM_FIREJAIL}" == "1" ]] ; then
-einfo "Firejail:  ON"
-			sandbox_launcher+=(
-				"firejail" --profile=pnpm
-			)
-		elif [[ "${PNPM_FIREJAIL}" == "0" ]] ; then
-ewarn "Firejail:  OFF"
-		elif [[ "${PNPM_FIREJAIL}" == "auto" ]] ; then
-			if which firejail >/dev/null 2>&1 ; then
-einfo "Firejail:  ON"
-				sandbox_launcher+=(
-					"firejail" --profile=pnpm
-				)
-
-			else
-ewarn "Firejail:  OFF"
-			fi
-		else
-eerror "PNPM_FIREJAIL is invalid."
-eerror "Valid values:  1, 0, auto, unset"
-			die
-		fi
-	elif which firejail >/dev/null 2>&1 ; then
-einfo "Firejail:  ON"
-		sandbox_launcher+=(
-			"firejail" --profile=pnpm
-		)
-	else
-ewarn "Firejail:  OFF"
-	fi
-
-einfo "Running:\t\t${sandbox_launcher[@]} pnpm $@"
-	${sandbox_launcher[@]} pnpm $@ || die
+einfo "Running:\t\tpnpm $@"
+	pnpm $@ || die
 }
 
 # @FUNCTION: pnpm_network_settings
