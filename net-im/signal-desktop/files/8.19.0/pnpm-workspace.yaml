@@ -66,3 +66,4 @@ allowBuilds:
 overrides:
   'canvas': '-' # Deny
   'jsdom': '-' # Deny referencing canvas package
+loglevel: debug

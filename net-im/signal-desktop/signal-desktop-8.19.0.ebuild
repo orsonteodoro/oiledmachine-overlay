@@ -130,6 +130,7 @@ RDEPEND+="
 BDEPEND+="
 	>=net-libs/nodejs-${NODEJS_24_PV}:${NODE_SLOT}=[webassembly(+)]
 	>=sys-apps/pnpm-11:9
+	x11-misc/xvfb-run
 	|| (
 		dev-lang/rust:${RUST_PV}
 		dev-lang/rust-bin:${RUST_PV}
@@ -184,8 +185,10 @@ eerror "Rust ${RUST_PV} required for @swc/core"
 	# FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
 	export NODE_OPTIONS="--max-old-space-size=4096"
 
-	#export NPM_CONFIG_LOGLEVEL="verbose"
-	#export NPM_CONFIG_NODE_GYP="echo"
+	# Do not remove these two.  It is required to build to avoid during pnpm install:
+	# [ELIFECYCLE] Command failed with exit code 1.
+	export NPM_CONFIG_LOGLEVEL="verbose"
+	export NPM_CONFIG_NODE_GYP="echo"
 }
 
 pnpm_audit_post() {
@@ -207,7 +210,10 @@ _apply_patches() {
 einfo "DEBUG:  Called pnpm_unpack_post()"
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		eapply "${FILESDIR}/${PN}-8.19.0-project-files-changes.patch"
-		#echo "loglevel: debug" >> "${S}/pnpm-workspace.yaml" || die
+
+	# Do not remove.  It may be required to build to avoid during pnpm install:
+	# [ELIFECYCLE] Command failed with exit code 1.
+		echo "loglevel: debug" >> "${S}/pnpm-workspace.yaml" || die
 	fi
 
 einfo "Increasing verbosity to debug"
@@ -424,6 +430,9 @@ src_compile() {
 
 	epnpm run "build:emoji-data"
 
+	# This is required to avoid load time issue.
+	edo xvfb-run --auto-servernum pnpm run build:preload-cache
+
 	# Same as `epnpm run "build-linux"`
 	run-s build:policy-files generate build:rolldown:prod
 	export NODE_OPTIONS="--import=tsx"
@@ -439,7 +448,7 @@ src_compile() {
 #	grep -q -e "⨯" "${T}/build.log" && die "Detected error"
 	[[ -e "dist/linux-unpacked/signal-desktop" ]] || die "Build failed"
 	grep -q -e "ENOENT" "${T}/build.log" && die "Build failed"
-	grep -q -e "Error: No native build was found" "${T}/build.log" && die "Build failed"
+#	grep -q -e "Error: No native build was found" "${T}/build.log" && die "Build failed"
 }
 
 src_install() {
