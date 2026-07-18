@@ -19,7 +19,7 @@
        "depends": [
          "libnotify4",
 --- a/pnpm-workspace.yaml.orig	2026-07-15 15:58:07.000000000 -0700
-+++ b/pnpm-workspace.yaml	2026-07-18 07:51:46.044568889 -0700
++++ b/pnpm-workspace.yaml	2026-07-18 10:38:30.208976430 -0700
 @@ -1,77 +1,74 @@
 -saveExact: true
 -blockExoticSubdeps: true
@@ -160,6 +160,15 @@
  strictDepBuilds: true
  allowBuilds:
    # Enabled Builds: Use specific version
+@@ -84,7 +81,7 @@ allowBuilds:
+   '@signalapp/ringrtc@2.69.4': true
+   '@signalapp/sqlcipher@3.3.9': true
+   '@signalapp/windows-ucv@1.0.1': true
+-  '@swc/core@1.10.16': true
++  '@swc/core@1.15.43': true
+   '@tailwindcss/oxide@4.3.0': true
+   'electron@23.3.13': false # duplicate package
+   'electron@42.3.0': true
 @@ -99,39 +96,76 @@ allowBuilds:
    'esbuild': false
    'utf-8-validate': false

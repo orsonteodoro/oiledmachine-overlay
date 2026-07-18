@@ -3,9 +3,35 @@
 
 EAPI=8
 
-# TODO fork @signalapp/libsignal-client for custom hardening
 # This ebuild uses AI for synthetic data or estimations.
 # This ebuild uses suggestions from AI to build on Linux.
+
+# TODO:
+# For 8.20.0 or later ebuild release:
+# Add ebuild @signalapp/libsignal-client (Rust/TS) for custom hardening
+# Add ebuild @signalapp/sqlcipher (C++) for custom hardening
+# Add ebuild @signalapp/ringrtc (C++) for custom hardening
+# Install @signalapp/libsignal-client to /usr/lib/signal/libsignal-client
+# Install @signalapp/sqlcipher to /usr/lib/signal/sqlcipher
+# Install @signalapp/ringrtc to /usr/lib/signal/ringrtc
+
+# @signalapp/libsignal-client ebuild configure phase:
+#rustflags-hardened_append
+# @signalapp/libsignal-client ebuild compile phase:
+#cargo build --release
+
+# @signalapp/sqlcipher ebuild configure phase:
+#cflags-hardened_append
+#./configure --prefix=/usr --enable-tempstore=yes
+# @signalapp/sqlcipher ebuild compile phase:
+#make
+
+# Change package.json for signal-desktop ebuild:
+#"dependencies": {
+#  "@signalapp/libsignal-client": "file:/usr/lib/signal/libsignal-client",
+#  "@signalapp/sqlcipher": "file:/usr/lib/signal/sqlcipher"
+#  "@signalapp/ringrtc": "file:/usr/lib/signal/ringrtc"
+#}
 
 # To update use:
 # PATH=$(realpath "../../scripts")":${PATH}"
@@ -120,7 +146,7 @@ SLOT="0"
 RESTRICT="splitdebug binchecks strip mirror" # Prevent slow down and snooping
 IUSE+="
 firejail wayland +X
-ebuild_revision_91
+ebuild_revision_92
 "
 REQUIRED_USE+="
 	|| (
@@ -267,8 +293,11 @@ src_unpack() {
 		addwrite "${PNPM_CACHE_FOLDER}"
 		mkdir -p "${PNPM_CACHE_FOLDER}"
 
+		# Fix the lockfiles after pnpm-workspace.yaml overrides changed.
+		find "${S}" -name "pnpm-lock.yaml" -type f -delete || die
+
 		# Generate the required lockfile first for `pnpm audit`.
-		epnpm install "${PNPM_INSTALL_ARGS[@]}"
+		epnpm install "${PNPM_INSTALL_ARGS[@]}" --recursive
 
 		# DoS = Denial of Service
 		# DT = Data Tampering
@@ -277,23 +306,6 @@ src_unpack() {
 		# VS = Vulnerable System (Direct attack)
 		# ZC = Zero Click Attack (AV:N, PR:N, UI:N)
 		# RCE = Remote Code Execution
-
-ewarn "QA:  toolsets must be removed from package.json"
-ewarn "QA:  mac, mas, masDev, nsis, win sections must be removed from package.json"
-ewarn "QA:  Remove fabric@<7.2.0: ^7.2.0 and fabric@<7.4.0: ^7.4.0 from override section in pnpm-lock.yaml"
-ewarn "QA:  Remove fabric@7.2.0 and fabric@7.4.0 from minimumReleaseAgeExclude: and in overrides: sections in pnpm-workspace.yaml"
-ewarn "QA:  Remove electron@<39.8.1: ^39.8.1 from override section in pnpm-lock.yaml"
-ewarn "QA:  Remove electron@39.8.1 from minimumReleaseAgeExclude: and in overrides: sections section in pnpm-workspace.yaml"
-
-ewarn "QA:  Remove shell-quote@1.8.3 in sticker-creator/pnpm-lock.yaml"
-ewarn "QA:  Change shell-quote: 1.8.3 to shell-quote: 1.8.4 in sticker-creator/pnpm-lock.yaml"
-ewarn "QA:  Remove vite@4.5.3 in sticker-creator/pnpm-lock.yaml"
-ewarn "QA:  Manually change vite: 4.5.3(@types/node@22.13.4)(sass@1.62.0) to vite: 6.4.3 in sticker-creator/pnpm-lock.yaml"
-ewarn "QA:  Manually change @vitejs/plugin-react@3.1.0(vite@4.5.3(@types/node@22.13.4)(sass@1.62.0)) to @vitejs/plugin-react@3.1.0(vite@6.4.3) in sticker-creator/pnpm-lock.yaml"
-ewarn "QA:  Manually change specifier: and version: under vite: to specifier: 6.4.3 version: 6.4.3 in sticker-creator/pnpm-lock.yaml"
-
-
-ewarn "QA:  Manually remove electron<38.8.6 from ${S}/pnpm-lock.yaml"
 
 	# The brace-expansion version changes breaks build.
 	# The pinned version of fabric is required.

@@ -42,25 +42,14 @@ minimumReleaseAgeExclude:
   - react-router@6.30.2
   - tar@7.5.7
   - diff@8.0.3
-  - qs@6.14.2
   - tar@7.5.3
   - tar@7.5.8
   - serialize-javascript@7.0.3
-  - qs@6.14.1
   - tar@7.5.10
   - tar@7.5.11
   - tar@7.5.4
-  - brace-expansion@1.1.13
-  - brace-expansion@2.0.3
-  - brace-expansion@5.0.5
-  - yaml@1.10.3
-  - ip-address@10.1.1
   - uuid@11.1.1
-  - brace-expansion@5.0.6
-  - joi@17.13.4
-  - joi@18.2.1
   - esbuild@0.28.1
-  - js-yaml@3.15.0
   - js-yaml@4.1.2
 
 allowedDeprecatedVersions:
@@ -106,7 +95,7 @@ allowBuilds:
   '@signalapp/ringrtc@2.69.4': true
   '@signalapp/sqlcipher@3.3.9': true
   '@signalapp/windows-ucv@1.0.1': true
-  '@swc/core@1.10.16': true
+  '@swc/core@1.15.43': true
   '@tailwindcss/oxide@4.3.0': true
   'electron@23.3.13': false # duplicate package
   'electron@42.3.0': true
@@ -176,22 +165,11 @@ overrides:
   'react-popper@2.3.0>react': '19.2.4'
   'thenify-all>thenify': '3.3.1'
   '@remix-run/router@<=1.23.1': ^1.23.2
-  brace-expansion@<1.1.13: ^1.1.13
-  brace-expansion@>=2.0.0 <2.0.3: ^2.0.3
-  brace-expansion@>=4.0.0 <5.0.5: ^5.0.5
-  brace-expansion@>=5.0.0 <5.0.6: ^5.0.6
   cross-spawn@<6.0.6: ^6.0.6
   diff@>=6.0.0 <8.0.3: ^8.0.3
   esbuild@>=0.27.3 <0.28.1: ^0.28.1
   got@<11.8.5: ^11.8.5
-  ip-address@<=10.1.0: ^10.1.1
-  joi@<17.13.4: ^17.13.4
-  joi@>=18.0.0 <18.2.1: ^18.2.1
-  js-yaml@<3.15.0: ^3.15.0
   js-yaml@>=4.0.0 <=4.1.1: ^4.1.2
-  qs@<6.14.1: ^6.14.1
-  qs@>=6.11.1 <=6.15.1: ^6.15.2
-  qs@>=6.7.0 <=6.14.1: ^6.14.2
   react-router@>=6.0.0 <6.30.2: ^6.30.2
   react-router@>=6.7.0 <6.30.4: ^6.30.4
   serialize-javascript@<=7.0.2: ^7.0.3
@@ -204,7 +182,6 @@ overrides:
   tar@<=7.5.3: ^7.5.4
   tar@<=7.5.9: ^7.5.10
   uuid@<11.1.1: ^11.1.1
-  yaml@>=1.0.0 <1.10.3: ^1.10.3
 
 patchedDependencies:
   # Note: Prefer adding without version so that pnpm attempts to re-apply the patch after an upgrade
