@@ -26,8 +26,8 @@ MY_PN2="Signal"
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 ELECTRON_APP_REQUIRES_MITIGATE_ID_CHECK="1"
 NPM_SLOT="3"
-PNPM_AUDIT_FIX=0 # Vulnerabilities are manually individually patched to prevent runtime breakage
-#PNPM_AUDIT_FIX_ARG="override" # Avoid [ELIFECYCLE] Command failed.
+PNPM_AUDIT_FIX=1
+PNPM_AUDIT_FIX_ARG="override" # Avoid [ELIFECYCLE] Command failed.
 PNPM_SLOT="9"
 NODE_SLOT="24" # Upstream uses 24.14.0 from .nvmrc
 NODE_ENV="development"
@@ -120,7 +120,7 @@ SLOT="0"
 RESTRICT="splitdebug binchecks strip mirror" # Prevent slow down and snooping
 IUSE+="
 firejail wayland +X
-ebuild_revision_89
+ebuild_revision_90
 "
 REQUIRED_USE+="
 	|| (
@@ -204,17 +204,21 @@ eerror "Rust ${RUST_PV} required for @swc/core"
 }
 
 pnpm_audit_post() {
-	:
-#einfo "DEBUG:  Fixing audit changes"
-#einfo "DEBUG:  Deleting old electron changes suggested by pnpm audit --fix"
 # Required to prevent:
 # [ERR_PNPM_NO_MATCHING_VERSION] No matching version found for electron@^23.3.14 while fetching it
-#	sed -i -e "\|23.3.14|d" "${S}/pnpm-workspace.yaml" || die
-#	sed -i -e "\|28.3.2|d" "${S}/pnpm-workspace.yaml" || die
-#	sed -i -e "\|35.7.5|d" "${S}/pnpm-workspace.yaml" || die
-#	sed -i -e "\|38.8.6|d" "${S}/pnpm-workspace.yaml" || die
-#	sed -i -e "\|39.8.5|d" "${S}/pnpm-workspace.yaml" || die
-#	sed -i -e "\|patches/fabric|d" "${S}/pnpm-workspace.yaml" || die
+	if [[ "${PNPM_AUDIT_FIX}" == "1" ]] ; then
+einfo "DEBUG:  Fixing audit changes"
+einfo "DEBUG:  Deleting old electron changes suggested by pnpm audit --fix"
+		sed -i -e "\|23.3.14|d" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "\|28.3.2|d" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "\|35.7.5|d" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "\|38.8.6|d" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "\|39.8.5|d" "${S}/pnpm-workspace.yaml" || die
+
+einfo "DEBUG:  Allowing only the pinned fabric versions and rejected non-pinned suggested by pnpm audit --fix"
+		sed -i -e "\|fabric.*7.2.0|d" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "\|fabric.*7.4.0|d" "${S}/pnpm-workspace.yaml" || die
+	fi
 }
 
 _apply_patches() {
@@ -225,7 +229,7 @@ einfo "DEBUG:  Called pnpm_unpack_post()"
 
 	# Do not remove.  It may be required to build to avoid during pnpm install:
 	# [ELIFECYCLE] Command failed with exit code 1.
-		echo "loglevel: debug" >> "${S}/pnpm-workspace.yaml" || die
+		#echo "loglevel: debug" >> "${S}/pnpm-workspace.yaml" || die
 	fi
 
 einfo "Increasing verbosity to debug"
@@ -263,7 +267,8 @@ src_unpack() {
 		addwrite "${PNPM_CACHE_FOLDER}"
 		mkdir -p "${PNPM_CACHE_FOLDER}"
 
-		#epnpm install "${PNPM_INSTALL_ARGS[@]}"
+		# Generate the required lockfile first for `pnpm audit`.
+		epnpm install "${PNPM_INSTALL_ARGS[@]}"
 
 		# DoS = Denial of Service
 		# DT = Data Tampering
@@ -286,68 +291,8 @@ ewarn "QA:  Manually remove electron<38.8.6 from ${S}/pnpm-lock.yaml"
 	# The pinned version of fabric is required.
 	# The pinned version of minimatch is required.
 
-	#############################
-	# Vulnerability fixes section
-	#############################
-
-		local deps=()
-		pushd "sticker-creator" >/dev/null 2>&1 || die
-			deps=(
-				"@babel/core@7.29.6"
-				"@babel/runtime@7.26.10"
-				"@remix-run/router@1.23.2"
-				"esbuild@0.25.0"
-				"flatted@3.4.2"
-				"immutable@4.3.8"
-				"js-yaml@4.2.0"
-				"picomatch@2.3.2"
-				"postcss@8.5.10"
-				"react-router@6.30.2"
-				"rollup@3.30.0"
-				"shell-quote@1.8.4"
-				"vite@6.4.3"
-			)
-			epnpm install "${deps[@]}" -D "${PNPM_INSTALL_ARGS[@]}"
-			deps=(
-				"@babel/runtime@7.26.10"
-				"@remix-run/router@1.23.2"
-				"react-router@6.30.4"
-			)
-			epnpm install "${deps[@]}" -P "${PNPM_INSTALL_ARGS[@]}"
-		popd >/dev/null 2>&1 || die
-
-		pushd "danger" >/dev/null 2>&1 || die
-			deps=(
-				"js-yaml@4.2.0"
-				"jws@3.2.3"
-				"picomatch@2.3.2"
-				"qs@6.15.2"
-			)
-			epnpm install "${deps[@]}" -D "${PNPM_INSTALL_ARGS[@]}"
-		popd >/dev/null 2>&1 || die
-
-		deps=(
-			"@babel/core@7.29.6"
-			"esbuild@0.28.1"
-			"form-data@2.5.4"
-			"got@11.8.5"
-			"ip-address@10.1.1"
-			"js-yaml@4.2.0"
-			"qs@6.15.2"
-			"serialize-javascript@7.0.5"
-			"tough-cookie@4.1.3"
-			"undici@6.27.0"
-			"uuid@13.0.1"
-			"webpack@5.104.1"
-		)
-		epnpm install "${deps[@]}" -D -w "${PNPM_INSTALL_ARGS[@]}"
-
-		deps=(
-			"@remix-run/router@1.23.2"
-			"react-router@6.30.4"
-			"tar@7.5.16"
-		)
-		epnpm install "${deps[@]}" -P -w "${PNPM_INSTALL_ARGS[@]}"
+		epnpm audit --fix=${PNPM_AUDIT_FIX_ARG}
+		pnpm_audit_post
 
 	#############################
 	# Custom version bumps
@@ -486,6 +431,7 @@ einfo "Building TypeScript"
 	addpredict "/dev/dri/card0"
 	addpredict "/dev/dri/renderD128"
 	addpredict "/var/lib/portage/home/.cache/dconf"
+	addpredict "/var/lib/portage/home/.config"
 	if use X ; then
 ewarn "Generating preload-cache using xvfb."
 		virtx epnpm run "build:preload-cache"

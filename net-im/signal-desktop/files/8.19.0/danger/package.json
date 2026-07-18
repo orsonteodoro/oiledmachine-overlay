@@ -7,10 +7,7 @@
   },
   "devDependencies": {
     "danger": "13.0.10",
-    "js-yaml": "4.2.0",
-    "jws": "3.2.3",
-    "picomatch": "2.3.2",
-    "qs": "6.15.2",
+    "js-yaml": "4.1.1",
     "semver": "7.7.4"
   }
 }
