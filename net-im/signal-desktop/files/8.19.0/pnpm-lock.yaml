@@ -5,10 +5,30 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
+  '@electron/rebuild>node-gyp': 12.4.0
   canvas: '-'
+  electron@39.8.1: '-'
   jsdom: '-'
+  react-popper@2.3.0>react-dom: 19.2.4
+  react-popper@2.3.0>react: 19.2.4
+  thenify-all>thenify: 3.3.1
 
 pnpmfileChecksum: sha256-bByyW+G0/ld7ZSgtIlcAVRHgcUTBCQ31JLSwI1rhzys=
+
+patchedDependencies:
+  '@napi-rs/canvas@0.1.61': d232c1154bffd88fa8df40fc91dc36098b29aba725d826c24ce74cfac7803919
+  '@types/chai': b1cea4e432957039e7f72a32140d7a718258944078c5d5bdb40ad62b8717cb97
+  '@types/fabric@4.5.3': e5f339ecf72fbab1c91505e7713e127a7184bfe8164aa3a9afe9bf45a0ad6b89
+  '@vitest/expect@2.0.5': e8a96f71e52bf903c9f1eadba4740489a0beb48da33db52354adca484fe1f495
+  casual@1.6.2: b88b5052437cbdc1882137778b76ca5037f71b2a030ae9ef39dc97f51670d599
+  fabric@4.6.0: 259e6eff3d60c4a453f7815fca6aa0d3a81842f4efdc4051836812fc1e711e00
+  fs-xattr: 325d1e5f73cce8e15671dbd2394e091aadb71600f41d97d1a8cb63960c188112
+  growing-file@0.1.3: 1bb085e3fda38f2983114beedc229acf8b0c539736fe73e2e8183dab2df074b4
+  node-fetch@3.3.2: 1dc57b3827aeb8d0a7f3f6c39c51df08119ff45aff99d9a03db2360e99d3a826
+  playwright-core: 0d32e74d7c83e28ccbaea73aeaf171e4f4180b2d997e4ec0457aeda2144b651d
+  qrcode-generator: d70b44e0a29e1109f8b55b2a89c4f600bb3907877375cb50d0d363e16a2636ad
+  tsx: 251027c4cc25615da4cf5b54757ba1af5ecae4256a23772bcc2c1284f6aa1251
+  zod@4.3.6: ab3dbef13a3a4a50b2a2fcab2bdabd3ef94a4b1607e046308492e88bdd9d5553
 
 importers:
 
@@ -116,7 +136,7 @@ importers:
         version: 3.12.0
       '@napi-rs/canvas':
         specifier: 0.1.61
-        version: 0.1.61
+        version: 0.1.61(patch_hash=d232c1154bffd88fa8df40fc91dc36098b29aba725d826c24ce74cfac7803919)
       '@popperjs/core':
         specifier: 2.11.8
         version: 2.11.8
@@ -209,7 +229,7 @@ importers:
         version: 5.16.6
       '@types/chai':
         specifier: 5.2.3
-        version: 5.2.3
+        version: 5.2.3(patch_hash=b1cea4e432957039e7f72a32140d7a718258944078c5d5bdb40ad62b8717cb97)
       '@types/chai-as-promised':
         specifier: 8.0.2
         version: 8.0.2
@@ -224,7 +244,7 @@ importers:
         version: 0.1.11
       '@types/fabric':
         specifier: 4.5.3
-        version: 4.5.3
+        version: 4.5.3(patch_hash=e5f339ecf72fbab1c91505e7713e127a7184bfe8164aa3a9afe9bf45a0ad6b89)
       '@types/fs-extra':
         specifier: 11.0.4
         version: 11.0.4
@@ -326,7 +346,7 @@ importers:
         version: 10.0.4
       casual:
         specifier: 1.6.2
-        version: 1.6.2
+        version: 1.6.2(patch_hash=b88b5052437cbdc1882137778b76ca5037f71b2a030ae9ef39dc97f51670d599)
       chai:
         specifier: 6.2.2
         version: 6.2.2
@@ -410,7 +430,7 @@ importers:
         version: 9.6.1
       fabric:
         specifier: 4.6.0
-        version: 4.6.0
+        version: 4.6.0(patch_hash=259e6eff3d60c4a453f7815fca6aa0d3a81842f4efdc4051836812fc1e711e00)
       fast-glob:
         specifier: 3.3.3
         version: 3.3.3
@@ -434,7 +454,7 @@ importers:
         version: 11.8.5
       growing-file:
         specifier: 0.1.3
-        version: 0.1.3
+        version: 0.1.3(patch_hash=1bb085e3fda38f2983114beedc229acf8b0c539736fe73e2e8183dab2df074b4)
       heic-convert:
         specifier: 2.1.0
         version: 2.1.0
@@ -494,7 +514,7 @@ importers:
         version: 0.5.3
       node-fetch:
         specifier: 3.3.2
-        version: 3.3.2
+        version: 3.3.2(patch_hash=1dc57b3827aeb8d0a7f3f6c39c51df08119ff45aff99d9a03db2360e99d3a826)
       normalize-path:
         specifier: 3.0.0
         version: 3.0.0
@@ -554,7 +574,7 @@ importers:
         version: 0.8.0(prettier@3.8.3)
       qrcode-generator:
         specifier: 2.0.4
-        version: 2.0.4
+        version: 2.0.4(patch_hash=d70b44e0a29e1109f8b55b2a89c4f600bb3907877375cb50d0d363e16a2636ad)
       qs:
         specifier: 6.15.2
         version: 6.15.2
@@ -674,7 +694,7 @@ importers:
         version: 4.1.3
       tsx:
         specifier: 4.21.0
-        version: 4.21.0
+        version: 4.21.0(patch_hash=251027c4cc25615da4cf5b54757ba1af5ecae4256a23772bcc2c1284f6aa1251)
       type-fest:
         specifier: 5.5.0
         version: 5.5.0
@@ -701,11 +721,11 @@ importers:
         version: 7.0.1
       zod:
         specifier: 4.3.6
-        version: 4.3.6
+        version: 4.3.6(patch_hash=ab3dbef13a3a4a50b2a2fcab2bdabd3ef94a4b1607e046308492e88bdd9d5553)
     optionalDependencies:
       fs-xattr:
         specifier: 0.4.0
-        version: 0.4.0
+        version: 0.4.0(patch_hash=325d1e5f73cce8e15671dbd2394e091aadb71600f41d97d1a8cb63960c188112)
 
   packages/lame: {}
 
@@ -738,7 +758,7 @@ importers:
         version: 13.0.0
       zod:
         specifier: 4.3.6
-        version: 4.3.6
+        version: 4.3.6(patch_hash=ab3dbef13a3a4a50b2a2fcab2bdabd3ef94a4b1607e046308492e88bdd9d5553)
     devDependencies:
       '@arethetypeswrong/core':
         specifier: 0.18.4
@@ -751,7 +771,7 @@ importers:
         version: 0.3.21
       tsdown:
         specifier: 0.22.3
-        version: 0.22.3(@arethetypeswrong/core@0.18.4)(@typescript/native-preview@7.0.0-dev.20260515.1)(oxc-resolver@11.19.1(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1))(publint@0.3.21)(tsx@4.21.0)(typescript@6.0.3)
+        version: 0.22.3(@arethetypeswrong/core@0.18.4)(@typescript/native-preview@7.0.0-dev.20260515.1)(oxc-resolver@11.19.1(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1))(publint@0.3.21)(tsx@4.21.0(patch_hash=251027c4cc25615da4cf5b54757ba1af5ecae4256a23772bcc2c1284f6aa1251))(typescript@6.0.3)
 
   packages/windows-ucv:
     dependencies:
@@ -864,7 +884,7 @@ importers:
         version: 5.59.0(eslint@8.38.0(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)
       '@vitejs/plugin-react':
         specifier: 6.0.2
-        version: 6.0.2(vite@6.4.3(@types/node@24.12.0)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.101.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))
+        version: 6.0.2(vite@6.4.3(@types/node@24.12.0)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.101.0)(terser@5.46.1)(tsx@4.21.0(patch_hash=251027c4cc25615da4cf5b54757ba1af5ecae4256a23772bcc2c1284f6aa1251))(yaml@2.9.0))
       esbuild:
         specifier: 0.25.0
         version: 0.25.0
@@ -912,7 +932,7 @@ importers:
         version: 6.0.3
       vite:
         specifier: 6.4.3
-        version: 6.4.3(@types/node@24.12.0)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.101.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)
+        version: 6.4.3(@types/node@24.12.0)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.101.0)(terser@5.46.1)(tsx@4.21.0(patch_hash=251027c4cc25615da4cf5b54757ba1af5ecae4256a23772bcc2c1284f6aa1251))(yaml@2.9.0)
 
 packages:
 
@@ -6838,6 +6858,11 @@ packages:
     resolution: {integrity: sha512-bO3y10YikuUwUuDUQRM4KfwNkKhnpVO7IPdbsrejwN9/AABJzzTQ4GeHwyzNSrVO+tEH3/Np255a3sVZpZDjvg==}
     engines: {node: '>=8.0.0'}
 
+  electron@23.3.13:
+    resolution: {integrity: sha512-BaXtHEb+KYKLouUXlUVDa/lj9pj4F5kiE0kwFdJV84Y2EU7euIDgPthfKtchhr5MVHmjtavRMIV/zAwEiSQ9rQ==}
+    engines: {node: '>= 12.20.55'}
+    hasBin: true
+
   electron@43.1.1:
     resolution: {integrity: sha512-I5c5vfuVvaXpWx3IZdwvXgxQW44+e7OP1wXGVQkogLeSFSkUZ6sLCcWV05AdEcs65AO5tAIJJwbp7ixw+LdarA==}
     engines: {node: '>= 22.12.0'}
@@ -9922,8 +9947,8 @@ packages:
     resolution: {integrity: sha512-e1hj8lL3uM+sgSR4Lxzn5h1GxBlpa4CQz0XLF8kx4MDrDRWY0Ena4c97PUeSX9i5W3UAfDP0z0FXCTQkoXUl3Q==}
     peerDependencies:
       '@popperjs/core': ^2.0.0
-      react: ^16.8.0 || ^17 || ^18
-      react-dom: ^16.8.0 || ^17 || ^18
+      react: 19.2.4
+      react-dom: 19.2.4
 
   react-redux@9.2.0:
     resolution: {integrity: sha512-ROY9fvHhwOD9ySfrF0wmvu//bKCQ6AeZZq1nJNtbDC+kk5DuSuNX/n6YWYF/SYy7bSba4D4FSz8DJeKY/S/r+g==}
@@ -13023,7 +13048,7 @@ snapshots:
   '@napi-rs/canvas-win32-x64-msvc@0.1.61':
     optional: true
 
-  '@napi-rs/canvas@0.1.61':
+  '@napi-rs/canvas@0.1.61(patch_hash=d232c1154bffd88fa8df40fc91dc36098b29aba725d826c24ce74cfac7803919)':
     optionalDependencies:
       '@napi-rs/canvas-android-arm64': 0.1.61
       '@napi-rs/canvas-darwin-arm64': 0.1.61
@@ -15907,7 +15932,7 @@ snapshots:
       '@testing-library/dom': 10.4.0
       '@testing-library/jest-dom': 6.5.0
       '@testing-library/user-event': 14.5.2(@testing-library/dom@10.4.0)
-      '@vitest/expect': 2.0.5
+      '@vitest/expect': 2.0.5(patch_hash=e8a96f71e52bf903c9f1eadba4740489a0beb48da33db52354adca484fe1f495)
       '@vitest/spy': 2.0.5
       storybook: 8.6.18(bufferutil@4.0.9)(prettier@3.8.3)(supports-color@8.1.1)(utf-8-validate@5.0.10)
 
@@ -15918,7 +15943,7 @@ snapshots:
       '@testing-library/dom': 10.4.0
       '@testing-library/jest-dom': 6.5.0
       '@testing-library/user-event': 14.5.2(@testing-library/dom@10.4.0)
-      '@vitest/expect': 2.0.5
+      '@vitest/expect': 2.0.5(patch_hash=e8a96f71e52bf903c9f1eadba4740489a0beb48da33db52354adca484fe1f495)
       '@vitest/spy': 2.0.5
       storybook: 8.6.18(bufferutil@4.0.9)(prettier@3.8.3)(supports-color@8.1.1)(utf-8-validate@5.0.10)
 
@@ -16199,9 +16224,9 @@ snapshots:
 
   '@types/chai-as-promised@8.0.2':
     dependencies:
-      '@types/chai': 5.2.3
+      '@types/chai': 5.2.3(patch_hash=b1cea4e432957039e7f72a32140d7a718258944078c5d5bdb40ad62b8717cb97)
 
-  '@types/chai@5.2.3':
+  '@types/chai@5.2.3(patch_hash=b1cea4e432957039e7f72a32140d7a718258944078c5d5bdb40ad62b8717cb97)':
     dependencies:
       '@types/deep-eql': 4.0.2
       assertion-error: 2.0.1
@@ -16240,7 +16265,7 @@ snapshots:
 
   '@types/estree@1.0.9': {}
 
-  '@types/fabric@4.5.3': {}
+  '@types/fabric@4.5.3(patch_hash=e5f339ecf72fbab1c91505e7713e127a7184bfe8164aa3a9afe9bf45a0ad6b89)': {}
 
   '@types/fs-extra@11.0.4':
     dependencies:
@@ -16596,12 +16621,12 @@ snapshots:
     dependencies:
       valibot: 1.4.0(typescript@6.0.3)
 
-  '@vitejs/plugin-react@6.0.2(vite@6.4.3(@types/node@24.12.0)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.101.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))':
+  '@vitejs/plugin-react@6.0.2(vite@6.4.3(@types/node@24.12.0)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.101.0)(terser@5.46.1)(tsx@4.21.0(patch_hash=251027c4cc25615da4cf5b54757ba1af5ecae4256a23772bcc2c1284f6aa1251))(yaml@2.9.0))':
     dependencies:
       '@rolldown/pluginutils': 1.0.1
-      vite: 6.4.3(@types/node@24.12.0)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.101.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0)
+      vite: 6.4.3(@types/node@24.12.0)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.101.0)(terser@5.46.1)(tsx@4.21.0(patch_hash=251027c4cc25615da4cf5b54757ba1af5ecae4256a23772bcc2c1284f6aa1251))(yaml@2.9.0)
 
-  '@vitest/expect@2.0.5':
+  '@vitest/expect@2.0.5(patch_hash=e8a96f71e52bf903c9f1eadba4740489a0beb48da33db52354adca484fe1f495)':
     dependencies:
       '@vitest/spy': 2.0.5
       '@vitest/utils': 2.0.5
@@ -17336,7 +17361,7 @@ snapshots:
 
   case-sensitive-paths-webpack-plugin@2.4.0: {}
 
-  casual@1.6.2:
+  casual@1.6.2(patch_hash=b88b5052437cbdc1882137778b76ca5037f71b2a030ae9ef39dc97f51670d599):
     dependencies:
       mersenne-twister: 1.1.0
       moment: 2.30.1
@@ -18110,6 +18135,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  electron@23.3.13(supports-color@8.1.1):
+    dependencies:
+      '@electron/get': 2.0.3(supports-color@8.1.1)
+      '@types/node': 16.18.126
+      extract-zip: 2.0.1(supports-color@8.1.1)
+    transitivePeerDependencies:
+      - supports-color
+
   electron@43.1.1(supports-color@8.1.1):
     dependencies:
       '@electron-internal/extract-zip': 1.0.4
@@ -18773,7 +18806,7 @@ snapshots:
   extsprintf@1.4.1:
     optional: true
 
-  fabric@4.6.0: {}
+  fabric@4.6.0(patch_hash=259e6eff3d60c4a453f7815fca6aa0d3a81842f4efdc4051836812fc1e711e00): {}
 
   fast-deep-equal@3.1.3: {}
 
@@ -19028,7 +19061,7 @@ snapshots:
 
   fs-monkey@1.0.6: {}
 
-  fs-xattr@0.4.0:
+  fs-xattr@0.4.0(patch_hash=325d1e5f73cce8e15671dbd2394e091aadb71600f41d97d1a8cb63960c188112):
     optional: true
 
   fs.realpath@1.0.0: {}
@@ -19268,7 +19301,7 @@ snapshots:
 
   grapheme-splitter@1.0.4: {}
 
-  growing-file@0.1.3:
+  growing-file@0.1.3(patch_hash=1bb085e3fda38f2983114beedc229acf8b0c539736fe73e2e8183dab2df074b4):
     dependencies:
       oop: 0.0.3
 
@@ -20051,7 +20084,7 @@ snapshots:
       jest-process-manager: 0.4.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
       jest-runner: 29.7.0
       nyc: 15.1.0
-      playwright-core: 1.60.0
+      playwright-core: 1.60.0(patch_hash=0d32e74d7c83e28ccbaea73aeaf171e4f4180b2d997e4ec0457aeda2144b651d)
       rimraf: 3.0.2
       uuid: 8.3.2
     transitivePeerDependencies:
@@ -20385,7 +20418,7 @@ snapshots:
       tinyglobby: 0.2.17
       unbash: 3.0.0
       yaml: 2.9.0
-      zod: 4.3.6
+      zod: 4.3.6(patch_hash=ab3dbef13a3a4a50b2a2fcab2bdabd3ef94a4b1607e046308492e88bdd9d5553)
     transitivePeerDependencies:
       - '@emnapi/core'
       - '@emnapi/runtime'
@@ -20879,7 +20912,7 @@ snapshots:
       object.entries: 1.1.9
       semver: 6.3.1
 
-  node-fetch@3.3.2:
+  node-fetch@3.3.2(patch_hash=1dc57b3827aeb8d0a7f3f6c39c51df08119ff45aff99d9a03db2360e99d3a826):
     dependencies:
       data-uri-to-buffer: 4.0.1
       fetch-blob: 3.2.0
@@ -21363,11 +21396,11 @@ snapshots:
     dependencies:
       find-up: 4.1.0
 
-  playwright-core@1.60.0: {}
+  playwright-core@1.60.0(patch_hash=0d32e74d7c83e28ccbaea73aeaf171e4f4180b2d997e4ec0457aeda2144b651d): {}
 
   playwright@1.60.0:
     dependencies:
-      playwright-core: 1.60.0
+      playwright-core: 1.60.0(patch_hash=0d32e74d7c83e28ccbaea73aeaf171e4f4180b2d997e4ec0457aeda2144b651d)
     optionalDependencies:
       fsevents: 2.3.2
 
@@ -21580,7 +21613,7 @@ snapshots:
     dependencies:
       hookified: 2.1.0
 
-  qrcode-generator@2.0.4: {}
+  qrcode-generator@2.0.4(patch_hash=d70b44e0a29e1109f8b55b2a89c4f600bb3907877375cb50d0d363e16a2636ad): {}
 
   qs@6.15.2:
     dependencies:
@@ -21789,7 +21822,7 @@ snapshots:
   react-devtools@7.0.1(bufferutil@4.0.9)(supports-color@8.1.1)(utf-8-validate@5.0.10):
     dependencies:
       cross-spawn: 5.1.0
-      electron: 43.1.1(supports-color@8.1.1)
+      electron: 23.3.13(supports-color@8.1.1)
       internal-ip: 6.2.0
       minimist: 1.2.8
       react-devtools-core: 7.0.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
@@ -23078,7 +23111,7 @@ snapshots:
       minimist: 1.2.8
       strip-bom: 3.0.0
 
-  tsdown@0.22.3(@arethetypeswrong/core@0.18.4)(@typescript/native-preview@7.0.0-dev.20260515.1)(oxc-resolver@11.19.1(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1))(publint@0.3.21)(tsx@4.21.0)(typescript@6.0.3):
+  tsdown@0.22.3(@arethetypeswrong/core@0.18.4)(@typescript/native-preview@7.0.0-dev.20260515.1)(oxc-resolver@11.19.1(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1))(publint@0.3.21)(tsx@4.21.0(patch_hash=251027c4cc25615da4cf5b54757ba1af5ecae4256a23772bcc2c1284f6aa1251))(typescript@6.0.3):
     dependencies:
       ansis: 4.3.1
       cac: 7.0.0
@@ -23098,7 +23131,7 @@ snapshots:
     optionalDependencies:
       '@arethetypeswrong/core': 0.18.4
       publint: 0.3.21
-      tsx: 4.21.0
+      tsx: 4.21.0(patch_hash=251027c4cc25615da4cf5b54757ba1af5ecae4256a23772bcc2c1284f6aa1251)
       typescript: 6.0.3
     transitivePeerDependencies:
       - '@ts-macro/tsc'
@@ -23115,7 +23148,7 @@ snapshots:
       tslib: 1.14.1
       typescript: 6.0.3
 
-  tsx@4.21.0:
+  tsx@4.21.0(patch_hash=251027c4cc25615da4cf5b54757ba1af5ecae4256a23772bcc2c1284f6aa1251):
     dependencies:
       esbuild: 0.27.4
       get-tsconfig: 4.14.0
@@ -23369,7 +23402,7 @@ snapshots:
       extsprintf: 1.4.1
     optional: true
 
-  vite@6.4.3(@types/node@24.12.0)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.101.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0):
+  vite@6.4.3(@types/node@24.12.0)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.101.0)(terser@5.46.1)(tsx@4.21.0(patch_hash=251027c4cc25615da4cf5b54757ba1af5ecae4256a23772bcc2c1284f6aa1251))(yaml@2.9.0):
     dependencies:
       esbuild: 0.25.0
       fdir: 6.5.0(picomatch@4.0.4)
@@ -23384,7 +23417,7 @@ snapshots:
       lightningcss: 1.32.0
       sass: 1.101.0
       terser: 5.46.1
-      tsx: 4.21.0
+      tsx: 4.21.0(patch_hash=251027c4cc25615da4cf5b54757ba1af5ecae4256a23772bcc2c1284f6aa1251)
       yaml: 2.9.0
 
   wait-on@7.2.0(debug@4.4.3(supports-color@8.1.1)):
@@ -23725,4 +23758,4 @@ snapshots:
 
   zod@3.23.8: {}
 
-  zod@4.3.6: {}
+  zod@4.3.6(patch_hash=ab3dbef13a3a4a50b2a2fcab2bdabd3ef94a4b1607e046308492e88bdd9d5553): {}

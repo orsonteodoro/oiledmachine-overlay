@@ -32,7 +32,7 @@ allowedDeprecatedVersions:
   'w3c-hr-time': '1.0.2'
   'whatwg-encoding': '1.0.5 || 2.0.0'
 
-blockExoticSubdeps: false
+blockExoticSubdeps: false # Needed for older electron-builder to avoid [ERR_PNPM_EXOTIC_SUBDEP] Exotic dependency "@electron/node-gyp" (resolved via git-repository) is not allowed in subdependencies when blockExoticSubdeps is enabled
 strictDepBuilds: true
 allowBuilds:
   # Enabled Builds: Use specific version
@@ -64,6 +64,30 @@ allowBuilds:
 
 # Bans or rollbacks
 overrides:
+  '@electron/rebuild>node-gyp': '12.4.0'
   'canvas': '-' # Deny
+  'electron@39.8.1': '-' # Deny multiple install
   'jsdom': '-' # Deny referencing canvas package
+  'react-popper@2.3.0>react-dom': '19.2.4'
+  'react-popper@2.3.0>react': '19.2.4'
+  'thenify-all>thenify': '3.3.1'
+
+patchedDependencies:
+  # Note: Prefer adding without version so that pnpm attempts to re-apply the patch after an upgrade
+  #'@electron/universal': 'patches/@electron__universal.patch'
+  '@napi-rs/canvas@0.1.61': 'patches/@napi-rs__canvas@0.1.61.patch'
+  '@types/chai': 'patches/@types__chai.patch'
+  '@types/fabric@4.5.3': 'patches/@types+fabric+4.5.3.patch'
+  '@vitest/expect@2.0.5': 'patches/@vitest+expect+2.0.5.patch'
+  #'app-builder-lib': 'patches/app-builder-lib.patch'
+  'casual@1.6.2': 'patches/casual+1.6.2.patch'
+  #'dmg-builder': 'patches/dmg-builder.patch'
+  'fabric@4.6.0': 'patches/fabric+4.6.0.patch'
+  'fs-xattr': 'patches/fs-xattr.patch'
+  'growing-file@0.1.3': 'patches/growing-file+0.1.3.patch'
+  'node-fetch@3.3.2': 'patches/node-fetch@3.3.2.patch'
+  'playwright-core': 'patches/playwright-core.patch'
+  'qrcode-generator': 'patches/qrcode-generator.patch'
+  'tsx': 'patches/tsx.patch'
+  'zod@4.3.6': 'patches/zod@4.3.6.patch'
 loglevel: debug

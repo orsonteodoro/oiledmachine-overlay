@@ -120,7 +120,7 @@ SLOT="0"
 RESTRICT="splitdebug binchecks strip mirror" # Prevent slow down and snooping
 IUSE+="
 firejail wayland +X
-ebuild_revision_88
+ebuild_revision_89
 "
 REQUIRED_USE+="
 	|| (
@@ -470,6 +470,10 @@ src_compile() {
 
 	epnpm run "build:emoji-data"
 
+einfo "Building TypeScript"
+	epnpm run "generate"
+	[[ -e "${S}/bundles/config.js" ]] || die "Generate failed"
+
 	# This is required to avoid load time issue.
 	addpredict "/dev/dri"
 	addpredict "/dev/nvidia0"
@@ -481,13 +485,14 @@ src_compile() {
 	addpredict "/dev/dri/card"
 	addpredict "/dev/dri/card0"
 	addpredict "/dev/dri/renderD128"
+	addpredict "/var/lib/portage/home/.cache/dconf"
 	if use X ; then
 ewarn "Generating preload-cache using xvfb."
-		virtx pnpm run build:preload-cache
+		virtx epnpm run "build:preload-cache"
 	elif use wayland ; then
 ewarn "Generating preload-cache is EXPERIMENTAL."
 ewarn "If preload-cache generation fails, enable the X USE flag."
-		virtwl pnpm run build:preload-cache
+		virtwl epnpm run "build:preload-cache"
 	fi
 
 	# Same as `epnpm run "build-linux"`
@@ -505,7 +510,7 @@ ewarn "If preload-cache generation fails, enable the X USE flag."
 #	grep -q -e "⨯" "${T}/build.log" && die "Detected error"
 	[[ -e "dist/linux-unpacked/signal-desktop" ]] || die "Build failed"
 	grep -q -e "ENOENT" "${T}/build.log" && die "Build failed"
-#	grep -q -e "Error: No native build was found" "${T}/build.log" && die "Build failed"
+	grep -q -e "Error: No native build was found" "${T}/build.log" && die "Build failed"
 }
 
 src_install() {
@@ -563,6 +568,7 @@ pkg_postinst() {
 	elog "For using the tray icon on compatible desktop environments, start Signal with"
 	elog " '--start-in-tray' or '--use-tray-icon'."
 }
+# OILEDMACHINE-OVERLAY-TEST:  passed (8.19.0, 20260718, Electron 43.1.1 with Firejail and GPU acceleration off hardening)
 # OILEDMACHINE-OVERLAY-TEST:  passed (8.14.0, 20260610, Electron 42.4.0 with Firejail and GPU acceleration off hardening)
 # OILEDMACHINE-OVERLAY-TEST:  passed (8.11.0, 20260525, Electron 42.2.0, Node (build-time): 24.16.0)
 # OILEDMACHINE-OVERLAY-TEST:  passed (8.8.0, 20250504, Electron 41.5.0)
