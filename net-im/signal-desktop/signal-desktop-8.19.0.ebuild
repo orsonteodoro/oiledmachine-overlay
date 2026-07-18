@@ -120,7 +120,7 @@ SLOT="0"
 RESTRICT="splitdebug binchecks strip mirror" # Prevent slow down and snooping
 IUSE+="
 firejail wayland +X
-ebuild_revision_90
+ebuild_revision_91
 "
 REQUIRED_USE+="
 	|| (
@@ -284,6 +284,14 @@ ewarn "QA:  Remove fabric@<7.2.0: ^7.2.0 and fabric@<7.4.0: ^7.4.0 from override
 ewarn "QA:  Remove fabric@7.2.0 and fabric@7.4.0 from minimumReleaseAgeExclude: and in overrides: sections in pnpm-workspace.yaml"
 ewarn "QA:  Remove electron@<39.8.1: ^39.8.1 from override section in pnpm-lock.yaml"
 ewarn "QA:  Remove electron@39.8.1 from minimumReleaseAgeExclude: and in overrides: sections section in pnpm-workspace.yaml"
+
+ewarn "QA:  Remove shell-quote@1.8.3 in sticker-creator/pnpm-lock.yaml"
+ewarn "QA:  Change shell-quote: 1.8.3 to shell-quote: 1.8.4 in sticker-creator/pnpm-lock.yaml"
+ewarn "QA:  Remove vite@4.5.3 in sticker-creator/pnpm-lock.yaml"
+ewarn "QA:  Manually change vite: 4.5.3(@types/node@22.13.4)(sass@1.62.0) to vite: 6.4.3 in sticker-creator/pnpm-lock.yaml"
+ewarn "QA:  Manually change @vitejs/plugin-react@3.1.0(vite@4.5.3(@types/node@22.13.4)(sass@1.62.0)) to @vitejs/plugin-react@3.1.0(vite@6.4.3) in sticker-creator/pnpm-lock.yaml"
+ewarn "QA:  Manually change specifier: and version: under vite: to specifier: 6.4.3 version: 6.4.3 in sticker-creator/pnpm-lock.yaml"
+
 
 ewarn "QA:  Manually remove electron<38.8.6 from ${S}/pnpm-lock.yaml"
 
