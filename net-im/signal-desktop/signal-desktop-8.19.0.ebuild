@@ -119,8 +119,14 @@ SLOT="0"
 #KEYWORDS="-* amd64" # Unfinished update
 RESTRICT="splitdebug binchecks strip mirror" # Prevent slow down and snooping
 IUSE+="
-firejail wayland X
+firejail wayland +X
 ebuild_revision_88
+"
+REQUIRED_USE+="
+	|| (
+		X
+		wayland
+	)
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -475,9 +481,12 @@ src_compile() {
 	addpredict "/dev/dri/card"
 	addpredict "/dev/dri/card0"
 	addpredict "/dev/dri/renderD128"
-	if [[ -n "${DISPLAY}" ]] ; then
+	if use X ; then
+ewarn "Generating preload-cache using xvfb."
 		virtx pnpm run build:preload-cache
-	else
+	elif use wayland ; then
+ewarn "Generating preload-cache is EXPERIMENTAL."
+ewarn "If preload-cache generation fails, enable the X USE flag."
 		virtwl pnpm run build:preload-cache
 	fi
 
