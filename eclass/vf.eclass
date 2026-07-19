@@ -698,8 +698,14 @@ einfo "UVAR = Uninitialized Variable"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"WC"($|" "|";"|",") ]] ; then
 einfo "WC = Weak Cipher"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"WS"($|" "|";"|",") ]] ; then
-einfo "WS = Weak Security Design or Implementation"
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"WR"($|" "|";"|",") ]] ; then
+einfo "WRNG = Weak CSRNG"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"WSD"($|" "|";"|",") ]] ; then
+einfo "WSD = Weak Security Design"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"WSI"($|" "|";"|",") ]] ; then
+einfo "WSI = Weak Security Implementation"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"WWWC"($|" "|";"|",") ]] ; then
 einfo "WWWC = Write What Where Condition"
