@@ -1,4 +1,4 @@
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -9,16 +9,20 @@ CFLAGS_HARDENED_LANGS="c-lang"
 CFLAGS_HARDENED_USE_CASES="network security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS IO IU NPD OOBR SO UAF"
 
+FALLBACK_COMMIT="00858a9740fd67cbf3b6ee4ba6def1b681e3c9da"
+EGIT_BRANCH="master"
+
 inherit cflags-hardened gnome.org meson-multilib vala xdg
 
 DESCRIPTION="HTTP client/server library for GNOME"
 HOMEPAGE="https://libsoup.gnome.org"
 
 LICENSE="LGPL-2.1+"
-SLOT="3.0"
+PV_MAJOR="3"
+SLOT="${PV_MAJOR}.0"
 
-KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~mips ppc ppc64 ~riscv ~s390 ~sparc x86"
-IUSE="
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
+IUSE+="
 +brotli gssapi gtk-doc +introspection samba ssl sysprof test +vala
 ebuild_revision_9
 "
@@ -63,6 +67,26 @@ PATCHES=(
 	# Disable apache tests until they are usable on Gentoo, bug #326957
 	"${FILESDIR}"/disable-apache-tests.patch
 )
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+	local actual_pv_major=$(grep -E -e "version: " "${S}/meson.build" | head -n 1 | grep -E -o -e "[0-9.]+" | cut -f 1 -d ".")
+	local expected_pv_major="${PV_MAJOR}"
+	if ver_test "${actual_pv_major}" "-ne" "${expected_pv_major}" ; then
+eerror "QA:  Update PV_MAJOR in the ebuild."
+eerror "Actual PV_MAJOR:  ${actual_pv_major}"
+eerror "Expected PV_MAJOR:  ${expected_pv_major}"
+		die
+	fi
+}
 
 src_prepare() {
 	default
