@@ -363,10 +363,6 @@ CHKL_TIMESTAMPS=(
 	"x11-libs/pango-9999"
 )
 
-CHKL_BLACKLIST=(
-	"x11-libs/libdrm-9999"
-)
-
 # One of the major sources of lag comes from dependencies
 # These are strict to match performance to competition or normal builds.
 declare -A CFLAGS_RDEPEND=(
@@ -3342,7 +3338,6 @@ ewarn "The default DNS servers and settings could weaken the privacy."
 einfo "RUSTC:  ${RUSTC}"
 	verify_compiler_flags_hardening
 	chkl_check_many_timestamps
-#	chkl_check_many_live_bans
 }
 
 src_unpack() {
