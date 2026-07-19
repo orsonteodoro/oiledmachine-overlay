@@ -15,7 +15,14 @@ inherit cflags-hardened ${GIT_ECLASS} python-any-r1 meson-multilib
 
 DESCRIPTION="X.Org libdrm library"
 HOMEPAGE="https://dri.freedesktop.org/ https://gitlab.freedesktop.org/mesa/drm"
-if [[ ${PV} != 9999* ]]; then
+if [[ ${PV} == *9999 ]]; then
+	FALLBACK_COMMIT="f9816a42b0d6138851cbe5eb7a33ee1a2f2a15ca"
+	EGIT_BRANCH="main"
+	EGIT_REPO_URI="https://gitlab.freedesktop.org/mesa/drm"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+else
 	SRC_URI="https://dri.freedesktop.org/libdrm/${P}.tar.xz"
 	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86"
 fi
@@ -27,7 +34,10 @@ done
 
 LICENSE="MIT"
 SLOT="0"
-IUSE="${IUSE_VIDEO_CARDS} doc test tools udev valgrind"
+IUSE+="
+${IUSE_VIDEO_CARDS}
+doc test tools udev valgrind
+"
 RESTRICT="!test? ( test )"
 
 COMMON_DEPEND="
@@ -42,6 +52,18 @@ BDEPEND="${PYTHON_DEPS}
 python_check_deps() {
 	use doc || return 0
 	python_has_version "dev-python/docutils[${PYTHON_USEDEP}]"
+}
+
+src_unpack() {
+	if [[ ${PV} == *9999 ]]; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
 }
 
 src_prepare() {
