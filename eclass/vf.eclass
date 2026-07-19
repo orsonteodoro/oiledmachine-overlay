@@ -666,6 +666,8 @@ einfo "UF = Underflow"
 einfo "UI = UI Spoofing"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UM"($|" "|";"|",") ]] ; then
+# See also UPTR, UVAL, UVAR for non ID.
+# UM should typically used when ID possible for proper association/implication.
 einfo "UM = Uninitialized Memory"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UP"($|" "|";"|",") ]] ; then
@@ -678,7 +680,20 @@ einfo "US = Unterminated String"
 einfo "USI = UnSanitized Input"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UV"($|" "|";"|",") ]] ; then
+# Deprecated.  Use UVAL
 einfo "UV = Uninitialized Value"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UPTR"($|" "|";"|",") ]] ; then
+einfo "UPTR = Uninitialized Pointer"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UFNPTR"($|" "|";"|",") ]] ; then
+einfo "UFNPTR = Uninitialized Function Pointer"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UVAL"($|" "|";"|",") ]] ; then
+einfo "UVAL = Uninitialized Value"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UVAR"($|" "|";"|",") ]] ; then
+einfo "UVAR = Uninitialized Variable"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"WC"($|" "|";"|",") ]] ; then
 einfo "WC = Weak Cipher"
