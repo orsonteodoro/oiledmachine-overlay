@@ -21,7 +21,7 @@ DESCRIPTION="High-quality and portable font engine"
 HOMEPAGE="https://www.freetype.org/"
 
 if [[ ${PV} == 9999 ]] ; then
-	FALLBACK_COMMIT="25a08f24cfc0da879d1938352d026532f280b77e"
+	FALLBACK_COMMIT="f01dec5e676847267834b881b25f6e8c79581163"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
 	fi
@@ -60,7 +60,10 @@ fi
 
 LICENSE="|| ( FTL GPL-2+ )"
 SLOT="2"
-IUSE+=" X +adobe-cff brotli bzip2 +cleartype-hinting debug doc fontforge harfbuzz +png static-libs svg utils"
+IUSE+="
+X +adobe-cff brotli bzip2 +cleartype-hinting debug doc fontforge harfbuzz +png static-libs svg utils
+ebuild_revision_1
+"
 
 RDEPEND="
 	>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}]
