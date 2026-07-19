@@ -702,10 +702,8 @@ einfo "WC = Weak Cipher"
 einfo "WRNG = Weak CSRNG"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"WSD"($|" "|";"|",") ]] ; then
+# For Weak Security Implementation (WSI), use ISI
 einfo "WSD = Weak Security Design"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"WSI"($|" "|";"|",") ]] ; then
-einfo "WSI = Weak Security Implementation"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"WWWC"($|" "|";"|",") ]] ; then
 einfo "WWWC = Write What Where Condition"
