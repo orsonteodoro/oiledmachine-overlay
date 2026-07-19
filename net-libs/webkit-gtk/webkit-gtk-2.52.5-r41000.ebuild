@@ -160,6 +160,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/openh264-9999"
 	"media-libs/opus-9999"
 	"media-libs/woff2-9999"
+	"net-libs/libsoup-3.9999"
 	"sys-apps/bubblewrap-9999"
 	"sys-auth/elogind-257.9999"
 	"sys-libs/libseccomp-9999"
@@ -887,7 +888,7 @@ RDEPEND+="
 	>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:=[${MULTILIB_USEDEP}]
 	>=media-libs/libpng-${LIBPNG_PV}:=[${MULTILIB_USEDEP}]
 	>=media-libs/libwebp-${LIBWEBP_PV}:=[${MULTILIB_USEDEP}]
-	>=net-libs/libsoup-3.0.0:=[${MULTILIB_USEDEP},introspection?]
+	>=net-libs/libsoup-${LIBSOUP3_PV}:=[${MULTILIB_USEDEP},introspection?]
 	>=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP},X?]
 	>=x11-libs/gtk+-${GTK3_PV}:3=[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]

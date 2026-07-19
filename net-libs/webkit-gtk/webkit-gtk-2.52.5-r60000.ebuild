@@ -161,6 +161,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/openh264-9999"
 	"media-libs/opus-9999"
 	"media-libs/woff2-9999"
+	"net-libs/libsoup-3.9999"
 	"sys-apps/bubblewrap-9999"
 	"sys-auth/elogind-257.9999"
 	"sys-libs/libseccomp-9999"
