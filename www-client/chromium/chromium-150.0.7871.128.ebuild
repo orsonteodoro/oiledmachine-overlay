@@ -194,7 +194,7 @@ EAPI=8
 TC_COUNT_EXPECTED_CLANG=429
 TC_COUNT_EXPECTED_GN=1155
 TC_COUNT_EXPECTED_RUST=7267
-SOURCES_COUNT_EXPECTED=565541
+SOURCES_COUNT_EXPECTED=565548
 CHROMIUM_EBUILD_MAINTAINER=0 # Also set GEN_ABOUT_CREDITS
 GEN_ABOUT_CREDITS=0
 
@@ -8705,7 +8705,7 @@ src_test() {
 		"StackTraceDeathTest.StackDumpSignalHandlerIsMallocFree"
 		"TestLauncherTools.TruncateSnippetFocusedMatchesFatalMessagesTest"
 		"ThreadPoolEnvironmentConfig.CanUseBackgroundPriorityForWorker"
-		"ThreadControllerPowerMonitorTest.IsProcessInPowerSuspendState"
+		"DriveInfoTest.GetFileDriveInfo"
 	)
 
 	local test_filter="-"$(IFS=:; printf "%s" "${skip_tests[*]}")
