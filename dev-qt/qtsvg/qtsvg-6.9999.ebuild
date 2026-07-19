@@ -8,7 +8,7 @@ CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS IO"
 CXX_STANDARD=17
 
-FALLBACK_COMMIT="f8888c3e8640d48c4be5828962dba0f6cbd8d17e" # Wed, 27 May 2026 16:17:25 +0200
+FALLBACK_COMMIT="c6407493dbd3d09aee90abc2002bfb40a80d66af"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -31,7 +31,9 @@ DESCRIPTION="SVG rendering library for the Qt6 framework"
 if [[ ${QT6_BUILD_TYPE} == release ]]; then
 	KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~loong ~ppc ~ppc64 ~riscv ~x86"
 fi
-
+IUSE+="
+ebuild_revision_1
+"
 RDEPEND="
 	~dev-qt/qtbase-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui,widgets]
 	>=virtual/zlib-${ZLIB_PV}:=
