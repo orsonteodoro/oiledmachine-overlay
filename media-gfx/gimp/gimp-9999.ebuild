@@ -44,7 +44,7 @@ DESCRIPTION="GNU Image Manipulation Program"
 HOMEPAGE="https://www.gimp.org/"
 
 if [[ ${PV} == 9999 ]]; then
-	FALLBACK_COMMIT="7e4cecbc71344ae96da6e1ec78c88bf1a59f0156"
+	FALLBACK_COMMIT="b4b2bd4be172ae002ca66301c0d5672391d3ad92"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://gitlab.gnome.org/GNOME/gimp.git"
 	inherit git-r3
