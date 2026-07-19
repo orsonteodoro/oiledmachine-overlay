@@ -8,7 +8,7 @@ CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CXX_STANDARD=17
 
-FALLBACK_COMMIT="f09ef2ddc2b2151af60aafa98262caa00e22bce0" # Mon, 15 Jun 2026 04:04:02 +0000
+FALLBACK_COMMIT="ae7c18d1e0bdcfce8abc1347a43c9c74ac5a3d37"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -34,7 +34,10 @@ if [[ ${QT6_BUILD_TYPE} == release ]]; then
 	KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~loong ~ppc64 ~riscv ~x86"
 fi
 
-IUSE+=" mng"
+IUSE+="
+mng
+ebuild_revision_1
+"
 
 RDEPEND="
 	~dev-qt/qtbase-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui]
