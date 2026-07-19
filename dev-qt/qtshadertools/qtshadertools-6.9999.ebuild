@@ -5,7 +5,7 @@ EAPI=8
 
 CXX_STANDARD=17
 
-FALLBACK_COMMIT="af0d9c3e0dcd68176b5a5288a5192c12a2d8a188" # Mon, 15 Jun 2026 04:04:14 +0000
+FALLBACK_COMMIT="d25fcc21d8cf9da8d85a9276766a2afcc93892bf"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -28,7 +28,7 @@ DESCRIPTION="Qt APIs and Tools for Graphics Pipelines"
 if [[ ${QT6_BUILD_TYPE} == release ]]; then
 	KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~loong ~ppc ~ppc64 ~riscv ~x86"
 fi
-
+IUSE+=" ebuild_revision_1"
 RDEPEND="
 	~dev-qt/qtbase-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui]
 "
