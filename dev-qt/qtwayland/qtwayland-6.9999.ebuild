@@ -9,7 +9,7 @@ CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data 
 CFLAGS_HARDENED_VTABLE_VERIFY=1
 CXX_STANDARD=17
 
-FALLBACK_COMMIT="4312cfc837823a0bde320f5ec86c2d959005bafa" # Fri, 12 Jun 2026 21:06:40 +0000
+FALLBACK_COMMIT="882935fdbc3b06dc4cd45b8e5181906916403243"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -37,7 +37,10 @@ if [[ ${QT6_BUILD_TYPE} == release ]]; then
 	KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~x86"
 fi
 
-IUSE+=" gnome qml"
+IUSE+="
+gnome qml
+ebuild_revision_1
+"
 
 RDEPEND="
 	>=dev-libs/wayland-${WAYLAND_PV}:=
