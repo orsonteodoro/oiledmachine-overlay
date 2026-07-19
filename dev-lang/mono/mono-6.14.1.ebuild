@@ -31,7 +31,7 @@ UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=1
 
-JEMALLOC_COMMIT="9c1a484e1de990678986b5e4a6c7768dba25e0b2"
+JEMALLOC_COMMIT="c597d7377837337425d2540ae1ced74858159ef7" # 160/160 green checkmarks
 
 BENCHMARKDOTNET_COMMIT="96ed005c57605cb8f005b6941c4d83453912eb75"
 DEBIANSHOOTOUTMONO_COMMIT="3fde2ced806c1fe7eed81120a40d99474fa009f0"
@@ -211,7 +211,7 @@ IUSE+="
 ${TRAINERS[@]}
 doc jemalloc jemalloc-assert jemalloc-custom-cflags jemalloc-default minimal nls
 pax-kernel xen
-ebuild_revision_30
+ebuild_revision_31
 "
 REQUIRED_USE+="
 	jemalloc-assert? (
