@@ -19,7 +19,7 @@ CXX_STANDARD=17
 # 2. A new tagged release on distro overlay.  Currently at 6.11.1
 # 3. A new Chromium bump in qtwebengine.  Currently at 140.0.7339.225
 #
-FALLBACK_COMMIT="add80e776a5ff693f95d3c46fd020e9bd7e19f1f"
+FALLBACK_COMMIT="69b293676d702b4021b60fe7148a21808437c90b"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -352,6 +352,9 @@ src_configure() {
 		-DQT_FEATURE_trivial_auto_var_init_pattern=OFF
 
 		-DQT_INTERNAL_AVOID_OVERRIDING_SYNCQT_CONFIG=ON # would force -O3
+
+		# oiledmachine-overlay changes
+		-DQT_FEATURE_randomgenerator_disable_fallback=ON # It is always security-critical for this ebuild fork.
 	)
 
 	use gui && mycmakeargs+=(
