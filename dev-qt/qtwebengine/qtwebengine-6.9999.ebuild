@@ -16,10 +16,10 @@ CXX_STANDARD=17
 WEB_KERNEL_CONFIG_CHECK_YAMA=1
 PYTHON_COMPAT=( python3_{10..14} )
 
-FALLBACK_COMMIT="ce8c6cb317d3f5308adfd2d1523ba21669b8d7e2"
+FALLBACK_COMMIT="773dd4c98f4c55570c3c573a45ee17f09d41946e"
 
 # See https://github.com/qt/qtwebengine/tree/dev/src for submodule ID
-# See https://github.com/qt/qtwebengine-chromium/blob/fc3a1a7/chromium/chrome/VERSION
+# See https://github.com/qt/qtwebengine-chromium/blob/622496e/chromium/chrome/VERSION
 CHROMIUM_VENDORED_VER="140.0.7339.225"
 CHROMIUM_VENDORED_TIMESTAMP="Oct 22, 2025 4:20 AM PDT"
 
@@ -85,7 +85,7 @@ IUSE+="
 	accessibility +alsa clang bindist custom-cflags designer gcc geolocation
 	+jumbo-build kerberos opengl +pdfium pulseaudio qml screencast
 	+system-icu vaapi vulkan webdriver +widgets
-	ebuild_revision_3
+	ebuild_revision_4
 "
 REQUIRED_USE="
 	^^ (
