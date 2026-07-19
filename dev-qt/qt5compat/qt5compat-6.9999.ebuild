@@ -5,7 +5,7 @@ EAPI=8
 
 CXX_STANDARD=17
 
-FALLBACK_COMMIT="8c177c8ae0d00daf9c5dae7954fc15bdf6bab153" # Fri, 12 Jun 2026 21:06:59 +0000
+FALLBACK_COMMIT="eefa5025da20d74b06a38b59f7e0666fa87721da"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -32,7 +32,7 @@ fi
 
 IUSE+="
 +gui icu qml
-ebuild_revision_1
+ebuild_revision_2
 "
 
 RDEPEND="
