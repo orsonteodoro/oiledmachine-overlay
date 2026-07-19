@@ -18,7 +18,7 @@ CHKL_TIMESTAMPS=(
 inherit autotools cflags-hardened chkl flag-o-matic multilib-minimal secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="6caeb8da9074b71a5339b6d78a832c68207b26cb"
+	FALLBACK_COMMIT="ab9e2a2b7ff19e65f99ae39ffda29f9b9c9ea2f5"
 	EGIT_BRANCH="master"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/lib${P}"
 	EGIT_REPO_URI="https://github.com/libgd/libgd.git"
@@ -39,7 +39,10 @@ PV_MAJOR="2"
 SOVER="3"
 SLOT="${PV_MAJOR}/${SOVER}"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~x64-macos ~x64-solaris"
-IUSE+=" avif cpu_flags_x86_sse fontconfig +jpeg heif +png static-libs test tiff truetype webp xpm zlib"
+IUSE+="
+avif cpu_flags_x86_sse fontconfig +jpeg heif +png static-libs test tiff truetype webp xpm zlib
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 # fontconfig has prefixed font paths, details see bug #518970
