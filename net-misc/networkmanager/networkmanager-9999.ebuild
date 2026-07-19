@@ -302,7 +302,7 @@ eerror "QA: NM_CAPS:  ${NM_CAPS}"
 
 multilib_src_configure() {
 	chkl_check_many_timestamps
-	cflags-hardened_append
+	#cflags-hardened_append
 	# Workaround for LLD on musl systems (bug #959603)
 	append-ldflags $(test-flags-CCLD -Wl,--undefined-version)
 
