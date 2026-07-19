@@ -5,7 +5,7 @@ EAPI=8
 
 CXX_STANDARD=17
 
-FALLBACK_COMMIT="5f47b05daa5c35e7db858b6f89cc8f967e9d7a01" # Fri, 12 Jun 2026 21:06:36 +0000
+FALLBACK_COMMIT="6a8af3d8a23bb27643f8473aabdc553dc2f0a611"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -44,6 +44,7 @@ IUSE+="
 	+assistant designer distancefieldgenerator gles2-only kmap2qmap
 	+linguist opengl pixeltool +qdbus qdoc qml qmlls
 	qtattributionsscanner qtdiag qtplugininfo vulkan +widgets zstd
+	ebuild_revision_1
 "
 # note that some tools do not *require* widgets but will skip a sub-tool
 # if not enabled (e.g. linguist gives lrelease but not the GUI linguist6)
