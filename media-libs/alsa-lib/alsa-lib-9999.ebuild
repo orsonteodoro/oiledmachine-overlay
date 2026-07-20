@@ -9,7 +9,15 @@ inherit autotools multilib-minimal flag-o-matic toolchain-funcs python-single-r1
 
 DESCRIPTION="Advanced Linux Sound Architecture Library"
 HOMEPAGE="https://alsa-project.org/wiki/Main_Page"
-if [[ ${PV} == *_p* ]] ; then
+if [[ ${PV} =~ 9999 ]] ; then
+	FALLBACK_COMMIT="4011688eca48909dd2b8385be55fad3314f1546a"
+	EGIT_BRANCH="master"
+	EGIT_REPO_URI="https://github.com/alsa-project/alsa-lib.git"
+	if [[ "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+elif [[ ${PV} == *_p* ]] ; then
 	# Please set correct commit ID for a snapshot release!
 	COMMIT="7e3a3c2b0a092d0f568ba3c98365030dd91cc877"
 	SRC_URI="https://git.alsa-project.org/?p=${PN}.git;a=snapshot;h=${COMMIT};sf=tgz -> ${P}.tar.gz"
@@ -29,7 +37,7 @@ fi
 LICENSE="LGPL-2.1"
 SLOT="0"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
-IUSE="debug doc python"
+IUSE+=" debug doc python"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
 RDEPEND="
@@ -46,6 +54,18 @@ PATCHES=(
 
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
+}
+
+src_unpack() {
+	if [[ ${PV} =~ 9999 ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
 }
 
 src_prepare() {
