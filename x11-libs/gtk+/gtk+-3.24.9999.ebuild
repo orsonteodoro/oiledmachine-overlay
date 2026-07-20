@@ -13,6 +13,7 @@ GNOME_ORG_MODULE=gtk
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/fribidi-9999"
+	"dev-libs/glib-2.89.9999"
 	"dev-libs/libxslt-9999"
 	"dev-libs/wayland-9999"
 	"media-libs/fontconfig-9999"
