@@ -18,8 +18,8 @@ DESCRIPTION="HTTP client/server library for GNOME"
 HOMEPAGE="https://libsoup.gnome.org"
 
 LICENSE="LGPL-2.1+"
-PV_MAJOR="3"
-SLOT="${PV_MAJOR}.0"
+API_VERSION="3.0"
+SLOT="${API_VERSION}"
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 IUSE+="
@@ -78,12 +78,12 @@ src_unpack() {
 	else
 		unpack ${A}
 	fi
-	local actual_pv_major=$(grep -E -e "version: " "${S}/meson.build" | head -n 1 | grep -E -o -e "[0-9.]+" | cut -f 1 -d ".")
-	local expected_pv_major="${PV_MAJOR}"
-	if ver_test "${actual_pv_major}" "-ne" "${expected_pv_major}" ; then
-eerror "QA:  Update PV_MAJOR in the ebuild."
-eerror "Actual PV_MAJOR:  ${actual_pv_major}"
-eerror "Expected PV_MAJOR:  ${expected_pv_major}"
+	local actual_api_version=$(grep -E -e "apiversion = '[0-9.]+'" "${S}/meson.build" | cut -f 2 -d "'")
+	local expected_api_version="${API_VERSION}"
+	if ver_test "${actual_api_version}" "-ne" "${expected_api_version}" ; then
+eerror "QA:  Update API_VERSION in the ebuild."
+eerror "Actual API_VERSION:  ${actual_api_version}"
+eerror "Expected API_VERSION:  ${expected_api_version}"
 		die
 	fi
 }
