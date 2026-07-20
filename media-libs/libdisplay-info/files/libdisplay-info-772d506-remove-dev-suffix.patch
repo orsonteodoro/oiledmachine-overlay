@@ -1,0 +1,11 @@
+--- a/meson.build.orig	2026-07-20 04:13:09.148414481 -0700
++++ b/meson.build	2026-07-20 04:16:14.725369920 -0700
+@@ -1,7 +1,7 @@
+ project(
+ 	'libdisplay-info',
+ 	'c',
+-	version: '0.4.0-dev',
++	version: '0.3.9999',
+ 	license: 'MIT',
+ 	meson_version: '>= 0.57.0',
+ 	default_options: [

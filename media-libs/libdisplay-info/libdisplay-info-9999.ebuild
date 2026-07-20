@@ -29,6 +29,7 @@ fi
 DESCRIPTION="EDID and DisplayID library"
 HOMEPAGE="https://gitlab.freedesktop.org/emersion/libdisplay-info"
 LICENSE="MIT"
+IUSE+=" ebuild_revision_1"
 BDEPEND="
 	${PYTHON_DEPS}
 	sys-apps/hwdata
@@ -37,6 +38,9 @@ BDEPEND="
 "
 
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/emersion.asc"
+PATCHES=(
+	"${FILESDIR}/${PN}-772d506-remove-dev-suffix.patch"
+)
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
@@ -56,4 +60,5 @@ eerror "QA:  Actual slot:  ${actual_slot}"
 	else
 		unpack ${A}
 	fi
+	die
 }
