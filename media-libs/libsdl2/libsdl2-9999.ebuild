@@ -11,11 +11,37 @@ MY_P="SDL2-${PV/_pre}"
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DF HO"
 
-inherit cflags-hardened check-compiler-switch cmake flag-o-matic linux-info toolchain-funcs multilib-minimal
+CHKL_TIMESTAMPS=(
+	"dev-libs/libusb-9999"
+	"dev-libs/wayland-9999"
+	"media-libs/alsa-lib-9999"
+	"media-libs/libpulse-9999"
+	"media-libs/mesa-9999"
+	"media-sound/sndio-9999"
+	"media-video/pipewire-9999"
+	"sys-apps/dbus-9999"
+	"x11-libs/libdrm-9999"
+	"x11-libs/libX11-9999"
+	"x11-libs/libXcursor-9999"
+)
+
+inherit cflags-hardened check-compiler-switch chkl cmake flag-o-matic linux-info toolchain-funcs multilib-minimal secure-version
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="76847b46be9cb461b7a289cc004fe3d3d10814f2"
+	EGIT_BRANCH="SDL2"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/${MY_P}"
+	EGIT_REPO_URI="https://github.com/libsdl-org/SDL.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	SRC_URI="https://www.libsdl.org/release/${MY_P}.tar.gz"
+fi
 
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~x86"
 S="${WORKDIR}/${MY_P}"
-SRC_URI="https://www.libsdl.org/release/${MY_P}.tar.gz"
 
 DESCRIPTION="Simple Direct Media Layer"
 HOMEPAGE="
@@ -196,72 +222,71 @@ REQUIRED_USE="
 # https://github.com/libsdl-org/SDL/blob/release-2.30.0/docs/README-linux.md
 # U 22.04 ; CI tag release-2.30.x
 # libudev version relaxed
-MESA_PV="22.2.5"
 CDEPEND="
-	virtual/libiconv[${MULTILIB_USEDEP}]
+	virtual/libiconv:*[${MULTILIB_USEDEP}]
 	alsa? (
-		>=media-libs/alsa-lib-1.2.6.1[${MULTILIB_USEDEP}]
+		>=media-libs/alsa-lib-${ALSA_LIB_PV}:=[${MULTILIB_USEDEP}]
 	)
 	dbus? (
-		>=sys-apps/dbus-1.12.20[${MULTILIB_USEDEP}]
+		>=sys-apps/dbus-${DBUS_PV}:=[${MULTILIB_USEDEP}]
 	)
 	hidapi-libusb? (
-		>=dev-libs/libusb-1.0.25[${MULTILIB_USEDEP}]
+		>=dev-libs/libusb-${LIBUSB_PV}:=[${MULTILIB_USEDEP}]
 	)
 	ibus? (
-		>=app-i18n/ibus-1.5.26
+		>=app-i18n/ibus-1.5.26:=
 	)
 	jack? (
-		virtual/jack[${MULTILIB_USEDEP}]
+		virtual/jack:*[${MULTILIB_USEDEP}]
 	)
 	kms? (
-		>=x11-libs/libdrm-2.4.113[${MULTILIB_USEDEP}]
-		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},gbm(+)]
+		>=x11-libs/libdrm-${LIBDRM_PV}:=[${MULTILIB_USEDEP}]
+		>=media-libs/mesa-${MESA_PV}:=[${MULTILIB_USEDEP},gbm(+)]
 	)
 	libdecor? (
-		>=gui-libs/libdecor-0.1.0[${MULTILIB_USEDEP}]
+		>=gui-libs/libdecor-0.1.0:=[${MULTILIB_USEDEP}]
 	)
 	libsamplerate? (
-		>=media-libs/libsamplerate-0.2.2[${MULTILIB_USEDEP}]
+		>=media-libs/libsamplerate-${LIBSAMPLERATE_PV}:=[${MULTILIB_USEDEP}]
 	)
 	nas? (
-		>=media-libs/nas-1.9.4[${MULTILIB_USEDEP}]
-		>=x11-libs/libXt-1.2.1[${MULTILIB_USEDEP}]
+		>=media-libs/nas-${NAS_PV}:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libXt-${LIBXT_PV}:=[${MULTILIB_USEDEP}]
 	)
 	opengl? (
-		>=virtual/glu-9.0-r1[${MULTILIB_USEDEP}]
-		>=virtual/opengl-7.0-r1[${MULTILIB_USEDEP}]
+		>=virtual/glu-9.0-r1:*[${MULTILIB_USEDEP}]
+		>=virtual/opengl-7.0-r1:*[${MULTILIB_USEDEP}]
 	)
 	openurl? (
-		>=x11-misc/xdg-utils-1.1.3
+		>=x11-misc/xdg-utils-${XDG_UTILS_PV}:=
 	)
 	pipewire? (
-		>=media-video/pipewire-0.3.48:=[${MULTILIB_USEDEP}]
+		>=media-video/pipewire-${PIPEWIRE_PV}:=[${MULTILIB_USEDEP}]
 	)
 	pulseaudio? (
-		>=media-libs/libpulse-15.99.1[${MULTILIB_USEDEP}]
+		>=media-libs/libpulse-${LIBPULSE_PV}:=[${MULTILIB_USEDEP}]
 	)
 	sndio? (
-		>=media-sound/sndio-1.8.1:=[${MULTILIB_USEDEP}]
+		>=media-sound/sndio-${SNDIO_PV}:=[${MULTILIB_USEDEP}]
 	)
 	udev? (
 		>=virtual/libudev-232-r8:=[${MULTILIB_USEDEP}]
 	)
 	wayland? (
-		>=dev-libs/wayland-1.20.0[${MULTILIB_USEDEP}]
-		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},egl(+),gles2(+),opengl,wayland]
-		>=x11-libs/libxkbcommon-1.4.0[${MULTILIB_USEDEP}]
-		gui-libs/libdecor[${MULTILIB_USEDEP}]
+		>=dev-libs/wayland-${WAYLAND_PV}:=[${MULTILIB_USEDEP}]
+		>=media-libs/mesa-${MESA_PV}:=[${MULTILIB_USEDEP},egl(+),gles2(+),opengl,wayland]
+		>=x11-libs/libxkbcommon-1.4.0:=[${MULTILIB_USEDEP}]
+		gui-libs/libdecor:=[${MULTILIB_USEDEP}]
 	)
 	X? (
-		>=x11-libs/libX11-1.7.5[${MULTILIB_USEDEP}]
-		>=x11-libs/libXcursor-1.2.0[${MULTILIB_USEDEP}]
-		>=x11-libs/libXext-1.3.4[${MULTILIB_USEDEP}]
-		>=x11-libs/libXfixes-6.0.0[${MULTILIB_USEDEP}]
-		>=x11-libs/libXi-1.8[${MULTILIB_USEDEP}]
-		>=x11-libs/libXrandr-1.5.2[${MULTILIB_USEDEP}]
+		>=x11-libs/libX11-${LIBX11_PV}:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libXcursor-${LIBXCURSOR_PV}:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libXext-${LIBXEXT_PV}:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libXfixes-${LIBXFIXES_PV}:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libXi-${LIBXI_PV}:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libXrandr-${LIBXRANDR_PV}:=[${MULTILIB_USEDEP}]
 		xscreensaver? (
-			>=x11-libs/libXScrnSaver-1.2.3[${MULTILIB_USEDEP}]
+			>=x11-libs/libXScrnSaver-1.2.3:=[${MULTILIB_USEDEP}]
 		)
 	)
 "
@@ -271,35 +296,35 @@ RDEPEND="
 		>=app-i18n/fcitx-4.2.9.8:*
 	)
 	gles1? (
-		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},gles1(+)]
+		>=media-libs/mesa-${MESA_PV}:=[${MULTILIB_USEDEP},gles1(+)]
 	)
 	gles2? (
-		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},gles2(+)]
+		>=media-libs/mesa-${MESA_PV}:=[${MULTILIB_USEDEP},gles2(+)]
 	)
 	vulkan? (
-		virtual/vulkan[${MULTILIB_USEDEP}]
-		media-libs/vulkan-loader[${MULTILIB_USEDEP}]
+		virtual/vulkan:=[${MULTILIB_USEDEP}]
+		>=media-libs/vulkan-loader-${VULKAN_LOADER_PV}:=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
 	${CDEPEND}
 	gles1? (
-		media-libs/libglvnd[${MULTILIB_USEDEP}]
+		media-libs/libglvnd:=[${MULTILIB_USEDEP}]
 	)
 	gles2? (
-		media-libs/libglvnd[${MULTILIB_USEDEP}]
+		media-libs/libglvnd:=[${MULTILIB_USEDEP}]
 	)
 	ibus? (
-		>=dev-libs/glib-2.72.1:2[${MULTILIB_USEDEP}]
+		>=dev-libs/glib-2.72.1:=[${MULTILIB_USEDEP}]
 	)
 	test? (
-		x11-libs/libX11[${MULTILIB_USEDEP}]
+		x11-libs/libX11:=[${MULTILIB_USEDEP}]
 	)
 	vulkan? (
-		dev-util/vulkan-headers
+		>=dev-util/vulkan-headers-${VULKAN_LOADER_PV}:=
 	)
 	X? (
-		x11-base/xorg-proto
+		x11-base/xorg-proto:=
 	)
 "
 BDEPEND="
@@ -320,10 +345,23 @@ MULTILIB_WRAPPED_HEADERS=(
 	/usr/include/SDL2/SDL_platform.h
 )
 PATCHES=(
+	"${FILESDIR}"/libsdl2-2.32.0-fix-tests-for-disabled-vulkan-and-gles.patch
 )
 
 pkg_setup() {
 	check-compiler-switch_start
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
 }
 
 src_prepare() {
@@ -340,6 +378,7 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	chkl_check_many_timestamps
 	use custom-cflags || strip-flags
 
 	check-compiler-switch_end
