@@ -1,0 +1,14 @@
+diff '--color=auto' -urp fontconfig-9999.orig/test/meson.build fontconfig-9999/test/meson.build
+--- fontconfig-9999.orig/test/meson.build	2026-07-19 19:13:34.552927767 -0700
++++ fontconfig-9999/test/meson.build	2026-07-19 19:15:26.226659030 -0700
+@@ -99,7 +99,7 @@ else
+                              'out.expected')
+ endif
+ 
+-if pytest.found()
++if false
+   pytest_args = ['--tap', '-vv', '--assert=plain']
+   if not get_option('tests-external-fonts').allowed()
+     pytest_args += ['-m', 'not network']
+Only in fontconfig-9999/test: meson.build.orig
+Only in fontconfig-9999/test: meson.build.rej

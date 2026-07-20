@@ -9,25 +9,38 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF"
 PYTHON_COMPAT=( python3_{10..14} )
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/expat-9999"		# Bumped live/*DEPENDS to latest non-vulnerable
-	"media-libs/freetype-9999"	# Bumped live/*DEPENDS to latest non-vulnerable
+	"dev-libs/expat-9999"
+	"dev-libs/json-c-9999"
+	"media-libs/freetype-9999"
+	"sys-apps/util-linux-9999"
 )
 
-inherit cflags-hardened eapi9-ver multilib meson-multilib python-any-r1 readme.gentoo-r1
+inherit cflags-hardened eapi9-ver multilib meson-multilib python-any-r1 readme.gentoo-r1 secure-version
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="08441e56c98a08a39e2b20835d420c4bcc031595"
+	EGIT_BRANCH="main"
+	EGIT_REPO_URI="https://gitlab.freedesktop.org/fontconfig/fontconfig.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	SRC_URI="
+https://gitlab.freedesktop.org/api/v4/projects/890/packages/generic/fontconfig/${PV}/${P}.tar.xz
+https://fontconfig.org/release/${P}.tar.xz
+	"
+fi
 
 DESCRIPTION="A library for configuring and customizing font access"
 HOMEPAGE="https://fontconfig.org/"
-SRC_URI="
-	https://gitlab.freedesktop.org/api/v4/projects/890/packages/generic/fontconfig/${PV}/${P}.tar.xz
-	https://fontconfig.org/release/${P}.tar.xz
-"
 
 LICENSE="MIT"
 SLOT="1.0"
 if ! [[ $(ver_cut 3) -ge 90 ]] ; then
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
 fi
-IUSE="doc nls test"
+IUSE+=" doc nls test"
 RESTRICT="!test? ( test )"
 
 # - Check minimum freetype & other deps on bumps. See
@@ -44,16 +57,16 @@ RESTRICT="!test? ( test )"
 #   It might become an optional(?) runtime dep in future though. Who knows.
 #   Keep an eye on it.
 RDEPEND="
-	>=dev-libs/expat-9999[${MULTILIB_USEDEP}]
-	>=media-libs/freetype-9999[${MULTILIB_USEDEP}]
-	virtual/libintl[${MULTILIB_USEDEP}]
-	!elibc_Darwin? ( !elibc_SunOS? ( sys-apps/util-linux[${MULTILIB_USEDEP}] ) )
-	elibc_Darwin? ( sys-libs/native-uuid )
-	elibc_SunOS? ( sys-libs/libuuid )
+	>=dev-libs/expat-${EXPAT_PV}:=[${MULTILIB_USEDEP}]
+	>=media-libs/freetype-${FREETYPE_PV}:=[${MULTILIB_USEDEP}]
+	virtual/libintl:*[${MULTILIB_USEDEP}]
+	!elibc_Darwin? ( !elibc_SunOS? ( >=sys-apps/util-linux-${UTIL_LINUX_PV}:=[${MULTILIB_USEDEP}] ) )
+	elibc_Darwin? ( sys-libs/native-uuid:= )
+	elibc_SunOS? ( sys-libs/libuuid:= )
 "
 DEPEND="
 	${RDEPEND}
-	test? ( dev-libs/json-c )
+	test? ( >=dev-libs/json-c-${JSON_C_PV}:= )
 "
 BDEPEND="
 	${PYTHON_DEPS}
@@ -75,7 +88,7 @@ PATCHES=(
 	# bug #130466 + make liberation default
 	"${FILESDIR}"/${PN}-2.14.0-latin-update.patch
 	# Avoid network access and unpackaged pytest-tap
-	"${FILESDIR}"/${PN}-2.18.1-network-test.patch
+	"${FILESDIR}"/${PN}-08441e5-network-test.patch
 	# Fix build failure with -ggdb3
 	"${FILESDIR}"/${PN}-2.17.0-macro-preprocess.patch
 
@@ -86,6 +99,18 @@ DOC_CONTENTS="Please make fontconfig configuration changes using
 \`eselect fontconfig\`. Any changes made to /etc/fonts/fonts.conf will be
 overwritten. If you need to reset your configuration to upstream defaults,
 delete the directory ${EROOT}/etc/fonts/conf.d/ and re-emerge fontconfig."
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+}
 
 src_prepare() {
 	default
