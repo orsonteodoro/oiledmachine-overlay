@@ -1654,6 +1654,7 @@ RDEPEND+="
 	${CARGO_BINDINGS_DEPENDS_GLIB}
 	${PATENT_STATUS_RDEPEND}
 	~media-plugins/gst-plugins-meta-${GST_PV}:=[${MULTILIB_USEDEP}]
+	~media-libs/gst-devtools-${GST_PV}:=[${MULTILIB_USEDEP},introspection,validate]
 	analytics? (
 		~media-plugins/gst-plugins-analyticsoverlay-${GST_PV}:=[${MULTILIB_USEDEP}]
 	)
@@ -1930,10 +1931,6 @@ src_prepare() {
 		-e "s|csound64|csound|g" \
 		"meson.build" \
 		|| die
-
-	if ! use validate ; then
-		sed -i -e "/validate-plugins/d" "meson.build" || die
-	fi
 }
 
 multilib_src_configure() {
