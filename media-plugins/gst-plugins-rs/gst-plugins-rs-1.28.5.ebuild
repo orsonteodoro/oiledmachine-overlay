@@ -1979,9 +1979,17 @@ einfo "emesonargs:  ${emesonargs[@]}"
 	meson_src_configure
 }
 
+src_configure() {
+	multilib-minimal_src_configure
+}
+
 multilib_src_compile() {
 # DO NOT REMOVE
 	meson_src_compile
+}
+
+src_compile() {
+	multilib-minimal_src_compile
 }
 
 multilib_src_install() {
@@ -2032,6 +2040,10 @@ multilib_src_test() {
 
 multilib_src_install_all() {
 	einstalldocs
+}
+
+src_install() {
+	multilib-minimal_src_install
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
