@@ -60,5 +60,4 @@ eerror "QA:  Actual slot:  ${actual_slot}"
 	else
 		unpack ${A}
 	fi
-	die
 }
