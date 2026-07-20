@@ -12,6 +12,7 @@ CHKL_TIMESTAMPS=(
 	"app-accessibility/espeak-ng-9999"
 	"dev-libs/dotconf-9999"
 	"dev-libs/glib-2.89.9999"
+	"media-libs/alsa-lib-9999"
 	"media-libs/libpulse-9999"
 	"media-libs/libsndfile-9999"
 	"media-video/pipewire-9999"

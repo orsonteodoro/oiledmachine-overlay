@@ -15,6 +15,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/glib-2.89.9999"
 	"dev-qt/qtbase-6.9999"
 	"gui-libs/gtk-4.23.9999"
+	"media-libs/alsa-lib-9999"
 	"media-libs/mesa-9999"
 	"net-misc/curl-9999"
 	"net-print/cups-9999"

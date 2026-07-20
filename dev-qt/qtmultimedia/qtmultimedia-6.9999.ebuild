@@ -23,6 +23,7 @@ LLVM_COMPAT=(
 CHKL_TIMESTAMPS=(
 	"dev-libs/glib-2.89.9999"
 	"dev-qt/qtbase-6.9999"
+	"media-libs/alsa-lib-9999"
 	"media-libs/libpulse-9999"
 	"media-libs/libva-9999"
 	"media-video/ffmpeg-9999"

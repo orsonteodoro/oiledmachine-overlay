@@ -30,6 +30,7 @@ CHKL_TIMESTAMPS+=(
 	"dev-libs/expat-9999"
 	"dev-libs/glib-2.89.9999"
 	"dev-libs/wayland-9999"
+	"media-libs/alsa-lib-9999"
 	"media-libs/libpulse-9999"
 	"media-libs/mesa-9999"
 	"net-misc/wget-9999"

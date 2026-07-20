@@ -50,6 +50,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/libxslt-9999"
 	"dev-qt/qtbase-6.9999"
 	"dev-qt/qtdeclarative-6.9999"
+	"media-libs/alsa-lib-9999"
 	"media-libs/fontconfig-9999"
 	"media-libs/harfbuzz-9999"
 	"media-libs/lcms-9999"

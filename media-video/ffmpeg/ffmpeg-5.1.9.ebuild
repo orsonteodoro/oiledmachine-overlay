@@ -420,6 +420,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-3.4.9999"
 	"dev-libs/openssl-3.0.9999"
 	"gnome-base/librsvg-9999"
+	"media-libs/alsa-lib-9999"
 	"media-libs/chromaprint-9999"
 	"media-libs/dav1d-9999"
 	"media-libs/fontconfig-9999"

@@ -78,6 +78,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/wayland-9999"
 	"dev-qt/qtbase-6.9999"
 	"dev-qt/qtsvg-6.9999"
+	"media-libs/alsa-lib-9999"
 	"media-libs/libva-9999"
 	"media-libs/rnnoise-9999"
 	"media-libs/x264-9999"

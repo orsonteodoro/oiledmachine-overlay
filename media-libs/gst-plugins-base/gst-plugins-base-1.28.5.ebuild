@@ -45,6 +45,7 @@ GST_ORG_MODULE="gst-plugins-base"
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/wayland-9999"
+	"media-libs/alsa-lib-9999"
 	"media-libs/libpng-9999"
 	"media-libs/libjpeg-turbo-9999"
 	"media-libs/libogg-9999"

@@ -31,6 +31,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/libcdio-paranoia-9999"
 	"dev-lang/mujs-9999"
 	"dev-libs/wayland-9999"
+	"media-libs/alsa-lib-9999"
 	"media-libs/lcms-9999"
 	"media-libs/libdisplay-info-9999"
 	"media-libs/libjpeg-turbo-9999"

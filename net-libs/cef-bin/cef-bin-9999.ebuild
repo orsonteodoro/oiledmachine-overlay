@@ -41,13 +41,7 @@ CEF_BETA_VER="148.0.7778.40" # Upstream suggested tested
 # The -bin in ${PN} comes from the prebuilt chromium
 
 CXX_STANDARD=20
-FFMPEG_SLOT="0/59.61.61" # Same as 7.1
-GLIB_PV="2.66.8"
 GCC_PV="10.2.1" # Minimum
-GTK3_PV="3.24.24"
-GTK4_PV="4.8.3"
-LIBXI_PV="1.7.10"
-MESA_PV="20.3.5"
 VIRTUALX_REQUIRED="manual"
 WEB_KERNEL_CONFIG_CHECK_YAMA=1
 
@@ -63,7 +57,24 @@ LLVM_COMPAT=(
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
-inherit chromium-2 cmake flag-o-matic libcxx-slot libstdcxx-slot linux-info sandbox-changes virtualx web-kernel-config
+CHKL_TIMESTAMPS=(
+	"app-accessibility/at-spi2-core-9999"
+	"app-crypt/rhash-9999"
+	"app-misc/jq-9999"
+	"dev-libs/expat-9999"
+	"dev-libs/glib-2.89.9999"
+	"media-libs/alsa-lib-9999"
+	"net-print/cups-9999"
+	"sys-apps/dbus-9999"
+	"x11-base/xorg-server-9999"
+	"x11-libs/cairo-9999"
+	"x11-libs/gtk+-3.24.9999"
+	"x11-libs/libX11-9999"
+	"x11-libs/libxcb-9999"
+	"x11-libs/libxkbcommon-9999"
+)
+
+inherit chkl chromium-2 cmake flag-o-matic libcxx-slot libstdcxx-slot linux-info sandbox-changes secure-version virtualx web-kernel-config
 
 REQUIRED_USE=""
 KEYWORDS="~arm ~arm64 ~amd64"
@@ -139,48 +150,45 @@ REQUIRED_USE+="
 # *DEPENDs based on install-build-deps.sh
 # libcef alone uses aura not gtk
 RDEPEND+="
-	app-accessibility/at-spi2-core
-	>=dev-libs/glib-${GLIB_PV}:2
-	dev-libs/glib:=
-	>=dev-libs/expat-2.2.10
-	>=dev-libs/nspr-4.38.2
-	>=dev-libs/nss-3.125
-	>=media-libs/alsa-lib-1.2.4
+	>=app-accessibility/at-spi2-core-${AT_SPI2_CORE_PV}
+	>=dev-libs/glib-${GLIB_PV}
+	>=dev-libs/expat-${EXPAT_PV}
+	>=dev-libs/nspr-${NSPR_PV}
+	>=dev-libs/nss-${NSS_PV}
+	>=media-libs/alsa-lib-${ALSA_LIB_PV}
 	>=media-libs/mesa-${MESA_PV}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},gbm(+)]
-	media-libs/mesa:=
-	media-libs/libglvnd
-	>=net-print/cups-2.3.3
-	sys-apps/dbus
+	>=media-libs/libglvnd-${LIBGLVND_PV}
+	>=net-print/cups-${CUPS_PV}
+	>=sys-apps/dbus-${DBUS_PV}
 	>=sys-devel/gcc-${GCC_PV}[cxx(+)]
-	sys-libs/glibc
-	>=x11-libs/cairo-1.16.0
-	>=x11-libs/pango-1.46.2
+	>=sys-libs/glibc-${GLIBC_PV}
+	>=x11-libs/cairo-${CAIRO_PV}
+	>=x11-libs/pango-${PANGO_PV}
 	virtual/udev
-	>=x11-libs/libX11-1.7.2
-	>=x11-libs/libxcb-1.14
+	>=x11-libs/libX11-${LIBX11_PV}
+	>=x11-libs/libxcb-${LIBXCB_PV}
 	>=x11-libs/libXcomposite-0.4.5
 	>=x11-libs/libXdamage-1.1.5
-	>=x11-libs/libXext-1.3.3
-	>=x11-libs/libXfixes-5.0.3
-	>=x11-libs/libxkbcommon-1.0.3
-	>=x11-libs/libXrandr-1.5.1
+	>=x11-libs/libXext-${LIBXEXT_PV}
+	>=x11-libs/libXfixes-${LIBXFIXES_PV}
+	>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}
+	>=x11-libs/libXrandr-${LIBXRANDR_PV}
 	cefclient? (
 		>=x11-libs/gtk+-${GTK3_PV}:3
-		x11-libs/gtk+:=
 	)
 "
 DEPEND+="
 	${RDEPEND}
 "
 INTEGRITY_CHECK_BDEPEND="
-	app-crypt/rhash
-	app-misc/jq
+	>=app-crypt/rhash-${RHASH_PV}
+	>=app-misc/jq-${JQ_PV}
 " # From ebuild dev
 BDEPEND+="
 	${INTEGRITY_CHECK_BDEPEND}
 	>=dev-build/cmake-3.21
 	test? (
-		x11-base/xorg-server[xvfb]
+		>=x11-base/xorg-server-${XORG_SERVER_PV}[xvfb]
 		x11-apps/xhost
 	)
 "
@@ -675,6 +683,7 @@ einfo "CMAKE_USE_DIR=${CMAKE_USE_DIR}"
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	export CMAKE_USE_DIR=$(get_S_abi)
 	export BUILD_DIR=$(get_S_abi)
 	strip-unsupported-flags

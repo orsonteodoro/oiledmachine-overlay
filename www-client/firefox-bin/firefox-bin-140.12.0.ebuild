@@ -34,6 +34,7 @@ MOZ_P_DISTFILES="${MOZ_PN}-${MOZ_PV_DISTFILES}"
 CHKL_TIMESTAMPS=(
 	"app-accessibility/at-spi2-core-9999"
 	"dev-libs/glib-2.89.9999"
+	"media-libs/alsa-lib-9999"
 	"media-libs/freetype-9999"
 	"sys-apps/dbus-9999"
 	"sys-libs/libselinux-9999"

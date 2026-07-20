@@ -13,6 +13,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-3.5.9999"
 	"dev-libs/openssl-3.4.9999"
 	"dev-libs/openssl-3.0.9999"
+	"media-libs/alsa-lib-9999"
 	"media-libs/libpulse-9999"
 	"media-libs/libsndfile-9999"
 	"net-dns/avahi-9999"

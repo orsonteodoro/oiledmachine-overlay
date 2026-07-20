@@ -303,6 +303,7 @@ CHKL_TIMESTAMPS=(
 	"dev-cpp/highway-9999"
 	"dev-cpp/simdutf-9999"
 	"dev-db/sqlite-9999"
+	"media-libs/alsa-lib-9999"
 	"dev-libs/crc32c-9999"
 	"dev-libs/expat-9999"
 	"dev-libs/flatbuffers-9999"

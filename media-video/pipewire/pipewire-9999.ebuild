@@ -40,6 +40,7 @@ CHKL_TIMESTAMPS=(
 	"sys-auth/elogind-257.9999"
 	"sys-apps/dbus-9999"
 	"sys-apps/systemd-9999"
+	"media-libs/alsa-lib-9999"
 	"media-libs/libpulse-9999"
 	"media-libs/libsndfile-9999"
 	"media-libs/opus-9999"

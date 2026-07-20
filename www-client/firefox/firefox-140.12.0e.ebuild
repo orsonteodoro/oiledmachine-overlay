@@ -221,6 +221,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/nss-9999"
 	"dev-libs/wayland-9999"
 	"media-gfx/graphite2-9999"
+	"media-libs/alsa-lib-9999"
 	"media-libs/dav1d-9999"
 	"media-libs/freetype-9999"
 	"media-libs/harfbuzz-9999"

@@ -147,6 +147,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-3.0.9999"
 	"dev-libs/wayland-9999"
 	"gui-libs/gtk-4.23.9999"
+	"media-libs/alsa-lib-9999"
 	"media-libs/dav1d-9999"
 	"media-libs/fontconfig-9999"
 	"media-libs/freetype-9999"
