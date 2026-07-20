@@ -3,15 +3,12 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="network security-critical server untrusted-data"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO"
-
 CHKL_TIMESTAMPS=(
 	"dev-libs/glib-2.89.9999"
 	"x11-libs/gtk+-3.24.9999"
 )
 
-inherit cflags-hardened check-compiler-switch chkl flag-o-matic secure-version gstreamer-meson
+inherit check-compiler-switch chkl flag-o-matic secure-version gstreamer-meson
 
 KEYWORDS="~amd64 ~arm64 ~x86"
 
@@ -65,7 +62,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
 
-	cflags-hardened_append
 	chkl_check_many_timestamps
 	local emesonargs=(
 		$(meson_feature cairo)
