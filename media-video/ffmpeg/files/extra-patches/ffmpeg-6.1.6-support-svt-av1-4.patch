@@ -1,0 +1,15 @@
+# This patch is based on an AI suggested fix.
+--- a/libavcodec/libsvtav1.c.orig	2026-07-20 10:08:36.876022212 -0700
++++ b/libavcodec/libsvtav1.c	2026-07-20 10:19:30.390939309 -0700
+@@ -195,7 +195,11 @@ static int config_enc_params(EbSvtAv1Enc
+     } else if (svt_enc->qp > 0) {
+         param->qp                   = svt_enc->qp;
+         param->rate_control_mode    = 0;
++#if SVT_AV1_CHECK_VERSION(4, 0, 0)
++        param->aq_mode = 0;
++#else
+         param->enable_adaptive_quantization = 0;
++#endif
+     }
+ 
+     desc = av_pix_fmt_desc_get(avctx->pix_fmt);

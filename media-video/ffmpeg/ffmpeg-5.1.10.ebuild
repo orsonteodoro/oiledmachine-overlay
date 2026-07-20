@@ -1221,6 +1221,7 @@ PATCHES=(
 	"${FILESDIR}/extra-patches/${PN}-6.0.1-convert_from_tensorflow-tensorflow2-compat.patch"
 	"${FILESDIR}/extra-patches/${PN}-5.1.6-glslang-fix-configure-test.patch"
 	"${FILESDIR}/extra-patches/${PN}-6.1.3-svt-av1-backport-d1ed5c0.patch"
+	"${FILESDIR}/extra-patches/${PN}-6.1.6-support-svt-av1-4.patch"
 )
 
 get_av_device_ids() {
