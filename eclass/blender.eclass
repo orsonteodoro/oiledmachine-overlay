@@ -27,7 +27,7 @@ LTS_VERSIONS=(
 	"4.5"
 )
 
-inherit cflags-hardened check-compiler-switch cuda check-reqs cmake cython dhms
+inherit cflags-hardened check-compiler-switch chkl cuda check-reqs cmake cython dhms
 inherit ffmpeg fix-rpath flag-o-matic flag-o-matic-om hip-versions llvm pax-utils
 inherit python-single-r1 rocm toolchain-funcs xdg optfeature
 

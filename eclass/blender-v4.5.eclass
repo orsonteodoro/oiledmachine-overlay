@@ -16,25 +16,25 @@
 # the multiple LLVM bug.
 
 # For versioning see:
-# https://github.com/blender/blender/blob/v4.5.10/source/blender/blenkernel/BKE_blender_version.h
+# https://github.com/blender/blender/blob/v4.5.11/source/blender/blenkernel/BKE_blender_version.h
 
 # Keep dates and links updated to speed up releases and decrease maintenance time cost.
 # No need to look past those dates.
 
 # Last change was Oct 27, 2025 for:
-# https://github.com/blender/blender/blob/v4.5.10/build_files/build_environment/install_linux_packages.py
+# https://github.com/blender/blender/blob/v4.5.11/build_files/build_environment/install_linux_packages.py
 
 # Last change was Apr 8, 2025 for:
-# https://github.com/blender/blender/blob/v4.5.10/build_files/cmake/config/blender_release.cmake
+# https://github.com/blender/blender/blob/v4.5.11/build_files/cmake/config/blender_release.cmake
 # used for REQUIRED_USE section.
 
 # Last change was Oct 7, 2025 for:
-# https://github.com/blender/blender/blob/v4.5.10/build_files/build_environment/cmake/versions.cmake
+# https://github.com/blender/blender/blob/v4.5.11/build_files/build_environment/cmake/versions.cmake
 # used for *DEPENDs.
 
-# HIP:  https://github.com/blender/blender/blob/v4.5.10/intern/cycles/cmake/external_libs.cmake#L47
+# HIP:  https://github.com/blender/blender/blob/v4.5.11/intern/cycles/cmake/external_libs.cmake#L47
 
-# GPU lib versions:  https://github.com/blender/blender/blob/v4.5.10/build_files/config/pipeline_config.yaml
+# GPU lib versions:  https://github.com/blender/blender/blob/v4.5.11/build_files/config/pipeline_config.yaml
 
 # dependency version requirements see
 # build_files/build_environment/cmake/versions.cmake
@@ -98,20 +98,43 @@ esac
 
 CXX_STANDARD=17
 # For the max exclusive Python supported (and others), see \
-# https://github.com/blender/blender/blob/v4.5.10/build_files/build_environment/install_linux_packages.py#L693 \
+# https://github.com/blender/blender/blob/v4.5.11/build_files/build_environment/install_linux_packages.py#L693 \
 PYTHON_COMPAT=( "python3_"{11..12} ) # < 3.11 for Numpy 1.x
 BOOST_PV="1.82"
 CLANG_MIN="18" # C++17
 FREETYPE_PV="2.13.0"
 GCC_MIN="11" # C++17
-LIBOGG_PV="1.3.5"
-LIBSNDFILE_PV="1.2.2"
+
+inherit secure-version
+
 ONETBB_SLOT="0"
 OPENVDB_ABIS_MAJOR_VERS=12
 OSL_PV="1.14.3.0"
-PUGIXML_PV="1.10"
-THEORA_PV="1.1.1"
-VULKAN_PV="1.3.296"
+VULKAN_PV="${VULKAN_LOADER_PV}"
+
+CHKL_TIMESTAMPS=(
+	"app-arch/zstd-9999"
+	"dev-libs/expat-9999"
+	"dev-libs/fribidi-9999"
+	"dev-libs/jemalloc-9999"
+	"dev-libs/wayland-9999"
+	"media-libs/flac-9999"
+	"media-libs/harfbuzz-9999"
+	"media-libs/libaom-9999"
+	"media-libs/libogg-9999"
+	"media-libs/libpng-9999"
+	"media-libs/libpulse-9999"
+	"media-libs/libsdl2-9999"
+	"media-libs/libtheora-9999"
+	"media-libs/libvorbis-9999"
+	"media-libs/libvpx-9999"
+	"media-libs/libwebp-9999"
+	"media-libs/openjpeg-9999"
+	"media-libs/opus-9999"
+	"media-libs/tiff-9999"
+	"media-libs/x264-9999"
+	"sys-libs/minizip-ng-9999"
+)
 
 ARM_CPU_FLAGS_3_3=(
 	neon2x:neon2x
@@ -145,7 +168,7 @@ FFMPEG_COMPAT_SLOTS=(
 )
 
 # For max and min package versions see link below. \
-# https://github.com/blender/blender/blob/v4.5.10/build_files/build_environment/install_linux_packages.py
+# https://github.com/blender/blender/blob/v4.5.11/build_files/build_environment/install_linux_packages.py
 # Ebuild will disable patented codecs by default, but upstream enables by default.
 FFMPEG_IUSE=(
 	"+jpeg2k"
@@ -225,7 +248,7 @@ OPTIX_RAYTRACE_TARGETS=(
 )
 
 AMDGPU_TARGETS_COMPAT=(
-# https://github.com/blender/blender/blob/v4.5.10/CMakeLists.txt#L699
+# https://github.com/blender/blender/blob/v4.5.11/CMakeLists.txt#L699
 	"gfx1010"
 	"gfx1011"
 	"gfx1012"
@@ -384,7 +407,7 @@ LICENSE+="
 	)
 
 "
-# ( all-rights-reserved Apache-2.0 ) - blender-4.5.10/extern/mantaflow/LICENSE
+# ( all-rights-reserved Apache-2.0 ) - blender-4.5.11/extern/mantaflow/LICENSE
 # ( all-rights-reserved Apache-2.0 )
 #   ( all-rights-reserved MIT )
 #   ( all-rights-reserved || ( BSD GPL-2 ) )
@@ -405,28 +428,28 @@ LICENSE+="
 #   public-domain
 #   UoI-NCSA
 #   ZLIB
-#   - blender-4.5.10/release/license/THIRD-PARTY-LICENSES.txt
-# all-rights-reserved MIT - blender-4.5.10/extern/vulkan_memory_allocator/LICENSE.txt
-# Apache-2.0 - blender-4.5.10/intern/cycles/doc/license/Apache2-license.txt
-# Apache-2.0 - blender-4.5.10/extern/cuew/LICENSE
-# Apache-2.0 BSD BSD-2 GPL-2.0+ GPL-3.0+ LGPL-2.1+ MIT MPL-2.0 ZLIB - blender-4.5.10/doc/license/SPDX-license-identifiers.txt
-# Apache-2.0 BSD MIT ZLIB - blender-4.5.10/intern/cycles/doc/license/SPDX-license-identifiers.txt
-# BL - blender-4.5.10/doc/license/BL-license.txt
-# Boost-1.0 - blender-4.5.10/extern/quadriflow/3rd/lemon-1.3.1/LICENSE
-# BSD - blender-4.5.10/intern/cycles/doc/license/BSD-3-Clause-license.txt
-# BSD-2.0 - blender-4.5.10/extern/xxhash/LICENSE
-# BSD custom - blender-4.5.10/extern/quadriflow/LICENSE.txt
+#   - blender-4.5.11/release/license/THIRD-PARTY-LICENSES.txt
+# all-rights-reserved MIT - blender-4.5.11/extern/vulkan_memory_allocator/LICENSE.txt
+# Apache-2.0 - blender-4.5.11/intern/cycles/doc/license/Apache2-license.txt
+# Apache-2.0 - blender-4.5.11/extern/cuew/LICENSE
+# Apache-2.0 BSD BSD-2 GPL-2.0+ GPL-3.0+ LGPL-2.1+ MIT MPL-2.0 ZLIB - blender-4.5.11/doc/license/SPDX-license-identifiers.txt
+# Apache-2.0 BSD MIT ZLIB - blender-4.5.11/intern/cycles/doc/license/SPDX-license-identifiers.txt
+# BL - blender-4.5.11/doc/license/BL-license.txt
+# Boost-1.0 - blender-4.5.11/extern/quadriflow/3rd/lemon-1.3.1/LICENSE
+# BSD - blender-4.5.11/intern/cycles/doc/license/BSD-3-Clause-license.txt
+# BSD-2.0 - blender-4.5.11/extern/xxhash/LICENSE
+# BSD custom - blender-4.5.11/extern/quadriflow/LICENSE.txt
 # CC-BY-4.0 - The splash screen chosen license is found in https://www.blender.org/download/demo-files/ )
-# CC0-1.0 - blender-4.5.10/release/datafiles/studiolights/world/license.txt
-# custom MIT - blender-4.5.10/extern/fmtlib/LICENSE.rst
-# GPL-2+ - blender-4.5.10/tools/check_source/check_licenses.py
-# GPL-2.0 - blender-4.5.10/release/license/GPL-license.txt
-# GPL-3.0 - blender-4.5.10/doc/license/GPL3-license.txt
-# LGPL-2.1 - ./blender-4.5.10/doc/license/LGPL2.1-license.txt
-# MIT - blender-4.5.10/intern/cycles/doc/license/MIT-license.txt
-# ZLIB - blender-4.5.10/intern/cycles/doc/license/Zlib-license.txt
-# ZLIB - blender-4.5.10/doc/license/Zlib-license.txt
-# || ( CC0-1.0 public-domain ) - blender-4.5.10/release/datafiles/studiolights/matcap/license.txt
+# CC0-1.0 - blender-4.5.11/release/datafiles/studiolights/world/license.txt
+# custom MIT - blender-4.5.11/extern/fmtlib/LICENSE.rst
+# GPL-2+ - blender-4.5.11/tools/check_source/check_licenses.py
+# GPL-2.0 - blender-4.5.11/release/license/GPL-license.txt
+# GPL-3.0 - blender-4.5.11/doc/license/GPL3-license.txt
+# LGPL-2.1 - ./blender-4.5.11/doc/license/LGPL2.1-license.txt
+# MIT - blender-4.5.11/intern/cycles/doc/license/MIT-license.txt
+# ZLIB - blender-4.5.11/intern/cycles/doc/license/Zlib-license.txt
+# ZLIB - blender-4.5.11/doc/license/Zlib-license.txt
+# || ( CC0-1.0 public-domain ) - blender-4.5.11/release/datafiles/studiolights/matcap/license.txt
 # The distro's Apache-2.0 license template does not contain all rights reserved.
 # The distro's GPL-2 license template does not contain all rights reserved.
 # The distro's MIT license template does not contain all rights reserved.
@@ -773,33 +796,33 @@ gen_osl_depends()
 # build_files/build_environment/install_linux_packages.py : --disable-ffplay
 CODECS="
 	libaom? (
-		>=media-libs/libaom-3.4.0:=
+		>=media-libs/libaom-${LIBAOM_PV}:=
 	)
 	mp3? (
 		>=media-sound/lame-3.100:=[sndfile]
 	)
 	opus? (
-		>=media-libs/opus-1.3.1:=
+		>=media-libs/opus-${OPUS_PV}:=
 	)
 	theora? (
 		>=media-libs/libogg-${LIBOGG_PV}:=
-		>=media-libs/libtheora-${THEORA_PV}:=
+		>=media-libs/libtheora-${LIBTHEORA_PV}:=
 		vorbis? (
-			>=media-libs/libtheora-${THEORA_PV}:=[encode]
+			>=media-libs/libtheora-${LIBTHEORA_PV}:=[encode]
 		)
 	)
 	vorbis? (
 		>=media-libs/libogg-${LIBOGG_PV}:=
-		>=media-libs/libvorbis-1.3.7:=
+		>=media-libs/libvorbis-${LIBVORBIS_PV}:=
 	)
 	vpx? (
-		>=media-libs/libvpx-1.14:=
+		>=media-libs/libvpx-${LIBVPX_PV}:=
 	)
 	x264? (
-		>=media-libs/x264-0.0.20220221:=
+		>=media-libs/x264-${X264_PV}:=
 	)
 	xvid? (
-		>=media-libs/xvid-1.3.7:=
+		>=media-libs/xvid-${XVID_PV}:=
 	)
 "
 
@@ -807,20 +830,12 @@ PATENT_STATUS_RDEPEND="
 	virtual/patent-status:*[patent_status_nonfree=]
 	!patent_status_nonfree? (
 		ffmpeg? (
-			media-video/ffmpeg:=
-			|| (
-				media-video/ffmpeg:59.61.61[encode,jpeg2k?,libaom?,mp3?,opus?,-patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,-x264,xvid?,zlib]
-				media-video/ffmpeg:0/59.61.61[encode,jpeg2k?,libaom?,mp3?,opus?,-patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,-x264,xvid?,zlib]
-			)
+			$(secure-version_gen_ffmpeg_depends '7.1' '[encode,jpeg2k?,libaom?,mp3?,opus?,-patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,-x264,xvid?,zlib]')
 		)
 	)
 	patent_status_nonfree? (
 		ffmpeg? (
-			media-video/ffmpeg:=
-			|| (
-				media-video/ffmpeg:59.61.61[encode,jpeg2k?,libaom?,mp3?,opus?,patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,x264?,xvid?,zlib]
-				media-video/ffmpeg:0/59.61.61[encode,jpeg2k?,libaom?,mp3?,opus?,patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,x264?,xvid?,zlib]
-			)
+			$(secure-version_gen_ffmpeg_depends '7.1' '[encode,jpeg2k?,libaom?,mp3?,opus?,patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,x264?,xvid?,zlib]')
 		)
 	)
 "
@@ -908,21 +923,21 @@ RDEPEND+="
 	${CODECS}
 	${PATENT_STATUS_RDEPEND}
 	${PYTHON_DEPS}
-	>=app-arch/zstd-1.5.6:=
-	>=dev-cpp/pystring-1.1.3:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=app-arch/zstd-${ZSTD_PV}:=
+	>=dev-cpp/pystring-${PYSTRING_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-lang/python-3.11.11:=
-	>=dev-libs/fribidi-1.0.12:=
+	>=dev-libs/fribidi-${FRIBIDI_PV}:=
 	>=dev-util/glslang-${VULKAN_PV}:=
 	>=media-libs/freetype-${FREETYPE_PV}:=[brotli]
-	>=media-libs/libpng-1.6.43:=
+	>=media-libs/libpng-${LIBPNG_PV}:=
 	>=media-libs/shaderc-2024.3:=[${LIBSTDCXX_USEDEP}]
 	>=media-libs/vulkan-loader-${VULKAN_PV}:=
 	>=sci-mathematics/manifold-3.1.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=sys-libs/minizip-ng-3.0.7:=
-	>=sys-libs/zlib-1.3.1:=
+	>=sys-libs/minizip-ng-${MINIZIP_NG_PV}:=
+	>=sys-libs/zlib-${ZLIB_PV}:=
 	dev-libs/lzo:=
-	media-libs/libglvnd:=
-	media-libs/libsamplerate:=
+	>=media-libs/libglvnd-${LIBGLVND_PV}:=
+	>=media-libs/libsamplerate-${LIBSAMPLERATE_PV}:=
 	virtual/glu:*
 	virtual/jpeg:*
 	virtual/libintl:*
@@ -940,11 +955,14 @@ RDEPEND+="
 		>=media-libs/aras-p-opencollada-20240718:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	color-management? (
-		>=dev-libs/expat-2.6.4:=
+		>=dev-libs/expat-${EXPAT_PV}:=
 		>=media-libs/opencolorio-2.4.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cpu_flags_x86_sse2?,python]
 		<media-libs/opencolorio-3.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cpu_flags_x86_sse2?,python]
 	)
 	cuda? (
+		dev-util/nvidia-cuda-toolkit:=
+		x11-drivers/nvidia-drivers:=
+		virtual/cuda-compiler:=
 		cuda_targets_sm_50? (
 			|| (
 				${CUDA_12_8_RDEPEND}
@@ -990,8 +1008,6 @@ RDEPEND+="
 				${CUDA_12_8_RDEPEND}
 			)
 		)
-		dev-util/nvidia-cuda-toolkit:=
-		virtual/cuda-compiler:=
 	)
 	cycles? (
 		cycles-path-guiding? (
@@ -1005,10 +1021,10 @@ RDEPEND+="
 		)
 	)
 	dbus? (
-		sys-apps/dbus:=
+		>=sys-apps/dbus-${DBUS_PV}:=
 	)
 	embree? (
-		>=media-libs/embree-4.4.0:=[-backface-culling(-),-compact-polys(-),cpu_flags_arm_neon2x?,cpu_flags_x86_sse4_2?,cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sycl?,tbb?]
+		>=media-libs/embree-${EMBREE_PV}:=[-backface-culling(-),-compact-polys(-),cpu_flags_arm_neon2x?,cpu_flags_x86_sse4_2?,cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sycl?,tbb?]
 		<media-libs/embree-5:=[-backface-culling(-),-compact-polys(-),cpu_flags_arm_neon2x?,cpu_flags_x86_sse4_2?,cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sycl?,tbb?]
 	)
 	ffmpeg? (
@@ -1018,10 +1034,10 @@ RDEPEND+="
 		>=sci-libs/fftw-3.3.10:3.0=
 	)
 	flac? (
-		>=media-libs/flac-1.4.2:=
+		>=media-libs/flac-${FLAC_PV}:=
 	)
 	gmp? (
-		>=dev-libs/gmp-6.3.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx]
+		>=dev-libs/gmp-${GMP_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx]
 	)
 	hiprt? (
 		$(gen_rocm_hiprt_rdepend)
@@ -1030,10 +1046,10 @@ RDEPEND+="
 		virtual/jack:=
 	)
 	jemalloc? (
-		>=dev-libs/jemalloc-5.2.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-libs/jemalloc-${JEMALLOC_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	jpeg2k? (
-		>=media-libs/openjpeg-2.5.0:=
+		>=media-libs/openjpeg-${OPENJPEG_PV}:=
 	)
 	llvm? (
 		$(gen_llvm_depends)
@@ -1069,9 +1085,9 @@ RDEPEND+="
 	)
 	openal? (
 		!pulseaudio? (
-			>=media-libs/openal-1.23.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},alsa]
+			>=media-libs/openal-${OPENAL_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},alsa]
 		)
-		>=media-libs/openal-1.23.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},pulseaudio?]
+		>=media-libs/openal-${OPENAL_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},pulseaudio?]
 	)
 	opencl? (
 		virtual/opencl:=
@@ -1085,6 +1101,8 @@ RDEPEND+="
 	)
 	openexr? (
 		!<media-libs/openexr-3
+		dev-libs/imath:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		media-libs/openexr:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		|| (
 			$(gen_openexr_pairs)
 		)
@@ -1114,19 +1132,19 @@ RDEPEND+="
 		>=media-gfx/potrace-1.16:=
 	)
 	pulseaudio? (
-		media-sound/pulseaudio:=
+		>=media-libs/libpulse-${LIBPULSE_PV}:=
 	)
 	release? (
 		>=media-libs/freetype-${FREETYPE_PV}:=[brotli,bzip2,harfbuzz,png]
-		>=media-libs/harfbuzz-10.0.1:=[truetype]
+		>=media-libs/harfbuzz-${HARFBUZZ_PV}:=[truetype]
 	)
 	rocm? (
 		$(gen_rocm_rdepend)
 	)
 	sdl? (
-		>=media-libs/libsdl2-2.28.2:=[opengl,pulseaudio?,sound]
+		>=media-libs/libsdl2-${LIBSDL2_PV}:=[opengl,pulseaudio?,sound]
 		!pulseaudio? (
-			>=media-libs/libsdl2-2.28.2:=[alsa,opengl,sound]
+			>=media-libs/libsdl2-${LIBSDL2_PV}:=[alsa,opengl,sound]
 		)
 	)
 	sndfile? (
@@ -1156,7 +1174,7 @@ RDEPEND+="
 		>=dev-cpp/tbb-2021.13.0:${ONETBB_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},tbbmalloc(+)]
 	)
 	tiff? (
-		>=media-libs/tiff-4.7.0:=[jpeg,zlib]
+		>=media-libs/tiff-${TIFF_PV}:=[jpeg,zlib]
 	)
 	usd? (
 		>=media-libs/openusd-25.02:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},imaging,materialx?,monolithic,opengl,openvdb,openimageio,python]
@@ -1166,17 +1184,17 @@ RDEPEND+="
 		dev-debug/valgrind:=
 	)
 	wayland? (
-		>=dev-libs/wayland-1.23.1:=
+		>=dev-libs/wayland-${WAYLAND_PV}:=
 		>=dev-libs/wayland-protocols-1.44:=
 		>=gui-libs/libdecor-0.2.2:=
 	)
 	webp? (
-		>=media-libs/libwebp-1.3.2:=
+		>=media-libs/libwebp-${LIBWEBP_PV}:=
 	)
 	X? (
-		x11-libs/libX11:=
-		x11-libs/libXi:=
-		x11-libs/libXxf86vm:=
+		>=x11-libs/libX11-${LIBX11_PV}:=
+		>=x11-libs/libXi-${LIBXI_PV}:=
+		>=x11-libs/libXxf86vm-${LIBXXF86VM_PV}:=
 	)
 "
 DEPEND+="
@@ -1261,7 +1279,7 @@ PATCHES=(
 )
 
 _blender_set_rocm_compiler() {
-	# See https://github.com/blender/blender/blob/v4.5.10/build_files/config/pipeline_config.yaml
+	# See https://github.com/blender/blender/blob/v4.5.11/build_files/config/pipeline_config.yaml
 	if use rocm_6_4 ; then
 		export LLVM_SLOT=19
 		export ROCM_SLOT="6.4"
@@ -1393,6 +1411,7 @@ _src_configure_compiler() {
 }
 
 _src_configure() {
+	chkl_check_many_timestamps
 	export CMAKE_USE_DIR="${S}"
 	export BUILD_DIR="${S}_${impl}_build"
 	cd "${CMAKE_USE_DIR}" || die
@@ -1609,7 +1628,7 @@ einfo "AMDGPU_TARGETS:  ${targets}"
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v4.5.10/build_files/cmake/config
+# https://github.com/blender/blender/tree/v4.5.11/build_files/cmake/config
 	if [[ "${impl}" == "build_creator" \
 		|| "${impl}" == "build_headless" ]] ; then
 		mycmakeargs+=(
