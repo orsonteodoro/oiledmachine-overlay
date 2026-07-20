@@ -602,9 +602,19 @@ if ! [[ "${PV}" =~ "9999" ]] ; then
 	export S_GO="${WORKDIR}/go-mod"
 fi
 
-inherit cflags-hardened check-compiler-switch cmake dep-prepare edo flag-o-matic
+CHKL_TIMESTAMPS=(
+	"app-shells/bash-9999"
+	"media-libs/fontconfig-9999"
+	"media-libs/freetype-9999"
+	"sci-libs/openblas-9999"
+	"sys-apps/firejail-9999"
+	"x11-libs/cairo-9999"
+	"x11-libs/libdrm-9999"
+)
+
+inherit cflags-hardened check-compiler-switch chkl cmake dep-prepare edo flag-o-matic
 inherit go-module lcnr libcxx-slot libstdcxx-slot multiprocessing optfeature
-inherit rocm
+inherit rocm secure-version
 
 # protobuf-go 1.34.1 tests with protobuf 5.27.0-rc1
 
@@ -2706,8 +2716,8 @@ gen_clang_bdepend() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo  "
 		llvm_slot_${s}? (
-			llvm-core/clang:${s}
-			llvm-core/llvm:${s}
+			llvm-core/clang:${s}=
+			llvm-core/llvm:${s}=
 		)
 		"
 	done
@@ -2762,15 +2772,15 @@ gen_rocm_rdepend() {
 }
 # Missing mkl_sycl_blas in =dev-libs/intel-compute-runtime-2023*
 RDEPEND="
-	acct-group/ollama
-	acct-user/ollama
+	acct-group/ollama:*
+	acct-user/ollama:*
 	blis? (
 		sci-libs/blis:=
 	)
 	emoji? (
-		>=media-libs/fontconfig-2.15.0
-		>=media-libs/freetype-2.13.2[png]
-		>=x11-libs/cairo-1.16.0
+		>=media-libs/fontconfig-${FONTCONFIG_PV}:=
+		>=media-libs/freetype-${FREETYPE_PV}:=[png]
+		>=x11-libs/cairo-${CAIRO_PV}:=
 		|| (
 			media-fonts/noto-color-emoji
 			media-fonts/noto-color-emoji-bin
@@ -2779,7 +2789,7 @@ RDEPEND="
 		)
 	)
 	firejail? (
-		sys-apps/firejail
+		>=sys-apps/firejail-${FIREJAIL_PV}:=
 	)
 	lapack? (
 		sci-libs/lapack:=
@@ -2788,10 +2798,10 @@ RDEPEND="
 		sci-libs/mkl:=
 	)
 	openblas? (
-		sci-libs/openblas:=
+		>=sci-libs/openblas-${OPENBLAS_PV}:=
 	)
 	openrc? (
-		sys-apps/openrc[bash]
+		sys-apps/openrc:=[bash]
 		|| (
 			app-admin/sysklogd
 			sys-apps/util-linux[logger]
@@ -2799,22 +2809,23 @@ RDEPEND="
 	)
 	rocm? (
 		$(gen_rocm_rdepend)
-		x11-libs/libdrm[video_cards_amdgpu]
+		>=x11-libs/libdrm-${LIBDRM_PV}:=[video_cards_amdgpu]
 	)
 	video_cards_intel? (
-		>=dev-libs/intel-compute-runtime-2024[l0]
+		>=dev-libs/intel-compute-runtime-2024:=[l0]
 		dev-libs/intel-compute-runtime:=
 		sci-libs/mkl:=
 		sys-devel/DPC++:=
 	)
 	vulkan? (
-		>=media-libs/vulkan-loader-${VULKAN_PV}
+		>=media-libs/vulkan-loader-${VULKAN_PV}:=
 	)
 "
 DEPEND="
 	${RDEPEND}
 	vulkan? (
-		>=dev-util/vulkan-headers-${VULKAN_PV}
+		media-libs/shaderc:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-util/vulkan-headers-${VULKAN_PV}:=
 	)
 "
 gen_rocm_bdepend() {
@@ -2823,7 +2834,7 @@ gen_rocm_bdepend() {
 		local s1="${s/./_}"
 		echo "
 			rocm_${s/./_}? (
-				sys-devel/gcc
+				sys-devel/gcc:=
 			)
 		"
 	done
@@ -2834,8 +2845,8 @@ BDEPEND="
 	>=dev-build/cmake-3.31.2
 	>=dev-lang/go-1.26.0
 	>=sys-devel/gcc-11.4.0
-	app-arch/pigz
-	app-shells/bash
+	>=app-arch/pigz-${PIGZ_PV}
+	>=app-shells/bash-${BASH_PV}
 	dev-build/make
 	dev-util/patchelf
 	dev-vcs/git
@@ -2845,6 +2856,9 @@ BDEPEND="
 		>=dev-util/ragel-7.0.1
 	)
 	cuda? (
+		dev-util/nvidia-cuda-toolkit:=
+		virtual/cuda-compiler:=
+		x11-drivers/nvidia-drivers:=
 		cuda_targets_sm_50? (
 			|| (
 				${CUDA_12_8_BDEPEND}
@@ -2976,14 +2990,9 @@ BDEPEND="
 				${CUDA_13_0_BDEPEND}
 			)
 		)
-		dev-util/nvidia-cuda-toolkit:=
-		virtual/cuda-compiler:=
 	)
 	rocm? (
 		$(gen_rocm_bdepend)
-	)
-	vulkan? (
-		media-libs/shaderc[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 "
 IDEPEND="
@@ -2991,7 +3000,7 @@ IDEPEND="
 "
 PDEPEND="
 	vscode? (
-		>=app-editors/vscode-1.113
+		>=app-editors/vscode-${VSCODE_PV}
 	)
 "
 PATCHES=(
@@ -3412,6 +3421,7 @@ get_cuda_flags() {
 
 _NVCC_FLAGS=""
 src_configure() {
+	chkl_check_many_timestamps
 	if use firejail ; then
 		if [[ ! -e "/etc/firejail/ollama.profile" ]] ; then
 eerror "Re-emerge sys-apps/firejail::oiledmachine-overlay for the ollama profile."

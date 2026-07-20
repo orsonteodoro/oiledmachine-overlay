@@ -30,6 +30,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/glib-2.89.9999"
 	"dev-qt/qtbase-6.9999"
 	"net-misc/curl-9999"
+	"media-libs/fontconfig-9999"
 	"media-libs/freetype-9999"
 	"media-libs/lcms-9999"
 	"media-libs/libjpeg-turbo-9999"

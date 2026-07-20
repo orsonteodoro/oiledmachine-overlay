@@ -14,6 +14,7 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO"
 CHKL_TIMESTAMPS=(
 	"dev-libs/fribidi-9999"
 	"dev-libs/glib-2.89.9999"
+	"media-libs/fontconfig-9999"
 	"media-libs/freetype-9999"
 	"media-libs/harfbuzz-9999"
 	"x11-libs/cairo-9999"

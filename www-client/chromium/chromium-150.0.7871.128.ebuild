@@ -291,7 +291,6 @@ CHKL_TIMESTAMPS=(
 # The timestamp policy most recent version patched version vulnerabilities or head-snapshot provided by upstream.
 # All used live security-critical system packages and live ebuilds must be verified.
 # See vf.eclass for a list of vulnerabilities.
-# Last vulnerability check 20260614
 	"app-accessibility/at-spi2-core-9999"
 	"app-arch/brotli-9999"
 	"app-arch/bzip2-9999"
@@ -304,6 +303,7 @@ CHKL_TIMESTAMPS=(
 	"dev-cpp/simdutf-9999"
 	"dev-db/sqlite-9999"
 	"media-libs/alsa-lib-9999"
+	"media-libs/fontconfig-9999"
 	"dev-libs/crc32c-9999"
 	"dev-libs/expat-9999"
 	"dev-libs/flatbuffers-9999"

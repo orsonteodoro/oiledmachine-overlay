@@ -22,6 +22,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/glib-2.89.9999"
 	"gnome-base/librsvg-9999"
 	"media-libs/alsa-lib-9999"
+	"media-libs/fontconfig-9999"
 	"media-libs/freetype-9999"
 	"media-libs/harfbuzz-9999"
 	"media-libs/lcms-9999"

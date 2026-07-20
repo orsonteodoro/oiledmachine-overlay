@@ -25,6 +25,7 @@ MODS_LIST=(
 )
 
 CHKL_TIMESTAMPS=(
+	"media-libs/fontconfig-9999"
 	"x11-libs/libX11-9999"
 )
 
