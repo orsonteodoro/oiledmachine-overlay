@@ -293,8 +293,24 @@ HIPRT_RAYTRACE_TARGETS=(
 	"gfx1201"
 )
 
-ROCM_SLOTS=(
-	"rocm_6_4"
+inherit hip-versions
+
+ROCM_VERSIONS=(
+	"${HIP_6_4_VERSION}"
+)
+
+gen_rocm_iuse() {
+	local pv
+	for pv in "${ROCM_VERSIONS[@]}" ; do
+		local s
+		s="${pv%.*}"
+		s="${s/./_}"
+		echo "rocm_${s}"
+	done
+}
+
+ROCM_IUSE=(
+	$(gen_rocm_iuse)
 )
 
 IUSE+="
@@ -303,7 +319,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${FFMPEG_IUSE[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS_IUSE[@]}
-${ROCM_SLOTS[@]}
+${ROCM_IUSE[@]}
 +alembic aot -asan +boost +bullet clang +cineon +collada
 +color-management -cpudetection +cuda +cycles +cycles-path-guiding +dds -debug
 -dbus doc +draco +elbeem +embree +ffmpeg +fftw flac gcc +gmp -hiprt +hydra icc
@@ -678,7 +694,7 @@ REQUIRED_USE+="
 		cycles
 		${ROCM_REQUIRED_USE}
 		^^ (
-			${ROCM_SLOTS[@]}
+			${ROCM_IUSE[@]}
 		)
 		^^ (
 			${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]}
@@ -850,6 +866,7 @@ CUDA_12_8_RDEPEND="
 
 is_rocm_target_allowed() {
 	local target="${1}"
+	local x
 	for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
 		[[ "${x}" == "${target}" ]] && return 0
 	done
@@ -862,7 +879,8 @@ gen_hiprt_usedep() {
 	local t="HIPRT_${hiprt_ver}_${rocm_slot}_AMDGPU_TARGETS_COMPAT[@]"
 	local a=( "${!t}" )
 	local str=""
-	for x in ${a[@]} ; do
+	local x
+	for x in "${a[@]}" ; do
 		if is_rocm_target_allowed "${x}" ; then
 			str+=",amdgpu_targets_${x}(-)?"
 		fi
@@ -872,14 +890,15 @@ gen_hiprt_usedep() {
 }
 
 gen_rocm_hiprt_rdepend() {
-	local u
-	for u in "${ROCM_SLOTS[@]}" ; do
-		local s="${u/rocm_}"
-		local s="${s/_/.}"
-		local d="${s/./_}"
-		local ROCM_SLOT="${s}"
+	local pv
+	for pv in "${ROCM_VERSIONS[@]}" ; do
+		local s
+		local u
+		s="${pv%.*}"
+		u="${s/./_}"
+		export ROCM_SLOT="${s}"
 		echo "
-			rocm_${d}? (
+			rocm_${u}? (
 				media-libs/HIPRT:=[${LIBSTDCXX_USEDEP},rocm]
 				|| (
 					=media-libs/HIPRT-2.5*:0/${s}[${LIBSTDCXX_USEDEP},rocm,$(gen_hiprt_usedep 2.5 ${s})]
@@ -891,19 +910,18 @@ gen_rocm_hiprt_rdepend() {
 }
 
 gen_rocm_rdepend() {
-	local u
-	for u in "${ROCM_SLOTS[@]}" ; do
-		local s="${u/rocm_}"
-		local s="${s/_/.}"
-		local d="${s/./_}"
-		local ROCM_SLOT="${s}"
-		local v="HIP_${d}_VERSION"
-		local v="${!v}"
+	local pv
+	for pv in "${ROCM_VERSIONS[@]}" ; do
+		local s
+		local u
+		s="${pv%.*}"
+		u="${s/./_}"
+		export ROCM_SLOT="${s}"
 		echo "
-			rocm_${d}? (
-				~dev-libs/rocm-opencl-runtime-${v}:=[${LIBSTDCXX_USEDEP}]
-				~dev-util/hip-${v}:=[${LIBSTDCXX_USEDEP},rocm]
-				~sys-libs/llvm-roc-libomp-${v}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep LLVM_ROC_LIBOMP)]
+			rocm_${u}? (
+				~dev-libs/rocm-opencl-runtime-${pv}:=[${LIBSTDCXX_USEDEP}]
+				~dev-util/hip-${pv}:=[${LIBSTDCXX_USEDEP},rocm]
+				~sys-libs/llvm-roc-libomp-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep LLVM_ROC_LIBOMP)]
 			)
 		"
 	done
