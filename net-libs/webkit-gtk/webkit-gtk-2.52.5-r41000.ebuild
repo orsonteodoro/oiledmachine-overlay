@@ -9,6 +9,9 @@ EAPI=8
 # Contains AI generated synthetic data and AI generated code in the ebuild.
 # Contains AI derived information from AI inference in the metadata.xml.
 
+# TODO
+# Re-try librice USE flag on next stable release (2.54.x).  The complete patch landed on 2.53.2.
+
 # -r revision notes
 # -rabcde
 # ab = WEBKITGTK_API_VERSION version (4.1)
@@ -1090,12 +1093,6 @@ _PATCHES=(
 
 	"${FILESDIR}/extra-patches/${PN}-2.43.2-custom-page-size.patch"
 	"${FILESDIR}/extra-patches/${PN}-2.46.3-gi-flags.patch"
-
-	# It was not applied to other tags (webkitgtk-2.52.3) because the librice was not widely packaged.
-	# There was indication of a test crashed because of commit.  The crash may be resolved with the closed issue.
-	"${FILESDIR}/extra-patches/${PN}-e6516c9-sockets-tos-configuration-support.patch"
-	"${FILESDIR}/extra-patches/${PN}-2.52.5-turn-improvements.patch"
-	"${FILESDIR}/extra-patches/${PN}-2.52.5-remove-pre-librice-0.4.x.patch"
 )
 
 _set_clang() {
