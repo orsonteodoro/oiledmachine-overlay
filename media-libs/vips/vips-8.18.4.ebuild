@@ -558,14 +558,14 @@ _apply_flags() {
 			-g \
 			-fsanitize=address,undefined \
 			-fno-omit-frame-pointer \
-			-I"${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/include" \
+			-I"${ESYSROOT}/usr/include" \
 			-fopenmp=libomp \
 			-DFUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
 		append-ldflags \
 			-g \
 			-fsanitize=address,undefined \
 			-shared-libsan \
-			"${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}"
+			"${ESYSROOT}/usr/$(get_libdir)/libomp.so"
 	fi
 
 	if use debug ; then
