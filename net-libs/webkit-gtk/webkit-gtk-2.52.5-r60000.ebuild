@@ -3364,3 +3364,4 @@ elog
 # OILEDMACHINE-OVERLAY-TEST: passed with -Oshit, clang 21.1.8 (2.50.4, 20260104) for slot 4/37 with completion time:  0 days, 11 hrs, 2 mins, 0 secs
 # OILEDMACHINE-OVERLAY-TEST: passed with -Oshit, clang 21.1.8 (2.50.5, 20260210) for slot 4/37 with completion time:  0 days, 6 hrs, 59 mins, 43 secs
 # OILEDMACHINE-OVERLAY-TEST: passed but unstable with -Oshit, clang 21.1.8 (2.52.3, 20260423) for slot 4.1/0; works with one search engine, crashes in another during captcha test.
+# OILEDMACHINE-OVERLAY-TEST: passed but unstable with -Oshit, clang 21.1.8 (2.52.5, 20260721) for slot 4.1/0; has slow video issue
