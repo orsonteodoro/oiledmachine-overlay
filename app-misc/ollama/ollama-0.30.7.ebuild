@@ -573,16 +573,21 @@ LLMS=(
 	"${COMMUNITY_LLMS[@]}"
 )
 
+inherit hip-versions
+
 ROCM_SLOTS=(
 	# Limited by libhipblas.so.2 hardcoded SOVERSION
-	"6.4"
+	${HIP_6_4_VERSION}
 )
 
 gen_rocm_iuse() {
-	local s
-	for s in "${ROCM_SLOTS[@]}" ; do
+	local pv
+	for pv in "${ROCM_SLOTS[@]}" ; do
+		local s
+		s="${pv%.*}"
+		s="${s/./_}"
 		echo "
-			rocm_${s/./_}
+			rocm_${s}
 		"
 	done
 }
@@ -592,11 +597,6 @@ ROCM_IUSE=(
 )
 
 LLAMA_CPP_TAG="b9509"
-
-inherit hip-versions
-declare -A ROCM_VERSIONS=(
-	["6_4"]="${HIP_6_4_VERSION}"
-)
 
 if ! [[ "${PV}" =~ "9999" ]] ; then
 	export S_GO="${WORKDIR}/go-mod"
@@ -2539,10 +2539,13 @@ ebuild_revision_143
 "
 
 gen_rocm_required_use() {
-	local s
-	for s in ${ROCM_SLOTS[@]} ; do
+	local pv
+	for pv in "${ROCM_SLOTS[@]}" ; do
+		local s
+		s="${pv%.*}"
+		s="${s/./_}"
 		echo "
-			rocm_${s/./_}? (
+			rocm_${s}? (
 				rocm
 			)
 		"
@@ -2551,7 +2554,7 @@ gen_rocm_required_use() {
 
 gen_cuda_required_use() {
 	local x
-	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+	for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
 		echo "
 			cuda_targets_${x}? (
 				cuda
@@ -2562,7 +2565,7 @@ gen_cuda_required_use() {
 
 gen_rocm_required_use() {
 	local x
-	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+	for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
 		echo "
 			amdgpu_targets_${x}? (
 				rocm
@@ -2713,7 +2716,7 @@ CUDA_13_0_BDEPEND="
 "
 gen_clang_bdepend() {
 	local s
-	for s in ${LLVM_COMPAT[@]} ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
 		echo  "
 		llvm_slot_${s}? (
 			llvm-core/clang:${s}=
@@ -2725,16 +2728,15 @@ gen_clang_bdepend() {
 gen_rocm_bdepend() {
 	# DEPENDs listed in Dockerfile
 	local pv
-	for pv in ${ROCM_SLOTS[@]} ; do
-		local s="0/${pv}"
-		local s1="${pv/./_}"
-		local ROCM_SLOT="${pv}"
+	for pv in "${ROCM_SLOTS[@]}" ; do
+		local s
+		s="${pv%.*}"
+		s="${s/./_}"
+		local ROCM_SLOT="${pv%.*}"
 		echo "
-			rocm_${s1}? (
-				>=dev-util/hip-${ROCM_VERSIONS[${s1}]}:${s}[${LIBSTDCXX_USEDEP},lc,rocm]
-				dev-util/hip:=
-				>=sys-devel/llvm-roc-${ROCM_VERSIONS[${s1}]}:${s}[${LIBSTDCXX_USEDEP},llvm_targets_AMDGPU,llvm_targets_X86]
-				sys-devel/llvm-roc:=
+			rocm_${s}? (
+				~dev-util/hip-${pv}:=[${LIBSTDCXX_USEDEP},lc,rocm]
+				~sys-devel/llvm-roc-${pv}:=[${LIBSTDCXX_USEDEP},llvm_targets_AMDGPU,llvm_targets_X86]
 			)
 		"
 	done
@@ -2742,30 +2744,22 @@ gen_rocm_bdepend() {
 gen_rocm_rdepend() {
 	# DEPENDs listed in Dockerfile
 	local pv
-	for pv in ${ROCM_SLOTS[@]} ; do
-		local s="0/${pv}"
-		local s1="${pv/./_}"
-		local ROCM_SLOT="${pv}"
+	for pv in "${ROCM_SLOTS[@]}" ; do
+		local s
+		s="${pv%.*}"
+		s="${s/./_}"
+		local ROCM_SLOT="${pv%.*}"
 		echo "
-			rocm_${s1}? (
-				>=dev-libs/rocm-comgr-${ROCM_VERSIONS[${s1}]}:${s}[${LIBSTDCXX_USEDEP}]
-				dev-libs/rocm-comgr:=
-				>=dev-libs/rocm-opencl-runtime-${ROCM_VERSIONS[${s1}]}:${s}[${LIBSTDCXX_USEDEP}]
-				dev-libs/rocm-opencl-runtime:=
-				>=dev-libs/rocr-runtime-${ROCM_VERSIONS[${s1}]}:${s}[${LIBSTDCXX_USEDEP}]
-				dev-libs/rocr-runtime:=
-				>=dev-util/hip-${ROCM_VERSIONS[${s1}]}:${s}[${LIBSTDCXX_USEDEP},lc,rocm]
-				dev-util/hip:=
-				>=sci-libs/hipBLAS-${ROCM_VERSIONS[${s1}]}:${s}[${LIBSTDCXX_USEDEP},rocm]
-				sci-libs/hipBLAS:=
-				>=sci-libs/rocBLAS-${ROCM_VERSIONS[${s1}]}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCBLAS),cpu_flags_x86_f16c=]
-				sci-libs/rocBLAS:=
-				>=sci-libs/rocSPARSE-${ROCM_VERSIONS[${s1}]}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCSPARSE)]
-				sci-libs/rocSPARSE:=
-				>=sci-libs/rocSOLVER-${ROCM_VERSIONS[${s1}]}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCSOLVER)]
-				sci-libs/rocSOLVER:=
-				>=sys-devel/llvm-roc-${ROCM_VERSIONS[${s1}]}:${s}[${LIBSTDCXX_USEDEP},llvm_targets_AMDGPU,llvm_targets_X86]
-				sys-devel/llvm-roc:=
+			rocm_${s}? (
+				~dev-libs/rocm-comgr-${pv}:=[${LIBSTDCXX_USEDEP}]
+				~dev-libs/rocm-opencl-runtime-${pv}:=[${LIBSTDCXX_USEDEP}]
+				~dev-libs/rocr-runtime-${pv}:=[${LIBSTDCXX_USEDEP}]
+				~dev-util/hip-${pv}:=[${LIBSTDCXX_USEDEP},lc,rocm]
+				~sci-libs/hipBLAS-${pv}:=[${LIBSTDCXX_USEDEP},rocm]
+				~sci-libs/rocBLAS-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCBLAS),cpu_flags_x86_f16c=]
+				~sci-libs/rocSPARSE-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCSPARSE)]
+				~sci-libs/rocSOLVER-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCSOLVER)]
+				~sys-devel/llvm-roc-${pv}:=[${LIBSTDCXX_USEDEP},llvm_targets_AMDGPU,llvm_targets_X86]
 			)
 		"
 	done
@@ -2829,11 +2823,13 @@ DEPEND="
 	)
 "
 gen_rocm_bdepend() {
-	local s
-	for s in ${ROCM_SLOTS[@]} ; do
-		local s1="${s/./_}"
+	local pv
+	for pv in "${ROCM_SLOTS[@]}" ; do
+		local s
+		s="${pv%.*}"
+		s="${s/./_}"
 		echo "
-			rocm_${s/./_}? (
+			rocm_${s}? (
 				sys-devel/gcc:=
 			)
 		"

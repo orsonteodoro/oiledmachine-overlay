@@ -119,6 +119,7 @@ ewarn "${x_targets_compat} is a typo or missing."
 # @DESCRIPTION:
 # Generate a USEDEP compat with enabled rocm USE flag
 get_rocm_usedep() {
+	# ROCM_SLOT must be a 2 component version e.g. 6.4.
 	[[ -z "${ROCM_SLOT}" ]] && die "QA:  ROCM_SLOT must be defined before \`inherit rocm\`"
 	local rocm_version="${ROCM_SLOT/./_}"
         local name="${1}"
