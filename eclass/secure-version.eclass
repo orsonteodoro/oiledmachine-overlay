@@ -117,6 +117,7 @@ _SECURE_VERSION_ECLASS=1
 
 # Ebuilds or users can override this
 
+_7ZIP_PV=${_7ZIP_PV:-"26.02"}
 ACL_PV=${ACL_PV:-"2.4.0"}
 ALSA_LIB_PV=${ALSA_LIB_PV:-"9999"}
 ALSA_PLUGINS_PV=${ALSA_PLUGINS_PV:-"1.2.6"}
