@@ -884,7 +884,7 @@ RDEPEND+="
 	>=gui-libs/gtk-${GTK4_PV}:4=[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
 	>=media-libs/fontconfig-${FONTCONFIG_PV}:=[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-${FREETYPE_PV}:=[${MULTILIB_USEDEP}]
-	>=media-libs/harfbuzz-${HARFBUZZ_PV}:=[${MULTILIB_USEDEP},icu(+)]
+	>=media-libs/harfbuzz-${HARFBUZZ_PV}:=[${MULTILIB_USEDEP},icu(+),system-icu]
 	>=media-libs/lcms-${LCMS_PV}:=[${MULTILIB_USEDEP}]
 	>=media-libs/libepoxy-1.5.4:=[${MULTILIB_USEDEP}]
 	>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:=[${MULTILIB_USEDEP}]
