@@ -200,3 +200,6 @@ x11-libs/cairo lzo
 
 # The oniguruma package is either EOL or suspended
 app-misc/jq oniguruma
+
+# Re-enable feature complete librice support on next stable (2.54.x)
+net-libs/webkit-gtk librice
