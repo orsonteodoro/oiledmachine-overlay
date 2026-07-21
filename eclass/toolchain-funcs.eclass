@@ -652,7 +652,7 @@ _tc-has-openmp() {
 		else
 			local llvm_slot=$(clang-major-version)
 			local extra_args
-			extra_args="-I${ESYSROOT}/usr/lib/llvm/${llvm_slot}/include"
+			extra_args="-I${ESYSROOT}/usr/include"
 			$(tc-getCC "$@") ${extra_args} -fopenmp=libomp "${base}.c" -o "${base}" >&/dev/null
 		fi
 	else
