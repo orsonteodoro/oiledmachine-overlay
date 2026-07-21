@@ -635,7 +635,7 @@ aqua +avif -bmalloc -cache-partitioning clang dash debug +doc elogind -eme
 +minibrowser mold +opengl openmp -seccomp +speech-synthesis -spell
 -system-malloc systemd test thunder +variation-fonts wayland +webassembly
 -webdriver +webgl webm-eme -webrtc webvtt -webxr +woff2 +X
-ebuild_revision_40
+ebuild_revision_41
 "
 
 gen_gst_plugins_duse() {
@@ -3040,11 +3040,10 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 
 	if use openmp && tc-is-clang ; then
-		local llvm_slot=$(clang-major-version)
 		mycmakeargs+=(
-			-DOpenMP_CXX_FLAGS="-I${ESYSROOT}/usr/lib/llvm/${llvm_slot}/include -fopenmp=openmp"
+			-DOpenMP_CXX_FLAGS="-I${ESYSROOT}/usr/include -fopenmp=openmp"
 			-DOpenMP_CXX_LIB_NAMES="libomp"
-			-DOpenMP_libomp_LIBRARY="${ESYSROOT}/usr/lib/llvm/${llvm_slot}/$(get_libdir)/libomp.so.${llvm_slot}"
+			-DOpenMP_libomp_LIBRARY="${ESYSROOT}/usr/$(get_libdir)/libomp.so"
 		)
 	fi
 

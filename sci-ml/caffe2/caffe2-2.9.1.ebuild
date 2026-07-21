@@ -544,7 +544,7 @@ ${ROCM_SLOTS2[@]}
 clang cuda +distributed +eigen +fbgemm +flash-attention +gloo -jit +kineto +magma -mimalloc
 -mkl +mpi +nccl +nnpack +numpy +onednn openblas -opencl +openmp +tensorpipe
 +qnnpack +rccl rocm roctracer -ssl system-libs test +xnnpack
-ebuild_revision_53
+ebuild_revision_54
 "
 # bin/torch_shm_manager requires openmp
 gen_cuda_required_use() {
@@ -1950,13 +1950,13 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		)
 	elif use clang ; then
 		mycmakeargs+=(
-			-DOpenMP_C_FLAGS="-I${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/include -fopenmp=libomp"
+			-DOpenMP_C_FLAGS="-I${ESYSROOT}/usr/include -fopenmp=libomp"
 			-DOpenMP_C_LIB_NAMES="libomp"
 
-			-DOpenMP_CXX_FLAGS="-I${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/include -fopenmp=libomp"
+			-DOpenMP_CXX_FLAGS="-I${ESYSROOT}/usr/include -fopenmp=libomp"
 			-DOpenMP_CXX_LIB_NAMES="libomp"
 
-			-DOpenMP_libomp_LIBRARY="${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/$(get_libdir)/libomp.so"
+			-DOpenMP_libomp_LIBRARY="${ESYSROOT}/usr/$(get_libdir)/libomp.so"
 		)
 	fi
 

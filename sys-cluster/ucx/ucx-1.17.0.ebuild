@@ -70,7 +70,7 @@ ${ROCM_IUSE[@]}
 clang +cma cuda custom-kernel dc debug devx dm dmabuf fuse3 gcc examples gdrcopy
 hip-clang knem mlx5-dv +numa +openmp rc rdma rocm roce threads tm ud verbs xpmem
 video_cards_intel
-ebuild_revision_7
+ebuild_revision_8
 "
 get_cuda_targets_required_use() {
 	local x
@@ -598,7 +598,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 
 	if use clang && use openmp ; then
-		append-flags -I"${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/include" -fopenmp=libomp
+		append-flags -I"${ESYSROOT}/usr/include" -fopenmp=libomp
 	fi
 
 	if use hip-clang && use openmp ; then
