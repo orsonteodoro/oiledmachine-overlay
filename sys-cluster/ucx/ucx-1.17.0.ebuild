@@ -312,15 +312,13 @@ gen_clang_bdepend() {
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
-			llvm-core/clang:${s}[${LIBSTDCXX_USEDEP}]
-			llvm-core/clang:=
-			llvm-core/llvm:${s}[${LIBSTDCXX_USEDEP}]
-			llvm-core/llvm:=
-			llvm-core/lld:${s}[${LIBSTDCXX_USEDEP}]
-			llvm-core/lld:=
-			openmp? (
-				llvm-runtimes/openmp:${s}[${LIBSTDCXX_USEDEP}]
-				llvm-runtimes/openmp:=
+			llvm_slot_${s}? (
+				llvm-core/clang:${s}=[${LIBSTDCXX_USEDEP}]
+				llvm-core/llvm:${s}=[${LIBSTDCXX_USEDEP}]
+				llvm-core/lld:${s}=[${LIBSTDCXX_USEDEP}]
+				openmp? (
+					>=llvm-runtimes/openmp-${s}:=[${LIBSTDCXX_USEDEP}]
+				)
 			)
 		"
 	done
@@ -329,12 +327,15 @@ gen_hip_clang_bdepend() {
 	local pv
 	for pv in ${ROCM_VERSIONS[@]} ; do
 		local s="0/${pv%.*}"
+		local u
+		u="${pv%.*}"
+		u="${u/./_}"
 		echo "
-			>=sys-devel/llvm-roc-${pv}:${s}[${LIBSTDCXX_USEDEP}]
-			sys-devel/llvm-roc:=
-			openmp? (
-				>=sys-libs/llvm-roc-libomp-${pv}:${s}[${LIBSTDCXX_USEDEP}]
-				sys-libs/llvm-roc-libomp:=
+			rocm_${u}? (
+				~sys-devel/llvm-roc-${pv}:=[${LIBSTDCXX_USEDEP}]
+				openmp? (
+					~sys-libs/llvm-roc-libomp-${pv}:=[${LIBSTDCXX_USEDEP}]
+				)
 			)
 		"
 	done

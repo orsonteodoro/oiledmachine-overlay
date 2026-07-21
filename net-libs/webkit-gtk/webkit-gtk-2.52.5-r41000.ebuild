@@ -864,7 +864,7 @@ gen_depend_llvm() {
 				=llvm-core/llvm-${s}*:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 				=llvm-core/lld-${s}*:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 				openmp? (
-					=llvm-runtimes/openmp-${s}*:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
+					>=llvm-runtimes/openmp-${s}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 				)
 			)
 		"

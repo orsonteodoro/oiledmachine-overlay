@@ -50,7 +50,7 @@ ${LLVM_EBUILDS_LLVM17_REVISION}
 REQUIRED_USE="
 "
 RDEPEND="
-	>=llvm-runtimes/openmp-${LLVM_VERSION}:${LLVM_MAJOR}=[offload?]
+	>=llvm-runtimes/openmp-${LLVM_VERSION}:=[offload?]
 	~llvm-core/clang-${LLVM_VERSION}:${LLVM_MAJOR}=
 	~llvm-core/llvm-${LLVM_VERSION}:${LLVM_MAJOR}=
 	~llvm-core/mlir-${LLVM_VERSION}:${LLVM_MAJOR}=

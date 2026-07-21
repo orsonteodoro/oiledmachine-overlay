@@ -44,10 +44,14 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-doc clang cuda openmp tbb
+doc clang cuda gcc openmp tbb
 ebuild_revision_7
 "
 REQUIRED_USE="
+	^^ (
+		clang
+		gcc
+	)
 	clang? (
 		^^ (
 			${LLVM_COMPAT[@]/#/llvm_slot_}
@@ -59,17 +63,16 @@ REQUIRED_USE="
 	)
 "
 RDEPEND+="
-	virtual/numpy[${PYTHON_USEDEP}]
+	virtual/numpy:=[${PYTHON_USEDEP}]
 	cuda? (
-		>=dev-util/nvidia-cuda-toolkit-11.2
-		dev-python/cuda-python[${PYTHON_USEDEP}]
+		>=dev-util/nvidia-cuda-toolkit-11.2:=
+		dev-python/cuda-python:=[${PYTHON_USEDEP}]
 	)
 	llvm_slot_20? (
 		=dev-python/llvmlite-0.47*[${PYTHON_USEDEP}]
 	)
 	tbb? (
-		>=dev-cpp/tbb-2021.1:0
-		dev-cpp/tbb:=
+		>=dev-cpp/tbb-2021.1:=
 	)
 "
 DEPEND+="
@@ -77,12 +80,12 @@ DEPEND+="
 "
 gen_clang_bdepend() {
 	local s
-	for s in ${LLVM_COMPAT[@]} ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
 		echo "
 			llvm_slot_${s}? (
-				llvm-core/clang:${s}
-				llvm-runtimes/clang-runtime:${s}[openmp]
-				>=llvm-runtimes/openmp-${s}
+				llvm-core/clang:${s}=
+				llvm-runtimes/clang-runtime:${s}=[openmp]
+				>=llvm-runtimes/openmp-${s}:=
 			)
 		"
 	done
@@ -91,12 +94,12 @@ BDEPEND+="
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/versioneer[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
-	virtual/numpy[${PYTHON_USEDEP}]
-	!clang? (
-		sys-devel/gcc[openmp]
-	)
+	virtual/numpy:=[${PYTHON_USEDEP}]
 	clang? (
 		$(gen_clang_bdepend)
+	)
+	gcc? (
+		sys-devel/gcc:=[openmp]
 	)
 	doc? (
 		dev-python/numpydoc[${PYTHON_USEDEP}]
@@ -110,6 +113,12 @@ PATCHES=(
 pkg_setup() {
 	check-compiler-switch_start
 	python_setup
+	if tc-is-clang ; then
+		use clang || die "Enable the clang USE flag to continue."
+	fi
+	if tc-is-gcc ; then
+		use gcc || die "Enable the gcc USE flag to continue."
+	fi
 }
 
 src_unpack() {

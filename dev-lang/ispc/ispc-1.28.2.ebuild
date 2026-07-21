@@ -107,18 +107,19 @@ REQUIRED_USE+="
 
 gen_llvm_depends() {
 	local s
-	for s in ${LLVM_COMPAT[@]} ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
 		echo "
 			llvm_slot_${s}? (
 				llvm-core/clang:${s}=
+				llvm-core/llvm:${s}=
 				lto? (
-					llvm-core/lld:${s}
+					llvm-core/lld:${s}=
 				)
 				openmp? (
-					llvm-runtimes/openmp:${s}
+					>=llvm-runtimes/openmp-${s}:=
 				)
 				video_cards_intel? (
-					>=dev-util/spirv-llvm-translator-${s}
+					>=dev-util/spirv-llvm-translator-${s}:${s}=
 				)
 			)
 		"
@@ -127,11 +128,12 @@ gen_llvm_depends() {
 
 gen_omp_depends() {
 	local s
-	for s in ${LLVM_COMPAT[@]} ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
 		echo "
 			llvm_slot_${s}? (
 				llvm-core/clang:${s}=
-				llvm-runtimes/openmp:${s}
+				llvm-core/llvm:${s}=
+				>=llvm-runtimes/openmp-${s}:=
 			)
 		"
 	done

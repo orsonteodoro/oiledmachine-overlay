@@ -333,7 +333,7 @@ gen_llvm_bdepend()
 				llvm-core/lld:${s}=[${LIBSTDCXX_USEDEP}]
 				llvm-core/llvm:${s}=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 				fuzz-testing? (
-					llvm-runtimes/openmp:=[${MULTILIB_USEDEP}]
+					>=llvm-runtimes/openmp-${s}:=[${MULTILIB_USEDEP}]
 				)
 			)
 		"
@@ -355,7 +355,7 @@ gen_llvm_test_bdepend()
 				fuzz-testing? (
 					=llvm-runtimes/clang-runtime-${s}*:=[${MULTILIB_USEDEP},compiler-rt,sanitize]
 					=llvm-runtimes/compiler-rt-sanitizers-${s}*:=[${LIBSTDCXX_USEDEP},libfuzzer,asan,ubsan]
-					llvm-runtimes/openmp:=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+					>=llvm-runtimes/openmp-${s}:=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 				)
 			)
 		"

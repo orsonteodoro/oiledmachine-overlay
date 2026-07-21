@@ -15,7 +15,7 @@ LICENSE="BSD"
 HOMEPAGE="https://bitbucket.org/blaze-lib/blaze"
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" boost cxx11threads hpx +lapack +openmp"
+IUSE+=" boost clang cxx11threads gcc hpx +lapack +openmp"
 RDEPEND+="
 	boost? (
 		dev-libs/boost
@@ -31,9 +31,11 @@ RDEPEND+="
 		)
 	)
 	openmp? (
-		|| (
-			sys-devel/gcc[openmp]
-			llvm-runtimes/openmp
+		gcc? (
+			sys-devel/gcc:=[openmp]
+		)
+		clang? (
+			llvm-runtimes/openmp:=
 		)
 	)
 "
@@ -49,6 +51,12 @@ BDEPEND+="
 "
 
 src_configure() {
+	if tc-is-clang ; then
+		use clang || die "Enable the clang USE flag to continue."
+	fi
+	if tc-is-gcc ; then
+		use gcc || die "Enable the gcc USE flag to continue."
+	fi
 	local mycmakeargs=(
 		-DUSE_LAPACK=$(usex lapack)
 	)

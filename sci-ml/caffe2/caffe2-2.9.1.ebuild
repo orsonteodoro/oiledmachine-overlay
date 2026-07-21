@@ -803,57 +803,35 @@ gen_rocm_depends() {
 		u="${u/./_}"
 		echo "
 			rocm_${u}? (
-				>=dev-libs/rocm-comgr-${pv}:${s}[${LIBSTDCXX_USEDEP}]
-				dev-libs/rocm-comgr:=
-				>=dev-libs/rocm-core-${pv}:${s}[${LIBSTDCXX_USEDEP}]
-				dev-libs/rocm-core:=
-				>=dev-libs/rocr-runtime-${pv}:${s}[${LIBSTDCXX_USEDEP}]
-				dev-libs/rocr-runtime:=
-				>=dev-util/hip-${pv}:${s}[${LIBSTDCXX_USEDEP},rocm]
-				dev-util/hip:=
-				>=sci-libs/hipBLAS-${pv}:${s}[${LIBSTDCXX_USEDEP},rocm]
-				sci-libs/hipBLAS:=
-				>=sci-libs/hipBLASLt-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPBLASLT)]
-				sci-libs/hipBLASLt:=
-				>=sci-libs/hipCUB-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPCUB),rocm]
-				sci-libs/hipCUB:=
-				>=sci-libs/hipRAND-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPRAND),rocm]
-				sci-libs/hipRAND:=
-				>=sci-libs/hipSOLVER-${pv}:${s}[${LIBSTDCXX_USEDEP},rocm]
-				sci-libs/hipSOLVER:=
-				>=sci-libs/hipSPARSE-${pv}:${s}[${LIBSTDCXX_USEDEP},rocm]
-				sci-libs/hipSPARSE:=
-				>=sci-libs/hipFFT-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPFFT),rocm]
-				sci-libs/hipFFT:=
-				>=sci-libs/miopen-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep MIOPEN)]
-				sci-libs/miopen:=
-				>=sci-libs/rocBLAS-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCBLAS)]
-				sci-libs/rocBLAS:=
-				>=sci-libs/rocFFT-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCFFT)]
-				sci-libs/rocFFT:=
-				>=sci-libs/rocRAND-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCRAND)]
-				sci-libs/rocRAND:=
-				>=sci-libs/rocPRIM-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCPRIM)]
-				sci-libs/rocPRIM:=
-				>=sci-libs/rocSOLVER-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCSOLVER)]
-				sci-libs/rocSOLVER:=
-				>=sci-libs/rocThrust-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCTHRUST)]
-				sci-libs/rocThrust:=
+				~dev-libs/rocm-comgr-${pv}:=[${LIBSTDCXX_USEDEP}]
+				~dev-libs/rocm-core-${pv}:=[${LIBSTDCXX_USEDEP}]
+				~dev-libs/rocr-runtime-${pv}:=[${LIBSTDCXX_USEDEP}]
+				~dev-util/hip-${pv}:=[${LIBSTDCXX_USEDEP},rocm]
+				~sci-libs/hipBLAS-${pv}:=[${LIBSTDCXX_USEDEP},rocm]
+				~sci-libs/hipBLASLt-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPBLASLT)]
+				~sci-libs/hipCUB-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPCUB),rocm]
+				~sci-libs/hipRAND-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPRAND),rocm]
+				~sci-libs/hipSOLVER-${pv}:=[${LIBSTDCXX_USEDEP},rocm]
+				~sci-libs/hipSPARSE-${pv}:=[${LIBSTDCXX_USEDEP},rocm]
+				~sci-libs/hipFFT-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPFFT),rocm]
+				~sci-libs/miopen-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep MIOPEN)]
+				~sci-libs/rocBLAS-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCBLAS)]
+				~sci-libs/rocFFT-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCFFT)]
+				~sci-libs/rocRAND-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCRAND)]
+				~sci-libs/rocPRIM-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCPRIM)]
+				~sci-libs/rocSOLVER-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCSOLVER)]
+				~sci-libs/rocThrust-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCTHRUST)]
 				magma? (
-					=sci-libs/magma-2.9*:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep MAGMA_2_9),rocm]
-					sci-libs/magma:=
+					=sci-libs/magma-2.9*:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep MAGMA_2_9),rocm]
 				)
 				openmp? (
-					>=sys-libs/llvm-roc-libomp-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep LLVM_ROC_LIBOMP)]
-					sys-libs/llvm-roc-libomp:=
+					~sys-libs/llvm-roc-libomp-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep LLVM_ROC_LIBOMP)]
 				)
 				rccl? (
-					>=dev-libs/rccl-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep RCCL)]
-					dev-libs/rccl:=
+					~dev-libs/rccl-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep RCCL)]
 				)
 				roctracer? (
-					>=dev-util/roctracer-${pv}:${s}[${LIBSTDCXX_USEDEP}]
-					dev-util/roctracer:=
+					~dev-util/roctracer-${pv}:=[${LIBSTDCXX_USEDEP}]
 				)
 			)
 		"
@@ -886,8 +864,12 @@ CUDA_13_0_RDEPEND="
 "
 RDEPEND="
 	${PYTHON_DEPS}
-	virtual/lapack
+	virtual/lapack:*
 	cuda? (
+		dev-util/nvidia-cuda-toolkit:=[profiler]
+		dev-libs/cudnn:=
+		x11-drivers/nvidia-drivers:=
+		virtual/cuda-compiler:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		cuda_targets_auto? (
 			|| (
 				${CUDA_12_6_RDEPEND}
@@ -1018,11 +1000,8 @@ RDEPEND="
 			)
 		)
 		nccl? (
-			dev-libs/nccl
+			dev-libs/nccl:=
 		)
-		dev-util/nvidia-cuda-toolkit:=
-		dev-libs/cudnn:=
-		virtual/cuda-compiler:=
 	)
 	flash-attention? (
 		$(python_gen_cond_dep '
@@ -1034,13 +1013,12 @@ RDEPEND="
 			dev-python/wheel[${PYTHON_USEDEP}]
 			dev-python/pybind11[${PYTHON_USEDEP}]
 			dev-python/pandas[${PYTHON_USEDEP}]
-			virtual/numpy[${PYTHON_USEDEP}]
+			virtual/numpy:=[${PYTHON_USEDEP}]
 		')
 	)
 	gloo? (
 		ssl? (
-			>=dev-libs/openssl-1.1
-			dev-libs/openssl:=
+			>=dev-libs/openssl-1.1:=
 		)
 	)
 	magma? (
@@ -1054,7 +1032,7 @@ RDEPEND="
 	)
 	numpy? (
 		$(python_gen_cond_dep '
-			virtual/numpy[${PYTHON_USEDEP}]
+			virtual/numpy:=[${PYTHON_USEDEP}]
 		')
 	)
 	openblas? (
@@ -1069,53 +1047,45 @@ RDEPEND="
 		)
 	)
 	system-libs? (
-		(
-			>=dev-cpp/gflags-2.2.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-			dev-cpp/gflags:=
-		)
-		>=dev-cpp/glog-0.4.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-cpp/glog:=
-		>=dev-libs/cpuinfo-2025.03.21
-		>=dev-libs/libfmt-11.2.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-libs/libfmt:=
-		>=dev-libs/pthreadpool-2023.08.28
-		>=dev-libs/sleef-3.8.0[cpu_flags_x86_avx?,cpu_flags_x86_avx2?,cpu_flags_x86_avx512f?,cpu_flags_x86_fma4?,cpu_flags_x86_sse2?,cpu_flags_x86_sse4_1?]
-		>=sci-ml/onnx-1.18.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		sci-ml/onnx:=
-		>=dev-cpp/opentelemetry-cpp-1.14.2:${PROTOBUF_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-cpp/opentelemetry-cpp:=
-		dev-libs/protobuf:${PROTOBUF_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-libs/protobuf:=
+		>=dev-cpp/gflags-2.2.2:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-cpp/glog-0.4.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-libs/cpuinfo-2025.03.21:=
+		>=dev-libs/libfmt-11.2.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-libs/pthreadpool-2023.08.28:=
+		>=dev-libs/sleef-3.8.0:=[cpu_flags_x86_avx?,cpu_flags_x86_avx2?,cpu_flags_x86_avx512f?,cpu_flags_x86_fma4?,cpu_flags_x86_sse2?,cpu_flags_x86_sse4_1?]
+		>=sci-ml/onnx-1.18.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-cpp/opentelemetry-cpp-1.14.2:${PROTOBUF_CPP_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		dev-libs/protobuf:${PROTOBUF_CPP_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		cuda? (
-			>=dev-libs/cudnn-frontend-1.12.0
+			>=dev-libs/cudnn-frontend-1.12.0:=
 		)
 		fbgemm? (
-			>=sci-ml/FBGEMM-2025.09.05
+			>=sci-ml/FBGEMM-2025.09.05:=
 		)
 		gloo? (
-			>=sci-ml/gloo-0.5.0[cuda?,mpi?,ssl?]
+			>=sci-ml/gloo-0.5.0:=[cuda?,mpi?,ssl?]
 		)
 		mkl? (
-			>=sci-libs/mkl-2024.2.0.0
+			>=sci-libs/mkl-2024.2.0.0:=
 		)
 		nnpack? (
-			>=sci-ml/NNPACK-2020.12.21
+			>=sci-ml/NNPACK-2020.12.21:=
 		)
 		onednn? (
-			>=sci-ml/oneDNN-3.7.1
+			>=sci-ml/oneDNN-3.7.1:=
 		)
 		qnnpack? (
 			!sci-libs/QNNPACK
-			>=dev-cpp/gemmlowp-2018.11.26
+			>=dev-cpp/gemmlowp-2018.11.26:=
 		)
 		tensorpipe? (
-			>=sci-ml/tensorpipe-2025.08.15[cuda?]
+			>=sci-ml/tensorpipe-2025.08.15:=[cuda?]
 		)
 		xnnpack? (
-			>=sci-ml/XNNPACK-2024.12.29[jit?,memopt,sparse]
+			>=sci-ml/XNNPACK-2024.12.29:=[jit?,memopt,sparse]
 			cpu_flags_arm_dotprod? (
 				cpu_flags_arm_fp16? (
-					>=sci-ml/XNNPACK-2024.12.29[assembly]
+					>=sci-ml/XNNPACK-2024.12.29:=[assembly]
 				)
 			)
 		)
@@ -1130,18 +1100,18 @@ DEPEND="
 		$(python_gen_cond_dep '
 			>=dev-python/pybind11-3.0.1[${PYTHON_USEDEP}]
 		')
-		>=dev-libs/flatbuffers-24.12.23[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-libs/flatbuffers-24.12.23:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		dev-libs/flatbuffers:=
-		>=sci-ml/FP16-2020.05.14
-		>=dev-libs/FXdiv-2020.04.17
-		>=dev-libs/pocketfft-2024.11.30
-		>=dev-libs/psimd-2020.05.17
-		>=sci-ml/kineto-0.4.0_p20250616
+		>=sci-ml/FP16-2020.05.14:=
+		>=dev-libs/FXdiv-2020.04.17:=
+		>=dev-libs/pocketfft-2024.11.30:=
+		>=dev-libs/psimd-2020.05.17:=
+		>=sci-ml/kineto-0.4.0_p20250616:=
 		cuda? (
-			>=dev-libs/cutlass-4.1.0
+			>=dev-libs/cutlass-4.1.0:=
 		)
 		onednn? (
-			>=sci-ml/ideep-3.7.1_p4
+			>=sci-ml/ideep-3.7.1_p4:=
 		)
 	)
 "
@@ -1150,17 +1120,12 @@ gen_clang() {
 	for s in "${LLVM_COMPAT[@]}" ; do
 		echo "
 			llvm_slot_${s}? (
-				llvm-core/llvm:${s}[${LIBSTDCXX_USEDEP}]
-				llvm-core/llvm:=
-				llvm-core/clang:${s}[${LIBSTDCXX_USEDEP}]
-				llvm-core/clang:=
-				llvm-core/lld:${s}[${LIBSTDCXX_USEDEP}]
-				llvm-core/lld:=
+				llvm-core/llvm:${s}=[${LIBSTDCXX_USEDEP}]
+				llvm-core/clang:${s}=[${LIBSTDCXX_USEDEP}]
+				llvm-core/lld:${s}=[${LIBSTDCXX_USEDEP}]
 				openmp? (
-					llvm-runtimes/clang-runtime:${s}[openmp]
-					llvm-runtimes/clang-runtime:=
-					=llvm-runtimes/openmp-${s}*[${LIBSTDCXX_USEDEP}]
-					llvm-runtimes/openmp:=
+					llvm-runtimes/clang-runtime:${s}=[openmp]
+					>=llvm-runtimes/openmp-${s}:=[${LIBSTDCXX_USEDEP}]
 				)
 			)
 		"
@@ -1171,13 +1136,14 @@ gen_gcc_bdepend() {
 	for s in "${GCC_COMPAT[@]/gcc_slot_}" ; do
 		echo "
 			=sys-devel/gcc-${s/_/.}*[openmp?]
-			sys-devel/gcc:=
 		"
 	done
 }
 BDEPEND="
 	>=dev-build/cmake-3.27.0
 	!clang? (
+		sys-devel/gcc:=[openmp?]
+		sys-devel/binutils:=
 		|| (
 			$(gen_gcc_bdepend)
 		)
@@ -1258,11 +1224,9 @@ BDEPEND="
 		$(gen_clang)
 	)
 	system-libs? (
-		dev-libs/protobuf:${PROTOBUF_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-libs/protobuf:=
+		dev-libs/protobuf:${PROTOBUF_CPP_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		test? (
 			>=dev-cpp/benchmark-1.9.3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-			dev-cpp/benchmark:=
 		)
 	)
 "
