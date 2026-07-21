@@ -122,7 +122,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libogg-9999"
 	"media-libs/libpng-9999"
 	"media-libs/libpulse-9999"
-	"media-libs/libsdl2-9999"
+	"media-libs/libsdl3-9999"
 	"media-libs/libtheora-9999"
 	"media-libs/libvorbis-9999"
 	"media-libs/libvpx-9999"

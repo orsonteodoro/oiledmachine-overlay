@@ -429,6 +429,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libogg-9999"
 	"media-libs/libplacebo-9999"
 	"media-libs/libpulse-9999"
+	"media-libs/libsdl2-9999"
 	"media-libs/libtheora-9999"
 	"media-libs/libva-9999"
 	"media-libs/libvorbis-9999"
@@ -1048,7 +1049,7 @@ RDEPEND+="
 		>=net-fs/samba-${SAMBA_PV}:=[${MULTILIB_USEDEP},client]
 	)
 	sdl? (
-		<media-libs/libsdl2-3:=[${MULTILIB_USEDEP},sound,threads(+),video,wayland?,X?]
+		>=media-libs/libsdl2-${LIBSDL2_PV}:=[${MULTILIB_USEDEP},sound,threads(+),video,wayland?,X?]
 	)
 	sndio? (
 		>=media-sound/sndio-${SNDIO_PV}:=[${MULTILIB_USEDEP}]
