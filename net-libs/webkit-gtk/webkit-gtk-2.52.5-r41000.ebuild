@@ -3269,7 +3269,7 @@ src_install() {
 	multilib_foreach_abi install_abi
 	multilib_install_wrappers
 	_src_install_all
-	disable_dfg_jit
+	#disable_dfg_jit
 }
 
 pkg_postinst() {
@@ -3314,7 +3314,9 @@ ewarn "requested by the site."
 ewarn
 	fi
 
-	if use amd64 && ! use cpu_flags_x86_sse4_1 ; then
+	if true ; then
+		:
+	elif use amd64 && ! use cpu_flags_x86_sse4_1 ; then
 elog
 elog "Your CPU lacks SSE4.1.  The DFG JIT tier in WebKitGTK 2.52.3+ is known to"
 elog "emit an unsupported instructions → SIGILL crash on heavy JS pages."
