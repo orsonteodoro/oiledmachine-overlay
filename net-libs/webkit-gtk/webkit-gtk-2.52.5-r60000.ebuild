@@ -3045,7 +3045,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	if use openmp && tc-is-clang ; then
 		mycmakeargs+=(
-			-DOpenMP_CXX_FLAGS="-I${ESYSROOT}/usr/include -fopenmp=openmp"
+			-DOpenMP_CXX_FLAGS="-I${ESYSROOT}/usr/include -fopenmp=libomp"
 			-DOpenMP_CXX_LIB_NAMES="libomp"
 			-DOpenMP_libomp_LIBRARY="${ESYSROOT}/usr/$(get_libdir)/libomp.so"
 		)
