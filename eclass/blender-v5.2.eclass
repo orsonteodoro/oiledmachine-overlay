@@ -841,9 +841,9 @@ PATENT_STATUS_RDEPEND="
 
 CUDA_12_8_RDEPEND="
 	(
-		=dev-util/nvidia-cuda-toolkit-12.8*:=
-		>=x11-drivers/nvidia-drivers-570.124:=
-		virtual/cuda-compiler:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		=dev-util/nvidia-cuda-toolkit-12.8*
+		>=x11-drivers/nvidia-drivers-570.124
+		virtual/cuda-compiler[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 "
 

@@ -841,9 +841,9 @@ PATENT_STATUS_RDEPEND="
 
 CUDA_12_8_RDEPEND="
 	(
-		=dev-util/nvidia-cuda-toolkit-12.8*:=
-		>=x11-drivers/nvidia-drivers-570.124:=
-		virtual/cuda-compiler:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		=dev-util/nvidia-cuda-toolkit-12.8*
+		>=x11-drivers/nvidia-drivers-570.124
+		virtual/cuda-compiler[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 "
 
@@ -879,7 +879,7 @@ gen_rocm_hiprt_rdepend() {
 		local ROCM_SLOT="${s}"
 		echo "
 			rocm_${d}? (
-				media-libs/HIPRT:=
+				media-libs/HIPRT:=[${LIBSTDCXX_USEDEP},rocm]
 				|| (
 					=media-libs/HIPRT-2.5*:0/${s}[${LIBSTDCXX_USEDEP},rocm,$(gen_hiprt_usedep 2.5 ${s})]
 					=media-libs/HIPRT-3.0*:0/${s}[${LIBSTDCXX_USEDEP},rocm,$(gen_hiprt_usedep 3.0 ${s})]
