@@ -24,7 +24,7 @@ DESCRIPTION="C++ HTTP/HTTPS server and client library"
 HOMEPAGE="https://github.com/yhirose/cpp-httplib/"
 
 if [[ "${PV}" == *9999* ]] ; then
-	FALLBACK_COMMIT=""
+	FALLBACK_COMMIT="c64bf21a5ea10c196187cda52ccd776725968e3c"
 	EGIT_REPO_URI="https://github.com/yhirose/${PN}.git"
 	EGIT_BRANCH="master"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -39,9 +39,12 @@ else
 fi
 
 LICENSE="MIT"
-SLOT="0/$(ver_cut 0-2)"  # soversion
+SLOT="0/"$(ver_cut "1-2" "${PV}")
 
-IUSE+=" brotli mbedtls ssl test zlib zstd"
+IUSE+="
+brotli mbedtls ssl test zlib zstd
+ebuild_revision_2
+"
 REQUIRED_USE="test? ( brotli zlib zstd )"
 RESTRICT="!test? ( test )"
 
@@ -50,7 +53,13 @@ RDEPEND="
 		>=app-arch/brotli-${BROTLI_PV}:=[${MULTILIB_USEDEP}]
 	)
 	ssl? (
-		mbedtls? ( >=net-libs/mbedtls-${MBEDTLS_3_PV}:3=[${MULTILIB_USEDEP}] )
+		mbedtls? (
+			net-libs/mbedtls:=[${MULTILIB_USEDEP}]
+			|| (
+				>=net-libs/mbedtls-${MBEDTLS_3_PV}:3[${MULTILIB_USEDEP}]
+				>=net-libs/mbedtls-${MBEDTLS_4_PV}:4[${MULTILIB_USEDEP}]
+			)
+		)
 		!mbedtls? (
 			$(secure-version_gen_openssl_depends '' '[${MULTILIB_USEDEP}]')
 		)
