@@ -405,7 +405,7 @@ inherit abseil-cpp cflags-hardened chkl cuda java-pkg-opt-2 cmake-multilib flag-
 inherit libcxx-slot libstdcxx-slot protobuf python-single-r1 toolchain-funcs virtualx
 
 if [[ "${PV}" == *"9999"* ]] ; then
-	FALLBACK_COMMIT="639fd5d07a7a71434deb038b5fa02ac7631ac2ab"
+	FALLBACK_COMMIT="0e09f1a23885eee460ade65fe51950b80bc8f49c"
 	EGIT_BRANCH="4.x"
 	EGIT_REPO_URI="https://github.com/${PN}/${PN}.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -481,7 +481,7 @@ IUSE+="
 	${PATENT_STATUS_IUSE[@]}
 	debug -doc +eigen gflags glog -halide +java -non-free +opencvapps +protobuf +python
 	-system-flatbuffers test -testprograms -vulkan -zlib-ng
-	ebuild_revision_57
+	ebuild_revision_58
 "
 # hal for acceleration
 IUSE+="
