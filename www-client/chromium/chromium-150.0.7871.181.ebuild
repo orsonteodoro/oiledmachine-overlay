@@ -1539,7 +1539,6 @@ LIBCXX_REQUIRED_USE=(
 REQUIRED_USE+="
 	${PATENT_USE_FLAGS}
 	!drumbrake
-	!system-ffmpeg
 	!headless (
 		extensions
 		pdf
