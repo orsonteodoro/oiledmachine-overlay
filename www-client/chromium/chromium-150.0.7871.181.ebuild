@@ -1388,7 +1388,7 @@ ${SYSTEM_USE[@]}
 -debug -drumbrake +encode +extensions ffmpeg-chromium firejail -force-unbundler
 -gtk3 -gtk4 -gwp-asan -hangouts -headless +hidpi +jit +js-type-check +kerberos
 +miracleptr mold +mpris -official +partitionalloc pax-kernel +pdf pic +pgo
-+plugins +pre-check-vaapi +pulseaudio +reporting-api -qt6 +rar +screencast
++plugins +pulseaudio +reporting-api -qt6 +rar +screencast
 selinux -system-clang -system-rust systemd test +v8-snapshot +wayland
 +webassembly -widevine +X
 ebuild_revision_41
@@ -1800,9 +1800,6 @@ REQUIRED_USE+="
 	)
 	pgo? (
 		official
-	)
-	pre-check-vaapi? (
-		vaapi
 	)
 	screencast? (
 		wayland
