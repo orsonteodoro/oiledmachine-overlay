@@ -306,6 +306,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/alsa-lib-9999"
 	"media-libs/fontconfig-9999"
 	"dev-libs/crc32c-9999"
+	"dev-libs/double-conversion-9999"
 	"dev-libs/expat-9999"
 	"dev-libs/flatbuffers-9999"
 	"dev-libs/glib-2.89.9999"
@@ -1536,9 +1537,9 @@ LIBCXX_REQUIRED_USE=(
 # system-rust patches not ready yet
 #	!system-clang
 #	!system-rust
+#	!drumbrake
 REQUIRED_USE+="
 	${PATENT_USE_FLAGS}
-	!drumbrake
 	!headless (
 		extensions
 		pdf
