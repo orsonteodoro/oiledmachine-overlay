@@ -254,7 +254,7 @@ SECURE_TIMESTAMP["media_libs_libva_9999"]="Apr 13, 2026"
 SECURE_TIMESTAMP["media_libs_libvisual_9999"]="Jan 21, 2025 6:32 PM PST"
 SECURE_TIMESTAMP["media_libs_libvorbis_9999"]="May 24, 2026 2:10:05 PM PDT"
 SECURE_TIMESTAMP["media_libs_libvpx_9999"]="Wed, May 27, 2026 18:14:29"
-SECURE_TIMESTAMP["media_libs_libyuv_9999"]="Jun 05, 2026 6:38 PM PDT"
+SECURE_TIMESTAMP["media_libs_libyuv_9999"]="Jul 17, 2026 9:19 AM PDT"
 SECURE_TIMESTAMP["media_libs_libwmf_9999"]="May 15, 2026 12:51 AM PDT"
 SECURE_TIMESTAMP["media_libs_lv2_9999"]="Sep 28, 2025 4:27 PM PDT"
 
