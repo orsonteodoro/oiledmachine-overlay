@@ -1,3 +1,9 @@
+# Fix for GCC PGO instrumentation phase when CFLAGS = -O2 -fprofile-generate -fno-reorder-blocks-and-partition
+# libswscale/x86/rgb2rgb_template.c:1640:9: error: 'asm' operand has impossible constraints
+
+# If using x86 (32-bit) with PGO set CPPFLAGS=-DALLOW_7REGS=0
+# Otherwise, CPPFLAGS=-DALLOW_7REGS=1
+
 --- a/libavutil/x86/asm.h.orig	2026-07-19 02:04:28.538851083 -0700
 +++ b/libavutil/x86/asm.h	2026-07-19 02:06:53.263414337 -0700
 @@ -71,7 +71,7 @@ typedef int32_t x86_reg;

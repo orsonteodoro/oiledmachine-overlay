@@ -1,0 +1,105 @@
+# Fix for GCC PGO instrumentation phase when CFLAGS = -O2 -fprofile-generate -fno-reorder-blocks-and-partition
+# libswscale/x86/rgb2rgb_template.c:1640:9: error: 'asm' operand has impossible constraints
+
+# If using x86 (32-bit) with PGO set CPPFLAGS=-DALLOW_7REGS=0
+# Otherwise, CPPFLAGS=-DALLOW_7REGS=1
+
+diff '--color=auto' -urp ffmpeg-9999.orig/libavcodec/msmpeg4.c ffmpeg-9999/libavcodec/msmpeg4.c
+--- ffmpeg-9999.orig/libavcodec/msmpeg4.c	2026-07-22 15:23:09.112544859 -0700
++++ ffmpeg-9999/libavcodec/msmpeg4.c	2026-07-22 15:29:12.137435038 -0700
+@@ -228,7 +228,7 @@ int ff_msmpeg4_pred_dc(MpegEncContext *s
+        necessitate to modify mpegvideo.c. The problem comes from the
+        fact they decided to store the quantized DC (which would lead
+        to problems if Q could vary !) */
+-#if ARCH_X86 && HAVE_X86_7REGS && HAVE_EBX_AVAILABLE
++#if ARCH_X86 && HAVE_X86_7REGS && ALLOW_7REGS && HAVE_EBX_AVAILABLE
+     __asm__ volatile(
+         "movl %3, %%eax         \n\t"
+         "shrl $1, %%eax         \n\t"
+diff '--color=auto' -urp ffmpeg-9999.orig/libavcodec/x86/cabac.h ffmpeg-9999/libavcodec/x86/cabac.h
+--- ffmpeg-9999.orig/libavcodec/x86/cabac.h	2026-07-22 15:23:09.352620795 -0700
++++ ffmpeg-9999/libavcodec/x86/cabac.h	2026-07-22 15:29:07.881565161 -0700
+@@ -216,7 +216,7 @@
+ 
+ #endif /* BROKEN_RELOCATIONS */
+ 
+-#if HAVE_X86_7REGS && !BROKEN_COMPILER
++#if HAVE_X86_7REGS && ALLOW_7REGS && !BROKEN_COMPILER
+ #define get_cabac_inline get_cabac_inline_x86
+ static
+ #if ARCH_X86_32
+diff '--color=auto' -urp ffmpeg-9999.orig/libavcodec/x86/h264_cabac.c ffmpeg-9999/libavcodec/x86/h264_cabac.c
+--- ffmpeg-9999.orig/libavcodec/x86/h264_cabac.c	2026-07-22 15:23:09.360537343 -0700
++++ ffmpeg-9999/libavcodec/x86/h264_cabac.c	2026-07-22 15:29:06.009610616 -0700
+@@ -41,7 +41,7 @@
+ 
+ //FIXME use some macros to avoid duplicating get_cabac (cannot be done yet
+ //as that would make optimization work hard)
+-#if HAVE_X86_7REGS && !BROKEN_COMPILER
++#if HAVE_X86_7REGS && ALLOW_7REGS && !BROKEN_COMPILER
+ #define decode_significance decode_significance_x86
+ static int decode_significance_x86(CABACContext *c, int max_coeff,
+                                    uint8_t *significant_coeff_ctx_base,
+diff '--color=auto' -urp ffmpeg-9999.orig/libavcodec/x86/mlpdsp_init.c ffmpeg-9999/libavcodec/x86/mlpdsp_init.c
+--- ffmpeg-9999.orig/libavcodec/x86/mlpdsp_init.c	2026-07-22 15:23:09.376536859 -0700
++++ ffmpeg-9999/libavcodec/x86/mlpdsp_init.c	2026-07-22 15:29:10.569380301 -0700
+@@ -45,7 +45,7 @@ void ff_mlp_rematrix_channel_##opt(int32
+ REMATRIX_CHANNEL_FUNC(sse4)
+ REMATRIX_CHANNEL_FUNC(avx2_bmi2)
+ 
+-#if HAVE_X86_7REGS && HAVE_INLINE_ASM && HAVE_INLINE_ASM_NONLOCAL_LABELS
++#if HAVE_X86_7REGS && ALLOW_7REGS && HAVE_INLINE_ASM && HAVE_INLINE_ASM_NONLOCAL_LABELS
+ 
+ extern char ff_mlp_firorder_8;
+ extern char ff_mlp_firorder_7;
+@@ -196,7 +196,7 @@ static void mlp_filter_channel_x86(int32
+ av_cold void ff_mlpdsp_init_x86(MLPDSPContext *c)
+ {
+     int cpu_flags = av_get_cpu_flags();
+-#if HAVE_X86_7REGS && HAVE_INLINE_ASM && HAVE_INLINE_ASM_NONLOCAL_LABELS
++#if HAVE_X86_7REGS && ALLOW_7REGS && HAVE_INLINE_ASM && HAVE_INLINE_ASM_NONLOCAL_LABELS
+     if (INLINE_MMX(cpu_flags))
+         c->mlp_filter_channel = mlp_filter_channel_x86;
+ #endif
+diff '--color=auto' -urp ffmpeg-9999.orig/libavcodec/x86/snowdsp_init.c ffmpeg-9999/libavcodec/x86/snowdsp_init.c
+--- ffmpeg-9999.orig/libavcodec/x86/snowdsp_init.c	2026-07-22 15:23:09.384536616 -0700
++++ ffmpeg-9999/libavcodec/x86/snowdsp_init.c	2026-07-22 15:29:09.353548483 -0700
+@@ -207,7 +207,7 @@ static void ff_snow_horizontal_compose97
+     }
+ }
+ 
+-#if HAVE_X86_7REGS
++#if HAVE_X86_7REGS && ALLOW_7REGS
+ #define snow_vertical_compose_r2r_sub(s0,s1,s2,s3,t0,t1,t2,t3)\
+         "psubw %%"s0", %%"t0" \n\t"\
+         "psubw %%"s1", %%"t1" \n\t"\
+@@ -336,7 +336,7 @@ av_cold void ff_dwt_init_x86(SnowDWTCont
+ #if HAVE_INLINE_ASM
+     if (INLINE_MMXEXT(cpuflags)) {
+         c->horizontal_compose97i = ff_snow_horizontal_compose97i_mmx;
+-#if HAVE_X86_7REGS
++#if HAVE_X86_7REGS && ALLOW_7REGS
+         c->vertical_compose97i   = ff_snow_vertical_compose97i_mmx;
+ #endif
+     }
+diff '--color=auto' -urp ffmpeg-9999.orig/libswscale/x86/rgb2rgb.c ffmpeg-9999/libswscale/x86/rgb2rgb.c
+--- ffmpeg-9999.orig/libswscale/x86/rgb2rgb.c	2026-07-22 15:23:09.976518677 -0700
++++ ffmpeg-9999/libswscale/x86/rgb2rgb.c	2026-07-22 15:29:03.289660949 -0700
+@@ -1375,7 +1375,7 @@ static inline void planar2x_mmxext(const
+  * others are ignored in the C version.
+  * FIXME: Write HQ version.
+  */
+-#if ARCH_X86_32 && HAVE_X86_7REGS
++#if ARCH_X86_32 && HAVE_X86_7REGS && ALLOW_7REGS
+ DECLARE_ASM_CONST(8, uint64_t, bgr2YOffset)  = 0x1010101010101010ULL;
+ DECLARE_ASM_CONST(8, uint64_t, bgr2UVOffset) = 0x8080808080808080ULL;
+ DECLARE_ASM_CONST(8, uint64_t, w1111)        = 0x0001000100010001ULL;
+@@ -1977,7 +1977,7 @@ static av_cold void rgb2rgb_init_mmxext(
+     yuyvtoyuv422       = yuyvtoyuv422_mmxext;
+ 
+     planar2x           = planar2x_mmxext;
+-#if ARCH_X86_32 && HAVE_X86_7REGS
++#if ARCH_X86_32 && HAVE_X86_7REGS && ALLOW_7REGS
+     ff_rgb24toyv12     = rgb24toyv12_mmxext;
+ #endif /* ARCH_X86_32 && HAVE_X86_7REGS */
+ 
