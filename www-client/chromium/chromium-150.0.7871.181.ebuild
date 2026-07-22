@@ -2134,12 +2134,12 @@ COMMON_DEPEND="
 		)
 	)
 	${COMMON_SNAPSHOT_DEPEND}
+	>=app-arch/bzip2-${BZIP2_PV}:=[${MULTILIB_USEDEP}]
 	>=dev-libs/expat-${EXPAT_PV}:=[${MULTILIB_USEDEP}]
 	>=net-misc/curl-${CURL_PV}:=[${MULTILIB_USEDEP},ssl]
 	>=sys-apps/dbus-${DBUS_PV}:=[${MULTILIB_USEDEP}]
 	>=sys-devel/gcc-${GCC_PV}:=
-	>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP},minizip]
-	>=app-arch/bzip2-${BZIP2_PV}:=[${MULTILIB_USEDEP}]
+	>=sys-libs/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP},minizip]
 	virtual/libc:=
 	bluetooth? (
 		>=net-wireless/bluez-${BLUEZ_PV}:=[${MULTILIB_USEDEP}]
