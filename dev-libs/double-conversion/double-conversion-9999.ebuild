@@ -35,7 +35,7 @@ LICENSE="BSD"
 SOVER="3"
 SLOT="0/${SOVER}"
 KEYWORDS="~amd64 ~arm64"
-IUSE="test"
+IUSE+=" test"
 
 pkg_setup() {
 	libcxx-slot_verify
