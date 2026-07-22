@@ -19,7 +19,7 @@ CHKL_TIMESTAMPS=(
 inherit autotools chkl multilib-minimal python-single-r1 secure-version systemd
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="96fbba39366e8deb06bf8a176b5bea342b2722c1"
+	FALLBACK_COMMIT="9af37a340aca98201e03027c0850688ec5a75a78"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
 	fi
@@ -39,7 +39,7 @@ SLOT="0"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~mips ppc ppc64 ~riscv ~s390 ~sparc x86"
 IUSE+="
 autoipd bookmarks +dbus doc gdbm gtk howl-compat +introspection mdnsresponder-compat nls python qt6 selinux systemd test
-ebuild_revision_2
+ebuild_revision_3
 "
 
 REQUIRED_USE="
