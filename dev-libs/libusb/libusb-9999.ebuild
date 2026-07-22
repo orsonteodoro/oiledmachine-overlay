@@ -7,14 +7,25 @@ CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 
 inherit cflags-hardened libtool multilib-minimal
 
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="7b4dc489578bb71a2e1186b9a6b15f416be49ee3"
+	EGIT_BRANCH="master"
+	EGIT_REPO_URI="https://github.com/libusb/libusb.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos"
+	SRC_URI="https://github.com/${PN}/${PN}/releases/download/v${PV}/${P}.tar.bz2"
+fi
+
 DESCRIPTION="Userspace access to USB devices"
 HOMEPAGE="https://libusb.info/ https://github.com/libusb/libusb"
-SRC_URI="https://github.com/${PN}/${PN}/releases/download/v${PV}/${P}.tar.bz2"
 
 LICENSE="LGPL-2.1"
 SLOT="1"
-KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos"
-IUSE="
+IUSE+="
 debug doc examples static-libs test udev
 ebuild_revision_9
 "
@@ -32,9 +43,22 @@ src_prepare() {
 	default
 
 	# bug #923738
+	./bootstrap.sh || die
 	sed -i -e "s:umockdev-1.0:umockdev-1.0-DISABLED:" configure || die
 
 	elibtoolize
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
 }
 
 multilib_src_configure() {
