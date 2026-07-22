@@ -18,7 +18,7 @@ LLVM_COMPAT=(
 # See https://github.com/lemenkov/libyuv/commits/main/README.chromium for activity
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CXX_STANDARD=17 # Compiler default
-EGIT_COMMIT="3bdb3b94caaf12487af7c5f91f830ef0064be250"
+EGIT_COMMIT="c1e9e698264a904048561483ec5c1f1ca81d2164"
 
 inherit cflags-hardened cmake libcxx-slot libstdcxx-slot multilib-minimal
 
@@ -50,11 +50,9 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 	test? (
-		dev-cpp/gflags[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
-		dev-cpp/gflags:=
-		dev-cpp/gtest[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
-		dev-cpp/gtest:=
-		virtual/jpeg[${MULTILIB_USEDEP}]
+		dev-cpp/gflags:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		dev-cpp/gtest:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		virtual/jpeg:*[${MULTILIB_USEDEP}]
 	)
 "
 BDEPEND+="
