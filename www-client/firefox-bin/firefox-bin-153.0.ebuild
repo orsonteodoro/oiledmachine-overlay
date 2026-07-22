@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# For versioning, the ebuild does accept the 153.0 like in the ftp folder.
+
 MOZ_ESR=
 
 MOZ_PV=${PV}
