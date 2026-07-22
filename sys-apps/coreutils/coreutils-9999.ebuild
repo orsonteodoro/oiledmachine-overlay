@@ -34,7 +34,7 @@ DESCRIPTION="Standard GNU utilities (chmod, cp, dd, ls, sort, tr, head, wc, who,
 HOMEPAGE="https://www.gnu.org/software/coreutils/"
 
 if [[ ${PV} == 9999 ]] ; then
-	FALLBACK_COMMIT="970548101e9bed4a3ade5d8236e311a08ba0bf5c"
+	FALLBACK_COMMIT="39d955a0efa41df816d96c3b0e221c5478c8f27b"
 	EGIT_COMMIT="master"
 	EGIT_REPO_URI="https://git.savannah.gnu.org/git/coreutils.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -61,7 +61,10 @@ SRC_URI+=" !vanilla? ( https://dev.gentoo.org/~sam/distfiles/${CATEGORY}/${PN}/$
 
 LICENSE="GPL-3+"
 SLOT="0"
-IUSE+=" acl caps gmp hostname kill multicall nls +openssl selinux +split-usr static test test-full vanilla xattr"
+IUSE+="
+acl caps gmp hostname kill multicall nls +openssl selinux +split-usr static test test-full vanilla xattr
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 # Sync !static and static section, removing [static-libs] in !static section.
