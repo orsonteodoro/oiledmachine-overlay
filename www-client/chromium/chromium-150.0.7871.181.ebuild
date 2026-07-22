@@ -2241,7 +2241,7 @@ BDEPEND+="
 	sys-apps/hwdata
 	sys-devel/flex
 	x11-misc/xdg-utils
-	www-client/chromium-toolchain:${PV%.*}.x=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cfi=,pgo=,system-clang=,system-rust=]
+	www-client/chromium-toolchain:${PV%.*}.x=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cfi,pgo,system-clang=,system-rust=]
 	mold? (
 		>=sys-devel/mold-${MOLD_PV}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},-system-mimalloc]
 	)
