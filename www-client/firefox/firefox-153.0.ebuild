@@ -180,7 +180,7 @@ RUSTFLAGS_HARDENED_USE_CASES="network sensitive-data untrusted-data web-browser"
 RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IBC ID IO JITM MC NPD OOBA OOBR OOBW PE SA SB SBE SO SOPB UAF UM TC"
 DBUS_PV="0.60"
 EBUILD_MAINTAINER_MODE=0
-FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-03.tar.xz"
+FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-01.tar.xz"
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
 LICENSE_FINGERPRINT="\
@@ -1561,6 +1561,8 @@ eerror
 eerror "  \`cp -a ${S}/toolkit/content/license.html ${MY_OVERLAY_DIR}/licenses/${license_file_name}\`"
 eerror
 			die
+		else
+einfo "License fingerprint check:  PASSED"
 		fi
 einfo "License file and fingerprint passed and is up to date."
 	else
@@ -1574,6 +1576,8 @@ eerror "A change in the license was detected.  Please notify the ebuild"
 eerror "maintainer."
 eerror
 			die
+		else
+einfo "License fingerprint check:  PASSED"
 		fi
 	fi
 }
@@ -2481,6 +2485,11 @@ einfo "Detected compiler switch.  Disabling LTO."
 	# PGO was moved outside lto block to allow building pgo without lto.
 	if use pgo ; then
 		mozconfig_add_options_ac "+pgo" "MOZ_PGO=1"
+
+	# Avoid compressing just-built instrumented Firefox with
+	# high levels of compression. Just use tar as a container
+	# to save >=10 minutes.
+		export MOZ_PKG_FORMAT=TAR
 
 		if tc-is-clang ; then
 	# Used in build/pgo/profileserver.py

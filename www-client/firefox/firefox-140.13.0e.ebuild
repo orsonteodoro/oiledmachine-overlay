@@ -179,7 +179,7 @@ RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IBC ID IO JITM MC NPD OOB
 DBUS_PV="0.60"
 DBUS_GLIB_PV="0.60"
 EBUILD_MAINTAINER_MODE=0
-FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-12.tar.xz"
+FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-13.tar.xz"
 FIREFOX_LOONG_PATCHSET="firefox-139-loong-patches-02.tar.xz"
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
@@ -410,7 +410,7 @@ inherit libstdcxx-slot linux-info llvm multilib-minimal multiprocessing
 inherit node optfeature pax-utils python-any-r1 readme.gentoo-r1 rust
 inherit rustflags-hardened secure-version toolchain-funcs virtualx vf web-kernel-config xdg
 
-KEYWORDS="amd64 arm64 ~loong ~ppc64 ~riscv ~x86"
+KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~riscv ~x86"
 S="${WORKDIR}/${PN}-${PV/e}"
 S_BAK="${WORKDIR}/${PN}-${PV/e}"
 if [[ "${PV}" == *"_rc"* ]] ; then
@@ -1736,6 +1736,8 @@ eerror
 eerror "  \`cp -a ${S}/toolkit/content/license.html ${MY_OVERLAY_DIR}/licenses/${license_file_name}\`"
 eerror
 			die
+		else
+einfo "License fingerprint check:  PASSED"
 		fi
 einfo "License file and fingerprint passed and is up to date."
 	else
@@ -1749,6 +1751,8 @@ eerror "A change in the license was detected.  Please notify the ebuild"
 eerror "maintainer."
 eerror
 			die
+		else
+einfo "License fingerprint check:  PASSED"
 		fi
 	fi
 }
