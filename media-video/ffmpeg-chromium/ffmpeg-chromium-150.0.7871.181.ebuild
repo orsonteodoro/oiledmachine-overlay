@@ -14,8 +14,8 @@ CFLAGS_HARDENED_SSP_LEVEL=3 # SSP all is upstream default
 CFLAGS_HARDENED_USE_CASES="network security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS HO IO MC NPD OOBR OOBW RC SO UAF"
 
-# Referenced in ffmpeg_revision in https://github.com/chromium/chromium/blob/150.0.7871.128/DEPS#L519
-# Referenced in ffmpeg submodule in https://github.com/chromium/chromium/tree/150.0.7871.128/third_party
+# Referenced in ffmpeg_revision in https://github.com/chromium/chromium/blob/150.0.7871.181/DEPS#L519
+# Referenced in ffmpeg submodule in https://github.com/chromium/chromium/tree/150.0.7871.181/third_party
 COMMIT="ad41607c61898cf7150e0fb20fe4bbabd44922a3" # FFmpeg submodule commit ID.
 
 # Options to use as use_enable in the foo[:bar] form.
