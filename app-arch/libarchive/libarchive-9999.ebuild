@@ -100,7 +100,7 @@ QA_CONFIG_IMPL_DECL_SKIP=(
 PATCHES=(
 	# https://github.com/libarchive/libarchive/issues/2069
 	# (we can simply update the command since we don't support old lrzip)
-	"${FILESDIR}/${PN}-3.7.2-lrzip.patch"
+	"${FILESDIR}/${PN}-f5509ae-lrzip.patch"
 )
 
 src_unpack() {

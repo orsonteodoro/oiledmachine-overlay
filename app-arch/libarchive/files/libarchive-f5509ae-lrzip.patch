@@ -1,0 +1,22 @@
+--- a/libarchive/archive_read_support_filter_lrzip.c.orig	2026-07-22 11:05:11.625735226 -0700
++++ b/libarchive/archive_read_support_filter_lrzip.c	2026-07-22 11:06:07.828088335 -0700
+@@ -109,7 +109,7 @@ lrzip_bidder_init(struct archive_read_fi
+ {
+ 	int r;
+ 
+-	r = __archive_read_program(f, "lrzip -d -q");
++	r = __archive_read_program(f, "lrzip -d -Q");
+ 	/* Note: We set the format here even if __archive_read_program()
+ 	 * above fails.  We do, after all, know what the format is
+ 	 * even if we weren't able to read it. */
+--- a/libarchive/archive_write_add_filter_lrzip.c.orig	2026-07-22 11:05:11.641734741 -0700
++++ b/libarchive/archive_write_add_filter_lrzip.c	2026-07-22 11:06:42.371102057 -0700
+@@ -145,7 +145,7 @@ archive_write_lrzip_open(struct archive_
+ 	int r;
+ 
+ 	archive_string_init(&as);
+-	archive_strcpy(&as, "lrzip -q");
++	archive_strcpy(&as, "lrzip -Q");
+ 
+ 	/* Specify compression type. */
+ 	switch (lrzip->compression) {
