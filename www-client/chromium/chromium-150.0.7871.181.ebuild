@@ -1558,6 +1558,10 @@ REQUIRED_USE+="
 		gtk3
 		gtk4
 	)
+	?? (
+		ffmpeg-chromium
+		system-ffmpeg
+	)
 	partitionalloc
 	amd64? (
 		cpu_flags_x86_sse2
