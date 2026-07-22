@@ -17,18 +17,48 @@ LLVM_COMPAT=(
 
 inherit cmake-multilib flag-o-matic libcxx-slot libstdcxx-slot
 
-SRC_URI="https://github.com/google/double-conversion/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="cca5e458e1bb930a19fa77ea8ee7dff7069ba68e"
+	EGIT_BRANCH="master"
+	EGIT_REPO_URI="https://github.com/google/double-conversion.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	SRC_URI="https://github.com/google/double-conversion/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+fi
 
 DESCRIPTION="Binary-decimal and decimal-binary conversion routines for IEEE doubles"
 HOMEPAGE="https://github.com/google/double-conversion"
 LICENSE="BSD"
-SLOT="0/3"
+SOVER="3"
+SLOT="0/${SOVER}"
 KEYWORDS="~amd64 ~arm64"
 IUSE="test"
 
 pkg_setup() {
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+	local actual_sover=$(grep -E -e "SOVERSION [0-9]+" "${S}/CMakeLists.txt" | cut -f 6 -d " " | sed -e "s|)||g")
+	local expected_sover="${SOVER}"
+	if ver_test "${actual_sover}" "-ne" "${expected_sover}" ; then
+eerror "QA:  Update the SOVER in the ebuild."
+eerror "Actual SOVER:  ${actual_sover}"
+eerror "Expected SOVER:  ${expected_sover}"
+	fi
 }
 
 src_configure() {
