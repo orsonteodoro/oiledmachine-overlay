@@ -30,14 +30,29 @@ LLVM_COMPAT=(
 
 inherit cflags-hardened cmake-multilib libcxx-slot libstdcxx-slot
 
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="7406111ac4ae539ea0db8b7ea2dc76730cd957f4"
+	EGIT_BRANCH="main"
+	EGIT_REPO_URI="https://github.com/google/snappy.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~amd64-linux ~x86-linux ~x64-macos"
+	SRC_URI="https://github.com/google/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
+fi
+
 DESCRIPTION="A high-speed compression/decompression library by Google"
 HOMEPAGE="https://github.com/google/snappy"
-SRC_URI="https://github.com/google/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
-
 LICENSE="BSD"
-# ABI may be broken without a new SONAME. Please use abidiff on bumps.
-SLOT="0/1.1"
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~x64-macos"
+# ABI may be broken without a new SONAME.  Please use abidiff on bumps.
+SOVER="1" # Since 1.1.3
+# SLOT=0 - 1.1.3
+# SLOT=0/${project_major_version} - 1.1.7 to 1.1.10
+# SLOT=0/${project_major_version}.1 - 1.2.0
+ABIDIFF_BUMP="1" # It is not well documented.  But for simplicity, it could be project_minor_version difference.
+SLOT="0/${SOVER}.${ABIDIFF_BUMP}"
 IUSE="
 ${_CXX_STANDARD[@]}
 ${CPU_FLAGS_X86[@]}
@@ -54,10 +69,9 @@ REQUIRED_USE="
 "
 RESTRICT="!test? ( test )"
 
-DEPEND="
+BDEPEND+="
 	test? (
-		dev-cpp/gtest[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-cpp/gtest:=
+		dev-cpp/gtest:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 "
 
@@ -72,6 +86,36 @@ PATCHES=(
 pkg_setup() {
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			GIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+	local actual_sover=$(grep -E "^project.*VERSION" "${S}/CMakeLists.txt" | grep -E -o -e "[0-9.]+" | cut -f 1 -d ".")
+	local expected_sover="${SOVER}"
+	if ver_test "${actual_sover}" "-ne" "${expected_sover}" ; then
+eerror "QA:  Bump SOVER in ebuild."
+eerror "Actual SOVER:  ${actual_sover}"
+eerror "Expected SOVER:  ${expected_sover}"
+		die
+	fi
+	local actual_abidiff_bump=$(grep -E "^project.*VERSION" "${S}/CMakeLists.txt" | grep -E -o -e "[0-9.]+" | cut -f 2 -d ".")
+	actual_abidiff_bump=$(( ${actual_abidiff_bump} - 1 ))
+	local expected_abidiff_bump="${ABIDIFF_BUMP}"
+	if ver_test "${actual_abidiff_bump}" "-ne" "${expected_abidiff_bump}" ; then
+eerror "QA:  Bump ABIDIFF_BUMP in ebuild."
+eerror "Actual ABIDIFF_BUMP:  ${actual_abidiff_bump}"
+eerror "Expected ABIDIFF_BUMP:  ${expected_abidiff_bump}"
+		die
+	fi
+
 }
 
 multilib_src_configure() {

@@ -46,7 +46,7 @@ LICENSE="
 		MIT
 	)
 "
-SOVER="27"
+SOVER="28"
 SLOT="0/${SOVER}"
 IUSE+="
 doc test
