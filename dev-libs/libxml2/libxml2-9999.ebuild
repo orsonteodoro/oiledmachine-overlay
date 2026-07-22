@@ -24,7 +24,7 @@ inherit cflags-hardened check-compiler-switch chkl python-r1 meson-multilib
 DESCRIPTION="XML C parser and toolkit"
 HOMEPAGE="https://gitlab.gnome.org/GNOME/libxml2/-/wikis/home"
 if [[ ${PV} == 9999 ]] ; then
-	FALLBACK_COMMIT="c8eaf2236ff16667970f96f3f01e119c99d38ab2"
+	FALLBACK_COMMIT="ddcb79dc9934fd8a26263f6368c4eb7aa43f6d49"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://gitlab.gnome.org/GNOME/libxml2"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -43,7 +43,7 @@ LICENSE="MIT"
 SLOT="2/16"
 IUSE+="
 doc icu python readline static-libs test
-ebuild_revision_1
+ebuild_revision_2
 "
 RESTRICT="!test? ( test )"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
