@@ -21,7 +21,8 @@ gen_go_dl_gh_url()
 	local uri_frag="${2}"
 	local tag="${3}"
 	unset tag_split
-	readarray -d - -t tag_split <<<"${tag}"
+	tag_split[0]="${tag}"
+	#readarray -d - -t tag_split <<<"${tag}"
 	local tag_commit="${tag_split[2]}"
 	local dest_name="${pkg_name//\//-}-${tag//\//-}"
 
