@@ -38,6 +38,7 @@ CHKL_TIMESTAMPS=(
 	"x11-libs/libdrm-9999"
 	"x11-libs/pango-9999"
 	"x11-libs/pixman-9999"
+	"sys-libs/readline-9999"
 	"x11-libs/libxcb-9999"
 	"x11-libs/libXcursor-9999"
 	"x11-libs/libxkbcommon-9999"
@@ -86,8 +87,10 @@ RDEPEND="
 	${HYPRPM_RDEPEND}
 	>=dev-cpp/muParser-${MUPARSER_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-cpp/tomlplusplus-${TOMLPLUSPLUS_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+	>=dev-libs/glib-${GLIB_PV}:=
 	>=dev-libs/hyprlang-0.6.8:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/hyprgraphics-0.5.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-libs/libei-${LIBEI_PV}:=
 	>=dev-libs/libinput-1.31.2:=
 	dev-libs/re2:${RE2_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	>=dev-libs/udis86-1.7.2:=
@@ -101,17 +104,18 @@ RDEPEND="
 	)
 	>=media-libs/libglvnd-1.7.0:=
 	>=media-libs/mesa-${MESA_PV}:=
+	>=sys-apps/pciutils-3.10.0:=
+	>=sys-libs/readline-${READLINE_PV}:=
 	>=x11-libs/cairo-${CAIRO_PV}:=
 	>=x11-libs/libdrm-${LIBDRM_PV}:=
 	>=x11-libs/libXcursor-${LIBXCURSOR_PV}:=
 	>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=
 	>=x11-libs/pango-${PANGO_PV}:=
 	>=x11-libs/pixman-${PIXMAN_PV}:=
+	dev-cpp/sdbus-c++:=
 	dev-lang/lua:5.5=
-	>=dev-libs/glib-${GLIB_PV}:=
 	dev-util/glslang:=
 	sys-apps/util-linux:=
-	>=sys-apps/pciutils-3.10.0:=
 	guiutils? (
 		gui-libs/hyprland-guiutils:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
