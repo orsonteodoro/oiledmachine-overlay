@@ -28,9 +28,16 @@ CHKL_TIMESTAMPS=(
 inherit chkl cmake libcxx-slot libstdcxx-slot secure-version
 
 if [[ "${PV}" =~ "9999" ]]; then
+	FALLBACK_COMMIT="a16ad89ed5fb4192c966018a80c652de8d96f748"
+	EGIT_BRANCH="main"
+	EGIT_REPO_URI="https://github.com/hyprwm/hyprland-guiutils.git"
+	SUBSLOT="0.2"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 	inherit git-r3
-	EGIT_REPO_URI="https://github.com/hyprwm/${PN^}.git"
 else
+	SUBSLOT=$(ver_cut "1-2" "${PV}")
 	KEYWORDS="~amd64"
 	SRC_URI="https://github.com/hyprwm/${PN^}/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz"
 fi
@@ -38,7 +45,7 @@ fi
 DESCRIPTION="Hyprland GUI utilities, successor to hyprland-qtutils"
 HOMEPAGE="https://github.com/hyprwm/hyprland-guiutils"
 LICENSE="BSD"
-SLOT="0/"$(ver_cut "1-2" "${PV}")
+SLOT="0/${SUBSLOT}"
 RDEPEND="
 	!gui-libs/hyprland-qtutils
 	>=gui-libs/hyprtoolkit-${HYPRTOOLKIT_PV}:=
@@ -66,6 +73,26 @@ BDEPEND="
 pkg_setup() {
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+	local actual_subslot=$(cat "${S}/VERSION" | cut -f 1-2 -d ".")
+	local expected_subslot="${SUBSLOT}"
+	if ver_test "${actual_subslot}" "-ne" "${expected_subslot}" ; then
+eerror "QA:  Update SUBSLOT in ebuild"
+eerror "Actual SUBSLOT:  ${actual_subslot}"
+eerror "Expected SUBSLOT:  ${expected_subslot}"
+		die
+	fi
 }
 
 src_configure() {
