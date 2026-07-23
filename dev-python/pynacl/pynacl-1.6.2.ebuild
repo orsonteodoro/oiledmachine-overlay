@@ -5,7 +5,7 @@ EAPI=8
 
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517=setuptools
-PYTHON_COMPAT=( python3_{12..15} python3_14t )
+PYTHON_COMPAT=( python3_{10..15} python3_14t )
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/libsodium-9999"
@@ -26,6 +26,9 @@ SRC_URI="
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ppc ppc64 ~riscv ~s390 ~sparc x86"
+IUSE+="
+ebuild_revision_1
+"
 
 DEPEND="
 	>=dev-libs/libsodium-${LIBSODIUM_PV}:=
