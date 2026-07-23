@@ -510,7 +510,7 @@ zvariant_derive-5.12.0
 zvariant_utils-3.4.0
 "
 
-inherit cargo chkl rustflags-hardened secure-version
+inherit cargo chkl optfeature rustflags-hardened secure-version
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${PV}"
@@ -585,4 +585,30 @@ src_install() {
 	dodoc "LICENSE"
 }
 
+pkg_postinst() {
+	optfeature_header "Install optional packages for the default configuration:"
+	optfeature "a memory safe Rust based terminal" "x11-terms/alacritty"
+	optfeature "a screen locker" "gui-apps/swaylock"
+	optfeature "an wlroots based app launcher" "gui-apps/fuzzel"
+
+	optfeature_header "Install optional packages:"
+	optfeature "a dmenu style app lanucher" "dev-libs/bemenu"
+	optfeature "a themable status bar with clock and plugins" "gui-apps/noctalia"
+
+einfo "niri - To launch from virtual terminal"
+einfo "Cheat sheet:"
+einfo "Win+Shift+/ - Show keybindings list"
+einfo "Win+T - Open terminal"
+einfo "Win+D - Run launcher"
+einfo "Win+1 - Switch to workspace 1"
+einfo "Win+2 - Switch to workspace 2"
+einfo "Win+Ctrl+PageDown - Move focus window to a higher workspace"
+einfo "Win+Ctrl+PageUp - Move focus window to a lower workspace"
+einfo "Win+Left - Switch to column left"
+einfo "Win+Right - Switch to column right"
+einfo "Win+F - Maximize window"
+einfo "Win+Shift+E - Exit"
+}
+
 # OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 26.0.4 (20260723)
