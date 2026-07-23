@@ -4,6 +4,7 @@
 EAPI=8
 
 CXX_STANDARD=23
+ABSEIL_CPP_SLOT="20260107"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -26,7 +27,7 @@ CHKL_TIMESTAMPS=(
 	"x11-libs/pixman-9999"
 )
 
-inherit chkl cmake libcxx-slot libstdcxx-slot secure-version
+inherit abseil-cpp chkl cmake libcxx-slot libstdcxx-slot secure-version
 
 if [[ "${PV}" =~ "9999" ]]; then
 	FALLBACK_COMMIT="a16ad89ed5fb4192c966018a80c652de8d96f748"
@@ -49,6 +50,7 @@ LICENSE="BSD"
 SLOT="0/${SUBSLOT}"
 RDEPEND="
 	!gui-libs/hyprland-qtutils
+	>=dev-cpp/abseil-cpp-20260107.1:${ABSEIL_CPP_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=gui-libs/hyprtoolkit-${HYPRTOOLKIT_PV}:=
 	>=gui-libs/hyprutils-0.2.4:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/glib-${GLIB_PV}:=
@@ -97,5 +99,6 @@ eerror "Expected SUBSLOT:  ${expected_subslot}"
 
 src_configure() {
 	chkl_check_many_timestamps
+	abseil-cpp_src_configure
 	cmake_src_configure
 }
