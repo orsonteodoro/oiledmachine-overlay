@@ -147,4 +147,15 @@ src_configure() {
 	meson_src_configure
 }
 
+pkg_postinst() {
+einfo
+einfo "Tip:  Setting clock"
+einfo
+einfo "The clock settings can be found in Owl>Gear>Bar: default>Center>Clock>Gear"
+einfo "The clock format documentation can be found at https://docs.noctalia.dev/v5/configuration/date-format-tokens/"
+einfo
+einfo "Tip:  Add \`noctalia --daemon\` to add to autostart."
+einfo
+}
+
 # OILEDMACHINE_OVERLAY_TEST:  PASSED interactive 4c2dcd0 (20260723)
