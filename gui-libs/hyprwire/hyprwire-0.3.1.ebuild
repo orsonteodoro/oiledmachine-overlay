@@ -44,7 +44,8 @@ RESTRICT="
 		test
 	)
 "
-SLOT="0/"$(ver_cut "1-2" "${PV}")
+SOVER="3"
+SLOT="0/${SOVER}"
 IUSE="
 test
 ebuild_revision_1
