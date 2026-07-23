@@ -595,8 +595,11 @@ pkg_postinst() {
 	optfeature "a dmenu style app lanucher" "dev-libs/bemenu"
 	optfeature "a themable status bar with clock and plugins" "gui-apps/noctalia"
 
-einfo "niri - To launch from virtual terminal"
+einfo
 einfo "Cheat sheet:"
+einfo
+einfo "niri - To launch from virtual terminal"
+einfo
 einfo "Win+Shift+/ - Show keybindings list"
 einfo "Win+T - Open terminal"
 einfo "Win+D - Run launcher"
@@ -608,6 +611,7 @@ einfo "Win+Left - Switch to column left"
 einfo "Win+Right - Switch to column right"
 einfo "Win+F - Maximize window"
 einfo "Win+Shift+E - Exit"
+einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD
