@@ -63,6 +63,7 @@ BDEPEND="
 	)
 "
 RDEPEND="
+	>=dev-cpp/abseil-cpp-20260107.1:20260107=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/glib-${GLIB_PV}:=
 	>=dev-libs/hyprgraphics-0.5.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/hyprlang-${HYPRLANG_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
