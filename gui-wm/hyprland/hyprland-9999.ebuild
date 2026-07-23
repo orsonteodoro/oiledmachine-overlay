@@ -32,6 +32,7 @@ CHKL_TIMESTAMPS=(
 	"dev-cpp/tomlplusplus-9999"
 	"dev-libs/glib-2.89.9999"
 	"dev-libs/wayland-9999"
+	"gui-libs/hyprutils-9999"
 	"media-libs/lcms-9999"
 	"media-libs/mesa-9999"
 	"x11-libs/cairo-9999"
@@ -50,8 +51,13 @@ DESCRIPTION="A dynamic tiling Wayland compositor that doesn't sacrifice on its l
 HOMEPAGE="https://github.com/hyprwm/Hyprland"
 
 if [[ "${PV}" == *"9999" ]] ; then
-	inherit git-r3
+	FALLBACK_COMMIT="7d2ea270704c265dd100a7898e6186e49c6741a7"
+	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/hyprwm/${PN^}.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
 else
 	KEYWORDS="~amd64"
 	S="${WORKDIR}/${PN}-source"
@@ -66,7 +72,7 @@ SLOT="0"
 IUSE+="
 ${GCC_COMPAT[@]}
 clang gcc lcms legacy-renderer -guiutils systemd test X
-ebuild_revision_30
+ebuild_revision_31
 "
 REQUIRED_USE="
 	^^ (
@@ -97,7 +103,7 @@ RDEPEND="
 	>=dev-libs/wayland-${WAYLAND_PV}:=
 	>=gui-libs/aquamarine-0.11.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=gui-libs/hyprcursor-0.1.13:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=gui-libs/hyprutils-0.13.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=gui-libs/hyprutils-${HYPRUTILS_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=gui-libs/hyprwire-0.3.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	lcms? (
 		>=media-libs/lcms-${LCMS_PV}:=
@@ -188,6 +194,18 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 
 	python-single-r1_pkg_setup
+}
+
+src_unpack() {
+	if [[ "${PV}" == *"9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
 }
 
 src_prepare() {
