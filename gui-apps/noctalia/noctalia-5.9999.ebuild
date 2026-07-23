@@ -151,10 +151,22 @@ pkg_postinst() {
 einfo
 einfo "Tip:  Setting clock"
 einfo
-einfo "The clock settings can be found in Owl>Gear>Bar: default>Center>Clock>Gear"
+einfo "The clock settings can be found in Owl > Gear > Bar: default > Center > Clock > Gear"
 einfo "The clock format documentation can be found at https://docs.noctalia.dev/v5/configuration/date-format-tokens/"
 einfo
-einfo "Tip:  Add \`noctalia --daemon\` to add to autostart."
+einfo
+einfo "Tip:  Autostarting with Hyprland"
+einfo
+einfo "Contents of ~/.config/hypr/hyprland.lua:"
+einfo
+einfo "hl.on(\"hyprland.start\", function ()"
+einfo "    hl.exec_cmd(\"noctalia --daemon\")"
+einfo "end)"
+einfo
+einfo
+einfo "Tip:  Autostarting with others"
+einfo
+einfo "noctalia --daemon"
 einfo
 }
 
