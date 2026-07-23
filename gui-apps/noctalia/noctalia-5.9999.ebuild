@@ -164,9 +164,18 @@ einfo "    hl.exec_cmd(\"noctalia --daemon\")"
 einfo "end)"
 einfo
 einfo
-einfo "Tip:  Autostarting with others"
+einfo "Tip:  Autostarting with Niri (Option 1)"
 einfo
-einfo "noctalia --daemon"
+einfo "Contents of ~/.config/niri/config.kdl:"
+einfo
+einfo "spawn-at-startup \"noctalia\""
+einfo
+einfo
+einfo "Tip:  Autostarting with Niri (Option 2)"
+einfo
+einfo "Contents of ~/.config/niri/config.kdl:"
+einfo
+einfo "spawn-sh-at-startup \"noctalia --daemon\""
 einfo
 }
 
