@@ -33,15 +33,21 @@ DESCRIPTION="Aquamarine is a very light linux rendering backend library"
 HOMEPAGE="https://github.com/hyprwm/aquamarine"
 
 if [[ "${PV}" == *"9999"* ]]; then
-	inherit git-r3
+	FALLBACK_COMMIT="c847837ad6234a180daacf019150965084bad9ae"
+	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/hyprwm/${PN^}.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
 else
 	SRC_URI="https://github.com/hyprwm/${PN^}/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz"
 	KEYWORDS="~amd64"
 fi
 
 LICENSE="BSD"
-SLOT="0/"$(ver_cut "1-2" "${PV}")
+SOVER="12"
+SLOT="0/${SOVER}"
 
 # Upstream states that the simpleWindow test is broken, see bug 936653
 RESTRICT="test"
@@ -77,6 +83,26 @@ BDEPEND="
 pkg_setup() {
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+	local actual_sover=$(grep -z -o -E "SOVERSION[[:space:]]+[0-9]+" "${S}/CMakeLists.txt" | grep -z -E -o -e "[0-9]+")
+	local expected_sover="${SOVER}"
+	if ver_test "${actual_sover}" "-ne" "${expected_sover}" ; then
+eerror "QA:  Update SOVER in ebuild"
+eerror "Actual SOVER:  ${actual_sover}"
+eerror "Expected SOVER:  ${expected_sover}"
+		die
+	fi
 }
 
 src_prepare() {
