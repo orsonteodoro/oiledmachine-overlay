@@ -4,6 +4,7 @@
 EAPI=8
 
 CXX_STANDARD=23
+ABSEIL_CPP_SLOT="20260107"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -28,7 +29,7 @@ CHKL_TIMESTAMPS=(
 	"x11-libs/pixman-9999"
 )
 
-inherit chkl cmake libcxx-slot libstdcxx-slot secure-version
+inherit abseil-cpp chkl cmake libcxx-slot libstdcxx-slot secure-version
 
 DESCRIPTION="A modern C++ Wayland-native GUI toolkit"
 HOMEPAGE="https://github.com/hyprwm/hyprtoolkit"
@@ -63,7 +64,7 @@ BDEPEND="
 	)
 "
 RDEPEND="
-	>=dev-cpp/abseil-cpp-20260107.1:20260107=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-cpp/abseil-cpp-20260107.1:${ABSEIL_CPP_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/glib-${GLIB_PV}:=
 	>=dev-libs/hyprgraphics-0.5.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/hyprlang-${HYPRLANG_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
@@ -117,6 +118,7 @@ eerror "Expected SOVER:  ${expected_sover}"
 
 src_configure() {
 	chkl_check_many_timestamps
+	abseil-cpp_src_configure
 	local mycmakeargs=(
 		-DBUILD_TESTING=$(usex test)
 	)
