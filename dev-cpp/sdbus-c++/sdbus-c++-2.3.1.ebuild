@@ -16,6 +16,7 @@ LLVM_COMPAT=(
 )
 
 CHKL_TIMESTAMPS=(
+	"dev-libs/expat-9999"
 	"sys-apps/systemd-9999"
 	"sys-auth/elogind-257.9999"
 )
@@ -30,15 +31,24 @@ S="${WORKDIR}/sdbus-cpp-${PV}"
 LICENSE="LGPL-2.1+ Nokia-Qt-LGPL-Exception-1.1" # Nothing to do with Qt but exception text is exactly the same.
 SLOT="0/2"
 KEYWORDS="~amd64 ~arm64"
-IUSE="doc +elogind systemd test tools"
-REQUIRED_USE="?? ( elogind systemd )"
+IUSE="
+basu doc +elogind systemd test tools
+ebuild_revision_2
+"
+REQUIRED_USE="
+	?? (
+		elogind
+		systemd
+		basu
+	)
+"
 RESTRICT="!test? ( test )"
 
 RDEPEND="
 	elogind? ( >=sys-auth/elogind-${ELOGIND_PV}:= )
 	systemd? ( >=sys-apps/systemd-${SYSTEMD_PV}:= )
-	!elogind? ( !systemd? ( >=sys-libs/basu-0.2.1:= ) )
-	tools? ( dev-libs/expat:= )
+	basu? ( >=sys-libs/basu-0.2.1:= )
+	tools? ( >=dev-libs/expat-${EXPAT_PV}:= )
 "
 
 DEPEND="
