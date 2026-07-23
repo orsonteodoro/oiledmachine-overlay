@@ -186,3 +186,8 @@ media-libs/lcms
 # - Over-reliance on CVE instead of manual commit review with critical thinking
 # - Misses silent patches that later become vulnerability annoucements
 dev-qt/qtwebengine
+
+# 4.x is EOL.  Use gui-apps/noctalia 5.x instead.
+# It only properly works with Qt6 stable.
+# For Qt6 live, it has black icons issue.
+gui-apps/noctalia-shell
