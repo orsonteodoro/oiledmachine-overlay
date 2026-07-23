@@ -33,7 +33,7 @@ SLOT="0/2"
 KEYWORDS="~amd64 ~arm64"
 IUSE="
 basu doc +elogind systemd test tools
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	?? (
@@ -60,6 +60,11 @@ BDEPEND="
 	virtual/pkgconfig
 	doc? ( app-text/doxygen[dot] )
 "
+
+pkg_setup() {
+	libcxx-slot_verify
+	libstdcxx-slot_verify
+}
 
 src_configure() {
 	chkl_check_many_timestamps
