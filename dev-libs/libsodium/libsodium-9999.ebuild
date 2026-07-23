@@ -12,7 +12,15 @@ inherit autotools cflags-hardened multilib-minimal verify-sig
 DESCRIPTION="Portable fork of NaCl, a higher-level cryptographic library"
 HOMEPAGE="https://libsodium.org"
 
-if [[ ${PV} == *_p* ]] ; then
+if [[ ${PV} == *9999* ]] ; then
+	FALLBACK_COMMIT="931db45728f4022ec8ca0daff38831faf23d3e8e"
+	EGIT_BRANCH="master"
+	EGIT_REPO_URI="https://github.com/jedisct1/libsodium.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+elif [[ ${PV} == *_p* ]] ; then
 	MY_P=${PN}-$(ver_cut 1-3)-stable-$(ver_cut 5-)
 
 	# We use _pN to represent 'stable releases'
@@ -31,9 +39,10 @@ else
 fi
 
 LICENSE="ISC"
-SLOT="0/26"
+SOVER="30"
+SLOT="0/${SOVER}"
 KEYWORDS="~alpha amd64 arm arm64 hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~arm64-macos ~x64-macos"
-IUSE="
+IUSE+="
 +asm static-libs +urandom
 ebuild_revision_9
 "
@@ -50,6 +59,28 @@ QA_CONFIG_IMPL_DECL_SKIP=(
 PATCHES=(
 	"${FILESDIR}"/${PN}-1.0.19-cpuflags.patch
 )
+
+src_unpack() {
+	if [[ ${PV} == *9999* ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+	local c=$(grep "SODIUM_LIBRARY_VERSION=" "${S}/configure.ac" | head | cut -f 2 -d "=" | cut -f 1 -d ":")
+	local a=$(grep "SODIUM_LIBRARY_VERSION=" "${S}/configure.ac" | head | cut -f 2 -d "=" | cut -f 3 -d ":")
+	local actual_sover=$(( ${c} - ${a} ))
+	local expected_sover="${SOVER}"
+	if ver_test "${actual_sover}" "-ne" "${expected_sover}" ; then
+eerror "QA:  Update SOVER in ebuild"
+eerror "Actual SOVER:  ${actual_sover}"
+eerror "Expected SOVER:  ${expected_sover}"
+		die
+	fi
+}
 
 src_prepare() {
 	default
