@@ -68,7 +68,7 @@ HOMEPAGE="
 LICENSE="MIT"
 SLOT="0/5"
 IUSE+="
-jemalloc native-optimizations test
+jemalloc native-optimizations systemd test
 "
 REQUIRED_USE="
 "
@@ -76,13 +76,9 @@ REQUIRED_USE="
 RDEPEND="
 	>=app-crypt/libsecret-${LIBSECRET_PV}:=
 	>=dev-cpp/nlohmann_json-${NLOHMANN_JSON_PV}:=
-	dev-cpp/sdbus-c++:=
-	dev-cpp/tomlplusplus:=
 	>=dev-libs/glib-${GLIB_PV}:=
 	>=dev-libs/jemalloc-${JEMALLOC_PV}:=
 	>=dev-libs/libsodium-${LIBSODIUM_PV}:=
-	dev-libs/md4c:=
-	dev-libs/stb:=
 	>=dev-libs/wayland-${WAYLAND_PV}:=
 	>=dev-libs/libxml2-${LIBXML2_PV}:=
 	>=gnome-base/librsvg-${LIBRSVG_PV}:=
@@ -93,15 +89,21 @@ RDEPEND="
 	>=media-libs/libwebp-${LIBWEBP_PV}:=
 	>=media-libs/mesa-${MESA_PV}:=[opengl]
 	>=media-video/pipewire-${PIPEWIRE_PV}:=
-	media-video/wireplumber:=
 	>=net-misc/curl-${CURL_PV}:=
-	>=sys-apps/systemd-${SYSTEMD_PV}:=
 	>=sys-auth/polkit-${POLKIT_PV}:=
 	>=sys-libs/pam-${PAM_PV}:=
-	sci-libs/libqalculate:=
 	>=x11-libs/cairo-${CAIRO_PV}:=
 	>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=
 	>=x11-libs/pango-${PANGO_PV}:=
+	dev-cpp/sdbus-c++:=
+	dev-cpp/tomlplusplus:=
+	dev-libs/md4c:=
+	dev-libs/stb:=
+	media-video/wireplumber:=
+	sci-libs/libqalculate:=
+	systemd? (
+		>=sys-apps/systemd-${SYSTEMD_PV}:=
+	)
 
 "
 DEPEND="
