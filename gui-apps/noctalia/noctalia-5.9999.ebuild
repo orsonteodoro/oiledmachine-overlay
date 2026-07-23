@@ -114,7 +114,7 @@ BDEPEND="
 	dev-build/meson
 	dev-util/wayland-scanner
 	dev-vcs/git
-	virtual/pkg-config
+	virtual/pkgconfig
 "
 
 DOCS=( "README.md" )
