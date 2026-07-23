@@ -5,6 +5,8 @@ EAPI=8
 
 # U24
 
+# This ebuild contains a patch with AI generated code.
+
 PYTHON_COMPAT=( "python3_"{12,13} )
 
 ABSEIL_CPP_SLOT="20240116"
@@ -161,6 +163,9 @@ BDEPEND="
 		x11-terms/kitty
 	)
 "
+PATCHES=(
+	"${FILESDIR}/hyprland-7d2ea27-string_view.patch"
+)
 
 pkg_setup() {
 	check-compiler-switch_start

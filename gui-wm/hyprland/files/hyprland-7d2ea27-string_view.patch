@@ -1,0 +1,29 @@
+# This patch contains AI generate code.
+--- a/src/helpers/MiscFunctions.cpp.orig	2026-07-23 02:25:05.729478181 -0700
++++ b/src/helpers/MiscFunctions.cpp	2026-07-23 02:35:36.290195352 -0700
+@@ -827,18 +827,19 @@ std::string getBuiltSystemLibraryNames()
+ }
+ 
+ bool truthy(const std::string& str) {
++    using namespace std::string_view_literals;
+     using std::operator""sv;
+ 
+     if (str == "1"sv)
+         return true;
+ 
+     // clang-format off
+-    auto str_view = str | std::views::transform([](unsigned char ch) -> char {
+-        return sc<char>(std::tolower(ch));
+-    });
+ 
+-    return [&](auto&&... prefixes) -> bool {
+-        return (... || std::ranges::starts_with(str_view, prefixes));
+-    }("true"sv, "yes"sv, "on"sv);
++    std::string low;
++    low.reserve(str.size());
++    for (unsigned char c : str) low.push_back(std::tolower(c));
++    std::string_view v = low;
++    return v.starts_with("true"sv) || v.starts_with("yes"sv) || v.starts_with("on"sv);
++
+     // clang-format on
+ }
