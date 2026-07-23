@@ -15,6 +15,8 @@ HOMEPAGE="https://libsodium.org"
 if [[ ${PV} == *9999* ]] ; then
 	FALLBACK_COMMIT="931db45728f4022ec8ca0daff38831faf23d3e8e"
 	EGIT_BRANCH="master"
+	# master - unfuzzed, latest patches, ~14 tests
+	# stable - fuzzed, missing latest security patch, ~30 tests
 	EGIT_REPO_URI="https://github.com/jedisct1/libsodium.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
@@ -35,11 +37,13 @@ else
 	SRC_URI="
 		https://download.libsodium.org/${PN}/releases/${P}.tar.gz
 		verify-sig? ( https://download.libsodium.org/${PN}/releases/${P}.tar.gz.minisig )
+		https://github.com/jedisct1/libsodium/commit/df8802b013f9fa67e83eb90f184713477da68f32.patch -> libsodium-df8802b.patch
 	"
+	# libsodium-df8802b.patch - Fix deadlock
 fi
 
 LICENSE="ISC"
-SOVER="30"
+SOVER="26"
 SLOT="0/${SOVER}"
 KEYWORDS="~alpha amd64 arm arm64 hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~arm64-macos ~x64-macos"
 IUSE+="
@@ -58,6 +62,7 @@ QA_CONFIG_IMPL_DECL_SKIP=(
 
 PATCHES=(
 	"${FILESDIR}"/${PN}-1.0.19-cpuflags.patch
+	"${DISTDIR}/libsodium-df8802b.patch"
 )
 
 src_unpack() {
