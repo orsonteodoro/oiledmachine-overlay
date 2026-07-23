@@ -31,6 +31,7 @@ CHKL_TIMESTAMPS=(
 	"dev-cpp/muParser-9999"
 	"dev-cpp/tomlplusplus-9999"
 	"dev-libs/glib-2.89.9999"
+	"dev-libs/hyprlang-9999"
 	"dev-libs/wayland-9999"
 	"gui-libs/hyprutils-9999"
 	"media-libs/lcms-9999"
@@ -72,7 +73,7 @@ SLOT="0"
 IUSE+="
 ${GCC_COMPAT[@]}
 clang gcc lcms legacy-renderer -guiutils systemd test X
-ebuild_revision_31
+ebuild_revision_32
 "
 REQUIRED_USE="
 	^^ (
@@ -94,7 +95,7 @@ RDEPEND="
 	>=dev-cpp/muParser-${MUPARSER_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-cpp/tomlplusplus-${TOMLPLUSPLUS_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	>=dev-libs/glib-${GLIB_PV}:=
-	>=dev-libs/hyprlang-0.6.8:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-libs/hyprlang-${HYPRLANG_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/hyprgraphics-0.5.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/libei-${LIBEI_PV}:=
 	>=dev-libs/libinput-1.31.2:=
