@@ -119,7 +119,7 @@ RDEPEND="
 	>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=
 	>=x11-libs/pango-${PANGO_PV}:=
 	>=x11-libs/pixman-${PIXMAN_PV}:=
-	dev-cpp/sdbus-c++:=
+	dev-cpp/sdbus-c++:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-lang/lua:5.5=
 	dev-util/glslang:=
 	sys-apps/util-linux:=
