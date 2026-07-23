@@ -35,16 +35,24 @@ if [[ -z "${SONAME}" ]] ; then
 	SONAME="${PV}"
 fi
 SLOT="0/${SONAME}"
-IUSE+=" elogind systemd test"
+IUSE+="
+basu elogind systemd test
+ebuild_revision_1
+"
+REQUIRED_USE="
+	|| (
+		systemd
+		elogind
+		basu
+	)
+"
 RESTRICT="!test? ( test )"
 
 RDEPEND="
-	>=dev-libs/libevdev-1.9.902
-	|| (
-		systemd? ( >=sys-apps/systemd-${SYSTEMD_PV} )
-		elogind? ( >=sys-auth/elogind-237 )
-		sys-libs/basu
-	)
+	>=dev-libs/libevdev-1.9.902:=
+	systemd? ( >=sys-apps/systemd-${SYSTEMD_PV}:= )
+	elogind? ( >=sys-auth/elogind-${ELOGIND_PV}:= )
+	basu? ( sys-libs/basu:= )
 "
 DEPEND="${RDEPEND}"
 BDEPEND="
