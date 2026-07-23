@@ -46,7 +46,7 @@ else
 fi
 
 LICENSE="BSD"
-SOVER="12"
+SOVER="11"
 SLOT="0/${SOVER}"
 
 # Upstream states that the simpleWindow test is broken, see bug 936653
