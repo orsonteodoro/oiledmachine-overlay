@@ -43,7 +43,7 @@ SOVER="30"
 SLOT="0/${SOVER}"
 KEYWORDS="~alpha amd64 arm arm64 hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~arm64-macos ~x64-macos"
 IUSE+="
-+asm static-libs +urandom
++asm minimal static-libs +urandom
 ebuild_revision_9
 "
 
@@ -94,6 +94,7 @@ multilib_src_configure() {
 		$(use_enable asm)
 		$(use_enable cpu_flags_x86_aes aesni)
 		$(use_enable cpu_flags_x86_sse4_1 sse4_1)
+		$(use_enable minimal)
 		$(use_enable static-libs static)
 		$(use_enable !urandom blocking-random)
 	)
