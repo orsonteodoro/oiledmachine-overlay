@@ -37,7 +37,8 @@ else
 fi
 
 LICENSE="BSD"
-SLOT="0"
+SOVER="0"
+SLOT="0/0"
 
 # Disable tests since as per upstream, tests require a theme to be installed
 # See also https://github.com/hyprwm/hyprcursor/commit/94361fd8a75178b92c4bb24dcd8c7fac8423acf3
