@@ -147,4 +147,4 @@ src_configure() {
 	meson_src_configure
 }
 
-# OILEDMACHINE_OVERLAY_TEST:  TBA
+# OILEDMACHINE_OVERLAY_TEST:  PASSED interactive 4c2dcd0 (20260723)
