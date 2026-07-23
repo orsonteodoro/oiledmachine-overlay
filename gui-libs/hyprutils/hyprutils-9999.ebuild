@@ -27,8 +27,13 @@ DESCRIPTION="Hyprland utilities library used across the ecosystem"
 HOMEPAGE="https://github.com/hyprwm/hyprutils"
 
 if [[ "${PV}" =~ "9999" ]]; then
-	inherit git-r3
+	FALLBACK_COMMIT="83da5ee98d806cef2d05a1072b8d8b832bf52891"
+	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/hyprwm/${PN^}.git"
+	if [[ "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
 else
 	SRC_URI="https://github.com/hyprwm/${PN^}/archive/refs/tags/v${PV}/v${PV}.tar.gz -> ${P}.gh.tar.gz"
 	S="${WORKDIR}/${PN}-${PV}"
@@ -54,6 +59,18 @@ BDEPEND="
 pkg_setup() {
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]]; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
 }
 
 src_configure() {
