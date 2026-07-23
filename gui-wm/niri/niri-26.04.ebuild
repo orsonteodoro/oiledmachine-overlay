@@ -601,17 +601,26 @@ einfo "Cheat sheet:"
 einfo
 einfo "niri - To launch from virtual terminal"
 einfo
-einfo "Win+Shift+/ - Show keybindings list"
-einfo "Win+T - Open terminal"
-einfo "Win+D - Run launcher"
-einfo "Win+1 - Switch to workspace 1"
-einfo "Win+2 - Switch to workspace 2"
+einfo "Win+Shift+/       - Show keybindings list"
+einfo "Win+T             - Open terminal"
+einfo "Win+D             - Run launcher"
+einfo "Win+1             - Switch to workspace 1"
+einfo "Win+2             - Switch to workspace 2"
 einfo "Win+Ctrl+PageDown - Move focus window to a higher workspace"
-einfo "Win+Ctrl+PageUp - Move focus window to a lower workspace"
-einfo "Win+Left - Switch to column left"
-einfo "Win+Right - Switch to column right"
-einfo "Win+F - Maximize window"
-einfo "Win+Shift+E - Exit"
+einfo "Win+Ctrl+PageUp   - Move focus window to a lower workspace"
+einfo "Win+Left          - Switch to column left"
+einfo "Win+Right         - Switch to column right"
+einfo "Win+F             - Maximize window"
+einfo "Win+Shift+E       - Exit"
+einfo
+einfo
+einfo "Overview mode:"
+einfo
+einfo "Mouse at top left corner - views all workspace and columns"
+einfo "Mouse wheel down         - focus to top of workspace stack"
+einfo "Mouse wheel up           - focus to bottom of workspace stack"
+einfo "Keyboard left            - focus on left column"
+einfo "Keyboard right           - focus on right column"
 einfo
 }
 
