@@ -18,7 +18,7 @@ LIBSTDCXX_USEDEP_DEV="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX23[@]}" # 21-22
+	"${LIBCXX_COMPAT_STDCXX23[@]//llvm_slot_/}" # 21-22
 )
 LIBCXX_USEDEP_DEV="llvm_slot_skip(+)"
 
@@ -47,8 +47,8 @@ CHKL_TIMESTAMPS=(
 inherit branding cflags-hardened chkl libcxx-slot libstdcxx-slot meson secure-version
 
 if [[ "${PV}" =~ "9999" ]]; then
-	FALLBACK_COMMIT="79530a6290fbf5ba5e34db61d4729abc7eea3920"
-	EGIT_BRANCH="master"
+	FALLBACK_COMMIT="4c2dcd0995f9c570c0ced95561bf5e4685e2ad1b"
+	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/noctalia-dev/noctalia.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
