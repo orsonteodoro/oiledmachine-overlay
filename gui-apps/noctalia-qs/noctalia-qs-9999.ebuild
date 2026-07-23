@@ -18,7 +18,7 @@ LIBSTDCXX_USEDEP_DEV="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX20[@]}" # 20-22
+	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}" # 20-22
 )
 LIBCXX_USEDEP_DEV="llvm_slot_skip(+)"
 
