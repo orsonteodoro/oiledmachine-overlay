@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# Ebuild r100 is for oiledmachine-overlay patches and anti-ambiguous deterministic dependency graph.
+
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/libsodium.minisig"
 VERIFY_SIG_METHOD="minisig"
