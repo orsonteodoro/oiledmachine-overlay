@@ -42,8 +42,9 @@ else
 fi
 
 LICENSE="BSD"
-SLOT="0/"$(ver_cut "1-2" "${PV}")
-
+SOVER="13"
+SLOT="0/${SOVER}"
+IUSE+=" ebuild_revision_1"
 DEPEND="
 	>=x11-libs/pixman-${PIXMAN_PV}:=
 "
@@ -70,6 +71,14 @@ src_unpack() {
 		git-r3_checkout
 	else
 		unpack ${A}
+	fi
+	local actual_sover=$(grep -E -e "SOVERSION [0-9]+" "${S}/CMakeLists.txt" | grep -E -o -e "[0-9]+")
+	local expected_sover="${SOVER}"
+	if ver_test "${actual_sover}" "-ne" "${expected_sover}" ; then
+eerror "QA:  Update SOVER in ebuild"
+eerror "Actual SOVER:  ${actual_sover}"
+eerror "Expected SOVER:  ${expected_sover}"
+		die
 	fi
 }
 
