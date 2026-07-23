@@ -263,7 +263,7 @@ GN_PV="0.2315"
 ESBUILD_PV="0.25.1"
 ROLLUP_WASM_NODE_PV="4.57.1"
 QT6_PV="${QTBASE6_PV}"
-UNGOOGLED_CHROMIUM_PV="150.0.7871.128-1"
+UNGOOGLED_CHROMIUM_PV="150.0.7871.181-1"
 # Testing this V8 version to avoid breaking security.  The 13.6 series cause the \
 # mksnapshot "Return code is -11" error.  To fix it, it required to either \
 # disable v8 sandbox, or pointer compression and DrumBrake.  Before it was \
