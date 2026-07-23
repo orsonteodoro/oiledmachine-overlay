@@ -27,15 +27,22 @@ DESCRIPTION="A Hyprland implementation of wayland-scanner, in and for C++"
 HOMEPAGE="https://github.com/hyprwm/hyprwayland-scanner/"
 
 if [[ "${PV}" == "9999" ]] ; then
+	SUBSLOT="0.7"
+	FALLBACK_COMMIT="b8632713a6beaf28b56f2a7b0ab2fb7088dbb404"
+	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/hyprwm/hyprwayland-scanner.git"
+	if [[ "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 	inherit git-r3
 else
+	SUBSLOT=$(ver_cut "1-2" "${PV}")
 	SRC_URI="https://github.com/hyprwm/hyprwayland-scanner/archive/v${PV}.tar.gz -> ${P}.gh.tar.gz"
 	KEYWORDS="~amd64"
 fi
 
 LICENSE="BSD"
-SLOT="0"
+SLOT="0/${SUBSLOT}"
 
 RDEPEND="
 	>=dev-libs/pugixml-${PUGIXML_PV}:=[${LIBSTDCXX_USEDEP_LTS}]
@@ -73,6 +80,27 @@ eerror
 	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]]; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+	local actual_subslot=$(cat "${S}/VERSION" | cut -f "1-2" -d ".")
+	local expected_subslot="${SUBSLOT}"
+	if ver_test "${actual_subslot}" "-ne" "${expected_subslot}" ; then
+eerror "QA:  Update SUBSLOT in ebuild"
+eerror "Actual SUBSLOT:  ${actual_subslot}"
+eerror "Expected SUBSLOT:  ${expected_subslot}"
+		die
+	fi
+}
+
 
 src_configure() {
 	chkl_check_many_timestamps
