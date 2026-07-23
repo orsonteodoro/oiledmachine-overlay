@@ -19,7 +19,9 @@ LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/glib-2.89.9999"
+	"dev-libs/hyprlang-9999"
 	"dev-libs/wayland-9999"
+	"gui-libs/hyprutils-9999"
 	"x11-libs/cairo-9999"
 	"x11-libs/libdrm-9999"
 	"x11-libs/libxkbcommon-9999"
@@ -32,7 +34,12 @@ DESCRIPTION="A modern C++ Wayland-native GUI toolkit"
 HOMEPAGE="https://github.com/hyprwm/hyprtoolkit"
 
 if [[ "${PV}" =~ "9999" ]]; then
+	FALLBACK_COMMIT="67d9012d7d3a902a6a37e313fbfaf56ce7d3c53e"
+	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/hyprwm/${PN^}.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 	inherit git-r3
 else
 	KEYWORDS="~amd64"
@@ -46,7 +53,8 @@ RESTRICT="
 		test
 	)
 "
-SLOT="0/"$(ver_cut "1-2" "${PV}")
+SOVER="5"
+SLOT="0/${SOVER}"
 IUSE="test"
 
 BDEPEND="
@@ -57,12 +65,12 @@ BDEPEND="
 RDEPEND="
 	>=dev-libs/glib-${GLIB_PV}:=
 	>=dev-libs/hyprgraphics-0.5.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=dev-libs/hyprlang-0.6.8:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-libs/hyprlang-${HYPRLANG_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/iniparser-${INIPARSER_PV}:=
 	>=dev-libs/wayland-${WAYLAND_PV}:=
 	>=dev-libs/wayland-protocols-1.47:=
 	>=gui-libs/aquamarine-0.10.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=gui-libs/hyprutils-0.11.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=gui-libs/hyprutils-${HYPRUTILS_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_PV}:=
 	>=x11-libs/libdrm-${LIBDRM_PV}:=
 	>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=
@@ -84,6 +92,26 @@ BDEPEND="
 pkg_setup() {
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+	local actual_sover=$(grep -E -e "SOVERSION [0-9]+" "${S}/CMakeLists.txt" | grep -E -o -e "[0-9]+")
+	local expected_sover="${SOVER}"
+	if ver_test "${actual_sover}" "-ne" "${expected_sover}" ; then
+eerror "QA:  Update SOVER in ebuild"
+eerror "Actual SOVER:  ${actual_sover}"
+eerror "Expected SOVER:  ${expected_sover}"
+		die
+	fi
 }
 
 src_configure() {

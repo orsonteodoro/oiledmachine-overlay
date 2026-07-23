@@ -17,6 +17,8 @@ LLVM_COMPAT=(
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/glib-2.89.9999"
+	"gui-libs/hyprtoolkit-9999"
+	"media-libs/mesa-9999"
 	"x11-libs/cairo-9999"
 	"x11-libs/libdrm-9999"
 	"x11-libs/libxkbcommon-9999"
@@ -39,17 +41,19 @@ LICENSE="BSD"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 RDEPEND="
 	!gui-libs/hyprland-qtutils
-	gui-libs/aquamarine:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=gui-libs/hyprtoolkit-0.4.0:=
+	>=gui-libs/hyprtoolkit-${HYPRTOOLKIT_PV}:=
 	>=gui-libs/hyprutils-0.2.4:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/glib-${GLIB_PV}:=
 	>=dev-libs/hyprlang-0.6.0:=
-	dev-libs/hyprlang:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	dev-libs/hyprgraphics:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=media-libs/mesa-${MESA_PV}:=[opengl]
 	>=x11-libs/cairo-${CAIRO_PV}:=
 	>=x11-libs/libdrm-${LIBDRM_PV}:=
 	>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=
+	>=x11-libs/pango-${PANGO_PV}:=
 	>=x11-libs/pixman-${PIXMAN_PV}:=
+	dev-libs/hyprlang:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	dev-libs/hyprgraphics:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	gui-libs/aquamarine:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
