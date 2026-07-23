@@ -26,7 +26,6 @@
   <![CDATA[
     oiledmachine-overlay ebuild changes and ebuild additions:
 
-      - Improved Xpra support
       - Enable or disable sound forwarding
       - /usr/local/bin wrapper auto generation
       - ROP attack mitigations
@@ -714,12 +713,9 @@
                        (gaming-unsandbox, opengl-unsandboxed, none, disable are
                        acceptable aliases)
     xephyr           - Runs the program using Xephyr
-    xpra             - Runs the program using Xpra
-                       (gaming-sandboxed, opengl-sandboxed are acceptable
-                       aliases)
     xvfb             - Runs the program using Xvfb
                        (headless, /dev/null are an acceptable aliases)
-    unset            - Default as Xpra or Xephyr if X11 app.  Otherwise, it will
+    unset            - Default as Xephyr if X11 app.  Otherwise, it will
                        default to unsandboxed X11 for CLI/TUI apps in a virtual
                        terminal.  If the CLI/TUI app is running under a virtual
                        terminal emulator with the x-terminal-emulator profile,
@@ -731,8 +727,6 @@
     unsandboxed    | works               | performance-critical   | 2              | 10                | no frame grab isolation and | fastest fps, fastest start    | yes, fast
                    |                     |                        |                |                   | no input isolation          |                               |
     xephyr         | works               | security-security      | 9              | 8                 | window size inconsistencies | fast start, faster scroll     | yes, but slow
-    xpra           | works               | security-critical      | 9              | 4                 | slow start                  | no window size problems       | yes, but slow
-    xpra-virtualgl | works [2]           | balanced-security      | 8              | 6                 | slow start                  | no window size problems       | yes, but slow
     xorg [1][3]    | works sometimes [4] | balanced-security      | 6              | 9                 | weak input isolation        | partial screenshot protection | yes, fast
     xvfb           | untested            | security-critical      | 9              | 3                 |                             | hidden output                 | untested
     wayland        | works               | performance-critical & | 10             | 10                | annoying quirks,            | fastest fps                   | yes, fast
@@ -754,10 +748,6 @@
     Chromium --disable-gpu no Firejail:  2 fps
     Chromium no Firejail:  60 fps
     Chromium with Firejail --x11=xephyr:  11 fps
-    Chromium with Firejail --x11=xpra and opengl=yes:  7 fps
-    Chromium with Firejail --x11=xpra and opengl=no:  7 fps
-    Chromium with Firejail --x11=xpra-virtualgl and opengl=no:  7 fps
-    Chromium with Firejail --x11=xpra-virtualgl and opengl=yes:  7 fps
     Chromium with Firejail without --x11 (same as X_BACKEND[<cli-name>]=unsanboxed|disable|none):  60 fps
 
     Variables are in all capitals.
@@ -784,7 +774,6 @@
       XEPHYR_WH["chromium"]="1918x1058"
       XEPHYR_WH["firefox"]="1918x1058"
       X_BACKEND["chromium"]="xephyr"
-      X_BACKEND["firefox"]="xpra"
       X_BACKEND["spotify"]="xephyr"
       X_BACKEND["xchat"]="auto"
 
@@ -792,7 +781,6 @@
       ARGS["upscayl"]="--nosound --noprinters --noprofile"
       MALLOC_BACKEND["upscayl"]="mimalloc"
       PATH_CORRECTION["upscayl"]="/usr/bin/upscayl"
-      X_BACKEND["upscayl"]="xpra"
 
     Contents of /etc/portage/package.env:
 
@@ -949,12 +937,6 @@
     </flag>
     <flag name="xcsecurity">
       Enable X security extension support for windowed apps.
-    </flag>
-    <flag name="xpra">
-      Enable Xpra support for windowed apps and better OpenGL support.
-    </flag>
-    <flag name="xcsecurity">
-      Enable xcsecurity support for balanced sandboxing.
     </flag>
     <flag name="xvfb">
       Enable Xvfb support for sandboxing remote access or headless servers.

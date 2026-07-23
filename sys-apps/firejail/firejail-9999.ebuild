@@ -134,8 +134,9 @@ X_BLACKLIST=(
 
 # Avoid broken resolution issue
 X_FALLBACKS=(
-	"leafpad:xpra"
-	"x-terminal-emulator:xpra"
+	# TODO:  update to next fallback
+	#"leafpad:xpra"
+	#"x-terminal-emulator:xpra"
 )
 
 X_HEADLESS_COMPAT=(
@@ -159,17 +160,18 @@ X_NONE_ONLY=(
 X_XEPHYR_ONLY=(
 )
 
-X_XPRA_ONLY=(
-	# Ban those that perform unexpected behavior like eager window close
-	# with xephyr.
-	"firefox"
-	"firefox-beta"
-	"firefox-developer-edition"
-	"firefox-esr"
-	"firefox-nightly"
-	"firefox-wayland"
-	"firefox-x11"
-)
+#X_XPRA_ONLY=(
+#	# TODO:  update to next fallback
+#	# Ban those that perform unexpected behavior like eager window close
+#	# with xephyr.
+#	"firefox"
+#	"firefox-beta"
+#	"firefox-developer-edition"
+#	"firefox-esr"
+#	"firefox-nightly"
+#	"firefox-wayland"
+#	"firefox-x11"
+#)
 
 CURSES_COMPAT=(
 # This list are apps that may run in the console but are organized like a GUI.
@@ -286,7 +288,7 @@ gen_clang_bdepend() {
 if [[ "${PV}" =~ "9999" ]]; then
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/netblue30/firejail.git"
-	FALLBACK_COMMIT="8baad2bebfb96f1bd082c6bd270bb3907ef41833"
+	FALLBACK_COMMIT="13bb0f4eb64502f451fd40a45cf24444bc205d99"
 #	FALLBACK_COMMIT="1a576d15a9339b8f70ae3056e2413e58931072d5" # Jan 17, 2025 # working
 #	FALLBACK_COMMIT="897f12dd88c1add667ecb211b61b6126a49c7065" # Sep 1, 2024 # working
 	if [[ "${FALLBACK_COMMIT}" ]] ; then
@@ -312,7 +314,7 @@ ${HARDENED_ALLOCATORS_IUSE[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 -apparmor +chroot clang contrib +dbusproxy +file-transfer +globalcfg
 landlock +network +private-home -private-lib -selinux +suid
-test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xcsecurity xvfb
+test-profiles test-x11 +userns vanilla wrapper X xephyr xcsecurity xvfb
 ebuild_revision_146
 "
 REQUIRED_USE+="
@@ -335,9 +337,6 @@ REQUIRED_USE+="
 		test
 	)
 	xephyr? (
-		X
-	)
-	xpra? (
 		X
 	)
 	xcsecurity? (
@@ -386,13 +385,6 @@ RDEPEND+="
 	X? (
 		>=x11-base/xorg-server-${XORG_SERVER_PV}:=[-suid,xcsecurity?,xvfb?]
 	)
-	xpra? (
-		x11-wm/xpra:=[${PYTHON_SINGLE_USEDEP},X,avif,client,cython,firejail,gtk3,jpeg,rencodeplus,server,webp]
-		|| (
-			=x11-wm/xpra-6*[${PYTHON_SINGLE_USEDEP},X,avif,client,cython,firejail,gtk3,jpeg,rencodeplus,server,webp]
-			=x11-wm/xpra-5*[${PYTHON_SINGLE_USEDEP},X,avif,client,cython,firejail,gtk3,jpeg,rencodeplus,server,webp]
-		)
-	)
 	xephyr? (
 		>=x11-base/xorg-server-${XORG_SERVER_PV}:=[xephyr?]
 	)
@@ -419,11 +411,11 @@ PATCHES=(
 	"${FILESDIR}/${PN}-0.9.80-manpage-nocompress.patch"
 #	"${FILESDIR}/extra-patches/${PN}-009110a-disable-xcsecurity.patch"
 #	"${FILESDIR}/extra-patches/${PN}-009110a-disable-xcsecurity-usage.patch"
-	"${FILESDIR}/extra-patches/${PN}-8baad2b-profile-fixes.patch"
+	"${FILESDIR}/extra-patches/${PN}-13bb0f4-profile-fixes.patch"
 	"${FILESDIR}/extra-patches/${PN}-3bbc6b5-private-bin-no-local-default-yes.patch" # Fix all wrappers and mpv
-	"${FILESDIR}/extra-patches/${PN}-1b2d18e-default-res.patch"
+	"${FILESDIR}/extra-patches/${PN}-13bb0f4-default-res.patch"
 	"${FILESDIR}/extra-patches/${PN}-0.9.80-inc-profile-changes.patch"
-	"${FILESDIR}/extra-patches/${PN}-0.9.80-fix-private-lib-for-multilslot.patch"
+	"${FILESDIR}/extra-patches/${PN}-13bb0f4-fix-private-lib-for-multilslot.patch"
 	"${FILESDIR}/extra-patches/${PN}-0.9.80-chown-warning.patch"
 )
 
@@ -500,17 +492,6 @@ is_xephyr_only() {
 	local arg="${1}"
 	local y
 	for y in "${X_XEPHYR_ONLY[@]}" ; do
-		if [[ "${arg}" == "${y}" ]] ; then
-			return 0
-		fi
-	done
-	return 1
-}
-
-is_xpra_only() {
-	local arg="${1}"
-	local y
-	for y in "${X_XPRA_ONLY[@]}" ; do
 		if [[ "${arg}" == "${y}" ]] ; then
 			return 0
 		fi
@@ -825,16 +806,6 @@ src_prepare() {
 	default
 
 	cp -aT "${FILESDIR}/extra-profiles/" "${S}/etc" || die
-
-	if use xpra ; then
-		eapply "${FILESDIR}/extra-patches/${PN}-0.9.80-xpra-opengl.patch"
-		eapply "${FILESDIR}/extra-patches/${PN}-0.9.80-disable-xpra-splash-v2.patch"
-	fi
-
-	if use xpra ; then
-	# eog fix
-		sed -i -e "s|@IPC_NAMESPACE_FIX@|#|g" "etc/profile-a-l/eo-common.profile" || die
-	fi
 
 	# Our toolchain already sets SSP by default but forcing it causes problems
 	# on arches which don't support it. As for F_S, we again set it by defualt
@@ -1442,7 +1413,7 @@ einfo "Generating wrapper for ${wrapper_name}"
 	; then
 eerror
 eerror "X_BACKEND[PROFILE]=auto has been removed."
-eerror "Use X_BACKEND[PROFILE]=xorg|xpra|xephyr to continue."
+eerror "Use X_BACKEND[PROFILE]=xorg|xephyr to continue."
 eerror
 	fi
 
@@ -1484,33 +1455,15 @@ eerror
 		return 1
 	}
 
-	is_xpra_only() {
-		local arg="${1}"
-		local y
-		for y in "${X_XPRA_ONLY[@]}" ; do
-			if [[ "${arg}" == "${y}" ]] ; then
-				return 0
-			fi
-		done
-		return 1
-	}
-
 	local x11_sandbox=""
 	if ! use X ; then
 		:
 	elif [[ "${X_BACKEND[${key_command}]}" =~ ("disable"|"none"|"unsandboxed"|"gaming-unsandboxed"|"opengl-unsandboxed") ]] ; then
 		:
-	elif is_xpra_only "${key_command}" ; then
-einfo "Forcing xpra for ${key_command}"
-		x11_arg="--x11=xpra"
 	elif is_xephyr_only "${key_command}" ; then
 einfo "Forcing xephyr for ${key_command}"
 		x11_arg="--x11=xephyr"
 		x11_sandbox="xephyr"
-	elif [[ "${X_BACKEND[${key_command}]}" =~ ("gaming-sandboxed"|"opengl-sandboxed") ]] ; then
-		x11_arg="--x11=xpra"
-	elif [[ "${X_BACKEND[${key_command}]}" =~ "xpra" ]] ; then
-		x11_arg="--x11=xpra"
 	elif [[ "${X_BACKEND[${key_command}]}" == "xephyr" ]] ; then
 		x11_arg="--x11=xephyr"
 		x11_sandbox="xephyr"
@@ -1521,8 +1474,6 @@ einfo "Forcing xephyr for ${key_command}"
 		x11_arg="--x11=xvfb"
 	elif [[ "${X_BACKEND[${key_command}]}" == "auto" ]] ; then
 		x11_arg="--x11"
-	elif is_x11_compat "${key_command}" && [[ "${preferred_fallback}" == "xpra" ]] && use xpra ; then
-		x11_arg="--x11=xpra"
 	elif is_x11_compat "${key_command}" && [[ "${preferred_fallback}" == "xephyr" ]] && use xephyr ; then
 		x11_arg="--x11=xephyr"
 		x11_sandbox="xephyr"
@@ -1531,8 +1482,6 @@ einfo "Forcing xephyr for ${key_command}"
 	elif is_x11_compat "${key_command}" && [[ "${preferred_fallback}" == "xorg" ]] && use xcsecurity ; then
 		x11_arg="--x11=xorg"
 		x11_sandbox="xorg"
-	elif is_x11_compat "${key_command}" && use xpra ; then
-		x11_arg="--x11=xpra"
 	elif is_x11_compat "${key_command}" && use xephyr ; then
 		x11_arg="--x11=xephyr"
 		x11_sandbox="xephyr"
