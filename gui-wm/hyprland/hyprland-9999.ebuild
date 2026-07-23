@@ -141,7 +141,7 @@ DEPEND="
 	${RDEPEND}
 	>=dev-cpp/glaze-7.6.0:=
 	>=dev-libs/hyprland-protocols-0.6.4:=
-	>=dev-libs/wayland-protocols-1.48:=
+	>=dev-libs/wayland-protocols-1.49:=
 "
 BDEPEND="
 	>=dev-build/cmake-4.3.2
@@ -163,7 +163,6 @@ BDEPEND="
 "
 
 pkg_setup() {
-	use lcms || ewarn "Disabling the lcms USE flag is experimental.  Enable if build fails."
 	check-compiler-switch_start
 	[[ "${MERGE_TYPE}" == "binary" ]] && return
 
