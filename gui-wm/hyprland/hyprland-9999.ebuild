@@ -275,12 +275,18 @@ ewarn
 ewarn "Hyprlang is deprecated and will be removed in the future."
 ewarn "Migrate the config to the newest LUA based config."
 ewarn
+	optfeature_header "Install optional packages for the default configuration:"
+	optfeature "a terminal" "x11-terms/kitty"
+	optfeature "a file manager" "kde-apps/dolphin"
+	optfeature "an app launcher" "gui-apps/hyprlauncher"
+
 	optfeature_header "Install optional packages:"
 	optfeature "a memory safe Rust based GTK4 status bar with clock" "gui-apps/wayle"
 	optfeature "a themable status bar with clock and plugins" "gui-apps/noctalia"
 	optfeature "a dmenu style app lanucher" "dev-libs/bemenu"
 	optfeature "a Polkit agent for password requests for privileged actions" "sys-auth/hyprpolkitagent"
 	optfeature "a memory safe Rust based terminal" "x11-terms/alacritty"
+	optfeature "change or set the wallpaper" "gui-apps/swaybg"
 }
 
 # OILEDMACHINE-OVERLAY-TEST:  INTERACTIVE 0.51.1 PASSED (20250815)

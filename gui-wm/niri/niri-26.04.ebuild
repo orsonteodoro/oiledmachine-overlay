@@ -590,7 +590,7 @@ pkg_postinst() {
 	optfeature "a memory safe Rust based terminal" "x11-terms/alacritty"
 	optfeature "a screen locker" "gui-apps/swaylock"
 	optfeature "an wlroots based app launcher" "gui-apps/fuzzel"
-	optfeature "change or set the wallpaer" "gui-apps/swaybg"
+	optfeature "change or set the wallpaper" "gui-apps/swaybg"
 
 	optfeature_header "Install optional packages:"
 	optfeature "a dmenu style app lanucher" "dev-libs/bemenu"
