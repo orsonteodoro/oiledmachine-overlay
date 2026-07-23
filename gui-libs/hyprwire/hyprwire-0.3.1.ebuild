@@ -22,6 +22,7 @@ LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 CHKL_TIMESTAMPS=(
 	"dev-libs/libffi-9999"
 	"dev-libs/pugixml-9999"
+	"gui-libs/hyprutils-9999"
 	"x11-libs/pixman-9999"
 )
 
@@ -38,7 +39,7 @@ if [[ "${PV}" =~ "9999" ]]; then
 else
 	KEYWORDS="~amd64"
 	S="${WORKDIR}/${PN}-${PV}"
-	SRC_URI="https://github.com/hyprwm/${PN^}/archive/refs/tags/v${PV}/v${PV}.tar.gz -> ${P}.gh.tar.gz"
+	SRC_URI="https://github.com/hyprwm/hyprwire/archive/refs/tags/v${PV}/v${PV}.tar.gz -> ${P}.gh.tar.gz"
 fi
 
 DESCRIPTION="A fast and consistent wire protocol for IPC"
@@ -58,7 +59,7 @@ ebuild_revision_1
 RDEPEND="
 	>=dev-libs/libffi-${LIBFFI_PV}:=
 	>=dev-libs/pugixml-${PUGIXML_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
-	>=gui-libs/hyprutils-0.11.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=gui-libs/hyprutils-${HYPRUTILS_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=x11-libs/pixman-${PIXMAN_PV}:=
 "
 DEPEND="
@@ -66,8 +67,7 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-build/cmake-3.19
-	dev-cpp/gtest[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
-	dev-cpp/gtest:=
+	dev-cpp/gtest:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	virtual/pkgconfig
 "
 DOCS=( "README.md" )

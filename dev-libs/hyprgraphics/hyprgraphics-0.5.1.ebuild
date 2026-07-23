@@ -19,6 +19,7 @@ LLVM_COMPAT=(
 
 CHKL_TIMESTAMPS=(
 	"gnome-base/librsvg-9999"
+	"gui-libs/hyprutils-9999"
 	"media-libs/libheif-9999"
 	"media-libs/libjpeg-turbo-9999"
 	"media-libs/libjxl-9999"
@@ -42,7 +43,7 @@ if [[ "${PV}" =~ "9999" ]]; then
 	fi
 	inherit git-r3
 else
-	SRC_URI="https://github.com/hyprwm/${PN}/archive/v${PV}.tar.gz -> ${P}.gh.tar.gz"
+	SRC_URI="https://github.com/hyprwm/hyprgraphics/archive/v${PV}.tar.gz -> ${P}.gh.tar.gz"
 	KEYWORDS="~amd64"
 fi
 
@@ -57,10 +58,8 @@ ebuild_revision_2
 "
 RDEPEND="
 	>=gnome-base/librsvg-${LIBRSVG_PV}:=
-	>=gui-libs/hyprutils-0.1.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=x11-libs/libdrm-${LIBDRM_PV}:=
-	>=x11-libs/pango-${PANGO_PV}:=
-	>=media-libs/libglvnd-1.7.0:=
+	>=gui-libs/hyprutils-${HYPRUTILS_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=media-libs/libglvnd-${LIBGLVND_PV}:=
 	>=media-libs/libheif-${LIBHEIF_PV}:=[${LIBSTDCXX_USEDEP_LTS}]
 	>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:=
 	>=media-libs/libjxl-${LIBJXL_PV}:=[${LIBSTDCXX_USEDEP_LTS}]
@@ -68,6 +67,8 @@ RDEPEND="
 	>=media-libs/libwebp-${LIBWEBP_PV}:=
 	>=sys-apps/file-${FILE_PV}:=
 	>=x11-libs/cairo-${CAIRO_PV}:=
+	>=x11-libs/libdrm-${LIBDRM_PV}:=
+	>=x11-libs/pango-${PANGO_PV}:=
 	>=x11-libs/pixman-${PIXMAN_PV}:=
 "
 DEPEND="

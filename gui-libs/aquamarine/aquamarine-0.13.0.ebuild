@@ -19,6 +19,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/libffi-9999"
 	"dev-libs/libinput-9999"
 	"dev-libs/wayland-9999"
+	"gui-libs/hyprutils-9999"
 	"media-libs/libdisplay-info-9999"
 	"media-libs/mesa-9999"
 	"x11-libs/cairo-9999"
@@ -35,13 +36,13 @@ HOMEPAGE="https://github.com/hyprwm/aquamarine"
 if [[ "${PV}" == *"9999"* ]]; then
 	FALLBACK_COMMIT="c847837ad6234a180daacf019150965084bad9ae"
 	EGIT_BRANCH="main"
-	EGIT_REPO_URI="https://github.com/hyprwm/${PN^}.git"
+	EGIT_REPO_URI="https://github.com/hyprwm/aquamarine.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
 	fi
 	inherit git-r3
 else
-	SRC_URI="https://github.com/hyprwm/${PN^}/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz"
+	SRC_URI="https://github.com/hyprwm/aquamarine/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz"
 	KEYWORDS="~amd64"
 fi
 
@@ -56,17 +57,17 @@ RDEPEND="
 	>=dev-libs/libffi-${LIBFFI_PV}:=
 	>=dev-libs/wayland-${WAYLAND_PV}:=
 	>=dev-util/hyprwayland-scanner-0.4.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=gui-libs/hyprutils-0.8.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=gui-libs/hyprutils-${HYPRUTILS_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=media-libs/libdisplay-info-${LIBDISPLAY_INFO_PV}:=
-	media-libs/libglvnd:=
+	>=media-libs/libglvnd-${LIBGLVND_PV}:=
 	>=media-libs/mesa-${MESA_PV}:=[opengl]
-	sys-apps/hwdata:=
 	>=sys-auth/seatd-0.9.2:=
 	>=x11-libs/cairo-${CAIRO_PV}:=
 	>=x11-libs/libdrm-${LIBDRM_PV}:=
 	>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=
 	>=x11-libs/pango-${PANGO_PV}:=
 	>=x11-libs/pixman-${PIXMAN_PV}:=
+	sys-apps/hwdata:=
 	virtual/libudev:=
 "
 DEPEND="

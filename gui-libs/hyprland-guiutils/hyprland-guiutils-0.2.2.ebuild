@@ -17,6 +17,7 @@ LLVM_COMPAT=(
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/glib-2.89.9999"
+	"dev-libs/hyprlang-9999"
 	"gui-libs/hyprtoolkit-9999"
 	"media-libs/mesa-9999"
 	"x11-libs/cairo-9999"
@@ -39,7 +40,7 @@ if [[ "${PV}" =~ "9999" ]]; then
 else
 	SUBSLOT=$(ver_cut "1-2" "${PV}")
 	KEYWORDS="~amd64"
-	SRC_URI="https://github.com/hyprwm/${PN^}/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz"
+	SRC_URI="https://github.com/hyprwm/hyprland-guiutils/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz"
 fi
 
 DESCRIPTION="Hyprland GUI utilities, successor to hyprland-qtutils"
@@ -51,14 +52,13 @@ RDEPEND="
 	>=gui-libs/hyprtoolkit-${HYPRTOOLKIT_PV}:=
 	>=gui-libs/hyprutils-0.2.4:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/glib-${GLIB_PV}:=
-	>=dev-libs/hyprlang-0.6.0:=
+	>=dev-libs/hyprlang-${HYPRLANG_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=media-libs/mesa-${MESA_PV}:=[opengl]
 	>=x11-libs/cairo-${CAIRO_PV}:=
 	>=x11-libs/libdrm-${LIBDRM_PV}:=
 	>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=
 	>=x11-libs/pango-${PANGO_PV}:=
 	>=x11-libs/pixman-${PIXMAN_PV}:=
-	dev-libs/hyprlang:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-libs/hyprgraphics:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	gui-libs/aquamarine:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 "

@@ -29,13 +29,13 @@ HOMEPAGE="https://github.com/hyprwm/hyprutils"
 if [[ "${PV}" =~ "9999" ]]; then
 	FALLBACK_COMMIT="83da5ee98d806cef2d05a1072b8d8b832bf52891"
 	EGIT_BRANCH="main"
-	EGIT_REPO_URI="https://github.com/hyprwm/${PN^}.git"
+	EGIT_REPO_URI="https://github.com/hyprwm/hyprutils.git"
 	if [[ "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
 	fi
 	inherit git-r3
 else
-	SRC_URI="https://github.com/hyprwm/${PN^}/archive/refs/tags/v${PV}/v${PV}.tar.gz -> ${P}.gh.tar.gz"
+	SRC_URI="https://github.com/hyprwm/hyprutils/archive/refs/tags/v${PV}/v${PV}.tar.gz -> ${P}.gh.tar.gz"
 	S="${WORKDIR}/${PN}-${PV}"
 
 	KEYWORDS="~amd64"

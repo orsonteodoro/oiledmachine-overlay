@@ -28,19 +28,23 @@ LLVM_COMPAT=(
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)" # Skip placeholder
 
 CHKL_TIMESTAMPS=(
+	"app-misc/jq-9999"
 	"dev-cpp/muParser-9999"
 	"dev-cpp/tomlplusplus-9999"
 	"dev-libs/glib-2.89.9999"
 	"dev-libs/hyprlang-9999"
+	"dev-libs/libinput-9999"
 	"dev-libs/wayland-9999"
 	"gui-libs/hyprutils-9999"
 	"media-libs/lcms-9999"
 	"media-libs/mesa-9999"
+	"sys-apps/util-linux-9999"
+	"sys-libs/readline-9999"
+	"x11-base/xwayland-9999"
 	"x11-libs/cairo-9999"
 	"x11-libs/libdrm-9999"
 	"x11-libs/pango-9999"
 	"x11-libs/pixman-9999"
-	"sys-libs/readline-9999"
 	"x11-libs/libxcb-9999"
 	"x11-libs/libXcursor-9999"
 	"x11-libs/libxkbcommon-9999"
@@ -72,7 +76,7 @@ LICENSE="BSD"
 SLOT="0"
 IUSE+="
 ${GCC_COMPAT[@]}
-clang gcc lcms legacy-renderer -guiutils systemd test X
+clang gcc legacy-renderer -guiutils systemd test X
 ebuild_revision_32
 "
 REQUIRED_USE="
@@ -98,20 +102,18 @@ RDEPEND="
 	>=dev-libs/hyprlang-${HYPRLANG_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/hyprgraphics-0.5.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/libei-${LIBEI_PV}:=
-	>=dev-libs/libinput-1.31.2:=
-	dev-libs/re2:${RE2_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+	>=dev-libs/libinput-${LIBINPUT_PV}:=
 	>=dev-libs/udis86-1.7.2:=
 	>=dev-libs/wayland-${WAYLAND_PV}:=
 	>=gui-libs/aquamarine-0.11.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=gui-libs/hyprcursor-0.1.13:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=gui-libs/hyprutils-${HYPRUTILS_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=gui-libs/hyprwire-0.3.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	lcms? (
-		>=media-libs/lcms-${LCMS_PV}:=
-	)
-	>=media-libs/libglvnd-1.7.0:=
-	>=media-libs/mesa-${MESA_PV}:=
+	>=media-libs/lcms-${LCMS_PV}:=
+	>=media-libs/libglvnd-${LIBGLVND_PV}:=
+	>=media-libs/mesa-${MESA_PV}:=[opengl]
 	>=sys-apps/pciutils-3.10.0:=
+	>=sys-apps/util-linux-${UTIL_LINUX_PV}:=
 	>=sys-libs/readline-${READLINE_PV}:=
 	>=x11-libs/cairo-${CAIRO_PV}:=
 	>=x11-libs/libdrm-${LIBDRM_PV}:=
@@ -121,8 +123,8 @@ RDEPEND="
 	>=x11-libs/pixman-${PIXMAN_PV}:=
 	dev-cpp/sdbus-c++:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-lang/lua:5.5=
+	dev-libs/re2:${RE2_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	dev-util/glslang:=
-	sys-apps/util-linux:=
 	guiutils? (
 		gui-libs/hyprland-guiutils:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
@@ -132,7 +134,7 @@ RDEPEND="
 		>=x11-libs/xcb-util-errors-1.0.1:=
 		>=x11-libs/xcb-util-renderutil-0.3.10:=
 		>=x11-libs/xcb-util-wm-0.4.2:=
-		>=x11-base/xwayland-24.1.11:=
+		>=x11-base/xwayland-${XWAYLAND_PV}:=
 	)
 "
 DEPEND="
@@ -153,7 +155,7 @@ BDEPEND="
 		>=sys-devel/gcc-14:=
 	)
 	test? (
-		>=app-misc/jq-1.8.1
+		>=app-misc/jq-${JQ_PV}
 		>=dev-cpp/gtest-1.17.0[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 		x11-apps/xeyes
 		x11-terms/kitty

@@ -36,7 +36,7 @@ HOMEPAGE="https://github.com/hyprwm/hyprtoolkit"
 if [[ "${PV}" =~ "9999" ]]; then
 	FALLBACK_COMMIT="67d9012d7d3a902a6a37e313fbfaf56ce7d3c53e"
 	EGIT_BRANCH="main"
-	EGIT_REPO_URI="https://github.com/hyprwm/${PN^}.git"
+	EGIT_REPO_URI="https://github.com/hyprwm/hyprtoolkit.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
 	fi
@@ -44,7 +44,7 @@ if [[ "${PV}" =~ "9999" ]]; then
 else
 	KEYWORDS="~amd64"
 	S="${WORKDIR}/${PN}-${PV}"
-	SRC_URI="https://github.com/hyprwm/${PN^}/archive/refs/tags/v${PV}/v${PV}.tar.gz -> ${P}.gh.tar.gz"
+	SRC_URI="https://github.com/hyprwm/hyprtoolkit/archive/refs/tags/v${PV}/v${PV}.tar.gz -> ${P}.gh.tar.gz"
 fi
 
 LICENSE="BSD"
@@ -71,12 +71,12 @@ RDEPEND="
 	>=dev-libs/wayland-protocols-1.47:=
 	>=gui-libs/aquamarine-0.10.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=gui-libs/hyprutils-${HYPRUTILS_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=media-libs/libglvnd-${LIBGLVND_PV}:=
 	>=x11-libs/cairo-${CAIRO_PV}:=
 	>=x11-libs/libdrm-${LIBDRM_PV}:=
 	>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=
 	>=x11-libs/pango-${PANGO_PV}:=
 	>=x11-libs/pixman-${PIXMAN_PV}:=
-	media-libs/libglvnd:=
 "
 DEPEND="
 	${RDEPEND}

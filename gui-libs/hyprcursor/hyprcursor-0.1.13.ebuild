@@ -18,6 +18,7 @@ LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 CHKL_TIMESTAMPS=(
 	"dev-cpp/tomlplusplus-9999"
+	"dev-libs/hyprlang-9999"
 	"dev-libs/libzip-9999"
 	"gnome-base/librsvg-9999"
 	"x11-libs/cairo-9999"
@@ -31,13 +32,13 @@ HOMEPAGE="https://github.com/hyprwm/hyprcursor"
 if [[ ${PV} == *9999* ]]; then
 	FALLBACK_COMMIT="39435900785d0c560c6ae8777d29f28617d031ef"
 	EGIT_BRANCH="main"
-	EGIT_REPO_URI="https://github.com/hyprwm/${PN^}.git"
+	EGIT_REPO_URI="https://github.com/hyprwm/hyprcursor.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
 	fi
 	inherit git-r3
 else
-	SRC_URI="https://github.com/hyprwm/${PN^}/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz"
+	SRC_URI="https://github.com/hyprwm/hyprcursor/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz"
 	KEYWORDS="~amd64 ~riscv"
 fi
 
@@ -51,7 +52,7 @@ RESTRICT="test"
 
 RDEPEND="
 	>=dev-cpp/tomlplusplus-${TOMLPLUSPLUS_PV}:=[${LIBSTDCXX_USEDEP_LTS}]
-	>=dev-libs/hyprlang-0.4.2:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-libs/hyprlang-${HYPRLANG_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/libzip-${LIBZIP_PV}:=
 	>=gnome-base/librsvg-${LIBRSVG_PV}:=
 	>=x11-libs/cairo-${CAIRO_PV}:=
