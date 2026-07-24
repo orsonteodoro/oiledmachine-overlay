@@ -41,7 +41,7 @@ PNPM_AUDIT_FIX_ARGS=(
 PNPM_INSTALL_ARGS=(
 )
 
-inherit flag-o-matic pnpm rust
+inherit flag-o-matic pnpm rust secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="fabae940acf33ca050f0767d3d5dadc61fcffe32"
@@ -82,7 +82,7 @@ RDEPEND+="
 BDEPEND+="
 	dev-util/rustup
 	dev-vcs/git
-	net-libs/nodejs:${NODE_SLOT}
+	>=net-libs/nodejs-${NODEJS_24_PV}:${NODE_SLOT}
 	llvm-core/clang:${LLVM_SLOT}
 	llvm-core/llvm:${LLVM_SLOT}
 	llvm-core/lld:${LLVM_SLOT}
@@ -90,10 +90,6 @@ BDEPEND+="
 	|| (
 		dev-lang/rust-bin:${RUST_PV}
 		dev-lang/rust:${RUST_PV}
-	)
-	|| (
-		dev-lang/rust-bin:=
-		dev-lang/rust:=
 	)
 "
 RESTRICT="mirror"
