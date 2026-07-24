@@ -11,7 +11,7 @@ DESCRIPTION="Scalable Video Technology for AV1 (SVT-AV1 Encoder)"
 HOMEPAGE="https://gitlab.com/AOMediaCodec/SVT-AV1"
 
 if [[ ${PV} == 9999 ]]; then
-	FALLBACK_COMMIT="ec17f83820ed7cf006faec8a1a2215388d6f8f8c"
+	FALLBACK_COMMIT="0dd9c6583d28963e7e5ac2395547c4c8603632c3"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://gitlab.com/AOMediaCodec/SVT-AV1.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -32,7 +32,10 @@ SRC_URI+=" pgo? ( https://media.xiph.org/video/derf/y4m/${PROFILING_VIDEO} -> sv
 LICENSE="BSD-2 Apache-2.0 BSD ISC LGPL-2.1+ MIT"
 SLOT="0/"$(ver_cut "1" "${PV}")
 
-IUSE+=" cpu_flags_x86_avx512vl pgo test tools"
+IUSE+="
+cpu_flags_x86_avx512vl pgo test tools
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 BDEPEND="
