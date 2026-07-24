@@ -12,12 +12,17 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="UAF"
 inherit cflags-hardened check-compiler-switch dot-a flag-o-matic libtool multilib multilib-minimal preserve-libs toolchain-funcs
 
 if [[ ${PV} == 9999 ]] ; then
+	FALLBACK_COMMIT="6097929ae8f8c2a1714aacd844a8e9747b071cdc"
+	EGIT_BRANCH="master"
 	# Per tukaani.org, git.tukaani.org is a mirror of github and
 	# may be behind.
 	EGIT_REPO_URI="
 		https://github.com/tukaani-project/xz
 		https://git.tukaani.org/xz.git
 	"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 	inherit git-r3 autotools
 
 	# bug #272880 and bug #286068
@@ -50,7 +55,7 @@ HOMEPAGE="https://tukaani.org/xz/"
 # See top-level COPYING file as it outlines the various pieces and their licenses.
 LICENSE="0BSD LGPL-2.1+ GPL-2+ doc? ( CC-BY-SA-4.0 )"
 SLOT="0"
-IUSE="cpu_flags_arm_crc32 doc +extra-filters pgo nls static-libs"
+IUSE+=" cpu_flags_arm_crc32 doc +extra-filters pgo nls static-libs"
 
 if [[ ${PV} != 9999 ]] ; then
 	BDEPEND+=" verify-sig? ( >=sec-keys/openpgp-keys-lassecollin-20250313 )"
@@ -69,6 +74,19 @@ src_prepare() {
 	else
 		# Allow building shared libs on Solaris/x64
 		elibtoolize
+	fi
+}
+
+src_unpack() {
+	if [[ ${PV} == 9999 ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+# TODO: add verify-sig support
+		unpack ${A}
 	fi
 }
 
