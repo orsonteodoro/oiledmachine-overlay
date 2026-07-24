@@ -26,6 +26,10 @@ PNPM_TARBALL="${MY_P}.tar.gz"
 RUST_MAX_VER="1.96.1" # Inclusive
 RUST_MIN_VER="1.96.1" # llvm-22.1 # See https://github.com/vercel/vercel/blob/vercel%4056.5.0/.github/workflows/release.yml#L48
 RUST_PV="${RUST_MIN_VER}"
+
+# https://github.com/rust-lang/rust/commit/<COMMIT_ID>.patch
+# Copy-paste timestamp from "Date:" row
+# Use date --date="Tue, 23 Jun 2026 19:08:22 -0400" "+%s"
 RUST_EXPECTED_TIMESTAMP=1782256102 # Same as 1.96.1 release date
 
 LLVM_SLOT=22
