@@ -133,7 +133,7 @@ src_unpack() {
 	edo rustup install ${RUST_PV}
 	edo rustup target add wasm32-wasip2
 
-	rustc --version || die
+einfo "rustc version: "$(rustc --version || die)
 
 	if [[ "${PV}" =~ "9999" ]] ; then
 		if in_iuse fallback-commit && use fallback-commit ; then
