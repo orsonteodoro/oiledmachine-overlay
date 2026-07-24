@@ -27,7 +27,7 @@ DESCRIPTION="i3-compatible Wayland window manager"
 HOMEPAGE="https://swaywm.org"
 
 if [[ "${PV}" == "9999" ]]; then
-	FALLBACK_COMMIT="f3b64311045c3241ac6be3fd293dff8bfd55b6d4"
+	FALLBACK_COMMIT="6959a78a8f0d52f79ad7465135b3295307a5146a"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/swaywm/${PN}.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
