@@ -7,7 +7,7 @@ CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS IO"
 
 if [[ "${PV}" == "9999" ]]; then
-	FALLBACK_COMMIT="14c73c7db38eebfd3202146b76a1ad4df90dd3a2"
+	FALLBACK_COMMIT="54706fc6bc0cdecab7e9593974a4039cc038fca7"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://code.videolan.org/videolan/dav1d"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -28,7 +28,7 @@ LICENSE="BSD-2"
 SLOT="0/7"
 IUSE+="
 +8bit +10bit +asm test xxhash
-ebuild_revision_10
+ebuild_revision_11
 "
 RESTRICT="!test? ( test )"
 DEPEND="
