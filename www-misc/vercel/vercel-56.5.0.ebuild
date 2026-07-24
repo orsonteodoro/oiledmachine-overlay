@@ -129,10 +129,13 @@ src_unpack() {
 	# Required for @vercel/python-analysis:build
 	# It will download so placed here.
 	# It is assumed that both dev-lang/rust and dev-lang/rust-bin do not have this target.
+#	edo rustup default stable
 	edo rustup override set ${RUST_PV}
 	edo rustup install ${RUST_PV}
 	edo rustup target add wasm32-wasip2
+	export PATH=$(realpath "${HOME}/.rustup/toolchains/${RUST_PV}-"*"-unknown-linux-gnu/bin")":${PATH}"
 
+echo # Insert new line
 einfo "rustc version: "$(rustc --version || die)
 
 	if [[ "${PV}" =~ "9999" ]] ; then
@@ -151,6 +154,10 @@ src_configure() {
 	export TURBO_TELEMETRY_DISABLED=1
 	export DO_NOT_TRACK=1
 
+	export LD_LIBRARY_PATH=$(realpath "${HOME}/.rustup/toolchains/${RUST_PV}-"*"-unknown-linux-gnu/lib")":${LD_LIBRARY_PATH}"
+	# Remove the distro Rust references and use upstream's Rust.
+	export PATH=$(echo "${PATH}" | tr ':' $'\n' | sed -e "\|/opt/rust|d" -e "\|/usr/lib/rust|d" | tr $'\n' ":")
+
 	export PATH="/usr/lib/llvm/${LLVM_SLOT}/bin:${PATH}"
 # Prevent
 # note: gcc: error: unrecognized command-line option '--target=wasm32-wasip2'
@@ -162,6 +169,8 @@ src_configure() {
 
 	append-flags "-fuse-ld=lld"
 
+	RUSTFLAGS+=" -L "$(realpath "${HOME}/.rustup/toolchains/${RUST_PV}-"*"-unknown-linux-gnu/lib/rustlib/wasm32-wasip2/lib")
+
 einfo "CC:  ${CC}"
 einfo "CXX:  ${CXX}"
 einfo "CPP:  ${CPP}"
@@ -169,6 +178,9 @@ einfo "LD:  ${LD}"
 einfo "CFLAGS:  ${CFLAGS}"
 einfo "CXXFLAGS:  ${CXXFLAGS}"
 einfo "LDFLAGS:  ${LDFLAGS}"
+einfo "RUSTFLAGS:  ${RUSTFLAGS}"
+einfo "PATH:  ${PATH}"
+einfo "LD_LIBRARY_PATH:  ${LD_LIBRARY_PATH}"
 }
 
 src_compile() {
