@@ -45,7 +45,7 @@ LICENSE="MIT"
 SLOT="0"
 IUSE+="
 basu elogind +man +swaybar +swaynag systemd tray wallpapers X
-ebuild_revision_19
+ebuild_revision_20
 "
 REQUIRED_USE="
 	|| (
