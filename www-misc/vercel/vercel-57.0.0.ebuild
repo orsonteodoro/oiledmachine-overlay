@@ -13,16 +13,16 @@ EAPI=8
 
 # To update lockfile
 # PATH=$(realpath "../../scripts")":${PATH}"
-# PNPM_UPDATER_VERSIONS="56.5.0" pnpm_updater_update_locks.sh
+# PNPM_UPDATER_VERSIONS="57.0.0" pnpm_updater_update_locks.sh
 
 MY_PN="vercel"
 MY_P="${MY_PN}-${PV}"
 
-NODE_SLOT="24" # Based on https://github.com/vercel/vercel/blob/vercel%4056.5.0/.github/workflows/release.yml
+NODE_SLOT="24" # Based on https://github.com/vercel/vercel/blob/vercel%4057.0.0/.github/workflows/release.yml
 PNPM_SLOT="9"
 PNPM_TARBALL="${MY_P}.tar.gz"
 RUST_MAX_VER="1.96.1" # Inclusive
-RUST_MIN_VER="1.96.1" # llvm-22.1 # See https://github.com/vercel/vercel/blob/vercel%4056.5.0/.github/workflows/release.yml#L48
+RUST_MIN_VER="1.96.1" # llvm-22.1 # See https://github.com/vercel/vercel/blob/vercel%4057.0.0/.github/workflows/release.yml#L48
 RUST_PV="${RUST_MIN_VER}"
 
 # https://github.com/rust-lang/rust/commit/<COMMIT_ID>.patch
@@ -51,6 +51,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	fi
 	inherit git-r3
 else
+	#KEYWORDS="~amd64" # Disabled temporarily for supply chain attack mitigation.  Enable after 57.0.1 point release.
 	SRC_URI="
 https://github.com/vercel/vercel/archive/refs/tags/vercel@${PV}.tar.gz
 	-> ${MY_P}.tar.gz
@@ -69,7 +70,6 @@ LICENSE="
 	Vercel-Legal
 	Vercel-Privacy-Policy
 "
-KEYWORDS="~amd64"
 IUSE+=" ebuild_revision_11"
 SLOT="0"
 DEPEND+="
@@ -106,6 +106,12 @@ eerror "Expected timestamp:  >= ${expected_timestamp}"
 }
 
 pkg_setup() {
+ewarn "Do not use this 57.0.0 release until the next the patch release(s) to mitigate against a supply chain attack."
+ewarn "The ebuild release is to ensure the dependency requirements are in place."
+ewarn "Please use the even number major release 56.x series instead."
+ewarn "Wait for the 5 minute pause to expire to continue."
+	sleep 300
+
 	sandbox-changes_no_network_sandbox "For downloading node micropackages and missing Rust wasm32-wasip2 target"
 
 	# Reduce downloads for frequently versioned bumped releases.
