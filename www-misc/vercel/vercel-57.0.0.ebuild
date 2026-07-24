@@ -11,6 +11,8 @@ EAPI=8
 
 # This ebuild uses AI generated code and suggested fixes.
 
+# go version:  https://github.com/vercel/vercel/blob/vercel%4057.0.0/internals/ipc-proxy/build.mjs#L15
+
 # To update lockfile
 # PATH=$(realpath "../../scripts")":${PATH}"
 # PNPM_UPDATER_VERSIONS="57.0.0" pnpm_updater_update_locks.sh
@@ -51,7 +53,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	fi
 	inherit git-r3
 else
-	#KEYWORDS="~amd64" # Disabled temporarily for supply chain attack mitigation.  Enable after 57.0.1 point release.
+	#KEYWORDS="~amd64 ~arm64" # Disabled temporarily for supply chain attack mitigation.  Enable after 57.0.1 point release.
 	SRC_URI="
 https://github.com/vercel/vercel/archive/refs/tags/vercel@${PV}.tar.gz
 	-> ${MY_P}.tar.gz
@@ -78,9 +80,10 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
+	>=dev-lang/go-1.23.12
+	>=net-libs/nodejs-${NODEJS_24_PV}:${NODE_SLOT}
 	dev-util/rustup
 	dev-vcs/git
-	>=net-libs/nodejs-${NODEJS_24_PV}:${NODE_SLOT}
 	llvm-core/clang:${LLVM_SLOT}
 	llvm-core/llvm:${LLVM_SLOT}
 	llvm-core/lld:${LLVM_SLOT}
