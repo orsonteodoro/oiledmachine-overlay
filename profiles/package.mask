@@ -115,6 +115,8 @@ www-misc/rainbowstream
 <net-libs/nodejs-20
 =net-libs/nodejs-21*
 =net-libs/nodejs-23*
+
+# EOL
 =media-gfx/blender-4.1*
 =media-gfx/blender-3.3*
 =virtual/blender-lts-3.3*
@@ -191,3 +193,6 @@ dev-qt/qtwebengine
 # It only properly works with Qt6 stable.
 # For Qt6 live, it has black icons issue.
 gui-apps/noctalia-shell
+
+# EOL
+app-arch/zopfli
