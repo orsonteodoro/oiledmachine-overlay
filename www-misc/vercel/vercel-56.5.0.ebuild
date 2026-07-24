@@ -20,7 +20,7 @@ EAPI=8
 MY_PN="vercel"
 MY_P="${MY_PN}-${PV}"
 
-NODE_SLOT="24"
+NODE_SLOT="24" # Based on https://github.com/vercel/vercel/blob/vercel%4056.5.0/.github/workflows/release.yml
 PNPM_SLOT="9"
 PNPM_TARBALL="${MY_P}.tar.gz"
 RUST_MAX_VER="1.95.0" # Inclusive
@@ -39,11 +39,23 @@ PNPM_INSTALL_ARGS=(
 
 inherit flag-o-matic pnpm rust
 
-S="${WORKDIR}/${MY_PN}-${MY_PN}-${PV}"
-SRC_URI="
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="fabae940acf33ca050f0767d3d5dadc61fcffe32"
+	EGIT_BRANCH="main"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/${MY_PN}-${MY_PN}-${PV}"
+	EGIT_REPO_URI="https://github.com/vercel/vercel.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	SRC_URI="
 https://github.com/vercel/vercel/archive/refs/tags/vercel@${PV}.tar.gz
 	-> ${MY_P}.tar.gz
-"
+	"
+fi
+
+S="${WORKDIR}/${MY_PN}-${MY_PN}-${PV}"
 
 DESCRIPTION="Vercel CLI"
 HOMEPAGE="
@@ -108,7 +120,16 @@ pkg_setup() {
 }
 
 src_unpack() {
-	pnpm_src_unpack
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+		pnpm_src_unpack
+	else
+		pnpm_src_unpack
+	fi
 }
 
 src_configure() {
