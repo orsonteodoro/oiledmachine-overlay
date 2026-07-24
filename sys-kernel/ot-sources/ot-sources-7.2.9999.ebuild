@@ -9,14 +9,14 @@ EAPI=8
 # See also https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/
 
 GENPATCHES_FALLBACK_COMMIT="d4fa92430e875432c3a61bb3abd9b6e68ea9fcbd" # 2026-06-04 18:26:32 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="4539944e515183668109bdf4d0c3d7d228383d88" # 2026-07-22 11:38:20 -0700 @ Merge tag 'liveupdate-fixes-2026-07-22'
+LINUX_SOURCES_FALLBACK_COMMIT="48a5a7ab8d6ab7090564339e039c421f315de912" # 2026-07-23 13:49:54 -0700 @ Merge tag 'v7.2-rc4-smb3-client-fixes' 
 RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
 # https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=7.2
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
-EBUILD_REV="ebuild_revision_8"
+EBUILD_REV="ebuild_revision_9"
 GENPATCHES_VER="live" # can be live only when 9999
 PATCH_PROJC_VER="7.1-r0"
 PATCH_RT_VER="7.2-rc2-rt1"
