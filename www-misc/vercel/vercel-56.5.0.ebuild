@@ -9,7 +9,7 @@ EAPI=8
 # We use the upstream lockfiles for both pnpm and cargo.
 # Assuming frequent ebuild updates.
 
-# This ebuild uses AI generated code.
+# This ebuild uses AI generated code and suggested fixes.
 
 # Rust 1.95.0
 
@@ -41,7 +41,7 @@ PNPM_AUDIT_FIX_ARGS=(
 PNPM_INSTALL_ARGS=(
 )
 
-inherit flag-o-matic pnpm rust secure-version
+inherit edo flag-o-matic pnpm rust sandbox-changes secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="fabae940acf33ca050f0767d3d5dadc61fcffe32"
@@ -108,6 +108,8 @@ eerror "Expected timestamp:  >= ${expected_timestamp}"
 }
 
 pkg_setup() {
+	sandbox-changes_no_network_sandbox "For downloading node micropackages and missing Rust wasm32-wasip2 target"
+
 	# Reduce downloads for frequently versioned bumped releases.
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	export PNPM_CACHE_FOLDER="${EDISTDIR}/pnpm-download-cache-${PNPM_SLOT}/${CATEGORY}/${PN}-${PV%%.*}"
@@ -120,6 +122,19 @@ pkg_setup() {
 }
 
 src_unpack() {
+	rustup-init-gentoo -s || die
+	export PATH="${HOME}/.cargo/bin:${PATH}"
+	"${RUSTC}" --version || die
+
+	# Required for @vercel/python-analysis:build
+	# It will download so placed here.
+	# It is assumed that both dev-lang/rust and dev-lang/rust-bin do not have this target.
+	edo rustup override set ${RUST_PV}
+	edo rustup install ${RUST_PV}
+	edo rustup target add wasm32-wasip2
+
+	rustc --version || die
+
 	if [[ "${PV}" =~ "9999" ]] ; then
 		if in_iuse fallback-commit && use fallback-commit ; then
 			EGIT_COMMIT="${FALLBACK_COMMIT}"
@@ -145,11 +160,6 @@ src_configure() {
 	unset LD
 	filter-flags "-fuse-ld=*"
 
-	rustup-init-gentoo -s || die
-	export PATH="${HOME}/.cargo/bin:${PATH}"
-	"${RUSTC}" --version || die
-
-	filter-flags "-fuse-ld=*"
 	append-flags "-fuse-ld=lld"
 
 einfo "CC:  ${CC}"
