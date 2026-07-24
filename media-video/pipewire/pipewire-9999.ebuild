@@ -54,7 +54,7 @@ inherit cflags-hardened chkl meson-multilib optfeature prefix python-any-r1 syst
 
 if [[ ${PV} =~ 9999 ]] ; then
 	if [[ "${PV}" == 9999 ]] ; then
-		FALLBACK_COMMIT="47a3479490ff0cda6149d6941dc5e8bae2ab6b43"
+		FALLBACK_COMMIT="2a7bd1aed2818d280ba34384f8b893e358cf0e92"
 		EGIT_BRANCH="master"
 	fi
 	if [[ "${PV}" == *.9999 ]] ; then
@@ -92,7 +92,7 @@ SLOT="0/0.4"
 IUSE+=" ${PIPEWIRE_DOCS_USEFLAG} bluetooth elogind dbus doc echo-cancel extra ffmpeg fftw flatpak gstreamer gsettings"
 IUSE+=" ieee1394 jack-client jack-sdk libcamera loudness lv2 modemmanager pipewire-alsa readline roc selinux"
 IUSE+=" pulseaudio sound-server ssl system-service systemd test v4l X zeroconf"
-IUSE+=" ebuild_revision_2"
+IUSE+=" ebuild_revision_3"
 
 # Once replacing system JACK libraries is possible, it's likely that
 # jack-client IUSE will need blocking to avoid users accidentally
