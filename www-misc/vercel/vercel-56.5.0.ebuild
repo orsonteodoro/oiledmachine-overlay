@@ -23,10 +23,10 @@ MY_P="${MY_PN}-${PV}"
 NODE_SLOT="24" # Based on https://github.com/vercel/vercel/blob/vercel%4056.5.0/.github/workflows/release.yml
 PNPM_SLOT="9"
 PNPM_TARBALL="${MY_P}.tar.gz"
-RUST_MAX_VER="1.95.0" # Inclusive
-RUST_MIN_VER="1.95.0" # llvm-22.1
+RUST_MAX_VER="1.96.1" # Inclusive
+RUST_MIN_VER="1.96.1" # llvm-22.1 # See https://github.com/vercel/vercel/blob/vercel%4056.5.0/.github/workflows/release.yml#L48
 RUST_PV="${RUST_MIN_VER}"
-RUST_EXPECTED_TIMESTAMP=20260414 # Same as 1.95.0 release date
+RUST_EXPECTED_TIMESTAMP=1782256102 # Same as 1.96.1 release date
 
 LLVM_SLOT=22
 LLVM_COMPAT=( ${LLVM_SLOT} )
