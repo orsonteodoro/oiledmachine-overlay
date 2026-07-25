@@ -201,6 +201,7 @@ ffmpeg_python_configure() {
 #   einfo "ffmpeg_pv:  ${ffmpeg_pv}"
 # }
 ffmpeg_get_slot() {
+	local _FFMPEG_SLOT=""
 	local x
 	for x in "${FFMPEG_COMPAT_SLOTS[@]}" ; do
 		if has_version "media-video/ffmpeg:${x}" ; then

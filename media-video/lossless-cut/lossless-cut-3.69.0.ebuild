@@ -57,7 +57,12 @@ PATENT_STATUS=(
 	"patent_status_nonfree"
 )
 
-inherit edo electron-app flag-o-matic lcnr node-sharp optfeature xdg yarn
+inherit edo electron-app ffmpeg flag-o-matic lcnr node-sharp optfeature xdg yarn
+
+FFMPEG_COMPAT_SLOTS=(
+	"${FFMPEG_COMPAT_SLOTS_8[@]}"
+	"${FFMPEG_COMPAT_SLOTS_7[@]}"
+)
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
@@ -101,7 +106,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${PATENT_STATUS[@]}
 lame opus svt-av1 theora vorbis vpx x264
-ebuild_revision_29
+ebuild_revision_30
 "
 REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -391,9 +396,10 @@ src_install() {
 	lcnr_install_files
 	electron-app_set_sandbox_suid "/opt/${MY_PN}/chrome-sandbox"
 
-	if has_version "media-video/ffmpeg:58.60.60" ; then
-		dosym "/usr/lib/ffmpeg/58.60.60/bin/ffmpeg" "/opt/losslesscut/resources/ffmpeg"
-		dosym "/usr/lib/ffmpeg/58.60.60/bin/ffprobe" "/opt/losslesscut/resources/ffprobe"
+	local s=$(ffmpeg_get_slot)
+	if has_version "media-video/ffmpeg:${s}" ; then
+		dosym "/usr/lib/ffmpeg/${s}/bin/ffmpeg" "/opt/losslesscut/resources/ffmpeg"
+		dosym "/usr/lib/ffmpeg/${s}/bin/ffprobe" "/opt/losslesscut/resources/ffprobe"
 	else
 		dosym "/usr/bin/ffmpeg" "/opt/losslesscut/resources/ffmpeg"
 		dosym "/usr/bin/ffprobe" "/opt/losslesscut/resources/ffprobe"
