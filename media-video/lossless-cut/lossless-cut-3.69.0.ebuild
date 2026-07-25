@@ -416,7 +416,7 @@ src_install() {
 		dosym "/usr/bin/ffmpeg" "/opt/losslesscut/resources/ffmpeg"
 		sed -i -e "s|@FFPROBE_PATH@|/usr/bin/ffprobe|" "${ED}/opt/losslesscut/resources/ffprobe" || die
 	fi
-	fperms 0755 "/opt/losslesscut/resources/ffmpeg"
+	fperms 0755 "/opt/losslesscut/resources/ffprobe"
 }
 
 pkg_postinst() {
