@@ -2333,6 +2333,10 @@ ewarn "Use GPU acceleration selectively."
 ewarn
 }
 
+pkg_postrm() {
+ewarn "Do \`source /etc/profile\` after complete removal of ${CATEGORY}/${PN} or restart to unbreak command line."
+}
+
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
 # OILEDMACHINE-OVERLAY-META-MOD-TYPE:  patches, ebuild-changes, profile-selection, testing-sections, audio-patch
 # OILEDMACHINE-OVERLAY-META-WIP:  test-USE-flag
