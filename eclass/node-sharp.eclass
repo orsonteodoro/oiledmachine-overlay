@@ -32,30 +32,9 @@ CHKL_TIMESTAMPS+=(
 	"media-libs/freetype-9999"
 )
 
-inherit chkl edo flag-o-matic secure-version
+inherit chkl edo flag-o-matic secure-version secure-version-sharp
 
-_node_sharp_set_globals() {
-	if [[ -z "${SHARP_PV}" ]] ; then
-eerror "QA:  SHARP_PV needs to be defined"
-		die
-	fi
-	if [[ -z "${VIPS_PV}" ]] ; then
-eerror "QA:  VIPS_PV needs to be defined"
-		die
-	fi
-	local sharp_pv=$(ver_cut 1-2 "${SHARP_PV}")
-	if ver_test "${sharp_pv}" -eq "0.35" ; then
-# See https://github.com/lovell/sharp/blob/v0.35.3/docs/src/content/docs/install.md
-		:
-	else
-einfo "QA:  Update SHARP_PV in ${CATEGORY}/${P}"
-einfo "Requested SHARP_PV:  ${sharp_pv}"
-einfo "Supported SHARP_PV:  >=0.35"
-		die
-	fi
-}
-_node_sharp_set_globals
-unset -f _node_sharp_set_globals
+# Only latest supported for sharp and libvips security reasons.
 
 # See also node-sharp_pkg_setup().
 #
@@ -74,7 +53,7 @@ unset -f _node_sharp_set_globals
 # https://github.com/lovell/sharp-libvips/blob/main/build/posix.sh
 # https://github.com/lovell/sharp-libvips/blob/v1.3.2/versions.properties
 #
-if [[ -n "${SHARP_PV}" ]] ; then
+if [[ -n "${NODE_SHARP_PV}" ]] ; then
 	NODE_SHARP_CDEPEND+="
 		>=media-libs/vips-${VIPS_PV}:=[avif,cairo,cgif,cxx,dzi,exif,fontconfig,avif,heif,highway,imagequant,lcms,pango,png,svg,tiff,uhdr,webp,zlib]
 		>=media-libs/freetype-${FREETYPE_PV}:=[harfbuzz]
@@ -110,6 +89,12 @@ node-sharp_pkg_setup() {
 # Reference:  https://sharp.pixelplumbing.com/install#prebuilt-binaries
 	unset SHARP_IGNORE_GLOBAL_LIBVIPS
 	unset SHARP_FORCE_GLOBAL_LIBVIPS
+
+	if ! pkg-config --modversion vips-cpp >/dev/null 2>&1 ; then
+eerror "Failed detecting vips-cpp."
+eerror "Rebuild media-libs/vips[avif,cairo,cgif,cxx,dzi,exif,fontconfig,avif,heif,highway,imagequant,lcms,pango,png,svg,tiff,uhdr,webp,zlib]."
+		die
+	fi
 
 	if [[ -z "${NODE_SLOT}" ]] ; then
 eerror "QA:  NODE_SLOT needs to be defined"
@@ -303,7 +288,7 @@ einfo "DEBUG:  Called node-sharp_npm_rebuild_sharp()"
 	export LD_LIBRARY_PATH="/usr/${libdir}:${LD_LIBRARY_PATH}"
 	einfo "PKG_CONFIG_PATH in npm_rebuild: ${PKG_CONFIG_PATH}"
 
-	enpm add "sharp@${SHARP_PV}" \
+	enpm add "sharp@${NODE_SHARP_PV}" \
 		${NPM_INSTALL_ARGS[@]} \
 		${SHARP_INSTALL_ARGS[@]} \
 		--ignore-scripts=false \
@@ -327,42 +312,14 @@ einfo "DEBUG:  Called node-sharp_npm_rebuild_sharp()"
 einfo "DEBUG:  PATH:  ${PATH}"
 einfo "DEBUG:  PWD:  ${PWD}"
 		which node >/dev/null || die "DEBUG:  Missing node (1)"
-		local sharp_pv=$(ver_cut 1-2 "${SHARP_PV}")
-		local sharp_full_pv=$(ver_cut 1-3 "${SHARP_PV}")
-		if ver_test "${sharp_full_pv}" -eq "0.34.5" ; then
-			if ! ls ../install/build.js >/dev/null ; then
+		local sharp_pv=$(ver_cut 1-2 "${NODE_SHARP_PV}")
+		local sharp_full_pv=$(ver_cut 1-3 "${NODE_SHARP_PV}")
+		if ! ls ../install/build.js >/dev/null ; then
 ewarn "DEBUG:  Missing ../install/build.js for sharp (1)"
-			elif [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
-				node ../install/build.js --debug || die
-			else
-				node ../install/build.js || die
-			fi
-		elif ver_test "${sharp_full_pv}" -eq "0.34.3" || ver_test "${sharp_full_pv}" -eq "0.34.4" ; then
-			if ! ls ../install/check.js >/dev/null ; then
-ewarn "DEBUG:  Missing ../install/check.js for sharp (1)"
-			elif [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
-				node ../install/check.js --debug || die
-			else
-				node ../install/check.js || die
-			fi
-		elif ver_test "${sharp_pv}" -eq "0.33" || ver_test "${sharp_pv}" -eq "0.34" ; then
-			if ! ls ../install/check >/dev/null ; then
-ewarn "DEBUG:  Missing ../install/check for sharp (1)"
-			elif [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
-				node ../install/check --debug || die
-			else
-				node ../install/check || die
-			fi
-		elif ver_test "${sharp_pv}" -lt "0.33" ; then
-			edo node "install/can-compile" || die "Failed to run install/can-compile"
-			if [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
-				edo node-gyp configure --debug
-				edo node-gyp build --debug --verbose
-			else
-				edo node-gyp rebuild
-			fi
-			ls ../install/dll-copy || die "Missing"
-			node ../install/dll-copy || die
+		elif [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
+			node ../install/build.js --debug || die
+		else
+			node ../install/build.js || die
 		fi
 	popd >/dev/null 2>&1 || die
 
@@ -372,10 +329,10 @@ ewarn "DEBUG:  Missing ../install/check for sharp (1)"
 
 	if [[ -e "${NODE_SHARP_NODE_MODULE_PATH}" ]] ; then
 		ls "${NODE_SHARP_NODE_MODULE_PATH}" >/dev/null \
-			|| die "Did not build sharp@${SHARP_PV} with node-gyp"
+			|| die "Did not build sharp@${NODE_SHARP_PV} with node-gyp"
 	else
 		ls "${S}/node_modules/sharp/src/build/"*"/sharp-linux-"*".node" >/dev/null \
-			|| die "Did not build sharp@${SHARP_PV} with node-gyp"
+			|| die "Did not build sharp@${NODE_SHARP_PV} with node-gyp"
 	fi
 	grep -q \
 		-e "compilation terminated" \
@@ -411,7 +368,7 @@ node-sharp_pnpm_rebuild_sharp() {
 	export LD_LIBRARY_PATH="/usr/${libdir}:${LD_LIBRARY_PATH}"
 	einfo "PKG_CONFIG_PATH in npm_rebuild: ${PKG_CONFIG_PATH}"
 
-	epnpm add "sharp@${SHARP_PV}" \
+	epnpm add "sharp@${NODE_SHARP_PV}" \
 		${PNPM_INSTALL_ARGS[@]} \
 		${SHARP_INSTALL_ARGS[@]}
 
@@ -432,42 +389,14 @@ node-sharp_pnpm_rebuild_sharp() {
 einfo "DEBUG:  PATH:  ${PATH}"
 einfo "DEBUG:  PWD:  ${PWD}"
 		which node >/dev/null || die "DEBUG:  Missing node (2)"
-		local sharp_pv=$(ver_cut 1-2 "${SHARP_PV}")
-		local sharp_full_pv=$(ver_cut 1-3 "${SHARP_PV}")
-		if ver_test "${sharp_full_pv}" -eq "0.34.5" ; then
-			if ! ls ../install/build.js >/dev/null ; then
+		local sharp_pv=$(ver_cut 1-2 "${NODE_SHARP_PV}")
+		local sharp_full_pv=$(ver_cut 1-3 "${NODE_SHARP_PV}")
+		if ! ls ../install/build.js >/dev/null ; then
 ewarn "DEBUG:  Missing ../install/build.js for sharp (2)"
-			elif [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
-				node ../install/build.js --debug || die
-			else
-				node ../install/build.js || die
-			fi
-		elif ver_test "${sharp_full_pv}" -eq "0.34.3" || ver_test "${sharp_full_pv}" -eq "0.34.4" ; then
-			if ! ls ../install/check.js >/dev/null ; then
-ewarn "DEBUG:  Missing ../install/check.js for sharp (2)"
-			elif [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
-				node ../install/check.js --debug || die
-			else
-				node ../install/check.js || die
-			fi
-		elif ver_test "${sharp_pv}" -eq "0.33" || ver_test "${sharp_pv}" -eq "0.34" ; then
-			if ! ls ../install/check >/dev/null ; then
-ewarn "DEBUG:  Missing ../install/check for sharp (2)"
-			elif [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
-				node ../install/check --debug || die
-			else
-				node ../install/check || die
-			fi
-		elif ver_test "${sharp_pv}" -lt "0.33" ; then
-			edo node "install/can-compile" || die "Failed to run install/can-compile"
-			if [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
-				edo node-gyp configure --debug
-				edo node-gyp build --debug --verbose
-			else
-				edo node-gyp rebuild
-			fi
-			ls ../install/dll-copy || die "Missing"
-			node ../install/dll-copy || die
+		elif [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
+			node ../install/build.js --debug || die
+		else
+			node ../install/build.js || die
 		fi
 	popd >/dev/null 2>&1 || die
 
@@ -477,10 +406,10 @@ ewarn "DEBUG:  Missing ../install/check for sharp (2)"
 
 	if [[ -e "${NODE_SHARP_NODE_MODULE_PATH}" ]] ; then
 		ls "${NODE_SHARP_NODE_MODULE_PATH}" >/dev/null \
-			|| die "Did not build sharp@${SHARP_PV} with node-gyp"
+			|| die "Did not build sharp@${NODE_SHARP_PV} with node-gyp"
 	else
 		ls "${S}/node_modules/sharp/src/build/"*"/sharp-linux-"*".node" >/dev/null \
-			|| die "Did not build sharp@${SHARP_PV} with node-gyp"
+			|| die "Did not build sharp@${NODE_SHARP_PV} with node-gyp"
 	fi
 	grep -q \
 		-e "compilation terminated" \
@@ -508,7 +437,7 @@ node-sharp_npm_lockfile_add_sharp() {
 	else
 		enpm install "node-gyp" ${NPM_INSTALL_ARGS[@]} ${NODE_GYP_INSTALL_ARGS[@]}
 	fi
-	enpm add "sharp@${SHARP_PV}" ${NPM_INSTALL_ARGS[@]} ${SHARP_INSTALL_ARGS[@]}
+	enpm add "sharp@${NODE_SHARP_PV}" ${NPM_INSTALL_ARGS[@]} ${SHARP_INSTALL_ARGS[@]}
 }
 
 # @FUNCTION: node-sharp_pnpm_lockfile_add_sharp
@@ -527,7 +456,7 @@ node-sharp_pnpm_lockfile_add_sharp() {
 	else
 		epnpm install "node-gyp" ${PNPM_INSTALL_ARGS[@]} ${NODE_GYP_INSTALL_ARGS[@]}
 	fi
-	epnpm add "sharp@${SHARP_PV}" ${PNPM_INSTALL_ARGS[@]} ${SHARP_INSTALL_ARGS[@]}
+	epnpm add "sharp@${NODE_SHARP_PV}" ${PNPM_INSTALL_ARGS[@]} ${SHARP_INSTALL_ARGS[@]}
 }
 
 # @FUNCTION: node-sharp_yarn_rebuild_sharp
@@ -568,8 +497,8 @@ node-sharp_yarn_rebuild_sharp() {
 	fi
 	einfo "Found libvips-cpp.so in ${sharp_vips_lib}"
 
-	einfo "Running yarn add sharp@${SHARP_PV} --verbose"
-	eyarn add "sharp@${SHARP_PV}" -E \
+	einfo "Running yarn add sharp@${NODE_SHARP_PV} --verbose"
+	eyarn add "sharp@${NODE_SHARP_PV}" -E \
 		${YARN_INSTALL_ARGS[@]} \
 		${SHARP_INSTALL_ARGS[@]}
 
@@ -598,42 +527,14 @@ node-sharp_yarn_rebuild_sharp() {
 einfo "DEBUG:  PATH:  ${PATH}"
 einfo "DEBUG:  PWD:  ${PWD}"
 		which node >/dev/null || die "DEBUG:  Missing node (3)"
-		local sharp_pv=$(ver_cut 1-2 "${SHARP_PV}")
-		local sharp_full_pv=$(ver_cut 1-3 "${SHARP_PV}")
-		if ver_test "${sharp_full_pv}" -eq "0.34.5" ; then
-			if ! ls ../install/build.js >/dev/null ; then
+		local sharp_pv=$(ver_cut 1-2 "${NODE_SHARP_PV}")
+		local sharp_full_pv=$(ver_cut 1-3 "${NODE_SHARP_PV}")
+		if ! ls ../install/build.js >/dev/null ; then
 ewarn "DEBUG:  Missing ../install/build.js for sharp (3)"
-			elif [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
-				node ../install/build.js --debug || die
-			else
-				node ../install/build.js || die
-			fi
-		elif ver_test "${sharp_full_pv}" -eq "0.34.3" || ver_test "${sharp_full_pv}" -eq "0.34.4" ; then
-			if ! ls ../install/check.js >/dev/null ; then
-ewarn "DEBUG:  Missing ../install/check.js for sharp (3)"
-			elif [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
-				node ../install/check.js --debug || die
-			else
-				node ../install/check.js || die
-			fi
-		elif ver_test "${sharp_pv}" -eq "0.33" || ver_test "${sharp_pv}" -eq "0.34" ; then
-			if ! ls ../install/check >/dev/null ; then
-ewarn "DEBUG:  Missing ../install/check for sharp (3)"
-			elif [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
-				node ../install/check --debug || die
-			else
-				node ../install/check || die
-			fi
-		elif ver_test "${sharp_pv}" -lt "0.33" ; then
-			edo node "install/can-compile" || die "Failed to run install/can-compile"
-			if [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
-				edo node-gyp configure --debug
-				edo node-gyp build --debug --verbose
-			else
-				edo node-gyp rebuild
-			fi
-			ls ../install/dll-copy || die "Missing"
-			node ../install/dll-copy || die
+		elif [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
+			node ../install/build.js --debug || die
+		else
+			node ../install/build.js || die
 		fi
 	popd >/dev/null 2>&1 || die
 
@@ -643,10 +544,10 @@ ewarn "DEBUG:  Missing ../install/check for sharp (3)"
 
 	if [[ -e "${NODE_SHARP_NODE_MODULE_PATH}" ]] ; then
 		ls "${NODE_SHARP_NODE_MODULE_PATH}" >/dev/null \
-			|| die "Did not build sharp@${SHARP_PV} with yarn"
+			|| die "Did not build sharp@${NODE_SHARP_PV} with yarn"
 	else
 		ls "${S}/node_modules/sharp/src/build/"*"/sharp-linux-"*".node" >/dev/null \
-			|| die "Did not build sharp@${SHARP_PV} with yarn"
+			|| die "Did not build sharp@${NODE_SHARP_PV} with yarn"
 	fi
 	grep -q \
 		-e "compilation terminated" \
@@ -674,7 +575,7 @@ node-sharp_yarn_lockfile_add_sharp() {
 	else
 		eyarn add "node-gyp" ${YARN_INSTALL_ARGS[@]} ${NODE_GYP_INSTALL_ARGS[@]}
 	fi
-	eyarn add "sharp@${SHARP_PV}" ${YARN_INSTALL_ARGS[@]} ${SHARP_INSTALL_ARGS[@]}
+	eyarn add "sharp@${NODE_SHARP_PV}" ${YARN_INSTALL_ARGS[@]} ${SHARP_INSTALL_ARGS[@]}
 }
 
 # @FUNCTION: node-sharp_verify_dedupe
