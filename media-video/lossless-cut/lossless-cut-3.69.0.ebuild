@@ -23,7 +23,7 @@ ICON_TYPE=${ICON_TYPE:-"png"} # svg or png.  png is used by upstream and is brok
 NPM_AUDIT_FIX=0 # Breaks build
 #export NODE_SHARP_DEBUG=1
 NODE_SHARP_USE="png svg"
-NODE_SLOT="22" # Based on CI
+NODE_SLOT="24" # Based on CI
 YARN_AUDIT_FIX=0
 YARN_INSTALL_PATH="/opt/${MY_PN}"
 YARN_LOCKFILE_SOURCE="ebuild"
@@ -187,18 +187,22 @@ einfo "DEBUG:  Called yarn_update_lock_yarn_import_post()"
 
 einfo "Fixing vulnerabilities"
 
-einfo "QA:  Remove sharp@npm:^0.34.5 and microarches in yarn.lock"
+einfo "QA:  Remove sharp@npm:^0.34.5 and @img/sharp-libvips-<arch>-arm64@npm:1.2.4 @img/sharp-libvips-<arch>-arm64@npm:0.34.5 and microarches in yarn.lock"
+einfo "QA:  Change sharp: \"npm:^0.33.4\" to sharp: \"npm:0.35.3\" in yarn.lock"
 einfo "QA:  Remove esbuild>=0.27.3, <0.28.1 and microarches in yarn.lock"
-einfo "QA:  Change esbuild>=0.27.3, <0.28.1 references to 0.28.1 in yarn.lock"
+einfo "QA:  Change esbuild: \"npm:^0.27.0\" references to esbuild: \"npm:0.28.1\" in yarn.lock"
 einfo "QA:  Remove builder-util-runtime@npm:9.5.1 in yarn.lock"
 einfo "QA:  Change builder-util-runtime: \"npm:9.5.1\" to builder-util-runtime: \"npm:9.7.0\" in yarn.lock"
 einfo "QA:  Remove app-builder-lib@npm:26.8.1 in yarn.lock"
 einfo "QA:  Change app-builder-lib: \"npm:26.8.1\" to app-builder-lib: \"npm:26.15.0\" in yarn.lock"
 
-		eyarn add "vite@7.3.5" -D
-		eyarn add "builder-util-runtime@9.7.0" -D
-		eyarn add "app-builder-lib@26.15.0" -D
-		eyarn add "esbuild@0.28.1" -D
+		local L=(
+			"vite@7.3.5"
+			"builder-util-runtime@9.7.0"
+			"app-builder-lib@26.15.0"
+			"esbuild@0.28.1"
+		)
+		eyarn add "${L[@]}" -D
 
 einfo "Fixing vulnerabilities done"
 
