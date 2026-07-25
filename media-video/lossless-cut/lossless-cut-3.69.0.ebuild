@@ -13,7 +13,7 @@ EAPI=8
 
 # To update:
 # PATH=$(realpath "../../scripts")":${PATH}"
-# YARN_UPDATER_VERSIONS="3.68.1" yarn_updater_update_locks.sh
+# YARN_UPDATER_VERSIONS="3.69.0" yarn_updater_update_locks.sh
 
 MY_PN="${PN/-/}"
 
@@ -23,7 +23,7 @@ ICON_TYPE=${ICON_TYPE:-"png"} # svg or png.  png is used by upstream and is brok
 NPM_AUDIT_FIX=0 # Breaks build
 #export NODE_SHARP_DEBUG=1
 NODE_SHARP_USE="png svg"
-NODE_SLOT="22"
+NODE_SLOT="24" # Same as Electron
 YARN_AUDIT_FIX=0
 YARN_INSTALL_PATH="/opt/${MY_PN}"
 YARN_LOCKFILE_SOURCE="ebuild"
@@ -31,14 +31,14 @@ YARN_SLOT=8
 
 inherit secure-version secure-version-node
 
-NODE_GYP_PV="11.5.0"
+NODE_GYP_PV="12.3.0"
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="41.3.0" # Cr 146.0.7680.188, node 24.15.0
+	ELECTRON_APP_ELECTRON_PV="${ELECTRON_PV}" # Cr 150.0.7871.129, node 24.18.0
 else
 	# Upstream preference
-	ELECTRON_APP_ELECTRON_PV="38.7.2" # Cr 140.0.7339.249, node 22.21.1
+	ELECTRON_APP_ELECTRON_PV="42.3.0" # Cr 148.0.7778.180, node 24.15.0
 fi
 
 NODE_SHARP_PATCHES=(
@@ -86,15 +86,14 @@ LICENSE="
 	CC0-1.0
 	GPL-2
 "
-# Electron's 37.2.5 license fingerprint is the same as 37.1.0
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
-	# Fingerprint 41.2.1 is the same as 41.3.0
+	# The license fingerprint of 42.2.0 is the same as 43.x
 	LICENSE+="
-		electron-41.2.1-chromium.html
+		electron-42.2.0-chromium.html
 	"
 else
 	LICENSE+="
-		electron-38.7.2-chromium.html
+		electron-42.3.0-chromium.html
 	"
 fi
 RESTRICT="mirror"
@@ -113,33 +112,24 @@ REQUIRED_USE="
 	)
 "
 PATENT_STATUS_RDEPEND="
-	virtual/patent-status[patent_status_nonfree=]
+	virtual/patent-status:*[patent_status_nonfree=]
 	!patent_status_nonfree? (
-		|| (
-			media-video/ffmpeg:58.60.60[encode,lame?,opus?,-patent_status_nonfree,svt-av1?,theora?,vorbis?,vpx?,-x264]
-			media-video/ffmpeg:0/58.60.60[encode,lame?,opus?,-patent_status_nonfree,svt-av1?,theora?,vorbis?,vpx?,-x264]
-		)
+		$(secure-version_gen_ffmpeg_depends '6.1' '[encode,lame?,opus?,-patent_status_nonfree,svt-av1?,theora?,vorbis?,vpx?,-x264]')
 	)
 	patent_status_nonfree? (
-		|| (
-			media-video/ffmpeg:58.60.60[encode,lame?,opus?,patent_status_nonfree,svt-av1?,theora?,vorbis?,vpx?,x264?]
-			media-video/ffmpeg:0/58.60.60[encode,lame?,opus?,patent_status_nonfree,svt-av1?,theora?,vorbis?,vpx?,x264?]
-		)
+		$(secure-version_gen_ffmpeg_depends '6.1' '[encode,lame?,opus?,patent_status_nonfree,svt-av1?,theora?,vorbis?,vpx?,x264?]')
 	)
 "
 RDEPEND+="
 	${PATENT_STATUS_RDEPEND}
-	media-video/ffmpeg:=
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	app-misc/jq
-	net-libs/nodejs:${NODE_SLOT}
-	net-libs/nodejs:=
-	sys-apps/yarn:${YARN_SLOT}
-	sys-apps/yarn:=
+	>=app-misc/jq-${JQ_PV}:=
+	net-libs/nodejs:${NODE_SLOT}=
+	sys-apps/yarn:${YARN_SLOT}=
 	virtual/pkgconfig
 "
 DOCS=( "README.md" )
@@ -155,8 +145,8 @@ yarn_unpack_post() {
 	#die
 	if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
 # We remove patch temporarily so we can bump version and audit the lockfile
-einfo "Temporarily disabling file-type patch"
-		sed -i -e "s|\"file-type\": \"patch:file-type@npm%3A19.4.1#~/.yarn/patches/file-type-npm-19.4.1-d18086444c.patch\"|\"file-type\": \"19.4.1\"|g" "package.json" || die
+einfo "Temporarily disabling package.json patches"
+		sed -i -e "s|\"mitt\": \"patch:mitt@npm%3A3.0.1#~/.yarn/patches/mitt-npm-3.0.1-ce290ffa77.patch\"|\"mitt\": \"3.0.1\"|g" "package.json" || die
 	fi
 	eapply "${FILESDIR}/${PN}-3.64.0-sharp-type.patch"
 	sed -i -e "/npmMinimalAgeGate:/d" "${S}/.yarnrc.yml" || die
@@ -173,22 +163,10 @@ einfo "DEBUG:  Removing node-gyp (1)"
 		enpm uninstall "node-gyp"
 	fi
 
-	eyarn add "node-gyp@^11.2.0"
-#	eyarn remove "sharp"
-	eyarn add "node-addon-api@^1.6.3"
-	eyarn add "node-addon-api@^7.0.0"
-#	eyarn add "sharp@^0.33.4" -D
-#	eyarn add "sharp@^0.34.5" -D
-	eyarn add '@img/colour@^1.0.0'
-
-ewarn "Replacing vulnerable packages"
-	eyarn add "electron-builder@^26.8.1" -D										# Bump to avoid build time error with tar update
-	sed -i -e "s|tar: \"npm:^6.0.5\"|tar: \"npm:^7.5.8\"|g" "yarn.lock" || die
-	sed -i -e "s|tar: \"npm:^6.1.12\"|tar: \"npm:^7.5.8\"|g" "yarn.lock" || die
-	sed -i -e "s|tar: \"npm:^7.4.3\"|tar: \"npm:^7.5.8\"|g" "yarn.lock" || die
-	eyarn add 'tar@^7.5.8'												# CVE-2026-23950; DoS, DT, ID; High
-															# CVE-2026-24842; DT, ID; High
-															# CVE-2026-26960; DT, ID; High
+	eyarn add "node-gyp@^${NODE_GYP_PV}"
+#	eyarn add "node-addon-api@^1.7.2"
+#	eyarn add "node-addon-api@^7.1.1"
+#	eyarn add '@img/colour@^1.0.0'
 }
 
 yarn_update_lock_install_post() {
@@ -200,61 +178,20 @@ yarn_update_lock_install_post() {
 yarn_update_lock_yarn_import_post() {
 einfo "DEBUG:  Called yarn_update_lock_yarn_import_post()"
 	if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
-# Doesn't break build
-#ewarn "QA:  Manually modify lockfile to remove typescript@5.7.x and move associated version ranges from typescript 5.7.x to typescript@5.5.4"
-#ewarn "QA:  Manually modify lockfile to associate @types/node:* with @types/node 20 in yarn.lock and drop @types/node 22"
-ewarn "QA:  Manually modify prismjs ~x.xx to ^1.30.0 in yarn.lock"							# CVE-2024-53382; DT, ID; Medium
-ewarn "QA:  Manually modify prismjs ~1.27.0 to ^1.30.0 in yarn.lock"							# CVE-2024-53382; DT, ID; Medium
-ewarn "QA:  Manually remove prismjs <1.30.0 in yarn.lock"								# CVE-2024-53382; DT, ID; Medium
-ewarn "QA:  Manually remove sharp@^0.30.4 in yarn.lock"
-ewarn "QA:  Manually modify sharp: \"npm:^0.30.4\" to sharp: \"npm:^0.34.3\" in yarn.lock"
-
-		eyarn add "typescript@5.5.4" -D
-		#eyarn add "@types/node@20.14.14" -D
-		eyarn add "@types/node@20.19.4" -D
-		eyarn add "@types/node@18.19.21" -D
-
 		eyarn add "electron@${ELECTRON_APP_ELECTRON_PV}" -D							# Enable for offline cache speed up
 
 		NODE_GYP_INSTALL_ARGS=( "-D" )
 		node-sharp_yarn_lockfile_add_sharp
 
-		sed -i -e "s|node-fetch: \"npm:^1.0.1\"|node-fetch: \"npm:^2.6.7\"|g" "yarn.lock" || die		# CVE-2022-0235, GHSA-r683-j2x4-v87g; DoS, DT, ID; High
-		eyarn add "node-fetch@2.6.7" -D
-
-		sed -i -e "s|esbuild: \"npm:^0.21.5\"|esbuild: \"npm:^0.27.7\"|g" "yarn.lock" || die			# GHSA-67mh-4wv8-2f99; ID; Moderate
-		sed -i -e "s|esbuild: \"npm:^0.24.0\"|esbuild: \"npm:^0.27.7\"|g" "yarn.lock" || die			# GHSA-67mh-4wv8-2f99; ID; Moderate
-		sed -i -e "s|esbuild: \"npm:~0.23.0\"|esbuild: \"npm:^0.27.7\"|g" "yarn.lock" || die			# GHSA-67mh-4wv8-2f99; ID; Moderate
-		sed -i -e "s|esbuild: \"npm:^0.21.3\"|esbuild: \"npm:^0.27.7\"|g" "yarn.lock" || die			# GHSA-67mh-4wv8-2f99; ID; Moderate
-		sed -i -e "s|esbuild: \"npm:0.25.0\"|esbuild: \"npm:^0.27.7\"|g" "yarn.lock" || die			# GHSA-67mh-4wv8-2f99; ID; Moderate
-		sed -i -e "s|esbuild: \"npm:^0.25.11\"|esbuild: \"npm:^0.27.7\"|g" "yarn.lock" || die			# GHSA-67mh-4wv8-2f99; ID; Moderate
-		eyarn add "esbuild@^0.27.7" -D
-
-		eyarn add "sweetalert2@^11.4.8" -D									# GHSA-mrr8-v49w-3333; Low
-
-		# Breaks during runtime
-#		sed -i -e "s|\"@octokit/core\": \"5\"|\"@octokit/core\": \"^6\"|g" "package.json" || die
-#		eyarn add "@octokit/core@^6"										# CVE-2025-25290, CVE-2025-25289, CVE-2025-25285; DoS
-
-		sed -i -e "s|tmp: \"npm:^0.2.0\"|tmp: \"npm:^0.2.4\"|g" "yarn.lock" || die				# CVE-2025-54798; DT; Low
-		eyarn add "tmp@^0.2.4" -D
-
 		if [[ "${ICON_TYPE}" == "png" ]] ; then
-			#eyarn add "icon-gen@3.0.1" -D # Must go before node-sharp_yarn_rebuild_sharp
 			eyarn add "icon-gen@5.0.0" -D # Must go before node-sharp_yarn_rebuild_sharp
 		else
 			eyarn remove "icon-gen"
 			eyarn remove "sharp"
 		fi
 
-einfo "Adding file-type patch"
-		sed -i -e "s|\"file-type\": \"19.4.1\"|\"file-type\": \"patch:file-type@npm%3A19.4.1#~/.yarn/patches/file-type-npm-19.4.1-d18086444c.patch\"|g" "package.json" || die
-
-		sed -i -e "s|undici: \"npm:^5.25.4\"|undici: \"npm:^6.25.0\"|g" "yarn.lock" || die			# CVE-2026-1525; ZC, DoS, DT; Moderate
-		sed -i -e "s|undici: \"npm:^5.28.5\"|undici: \"npm:^6.25.0\"|g" "yarn.lock" || die			# CVE-2026-1525; ZC, DoS, DT; Moderate
-		sed -i -e "s|undici: \"npm:^6.23.0\"|undici: \"npm:^6.25.0\"|g" "yarn.lock" || die			# CVE-2026-1525; ZC, DoS, DT; Moderate
-		sed -i -e "s|undici: \"npm:^6.25.0\"|undici: \"npm:^6.25.0\"|g" "yarn.lock" || die			# CVE-2026-1525; ZC, DoS, DT; Moderate
-		eyarn add "undici@^6.25.0"
+einfo "Adding package.json patches"
+		sed -i -e "s|\"mitt\": \"3.0.1\"|\"mitt\": \"patch:mitt@npm%3A3.0.1#~/.yarn/patches/mitt-npm-3.0.1-ce290ffa77.patch\"|g" "package.json" || die
 	fi
 }
 
