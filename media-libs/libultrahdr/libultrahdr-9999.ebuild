@@ -5,15 +5,26 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
+CXX_STANDARD=17
 
 LIBSMPTE2094_50_PV="0.1.4"
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
+)
 
 CHKL_TIMESTAMPS=(
 	"media-libs/libjpeg-turbo-9999"
 	"media-libs/mesa-9999"
 )
 
-inherit cflags-hardened chkl cmake-multilib secure-version
+inherit cflags-hardened chkl cmake-multilib libcxx-slot libstdcxx-slot secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="ad4a92eea0d2f39f18b5ecae3165fdd56c6a478b"
@@ -50,7 +61,10 @@ RESTRICT="mirror"
 SOVER="1"
 SLOT="0/${SOVER}"
 # examples is enabled on upstream but disabled by default in this ebuild.
-IUSE+=" -benchmark -examples -gles +intrinsics -smpte2094-50 -test"
+IUSE+="
+-benchmark -examples -gles +intrinsics -smpte2094-50 -test
+ebuild_revision_1
+"
 RDEPEND+="
 	>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:=
 	gles? (
@@ -63,6 +77,11 @@ DEPEND+="
 BDEPEND+="
 "
 DOCS=( "README.md" )
+
+pkg_setup() {
+	libcxx-slot_verify
+	libstdcxx-slot_verify
+}
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
