@@ -68,6 +68,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libpng-9999"
 	"media-libs/libraw-9999"
 	"media-libs/libspng-9999"
+	"media-libs/libultrahdr-9999"
 	"media-libs/libwebp-9999"
 	"media-libs/openexr-9999"
 	"media-libs/tiff-9999"
@@ -275,7 +276,7 @@ RDEPEND+="
 		>=media-libs/tiff-${TIFF_PV}:=[${MULTILIB_USEDEP}]
 	)
 	uhdr? (
-		media-libs/libultrahdr:=
+		>=media-libs/libultrahdr-${LIBULTRAHDR_PV}:=[${MULTILIB_USEDEP}]
 	)
 	vala? (
 		>=dev-lang/vala-0.56.0:=
