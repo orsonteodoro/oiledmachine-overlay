@@ -319,6 +319,7 @@ einfo "DEBUG:  PWD:  ${PWD}"
 		which node >/dev/null || die "DEBUG:  Missing node (1)"
 		local sharp_pv=$(ver_cut 1-2 "${NODE_SHARP_PV}")
 		local sharp_full_pv=$(ver_cut 1-3 "${NODE_SHARP_PV}")
+# Keep in sync with build script from https://github.com/lovell/sharp/blob/v0.35.3/package.json#L97
 		if ! ls ../install/build.js >/dev/null ; then
 ewarn "DEBUG:  Missing ../install/build.js for sharp (1)"
 		elif [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
@@ -396,6 +397,7 @@ einfo "DEBUG:  PWD:  ${PWD}"
 		which node >/dev/null || die "DEBUG:  Missing node (2)"
 		local sharp_pv=$(ver_cut 1-2 "${NODE_SHARP_PV}")
 		local sharp_full_pv=$(ver_cut 1-3 "${NODE_SHARP_PV}")
+# Keep in sync with build script from https://github.com/lovell/sharp/blob/v0.35.3/package.json#L97
 		if ! ls ../install/build.js >/dev/null ; then
 ewarn "DEBUG:  Missing ../install/build.js for sharp (2)"
 		elif [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
@@ -534,6 +536,7 @@ einfo "DEBUG:  PWD:  ${PWD}"
 		which node >/dev/null || die "DEBUG:  Missing node (3)"
 		local sharp_pv=$(ver_cut 1-2 "${NODE_SHARP_PV}")
 		local sharp_full_pv=$(ver_cut 1-3 "${NODE_SHARP_PV}")
+# Keep in sync with build script from https://github.com/lovell/sharp/blob/v0.35.3/package.json#L97
 		if ! ls ../install/build.js >/dev/null ; then
 ewarn "DEBUG:  Missing ../install/build.js for sharp (3)"
 		elif [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
