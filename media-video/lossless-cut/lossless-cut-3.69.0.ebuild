@@ -106,7 +106,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${PATENT_STATUS[@]}
 lame opus svt-av1 theora vorbis vpx x264
-ebuild_revision_32
+ebuild_revision_33
 "
 REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -407,6 +407,7 @@ src_install() {
 		dosym "/usr/bin/ffmpeg" "/opt/losslesscut/resources/ffmpeg"
 		sed -i -e "s|@FFPROBE_PATH@|/usr/bin/ffprobe|" "/opt/losslesscut/resources/ffprobe" || die
 	fi
+	fperms 0755 "/opt/losslesscut/resources/ffmpeg"
 }
 
 pkg_postinst() {
