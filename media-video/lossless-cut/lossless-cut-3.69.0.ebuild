@@ -23,7 +23,7 @@ ICON_TYPE=${ICON_TYPE:-"png"} # svg or png.  png is used by upstream and is brok
 NPM_AUDIT_FIX=0 # Breaks build
 #export NODE_SHARP_DEBUG=1
 NODE_SHARP_USE="png svg"
-NODE_SLOT="24" # Same as Electron
+NODE_SLOT="22" # Based on CI, Node 24 may likely break it.
 YARN_AUDIT_FIX=0
 YARN_INSTALL_PATH="/opt/${MY_PN}"
 YARN_LOCKFILE_SOURCE="ebuild"
@@ -114,10 +114,10 @@ REQUIRED_USE="
 PATENT_STATUS_RDEPEND="
 	virtual/patent-status:*[patent_status_nonfree=]
 	!patent_status_nonfree? (
-		$(secure-version_gen_ffmpeg_depends '6.1' '[encode,lame?,opus?,-patent_status_nonfree,svt-av1?,theora?,vorbis?,vpx?,-x264]')
+		$(secure-version_gen_ffmpeg_depends '7.0-8.1' '[encode,lame?,opus?,-patent_status_nonfree,svt-av1?,theora?,vorbis?,vpx?,-x264]')
 	)
 	patent_status_nonfree? (
-		$(secure-version_gen_ffmpeg_depends '6.1' '[encode,lame?,opus?,patent_status_nonfree,svt-av1?,theora?,vorbis?,vpx?,x264?]')
+		$(secure-version_gen_ffmpeg_depends '7.0-8.1' '[encode,lame?,opus?,patent_status_nonfree,svt-av1?,theora?,vorbis?,vpx?,x264?]')
 	)
 "
 RDEPEND+="
@@ -179,6 +179,19 @@ yarn_update_lock_yarn_import_post() {
 einfo "DEBUG:  Called yarn_update_lock_yarn_import_post()"
 	if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
 		eyarn add "electron@${ELECTRON_APP_ELECTRON_PV}" -D							# Enable for offline cache speed up
+
+einfo "Fixing vulnerabilities"
+
+einfo "QA:  Remove sharp@npm:^0.34.5 and microarches from yarn.lock"
+einfo "QA:  Remove esbuild>=0.27.3, <0.28.1 from yarn.lock"
+einfo "QA:  Change esbuild>=0.27.3, <0.28.1 references to 0.28.1 from yarn.lock"
+
+		eyarn add "vite@7.3.5" -D
+		eyarn add "builder-util-runtime@9.7.0" -D
+		eyarn add "app-builder-lib@26.15.0" -D
+		eyarn add "esbuild@0.28.1" -D
+
+einfo "Fixing vulnerabilities done"
 
 		NODE_GYP_INSTALL_ARGS=( "-D" )
 		node-sharp_yarn_lockfile_add_sharp
