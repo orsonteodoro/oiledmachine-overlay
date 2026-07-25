@@ -106,7 +106,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${PATENT_STATUS[@]}
 lame opus svt-av1 theora vorbis vpx x264
-ebuild_revision_37
+ebuild_revision_38
 "
 REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -138,6 +138,9 @@ BDEPEND+="
 	virtual/pkgconfig
 "
 DOCS=( "README.md" )
+PATCHES=(
+	"${FILESDIR}/lossless-cut-3.69.0-quiet-processing-leak.patch"
+)
 
 pkg_setup() {
 # Sharp is used for icon conversions.
@@ -147,7 +150,7 @@ ewarn "Part of the sharp fix requires the use of the media-libs/vips ebuilds fro
 }
 
 yarn_unpack_post() {
-	#die
+	die
 	if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
 # We remove patch temporarily so we can bump version and audit the lockfile
 einfo "Temporarily disabling package.json patches"
@@ -411,12 +414,11 @@ src_install() {
 	local s=$(ffmpeg_get_slot)
 	if has_version "media-video/ffmpeg:${s}" ; then
 		dosym "/usr/lib/ffmpeg/${s}/bin/ffmpeg" "/opt/losslesscut/resources/ffmpeg"
-		sed -i -e "s|@FFPROBE_PATH@|/usr/lib/ffmpeg/${s}/bin/ffprobe|" "${ED}/opt/losslesscut/resources/ffprobe" || die
+		dosym "/usr/lib/ffmpeg/${s}/bin/ffprobe" "/opt/losslesscut/resources/ffprobe"
 	else
 		dosym "/usr/bin/ffmpeg" "/opt/losslesscut/resources/ffmpeg"
-		sed -i -e "s|@FFPROBE_PATH@|/usr/bin/ffprobe|" "${ED}/opt/losslesscut/resources/ffprobe" || die
+		dosym "/usr/bin/ffprobe" "/opt/losslesscut/resources/ffprobe"
 	fi
-	fperms 0755 "/opt/losslesscut/resources/ffprobe"
 }
 
 pkg_postinst() {

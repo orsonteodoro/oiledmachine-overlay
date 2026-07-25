@@ -1,0 +1,27 @@
+--- a/src/renderer/src/ffmpeg.ts.orig	2026-06-03 07:06:35.000000000 -0700
++++ b/src/renderer/src/ffmpeg.ts	2026-07-25 12:24:41.248372439 -0700
+@@ -329,7 +329,7 @@ export async function getDefaultOutForma
+ export async function readFileFfprobeMeta(filePath: string) {
+   try {
+     const { stdout } = await runFfprobe([
+-      '-of', 'json', '-show_chapters', '-show_format', '-show_entries', 'stream', '-i', filePath, '-hide_banner',
++      '-of', 'json', '-show_chapters', '-show_format', '-show_entries', 'stream', '-i', filePath, '-hide_banner', '-v', 'quiet',
+     ]);
+ 
+     let parsedJson: FFprobeProbeResult;
+@@ -383,6 +383,7 @@ async function renderThumbnail(filePath:
+ export async function extractSubtitleTrack(filePath: string, streamId: number) {
+   const args = [
+     '-hide_banner',
++    '-v', 'quiet',
+     '-i', filePath,
+     '-map', `0:${streamId}`,
+     '-f', 'srt',
+@@ -406,6 +407,7 @@ export async function extractSrtGpsTrack
+ export async function extractSubtitleTrackVtt(filePath: string, streamId: number) {
+   const args = [
+     '-hide_banner',
++    '-v', 'quiet',
+     '-i', filePath,
+     '-map', `0:${streamId}`,
+     '-f', 'webvtt',
