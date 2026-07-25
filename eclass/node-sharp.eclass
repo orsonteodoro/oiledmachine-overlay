@@ -85,15 +85,26 @@ if [[ -n "${NODE_SHARP_PV}" ]] ; then
 	"
 fi
 
+# Prebuilt vips is built with sse4.2 which breaks on older processors.
+# Reference:  https://sharp.pixelplumbing.com/install#prebuilt-binaries
+node-sharp_use_system_vips() {
+	local arg=${1}
+	if [[ "${arg}" == "1" ]] ; then
+einfo "Sharp will be using the system's libvips"
+		export SHARP_IGNORE_GLOBAL_LIBVIPS="false"
+		export SHARP_FORCE_GLOBAL_LIBVIPS="true"
+	else
+ewarn "Sharp will be using sharp's vendored libvips"
+		export SHARP_IGNORE_GLOBAL_LIBVIPS="true"
+		export SHARP_FORCE_GLOBAL_LIBVIPS="false"
+	fi
+}
+
 # @FUNCTION: node-sharp_pkg_setup
 # @DESCRIPTION:
 # Sets up the sharp build environment variables.
 node-sharp_pkg_setup() {
-# Rebuild sharp without prebuilt vips.
-# Prebuilt vips is built with sse4.2 which breaks on older processors.
-# Reference:  https://sharp.pixelplumbing.com/install#prebuilt-binaries
-	unset SHARP_IGNORE_GLOBAL_LIBVIPS
-	unset SHARP_FORCE_GLOBAL_LIBVIPS
+	node-sharp_use_system_vips 1
 
 	if ! pkg-config --modversion vips-cpp >/dev/null 2>&1 ; then
 eerror "Failed detecting vips-cpp."
@@ -110,7 +121,6 @@ eerror "QA:  NODE_SLOT needs to be defined"
 einfo "Node version:  ${node_pv}"
 	fi
 
-	export SHARP_FORCE_GLOBAL_LIBVIPS="true"
 	local libdir=$(get_libdir)
 	local sharp_vips_pkgconfig="/usr/${libdir}/pkgconfig"
 	local sharp_vips_lib="/usr/${libdir}"
@@ -210,17 +220,18 @@ node-sharp_verify_built_symbols() {
 		local sharp_platform=$(node-sharp_get_platform)
 		einfo "Rebuilding sharp from source"
 		pushd "${S}/node_modules/sharp" >/dev/null 2>&1 || die "Failed to enter sharp directory"
-			local node_path=$(realpath "${S}/node_modules/sharp/src/build/"*"/sharp-${sharp_platform}.node")
+			local fn="sharp-${sharp_platform}-${NODE_SHARP_PV}.node"
+			local node_path=$(realpath "${S}/node_modules/sharp/src/build/"*"/${fn}")
 			if [[ -f "${node_path}" ]]; then
 				if false && [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
-					einfo "Checking for undefined symbols in sharp-${sharp_platform}.node"
+					einfo "Checking for undefined symbols in ${fn}"
 					if nm -D "${node_path}" | grep -q "U xmlCtxtUseOptions"; then
-						die "Undefined symbol xmlCtxtUseOptions still present in sharp-${sharp_platform}.node"
+						die "Undefined symbol xmlCtxtUseOptions still present in ${fn}"
 					fi
 					# Verify static libxml2 via nm
 					einfo "Verifying libxml2 static linking"
 					if nm "${node_path}" | grep -q "U xmlCtxtUseOptions"; then
-						die "libxml2 not statically linked in sharp-${sharp_platform}.node"
+						die "libxml2 not statically linked in ${fn}"
 					fi
 
 					# Verify format loader symbols
@@ -260,7 +271,7 @@ node-sharp_verify_built_symbols() {
 					done
 				fi
 			else
-				die "sharp-${sharp_platform}.node not found after rebuild"
+				die "${fn} not found after rebuild"
 			fi
 		popd >/dev/null 2>&1 || die
 	else
@@ -594,7 +605,7 @@ node-sharp_verify_dedupe() {
 	local sharp_platform=$(node-sharp_get_platform)
 	local NODE_SHARP_PROJECT_ROOT=${PROJECT_ROOT:-"${S}"}
 	local L=(
-		$(find "${NODE_SHARP_PROJECT_ROOT}" -name "sharp-${sharp_platform}.node")
+		$(find "${NODE_SHARP_PROJECT_ROOT}" -name "sharp-${sharp_platform}-${NODE_SHARP_PV}.node")
 	)
 	local n_hashes=$(sha1sum "${L[@]}" \
 		| cut -f 1 -d " " \

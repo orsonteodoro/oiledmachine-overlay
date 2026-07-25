@@ -29,9 +29,9 @@ YARN_INSTALL_PATH="/opt/${MY_PN}"
 YARN_LOCKFILE_SOURCE="ebuild"
 YARN_SLOT=8
 
+inherit secure-version secure-version-node
+
 NODE_GYP_PV="11.5.0"
-SHARP_PV="0.34.5" # patched 0.34.2, 0.34.7 works; non-patched 0.30.7 works; 0.31.0 introduced format() regression
-VIPS_PV="8.17.3" # Required by sharp@0.34.5.  See https://github.com/lovell/sharp/blob/v0.34.5/src/common.h#L23
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
@@ -42,10 +42,7 @@ else
 fi
 
 NODE_SHARP_PATCHES=(
-	"${FILESDIR}/sharp-0.34.5-debug.patch"
-	"${FILESDIR}/sharp-0.34.5-format-fixes.patch"
-	"${FILESDIR}/sharp-0.34.5-static-libs.patch"
-	"${FILESDIR}/icon-gen-5.0.0-png-return-for-sharp-0.34.5.patch"
+	"${FILESDIR}/sharp-0.35.3-remove-sover-suffix.patch"
 )
 
 NPM_INSTALL_ARGS=(
@@ -155,7 +152,7 @@ ewarn "Part of the sharp fix requires the use of the media-libs/vips ebuilds fro
 }
 
 yarn_unpack_post() {
-#	die
+	#die
 	if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
 # We remove patch temporarily so we can bump version and audit the lockfile
 einfo "Temporarily disabling file-type patch"
@@ -167,8 +164,7 @@ einfo "Temporarily disabling file-type patch"
 
 yarn_update_lock_install_pre() {
 einfo "DEBUG:  Called yarn_update_lock_install_pre()"
-	export SHARP_IGNORE_GLOBAL_LIBVIPS="false"
-	export SHARP_FORCE_GLOBAL_LIBVIPS="true"
+	node-sharp_use_system_vips 1
 
 	yarn_hydrate
 
@@ -273,8 +269,7 @@ einfo "DEBUG:  Called gen_icon()"
 
 src_unpack() {
 	if [[ "${YARN_UPDATE_LOCK}" != "1" ]] ; then
-		export SHARP_IGNORE_GLOBAL_LIBVIPS="false"
-		export SHARP_FORCE_GLOBAL_LIBVIPS="true"
+		node-sharp_use_system_vips 1
 	fi
 
 	append-cppflags -I"/usr/include/glib-2.0"
@@ -301,13 +296,13 @@ einfo "NODE_ENV:  ${NODE_ENV}"
 	        yarn cache clean || die "Failed to clear yarn cache"
 	        npm cache clean --force || die "Failed to clear npm cache"
 
-		if ver_test "${SHARP_PV%.*}" "-le" "0.32" ; then
+		if ver_test "${NODE_SHARP_PV%.*}" "-le" "0.32" ; then
 			eyarn add "@types/sharp" -D # Must go before node-sharp_yarn_rebuild_sharp
 		fi
-		eyarn add "sharp@${SHARP_PV}" -D
+		eyarn add "sharp@${NODE_SHARP_PV}" -D
 		eyarn add "@types/icon-gen"
 
-		jq ".dependencies.sharp = \"^${SHARP_PV}\"" \
+		jq ".dependencies.sharp = \"^${NODE_SHARP_PV}\"" \
 			"node_modules/icon-gen/package.json" \
 				> \
 			"temp.json" \
@@ -336,27 +331,29 @@ einfo "NODE_ENV:  ${NODE_ENV}"
 		local sharp_platform=$(node-sharp_get_platform)
 
 		# Rebuild sharp
+		local fn="sharp-${sharp_platform}-${NODE_SHARP_PV}.node"
 		einfo "Rebuilding sharp in ${S}"
 		pushd "${S}" >/dev/null 2>&1 || die
 			node-sharp_yarn_rebuild_sharp
 			# Copy sharp binary to expected location
 			mkdir -p "node_modules/sharp/build/${configuration}" || die "Failed to create node_modules/sharp/build/${configuration}"
-			[[ -e "node_modules/sharp/src/build/${configuration}/sharp-${sharp_platform}.node" ]] || die "Missing"
-			cp "node_modules/sharp/src/build/${configuration}/sharp-${sharp_platform}.node" \
-				"node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" \
-				|| die "Failed to copy sharp-${sharp_platform}.node"
-			ls -l "node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" || die "sharp-${sharp_platform}.node not found"
+			[[ -e "node_modules/sharp/src/build/${configuration}/${fn}" ]] || die "Missing"
+			cp \
+				"node_modules/sharp/src/build/${configuration}/${fn}" \
+				"node_modules/sharp/build/${configuration}/${fn}" \
+				|| die "Failed to copy ${fn}"
+			ls -l "node_modules/sharp/build/${configuration}/${fn}" || die "${fn} not found"
 		popd >/dev/null 2>&1 || die
 
 		# Copy sharp binary to icon-gen if needed
 		if [[ -d "node_modules/icon-gen/node_modules/sharp" ]]; then
 			einfo "Copying sharp binary to node_modules/icon-gen/node_modules/sharp"
 			mkdir -p "node_modules/icon-gen/node_modules/sharp/build/${configuration}" || die "Failed to create icon-gen sharp build directory"
-			[[ -e "node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" ]] || die "Missing"
-			cp "node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" \
-				"node_modules/icon-gen/node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" \
-				|| die "Failed to copy sharp-${sharp_platform}.node to icon-gen"
-			ls -l "node_modules/icon-gen/node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" || die "Copied sharp-${sharp_platform}.node not found"
+			[[ -e "node_modules/sharp/build/${configuration}/${fn}" ]] || die "Missing"
+			cp "node_modules/sharp/build/${configuration}/${fn}" \
+				"node_modules/icon-gen/node_modules/sharp/build/${configuration}/${fn}" \
+				|| die "Failed to copy ${fn} to icon-gen"
+			ls -l "node_modules/icon-gen/node_modules/sharp/build/${configuration}/${fn}" || die "Copied ${fn} not found"
 		fi
 
 		ewarn "Removing nested sharp or @img/sharp-linux-x64"
