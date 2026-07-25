@@ -32,7 +32,7 @@ CHKL_TIMESTAMPS+=(
 	"media-libs/freetype-9999"
 )
 
-inherit chkl edo flag-o-matic secure-version secure-version-sharp
+inherit chkl edo flag-o-matic secure-version secure-version-node
 
 # Only latest supported for sharp and libvips security reasons.
 
