@@ -105,7 +105,7 @@ ${PATENT_STATUS_IUSE[@]}
 +jpeg2k +jpegxl +lcms +matio -nifti +openexr +openslide +orc
 +pango +png +poppler +python +ppm -raw -spng +svg test +tiff
 -uhdr +vala +webp +zlib
-ebuild_revision_52
+ebuild_revision_53
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -290,8 +290,8 @@ RDEPEND+="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-8.17.2-simd-options.patch"
-	"${FILESDIR}/${PN}-8.18.0-remove-release-changes.patch"
-	"${FILESDIR}/${PN}-8.17.0-magick-suffixes.patch"
+	#"${FILESDIR}/${PN}-8.18.0-remove-release-changes.patch"
+	#"${FILESDIR}/${PN}-8.17.0-magick-suffixes.patch"
 )
 
 get_configurations() {
