@@ -77,6 +77,11 @@ if [[ -n "${NODE_SHARP_PV}" ]] ; then
 	"
 	BDEPEND+="
 		virtual/pkgconfig
+		net-libs/nodejs:=
+		|| (
+			>=net-libs/nodejs-${NODEJS_22_PV}:22
+			>=net-libs/nodejs-${NODEJS_24_PV}:24
+		)
 	"
 fi
 
