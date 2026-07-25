@@ -38,12 +38,10 @@ inherit chkl edo flag-o-matic secure-version secure-version-node
 
 # See also node-sharp_pkg_setup().
 #
-# For system-vips, the reason why there are so many requirements is because they
-# do not do testing on the format() checker in
-# https://github.com/lovell/sharp/blob/v0.34.2/src/utilities.cc#L120 for
-# custom vips builds with enabled/disabled image formats.  All checked are
-# required to prevent a segfault and to prevent force adding the old vulnerable
-# sharp.  It has been bugged since 0.31.0 for system-wide vips users.
+# We don't support the prebuilt vips because of security reasons.  The
+# sharp-libvips repo does not backport security fixes from main/master branches.
+# Many of the vendored libraries are missing security fixes.  It can be easily
+# remediated like in the Chromium by using live snapshots.
 #
 # We don't use the prebuilt sharp because it builds for non-portable -march=nehalem
 # <https://github.com/lovell/sharp-libvips/blob/v8.16.1/platforms/linux-x64/Dockerfile>
