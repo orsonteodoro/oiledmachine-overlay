@@ -411,10 +411,10 @@ src_install() {
 	local s=$(ffmpeg_get_slot)
 	if has_version "media-video/ffmpeg:${s}" ; then
 		dosym "/usr/lib/ffmpeg/${s}/bin/ffmpeg" "/opt/losslesscut/resources/ffmpeg"
-		sed -i -e "s|@FFPROBE_PATH@|/usr/lib/ffmpeg/${s}/bin/ffprobe|" "/opt/losslesscut/resources/ffprobe" || die
+		sed -i -e "s|@FFPROBE_PATH@|/usr/lib/ffmpeg/${s}/bin/ffprobe|" "${ED}/opt/losslesscut/resources/ffprobe" || die
 	else
 		dosym "/usr/bin/ffmpeg" "/opt/losslesscut/resources/ffmpeg"
-		sed -i -e "s|@FFPROBE_PATH@|/usr/bin/ffprobe|" "/opt/losslesscut/resources/ffprobe" || die
+		sed -i -e "s|@FFPROBE_PATH@|/usr/bin/ffprobe|" "${ED}/opt/losslesscut/resources/ffprobe" || die
 	fi
 	fperms 0755 "/opt/losslesscut/resources/ffmpeg"
 }
