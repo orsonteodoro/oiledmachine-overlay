@@ -23,7 +23,7 @@ ICON_TYPE=${ICON_TYPE:-"png"} # svg or png.  png is used by upstream and is brok
 NPM_AUDIT_FIX=0 # Breaks build
 #export NODE_SHARP_DEBUG=1
 NODE_SHARP_USE="png svg"
-NODE_SLOT="22" # Based on CI, Node 24 may likely break it.
+NODE_SLOT="24" # Based on Electron
 YARN_AUDIT_FIX=0
 YARN_INSTALL_PATH="/opt/${MY_PN}"
 YARN_LOCKFILE_SOURCE="ebuild"
@@ -106,7 +106,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${PATENT_STATUS[@]}
 lame opus svt-av1 theora vorbis vpx x264
-ebuild_revision_30
+ebuild_revision_31
 "
 REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -396,13 +396,16 @@ src_install() {
 	lcnr_install_files
 	electron-app_set_sandbox_suid "/opt/${MY_PN}/chrome-sandbox"
 
+	# It is leaking stdout in stderr.
+	cat "${FILESDIR}/ffprobe" > "/opt/losslesscut/resources/ffmpeg"
+
 	local s=$(ffmpeg_get_slot)
 	if has_version "media-video/ffmpeg:${s}" ; then
 		dosym "/usr/lib/ffmpeg/${s}/bin/ffmpeg" "/opt/losslesscut/resources/ffmpeg"
-		dosym "/usr/lib/ffmpeg/${s}/bin/ffprobe" "/opt/losslesscut/resources/ffprobe"
+		sed -i -e "s|@FFPROBE_PATH@|/usr/lib/ffmpeg/${s}/bin/ffprobe|" "/opt/losslesscut/resources/ffprobe" || die
 	else
 		dosym "/usr/bin/ffmpeg" "/opt/losslesscut/resources/ffmpeg"
-		dosym "/usr/bin/ffprobe" "/opt/losslesscut/resources/ffprobe"
+		sed -i -e "s|@FFPROBE_PATH@|/usr/bin/ffprobe|" "/opt/losslesscut/resources/ffprobe" || die
 	fi
 }
 
