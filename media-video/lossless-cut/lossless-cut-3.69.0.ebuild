@@ -106,7 +106,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${PATENT_STATUS[@]}
 lame opus svt-av1 theora vorbis vpx x264
-ebuild_revision_35
+ebuild_revision_37
 "
 REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -406,7 +406,7 @@ src_install() {
 	electron-app_set_sandbox_suid "/opt/${MY_PN}/chrome-sandbox"
 
 	# It is leaking stdout in stderr.
-	cat "${FILESDIR}/ffprobe" > "${ED}/opt/losslesscut/resources/ffmpeg" || die
+	cat "${FILESDIR}/ffprobe" > "${ED}/opt/losslesscut/resources/ffprobe" || die
 
 	local s=$(ffmpeg_get_slot)
 	if has_version "media-video/ffmpeg:${s}" ; then
