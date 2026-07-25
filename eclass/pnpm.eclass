@@ -246,7 +246,7 @@ einfo "Hydrating pnpm..."
 		chmod +x "${HOME}/.cache/node/corepack/v1/pnpm/${pnpm_pv}/bin/pnpm.cjs" || die
 	fi
 	local pnpm_pv=$(pnpm --version)
-	local node_pv=$(node --version)
+	local node_pv=$(node --version | sed -e "s|^v||g")
 einfo "pnpm version:  ${pnpm_pv}"
 einfo "Node.js version:  ${node_pv}"
 

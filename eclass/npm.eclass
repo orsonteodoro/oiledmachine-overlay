@@ -596,7 +596,7 @@ einfo "Hydrating npm..."
 		fi
 	fi
 	local npm_pv=$(npm --version)
-	local node_pv=$(node --version)
+	local node_pv=$(node --version | sed -e "s|^v||g")
 einfo "npm version:  ${npm_pv}"
 einfo "Node.js version:  ${node_pv}"
 

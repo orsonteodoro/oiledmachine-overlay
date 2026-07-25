@@ -28,7 +28,11 @@ esac
 if [[ -z "${_NODE_SHARP_ECLASS}" ]] ; then
 _NODE_SHARP_ECLASS=1
 
-inherit edo flag-o-matic
+CHKL_TIMESTAMPS+=(
+	"media-libs/freetype-9999"
+)
+
+inherit chkl edo flag-o-matic secure-version
 
 _node_sharp_set_globals() {
 	if [[ -z "${SHARP_PV}" ]] ; then
@@ -40,100 +44,13 @@ eerror "QA:  VIPS_PV needs to be defined"
 		die
 	fi
 	local sharp_pv=$(ver_cut 1-2 "${SHARP_PV}")
-	if ver_test "${sharp_pv}" -eq "0.34" ; then
-# See https://github.com/lovell/sharp/blob/v0.34.2/docs/src/content/docs/install.md
-		NODE_SHARP_GLIBC_PV="2.31"
-		NODE_SHARP_MUSL_PV="1.2.2"
-		NODE_SHARP_NODEJS_CDEPEND="
-			|| (
-				>=net-libs/nodejs-18.17.0:18
-				>=net-libs/nodejs-20.3.0
-			)
-		"
-		if [[ "${ARCH}" == "amd64" ]] ; then
-			NODE_SHARP_GLIBC_PV="2.26"
-			NODE_SHARP_MUSL_PV="1.2.2"
-		elif [[ "${ARCH}" == "arm" ]] ; then
-			NODE_SHARP_GLIBC_PV="2.31"
-		elif [[ "${ARCH}" == "arm64" ]] ; then
-			NODE_SHARP_GLIBC_PV="2.26"
-			NODE_SHARP_MUSL_PV="1.2.2"
-		elif [[ "${ARCH}" == "s390x" ]] ; then
-			NODE_SHARP_GLIBC_PV="2.31"
-		fi
-	elif ver_test "${sharp_pv}" -eq "0.33" ; then
-# See https://github.com/lovell/sharp/blob/v0.33.5/docs/install.md#prebuilt-binaries
-		NODE_SHARP_GLIBC_PV="2.31"
-		NODE_SHARP_MUSL_PV="1.2.2"
-		NODE_SHARP_NODEJS_CDEPEND="
-			|| (
-				>=net-libs/nodejs-18.17.0:18
-				>=net-libs/nodejs-20.3.0
-			)
-		"
-		if [[ "${ARCH}" == "amd64" ]] ; then
-			NODE_SHARP_GLIBC_PV="2.26"
-			NODE_SHARP_MUSL_PV="1.2.2"
-		elif [[ "${ARCH}" == "arm" ]] ; then
-			NODE_SHARP_GLIBC_PV="2.28"
-		elif [[ "${ARCH}" == "arm64" ]] ; then
-			NODE_SHARP_GLIBC_PV="2.26"
-			NODE_SHARP_MUSL_PV="1.2.2"
-		elif [[ "${ARCH}" == "s390x" ]] ; then
-			NODE_SHARP_GLIBC_PV="2.31"
-		fi
-	elif ver_test "${sharp_pv}" -eq "0.32" || ver_test "${sharp_pv}" -eq "0.31" ; then
-# See https://github.com/lovell/sharp/blob/v0.31.3/docs/install.md#prebuilt-binaries
-# See https://github.com/lovell/sharp/blob/v0.32.6/docs/install.md#prebuilt-binaries
-		NODE_SHARP_GLIBC_PV="2.28"
-		NODE_SHARP_MUSL_PV="1.1.24"
-		NODE_SHARP_NODEJS_CDEPEND="
-			>=net-libs/nodejs-14.15.0
-		"
-		if [[ "${ARCH}" == "amd64" ]] ; then
-			NODE_SHARP_GLIBC_PV="2.17"
-			NODE_SHARP_MUSL_PV="1.1.24"
-		elif [[ "${ARCH}" == "arm" ]] ; then
-			NODE_SHARP_GLIBC_PV="2.28"
-		elif [[ "${ARCH}" == "arm64" ]] ; then
-			NODE_SHARP_GLIBC_PV="2.17"
-			NODE_SHARP_MUSL_PV="1.1.24"
-		fi
-	elif ver_test "${sharp_pv}" -eq "0.30" ; then
-# See https://github.com/lovell/sharp/blob/v0.30.7/docs/install.md#prebuilt-binaries
-		NODE_SHARP_GLIBC_PV="2.28"
-		NODE_SHARP_MUSL_PV="1.1.24"
-		NODE_SHARP_NODEJS_CDEPEND="
-			>=net-libs/nodejs-12.13.0
-		"
-		if [[ "${ARCH}" == "amd64" ]] ; then
-			NODE_SHARP_GLIBC_PV="2.17"
-			NODE_SHARP_MUSL_PV="1.1.24"
-		elif [[ "${ARCH}" == "arm" ]] ; then
-			NODE_SHARP_GLIBC_PV="2.28"
-		elif [[ "${ARCH}" == "arm64" ]] ; then
-			NODE_SHARP_GLIBC_PV="2.17"
-			NODE_SHARP_MUSL_PV="1.1.24"
-		fi
-	elif ver_test "${sharp_pv}" -eq "0.29" ; then
-# See https://github.com/lovell/sharp/blob/v0.29.3/docs/install.md#prebuilt-binaries
-		NODE_SHARP_GLIBC_PV="2.29"
-		NODE_SHARP_MUSL_PV="1.1.24"
-		NODE_SHARP_NODEJS_CDEPEND="
-			>=net-libs/nodejs-12.13.0
-		"
-		if [[ "${ARCH}" == "amd64" ]] ; then
-			NODE_SHARP_GLIBC_PV="2.17"
-			NODE_SHARP_MUSL_PV="1.1.24"
-		elif [[ "${ARCH}" == "arm" ]] ; then
-			NODE_SHARP_GLIBC_PV="2.28"
-		elif [[ "${ARCH}" == "arm64" ]] ; then
-			NODE_SHARP_GLIBC_PV="2.29"
-			NODE_SHARP_MUSL_PV="1.1.24"
-		fi
+	if ver_test "${sharp_pv}" -eq "0.35" ; then
+# See https://github.com/lovell/sharp/blob/v0.35.3/docs/src/content/docs/install.md
+		:
 	else
-einfo "QA:  Update _node_sharp_set_globals for sharp_pv=${sharp_pv}"
-einfo "sharp_pv=${sharp_pv} is currently not supported."
+einfo "QA:  Update SHARP_PV in ${CATEGORY}/${P}"
+einfo "Requested SHARP_PV:  ${sharp_pv}"
+einfo "Supported SHARP_PV:  >=0.35"
 		die
 	fi
 }
@@ -149,23 +66,28 @@ unset -f _node_sharp_set_globals
 # required to prevent a segfault and to prevent force adding the old vulnerable
 # sharp.  It has been bugged since 0.31.0 for system-wide vips users.
 #
-# We don't use the prebuilt sharp because it builds for non-portable
-# -march=nehalem
+# We don't use the prebuilt sharp because it builds for non-portable -march=nehalem
 # <https://github.com/lovell/sharp-libvips/blob/v8.16.1/platforms/linux-x64/Dockerfile>
 # and doesn't work on my machine.
 #
-# See also:  https://github.com/lovell/sharp-libvips/blob/main/build/posix.sh
+# See also:
+# https://github.com/lovell/sharp-libvips/blob/main/build/posix.sh
+# https://github.com/lovell/sharp-libvips/blob/v1.3.2/versions.properties
 #
 if [[ -n "${SHARP_PV}" ]] ; then
 	NODE_SHARP_CDEPEND+="
-		${NODE_SHARP_NODEJS_CDEPEND}
-		>=media-libs/sharp-libvips-8.16.1
-		media-libs/sharp-libvips:=
+		>=media-libs/vips-${VIPS_PV}:=[avif,cairo,cgif,cxx,dzi,exif,fontconfig,avif,heif,highway,imagequant,lcms,pango,png,svg,tiff,uhdr,webp,zlib]
+		>=media-libs/freetype-${FREETYPE_PV}:=[harfbuzz]
+		net-libs/nodejs:=
+		|| (
+			>=net-libs/nodejs-${NODEJS_22_PV}:22
+			>=net-libs/nodejs-${NODEJS_24_PV}:24
+		)
 		elibc_glibc? (
-			>=sys-libs/glibc-${NODE_SHARP_GLIBC_PV}
+			>=sys-libs/glibc-${GLIBC_PV}:=
 		)
 		elibc_musl? (
-			>=sys-libs/musl-${NODE_SHARP_MUSL_PV}
+			>=sys-libs/musl-${MUSL_PV}:=
 		)
 	"
 	RDEPEND+="
@@ -194,15 +116,15 @@ eerror "QA:  NODE_SLOT needs to be defined"
 		die
 	else
 		export PATH="/usr/lib/node/${NODE_SLOT}/bin:${PATH}"
-		local node_pv=$(node --version) || die
+		local node_pv=$(node --version | sed -e "s|^v||g" || die)
 einfo "Node version:  ${node_pv}"
 	fi
 
 	export SHARP_FORCE_GLOBAL_LIBVIPS="true"
 	local libdir=$(get_libdir)
-	local sharp_vips_pkgconfig="/usr/lib/sharp-vips/${libdir}/pkgconfig"
-	local sharp_vips_lib="/usr/lib/sharp-vips/${libdir}"
-	local sharp_vips_include="/usr/lib/sharp-vips/include"
+	local sharp_vips_pkgconfig="/usr/${libdir}/pkgconfig"
+	local sharp_vips_lib="/usr/${libdir}"
+	local sharp_vips_include="/usr/include"
 	if [[ ":${PKG_CONFIG_PATH}:" != *":${sharp_vips_pkgconfig}:"* ]]; then
 		export PKG_CONFIG_PATH="${sharp_vips_pkgconfig}:${PKG_CONFIG_PATH}"
 	fi
@@ -213,13 +135,13 @@ einfo "Node version:  ${node_pv}"
 	einfo "PKG_CONFIG_PATH set to: ${PKG_CONFIG_PATH}"
 	einfo "LD_LIBRARY_PATH set to: ${LD_LIBRARY_PATH}"
 	einfo "vips-cpp version:  "$(pkg-config --modversion vips-cpp || die "Failed to find vips-cpp.pc")
-	einfo "vips-cpp libs:  "$(pkg-config --static --libs vips-cpp || die "Failed to find vips-cpp.pc libs")
+	einfo "vips-cpp libs:  "$(pkg-config --libs vips-cpp || die "Failed to find vips-cpp.pc libs")
 
 	# Verify libvips-cpp.so exists
-	if [[ ! -f "${sharp_vips_lib}/libvips-cpp.a" ]]; then
-		die "libvips-cpp.a not found in ${sharp_vips_lib}"
+	if [[ ! -f "${sharp_vips_lib}/libvips-cpp.so" ]]; then
+		die "libvips-cpp.so not found in ${sharp_vips_lib}"
 	fi
-	einfo "Found libvips-cpp.a in ${sharp_vips_lib}"
+	einfo "Found libvips-cpp.so in ${sharp_vips_lib}"
 
 	export NODE_SHARP_LIB_PATH="${sharp_vips_lib}"
 	export NODE_SHARP_INCLUDE_DIR="${sharp_vips_include}"
@@ -234,14 +156,14 @@ einfo "Node version:  ${node_pv}"
 # Appends required libs.  Allows for custom or minified builds by setting NODE_SHARP_USE.
 node-sharp_append_libs() {
 	local libdir=$(get_libdir)
-	local sharp_vips_lib="/usr/lib/sharp-vips/${libdir}"
+	local sharp_vips_lib="/usr/${libdir}"
 einfo "PKG_CONFIG_PATH:  ${PKG_CONFIG_PATH} (1)"
-	local pkg_config_libs=$(pkg-config --libs --static vips-cpp glib-2.0 libxml2 libpng libjpeg-turbo tiff libwebp libheif libexif lcms2 aom cgif harfbuzz fontconfig cairo pango fribidi pixman-1 | sed 's/-l/ /g')
-	local libs="\"${sharp_vips_lib}/libvips-cpp.a ${sharp_vips_lib}/libvips.a $(pkg-config --libs --static vips-cpp glib-2.0 libxml2 libpng libjpeg-turbo tiff libwebp libheif libexif lcms2 aom cgif harfbuzz fontconfig cairo pango fribidi pixman-1)\""
+	local pkg_config_libs=$(pkg-config --libs vips-cpp glib-2.0 libxml2 libpng libjpeg-turbo tiff libwebp libheif libexif lcms2 aom cgif harfbuzz fontconfig cairo pango fribidi pixman-1 | sed 's/-l/ /g')
+	local libs="\"${sharp_vips_lib}/libvips-cpp.so ${sharp_vips_lib}/libvips.so $(pkg-config --libs vips-cpp glib-2.0 libxml2 libpng libjpeg-turbo tiff libwebp libheif libexif lcms2 aom cgif harfbuzz fontconfig cairo pango fribidi pixman-1)\""
 	einfo "Appending libraries to binding.gyp: ${libs}"
 	sed -i \
 		-e "s|\"libraries\": \[\],|\"libraries\": [ ${libs} ],|" \
-		-e "s|\"include_dirs\": \[\],|\"include_dirs\": [ \"/usr/lib/sharp-vips/include\", \"$(pkg-config --cflags-only-I vips-cpp | sed 's/-I//g')\" ],|" \
+		-e "s|\"include_dirs\": \[\],|\"include_dirs\": [ \"/usr/include\", \"$(pkg-config --cflags-only-I vips-cpp | sed 's/-I//g')\" ],|" \
 		"${S}/node_modules/sharp/src/binding.gyp" \
 		|| die "Failed to append libraries to binding.gyp"
 
@@ -360,6 +282,8 @@ node-sharp_verify_built_symbols() {
 # @DESCRIPTION:
 # Rebuild sharp with npm
 node-sharp_npm_rebuild_sharp() {
+	chkl_check_many_timestamps
+
 einfo "DEBUG:  Called node-sharp_npm_rebuild_sharp()"
 	if [[ "${SHARP_ADD_DEPS:-0}" == "1" ]] ; then
 		enpm add "node-addon-api" ${NODE_ADDON_API_INSTALL_ARGS[@]} ${NPM_INSTALL_ARGS[@]}
@@ -375,8 +299,8 @@ einfo "DEBUG:  Called node-sharp_npm_rebuild_sharp()"
 	export npm_config_build_from_source="true"
 
 	local libdir=$(get_libdir)
-	export PKG_CONFIG_PATH="/usr/lib/sharp-vips/${libdir}/pkgconfig:${PKG_CONFIG_PATH}"
-	export LD_LIBRARY_PATH="/usr/lib/sharp-vips/${libdir}:${LD_LIBRARY_PATH}"
+	export PKG_CONFIG_PATH="/usr/${libdir}/pkgconfig:${PKG_CONFIG_PATH}"
+	export LD_LIBRARY_PATH="/usr/${libdir}:${LD_LIBRARY_PATH}"
 	einfo "PKG_CONFIG_PATH in npm_rebuild: ${PKG_CONFIG_PATH}"
 
 	enpm add "sharp@${SHARP_PV}" \
@@ -467,6 +391,8 @@ ewarn "DEBUG:  Missing ../install/check for sharp (1)"
 # @DESCRIPTION:
 # Rebuild sharp with npm
 node-sharp_pnpm_rebuild_sharp() {
+	chkl_check_many_timestamps
+
 	if [[ "${SHARP_ADD_DEPS:-0}" == "1" ]] ; then
 		epnpm add "node-addon-api" ${NODE_ADDON_API_INSTALL_ARGS[@]} ${PNPM_INSTALL_ARGS[@]}
 		if ! npm list --depth=0 | grep -q "node-gyp" ; then
@@ -481,8 +407,8 @@ node-sharp_pnpm_rebuild_sharp() {
 	export npm_config_build_from_source="true"
 
 	local libdir=$(get_libdir)
-	export PKG_CONFIG_PATH="/usr/lib/sharp-vips/${libdir}/pkgconfig:${PKG_CONFIG_PATH}"
-	export LD_LIBRARY_PATH="/usr/lib/sharp-vips/${libdir}:${LD_LIBRARY_PATH}"
+	export PKG_CONFIG_PATH="/usr/${libdir}/pkgconfig:${PKG_CONFIG_PATH}"
+	export LD_LIBRARY_PATH="/usr/${libdir}:${LD_LIBRARY_PATH}"
 	einfo "PKG_CONFIG_PATH in npm_rebuild: ${PKG_CONFIG_PATH}"
 
 	epnpm add "sharp@${SHARP_PV}" \
@@ -608,6 +534,8 @@ node-sharp_pnpm_lockfile_add_sharp() {
 # @DESCRIPTION:
 # Rebuild sharp with yarn
 node-sharp_yarn_rebuild_sharp() {
+	chkl_check_many_timestamps
+
 	if [[ "${SHARP_ADD_DEPS:-0}" == "1" ]] ; then
 		eyarn add "node-addon-api" ${NODE_ADDON_API_INSTALL_ARGS[@]} ${NPM_INSTALL_ARGS[@]}
 		if ! npm list --depth=0 | grep -q "node-gyp" ; then
@@ -622,8 +550,8 @@ node-sharp_yarn_rebuild_sharp() {
 	export npm_config_build_from_source="true"
 
 	local libdir=$(get_libdir)
-	local sharp_vips_pkgconfig="/usr/lib/sharp-vips/${libdir}/pkgconfig"
-	local sharp_vips_lib="/usr/lib/sharp-vips/${libdir}"
+	local sharp_vips_pkgconfig="/usr/${libdir}/pkgconfig"
+	local sharp_vips_lib="/usr/${libdir}"
 	if [[ ":${PKG_CONFIG_PATH}:" != *":${sharp_vips_pkgconfig}:"* ]]; then
 		export PKG_CONFIG_PATH="${sharp_vips_pkgconfig}:${PKG_CONFIG_PATH}"
 	fi
@@ -634,11 +562,11 @@ node-sharp_yarn_rebuild_sharp() {
 	einfo "PKG_CONFIG_PATH in yarn_rebuild: ${PKG_CONFIG_PATH}"
 	einfo "LD_LIBRARY_PATH in yarn_rebuild: ${LD_LIBRARY_PATH}"
 	einfo "vips-cpp version:  "$(pkg-config --modversion vips-cpp || die "Failed to find vips-cpp.pc")
-	einfo "vips-cpp libs:  "$(pkg-config --static --libs vips-cpp || die "Failed to find vips-cpp.pc libs")
-	if [[ ! -f "${sharp_vips_lib}/libvips-cpp.a" ]]; then
-		die "libvips-cpp.a not found in ${sharp_vips_lib}"
+	einfo "vips-cpp libs:  "$(pkg-config --libs vips-cpp || die "Failed to find vips-cpp.pc libs")
+	if [[ ! -f "${sharp_vips_lib}/libvips-cpp.so" ]]; then
+		die "libvips-cpp.so not found in ${sharp_vips_lib}"
 	fi
-	einfo "Found libvips-cpp.a in ${sharp_vips_lib}"
+	einfo "Found libvips-cpp.so in ${sharp_vips_lib}"
 
 	einfo "Running yarn add sharp@${SHARP_PV} --verbose"
 	eyarn add "sharp@${SHARP_PV}" -E \

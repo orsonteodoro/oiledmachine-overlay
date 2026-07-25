@@ -39,7 +39,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/tiff-9999"
 )
 
-inherit autotools cflags-hardened chkl flag-o-matic perl-module secure-version toolchain-funcs
+inherit autotools cflags-hardened chkl flag-o-matic libcxx-slot libstdcxx-slot perl-module secure-version toolchain-funcs
 
 DESCRIPTION="A collection of tools and libraries for many image formats"
 HOMEPAGE="https://imagemagick.org"
@@ -74,7 +74,7 @@ LICENSE="imagemagick"
 # Please check this on bumps, SONAME is often not updated! Use abidiff on old/new.
 # If ABI is broken, change the bit after the '-'.
 SLOT="0/$(ver_cut 1-3)-18"
-IUSE+=" bzip2 corefonts +cxx djvu fftw fontconfig fpx graphviz hardened hdri heif"
+IUSE+=" avif bzip2 corefonts +cxx djvu fftw fontconfig fpx graphviz hardened hdri heic heif"
 IUSE+=" jbig jpeg jpeg2k jpegxl lcms lqr lzma opencl openexr openmp pango perl ${GENTOO_PERL_USESTRING}"
 IUSE+=" +png postscript q32 q8 raw static-libs svg test tiff truetype webp wmf"
 IUSE+=" X xml zip zlib"
@@ -82,6 +82,18 @@ IUSE+=" ebuild_revision_3"
 
 REQUIRED_USE="
 	corefonts? ( truetype )
+	avif? (
+		heif
+	)
+	heic? (
+		heif
+	)
+	heif? (
+		|| (
+			avif
+			heic
+		)
+	)
 	svg? ( xml )
 	test? ( corefonts )
 "
@@ -98,7 +110,7 @@ RDEPEND="
 	fontconfig? ( >=media-libs/fontconfig-${FONTCONFIG_PV}:= )
 	fpx? ( >=media-libs/libfpx-1.3.0-r1:= )
 	graphviz? ( media-gfx/graphviz:= )
-	heif? ( >=media-libs/libheif-${LIBHEIF_PV}:=[x265] )
+	heif? ( >=media-libs/libheif-${LIBHEIF_PV}:=[avif?,heic?] )
 	jbig? ( >=media-libs/jbigkit-2:= )
 	jpeg? ( >=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:= )
 	jpeg2k? ( >=media-libs/openjpeg-${OPENJPEG_PV}:= )

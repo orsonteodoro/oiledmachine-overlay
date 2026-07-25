@@ -56,7 +56,12 @@ FFMPEG_COMPAT_SLOTS=(
 )
 
 if [[ ${PV} == *9999* ]] ; then
+	FALLBACK_COMMIT="1a3583bcce77de6d3f8701c0758e3954863681ba"
+	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/strukturag/libheif.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 	inherit git-r3
 else
 	SRC_URI="https://github.com/strukturag/libheif/releases/download/v${PV}/${P}.tar.gz"
@@ -74,7 +79,8 @@ RESTRICT="
 		test
 	)
 "
-SLOT="0/$(ver_cut 1-2)"
+SOVER="1"
+SLOT="0/${SOVER}"
 FFMPEG_HW_ACCEL_DECODE_H265_USE=(
 	"amf"
 	"cuda"
@@ -274,6 +280,26 @@ pkg_setup() {
 	libcxx-slot_verify
 	libstdcxx-slot_verify
 	warn_use_flag_non_default
+}
+
+src_unpack() {
+	if [[ ${PV} == *9999* ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+	local actual_sover=$(grep -r -e "^project(libheif" "${S}/CMakeLists.txt" | cut -f 6 -d " " | sed -e "s|)||g" | cut -f 1 -d ".")
+	local expected_sover="${SOVER}"
+	if ver_test "${actual_sover}" "-ne" "${expected_sover}" ; then
+eerror "QA:  Upate SOVER in ebuild"
+eerror "Actual SOVER:  ${actual_sover}"
+eerror "Expected SOVER:  ${expected_sover}"
+		die
+	fi
 }
 
 multilib_src_configure() {

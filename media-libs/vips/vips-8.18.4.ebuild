@@ -30,12 +30,12 @@ SO_MAJOR=$((${SO_C} - ${SO_A})) # Currently 42
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX14[@]}"
+	"${LIBSTDCXX_COMPAT_STDCXX14[@]}" # 11-15
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}" # 18, 19
+	"${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}" # 18, 19, 21
 )
 LLVM_MAX_SLOT="19"
 
@@ -63,6 +63,7 @@ CHKL_TIMESTAMPS=(
 	"media-gfx/imagemagick-9999"
 	"media-gfx/graphicsmagick-9999"
 	"media-libs/lcms-9999"
+	"media-libs/libheif-9999"
 	"media-libs/libjpeg-turbo-9999"
 	"media-libs/libpng-9999"
 	"media-libs/libraw-9999"
@@ -99,7 +100,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS_IUSE[@]}
 +analyze +avif +cairo +cgif +cxx debug +deprecated -doxygen
 +dzi +examples +exif +fftw +fits fuzz-testing +gif -graphicsmagick -gtk-doc -heic
-+fontconfig +hdr -highway +imagemagick +imagequant -introspection +jpeg
++heif +fontconfig +hdr -highway +imagemagick +imagequant -introspection +jpeg
 +jpeg2k +jpegxl +lcms +matio -nifti +openexr +openslide +orc
 +pango +png +poppler +python +ppm -raw -spng +svg test +tiff
 -uhdr +vala +webp +zlib
@@ -123,14 +124,10 @@ REQUIRED_USE="
 		!jpegxl
 	)
 	fontconfig? (
-		imagemagick
+		pango
 	)
 	fuzz-testing? (
 		test
-	)
-	imagemagick? (
-		fontconfig
-		pango
 	)
 	imagequant? (
 		png
@@ -139,7 +136,7 @@ REQUIRED_USE="
 		!debug
 	)
 	pango? (
-		imagemagick
+		cairo
 	)
 	png? (
 		zlib
@@ -147,11 +144,13 @@ REQUIRED_USE="
 	poppler? (
 		cairo
 	)
+	spng? (
+		zlib
+	)
 	svg? (
 		cairo
 		fontconfig
-		pango
-		imagemagick
+		png
 		zlib
 	)
 	test? (
@@ -167,23 +166,13 @@ REQUIRED_USE="
 PATENT_STATUS_RDEPEND="
 	virtual/patent-status:*[patent_status_nonfree=]
 	!patent_status_nonfree? (
-		avif? (
-			>=media-libs/libheif-1.7.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
-			<media-libs/libheif-1.19.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
-		)
-		heic? (
-			>=media-libs/libheif-1.7.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
-			<media-libs/libheif-1.19.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
+		heif? (
+			>=media-libs/libheif-${LIBHEIF_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,-heic,-patent_status_nonfree]
 		)
 	)
 	patent_status_nonfree? (
-		avif? (
-			>=media-libs/libheif-1.7.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
-			<media-libs/libheif-1.19.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
-		)
-		heic? (
-			>=media-libs/libheif-1.7.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
-			<media-libs/libheif-1.19.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
+		heif? (
+			>=media-libs/libheif-${LIBHEIF_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
 		)
 	)
 "
@@ -228,25 +217,11 @@ RDEPEND+="
 			>=dev-cpp/highway-${HIGHWAY_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cpu_flags_x86_avx=,cpu_flags_x86_avx10_2=,cpu_flags_x86_avx512bw=,cpu_flags_x86_avx512bf16=,cpu_flags_x86_avx512fp16=,cpu_flags_x86_ssse3=]
 		)
 	)
+	graphicsmagick? (
+		>=media-gfx/graphicsmagick-${GRAPHICSMAGICK_PV}:=[cxx?,heif?,jpeg?,jpeg2k?,jpegxl?,lcms?,png?,tiff?,webp?,zlib?]
+	)
 	imagemagick? (
-		!graphicsmagick? (
-			>=media-gfx/imagemagick-${IMAGEMAGICK_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx?,jpeg?,jpeg2k?,jpegxl?,lcms?,pango?,png?,svg?,tiff?,webp?,zlib?]
-			avif? (
-				>=media-gfx/imagemagick-${IMAGEMAGICK_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx?,heif,jpeg?,jpeg2k?,jpegxl?,lcms?,pango?,png?,svg?,tiff?,webp?,zlib?]
-			)
-			heic? (
-				>=media-gfx/imagemagick-${IMAGEMAGICK_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx?,heif,jpeg?,jpeg2k?,jpegxl?,lcms?,pango?,png?,svg?,tiff?,webp?,zlib?]
-			)
-		)
-		graphicsmagick? (
-			>=media-gfx/graphicsmagick-${GRAPHICSMAGICK_PV}:=[cxx?,jpeg?,jpeg2k?,jpegxl?,lcms?,png?,tiff?,webp?,zlib?]
-			avif? (
-				>=media-gfx/graphicsmagick-${GRAPHICSMAGICK_PV}:=[cxx?,heif,jpeg?,jpeg2k?,jpegxl?,lcms?,png?,tiff?,webp?,zlib?]
-			)
-			heic? (
-				>=media-gfx/graphicsmagick-${GRAPHICSMAGICK_PV}:=[cxx?,heif,jpeg?,jpeg2k?,jpegxl?,lcms?,png?,tiff?,webp?,zlib?]
-			)
-		)
+		>=media-gfx/imagemagick-${IMAGEMAGICK_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},avif?,cxx?,heic?,heif?,jpeg?,jpeg2k?,jpegxl?,lcms?,pango?,png?,svg?,tiff?,webp?,zlib?]
 	)
 	imagequant? (
 		>=media-gfx/libimagequant-2.17.0:=

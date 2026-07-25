@@ -999,7 +999,7 @@ einfo "Hydrating yarn..."
 		fi
 	fi
 	local yarn_pv=$(yarn --version)
-	local node_pv=$(node --version)
+	local node_pv=$(node --version | sed -e "s|^v||g")
 einfo "Yarn version:  ${yarn_pv}"
 einfo "Node.js version:  ${node_pv}"
 
