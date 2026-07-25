@@ -169,9 +169,6 @@ einfo "DEBUG:  Removing node-gyp (1)"
 	fi
 
 	eyarn add "node-gyp@^${NODE_GYP_PV}"
-#	eyarn add "node-addon-api@^1.7.2"
-#	eyarn add "node-addon-api@^7.1.1"
-#	eyarn add '@img/colour@^1.0.0'
 }
 
 yarn_update_lock_install_post() {
@@ -275,7 +272,6 @@ einfo "NODE_ENV:  ${NODE_ENV}"
 			mv "temp.json" "node_modules/icon-gen/package.json" \
 			|| die "Failed to update icon-gen package.json"
 
-#		eyarn add "icon-gen@3.0.1" --no-optional # Must go before node-sharp_yarn_rebuild_sharp
 		eyarn add "icon-gen@5.0.0" --no-optional # Must go before node-sharp_yarn_rebuild_sharp
 
 		# Remove nested sharp and prebuilt sharp
@@ -300,8 +296,9 @@ einfo "NODE_ENV:  ${NODE_ENV}"
 		einfo "Rebuilding sharp in ${S}"
 		pushd "${S}" >/dev/null 2>&1 || die
 			node-sharp_yarn_rebuild_sharp
-			# Copy sharp binary to expected location
-			mkdir -p "node_modules/sharp/build/${configuration}" || die "Failed to create node_modules/sharp/build/${configuration}"
+		# Copy sharp binary to expected location
+			mkdir -p "node_modules/sharp/build/${configuration}" \
+				|| die "Failed to create node_modules/sharp/build/${configuration}"
 			[[ -e "node_modules/sharp/src/build/${configuration}/${fn}" ]] || die "Missing"
 			cp \
 				"node_modules/sharp/src/build/${configuration}/${fn}" \
@@ -313,12 +310,14 @@ einfo "NODE_ENV:  ${NODE_ENV}"
 		# Copy sharp binary to icon-gen if needed
 		if [[ -d "node_modules/icon-gen/node_modules/sharp" ]]; then
 			einfo "Copying sharp binary to node_modules/icon-gen/node_modules/sharp"
-			mkdir -p "node_modules/icon-gen/node_modules/sharp/build/${configuration}" || die "Failed to create icon-gen sharp build directory"
+			mkdir -p "node_modules/icon-gen/node_modules/sharp/build/${configuration}" \
+				|| die "Failed to create icon-gen sharp build directory"
 			[[ -e "node_modules/sharp/build/${configuration}/${fn}" ]] || die "Missing"
 			cp "node_modules/sharp/build/${configuration}/${fn}" \
 				"node_modules/icon-gen/node_modules/sharp/build/${configuration}/${fn}" \
 				|| die "Failed to copy ${fn} to icon-gen"
-			ls -l "node_modules/icon-gen/node_modules/sharp/build/${configuration}/${fn}" || die "Copied ${fn} not found"
+			ls -l "node_modules/icon-gen/node_modules/sharp/build/${configuration}/${fn}" \
+				|| die "Copied ${fn} not found"
 		fi
 
 		ewarn "Removing nested sharp or @img/sharp-linux-x64"
@@ -342,7 +341,7 @@ einfo "NODE_ENV:  ${NODE_ENV}"
 
 	cat \
 		"${FILESDIR}/icon-gen.mjs" \
-		> \
+			> \
 		"${S}/script/icon-gen.mjs" \
 		|| die
 
