@@ -106,7 +106,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${PATENT_STATUS[@]}
 lame opus svt-av1 theora vorbis vpx x264
-ebuild_revision_33
+ebuild_revision_34
 "
 REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -187,9 +187,13 @@ einfo "DEBUG:  Called yarn_update_lock_yarn_import_post()"
 
 einfo "Fixing vulnerabilities"
 
-einfo "QA:  Remove sharp@npm:^0.34.5 and microarches from yarn.lock"
-einfo "QA:  Remove esbuild>=0.27.3, <0.28.1 from yarn.lock"
-einfo "QA:  Change esbuild>=0.27.3, <0.28.1 references to 0.28.1 from yarn.lock"
+einfo "QA:  Remove sharp@npm:^0.34.5 and microarches in yarn.lock"
+einfo "QA:  Remove esbuild>=0.27.3, <0.28.1 and microarches in yarn.lock"
+einfo "QA:  Change esbuild>=0.27.3, <0.28.1 references to 0.28.1 in yarn.lock"
+einfo "QA:  Remove builder-util-runtime@npm:9.5.1 in yarn.lock"
+einfo "QA:  Change builder-util-runtime: \"npm:9.5.1\" to builder-util-runtime: \"npm:9.7.0\" in yarn.lock"
+einfo "QA:  Remove app-builder-lib@npm:26.8.1 in yarn.lock"
+einfo "QA:  Change app-builder-lib: \"npm:26.8.1\" to app-builder-lib: \"npm:26.15.0\" in yarn.lock"
 
 		eyarn add "vite@7.3.5" -D
 		eyarn add "builder-util-runtime@9.7.0" -D
