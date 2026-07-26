@@ -28,7 +28,7 @@ inherit cflags-hardened check-compiler-switch chkl edo flag-o-matic multilib mul
 # On version updates, make sure to read the forum (https://sqlite.org/forum/forum)
 # for hints regarding test failures, backports, etc.
 if [[ "${PV}" == "9999" && "${VCS}" == "git" ]] ; then
-	FALLBACK_COMMIT="c9a90ce1ece31b8ba9b81353dd5b852962705144"
+	FALLBACK_COMMIT="d9305a65c8768bb00b522a1070919c6a2e8760ed"
 	EGIT_BRANCH="master"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${PN}"
 	EGIT_REPO_URI="https://github.com/sqlite/sqlite.git"
@@ -66,7 +66,7 @@ RESTRICT="
 SLOT="3"
 IUSE+="
 debug doc icu +readline static-libs tcl test test-full tools
-ebuild_revision_28
+ebuild_revision_29
 "
 REQUIRED_USE="
 	pgo? (
