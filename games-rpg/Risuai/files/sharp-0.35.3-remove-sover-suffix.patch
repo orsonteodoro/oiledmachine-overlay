@@ -1,0 +1,11 @@
+--- a/node_modules/sharp/src/binding.gyp.orig	2026-07-24 23:59:04.162503166 -0700
++++ b/node_modules/sharp/src/binding.gyp	2026-07-25 00:05:06.919703947 -0700
+@@ -187,7 +187,7 @@
+             ],
+             'link_settings': {
+               'libraries': [
+-                '-l:libvips-cpp.so.<(vips_version)'
++                '-l:libvips-cpp.so'
+               ],
+               'ldflags': [
+                 '-lstdc++fs',

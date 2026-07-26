@@ -165,6 +165,9 @@ einfo "PKG_CONFIG_PATH:  ${PKG_CONFIG_PATH} (1)"
 		"${S}/node_modules/sharp/src/binding.gyp" \
 		|| die "Failed to append libraries to binding.gyp"
 
+	# For vips header
+	append-cppflags -I"/usr/include/glib-2.0"
+
 	# Set PKG_CONFIG_PATH to use custom vips.pc
 einfo "PKG_CONFIG_PATH:  ${PKG_CONFIG_PATH} (2)"
 einfo "LD_LIBRARY_PATH:  ${LD_LIBRARY_PATH}"

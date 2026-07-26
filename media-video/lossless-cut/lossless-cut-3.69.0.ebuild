@@ -232,7 +232,6 @@ src_unpack() {
 
 	export ELECTRON_CUSTOM_DIR="v${ELECTRON_APP_ELECTRON_PV}" # For electron-builder@26.15.7
 
-	append-cppflags -I"/usr/include/glib-2.0"
 	export ELECTRON_SKIP_BINARY_DOWNLOAD=1
 	export ELECTRON_BUILDER_CACHE="${HOME}/.cache/electron-builder"
 	export ELECTRON_CACHE="${HOME}/.cache/electron"

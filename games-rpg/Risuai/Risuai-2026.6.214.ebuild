@@ -18,26 +18,25 @@ EAPI=8
 
 # To generate lockfile
 # PATH=$(realpath "../../scripts")":${PATH}"
-# PNPM_UPDATER_VERSIONS="2026.4.181" pnpm_updater_update_locks.sh
+# PNPM_UPDATER_VERSIONS="2026.6.214" pnpm_updater_update_locks.sh
 
 # pnpm required because lockfile deps.  DO NOT CHANGE!
 
 MY_PN="RisuAI"
 
 NODE_SHARP_USE="exif jpeg lcms png svg"
-NODE_SLOT="22"
+NODE_SLOT="24"
 PNPM_SLOT="9"
+PNPM_TARBALL="${TARBALL}"
+PYTHON_COMPAT=( "python3_12" )
 # CI uses Rust 1.94.1
 # Lockfile deps require 1.88.0
-RUST_MAX_VER="1.91.1" # Inclusive
-RUST_MIN_VER="1.91.1" # llvm-21.1
+RUST_MAX_VER="1.93.1" # Inclusive
+RUST_MIN_VER="1.93.1" # llvm-21.1
 RUST_PV="${RUST_MIN_VER}"
 TARBALL="${P}.tar.gz"
-PNPM_TARBALL="${TARBALL}"
-PYTHON_COMPAT=( "python3_11" )
 
-SHARP_PV="0.34.3"
-VIPS_PV="8.17.2"
+VITE_PV="8.0.16"
 
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse4_2"
@@ -52,9 +51,9 @@ adler2-2.0.1
 aes-0.8.4
 aho-corasick-1.1.4
 alloc-no-stdlib-2.0.4
-alloc-stdlib-0.2.2
+alloc-stdlib-0.2.4
 android_system_properties-0.1.5
-anyhow-1.0.102
+anyhow-1.0.104
 arbitrary-1.4.2
 async-broadcast-0.7.2
 async-channel-2.5.0
@@ -65,16 +64,16 @@ async-process-2.5.0
 async-recursion-1.1.1
 async-signal-0.2.14
 async-task-4.7.1
-async-trait-0.1.89
+async-trait-0.1.91
 atk-0.18.2
 atk-sys-0.18.2
 atomic-waker-1.1.2
-autocfg-1.5.0
+autocfg-1.5.1
 base64-0.21.7
 base64-0.22.1
 base64ct-1.8.3
 bitflags-1.3.2
-bitflags-2.11.1
+bitflags-2.13.1
 bit-set-0.5.3
 bit-set-0.8.0
 bit-vec-0.6.3
@@ -82,35 +81,36 @@ bit-vec-0.8.0
 block2-0.6.2
 block-buffer-0.10.4
 blocking-1.6.2
-brotli-8.0.2
-brotli-decompressor-5.0.0
-bstr-1.12.1
-bumpalo-3.20.2
-bytemuck-1.25.0
+brotli-8.0.4
+brotli-decompressor-5.0.3
+bs58-0.5.1
+bstr-1.13.0
+bumpalo-3.20.3
+bytemuck-1.25.2
 byteorder-1.5.0
-bytes-1.11.1
+bytes-1.12.1
 bzip2-0.4.4
 bzip2-sys-0.1.13+1.0.8
 cairo-rs-0.18.5
 cairo-sys-rs-0.18.2
-camino-1.2.2
+camino-1.2.4
 cargo_metadata-0.19.2
 cargo-platform-0.1.9
 cargo_toml-0.22.3
-cc-1.2.61
+cc-1.4.0
 cesu8-1.1.0
 cfb-0.7.3
-cfg_aliases-0.2.1
+cfg_aliases-0.2.2
 cfg-expr-0.15.8
 cfg-if-1.0.4
-chrono-0.4.44
+chacha20-0.10.1
+chrono-0.4.45
 cipher-0.4.4
 combine-4.6.7
 concurrent-queue-2.5.0
 constant_time_eq-0.1.5
 const-random-0.1.18
 const-random-macro-0.1.16
-convert_case-0.4.0
 cookie-0.18.1
 cookie_store-0.22.1
 core-foundation-0.10.1
@@ -119,15 +119,16 @@ core-foundation-sys-0.8.7
 core-graphics-0.25.0
 core-graphics-types-0.2.0
 cpufeatures-0.2.17
+cpufeatures-0.3.0
 crc32fast-1.5.0
-crossbeam-channel-0.5.15
-crossbeam-utils-0.8.21
+crossbeam-channel-0.5.16
+crossbeam-utils-0.8.22
 crunchy-0.2.4
 crypto-common-0.1.7
-cssparser-0.29.6
 cssparser-0.36.0
 cssparser-macros-0.6.1
-ctor-0.2.9
+ctor-0.8.0
+ctor-proc-macro-0.0.7
 darling-0.20.11
 darling-0.23.0
 darling_core-0.20.11
@@ -135,16 +136,16 @@ darling_core-0.23.0
 darling_macro-0.20.11
 darling_macro-0.23.0
 data-url-0.3.2
+dbus-0.9.12
 deranged-0.5.8
 derive_arbitrary-1.4.2
-derive_more-0.99.20
 derive_more-2.1.1
 derive_more-impl-2.1.1
 digest-0.10.7
 dirs-6.0.0
 dirs-sys-0.5.0
 dispatch2-0.3.1
-displaydoc-0.2.5
+displaydoc-0.2.6
 dlopen2-0.8.2
 dlopen2_derive-0.4.3
 dlv-list-0.5.2
@@ -153,10 +154,12 @@ dom_query-0.27.0
 dpi-0.1.2
 dtoa-1.0.11
 dtoa-short-0.3.5
+dtor-0.3.0
+dtor-proc-macro-0.0.6
 dunce-1.0.5
 dyn-clone-1.0.20
 embed_plist-1.2.2
-embed-resource-3.0.9
+embed-resource-3.0.11
 encoding_rs-0.8.35
 endi-1.1.1
 enumflags2-0.7.12
@@ -168,33 +171,30 @@ event-listener-5.4.1
 event-listener-strategy-0.5.4
 eventsource-client-0.12.2
 fancy-regex-0.11.0
-fastrand-2.4.1
+fastrand-2.5.0
 fdeflate-0.3.7
 field-offset-0.3.6
-filetime-0.2.27
+filetime-0.2.29
 find-msvc-tools-0.1.9
 flate2-1.1.9
 fnv-1.0.7
-foldhash-0.1.5
 foldhash-0.2.0
 foreign-types-0.3.2
 foreign-types-0.5.0
-foreign-types-macros-0.2.3
+foreign-types-macros-0.2.4
 foreign-types-shared-0.1.1
 foreign-types-shared-0.3.1
 form_urlencoded-1.2.2
-futf-0.1.5
-futures-0.3.32
-futures-channel-0.3.32
-futures-core-0.3.32
-futures-executor-0.3.32
-futures-io-0.3.32
+futures-0.3.33
+futures-channel-0.3.33
+futures-core-0.3.33
+futures-executor-0.3.33
+futures-io-0.3.33
 futures-lite-2.6.1
-futures-macro-0.3.32
-futures-sink-0.3.32
-futures-task-0.3.32
-futures-util-0.3.32
-fxhash-0.2.1
+futures-macro-0.3.33
+futures-sink-0.3.33
+futures-task-0.3.33
+futures-util-0.3.33
 gdk-0.18.2
 gdk-pixbuf-0.18.5
 gdk-pixbuf-sys-0.18.0
@@ -204,43 +204,40 @@ gdkx11-0.18.2
 gdkx11-sys-0.18.2
 generic-array-0.14.7
 gethostname-1.1.0
-getrandom-0.1.16
 getrandom-0.2.17
 getrandom-0.3.4
-getrandom-0.4.2
+getrandom-0.4.3
 gio-0.18.4
 gio-sys-0.18.1
 glib-0.18.5
 glib-macros-0.18.5
 glib-sys-0.18.1
-glob-0.3.3
+glob-0.3.4
 gobject-sys-0.18.0
 gtk-0.18.2
 gtk3-macros-0.18.2
 gtk-sys-0.18.2
 h2-0.3.27
-h2-0.4.13
+h2-0.4.15
 hashbrown-0.12.3
 hashbrown-0.14.5
-hashbrown-0.15.5
-hashbrown-0.17.0
+hashbrown-0.17.1
 heck-0.4.1
 heck-0.5.0
 hermit-abi-0.5.2
 hex-0.4.3
 hmac-0.12.1
-html5ever-0.29.1
 html5ever-0.38.0
 http-0.2.12
-http-1.4.0
+http-1.4.2
 httparse-1.10.1
 http-body-0.4.6
-http-body-1.0.1
-http-body-util-0.1.3
+http-body-1.1.0
+http-body-util-0.1.4
 httpdate-1.0.3
 http-range-0.1.5
 hyper-0.14.32
-hyper-1.9.0
+hyper-1.11.0
 hyper-rustls-0.24.2
 hyper-rustls-0.27.9
 hyper-timeout-0.4.1
@@ -256,7 +253,6 @@ icu_normalizer_data-2.2.0
 icu_properties-2.2.0
 icu_properties_data-2.2.0
 icu_provider-2.2.0
-id-arena-2.3.0
 ident_case-1.0.1
 idna-1.1.0
 idna_adapter-1.2.2
@@ -265,7 +261,6 @@ indexmap-2.14.0
 infer-0.19.0
 inout-0.1.4
 ipnet-2.12.0
-iri-string-0.7.12
 is-docker-0.2.0
 is-wsl-0.4.0
 itoa-1.0.18
@@ -277,45 +272,38 @@ jni-macros-0.22.4
 jni-sys-0.3.1
 jni-sys-0.4.1
 jni-sys-macros-0.4.1
-jobserver-0.1.34
+jobserver-0.1.35
 json-patch-3.0.1
 jsonptr-0.6.3
-js-sys-0.3.97
+js-sys-0.3.103
 keyboard-types-0.7.0
-kuchikiki-0.8.8-speedreader
 lazy_static-1.5.0
-leb128fmt-0.1.0
 libappindicator-0.9.0
 libappindicator-sys-0.9.0
-libc-0.2.186
+libc-0.2.189
+libdbus-sys-0.2.7
 libloading-0.7.4
-libredox-0.1.16
+libredox-0.1.18
 linux-raw-sys-0.12.1
 litemap-0.8.2
 litrs-1.0.0
 lock_api-0.4.14
-log-0.4.29
+log-0.4.33
 lru-slab-0.1.2
-mac-0.1.1
-markup5ever-0.14.1
 markup5ever-0.38.0
-matches-0.1.10
-match_token-0.1.0
-memchr-2.8.0
+memchr-2.8.3
 memoffset-0.9.1
 mime-0.3.17
 minisign-verify-0.2.5
 miniz_oxide-0.8.9
-mio-1.2.0
-muda-0.17.2
+mio-1.2.2
+muda-0.19.3
 native-tls-0.2.18
 ndk-0.9.0
-ndk-context-0.1.1
 ndk-sys-0.6.0+11769913
 new_debug_unreachable-1.0.6
-nix-0.30.1
-nodrop-0.1.14
-num-conv-0.2.1
+nix-0.31.3
+num-conv-0.2.2
 num_enum-0.7.6
 num_enum_derive-0.7.6
 num-traits-0.2.19
@@ -339,17 +327,17 @@ objc2-ui-kit-0.3.2
 objc2-user-notifications-0.3.2
 objc2-web-kit-0.3.2
 once_cell-1.21.4
-open-5.3.4
-openssl-0.10.78
+open-5.4.0
+openssl-0.10.81
 openssl-macros-0.1.1
 openssl-probe-0.1.6
 openssl-probe-0.2.1
-openssl-sys-0.9.114
+openssl-sys-0.9.117
 option-ext-0.2.0
 ordered-multimap-0.7.3
 ordered-stream-0.2.0
 osakit-0.3.1
-os_info-3.14.0
+os_info-3.15.0
 os_pipe-1.2.3
 pango-0.18.3
 pango-sys-0.18.0
@@ -357,98 +345,76 @@ parking-2.2.1
 parking_lot-0.12.5
 parking_lot_core-0.9.12
 password-hash-0.4.2
-pathdiff-0.2.3
 pbkdf2-0.11.0
 percent-encoding-2.3.2
-phf-0.10.1
-phf-0.11.3
 phf-0.13.1
-phf-0.8.0
-phf_codegen-0.11.3
 phf_codegen-0.13.1
-phf_codegen-0.8.0
-phf_generator-0.10.0
-phf_generator-0.11.3
 phf_generator-0.13.1
-phf_generator-0.8.0
-phf_macros-0.10.0
-phf_macros-0.11.3
 phf_macros-0.13.1
-phf_shared-0.10.0
-phf_shared-0.11.3
 phf_shared-0.13.1
-phf_shared-0.8.0
-pin-project-1.1.11
-pin-project-internal-1.1.11
+pin-project-1.1.13
+pin-project-internal-1.1.13
 pin-project-lite-0.2.17
 piper-0.2.5
 pkg-config-0.3.33
-plain-0.2.3
-plist-1.9.0
+plist-1.10.0
 png-0.17.16
+png-0.18.1
 polling-3.11.0
 potential_utf-0.1.5
 powerfmt-0.2.0
 ppv-lite86-0.2.21
 precomputed-hash-0.1.1
-prettyplease-0.2.37
-proc-macro2-1.0.106
+proc-macro2-1.0.107
 proc-macro-crate-1.3.1
 proc-macro-crate-2.0.2
 proc-macro-crate-3.5.0
 proc-macro-error-1.0.4
 proc-macro-error-attr-1.0.4
-proc-macro-hack-0.5.20+deprecated
 psl-types-2.0.11
 publicsuffix-2.3.0
-quick-xml-0.39.2
-quinn-0.11.9
-quinn-proto-0.11.14
-quinn-udp-0.5.14
-quote-1.0.45
-rand-0.7.3
-rand-0.8.6
-rand-0.9.4
-rand_chacha-0.2.2
+quick-xml-0.41.0
+quinn-0.11.11
+quinn-proto-0.11.16
+quinn-udp-0.5.15
+quote-1.0.47
+rand-0.10.2
+rand-0.8.7
 rand_chacha-0.3.1
-rand_chacha-0.9.0
-rand_core-0.5.1
+rand_core-0.10.1
 rand_core-0.6.4
-rand_core-0.9.5
-rand_hc-0.2.0
-rand_pcg-0.2.1
+rand_pcg-0.10.2
 raw-window-handle-0.6.2
 redox_syscall-0.5.18
-redox_syscall-0.7.4
 redox_users-0.5.2
-ref-cast-1.0.25
-ref-cast-impl-1.0.25
+ref-cast-1.0.26
+ref-cast-impl-1.0.26
 r-efi-5.3.0
 r-efi-6.0.0
-regex-1.12.3
-regex-automata-0.4.14
-regex-syntax-0.8.10
+regex-1.13.1
+regex-automata-0.4.16
+regex-syntax-0.8.11
 reqwest-0.11.27
 reqwest-0.12.28
-reqwest-0.13.3
+reqwest-0.13.4
 rfd-0.16.0
 ring-0.17.14
 rustc-hash-1.1.0
-rustc-hash-2.1.2
+rustc-hash-2.1.3
 rustc_version-0.4.1
 rust-ini-0.21.3
 rustix-1.1.4
 rustls-0.21.12
-rustls-0.23.40
+rustls-0.23.42
 rustls-native-certs-0.6.3
-rustls-native-certs-0.8.3
+rustls-native-certs-0.8.4
 rustls-pemfile-1.0.4
-rustls-pki-types-1.14.1
+rustls-pki-types-1.15.1
 rustls-platform-verifier-0.7.0
 rustls-platform-verifier-android-0.1.1
 rustls-webpki-0.101.7
 rustls-webpki-0.103.13
-rustversion-1.0.22
+rustversion-1.0.23
 ryu-1.0.23
 same-file-1.0.6
 schannel-0.1.29
@@ -461,55 +427,51 @@ sct-0.7.1
 security-framework-2.11.1
 security-framework-3.7.0
 security-framework-sys-2.17.0
-selectors-0.24.0
 selectors-0.36.1
 semver-1.0.28
-serde-1.0.228
-serde_core-1.0.228
-serde_derive-1.0.228
+serde-1.0.229
+serde_core-1.0.229
+serde_derive-1.0.229
 serde_derive_internals-0.29.1
-serde_json-1.0.149
+serde_json-1.0.151
 serde_path_to_error-0.1.20
-serde_repr-0.1.20
+serde_repr-0.1.21
 serde_spanned-0.6.9
 serde_spanned-1.1.1
 serde-untagged-0.1.9
 serde_urlencoded-0.7.1
-serde_with-3.18.0
-serde_with_macros-3.18.0
+serde_with-3.21.0
+serde_with_macros-3.21.0
 serialize-to-javascript-0.1.2
 serialize-to-javascript-impl-0.1.2
-servo_arc-0.2.0
 servo_arc-0.4.3
-sha1-0.10.6
+sha1-0.10.7
 sha2-0.10.9
 shared_child-1.1.1
-shlex-1.3.0
+shlex-2.0.1
 sigchld-0.2.4
 signal-hook-0.3.18
 signal-hook-registry-1.4.8
-simd-adler32-0.3.9
-simd_cesu8-1.1.1
+simd-adler32-0.3.10
+simd_cesu8-1.2.0
 simdutf8-0.1.5
-siphasher-0.3.11
-siphasher-1.0.2
+siphasher-1.0.3
 slab-0.4.12
-smallvec-1.15.1
+smallvec-1.15.2
 socket2-0.5.10
-socket2-0.6.3
+socket2-0.6.5
 softbuffer-0.4.8
 soup3-0.5.0
 soup3-sys-0.5.0
 stable_deref_trait-1.2.1
-string_cache-0.8.9
 string_cache-0.9.0
-string_cache_codegen-0.5.4
 string_cache_codegen-0.6.1
 strsim-0.11.1
 subtle-2.6.1
 swift-rs-1.0.7
 syn-1.0.109
-syn-2.0.117
+syn-2.0.119
+syn-3.0.3
 sync_wrapper-0.1.2
 sync_wrapper-1.0.2
 synstructure-0.13.2
@@ -519,87 +481,84 @@ system-configuration-0.7.0
 system-configuration-sys-0.5.0
 system-configuration-sys-0.6.0
 system-deps-6.2.2
-tao-0.34.8
+tao-0.35.3
 tao-macros-0.1.3
-tar-0.4.45
+tar-0.4.46
 target-lexicon-0.12.16
-tauri-2.10.3
-tauri-build-2.5.6
-tauri-codegen-2.5.5
-tauri-macros-2.5.5
-tauri-plugin-2.5.4
-tauri-plugin-deep-link-2.4.7
-tauri-plugin-dialog-2.7.0
-tauri-plugin-fs-2.5.0
-tauri-plugin-http-2.5.8
+tauri-2.11.5
+tauri-build-2.6.3
+tauri-codegen-2.6.3
+tauri-macros-2.6.3
+tauri-plugin-2.6.3
+tauri-plugin-deep-link-2.4.9
+tauri-plugin-dialog-2.7.2
+tauri-plugin-fs-2.5.1
+tauri-plugin-http-2.5.9
 tauri-plugin-os-2.3.2
 tauri-plugin-process-2.3.1
 tauri-plugin-shell-2.3.5
-tauri-plugin-single-instance-2.4.0
+tauri-plugin-single-instance-2.4.3
 tauri-plugin-updater-2.10.1
-tauri-runtime-2.10.1
-tauri-runtime-wry-2.10.1
-tauri-utils-2.8.3
+tauri-runtime-2.11.3
+tauri-runtime-wry-2.11.4
+tauri-utils-2.9.3
 tauri-winres-0.3.6
 tempfile-3.27.0
-tendril-0.4.3
-tendril-0.5.0
+tendril-0.5.1
 thiserror-1.0.69
-thiserror-2.0.18
+thiserror-2.0.19
 thiserror-impl-1.0.69
-thiserror-impl-2.0.18
+thiserror-impl-2.0.19
 tiktoken-rs-0.4.5
-time-0.3.47
-time-core-0.1.8
-time-macros-0.2.27
+time-0.3.54
+time-core-0.1.9
+time-macros-0.2.32
 tiny-keccak-2.0.2
 tinystr-0.8.3
-tinyvec-1.11.0
+tinyvec-1.12.0
 tinyvec_macros-0.1.1
-tokio-1.52.1
+tokio-1.53.1
 tokio-io-timeout-1.2.1
-tokio-macros-2.7.0
+tokio-macros-2.7.1
 tokio-native-tls-0.3.1
 tokio-rustls-0.24.1
 tokio-rustls-0.26.4
-tokio-util-0.7.18
+tokio-util-0.7.19
 toml-0.8.2
 toml-0.9.12+spec-1.1.0
-toml-1.1.2+spec-1.1.0
+toml-1.1.3+spec-1.1.0
 toml_datetime-0.6.3
 toml_datetime-0.7.5+spec-1.1.0
 toml_datetime-1.1.1+spec-1.1.0
 toml_edit-0.19.15
 toml_edit-0.20.2
-toml_edit-0.25.11+spec-1.1.0
+toml_edit-0.25.13+spec-1.1.0
 toml_parser-1.1.2+spec-1.1.0
-toml_writer-1.1.1+spec-1.1.0
+toml_writer-1.1.2+spec-1.1.0
 tower-0.5.3
-tower-http-0.6.8
+tower-http-0.6.11
 tower-layer-0.3.3
 tower-service-0.3.3
 tracing-0.1.44
 tracing-attributes-0.1.31
 tracing-core-0.1.36
-tray-icon-0.21.3
+tray-icon-0.24.1
 try-lock-0.2.5
 typeid-1.0.3
-typenum-1.20.0
+typenum-1.20.1
 uds_windows-1.2.1
 unic-char-property-0.9.0
 unic-char-range-0.9.0
 unic-common-0.9.0
 unicode-ident-1.0.24
-unicode-segmentation-1.13.2
-unicode-xid-0.2.6
+unicode-segmentation-1.13.3
 unic-ucd-ident-0.9.0
 unic-ucd-version-0.9.0
 untrusted-0.9.0
 url-2.5.8
 urlpattern-0.3.0
-utf-8-0.7.6
 utf8_iter-1.0.4
-uuid-1.23.1
+uuid-1.24.0
 vcpkg-0.2.15
 version_check-0.9.5
 version-compare-0.2.1
@@ -608,24 +567,19 @@ vswhom-sys-0.1.3
 walkdir-2.5.0
 want-0.3.1
 wasi-0.11.1+wasi-snapshot-preview1
-wasi-0.9.0+wasi-snapshot-preview1
-wasip2-1.0.3+wasi-0.2.9
-wasip3-0.4.0+wasi-0.3.0-rc-2026-01-06
-wasm-bindgen-0.2.120
-wasm-bindgen-futures-0.4.70
-wasm-bindgen-macro-0.2.120
-wasm-bindgen-macro-support-0.2.120
-wasm-bindgen-shared-0.2.120
-wasm-encoder-0.244.0
-wasm-metadata-0.244.0
-wasmparser-0.244.0
+wasip2-1.0.4+wasi-0.2.12
+wasm-bindgen-0.2.126
+wasm-bindgen-futures-0.4.76
+wasm-bindgen-macro-0.2.126
+wasm-bindgen-macro-support-0.2.126
+wasm-bindgen-shared-0.2.126
 wasm-streams-0.5.0
-web_atoms-0.2.4
+web_atoms-0.2.5
 webkit2gtk-2.0.2
 webkit2gtk-sys-2.0.2
-webpki-root-certs-1.0.7
-webpki-roots-1.0.7
-web-sys-0.3.97
+webpki-root-certs-1.0.9
+webpki-roots-1.0.9
+web-sys-0.3.103
 web-time-1.1.0
 webview2-com-0.38.2
 webview2-com-macros-0.8.1
@@ -695,49 +649,41 @@ windows_x86_64_msvc-0.53.1
 window-vibrancy-0.6.0
 winnow-0.5.40
 winnow-0.7.15
-winnow-1.0.2
+winnow-1.0.4
 winreg-0.50.0
 winreg-0.55.0
-wit-bindgen-0.51.0
 wit-bindgen-0.57.1
-wit-bindgen-core-0.51.0
-wit-bindgen-rust-0.51.0
-wit-bindgen-rust-macro-0.51.0
-wit-component-0.244.0
-wit-parser-0.244.0
 writeable-0.6.3
-wry-0.54.4
+wry-0.55.1
 x11-2.21.0
 x11-dl-2.21.0
 xattr-1.6.1
-yoke-0.8.2
+yoke-0.8.3
 yoke-derive-0.8.2
-zbus-5.15.0
-zbus_macros-5.15.0
-zbus_names-4.3.2
-zerocopy-0.8.48
-zerocopy-derive-0.8.48
-zerofrom-0.1.7
+zbus-5.18.0
+zbus_macros-5.18.0
+zbus_names-4.3.4
+zerocopy-0.8.55
+zerocopy-derive-0.8.55
+zerofrom-0.1.8
 zerofrom-derive-0.1.7
-zeroize-1.8.2
+zeroize-1.9.0
 zerotrie-0.2.4
 zerovec-0.11.6
 zerovec-derive-0.11.3
 zip-0.6.6
 zip-4.6.1
-zmij-1.0.21
+zmij-1.0.23
 zstd-0.11.2+zstd.1.5.2
 zstd-safe-5.0.2+zstd.1.5.2
 zstd-sys-2.0.16+zstd.1.5.7
-zvariant-5.10.1
-zvariant_derive-5.10.1
-zvariant_utils-3.3.1
+zvariant-5.13.1
+zvariant_derive-5.13.1
+zvariant_utils-3.5.0
 "
 
 NODE_SHARP_PATCHES=(
-	"${FILESDIR}/sharp-0.34.2-debug.patch"
-	"${FILESDIR}/sharp-0.34.3-format-fixes.patch"
-	"${FILESDIR}/sharp-0.34.3-static-libs.patch"
+	"${FILESDIR}/sharp-0.35.3-remove-sover-suffix.patch"
 )
 
 PNPM_AUDIT_FIX_ARGS=(
@@ -747,13 +693,12 @@ PNPM_INSTALL_ARGS=(
 )
 
 
-# CVE-2025-58752; VS(ID); Low
-# CVE-2025-58751; VS(ID); Low
-# CVE-2025-62522; VS(ID); Moderate
-# CVE-2026-39365; ZC, VS(ID); Moderate
-# CVE-2026-39364; ZC, VS(ID); High
-# CVE-2026-39363; ZC, VS(ID); High
-VITE_PV="8.0.5" # Upstream version
+CHKL_TIMESTAMPS=(
+	"app-accessibility/at-spi2-core-9999"
+	"dev-libs/glib-2.89.9999"
+	"x11-libs/cairo-9999"
+	"x11-libs/gtk+-3.24.9999"
+)
 
 inherit cargo desktop edo lcnr node-sharp pnpm python-r1 webkitgtk-stable xdg
 
@@ -785,30 +730,23 @@ REQUIRED_USE="
 		wayland
 	)
 "
-gen_webkit_depend() {
-	local s
-	for s in ${WEBKITGTK_STABLE[@]} ; do
-	# TODO:  add audio minimum requirement for webkit-gtk for tts/stt
-	# onnxruntime-web needs webassembly
-		echo "
-			=net-libs/webkit-gtk-${s}*:4.1[javascript,jit,introspection,wayland?,webassembly,X?,webgl]
-		"
-	done
-}
-RUST_BINDINGS_DEPEND="
-	>=app-accessibility/at-spi2-core-2.35.1[introspection]
-	>=dev-libs/glib-2.48:2
-	>=dev-libs/gobject-introspection-1.64.0
+RUST_BINDINGS_DEPEND_DISABLED="
 	>=net-libs/libsoup-2.70.0:2.4[introspection]
-	>=x11-libs/cairo-1.14
-	>=x11-libs/gdk-pixbuf-2.32[introspection]
-	>=x11-libs/gtk+-3.18:3[introspection,wayland?,X?]
-	>=x11-libs/pango-1.38[introspection]
+"
+RUST_BINDINGS_DEPEND="
+	>=app-accessibility/at-spi2-core-${AT_SPI2_CORE_PV}:=[introspection]
+	>=dev-libs/glib-${GLIB_PV}:=
+	>=dev-libs/gobject-introspection-${GOBJECT_INTROSPECTION_PV}:=
+	>=x11-libs/cairo-${CAIRO_PV}:=
+	>=x11-libs/gdk-pixbuf-${GDK_PIXBUF_PV}:=[introspection]
+	>=x11-libs/gtk+-${GTK3_PV}:3=[introspection,wayland?,X?]
+	>=x11-libs/pango-${PANGO_PV}:=[introspection]
+	~net-libs/webkit-gtk-${WEBKIT_GTK_STABLE_PV}:4.1=[javascript,jit,introspection,wayland?,webassembly,X?,webgl]
 	elibc_glibc? (
-		>=sys-libs/glibc-2.31
+		>=sys-libs/glibc-${GLIBC_PV}:=
 	)
 	elibc_musl? (
-		>=sys-libs/musl-1.1.24
+		>=sys-libs/musl-${MUSL_PV}:=
 	)
 	tray? (
 		|| (
@@ -816,10 +754,6 @@ RUST_BINDINGS_DEPEND="
 			>=dev-libs/libayatana-appindicator-0.5.4
 		)
 	)
-	|| (
-		$(gen_webkit_depend)
-	)
-	net-libs/webkit-gtk:=
 "
 RUST_BINDINGS_BDEPEND="
 	virtual/pkgconfig
@@ -830,20 +764,16 @@ TAURI_RDEPEND="
 		dev-lang/rust-bin:${RUST_PV}
 		dev-lang/rust:${RUST_PV}[wasm]
 	)
-	|| (
-		dev-lang/rust-bin:=
-		dev-lang/rust:=
-	)
 "
 RDEPEND+="
 	${TAURI_RDEPEND}
 	!games-rpg/RisuAI
 	ollama? (
-		app-misc/ollama
+		>=app-misc/ollama-${OLLAMA_PV}:=
 	)
 	server? (
-		acct-group/risuai
-		acct-user/risuai
+		acct-group/risuai:*
+		acct-user/risuai:*
 		$(python_gen_cond_dep '
 			dev-python/fastapi[${PYTHON_USEDEP}]
 			dev-python/llama-cpp-python[${PYTHON_USEDEP}]
@@ -857,13 +787,13 @@ DEPEND+="
 "
 BDEPEND+="
 	${RUST_BINDINGS_BDEPEND}
-	net-libs/nodejs:${NODE_SLOT}
+	$(secure-version_gen_openssl_depends)
+	>=net-libs/nodejs-${NODEJS_24_PV}:${NODE_SLOT}
 	sys-apps/pnpm:${PNPM_SLOT}
-	dev-libs/openssl
 "
 _PATCHES=(
 	"${FILESDIR}/${PN}-2026.4.181-replace-with-js-tiktoken.patch"
-	"${FILESDIR}/${PN}-163.1.1-ollama-fix.patch"
+	"A${FILESDIR}/${PN}-163.1.1-ollama-fix.patch"
 
 	# Disable signing which makes it a fatal error.
 	# We don't use auto update because of supply chain attacks and to have
@@ -897,18 +827,22 @@ pnpm_unpack_post() {
 		|| die
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		local L=(
-			"node-addon-api@8.7.0"
-			"node-gyp@12.3.0"
+			"node-addon-api@^8.9.0"		# For node sharp
+			"node-gyp@^12.4.0"		# For node sharp
 		)
-		epnpm add -D "${L[@]}" ${PNPM_INSTALL_ARGS[@]} # For node sharp
+		epnpm add -D "${L[@]}" ${PNPM_INSTALL_ARGS[@]}
 	fi
 }
 
 pnpm_install_post() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
-		epnpm add -D "vite@${VITE_PV}" ${PNPM_INSTALL_ARGS[@]}
-		epnpm add -D "vite-plugin-top-level-await@1.6.0" ${PNPM_INSTALL_ARGS[@]} # For tiktoken
-		epnpm add -D "rollup@4.60.2" ${PNPM_INSTALL_ARGS[@]} # For vite-plugin-top-level-await
+		local L
+		L=(
+			"vite@${VITE_PV}"
+			"vite-plugin-top-level-await@1.6.0" # For tiktoken
+			"rollup@4.60.2" # For vite-plugin-top-level-await
+		)
+		epnpm add -D "${L[@]}" ${PNPM_INSTALL_ARGS[@]}
 
 	# Use a more robust implementation to avoid WASM error
 		pnpm remove "@dqbd/tiktoken"
@@ -918,37 +852,13 @@ pnpm_install_post() {
 
 pnpm_audit_post() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
-		fix_lockfile() {
-			sed -i -e "s|esbuild: 0.21.3|esbuild: 0.27.2|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|dompurify: 3.2.7|dompurify: 3.4.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|dompurify: 3.3.2|dompurify: 3.4.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|uuid: 9.0.1|uuid: 14.0.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|uuid: 10.0.0|uuid: 14.0.0|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|diff: 7.0.0|diff: 8.0.3|g" "pnpm-lock.yaml" || die
-		}
-		fix_lockfile
-
-		local L
+		L=(
+		)
+		#epnpm add -P "${L[@]}"
 
 		L=(
-			"dompurify@3.4.0"		# CVE-2026-41238; DT, ID; Moderate
-							# GHSA-h8r8-wccr-v5f2; ZC, SS(DoS); Moderate
-							# CVE-2026-41239; DT, ID; Moderate
-							# CVE-2026-41240; VS(DT); Moderate
-							# GHSA-39q2-94rc-95cp; VS(DT, ID); Moderate
-							# GHSA-cjmm-f4jc-qw8r; SS(DT, ID); Moderate
-							# GHSA-cj63-jhhr-wcxv; ZC, VS(DT), SS(DT, ID); Moderate
-							# CVE-2026-0540; SS(DT, ID); Moderate
-
-			"uuid@14.0.0"			# GHSA-w5hq-g745-h8pq; VS(DT); ZC, Moderate
-			"diff@8.0.3"			# CVE-2026-24001; VS(DoS); Low
 		)
-		epnpm add -P "${L[@]}"
-
-		L=(
-			"esbuild@0.27.2"
-		)
-		epnpm add -D "${L[@]}"
+		#epnpm add -D "${L[@]}"
 
 		node-sharp_pnpm_lockfile_add_sharp
 		fix_lockfile
@@ -1051,13 +961,14 @@ ewarn "QA:  Manually \`cargo add \"hyper-tls@0.6.0\"\` for the cargo lockfile."
 	# The prebuilt sharp node binary builds are x86-64-v2 which are not
 	# compatible with older CPUs.
 
+		local fn="sharp-${sharp_platform}-${NODE_SHARP_PV}.node"
 	# Copy sharp binary to expected location and replace other copies.
 		mkdir -p "node_modules/sharp/build/${configuration}" \
 			|| die "Failed to create node_modules/sharp/build/${configuration}"
 		cp \
-			"node_modules/sharp/src/build/${configuration}/sharp-${sharp_platform}.node" \
-			"node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" \
-			|| die "Failed to copy sharp-${sharp_platform}.node (1)"
+			"node_modules/sharp/src/build/${configuration}/${fn}" \
+			"node_modules/sharp/build/${configuration}/${fn}" \
+			|| die "Failed to copy ${fn} (1)"
 
 	# Remove the illegal instruction prebuilt.
 		rm -rf "node_modules/.pnpm/@img+sharp-"*"-"*"@"*
