@@ -15,7 +15,7 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS HO NPD OOBR UAF TA"
 
 inherit cflags-hardened dot-a flag-o-matic multilib toolchain-funcs multilib-minimal
 
-NSPR_VER="4.38.2"
+NSPR_VER="4.39"
 RTM_NAME="NSS_${PV//./_}_RTM"
 
 # If the release is made in Github only, not released at the official archive.mozilla.org. These
@@ -64,7 +64,7 @@ MULTILIB_CHOST_TOOLS=(
 )
 
 PATCHES=(
-	"${FILESDIR}"/v2-0001-Bug-2027768-Fix-build-failure-due-to-missing-gcm-.patch
+	"${FILESDIR}"/nss-3.126-bmo-2027768-fix-build-failure-due-to-missing-gcm-stubs-if-on-big-endian.patch
 	"${FILESDIR}"/nss-3.103-gentoo-fixes-add-pkgconfig-files.patch
 	"${FILESDIR}"/nss-3.21-gentoo-fixup-warnings.patch
 )
