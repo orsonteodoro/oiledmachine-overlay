@@ -399,6 +399,7 @@ FEATURED_LLMS=(
 	"glm-4.7-flash"
 	"glm-5"
 	"glm-5.1"
+	"glm-5.2"
 	"glm-ocr"
 	"embeddinggemma"
 	"exaone3.5"
@@ -424,7 +425,10 @@ FEATURED_LLMS=(
 	"kimi-k2-thinking"
 	"kimi-k2.5"
 	"kimi-k2.6"
+	"kimi-k2.7-code"
+	"laguna-s-2.1"
 	"laguna-xs.2"
+	"laguna-xs-2.1"
 	"lfm2"
 	"lfm2.5"
 	"lfm2.5-thinking"
@@ -486,6 +490,7 @@ FEATURED_LLMS=(
 	"nexusraven"
 	"nomic-embed-text"
 	"nomic-embed-text-v2-moe"
+	"north-mini-code-1.0"
 	"notus"
 	"notux"
 	"nous-hermes"
@@ -502,6 +507,7 @@ FEATURED_LLMS=(
 	"openthinker"
 	"orca-mini"
 	"orca2"
+	"ornith"
 	"paraphrase-multilingual"
 	"phi"
 	"phi3"
@@ -1732,6 +1738,9 @@ LLM_LICENSES="
 	ollama_llms_glm-5.1? (
 		MIT
 	)
+	ollama_llms_glm-5.2? (
+		MIT
+	)
 	ollama_llms_glm-ocr? (
 		MIT
 	)
@@ -1901,9 +1910,18 @@ LLM_LICENSES="
 	ollama_llms_kimi-k2.6? (
 		Kimi-K2.6-LICENSE
 	)
+	ollama_llms_kimi-k2.7-code? (
+		Kimi-K2.7-Code-LICENSE
+	)
+	ollama_llms_laguna-s-2.1? (
+		OpenMDW-1.1
+	)
 	ollama_llms_laguna-xs.2? (
 		Apache-2.0
 		Poolside-Acceptable-Use-Policy
+	)
+	ollama_llms_laguna-xs-2.1? (
+		OpenMDW-1.1
 	)
 	ollama_llms_leeplenty-lumimaid-v0.2? (
 		Apache-2.0
@@ -2078,6 +2096,9 @@ LLM_LICENSES="
 	ollama_llms_nomic-embed-text-v2-moe? (
 		Apache-2.0
 	)
+	ollama_llms_north-mini-code-1.0? (
+		Apache-2.0
+	)
 	ollama_llms_notus? (
 		MIT
 	)
@@ -2140,6 +2161,9 @@ LLM_LICENSES="
 	)
 	ollama_llms_orca2? (
 		MICROSOFT-RESEARCH-LICENSE-TERMS
+	)
+	ollama_llms_ornith? (
+		MIT
 	)
 	ollama_llms_paraphrase-multilingual? (
 		Apache-2.0
@@ -2531,7 +2555,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 ai-agent blis cuda debug emoji +firejail flash lapack mkl openblas openrc
 rocm systemd unrestrict video_cards_intel -vulkan
-ebuild_revision_143
+ebuild_revision_144
 "
 
 gen_rocm_required_use() {
