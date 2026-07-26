@@ -99,7 +99,7 @@ if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	"
 else
 	LICENSE+="
-		electron-42.3.0-chromium.html
+		electron-42.2.0-chromium.html
 	"
 fi
 RESTRICT="mirror"
