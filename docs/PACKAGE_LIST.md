@@ -379,7 +379,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/dash-svg | SVG support library for Plotly/Dash |
 | dev-python/dataclass-wizard | A simple, yet elegant, set of wizarding tools for interacting with Python dataclasses. |
 | dev-python/dctorch | Fast discrete cosine transforms for PyTorch |
-| dev-python/ddgs | |
+| dev-python/ddgs | A metasearch library that aggregates results from diverse web search services |
 | dev-python/debian-inspector | Utilities to parse Debian package, copyright and control files |
 | dev-python/dek | The decorator-decorator |
 | dev-python/diffusers | State-of-the-art diffusion in PyTorch and JAX. |

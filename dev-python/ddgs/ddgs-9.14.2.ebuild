@@ -29,7 +29,7 @@ https://github.com/deedy5/ddgs/archive/refs/tags/v${PV}.tar.gz
 	"
 fi
 
-DESCRIPTION=""
+DESCRIPTION="A metasearch library that aggregates results from diverse web search services"
 HOMEPAGE="
 	https://github.com/deedy5/ddgs
 	https://pypi.org/project/tdir
