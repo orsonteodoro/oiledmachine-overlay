@@ -793,7 +793,7 @@ BDEPEND+="
 "
 _PATCHES=(
 	"${FILESDIR}/${PN}-2026.4.181-replace-with-js-tiktoken.patch"
-	"A${FILESDIR}/${PN}-163.1.1-ollama-fix.patch"
+	#"${FILESDIR}/${PN}-163.1.1-ollama-fix.patch"
 
 	# Disable signing which makes it a fatal error.
 	# We don't use auto update because of supply chain attacks and to have
