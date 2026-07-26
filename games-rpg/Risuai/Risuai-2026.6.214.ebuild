@@ -793,7 +793,6 @@ BDEPEND+="
 "
 _PATCHES=(
 	"${FILESDIR}/${PN}-2026.4.181-replace-with-js-tiktoken.patch"
-	#"${FILESDIR}/${PN}-163.1.1-ollama-fix.patch"
 
 	# Disable signing which makes it a fatal error.
 	# We don't use auto update because of supply chain attacks and to have
@@ -1253,4 +1252,5 @@ ewarn
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (166.3.0, 20251004) with rust 1.85.1
 # OILEDMACHINE-OVERLAY-TEST:  FAILED (2026.4.181, 20260428) with rust 1.88.0.  tiktoken wasm errors and ollama/app freezes
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (2026.4.181, 20260522) with rust 1.88.0 and js-tiktoken
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (2026.6.214, 20260726) with rust 1.93.1 and js-tiktoken
 # ollama support - passed
