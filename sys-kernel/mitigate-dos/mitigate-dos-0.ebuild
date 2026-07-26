@@ -62,7 +62,7 @@ VIDEO_CARDS=(
 IUSE+="
 ${VIDEO_CARDS[@]}
 +max-uptime
-ebuild_revision_15
+ebuild_revision_16
 "
 REQUIRED_USE="
 "
