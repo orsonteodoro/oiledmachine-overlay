@@ -23,11 +23,12 @@ ICON_TYPE=${ICON_TYPE:-"png"} # svg or png.  png is used by upstream and is brok
 NPM_AUDIT_FIX=0 # Breaks build
 #export NODE_SHARP_DEBUG=1
 NODE_SHARP_USE="png svg"
-NODE_SLOT="24" # Based on Electron
+NODE_SLOT="22"
 YARN_AUDIT_FIX=0
 YARN_INSTALL_PATH="/opt/${MY_PN}"
 YARN_LOCKFILE_SOURCE="ebuild"
 YARN_SLOT=8
+ELECTRON_BUILDER_PV="26.15.7"
 
 inherit secure-version secure-version-node
 
@@ -73,7 +74,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-	KEYWORDS="~amd64"
+	#KEYWORDS="~amd64" # ffprobe issue
 	S="${WORKDIR}/${PN}-${PV}"
 	SRC_URI="
 $(electron-app_gen_electron_uris)
@@ -138,9 +139,6 @@ BDEPEND+="
 	virtual/pkgconfig
 "
 DOCS=( "README.md" )
-PATCHES=(
-	"${FILESDIR}/lossless-cut-3.69.0-quiet-processing-leak.patch"
-)
 
 pkg_setup() {
 # Sharp is used for icon conversions.
@@ -150,13 +148,14 @@ ewarn "Part of the sharp fix requires the use of the media-libs/vips ebuilds fro
 }
 
 yarn_unpack_post() {
-	die
+	#die
 	if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
 # We remove patch temporarily so we can bump version and audit the lockfile
 einfo "Temporarily disabling package.json patches"
 		sed -i -e "s|\"mitt\": \"patch:mitt@npm%3A3.0.1#~/.yarn/patches/mitt-npm-3.0.1-ce290ffa77.patch\"|\"mitt\": \"3.0.1\"|g" "package.json" || die
 	fi
 	eapply "${FILESDIR}/${PN}-3.64.0-sharp-type.patch"
+	eapply "${FILESDIR}/${PN}-3.69.0-quiet-processing-leak.patch"
 	sed -i -e "/npmMinimalAgeGate:/d" "${S}/.yarnrc.yml" || die
 }
 
@@ -191,18 +190,12 @@ einfo "QA:  Remove sharp@npm:^0.34.5 and both @img/sharp-libvips-<arch>-arm64@np
 einfo "QA:  Change sharp: \"npm:^0.33.4\" to sharp: \"npm:0.35.3\" in yarn.lock"
 einfo "QA:  Remove esbuild@npm:^0.27.0 and @esbuild/<os>-<arch>@npm:0.27.7 microarches in yarn.lock"
 einfo "QA:  Change esbuild: \"npm:^0.27.0\" references to esbuild: \"npm:0.28.1\" in yarn.lock"
-einfo "QA:  Remove builder-util-runtime@npm:9.5.1 in yarn.lock"
-einfo "QA:  Change builder-util-runtime: \"npm:9.5.1\" to builder-util-runtime: \"npm:9.7.0\" in yarn.lock"
 
-# electron-builder requires a pinned version of app-builder-lib.
-#einfo "QA:  Remove app-builder-lib@npm:26.8.1 in yarn.lock"
-#einfo "QA:  Change app-builder-lib: \"npm:26.8.1\" to app-builder-lib: \"npm:26.15.0\" in yarn.lock"
-
-		local L=(
+		local L
+		L=(
 			"vite@7.3.5"
-			"builder-util-runtime@9.7.0"
-			#"app-builder-lib@26.15.0"
 			"esbuild@0.28.1"
+			"electron-builder@${ELECTRON_BUILDER_PV}"
 		)
 		eyarn add "${L[@]}" -D
 
@@ -236,6 +229,8 @@ src_unpack() {
 	if [[ "${YARN_UPDATE_LOCK}" != "1" ]] ; then
 		node-sharp_use_system_vips 1
 	fi
+
+	export ELECTRON_CUSTOM_DIR="v${ELECTRON_APP_ELECTRON_PV}" # For electron-builder@26.15.7
 
 	append-cppflags -I"/usr/include/glib-2.0"
 	export ELECTRON_SKIP_BINARY_DOWNLOAD=1
@@ -436,6 +431,7 @@ pkg_postinst() {
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (3.68.0, 20260304 with Electron 40.6.1)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (3.68.0, 20260304 with Electron 40.7.0)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (3.68.1, 20260422 with Electron 41.3.0)
+# OILEDMACHINE-OVERLAY-TEST:  FAILED (3.69.0, 20270725 with Electron 43.2.0), breaks when doing ffprobe
 # UI load:  pass
-# Load video:  pass
-# Export by segment:  pass
+# Load video:  fail
+# Export by segment:  TBA

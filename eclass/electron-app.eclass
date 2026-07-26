@@ -15,6 +15,7 @@
 
 # D11, U20, U22, U24
 
+# This ebuild contains AI generated code.
 # Contains data derived from AI generated synthetic data.
 
 case ${EAPI:-0} in
@@ -743,10 +744,18 @@ electron-app_cp_electron() {
 	#export ELECTRON_SKIP_BINARY_DOWNLOAD=${ELECTRON_SKIP_BINARY_DOWNLOAD:-1}
 	export ELECTRON_DOWNLOAD_CACHE_MODE=3 # https://www.jsdocs.io/package/@electron/get#ElectronDownloadCacheMode
 	export ELECTRON_BUILDER_CACHE="${HOME}/.cache/electron-builder"
+	#export ELECTRON_BUILDER_BINARIES_ALLOW_HTTP=${ELECTRON_BUILDER_BINARIES_ALLOW_HTTP:-"false"}
 	export ELECTRON_CACHE="${HOME}/.cache/electron"
 	mkdir -p "${ELECTRON_CACHE}" || die
 	local fn="electron-v${ELECTRON_APP_ELECTRON_PV}-$(electron-app_get_electron_platarch).zip"
-	export ELECTRON_CUSTOM_FILENAME="${fn}"
+
+	# FIX: Do NOT permanently export this globally if running electron-builder >= 26.15.3
+	# as it forces @electron/get to treat the checksum lookup target as a binary zip.
+	if ! ver_test "${ELECTRON_BUILDER_PV}" "-ge" "26.15.3" ; then
+		export ELECTRON_CUSTOM_FILENAME="${fn}"
+	else
+		unset ELECTRON_CUSTOM_FILENAME
+	fi
 
 #
 #                                                                                                    fn
@@ -760,18 +769,47 @@ electron-app_cp_electron() {
 #
 # See also URIs in https://github.com/electron/electron/releases/
 #
-	export ELECTRON_CUSTOM_DIR=${ELECTRON_CUSTOM_DIR:-"${ELECTRON_APP_ELECTRON_PV}"}
+	export ELECTRON_CUSTOM_DIR=${ELECTRON_CUSTOM_DIR:-"v${ELECTRON_APP_ELECTRON_PV}"}
 
-	cat \
-		"${DISTDIR}/${fn}" \
-			> \
-		"${ELECTRON_CACHE}/${fn}" \
-		|| die
-	cat \
-		"${DISTDIR}/electron-SHASUMS256.txt.${ELECTRON_APP_ELECTRON_PV}" \
-			> \
-		"${ELECTRON_CACHE}/SHASUMS256.txt" \
-		|| die
+	if [[ -z "${ELECTRON_BUILDER_PV}" ]] ; then
+eerror "ELECTRON_BUILDER_PV must be defined"
+		die
+	fi
+	if ver_test "${ELECTRON_BUILDER_PV}" "-ge" "26.15.3" ; then
+	# Breaking change introduced in maybe 9097daf
+	# electron-builder 26.15.7
+		# Use the exact base URL evaluation that @electron/get generates
+		local uri="https://github.com/electron/electron/releases/download/${ELECTRON_CUSTOM_DIR}/${fn}"
+		local stripped_url="${uri%/*}"
+		local dir_hash=$(echo -n "${stripped_url}" | sha256sum | awk '{print $1}')
+
+		CACHE_DIR="${ELECTRON_CACHE}/${dir_hash}"
+		mkdir -p "${CACHE_DIR}" || die
+
+		# Copy the main binary payload into place
+		cat "${DISTDIR}/${fn}" > "${CACHE_DIR}/${fn}" || die
+
+		# FIX: Extract the REAL binary SHA-256 hash from your existing manifest
+		# rather than writing the URL's directory hash into the text parser.
+		local binary_hash=$(grep "${fn}" "${DISTDIR}/electron-SHASUMS256.txt.${ELECTRON_APP_ELECTRON_PV}" | awk '{print $1}')
+
+		if [[ -z "${binary_hash}" ]]; then
+			# Fallback calculation if the text layout inside the patch manifest changes
+			binary_hash=$(sha256sum "${DISTDIR}/${fn}" | awk '{print $1}')
+		fi
+
+		# FIX: Use printf with explicit double-newlines (\n\n) to guarantee
+		# that sumchecker reads a valid text block and empty trailing line.
+		printf "%s *%s\n\n" "${binary_hash}" "${fn}" > "${CACHE_DIR}/shasums256.txt" || die
+
+		# Fallback: create both lowercase and uppercase variants to satisfy
+		# any rigid file matching overrides inside app-builder-lib.
+		cp "${CACHE_DIR}/shasums256.txt" "${CACHE_DIR}/SHASUMS256.txt" || die
+	else
+	# electron-builder 26.8.1
+		cat "${DISTDIR}/${fn}" > "${ELECTRON_CACHE}/${fn}" || die
+		cat "${DISTDIR}/electron-SHASUMS256.txt.${ELECTRON_APP_ELECTRON_PV}" > "${ELECTRON_CACHE}/SHASUMS256.txt" || die
+	fi
 }
 
 # @FUNCTION: electron-app_get_electron_platarch_args
