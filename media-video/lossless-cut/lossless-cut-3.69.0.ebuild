@@ -17,7 +17,7 @@ EAPI=8
 
 MY_PN="${PN/-/}"
 
-_ELECTRON_DEP_ROUTE="secure" # reproducible or secure
+_ELECTRON_DEP_ROUTE="reproducible" # reproducible or secure.  Working with reproducible but not secure.
 # TODO:  Fix newer sharp with ICON_TYPE="png"
 ICON_TYPE=${ICON_TYPE:-"png"} # svg or png.  png is used by upstream and is broken for newer sharp.
 NPM_AUDIT_FIX=0 # Breaks build
@@ -107,7 +107,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${PATENT_STATUS[@]}
 lame opus svt-av1 theora vorbis vpx x264
-ebuild_revision_38
+ebuild_revision_39
 "
 REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -431,7 +431,7 @@ pkg_postinst() {
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (3.68.0, 20260304 with Electron 40.6.1)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (3.68.0, 20260304 with Electron 40.7.0)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (3.68.1, 20260422 with Electron 41.3.0)
-# OILEDMACHINE-OVERLAY-TEST:  FAILED (3.69.0, 20270725 with Electron 43.2.0), breaks when doing ffprobe
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (3.69.0, 20270725 with Electron 42.3.0)
 # UI load:  pass
-# Load video:  fail
-# Export by segment:  TBA
+# Load video:  pass
+# Export by segment:  pass
