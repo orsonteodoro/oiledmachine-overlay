@@ -2762,6 +2762,7 @@ gen_rocm_rdepend() {
 }
 # Missing mkl_sycl_blas in =dev-libs/intel-compute-runtime-2023*
 RDEPEND="
+	!app-misc/ollama
 	acct-group/ollama:*
 	acct-user/ollama:*
 	blis? (
