@@ -9,7 +9,7 @@ EAPI=8
 # See also https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/
 
 GENPATCHES_FALLBACK_COMMIT="d4fa92430e875432c3a61bb3abd9b6e68ea9fcbd" # 2026-06-04 18:26:32 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="48a5a7ab8d6ab7090564339e039c421f315de912" # 2026-07-23 13:49:54 -0700 @ Merge tag 'v7.2-rc4-smb3-client-fixes' 
+LINUX_SOURCES_FALLBACK_COMMIT="3dab139d4795f688e4f243e40c7474df00d329d9" # 2026-07-25 10:15:23 -0700 @ Merge tag 'rust-fixes-7.2-2'
 RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
@@ -19,7 +19,7 @@ RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi
 EBUILD_REV="ebuild_revision_9"
 GENPATCHES_VER="live" # can be live only when 9999
 PATCH_PROJC_VER="7.1-r0"
-PATCH_RT_VER="7.2-rc2-rt1"
+PATCH_RT_VER="7.2-rc4-rt3"
 
 inherit ot-kernel-v7.2
 
