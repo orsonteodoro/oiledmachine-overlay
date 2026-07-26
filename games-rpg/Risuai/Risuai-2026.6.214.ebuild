@@ -769,7 +769,7 @@ RDEPEND+="
 	${TAURI_RDEPEND}
 	!games-rpg/RisuAI
 	ollama? (
-		>=app-misc/ollama-${OLLAMA_PV}:=
+		>=sci-ml/ollama-${OLLAMA_PV}:=
 	)
 	server? (
 		acct-group/risuai:*

@@ -31,7 +31,7 @@ RDEPEND="
 		>=dev-python/typer-0.7.0[${PYTHON_USEDEP}]
 		ollama? (
 			dev-python/litellm[${PYTHON_USEDEP}]
-			app-misc/ollama
+			sci-ml/ollama
 		)
 	')
 	>=dev-python/instructor-0.4.5[${PYTHON_SINGLE_USEDEP}]

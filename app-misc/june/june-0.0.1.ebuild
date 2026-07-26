@@ -80,10 +80,10 @@ RDEPEND+="
 	>=sci-ml/pytorch-2.3.1[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/torchaudio-2.3.1[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/transformers-4.40.2[${PYTHON_SINGLE_USEDEP}]
-	app-misc/ollama
 	media-libs/portaudio[alsa?,jack?,oss?]
 	media-libs/sdl2-mixer[wav]
 	media-libs/libsdl2[alsa?,jack?,nas?,oss?,pulseaudio?,sound,threads(+)]
+	sci-ml/ollama
 	|| (
 		sci-libs/mkl
 		sci-libs/openblas[eselect-ldso,openmp]

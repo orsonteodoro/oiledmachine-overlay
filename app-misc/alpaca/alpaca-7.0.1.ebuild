@@ -61,11 +61,11 @@ RDEPEND="
 		>=media-libs/opencv-4.11.0[${PYTHON_USEDEP},python]
 		>=virtual/pillow-11.2.1[${PYTHON_USEDEP}]
 	')
-	>=app-misc/ollama-0.3.12
 	>=app-text/libspelling-0.4.7
 	>=media-libs/portaudio-19.07.00
 	>=gui-libs/gtk-4:4[wayland?,X?]
 	>=gui-libs/vte-0.78.0[introspection]
+	>=sci-ml/ollama-0.3.12
 	dev-libs/appstream
 	dev-libs/gobject-introspection[${PYTHON_SINGLE_USEDEP}]
 	gui-libs/libadwaita[introspection]

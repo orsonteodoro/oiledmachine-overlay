@@ -85,7 +85,7 @@ fi
 SLOT="0"
 IUSE+=" ebuild_revision_19"
 RDEPEND="
-	app-misc/ollama
+	sci-ml/ollama
 "
 BDEPEND="
 	|| (

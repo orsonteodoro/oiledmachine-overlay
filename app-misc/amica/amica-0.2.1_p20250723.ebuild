@@ -711,7 +711,7 @@ RDEPEND+="
 		sys-process/procps
 	)
 	ollama? (
-		app-misc/ollama
+		sci-ml/ollama
 	)
 	whisper-cpp? (
 		app-accessibility/whisper-cpp
