@@ -9,7 +9,7 @@ EAPI=8
 # See also https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/
 
 GENPATCHES_FALLBACK_COMMIT="d4fa92430e875432c3a61bb3abd9b6e68ea9fcbd" # 2026-06-04 18:26:32 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="3dab139d4795f688e4f243e40c7474df00d329d9" # 2026-07-25 10:15:23 -0700 @ Merge tag 'rust-fixes-7.2-2'
+LINUX_SOURCES_FALLBACK_COMMIT="f5098b6bae761e346ebcd9da7f95622c04733cff" # 2026-07-26 14:45:48 -0700 @ Linux 7.2-rc5
 RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
