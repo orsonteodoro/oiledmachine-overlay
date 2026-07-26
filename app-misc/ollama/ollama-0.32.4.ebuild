@@ -2996,7 +2996,7 @@ PDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-0.30.7-cmd-changes.patch"
+	"${FILESDIR}/${PN}-0.32.4-cmd-changes.patch"
 	"${FILESDIR}/${PN}-0.30.6-hardcoded-paths.patch"
 	"${FILESDIR}/${PN}-0.24.0-disable-agent-install.patch"
 	"${FILESDIR}/${PN}-0.32.4-optionalize-features.patch"
