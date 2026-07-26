@@ -4750,6 +4750,7 @@ einfo
 einfo "For OpenRC:"
 einfo
 einfo "  etc-update"
+einfo "  source /etc/profile"
 einfo "  \`killall -9 ollama\`"
 einfo "  /etc/init.d/ollama stop"
 einfo "  \`killall -9 ollama\`"
@@ -4759,6 +4760,7 @@ einfo
 einfo "For systemd:"
 einfo
 einfo "  etc-update"
+einfo "  source /etc/profile"
 einfo "  \`killall -9 ollama\`"
 einfo "  systemctl stop ollama"
 einfo "  \`killall -9 ollama\`"
