@@ -25,6 +25,7 @@ EAPI=8
 # 0.18.3 -> 0.21.2
 # 0.21.2 -> 0.24.0
 # 0.24.0 -> 0.30.6
+# 0.30.7 -> 0.32.4
 
 # Hardened because of CVE-2024-37032 implications of similar attacks.
 
@@ -596,7 +597,7 @@ ROCM_IUSE=(
 	$(gen_rocm_iuse)
 )
 
-LLAMA_CPP_TAG="b9509"
+LLAMA_CPP_TAG="b10091" # See https://github.com/ollama/ollama/blob/v0.32.4/LLAMA_CPP_VERSION
 
 if ! [[ "${PV}" =~ "9999" ]] ; then
 	export S_GO="${WORKDIR}/go-mod"
@@ -1026,7 +1027,6 @@ else
 		"github.com/yuin/goldmark v1.1.27/go.mod"
 		"github.com/yuin/goldmark v1.2.1/go.mod"
 		"github.com/yuin/goldmark v1.3.5/go.mod"
-		"github.com/yuin/goldmark v1.4.13"
 		"github.com/yuin/goldmark v1.4.13/go.mod"
 		"go.opentelemetry.io/proto/otlp v0.7.0/go.mod"
 		"go4.org/unsafe/assume-no-moving-gc v0.0.0-20231121144256-b99613f794b6"
@@ -1091,8 +1091,6 @@ else
 		"golang.org/x/mod v0.23.0/go.mod"
 		"golang.org/x/mod v0.28.0"
 		"golang.org/x/mod v0.28.0/go.mod"
-		"golang.org/x/mod v0.29.0"
-		"golang.org/x/mod v0.29.0/go.mod"
 		"golang.org/x/mod v0.3.0"
 		"golang.org/x/mod v0.3.0/go.mod"
 		"golang.org/x/mod v0.30.0"
@@ -1188,8 +1186,6 @@ else
 		"golang.org/x/sys v0.5.0/go.mod"
 		"golang.org/x/sys v0.6.0"
 		"golang.org/x/sys v0.6.0/go.mod"
-		"golang.org/x/telemetry v0.0.0-20251008203120-078029d740a8"
-		"golang.org/x/telemetry v0.0.0-20251008203120-078029d740a8/go.mod"
 		"golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod"
 		"golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod"
 		"golang.org/x/term v0.36.0"
@@ -3003,11 +2999,11 @@ PATCHES=(
 	"${FILESDIR}/${PN}-0.30.7-cmd-changes.patch"
 	"${FILESDIR}/${PN}-0.30.6-hardcoded-paths.patch"
 	"${FILESDIR}/${PN}-0.24.0-disable-agent-install.patch"
-	"${FILESDIR}/${PN}-0.30.6-optionalize-features.patch"
+	"${FILESDIR}/${PN}-0.32.4-optionalize-features.patch"
 )
 
 LLAMA_CPP_PATCHES=(
-	"${FILESDIR}/llama-cpp-b9509-custom-cpu-features.patch"
+	"${FILESDIR}/llama-cpp-b10091-custom-cpu-features.patch"
 	"${FILESDIR}/llama-cpp-b9509-cuda-not-fatal.patch"
 )
 
@@ -3313,12 +3309,6 @@ einfo "Editing ${x} for ragel -Z -> ragel-go"
 			"api/client.go" \
 			"app/tools/cloud_policy.go" \
 			"cmd/launch/models.go" \
-			"x/cmd/run.go" \
-			|| die
-	else
-		sed -i \
-			-e "s|@DISABLE_CLOUD_SUPPORT@|true|g" \
-			"x/cmd/run.go" \
 			|| die
 	fi
 	if use mlx ; then
