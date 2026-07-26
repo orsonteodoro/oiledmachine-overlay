@@ -424,6 +424,9 @@ einfo "IV = Insufficient Validation of Input or Data"
 # See also MISCOMP, BGC, PGC
 einfo "JITM = JIT Miscompilation"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"JITS"($|" "|";"|",") ]] ; then
+einfo "JITS = JIT Spray"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"KEV"($|" "|";"|",") ]] ; then
 # Government recognition of AEITW
 einfo "KEV = Known Exploited Vulnerabilities (CISA, U.S. Government Advisory)"
