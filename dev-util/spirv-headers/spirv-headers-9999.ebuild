@@ -4,6 +4,9 @@
 EAPI=8
 
 MY_PN=SPIRV-Headers
+
+INTERNAL_VERSION="1.6.7" # https://github.com/KhronosGroup/SPIRV-Headers/blob/main/include/spirv/unified1/spirv.core.grammar.json#L12
+
 inherit cmake
 
 if [[ ${PV} == *9999* ]]; then
@@ -24,7 +27,6 @@ DESCRIPTION="Machine-readable files for the SPIR-V Registry"
 HOMEPAGE="https://registry.khronos.org/SPIR-V/ https://github.com/KhronosGroup/SPIRV-Headers"
 
 LICENSE="MIT"
-INTERNAL_VERSION="1.6" # https://github.com/KhronosGroup/SPIRV-Headers/blob/main/include/spirv/unified1/spirv.core.grammar.json#L12
 SLOT="0/${INTERNAL_VERSION}"
 
 src_unpack() {
@@ -41,7 +43,7 @@ src_unpack() {
 	local spirv_headers_pv_c1=$(grep "major_version" "${p}" | grep -E -o -e "[0-9]+")
 	local spirv_headers_pv_c2=$(grep "minor_version" "${p}" | grep -E -o -e "[0-9]+")
 	local spirv_headers_pv_c3=$(grep "revision" "${p}" | grep -E -o -e "[0-9]+")
-	local actual_spirv_headers_pv="${spirv_headers_pv_c1}.${spirv_headers_pv_c2}"
+	local actual_spirv_headers_pv="${spirv_headers_pv_c1}.${spirv_headers_pv_c2}.${spirv_headers_pv_c3}"
 	local expected_spirv_headers_pv="${INTERNAL_VERSION}"
 	if ver_test "${actual_spirv_headers_pv}" "-ne" "${expected_spirv_headers_pv}" ; then
 eerror "QA:  Bump INTERNAL_VERSION"
