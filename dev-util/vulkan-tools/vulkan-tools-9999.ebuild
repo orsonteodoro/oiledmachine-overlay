@@ -96,11 +96,11 @@ eerror "Re-emerge both if live ebuilds."
 	fi
 	local actual_glslang_pv=$(/usr/bin/glslang --version | head -n 1 | cut -f 3 -d ":")
 	local expected_glslang_pv="${INTERNAL_GLSLANG_PV}"
-	if ver_test "${actual_glslang_pv}" "-lt" "${expected_glslang_pv}" ; then
+	if ver_test "${actual_glslang_pv}" "-ne" "${expected_glslang_pv}" ; then
 eerror "Detected old glslang version"
 eerror "Actual version:  ${actual_glslang_pv}"
 eerror "Expected version:  ${expected_glslang_pv}"
-eerror "Re-emerge glslang ebuild"
+eerror "Re-emerge glslang ebuild or wait for ebuild maintainer to update the pinned version."
 		die
 	fi
 
