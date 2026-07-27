@@ -91,7 +91,7 @@ multilib_src_configure() {
 eerror "Detected inconsistency between vulkan-headers and vulkan-loaders slots"
 eerror "vulkan-headers slot:  ${vulkan_headers_slot}"
 eerror "vulkan-loader slot:  ${vulkan_loader_slot}"
-eerror "Re-emerge both if live ebuilds."
+eerror "Re-emerge both if live ebuilds or use the fallback-commit USE flag."
 		die
 	fi
 	local actual_glslang_pv=$(/usr/bin/glslang --version | head -n 1 | cut -f 3 -d ":" | cut -f 1-2 -d ".")
@@ -100,7 +100,7 @@ eerror "Re-emerge both if live ebuilds."
 eerror "Detected old glslang version"
 eerror "Actual slot:  ${actual_glslang_slot}"
 eerror "Expected slot:  ${expected_glslang_slot}"
-eerror "Re-emerge glslang ebuild or wait for ebuild maintainer to update the pinned version."
+eerror "Re-emerge the glslang ebuild or use the fallback-commit USE flag."
 		die
 	fi
 
