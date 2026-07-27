@@ -43,7 +43,12 @@ IUSE+=" cube wayland test X"
 RESTRICT="!test? ( test )"
 
 BDEPEND="${PYTHON_DEPS}
-	cube? ( >=dev-util/glslang-${GLSLANG_PV}:=[${MULTILIB_USEDEP}] )
+	cube? (
+		>=dev-util/glslang-${GLSLANG_PV}:=[${MULTILIB_USEDEP}]
+		|| (
+			dev-util/glslang:0/${INTERNAL_GLSLANG_SLOT}[${MULTILIB_USEDEP}]
+		)
+	)
 	test? ( dev-cpp/gtest )
 "
 RDEPEND="

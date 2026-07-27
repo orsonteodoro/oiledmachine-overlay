@@ -4,7 +4,7 @@
 EAPI=8
 
 MY_PN="SPIRV-Tools"
-INTERNAL_SPIRV_HEADERS_SLOT="1.6" # See https://github.com/KhronosGroup/SPIRV-Headers/blob/main/include/spirv/unified1/spirv.core.grammar.json#L12
+INTERNAL_SPIRV_HEADERS_SLOT="1.6.7" # See https://github.com/KhronosGroup/SPIRV-Headers/blob/main/include/spirv/unified1/spirv.core.grammar.json#L12
 
 CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CXX_STANDARD=17
@@ -50,7 +50,10 @@ ebuild_revision_1
 RESTRICT="!test? ( test )"
 
 DEPEND="
-	>=dev-util/spirv-headers-${PV}:=
+	dev-util/spirv-headers:=
+	|| (
+		dev-util/spirv-headers:0/${INTERNAL_SPIRV_HEADERS_SLOT}
+	)
 "
 # RDEPEND=""
 BDEPEND="${PYTHON_DEPS}"
@@ -75,7 +78,7 @@ src_unpack() {
 	local spirv_headers_pv_c1=$(grep "major_version" "${p}" | grep -E -o -e "[0-9]+")
 	local spirv_headers_pv_c2=$(grep "minor_version" "${p}" | grep -E -o -e "[0-9]+")
 	local spirv_headers_pv_c3=$(grep "revision" "${p}" | grep -E -o -e "[0-9]+")
-	local actual_spirv_headers_pv="${spirv_headers_pv_c1}.${spirv_headers_pv_c2}"
+	local actual_spirv_headers_pv="${spirv_headers_pv_c1}.${spirv_headers_pv_c2}.${spirv_headers_pv_c3}"
 	local expected_spirv_headers_pv="${INTERNAL_SPIRV_HEADERS_SLOT}"
 	if ver_test "${actual_spirv_headers_slot}" "-ne" "${expected_spirv_headers_slot}" ; then
 eerror "QA:  The slot spirv-headers is inconsistent with this release."
