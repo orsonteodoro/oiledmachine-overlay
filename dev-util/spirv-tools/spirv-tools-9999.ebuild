@@ -4,6 +4,7 @@
 EAPI=8
 
 MY_PN="SPIRV-Tools"
+INTERNAL_SPIRV_HEADERS_PV="1.6.7" # See https://github.com/KhronosGroup/SPIRV-Headers/blob/main/include/spirv/unified1/spirv.core.grammar.json#L12
 
 CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CXX_STANDARD=17
@@ -20,10 +21,15 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-inherit cflags-hardened cmake-multilib libcxx-slot libstdcxx-slot python-any-r1
+inherit cflags-hardened cmake-multilib libcxx-slot libstdcxx-slot secure-version python-any-r1
 
 if [[ "${PV}" == *"9999"* ]]; then
+	FALLBACK_COMMIT="a665e21f3061f34064b39937cf00fe8d8769f4ef"
+	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/KhronosGroup/${MY_PN}.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 	inherit git-r3
 else
 	EGIT_COMMIT="vulkan-sdk-${PV}"
@@ -37,15 +43,14 @@ HOMEPAGE="https://github.com/KhronosGroup/SPIRV-Tools"
 
 LICENSE="Apache-2.0"
 SLOT="0"
-IUSE="
+IUSE+="
 test
 ebuild_revision_1
 "
 RESTRICT="!test? ( test )"
 
 DEPEND="
-	~dev-util/spirv-headers-${PV}
-	dev-util/spirv-headers:=
+	>=dev-util/spirv-headers-${PV}:=
 "
 # RDEPEND=""
 BDEPEND="${PYTHON_DEPS}"
@@ -54,6 +59,30 @@ pkg_setup() {
 	python-any-r1_pkg_setup
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+}
+
+src_unpack() {
+	if [[ "${PV}" == *"9999"* ]]; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+	local spirv_headers_pv_c1=$(grep "major_version" "/usr/include/spirv/unified1/spirv.core.grammar.json" | grep -E -o -e "[0-9]+")
+	local spirv_headers_pv_c2=$(grep "minor_version" "/usr/include/spirv/unified1/spirv.core.grammar.json" | grep -E -o -e "[0-9]+")
+	local spirv_headers_pv_c3=$(grep "revision" "/usr/include/spirv/unified1/spirv.core.grammar.json" | grep -E -o -e "[0-9]+")
+	local actual_spirv_headers_pv="${spirv_headers_pv_c1}.${spirv_headers_pv_c2}.${spirv_headers_pv_c3}"
+	local expected_spirv_headers_pv="${INTERNAL_SPIRV_HEADERS_PV}"
+	if ver_test "${actual_spirv_headers_pv}" "-ne" "${expected_spirv_headers_pv}" ; then
+eerror "QA:  The spirv-headers is inconsistent"
+eerror "Actual spirv-headers version:  ${actual_spirv_headers_pv}"
+eerror "Expected spirv-headers version:  ${expected_spirv_headers_pv}"
+eerror "Try re-emerging the spirv-headers packages or wait for ebuild maintainer to update the pinned version in ${PN}."
+		die
+	fi
 }
 
 multilib_src_configure() {
