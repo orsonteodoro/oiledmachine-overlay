@@ -4,12 +4,17 @@
 EAPI=8
 
 MY_PN=Vulkan-Loader
-COMMIT_ID="9fd87c33d003122d07169230030ed34cc6dd6bca"
+COMMIT_ID="5f157b62e333c63260d05d81bf66faa216ab0fb8"
 FLAVOR="vulkan-tmp" # vulkan-tmp or vulkan-sdk
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 
-inherit cmake-multilib cflags-hardened flag-o-matic toolchain-funcs
+CHKL_TIMESTAMPS=(
+	"dev-libs/wayland-9999"
+	"x11-libs/libX11-9999"
+)
+
+inherit chkl cmake-multilib cflags-hardened flag-o-matic secure-version toolchain-funcs
 
 if [[ ${PV} == *9999* ]]; then
 	FALLBACK_COMMIT="${COMMIT_ID}"
@@ -35,12 +40,12 @@ SLOT="0"
 IUSE+=" wayland X"
 
 DEPEND="
-	~dev-util/vulkan-headers-${PV}
-	wayland? ( dev-libs/wayland:=[${MULTILIB_USEDEP}] )
+	~dev-util/vulkan-headers-${PV}:=
+	wayland? ( >=dev-libs/wayland-${WAYLAND_PV}:=[${MULTILIB_USEDEP}] )
 	X? (
-		x11-base/xorg-proto
-		x11-libs/libX11:=[${MULTILIB_USEDEP}]
-		x11-libs/libXrandr:=[${MULTILIB_USEDEP}]
+		x11-base/xorg-proto:=
+		>=x11-libs/libX11-${LIBX11_PV}:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libXrandr-${LIBXRANDR_PV}:=[${MULTILIB_USEDEP}]
 	)
 "
 
@@ -67,6 +72,7 @@ eerror "Expected version:  ${expected_ver}"
 }
 
 multilib_src_configure() {
+	chkl_check_many_timestamps
 	cflags-hardened_append
 	# Integrated clang assembler doesn't work with x86 - Bug #698164
 	if tc-is-clang && [[ ${ABI} == x86 ]]; then
