@@ -23,6 +23,7 @@ CHKL_TIMESTAMPS=(
 inherit chkl cmake-multilib python-any-r1 secure-version
 
 if [[ ${PV} == *9999* ]]; then
+	INTERNAL_VERSION="1.4.357"
 	FALLBACK_COMMIT="a665e21f3061f34064b39937cf00fe8d8769f4ef"
 	EGIT_REPO_URI="https://github.com/KhronosGroup/${MY_PN}.git"
 	EGIT_SUBMODULES=()
@@ -31,6 +32,7 @@ if [[ ${PV} == *9999* ]]; then
 	fi
 	inherit git-r3
 else
+	INTERNAL_VERSION=$(ver_cut "1-3" "${PV}")
 	SRC_URI="https://github.com/KhronosGroup/Vulkan-Tools/archive/refs/tags/v${MY_PV}.tar.gz -> ${P}.tar.gz"
 	KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv"
 	S="${WORKDIR}"/${MY_PN}${FLAVOR}-${MY_PV}
@@ -40,7 +42,7 @@ DESCRIPTION="Official Vulkan Tools and Utilities for Windows, Linux, Android, an
 HOMEPAGE="https://github.com/KhronosGroup/Vulkan-Tools"
 
 LICENSE="Apache-2.0"
-SLOT="0"
+SLOT="0/${INTERNAL_VERSION}"
 IUSE+=" cube wayland test X"
 RESTRICT="!test? ( test )"
 
@@ -88,6 +90,14 @@ src_unpack() {
 		git-r3_checkout
 	else
 		unpack ${A}
+	fi
+	local actual_pv=$(grep -E -o -e "^project(Vulkan-Tools" | sed -e "s|)||g" | cut -f 2 -d " ")
+	local expected_pv="${INTERNAL_VERSION}"
+	if ver_test "${actual_pv}" "-ne" "${expected_pv}" ; then
+eerror "QA:  Update INTERNAL_VERSION"
+eerror "Actual version:  ${actual_pv}"
+eerror "Expected version:  ${expected_pv}"
+		die
 	fi
 }
 
