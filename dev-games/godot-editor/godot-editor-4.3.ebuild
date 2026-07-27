@@ -90,6 +90,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libtheora-9999"
 	"media-libs/libvorbis-9999"
 	"media-libs/libwebp-9999"
+	"media-libs/vulkan-loader-9999"
 	"sys-apps/dbus-9999"
 	"sys-apps/util-linux-9999"
 	"x11-libs/libX11-9999"
@@ -576,9 +577,9 @@ DEPEND+="
 		>=app-arch/zstd-${ZSTD_PV}:=
 	)
 	vulkan? (
-		virtual/vulkan
+		virtual/vulkan:=
 		!volk? (
-			media-libs/vulkan-loader:=[X]
+			>=media-libs/vulkan-loader-${VULKAN_PV}:=[X]
 			layers? (
 				media-libs/vulkan-layers:=
 			)

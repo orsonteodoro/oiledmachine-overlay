@@ -1198,7 +1198,7 @@ RDEPEND+="
 		>=media-libs/libvpx-${LIBVPX_PV}:=[${MULTILIB_USEDEP}]
 	)
 	vulkan? (
-		>=media-libs/vulkan-loader-${VULKAN_LOADER_PV}:=[${MULTILIB_USEDEP}]
+		>=media-libs/vulkan-loader-${VULKAN_PV}:=[${MULTILIB_USEDEP}]
 		virtual/vulkan:*[${MULTILIB_USEDEP}]
 	)
 	whisper? (

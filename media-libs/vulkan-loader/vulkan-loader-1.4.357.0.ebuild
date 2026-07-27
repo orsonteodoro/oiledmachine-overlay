@@ -11,6 +11,7 @@ CFLAGS_HARDENED_USE_CASES="untrusted-data"
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/wayland-9999"
+	"dev-util/vulkan-headers-9999"
 	"x11-libs/libX11-9999"
 )
 
@@ -40,7 +41,7 @@ SLOT="0"
 IUSE+=" wayland X"
 
 DEPEND="
-	~dev-util/vulkan-headers-${PV}:=
+	>=dev-util/vulkan-headers-${VULKAN_PV}:=
 	wayland? ( >=dev-libs/wayland-${WAYLAND_PV}:=[${MULTILIB_USEDEP}] )
 	X? (
 		x11-base/xorg-proto:=
@@ -68,6 +69,15 @@ eerror "Actual version:  ${actual_ver}"
 eerror "Expected version:  ${expected_ver}"
 			die
 		fi
+	fi
+	local actual_vulkan_headers_pv=$(grep -r -e "api version" "/usr/share/vulkan/registry/validusage.json" | sed -r -e "s|[ ]+||g" | cut -f 4 -d '"')
+	local expected_vulkan_headers_pv=$(ver_cut 1-3 "${PV}")
+	if ver_test "${actual_vulkan_headers_pv}" "-ne" "${expected_vulkan_headers_pv}" ; then
+eerror "Detected vulkan header version inconsistency"
+eerror "Actual vulkan-headers version:  ${actual_vulkan_headers_pv}"
+eerror "Expected vulkan-headers version:  ${expected_vulkan_headers_pv}"
+eerror "Re-emerge vulkan-headers to match this version."
+		die
 	fi
 }
 

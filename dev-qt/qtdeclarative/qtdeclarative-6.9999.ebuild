@@ -32,9 +32,10 @@ LLVM_COMPAT=(
 CHKL_TIMESTAMPS=(
 	"dev-qt/qtbase-6.9999"
 	"dev-qt/qtsvg-6.9999"
+	"dev-util/vulkan-headers-9999"
 )
 
-inherit cflags-hardened chkl libcxx-slot libstdcxx-slot python-any-r1 qt6-build
+inherit cflags-hardened chkl libcxx-slot libstdcxx-slot python-any-r1 secure-version qt6-build
 
 DESCRIPTION="Qt Declarative (Quick 2)"
 
@@ -56,12 +57,11 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
-	vulkan? ( dev-util/vulkan-headers:= )
+	vulkan? ( >=dev-util/vulkan-headers-${VULKAN_PV}:= )
 "
 BDEPEND="
 	${PYTHON_DEPS}
-	~dev-qt/qtshadertools-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	dev-qt/qtshadertools:=
+	~dev-qt/qtshadertools-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 "
 
 PATCHES=(

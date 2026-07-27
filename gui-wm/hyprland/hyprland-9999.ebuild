@@ -37,6 +37,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/hyprlang-9999"
 	"dev-libs/libinput-9999"
 	"dev-libs/wayland-9999"
+	"dev-util/glslang-9999"
 	"gui-libs/hyprutils-9999"
 	"media-libs/lcms-9999"
 	"media-libs/mesa-9999"
@@ -107,6 +108,7 @@ RDEPEND="
 	>=dev-libs/libinput-${LIBINPUT_PV}:=
 	>=dev-libs/udis86-1.7.2:=
 	>=dev-libs/wayland-${WAYLAND_PV}:=
+	>=dev-util/glslang-${GLSLANG_PV}:=
 	>=gui-libs/aquamarine-0.11.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=gui-libs/hyprcursor-0.1.13:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=gui-libs/hyprutils-${HYPRUTILS_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
@@ -126,7 +128,6 @@ RDEPEND="
 	dev-cpp/sdbus-c++:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-lang/lua:5.5=
 	dev-libs/re2:${RE2_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
-	dev-util/glslang:=
 	guiutils? (
 		gui-libs/hyprland-guiutils:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)

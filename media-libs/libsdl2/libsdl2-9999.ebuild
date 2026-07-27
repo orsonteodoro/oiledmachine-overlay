@@ -14,9 +14,11 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="DF HO"
 CHKL_TIMESTAMPS=(
 	"dev-libs/libusb-9999"
 	"dev-libs/wayland-9999"
+	"dev-util/vulkan-headers-9999"
 	"media-libs/alsa-lib-9999"
 	"media-libs/libpulse-9999"
 	"media-libs/mesa-9999"
+	"media-libs/vulkan-loader-9999"
 	"media-sound/sndio-9999"
 	"media-video/pipewire-9999"
 	"sys-apps/dbus-9999"
@@ -303,7 +305,7 @@ RDEPEND="
 	)
 	vulkan? (
 		virtual/vulkan:=[${MULTILIB_USEDEP}]
-		>=media-libs/vulkan-loader-${VULKAN_LOADER_PV}:=[${MULTILIB_USEDEP}]
+		>=media-libs/vulkan-loader-${VULKAN_PV}:=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
@@ -321,7 +323,7 @@ DEPEND="
 		x11-libs/libX11:=[${MULTILIB_USEDEP}]
 	)
 	vulkan? (
-		>=dev-util/vulkan-headers-${VULKAN_LOADER_PV}:=
+		>=dev-util/vulkan-headers-${VULKAN_PV}:=
 	)
 	X? (
 		x11-base/xorg-proto:=

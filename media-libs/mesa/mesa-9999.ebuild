@@ -52,6 +52,7 @@ CPU_FLAGS_X86=(
 CHKL_TIMESTAMPS=(
 	"app-arch/zstd-9999"
 	"dev-libs/expat-9999"
+	"dev-util/glslang-9999"
 	"media-libs/libdisplay-info-9999"
 	"media-libs/libva-9999"
 	"media-libs/vulkan-loader-9999"
@@ -259,7 +260,7 @@ RDEPEND="
 		virtual/libelf:0=[${MULTILIB_USEDEP}]
 	)
 	video_cards_zink? (
-		>=media-libs/vulkan-loader-${VULKAN_LOADER_PV}:=[${MULTILIB_USEDEP}]
+		>=media-libs/vulkan-loader-${VULKAN_PV}:=[${MULTILIB_USEDEP}]
 	)
 	vulkan? (
 		>=media-libs/libdisplay-info-${LIBDISPLAY_INFO_PV}:=[${MULTILIB_USEDEP}]
@@ -381,7 +382,7 @@ BDEPEND="
 		${CLC_DEPSTRING}
 	)
 	vulkan? (
-		dev-util/glslang
+		>=dev-util/glslang-${GLSLANG_PV}
 		video_cards_nvk? (
 			${CLC_DEPSTRING}
 			${RUST_DEPEND}

@@ -118,6 +118,8 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/fribidi-9999"
 	"dev-libs/jemalloc-9999"
 	"dev-libs/wayland-9999"
+	"dev-util/glslang-9999"
+	"dev-util/vulkan-headers-9999"
 	"media-libs/flac-9999"
 	"media-libs/harfbuzz-9999"
 	"media-libs/libaom-9999"
@@ -132,6 +134,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/openjpeg-9999"
 	"media-libs/opus-9999"
 	"media-libs/tiff-9999"
+	"media-libs/vulkan-loader-9999"
 	"media-libs/x264-9999"
 	"sys-libs/minizip-ng-9999"
 )
@@ -945,7 +948,7 @@ RDEPEND+="
 	>=dev-cpp/pystring-${PYSTRING_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-lang/python-3.11.11:=
 	>=dev-libs/fribidi-${FRIBIDI_PV}:=
-	>=dev-util/glslang-${VULKAN_PV}:=
+	>=dev-util/glslang-${GLSLANG_PV}:=
 	>=media-libs/freetype-${FREETYPE_PV}:=[brotli]
 	>=media-libs/libpng-${LIBPNG_PV}:=
 	>=media-libs/shaderc-2024.3:=[${LIBSTDCXX_USEDEP}]

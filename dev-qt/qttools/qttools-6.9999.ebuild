@@ -25,6 +25,7 @@ CHKL_TIMESTAMPS=(
 	"app-arch/zstd-9999"
 	"dev-qt/qtbase-6.9999"
 	"dev-qt/qtdeclarative-6.9999"
+	"dev-util/vulkan-headers-9999"
 )
 
 # behaves very badly when qttools is not already installed, also
@@ -94,7 +95,7 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 	qtdiag? (
-		vulkan? ( dev-util/vulkan-headers:= )
+		vulkan? ( >=dev-util/vulkan-headers-${VULKAN_PV}:= )
 	)
 "
 

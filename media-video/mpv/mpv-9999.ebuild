@@ -31,6 +31,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/libcdio-paranoia-9999"
 	"dev-lang/mujs-9999"
 	"dev-libs/wayland-9999"
+	"dev-util/vulkan-headers-9999"
 	"media-libs/alsa-lib-9999"
 	"media-libs/lcms-9999"
 	"media-libs/libdisplay-info-9999"
@@ -194,7 +195,7 @@ COMMON_DEPEND="
 		media-libs/libglvnd:=[X]
 		x11-libs/libvdpau:=
 	)
-	vulkan? ( >=media-libs/vulkan-loader-${VULKAN_LOADER_PV}:=[X?,wayland?] )
+	vulkan? ( >=media-libs/vulkan-loader-${VULKAN_PV}:=[X?,wayland?] )
 	wayland? (
 		>=dev-libs/wayland-${WAYLAND_PV}:=
 		>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=
@@ -216,7 +217,7 @@ DEPEND="
 		egl? ( >=x11-libs/libdrm-${LIBDRM_PV}:= )
 	)
 	vulkan? (
-		dev-util/vulkan-headers:=
+		>=dev-util/vulkan-headers-${VULKAN_PV}:=
 		virtual/vulkan:*
 	)
 	wayland? ( >=dev-libs/wayland-protocols-1.41:= )

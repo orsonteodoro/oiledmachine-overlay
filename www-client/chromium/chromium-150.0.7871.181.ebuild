@@ -270,7 +270,6 @@ UNGOOGLED_CHROMIUM_PV="150.0.7871.181-1"
 # possible to use all 3.  The 13.7 series fixes contains the 5c595ad commit \
 # to fix a compile error when DrumBrake is enabled. \
 #V8_PV="13.7.152.7" # About the same as the latest Chromium beta release.
-VULKAN_PV="1.4.350"
 
 COPIUM_COMMIT="b00f26bb5e0781020da5f830981472a142c6baf1"
 CROMITE_HASH="cb3baf14f52eb4365d017f640f85310735c19b79" # Not the same as the tagged commit but from the commit message

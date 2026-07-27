@@ -45,6 +45,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-3.4.9999"
 	"dev-libs/openssl-3.0.9999"
 	"dev-libs/wayland-9999"
+	"dev-util/vulkan-headers-9999"
 	"media-libs/fontconfig-9999"
 	"media-libs/harfbuzz-9999"
 	"media-libs/freetype-9999"
@@ -237,7 +238,7 @@ DEPEND="
 	${COMMON_DEPEND}
 	X? ( x11-base/xorg-proto:= )
 	gui? (
-		vulkan? ( dev-util/vulkan-headers:= )
+		vulkan? ( >=dev-util/vulkan-headers-${VULKAN_PV}:= )
 		wayland? ( dev-util/wayland-scanner:= )
 	)
 	network? (

@@ -448,6 +448,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-3.5.9999"
 	"dev-libs/openssl-3.4.9999"
 	"dev-libs/openssl-3.0.9999"
+	"dev-util/glslang-9999"
 	"gnome-base/librsvg-9999"
 	"media-libs/alsa-lib-9999"
 	"media-libs/chromaprint-9999"
@@ -1012,7 +1013,7 @@ RDEPEND+="
 		>=dev-libs/libgcrypt-${LIBGCRYPT_PV}:=[${MULTILIB_USEDEP}]
 	)
 	glslang? (
-		dev-util/glslang:=[${MULTILIB_USEDEP}]
+		>=dev-util/glslang-${GLSLANG_PV}:=[${MULTILIB_USEDEP}]
 		dev-util/spirv-tools:=[${MULTILIB_USEDEP}]
 	)
 	gme? (
@@ -1206,7 +1207,7 @@ RDEPEND+="
 		>=media-libs/libvpx-${LIBVPX_PV}:=[${MULTILIB_USEDEP}]
 	)
 	vulkan? (
-		>=media-libs/vulkan-loader-${VULKAN_LOADER_PV}:=[${MULTILIB_USEDEP}]
+		>=media-libs/vulkan-loader-${VULKAN_PV}:=[${MULTILIB_USEDEP}]
 		virtual/vulkan:*[${MULTILIB_USEDEP}]
 	)
 	whisper? (

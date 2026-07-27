@@ -133,8 +133,8 @@ IUSE+="
 	ebuild_revision_28
 "
 RDEPEND+="
-	virtual/vulkan
-	media-libs/vulkan-loader
+	>=virtual/vulkan:=
+	>=media-libs/vulkan-loader-${VULKAN_PV}:=
 	custom-models? (
 		media-gfx/upscayl-custom-models
 	)
@@ -143,13 +143,12 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=net-libs/nodejs-${NODEJS_22_PV}:${NODE_SLOT}
-	>=net-libs/nodejs-${NODEJS_22_PV}[npm]
+	>=net-libs/nodejs-${NODEJS_22_PV}:${NODE_SLOT}=[npm]
 	virtual/pkgconfig
 "
 PDEPEND+="
 	firejail? (
-		sys-apps/firejail
+		>=sys-apps/firejail-${FIREJAIL_PV}
 	)
 "
 

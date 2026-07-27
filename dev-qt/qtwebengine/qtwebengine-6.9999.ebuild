@@ -50,6 +50,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/libxslt-9999"
 	"dev-qt/qtbase-6.9999"
 	"dev-qt/qtdeclarative-6.9999"
+	"dev-util/vulkan-headers-9999"
 	"media-libs/alsa-lib-9999"
 	"media-libs/fontconfig-9999"
 	"media-libs/harfbuzz-9999"
@@ -176,7 +177,7 @@ DEPEND="
 	)
 	screencast? ( media-libs/libepoxy:=[egl(+)] )
 	vaapi? (
-		vulkan? ( >=dev-util/vulkan-headers-${VULKAN_LOADER_PV}:= )
+		vulkan? ( >=dev-util/vulkan-headers-${VULKAN_PV}:= )
 	)
 "
 BDEPEND="

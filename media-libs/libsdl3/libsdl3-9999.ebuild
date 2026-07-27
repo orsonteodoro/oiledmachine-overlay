@@ -8,9 +8,11 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="DF HO"
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/fribidi-9999"
+	"dev-util/vulkan-headers-9999"
 	"media-libs/alsa-lib-9999"
 	"media-libs/libpulse-9999"
 	"media-libs/mesa-9999"
+	"media-libs/vulkan-loader-9999"
 	"media-sound/sndio-9999"
 	"sys-apps/dbus-9999"
 	"x11-libs/libdrm-9999"
@@ -91,16 +93,16 @@ RDEPEND="
 		gui-libs/libdecor:=[${MULTILIB_USEDEP}]
 		>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=[${MULTILIB_USEDEP}]
 	)
-	vulkan? ( >=media-libs/vulkan-loader-${VULKAN_LOADER_PV}:=[${MULTILIB_USEDEP}] )
+	vulkan? ( >=media-libs/vulkan-loader-${VULKAN_PV}:=[${MULTILIB_USEDEP}] )
 "
 DEPEND="
 	${RDEPEND}
 	X? ( x11-base/xorg-proto:= )
 	test? (
-		>=dev-util/vulkan-headers-${VULKAN_LOADER_PV}:=
+		>=dev-util/vulkan-headers-${VULKAN_PV}:=
 		>=media-libs/libglvnd-${LIBGLVND_PV}:=
 	)
-	vulkan? ( >=dev-util/vulkan-headers-${VULKAN_LOADER_PV}:= )
+	vulkan? ( >=dev-util/vulkan-headers-${VULKAN_PV}:= )
 "
 BDEPEND="
 	doc? (

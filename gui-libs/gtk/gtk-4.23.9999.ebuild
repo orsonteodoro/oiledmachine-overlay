@@ -101,7 +101,7 @@ COMMON_DEPEND="
 	)
 	introspection? ( >=dev-libs/gobject-introspection-${GOBJECT_INTROSPECTION_PV}:= )
 	vulkan? (
-		>=media-libs/vulkan-loader-${VULKAN_LOADER_PV}:=[wayland?,X?]
+		>=media-libs/vulkan-loader-${VULKAN_PV}:=[wayland?,X?]
 		>=media-libs/mesa-${MESA_PV}:=[vulkan]
 		)
 	wayland? (

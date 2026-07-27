@@ -12,6 +12,8 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/libinput-9999"
 	"dev-libs/libliftoff-9999"
 	"dev-libs/wayland-9999"
+	"dev-util/glslang-9999"
+	"dev-util/vulkan-headers-9999"
 	"media-libs/lcms-9999"
 	"media-libs/libdisplay-info-9999"
 	"media-libs/mesa-9999"
@@ -73,9 +75,9 @@ RDEPEND="
 		virtual/libudev:=
 	)
 	vulkan? (
-		dev-util/glslang:=
-		dev-util/vulkan-headers:=
-		>=media-libs/vulkan-loader-${VULKAN_LOADER_PV}:=
+		>=dev-util/glslang-${GLSLANG_PV}:=
+		>=dev-util/vulkan-headers-${VULKAN_PV}:=
+		>=media-libs/vulkan-loader-${VULKAN_PV}:=
 	)
 	xcb-errors? ( x11-libs/xcb-util-errors:= )
 	x11-backend? (

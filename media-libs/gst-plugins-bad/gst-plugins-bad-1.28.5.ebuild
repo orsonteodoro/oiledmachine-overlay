@@ -40,11 +40,16 @@ CHKL_TIMESTAMPS=(
 	"app-arch/bzip2-9999"
 	"dev-libs/glib-2.89.9999"
 	"dev-libs/wayland-9999"
+	"dev-util/vulkan-headers-9999"
 	"media-libs/libva-9999"
+	"media-libs/vulkan-loader-9999"
 	"x11-libs/libdrm-9999"
+	"x11-libs/libX11-9999"
+	"x11-libs/libxcb-9999"
+	"x11-libs/libxkbcommon-9999"
 )
 
-inherit cflags-hardened chkl gstreamer-meson
+inherit cflags-hardened chkl gstreamer-meson secure-version
 
 KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~m68k ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86
@@ -130,7 +135,7 @@ RDEPEND="
 	${PATENT_STATUS_RDEPEND}
 	!media-plugins/gst-plugins-va
 	!media-plugins/gst-transcoder
-	>=dev-libs/glib-2.89.9999:=[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-${GLIB_PV}:=[${MULTILIB_USEDEP}]
 	~media-libs/gstreamer-${PV}:${SLOT}=[${MULTILIB_USEDEP},introspection?]
 	~media-libs/gst-plugins-base-${PV}:${SLOT}=[${MULTILIB_USEDEP},introspection?]
 	amf? (
@@ -138,21 +143,21 @@ RDEPEND="
 		media-video/amdgpu-pro-amf:=[video_cards_amdgpu?]
 	)
 	bzip2? (
-		>=app-arch/bzip2-9999:=[${MULTILIB_USEDEP}]
+		>=app-arch/bzip2-${BZIP2_PV}:=[${MULTILIB_USEDEP}]
 	)
 	introspection? (
-		>=dev-libs/gobject-introspection-1.86.0:=
+		>=dev-libs/gobject-introspection-${GOBJECT_INTROSPECTION_PV}:=
 	)
 	nls? (
 		sys-devel/gettext:=[${MULTILIB_USEDEP}]
 	)
 	nvcodec? (
-		>=dev-libs/glib-2.89.9999:=[${MULTILIB_USEDEP}]
+		>=dev-libs/glib-${GLIB_PV}:=[${MULTILIB_USEDEP}]
 		dev-util/nvidia-cuda-toolkit:=
 		x11-drivers/nvidia-drivers:=[${MULTILIB_USEDEP}]
 	)
 	orc? (
-		>=dev-lang/orc-0.4.42:=[${MULTILIB_USEDEP}]
+		>=dev-lang/orc-${ORC_PV}:=[${MULTILIB_USEDEP}]
 	)
 	qsv? (
 		msdk? (
@@ -167,7 +172,7 @@ RDEPEND="
 		)
 	)
 	vaapi? (
-		>=media-libs/libva-9999:=[${MULTILIB_USEDEP},wayland?,X?]
+		>=media-libs/libva-${LIBVA_PV}:=[${MULTILIB_USEDEP},wayland?,X?]
 		virtual/vaapi:*[video_cards_amdgpu?,video_cards_r600?,video_cards_radeonsi?,video_cards_intel?,video_cards_nouveau?,video_cards_nvidia?]
 		udev? (
 			dev-libs/libgudev:=[${MULTILIB_USEDEP}]
@@ -175,28 +180,28 @@ RDEPEND="
 	)
 	vnc? (
 		X? (
-			x11-libs/libX11:=[${MULTILIB_USEDEP}]
+			>=x11-libs/libX11-${LIBX11_PV}:=[${MULTILIB_USEDEP}]
 		)
 	)
 	vulkan? (
 		virtual/vulkan:*[${MULTILIB_USEDEP}]
-		media-libs/vulkan-loader:=[${MULTILIB_USEDEP},wayland?,X?]
+		>=media-libs/vulkan-loader-${VULKAN_PV}:=[${MULTILIB_USEDEP},wayland?,X?]
 	)
 	wayland? (
-		>=dev-libs/wayland-9999:=[${MULTILIB_USEDEP}]
+		>=dev-libs/wayland-${WAYLAND_PV}:=[${MULTILIB_USEDEP}]
 		>=dev-libs/wayland-protocols-1.44:=
-		>=x11-libs/libdrm-2.4.132:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libdrm-${LIBDRM_PV}:=[${MULTILIB_USEDEP}]
 	)
 	X? (
-		>=x11-libs/libxcb-1.10:=[${MULTILIB_USEDEP}]
-		x11-libs/libX11:=[${MULTILIB_USEDEP}]
-		x11-libs/libxkbcommon:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libxcb-${LIBXCB_PV}:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libX11-${LIBX11_PV}:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
 	${RDEPEND}
 	vulkan? (
-		dev-util/vulkan-headers:=
+		>=dev-util/vulkan-headers-${VULKAN_PV}:=
 	)
 "
 BDEPEND="

@@ -21,6 +21,7 @@ LLVM_COMPAT=(
 CHKL_TIMESTAMPS=(
 	"dev-qt/qtbase-6.9999"
 	"dev-qt/qtdeclarative-6.9999"
+	"dev-util/vulkan-headers-9999"
 	"media-libs/assimp-9999"
 )
 
@@ -54,7 +55,7 @@ DEPEND="
 	test? (
 		~dev-qt/qtbase-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},network]
 	)
-	vulkan? ( dev-util/vulkan-headers:= )
+	vulkan? ( >=dev-util/vulkan-headers-${VULKAN_PV}:= )
 "
 BDEPEND="
 	~dev-qt/qtshadertools-${PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]

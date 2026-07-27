@@ -383,6 +383,7 @@ CHKL_TIMESTAMPS=(
 	"dev-games/ogre-9999"
 	"dev-libs/glib-2.89.9999"
 	"dev-libs/wayland-9999"
+	"dev-util/vulkan-headers-9999"
 	"media-libs/harfbuzz-9999"
 	"media-libs/freetype-9999"
 	"media-libs/libavif-9999"
@@ -393,6 +394,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libwebp-9999"
 	"media-libs/openjpeg-9999"
 	"media-libs/tiff-9999"
+	"media-libs/vulkan-loader-9999"
 	"sci-libs/gdal-9999"
 	"sci-libs/openblas-9999"
 	"sci-ml/openvino-9999"
@@ -1073,7 +1075,7 @@ RDEPEND="
 		>=sci-libs/vtk-7.1.1:=[rendering,cuda=]
 	)
 	vulkan? (
-		>=media-libs/vulkan-loader-${VULKAN_LOADER_PV}:=[${MULTILIB_USEDEP}]
+		>=media-libs/vulkan-loader-${VULKAN_PV}:=[${MULTILIB_USEDEP}]
 		virtual/vulkan:=[${MULTILIB_USEDEP}]
 	)
 	wayland? (
@@ -1100,7 +1102,7 @@ DEPEND="
 		>=virtual/jdk-1.8:*
 	)
 	vulkan? (
-		dev-util/vulkan-headers:=
+		>=dev-util/vulkan-headers-${VULKAN_PV}:=
 	)
 	xvfb? (
 		x11-base/xorg-proto:=

@@ -60,7 +60,6 @@ CXX_STANDARD=17
 EGO_PN="github.com/ollama/ollama"
 GEN_EBUILD=0
 LLAMA_CPP_UPDATE=0
-VULKAN_PV="1.4.321.1"
 
 # U20
 # For depends see
@@ -611,8 +610,10 @@ fi
 
 CHKL_TIMESTAMPS=(
 	"app-shells/bash-9999"
+	"dev-util/vulkan-headers-9999"
 	"media-libs/fontconfig-9999"
 	"media-libs/freetype-9999"
+	"media-libs/vulkan-loader-9999"
 	"sci-libs/openblas-9999"
 	"sys-apps/firejail-9999"
 	"x11-libs/cairo-9999"

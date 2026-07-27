@@ -154,6 +154,7 @@ CPU_REQUIRED_USE="
 "
 
 CHKL_TIMESTAMPS=(
+	"dev-util/vulkan-headers-9999"
 	"media-libs/opus-9999"
 	"media-libs/libva-9999"
 	"media-libs/vulkan-loader-9999"
@@ -201,14 +202,14 @@ RDEPEND="
 		>=x11-libs/libvdpau-0.7:=
 	)
 	vulkan? (
-		>=media-libs/vulkan-loader-${VULKAN_LOADER_PV}:=
+		>=media-libs/vulkan-loader-${VULKAN_PV}:=
 	)
 "
 DEPEND="
 	${RDEPEND}
 	~www-client/chromium-sources-${PV}:=
 	vulkan? (
-		>=dev-util/vulkan-headers-1.3.277:=
+		>=dev-util/vulkan-headers-${VULKAN_PV}:=
 	)
 "
 BDEPEND="
