@@ -9,19 +9,24 @@ CXX_STANDARD=17
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-PYTHON_COMPAT=( "python3_"{11..14} )
+PYTHON_COMPAT=( "python3_"{10..14} )
 inherit cflags-hardened cmake-multilib libcxx-slot libstdcxx-slot python-any-r1
 
 if [[ ${PV} == *9999* ]]; then
+	FALLBACK_COMMIT="8292684e941bf22583b257bd9dfe47daccacb665"
+	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/KhronosGroup/${PN}.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 	inherit git-r3
 else
 	GIT_COMMIT="vulkan-sdk-${PV}"
@@ -34,16 +39,15 @@ DESCRIPTION="Khronos reference front-end for GLSL and ESSL, and sample SPIR-V ge
 HOMEPAGE="https://www.khronos.org/opengles/sdk/tools/Reference-Compiler/ https://github.com/KhronosGroup/glslang"
 
 LICENSE="BSD"
-SLOT="0/16.2"
+INTERNAL_PV="16.4" # Versioning based on https://github.com/KhronosGroup/glslang/blob/main/CHANGES.md
+SLOT="0/${INTERNAL_PV}"
 
 BDEPEND="${PYTHON_DEPS}
-	~dev-util/spirv-tools-${PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
-	dev-util/spirv-tools:=
+	>=dev-util/spirv-tools-${PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 "
 
 DEPEND="
-	~dev-util/spirv-tools-${PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
-	dev-util/spirv-tools:=
+	>=dev-util/spirv-tools-${PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 "
 RDEPEND="${DEPEND}"
 
@@ -51,6 +55,26 @@ pkg_setup() {
 	python-any-r1_pkg_setup
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+}
+
+src_unpack() {
+	if [[ ${PV} == *9999* ]]; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+	local actual_pv=$(grep -E -o "^## [0-9]+[.][0-9]+[.][0-9]+" "${S}/CHANGES.md" | head -n 1 | sed -e "s|^## ||g" | cut -f 1-2 -d ".")
+	local expected_pv="${INTERNAL_PV}"
+	if ver_test "${actual_pv}" "-ne" "${expected_pv}" ; then
+eerror "QA:  Update the INTERNAL_PV"
+eerror "QA:  Actual PV:  ${actual_pv}"
+eerror "QA:  Expected PV:  ${expected_pv}"
+		die
+	fi
 }
 
 multilib_src_configure() {
