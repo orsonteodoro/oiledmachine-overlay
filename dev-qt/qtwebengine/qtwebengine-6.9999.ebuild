@@ -16,10 +16,10 @@ CXX_STANDARD=17
 WEB_KERNEL_CONFIG_CHECK_YAMA=1
 PYTHON_COMPAT=( python3_{10..14} )
 
-FALLBACK_COMMIT="773dd4c98f4c55570c3c573a45ee17f09d41946e"
+FALLBACK_COMMIT="c5062977a16ad795431d28789760e269b81cd3e7"
 
 # See https://github.com/qt/qtwebengine/tree/dev/src for submodule ID
-# See https://github.com/qt/qtwebengine-chromium/blob/622496e/chromium/chrome/VERSION
+# See https://github.com/qt/qtwebengine-chromium/blob/1e2ffa9/chromium/chrome/VERSION
 CHROMIUM_VENDORED_VER="140.0.7339.225"
 CHROMIUM_VENDORED_TIMESTAMP="Oct 22, 2025 4:20 AM PDT"
 
@@ -64,6 +64,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/opus-9999"
 	"media-libs/tiff-9999"
 	"media-video/pipewire-9999"
+	"sys-apps/dbus-9999"
 	"x11-libs/libX11-9999"
 	"x11-libs/libxcb-9999"
 	"x11-libs/libXcursor-9999"
@@ -119,7 +120,7 @@ RDEPEND="
 	>=media-libs/openjpeg-${OPENJPEG_PV}:=
 	>=media-libs/opus-${OPUS_PV}:=
 	>=media-libs/tiff-${TIFF_PV}:=
-	sys-apps/dbus:=
+	>=sys-apps/dbus-${DBUS_PV}:=
 	sys-apps/pciutils:=
 	virtual/libudev:=
 	virtual/minizip:=
@@ -148,7 +149,7 @@ RDEPEND="
 	)
 	geolocation? ( ~dev-qt/qtpositioning-${PV}:6= )
 	kerberos? ( virtual/krb5:* )
-	opengl? ( media-libs/libglvnd:=[X] )
+	opengl? ( >=media-libs/libglvnd-${LIBGLVND_PV}:=[X] )
 	pulseaudio? ( >=media-libs/libpulse-${LIBPULSE_PV}:=[glib] )
 	screencast? (
 		>=dev-libs/glib-${GLIB_PV}:=
@@ -161,7 +162,7 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
-	media-libs/libglvnd:=
+	>=media-libs/libglvnd-${LIBGLVND_PV}:=
 	x11-base/xorg-proto:=
 	>=x11-libs/libXcursor-${LIBXCURSOR_PV}:=
 	>=x11-libs/libXi-${LIBXI_PV}:=
@@ -175,7 +176,7 @@ DEPEND="
 	)
 	screencast? ( media-libs/libepoxy:=[egl(+)] )
 	vaapi? (
-		vulkan? ( dev-util/vulkan-headers:= )
+		vulkan? ( >=dev-util/vulkan-headers-${VULKAN_LOADER_PV}:= )
 	)
 "
 BDEPEND="
@@ -183,7 +184,7 @@ BDEPEND="
 		dev-python/html5lib[${PYTHON_USEDEP}]
 	')
 	dev-util/gperf
-	net-libs/nodejs:${NODE_SLOT}[icu,ssl]
+	>=net-libs/nodejs-${NODEJS_22_PV}:${NODE_SLOT}[icu,ssl]
 	sys-devel/bison
 	sys-devel/flex
 "
