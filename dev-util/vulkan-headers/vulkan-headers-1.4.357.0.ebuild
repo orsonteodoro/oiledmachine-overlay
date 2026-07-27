@@ -19,7 +19,7 @@ if [[ ${PV} == *9999* ]]; then
 	fi
 	inherit git-r3
 else
-	INTERNAL_PV="${PV}"
+	INTERNAL_PV=$(ver_cut "1-3" "${PV}")
 	SRC_URI="
 https://github.com/KhronosGroup/Vulkan-Headers/archive/${COMMIT_ID}.tar.gz -> ${P}.${COMMIT_ID:0:7}.tar.gz
 	"
