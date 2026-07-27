@@ -18,6 +18,7 @@ CHKL_TIMESTAMPS=(
 inherit chkl cmake-multilib cflags-hardened flag-o-matic secure-version toolchain-funcs
 
 if [[ ${PV} == *9999* ]]; then
+	VULKAN_HEADER_SLOT="1.4.357"
 	FALLBACK_COMMIT="${COMMIT_ID}"
 	EGIT_REPO_URI="https://github.com/KhronosGroup/${MY_PN}.git"
 	EGIT_SUBMODULES=()
@@ -26,6 +27,7 @@ if [[ ${PV} == *9999* ]]; then
 	fi
 	inherit git-r3
 else
+	VULKAN_HEADER_SLOT=$(ver_cut "1-3" "${PV}")
 	SRC_URI="
 https://github.com/KhronosGroup/Vulkan-Loader/archive/${COMMIT_ID}.tar.gz -> ${P}.${COMMIT_ID:0:7}.tar.gz
 	"
@@ -41,7 +43,7 @@ SLOT="0"
 IUSE+=" wayland X"
 
 DEPEND="
-	>=dev-util/vulkan-headers-${VULKAN_PV}:=
+	~dev-util/vulkan-headers-${VULKAN_PV}:=
 	wayland? ( >=dev-libs/wayland-${WAYLAND_PV}:=[${MULTILIB_USEDEP}] )
 	X? (
 		x11-base/xorg-proto:=
@@ -70,12 +72,12 @@ eerror "Expected version:  ${expected_ver}"
 			die
 		fi
 	fi
-	local actual_vulkan_headers_pv=$(grep -r -e "api version" "/usr/share/vulkan/registry/validusage.json" | sed -r -e "s|[ ]+||g" | cut -f 4 -d '"')
-	local expected_vulkan_headers_pv=$(ver_cut 1-3 "${PV}")
-	if ver_test "${actual_vulkan_headers_pv}" "-ne" "${expected_vulkan_headers_pv}" ; then
-eerror "Detected vulkan header version inconsistency"
-eerror "Actual vulkan-headers version:  ${actual_vulkan_headers_pv}"
-eerror "Expected vulkan-headers version:  ${expected_vulkan_headers_pv}"
+	local actual_vulkan_headers_slot=$(grep -r -e "api version" "/usr/share/vulkan/registry/validusage.json" | sed -r -e "s|[ ]+||g" | cut -f 4 -d '"')
+	local expected_vulkan_headers_slot=$(ver_cut 1-3 "${PV}")
+	if ver_test "${actual_vulkan_headers_slot}" "-ne" "${expected_vulkan_headers_slot}" ; then
+eerror "Detected vulkan header slot inconsistency"
+eerror "Actual vulkan-headers slot:  ${actual_vulkan_headers_slot}"
+eerror "Expected vulkan-headers slot:  ${expected_vulkan_headers_slot}"
 eerror "Re-emerge vulkan-headers to match this version."
 		die
 	fi
