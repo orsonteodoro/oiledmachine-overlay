@@ -42,7 +42,7 @@ ieee1394
 
 # It may violate the Fail-Secure cybersecurity principle.
 # It is unknown how much of the code violates the principle.
-# For context see,
+# For context, see
 # https://github.com/mm2/Little-CMS/commit/bc4ee0633d375cb3bd1dd83b9ffc15ba37d12a64
 # https://github.com/mm2/Little-CMS/issues/580
 lcms
