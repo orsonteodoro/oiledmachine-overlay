@@ -2061,7 +2061,7 @@ COMMON_SNAPSHOT_DEPEND="
 		>=app-arch/snappy-${SNAPPY_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 	)
 	system-spirv-tools? (
-		>=dev-util/spirv-tools-${VULKAN_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
+		>=dev-util/spirv-tools-${SPIRV_TOOLS_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}]
 	)
 	system-sqlite? (
 		>=dev-db/sqlite-${SQLITE_PV}:=[${MULTILIB_USEDEP}]
@@ -2203,7 +2203,7 @@ DEPEND+="
 			>=gui-libs/gtk-${GTK4_PV}:4=[wayland?,X?]
 		)
 		system-spirv-headers? (
-			>=dev-util/spirv-headers-${VULKAN_PV}:=
+			>=dev-util/spirv-headers-${SPIRV_HEADERS_PV}:=
 		)
 		wayland? (
 			>=dev-libs/wayland-protocols-1.46:=

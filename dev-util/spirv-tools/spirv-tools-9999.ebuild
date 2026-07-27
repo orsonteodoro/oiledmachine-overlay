@@ -21,7 +21,11 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-inherit cflags-hardened cmake-multilib libcxx-slot libstdcxx-slot secure-version python-any-r1
+CHKL_TIMESTAMPS=(
+	"dev-util/spirv-headers-9999"
+)
+
+inherit cflags-hardened chkl cmake-multilib libcxx-slot libstdcxx-slot secure-version python-any-r1
 
 if [[ "${PV}" == *"9999"* ]]; then
 	FALLBACK_COMMIT="a665e21f3061f34064b39937cf00fe8d8769f4ef"
@@ -50,7 +54,7 @@ ebuild_revision_1
 RESTRICT="!test? ( test )"
 
 DEPEND="
-	dev-util/spirv-headers:=
+	>=dev-util/spirv-headers-${SPIRV_HEADERS_PV}:=
 	|| (
 		dev-util/spirv-headers:0/${INTERNAL_SPIRV_HEADERS_SLOT}
 	)
@@ -90,6 +94,7 @@ eerror "Use the fallback-commit USE flag or update the spirv-headers header pack
 }
 
 multilib_src_configure() {
+	chkl_check_many_timestamps
 	cflags-hardened_append
 	local mycmakeargs=(
 		-DSPIRV-Headers_SOURCE_DIR="${ESYSROOT}"/usr/

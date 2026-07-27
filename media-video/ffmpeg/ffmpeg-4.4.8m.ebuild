@@ -417,6 +417,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-3.4.9999"
 	"dev-libs/openssl-3.0.9999"
 	"dev-util/glslang-9999"
+	"dev-util/spirv-tools-9999"
 	"gnome-base/librsvg-9999"
 	"media-libs/alsa-lib-9999"
 	"media-libs/chromaprint-9999"
@@ -938,7 +939,7 @@ RDEPEND+="
 	)
 	glslang? (
 		>=dev-util/glslang-${GLSLANG_PV}:=[${MULTILIB_USEDEP}]
-		dev-util/spirv-tools:=[${MULTILIB_USEDEP}]
+		>=dev-util/spirv-tools-${SPIRV_TOOLS_PV}:=[${MULTILIB_USEDEP}]
 	)
 	gme? (
 		>=media-libs/game-music-emu-${GAME_MUSIC_EMU_PV}:=[${MULTILIB_USEDEP}]

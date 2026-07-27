@@ -53,6 +53,7 @@ CHKL_TIMESTAMPS=(
 	"app-arch/zstd-9999"
 	"dev-libs/expat-9999"
 	"dev-util/glslang-9999"
+	"dev-util/spirv-tools-9999"
 	"media-libs/libdisplay-info-9999"
 	"media-libs/libva-9999"
 	"media-libs/vulkan-loader-9999"
@@ -226,7 +227,7 @@ LIBDRM_DEPSTRING=">=x11-libs/libdrm-${LIBDRM_PV}:="
 RDEPEND="
 	${LIBDRM_DEPSTRING}[${MULTILIB_USEDEP}]
 	>=dev-libs/expat-${EXPAT_PV}:=[${MULTILIB_USEDEP}]
-	>=dev-util/spirv-tools-1.3.231.0:=[${MULTILIB_USEDEP}]
+	>=dev-util/spirv-tools-${SPIRV_TOOLS_PV}:=[${MULTILIB_USEDEP}]
 	>=media-libs/libglvnd-1.3.2:=[X?,${MULTILIB_USEDEP}]
 	>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}]
 	virtual/patent-status:*[patent_status_nonfree=]
