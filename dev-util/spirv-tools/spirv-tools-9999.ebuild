@@ -4,7 +4,7 @@
 EAPI=8
 
 MY_PN="SPIRV-Tools"
-INTERNAL_SPIRV_HEADERS_PV="1.6.7" # See https://github.com/KhronosGroup/SPIRV-Headers/blob/main/include/spirv/unified1/spirv.core.grammar.json#L12
+INTERNAL_SPIRV_HEADERS_SLOT="1.6" # See https://github.com/KhronosGroup/SPIRV-Headers/blob/main/include/spirv/unified1/spirv.core.grammar.json#L12
 
 CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CXX_STANDARD=17
@@ -71,16 +71,17 @@ src_unpack() {
 	else
 		unpack ${A}
 	fi
-	local spirv_headers_pv_c1=$(grep "major_version" "/usr/include/spirv/unified1/spirv.core.grammar.json" | grep -E -o -e "[0-9]+")
-	local spirv_headers_pv_c2=$(grep "minor_version" "/usr/include/spirv/unified1/spirv.core.grammar.json" | grep -E -o -e "[0-9]+")
-	local spirv_headers_pv_c3=$(grep "revision" "/usr/include/spirv/unified1/spirv.core.grammar.json" | grep -E -o -e "[0-9]+")
-	local actual_spirv_headers_pv="${spirv_headers_pv_c1}.${spirv_headers_pv_c2}.${spirv_headers_pv_c3}"
-	local expected_spirv_headers_pv="${INTERNAL_SPIRV_HEADERS_PV}"
-	if ver_test "${actual_spirv_headers_pv}" "-ne" "${expected_spirv_headers_pv}" ; then
-eerror "QA:  The spirv-headers is inconsistent"
-eerror "Actual spirv-headers version:  ${actual_spirv_headers_pv}"
-eerror "Expected spirv-headers version:  ${expected_spirv_headers_pv}"
-eerror "Try re-emerging the spirv-headers packages or wait for ebuild maintainer to update the pinned version in ${PN}."
+	local p="/usr/include/spirv/unified1/spirv.core.grammar.json"
+	local spirv_headers_pv_c1=$(grep "major_version" "${p}" | grep -E -o -e "[0-9]+")
+	local spirv_headers_pv_c2=$(grep "minor_version" "${p}" | grep -E -o -e "[0-9]+")
+	local spirv_headers_pv_c3=$(grep "revision" "${p}" | grep -E -o -e "[0-9]+")
+	local actual_spirv_headers_pv="${spirv_headers_pv_c1}.${spirv_headers_pv_c2}"
+	local expected_spirv_headers_pv="${INTERNAL_SPIRV_HEADERS_SLOT}"
+	if ver_test "${actual_spirv_headers_slot}" "-ne" "${expected_spirv_headers_slot}" ; then
+eerror "QA:  The slot spirv-headers is inconsistent with this release."
+eerror "Actual spirv-headers slot:  ${actual_spirv_headers_slot}"
+eerror "Expected spirv-headers slot:  ${expected_spirv_headers_slot}"
+eerror "Use the fallback-commit USE flag or update the spirv-headers header package."
 		die
 	fi
 }
