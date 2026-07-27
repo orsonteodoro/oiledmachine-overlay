@@ -26,7 +26,7 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
 )
 
-inherit libcxx-slot libstdcxx-slot
+inherit libcxx-slot libstdcxx-slot secure-version
 
 KEYWORDS="~amd64"
 S="${WORKDIR}"
@@ -58,8 +58,8 @@ REQUIRED_USE="
 	)
 "
 RDEPEND+="
-	dev-util/vulkan-headers:=
-	media-libs/vulkan-loader
+	>=dev-util/vulkan-headers-${VULKAN_PV}
+	>=media-libs/vulkan-loader-${VULKAN_PV}
 	video_cards_intel? (
 		media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},vulkan,video_cards_intel]
 	)
