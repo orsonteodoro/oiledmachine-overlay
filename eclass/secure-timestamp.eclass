@@ -179,6 +179,7 @@ SECURE_TIMESTAMP["dev_libs_openssl_3_4_9999"]="Jul 20, 2026 12:31 AM PDT"
 SECURE_TIMESTAMP["dev_libs_openssl_3_0_9999"]="Jul 20, 2026 12:28 PM PDT"
 
 SECURE_TIMESTAMP["dev_libs_pugixml_9999"]="Jun 15, 2026 1:38 PM PDT"
+SECURE_TIMESTAMP["dev_libs_rapidjson_9999"]="Feb 5, 2025 5:28 AM PST"
 SECURE_TIMESTAMP["dev_libs_re2_9999"]="Thu, 22 Jan 2026 16:05:23 -0500"
 SECURE_TIMESTAMP["dev_libs_wayland_9999"]="Mar 26, 2026 1:38:38 AM PDT"
 SECURE_TIMESTAMP["dev_lang_mujs_9999"]="May 6, 2026 8:40 AM PDT"
