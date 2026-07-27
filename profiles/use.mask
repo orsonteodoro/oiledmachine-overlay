@@ -42,7 +42,7 @@ ieee1394
 
 # It may violate the Fail-Secure cybersecurity principle.
 # It is unknown how much of the code violates the principle.
-#lcms
+lcms
 
 # The last release of libmng was in 2015.
 mng
