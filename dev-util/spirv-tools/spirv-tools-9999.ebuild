@@ -46,7 +46,8 @@ DESCRIPTION="Provides an API and commands for processing SPIR-V modules"
 HOMEPAGE="https://github.com/KhronosGroup/SPIRV-Tools"
 
 LICENSE="Apache-2.0"
-SLOT="0"
+INTERNAL_VERSION="2026.3" # From https://github.com/KhronosGroup/SPIRV-Tools/blob/main/CHANGES
+SLOT="0/${INTERNAL_VERSION}"
 IUSE+="
 test
 ebuild_revision_1
@@ -89,6 +90,15 @@ eerror "QA:  The slot spirv-headers is inconsistent with this release."
 eerror "Actual spirv-headers slot:  ${actual_spirv_headers_slot}"
 eerror "Expected spirv-headers slot:  ${expected_spirv_headers_slot}"
 eerror "Use the fallback-commit USE flag or update the spirv-headers header package."
+		die
+	fi
+
+	local actual_slot=$(grep -E -e "^v[0-9]{4}[.][0-9] [0-9]{4}-[0-9]{2}-[0-9]{2}" "${S}/CHANGES" | sed -e "s|^v||g" | cut -f 1 -d " ")
+	local expected_slot="${INTERNAL_VERSION}"
+	if ver_test "${actual_slot}" "-ne" "${expected_slot}" ; then
+eerror "QA:  Update INTERNAL_VERSION in ebuild"
+eerror "Actual slot:  ${actual_slot}"
+eerror "Expected slot:  ${expected_slot}"
 		die
 	fi
 }
