@@ -4,6 +4,8 @@
 EAPI=8
 
 MY_PN=Vulkan-Tools
+MY_PV=$(ver_cut 1-3 "${PV}")
+FLAVOR="" # Either -vulkan-sdk or empty
 
 # The Glslang version to Vulkan version correspondence is based on the date.
 INTERNAL_GLSLANG_SLOT="16.4" # From https://github.com/KhronosGroup/glslang/blob/main/CHANGES.md
@@ -29,9 +31,9 @@ if [[ ${PV} == *9999* ]]; then
 	fi
 	inherit git-r3
 else
-	SRC_URI="https://github.com/KhronosGroup/${MY_PN}/archive/vulkan-sdk-${PV}.tar.gz -> ${P}.tar.gz"
+	SRC_URI="https://github.com/KhronosGroup/Vulkan-Tools/archive/refs/tags/v${MY_PV}.tar.gz -> ${P}.tar.gz"
 	KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv"
-	S="${WORKDIR}"/${MY_PN}-vulkan-sdk-${PV}
+	S="${WORKDIR}"/${MY_PN}${FLAVOR}-${MY_PV}
 fi
 
 DESCRIPTION="Official Vulkan Tools and Utilities for Windows, Linux, Android, and MacOS"
@@ -90,15 +92,18 @@ src_unpack() {
 }
 
 multilib_src_configure() {
+einfo "Checking vulkan-header and vulkan-tools consistency"
 	local vulkan_headers_slot=$(grep -r -e "api version" "/usr/share/vulkan/registry/validusage.json" | sed -r -e "s|[ ]+||g" | cut -f 4 -d '"')
 	local vulkan_loader_slot=$(pkg-config --modversion vulkan)
-	if ver_test "${vulkan_headers_pv}" "-ne" "${vulkan_loader_pv}" ; then
+	if ver_test "${vulkan_headers_slot}" "-ne" "${vulkan_loader_slot}" ; then
 eerror "Detected inconsistency between vulkan-headers and vulkan-loaders slots"
 eerror "vulkan-headers slot:  ${vulkan_headers_slot}"
 eerror "vulkan-loader slot:  ${vulkan_loader_slot}"
 eerror "Re-emerge both if live ebuilds or use the fallback-commit USE flag."
 		die
 	fi
+
+einfo "Checking glslang consistency"
 	local actual_glslang_pv=$(/usr/bin/glslang --version | head -n 1 | cut -f 3 -d ":" | cut -f 1-2 -d ".")
 	local expected_glslang_pv="${INTERNAL_GLSLANG_SLOT}"
 	if ver_test "${actual_glslang_slot}" "-ne" "${expected_glslang_slot}" ; then
