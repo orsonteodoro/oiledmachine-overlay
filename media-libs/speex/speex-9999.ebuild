@@ -3,13 +3,33 @@
 
 EAPI=8
 
+MY_P="${P/_}"
+MY_P="${MY_P/_p/.}"
+
 CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE SO"
 
-inherit autotools cflags-hardened flag-o-matic multilib-minimal
+CHKL_TIMESTAMPS=(
+	"media-libs/libogg-9999"
+)
 
-MY_P="${P/_}"
-MY_P="${MY_P/_p/.}"
+inherit autotools cflags-hardened chkl flag-o-matic multilib-minimal secure-version
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="a1b872e6704cc5825750098ce0e0c0b4aacaef4d"
+	EGIT_BRANCH="main"
+	EGIT_REPO_URI="https://gitlab.xiph.org/xiph/speex.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	KEYWORDS="
+~alpha amd64 arm arm64 ~hppa ~loong ~mips ppc ppc64 ~riscv sparc x86
+~amd64-linux ~x86-linux ~ppc-macos ~x64-macos
+	"
+	SRC_URI="https://downloads.xiph.org/releases/speex/${MY_P}.tar.gz"
+fi
 
 CPU_FLAGS_ARM=(
 	"cpu_flags_arm_v4"
@@ -21,15 +41,10 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse"
 )
 
-KEYWORDS="
-~alpha amd64 arm arm64 ~hppa ~loong ~mips ppc ppc64 ~riscv sparc x86
-~amd64-linux ~x86-linux ~ppc-macos ~x64-macos
-"
 S="${WORKDIR}/${MY_P}"
 
 DESCRIPTION="Audio compression format designed for speech"
 HOMEPAGE="https://www.speex.org/"
-SRC_URI="https://downloads.xiph.org/releases/speex/${MY_P}.tar.gz"
 LICENSE="BSD"
 SLOT="0"
 IUSE="
@@ -40,8 +55,8 @@ ebuild_revision_24
 "
 RDEPEND="
 	utils? (
-		media-libs/libogg:=
-		media-libs/speexdsp[${MULTILIB_USEDEP}]
+		>=media-libs/libogg-${LIBOGG_PV}:=
+		>=media-libs/speexdsp-${SPEEXDSP_PV}:=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
@@ -55,10 +70,19 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-1.2.0-configure.patch"
-	"${FILESDIR}/${PN}-1.2.1-vla-detection.patch"
-	"${FILESDIR}/${PN}-1.2.1-slibtoolize.patch"
-	"${FILESDIR}/${PN}-1.2.1-valgrind.patch"
 )
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+}
 
 src_prepare() {
 	default
@@ -70,6 +94,7 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	chkl_check_many_timestamps
 	append-lfs-flags
 	cflags-hardened_append
 
