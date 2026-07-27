@@ -6,7 +6,7 @@ EAPI=8
 MY_PN=Vulkan-Tools
 
 # The Glslang version to Vulkan version correspondence is based on the date.
-INTERNAL_GLSLANG_PV="16.4.0" # From https://github.com/KhronosGroup/glslang/blob/main/CHANGES.md
+INTERNAL_GLSLANG_SLOT="16.4" # From https://github.com/KhronosGroup/glslang/blob/main/CHANGES.md
 PYTHON_COMPAT=( python3_{10..14} )
 
 CHKL_TIMESTAMPS=(
@@ -85,21 +85,21 @@ src_unpack() {
 }
 
 multilib_src_configure() {
-	local vulkan_headers_pv=$(grep -r -e "api version" "/usr/share/vulkan/registry/validusage.json" | sed -r -e "s|[ ]+||g" | cut -f 4 -d '"')
-	local vulkan_loader_pv=$(pkg-config --modversion vulkan)
+	local vulkan_headers_slot=$(grep -r -e "api version" "/usr/share/vulkan/registry/validusage.json" | sed -r -e "s|[ ]+||g" | cut -f 4 -d '"')
+	local vulkan_loader_slot=$(pkg-config --modversion vulkan)
 	if ver_test "${vulkan_headers_pv}" "-ne" "${vulkan_loader_pv}" ; then
-eerror "Detected inconsistency between vulkan-headers and vulkan-loaders"
-eerror "vulkan-headers version:  ${vulkan_headers_pv}"
-eerror "vulkan-loader version:  ${vulkan_loader_pv}"
+eerror "Detected inconsistency between vulkan-headers and vulkan-loaders slots"
+eerror "vulkan-headers slot:  ${vulkan_headers_slot}"
+eerror "vulkan-loader slot:  ${vulkan_loader_slot}"
 eerror "Re-emerge both if live ebuilds."
 		die
 	fi
-	local actual_glslang_pv=$(/usr/bin/glslang --version | head -n 1 | cut -f 3 -d ":")
-	local expected_glslang_pv="${INTERNAL_GLSLANG_PV}"
-	if ver_test "${actual_glslang_pv}" "-ne" "${expected_glslang_pv}" ; then
+	local actual_glslang_pv=$(/usr/bin/glslang --version | head -n 1 | cut -f 3 -d ":" | cut -f 1-2 -d ".")
+	local expected_glslang_pv="${INTERNAL_GLSLANG_SLOT}"
+	if ver_test "${actual_glslang_slot}" "-ne" "${expected_glslang_slot}" ; then
 eerror "Detected old glslang version"
-eerror "Actual version:  ${actual_glslang_pv}"
-eerror "Expected version:  ${expected_glslang_pv}"
+eerror "Actual slot:  ${actual_glslang_slot}"
+eerror "Expected slot:  ${expected_glslang_slot}"
 eerror "Re-emerge glslang ebuild or wait for ebuild maintainer to update the pinned version."
 		die
 	fi
