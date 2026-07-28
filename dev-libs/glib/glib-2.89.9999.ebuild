@@ -35,7 +35,7 @@ SLOT="2"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
 IUSE+="
 dbus debug +elf doc +introspection +mime selinux static-libs sysprof systemtap test utils xattr
-ebuild_revision_5
+ebuild_revision_6
 "
 RESTRICT="!test? ( test )"
 
@@ -104,6 +104,9 @@ MULTILIB_CHOST_TOOLS=(
 
 PATCHES=(
 	"${FILESDIR}"/${PN}-2.64.1-mark-gdbus-server-auth-test-flaky.patch
+
+	# oiledmachine-overlay patch
+	"${FILESDIR}/extra-patches/glib-90b0a7e-change-cast.patch"
 )
 
 python_check_deps() {

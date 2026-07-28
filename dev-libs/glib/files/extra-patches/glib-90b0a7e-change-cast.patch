@@ -1,0 +1,13 @@
+# This applies an AI suggested fix.
+# It fixes building the node Sharp library when system vips8 header includes glib.
+--- a/glib/gstrfuncs.h.orig	2026-07-28 07:40:14.193610058 -0700
++++ b/glib/gstrfuncs.h	2026-07-28 07:41:09.944047543 -0700
+@@ -621,7 +621,7 @@ G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+     return FALSE;
+ G_GNUC_END_IGNORE_DEPRECATIONS
+ 
+-  copy = g_strdupv ((char **) (guintptr) new_strv);
++  copy = g_strdupv ((char **) (uintptr_t) new_strv);
+   g_strfreev (*strv_pointer);
+   *strv_pointer = copy;
+ 

@@ -166,14 +166,20 @@ einfo "PKG_CONFIG_PATH:  ${PKG_CONFIG_PATH} (1)"
 		|| die "Failed to append libraries to binding.gyp"
 
 	# For vips header
+einfo "Adding glib-2.0 includes path to CPPFLAGS for glib-object.h for vips8"
 	append-cppflags -I"/usr/include/glib-2.0"
+einfo "Adding glib-2.0/include includes path to CPPFLAGS for glibconfig.h for glib/gtypes.h"
+	append-cppflags -I"/usr/lib/glib-2.0/include"
 
 	# Set PKG_CONFIG_PATH to use custom vips.pc
 einfo "PKG_CONFIG_PATH:  ${PKG_CONFIG_PATH} (2)"
 einfo "LD_LIBRARY_PATH:  ${LD_LIBRARY_PATH}"
 
+einfo "CC:  ${CC}"
+einfo "CXX:  ${CXX}"
 einfo "CFLAGS:  ${CFLAGS}"
 einfo "CXXFLAGS:  ${CXXFLAGS}"
+einfo "CPPFLAGS:  ${CPPFLAGS}"
 einfo "LDFLAGS:  ${LDFLAGS}"
 einfo "LIBS:  ${LIBS}"
 einfo "PKG_CONFIG_PATH:  ${PKG_CONFIG_PATH}"
@@ -219,7 +225,7 @@ eerror "The current Project Prefix is currently not supported."
 node-sharp_verify_built_symbols() {
 	if [[ -d "${S}/node_modules/sharp" ]]; then
 		local sharp_platform=$(node-sharp_get_platform)
-		einfo "Rebuilding sharp from source"
+		einfo "Verifying Sharp symbols"
 		pushd "${S}/node_modules/sharp" >/dev/null 2>&1 || die "Failed to enter sharp directory"
 			local fn="sharp-${sharp_platform}-${NODE_SHARP_PV}.node"
 			local node_path=$(realpath "${S}/node_modules/sharp/src/build/"*"/${fn}")
@@ -335,8 +341,10 @@ einfo "DEBUG:  PWD:  ${PWD}"
 		if ! ls ../install/build.js >/dev/null ; then
 ewarn "DEBUG:  Missing ../install/build.js for sharp (1)"
 		elif [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
+einfo "Building Sharp from source (Debug)"
 			node ../install/build.js --debug || die
 		else
+einfo "Building Sharp from source (Release)"
 			node ../install/build.js || die
 		fi
 	popd >/dev/null 2>&1 || die
@@ -413,8 +421,10 @@ einfo "DEBUG:  PWD:  ${PWD}"
 		if ! ls ../install/build.js >/dev/null ; then
 ewarn "DEBUG:  Missing ../install/build.js for sharp (2)"
 		elif [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
+einfo "Building Sharp from source (Debug)"
 			node ../install/build.js --debug || die
 		else
+einfo "Building Sharp from source (Release)"
 			node ../install/build.js || die
 		fi
 	popd >/dev/null 2>&1 || die
@@ -552,8 +562,10 @@ einfo "DEBUG:  PWD:  ${PWD}"
 		if ! ls ../install/build.js >/dev/null ; then
 ewarn "DEBUG:  Missing ../install/build.js for sharp (3)"
 		elif [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
+einfo "Building Sharp from source (Debug)"
 			node ../install/build.js --debug || die
 		else
+einfo "Building Sharp from source (Release)"
 			node ../install/build.js || die
 		fi
 	popd >/dev/null 2>&1 || die
