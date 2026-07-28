@@ -1,5 +1,15 @@
 # This applies an AI suggested fix.
 # It fixes building the node Sharp library when system vips8 header includes glib.
+
+#
+# Error:
+#
+# /usr/include/glib-2.0/glib/gstrfuncs.h: In function 'gboolean g_set_strv(char***, const char* const*)':
+# /usr/include/glib-2.0/glib/gstrfuncs.h:624:31: error: cast from 'const char* const*' to 'guintptr' {aka 'unsigned int'} loses precision [-fpermissive]
+#  624 |   copy = g_strdupv ((char **) (guintptr) new_strv);
+#      |                               ^~~~~~~~~~~~~~~~~~~
+#
+
 --- a/glib/gstrfuncs.h.orig	2026-07-28 07:40:14.193610058 -0700
 +++ b/glib/gstrfuncs.h	2026-07-28 07:41:09.944047543 -0700
 @@ -621,7 +621,7 @@ G_GNUC_BEGIN_IGNORE_DEPRECATIONS
