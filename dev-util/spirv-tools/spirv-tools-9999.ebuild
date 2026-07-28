@@ -93,7 +93,7 @@ eerror "Use the fallback-commit USE flag or update the spirv-headers header pack
 		die
 	fi
 
-	local actual_slot=$(grep -E -e "^v[0-9]{4}[.][0-9] [0-9]{4}-[0-9]{2}-[0-9]{2}" "${S}/CHANGES" | sed -e "s|^v||g" | cut -f 1 -d " ")
+	local actual_slot=$(grep -E -e "^v[0-9]{4}[.][0-9] [0-9]{4}-[0-9]{2}-[0-9]{2}" "${S}/CHANGES" | head -n 1 | sed -e "s|^v||g" | cut -f 1 -d " ")
 	local expected_slot="${INTERNAL_VERSION}"
 	if ver_test "${actual_slot}" "-ne" "${expected_slot}" ; then
 eerror "QA:  Update INTERNAL_VERSION in ebuild"
