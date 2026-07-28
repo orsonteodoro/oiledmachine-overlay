@@ -751,6 +751,10 @@ electron-app_cp_electron() {
 
 	# FIX: Do NOT permanently export this globally if running electron-builder >= 26.15.3
 	# as it forces @electron/get to treat the checksum lookup target as a binary zip.
+	if [[ -z "${ELECTRON_BUILDER_PV}" ]] ; then
+eerror "QA:  ELECTRON_BUILDER_PV must be defined."
+		die
+	fi
 	if ! ver_test "${ELECTRON_BUILDER_PV}" "-ge" "26.15.3" ; then
 		export ELECTRON_CUSTOM_FILENAME="${fn}"
 	else

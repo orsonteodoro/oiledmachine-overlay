@@ -19,9 +19,11 @@ NPM_INSTALL_PATH="/opt/${PN}"
 ELECTRON_APP_APPIMAGE_ARCHIVE_NAME="${PN}-${PV}-linux.AppImage"
 ELECTRON_APP_LOCKFILE_EXACT_VERSIONS_ONLY=1
 ELECTRON_APP_MODE="npm"
-ELECTRON_APP_REACT_PV="18.3.1"
+#ELECTRON_APP_REACT_PV="18.3.1"
+ELECTRON_APP_REACT_PV="ignore"
 NODE_ENV="development"
 NODE_SLOT="24" # Same as Electron 42.4.1
+ELECTRON_BUILDER_PV="24.13.3" # Pinned required.  Error:  ⨯ Invalid configuration object. electron-builder 26.15.7 has been initialized using a configuration object that does not match the API schema.
 
 inherit secure-version
 
@@ -133,8 +135,8 @@ IUSE+="
 	ebuild_revision_28
 "
 RDEPEND+="
-	>=virtual/vulkan:=
 	>=media-libs/vulkan-loader-${VULKAN_PV}:=
+	virtual/vulkan:=
 	custom-models? (
 		media-gfx/upscayl-custom-models
 	)
@@ -167,7 +169,7 @@ einfo "QA:  Manually remove node_modules/next/node_modules/postcss from package-
 	# Required pinned versions
 	local pkgs
 	pkgs=(
-		"electron-builder@^24.13.3"
+		"electron-builder@^${ELECTRON_BUILDER_PV}"
 		"next@^15.5.19"
 	)
 	enpm install -D "${pkgs[@]}" "${NPM_INSTALL_ARGS[@]}"
