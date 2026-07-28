@@ -289,13 +289,14 @@ einfo "IA = Improper Authentication"
 einfo "IAC = Improper Access Control"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IBC"($|" "|";"|",") ]] ; then
-# Deprecated
-einfo "IBC = Incorrect Boundary Conditions"
+einfo "IBC = Inappropriate Boundary Conditions"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IBCH"($|" "|";"|",") ]] ; then
+# Deprecated
 einfo "IBCH = Incorrect Bounds Check"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IBCO"($|" "|";"|",") ]] ; then
+# Deprecated
 einfo "IBCO = Incorrect Boundary Condition"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IB"($|" "|";"|",") ]] ; then
