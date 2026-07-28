@@ -5,6 +5,9 @@ EAPI=8
 
 # TODO:  Replace prebuilt node sharp with source based build of node sharp
 
+# FIXME:
+# Error occurred in handler for 'downloadingOllama': download-failed
+
 # To update lockfile
 # PATH=$(realpath "../../scripts")":${PATH}"
 # NPM_UPDATER_VERSIONS="1.0.0_beta12" npm_updater_update_locks.sh
@@ -39,13 +42,11 @@ NODE_SHARP_PATCHES=(
 
 NPM_AUDIT_FIX_ARGS=(
 	"--force"
-#	"--legacy-peer-deps"
 	"--prefer-offline"
 )
 
 NPM_INSTALL_ARGS=(
 	"--force"
-#	"--legacy-peer-deps"
 	"--prefer-offline"
 )
 
@@ -145,40 +146,12 @@ npm_update_lock_install_post() {
 	if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 		enpm install "electron@${ELECTRON_APP_ELECTRON_PV}" -D
 	fi
-	patch_lockfile() {
-	# The pinned version of @langchain/community is required.
-	# The pinned version of react-icons is required.
-		:
-	}
-#	patch_lockfile
-
-	local L
-
-	L=(
-#		"node-gyp"
-	)
-#	enpm install "${L[@]}" -D "${NPM_INSTALL_ARGS[@]}"
-
-	L=(
-	)
-#	enpm install "${L[@]}" -P "${NPM_INSTALL_ARGS[@]}"
-
-	L=(
-	)
-#	enpm install "${L[@]}" -D "${NPM_INSTALL_ARGS[@]}"
-
-#	patch_lockfile
 }
 
 npm_update_lock_audit_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 ewarn "QA:  Remove node_modules/vite/node_modules/esbuild and @esbuild/* <0.25.12 from package-lock.json"
 		node-sharp_npm_lockfile_add_sharp
-
-		patch_lockfile() {
-			:
-		}
-#		patch_lockfile
 
 		# Required pinned dependencies
 		L=(
@@ -198,8 +171,6 @@ ewarn "QA:  Remove node_modules/vite/node_modules/esbuild and @esbuild/* <0.25.1
 			"electron-builder@^${ELECTRON_BUILDER_PV}"
 		)
 		enpm install "${L[@]}" -D "${NPM_INSTALL_ARGS[@]}"
-
-#		patch_lockfile
 	fi
 }
 
@@ -264,6 +235,7 @@ pkg_postinst() {
 ewarn "The ollama service must be started from init system in order to list models."
 }
 
+# OILEDMACHINE-OVERLAY-TEST:  FAILED 1.0.0_beta12 (20260728 with electron 43.2.0)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.0_beta12 (20260422 with electron 41.2.2)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.0_beta12 (20260321 with electron 41.0.3)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.0_beta11 (20250630 with electron 37.1.0)
