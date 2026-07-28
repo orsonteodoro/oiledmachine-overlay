@@ -83,8 +83,8 @@ src_unpack() {
 	local spirv_headers_pv_c1=$(grep "major_version" "${p}" | grep -E -o -e "[0-9]+")
 	local spirv_headers_pv_c2=$(grep "minor_version" "${p}" | grep -E -o -e "[0-9]+")
 	local spirv_headers_pv_c3=$(grep "revision" "${p}" | grep -E -o -e "[0-9]+")
-	local actual_spirv_headers_pv="${spirv_headers_pv_c1}.${spirv_headers_pv_c2}.${spirv_headers_pv_c3}"
-	local expected_spirv_headers_pv="${INTERNAL_SPIRV_HEADERS_SLOT}"
+	local actual_spirv_headers_slot="${spirv_headers_pv_c1}.${spirv_headers_pv_c2}.${spirv_headers_pv_c3}"
+	local expected_spirv_headers_slot="${INTERNAL_SPIRV_HEADERS_SLOT}"
 	if ver_test "${actual_spirv_headers_slot}" "-ne" "${expected_spirv_headers_slot}" ; then
 eerror "QA:  The slot spirv-headers is inconsistent with this release."
 eerror "Actual spirv-headers slot:  ${actual_spirv_headers_slot}"
