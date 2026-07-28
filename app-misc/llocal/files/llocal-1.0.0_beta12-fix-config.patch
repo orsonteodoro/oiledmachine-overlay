@@ -1,0 +1,52 @@
+--- a/package.json.orig	2026-07-28 13:34:12.838140138 -0700
++++ b/package.json	2026-07-28 15:02:40.978298099 -0700
+@@ -2,7 +2,7 @@
+   "name": "LLocal",
+   "version": "1.0.0-beta.12",
+   "description": "Llocal is a client application to utilize locally installed LLM's.",
+-  "main": "./out/main/index.js",
++  "main": "./out/main/index.mjs",
+   "author": "Kartikeya Mishra",
+   "license": "MIT",
+   "homepage": "https://llocal.in",
+--- a/src/main/index.ts.orig	2025-09-14 06:52:34.000000000 -0700
++++ b/src/main/index.ts	2026-07-28 15:02:04.707128938 -0700
+@@ -20,6 +20,7 @@ import i18n from './lib/localization/i18
+ import { fork } from 'child_process'
+ import ttsPath from "./workers/tts.ts?modulePath"
+ import { createPath } from './utils/utils'
++//import path from 'path';
+ 
+ // Handling dynamic imports the shell-path module, provides asynchronous functions
+ (async (): Promise<void> => {
+@@ -58,7 +59,7 @@ function createWindow(): void {
+     backgroundMaterial: 'acrylic',
+     ...(process.platform === 'linux' ? { icon } : {}),
+     webPreferences: {
+-      preload: join(__dirname, '../preload/index.js'),
++      preload: join(import.meta.dirname, '../preload/index.js'),
+       sandbox: true,
+       contextIsolation: true
+     }
+@@ -78,7 +79,7 @@ function createWindow(): void {
+   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+     mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+   } else {
+-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
++    mainWindow.loadFile(join(import.meta.dirname, '../renderer/index.html'))
+   }
+ }
+ 
+--- a/electron.vite.config.ts.orig	2025-09-14 06:52:34.000000000 -0700
++++ b/electron.vite.config.ts	2026-07-28 15:42:21.851745566 -0700
+@@ -11,7 +11,9 @@ export default defineConfig({
+         input: {
+           index: resolve(__dirname, 'src/main/index.ts'),
+           child: resolve(__dirname, 'src/main/workers/tts.ts')
+-        }
++        },
++        // Prevent bundling electron-specific imports
++        external: ['electron', 'electron/main', 'electron/common'],
+       }
+     }
+   },
