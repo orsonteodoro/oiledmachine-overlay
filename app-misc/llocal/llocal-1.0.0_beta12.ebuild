@@ -41,11 +41,13 @@ NODE_SHARP_PATCHES=(
 )
 
 NPM_AUDIT_FIX_ARGS=(
+	#"--legacy-peer-deps"
 	"--force"
 	"--prefer-offline"
 )
 
 NPM_INSTALL_ARGS=(
+	#"--legacy-peer-deps"
 	"--force"
 	"--prefer-offline"
 )
@@ -93,7 +95,7 @@ else
 	"
 fi
 SLOT="0"
-IUSE+=" ebuild_revision_19"
+IUSE+=" ebuild_revision_20"
 RDEPEND="
 	>=sci-ml/ollama-${OLLAMA_PV}:=
 "
@@ -156,13 +158,19 @@ ewarn "QA:  Remove node_modules/vite/node_modules/esbuild and @esbuild/* <0.25.1
 		# Required pinned dependencies
 		L=(
 			"@types/node@^20.19.43"				# For import.meta.dirname
-			"langchain@^0.3.37"
-			"@langchain/core@^0.3.80"			# For langchain/vectorstores/memory
-			"@langchain/textsplitters@^0.1.0"
-			"@langchain/community@^0.3.59"			# For langchain/document_loaders/fs/text
-			"kokoro-js@^1.2.1"				# For package.json
+			"langchain@0.3.33"
+			"@langchain/core@0.3.75"			# For langchain/vectorstores/memory
+			"@langchain/textsplitters@0.1.0"
+			"@langchain/community@0.3.55"			# For langchain/document_loaders/fs/text
+			"kokoro-js@1.2.1"				# For package.json
 			"react-icons@5.2.1"
-			"officeparser@^5.2.2"				# For parseOfficeAsync used in node_modules/@langchain/community/dist/document_loaders/fs/pptx.js
+			"officeparser@4.1.1"				# For parseOfficeAsync used in node_modules/@langchain/community/dist/document_loaders/fs/pptx.js
+
+			"langsmith@0.3.67"
+			"ollama@0.5.17"
+			"puppeteer@24.4.0"
+			"puppeteer-core@24.4.0"
+			"puppeteer-in-electron@3.0.5"
 		)
 		enpm install "${L[@]}" -P "${NPM_INSTALL_ARGS[@]}"
 
@@ -235,7 +243,7 @@ pkg_postinst() {
 ewarn "The ollama service must be started from init system in order to list models."
 }
 
-# OILEDMACHINE-OVERLAY-TEST:  FAILED 1.0.0_beta12 (20260728 with electron 43.2.0)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (with bugs) 1.0.0_beta12 (20260728 with electron 43.2.0)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.0_beta12 (20260422 with electron 41.2.2)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.0_beta12 (20260321 with electron 41.0.3)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.0_beta11 (20250630 with electron 37.1.0)
