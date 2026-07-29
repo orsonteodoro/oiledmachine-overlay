@@ -146,7 +146,7 @@ SLOT="0"
 RESTRICT="splitdebug binchecks strip mirror" # Prevent slow down and snooping
 IUSE+="
 firejail wayland +X
-ebuild_revision_93
+ebuild_revision_94
 "
 REQUIRED_USE+="
 	|| (
@@ -201,7 +201,6 @@ get_deps() {
 	[[ -d "${S}/node_modules/.bin" ]] || die
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	epnpm run build:acknowledgments
-	#patch-package --error-on-fail --error-on-warn || die
 	epnpm run electron:install-app-deps
 }
 
@@ -252,10 +251,6 @@ _apply_patches() {
 einfo "DEBUG:  Called pnpm_unpack_post()"
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		eapply "${FILESDIR}/${PN}-8.20.0-project-files-changes.patch"
-
-	# Do not remove.  It may be required to build to avoid during pnpm install:
-	# [ELIFECYCLE] Command failed with exit code 1.
-		#echo "loglevel: debug" >> "${S}/pnpm-workspace.yaml" || die
 	fi
 
 einfo "Increasing verbosity to debug"
@@ -335,7 +330,7 @@ src_unpack() {
 		epnpm install "${deps[@]}" -D -w "${PNPM_INSTALL_ARGS[@]}"
 
 		deps=(
-			"file-uri-to-path@1.0.0"	# Set as production dependency required
+			"file-uri-to-path@1.0.0"			# Set as production dependency required
 		)
 		epnpm install "${deps[@]}" -P -w "${PNPM_INSTALL_ARGS[@]}"
 
@@ -347,8 +342,8 @@ src_unpack() {
 	# pnpm is sloppy/inconsistent.  It is fixed but missed some spots that offends Dependabot that it is strict about.
 		patch_build_files() {
 			sed -i -e "s|\"@babel/core\": \"7.29.0\"|\"@babel/core\": \"7.29.6\"|g" "${S}/package.json" || die
-			sed -i -e "s|\"js-yaml\": \"4.1.1\"|\"js-yaml\": \"4.2.0\"|g" "${S}/package.json" || die
-			sed -i -e "s|\"js-yaml\": \"4.1.1\"|\"js-yaml\": \"4.2.0\"|g" "${S}/danger/package.json" || die
+			sed -i -e "s|\"js-yaml\": \"4.1.1\"|\"js-yaml\": \"4.3.0\"|g" "${S}/package.json" || die
+			sed -i -e "s|\"js-yaml\": \"4.1.1\"|\"js-yaml\": \"4.3.0\"|g" "${S}/danger/package.json" || die
 			sed -i -e "s|\"uuid\": \"13.0.0\"|\"uuid\": \"13.0.2\"|g" "${S}/package.json" || die
 			sed -i -e "s|\"webpack\": \"5.96.1\"|\"webpack\": \"5.104.1\"|g" "${S}/package.json" || die
 		}
