@@ -146,7 +146,7 @@ SLOT="0"
 RESTRICT="splitdebug binchecks strip mirror" # Prevent slow down and snooping
 IUSE+="
 firejail wayland +X
-ebuild_revision_96
+ebuild_revision_97
 "
 REQUIRED_USE+="
 	|| (
@@ -349,7 +349,7 @@ src_unpack() {
 			sed -i -e "s|\"svgo\": \"4.0.1\"|\"svgo\": \"4.0.2\"|g" "${S}/package.json" || die
 			sed -i -e "s|\"linkify-it\": \"5.0.1\"|\"linkify-it\": \"5.0.2\"|g" "${S}/package.json" || die
 		}
-einfo "QA:  Remove react-router@6.30.4 from pnpm-lock.yaml"
+einfo "QA:  Remove react-router@<8.3.0 from pnpm-lock.yaml"
 
 		patch_build_files
 
