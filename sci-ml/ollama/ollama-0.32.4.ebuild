@@ -425,6 +425,7 @@ FEATURED_LLMS=(
 	"kimi-k2.5"
 	"kimi-k2.6"
 	"kimi-k2.7-code"
+	"kimi-k3"
 	"laguna-s-2.1"
 	"laguna-xs.2"
 	"laguna-xs-2.1"
@@ -1914,6 +1915,9 @@ LLM_LICENSES="
 	ollama_llms_kimi-k2.7-code? (
 		Kimi-K2.7-Code-LICENSE
 	)
+	ollama_llms_kimi-k3? (
+		Kimi-K3-License
+	)
 	ollama_llms_laguna-s-2.1? (
 		OpenMDW-1.1
 	)
@@ -2556,7 +2560,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 ai-agent blis cuda debug emoji +firejail flash lapack mkl openblas openrc
 rocm systemd unrestrict video_cards_intel -vulkan
-ebuild_revision_144
+ebuild_revision_145
 "
 
 gen_rocm_required_use() {
@@ -3165,7 +3169,7 @@ src_unpack() {
 	else
 		unpack "${P}.tar.gz"
 		unpack "llama.cpp-${LLAMA_CPP_TAG}.tar.gz"
-#		die
+		#die
 
 	# Generating requires 2 phases for dependency of dependency
 		if [[ "${GEN_EBUILD}" == "1" ]] ; then

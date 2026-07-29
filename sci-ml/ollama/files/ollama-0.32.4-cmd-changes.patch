@@ -1,6 +1,5 @@
-diff '--color=auto' -urp ollama-0.32.4.orig/cmd/cmd.go ollama-0.32.4/cmd/cmd.go
---- ollama-0.32.4.orig/cmd/cmd.go	2026-07-24 18:24:53.000000000 -0700
-+++ ollama-0.32.4/cmd/cmd.go	2026-07-26 12:43:51.307282637 -0700
+--- a/cmd/cmd.go.orig	2026-07-24 18:24:53.000000000 -0700
++++ b/cmd/cmd.go	2026-07-28 21:47:31.304310383 -0700
 @@ -16,9 +16,11 @@ import (
  	"net"
  	"net/http"
@@ -13,7 +12,7 @@ diff '--color=auto' -urp ollama-0.32.4.orig/cmd/cmd.go ollama-0.32.4/cmd/cmd.go
  	"runtime"
  	"slices"
  	"sort"
-@@ -219,6 +221,3738 @@ func resolveExperimentalDraftDir(ref, fi
+@@ -219,6 +221,3741 @@ func resolveExperimentalDraftDir(ref, fi
  	return "", fmt.Errorf("DRAFT model references are not supported with --experimental yet: %s", ref)
  }
  
@@ -919,6 +918,7 @@ diff '--color=auto' -urp ollama-0.32.4.orig/cmd/cmd.go ollama-0.32.4/cmd/cmd.go
 +	"kimi-k2.5:cloud": "0GB",
 +	"kimi-k2.6:cloud": "0GB",
 +	"kimi-k2.7-code:cloud": "0GB",
++	"kimi-k3:cloud": "0GB",
 +	"laguna-s-2.1:latest": "75GB",
 +	"laguna-s-2.1:mxfp8": "136GB",
 +	"laguna-s-2.1:nvfp4": "67GB",
@@ -3130,6 +3130,7 @@ diff '--color=auto' -urp ollama-0.32.4.orig/cmd/cmd.go ollama-0.32.4/cmd/cmd.go
 +	"kimi-k2.5": 1,
 +	"kimi-k2.6": 1,
 +	"kimi-k2.7-code": 1,
++	"kimi-k3": 1,
 +	"laguna-s-2.1": 1,
 +	"laguna-xs.2": 1,
 +	"laguna-xs-2.1": 1,
@@ -3498,6 +3499,7 @@ diff '--color=auto' -urp ollama-0.32.4.orig/cmd/cmd.go ollama-0.32.4/cmd/cmd.go
 +	"kimi-k2.5": "cloud cloud-hosted long-context high-school-math expert-level-reasoning general-reasoning multimodal-reasoning multimodal-mathematical-reasoning chart-reasoning image-understanding ocr optical-character-recognition video-understanding document-image-understanding python software-engineering multiple-programming-languages multilingual-software-engineering coding-agent search-agent",
 +	"kimi-k2.6": "cloud cloud-hosted agentic-browsing web-search desktop-gui-agent software-engineering multiple-programming-languages multilingual-software-engineering multifile-editing long-context",
 +	"kimi-k2.7-code": "cloud cloud-hosted coding long-context",
++	"kimi-k3": "cloud cloud-hosted coding long-horizon-coding expert-level-reasoning command-line shell-scripting agentic-browsing multimodal mcp multi-context-protocol agentic-ai research-agent deep-research-agent frontier-open-weight-model 3d-game-development gui-tasks legal-work pdf-processing finance-credit-docs-extration video-understanding python-code-visual-analysis visual-understanding visual-reasoning mathematical-visual-reasoning",
 +	"laguna-s-2.1": "terminal command-line shell-scripting multiple-programming-languages long-context",
 +	"laguna-xs.2": "coding single-file-coding long-context safety-guardrails",
 +	"laguna-xs-2.1": "coding long-context single-file-coding safety-guardrails",
@@ -3555,7 +3557,7 @@ diff '--color=auto' -urp ollama-0.32.4.orig/cmd/cmd.go ollama-0.32.4/cmd/cmd.go
 +	"glm-4.7-flash": "high-school-math graduate-level-reasoning troubleshooting",
 +	"glm-5": "long-context cloud cloud-hosted expert-level-reasoning advanced-high-school-math software-engineering multlingual-software-engineering chinese english",
 +	"glm-5.1": "cloud cloud-hosted long-context expert-level-reasoning troubleshooting advanced-high-school-math mcp-competency model-context-protocol-competency mcp model-context-protocol agentic-ai mcp-tool-use",
-+	"glm-5.2": "cloud cloud-hosted long-context terminal command-line shell-scripting tool-use mcp model-context-protocol mcp-tool-use agentic-ai high-school-math math-word-problems expert-level-reasoning",
++	"glm-5.2": "cloud cloud-hosted long-context terminal command-line shell-scripting long-horizon-coding tool-use mcp model-context-protocol mcp-tool-use agentic-ai high-school-math math-word-problems expert-level-reasoning 3d-game-development",
 +	"glm-ocr": "document-understanding ocr optical-character-recognition formula-recognition table-recognition visual-recognition figure-recognition business",
 +	"glm4": "math-word-problems coding multilingual",
 +	"glm4:9b-chat-q5_1": "math-word-problems coding chat function-calling comprehensive-response multilingual",
@@ -3752,7 +3754,7 @@ diff '--color=auto' -urp ollama-0.32.4.orig/cmd/cmd.go ollama-0.32.4/cmd/cmd.go
  func CreateHandler(cmd *cobra.Command, args []string) error {
  	p := progress.NewProgress(os.Stderr)
  	defer p.Stop()
-@@ -712,6 +4446,25 @@ func hasListedModelName(models []api.Lis
+@@ -712,6 +4449,25 @@ func hasListedModelName(models []api.Lis
  func RunHandler(cmd *cobra.Command, args []string) error {
  	interactive := true
  
@@ -3778,7 +3780,7 @@ diff '--color=auto' -urp ollama-0.32.4.orig/cmd/cmd.go ollama-0.32.4/cmd/cmd.go
  	opts := runOptions{
  		Model:       args[0],
  		WordWrap:    os.Getenv("TERM") == "xterm-256color",
-@@ -1200,10 +4953,12 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -1200,10 +4956,12 @@ func ShowHandler(cmd *cobra.Command, arg
  	modelfile, errModelfile := cmd.Flags().GetBool("modelfile")
  	parameters, errParams := cmd.Flags().GetBool("parameters")
  	system, errSystem := cmd.Flags().GetBool("system")
@@ -3792,7 +3794,7 @@ diff '--color=auto' -urp ollama-0.32.4.orig/cmd/cmd.go ollama-0.32.4/cmd/cmd.go
  		if boolErr != nil {
  			return errors.New("error retrieving flags")
  		}
-@@ -1232,13 +4987,413 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -1232,13 +4990,414 @@ func ShowHandler(cmd *cobra.Command, arg
  		showType = "system"
  	}
  
@@ -3966,6 +3968,7 @@ diff '--color=auto' -urp ollama-0.32.4.orig/cmd/cmd.go ollama-0.32.4/cmd/cmd.go
 +		"kimi-k2.6": "Kimi-K2.6-LICENSE MIT",
 +		"kimi-k2.7-code": "Kimi-K2.7-Code-LICENSE MIT",
 +		"kimi-k2-thinking": "Kimi-K2-LICENSE MIT",
++		"kimi-k3": "Kimi-K3-License",
 +		"leeplenty/lumimaid-v0.2": "Apache-2.0, CC-BY-NC-4.0, LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Acceptable Use Policy",
 +		"lfm2": "LFM Open License v1.0",
 +		"lfm2.5": "LFM Open License v1.0",
@@ -4207,7 +4210,7 @@ diff '--color=auto' -urp ollama-0.32.4.orig/cmd/cmd.go ollama-0.32.4/cmd/cmd.go
  	}
  
  	req := api.ShowRequest{Name: args[0], Verbose: verbose}
-@@ -1572,6 +5727,146 @@ func PullHandler(cmd *cobra.Command, arg
+@@ -1572,6 +5731,160 @@ func PullHandler(cmd *cobra.Command, arg
  	return client.Pull(cmd.Context(), &request, fn)
  }
  
@@ -4300,13 +4303,27 @@ diff '--color=auto' -urp ollama-0.32.4.orig/cmd/cmd.go ollama-0.32.4/cmd/cmd.go
 +	printModelSizeResults(results)
 +	if len(results) != 0 {
 +		fmt.Println()
-+		fmt.Printf("About compressed floats (aka f16) or ints (aka q2, q3, q4, q5, q6, q8) compression....\n")
++		fmt.Printf("About the compressed floats (aka f16) or ints (aka q2, q3, q4, q5, q6, q8) compression....\n")
++		fmt.Println()
 +		fmt.Printf("f16 is the uncompressed full version and should only be used on f16 native hardware.\n")
 +		fmt.Printf("q8 is the compressed full version.\n")
 +		fmt.Printf("q6 or above should be used for secure coding, finance, legal, medical or when accuracy is required.\n")
 +		fmt.Printf("q4 is the optimized balanced version and default.  If without a q suffix, it is assumed q4_0 or q4_K_M with preference for speed over accuracy.\n")
 +		fmt.Printf("q4 or above should be for logical, complex tasks, detailed answers, or translations.\n")
 +		fmt.Printf("q2 or q3 is resilient only when doing simple tasks, casual social contexts or chat, or basic answers.\n")
++		fmt.Println()
++		fmt.Printf("Parameter sizes:")
++		fmt.Println()
++		fmt.Printf("         1+ T - frontier datacenter cluster models")
++		fmt.Printf("110 B - 405 B - datacenter cluster models")
++		fmt.Printf("      70-72 B - standard enterprise datacenter models")
++		fmt.Printf("      14-32 B - standard enterprise server models")
++		fmt.Printf("        3-8 B - micro datacenter models")
++		fmt.Printf("      14-32 B - enthusiast/workstation models or 16+ GB Vulkan (2024+) based GPU models")
++		fmt.Printf("        7-8 B - standard desktop/laptop models or 8+ GB Vulkan (2016+) based GPU models")
++		fmt.Printf("        1-3 B - mobile or 4+ GB Vulkan (2016+) based GPU models")
++		fmt.Printf(" 100 M  - 1 B - testing/embeddings or GPU less models")
++		fmt.Println()
 +	}
 +	return nil
 +}
@@ -4354,7 +4371,7 @@ diff '--color=auto' -urp ollama-0.32.4.orig/cmd/cmd.go ollama-0.32.4/cmd/cmd.go
  type generateContextKey string
  
  type runOptions struct {
-@@ -2255,9 +6550,14 @@ func NewCLI() *cobra.Command {
+@@ -2255,9 +6568,14 @@ func NewCLI() *cobra.Command {
  		console.ConsoleFromFile(os.Stdin) //nolint:errcheck
  	}
  
@@ -4370,7 +4387,7 @@ diff '--color=auto' -urp ollama-0.32.4.orig/cmd/cmd.go ollama-0.32.4/cmd/cmd.go
  		SilenceUsage:  true,
  		SilenceErrors: true,
  		CompletionOptions: cobra.CompletionOptions{
-@@ -2309,7 +6609,9 @@ func NewCLI() *cobra.Command {
+@@ -2309,7 +6627,9 @@ func NewCLI() *cobra.Command {
  	showCmd.Flags().Bool("parameters", false, "Show parameters of a model")
  	showCmd.Flags().Bool("template", false, "Show template of a model")
  	showCmd.Flags().Bool("system", false, "Show system message of a model")
@@ -4380,7 +4397,7 @@ diff '--color=auto' -urp ollama-0.32.4.orig/cmd/cmd.go ollama-0.32.4/cmd/cmd.go
  
  	runCmd := &cobra.Command{
  		Use:     "run MODEL [PROMPT]",
-@@ -2458,6 +6760,30 @@ func NewCLI() *cobra.Command {
+@@ -2458,6 +6778,30 @@ func NewCLI() *cobra.Command {
  	}
  	gpuDiscoverCmd.Flags().StringArrayVar(&gpuDiscoverLibDirs, "lib-dir", nil, "Ollama runtime library directory")
  
@@ -4411,7 +4428,7 @@ diff '--color=auto' -urp ollama-0.32.4.orig/cmd/cmd.go ollama-0.32.4/cmd/cmd.go
  	envVars := envconfig.AsMap()
  
  	envs := []envconfig.EnvVar{envVars["OLLAMA_HOST"]}
-@@ -2474,6 +6800,9 @@ func NewCLI() *cobra.Command {
+@@ -2474,6 +6818,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		serveCmd,
@@ -4421,7 +4438,7 @@ diff '--color=auto' -urp ollama-0.32.4.orig/cmd/cmd.go ollama-0.32.4/cmd/cmd.go
  	} {
  		switch cmd {
  		case runCmd:
-@@ -2526,7 +6855,12 @@ func NewCLI() *cobra.Command {
+@@ -2526,7 +6873,12 @@ func NewCLI() *cobra.Command {
  		deleteCmd,
  		runnerCmd,
  		gpuDiscoverCmd,
