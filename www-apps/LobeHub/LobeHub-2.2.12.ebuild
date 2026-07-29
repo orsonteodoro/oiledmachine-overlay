@@ -26,6 +26,7 @@ EAPI=8
 # 2.1.48 -> 2.1.52
 # 2.1.52 - > 2.2.0
 # 2.2.0 -> 2.2.10
+# 2.2.10 -> 2.2.12
 
 # Ebuild using React 19
 
@@ -49,7 +50,7 @@ EAPI=8
 # U22, U24, D12
 # U24 - node 20 (release - live, debug - live)
 # U22 - node 18 (check - live)
-# Postgres and Redis slot:  https://github.com/lobehub/lobehub/blob/v2.2.0/docker-compose/deploy/docker-compose.yml#L41
+# Postgres and Redis slot:  https://github.com/lobehub/lobehub/blob/v2.2.12/docker-compose/deploy/docker-compose.yml#L41
 
 # TODO:
 # USE sandbox
@@ -79,14 +80,12 @@ RUST_MIN_VER="1.93.1" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0
 RUST_PV="${RUST_MIN_VER}"
 
 NEXTJS_PV="16.2.6"
-SHARP_PV="0.34.5"
-VIPS_PV="8.18.0"
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
 	ELECTRON_APP_ELECTRON_PV="${ELECTRON_PV}"
 else
-#https://github.com/lobehub/lobehub/blob/v2.2.0/apps/desktop/package.json#L70
+#https://github.com/lobehub/lobehub/blob/v2.2.12/apps/desktop/package.json#L70
 	# Upstream's choice
 	ELECTRON_APP_ELECTRON_PV="41.1.0" # Cr 146.0.7680.166, node 24.14.0
 fi
@@ -97,13 +96,17 @@ CPU_FLAGS_X86=(
 )
 
 NODE_SHARP_PATCHES=(
-	"${FILESDIR}/sharp-0.34.5-debug.patch"
-	"${FILESDIR}/sharp-0.34.5-format-fixes.patch"
-	"${FILESDIR}/sharp-0.34.5-static-libs.patch"
+	"${FILESDIR}/sharp-0.35.3-remove-sover-suffix.patch"
+)
+
+CHKL_TIMESTAMPS=(
+	"app-admin/sudo-9999"
+	"sys-apps/openrc-9999"
+	"sys-process/procps-9999"
 )
 
 # Use pnpm for pnpm_updater_update_locks.sh
-inherit dhms desktop edo electron-app lcnr node-sharp npm pnpm rust xdg
+inherit chkl dhms desktop edo electron-app lcnr node-sharp npm pnpm rust secure-version xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -206,38 +209,38 @@ else
 	"
 fi
 # Third party licenses:
-# ( CC0-1.0 MIT ) - ./lobehub-2.2.0/node_modules/.pnpm/lodash.escape@4.0.1/node_modules/lodash.escape/LICENSE
-# all-rights-reserved MIT - ./lobehub-2.2.0/node_modules/.pnpm/vscode-languageserver-protocol@3.17.5/node_modules/vscode-languageserver-protocol/License.txt
-# all-rights-reserved MIT - ./lobehub-2.2.0/node_modules/.pnpm/tsyringe@4.10.0/node_modules/tsyringe/LICENSE
-# AGPL-3 - ./lobehub-2.2.0/node_modules/.pnpm/dirty-json@0.9.2/node_modules/dirty-json/LICENSE
-# Apache-2.0 - ./lobehub-2.2.0/node_modules/.pnpm/aria-query@5.3.2/node_modules/aria-query/LICENSE
-# Artistic-2 - ./lobehub-2.2.0/node_modules/.pnpm/textextensions@6.11.0/node_modules/textextensions/LICENSE.md
-# BlueOak-1.0.0 - ./lobehub-2.2.0/node_modules/.pnpm/@isaacs+cliui@9.0.0/node_modules/@isaacs/cliui/LICENSE.md
-# BlueOak-1.0.0 - ./lobehub-2.2.0/node_modules/.pnpm/yallist@5.0.0/node_modules/yallist/LICENSE.md
-# BSD - ./lobehub-2.2.0/node_modules/.pnpm/@protobufjs+pool@1.1.0/node_modules/@protobufjs/pool/LICENSE
-# BSD-2 - ./lobehub-2.2.0/node_modules/.pnpm/esutils@2.0.3/node_modules/esutils/LICENSE.BSD
-# BSD-2 CC0-1.0 ISC MIT - ./lobehub-2.2.0/node_modules/.pnpm/vite@7.3.1_@types+node@24.12.0_jiti@2.6.1_terser@5.46.1_tsx@4.21.0_yaml@2.8.3/node_modules/vite/LICENSE.md
-# CC-BY-4.0 - ./lobehub-2.2.0/node_modules/.pnpm/caniuse-lite@1.0.30001780/node_modules/caniuse-lite/LICENSE
-# CC-BY-SA-4.0 ISC - ./lobehub-2.2.0/node_modules/.pnpm/npm@9.9.4/node_modules/npm/node_modules/node-gyp/node_modules/glob/LICENSE
-# CC0-1.0 - ./lobehub-2.2.0/node_modules/.pnpm/type-fest@5.5.0/node_modules/type-fest/license-cc0
-# custom (Sustainable Use License) - ./lobehub-2.2.0/node_modules/.pnpm/@codesandbox+nodebox@0.1.8/node_modules/@codesandbox/nodebox/LICENSE
-# custom (https://code.claude.com/docs/en/legal-and-compliance) - ./lobehub-2.2.0/node_modules/.pnpm/@anthropic-ai+claude-agent-sdk@0.2.81_zod@4.3.6/node_modules/@anthropic-ai/claude-agent-sdk/LICENSE.md
-# custom - ./lobehub-2.2.0/node_modules/.pnpm/npm@9.9.4/node_modules/npm/node_modules/jsbn/LICENSE
-# ISC - ./lobehub-2.2.0/node_modules/.pnpm/internmap@2.0.3/node_modules/internmap/LICENSE
-# icu-64.2 - ./lobehub-2.2.0/node_modules/.pnpm/tree-sitter@0.21.1/node_modules/tree-sitter/vendor/tree-sitter/lib/src/unicode/LICENSE
+# ( CC0-1.0 MIT ) - ./lobehub-2.2.12/node_modules/.pnpm/lodash.escape@4.0.1/node_modules/lodash.escape/LICENSE
+# all-rights-reserved MIT - ./lobehub-2.2.12/node_modules/.pnpm/vscode-languageserver-protocol@3.17.5/node_modules/vscode-languageserver-protocol/License.txt
+# all-rights-reserved MIT - ./lobehub-2.2.12/node_modules/.pnpm/tsyringe@4.10.0/node_modules/tsyringe/LICENSE
+# AGPL-3 - ./lobehub-2.2.12/node_modules/.pnpm/dirty-json@0.9.2/node_modules/dirty-json/LICENSE
+# Apache-2.0 - ./lobehub-2.2.12/node_modules/.pnpm/aria-query@5.3.2/node_modules/aria-query/LICENSE
+# Artistic-2 - ./lobehub-2.2.12/node_modules/.pnpm/textextensions@6.11.0/node_modules/textextensions/LICENSE.md
+# BlueOak-1.0.0 - ./lobehub-2.2.12/node_modules/.pnpm/@isaacs+cliui@9.0.0/node_modules/@isaacs/cliui/LICENSE.md
+# BlueOak-1.0.0 - ./lobehub-2.2.12/node_modules/.pnpm/yallist@5.0.0/node_modules/yallist/LICENSE.md
+# BSD - ./lobehub-2.2.12/node_modules/.pnpm/@protobufjs+pool@1.1.0/node_modules/@protobufjs/pool/LICENSE
+# BSD-2 - ./lobehub-2.2.12/node_modules/.pnpm/esutils@2.0.3/node_modules/esutils/LICENSE.BSD
+# BSD-2 CC0-1.0 ISC MIT - ./lobehub-2.2.12/node_modules/.pnpm/vite@7.3.1_@types+node@24.12.0_jiti@2.6.1_terser@5.46.1_tsx@4.21.0_yaml@2.8.3/node_modules/vite/LICENSE.md
+# CC-BY-4.0 - ./lobehub-2.2.12/node_modules/.pnpm/caniuse-lite@1.0.30001780/node_modules/caniuse-lite/LICENSE
+# CC-BY-SA-4.0 ISC - ./lobehub-2.2.12/node_modules/.pnpm/npm@9.9.4/node_modules/npm/node_modules/node-gyp/node_modules/glob/LICENSE
+# CC0-1.0 - ./lobehub-2.2.12/node_modules/.pnpm/type-fest@5.5.0/node_modules/type-fest/license-cc0
+# custom (Sustainable Use License) - ./lobehub-2.2.12/node_modules/.pnpm/@codesandbox+nodebox@0.1.8/node_modules/@codesandbox/nodebox/LICENSE
+# custom (https://code.claude.com/docs/en/legal-and-compliance) - ./lobehub-2.2.12/node_modules/.pnpm/@anthropic-ai+claude-agent-sdk@0.2.81_zod@4.3.6/node_modules/@anthropic-ai/claude-agent-sdk/LICENSE.md
+# custom - ./lobehub-2.2.12/node_modules/.pnpm/npm@9.9.4/node_modules/npm/node_modules/jsbn/LICENSE
+# ISC - ./lobehub-2.2.12/node_modules/.pnpm/internmap@2.0.3/node_modules/internmap/LICENSE
+# icu-64.2 - ./lobehub-2.2.12/node_modules/.pnpm/tree-sitter@0.21.1/node_modules/tree-sitter/vendor/tree-sitter/lib/src/unicode/LICENSE
 # LobeHub-Community-License-20250921 - See https://github.com/lobehub/lobehub/blob/main/LICENSE
-# MIT - ./lobehub-2.2.0/node_modules/.pnpm/matcher@3.0.0/node_modules/matcher/license
-# MIT-0 - ./lobehub-2.2.0/node_modules/.pnpm/@csstools+selector-specificity@5.0.0_postcss-selector-parser@7.1.1/node_modules/@csstools/selector-specificity/LICENSE.md
-# MPL-2.0 - ./lobehub-2.2.0/node_modules/.pnpm/@vercel+analytics@1.6.1_next@16.1.7_@babel+core@7.29.0_@opentelemetry+api@1.9.0_@playwr_479db63f3807ed5fe2ed8b4d0278027d/node_modules/@vercel/analytics/LICENSE
-# OFL-1.1 - ./lobehub-2.2.0/node_modules/.pnpm/polished@4.3.1/node_modules/polished/docs/assets/fonts/LICENSE.txt
-# Princeton - ./lobehub-2.2.0/node_modules/.pnpm/wordnet-db@3.1.14/node_modules/wordnet-db/LICENSE
-# PSF-2.2 (similar to PSF-2.4) - ./lobehub-2.2.0/node_modules/.pnpm/argparse@2.0.1/node_modules/argparse/LICENSE
-# Unlicense - ./lobehub-2.2.0/node_modules/.pnpm/robust-predicates@3.0.2/node_modules/robust-predicates/LICENSE
-# WTFPL-2 - MIT - ./lobehub-2.2.0/node_modules/.pnpm/opener@1.5.2/node_modules/opener/LICENSE.txt
-# || ( Apache-2.0 MPL-2.0 ) - ./lobehub-2.2.0/node_modules/.pnpm/dompurify@3.3.3/node_modules/dompurify/LICENSE
-# || ( AFL-2.1 BSD ) - ./lobehub-2.2.0/node_modules/.pnpm/json-schema@0.4.0/node_modules/json-schema/LICENSE
-# || ( BSD GPL-2 ) - ./lobehub-2.2.0/node_modules/.pnpm/node-forge@1.3.3/node_modules/node-forge/LICENSE
-# || ( GPL-3 MIT ) - ./lobehub-2.2.0/node_modules/.pnpm/jszip@3.10.1/node_modules/jszip/LICENSE.markdown
+# MIT - ./lobehub-2.2.12/node_modules/.pnpm/matcher@3.0.0/node_modules/matcher/license
+# MIT-0 - ./lobehub-2.2.12/node_modules/.pnpm/@csstools+selector-specificity@5.0.0_postcss-selector-parser@7.1.1/node_modules/@csstools/selector-specificity/LICENSE.md
+# MPL-2.0 - ./lobehub-2.2.12/node_modules/.pnpm/@vercel+analytics@1.6.1_next@16.1.7_@babel+core@7.29.0_@opentelemetry+api@1.9.0_@playwr_479db63f3807ed5fe2ed8b4d0278027d/node_modules/@vercel/analytics/LICENSE
+# OFL-1.1 - ./lobehub-2.2.12/node_modules/.pnpm/polished@4.3.1/node_modules/polished/docs/assets/fonts/LICENSE.txt
+# Princeton - ./lobehub-2.2.12/node_modules/.pnpm/wordnet-db@3.1.14/node_modules/wordnet-db/LICENSE
+# PSF-2.2 (similar to PSF-2.4) - ./lobehub-2.2.12/node_modules/.pnpm/argparse@2.0.1/node_modules/argparse/LICENSE
+# Unlicense - ./lobehub-2.2.12/node_modules/.pnpm/robust-predicates@3.0.2/node_modules/robust-predicates/LICENSE
+# WTFPL-2 - MIT - ./lobehub-2.2.12/node_modules/.pnpm/opener@1.5.2/node_modules/opener/LICENSE.txt
+# || ( Apache-2.0 MPL-2.0 ) - ./lobehub-2.2.12/node_modules/.pnpm/dompurify@3.3.3/node_modules/dompurify/LICENSE
+# || ( AFL-2.1 BSD ) - ./lobehub-2.2.12/node_modules/.pnpm/json-schema@0.4.0/node_modules/json-schema/LICENSE
+# || ( BSD GPL-2 ) - ./lobehub-2.2.12/node_modules/.pnpm/node-forge@1.3.3/node_modules/node-forge/LICENSE
+# || ( GPL-3 MIT ) - ./lobehub-2.2.12/node_modules/.pnpm/jszip@3.10.1/node_modules/jszip/LICENSE.markdown
 # The distro's Apache-2.0 license file does not contain all rights reserved.
 # The distro's MIT license file does not contain all rights reserved.
 # The PSF-2.2 license differs from the PSF-2.4 license.
@@ -285,37 +288,35 @@ REQUIRED_USE="
 # xdg-open is from x11-misc/xdg-utils
 RDEPEND+="
 	${VIPS_RDEPEND}
-	acct-group/lobehub
-	acct-user/lobehub
-	>=app-misc/ca-certificates-20240203
-	>=net-misc/proxychains-3.1
-	>=sys-devel/gcc-12.2.0
-	net-libs/nodejs:${NODE_SLOT}[corepack,npm]
-	net-libs/nodejs:=
+	acct-group/lobehub:*
+	acct-user/lobehub:*
+	>=app-misc/ca-certificates-${CA_CERTIFICATES_PV}:=
+	>=net-misc/proxychains-${PROXYCHAINS_PV}:=
+	>=sys-devel/gcc-12.2.0:=
+	>=net-libs/nodejs-${NODEJS_24_PV}:${NODE_SLOT}=[corepack,npm]
 	embeddings? (
-		dev-db/pgvector[postgres_targets_postgres${POSTGRESQL_SLOT}]
+		>=dev-db/pgvector-${PGVECTOR_PV}:=[postgres_targets_postgres${POSTGRESQL_SLOT}]
 	)
 	openrc? (
-		sys-apps/openrc[bash]
-		sys-process/procps[kill]
+		>=sys-apps/openrc-${OPENRC_PV}:=[bash]
+		>=sys-process/procps-${PROCPS_PV}:=[kill]
 	)
 	postgres? (
-		dev-db/postgresql:${POSTGRESQL_SLOT}[server]
-		dev-db/postgresql:=
-		dev-db/pg_search[postgres_targets_postgres${POSTGRESQL_SLOT}]
+		>=dev-db/postgresql-${POSTGRES_17_PV}:${POSTGRESQL_SLOT}=[server]
+		>=dev-db/pg_search-${PG_SEARCH_PV}:=[postgres_targets_postgres${POSTGRESQL_SLOT}]
 	)
 	pwa? (
-		x11-misc/xdg-utils
+		>=x11-misc/xdg-utils-${XDG_UTILS_PV}:=
 	)
 	rag? (
-		dev-db/pgvector[postgres_targets_postgres${POSTGRESQL_SLOT}]
+		>=dev-db/pgvector-${PGVECTOR_PV}:=[postgres_targets_postgres${POSTGRESQL_SLOT}]
 	)
 	redis? (
-		dev-db/redis
+		>=dev-db/redis-${REDIS_PV}:=
 	)
 	tools? (
-		app-admin/sudo
-		www-misc/lobehub-market-cli
+		>=app-admin/sudo-${SUDO_PV}:=
+		www-misc/lobehub-market-cli:=
 	)
 "
 DEPEND+="
@@ -324,8 +325,7 @@ DEPEND+="
 BDEPEND+="
 	>=sys-apps/pnpm-10.20.0:${PNPM_SLOT}
 	>=sys-apps/npm-10.8.2:${NPM_SLOT}
-	>=net-libs/nodejs-${NODEJS_24_PV}:${NODE_SLOT}[corepack,npm]
-	net-libs/nodejs:=
+	>=net-libs/nodejs-${NODEJS_24_PV}:${NODE_SLOT}=[corepack,npm]
 	|| (
 		dev-lang/rust:${RUST_PV}
 		dev-lang/rust-bin:${RUST_PV}
@@ -768,6 +768,8 @@ eerror "The postgres-${POSTGRESQL_SLOT} daemon needs to run to continue."
 }
 
 src_configure() {
+	chkl_check_many_timestamps
+
 	npm_hydrate
 	pnpm_hydrate
 
