@@ -6,7 +6,7 @@
   "description": "Private messaging from your desktop",
   "desktopName": "signal.desktop",
   "repository": "https://github.com/signalapp/Signal-Desktop.git",
-  "version": "8.19.0",
+  "version": "8.20.0",
   "license": "AGPL-3.0-only",
   "author": {
     "name": "Signal Messenger, LLC",
@@ -121,7 +121,7 @@
   "dependencies": {
     "@indutny/mac-screen-share": "1.2.5",
     "@indutny/simple-windows-notifications": "2.0.21",
-    "@signalapp/libsignal-client": "0.96.4",
+    "@signalapp/libsignal-client": "0.97.3",
     "@signalapp/mute-state-change": "workspace:*",
     "@signalapp/ringrtc": "2.69.7",
     "@signalapp/sqlcipher": "3.3.9",
@@ -159,7 +159,7 @@
     "@react-spring/web": "10.0.3",
     "@signalapp/lame": "workspace:*",
     "@signalapp/minimask": "1.0.1",
-    "@signalapp/mock-server": "23.0.0",
+    "@signalapp/mock-server": "24.0.3",
     "@signalapp/parchment-cjs": "3.0.1",
     "@signalapp/quill-cjs": "2.1.2",
     "@storybook/addon-a11y": "8.4.4",
@@ -239,8 +239,8 @@
     "debug": "4.4.3",
     "direction": "2.0.1",
     "dom-accessibility-api": "0.7.1",
-    "electron": "43.1.1",
-    "electron-builder": "26.0.14",
+    "electron": "43.2.0",
+    "electron-builder": "26.15.7",
     "electron-mocha": "13.1.0",
     "emoji-regex-xs": "2.0.1",
     "enhanced-resolve": "5.21.3",
@@ -332,18 +332,18 @@
     "synckit": "0.11.12",
     "tailwindcss": "4.3.0",
     "tinykeys": "3.1.0",
-    "tsx": "4.21.0",
+    "tsx": "4.23.0",
     "type-fest": "5.5.0",
     "typescript": "6.0.3",
     "url": "0.11.4",
-    "uuid": "13.0.1",
+    "uuid": "13.0.2",
     "wait-on": "9.0.5",
     "webpack": "5.104.1",
     "write-file-atomic": "7.0.1",
     "zod": "4.3.6"
   },
   "engines": {
-    "node": "24.15.0"
+    "node": "24.17.0"
   },
   "build": {
     "appId": "org.whispersystems.signal-desktop",
@@ -624,6 +624,6 @@
     ]
   },
   "volta": {
-    "node": "24.15.0"
+    "node": "24.17.0"
   }
 }

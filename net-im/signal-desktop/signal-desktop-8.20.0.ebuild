@@ -35,7 +35,7 @@ EAPI=8
 
 # To update use:
 # PATH=$(realpath "../../scripts")":${PATH}"
-# PNPM_UPDATER_PROJECT_ROOT="Signal-Desktop-8.19.0" pnpm_updater_update_locks.sh
+# PNPM_UPDATER_PROJECT_ROOT="Signal-Desktop-8.20.0" pnpm_updater_update_locks.sh
 
 # Ignore if error:
 # Could not detect abi for version ' + target + ' and runtime ' + runtime + '.  Updating "node-abi" might help solve this issue if it is a new release of ' + runtime)
@@ -57,8 +57,8 @@ PNPM_AUDIT_FIX_ARG="override" # Avoid [ELIFECYCLE] Command failed.
 PNPM_SLOT="9"
 NODE_SLOT="24" # Upstream uses 24.14.0 from .nvmrc
 NODE_ENV="development"
-RUST_MAX_VER="1.91.1" # Inclusive
-RUST_MIN_VER="1.91.1" # llvm-21.1.  Rust is required for @swc/core@1.10.16
+RUST_MAX_VER="1.93.1" # Inclusive
+RUST_MIN_VER="1.93.1" # llvm-21.1.  Rust is required for @swc/core@1.10.16
 # https://github.com/rust-lang/rust/commits/main/src/version		# nightly-2024-10-07
 # https://github.com/swc-project/swc/blob/v1.10.16/rust-toolchain	# Find date at or before 2024-10-07
 VIRTUALX_REQUIRED="manual"
@@ -72,7 +72,7 @@ PNPM_INSTALL_ARGS=(
 inherit secure-version secure-version-node
 
 AT_TYPES_NODE_PV="24.12.0"
-ELECTRON_BUILDER_PV="26.11.1"
+ELECTRON_BUILDER_PV="26.15.7" # 26.11.1 works, 26.15.7 is latest
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
@@ -176,7 +176,7 @@ BDEPEND+="
 "
 PDEPEND+="
 	firejail? (
-		sys-apps/firejail
+		>=sys-apps/firejail-${FIREJAIL_PV}
 	)
 "
 
@@ -251,7 +251,7 @@ _apply_patches() {
 	[[ "${ALREADY_PATCHED}" == "1" ]] && return
 einfo "DEBUG:  Called pnpm_unpack_post()"
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
-		eapply "${FILESDIR}/${PN}-8.19.0-project-files-changes.patch"
+		eapply "${FILESDIR}/${PN}-8.20.0-project-files-changes.patch"
 
 	# Do not remove.  It may be required to build to avoid during pnpm install:
 	# [ELIFECYCLE] Command failed with exit code 1.
@@ -329,8 +329,8 @@ src_unpack() {
 	# Pinned dependencies or add dependency as production section
 	#############################################################
 		deps=(
-			"fabric@4.6.0"			# Pinned version required
-			"electron-builder@26.0.14"	# Pinned version required
+			"fabric@4.6.0"					# Pinned version required
+			"electron-builder@${ELECTRON_BUILDER_PV}"	# Pinned version required
 		)
 		epnpm install "${deps[@]}" -D -w "${PNPM_INSTALL_ARGS[@]}"
 
@@ -349,7 +349,7 @@ src_unpack() {
 			sed -i -e "s|\"@babel/core\": \"7.29.0\"|\"@babel/core\": \"7.29.6\"|g" "${S}/package.json" || die
 			sed -i -e "s|\"js-yaml\": \"4.1.1\"|\"js-yaml\": \"4.2.0\"|g" "${S}/package.json" || die
 			sed -i -e "s|\"js-yaml\": \"4.1.1\"|\"js-yaml\": \"4.2.0\"|g" "${S}/danger/package.json" || die
-			sed -i -e "s|\"uuid\": \"13.0.0\"|\"uuid\": \"13.0.1\"|g" "${S}/package.json" || die
+			sed -i -e "s|\"uuid\": \"13.0.0\"|\"uuid\": \"13.0.2\"|g" "${S}/package.json" || die
 			sed -i -e "s|\"webpack\": \"5.96.1\"|\"webpack\": \"5.104.1\"|g" "${S}/package.json" || die
 		}
 
@@ -388,7 +388,7 @@ einfo "Updating lockfile done."
 		export ELECTRON_BUILDER_CACHE="${HOME}/.cache/electron-builder"
 		export ELECTRON_CACHE="${HOME}/.cache/electron"
 		export ELECTRON_CUSTOM_DIR="v${ELECTRON_APP_ELECTRON_PV}"
-		#unpack "${P}.tar.gz"
+		unpack "${P}.tar.gz"
 		#die
 		pnpm_src_unpack
 		get_deps
@@ -547,6 +547,7 @@ pkg_postinst() {
 	elog "For using the tray icon on compatible desktop environments, start Signal with"
 	elog " '--start-in-tray' or '--use-tray-icon'."
 }
+# OILEDMACHINE-OVERLAY-TEST:  passed (8.20.0, 20260729, Electron 43.2.0)
 # OILEDMACHINE-OVERLAY-TEST:  passed (8.19.0, 20260718, Electron 43.1.1 with Firejail and GPU acceleration off hardening)
 # OILEDMACHINE-OVERLAY-TEST:  passed (8.14.0, 20260610, Electron 42.4.0 with Firejail and GPU acceleration off hardening)
 # OILEDMACHINE-OVERLAY-TEST:  passed (8.11.0, 20260525, Electron 42.2.0, Node (build-time): 24.16.0)
