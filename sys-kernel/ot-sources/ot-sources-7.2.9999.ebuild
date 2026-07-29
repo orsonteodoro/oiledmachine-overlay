@@ -9,14 +9,14 @@ EAPI=8
 # See also https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/
 
 GENPATCHES_FALLBACK_COMMIT="d4fa92430e875432c3a61bb3abd9b6e68ea9fcbd" # 2026-06-04 18:26:32 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="62cc90241548d5570ee68e01aaba6506964e9811" # 2026-07-27 14:36:26 -0700 @ Merge tag 'mm-hotfixes-stable-2026-07-27-14-18'
+LINUX_SOURCES_FALLBACK_COMMIT="fc02acf6ac0ccde0c805c2daa9148683cdd01ba8" # 2026-07-28 13:45:01 -0700 -0700 @ Merge tag 'platform-drivers-x86-v7.2-4'
 RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
 # https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=7.2
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
-EBUILD_REV="ebuild_revision_10"
+EBUILD_REV="ebuild_revision_11"
 GENPATCHES_VER="live" # can be live only when 9999
 PATCH_PROJC_VER="7.1-r0"
 PATCH_RT_VER="7.2-rc4-rt3"
