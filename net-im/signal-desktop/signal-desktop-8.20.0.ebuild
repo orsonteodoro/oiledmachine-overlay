@@ -346,6 +346,8 @@ src_unpack() {
 			sed -i -e "s|\"js-yaml\": \"4.1.1\"|\"js-yaml\": \"4.3.0\"|g" "${S}/danger/package.json" || die
 			sed -i -e "s|\"uuid\": \"13.0.0\"|\"uuid\": \"13.0.2\"|g" "${S}/package.json" || die
 			sed -i -e "s|\"webpack\": \"5.96.1\"|\"webpack\": \"5.104.1\"|g" "${S}/package.json" || die
+			sed -i -e "s|\"svgo\": \"4.0.1\"|\"svgo\": \"4.0.2\"|g" "${S}/package.json" || die
+			sed -i -e "s|\"linkify-it\": \"5.0.1\"|\"linkify-it\": \"5.0.2\"|g" "${S}/package.json" || die
 		}
 
 		patch_build_files
