@@ -331,7 +331,7 @@ einfo "ICA = Improper Criticality Applied"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ICI"($|" "|";"|",") ]] ; then
 # Created to differentiate from cryptographic weakness
-einfo "ICI = Inappropriate Cryptographic Implementation"
+einfo "ICI = Improper Cryptographic Implementation"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ICP"($|" "|";"|",") ]] ; then
 einfo "ICP = Insecure Coding Practices"
