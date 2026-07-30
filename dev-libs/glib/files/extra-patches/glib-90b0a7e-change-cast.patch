@@ -10,9 +10,17 @@
 #      |                               ^~~~~~~~~~~~~~~~~~~
 #
 
---- a/glib/gstrfuncs.h.orig	2026-07-28 07:40:14.193610058 -0700
-+++ b/glib/gstrfuncs.h	2026-07-28 07:41:09.944047543 -0700
-@@ -621,7 +621,7 @@ G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+--- a/glib/gstrfuncs.h.orig	2026-07-29 22:29:58.608708900 -0700
++++ b/glib/gstrfuncs.h	2026-07-29 22:30:50.795561543 -0700
+@@ -33,6 +33,7 @@
+ 
+ #include <stdarg.h>
+ #include <string.h>
++#include <stdint.h>
+ 
+ #include <glib/gmacros.h>
+ #include <glib/gtypes.h>
+@@ -621,7 +622,7 @@ G_GNUC_BEGIN_IGNORE_DEPRECATIONS
      return FALSE;
  G_GNUC_END_IGNORE_DEPRECATIONS
  
