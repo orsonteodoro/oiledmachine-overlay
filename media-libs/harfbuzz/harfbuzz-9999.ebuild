@@ -11,7 +11,7 @@ CXX_STANDARD=17
 CFLAGS_HARDENED_LANGS="c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO NPD"
-EXPECTED_CARGO_HASH="3cab8b6daf33cceed328b4efd7bea3fd4a4e26bb940532b13ce33a522a1dadc80bb2d85c0e61c4cd178ccb777ac26dd492b2cc9b01cec2f700d04de9e5a118e5"
+EXPECTED_CARGO_HASH="cb07a207f107faec2717eee8dab52bc65547b6f674d0f471fee0c5868c607a6320f5375fa2a755fc2c20b0418ed9b67d753074c8576f8f67037b08b223a43904"
 PYTHON_COMPAT=( python3_{10..14} )
 RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO NPD"
@@ -21,10 +21,8 @@ RUST_MIN_VER="1.90.0" # LLVM 20.1 for harfbuzz_rust@0.0.0
 RUST_NEEDS_LLVM=1 # Prune rustc for unused LLVM slots
 RUST_NIGHTLY_PV="1.98.0"
 
-
-
-KB_COMMIT="ca6c9624dd7c6b774e6cec9901f3d8d998d6f62a"
-RAGEL_PV="6.10"
+KB_COMMIT="ca6c9624dd7c6b774e6cec9901f3d8d998d6f62a" # See https://github.com/harfbuzz/harfbuzz/blob/main/subprojects/kbts.wrap
+RAGEL_PV="6.10" # See https://github.com/harfbuzz/harfbuzz/blob/main/subprojects/ragel.wrap
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/glib-2.89.9999"
@@ -42,20 +40,19 @@ harfbuzz_rust-0.0.0
 
 # From "./convert-cargo-lock.sh 9999"
 CRATES="
-bitflags-2.13.0
-bytemuck-1.25.0
-bytemuck_derive-1.10.2
-font-types-0.11.3
-font-types-0.12.0
-harfrust-0.10.0
+bitflags-2.13.1
+bytemuck-1.25.2
+bytemuck_derive-1.11.0
+font-types-0.12.2
+harfrust-0.12.0
 once_cell-1.21.4
-proc-macro2-1.0.106
-quote-1.0.46
-read-fonts-0.39.2
-read-fonts-0.40.2
-skrifa-0.43.2
+proc-macro2-1.0.107
+quote-1.0.47
+read-fonts-0.41.0
+read-fonts-0.42.1
+skrifa-0.45.1
 smallvec-1.15.2
-syn-2.0.118
+syn-2.0.119
 unicode-ident-1.0.24
 "
 
@@ -76,7 +73,7 @@ DESCRIPTION="An OpenType text shaping engine"
 HOMEPAGE="https://harfbuzz.github.io/"
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="f2210d5787230f542a1b2035322134b0b686c0ae"
+	FALLBACK_COMMIT="5b54d30ce7ade7b1c675bd71eb33fa5fa754fa8f"
 	EGIT_REPO_URI="https://github.com/harfbuzz/harfbuzz.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
@@ -116,7 +113,7 @@ IUSE+="
 -benchmark +cairo +chafa debug doc -experimental -fatlto -fontations +glib +gpu
 +graphite -harfrust +icu +kbts +png +raster +ragel +subset -system-icu -system-ragel
 +introspection test -thinlto +truetype +utilities +vector +zlib
-ebuild_revision_2
+ebuild_revision_3
 "
 RESTRICT="
 	!test? (
