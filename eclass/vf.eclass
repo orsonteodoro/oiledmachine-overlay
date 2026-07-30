@@ -443,6 +443,9 @@ einfo "ITW = In The Wild" # More informal but more commonly used
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IU"($|" "|";"|",") ]] ; then
 einfo "IU = Integer Underflow"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IUIR"($|" "|";"|",") ]] ; then
+einfo "IUIR = Improper UI Restriction"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IV"($|" "|";"|",") ]] ; then
 einfo "IV = Insufficient Validation of Input or Data"
 		fi
