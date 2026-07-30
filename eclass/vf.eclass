@@ -10,6 +10,8 @@
 # mark KEYWORDS faster as stable.
 #
 
+# This eclass uses AI inference for improved clarification.
+
 case ${EAPI:-0} in
 	[78]) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
@@ -145,12 +147,28 @@ einfo "AW = Arbitrary Write"
 # See also JITM, MISCOMP, PGC
 einfo "BGC = Badly Generated Code"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"BISI"($|" "|";"|",") ]] ; then
+# Created to differentiate from spoof attack
+einfo "BISI = Browser Inappropriate Security Indicators"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"BO"($|" "|";"|",") ]] ; then
 # Stack size insufficient
 einfo "BO = Buffer Overflow"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"BOR"($|" "|";"|",") ]] ; then
 einfo "BOR = Buffer Overread"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"BOIL"($|" "|";"|",") ]] ; then
+# Created to differentiate from memory leak
+einfo "BOLI = Browser Object Lifecycle Issue"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"BPB"($|" "|";"|",") ]] ; then
+# Created to differentiate from MAC (Mandatory Access Control) Policy Bypass
+einfo "BPB = Browser Policy Bypass"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"BUSE"($|" "|";"|",") ]] ; then
+# Created to differentiate from UM (msan)
+einfo "BUSE = Browser Uninitialized Use"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"BU"($|" "|";"|",") ]] ; then
 einfo "BU = Buffer Underflow"
@@ -310,6 +328,10 @@ einfo "IbD = Insecure by Design"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ICA"($|" "|";"|",") ]] ; then
 einfo "ICA = Improper Criticality Applied"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ICI"($|" "|";"|",") ]] ; then
+# Created to differentiate from cryptographic weakness
+einfo "ICI = Inappropriate Cryptographic Implementation"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ICP"($|" "|";"|",") ]] ; then
 einfo "ICP = Insecure Coding Practices"
@@ -670,7 +692,7 @@ einfo "UF = Underflow"
 einfo "UI = UI Spoofing"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UM"($|" "|";"|",") ]] ; then
-# See also UPTR, UVAL, UVAR for non ID.
+# See also BUSE, UPTR, UVAL, UVAR for non ID.
 # UM should typically used when ID possible for proper association/implication.
 einfo "UM = Uninitialized Memory"
 		fi
