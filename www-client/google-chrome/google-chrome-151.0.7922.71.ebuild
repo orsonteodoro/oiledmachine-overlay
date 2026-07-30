@@ -489,6 +489,11 @@ pkg_pretend() {
 pkg_setup() {
 	chromium_suid_sandbox_check_kernel_config
 	web-kernel-config_setup
+
+	if [[ -n "${MITIGATION_URI}" ]] ; then
+einfo "Security announcement date:  ${MITIGATION_DATE}"
+einfo "Security fixes applied:  ${MITIGATION_URI}"
+	fi
 	vf_show
 }
 

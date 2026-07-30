@@ -237,6 +237,11 @@ pkg_setup() {
 
 	linux-info_pkg_setup
 	web-kernel-config_setup
+
+	if [[ -n "${MITIGATION_URI}" ]] ; then
+einfo "Security announcement date:  ${MITIGATION_DATE}"
+einfo "Security fixes applied:  ${MITIGATION_URI}"
+	fi
 	vf_show
 }
 
