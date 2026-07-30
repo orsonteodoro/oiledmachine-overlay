@@ -393,6 +393,9 @@ einfo "IO = Integer Overflow"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IOOB"($|" "|";"|",") ]] ; then
 einfo "IOOB = Index Out Of Bounds"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IOV"($|" "|";"|",") ]] ; then
+einfo "IOV = Inadquate Origin Validation"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IP"($|" "|";"|",") ]] ; then
 einfo "IP = Improper Permissions"
 		fi

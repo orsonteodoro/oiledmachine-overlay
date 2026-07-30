@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# See also https://ftp.mozilla.org/pub/firefox/releases/
+
 MOZ_ESR=yes
 
 MOZ_PV=${PV}
@@ -31,6 +33,44 @@ MOZ_P="${MOZ_PN}-${MOZ_PV}"
 MOZ_PV_DISTFILES="${MOZ_PV}${MOZ_PV_SUFFIX}"
 MOZ_P_DISTFILES="${MOZ_PN}-${MOZ_PV_DISTFILES}"
 
+MITIGATION_DATE="Jul 21, 2026" # Official annoucement (blog)
+MITIGATION_LAST_UPDATE=1784568240 # From `date +%s -d "20-Jul-2026 10:24"` From ftp linux-x86_64/en-US/
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-70/"
+VULNERABILITIES_FIXED=(
+	"CVE-2026-15718;IF;Medium"
+	"CVE-2026-15719;IOV;"
+	"CVE-2026-16349;BPB, SOPB;"
+	"CVE-2026-16350;IBC;"
+	"CVE-2026-16362;UAF;"
+	"CVE-2026-16351;UAF, SBE;"
+	"CVE-2026-16352;UAF, SBE;"
+	"CVE-2026-16363;JITM;"
+	"CVE-2026-16353;UAF, NPD, UPTR;Critical"
+	"CVE-2026-16354;ID;"
+	"CVE-2026-16368;IBC;"
+	"CVE-2026-16369;IO;"
+	"CVE-2026-16355;JITM;"
+	"CVE-2026-16356;UAF, SBE;"
+	"CVE-2026-16357;IBC;"
+	"CVE-2026-16371;PE;"
+	"CVE-2026-16374;ID;"
+	"CVE-2026-16375;IOV;"
+	"CVE-2026-16377;SB;"
+	"CVE-2026-16379;PE;"
+	"CVE-2026-16358;IOV;"
+	"CVE-2026-16381;BPB, SOPB;"
+	"CVE-2026-16383;SB;"
+	"CVE-2026-16387;IOV, IAC, ID;Critical"
+	"CVE-2026-16390;SB;"
+	"CVE-2026-16391;ID;"
+	"CVE-2026-16359;IBC;"
+	"CVE-2026-16396;PE;"
+	"CVE-2026-16405;ID;"
+	"CVE-2026-16412;MC, ACE;"
+	"CVE-2026-16360;MC, ACE;"
+	"CVE-2026-16361;MC, ACE;"
+)
+
 CHKL_TIMESTAMPS=(
 	"app-accessibility/at-spi2-core-9999"
 	"dev-libs/glib-2.89.9999"
@@ -46,7 +86,7 @@ CHKL_TIMESTAMPS=(
 	"x11-libs/libXcursor-9999"
 )
 
-inherit chkl desktop linux-info optfeature pax-utils secure-version web-kernel-config xdg
+inherit chkl desktop linux-info optfeature pax-utils secure-version vf web-kernel-config xdg
 
 MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/releases/${MOZ_PV}"
 
@@ -197,6 +237,7 @@ pkg_setup() {
 
 	linux-info_pkg_setup
 	web-kernel-config_setup
+	vf_show
 }
 
 src_unpack() {
