@@ -184,7 +184,7 @@ BDEPEND="
 	verify-sig? ( sec-keys/openpgp-keys-danielstenberg )
 "
 
-DOCS=( README docs/{FEATURES.md,INTERNALS.md,FAQ.md,BUGS.md,CONTRIBUTE.md} )
+DOCS=( README docs/{FEATURES.md,FAQ.md,BUGS.md,CONTRIBUTE.md} )
 
 MULTILIB_WRAPPED_HEADERS=(
 	/usr/include/curl/curlbuild.h
