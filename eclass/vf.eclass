@@ -588,7 +588,11 @@ einfo "ReDoS = Regular Expression Denial of Service"
 einfo "RL = Resource Leak"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SA"($|" "|";"|",") ]] ; then
+# Deprecated use SAV
 einfo "SA = Spoofing Attack"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SAV"($|" "|";"|",") ]] ; then
+einfo "SAV = Spoofing Attack Vulnerability"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SB"($|" "|";"|",") ]] ; then
 einfo "SB = Security Bypass"
@@ -695,6 +699,7 @@ einfo "UESE = UnExpected Sign Extension"
 einfo "UF = Underflow"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UI"($|" "|";"|",") ]] ; then
+# Deprecated use SAV
 einfo "UI = UI Spoofing"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UM"($|" "|";"|",") ]] ; then
