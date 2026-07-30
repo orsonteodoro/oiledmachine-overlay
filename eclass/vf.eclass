@@ -147,28 +147,12 @@ einfo "AW = Arbitrary Write"
 # See also JITM, MISCOMP, PGC
 einfo "BGC = Badly Generated Code"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"BISI"($|" "|";"|",") ]] ; then
-# Created to differentiate from spoof attack
-einfo "BISI = Browser Inappropriate Security Indicators"
-		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"BO"($|" "|";"|",") ]] ; then
 # Stack size insufficient
 einfo "BO = Buffer Overflow"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"BOR"($|" "|";"|",") ]] ; then
 einfo "BOR = Buffer Overread"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"BOIL"($|" "|";"|",") ]] ; then
-# Created to differentiate from memory leak
-einfo "BOLI = Browser Object Lifecycle Issue"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"BPB"($|" "|";"|",") ]] ; then
-# Created to differentiate from MAC (Mandatory Access Control) Policy Bypass
-einfo "BPB = Browser Policy Bypass"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"BUSE"($|" "|";"|",") ]] ; then
-# Created to differentiate from UM (msan)
-einfo "BUSE = Browser Uninitialized Use"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"BU"($|" "|";"|",") ]] ; then
 einfo "BU = Buffer Underflow"
@@ -387,6 +371,10 @@ einfo "IMPRREL = Improper Release"
 # Log Injection
 einfo "INJECT = Injection"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"INSI"($|" "|";"|",") ]] ; then
+# Created to differentiate from spoof attack
+einfo "INSI = Inappropriate Security Indicators"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IO"($|" "|";"|",") ]] ; then
 einfo "IO = Integer Overflow"
 		fi
@@ -431,9 +419,6 @@ einfo "ISI = Improper Secure Implementation"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("ISoI"|"ISOI")($|" "|";"|",") ]] ; then
 einfo "ISoI = Insufficient Sanitiation of Input"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ISPE"($|" "|";"|",") ]] ; then
-einfo "ISPE = Improper Security Policy Enforcement"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ITW"($|" "|";"|",") ]] ; then
 # Alias for AEITW.
@@ -520,6 +505,10 @@ einfo "OE = Offset Error"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"OF"($|" "|";"|",") ]] ; then
 einfo "OF = Overflow"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"OLF"($|" "|";"|",") ]] ; then
+# Created to differentiate from memory leak
+einfo "OLF = Object Lifecycle Flaw"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"OOB"($|" "|";"|",") ]] ; then
 einfo "OOB = Out Of Bounds"
@@ -703,7 +692,7 @@ einfo "UF = Underflow"
 einfo "UI = UI Spoofing"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UM"($|" "|";"|",") ]] ; then
-# See also BUSE, UPTR, UVAL, UVAR for non ID.
+# See also WBUU, UPTR, UVAL, UVAR for non ID.
 # UM should typically used when ID possible for proper association/implication.
 einfo "UM = Uninitialized Memory"
 		fi
@@ -734,6 +723,16 @@ einfo "UVAR = Uninitialized Variable"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"WC"($|" "|";"|",") ]] ; then
 einfo "WC = Weak Cipher"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"WBSPB"($|" "|";"|",") ]] ; then
+einfo "WBSPB = Web Browser Security Policy Bypass"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"WBSPI"($|" "|";"|",") ]] ; then
+einfo "WBSPI = Web Browser Security Policy Inadequate/Inappropriate"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"WBUU"($|" "|";"|",") ]] ; then
+# Created to differentiate from UM (msan)
+einfo "WBUU = Web Browser Uninitialized Use"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"WR"($|" "|";"|",") ]] ; then
 einfo "WRNG = Weak CSRNG"
