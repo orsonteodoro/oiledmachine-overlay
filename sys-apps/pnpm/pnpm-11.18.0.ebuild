@@ -17,14 +17,14 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT_MAJOR="9" # See https://github.com/pnpm/pnpm/blob/v10.34.4/pnpm-lock.yaml#L1
+SLOT_MAJOR="9" # See https://github.com/pnpm/pnpm/blob/v11.18.0/pnpm-lock.yaml#L1
 SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ebuild_revision_6
 "
-# See https://github.com/pnpm/pnpm/blob/v10.34.4/pnpm/package.json
+# See https://github.com/pnpm/pnpm/blob/v11.18.0/pnpm11/pnpm/package.json#L188
 CDEPEND+="
-	>=net-libs/nodejs-18.12[corepack,ssl]
+	>=net-libs/nodejs-22.13[corepack,ssl]
 "
 DEPEND+="
 	${CDEPEND}
@@ -38,7 +38,7 @@ BDEPEND+="
 
 get_min_node_slot() {
 	local x
-	for x in $(seq 18 30) ; do
+	for x in $(seq 22 30) ; do
 		if [[ -e "${ESYSROOT}/usr/lib/node/${x}/bin/corepack" ]] ; then
 			echo "${x}"
 			return

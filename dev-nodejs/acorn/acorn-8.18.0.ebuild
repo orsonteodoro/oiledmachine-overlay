@@ -5,7 +5,7 @@
 EAPI=8
 
 # For node range see:
-# https://github.com/acornjs/acorn/blob/8.16.0/acorn/package.json#L21
+# https://github.com/acornjs/acorn/blob/8.18.0/acorn/package.json#L21
 
 KEYWORDS="~amd64"
 S="${WORKDIR}"
@@ -19,7 +19,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT="$(ver_cut 1-2 ${PV})"
+SLOT=$(ver_cut "1-2" "${PV}")
 IUSE+=" "
 CDEPEND+="
 	>=net-libs/nodejs-0.4.0

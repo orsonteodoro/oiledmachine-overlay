@@ -12,7 +12,7 @@ EAPI=8
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
 
-# Last deps commit date:  Jun 22, 2026
+# Last deps commit date:  Jul 27, 2026
 
 CFLAGS_HARDENED_PIE="1"
 CFLAGS_HARDENED_USE_CASES="jit language-runtime network server untrusted-data web-server"
@@ -31,7 +31,7 @@ UOPTS_SUPPORT_TPGO=1
 ACORN_PV="8.16.0"
 AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 COREPACK_PV="0.35.0"
-NPM_PV="11.16.0" # See https://github.com/nodejs/node/blob/v24.16.0/deps/npm/package.json
+NPM_PV="11.16.0" # See https://github.com/nodejs/node/blob/v24.18.0/deps/npm/package.json
 WRK_PV="1.2.1" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 
 CHKL_TIMESTAMPS=(
