@@ -1,0 +1,115 @@
+--- a/src/features/vrmViewer/model.ts.orig	2025-07-23 13:57:17.000000000 -0700
++++ b/src/features/vrmViewer/model.ts	2026-07-30 22:55:39.144362090 -0700
+@@ -6,7 +6,7 @@ import {
+   VRMLoaderPlugin,
+   VRMUtils,
+ } from "@pixiv/three-vrm";
+-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
++import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+ import { VRMAnimation } from "@/lib/VRMAnimation/VRMAnimation";
+ import { VRMLookAtSmootherLoaderPlugin } from "@/lib/VRMLookAtSmootherLoaderPlugin/VRMLookAtSmootherLoaderPlugin";
+ import { LipSync } from "@/features/lipSync/lipSync";
+diff '--color=auto' -urp a/src/features/vrmViewer/room.ts.orig b/src/features/vrmViewer/room.ts
+--- a/src/features/vrmViewer/room.ts.orig	2025-07-23 13:57:17.000000000 -0700
++++ b/src/features/vrmViewer/room.ts	2026-07-30 23:19:18.755111986 -0700
+@@ -1,5 +1,5 @@
+ import * as THREE from "three";
+-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
++import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+ // @ts-ignore
+ import * as GaussianSplats3D from '@mkkellogg/gaussian-splats-3d';
+ import { downscaleModelTextures, logTextureInfo } from '@/utils/textureDownscaler';
+diff '--color=auto' -urp a/src/features/vrmViewer/XRControllerModelFactory.js b/src/features/vrmViewer/XRControllerModelFactory.js
+--- a/src/features/vrmViewer/XRControllerModelFactory.js	2025-07-23 13:57:17.000000000 -0700
++++ b/src/features/vrmViewer/XRControllerModelFactory.js	2026-07-30 23:19:41.522306370 -0700
+@@ -5,7 +5,7 @@ import {
+   SphereGeometry,
+ } from 'three';
+ 
+-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
++import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+ 
+ import {
+   Constants as MotionControllerConstants,
+diff '--color=auto' -urp a/src/features/vrmViewer/XRHandMeshModel.js b/src/features/vrmViewer/XRHandMeshModel.js
+--- a/src/features/vrmViewer/XRHandMeshModel.js	2025-07-23 13:57:17.000000000 -0700
++++ b/src/features/vrmViewer/XRHandMeshModel.js	2026-07-30 23:19:26.610654925 -0700
+@@ -1,4 +1,4 @@
+-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
++import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+ 
+ const DEFAULT_HAND_PROFILE_PATH = '/controllers/generic-hand/';
+ 
+diff '--color=auto' -urp a/src/lib/VRMAnimation/loadVRMAnimation.ts b/src/lib/VRMAnimation/loadVRMAnimation.ts
+--- a/src/lib/VRMAnimation/loadVRMAnimation.ts	2025-07-23 13:57:17.000000000 -0700
++++ b/src/lib/VRMAnimation/loadVRMAnimation.ts	2026-07-30 23:19:13.203083103 -0700
+@@ -1,4 +1,4 @@
+-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
++import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+ import { VRMAnimation } from './VRMAnimation';
+ import { VRMAnimationLoaderPlugin } from './VRMAnimationLoaderPlugin';
+ 
+diff '--color=auto' -urp a/src/lib/VRMAnimation/VRMAnimationLoaderPlugin.ts b/src/lib/VRMAnimation/VRMAnimationLoaderPlugin.ts
+--- a/src/lib/VRMAnimation/VRMAnimationLoaderPlugin.ts	2025-07-23 13:57:17.000000000 -0700
++++ b/src/lib/VRMAnimation/VRMAnimationLoaderPlugin.ts	2026-07-30 23:19:09.891104487 -0700
+@@ -3,7 +3,7 @@ import {
+   GLTF,
+   GLTFLoaderPlugin,
+   GLTFParser,
+-} from "three/examples/jsm/loaders/GLTFLoader";
++} from "three/examples/jsm/loaders/GLTFLoader.js";
+ import { VRMAnimationLoaderPluginOptions } from "./VRMAnimationLoaderPluginOptions";
+ import { GLTF as GLTFSchema } from "@gltf-transform/core";
+ import { VRMCVRMAnimation } from "./VRMCVRMAnimation";
+diff '--color=auto' -urp a/src/lib/VRMLookAtSmootherLoaderPlugin/VRMLookAtSmootherLoaderPlugin.ts b/src/lib/VRMLookAtSmootherLoaderPlugin/VRMLookAtSmootherLoaderPlugin.ts
+--- a/src/lib/VRMLookAtSmootherLoaderPlugin/VRMLookAtSmootherLoaderPlugin.ts	2025-07-23 13:57:17.000000000 -0700
++++ b/src/lib/VRMLookAtSmootherLoaderPlugin/VRMLookAtSmootherLoaderPlugin.ts	2026-07-30 23:19:06.691190937 -0700
+@@ -3,7 +3,7 @@ import {
+   VRMLookAt,
+   VRMLookAtLoaderPlugin,
+ } from "@pixiv/three-vrm";
+-import { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
++import { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
+ import { VRMLookAtSmoother } from "./VRMLookAtSmoother";
+ 
+ export class VRMLookAtSmootherLoaderPlugin extends VRMLookAtLoaderPlugin {
+diff '--color=auto' -urp a/src/utils/gltfAnalyzer.ts b/src/utils/gltfAnalyzer.ts
+--- a/src/utils/gltfAnalyzer.ts	2025-07-23 13:57:17.000000000 -0700
++++ b/src/utils/gltfAnalyzer.ts	2026-07-30 23:19:30.178587467 -0700
+@@ -1,5 +1,5 @@
+ import * as THREE from 'three';
+-import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
++import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
+ 
+ interface MaterialStats {
+   name: string;
+diff '--color=auto' -urp a/src/utils/gltfOptimizer.ts b/src/utils/gltfOptimizer.ts
+--- a/src/utils/gltfOptimizer.ts	2025-07-23 13:57:17.000000000 -0700
++++ b/src/utils/gltfOptimizer.ts	2026-07-30 23:19:39.346411467 -0700
+@@ -1,5 +1,5 @@
+ import * as THREE from 'three';
+-import { GLTF, GLTFLoader, GLTFParser } from 'three/examples/jsm/loaders/GLTFLoader';
++import { GLTF, GLTFLoader, GLTFParser } from 'three/examples/jsm/loaders/GLTFLoader.js';
+ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
+ 
+ // Type for the extension callback
+diff '--color=auto' -urp a/src/utils/textureDownscaler.ts b/src/utils/textureDownscaler.ts
+--- a/src/utils/textureDownscaler.ts	2025-07-23 13:57:17.000000000 -0700
++++ b/src/utils/textureDownscaler.ts	2026-07-30 23:19:35.778405999 -0700
+@@ -1,5 +1,5 @@
+ import * as THREE from "three";
+-import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
++import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
+ 
+ interface Dimensions {
+   width: number;
+diff '--color=auto' -urp a/src/utils/transparencyOptimizer.ts b/src/utils/transparencyOptimizer.ts
+--- a/src/utils/transparencyOptimizer.ts	2025-07-23 13:57:17.000000000 -0700
++++ b/src/utils/transparencyOptimizer.ts	2026-07-30 23:19:33.010472791 -0700
+@@ -1,5 +1,5 @@
+ import * as THREE from 'three';
+-import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
++import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
+ 
+ interface TransparencyStats {
+   meshName: string;

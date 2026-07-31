@@ -149,6 +149,17 @@ einfo "Node version:  ${node_pv}"
 	einfo "NODE_SHARP_PKG_CONFIG_DIR:  ${NODE_SHARP_PKG_CONFIG_DIR}"
 }
 
+node-sharp_append_includes() {
+	filter-flags "-I/usr/include/glib-2.0"
+	filter-flags "-I/usr/lib/glib-2.0/include"
+	# For vips header
+einfo "Adding glib-2.0 includes path to CPPFLAGS for glib-object.h for vips8"
+	append-cppflags "-I/usr/include/glib-2.0"
+einfo "Adding glib-2.0/include includes path to CPPFLAGS for glibconfig.h for glib/gtypes.h"
+	append-cppflags "-I/usr/lib/glib-2.0/include"
+
+}
+
 # @FUNCTION: node-sharp_append_libs
 # @DESCRIPTION:
 # Appends required libs.  Allows for custom or minified builds by setting NODE_SHARP_USE.
@@ -165,11 +176,7 @@ einfo "PKG_CONFIG_PATH:  ${PKG_CONFIG_PATH} (1)"
 		"${S}/node_modules/sharp/src/binding.gyp" \
 		|| die "Failed to append libraries to binding.gyp"
 
-	# For vips header
-einfo "Adding glib-2.0 includes path to CPPFLAGS for glib-object.h for vips8"
-	append-cppflags -I"/usr/include/glib-2.0"
-einfo "Adding glib-2.0/include includes path to CPPFLAGS for glibconfig.h for glib/gtypes.h"
-	append-cppflags -I"/usr/lib/glib-2.0/include"
+	node-sharp_append_includes
 
 	# Set PKG_CONFIG_PATH to use custom vips.pc
 einfo "PKG_CONFIG_PATH:  ${PKG_CONFIG_PATH} (2)"
@@ -311,6 +318,8 @@ einfo "DEBUG:  Called node-sharp_npm_rebuild_sharp()"
 	export LD_LIBRARY_PATH="/usr/${libdir}:${LD_LIBRARY_PATH}"
 	einfo "PKG_CONFIG_PATH in npm_rebuild: ${PKG_CONFIG_PATH}"
 
+	node-sharp_append_includes
+
 	enpm add "sharp@${NODE_SHARP_PV}" \
 		${NPM_INSTALL_ARGS[@]} \
 		${SHARP_INSTALL_ARGS[@]} \
@@ -394,6 +403,8 @@ node-sharp_pnpm_rebuild_sharp() {
 	export LD_LIBRARY_PATH="/usr/${libdir}:${LD_LIBRARY_PATH}"
 	einfo "PKG_CONFIG_PATH in npm_rebuild: ${PKG_CONFIG_PATH}"
 
+	node-sharp_append_includes
+
 	epnpm add "sharp@${NODE_SHARP_PV}" \
 		${PNPM_INSTALL_ARGS[@]} \
 		${SHARP_INSTALL_ARGS[@]}
@@ -466,6 +477,7 @@ node-sharp_npm_lockfile_add_sharp() {
 	else
 		enpm install "node-gyp" ${NPM_INSTALL_ARGS[@]} ${NODE_GYP_INSTALL_ARGS[@]}
 	fi
+	node-sharp_append_includes
 	enpm add "sharp@${NODE_SHARP_PV}" ${NPM_INSTALL_ARGS[@]} ${SHARP_INSTALL_ARGS[@]}
 }
 
@@ -485,6 +497,7 @@ node-sharp_pnpm_lockfile_add_sharp() {
 	else
 		epnpm install "node-gyp" ${PNPM_INSTALL_ARGS[@]} ${NODE_GYP_INSTALL_ARGS[@]}
 	fi
+	node-sharp_append_includes
 	epnpm add "sharp@${NODE_SHARP_PV}" ${PNPM_INSTALL_ARGS[@]} ${SHARP_INSTALL_ARGS[@]}
 }
 
@@ -525,6 +538,8 @@ node-sharp_yarn_rebuild_sharp() {
 		die "libvips-cpp.so not found in ${sharp_vips_lib}"
 	fi
 	einfo "Found libvips-cpp.so in ${sharp_vips_lib}"
+
+	node-sharp_append_includes
 
 	einfo "Running yarn add sharp@${NODE_SHARP_PV} --verbose"
 	eyarn add "sharp@${NODE_SHARP_PV}" -E \
@@ -607,6 +622,7 @@ node-sharp_yarn_lockfile_add_sharp() {
 	else
 		eyarn add "node-gyp" ${YARN_INSTALL_ARGS[@]} ${NODE_GYP_INSTALL_ARGS[@]}
 	fi
+	node-sharp_append_includes
 	eyarn add "sharp@${NODE_SHARP_PV}" ${YARN_INSTALL_ARGS[@]} ${SHARP_INSTALL_ARGS[@]}
 }
 

@@ -30,8 +30,7 @@ RUST_MIN_VER="1.93.1" # LLVM 21.1
 RUST_PV="${RUST_MIN_VER}"
 
 AT_TYPES_NODE_PV="22.7.4"
-SHARP_PV="0.34.3"
-VIPS_PV="8.17.1"
+NODE_SHARP_PV="0.35.3"
 
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse4_2"
@@ -462,27 +461,29 @@ zmij-1.0.21
 "
 
 NODE_SHARP_PATCHES=(
-	"${FILESDIR}/sharp-0.34.2-debug.patch"
-	"${FILESDIR}/sharp-0.34.3-format-fixes.patch"
-	"${FILESDIR}/sharp-0.34.3-static-libs.patch"
+	"${FILESDIR}/sharp-0.35.3-remove-sover-suffix.patch"
 )
 
 NPM_AUDIT_FIX_ARGS=(
-	"--legacy-peer-deps"
+	"--force"
+	#"--legacy-peer-deps"
 	"--prefer-offline"
 )
 
 NPM_DEDUPE_ARGS=(
-	"--legacy-peer-deps"
+	"--force"
+	#"--legacy-peer-deps"
 )
 
 NPM_INSTALL_ARGS=(
-	"--legacy-peer-deps"
+	"--force"
+	#"--legacy-peer-deps"
 	"--prefer-offline"
 )
 
 NPM_UNINSTALL_ARGS=(
-	"--legacy-peer-deps"
+	"--force"
+	#"--legacy-peer-deps"
 	"--prefer-offline"
 )
 
@@ -649,26 +650,6 @@ REQUIRED_USE="
 		wayland
 	)
 "
-gen_webkit_depend() {
-	# TODO:  add audio minimum requirement for webkit-gtk for tts/stt
-	# onnxruntime-web needs webassembly
-	echo "
-		(
-			~net-libs/webkit-gtk-${WEBKIT_GTK_STABLE_PV}:4[javascript,jit,introspection,wayland?,webassembly,X?,webgl]
-	"
-
-	# tts - voice synthesis
-	echo "
-	"
-
-	# stt - voice recognition
-	echo "
-			voice-recognition? (
-				~net-libs/webkit-gtk-${WEBKIT_GTK_STABLE_PV}:4[microphone]
-			)
-		)
-	"
-}
 RUST_BINDINGS_DEPEND_DISABLED="
 	>=net-libs/libsoup-${LIBSOUP2_PV}:2.4[introspection]
 "
@@ -693,12 +674,9 @@ RUST_BINDINGS_DEPEND="
 		)
 	)
 
-	net-libs/webkit-gtk:4=[javascript,jit,introspection,wayland?,webassembly,X?,webgl]
+	>=net-libs/webkit-gtk-${WEBKIT_GTK_STABLE_PV}:4.1=[javascript,jit,introspection,wayland?,webassembly,X?,webgl]
 	voice-recognition? (
-		net-libs/webkit-gtk:4=[microphone]
-	)
-	|| (
-		$(gen_webkit_depend)
+		~net-libs/webkit-gtk-${WEBKIT_GTK_STABLE_PV}:4.1=[microphone]
 	)
 "
 RUST_BINDINGS_BDEPEND="
@@ -707,14 +685,14 @@ RUST_BINDINGS_BDEPEND="
 RDEPEND+="
 	${RUST_BINDINGS_DEPEND}
 	coqui? (
-		dev-python/coqui-tts[${PYTHON_SINGLE_USEDEP}]
-		sys-process/procps
+		dev-python/coqui-tts:=[${PYTHON_SINGLE_USEDEP}]
+		>=sys-process/procps-${PROCPS_PV}:=
 	)
 	ollama? (
-		sci-ml/ollama
+		>=sci-ml/ollama-${OLLAMA_PV}:=
 	)
 	whisper-cpp? (
-		app-accessibility/whisper-cpp
+		app-accessibility/whisper-cpp:=
 	)
 "
 DEPEND+="
@@ -722,15 +700,11 @@ DEPEND+="
 "
 BDEPEND+="
 	${RUST_BINDINGS_BDEPEND}
-	=net-libs/nodejs-${NODE_SLOT}*[npm,webassembly(+)]
+	>=net-libs/nodejs-${NODEJS_24_PV}:${NODE_SLOT}=[npm,webassembly(+)]
 	virtual/pkgconfig
 	|| (
 		dev-lang/rust:${RUST_PV}[wasm]
 		dev-lang/rust-bin:${RUST_PV}
-	)
-	|| (
-		dev-lang/rust:=
-		dev-lang/rust-bin:=
 	)
 "
 DOCS=( "README.md" )
@@ -836,107 +810,26 @@ npm_update_lock_install_post() {
 #ewarn "QA:  Manually remove node_modules/eslint-config-next/node_modules/eslint-plugin-react-hooks in package-lock.json"
 #ewarn "QA:  Manually remove node_modules/copy-webpack-plugin/node_modules/serialize-javascript in package-lock.json"
 #ewarn "QA:  Manually remove node_modules/@charcoal-ui/icons/node_modules/dompurify in package-lock.json"
-		patch_lockfile() {
-			sed -i -e "s|\"@babel/runtime\": \"^7.8.4\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-			sed -i -e "s|\"@babel/runtime\": \"^7.11.2\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-			sed -i -e "s|\"@babel/runtime\": \"^7.12.5\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-			sed -i -e "s|\"@babel/runtime\": \"^7.17.8\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-			sed -i -e "s|\"@babel/runtime\": \"^7.21.0\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-			sed -i -e "s|\"@babel/runtime\": \"^7.23.2\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-			sed -i -e "s|\"@babel/runtime\": \"^7.25.0\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-			sed -i -e "s|\"@babel/runtime\": \"^7.26.0\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-			sed -i -e "s|\"dompurify\": \"2.5.7\"|\"dompurify\": \"^3.4.1\"|g" "package-lock.json" || die
-			sed -i -e "s|\"esbuild\": \"^0.24.0\"|\"esbuild\": \"^0.25.0\"|g" "package.json" || die
-			sed -i -e "s|\"esbuild\": \"^0.24.0\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die
-
-			sed -i -e "s|\"form-data\": \"^4.0.0\"|\"form-data\": \"4.0.4\"|" "package-lock.json" || die
-			sed -i -e "s|\"tar-fs\": \"^2.0.0\"|\"tar-fs\": \"^2.1.4\"|" "package-lock.json" || die
-			sed -i -e "s|\"tar-fs\": \"^3.0.4\"|\"tar-fs\": \"^3.1.1\"|" "package-lock.json" || die
-
-			sed -i -e "s|\"protobufjs\": \"^6.8.8\"|\"protobufjs\": \"^7.5.5\"|g" "package-lock.json" || die
-			sed -i -e "s|\"serialize-javascript\": \"^6.0.1\"|\"serialize-javascript\": \"^7.0.5\"|g" "package-lock.json" || die
-			sed -i -e "s|\"serialize-javascript\": \"^6.0.2\"|\"serialize-javascript\": \"^7.0.5\"|g" "package-lock.json" || die
-			sed -i -e "s|\"serialize-javascript\": \"^7.0.3\"|\"serialize-javascript\": \"^7.0.5\"|g" "package-lock.json" || die
-
-			sed -i -e "s|\"postcss\": \"^8.0.0\"|\"postcss\": \"^8.5.10\"|g" "package-lock.json" || die
-			sed -i -e "s|\"postcss\": \">=8.0.9\"|\"postcss\": \"^8.5.10\"|g" "package-lock.json" || die
-			sed -i -e "s|\"postcss\": \"^8.1.0\"|\"postcss\": \"^8.5.10\"|g" "package-lock.json" || die
-			sed -i -e "s|\"postcss\": \"^8.4.21\"|\"postcss\": \"^8.5.10\"|g" "package-lock.json" || die
-			sed -i -e "s|\"postcss\": \"8.4.31\"|\"postcss\": \"^8.5.10\"|g" "package-lock.json" || die
-			sed -i -e "s|\"postcss\": \"^8.2.14\"|\"postcss\": \"^8.5.10\"|g" "package-lock.json" || die
-			sed -i -e "s|\"postcss\": \"^8.4.47\"|\"postcss\": \"^8.5.10\"|g" "package-lock.json" || die
-
-			sed -i -e "s|\"glob\": \"^7.1.3\"|\"glob\": \"^10.5.0\"|g" "package-lock.json" || die
-			sed -i -e "s|\"glob\": \"^7.1.4\"|\"glob\": \"^10.5.0\"|g" "package-lock.json" || die
-			sed -i -e "s|\"glob\": \"^7.1.6\"|\"glob\": \"^10.5.0\"|g" "package-lock.json" || die
-			sed -i -e "s|\"glob\": \"^10.2.2\"|\"glob\": \"^10.5.0\"|g" "package-lock.json" || die
-			sed -i -e "s|\"glob\": \"^10.3.7\"|\"glob\": \"^10.5.0\"|g" "package-lock.json" || die
-			sed -i -e "s|\"glob\": \"10.3.10\"|\"glob\": \"^10.5.0\"|g" "package-lock.json" || die
-			sed -i -e "s|\"glob\": \"^13.0.6\"|\"glob\": \"^10.5.0\"|g" "package-lock.json" || die
-
-			sed -i -e "s|\"@tootallnate/once\": \"2\"|\"@tootallnate/once\": \"^3.0.1\"|g" "package-lock.json" || die
-		}
 
 		local pkgs
-		patch_lockfile
 		pkgs=(
-			"@babel/runtime@^7.26.10"								# CVE-2025-27789; DoS; Moderate
-			"dompurify@^3.4.1"									# CVE-2024-47875; ZC, SS(DoS, DT, ID); High
-														# CVE-2024-45801; ZC, SS(DoS, DT, ID); High
-														# CVE-2026-41239; DT, ID; Moderate
-														# CVE-2026-41238; DT, ID; Moderate
-														# CVE-2026-41240; VS(DT), 
-														# GHSA-h8r8-wccr-v5f2; DT, ID; Moderate
-														# GHSA-39q2-94rc-95cp; VS(DT, ID); Moderate
-														# GHSA-cj63-jhhr-wcxv; VS(DT), SS(DT, ID); Moderate
-														# GHSA-cjmm-f4jc-qw8r; SS(DT, ID); Moderate
-														# CVE-2025-15599; SS(DT, ID); Moderate
-														# CVE-2026-0540; SS(DT, ID); Moderate
 			"onnxruntime-web@1.14.0"								# Fix build breakage
-			"tar-fs@^2.1.4"										# CVE-2025-59343; ZC, VS(DT);
-			"tar-fs@^3.1.1"										# CVE-2025-59343; ZC, VS(DT);
-			"protobufjs@^7.5.5"									# CVE-2026-41242; VS(DoS, DT, ID), SS(DoS, DT, ID); Critical
-			"serialize-javascript@^7.0.5"								# GHSA-5c6j-r48x-rmvq; ZC, DoS, DT, ID; High
-														# CVE-2026-34043; ZC, DoS; Moderate
+			"serialize-javascript@^7.0.5"
 			"@sentry/nextjs@^10.50.0"								# Fix build breakage
-			"postcss@^8.5.10"									# CVE-2026-41305; DT, ID; Moderate
-			"glob@^10.5.0"										# CVE-2025-64756; DoS, DT, ID; High
 		)
 		enpm install "${pkgs[@]}" -P "${NPM_INSTALL_ARGS[@]}"
 		pkgs=(
-			"next@^${NODE_NEXT_PV}"									# CVE-2025-29927; DT, ID		# --prefer-offline is broken
-														# CVE-2026-44578; ZC, ID; High
-														# GHSA-q4gf-8mx6-v5v3; ZC, DoS; High
-														# CVE-2026-44581; DT, ID; Moderate
-														# CVE-2026-44582; DT; Low
-														# CVE-2026-44577; ZC, DoS; Moderate
-														# CVE-2026-44572; ZC, DoS; Low
-														# CVE-2026-44580; DoS, DT; Moderate
-														# GHSA-8h8q-6873-q5fj; ZC, DoS; High
-														# CVE-2026-44578; ZC, ID; High
-														# CVE-2026-44576; ZC, DoS, DT; Moderate
-														# CVE-2026-44579; ZC, DoS; High
-														# CVE-2026-44575; ZC, ID; High
-														# CVE-2026-45109; ZC, ID; High
-														# CVE-2026-44574; DT, ID; High
-														# CVE-2026-44573; ZC DT; High
 		)
-		enpm install "${pkgs[@]}" -P --legacy-peer-deps
+		#enpm install "${pkgs[@]}" -P --legacy-peer-deps
 
 		pkgs=(
 			"@types/node@^${AT_TYPES_NODE_PV}"
-			"esbuild@^0.25.0"									# GHSA-67mh-4wv8-2f99; ID; Moderate	# --prefer-offline is broken
-			"eslint"
-			"node-gyp@^11.1.0"
-			"form-data@^4.0.4"									# CVE-2025-7783; ZC, VS(DT, ID), SS(DT, ID); Critical
 
 			# Fix runtime
 			"typescript@5.6.3"
 			"@eslint/compat"									# Fix build breakage
-			"@tootallnate/once@^3.0.1"								# CVE-2026-3449; VS(DoS); Low
 		)
 		enpm install "${pkgs[@]}" -D "${NPM_INSTALL_ARGS[@]}"
-		patch_lockfile
 	fi
 }
 
@@ -960,7 +853,7 @@ einfo "Unpacking cargo packages"
 	else
 		S="${S_PROJECT}/src-tauri" \
 		_production_unpack
-		enpm install "node-gyp@11.1.0" -D "${NPM_INSTALL_ARGS[@]}"
+		enpm install "node-gyp@^12.4.0" -D "${NPM_INSTALL_ARGS[@]}"
 
 		local configuration="Debug"
 		local nconfiguration="Release"
@@ -970,6 +863,7 @@ einfo "Unpacking cargo packages"
 		fi
 		local sharp_platform=$(node-sharp_get_platform)
 
+		local fn="sharp-${sharp_platform}-${NODE_SHARP_PV}.node"
 	# Replace upstream prebuilt with newly source locally built node sharp
 	# The upstream sharp-node is minimally x86-64-v2 and not portable.
 		pushd "${S}" >/dev/null 2>&1 || die
@@ -978,19 +872,20 @@ einfo "Unpacking cargo packages"
 			mkdir -p "node_modules/sharp/build/${configuration}" \
 				|| die "Failed to create dir"
 			cp \
-				"node_modules/sharp/src/build/${configuration}/sharp-${sharp_platform}.node" \
-				"node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" \
-				|| die "Failed to copy sharp-${sharp_platform}.node (1)"
+				"node_modules/sharp/src/build/${configuration}/${fn}" \
+				"node_modules/sharp/build/${configuration}/${fn}" \
+				|| die "Failed to copy ${fn} (1)"
 
 			cp \
-				"node_modules/sharp/src/build/${configuration}/sharp-${sharp_platform}.node" \
-				"node_modules/@xenova/transformers/node_modules/sharp/build/Release/obj.target/sharp-${sharp_platform}.node" \
-				|| die "Failed to copy sharp-${sharp_platform}.node (2)"
+				"node_modules/sharp/src/build/${configuration}/${fn}" \
+				"node_modules/next/node_modules/sharp/src/build/Release/obj.target/sharp-${sharp_platform}.node" \
+				|| die "Failed to copy ${fn} (2)"
 
 			cp \
-				"node_modules/sharp/src/build/${configuration}/sharp-${sharp_platform}.node" \
-				"node_modules/@xenova/transformers/node_modules/sharp/build/Release/sharp-${sharp_platform}.node" \
-				|| die "Failed to copy sharp-${sharp_platform}.node (3)"
+				"node_modules/sharp/src/build/${configuration}/${fn}" \
+				"node_modules/next/node_modules/sharp/src/build/Release/sharp-${sharp_platform}.node" \
+				|| die "Failed to copy ${fn} (3)"
+
 	        popd >/dev/null 2>&1 || die
 
 	# Allow only the locally built node sharp
@@ -1005,6 +900,7 @@ src_prepare() {
 #	eapply -R "${DISTDIR}/${PN}-commit-da5a390.patch"
 #	eapply "${FILESDIR}/${PN}-0.2.1_p20241022-coqui-local.patch"
 	eapply "${FILESDIR}/${PN}-0.2.1_p20250204-array-type-check.patch"
+	eapply "${FILESDIR}/${PN}-0.2.1_p20250723-import-fix.patch"
 
 # Prevent ⨯ ESLint: a.getScope is not a function Occurred while linting ${S}/src/components/addToHomescreen.tsx:9 Rule: "react-hooks/rules-of-hooks"
 cat <<EOF > "${S}/eslint.config.mjs"
