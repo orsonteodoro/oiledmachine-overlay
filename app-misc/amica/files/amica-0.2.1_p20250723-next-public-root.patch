@@ -1,0 +1,19 @@
+--- a/src/utils/buildUrl.ts.orig	2025-07-23 13:57:17.000000000 -0700
++++ b/src/utils/buildUrl.ts	2026-07-31 00:20:23.826901208 -0700
+@@ -1,15 +1,7 @@
+-import getConfig from "next/config";
+-
+ /**
+  * github pagesに公開時にアセットを読み込めるようにするため、
+  * 環境変数を見てURLにリポジトリ名を追加する
+  */
+ export function buildUrl(path: string): string {
+-  const {
+-    publicRuntimeConfig,
+-  }: {
+-    publicRuntimeConfig: { root: string };
+-  } = getConfig();
+-
+-  return publicRuntimeConfig.root + path;
++  return process.env.NEXT_PUBLIC_ROOT + path;
+ }

@@ -6,7 +6,7 @@ EAPI=8
 
 # U24
 
-# This ebuild contains an AI generated content.
+# This ebuild an associated patch(es) contains an AI generated content.
 # The node sharp patches are directly from AI generated code.
 # Some of the patches for amica were suggested/influenced with the help of AI inference.
 
@@ -44,130 +44,151 @@ CRATES="
 adler2-2.0.1
 aho-corasick-1.1.4
 alloc-no-stdlib-2.0.4
-alloc-stdlib-0.2.2
+alloc-stdlib-0.2.4
 android_system_properties-0.1.5
-anyhow-1.0.102
-atk-0.15.1
-atk-sys-0.15.1
-autocfg-1.5.0
-base64-0.13.1
+anyhow-1.0.104
+atk-0.18.2
+atk-sys-0.18.2
+atomic-waker-1.1.2
+autocfg-1.5.1
 base64-0.21.7
 base64-0.22.1
 bitflags-1.3.2
-bitflags-2.11.1
-block-0.1.6
+bitflags-2.13.1
+bit-set-0.8.0
+bit-vec-0.8.0
+block2-0.6.2
 block-buffer-0.10.4
-brotli-7.0.0
-brotli-decompressor-4.0.3
-bstr-1.12.1
-bumpalo-3.20.2
-bytemuck-1.25.0
+brotli-8.0.4
+brotli-decompressor-5.0.3
+bs58-0.5.1
+bumpalo-3.20.3
+bytemuck-1.25.2
 byteorder-1.5.0
-bytes-1.11.1
-cairo-rs-0.15.12
-cairo-sys-rs-0.15.1
+bytes-1.12.1
+cairo-rs-0.18.5
+cairo-sys-rs-0.18.2
+camino-1.2.5
+cargo_metadata-0.19.2
+cargo-platform-0.1.9
 cargo_toml-0.15.3
-cc-1.2.61
+cargo_toml-0.22.3
+cc-1.4.0
 cesu8-1.1.0
 cfb-0.7.3
 cfg-expr-0.15.8
-cfg-expr-0.9.1
 cfg-if-1.0.4
-chrono-0.4.44
-cocoa-0.24.1
-cocoa-foundation-0.1.2
-color_quant-1.1.0
+chrono-0.4.45
 combine-4.6.7
 convert_case-0.4.0
-core-foundation-0.9.4
+cookie-0.18.1
+core-foundation-0.10.1
 core-foundation-sys-0.8.7
-core-graphics-0.22.3
-core-graphics-types-0.1.3
+core-graphics-0.25.0
+core-graphics-types-0.2.0
 cpufeatures-0.2.17
 crc32fast-1.5.0
-crossbeam-channel-0.5.15
-crossbeam-deque-0.8.6
-crossbeam-epoch-0.9.18
-crossbeam-utils-0.8.21
+crossbeam-channel-0.5.16
+crossbeam-utils-0.8.22
 crypto-common-0.1.7
 cssparser-0.27.2
+cssparser-0.36.0
 cssparser-macros-0.6.1
 ctor-0.2.9
+ctor-0.8.0
+ctor-proc-macro-0.0.7
 darling-0.23.0
 darling_core-0.23.0
 darling_macro-0.23.0
+dbus-0.9.12
 deranged-0.5.8
 derive_more-0.99.20
+derive_more-2.1.1
+derive_more-impl-2.1.1
 digest-0.10.7
+dirs-6.0.0
 dirs-next-2.0.0
+dirs-sys-0.5.0
 dirs-sys-next-0.1.2
-dispatch-0.2.0
-displaydoc-0.2.5
+dispatch2-0.3.1
+displaydoc-0.2.7
+dlopen2-0.8.2
+dlopen2_derive-0.4.3
+dom_query-0.27.0
+dpi-0.1.2
 dtoa-1.0.11
 dtoa-short-0.3.5
+dtor-0.3.0
+dtor-proc-macro-0.0.6
 dunce-1.0.5
 dyn-clone-1.0.20
 embed_plist-1.2.2
 embed-resource-2.5.2
+embed-resource-3.0.11
 encoding_rs-0.8.35
 equivalent-1.0.2
+erased-serde-0.4.10
 errno-0.3.14
-fastrand-2.4.1
+fastrand-2.5.0
 fdeflate-0.3.7
 field-offset-0.3.6
-filetime-0.2.27
 find-msvc-tools-0.1.9
 flate2-1.1.9
 fluent-uri-0.1.4
 fnv-1.0.7
-foldhash-0.1.5
-foreign-types-0.3.2
-foreign-types-shared-0.1.1
+foldhash-0.2.0
+foreign-types-0.5.0
+foreign-types-macros-0.2.4
+foreign-types-shared-0.3.1
 form_urlencoded-1.2.2
 futf-0.1.5
-futures-channel-0.3.32
-futures-core-0.3.32
-futures-executor-0.3.32
-futures-io-0.3.32
-futures-macro-0.3.32
-futures-task-0.3.32
-futures-util-0.3.32
+futures-channel-0.3.33
+futures-core-0.3.33
+futures-executor-0.3.33
+futures-io-0.3.33
+futures-macro-0.3.33
+futures-sink-0.3.33
+futures-task-0.3.33
+futures-util-0.3.33
 fxhash-0.2.1
-gdk-0.15.4
-gdk-pixbuf-0.15.11
-gdk-pixbuf-sys-0.15.10
-gdk-sys-0.15.1
-gdkwayland-sys-0.15.3
-gdkx11-sys-0.15.1
-generator-0.7.5
+gdk-0.18.2
+gdk-pixbuf-0.18.5
+gdk-pixbuf-sys-0.18.0
+gdk-sys-0.18.2
+gdkwayland-sys-0.18.2
+gdkx11-0.18.2
+gdkx11-sys-0.18.2
 generic-array-0.14.7
 getrandom-0.1.16
 getrandom-0.2.17
-getrandom-0.4.2
-gio-0.15.12
-gio-sys-0.15.10
-glib-0.15.12
-glib-macros-0.15.13
-glib-sys-0.15.10
-glob-0.3.3
-globset-0.4.18
-gobject-sys-0.15.10
-gtk-0.15.5
-gtk3-macros-0.15.6
-gtk-sys-0.15.3
+getrandom-0.3.4
+getrandom-0.4.3
+gio-0.18.4
+gio-sys-0.18.1
+glib-0.18.5
+glib-macros-0.18.5
+glib-sys-0.18.1
+glob-0.3.4
+gobject-sys-0.18.0
+gtk-0.18.2
+gtk3-macros-0.18.2
+gtk-sys-0.18.2
 hashbrown-0.12.3
-hashbrown-0.15.5
-hashbrown-0.17.0
-heck-0.3.3
+hashbrown-0.17.1
 heck-0.4.1
 heck-0.5.0
 hex-0.4.3
 html5ever-0.26.0
-http-0.2.12
-http-range-0.1.5
+html5ever-0.38.0
+http-1.5.0
+httparse-1.10.1
+http-body-1.1.0
+http-body-util-0.1.4
+hyper-1.11.0
+hyper-util-0.1.20
 iana-time-zone-0.1.65
 iana-time-zone-haiku-0.1.2
-ico-0.4.0
+ico-0.5.0
 icu_collections-2.2.0
 icu_locale_core-2.2.0
 icu_normalizer-2.2.0
@@ -175,289 +196,362 @@ icu_normalizer_data-2.2.0
 icu_properties-2.2.0
 icu_properties_data-2.2.0
 icu_provider-2.2.0
-id-arena-2.3.0
 ident_case-1.0.1
 idna-1.1.0
-idna_adapter-1.2.1
-ignore-0.4.25
-image-0.24.9
+idna_adapter-1.2.2
 indexmap-1.9.3
 indexmap-2.14.0
 infer-0.13.0
-instant-0.1.13
+infer-0.19.0
+ipnet-2.12.0
+is-docker-0.2.0
+is-wsl-0.4.0
 itoa-0.4.8
 itoa-1.0.18
-javascriptcore-rs-0.16.0
-javascriptcore-rs-sys-0.4.0
-jni-0.20.0
+javascriptcore-rs-1.1.2
+javascriptcore-rs-sys-1.1.1
+jni-0.21.1
 jni-sys-0.3.1
 jni-sys-0.4.1
 jni-sys-macros-0.4.1
 json-patch-2.0.0
+json-patch-3.0.1
 jsonptr-0.4.7
-js-sys-0.3.95
+jsonptr-0.6.3
+js-sys-0.3.103
+keyboard-types-0.7.0
 kuchikiki-0.8.2
-lazy_static-1.5.0
-leb128fmt-0.1.0
-libappindicator-0.7.1
-libappindicator-sys-0.7.3
-libc-0.2.186
+libappindicator-0.9.0
+libappindicator-sys-0.9.0
+libc-0.2.189
+libdbus-sys-0.2.7
 libloading-0.7.4
-libredox-0.1.16
-linux-raw-sys-0.12.1
+libredox-0.1.18
 litemap-0.8.2
 lock_api-0.4.14
-log-0.4.29
-loom-0.5.6
+log-0.4.33
 mac-0.1.1
-malloc_buf-0.0.6
 markup5ever-0.11.0
-matchers-0.2.0
+markup5ever-0.38.0
 matches-0.1.10
-memchr-2.8.0
+memchr-2.8.3
 memoffset-0.9.1
+mime-0.3.17
 miniz_oxide-0.8.9
-ndk-0.6.0
-ndk-context-0.1.1
-ndk-sys-0.3.0
+mio-1.2.2
+muda-0.19.3
+ndk-0.9.0
+ndk-sys-0.6.0+11769913
 new_debug_unreachable-1.0.6
 nodrop-0.1.14
-nu-ansi-term-0.50.3
-num-conv-0.2.1
-num_enum-0.5.11
-num_enum_derive-0.5.11
+num-conv-0.2.2
+num_enum-0.7.6
+num_enum_derive-0.7.6
 num-traits-0.2.19
-objc-0.2.7
-objc_exception-0.1.2
-objc_id-0.1.1
+objc2-0.6.4
+objc2-app-kit-0.3.2
+objc2-cloud-kit-0.3.2
+objc2-core-data-0.3.2
+objc2-core-foundation-0.3.2
+objc2-core-graphics-0.3.2
+objc2-core-image-0.3.2
+objc2-core-location-0.3.2
+objc2-core-text-0.3.2
+objc2-encode-4.1.0
+objc2-exception-helper-0.1.1
+objc2-foundation-0.3.2
+objc2-io-surface-0.3.2
+objc2-quartz-core-0.3.2
+objc2-ui-kit-0.3.2
+objc2-user-notifications-0.3.2
+objc2-web-kit-0.3.2
 once_cell-1.21.4
-open-3.2.0
-pango-0.15.10
-pango-sys-0.15.10
+open-5.4.0
+option-ext-0.2.0
+os_pipe-1.2.3
+pango-0.18.3
+pango-sys-0.18.0
 parking_lot-0.12.5
 parking_lot_core-0.9.12
-pathdiff-0.2.3
 percent-encoding-2.3.2
 phf-0.10.1
 phf-0.11.3
+phf-0.13.1
 phf-0.8.0
 phf_codegen-0.10.0
+phf_codegen-0.13.1
 phf_codegen-0.8.0
 phf_generator-0.10.0
 phf_generator-0.11.3
+phf_generator-0.13.1
 phf_generator-0.8.0
 phf_macros-0.11.3
+phf_macros-0.13.1
 phf_macros-0.8.0
 phf_shared-0.10.0
 phf_shared-0.11.3
+phf_shared-0.13.1
 phf_shared-0.8.0
 pin-project-lite-0.2.17
 pkg-config-0.3.33
-plain-0.2.3
-plist-1.8.0
+plist-1.10.0
 png-0.17.16
+png-0.18.1
 potential_utf-0.1.5
 powerfmt-0.2.0
 ppv-lite86-0.2.21
 precomputed-hash-0.1.1
-prettyplease-0.2.37
-proc-macro2-1.0.106
+proc-macro2-1.0.107
 proc-macro-crate-1.3.1
+proc-macro-crate-2.0.2
+proc-macro-crate-3.5.0
 proc-macro-error-1.0.4
 proc-macro-error-attr-1.0.4
 proc-macro-hack-0.5.20+deprecated
-quick-xml-0.38.4
-quote-1.0.45
+quick-xml-0.41.0
+quote-1.0.47
 rand-0.7.3
-rand-0.8.6
+rand-0.8.7
 rand_chacha-0.2.2
 rand_chacha-0.3.1
 rand_core-0.5.1
 rand_core-0.6.4
 rand_hc-0.2.0
 rand_pcg-0.2.1
-raw-window-handle-0.5.2
+raw-window-handle-0.6.2
 redox_syscall-0.5.18
-redox_syscall-0.7.4
 redox_users-0.4.6
-ref-cast-1.0.25
-ref-cast-impl-1.0.25
+redox_users-0.5.2
+ref-cast-1.0.26
+ref-cast-impl-1.0.26
+r-efi-5.3.0
 r-efi-6.0.0
-regex-1.12.3
-regex-automata-0.4.14
-regex-syntax-0.8.10
+regex-1.13.1
+regex-automata-0.4.16
+regex-syntax-0.8.11
+reqwest-0.13.4
+rustc-hash-2.1.3
 rustc_version-0.4.1
-rustix-1.1.4
-rustversion-1.0.22
+rustversion-1.0.23
 same-file-1.0.6
+schemars-0.8.22
 schemars-0.9.0
-schemars-1.2.1
-scoped-tls-1.0.1
+schemars-1.2.2
+schemars_derive-0.8.22
 scopeguard-1.2.0
 selectors-0.22.0
+selectors-0.36.1
 semver-1.0.28
-serde-1.0.228
-serde_core-1.0.228
-serde_derive-1.0.228
-serde_json-1.0.149
-serde_repr-0.1.20
+serde-1.0.229
+serde_core-1.0.229
+serde_derive-1.0.229
+serde_derive_internals-0.29.1
+serde_json-1.0.151
+serde_repr-0.1.21
 serde_spanned-0.6.9
-serde_with-3.18.0
-serde_with_macros-3.18.0
+serde_spanned-1.1.1
+serde-untagged-0.1.9
+serde_with-3.21.0
+serde_with_macros-3.21.0
 serialize-to-javascript-0.1.2
 serialize-to-javascript-impl-0.1.2
 servo_arc-0.1.1
+servo_arc-0.4.3
 sha2-0.10.9
-sharded-slab-0.1.7
-shlex-1.3.0
-simd-adler32-0.3.9
+shared_child-1.1.1
+shlex-2.0.1
+sigchld-0.2.4
+signal-hook-0.3.18
+signal-hook-registry-1.4.8
+simd-adler32-0.3.10
 siphasher-0.3.11
-siphasher-1.0.2
+siphasher-1.0.3
 slab-0.4.12
-smallvec-1.15.1
-soup2-0.2.1
-soup2-sys-0.2.0
+smallvec-1.15.2
+socket2-0.6.5
+softbuffer-0.4.8
+soup3-0.5.0
+soup3-sys-0.5.0
 stable_deref_trait-1.2.1
-state-0.5.3
 string_cache-0.8.9
+string_cache-0.9.0
 string_cache_codegen-0.5.4
+string_cache_codegen-0.6.1
 strsim-0.11.1
+swift-rs-1.0.7
 syn-1.0.109
-syn-2.0.117
+syn-2.0.119
+syn-3.0.3
+sync_wrapper-1.0.2
 synstructure-0.13.2
-system-deps-5.0.0
 system-deps-6.2.2
-tao-0.16.11
-tao-macros-0.1.3
-tar-0.4.45
+tao-0.35.3
+tao-macros-0.1.4
 target-lexicon-0.12.16
-tauri-1.8.3
+tauri-2.11.5
 tauri-build-1.5.6
-tauri-codegen-1.4.6
-tauri-macros-1.4.7
-tauri-runtime-0.14.6
-tauri-runtime-wry-0.14.11
+tauri-build-2.6.3
+tauri-codegen-2.6.3
+tauri-macros-2.6.3
+tauri-plugin-2.6.3
+tauri-plugin-shell-2.3.5
+tauri-runtime-2.11.3
+tauri-runtime-wry-2.11.4
 tauri-utils-1.6.2
+tauri-utils-2.9.3
 tauri-winres-0.1.1
-tempfile-3.27.0
+tauri-winres-0.3.6
 tendril-0.4.3
+tendril-0.5.1
 thin-slice-0.1.1
 thiserror-1.0.69
+thiserror-2.0.19
 thiserror-impl-1.0.69
-thread_local-1.1.9
-time-0.3.47
-time-core-0.1.8
-time-macros-0.2.27
+thiserror-impl-2.0.19
+time-0.3.54
+time-core-0.1.9
+time-macros-0.2.32
 tinystr-0.8.3
-tokio-1.52.1
-toml-0.5.11
+tinyvec-1.12.0
+tinyvec_macros-0.1.1
+tokio-1.53.1
+tokio-util-0.7.19
 toml-0.7.8
-toml-0.8.23
-toml_datetime-0.6.11
+toml-0.8.2
+toml-0.9.12+spec-1.1.0
+toml-1.1.4+spec-1.1.0
+toml_datetime-0.6.3
+toml_datetime-0.7.5+spec-1.1.0
+toml_datetime-1.1.1+spec-1.1.0
 toml_edit-0.19.15
-toml_edit-0.22.27
-toml_write-0.1.2
+toml_edit-0.20.2
+toml_edit-0.25.13+spec-1.1.0
+toml_parser-1.1.3+spec-1.1.0
+toml_writer-1.1.2+spec-1.1.0
+tower-0.5.3
+tower-http-0.6.11
+tower-layer-0.3.3
+tower-service-0.3.3
 tracing-0.1.44
-tracing-attributes-0.1.31
 tracing-core-0.1.36
-tracing-log-0.2.0
-tracing-subscriber-0.3.23
-typenum-1.20.0
+tray-icon-0.24.2
+try-lock-0.2.5
+typeid-1.0.3
+typenum-1.20.1
+unic-char-property-0.9.0
+unic-char-range-0.9.0
+unic-common-0.9.0
 unicode-ident-1.0.24
-unicode-segmentation-1.13.2
-unicode-xid-0.2.6
+unicode-segmentation-1.13.3
+unic-ucd-ident-0.9.0
+unic-ucd-version-0.9.0
 url-2.5.8
+urlpattern-0.3.0
 utf-8-0.7.6
 utf8_iter-1.0.4
-uuid-1.23.1
-valuable-0.1.1
+uuid-1.24.0
 version_check-0.9.5
-version-compare-0.0.11
 version-compare-0.2.1
 vswhom-0.1.0
 vswhom-sys-0.1.3
 walkdir-2.5.0
+want-0.3.1
 wasi-0.11.1+wasi-snapshot-preview1
 wasi-0.9.0+wasi-snapshot-preview1
-wasip2-1.0.3+wasi-0.2.9
-wasip3-0.4.0+wasi-0.3.0-rc-2026-01-06
-wasm-bindgen-0.2.118
-wasm-bindgen-macro-0.2.118
-wasm-bindgen-macro-support-0.2.118
-wasm-bindgen-shared-0.2.118
-wasm-encoder-0.244.0
-wasm-metadata-0.244.0
-wasmparser-0.244.0
-webkit2gtk-0.18.2
-webkit2gtk-sys-0.18.0
-webview2-com-0.19.1
-webview2-com-macros-0.6.0
-webview2-com-sys-0.19.0
+wasip2-1.0.4+wasi-0.2.12
+wasm-bindgen-0.2.126
+wasm-bindgen-futures-0.4.76
+wasm-bindgen-macro-0.2.126
+wasm-bindgen-macro-support-0.2.126
+wasm-bindgen-shared-0.2.126
+wasm-streams-0.5.0
+web_atoms-0.2.5
+webkit2gtk-2.0.2
+webkit2gtk-sys-2.0.2
+web-sys-0.3.103
+webview2-com-0.38.2
+webview2-com-macros-0.8.1
+webview2-com-sys-0.38.2
 winapi-0.3.9
 winapi-i686-pc-windows-gnu-0.4.0
 winapi-util-0.1.11
 winapi-x86_64-pc-windows-gnu-0.4.0
-windows-0.39.0
-windows-0.48.0
+windows-0.61.3
 windows_aarch64_gnullvm-0.42.2
 windows_aarch64_gnullvm-0.48.5
-windows_aarch64_msvc-0.39.0
+windows_aarch64_gnullvm-0.52.6
+windows_aarch64_gnullvm-0.53.1
 windows_aarch64_msvc-0.42.2
 windows_aarch64_msvc-0.48.5
-windows-bindgen-0.39.0
+windows_aarch64_msvc-0.52.6
+windows_aarch64_msvc-0.53.1
+windows-collections-0.2.0
+windows-core-0.61.2
 windows-core-0.62.2
-windows_i686_gnu-0.39.0
+windows-future-0.2.1
 windows_i686_gnu-0.42.2
 windows_i686_gnu-0.48.5
-windows_i686_msvc-0.39.0
+windows_i686_gnu-0.52.6
+windows_i686_gnu-0.53.1
+windows_i686_gnullvm-0.52.6
+windows_i686_gnullvm-0.53.1
 windows_i686_msvc-0.42.2
 windows_i686_msvc-0.48.5
-windows-implement-0.39.0
+windows_i686_msvc-0.52.6
+windows_i686_msvc-0.53.1
 windows-implement-0.60.2
 windows-interface-0.59.3
+windows-link-0.1.3
 windows-link-0.2.1
-windows-metadata-0.39.0
+windows-numerics-0.2.0
+windows-result-0.3.4
 windows-result-0.4.1
+windows-strings-0.4.2
 windows-strings-0.5.1
-windows-sys-0.42.0
+windows-sys-0.45.0
 windows-sys-0.48.0
+windows-sys-0.59.0
+windows-sys-0.60.2
 windows-sys-0.61.2
+windows-targets-0.42.2
 windows-targets-0.48.5
-windows-tokens-0.39.0
+windows-targets-0.52.6
+windows-targets-0.53.5
+windows-threading-0.1.0
 windows-version-0.1.7
-windows_x86_64_gnu-0.39.0
 windows_x86_64_gnu-0.42.2
 windows_x86_64_gnu-0.48.5
+windows_x86_64_gnu-0.52.6
+windows_x86_64_gnu-0.53.1
 windows_x86_64_gnullvm-0.42.2
 windows_x86_64_gnullvm-0.48.5
-windows_x86_64_msvc-0.39.0
+windows_x86_64_gnullvm-0.52.6
+windows_x86_64_gnullvm-0.53.1
 windows_x86_64_msvc-0.42.2
 windows_x86_64_msvc-0.48.5
+windows_x86_64_msvc-0.52.6
+windows_x86_64_msvc-0.53.1
+window-vibrancy-0.6.0
 winnow-0.5.40
 winnow-0.7.15
+winnow-1.0.4
 winreg-0.52.0
-wit-bindgen-0.51.0
+winreg-0.55.0
 wit-bindgen-0.57.1
-wit-bindgen-core-0.51.0
-wit-bindgen-rust-0.51.0
-wit-bindgen-rust-macro-0.51.0
-wit-component-0.244.0
-wit-parser-0.244.0
 writeable-0.6.3
-wry-0.24.12
+wry-0.55.1
 x11-2.21.0
 x11-dl-2.21.0
-xattr-1.6.1
-yoke-0.8.2
+yoke-0.8.3
 yoke-derive-0.8.2
-zerocopy-0.8.48
-zerocopy-derive-0.8.48
-zerofrom-0.1.7
+zerocopy-0.8.55
+zerocopy-derive-0.8.55
+zerofrom-0.1.8
 zerofrom-derive-0.1.7
 zerotrie-0.2.4
 zerovec-0.11.6
 zerovec-derive-0.11.3
-zmij-1.0.21
+zmij-1.0.23
 "
 
 NODE_SHARP_PATCHES=(
@@ -465,25 +559,21 @@ NODE_SHARP_PATCHES=(
 )
 
 NPM_AUDIT_FIX_ARGS=(
-	"--force"
-	#"--legacy-peer-deps"
+	"--legacy-peer-deps"
 	"--prefer-offline"
 )
 
 NPM_DEDUPE_ARGS=(
-	"--force"
-	#"--legacy-peer-deps"
+	"--legacy-peer-deps"
 )
 
 NPM_INSTALL_ARGS=(
-	"--force"
-	#"--legacy-peer-deps"
+	"--legacy-peer-deps"
 	"--prefer-offline"
 )
 
 NPM_UNINSTALL_ARGS=(
-	"--force"
-	#"--legacy-peer-deps"
+	"--legacy-peer-deps"
 	"--prefer-offline"
 )
 
@@ -638,7 +728,7 @@ SLOT="0"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 coqui debug ollama tray voice-recognition wayland whisper-cpp X
-ebuild_revision_28
+ebuild_revision_29
 "
 REQUIRED_USE="
 	voice-recognition
@@ -796,8 +886,7 @@ _production_unpack() {
 	if [[ -e "${FILESDIR}/${PV}/Cargo.lock" ]] ; then
 einfo "Adding Cargo.lock"
 		cp -a \
-			"${FILESDIR}/${PV}/Cargo.toml" \
-			"${FILESDIR}/${PV}/Cargo.lock" \
+			"${FILESDIR}/${PV}/Cargo."{"toml","lock"} \
 			"${S}" \
 			|| die
 	fi
@@ -828,6 +917,11 @@ npm_update_lock_install_post() {
 			# Fix runtime
 			"typescript@5.6.3"
 			"@eslint/compat"									# Fix build breakage
+
+	# Must be the same major.minor (2.11) versions
+	# The Tauri in package.json and Cargo.toml must be the same major.minor (2.11) version.
+			"@tauri-apps/api@2.11.1"
+			"@tauri-apps/cli@2.11.4"								# Fix build issue with tauri.conf.json when updating to tauri v2
 		)
 		enpm install "${pkgs[@]}" -D "${NPM_INSTALL_ARGS[@]}"
 	fi
@@ -837,6 +931,8 @@ src_unpack() {
 	# For updating cargo lockfile.
 	unpack "${TARBALL}"
 #	die
+
+	node-sharp_append_includes
 
 einfo "Unpacking npm packages"
 	if [[ "${PV}" =~ "_p" ]] ; then
@@ -878,12 +974,12 @@ einfo "Unpacking cargo packages"
 
 			cp \
 				"node_modules/sharp/src/build/${configuration}/${fn}" \
-				"node_modules/next/node_modules/sharp/src/build/Release/obj.target/sharp-${sharp_platform}.node" \
+				"node_modules/@xenova/transformers/node_modules/sharp/build/Release/obj.target/sharp-${sharp_platform}.node" \
 				|| die "Failed to copy ${fn} (2)"
 
 			cp \
 				"node_modules/sharp/src/build/${configuration}/${fn}" \
-				"node_modules/next/node_modules/sharp/src/build/Release/sharp-${sharp_platform}.node" \
+				"node_modules/@xenova/transformers/node_modules/sharp/build/Release/sharp-${sharp_platform}.node" \
 				|| die "Failed to copy ${fn} (3)"
 
 	        popd >/dev/null 2>&1 || die
@@ -901,6 +997,8 @@ src_prepare() {
 #	eapply "${FILESDIR}/${PN}-0.2.1_p20241022-coqui-local.patch"
 	eapply "${FILESDIR}/${PN}-0.2.1_p20250204-array-type-check.patch"
 	eapply "${FILESDIR}/${PN}-0.2.1_p20250723-import-fix.patch"
+	eapply "${FILESDIR}/${PN}-0.2.1_p20250723-next-public-root.patch"
+	eapply "${FILESDIR}/${PN}-0.2.1_p20250723-tauri-v2.patch"
 
 # Prevent ⨯ ESLint: a.getScope is not a function Occurred while linting ${S}/src/components/addToHomescreen.tsx:9 Rule: "react-hooks/rules-of-hooks"
 cat <<EOF > "${S}/eslint.config.mjs"
@@ -920,6 +1018,7 @@ EOF
 
 src_configure() {
 	chkl_check_many_timestamps
+	export WEBKIT2GTK_USE_API="4.1"
 	if ! has_version "dev-util/sccache" ; then
 einfo "Disabling sccache support"
 		unset RUSTC_WRAPPER
