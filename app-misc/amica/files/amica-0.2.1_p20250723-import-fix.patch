@@ -1,5 +1,6 @@
---- a/src/features/vrmViewer/model.ts.orig	2025-07-23 13:57:17.000000000 -0700
-+++ b/src/features/vrmViewer/model.ts	2026-07-30 22:55:39.144362090 -0700
+diff '--color=auto' -urp a/src/features/vrmViewer/model.ts b/src/features/vrmViewer/model.ts
+--- a/src/features/vrmViewer/model.ts	2026-07-30 23:56:09.562186632 -0700
++++ b/src/features/vrmViewer/model.ts	2026-07-30 23:57:05.160769841 -0700
 @@ -6,7 +6,7 @@ import {
    VRMLoaderPlugin,
    VRMUtils,
@@ -9,9 +10,9 @@
  import { VRMAnimation } from "@/lib/VRMAnimation/VRMAnimation";
  import { VRMLookAtSmootherLoaderPlugin } from "@/lib/VRMLookAtSmootherLoaderPlugin/VRMLookAtSmootherLoaderPlugin";
  import { LipSync } from "@/features/lipSync/lipSync";
-diff '--color=auto' -urp a/src/features/vrmViewer/room.ts.orig b/src/features/vrmViewer/room.ts
---- a/src/features/vrmViewer/room.ts.orig	2025-07-23 13:57:17.000000000 -0700
-+++ b/src/features/vrmViewer/room.ts	2026-07-30 23:19:18.755111986 -0700
+diff '--color=auto' -urp a/src/features/vrmViewer/room.ts b/src/features/vrmViewer/room.ts
+--- a/src/features/vrmViewer/room.ts	2026-07-30 23:56:09.574897939 -0700
++++ b/src/features/vrmViewer/room.ts	2026-07-30 23:57:05.161340396 -0700
 @@ -1,5 +1,5 @@
  import * as THREE from "three";
 -import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
@@ -19,9 +20,28 @@ diff '--color=auto' -urp a/src/features/vrmViewer/room.ts.orig b/src/features/vr
  // @ts-ignore
  import * as GaussianSplats3D from '@mkkellogg/gaussian-splats-3d';
  import { downscaleModelTextures, logTextureInfo } from '@/utils/textureDownscaler';
+diff '--color=auto' -urp a/src/features/vrmViewer/viewer.ts b/src/features/vrmViewer/viewer.ts
+--- a/src/features/vrmViewer/viewer.ts	2025-07-23 13:57:17.000000000 -0700
++++ b/src/features/vrmViewer/viewer.ts	2026-07-30 23:58:18.756360902 -0700
+@@ -21,7 +21,7 @@ import { VRMHumanBoneName } from "@pixiv
+ import GUI from "lil-gui";
+ import Stats from "stats.js";
+ 
+-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
++import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+ import { InteractiveGroup } from "three/examples/jsm/interactive/InteractiveGroup.js";
+ import { HTMLMesh } from "three/examples/jsm/interactive/HTMLMesh.js";
+ 
+@@ -1407,4 +1407,4 @@ export class Viewer {
+     this.screenshotCallback = callback;
+     this.sendScreenshotToCallback = true;
+   };
+-}
+\ No newline at end of file
++}
 diff '--color=auto' -urp a/src/features/vrmViewer/XRControllerModelFactory.js b/src/features/vrmViewer/XRControllerModelFactory.js
---- a/src/features/vrmViewer/XRControllerModelFactory.js	2025-07-23 13:57:17.000000000 -0700
-+++ b/src/features/vrmViewer/XRControllerModelFactory.js	2026-07-30 23:19:41.522306370 -0700
+--- a/src/features/vrmViewer/XRControllerModelFactory.js	2026-07-30 23:56:09.577909383 -0700
++++ b/src/features/vrmViewer/XRControllerModelFactory.js	2026-07-30 23:57:05.161488445 -0700
 @@ -5,7 +5,7 @@ import {
    SphereGeometry,
  } from 'three';
@@ -32,17 +52,28 @@ diff '--color=auto' -urp a/src/features/vrmViewer/XRControllerModelFactory.js b/
  import {
    Constants as MotionControllerConstants,
 diff '--color=auto' -urp a/src/features/vrmViewer/XRHandMeshModel.js b/src/features/vrmViewer/XRHandMeshModel.js
---- a/src/features/vrmViewer/XRHandMeshModel.js	2025-07-23 13:57:17.000000000 -0700
-+++ b/src/features/vrmViewer/XRHandMeshModel.js	2026-07-30 23:19:26.610654925 -0700
+--- a/src/features/vrmViewer/XRHandMeshModel.js	2026-07-30 23:56:09.578212885 -0700
++++ b/src/features/vrmViewer/XRHandMeshModel.js	2026-07-30 23:57:05.161618939 -0700
 @@ -1,4 +1,4 @@
 -import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 +import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
  
  const DEFAULT_HAND_PROFILE_PATH = '/controllers/generic-hand/';
  
+diff '--color=auto' -urp a/src/lib/VRMAnimation/loadMixamoAnimation.ts b/src/lib/VRMAnimation/loadMixamoAnimation.ts
+--- a/src/lib/VRMAnimation/loadMixamoAnimation.ts	2025-07-23 13:57:17.000000000 -0700
++++ b/src/lib/VRMAnimation/loadMixamoAnimation.ts	2026-07-30 23:58:39.300013018 -0700
+@@ -1,6 +1,6 @@
+ import * as THREE from 'three';
+ import { VRM } from "@pixiv/three-vrm";
+-import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
++import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
+ import { mixamoVRMRigMap } from './mixamoVRMRigMap';
+ 
+ /**
 diff '--color=auto' -urp a/src/lib/VRMAnimation/loadVRMAnimation.ts b/src/lib/VRMAnimation/loadVRMAnimation.ts
---- a/src/lib/VRMAnimation/loadVRMAnimation.ts	2025-07-23 13:57:17.000000000 -0700
-+++ b/src/lib/VRMAnimation/loadVRMAnimation.ts	2026-07-30 23:19:13.203083103 -0700
+--- a/src/lib/VRMAnimation/loadVRMAnimation.ts	2026-07-30 23:56:09.586897575 -0700
++++ b/src/lib/VRMAnimation/loadVRMAnimation.ts	2026-07-30 23:57:05.161742379 -0700
 @@ -1,4 +1,4 @@
 -import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 +import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -50,8 +81,8 @@ diff '--color=auto' -urp a/src/lib/VRMAnimation/loadVRMAnimation.ts b/src/lib/VR
  import { VRMAnimationLoaderPlugin } from './VRMAnimationLoaderPlugin';
  
 diff '--color=auto' -urp a/src/lib/VRMAnimation/VRMAnimationLoaderPlugin.ts b/src/lib/VRMAnimation/VRMAnimationLoaderPlugin.ts
---- a/src/lib/VRMAnimation/VRMAnimationLoaderPlugin.ts	2025-07-23 13:57:17.000000000 -0700
-+++ b/src/lib/VRMAnimation/VRMAnimationLoaderPlugin.ts	2026-07-30 23:19:09.891104487 -0700
+--- a/src/lib/VRMAnimation/VRMAnimationLoaderPlugin.ts	2026-07-30 23:56:09.590897453 -0700
++++ b/src/lib/VRMAnimation/VRMAnimationLoaderPlugin.ts	2026-07-30 23:57:05.161873918 -0700
 @@ -3,7 +3,7 @@ import {
    GLTF,
    GLTFLoaderPlugin,
@@ -62,8 +93,8 @@ diff '--color=auto' -urp a/src/lib/VRMAnimation/VRMAnimationLoaderPlugin.ts b/sr
  import { GLTF as GLTFSchema } from "@gltf-transform/core";
  import { VRMCVRMAnimation } from "./VRMCVRMAnimation";
 diff '--color=auto' -urp a/src/lib/VRMLookAtSmootherLoaderPlugin/VRMLookAtSmootherLoaderPlugin.ts b/src/lib/VRMLookAtSmootherLoaderPlugin/VRMLookAtSmootherLoaderPlugin.ts
---- a/src/lib/VRMLookAtSmootherLoaderPlugin/VRMLookAtSmootherLoaderPlugin.ts	2025-07-23 13:57:17.000000000 -0700
-+++ b/src/lib/VRMLookAtSmootherLoaderPlugin/VRMLookAtSmootherLoaderPlugin.ts	2026-07-30 23:19:06.691190937 -0700
+--- a/src/lib/VRMLookAtSmootherLoaderPlugin/VRMLookAtSmootherLoaderPlugin.ts	2026-07-30 23:56:09.594897332 -0700
++++ b/src/lib/VRMLookAtSmootherLoaderPlugin/VRMLookAtSmootherLoaderPlugin.ts	2026-07-30 23:57:05.162009236 -0700
 @@ -3,7 +3,7 @@ import {
    VRMLookAt,
    VRMLookAtLoaderPlugin,
@@ -74,8 +105,8 @@ diff '--color=auto' -urp a/src/lib/VRMLookAtSmootherLoaderPlugin/VRMLookAtSmooth
  
  export class VRMLookAtSmootherLoaderPlugin extends VRMLookAtLoaderPlugin {
 diff '--color=auto' -urp a/src/utils/gltfAnalyzer.ts b/src/utils/gltfAnalyzer.ts
---- a/src/utils/gltfAnalyzer.ts	2025-07-23 13:57:17.000000000 -0700
-+++ b/src/utils/gltfAnalyzer.ts	2026-07-30 23:19:30.178587467 -0700
+--- a/src/utils/gltfAnalyzer.ts	2026-07-30 23:56:09.595576551 -0700
++++ b/src/utils/gltfAnalyzer.ts	2026-07-30 23:57:05.162139438 -0700
 @@ -1,5 +1,5 @@
  import * as THREE from 'three';
 -import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
@@ -84,18 +115,20 @@ diff '--color=auto' -urp a/src/utils/gltfAnalyzer.ts b/src/utils/gltfAnalyzer.ts
  interface MaterialStats {
    name: string;
 diff '--color=auto' -urp a/src/utils/gltfOptimizer.ts b/src/utils/gltfOptimizer.ts
---- a/src/utils/gltfOptimizer.ts	2025-07-23 13:57:17.000000000 -0700
-+++ b/src/utils/gltfOptimizer.ts	2026-07-30 23:19:39.346411467 -0700
-@@ -1,5 +1,5 @@
+--- a/src/utils/gltfOptimizer.ts	2026-07-30 23:56:09.596209495 -0700
++++ b/src/utils/gltfOptimizer.ts	2026-07-30 23:58:56.467902839 -0700
+@@ -1,6 +1,6 @@
  import * as THREE from 'three';
 -import { GLTF, GLTFLoader, GLTFParser } from 'three/examples/jsm/loaders/GLTFLoader';
+-import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 +import { GLTF, GLTFLoader, GLTFParser } from 'three/examples/jsm/loaders/GLTFLoader.js';
- import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
++import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
  
  // Type for the extension callback
+ type ExtensionCallback = (parser: GLTFParser) => Promise<void> | void;
 diff '--color=auto' -urp a/src/utils/textureDownscaler.ts b/src/utils/textureDownscaler.ts
---- a/src/utils/textureDownscaler.ts	2025-07-23 13:57:17.000000000 -0700
-+++ b/src/utils/textureDownscaler.ts	2026-07-30 23:19:35.778405999 -0700
+--- a/src/utils/textureDownscaler.ts	2026-07-30 23:56:09.597624428 -0700
++++ b/src/utils/textureDownscaler.ts	2026-07-30 23:57:05.162407177 -0700
 @@ -1,5 +1,5 @@
  import * as THREE from "three";
 -import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
@@ -104,8 +137,8 @@ diff '--color=auto' -urp a/src/utils/textureDownscaler.ts b/src/utils/textureDow
  interface Dimensions {
    width: number;
 diff '--color=auto' -urp a/src/utils/transparencyOptimizer.ts b/src/utils/transparencyOptimizer.ts
---- a/src/utils/transparencyOptimizer.ts	2025-07-23 13:57:17.000000000 -0700
-+++ b/src/utils/transparencyOptimizer.ts	2026-07-30 23:19:33.010472791 -0700
+--- a/src/utils/transparencyOptimizer.ts	2026-07-30 23:56:09.598010949 -0700
++++ b/src/utils/transparencyOptimizer.ts	2026-07-30 23:57:05.162541620 -0700
 @@ -1,5 +1,5 @@
  import * as THREE from 'three';
 -import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
