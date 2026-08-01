@@ -71,7 +71,6 @@ cairo-sys-rs-0.18.2
 camino-1.2.5
 cargo_metadata-0.19.2
 cargo-platform-0.1.9
-cargo_toml-0.15.3
 cargo_toml-0.22.3
 cc-1.4.0
 cesu8-1.1.0
@@ -80,7 +79,6 @@ cfg-expr-0.15.8
 cfg-if-1.0.4
 chrono-0.4.45
 combine-4.6.7
-convert_case-0.4.0
 cookie-0.18.1
 core-foundation-0.10.1
 core-foundation-sys-0.8.7
@@ -91,10 +89,8 @@ crc32fast-1.5.0
 crossbeam-channel-0.5.16
 crossbeam-utils-0.8.22
 crypto-common-0.1.7
-cssparser-0.27.2
 cssparser-0.36.0
 cssparser-macros-0.6.1
-ctor-0.2.9
 ctor-0.8.0
 ctor-proc-macro-0.0.7
 darling-0.23.0
@@ -102,14 +98,11 @@ darling_core-0.23.0
 darling_macro-0.23.0
 dbus-0.9.12
 deranged-0.5.8
-derive_more-0.99.20
 derive_more-2.1.1
 derive_more-impl-2.1.1
 digest-0.10.7
 dirs-6.0.0
-dirs-next-2.0.0
 dirs-sys-0.5.0
-dirs-sys-next-0.1.2
 dispatch2-0.3.1
 displaydoc-0.2.7
 dlopen2-0.8.2
@@ -123,7 +116,6 @@ dtor-proc-macro-0.0.6
 dunce-1.0.5
 dyn-clone-1.0.20
 embed_plist-1.2.2
-embed-resource-2.5.2
 embed-resource-3.0.11
 encoding_rs-0.8.35
 equivalent-1.0.2
@@ -134,14 +126,12 @@ fdeflate-0.3.7
 field-offset-0.3.6
 find-msvc-tools-0.1.9
 flate2-1.1.9
-fluent-uri-0.1.4
 fnv-1.0.7
 foldhash-0.2.0
 foreign-types-0.5.0
 foreign-types-macros-0.2.4
 foreign-types-shared-0.3.1
 form_urlencoded-1.2.2
-futf-0.1.5
 futures-channel-0.3.33
 futures-core-0.3.33
 futures-executor-0.3.33
@@ -150,7 +140,6 @@ futures-macro-0.3.33
 futures-sink-0.3.33
 futures-task-0.3.33
 futures-util-0.3.33
-fxhash-0.2.1
 gdk-0.18.2
 gdk-pixbuf-0.18.5
 gdk-pixbuf-sys-0.18.0
@@ -159,7 +148,6 @@ gdkwayland-sys-0.18.2
 gdkx11-0.18.2
 gdkx11-sys-0.18.2
 generic-array-0.14.7
-getrandom-0.1.16
 getrandom-0.2.17
 getrandom-0.3.4
 getrandom-0.4.3
@@ -178,7 +166,6 @@ hashbrown-0.17.1
 heck-0.4.1
 heck-0.5.0
 hex-0.4.3
-html5ever-0.26.0
 html5ever-0.38.0
 http-1.5.0
 httparse-1.10.1
@@ -201,12 +188,10 @@ idna-1.1.0
 idna_adapter-1.2.2
 indexmap-1.9.3
 indexmap-2.14.0
-infer-0.13.0
 infer-0.19.0
 ipnet-2.12.0
 is-docker-0.2.0
 is-wsl-0.4.0
-itoa-0.4.8
 itoa-1.0.18
 javascriptcore-rs-1.1.2
 javascriptcore-rs-sys-1.1.1
@@ -214,13 +199,10 @@ jni-0.21.1
 jni-sys-0.3.1
 jni-sys-0.4.1
 jni-sys-macros-0.4.1
-json-patch-2.0.0
 json-patch-3.0.1
-jsonptr-0.4.7
 jsonptr-0.6.3
 js-sys-0.3.103
 keyboard-types-0.7.0
-kuchikiki-0.8.2
 libappindicator-0.9.0
 libappindicator-sys-0.9.0
 libc-0.2.189
@@ -230,10 +212,7 @@ libredox-0.1.18
 litemap-0.8.2
 lock_api-0.4.14
 log-0.4.33
-mac-0.1.1
-markup5ever-0.11.0
 markup5ever-0.38.0
-matches-0.1.10
 memchr-2.8.3
 memoffset-0.9.1
 mime-0.3.17
@@ -243,7 +222,6 @@ muda-0.19.3
 ndk-0.9.0
 ndk-sys-0.6.0+11769913
 new_debug_unreachable-1.0.6
-nodrop-0.1.14
 num-conv-0.2.2
 num_enum-0.7.6
 num_enum_derive-0.7.6
@@ -274,24 +252,11 @@ pango-sys-0.18.0
 parking_lot-0.12.5
 parking_lot_core-0.9.12
 percent-encoding-2.3.2
-phf-0.10.1
-phf-0.11.3
 phf-0.13.1
-phf-0.8.0
-phf_codegen-0.10.0
 phf_codegen-0.13.1
-phf_codegen-0.8.0
-phf_generator-0.10.0
-phf_generator-0.11.3
 phf_generator-0.13.1
-phf_generator-0.8.0
-phf_macros-0.11.3
 phf_macros-0.13.1
-phf_macros-0.8.0
-phf_shared-0.10.0
-phf_shared-0.11.3
 phf_shared-0.13.1
-phf_shared-0.8.0
 pin-project-lite-0.2.17
 pkg-config-0.3.33
 plist-1.10.0
@@ -299,7 +264,6 @@ png-0.17.16
 png-0.18.1
 potential_utf-0.1.5
 powerfmt-0.2.0
-ppv-lite86-0.2.21
 precomputed-hash-0.1.1
 proc-macro2-1.0.107
 proc-macro-crate-1.3.1
@@ -307,20 +271,10 @@ proc-macro-crate-2.0.2
 proc-macro-crate-3.5.0
 proc-macro-error-1.0.4
 proc-macro-error-attr-1.0.4
-proc-macro-hack-0.5.20+deprecated
 quick-xml-0.41.0
 quote-1.0.47
-rand-0.7.3
-rand-0.8.7
-rand_chacha-0.2.2
-rand_chacha-0.3.1
-rand_core-0.5.1
-rand_core-0.6.4
-rand_hc-0.2.0
-rand_pcg-0.2.1
 raw-window-handle-0.6.2
 redox_syscall-0.5.18
-redox_users-0.4.6
 redox_users-0.5.2
 ref-cast-1.0.26
 ref-cast-impl-1.0.26
@@ -339,7 +293,6 @@ schemars-0.9.0
 schemars-1.2.2
 schemars_derive-0.8.22
 scopeguard-1.2.0
-selectors-0.22.0
 selectors-0.36.1
 semver-1.0.28
 serde-1.0.229
@@ -355,7 +308,6 @@ serde_with-3.21.0
 serde_with_macros-3.21.0
 serialize-to-javascript-0.1.2
 serialize-to-javascript-impl-0.1.2
-servo_arc-0.1.1
 servo_arc-0.4.3
 sha2-0.10.9
 shared_child-1.1.1
@@ -364,7 +316,6 @@ sigchld-0.2.4
 signal-hook-0.3.18
 signal-hook-registry-1.4.8
 simd-adler32-0.3.10
-siphasher-0.3.11
 siphasher-1.0.3
 slab-0.4.12
 smallvec-1.15.2
@@ -373,9 +324,7 @@ softbuffer-0.4.8
 soup3-0.5.0
 soup3-sys-0.5.0
 stable_deref_trait-1.2.1
-string_cache-0.8.9
 string_cache-0.9.0
-string_cache_codegen-0.5.4
 string_cache_codegen-0.6.1
 strsim-0.11.1
 swift-rs-1.0.7
@@ -389,7 +338,6 @@ tao-0.35.3
 tao-macros-0.1.4
 target-lexicon-0.12.16
 tauri-2.11.5
-tauri-build-1.5.6
 tauri-build-2.6.3
 tauri-codegen-2.6.3
 tauri-macros-2.6.3
@@ -397,13 +345,9 @@ tauri-plugin-2.6.3
 tauri-plugin-shell-2.3.5
 tauri-runtime-2.11.3
 tauri-runtime-wry-2.11.4
-tauri-utils-1.6.2
 tauri-utils-2.9.3
-tauri-winres-0.1.1
 tauri-winres-0.3.6
-tendril-0.4.3
 tendril-0.5.1
-thin-slice-0.1.1
 thiserror-1.0.69
 thiserror-2.0.19
 thiserror-impl-1.0.69
@@ -416,7 +360,6 @@ tinyvec-1.12.0
 tinyvec_macros-0.1.1
 tokio-1.53.1
 tokio-util-0.7.19
-toml-0.7.8
 toml-0.8.2
 toml-0.9.12+spec-1.1.0
 toml-1.1.4+spec-1.1.0
@@ -447,7 +390,6 @@ unic-ucd-ident-0.9.0
 unic-ucd-version-0.9.0
 url-2.5.8
 urlpattern-0.3.0
-utf-8-0.7.6
 utf8_iter-1.0.4
 uuid-1.24.0
 version_check-0.9.5
@@ -457,7 +399,6 @@ vswhom-sys-0.1.3
 walkdir-2.5.0
 want-0.3.1
 wasi-0.11.1+wasi-snapshot-preview1
-wasi-0.9.0+wasi-snapshot-preview1
 wasip2-1.0.4+wasi-0.2.12
 wasm-bindgen-0.2.126
 wasm-bindgen-futures-0.4.76
@@ -478,11 +419,9 @@ winapi-util-0.1.11
 winapi-x86_64-pc-windows-gnu-0.4.0
 windows-0.61.3
 windows_aarch64_gnullvm-0.42.2
-windows_aarch64_gnullvm-0.48.5
 windows_aarch64_gnullvm-0.52.6
 windows_aarch64_gnullvm-0.53.1
 windows_aarch64_msvc-0.42.2
-windows_aarch64_msvc-0.48.5
 windows_aarch64_msvc-0.52.6
 windows_aarch64_msvc-0.53.1
 windows-collections-0.2.0
@@ -490,13 +429,11 @@ windows-core-0.61.2
 windows-core-0.62.2
 windows-future-0.2.1
 windows_i686_gnu-0.42.2
-windows_i686_gnu-0.48.5
 windows_i686_gnu-0.52.6
 windows_i686_gnu-0.53.1
 windows_i686_gnullvm-0.52.6
 windows_i686_gnullvm-0.53.1
 windows_i686_msvc-0.42.2
-windows_i686_msvc-0.48.5
 windows_i686_msvc-0.52.6
 windows_i686_msvc-0.53.1
 windows-implement-0.60.2
@@ -509,33 +446,27 @@ windows-result-0.4.1
 windows-strings-0.4.2
 windows-strings-0.5.1
 windows-sys-0.45.0
-windows-sys-0.48.0
 windows-sys-0.59.0
 windows-sys-0.60.2
 windows-sys-0.61.2
 windows-targets-0.42.2
-windows-targets-0.48.5
 windows-targets-0.52.6
 windows-targets-0.53.5
 windows-threading-0.1.0
 windows-version-0.1.7
 windows_x86_64_gnu-0.42.2
-windows_x86_64_gnu-0.48.5
 windows_x86_64_gnu-0.52.6
 windows_x86_64_gnu-0.53.1
 windows_x86_64_gnullvm-0.42.2
-windows_x86_64_gnullvm-0.48.5
 windows_x86_64_gnullvm-0.52.6
 windows_x86_64_gnullvm-0.53.1
 windows_x86_64_msvc-0.42.2
-windows_x86_64_msvc-0.48.5
 windows_x86_64_msvc-0.52.6
 windows_x86_64_msvc-0.53.1
 window-vibrancy-0.6.0
 winnow-0.5.40
 winnow-0.7.15
 winnow-1.0.4
-winreg-0.52.0
 winreg-0.55.0
 wit-bindgen-0.57.1
 writeable-0.6.3
@@ -544,14 +475,13 @@ x11-2.21.0
 x11-dl-2.21.0
 yoke-0.8.3
 yoke-derive-0.8.2
-zerocopy-0.8.55
-zerocopy-derive-0.8.55
 zerofrom-0.1.8
 zerofrom-derive-0.1.7
 zerotrie-0.2.4
 zerovec-0.11.6
 zerovec-derive-0.11.3
 zmij-1.0.23
+
 "
 
 NODE_SHARP_PATCHES=(
@@ -917,6 +847,17 @@ npm_update_lock_install_post() {
 			# Fix runtime
 			"typescript@5.6.3"
 			"@eslint/compat"									# Fix build breakage
+
+	#
+	# Required Cargo.toml changes for tauri v2:
+	#
+	# Update [build-dependencies] with the following:
+	# tauri-build needs version = 2.6.3.
+	#
+	# Update [dependencies] with the following:
+	# tauri = { version = "2.11.5", features = [ "macos-private-api", "tray-icon" ] }
+	# tauri-plugin-shell = "2"
+	#
 
 	# Must be the same major.minor (2.11) versions
 	# The Tauri in package.json and Cargo.toml must be the same major.minor (2.11) version.
