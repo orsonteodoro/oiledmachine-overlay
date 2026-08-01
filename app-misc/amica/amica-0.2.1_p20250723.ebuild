@@ -6,6 +6,11 @@ EAPI=8
 
 # U24
 
+# Ebuild TODO:
+# Phase 1:  Update to tauri v2 (done)
+# Phase 2:  Fix friction issues (current)
+# Phase 3:  Fix vulnerabilities in lockfiles deps
+
 # This ebuild an associated patch(es) contains an AI generated content.
 # The node sharp patches are directly from AI generated code.
 # Some of the patches for amica were suggested/influenced with the help of AI inference.
@@ -658,7 +663,7 @@ SLOT="0"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 coqui debug ollama tray voice-recognition wayland whisper-cpp X
-ebuild_revision_32
+ebuild_revision_33
 "
 REQUIRED_USE="
 	voice-recognition
