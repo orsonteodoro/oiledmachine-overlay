@@ -134,7 +134,7 @@ DEPEND+="
 "
 BDEPEND+="
 	>=app-misc/jq-${JQ_PV}:=
-	net-libs/nodejs:${NODE_SLOT}=
+	>=net-libs/nodejs-${NODEJS_22_PV}:${NODE_SLOT}=
 	sys-apps/yarn:${YARN_SLOT}=
 	virtual/pkgconfig
 "
