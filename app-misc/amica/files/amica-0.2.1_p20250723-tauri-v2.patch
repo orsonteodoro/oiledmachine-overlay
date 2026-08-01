@@ -1,24 +1,25 @@
 # This patch contains AI generated code.
 diff '--color=auto' -urpN a/src-tauri/capabilities/default.json b/src-tauri/capabilities/default.json
 --- a/src-tauri/capabilities/default.json	1969-12-31 16:00:00.000000000 -0800
-+++ b/src-tauri/capabilities/default.json	2026-07-31 22:05:24.960265027 -0700
-@@ -0,0 +1,12 @@
++++ b/src-tauri/capabilities/default.json	2026-08-01 11:52:51.394273948 -0700
+@@ -0,0 +1,13 @@
 +{
 +  "$schema": "../gen/schemas/desktop-schema.json",
-+  "identifier": "main-capability",
++  "identifier": "default",
 +  "description": "Capability for the main window",
-+  "windows": ["main"],
++  "windows": ["main", "splashscreen"],
 +  "permissions": [
 +    "core:default",
-+    "shell:default",
 +    "core:tray:default",
-+    "shell:allow-open",
++    "core:event:default",
++    "shell:default",
++    "shell:allow-open"
 +  ]
 +}
 diff '--color=auto' -urpN a/src-tauri/src/main.rs b/src-tauri/src/main.rs
 --- a/src-tauri/src/main.rs	2025-07-23 13:57:17.000000000 -0700
-+++ b/src-tauri/src/main.rs	2026-07-31 22:05:24.960414804 -0700
-@@ -1,53 +1,69 @@
++++ b/src-tauri/src/main.rs	2026-08-01 11:54:01.069073102 -0700
+@@ -1,53 +1,67 @@
  // Prevents additional console window on Windows in release, DO NOT REMOVE!!
  #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
  
@@ -43,14 +44,13 @@ diff '--color=auto' -urpN a/src-tauri/src/main.rs b/src-tauri/src/main.rs
 -  window.get_window("main").expect("no window labeled 'main' found").show().unwrap();
 -}
 +fn main() {
++    // WebKitGTK fix for Linux media/VAD streams
++    std::env::set_var("WEBKIT_DISABLE_DMABUF_RENDERER", "1");
+ 
 +    tauri::Builder::default()
 +        .plugin(tauri_plugin_shell::init())
-+        .plugin(tauri_plugin_asset::init()) 
-+        .setup(|app| {
-+            // 1. Get a thread-safe handle to the application
-+            let handle = app.handle().clone();
- 
-+            // 2. Build the Menu and Tray immediately on the main thread (fixes scoping & dropping)
++        .setup(|app: &mut tauri::App| {
++            // Build the Menu and Tray on the main thread
 +            let check_updates = MenuItem::with_id(app, "checkforupdates", "Check for updates", true, None::<&str>)?;
 +            let help = MenuItem::with_id(app, "help", "Help", true, None::<&str>)?;
 +            let quit = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
@@ -94,36 +94,35 @@ diff '--color=auto' -urpN a/src-tauri/src/main.rs b/src-tauri/src/main.rs
 +                &quit,
 +            ])?;
 +
-+            // We assign it to an app-scoped state or let it leak so it stays alive
 +            let _tray = TrayIconBuilder::new()
 +                .icon(app.default_window_icon().unwrap().clone())
 +                .menu(&tray_menu)
 +                .on_menu_event(|app_handle: &tauri::AppHandle, event| {
 +                    match event.id.as_ref() {
 +                        "quit" => {
-+                            app_handle.exit(0); // Cleaner than std::process::exit
++                            app_handle.exit(0);
 +                        }
 +                        "checkforupdates" => {
-+                            let _ = app_handle.shell().open("https://github.com/semperai/amica/releases/latest", None);
++                            let _ = app_handle.shell().open("https://github.com", None);
 +                        }
 +                        "help" => {
-+                            let _ = app_handle.shell().open("https://docs.heyamica.com", None);
++                            let _ = app_handle.shell().open("https://heyamica.com", None);
 +                        }
 +                        _ => {}
 +                    }
 +                })
 +                .build(app)?;
 +
-+            // 3. Grab window handles using the v2 method
++            // Grab window handles using the v2 method
 +            let splashscreen = app.get_webview_window("splashscreen").unwrap();
 +            let main_window = app.get_webview_window("main").unwrap();
 +
-+            // 4. Run your loading delay asynchronously
++            // Run your loading delay asynchronously
 +            tauri::async_runtime::spawn(async move {
-+                // Simulate loading/heavy tasks
++                // Background thread delay
 +                std::thread::sleep(std::time::Duration::from_secs(3));
 +
-+                // Close splash and open main window using the moved window variables
++                // Close splash and open main window
 +                let _ = splashscreen.close();
 +                let _ = main_window.show();
 +            });
@@ -135,7 +134,7 @@ diff '--color=auto' -urpN a/src-tauri/src/main.rs b/src-tauri/src/main.rs
  }
 diff '--color=auto' -urpN a/src-tauri/tauri.conf.json b/src-tauri/tauri.conf.json
 --- a/src-tauri/tauri.conf.json	2025-07-23 13:57:17.000000000 -0700
-+++ b/src-tauri/tauri.conf.json	2026-07-31 22:07:01.425535871 -0700
++++ b/src-tauri/tauri.conf.json	2026-08-01 11:52:51.394570466 -0700
 @@ -1,66 +1,16 @@
  {
    "$schema": "../node_modules/@tauri-apps/cli/schema.json",
@@ -209,21 +208,34 @@ diff '--color=auto' -urpN a/src-tauri/tauri.conf.json b/src-tauri/tauri.conf.jso
      "windows": [
        {
          "width": 800,
-@@ -82,6 +32,45 @@
+@@ -70,7 +20,8 @@
+         "title": "Amica",
+         "transparent": true,
+         "visible": false,
+-        "label": "main"
++        "label": "main",
++        "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15"
+       },
+       {
+         "fullscreen": false,
+@@ -82,6 +33,48 @@
          "url": "/splashscreen.html",
          "label": "splashscreen"
        }
 -    ]
 +    ],
 +    "security": {
-+      "csp": null,
 +      "assetProtocol": {
-+        "enable": true,
-+        "scope": {
-+          "requireLiteralLeadingDot": false,
-+          "allow": ["$APPDATA/**/*", "$DOCUMENT/**/*"]
-+        }
-+      }
++        "scope": [
++          "asset",
++          "$APPDATA",
++          "$APPDATA/*",
++          "$APPDATA/**/*",
++          "/data/**/*"
++        ],
++        "enable": true
++      },
++      "csp": null
 +    }
 +  },
 +  "bundle": {
@@ -256,9 +268,9 @@ diff '--color=auto' -urpN a/src-tauri/tauri.conf.json b/src-tauri/tauri.conf.jso
 +    }
    }
  }
-diff '--color=auto' -urp a/src/components/vrmViewer.tsx b/src/components/vrmViewer.tsx
+diff '--color=auto' -urpN a/src/components/vrmViewer.tsx b/src/components/vrmViewer.tsx
 --- a/src/components/vrmViewer.tsx	2025-07-23 13:57:17.000000000 -0700
-+++ b/src/components/vrmViewer.tsx	2026-07-31 22:05:24.960746536 -0700
++++ b/src/components/vrmViewer.tsx	2026-08-01 11:52:51.394030112 -0700
 @@ -5,7 +5,7 @@ import { buildUrl } from "@/utils/buildU
  import { config } from "@/utils/config";
  import { useVrmStoreContext } from "@/features/vrmStore/vrmStoreContext";
