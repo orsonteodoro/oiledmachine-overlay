@@ -15,7 +15,7 @@ KEYWORDS="
 "
 IUSE="
 5_10 5_15 6_1 6_6 6_12 6_18
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND="
 	5_10? (
