@@ -44,7 +44,7 @@ DESCRIPTION="A Client that groks URLs"
 HOMEPAGE="https://curl.se/"
 
 if [[ ${PV} == 9999 ]]; then
-	FALLBACK_COMMIT="64f746ee1e71f1079424cc173b7ec9d93adbb169"
+	FALLBACK_COMMIT="527573490eb2564b3d7c9dd51d8bff963b5d6303"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
 	fi
@@ -71,7 +71,7 @@ IUSE+=" mbedtls +openssl +pop3 +psl +quic rustls sasl-scram +smtp ssh ssl static
 IUSE+=" telnet +tftp +websockets zstd"
 # These select the default tls implementation / which quic impl to use
 IUSE+=" curl_ssl_gnutls curl_ssl_mbedtls +curl_ssl_openssl curl_ssl_rustls"
-IUSE+=" ebuild_revision_6"
+IUSE+=" ebuild_revision_7"
 RESTRICT="!test? ( test )"
 
 # HTTPS RR is technically usable with the threaded resolver, but it still uses c-ares to
