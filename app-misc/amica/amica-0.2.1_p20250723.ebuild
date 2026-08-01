@@ -176,6 +176,7 @@ http-1.5.0
 httparse-1.10.1
 http-body-1.1.0
 http-body-util-0.1.4
+http-range-0.1.5
 hyper-1.11.0
 hyper-util-0.1.20
 iana-time-zone-0.1.65
@@ -486,13 +487,15 @@ zerotrie-0.2.4
 zerovec-0.11.6
 zerovec-derive-0.11.3
 zmij-1.0.23
-
 "
 
 NODE_SHARP_PATCHES=(
 	"${FILESDIR}/sharp-0.35.3-remove-sover-suffix.patch"
 )
 
+# --legacy-peer-deps is used for better pinning removing caret, but using
+# --force introduces the ^ (caret) operator which breaks onnxruntime-web version
+# pinning.
 NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
 	"--prefer-offline"
@@ -663,7 +666,7 @@ SLOT="0"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 coqui debug ollama tray voice-recognition wayland whisper-cpp X
-ebuild_revision_33
+ebuild_revision_34
 "
 REQUIRED_USE="
 	voice-recognition
@@ -1015,11 +1018,11 @@ src_install() {
 
 	LCNR_SOURCE="${WORKDIR}/cargo_home/gentoo"
 	LCNR_TAG="third_party_cargo"
-	lcnr_install_files
+#	lcnr_install_files
 
 	LCNR_SOURCE="${S_PROJECT}/node_modules"
 	LCNR_TAG="third_party_npm"
-	lcnr_install_files
+#	lcnr_install_files
 
 	USE_COQUI=$(usex coqui "1" "0")
 
