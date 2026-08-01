@@ -27,7 +27,7 @@ DESCRIPTION="Wayland protocol libraries"
 HOMEPAGE="https://wayland.freedesktop.org/ https://gitlab.freedesktop.org/wayland/wayland"
 
 LICENSE="MIT doc? ( Apache-2.0 OFL-1.1 )"
-SLOT="0"
+SLOT="0" # For soname, see https://gitlab.freedesktop.org/wayland/wayland/-/blob/main/src/meson.build?ref_type=heads#L233
 IUSE+="
 doc test selinux
 ebuild_revision_1
