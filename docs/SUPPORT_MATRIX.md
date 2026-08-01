@@ -296,7 +296,7 @@ Language defaults
 | gRPC 1.71.2 [3]                     | Fully supported                       |                                                          |
 | gRPC >= 1.75.1 (3)                  | Fully supported                       |                                                          |
 | GTK 2 (4)                           | Not Supported                         |                                                          |
-| GTK 3                               | Fully supported                       |                                                          |
+| GTK 3 live                          | Fully supported                       |                                                          |
 | GTK 4 live                          | Fully supported                       |                                                          |
 | LocalAI (llama.cpp with CPU)        | Fully supported                       |                                                          |
 | LocalAI (llama.cpp with ROCm 7.0)   | WIP                                   |                                                          |
@@ -329,13 +329,15 @@ Language defaults
 | PyTorch 2.9 (CUDA 12.6, 12.8, 13.0) | Available                             |                                                          |
 | PyTorch 2.9 (ROCm 6.4)              | Available                             |                                                          |
 | Qt 5.x [4][5]                       | Not supported, but available          |                                                          |
-| Qt 6.x                              | Fully supported                       |                                                          |
+| Qt 6.x live                         | Fully supported                       |                                                          |
 | ROCm 6.4                            | Available                             | D12, U22, U24                                            |
 | ROCm 7.0                            | Available                             | D12, D13, U22, U24                                       |
 | ROCm 7.1                            | Not supported                         | U26                                                      |
 | ROCm 7.2                            | In planning                           |                                                          |
 | SYCL                                | Not supported                         |                                                          |
 | systemd                             | Partially supported                   |                                                          |
+| Tauri 1.x                           | Not supported                         |                                                          |
+| Tauri 2.x                           | Supported                             |                                                          |
 | TensorFlow 2.17 (CPU)               | WIP                                   |                                                          |
 | TensorFlow 2.17 (CUDA 12.3)         | Not supported                         |                                                          |
 | TensorFlow 2.20 (CPU)               | WIP                                   |                                                          |
