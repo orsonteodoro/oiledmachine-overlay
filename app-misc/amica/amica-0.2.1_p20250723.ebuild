@@ -658,7 +658,7 @@ SLOT="0"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 coqui debug ollama tray voice-recognition wayland whisper-cpp X
-ebuild_revision_29
+ebuild_revision_31
 "
 REQUIRED_USE="
 	voice-recognition
@@ -994,11 +994,10 @@ src_install() {
 #	rm -rf "${ED}/usr/bin/app" || die
 
 	exeinto "/usr/lib/${PN}"
-	if use debug ; then
-		doexe "src-tauri/target/debug/${PN}"
-	else
-		doexe "src-tauri/target/release/${PN}"
-	fi
+	local configuration=$(usex debug "debug" "release")
+	newexe \
+		"src-tauri/target/${configuration}/app" \
+		"${PN}"
 
 	newicon -s 48 "app-icon.png" "${PN}.png"
 	make_desktop_entry \
