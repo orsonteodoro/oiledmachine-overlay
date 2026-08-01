@@ -1038,6 +1038,7 @@ pkg_postinst() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  Working but buggy, wait several iterations for the tauri v2 patch to mature (0.2.1_p20250723, 20260731)
 # OILEDMACHINE-OVERLAY-TEST:  Passed (0.2.1_p20250723, 20260426 with webkit-gtk-2.52.3:4.1/0, ollama 0.21.2, TTS off)
 # OILEDMACHINE-OVERLAY-TEST:  Passed (0.2.1_p20250723, 20250810)
 # OILEDMACHINE-OVERLAY-TEST:  Passed (0.2.1_p20250610, 20250701)
