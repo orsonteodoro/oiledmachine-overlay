@@ -10,7 +10,7 @@ diff '--color=auto' -urpN a/src-tauri/capabilities/default.json b/src-tauri/capa
 +  "windows": ["main"],
 +  "permissions": [
 +    "core:default",
-+    "tray:default",
++    "core:tray:default",
 +    "shell:allow-open"
 +  ]
 +}
