@@ -27,8 +27,8 @@ diff '--color=auto' -urp a/src-tauri/src/main.rs b/src-tauri/src/main.rs
 -  SystemTrayMenuItem,
 -};
  use tauri::Manager;
-+use tauri::menu::{Menu, MenuItem};
-+use tauri::tray::{TrayIconBuilder, TrayIconEvent, PredefinedMenuItem};
++use tauri::menu::{Menu, MenuItem, PredefinedMenuItem};
++use tauri::tray::{TrayIconBuilder, TrayIconEvent};
 +// Import the shell extension trait to use app_handle.shell()
 +use tauri_plugin_shell::ShellExt;
  
@@ -117,7 +117,7 @@ diff '--color=auto' -urp a/src-tauri/src/main.rs b/src-tauri/src/main.rs
 +            // 4. Run your loading delay asynchronously
 +            tauri::async_runtime::spawn(async move {
 +                // Simulate loading/heavy tasks
-+                tokio::time::sleep(std::time::Duration::from_secs(3)).await;
++                std::thread::sleep(std::time::Duration::from_secs(3));
 +
 +                // Close splash and open main window using the moved window variables
 +                let _ = splashscreen.close();
