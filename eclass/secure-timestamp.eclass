@@ -442,8 +442,8 @@ SECURE_TIMESTAMP["sys_kernel_linux_firmware_99999999"]="2026-05-16 22:15:36 +000
 
 SECURE_TIMESTAMP["sys_process_procps_9999"]="Mar 26, 2026 4:03:17 AM PDT"
 SECURE_TIMESTAMP["www_servers_civetweb_9999"]="Sep 2, 2025 7:51 AM PDT"
-SECURE_TIMESTAMP["x11_base_xorg_server_9999"]="2026-06-08 02:12:00 +0000"
-SECURE_TIMESTAMP["x11_base_xwayland_9999"]="2026-06-08 02:12:00 +0000" # Keep timestamp the same as xorg-server for simplified remediation
+SECURE_TIMESTAMP["x11_base_xorg_server_9999"]="2026-07-30 12:12:56 +0000"
+SECURE_TIMESTAMP["x11_base_xwayland_9999"]="2026-07-30 12:12:56 +0000" # Keep timestamp the same as xorg-server for simplified remediation
 SECURE_TIMESTAMP["x11_libs_libdrm_9999"]="2026-07-14 14:59:49 -0500"
 SECURE_TIMESTAMP["x11_libs_libX11_9999"]="2026-07-18 16:15:00 +0000"
 SECURE_TIMESTAMP["x11_libs_libxcb_9999"]="Jul 29, 2025 4:20:59 PM PDT"

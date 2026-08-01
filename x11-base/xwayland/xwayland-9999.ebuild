@@ -24,7 +24,7 @@ CHKL_TIMESTAMPS=(
 inherit cflags-hardened chkl meson secure-version
 
 if [[ ${PV} == "9999" ]] ; then
-	FALLBACK_COMMIT="9babe7e7f687b0342c8ab726d01a658d590d7c54"
+	FALLBACK_COMMIT="5541a5c8befbb3975f69c1d7666a2ba76a57b682"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/xorg/xserver.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -44,7 +44,7 @@ SLOT="0"
 
 IUSE+="
 libei selinux systemd test unwind xcsecurity
-ebuild_revision_1
+ebuild_revision_2
 "
 RESTRICT="!test? ( test )"
 
