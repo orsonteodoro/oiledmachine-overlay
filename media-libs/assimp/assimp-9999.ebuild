@@ -24,7 +24,7 @@ CHKL_TIMESTAMPS=(
 inherit cflags-hardened check-compiler-switch chkl flag-o-matic libcxx-slot libstdcxx-slot secure-version cmake-multilib
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="4b0dea0349f1c8d853bde749d952f0bd361409fc"
+	FALLBACK_COMMIT="a472362d33c31b1200245dd92206741ac9165902"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/assimp/assimp.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -57,10 +57,11 @@ RESTRICT="
 		test
 	)
 "
-SLOT="0/"$(ver_cut "1-2" "${PV}")
+SOVER="6"
+SLOT="0/${SOVER}"
 IUSE+="
 samples static-libs test
-ebuild_revision_23
+ebuild_revision_24
 "
 RDEPEND="
 	>=sys-libs/zlib-${ZLIB_PV}[${MULTILIB_USEDEP},minizip]
@@ -102,6 +103,14 @@ src_unpack() {
 		git-r3_checkout
 	else
 		unpack ${A}
+	fi
+	local actual_sover=$(grep -e "ASSIMP_SOVERSION" "${S}/CMakeLists.txt" | head -n 1 | grep -E -o -e "[0-9]+")
+	local expected_sover="${SOVER}"
+	if ver_test "${actual_sover}" "-ne" "${expected_sover}" ; then
+eerror "QA:  Change SOVER in ebuild"
+eerror "Actual SOVER:  ${actual_sover}"
+eerror "Expected SOVER:  ${expected_sover}"
+		die
 	fi
 }
 
