@@ -453,7 +453,7 @@ diff '--color=auto' -urpN firejail-0.9.80.orig/etc/inc/disable-common.inc fireja
  # bubblejail
  blacklist ${HOME}/.config/bubblejail
  blacklist ${HOME}/.local/share/bubblejail
-@@ -760,3 +765,1299 @@ blacklist ${RUNUSER}/update-notifier.pid
+@@ -760,3 +765,1300 @@ blacklist ${RUNUSER}/update-notifier.pid
  
  # pass utility (pass package in Debian etc.)
  blacklist ${HOME}/.password-store
@@ -692,6 +692,7 @@ diff '--color=auto' -urpN firejail-0.9.80.orig/etc/inc/disable-common.inc fireja
 +blacklist ${PATH}/lsusb
 +
 +# CPU inspection, kernel version
++blacklist ${PATH}/animfetch
 +blacklist ${PATH}/cpufetch
 +blacklist ${PATH}/cpuinfo
 +blacklist ${PATH}/fastfetch
