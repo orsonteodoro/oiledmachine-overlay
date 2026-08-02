@@ -1,5 +1,5 @@
 # Copyright 2022-2025 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -67,7 +67,7 @@ IUSE+="
 ${LLVM_EBUILDS_LLVM18_REVISION}
 +binutils-plugin bolt bolt-heatmap +debug debuginfod doc -dump exegesis jemalloc
 libedit +libffi ncurses tcmalloc test xml z3 zstd
-ebuild_revision_12
+ebuild_revision_13
 "
 REQUIRED_USE+="
 	!amd64? (
@@ -202,7 +202,7 @@ LLVM_COMPONENTS=(
 	"third-party"
 )
 LLVM_MANPAGES=1
-LLVM_PATCHSET="${PV}-r7"
+LLVM_PATCHSET="${PV}-r8"
 LLVM_USE_TARGETS="provide"
 llvm.org_set_globals
 
