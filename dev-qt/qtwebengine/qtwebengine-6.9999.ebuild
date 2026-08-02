@@ -16,7 +16,7 @@ CXX_STANDARD=17
 WEB_KERNEL_CONFIG_CHECK_YAMA=1
 PYTHON_COMPAT=( python3_{10..14} )
 
-FALLBACK_COMMIT="c5062977a16ad795431d28789760e269b81cd3e7"
+FALLBACK_COMMIT="f96606d16447b787f2010181eb51df14d85c83f5"
 
 # See https://github.com/qt/qtwebengine/tree/dev/src for submodule ID
 # See https://github.com/qt/qtwebengine-chromium/blob/1e2ffa9/chromium/chrome/VERSION
@@ -88,7 +88,7 @@ IUSE+="
 	accessibility +alsa clang bindist custom-cflags designer gcc geolocation
 	+jumbo-build kerberos opengl +pdfium pulseaudio qml screencast
 	+system-icu vaapi vulkan webdriver +widgets
-	ebuild_revision_4
+	ebuild_revision_5
 "
 REQUIRED_USE="
 	^^ (
