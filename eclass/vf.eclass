@@ -172,10 +172,14 @@ einfo "CB = Container Breakout"
 # Alias for ACE, RCE
 einfo "CE = Code Execution"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"CBHJ"($|" "|";"|",") ]] ; then
+einfo "CBHJ = Clipboard Hijacking"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"CI"($|" "|";"|",") ]] ; then
 einfo "CI = Code Injection"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"CJ"($|" "|";"|",") ]] ; then
+# It means to be tricked into clicking button
 einfo "CJ = Clickjack"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"CP"($|" "|";"|",") ]] ; then
