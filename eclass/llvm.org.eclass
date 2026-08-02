@@ -82,18 +82,9 @@ if [[ -z ${_LLVM_SOURCE_TYPE+1} ]]; then
 			_LLVM_SOURCE_TYPE=snapshot
 
 			case ${PV} in
-				23.0.0_pre20260628)
-					EGIT_COMMIT=49de424f45389cb757c3cc8c50daf38d024e2314
-					;;
-				23.0.0_pre20260605)
-					EGIT_COMMIT=6d4cd34d861baec5a761d15b81395fbe88f4391b
-					;;
-				23.0.0_pre20260512)
-					EGIT_COMMIT=8789401c6f0b2c53ba348860c1b0c5df1fa40c8c
-					;;
-				23.0.0_pre20260507)
-					EGIT_COMMIT=0f3ca6bb9ca514518c55fc02855a6083312ddfe2
-					;;
+				#23.0.0_pre20260628)
+				#	EGIT_COMMIT=49de424f45389cb757c3cc8c50daf38d024e2314
+				#	;;
 				*)
 					die "Unknown snapshot: ${PV}"
 					;;
@@ -247,9 +238,6 @@ llvm.org_set_globals() {
 	case ${_LLVM_SOURCE_TYPE} in
 		git)
 			EGIT_REPO_URI="https://github.com/llvm/llvm-project.git"
-
-			[[ ${LLVM_MAJOR} != ${_LLVM_MAIN_MAJOR} ]] &&
-				EGIT_BRANCH="release/${LLVM_MAJOR}.x"
 			;;
 		tar)
 			if [[ ${LLVM_MAJOR} -ge 19 ]]; then
