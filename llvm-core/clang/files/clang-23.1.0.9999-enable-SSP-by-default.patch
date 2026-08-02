@@ -1,0 +1,21 @@
+--- a/lib/Driver/ToolChains/Linux.h.orig	2026-08-02 13:18:34.149438271 -0700
++++ b/lib/Driver/ToolChains/Linux.h	2026-08-02 13:20:24.450508022 -0700
+@@ -10,6 +10,7 @@
+ #define LLVM_CLANG_LIB_DRIVER_TOOLCHAINS_LINUX_H
+ 
+ #include "Gnu.h"
++#include "clang/Basic/LangOptions.h"						// Added by Foutras for SSP default ON
+ #include "clang/Driver/ToolChain.h"
+ 
+ namespace clang {
+@@ -51,6 +52,10 @@ public:
+   IsAArch64OutlineAtomicsDefault(const llvm::opt::ArgList &Args) const override;
+   bool isPIEDefault(const llvm::opt::ArgList &Args) const override;
+   bool IsMathErrnoDefault() const override;
++  LangOptions::StackProtectorMode						// Added by Foutras for SSP default ON
++  GetDefaultStackProtectorLevel(bool KernelOrKext) const override {		// Added by Foutras
++    return LangOptions::SSPStrong;						// Added by Foutras
++  }
+   SanitizerMask
+   getSupportedSanitizers(BoundArch BA,
+                          Action::OffloadKind DeviceOffloadKind) const override;

@@ -308,7 +308,7 @@ ewarn
 	fi
 	if use ssp ; then
 		patches_hardened+=(
-			"${FILESDIR}/clang-12.0.1-enable-SSP-by-default.patch"
+			"${FILESDIR}/clang-23.1.0.9999-enable-SSP-by-default.patch"
 		)
 		hardened_features+="SSP, "
 	fi
