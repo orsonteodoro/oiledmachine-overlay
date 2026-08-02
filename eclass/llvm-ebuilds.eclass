@@ -19,15 +19,23 @@ esac
 # This section is AI assisted to better explain the formula.
 
 #
-# Commit snapshot quality comparison on Jul 4, 2026
+# Commit snapshot quality comparison on Aug 2, 2026
 #
-# | Source                 | Commit ID  | Date     | Checkmarks | Sanitizer test fails | Sanitizer checks | llvm-clang-pauth pass | llvm-clang-pac-ret pass | libc-asan passed |
-# | -----------------------|------------|----------|------------|----------------------|------------------|-----------------------|-------------------------|------------------|
-# | chromium-toolchain     | 20b6ec66   | 20260409 | 70/82      | 1                    | 8                | 1                     | 1                       | 2                |
-# | distro                 | 49de424f   | 20260628 | 76/87      | 3                    | 10               | 1                     | 1                       | 2                |
-# | distro                 | 6d4cd34d   | 20260605 | 76/91      | 2                    | 9                | 0                     | 0                       | 2                |
-# | oiledmachine-overlay   | ad35cfed   | 20260627 | 109/118    | 0                    | 15               | 1                     | 1                       | 2                |
+# | Source                 | Commit ID  | Date     | LLVM slot  | Checkmarks | sanitizer-* test fails    | sanitizer-* checks    | llvm-clang-pauth pass | llvm-clang-pac-ret pass | libc-asan passed |
+# | -----------------------|------------|----------|------------|------------|---------------------------|-----------------------|-----------------------|-------------------------|------------------|
+# | chromium-toolchain     | 53d1880    | 20260616 | 23.0.0-git | 6/6        | 0 [3]                     | 0 [3]                 | 0 [3]                 | 0 [3]                   | 0 [3]            |
+# | distro                 | 0bf3638    | 20260725 | 24.0.0-git | 120/134    | 0                         | 17                    | 1                     | 1                       | 2                |
+# | distro                 | bb9934d    | 20260724 | 23.1.0-rc1 | 27/32      | 0 [2]                     | 0 [1]                 | 0 [1][2]              | 0 [1]                   | 0 [1]            |
+# | oiledmachine-overlay   | 11038cc    | 20260801 | 24.0.0-git | 122/133    | 0                         | 17                    | 1                     | 1                       | 2                |
+# | oiledmachine-overlay   | edb9efb    | 20260802 | 23.1.0-rc2 | 20/24 [5]  | 0 [2]                     | 0 [1]                 | 0 [1][2]              | 0 [1]                   | 0 [1]            |
+# | -                      | bd6bfba    | 20260802 | 23.0.0-git | 99/126     | 0 [4]                     | 9                     | 0 [2]                 | 0                       | 2                |
+# | -                      | 8b68596    | 20260616 | 23.0.0-git | 77/81      | 2                         | 10                    | 0                     | 1                       | 2                |
 #
+# [1] See bd6bfba3
+# [2] Passes with adjacent commit 1546138, adjacent to bd6bfba3 (code freeze)
+# [3] See 8b68596 adjacent commit, adjacent to 53d1880 (git repo snapshot)
+# [4] Fail detected with adjacent commit 1546138, adjacent to bd6bfba3 (code freeze)
+# [5] The updated 23.x branch is preferred over an older pre llvmorg-23-init development snapshot to address miscompilation vulnerabilities
 
 #
 # My AI prompt:
@@ -58,7 +66,8 @@ esac
 # P = If days passed >= 8 then - 100000, else 0
 # S = 10000 + p_1*D + p_2*B + p_3*C + p_4*F + P
 #
-LLVM_EBUILDS_LLVM23_FALLBACK_COMMIT="ad35cfed2d2bd8a373ced8bd7d91e1505ba99d17" # Jun 27, 2026 (109 / 118 green checkmarks)
+LLVM_EBUILDS_LLVM24_FALLBACK_COMMIT="11038cc1618ac1f801e4029b7149f68f3ad949f5" # Aug 1, 2026 (122 / 133 green checkmarks)
+LLVM_EBUILDS_LLVM23_FALLBACK_COMMIT="edb9efb3e0823d32d6b4baa8f5f798bca3e300a3" # Aug 2, 2026 (20 / 24 green checkmarks)
 LLVM_EBUILDS_LLVM20_FALLBACK_COMMIT="1df28554bd6264d44aa2ce12e5a2fc29f61bb027" # Dec 6, 2024 (63 / 63 green checkmarks)
 LLVM_EBUILDS_LLVM19_FALLBACK_COMMIT="5b4000dc58572d08754f0b2199c2046871ec8507" # Jun 26, 2024 (72 / 72 green checkmarks)
 LLVM_EBUILDS_LLVM18_FALLBACK_COMMIT="2b033a32ea1b45c773158f67b48623ceffbb153d" # Feb 14, 2024 (42 / 43 green checkmarks)
