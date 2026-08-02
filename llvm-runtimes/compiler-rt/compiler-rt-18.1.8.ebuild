@@ -89,7 +89,6 @@ python_check_deps() {
 	python_has_version ">=dev-python/lit-${LLVM_VERSION}[${PYTHON_USEDEP}]"
 }
 PATCHES=(
-#	"${FILESDIR}/${PN}-18.1.8-remove-pid-suffix-from-logname.patch"
 )
 
 pkg_pretend() {
