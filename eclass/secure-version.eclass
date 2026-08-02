@@ -257,8 +257,12 @@ LENSFUN_PV=${LENSFUN_PV:-"9999"}
 LERC_PV=${LERC_PV:-"9999"}
 LEVEL_ZERO_PV=${LEVEL_ZERO_PV:-"1.31.0"}
 LIBAOM_PV=${LIBAOM_PV:-"9999"}
-LIBAPPARMOR_5_0_PV=${LIBAPPARMOR_5_0_PV:-"5.0.1"} # Rolling
+
+# Bump the libapparmor to the latest point releases, because the distro doesn't
+# use slot when it should.
+LIBAPPARMOR_5_0_PV=${LIBAPPARMOR_5_0_PV:-"5.0.2"} # Rolling
 LIBAPPARMOR_4_1_PV=${LIBAPPARMOR_4_1_PV:-"4.1.7"} # LTS, 5 years
+
 LIBARCHIVE_PV=${LIBARCHIVE_PV:-"9999"}
 LIBASS_PV=${LIBASS_PV:-"0.17.4"}
 LIBAVIF_PV=${LIBAVIF_PV:-"9999"}
