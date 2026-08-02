@@ -86,6 +86,7 @@ SECURE_TIMESTAMP["app_accessibility_whisper_cpp_9999"]="Jun 19, 2026 2:53 AM PDT
 SECURE_TIMESTAMP["app_admin_sudo_9999"]="Jul 19, 2026 3:50 PM PDT"
 SECURE_TIMESTAMP["app_misc_jq_9999"]="Jul 1, 2026 10:45 PM PDT"
 SECURE_TIMESTAMP["app_misc_ollama_9999"]="Jul 24, 2026 1:23 PM PDT"
+SECURE_TIMESTAMP["app_antivirus_clamav_9999"]="Jul 24, 2026 3:08 PM PDT"
 SECURE_TIMESTAMP["app_arch_brotli_9999"]="Sun, 30 Apr 2026 10:19 AM PDT"
 SECURE_TIMESTAMP["app_arch_bzip2_9999"]="2026-07-12 00:14:43 +0200"
 SECURE_TIMESTAMP["app_arch_cpio_9999"]="2025-05-29 08:28:33 +0300"
