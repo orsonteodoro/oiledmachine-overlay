@@ -53,7 +53,7 @@ inherit autotools cflags-hardened check-compiler-switch flag-o-matic libcxx-slot
 inherit libstdcxx-slot multilib-minimal uopts
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="c597d7377837337425d2540ae1ced74858159ef7" # 160/160 greeen checkmarks
+	FALLBACK_COMMIT="85599c8b1213ffd410195885663920b463732681" # 160/160 greeen checkmarks
 	EGIT_BRANCH="dev"
 	EGIT_REPO_URI="https://github.com/jemalloc/jemalloc.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -89,7 +89,7 @@ SLOT="0/${SOVER}"
 IUSE+="
 ${TRAINERS[@]}
 custom-cflags debug lazy-lock prof static-libs stats test xmalloc
-ebuild_revision_50
+ebuild_revision_51
 "
 REQUIRED_USE+="
 	!custom-cflags? (
