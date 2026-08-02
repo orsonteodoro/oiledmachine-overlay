@@ -31,7 +31,7 @@ esac
 # | -                      | bd6bfba    | 20260802 | 23.0.0-git | 99/126     | 0 [4]                     | 9                     | 0 [2]                 | 0                       | 2                |
 # | -                      | 8b68596    | 20260616 | 23.0.0-git | 77/81      | 2                         | 10                    | 0                     | 1                       | 2                |
 #
-# [1] See bd6bfba3
+# [1] See bd6bfba3 (tagged llvmorg-23-init)
 # [2] Passes with adjacent commit 1546138, adjacent to bd6bfba3 (code freeze)
 # [3] See 8b68596 adjacent commit, adjacent to 53d1880 (git repo snapshot)
 # [4] Fail detected with adjacent commit 1546138, adjacent to bd6bfba3 (code freeze)
