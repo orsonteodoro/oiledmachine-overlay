@@ -166,6 +166,7 @@ LLVM_COMPONENTS=(
 	"clang"
 	"clang-tools-extra"
 	"cmake"
+	"mlir/utils/pygments"
 	"utils/docs"
 )
 LLVM_MANPAGES=1
