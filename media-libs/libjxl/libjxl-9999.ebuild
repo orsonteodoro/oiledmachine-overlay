@@ -31,7 +31,7 @@ CHKL_TIMESTAMPS=(
 inherit cflags-hardened chkl cmake-multilib gnome2-utils libcxx-slot libstdcxx-slot secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="3ee90ced9b3d2cb2f37afe9d1c9fd8162ad842aa"
+	FALLBACK_COMMIT="196a43d996aa6ed33ebf98812a7c6d43b2b6d01b"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/libjxl/libjxl.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -59,7 +59,7 @@ LICENSE="BSD"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 +gdk-pixbuf gif jpeg openexr +png test
-ebuild_revision_11
+ebuild_revision_12
 "
 REQUIRED_USE="test? ( png )"
 RESTRICT="!test? ( test )"
