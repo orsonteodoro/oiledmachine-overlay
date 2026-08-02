@@ -2,8 +2,8 @@
 
 main() {
 	# Commit from https://gn.googlesource.com/gn/+log
-	# See also https://github.com/chromium/chromium/blob/150.0.7871.114/DEPS#L557
-	GN_COMMIT=${GN_COMMIT:-"3357c4f51b1a9e676378c695dd9c7e9911c35ee6"}
+	# See also https://github.com/chromium/chromium/blob/151.0.7922.71/DEPS#L557
+	GN_COMMIT=${GN_COMMIT:-"1d86777e7f2562a86ecea77d1809ac4f82bb5bfe"}
 	echo "GN_COMMIT: ${GN_COMMIT}"
 
 	if ! [[ -e "gn" ]] ; then
