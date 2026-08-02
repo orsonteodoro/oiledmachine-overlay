@@ -21,21 +21,24 @@ esac
 #
 # Commit snapshot quality comparison on Aug 2, 2026
 #
-# | Source                 | Commit ID  | Date     | LLVM slot  | Checkmarks | sanitizer-* test fails    | sanitizer-* checks    | llvm-clang-pauth pass | llvm-clang-pac-ret pass | libc-asan passed |
-# | -----------------------|------------|----------|------------|------------|---------------------------|-----------------------|-----------------------|-------------------------|------------------|
-# | chromium-toolchain     | 53d1880    | 20260616 | 23.0.0-git | 6/6        | 0 [3]                     | 0 [3]                 | 0 [3]                 | 0 [3]                   | 0 [3]            |
-# | distro                 | 0bf3638    | 20260725 | 24.0.0-git | 120/134    | 0                         | 17                    | 1                     | 1                       | 2                |
-# | distro                 | bb9934d    | 20260724 | 23.1.0-rc1 | 27/32      | 0 [2]                     | 0 [1]                 | 0 [1][2]              | 0 [1]                   | 0 [1]            |
-# | oiledmachine-overlay   | 11038cc    | 20260801 | 24.0.0-git | 122/133    | 0                         | 17                    | 1                     | 1                       | 2                |
-# | oiledmachine-overlay   | edb9efb    | 20260802 | 23.1.0-rc2 | 20/24 [5]  | 0 [2]                     | 0 [1]                 | 0 [1][2]              | 0 [1]                   | 0 [1]            |
-# | -                      | bd6bfba    | 20260802 | 23.0.0-git | 99/126     | 0 [4]                     | 9                     | 0 [2]                 | 0                       | 2                |
-# | -                      | 8b68596    | 20260616 | 23.0.0-git | 77/81      | 2                         | 10                    | 0                     | 1                       | 2                |
+# | Source                 | Commit ID  | Date     | LLVM slot  | Checkmarks | sanitizer-* test fails    | sanitizer-* checks    | llvm-clang-pauth pass | llvm-clang-pac-ret pass | libc-asan passed | [6] |
+# | -----------------------|------------|----------|------------|------------|---------------------------|-----------------------|-----------------------|-------------------------|------------------|-----|
+# | chromium-toolchain     | 53d1880    | 20260616 | 23.0.0-git | 6/6        | 0 [3]                     | 0 [3]                 | 0 [3]                 | 0 [3]                   | 0 [3]            | N   |
+# | distro                 | 0bf3638    | 20260725 | 24.0.0-git | 120/134    | 0                         | 17                    | 1                     | 1                       | 2                | Y   |
+# | distro                 | bb9934d    | 20260724 | 23.1.0-rc1 | 27/32      | 0 [2]                     | 0 [1]                 | 0 [1][2]              | 0 [1]                   | 0 [1]            | Y   |
+# | oiledmachine-overlay   | 11038cc    | 20260801 | 24.0.0-git | 122/133    | 0                         | 17                    | 1                     | 1                       | 2                | Y   |
+# | oiledmachine-overlay   | edb9efb    | 20260802 | 23.1.0-rc2 | 20/24 [5]  | 0 [2]                     | 0 [1]                 | 0 [1][2]              | 0 [1]                   | 0 [1]            | Y   |
+# | -                      | bd6bfba    | 20260802 | 23.0.0-git | 99/126     | 0 [4]                     | 9                     | 0 [2]                 | 0                       | 2                | N   |
+# | -                      | 8b68596    | 20260616 | 23.0.0-git | 77/81      | 2                         | 10                    | 0                     | 1                       | 2                | N   |
 #
 # [1] See bd6bfba3 (tagged llvmorg-23-init)
 # [2] Passes with adjacent commit 1546138, adjacent to bd6bfba3 (code freeze)
 # [3] See 8b68596 adjacent commit, adjacent to 53d1880 (git repo snapshot)
 # [4] Fail detected with adjacent commit 1546138, adjacent to bd6bfba3 (code freeze)
 # [5] The updated 23.x branch is preferred over an older pre llvmorg-23-init development snapshot to address miscompilation vulnerabilities
+# [6] Contains f2dfbf0 (20260710) miscompilation fix?
+#     UB - https://github.com/llvm/llvm-project/pull/208683
+#     OOBR, segfault - https://github.com/llvm/llvm-project/issues/208611
 
 #
 # My AI prompt:
