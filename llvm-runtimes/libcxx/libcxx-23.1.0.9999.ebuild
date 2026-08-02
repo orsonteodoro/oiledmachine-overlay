@@ -225,8 +225,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	local nostdlib_flags=( -nostdlib++ )
 	if ! test_compiler && test_compiler "${nostdlib_flags[@]}"; then
-		local -x LDFLAGS="${LDFLAGS} ${nort_flags[*]}"
-		ewarn "${CXX} seems to lack runtime, trying with ${nort_flags[*]}"
+		local -x LDFLAGS="${LDFLAGS} ${nostdlib_flags[*]}"
+		ewarn "${CXX} seems to lack runtime, trying with ${nostdlib_flags[*]}"
 	fi
 
 	local libdir=$(get_libdir)

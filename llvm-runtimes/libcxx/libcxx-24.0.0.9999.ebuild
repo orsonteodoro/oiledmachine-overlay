@@ -15,8 +15,8 @@ inherit llvm-ebuilds
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
 llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM22_FALLBACK_COMMIT}"
-		EGIT_BRANCH="${LLVM_EBUILDS_LLVM22_BRANCH}"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM24_FALLBACK_COMMIT}"
+		EGIT_BRANCH="${LLVM_EBUILDS_LLVM24_BRANCH}"
 	fi
 }
 _llvm_set_globals
@@ -38,7 +38,7 @@ LLVM_COMPONENTS=(
 	"runtimes"
 	"libcxx"{"","abi"}
 	"libc"
-	"llvm/"{"cmake","utils/llvm-lit"}
+	"llvm/"{"cmake","utils"}
 	"cmake"
 )
 
@@ -50,9 +50,9 @@ PYTHON_COMPAT=( "python3_"{13..14} )
 
 inherit check-compiler-switch cflags-hardened cmake-multilib crossdev flag-o-matic libcxx-slot libstdcxx-slot llvm.org llvm-utils python-any-r1 toolchain-funcs
 
-KEYWORDS="
-amd64 arm arm64 ~loong ~riscv ~sparc x86 ~arm64-macos ~x64-macos
-"
+#KEYWORDS="
+#~amd64 ~arm ~arm64 ~loong ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos
+#"
 
 SRC_URI+="
 https://github.com/llvm/llvm-project/commit/ef843c8271027b89419d07ffc2aaa3abf91438ef.patch
@@ -75,7 +75,7 @@ RESTRICT="
 "
 SLOT="0"
 IUSE+="
-${LLVM_EBUILDS_LLVM22_REVISION}
+${LLVM_EBUILDS_LLVM24_REVISION}
 clang +libcxxabi +static-libs test +threads
 ebuild_revision_21
 "
@@ -269,15 +269,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 		)
 	fi
 
-	if ! has_version -b sys-devel/gcc; then
-	# Since this package is merged before llvm-runtimes/clang-stdlib-config,
-	# clang will attempt to use libstdc++ for the C++ compiler check, and will
-	# fail if it is missing.
-		mycmakeargs+=(
-			-DCMAKE_CXX_COMPILER_WORKS=1
-		)
-	fi
-
 	if is_crosspkg ; then
 	# Needed to target built libc headers
 		local -x CFLAGS="${CFLAGS} -isystem ${ESYSROOT}/usr/${CTARGET}/usr/include"
@@ -327,8 +318,6 @@ src_test() {
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			local -x LIT_PRESERVES_TMP=1
-	# https://github.com/llvm/llvm-project/issues/153940
-			local -x LIT_XFAIL="libcxx/gdb/gdb_pretty_printer_test.sh.cpp"
 			cmake_build "libcxx-test-suite-install-cxx"
 			if [[ "${CHOST}" != *"-darwin"* ]] ; then
 				local libdir=$(get_libdir)
