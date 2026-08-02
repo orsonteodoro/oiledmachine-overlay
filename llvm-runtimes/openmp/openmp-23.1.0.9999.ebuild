@@ -1,0 +1,836 @@
+# Copyright 1999-2026 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+# Last update:  2024-07-23
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	IUSE+="
+		fallback-commit
+	"
+fi
+
+CXX_STANDARD=17
+LLVM_SLOT="${PV%%.*}"
+PYTHON_COMPAT=( "python3_"{13..14} )
+
+# For NVPTX, see https://github.com/llvm/llvm-project/blob/main/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L57C1-L64C1
+# For CUDA sdk versions, see https://github.com/llvm/llvm-project/blob/main/clang/include/clang/Basic/Cuda.h#L22
+# See also https://github.com/llvm/llvm-project/blob/main/clang/include/clang/Basic/OffloadArch.h#L21
+# See also https://github.com/llvm/llvm-project/blob/main/clang/lib/CodeGen/CGOpenMPRuntimeGPU.cpp#L2269
+CUDA_TARGETS_COMPAT=(
+	"auto"
+	"sm_35"
+	"sm_37"
+	"sm_50"
+	"sm_52"
+	"sm_53"
+	"sm_60"
+	"sm_61"
+	"sm_62"
+	"sm_70"
+	"sm_72"
+	"sm_75"
+	"sm_80"
+	"sm_86"
+	"sm_87"
+	"sm_88"
+	"sm_89"
+	"sm_90"
+	"sm_90a"
+	"sm_100"
+	"sm_100a"
+	"sm_100f"
+	"sm_101"
+	"sm_101a"
+	"sm_101f"
+	"sm_103"
+	"sm_103a"
+	"sm_103f"
+	"sm_110"
+	"sm_110a"
+	"sm_110f"
+	"sm_120"
+	"sm_120a"
+	"sm_120f"
+	"sm_121"
+	"sm_121a"
+	"sm_121f"
+)
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+)
+
+inherit llvm-ebuilds
+inherit abseil-cpp cmake-multilib crossdev flag-o-matic grpc libstdcxx-slot llvm.org llvm-utils protobuf python-single-r1
+inherit re2 secure-version toolchain-funcs
+
+if [[ "${PV}" =~ "9999" ]] ; then
+llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
+	EGIT_BRANCH="${LLVM_EBUILDS_LLVM23_BRANCH}"
+	if [[ "${USE}" =~ "fallback-commit" ]] ; then
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM23_FALLBACK_COMMIT}"
+	fi
+else
+	:
+#	KEYWORDS="
+#~amd64 ~arm ~arm64 ~loong ~mips ~ppc64 ~riscv ~x86 ~x64-macos
+#	"
+fi
+
+DESCRIPTION="OpenMP runtime libraries for LLVM/clang compiler"
+HOMEPAGE="https://openmp.llvm.org"
+LICENSE="
+	Apache-2.0-with-LLVM-exceptions
+	|| (
+		MIT
+		UoI-NCSA
+	)
+"
+RESTRICT="
+	!test? (
+		test
+	)
+"
+SLOT="0/${LLVM_SOABI}"
+IUSE+="
+${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+${LLVM_EBUILDS_LLVM23_REVISION}
++clang cuda +debug gdb-plugin hwloc level-zero offload ompt remote-offloading rocm test llvm_targets_NVPTX
+ebuild_revision_11
+"
+gen_cuda_required_use() {
+	local x
+	for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
+		echo "
+			cuda_targets_${x}? (
+				cuda
+				llvm_targets_NVPTX
+			)
+		"
+	done
+}
+REQUIRED_USE="
+	$(gen_cuda_required_use)
+	gdb-plugin? (
+		${PYTHON_REQUIRED_USE}
+	)
+	llvm_targets_NVPTX? (
+		|| (
+			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+		)
+	)
+	remote-offloading? (
+		offload
+	)
+"
+CUDA_11_8_RDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-11.8*
+		>=x11-drivers/nvidia-drivers-520.61
+		virtual/cuda-compiler:0/11.8[${LIBSTDCXX_USEDEP}]
+	)
+"
+CUDA_12_3_RDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-12.3*
+		>=x11-drivers/nvidia-drivers-545.23
+		virtual/cuda-compiler:0/12.3[${LIBSTDCXX_USEDEP}]
+	)
+"
+CUDA_12_4_RDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-12.4*
+		>=x11-drivers/nvidia-drivers-550.54
+		virtual/cuda-compiler:0/12.4[${LIBSTDCXX_USEDEP}]
+	)
+"
+CUDA_12_5_RDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-12.5*
+		>=x11-drivers/nvidia-drivers-555.42
+		virtual/cuda-compiler:0/12.5[${LIBSTDCXX_USEDEP}]
+	)
+"
+CUDA_12_6_RDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-12.6*
+		>=x11-drivers/nvidia-drivers-560.35
+		virtual/cuda-compiler:0/12.6[${LIBSTDCXX_USEDEP}]
+	)
+"
+CUDA_12_8_RDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-12.8*
+		>=x11-drivers/nvidia-drivers-570.124
+		virtual/cuda-compiler:0/12.8[${LIBSTDCXX_USEDEP}]
+	)
+"
+CUDA_12_9_RDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-12.9*
+		>=x11-drivers/nvidia-drivers-575.57
+		virtual/cuda-compiler:0/12.9[${LIBSTDCXX_USEDEP}]
+	)
+"
+CUDA_13_0_RDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-13.0*
+		>=x11-drivers/nvidia-drivers-580.95
+		virtual/cuda-compiler:0/13.0[${LIBSTDCXX_USEDEP}]
+	)
+"
+CUDA_13_1_RDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-13.1*
+		>=x11-drivers/nvidia-drivers-595.58
+		virtual/cuda-compiler:0/13.1[${LIBSTDCXX_USEDEP}]
+	)
+"
+CUDA_13_2_RDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-13.2*
+		>=x11-drivers/nvidia-drivers-610.43
+		virtual/cuda-compiler:0/13.2[${LIBSTDCXX_USEDEP}]
+	)
+"
+RDEPEND="
+	cuda? (
+		dev-util/nvidia-cuda-toolkit:=
+		x11-drivers/nvidia-drivers:=
+		virtual/cuda-compiler:=
+	)
+	cuda_targets_sm_35? (
+		${CUDA_11_8_RDEPEND}
+	)
+	cuda_targets_sm_37? (
+		${CUDA_11_8_RDEPEND}
+	)
+	cuda_targets_sm_50? (
+		|| (
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
+			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+		)
+	)
+	cuda_targets_sm_52? (
+		|| (
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
+			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+		)
+	)
+	cuda_targets_sm_53? (
+		|| (
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
+			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+		)
+	)
+	cuda_targets_sm_60? (
+		|| (
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
+			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+		)
+	)
+	cuda_targets_sm_61? (
+		|| (
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
+			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+		)
+	)
+	cuda_targets_sm_62? (
+		|| (
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
+			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+		)
+	)
+	cuda_targets_sm_70? (
+		|| (
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
+			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+		)
+	)
+	cuda_targets_sm_72? (
+		|| (
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
+			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+		)
+	)
+	cuda_targets_sm_75? (
+		|| (
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
+			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+			${CUDA_13_1_RDEPEND}
+			${CUDA_13_2_RDEPEND}
+		)
+	)
+	cuda_targets_sm_80? (
+		|| (
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
+			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+			${CUDA_13_1_RDEPEND}
+			${CUDA_13_2_RDEPEND}
+		)
+	)
+	cuda_targets_sm_86? (
+		|| (
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
+			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+			${CUDA_13_1_RDEPEND}
+			${CUDA_13_2_RDEPEND}
+		)
+	)
+	cuda_targets_sm_87? (
+		|| (
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
+			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+			${CUDA_13_1_RDEPEND}
+			${CUDA_13_2_RDEPEND}
+		)
+	)
+	cuda_targets_sm_88? (
+		|| (
+			${CUDA_13_0_RDEPEND}
+			${CUDA_13_1_RDEPEND}
+			${CUDA_13_2_RDEPEND}
+		)
+	)
+	cuda_targets_sm_89? (
+		|| (
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
+			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+			${CUDA_13_1_RDEPEND}
+			${CUDA_13_2_RDEPEND}
+		)
+	)
+	cuda_targets_sm_90? (
+		|| (
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
+			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+			${CUDA_13_1_RDEPEND}
+			${CUDA_13_2_RDEPEND}
+		)
+	)
+	cuda_targets_sm_100? (
+		|| (
+			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+			${CUDA_13_1_RDEPEND}
+			${CUDA_13_2_RDEPEND}
+		)
+	)
+	cuda_targets_sm_100a? (
+		|| (
+			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+			${CUDA_13_1_RDEPEND}
+			${CUDA_13_2_RDEPEND}
+		)
+	)
+	cuda_targets_sm_100f? (
+		|| (
+			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+			${CUDA_13_1_RDEPEND}
+			${CUDA_13_2_RDEPEND}
+		)
+	)
+	cuda_targets_sm_101? (
+		|| (
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+			${CUDA_13_1_RDEPEND}
+			${CUDA_13_2_RDEPEND}
+		)
+	)
+	cuda_targets_sm_101a? (
+		|| (
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+			${CUDA_13_1_RDEPEND}
+			${CUDA_13_2_RDEPEND}
+		)
+	)
+	cuda_targets_sm_101f? (
+		|| (
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+			${CUDA_13_1_RDEPEND}
+			${CUDA_13_2_RDEPEND}
+		)
+	)
+	cuda_targets_sm_103? (
+		|| (
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+			${CUDA_13_1_RDEPEND}
+			${CUDA_13_2_RDEPEND}
+		)
+	)
+	cuda_targets_sm_103a? (
+		|| (
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+			${CUDA_13_1_RDEPEND}
+			${CUDA_13_2_RDEPEND}
+		)
+	)
+	cuda_targets_sm_103f? (
+		|| (
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+			${CUDA_13_1_RDEPEND}
+			${CUDA_13_2_RDEPEND}
+		)
+	)
+	cuda_targets_sm_110? (
+		|| (
+			${CUDA_13_0_RDEPEND}
+			${CUDA_13_1_RDEPEND}
+			${CUDA_13_2_RDEPEND}
+		)
+	)
+	cuda_targets_sm_110a? (
+		|| (
+			${CUDA_13_0_RDEPEND}
+			${CUDA_13_1_RDEPEND}
+			${CUDA_13_2_RDEPEND}
+		)
+	)
+	cuda_targets_sm_110f? (
+		|| (
+			${CUDA_13_0_RDEPEND}
+			${CUDA_13_1_RDEPEND}
+			${CUDA_13_2_RDEPEND}
+		)
+	)
+	cuda_targets_sm_120? (
+		|| (
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+			${CUDA_13_1_RDEPEND}
+			${CUDA_13_2_RDEPEND}
+		)
+	)
+	cuda_targets_sm_120a? (
+		|| (
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+			${CUDA_13_1_RDEPEND}
+			${CUDA_13_2_RDEPEND}
+		)
+	)
+	cuda_targets_sm_120f? (
+		|| (
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+			${CUDA_13_1_RDEPEND}
+			${CUDA_13_2_RDEPEND}
+		)
+	)
+	cuda_targets_sm_121? (
+		|| (
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+			${CUDA_13_1_RDEPEND}
+			${CUDA_13_2_RDEPEND}
+		)
+	)
+	cuda_targets_sm_121a? (
+		|| (
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+			${CUDA_13_1_RDEPEND}
+			${CUDA_13_2_RDEPEND}
+		)
+	)
+	cuda_targets_sm_121f? (
+		|| (
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+			${CUDA_13_1_RDEPEND}
+			${CUDA_13_2_RDEPEND}
+		)
+	)
+	gdb-plugin? (
+		${PYTHON_DEPS}
+	)
+	hwloc? (
+		>=sys-apps/hwloc-2.5:=[${MULTILIB_USEDEP}]
+	)
+	llvm_targets_NVPTX? (
+		|| (
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
+			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+			${CUDA_13_1_RDEPEND}
+			${CUDA_13_2_RDEPEND}
+		)
+	)
+	offload? (
+		!llvm-runtimes/offload
+		>=dev-libs/libffi-${LIBFFI_PV}:=[${MULTILIB_USEDEP}]
+		~llvm-core/llvm-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		cuda? (
+			~llvm-runtimes/openmp-nvptx64-nvidia-cuda-${PV}:=
+		)
+		level-zero? (
+			~llvm-runtimes/openmp-spirv64-intel-${PV}:=
+			dev-libs/level-zero:=
+		)
+		rocm? (
+			~llvm-runtimes/openmp-amdgcn-amd-amdhsa-${PV}:=
+			dev-libs/rocr-runtime:=
+		)
+	)
+	remote-offloading? (
+		net-libs/grpc:=[${LIBSTDCXX_USEDEP},cxx]
+		|| (
+			net-libs/grpc:3/1.30[${LIBSTDCXX_USEDEP},cxx]
+			net-libs/grpc:3/1.51[${LIBSTDCXX_USEDEP},cxx]
+		)
+	)
+"
+DEPEND="
+	${RDEPEND}
+"
+# Tests:
+# - dev-python/lit provides the test runner
+# - llvm-core/llvm provide test utils (e.g. FileCheck)
+# - llvm-core/clang provides the compiler to run tests
+BDEPEND="
+	>=dev-lang/perl-${PERL_PV}
+	~llvm-core/lld-${LLVM_VERSION}:${LLVM_MAJOR}=
+	clang? (
+		~llvm-core/clang-${LLVM_VERSION}:=[${LIBSTDCXX_USEDEP}]
+	)
+	gdb-plugin? (
+		${PYTHON_DEPS}
+	)
+	offload? (
+		virtual/pkgconfig
+	)
+	test? (
+		${PYTHON_DEPS}
+		$(python_gen_cond_dep "
+			>=dev-python/lit-${LLVM_VERSION}[\${PYTHON_USEDEP}]
+		")
+		~llvm-core/clang-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		~llvm-core/llvm-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	)
+"
+LLVM_COMPONENTS=(
+	"runtimes"
+	"openmp"
+	"offload"
+	"cmake"
+	"libc"
+	"llvm/"{"cmake","include","utils"}
+	"third-party/unittest"
+)
+llvm.org_set_globals
+PATCHES=(
+	"${FILESDIR}/${PN}-17.0.0.9999-sover-suffix.patch"
+#	"${FILESDIR}/${PN}-19.0.0.9999-libffi.patch"
+)
+
+MULTILIB_WRAPPED_HEADERS=(
+	/usr/include/offload/OffloadPrint.hpp
+	/usr/include/offload/OffloadAPI.h
+)
+
+pkg_pretend() {
+	if [[ ${LLVM_ALLOW_GPU_TESTING} ]]; then
+		ewarn "LLVM_ALLOW_GPU_TESTING set.  This package will run tests against your"
+		ewarn "GPU if it is supported.  Note that these tests may be flaky, fail or"
+		ewarn "hang, or even cause your GPU to crash (requiring a reboot)."
+	fi
+}
+
+pkg_setup() {
+ewarn "You may need to uninstall =libomp-${PV} first if merge is unsuccessful."
+	python-single-r1_pkg_setup
+	LLVM_MAX_SLOT="${LLVM_SLOT}"
+	#llvm_pkg_setup
+	libstdcxx-slot_verify
+}
+
+src_prepare() {
+	llvm.org_src_prepare # Already calls cmake_src_prepare
+	pushd "${WORKDIR}" || die
+		eapply "${FILESDIR}/${PN}-22.1.0-protobuf_install_path.patch"
+	popd
+}
+
+gen_nvptx_list() {
+	if use cuda_targets_auto ; then
+		echo "auto"
+	else
+		local list
+		local x
+		for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
+			if use "cuda_targets_${x}" ; then
+				list+=";${x/sm_}"
+			fi
+		done
+		list="${list:1}"
+		echo "${list}"
+	fi
+}
+
+multilib_src_configure() {
+	if use clang && ! is_crosspkg; then
+		# Only do this conditionally to allow overriding with
+		# e.g. CC=clang-13 in case of breakage
+		if ! tc-is-clang ; then
+			local -x CC=${CHOST}-clang
+			local -x CXX=${CHOST}-clang++
+		fi
+
+		strip-unsupported-flags
+	fi
+
+	use offload && llvm_prepend_path "${LLVM_MAJOR}"
+
+	# LTO causes issues in other packages building, #870127
+	filter-lto
+
+	# Avoid possible error:
+	# ld.bfd: duplicate version tag `VERS1.0'
+	filter-flags "-fuse-ld=*"
+	append-ldflags "-fuse-ld=lld"
+	strip-unsupported-flags
+
+	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
+	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
+
+	local libdir="$(get_libdir)"
+	local mycmakeargs=(
+		-DLLVM_LIBDIR_SUFFIX="${libdir#lib}"
+		-DLLVM_BINARY_DIR="${BROOT}/usr/lib/llvm/${LLVM_MAJOR}"
+
+		-DLLVM_ENABLE_RUNTIMES=openmp
+	# Disable unnecessary hack copying stuff back to srcdir. \
+		-DLIBOMP_COPY_EXPORTS=OFF
+		-DLIBOMP_INSTALL_ALIASES=ON # For binary packages
+		-DLIBOMP_OMPD_GDB_SUPPORT=$(multilib_native_usex gdb-plugin)
+		-DLIBOMP_OMPT_SUPPORT=$(usex ompt)
+		-DLIBOMP_USE_HWLOC=$(usex hwloc)
+		-DLLVM_VERSION_MAJOR="${LLVM_MAJOR}"
+		-DLLVM_LIBDIR_SUFFIX="${libdir#lib}"
+		-DLLVM_BINARY_DIR="${BROOT}/usr/lib/llvm/${LLVM_MAJOR}"
+
+		-DPython3_EXECUTABLE="${PYTHON}"
+
+		# this breaks building static target libs
+		-DBUILD_SHARED_LIBS=OFF
+	)
+
+	if use offload && has "${CHOST%%-*}" "aarch64" "powerpc64le" "x86_64" ; then
+		mycmakeargs+=(
+			-DLIBOMPTARGET_BUILD_AMDGPU_PLUGIN=OFF
+			-DLIBOMPTARGET_BUILD_CUDA_PLUGIN=$(usex llvm_targets_NVPTX)
+			-DLIBOMPTARGET_ENABLE_EXPERIMENTAL_REMOTE_PLUGIN=$(usex remote-offloading)
+
+	# Prevent trying to access the GPU
+			-DLIBOMPTARGET_AMDGPU_ARCH="LIBOMPTARGET_AMDGPU_ARCH-NOTFOUND"
+			-DLIBOMPTARGET_NVPTX_ARCH="LIBOMPTARGET_NVPTX_ARCH-NOTFOUND"
+
+			-DOPENMP_ENABLE_LIBOMPTARGET=ON
+		)
+		if use llvm_targets_NVPTX ; then
+			mycmakeargs+=(
+				-DLIBOMPTARGET_NVPTX_COMPUTE_CAPABILITIES=$(gen_nvptx_list)
+			)
+		fi
+		if use ppc64 && ( use llvm_targets_NVPTX ) ; then
+			if ! [[ "${CHOST}" =~ "powerpc64le" ]] ; then
+eerror
+eerror "Big endian is not supported for ppc64 for offload.  Disable either the"
+eerror "offload or the llvm_targets_NVPTX USE flag(s) to continue."
+eerror
+				die
+			fi
+		fi
+	else
+		mycmakeargs+=(
+			-DCMAKE_DISABLE_FIND_PACKAGE_CUDA=ON
+			-DLIBOMPTARGET_BUILD_AMDGPU_PLUGIN=OFF
+			-DLIBOMPTARGET_BUILD_CUDA_PLUGIN=OFF
+			-DLIBOMPTARGET_ENABLE_EXPERIMENTAL_REMOTE_PLUGIN=OFF
+			-DOPENMP_ENABLE_LIBOMPTARGET=OFF
+		)
+	fi
+
+	if multilib_is_native_abi && use offload; then
+		local ffi_cflags=$($(tc-getPKG_CONFIG) --cflags-only-I libffi)
+		local ffi_ldflags=$($(tc-getPKG_CONFIG) --libs-only-L libffi)
+		local plugins="host"
+
+		if has "${CHOST%%-*}" aarch64 powerpc64le x86_64; then
+			if use rocm; then
+				plugins+=";amdgpu"
+			fi
+			if use cuda; then
+				plugins+=";cuda"
+			fi
+			if use level-zero; then
+				plugins+=";level_zero"
+			fi
+		fi
+
+		mycmakeargs+=(
+			-DLLVM_ENABLE_RUNTIMES="openmp;offload"
+			-DOFFLOAD_INCLUDE_TESTS=$(usex test)
+			-DLIBOMPTARGET_PLUGINS_TO_BUILD="${plugins}"
+			-DLIBOMPTARGET_OMPT_SUPPORT="$(usex ompt)"
+		)
+
+		[[ ! ${LLVM_ALLOW_GPU_TESTING} ]] && mycmakeargs+=(
+			# prevent trying to access the GPU
+			-DLIBOMPTARGET_AMDGPU_ARCH=LIBOMPTARGET_AMDGPU_ARCH-NOTFOUND
+			-DLIBOMPTARGET_NVPTX_ARCH=LIBOMPTARGET_NVPTX_ARCH-NOTFOUND
+			-DLIBOMPTARGET_OFFLOAD_ARCH=LIBOMPTARGET_OFFLOAD_ARCH-NOTFOUND
+		)
+	fi
+
+	use test && mycmakeargs+=(
+		-DLLVM_LIT_ARGS="$(get_lit_flags)"
+		-DOPENMP_TEST_C_COMPILER="$(type -P "${CHOST}-clang-${LLVM_MAJOR}")"
+		-DOPENMP_TEST_CXX_COMPILER="$(type -P "${CHOST}-clang++-${LLVM_MAJOR}")"
+	# Disable Fortran tests for now
+	# (TODO: enable where we have flang keyworded)
+		-DOPENMP_TEST_Fortran_COMPILER=
+	)
+
+	if use remote-offloading ; then
+		if has_version "net-libs/grpc:3/1.30" ; then
+			ABSEIL_CPP_SLOT="20200225"
+			PROTOBUF_CPP_SLOT="3"
+			GRPC_SLOT="3"
+			RE2_SLOT="20220623"
+		elif has_version "net-libs/grpc:3/1.51" ; then
+			ABSEIL_CPP_SLOT="20220623"
+			PROTOBUF_CPP_SLOT="3"
+			GRPC_SLOT="3"
+			RE2_SLOT="20220623"
+		fi
+		abseil-cpp_src_configure
+		protobuf_src_configure
+		re2_src_configure
+		grpc_src_configure
+		mycmakeargs+=(
+			-DGRPC_INSTALL_PATH="${ESYSROOT}/usr/lib/grpc/${GRPC_SLOT}/$(get_libdir)/cmake/grpc"
+			-DPROTOBUF_INSTALL_PATH="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/$(get_libdir)/cmake/protobuf"
+		)
+	fi
+
+	addpredict "/dev/nvidiactl"
+	addpredict "/proc/self/task/"
+	cmake_src_configure
+}
+
+multilib_src_test() {
+	# Respect TMPDIR!
+	local -x LIT_PRESERVES_TMP=1
+	local targets=( check-openmp )
+	if multilib_is_native_abi && use offload; then
+		targets+=( check-offload check-offload-unit )
+	fi
+	cmake_build "${targets[@]}"
+}

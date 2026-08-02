@@ -70,9 +70,9 @@ inherit re2 secure-version toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
 llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
-	EGIT_BRANCH="${LLVM_EBUILDS_LLVM23_BRANCH}"
+	EGIT_BRANCH="${LLVM_EBUILDS_LLVM24_BRANCH}"
 	if [[ "${USE}" =~ "fallback-commit" ]] ; then
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM23_FALLBACK_COMMIT}"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM24_FALLBACK_COMMIT}"
 	fi
 else
 	:
@@ -98,7 +98,7 @@ RESTRICT="
 SLOT="0/${LLVM_SOABI}"
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-${LLVM_EBUILDS_LLVM23_REVISION}
+${LLVM_EBUILDS_LLVM24_REVISION}
 +clang cuda +debug gdb-plugin hwloc level-zero offload ompt remote-offloading rocm test llvm_targets_NVPTX
 ebuild_revision_11
 "
@@ -567,14 +567,14 @@ RDEPEND="
 		>=dev-libs/libffi-${LIBFFI_PV}:=[${MULTILIB_USEDEP}]
 		~llvm-core/llvm-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		cuda? (
-			~llvm-runtimes/openmp-nvptx64-nvidia-cuda-${PV}
+			~llvm-runtimes/openmp-nvptx64-nvidia-cuda-${PV}:=
 		)
 		level-zero? (
-			~llvm-runtimes/openmp-spirv64-intel-${PV}
+			~llvm-runtimes/openmp-spirv64-intel-${PV}:=
 			dev-libs/level-zero:=
 		)
 		rocm? (
-			~llvm-runtimes/openmp-amdgcn-amd-amdhsa-${PV}
+			~llvm-runtimes/openmp-amdgcn-amd-amdhsa-${PV}:=
 			dev-libs/rocr-runtime:=
 		)
 	)
