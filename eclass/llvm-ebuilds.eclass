@@ -56,10 +56,10 @@ esac
 #
 # It is based on the GitHub CI/CD results:
 #
-# S = CM + SAN + ARM + LIBC + CUT + MISCOMP
+# S = CHECKS + SAN + ARM + LIBC + CUT + MISCOMP
 #
 # S = total score
-# CM = cost/benefit score for 120 checkmarks
+# CHECKS = cost/benefit score for 120 checkmarks baseline
 # SAN = cost/benefit score for sanitizers
 # ARM = cost/benefit score for Arm sanitizers
 # LIBC = cost/benefit score for LLVM libc sanitizers
