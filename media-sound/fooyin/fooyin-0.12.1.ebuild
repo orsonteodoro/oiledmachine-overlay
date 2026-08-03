@@ -47,7 +47,10 @@ PLUGINS=(
 )
 
 FFMPEG_COMPAT_SLOTS=(
-	"${FFMPEG_COMPAT_SLOTS_4[@]}"
+	"${FFMPEG_COMPAT_SLOTS_5[@]}"
+	"${FFMPEG_COMPAT_SLOTS_6[@]}"
+	"${FFMPEG_COMPAT_SLOTS_7[@]}"
+	"${FFMPEG_COMPAT_SLOTS_8[@]}"
 )
 
 CHKL_TIMESTAMPS=(
@@ -179,6 +182,7 @@ src_unpack() {
 src_configure() {
 	chkl_check_many_timestamps
 	cflags-hardened_append
+	ffmpeg_src_configure
 	local mycmakeargs=(
 		-DBUILD_ALSA=$(usex alsa)
 		-DBUILD_TESTING=$(usex test)
