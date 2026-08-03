@@ -79,7 +79,7 @@ CHKL_TIMESTAMPS=(
 	"media-video/pipewire-9999"
 )
 
-inherit cflags-hardened cmake ffmpeg libcxx-slot libstdcxx-slot secure-version
+inherit cflags-hardened chkl cmake ffmpeg libcxx-slot libstdcxx-slot secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	#FALLBACK_COMMIT="FIXME"
@@ -112,6 +112,7 @@ SLOT="0"
 IUSE+="
 ${PLUGINS[@]/+}
 nls test wayland X
+ebuild_revision_1
 "
 REQUIRED_USE="
 	|| (
