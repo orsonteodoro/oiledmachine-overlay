@@ -252,7 +252,8 @@ einfo
 einfo "You will need to disable menu > Layout > Editing mode to configure the"
 einfo "path to the unpacked presets.  The extension of a preset is .milk.  If"
 einfo "you are undecided, try the default presets \"Cream of the Crop Pack\""
-einfo "which was tested working."
+einfo "which was tested working.  The zip download is buried in the Code"
+einfo "button of the repo."
 einfo
 	fi
 }
