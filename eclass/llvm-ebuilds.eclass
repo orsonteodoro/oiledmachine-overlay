@@ -68,7 +68,7 @@ esac
 #
 # Alternatively,
 #
-# S = (B_1 + C_1) + (B_2 + C_2) + (B_3 + C_3) + (B_4 + C_4) + (B_5 + C_5) + (B_6_1 + C_6_1 ... B_6_N + C_6_N) + (B_7),
+# S = (B_1 + C_1) + (B_2 + C_2) + (B_3 + C_3) + (B_4 + C_4) + (B_5 + C_5) + (B_6_6 + C_6_1 ... B_6_N + C_6_N) + (B_7),
 # when S >= 0 it is a keeper, S < 0 it is a reject
 #
 # S = Scoring function, aka total score
@@ -82,9 +82,11 @@ esac
 # C_4 = subscore for the number of red cost llvm-clang-pauth checkmarks
 # B_5 = subscore for the number of green benefit libc-asan checkmarks
 # C_5 = subscore for the number of red cost libc-asan checkmarks
-# B_6 = subscore for the number of days passed since today.
-# C_6 = subscore for the number of days passed since today.
-# B_6 = subscore for the number of green benefit miscompile fixes since today.
+# B_6_1 = subscore for the number of green benefit miscompile fixes since today instance 1
+# C_6_1 = subscore for the number of red cost miscompile missed fixes since today instance 1
+# B_6_N = subscore for the number of green benefit miscompile fixes since today instance N
+# C_6_N = subscore for the number of red cost miscompile missed fixes since today instance N
+# B_7 = subscore for the number of days passed since today,
 # M = subscore for miscompile fix.
 #
 # B_1 = +75 per green checkmark
@@ -97,10 +99,15 @@ esac
 # B_4 = +5000 per llvm-clang-pac-ret green checkmark
 # C_5 = -5000 per libc-asan red checkmark
 # B_5 = +5000 per libc-asan green checkmark
-# B_6 = 0 for simplification
-# C_6 = If days passed >= 8 then - 1000000, else 0
-# B_7 = higher base score but diminishes as days pass
-# C_7 = 0 for simplification
+# C_6_1 = 0 for simplification
+# B_6_1 = higher base score but diminishes as days pass instance 1
+# ...
+# (There can be multiple miscompile fixes that land on the repo a single day)
+# ...
+# C_6_N = 0 for simplification
+# B_6_N = higher base score but diminishes as days pass instance N
+# B_7 = 0 for simplification
+# C_7 = If days passed >= 8 then - 1000000, else 0
 #
 # Again, we don't calculate this but use simple rules.  Reject older commits
 # that do not address most recently fixed miscompiles.  Find commits where
