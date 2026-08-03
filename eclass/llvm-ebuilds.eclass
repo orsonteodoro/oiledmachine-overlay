@@ -82,11 +82,13 @@ esac
 # C_4 = subscore for the number of red cost llvm-clang-pauth checkmarks
 # B_5 = subscore for the number of green benefit libc-asan checkmarks
 # C_5 = subscore for the number of red cost libc-asan checkmarks
-# B_6_1 = subscore for the number of green benefit miscompile fixes since today instance 1
-# C_6_1 = subscore for the number of red cost miscompile missed fixes since today instance 1
+# B_6_1 = subscore for the number of green benefit miscompile fixes since today, instance 1
+# C_6_1 = subscore for the number of red cost miscompile missed fixes since today, instance 1
 # ...
-# B_6_N = subscore for the number of green benefit miscompile fixes since today instance N
-# C_6_N = subscore for the number of red cost miscompile missed fixes since today instance N
+# (There can be multiple miscompile fixes that land on the repo on a single day.)
+# ...
+# B_6_N = subscore for the number of green benefit miscompile fixes since today, instance N
+# C_6_N = subscore for the number of red cost miscompile missed fixes since today, instance N
 # B_7 = subscore for the number of days passed since today,
 # M = subscore for miscompile fix.
 #
@@ -101,12 +103,12 @@ esac
 # C_5 = -5000 per libc-asan red checkmark
 # B_5 = +5000 per libc-asan green checkmark
 # C_6_1 = 0 for simplification
-# B_6_1 = higher base score but diminishes as days pass instance 1
+# B_6_1 = higher base score but diminishes as days pass, instance 1
 # ...
 # (There can be multiple miscompile fixes that land on the repo on a single day.)
 # ...
 # C_6_N = 0 for simplification
-# B_6_N = higher base score but diminishes as days pass instance N
+# B_6_N = higher base score but diminishes as days pass, instance N
 # B_7 = 0 for simplification
 # C_7 = If days passed >= 8 then - 1000000, else 0
 #
