@@ -76,7 +76,8 @@
       Adds the ReplayGain scanner for track loudness normalization as a plugin
     </flag>
     <flag name="scrobbler">
-      Adds sharing listening history scrobbling plugin
+      Adds sharing listening history scrobbling plugin.
+      Disable in settings to control privacy/snooping.
     </flag>
     <flag name="sdl">
       Adds SDL2 as an audio output plugin
