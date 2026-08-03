@@ -69,6 +69,7 @@ FFMPEG_COMPAT_SLOTS=(
 CHKL_TIMESTAMPS=(
 	"app-arch/libarchive-9999"
 	"dev-libs/icu-79.0.9999"
+	"dev-libs/qcoro-9999"
 	"dev-qt/qtbase-6.9999"
 	"dev-qt/qtsvg-6.9999"
 	"media-libs/libsdl2-9999"
@@ -131,7 +132,7 @@ RDEPEND+="
 	>=media-libs/taglib-${TAGLIB_PV}:=
 	>=virtual/zlib-${ZLIB_PV}:=
 	dev-libs/kdsingleapplication:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
-	dev-libs/qcoro:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-libs/qcoro-${QCORO_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	alsa? (
 		>=media-libs/alsa-lib-${ALSA_LIB_PV}:=
 	)
