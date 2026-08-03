@@ -88,10 +88,11 @@
       Adds retro sndfile audio as an input decoder plugin
     </flag>
     <flag name="spectrogram">
-      Adds live scrolling spectrogram widget plugin
+      Adds frequency versus time live scrolling spectrogram widget plugin to see
+      hidden images/messages; to see low, mid, or high notes; or to see quality.
     </flag>
     <flag name="spectrum">
-      Adds spectrum visualization plugin
+      Adds frequency versus dB ampltude bars as a spectrum visualization plugin
     </flag>
     <flag name="soundtouch">
       Adds SoundTouch tempo/pitch/rate DSP plugin
@@ -109,7 +110,7 @@
       Adds VU and peak meter visualizer plugin
     </flag>
     <flag name="wavebar">
-      Adds the waveform seekbar visualizer plugin
+      Adds the waveform seekbar visualizer plugin to play at specific time with mouse
     </flag>
   </use>
 </pkgmetadata>

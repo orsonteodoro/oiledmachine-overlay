@@ -112,7 +112,7 @@ SLOT="0"
 IUSE+="
 ${PLUGINS[@]/+}
 nls test wayland X
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	|| (
@@ -216,7 +216,9 @@ src_configure() {
 	local x
 	for x in "${PLUGINS[@]/+}" ; do
 		if use "${x}" ; then
-			list+=";${x}"
+			list+=",${x}"
+		else
+			list+=",-${x}"
 		fi
 	done
 	mycmakeargs+=(
@@ -232,4 +234,37 @@ src_install() {
 	dodoc "COPYING"
 }
 
+pkg_postinst() {
+	if use oscilloscope || use projectm || use spectrogram || use spectrum || use vumeter || use wavebar ; then
+einfo
+einfo "For adding visualizations, use Menu > Editing mode >"
+einfo "> Right click status bar > Split (top/bottom) >"
+einfo "> Right click to add new widget > Widget > Visualizations"
+einfo
+	fi
+	if use projectm ; then
+einfo
+einfo "The distro libprojectm package doesn't come with presets.  You can get"
+einfo "trusted presets from"
+einfo
+einfo "  https://github.com/projectM-visualizer/projectm#presets"
+einfo
+einfo "You will need to disable menu > Layout > Editing mode to configure the"
+einfo "path to the unpacked presets.  The extension of a preset is .milk.  If"
+einfo "you are undecided, try the default presets \"Cream of the Crop Pack\""
+einfo "which was tested working."
+einfo
+	fi
+}
+
 # OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 0.12.1
+# alsa:  passed
+# projectM with presets-cream-of-the-crop:  passed
+# radiobrowser:  passed
+# pulseaudio:  failed
+# oscilloscope:  passed
+# vumeter:  passed
+# spectrogram:  passed
+# spectrum:  passed
+# wavebar:  passed
