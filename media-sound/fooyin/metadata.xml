@@ -22,7 +22,7 @@
       Adds the SuperEQ based equaliser DSP plugin
     </flag>
     <flag name="fileops">
-      Adds support for copying/move/rename files as a plugin
+      Adds support for copying/moving/renaming files as a plugin
     </flag>
     <flag name="filters">
       Adds a widget to search and filter the music library as a plugin
