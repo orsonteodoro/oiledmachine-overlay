@@ -84,6 +84,7 @@ esac
 # C_5 = subscore for the number of red cost libc-asan checkmarks
 # B_6_1 = subscore for the number of green benefit miscompile fixes since today instance 1
 # C_6_1 = subscore for the number of red cost miscompile missed fixes since today instance 1
+# ...
 # B_6_N = subscore for the number of green benefit miscompile fixes since today instance N
 # C_6_N = subscore for the number of red cost miscompile missed fixes since today instance N
 # B_7 = subscore for the number of days passed since today,
@@ -102,7 +103,7 @@ esac
 # C_6_1 = 0 for simplification
 # B_6_1 = higher base score but diminishes as days pass instance 1
 # ...
-# (There can be multiple miscompile fixes that land on the repo a single day)
+# (There can be multiple miscompile fixes that land on the repo on a single day.)
 # ...
 # C_6_N = 0 for simplification
 # B_6_N = higher base score but diminishes as days pass instance N
