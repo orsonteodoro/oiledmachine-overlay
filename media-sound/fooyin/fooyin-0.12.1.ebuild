@@ -75,6 +75,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libsdl2-9999"
 	"media-libs/alsa-lib-9999"
 	"media-libs/libsndfile-9999"
+	"media-libs/taglib-9999"
 	"media-video/pipewire-9999"
 )
 

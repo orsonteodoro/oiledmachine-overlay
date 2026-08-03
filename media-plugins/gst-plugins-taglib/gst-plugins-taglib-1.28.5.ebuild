@@ -6,7 +6,11 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="plugin sensitive-data untrusted-data"
 GST_ORG_MODULE="gst-plugins-good"
 
-inherit cflags-hardened secure-version gstreamer-meson
+CHKL_TIMESTAMP=(
+	"media-libs/taglib-9999"
+)
+
+inherit chkl cflags-hardened secure-version gstreamer-meson
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
 
@@ -22,6 +26,7 @@ DEPEND="
 "
 
 multilib_src_configure() {
+	chkl_check_many_timestamps
 	cflags-hardened_append
 	gstreamer_multilib_src_configure
 }
