@@ -59,13 +59,6 @@ PLUGINS=(
 	"+wavebar"
 )
 
-FFMPEG_COMPAT_SLOTS=(
-	"${FFMPEG_COMPAT_SLOTS_8[@]}"
-	"${FFMPEG_COMPAT_SLOTS_7[@]}"
-	"${FFMPEG_COMPAT_SLOTS_6[@]}"
-	"${FFMPEG_COMPAT_SLOTS_5[@]}"
-)
-
 CHKL_TIMESTAMPS=(
 	"app-arch/libarchive-9999"
 	"dev-libs/icu-79.0.9999"
@@ -80,6 +73,13 @@ CHKL_TIMESTAMPS=(
 )
 
 inherit cflags-hardened chkl cmake ffmpeg libcxx-slot libstdcxx-slot secure-version
+
+FFMPEG_COMPAT_SLOTS=(
+	"${FFMPEG_COMPAT_SLOTS_8[@]}"
+	"${FFMPEG_COMPAT_SLOTS_7[@]}"
+	"${FFMPEG_COMPAT_SLOTS_6[@]}"
+	"${FFMPEG_COMPAT_SLOTS_5[@]}"
+)
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	#FALLBACK_COMMIT="FIXME"
