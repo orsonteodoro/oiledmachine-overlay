@@ -28,7 +28,7 @@
       Adds a widget to search and filter the music library as a plugin
     </flag>
     <flag name="gme">
-      Adds game music input plugin
+      Adds retro game music input plugin
     </flag>
     <flag name="libarchive">
       Adds support to play files in archives as an input plugin
@@ -40,7 +40,7 @@
       Adds native media control support system integration plugin for Windows
     </flag>
     <flag name="mpris">
-      Adds desktop and media key integration plugin
+      Adds desktop and multimedia keyboard key integration plugin
     </flag>
     <flag name="notify">
       Adds desktop notification system integration plugin
@@ -67,7 +67,7 @@
       Add PulseAudio as an audio output plugin
     </flag>
     <flag name="rawaudio">
-      Adds raw PCM audio decoder plugin
+      Adds raw PCM audio (e.g. CD mixes) decoder plugin
     </flag>
     <flag name="radiobrowser">
       Adds radio browser widget to find online radio stations as a plugin
@@ -85,7 +85,7 @@
       Adds system integration workaround to prevent system sleep as a plugin
     </flag>
     <flag name="sndfile">
-      Adds sndfile audio as an input decoder plugin
+      Adds retro sndfile audio as an input decoder plugin
     </flag>
     <flag name="spectrogram">
       Adds live scrolling spectrogram widget plugin
