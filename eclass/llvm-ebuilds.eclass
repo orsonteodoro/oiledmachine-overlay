@@ -120,9 +120,9 @@ esac
 # up to 30 days as a hard requirement.
 #
 # There are consideration for faster bumps for most latest LLVM slot (24) to
-# mitigate miscompilations.  The fallback-commit policy is still being decided
-# to go with either a zero-tolerance policy or bump once a month to balance the
-# costs/benefits.
+# mitigate miscompilations that may lead to vulnerabilities.  The
+# fallback-commit policy is still being decided to go with either a
+# zero-tolerance policy or bump once a month to balance the costs/benefits.
 #
 
 LLVM_EBUILDS_LLVM24_FALLBACK_COMMIT="11038cc1618ac1f801e4029b7149f68f3ad949f5" # Aug 1, 2026 (122 / 133 green checkmarks)
