@@ -480,6 +480,7 @@ get_distribution_components() {
 			llvm-bcanalyzer
 			llvm-bitcode-strip
 			llvm-c-test
+			llvm-calc-occupancy # oiledmachine-overlay added row
 			llvm-cas
 			llvm-cat
 			llvm-cfi-verify
@@ -538,7 +539,7 @@ get_distribution_components() {
 			llvm-reduce
 			llvm-remarkutil
 			llvm-rtdyld
-			llvm-sim
+			#llvm-sim
 			llvm-size
 			llvm-split
 			llvm-stress
