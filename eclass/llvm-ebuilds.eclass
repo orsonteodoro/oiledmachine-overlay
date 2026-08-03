@@ -111,10 +111,11 @@ esac
 # C_7 = If days passed >= 8 then - 1000000, else 0
 #
 # Again, we don't calculate this but use simple rules.  Reject older commits
-# that do not address most recently fixed miscompiles.  Find commits where
-# they are above 120 for pre stable commit snapshots.  Reject commits when
-# red checkmark sanitizer observed.  Backtrack the search to 7 days as a
-# soft requirement and up to 30 days as a hard requirement.
+# that do not address most recently fixed miscompiles.  Prioritize and find
+# commits where they are above 120 for pre stable commit snapshots.  Reject
+# commits when red checkmark is sanitizer observed for our microarch use case.
+# Backtrack the search to 7 days as a soft requirement and up to 30 days as a
+# hard requirement.
 #
 
 LLVM_EBUILDS_LLVM24_FALLBACK_COMMIT="11038cc1618ac1f801e4029b7149f68f3ad949f5" # Aug 1, 2026 (122 / 133 green checkmarks)
