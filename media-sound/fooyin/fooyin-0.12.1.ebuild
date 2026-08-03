@@ -259,7 +259,7 @@ einfo "button of the repo."
 einfo
 	fi
 	if use scrobbler ; then
-ewarn "The scrobbler should manually be controlled to control privacy/snooping."
+ewarn "The scrobbler settings should manually be controlled to control privacy/snooping."
 	fi
 }
 
