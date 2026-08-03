@@ -9,11 +9,13 @@ inherit libstdcxx-compat
 GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX20[@]}"
 )
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}"
 )
+LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
 inherit cmake libcxx-slot libstdcxx-slot
 
@@ -36,16 +38,16 @@ REQUIRED_USE="examples? ( network )"
 RESTRICT="!test? ( test )"
 
 RDEPEND="
-	dev-qt/qtbase:6=[dbus?,network?]
+	dev-qt/qtbase:6=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},dbus?,network?]
 	qml? (
-		dev-qt/qtbase:6=[gui]
-		dev-qt/qtdeclarative:6=
+		dev-qt/qtbase:6=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},gui]
+		dev-qt/qtdeclarative:6=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	)
-	websockets? ( dev-qt/qtwebsockets:6= )
+	websockets? ( dev-qt/qtwebsockets:6=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}] )
 "
 DEPEND="${RDEPEND}
-	examples? ( dev-qt/qtbase:6=[concurrent,network,widgets] )
-	test? ( dev-qt/qtbase:6=[concurrent] )
+	examples? ( dev-qt/qtbase:6=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},concurrent,network,widgets] )
+	test? ( dev-qt/qtbase:6=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},concurrent] )
 "
 
 pkg_setup() {
