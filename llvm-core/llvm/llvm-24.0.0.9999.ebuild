@@ -539,7 +539,7 @@ get_distribution_components() {
 			llvm-reduce
 			llvm-remarkutil
 			llvm-rtdyld
-			#llvm-sim
+			#llvm-sim # oiledmachine-overlay disabled
 			llvm-size
 			llvm-split
 			llvm-stress
