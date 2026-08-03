@@ -9,9 +9,22 @@ EAPI=8
 # D12, D13, F42, F43, F44, U24, U25, U26
 
 CFLAGS_HARDENED_USE_CASES="modular-app network plugin untrusted-data"
+CXX_STANDARD=23
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX23[@]}"
+)
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}"
+)
+LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
 PLUGINS=(
-	"alsa"
+	"+alsa"
 	"+discord"
 	"+equaliser"
 	"+fileops"
@@ -20,13 +33,13 @@ PLUGINS=(
 	"+libarchive"
 	"+lyrics"
 	"mediacontrol"
-	"mpris"
-	"notify"
+	"+mpris"
+	"+notify"
 	"nowplaying"
 	"+oscilloscope"
 	"+openmpt"
 	"+pipewire"
-	"pulseaudio"
+	"+pulseaudio"
 	"+quicktagger"
 	"+projectm"
 	"+rawaudio"
@@ -64,7 +77,7 @@ CHKL_TIMESTAMPS=(
 	"media-video/pipewire-9999"
 )
 
-inherit cflags-hardened cmake ffmpeg secure-version
+inherit cflags-hardened cmake ffmpeg libcxx-slot libstdcxx-slot secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	#FALLBACK_COMMIT="FIXME"
@@ -112,13 +125,13 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	$(secure-version_gen_ffmpeg_depends '5.1-8.1')
-	>=dev-libs/icu-${ICU_PV}:=
-	>=dev-qt/qtbase-${QTBASE6_PV}:6=[concurrent,gui,network,sql,widgets,wayland?,X?]
-	>=dev-qt/qtsvg-${QTBASE6_PV}:6=
+	>=dev-libs/icu-${ICU_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+	>=dev-qt/qtbase-${QTBASE6_PV}:6=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},concurrent,gui,network,sql,widgets,wayland?,X?]
+	>=dev-qt/qtsvg-${QTBASE6_PV}:6=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	>=media-libs/taglib-${TAGLIB_PV}:=
 	>=virtual/zlib-${ZLIB_PV}:=
-	dev-libs/kdsingleapplication:=
-	dev-libs/qcoro:=
+	dev-libs/kdsingleapplication:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+	dev-libs/qcoro:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	alsa? (
 		>=media-libs/alsa-lib-${ALSA_LIB_PV}:=
 	)
@@ -132,7 +145,7 @@ RDEPEND+="
 		>=media-libs/libprojectm-4:=
 	)
 	nls? (
-		>=dev-qt/qtbase-${QTBASE6_PV}:6=[linguist]
+		>=dev-qt/qtbase-${QTBASE6_PV}:6=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},linguist]
 	)
 	openmpt? (
 		media-libs/libopenmpt:=
@@ -160,12 +173,18 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	>=dev-build/cmake-3.18
 	virtual/pkgconfig
 	test? (
-		dev-cpp/gtest
+		dev-cpp/gtest[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	)
 "
 DOCS=( "CHANGELOG.md" "README.md" )
+
+pkg_setup() {
+	libcxx-slot_verify
+	libstdcxx-slot_verify
+}
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
