@@ -1,5 +1,5 @@
 --- a/cmd/cmd.go.orig	2026-07-24 18:24:53.000000000 -0700
-+++ b/cmd/cmd.go	2026-07-28 21:47:31.304310383 -0700
++++ b/cmd/cmd.go	2026-08-02 17:05:11.022011025 -0700
 @@ -16,9 +16,11 @@ import (
  	"net"
  	"net/http"
@@ -12,7 +12,7 @@
  	"runtime"
  	"slices"
  	"sort"
-@@ -219,6 +221,3741 @@ func resolveExperimentalDraftDir(ref, fi
+@@ -219,6 +221,3752 @@ func resolveExperimentalDraftDir(ref, fi
  	return "", fmt.Errorf("DRAFT model references are not supported with --experimental yet: %s", ref)
  }
  
@@ -378,6 +378,7 @@
 +	"deepseek-v3.1:671b-fp16": "1.3TB",
 +	"deepseek-v3.2:cloud": "0GB",
 +	"deepseek-v4-flash:cloud": "0GB",
++	"deepseek-v4-flash:0731-cloud": "0GB",
 +	"deepseek-v4-pro:cloud": "0GB",
 +	"devstral:24b": "14GB",
 +	"devstral:24b-small-2505-q8_0": "25GB",
@@ -856,6 +857,12 @@
 +	"granite4.1:30b-q6_K": "24GB",
 +	"granite4.1:30b-q8_0": "31GB",
 +	"granite4.1:30b-bf16": "58GB",
++	"granite4.1-guardian:8b": "6.9GB",
++	"granite4.1-guardian:8b-q2_K": "3.3GB",
++	"granite4.1-guardian:8b-q3_K_S": "3.8GB",
++	"granite4.1-guardian:8b-q6_K": "6.9GB",
++	"granite4.1-guardian:8b-q8_0": "8.9GB",
++	"granite4.1-guardian:8b-bf16": "17GB",
 +	"hemanth/chessplayer": "3.8GB",
 +	"hermes3:8b": "4.7GB",
 +	"hermes3:70b": "40GB",
@@ -3116,6 +3123,7 @@
 +	"granite3.3": 1,
 +	"granite4": 1,
 +	"granite4.1": 1,
++	"granite4.1-guardian": 1,
 +	"hemanth/chessplayer": 1,
 +	"hermes3": 1,
 +	"hookingai/monah-8b": 1,
@@ -3432,6 +3440,8 @@
 +	"deepseek-v3.1:671b-cloud": "language-consistency code-agent search-agent tool-use agentic-tasks thinking-mode non-thinking-mode multi-thinking-mode rate-limited",
 +	"deepseek-v3.2": "cloud-hosted python software-engineering multiple-programming-languages multilingual-software-engineering ai-human-collaboration pre-calculus high-school-math ap-high-school-math",
 +	"deepseek-v4-flash": "cloud-hosted software-engineering single-file-coding expert-level-reasoning stem science-technology-engineering-math reasoning coding-agent high-school-math multiple-programming-languages multilingual-software-engineering web-research-competent long-context",
++	"deepseek-v4-flash:cloud": "preview-release cloud-hosted software-engineering single-file-coding expert-level-reasoning stem science-technology-engineering-math reasoning coding-agent high-school-math multiple-programming-languages multilingual-software-engineering web-research-competent long-context",
++	"deepseek-v4-flash:0731-cloud": "official-release cloud-hosted terminal command-line shell-scripting tool-calling cybersecurity",
 +	"deepseek-v4-pro": "cloud-hosted qa single-file-coding multiple-programming-languages long-context 3-thinking-modes fast-intuitive-thinking-mode careful-analysis-mode max-reasoning-mode expert-level-reasoning python code-generation high-school-math agentic-browsing",
 +	"disinfozone/telos": "continental-philosophy philosophy conspiracy conspiracies creative-tasking funny wit witty",
 +	"devstral": "basic-coding-agent open-model",
@@ -3485,6 +3495,7 @@
 +	"granite4:small-h": "instruction-following math-word-problems python c++ java javascript go-lang safety-guardrails reasoning step-by-step-math-reasoning step-by-step-scientific-reasoning",
 +	"granite4:tiny-h": "instruction-following math-word-problems python c++ java javascript go-lang safety-guardrails",
 +	"granite4.1": "rag retrival-augmented-generation long-context enterprise-scenarios high-school-math math-word-problems multilingual-math instruction-following python code-generation llm-prompt-security llm-prompt-harm-refusal",
++	"granite4.1-guardian:8b": "safe-prompt-checking safe-response-checking yes-no-responses risk-prompt-assessment risk-response-assessment risk-assessment harm-detection hallucination-detection",
 +	"hemanth/chessplayer": "chess chess-player white-player ai-moves-first",
 +	"hermes3": "roleplaying abstract-reasoning common-sense function-calling structured-output assistant code-generation",
 +	"hookingai/monah-8b": "online-dating hook-up llm-trainer nsfw adult-content uncensored",
@@ -3754,7 +3765,7 @@
  func CreateHandler(cmd *cobra.Command, args []string) error {
  	p := progress.NewProgress(os.Stderr)
  	defer p.Stop()
-@@ -712,6 +4449,25 @@ func hasListedModelName(models []api.Lis
+@@ -712,6 +4460,25 @@ func hasListedModelName(models []api.Lis
  func RunHandler(cmd *cobra.Command, args []string) error {
  	interactive := true
  
@@ -3780,7 +3791,7 @@
  	opts := runOptions{
  		Model:       args[0],
  		WordWrap:    os.Getenv("TERM") == "xterm-256color",
-@@ -1200,10 +4956,12 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -1200,10 +4967,12 @@ func ShowHandler(cmd *cobra.Command, arg
  	modelfile, errModelfile := cmd.Flags().GetBool("modelfile")
  	parameters, errParams := cmd.Flags().GetBool("parameters")
  	system, errSystem := cmd.Flags().GetBool("system")
@@ -3794,7 +3805,7 @@
  		if boolErr != nil {
  			return errors.New("error retrieving flags")
  		}
-@@ -1232,13 +4990,414 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -1232,13 +5001,415 @@ func ShowHandler(cmd *cobra.Command, arg
  		showType = "system"
  	}
  
@@ -3951,6 +3962,7 @@
 +		"granite3.3": "Apache-2.0",
 +		"granite4": "Apache-2.0",
 +		"granite4.1": "Apache-2.0",
++		"granite4.1-guardian": "Apache-2.0",
 +		"hemanth/chessplayer": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
 +		"hermes3": "META LLAMA 3 COMMUNITY LICENSE AGREEMENT, Meta Llama 3 Acceptable Use Policy",
 +		"hookingai/monah-8b": "Apache-2.0",
@@ -4210,7 +4222,7 @@
  	}
  
  	req := api.ShowRequest{Name: args[0], Verbose: verbose}
-@@ -1572,6 +5731,160 @@ func PullHandler(cmd *cobra.Command, arg
+@@ -1572,6 +5743,160 @@ func PullHandler(cmd *cobra.Command, arg
  	return client.Pull(cmd.Context(), &request, fn)
  }
  
@@ -4371,7 +4383,7 @@
  type generateContextKey string
  
  type runOptions struct {
-@@ -2255,9 +6568,14 @@ func NewCLI() *cobra.Command {
+@@ -2255,9 +6580,14 @@ func NewCLI() *cobra.Command {
  		console.ConsoleFromFile(os.Stdin) //nolint:errcheck
  	}
  
@@ -4387,7 +4399,7 @@
  		SilenceUsage:  true,
  		SilenceErrors: true,
  		CompletionOptions: cobra.CompletionOptions{
-@@ -2309,7 +6627,9 @@ func NewCLI() *cobra.Command {
+@@ -2309,7 +6639,9 @@ func NewCLI() *cobra.Command {
  	showCmd.Flags().Bool("parameters", false, "Show parameters of a model")
  	showCmd.Flags().Bool("template", false, "Show template of a model")
  	showCmd.Flags().Bool("system", false, "Show system message of a model")
@@ -4397,7 +4409,7 @@
  
  	runCmd := &cobra.Command{
  		Use:     "run MODEL [PROMPT]",
-@@ -2458,6 +6778,30 @@ func NewCLI() *cobra.Command {
+@@ -2458,6 +6790,30 @@ func NewCLI() *cobra.Command {
  	}
  	gpuDiscoverCmd.Flags().StringArrayVar(&gpuDiscoverLibDirs, "lib-dir", nil, "Ollama runtime library directory")
  
@@ -4428,7 +4440,7 @@
  	envVars := envconfig.AsMap()
  
  	envs := []envconfig.EnvVar{envVars["OLLAMA_HOST"]}
-@@ -2474,6 +6818,9 @@ func NewCLI() *cobra.Command {
+@@ -2474,6 +6830,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		serveCmd,
@@ -4438,7 +4450,7 @@
  	} {
  		switch cmd {
  		case runCmd:
-@@ -2526,7 +6873,12 @@ func NewCLI() *cobra.Command {
+@@ -2526,7 +6885,12 @@ func NewCLI() *cobra.Command {
  		deleteCmd,
  		runnerCmd,
  		gpuDiscoverCmd,

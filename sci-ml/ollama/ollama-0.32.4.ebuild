@@ -418,6 +418,7 @@ FEATURED_LLMS=(
 	"granite3.3"
 	"granite4"
 	"granite4.1"
+	"granite4.1-guardian"
 	"hermes3"
 	"internlm2"
 	"kimi-k2"
@@ -1790,6 +1791,9 @@ LLM_LICENSES="
 		Apache-2.0
 	)
 	ollama_llms_granite4.1? (
+		Apache-2.0
+	)
+	ollama_llms_granite4.1-guardian? (
 		Apache-2.0
 	)
 	ollama_llms_hemanth-chessplayer? (
