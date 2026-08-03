@@ -105,8 +105,10 @@ HOMEPAGE="
 	https://fooyin.org/
 "
 LICENSE="
-	GPL-3
+	BSD
+	GPL-3+
 "
+# BSD - https://github.com/fooyin/fooyin/blob/master/cmake/modules/FindPipeWire.cmake
 RESTRICT="mirror"
 SLOT="0"
 IUSE+="
