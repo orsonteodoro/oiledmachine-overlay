@@ -61,7 +61,7 @@
       Adds PipeWire as an audio output plugin
     </flag>
     <flag name="projectm">
-      Adds ProjectM visualization plugin
+      Adds the projectM visualization plugin to see psychedelic or fractal art
     </flag>
     <flag name="pulseaudio">
       Add PulseAudio as an audio output plugin
