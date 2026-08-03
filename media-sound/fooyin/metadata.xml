@@ -46,7 +46,7 @@
       Adds desktop notification system integration plugin
     </flag>
     <flag name="nowplaying">
-      Adds nowplaying system integration plugin for macOS
+      Adds a plugin for macOS's Now Playing Center
     </flag>
     <flag name="oscilloscope">
       Adds oscilloscope visualizer plugin
