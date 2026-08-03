@@ -56,15 +56,15 @@ esac
 #
 # It is based on the GitHub CI/CD results:
 #
-# S = CHECKS + SAN + ARM + LIBC + CUT + MISCOMP
+# S = CHECKS + SAN + ARM + LIBC + MISCOMP + CUT
 #
 # S = total score
 # CHECKS = cost/benefit score for 120 checkmarks baseline
 # SAN = cost/benefit score for sanitizers
 # ARM = cost/benefit score for Arm sanitizers
 # LIBC = cost/benefit score for LLVM libc sanitizers
-# CUT = cutoff penalty score
 # MISCOMP = miscompile fix(es) benefit score
+# CUT = days cutoff penalty score
 #
 # Alternatively,
 #
@@ -89,8 +89,8 @@ esac
 # ...
 # B_6_N = subscore for the number of green benefit miscompile fixes since today, instance N
 # C_6_N = subscore for the number of red cost miscompile missed fixes since today, instance N
-# B_7 = subscore for the number of days passed since today,
-# M = subscore for miscompile fix.
+# B_7 = subscore for the benefit number of days passed since today
+# C_7 = subscore for the cost number of days passed since today
 #
 # B_1 = +75 per green checkmark
 # C_1 = -75 per red checkmark
