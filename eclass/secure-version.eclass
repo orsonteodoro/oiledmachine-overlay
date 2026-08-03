@@ -63,7 +63,7 @@
 # out of bounds
 # overflow
 # race
-# reject [Fail-Secure hints or improper/inadequate validation vulnerability hint]
+# reject [Fail-Secure hints, improper/inadequate validation vulnerability, validation bypass hint]
 # segfault
 # stack overflow
 # toctou
