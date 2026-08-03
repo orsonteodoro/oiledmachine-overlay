@@ -127,12 +127,12 @@ REQUIRED_USE="
 RDEPEND+="
 	$(secure-version_gen_ffmpeg_depends '5.1-8.1')
 	>=dev-libs/icu-${ICU_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+	>=dev-libs/kdsingleapplication-${KDSINGLEAPPLICATION_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+	>=dev-libs/qcoro-${QCORO_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-qt/qtbase-${QTBASE6_PV}:6=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},concurrent,gui,network,sql,widgets,wayland?,X?]
 	>=dev-qt/qtsvg-${QTBASE6_PV}:6=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	>=media-libs/taglib-${TAGLIB_PV}:=
 	>=virtual/zlib-${ZLIB_PV}:=
-	dev-libs/kdsingleapplication:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
-	>=dev-libs/qcoro-${QCORO_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	alsa? (
 		>=media-libs/alsa-lib-${ALSA_LIB_PV}:=
 	)
