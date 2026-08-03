@@ -14,7 +14,7 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
-# The algorithm to pick the fallback-commit has changed on Jul 2, 2026.
+# The algorithm to pick the fallback-commit has changed on Aug 3, 2026.
 
 # This section is AI assisted to better explain the formula.
 
@@ -43,11 +43,11 @@ esac
 #
 # My AI prompt:
 #
-# i need a custom scoring function coefficients that uses S = D + N + F,
-# where S is the score, D=days passed from today limited to 7 days, N for number
-# of green checkmarks in CI/CD with 100 as baseline, F for failed sanitizers
-# remaining. if the D is 8 or more the penalty is heavy. If the F is not zero it
-# is a heavy penalty.
+# i need a custom scoring function coefficients that uses uses a cutoff of >=8
+# days with heavy penalty, miscompile commit fix(es) that increases the score
+# more heavily for recently fixed commits but declines for older, increases the score
+# significantly when there is number of ci/cd fixes >= 120 but diminishes when
+# the score drops below 120.
 #
 # If you ask the AI for the answer, it is garbage.  They are giving complex
 # answers but still give useful facts to craft the custom score function.
@@ -55,20 +55,60 @@ esac
 # The most elegant one by AI uses a predefined budget of 1000 and decreases it.
 #
 # It is based on the GitHub CI/CD results:
-# D = number of days passed since today.
-# N = number of green checkmarks.
-# F = number of failed sanitizer checks (red checkmarks).
-# S = score
 #
-# p_1 = -10 per day passed
-# p_2 = -1000 per sanitizer fail
-# p_3 = +50 points per gained checkmarks above 100.  if 109 green checkmarks, then s_cb [subscore of check benefit] = 50*(109-100)
-# p_4 = -50 points per lost checkmarks below 100.  if 76 green checkmarks, then s_cc [subscore of check cost] = -50*(100-76)
-# B = number of benefit CI/CD checkmarks that are above 100
-# C = number of cost CI/CD checkmarks that are below 100
-# P = If days passed >= 8 then - 100000, else 0
-# S = 10000 + p_1*D + p_2*B + p_3*C + p_4*F + P
+# S = CM + SAN + ARM + LIBC + CUT + MISCOMP
 #
+# S = total score
+# CM = cost/benefit score for 120 checkmarks
+# SAN = cost/benefit score for sanitizers
+# ARM = cost/benefit score for Arm sanitizers
+# LIBC = cost/benefit score for LLVM libc sanitizers
+# CUT = cutoff penalty score
+# MISCOMP = miscompile fix(es) benefit score
+#
+# Alternatively,
+#
+# S = (B_1 + C_1) + (B_2 + C_2) + (B_3 + C_3) + (B_4 + C_4) + (B_5 + C_5) + (B_6_1 + C_6_1 ... B_6_N + C_6_N) + (B_7),
+# when S >= 0 it is a keeper, S < 0 it is a reject
+#
+# S = Scoring function, aka total score
+# B_1 = subscore for the number of green benefit checkmarks
+# C_1 = subscore for the number of red cost checkmarks
+# B_2 = subscore for the number of sanitizer green benefit checkmarks
+# C_2 = subscore for the number of sanitizer red cost checkmarks
+# B_3 = subscore for the number of green benefit llvm-clang-pac-ret checkmarks
+# C_3 = subscore for the number of red cost llvm-clang-pac-ret checkmarks
+# B_4 = subscore for the number of green benefit llvm-clang-pauth checkmarks
+# C_4 = subscore for the number of red cost llvm-clang-pauth checkmarks
+# B_5 = subscore for the number of green benefit libc-asan checkmarks
+# C_5 = subscore for the number of red cost libc-asan checkmarks
+# B_6 = subscore for the number of days passed since today.
+# C_6 = subscore for the number of days passed since today.
+# B_6 = subscore for the number of green benefit miscompile fixes since today.
+# M = subscore for miscompile fix.
+#
+# B_1 = +75 per green checkmark
+# C_1 = -75 per red checkmark
+# B_2 = +588 points per gained checkmarks above 120
+# C_2 = -588 points per lost checkmarks below 120
+# C_3 = -10000 per llvm-clang-pac-ret red checkmark
+# B_3 = +10000 per llvm-clang-pac-ret green checkmark
+# C_4 = -5000 per llvm-clang-pac-ret red checkmark
+# B_4 = +5000 per llvm-clang-pac-ret green checkmark
+# C_5 = -5000 per libc-asan red checkmark
+# B_5 = +5000 per libc-asan green checkmark
+# B_6 = 0 for simplification
+# C_6 = If days passed >= 8 then - 1000000, else 0
+# B_7 = higher base score but diminishes as days pass
+# C_7 = 0 for simplification
+#
+# Again, we don't calculate this but use simple rules.  Reject older commits
+# that do not address most recently fixed miscompiles.  Find commits where
+# they are above 120 for pre stable commit snapshots.  Reject commits when
+# red checkmark sanitizer observed.  Backtrack the search to 7 days as a
+# soft requirement and up to 30 days as a hard requirement.
+#
+
 LLVM_EBUILDS_LLVM24_FALLBACK_COMMIT="11038cc1618ac1f801e4029b7149f68f3ad949f5" # Aug 1, 2026 (122 / 133 green checkmarks)
 LLVM_EBUILDS_LLVM23_FALLBACK_COMMIT="edb9efb3e0823d32d6b4baa8f5f798bca3e300a3" # Aug 2, 2026 (20 / 24 green checkmarks)
 
