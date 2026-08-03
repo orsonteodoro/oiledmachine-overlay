@@ -95,7 +95,7 @@ esac
 # B_1 = +75 per green checkmark
 # C_1 = -75 per red checkmark
 # B_2 = +588 points per gained checkmarks above 120
-# C_2 = -588 points per lost checkmarks below 120
+# C_2 = -588 points per lost checkmarks below 120, -10000 score if it violates our microarch use case
 # C_3 = -10000 per llvm-clang-pac-ret red checkmark
 # B_3 = +10000 per llvm-clang-pac-ret green checkmark
 # C_4 = -5000 per llvm-clang-pac-ret red checkmark
