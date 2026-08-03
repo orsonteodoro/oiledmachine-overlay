@@ -68,7 +68,7 @@ esac
 #
 # Alternatively,
 #
-# S = (B_1 + C_1) + (B_2 + C_2) + (B_3 + C_3) + (B_4 + C_4) + (B_5 + C_5) + (B_6_6 + C_6_1 ... B_6_N + C_6_N) + (B_7),
+# S = (B_1 + C_1) + (B_2 + C_2) + (B_3 + C_3) + (B_4 + C_4) + (B_5 + C_5) + (B_6_6 + C_6_1 ... B_6_N + C_6_N) + (B_7 + C_7),
 # when S >= 0 it is a keeper, S < 0 it is a reject
 #
 # S = Scoring function, aka total score
