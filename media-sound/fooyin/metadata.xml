@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/fooyin/fooyin/issues</bugs-to>
+    <changelog>https://github.com/fooyin/fooyin/blob/master/CHANGELOG.md</changelog>
+    <remote-id type="github">fooyin/fooyin</remote-id>
+  </upstream>
+  <use>
+    <flag name="alsa">
+      Adds ALSA as audio output plugin
+    </flag>
+    <flag name="discord">
+      Adds the Discord rich presence integration plugin
+    </flag>
+    <flag name="equaliser">
+      Adds the SuperEQ based equaliser DSP plugin
+    </flag>
+    <flag name="fileops">
+      Adds support for copying/move/rename files as a plugin
+    </flag>
+    <flag name="filters">
+      Adds a widget to search and filter the music library as a plugin
+    </flag>
+    <flag name="gme">
+      Adds game music input plugin
+    </flag>
+    <flag name="libarchive">
+      Adds support to play files in archives as an input plugin
+    </flag>
+    <flag name="lyrics">
+      Adds the display lyrics plugin
+    </flag>
+    <flag name="mediacontrol">
+      Adds native media control support system integration plugin for Windows
+    </flag>
+    <flag name="mpris">
+      Adds desktop and media key integration plugin
+    </flag>
+    <flag name="notify">
+      Adds desktop notification system integration plugin
+    </flag>
+    <flag name="nowplaying">
+      Adds nowplaying system integration plugin for macOS
+    </flag>
+    <flag name="oscilloscope">
+      Adds oscilloscope visualizer plugin
+    </flag>
+    <flag name="openmpt">
+      Adds OpenMPT support for tracker module audio format as an input decoder plugin
+    </flag>
+    <flag name="quicktagger">
+      Adds the library quick tagging plugin
+    </flag>
+    <flag name="pipewire">
+      Adds PipeWire as an audio output plugin
+    </flag>
+    <flag name="projectm">
+      Adds ProjectM visualization plugin
+    </flag>
+    <flag name="pulseaudio">
+      Add PulseAudio as an audio output plugin
+    </flag>
+    <flag name="rawaudio">
+      Adds raw PCM audio decoder plugin
+    </flag>
+    <flag name="radiobrowser">
+      Adds radio browser widget to find online radio stations as a plugin
+    </flag>
+    <flag name="rgscanner">
+      Adds the ReplayGain scanner for track loudness normalization as a plugin
+    </flag>
+    <flag name="scrobbler">
+      Adds sharing listening history scrobbling plugin
+    </flag>
+    <flag name="sdl">
+      Adds SDL2 as an audio output plugin
+    </flag>
+    <flag name="sleepinhibitor">
+      Adds system integration workaround to prevent system sleep as a plugin
+    </flag>
+    <flag name="sndfile">
+      Adds sndfile audio as an input decoder plugin
+    </flag>
+    <flag name="spectrogram">
+      Adds live scrolling spectrogram widget plugin
+    </flag>
+    <flag name="spectrum">
+      Adds spectrum visualization plugin
+    </flag>
+    <flag name="soundtouch">
+      Adds SoundTouch tempo/pitch/rate DSP plugin
+    </flag>
+    <flag name="soxresampler">
+      Adds the SoX resampler DSP plugin
+    </flag>
+    <flag name="tageditor">
+      Adds tag editing plugin
+    </flag>
+    <flag name="thumbnailtoolbar">
+      Adds an Thumbnail Toolbar plugin for Windows system integration
+    </flag>
+    <flag name="vumeter">
+      Adds VU and peak meter visualizer plugin
+    </flag>
+    <flag name="wavebar">
+      Adds the waveform seekbar visualizer plugin
+    </flag>
+  </use>
+</pkgmetadata>
