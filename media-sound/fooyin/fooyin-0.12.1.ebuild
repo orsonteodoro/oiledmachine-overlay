@@ -261,7 +261,7 @@ einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-TEST:  PASSED 0.12.1
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 0.12.1 (20260803, interactive)
 # alsa:  passed
 # projectM with presets-cream-of-the-crop:  passed
 # radiobrowser:  passed
