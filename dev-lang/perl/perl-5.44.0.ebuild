@@ -8,14 +8,17 @@ CFLAGS_HARDENED_TRAPV=0
 CFLAGS_HARDENED_USE_CASES="crypto language-runtime security-critical sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="AFW BO BOR CE DF DOS HO IO NPD OOBW PE PT RC SB SYM"
 
-inherit alternatives cflags-hardened flag-o-matic toolchain-funcs multilib multiprocessing
+CHKL_TIMESTAMPS=(
+	"app-arch/bzip2-9999"
+)
 
-PATCH_VER=1
+inherit alternatives cflags-hardened chkl flag-o-matic toolchain-funcs multilib multiprocessing secure-version
+
+PATCH_VER=2
 CROSS_VER=1.6.4
-PATCH_BASE="perl-5.42.0-patches-${PATCH_VER}"
-PATCH_DEV=dilfridge
+PATCH_BASE="perl-5.44.0-RC1-patches-${PATCH_VER}"
 
-DIST_AUTHOR=SHAY
+DIST_AUTHOR=LEONT
 
 # Greatest first, don't include yourself
 # Devel point-releases are not ABI-intercompatible, but stable point releases are
@@ -23,7 +26,7 @@ DIST_AUTHOR=SHAY
 PERL_BIN_OLDVERSEN=""
 
 if [[ "${PV##*.}" == "9999" ]]; then
-	DIST_VERSION=5.42.0
+	DIST_VERSION=5.45.0
 else
 	DIST_VERSION="${PV/_rc/-RC}"
 fi
@@ -49,7 +52,7 @@ HOMEPAGE="https://www.perl.org/"
 SRC_URI="
 	mirror://cpan/src/5.0/${MY_P}.tar.xz
 	mirror://cpan/authors/id/${DIST_AUTHOR:0:1}/${DIST_AUTHOR:0:2}/${DIST_AUTHOR}/${MY_P}.tar.xz
-	https://dev.gentoo.org/~${PATCH_DEV}/distfiles/${PATCH_BASE}.tar.xz
+	https://distfiles.gentoo.org/pub/proj/perl/${PATCH_BASE}.tar.xz
 	https://github.com/arsv/perl-cross/releases/download/${CROSS_VER}/perl-cross-${CROSS_VER}.tar.gz
 "
 
@@ -59,14 +62,11 @@ LICENSE="|| ( Artistic GPL-1+ )"
 
 SLOT="0/${SUBSLOT}"
 
-if [[ "${PV##*.}" != "9999" ]] && [[ "${PV/rc//}" == "${PV}" ]] ; then
+if [[ "${PV##*.}" != "9999" ]] ; then
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
 fi
 
-IUSE="
-berkdb perl_features_debug doc gdbm perl_features_ithreads minimal perl_features_quadmath
-ebuild_revision_2
-"
+IUSE="berkdb perl_features_debug doc gdbm perl_features_ithreads minimal perl_features_quadmath"
 
 RDEPEND="
 	berkdb? ( sys-libs/db:= )
@@ -93,19 +93,19 @@ PDEPEND="
 # virtual/perl-Test-Harness is here for the bundled ExtUtils::MakeMaker
 
 dual_scripts() {
-	src_remove_dual      perl-core/Archive-Tar        3.40.0        ptar ptardiff ptargrep
+	src_remove_dual      perl-core/Archive-Tar        3.120.0        ptar ptardiff ptargrep
 	src_remove_dual      perl-core/CPAN               2.380.0       cpan
 	src_remove_dual      perl-core/Digest-SHA         6.40.0        shasum
-	src_remove_dual      perl-core/Encode             3.210.0       enc2xs piconv
-	src_remove_dual      perl-core/ExtUtils-MakeMaker 7.760.0       instmodsh
-	src_remove_dual      perl-core/ExtUtils-ParseXS   3.570.0       xsubpp
-	src_remove_dual      perl-core/IO-Compress        2.213.0       zipdetails
+	src_remove_dual      perl-core/Encode             3.240.0       enc2xs piconv
+	src_remove_dual      perl-core/ExtUtils-MakeMaker 7.780.0       instmodsh
+	src_remove_dual      perl-core/ExtUtils-ParseXS   3.630.0       xsubpp
+	src_remove_dual      perl-core/IO-Compress        2.223.0       zipdetails
 	src_remove_dual      perl-core/JSON-PP            4.160.0       json_pp
-	src_remove_dual      perl-core/Module-CoreList    5.202.507.20  corelist
+	src_remove_dual      perl-core/Module-CoreList    5.202.607.80  corelist
 	src_remove_dual      perl-core/Pod-Checker        1.770.0       podchecker
 	src_remove_dual      perl-core/Pod-Perldoc        3.280.100     perldoc
 	src_remove_dual      perl-core/Pod-Usage          2.50.0        pod2usage
-	src_remove_dual      perl-core/Test-Harness       3.500.0       prove
+	src_remove_dual      perl-core/Test-Harness       3.520.0       prove
 	src_remove_dual      perl-core/podlators          6.0.2         pod2man pod2text
 	src_remove_dual_man  perl-core/podlators          6.0.2         /usr/share/man/man1/perlpodstyle.1
 }
@@ -286,8 +286,8 @@ src_prepare_perlcross() {
 	eapply "${FILESDIR}/perl-5.34.0-crossfit.patch"
 	# fix cross-compilation configure tests w/ lto
 	eapply "${FILESDIR}/perl-5.42.0-cross-no-lto.patch"
-	# https://github.com/arsv/perl-cross/pull/174
-	eapply "${FILESDIR}/perl-5.42.2-cross.patch"
+	# https://github.com/arsv/perl-cross/pull/178
+	eapply "${FILESDIR}/perl-5.44.0-cross.patch"
 
 	# bug 604072
 	MAKEOPTS+=" -j1"
@@ -447,9 +447,6 @@ src_prepare() {
 		rm_patch "*-nsl-and-cl*"
 	fi
 
-	# CVE-2026-8376 - HO, ZC, DoS, DT, ID
-	add_patch "${FILESDIR}/extra-patches/perl-5.42.2-backport-5e7f119.patch"
-
 	apply_patchdir
 
 	tc-is-cross-compiler && src_prepare_perlcross
@@ -466,21 +463,11 @@ src_prepare() {
 		sed -i "/my..sysroot/s:'':'${EPREFIX}':" ext/Errno/Errno_pm.PL || die
 	fi
 
-	if [[ ${CHOST} == *-solaris* ]] ; then
-		# set a soname, fix linking against just built libperl
-		sed -i -e 's/netbsd\*/netbsd*|solaris*/' Makefile.SH || die
-	fi
+	# set a soname, fix linking against just built libperl
+	eapply "${FILESDIR}"/perl-5.44.0-solaris-soname.patch
 
-	if [[ ${CHOST} == *-darwin* ]] ; then
-		# fix install_name (soname) not to reference $D
-		sed -i -e '/install_name `pwd/s/`pwd`/\\$(shrpdir)/' Makefile.SH || die
-
-		# fix environ linkage absence (only a real issue on Darwin9)
-		if [[ ${CHOST##*-darwin} -le 9 ]] ; then
-			sed -i -e '/^PLDLFLAGS =/s/=/= -include crt_externs.h -Denviron="(*_NSGetEnviron())"/' \
-				Makefile.SH || die
-		fi
-	fi
+	# fix install_name (soname) not to reference $D
+	eapply "${FILESDIR}"/perl-5.44.0-darwin-install_name.patch
 
 	default
 }
@@ -653,6 +640,11 @@ src_configure() {
 			HOSTCC=$(tc-getBUILD_CC) \
 			HOSTCFLAGS="${CFLAGS_FOR_BUILD} -D_GNU_SOURCE" \
 			HOSTLDFLAGS="${LDFLAGS_FOR_BUILD}"
+
+		# bug #977768
+		if tc-is-clang; then
+			export HOSTCFLAGS="${HOSTCFLAGS} -fno-strict-aliasing"
+		fi
 	fi
 
 	# bug #877659, bug #821577
@@ -689,13 +681,6 @@ src_configure() {
 	# target to override hardcoded 10.3 which breaks on modern OSX
 	[[ ${CHOST} == *-darwin* ]] && \
 		myconf "-Dld=env MACOSX_DEPLOYMENT_TARGET=${MACOSX_DEPLOYMENT_TARGET} $(tc-getCC)"
-
-	# Older macOS with non-Apple GCC chokes on inline in system headers
-	# using c89 mode as injected by cflags.SH, in addition, we override
-	# cflags, so we loose PERL_DARWIN which enables compat code that
-	# apparently on more recent macOS releases is no longer necessary
-	[[ ${CHOST} == *-darwin* && ${CHOST##*darwin} -le 9 ]] && tc-is-gcc && \
-		append-cflags -Dinline=__inline__ -DPERL_DARWIN
 
 	# Prefix: the host system needs not to follow Gentoo multilib stuff, and in
 	# Prefix itself we don't do multilib either, so make sure perl can find
@@ -885,5 +870,3 @@ pkg_postinst() {
 pkg_postrm() {
 	dual_scripts
 }
-
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (INTERACTIVE) 5.42.2
