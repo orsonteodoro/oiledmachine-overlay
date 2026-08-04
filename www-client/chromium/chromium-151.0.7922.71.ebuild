@@ -193,9 +193,9 @@ EAPI=8
 # /usr/share/chromium/151.0.7922.71/sources/build/linux/unbundle/replace_gn_files.py
 
 # Use `USE="-system-clang -system-rust" ebuild chromium-toolchain-151.0.7922.71.ebuild digest clean unpack prepare compile install merge` to obtain numbers.
-TC_COUNT_EXPECTED_CLANG=429
-TC_COUNT_EXPECTED_GN=1155
-TC_COUNT_EXPECTED_RUST=7267
+TC_COUNT_EXPECTED_CLANG=433
+TC_COUNT_EXPECTED_GN=1184
+TC_COUNT_EXPECTED_RUST=6991
 SOURCES_COUNT_EXPECTED=569114
 CHROMIUM_EBUILD_MAINTAINER=0 # Also set GEN_ABOUT_CREDITS
 GEN_ABOUT_CREDITS=0

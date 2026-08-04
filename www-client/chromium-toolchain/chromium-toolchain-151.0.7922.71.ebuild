@@ -6,7 +6,7 @@ EAPI=8
 
 # Add `www-client/chromium-toolchain -llvm_slot_23` to `/etc/portage/profile/package.use.mask` to bypass the distro's FAFO hard mask guardrail.
 
-# To get expected numbers, do `USE="-system-clang -system-rust" ebuild chromium-toolchain-151.0.7922.71.ebuild digest clean unpack prepare compile install merge`
+# Use `USE="-system-clang -system-rust" ebuild chromium-toolchain-151.0.7922.71.ebuild digest clean unpack prepare compile install merge` to obtain numbers.
 
 inherit dhms
 
