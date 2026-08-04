@@ -9,14 +9,14 @@ EAPI=8
 # See also https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/
 
 GENPATCHES_FALLBACK_COMMIT="d4fa92430e875432c3a61bb3abd9b6e68ea9fcbd" # 2026-06-04 18:26:32 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="2d2338c93da79b3bfe4b6099a931d9468d539952" # 2026-08-01 09:02:45 -0700 @ Merge tag 'i2c-fixes-7.2-rc6'
+LINUX_SOURCES_FALLBACK_COMMIT="848acc8ffe1b7cd5f1bf427b93069becfebc2c9d" # 2026-08-03 12:26:51 -0700 @	Merge tag 'fsverity-for-linus'
 RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
 # https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=7.2
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
-EBUILD_REV="ebuild_revision_14"
+EBUILD_REV="ebuild_revision_15"
 GENPATCHES_VER="live" # can be live only when 9999
 PATCH_PROJC_VER="7.1-r0"
 PATCH_RT_VER="7.2-rc4-rt3"
