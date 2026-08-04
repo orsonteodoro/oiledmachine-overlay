@@ -55,7 +55,7 @@ LICENSE="Apache-2.0"
 SLOT="0/3" # .so version of libssl/libcrypto
 IUSE+="
 +asm cpu_flags_x86_sse2 fips ktls rfc3779 sctp static-libs test tls-compression vanilla weak-ssl-ciphers
-ebuild_revision_6
+ebuild_revision_7
 "
 RESTRICT="!test? ( test )"
 
