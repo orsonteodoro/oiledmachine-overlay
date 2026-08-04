@@ -2,7 +2,7 @@ Title: Update perl
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-08-03
-Revision: 11
+Revision: 12
 News-Item-Format: 2.0
 Display-If-Installed: dev-lang/perl
 
@@ -39,6 +39,7 @@ dev-lang/perl::gentoo
 =virtual/perl-Math-BigInt-2.5.3::gentoo ~amd64 **
 =virtual/perl-Storable-3.410.0::gentoo ~amd64 **
 =virtual/perl-Time-HiRes-1.978.0::gentoo ~amd64 **
+=virtual/perl-IO-1.560.0::gentoo ~amd64 **
 
 6. Update /etc/portage/package.unmask/perl with the following:
 =dev-perl/Compress-Raw-Lzma-2.221.0::gentoo
@@ -48,6 +49,7 @@ dev-lang/perl::gentoo
 =virtual/perl-Math-BigInt-2.5.3::gentoo
 =virtual/perl-Storable-3.410.0::gentoo
 =virtual/perl-Time-HiRes-1.978.0::gentoo 
+=virtual/perl-IO-1.560.0::gentoo
 
 7. Emerge as follows:
 emerge -aovuDN =dev-lang/perl-5.44.0::oiledmachine-overlay # Update dependencies
