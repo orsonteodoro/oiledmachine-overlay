@@ -65,6 +65,7 @@ RDEPEND+="
 	>=dev-libs/wayland-${WAYLAND_PV}:=
 	>=gui-libs/hyprtoolkit-${HYPRTOOLKIT_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=gui-libs/hyprutils-${HYPRUTILS_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=sci-libs/libqalculate-${LIBQALCULATE_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	>=x11-libs/cairo-${CAIRO_PV}:=
 	>=x11-libs/libdrm-${LIBDRM_PV}:=
 	>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=
@@ -72,7 +73,6 @@ RDEPEND+="
 	gui-libs/aquamarine:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	gui-libs/hyprwire:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-libs/hyprgraphics:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	sci-libs/libqalculate:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 "
 DEPEND+="
 	${RDEPEND}
