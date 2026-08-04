@@ -2,7 +2,7 @@ Title: Update perl
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-08-03
-Revision: 6
+Revision: 7
 News-Item-Format: 2.0
 Display-If-Installed: dev-lang/perl
 
@@ -20,22 +20,24 @@ Details can be found at https://perldoc.perl.org/5.44.0/perldelta#Security
 This is for people that need to update from dev-lang/perl-5.42.2 or earlier to
 the newest dev-lang/perl-5.44.0.
 
-1. Add /etc/portage/package.mask/perl:
+1. emaint sync -A
+
+2. Add /etc/portage/package.mask/perl:
 dev-lang/perl::gentoo
 
-2. Add the following to /etc/portage/package.accept_keywords:
+3. Add the following to /etc/portage/package.accept_keywords:
 =dev-lang/perl-5.44.0::oiledmachine-overlay ~amd64 **
 
-3. Add the following to /etc/portage/package.unmask:
+4. Add the following to /etc/portage/package.unmask:
 =dev-lang/perl-5.44.0::oiledmachine-overlay
 
-4. Emerge as follows:
+5. Emerge as follows:
 emerge -aovuDN =dev-lang/perl-5.44.0::oiledmachine-overlay # Update dependencies
 emerge -a1vO =dev-lang/perl-5.44.0::oiledmachine-overlay # Force update
 
-5. emerge -a app-admin/perl-cleaner
+6. emerge -a app-admin/perl-cleaner
 
-6. Use perl cleaner to rebuild Perl packages.
+7. Use perl cleaner to rebuild Perl packages.
 perl-cleaner --all
 
 
