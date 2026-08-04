@@ -47,7 +47,7 @@ CHKL_TIMESTAMPS=(
 inherit branding cflags-hardened chkl libcxx-slot libstdcxx-slot meson secure-version
 
 if [[ "${PV}" =~ "9999" ]]; then
-	FALLBACK_COMMIT="4c2dcd0995f9c570c0ced95561bf5e4685e2ad1b"
+	FALLBACK_COMMIT="e41c99439605df6d2fa62409139f96ded6ac7345"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/noctalia-dev/noctalia.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -69,6 +69,7 @@ LICENSE="MIT"
 SLOT="0/5"
 IUSE+="
 jemalloc native-optimizations systemd test
+ebuild_revision_2
 "
 REQUIRED_USE="
 "
