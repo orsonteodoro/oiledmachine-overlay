@@ -17,7 +17,7 @@ INTROSPECTION_BUILD_DIR="${WORKDIR}/${INTROSPECTION_P}-build"
 inherit dot-a eapi9-ver gnome.org gnome2-utils linux-info meson-multilib multilib python-any-r1 secure-version toolchain-funcs xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="0aa3ded025eae99d722e7f7f504ef9b7a8a23e33"
+	FALLBACK_COMMIT="eb37a398d8bcc10a6bfdde39858cbaf3e58c9e17"
 else
 	SRC_URI="
 		${SRC_URI}
@@ -35,7 +35,7 @@ SLOT="2"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
 IUSE+="
 dbus debug +elf doc +introspection +mime selinux static-libs sysprof systemtap test utils xattr
-ebuild_revision_6
+ebuild_revision_7
 "
 RESTRICT="!test? ( test )"
 
