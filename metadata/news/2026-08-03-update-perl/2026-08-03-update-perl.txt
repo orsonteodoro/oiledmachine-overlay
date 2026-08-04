@@ -2,7 +2,7 @@ Title: Update perl
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-08-03
-Revision: 12
+Revision: 13
 News-Item-Format: 2.0
 Display-If-Installed: dev-lang/perl
 
@@ -25,10 +25,10 @@ the newest dev-lang/perl-5.44.0.
 2. Add /etc/portage/package.mask/perl:
 dev-lang/perl::gentoo
 
-3. Add the following to /etc/portage/package.accept_keywords:
+3. Add the following to /etc/portage/package.accept_keywords/perl:
 =dev-lang/perl-5.44.0::oiledmachine-overlay ~amd64 **
 
-4. Add the following to /etc/portage/package.unmask:
+4. Add the following to /etc/portage/package.unmask/perl:
 =dev-lang/perl-5.44.0::oiledmachine-overlay
 
 5. Update /etc/portage/package.accept_keywords/perl with the following:
