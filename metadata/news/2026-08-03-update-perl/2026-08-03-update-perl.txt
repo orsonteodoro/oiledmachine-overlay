@@ -2,7 +2,7 @@ Title: Update perl
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-08-03
-Revision: 13
+Revision: 14
 News-Item-Format: 2.0
 Display-If-Installed: dev-lang/perl
 
@@ -25,39 +25,37 @@ the newest dev-lang/perl-5.44.0.
 2. Add /etc/portage/package.mask/perl:
 dev-lang/perl::gentoo
 
-3. Add the following to /etc/portage/package.accept_keywords/perl:
-=dev-lang/perl-5.44.0::oiledmachine-overlay ~amd64 **
-
-4. Add the following to /etc/portage/package.unmask/perl:
-=dev-lang/perl-5.44.0::oiledmachine-overlay
-
-5. Update /etc/portage/package.accept_keywords/perl with the following:
+3. Add/update /etc/portage/package.accept_keywords/perl with the following:
 =dev-perl/Compress-Raw-Lzma-2.221.0::gentoo ~amd64 **
-=virtual/perl-Test-Simple-1.302.219::gentoo ~amd64 **
+=dev-lang/perl-5.44.0::oiledmachine-overlay ~amd64 **
 =virtual/perl-Archive-Tar-3.120.0::gentoo ~amd64 **
 =virtual/perl-CPAN-Meta-Requirements-2.145.0::gentoo ~amd64 **
+=virtual/perl-ExtUtils-ParseXS-3.630.0::gentoo ~amd64
+=virtual/perl-IO-1.560.0::gentoo ~amd64 **
 =virtual/perl-Math-BigInt-2.5.3::gentoo ~amd64 **
 =virtual/perl-Storable-3.410.0::gentoo ~amd64 **
+=virtual/perl-Test-Simple-1.302.219::gentoo ~amd64 **
 =virtual/perl-Time-HiRes-1.978.0::gentoo ~amd64 **
-=virtual/perl-IO-1.560.0::gentoo ~amd64 **
 
-6. Update /etc/portage/package.unmask/perl with the following:
+4. Add/update /etc/portage/package.unmask/perl with the following:
 =dev-perl/Compress-Raw-Lzma-2.221.0::gentoo
-=virtual/perl-Test-Simple-1.302.219::gentoo
+=dev-lang/perl-5.44.0::oiledmachine-overlay
 =virtual/perl-Archive-Tar-3.120.0::gentoo
 =virtual/perl-CPAN-Meta-Requirements-2.145.0::gentoo
+=virtual/perl-ExtUtils-ParseXS-3.630.0::gentoo
+=virtual/perl-IO-1.560.0::gentoo
 =virtual/perl-Math-BigInt-2.5.3::gentoo
 =virtual/perl-Storable-3.410.0::gentoo
+=virtual/perl-Test-Simple-1.302.219::gentoo
 =virtual/perl-Time-HiRes-1.978.0::gentoo 
-=virtual/perl-IO-1.560.0::gentoo
 
-7. Emerge as follows:
+5. Emerge as follows:
 emerge -aovuDN =dev-lang/perl-5.44.0::oiledmachine-overlay # Update dependencies
 emerge -a1vO =dev-lang/perl-5.44.0::oiledmachine-overlay # Force update
 
-8. emerge -a app-admin/perl-cleaner
+6. emerge -a app-admin/perl-cleaner
 
-9. Use perl cleaner to rebuild Perl packages.
+7. Use perl cleaner to rebuild Perl packages.
 perl-cleaner --all
 
 
