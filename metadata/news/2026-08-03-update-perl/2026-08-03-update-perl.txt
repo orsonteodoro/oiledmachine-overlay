@@ -2,7 +2,7 @@ Title: Update perl
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-08-03
-Revision: 7
+Revision: 8
 News-Item-Format: 2.0
 Display-If-Installed: dev-lang/perl
 
@@ -31,13 +31,21 @@ dev-lang/perl::gentoo
 4. Add the following to /etc/portage/package.unmask:
 =dev-lang/perl-5.44.0::oiledmachine-overlay
 
-5. Emerge as follows:
+5. Update /etc/portage/package.accept_keywords/perl with the following:
+=dev-perl/Compress-Raw-Lzma-2.221.0::gentoo ~amd64 **
+=virtual/perl-Test-Simple-1.302.219::gentoo ~amd64 **
+
+6. Update /etc/portage/package.unmask/perl with the following:
+=dev-perl/Compress-Raw-Lzma-2.221.0::gentoo
+=virtual/perl-Test-Simple-1.302.219::gentoo
+
+7. Emerge as follows:
 emerge -aovuDN =dev-lang/perl-5.44.0::oiledmachine-overlay # Update dependencies
 emerge -a1vO =dev-lang/perl-5.44.0::oiledmachine-overlay # Force update
 
-6. emerge -a app-admin/perl-cleaner
+8. emerge -a app-admin/perl-cleaner
 
-7. Use perl cleaner to rebuild Perl packages.
+9. Use perl cleaner to rebuild Perl packages.
 perl-cleaner --all
 
 
