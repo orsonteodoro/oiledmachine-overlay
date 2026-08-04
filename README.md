@@ -46,6 +46,7 @@ to the .txt file at:
 
 The selected first news items:
 
+* 2026-08-03 - [Update Perl](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-08-03-update-perl/2026-08-03-update-perl.txt)
 * 2026-07-01 - [Split-usr users, update util-linux and others](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-07-01-update-util-linux-and-others/2026-06-19-update-util-linux-and-others.txt)
 * 2026-06-19 - [Use split-usr](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-06-19-use-split-usr/2026-06-19-use-split-usr.txt)
 * 2026-06-14 - [Use FFmpeg live](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-06-14-use-ffmpeg-live/2026-06-14-use-ffmpeg-live.txt)
