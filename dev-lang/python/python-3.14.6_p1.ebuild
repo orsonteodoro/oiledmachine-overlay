@@ -11,11 +11,29 @@ WANT_LIBTOOL="none"
 CFLAGS_HARDENED_USE_CASES="login network security-critical sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO BOR CE CI DOS HO IO IL PE RC REDOS UAF"
 
-inherit autotools cflags-hardened check-reqs eapi9-ver flag-o-matic linux-info llvm-r1
-inherit multiprocessing pax-utils python-utils-r1 toolchain-funcs
+CHKL_TIMESTAMPS=(
+	"app-arch/bzip2-9999"
+	"app-arch/xz-utils-9999"
+	"dev-libs/expat-9999"
+	"dev-libs/libffi-9999"
+	"app-arch/zstd-9999"
+	"sys-apps/util-linux-9999"
+	"sys-libs/ncurses-9999"
+	"sys-libs/readline-9999"
+	"dev-db/sqlite-9999"
+	"dev-libs/openssl-4.0.9999"
+	"dev-libs/openssl-3.6.9999"
+	"dev-libs/openssl-3.5.9999"
+	"dev-libs/openssl-3.4.9999"
+	"dev-libs/openssl-3.0.9999"
+	"net-wireless/bluez-9999"
+)
+
+inherit autotools cflags-hardened check-reqs chkl flag-o-matic linux-info llvm-r1
+inherit multiprocessing pax-utils python-utils-r1 secure-version toolchain-funcs
 inherit verify-sig
 
-MY_PV=${PV/_/}
+MY_PV=${PV}
 MY_P="Python-${MY_PV%_p*}"
 PYVER=$(ver_cut 1-2)
 PATCHSET="python-gentoo-patches-${MY_PV}"
@@ -37,10 +55,10 @@ S="${WORKDIR}/${MY_P}"
 LICENSE="PSF-2"
 SLOT="${PYVER}"
 if [[ ${PV} != *_rc* ]]; then
-	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
+	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86"
 fi
 IUSE="
-	bluetooth debug +ensurepip examples gdbm jit libedit +ncurses pgo
+	bluetooth build debug +ensurepip examples gdbm jit libedit +ncurses pgo
 	+readline +sqlite +ssl tail-call-interp test tk valgrind
 "
 # PGO + fzero-call-used-regs=all causes illegal instruction in 3.14.
@@ -56,25 +74,25 @@ RESTRICT="!test? ( test )"
 # patchset. See bug 447752.
 
 RDEPEND="
-	app-arch/bzip2:=
+	>=app-arch/bzip2-${BZIP2_PV}:=
 	app-arch/xz-utils:=
-	app-arch/zstd:=
-	app-misc/mime-types
-	>=dev-libs/expat-2.1:=
-	dev-libs/libffi:=
+	app-misc/mime-types:=
+	>=dev-libs/expat-${EXPAT_PV}:=
+	>=dev-libs/libffi-${LIBFFI_PV}:=
 	dev-libs/mpdecimal:=
-	dev-python/gentoo-common
-	sys-apps/util-linux
-	>=virtual/zlib-1.1.3:=
-	virtual/libintl
+	dev-python/gentoo-common:=
+	>=sys-apps/util-linux-${UTIL_LINUX_PV}:=
+	>=virtual/zlib-${ZLIB_PV}:=
+	virtual/libintl:*
+	!build? ( >=app-arch/zstd-${ZSTD_PV}:= )
 	gdbm? ( sys-libs/gdbm:=[berkdb] )
-	ncurses? ( >=sys-libs/ncurses-5.2:= )
+	ncurses? ( >=sys-libs/ncurses-${NCURSES_PV}:= )
 	readline? (
-		!libedit? ( >=sys-libs/readline-4.1:= )
-		libedit? ( dev-libs/libedit:= )
+		!libedit? ( >=sys-libs/readline-${READLINE_PV}:= )
+		libedit? ( >=dev-libs/libedit-${LIBEDIT_PV}:= )
 	)
-	sqlite? ( >=dev-db/sqlite-3.3.8:3= )
-	ssl? ( >=dev-libs/openssl-1.1.1:= )
+	sqlite? ( >=dev-db/sqlite-${SQLITE_PV}:3= )
+	ssl? ( $(secure-version_gen_openssl_depends) )
 	tk? (
 		>=dev-lang/tcl-8.0:=
 		>=dev-lang/tk-8.0:=
@@ -85,12 +103,12 @@ RDEPEND="
 # bluetooth requires headers from bluez
 DEPEND="
 	${RDEPEND}
-	bluetooth? ( net-wireless/bluez )
+	bluetooth? ( >=net-wireless/bluez-${BLUEZ_PV}:= )
 	test? (
 		dev-python/ensurepip-pip
 		dev-python/ensurepip-setuptools
 	)
-	valgrind? ( dev-debug/valgrind )
+	valgrind? ( dev-debug/valgrind:= )
 "
 # autoconf-archive needed to eautoreconf
 BDEPEND="
@@ -150,9 +168,6 @@ pkg_pretend() {
 }
 
 pkg_setup() {
-# See https://devguide.python.org/versions/#supported-versions
-einfo "EOL date:  Oct 2030"
-
 	if [[ ${MERGE_TYPE} != binary ]]; then
 		use jit && llvm-r1_pkg_setup
 		if use test || use pgo; then
@@ -264,6 +279,7 @@ build_cbuild_python() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	cflags-hardened_append
 
 	# Avoid buffer overflow with -fstrict-flex-arrays=2 or 3
@@ -452,6 +468,7 @@ src_configure() {
 	cat > Modules/Setup.local <<-EOF || die
 		*disabled*
 		nis
+		$(usev build '_zstd')
 		$(usev !gdbm '_gdbm _dbm')
 		$(usev !sqlite '_sqlite3')
 		$(usev !ssl '_hashlib _ssl')
@@ -646,18 +663,5 @@ src_install() {
 	# idle
 	if use tk; then
 		ln -s "../../../bin/idle${PYVER}" "${scriptdir}/idle" || die
-	fi
-}
-
-pkg_postinst() {
-	if ver_replacing -lt 3.14.0_beta3; then
-		ewarn "Python 3.14.0b3 has changed its module ABI.  The .pyc files"
-		ewarn "installed previously are no longer valid and will be regenerated"
-		ewarn "(or ignored) on the next import.  This may cause sandbox failures"
-		ewarn "when installing some packages and checksum mismatches when removing"
-		ewarn "old versions.  To actively prevent this, rebuild all packages"
-		ewarn "installing Python 3.14 modules, e.g. using:"
-		ewarn
-		ewarn "  emerge -1v /usr/lib/python3.14/site-packages"
 	fi
 }
