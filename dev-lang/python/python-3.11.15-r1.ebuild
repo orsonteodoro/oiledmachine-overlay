@@ -13,7 +13,6 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/expat-9999"
 	"dev-libs/libffi-9999"
 	"sys-apps/util-linux-9999"
-	"sys-libs/ncurses-9999"
 	"sys-libs/readline-9999"
 	"dev-db/sqlite-9999"
 	"dev-libs/openssl-4.0.9999"
