@@ -4,6 +4,20 @@
 
 EAPI=8
 
+CXX_STANDARD=23
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX23[@]}"
+)
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)" # Skip placeholder
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}"
+)
+LIBCXX_USEDEP_LTS="llvm_slot_skip(+)" # Skip placeholder
+
 CHKL_TIMESTAMPS=(
 	"dev-libs/hyprlang-9999"
 	"dev-libs/wayland-9999"
@@ -15,7 +29,7 @@ CHKL_TIMESTAMPS=(
 	"x11-libs/pixman-9999"
 )
 
-inherit chkl cmake secure-version
+inherit chkl cmake libcxx-slot libstdcxx-slot secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="b6daa91510d3f6cfa02edc28fd4966414224a485"
@@ -47,30 +61,35 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+=" "
 RDEPEND+="
-	>=dev-libs/hyprlang-${HYPRLANG_PV}:=
+	>=dev-libs/hyprlang-${HYPRLANG_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/wayland-${WAYLAND_PV}:=
-	>=gui-libs/hyprtoolkit-${HYPRTOOLKIT_PV}:=
-	>=gui-libs/hyprutils-${HYPRUTILS_PV}:=
+	>=gui-libs/hyprtoolkit-${HYPRTOOLKIT_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=gui-libs/hyprutils-${HYPRUTILS_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_PV}:=
 	>=x11-libs/libdrm-${LIBDRM_PV}:=
 	>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=
 	>=x11-libs/pixman-${PIXMAN_PV}:=
-	dev-libs/wayland-protocols:=
-	gui-libs/aquamarine:=
-	gui-libs/hyprwire:=
-	dev-libs/hyprgraphics:=
-	sci-libs/libqalculate:=
+	gui-libs/aquamarine:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	gui-libs/hyprwire:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	dev-libs/hyprgraphics:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	sci-libs/libqalculate:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 "
 DEPEND+="
 	${RDEPEND}
-	dev-util/wayland-scanner:=
-	dev-util/hyprwayland-scanner:=
+	dev-libs/wayland-protocols:=
 "
 BDEPEND+="
 	dev-build/cmake
+	dev-util/wayland-scanner:=
+	dev-util/hyprwayland-scanner:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	virtual/pkgconfig
 "
 DOCS=( "README.md" )
+
+pkg_setup() {
+	libcxx-slot_verify
+	libstdcxx-slot_verify
+}
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
