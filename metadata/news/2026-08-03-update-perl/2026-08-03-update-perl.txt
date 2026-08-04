@@ -2,7 +2,7 @@ Title: Update perl
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-08-03
-Revision: 14
+Revision: 15
 News-Item-Format: 2.0
 Display-If-Installed: dev-lang/perl
 
@@ -30,6 +30,7 @@ dev-lang/perl::gentoo
 =dev-lang/perl-5.44.0::oiledmachine-overlay ~amd64 **
 =virtual/perl-Archive-Tar-3.120.0::gentoo ~amd64 **
 =virtual/perl-CPAN-Meta-Requirements-2.145.0::gentoo ~amd64 **
+=virtual/perl-Encode-3.240.0::gentoo ~amd64 **
 =virtual/perl-ExtUtils-ParseXS-3.630.0::gentoo ~amd64
 =virtual/perl-IO-1.560.0::gentoo ~amd64 **
 =virtual/perl-Math-BigInt-2.5.3::gentoo ~amd64 **
@@ -42,6 +43,7 @@ dev-lang/perl::gentoo
 =dev-lang/perl-5.44.0::oiledmachine-overlay
 =virtual/perl-Archive-Tar-3.120.0::gentoo
 =virtual/perl-CPAN-Meta-Requirements-2.145.0::gentoo
+=virtual/perl-Encode-3.240.0::gentoo
 =virtual/perl-ExtUtils-ParseXS-3.630.0::gentoo
 =virtual/perl-IO-1.560.0::gentoo
 =virtual/perl-Math-BigInt-2.5.3::gentoo
