@@ -2,7 +2,7 @@ Title: Update perl
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-08-03
-Revision: 8
+Revision: 9
 News-Item-Format: 2.0
 Display-If-Installed: dev-lang/perl
 
@@ -34,10 +34,20 @@ dev-lang/perl::gentoo
 5. Update /etc/portage/package.accept_keywords/perl with the following:
 =dev-perl/Compress-Raw-Lzma-2.221.0::gentoo ~amd64 **
 =virtual/perl-Test-Simple-1.302.219::gentoo ~amd64 **
+=virtual/perl-Archive-Tar-3.120.0::gentoo ~amd64 **
+=virtual/perl-CPAN-Meta-Requirements-2.145.0::gentoo ~amd64 **
+=virtual/perl-Math-BigInt-2.5.3::gentoo ~amd64 **
+=virtual/perl-Storable/perl-Storable-3.410.0::gentoo ~amd64 **
+=virtual/perl-Time-HiRes/perl-Time-HiRes-3.410.0::gentoo ~amd64 **
 
 6. Update /etc/portage/package.unmask/perl with the following:
 =dev-perl/Compress-Raw-Lzma-2.221.0::gentoo
 =virtual/perl-Test-Simple-1.302.219::gentoo
+=virtual/perl-Archive-Tar-3.120.0::gentoo
+=virtual/perl-CPAN-Meta-Requirements-2.145.0::gentoo
+=virtual/perl-Math-BigInt-2.5.3::gentoo
+=virtual/perl-Storable/perl-Storable-3.410.0::gentoo
+=virtual/perl-Time-HiRes/perl-Time-HiRes-3.410.0::gentoo 
 
 7. Emerge as follows:
 emerge -aovuDN =dev-lang/perl-5.44.0::oiledmachine-overlay # Update dependencies
