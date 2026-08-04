@@ -1,0 +1,44 @@
+Title: Update perl
+Author: Orson Teodoro <orsonteodoro@hotmail.com>
+Content-Type: text/plain
+Posted: 2026-08-03
+Revision: 6
+News-Item-Format: 2.0
+Display-If-Installed: dev-lang/perl
+
+Steps to update Perl for mitigation against buffer overflows, integer overflow,
+and 16-bit field overflow.
+
+This version bump fixes the following CVEs:
+
+CVE-2026-8376
+CVE-2026-57432
+CVE-2026-13221
+
+Details can be found at https://perldoc.perl.org/5.44.0/perldelta#Security
+
+This is for people that need to update from dev-lang/perl-5.42.2 or earlier to
+the newest dev-lang/perl-5.44.0.
+
+1. Add /etc/portage/package.mask/perl:
+dev-lang/perl::gentoo
+
+2. Add the following to /etc/portage/package.accept_keywords:
+=dev-lang/perl-5.44.0::oiledmachine-overlay ~amd64 **
+
+3. Add the following to /etc/portage/package.unmask:
+=dev-lang/perl-5.44.0::oiledmachine-overlay
+
+4. Emerge as follows:
+emerge -aovuDN =dev-lang/perl-5.44.0::oiledmachine-overlay # Update dependencies
+emerge -a1vO =dev-lang/perl-5.44.0::oiledmachine-overlay # Force update
+
+5. emerge -a app-admin/perl-cleaner
+
+6. Use perl cleaner to rebuild Perl packages.
+perl-cleaner --all
+
+
+Why use the oiledmachine-overlay Perl over the distro's release?
+
+The oiledmachine-overlay adds additional compiler hardening flags.
