@@ -2,7 +2,7 @@ Title: Update perl
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-08-03
-Revision: 16
+Revision: 19
 News-Item-Format: 2.0
 Display-If-Installed: dev-lang/perl
 
@@ -35,6 +35,7 @@ dev-lang/perl::gentoo
 =virtual/perl-IO-1.560.0::gentoo ~amd64 **
 =virtual/perl-Math-BigInt-2.5.3::gentoo ~amd64 **
 =virtual/perl-Storable-3.410.0::gentoo ~amd64 **
+=virtual/perl-Test-Harness-3.520.0::gentoo ~amd64 **
 =virtual/perl-Test-Simple-1.302.219::gentoo ~amd64 **
 =virtual/perl-Time-HiRes-1.978.0::gentoo ~amd64 **
 =virtual/perl-version-0.993.400::gentoo ~amd64 **
@@ -50,6 +51,7 @@ dev-lang/perl::gentoo
 =virtual/perl-IO-1.560.0::gentoo
 =virtual/perl-Math-BigInt-2.5.3::gentoo
 =virtual/perl-Storable-3.410.0::gentoo
+=virtual/perl-Test-Harness-3.520.0::gentoo
 =virtual/perl-Test-Simple-1.302.219::gentoo
 =virtual/perl-Time-HiRes-1.978.0::gentoo 
 =virtual/perl-version-0.993.400::gentoo
@@ -64,6 +66,91 @@ emerge -a1vO =dev-lang/perl-5.44.0::oiledmachine-overlay # Force update
 7. Use perl cleaner to rebuild Perl packages.
 perl-cleaner --all
 
+8. Re-emerge all the installed virtual/perl* to update the subslot slot info to
+avoid this downgrade message or when emerging @system:
+
+!!! All ebuilds that could satisfy "dev-lang/perl:0/5.42=" have been masked.
+!!! One of the following masked packages is required to complete your request:
+- dev-lang/perl-5.42.2::gentoo (masked by: package.mask)
+- dev-lang/perl-5.42.0-r1::gentoo (masked by: package.mask)
+
+8. To update Perl virtuals packages, do:
+
+A=(
+perl-podlators
+perl-Getopt-Long
+perl-Math-BigInt
+perl-libnet
+perl-IO
+perl-Test-Simple
+perl-threads
+perl-Exporter
+perl-Sys-Syslog
+perl-ExtUtils-MakeMaker
+perl-Module-Load
+perl-Pod-Simple
+perl-Test
+perl-Text-Tabs+Wrap
+perl-Devel-PPPort
+perl-Test-Harness
+perl-File-Temp
+perl-Term-Table
+perl-IO-Socket-IP
+perl-Digest
+perl-Text-Balanced
+perl-ExtUtils-ParseXS
+perl-Test2-Suite
+perl-DB_File
+perl-Text-ParseWords
+perl-Carp
+perl-File-Path
+perl-Compress-Raw-Bzip2
+perl-Data-Dumper
+perl-version
+perl-File-Spec
+perl-parent
+perl-ExtUtils-CBuilder
+perl-autodie
+perl-Socket
+perl-Compress-Raw-Zlib
+perl-Module-CoreList
+perl-IO-Compress
+perl-CPAN
+perl-JSON-PP
+perl-CPAN-Meta
+perl-Digest-MD5
+perl-CPAN-Meta-Requirements
+perl-Storable
+perl-Module-Metadata
+perl-Scalar-List-Utils
+perl-XSLoader
+perl-if
+perl-Time-HiRes
+perl-Encode
+perl-Archive-Tar
+perl-Digest-SHA
+perl-Term-ANSIColor
+perl-MIME-Base64
+perl-Time-Local
+)
+emerge -p1vO "${A[@]}" # See what are installed
+Update A array to delete the not installed rows
+emerge -a1vO "${A[@]}" # Re-install the installed
+
+9.  Update the other non-virtual perl packages.
+
+You can obtained the non-virtual by doing
+
+  emerge -pve world
+
+or by
+
+  cd "${DISTRO_OVERLAY_PATH}/virtual" && emerge -pv perl*
+
+
+All dev-perl category packages with this pattern need to be manually re-emerge
+as well to update the slot:
+(dependency required by "dev-perl/<PN>-<PV>::gentoo" [installed])
 
 Why use the oiledmachine-overlay Perl over the distro's release?
 
