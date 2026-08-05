@@ -2,11 +2,15 @@ Title: Update Perl
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-08-03
-Revision: 26
+Revision: 27
 News-Item-Format: 2.0
 Display-If-Installed: dev-lang/perl
 
 Choose an upgrade path:
+
+  =dev-lang/perl-5.40.5		# A full rebuild is not required
+
+or
 
   =dev-lang/perl-5.42.3		# A full rebuild is not required
 
@@ -15,11 +19,15 @@ or
   =dev-lang/perl-5.44.0		# Upgrading to this requires `emerge -vuDN system && emerge -e system && emerge -e world`
 
 
-Upgrading to 5.42.3 is recommended for recent upcoming obligations.  A full
-upgrade to 5.44.0 is recommended when a full update is long overdue and no
-rush to obligations.
+Upgrading to 5.40.5 or 5.42.3 is recommended for recent upcoming obligations.
 
-A version bump to either 5.42.3 or 5.44.0 fixes the following CVEs:
+A full upgrade to 5.44.0 (or switching between minor versions) is
+recommended when a full update is long overdue and no rush to obligations.
+A full rebuild is needed because not all packages have comprehensive
+dependencies or the metadata of the package manager that keeps track of
+subslots not updating as expected.
+
+A version bump to either 5.40.5, 5.42.3, or 5.44.0 fixes the following CVEs:
 
 CVE-2026-8376
 CVE-2026-57432
@@ -29,7 +37,7 @@ Follow one of the upgrade paths below to update Perl for mitigation against
 buffer overflows, integer overflow, and 16-bit field overflow.
 
 
-Instructions to upgrade 5.42.3:
+Instructions to upgrade 5.40.5 or 5.42.3:
 
 1. emaint sync -A
 
@@ -126,4 +134,5 @@ perl-cleaner --all
 Why use the oiledmachine-overlay Perl over the distro's release?
 
 The oiledmachine-overlay adds additional compiler hardening flags for
-Perl itself to protect security-critical Perl based apps.
+Perl itself to protect security-critical Perl based apps
+(e.g. password managers).

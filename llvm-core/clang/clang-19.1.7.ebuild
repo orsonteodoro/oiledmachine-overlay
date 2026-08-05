@@ -137,6 +137,7 @@ RDEPEND+="
 		|| (
 			>=dev-lang/perl-${PERL_5_44_PV}:0/5.44
 			>=dev-lang/perl-${PERL_5_42_PV}:0/5.42
+			>=dev-lang/perl-${PERL_5_40_PV}:0/5.40
 		)
 	)
 	xml? (
