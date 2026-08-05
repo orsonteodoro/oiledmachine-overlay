@@ -20,7 +20,7 @@ LLVM_COMPAT=(
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)" # Skip placeholder
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/icu-9999"
+	"dev-libs/icu-79.0.9999"
 	"dev-libs/libxml2-9999"
 	"net-misc/curl-9999"
 	"sys-libs/readline-9999"
