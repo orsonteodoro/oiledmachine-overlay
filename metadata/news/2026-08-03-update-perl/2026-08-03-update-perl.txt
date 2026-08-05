@@ -1,4 +1,4 @@
-Title: Update perl
+Title: Update Perl
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-08-03
@@ -6,22 +6,27 @@ Revision: 26
 News-Item-Format: 2.0
 Display-If-Installed: dev-lang/perl
 
-Choose upgrade path:
+Choose an upgrade path:
 
-  =dev-lang/perl-5.42.3		# A full rebuild not required
+  =dev-lang/perl-5.42.3		# A full rebuild is not required
 
 or
 
   =dev-lang/perl-5.44.0		# Upgrading to this requires `emerge -vuDN system && emerge -e system && emerge -e world`
 
-Steps to update Perl for mitigation against buffer overflows, integer overflow,
-and 16-bit field overflow.
+
+Upgrading to 5.42.3 is recommended for recent upcoming obligations.  A full
+upgrade to 5.44.0 is recommended, when full update is overdue and no rush to
+obligations.
 
 A version bump to either 5.42.3 or 5.44.0 fixes the following CVEs:
 
 CVE-2026-8376
 CVE-2026-57432
 CVE-2026-13221
+
+Follow one of the upgrade paths below to update Perl for mitigation against
+buffer overflows, integer overflow, and 16-bit field overflow.
 
 
 Instructions to upgrade 5.42.3:
