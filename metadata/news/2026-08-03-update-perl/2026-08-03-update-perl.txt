@@ -16,8 +16,8 @@ or
 
 
 Upgrading to 5.42.3 is recommended for recent upcoming obligations.  A full
-upgrade to 5.44.0 is recommended, when full update is overdue and no rush to
-obligations.
+upgrade to 5.44.0 is recommended when a full update is long overdue and no
+rush to obligations.
 
 A version bump to either 5.42.3 or 5.44.0 fixes the following CVEs:
 
