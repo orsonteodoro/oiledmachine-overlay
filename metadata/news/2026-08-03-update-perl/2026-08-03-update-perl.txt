@@ -27,7 +27,9 @@ recommended when a full update is long overdue and no rush to obligations.
 
 A full rebuild is needed because not all packages have comprehensive
 dependencies or the metadata of the package manager that keeps track of
-subslots not updating as expected.
+subslots is not updating as expected.  The package manager will still
+complain about unresolved issues when updating world after
+perl-cleaner has done its comprehensive job.
 
 A version bump to either 5.40.5, 5.42.3, or 5.44.0 fixes the following CVEs:
 
