@@ -52,6 +52,8 @@ write, out-of-bounds reads.
 
 Instructions to upgrade to 5.40.5 or 5.42.3:
 
+(For 5.40.5, we will not repeat but use the corresponding choice.)
+
 1. emaint sync -A
 
 2. Add /etc/portage/package.mask/perl:
@@ -66,12 +68,6 @@ dev-lang/perl::gentoo
 5. Update to 5.42.3
 emerge -aovuDN =dev-lang/perl-5.42.3::oiledmachine-overlay	# Update dependencies
 emerge -a1vO =dev-lang/perl-5.42.3::oiledmachine-overlay	# Force update
-
-or
-
-5. Update to 5.40.5
-emerge -aovuDN =dev-lang/perl-5.40.5::oiledmachine-overlay	# Update dependencies
-emerge -a1vO =dev-lang/perl-5.40.5::oiledmachine-overlay	# Force update
 
 
 If you tried to upgrade to 5.44.0 but want to stay on 5.42.3 or 5.40.5, you
