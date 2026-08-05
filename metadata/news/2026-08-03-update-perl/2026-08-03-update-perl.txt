@@ -60,7 +60,9 @@ perl-cleaner --all
 
 Instructions to upgrade 5.44.0:
 
-Details can be found at https://perldoc.perl.org/5.44.0/perldelta#Security
+CVE vulnerability info can be found at
+https://perldoc.perl.org/5.44.0/perldelta#Security
+https://perldoc.perl.org/5.42.3/perldelta#Security
 
 This is for people that need to update from dev-lang/perl-5.42.2 or earlier to
 the newest dev-lang/perl-5.44.0.
