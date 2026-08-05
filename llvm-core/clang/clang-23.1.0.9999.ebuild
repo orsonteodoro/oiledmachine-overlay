@@ -128,11 +128,12 @@ REQUIRED_USE="
 		!test
 	)
 "
+# Slot rebuild operator disabled for perl to prevent eager update to 5.44.0 and breaking emerge -vuDN world.
 RDEPEND+="
 	${PYTHON_DEPS}
 	>=llvm-core/clang-common-${LLVM_VERSION}:=
 	static-analyzer? (
-		>=dev-lang/perl-${PERL_PV}:=
+		>=dev-lang/perl-${PERL_PV}
 	)
 	xml? (
 		>=dev-libs/libxml2-${LIBXML2_PV}:=[${MULTILIB_USEDEP}]
