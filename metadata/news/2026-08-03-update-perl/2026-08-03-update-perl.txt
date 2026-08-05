@@ -2,7 +2,7 @@ Title: Update perl
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-08-03
-Revision: 25
+Revision: 26
 News-Item-Format: 2.0
 Display-If-Installed: dev-lang/perl
 
@@ -38,8 +38,8 @@ dev-lang/perl::gentoo
 =dev-lang/perl-5.42.3::oiledmachine-overlay
 
 5. Update to 5.42.3
-emerge -aovuDN =dev-lang/perl-5.42.3::oiledmachine-overlay # Update dependencies
-emerge -a1vO =dev-lang/perl-5.42.3::oiledmachine-overlay # Force update
+emerge -aovuDN =dev-lang/perl-5.42.3::oiledmachine-overlay	# Update dependencies
+emerge -a1vO =dev-lang/perl-5.42.3::oiledmachine-overlay	# Force update
 
 If you tried to upgrade 5.44.0, but want to stay on 5.42.3, you need to undo the
 accept_keyword and unmask and run perl-cleaner.  The following is not required
@@ -109,8 +109,11 @@ perl-cleaner --all
 
 8. emerge -1avuDN =virtual/perl-Test-Harness-3.520.0::gentoo # Update dependencies
 
-9. emerge -ave system
-10. emerge -ave world
+9. emerge -avuDN		# Upgrade toolchain
+
+10. emerge -ave system		# Rebuild the system toolchain with updated toolchain
+
+11. emerge -ave world		# Rebuild world with new toolchain
 
 
 Why use the oiledmachine-overlay Perl over the distro's release?
