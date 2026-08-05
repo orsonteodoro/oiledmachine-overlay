@@ -52,7 +52,8 @@ write, out-of-bounds reads.
 
 Instructions to upgrade to 5.40.5 or 5.42.3:
 
-(For 5.40.5, we will not repeat but use the corresponding choice.)
+(For 5.40.5, we will not repeat but use the corresponding version replacing
+5.42.3 with 5.40.5.  Verify that it is consistent.)
 
 1. emaint sync -A
 
