@@ -29,13 +29,13 @@ subslots not updating as expected.
 
 A version bump to either 5.40.5, 5.42.3, or 5.44.0 fixes the following CVEs:
 
-CVE-2026-8376
-CVE-2026-57432
-CVE-2026-13221
+CVE-2026-8376 - high severity, network based zero-click vulnerability, information disclosure, data tampering, denial of service, heap overflow, out-of-bounds write
+CVE-2026-57432 - high severity, information disclosure, data tampering, denial of service, integer overflow, out-of-bounds read
+CVE-2026-13221 - critical severity, network based zero-click vulnerability, information disclosure, data tampering, denial of service, 16-bit integer overflow, unreliable regex
 
 Follow one of the upgrade paths below to update Perl for mitigation against
 buffer overflows, integer overflow, 16-bit field overflow, out-of-bounds
-write.
+write, out-of-bounds reads.
 
 
 Instructions to upgrade to 5.40.5 or 5.42.3:
