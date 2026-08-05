@@ -2,7 +2,7 @@ Title: Update perl
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-08-03
-Revision: 19
+Revision: 20
 News-Item-Format: 2.0
 Display-If-Installed: dev-lang/perl
 
@@ -134,7 +134,7 @@ perl-MIME-Base64
 perl-Time-Local
 )
 emerge -p1vO "${A[@]}" # See what are installed
-Update A array to delete the not installed rows
+# Update A array to delete the not installed rows.
 emerge -a1vO "${A[@]}" # Re-install the installed
 
 9.  Update the other non-virtual perl packages.
