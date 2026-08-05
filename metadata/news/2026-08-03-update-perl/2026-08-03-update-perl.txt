@@ -20,7 +20,8 @@ or
 				# `emerge -vuDN system && emerge -e system && emerge -e world`
 
 
-Upgrading to 5.40.5 or 5.42.3 is recommended for recent upcoming obligations.
+Upgrading to 5.40.5 or 5.42.3 is recommended for recent upcoming obligations or
+emergencies.
 
 A full upgrade to 5.44.0 (or switching between minor versions) is
 recommended when a full update is long overdue and no rush to obligations.
@@ -75,7 +76,7 @@ following is not required if you didn't attempt to upgrade to 5.44.0.
 7. Use perl cleaner to rebuild Perl packages.
 perl-cleaner --all
 
-8. Rebuild to downgrade stable KEYWORDed `emerge -1avuDN virtual/perl-Test-Harness`
+8. Rebuild to downgrade to stable KEYWORDS `emerge -1avuDN virtual/perl-Test-Harness`
 
 
 Instructions to upgrade 5.44.0:
