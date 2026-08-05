@@ -45,6 +45,12 @@ CVE-2026-13221 - critical severity, network based zero-click vulnerability,
 information disclosure, data tampering, denial of service, 16-bit integer
 overflow, unreliable regex that may lead to access bypass/deny
 
+CVE vulnerability info can be found at
+https://perldoc.perl.org/5.44.0/perldelta#Security
+https://perldoc.perl.org/5.42.3/perldelta#Security
+https://perldoc.perl.org/5.40.5/perldelta#Security
+
+
 
 Follow one of the upgrade paths below to update Perl for mitigation against
 buffer overflows, integer overflow, 16-bit field overflow, out-of-bounds
@@ -83,12 +89,9 @@ perl-cleaner --all
 8. Rebuild to downgrade to stable KEYWORDS `emerge -1avuDN virtual/perl-Test-Harness`
 
 
-Instructions to upgrade 5.44.0:
+Instructions to upgrade to 5.44.0:
 
-CVE vulnerability info can be found at
-https://perldoc.perl.org/5.44.0/perldelta#Security
-https://perldoc.perl.org/5.42.3/perldelta#Security
-https://perldoc.perl.org/5.40.5/perldelta#Security
+A little reminder that the distro has marked 5.44.0 as testing for KEYWORDS.
 
 This is for people that need to update from dev-lang/perl-5.42.2 or earlier to
 the newest dev-lang/perl-5.44.0.
