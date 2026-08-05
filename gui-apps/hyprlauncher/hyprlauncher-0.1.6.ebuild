@@ -5,6 +5,7 @@
 EAPI=8
 
 CXX_STANDARD=23
+ABSEIL_CPP_SLOT="20260107"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -29,7 +30,7 @@ CHKL_TIMESTAMPS=(
 	"x11-libs/pixman-9999"
 )
 
-inherit chkl cmake libcxx-slot libstdcxx-slot secure-version
+inherit abseil-cpp chkl cmake libcxx-slot libstdcxx-slot secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="b6daa91510d3f6cfa02edc28fd4966414224a485"
@@ -61,6 +62,7 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+=" "
 RDEPEND+="
+	>=dev-cpp/abseil-cpp-20260107.1:${ABSEIL_CPP_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/hyprlang-${HYPRLANG_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/wayland-${WAYLAND_PV}:=
 	>=gui-libs/hyprtoolkit-${HYPRTOOLKIT_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
@@ -105,6 +107,7 @@ src_unpack() {
 
 src_configure() {
 	chkl_check_many_timestamps
+	abseil-cpp_src_configure
 	cmake_src_configure
 }
 
