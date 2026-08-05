@@ -66,16 +66,16 @@ dev-lang/perl::gentoo
 emerge -aovuDN =dev-lang/perl-5.42.3::oiledmachine-overlay	# Update dependencies
 emerge -a1vO =dev-lang/perl-5.42.3::oiledmachine-overlay	# Force update
 
-If you tried to upgrade 5.44.0, but want to stay on 5.42.3, you need to undo the
-accept_keyword and unmask and run perl-cleaner.  The following is not required
-if you didn't attempt to upgrade to 5.44.0.
+If you tried to upgrade to 5.44.0, but want to stay on 5.42.3 or 5.40.5, you
+need to undo the accept_keyword and unmask changes and run perl-cleaner.  The
+following is not required if you didn't attempt to upgrade to 5.44.0.
 
 6. emerge -a app-admin/perl-cleaner
 
 7. Use perl cleaner to rebuild Perl packages.
 perl-cleaner --all
 
-8. Rebuild to downgrade `emerge -1avuDN virtual/perl-Test-Harness`
+8. Rebuild to downgrade stable KEYWORDed `emerge -1avuDN virtual/perl-Test-Harness`
 
 
 Instructions to upgrade 5.44.0:
