@@ -2,18 +2,46 @@ Title: Update perl
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-08-03
-Revision: 21
+Revision: 22
 News-Item-Format: 2.0
 Display-If-Installed: dev-lang/perl
+
+Choose upgrade path:
+
+  =dev-lang/perl-5.42.3		# A full rebuild not required
+
+or
+
+  =dev-lang/perl-5.44.0		# Upgrading to this requires `emerge -vuDN system && emerge -e system && emerge -e world`
 
 Steps to update Perl for mitigation against buffer overflows, integer overflow,
 and 16-bit field overflow.
 
-This version bump fixes the following CVEs:
+A version bump to either 5.42.3 or 5.44.0 fixes the following CVEs:
 
 CVE-2026-8376
 CVE-2026-57432
 CVE-2026-13221
+
+
+Instructions to upgrade 5.42.3:
+
+1. emaint sync -A
+
+2. Add /etc/portage/package.mask/perl:
+dev-lang/perl::gentoo
+
+3. Add/update /etc/portage/package.accept_keywords/perl with the following:
+=dev-lang/perl-5.42.3::oiledmachine-overlay ~amd64 **
+
+4. Add/update /etc/portage/package.unmask/perl with the following:
+=dev-lang/perl-5.42.3::oiledmachine-overlay
+
+If you tried to upgrade 5.44.0, but want to stay at 5.42.3, you need to undo the
+accept_keyword and unmask and run perl-cleaner.
+
+
+Instructions to upgrade 5.44.0:
 
 Details can be found at https://perldoc.perl.org/5.44.0/perldelta#Security
 
@@ -24,6 +52,7 @@ the newest dev-lang/perl-5.44.0.
 
 2. Add /etc/portage/package.mask/perl:
 dev-lang/perl::gentoo
+
 
 3. Add/update /etc/portage/package.accept_keywords/perl with the following:
 =dev-perl/Compress-Raw-Lzma-2.221.0::gentoo ~amd64 **
@@ -66,92 +95,11 @@ emerge -a1vO =dev-lang/perl-5.44.0::oiledmachine-overlay # Force update
 7. Use perl cleaner to rebuild Perl packages.
 perl-cleaner --all
 
-8. Re-emerge all the installed virtual/perl* to update the subslot slot info to
-avoid this downgrade message or when emerging @system:
+8. emerge -1avuDN =virtual/perl-Test-Harness-3.520.0::gentoo # Update dependencies
 
-!!! All ebuilds that could satisfy "dev-lang/perl:0/5.42=" have been masked.
-!!! One of the following masked packages is required to complete your request:
-- dev-lang/perl-5.42.2::gentoo (masked by: package.mask)
-- dev-lang/perl-5.42.0-r1::gentoo (masked by: package.mask)
+9. emerge -ave system
+10. emerge -ave world
 
-8. To update Perl virtuals packages, do:
-
-A=(
-perl-podlators
-perl-Getopt-Long
-perl-Math-BigInt
-perl-libnet
-perl-IO
-perl-Test-Simple
-perl-threads
-perl-Exporter
-perl-Sys-Syslog
-perl-ExtUtils-MakeMaker
-perl-Module-Load
-perl-Pod-Simple
-perl-Test
-perl-Text-Tabs+Wrap
-perl-Devel-PPPort
-perl-Test-Harness
-perl-File-Temp
-perl-Term-Table
-perl-IO-Socket-IP
-perl-Digest
-perl-Text-Balanced
-perl-ExtUtils-ParseXS
-perl-Test2-Suite
-perl-DB_File
-perl-Text-ParseWords
-perl-Carp
-perl-File-Path
-perl-Compress-Raw-Bzip2
-perl-Data-Dumper
-perl-version
-perl-File-Spec
-perl-parent
-perl-ExtUtils-CBuilder
-perl-autodie
-perl-Socket
-perl-Compress-Raw-Zlib
-perl-Module-CoreList
-perl-IO-Compress
-perl-CPAN
-perl-JSON-PP
-perl-CPAN-Meta
-perl-Digest-MD5
-perl-CPAN-Meta-Requirements
-perl-Storable
-perl-Module-Metadata
-perl-Scalar-List-Utils
-perl-XSLoader
-perl-if
-perl-Time-HiRes
-perl-Encode
-perl-Archive-Tar
-perl-Digest-SHA
-perl-Term-ANSIColor
-perl-MIME-Base64
-perl-Time-Local
-)
-emerge -p1vO "${A[@]}" # See what are installed
-# Update A array to delete the not installed rows.
-emerge -a1vO "${A[@]}" # Re-install the installed
-emerge -1avuDN =virtual/perl-Test-Harness-3.520.0::gentoo # Update dependencies
-
-9.  Update the other non-virtual perl packages.
-
-You can obtained the non-virtual by doing
-
-  emerge -pve world
-
-or by
-
-  cd "${DISTRO_OVERLAY_PATH}/virtual" && emerge -pv perl*
-
-
-All dev-perl category packages with this pattern need to be manually re-emerge
-as well to update the slot:
-(dependency required by "dev-perl/<PN>-<PV>::gentoo" [installed])
 
 Why use the oiledmachine-overlay Perl over the distro's release?
 
