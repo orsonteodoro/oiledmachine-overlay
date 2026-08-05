@@ -28,7 +28,7 @@ CHKL_TIMESTAMPS=(
 	"x11-misc/colord-9999"
 )
 
-FALLBACK_COMMIT="cf0dd9763b4eca643bcfdf6ee40f2f39dfde9c33"
+FALLBACK_COMMIT="84b3b8ebcc61d55d0aaf8df84cce638c80e04d70"
 
 inherit cflags-hardened check-compiler-switch chkl gnome2 meson-multilib multilib secure-version toolchain-funcs virtualx
 
