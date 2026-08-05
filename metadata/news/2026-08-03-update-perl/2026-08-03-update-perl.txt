@@ -34,10 +34,11 @@ CVE-2026-57432
 CVE-2026-13221
 
 Follow one of the upgrade paths below to update Perl for mitigation against
-buffer overflows, integer overflow, and 16-bit field overflow.
+buffer overflows, integer overflow, 16-bit field overflow, out-of-bounds
+write.
 
 
-Instructions to upgrade 5.40.5 or 5.42.3:
+Instructions to upgrade to 5.40.5 or 5.42.3:
 
 1. emaint sync -A
 
