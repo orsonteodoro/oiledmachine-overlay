@@ -2,7 +2,7 @@ Title: Update perl
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-08-03
-Revision: 22
+Revision: 24
 News-Item-Format: 2.0
 Display-If-Installed: dev-lang/perl
 
@@ -37,8 +37,16 @@ dev-lang/perl::gentoo
 4. Add/update /etc/portage/package.unmask/perl with the following:
 =dev-lang/perl-5.42.3::oiledmachine-overlay
 
-If you tried to upgrade 5.44.0, but want to stay at 5.42.3, you need to undo the
-accept_keyword and unmask and run perl-cleaner.
+If you tried to upgrade 5.44.0, but want to stay on 5.42.3, you need to undo the
+accept_keyword and unmask and run perl-cleaner.  The following is not required
+if you didn't attempt to upgrade to 5.44.0.
+
+6. emerge -a app-admin/perl-cleaner
+
+7. Use perl cleaner to rebuild Perl packages.
+perl-cleaner --all
+
+8. Rebuild to downgrade `emerge -1avuDN virtual/perl-Test-Harness`
 
 
 Instructions to upgrade 5.44.0:
