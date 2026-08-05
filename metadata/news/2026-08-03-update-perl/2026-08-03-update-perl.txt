@@ -123,4 +123,5 @@ perl-cleaner --all
 
 Why use the oiledmachine-overlay Perl over the distro's release?
 
-The oiledmachine-overlay adds additional compiler hardening flags.
+The oiledmachine-overlay adds additional compiler hardening flags for
+security-critical Perl based apps.
