@@ -468,9 +468,9 @@ ORC_PV=${ORC_PV:-"0.4.42"}
 PAM_PV=${PAM_PV:-"9999"}
 PANGO_PV=${PANGO_PV:-"1.58.0"}
 PERL_PV=${PERL_PV:-"5.40.5"}
-PERL_5_44_PV=${PERL_PV:-"5.44.0"}
-PERL_5_42_PV=${PERL_PV:-"5.42.3"}
-PERL_5_40_PV=${PERL_PV:-"5.40.5"}
+PERL_5_44_PV=${PERL_5_44_PV:-"5.44.0"}
+PERL_5_42_PV=${PERL_5_42_PV:-"5.42.3"}
+PERL_5_40_PV=${PERL_5_40_PV:-"5.40.5"}
 PIGZ_PV=${PIGZ_PV:-"2.8"}
 PIPEWIRE_PV=${PIPEWIRE_PV:-"9999"}
 PIXMAN_PV=${PIXMAN_PV:-"9999"}
@@ -747,6 +747,65 @@ secure-version_gen_ffmpeg_depends() {
 	else
 		t2="${t2}"
 	fi
+
+	output="${t2}"
+#einfo "${output}"
+	echo "${output}"
+}
+
+secure-version_gen_perl_depends() {
+	local range="${1}" # 5.40, 5.40-5.44, 5.40-, <empty string>
+	local usedep="${2}" # [berkdb], <empty string>
+	local t=""
+	t+="
+		dev-lang/perl:=${usedep}
+		|| (
+	"
+	local l=""
+	local r=""
+	if [[ -z "${range}" ]] ; then
+	# Slots used in any distro releases
+		l="5.40"
+		r="5.44"
+	elif [[ "${range}" =~ "-" ]] ; then
+		l="${range%-*}"
+		r="${range#*-}"
+		if [[ -z "${l}" ]] ; then
+	# Slot used in live distro releases
+			r="5.40"
+		fi
+		if [[ -z "${r}" ]] ; then
+	# Slot used in live distro releases
+			r="5.44"
+		fi
+	else
+		l="${range}"
+		r="${range}"
+	fi
+	local L=(
+		"5.44"
+		"5.42"
+		"5.40"
+	)
+	local x
+	for x in "${L[@]}" ; do
+		if ver_test "${l}" "-le" "${x}" && ver_test "${x}" "-le" "${r}" ; then
+			local u="PERL_${x/./_}_PV"
+#einfo "${u} ${x} ${!u}"
+			t+="
+				>=dev-lang/perl-${!u}${usedep}:0/${x}
+			"
+		fi
+	done
+	t+="
+		)
+	"
+
+	local output=""
+	local t2=""
+
+	t2="${t}"
+	t2="${t2}"
 
 	output="${t2}"
 #einfo "${output}"

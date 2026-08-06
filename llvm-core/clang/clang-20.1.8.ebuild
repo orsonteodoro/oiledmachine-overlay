@@ -133,12 +133,7 @@ RDEPEND+="
 	${PYTHON_DEPS}
 	>=llvm-core/clang-common-${LLVM_VERSION}:=
 	static-analyzer? (
-		>=dev-lang/perl-${PERL_PV}:=
-		|| (
-			>=dev-lang/perl-${PERL_5_44_PV}:0/5.44
-			>=dev-lang/perl-${PERL_5_42_PV}:0/5.42
-			>=dev-lang/perl-${PERL_5_40_PV}:0/5.40
-		)
+		$(secure-version_gen_perl_depends)
 	)
 	xml? (
 		>=dev-libs/libxml2-${LIBXML2_PV}:=[${MULTILIB_USEDEP}]
