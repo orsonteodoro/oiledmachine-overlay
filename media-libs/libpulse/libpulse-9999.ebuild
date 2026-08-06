@@ -74,7 +74,7 @@ DEPEND="${RDEPEND}
 
 # pulseaudio ships a bundled xmltoman, which uses XML::Parser
 BDEPEND="
-	>=dev-lang/perl-${PERL_PV}
+	$(secure-version_gen_perl_depends)
 	dev-perl/XML-Parser
 	sys-devel/gettext
 	sys-devel/m4

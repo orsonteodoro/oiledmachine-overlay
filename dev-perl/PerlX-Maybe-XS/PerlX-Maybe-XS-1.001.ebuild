@@ -5,7 +5,7 @@
 EAPI=8
 
 DIST_AUTHOR="TOBYINK"
-inherit perl-module
+inherit secure-version perl-module
 
 DESCRIPTION="XS backend for PerlX::Maybe"
 HOMEPAGE="
@@ -21,15 +21,14 @@ LICENSE="
 SLOT="0"
 KEYWORDS="~amd64"
 RESTRICT="mirror"
-PERL_PV="5.8.0"
 RDEPEND+="
-	>=dev-lang/perl-${PERL_PV}
+	$(secure-version_gen_perl_depends)
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-lang/perl-${PERL_PV}
+	$(secure-version_gen_perl_depends)
 	>=virtual/perl-ExtUtils-MakeMaker-6.17
 	virtual/perl-CPAN
 "

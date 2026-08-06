@@ -172,7 +172,7 @@ RDEPEND="
 DEPEND="${COMMON_DEPEND}"
 
 BDEPEND="
-	>=dev-lang/perl-${PERL_PV}
+	$(secure-version_gen_perl_depends)
 	>=dev-libs/libxslt-${LIBXSLT_PV}
 	>=dev-util/gdbus-codegen-2.80.5-r1
 	>=sys-devel/gettext-0.21

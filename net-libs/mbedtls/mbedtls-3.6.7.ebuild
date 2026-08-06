@@ -47,7 +47,7 @@ BDEPEND="
 		app-text/doxygen
 		media-gfx/graphviz
 	)
-	test? ( >=dev-lang/perl-${PERL_PV} )
+	test? ( $(secure-version_gen_perl_depends) )
 "
 
 PATCHES=(

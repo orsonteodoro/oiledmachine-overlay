@@ -7,7 +7,8 @@ EAPI=8
 DIST_AUTHOR="TOBYINK"
 DIST_VERSION="0.011"
 DIST_EXAMPLES=("examples/*")
-inherit perl-module
+
+inherit secure-version perl-module
 
 DESCRIPTION="Munge your 'has' (works with Moo, Moose and Mouse)"
 HOMEPAGE="
@@ -23,16 +24,15 @@ LICENSE="
 SLOT="0"
 KEYWORDS="~amd64"
 RESTRICT="mirror"
-PERL_PV="5.8.0"
 RDEPEND+="
-	>=dev-lang/perl-${PERL_PV}
+	$(secure-version_gen_perl_depends)
 	>=virtual/perl-Scalar-List-Utils-1.40
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-lang/perl-${PERL_PV}
+	$(secure-version_gen_perl_depends)
 	>=dev-perl/Test-Fatal-0
 	>=dev-perl/Test-Requires-0.6
 	>=virtual/perl-CPAN-Meta-YAML-0.18

@@ -7,7 +7,8 @@ EAPI=8
 DIST_AUTHOR="DBOOK"
 DIST_VERSION="3.001"
 DIST_EXAMPLES=("example/*")
-inherit perl-module
+
+inherit secure-version perl-module
 
 DESCRIPTION="Minimalistic HTML/XML DOM parser with CSS selectors"
 HOMEPAGE="
@@ -19,16 +20,15 @@ LICENSE="
 SLOT="0"
 KEYWORDS="~amd64"
 RESTRICT="mirror"
-PERL_PV="5.8.1"
 RDEPEND+="
-	>=dev-lang/perl-${PERL_PV}
+	$(secure-version_gen_perl_depends)
 	>=virtual/perl-Scalar-List-Utils-0
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-lang/perl-${PERL_PV}
+	$(secure-version_gen_perl_depends)
 	>=dev-perl/YAML-Tiny-1.73
 	>=virtual/perl-ExtUtils-MakeMaker-0
 	>=virtual/perl-JSON-PP-0

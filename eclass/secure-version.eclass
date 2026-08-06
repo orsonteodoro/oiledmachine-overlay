@@ -4,7 +4,7 @@
 
 # @ECLASS: secure-versions.eclass
 # @MAINTAINER: Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS: 8 9
+# @SUPPORTED_EAPIS: 7 8 9
 # @BLURB: secure versions
 # @DESCRIPTION:
 # Install *only* secure versions in security-critical systems typically for C/C++ programs.
@@ -102,7 +102,7 @@
 #
 
 case ${EAPI:-0} in
-	[89]) ;;
+	[789]) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
@@ -793,7 +793,7 @@ secure-version_gen_perl_depends() {
 			local u="PERL_${x/./_}_PV"
 #einfo "${u} ${x} ${!u}"
 			t+="
-				>=dev-lang/perl-${!u}${usedep}:0/${x}
+				>=dev-lang/perl-${!u}:0/${x}${usedep}
 			"
 		fi
 	done

@@ -67,7 +67,7 @@ LICENSE="
 SLOT="0"
 
 EMOJI_DEPENDS="
-	>=dev-lang/perl-${PERL_PV}
+	$(secure-version_gen_perl_depends)
 	dev-perl/Path-Class
 "
 RDEPEND+="

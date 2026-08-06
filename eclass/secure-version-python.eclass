@@ -4,13 +4,13 @@
 
 # @ECLASS: secure-versions-python.eclass
 # @MAINTAINER: Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS: 8 9
+# @SUPPORTED_EAPIS: 7 8 9
 # @BLURB: secure versions for python
 # @DESCRIPTION:
 # Install *only* secure versions for python.
 
 case ${EAPI:-0} in
-	[89]) ;;
+	[789]) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 

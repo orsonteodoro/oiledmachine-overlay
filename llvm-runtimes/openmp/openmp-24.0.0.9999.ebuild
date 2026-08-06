@@ -594,7 +594,7 @@ DEPEND="
 # - llvm-core/llvm provide test utils (e.g. FileCheck)
 # - llvm-core/clang provides the compiler to run tests
 BDEPEND="
-	>=dev-lang/perl-${PERL_PV}
+	$(secure-version_gen_perl_depends)
 	~llvm-core/lld-${LLVM_VERSION}:${LLVM_MAJOR}=
 	clang? (
 		~llvm-core/clang-${LLVM_VERSION}:=[${LIBSTDCXX_USEDEP}]

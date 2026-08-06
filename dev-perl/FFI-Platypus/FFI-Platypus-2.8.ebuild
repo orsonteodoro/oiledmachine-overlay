@@ -6,7 +6,12 @@ EAPI=8
 DIST_AUTHOR="PLICEASE"
 DIST_VERSION="2.08"
 DIST_EXAMPLES=("examples/*")
-inherit perl-module
+
+CAPTURE_TINY_PV="0"
+EXTUTILS_MAKEMAKER_PV="7.12"
+JSON_PP_PV="0"
+
+inherit secure-version perl-module
 
 DESCRIPTION="Write Perl bindings to non-Perl libraries with FFI. No XS required."
 HOMEPAGE="
@@ -22,12 +27,8 @@ LICENSE="
 SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~arm64-macos"
 RESTRICT="mirror"
-CAPTURE_TINY_PV="0"
-EXTUTILS_MAKEMAKER_PV="7.12"
-JSON_PP_PV="0"
-PERL_PV="5.8.4"
 RDEPEND+="
-	>=dev-lang/perl-${PERL_PV}
+	$(secure-version_gen_perl_depends)
 	>=dev-perl/Capture-Tiny-${CAPTURE_TINY_PV}
 	>=dev-perl/FFI-CheckLib-0.5
 	>=dev-perl/PathTools-0
@@ -39,7 +40,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-lang/perl-${PERL_PV}
+	$(secure-version_gen_perl_depends)
 	>=dev-perl/Alien-FFI-0.20
 	>=dev-perl/Capture-Tiny-${CAPTURE_TINY_PV}
 	>=dev-perl/Test2-Suite-0.0.121

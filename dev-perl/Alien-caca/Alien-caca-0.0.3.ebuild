@@ -4,9 +4,17 @@
 
 EAPI=8
 
-LIBCACA_PV="0.99.beta20"
+LIBCACA_PV_VENDORED="0.99.beta20"
 DIST_AUTHOR="YANICK"
-inherit perl-module sandbox-changes
+
+FILE_SHAREDIR_PV="1.3"
+
+CHKL_TIMESTAMPS=(
+	"dev-libs/glib-2.89.9999"
+	"x11-libs/libX11-9999"
+)
+
+inherit cflags-hardened chkl sandbox-changes secure-version perl-module
 
 DESCRIPTION="Alien package for the Colored ASCII Art library"
 HOMEPAGE="
@@ -23,36 +31,37 @@ LICENSE="
 "
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE+=" system-libcaca ebuild_revision_6"
+IUSE+="
+system-libcaca
+ebuild_revision_7
+"
+REQUIRED_USE="
+	system-libcaca
+"
 RESTRICT="mirror"
-PERL_PV="5.6"
-FILE_SHAREDIR_PV="1.3"
 RDEPEND_LIBCACA+="
-	dev-libs/glib:2
-	media-libs/freeglut
-	media-libs/glu
-	media-libs/imlib2
-	media-libs/libglvnd
-	sys-devel/gcc
-	sys-libs/ncurses
-	sys-libs/slang
-	virtual/zlib
-	x11-libs/libX11
-	x11-libs/pango
+	>=dev-libs/glib-${GLIB_PV}:=
+	>=media-libs/freeglut-${FREEGLUT_PV}:=
+	media-libs/glu:=
+	media-libs/imlib2:=
+	>=media-libs/libglvnd-${LIBGLVND_PV}:=
+	sys-devel/gcc:=
+	>=sys-libs/ncurses-${NCURSES_PV}:=
+	>=sys-libs/slang-${SLANG_PV}:=
+	>=virtual/zlib-${ZLIB_PV}:=
+	>=x11-libs/libX11-${LIBX11_PV}:=
+	>=x11-libs/pango-${PANGO_PV}:=
 	virtual/libc
 "
 RDEPEND+="
+	$(secure-version_gen_perl_depends)
+	>=dev-perl/Alien-Build-0.5
+	>=dev-perl/File-ShareDir-${FILE_SHAREDIR_PV}
 	!system-libcaca? (
 		${RDEPEND_LIBCACA}
 	)
-	>=dev-lang/perl-${PERL_PV}
-	>=dev-perl/Alien-Build-0.5
-	>=dev-perl/File-ShareDir-${FILE_SHAREDIR_PV}
 	system-libcaca? (
-		|| (
-			~media-libs/libcaca-0.99_beta20_p20211207
-			~media-libs/libcaca-0.99_beta20
-		)
+		>=media-libs/libcaca-${LIBCACA_PV}:=
 	)
 "
 DEPEND+="
@@ -60,19 +69,19 @@ DEPEND+="
 "
 BDEPEND_LIBCACA+="
 	dev-util/pkgconf
-	sys-devel/gcc
+	sys-devel/gcc:=
 "
 BDEPEND+="
-	!system-libcaca? (
-		${BDEPEND_LIBCACA}
-	)
-	>=dev-lang/perl-${PERL_PV}
+	$(secure-version_gen_perl_depends)
 	>=dev-perl/Alien-Base-ModuleBuild-0.5
 	>=dev-perl/File-ShareDir-${FILE_SHAREDIR_PV}
 	>=dev-perl/YAML-Tiny-1.67
 	>=virtual/perl-ExtUtils-MakeMaker-6.59
 	dev-perl/Module-Build
 	virtual/perl-CPAN
+	!system-libcaca? (
+		${BDEPEND_LIBCACA}
+	)
 "
 SRC_URI+="
 https://github.com/cacalabs/libcaca/commit/d33a9ca2b7e9f32483c1aee4c3944c56206d456b.patch
@@ -90,13 +99,19 @@ pkg_setup() {
 
 src_prepare() {
 	# Fix vulnerabilities
-	sed -i -e "s|v0.99.beta19.tar.gz|v${LIBCACA_PV}.tar.gz|" \
+	sed -i -e "s|v0.99.beta19.tar.gz|v${LIBCACA_PV_VENDORED}.tar.gz|" \
 		"Build.PL" \
 		|| die
 	sed -i -e "s|\"make\"|\"make V=1\"|g" \
 		"Build.PL" \
 		|| die
 	perl-module_src_prepare
+}
+
+src_configure() {
+	chkl_check_many_timestamps
+	cflags-hardened_append
+	perl-module_src_configure
 }
 
 # OILEDMACHINE-OVERLAY-META:  created-ebuild

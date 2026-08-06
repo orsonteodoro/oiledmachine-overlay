@@ -5,7 +5,8 @@
 EAPI=8
 
 DIST_AUTHOR="YANICK"
-inherit perl-module
+
+inherit secure-version perl-module
 
 DESCRIPTION="A perl interface for libcaca (Colour AsCii Art library)"
 HOMEPAGE="
@@ -16,9 +17,8 @@ LICENSE="WTFPL-2"
 SLOT="0"
 KEYWORDS="~amd64"
 RESTRICT="mirror"
-PERL_PV="5.20"
 RDEPEND+="
-	>=dev-lang/perl-${PERL_PV}
+	$(secure-version_gen_perl_depends)
 	>=dev-perl/Alien-caca-0
 	>=dev-perl/Exporter-Tiny-0
 	>=dev-perl/FFI-Platypus-0.88
@@ -33,7 +33,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-lang/perl-${PERL_PV}
+	$(secure-version_gen_perl_depends)
 	>=dev-perl/Test-Exception-0
 	>=dev-perl/YAML-Tiny-1.68
 	>=virtual/perl-ExtUtils-MakeMaker-0

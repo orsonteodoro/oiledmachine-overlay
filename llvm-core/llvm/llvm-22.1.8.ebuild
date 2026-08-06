@@ -160,8 +160,8 @@ DEPEND="
 "
 BDEPEND="
 	${PYTHON_DEPS}
+	$(secure-version_gen_perl_depends)
 	>=dev-build/cmake-3.16
-	>=dev-lang/perl-${PERL_PV}
 	sys-devel/gnuconfig
 	kernel_Darwin? (
 		<llvm-runtimes/libcxx-${LLVM_VERSION_CANONICAL}.9999

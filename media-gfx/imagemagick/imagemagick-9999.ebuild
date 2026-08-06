@@ -122,7 +122,7 @@ RDEPEND="
 	pango? ( >=x11-libs/pango-${PANGO_PV}:= )
 	perl? (
 		${GENTOO_PERL_DEPSTRING}
-		>=dev-lang/perl-${PERL_PV}:=
+		$(secure-version_gen_perl_depends)
 	)
 	png? ( >=media-libs/libpng-${LIBPNG_PV}:= )
 	postscript? ( >=app-text/ghostscript-gpl-${GHOSTSCRIPT_GPL_PV}:= )

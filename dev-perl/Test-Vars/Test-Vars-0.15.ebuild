@@ -7,7 +7,8 @@ EAPI=8
 DIST_AUTHOR="GFUJI"
 DIST_VERSION="0.015"
 DIST_EXAMPLES=("example/*")
-inherit perl-module
+
+inherit secure-version perl-module
 
 DESCRIPTION="Detects unused variables in perl modules"
 HOMEPAGE="
@@ -22,16 +23,15 @@ LICENSE="
 SLOT="0"
 KEYWORDS="~amd64"
 RESTRICT="mirror"
-PERL_PV="5.10.0"
 RDEPEND+="
-	>=dev-lang/perl-${PERL_PV}
+	$(secure-version_gen_perl_depends)
 	>=virtual/perl-Scalar-List-Utils-1.33
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-lang/perl-${PERL_PV}
+	$(secure-version_gen_perl_depends)
 	>=dev-perl/Module-Build-Tiny-0.035
 	>=dev-perl/Test-Output-0
 	>=virtual/perl-CPAN-Meta-YAML-0.18

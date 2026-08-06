@@ -6,7 +6,10 @@ EAPI=8
 
 DIST_AUTHOR="PLICEASE"
 DIST_VERSION="0.27"
-inherit perl-module
+
+ALIEN_BUILD_PV="2.10"
+
+inherit secure-version perl-module
 
 DESCRIPTION="Build and make available libffi"
 HOMEPAGE="
@@ -22,10 +25,8 @@ LICENSE="
 SLOT="0"
 KEYWORDS="~amd64"
 RESTRICT="mirror"
-ALIEN_BUILD_PV="2.10"
-PERL_PV="5.6"
 RDEPEND+="
-	>=dev-lang/perl-${PERL_PV}
+	$(secure-version_gen_perl_depends)
 	>=dev-perl/Alien-Build-${ALIEN_BUILD_PV}
 "
 DEPEND+="
@@ -33,7 +34,7 @@ DEPEND+="
 "
 # Alien-Build-Git-0.10 is override by ebuild for sed patch below
 BDEPEND+="
-	>=dev-lang/perl-${PERL_PV}
+	$(secure-version_gen_perl_depends)
 	>=dev-perl/Alien-Build-${ALIEN_BUILD_PV}
 	>=dev-perl/Alien-Build-Git-0.10
 	>=dev-perl/Capture-Tiny-0

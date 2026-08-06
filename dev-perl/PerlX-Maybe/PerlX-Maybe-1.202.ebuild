@@ -5,7 +5,8 @@
 EAPI=8
 
 DIST_AUTHOR="TOBYINK"
-inherit perl-module
+
+inherit secure-version perl-module
 
 DESCRIPTION="Return a pair only if they are both defined"
 HOMEPAGE="
@@ -21,9 +22,8 @@ LICENSE="
 SLOT="0"
 KEYWORDS="~amd64"
 RESTRICT="mirror"
-PERL_PV="5.6.0"
 RDEPEND+="
-	>=dev-lang/perl-${PERL_PV}
+	$(secure-version_gen_perl_depends)
 	>=dev-perl/Exporter-Tiny-0
 	>=dev-perl/PerlX-Maybe-XS-0
 	>=virtual/perl-Scalar-List-Utils-0
@@ -32,7 +32,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-lang/perl-${PERL_PV}
+	$(secure-version_gen_perl_depends)
 	>=virtual/perl-CPAN-Meta-YAML-0.018
 	>=virtual/perl-ExtUtils-MakeMaker-6.17
 	virtual/perl-CPAN

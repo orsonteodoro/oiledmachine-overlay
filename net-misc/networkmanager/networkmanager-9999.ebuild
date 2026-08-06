@@ -178,7 +178,7 @@ BDEPEND="
 	)
 	introspection? (
 		$(python_gen_any_dep 'dev-python/pygobject:3[${PYTHON_USEDEP}]')
-		>=dev-lang/perl-${PERL_PV}
+		$(secure-version_gen_perl_depends)
 		>=dev-libs/libxslt-${LIBXSLT_PV}
 	)
 	vala? ( $(vala_depend) )

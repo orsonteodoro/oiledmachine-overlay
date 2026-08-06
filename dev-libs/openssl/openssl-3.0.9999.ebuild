@@ -63,7 +63,7 @@ COMMON_DEPEND="
 	tls-compression? ( >=virtual/zlib-${ZLIB_PV}:=[static-libs(+)?,${MULTILIB_USEDEP}] )
 "
 BDEPEND+="
-	>=dev-lang/perl-${PERL_PV}
+	$(secure-version_gen_perl_depends)
 	sctp? ( >=net-misc/lksctp-tools-1.0.12 )
 	test? (
 		sys-apps/diffutils

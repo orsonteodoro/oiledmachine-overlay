@@ -1077,8 +1077,8 @@ DEPEND+="
 BDEPEND+="
 	${PYTHON_DEPS}
 	${RUBY_DEPS}
+	$(secure-version_gen_perl_depends)
 	>=app-accessibility/at-spi2-core-2.5.3[${MULTILIB_USEDEP}]
-	>=dev-lang/perl-${PERL_PV}
 	>=dev-lang/python-2.7
 	>=dev-lang/ruby-1.9
 	>=dev-build/cmake-3.20

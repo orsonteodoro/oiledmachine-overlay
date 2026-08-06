@@ -2129,26 +2129,26 @@ PDEPEND+="
 # Mold was relicensed as MIT in 2.0.  >=2.0 was used to avoid legal issues.
 # Using system-mimalloc with mold causes link failure.
 BDEPEND+="
+	${COMMON_SNAPSHOT_DEPEND}
+	${PYTHON_DEPS}
 	$(python_gen_any_dep '
 		dev-python/setuptools[${PYTHON_USEDEP}]
 	')
-	${COMMON_SNAPSHOT_DEPEND}
-	${PYTHON_DEPS}
-	app-alternatives/ninja
-	dev-util/patchutils
+	$(secure-version_gen_perl_depends)
 	>=app-arch/gzip-${GZIP_PV}
 	>=dev-util/gperf-3.2[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	>=sys-devel/bison-2.4.3
-	app-alternatives/lex
-	>=dev-lang/perl-${PERL_PV}
-	dev-util/esbuild:${ESBUILD_PV}
-	dev-vcs/git
 	>=net-libs/nodejs-${NODEJS_24_PV}:${NODE_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},inspector]
+	>=sys-devel/bison-2.4.3
+	app-alternatives/ninja
+	app-alternatives/lex
+	dev-util/esbuild:${ESBUILD_PV}
+	dev-util/patchutils
+	dev-vcs/git
 	sys-apps/hwdata
 	sys-devel/flex
-	x11-misc/xdg-utils
 	www-client/chromium-toolchain:${PV%.*}.x=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cfi,pgo,system-clang=,system-rust=]
+	x11-misc/xdg-utils
 	mold? (
 		>=sys-devel/mold-${MOLD_PV}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},-system-mimalloc]
 	)

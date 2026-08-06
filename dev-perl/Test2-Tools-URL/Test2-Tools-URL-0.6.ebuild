@@ -7,7 +7,10 @@ EAPI=8
 DIST_AUTHOR="PLICEASE"
 DIST_VERSION="0.06"
 DIST_EXAMPLES=("example/*")
-inherit perl-module
+
+TEST2_SUITE_PV="0.0.121"
+
+inherit secure-version perl-module
 
 DESCRIPTION="Compare a URL in your Test2 test"
 HOMEPAGE="
@@ -23,10 +26,8 @@ LICENSE="
 SLOT="0"
 KEYWORDS="~amd64"
 RESTRICT="mirror"
-PERL_PV="5.8.1"
-TEST2_SUITE_PV="0.0.121"
 RDEPEND+="
-	>=dev-lang/perl-${PERL_PV}
+	$(secure-version_gen_perl_depends)
 	>=dev-perl/Test2-Suite-${TEST2_SUITE_PV}
 	>=dev-perl/URI-1.61
 	>=virtual/perl-Carp-0
@@ -35,7 +36,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-lang/perl-${PERL_PV}
+	$(secure-version_gen_perl_depends)
 	>=dev-perl/Test2-Suite-${TEST2_SUITE_PV}
 	>=dev-perl/YAML-Tiny-1.73
 	>=virtual/perl-ExtUtils-MakeMaker-0

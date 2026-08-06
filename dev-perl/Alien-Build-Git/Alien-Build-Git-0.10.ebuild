@@ -10,7 +10,11 @@ DIST_AUTHOR="PLICEASE"
 DIST_NAME="Alien-Build-Git"
 DIST_VERSION="0.10"
 DIST_EXAMPLES=("examples/*")
-inherit perl-module
+
+ALIEN_BUILD_PV="0.65"
+FILE_WHICH_PV="0"
+
+inherit secure-version perl-module
 
 DESCRIPTION="Alien::Build tools for interacting with git"
 HOMEPAGE="
@@ -26,11 +30,8 @@ LICENSE="
 SLOT="0"
 KEYWORDS="~amd64"
 RESTRICT="mirror"
-ALIEN_BUILD_PV="0.65"
-PERL_PV="5.8.1"
-FILE_WHICH_PV="0"
 RDEPEND+="
-	>=dev-lang/perl-${PERL_PV}
+	$(secure-version_gen_perl_depends)
 	>=dev-perl/Alien-Build-${ALIEN_BUILD_PV}
 	>=dev-perl/Capture-Tiny-0
 	>=dev-perl/File-chdir-0
@@ -46,7 +47,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-lang/perl-${PERL_PV}
+	$(secure-version_gen_perl_depends)
 	>=dev-perl/Alien-Build-${ALIEN_BUILD_PV}
 	>=dev-perl/File-Which-${FILE_WHICH_PV}
 	>=dev-perl/Test2-Suite-0.0.121

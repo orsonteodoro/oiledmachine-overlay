@@ -4,13 +4,13 @@
 
 # @ECLASS: secure-versions.eclass
 # @MAINTAINER: Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS: 8 9
+# @SUPPORTED_EAPIS: 7 8 9
 # @BLURB: secure versions for node/electron
 # @DESCRIPTION:
 # Install *only* secure versions for node/electron micropackages.
 
 case ${EAPI:-0} in
-	[89]) ;;
+	[789]) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 

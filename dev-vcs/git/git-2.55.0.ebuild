@@ -105,7 +105,7 @@ DEPEND="
 		>=dev-libs/libpcre2-${LIBPCRE2_PV}:=
 	)
 	perl? (
-		>=dev-lang/perl-${PERL_PV}:=[-build(-)]
+		$(secure-version_gen_perl_depends '' '[-build(-)]')
 	)
 	tk? (
 		dev-lang/tk:=

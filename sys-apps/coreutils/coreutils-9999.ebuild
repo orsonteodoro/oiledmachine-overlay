@@ -94,11 +94,11 @@ DEPEND="
 	)
 "
 BDEPEND="
+	$(secure-version_gen_perl_depends)
 	>=app-arch/xz-utils-${XZ_UTILS_PV}
-	>=dev-lang/perl-${PERL_PV}
 	test? (
+		$(secure-version_gen_perl_depends)
 		dev-debug/strace
-		>=dev-lang/perl-${PERL_PV}
 		dev-perl/Expect
 		${PYTHON_DEPS}
 	)

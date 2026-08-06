@@ -830,11 +830,11 @@ gen_llvm_bdepend() {
 	done
 }
 BDEPEND+="
-	$(gen_llvm_bdepend)
 	${PYTHON_DEPS}
 	${RUST_CDEPEND}
+	$(gen_llvm_bdepend)
+	$(secure-version_gen_perl_depends)
 	=net-libs/nodejs-${NODE_SLOT%%.*}*
-	>=dev-lang/perl-${PERL_PV}
 	>=dev-util/cbindgen-0.29.4
 	>=dev-util/pkgconf-1.8.0[${MULTILIB_USEDEP},pkg-config(+)]
 	app-alternatives/awk

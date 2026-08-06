@@ -4,13 +4,13 @@
 
 # @ECLASS: secure-timestamp.eclass
 # @MAINTAINER: Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS: 8 9
+# @SUPPORTED_EAPIS: 7 8 9
 # @BLURB: secure timestamps
 # @DESCRIPTION:
 # A collection of secure timestamps for live ebuilds for chkl.eclass
 
 case ${EAPI:-0} in
-	[89]) ;;
+	[789]) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 

@@ -109,9 +109,9 @@ DEPEND="
 	)
 "
 BDEPEND="
+	$(secure-version_gen_perl_depends)
 	$(unpacker_src_uri_depends)
 	>=app-arch/xz-utils-${XZ_UTILS_PV}
-	>=dev-lang/perl-${PERL_PV}
 	sys-apps/texinfo
 	virtual/pkgconfig
 	nls? (

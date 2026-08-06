@@ -6,6 +6,7 @@ EAPI=8
 
 DIST_AUTHOR="MIYAGAWA"
 DIST_VERSION="0.02"
+
 inherit perl-module
 
 DESCRIPTION="URI handler for git scheme"
@@ -21,9 +22,8 @@ LICENSE="
 SLOT="0"
 KEYWORDS="~amd64"
 RESTRICT="mirror"
-PERL_PV="5.8.1"
 RDEPEND+="
-	>=dev-lang/perl-${PERL_PV}
+	$(secure-version_gen_perl_depends)
 	>=dev-perl/Filter-0
 	>=dev-perl/URI-0
 "
@@ -31,7 +31,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-lang/perl-${PERL_PV}
+	$(secure-version_gen_perl_depends)
 	>=virtual/perl-ExtUtils-MakeMaker-6.42
 	dev-perl/Module-Install
 	virtual/perl-CPAN

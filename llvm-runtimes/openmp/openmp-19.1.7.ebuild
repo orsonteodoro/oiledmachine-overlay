@@ -300,7 +300,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	>=dev-lang/perl-${PERL_PV}
+	$(secure-version_gen_perl_depends)
 	~llvm-core/lld-${LLVM_VERSION}:${LLVM_MAJOR}=
 	offload? (
 		llvm_targets_NVPTX? (
