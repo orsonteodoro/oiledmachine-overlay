@@ -69,8 +69,8 @@ PERL_USEDEP="perl_features_debug=,perl_features_ithreads=,perl_features_quadmath
 # oiledmachine-overlay:  modified
 # oiledmachine-overlay:  We always use the slot rebuild operator, but on the
 # distro overlay it is only used for RDEPEND and when GENTOO_DEPEND_ON_PERL=yes.
-# The distro's solution doesn't work and requires a full system empty tree (-e)
-# rebuild.
+# The distro's solution doesn't work for the reduced set for a slot rebuild and
+# still requires a full system/world empty tree (-e) rebuild.
 GENTOO_PERL_DEPSTRING="
 	dev-lang/perl:=[${PERL_USEDEP}]
 	|| (
