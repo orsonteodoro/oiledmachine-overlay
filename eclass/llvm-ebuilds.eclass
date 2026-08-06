@@ -181,7 +181,9 @@ ewarn "    or 10 years old."
 ewarn "10. Disable USB autosuspend by setting CONFIG_USB_AUTOSUSPEND_DELAY=-1"
 ewarn "    in the kernel config and set Low Power State (deep mode)"
 ewarn "    disable_lps_deep=Y module autoload option for rtw88_core for"
-ewarn "    problematic USB dongles."
+ewarn "    problematic USB dongles.  For integrated rtw88 WiFi, consider"
+ewarn "    disabling pcie_aspm=off or CONFIG_PCIEASPM_PERFORMANCE=y to"
+ewarn "    mitigate frequent/random disconnects."
 ewarn
 	fi
 }
