@@ -67,6 +67,10 @@ inherit secure-version
 PERL_USEDEP="perl_features_debug=,perl_features_ithreads=,perl_features_quadmath="
 
 # oiledmachine-overlay:  modified
+# oiledmachine-overlay:  We always use the slot rebuild operator, but on the
+# distro overlay it is only used for RDEPEND and when GENTOO_DEPEND_ON_PERL=yes.
+# The distro's solution doesn't work and requires a full system empty tree (-e)
+# rebuild.
 GENTOO_PERL_DEPSTRING="
 	dev-lang/perl:=[${PERL_USEDEP}]
 	|| (
@@ -77,6 +81,7 @@ GENTOO_PERL_DEPSTRING="
 "
 GENTOO_PERL_USESTRING="perl_features_debug perl_features_ithreads perl_features_quadmath"
 
+# oiledmachine-overlay:  modified to dedupe dev-lang/perl:= and put explicit quotes.
 case ${EAPI} in
 	7)
 		[[ ${CATEGORY} == perl-core ]] && \
@@ -84,16 +89,16 @@ case ${EAPI} in
 
 		case "${GENTOO_DEPEND_ON_PERL:-yes}" in
 			yes)
-				IUSE=${GENTOO_PERL_USESTRING}
-				DEPEND=${GENTOO_PERL_DEPSTRING}
-				BDEPEND=${GENTOO_PERL_DEPSTRING}
-				RDEPEND="${GENTOO_PERL_DEPSTRING} dev-lang/perl:="
+				IUSE="${GENTOO_PERL_USESTRING}"
+				DEPEND="${GENTOO_PERL_DEPSTRING}"
+				BDEPEND="${GENTOO_PERL_DEPSTRING}"
+				RDEPEND="${GENTOO_PERL_DEPSTRING}"
 				;;
 			noslotop)
-				IUSE=${GENTOO_PERL_USESTRING}
-				DEPEND=${GENTOO_PERL_DEPSTRING}
-				BDEPEND=${GENTOO_PERL_DEPSTRING}
-				RDEPEND=${GENTOO_PERL_DEPSTRING}
+				IUSE="${GENTOO_PERL_USESTRING}"
+				DEPEND="${GENTOO_PERL_DEPSTRING}"
+				BDEPEND="${GENTOO_PERL_DEPSTRING}"
+				RDEPEND="${GENTOO_PERL_DEPSTRING}"
 				;;
 		esac
 
@@ -113,18 +118,20 @@ case ${EAPI} in
 
 		case "${GENTOO_DEPEND_ON_PERL:-yes}" in
 			yes|noslotop)
-				IUSE=${GENTOO_PERL_USESTRING}
-				DEPEND=${GENTOO_PERL_DEPSTRING}
-				BDEPEND="${GENTOO_PERL_DEPSTRING}
-					 test? ( >=virtual/perl-Test-Simple-1 )"
+				IUSE="${GENTOO_PERL_USESTRING}"
+				DEPEND="${GENTOO_PERL_DEPSTRING}"
+				BDEPEND="
+					${GENTOO_PERL_DEPSTRING}
+					 test? ( >=virtual/perl-Test-Simple-1 )
+				"
 				IUSE+=" test"
 				RESTRICT="!test? ( test )"
 				;;&
 			yes)
-				RDEPEND="${GENTOO_PERL_DEPSTRING} dev-lang/perl:="
+				RDEPEND="${GENTOO_PERL_DEPSTRING}"
 				;;
 			noslotop)
-				RDEPEND=${GENTOO_PERL_DEPSTRING}
+				RDEPEND="${GENTOO_PERL_DEPSTRING}"
 				;;
 		esac
 
