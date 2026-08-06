@@ -41,6 +41,7 @@ inherit ot-kernel-v6.18
 # OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.18.22 (20260414) with builder profile with -O2 and -march=native, KFENCE on, KCFI on, UBSAN on, -D_FORTIFY_SOURCE on
 # OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.18.26 (20260504) with builder profile with -O2 and -march=native, KFENCE on, KCFI on, UBSAN on, -D_FORTIFY_SOURCE on
 # OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.18.26 (20260511) with gaming profile with -O3 and -march=native, scx_lavd 1.1.0 on
+# OILEDMACHINE-OVERLAY-TEST:  FAIL stack size build time issue (interactive) 6.18.42 (20260806) with builder profile
 
 # OILEDMACHINE-OVERLAY-TEST:  N/A
 
