@@ -86,6 +86,7 @@ _method1() {
 
 src_install() {
 	keepdir "${INSTALL_PREFIX}/sources"
+	addwrite "/usr/share/"
 	addwrite "/usr/share/chromium/"
 	addwrite "/usr/share/chromium/${PV}"
 	addwrite "${INSTALL_PREFIX}/sources"
