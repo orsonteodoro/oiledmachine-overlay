@@ -33,6 +33,7 @@ case ${EAPI} in
 		;;
 esac
 
+# oiledmachine-overlay:  added
 inherit secure-version
 
 # @ECLASS_VARIABLE: GENTOO_DEPEND_ON_PERL
@@ -65,6 +66,7 @@ inherit secure-version
 # @CODE
 PERL_USEDEP="perl_features_debug=,perl_features_ithreads=,perl_features_quadmath="
 
+# oiledmachine-overlay:  modified
 GENTOO_PERL_DEPSTRING="
 	dev-lang/perl:=[${PERL_USEDEP}]
 	|| (
