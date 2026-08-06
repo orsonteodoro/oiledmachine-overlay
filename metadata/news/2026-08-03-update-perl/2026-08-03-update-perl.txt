@@ -43,7 +43,8 @@ denial of service, integer overflow, out-of-bounds read
 
 CVE-2026-13221 - critical severity, network based zero-click vulnerability,
 information disclosure, data tampering, denial of service, 16-bit integer
-overflow, unreliable regex that may lead to access bypass/deny
+overflow, unreliable regex filters that may lead to security access to
+allow, bypass, or deny.
 
 CVE vulnerability info can be found at
 https://perldoc.perl.org/5.44.0/perldelta#Security
