@@ -9,10 +9,54 @@ CHROMIUM_LANGS="af am ar bg bn ca cs da de el en-GB es es-419 et fa fi fil fr gu
 	hi hr hu id it ja kn ko lt lv ml mr ms nb nl pl pt-BR pt-PT ro ru sk sl sr
 	sv sw ta te th tr uk ur vi zh-CN zh-TW"
 
-MITIGATION_DATE="Jul 29, 2026" # Official annoucement (blog)
-MITIGATION_LAST_UPDATE=1785308400 # From `date +%s -d "Jul 29, 2026"` From blog date
-MITIGATION_URI="https://chromereleases.googleblog.com/2026/07/stable-channel-update-for-desktop_0887107924.html"
+MITIGATION_DATE="Aug 6, 2026" # Official annoucement (blog)
+MITIGATION_LAST_UPDATE=1785999600 # From `date +%s -d "Aug 6, 2026"` From blog date
+MITIGATION_URI="https://chromereleases.googleblog.com/2026/08/stable-channel-update-for-desktop_01193673229.html"
 VULNERABILITIES_FIXED=(
+	# 151.0.7922.108
+	"CVE-2026-19137;UAF;"
+	"CVE-2026-19149;UAF;"
+	"CVE-2026-19154;UAF;"
+	"CVE-2026-19157;OOBW;"
+	"CVE-2026-19170;UAF;"
+	"CVE-2026-19172;UAF;"
+	"CVE-2026-19169;IV;"
+	"CVE-2026-19168;II;"
+	"CVE-2026-19138;HO, DoS;"
+	"CVE-2026-19139;RC;"
+	"CVE-2026-19140;UAF;"
+	"CVE-2026-19141;UAF;"
+	"CVE-2026-19142;UAF;"
+	"CVE-2026-19143;IV;"
+	"CVE-2026-19144;UAF;"
+	"CVE-2026-19145;UAF;"
+	"CVE-2026-19146;WBUU;"
+	"CVE-2026-19147;UAF;"
+	"CVE-2026-19148;OOBW;"
+	"CVE-2026-19150;II;"
+	"CVE-2026-19151;UAF;"
+	"CVE-2026-19152;II;"
+	"CVE-2026-19153;IV;"
+	"CVE-2026-19155;UAF;"
+	"CVE-2026-19156;HO;"
+	"CVE-2026-19158;UAF;"
+	"CVE-2026-19159;UAF;"
+	"CVE-2026-19160;WBUU;"
+	"CVE-2026-19161;WBUU;"
+	"CVE-2026-19162;OOBW;"
+	"CVE-2026-19163;UAF;"
+	"CVE-2026-19164;IV;"
+	"CVE-2026-19165;UAF;"
+	"CVE-2026-19166;UAF;"
+	"CVE-2026-19167;IO;"
+	"CVE-2026-19171;UAF;"
+	"CVE-2026-19173;OOBW;"
+	"CVE-2026-19174;IO;"
+	"CVE-2026-19175;UAF;"
+	"CVE-2026-19176;UAF;"
+	"CVE-2026-19177;IV;"
+
+	# 151.0.7922.71
 	"CVE-2026-17650;UAF;"
 	"CVE-2026-17651;IV;"
 	"CVE-2026-17652;UAF;"
