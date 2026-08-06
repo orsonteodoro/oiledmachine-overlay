@@ -180,7 +180,7 @@ ewarn " 9. Consider replacing the WiFi antenna/dongle/card if older than 5"
 ewarn "    or 10 years old."
 ewarn "10. Disable USB autosuspend by setting CONFIG_USB_AUTOSUSPEND_DELAY=-1"
 ewarn "    in the kernel config and set Low Power State (deep mode)"
-ewarn "    disable_lps_deep=N module autoload option for rtw88_core for"
+ewarn "    disable_lps_deep=Y module autoload option for rtw88_core for"
 ewarn "    problematic USB dongles."
 ewarn
 	fi
