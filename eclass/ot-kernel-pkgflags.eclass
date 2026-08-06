@@ -24,7 +24,7 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
-inherit ot-kernel-kutils toolchain-funcs
+inherit ot-kernel-kutils secure-version toolchain-funcs
 
 # To find missing package use:
 # for x in $(grep -E -r --exclude-dir=".git" --exclude-dir="metadata" --exclude="Manifest.gz" -e "(CHECK_CONFIG|CONFIG_CHECK)(\+|=)" -e "linux_chkconfig_" "/usr/portage"  | sort | cut -f 1 -d ":" | cut -f 4-5 -d "/") ; do grep -q -e "${x}" ot-kernel-pkgflags.eclass || echo "Missing ${x}" ; done
@@ -3693,7 +3693,7 @@ ot-kernel-pkgflags_discord() { # DONE
 	if ot-kernel_has_version_slow "${pkg}" ; then
 # Download link for stable at https://discord.com/download near the top of the page.
 		local pv=$(best_version "${pkg}" | sed -e "s|${pkg}-||g")
-		local expected_pv="0.0.101" # 20250713
+		local expected_pv="${DISCORD_PV}"
 		if ver_test "${actual_pv}" "-ne" "${expected_pv}" ; then
 ewarn
 ewarn "Detected older ${pkg} ebuild.  Bump the ebuild manually in local repo or"
@@ -3712,7 +3712,7 @@ ewarn
 # Download link for canary at https://support.discord.com/hc/en-us/articles/360035675191-Discord-Testing-Clients \
 # in section "Where can I download these clients?" > "Linux:"
 		local pv=$(best_version "${pkg}" | sed -e "s|${pkg}-||g")
-		local expected_pv="0.0.717" # 20250713
+		local expected_pv="${DISCORD_CANARY_PV}"
 		if ver_test "${actual_pv}" "-ne" "${expected_pv}" ; then
 ewarn
 ewarn "Detected older ${pkg} ebuild.  Bump the ebuild or use distro ebuild"
@@ -3732,7 +3732,7 @@ ewarn
 # The ebuild should be deleted.
 # Download link for PTB at https://ptb.discord.com/ at bottom of the page.
 		local actual_pv=$(best_version "${pkg}" | sed -e "s|${pkg}-||g")
-		local expected_pv="0.0.152" # 20250713
+		local expected_pv="${DISCORD_PTB_PV}"
 		if ver_test "${actual_pv}" "-ne" "${expected_pv}" ; then
 ewarn
 ewarn "Detected older ${pkg} ebuild.  Bump the ebuild or use distro ebuild"
