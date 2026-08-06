@@ -336,6 +336,7 @@ declare -A TCCA_MAP=(
 	["p2p"]="${TCCA_P2P}"
 	["podcast"]="${TCCA_PODCAST}"
 	["podcast-upload"]="${TCCA_PODCAST_UPLOAD}"
+	["resil"]="${TCCA_RESIL}"
 	["social-game"]="${TCCA_SOCIAL_GAME}"
 	["streaming"]="${TCCA_STREAMING}"
 	["torrent"]="${TCCA_TORRENT}"
