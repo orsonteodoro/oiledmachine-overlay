@@ -11220,7 +11220,8 @@ ot-kernel_has_buggy_pci_powersave() {
 	# These are alleged buggy.  Some models or generations may be buggy.
 	#
 	# We increase the coverage for under-reported broken cases to prioritize
-	# operational stability over optimistic working implementation.
+	# operational stability over an optimistic working implementation of
+	# powersave.
 	#
 	if grep -q -E -e "^CONFIG_ATH10K=(y|m)" "${path_config}" ; then
 		return 0
@@ -11276,7 +11277,8 @@ ot-kernel_has_buggy_usb_autosuspend() {
 	# These are alleged buggy.  Some models or generations may be buggy.
 	#
 	# We increase the coverage for under-reported broken cases to prioritize
-	# operational stability over optimistic working implementation.
+	# operational stability over an optimistic working implementation of USB
+	# autosuspend.
 	#
 	if grep -q -E -e "^CONFIG_BT_HCIBTUSB=(y|m)" "${path_config}" ; then
 		return 0
