@@ -18358,7 +18358,7 @@ einfo "Adding modprobe settings for rtw89_pci to mitigate unstable disconnects"
 		if [[ ! -d "${EROOT}/etc/modprobe.d" ]] ; then
 			mkdir -p "${EROOT}/etc/modprobe.d"
 		fi
-		echo "options rtw88_pci disable_aspm_l1=Y disable_aspm_l1ss=Y" > "${EROOT}/etc/modprobe.d/ot-kernel-rtw89_pci.conf"
+		echo "options rtw89_pci disable_aspm_l1=Y disable_aspm_l1ss=Y" > "${EROOT}/etc/modprobe.d/ot-kernel-rtw89_pci.conf"
 	fi
 }
 
