@@ -145,7 +145,8 @@ _OT_KERNEL_IWLMVM=0 # Variable not const
 _OT_KERNEL_IWLWIFI=0 # Variable not const
 _OT_KERNEL_RTW88_CORE=0 # Variable not const
 _OT_KERNEL_RTW88_PCI=0 # Variable not const
-_OT_KERNEL_RTW88_USB=0 # Variable not const
+_OT_KERNEL_RTW89_CORE=0 # Variable not const
+_OT_KERNEL_RTW89_PCI=0 # Variable not const
 _OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL=0 # Variable not const
 BBRV2_BASE_URI="https://github.com/google/bbr/commit/"
 BBRV3_BASE_URI="https://github.com/google/bbr/commit/"
@@ -11264,6 +11265,7 @@ ot-kernel_has_buggy_pci_powersave() {
 		|| grep -q -E -e "^CONFIG_RTW89_PCI=(y|m)" "${path_config}" \
 	) \
 	; then
+		export _OT_KERNEL_RTW89_PCI=1
 		return 0
 	fi
 	return 1
@@ -11294,7 +11296,6 @@ ot-kernel_has_buggy_usb_autosuspend() {
 		|| grep -q -E -e "^CONFIG_RTW88_USB=(y|m)" "${path_config}" \
 	) \
 	; then
-		export _OT_KERNEL_RTW88_USB=1
 		return 0
 	elif grep -q -E -e "^CONFIG_RTW89=(y|m)" "${path_config}" \
 		&& \
@@ -11428,8 +11429,8 @@ ot-kernel_set_power_level() {
 		fi
 	fi
 
-	# Mitigate unstable disconnects
 	if ot-kernel_has_buggy_pci_powersave ; then
+ewarn "Detected possibly buggy wireless driver.  Forcing performance mode to avoid PCIE powersave for mitigation against unstable disconnects."
 		power_level_pci=2
 	fi
 
@@ -11645,12 +11646,12 @@ ot-kernel_set_power_level() {
 	else
 		local usb_autosuspend_seconds
 		if ot-kernel_has_buggy_usb_autosuspend ; then
-	# Mitigate disconnects
+ewarn "Detected possibly buggy wireless driver.  Force disabling USB power autosuspend for mitigation against unstable disconnects."
 			usb_autosuspend_seconds=-1
 		else
 			usb_autosuspend_seconds=${OT_KERNEL_AUTOSUSPEND_SECONDS_USB:-2}
 		fi
-ewarn "If using an out-of-tree USB driver, setting OT_KERNEL_AUTOSUSPEND_SECONDS_USB=-1 may help mitigate unstable disconnects."
+ewarn "If using an out-of-tree USB driver package, setting OT_KERNEL_AUTOSUSPEND_SECONDS_USB=-1 may help mitigate unstable disconnects."
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "${usb_autosuspend_seconds}"
 	fi
 
@@ -14846,6 +14847,9 @@ ot-kernel_verify_mitigation_late() {
 ot-kernel_set_globals_post() {
 	if grep -q -E -e "^CONFIG_RTW88_CORE=(y|m)" "${path_config}" ; then
 		export _OT_KERNEL_RTW88_CORE=1
+	fi
+	if grep -q -E -e "^CONFIG_RTW89_CORE=(y|m)" "${path_config}" ; then
+		export _OT_KERNEL_RTW89_CORE=1
 	fi
 }
 
@@ -18260,6 +18264,20 @@ einfo "Adding modprobe settings for rtw88_pci to mitigate unstable disconnects"
 		fi
 		echo "options rtw88_pci disable_aspm=Y" > "${EROOT}/etc/modprobe.d/ot-kernel-rtw88_pci.conf"
 	fi
+	if (( ${_OT_KERNEL_RTW89_CORE} == 1 )) ; then
+einfo "Adding modprobe settings for rtw89_core to mitigate unstable disconnects"
+		if [[ ! -d "${EROOT}/etc/modprobe.d" ]] ; then
+			mkdir -p "${EROOT}/etc/modprobe.d"
+		fi
+		echo "options rtw89_core disable_ps_mode=Y" > "${EROOT}/etc/modprobe.d/ot-kernel-rtw89_core.conf"
+	fi
+	if (( ${_OT_KERNEL_RTW89_PCI} == 1 )) ; then
+einfo "Adding modprobe settings for rtw89_pci to mitigate unstable disconnects"
+		if [[ ! -d "${EROOT}/etc/modprobe.d" ]] ; then
+			mkdir -p "${EROOT}/etc/modprobe.d"
+		fi
+		echo "options rtw88_pci disable_aspm_l1=Y disable_aspm_l1ss=Y" > "${EROOT}/etc/modprobe.d/ot-kernel-rtw89_pci.conf"
+	fi
 }
 
 # @FUNCTION: ot-kernel_pkg_postinst
@@ -18370,9 +18388,12 @@ einfo "Removing ot-kernel-iosched"
 einfo "Removing tcca configs"
 		rm "${EROOT}/etc/tcca-"*"-"*"-"*".conf" 2>/dev/null
 einfo "Removing modprobe configs"
+		rm "${EROOT}/etc/modprobe.d/ot-kernel-iwlmvm.conf" 2>/dev/null
 		rm "${EROOT}/etc/modprobe.d/ot-kernel-iwlwifi.conf" 2>/dev/null
 		rm "${EROOT}/etc/modprobe.d/ot-kernel-rtw88_core.conf" 2>/dev/null
 		rm "${EROOT}/etc/modprobe.d/ot-kernel-rtw88_pci.conf" 2>/dev/null
+		rm "${EROOT}/etc/modprobe.d/ot-kernel-rtw89_core.conf" 2>/dev/null
+		rm "${EROOT}/etc/modprobe.d/ot-kernel-rtw89_pci.conf" 2>/dev/null
 	fi
 }
 
