@@ -3373,63 +3373,108 @@ is_generating_credits() {
 apply_distro_patchset_for_system_toolchain() {
 	# We don't need toolchain patches if we're using the official toolchain.
 
+
 	if use system-clang || use system-rust ; then
 	# Copium patches go here.
+# Generated from `find /var/tmp/portage/www-client/chromium-151.0.7922.108/work/chromium-patches-151-1 | sort -V`
+		DISTRO_PATCHSET_LLVM=(
+"${WORKDIR}/chromium-patches-${PATCH_VER}/llvm/lt-23/cr147-disable-fno-lifetime-dse.patch"
+"${WORKDIR}/chromium-patches-${PATCH_VER}/llvm/lt-23/cr149-ubsan-feature.patch"
+"${WORKDIR}/chromium-patches-${PATCH_VER}/llvm/lt-23/cr151-fdiagnostics-show-inlining-chain.patch"
+		)
+		DISTRO_PATCHSET_PPC64LE=(
+"${WORKDIR}/chromium-patches-${PATCH_VER}/ppc64le/cr145-ppc64-libpng.patch"
+"${WORKDIR}/chromium-patches-${PATCH_VER}/ppc64le/libpng-pdfium-compile-98.patch"
+"${WORKDIR}/chromium-patches-${PATCH_VER}/ppc64le/rust-clanglib.patch"
+		)
+		DISTRO_PATCHSET_RUST=(
+"${WORKDIR}/chromium-patches-${PATCH_VER}/rust/cr146-fix-botched-bytemuck-roll.patch"
+		)
+		DISTRO_PATCHSET_TOOLCHAIN=(
+#"${WORKDIR}/chromium-patches-${PATCH_VER}/toolchain/cr117-material-color-include.patch"		# Upstream deleted function
+"${WORKDIR}/chromium-patches-${PATCH_VER}/toolchain/cr146-empty-parsed_rustc_args.patch"
+"${WORKDIR}/chromium-patches-${PATCH_VER}/toolchain/cr149-bindgen-libclang-paths.patch"
+"${WORKDIR}/chromium-patches-${PATCH_VER}/toolchain/cr149-fix-rust.patch"
+"${WORKDIR}/chromium-patches-${PATCH_VER}/toolchain/cr149-fix-rust-2-oxidize-harder.patch"
+#"${WORKDIR}/chromium-patches-${PATCH_VER}/toolchain/cr150-compiler.patch"				# oiledmachine-overlay changes prefered
+#"${WORKDIR}/chromium-patches-${PATCH_VER}/toolchain/cr151-actually-fix-ar.patch"			# Upstreamed already
+"${WORKDIR}/chromium-patches-${PATCH_VER}/toolchain/cr151-dawn-system-go.patch"
+"${WORKDIR}/chromium-patches-${PATCH_VER}/toolchain/cr151-mold-unbundle.patch"
+		)
+		COPIUM_PATCHSET=(
+# Generated from `find /var/tmp/portage/www-client/chromium-151.0.7922.108/work/copium | sort -V`
+# There is some overlap so only the ones needed are applied.
+#"${WORKDIR}/copium/cr133-ffmpeg-no-noh264parse.patch"
+#"${WORKDIR}/copium/cr138-node-version-check.patch"
+#"${WORKDIR}/copium/cr140-musl-prctl.patch"
+#"${WORKDIR}/copium/cr140-rust-pre1.89.patch"
+#"${WORKDIR}/copium/cr142-rust-pre1.90.patch"
+"${WORKDIR}/copium/cr143-libsync-__BEGIN_DECLS.patch"
+#"${WORKDIR}/copium/cr144-esbuild-non-0.25.1.patch"
+#"${WORKDIR}/copium/cr144-no-esbuild.patch"
+#"${WORKDIR}/copium/cr145-iwyu-dev_t.patch"
+#"${WORKDIR}/copium/cr145-musl-unfortify-SkDescriptor.patch"
+#"${WORKDIR}/copium/cr145-rollup-as-rollup.patch"
+#"${WORKDIR}/copium/cr146-no-esbuild.patch"
+#"${WORKDIR}/copium/cr146-rust-pre1.95-bytemuck.patch"
+#"${WORKDIR}/copium/cr146-sanitize-ignore-for-ubsan-feature.patch"
+#"${WORKDIR}/copium/cr146-swiftshader-unfortify-memset-memcpy.patch"
+#"${WORKDIR}/copium/cr146-unfortify-blink-display_item_list.patch"
+#"${WORKDIR}/copium/cr147-is-musl-libcxx.patch"
+#"${WORKDIR}/copium/cr147-simdutf-8.0-base-char.patch"
+#"${WORKDIR}/copium/cr148-logger-rust-pre1.92.patch"
+#"${WORKDIR}/copium/cr148-rust-1.95-bytemuck.patch"
+#"${WORKDIR}/copium/cr148-v8-no-san-trap.patch"
+#"${WORKDIR}/copium/cr149-musl-alloc-shim-dispatch.patch"
+#"${WORKDIR}/copium/cr149-rust-toolchain-var.patch"
+"${WORKDIR}/copium/cr149-unbundle-minizip-undo-unicode.patch"
+		)
 		PATCHES+=(
-			"${WORKDIR}/copium/cr143-libsync-__BEGIN_DECLS.patch"
-			"${WORKDIR}/copium/cr149-unbundle-minizip-undo-unicode.patch"
+			"${COPIUM_PATCHSET[@]}"
 		)
 
-	# Automate conditional application of chromium-patches
-	# The directory structure is expected to be something like:
-	# chromium-patches-145/
-	# ├── toolchain/
-	# │   ├── cr123-foo.patch
-	# │   └── cr135-bar.patch
-	# ├── llvm/
-	# │   ├── cr144-baz.patch
-	# │   └── lt-23/
-	# │       └── cr145-bleeding-edge-llvm-feature.patch
-	# Where `lt-23` means "apply this patch if the LLVM version is less than 23".
-	# Only categories in `slot_map` will be checked for version constraints.
+#work/chromium-patches-151-1/toolchain//cr117-material-color-include.patch
+
+	# oiledmachine-overlay:  We unroll the distro patching for more control and more transparency.
+
+	# `lt-23` in llvm/lt-23 means "apply this patch if the LLVM version is less than 23".
+	# Only llvm will be checked for version constraints.
 		shopt -s nullglob
 		[[ -z "${LLVM_SLOT}" ]] && die "QA:  LLVM_SLOT is not initalized."
 		[[ -z "${RUST_SLOT}" ]] && die "QA:  RUST_SLOT is not initalized."
-		local -A slot_map=(
-			["llvm"]="${LLVM_SLOT}"
-			["rust"]="${RUST_SLOT}"
-		)
-
-		local category
-		for category in "${WORKDIR}/chromium-patches-${PATCH_VER}/"*"/" ; do
-			local category_name="${category%/}"
-			category_name="${category_name##*/}"
 
 	# Skip arch-specific categories
-			if [[ "${category_name}" == "ppc64le" ]]; then
-				use ppc64 || continue
+		if [[ "${category_name}" == "ppc64le" ]]; then
+			if use ppc64 && [[ "${CHOST}" =~ "powerpc64le" ]] ; then
+				PATCHES+=(
+					"${DISTRO_PATCHSET_PPC64LE[@]}"
+				)
 			fi
+		fi
 
-	# We applied common patches above, no need to apply them again here
-			[[ "${category_name}" == "common" ]] && continue
+	# Conditional patches
+		local rust_pv=$("${RUSTC}" --version | cut -f 2 -d " " | cut -f 1 -d "-")
+einfo "rust_pv:  ${rust_pv}"
+		if ver_test "${rust_pv}" "-ge" "1.95.0" ; then
+einfo "Removing SupportedLaneCount"
+		else
+einfo "Adding SupportedLaneCount"
+			PATCHES+=(
+				"${DISTRO_PATCHSET_RUST[@]}"
+			)
+		fi
 
-	# Unconditional patches for this category
-			local category_patches=( "${category}"*".patch" )
-			(( ${#category_patches[@]} > 0 )) && PATCHES+=( "${category}" )
+	# Unconditional patches for folder categories
+		PATCHES+=(
+			"${DISTRO_PATCHSET_TOOLCHAIN[@]}"
+		)
 
-	# Version-constrained subdirectories (e.g., llvm/lt-23/)
-			local constraint_dir
-			for constraint_dir in "${category}"*"/" ; do
-				local dir_name="${constraint_dir%/}"
-				dir_name="${dir_name##*/}"
-				if [[ "${dir_name}" =~ ^"lt-"(.*)$ && -v slot_map[${category_name}] ]] ; then
-					ver_test "${slot_map[${category_name}]}" -lt "${BASH_REMATCH[1]}" && \
-					PATCHES+=(
-						"${constraint_dir}"
-					)
-				fi
-			done
-		done
+	# Handle version-constrained folder in folder (e.g., llvm/lt-23/) scenario
+		if ver_test "${LLVM_SLOT}" "-lt" "23" ; then
+			PATCHES+=(
+				"${DISTRO_PATCHSET_TOOLCHAIN[@]}"
+			)
+		fi
 
 		shopt -u nullglob
 
@@ -3484,33 +3529,23 @@ apply_distro_patchset() {
 einfo "Applying the distro patchset ..."
 
 	if use system-clang ; then
-		PATCHES+=(
-			$(use system-zlib && echo "${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr109-system-zlib.patch")
-			$(use system-icu && echo "${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr131-unbundle-icu-target.patch")
-			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr138-nodejs-version-check.patch"
-			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr144-glibc-2.43.patch"
-			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr145-oauth2-client-switches.patch"
-			$((in_iuse ungoogled-chromium && use ungoogled-chromium) || echo "${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr145-revert-to-rollup-wasm.patch")
-			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr148-v8-fix-cfi-sanitizer-set-death-callback.patch"
-			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr149-channel-aware-build.patch"
-			"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cross-compile.patch"
+# Generated from `find /var/tmp/portage/www-client/chromium-151.0.7922.108/work/chromium-patches-151-1 | sort -V`
+		DISTRO_PATCHSET_COMMON=(
+$(use system-zlib && echo "${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr109-system-zlib.patch")
+$(use system-icu && echo "${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr131-unbundle-icu-target.patch")
+"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr138-nodejs-version-check.patch"
+"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr144-glibc-2.43.patch"
+"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr145-oauth2-client-switches.patch"
+$((in_iuse ungoogled-chromium && use ungoogled-chromium) || echo "${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr145-revert-to-rollup-wasm.patch")
+"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr148-v8-fix-cfi-sanitizer-set-death-callback.patch"
+"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr149-channel-aware-build.patch"
+#"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr150-module-sysroot.patch"				# Upstreamed
+"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cross-compile.patch"
 		)
 
-	# Dedupe, oiledmachine-overlay changes preferred
-	# Update every major version
-		rm -f "${WORKDIR}/chromium-patches-${PATCH_VER}/toolchain/cr150-compiler.patch" || die "Fix versioning or remove patch"
-
-	# Applied upstreamed
-		rm -f "${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr150-module-sysroot.patch" || die
-	fi
-
-	local rust_pv=$("${RUSTC}" --version | cut -f 2 -d " " | cut -f 1 -d "-")
-einfo "rust_pv:  ${rust_pv}"
-	if ver_test "${rust_pv}" "-ge" "1.95.0" ; then
-einfo "Removing SupportedLaneCount"
-		rm -f "${WORKDIR}/chromium-patches-${PATCH_VER}/rust/cr146-fix-botched-bytemuck-roll.patch" || die "Fix versioning or remove patch"
-	else
-einfo "Adding SupportedLaneCount"
+		PATCHES+=(
+			${DISTRO_PATCHSET_COMMON[@]}
+		)
 	fi
 
 	# https://issues.chromium.org/issues/442698344
