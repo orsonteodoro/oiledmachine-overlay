@@ -1460,6 +1460,10 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
     If using out-of-tree USB driver, setting this to -1 may help mitigate random
     disconnects.
 
+    The USB autosuspend value is forced to -1 (disabled) for alleged buggy
+    network/bluetooth drivers to mitigate unstable disconnects or to mitigate
+    against hallucinating being DoSed or hacked.
+
     Acceptable values:
 
       -1 = disable
@@ -4009,6 +4013,10 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
     need to be manually added to the kernel config by using
     OT_KERNEL_MENUCONFIG_UI=menuconfig or with the OT_KERNEL_KCONFIG array
     (e.g. OT_KERNEL_KCONFIG[CONFIG_ASUS_LAPTOP]=y).
+
+    The OT_KERNEL_POWER_LEVEL_PCI is forced performance for alleged buggy
+    network drivers to mitigate unstable disconnects or to mitigate against
+    hallucinating being DoSed or hacked.
 
     Valid settings depending on the perspectives:
 
