@@ -141,6 +141,7 @@ _OT_KERNEL_NEEDS_DEBUGFS=0 # Variable not const
 unset _OT_KERNEL_O3_PROVIDER
 declare -A _OT_KERNEL_O3_PROVIDER=()
 _OT_KERNEL_PRINK_DISABLED=0 # Variable not const
+_OT_KERNEL_ATH9K=0 # Variable not const
 _OT_KERNEL_IWLMVM=0 # Variable not const
 _OT_KERNEL_IWLWIFI=0 # Variable not const
 _OT_KERNEL_RTW88_CORE=0 # Variable not const
@@ -11224,7 +11225,10 @@ ot-kernel_has_buggy_pci_powersave() {
 	# operational stability over an optimistic working implementation of
 	# powersave.
 	#
-	if grep -q -E -e "^CONFIG_ATH10K=(y|m)" "${path_config}" ; then
+	if grep -q -E -e "^CONFIG_ATH9K=(y|m)" "${path_config}" ; then
+		export _OT_KERNEL_ATH9K=1
+		return 0
+	elif grep -q -E -e "^CONFIG_ATH10K=(y|m)" "${path_config}" ; then
 		return 0
 	elif grep -q -E -e "^CONFIG_ATH11K=(y|m)" "${path_config}" ; then
 		return 0
@@ -18235,6 +18239,13 @@ ewarn
 # Disable buggy power management for more a stable and reliable Internet experience.
 # Mitigate DoS, unstable disconnects, or hallucinations of being hacked.
 ot-kernel_postinst_wireless_disable_power_management() {
+	if (( ${_OT_KERNEL_ATH9K} == 1 )) ; then
+einfo "Adding modprobe settings for athk9 to mitigate unstable disconnects"
+		if [[ ! -d "${EROOT}/etc/modprobe.d" ]] ; then
+			mkdir -p "${EROOT}/etc/modprobe.d"
+		fi
+		echo "options ath9k ps_enable=0" > "${EROOT}/etc/modprobe.d/ot-kernel-ath9k.conf"
+	fi
 	if (( ${_OT_KERNEL_IWLMVM} == 1 )) ; then
 einfo "Adding modprobe settings for iwlmvm to mitigate unstable disconnects"
 		if [[ ! -d "${EROOT}/etc/modprobe.d" ]] ; then
@@ -18388,6 +18399,7 @@ einfo "Removing ot-kernel-iosched"
 einfo "Removing tcca configs"
 		rm "${EROOT}/etc/tcca-"*"-"*"-"*".conf" 2>/dev/null
 einfo "Removing modprobe configs"
+		rm "${EROOT}/etc/modprobe.d/ot-kernel-ath9k.conf" 2>/dev/null
 		rm "${EROOT}/etc/modprobe.d/ot-kernel-iwlmvm.conf" 2>/dev/null
 		rm "${EROOT}/etc/modprobe.d/ot-kernel-iwlwifi.conf" 2>/dev/null
 		rm "${EROOT}/etc/modprobe.d/ot-kernel-rtw88_core.conf" 2>/dev/null
