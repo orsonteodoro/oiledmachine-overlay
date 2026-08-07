@@ -141,7 +141,9 @@ _OT_KERNEL_NEEDS_DEBUGFS=0 # Variable not const
 unset _OT_KERNEL_O3_PROVIDER
 declare -A _OT_KERNEL_O3_PROVIDER=()
 _OT_KERNEL_PRINK_DISABLED=0 # Variable not const
-_OT_KERNEL_RTW88_CORE=1 # Variable not const
+_OT_KERNEL_IWLMVM=0 # Variable not const
+_OT_KERNEL_IWLWIFI=0 # Variable not const
+_OT_KERNEL_RTW88_CORE=0 # Variable not const
 _OT_KERNEL_RTW88_PCI=0 # Variable not const
 _OT_KERNEL_RTW88_USB=0 # Variable not const
 _OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL=0 # Variable not const
@@ -11210,28 +11212,103 @@ ot-kernel_has_open_firmware_thermal_support() {
 	fi
 }
 
+# @FUNCTION: ot-kernel_has_buggy_pci_powersave
+# @DESCRIPTION:
+# Helper to check if it has buggy PCIE powersave.
+ot-kernel_has_buggy_pci_powersave() {
+	#
+	# These are alleged buggy.  Some models or generations may be buggy.
+	#
+	# We increase the coverage for under-reported broken cases to prioritize
+	# operational stability over optimistic working implementation.
+	#
+	if grep -q -E -e "^CONFIG_ATH10K=(y|m)" "${path_config}" ; then
+		return 0
+	elif grep -q -E -e "^CONFIG_ATH11K=(y|m)" "${path_config}" ; then
+		return 0
+	elif grep -q -E -e "^CONFIG_ATH12K=(y|m)" "${path_config}" ; then
+		return 0
+	elif grep -q -E -e "^CONFIG_E1000E=(y|m)" "${path_config}" ; then
+		return 0
+	elif grep -q -E -e "^CONFIG_IGC=(y|m)" "${path_config}" ; then
+		return 0
+	elif grep -q -E -e "^CONFIG_IWLMVM=(y|m)" "${path_config}" ; then
+		export _OT_KERNEL_IWLMVM=1
+		export _OT_KERNEL_IWLWIFI=1
+		return 0
+	elif grep -q -E -e "^CONFIG_IWLWIFI=(y|m)" "${path_config}" ; then
+		export _OT_KERNEL_IWLWIFI=1
+		return 0
+	elif grep -q -E -e "^CONFIG_RTW88_CORE=(y|m)" "${path_config}" \
+		&& \
+	( \
+		   grep -q -E -e "^CONFIG_RTW88_8822BE=(y|m)" "${path_config}" \
+		|| grep -q -E -e "^CONFIG_RTW88_8822CE=(y|m)" "${path_config}" \
+		|| grep -q -E -e "^CONFIG_RTW88_8723DE=(y|m)" "${path_config}" \
+		|| grep -q -E -e "^CONFIG_RTW88_8821CE=(y|m)" "${path_config}" \
+		|| grep -q -E -e "^CONFIG_RTW88_PCI=(y|m)" "${path_config}" \
+	) \
+	; then
+		export _OT_KERNEL_RTW88_PCI=1
+		return 0
+	elif grep -q -E -e "^CONFIG_RTW89=(y|m)" "${path_config}" \
+		&& \
+	( \
+		   grep -q -E -e "^CONFIG_RTW89_8851BE=(y|m)" "${path_config}" \
+		|| grep -q -E -e "^CONFIG_RTW89_8852AE=(y|m)" "${path_config}" \
+		|| grep -q -E -e "^CONFIG_RTW89_8852BE=(y|m)" "${path_config}" \
+		|| grep -q -E -e "^CONFIG_RTW89_8852BTE=(y|m)" "${path_config}" \
+		|| grep -q -E -e "^CONFIG_RTW89_8852CE=(y|m)" "${path_config}" \
+		|| grep -q -E -e "^CONFIG_RTW89_8922AE=(y|m)" "${path_config}" \
+		|| grep -q -E -e "^CONFIG_RTW89_PCI=(y|m)" "${path_config}" \
+	) \
+	; then
+		return 0
+	fi
+	return 1
+}
+
 # @FUNCTION: ot-kernel_has_buggy_usb_autosuspend
 # @DESCRIPTION:
 # Helper to check if it has buggy USB autosuspend.
 ot-kernel_has_buggy_usb_autosuspend() {
-	if grep -q -E -e "^CONFIG_RTW88_CORE=(y|m)" "${path_config}" \
+	#
+	# These are alleged buggy.  Some models or generations may be buggy.
+	#
+	# We increase the coverage for under-reported broken cases to prioritize
+	# operational stability over optimistic working implementation.
+	#
+	if grep -q -E -e "^CONFIG_BT_HCIBTUSB=(y|m)" "${path_config}" ; then
+		return 0
+	elif grep -q -E -e "^CONFIG_RT2800USB=(y|m)" "${path_config}" ; then
+		return 0
+	elif grep -q -E -e "^CONFIG_RTW88_CORE=(y|m)" "${path_config}" \
 		&& \
 	( \
 		   grep -q -E -e "^CONFIG_RTW88_8822BU=(y|m)" "${path_config}" \
 		|| grep -q -E -e "^CONFIG_RTW88_8822CU=(y|m)" "${path_config}" \
 		|| grep -q -E -e "^CONFIG_RTW88_8723DU=(y|m)" "${path_config}" \
 		|| grep -q -E -e "^CONFIG_RTW88_8821CU=(y|m)" "${path_config}" \
+		|| grep -q -E -e "^CONFIG_RTW88_USB=(y|m)" "${path_config}" \
 	) \
 	; then
 		export _OT_KERNEL_RTW88_USB=1
 		return 0
+	elif grep -q -E -e "^CONFIG_RTW89=(y|m)" "${path_config}" \
+		&& \
+	( \
+		   grep -q -E -e "^CONFIG_RTW89_8851BU=(y|m)" "${path_config}" \
+		|| grep -q -E -e "^CONFIG_RTW89_8852AU=(y|m)" "${path_config}" \
+		|| grep -q -E -e "^CONFIG_RTW89_8852BU=(y|m)" "${path_config}" \
+		|| grep -q -E -e "^CONFIG_RTW89_8852CU=(y|m)" "${path_config}" \
+		|| grep -q -E -e "^CONFIG_RTW89_8922AU=(y|m)" "${path_config}" \
+		|| grep -q -E -e "^CONFIG_RTW89_USB=(y|m)" "${path_config}" \
+	) \
+	; then
+		return 0
 	elif grep -q -E -e "^CONFIG_RTL8192CU=(y|m)" "${path_config}" ; then
 		return 0
 	elif grep -q -E -e "^CONFIG_RTL8XXXU=(y|m)" "${path_config}" ; then
-		return 0
-	elif grep -q -E -e "^CONFIG_RT2800USB=(y|m)" "${path_config}" ; then
-		return 0
-	elif grep -q -E -e "^CONFIG_BT_HCIBTUSB=(y|m)" "${path_config}" ; then
 		return 0
 	elif grep -q -E -e "^CONFIG_USB_NET_CDCETHER=(y|m)" "${path_config}" ; then
 		return 0
@@ -11349,18 +11426,9 @@ ot-kernel_set_power_level() {
 		fi
 	fi
 
-	# Mitigate frequent disconnects
-	if grep -q -E -e "^CONFIG_RTW88_CORE=(y|m)" "${path_config}" \
-		&& \
-	( \
-		   grep -q -E -e "^CONFIG_RTW88_8822BE=(y|m)" "${path_config}" \
-		|| grep -q -E -e "^CONFIG_RTW88_8822CE=(y|m)" "${path_config}" \
-		|| grep -q -E -e "^CONFIG_RTW88_8723DE=(y|m)" "${path_config}" \
-		|| grep -q -E -e "^CONFIG_RTW88_8821CE=(y|m)" "${path_config}" \
-	) \
-	; then
+	# Mitigate unstable disconnects
+	if ot-kernel_has_buggy_pci_powersave ; then
 		power_level_pci=2
-		export _OT_KERNEL_RTW88_PCI=1
 	fi
 
 	if (( ${power_level_pci} == 2 )) ; then
@@ -11580,7 +11648,7 @@ ot-kernel_set_power_level() {
 		else
 			usb_autosuspend_seconds=${OT_KERNEL_AUTOSUSPEND_SECONDS_USB:-2}
 		fi
-ewarn "If using an out-of-tree USB driver, setting OT_KERNEL_AUTOSUSPEND_SECONDS_USB=-1 may help mitigate random disconnects."
+ewarn "If using an out-of-tree USB driver, setting OT_KERNEL_AUTOSUSPEND_SECONDS_USB=-1 may help mitigate unstable disconnects."
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "${usb_autosuspend_seconds}"
 	fi
 
@@ -18156,24 +18224,39 @@ ewarn "kernel package."
 ewarn
 }
 
-# @FUNCTION: ot-kernel_postinst_rtw88_disable_power_management
+# @FUNCTION: ot-kernel_postinst_wireless_disable_power_management
 # @DESCRIPTION:
 # Disable buggy power management for more a stable and reliable Internet experience.
-# Mitigate DoS, frequent disconnects, or hallucinations of being hacked.
-ot-kernel_postinst_rtw88_disable_power_management() {
-	if (( ${_OT_KERNEL_RTW88_PCI} == 1 )) ; then
-einfo "Adding modprobe settings for rtw88_pci to mitigate frequent disconnects"
+# Mitigate DoS, unstable disconnects, or hallucinations of being hacked.
+ot-kernel_postinst_wireless_disable_power_management() {
+	if (( ${_OT_KERNEL_IWLMVM} == 1 )) ; then
+einfo "Adding modprobe settings for iwlmvm to mitigate unstable disconnects"
 		if [[ ! -d "${EROOT}/etc/modprobe.d" ]] ; then
 			mkdir -p "${EROOT}/etc/modprobe.d"
 		fi
-		echo "options rtw88_pci disable_aspm=Y" > "${EROOT}/etc/modprobe.d/ot-kernel-rtw88_pci.conf"
+		echo "options iwlmvm power_scheme=1" > "${EROOT}/etc/modprobe.d/ot-kernel-iwlmvm.conf"
 	fi
+	if (( ${_OT_KERNEL_IWLWIFI} == 1 )) ; then
+einfo "Adding modprobe settings for iwlwifi to mitigate unstable disconnects"
+		if [[ ! -d "${EROOT}/etc/modprobe.d" ]] ; then
+			mkdir -p "${EROOT}/etc/modprobe.d"
+		fi
+		echo "options iwlwifi power_save=0" > "${EROOT}/etc/modprobe.d/ot-kernel-iwlwifi.conf"
+	fi
+
 	if (( ${_OT_KERNEL_RTW88_CORE} == 1 )) ; then
-einfo "Adding modprobe settings for rtw88_core to mitigate frequent disconnects"
+einfo "Adding modprobe settings for rtw88_core to mitigate unstable disconnects"
 		if [[ ! -d "${EROOT}/etc/modprobe.d" ]] ; then
 			mkdir -p "${EROOT}/etc/modprobe.d"
 		fi
 		echo "options rtw88_core disable_lps_deep=Y" > "${EROOT}/etc/modprobe.d/ot-kernel-rtw88_core.conf"
+	fi
+	if (( ${_OT_KERNEL_RTW88_PCI} == 1 )) ; then
+einfo "Adding modprobe settings for rtw88_pci to mitigate unstable disconnects"
+		if [[ ! -d "${EROOT}/etc/modprobe.d" ]] ; then
+			mkdir -p "${EROOT}/etc/modprobe.d"
+		fi
+		echo "options rtw88_pci disable_aspm=Y" > "${EROOT}/etc/modprobe.d/ot-kernel-rtw88_pci.conf"
 	fi
 }
 
@@ -18232,7 +18315,7 @@ einfo "Secure wiping the private key in build directory for ${extraversion}"
 	ot-kernel_postinst_exfat
 	ot-kernel_postinst_proton
 	ot-kernel_postinst_experimental_kernel
-	ot-kernel_postinst_rtw88_disable_power_management
+	ot-kernel_postinst_wireless_disable_power_management
 }
 
 # @FUNCTION: pkg_prerm
@@ -18285,8 +18368,9 @@ einfo "Removing ot-kernel-iosched"
 einfo "Removing tcca configs"
 		rm "${EROOT}/etc/tcca-"*"-"*"-"*".conf" 2>/dev/null
 einfo "Removing modprobe configs"
-		rm "${EROOT}/etc/modprobe.d/ot-kernel-rtw88_pci.conf" 2>/dev/null
+		rm "${EROOT}/etc/modprobe.d/ot-kernel-iwlwifi.conf" 2>/dev/null
 		rm "${EROOT}/etc/modprobe.d/ot-kernel-rtw88_core.conf" 2>/dev/null
+		rm "${EROOT}/etc/modprobe.d/ot-kernel-rtw88_pci.conf" 2>/dev/null
 	fi
 }
 
