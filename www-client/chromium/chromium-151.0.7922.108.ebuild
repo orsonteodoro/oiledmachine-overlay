@@ -4,12 +4,6 @@
 
 EAPI=8
 
-# FIXME:
-#ERROR Unresolved dependencies.
-#//tools/metrics:metrics_metadata(//build/toolchain/linux/unbundle:default)
-#  needs //tools/metrics:histograms_xml(//build/toolchain/linux/unbundle:default)
-
-
 # Add `www-client/chromium -llvm_slot_23` to `/etc/portage/profile/package.use.mask` to bypass the distro's FAFO hard mask guardrail.
 
 # This ebuild and metadata.xml contains some AI generated code and synthetic data.
@@ -7450,7 +7444,7 @@ _configure_debug() {
 
 	# Disable tests
 		"angle_build_tests=$(usex test true false)"
-		"angle_has_histograms=$(usex test true false)"
+		"angle_has_histograms=true" # Force on is required
 		"build_angle_perftests=$(usex test true false)"
 		"build_dawn_tests=$(usex test true false)"
 		"chrome_test_libpng_test_only=$(usex test true false)"
