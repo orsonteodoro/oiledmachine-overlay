@@ -11576,7 +11576,7 @@ ot-kernel_set_power_level() {
 		local usb_autosuspend_seconds
 		if ot-kernel_has_buggy_usb_autosuspend ; then
 	# Mitigate disconnects
-			usb_autosuspend_seconds=${OT_KERNEL_AUTOSUSPEND_SECONDS_USB:--1}
+			usb_autosuspend_seconds=-1
 		else
 			usb_autosuspend_seconds=${OT_KERNEL_AUTOSUSPEND_SECONDS_USB:-2}
 		fi
