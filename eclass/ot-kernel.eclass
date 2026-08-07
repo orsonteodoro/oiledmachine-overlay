@@ -14883,9 +14883,18 @@ ot-kernel_verify_mitigation_late() {
 	:
 }
 
+# @FUNCTION: ot-kernel_set_globals_pre
+# @DESCRIPTION:
+# Set/unset additional post global per profile.
+# The event before make olddefconfig before resolving driver/option dependencies.
+ot-kernel_set_globals_pre() {
+	:
+}
+
 # @FUNCTION: ot-kernel_set_globals_post
 # @DESCRIPTION:
-# Set/unset additional post global per profile
+# Set/unset additional post global per profile.
+# The event after make olddefconfig after resolving driver/option dependencies.
 ot-kernel_set_globals_post() {
 	if grep -q -E -e "^CONFIG_MT76_CORE=(y|m)" "${path_config}" ; then
 		export _OT_KERNEL_MT76_CORE=1
@@ -15111,7 +15120,7 @@ einfo "Disabling all debug and shortening logging buffers"
 	ot-kernel_disable_affected_modules
 	ot-kernel_verify_mitigation_late
 
-	ot-kernel_set_globals_post
+	ot-kernel_set_globals_pre
 	ot-kernel_set_kconfig_from_envvar_array				# Final user override
 	ot-kernel_print_thp_status
 
@@ -15128,6 +15137,9 @@ einfo "Disabling all debug and shortening logging buffers"
 einfo "Updating the .config for defaults for the newly enabled options."
 einfo "Running:  make olddefconfig ${args[@]}"
 	make olddefconfig "${args[@]}" || die
+
+	ot-kernel_set_globals_post
+
 	ot-kernel_menuconfig "post"					# Uses llvm_slot
 }
 
