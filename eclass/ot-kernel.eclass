@@ -11248,6 +11248,8 @@ ot-kernel_has_buggy_pci_powersave() {
 	elif grep -q -E -e "^CONFIG_IWLWIFI=(y|m)" "${path_config}" ; then
 		export _OT_KERNEL_IWLWIFI=1
 		return 0
+	elif grep -q -E -e "^CONFIG_R8169=(y|m)" "${path_config}" ; then
+		return 0
 	elif grep -q -E -e "^CONFIG_RTW88_CORE=(y|m)" "${path_config}" \
 		&& \
 	( \
@@ -11320,7 +11322,11 @@ ot-kernel_has_buggy_usb_autosuspend() {
 		return 0
 	elif grep -q -E -e "^CONFIG_RTL8XXXU=(y|m)" "${path_config}" ; then
 		return 0
+	elif grep -q -E -e "^CONFIG_USB_NET_AX8817X=(y|m)" "${path_config}" ; then
+		return 0
 	elif grep -q -E -e "^CONFIG_USB_NET_CDCETHER=(y|m)" "${path_config}" ; then
+		return 0
+	elif grep -q -E -e "^CONFIG_USB_RTL8152=(y|m)" "${path_config}" ; then
 		return 0
 	elif grep -q -E -e "^CONFIG_USB_SERIAL_CH341=(y|m)" "${path_config}" ; then
 		return 0
