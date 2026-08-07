@@ -141,6 +141,8 @@ _OT_KERNEL_NEEDS_DEBUGFS=0 # Variable not const
 unset _OT_KERNEL_O3_PROVIDER
 declare -A _OT_KERNEL_O3_PROVIDER=()
 _OT_KERNEL_PRINK_DISABLED=0 # Variable not const
+_OT_KERNEL_RTW88_PCI=0 # Variable not const
+_OT_KERNEL_RTW88_USB=0 # Variable not const
 _OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL=0 # Variable not const
 BBRV2_BASE_URI="https://github.com/google/bbr/commit/"
 BBRV3_BASE_URI="https://github.com/google/bbr/commit/"
@@ -11315,6 +11317,20 @@ ot-kernel_set_power_level() {
 		fi
 	fi
 
+	# Mitigate frequent disconnects
+	if grep -q -E -e "^CONFIG_RTW88_CORE=(y|m)" "${path_config}" \
+		&& \
+	( \
+		   grep -q -E -e "^CONFIG_RTW88_8822BE=(y|m)" "${path_config}" \
+		|| grep -q -E -e "^CONFIG_RTW88_8822CE=(y|m)" "${path_config}" \
+		|| grep -q -E -e "^CONFIG_RTW88_8723DE=(y|m)" "${path_config}" \
+		|| grep -q -E -e "^CONFIG_RTW88_8821CE=(y|m)" "${path_config}" \
+	) \
+	; then
+		power_level_pci=2
+		export _OT_KERNEL_RTW88_PCI=1
+	fi
+
 	if (( ${power_level_pci} == 2 )) ; then
 		if grep -q -E -e "^CONFIG_PCI=y" "${path_config}" ; then
 			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
@@ -11525,7 +11541,22 @@ ot-kernel_set_power_level() {
 	if (( ${power_level_usb} == 2 )) ; then
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 	else
-		local usb_autosuspend_seconds=${OT_KERNEL_AUTOSUSPEND_SECONDS_USB:-2}
+		local usb_autosuspend_seconds
+		if grep -q -E -e "^CONFIG_RTW88_CORE=(y|m)" "${path_config}" \
+			&& \
+		( \
+			   grep -q -E -e "^CONFIG_RTW88_8822BU=(y|m)" "${path_config}" \
+			|| grep -q -E -e "^CONFIG_RTW88_8822CU=(y|m)" "${path_config}"
+			|| grep -q -E -e "^CONFIG_RTW88_8723DU=(y|m)" "${path_config}"
+			|| grep -q -E -e "^CONFIG_RTW88_8821CU=(y|m)" "${path_config}"
+		) \
+		; then
+	# Mitigate frequent disconnects
+			usb_autosuspend_seconds=${OT_KERNEL_AUTOSUSPEND_SECONDS_USB:--1}
+			export _OT_KERNEL_RTW88_USB=1
+		else
+			usb_autosuspend_seconds=${OT_KERNEL_AUTOSUSPEND_SECONDS_USB:-2}
+		fi
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "${usb_autosuspend_seconds}"
 	fi
 
@@ -18091,6 +18122,27 @@ ewarn "kernel package."
 ewarn
 }
 
+# @FUNCTION: ot-kernel_postinst_rtw88_disable_power_management
+# @DESCRIPTION:
+# Disable buggy power management for more a stable and reliable Internet experience.
+# Mitigate DoS, frequent disconnects, or hallucinations of being hacked.
+ot-kernel_postinst_rtw88_disable_power_management() {
+	if (( ${_OT_KERNEL_RTW88_PCI} == 1 )) ; then
+einfo "Adding modprobe settings for rtw88_pci to mitigate frequent disconnects"
+		if [[ ! -d "${EROOT}/etc/modprobe.d" ]] ; then
+			mkdir -p "${EROOT}/etc/modprobe.d"
+		fi
+		echo "options rtw88_pci disable_aspm=Y" > "${EROOT}/etc/modprobe.d/ot-kernel-rtw88-pci.conf"
+	fi
+	if (( ${_OT_KERNEL_RTW88_USB} == 1 )) ; then
+einfo "Adding modprobe settings for rtw88_core to mitigate frequent disconnects"
+		if [[ ! -d "${EROOT}/etc/modprobe.d" ]] ; then
+			mkdir -p "${EROOT}/etc/modprobe.d"
+		fi
+		echo "options rtw88_core disable_lps_deep=Y" > "${EROOT}/etc/modprobe.d/ot-kernel-rtw88-usb.conf"
+	fi
+}
+
 # @FUNCTION: ot-kernel_pkg_postinst
 # @DESCRIPTION:
 # Present warnings and avoid collision checks.
@@ -18146,6 +18198,7 @@ einfo "Secure wiping the private key in build directory for ${extraversion}"
 	ot-kernel_postinst_exfat
 	ot-kernel_postinst_proton
 	ot-kernel_postinst_experimental_kernel
+	ot-kernel_postinst_rtw88_disable_power_management
 }
 
 # @FUNCTION: pkg_prerm
@@ -18197,6 +18250,9 @@ einfo "Removing ot-kernel-iosched"
 		rm "${EROOT}/etc/init.d/ot-kernel-iosched" 2>/dev/null
 einfo "Removing tcca configs"
 		rm "${EROOT}/etc/tcca-"*"-"*"-"*".conf" 2>/dev/null
+einfo "Removing modprobe configs"
+		rm "${EROOT}/etc/modprobe.d/ot-kernel-rtw88-pci.conf" 2>/dev/null
+		rm "${EROOT}/etc/modprobe.d/ot-kernel-rtw88-usb.conf" 2>/dev/null
 	fi
 }
 
