@@ -4,6 +4,12 @@
 
 EAPI=8
 
+# FIXME:
+#ERROR Unresolved dependencies.
+#//tools/metrics:metrics_metadata(//build/toolchain/linux/unbundle:default)
+#  needs //tools/metrics:histograms_xml(//build/toolchain/linux/unbundle:default)
+
+
 # Add `www-client/chromium -llvm_slot_23` to `/etc/portage/profile/package.use.mask` to bypass the distro's FAFO hard mask guardrail.
 
 # This ebuild and metadata.xml contains some AI generated code and synthetic data.
@@ -3619,7 +3625,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		)
 	else
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-150.0.7871.114-mold.patch"
+			"${FILESDIR}/extra-patches/${PN}-151.0.7922.108-mold.patch"
 		)
 	fi
 
@@ -3700,12 +3706,12 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	PATCHES+=(
 #		"${FILESDIR}/extra-patches/${PN}-143.0.7499.192-system-libsecret-includes-path.patch"
 		"${FILESDIR}/extra-patches/${PN}-143.0.7499.192-custom-march.patch"
-		"${FILESDIR}/extra-patches/${PN}-149.0.7827.114-optionalize-sanitize-array-bounds.patch"
-		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-xnnpack-scalar-fallback.patch"
+		"${FILESDIR}/extra-patches/${PN}-151.0.7922.108-optionalize-sanitize-array-bounds.patch"
+		"${FILESDIR}/extra-patches/${PN}-151.0.7922.108-xnnpack-scalar-fallback.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-pdfium-system-deps.patch"
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.45-use-system-opus-alt.patch"
 #		$(use system-libpng && echo "${FILESDIR}/extra-patches/${PN}-144.0.7559.59-libpng-test-only.patch")
-		"${FILESDIR}/extra-patches/${PN}-149.0.7827.114-optionalize-clang-flags.patch"
+		"${FILESDIR}/extra-patches/${PN}-151.0.7922.108-optionalize-clang-flags.patch"
 		"${FILESDIR}/extra-patches/${PN}-149.0.7827.114-optionalize-omit-frame-pointer.patch"
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.75-dedupe-use-system-zlib.patch" # It appears twice in cromite build
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-optionalize-clang-warning-suppression-mappings.patch"
@@ -3737,7 +3743,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		:
 	else
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-148.0.7778.167-optionalize-glic.patch"
+			"${FILESDIR}/extra-patches/${PN}-151.0.7922.108-optionalize-glic.patch"
 		)
 	fi
 
