@@ -11223,6 +11223,7 @@ ot-kernel_has_buggy_usb_autosuspend() {
 		|| grep -q -E -e "^CONFIG_RTW88_8821CU=(y|m)" "${path_config}" \
 	) \
 	; then
+		export _OT_KERNEL_RTW88_USB=1
 		return 0
 	elif grep -q -E -e "^CONFIG_RTL8192CU=(y|m)" "${path_config}" ; then
 		return 0
@@ -11573,19 +11574,7 @@ ot-kernel_set_power_level() {
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 	else
 		local usb_autosuspend_seconds
-		if grep -q -E -e "^CONFIG_RTW88_CORE=(y|m)" "${path_config}" \
-			&& \
-		( \
-			   grep -q -E -e "^CONFIG_RTW88_8822BU=(y|m)" "${path_config}" \
-			|| grep -q -E -e "^CONFIG_RTW88_8822CU=(y|m)" "${path_config}" \
-			|| grep -q -E -e "^CONFIG_RTW88_8723DU=(y|m)" "${path_config}" \
-			|| grep -q -E -e "^CONFIG_RTW88_8821CU=(y|m)" "${path_config}" \
-		) \
-		; then
-	# Mitigate frequent disconnects
-			usb_autosuspend_seconds=${OT_KERNEL_AUTOSUSPEND_SECONDS_USB:--1}
-			export _OT_KERNEL_RTW88_USB=1
-		elif ot-kernel_has_buggy_usb_autosuspend ; then
+		if ot-kernel_has_buggy_usb_autosuspend ; then
 	# Mitigate disconnects
 			usb_autosuspend_seconds=${OT_KERNEL_AUTOSUSPEND_SECONDS_USB:--1}
 		else
