@@ -12375,6 +12375,9 @@ ewarn "The dss work profile is experimental and in development."
 			else
 				ot-kernel_set_kconfig_set_user_capacity_hz "100" # Percent
 			fi
+	# We want integrity-critical instead when anti-DoS and
+	# integrity-critical are mutually exclusive.
+			_OT_KERNEL_FORCE_STABILITY=0
 		elif [[ "${work_profile}" == "media-server" ]] ; then
 			ot-kernel_set_kconfig_set_video_timer_hz
 		elif [[ \

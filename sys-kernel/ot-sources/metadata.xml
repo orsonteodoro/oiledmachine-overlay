@@ -3666,7 +3666,6 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
     database-server
     datacenter-backend
     digital-audio-workstation
-    dss
     gamedev
     game-server
     gaming-tournament
