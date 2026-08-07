@@ -11210,6 +11210,36 @@ ot-kernel_has_open_firmware_thermal_support() {
 	fi
 }
 
+# @FUNCTION: ot-kernel_has_buggy_usb_autosuspend
+# @DESCRIPTION:
+# Helper to check if it has buggy USB autosuspend.
+ot-kernel_has_buggy_usb_autosuspend() {
+	if grep -q -E -e "^CONFIG_RTW88_CORE=(y|m)" "${path_config}" \
+		&& \
+	( \
+		   grep -q -E -e "^CONFIG_RTW88_8822BU=(y|m)" "${path_config}" \
+		|| grep -q -E -e "^CONFIG_RTW88_8822CU=(y|m)" "${path_config}" \
+		|| grep -q -E -e "^CONFIG_RTW88_8723DU=(y|m)" "${path_config}" \
+		|| grep -q -E -e "^CONFIG_RTW88_8821CU=(y|m)" "${path_config}" \
+	) \
+	; then
+		return 0
+	elif grep -q -E -e "^CONFIG_RTL8192CU=(y|m)" "${path_config}" ; then
+		return 0
+	elif grep -q -E -e "^CONFIG_RTL8XXXU=(y|m)" "${path_config}" ; then
+		return 0
+	elif grep -q -E -e "^CONFIG_RT2800USB=(y|m)" "${path_config}" ; then
+		return 0
+	elif grep -q -E -e "^CONFIG_BT_HCIBTUSB=(y|m)" "${path_config}" ; then
+		return 0
+	elif grep -q -E -e "^CONFIG_USB_NET_CDCETHER=(y|m)" "${path_config}" ; then
+		return 0
+	elif grep -q -E -e "^CONFIG_USB_SERIAL_CH341=(y|m)" "${path_config}" ; then
+		return 0
+	fi
+	return 1
+}
+
 # @FUNCTION: ot-kernel_set_power_level
 # @DESCRIPTION:
 # Adjust the power level of the devices
@@ -11547,17 +11577,21 @@ ot-kernel_set_power_level() {
 			&& \
 		( \
 			   grep -q -E -e "^CONFIG_RTW88_8822BU=(y|m)" "${path_config}" \
-			|| grep -q -E -e "^CONFIG_RTW88_8822CU=(y|m)" "${path_config}"
-			|| grep -q -E -e "^CONFIG_RTW88_8723DU=(y|m)" "${path_config}"
-			|| grep -q -E -e "^CONFIG_RTW88_8821CU=(y|m)" "${path_config}"
+			|| grep -q -E -e "^CONFIG_RTW88_8822CU=(y|m)" "${path_config}" \
+			|| grep -q -E -e "^CONFIG_RTW88_8723DU=(y|m)" "${path_config}" \
+			|| grep -q -E -e "^CONFIG_RTW88_8821CU=(y|m)" "${path_config}" \
 		) \
 		; then
 	# Mitigate frequent disconnects
 			usb_autosuspend_seconds=${OT_KERNEL_AUTOSUSPEND_SECONDS_USB:--1}
 			export _OT_KERNEL_RTW88_USB=1
+		elif ot-kernel_has_buggy_usb_autosuspend ; then
+	# Mitigate disconnects
+			usb_autosuspend_seconds=${OT_KERNEL_AUTOSUSPEND_SECONDS_USB:--1}
 		else
 			usb_autosuspend_seconds=${OT_KERNEL_AUTOSUSPEND_SECONDS_USB:-2}
 		fi
+ewarn "If using an out-of-tree USB driver, setting OT_KERNEL_AUTOSUSPEND_SECONDS_USB=-1 may help mitigate random disconnects."
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "${usb_autosuspend_seconds}"
 	fi
 

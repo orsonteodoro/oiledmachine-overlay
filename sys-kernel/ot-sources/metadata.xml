@@ -1454,8 +1454,11 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
 
 
 
-    OT_KERNEL_AUTOSUSPEND_SECONDS_USB - The number of seconds to wait before USB power
-    suspend state is activated.
+    OT_KERNEL_AUTOSUSPEND_SECONDS_USB - The number of seconds to wait before USB
+    power suspend state is activated.
+
+    If using out-of-tree USB driver, setting this to -1 may help mitigate random
+    disconnects.
 
     Acceptable values:
 
