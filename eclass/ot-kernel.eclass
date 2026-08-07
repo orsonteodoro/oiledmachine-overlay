@@ -18132,14 +18132,14 @@ einfo "Adding modprobe settings for rtw88_pci to mitigate frequent disconnects"
 		if [[ ! -d "${EROOT}/etc/modprobe.d" ]] ; then
 			mkdir -p "${EROOT}/etc/modprobe.d"
 		fi
-		echo "options rtw88_pci disable_aspm=Y" > "${EROOT}/etc/modprobe.d/ot-kernel-rtw88-pci.conf"
+		echo "options rtw88_pci disable_aspm=Y" > "${EROOT}/etc/modprobe.d/ot-kernel-rtw88_pci.conf"
 	fi
-	if (( ${_OT_KERNEL_RTW88_USB} == 1 )) ; then
+	if (( ${_OT_KERNEL_RTW88_PCI} == 1 || ${_OT_KERNEL_RTW88_USB} == 1 )) ; then
 einfo "Adding modprobe settings for rtw88_core to mitigate frequent disconnects"
 		if [[ ! -d "${EROOT}/etc/modprobe.d" ]] ; then
 			mkdir -p "${EROOT}/etc/modprobe.d"
 		fi
-		echo "options rtw88_core disable_lps_deep=Y" > "${EROOT}/etc/modprobe.d/ot-kernel-rtw88-usb.conf"
+		echo "options rtw88_core disable_lps_deep=Y" > "${EROOT}/etc/modprobe.d/ot-kernel-rtw88_core.conf"
 	fi
 }
 
@@ -18251,8 +18251,8 @@ einfo "Removing ot-kernel-iosched"
 einfo "Removing tcca configs"
 		rm "${EROOT}/etc/tcca-"*"-"*"-"*".conf" 2>/dev/null
 einfo "Removing modprobe configs"
-		rm "${EROOT}/etc/modprobe.d/ot-kernel-rtw88-pci.conf" 2>/dev/null
-		rm "${EROOT}/etc/modprobe.d/ot-kernel-rtw88-usb.conf" 2>/dev/null
+		rm "${EROOT}/etc/modprobe.d/ot-kernel-rtw88_pci.conf" 2>/dev/null
+		rm "${EROOT}/etc/modprobe.d/ot-kernel-rtw88_core.conf" 2>/dev/null
 	fi
 }
 
