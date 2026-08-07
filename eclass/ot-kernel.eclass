@@ -141,6 +141,7 @@ _OT_KERNEL_NEEDS_DEBUGFS=0 # Variable not const
 unset _OT_KERNEL_O3_PROVIDER
 declare -A _OT_KERNEL_O3_PROVIDER=()
 _OT_KERNEL_PRINK_DISABLED=0 # Variable not const
+_OT_KERNEL_RTW88_CORE=1 # Variable not const
 _OT_KERNEL_RTW88_PCI=0 # Variable not const
 _OT_KERNEL_RTW88_USB=0 # Variable not const
 _OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL=0 # Variable not const
@@ -14746,6 +14747,15 @@ ot-kernel_verify_mitigation_late() {
 	:
 }
 
+# @FUNCTION: ot-kernel_set_globals_post
+# @DESCRIPTION:
+# Set/unset additional post global per profile
+ot-kernel_set_globals_post() {
+	if grep -q -E -e "^CONFIG_RTW88_CORE=(y|m)" "${path_config}" ; then
+		export _OT_KERNEL_RTW88_CORE=1
+	fi
+}
+
 # @FUNCTION: ot-kernel_src_configure_assisted
 # @DESCRIPTION:
 # More assisted configuration
@@ -14943,6 +14953,7 @@ einfo "Disabling all debug and shortening logging buffers"
 	ot-kernel_disable_affected_modules
 	ot-kernel_verify_mitigation_late
 
+	ot-kernel_set_globals_post
 	ot-kernel_set_kconfig_from_envvar_array				# Final user override
 	ot-kernel_print_thp_status
 
@@ -18134,7 +18145,7 @@ einfo "Adding modprobe settings for rtw88_pci to mitigate frequent disconnects"
 		fi
 		echo "options rtw88_pci disable_aspm=Y" > "${EROOT}/etc/modprobe.d/ot-kernel-rtw88_pci.conf"
 	fi
-	if (( ${_OT_KERNEL_RTW88_PCI} == 1 || ${_OT_KERNEL_RTW88_USB} == 1 )) ; then
+	if (( ${_OT_KERNEL_RTW88_CORE} == 1 )) ; then
 einfo "Adding modprobe settings for rtw88_core to mitigate frequent disconnects"
 		if [[ ! -d "${EROOT}/etc/modprobe.d" ]] ; then
 			mkdir -p "${EROOT}/etc/modprobe.d"
