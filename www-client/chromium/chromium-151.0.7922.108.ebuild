@@ -3398,8 +3398,8 @@ apply_distro_patchset_for_system_toolchain() {
 "${WORKDIR}/chromium-patches-${PATCH_VER}/toolchain/cr149-fix-rust-2-oxidize-harder.patch"
 #"${WORKDIR}/chromium-patches-${PATCH_VER}/toolchain/cr150-compiler.patch"				# oiledmachine-overlay changes prefered
 #"${WORKDIR}/chromium-patches-${PATCH_VER}/toolchain/cr151-actually-fix-ar.patch"			# Upstreamed already
-"${WORKDIR}/chromium-patches-${PATCH_VER}/toolchain/cr151-dawn-system-go.patch"
-"${WORKDIR}/chromium-patches-${PATCH_VER}/toolchain/cr151-mold-unbundle.patch"
+"${FILESDIR}/extra-patches/${PN}-151.0.7922.108-dawn-system-go.patch"					# Same as cr151-dawn-system-go.patch but with updated context
+"${FILESDIR}/extra-patches/${PN}-151.0.7922.108-mold-unbundle.patch"					# Same as cr151-mold-unbundle.patch
 		)
 		COPIUM_PATCHSET=(
 # Generated from `find /var/tmp/portage/www-client/chromium-151.0.7922.108/work/copium | sort -V`
