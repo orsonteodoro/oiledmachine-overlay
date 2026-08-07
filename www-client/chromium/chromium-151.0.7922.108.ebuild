@@ -6,6 +6,7 @@ EAPI=8
 
 # Add `www-client/chromium -llvm_slot_23` to `/etc/portage/profile/package.use.mask` to bypass the distro's FAFO hard mask guardrail.
 
+# This ebuild uses AI interence to fix build issue and uses AI suggested configure time option.
 # This ebuild and metadata.xml contains some AI generated code and synthetic data.
 # It contains patches (in extra folder) that were derived from AI generated code.
 
