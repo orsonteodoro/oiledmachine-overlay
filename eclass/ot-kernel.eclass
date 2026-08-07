@@ -8581,6 +8581,9 @@ einfo "Changed .config to use Multi-Gen LRU"
 # @FUNCTION: ot-kernel_set_kconfig_oflag
 # @DESCRIPTION:
 # Sets the kernel config for the compiler flag based on CFLAGS.
+#
+# Precondition:
+# Place after ot-kernel_set_kconfig_work_profile
 ot-kernel_set_kconfig_oflag() {
 	# Normalize
 	local O_last=$(echo "${CFLAGS}" \
@@ -12505,7 +12508,7 @@ ewarn "The dss work profile is experimental and in development."
 			else
 				ot-kernel_set_kconfig_set_user_capacity_hz "100" # Percent
 			fi
-	# We want integrity-critical instead when anti-DoS and
+	# We want integrity-critical instead when anti-DoS-critical and
 	# integrity-critical are mutually exclusive.
 			_OT_KERNEL_FORCE_STABILITY=0
 		elif [[ "${work_profile}" == "media-server" ]] ; then
@@ -14901,18 +14904,20 @@ einfo
 
 	local hardening_level="${OT_KERNEL_HARDENING_LEVEL:-manual}"
 
-	if [[ \
-		   "${OT_KERNEL_MAX_UPTIME}"       == "1" \
-		|| "${_OT_KERNEL_FORCE_STABILITY}" == "1" \
-	]] ; then
-einfo "Forcing the default hardening level for maximum uptime"
-		hardening_level="default"
-	fi
+	# Place before ot-kernel_set_kconfig_work_profile \
+	# Place before ot-kernel_set_kconfig_oflag \
+	# Place before ot-kernel_set_tbm \
+	_OT_KERNEL_FORCE_STABILITY=0
 
+	# Place before ot-kernel_set_kconfig_work_profile, \
+	#	ot-kernel_set_kconfig_swap, \
+	#	ot-kernel_set_kconfig_uksm, \
+	#	ot-kernel_set_kconfig_zswap, \
+	#	ot-kernel_optimize_realtime \
+	_OT_KERNEL_FORCE_SWAP_OFF=0
+
+	# Place before ot-kernel_set_kconfig_work_profile
 	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
-	if [[ "${work_profile}" == "dss" ]] ; then
-		hardening_level="secure-af"
-	fi
 
 	ot-kernel_verify_mitigation_early
 
@@ -14923,7 +14928,6 @@ einfo "Forcing the default hardening level for maximum uptime"
 	ot-kernel_menuconfig "pre"					# Uses llvm_slot
 
 	ot-kernel_set_kconfig_march
-	ot-kernel_set_kconfig_oflag
 	ot-kernel_set_kconfig_lto					# Uses llvm_slot
 	ot-kernel_set_kconfig_abis
 	#ot-kernel_set_kconfig_mem
@@ -14945,17 +14949,31 @@ einfo "Forcing the default hardening level for maximum uptime"
 	ot-kernel_set_kconfig_set_net_qos_actions
 	# See also ot-kernel-pkgflags.eclass: _ot-kernel_set_netfilter()
 
-	# Place before ot-kernel_set_kconfig_work_profile, \
-	#	ot-kernel_set_kconfig_swap, \
-	#	ot-kernel_set_kconfig_uksm, \
-	#	ot-kernel_set_kconfig_zswap, \
-	#	ot-kernel_optimize_realtime \
-	_OT_KERNEL_FORCE_SWAP_OFF=0
+	# Place before ot-kernel_set_kconfig_work_profile or before ot-kernel_set_power_level \
+	ot-kernel-driver-bundle_add_drivers
 
-	# Place before ot-kernel_set_kconfig_work_profile \
-	_OT_KERNEL_FORCE_STABILITY=0
-
+	# Place as early as possible
 	ot-kernel_set_kconfig_work_profile				# Sets PREEMPT*
+
+	# Place if-else chain before ot-kernel_set_kconfig_hardening_level
+	# Place if-else chain after ot-kernel_set_kconfig_work_profile
+	# The dss is integrity-critical but the default hardening is
+	# anti-DoS-critical.  They are both mutually exclusive.
+	if [[ "${work_profile}" == "dss" ]] ; then
+		hardening_level="secure-af" # Place before ot-kernel_set_kconfig_hardening_level
+	else if \
+		[[ \
+			   "${OT_KERNEL_MAX_UPTIME}"       == "1" \
+			|| "${_OT_KERNEL_FORCE_STABILITY}" == "1" \
+		]] \
+	; then
+einfo "Forcing the default hardening level for maximum uptime"
+		hardening_level="default" # Place before ot-kernel_set_kconfig_hardening_level
+	fi
+
+	# Place after ot-kernel_set_kconfig_work_profile \
+	ot-kernel_set_kconfig_oflag
+
 	ot-kernel_set_kconfig_pcie_mps
 	ot-kernel_set_kconfig_usb_flash_disk
 
@@ -14968,8 +14986,9 @@ einfo "Forcing the default hardening level for maximum uptime"
 	ot-kernel_set_kconfig_firmware
 	ot-kernel_check_firmware
 
+	# Place before ot-kernel_fix_external_modules \
 	local _OT_KERNEL_FORCE_EXTERNAL_MODULES=0
-	ot-kernel-driver-bundle_add_drivers
+
 	ot-kernel_set_kconfig_vm_host_gpu_passthrough
 
 	# The ot-kernel-pkgflags_apply has higher weight than
