@@ -144,6 +144,8 @@ _OT_KERNEL_PRINK_DISABLED=0 # Variable not const
 _OT_KERNEL_ATH9K=0 # Variable not const
 _OT_KERNEL_IWLMVM=0 # Variable not const
 _OT_KERNEL_IWLWIFI=0 # Variable not const
+_OT_KERNEL_MT7921E=0 # Variable not const
+_OT_KERNEL_MT7925E=0 # Variable not const
 _OT_KERNEL_RTW88_CORE=0 # Variable not const
 _OT_KERNEL_RTW88_PCI=0 # Variable not const
 _OT_KERNEL_RTW89_CORE=0 # Variable not const
@@ -11248,6 +11250,24 @@ ot-kernel_has_buggy_pci_powersave() {
 	elif grep -q -E -e "^CONFIG_IWLWIFI=(y|m)" "${path_config}" ; then
 		export _OT_KERNEL_IWLWIFI=1
 		return 0
+	elif grep -q -E -e "^CONFIG_MT76_CORE=(y|m)" "${path_config}" \
+		&& \
+	( \
+		   grep -q -E -e "^CONFIG_MT7921_COMMON=(y|m)" "${path_config}" \
+		|| grep -q -E -e "^CONFIG_MT7921E=(y|m)" "${path_config}" \
+	) \
+	; then
+		export _OT_KERNEL_MT7921E=1
+		return 0
+	elif grep -q -E -e "^CONFIG_MT76_CORE=(y|m)" "${path_config}" \
+		&& \
+	( \
+		   grep -q -E -e "^CONFIG_MT7925_COMMON=(y|m)" "${path_config}" \
+		|| grep -q -E -e "^CONFIG_MT7925E=(y|m)" "${path_config}" \
+	) \
+	; then
+		export _OT_KERNEL_MT7925E=1
+		return 0
 	elif grep -q -E -e "^CONFIG_R8169=(y|m)" "${path_config}" ; then
 		return 0
 	elif grep -q -E -e "^CONFIG_RTW88_CORE=(y|m)" "${path_config}" \
@@ -11292,6 +11312,15 @@ ot-kernel_has_buggy_usb_autosuspend() {
 	# autosuspend.
 	#
 	if grep -q -E -e "^CONFIG_BT_HCIBTUSB=(y|m)" "${path_config}" ; then
+		return 0
+	elif grep -q -E -e "^CONFIG_MT76_CORE=(y|m)" "${path_config}" \
+		&& \
+	( \
+		   grep -q -E -e "^CONFIG_MT76_USB=(y|m)" "${path_config}" \
+		|| grep -q -E -e "^CONFIG_MT7921U=(y|m)" "${path_config}" \
+		|| grep -q -E -e "^CONFIG_MT7925U=(y|m)" "${path_config}" \
+	) \
+	; then
 		return 0
 	elif grep -q -E -e "^CONFIG_RT2800USB=(y|m)" "${path_config}" ; then
 		return 0
@@ -14858,6 +14887,9 @@ ot-kernel_verify_mitigation_late() {
 # @DESCRIPTION:
 # Set/unset additional post global per profile
 ot-kernel_set_globals_post() {
+	if grep -q -E -e "^CONFIG_MT76_CORE=(y|m)" "${path_config}" ; then
+		export _OT_KERNEL_MT76_CORE=1
+	fi
 	if grep -q -E -e "^CONFIG_RTW88_CORE=(y|m)" "${path_config}" ; then
 		export _OT_KERNEL_RTW88_CORE=1
 	fi
@@ -18285,6 +18317,20 @@ einfo "Adding modprobe settings for iwlwifi to mitigate unstable disconnects"
 		fi
 		echo "options iwlwifi power_save=0" > "${EROOT}/etc/modprobe.d/ot-kernel-iwlwifi.conf"
 	fi
+	if (( ${_OT_KERNEL_MT7921E_CORE} == 1 )) ; then
+einfo "Adding modprobe settings for mt7921e to mitigate unstable disconnects"
+		if [[ ! -d "${EROOT}/etc/modprobe.d" ]] ; then
+			mkdir -p "${EROOT}/etc/modprobe.d"
+		fi
+		echo "options mt7921e disable_aspm=1" > "${EROOT}/etc/modprobe.d/ot-kernel-mt7921e.conf"
+	fi
+	if (( ${_OT_KERNEL_MT7925E_CORE} == 1 )) ; then
+einfo "Adding modprobe settings for mt7925e to mitigate unstable disconnects"
+		if [[ ! -d "${EROOT}/etc/modprobe.d" ]] ; then
+			mkdir -p "${EROOT}/etc/modprobe.d"
+		fi
+		echo "options mt7925e disable_aspm=1" > "${EROOT}/etc/modprobe.d/ot-kernel-mt7925e.conf"
+	fi
 
 	if (( ${_OT_KERNEL_RTW88_CORE} == 1 )) ; then
 einfo "Adding modprobe settings for rtw88_core to mitigate unstable disconnects"
@@ -18427,6 +18473,8 @@ einfo "Removing modprobe configs"
 		rm "${EROOT}/etc/modprobe.d/ot-kernel-ath9k.conf" 2>/dev/null
 		rm "${EROOT}/etc/modprobe.d/ot-kernel-iwlmvm.conf" 2>/dev/null
 		rm "${EROOT}/etc/modprobe.d/ot-kernel-iwlwifi.conf" 2>/dev/null
+		rm "${EROOT}/etc/modprobe.d/ot-kernel-mt7921e.conf" 2>/dev/null
+		rm "${EROOT}/etc/modprobe.d/ot-kernel-mt7925e.conf" 2>/dev/null
 		rm "${EROOT}/etc/modprobe.d/ot-kernel-rtw88_core.conf" 2>/dev/null
 		rm "${EROOT}/etc/modprobe.d/ot-kernel-rtw88_pci.conf" 2>/dev/null
 		rm "${EROOT}/etc/modprobe.d/ot-kernel-rtw89_core.conf" 2>/dev/null
