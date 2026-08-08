@@ -318,12 +318,35 @@ verify_clang() {
 		)
 		local pkg
 		for pkg in "${L[@]}" ; do
-			if ! ls "/var/db/pkg/${pkg}-${LLVM_SYSTEM_SLOT}"* >/dev/null 2>&1 ; then
+			local pv=""
+			if [[ "${pkg}" == "llvm-runtimes/libcxx" ]] ; then
+				local libcxx_pv=$(best_version "llvm-runtimes/libcxx" | sed -e "s|llvm-runtimes/libcxx-||g")
+				if ls "/var/db/pkg/${pkg}-${libcxx_pv}"* >/dev/null 2>&1 ; then
+					pv="${libcxx_pv}"
+				else
 eerror "${pkg} is not installed."
 eerror "Disable the system-clang USE flag or emerge =${pkg}-${LLVM_SYSTEM_SLOT}*."
-				die
+					die
+				fi
+			elif [[ "${pkg}" == "llvm-runtimes/libcxxabi" ]] ; then
+				local libcxxabi_pv=$(best_version "llvm-runtimes/libcxxabi" | sed -e "s|llvm-runtimes/libcxxabi-||g")
+				if ls "/var/db/pkg/${pkg}-${libcxxabi_pv}"* >/dev/null 2>&1 ; then
+					pv="${libcxxabi_pv}"
+				else
+eerror "${pkg} is not installed."
+eerror "Disable the system-clang USE flag or emerge =${pkg}-${LLVM_SYSTEM_SLOT}*."
+					die
+				fi
+			else
+				if ls "/var/db/pkg/${pkg}-${LLVM_SYSTEM_SLOT}"* >/dev/null 2>&1 ; then
+					pv="${LLVM_SYSTEM_SLOT}"
+				else
+eerror "${pkg} is not installed."
+eerror "Disable the system-clang USE flag or emerge =${pkg}-${LLVM_SYSTEM_SLOT}*."
+					die
+				fi
 			fi
-			local pkg_timestamp=$(cat "/var/db/pkg/${pkg}-${LLVM_SYSTEM_SLOT}"*"/BUILD_TIME")
+			local pkg_timestamp=$(cat "/var/db/pkg/${pkg}-${pv}"*"/BUILD_TIME")
 			if (( ${pkg_timestamp} < ${upstream_timestamp} )) ; then
 eerror
 eerror "Detected old live timestamp."
