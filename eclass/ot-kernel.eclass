@@ -15008,11 +15008,11 @@ einfo
 	# anti-DoS-critical.  They are both mutually exclusive.
 	if [[ "${work_profile}" == "dss" ]] ; then
 		hardening_level="secure-af" # Place before ot-kernel_set_kconfig_hardening_level
-	else if \
-		[[ \
-			   "${OT_KERNEL_MAX_UPTIME}"       == "1" \
-			|| "${_OT_KERNEL_FORCE_STABILITY}" == "1" \
-		]] \
+	elif \
+	[[ \
+		   "${OT_KERNEL_MAX_UPTIME}"       == "1" \
+		|| "${_OT_KERNEL_FORCE_STABILITY}" == "1" \
+	]] \
 	; then
 einfo "Forcing the default hardening level for maximum uptime"
 		hardening_level="default" # Place before ot-kernel_set_kconfig_hardening_level
