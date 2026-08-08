@@ -612,6 +612,7 @@ fi
 
 CHKL_TIMESTAMPS=(
 	"app-shells/bash-9999"
+	"dev-lang/go-9999"
 	"dev-util/vulkan-headers-9999"
 	"media-libs/fontconfig-9999"
 	"media-libs/freetype-9999"
@@ -2869,7 +2870,7 @@ BDEPEND="
 	$(gen_clang_bdepend)
 	$(gen_rocm_bdepend)
 	>=dev-build/cmake-3.31.2
-	>=dev-lang/go-1.26.0
+	>=dev-lang/go-${GO_PV}:=
 	>=sys-devel/gcc-11.4.0
 	>=app-arch/pigz-${PIGZ_PV}
 	>=app-shells/bash-${BASH_PV}
