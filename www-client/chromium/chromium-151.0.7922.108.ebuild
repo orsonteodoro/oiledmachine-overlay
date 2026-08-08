@@ -1013,11 +1013,10 @@ LLVM_COMPAT=(
 	# Also, only the one that passes all the fuzz tests is allowed, this
 	# means that the compiler must be pinned to the exact commit that meets
 	# all security requirements (A+ grade commit snapshot).
-	23 # Vendored-slot
-	24 # System-slot
+	23 # Vendored-slot and system slot
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
-LLVM_SYSTEM_SLOT="24"
+LLVM_SYSTEM_SLOT="23"
 LLVM_OFFICIAL_SLOT="23" # Cr official slot
 LIBCXX_SLOT_MIN="21"
 # For simplicity, the PGO profdata compatibility assumes the same as
@@ -1706,12 +1705,6 @@ REQUIRED_USE+="
 	ffmpeg-chromium? (
 		bindist
 		patent_status_nonfree
-	)
-	llvm_slot_${LLVM_OFFICIAL_SLOT}? (
-		official
-	)
-	llvm_slot_${LLVM_SYSTEM_SLOT}? (
-		!official
 	)
 	miracleptr? (
 		partitionalloc
