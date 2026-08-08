@@ -65,7 +65,8 @@ LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 inherit libcxx-compat
 LLVM_COMPAT=(
 	#"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}" # 21-22
-	23 # Simplify for chromium
+	23 # Same as vendored-slot
+	24 # Same as system-slot
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
@@ -229,6 +230,18 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ebuild_revision_35
 "
 REQUIRED_USE="
+	llvm_slot_${LLVM_SYSTEM_SLOT}? (
+		system-clang
+	)
+	llvm_slot_${LLVM_VENDORED_SLOT}? (
+		!system-clang
+	)
+	system-clang? (
+		llvm_slot_${LLVM_SYSTEM_SLOT}
+	)
+	!system-clang? (
+		llvm_slot_${LLVM_VENDORED_SLOT}
+	)
 	^^ (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
