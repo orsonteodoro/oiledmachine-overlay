@@ -2146,7 +2146,7 @@ RDEPEND+="
 	)
 	bindist? (
 		ffmpeg-chromium? (
-			media-video/ffmpeg-chromium:${PV%%\.*}[patent_status_nonfree=]
+			~media-video/ffmpeg-chromium-${PV}:=[patent_status_nonfree=]
 		)
 	)
 "
