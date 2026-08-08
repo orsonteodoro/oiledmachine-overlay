@@ -1013,9 +1013,11 @@ LLVM_COMPAT=(
 	# Also, only the one that passes all the fuzz tests is allowed, this
 	# means that the compiler must be pinned to the exact commit that meets
 	# all security requirements (A+ grade commit snapshot).
-	23
+	23 # Vendored-slot
+	24 # System-slot
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
+LLVM_SYSTEM_SLOT="24"
 LLVM_OFFICIAL_SLOT="23" # Cr official slot
 LIBCXX_SLOT_MIN="21"
 # For simplicity, the PGO profdata compatibility assumes the same as
@@ -1522,6 +1524,9 @@ REQUIRED_USE+="
 		system-ffmpeg
 	)
 	partitionalloc
+	^^ (
+		${LLVM_COMPAT[@]/#/llvm_slot_}
+	)
 	amd64? (
 		cpu_flags_x86_sse2
 	)
@@ -1702,6 +1707,12 @@ REQUIRED_USE+="
 		bindist
 		patent_status_nonfree
 	)
+	llvm_slot_${LLVM_OFFICIAL_SLOT}? (
+		official
+	)
+	llvm_slot_${LLVM_SYSTEM_SLOT}? (
+		!official
+	)
 	miracleptr? (
 		partitionalloc
 	)
@@ -1725,6 +1736,7 @@ REQUIRED_USE+="
 		jit
 		kerberos
 		libaom
+		llvm_slot_${LLVM_OFFICIAL_SLOT}
 		miracleptr
 		mpris
 		openh264
@@ -2592,13 +2604,7 @@ setup_system_clang_paths() {
 		slot="${LLVM_OFFICIAL_SLOT}"
 	else
 	# Clang (system)
-		local s
-		for s in "${LLVM_COMPAT[@]}" ; do
-			if use "llvm_slot_${s}" ; then
-				slot="${s}"
-				break
-			fi
-		done
+		slot="${LLVM_SYSTEM_SLOT}"
 	fi
 
 	LLVM_SLOT="${slot}"

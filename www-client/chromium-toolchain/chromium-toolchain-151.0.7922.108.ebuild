@@ -29,9 +29,9 @@ GN_USE_GIT=1
 INSTALL_PREFIX="/usr/share/chromium/${PV%.*}.x"
 LIBCXX_USEDEP_SKIP=1
 # https://github.com/chromium/chromium/blob/151.0.7922.108/tools/clang/scripts/update.py#L38 \
-LLVM_SYSTEM_SLOT="24" # We use the latest slot to mitigate recompilation vulnerabilities.
+LLVM_SYSTEM_SLOT="24" # We use the latest to mitigate miscompilation vulnerabilities.
 LLVM_SYSTEM_SLOT_LIVE="1"
-LLVM_SYSTEM_TIMESTAMP_LIVE="Fri, 15 May 2026 18:39:29 +0000" # Unvendored timestamp for system-clang from https://github.com/llvm/llvm-project/commit/${LLVM_VENDORED_COMMIT}.patch
+LLVM_SYSTEM_TIMESTAMP_LIVE="Aug 1, 2026 2:01 PM PDT" # Unvendored timestamp for system-clang corresponding to https://github.com/llvm/llvm-project/commit/11038cc1618ac1f801e4029b7149f68f3ad949f5.patch
 # Vendored is before -rc release before -rc1 miscompile fixes.
 LLVM_VENDORED_COMMIT="53d18800" # without the g prefix; See also https://github.com/llvm/llvm-project/blob/53d18800eda3b7407e53366f27ca78e922c6e0db/cmake/Modules/LLVMVersion.cmake
 LLVM_VENDORED_N_COMMITS="19482" # The number to the right of -init- in llvmorg-23-init-10931-g20b6ec66
