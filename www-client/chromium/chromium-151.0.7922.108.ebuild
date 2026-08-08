@@ -4,6 +4,12 @@
 
 EAPI=8
 
+#ERROR Unresolved dependencies.
+#//tools/metrics:metrics_metadata(//build/toolchain/linux/unbundle:default)
+#  needs //tools/metrics:histograms_xml(//build/toolchain/linux/unbundle:default)
+
+
+
 # Add `www-client/chromium -llvm_slot_23` to `/etc/portage/profile/package.use.mask` to bypass the distro's FAFO hard mask guardrail.
 
 # This ebuild uses AI interence to fix build issue and uses AI suggested configure time option.
@@ -265,7 +271,7 @@ GN_PV="0.2435"
 ESBUILD_PV="0.25.1"
 ROLLUP_WASM_NODE_PV="4.57.1"
 QT6_PV="${QTBASE6_PV}"
-UNGOOGLED_CHROMIUM_PV="151.0.7922.75-1"
+UNGOOGLED_CHROMIUM_PV="151.0.7922.108-1"
 # Testing this V8 version to avoid breaking security.  The 13.6 series cause the \
 # mksnapshot "Return code is -11" error.  To fix it, it required to either \
 # disable v8 sandbox, or pointer compression and DrumBrake.  Before it was \
@@ -281,7 +287,7 @@ OPENPOWER_PATCHES_COMMIT="a85b64f07b489b8c6fdb13ecf79c16c56c560fc6" # Same as PP
 TEST_FONT="9c07d19d9c5ee1ff94f717e6fb17e0c8c354e6f9"
 
 # SHA512 about_credits.html fingerprint:
-LICENSE_FINGERPRINT_UNGOOGLED_CHROMIUM="cd0b235fd0117386c34cd1467c731767c511cdab13f62cbe9629d0952b583383146985c8ddbc173f8fb40524cfdbdba9df80e8cdc54c209da30a6e11ac7d5d6e"
+LICENSE_FINGERPRINT_UNGOOGLED_CHROMIUM="93287c1296de800c34fd2aa19fb8a6233313e15b9779024a51de62d0d17fa5f53235c3180d0e45d40af1ca8f04872f0875f048e2b3c989164bbe95c634621568"
 LICENSE_FINGERPRINT_VANILLA="1c5d4851276da0d51a5e97ea49987fb1d7b11c2094dbe3fc4238770154245a1373fc639b5c6839e21de1757d5cfae3728135f52fd8c0a2d52fcd3e65ba398212"
 
 # Mitigate flood the zone vulnerability.
@@ -3612,7 +3618,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	if in_iuse "ungoogled-chromium" && use ungoogled-chromium ; then
 	# Same as USE="ungoogled-chromium cromite" or USE=ungoogled-chromium
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-150.0.7871.114-mold-ungoogled-chromium.patch"
+			"${FILESDIR}/extra-patches/${PN}-151.0.7922.108-mold-ungoogled-chromium.patch"
 		)
 	elif in_iuse "cromite" && use cromite ; then
 		PATCHES+=(
@@ -3750,6 +3756,11 @@ einfo "Removing SupportedLaneCount"
 			"${FILESDIR}/extra-patches/${PN}-147-rust-1.95-bytemuck.patch"
 		)
 	fi
+
+	sed -i \
+		-e "s|generate_location_tags = true|generate_location_tags = false|g" \
+		"${S}/build/config/gclient_args.gni" \
+		|| die
 }
 
 is_cromite_patch_non_fatal() {
@@ -7445,10 +7456,11 @@ _configure_debug() {
 
 	# Disable tests
 		"angle_build_tests=$(usex test true false)"
-		"angle_has_histograms=true" # Force on is required
+		"angle_has_histograms=$(usex test true false)"
 		"build_angle_perftests=$(usex test true false)"
 		"build_dawn_tests=$(usex test true false)"
 		"chrome_test_libpng_test_only=$(usex test true false)"
+		"generate_location_tags=false"
 		"libpng_test_only=$(usex test true false)"
 		"tools_imagediff_libpng_test_only=$(usex test true false)"
 		"ui_gfx_libpng_test_only=$(usex test true false)"
