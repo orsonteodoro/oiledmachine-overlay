@@ -7592,7 +7592,7 @@ _configure_features() {
 		")
 	# We need the harfbuzz_from_pkgconfig target.
 		$(use system-harfbuzz && echo "
-			harfbuzz-ng
+			harfbuzz
 		")
 		$(use system-highway && echo "
 			highway
