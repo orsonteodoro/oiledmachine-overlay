@@ -4,9 +4,11 @@
 
 EAPI=8
 
+# Same versions and commits for 151.0.7922.71 and 151.0.7922.108.
+
 # Add `www-client/chromium-toolchain -llvm_slot_23` to `/etc/portage/profile/package.use.mask` to bypass the distro's FAFO hard mask guardrail.
 
-# Use `USE="-system-clang -system-rust" ebuild chromium-toolchain-151.0.7922.71.ebuild digest clean unpack prepare compile install merge` to obtain numbers.
+# Use `USE="-system-clang -system-rust" ebuild chromium-toolchain-151.0.7922.108.ebuild digest clean unpack prepare compile install merge` to obtain numbers.
 
 inherit dhms
 
@@ -20,14 +22,14 @@ inherit dhms
 # llvm = c++17
 CXX_STANDARD=23 # Same as libcxx and chromium.
 # For commit history, see https://gn.googlesource.com/gn/+log
-# For the pinned gn version associated with a specific Chromium release, see https://github.com/chromium/chromium/blob/151.0.7922.71/DEPS#L557
+# For the pinned gn version associated with a specific Chromium release, see https://github.com/chromium/chromium/blob/151.0.7922.108/DEPS#L557
 GN_COMMIT="1d86777e7f2562a86ecea77d1809ac4f82bb5bfe"
 GN_PV="0.2435" # See get_gn_ver.sh to obtain the version.
 GN_USE_GIT=1
 INSTALL_PREFIX="/usr/share/chromium/${PV%.*}.x"
 LIBCXX_USEDEP_SKIP=1
-# https://github.com/chromium/chromium/blob/151.0.7922.71/tools/clang/scripts/update.py#L38 \
-LLVM_SYSTEM_SLOT="23" # Comment out if using stable slot
+# https://github.com/chromium/chromium/blob/151.0.7922.108/tools/clang/scripts/update.py#L38 \
+LLVM_SYSTEM_SLOT="24" # We use the latest slot to mitigate recompilation vulnerabilities.
 LLVM_SYSTEM_SLOT_LIVE="1"
 LLVM_SYSTEM_TIMESTAMP_LIVE="Fri, 15 May 2026 18:39:29 +0000" # Unvendored timestamp for system-clang from https://github.com/llvm/llvm-project/commit/${LLVM_VENDORED_COMMIT}.patch
 # Vendored is before -rc release before -rc1 miscompile fixes.
@@ -35,7 +37,7 @@ LLVM_VENDORED_COMMIT="53d18800" # without the g prefix; See also https://github.
 LLVM_VENDORED_N_COMMITS="19482" # The number to the right of -init- in llvmorg-23-init-10931-g20b6ec66
 LLVM_VENDORED_SLOT="23" # Cr official slot
 LLVM_VENDORED_SUB_REV="1" # Same as CLANG_SUB_REVISION
-# https://github.com/chromium/chromium/blob/151.0.7922.71/tools/rust/update_rust.py#L37 \
+# https://github.com/chromium/chromium/blob/151.0.7922.108/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
 RUST_SYSTEM_LIVE_TIMESTAMP="Jul 5, 2026 8:11 AM PDT" # Same as Rust 1.99.0 timestamp
 RUST_SYSTEM_LIVE_VER="1.99.0"
@@ -235,18 +237,18 @@ REQUIRED_USE="
 RDEPEND+="
 	!www-client/chromium-toolchain:0
 	system-clang? (
-		>=llvm-runtimes/libcxx-${LLVM_VENDORED_SLOT}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},libcxxabi${USE_FALLBACK_COMMIT}]
-		>=llvm-runtimes/libcxxabi-${LLVM_VENDORED_SLOT}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}${USE_FALLBACK_COMMIT}]
-		=llvm-runtimes/compiler-rt-${LLVM_VENDORED_SLOT}*:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}${USE_FALLBACK_COMMIT}]
-		=llvm-runtimes/clang-runtime-${LLVM_VENDORED_SLOT}*:=[${MULTILIB_USEDEP},compiler-rt,sanitize]
-		llvm-core/clang:${LLVM_VENDORED_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}${USE_FALLBACK_COMMIT}]
-		llvm-core/lld:${LLVM_VENDORED_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}${USE_FALLBACK_COMMIT}]
-		llvm-core/llvm:${LLVM_VENDORED_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}${USE_FALLBACK_COMMIT}]
+		>=llvm-runtimes/libcxx-${LLVM_SYSTEM_SLOT}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},libcxxabi${USE_FALLBACK_COMMIT}]
+		>=llvm-runtimes/libcxxabi-${LLVM_SYSTEM_SLOT}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}${USE_FALLBACK_COMMIT}]
+		=llvm-runtimes/compiler-rt-${LLVM_SYSTEM_SLOT}*:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}${USE_FALLBACK_COMMIT}]
+		=llvm-runtimes/clang-runtime-${LLVM_SYSTEM_SLOT}*:=[${MULTILIB_USEDEP},compiler-rt,sanitize]
+		llvm-core/clang:${LLVM_SYSTEM_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}${USE_FALLBACK_COMMIT}]
+		llvm-core/lld:${LLVM_SYSTEM_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}${USE_FALLBACK_COMMIT}]
+		llvm-core/llvm:${LLVM_SYSTEM_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}${USE_FALLBACK_COMMIT}]
 		cfi? (
-			=llvm-runtimes/compiler-rt-sanitizers-${LLVM_VENDORED_SLOT}*:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},cfi${USE_FALLBACK_COMMIT}]
+			=llvm-runtimes/compiler-rt-sanitizers-${LLVM_SYSTEM_SLOT}*:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},cfi${USE_FALLBACK_COMMIT}]
 		)
 		pgo? (
-			=llvm-runtimes/compiler-rt-sanitizers-${LLVM_VENDORED_SLOT}*:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},profile${USE_FALLBACK_COMMIT}]
+			=llvm-runtimes/compiler-rt-sanitizers-${LLVM_SYSTEM_SLOT}*:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},profile${USE_FALLBACK_COMMIT}]
 		)
 	)
 	system-rust? (
