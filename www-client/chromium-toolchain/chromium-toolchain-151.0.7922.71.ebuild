@@ -235,30 +235,18 @@ REQUIRED_USE="
 RDEPEND+="
 	!www-client/chromium-toolchain:0
 	system-clang? (
-		=llvm-runtimes/compiler-rt-${LLVM_VENDORED_SLOT}*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}${USE_FALLBACK_COMMIT}]
-		llvm-runtimes/compiler-rt:=
-		=llvm-runtimes/clang-runtime-${LLVM_VENDORED_SLOT}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
-		llvm-runtimes/clang-runtime:=
-		llvm-core/clang:${LLVM_VENDORED_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}${USE_FALLBACK_COMMIT}]
-		llvm-core/clang:=
-		llvm-core/lld:${LLVM_VENDORED_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}${USE_FALLBACK_COMMIT}]
-		llvm-core/lld:=
-		llvm-core/llvm:${LLVM_VENDORED_SLOT}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}${USE_FALLBACK_COMMIT}]
-		llvm-core/llvm:=
-
-		>=llvm-runtimes/libcxx-${LLVM_VENDORED_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},libcxxabi${USE_FALLBACK_COMMIT}]
-		llvm-runtimes/libcxx:=
-
-		>=llvm-runtimes/libcxxabi-${LLVM_VENDORED_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}${USE_FALLBACK_COMMIT}]
-		llvm-runtimes/libcxxabi:=
-
+		>=llvm-runtimes/libcxx-${LLVM_VENDORED_SLOT}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},libcxxabi${USE_FALLBACK_COMMIT}]
+		>=llvm-runtimes/libcxxabi-${LLVM_VENDORED_SLOT}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}${USE_FALLBACK_COMMIT}]
+		=llvm-runtimes/compiler-rt-${LLVM_VENDORED_SLOT}*:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}${USE_FALLBACK_COMMIT}]
+		=llvm-runtimes/clang-runtime-${LLVM_VENDORED_SLOT}*:=[${MULTILIB_USEDEP},compiler-rt,sanitize]
+		llvm-core/clang:${LLVM_VENDORED_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}${USE_FALLBACK_COMMIT}]
+		llvm-core/lld:${LLVM_VENDORED_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}${USE_FALLBACK_COMMIT}]
+		llvm-core/llvm:${LLVM_VENDORED_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP}${USE_FALLBACK_COMMIT}]
 		cfi? (
-			=llvm-runtimes/compiler-rt-sanitizers-${LLVM_VENDORED_SLOT}*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},cfi${USE_FALLBACK_COMMIT}]
-			llvm-runtimes/compiler-rt-sanitizers:=
+			=llvm-runtimes/compiler-rt-sanitizers-${LLVM_VENDORED_SLOT}*:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},cfi${USE_FALLBACK_COMMIT}]
 		)
 		pgo? (
-			=llvm-runtimes/compiler-rt-sanitizers-${LLVM_VENDORED_SLOT}*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},profile${USE_FALLBACK_COMMIT}]
-			llvm-runtimes/compiler-rt-sanitizers:=
+			=llvm-runtimes/compiler-rt-sanitizers-${LLVM_VENDORED_SLOT}*:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},profile${USE_FALLBACK_COMMIT}]
 		)
 	)
 	system-rust? (
