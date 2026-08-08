@@ -185,7 +185,7 @@ EAPI=8
 # The LLVM timestamp can be obtained from
 # https://github.com/chromium/chromium/blob/151.0.7922.108/tools/clang/scripts/update.py#L42
 # https://github.com/llvm/llvm-project/commit/7b473dfe
-# Also change LLVM_OFFICIAL_SLOT
+# Also change LLVM_VENDORED_SLOT
 #
 
 #
@@ -340,9 +340,9 @@ CHKL_TIMESTAMPS=(
 	"llvm-runtimes/compiler-rt-sanitizers-9999"
 	"llvm-runtimes/compiler-rt-sanitizers-23.0.0.9999"
 	"llvm-runtimes/libcxx-9999"
-	"llvm-runtimes/libcxx-23.0.0.9999"
+	"llvm-runtimes/libcxx-24.0.0.9999"
 	"llvm-runtimes/libcxxabi-9999"
-	"llvm-runtimes/libcxxabi-23.0.0.9999"
+	"llvm-runtimes/libcxxabi-24.0.0.9999"
 	"media-libs/dav1d-9999"
 	"media-libs/flac-9999"
 	"media-libs/freetype-9999"
@@ -1013,20 +1013,21 @@ LLVM_COMPAT=(
 	# Also, only the one that passes all the fuzz tests is allowed, this
 	# means that the compiler must be pinned to the exact commit that meets
 	# all security requirements (A+ grade commit snapshot).
-	23 # Vendored-slot and system slot
+	23 # vendored-slot, official
+	24 # system-clang
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
-LLVM_SYSTEM_SLOT="23"
-LLVM_OFFICIAL_SLOT="23" # Cr official slot
 LIBCXX_SLOT_MIN="21"
+LLVM_SYSTEM_SLOT="24"
+LLVM_VENDORED_SLOT="23" # Cr official slot
 # For simplicity, the PGO profdata compatibility assumes the same as
-# LLVM_OFFICIAL_SLOT to LLVM_OFFICIAL_SLOT + 1.
+# LLVM_VENDORED_SLOT to LLVM_VENDORED_SLOT + 1.
 
 PGO_LLVM_SUPPORTED_VERSIONS=(
-	"$(( ${LLVM_OFFICIAL_SLOT} + 1 )).0.0.9999"
-	"$(( ${LLVM_OFFICIAL_SLOT} + 1 )).0.0"
-	"${LLVM_OFFICIAL_SLOT}.0.0.9999"
-	"${LLVM_OFFICIAL_SLOT}.0.0"
+	"$(( ${LLVM_VENDORED_SLOT} + 1 )).0.0.9999"
+	"$(( ${LLVM_VENDORED_SLOT} + 1 )).0.0"
+	"${LLVM_VENDORED_SLOT}.0.0.9999"
+	"${LLVM_VENDORED_SLOT}.0.0"
 )
 
 # Has GLIBCXX symbol indicating C++
@@ -1706,6 +1707,14 @@ REQUIRED_USE+="
 		bindist
 		patent_status_nonfree
 	)
+	llvm_slot_${LLVM_SYSTEM_SLOT}? (
+		!official
+		system-clang
+	)
+	llvm_slot_${LLVM_VENDORED_SLOT}? (
+		!system-clang
+		official
+	)
 	miracleptr? (
 		partitionalloc
 	)
@@ -1729,7 +1738,7 @@ REQUIRED_USE+="
 		jit
 		kerberos
 		libaom
-		llvm_slot_${LLVM_OFFICIAL_SLOT}
+		llvm_slot_${LLVM_VENDORED_SLOT}
 		miracleptr
 		mpris
 		openh264
@@ -2591,10 +2600,10 @@ eerror
 setup_system_clang_paths() {
 	local slot
 	if use official ; then
-		slot="${LLVM_OFFICIAL_SLOT}"
+		slot="${LLVM_VENDORED_SLOT}"
 	elif ! use system-clang ; then
 	# Clang (vendored)
-		slot="${LLVM_OFFICIAL_SLOT}"
+		slot="${LLVM_VENDORED_SLOT}"
 	else
 	# Clang (system)
 		slot="${LLVM_SYSTEM_SLOT}"
@@ -5014,11 +5023,11 @@ einfo "C/C++ compiler:  Clang (vendored)"
 		| head -n 1 \
 		| cut -f 3 -d " " \
 		| cut -f 1 -d ".")
-	if [[ "${LLVM_OFFICIAL_SLOT}" != "${LLVM_SLOT}" ]] ; then
+	if [[ "${LLVM_VENDORED_SLOT}" != "${LLVM_SLOT}" ]] ; then
 eerror
-eerror "Fix LLVM_OFFICIAL_SLOT.  Set it to LLVM_SLOT."
+eerror "Fix LLVM_VENDORED_SLOT.  Set it to LLVM_SLOT."
 eerror
-eerror "LLVM_OFFICIAL_SLOT:  ${LLVM_OFFICIAL_SLOT}"
+eerror "LLVM_VENDORED_SLOT:  ${LLVM_VENDORED_SLOT}"
 eerror "LLVM_SLOT:  ${LLVM_SLOT}"
 eerror
 		die
