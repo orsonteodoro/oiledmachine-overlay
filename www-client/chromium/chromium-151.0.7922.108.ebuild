@@ -312,6 +312,7 @@ CHKL_TIMESTAMPS=(
 	"dev-db/sqlite-9999"
 	"media-libs/alsa-lib-9999"
 	"media-libs/fontconfig-9999"
+	"dev-lang/go-9999"
 	"dev-libs/crc32c-9999"
 	"dev-libs/double-conversion-9999"
 	"dev-libs/expat-9999"
@@ -2201,6 +2202,7 @@ BDEPEND+="
 	')
 	$(secure-version_gen_perl_depends)
 	>=app-arch/gzip-${GZIP_PV}
+	>=dev-lang/go-${GO_PV}
 	>=dev-util/gperf-3.2[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	>=net-libs/nodejs-${NODEJS_24_PV}:${NODE_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},inspector]
@@ -3342,6 +3344,18 @@ eerror "gn >= ${GN_MIN_VER} is required"
 		rm -rf "${S}/third_party/rust-toolchain" || true
 		ln -s "${CHROMIUM_TOOLCHAIN_PREFIX}/rust" "${S}/third_party/rust-toolchain" || die
 	fi
+
+	local golang_arch
+	if use arm64 ; then
+		golang_arch="arm64"
+	elif use amd64 ; then
+		golang_arch="amd64"
+	else
+eerror "${ARCH} is not supported.  Missing Go support for Dawn used for WebGPU."
+		die
+	fi
+	mkdir -p "${S}/third_party/dawn/tools/golang/linux-${golang_arch}/bin" || die
+	ln -s "/usr/bin/go" "${S}/third_party/dawn/tools/golang/linux-${golang_arch}/bin/go" || die
 
 	if use ppc64 && [[ "${KEYWORDS}" =~ "ppc64" ]] ; then
 		unpack "chromium-openpower-${OPENPOWER_PATCHES_COMMIT:0:10}.tar.bz2"
