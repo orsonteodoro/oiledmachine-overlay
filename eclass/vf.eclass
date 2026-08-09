@@ -379,8 +379,8 @@ einfo "INJECT = Injection"
 # Created to differentiate from spoof attack
 einfo "INSI = Inappropriate Security Indicators"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"INTINJ"($|" "|";"|",") ]] ; then
-einfo "INTINJ = Interrupt Injection"
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"INTRINJ"($|" "|";"|",") ]] ; then
+einfo "INTRINJ = Interrupt Injection"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IO"($|" "|";"|",") ]] ; then
 einfo "IO = Integer Overflow"
