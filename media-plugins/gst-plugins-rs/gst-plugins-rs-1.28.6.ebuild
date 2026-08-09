@@ -1848,7 +1848,7 @@ einfo "Copy Cargo.lock Cargo.toml to the files/${PV}"
 
 src_unpack() {
 	unpack "gst-plugins-rs-gstreamer-${MY_PV}.tar.gz"
-	die # For manual lockfile update
+	#die # For manual lockfile update
 
 	if [[ "${GENERATE_LOCKFILE}" =~ "1" && "${LOCKFILE_SOURCE}" == "upstream" ]] ; then
 		_lockfile_gen_unpack_upstream
