@@ -379,6 +379,9 @@ einfo "INJECT = Injection"
 # Created to differentiate from spoof attack
 einfo "INSI = Inappropriate Security Indicators"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"INTINJ"($|" "|";"|",") ]] ; then
+einfo "INTINJ = Interrupt Injection"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IO"($|" "|";"|",") ]] ; then
 einfo "IO = Integer Overflow"
 		fi
@@ -664,7 +667,10 @@ einfo "TA = Timing Attack"
 einfo "TC = Type Confusion"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("ToCToU"|"TOCTOU")($|" "|";"|",") ]] ; then
-einfo "ToCToU = Time of Check Time of Use"
+einfo "ToCToU = Time-of-Check to Time-of-Use"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("ToNToU"|"TONTOU")($|" "|";"|",") ]] ; then
+einfo "TONTOU = Time-of-Neutralization to Time-of-Use"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"TSE"($|" "|";"|",") ]] ; then
 einfo "TSE = Transient Speculative Execution"
