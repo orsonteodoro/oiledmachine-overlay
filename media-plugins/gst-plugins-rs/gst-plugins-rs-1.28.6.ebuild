@@ -154,7 +154,7 @@ else
 	S="${WORKDIR}/gst-plugins-rs-gstreamer-${MY_PV}"
 	SRC_URI+="
 fetch+https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs/-/archive/gstreamer-${MY_PV}/gst-plugins-rs-gstreamer-${PV}.tar.gz?ref_type=tags -> gst-plugins-rs-gstreamer-${PV}.tar.gz
-fetch+https://gitlab.freedesktop.org/gstreamer/gstreamer-rs/-/archive/${GSTREAMER_RS_COMMIT}/gstreamer-rs-${GSTREAMER_RS_COMMIT}.tar.gz -> gstreamer-rs-${GSTREAMER_RS_COMMIT}.gl.tar.gz
+fetch+https://gitlab.freedesktop.org/gstreamer/gstreamer-rs/-/archive/${GSTREAMER_RS_COMMIT}/gstreamer-rs-${GSTREAMER_RS_COMMIT}.tar.gz -> gstreamer-rs-${GSTREAMER_RS_COMMIT}.tar.gz
 	"
 	if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
 		:
@@ -1757,7 +1757,7 @@ einfo "7.  chmod 0664 \"${distdir}/${f2}\""
 einfo "8.  emerge -1vO =${CATEGORY}/${P}"
 einfo
 	f1="gstreamer-rs-${GSTREAMER_RS_COMMIT}.tar.gz"
-	f2="gstreamer-rs-${GSTREAMER_RS_COMMIT}.gl.tar.gz"
+	f2="gstreamer-rs-${GSTREAMER_RS_COMMIT}.tar.gz"
 einfo
 einfo "1.  Goto http://gitlab.freedesktop.org/gstreamer/gstreamer-rs"
 einfo "2.  Click the main drop down widget on top left and change it from main to ${GSTREAMER_RS_COMMIT}"
