@@ -43,10 +43,10 @@ IUSE+="
 ebuild_revision_28
 "
 RDEPEND="
+	$(secure-version_gen_ffmpeg_depends '7.1-' '[${MULTILIB_USEDEP}]')
 	>=dev-libs/glib-${GLIB_PV}:=[${MULTILIB_USEDEP}]
 	~media-libs/gstreamer-${MY_PV}:=[${MULTILIB_USEDEP}]
 	~media-libs/gst-plugins-base-${MY_PV}:=[${MULTILIB_USEDEP}]
-	$(secure-version_gen_ffmpeg_depends '7.1-' '[${MULTILIB_USEDEP}]')
 "
 DEPEND="
 	${RDEPEND}
@@ -54,15 +54,14 @@ DEPEND="
 BDEPEND="
 "
 PATCHES=(
-	"${FILESDIR}/gst-plugins-libav-1.28.5-cond-support-for-v410.patch"
 )
 
 get_ffmpeg_prefix() {
 	local L=(
-		"61.63.63" # live
+		"61.63.63" # 9.0, live
 		"60.62.62" # 8.0, 8.1
 		"59.61.61" # 7.1, same version used by upstream
-		"0/61.63.63" # live
+		"0/61.63.63" # 9.0, live
 		"0/60.62.62" # 8.0, 8.1
 		"0/59.61.61" # 7.1, same version used by upstream
 	)
