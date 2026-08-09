@@ -9,7 +9,7 @@ EAPI=8
 # See also https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/
 
 GENPATCHES_FALLBACK_COMMIT="d4fa92430e875432c3a61bb3abd9b6e68ea9fcbd" # 2026-06-04 18:26:32 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="848acc8ffe1b7cd5f1bf427b93069becfebc2c9d" # 2026-08-03 12:26:51 -0700 @	Merge tag 'fsverity-for-linus'
+LINUX_SOURCES_FALLBACK_COMMIT="06cf61899d6498b33e4b7c87d99d5bd471ccc375" # 2026-08-08 16:43:07 -0700 @	Merge tag 'x86-urgent-2026-08-08'
 RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
