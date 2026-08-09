@@ -335,11 +335,6 @@ PPC_CPU_REQUIRED_USE="
 	)
 "
 
-ARM64_CPU_FEATURES_RAW=(
-	"sme:sme"
-	"sme2:sme2"
-)
-
 X86_CPU_FEATURES_RAW=(
 	"aes:aesni"
 	"avx:avx"
@@ -511,7 +506,7 @@ if [[ "${MY_PV#9999}" == "${MY_PV}" ]] ; then
 	"
 fi
 if [[ "${MY_PV#9999}" != "${MY_PV}" ]] ; then
-	FALLBACK_COMMIT="2a20737f662fd3f3f5999e873b9e7c90b5efc375"
+	FALLBACK_COMMIT="9862dd83b1645b0c6e39b318aefb896138ffb08e"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${MY_P}"
 	EGIT_MIN_CLONE_TYPE="single"
 	EGIT_REPO_URI=(
@@ -617,7 +612,7 @@ ${USE_LICENSES[@]}
 alsa -clear-config-first cuda cuda-filters doc dvdvideo +encode gdbm
 liblensfun mold openvino oss pgo pipewire +re-codecs sndio sr
 static-libs tensorflow test torch v4l wayland
-ebuild_revision_83
+ebuild_revision_82
 "
 
 # The distro has frei0r-plugins as GPL-2 only but source is actually GPL-2+, GPL-3+ [baltan.cpp], LGPL-2.1+ [nois0r.cpp].

@@ -30,7 +30,7 @@ CFLAGS_HARDENED_LANGS="asm c-lang"
 CFLAGS_HARDENED_SSP_LEVEL=3 # SSP all is upstream default
 CFLAGS_HARDENED_USE_CASES="network security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS HO IO MC NPD OOBR OOBW RC SO UAF"
-FFMPEG_SOC_PATCH="ffmpeg-soc-8.1.patch"
+FFMPEG_SOC_PATCH=""
 N_SAMPLES=1
 NV_CODEC_HEADERS_PV="9.1.23.1"
 PYTHON_COMPAT=( "python3_14" )
@@ -506,7 +506,7 @@ if [[ "${MY_PV#9999}" == "${MY_PV}" ]] ; then
 	"
 fi
 if [[ "${MY_PV#9999}" != "${MY_PV}" ]] ; then
-	FALLBACK_COMMIT="9862dd83b1645b0c6e39b318aefb896138ffb08e"
+	FALLBACK_COMMIT="2a20737f662fd3f3f5999e873b9e7c90b5efc375"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${MY_P}"
 	EGIT_MIN_CLONE_TYPE="single"
 	EGIT_REPO_URI=(
@@ -612,7 +612,7 @@ ${USE_LICENSES[@]}
 alsa -clear-config-first cuda cuda-filters doc dvdvideo +encode gdbm
 liblensfun mold openvino oss pgo pipewire +re-codecs sndio sr
 static-libs tensorflow test torch v4l wayland
-ebuild_revision_82
+ebuild_revision_83
 "
 
 # The distro has frei0r-plugins as GPL-2 only but source is actually GPL-2+, GPL-3+ [baltan.cpp], LGPL-2.1+ [nois0r.cpp].
@@ -1235,7 +1235,7 @@ if [[ -n "${FFMPEG_SOC_PATCH}" ]] ; then
 fi
 DEPEND+="
 	amf? (
-		>=media-libs/amf-headers-1.5.0:=
+		>=media-libs/amf-headers-1.5.2:=
 	)
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
@@ -1248,6 +1248,7 @@ DEPEND+="
 		sys-kernel/linux-headers:=
 	)
 	vulkan? (
+		dev-util/spirv-headers:=
 		>=dev-util/vulkan-headers-1.4.317:=
 	)
 "
@@ -1300,13 +1301,7 @@ PDEPEND+="
 	)
 "
 PATCHES=(
-#	"${FILESDIR}/${PN}-6.1-wint-conversion.patch"
-#	"${FILESDIR}/${PN}-6.0-fix-lto-type-mismatch.patch"
 	"${FILESDIR}/${PN}-6.1-opencl-parallel-gmake-fix.patch"
-##	"${FILESDIR}/${PN}-6.1-gcc-14.patch"
-#	"${FILESDIR}/${PN}-6.0.1-alignment.patch"
-#	"${FILESDIR}/${PN}-6.1.1-vulkan-rename.patch"
-#	"${FILESDIR}/${PN}-6.1.1-memory-leak.patch"
 	"${FILESDIR}/extra-patches/${PN}-2cf3f4d-allow-7regs.patch"			# Added by oiledmachine-overlay
 	"${FILESDIR}/extra-patches/${PN}-5.1.2-configure-non-free-options.patch"	# Added by oiledmachine-overlay
 	"${FILESDIR}/extra-patches/${PN}-4.4.4-no-m32-or-m64-for-nvcc.patch"
@@ -2307,6 +2302,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	# libaribcaption is not packaged yet?
 		--disable-libaribcaption
 		--disable-liboapv
+		--disable-libonnxruntime
 		--disable-ohcodec
 		--enable-avfilter
 		--enable-pic
