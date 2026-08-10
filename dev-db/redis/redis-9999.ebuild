@@ -135,10 +135,10 @@ src_prepare() {
 }
 
 src_configure() {
-	econf
-
 	chkl_check_many_timestamps
 	cflags-hardened_append
+
+	econf
 
 	# Linenoise can't be built with -std=c99, see https://bugs.gentoo.org/451164
 	# also, don't define ANSI/c99 for lua twice
