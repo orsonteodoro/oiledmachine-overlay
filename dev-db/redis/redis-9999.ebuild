@@ -8,7 +8,11 @@ EAPI=8
 
 # For version see https://github.com/redis/redis/blob/unstable/src/version.h
 
-MY_PV="8.10.9999" # >= 58d0fb9, but src/version.h is incorrect
+if [[ "${PV}" =~ "9999" ]] ; then
+	MY_PV="8.10.9999" # >= 58d0fb9, but src/version.h is incorrect
+else
+	MY_PV="${PV}"
+fi
 
 CFLAGS_HARDENED_USE_CASES="security-critical database sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE SO UAF"
