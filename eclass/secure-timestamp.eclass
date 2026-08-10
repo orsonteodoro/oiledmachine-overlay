@@ -118,6 +118,7 @@ SECURE_TIMESTAMP["dev_cpp_nlohmann_json_9999"]="Jan 12, 2026 1:17 AM PST"
 SECURE_TIMESTAMP["dev_cpp_simdutf_9999"]="Jan 13, 2026 12:30 PST"
 SECURE_TIMESTAMP["dev_cpp_tbb_9999"]="May 26, 2026 7:55 AM PDT"
 SECURE_TIMESTAMP["dev_cpp_tomlplusplus_9999"]="Mar 23, 2026 8:33 AM PDT"
+SECURE_TIMESTAMP["dev_db_redis_9999"]="Aug 6, 2026 1:52 AM PDT"
 SECURE_TIMESTAMP["dev_db_sqlite_9999"]="Jul 26, 2026 11:45 AM PDT"
 SECURE_TIMESTAMP["dev_db_postgresql_9999"]="Jul 27, 2026 9:10 AM PDT"
 SECURE_TIMESTAMP["dev_qt_qt5compat_6_9999"]="Jun 18, 2026 12:50 AM PDT"
@@ -473,7 +474,6 @@ SECURE_TIMESTAMP["x11_libs_pango_9999"]="Jun 1, 2026 3:30 PM PDT"
 SECURE_TIMESTAMP["x11_libs_pixman_9999"]="Aug 1, 2025 9:38:49 AM PDT"
 SECURE_TIMESTAMP["x11_misc_colord_9999"]="Feb 2, 2026 1:31 AM PST"
 
-# SECURE_TIMESTAMP[""]=""
 
 	declare -p SECURE_TIMESTAMP
 }
