@@ -167,22 +167,11 @@ LICENSE="
 
 RESTRICT="mirror"
 SLOT="0"
-IUSE+=" ebuild_revision_20"
+IUSE+=" ebuild_revision_21"
 BDEPEND+="
 	>=net-libs/nodejs-${NODEJS_24_PV}:${NODE_SLOT}[webassembly(+)]
 	>=net-libs/nodejs-${NODEJS_24_PV}[npm,webassembly(+)]
 "
-
-npm_update_lock_install_post() {
-	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
-		local L
-		L=(
-			"electron-builder@${ELECTRON_BUILDER_PV}"
-			"electron@${ELECTRON_APP_ELECTRON_PV}"
-		)
-		enpm install "${L[@]}" -D ${NPM_INSTALL_ARGS[@]}
-	fi
-}
 
 src_unpack() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
@@ -193,12 +182,29 @@ src_unpack() {
 		_npm_setup_offline_cache
 
 		rm -vf package-lock.json
-		enpm install -D "typescript@5.8.3" # Fix build issue with 5.6.3
-		enpm install "${NPM_INSTALL_ARGS[@]}"
+
+	# Pinned versions
+		local L
+		L=(
+			"electron-builder@${ELECTRON_BUILDER_PV}"
+			"electron@${ELECTRON_APP_ELECTRON_PV}"
+			"typescript@5.8.3"
+		)
+		enpm install "${L[@]}" -D ${NPM_INSTALL_ARGS[@]}
 
 		npm_update_lock_install_post
 
 		enpm audit fix "${NPM_AUDIT_FIX_ARGS[@]}"
+
+	# Fix vulnerabilities
+		local L
+		L=(
+			"json5@^${NODE_JSON5_PV}"
+			"loader-utils@^${NODE_LOADER_UTILS_PV}"
+			"postcss@^${NODE_POSTCSS_PV}"
+			"serialize-javascript@^${NODE_SERIALIZE_JAVASCRIPT_PV}"
+		)
+		enpm install "${L[@]}" -D ${NPM_INSTALL_ARGS[@]}
 
 		_npm_check_errors
 einfo "Updating lockfile done."
@@ -233,7 +239,6 @@ src_compile() {
 	# The zip gets wiped for some reason in src_unpack.
 	electron-app_cp_electron
 
-#		-c.electronDownload.customFilename="electron-v${ELECTRON_APP_ELECTRON_PV}-$(electron-app_get_electron_platarch).zip" \
 	edo electron-builder \
 		$(electron-app_get_electron_platarch_args) \
 		-l dir \
