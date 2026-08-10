@@ -701,16 +701,17 @@ src_unpack() {
 		        einfo "Rebuilding sharp in ${S}"
 		        pushd "${S}" >/dev/null 2>&1 || die
 				node-sharp_pnpm_rebuild_sharp
+
 				# Copy sharp binary to expected location
-				mkdir -p "node_modules/sharp/build/${configuration}" || die "Failed to create node_modules/sharp/build/${configuration}"
+				mkdir -p "node_modules/.pnpm/sharp@${NODE_SHARP_PV}_@types+node@${NODEJS_24_PV}/node_modules/sharp/build/${configuration}" || die "Failed to create dir"
+
 				cp \
-					"node_modules/sharp/src/build/${configuration}/sharp-${sharp_platform}.node" \
-					"node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" \
+					"node_modules/.pnpm/sharp@${NODE_SHARP_PV}_@types+node@${NODEJS_24_PV}/node_modules/sharp/src/build/${configuration}/sharp-${sharp_platform}-${NODE_SHARP_PV}.node" \
+					"node_modules/.pnpm/sharp@${NODE_SHARP_PV}_@types+node@${NODEJS_24_PV}/node_modules/sharp/build/${configuration}/sharp-${sharp_platform}-${NODE_SHARP_PV}.node" \
 					|| die "Failed to copy sharp-${sharp_platform}.node"
-				ls -l "node_modules/sharp/build/${configuration}/sharp-${sharp_platform}.node" || die "sharp-${sharp_platform}.node not found"
 
 		# Remove prebuilts
-				rm -rf "node_modules/.pnpm/@img+sharp-"*"@"* || true
+				rm -rf "node_modules/.pnpm/@img+sharp-${sharp_platform}@"* || true
 
 				node-sharp_verify_dedupe
 			popd >/dev/null 2>&1 || die
