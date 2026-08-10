@@ -25,11 +25,11 @@ NODE_ENV="development"
 NODE_SLOT="24" # Same as Electron 42.4.1
 ELECTRON_BUILDER_PV="24.13.3" # Pinned required.  Error:  ⨯ Invalid configuration object. electron-builder 26.15.7 has been initialized using a configuration object that does not match the API schema.
 
-inherit secure-version
+inherit secure-version secure-version-node
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="${ELECTRON_PV}"
+	ELECTRON_APP_ELECTRON_PV="${NODE_24_ELECTRON_PV}"
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="27.3.10" # Cr 118.0.5993.159, node 18.17.1
