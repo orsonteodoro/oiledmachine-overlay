@@ -570,9 +570,9 @@ pnpm_unpack_post() {
 #		eapply "${FILESDIR}/${PN}-2.2.13-docker-cjs-multidriver-support.patch" # TODO update
 	fi
 
+	eapply "${FILESDIR}/${PN}-2.2.13-pnpm-workspace-changes.patch"
 
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
-		eapply "${FILESDIR}/${PN}-2.2.13-pnpm-workspace-changes.patch"
 	# Fixes to unmet peer or missing references
 		pkgs=(
 		)
