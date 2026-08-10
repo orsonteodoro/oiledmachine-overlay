@@ -308,9 +308,9 @@ einfo "DEBUG:  Called node-sharp_npm_rebuild_sharp()"
 	fi
 
 	einfo "Cleaning prebuilt for system-vips"
-	edo rm -vrf "node_modules/@img/sharp"*
-	edo rm -vrf "${HOME}/.cache/node-gyp"
-	edo rm -vrf "node_modules/sharp"
+	edo rm -vrf "node_modules/@img/sharp"* || true
+	edo rm -vrf "${HOME}/.cache/node-gyp" || treu
+	edo rm -vrf "node_modules/sharp" || true
 	export npm_config_build_from_source="true"
 
 	local libdir=$(get_libdir)
@@ -393,9 +393,9 @@ node-sharp_pnpm_rebuild_sharp() {
 	fi
 
 	einfo "Cleaning prebuilt for system-vips"
-	edo rm -vrf "node_modules/@img/sharp"*
-	edo rm -vrf "${HOME}/.cache/node-gyp"
-	edo rm -vrf "node_modules/sharp"
+	edo rm -vrf "node_modules/@img/sharp"* || true
+	edo rm -vrf "${HOME}/.cache/node-gyp" || true
+	edo rm -vrf "node_modules/sharp" || true
 	export npm_config_build_from_source="true"
 
 	local libdir=$(get_libdir)
@@ -515,9 +515,9 @@ node-sharp_yarn_rebuild_sharp() {
 	fi
 
 	einfo "Cleaning prebuilt for system-vips"
-	edo rm -vrf "node_modules/@img/sharp"* || die "Failed to clean @img/sharp"
-	edo rm -vrf "${HOME}/.cache/node-gyp" || die "Failed to clean node-gyp cache"
-	edo rm -vrf "node_modules/sharp" || die "Failed to clean node_modules/sharp"
+	edo rm -vrf "node_modules/@img/sharp"* || true
+	edo rm -vrf "${HOME}/.cache/node-gyp" || true
+	edo rm -vrf "node_modules/sharp" || true
 	export npm_config_build_from_source="true"
 
 	local libdir=$(get_libdir)

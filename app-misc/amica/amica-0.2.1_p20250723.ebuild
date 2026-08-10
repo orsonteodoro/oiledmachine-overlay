@@ -942,6 +942,12 @@ einfo "Unpacking cargo packages"
 				"node_modules/@xenova/transformers/node_modules/sharp/build/Release/sharp-${sharp_platform}.node" \
 				|| die "Failed to copy ${fn} (3)"
 
+			cp \
+				"node_modules/sharp/src/build/${configuration}/${fn}" \
+				"node_modules/@xenova/transformers/node_modules/sharp/build/Release/sharp-${sharp_platform}.node" \
+				|| die "Failed to copy ${fn} (3)"
+
+			rm -vrf "node_modules/sharp/node_modules/@img/sharp-${sharp_platform}" || true
 	        popd >/dev/null 2>&1 || die
 
 	# Allow only the locally built node sharp
