@@ -837,6 +837,8 @@ npm_update_lock_install_post() {
 #ewarn "QA:  Manually remove node_modules/eslint-config-next/node_modules/eslint-plugin-react-hooks in package-lock.json"
 #ewarn "QA:  Manually remove node_modules/copy-webpack-plugin/node_modules/serialize-javascript in package-lock.json"
 #ewarn "QA:  Manually remove node_modules/@charcoal-ui/icons/node_modules/dompurify in package-lock.json"
+ewarn "QA:  Manually remove node_modules/onnx-proto/node_modules/protobufjs in package-lock.json"
+ewarn "QA:  Manually change \"protobufjs\": \"^6.8.8\" to \"protobufjs\": \"^7.6.3\" in package-lock.json"
 
 	#####################
 	# Pinned dependencies
