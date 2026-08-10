@@ -563,14 +563,16 @@ pnpm_unpack_post() {
 # The prebuilt vips could be causing the segfault.  The sharp package need to
 # reference the system's vips package not the prebuilt one.
 	eapply "${FILESDIR}/lobe-chat-1.65.0-sharp-declaration.patch"
-	eapply "${FILESDIR}/${PN}-2.1.33-use-e965-xlsx.patch"
+#	eapply "${FILESDIR}/${PN}-2.1.33-use-e965-xlsx.patch"
 	if use pwa ; then
 		eapply "${FILESDIR}/${MY_PN2}-2.1.34-hardcoded-paths.patch"
 #		eapply "${FILESDIR}/${PN}-2.2.0-postgresjs-driver-support.patch"
-		eapply "${FILESDIR}/${PN}-2.1.44-docker-cjs-multidriver-support.patch"
+#		eapply "${FILESDIR}/${PN}-2.2.13-docker-cjs-multidriver-support.patch" # TODO update
 	fi
 
+
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
+		eapply "${FILESDIR}/${PN}-2.2.13-pnpm-workspace-changes.patch"
 	# Fixes to unmet peer or missing references
 		pkgs=(
 		)
