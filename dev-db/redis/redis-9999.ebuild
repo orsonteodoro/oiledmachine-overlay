@@ -42,7 +42,8 @@ HOMEPAGE="
 "
 
 LICENSE="|| ( AGPL-3 RSAL-2 SSPL-1 ) Boost-1.0 MIT"
-SLOT="0/"$(ver_cut "1-2" "${MY_PV}")
+SUBSLOT=$(ver_cut "1-2" "${MY_PV}")
+SLOT="0/${SUBSLOT}"
 KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~loong ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 IUSE="jemalloc selinux ssl systemd tcmalloc test"
 RESTRICT="!test? ( test )"
@@ -81,6 +82,26 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-7.0.4-no-which.patch
 	"${FILESDIR}"/${PN}-8.2.6-tcmalloc-deprecated.patch
 )
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+	local actual_slot=$(head -n 1 "${S}/00-RELEASENOTES" | cut -f 4 -d " ")
+	local expected_slot="${SUBSLOT}"
+	if ver_test "${actual_slot}" "-ne" "${expected_slot}" ; then
+eerror "QA:  Update MY_PV"
+eerror "Actual slot:  ${actual_slot}"
+eerror "Expected slot:  ${expected_slot}"
+		die
+	fi
+}
 
 src_prepare() {
 	default
