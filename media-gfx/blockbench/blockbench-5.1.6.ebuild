@@ -167,7 +167,7 @@ LICENSE="
 
 RESTRICT="mirror"
 SLOT="0"
-IUSE+=" ebuild_revision_21"
+IUSE+=" ebuild_revision_22"
 BDEPEND+="
 	>=net-libs/nodejs-${NODEJS_24_PV}:${NODE_SLOT}[webassembly(+)]
 	>=net-libs/nodejs-${NODEJS_24_PV}[npm,webassembly(+)]
@@ -183,6 +183,16 @@ src_unpack() {
 
 		rm -vf package-lock.json
 
+einfo "QA:  Change \"loader-utils\": \"^0.2.16\" to \"loader-utils\": \"^1.4.2\" in package-lock.json"
+einfo "QA:  Remove node_modules/generic-names/node_modules/loader-utils in package-lock.json"
+einfo "QA:  Remove node_modules/generic-names/node_modules/json5 in package-lock.json"
+einfo "QA:  Remove node_modules/rollup-plugin-terser/node_modules/serialize-javascript in package-lock.json"
+einfo "QA:  Change \"serialize-javascript\": \"^4.0.0\" to \"serialize-javascript\": \"^7.1.0\" in package-lock.json"
+einfo "QA:  Remove node_modules/postcss-modules-local-by-default/node_modules/postcss in package-lock.json"
+einfo "QA:  Remove node_modules/postcss-modules-scope/node_modules/postcss in package-lock.json"
+einfo "QA:  Remove node_modules/postcss-modules-sync/node_modules/postcss in package-lock.json"
+einfo "QA:  Remove node_modules/@vue/component-compiler-utils/node_modules/postcss in package-lock.json"
+einfo "QA:  Change \"postcss\": \"^6.0.1\" and others to \"postcss\": \"^8.5.26\" in package-lock.json"
 	# Pinned versions
 		local L
 		L=(
