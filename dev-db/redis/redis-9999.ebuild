@@ -7,6 +7,7 @@ EAPI=8
 # too far from vanilla Lua, adding their own APIs like lua_enablereadonlytable
 
 # For version see https://github.com/redis/redis/blob/unstable/src/version.h
+# or https://github.com/redis/redis/blob/unstable/00-RELEASENOTES
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	MY_PV="8.10.9999" # >= 58d0fb9, but src/version.h is incorrect
