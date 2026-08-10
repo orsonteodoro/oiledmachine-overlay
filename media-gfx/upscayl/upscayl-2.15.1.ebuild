@@ -259,3 +259,4 @@ ewarn "You need vulkan drivers to use ${PN}."
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20260419, Electron 42.5.0)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20260715, Electron 43.1.1)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20260727, Electron 43.2.0)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20260809, Electron 43.3.0) but the Firejail profile needs to be fixed.
