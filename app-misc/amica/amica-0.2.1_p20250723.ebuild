@@ -838,6 +838,10 @@ npm_update_lock_install_post() {
 #ewarn "QA:  Manually remove node_modules/copy-webpack-plugin/node_modules/serialize-javascript in package-lock.json"
 #ewarn "QA:  Manually remove node_modules/@charcoal-ui/icons/node_modules/dompurify in package-lock.json"
 
+	#####################
+	# Pinned dependencies
+	#####################
+
 		local pkgs
 		pkgs=(
 			"onnxruntime-web@1.14.0"								# Fix build breakage
@@ -845,9 +849,6 @@ npm_update_lock_install_post() {
 			"@sentry/nextjs@^10.50.0"								# Fix build breakage
 		)
 		enpm install "${pkgs[@]}" -P "${NPM_INSTALL_ARGS[@]}"
-		pkgs=(
-		)
-		#enpm install "${pkgs[@]}" -P --legacy-peer-deps
 
 		pkgs=(
 			"@types/node@^${AT_TYPES_NODE_PV}"
@@ -873,6 +874,16 @@ npm_update_lock_install_post() {
 			"@tauri-apps/cli@2.11.4"								# Fix build issue with tauri.conf.json when updating to tauri v2
 		)
 		enpm install "${pkgs[@]}" -D "${NPM_INSTALL_ARGS[@]}"
+
+	#####################
+	# Fix vulnerabilities
+	#####################
+		pkgs=(
+			"next@${NODE_NEXT_PV}"
+			"protobufjs@${NODE_24_PROTOBUFJS_PV}"
+		)
+		enpm install "${pkgs[@]}" -P --legacy-peer-deps
+
 	fi
 }
 
