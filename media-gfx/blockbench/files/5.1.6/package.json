@@ -1,7 +1,7 @@
 {
 	"name": "Blockbench",
 	"description": "Low-poly modeling and animation software",
-	"version": "5.1.4",
+	"version": "5.1.6",
 	"license": "GPL-3.0-or-later",
 	"author": {
 		"name": "JannisX11",
@@ -154,7 +154,6 @@
 	"devDependencies": {
 		"@electron/notarize": "^2.5.0",
 		"@lunapaint/tga-codec": "^0.2.0",
-		"@tootallnate/once": "^3.0.1",
 		"@types/jquery": "^3.5.32",
 		"@types/node": "^22.14.0",
 		"@types/spectrum": "^1.8.7",
@@ -164,24 +163,20 @@
 		"concurrently": "^9.1.2",
 		"dompurify": "^3.3.1",
 		"dotenv": "^16.5.0",
-		"electron": "^43.1.1",
-		"electron-builder": "^25.1.8",
+		"electron": "^43.3.0",
+		"electron-builder": "^26.15.7",
 		"esbuild": "^0.25.8",
 		"esbuild-plugin-glsl": "^1.2.2",
 		"esbuild-vue": "^0.0.1",
 		"file-saver": "^2.0.5",
 		"gifenc": "^1.0.3",
 		"jquery": "^3.7.1",
-		"json5": "^2.2.3",
 		"jszip": "^3.10.1",
-		"loader-utils": "^1.4.2",
 		"marked": "^15.0.11",
 		"molangjs": "^1.7.0",
 		"peerjs": "^1.5.4",
 		"prismjs": "^1.29.0",
-		"serialize-javascript": "^7.0.7",
 		"strip-json-comments": "^5.0.3",
-		"tar": "^7.5.20",
 		"three": "^0.129.0",
 		"tinycolor2": "^1.6.0",
 		"typedoc": "^0.28.14",
@@ -195,7 +190,6 @@
 	"dependencies": {
 		"@electron/remote": "^2.1.2",
 		"electron-color-picker": "^0.2.0",
-		"electron-updater": "^6.7.3",
-		"postcss": "^8.5.19"
+		"electron-updater": "^6.7.3"
 	}
 }
