@@ -702,12 +702,14 @@ src_unpack() {
 		        pushd "${S}" >/dev/null 2>&1 || die
 				node-sharp_pnpm_rebuild_sharp
 
+				local node_pv="24.13.3" # The upstream version not the system's
+
 				# Copy sharp binary to expected location
-				mkdir -p "node_modules/.pnpm/sharp@${NODE_SHARP_PV}_@types+node@${NODEJS_24_PV}/node_modules/sharp/build/${configuration}" || die "Failed to create dir"
+				mkdir -p "node_modules/.pnpm/sharp@${NODE_SHARP_PV}_@types+node@${node_pv}/node_modules/sharp/build/${configuration}" || die "Failed to create dir"
 
 				cp \
-					"node_modules/.pnpm/sharp@${NODE_SHARP_PV}_@types+node@${NODEJS_24_PV}/node_modules/sharp/src/build/${configuration}/sharp-${sharp_platform}-${NODE_SHARP_PV}.node" \
-					"node_modules/.pnpm/sharp@${NODE_SHARP_PV}_@types+node@${NODEJS_24_PV}/node_modules/sharp/build/${configuration}/sharp-${sharp_platform}-${NODE_SHARP_PV}.node" \
+					"node_modules/.pnpm/sharp@${NODE_SHARP_PV}_@types+node@${node_pv}/node_modules/sharp/src/build/${configuration}/sharp-${sharp_platform}-${NODE_SHARP_PV}.node" \
+					"node_modules/.pnpm/sharp@${NODE_SHARP_PV}_@types+node@${node_pv}/node_modules/sharp/build/${configuration}/sharp-${sharp_platform}-${NODE_SHARP_PV}.node" \
 					|| die "Failed to copy sharp-${sharp_platform}.node"
 
 		# Remove prebuilts
