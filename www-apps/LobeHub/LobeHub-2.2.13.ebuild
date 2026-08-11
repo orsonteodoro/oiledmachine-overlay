@@ -599,6 +599,14 @@ pnpm_unpack_post() {
 
 	eapply "${FILESDIR}/${PN}-2.2.13-pnpm-workspace-changes.patch"
 
+	# Prevent inconsistent download URL
+#	sed -i -e "s|\"electron\": \"43.2.0\"|\"electron\": \"${ELECTRON_APP_ELECTRON_PV}\"|g" \
+#		"${S}/apps/desktop/package.json" \
+#		|| die
+	sed -i -e "s|electron: '43.3.0'|electron: '${ELECTRON_APP_ELECTRON_PV}'|g" \
+		"${S}/apps/desktop/pnpm-workspace.yaml" \
+		|| die
+
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 	# Fixes to unmet peer or missing references
 		pkgs=(
@@ -685,20 +693,20 @@ pnpm_dedupe_post() {
 				"esbuild@${NODE_ESBUILD_PV}"
 				"file-type@${NODE_FILE_TYPE_PV}"
 			)
-			epnpm add "${pkgs[@]}" -w "${PNPM_INSTALL_ARGS[@]}"
+			#epnpm add "${pkgs[@]}" -w "${PNPM_INSTALL_ARGS[@]}"
 			pkgs=(
 				"app-builder-lib@${NODE_APP_BUILDER_LIB_PV}"
 				"builder-util-runtime@${NODE_BUILDER_UTIL_RUNTIME_PV}"
 				"vite@${NODE_VITE_8_PV}"
 			)
-			epnpm add "${pkgs[@]}" -D -w "${PNPM_INSTALL_ARGS[@]}"
+			#epnpm add "${pkgs[@]}" -D -w "${PNPM_INSTALL_ARGS[@]}"
 		popd >/dev/null 2>&1 || die
 
 		pushd "apps/cli" >/dev/null 2>&1 || die
 			pkgs=(
 				"file-type@${NODE_FILE_TYPE_PV}"
 			)
-			epnpm add "${pkgs[@]}" -w "${PNPM_INSTALL_ARGS[@]}"
+			#epnpm add "${pkgs[@]}" -w "${PNPM_INSTALL_ARGS[@]}"
 		popd >/dev/null 2>&1 || die
 
 		pkgs=(
@@ -720,12 +728,12 @@ pnpm_dedupe_post() {
 			"tough-cookie@${NODE_TOUGH_COOKIE_PV}"
 			"uuid@${NODE_UUID_PV}"
 		)
-		epnpm add "${pkgs[@]}" -w "${PNPM_INSTALL_ARGS[@]}"
+		#epnpm add "${pkgs[@]}" -w "${PNPM_INSTALL_ARGS[@]}"
 
 		pkgs=(
 			"@apidevtools/json-schema-ref-parser@${NODE_AT_APIDEVTOOLS_JSON_SCHEMA_REF_PARSER_11_PV}"
 		)
-		epnpm add "${pkgs[@]}" -D -w "${PNPM_INSTALL_ARGS[@]}"
+		#epnpm add "${pkgs[@]}" -D -w "${PNPM_INSTALL_ARGS[@]}"
 
 		NODE_ADDON_API_INSTALL_ARGS=( "-P" )
 		NODE_GYP_INSTALL_ARGS=( "-D" )
