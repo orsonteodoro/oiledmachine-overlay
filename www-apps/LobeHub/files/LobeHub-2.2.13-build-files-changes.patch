@@ -1,0 +1,71 @@
+--- a/apps/cli/package.json.orig	2026-08-11 13:47:07.227706132 -0700
++++ b/apps/cli/package.json	2026-08-11 13:57:41.236620529 -0700
+@@ -64,7 +64,7 @@
+   },
+   "pnpm": {
+     "overrides": {
+-      "@types/react": "19.2.13",
++      "@types/react": "@NODE_AT_TYPES_REACT_19_PV@",
+       "antd": "6.3.5"
+     }
+   }
+--- a/package.json.orig	2026-08-11 13:47:07.231706011 -0700
++++ b/package.json	2026-08-11 13:56:02.455594762 -0700
+@@ -164,12 +164,13 @@
+     ]
+   },
+   "overrides": {
+-    "@types/react": "19.2.13",
++    "@types/react": "@NODE_AT_TYPES_REACT_19_PV@",
+     "antd": "6.3.5",
+     "baseline-browser-mapping": "2.10.31",
+-    "better-auth": "1.6.15",
+-    "drizzle-orm": "^0.45.2",
+-    "fast-xml-parser": "5.4.2",
++    "better-auth": "@NODE_BETTER_AUTH_PV@",
++    "drizzle-orm": "@NODE_DRIZZLE_ORM_PV@",
++    "fast-xml-parser": "@NODE_FAST_XML_PARSER_5_PV@",
++    "sharp": "@NODE_SHARP_PV@",
+     "lexical": "0.42.0",
+     "pdfjs-dist": "5.4.530",
+     "stylelint-config-clean-order": "7.0.0"
+@@ -574,18 +575,19 @@
+     ],
+     "overrides": {
+       "@react-pdf/image": "3.0.4",
+-      "@types/react": "19.2.13",
++      "@types/react": "@NODE_AT_TYPES_REACT_19_PV@",
+       "@vitest/coverage-v8": "3.2.6",
+       "antd": "6.3.5",
+       "baseline-browser-mapping": "2.10.31",
+-      "drizzle-orm": "^0.45.2",
+-      "fast-xml-parser": "5.4.2",
++      "drizzle-orm": "@NODE_DRIZZLE_ORM_PV@",
++      "fast-xml-parser": "@NODE_FAST_XML_PARSER_5_PV@",
+       "lexical": "0.42.0",
+       "node-gyp": "^12.4.0",
+       "pdfjs-dist": "5.4.530",
+-      "react": "19.2.7",
+-      "react-dom": "19.2.7",
++      "react": "@NODE_REACT_19_PV@",
++      "react-dom": "@NODE_REACT_DOM_19_PV@",
+       "s3rver>fast-xml-parser": "3.21.1",
++      "sharp": "@NODE_SHARP_PV@",
+       "stylelint-config-clean-order": "7.0.0",
+       "typescript": "6.0.3",
+       "vitest": "3.2.6"
+--- a/apps/desktop/package.json.orig	2026-08-11 13:47:07.227706132 -0700
++++ b/apps/desktop/package.json	2026-08-11 13:57:11.365519928 -0700
+@@ -135,9 +135,10 @@
+       "node-mac-permissions"
+     ],
+     "overrides": {
++      "electron": "@NODE_ELECTRON_PV@",
+       "node-gyp": "^12.4.0",
+-      "react": "19.2.7",
+-      "react-dom": "19.2.7",
++      "react": "@NODE_REACT_19_PV@",
++      "react-dom": "@NODE_REACT_DOM_19_PV@",
+       "vitest": "3.2.6"
+     }
+   }

@@ -597,16 +597,45 @@ pnpm_unpack_post() {
 #		eapply "${FILESDIR}/${PN}-2.2.13-docker-cjs-multidriver-support.patch" # TODO update
 	fi
 
+	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
+		eapply "${FILESDIR}/${PN}-2.2.13-build-files-changes.patch"
+	fi
 	eapply "${FILESDIR}/${PN}-2.2.13-pnpm-workspace-changes.patch"
 
-	# Prevent inconsistent download URL
-	sed -i -e "s|\"electron\": \"43.2.0\"|\"electron\": \"${ELECTRON_APP_ELECTRON_PV}\"|g" \
+	# secure-version-node changes
+	sed -i \
+		-e "s|@NODE_ADM_ZIP_PV@|${NODE_ADM_ZIP_PV}|g" \
+		-e "s|@NODE_AJV_PV@|${NODE_AJV_PV}|g" \
+		-e "s|@NODE_AT_APIDEVTOOLS_JSON_SCHEMA_REF_PARSER_11_PV@|${NODE_AT_APIDEVTOOLS_JSON_SCHEMA_REF_PARSER_11_PV}|g" \
+		-e "s|@NODE_AT_OCTOKIT_PLUGIN_PAGINATE_REST_PV@|${NODE_AT_OCTOKIT_PLUGIN_PAGINATE_REST_PV}|g" \
+		-e "s|@NODE_AT_OCTOKIT_REQUEST_PV@|${NODE_AT_OCTOKIT_REQUEST_PV}|g" \
+		-e "s|@NODE_AT_OCTOKIT_REQUEST_ERROR_PV@|${NODE_AT_OCTOKIT_REQUEST_ERROR_PV}|g" \
+		-e "s|@NODE_AT_OPENTELEMETRY_CORE_PV@|${NODE_AT_OPENTELEMETRY_CORE_PV}|g" \
+		-e "s|@NODE_AT_OPENTELEMETRY_PROPAGATOR_JAEGER_PV@|${NODE_AT_OPENTELEMETRY_PROPAGATOR_JAEGER_PV}|g" \
+		-e "s|@NODE_AT_TYPES_REACT_19_PV@|${NODE_AT_TYPES_REACT_19_PV}|g" \
+		-e "s|@NODE_BETTER_AUTH_PV@|${NODE_BETTER_AUTH_PV}|g" \
+		-e "s|@NODE_DRIZZLE_ORM_PV@|${NODE_DRIZZLE_ORM_PV}|g" \
+		-e "s|@NODE_ELECTRON_PV@|${ELECTRON_APP_ELECTRON_PV}|g" \
+		-e "s|@NODE_ESBUILD_PV@|${NODE_ESBUILD_PV}|g" \
+		-e "s|@NODE_FAST_XML_PARSER_5_PV@|${NODE_FAST_XML_PARSER_PV_5_PV}|g" \
+		-e "s|@NODE_FILE_TYPE_PV@|${NODE_FILE_TYPE_PV}|g" \
+		-e "s|@NODE_FORM_DATA_PV@|${NODE_FORM_DATA_PV}|g" \
+		-e "s|@NODE_JSONDIFFPATCH_PV@|${NODE_JSONDIFFPATCH_PV}|g" \
+		-e "s|@NODE_MINIMATCH_9_PV@|${NODE_MINIMATCH_9_PV}|g" \
+		-e "s|@NODE_PROTOBUFJS_8_PV@|${NODE_PROTOBUFJS_8_PV}|g" \
+		-e "s|@NODE_QS_PV@|${NODE_QS_PV}|g" \
+		-e "s|@NODE_REACT_19_PV@|${NODE_REACT_19_PV}|g" \
+		-e "s|@NODE_REACT_DOM_19_PV@|${NODE_REACT_DOM_19_PV}|g" \
+		-e "s|@NODE_SHARP_PV@|${NODE_SHARP_PV}|g" \
+		-e "s|@NODE_TAR_PV@|${NODE_TAR_PV}|g" \
+		-e "s|@NODE_TOUGH_COOKIE_PV@|${NODE_TOUGH_COOKIE_PV}|g" \
+		-e "s|@NODE_UUID_PV@|${NODE_UUID_PV}|g" \
+		-e "s|@NODE_VITE_8_PV@|${NODE_VITE_8_PV}|g" \
 		"${S}/apps/desktop/package.json" \
-		|| die
-	sed -i -e "s|@NODE_ELECTRON_PV@|${ELECTRON_APP_ELECTRON_PV}|g" \
 		"${S}/apps/desktop/pnpm-workspace.yaml" \
-		|| die
-	sed -i -e "s|@NODE_SHARP_PV@|${NODE_SHARP_PV}|g" \
+		"${S}/apps/cli/package.json" \
+		"${S}/apps/cli/pnpm-workspace.yaml" \
+		"${S}/package.json" \
 		"${S}/pnpm-workspace.yaml" \
 		|| die
 
