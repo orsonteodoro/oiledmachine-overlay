@@ -906,10 +906,7 @@ einfo "Building next.config.js"
 		edo npm run "build"
 		grep -q -e "Next.js build worker exited with code" "${T}/build.log" && die "Detected error"
 		grep -q -e "Failed to load next.config.js" "${T}/build.log" && die "Detected error"
-		edo npm run "build-sitemap"
 
-		# Equivalent to `pnpm run postbuild`
-		#edo npm run "build-sitemap"
 		postgres_migrate
 
 		grep -q -e "Build failed because of webpack errors" "${T}/build.log" && die "Detected error"
