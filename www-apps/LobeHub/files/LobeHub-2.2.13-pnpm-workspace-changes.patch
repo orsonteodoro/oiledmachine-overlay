@@ -7,7 +7,7 @@
    - .
 --- a/apps/desktop/pnpm-workspace.yaml.orig	2026-08-01 05:07:55.000000000 -0700
 +++ b/apps/desktop/pnpm-workspace.yaml	2026-08-10 11:42:07.708213172 -0700
-@@ -22,8 +22,11 @@ packages:
+@@ -22,8 +22,13 @@ packages:
    - '../../packages/utils'
    - '.'
  allowBuilds:
@@ -19,7 +19,9 @@
 +  'electron-winstaller@5.4.0': false
 +  'esbuild@0.18.20': false
 +  'esbuild@0.25.12': false
++  'esbuild@0.27.2': false
 +  'esbuild@0.27.7': false
++  'esbuild@0.28.1': false
 +  'esbuild@0.28.2': false
 +  'get-windows@9.3.0': false
 +  electron: true

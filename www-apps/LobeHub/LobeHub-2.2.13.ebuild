@@ -66,12 +66,13 @@ inherit secure-version secure-version-node
 _ELECTRON_DEP_ROUTE="secure"
 NODE_SHARP_USE="exif lcms webp"
 NODE_SLOT="24" # See .nvmrc or Dockerfile
-NPM_SLOT="3"
 PNPM_AUDIT_FIX=0
+PNPM_AUDIT_FIX_ARG="update" # override or update
 PNPM_DEDUPE=0 # Still debugging
 PNPM_SLOT="9"
 POSTGRESQL_PORT="5432"
 POSTGRESQL_SLOT="17"
+NPM_SLOT="3"
 RUST_MAX_VER="1.93.1" # Inclusive
 RUST_MIN_VER="1.93.1" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0 for next.js 15.3.3 dependency of @swc/core 1.11.24 \
 # Obtained from https://github.com/swc-project/swc/blob/v1.15.8/rust-toolchain \
@@ -79,6 +80,7 @@ RUST_MIN_VER="1.93.1" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0
 # Obtained from https://github.com/rust-lang/rust/blob/<commit-id>/RELEASES.md
 RUST_PV="${RUST_MIN_VER}"
 
+ELECTRON_BUILDER_PV="26.15.7"
 NEXTJS_PV="16.3.0"
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
@@ -601,26 +603,30 @@ pnpm_unpack_post() {
 	# Fixes to unmet peer or missing references
 		pkgs=(
 		)
-#		epnpm add -D ${pkgs[@]}
+#		epnpm add -D "${pkgs[@]}"
 		pkgs=(
 		)
-#		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
+#		epnpm add "${pkgs[@]}" "${PNPM_INSTALL_ARGS[@]}"
 	fi
 }
 
 pnpm_install_post() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
+		epnpm install --lockfile-only
+		pnpm audit --fix=${PNPM_AUDIT_FIX_ARG} || true
 		pushd "apps/desktop" >/dev/null 2>&1 || die
 einfo "Generating lockfile for lobehub-desktop-dev"
 			sed -i -e "/lockfile=false/d" ".npmrc" || die
 			epnpm install "${PNPM_INSTALL_ARGS[@]}"
 			epnpm install --lockfile-only
+			pnpm audit --fix=${PNPM_AUDIT_FIX_ARG} || true
 		popd >/dev/null 2>&1 || die
 		pushd "apps/cli" >/dev/null 2>&1 || die
 einfo "Generating lockfile for @lobehub/cli"
 			sed -i -e "/lockfile=false/d" ".npmrc" || die
 			epnpm install "${PNPM_INSTALL_ARGS[@]}"
 			epnpm install --lockfile-only
+			pnpm audit --fix=${PNPM_AUDIT_FIX_ARG} || true
 		popd >/dev/null 2>&1 || die
 	else
 		pushd "apps/desktop" >/dev/null 2>&1 || die
@@ -634,9 +640,9 @@ einfo "Unpacking @lobehub/cli"
 			epnpm install "${PNPM_INSTALL_ARGS[@]}"
 		popd >/dev/null 2>&1 || die
 		local pkgs=(
-			"sharp@${SHARP_PV}"
+			"sharp@${NODE_SHARP_PV}"
 		)
-		epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
+		epnpm add "${pkgs[@]}" "${PNPM_INSTALL_ARGS[@]}"
 	fi
 }
 
@@ -645,7 +651,7 @@ pnpm_audit_post() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		pkgs=(
 		)
-#		epnpm add -D ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}						# CVE-2025-24964; DoS, DT, ID; Critical
+#		epnpm add -D "${pkgs[@]}" "${PNPM_INSTALL_ARGS[@]}"						# CVE-2025-24964; DoS, DT, ID; Critical
 	fi
 }
 
@@ -660,30 +666,70 @@ pnpm_dedupe_post() {
 
 		local pkgs
 
+	#################
+	# Pinned versions
+	#################
 		pushd "apps/desktop" >/dev/null 2>&1 || die
 			pkgs=(
+				"electron-builder@${ELECTRON_BUILDER_PV}"
 			)
-#			epnpm add -D ${pkgs[@]}
+			epnpm add "${pkgs[@]}" -D -w "${PNPM_INSTALL_ARGS[@]}"
+		popd >/dev/null 2>&1 || die
+
+	#####################
+	# Vulnerability fixes
+	#####################
+		pushd "apps/desktop" >/dev/null 2>&1 || die
+			pkgs=(
+#				"tar@${NODE_TAR_PV}"
+#				"esbuild@${NODE_ESBUILD_PV}"
+#				"file-type@${NODE_FILE_TYPE_PV}"
+			)
+#			epnpm add "${pkgs[@]}" -w "${PNPM_INSTALL_ARGS[@]}"
+			pkgs=(
+#				"app-builder-lib@${NODE_APP_BUILDER_LIB_PV}"
+#				"builder-util-runtime@${NODE_BUILDER_UTIL_RUNTIME_PV}"
+#				"vite@${NODE_VITE_8_PV}"
+			)
+#			epnpm add "${pkgs[@]}" -D -w "${PNPM_INSTALL_ARGS[@]}"
 		popd >/dev/null 2>&1 || die
 
 		pushd "apps/cli" >/dev/null 2>&1 || die
 			pkgs=(
+#				"file-type@${NODE_FILE_TYPE_PV}"
 			)
-#			epnpm add -D ${pkgs[@]}
+#			epnpm add "${pkgs[@]}" -w "${PNPM_INSTALL_ARGS[@]}"
 		popd >/dev/null 2>&1 || die
 
 		pkgs=(
-
+#			"@octokit/plugin-paginate-rest@${NODE_AT_OCTOKIT_PLUGIN_PAGINATE_REST_PV}"
+#			"@octokit/request@${NODE_AT_OCTOKIT_REQUEST_PV}"
+#			"@octokit/request-error@${NODE_AT_OCTOKIT_REQUEST_ERROR_PV}"
+#			"@opentelemetry/core@${NODE_AT_OPENTELEMETRY_CORE_PV}"
+#			"@opentelemetry/propagator-jaeger@${NODE_AT_OPENTELEMETRY_PROPAGATOR_JAEGER_PV}"
+#			"ai@${NODE_AI_PV}"
+#			"adm-zip@${NODE_ADM_ZIP_PV}"
+#			"better-auth@${NODE_BETTER_AUTH_PV}"
+#			"esbuild@${NODE_ESBUILD_PV}"
+#			"fast-xml-parser@${NODE_FAST_XML_PARSER_PV_5_PV}"
+#			"file-type@${NODE_FILE_TYPE_PV}"
+#			"form-data@${NODE_FORM_DATA_PV}"
+#			"jsondiffpatch@${NODE_JSONDIFFPATCH_PV}"
+#			"protobufjs@${NODE_PROTOBUFJS_8_PV}"
+#			"qs@${NODE_QS_PV}"
+#			"tough-cookie@${NODE_TOUGH_COOKIE_PV}"
+#			"uuid@${NODE_UUID_PV}"
 		)
-		#epnpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
+#		epnpm add "${pkgs[@]}" -w "${PNPM_INSTALL_ARGS[@]}"
 
 		pkgs=(
+#			"@apidevtools/json-schema-ref-parser@${NODE_AT_APIDEVTOOLS_JSON_SCHEMA_REF_PARSER_11_PV}"
 		)
-#		epnpm add -D ${pkgs[@]}
+#		epnpm add "${pkgs[@]}" -D -w "${PNPM_INSTALL_ARGS[@]}"
 
 		NODE_ADDON_API_INSTALL_ARGS=( "-P" )
 		NODE_GYP_INSTALL_ARGS=( "-D" )
-		#epnpm add -D "@types/sharp" ${NPM_INSTALL_ARGS[@]}
+		#epnpm add -D "@types/sharp" "${PNPM_INSTALL_ARGS[@]}"
 		node-sharp_pnpm_lockfile_add_sharp
 
 		# Copy all lockfiles
@@ -744,7 +790,7 @@ src_unpack() {
 			popd >/dev/null 2>&1 || die
 		fi
 
-#		epnpm add "svix@1.45.1" ${NPM_INSTALL_ARGS[@]}
+#		epnpm add "svix@1.45.1" "${PNPM_INSTALL_ARGS[@]}"
 
 		if use electron ;then
 			pushd "apps/desktop" >/dev/null 2>&1 || die
