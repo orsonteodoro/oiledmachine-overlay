@@ -530,6 +530,25 @@ einfo "Remote-hosted LobeHub Cloud:  No"
 		export LOBEHUB_PORT=${LOBEHUB_PORT:-3210}
 einfo "LOBEHUB_HOSTNAME:  ${LOBEHUB_HOSTNAME} (user-definable, per-package environment variable)"
 einfo "LOBEHUB_PORT:  ${LOBEHUB_PORT} (user-definable, per-package environment variable)"
+		if [[ "${DATABASE_DRIVER}" == "node" || "${DATABASE_DRIVER}" == "neon" ]] ; then
+			:
+		else
+eerror
+eerror "DATABASE_DRIVER must be node or neon.  Update your"
+eerror "/etc/portage/package.env so that the line reads:"
+eerror
+eerror "export DATABASE_DRIVER=\"neon\""
+eerror
+eerror "  or"
+eerror
+eerror "export DATABASE_DRIVER=\"node\""
+eerror
+eerror
+eerror "DATABASE_DRIVER actual:  ${DATABASE_DRIVER}"
+eerror "DATABASE_DRIVER expected:  neon or node"
+eerror
+			die
+		fi
 	fi
 
 	if use postgres && ! grep -q -e "^shared_preload_libraries.*pg_search" "/etc/postgresql-${POSTGRESQL_SLOT}/postgresql.conf" ; then
