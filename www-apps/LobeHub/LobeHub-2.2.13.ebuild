@@ -668,15 +668,6 @@ pnpm_audit_post() {
 
 pnpm_dedupe_post() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
-		# DoS = Denial of Service
-		# DT = Data Tampering
-		# ID = Information Disclosure
-		# EBR = Extended Blast Radius
-		# ZC = Zero Click Attack (AV:N, PR:N, UI:N)
-		# CE = Code Execution
-
-	
-
 		local pkgs
 
 	#################

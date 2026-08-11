@@ -1,11 +1,40 @@
 --- a/pnpm-workspace.yaml.orig	2026-08-01 05:07:55.000000000 -0700
-+++ b/pnpm-workspace.yaml	2026-08-11 10:39:41.866121338 -0700
++++ b/pnpm-workspace.yaml	2026-08-11 12:19:17.942307888 -0700
 @@ -1,4 +1,3 @@
 -lockfile: false
  packages:
    - packages/**
    - .
-@@ -15,12 +14,72 @@ onlyBuiltDependencies:
+@@ -7,7 +6,28 @@ packages:
+   - apps/server
+ 
+ minimumReleaseAgeExclude:
++  # Upstream changes
+   - '@lobehub/ui@5.20.2'
++  # oiledmachine-overlay changes
++  - '@apidevtools/json-schema-ref-parser@11.2.0'
++  - '@octokit/plugin-paginate-rest@9.2.2'
++  - '@octokit/request@8.4.1'
++  - '@octokit/request-error@5.1.1'
++  - '@opentelemetry/core@2.8.0'
++  - '@opentelemetry/propagator-jaeger@2.9.0'
++  - 'adm-zip@0.6.0'
++  - 'better-auth@1.6.22'
++  - 'esbuild@0.28.1'
++  - 'fast-xml-parser@5.7.0'
++  - 'file-type@21.3.2'
++  - 'form-data@2.5.6'
++  - 'jsondiffpatch@0.7.2'
++  - 'minimatch@9.0.7'
++  - 'protobufjs@8.4.1'
++  - 'qs@6.15.2'
++  - 'sharp@@NODE_SHARP_PV@'
++  - 'tough-cookie@4.1.3'
++  - 'uuid@11.1.1'
+ 
+ onlyBuiltDependencies:
+   - '@google/genai'
+@@ -15,12 +35,73 @@ onlyBuiltDependencies:
    - '@vercel/speed-insights'
  
  overrides:
@@ -76,6 +105,7 @@
 +  'vite-tsconfig-paths@6.1.1>fast-xml-parser': '5.7.0'
 +  'vite-tsconfig-paths@6.1.1>qs': '6.15.2'
 +  esbuild: '0.28.1'
++  better-auth: '1.6.22'
 +  fast-xml-parser: '5.7.0'
 +  file-type: '21.3.2'
 +  protobufjs: '8.4.1'
@@ -84,8 +114,8 @@
  patchedDependencies:
    '@upstash/qstash': patches/@upstash__qstash.patch
 --- a/apps/desktop/pnpm-workspace.yaml.orig	2026-08-01 05:07:55.000000000 -0700
-+++ b/apps/desktop/pnpm-workspace.yaml	2026-08-11 10:37:33.981969882 -0700
-@@ -22,8 +22,20 @@ packages:
++++ b/apps/desktop/pnpm-workspace.yaml	2026-08-11 11:51:37.992253975 -0700
+@@ -22,8 +22,28 @@ packages:
    - '../../packages/utils'
    - '.'
  allowBuilds:
@@ -105,14 +135,22 @@
 +  electron: true
 +  node-mac-permissions: false
 +
++minimumReleaseAgeExclude:
++  - 'electron@@NODE_ELECTRON_PV@'
++  - 'esbuild@0.28.1'
++  - 'vite@8.0.16'
++
 +overrides:
 +  # Pinned versions
 +  electron: '@NODE_ELECTRON_PV@'
 +  # Vulnerability fixes
++  '@vanilla-extract/vite-plugin@5.2.6>vite': '8.0.16'
++  'drizzle-kit@0.31.10>esbuild': '0.28.1'
 +  'get-windows@9.3.0>tar': '7.5.21'
 +  file-type: '21.3.1'
++  vite: '8.0.16'
 --- a/apps/cli/pnpm-workspace.yaml.orig	2026-08-01 05:07:55.000000000 -0700
-+++ b/apps/cli/pnpm-workspace.yaml	2026-08-11 10:18:49.947799876 -0700
++++ b/apps/cli/pnpm-workspace.yaml	2026-08-11 11:32:03.579587724 -0700
 @@ -16,5 +16,10 @@ packages:
    - '../../packages/file-loaders'
    - '../../packages/utils'
