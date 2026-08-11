@@ -535,7 +535,7 @@ einfo "LOBEHUB_PORT:  ${LOBEHUB_PORT} (user-definable, per-package environment v
 		else
 eerror
 eerror "DATABASE_DRIVER must be node or neon.  Update your"
-eerror "/etc/portage/package.env so that the line reads:"
+eerror "/etc/portage/env/lobehub.conf so that the line reads:"
 eerror
 eerror "export DATABASE_DRIVER=\"neon\""
 eerror
@@ -546,6 +546,12 @@ eerror
 eerror
 eerror "DATABASE_DRIVER actual:  ${DATABASE_DRIVER}"
 eerror "DATABASE_DRIVER expected:  neon or node"
+eerror
+eerror "Example contents of /etc/portage/env/lobehub.conf:"
+eerror "export DATABASE_DRIVER=\"node\""
+eerror
+eerror "Example contents of /etc/portage/package.env:"
+eerror "${CATEGORY}/${PN} lobehub.conf"
 eerror
 			die
 		fi
