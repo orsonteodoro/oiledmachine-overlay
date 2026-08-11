@@ -774,6 +774,8 @@ src_unpack() {
 #ewarn "QA: Dedupe and remove sharp@0.33.5.  Change reference of sharp@0.33.5 to sharp@0.30.7"
 ewarn "QA:  Remove form-data@2.3.3 in pnpm-lock.yaml"
 ewarn "QA:  Change form-data: 2.3.3 to form-data: 2.5.6 in pnpm-lock.yaml"
+ewarn "QA:  Remove tar@6.2.1 in apps/desktop/pnpm-lock.yaml"
+ewarn "QA:  Change tar: 6.2.1 to tar: 7.5.21 in apps/desktop/pnpm-lock.yaml"
 
 		local configuration="Debug"
 		local nconfiguration="Release"
