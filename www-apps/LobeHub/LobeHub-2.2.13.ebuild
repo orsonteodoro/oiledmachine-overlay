@@ -613,20 +613,20 @@ pnpm_unpack_post() {
 pnpm_install_post() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		epnpm install --lockfile-only
-		pnpm audit --fix=${PNPM_AUDIT_FIX_ARG} || true
+		#pnpm audit --fix=${PNPM_AUDIT_FIX_ARG} || true
 		pushd "apps/desktop" >/dev/null 2>&1 || die
 einfo "Generating lockfile for lobehub-desktop-dev"
 			sed -i -e "/lockfile=false/d" ".npmrc" || die
 			epnpm install "${PNPM_INSTALL_ARGS[@]}"
 			epnpm install --lockfile-only
-			pnpm audit --fix=${PNPM_AUDIT_FIX_ARG} || true
+			#pnpm audit --fix=${PNPM_AUDIT_FIX_ARG} || true
 		popd >/dev/null 2>&1 || die
 		pushd "apps/cli" >/dev/null 2>&1 || die
 einfo "Generating lockfile for @lobehub/cli"
 			sed -i -e "/lockfile=false/d" ".npmrc" || die
 			epnpm install "${PNPM_INSTALL_ARGS[@]}"
 			epnpm install --lockfile-only
-			pnpm audit --fix=${PNPM_AUDIT_FIX_ARG} || true
+			#pnpm audit --fix=${PNPM_AUDIT_FIX_ARG} || true
 		popd >/dev/null 2>&1 || die
 	else
 		pushd "apps/desktop" >/dev/null 2>&1 || die
@@ -681,51 +681,51 @@ pnpm_dedupe_post() {
 	#####################
 		pushd "apps/desktop" >/dev/null 2>&1 || die
 			pkgs=(
-#				"tar@${NODE_TAR_PV}"
-#				"esbuild@${NODE_ESBUILD_PV}"
-#				"file-type@${NODE_FILE_TYPE_PV}"
+				"tar@${NODE_TAR_PV}"
+				"esbuild@${NODE_ESBUILD_PV}"
+				"file-type@${NODE_FILE_TYPE_PV}"
 			)
-#			epnpm add "${pkgs[@]}" -w "${PNPM_INSTALL_ARGS[@]}"
+			epnpm add "${pkgs[@]}" -w "${PNPM_INSTALL_ARGS[@]}"
 			pkgs=(
-#				"app-builder-lib@${NODE_APP_BUILDER_LIB_PV}"
-#				"builder-util-runtime@${NODE_BUILDER_UTIL_RUNTIME_PV}"
-#				"vite@${NODE_VITE_8_PV}"
+				"app-builder-lib@${NODE_APP_BUILDER_LIB_PV}"
+				"builder-util-runtime@${NODE_BUILDER_UTIL_RUNTIME_PV}"
+				"vite@${NODE_VITE_8_PV}"
 			)
-#			epnpm add "${pkgs[@]}" -D -w "${PNPM_INSTALL_ARGS[@]}"
+			epnpm add "${pkgs[@]}" -D -w "${PNPM_INSTALL_ARGS[@]}"
 		popd >/dev/null 2>&1 || die
 
 		pushd "apps/cli" >/dev/null 2>&1 || die
 			pkgs=(
-#				"file-type@${NODE_FILE_TYPE_PV}"
+				"file-type@${NODE_FILE_TYPE_PV}"
 			)
-#			epnpm add "${pkgs[@]}" -w "${PNPM_INSTALL_ARGS[@]}"
+			epnpm add "${pkgs[@]}" -w "${PNPM_INSTALL_ARGS[@]}"
 		popd >/dev/null 2>&1 || die
 
 		pkgs=(
-#			"@octokit/plugin-paginate-rest@${NODE_AT_OCTOKIT_PLUGIN_PAGINATE_REST_PV}"
-#			"@octokit/request@${NODE_AT_OCTOKIT_REQUEST_PV}"
-#			"@octokit/request-error@${NODE_AT_OCTOKIT_REQUEST_ERROR_PV}"
-#			"@opentelemetry/core@${NODE_AT_OPENTELEMETRY_CORE_PV}"
-#			"@opentelemetry/propagator-jaeger@${NODE_AT_OPENTELEMETRY_PROPAGATOR_JAEGER_PV}"
-#			"ai@${NODE_AI_PV}"
-#			"adm-zip@${NODE_ADM_ZIP_PV}"
-#			"better-auth@${NODE_BETTER_AUTH_PV}"
-#			"esbuild@${NODE_ESBUILD_PV}"
-#			"fast-xml-parser@${NODE_FAST_XML_PARSER_PV_5_PV}"
-#			"file-type@${NODE_FILE_TYPE_PV}"
-#			"form-data@${NODE_FORM_DATA_PV}"
-#			"jsondiffpatch@${NODE_JSONDIFFPATCH_PV}"
-#			"protobufjs@${NODE_PROTOBUFJS_8_PV}"
-#			"qs@${NODE_QS_PV}"
-#			"tough-cookie@${NODE_TOUGH_COOKIE_PV}"
-#			"uuid@${NODE_UUID_PV}"
+			"@octokit/plugin-paginate-rest@${NODE_AT_OCTOKIT_PLUGIN_PAGINATE_REST_PV}"
+			"@octokit/request@${NODE_AT_OCTOKIT_REQUEST_PV}"
+			"@octokit/request-error@${NODE_AT_OCTOKIT_REQUEST_ERROR_PV}"
+			"@opentelemetry/core@${NODE_AT_OPENTELEMETRY_CORE_PV}"
+			"@opentelemetry/propagator-jaeger@${NODE_AT_OPENTELEMETRY_PROPAGATOR_JAEGER_PV}"
+			"ai@${NODE_AI_PV}"
+			"adm-zip@${NODE_ADM_ZIP_PV}"
+			"better-auth@${NODE_BETTER_AUTH_PV}"
+			"esbuild@${NODE_ESBUILD_PV}"
+			"fast-xml-parser@${NODE_FAST_XML_PARSER_PV_5_PV}"
+			"file-type@${NODE_FILE_TYPE_PV}"
+			"form-data@${NODE_FORM_DATA_PV}"
+			"jsondiffpatch@${NODE_JSONDIFFPATCH_PV}"
+			"protobufjs@${NODE_PROTOBUFJS_8_PV}"
+			"qs@${NODE_QS_PV}"
+			"tough-cookie@${NODE_TOUGH_COOKIE_PV}"
+			"uuid@${NODE_UUID_PV}"
 		)
-#		epnpm add "${pkgs[@]}" -w "${PNPM_INSTALL_ARGS[@]}"
+		epnpm add "${pkgs[@]}" -w "${PNPM_INSTALL_ARGS[@]}"
 
 		pkgs=(
-#			"@apidevtools/json-schema-ref-parser@${NODE_AT_APIDEVTOOLS_JSON_SCHEMA_REF_PARSER_11_PV}"
+			"@apidevtools/json-schema-ref-parser@${NODE_AT_APIDEVTOOLS_JSON_SCHEMA_REF_PARSER_11_PV}"
 		)
-#		epnpm add "${pkgs[@]}" -D -w "${PNPM_INSTALL_ARGS[@]}"
+		epnpm add "${pkgs[@]}" -D -w "${PNPM_INSTALL_ARGS[@]}"
 
 		NODE_ADDON_API_INSTALL_ARGS=( "-P" )
 		NODE_GYP_INSTALL_ARGS=( "-D" )
