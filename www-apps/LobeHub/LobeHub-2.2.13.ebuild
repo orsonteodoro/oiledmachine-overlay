@@ -600,11 +600,14 @@ pnpm_unpack_post() {
 	eapply "${FILESDIR}/${PN}-2.2.13-pnpm-workspace-changes.patch"
 
 	# Prevent inconsistent download URL
-#	sed -i -e "s|\"electron\": \"43.2.0\"|\"electron\": \"${ELECTRON_APP_ELECTRON_PV}\"|g" \
-#		"${S}/apps/desktop/package.json" \
-#		|| die
-	sed -i -e "s|electron: '43.3.0'|electron: '${ELECTRON_APP_ELECTRON_PV}'|g" \
+	sed -i -e "s|\"electron\": \"43.2.0\"|\"electron\": \"${ELECTRON_APP_ELECTRON_PV}\"|g" \
+		"${S}/apps/desktop/package.json" \
+		|| die
+	sed -i -e "s|@NODE_ELECTRON_PV@|${ELECTRON_APP_ELECTRON_PV}|g" \
 		"${S}/apps/desktop/pnpm-workspace.yaml" \
+		|| die
+	sed -i -e "s|@NODE_SHARP_PV@|${NODE_SHARP_PV}|g" \
+		"${S}/pnpm-workspace.yaml" \
 		|| die
 
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
@@ -671,6 +674,8 @@ pnpm_dedupe_post() {
 		# EBR = Extended Blast Radius
 		# ZC = Zero Click Attack (AV:N, PR:N, UI:N)
 		# CE = Code Execution
+
+	
 
 		local pkgs
 
@@ -767,6 +772,8 @@ src_unpack() {
 		pnpm_src_unpack
 		rm -rf "${S}/node_modules/sharp/src/build"
 #ewarn "QA: Dedupe and remove sharp@0.33.5.  Change reference of sharp@0.33.5 to sharp@0.30.7"
+ewarn "QA:  Remove form-data@2.3.3 in pnpm-lock.yaml"
+ewarn "QA:  Change form-data: 2.3.3 to form-data: 2.5.6 in pnpm-lock.yaml"
 
 		local configuration="Debug"
 		local nconfiguration="Release"
