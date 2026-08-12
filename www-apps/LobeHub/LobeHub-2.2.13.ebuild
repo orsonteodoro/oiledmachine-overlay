@@ -251,7 +251,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management minio -online-search
 +openrc +pwa +postgres +rag redis +s3 searxng systemd +tools
-ebuild_revision_112
+ebuild_revision_113
 "
 REQUIRED_USE="
 	embeddings? (
@@ -1128,8 +1128,8 @@ _install_electron() {
 "libvk_swiftshader.so"
 "libEGL.so"
 "chrome-sandbox"
-"resources/bin/agent-browser"
 "libvulkan.so.1"
+"lobe-cli.js"
 "chrome_crashpad_handler"
 		)
 
