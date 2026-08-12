@@ -567,6 +567,39 @@ eerror "Then, restart the Postgres ${POSTGRESQL_SLOT} service."
 	fi
 }
 
+fix_lockfiles() {
+	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
+		sed -i \
+			-e "s|\"better-auth\": \"1.6.15\"|\"better-auth\": \"${NODE_BETTER_AUTH_PV}\"|g" \
+			-e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"${NODE_FAST_XML_PARSER_5_PV}\"|g" \
+			"${S}/package.json" \
+			|| die
+		sed -i \
+			-e "s|'@apidevtools/json-schema-ref-parser': 11.1.0|'@apidevtools/json-schema-ref-parser': ${NODE_AT_APIDEVTOOLS_JSON_SCHEMA_REF_PARSER_11_PV}|g" \
+			-e "s|adm-zip: 0.5.18|adm-zip: ${NODE_ADM_ZIP_PV}|g" \
+			-e "s|fast-xml-parser: 3.21.1|fast-xml-parser: ${NODE_FAST_XML_PARSER_5_PV}|g" \
+			-e "s|fast-xml-parser: 5.7.0|fast-xml-parser: ${NODE_FAST_XML_PARSER_5_PV}|g" \
+			-e "s|form-data: 2.3.3|form-data: ${NODE_FORM_DATA_4_PV}|g" \
+			-e "s|form-data: 2.5.6|form-data: ${NODE_FORM_DATA_4_PV}|g" \
+			-e "s|form-data: 4.0.6|form-data: ${NODE_FORM_DATA_4_PV}|g" \
+			-e "s|protobufjs: 7.6.5|protobufjs: ${NODE_PROTOBUFJS_8_PV}|g" \
+			-e "s|protobufjs: 8.0.1|protobufjs: ${NODE_PROTOBUFJS_8_PV}|g" \
+			-e "s|qs: 6.5.5|qs: ${NODE_QS_PV}|g" \
+			-e "s|qs: 6.15.3|qs: ${NODE_QS_PV}|g" \
+			-e "s|tar: 6.2.1|tar: ${NODE_TAR_PV}|g" \
+			-e "s|tar: 7.5.22|tar: ${NODE_TAR_PV}|g" \
+			-e "s|tough-cookie: 2.5.0|tough-cookie: ${NODE_TOUGH_COOKIE_PV}|g" \
+			-e "s|uuid: 3.4.0|uuid: ${NODE_UUID_PV}|g" \
+			-e "s|uuid: 8.3.2|uuid: ${NODE_UUID_PV}|g" \
+			-e "s|uuid: 9.0.1|uuid: ${NODE_UUID_PV}|g" \
+			-e "s|uuid: 11.1.1|uuid: ${NODE_UUID_PV}|g" \
+			"${S}/pnpm-lock.yaml" \
+			"${S}/apps/cli/pnpm-lock.yaml" \
+			"${S}/apps/desktop/pnpm-lock.yaml" \
+			|| die
+	fi
+}
+
 pnpm_unpack_post() {
 	gen_git_tag "${S}" "v${PV}"
 
@@ -617,9 +650,9 @@ pnpm_unpack_post() {
 		-e "s|@NODE_DRIZZLE_ORM_PV@|${NODE_DRIZZLE_ORM_PV}|g" \
 		-e "s|@NODE_ELECTRON_PV@|${ELECTRON_APP_ELECTRON_PV}|g" \
 		-e "s|@NODE_ESBUILD_PV@|${NODE_ESBUILD_PV}|g" \
-		-e "s|@NODE_FAST_XML_PARSER_5_PV@|${NODE_FAST_XML_PARSER_PV_5_PV}|g" \
+		-e "s|@NODE_FAST_XML_PARSER_5_PV@|${NODE_FAST_XML_PARSER_5_PV}|g" \
 		-e "s|@NODE_FILE_TYPE_PV@|${NODE_FILE_TYPE_PV}|g" \
-		-e "s|@NODE_FORM_DATA_PV@|${NODE_FORM_DATA_PV}|g" \
+		-e "s|@NODE_FORM_DATA_4_PV@|${NODE_FORM_DATA_4_PV}|g" \
 		-e "s|@NODE_JSONDIFFPATCH_PV@|${NODE_JSONDIFFPATCH_PV}|g" \
 		-e "s|@NODE_MINIMATCH_9_PV@|${NODE_MINIMATCH_9_PV}|g" \
 		-e "s|@NODE_PROTOBUFJS_8_PV@|${NODE_PROTOBUFJS_8_PV}|g" \
@@ -684,6 +717,7 @@ einfo "Unpacking @lobehub/cli"
 		)
 		epnpm add "${pkgs[@]}" "${PNPM_INSTALL_ARGS[@]}"
 	fi
+	fix_lockfiles
 }
 
 pnpm_audit_post() {
@@ -744,9 +778,9 @@ pnpm_dedupe_post() {
 			"adm-zip@${NODE_ADM_ZIP_PV}"
 			"better-auth@${NODE_BETTER_AUTH_PV}"
 			"esbuild@${NODE_ESBUILD_PV}"
-			"fast-xml-parser@${NODE_FAST_XML_PARSER_PV_5_PV}"
+			"fast-xml-parser@${NODE_FAST_XML_PARSER_5_PV}"
 			"file-type@${NODE_FILE_TYPE_PV}"
-			"form-data@${NODE_FORM_DATA_PV}"
+			"form-data@${NODE_FORM_DATA_4_PV}"
 			"jsondiffpatch@${NODE_JSONDIFFPATCH_PV}"
 			"protobufjs@${NODE_PROTOBUFJS_8_PV}"
 			"qs@${NODE_QS_PV}"
@@ -764,6 +798,8 @@ pnpm_dedupe_post() {
 		NODE_GYP_INSTALL_ARGS=( "-D" )
 		#epnpm add -D "@types/sharp" "${PNPM_INSTALL_ARGS[@]}"
 		node-sharp_pnpm_lockfile_add_sharp
+
+		fix_lockfiles
 
 		# Copy all lockfiles
 		mkdir -p "${WORKDIR}/lockfile-image"
