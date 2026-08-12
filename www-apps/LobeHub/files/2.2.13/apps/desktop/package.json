@@ -90,7 +90,7 @@
     "drizzle-kit": "^0.31.10",
     "drizzle-orm": "^0.45.2",
     "electron": "43.2.0",
-    "electron-builder": "26.15.7",
+    "electron-builder": "26.14.0",
     "electron-is": "^3.0.0",
     "electron-store": "^8.2.0",
     "electron-updater": "^6.8.9",

@@ -104,18 +104,18 @@
 +  'vite-tsconfig-paths@6.1.1>ajv': '@NODE_AJV_PV@'
 +  'vite-tsconfig-paths@6.1.1>fast-xml-parser': '@NODE_FAST_XML_PARSER_5_PV@'
 +  'vite-tsconfig-paths@6.1.1>qs': '@NODE_QS_PV@'
-+  esbuild: '@NODE_ESBUILD_PV@'
-+  better-auth: '@NODE_BETTER_AUTH_PV@'
-+  fast-xml-parser: '@NODE_FAST_XML_PARSER_5_PV@'
-+  file-type: '@NODE_FILE_TYPE_PV@'
-+  protobufjs: '@NODE_PROTOBUFJS_8_PV@'
-+  qs: '@NODE_QS_PV@'
++  'esbuild@<@NODE_ESBUILD_PV@': '@NODE_ESBUILD_PV@'
++  'better-auth@<@NODE_BETTER_AUTH_PV@': '@NODE_BETTER_AUTH_PV@'
++  'fast-xml-parser@<@NODE_FAST_XML_PARSER_5_PV@': '@NODE_FAST_XML_PARSER_5_PV@'
++  'file-type@<@NODE_FILE_TYPE_PV@': '@NODE_FILE_TYPE_PV@'
++  'protobufjs@<@NODE_PROTOBUFJS_8_PV@': '@NODE_PROTOBUFJS_8_PV@'
++  'qs@<@NODE_QS_PV@': '@NODE_QS_PV@'
  
  patchedDependencies:
    '@upstash/qstash': patches/@upstash__qstash.patch
 --- a/apps/desktop/pnpm-workspace.yaml.orig	2026-08-01 05:07:55.000000000 -0700
 +++ b/apps/desktop/pnpm-workspace.yaml	2026-08-11 11:51:37.992253975 -0700
-@@ -22,8 +22,28 @@ packages:
+@@ -22,8 +22,30 @@ packages:
    - '../../packages/utils'
    - '.'
  allowBuilds:
@@ -137,18 +137,20 @@
 +
 +minimumReleaseAgeExclude:
 +  - 'electron@@NODE_ELECTRON_PV@'
++  - 'electron-builder@@NODE_ELECTRON_BUILDER_PV@'
 +  - 'esbuild@@NODE_ESBUILD_PV@'
 +  - 'vite@@NODE_VITE_8_PV@'
 +
 +overrides:
 +  # Pinned versions
-+  electron: '@NODE_ELECTRON_PV@'
++  electron@<@NODE_ELECTRON_PV@: '@NODE_ELECTRON_PV@'
 +  # Vulnerability fixes
 +  '@vanilla-extract/vite-plugin@5.2.6>vite': '@NODE_VITE_8_PV@'
 +  'drizzle-kit@0.31.10>esbuild': '@NODE_ESBUILD_PV@'
++  'electron-builder@<@NODE_ELECTRON_BUILDER_PV@': '@NODE_ELECTRON_BUILDER_PV@'
 +  'get-windows@9.3.0>tar': '@NODE_TAR_PV@'
-+  file-type: '@NODE_FILE_TYPE_PV@'
-+  vite: '@NODE_VITE_8_PV@'
++  'file-type@<@NODE_FILE_TYPE_PV@': '@NODE_FILE_TYPE_PV@'
++  'vite@<@NODE_VITE_8_PV@': '@NODE_VITE_8_PV@'
 --- a/apps/cli/pnpm-workspace.yaml.orig	2026-08-01 05:07:55.000000000 -0700
 +++ b/apps/cli/pnpm-workspace.yaml	2026-08-11 11:32:03.579587724 -0700
 @@ -16,5 +16,10 @@ packages:
@@ -161,4 +163,4 @@
 +
 +overrides:
 +  # Vulnerability fixes
-+  file-type: '@NODE_FILE_TYPE_PV@'
++  'file-type@<@NODE_FILE_TYPE_PV@': '@NODE_FILE_TYPE_PV@'

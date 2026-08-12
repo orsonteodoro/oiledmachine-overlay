@@ -664,6 +664,7 @@ pnpm_unpack_post() {
 		-e "s|@NODE_TOUGH_COOKIE_PV@|${NODE_TOUGH_COOKIE_PV}|g" \
 		-e "s|@NODE_UUID_PV@|${NODE_UUID_PV}|g" \
 		-e "s|@NODE_VITE_8_PV@|${NODE_VITE_8_PV}|g" \
+		-e "s|@NODE_ELECTRON_BUILDER_PV@|${ELECTRON_BUILDER_PV}|g" \
 		"${S}/apps/desktop/package.json" \
 		"${S}/apps/desktop/pnpm-workspace.yaml" \
 		"${S}/apps/cli/package.json" \
@@ -717,7 +718,7 @@ einfo "Unpacking @lobehub/cli"
 		)
 		epnpm add "${pkgs[@]}" "${PNPM_INSTALL_ARGS[@]}"
 	fi
-	fix_lockfiles
+	#fix_lockfiles
 }
 
 pnpm_audit_post() {
@@ -738,9 +739,9 @@ pnpm_dedupe_post() {
 	#################
 		pushd "apps/desktop" >/dev/null 2>&1 || die
 			pkgs=(
-				"electron-builder@${ELECTRON_BUILDER_PV}"
+				#"electron-builder@${ELECTRON_BUILDER_PV}"
 			)
-			epnpm add "${pkgs[@]}" -D -w "${PNPM_INSTALL_ARGS[@]}"
+			#epnpm add "${pkgs[@]}" -D -w "${PNPM_INSTALL_ARGS[@]}"
 		popd >/dev/null 2>&1 || die
 
 	#####################
@@ -799,7 +800,7 @@ pnpm_dedupe_post() {
 		#epnpm add -D "@types/sharp" "${PNPM_INSTALL_ARGS[@]}"
 		node-sharp_pnpm_lockfile_add_sharp
 
-		fix_lockfiles
+		#fix_lockfiles
 
 		# Copy all lockfiles
 		mkdir -p "${WORKDIR}/lockfile-image"
