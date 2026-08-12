@@ -251,7 +251,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management minio -online-search
 +openrc +pwa +postgres +rag redis +s3 searxng systemd +tools
-ebuild_revision_113
+ebuild_revision_114
 "
 REQUIRED_USE="
 	embeddings? (
@@ -532,7 +532,7 @@ einfo "Remote-hosted LobeHub Cloud:  No"
 		export LOBEHUB_PORT=${LOBEHUB_PORT:-3210}
 einfo "LOBEHUB_HOSTNAME:  ${LOBEHUB_HOSTNAME} (user-definable, per-package environment variable)"
 einfo "LOBEHUB_PORT:  ${LOBEHUB_PORT} (user-definable, per-package environment variable)"
-		if [[ "${DATABASE_DRIVER}" == "node" || "${DATABASE_DRIVER}" == "neon" ]] ; then
+		if [[ "${DATABASE_DRIVER}" == "node" || "${DATABASE_DRIVER}" == "neon" || "${DATABASE_DRIVER}" == "pg" ]] ; then
 			:
 		else
 eerror
@@ -543,14 +543,14 @@ eerror "export DATABASE_DRIVER=\"neon\""
 eerror
 eerror "  or"
 eerror
-eerror "export DATABASE_DRIVER=\"node\""
+eerror "export DATABASE_DRIVER=\"pg\""
 eerror
 eerror
 eerror "DATABASE_DRIVER actual:  ${DATABASE_DRIVER}"
-eerror "DATABASE_DRIVER expected:  neon or node"
+eerror "DATABASE_DRIVER expected:  One of neon, node, or pg"
 eerror
 eerror "Example contents of /etc/portage/env/lobehub.conf:"
-eerror "export DATABASE_DRIVER=\"node\""
+eerror "export DATABASE_DRIVER=\"pg\""
 eerror
 eerror "Example contents of /etc/portage/package.env:"
 eerror "${CATEGORY}/${PN} lobehub.conf"
@@ -626,8 +626,8 @@ pnpm_unpack_post() {
 #	eapply "${FILESDIR}/${PN}-2.1.33-use-e965-xlsx.patch"
 	if use pwa ; then
 		eapply "${FILESDIR}/${MY_PN2}-2.1.34-hardcoded-paths.patch"
-#		eapply "${FILESDIR}/${PN}-2.2.0-postgresjs-driver-support.patch"
-#		eapply "${FILESDIR}/${PN}-2.2.13-docker-cjs-multidriver-support.patch" # TODO update
+		eapply "${FILESDIR}/${PN}-2.2.0-postgresjs-driver-support.patch"
+		eapply "${FILESDIR}/${PN}-2.2.13-docker-cjs-multidriver-support.patch" # TODO update
 	fi
 
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
@@ -733,6 +733,14 @@ pnpm_audit_post() {
 pnpm_dedupe_post() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		local pkgs
+
+	######################
+	# Feature dependencies
+	######################
+		pkgs=(
+			"pg@${NODE_PG_PV}"
+		)
+		epnpm add "${pkgs[@]}" -w "${PNPM_INSTALL_ARGS[@]}"
 
 	#################
 	# Pinned versions
@@ -946,7 +954,7 @@ postgres_migrate() {
 	else
 		echo "DATABASE_URL=\"${DATABASE_URL}?sslmode=disable\"" >> "${S}/.env" || die
 	fi
-	echo "DATABASE_DRIVER=\"node\"" >> "${S}/.env" || die
+	echo "DATABASE_DRIVER=\"pg\"" >> "${S}/.env" || die
 
 	edo npm run "db:generate"
 	edo npm run "db:migrate"
@@ -1462,6 +1470,7 @@ pkg_postrm() {
 # OILEDMACHINE-OVERLAY-TEST:  PASS 2.1.48 (20260408) with sharp 0.34.3.    Tested with only USE=electron
 # OILEDMACHINE-OVERLAY-TEST:  PASS 2.1.48 (20260409) with sharp 0.34.3.    Tested with only USE=pwa
 # OILEDMACHINE-OVERLAY-TEST:  PASS 2.1.52 (20260421) with sharp 0.34.3.    Tested pwa and electron login to self-hosted server
+# OILEDMACHINE-OVERLAY-TEST:  FAIL 2.2.13 (20260812) with sharp 0.35.3.    Tested pwa
 
 # E-mail login:  untested
 # Electron:  passed
