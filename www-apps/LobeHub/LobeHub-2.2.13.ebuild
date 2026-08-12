@@ -1129,7 +1129,7 @@ _install_electron() {
 "libEGL.so"
 "chrome-sandbox"
 "libvulkan.so.1"
-"lobe-cli.js"
+"resources/bin/lobe-cli.js"
 "chrome_crashpad_handler"
 		)
 
