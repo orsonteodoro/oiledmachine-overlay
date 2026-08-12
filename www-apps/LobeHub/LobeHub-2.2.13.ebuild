@@ -251,7 +251,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management minio -online-search
 +openrc +pwa +postgres +rag redis +s3 searxng systemd +tools
-ebuild_revision_114
+ebuild_revision_115
 "
 REQUIRED_USE="
 	embeddings? (
@@ -532,9 +532,10 @@ einfo "Remote-hosted LobeHub Cloud:  No"
 		export LOBEHUB_PORT=${LOBEHUB_PORT:-3210}
 einfo "LOBEHUB_HOSTNAME:  ${LOBEHUB_HOSTNAME} (user-definable, per-package environment variable)"
 einfo "LOBEHUB_PORT:  ${LOBEHUB_PORT} (user-definable, per-package environment variable)"
-		if [[ "${DATABASE_DRIVER}" == "node" || "${DATABASE_DRIVER}" == "neon" || "${DATABASE_DRIVER}" == "pg" ]] ; then
+		if [[ "${DATABASE_DRIVER}" == "neon" || "${DATABASE_DRIVER}" == "pg" || "${DATABASE_DRIVER}" == "postgres" ]] ; then
 			:
 		else
+# We try to use the package name to minimize confusion.
 eerror
 eerror "DATABASE_DRIVER must be node or neon.  Update your"
 eerror "/etc/portage/env/lobehub.conf so that the line reads:"
@@ -545,12 +546,18 @@ eerror "  or"
 eerror
 eerror "export DATABASE_DRIVER=\"pg\""
 eerror
+eerror "  or"
+eerror
+eerror "export DATABASE_DRIVER=\"postgres\""
 eerror
 eerror "DATABASE_DRIVER actual:  ${DATABASE_DRIVER}"
-eerror "DATABASE_DRIVER expected:  One of neon, node, or pg"
+eerror "DATABASE_DRIVER expected:  One of neon, node, pg, postgres"
+eerror "    neon - for serverless PostgreSQL platform.  Upstream default."
+eerror "      pg - for locally hosted battle tested database driver.  Upstream equivalent for locally hosted with PostgreSQL support."
+eerror "postgres - for locally hosted alternative database driver.  Ebuild maintainer recommended."
 eerror
 eerror "Example contents of /etc/portage/env/lobehub.conf:"
-eerror "export DATABASE_DRIVER=\"pg\""
+eerror "export DATABASE_DRIVER=\"postgres\""
 eerror
 eerror "Example contents of /etc/portage/package.env:"
 eerror "${CATEGORY}/${PN} lobehub.conf"
@@ -626,8 +633,8 @@ pnpm_unpack_post() {
 #	eapply "${FILESDIR}/${PN}-2.1.33-use-e965-xlsx.patch"
 	if use pwa ; then
 		eapply "${FILESDIR}/${MY_PN2}-2.1.34-hardcoded-paths.patch"
-		eapply "${FILESDIR}/${PN}-2.2.0-postgresjs-driver-support.patch"
-		eapply "${FILESDIR}/${PN}-2.2.13-docker-cjs-multidriver-support.patch" # TODO update
+		eapply "${FILESDIR}/${PN}-2.2.13-postgresjs-driver-support.patch"
+		eapply "${FILESDIR}/${PN}-2.2.13-docker-cjs-multidriver-support.patch"
 	fi
 
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
@@ -738,7 +745,9 @@ pnpm_dedupe_post() {
 	# Feature dependencies
 	######################
 		pkgs=(
-			"pg@${NODE_PG_PV}"
+			"@neondatabase/serverless@${NODE_AT_NEONDATABASE_SERVERLESS_PV}"	# aka neon support
+			"pg@${NODE_PG_PV}"							# aka node, aka node-postgres, battle tested driver
+			"postgres@${NODE_POSTGRES_PV}"						# aka postgres.js, alternative driver
 		)
 		epnpm add "${pkgs[@]}" -w "${PNPM_INSTALL_ARGS[@]}"
 
@@ -954,7 +963,12 @@ postgres_migrate() {
 	else
 		echo "DATABASE_URL=\"${DATABASE_URL}?sslmode=disable\"" >> "${S}/.env" || die
 	fi
-	echo "DATABASE_DRIVER=\"pg\"" >> "${S}/.env" || die
+	if [[ "${DATABASE_DRIVER}" == "neon" || "${DATABASE_DRIVER}" == "pg" || "${DATABASE_DRIVER}" == "postgres" ]] ; then
+		echo "DATABASE_DRIVER=\"${DATABASE_DRIVER}\"" >> "${S}/.env" || die
+	else
+eerror "Only neon, postgres, or pg options are supported for DATABASE_DRIVER for PostgreSQL support."
+		die
+	fi
 
 	edo npm run "db:generate"
 	edo npm run "db:migrate"
