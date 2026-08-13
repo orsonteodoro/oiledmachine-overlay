@@ -3593,14 +3593,7 @@ ewarn "QA:  Update sanitizer patch for kernel ${KV_MAJOR_MINOR}."
 # Checks if OT_KERNEL_SECURITY_CRITICAL_TYPES contains type
 _has_security_critical_type() {
 	local type="${1}"
-	local types
-	if has "kcfi" ${IUSE_EFFECTIVE} ; then
-		types=${OT_KERNEL_SECURITY_CRITICAL_TYPES:-"kasan ubsan kcfi"}
-	elif has "cfi" ${IUSE_EFFECTIVE} ; then
-		types=${OT_KERNEL_SECURITY_CRITICAL_TYPES:-"kasan ubsan cfi"}
-	else
-		types=${OT_KERNEL_SECURITY_CRITICAL_TYPES:-"kasan ubsan"}
-	fi
+	local types=${OT_KERNEL_SECURITY_CRITICAL_TYPES}
 	local x
 	for x in ${types} ; do
 		if [[ "${x}" == "${type}" ]] ; then
@@ -14745,15 +14738,18 @@ ot-kernel_set_security_critical() {
 
 	# TODO: patch kernel for custom panic for <sanitizer>.fault=panic for KCSAN, UBSAN, KMSAN, KFENCE.
 
-	local security_critical=${OT_KERNEL_SECURITY_CRITICAL:-0}
-	local types
-	if has "kcfi" ${IUSE_EFFECTIVE} ; then
-		types=${OT_KERNEL_SECURITY_CRITICAL_TYPES:-"kasan ubsan kcfi"}
-	elif has "cfi" ${IUSE_EFFECTIVE} ; then
-		types=${OT_KERNEL_SECURITY_CRITICAL_TYPES:-"kasan ubsan cfi"}
-	else
-		types=${OT_KERNEL_SECURITY_CRITICAL_TYPES:-"kasan ubsan"}
+	if [[ -z "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" ]] ; then
+ewarn
+ewarn "The OT_KERNEL_SECURITY_CRITICAL_TYPES default behavior has changed."
+ewarn "It should be explicitly set for security-critical configs."
+ewarn "See metadata.xml for details."
+ewarn
 	fi
+einfo "OT_KERNEL_SECURITY_CRITICAL:  ${OT_KERNEL_SECURITY_CRITICAL}"
+einfo "OT_KERNEL_SECURITY_CRITICAL_TYPES:  ${OT_KERNEL_SECURITY_CRITICAL_TYPES}"
+
+	local security_critical=${OT_KERNEL_SECURITY_CRITICAL:-0}
+	local types=${OT_KERNEL_SECURITY_CRITICAL_TYPES:-" "} # Equivalent as upstream default, all sanitiziers are off
 	local kfence_sample_interval=${KFENCE_SAMPLE_INTERVAL-10}
 	local kasan_sample_interval=${KASAN_SAMPLE_INTERVAL-1}
 	if \
@@ -15535,7 +15531,11 @@ einfo "Disabling all debug and shortening logging buffers"
 
 	_ot-kernel_enable_ppc_476fpe_workaround
 	ot-kernel_set_tbm
-	ot-kernel_set_security_critical					# Must go after disable_debug to avoid disablement
+
+	# Must go after disable_debug to avoid disablement
+	# Must go after ot-kernel_set_kconfig_work_profile and work_profile
+	# Must go after hardening_level
+	ot-kernel_set_security_critical
 
 	ot-kernel_disable_affected_modules
 	ot-kernel_verify_mitigation_late

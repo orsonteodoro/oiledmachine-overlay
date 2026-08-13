@@ -4333,8 +4333,9 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
     OT_KERNEL_SECURITY_CRITICAL_TYPES - A list of sanitizer types to protect
-    the kernel.  The default is KASAN, UBSAN, CFI, KCFI when
-    OT_KERNEL_SECURITY_CRITICAL=1.
+    the kernel.  The default is all off to match upstream defaults.  You must
+    explicitly set it.  It should be used with OT_KERNEL_SECURITY_CRITICAL=1 to
+    enforce it an make sanitizer violations fatal.
 
     Sanitizer  | Supported versions | Threats mitigated   | Performance impact | Production ready | Estimated CVSS 3.1 Severity | Estimated false positives
     cfi        |  = 5.15            | CE, PE              | 1.05 -  1.15x      | Maybe            | High - Critical             | 0.1 - 1 %
@@ -4490,6 +4491,7 @@ unset OT_KERNEL_PRIVATE_KEY
       OT_KERNEL_SECURITY_CRITICAL_TYPES="kasan ubsan"
       OT_KERNEL_SECURITY_CRITICAL_TYPES="kasan ubsan kcsan"
       OT_KERNEL_SECURITY_CRITICAL_TYPES="ubsan"
+      OT_KERNEL_SECURITY_CRITICAL_TYPES=" "			# Disables all
       KFENCE_SAMPLE_INTERVAL="10"
 
     See also:
