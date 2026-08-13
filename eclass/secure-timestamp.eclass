@@ -290,7 +290,7 @@ SECURE_TIMESTAMP["media_libs_lv2_9999"]="Sep 28, 2025 4:27 PM PDT"
 # https://gitlab.freedesktop.org/mesa/mesa/-/commits/main?format=atom
 SECURE_TIMESTAMP["media_libs_mesa_9999"]="2026-08-08 T16:53:12 +00:00"
 
-SECURE_TIMESTAMP["media_libs_opencv_4_9999"]="Jul 28, 2026 7:22 AM PDT"
+SECURE_TIMESTAMP["media_libs_opencv_4_9999"]="Aug 10, 2026 9:33 AM PDT"
 SECURE_TIMESTAMP["media_libs_opencv_5_9999"]="Jul 31, 2026 6:23 AM PDT"
 SECURE_TIMESTAMP["media_libs_openexr_9999"]="Jun 22, 2026 6:25 AM PDT"
 SECURE_TIMESTAMP["media_libs_openh264_9999"]="May 10, 2026 11:27 PM PDT"
