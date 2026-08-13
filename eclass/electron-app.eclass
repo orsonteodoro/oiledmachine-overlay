@@ -772,6 +772,7 @@ eerror "QA:  ELECTRON_BUILDER_PV must be defined."
 # [build:release     ]   • downloading     url=https://github.com/electron/electron/releases/download/v35.0.0-beta.3/electron-v35.0.0-beta.3-linux-x64.zip size=109 MB parts=8
 #
 # See also URIs in https://github.com/electron/electron/releases/
+# See also https://www.npmjs.com/package/@electron-builder/electron-download
 #
 	export ELECTRON_CUSTOM_DIR=${ELECTRON_CUSTOM_DIR:-"v${ELECTRON_APP_ELECTRON_PV}"}
 
