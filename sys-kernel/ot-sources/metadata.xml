@@ -4297,14 +4297,15 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
-    OT_KERNEL_SECURITY_CRITICAL - Perform runtime monitoring and protection.
+    OT_KERNEL_SECURITY_CRITICAL - Enforce runtime monitoring and protection.
 
     Value | Error treatment | Benefit           | Costs         | Halts before running attacker code |
     ------|-----------------|-------------------|---------------|------------------------------------|
     1     | Fatal           | Maximum integrity | Low uptime    | Y                                  |
     0     | Warning         | Maximum uptime    | Low integrity | N                                  |
 
-    Integrity and uptime are mutually exclusive for this setting.
+    Integrity and uptime are mutually exclusive for this setting.  It requires 
+    OT_KERNEL_SECURITY_CRITICAL_TYPES be explicitly set for it to be effective.
 
     Unconditionally enabled for work profiles:
 
