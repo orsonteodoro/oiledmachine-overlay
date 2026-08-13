@@ -456,11 +456,14 @@ einfo "KEV = Known Exploited Vulnerabilities (CISA, U.S. Government Advisory)"
 # Equivalent to BSOD
 einfo "KP = Kernel Panic"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"LPE"($|" "|";"|",") ]] ; then
-einfo "LPE = Local Privilege Escalation"
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"LEAK"($|" "|";"|",") ]] ; then
+einfo "LEAK = Miscellaneous Leak"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"LI"($|" "|";"|",") ]] ; then
 einfo "LI = Log Injection"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"LPE"($|" "|";"|",") ]] ; then
+einfo "LPE = Local Privilege Escalation"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"MBV"($|" "|";"|",") ]] ; then
 # Deprecated
@@ -578,6 +581,9 @@ einfo "RCE = Remote Code Execution"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("ReDoS"|"REDOS")($|" "|";"|",") ]] ; then
 einfo "ReDoS = Regular Expression Denial of Service"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("REFLEAK")($|" "|";"|",") ]] ; then
+einfo "REFLEAK = Reference Leak"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"RL"($|" "|";"|",") ]] ; then
 # Unreleased network, file, database, threads
