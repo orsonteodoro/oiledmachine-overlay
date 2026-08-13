@@ -4299,21 +4299,12 @@ unset OT_KERNEL_PRIVATE_KEY
 
     OT_KERNEL_SECURITY_CRITICAL - Perform runtime monitoring and protection.
 
-    There are competing security objectives for security.  Always-available and
-    execution-integrity are mutually exclusive.  This setting is
-    execution-integrity first meaning that in secure contexts, it should never
-    be compromised.  If a vulnerability is detected, the computer should stop
-    whether or not the vulnerability is taken advantage of and exploited for the
-    benefit of the attacker(s).  It assumes that it is better to halt than to
-    continue unauthorized anything that gives the attacker an advantage at the
-    cost of you or the other people involved.  These sanitizers types may also
-    trigger on false positives.  A crash can be a negative experience that leads
-    to lost work or changes a good day into a bad day.  This is is why
-    OT_KERNEL_SECURITY_CRITICAL is default off except for the dss work profile.
+    Value | Error treatment | Benefit           | Costs         |
+    ------|-----------------|-------------------|---------------|
+    1     | Fatal           | Maximum integrity | Low uptime    |
+    0     | Warning         | Maximum uptime    | Low integrity |
 
-    In any case, it does a kernel panic crash on the kernel before running
-    attacker's code, or crashes the kernel before running unauthorized changes,
-    or crashes the kernel before running attacker's exfiltration code.
+    Integrity and uptime are mutually exclusive for this setting.
 
     Unconditionally enabled for work profiles:
 
@@ -4321,8 +4312,8 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Acceptable values:
 
-    1 - enforce by making sanitizer warnings into a fatal panic before running attacker code
-    0 - do not enforce but maximize uptime availability (default, same as upstream)
+    1 - enforce mode
+    0 - chihuahua mode (default, same as upstream)
     unset - same as 0
 
     See also:
