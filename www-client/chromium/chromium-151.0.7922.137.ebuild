@@ -120,12 +120,12 @@ EAPI=8
 # https://github.com/chromium/chromium/tree/151.0.7922.137/third_party/highway								# Stable
 # https://github.com/chromium/chromium/tree/151.0.7922.137/third_party/jsoncpp								# Stable used instead.  Both the submodule and version are old, but the submodule is newer.
 # https://github.com/chromium/chromium/blob/151.0.7922.137/third_party/libaom/source/config/config/aom_version.h#L19			# Stable
-# https://github.com/chromium/chromium/blob/151.0.7922.137/third_party/libpng/png.h#L288							# Stable
-# https://github.com/chromium/chromium/tree/151.0.7922.137/third_party/libsecret								# Stable used instead.  The revision is newer than the suggested version.
+# https://github.com/chromium/chromium/blob/151.0.7922.137/third_party/libpng/png.h#L288						# Stable
+# https://github.com/chromium/chromium/tree/151.0.7922.137/third_party/libsecret							# Stable used instead.  The revision is newer than the suggested version.
 # https://github.com/chromium/chromium/tree/151.0.7922.137/third_party/libusb								# Stable
 # https://github.com/chromium/chromium/tree/151.0.7922.137/third_party/libvpx								# Live
 # https://github.com/chromium/chromium/tree/151.0.7922.137/third_party/libwebp								# Live, used the version suggested in cpe prefix not the commit
-# https://github.com/chromium/chromium/blob/151.0.7922.137/third_party/libxml/linux/config.h#L86						# Live
+# https://github.com/chromium/chromium/blob/151.0.7922.137/third_party/libxml/linux/config.h#L86					# Live
 # https://github.com/chromium/chromium/blob/151.0.7922.137/third_party/libxslt/linux/config.h#L116					# Stable
 # https://github.com/chromium/chromium/blob/151.0.7922.137/third_party/node/update_node_binaries#L18					# Stable, marked no for security-critical by upstream
 # https://github.com/chromium/chromium/tree/151.0.7922.137/third_party/re2								# Live.  Submodule is newer commit than readme.
@@ -136,10 +136,10 @@ EAPI=8
 # https://github.com/chromium/chromium/tree/151.0.7922.137/third_party/spirv-headers							# Live.  Relaxed stable version used.
 # https://github.com/chromium/chromium/tree/151.0.7922.137/third_party/spirv-tools							# Live.  Relaxed stable version used.
 # https://github.com/chromium/chromium/tree/151.0.7922.137/third_party/wayland								# Stable
-# https://github.com/chromium/chromium/tree/151.0.7922.137/third_party/wayland-protocols							# Stable used instead.  The submodule is old.
+# https://github.com/chromium/chromium/tree/151.0.7922.137/third_party/wayland-protocols						# Stable used instead.  The submodule is old.
 # https://github.com/chromium/chromium/blob/151.0.7922.137/third_party/woff2/README.chromium						# Live
 # https://github.com/chromium/chromium/blob/151.0.7922.137/third_party/zlib/zlib.h#L40							# Stable
-# https://github.com/chromium/chromium/blob/151.0.7922.137/tools/rust/update_rust.py#L35							#
+# https://github.com/chromium/chromium/blob/151.0.7922.137/tools/rust/update_rust.py#L35						#
 
 
 #   https://github.com/rust-lang/rust/blob/4c4205163abcbd08948b3efab796c543ba1ea687/src/version						# Live
@@ -575,8 +575,8 @@ IUSE_CODECS=(
 )
 
 MITIGATION_DATE="Aug 6, 2026" # Official annoucement (blog)
-MITIGATION_LAST_UPDATE=1785986262 # From `date +%s -d "Wed, Aug 05, 2026 20:17:42"` From tag in GH or upstream repo
-MITIGATION_URI="https://chromereleases.googleblog.com/2026/08/stable-channel-update-for-desktop_01193673229.html"
+MITIGATION_LAST_UPDATE=1786400820 # From `date +%s -d "Wed, Aug 10, 2026 3:27 PM PDT"` From tag in GH or upstream repo
+MITIGATION_URI="https://chromereleases.googleblog.com/2026/08/stable-channel-update-for-desktop_01815628406.html"
 VULNERABILITIES_FIXED=(
 	# 151.0.7922.137
 	"CVE-2026-19556;UAF;"
