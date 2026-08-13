@@ -35,7 +35,7 @@ MOZ_PV_DISTFILES="${MOZ_PV}${MOZ_PV_SUFFIX}"
 MOZ_P_DISTFILES="${MOZ_PN}-${MOZ_PV_DISTFILES}"
 
 MITIGATION_DATE="Jul 21, 2026" # Official annoucement (blog)
-MITIGATION_LAST_UPDATE=1785201660 # From `date +%s -d "27-Jul-2026 18:21"` From ftp linux-x86_64/en-US/
+MITIGATION_LAST_UPDATE=1786430460 # From `date +%s -d "10-Aug-2026 23:41"` From ftp linux-x86_64/en-US/
 MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-68/"
 VULNERABILITIES_FIXED=(
 	"CVE-2026-16349;SOPB;"
