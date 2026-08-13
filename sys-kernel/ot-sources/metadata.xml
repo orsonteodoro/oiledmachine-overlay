@@ -4321,7 +4321,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Acceptable values:
 
-    1 - enforce to by using a panic before running attacker code
+    1 - enforce by making sanitizer warnings into a fatal panic before running attacker code
     0 - do not enforce but maximize uptime availability (default, same as upstream)
     unset - same as 0
 
