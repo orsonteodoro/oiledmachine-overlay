@@ -43,7 +43,7 @@ inherit cflags-hardened check-compiler-switch chkl cmake flag-o-matic flag-o-mat
 inherit libcxx-slot libstdcxx-slot python-any-r1 secure-version toolchain-funcs xdg-utils
 
 if [[ ${PV} == *9999* ]] ; then
-	FALLBACK_COMMIT="ed2a5538cf0a8d3ff908191eda9b73f91a5f952a"
+	FALLBACK_COMMIT="ba9a021b452802a061bcd0e128512d3bf1a653d7"
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/poppler/poppler"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
@@ -67,7 +67,7 @@ HOMEPAGE="https://poppler.freedesktop.org/"
 LICENSE="GPL-2"
 IUSE+="
 boost cairo cjk curl +cxx debug doc gpg +introspection +jpeg +jpeg2k +lcms nss png qt6 test tiff +utils
-ebuild_revision_3
+ebuild_revision_4
 "
 RESTRICT="!test? ( test )"
 
