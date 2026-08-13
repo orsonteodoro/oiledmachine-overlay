@@ -9,7 +9,7 @@ CFLAGS_HARDENED_LANGS="c-lang"
 CFLAGS_HARDENED_USE_CASES="network security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS IO IU NPD OOBR SO UAF"
 
-FALLBACK_COMMIT="00858a9740fd67cbf3b6ee4ba6def1b681e3c9da"
+FALLBACK_COMMIT="f2af6b499cf23075ad73e065370cbb2e4eaceb6a"
 EGIT_BRANCH="master"
 
 inherit cflags-hardened gnome.org meson-multilib vala xdg
@@ -24,7 +24,7 @@ SLOT="${API_VERSION}"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 IUSE+="
 +brotli gssapi gtk-doc +introspection samba ssl sysprof test +vala
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE="vala? ( introspection )"
 RESTRICT="!test? ( test )"
