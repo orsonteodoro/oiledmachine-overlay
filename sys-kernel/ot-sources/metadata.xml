@@ -4321,8 +4321,8 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Acceptable values:
 
-    1 - protect and crash
-    0 - do not protect but maximize uptime availability (default, same as upstream)
+    1 - enforce to by using a panic before running attacker code
+    0 - do not enforce but maximize uptime availability (default, same as upstream)
     unset - same as 0
 
     See also:
