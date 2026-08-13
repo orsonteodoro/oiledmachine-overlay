@@ -261,6 +261,7 @@ einfo
 	if use scrobbler ; then
 ewarn "The scrobbler settings should manually be controlled to control privacy/snooping."
 	fi
+einfo "If load time failure, try resetting the config with \`rm -Ir ~/.config/fooyin\`."
 }
 
 # OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD
