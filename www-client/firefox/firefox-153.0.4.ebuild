@@ -40,6 +40,8 @@ EAPI=8
 # 150.0.2 -> 150.0.3
 # 150.0.3 -> 151.0.4
 # 151.0.4 -> 152.0.5
+# 152.0.5 -> 153.0.1
+# 153.0.1 -> 153.0.4
 
 # Originally based on the firefox-89.0.ebuild from the gentoo-overlay,
 # with update sync updated to this version of the ebuild.
@@ -295,11 +297,73 @@ declare -A CFLAGS_RDEPEND=(
 	["media-libs/libvpx"]=">=;-O1" # -O0 causes FPS to lag below 25 FPS.
 )
 
-MITIGATION_DATE="Jun 30, 2026" # Advisory date
-MITIGATION_LAST_UPDATE=1783401060 # From `date +%s -d "2026-07-06 22:11"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-62/"
-SEVERITY_LABEL="Severity:"
+MITIGATION_DATE="Jul 21, 2026" # Official annoucement (blog)
+MITIGATION_LAST_UPDATE=1786430460 # From `date +%s -d "10-Aug-2026 23:41"` From ftp
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-68/"
 VULNERABILITIES_FIXED=(
+	"CVE-2026-16349;SOPB;"
+	"CVE-2026-16350;IBC;"
+	"CVE-2026-16362;UAF;"
+	"CVE-2026-16351;UAF, SBE;"
+	"CVE-2026-16352;UAF, SBE;"
+	"CVE-2026-16363;JITM;"
+	"CVE-2026-16364;IBC;"
+	"CVE-2026-16365;PE;"
+	"CVE-2026-16366;PE;"
+	"CVE-2026-16353;UAF, NPD, UPTR;Critical"
+	"CVE-2026-16354;ID;"
+	"CVE-2026-16367;SBE;"
+	"CVE-2026-16368;IBC;"
+	"CVE-2026-16369;IO;"
+	"CVE-2026-16355;JITM;"
+	"CVE-2026-16356;UAF, SBE;"
+	"CVE-2026-16357;IBC;"
+	"CVE-2026-16370;SB;"
+	"CVE-2026-16371;PE;"
+	"CVE-2026-16372;PE;"
+	"CVE-2026-16373;ID;"
+	"CVE-2026-16374;ID;"
+	"CVE-2026-16375;IOV;"
+	"CVE-2026-16376;DoS;High"
+	"CVE-2026-16377;SB;"
+	"CVE-2026-16378;IV;High"
+	"CVE-2026-16379;PE;"
+	"CVE-2026-16358;IOV;"
+	"CVE-2026-16380;SB;"
+	"CVE-2026-16381;SOPB;"
+	"CVE-2026-16382;SB;"
+	"CVE-2026-16383;SB;"
+	"CVE-2026-16384;ID;"
+	"CVE-2026-16385;ID;"
+	"CVE-2026-16386;ID;"
+	"CVE-2026-16387;IOV;"
+	"CVE-2026-16388;SBE;"
+	"CVE-2026-16389;IO, IBC;"
+	"CVE-2026-16390;SB;"
+	"CVE-2026-16391;ID;"
+	"CVE-2026-16392;JITM;"
+	"CVE-2026-16393;IBC;"
+	"CVE-2026-16359;IBC;"
+	"CVE-2026-16394;SB;"
+	"CVE-2026-16395;IO;"
+	"CVE-2026-16396;PE;"
+	"CVE-2026-16397;CJ, IUIR, SAV;Medium"
+	"CVE-2026-16398;IOV;"
+	"CVE-2026-16399;IOV;"
+	"CVE-2026-16400;ID;"
+	"CVE-2026-16401;PE;"
+	"CVE-2026-16402;IO;"
+	"CVE-2026-16403;INSI, SAV;Medium"
+	"CVE-2026-16404;AB, SAV;High"
+	"CVE-2026-16405;ID;"
+	"CVE-2026-16406;SB;"
+	"CVE-2026-16407;SB;"
+	"CVE-2026-16408;IO;"
+	"CVE-2026-16409;UPTR;High"
+	"CVE-2026-16410;JITM;"
+	"CVE-2026-16411;MC, ACE;"
+	"CVE-2026-16412;MC, ACE;"
+	"CVE-2026-16360;MC, ACE;"
 )
 
 inherit cflags-depends cflags-hardened check-compiler-switch check-linker
