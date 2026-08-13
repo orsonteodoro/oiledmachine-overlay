@@ -21,7 +21,7 @@ CHKL_TIMESTAMPS=(
 inherit autotools cflags-hardened check-compiler-switch chkl flag-o-matic python-any-r1 secure-version toolchain-funcs unpacker verify-sig
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="705e9e3a749f9f0430c1fad9892227c210c66dee"
+	FALLBACK_COMMIT="e9697d98e7249b0f68a6be040a4f3dcc5bc101fa"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://https.git.savannah.gnu.org/git/wget.git"
 	if [[ "${PV}" =~ "9999" ]] ; then
@@ -45,7 +45,7 @@ x86 ~arm64-macos ~x64-macos ~x64-solaris
 IUSE+="
 cookie-check debug gnutls idn libproxy metalink nls ntlm pcre +ssl static
 test uuid zlib
-ebuild_revision_24
+ebuild_revision_25
 "
 REQUIRED_USE="
 	ntlm? (
