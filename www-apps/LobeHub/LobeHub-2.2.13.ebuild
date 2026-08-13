@@ -251,7 +251,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management minio -online-search
 +openrc +pwa +postgres +rag redis +s3 searxng systemd +tools
-ebuild_revision_115
+ebuild_revision_116
 "
 REQUIRED_USE="
 	embeddings? (
@@ -553,11 +553,11 @@ eerror
 eerror "DATABASE_DRIVER actual:  ${DATABASE_DRIVER}"
 eerror "DATABASE_DRIVER expected:  One of neon, node, pg, postgres"
 eerror "    neon - for serverless PostgreSQL platform.  Upstream default."
-eerror "      pg - for locally hosted battle tested database driver.  Upstream equivalent for locally hosted with PostgreSQL support."
-eerror "postgres - for locally hosted alternative database driver.  Ebuild maintainer recommended."
+eerror "      pg - for locally hosted battle tested database driver.  Upstream equivalent for locally hosted with PostgreSQL support.  Tested working"
+eerror "postgres - for locally hosted alternative database driver.  Currently broken."
 eerror
 eerror "Example contents of /etc/portage/env/lobehub.conf:"
-eerror "export DATABASE_DRIVER=\"postgres\""
+eerror "export DATABASE_DRIVER=\"pg\""
 eerror
 eerror "Example contents of /etc/portage/package.env:"
 eerror "${CATEGORY}/${PN} lobehub.conf"
@@ -750,6 +750,20 @@ pnpm_dedupe_post() {
 			"postgres@${NODE_POSTGRES_PV}"						# aka postgres.js, alternative driver
 		)
 		epnpm add "${pkgs[@]}" -w "${PNPM_INSTALL_ARGS[@]}"
+
+		if use electron ; then
+			pushd "apps/desktop" >/dev/null 2>&1 || die
+				pkgs=(
+					"@lydell/node-pty-linux-x64@1.2.0-beta.12"		# Missing during loadtime
+					#"@lydell/node-pty-linux-arm64@1.2.0-beta.12"
+					#"node-screenshots-linux-arm64-gnu@0.2.8"
+					#"node-screenshots-linux-loong64-gnu@0.2.8"
+					"node-screenshots-linux-x64-gnu@0.2.8"			# Make optional required to avoid load time error
+					#"node-screenshots-linux-x64-musl@0.2.8"
+				)
+				epnpm add "${pkgs[@]}" -w "${PNPM_INSTALL_ARGS[@]}"
+			popd >/dev/null 2>&1 || die
+		fi
 
 	#################
 	# Pinned versions
@@ -963,7 +977,10 @@ postgres_migrate() {
 	else
 		echo "DATABASE_URL=\"${DATABASE_URL}?sslmode=disable\"" >> "${S}/.env" || die
 	fi
-	if [[ "${DATABASE_DRIVER}" == "neon" || "${DATABASE_DRIVER}" == "pg" || "${DATABASE_DRIVER}" == "postgres" ]] ; then
+	if [[ "${DATABASE_DRIVER}" == "postgres" ]] ; then
+eerror "DATABASE_DRIVER=postgres is currently broken.  Use DATABASE_DRIVER=pg"
+		die
+	elif [[ "${DATABASE_DRIVER}" == "neon" || "${DATABASE_DRIVER}" == "pg" || "${DATABASE_DRIVER}" == "postgres" ]] ; then
 		echo "DATABASE_DRIVER=\"${DATABASE_DRIVER}\"" >> "${S}/.env" || die
 	else
 eerror "Only neon, postgres, or pg options are supported for DATABASE_DRIVER for PostgreSQL support."
@@ -1166,7 +1183,7 @@ _install_electron() {
 
 	# Copy all the licenses, copyright notices, NOTICEs files, readmes in
 	# node_modules and elsewhere.
-		lcnr_install_files
+		#lcnr_install_files
 	popd >/dev/null 2>&1 || die
 
 	make_desktop_entry \
@@ -1423,7 +1440,7 @@ einfo "${MY_PN2}-pwa or bookmark http://${LOBEHUB_HOSTNAME}:${LOBEHUB_PORT}"
 	if use electron ; then
 einfo "To use the Electron app from command line, use ${MY_PN2}-electron."
 	fi
-	if use tools ; then
+	if use tools || use electron ; then
 		local lobehub_server=$(get_lobehub_server)
 einfo "To use the @lobehub/cli from command line, use lh."
 einfo
@@ -1448,6 +1465,12 @@ einfo
 einfo "Run 'lh --help' for more commands."
 einfo "Run 'lh skill i <marketplace-identifier>' to install skills."
 einfo
+		if use electron ; then
+einfo
+einfo "The ENABLE_OIDC=1 and JWKS_KEY='<generated-key>' both required for"
+einfo "locally hosted postgres with electron client"
+einfo
+		fi
 	fi
 	if use pwa ; then
 einfo "LOBEHUB_HOSTNAME:  ${LOBEHUB_HOSTNAME} (user-definable, per-package environment variable)"
@@ -1484,7 +1507,7 @@ pkg_postrm() {
 # OILEDMACHINE-OVERLAY-TEST:  PASS 2.1.48 (20260408) with sharp 0.34.3.    Tested with only USE=electron
 # OILEDMACHINE-OVERLAY-TEST:  PASS 2.1.48 (20260409) with sharp 0.34.3.    Tested with only USE=pwa
 # OILEDMACHINE-OVERLAY-TEST:  PASS 2.1.52 (20260421) with sharp 0.34.3.    Tested pwa and electron login to self-hosted server
-# OILEDMACHINE-OVERLAY-TEST:  FAIL 2.2.13 (20260812) with sharp 0.35.3.    Tested pwa
+# OILEDMACHINE-OVERLAY-TEST:  PASS 2.2.13 (20260812) with sharp 0.35.3.    Tested pwa and electron with DATABASE_DRIVER="pg" and AUTH_SSO_PROVIDERS="github"
 
 # E-mail login:  untested
 # Electron:  passed

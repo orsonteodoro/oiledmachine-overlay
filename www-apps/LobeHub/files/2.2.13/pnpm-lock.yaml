@@ -46,7 +46,7 @@ importers:
         version: 1.2.0
       '@aws-sdk/client-bedrock-runtime':
         specifier: ^3.1076.0
-        version: 3.1108.0
+        version: 3.1109.0
       '@aws-sdk/client-s3':
         specifier: ~3.932.0
         version: 3.932.0
@@ -672,8 +672,8 @@ importers:
         specifier: ^3.9.17
         version: 3.9.17(next@16.3.0(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       node-addon-api:
-        specifier: ^8.9.1
-        version: 8.9.1
+        specifier: ^8.9.2
+        version: 8.9.2
       node-machine-id:
         specifier: ^1.1.12
         version: 1.1.12
@@ -2753,7 +2753,7 @@ importers:
         version: 0.1.100
       '@xmldom/xmldom':
         specifier: ^0.9.10
-        version: 0.9.10
+        version: 0.9.11
       concat-stream:
         specifier: ^2.0.0
         version: 2.0.0
@@ -2965,7 +2965,7 @@ importers:
         version: 0.73.0(zod@4.4.3)
       '@aws-sdk/client-bedrock-runtime':
         specifier: ^3.1076.0
-        version: 3.1108.0
+        version: 3.1109.0
       '@azure-rest/ai-inference':
         specifier: 1.0.0-beta.5
         version: 1.0.0-beta.5
@@ -3629,8 +3629,8 @@ packages:
     resolution: {integrity: sha512-insWOqKKNUrbN/dohEG7BJ0U5GkyqhjbMb/NHNaLUtq+7my2M8C4EnZZZoxMmXRqCC+P9dEr+KyJA2JGGzoKLg==}
     engines: {node: '>=20.0.0'}
 
-  '@aws-sdk/client-bedrock-runtime@3.1108.0':
-    resolution: {integrity: sha512-hWc8K8x7y2qwNwF5N49sjJSYBSLxP1wi0KNBZnAPzrZ0ephpDZqi5fdbdS6rxhA2442BG0vJlro1xWbPbWfpZQ==}
+  '@aws-sdk/client-bedrock-runtime@3.1109.0':
+    resolution: {integrity: sha512-lT8JydulZoM+fsdiqr/D8QMmud7eMjAee4qPYAJj7DZZPgjaOKiUYjfb54iRLNBkyCzZOXXwT5UzIjZxM4+KrA==}
     engines: {node: '>=20.0.0'}
 
   '@aws-sdk/client-s3@3.1051.0':
@@ -3823,6 +3823,10 @@ packages:
 
   '@aws-sdk/token-providers@3.1108.0':
     resolution: {integrity: sha512-rI80zxDxGJ6904eC/YbjkdjY6JdaZvQ01kOmrMvw7cFQGIHo27fhnIVbMSVDS4T6foQImjxYSRoOu/uSJscXDw==}
+    engines: {node: '>=20.0.0'}
+
+  '@aws-sdk/token-providers@3.1109.0':
+    resolution: {integrity: sha512-cAfGUyROpaYPgNrURNCX7JTSWKYtLEt6MDJQNjvgLoFHDYrFdl6qswvnOTZe4hag/8xlLbV6hxB0cOQg0jT2dw==}
     engines: {node: '>=20.0.0'}
 
   '@aws-sdk/token-providers@3.932.0':
@@ -5950,8 +5954,8 @@ packages:
   '@huggingface/tasks@0.19.90':
     resolution: {integrity: sha512-nfV9luJbvwGQ/5oKXkKhCV9h4X7mwh1YaGG3ORd6UMLDSwr1OFSSatcBX0O9OtBtmNK19aGSjbLFqqgcIR6+IA==}
 
-  '@huggingface/tasks@0.21.33':
-    resolution: {integrity: sha512-efQa8g+WjPwzlwk7Wl4eDgbM1Jq+WooUw/b1+eKl2LVUdPMhnbwsFNMJJxhEywaLJvJBy93+jjna6855U9GePw==}
+  '@huggingface/tasks@0.21.34':
+    resolution: {integrity: sha512-NRc1vw2Q/nZQPKjlzEkXxi0YNXstI1hXoaVruvJbgeznpXtEmPD0pey/ujIWTnhmsBQIVexr/QJJ5pyIJBPrMw==}
 
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
@@ -11308,12 +11312,12 @@ packages:
   '@workflow/serde@4.1.0-beta.2':
     resolution: {integrity: sha512-8kkeoQKLDaKXefjV5dbhBj2aErfKp1Mc4pb6tj8144cF+Em5SPbyMbyLCHp+BVrFfFVCBluCtMx+jjvaFVZGww==}
 
-  '@xmldom/xmldom@0.8.13':
-    resolution: {integrity: sha512-KRYzxepc14G/CEpEGc3Yn+JKaAeT63smlDr+vjB8jRfgTBBI9wRj/nkQEO+ucV8p8I9bfKLWp37uHgFrbntPvw==}
+  '@xmldom/xmldom@0.8.14':
+    resolution: {integrity: sha512-T4EDRUBVZYRldYApjEJiU0e1stYWaRAX7CuSnKzrpwdZKo53zGV8/pqfzV6FfwNl9YThD2OumQYvqtvjvgG7aQ==}
     engines: {node: '>=10.0.0'}
 
-  '@xmldom/xmldom@0.9.10':
-    resolution: {integrity: sha512-A9gOqLdi6cV4ibazAjcQufGj0B1y/vDqYrcuP6d/6x8P27gRS8643Dj9o1dEKtB6O7fwxb2FgBmJS2mX7gpvdw==}
+  '@xmldom/xmldom@0.9.11':
+    resolution: {integrity: sha512-tW8bcK3hsG0/uqSnNz6TK4BkcuZSezoU7DlnYssILmZDktPnSHHuDJJFM0AJv+13gz2r0iGdrj6qqKeUnxXEDg==}
     engines: {node: '>=14.6'}
 
   '@xterm/addon-fit@0.11.0':
@@ -14331,8 +14335,8 @@ packages:
     resolution: {integrity: sha512-YGGyuEdVIjqxkxVH1pUTMY/XtmmsApXrCVv5EU25iX6inEPbV+VakJfLealkBtJN69AQmh1eGOdCl9Sm1UP6XQ==}
     engines: {node: '>=18'}
 
-  gaxios@7.3.0:
-    resolution: {integrity: sha512-RB5vLV+vvQeoFPCX4QMK6/hjVkbIamPp1QSUD0CiZcnj12qbpiL+pLbYtgD+oZkWl0tl9z+o2Utp+MpM3QRhBA==}
+  gaxios@7.3.1:
+    resolution: {integrity: sha512-kB3rzJV7d9juLZh8/56QTXCwQfxyhdOMdyYk1HdQKFtF8TJTDTZQJtixWIwXdE9Jji91mC41DUNpjleo4L4eAQ==}
     engines: {node: '>=18'}
 
   gcp-metadata@6.1.1:
@@ -14416,8 +14420,8 @@ packages:
     resolution: {integrity: sha512-w9UMqWwJxHNOvoNzSJ2oPF5wvYcvP7jUvYzhp67yEhTi17ZDBBC1z9pTdGuzjD+EFIqLSYRweZjqfiPzQ06Ebg==}
     engines: {node: '>= 0.4'}
 
-  get-tsconfig@4.14.1:
-    resolution: {integrity: sha512-Dz/6HxkrxgNehhxLVeyv8sad9UzF2xBVeaKBQNDfJ5XiSXmp2gTR0eO0RWiT2NCKS5aGP9jjkOMggTN90qU50A==}
+  get-tsconfig@4.14.2:
+    resolution: {integrity: sha512-XpwZALwwl/BaKTAyC6+c5T8y6kCg2jk+XGqOVrKIQmW49pNypYLMRjCUXqa28tQgJlhS2RlzP7sc+Rx7W6qsfw==}
 
   get-value@2.0.6:
     resolution: {integrity: sha512-Ln0UQDlxH1BapMu3GPtf7CuYNwRZf2gwCuPqbyG6pB8WfmFpzqcy4xtAaAMUhnNqjMKTiCPZG2oMT3YSx8U2NA==}
@@ -16924,8 +16928,8 @@ packages:
     resolution: {integrity: sha512-3yZ1vfGKOcv0dyyhUeqA0Qa6RsQ4SfUnL6o2IWR4sVg8kdnJo48XTWbMLdtnfiZTbCUdsMttNwyJcihEdGCZBw==}
     engines: {node: '>=16', npm: '>=8'}
 
-  node-addon-api@8.9.1:
-    resolution: {integrity: sha512-4eUQWVPCUUUiBjLnHS3cXWeC6ryoPUc0U3rP7IuzapoGbzMqd/r6KKO0clr0b+snQhsrueFEhCZDdK+LK7hxKg==}
+  node-addon-api@8.9.2:
+    resolution: {integrity: sha512-VijLXbi3UACN69I0JVXJsX4tjACjNoQDgv2gTF6sx2wWEi8tkSg2eX8p5gSIFi8z2+DL3oHmY6OyKce38SDolg==}
     engines: {node: ^18 || ^20 || >= 21}
 
   node-domexception@1.0.0:
@@ -21861,14 +21865,14 @@ snapshots:
       '@smithy/types': 4.17.0
       tslib: 2.8.1
 
-  '@aws-sdk/client-bedrock-runtime@3.1108.0':
+  '@aws-sdk/client-bedrock-runtime@3.1109.0':
     dependencies:
       '@aws-sdk/core': 3.977.7
       '@aws-sdk/credential-provider-node': 3.972.79
       '@aws-sdk/eventstream-handler-node': 3.972.32
       '@aws-sdk/middleware-eventstream': 3.972.27
       '@aws-sdk/middleware-websocket': 3.972.50
-      '@aws-sdk/token-providers': 3.1108.0
+      '@aws-sdk/token-providers': 3.1109.0
       '@aws-sdk/types': 3.974.3
       '@smithy/core': 3.32.0
       '@smithy/fetch-http-handler': 5.7.0
@@ -22464,6 +22468,15 @@ snapshots:
       tslib: 2.8.1
 
   '@aws-sdk/token-providers@3.1108.0':
+    dependencies:
+      '@aws-sdk/core': 3.977.7
+      '@aws-sdk/nested-clients': 3.997.42
+      '@aws-sdk/types': 3.974.3
+      '@smithy/core': 3.32.0
+      '@smithy/types': 4.17.0
+      tslib: 2.8.1
+
+  '@aws-sdk/token-providers@3.1109.0':
     dependencies:
       '@aws-sdk/core': 3.977.7
       '@aws-sdk/nested-clients': 3.997.42
@@ -24324,7 +24337,7 @@ snapshots:
   '@esbuild-kit/esm-loader@2.6.5':
     dependencies:
       '@esbuild-kit/core-utils': 3.3.2
-      get-tsconfig: 4.14.1
+      get-tsconfig: 4.14.2
 
   '@esbuild/aix-ppc64@0.25.12':
     optional: true
@@ -24899,13 +24912,13 @@ snapshots:
   '@huggingface/inference@4.13.25':
     dependencies:
       '@huggingface/jinja': 0.5.9
-      '@huggingface/tasks': 0.21.33
+      '@huggingface/tasks': 0.21.34
 
   '@huggingface/jinja@0.5.9': {}
 
   '@huggingface/tasks@0.19.90': {}
 
-  '@huggingface/tasks@0.21.33': {}
+  '@huggingface/tasks@0.21.34': {}
 
   '@humanfs/core@0.19.2':
     dependencies:
@@ -25787,7 +25800,7 @@ snapshots:
       '@lobehub/ui': 5.29.1(@lobehub/fluent-emoji@4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.4.0)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(@lobehub/icons@5.16.0)(@shikijs/themes@4.4.3)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.5(date-fns@4.4.0)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(date-fns@4.4.0)(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@12.43.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(vue@3.5.41(typescript@6.0.3))
       '@shikijs/core': 4.4.3
       '@shikijs/engine-javascript': 4.4.3
-      '@xmldom/xmldom': 0.9.10
+      '@xmldom/xmldom': 0.9.11
       ahooks: 3.9.7(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       antd: 6.3.5(date-fns@4.4.0)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       antd-style: 4.1.0(@types/react@19.2.14)(antd@6.3.5(date-fns@4.4.0)(luxon@3.7.2)(moment@2.30.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -31385,9 +31398,9 @@ snapshots:
 
   '@workflow/serde@4.1.0-beta.2': {}
 
-  '@xmldom/xmldom@0.8.13': {}
+  '@xmldom/xmldom@0.8.14': {}
 
-  '@xmldom/xmldom@0.9.10': {}
+  '@xmldom/xmldom@0.9.11': {}
 
   '@xterm/addon-fit@0.11.0': {}
 
@@ -33918,7 +33931,7 @@ snapshots:
 
   eslint-import-context@0.1.9(unrs-resolver@1.12.2):
     dependencies:
-      get-tsconfig: 4.14.1
+      get-tsconfig: 4.14.2
       stable-hash-x: 0.2.0
     optionalDependencies:
       unrs-resolver: 1.12.2
@@ -33928,7 +33941,7 @@ snapshots:
       debug: 4.4.3
       eslint: 10.0.2(jiti@2.7.0)
       eslint-import-context: 0.1.9(unrs-resolver@1.12.2)
-      get-tsconfig: 4.14.1
+      get-tsconfig: 4.14.2
       is-bun-module: 2.0.0
       stable-hash-x: 0.2.0
       tinyglobby: 0.2.17
@@ -34952,7 +34965,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  gaxios@7.3.0:
+  gaxios@7.3.1:
     dependencies:
       extend: 3.0.2
       https-proxy-agent: 7.0.6
@@ -34971,7 +34984,7 @@ snapshots:
 
   gcp-metadata@8.1.2:
     dependencies:
-      gaxios: 7.3.0
+      gaxios: 7.3.1
       google-logging-utils: 1.1.3
       json-bigint: 1.0.0
     transitivePeerDependencies:
@@ -35044,7 +35057,7 @@ snapshots:
       es-errors: 1.3.0
       get-intrinsic: 1.3.0
 
-  get-tsconfig@4.14.1:
+  get-tsconfig@4.14.2:
     dependencies:
       resolve-pkg-maps: 1.0.0
 
@@ -35176,7 +35189,7 @@ snapshots:
     dependencies:
       base64-js: 1.5.1
       ecdsa-sig-formatter: 1.0.11
-      gaxios: 7.3.0
+      gaxios: 7.3.1
       gcp-metadata: 8.1.2
       google-logging-utils: 1.1.3
       jws: 4.0.1
@@ -36954,7 +36967,7 @@ snapshots:
 
   mammoth@1.12.1:
     dependencies:
-      '@xmldom/xmldom': 0.8.13
+      '@xmldom/xmldom': 0.8.14
       argparse: 1.0.10
       base64-js: 1.5.1
       bluebird: 3.4.7
@@ -37951,7 +37964,7 @@ snapshots:
 
   no-cliches@0.3.6: {}
 
-  node-addon-api@8.9.1: {}
+  node-addon-api@8.9.2: {}
 
   node-domexception@1.0.0: {}
 
@@ -38216,7 +38229,7 @@ snapshots:
 
   officeparser@5.1.1:
     dependencies:
-      '@xmldom/xmldom': 0.8.13
+      '@xmldom/xmldom': 0.8.14
       concat-stream: 2.0.0
       file-type: 16.5.4
       node-ensure: 0.0.0
@@ -40794,7 +40807,7 @@ snapshots:
       ast-kit: 3.0.0
       birpc: 4.1.0
       dts-resolver: 2.1.3(oxc-resolver@11.24.2)
-      get-tsconfig: 4.14.1
+      get-tsconfig: 4.14.2
       obug: 2.1.4
       picomatch: 4.0.5
       rolldown: 1.0.0-rc.17
