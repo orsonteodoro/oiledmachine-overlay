@@ -585,6 +585,9 @@ einfo "ReDoS = Regular Expression Denial of Service"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("REFLEAK")($|" "|";"|",") ]] ; then
 einfo "REFLEAK = Reference Leak"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("REFCNT")($|" "|";"|",") ]] ; then
+einfo "REFCNT = Reference Count Leak"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"RL"($|" "|";"|",") ]] ; then
 # Unreleased network, file, database, threads
 einfo "RL = Resource Leak"
