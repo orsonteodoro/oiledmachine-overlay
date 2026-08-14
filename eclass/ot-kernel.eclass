@@ -8085,42 +8085,58 @@ einfo "Adding SDIO support"
 ot-kernel_set_kconfig_module_signing() {
 	grep -q -e "^CONFIG_MODULES=y" "${BUILD_DIR}/.config" || return
 	# The default profile does not have module signing default on.
-	if [[ "${OT_KERNEL_SIGN_MODULES}" == "0" ]] ; then
-einfo "Disabling auto-signed modules"
-		ot-kernel_unset_configopt "CONFIG_MODULE_SIG"
-		ot-kernel_unset_configopt "CONFIG_MODULE_SIG_ALL"
-	elif [[ "${OT_KERNEL_SIGN_MODULES,,}" == "manual" ]] ; then
-einfo "Using the manual setting for auto-signed modules"
-	elif [[ -n "${OT_KERNEL_SIGN_MODULES}" ]] ; then
-		if [[ "${OT_KERNEL_SIGN_MODULES,,}" == "sha512" ]] ; then
-			:
-		elif [[ "${OT_KERNEL_SIGN_MODULES,,}" == "sha384" ]] ; then
+
+	local sign_modules_raw="${OT_KERNEL_SIGN_MODULES}"
+	local sign_modules_lower="${OT_KERNEL_SIGN_MODULES,,}"
+	local sign_modules_upper="${OT_KERNEL_SIGN_MODULES^^}"
+
+	local lockdown_lsm=0
+	if [[ "${OT_KERNEL_LSMS}" =~ "lockdown" || "${work_profile}" == "dss" ]] ; then
+einfo "Detected lockdown LSM, forcing auto signed modules"
+		lockdown_lsm=1
+	fi
+
+	if [[ ( -n "${sign_modules}" && "${sign_modules}" != "0" ) || "${lockdown_lsm}" == "1" ]] ; then
+	# Validate quantum resistant secure options
+		if [[ "${sign_modules_lower}" =~ ("sha384"|"sha512"|"sha3_256"|"sha3_384"|"sha3_512") ]] ; then
 			:
 		else
-			OT_KERNEL_SIGN_MODULES="sha384"
+			OT_KERNEL_SIGN_MODULES="sha512" # Upstream default
+			sign_modules_raw="${OT_KERNEL_SIGN_MODULES}"
+			sign_modules_lower="${OT_KERNEL_SIGN_MODULES,,}"
+			sign_modules_upper="${OT_KERNEL_SIGN_MODULES^^}"
 		fi
 
-einfo "Changing config to auto-signed modules with ${OT_KERNEL_SIGN_MODULES^^}"
+einfo "Changing config to auto-signed modules with ${sign_modules_upper}"
 		ot-kernel_y_configopt "CONFIG_MODULE_SIG_FORMAT"
 		ot-kernel_y_configopt "CONFIG_MODULE_SIG"
 		ot-kernel_y_configopt "CONFIG_MODULE_SIG_ALL"
 		ot-kernel_y_configopt "CONFIG_MODULE_SIG_FORCE"
 		local alg
 		local sign_algs=(
-			SHA1
-			SHA224
-			SHA256
-			SHA384
-			SHA512
+			"SHA1"
+			"SHA224"
+			"SHA256"
+			"SHA384"
+			"SHA512"
+			"SHA3_256"
+			"SHA3_384"
+			"SHA3_512"
 		)
 		for alg in ${sign_algs[@]} ; do
 			# Reset
 			ot-kernel_n_configopt "CONFIG_MODULE_SIG_${alg}"
 			#ot-kernel_n_configopt "CONFIG_CRYPTO_${alg}" # Disabled because it can interfere with other modules.
 		done
-		ot-kernel_y_configopt "CONFIG_MODULE_SIG_${OT_KERNEL_SIGN_MODULES^^}"
-		ot-kernel_y_configopt "CONFIG_CRYPTO_${OT_KERNEL_SIGN_MODULES^^}"
-		ot-kernel_set_configopt "CONFIG_MODULE_SIG_HASH" "\"${OT_KERNEL_SIGN_MODULES,,}\""
+		ot-kernel_y_configopt "CONFIG_MODULE_SIG_${sign_modules_upper}"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_${sign_modules_upper}"
+		ot-kernel_set_configopt "CONFIG_MODULE_SIG_HASH" "\"${sign_modules_lower}\""
+	elif [[ "${sign_modules}" == "0" ]] ; then
+einfo "Disabling auto-signed modules"
+		ot-kernel_unset_configopt "CONFIG_MODULE_SIG"
+		ot-kernel_unset_configopt "CONFIG_MODULE_SIG_ALL"
+	elif [[ "${sign_modules_lower}" == "manual" ]] ; then
+einfo "Using the manual setting for auto-signed modules"
 	else
 einfo "Using the manual setting for auto-signed modules"
 	fi
@@ -14488,10 +14504,10 @@ ot-kernel_set_globals_post() {
 	fi
 }
 
-# @FUNCTION: ot-kernel_fix_lockdown_lsm
+# @FUNCTION: ot-kernel_fix_lockdown_lsm_v1
 # @DESCRIPTION:
-# Fix lockdown LSM
-ot-kernel_fix_lockdown_lsm() {
+# Fix lockdown LSM when auto module signing is disabled
+ot-kernel_fix_lockdown_lsm_v1() {
 	# Fix lockdown mode
 	# These need to be loaded before lockdown LSM
 	if [[ "${OT_KERNEL_LSMS}" =~ "lockdown" || "${work_profile}" == "dss" ]] ; then
@@ -14890,7 +14906,7 @@ einfo "Disabling all debug and shortening logging buffers"
 
 	ot-kernel_disable_affected_modules
 	ot-kernel_verify_mitigation_late
-	ot-kernel_fix_lockdown_lsm
+	ot-kernel_fix_lockdown_lsm_v2
 
 	ot-kernel_set_globals_pre
 	ot-kernel_set_kconfig_from_envvar_array				# Final user override
