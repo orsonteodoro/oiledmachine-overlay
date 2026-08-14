@@ -14498,8 +14498,17 @@ ot-kernel_fix_lockdown_lsm() {
 einfo "Fixing config for lockdown mode"
 		local L
 		L=(
-	# All cryptsetup config flags essentially listed
-	# Commented out are unsupported.
+	#
+	# These minimum must be built-in to unbreak operationality:
+	# cryptsetup config symbols: built-in to unbreak boot
+	# dm-crypt/lvm:  built-in to unbreak boot
+	# libinput config symbols: built-in to unbreak x11
+	#
+	# All config flags essentially listed for the 3 above are forced =y
+	# The commented out are unsupported or insecure.
+	# Do not include all to reduce the attack surface or hardware vulnerabilities or unaudited hardare implementations.
+	# You must maintain consistency for lockdown LSM to reduce the attack surface.
+	#
 			"CONFIG_ARM_CRYPTO"
 			"CONFIG_ARM64_CRYPTO"
 			"CONFIG_ASYMMETRIC_KEY_TYPE"
@@ -14632,6 +14641,7 @@ einfo "Fixing config for lockdown mode"
 			"CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG_PLATFORM_KEYRING"
 			"CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG_SECONDARY_KEYRING"
 			"CONFIG_ENCRYPTED_KEYS"
+			"CONFIG_INPUT_EVDEV"
 			"CONFIG_INTEGRITY"
 			"CONFIG_INTEGRITY_ASYMMETRIC_KEYS"
 			"CONFIG_INTEGRITY_PLATFORM_KEYRING"
