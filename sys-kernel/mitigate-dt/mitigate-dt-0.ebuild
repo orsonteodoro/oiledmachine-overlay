@@ -62,7 +62,7 @@ VIDEO_CARDS=(
 )
 IUSE+="
 ${VIDEO_CARDS[@]}
-ebuild_revision_27
+ebuild_revision_28
 "
 REQUIRED_USE="
 "
