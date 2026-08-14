@@ -9,7 +9,7 @@ EAPI=8
 # See also https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/
 
 GENPATCHES_FALLBACK_COMMIT="d4fa92430e875432c3a61bb3abd9b6e68ea9fcbd" # 2026-06-04 18:26:32 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="3aa1dcaa4f6f5ae08936491e08bd456f331f2d40" # 2026-08-13 09:00:55 -0700 @ Revert "wifi: mt76: Disable napi when removing device"
+LINUX_SOURCES_FALLBACK_COMMIT="ad8d485e665829ecbf3c97b22ce251f8ff5f8037" # 2026-08-14 07:58:01 -0700 @ Merge tag 'vfs-7.2-rc8.fixes'
 RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
