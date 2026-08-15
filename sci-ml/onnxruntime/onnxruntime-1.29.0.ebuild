@@ -10,9 +10,16 @@ EAPI=8
 # dawn .gitmodules
 # Change configure for re2
 
+# Vendored deps ignored or needs reviewe
+# dawn
+# cpp_client_telemetry
+# curl
+# mbedtls
+
 # 1.20.0 -> 1.20.2
 # 1.20.2 -> 1.26.0
 # 1.26.0 -> 1.27.1
+# 1.27.1 -> 1.29.0
 
 # TODO package (optional):
 # lintrunner-adapters
@@ -22,26 +29,26 @@ EAPI=8
 # torch-ort
 
 # For deps versioning, see
-# https://github.com/microsoft/onnxruntime/blob/v1.27.1/cmake/deps.txt
-# https://github.com/microsoft/onnxruntime/blob/v1.27.1/tools/ci_build/github/linux/docker/scripts/manylinux/requirements.txt
-# https://github.com/microsoft/onnxruntime/blob/v1.27.1/onnxruntime/python/tools/transformers/requirements.txt
-# https://github.com/microsoft/onnxruntime/blob/v1.27.1/cmake/external/dnnl.cmake#L5
-# https://github.com/microsoft/onnxruntime/blob/v1.27.1/requirements.txt
-# https://github.com/microsoft/onnxruntime/blob/v1.27.1/requirements-dev.txt
-# https://github.com/microsoft/onnxruntime/blob/v1.27.1/requirements-doc.txt
-# https://github.com/microsoft/onnxruntime/blob/v1.27.1/requirements-lintrunner.txt
-# https://github.com/microsoft/onnxruntime/blob/v1.27.1/requirements-training.txt
+# https://github.com/microsoft/onnxruntime/blob/v1.29.0/cmake/deps.txt
+# https://github.com/microsoft/onnxruntime/blob/v1.29.0/tools/ci_build/github/linux/docker/scripts/manylinux/requirements.txt
+# https://github.com/microsoft/onnxruntime/blob/v1.29.0/onnxruntime/python/tools/transformers/requirements.txt
+# https://github.com/microsoft/onnxruntime/blob/v1.29.0/cmake/external/dnnl.cmake#L5
+# https://github.com/microsoft/onnxruntime/blob/v1.29.0/requirements.txt
+# https://github.com/microsoft/onnxruntime/blob/v1.29.0/requirements-dev.txt
+# https://github.com/microsoft/onnxruntime/blob/v1.29.0/requirements-doc.txt
+# https://github.com/microsoft/onnxruntime/blob/v1.29.0/requirements-lintrunner.txt
+# https://github.com/microsoft/onnxruntime/blob/v1.29.0/requirements-training.txt
 # https://github.com/google/dawn/blob/511eb80847afe6bded34ec491a38d5d78ba2d604/DEPS
-# https://github.com/microsoft/onnxruntime/blob/v1.27.1/dockerfiles/Dockerfile.cuda
-# https://github.com/microsoft/onnxruntime/blob/v1.27.1/dockerfiles/Dockerfile.openvino
-# https://github.com/microsoft/onnxruntime/blob/v1.27.1/dockerfiles/Dockerfile.rocm
-# https://github.com/microsoft/onnxruntime/blob/v1.27.1/dockerfiles/Dockerfile.tensorrt
-# https://github.com/microsoft/onnxruntime/blob/v1.27.1/onnxruntime/python/tools/transformers/models/llama/requirements-cuda.txt#L2
-# https://github.com/microsoft/onnxruntime/blob/v1.27.1/dockerfiles/README.md#cuda
-# https://github.com/microsoft/onnxruntime/blob/v1.27.1/dockerfiles/README.md#openvino
-# https://github.com/microsoft/onnxruntime/blob/v1.27.1/dockerfiles/README.md#tensorrt
-# https://github.com/microsoft/onnxruntime/blob/v1.27.1/dockerfiles/README.md#rocm
-# https://github.com/microsoft/onnxruntime/blob/v1.27.1/tools/ci_build/github/linux/docker/inference/x86_64/python/openvino/Dockerfile#L25
+# https://github.com/microsoft/onnxruntime/blob/v1.29.0/dockerfiles/Dockerfile.cuda
+# https://github.com/microsoft/onnxruntime/blob/v1.29.0/dockerfiles/Dockerfile.openvino
+# https://github.com/microsoft/onnxruntime/blob/v1.29.0/dockerfiles/Dockerfile.rocm
+# https://github.com/microsoft/onnxruntime/blob/v1.29.0/dockerfiles/Dockerfile.tensorrt
+# https://github.com/microsoft/onnxruntime/blob/v1.29.0/onnxruntime/python/tools/transformers/models/llama/requirements-cuda.txt#L2
+# https://github.com/microsoft/onnxruntime/blob/v1.29.0/dockerfiles/README.md#cuda
+# https://github.com/microsoft/onnxruntime/blob/v1.29.0/dockerfiles/README.md#openvino
+# https://github.com/microsoft/onnxruntime/blob/v1.29.0/dockerfiles/README.md#tensorrt
+# https://github.com/microsoft/onnxruntime/blob/v1.29.0/dockerfiles/README.md#rocm
+# https://github.com/microsoft/onnxruntime/blob/v1.29.0/tools/ci_build/github/linux/docker/inference/x86_64/python/openvino/Dockerfile#L25
 
 # clog has same version as cpuinfo
 
@@ -58,7 +65,7 @@ RE2_SLOT="20250512"
 ABSEIL_CPP_PV_2="20250814.0" # From cmake/deps.txt
 BENCHMARK_PV="1.8.5" # onnxruntime dep
 COREMLTOOLS_PV="7.1" # From cmake/deps.txt
-CUDNN_FRONTEND_PV="1.12.0" # From cmake/deps.txt as cudnn_frontend
+CUDNN_FRONTEND_PV="1.24.0" # From cmake/deps.txt as cudnn_frontend
 CUTLASS_PV="4.4.2" # From cmake/deps.txt
 DATE_PV_1="3.0.1" # From cmake/deps.txt
 DIRECTX_HEADERS_PV="1.613.1"
@@ -70,7 +77,7 @@ GSL_PV="4.2.1" # From cmake/deps.txt
 JSON_PV="3.11.3" # From cmake/deps.txt
 KLEIDIAI_PV="1.20.0" # From cmake/deps.txt
 MP11_PV="1.82.0" # From cmake/deps.txt
-ONNX_PV_1="1.21.0" # From .gitmodules or cmake/deps.txt
+ONNX_PV_1="1.22.0" # From .gitmodules or cmake/deps.txt
 MIMALLOC_PV="2.1.1" # From cmake/deps.txt
 OPENVINO_PV="2026.1.0"
 PROTOBUF_PV_1="21.12" # From cmake/deps.txt
@@ -82,7 +89,7 @@ WIL_PV="1.0.250325.1" # From cmake/deps.txt as microsoft_wil
 
 LIBPROTOBUF_MUTATOR_COMMIT_1="7a2ed51a6b682a83e345ff49fc4cfd7ca47550db" # From .gitmodules
 
-CPUINFO_COMMIT="403d652dca4c1046e8145950b1c0997a9f748b57" # From cmake/deps.txt
+CPUINFO_COMMIT="4628dc060ce4e82345dc166bbac875609db4ff69" # From cmake/deps.txt
 CXXOPTS_COMMIT="3c73d91c0b04e2b59462f0a741be8c07024c1bc0" # From cmake/deps.txt
 DLPACK_COMMIT_2="5c210da409e7f1e51ddf445134a4376fdbd70d7d" # From cmake/deps.txt
 EIGEN_COMMIT="1d8b82b0740839c0de7f1242a3585e3390ff5f33" # From cmake/deps.txt
@@ -106,7 +113,7 @@ BENCHMARK_COMMIT_2="0d98dba29d66e93259db7daa53a9327df767a415" # external/flatbuf
 GOOGLETEST_COMMIT_3="e2239ee6043f73722e7aa812a459f54a28552929" # external/flatbuffers from cmake/external/flatbuffers/benchmarks/CMakeLists.txt, or dawn/swiftshader dep, dawn/angle/swiftshader dep, dawn/angle/astc-encoder dep, dawn/angle/dawn/swiftshader dep
 
 AMDGPU_TARGETS_COMPAT=(
-# See https://github.com/microsoft/onnxruntime/blob/v1.27.1/cmake/CMakeLists.txt#L299
+# See https://github.com/microsoft/onnxruntime/blob/v1.29.0/cmake/CMakeLists.txt#L299
 	"gfx906"
 	"gfx908"
 	"gfx90a" # ck
@@ -135,7 +142,7 @@ CPU_FLAGS_X86=(
 )
 
 CUDA_TARGETS_COMPAT=(
-# See https://github.com/microsoft/onnxruntime/blob/v1.27.1/cmake/CMakeLists.txt#L1453
+# See https://github.com/microsoft/onnxruntime/blob/v1.29.0/cmake/CMakeLists.txt#L1453
 	"sm_30"
 	"sm_37"
 	"sm_50"
@@ -395,7 +402,7 @@ gen_rocm_required_use() {
 		"
 	done
 }
-# For providers, see also https://github.com/microsoft/onnxruntime/blob/v1.27.1/onnxruntime/test/perftest/command_args_parser.cc#L40
+# For providers, see also https://github.com/microsoft/onnxruntime/blob/v1.29.0/onnxruntime/test/perftest/command_args_parser.cc#L40
 # abseil-cpp is required for protobuf and still links to it if disabled.
 # webgpu banned because the G repo servers removed tarball downloads.
 REQUIRED_USE="
@@ -701,7 +708,7 @@ BDEPEND+="
 	)
 "
 _PATCHES=(
-	"${FILESDIR}/${PN}-1.26.0-onnx_proto-visibility.patch"
+	"${FILESDIR}/${PN}-1.29.0-onnx_proto-visibility.patch"
 )
 
 pkg_setup() {
@@ -760,14 +767,14 @@ _unpack() {
 }
 
 src_unpack_external_modules() { # .gitmodules
-# ${S}/cmake/external for https://github.com/microsoft/onnxruntime/blob/v1.27.1/.gitmodules
+# ${S}/cmake/external for https://github.com/microsoft/onnxruntime/blob/v1.29.0/.gitmodules
 	dep_prepare_cp "${WORKDIR}/emsdk-${EMSDK_PV}"							"${S}/cmake/external/emsdk"
 	dep_prepare_cp "${WORKDIR}/libprotobuf-mutator-${LIBPROTOBUF_MUTATOR_COMMIT_1}"			"${S}/cmake/external/libprotobuf-mutator"
 	dep_prepare_cp "${WORKDIR}/onnx-${ONNX_PV_1}"							"${S}/cmake/external/onnx"
 }
 
 src_unpack_external_deps() { # *cmake/deps.txt*
-# ${S}/cmake/external for https://github.com/microsoft/onnxruntime/blob/v1.27.1/cmake/deps.txt
+# ${S}/cmake/external for https://github.com/microsoft/onnxruntime/blob/v1.29.0/cmake/deps.txt
 	dep_prepare_cp "${WORKDIR}/coremltools-${COREMLTOOLS_PV}"					"${S}/cmake/external/coremltools"
 	dep_prepare_cp "${WORKDIR}/cpuinfo-${CPUINFO_COMMIT}"						"${S}/cmake/external/pytorch_cpuinfo"
 	dep_prepare_cp "${WORKDIR}/date-${DATE_PV_1}"							"${S}/cmake/external/date-1"
@@ -1259,7 +1266,7 @@ src_install() {
 	fi
 
 # Generated from
-# find /var/tmp/portage/sci-ml/onnxruntime-1.27.1/work/onnxruntime-1.27.1/cmake/_deps -name "*.so*" | cut -f 9- -d "/"
+# find /var/tmp/portage/sci-ml/onnxruntime-1.29.0/work/onnxruntime-1.29.0/cmake/_deps -name "*.so*" | cut -f 9- -d "/"
 	local LIBS=(
 cmake/_deps/pytorch_cpuinfo-build/libcpuinfo.so
 cmake/_deps/re2-build/libre2.so.11
