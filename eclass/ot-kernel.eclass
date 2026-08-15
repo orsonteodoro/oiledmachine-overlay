@@ -14693,6 +14693,17 @@ einfo "${x}=m -> ${x}=y"
 	fi
 }
 
+# @FUNCTION: ot-kernel_set_kconfig_localversion
+# @DESCRIPTION:
+# Sets the LOCALVERSION reproducible builds and to fix `uname -r` and
+# `modprobe <module-name>`.  For uname -r, 7.2.9999-builder-x86_64 is abstractly
+# <CANONICAL_KERNEL_VERSION>-<EXTRAVERSION>-<LOCALVERSION>, where
+# CANONICAL_KERNEL_VERSION=<VERSION>.<PATCHLEVEL>.<SUBLEVEL>
+ot-kernel_set_kconfig_localversion() {
+	ot-kernel_set_configopt "CONFIG_LOCALVERSION" "\"-${arch}\""
+	ot-kernel_unset_configopt "CONFIG_LOCALVERSION_AUTO"
+}
+
 # @FUNCTION: ot-kernel_src_configure_assisted
 # @DESCRIPTION:
 # More assisted configuration
@@ -14760,6 +14771,7 @@ einfo
 	ot-kernel_set_kconfig_compiler_toolchain # Inits llvm_slot, gcc_slot
 	ot-kernel_menuconfig "pre"					# Uses llvm_slot
 
+	ot-kernel_set_kconfig_localversion
 	ot-kernel_set_kconfig_march
 	ot-kernel_set_kconfig_lto					# Uses llvm_slot
 	ot-kernel_set_kconfig_abis
@@ -14909,7 +14921,7 @@ einfo "Disabling all debug and shortening logging buffers"
 
 	ot-kernel_disable_affected_modules
 	ot-kernel_verify_mitigation_late
-	ot-kernel_fix_lockdown_lsm
+	#ot-kernel_fix_lockdown_lsm
 
 	ot-kernel_set_globals_pre
 	ot-kernel_set_kconfig_from_envvar_array				# Final user override
