@@ -4576,11 +4576,11 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Acceptable values:
 
-      sha384, sha512, unset, 1, 0, manual
+      sha384, sha512, sha3_256, sha3_384, sha3_512 unset, 1, 0, manual
 
-    If setting to 1, it will use sha384.  Setting to unset will assume manual.
-    Setting to 0 will disable module signing and disable module sign
-    verification.
+    If setting to 1, it will use sha512 which is the upstream default.  Setting
+    to unset will assume manual.  Setting to 0 will disable module signing and
+    disable module sign verification.
 
     When a new kernel config is generated, module signing is disabled; but it
     can be signed by setting this to 1.  If module signing is enabled,
@@ -4589,6 +4589,9 @@ unset OT_KERNEL_PRIVATE_KEY
     for kernel graphics modules if module signing is enabled.  It is not
     forced default on to prevent any unprepared disruption.  See
     OT_KERNEL_PRIVATE_KEY section also.
+
+    For dss or when lockdown LSM is enabled, module signing is forced on when
+    modules are enabled.
 
     IMPORTANT:
 
