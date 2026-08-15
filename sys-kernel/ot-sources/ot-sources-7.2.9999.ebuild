@@ -9,14 +9,14 @@ EAPI=8
 # See also https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/
 
 GENPATCHES_FALLBACK_COMMIT="d4fa92430e875432c3a61bb3abd9b6e68ea9fcbd" # 2026-06-04 18:26:32 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="a5161661ae99f497affa83a5b8654e457cda6267" # 2026-08-14 10:41:36 -0700 @ Merge tag 'sound-7.2' of
+LINUX_SOURCES_FALLBACK_COMMIT="15ef2f78c49d20d53ec7c0f1c9b40b02e089f2d6" # 2026-08-14 21:51:26 -0700 @ Merge tag 'input-for-v7.2-rc7' of
 RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
 # https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=7.2
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
-EBUILD_REV="ebuild_revision_16"
+EBUILD_REV="ebuild_revision_17"
 GENPATCHES_VER="live" # can be live only when 9999
 PATCH_PROJC_VER="7.1-r0"
 PATCH_RT_VER="7.2-rc4-rt3"
