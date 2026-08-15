@@ -14695,8 +14695,9 @@ einfo "${x}=m -> ${x}=y"
 
 # @FUNCTION: ot-kernel_set_kconfig_localversion
 # @DESCRIPTION:
-# Sets the LOCALVERSION reproducible builds and to fix `uname -r` and
-# `modprobe <module-name>`.  For uname -r, 7.2.9999-builder-x86_64 is abstractly
+# Sets the LOCALVERSION reproducible builds and to fix `uname -r` and module
+# search path for `modprobe <module-name>`.  For uname -r,
+# 7.2.9999-builder-x86_64 is abstractly
 # `<CANONICAL_KERNEL_VERSION><EXTRAVERSION><LOCALVERSION>`, where
 # `CANONICAL_KERNEL_VERSION=<VERSION>.<PATCHLEVEL>.<SUBLEVEL>`,
 # `EXTRAVERSION="-${OT_KERNEL_EXTRAVERSION}"`, and
