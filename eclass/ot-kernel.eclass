@@ -14504,16 +14504,19 @@ ot-kernel_set_globals_post() {
 	fi
 }
 
-# @FUNCTION: ot-kernel_fix_lockdown_lsm_v1
+# @FUNCTION: ot-kernel_fix_lockdown_lsm
 # @DESCRIPTION:
 # Fix lockdown LSM when auto module signing is disabled
-ot-kernel_fix_lockdown_lsm_v1() {
+ot-kernel_fix_lockdown_lsm() {
 	# Fix lockdown mode
 	# These need to be loaded before lockdown LSM
 	if [[ "${OT_KERNEL_LSMS}" =~ "lockdown" || "${work_profile}" == "dss" ]] ; then
 einfo "Fixing config for lockdown mode"
 		local L
 		L=(
+	#
+	# It is required to make these modules built-in even though module
+	# signing is enabled.
 	#
 	# These minimum must be built-in to unbreak operationality:
 	# cryptsetup config symbols: built-in to unbreak boot
@@ -14906,7 +14909,7 @@ einfo "Disabling all debug and shortening logging buffers"
 
 	ot-kernel_disable_affected_modules
 	ot-kernel_verify_mitigation_late
-	ot-kernel_fix_lockdown_lsm_v2
+	ot-kernel_fix_lockdown_lsm
 
 	ot-kernel_set_globals_pre
 	ot-kernel_set_kconfig_from_envvar_array				# Final user override
