@@ -6,19 +6,21 @@ EAPI=8
 
 # A3.20, U24
 
-# For requirements, see https://github.com/open-webui/open-webui/blob/v0.9.6/backend/requirements.txt
+# 0.9.6 -> 0.11.0
+
+# For requirements, see https://github.com/open-webui/open-webui/blob/v0.11.0/backend/requirements.txt
 # For telemetry, see https://docs.openwebui.com/reference/monitoring/otel/
 
 # To update lockfile:
 # PATH="$(realpath ../../scripts):${PATH}"
-# NPM_UPDATER_VERSIONS="0.9.6" npm_updater_update_locks.sh
+# NPM_UPDATER_VERSIONS="0.11.0" npm_updater_update_locks.sh
 
 MY_PN="Open WebUI"
 
 AT_TYPES_NODE_PV="25.5.0"
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="hatchling"
-NODE_SLOT="22" # From https://github.com/open-webui/open-webui/blob/v0.9.6/Dockerfile#L27
+NODE_SLOT="22" # From https://github.com/open-webui/open-webui/blob/v0.11.0/Dockerfile#L27
 NPM_AUDIT_FATAL=0
 NPM_SLOT="3"
 PROTOBUF_CPP_SLOT="5"
@@ -137,22 +139,19 @@ gen_torch_rdepend() {
 		echo "
 			(
 				~sci-ml/pytorch-${torch_pv}[${PYTHON_SINGLE_USEDEP},cuda?]
-				sci-ml/pytorch:=
 				~sci-ml/torchaudio-${torchaudio_pv}[${PYTHON_SINGLE_USEDEP}]
-				sci-ml/torchaudio:=
 				~sci-ml/torchvision-${torchvision_pv}[${PYTHON_SINGLE_USEDEP},cuda?]
-				sci-ml/torchvision:=
 			)
 		"
 	done
 }
 DOCKER_REPEND="
-	|| (
-		$(gen_torch_rdepend)
-	)
 	sci-ml/pytorch:=
 	sci-ml/torchaudio:=
 	sci-ml/torchvision:=
+	|| (
+		$(gen_torch_rdepend)
+	)
 	rag-ocr? (
 		app-arch/zstd
 		media-video/ffmpeg
@@ -168,137 +167,128 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		>=app-arch/brotli-1.2.0[${PYTHON_USEDEP}]
 		>=dev-python/aiocache-0.12.3[${PYTHON_USEDEP}]
+		>=dev-python/aiodns-4.0.4[${PYTHON_USEDEP}]
 		>=dev-python/aiofiles-25.1.0[${PYTHON_USEDEP}]
 		>=dev-python/aiohttp-3.13.5[${PYTHON_USEDEP}]
-		>=dev-python/aiosqlite-0.21.0[${PYTHON_USEDEP}]
+		>=dev-python/aiosqlite-0.22.1[${PYTHON_USEDEP}]
 		>=dev-python/alembic-1.18.4[${PYTHON_USEDEP}]
 		>=dev-python/anthropic-0.86.0[${PYTHON_USEDEP}]
 		>=dev-python/apscheduler-3.11.2[${PYTHON_USEDEP}]
 		>=dev-python/argon2-cffi-25.1.0[${PYTHON_USEDEP}]
 		>=dev-python/asgiref-3.11.1[${PYTHON_USEDEP}]
 		>=dev-python/async-timeout-5.0.1[${PYTHON_USEDEP}]
-		>=dev-python/authlib-1.6.10[${PYTHON_USEDEP}]
+		>=dev-python/authlib-1.7.2[${PYTHON_USEDEP}]
 		>=dev-python/azure-ai-documentintelligence-1.0.2[${PYTHON_USEDEP}]
-		>=dev-python/azure-identity-1.25.2[${PYTHON_USEDEP}]
-		>=dev-python/azure-storage-blob-12.28.0[${PYTHON_USEDEP}]
+		>=dev-python/azure-identity-1.25.3[${PYTHON_USEDEP}]
+		>=dev-python/azure-storage-blob-12.29.0[${PYTHON_USEDEP}]
 		>=dev-python/bcrypt-5.0.0[${PYTHON_USEDEP}]
 		>=dev-python/beautifulsoup4-4.14.3[${PYTHON_USEDEP}]
-		>=dev-python/black-26.3.1[${PYTHON_USEDEP}]
+		>=dev-python/black-26.5.1[${PYTHON_USEDEP}]
 		>=dev-python/boto3-1.42.62[${PYTHON_USEDEP}]
 		>=dev-python/brotlicffi-1.2.0.1[${PYTHON_USEDEP}]
-		>=dev-python/chardet-5.2.0[${PYTHON_USEDEP}]
-		>=dev-python/cryptography-46.0.5[${PYTHON_USEDEP}]
-		>=dev-python/ddgs-9.11.3[${PYTHON_USEDEP}]
+		>=dev-python/chardet-7.4.3[${PYTHON_USEDEP}]
+		>=dev-python/cryptography-48.0.0[${PYTHON_USEDEP}]
+		>=dev-python/ddgs-9.14.4[${PYTHON_USEDEP}]
 		>=dev-python/docx2txt-0.9[${PYTHON_USEDEP}]
 		>=dev-python/einops-0.8.2[${PYTHON_USEDEP}]
 		>=dev-python/fake-useragent-2.2.0[${PYTHON_USEDEP}]
-		>=dev-python/fastapi-0.135.1[${PYTHON_USEDEP}]
+		>=dev-python/fastapi-0.136.3[${PYTHON_USEDEP}]
 		>=dev-python/fpdf2-2.8.7[${PYTHON_USEDEP}]
 		>=dev-python/ftfy-6.3.1[${PYTHON_USEDEP}]
-		>=dev-python/google-api-python-client-2.193.0[${PYTHON_USEDEP}]
-		>=dev-python/google-auth-httplib2-0.3.0[${PYTHON_USEDEP}]
-		>=dev-python/google-auth-oauthlib-1.3.0[${PYTHON_USEDEP}]
+		>=dev-python/google-api-python-client-2.197.0[${PYTHON_USEDEP}]
+		>=dev-python/google-auth-httplib2-0.4.0[${PYTHON_USEDEP}]
+		>=dev-python/google-auth-oauthlib-1.4.0[${PYTHON_USEDEP}]
 		>=dev-python/google-cloud-storage-3.9.0[${PYTHON_USEDEP}]
 		>=dev-python/google-genai-1.66.0[${PYTHON_USEDEP}]
-		>=dev-python/googleapis-common-protos-1.72.0[${PYTHON_USEDEP}]
+		>=dev-python/googleapis-common-protos-1.75.0[${PYTHON_USEDEP}]
+		>=dev-python/hiredis-3.4.0[${PYTHON_USEDEP}]
 		>=dev-python/httpx-0.28.1[${PYTHON_USEDEP},brotli,cli,http2,socks,zstd]
 		>=dev-python/itsdangerous-2.2.0[${PYTHON_USEDEP}]
+		>=dev-python/lxml-6.1.1[${PYTHON_USEDEP}]
+		>=dev-python/joserfc-1.7.4[${PYTHON_USEDEP}]
 		>=dev-python/ldap3-2.9.1[${PYTHON_USEDEP}]
 		>=dev-python/langchain-1.2.10[${PYTHON_USEDEP}]
-		>=dev-python/langchain-classic-1.0.1[${PYTHON_USEDEP}]
-		>=dev-python/langchain-community-0.4.1[${PYTHON_USEDEP}]
-		>=dev-python/langchain-text-splitters-1.1.1[${PYTHON_USEDEP}]
+		>=dev-python/langchain-classic-1.0.7[${PYTHON_USEDEP}]
+		>=dev-python/langchain-community-0.4.2[${PYTHON_USEDEP}]
+		>=dev-python/langchain-text-splitters-1.1.2[${PYTHON_USEDEP}]
 		>=dev-python/loguru-0.7.3[${PYTHON_USEDEP}]
 		>=dev-python/markdown-3.10.2[${PYTHON_USEDEP}]
 		>=dev-python/msoffcrypto-tool-6.0.0[${PYTHON_USEDEP}]
-		>=dev-python/mcp-1.26.0[${PYTHON_USEDEP}]
-		>=dev-python/nltk-3.9.3[${PYTHON_USEDEP}]
+		>=dev-python/mcp-1.27.2[${PYTHON_USEDEP}]
+		>=dev-python/nltk-3.9.4[${PYTHON_USEDEP}]
 		>=dev-python/openai-2.29.0[${PYTHON_USEDEP}]
 		>=dev-python/openpyxl-3.1.5[${PYTHON_USEDEP}]
-		>=dev-python/opensearch-py-3.1.0[${PYTHON_USEDEP}]
-		>=dev-python/pandas-3.0.1[${PYTHON_USEDEP}]
-		>=dev-python/pycrdt-0.12.47[${PYTHON_USEDEP}]
-		>=dev-python/pytz-2026.1_p1[${PYTHON_USEDEP}]
-		>=dev-python/peewee-3.19.0[${PYTHON_USEDEP}]
-		>=dev-python/peewee-migrate-1.14.3[${PYTHON_USEDEP}]
+		>=dev-python/opensearch-py-3.2.0[${PYTHON_USEDEP}]
+		>=dev-python/orjson-3.11.9[${PYTHON_USEDEP}]
+		>=dev-python/pandas-3.0.3[${PYTHON_USEDEP}]
 		>=dev-python/psutil-7.2.2[${PYTHON_USEDEP}]
+		>=dev-python/psycopg-3.3.4[${PYTHON_USEDEP}]
 		>=dev-python/pyarrow-20.0.0[${PYTHON_USEDEP}]
-		>=dev-python/pydantic-2.12.5[${PYTHON_USEDEP}]
+		>=dev-python/pycrdt-0.13.1[${PYTHON_USEDEP}]
+		>=dev-python/pydantic-2.13.4[${PYTHON_USEDEP}]
 		>=dev-python/pydub-0.25.1[${PYTHON_USEDEP}]
-		>=dev-python/pyjwt-2.11.0[${PYTHON_USEDEP},crypto(+)]
-		>=dev-python/pymdown-extensions-10.21[${PYTHON_USEDEP}]
-		>=dev-python/pymysql-1.1.2[${PYTHON_USEDEP}]
-		>=dev-python/pypandoc-1.16.2[${PYTHON_USEDEP}]
+		>=dev-python/pyjwt-2.13.0[${PYTHON_USEDEP},crypto(+)]
+		>=dev-python/pymdown-extensions-10.21.3[${PYTHON_USEDEP}]
+		>=dev-python/pymysql-1.2.0[${PYTHON_USEDEP}]
+		>=dev-python/pypandoc-1.17[${PYTHON_USEDEP}]
 		>=dev-python/pypdf-6.7.5[${PYTHON_USEDEP}]
-		>=dev-python/python-jose-3.5.0[${PYTHON_USEDEP}]
 		>=dev-python/python-mimeparse-2.0.0[${PYTHON_USEDEP}]
-		>=dev-python/python-multipart-0.0.22[${PYTHON_USEDEP}]
+		>=dev-python/python-multipart-0.0.32[${PYTHON_USEDEP}]
 		>=dev-python/python-pptx-1.0.2[${PYTHON_USEDEP}]
-		>=dev-python/python-socketio-5.16.1[${PYTHON_USEDEP}]
+		>=dev-python/python-socketio-5.16.2[${PYTHON_USEDEP}]
 		>=dev-python/pytube-15.0.0[${PYTHON_USEDEP}]
+		>=dev-python/pytz-2026.2[${PYTHON_USEDEP}]
 		>=dev-python/pyxlsb-1.0.10[${PYTHON_USEDEP}]
 		>=dev-python/rank-bm25-0.2.2[${PYTHON_USEDEP}]
-		>=dev-python/redis-7.4.0[${PYTHON_USEDEP}]
-		>=dev-python/RestrictedPython-8.1[${PYTHON_USEDEP}]
+		>=dev-python/redis-8.0.1[${PYTHON_USEDEP}]
+		>=dev-python/regex-2026.5.9[${PYTHON_USEDEP}]
+		>=dev-python/RestrictedPython-8.2[${PYTHON_USEDEP}]
 		>=dev-python/soundfile-0.13.1[${PYTHON_USEDEP}]
-		>=dev-python/starlette-compress-1.7.0[${PYTHON_USEDEP}]
+		>=dev-python/starlette-compress-1.7.1[${PYTHON_USEDEP}]
 		>=dev-python/starsessions-2.2.1[${PYTHON_USEDEP},redis]
-		>=dev-python/uvicorn-0.41.0[${PYTHON_USEDEP},standard]
-		>=dev-python/requests-2.33.1[${PYTHON_USEDEP}]
-		>=dev-python/sqlalchemy-2.0.48[${PYTHON_USEDEP},asyncio(+)]
-		>=dev-python/tiktoken-0.12.0[${PYTHON_USEDEP}]
+		>=dev-python/uvicorn-0.51.0[${PYTHON_USEDEP},standard]
+		>=dev-python/requests-2.34.2[${PYTHON_USEDEP}]
+		>=dev-python/sqlalchemy-2.0.50[${PYTHON_USEDEP},asyncio(+)]
+		>=dev-python/tiktoken-0.13.0[${PYTHON_USEDEP}]
 		>=dev-python/validators-0.35.0[${PYTHON_USEDEP}]
 		>=dev-python/xlrd-2.0.2[${PYTHON_USEDEP}]
 		>=dev-python/youtube-transcript-api-1.2.4[${PYTHON_USEDEP}]
 		>=sci-ml/sentencepiece-0.2.1[${PYTHON_USEDEP}]
-		>=virtual/pillow-12.1.1[${PYTHON_USEDEP}]
+		>=virtual/pillow-12.2.0[${PYTHON_USEDEP}]
 		all? (
-			>=dev-python/azure-search-documents-11.6.0[${PYTHON_USEDEP}]
+			>=dev-python/azure-search-documents-12.0.0[${PYTHON_USEDEP}]
 			>=dev-python/docker-7.1.0[${PYTHON_USEDEP}]
-			>=dev-python/elasticsearch-9.3.0[${PYTHON_USEDEP}]
+			>=dev-python/elasticsearch-9.4.1[${PYTHON_USEDEP}]
 			>=dev-python/gcp-storage-emulator-2024.8.3[${PYTHON_USEDEP}]
 			>=dev-python/oracledb-3.4.2[${PYTHON_USEDEP}]
 			>=dev-python/pinecone-6.0.2[${PYTHON_USEDEP}]
-			>=dev-python/playwright-bin-1.58.0[${PYTHON_USEDEP}]
-			>=dev-python/pymongo-4.16.0[${PYTHON_USEDEP}]
+			>=dev-python/playwright-bin-1.60.0[${PYTHON_USEDEP}]
+			>=dev-python/pymongo-4.17.0[${PYTHON_USEDEP}]
 			>=dev-python/pytest-8.3.2[${PYTHON_USEDEP}]
 			>=dev-python/pytest-docker-3.2.5[${PYTHON_USEDEP}]
-			>=dev-python/qdrant-client-1.17.0[${PYTHON_USEDEP}]
+			>=dev-python/qdrant-client-1.18.0[${PYTHON_USEDEP}]
 			>=dev-python/weaviate-client-4.20.3[${PYTHON_USEDEP}]
 		)
 		mariadb? (
 			>=dev-python/mariadb-1.1.14[${PYTHON_USEDEP}]
 		)
 		postgres? (
-			>=dev-python/psycopg-3.2.9:2[${PYTHON_USEDEP},binary(+)]
-			dev-python/psycopg:=
+			>=dev-python/psycopg-3.2.9:2=[${PYTHON_USEDEP},binary(+)]
 			>=dev-python/pgvector-0.4.2[${PYTHON_USEDEP}]
 		)
 		telemetry? (
-			>=dev-python/opentelemetry-api-1.40.0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
-			dev-python/opentelemetry-api:=
-			>=dev-python/opentelemetry-sdk-1.40.0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
-			dev-python/opentelemetry-sdk:=
-			>=dev-python/opentelemetry-exporter-otlp-1.40.0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
-			dev-python/opentelemetry-exporter-otlp:=
-			>=dev-python/opentelemetry-instrumentation-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
-			dev-python/opentelemetry-instrumentation:=
-			>=dev-python/opentelemetry-instrumentation-fastapi-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
-			dev-python/opentelemetry-instrumentation-fastapi:=
-			>=dev-python/opentelemetry-instrumentation-sqlalchemy-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
-			dev-python/opentelemetry-instrumentation-sqlalchemy:=
-			>=dev-python/opentelemetry-instrumentation-redis-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
-			dev-python/opentelemetry-instrumentation-redis:=
-			>=dev-python/opentelemetry-instrumentation-requests-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
-			dev-python/opentelemetry-instrumentation-requests:=
-			>=dev-python/opentelemetry-instrumentation-logging-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
-			dev-python/opentelemetry-instrumentation-logging:=
-			>=dev-python/opentelemetry-instrumentation-httpx-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
-			dev-python/opentelemetry-instrumentation-httpx:=
-			>=dev-python/opentelemetry-instrumentation-aiohttp-client-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
-			dev-python/opentelemetry-instrumentation-aiohttp-client:=
-			>=dev-python/opentelemetry-instrumentation-system-metrics-0.61_beta0:'"${PROTOBUF_CPP_SLOT}"'[${PYTHON_USEDEP}]
-			dev-python/opentelemetry-instrumentation-system-metrics:=
+			>=dev-python/opentelemetry-api-1.42.1:'"${PROTOBUF_CPP_SLOT}"'=[${PYTHON_USEDEP}]
+			>=dev-python/opentelemetry-sdk-1.42.1:'"${PROTOBUF_CPP_SLOT}"'=[${PYTHON_USEDEP}]
+			>=dev-python/opentelemetry-exporter-otlp-1.42.1:'"${PROTOBUF_CPP_SLOT}"'=[${PYTHON_USEDEP}]
+			>=dev-python/opentelemetry-instrumentation-0.63_beta1:'"${PROTOBUF_CPP_SLOT}"'=[${PYTHON_USEDEP}]
+			>=dev-python/opentelemetry-instrumentation-fastapi-0.63_beta1:'"${PROTOBUF_CPP_SLOT}"'=[${PYTHON_USEDEP}]
+			>=dev-python/opentelemetry-instrumentation-sqlalchemy-0.63_beta1:'"${PROTOBUF_CPP_SLOT}"'=[${PYTHON_USEDEP}]
+			>=dev-python/opentelemetry-instrumentation-redis-0.63_beta1:'"${PROTOBUF_CPP_SLOT}"'=[${PYTHON_USEDEP}]
+			>=dev-python/opentelemetry-instrumentation-requests-0.63_beta1:'"${PROTOBUF_CPP_SLOT}"'=[${PYTHON_USEDEP}]
+			>=dev-python/opentelemetry-instrumentation-logging-0.63_beta1:'"${PROTOBUF_CPP_SLOT}"'=[${PYTHON_USEDEP}]
+			>=dev-python/opentelemetry-instrumentation-httpx-0.63_beta1:'"${PROTOBUF_CPP_SLOT}"'=[${PYTHON_USEDEP}]
+			>=dev-python/opentelemetry-instrumentation-aiohttp-client-0.63_beta1:'"${PROTOBUF_CPP_SLOT}"'=[${PYTHON_USEDEP}]
+			>=dev-python/opentelemetry-instrumentation-system-metrics-0.63_beta1:'"${PROTOBUF_CPP_SLOT}"'=[${PYTHON_USEDEP}]
 		)
 		valkey? (
 			>=dev-python/valkey-glide-sync-2.3.1[${PYTHON_USEDEP}]
@@ -306,22 +296,22 @@ RDEPEND+="
 	')
 	>=dev-python/accelerate-1.13.0[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/av-14.0.1[${PYTHON_SINGLE_USEDEP}]
-	>=dev-python/chromadb-1.5.2[${PYTHON_SINGLE_USEDEP},protobuf_python_5]
+	>=dev-python/chromadb-1.5.9[${PYTHON_SINGLE_USEDEP},protobuf_python_5]
 	>=dev-python/faster-whisper-1.2.1[${PYTHON_SINGLE_USEDEP}]
-	>=dev-python/rapidocr-onnxruntime-1.4.4[${PYTHON_SINGLE_USEDEP}]
-	>=dev-python/sentence-transformers-5.4.0[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/rapidocr-3.9.2[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/sentence-transformers-5.5.1[${PYTHON_SINGLE_USEDEP}]
 	>=media-libs/opencv-4.13.0[${PYTHON_SINGLE_USEDEP},python]
 	>=sci-ml/transformers-5.5.4[${PYTHON_SINGLE_USEDEP}]
-	>=sci-ml/onnxruntime-1.24.3[${PYTHON_SINGLE_USEDEP},python]
+	>=sci-ml/onnxruntime-1.26.0[${PYTHON_SINGLE_USEDEP},python]
 	acct-group/${PN}
 	acct-user/${PN}
 	x11-misc/xdg-utils
 	all? (
 		>=dev-python/colbert-ai-0.2.22[${PYTHON_SINGLE_USEDEP}]
-		>=dev-python/pymilvus-2.6.9[${PYTHON_SINGLE_USEDEP}]
+		>=dev-python/pymilvus-2.6.14[${PYTHON_SINGLE_USEDEP}]
 	)
 	unstructured? (
-		>=dev-python/unstructured-0.18.31[${PYTHON_SINGLE_USEDEP}]
+		>=dev-python/unstructured-0.22.31[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 # xdg-utils is not an upstream requirement but for the launcher wrapper.
@@ -341,7 +331,7 @@ BDEPEND+="
 DOCS=( "CHANGELOG.md" "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-0.5.20-symbolize-string-literals.patch"
-	"${FILESDIR}/${PN}-0.9.2-use-e965-xlsx.patch"
+#	"${FILESDIR}/${PN}-0.9.2-use-e965-xlsx.patch"
 )
 
 check_virtual_mem() {
@@ -373,80 +363,15 @@ pkg_setup() {
 }
 
 npm_update_lock_install_post() {
-ewarn "QA:  Manually remove node_modules/vite-node/node_modules/vite in package-lock.json."
-	patch_lockfile() {
-		# DoS = Denial of Service
-		# DT = Data Tampering
-		# ID = Information Disclosure
-		# SS = Subsequent System (Indirect attack)
-		# VS = Vulnerable System (Direct attack)
-		# ZC = Zero-Click vulnerability
-
-		sed -i -e "s|\"brace-expansion\": \"^1.1.7\"|\"brace-expansion\": \"^2.0.3\"|g" "package-lock.json" || die
-
-		sed -i -e "s|\"cookie\": \"^0.6.0\"|\"cookie\": \"^0.7.0\"|g" "package-lock.json" || die
-
-		sed -i -e "s|\"dompurify\": \"^3.1.6\"|\"dompurify\": \"^3.3.3\"|g" "package-lock.json" || die
-		sed -i -e "s|\"dompurify\": \"^3.2.4\"|\"dompurify\": \"^3.3.3\"|g" "package-lock.json" || die
-		sed -i -e "s|\"dompurify\": \"^3.0.5 <3.1.7\"|\"dompurify\": \"^3.3.3\"|g" "package-lock.json" || die
-
-		sed -i -e "s|\"esbuild\": \"^0.25.0\"|\"esbuild\": \"^0.25.12\"|g" "package-lock.json" || die
-		sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"^0.25.12\"|g" "package-lock.json" || die
-
-		sed -i -e "s#\"vite\": \"^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0\"#\"vite\": \"^5.4.21\"#g" "package-lock.json" || die
-		sed -i -e "s|\"vite\": \"^5.4.21\"|\"vite\": \"^5.4.21\"|g" "package-lock.json" || die
-		sed -i -e "s|\"vite\": \"^5.4.14\"|\"vite\": \"^5.4.21\"|g" "package-lock.json" || die
-		sed -i -e "s#\"vite\": \"^5.0.3 || ^6.0.0 || ^7.0.0-beta.0 || ^8.0.0\"#\"vite\": \"^5.4.21\"#g" "package-lock.json" || die
-		sed -i -e "s#\"vite\": \"^5.0.3 || ^6.0.0\"#\"vite\": \"^5.4.21\"#g" "package-lock.json" || die
-		sed -i -e "s#\"vite\": \"^5.0.0 || ^6.0.0\"#\"vite\": \"^5.4.21\"#g" "package-lock.json" || die
-		sed -i -e "s|\"vite\": \"^5.0.0\"|\"vite\": \"^5.4.21\"|g" "package-lock.json" || die
-		sed -i -e "s#\"vite\": \"^3.0.0 || ^4.0.0 || ^5.0.0\"#\"vite\": \"^5.4.21\"#g" "package-lock.json" || die
-
-		sed -i -e "s|\"form-data\": \"~4.0.0\"|\"form-data\": \"^4.0.5\"|g" "package-lock.json" || die
-		sed -i -e "s|\"tmp\": \"~0.2.3\"|\"tmp\": \"^0.2.5\"|g" "package-lock.json" || die
-
-		sed -i -e "s|\"jspdf\": \"^3.0.2\"|\"jspdf\": \"^4.2.1\"|g" "package-lock.json" || die
-		sed -i -e "s|\"devalue\": \"^5.1.0\"|\"devalue\": \"^5.6.4\"|g" "package-lock.json" || die
-		sed -i -e "s|\"vite-plugin-static-copy\": \"^2.2.0\"|\"vite-plugin-static-copy\": \"^2.3.2\"|g" "package-lock.json" || die
-		sed -i -e "s|\"mermaid\": \"^10.9.3\"|\"mermaid\": \"^11.13.0\"|g" "package-lock.json" || die
-
-		sed -i -e "s|\"uuid\": \"^11.1.0\"|\"uuid\": \"^14.0.0\"|g" "package-lock.json" || die
-		sed -i -e "s|\"uuid\": \"^9.0.1\"|\"uuid\": \"^14.0.0\"|g" "package-lock.json" || die
-		sed -i -e "s|\"uuid\": \"^8.3.2\"|\"uuid\": \"^14.0.0\"|g" "package-lock.json" || die
-
-		sed -i -e "s|\"xlsx\": \"^0.18.5\"|\"@e965/xlsx\": \"^0.20.3\"|g" "package.json" || die		# CVE-2024-22363; ZC, DoS; High
-														# CVE-2023-30533; DoS, DT, ID; High
-	}
-	patch_lockfile
-
+#ewarn "QA:  Manually remove node_modules/vite-node/node_modules/vite in package-lock.json."
 	local pkgs
 	pkgs=(
-		"brace-expansion@^2.0.3"					# CVE-2025-5889; DoS; Low
-		"cookie@^0.7.0"							# CVE-2024-47764; VS(DT); Medium
-		"esbuild@^0.25.12"						# GHSA-67mh-4wv8-2f99; ID; Moderate
-		"vite@^6.4.2"							# CVE-2025-46565; VS(ID); Low
-										# CVE-2025-58751; VS(ID); Low
-										# CVE-2025-58752; VS(ID); Low
-										# CVE-2026-39365; ZC, VS(ID); Moderate
-		"form-data@^4.0.5"						# CVE-2025-7783; VS(DT, ID), SS(DT, ID); Critical
-		"tmp@^0.2.5"							# CVE-2025-54798; DT; Low
-		"devalue@^5.6.4"						# CVE-2025-57820; SS(DoS, DT, ID); High
 	)
-	enpm install -D "${pkgs[@]}" "${NPM_INSTALL_ARGS[@]}"
+	#enpm install -D "${pkgs[@]}" "${NPM_INSTALL_ARGS[@]}"
 
 	pkgs=(
-		"dompurify@^3.3.3"
-		"jspdf@^4.2.1"							# CVE-2025-57810; ZC, VS(DoS); High
-										# CVE-2026-31938; DoS, DT, ID; Critical
-										# CVE-2025-68428; ZC, VS(ID), SS(ID); Critical
-										# CVE-2026-25535; ZC, DoS; High
-		"vite-plugin-static-copy@^2.3.2"				# CVE-2025-57753; VS(ID); Moderate
-		"mermaid@^11.13.0"						# CVE-2025-54881; SS(DT, ID); Moderate
-		"uuid@^14.0.0"							# GHSA-w5hq-g745-h8pq; ZC, VS(DT); Moderate
 	)
-	enpm install -P "${pkgs[@]}" "${NPM_INSTALL_ARGS[@]}"
-
-	patch_lockfile
+	#enpm install -P "${pkgs[@]}" "${NPM_INSTALL_ARGS[@]}"
 }
 
 _rebuild_sharp() {
