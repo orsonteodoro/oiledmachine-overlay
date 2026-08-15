@@ -1,0 +1,15 @@
+--- a/cmake/external/eigen/CMakeLists.txt.orig	2026-08-15 14:06:24.464665179 -0700
++++ b/cmake/external/eigen/CMakeLists.txt	2026-08-15 14:10:59.837915934 -0700
+@@ -272,9 +272,9 @@ if(PROJECT_IS_TOP_LEVEL)
+ endif()
+ 
+ # Guard against in-source builds
+-if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
+-  message(FATAL_ERROR "In-source builds not allowed. Please make a new directory (called a build directory) and run CMake from there. You may need to remove CMakeCache.txt. ")
+-endif()
++if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
++  message(WARNING "In-source builds not allowed. Please make a new directory (called a build directory) and run CMake from there. You may need to remove CMakeCache.txt. ")
++endif()
+ 
+ # Guard against bad build-type strings
+ if (PROJECT_IS_TOP_LEVEL AND NOT CMAKE_BUILD_TYPE)

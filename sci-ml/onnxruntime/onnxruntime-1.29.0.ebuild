@@ -481,72 +481,42 @@ gen_rocm_rdepend() {
 	# Check both the direct top and indirect bottom dependencies
 		echo "
 			rocm_${u}? (
-				>=dev-libs/rccl-${pv}:${s}[$(get_rocm_usedep RCCL)]
-				dev-libs/rccl:=
-				>=dev-libs/rocr-runtime-${pv}:${s}
-				dev-libs/rocr-runtime:=
-				>=dev-util/hip-${pv}:${s}[rocm]
-				dev-util/hip:=
-				>=dev-util/rocm-smi-${pv}:${s}
-				dev-util/rocm-smi:=
-				>=dev-util/roctracer-${pv}:${s}
-				dev-util/roctracer:=
-				>=sci-libs/hipCUB-${pv}:${s}[$(get_rocm_usedep HIPCUB)]
-				sci-libs/hipCUB:=
-				>=sci-libs/hipFFT-${pv}:${s}[$(get_rocm_usedep HIPFFT)]
-				sci-libs/hipFFT:=
-				>=sci-libs/hipRAND-${pv}:${s}[rocm]
-				sci-libs/hipRAND:=
-				>=sci-libs/miopen-${pv}:${s}[$(get_rocm_usedep MIOPEN)]
-				sci-libs/miopen:=
-				>=sci-libs/rocBLAS-${pv}:${s}[$(get_rocm_usedep ROCBLAS)]
-				sci-libs/rocBLAS:=
+				~dev-libs/rccl-${pv}:=[$(get_rocm_usedep RCCL)]
+				~dev-libs/rocr-runtime-${pv}:=
+				~dev-util/hip-${pv}:=[rocm]
+				~dev-util/rocm-smi-${pv}:=
+				~dev-util/roctracer-${pv}:=
+				~sci-libs/hipCUB-${pv}:=[$(get_rocm_usedep HIPCUB)]
+				~sci-libs/hipFFT-${pv}:=[$(get_rocm_usedep HIPFFT)]
+				~sci-libs/hipRAND-${pv}:=[rocm]
+				~sci-libs/miopen-${pv}:=[$(get_rocm_usedep MIOPEN)]
+				~sci-libs/rocBLAS-${pv}:=[$(get_rocm_usedep ROCBLAS)]
 				system-composable-kernel? (
-					sci-libs/composable-kernel:${s}[$(get_rocm_usedep COMPOSABLE_KERNEL)]
-					sci-libs/composable-kernel:=
+					sci-libs/composable-kernel:=[$(get_rocm_usedep COMPOSABLE_KERNEL)]
 				)
 			)
 		"
 		if use amdgpu_targets_gfx90a ; then
 			echo "
-				>=sci-libs/hipBLASLt-${pv}:${s}[$(get_rocm_usedep HIPBLASLT)]
-				sci-libs/hipBLASLt:=
+				~sci-libs/hipBLASLt-${pv}:=[$(get_rocm_usedep HIPBLASLT)]
 			"
 		fi
 	done
 }
 DISABLED_RDEPEND="
-	(
-		>=dev-cpp/ms-gsl-4.0.0
-		dev-cpp/ms-gsl:=
-	)
-	(
-		>=dev-cpp/nlohmann_json-3.10.5
-		dev-cpp/nlohmann_json:=
-	)
-	(
-		>=dev-libs/clog-2024.07.09
-		dev-libs/clog:=
-	)
-	(
-		>=dev-libs/cpuinfo-2024.07.09
-		dev-libs/cpuinfo:=
-	)
-	(
-		>=dev-libs/date-3.0.1
-		dev-libs/date:=
-	)
-	(
-		>=dev-libs/flatbuffers-23.5.26
-		dev-libs/flatbuffers:=
-	)
-	(
-		>=dev-libs/protobuf-21.12:0/3.21
-		dev-libs/protobuf:=
-	)
-	>=sci-ml/FP16-2021.03.16
+	>=dev-cpp/ms-gsl-4.0.0:=
+	>=dev-cpp/nlohmann_json-3.10.5:=
+	>=dev-libs/clog-2024.07.09:=
+	>=dev-libs/cpuinfo-2024.07.09:=
+	>=dev-libs/date-3.0.1:=
+	>=dev-libs/flatbuffers-23.5.26:=
 	>=dev-libs/FXdiv-2020.12.08
 	>=dev-libs/re2-0.2024.07.02:${RE2_SLOT}
+	>=sci-ml/FP16-2021.03.16
+	dev-libs/protobuf:=
+	|| (
+		dev-libs/protobuf:0/3.21
+	)
 	benchmark? (
 		>=dev-cpp/benchmark-1.8.5
 	)
@@ -554,43 +524,28 @@ DISABLED_RDEPEND="
 		>=sci-ml/XNNPACK-2023.10.19
 	)
 "
+CUDA_12_6_DEPEND="
+	(
+		>=sci-ml/pytorch-2.6.0:=[${PYTHON_SINGLE_USEDEP}]
+		>=x11-drivers/nvidia-drivers-560.35:=
+		=dev-util/nvidia-cuda-toolkit-12.6*:=
+		=virtual/cuda-compiler-12.6:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		cudnn? (
+			>=dev-libs/cudnn-9.5:=
+		)
+	)
+"
 RDEPEND="
 	${PYTHON_DEPS}
-	(
-		!python? (
-			>=sci-ml/onnx-1.16.1[disableStaticReg]
-		)
-		python? (
-			$(python_gen_cond_dep '
-				>=sci-ml/onnx-1.16.1[${PYTHON_USEDEP},disableStaticReg]
-			')
-		)
-		sci-ml/onnx:=
+	>=sys-cluster/openmpi-4.0.0:=[cuda?]
+	>=sci-ml/pytorch-1.13.1:=[${PYTHON_SINGLE_USEDEP}]
+	app-admin/chrpath:=
+	virtual/numpy:=
+	!python? (
+		>=sci-ml/onnx-1.16.1:=[disableStaticReg]
 	)
-	(
-		>=sys-cluster/openmpi-4.0.0[cuda?]
-		sys-cluster/openmpi:=
-	)
-	>=sci-ml/pytorch-1.13.1[${PYTHON_SINGLE_USEDEP}]
-	app-admin/chrpath
-	virtual/numpy
 	cuda? (
-		|| (
-			(
-				>=x11-drivers/nvidia-drivers-560.35
-				=dev-util/nvidia-cuda-toolkit-12.6*
-				!python? (
-					>=sci-ml/pytorch-2.6.0[${PYTHON_SINGLE_USEDEP}]
-				)
-				cudnn? (
-					>=dev-libs/cudnn-9.5
-				)
-				python? (
-					>=sci-ml/pytorch-2.6.0[${PYTHON_SINGLE_USEDEP}]
-				)
-				virtual/cuda-compiler:0/12.6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-			)
-		)
+		${CUDA_12_6_DEPEND}
 		dev-util/nvidia-cuda-toolkit:=
 		virtual/cuda-compiler:=
 	)
@@ -599,54 +554,50 @@ RDEPEND="
 	)
 	javascript? (
 		llvm_slot_18? (
-			>=dev-util/emscripten-3.1.59:18-3.1
+			>=dev-util/emscripten-3.1.59:=
+			|| (
+				dev-util/emscripten:18-3.1
+			)
 		)
 	)
 	onednn? (
-		>=sci-ml/oneDNN-3.0.1
-		sci-ml/oneDNN:=
+		>=sci-ml/oneDNN-3.0.1:=
 	)
 	openvino? (
-		>=sci-ml/openvino-${OPENVINO_PV}[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/openvino-${OPENVINO_PV}:=[${PYTHON_SINGLE_USEDEP}]
 		openvino_targets_gpu? (
-			>=sci-ml/openvino-${OPENVINO_PV}[${PYTHON_SINGLE_USEDEP},video_cards_intel]
+			>=sci-ml/openvino-${OPENVINO_PV}:=[${PYTHON_SINGLE_USEDEP},video_cards_intel]
 		)
 		openvino_targets_npu? (
-			>=sci-ml/openvino-${OPENVINO_PV}[${PYTHON_SINGLE_USEDEP},npu]
+			>=sci-ml/openvino-${OPENVINO_PV}:=[${PYTHON_SINGLE_USEDEP},npu]
 		)
+	)
+	python? (
+		$(python_gen_cond_dep '
+			>=sci-ml/onnx-1.16.1:=[${PYTHON_USEDEP},disableStaticReg]
+		')
 	)
 	rocm? (
 		$(gen_rocm_rdepend)
 		rocm_6_4? (
-			!python? (
-				|| (
-					=sci-ml/pytorch-2.3*[${PYTHON_SINGLE_USEDEP}]
-				)
-			)
-			python? (
-				|| (
-					=sci-ml/pytorch-2.3*[${PYTHON_SINGLE_USEDEP}]
-				)
-			)
+			=sci-ml/pytorch-2.3*:=[${PYTHON_SINGLE_USEDEP}]
 		)
 	)
 	system-eigen? (
-		>=dev-cpp/eigen-3.4.0[cuda?]
-		dev-cpp/eigen:=
+		>=dev-cpp/eigen-3.4.0:=[cuda?]
 	)
 	tensorrt? (
-		>=dev-util/tensorrt-8.5.1
-		=dev-util/nvidia-cuda-toolkit-11.8*
-		dev-util/tensorrt:=
+		>=dev-util/tensorrt-8.5.1:=
+		=dev-util/nvidia-cuda-toolkit-11.8*:=
 	)
 	python? (
-		>=sci-ml/transformers-4.18.0[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/transformers-4.18.0:=[${PYTHON_SINGLE_USEDEP}]
 		$(python_gen_cond_dep '
 			training? (
 				dev-python/cerberus[${PYTHON_USEDEP}]
 				dev-python/h5py[${PYTHON_USEDEP}]
-				sci-ml/onnx[${PYTHON_USEDEP}]
-				virtual/numpy[${PYTHON_USEDEP}]
+				sci-ml/onnx:=[${PYTHON_USEDEP}]
+				virtual/numpy:=[${PYTHON_USEDEP}]
 			)
 			>=dev-python/flatbuffers-23.5.26[${PYTHON_USEDEP}]
 			>=dev-python/sympy-1.12[${PYTHON_USEDEP}]
@@ -655,14 +606,14 @@ RDEPEND="
 			dev-python/protobuf:=[${PYTHON_USEDEP}]
 			dev-python/psutil[${PYTHON_USEDEP}]
 			dev-python/py-cpuinfo[${PYTHON_USEDEP}]
-			virtual/numpy[${PYTHON_USEDEP}]
+			virtual/numpy:=[${PYTHON_USEDEP}]
 		')
 		quant? (
 			dev-python/neural-compressor[${PYTHON_SINGLE_USEDEP}]
 		)
 		training? (
-			>=sci-ml/pytorch-1.13.1[${PYTHON_SINGLE_USEDEP}]
-			sci-ml/pytorch-ort[${PYTHON_SINGLE_USEDEP}]
+			>=sci-ml/pytorch-1.13.1:=[${PYTHON_SINGLE_USEDEP}]
+			sci-ml/pytorch-ort:=[${PYTHON_SINGLE_USEDEP}]
 		)
 		triton? (
 			dev-python/triton[${PYTHON_SINGLE_USEDEP}]
@@ -873,6 +824,9 @@ src_unpack() {
 
 src_prepare() {
 	eapply ${_PATCHES[@]}
+	if ! use system-eigen ; then
+		eapply "${FILESDIR}/eigen-1d8b82b-make-in-source-as-warning.patch"
+	fi
 
 	CMAKE_USE_DIR="${S}/cmake"
 
@@ -929,6 +883,9 @@ src_prepare() {
 
 src_configure() {
 	ewarn "This ebuild is still in development.  Use the 1.19.x series instead."
+
+	export BUILD_DIR="${S}_build"
+
 	export ROCM_PATH="${ESYSROOT}/${EROCM_PATH}"
 	export MIOPEN_PATH="${ESYSROOT}/${EROCM_PATH}"
 	#export ROCM_VERSION="${ROCM_VERSION}"-
@@ -972,6 +929,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DFETCHCONTENT_QUIET=OFF
 		-DFETCHCONTENT_SOURCE_DIR_CXXOPTS="${S}/cmake/external/flatbuffers/third_party/cxxopts"
 		-DFETCHCONTENT_SOURCE_DIR_DATE="${S}/cmake/external/date-1"
+		-DFETCHCONTENT_SOURCE_DIR_DLPACK="${S}/cmake/external/dlpack"
 		-DFETCHCONTENT_SOURCE_DIR_FLATBUFFERS="${S}/cmake/external/flatbuffers"
 		-DFETCHCONTENT_SOURCE_DIR_GSL="${S}/cmake/external/microsoft_gsl"
 		-DFETCHCONTENT_SOURCE_DIR_MP11="${S}/cmake/external/mp11"
@@ -1139,11 +1097,11 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	if use system-eigen ; then
 		mycmakeargs+=(
-			-Deigen_SOURCE_PATH="/usr/include/eigen3"
+			-Deigen3_SOURCE_PATH="/usr/include/eigen3"
 		)
 	else
 		mycmakeargs+=(
-			-DFETCHCONTENT_SOURCE_DIR_EIGEN="${S}/cmake/external/eigen"
+			-DFETCHCONTENT_SOURCE_DIR_EIGEN3="${S}/cmake/external/eigen"
 		)
 	fi
 
