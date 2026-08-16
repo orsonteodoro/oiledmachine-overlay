@@ -130,7 +130,6 @@ PDEPEND="
 PATCHES=(
 	"${FILESDIR}/${PN}-1.3.0-sparc-configure.patch" # 501010
 	"${FILESDIR}/${PN}-1.10.0-exeldflags.patch"
-	"${FILESDIR}/${PN}-1.13.1-allow-fortify-source.patch"
 )
 
 get_asset_ids() {
