@@ -1,0 +1,10 @@
+--- a/CMakeLists.txt.orig	2026-08-16 06:59:59.461435188 -0700
++++ b/CMakeLists.txt	2026-08-16 07:01:31.557965840 -0700
+@@ -311,6 +311,7 @@ endif()
+ 
+ if(ENABLE_APPS)
+   # Only used by aomenc.
++  add_definitions(-D_POSIX_C_SOURCE=200112L)
+   add_library(aom_encoder_stats OBJECT ${AOM_ENCODER_STATS_SOURCES})
+   set(AOM_LIB_TARGETS ${AOM_LIB_TARGETS} aom_encoder_stats)
+ endif()

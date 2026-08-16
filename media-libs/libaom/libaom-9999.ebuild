@@ -271,8 +271,7 @@ PDEPEND="
 PATCHES=(
 #	"${FILESDIR}/${PN}-2.0.1-aom_sadXXXxh-are-ssse3.patch"
 	"${FILESDIR}/${PN}-48d85ce-cfi-rework.patch"
-	"${FILESDIR}/${PN}-3.4.0-posix-c-source-ftello.patch"
-	"${FILESDIR}/${PN}-48d85ce-allow-fortify-source.patch"
+	"${FILESDIR}/${PN}-7a21028-posix-c-source-ftello.patch"
 	"${FILESDIR}/${PN}-3.8.1-tests-parallel.patch"
 )
 
