@@ -76,3 +76,6 @@ net-misc/curl psl
 
 # Last update of the dependency was in 2021
 dev-lang/php argon2
+
+# Guardrail to mitigate IV
+media-libs/opus hardened
