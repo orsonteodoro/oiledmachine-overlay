@@ -6,9 +6,13 @@ EAPI=8
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="system-set"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{11..12} )
+PYTHON_COMPAT=( "python3_"{10..14} )
 
-inherit cython distutils-r1 optfeature toolchain-funcs
+CHKL_TIMESTAMPS=(
+	"dev-libs/libxml2-9999"
+)
+
+inherit chkl cython distutils-r1 optfeature secure-version toolchain-funcs
 
 KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390
@@ -46,17 +50,18 @@ RESTRICT="
 
 # Note: lib{xml2,xslt} are used as C libraries, not Python modules.
 DEPEND="
-	>=dev-libs/libxml2-2.13.8:=
-	>=dev-libs/libxslt-1.1.43
+	>=dev-libs/libxml2-${LIBXML2_PV}:=
+	>=dev-libs/libxslt-${LIBXSLT_PV}:=
+	>=virtual/zlib-${ZLIB_PV}:=
+	virtual/libiconv:*
 "
 RDEPEND="
 	${DEPEND}
 "
 BDEPEND="
+	>=dev-python/cython-3.2.4:3.2=[${PYTHON_USEDEP}]
+	dev-python/setuptools[${PYTHON_USEDEP}]
 	virtual/pkgconfig
-	>=dev-python/cython-3.0.10[${PYTHON_USEDEP}]
-	=dev-python/cython-3*[${PYTHON_USEDEP}]
-	dev-python/cython:=
 	doc? (
 		$(python_gen_any_dep '
 			dev-python/docutils[${PYTHON_USEDEP}]
@@ -71,9 +76,7 @@ BDEPEND="
 "
 
 PATCHES=(
-	"${FILESDIR}/${PN}-5.3.0-pypy.patch"
-	# https://github.com/lxml/lxml/commit/6d5d6aed2e38e1abc625f29c0b3e97fc8c60ae3b
-	"${FILESDIR}/${PN}-5.4.0-cython-3.1.patch"
+	"${FILESDIR}/${PN}-6.1.1-pypy.patch"
 )
 
 python_check_deps() {
@@ -94,14 +97,15 @@ python_prepare_all() {
 }
 
 python_configure() {
-	cython_set_cython_slot "3"
+	chkl_check_many_timestamps
+	cython_set_cython_slot "3.2"
 	cython_python_configure
 }
 
 python_compile() {
 	local DISTUTILS_ARGS=(
 	# By default, it adds -w to CFLAGS.
-		--warnings
+		"--warnings"
 	)
 	tc-export PKG_CONFIG
 	distutils-r1_python_compile
