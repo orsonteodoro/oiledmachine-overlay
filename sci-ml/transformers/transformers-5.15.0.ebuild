@@ -5,6 +5,8 @@ EAPI=8
 
 # U24
 
+# 5.10.1 -> 5.15.0
+
 # TODO package:
 #
 # blobfile
@@ -122,8 +124,8 @@ RDEPEND="
 		>=dev-python/regex-2025.10.22[${PYTHON_USEDEP}]
 		>=dev-python/packaging-20.0[${PYTHON_USEDEP}]
 		>=dev-python/pyyaml-5.1[${PYTHON_USEDEP}]
-		>=dev-python/tqdm-4.27[${PYTHON_USEDEP}]
-		>=sci-ml/safetensors-0.4.3[${PYTHON_USEDEP}]
+		>=dev-python/tqdm-4.60[${PYTHON_USEDEP}]
+		>=sci-ml/safetensors-0.8.0[${PYTHON_USEDEP}]
 		dev-python/typer[${PYTHON_USEDEP}]
 		virtual/numpy[${PYTHON_USEDEP}]
 		audio? (
@@ -133,7 +135,6 @@ RDEPEND="
 		)
 		chat_template? (
 			>=dev-python/jinja2-3.1.0[${PYTHON_USEDEP}]
-			>=dev-python/jmespath-1.0.1[${PYTHON_USEDEP}]
 		)
 		codecarbon? (
 			>=dev-python/codecarbon-2.8.1[${PYTHON_USEDEP}]
@@ -142,8 +143,8 @@ RDEPEND="
 			>=dev-python/deepspeed-0.9.3[${PYTHON_USEDEP}]
 		)
 		kernels? (
-			>=dev-python/kernels-0.12.0[${PYTHON_USEDEP}]
-			<dev-python/kernels-0.13[${PYTHON_USEDEP}]
+			>=dev-python/kernels-0.16.0[${PYTHON_USEDEP}]
+			<dev-python/kernels-0.17[${PYTHON_USEDEP}]
 		)
 		l10n_ja? (
 			>=dev-python/fugashi-1.0[${PYTHON_USEDEP}]
@@ -158,7 +159,7 @@ RDEPEND="
 			>=dev-python/unidic-lite-1.0.7[${PYTHON_USEDEP}]
 		)
 		mistral-common? (
-			>=dev-python/mistral-common-1.10.0[image]
+			>=dev-python/mistral-common-1.11.7[image]
 		)
 		num2words? (
 			dev-python/num2words[${PYTHON_USEDEP}]
@@ -168,7 +169,7 @@ RDEPEND="
 		)
 		orphans? (
 			>=dev-python/schedulefree-1.2.6[${PYTHON_USEDEP}]
-			dev-python/peft[${PYTHON_USEDEP}]
+			>=dev-python/peft-0.19.1[${PYTHON_USEDEP}]
 			dev-python/scipy[${PYTHON_USEDEP}]
 		)
 		ray? (
@@ -229,7 +230,7 @@ RDEPEND="
 		media-libs/opencv[${PYTHON_SINGLE_USEDEP},python]
 	)
 	torch? (
-		>=sci-ml/pytorch-2.4[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/pytorch-2.5[${PYTHON_SINGLE_USEDEP}]
 	)
 	l10n_ja? (
 		$(python_gen_cond_dep '
@@ -261,7 +262,7 @@ BDEPEND="
 			<dev-python/urllib3-2.0.0[${PYTHON_USEDEP}]
 			>=dev-python/ty-0.0.20[${PYTHON_USEDEP}]
 			dev-python/tomli[${PYTHON_USEDEP}]
-			>=dev-ptyhon/transformers-mlinter-0.1.1[${PYTHON_USEDEP}]
+			>=dev-ptyhon/transformers-mlinter-0.1.2[${PYTHON_USEDEP}]
 			>=dev-util/ruff-0.14.10
 		)
 		test? (
