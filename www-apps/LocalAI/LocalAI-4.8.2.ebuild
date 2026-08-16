@@ -6,6 +6,8 @@ EAPI=8
 
 # U24
 
+# 4.3.6 -> 4.8.2
+
 # Contains AI generated synthetic data in metadata.xml
 
 # We use partial offline to avoid "argument list too long" for go modules.
@@ -39,7 +41,7 @@ CFLAGS_HARDENED_APPEND_GOFLAGS=1
 CFLAGS_HARDENED_USE_CASES="daemon network p2p security-critical sensitive-data server untrusted-data" # May process sensitive emails or photos.
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE CSRF SSRF XSS"
 GRPC_SLOT="5" # Same as the backends.  Ignore the /Makefile
-NODE_SLOT="22"
+NODE_SLOT="26"
 PROTOBUF_CPP_SLOT="5"
 PROTOBUF_PYTHON_SLOT="5"
 PYTHON_COMPAT=( "python3_"{11..14} ) # Based on NumPy
@@ -52,22 +54,22 @@ MODES=(
 	"worker"
 )
 
-ONNXRUNTIME_PV="1.20.0" # From https://github.com/mudler/LocalAI/blob/v4.3.6/backend/go/silero-vad/Makefile#L5
-VULKAN_PV="1.4.350.0" # Version relaxed.  Originally 1.4.350.1.  From the last vulkan-sdk-<ver> tag in https://github.com/KhronosGroup/Vulkan-Tools/tags relative to LLAMA_CPP_COMMIT commit date.  llama.cpp uses https://vulkan.lunarg.com/sdk/latest/linux.txt
+_ONNXRUNTIME_PV="1.20.0" # From https://github.com/mudler/LocalAI/blob/v4.8.2/backend/go/silero-vad/Makefile#L5
+# VULKAN_PV Version relaxed.  From the last vulkan-sdk-<ver> tag in https://github.com/KhronosGroup/Vulkan-Tools/tags relative to LLAMA_CPP_COMMIT commit date.  llama.cpp uses https://vulkan.lunarg.com/sdk/latest/linux.txt
 
 ESPEAK_NG_COMMIT="8593723f10cfd9befd50de447f14bf0a9d2a14a4" # For go-piper, from https://github.com/mudler/go-piper/tree/e10ca041a885d4a8f3871d52924b47792d5e5aa0
-GGML_COMMIT_2="0ce7ad348a3151e1da9f65d962044546bcaad421" # For stable-diffusion.cpp, from https://github.com/leejet/stable-diffusion.cpp/tree/0e4ee04488159b81d95a9ffcd983a077fd5dcb77
-GO_PIPER_COMMIT="e10ca041a885d4a8f3871d52924b47792d5e5aa0" # From https://github.com/mudler/LocalAI/blob/v4.3.6/backend/go/piper/Makefile#L4
-HUGO_THEME_RELEARN_COMMIT="8bb66fa674351f3a0b0917a7552caac686eca920" # From https://github.com/mudler/LocalAI/tree/v4.3.6/docs/themes
-KOKOROS_COMMIT="7089168f0ca2d8e1fcd8e523c9d75d915c6afdff" # From https://github.com/mudler/LocalAI/tree/v4.3.6/backend/rust/kokoros/sources
-LLAMA_CPP_COMMIT="22d66b567eef11cf2e9832f04db64ee0323a0fd0" # From https://github.com/mudler/LocalAI/blob/v4.3.6/backend/cpp/llama-cpp/Makefile#L2
+GGML_COMMIT_2="eced84c86f8b012c752c016f7fe789adea168e1e" # For stable-diffusion.cpp, from https://github.com/leejet/stable-diffusion.cpp/tree/c6beeef35526c6dc94b74a7fb69f9d2e6a2a7a12
+GO_PIPER_COMMIT="e10ca041a885d4a8f3871d52924b47792d5e5aa0" # From https://github.com/mudler/LocalAI/blob/v4.8.2/backend/go/piper/Makefile#L4
+HUGO_THEME_RELEARN_COMMIT="8bb66fa674351f3a0b0917a7552caac686eca920" # From https://github.com/mudler/LocalAI/tree/v4.8.2/docs/themes
+KOKOROS_COMMIT="7089168f0ca2d8e1fcd8e523c9d75d915c6afdff" # From https://github.com/mudler/LocalAI/tree/v4.8.2/backend/rust/kokoros/sources
+LLAMA_CPP_COMMIT="221f0f6356efe2260023208365705ec5d5a7c8f5" # From https://github.com/mudler/LocalAI/blob/v4.8.2/backend/cpp/llama-cpp/Makefile#L2
 PIPER_COMMIT="0987603ebd2a93c3c14289f3914cd9145a7dddb5" # For go-piper, from https://github.com/mudler/go-piper/tree/e10ca041a885d4a8f3871d52924b47792d5e5aa0
 PIPER_PHONEMIZE_COMMIT="fccd4f335aa68ac0b72600822f34d84363daa2bf" # For go-piper, from https://github.com/mudler/go-piper/tree/e10ca041a885d4a8f3871d52924b47792d5e5aa0
-STABLE_DIFFUSION_CPP_COMMIT="0e4ee04488159b81d95a9ffcd983a077fd5dcb77" # From https://github.com/mudler/LocalAI/blob/v4.3.6/backend/go/stablediffusion-ggml/Makefile#L22
-WHISPER_CPP_COMMIT="f24588a272ae8e23280d9c220536437164e6ed28" # From https://github.com/mudler/LocalAI/blob/v4.3.6/backend/go/whisper/Makefile#L9
+STABLE_DIFFUSION_CPP_COMMIT="c6beeef35526c6dc94b74a7fb69f9d2e6a2a7a12" # From https://github.com/mudler/LocalAI/blob/v4.8.2/backend/go/stablediffusion-ggml/Makefile#L22
+WHISPER_CPP_COMMIT="306c88f4d1286aec1bf96e544632897886af5501" # From https://github.com/mudler/LocalAI/blob/v4.8.2/backend/go/whisper/Makefile#L9
 
 # Yes the Protobuf situation is a mess.
-# Protobuf 6 needed by go-tools (protoc-gen-go@v1.34.2, protoc-gen-go-grpc@1958fcb) in https://github.com/mudler/LocalAI/blob/v4.3.6/Makefile#L267
+# Protobuf 6 needed by go-tools (protoc-gen-go@v1.34.2, protoc-gen-go-grpc@1958fcb) in https://github.com/mudler/LocalAI/blob/v4.8.2/Makefile#L267
 
 # Protobuf 5
 CPP_BACKENDS=(
@@ -175,12 +177,49 @@ FFMPEG_COMPAT_SLOTS=(
 	"${FFMPEG_COMPAT_SLOTS_4[@]}"
 )
 
-ROCM_SLOTS=(
+ROCM_VERSIONS=(
 	"${HIP_6_4_VERSION}"
 )
 
-inherit abseil-cpp cflags-hardened dep-prepare desktop edo flag-o-matic go-download-cache
-inherit grpc npm protobuf python-single-r1 re2 sandbox-changes toolchain-funcs xdg
+get_rocm_iuse() {
+	local pv
+	for pv in "${ROCM_VERSIONS[@]}" ; do
+		local s
+		s="${pv%.*}"
+		u="rocm_${s/./_}"
+		echo "${u}"
+	done
+}
+
+ROCM_IUSE=$(get_rocm_iuse)
+
+get_rocm_required_use() {
+	local pv
+	for pv in "${ROCM_VERSIONS[@]}" ; do
+		local s
+		s="${pv%.*}"
+		u="rocm_${s/./_}"
+		echo "
+			${u}? (
+				rocm
+			)
+		"
+	done
+}
+
+ROCM_REQUIRED_USE=$(get_rocm_required_use)
+
+CHKL_TIMESTAMPS=(
+	"app-accessibility/espeak-ng-9999"
+	"net-misc/curl-9999"
+	"net-misc/wget-9999"
+	"sci-libs/openblas-9999"
+	"sys-apps/firejail-9999"
+)
+
+inherit abseil-cpp cflags-hardened chkl dep-prepare desktop edo flag-o-matic
+inherit go-download-cache grpc npm protobuf python-single-r1 re2 sandbox-changes
+inherit secure-version toolchain-funcs xdg
 
 #
 # Used go-download-cache to avoid:
@@ -218,7 +257,7 @@ https://github.com/ggml-org/whisper.cpp/archive/${WHISPER_CPP_COMMIT}.tar.gz
 https://github.com/leejet/stable-diffusion.cpp/archive/${STABLE_DIFFUSION_CPP_COMMIT}.tar.gz
 	-> leejet-stable-diffusion-cpp-${STABLE_DIFFUSION_CPP_COMMIT:0:7}.tar.gz
 https://github.com/lucasjinreal/Kokoros/archive/${KOKOROS_COMMIT}.tar.gz
-	-> ${KOKOROS_COMMIT:0:7}.tar.gz
+	-> kokoros-${KOKOROS_COMMIT:0:7}.tar.gz
 https://github.com/McShelby/hugo-theme-relearn/archive/${HUGO_THEME_RELEARN_COMMIT}.tar.gz
 	-> hugo-theme-relearn-${HUGO_THEME_RELEARN_COMMIT:0:7}.tar.gz
 https://github.com/mudler/go-piper/archive/${GO_PIPER_COMMIT}.tar.gz
@@ -232,10 +271,10 @@ https://github.com/rhasspy/espeak-ng/archive/${ESPEAK_NG_COMMIT}.tar.gz
 https://github.com/rhasspy/piper-phonemize/archive/${PIPER_PHONEMIZE_COMMIT}.tar.gz
 	-> piper-phonemize-${PIPER_PHONEMIZE_COMMIT:0:7}.tar.gz
 	amd64? (
-https://github.com/microsoft/onnxruntime/releases/download/v${ONNXRUNTIME_PV}/onnxruntime-linux-x64-${ONNXRUNTIME_PV}.tgz
+https://github.com/microsoft/onnxruntime/releases/download/v${_ONNXRUNTIME_PV}/onnxruntime-linux-x64-${_ONNXRUNTIME_PV}.tgz
 	)
 	arm64? (
-https://github.com/microsoft/onnxruntime/releases/download/v${ONNXRUNTIME_PV}/onnxruntime-linux-aarch64-${ONNXRUNTIME_PV}.tgz
+https://github.com/microsoft/onnxruntime/releases/download/v${_ONNXRUNTIME_PV}/onnxruntime-linux-aarch64-${_ONNXRUNTIME_PV}.tgz
 	)
 	"
 fi
@@ -264,15 +303,23 @@ ${CPU_FLAGS_X86[@]}
 ${GOLANG_BACKENDS[@]/#/localai_backends_}
 ${MODES[@]/+}
 ${PYTHON_BACKENDS[@]/#/localai_backends_}
+${ROCM_IUSE}
 ci cuda debug devcontainer docker +firejail native openblas opencl
 openrc rag rocm stt sycl-f16 sycl-f32 systemd tts vulkan
 ebuild_revision_53
 "
+
 REQUIRED_USE="
+	${ROCM_REQUIRED_USE}
 	!ci
 	!devcontainer
 	^^ (
 		${MODES[@]/+}
+	)
+	rocm? (
+		^^ (
+			${ROCM_IUSE}
+		)
 	)
 	?? (
 		cuda
@@ -442,12 +489,16 @@ REQUIRED_USE="
 	)
 "
 gen_rocm_rdepend() {
-	local s
-	for s in "${ROCM_SLOTS[@]}" ; do
+	local pv
+	for pv in "${ROCM_VERSIONS[@]}" ; do
+		local s
+		local u
+		s="${pv%.*}"
+		u="rocm_${s/./_}"
 		echo "
-			(
-				~sci-libs/hipBLAS-${s}
-				~sci-libs/rocBLAS-${s}
+			${u}? (
+				~sci-libs/hipBLAS-${pv}
+				~sci-libs/rocBLAS-${pv}
 			)
 		"
 	done
@@ -547,7 +598,7 @@ MLX_AUDIO_RDEPEND="
 		dev-python/mlx-audio[${PYTHON_USEDEP}]
 		dev-python/setuptools[${PYTHON_USEDEP}]
 		dev-python/soundfile[${PYTHON_USEDEP}]
-		virtual/numpy[${PYTHON_USEDEP}]
+		virtual/numpy:=[${PYTHON_USEDEP}]
 	')
 "
 
@@ -568,7 +619,7 @@ NEUTTS_RDEPEND="
 		dev-python/protobuf:'${PROTOBUF_PYTHON_SLOT}'[${PYTHON_USEDEP}]
 		dev-python/scikit-build-core[${PYTHON_USEDEP}]
 		dev-python/setuptools[${PYTHON_USEDEP}]
-		virtual/numpy[${PYTHON_USEDEP}]
+		virtual/numpy:=[${PYTHON_USEDEP}]
 	')
 "
 
@@ -580,19 +631,19 @@ PIPER_RDEPEND="
 		)
 		>=dev-python/cython-0.29.0:0.29[${PYTHON_USEDEP}]
 		>=dev-python/piper-phonemize-1.1.0[${PYTHON_USEDEP}]
-		virtual/numpy[${PYTHON_USEDEP}]
+		virtual/numpy:=[${PYTHON_USEDEP}]
 	')
 	(
-		>=sci-ml/pytorch-1.11.0[${PYTHON_SINGLE_USEDEP}]
-		<sci-ml/pytorch-2[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/pytorch-1.11.0:=[${PYTHON_SINGLE_USEDEP}]
+		<sci-ml/pytorch-2:=[${PYTHON_SINGLE_USEDEP}]
 	)
 	>=dev-python/pytorch-lightning-1.7.0[${PYTHON_SINGLE_USEDEP}]
-	>=sci-ml/onnxruntime-1.11.0[${PYTHON_SINGLE_USEDEP},python]
+	>=sci-ml/onnxruntime-1.11.0:=[${PYTHON_SINGLE_USEDEP},python]
 "
 
 PIPER_BENCHMARK_RDEPEND="
-	>=sci-ml/onnxruntime-1.11.0[${PYTHON_SINGLE_USEDEP},python]
-	>=sci-ml/torch-1.11.0[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/onnxruntime-1.11.0:=[${PYTHON_SINGLE_USEDEP},python]
+	>=sci-ml/torch-1.11.0:=[${PYTHON_SINGLE_USEDEP}]
 "
 
 PIPER_RUN_RDEPEND="
@@ -600,8 +651,8 @@ PIPER_RUN_RDEPEND="
 		>=dev-python/piper-phonemize-1.1.0[${PYTHON_USEDEP}]
 	')
 	(
-		>=sci-ml/onnxruntime-1.11.0[${PYTHON_SINGLE_USEDEP},python]
-		<sci-ml/onnxruntime-2[${PYTHON_SINGLE_USEDEP},python]
+		>=sci-ml/onnxruntime-1.11.0:=[${PYTHON_SINGLE_USEDEP},python]
+		<sci-ml/onnxruntime-2:=[${PYTHON_SINGLE_USEDEP},python]
 	)
 "
 
@@ -632,18 +683,18 @@ RFDETR_RDEPEND="
 STABLEDIFFUSION_GGML_RDEPEND="
 	$(python_gen_cond_dep '
 		>=dev-python/gguf-0.1.0[${PYTHON_USEDEP}]
-		>=sci-ml/sentencepiece-0.1.98[${PYTHON_USEDEP}]
-		virtual/numpy[${PYTHON_USEDEP}]
+		>=sci-ml/sentencepiece-0.1.98:=[${PYTHON_USEDEP}]
+		virtual/numpy:=[${PYTHON_USEDEP}]
 	')
 	(
-		>=sci-ml/transformers-4.35.2[${PYTHON_SINGLE_USEDEP}]
-		<sci-ml/transformers-5.0.0[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/transformers-4.35.2:=[${PYTHON_SINGLE_USEDEP}]
+		<sci-ml/transformers-5.0.0:=[${PYTHON_SINGLE_USEDEP}]
 	)
 	>=dev-python/accelerate-0.19.0[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/keras-3.5.0[${PYTHON_SINGLE_USEDEP}]
-	>=sci-ml/torchvision-0.15.2[${PYTHON_SINGLE_USEDEP}]
-	>=sci-ml/tensorflow-2.18.0[${PYTHON_SINGLE_USEDEP},python]
-	>=sci-ml/pytorch-2.5.1[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/torchvision-0.15.2:=[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/tensorflow-2.18.0:=[${PYTHON_SINGLE_USEDEP},python]
+	>=sci-ml/pytorch-2.5.1:=[${PYTHON_SINGLE_USEDEP}]
 "
 
 TRANSFORMERS_RDEPEND="
@@ -653,7 +704,7 @@ TRANSFORMERS_RDEPEND="
 		dev-python/grpcio:'${GRPC_SLOT}'[${PYTHON_USEDEP}]
 		dev-python/protobuf:'${PROTOBUF_PYTHON_SLOT}'[${PYTHON_USEDEP}]
 		dev-python/setuptools[${PYTHON_USEDEP}]
-		virtual/numpy[${PYTHON_USEDEP}]
+		virtual/numpy:=[${PYTHON_USEDEP}]
 	')
 "
 
@@ -666,37 +717,26 @@ VLLM_RDEPEND="
 	')
 "
 
-VIBEVOICE_RDEPEND="
-	
-"
-
-# CUDA versions:  https://github.com/mudler/LocalAI/blob/v4.3.6/Dockerfile#L20
-#		  https://github.com/mudler/LocalAI/blob/v4.3.6/.github/workflows/image_build.yml#L20
+# CUDA versions:  https://github.com/mudler/LocalAI/blob/v4.8.2/Dockerfile#L20
+#		  https://github.com/mudler/LocalAI/blob/v4.8.2/.github/workflows/image_build.yml#L20
 # ROCm versions:
-#		  https://github.com/mudler/LocalAI/blob/v4.3.6/backend/python/kokoro/requirements-hipblas.txt
-#		  https://github.com/mudler/LocalAI/blob/v4.3.6/backend/python/vllm/requirements-hipblas.txt
-#		  https://github.com/mudler/LocalAI/blob/v4.3.6/.github/workflows/image.yml#L42
+#		  https://github.com/mudler/LocalAI/blob/v4.8.2/backend/python/kokoro/requirements-hipblas.txt
+#		  https://github.com/mudler/LocalAI/blob/v4.8.2/backend/python/vllm/requirements-hipblas.txt
+#		  https://github.com/mudler/LocalAI/blob/v4.8.2/.github/workflows/image.yml#L42
 RDEPEND+="
-	(
-		|| (
-			media-video/ffmpeg:56.58.58
-			media-video/ffmpeg:0/56.58.58
-		)
-		media-video/ffmpeg:=
-	)
-	>=app-accessibility/espeak-ng-1.51
-	acct-group/${MY_PN2}
-	acct-user/${MY_PN2}
-	x11-misc/xdg-utils
+	$(secure-version_gen_ffmpeg_depends '4.4')
+	>=app-accessibility/espeak-ng-${ESPEAK_NG_PV}:=
+	>=x11-misc/xdg-utils-${XDG_UTILS_PV}:=
+	acct-group/${MY_PN2}:*
+	acct-user/${MY_PN2}:*
 	cuda? (
-		=dev-util/nvidia-cuda-toolkit-12.0*
-		dev-util/nvidia-cuda-toolkit:=
+		=dev-util/nvidia-cuda-toolkit-12.0*:=
 	)
 	docker? (
-		app-containers/docker
+		app-containers/docker:=
 	)
 	firejail? (
-		sys-apps/firejail
+		>=sys-apps/firejail-${FIREJAIL_PV}:=
 	)
 	localai_backends_chatterbox? (
 		${PYTHON_COMMON_RDEPEND}
@@ -768,89 +808,68 @@ RDEPEND+="
 		${VLLM_RDEPEND}
 	)
 	openblas? (
-		>=sci-libs/openblas-0.3.26
+		>=sci-libs/openblas-${OPENBLAS_PV}:=
 	)
 	rocm? (
+		sci-libs/hipBLAS:=
+		sci-libs/rocBLAS:=
 		|| (
 			$(gen_rocm_rdepend)
 		)
-		sci-libs/hipBLAS:=
-		sci-libs/rocBLAS:=
 	)
 	vulkan? (
-		>=media-libs/vulkan-loader-${VULKAN_PV}
-		>=sys-apps/pciutils-3.10.0
+		>=media-libs/vulkan-loader-${VULKAN_PV}:=
+		>=sys-apps/pciutils-3.10.0:=
 	)
-	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}
-	dev-libs/protobuf:=
-	net-libs/grpc:${PROTOBUF_CPP_SLOT}
-	net-libs/grpc:=
+	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}=
+	net-libs/grpc:${PROTOBUF_CPP_SLOT}=
 "
 DEPEND+="
 	${RDEPEND}
 	vulkan? (
-		>=dev-util/vulkan-headers-${VULKAN_PV}
-		dev-util/vulkan-headers:=
+		>=dev-util/vulkan-headers-${VULKAN_PV}:=
 	)
 "
 DISABLED_DEPEND="
 	cpu_flags_arm_dotprod? (
-		>=dev-cpp/kleidiai-1.5.0
-		dev-cpp/kleidiai:=
+		>=dev-cpp/kleidiai-1.5.0:=
 	)
 	cpu_flags_arm_i8mm? (
-		>=dev-cpp/kleidiai-1.5.0
-		dev-cpp/kleidiai:=
+		>=dev-cpp/kleidiai-1.5.0:=
 	)
 	cpu_flags_arm_sme? (
-		>=dev-cpp/kleidiai-1.5.0
-		dev-cpp/kleidiai:=
+		>=dev-cpp/kleidiai-1.5.0:=
 	)
 "
 # iputils, rhash, wget are for custom downloader in src_unpack() only.
-# go, cmake versions:  https://github.com/mudler/LocalAI/blob/v4.3.6/Dockerfile#L118
-# protoc-gen-go, protoc-gen-go-grpc versions:  https://github.com/mudler/LocalAI/blob/v4.3.6/Dockerfile#L154
+# go, cmake versions:  https://github.com/mudler/LocalAI/blob/v4.8.2/Dockerfile#L118
+# protoc-gen-go, protoc-gen-go-grpc versions:  https://github.com/mudler/LocalAI/blob/v4.8.2/Dockerfile#L154
 # TODO:  Review dev-go/protobuf-go multislot
 BDEPEND+="
 	${PYTHON_DEPS}
-	(
-		>=dev-cpp/abseil-cpp-${ABSEIL_CPP_SLOT}:${ABSEIL_CPP_SLOT%%.*}
-		dev-cpp/abseil-cpp:=
-	)
-	(
-		dev-go/protobuf-go:${PROTOBUF_CPP_SLOT}
-		dev-go/protobuf-go:=
-	)
-	(
-		dev-go/protoc-gen-go-grpc:${GRPC_SLOT}
-		dev-go/protoc-gen-go-grpc:=
-	)
-	(
-		dev-libs/protobuf:${PROTOBUF_CPP_SLOT}
-		dev-libs/protobuf:=
-	)
-	(
-		net-libs/nodejs:22
-		net-libs/nodejs:=
-	)
+	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_SLOT}:${ABSEIL_CPP_SLOT%%.*}=
 	>=dev-build/cmake-3.26.4
 	>=dev-lang/go-1.22.6
+	>=net-libs/nodejs-${NODEJS_26_PV}:${NODE_SLOT}=
 	app-arch/upx
 	app-crypt/rhash
+	dev-go/protobuf-go:${PROTOBUF_CPP_SLOT}=
+	dev-go/protoc-gen-go-grpc:${GRPC_SLOT}=
+	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}=
 	net-misc/iputils
 	net-misc/wget
 	ci? (
+		$(secure-version_gen_openssl_depends)
+		>=net-misc/curl-${CURL_PV}
+		>=app-misc/ca-certificates-${CA_CERTIFICATES_PV}
 		app-crypt/gnupg
-		app-misc/ca-certificates
-		dev-libs/openssl
 		dev-python/pip
 		dev-vcs/git
 		dev-vcs/git-lfs
-		net-misc/curl
 	)
 	devcontainer? (
+		>=net-misc/wget-${WGET_PV}
 		sys-apps/less
-		net-misc/wget
 		virtual/ssh
 	)
 "
@@ -940,7 +959,7 @@ src_prepare() {
 	dep_prepare_mv "${WORKDIR}/llama.cpp-${LLAMA_CPP_COMMIT}" "${S}/backend/cpp/llama-cpp/llama.cpp"
 
 	local onnx_arch=$(get_onnx_arch)
-	dep_prepare_mv "${WORKDIR}/onnxruntime-linux-${onnx_arch}-${ONNXRUNTIME_PV}" "${S}/backend/go/silero-vad/sources/onnxruntime"
+	dep_prepare_mv "${WORKDIR}/onnxruntime-linux-${onnx_arch}-${_ONNXRUNTIME_PV}" "${S}/backend/go/silero-vad/sources/onnxruntime"
 
 	dep_prepare_mv "${WORKDIR}/hugo-theme-relearn-${HUGO_THEME_RELEARN_COMMIT}" "${S}/docs/themes/hugo-theme-relearn"
 	dep_prepare_mv "${WORKDIR}/Kokoros-${KOKOROS_COMMIT}" "${S}/backend/rust/kokoros/sources/Kokoros"
@@ -970,6 +989,8 @@ src_prepare() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
+
 	if use firejail ; then
 		if [[ ! -e "/etc/firejail/local-ai.profile" ]] ; then
 eerror "Re-emerge sys-apps/firejail::oiledmachine-overlay to add the local-ai.profile."
