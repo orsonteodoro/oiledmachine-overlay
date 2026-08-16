@@ -4,17 +4,25 @@
 
 EAPI=8
 
-DISTUTILS_USE_PEP517="hatchling"
-PYTHON_COMPAT=( "python3_"{10..14} "pypy3_11" )
+# U24
 
-inherit distutils-r1 pypi
+DISTUTILS_USE_PEP517="hatchling"
+PYTHON_COMPAT=( "python3_"{10..14} )
+
+CHKL_TIMESTAMPS=(
+	"app-arch/brotli-9999"
+)
+
+inherit chkl distutils-r1 secure-version pypi
 
 if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="1f1d989bb5744efe8b94f6aefb643b8dee95f71f"
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/Zaczero/pkgs.git"
-	FALLBACK_COMMIT="a934f413e487d6cf86dd24598a3d6f2dc3c246d5" # Jan 25, 2024
-	IUSE+=" fallback-commit"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
@@ -42,11 +50,8 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
-		>=app-arch/brotli-1.0[${PYTHON_USEDEP}]
+		>=app-arch/brotli-'${BROTLI_PV}':=[${PYTHON_USEDEP}]
 	' python3_{10..14})
-	$(python_gen_cond_dep '
-		>=dev-python/brotlicffi-1.0[${PYTHON_USEDEP}]
-	' pypy3_11)
 	$(python_gen_cond_dep '
 		>=dev-python/zstandard-0.15[${PYTHON_USEDEP}]
 	' python3_{10..13})
@@ -69,12 +74,18 @@ DOCS=( "README.md" )
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
-		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
 		git-r3_fetch
 		git-r3_checkout
 	else
 		unpack ${A}
 	fi
+}
+
+python_configure_all() {
+	chkl_check_many_timestamps
 }
 
 src_install() {
