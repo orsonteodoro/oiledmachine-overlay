@@ -146,6 +146,14 @@ _OT_KERNEL_IWLMVM=0 # Variable not const
 _OT_KERNEL_IWLWIFI=0 # Variable not const
 _OT_KERNEL_MT7921E=0 # Variable not const
 _OT_KERNEL_MT7925E=0 # Variable not const
+_OT_KERNEL_RTL8188EE=0 # Variable not const
+_OT_KERNEL_RTL8192CE=0 # Variable not const
+_OT_KERNEL_RTL8192DE=0 # Variable not const
+_OT_KERNEL_RTL8192EE=0 # Variable not const
+_OT_KERNEL_RTL8192SE=0 # Variable not const
+_OT_KERNEL_RTL8723AE=0 # Variable not const
+_OT_KERNEL_RTL8723BE=0 # Variable not const
+_OT_KERNEL_RTL8821AE=0 # Variable not const
 _OT_KERNEL_RTW88_CORE=0 # Variable not const
 _OT_KERNEL_RTW88_PCI=0 # Variable not const
 _OT_KERNEL_RTW89_CORE=0 # Variable not const
@@ -10955,6 +10963,92 @@ ot-kernel_has_buggy_usb_autosuspend() {
 	return 1
 }
 
+# @FUNCTION: ot-kernel_cfg80211_ps_impacted_by_issues
+# @DESCRIPTION:
+# Checks if the driver is allegedly impacted by CONFIG_CFG80211_DEFAULT_PS
+ot-kernel_cfg80211_ps_impacted_by_issues() {
+	local L=(
+		"CONFIG_ATH9K"
+		"CONFIG_ATH9K_HTC"
+		"CONFIG_B43"
+		"CONFIG_BRCMFMAC"
+		"CONFIG_IWLWIFI"
+		"CONFIG_MT76_CORE"
+		"CONFIG_MT76_USB"
+		"CONFIG_MT76_SDIO"
+		"CONFIG_MT7603E"
+		"CONFIG_MT7615E"
+		"CONFIG_MT7663U"
+		"CONFIG_MT7663S"
+		"CONFIG_MT76x0E"
+		"CONFIG_MT76x0U"
+		"CONFIG_MT76x2E"
+		"CONFIG_MT76x2U"
+		"CONFIG_MT7915E"
+		"CONFIG_MT7921E"
+		"CONFIG_MT7921S"
+		"CONFIG_MT7921U"
+		"CONFIG_MT7925E"
+		"CONFIG_MT7925U"
+		"CONFIG_MT7921_COMMON"
+		"CONFIG_MT7921E"
+		"CONFIG_MT7921S"
+		"CONFIG_MT7921U"
+		"CONFIG_MT7996E"
+		"CONFIG_RTL8188EE"
+		"CONFIG_RTL8192CE"
+		"CONFIG_RTL8192CU"
+		"CONFIG_RTL8192DE"
+		"CONFIG_RTL8192DU"
+		"CONFIG_RTL8192EE"
+		"CONFIG_RTL8192SE"
+		"CONFIG_RTL8723AE"
+		"CONFIG_RTL8723BE"
+		"CONFIG_RTL8821AE"
+		"CONFIG_RTL8XXXU"
+		"CONFIG_RTW88"
+		"CONFIG_RTW88_CORE"
+		"CONFIG_RTW88_8723CS"
+		"CONFIG_RTW88_8723DE"
+		"CONFIG_RTW88_8723DS"
+		"CONFIG_RTW88_8723DU"
+		"CONFIG_RTW88_8812AU"
+		"CONFIG_RTW88_8814AE"
+		"CONFIG_RTW88_8814AU"
+		"CONFIG_RTW88_8821CE"
+		"CONFIG_RTW88_8821CS"
+		"CONFIG_RTW88_8821CU"
+		"CONFIG_RTW88_8821AU"
+		"CONFIG_RTW88_8822BE"
+		"CONFIG_RTW88_8822BS"
+		"CONFIG_RTW88_8822BU"
+		"CONFIG_RTW88_8822CE"
+		"CONFIG_RTW88_8822CS"
+		"CONFIG_RTW88_8822CU"
+		"CONFIG_RTW89"
+		"CONFIG_RTW89_8851BE"
+		"CONFIG_RTW89_8851BU"
+		"CONFIG_RTW89_8852AE"
+		"CONFIG_RTW89_8852AU"
+		"CONFIG_RTW89_8852BE"
+		"CONFIG_RTW89_8852BU"
+		"CONFIG_RTW89_8852BTE"
+		"CONFIG_RTW89_8852CE"
+		"CONFIG_RTW89_8852CU"
+		"CONFIG_RTW89_8922AE"
+		"CONFIG_RTW89_8922AU"
+		"CONFIG_RTLWIFI"
+		"CONFIG_WILC1000"
+	)
+	local x
+	for x in "${L[@]}" ; do
+		if grep -q -E -e "^${x}=(y|m)" "${path_config}" ; then
+			return 0
+		fi
+	done
+	return 1
+}
+
 # @FUNCTION: ot-kernel_set_power_level
 # @DESCRIPTION:
 # Adjust the power level of the devices
@@ -11350,6 +11444,10 @@ ewarn "OT_KERNEL_POWER_LEVEL_SATA is set to the lowest-power (0) enables HDD/SSD
 ewarn "Use a secure safer option [0-2] to avoid Data Tampering (DT) or Denial of Service (DoS) vulnerabilities."
 einfo "OT_KERNEL_POWER_LEVEL_SATA=0 uses the kernel default value.  For most users, this is not an issue."
 		fi
+	fi
+
+	if ot-kernel_cfg80211_ps_impacted_by_issues ; then
+		power_level_wifi=2
 	fi
 
 	if (( ${power_level_wifi} == 2 )) ; then
@@ -14501,6 +14599,31 @@ ot-kernel_set_globals_post() {
 	fi
 	if grep -q -E -e "^CONFIG_RTW89_CORE=(y|m)" "${path_config}" ; then
 		export _OT_KERNEL_RTW89_CORE=1
+	fi
+
+	if grep -q -E -e "^CONFIG_RTL8188EE=(y|m)" "${path_config}" ; then
+		export _OT_KERNEL_RTL8188EE=1
+	fi
+	if grep -q -E -e "^CONFIG_RTL8192CE=(y|m)" "${path_config}" ; then
+		export _OT_KERNEL_RTL8192CE=1
+	fi
+	if grep -q -E -e "^CONFIG_RTL8192DE=(y|m)" "${path_config}" ; then
+		export _OT_KERNEL_RTL8192DE=1
+	fi
+	if grep -q -E -e "^CONFIG_RTL8192EE=(y|m)" "${path_config}" ; then
+		export _OT_KERNEL_RTL8192EE=1
+	fi
+	if grep -q -E -e "^CONFIG_RTL8192SE=(y|m)" "${path_config}" ; then
+		export _OT_KERNEL_RTL8192SE=1
+	fi
+	if grep -q -E -e "^CONFIG_RTL8723AE=(y|m)" "${path_config}" ; then
+		export _OT_KERNEL_RTL8723AE=1
+	fi
+	if grep -q -E -e "^CONFIG_RTL8723BE=(y|m)" "${path_config}" ; then
+		export _OT_KERNEL_RTL8723BE=1
+	fi
+	if grep -q -E -e "^CONFIG_RTL8821AE=(y|m)" "${path_config}" ; then
+		export _OT_KERNEL_RTL8821AE=1
 	fi
 }
 
@@ -17960,6 +18083,63 @@ einfo "Adding modprobe settings for mt7925e to mitigate unstable disconnects"
 		echo "options mt7925e disable_aspm=1" > "${EROOT}/etc/modprobe.d/ot-kernel-mt7925e.conf"
 	fi
 
+	if (( ${_OT_KERNEL_RTL8188EE} == 1 )) ; then
+einfo "Adding modprobe settings for rtl8188ee to mitigate unstable disconnects"
+		if [[ ! -d "${EROOT}/etc/modprobe.d" ]] ; then
+			mkdir -p "${EROOT}/etc/modprobe.d"
+		fi
+		echo "options rtl8188ee fwlps=0" > "${EROOT}/etc/modprobe.d/ot-kernel-rtl8188ee.conf"
+	fi
+	if (( ${_OT_KERNEL_RTL8192CE} == 1 )) ; then
+einfo "Adding modprobe settings for rtl8192ce to mitigate unstable disconnects"
+		if [[ ! -d "${EROOT}/etc/modprobe.d" ]] ; then
+			mkdir -p "${EROOT}/etc/modprobe.d"
+		fi
+		echo "options rtl8192ce fwlps=0" > "${EROOT}/etc/modprobe.d/ot-kernel-rtl8192ce.conf"
+	fi
+	if (( ${_OT_KERNEL_RTL8192DE} == 1 )) ; then
+einfo "Adding modprobe settings for rtl8192de to mitigate unstable disconnects"
+		if [[ ! -d "${EROOT}/etc/modprobe.d" ]] ; then
+			mkdir -p "${EROOT}/etc/modprobe.d"
+		fi
+		echo "options rtl8192de fwlps=0" > "${EROOT}/etc/modprobe.d/ot-kernel-rtl8192de.conf"
+	fi
+	if (( ${_OT_KERNEL_RTL8192EE} == 1 )) ; then
+einfo "Adding modprobe settings for rtl8192ee to mitigate unstable disconnects"
+		if [[ ! -d "${EROOT}/etc/modprobe.d" ]] ; then
+			mkdir -p "${EROOT}/etc/modprobe.d"
+		fi
+		echo "options rtl8192ee fwlps=0" > "${EROOT}/etc/modprobe.d/ot-kernel-rtl8192ee.conf"
+	fi
+	if (( ${_OT_KERNEL_RTL8192SE} == 1 )) ; then
+einfo "Adding modprobe settings for rtl8192se to mitigate unstable disconnects"
+		if [[ ! -d "${EROOT}/etc/modprobe.d" ]] ; then
+			mkdir -p "${EROOT}/etc/modprobe.d"
+		fi
+		echo "options rtl8192se fwlps=0" > "${EROOT}/etc/modprobe.d/ot-kernel-rtl8192se.conf"
+	fi
+	if (( ${_OT_KERNEL_RTL8723AE} == 1 )) ; then
+einfo "Adding modprobe settings for rtl8723ae to mitigate unstable disconnects"
+		if [[ ! -d "${EROOT}/etc/modprobe.d" ]] ; then
+			mkdir -p "${EROOT}/etc/modprobe.d"
+		fi
+		echo "options rtl8723ae fwlps=0" > "${EROOT}/etc/modprobe.d/ot-kernel-rtl8723ae.conf"
+	fi
+	if (( ${_OT_KERNEL_RTL8723BE} == 1 )) ; then
+einfo "Adding modprobe settings for rtl8723be to mitigate unstable disconnects"
+		if [[ ! -d "${EROOT}/etc/modprobe.d" ]] ; then
+			mkdir -p "${EROOT}/etc/modprobe.d"
+		fi
+		echo "options rtl8723be fwlps=0" > "${EROOT}/etc/modprobe.d/ot-kernel-rtl8723be.conf"
+	fi
+	if (( ${_OT_KERNEL_RTL8821AE} == 1 )) ; then
+einfo "Adding modprobe settings for rtl8821ae to mitigate unstable disconnects"
+		if [[ ! -d "${EROOT}/etc/modprobe.d" ]] ; then
+			mkdir -p "${EROOT}/etc/modprobe.d"
+		fi
+		echo "options rtl8821ae fwlps=0" > "${EROOT}/etc/modprobe.d/ot-kernel-rtl8821ae.conf"
+	fi
+
 	if (( ${_OT_KERNEL_RTW88_CORE} == 1 )) ; then
 einfo "Adding modprobe settings for rtw88_core to mitigate unstable disconnects"
 		if [[ ! -d "${EROOT}/etc/modprobe.d" ]] ; then
@@ -18103,6 +18283,14 @@ einfo "Removing modprobe configs"
 		rm "${EROOT}/etc/modprobe.d/ot-kernel-iwlwifi.conf" 2>/dev/null
 		rm "${EROOT}/etc/modprobe.d/ot-kernel-mt7921e.conf" 2>/dev/null
 		rm "${EROOT}/etc/modprobe.d/ot-kernel-mt7925e.conf" 2>/dev/null
+		rm "${EROOT}/etc/modprobe.d/ot-kernel-rtl8188ee.conf" 2>/dev/null
+		rm "${EROOT}/etc/modprobe.d/ot-kernel-rtl8192ce.conf" 2>/dev/null
+		rm "${EROOT}/etc/modprobe.d/ot-kernel-rtl8192de.conf" 2>/dev/null
+		rm "${EROOT}/etc/modprobe.d/ot-kernel-rtl8192ee.conf" 2>/dev/null
+		rm "${EROOT}/etc/modprobe.d/ot-kernel-rtl8192se.conf" 2>/dev/null
+		rm "${EROOT}/etc/modprobe.d/ot-kernel-rtl8723ae.conf" 2>/dev/null
+		rm "${EROOT}/etc/modprobe.d/ot-kernel-rtl8723be.conf" 2>/dev/null
+		rm "${EROOT}/etc/modprobe.d/ot-kernel-rtl8821ae.conf" 2>/dev/null
 		rm "${EROOT}/etc/modprobe.d/ot-kernel-rtw88_core.conf" 2>/dev/null
 		rm "${EROOT}/etc/modprobe.d/ot-kernel-rtw88_pci.conf" 2>/dev/null
 		rm "${EROOT}/etc/modprobe.d/ot-kernel-rtw89_core.conf" 2>/dev/null
