@@ -82,7 +82,7 @@ inherit aocc cflags-hardened check-compiler-switch cmake-multilib flag-o-matic f
 inherit libcxx-slot libstdcxx-slot multiprocessing python-single-r1 toolchain-funcs uopts
 
 if [[ "${PV}" == *"9999"* ]]; then
-	FALLBACK_COMMIT="ae38745d7ff610cf675fd268588cb0ada2add34f"
+	FALLBACK_COMMIT="7a210280be0986d63abae0661b71d0c342560b9d"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://aomedia.googlesource.com/aom"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -130,7 +130,7 @@ ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
 +asm chromium clang debug doc +examples gcc -highway lossless pgo static-libs test
-ebuild_revision_51
+ebuild_revision_52
 "
 REQUIRED_USE="
 	^^ (
