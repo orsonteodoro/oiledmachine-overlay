@@ -418,10 +418,15 @@ SECURE_TIMESTAMP["sys_libs_pam_9999"]="Jun 30, 2026 3:00 AM PDT"
 #
 # repo date  - security or release quality issue keywords:
 #
+# 2026-08-14 - deadlock
 # 2026-05-16 - bound
 # 2026-03-25 - page fault [it is unknown if it is a hard/soft fault but it is assumed that all are hard faults or result in fatal errors]
+# 2026-03-23 - stability
 # 2026-03-03 - corrupt
+# 2026-02-25 - problem
+# 2025-12-01 - hangs
 # 2025-10-09 (consumer), 2026-05-14 (enterprise) - secur
+# 2025-07-15 - unstable
 # 2025-06-19 - crash
 # 2025-03-10 - overflow
 # 2023-11-27 - malicious
@@ -431,10 +436,8 @@ SECURE_TIMESTAMP["sys_libs_pam_9999"]="Jun 30, 2026 3:00 AM PDT"
 # 2022-02-24 - unencry
 # 2021-10-25 - uninitialized
 # 2021-09-19 - memory leak
-# 2021-03-03 - deadlock
 # 2021-01-07 - cve
 # 2018-12-10 - hanging
-# 2012-02-19 - hangs
 # 2010-08-04 - dereference, null pointer
 #
 # Types of firmware updates
@@ -453,7 +456,7 @@ SECURE_TIMESTAMP["sys_libs_pam_9999"]="Jun 30, 2026 3:00 AM PDT"
 # The minimal version is chosen to mitigate the costs or damages in testing in production, DoS, or bricking.
 #
 
-SECURE_TIMESTAMP["sys_kernel_linux_firmware_99999999"]="2026-05-16 22:15:36 +0000"
+SECURE_TIMESTAMP["sys_kernel_linux_firmware_99999999"]="2026-08-14 02:46:57 +0000"
 
 SECURE_TIMESTAMP["sys_process_procps_9999"]="Mar 26, 2026 4:03:17 AM PDT"
 SECURE_TIMESTAMP["www_servers_civetweb_9999"]="Sep 2, 2025 7:51 AM PDT"
