@@ -40,7 +40,7 @@ RESTRICT="
 "
 SLOT="${SLOT_MAJOR}/${PV}"
 IUSE="
-emacs test
+doc emacs test
 ebuild_revision_16
 "
 RDEPEND="

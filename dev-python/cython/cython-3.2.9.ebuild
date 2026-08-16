@@ -20,7 +20,7 @@ PYTHON_REQ_USE="threads(+)"
 SITEFILE="50cython-gentoo.el"
 SLOT_MAJOR=$(ver_cut 1-2 "${PV}")
 
-inherit distutils-r1 toolchain-funcs elisp-common
+inherit distutils-r1 flag-o-matic toolchain-funcs elisp-common
 
 # Based on CI
 KEYWORDS="
@@ -186,6 +186,7 @@ BDEPEND="
 	)
 	test? (
 		$(python_gen_any_dep '
+			>=dev-python/abi3audit-0.0.22[${PYTHON_USEDEP}]
 			dev-python/setuptools[${PYTHON_USEDEP}]
 			dev-python/coverage[${PYTHON_USEDEP}]
 			dev-python/pycodestyle[${PYTHON_USEDEP}]
@@ -219,15 +220,26 @@ PATCHES=(
 	"${FILESDIR}/${PN}-0.29.23-pythran-parallel-install.patch"
 )
 
-distutils_enable_sphinx \
-	"docs" \
-	"dev-python/jinja2" \
-	"dev-python/sphinx-issues" \
-	"dev-python/sphinx-tabs"
+# disabled to workaround pkgcheck performance issue
+# https://github.com/pkgcore/pkgcheck/issues/782
+#distutils_enable_sphinx \
+#	"docs" \
+#	"dev-python/jinja2" \
+#	"dev-python/sphinx-issues" \
+#	"dev-python/sphinx-tabs"
+
+python_configure_all() {
+	# https://gcc.gnu.org/PR125730 (bug #976797)
+	tc-is-gcc && [[ $(gcc-major-version) -ge 16 ]] && append-cflags -fno-ivopts
+}
 
 python_compile() {
 	# Python gets confused when it is in sys.path before build.
 	local -x PYTHONPATH=
+
+	# uses $(nproc) to additionally parallelize many OpenMP-based jobs,
+	# leading to overcommitting
+	local -x OMP_NUM_THREADS=1
 
 	distutils-r1_python_compile
 }
@@ -237,6 +249,9 @@ python_compile_all() {
 }
 
 python_test() {
+	# PYTHON_TESTED controls whether we expect the testsuite to
+	# pass at all, while PYTHON_FULLY_TESTED allows skipping before
+	# numpy is ported (and possibly other deps in future).
 	if ! has "${EPYTHON/./_}" "${PYTHON_TESTED[@]}" ; then
 		einfo "Skipping tests on ${EPYTHON} (xfail)"
 		return
@@ -277,17 +292,6 @@ python_test() {
 		# changes these tests s.t. they break with our build layout.
 		--exclude 'build.depfile*'
 	)
-
-	if [[ ${EPYTHON} == pypy3* ]] ; then
-		testargs+=(
-			# Recursion issue
-			--exclude 'run.if_else_expr'
-			--exclude 'run.test_patma*'
-			# Slight output difference (missing '<')
-			--exclude 'run.cpp_exception_ptr_just_handler'
-
-		)
-	fi
 
 	# Keep test-full for numpy as it's large and doesn't pass tests itself
 	# on niche arches.
