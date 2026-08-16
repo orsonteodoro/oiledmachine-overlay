@@ -7,11 +7,7 @@ EAPI=8
 # 0.38.0 -> 0.39.0
 
 # TODO package:
-# hf-doc-builder
-# k-diffusion
-# note_seq		*
-# peft
-# torchsde		*
+# auto-round
 
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
@@ -45,7 +41,7 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror test" # Untested
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 bitsandbytes dev doc flashpack flax gguf nvidia_modelopt optimum_quanto orphans
 quality test torch torchao training
@@ -71,24 +67,23 @@ RDEPEND+="
 		!~dev-python/regex-2019.12.17[${PYTHON_USEDEP}]
 		>=dev-python/llvmlite-0.40.0[${PYTHON_USEDEP}]
 		>=dev-python/numba-0.57.0[${PYTHON_USEDEP}]
-		>=sci-ml/safetensors-0.8.0[${PYTHON_USEDEP}]
+		>=sci-ml/safetensors-0.8.0:=[${PYTHON_USEDEP}]
 		<dev-python/httpx-1.0.0[${PYTHON_USEDEP}]
 		dev-python/filelock[${PYTHON_USEDEP}]
 		dev-python/importlib-metadata[${PYTHON_USEDEP}]
 		dev-python/requests[${PYTHON_USEDEP}]
-		virtual/numpy[${PYTHON_USEDEP}]
-		virtual/pillow[${PYTHON_USEDEP}]
+		virtual/numpy:=[${PYTHON_USEDEP}]
+		virtual/pillow:=[${PYTHON_USEDEP}]
 		flashpack? (
 			dev-python/flashpack[${PYTHON_USEDEP}]
 		)
 
 		orphans? (
 			dev-python/note-seq[${PYTHON_USEDEP}]
-			sci-ml/onnx[${PYTHON_USEDEP}]
+			sci-ml/onnx:=[${PYTHON_USEDEP}]
 		)
 
 		training? (
-			>=dev-python/peft-0.17.0[${PYTHON_USEDEP}]
 			dev-python/jinja2[${PYTHON_USEDEP}]
 			dev-python/protobuf:=
 			|| (
@@ -98,14 +93,14 @@ RDEPEND+="
 		)
 	')
 
-	>=sci-ml/huggingface-hub-0.34.0[${PYTHON_SINGLE_USEDEP}]
-	<sci-ml/huggingface-hub-2.0.0[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/huggingface-hub-0.34.0:=[${PYTHON_SINGLE_USEDEP}]
+	<sci-ml/huggingface-hub-2.0.0:=[${PYTHON_SINGLE_USEDEP}]
 
 	bitsandbytes? (
 		$(python_gen_cond_dep '
 			>=dev-python/bitsandbytes-0.43.3[${PYTHON_USEDEP}]
 		')
-		>=sci-ml/accelerate-0.31.0[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/accelerate-0.31.0:=[${PYTHON_SINGLE_USEDEP}]
 	)
 	flax? (
 		>=dev-python/flax-0.4.1[${PYTHON_SINGLE_USEDEP}]
@@ -116,7 +111,7 @@ RDEPEND+="
 		$(python_gen_cond_dep '
 			>=dev-python/gguf-0.10.0[${PYTHON_USEDEP}]
 		')
-		>=sci-ml/accelerate-0.31.0[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/accelerate-0.31.0:=[${PYTHON_SINGLE_USEDEP}]
 	)
 	nvidia_modelopt? (
 		>=dev-python/nvidia_modelopt-0.33.1[${PYTHON_SINGLE_USEDEP},hf]
@@ -125,27 +120,28 @@ RDEPEND+="
 		$(python_gen_cond_dep '
 			>=dev-python/optimum_quanto-0.2.6[${PYTHON_USEDEP}]
 		')
-		>=sci-ml/accelerate-0.31.0[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/accelerate-0.31.0:=[${PYTHON_SINGLE_USEDEP}]
 	)
 	orphans? (
 		>=dev-python/auto-round-0.13.0[${PYTHON_SINGLE_USEDEP}]
-		media-libs/opencv[${PYTHON_SINGLE_USEDEP}]
+		media-libs/opencv:=[${PYTHON_SINGLE_USEDEP},python]
 	)
 	training? (
-		>=sci-ml/accelerate-0.31.0[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/accelerate-0.31.0:=[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/peft-0.17.0[${PYTHON_SINGLE_USEDEP}]
 		dev-python/datasets[${PYTHON_SINGLE_USEDEP}]
 		dev-python/timm[${PYTHON_SINGLE_USEDEP}]
-		sci-visualization/tensorboard[${PYTHON_SINGLE_USEDEP}]
+		sci-visualization/tensorboard:=[${PYTHON_SINGLE_USEDEP}]
 	)
 	torch? (
-		>=sci-ml/accelerate-0.31.0[${PYTHON_SINGLE_USEDEP}]
-		>=sci-ml/pytorch-2.6[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/accelerate-0.31.0:=[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/pytorch-2.6:=[${PYTHON_SINGLE_USEDEP}]
 	)
 	torchao? (
 		$(python_gen_cond_dep '
 			>=dev-python/torchao-0.7.0[${PYTHON_USEDEP}]
 		')
-		>=sci-ml/accelerate-0.31.0[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/accelerate-0.31.0:=[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DEPEND+="
@@ -199,8 +195,8 @@ BDEPEND+="
 	)
 	test? (
 		>=dev-python/invisible-watermark-0.2.0[${PYTHON_SINGLE_USEDEP}]
-		dev-python/torchsde[${PYTHON_SINGLE_USEDEP}]
 		>=sci-ml/transformers-4.41.2[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/torchsde[${PYTHON_SINGLE_USEDEP}]
 		sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 	)
 "
