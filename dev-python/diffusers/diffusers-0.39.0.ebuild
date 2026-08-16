@@ -4,8 +4,9 @@
 
 EAPI=8
 
+# 0.38.0 -> 0.39.0
+
 # TODO package:
-# compel
 # hf-doc-builder
 # k-diffusion
 # note_seq		*
@@ -22,7 +23,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/huggingface/diffusers.git"
-	FALLBACK_COMMIT="39aa3909e8e2dfe30f4807aedaadf42c1d8b1a8f" # Jun 12, 2023
+	FALLBACK_COMMIT="a3608b512ed7248499a44c61d954965ed9bdae4d"
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
 	inherit git-r3
@@ -68,11 +69,14 @@ REQUIRED_USE="
 RDEPEND+="
 	$(python_gen_cond_dep '
 		!~dev-python/regex-2019.12.17[${PYTHON_USEDEP}]
-		>=sci-ml/safetensors-0.8.0_rc0[${PYTHON_USEDEP}]
+		>=dev-python/auto-round-0.13.0[${PYTHON_USEDEP}]
+		>=dev-python/llvmlite-0.40.0[${PYTHON_USEDEP}]
+		>=dev-python/numba-0.57.0[${PYTHON_USEDEP}]
+		>=sci-ml/safetensors-0.8.0[${PYTHON_USEDEP}]
+		<dev-python/httpx-1.0.0[${PYTHON_USEDEP}]
 		dev-python/filelock[${PYTHON_USEDEP}]
 		dev-python/importlib-metadata[${PYTHON_USEDEP}]
 		dev-python/requests[${PYTHON_USEDEP}]
-		<dev-python/httpx-1.0.0[${PYTHON_USEDEP}]
 		virtual/numpy[${PYTHON_USEDEP}]
 		virtual/pillow[${PYTHON_USEDEP}]
 		flashpack? (
@@ -87,11 +91,11 @@ RDEPEND+="
 		training? (
 			>=dev-python/peft-0.17.0[${PYTHON_USEDEP}]
 			dev-python/jinja2[${PYTHON_USEDEP}]
+			dev-python/protobuf:=
 			|| (
 				dev-python/protobuf:3.12[${PYTHON_USEDEP}]
 				dev-python/protobuf:4.21[${PYTHON_USEDEP}]
 			)
-			dev-python/protobuf:=
 		)
 	')
 
@@ -135,7 +139,7 @@ RDEPEND+="
 	)
 	torch? (
 		>=sci-ml/accelerate-0.31.0[${PYTHON_SINGLE_USEDEP}]
-		>=sci-ml/pytorch-1.4[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/pytorch-2.6[${PYTHON_SINGLE_USEDEP}]
 	)
 	torchao? (
 		$(python_gen_cond_dep '
@@ -165,27 +169,28 @@ BDEPEND+="
 			>=sci-ml/sentencepiece-0.1.91[${PYTHON_USEDEP}]
 			!~sci-ml/sentencepiece-0.1.92[${PYTHON_USEDEP}]
 
-			<dev-python/GitPython-3.1.19[${PYTHON_USEDEP}]
-			>=dev-python/compel-0.1.8[${PYTHON_USEDEP}]
 			>=dev-python/tiktoken-0.7.0[${PYTHON_USEDEP}]
-			~dev-python/requests-mock-1.10.0[${PYTHON_USEDEP}]
-			>=sci-ml/safetensors-0.8.0_rc0[${PYTHON_USEDEP}]
+			<dev-python/GitPython-3.1.19[${PYTHON_USEDEP}]
+			sci-ml/safetensors[${PYTHON_USEDEP}]
 			dev-python/datasets[${PYTHON_USEDEP}]
 			dev-python/ftfy[${PYTHON_USEDEP}]
 			dev-python/jinja2[${PYTHON_USEDEP}]
 			dev-python/librosa[${PYTHON_USEDEP}]
+			dev-python/llvmlite[${PYTHON_USEDEP}]
+			dev-python/numba[${PYTHON_USEDEP}]
 			dev-python/parameterized[${PYTHON_USEDEP}]
 			dev-python/phonemizer[${PYTHON_USEDEP}]
 			dev-python/pytest[${PYTHON_USEDEP}]
 			dev-python/pytest-timeout[${PYTHON_USEDEP}]
 			dev-python/pytest-xdist[${PYTHON_USEDEP}]
 			dev-python/scipy[${PYTHON_USEDEP}]
+			~dev-python/requests-mock-1.10.0[${PYTHON_USEDEP}]
 
+			dev-python/protobuf:=
 			|| (
 				dev-python/protobuf:3.12[${PYTHON_USEDEP}]
 				dev-python/protobuf:4.21[${PYTHON_USEDEP}]
 			)
-			dev-python/protobuf:=
 
 		)
 	')
