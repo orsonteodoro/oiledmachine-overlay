@@ -5,69 +5,72 @@ EAPI=8
 
 RUSTFLAGS_HARDENED_USE_CASES="crypto security-critical sensitive-data untrusted-data"
 
-CARGO_OPTIONAL=yes
+CARGO_OPTIONAL="yes"
 DISTUTILS_EXT=1
-DISTUTILS_USE_PEP517=maturin
-PYPI_VERIFY_REPO=https://github.com/pyca/cryptography
-PYTHON_COMPAT=( python3_{11..14} pypy3_11 )
+DISTUTILS_USE_PEP517="maturin"
+PYPI_VERIFY_REPO="https://github.com/pyca/cryptography"
+PYTHON_COMPAT=( "python3_"{10..14} "pypy3_11" )
 PYTHON_REQ_USE="threads(+)"
 
-RUST_MAX_VER="1.91.1"
-RUST_MIN_VER="1.91.1" # LLVM 21.1
+RUST_MAX_VER="1.93.1"
+RUST_MIN_VER="1.93.1" # LLVM 21.1
 
 # Misnomer
 DISABLED_CRATES="
-cryptography-cffi-0.1.0
-cryptography-crypto-0.1.0
-cryptography-keepalive-0.1.0
-cryptography-key-parsing-0.1.0
-cryptography-openssl-0.1.0
-cryptography-rust-0.1.0
-cryptography-x509-0.1.0
-cryptography-x509-verification-0.1.0
+cryptography-cffi-0.50.0
+cryptography-crypto-0.50.0
+cryptography-keepalive-0.50.0
+cryptography-key-parsing-0.50.0
+cryptography-openssl-0.50.0
+cryptography-rust-0.50.0
+cryptography-x509-0.50.0
+cryptography-x509-verification-0.50.0
 "
 
 CRATES="
-asn1-0.22.0
-asn1_derive-0.22.0
-autocfg-1.5.0
-base64-0.22.1
-bitflags-2.11.1
-cc-1.2.61
+asn1-0.24.1
+asn1_derive-0.24.1
+base64-0.23.1
+bitflags-2.13.1
+cc-1.4.3
 cfg-if-1.0.4
-find-msvc-tools-0.1.9
+find-msvc-tools-0.1.11
 foreign-types-0.3.2
 foreign-types-shared-0.1.1
 heck-0.5.0
-indoc-2.0.7
 itoa-1.0.18
-libc-0.2.186
-memoffset-0.9.1
+libc-0.2.189
 once_cell-1.21.4
-openssl-0.10.79
+openssl-0.10.81
 openssl-macros-0.1.1
-openssl-sys-0.9.115
-pem-3.0.6
-pkg-config-0.3.33
-portable-atomic-1.13.1
-proc-macro2-1.0.106
-pyo3-0.26.0
-pyo3-build-config-0.26.0
-pyo3-ffi-0.26.0
-pyo3-macros-0.26.0
-pyo3-macros-backend-0.26.0
-quote-1.0.45
-rustversion-1.0.22
-self_cell-1.2.2
-shlex-1.3.0
-syn-2.0.117
+openssl-sys-0.9.117
+pem-4.0.0
+pkg-config-0.3.34
+portable-atomic-1.15.0
+proc-macro2-1.0.107
+pyo3-0.29.2
+pyo3-build-config-0.29.2
+pyo3-ffi-0.29.2
+pyo3-macros-0.29.2
+pyo3-macros-backend-0.29.2
+quote-1.0.47
+self_cell-1.3.0
+shlex-2.0.1
+syn-2.0.119
 target-lexicon-0.13.5
 unicode-ident-1.0.24
-unindent-0.2.4
 vcpkg-0.2.15
 "
 
-inherit cargo distutils-r1 flag-o-matic pypi rustflags-hardened
+CHKL_TIMESTAMPS=(
+	"dev-libs/openssl-4.0.9999"
+	"dev-libs/openssl-3.6.9999"
+	"dev-libs/openssl-3.5.9999"
+	"dev-libs/openssl-3.4.9999"
+	"dev-libs/openssl-3.0.9999"
+)
+
+inherit cargo chkl distutils-r1 flag-o-matic pypi rustflags-hardened secure-version
 
 VEC_P=cryptography_vectors-$(ver_cut 1-3)
 DESCRIPTION="Library providing cryptographic recipes and primitives"
@@ -84,20 +87,30 @@ SRC_URI+="
 	)
 "
 
-LICENSE="|| ( Apache-2.0 BSD ) PSF-2"
+LICENSE="
+	|| (
+		Apache-2.0
+		BSD
+	)
+	PSF-2
+"
 # Dependent crate licenses
 LICENSE+="
-	Apache-2.0 Apache-2.0-with-LLVM-exceptions BSD MIT Unicode-3.0
+	Apache-2.0
+	Apache-2.0-with-LLVM-exceptions
+	BSD
+	MIT
+	Unicode-3.0
 "
 RESTRICT="mirror" # Speed up and prevent snooping
 SLOT="0"
-KEYWORDS="amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv ~s390 ~sparc x86"
+KEYWORDS="~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 IUSE+=" ebuild_revision_2"
 RDEPEND="
-	>=dev-libs/openssl-1.0.2o-r6:0=
 	$(python_gen_cond_dep '
 		>=dev-python/cffi-2.0.0:=[${PYTHON_USEDEP}]
-	' 'python*')
+	' python3_{10..14})
+	$(secure-version_gen_openssl_depends)
 "
 DEPEND="
 	${RDEPEND}
@@ -105,8 +118,17 @@ DEPEND="
 
 BDEPEND="
 	${RUST_DEPEND}
-	>=dev-util/maturin-1.9.4[${PYTHON_USEDEP}]
-	dev-python/setuptools[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		>=dev-python/cffi-2.0.0[${PYTHON_USEDEP}]
+	' python3_{10..14})
+	$(python_gen_cond_dep '
+		>=dev-python/cffi-2.1[${PYTHON_USEDEP}]
+	' python3_15)
+	>=dev-util/maturin-1.14.1[${PYTHON_USEDEP}]
+	<dev-util/maturin-2[${PYTHON_USEDEP}]
+	!~dev-python/setuptools-74.0.0[${PYTHON_USEDEP}]
+	!~dev-python/setuptools-74.1.0[${PYTHON_USEDEP}]
+	!~dev-python/setuptools-74.1.2[${PYTHON_USEDEP}]
 	test? (
 		dev-python/certifi[${PYTHON_USEDEP}]
 		dev-python/iso8601[${PYTHON_USEDEP}]
@@ -119,14 +141,9 @@ BDEPEND="
 # Files built without CFLAGS/LDFLAGS, acceptable for rust
 QA_FLAGS_IGNORED="usr/lib.*/py.*/site-packages/cryptography/hazmat/bindings/_rust.*.so"
 
-EPYTEST_PLUGINS=( hypothesis pytest-subtests )
+EPYTEST_PLUGINS=( "hypothesis" "pytest-subtests" )
 EPYTEST_XDIST=1
 distutils_enable_tests pytest
-
-PATCHES=(
-	# https://github.com/pyca/cryptography/pull/14319
-	"${FILESDIR}/${PN}-46.0.5-stray-files.patch"
-)
 
 src_unpack() {
 	if use verify-provenance; then
@@ -135,7 +152,7 @@ src_unpack() {
 	fi
 
 	cargo_src_unpack
-#	die
+	#die
 	cp -aT \
 		"${FILESDIR}/${PV}"* \
 		"${S}" \
@@ -159,6 +176,7 @@ src_prepare() {
 }
 
 python_configure_all() {
+	chkl_check_many_timestamps
 	filter-lto # bug #903908
 	rustflags-hardened_append
 }
