@@ -8,7 +8,7 @@ EPYTEST_PLUGINS=( "anyio" "pytest-mock" )
 EPYTEST_RERUNS=5
 EPYTEST_XDIST=1
 PYPI_VERIFY_REPO="https://github.com/Kludex/uvicorn"
-PYTHON_COMPAT=( "pypy3_11" "python3_"{11..14} )
+PYTHON_COMPAT=( "pypy3_11" "python3_"{10..14} )
 
 inherit distutils-r1 optfeature pypi
 
@@ -37,40 +37,43 @@ RDEPEND="
 	>=dev-python/h11-0.8[${PYTHON_USEDEP}]
 	standard? (
 		>=dev-python/colorama-0.4[${PYTHON_USEDEP}]
-		>=dev-python/httptools-0.6.3[${PYTHON_USEDEP}]
+		>=dev-python/httptools-0.8.0[${PYTHON_USEDEP}]
 		>=dev-python/python-dotenv-0.13[${PYTHON_USEDEP}]
 		>=dev-python/pyyaml-5.1[${PYTHON_USEDEP}]
-		>=dev-python/uvloop-0.15.1[${PYTHON_USEDEP}]
+		$(python_gen_cond_dep '
+			>=dev-python/uvloop-0.15.1[${PYTHON_USEDEP}]
+		' python3_{10..14})
 		>=dev-python/watchfiles-0.20[${PYTHON_USEDEP}]
-		>=dev-python/websockets-10.4[${PYTHON_USEDEP}]
+		>=dev-python/websockets-13.0[${PYTHON_USEDEP}]
 	)
 "
 BDEPEND="
 	dev? (
 		>=dev-python/a2wsgi-1.10.10[${PYTHON_USEDEP}]
-		>=dev-python/coverage-7.13.4[${PYTHON_USEDEP}]
+		>=dev-python/coverage-7.14.1[${PYTHON_USEDEP}]
 		>=dev-python/coverage-conditional-plugin-0.9.0[${PYTHON_USEDEP}]
 		>=dev-python/coverage-enable-subprocess-1.0[${PYTHON_USEDEP}]
 		>=dev-python/cryptography-44.0.3[${PYTHON_USEDEP}]
 		>=dev-python/httpx-0.28.1[${PYTHON_USEDEP}]
-		>=dev-python/mypy-1.19.1[${PYTHON_USEDEP}]
+		>=dev-python/mypy-2.1.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-9.0.3[${PYTHON_USEDEP}]
 		>=dev-python/pytest-mock-3.15.1[${PYTHON_USEDEP}]
 		>=dev-python/pytest-xdist-3.8.0[${PYTHON_USEDEP},psutil(+)]
 		>=dev-python/pytest-codspeed-4.1.1[${PYTHON_USEDEP}]
 		>=dev-python/trustme-1.2.1[${PYTHON_USEDEP}]
 		>=dev-python/types-click-7.1.8[${PYTHON_USEDEP}]
-		>=dev-python/types-pyyaml-6.0.12.20250915[${PYTHON_USEDEP}]
+		>=dev-python/types-pyyaml-6.0.12.20260518[${PYTHON_USEDEP}]
 		>=dev-python/twine-6.2.0[${PYTHON_USEDEP}]
 		>=dev-python/websockets-13.1[${PYTHON_USEDEP}]
 		>=dev-python/wsproto-1.3.2[${PYTHON_USEDEP}]
-		>=dev-util/ruff-0.15.1
+		$(python_gen_cond_dep '
+			>=dev-python/zttp-0.0.24[${PYTHON_USEDEP}]
+		' python3_{12..14})
+		>=dev-util/ruff-0.15.15
 	)
 	doc? (
-		>=dev-python/mkdocs-1.6.1[${PYTHON_USEDEP}]
-		>=dev-python/mkdocs-llmstxt-0.5.0[${PYTHON_USEDEP}]
-		>=dev-python/mkdocs-material-9.7.1[${PYTHON_USEDEP}]
-		>=dev-python/mkdocstrings-python-2.0.2[${PYTHON_USEDEP}]
+		>=dev-python/zensical-0.0.43[${PYTHON_USEDEP}]
+		>=dev-python/mkdocstrings-python-2.0.3[${PYTHON_USEDEP}]
 	)
 "
 
