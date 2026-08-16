@@ -27,7 +27,7 @@ DESCRIPTION="Various useful Linux utilities"
 HOMEPAGE="https://www.kernel.org/pub/linux/utils/util-linux/ https://github.com/util-linux/util-linux"
 
 if [[ ${PV} == 9999 ]] ; then
-	FALLBACK_COMMIT="15825175e67f0a798d150b0b7d48eeacaa0c2928"
+	FALLBACK_COMMIT="e813ef5674e0891b822dd47dd2434833923f94dc"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://git.kernel.org/pub/scm/utils/util-linux/util-linux.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -55,7 +55,7 @@ SLOT="0"
 # oiledmachine-overlay: added split-usr
 IUSE+="
 audit build caps +cramfs cryptsetup fdformat +hardlink kill +logger magic ncurses nls pam python +readline rtas selinux slang split-usr static-libs +su +suid systemd test tty-helpers udev unicode uuidd
-ebuild_revision_6
+ebuild_revision_7
 "
 
 # Most lib deps here are related to programs rather than our libs,
