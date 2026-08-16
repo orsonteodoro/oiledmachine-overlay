@@ -69,7 +69,6 @@ REQUIRED_USE="
 RDEPEND+="
 	$(python_gen_cond_dep '
 		!~dev-python/regex-2019.12.17[${PYTHON_USEDEP}]
-		>=dev-python/auto-round-0.13.0[${PYTHON_USEDEP}]
 		>=dev-python/llvmlite-0.40.0[${PYTHON_USEDEP}]
 		>=dev-python/numba-0.57.0[${PYTHON_USEDEP}]
 		>=sci-ml/safetensors-0.8.0[${PYTHON_USEDEP}]
@@ -103,10 +102,10 @@ RDEPEND+="
 	<sci-ml/huggingface-hub-2.0.0[${PYTHON_SINGLE_USEDEP}]
 
 	bitsandbytes? (
-		>=sci-ml/accelerate-0.31.0[${PYTHON_SINGLE_USEDEP}]
 		$(python_gen_cond_dep '
 			>=dev-python/bitsandbytes-0.43.3[${PYTHON_USEDEP}]
 		')
+		>=sci-ml/accelerate-0.31.0[${PYTHON_SINGLE_USEDEP}]
 	)
 	flax? (
 		>=dev-python/flax-0.4.1[${PYTHON_SINGLE_USEDEP}]
@@ -129,12 +128,13 @@ RDEPEND+="
 		>=sci-ml/accelerate-0.31.0[${PYTHON_SINGLE_USEDEP}]
 	)
 	orphans? (
+		>=dev-python/auto-round-0.13.0[${PYTHON_SINGLE_USEDEP}]
 		media-libs/opencv[${PYTHON_SINGLE_USEDEP}]
-		dev-python/timm[${PYTHON_SINGLE_USEDEP}]
 	)
 	training? (
 		>=sci-ml/accelerate-0.31.0[${PYTHON_SINGLE_USEDEP}]
 		dev-python/datasets[${PYTHON_SINGLE_USEDEP}]
+		dev-python/timm[${PYTHON_SINGLE_USEDEP}]
 		sci-visualization/tensorboard[${PYTHON_SINGLE_USEDEP}]
 	)
 	torch? (
