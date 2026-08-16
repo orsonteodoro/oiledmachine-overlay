@@ -44,8 +44,8 @@ SLOT="0"
 IUSE+="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_X86[@]}
-custom-modes debug deep-plc dred doc hardened osce static-libs test
-ebuild_revision_27
+custom-modes deep-plc dred doc osce static-libs test
+ebuild_revision_28
 "
 REQUIRED_USE="
 	dred? (
@@ -119,13 +119,16 @@ einfo "Detected compiler switch.  Disabling LTO."
 		$(meson_feature test tests)
 		$(meson_native_use_feature doc docs)
 		$(meson_use custom-modes)
-		$(meson_use debug assertions)
-		$(meson_use hardened hardening)
+
+	# Mitigate IV
+		-Dhardening=true
 
 	# Upstream uses assertions for hardening.
 	# assertions are required for hardening.
 	# assertions are default off.
-	# Commit 241cd24
+	# An example of use is commit 241cd24.
+	# Using assertions in production is FAFO.
+	# Assertions is a debugging feature not production feature.
 		-Dassertions=true
 
 		-Ddefault_library=$(multilib_native_usex static-libs both shared)
