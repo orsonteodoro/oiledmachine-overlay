@@ -125,9 +125,9 @@ RDEPEND="
 		>=dev-python/packaging-20.0[${PYTHON_USEDEP}]
 		>=dev-python/pyyaml-5.1[${PYTHON_USEDEP}]
 		>=dev-python/tqdm-4.60[${PYTHON_USEDEP}]
-		>=sci-ml/safetensors-0.8.0[${PYTHON_USEDEP}]
+		>=sci-ml/safetensors-0.8.0:=[${PYTHON_USEDEP}]
 		dev-python/typer[${PYTHON_USEDEP}]
-		virtual/numpy[${PYTHON_USEDEP}]
+		virtual/numpy:=[${PYTHON_USEDEP}]
 		audio? (
 			>=dev-python/pyctcdecode-0.4.0[${PYTHON_USEDEP}]
 			dev-python/librosa[${PYTHON_USEDEP}]
@@ -185,10 +185,9 @@ RDEPEND="
 		)
 		sentencepiece? (
 			!~sci-ml/sentencepiece-0.1.92[${PYTHON_USEDEP}]
-			>=sci-ml/sentencepiece-0.1.91[${PYTHON_USEDEP}]
+			>=sci-ml/sentencepiece-0.1.91:=[${PYTHON_USEDEP}]
 
-			dev-python/protobuf[${PYTHON_USEDEP}]
-			dev-python/protobuf:=
+			dev-python/protobuf:=[${PYTHON_USEDEP}]
 		)
 		serving? (
 			dev-python/fastapi[${PYTHON_USEDEP}]
@@ -206,19 +205,18 @@ RDEPEND="
 			dev-python/tiktoken[${PYTHON_USEDEP}]
 		)
 		vision? (
-			>=virtual/pillow-10.0.1[${PYTHON_USEDEP}]
-			<virtual/pillow-15.0[${PYTHON_USEDEP}]
+			>=virtual/pillow-10.0.1:=[${PYTHON_USEDEP}]
+			<virtual/pillow-15.0:=[${PYTHON_USEDEP}]
 		)
 	')
-	>=sci-ml/huggingface-hub-1.5.0[${PYTHON_SINGLE_USEDEP}]
-	<sci-ml/huggingface-hub-2.0[${PYTHON_SINGLE_USEDEP}]
-	=sci-ml/tokenizers-0.22*[${PYTHON_SINGLE_USEDEP}]
-	sci-ml/tokenizers:=
+	>=sci-ml/huggingface-hub-1.5.0:=[${PYTHON_SINGLE_USEDEP}]
+	<sci-ml/huggingface-hub-2.0:=[${PYTHON_SINGLE_USEDEP}]
+	=sci-ml/tokenizers-0.22*:=[${PYTHON_SINGLE_USEDEP}]
 	accelerate? (
-		>=sci-ml/accelerate-1.1.0[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/accelerate-1.1.0:=[${PYTHON_SINGLE_USEDEP}]
 	)
 	audio? (
-		sci-ml/torchaudio[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/torchaudio:=[${PYTHON_SINGLE_USEDEP}]
 		$(python_gen_cond_dep '
 			dev-python/kenlm[${PYTHON_SINGLE_USEDEP}]
 		' python3_{10..12})
@@ -227,10 +225,10 @@ RDEPEND="
 		dev-python/av[${PYTHON_SINGLE_USEDEP}]
 	)
 	orphans? (
-		media-libs/opencv[${PYTHON_SINGLE_USEDEP},python]
+		media-libs/opencv:=[${PYTHON_SINGLE_USEDEP},python]
 	)
 	torch? (
-		>=sci-ml/pytorch-2.5[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/pytorch-2.5:=[${PYTHON_SINGLE_USEDEP}]
 	)
 	l10n_ja? (
 		$(python_gen_cond_dep '
@@ -242,7 +240,7 @@ RDEPEND="
 		>dev-python/timm-1.0.23[${PYTHON_SINGLE_USEDEP}]
 	)
 	vision? (
-		sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/torchvision:=[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 BDEPEND="
