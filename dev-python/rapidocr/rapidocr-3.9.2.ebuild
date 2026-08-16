@@ -82,8 +82,26 @@ BDEPEND+="
 		>=dev-python/setuptools-scm-8[${PYTHON_USEDEP}]
 		dev-python/wheel[${PYTHON_USEDEP}]
 	')
+	dev-vcs/git
 "
 DOCS=( "README.md" "README-CN.md" )
+
+gen_git_tag() {
+	local path="${1}"
+	local tag_name="${2}"
+einfo "Generating tag start for ${path}"
+	pushd "${path}" >/dev/null 2>&1 || die
+		git init || die
+		git config user.email "name@example.com" || die
+		git config user.name "John Doe" || die
+		touch "dummy" || die
+		git add "dummy" || die
+		#git add -f * || die
+		git commit -m "Dummy" || die
+		git tag "${tag_name}" || die
+	popd >/dev/null 2>&1 || die
+einfo "Generating tag done"
+}
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
@@ -94,6 +112,7 @@ src_unpack() {
 		git-r3_checkout
 	else
 		unpack ${A}
+		gen_git_tag "${WORKDIR}/${MY_P}" "v${PV}"
 	fi
 }
 
