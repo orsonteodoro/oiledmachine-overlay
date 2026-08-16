@@ -12,7 +12,7 @@ EAPI=8
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
 
-# Last deps commit date:  Jul 27, 2026
+# Last deps commit date:  Aug 5, 2026
 
 CFLAGS_HARDENED_PIE="1"
 CFLAGS_HARDENED_USE_CASES="jit language-runtime network server untrusted-data web-server"
@@ -28,10 +28,10 @@ UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
 
-ACORN_PV="8.16.0"
+ACORN_PV="8.18.0"
 AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 COREPACK_PV="0.35.0"
-NPM_PV="11.16.0" # See https://github.com/nodejs/node/blob/v24.18.0/deps/npm/package.json
+NPM_PV="11.19.0" # See https://github.com/nodejs/node/blob/v26.7.0/deps/npm/package.json
 WRK_PV="1.2.1" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 
 CHKL_TIMESTAMPS=(
@@ -229,11 +229,11 @@ PDEPEND+="
 PATCHES=(
 	"${FILESDIR}/${PN}-12.22.5-shared_c-ares_nameser_h.patch"
 	"${FILESDIR}/${PN}-22.2.0-global-npm-config.patch"
-	"${FILESDIR}/${PN}-24.16.0-lto-update.patch"
+	"${FILESDIR}/${PN}-26.2.0-lto-update.patch"
 	"${FILESDIR}/${PN}-24.2.0-support-clang-pgo.patch"
 	"${FILESDIR}/${PN}-19.3.0-v8-oflags.patch"
-	"${FILESDIR}/${PN}-24.11.1-split-pointer-compression-and-v8-sandbox-options.patch"
-	"${FILESDIR}/${PN}-24.16.0-add-v8-jit-fine-grained-options.patch"
+	"${FILESDIR}/${PN}-25.1.0-split-pointer-compression-and-v8-sandbox-options.patch"
+	"${FILESDIR}/${PN}-26.4.0-add-v8-jit-fine-grained-options.patch"
 )
 
 _count_useflag_slots() {
@@ -283,7 +283,7 @@ einfo "FEATURES:  ${FEATURES}"
 
 # See https://github.com/nodejs/release#release-schedule
 # See https://github.com/nodejs/release#end-of-life-releases
-einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2028-04-30."
+einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2029-04-30."
 
 	local u
 	for u in "${PN}_trainers_http" "${PN}_trainers_https" ; do

@@ -17,12 +17,12 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT_MAJOR="9" # See https://github.com/pnpm/pnpm/blob/v11.18.0/pnpm-lock.yaml#L1
-SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
+SLOT_MAJOR="9" # See https://github.com/pnpm/pnpm/blob/v11.22.0/pnpm-lock.yaml#L1
+SLOT="${SLOT_MAJOR}/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ebuild_revision_6
 "
-# See https://github.com/pnpm/pnpm/blob/v11.18.0/pnpm11/pnpm/package.json#L188
+# See https://github.com/pnpm/pnpm/blob/v11.22.0/pnpm11/pnpm/package.json#L188
 CDEPEND+="
 	>=net-libs/nodejs-22.13[corepack,ssl]
 "
