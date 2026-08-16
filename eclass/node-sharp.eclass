@@ -52,8 +52,9 @@ inherit chkl edo flag-o-matic secure-version secure-version-node
 # https://github.com/lovell/sharp-libvips/blob/v1.3.2/versions.properties
 #
 if [[ -n "${NODE_SHARP_PV}" ]] ; then
+	# Upstream uses lcms, but not forced on for security reasons for vips.
 	NODE_SHARP_CDEPEND+="
-		>=media-libs/vips-${VIPS_PV}:=[avif,cairo,cgif,cxx,dzi,exif,fontconfig,avif,heif,highway,imagequant,lcms,pango,png,svg,tiff,uhdr,webp,zlib]
+		>=media-libs/vips-${VIPS_PV}:=[avif,cairo,cgif,cxx,dzi,exif,fontconfig,avif,heif,highway,imagequant,pango,png,svg,tiff,uhdr,webp,zlib]
 		>=media-libs/freetype-${FREETYPE_PV}:=[harfbuzz]
 		net-libs/nodejs:=
 		|| (
