@@ -12,48 +12,43 @@ GENERATE_LOCKFILE=${GENERATE_LOCKFILE:-0}
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 LLVM_COMPAT=( 21 )
-PYTHON_COMPAT=( "python3_"{10..13} )
-RUST_MAX_VER="1.91.1"
-RUST_MIN_VER="1.91.1" # LLVM 21.1
+PYTHON_COMPAT=( "python3_"{10..14} )
+RUST_MAX_VER="1.93.1"
+RUST_MIN_VER="1.93.1" # LLVM 21.1
 RUST_NEEDS_LLVM=1
 
 DISABLE_CRATES="
-tiktoken-0.12.0
+tiktoken-0.13.0
 "
 
 CRATES="
-aho-corasick-1.1.4
-autocfg-1.5.0
-bit-set-0.5.3
-bit-vec-0.6.3
-bstr-1.12.1
-fancy-regex-0.13.0
+aho-corasick-1.1.5
+bit-set-0.8.0
+bit-vec-0.8.0
+bstr-1.13.1
+fancy-regex-0.17.0
 heck-0.5.0
-indoc-2.0.7
-libc-0.2.186
-memchr-2.8.0
-memoffset-0.9.1
+libc-0.2.189
+memchr-2.8.3
 once_cell-1.21.4
-portable-atomic-1.13.1
-proc-macro2-1.0.106
-pyo3-0.26.0
-pyo3-build-config-0.26.0
-pyo3-ffi-0.26.0
-pyo3-macros-0.26.0
-pyo3-macros-backend-0.26.0
-quote-1.0.45
-regex-1.12.3
-regex-automata-0.4.14
-regex-syntax-0.8.10
-rustc-hash-2.1.2
-rustversion-1.0.22
-serde-1.0.228
-serde_core-1.0.228
-serde_derive-1.0.228
-syn-2.0.117
+portable-atomic-1.15.0
+proc-macro2-1.0.107
+pyo3-0.28.3
+pyo3-build-config-0.28.3
+pyo3-ffi-0.28.3
+pyo3-macros-0.28.3
+pyo3-macros-backend-0.28.3
+quote-1.0.47
+regex-1.13.1
+regex-automata-0.4.18
+regex-syntax-0.8.11
+rustc-hash-2.1.3
+serde_core-1.0.229
+serde_derive-1.0.229
+syn-2.0.119
+syn-3.0.3
 target-lexicon-0.13.5
 unicode-ident-1.0.24
-unindent-0.2.4
 "
 
 inherit cargo distutils-r1 rust
@@ -75,13 +70,13 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror test" # Untested
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+=" blobfile dev ebuild_revision_2"
 RDEPEND+="
 	>=dev-python/regex-2022.1.18[${PYTHON_USEDEP}]
 	>=dev-python/requests-2.26.0[${PYTHON_USEDEP}]
 	blobfile? (
-		>=dev-python/blobfile-2[${PYTHON_USEDEP}]
+		>=dev-python/blobfile-3[${PYTHON_USEDEP}]
 	)
 "
 DEPEND+="
@@ -96,6 +91,7 @@ DOCS=()
 
 _lockfile_gen_unpack() {
 	unpack "${P}.tar.gz"
+	#die # For lockfile update
 	cd "${S}" || die
 einfo "Generating lockfile"
 	rm Cargo.lock
@@ -144,4 +140,4 @@ src_install() {
 	distutils-r1_src_install
 }
 
-# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD
