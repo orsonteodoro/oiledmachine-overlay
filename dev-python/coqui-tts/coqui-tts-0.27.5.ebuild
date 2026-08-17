@@ -125,10 +125,10 @@ RDEPEND+="
 		>=sci-ml/torchaudio-2.2.0[${PYTHON_SINGLE_USEDEP}]
 	)
 	codec? (
-		>=dev-python/torchcodec-0.8.0[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/torchcodec-0.8.0[${PYTHON_SINGLE_USEDEP}]
 	)
 	codec-cuda? (
-		>=dev-python/torchcodec-0.8.0[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/torchcodec-0.8.0[${PYTHON_SINGLE_USEDEP}]
 	)
 	l10n_ko? (
 		$(python_gen_cond_dep '
