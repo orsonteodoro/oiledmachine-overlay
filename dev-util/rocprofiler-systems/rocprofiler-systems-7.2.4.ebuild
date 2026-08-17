@@ -12,7 +12,7 @@ EAPI=8
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
 )
 
 BINUTILS_PV="2.40"
@@ -113,7 +113,7 @@ SLOT="0/${ROCM_SLOT}"
 IUSE="
 -debuginfod examples -mpi +openmp +papi -python +rccl +rocprofiler
 +roctracer test system-dyninst system-libunwind system-papi +rocm-smi
-ebuild_revision_3
+ebuild_revision_4
 "
 # The vendored dyninst is build-time broken.
 REQUIRED_USE="
