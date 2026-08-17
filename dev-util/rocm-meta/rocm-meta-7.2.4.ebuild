@@ -227,13 +227,8 @@ RDEPEND="
 		~dev-libs/rocr-runtime-${PV}:=[${LIBSTDCXX_USEDEP}]
 		hip? (
 			$(secure-version_gen_perl_depends)
+			>=sys-libs/glibc-${GLIBC_PV}:=
 			sys-apps/file:=
-			gcc_slot_12_5? (
-				>=sys-libs/glibc-2.35:=
-			)
-			gcc_slot_13_4? (
-				>=sys-libs/glibc-2.39:=
-			)
 			dev-perl/URI-Encode
 			dev-perl/File-BaseDir
 			dev-perl/File-Copy-Recursive
