@@ -40,7 +40,7 @@ CUDA_TARGETS_COMPAT=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
 )
 
 inherit cmake flag-o-matic libstdcxx-slot rocm toolchain-funcs
@@ -67,7 +67,7 @@ LICENSE="
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 cuda +rocm
-ebuild_revision_8
+ebuild_revision_9
 "
 gen_cuda_required_use() {
 	local x
@@ -115,9 +115,9 @@ RDEPEND="
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
-		>=sci-libs/rocFFT-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCFFT_7_0_AMDGPU_USEDEP},rocm]
+		>=sci-libs/rocFFT-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCFFT_7_2_AMDGPU_USEDEP},rocm]
 		sci-libs/rocFFT:=
-		>=sci-libs/rocRAND-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCRAND_7_0_AMDGPU_USEDEP},rocm]
+		>=sci-libs/rocRAND-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCRAND_7_2_AMDGPU_USEDEP},rocm]
 		sci-libs/rocRAND:=
 	)
 "
