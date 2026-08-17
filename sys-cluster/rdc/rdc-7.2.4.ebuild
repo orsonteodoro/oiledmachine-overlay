@@ -10,7 +10,7 @@ ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_ROCM_7_0[@]}"
+	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
 inherit abseil-cpp check-compiler-switch cmake flag-o-matic grpc libstdcxx-slot protobuf re2 rocm
@@ -43,7 +43,7 @@ SLOT="0/${ROCM_SLOT}"
 # raslib is installed by default, but disabled for security.
 IUSE="
 asan +compile-commands doc +raslib +standalone systemd test
-ebuild_revision_19
+ebuild_revision_20
 "
 REQUIRED_USE="
 	raslib
