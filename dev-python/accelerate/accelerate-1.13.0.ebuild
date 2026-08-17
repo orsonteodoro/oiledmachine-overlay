@@ -55,9 +55,9 @@ REQUIRED_USE+="
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/packaging-20.0[${PYTHON_USEDEP}]
+		>=sci-ml/safetensors-0.4.3[${PYTHON_USEDEP}]
 		dev-python/psutil[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
-		>=sci-ml/safetensors-0.4.3[${PYTHON_USEDEP}]
 		virtual/numpy[${PYTHON_USEDEP}]
 		deepspeed? (
 			dev-python/deepspeed[${PYTHON_USEDEP}]
@@ -81,36 +81,36 @@ DEPEND+="
 BDEPEND+="
 	$(python_gen_cond_dep '
 		test-dev? (
+			>=dev-python/torchpippy-0.2.0[${PYTHON_USEDEP}]
+			>=sci-ml/torchdata-0.8.0[${PYTHON_USEDEP}]
+			dev-python/bitsandbytes[${PYTHON_USEDEP}]
 			dev-python/datasets[${PYTHON_USEDEP}]
 			dev-python/diffusers[${PYTHON_USEDEP}]
 			dev-python/evaluate[${PYTHON_USEDEP}]
-			>=dev-python/torchdata-0.8.0[${PYTHON_USEDEP}]
-			>=dev-python/torchpippy-0.2.0[${PYTHON_USEDEP}]
-			dev-python/transformers[${PYTHON_USEDEP}]
-			dev-python/scipy[${PYTHON_USEDEP}]
 			dev-python/scikit-learn[${PYTHON_USEDEP}]
-			dev-python/tqdm[${PYTHON_USEDEP}]
-			dev-python/bitsandbytes[${PYTHON_USEDEP}]
+			dev-python/scipy[${PYTHON_USEDEP}]
 			dev-python/timm[${PYTHON_USEDEP}]
+			dev-python/tqdm[${PYTHON_USEDEP}]
+			dev-python/transformers[${PYTHON_USEDEP}]
 		)
 		test-fp8? (
 			dev-python/torchao
 		)
 		test-prod? (
 			>=dev-python/pytest-7.2.0[${PYTHON_USEDEP}]
-			dev-python/pytest-xdist[${PYTHON_USEDEP}]
-			dev-python/pytest-subtests[${PYTHON_USEDEP}]
 			dev-python/parameterized[${PYTHON_USEDEP}]
 			dev-python/pytest-order[${PYTHON_USEDEP}]
+			dev-python/pytest-subtests[${PYTHON_USEDEP}]
+			dev-python/pytest-xdist[${PYTHON_USEDEP}]
 		)
 		test-trackers? (
-			dev-python/wandb[${PYTHON_USEDEP}]
 			dev-python/comet-ml[${PYTHON_USEDEP}]
-			dev-python/tensorboard[${PYTHON_USEDEP}]
 			dev-python/dvclive[${PYTHON_USEDEP}]
 			dev-python/matplotlib[${PYTHON_USEDEP}]
 			dev-python/swanlab[${PYTHON_USEDEP},dashboard]
+			dev-python/tensorboard[${PYTHON_USEDEP}]
 			dev-python/trackio[${PYTHON_USEDEP}]
+			dev-python/wandb[${PYTHON_USEDEP}]
 		)
 	')
 "
