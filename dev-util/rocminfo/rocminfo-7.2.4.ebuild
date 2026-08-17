@@ -5,7 +5,7 @@ EAPI=8
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
 CXX_STANDARD=11
@@ -34,17 +34,16 @@ DESCRIPTION="ROCm Application for Reporting System Info"
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocminfo"
 LICENSE="NCSA-AMD"
 SLOT="0/${ROCM_SLOT}"
-IUSE+=" ebuild_revision_10"
+IUSE+=" ebuild_revision_11"
 RDEPEND="
-	>=dev-libs/rocr-runtime-${PV}:${SLOT}
-	dev-libs/rocr-runtime:=
-	sys-apps/pciutils
-	|| (
-		>=virtual/kfd-7.0:0/7.0
-		>=virtual/kfd-6.4:0/6.4
-		>=virtual/kfd-6.3:0/6.3
-	)
+	~dev-libs/rocr-runtime-${PV}:=
+	sys-apps/pciutils:=
 	virtual/kfd:=
+	|| (
+		>=virtual/kfd-7.2:0/7.2
+		>=virtual/kfd-7.1:0/7.1
+		>=virtual/kfd-7.0:0/7.0
+	)
 "
 DEPEND="
 	${RDEPEND}
