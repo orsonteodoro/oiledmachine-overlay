@@ -18,7 +18,11 @@ LLVM_SLOT=19 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-7
 PYTHON_COMPAT=( "python3_"{10..13} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit check-compiler-switch cmake docs flag-o-matic libstdcxx-slot prefix python-any-r1 rocm
+CHKL_TIMESTAMPS=(
+	"sys-process/numactl-9999"
+)
+
+inherit check-compiler-switch chkl cmake docs flag-o-matic libstdcxx-slot prefix python-any-r1 secure-version rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/clr-rocm-${PV}/hipamd"
@@ -79,7 +83,7 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 cuda debug +hsa -hsail +lc -pal numa +rocm +rocprofiler-register test
-ebuild_revision_65
+ebuild_revision_66
 "
 REQUIRED_USE="
 	hsa? (
@@ -124,68 +128,66 @@ REQUIRED_USE="
 # ROCclr uses clang -print-libgcc-file-name which may output a static-lib to link to.
 RDEPEND="
 	>=dev-perl/URI-Encode-1.1.1
-	virtual/opengl
+	virtual/opengl:*
 	cuda? (
 		${HIP_CUDA_DEPEND}
-		>=dev-libs/hipother-${PV}:${SLOT}
-		dev-libs/hipother:=
+		~dev-libs/hipother-${PV}:=
 	)
 	lc? (
-		>=dev-libs/rocm-comgr-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-		dev-libs/rocm-comgr:=
+		~dev-libs/rocm-comgr-${PV}:=[${LIBSTDCXX_USEDEP}]
 	)
 	numa? (
-		sys-process/numactl
+		>=sys-process/numactl-${NUMACTL_PV}:=
 	)
 	rocm? (
 		${ROCM_CLANG_DEPEND}
-		>=dev-libs/rocr-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-		dev-libs/rocr-runtime:=
-		>=dev-util/rocminfo-${PV}:${SLOT}
-		dev-util/rocminfo:=
+		~dev-libs/rocr-runtime-${PV}:=[${LIBSTDCXX_USEDEP}]
+		~dev-util/rocminfo-${PV}:=
 	)
 	rocprofiler-register? (
-		>=dev-libs/rocprofiler-register-${PV}:${SLOT}
-		dev-libs/rocprofiler-register:=
+		~dev-libs/rocprofiler-register-${PV}:=
 	)
 "
 DEPEND="
 	${RDEPEND}
+"
+CUDA_11_8_BDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-11.8*
+		virtual/cuda-compiler:0/11.8[${LIBSTDCXX_USEDEP}]
+	)
+"
+CUDA_12_3_BDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-12.3*
+		virtual/cuda-compiler:0/12.3[${LIBSTDCXX_USEDEP}]
+	)
+"
+CUDA_12_6_BDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-12.6*
+		virtual/cuda-compiler:0/12.6[${LIBSTDCXX_USEDEP}]
+	)
 "
 BDEPEND="
 	${PYTHON_DEPS}
 	${ROCM_GCC_DEPEND}
 	>=dev-build/cmake-3.16.8
 	cuda? (
+		dev-util/nvidia-cuda-toolkit:=
+		virtual/cuda-compiler:=
 		|| (
-			(
-				=dev-util/nvidia-cuda-toolkit-11.8*
-				dev-util/nvidia-cuda-toolkit:=
-				virtual/cuda-compiler:0/11.8[${LIBSTDCXX_USEDEP}]
-				virtual/cuda-compiler:=
-			)
-			(
-				=dev-util/nvidia-cuda-toolkit-12.3*
-				dev-util/nvidia-cuda-toolkit:=
-				virtual/cuda-compiler:0/12.3[${LIBSTDCXX_USEDEP}]
-				virtual/cuda-compiler:=
-			)
-			(
-				=dev-util/nvidia-cuda-toolkit-12.6*
-				dev-util/nvidia-cuda-toolkit:=
-				virtual/cuda-compiler:0/12.6[${LIBSTDCXX_USEDEP}]
-				virtual/cuda-compiler:=
-			)
+			${CUDA_11_8_BDEPEND}
+			${CUDA_12_3_BDEPEND}
+			${CUDA_12_6_BDEPEND}
 		)
 	)
 	rocm? (
-		virtual/rocm-libstdcxx:${SLOT}[${LIBSTDCXX_USEDEP}]
-		virtual/rocm-libstdcxx:=
+		virtual/rocm-libstdcxx:=[${LIBSTDCXX_USEDEP}]
 	)
 	test? (
 		rocm? (
-			>=dev-util/rocminfo-${PV}:${SLOT}
-			dev-util/rocminfo:=
+			~dev-util/rocminfo-${PV}:=
 		)
 	)
 "

@@ -458,6 +458,7 @@ SECURE_TIMESTAMP["sys_libs_pam_9999"]="Jun 30, 2026 3:00 AM PDT"
 
 SECURE_TIMESTAMP["sys_kernel_linux_firmware_99999999"]="2026-08-14 02:46:57 +0000"
 
+SECURE_TIMESTAMP["sys_process_numactl_9999"]="Jun 30, 2026 3:51 PM PST"
 SECURE_TIMESTAMP["sys_process_procps_9999"]="Mar 26, 2026 4:03:17 AM PDT"
 SECURE_TIMESTAMP["www_servers_civetweb_9999"]="Sep 2, 2025 7:51 AM PDT"
 SECURE_TIMESTAMP["x11_base_xorg_server_9999"]="2026-07-30 12:12:56 +0000"
@@ -476,7 +477,6 @@ SECURE_TIMESTAMP["x11_libs_libdrm_9999"]="2026-04-06 08:00:12 +0000"
 SECURE_TIMESTAMP["x11_libs_pango_9999"]="Jun 1, 2026 3:30 PM PDT"
 SECURE_TIMESTAMP["x11_libs_pixman_9999"]="Aug 1, 2025 9:38:49 AM PDT"
 SECURE_TIMESTAMP["x11_misc_colord_9999"]="Feb 2, 2026 1:31 AM PST"
-
 
 	declare -p SECURE_TIMESTAMP
 }
