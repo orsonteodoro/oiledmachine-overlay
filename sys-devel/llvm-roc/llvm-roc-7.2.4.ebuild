@@ -9,7 +9,7 @@ TAG_TIMESTAMP="Sep 26, 2025 8:42 AM PDT"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_ROCM_7_0[@]}"
+	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
 inherit libcxx-compat
@@ -109,7 +109,7 @@ IUSE+="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
 bolt flang -mlir profile
-ebuild_revision_56
+ebuild_revision_57
 "
 REQUIRED_USE="
 	^^ (
