@@ -43,7 +43,7 @@ AMDGPU_UNTESTED_TARGETS=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_ROCM_7_0[@]}"
+	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
 inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot rocm toolchain-funcs
@@ -71,7 +71,7 @@ IUSE+="
 ${LLVM_COMPAT/#/llvm_slot_}
 ${ROCM_IUSE}
 cpu opencl rocm test
-ebuild_revision_17
+ebuild_revision_18
 "
 gen_rocm_required_use() {
 	local x
@@ -99,7 +99,7 @@ RDEPEND="
 	dev-libs/boost:=
 	dev-libs/rocm-opencl-runtime:${SLOT}[${LIBSTDCXX_USEDEP}]
 	dev-libs/rocm-opencl-runtime:=
-	>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_0_AMDGPU_USEDEP}]
+	>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_2_AMDGPU_USEDEP}]
 	sys-libs/llvm-roc-libomp:=
 	opencl? (
 		virtual/opencl
