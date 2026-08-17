@@ -40,7 +40,7 @@ MIOPENKERNELS_TARGETS_COMPAT=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
 )
 
 inherit check-compiler-switch cmake flag-o-matic fix-rpath libstdcxx-slot rocm
@@ -72,7 +72,7 @@ SLOT="0/${ROCM_SLOT}"
 IUSE="
 +ai-kernel-tuning comgr composable-kernel debug hipblaslt hiprtc kernels
 miopendriver mlir opencl +rocm test
-ebuild_revision_20
+ebuild_revision_21
 "
 gen_amdgpu_required_use() {
 	local x
@@ -96,7 +96,7 @@ is_gfx_supported_by_miopen() {
 }
 gen_hipblaslt_required_use() {
 	local x
-	for x in ${HIPBLASLT_7_0_AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_} ; do
+	for x in ${HIPBLASLT_7_2_AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_} ; do
 		is_gfx_supported_by_miopen "${x}" || continue
 		echo "
 			${x}
@@ -135,7 +135,7 @@ REQUIRED_USE="
 "
 gen_hipblaslt_rdepend() {
 	local x
-	for x in ${HIPBLASLT_7_0_AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_} ; do
+	for x in ${HIPBLASLT_7_2_AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_} ; do
 		is_gfx_supported_by_miopen "${x}" || continue
 		echo "
 			${x}? (
@@ -158,18 +158,18 @@ RDEPEND="
 		dev-libs/rocm-comgr:=
 	)
 	composable-kernel? (
-		sci-libs/composable-kernel:${SLOT}[${LIBSTDCXX_USEDEP},${COMPOSABLE_KERNEL_7_0_AMDGPU_USEDEP}]
+		sci-libs/composable-kernel:${SLOT}[${LIBSTDCXX_USEDEP},${COMPOSABLE_KERNEL_7_2_AMDGPU_USEDEP}]
 		sci-libs/composable-kernel:=
 	)
 	hipblaslt? (
 		$(gen_hipblaslt_rdepend)
 	)
 	kernels? (
-		>=sci-libs/miopenkernels-${PV}:${SLOT}[${MIOPENKERNELS_7_0_AMDGPU_USEDEP}]
+		>=sci-libs/miopenkernels-${PV}:${SLOT}[${MIOPENKERNELS_7_2_AMDGPU_USEDEP}]
 		sci-libs/miopenkernels:=
 	)
 	miopendriver? (
-		>=sci-libs/rocRAND-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCRAND_7_0_AMDGPU_USEDEP}]
+		>=sci-libs/rocRAND-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCRAND_7_2_AMDGPU_USEDEP}]
 		sci-libs/rocRAND:=
 	)
 	mlir? (
@@ -177,19 +177,19 @@ RDEPEND="
 		sci-libs/rocMLIR:=
 	)
 	opencl? (
-		>=dev-libs/rocm-opencl-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_0_AMDGPU_USEDEP}]
+		>=dev-libs/rocm-opencl-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_2_AMDGPU_USEDEP}]
 		dev-libs/rocm-opencl-runtime:=
 	)
 	rocm? (
 		>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm]
 		dev-util/hip:=
-		>=sci-libs/rocBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCBLAS_7_0_AMDGPU_USEDEP},rocm]
+		>=sci-libs/rocBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCBLAS_7_2_AMDGPU_USEDEP},rocm]
 		sci-libs/rocBLAS:=
 	)
 "
 gen_hipblaslt_depend() {
 	local x
-	for x in ${HIPBLASLT_7_0_AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_} ; do
+	for x in ${HIPBLASLT_7_2_AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_} ; do
 		is_gfx_supported_by_miopen "${x}" || continue
 		echo "
 			${x}? (
