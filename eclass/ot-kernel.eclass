@@ -12305,6 +12305,7 @@ einfo "OT_KERNEL_POWER_LEVEL_SATA=0 uses the kernel default value.  For most use
 	fi
 
 	if ot-kernel_cfg80211_ps_impacted_by_issues ; then
+ewarn "Detected impacted wireless device.  Disabling CFG80211 powersave."
 		power_level_wifi=2
 	fi
 
