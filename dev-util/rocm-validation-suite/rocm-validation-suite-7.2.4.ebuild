@@ -11,7 +11,7 @@ ROCM_VERSION="${PV}"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
 )
 
 inherit check-compiler-switch flag-o-matic cmake libstdcxx-slot rocm
@@ -51,7 +51,7 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="test" # Needs SRC_URI changes for offline install.
 SLOT="0/${ROCM_SLOT}"
-IUSE+=" doc test ebuild_revision_4"
+IUSE+=" doc test ebuild_revision_5"
 RDEPEND="
 	dev-cpp/yaml-cpp[${LIBSTDCXX_USEDEP}]
 	dev-cpp/yaml-cpp:=
