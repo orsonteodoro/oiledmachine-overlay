@@ -51,7 +51,7 @@ CUDA_TARGETS_COMPAT=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
 )
 
 inherit cmake check-reqs edo flag-o-matic libstdcxx-slot multiprocessing python-r1 rocm
@@ -81,7 +81,7 @@ SLOT="0/${ROCM_SLOT}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 -asan +aot benchmark cuda perfscripts +rocm test
-ebuild_revision_15
+ebuild_revision_16
 "
 gen_cuda_required_use() {
 	local x
@@ -135,7 +135,7 @@ RDEPEND="
 	>=dev-db/sqlite-3.36
 	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
 	dev-util/hip:=
-	>=sci-libs/rocRAND-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCRAND_7_0_AMDGPU_USEDEP}]
+	>=sci-libs/rocRAND-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCRAND_7_2_AMDGPU_USEDEP}]
 	sci-libs/rocRAND:=
 	cuda? (
 		${HIP_CUDA_DEPEND}
@@ -167,7 +167,7 @@ BDEPEND="
 		dev-libs/boost:=
 		>=dev-libs/rocm-opencl-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-libs/rocm-opencl-runtime:=
-		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_0_AMDGPU_USEDEP}]
+		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_2_AMDGPU_USEDEP}]
 		sys-libs/llvm-roc-libomp:=
 	)
 "
