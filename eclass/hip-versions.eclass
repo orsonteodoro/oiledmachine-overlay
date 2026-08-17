@@ -3,9 +3,11 @@
 
 HIP_6_4_VERSION="6.4.4"
 HIP_7_0_VERSION="7.0.2"
+HIP_7_2_VERSION="7.2.4"
 
 HIP_6_4_LLVM_SLOT="19"
 HIP_7_0_LLVM_SLOT="19"
+HIP_7_2_LLVM_SLOT="22"
 
 # rocBLAS_PV  GCC_VER  U_VER
 # 4.1.0       6.1.0
@@ -18,14 +20,18 @@ HIP_7_0_LLVM_SLOT="19"
 # 6.2.2       9.1.0    20.04
 # 6.2.2       12.1.0   22.04
 # 6.2.2       13.2.0   24.04
+# 7.2.4       12.1.0   22.04
+# 7.2.4       13.2.0   24.04
 
 # Upstream preference
 HIP_6_4_GLIBCXX_MIN="3.4.30" # GCC 12.1.0
 HIP_7_0_GLIBCXX_MIN="3.4.30" # GCC 12.1.0
+HIP_7_2_GLIBCXX_MIN="3.4.30" # GCC 12.1.0
 
 # Upstream preference
 HIP_6_4_GLIBCXX_MAX="3.4.32" # GCC 13.2.0
 HIP_7_0_GLIBCXX_MAX="3.4.32" # GCC 13.2.0
+HIP_7_2_GLIBCXX_MAX="3.4.32" # GCC 13.2.0
 
 # oiledmachine-overlay preference
 # The choice of GLIBCXX and GCC_SLOT maximum currently is based on rebuild mood.
@@ -36,6 +42,7 @@ HIP_7_0_GLIBCXX_MAX="3.4.32" # GCC 13.2.0
 # 3. Testing between HIP and CUDA.
 HIP_6_4_GLIBCXX="3.4.32" # GCC 13.2.0
 HIP_7_0_GLIBCXX="3.4.32" # GCC 13.2.0
+HIP_7_2_GLIBCXX="3.4.32" # GCC 13.2.0
 
 _hip_set_globals() {
 	local hip_platform="${HIP_PLATFORM:-amd}"
@@ -45,11 +52,13 @@ _hip_set_globals() {
 	#		  This distro # Upstream
 		HIP_6_4_GCC_SLOT="13" # GCC 12.1 U22, GCC 13.2 U24
 		HIP_7_0_GCC_SLOT="13" # GCC 12.1 U22, GCC 13.2 U24
+		HIP_7_2_GCC_SLOT="13" # GCC 12.1 U22, GCC 13.2 U24
 	else
 	# The GCC slots listed is based on the max GCC allowed in the dev-util/nvidia-cuda-toolkit ebuild.
 	# For HIP_PLATFORM == nvidia.
 		HIP_6_4_GCC_SLOT="13" # CUDA 12.6
 		HIP_7_0_GCC_SLOT="14" # CUDA 12.9
+		HIP_7_2_GCC_SLOT="14" # CUDA 12.9
 	fi
 }
 
@@ -57,22 +66,34 @@ _hip_set_globals
 unset -f _hip_set_globals
 
 # CUDA;DRIVER_VERSION;CUDNN_MIN;CUDNN_MAX as data type
+# CUDNN version range based on cudnn ebuilds.
 HIPIFY_6_4_CUDA_SLOTS=(
 	"11.8;520.61;=,8.6.0;=,8.6"
-	"12.3;545.23;>=,8.8.0;<,9.8.0"
-	"12.4;550.54;>=,8.8.0;<,9.8.0"
-	"12.5;555.42;>=,8.8.0;<,9.8.0"
-	"12.6;560.35;>=,8.8.0;<,9.8.0"
+	"12.3;545.23;>=,8.8.0;<,9.25.0"
+	"12.4;550.54;>=,8.8.0;<,9.25.0"
+	"12.5;555.42;>=,8.8.0;<,9.25.0"
+	"12.6;560.35;>=,8.8.0;<,9.25.0"
 )
 HIPIFY_7_0_CUDA_SLOTS=(
 	"11.8;520.61;=,8.6.0;=,8.6"
-	"12.3;545.23;>=,8.8.0;<,9.12.0"
-	"12.4;550.54;>=,8.8.0;<,9.12.0"
-	"12.5;555.42;>=,8.8.0;<,9.12.0"
-	"12.6;560.35;>=,8.8.0;<,9.12.0"
-	"12.8;570.124;>=,8.8.0;<,9.12.0"
+	"12.3;545.23;>=,8.8.0;<,9.25.0"
+	"12.4;550.54;>=,8.8.0;<,9.25.0"
+	"12.5;555.42;>=,8.8.0;<,9.25.0"
+	"12.6;560.35;>=,8.8.0;<,9.25.0"
+	"12.8;570.221;>=,8.8.0;<,9.25.0"
+	"12.9;575.57;>=,8.8.0;<,9.25.0"
+)
+HIPIFY_7_2_CUDA_SLOTS=(
+	"11.8;520.61;=,8.6.0;=,8.6"
+	"12.3;545.23;>=,8.8.0;<,9.25.0"
+	"12.4;550.54;>=,8.8.0;<,9.25.0"
+	"12.5;555.42;>=,8.8.0;<,9.25.0"
+	"12.6;560.35;>=,8.8.0;<,9.25.0"
+	"12.8;570.211;>=,8.8.0;<,9.25.0"
+	"12.9;575.57;>=,8.8.0;<,9.25.0"
 )
 
 # Limited by prebuilt binaries
 HIP_6_4_LIBSTDCXX_SLOTS=( "12.5" "13.4" )
 HIP_7_0_LIBSTDCXX_SLOTS=( "12.5" "13.4" )
+HIP_7_2_LIBSTDCXX_SLOTS=( "12.5" "13.4" )
