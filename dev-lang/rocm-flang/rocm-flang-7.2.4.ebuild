@@ -5,7 +5,7 @@ EAPI=8
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
 )
 
 CXX_STANDARD=11
@@ -44,7 +44,7 @@ RESTRICT="
 "
 SLOT="0/${ROCM_SLOT}"
 IUSE="
-doc test ebuild_revision_8
+doc test ebuild_revision_9
 "
 REQUIRED_USE="
 "
