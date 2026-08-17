@@ -10,8 +10,8 @@ EAPI=8
 
 ABSEIL_CPP_SLOT=""
 BOOST_PV="1.72.0"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CXX_STANDARD=17
-LIBJPEG_TURBO_PV="3.0.2"
 LLVM_SLOT=19
 PYTHON_COMPAT=( "python3_"{10..13} )
 RAPIDJSON_COMMIT="24b5e7a8b27f42fa16b96fc70aade9106cf7102f" # Security fix for OOBR, 20250205
@@ -47,7 +47,12 @@ FFMPEG_COMPAT_SLOTS=(
 	"${FFMPEG_COMPAT_SLOTS_7[@]}" # D13
 )
 
-inherit abseil-cpp check-compiler-switch cmake flag-o-matic libstdcxx-slot protobuf python-single-r1 rocm
+CHKL_TIMESTAMPS=(
+	"dev-libs/rapidjson-9999"
+	"media-libs/libjpeg-turbo-9999"
+)
+
+inherit abseil-cpp cflags-hardened check-compiler-switch cmake flag-o-matic libstdcxx-slot protobuf python-single-r1 secure-version rocm
 
 #KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-rocm-${PV}"
@@ -76,7 +81,7 @@ IUSE+="
 ${AMDGPU_TARGETS_COMPAT[@]}
 cpu enhanced-message ffmpeg ieee1394 opencv python system-rapidjson
 test
-ebuild_revision_14
+ebuild_revision_15
 "
 REQUIRED_USE="
 	|| (
@@ -86,63 +91,44 @@ REQUIRED_USE="
 # The required Protobuf version is relaxed.
 RDEPEND="
 	${PYTHON_DEPS}
+	$(python_gen_cond_dep '
+		>=dev-python/pybind11-2.11.1[${PYTHON_USEDEP}]
+	')
+	dev-libs/protobuf:=
 	|| (
 		dev-libs/protobuf:3/3.12[${LIBSTDCXX_USEDEP}]
 		dev-libs/protobuf:3/3.21[${LIBSTDCXX_USEDEP}]
 	)
-	dev-libs/protobuf:=
-	$(python_gen_cond_dep '
-		>=dev-python/pybind11-2.11.1[${PYTHON_USEDEP}]
-	')
-	dev-db/lmdb
-	media-libs/libjpeg-turbo
-	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-	dev-util/hip:=
-	>=dev-libs/rocm-opencl-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-	dev-libs/rocm-opencl-runtime:=
-	>=sci-libs/MIVisionX-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-	sci-libs/MIVisionX:=
-	>=sci-libs/rocDecode-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-	sci-libs/rocDecode:=
-	>=sci-libs/rpp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-	sci-libs/rpp:=
-	>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-	sys-libs/llvm-roc-libomp:=
+	dev-db/lmdb:=
+	>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:=
+	~dev-util/hip-${PV}:=[${LIBSTDCXX_USEDEP}]
+	~dev-libs/rocm-opencl-runtime-${PV}:=[${LIBSTDCXX_USEDEP}]
+	~sci-libs/MIVisionX-${PV}:=[${LIBSTDCXX_USEDEP}]
+	~sci-libs/rocDecode-${PV}:=[${LIBSTDCXX_USEDEP}]
+	~sci-libs/rpp-${PV}:=[${LIBSTDCXX_USEDEP}]
+	~sys-libs/llvm-roc-libomp-${PV}:=[${LIBSTDCXX_USEDEP}]
 	!ffmpeg? (
-		>=dev-libs/boost-${BOOST_PV}[${LIBSTDCXX_USEDEP}]
-		dev-libs/boost:=
+		>=dev-libs/boost-${BOOST_PV}:=[${LIBSTDCXX_USEDEP}]
 	)
 	ffmpeg? (
-		|| (
-			>=media-video/ffmpeg-4.4.1:56.58.58
-			>=media-video/ffmpeg-4.4.1:0/56.58.58
-
-			>=media-video/ffmpeg-5.1.8:57.59.59
-			>=media-video/ffmpeg-5.1.8:0/57.59.59
-
-			>=media-video/ffmpeg-6.1.4:58.60.60
-			>=media-video/ffmpeg-6.1.4:0/58.60.60
-
-			>=media-video/ffmpeg-7.1.3:59.61.61
-			>=media-video/ffmpeg-7.1.3:0/59.61.61
-		)
-		media-video/ffmpeg:=
+		$(secure-version_gen_ffmpeg_depends '4.4-7.1')
 	)
 	opencv? (
-		>=media-libs/opencv-4.6.0[${LIBSTDCXX_USEDEP},features2d,gtk3,ieee1394?,jpeg,png,tiff]
-		media-libs/opencv:=
+		>=media-libs/opencv-${OPENCV4_PV}:=[${LIBSTDCXX_USEDEP},features2d,gtk3,ieee1394?,jpeg,png,tiff]
+		|| (
+			~media-libs/opencv-${OPENCV4_PV}[${LIBSTDCXX_USEDEP},features2d,gtk3,ieee1394?,jpeg,png,tiff]
+		)
 	)
 "
 DEPEND="
 	${RDEPEND}
-	>=dev-libs/half-1.12.0
+	>=dev-libs/half-1.12.0:=
 	system-rapidjson? (
-		=dev-libs/rapidjson-9999
+		=dev-libs/rapidjson-${RAPIDJSON_PV}:=
 	)
 "
 BDEPEND="
 	${PYTHON_DEPS}
-	>=dev-build/cmake-3.5
 	$(python_gen_cond_dep '
 		>=dev-python/wheel-0.37.0[${PYTHON_USEDEP}]
 		dev-python/pip[${PYTHON_USEDEP}]
@@ -150,6 +136,7 @@ BDEPEND="
 			>=dev-python/pytest-7.0.0[${PYTHON_USEDEP}]
 		)
 	')
+	>=dev-build/cmake-3.5
 	dev-lang/nasm
 	dev-lang/yasm
 	virtual/pkgconfig
@@ -166,7 +153,9 @@ pkg_setup() {
 
 src_unpack() {
 	if [[ "${PV}" == *"9999" ]] ; then
-		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
 		git-r3_fetch
 		git-r3_checkout
 	else
@@ -198,6 +187,8 @@ src_prepare() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
+
 	rocm_set_default_gcc
 
 	check-compiler-switch_end
@@ -205,6 +196,8 @@ src_configure() {
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
+
+	cflags-hardened_append
 
 	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
 	# Prevent static-libs IR mismatch.
