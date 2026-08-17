@@ -30,7 +30,7 @@ AMDGPU_TARGETS_COMPAT=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
 )
 
 inherit cmake libstdcxx-slot rocm
@@ -61,7 +61,7 @@ RESTRICT="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 -asan -benchmark -test
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
@@ -70,7 +70,7 @@ REQUIRED_USE="
 RDEPEND="
 	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 	dev-util/hip:=
-	>=sci-libs/rocPRIM-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCPRIM_7_0_AMDGPU_USEDEP}]
+	>=sci-libs/rocPRIM-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCPRIM_7_2_AMDGPU_USEDEP}]
 	sci-libs/rocPRIM:=
 	test? (
 		dev-cpp/gtest[${LIBSTDCXX_USEDEP}]
