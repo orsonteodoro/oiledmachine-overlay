@@ -97,7 +97,7 @@ RDEPEND+="
 	torch? (
 		${PYTORCH_DEPENDS}
 		$(python_gen_cond_dep '
-			dev-python/safetensors[${PYTHON_USEDEP},torch(+)]
+			sci-ml/safetensors[${PYTHON_USEDEP},torch(+)]
 		')
 		dev-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	)

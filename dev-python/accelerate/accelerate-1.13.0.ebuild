@@ -57,7 +57,7 @@ RDEPEND+="
 		>=dev-python/packaging-20.0[${PYTHON_USEDEP}]
 		dev-python/psutil[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
-		>=dev-python/safetensors-0.4.3[${PYTHON_USEDEP}]
+		>=sci-ml/safetensors-0.4.3[${PYTHON_USEDEP}]
 		virtual/numpy[${PYTHON_USEDEP}]
 		deepspeed? (
 			dev-python/deepspeed[${PYTHON_USEDEP}]
