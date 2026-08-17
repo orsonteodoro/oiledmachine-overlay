@@ -70,7 +70,7 @@ DOCS_DEPEND="
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_ROCM_7_0[@]}"
+	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
 inherit cmake docs edo flag-o-matic multiprocessing libstdcxx-slot python-single-r1 rocm
@@ -101,7 +101,7 @@ SLOT="0/${ROCM_SLOT}"
 IUSE="
 ${CPU_FLAGS_X86[@]}
 asan benchmark cuda +rocm test
-ebuild_revision_31
+ebuild_revision_32
 "
 gen_rocm_required_use() {
 	local x
@@ -133,7 +133,7 @@ is_gpu_allowed() {
 }
 gen_hipblaslt_rdepend() {
 	local x
-	for x in "${HIPBLASLT_7_0_AMDGPU_TARGETS_COMPAT[@]}" ; do
+	for x in "${HIPBLASLT_7_2_AMDGPU_TARGETS_COMPAT[@]}" ; do
 		is_gpu_allowed "${x}" || continue
 		echo "
 			amdgpu_targets_${x}? (
@@ -152,7 +152,7 @@ RDEPEND="
 	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
 	dev-util/hip:=
 	benchmark? (
-		sys-libs/llvm-roc-libomp:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_0_AMDGPU_USEDEP}]
+		sys-libs/llvm-roc-libomp:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_2_AMDGPU_USEDEP}]
 		sys-libs/llvm-roc-libomp:=
 		virtual/blas
 	)
@@ -169,7 +169,7 @@ DEPEND="
 	${RDEPEND}
 	test? (
 		dev-cpp/gtest
-		sys-libs/llvm-roc-libomp:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_0_AMDGPU_USEDEP}]
+		sys-libs/llvm-roc-libomp:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_2_AMDGPU_USEDEP}]
 		sys-libs/llvm-roc-libomp:=
 		virtual/blas
 	)
@@ -187,7 +187,7 @@ BDEPEND="
 	>=dev-build/rocm-cmake-${PV}:${SLOT}
 	dev-build/rocm-cmake:=
 	rocm? (
-		>=dev-util/Tensile-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},${TENSILE_7_0_AMDGPU_USEDEP},client,rocm]
+		>=dev-util/Tensile-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},${TENSILE_7_2_AMDGPU_USEDEP},client,rocm]
 		dev-util/Tensile:=
 	)
 "
@@ -243,7 +243,7 @@ ewarn "Pick one of the following for GPU side ASan:  ${ASAN_GPUS[@]/#/amdgpu_tar
 use_hipblaslt() {
 	local found=0
 	local x
-	for x in "${HIPBLASLT_7_0_AMDGPU_TARGETS_COMPAT[@]}" ; do
+	for x in "${HIPBLASLT_7_2_AMDGPU_TARGETS_COMPAT[@]}" ; do
 		is_gpu_allowed "${x}" || continue
 		if \
 			has "amdgpu_targets_${x}" ${IUSE_EFFECTIVE} \
