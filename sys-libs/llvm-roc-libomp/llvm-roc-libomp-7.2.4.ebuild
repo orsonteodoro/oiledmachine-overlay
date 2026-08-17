@@ -73,7 +73,7 @@ CUDA_TARGETS_COMPAT=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_ROCM_7_0[@]}"
+	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
 LLVM_TARGETS=(
@@ -144,7 +144,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${ROCM_IUSE}
 +archer -cuda +gdb-plugin -offload -ompt +ompd -remote-offloading
-ebuild_revision_32
+ebuild_revision_33
 "
 
 gen_cuda_required_use() {
