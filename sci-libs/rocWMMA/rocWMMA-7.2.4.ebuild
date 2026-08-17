@@ -19,7 +19,7 @@ AMDGPU_TARGETS_COMPAT=(
 )
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
 )
 
 CXX_STANDARD=17
@@ -52,7 +52,7 @@ RESTRICT="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 asan
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
@@ -62,7 +62,7 @@ RDEPEND="
 	dev-util/hip:=
 	>=dev-util/rocm-smi-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 	dev-util/rocm-smi:=
-	>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_0_AMDGPU_USEDEP}]
+	>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_2_AMDGPU_USEDEP}]
 	sys-libs/llvm-roc-libomp:=
 "
 DEPEND="
