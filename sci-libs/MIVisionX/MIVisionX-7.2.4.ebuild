@@ -37,7 +37,7 @@ FFMPEG_COMPAT_SLOTS=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_ROCM_7_0[@]}"
+	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
 inherit abseil-cpp check-compiler-switch cmake flag-o-matic libstdcxx-slot protobuf python-single-r1 rocm toolchain-funcs
@@ -92,7 +92,7 @@ IUSE="
 caffe cpu +enhanced-message ffmpeg -fp16 +ieee1394 +loom +migraphx +neural-net
 nnef onnx opencl opencv +rocal +rocal-python +rocm +rpp system-nnef-parser
 system-rapidjson
-ebuild_revision_27
+ebuild_revision_28
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
