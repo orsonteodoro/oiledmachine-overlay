@@ -5,7 +5,7 @@ EAPI=8
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
 )
 
 CXX_STANDARD=17
@@ -41,7 +41,7 @@ RESTRICT="strip" # Fix issue with finding symbols
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 	debug
-	ebuild_revision_17
+	ebuild_revision_18
 "
 RDEPEND="
 	${ROCM_CLANG_DEPEND}
