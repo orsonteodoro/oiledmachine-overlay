@@ -135,9 +135,14 @@ LIBCXX_COMPAT_CXX17_ROCM_7_0=(
 	"llvm_slot_19"
 )
 
+LIBCXX_COMPAT_CXX17_ROCM_7_2=(
+# Based on https://github.com/ROCm/llvm-project
+	"llvm_slot_22"
+)
+
 # For secure releases only
 LIBCXX_COMPAT_CXX17_ROCM=(
-	"llvm_slot_19"
+	"llvm_slot_22"
 )
 
 #
