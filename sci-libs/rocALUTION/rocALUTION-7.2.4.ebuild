@@ -37,7 +37,7 @@ AMDGPU_TARGETS_COMPAT=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
 )
 
 inherit check-compiler-switch cmake libstdcxx-slot rocm
@@ -57,7 +57,7 @@ SLOT="0/${ROCM_SLOT}"
 # Samples is default on upstream
 IUSE="
 -asan +rocm -samples openmp mpi
-ebuild_revision_10
+ebuild_revision_11
 "
 gen_rocm_required_use() {
 	local x
@@ -86,19 +86,19 @@ RDEPEND="
 	)
 	openmp? (
 		${ROCM_CLANG_DEPEND}
-		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_0_AMDGPU_USEDEP}]
+		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_2_AMDGPU_USEDEP}]
 		sys-libs/llvm-roc-libomp:=
 	)
 	rocm? (
 		>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-util/hip:=
-		>=sci-libs/rocBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCBLAS_7_0_AMDGPU_USEDEP}]
+		>=sci-libs/rocBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCBLAS_7_2_AMDGPU_USEDEP}]
 		sci-libs/rocBLAS:=
-		>=sci-libs/rocPRIM-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCPRIM_7_0_AMDGPU_USEDEP}]
+		>=sci-libs/rocPRIM-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCPRIM_7_2_AMDGPU_USEDEP}]
 		sci-libs/rocPRIM:=
-		>=sci-libs/rocRAND-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCRAND_7_0_AMDGPU_USEDEP}]
+		>=sci-libs/rocRAND-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCRAND_7_2_AMDGPU_USEDEP}]
 		sci-libs/rocRAND:=
-		>=sci-libs/rocSPARSE-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCSPARSE_7_0_AMDGPU_USEDEP}]
+		>=sci-libs/rocSPARSE-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCSPARSE_7_2_AMDGPU_USEDEP}]
 		sci-libs/rocSPARSE:=
 	)
 "
