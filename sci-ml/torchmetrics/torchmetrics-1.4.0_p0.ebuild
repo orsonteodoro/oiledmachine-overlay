@@ -135,10 +135,10 @@ IMAGE_RDEPEND="
 			)
 		)
 		!strict? (
-			sci-libs/torch-fidelity[${PYTHON_USEDEP}]
+			dev-python/torch-fidelity[${PYTHON_USEDEP}]
 		)
 		strict? (
-			<sci-libs/torch-fidelity-0.4.1[${PYTHON_USEDEP}]
+			<dev-python/torch-fidelity-0.4.1[${PYTHON_USEDEP}]
 		)
 	')
 	(
@@ -399,7 +399,7 @@ IMAGE_TEST_BDEPEND="
 				<dev-python/sewar-0.4.7[${PYTHON_USEDEP}]
 			)
 		)
-		=sci-libs/torch-fidelity-9999[${PYTHON_USEDEP}]
+		=dev-python/torch-fidelity-9999[${PYTHON_USEDEP}]
 		virtual/numpy[${PYTHON_USEDEP}]
 		!strict? (
 			dev-python/lpips[${PYTHON_USEDEP}]
