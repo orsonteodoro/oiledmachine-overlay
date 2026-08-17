@@ -10,7 +10,7 @@ ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
 )
 
 inherit check-compiler-switch cmake fix-rpath flag-o-matic libstdcxx-slot prefix rocm
@@ -93,7 +93,7 @@ RESTRICT="
 	)
 "
 SLOT="0/${ROCM_SLOT}"
-IUSE="test ebuild_revision_20"
+IUSE="test ebuild_revision_21"
 RDEPEND="
 	${ROCM_CLANG_DEPEND}
 	>=dev-libs/rocm-device-libs-${PV}:${SLOT}
