@@ -118,11 +118,11 @@ RDEPEND+="
 
 	cpu? (
 		>=dev-python/pytorch-2.2[${PYTHON_SINGLE_USEDEP},cpu]
-		>=dev-python/torchaudio-2.2.0[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/torchaudio-2.2.0[${PYTHON_SINGLE_USEDEP}]
 	)
 	cuda? (
 		>=dev-python/pytorch-2.2[${PYTHON_SINGLE_USEDEP},cuda]
-		>=dev-python/torchaudio-2.2.0[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/torchaudio-2.2.0[${PYTHON_SINGLE_USEDEP}]
 	)
 	codec? (
 		>=dev-python/torchcodec-0.8.0[${PYTHON_SINGLE_USEDEP}]

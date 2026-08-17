@@ -91,7 +91,7 @@ BDEPEND+="
 	)
 	test? (
 		>=dev-python/accelerate-1.0.0[${PYTHON_SINGLE_USEDEP}]
-		>=dev-python/torchvision-0.17.0[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/torchvision-0.17.0[${PYTHON_SINGLE_USEDEP}]
 	)
 
 "
