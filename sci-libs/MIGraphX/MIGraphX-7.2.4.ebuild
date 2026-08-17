@@ -23,7 +23,7 @@ AMDGPU_TARGETS_COMPAT=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_ROCM_7_0[@]}"
+	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
 inherit abseil-cpp cmake flag-o-matic libstdcxx-slot protobuf python-r1 rocm
@@ -52,7 +52,7 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 +composable-kernel -cpu -fpga -hip-rtc -mlir +rocm test
-ebuild_revision_12
+ebuild_revision_13
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -77,14 +77,14 @@ RDEPEND="
 	>=dev-python/pybind11-2.6.0[${PYTHON_USEDEP}]
 	dev-libs/msgpack
 	composable-kernel? (
-		>=sci-libs/composable-kernel-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${COMPOSABLE_KERNEL_7_0_AMDGPU_USEDEP}]
+		>=sci-libs/composable-kernel-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${COMPOSABLE_KERNEL_7_2_AMDGPU_USEDEP}]
 		sci-libs/composable-kernel:=
 	)
 	cpu? (
 		sci-ml/oneDNN
 		>=dev-libs/rocm-opencl-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
 		dev-libs/rocm-opencl-runtime:=
-		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_0_AMDGPU_USEDEP}]
+		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_2_AMDGPU_USEDEP}]
 		sys-libs/llvm-roc-libomp:=
 	)
 	mlir? (
@@ -92,9 +92,9 @@ RDEPEND="
 		sci-libs/rocMLIR:=
 	)
 	rocm? (
-		>=sci-libs/miopen-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${MIOPEN_7_0_AMDGPU_USEDEP}]
+		>=sci-libs/miopen-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${MIOPEN_7_2_AMDGPU_USEDEP}]
 		sci-libs/miopen:=
-		>=sci-libs/rocBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCBLAS_7_0_AMDGPU_USEDEP}]
+		>=sci-libs/rocBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCBLAS_7_2_AMDGPU_USEDEP}]
 		sci-libs/rocBLAS:=
 	)
 	test? (
