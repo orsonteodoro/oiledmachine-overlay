@@ -4201,7 +4201,7 @@ einfo
 einfo "Setting the EXTRAVERSION for the -${extraversion} build"
 		if [[ "${PV}" =~ "9999" ]] ; then
 			sed -i -r \
-				-e "s|EXTRAVERSION =[ rc0-9-]+\$|EXTRAVERSION = -${extraversion}|g" \
+				-e "s|EXTRAVERSION =[ rc0-9-]*\$|EXTRAVERSION = -${extraversion}|g" \
 				"Makefile" \
 				|| die
 		elif [[ "${PV}" =~ "_rc" ]] ; then
