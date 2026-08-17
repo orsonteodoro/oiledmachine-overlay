@@ -4,6 +4,7 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CXX_STANDARD=17
 LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
@@ -51,7 +52,12 @@ FFMPEG_COMPAT_SLOTS=(
 	"${FFMPEG_COMPAT_SLOTS_7[@]}" # D13
 )
 
-inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot rocm
+CHKL_TIMESTAMPS=(
+	"media-libs/libva-9999"
+	"media-libs/mesa-9999"
+)
+
+inherit cflags-hardened check-compiler-switch chkl cmake flag-o-matic libstdcxx-slot secure-version rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/rocDecode-rocm-${PV}"
@@ -83,43 +89,27 @@ RESTRICT="
 "
 SLOT="0/${ROCM_SLOT}"
 IUSE="
-samples ebuild_revision_5
+samples ebuild_revision_6
 "
 REQUIRED_USE="
 "
 RDEPEND="
-	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm]
-	dev-util/hip:=
-	>=media-libs/libva-2.7.0
-	>=media-libs/mesa-24.1.0[${LIBSTDCXX_USEDEP},vaapi,video_cards_radeonsi]
-	media-libs/mesa:=
+	~dev-util/hip-${PV}:=[${LIBSTDCXX_USEDEP},rocm]
+	>=media-libs/libva-${LIBVA_PV}:=
+	>=media-libs/mesa-${MESA_PV}:=[${LIBSTDCXX_USEDEP},vaapi,video_cards_radeonsi]
 	samples? (
-		|| (
-			>=media-video/ffmpeg-4.4.1:56.58.58
-			>=media-video/ffmpeg-4.4.1:0/56.58.58
-
-			>=media-video/ffmpeg-5.1.8:57.59.59
-			>=media-video/ffmpeg-5.1.8:0/57.59.59
-
-			>=media-video/ffmpeg-6.1.4:58.60.60
-			>=media-video/ffmpeg-6.1.4:0/58.60.60
-
-			>=media-video/ffmpeg-7.1.3:59.61.61
-			>=media-video/ffmpeg-7.1.3:0/59.61.61
-		)
-		media-video/ffmpeg:=
+		$(secure-version_gen_ffmpeg_depends '4.4-7.1')
 	)
 "
 DEPEND="
 	${RDEPEND}
-	>=dev-build/rocm-cmake-${PV}:${SLOT}
+	~dev-build/rocm-cmake-${PV}:=
 "
 BDEPEND="
 	${ROCM_CLANG_DEPEND}
 	>=dev-build/cmake-3.5
 	virtual/pkgconfig
-	>=dev-build/rocm-cmake-${PV}:${SLOT}
-	dev-build/rocm-cmake:=
+	~dev-build/rocm-cmake-${PV}:=
 "
 PATCHES=(
 )
@@ -146,6 +136,9 @@ src_prepare() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
+	cflags-hardened_append
+
 	addpredict "/dev/kfd"
 	addpredict "/dev/dri/"
 	local mycmakeargs=(
