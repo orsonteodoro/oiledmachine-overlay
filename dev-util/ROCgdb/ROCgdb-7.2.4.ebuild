@@ -3,11 +3,19 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 LLVM_SLOT=19
 PYTHON_COMPAT=( "python3_"{10..13} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit check-compiler-switch flag-o-matic python-single-r1 rocm
+CHKL_TIMESTAMPS=(
+	"app-arch/xz-utils-9999"
+	"app-arch/zstd-9999"
+	"dev-libs/expat-9999"
+	"sys-libs/readline-9999"
+)
+
+inherit cflags-hardened check-compiler-switch chkl flag-o-matic python-single-r1 secure-version rocm
 
 if [[ "${PV}" == *"9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/ROCm-Developer-Tools/ROCgdb/"
@@ -85,28 +93,27 @@ LICENSE="
 # The distro's GPL-3+ license template does not contain all rights reserved.
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="0/${ROCM_SLOT}"
-IUSE="ebuild_revision_12"
+IUSE="ebuild_revision_13"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
 RDEPEND="
 	${PYTHON_DEPS}
-	>=virtual/zlib-1.1.4
-	app-arch/xz-utils
-	app-arch/zstd
-	dev-libs/expat
-	dev-libs/gmp
-	dev-libs/mpfr
-	dev-util/babeltrace
-	sys-devel/gcc
-	sys-libs/ncurses
-	virtual/libc
-	>=dev-libs/ROCdbgapi-${PV}:${SLOT}
-	dev-libs/ROCdbgapi:=
+	>=app-arch/xz-utils-${XZ_UTILS_PV}:=
+	>=app-arch/zstd-${ZSTD_PV}:=
+	>=dev-libs/expat-${EXPAT_PV}:=
+	>=dev-libs/gmp-${GMP_PV}:=
+	>=sys-libs/ncurses-${NCURSES_PV}:=
+	>=virtual/zlib-${ZLIB_PV}:=
+	dev-libs/mpfr:=
+	dev-util/babeltrace:=
+	sys-devel/gcc:=
+	virtual/libc:=
+	~dev-libs/ROCdbgapi-${PV}:=
 "
 DEPEND="
 	${RDEPEND}
-	sys-libs/readline
+	>=sys-libs/readline-${READLINE_PV}:=
 "
 BDEPEND="
 	${ROCM_GCC_DEPEND}
@@ -133,6 +140,8 @@ src_prepare() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
+
 	rocm_set_default_gcc
 
 	check-compiler-switch_end
@@ -140,6 +149,8 @@ src_configure() {
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
+
+	cflags-hardened_append
 
 	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
 	# Prevent static-libs IR mismatch.
