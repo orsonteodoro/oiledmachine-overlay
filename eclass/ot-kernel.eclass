@@ -184,6 +184,8 @@ COREUTILS_IMPL=(
 	"uutils-coreutils"
 )
 
+SIGNED_MODULE_EXTRAVERSIONS=() # Variable not const
+
 GCC_PKG="sys-devel/gcc"
 GENPATCHES_URI_BASE_URI="https://gitweb.gentoo.org/proj/linux-patches.git/snapshot/"
 GENPATCHES_MAJOR_MINOR_REVISION="${KV_MAJOR_MINOR}-${GENPATCHES_VER}"
@@ -8994,6 +8996,7 @@ einfo "Changing config to auto-signed modules with ${sign_modules_upper}"
 		ot-kernel_y_configopt "CONFIG_MODULE_SIG_${sign_modules_upper}"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_${sign_modules_upper}"
 		ot-kernel_set_configopt "CONFIG_MODULE_SIG_HASH" "\"${sign_modules_lower}\""
+		SIGNED_MODULE_EXTRAVERSIONS+=( "${extraversion}" )
 	elif [[ "${sign_modules}" == "0" ]] ; then
 einfo "Disabling auto-signed modules"
 		ot-kernel_unset_configopt "CONFIG_MODULE_SIG"
@@ -19029,14 +19032,32 @@ einfo "Adding modprobe settings for rtw89_pci to mitigate unstable disconnects"
 	fi
 }
 
-# @FUNCTION: ot-kernel_pkg_postinst
+# @FUNCTION: ot-kernel_postinst_warn_external_module_signing_required
 # @DESCRIPTION:
-# Present warnings and avoid collision checks.
+# Warn about required signing for external modules.
+ot-kernel_postinst_warn_external_module_signing_required() {
+	if (( ${#SIGNED_MODULE_EXTRAVERSIONS[@]} > 0 )) ; then
+ewarn
+ewarn "Module signature verification is turned ON."
+ewarn
+ewarn "You need to sign your external modules for the following kernel"
+ewarn "extraversions:"
+ewarn
+echo "${SIGNED_MODULE_EXTRAVERSIONS[@]}" | tr " " $'\n'
+ewarn
+	fi
+}
+
+# @FUNCTION: ot-kernel_postinst_wipe_keys
+# @DESCRIPTION:
+# Wipe private signing keys from temporary build directory from forensics
+# attack.
 #
-# ot-kernel_pkg_postinst_cb - callback if any to handle after emerge phase
+# The user is still responsible to move and sanitize the key after
+# installation.
 #
-ot-kernel_pkg_postinst() {
-	dhms_end
+# TODO:  Verify or move to earlier phase.
+ot-kernel_postinst_wipe_keys() {
 	local env_path
 	for env_path in $(ot-kernel_get_envs) ; do
 		[[ -e "${env_path}" ]] || continue
@@ -19055,7 +19076,12 @@ einfo "Secure wiping the private key in build directory for ${extraversion}"
 			shred -f "${BUILD_DIR}/certs/signing_key.pem" || die
 		fi
 	done
+}
 
+# @FUNCTION: ot-kernel_postinst_set_kernel_symlink
+# @DESCRIPTION:
+# Set the symlink to /usr/src/linux
+ot-kernel_postinst_set_kernel_symlink() {
 	local main_extraversion=${OT_KERNEL_PRIMARY_EXTRAVERSION:-ot}
 	local main_extraversion_with_tresor=${OT_KERNEL_PRIMARY_EXTRAVERSION_WITH_TRESOR:-ot}
 
@@ -19066,6 +19092,19 @@ einfo "Secure wiping the private key in build directory for ${extraversion}"
 		# dosym src_relpath_real dest_abspath_symlink
 		dosym "linux-${highest_pv}-${main_extraversion}" "/usr/src/linux"
 	fi
+}
+
+# @FUNCTION: ot-kernel_pkg_postinst
+# @DESCRIPTION:
+# Present warnings and avoid collision checks.
+#
+# ot-kernel_pkg_postinst_cb - callback if any to handle after emerge phase
+#
+ot-kernel_pkg_postinst() {
+	dhms_end
+
+	ot-kernel_postinst_wipe_keys
+	ot-kernel_postinst_set_kernel_symlink
 
 	if declare -f ot-kernel_pkg_postinst_cb > /dev/null ; then
 		ot-kernel_pkg_postinst_cb
@@ -19085,6 +19124,7 @@ einfo "Secure wiping the private key in build directory for ${extraversion}"
 	ot-kernel_postinst_proton
 	ot-kernel_postinst_experimental_kernel
 	ot-kernel_postinst_wireless_disable_power_management
+	ot-kernel_postinst_warn_external_module_signing_required
 }
 
 # @FUNCTION: pkg_prerm
