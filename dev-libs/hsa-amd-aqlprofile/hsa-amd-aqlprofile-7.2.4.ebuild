@@ -5,7 +5,7 @@ EAPI=8
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
 )
 DOWNLOAD_FILE_12_5="hsa-amd-aqlprofile_1.0.0.70002-56~22.04_amd64.deb"
 DOWNLOAD_FILE_13_4="hsa-amd-aqlprofile_1.0.0.70002-56~24.04_amd64.deb"
@@ -45,7 +45,7 @@ SLOT="0/${ROCM_SLOT}"
 IUSE="
 ${GCC_COMPAT[@]}
 deny-install skip-install
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	^^ (
