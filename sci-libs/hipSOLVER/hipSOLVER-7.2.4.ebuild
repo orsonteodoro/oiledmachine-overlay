@@ -11,7 +11,7 @@ ROCM_VERSION="${PV}"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
 )
 
 inherit cmake edo flag-o-matic libstdcxx-slot rocm toolchain-funcs
@@ -37,7 +37,7 @@ LICENSE="
 # MIT - LICENSE.md
 # The distro's MIT license template does not have all rights reserved.
 SLOT="0/${ROCM_SLOT}"
-IUSE="asan test cuda +rocm ebuild_revision_7"
+IUSE="asan test cuda +rocm ebuild_revision_8"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 	^^ (
