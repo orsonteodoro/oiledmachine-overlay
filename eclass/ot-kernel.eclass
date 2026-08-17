@@ -18736,9 +18736,16 @@ ewarn
 ewarn
 ewarn "Numerous CPU and RAM vulnerabilities have been identified recently."
 ewarn
+ewarn
+ewarn "For Rowhammer mitigation:"
+ewarn
+ewarn "Prompt the AI:  how do i mitigate rowhammer in BIOS/UEFI?"
+ewarn
+ewarn
 ewarn "For an overview about affected processors, see"
 ewarn
 ewarn "  https://en.wikipedia.org/wiki/Transient_execution_CPU_vulnerability"
+ewarn
 ewarn
 ewarn "Mitigation techniques:"
 ewarn
