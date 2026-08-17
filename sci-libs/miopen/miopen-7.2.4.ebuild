@@ -9,8 +9,7 @@ LLVM_SLOT=19
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 AMDGPU_TARGETS_COMPAT=(
-# https://github.com/ROCm/MIOpen/blob/rocm-7.0.2/test/CMakeLists.txt#L121
-	"gfx803"
+# https://github.com/ROCm/MIOpen/blob/rocm-7.2.4/test/CMakeLists.txt#L121
 	"gfx900"
 	"gfx906"
 	"gfx908"
@@ -21,12 +20,15 @@ AMDGPU_TARGETS_COMPAT=(
 	"gfx1031"
 	"gfx1100"
 	"gfx1102"
+	"gfx1150"
+	"gfx1151"
+	"gfx1152"
+	"gfx1153"
 	"gfx1200"
 	"gfx1201"
 )
 
 AMDGPU_UNTESTED_TARGETS=(
-	"gfx803"
 )
 
 MIOPENKERNELS_TARGETS_COMPAT=(
@@ -40,7 +42,7 @@ MIOPENKERNELS_TARGETS_COMPAT=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
 inherit check-compiler-switch cmake flag-o-matic fix-rpath libstdcxx-slot rocm
@@ -76,7 +78,7 @@ ebuild_revision_21
 "
 gen_amdgpu_required_use() {
 	local x
-	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+	for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
 		echo "
 			amdgpu_targets_${x}? (
 				rocm
@@ -87,7 +89,7 @@ gen_amdgpu_required_use() {
 is_gfx_supported_by_miopen() {
 	local gfx="${1}"
 	local x
-	for x in ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_} ; do
+	for x in "${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}" ; do
 		if [[ "${gfx}" == "${x}" ]] ; then
 			return 0
 		fi
@@ -96,7 +98,7 @@ is_gfx_supported_by_miopen() {
 }
 gen_hipblaslt_required_use() {
 	local x
-	for x in ${HIPBLASLT_7_2_AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_} ; do
+	for x in "${HIPBLASLT_7_2_AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}" ; do
 		is_gfx_supported_by_miopen "${x}" || continue
 		echo "
 			${x}
@@ -135,56 +137,42 @@ REQUIRED_USE="
 "
 gen_hipblaslt_rdepend() {
 	local x
-	for x in ${HIPBLASLT_7_2_AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_} ; do
+	for x in "${HIPBLASLT_7_2_AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}" ; do
 		is_gfx_supported_by_miopen "${x}" || continue
 		echo "
 			${x}? (
-				>=sci-libs/hipBLASLt-${PV}:${SLOT}[${x}]
-				sci-libs/hipBLASLt:=
+				~sci-libs/hipBLASLt-${PV}:=[${x}]
 			)
 		"
 	done
 }
 RDEPEND="
-	>=app-arch/zstd-1.4.5
-	>=dev-db/sqlite-3.43.2
-	>=dev-libs/boost-1.83[${LIBSTDCXX_USEDEP}]
-	dev-libs/boost:=
-	app-alternatives/bzip2
-	>=dev-util/hip-${PV}:${SLOT}
-	dev-util/hip:=
+	>=app-arch/zstd-1.4.5:=
+	>=dev-db/sqlite-3.43.2:=
+	>=dev-libs/boost-1.83:=[${LIBSTDCXX_USEDEP}]
+	app-alternatives/bzip2:*
+	~dev-util/hip-${PV}:=
 	comgr? (
-		>=dev-libs/rocm-comgr-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-		dev-libs/rocm-comgr:=
+		~dev-libs/rocm-comgr-${PV}:=[${LIBSTDCXX_USEDEP}]
 	)
 	composable-kernel? (
-		sci-libs/composable-kernel:${SLOT}[${LIBSTDCXX_USEDEP},${COMPOSABLE_KERNEL_7_2_AMDGPU_USEDEP}]
-		sci-libs/composable-kernel:=
+		sci-libs/composable-kernel:=[${LIBSTDCXX_USEDEP},${COMPOSABLE_KERNEL_7_2_AMDGPU_USEDEP}]
 	)
 	hipblaslt? (
 		$(gen_hipblaslt_rdepend)
 	)
-	kernels? (
-		>=sci-libs/miopenkernels-${PV}:${SLOT}[${MIOPENKERNELS_7_2_AMDGPU_USEDEP}]
-		sci-libs/miopenkernels:=
-	)
 	miopendriver? (
-		>=sci-libs/rocRAND-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCRAND_7_2_AMDGPU_USEDEP}]
-		sci-libs/rocRAND:=
+		~sci-libs/rocRAND-${PV}:=[${LIBSTDCXX_USEDEP},${ROCRAND_7_2_AMDGPU_USEDEP}]
 	)
 	mlir? (
-		>=sci-libs/rocMLIR-${ROCM_SLOT}:${SLOT}[${LIBSTDCXX_USEDEP},fat-librockcompiler(+)]
-		sci-libs/rocMLIR:=
+		~sci-libs/rocMLIR-${ROCM_SLOT}:=[${LIBSTDCXX_USEDEP},fat-librockcompiler(+)]
 	)
 	opencl? (
-		>=dev-libs/rocm-opencl-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_2_AMDGPU_USEDEP}]
-		dev-libs/rocm-opencl-runtime:=
+		~dev-libs/rocm-opencl-runtime-${PV}:=[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_2_AMDGPU_USEDEP}]
 	)
 	rocm? (
-		>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm]
-		dev-util/hip:=
-		>=sci-libs/rocBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCBLAS_7_2_AMDGPU_USEDEP},rocm]
-		sci-libs/rocBLAS:=
+		~dev-util/hip-${PV}:=[${LIBSTDCXX_USEDEP},rocm]
+		~sci-libs/rocBLAS-${PV}:=[${LIBSTDCXX_USEDEP},${ROCBLAS_7_2_AMDGPU_USEDEP},rocm]
 	)
 "
 gen_hipblaslt_depend() {
@@ -193,27 +181,20 @@ gen_hipblaslt_depend() {
 		is_gfx_supported_by_miopen "${x}" || continue
 		echo "
 			${x}? (
-				>=sci-libs/hipBLAS-common-${PV}:${SLOT}
-				sci-libs/hipBLAS-common:=
+				~sci-libs/hipBLAS-common-${PV}:=
 			)
 		"
 	done
 }
 DEPEND="
 	${RDEPEND}
-	>=dev-libs/half-1.12.0
-	dev-libs/half:=
-	>=dev-cpp/eigen-3.4.0:3
-	dev-cpp/eigen:=
-	>=dev-cpp/frugally-deep-0.15.20
-	dev-cpp/frugally-deep:=
-	>=dev-cpp/nlohmann_json-3.11.2
-	dev-cpp/nlohmann_json:=
+	>=dev-libs/half-1.12.0:=
+	>=dev-cpp/eigen-3.4.0:=
+	>=dev-cpp/frugally-deep-0.15.20:=
+	>=dev-cpp/nlohmann_json-3.11.2:=
 	ai-kernel-tuning? (
-		>=dev-cpp/frugally-deep-0.15.21_p0
-		dev-cpp/frugally-deep:=
-		>=dev-cpp/eigen-3.4.0:3
-		dev-cpp/eigen:=
+		>=dev-cpp/frugally-deep-0.15.21_p0:=
+		>=dev-cpp/eigen-3.4.0:=
 	)
 	hipblaslt? (
 		$(gen_hipblaslt_depend)
@@ -223,8 +204,7 @@ DEPEND="
 BDEPEND="
 	${HIP_CLANG_DEPEND}
 	virtual/pkgconfig
-	>=dev-build/rocm-cmake-${PV}:${SLOT}
-	dev-build/rocm-cmake:=
+	~dev-build/rocm-cmake-${PV}:=
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-6.1.2-disable-no-inline-boost.patch" # Build time testing
@@ -249,7 +229,7 @@ ewarn "${gpu} is not tested upstream but may still be available."
 pkg_setup() {
 	check-compiler-switch_start
 	rocm_pkg_setup
-	warn_untested_gpu
+	#warn_untested_gpu
 	libstdcxx-slot_verify
 }
 
