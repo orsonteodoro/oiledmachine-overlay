@@ -7,7 +7,7 @@ CXX_STANDARD="ignore"
 LIBCXX_SLOT_VERIFY=0
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-# See https://github.com/ROCm/rocm-install-on-linux/blob/release/rocm-rel-7.0.2/docs/reference/system-requirements.rst
+# See https://github.com/ROCm/rocm-install-on-linux/blob/rocm-7.0.0/docs/reference/system-requirements.rst
 AMDGPU_TARGETS_COMPAT=(
 	"gfx908"
 	"gfx90a"
@@ -22,10 +22,10 @@ AMDGPU_TARGETS_COMPAT=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
-inherit libstdcxx-slot rocm
+inherit libstdcxx-slot secure-version rocm
 
 #KEYWORDS="~amd64"
 
@@ -68,7 +68,7 @@ REQUIRED_USE="
 has_gpu() {
 	local gpu="${x}"
 	local x
-	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+	for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
 		if [[ "${gpu}" == "${x}" ]] ; then
 			return 0
 		fi
@@ -77,26 +77,24 @@ has_gpu() {
 }
 gen_hipblaslt_rdepend() {
 	local x
-	for x in ${HIPBLASLT_7_2_AMDGPU_TARGETS_COMPAT[@]} ; do
+	for x in "${HIPBLASLT_7_2_AMDGPU_TARGETS_COMPAT[@]}" ; do
 		[[ "${x}" =~ "xnack" ]] && continue
 		has_gpu "${x}" || continue
 		echo "
 			amdgpu_targets_${x}? (
-				>=sci-libs/hipBLASLt-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPBLASLT)]
-				sci-libs/hipBLASLt:=
+				~sci-libs/hipBLASLt-${PV}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPBLASLT)]
 			)
 		"
 	done
 }
 gen_hipsparselt_rdepend() {
 	local x
-	for x in ${HIPSPARSELT_7_2_AMDGPU_TARGETS_COMPAT[@]} ; do
+	for x in "${HIPSPARSELT_7_2_AMDGPU_TARGETS_COMPAT[@]}" ; do
 		[[ "${x}" =~ "xnack" ]] && continue
 		has_gpu "${x}" || continue
 		echo "
 			amdgpu_targets_${x}? (
-				>=sci-libs/hipSPARSELt-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm]
-				sci-libs/hipSPARSELt:=
+				~sci-libs/hipSPARSELt-${PV}:=[${LIBSTDCXX_USEDEP},rocm]
 			)
 		"
 	done
@@ -108,85 +106,66 @@ RDEPEND="
 			virtual/cuda-compiler:=
 		)
 		rocm? (
-			>=dev-libs/rocm-comgr-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-			dev-libs/rocm-comgr:=
-			>=sys-devel/llvm-roc-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-			sys-devel/llvm-roc:=
+			~dev-libs/rocm-comgr-${PV}:=[${LIBSTDCXX_USEDEP}]
+			~sys-devel/llvm-roc-${PV}:=[${LIBSTDCXX_USEDEP}]
 		)
 	)
 	math? (
-		>=sci-libs/hipBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
-		sci-libs/hipBLAS:=
-		>=sci-libs/hipRAND-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
-		sci-libs/hipRAND:=
-		>=sci-libs/hipSOLVER-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
-		sci-libs/hipSOLVER:=
-		>=sci-libs/hipSPARSE-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
-		sci-libs/hipSPARSE:=
+		~sci-libs/hipBLAS-${PV}:=[${LIBSTDCXX_USEDEP},cuda?,rocm?]
+		~sci-libs/hipRAND-${PV}:=[${LIBSTDCXX_USEDEP},cuda?,rocm?]
+		~sci-libs/hipSOLVER-${PV}:=[${LIBSTDCXX_USEDEP},cuda?,rocm?]
+		~sci-libs/hipSPARSE-${PV}:=[${LIBSTDCXX_USEDEP},cuda?,rocm?]
 		cuda? (
-			>=sci-libs/hipFFT-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda]
-			sci-libs/hipFFT:=
+			~sci-libs/hipFFT-${PV}:=[${LIBSTDCXX_USEDEP},cuda]
 		)
 		fortran? (
-			>=dev-util/hipfort-${PV}:${SLOT}
-			dev-util/hipfort:=
+			~dev-util/hipfort-${PV}:=
 		)
 		rocm? (
-			>=sci-libs/hipFFT-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPFFT)]
-			sci-libs/hipFFT:=
+			~sci-libs/hipFFT-${PV}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPFFT)]
 			$(gen_hipblaslt_rdepend)
 			$(gen_hipsparselt_rdepend)
 		)
 	)
 	primitives? (
-		>=sci-libs/hipTensor-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
-		sci-libs/hipTensor:=
+		~sci-libs/hipTensor-${PV}:=[${LIBSTDCXX_USEDEP},cuda?,rocm?]
 		cuda? (
-			>=sci-libs/hipCUB-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda]
-			sci-libs/hipCUB:=
+			~sci-libs/hipCUB-${PV}:=[${LIBSTDCXX_USEDEP},cuda]
 		)
 		rocm? (
-			>=sci-libs/hipCUB-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPCUB)]
-			sci-libs/hipCUB:=
+			~sci-libs/hipCUB-${PV}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPCUB)]
 		)
 	)
 	runtimes? (
 		hip? (
-			>=dev-lang/perl-5.0
-			sys-apps/file
+			$(secure-version_gen_perl_depends)
+			sys-apps/file:=
 			gcc_slot_12_5? (
-				>=sys-libs/glibc-2.35
+				>=sys-libs/glibc-2.35:=
 			)
 			gcc_slot_13_4? (
-				>=sys-libs/glibc-2.39
+				>=sys-libs/glibc-2.39:=
 			)
 			dev-perl/URI-Encode
 			dev-perl/File-BaseDir
 			dev-perl/File-Copy-Recursive
 			dev-perl/File-Listing
 			dev-perl/File-Which
-			>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
-			dev-util/hip:=
+			~dev-util/hip-${PV}:=[${LIBSTDCXX_USEDEP},cuda?,rocm?]
 		)
 		rocm? (
-			>=dev-libs/rocm-device-libs-${PV}:${SLOT}
-			dev-libs/rocm-device-libs:=
-			>=dev-libs/rocr-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-			dev-libs/rocr-runtime:=
+			~dev-libs/rocm-device-libs-${PV}:=
+			~dev-libs/rocr-runtime-${PV}:=[${LIBSTDCXX_USEDEP}]
 		)
 	)
 	support-libs? (
 		cuda? (
-			>=dev-build/rocm-cmake-${PV}:${SLOT}
-			dev-build/rocm-cmake:=
-			>=dev-libs/hipother-${PV}:${SLOT}
-			dev-libs/hipother:=
+			~dev-build/rocm-cmake-${PV}:=
+			~dev-libs/hipother-${PV}:=
 		)
 		rocm? (
-			>=dev-build/rocm-cmake-${PV}:${SLOT}
-			dev-build/rocm-cmake:=
-			>=dev-libs/rocm-core-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-			dev-libs/rocm-core:=
+			~dev-build/rocm-cmake-${PV}:=
+			~dev-libs/rocm-core-${PV}:=[${LIBSTDCXX_USEDEP}]
 		)
 	)
 "

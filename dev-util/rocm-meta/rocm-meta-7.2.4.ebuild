@@ -12,7 +12,9 @@ CXX_STANDARD="ignore"
 LIBSTDCXX_SLOT_VERIFY=0
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-# See https://github.com/ROCm/rocm-install-on-linux/blob/rocm-7.2.0/docs/reference/system-requirements.rst
+# See
+# https://github.com/ROCm/rocm-install-on-linux/blob/rocm-7.2.0/docs/reference/system-requirements.rst
+# https://github.com/ROCm/rocm-install-on-linux/blob/rocm-7.2.0/docs/reference/user-kernel-space-compat-matrix.rst
 AMDGPU_TARGETS_COMPAT=(
 	"gfx908"
 	"gfx90a"
@@ -27,10 +29,10 @@ AMDGPU_TARGETS_COMPAT=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
-inherit libstdcxx-slot rocm
+inherit libstdcxx-slot secure-version rocm
 
 #KEYWORDS="~amd64"
 
@@ -184,9 +186,9 @@ RDEPEND="
 	kernel-driver? (
 		virtual/kfd:=
 		|| (
+			~virtual/kfd-7.2:0/7.2
+			~virtual/kfd-7.1:0/7.1
 			~virtual/kfd-7.0:0/7.0
-			~virtual/kfd-6.4:0/6.4
-			~virtual/kfd-6.3:0/6.3
 		)
 	)
 	math? (
@@ -224,7 +226,7 @@ RDEPEND="
 		~dev-libs/rocm-device-libs-${PV}:=
 		~dev-libs/rocr-runtime-${PV}:=[${LIBSTDCXX_USEDEP}]
 		hip? (
-			>=dev-lang/perl-5.0:=
+			$(secure-version_gen_perl_depends)
 			sys-apps/file:=
 			gcc_slot_12_5? (
 				>=sys-libs/glibc-2.35:=
