@@ -50,7 +50,7 @@ AMDGPU_UNTESTED_TARGETS=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
 )
 
 inherit check-compiler-switch cmake dhms flag-o-matic libstdcxx-slot rocm
@@ -82,7 +82,7 @@ LICENSE="
 RESTRICT="test"
 SLOT="0/${ROCM_SLOT}"
 IUSE+="
-test ebuild_revision_13
+test ebuild_revision_14
 "
 REQUIRED_USE="
 "
@@ -91,7 +91,7 @@ RDEPEND="
 	dev-libs/rocm-opencl-runtime:=
 	>=dev-util/hip-${ROCM_VERSION}:${SLOT}[${LIBSTDCXX_USEDEP}]
 	dev-util/hip:=
-	>=sys-libs/llvm-roc-libomp-${ROCM_VERSION}:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_0_AMDGPU_USEDEP}]
+	>=sys-libs/llvm-roc-libomp-${ROCM_VERSION}:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_2_AMDGPU_USEDEP}]
 	sys-libs/llvm-roc-libomp:=
 "
 DEPEND="
