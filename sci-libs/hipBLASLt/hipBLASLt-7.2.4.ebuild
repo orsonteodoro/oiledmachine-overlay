@@ -37,7 +37,7 @@ AMDGPU_TARGETS_COMPAT=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
 )
 
 inherit cmake flag-o-matic libstdcxx-slot python-r1 rocm
@@ -71,7 +71,7 @@ SLOT="0/${ROCM_SLOT}"
 IUSE+="
 ${ROCM_IUSE}
 -asan -benchmark -cuda +minimal +rocm
-ebuild_revision_14
+ebuild_revision_15
 "
 gen_rocm_required_use() {
 	local x
