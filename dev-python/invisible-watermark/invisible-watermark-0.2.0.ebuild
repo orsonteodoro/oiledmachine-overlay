@@ -51,7 +51,7 @@ RDEPEND+="
 		virtual/numpy[${PYTHON_USEDEP}]
 	')
 	>=media-libs/opencv-4.1.0.25[${PYTHON_SINGLE_USEDEP},ffmpeg?,gstreamer?,jpeg,png,python]
-	dev-python/pytorch[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
