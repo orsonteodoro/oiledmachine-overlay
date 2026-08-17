@@ -30,7 +30,7 @@ AMDGPU_TARGETS_COMPAT=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
 )
 
 inherit cmake edo fix-rpath libstdcxx-slot rocm
@@ -56,7 +56,7 @@ RESTRICT="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 -asan +sparse -test -benchmark
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
@@ -67,13 +67,13 @@ RDEPEND="
 	dev-libs/libfmt:=
 	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm]
 	dev-util/hip:=
-	>=sci-libs/rocBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCBLAS_7_0_AMDGPU_USEDEP},rocm]
+	>=sci-libs/rocBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCBLAS_7_2_AMDGPU_USEDEP},rocm]
 	sci-libs/rocBLAS:=
 	benchmark? (
 		virtual/blas
 	)
 	sparse? (
-		>=sci-libs/rocSPARSE-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCSPARSE_7_0_AMDGPU_USEDEP},rocm]
+		>=sci-libs/rocSPARSE-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCSPARSE_7_2_AMDGPU_USEDEP},rocm]
 		sci-libs/rocSPARSE:=
 	)
 "
