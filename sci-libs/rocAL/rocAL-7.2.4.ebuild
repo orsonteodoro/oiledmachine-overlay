@@ -36,7 +36,7 @@ AMDGPU_TARGETS_COMPAT=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_ROCM_7_0[@]}"
+	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
 inherit ffmpeg
@@ -76,7 +76,7 @@ IUSE+="
 ${AMDGPU_TARGETS_COMPAT[@]}
 cpu enhanced-message ffmpeg ieee1394 opencv python system-rapidjson
 test
-ebuild_revision_13
+ebuild_revision_14
 "
 REQUIRED_USE="
 	|| (
