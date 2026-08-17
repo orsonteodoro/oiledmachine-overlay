@@ -45,7 +45,13 @@ GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
-inherit check-compiler-switch cmake flag-o-matic fix-rpath libstdcxx-slot rocm
+CHKL_TIMESTAMPS=(
+	"app-arch/zstd-9999"
+	"dev-cpp/nlohmann_json-9999"
+	"dev-db/sqlite-9999"
+)
+
+inherit check-compiler-switch chkl cmake flag-o-matic fix-rpath libstdcxx-slot secure-version rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/MIOpen-rocm-${PV}"
@@ -147,8 +153,8 @@ gen_hipblaslt_rdepend() {
 	done
 }
 RDEPEND="
-	>=app-arch/zstd-1.4.5:=
-	>=dev-db/sqlite-3.43.2:=
+	>=app-arch/zstd-${ZSTD_PV}:=
+	>=dev-db/sqlite-${SQLITE_PV}:=
 	>=dev-libs/boost-1.83:=[${LIBSTDCXX_USEDEP}]
 	app-alternatives/bzip2:*
 	~dev-util/hip-${PV}:=
@@ -191,7 +197,7 @@ DEPEND="
 	>=dev-libs/half-1.12.0:=
 	>=dev-cpp/eigen-3.4.0:=
 	>=dev-cpp/frugally-deep-0.15.20:=
-	>=dev-cpp/nlohmann_json-3.11.2:=
+	>=dev-cpp/nlohmann_json-${NLOHMANN_JSON_PV}:=
 	ai-kernel-tuning? (
 		>=dev-cpp/frugally-deep-0.15.21_p0:=
 		>=dev-cpp/eigen-3.4.0:=
@@ -292,6 +298,8 @@ filter_test_gpus() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
+
 	# Prevent linking error:
 	# libhsa-runtime64.so: undefined reference to `hsaKmtReplaceAsanHeaderPage'
 	#append-flags -Wl,-fuse-ld=gold
