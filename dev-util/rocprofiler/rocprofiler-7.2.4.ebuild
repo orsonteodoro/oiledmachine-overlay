@@ -49,7 +49,7 @@ AMDGPU_UNTESTED_TARGETS=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
 )
 
 inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot python-any-r1 rocm
@@ -76,7 +76,7 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="test"
 SLOT="0/${ROCM_SLOT}"
-IUSE=" plugins samples test ebuild_revision_19"
+IUSE=" plugins samples test ebuild_revision_20"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
