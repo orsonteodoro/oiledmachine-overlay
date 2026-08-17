@@ -40,10 +40,10 @@ IUSE+=" cpu cuda dev"
 RDEPEND+="
 	virtual/numpy[${PYTHON_USEDEP}]
 	cpu? (
-		>=dev-python/pytorch-1.12.1[${PYTHON_USEDEP}]
+		>=sci-ml/pytorch-1.12.1[${PYTHON_USEDEP}]
 	)
 	cuda? (
-		>=dev-python/pytorch-1.12.1[${PYTHON_USEDEP}]
+		>=sci-ml/pytorch-1.12.1[${PYTHON_USEDEP}]
 	)
 "
 DEPEND+="

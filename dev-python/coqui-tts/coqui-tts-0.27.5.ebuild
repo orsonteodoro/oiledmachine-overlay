@@ -117,11 +117,11 @@ RDEPEND+="
 	>=sci-ml/transformers-4.57[${PYTHON_SINGLE_USEDEP}]
 
 	cpu? (
-		>=dev-python/pytorch-2.2[${PYTHON_SINGLE_USEDEP},cpu]
+		>=sci-ml/pytorch-2.2[${PYTHON_SINGLE_USEDEP},cpu]
 		>=sci-ml/torchaudio-2.2.0[${PYTHON_SINGLE_USEDEP}]
 	)
 	cuda? (
-		>=dev-python/pytorch-2.2[${PYTHON_SINGLE_USEDEP},cuda]
+		>=sci-ml/pytorch-2.2[${PYTHON_SINGLE_USEDEP},cuda]
 		>=sci-ml/torchaudio-2.2.0[${PYTHON_SINGLE_USEDEP}]
 	)
 	codec? (
