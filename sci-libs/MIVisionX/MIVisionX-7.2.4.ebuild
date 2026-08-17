@@ -4,9 +4,10 @@
 EAPI=8
 
 BOOST_PV="1.72.0"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CXX_STANDARD=17
 LLVM_SLOT=19
-NNEF_TOOLS_COMMIT="c166264b7cadb18f62a5711edf703e6029ad0212" # Same as nnef-v1.0.0 tag
+NNEF_TOOLS_COMMIT="f0aceb0a210dae1d7d9c0be86ebcd3fb3d326854" # Same as nnef-v1.0.7 tag
 PYTHON_COMPAT=( "python3_"{10..13} )
 RAPIDJSON_COMMIT="24b5e7a8b27f42fa16b96fc70aade9106cf7102f" # Security fix for 00BR
 ROCM_SLOT=$(ver_cut "1-2" "${PV}")
@@ -40,7 +41,18 @@ GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
-inherit abseil-cpp check-compiler-switch cmake flag-o-matic libstdcxx-slot protobuf python-single-r1 rocm toolchain-funcs
+CHKL_TIMESTAMPS=(
+	"dev-libs/openssl-4.0.9999"
+	"dev-libs/openssl-3.6.9999"
+	"dev-libs/openssl-3.5.9999"
+	"dev-libs/openssl-3.4.9999"
+	"dev-libs/openssl-3.0.9999"
+	"dev-libs/rapidjson-9999"
+	"media-libs/libjpeg-turbo-9999"
+	"media-libs/opencv-4.9999"
+)
+
+inherit abseil-cpp cflags-hardened check-compiler-switch chkl cmake flag-o-matic libstdcxx-slot protobuf python-single-r1 secure-version toolchain-funcs rocm
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/GPUOpen-ProfessionalCompute-Libraries/MIVisionX/"
@@ -89,15 +101,19 @@ LICENSE="
 # The distro's MIT license template does not contain All rights reserved.
 SLOT="0/${ROCM_SLOT}"
 IUSE="
-caffe cpu +enhanced-message ffmpeg -fp16 +ieee1394 +loom +migraphx +neural-net
+caffe cpu +enhanced-message ffmpeg -fp16 +ieee1394 +loom +migraphx -minimal +neural-net
 nnef onnx opencl opencv +rocal +rocal-python +rocm +rpp system-nnef-parser
 system-rapidjson
-ebuild_revision_28
+ebuild_revision_29
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 	caffe? (
 		neural-net
+	)
+	minimal? (
+		!ffmpeg
+		!opencv
 	)
 	neural-net? (
 		|| (
@@ -141,41 +157,27 @@ RDEPEND="
 	$(python_gen_cond_dep '
 		>=dev-python/pybind11-2.10.4[${PYTHON_USEDEP}]
 	')
-	dev-libs/openssl
-	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-	dev-util/hip:=
+	~dev-util/hip-${PV}:=[${LIBSTDCXX_USEDEP}]
+	!minimal? (
+		$(secure-version_gen_openssl_depends)
+	)
 	caffe? (
-		dev-libs/protobuf:3[${LIBSTDCXX_USEDEP}]
-		dev-libs/protobuf:=
 		$(python_gen_cond_dep '
 			>=dev-python/google-3.0.0[${PYTHON_USEDEP}]
 		')
+		dev-libs/protobuf:3=[${LIBSTDCXX_USEDEP}]
 	)
 	ffmpeg? (
-		|| (
-			>=media-video/ffmpeg-4.4.1:56.58.58[fdk,gpl,libass,x264,x265,nonfree]
-			>=media-video/ffmpeg-4.4.1:0/56.58.58[fdk,gpl,libass,x264,x265,nonfree]
-
-			>=media-video/ffmpeg-5.1.8:57.59.59[fdk,gpl,libass,x264,x265,nonfree]
-			>=media-video/ffmpeg-5.1.8:0/57.59.59[fdk,gpl,libass,x264,x265,nonfree]
-
-			>=media-video/ffmpeg-6.1.4:58.60.60[fdk,gpl,libass,x264,x265,nonfree]
-			>=media-video/ffmpeg-6.1.4:0/58.60.60[fdk,gpl,libass,x264,x265,nonfree]
-
-			>=media-video/ffmpeg-7.1.3:59.61.61[fdk,gpl,libass,x264,x265,nonfree]
-			>=media-video/ffmpeg-7.1.3:0/59.61.61[fdk,gpl,libass,x264,x265,nonfree]
-		)
-		media-video/ffmpeg:=
+		$(secure-version_gen_ffmpeg_depends '4.4-7.1' '[fdk,gpl,libass,x264,x265,nonfree]')
 	)
 	migraphx? (
-		>=sci-libs/MIGraphX-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-		sci-libs/MIGraphX:=
+		~sci-libs/MIGraphX-${PV}:=[${LIBSTDCXX_USEDEP}]
 	)
 	neural-net? (
 		$(python_gen_cond_dep '
-			>=dev-python/future-0.18.2[${PYTHON_USEDEP}]
+			>=dev-python/future-1.0.0[${PYTHON_USEDEP}]
 			>=dev-python/pytz-2022.1[${PYTHON_USEDEP}]
-			virtual/numpy[${PYTHON_USEDEP}]
+			virtual/numpy:=[${PYTHON_USEDEP}]
 		')
 	)
 	nnef? (
@@ -186,63 +188,52 @@ RDEPEND="
 		)
 	)
 	onnx? (
+		$(python_gen_cond_dep '
+			>=sci-ml/onnx-1.12.0:=[${PYTHON_USEDEP}]
+		')
+		dev-libs/protobuf:=[${LIBSTDCXX_USEDEP}]
 		|| (
 			dev-libs/protobuf:3/3.12[${LIBSTDCXX_USEDEP}]
 			dev-libs/protobuf:3/3.21[${LIBSTDCXX_USEDEP}]
 		)
-		dev-libs/protobuf:=
-		$(python_gen_cond_dep '
-			>=sci-ml/onnx-1.12.0[${PYTHON_USEDEP}]
-		')
 	)
 	opencl? (
-		virtual/opencl
-		>=sci-libs/miopengemm-${PV}:${SLOT}
-		sci-libs/miopengemm:=
+		virtual/opencl:=
+		~sci-libs/miopengemm-${PV}:=
 	)
 	opencv? (
-		>=media-libs/opencv-4.6.0[${LIBSTDCXX_USEDEP},features2d,gtk3,ieee1394?,jpeg,png,tiff]
+		>=media-libs/opencv-${OPENCV4_PV}:=[${LIBSTDCXX_USEDEP},features2d,gtk3,ieee1394?,jpeg,png,tiff]
+		|| (
+			~media-libs/opencv-${OPENCV4_PV}[${LIBSTDCXX_USEDEP},features2d,gtk3,ieee1394?,jpeg,png,tiff]
+		)
 	)
 	rocal? (
-		dev-libs/protobuf:3[${LIBSTDCXX_USEDEP}]
-		dev-libs/protobuf:=
-		dev-cpp/gflags[${LIBSTDCXX_USEDEP}]
-		dev-cpp/gflags:=
-		dev-cpp/glog[${LIBSTDCXX_USEDEP}]
-		dev-cpp/glog:=
-		dev-db/lmdb
-		media-libs/libjpeg-turbo
-		>=dev-libs/rocm-opencl-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-		dev-libs/rocm-opencl-runtime:=
-		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-		sys-libs/llvm-roc-libomp:=
+		dev-libs/protobuf:3=[${LIBSTDCXX_USEDEP}]
+		dev-cpp/gflags:=[${LIBSTDCXX_USEDEP}]
+		dev-cpp/glog:=[${LIBSTDCXX_USEDEP}]
+		dev-db/lmdb:=
+		>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:=
+		~dev-libs/rocm-opencl-runtime-${PV}:=[${LIBSTDCXX_USEDEP}]
+		~sys-libs/llvm-roc-libomp-${PV}:=[${LIBSTDCXX_USEDEP}]
 		!ffmpeg? (
-			>=dev-libs/boost-${BOOST_PV}
-			dev-libs/boost:=
+			>=dev-libs/boost-${BOOST_PV}:=
 		)
 	)
 	rocm? (
-		>=sci-libs/rocBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-		sci-libs/rocBLAS:=
-		>=dev-libs/rocm-opencl-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-		dev-libs/rocm-opencl-runtime:=
-		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-		sys-libs/llvm-roc-libomp:=
+		~sci-libs/rocBLAS-${PV}:=[${LIBSTDCXX_USEDEP}]
+		~dev-libs/rocm-opencl-runtime-${PV}:=[${LIBSTDCXX_USEDEP}]
+		~sys-libs/llvm-roc-libomp-${PV}:=[${LIBSTDCXX_USEDEP}]
 	)
 	rpp? (
-		>=dev-libs/boost-${BOOST_PV}[${LIBSTDCXX_USEDEP}]
-		dev-libs/boost:=
-		>=sci-libs/rpp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-		sci-libs/rpp:=
+		>=dev-libs/boost-${BOOST_PV}:=[${LIBSTDCXX_USEDEP}]
+		~sci-libs/rpp-${PV}:=[${LIBSTDCXX_USEDEP}]
 	)
 "
 DEPEND="
 	${RDEPEND}
-	>=dev-cpp/eigen-3
-	dev-cpp/eigen:=
+	>=dev-cpp/eigen-3:=
 	system-rapidjson? (
-		=dev-libs/rapidjson-9999
-		dev-libs/rapidjson:=
+		=dev-libs/rapidjson-${RAPIDJSON_PV}:=
 	)
 "
 BDEPEND="
@@ -278,6 +269,8 @@ src_prepare() {
 }
 
 src_configure() {
+	cflags-hardened_append
+
 	# Fix libhsa-runtime64.so: undefined reference to `hsaKmtReplaceAsanHeaderPage'
 #        append-flags -Wl,-fuse-ld=gold
 #        append-ldflags -fuse-ld=gold
@@ -317,6 +310,7 @@ src_configure() {
 		-DENHANCED_MESSAGE=$(usex enhanced-message ON OFF)
 		-DGPU_SUPPORT=$(usex cpu OFF ON)
 		-DLOOM=$(usex loom ON OFF)
+		-DMIN_DEPS_MODE=$(usex minimal ON OFF)
 		-DMIGRAPHX=$(usex migraphx ON OFF)
 		-DNEURAL_NET=$(usex neural-net ON OFF)
 		-DPYTHON_EXECUTABLE="/usr/bin/${EPYTHON}"
