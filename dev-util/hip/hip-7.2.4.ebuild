@@ -5,7 +5,7 @@ EAPI=8
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_ROCM_7_0[@]}"
+	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
 CXX_STANDARD=17 # llvm (17), clr (17), hiprtc (17), amdocl (17)
@@ -79,7 +79,7 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 cuda debug +hsa -hsail +lc -pal numa +rocm +rocprofiler-register test
-ebuild_revision_64
+ebuild_revision_65
 "
 REQUIRED_USE="
 	hsa? (
