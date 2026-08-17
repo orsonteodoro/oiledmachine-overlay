@@ -22,7 +22,7 @@ AMDGPU_TARGETS_COMPAT=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
 )
 
 inherit libstdcxx-slot rocm
@@ -43,7 +43,7 @@ IUSE="
 	rocm
 	runtimes
 	support-libs
-	ebuild_revision_1
+	ebuild_revision_2
 "
 REQUIRED_USE="
 	hip? (
@@ -77,7 +77,7 @@ has_gpu() {
 }
 gen_hipblaslt_rdepend() {
 	local x
-	for x in ${HIPBLASLT_7_0_AMDGPU_TARGETS_COMPAT[@]} ; do
+	for x in ${HIPBLASLT_7_2_AMDGPU_TARGETS_COMPAT[@]} ; do
 		[[ "${x}" =~ "xnack" ]] && continue
 		has_gpu "${x}" || continue
 		echo "
@@ -90,7 +90,7 @@ gen_hipblaslt_rdepend() {
 }
 gen_hipsparselt_rdepend() {
 	local x
-	for x in ${HIPSPARSELT_7_0_AMDGPU_TARGETS_COMPAT[@]} ; do
+	for x in ${HIPSPARSELT_7_2_AMDGPU_TARGETS_COMPAT[@]} ; do
 		[[ "${x}" =~ "xnack" ]] && continue
 		has_gpu "${x}" || continue
 		echo "
