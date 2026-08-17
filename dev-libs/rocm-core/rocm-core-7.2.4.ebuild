@@ -5,7 +5,7 @@ EAPI=8
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
 )
 
 CXX_STANDARD=11
@@ -38,7 +38,7 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="0/${ROCM_SLOT}"
 IUSE="
-ebuild_revision_8
+ebuild_revision_9
 "
 RDEPEND="
 "
