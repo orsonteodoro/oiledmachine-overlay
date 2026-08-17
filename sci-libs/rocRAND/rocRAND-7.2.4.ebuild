@@ -41,7 +41,7 @@ CUDA_TARGETS_COMPAT=(
 )
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
+	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
 )
 
 inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot rocm
@@ -70,7 +70,7 @@ RESTRICT="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-asan benchmark cuda hip-cpu +rocm test ebuild_revision_13
+asan benchmark cuda hip-cpu +rocm test ebuild_revision_14
 "
 gen_cuda_required_use() {
 	local x
