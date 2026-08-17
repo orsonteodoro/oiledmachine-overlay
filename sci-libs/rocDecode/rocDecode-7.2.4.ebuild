@@ -40,7 +40,7 @@ AMDGPU_TARGETS_UNTESTED=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_ROCM_7_0[@]}"
+	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
 inherit ffmpeg
@@ -83,7 +83,7 @@ RESTRICT="
 "
 SLOT="0/${ROCM_SLOT}"
 IUSE="
-samples ebuild_revision_4
+samples ebuild_revision_5
 "
 REQUIRED_USE="
 "
