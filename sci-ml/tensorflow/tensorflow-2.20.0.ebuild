@@ -531,45 +531,26 @@ gen_rocm_rdepend() {
 	# Check both the direct top and indirect bottom dependencies
 		echo "
 			rocm_${u}? (
-				>=dev-libs/rccl-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep RCCL)]
-				dev-libs/rccl:=
-				>=dev-libs/rocm-device-libs-${pv}:${s}
-				dev-libs/rocm-device-libs:=
-				>=dev-util/hip-${pv}:${s}[${LIBSTDCXX_USEDEP},rocm]
-				dev-util/hip:=
-				>=dev-util/roctracer-${pv}:${s}[${LIBSTDCXX_USEDEP}]
-				dev-util/roctracer:=
-				>=sci-libs/hipBLAS-${pv}:${s}[${LIBSTDCXX_USEDEP},rocm]
-				sci-libs/hipBLAS:=
-				>=sci-libs/hipFFT-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPFFT)]
-				sci-libs/hipFFT:=
-				>=sci-libs/hipSOLVER-${pv}:${s}[${LIBSTDCXX_USEDEP},rocm]
-				sci-libs/hipSOLVER:=
-				>=sci-libs/hipSPARSE-${pv}:${s}[${LIBSTDCXX_USEDEP},rocm]
-				sci-libs/hipSPARSE:=
-				>=sci-libs/rocBLAS-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCBLAS)]
-				sci-libs/rocBLAS:=
-				>=sci-libs/rocFFT-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCFFT)]
-				sci-libs/rocFFT:=
-				>=sci-libs/rocRAND-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCRAND)]
-				sci-libs/rocRAND:=
-				>=sci-libs/rocSOLVER-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCSOLVER)]
-				sci-libs/rocSOLVER:=
-				>=sci-libs/miopen-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep MIOPEN)]
-				sci-libs/miopen:=
+				~dev-libs/rccl-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep RCCL)]
+				~dev-libs/rocm-device-libs-${pv}:=
+				~dev-util/hip-${pv}:=[${LIBSTDCXX_USEDEP},rocm]
+				~dev-util/roctracer-${pv}:=[${LIBSTDCXX_USEDEP}]
+				~sci-libs/hipBLAS-${pv}:=[${LIBSTDCXX_USEDEP},rocm]
+				~sci-libs/hipFFT-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPFFT)]
+				~sci-libs/hipSOLVER-${pv}:=[${LIBSTDCXX_USEDEP},rocm]
+				~sci-libs/hipSPARSE-${pv}:=[${LIBSTDCXX_USEDEP},rocm]
+				~sci-libs/rocBLAS-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCBLAS)]
+				~sci-libs/rocFFT-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCFFT)]
+				~sci-libs/rocRAND-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCRAND)]
+				~sci-libs/rocSOLVER-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCSOLVER)]
+				~sci-libs/miopen-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep MIOPEN)]
 
-				>=dev-libs/rocm-comgr-${pv}:${s}[${LIBSTDCXX_USEDEP}]
-				dev-libs/rocm-comgr:=
-				>=dev-libs/rocr-runtime-${pv}:${s}[${LIBSTDCXX_USEDEP}]
-				dev-libs/rocr-runtime:=
-				>=dev-build/rocm-cmake-${pv}:${s}
-				dev-build/rocm-cmake:=
-				>=dev-util/rocm-smi-${pv}:${s}[${LIBSTDCXX_USEDEP}]
-				dev-util/rocm-smi:=
-				>=dev-util/rocminfo-${pv}:${s}[${LIBSTDCXX_USEDEP}]
-				dev-util/rocminfo:=
-				>=dev-util/Tensile-${pv}:${s}[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},$(get_rocm_usedep TENSILE)]
-				dev-util/Tensile:=
+				~dev-libs/rocm-comgr-${pv}:=[${LIBSTDCXX_USEDEP}]
+				~dev-libs/rocr-runtime-${pv}:=[${LIBSTDCXX_USEDEP}]
+				~dev-build/rocm-cmake-${pv}:=
+				~dev-util/rocm-smi-${pv}:=[${LIBSTDCXX_USEDEP}]
+				~dev-util/rocminfo-${pv}:=[${LIBSTDCXX_USEDEP}]
+				~dev-util/Tensile-${pv}:=[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},$(get_rocm_usedep TENSILE)]
 			)
 		"
 
@@ -580,12 +561,12 @@ gen_rocm_rdepend() {
 			[[ "${!t}" =~ "${x}"($|" ") ]] && hipblastlt_compat+=( "${x}" )
 		done
 
+		local x
 		for x in "${hipblastlt_compat[@]}" ; do
 			echo "
 				rocm_${u}? (
 					amdgpu_targets_${x}? (
-						>=sci-libs/hipBLASLt-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPBLASLT)]
-						sci-libs/hipBLASLt:=
+						~sci-libs/hipBLASLt-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPBLASLT)]
 					)
 				)
 			"
@@ -596,7 +577,6 @@ gen_rocm_rdepend() {
 GOOGLE_CLOUD_CPP_PROTOBUF_5="
 	python? (
 		net-libs/google-cloud-cpp:5[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		net-libs/google-cloud-cpp:=
 	)
 "
 gen_protobuf_rdepend() {
@@ -608,7 +588,7 @@ gen_protobuf_rdepend() {
 				!big-endian? (
 					python_single_target_${impl}? (
 						net-libs/grpc:${PROTOBUF_CPP_PV%%.*}[python_targets_${impl}(-),python]
-				)
+					)
 				)
 				big-endian? (
 					net-libs/grpc:${PROTOBUF_CPP_PV%%.*}[-python]
@@ -619,10 +599,10 @@ gen_protobuf_rdepend() {
 }
 
 RDEPEND_PROTOBUF="
+	net-libs/grpc:=
 	|| (
 		$(gen_protobuf_rdepend)
 	)
-	net-libs/grpc:=
 "
 gen_grpcio_rdepend() {
 	local impl
@@ -639,13 +619,13 @@ gen_grpcio_rdepend() {
 }
 
 RDEPEND_GRPCIO="
-	|| (
-		$(gen_grpcio_rdepend)
-	)
 	dev-python/grpcio:=
 	dev-python/grpcio-tools:=
 	dev-python/protobuf:=
 	net-libs/grpc:=
+	|| (
+		$(gen_grpcio_rdepend)
+	)
 "
 
 # Missing extension package for TF_ENABLE_ONEDNN_OPTS=1
@@ -661,11 +641,9 @@ gen_protobuf_rdepend() {
 		echo "
 			(
 				dev-libs/protobuf:${PROTOBUF_CPP_PV%%.*}
-				dev-libs/protobuf:=
 				python? (
 					python_single_target_${impl}? (
 						dev-python/protobuf:${PROTOBUF_PYTHON_SLOT}[python_targets_${impl}(-)]
-						dev-python/protobuf:=
 					)
 				)
 			)
@@ -674,44 +652,56 @@ gen_protobuf_rdepend() {
 }
 # The abseil-cpp rdepends is handled by protobuf package.
 RDEPEND="
+	python? (
+		net-libs/google-cloud-cpp:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	)
 	${RDEPEND_PROTOBUF}
-	>=dev-db/sqlite-3.43.0
-	>=dev-libs/icu-69.1
+
+	>=dev-db/sqlite-3.43.0:=
+	>=dev-libs/icu-69.1:=
 	dev-libs/icu:=
-	>=dev-libs/jsoncpp-1.9.5
+	>=dev-libs/jsoncpp-1.9.5:=
 	dev-libs/jsoncpp:=
 	>=dev-libs/re2-0.2023.06.01:${RE2_SLOT}
-	>=media-libs/giflib-5.2.1
-	>=media-libs/libjpeg-turbo-2.1.4
-	>=media-libs/libpng-1.6.43:0
-	>=net-misc/curl-8.11.0
-	>=sys-apps/hwloc-2.7.1
-	sys-apps/hwloc:=
-	>=virtual/zlib-1.3.1
+	>=media-libs/giflib-5.2.1:=
+	>=media-libs/libjpeg-turbo-2.1.4:=
+	>=media-libs/libpng-1.6.43:=
+	>=net-misc/curl-8.11.0:=
+	>=sys-apps/hwloc-2.7.1:=
+	>=virtual/zlib-1.3.1:=
+
+	python? (
+		dev-python/protobuf:=
+	)
 	|| (
 		$(gen_protobuf_rdepend)
 	)
+
 	!alt-ssl? (
 		>=dev-libs/openssl-3:0=
 	)
 	cuda? (
+		dev-util/nvidia-cuda-toolkit:=[profiler]
+		x11-drivers/nvidia-drivers:=
+		virtual/cuda-compiler:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		|| (
 			${CUDA_12_5_RDEPENDS}
 		)
-		dev-util/nvidia-cuda-toolkit:=
-		=dev-libs/cudnn-9*
 		dev-libs/cudnn:=
-		virtual/cuda-compiler:=
+		|| (
+			=dev-libs/cudnn-9*
+			=dev-libs/cudnn-8.9*
+			=dev-libs/cudnn-8.8*
+		)
 	)
 	mpi? (
-		virtual/mpi
+		virtual/mpi:*
 	)
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
-			(
-				>=dev-python/wrapt-1.16.0[${PYTHON_USEDEP}]
-			)
+			>=dev-python/wrapt-1.16.0[${PYTHON_USEDEP}]
+
 			>=dev-python/absl-py-1.0.0[${PYTHON_USEDEP}]
 			>=dev-python/astunparse-1.6.3[${PYTHON_USEDEP}]
 			>=dev-python/clang-13.0.0[${PYTHON_USEDEP}]
@@ -732,17 +722,16 @@ RDEPEND="
 			>=dev-python/tblib-2.0.0[${PYTHON_USEDEP}]
 			virtual/numpy:=[${PYTHON_USEDEP}]
 			system-flatbuffers? (
-				~dev-libs/flatbuffers-'${FLATBUFFERS_PV}'
+				~dev-libs/flatbuffers-'${FLATBUFFERS_PV}':=
 			)
 		')
 		!big-endian? (
 			${RDEPEND_GRPCIO}
 		)
-		=sci-visualization/tensorboard-${DEP_VER}*[${PYTHON_SINGLE_USEDEP}]
+		=sci-visualization/tensorboard-${DEP_VER}*:=[${PYTHON_SINGLE_USEDEP}]
 	)
 	rocm? (
 		$(gen_rocm_rdepend)
-		dev-util/hip:=
 	)
 "
 DEPEND="
