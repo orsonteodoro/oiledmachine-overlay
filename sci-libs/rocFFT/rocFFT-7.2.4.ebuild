@@ -7,7 +7,7 @@ CHECKREQS_DISK_BUILD="7G"
 CXX_STANDARD=17
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=22
-PYTHON_COMPAT=( "python3_"{10..12} ) # Force NumPy 1.x with < 3.13
+PYTHON_COMPAT=( "python3_"{10,12} ) # Force NumPy 1.x with < 3.13
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 AMDGPU_TARGETS_COMPAT=(
@@ -81,7 +81,7 @@ SLOT="0/${ROCM_SLOT}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 -asan +aot benchmark cuda perfscripts +rocm test
-ebuild_revision_18
+ebuild_revision_19
 "
 gen_cuda_required_use() {
 	local x
