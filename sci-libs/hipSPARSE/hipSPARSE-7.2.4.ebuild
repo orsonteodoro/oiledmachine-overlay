@@ -11,7 +11,7 @@ ROCM_VERSION="${PV}"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
 inherit cmake edo flag-o-matic libstdcxx-slot rocm toolchain-funcs
@@ -79,7 +79,10 @@ LICENSE="
 # The distro's MIT license template does not have all rights reserved.
 RESTRICT="test" # Test ebuild sections needs update
 SLOT="0/${ROCM_SLOT}"
-IUSE="cuda +rocm test ebuild_revision_12"
+IUSE="
+cuda +rocm test
+ebuild_revision_13
+"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 	^^ (
@@ -93,14 +96,12 @@ RESTRICT="
 	)
 "
 RDEPEND="
-	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
-	dev-util/hip:=
+	~dev-util/hip-${PV}:=[${LIBSTDCXX_USEDEP},cuda?,rocm?]
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
-		>=sci-libs/rocSPARSE-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm(+)]
-		sci-libs/rocSPARSE:=
+		~sci-libs/rocSPARSE-${PV}:=[${LIBSTDCXX_USEDEP},rocm(+)]
 	)
 "
 DEPEND="
@@ -109,16 +110,13 @@ DEPEND="
 BDEPEND="
 	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.5
-	>=dev-build/rocm-cmake-${PV}:${SLOT}
+	~dev-build/rocm-cmake-${PV}:=
 	dev-build/rocm-cmake:=
 	test? (
 		dev-cpp/gtest[${LIBSTDCXX_USEDEP}]
-		>=dev-util/rocminfo-${PV}:${SLOT}
-		dev-util/rocminfo:=
-		>=dev-libs/rocm-opencl-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-		dev-libs/rocm-opencl-runtime:=
-		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-		sys-libs/llvm-roc-libomp:=
+		~dev-util/rocminfo-${PV}:=
+		~dev-libs/rocm-opencl-runtime-${PV}:=[${LIBSTDCXX_USEDEP}]
+		~sys-libs/llvm-roc-libomp-${PV}:=[${LIBSTDCXX_USEDEP}]
 	)
 "
 PATCHES=(
