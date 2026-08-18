@@ -5,7 +5,7 @@ EAPI=8
 
 CXX_STANDARD=17
 HIP_SUPPORT_CUDA=1
-LLVM_SLOT=19
+LLVM_SLOT=22
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
@@ -67,7 +67,7 @@ LICENSE="
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 cuda +rocm
-ebuild_revision_9
+ebuild_revision_10
 "
 gen_cuda_required_use() {
 	local x
