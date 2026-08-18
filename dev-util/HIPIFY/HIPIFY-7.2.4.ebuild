@@ -4,8 +4,8 @@
 EAPI=8
 
 # Requirements:
-# https://github.com/ROCm/HIPIFY/blob/rocm-7.0.2/docs/how-to/hipify-clang.rst
-# https://github.com/ROCm/HIPIFY/blob/rocm-7.0.2/src/Statistics.h
+# https://github.com/ROCm/HIPIFY/blob/rocm-7.2.4/docs/how-to/hipify-clang.rst
+# https://github.com/ROCm/HIPIFY/blob/rocm-7.2.4/src/Statistics.h
 
 LLVM_SLOT=22
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
@@ -40,7 +40,7 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 asan cuda test
-ebuild_revision_22
+ebuild_revision_23
 "
 CUDA_12_6_CDEPEND="
 	(
