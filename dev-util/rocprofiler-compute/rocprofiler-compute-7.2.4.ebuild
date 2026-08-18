@@ -4,7 +4,7 @@
 EAPI=8
 
 LLVM_SLOT=22
-PYTHON_COMPAT=( "python3_"{10..13} )
+PYTHON_COMPAT=( "python3_"{10,12} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
@@ -37,7 +37,7 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 test
-ebuild_revision_8
+ebuild_revision_9
 "
 RDEPEND="
 	$(python_gen_cond_dep '
