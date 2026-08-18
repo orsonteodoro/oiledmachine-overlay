@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# The c in the version means cuda
+
 CXX_STANDARD=14
 MAGMA_CUDA=1
 SLOT="0/cuda"

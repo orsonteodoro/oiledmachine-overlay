@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# The h in the version means hip
+
 inherit hip-versions
 
 CXX_STANDARD=14
