@@ -11,7 +11,7 @@ ROCM_VERSION="${PV}"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
 inherit cmake edo flag-o-matic libstdcxx-slot rocm toolchain-funcs
@@ -37,7 +37,10 @@ LICENSE="
 # MIT - LICENSE.md
 # The distro's MIT license template does not have all rights reserved.
 SLOT="0/${ROCM_SLOT}"
-IUSE="asan test cuda +rocm ebuild_revision_9"
+IUSE="
+asan test cuda +rocm
+ebuild_revision_10
+"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 	^^ (
@@ -51,21 +54,16 @@ RESTRICT="
 	)
 "
 RDEPEND="
-	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
-	dev-util/hip:=
+	~dev-util/hip-${PV}:=[${LIBSTDCXX_USEDEP},cuda?,rocm?]
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
-		>=sci-libs/rocBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm]
-		sci-libs/rocBLAS:=
-		>=sci-libs/rocSOLVER-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm(+)]
-		sci-libs/rocSOLVER:=
-
-		>=dev-util/rocm-smi-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-		dev-util/rocm-smi:=
+		~sci-libs/rocBLAS-${PV}:=[${LIBSTDCXX_USEDEP},rocm]
+		~sci-libs/rocSOLVER-${PV}:=[${LIBSTDCXX_USEDEP},rocm(+)]
+		~dev-util/rocm-smi-${PV}:=[${LIBSTDCXX_USEDEP}]
 	)
-	virtual/blas
+	virtual/blas:*
 "
 DEPEND="
 	${RDEPEND}
@@ -73,8 +71,7 @@ DEPEND="
 BDEPEND="
 	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.7
-	>=dev-build/rocm-cmake-${PV}:${SLOT}
-	dev-build/rocm-cmake:=
+	~dev-build/rocm-cmake-${PV}:=
 	test? (
 		dev-cpp/gtest[${LIBSTDCXX_USEDEP}]
 	)
