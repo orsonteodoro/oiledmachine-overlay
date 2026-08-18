@@ -12,7 +12,7 @@ EAPI=8
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 CMAKE_MAKEFILE_GENERATOR="emake"
 CXX_STANDARD=17
-LLVM_SLOT=19
+LLVM_SLOT=22
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 AMDGPU_TARGETS_COMPAT=(
@@ -57,7 +57,7 @@ SLOT="0/${ROCM_SLOT}"
 # Samples is default on upstream
 IUSE="
 -asan +rocm -samples openmp mpi
-ebuild_revision_11
+ebuild_revision_12
 "
 gen_rocm_required_use() {
 	local x
