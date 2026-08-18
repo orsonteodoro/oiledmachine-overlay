@@ -22,7 +22,7 @@ DESCRIPTION="Bandwidth test for ROCm"
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocm_bandwidth_test"
 LICENSE="NCSA-AMD"
 SLOT="0/${ROCM_SLOT}"
-IUSE+=" ebuild_revision_12"
+IUSE+=" ebuild_revision_13"
 RDEPEND="
 	~dev-libs/rocr-runtime-${PV}:=
 "
