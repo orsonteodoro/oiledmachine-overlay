@@ -5,16 +5,16 @@ EAPI=8
 
 # D12, U22, U24
 
-AMDGPU_FIRMWARE_PV="30.10.2.0.30100200"
-GC_VER="12.0.1" # with kicker, see https://github.com/ROCm/amdgpu/blob/rocm-7.0.2/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c
-DC_VER="3.2.339" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-7.0.2/drivers/gpu/drm/amd/display/dc/dc.h#L48
-DCN_VER="4.0.1" # See https://github.com/ROCm/ROCK-Kernel-Driver/blob/rocm-7.0.2/drivers/gpu/drm/amd/display/include/dal_types.h#L61
-KFD_IOCTL_VER="1.18" # See https://github.com/ROCm/amdgpu/blob/rocm-7.0.2/include/uapi/linux/kfd_ioctl.h
-PSP_VER="14.0.5" # no kicker, see https://github.com/ROCm/amdgpu/blob/rocm-7.0.2/drivers/gpu/drm/amd/amdgpu/psp_v14_0.c
-VCN_VER="5.0.1" # See https://github.com/ROCm/amdgpu/blob/rocm-7.0.2/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c#L65
+AMDGPU_FIRMWARE_PV="30.30.4.0.30300400"
+GC_VER="12.0.1" # with kicker, see https://github.com/ROCm/amdgpu/blob/rocm-7.2.4/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c
+DC_VER="3.2.359" # See https://github.com/ROCm/amdgpu/blob/rocm-7.2.4/drivers/gpu/drm/amd/display/dc/dc.h#L48
+DCN_VER="4.0.1" # See https://github.com/ROCm/amdgpu/blob/rocm-7.2.4/drivers/gpu/drm/amd/display/include/dal_types.h#L61
+KFD_IOCTL_VER="1.18" # See https://github.com/ROCm/amdgpu/blob/rocm-7.2.4/include/uapi/linux/kfd_ioctl.h
+PSP_VER="14.0.5" # no kicker, see https://github.com/ROCm/amdgpu/blob/rocm-7.2.4/drivers/gpu/drm/amd/amdgpu/psp_v14_0.c
+VCN_VER="5.0.1" # See https://github.com/ROCm/amdgpu/blob/rocm-7.2.4/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c#L65
 
 DKMS_MODULES=(
-# Keep in sync with https://github.com/ROCm/ROCK-Kernel-Driver/blob/rocm-7.0.2/drivers/gpu/drm/amd/dkms/dkms.conf
+# Keep in sync with https://github.com/ROCm/amdgpu/blob/rocm-7.2.4/drivers/gpu/drm/amd/dkms/dkms.conf
 	"amdgpu amd/amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
 	"amdttm ttm /kernel/drivers/gpu/drm/ttm"
 	"amdkcl amd/amdkcl /kernel/drivers/gpu/drm/amd/amdkcl"
@@ -25,17 +25,20 @@ DKMS_MODULES=(
 	"amdxcp amd/amdxcp /kernel/drivers/gpu/drm/amd/amdxcp"
 )
 DKMS_PKG_NAME="amdgpu"
-KV="6.14.0" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-7.0.2/Makefile#L2
-KVS=(
-# See https://github.com/ROCm/rocm-install-on-linux/blob/release/rocm-rel-7.0.2/docs/reference/system-requirements.rst#supported-operating-systems
+KV="6.16.0" # See https://github.com/ROCm/amdgpu/blob/rocm-7.2.4/Makefile#L2
+KV_LTS_LIST=(
+# See https://github.com/ROCm/rocm-install-on-linux/blob/release/rocm-rel-7.2.4/docs/reference/system-requirements.rst#supported-operating-systems
 # Commented out means EOL kernel.
 # Active LTS only supported in this overlay because of security.
 # Compatible but not supported kernel versions:  4.18, 5.14, 6.4, 6.8, 6.14
-# Supported kernel versions:  5.15, 6.1, 6.6
+# Supported kernel versions:  5.15, 6.1, 6.12
+	"5.15"
+	"6.1"
+	"6.12"
 )
-MAINTAINER_MODE=0
-PV_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
-ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+MAINTAINER_MODE=1
+PV_MAJOR_MINOR=$(ver_cut "1-2" "${PV}")
+ROCM_SLOT=$(ver_cut "1-2" "${PV}")
 ROCK_VER="${PV}"
 SUFFIX="${PV_MAJOR_MINOR}"
 DKMS_PKG_VER="${SUFFIX}"
@@ -46,7 +49,7 @@ if [[ "${MAINTAINER_MODE}" == "1" ]] ; then
 	KV_NOT_SUPPORTED_MAX="99999999" # Exclusive
 	KV_SUPPORTED_MIN="4.18" # Inclusive
 else
-	KV_NOT_SUPPORTED_MAX="6.13" # Exclusive
+	KV_NOT_SUPPORTED_MAX="6.17" # Exclusive
 	KV_SUPPORTED_MIN="4.18" # Inclusive
 fi
 
@@ -55,13 +58,14 @@ inherit flag-o-matic linux-info toolchain-funcs
 #KEYWORDS="~amd64"
 S="${WORKDIR}/usr/src/amdgpu-${SUFFIX}"
 SRC_URI="
-https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/archive/refs/tags/rocm-${PV}.tar.gz
+https://github.com/ROCm/amdgpu/archive/refs/tags/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="ROCk DKMS kernel module"
+DESCRIPTION="The amdgpu DKMS kernel module"
 HOMEPAGE="
-https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver
+https://github.com/ROCm/amdgpu
+https://github.com/ROCm/amdgpu/tree/master/drivers/gpu/drm/amd/dkms
 "
 LICENSE="
 	GPL-2
@@ -135,14 +139,14 @@ gen_kernel_pairs() {
 		"sys-kernel/zen-sources"
 	)
 	local kv
-	for flavor in ${FLAVORS[@]} ; do
-		for kv in ${KVS[@]} ; do
+	for flavor in "${FLAVORS[@]}" ; do
+		for kv in "${KV_LTS_LIST[@]}" ; do
 			local kv_min="$(ver_cut 1-2 ${kv})"
 			local kv_max="${kv%%.*}.$(($(ver_cut 2 ${kv}) + 1))"
 			echo "
 			(
 				>=${flavor}-${kv_min}
-				<${flavor}-${kv_max}:=
+				<${flavor}-${kv_max}
 			)
 			"
 			if [[ "${MAINTAINER_MODE}" == "1" ]] ; then
@@ -165,12 +169,10 @@ TRASH="
 "
 CDEPEND="
 	!strict-pairing? (
-		>=sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}:${SLOT}
-		sys-firmware/amdgpu-dkms-firmware:=
+		>=sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}:=
 	)
 	strict-pairing? (
-		~sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}:${SLOT}
-		sys-firmware/amdgpu-dkms-firmware:=
+		~sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}:=
 	)
 "
 RDEPEND="
@@ -564,7 +566,7 @@ eerror "Missing kernel sources.  Install the kernel sources package first."
 fi
 }
 
-# See also https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-7.0.2/drivers/gpu/drm/amd/dkms/sources
+# See also https://github.com/ROCm/amdgpu/blob/rocm-7.2.4/drivers/gpu/drm/amd/dkms/sources
 _reconstruct_tarball_layout() {
 einfo "Reconstructing tarball layout"
 	local tarball_root="${WORKDIR}/amdgpu-rocm-${PV}"
@@ -858,7 +860,7 @@ _verify_magic_all() {
 }
 
 _copy_modules() {
-	# Keep in sync with https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-7.0.2/drivers/gpu/drm/amd/dkms/dkms.conf
+	# Keep in sync with https://github.com/ROCm/amdgpu/blob/rocm-7.2.4/drivers/gpu/drm/amd/dkms/dkms.conf
 	IFS=$'\n'
 
 	local x
@@ -884,7 +886,7 @@ _copy_modules() {
 }
 
 _copy_modules_dkms() {
-	# Keep in sync with https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.6.1/drivers/gpu/drm/amd/dkms/dkms.conf
+	# Keep in sync with https://github.com/ROCm/amdgpu/blob/rocm-5.6.1/drivers/gpu/drm/amd/dkms/dkms.conf
 	IFS=$'\n'
 
 	local x
