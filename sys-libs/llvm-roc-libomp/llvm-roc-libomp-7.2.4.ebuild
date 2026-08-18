@@ -14,9 +14,9 @@ ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_USE_LLVM_ROC=1
 
 # CUDA compatibility:
-# https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-7.0.2/clang/include/clang/Basic/Cuda.h
-# CUDA targets:  https://github.com/ROCm/llvm-project/blob/rocm-7.0.2/offload/hostexec/CMakeLists.txt#L134
-# ROCm targets:  https://github.com/ROCm/llvm-project/blob/rocm-7.0.2/offload/hostexec/CMakeLists.txt#L129
+# https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-7.2.4/clang/include/clang/Basic/Cuda.h
+# CUDA targets:  https://github.com/ROCm/llvm-project/blob/rocm-7.2.4/offload/hostexec/CMakeLists.txt#L134
+# ROCm targets:  https://github.com/ROCm/llvm-project/blob/rocm-7.2.4/offload/hostexec/CMakeLists.txt#L129
 
 AMDGPU_TARGETS_COMPAT=(
 	"gfx700"
@@ -133,7 +133,7 @@ LICENSE="
 	public-domain
 	UoI-NCSA
 "
-# Apache-2.0-with-LLVM-exceptions, UoI-NCSA, MIT, custom - llvm-project-rocm-7.0.2/openmp/LICENSE.TXT
+# Apache-2.0-with-LLVM-exceptions, UoI-NCSA, MIT, custom - llvm-project-rocm-7.2.4/openmp/LICENSE.TXT
 #   Keyword search:  "all right, title, and interest"
 RESTRICT="
 	strip
@@ -144,7 +144,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${ROCM_IUSE}
 +archer -cuda +gdb-plugin -offload -ompt +ompd -remote-offloading
-ebuild_revision_34
+ebuild_revision_35
 "
 
 gen_cuda_required_use() {
@@ -228,10 +228,8 @@ CUDA_12_5_RDEPEND="
 "
 RDEPEND="
 	dev-libs/libffi:=
-	>=dev-libs/rocm-device-libs-${PV}:${SLOT}
-	dev-libs/rocm-device-libs:=
-	>=sys-devel/llvm-roc-${PV}:${SLOT}[${LLVM_TARGETS_USEDEP}]
-	sys-devel/llvm-roc:=
+	~dev-libs/rocm-device-libs-${PV}:=
+	~sys-devel/llvm-roc-${PV}:=[${LIBSTDCXX_USEDEP},${LLVM_TARGETS_USEDEP}]
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
 		virtual/cuda-compiler:=
@@ -347,10 +345,9 @@ RDEPEND="
 		)
 	)
 	llvm_targets_AMDGPU? (
-		>=dev-libs/rocr-runtime-${ROCM_SLOT}:${SLOT}[${LIBSTDCXX_USEDEP}]
-		dev-libs/rocr-runtime:=
-		sys-process/numactl
-		x11-libs/libdrm[video_cards_amdgpu]
+		~dev-libs/rocr-runtime-${ROCM_SLOT}:=[${LIBSTDCXX_USEDEP}]
+		sys-process/numactl:=
+		x11-libs/libdrm:=[video_cards_amdgpu]
 	)
 	llvm_targets_NVPTX? (
 		<dev-util/nvidia-cuda-toolkit-11.9:=
@@ -360,8 +357,10 @@ RDEPEND="
 		virtual/libelf:=
 	)
 	remote-offloading? (
-		net-libs/grpc:${GRPC_SLOT}[${LIBSTDCXX_USEDEP},cxx]
-		net-libs/grpc:=
+		net-libs/grpc:=[${LIBSTDCXX_USEDEP},cxx]
+		|| (
+			net-libs/grpc:${GRPC_SLOT}[${LIBSTDCXX_USEDEP},cxx]
+		)
 	)
 "
 # The versions for protobuf and grpc was not disclosed in build files.
@@ -371,15 +370,9 @@ DEPEND="
 "
 BDEPEND="
 	${ROCM_GCC_DEPEND}
+	>=sys-devel/llvm-roc-${PV}:=[${LIBSTDCXX_USEDEP},${LLVM_TARGETS_USEDEP}]
 	offload? (
 		virtual/pkgconfig
-	)
-	|| (
-		llvm-core/lld:${LLVM_SLOT}
-		(
-			>=sys-devel/llvm-roc-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_TARGETS_USEDEP}]
-			sys-devel/llvm-roc:=
-		)
 	)
 "
 PATCHES=(
