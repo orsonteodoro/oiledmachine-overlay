@@ -43,7 +43,7 @@ AMDGPU_TARGETS_COMPAT=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
 inherit cmake edo flag-o-matic libstdcxx-slot python-any-r1 toolchain-funcs rocm
@@ -118,7 +118,7 @@ LICENSE="
 IUSE="
 ${GCC_COMPAT[@]}
 -asan -benchmark -test
-ebuild_revision_10
+ebuild_revision_11
 "
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
@@ -126,12 +126,9 @@ REQUIRED_USE="
 RESTRICT="test" # Test ebuild sections needs update
 SLOT="0/${ROCM_SLOT}"
 RDEPEND="
-	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm]
-	dev-util/hip:=
-	>=sci-libs/rocPRIM-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCPRIM_7_2_AMDGPU_USEDEP},rocm(+)]
-	sci-libs/rocPRIM:=
-	>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_2_AMDGPU_USEDEP}]
-	sys-libs/llvm-roc-libomp:=
+	~dev-util/hip-${PV}:=[${LIBSTDCXX_USEDEP},rocm]
+	~sci-libs/rocPRIM-${PV}:=[${LIBSTDCXX_USEDEP},${ROCPRIM_7_2_AMDGPU_USEDEP},rocm(+)]
+	~sys-libs/llvm-roc-libomp-${PV}:=[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_2_AMDGPU_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
@@ -139,8 +136,7 @@ DEPEND="
 BDEPEND="
 	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.5
-	>=dev-build/rocm-cmake-${PV}:${SLOT}
-	dev-build/rocm-cmake:=
+	~dev-build/rocm-cmake-${PV}:=
 	test? (
 		$(python_gen_any_dep '
 			dev-python/pyyaml[${PYTHON_USEDEP}]
