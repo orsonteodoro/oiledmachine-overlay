@@ -45,7 +45,7 @@ RESTRICT="strip" # Fix issue with finding symbols
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 debug
-ebuild_revision_21
+ebuild_revision_22
 "
 RDEPEND="
 	${ROCM_CLANG_DEPEND}
