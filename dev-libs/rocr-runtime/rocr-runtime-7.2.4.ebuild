@@ -9,7 +9,7 @@ GCC_COMPAT=(
 )
 
 CXX_STANDARD=17
-LLVM_SLOT=19 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.4.4/llvm/CMakeLists.txt
+LLVM_SLOT=22 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.4.4/llvm/CMakeLists.txt
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 CHKL_TIMESTAMPS=(
@@ -45,7 +45,7 @@ RESTRICT="strip" # Fix issue with finding symbols
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 debug
-ebuild_revision_20
+ebuild_revision_21
 "
 RDEPEND="
 	${ROCM_CLANG_DEPEND}
