@@ -23,7 +23,7 @@ LICENSE="
 "
 SLOT="0/${ROCM_SLOT}"
 IUSE+="
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 "
@@ -33,8 +33,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	>=dev-build/rocm-cmake-${PV}:${SLOT}
-	dev-build/rocm-cmake:=
+	>=dev-build/rocm-cmake-${PV}:=
 	>=dev-build/cmake-3.11
 "
 PATCHES=(
