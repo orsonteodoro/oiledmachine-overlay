@@ -41,7 +41,7 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE+="
 cuda rocm
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE+="
 	|| (
