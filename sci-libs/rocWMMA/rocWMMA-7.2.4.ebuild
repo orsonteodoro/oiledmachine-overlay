@@ -19,7 +19,7 @@ AMDGPU_TARGETS_COMPAT=(
 )
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
 CXX_STANDARD=17
@@ -52,18 +52,15 @@ RESTRICT="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 asan
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
 RDEPEND="
-	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm]
-	dev-util/hip:=
-	>=dev-util/rocm-smi-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-	dev-util/rocm-smi:=
-	>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_2_AMDGPU_USEDEP}]
-	sys-libs/llvm-roc-libomp:=
+	~dev-util/hip-${PV}:=[${LIBSTDCXX_USEDEP},rocm]
+	~dev-util/rocm-smi-${PV}:=[${LIBSTDCXX_USEDEP}]
+	~sys-libs/llvm-roc-libomp-${PV}:=[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_2_AMDGPU_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
@@ -71,8 +68,7 @@ DEPEND="
 BDEPEND="
 	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.5
-	>=dev-build/rocm-cmake-${PV}:${SLOT}
-	dev-build/rocm-cmake:=
+	~dev-build/rocm-cmake-${PV}:=
 "
 PATCHES=(
 )
