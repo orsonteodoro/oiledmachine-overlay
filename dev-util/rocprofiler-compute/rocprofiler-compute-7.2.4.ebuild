@@ -37,13 +37,13 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 test
-ebuild_revision_7
+ebuild_revision_8
 "
 RDEPEND="
 	$(python_gen_cond_dep '
 		>=dev-python/astunparse-1.6.2[${PYTHON_USEDEP}]
 		>=dev-python/pandas-1.4.3[${PYTHON_USEDEP}]
-		>=sci-visualization/dash-1.12.0[${PYTHON_USEDEP}]
+		>=sci-visualization/dash-1.12.0:=[${PYTHON_USEDEP}]
 		dev-python/colorlover[${PYTHON_USEDEP}]
 		dev-python/kaleido[${PYTHON_USEDEP}]
 		dev-python/matplotlib[${PYTHON_USEDEP}]
@@ -54,7 +54,7 @@ RDEPEND="
 		dev-python/tqdm[${PYTHON_USEDEP}]
 		dev-python/dash-bootstrap-components[${PYTHON_USEDEP}]
 		dev-python/dash-svg[${PYTHON_USEDEP}]
-		virtual/numpy[${PYTHON_USEDEP}]
+		virtual/numpy:=[${PYTHON_USEDEP}]
 	')
 "
 DEPEND="
