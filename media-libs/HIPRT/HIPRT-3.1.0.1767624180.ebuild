@@ -92,7 +92,7 @@ RESTRICT="test"
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 -bake-kernels -bitcode cuda encrypt precompile rocm system-orochi test
-ebuild_revision_10
+ebuild_revision_11
 "
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
@@ -109,8 +109,7 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	dev-util/hip:${SLOT}
-	dev-util/hip:=
+	~dev-util/hip-${ROCM_VERSION}:=
 	!system-orochi? (
 		!dev-libs/Orochi
 	)
