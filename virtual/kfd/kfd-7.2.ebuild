@@ -3,13 +3,19 @@
 
 EAPI=8
 
+inherit secure-version
+
+# This ebuild uses AI inference for clarification.
+
+# The ROCm 7.2 userspace packages supports the 6.4.0 amdgpu driver (equivalent to 6.15.x to 6.19.x vanilla, so only 6.18.x LTS supported).
+
 # ROCm driver versions:
-# Last GC:    https://github.com/ROCm/amdgpu/blob/rocm-7.0.2/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c
-# DCN:        https://github.com/ROCm/amdgpu/blob/rocm-7.0.2/drivers/gpu/drm/amd/display/include/dal_types.h#L67
-# DC_VER:     https://github.com/ROCm/amdgpu/blob/rocm-7.0.2/drivers/gpu/drm/amd/display/dc/dc.h
-# KFD IOCTL:  https://github.com/ROCm/amdgpu/blob/rocm-7.0.2/include/uapi/linux/kfd_ioctl.h
-# PSP:        https://github.com/ROCm/amdgpu/blob/rocm-7.0.2/drivers/gpu/drm/amd/amdgpu/psp_v14_0.c
-# VCN:        https://github.com/ROCm/amdgpu/blob/rocm-7.0.2/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c#L65
+# Last GC:    https://github.com/ROCm/amdgpu/blob/rocm-7.2.4/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c
+# DCN:        https://github.com/ROCm/amdgpu/blob/rocm-7.2.4/drivers/gpu/drm/amd/display/include/dal_types.h#L67
+# DC_VER:     https://github.com/ROCm/amdgpu/blob/rocm-7.2.4/drivers/gpu/drm/amd/display/dc/dc.h
+# KFD IOCTL:  https://github.com/ROCm/amdgpu/blob/rocm-7.2.4/include/uapi/linux/kfd_ioctl.h
+# PSP:        https://github.com/ROCm/amdgpu/blob/rocm-7.2.4/drivers/gpu/drm/amd/amdgpu/psp_v14_0.c
+# VCN:        https://github.com/ROCm/amdgpu/blob/rocm-7.2.4/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c#L65
 
 # VCN: Hardware accelerated encode and decode
 # DC:  Software driver layer
@@ -18,13 +24,13 @@ EAPI=8
 # PSP:  Platform security processor, HDCP
 
 AMDGPU_FIRMWARE_PV="30.10.2.0.30100200"
-DC_VER="3.2.339" # From rock-dkms
+DC_VER="3.2.359" # From rock-dkms
 KERNEL_FIRMWARE_PV="20250808"
 # Expected firmware properites:
 # Git message:  
-# Driver folder = 7.0.2
+# Driver folder = 7.2.4
 # DCN = 4.0.1 (20241206)
-# DC_VER = 3.2.339
+# DC_VER = 3.2.359
 # GC = 12.0.1 (20250808, with kicker)
 # KFD IOCTL = 1.18
 # PSP = 14.0.5 (20250808, with kicker)
@@ -33,18 +39,19 @@ KERNEL_FIRMWARE_PV="20250808"
 # VCN = 5.0.1 (20250620)
 # VPE = 
 
+
 # Vanilla kernel versions:
-# Last GC:    https://github.com/torvalds/linux/blob/v6.17/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c
-# DCN:        https://github.com/torvalds/linux/blob/v6.17/drivers/gpu/drm/amd/display/include/dal_types.h#L67
-# DC_VER:     https://github.com/torvalds/linux/blob/v6.17/drivers/gpu/drm/amd/display/dc/dc.h
-# KFD IOCTL:  https://github.com/torvalds/linux/blob/v6.17/include/uapi/linux/kfd_ioctl.h
-# PSP:        https://github.com/torvalds/linux/blob/v6.17/drivers/gpu/drm/amd/amdgpu/psp_v14_0.c
-# VCN:        https://github.com/torvalds/linux/blob/v6.17/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c#L65
-KERNEL_PV="6.17" # This row is from the vanilla Linux kernel not rock-dkms that reflects the vanilla kernel versions >= ROCm versions.
+# Last GC:    https://github.com/torvalds/linux/blob/v6.19/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c
+# DCN:        https://github.com/torvalds/linux/blob/v6.19/drivers/gpu/drm/amd/display/include/dal_types.h#L67
+# DC_VER:     https://github.com/torvalds/linux/blob/v6.19/drivers/gpu/drm/amd/display/dc/dc.h
+# KFD IOCTL:  https://github.com/torvalds/linux/blob/v6.19/include/uapi/linux/kfd_ioctl.h
+# PSP:        https://github.com/torvalds/linux/blob/v6.19/drivers/gpu/drm/amd/amdgpu/psp_v14_0.c
+# VCN:        https://github.com/torvalds/linux/blob/v6.19/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c#L65
+KERNEL_PV="6.19" # This row is from the vanilla Linux kernel not rock-dkms that reflects the vanilla kernel versions >= ROCm versions.
 # Expected kernel properties:
 # Some of the last amdkfd commits are applied to the amdkfd folder (d2e5bf7, b7c09a6, 97f3ca8, 37209d5) ; missing 835309f, a3431f7
 # GC = 12.0.1 (with kicker)
-# DC_VER = 3.2.340
+# DC_VER = 3.2.359
 # DCN = 4.0.1
 # KFD IOCTL = 1.18
 # PSP = 14.0.5
@@ -58,13 +65,14 @@ KERNEL_PV="6.17" # This row is from the vanilla Linux kernel not rock-dkms that 
 # drivers/gpu/drm/amd/display/include/dal_types.h for DCN version
 # drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c for VCN version
 KERNEL_RANGE=(
-# Avoid pinning solely to EOL version.
-# See footnote 2 in metadata.xml.
-	"6.17" #  0 : KERNEL_PV
-	"6.16" # -1
-	"6.15"  # -2
+# See table in metadata.xml.
+	"6.19" # Rolling max allowed
+	"6.18" # LTS (only supported on this overlay)
+	"6.17" # Rolling
+	"6.16" # Rolling
+	"6.15" # Rolling min allowed
 )
-ROCM_VERSION="7.0.2" # DC_VER = ${PV}
+ROCM_VERSION="7.2.4" # DC_VER = ${PV}
 ROCM_SLOT="${ROCM_VERSION%.*}"
 #
 # linux firmware notes:
@@ -77,37 +85,42 @@ ROCM_SLOT="${ROCM_VERSION%.*}"
 
 DESCRIPTION="KFD (Kernel Fusion Driver) with version limited upper boundary"
 #KEYWORDS="~amd64 ~x86" # Work In Progress (WIP)
-IUSE="custom-kernel kernel rock-dkms strict-pairing ebuild_revision_5"
+IUSE="amdgpu-dkms-firmware linux-firmware custom-kernel kernel rock-dkms strict-pairing ebuild_revision_5"
 REQUIRED_USE="
+	^^ (
+		amdgpu-dkms-firmware
+		linux-firmware
+	)
 	^^ (
 		kernel
 		rock-dkms
 	)
 	strict-pairing? (
 		!kernel
+		amdgpu-dkms-firmware
 		rock-dkms
 	)
 "
 SLOT="0/${ROCM_SLOT}"
 FIRMWARE_RDEPEND="
 	!strict-pairing? (
-		|| (
-			(
-				>=sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}:${SLOT}
-				sys-firmware/amdgpu-dkms-firmware:=
-			)
-			>=sys-kernel/linux-firmware-${KERNEL_FIRMWARE_PV}
+		amdgpu-dkms-firmware? (
+			>=sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}:=
+		)
+		linux-firmware? (
+			>=sys-kernel/linux-firmware-${LINUX_FIRMWARE_PV}:=
 		)
 	)
 	strict-pairing? (
-		~sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}:${SLOT}
-		sys-firmware/amdgpu-dkms-firmware:=
+		amdgpu-dkms-firmware? (
+			~sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}:=
+		)
 	)
 "
 gen_kfd_entry() {
 	local atom="${1}" # ex: sys-kernel/ot-sources
 	local x
-	for x in ${KERNEL_RANGE[@]} ; do
+	for x in "${KERNEL_RANGE[@]}" ; do
 		echo "
 			=${atom}-${x}*
 		"
@@ -117,27 +130,34 @@ KFD_RDEPEND="
 	kernel? (
 		!custom-kernel? (
 			|| (
+				$(gen_kfd_entry sys-kernel/cachyos-kernel)
+				$(gen_kfd_entry sys-kernel/cachyos-kernel-bin)
+				$(gen_kfd_entry sys-kernel/cachyos-sources)
 				$(gen_kfd_entry sys-kernel/gentoo-kernel)
 				$(gen_kfd_entry sys-kernel/gentoo-kernel-bin)
 				$(gen_kfd_entry sys-kernel/gentoo-sources)
 				$(gen_kfd_entry sys-kernel/git-sources)
+				$(gen_kfd_entry sys-kernel/hardened-sources)
+				$(gen_kfd_entry sys-kernel/liquorix-sources)
 				$(gen_kfd_entry sys-kernel/ot-sources)
 				$(gen_kfd_entry sys-kernel/pf-sources)
 				$(gen_kfd_entry sys-kernel/rt-sources)
 				$(gen_kfd_entry sys-kernel/vanilla-kernel)
 				$(gen_kfd_entry sys-kernel/vanilla-sources)
+				$(gen_kfd_entry sys-kernel/xanmod-kernel)
+				$(gen_kfd_entry sys-kernel/xanmod-rt)
+				$(gen_kfd_entry sys-kernel/xanmod-sources)
+				$(gen_kfd_entry sys-kernel/xanmod-sources-rt)
 				$(gen_kfd_entry sys-kernel/zen-sources)
 			)
 		)
 	)
 	rock-dkms? (
 		!strict-pairing? (
-			>=sys-kernel/rock-dkms-${ROCM_VERSION}:${SLOT}
-			sys-kernel/rock-dkms:=
+			>=sys-kernel/rock-dkms-${ROCM_VERSION}:=
 		)
 		strict-pairing? (
-			~sys-kernel/rock-dkms-${ROCM_VERSION}:${SLOT}
-			sys-kernel/rock-dkms:=
+			~sys-kernel/rock-dkms-${ROCM_VERSION}:=
 		)
 	)
 "
