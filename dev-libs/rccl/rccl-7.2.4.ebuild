@@ -69,9 +69,9 @@ RDEPEND="
 		dev-util/DOCA-Host:=[${LIBSTDCXX_USEDEP},mlnx-ofed-kernel]
 		virtual/kfd:=
 		|| (
-			>=virtual/kfd-7.2:0/7.2[rock-dkms]
-			>=virtual/kfd-7.1:0/7.1[rock-dkms]
-			>=virtual/kfd-7.0:0/7.0[rock-dkms]
+			>=virtual/kfd-7.2:0/7.2[amdgpu-dkms]
+			>=virtual/kfd-7.1:0/7.1[amdgpu-dkms]
+			>=virtual/kfd-7.0:0/7.0[amdgpu-dkms]
 		)
 	)
 	verbs? (

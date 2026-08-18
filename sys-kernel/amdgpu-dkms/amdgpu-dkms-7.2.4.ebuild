@@ -945,9 +945,9 @@ _gen_switch_wrapper() {
 		best_pv="${pv}"
 	fi
 
-cat <<EOF > "${EROOT}/usr/bin/install-rock-dkms-${PV}-for-${k}.sh"
+cat <<EOF > "${EROOT}/usr/bin/install-amdgpu-dkms-${PV}-for-${k}.sh"
 #!/bin/bash
-echo "Switching to rock-dkms ${PV}"
+echo "Switching to amdgpu-dkms ${PV}"
 PV="${PV}"
 ROCM_SLOT="${ROCM_SLOT}"
 kernel_release="${kernel_release}"
@@ -977,7 +977,7 @@ DKMS_MODULES=(
 	"amdxcp amd/amdxcp /kernel/drivers/gpu/drm/amd/amdxcp"
 )
 
-# Entries from all versions of the rock-dkms driver and the vanilla amdgpu kernel driver.
+# Entries from all versions of the amdgpu-dkms driver and the vanilla amdgpu kernel driver.
 _DKMS_MODULES=(
 	"amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
 	"amdttm /kernel/drivers/gpu/drm/ttm"
@@ -1009,8 +1009,8 @@ IFS=\$' \t\n'
 echo "Updating /lib/modules/\${kernel_release}/module.dep for \`modprobe amdgpu\`"
 depmod -a \${kernel_release}
 EOF
-	chmod -v 0750 "${EROOT}/usr/bin/install-rock-dkms-${PV}-for-${k}.sh"
-	ln -sf "${EROOT}/usr/bin/install-rock-dkms-${PV}-for-${k}.sh" "${EROOT}/usr/bin/install-rock-dkms-slot-${ROCM_SLOT}-for-${k}.sh"
+	chmod -v 0750 "${EROOT}/usr/bin/install-amdgpu-dkms-${PV}-for-${k}.sh"
+	ln -sf "${EROOT}/usr/bin/install-amdgpu-dkms-${PV}-for-${k}.sh" "${EROOT}/usr/bin/install-amdgpu-dkms-slot-${ROCM_SLOT}-for-${k}.sh"
 }
 
 dkms_build() {
@@ -1252,12 +1252,12 @@ ewarn
 	if use build ; then
 einfo
 einfo "The following can be used to switch between ROCm slots/versions for the"
-einfo "rock-dkms (aka amdgpu-dkms) kernel driver:"
+einfo "amdgpu-dkms kernel driver:"
 einfo
 		local k
 		for k in ${K[@]} ; do
-einfo "/usr/bin/install-rock-dkms-${PV}-for-${k}.sh"
-einfo "/usr/bin/install-rock-dkms-slot-${ROCM_SLOT}-for-${k}.sh"
+einfo "/usr/bin/install-amdgpu-dkms-${PV}-for-${k}.sh"
+einfo "/usr/bin/install-amdgpu-dkms-slot-${ROCM_SLOT}-for-${k}.sh"
 		done
 einfo
 

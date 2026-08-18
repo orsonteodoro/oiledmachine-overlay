@@ -64,8 +64,8 @@ RDEPEND="
 	)
 "
 #	|| (
-#		~sys-kernel/rock-dkms-${PV}:${SLOT}
-#		~sys-kernel/rocm-sources-${PV}:${SLOT}
+#		~sys-kernel/amdgpu-dkms-${PV}:${SLOT}
+#		~sys-kernel/amdgpu-sources-${PV}:${SLOT}
 #	)
 DEPEND="
 	${RDEPEND}
@@ -167,15 +167,15 @@ src_install() {
 
 pkg_postinst() {
 	if \
-		   has_version ">=sys-kernel/rock-dkms-${PV}:${SLOT}" \
-		|| has_version ">=sys-kernel/rocm-sources-${PV}:${SLOT}" ; then
+		   has_version ">=sys-kernel/amdgpu-dkms-${PV}:${SLOT}" \
+		|| has_version ">=sys-kernel/amdgpu-sources-${PV}:${SLOT}" ; then
 		:
 	else
 ewarn
 ewarn "ONE following are required to use ${PN}:"
 ewarn
-ewarn "  >=sys-kernel/rock-dkms-${PV}:${SLOT}"
-ewarn "  >=sys-kernel/rocm-sources-${PV}:${SLOT}"
+ewarn "  >=sys-kernel/amdgpu-dkms-${PV}:${SLOT}"
+ewarn "  >=sys-kernel/amdgpu-sources-${PV}:${SLOT}"
 ewarn
 	fi
 }
