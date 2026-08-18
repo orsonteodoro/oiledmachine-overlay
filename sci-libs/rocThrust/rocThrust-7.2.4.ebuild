@@ -30,7 +30,7 @@ AMDGPU_TARGETS_COMPAT=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
 inherit cmake libstdcxx-slot rocm
@@ -61,20 +61,15 @@ RESTRICT="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 -asan -benchmark -test
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
 #[${ROCM_USEDEP}]
 RDEPEND="
-	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-	dev-util/hip:=
-	>=sci-libs/rocPRIM-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCPRIM_7_2_AMDGPU_USEDEP}]
-	sci-libs/rocPRIM:=
-	test? (
-		dev-cpp/gtest[${LIBSTDCXX_USEDEP}]
-	)
+	~dev-util/hip-${PV}:=[${LIBSTDCXX_USEDEP}]
+	~sci-libs/rocPRIM-${PV}:=[${LIBSTDCXX_USEDEP},${ROCPRIM_7_2_AMDGPU_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
@@ -82,8 +77,10 @@ DEPEND="
 BDEPEND="
 	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.20.1
-	>=dev-build/rocm-cmake-${PV}:${SLOT}
-	dev-build/rocm-cmake:=
+	~dev-build/rocm-cmake-${PV}:=
+	test? (
+		dev-cpp/gtest:=[${LIBSTDCXX_USEDEP}]
+	)
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-4.0-operator_new.patch"
