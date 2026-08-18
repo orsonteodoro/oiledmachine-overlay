@@ -5,7 +5,7 @@ EAPI=8
 
 CXX_STANDARD=17
 HIP_SUPPORT_CUDA=1
-LLVM_SLOT=19
+LLVM_SLOT=22
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
@@ -37,7 +37,7 @@ LICENSE="
 # MIT - LICENSE.md
 # The distro's MIT license template does not have all rights reserved.
 SLOT="0/${ROCM_SLOT}"
-IUSE="asan test cuda +rocm ebuild_revision_8"
+IUSE="asan test cuda +rocm ebuild_revision_9"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 	^^ (
