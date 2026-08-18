@@ -12,7 +12,7 @@ CMAKE_BUILD_TYPE="RelWithDebInfo"
 CMAKE_MAKEFILE_GENERATOR="emake"
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=22
-PYTHON_COMPAT=( "python3_"{10..13} )
+PYTHON_COMPAT=( "python3_"{10,12} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 TENSILELITE_INTERNAL_PV="4.33.0" # https://github.com/ROCm/hipBLASLt/blob/rocm-7.2.4/tensilelite/Tensile/__init__.py#L29
 TENSILEFULL_INTERNAL_PV="4.44.0" # https://github.com/ROCm/Tensile/blob/rocm-7.2.4/Tensile/__init__.py#L29
@@ -71,7 +71,7 @@ SLOT="0/${ROCM_SLOT}"
 IUSE+="
 ${ROCM_IUSE}
 -asan -benchmark -cuda +minimal +rocm
-ebuild_revision_17
+ebuild_revision_18
 "
 gen_rocm_required_use() {
 	local x
