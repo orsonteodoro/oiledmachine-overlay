@@ -81,7 +81,7 @@ IUSE+="
 ${AMDGPU_TARGETS_COMPAT[@]}
 cpu enhanced-message ffmpeg ieee1394 opencv python system-rapidjson
 test
-ebuild_revision_16
+ebuild_revision_17
 "
 REQUIRED_USE="
 	|| (
@@ -94,13 +94,13 @@ RDEPEND="
 	$(python_gen_cond_dep '
 		>=dev-python/pybind11-2.11.1[${PYTHON_USEDEP}]
 	')
-	dev-libs/protobuf:=
+	>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:=
+	dev-db/lmdb:=
+	dev-libs/protobuf:=[${LIBSTDCXX_USEDEP}]
 	|| (
 		dev-libs/protobuf:3/3.12[${LIBSTDCXX_USEDEP}]
 		dev-libs/protobuf:3/3.21[${LIBSTDCXX_USEDEP}]
 	)
-	dev-db/lmdb:=
-	>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:=
 	~dev-util/hip-${PV}:=[${LIBSTDCXX_USEDEP}]
 	~dev-libs/rocm-opencl-runtime-${PV}:=[${LIBSTDCXX_USEDEP}]
 	~sci-libs/MIVisionX-${PV}:=[${LIBSTDCXX_USEDEP}]
