@@ -9,7 +9,7 @@ GRPC_SLOT="3"
 LLVM_SLOT=22
 MAKEOPTS="-j1" # Prevent build files race condition for /opt/rocm/lib/llvm/bin/llvm-link: No such file or directory: 'ocl_atomics_amdgcn.bc'
 PROTOBUF_CPP_SLOT="3"
-PYTHON_COMPAT=( "python3_"{10..13} )
+PYTHON_COMPAT=( "python3_"{10,12} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_USE_LLVM_ROC=1
 
@@ -144,7 +144,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${ROCM_IUSE}
 +archer -cuda +gdb-plugin -offload -ompt +ompd -remote-offloading
-ebuild_revision_35
+ebuild_revision_36
 "
 
 gen_cuda_required_use() {
