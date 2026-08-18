@@ -5,7 +5,7 @@ EAPI=8
 
 CXX_STANDARD=17
 HIP_SUPPORT_CUDA=1
-LLVM_SLOT=19
+LLVM_SLOT=22
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit libstdcxx-compat
@@ -34,7 +34,7 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE+="
 -asan cuda +rocm
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE="
 	^^ (
