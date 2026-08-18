@@ -24,7 +24,7 @@ AMDGPU_TARGETS_COMPAT=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_6_4[@]}"
 )
 
 inherit check-reqs cmake edo flag-o-matic libstdcxx-slot linux-info rocm
@@ -51,7 +51,7 @@ RESTRICT="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 test peermem rdma roce verbs
-ebuild_revision_10
+ebuild_revision_11
 "
 REQUIRED_USE="
 	rdma? (
