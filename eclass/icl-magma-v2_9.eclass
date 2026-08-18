@@ -288,23 +288,22 @@ if [[ "${MAGMA_ROCM}" == "1" ]] ; then
 			echo "
 				(
 					>=dev-libs/rocm-core-${pv}:${slot}[${LIBSTDCXX_USEDEP}]
-					dev-libs/rocm-core:=
 					>=dev-util/hip-${pv}:${slot}[${LIBSTDCXX_USEDEP},rocm]
-					dev-util/hip:=
 					>=sci-libs/hipBLAS-${pv}:${slot}[${LIBSTDCXX_USEDEP},rocm]
-					sci-libs/hipBLAS:=
 					>=sci-libs/hipSPARSE-${pv}:${slot}[${LIBSTDCXX_USEDEP},rocm]
-					sci-libs/hipSPARSE:=
 				)
 			"
 		done
 	}
 	RDEPEND+="
 		rocm? (
+			dev-libs/rocm-core:=
+			dev-util/hip:=
+			sci-libs/hipBLAS:=
+			sci-libs/hipSPARSE:=
 			|| (
 				$(gen_rocm_rdepend)
 			)
-			dev-util/hip:=
 		)
 	"
 fi
@@ -336,24 +335,23 @@ REQUIRED_USE+="
 # TODO: do not enforce openblas
 #	hip? ( sci-libs/hipBLAS )
 RDEPEND+="
-	sci-libs/hipBLAS
-	sys-devel/gcc[fortran]
+	sci-libs/hipBLAS:=
+	sys-devel/gcc:=[fortran]
 	!openblas? (
-		virtual/blas
-		virtual/lapack
+		virtual/blas:*
+		virtual/lapack:*
 	)
 	atlas? (
-		sci-libs/atlas
+		sci-libs/atlas:=
 	)
 	mkl? (
-		sci-libs/mkl
+		sci-libs/mkl:=
 	)
 	openblas? (
-		sci-libs/lapack
-		sci-libs/openblas
+		sci-libs/lapack:=
+		sci-libs/openblas:=
 	)
 	tbb? (
-		dev-cpp/tbb:0
 		dev-cpp/tbb:=
 	)
 "
@@ -425,24 +423,6 @@ Libs.private: -lm -lpthread -ldl
 Cflags: -I\${includedir}
 Requires: $(usex openblas "openblas" "blas lapack")
 EOF
-}
-
-# Replace symbols for cuda builds even if not inheriting rocm eclass.
-replace_symbols() {
-	IFS=$'\n'
-
-	local llvm_slot
-	if [[ "${ROCM_SLOT}" == "7.0" ]] ; then
-		llvm_slot=19
-	elif [[ "${ROCM_SLOT}" == "6.4" ]] ; then
-		llvm_slot=19
-	else
-		# Not installed or disable
-		llvm_slot=-1
-	fi
-
-
-	IFS=$' \t\n'
 }
 
 generate_precisions() {
@@ -526,7 +506,6 @@ icl-magma-v2_9_src_prepare() {
 	unset CXX
 
 	cmake_src_prepare
-	replace_symbols
 	local applied_rocm_patches=0
 	if [[ "${MAGMA_ROCM}" == "1" ]] ; then
 		if use rocm ; then
