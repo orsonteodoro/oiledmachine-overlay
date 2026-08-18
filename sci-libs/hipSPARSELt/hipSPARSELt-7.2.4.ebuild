@@ -48,7 +48,7 @@ RESTRICT="test"
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 -asan -cuda rocm -samples -test
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	^^ (
@@ -57,14 +57,12 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	dev-util/hip:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
-	dev-util/hip:=
+	~dev-util/hip-${PV}:=[${LIBSTDCXX_USEDEP},cuda?,rocm?]
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
-		>=sci-libs/hipSPARSE-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-		sci-libs/hipSPARSE:=
+		~sci-libs/hipSPARSE-${PV}:=[${LIBSTDCXX_USEDEP}]
 		virtual/hsa-code-object-version:=
 	)
 "
@@ -75,12 +73,10 @@ BDEPEND="
 	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.10.2
 	rocm? (
-		>=dev-util/Tensile-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP}]
-		dev-util/Tensile:=
+		~dev-util/Tensile-${PV}:=[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP}]
 	)
 	test? (
-		dev-cpp/gtest[${LIBSTDCXX_USEDEP}]
-		dev-cpp/gtest:=
+		dev-cpp/gtest:=[${LIBSTDCXX_USEDEP}]
 	)
 "
 PATCHES=(
