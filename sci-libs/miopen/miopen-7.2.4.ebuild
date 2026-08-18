@@ -80,7 +80,7 @@ SLOT="0/${ROCM_SLOT}"
 IUSE="
 +ai-kernel-tuning comgr composable-kernel debug hipblaslt hiprtc kernels
 miopendriver mlir opencl +rocm test
-ebuild_revision_23
+ebuild_revision_24
 "
 gen_amdgpu_required_use() {
 	local x
@@ -183,7 +183,7 @@ RDEPEND="
 "
 gen_hipblaslt_depend() {
 	local x
-	for x in ${HIPBLASLT_7_2_AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_} ; do
+	for x in "${HIPBLASLT_7_2_AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}" ; do
 		is_gfx_supported_by_miopen "${x}" || continue
 		echo "
 			${x}? (
