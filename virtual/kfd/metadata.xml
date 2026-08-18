@@ -11,10 +11,10 @@
     oiledmachine-overlay notes:
 
     The amdgpu-drm is a virtual ebuild.   It was originally intended as a way
-    to choose either between the amdgpu driver in the rock-dkms package or the
+    to choose either between the amdgpu driver in the amdgpu-dkms package or the
     amdgpu driver provided by the kernel package.[1]
 
-    Historically, it used the DC_VER from the rock-dkms package as a way to
+    Historically, it used the DC_VER from the amdgpu-dkms package as a way to
     ensure correspondence and equivalence between the ROCm version and DC_VER in
     both the vanilla kernel and the ROCK-Kernel-Driver.  The flaw in the
     assumption has been corrected.
@@ -25,7 +25,7 @@
 
     are present in the vanilla kernel.
 
-    | KFD ABI [3]  | DC [3]  | GC [3] | VCN [3] | ROCm version [3] | Vanilla kernel only equivalent   | rock-dkms supported kernel versions [4]    |
+    | KFD ABI [3]  | DC [3]  | GC [3] | VCN [3] | ROCm version [3] | Vanilla kernel only equivalent   | amdgpu-dkms supported kernel versions [4]  |
     |--------------|---------|--------|---------|------------------|----------------------------------|--------------------------------------------|
     | 1.17         | 3.2.319 | 12.0.1 | 5.0.1   | 6.4.0            | 6.15                             | 4.18 - 6.11, <= 6.12.x                     |
     | 1.17         | 3.2.320 | 12.0.1 | 5.0.1   | 6.4.3            | 6.15                             | 4.18 - 6.11, <= 6.12.x                     |
@@ -54,6 +54,12 @@
 
   -->
   <use>
+    <flag name="amdgpu-dkms">
+      Selects amdgpu-dkms as a DRM module driver.
+
+      (Recommended for feature completeness and kernel configuration
+      correctness.)
+    </flag>
     <flag name="amdgpu-dkms-firmware">
       Select the amdgpu-dkms-firmware package as the firmware source.
     </flag>
@@ -68,12 +74,6 @@
 
       (Recommended for minimal install and better security, but you are
       responsible for the proper kernel configuration.)
-    </flag>
-    <flag name="rock-dkms">
-      Selects rock-dkms as a DRM module driver.
-
-      (Recommended for feature completeness and kernel configuration
-      correctness.)
     </flag>
     <flag name="strict-pairing">
       Both the firmware and DRM driver are paired so the kernel driver

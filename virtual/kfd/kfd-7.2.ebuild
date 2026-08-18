@@ -24,7 +24,7 @@ inherit secure-version
 # PSP:  Platform security processor, HDCP
 
 AMDGPU_FIRMWARE_PV="30.30.4.0.30300400"
-DC_VER="3.2.359" # From rock-dkms
+DC_VER="3.2.359" # From amdgpu-dkms
 KERNEL_FIRMWARE_PV="20250808"
 # Expected firmware properites:
 # Git message:  
@@ -47,7 +47,7 @@ KERNEL_FIRMWARE_PV="20250808"
 # KFD IOCTL:  https://github.com/torvalds/linux/blob/v6.19/include/uapi/linux/kfd_ioctl.h
 # PSP:        https://github.com/torvalds/linux/blob/v6.19/drivers/gpu/drm/amd/amdgpu/psp_v14_0.c
 # VCN:        https://github.com/torvalds/linux/blob/v6.19/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c#L65
-KERNEL_PV="6.19" # This row is from the vanilla Linux kernel not rock-dkms that reflects the vanilla kernel versions >= ROCm versions.
+KERNEL_PV="6.19" # This row is from the vanilla Linux kernel not amdgpu-dkms that reflects the vanilla kernel versions >= ROCm versions.
 # Expected kernel properties:
 # Some of the last amdkfd commits are applied to the amdkfd folder (d2e5bf7, b7c09a6, 97f3ca8, 37209d5) ; missing 835309f, a3431f7
 # GC = 12.0.1 (with kicker)
@@ -85,7 +85,7 @@ ROCM_SLOT="${ROCM_VERSION%.*}"
 
 DESCRIPTION="KFD (Kernel Fusion Driver) with version limited upper boundary"
 #KEYWORDS="~amd64 ~x86" # Work In Progress (WIP)
-IUSE="amdgpu-dkms-firmware linux-firmware custom-kernel kernel rock-dkms strict-pairing ebuild_revision_5"
+IUSE="amdgpu-dkms amdgpu-dkms-firmware linux-firmware custom-kernel kernel strict-pairing ebuild_revision_5"
 REQUIRED_USE="
 	^^ (
 		amdgpu-dkms-firmware
@@ -93,12 +93,13 @@ REQUIRED_USE="
 	)
 	^^ (
 		kernel
-		rock-dkms
+		amdgpu-dkms
 	)
 	strict-pairing? (
+		!linux-firmware
 		!kernel
+		amdgpu-dkms
 		amdgpu-dkms-firmware
-		rock-dkms
 	)
 "
 SLOT="0/${ROCM_SLOT}"
@@ -152,12 +153,12 @@ KFD_RDEPEND="
 			)
 		)
 	)
-	rock-dkms? (
+	amdgpu-dkms? (
 		!strict-pairing? (
-			>=sys-kernel/rock-dkms-${ROCM_VERSION}:=
+			>=sys-kernel/amdgpu-dkms-${ROCM_VERSION}:=
 		)
 		strict-pairing? (
-			~sys-kernel/rock-dkms-${ROCM_VERSION}:=
+			~sys-kernel/amdgpu-dkms-${ROCM_VERSION}:=
 		)
 	)
 "
@@ -169,14 +170,17 @@ RDEPEND="
 
 pkg_setup() {
 ewarn
-ewarn "The following are still required:"
+ewarn "For non DKMS driver, the following LTS kernel versions is only supported:"
 ewarn
-	if use strict-pairing ; then
-ewarn "DC_VER:  ${PV} within z±10 in x.y.z, from /usr/src/linux/drivers/gpu/drm/amd/display/dc/dc.h"
-ewarn "Kernel version:  =${KERNEL_PV}*"
-	else
-ewarn "DC_VER:  >=${PV}, from /usr/src/linux/drivers/gpu/drm/amd/display/dc/dc.h"
-ewarn "Kernel version:  >=${KERNEL_PV}"
-	fi
+ewarn "6.18.x"
+ewarn
+ewarn
+ewarn "For building the DKMS driver, the following LTS kernel versions are only supported:"
+ewarn
+ewarn "5.10.x"
+ewarn "5.15.x"
+ewarn "6.1.x"
+ewarn "6.6.x"
+ewarn "6.12.x"
 ewarn
 }
