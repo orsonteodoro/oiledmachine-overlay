@@ -48,8 +48,8 @@ LICENSE="
 	custom
 	MIT
 "
-# all-rights-reserved MIT - ./clr-rocm-7.0.2/CMakeLists.txt
-# custom - ./clr-rocm-7.0.2/opencl/khronos/headers/opencl2.2/LICENSE.txt
+# all-rights-reserved MIT - ./clr-rocm-7.2.4/CMakeLists.txt
+# custom - ./clr-rocm-7.2.4/opencl/khronos/headers/opencl2.2/LICENSE.txt
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="
 	!test? (
@@ -59,7 +59,7 @@ RESTRICT="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 debug test
-ebuild_revision_16
+ebuild_revision_17
 "
 # ROCclr uses clang -print-libgcc-file-name which may output a static-lib to link to.
 #	=llvm-runtimes/compiler-rt-${LLVM_SLOT}*:=
