@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_SLOT=19
+LLVM_SLOT=22
 PYTHON_COMPAT=( "python3_"{10..13} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
@@ -35,7 +35,10 @@ LICENSE="
 "
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="0/${ROCM_SLOT}"
-IUSE="test ebuild_revision_6"
+IUSE="
+test
+ebuild_revision_7
+"
 RDEPEND="
 	$(python_gen_cond_dep '
 		>=dev-python/astunparse-1.6.2[${PYTHON_USEDEP}]

@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_SLOT=19
+LLVM_SLOT=22
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit check-compiler-switch cmake flag-o-matic rocm
@@ -22,7 +22,7 @@ DESCRIPTION="Bandwidth test for ROCm"
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocm_bandwidth_test"
 LICENSE="NCSA-AMD"
 SLOT="0/${ROCM_SLOT}"
-IUSE+=" ebuild_revision_11"
+IUSE+=" ebuild_revision_12"
 RDEPEND="
 	~dev-libs/rocr-runtime-${PV}:=
 "

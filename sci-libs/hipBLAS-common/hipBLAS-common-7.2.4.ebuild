@@ -4,7 +4,7 @@
 EAPI=8
 
 HIP_SUPPORT_CUDA=1
-LLVM_SLOT=19
+LLVM_SLOT=22
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake flag-o-matic rocm
@@ -23,7 +23,7 @@ LICENSE="
 "
 SLOT="0/${ROCM_SLOT}"
 IUSE+="
-ebuild_revision_0
+ebuild_revision_1
 "
 REQUIRED_USE="
 "

@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_SLOT=19
+LLVM_SLOT=22
 ROCM_SLOT="${PV%.*}"
 
 inherit rocm
@@ -26,7 +26,7 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="mirror" # Speed up downloads
 SLOT="0/${ROCM_SLOT}"
-IUSE+=" ebuild_revision_1"
+IUSE+=" ebuild_revision_2"
 
 pkg_setup() {
 	rocm_pkg_setup

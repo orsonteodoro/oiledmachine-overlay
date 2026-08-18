@@ -5,7 +5,7 @@ EAPI=8
 
 CHECKREQS_MEMORY=25G # Tested with 34.3G total memory
 CXX_STANDARD=14
-LLVM_SLOT=19
+LLVM_SLOT=22
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 AMDGPU_TARGETS_COMPAT=(
@@ -51,7 +51,7 @@ RESTRICT="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 test peermem rdma roce verbs
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE="
 	rdma? (

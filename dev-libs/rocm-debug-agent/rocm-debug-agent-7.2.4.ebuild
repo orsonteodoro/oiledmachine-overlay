@@ -4,7 +4,7 @@
 EAPI=8
 
 CONFIG_CHECK="~HSA_AMD"
-LLVM_SLOT=19
+LLVM_SLOT=22
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit check-compiler-switch cmake flag-o-matic linux-info rocm
@@ -23,7 +23,10 @@ RESTRICT="
 	test
 "
 SLOT="0/${ROCM_SLOT}"
-IUSE="test ebuild_revision_9"
+IUSE="
+test
+ebuild_revision_10
+"
 RDEPEND="
 	dev-libs/elfutils:=
 	dev-debug/systemtap:=

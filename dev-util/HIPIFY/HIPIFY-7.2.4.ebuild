@@ -7,7 +7,7 @@ EAPI=8
 # https://github.com/ROCm/HIPIFY/blob/rocm-7.0.2/docs/how-to/hipify-clang.rst
 # https://github.com/ROCm/HIPIFY/blob/rocm-7.0.2/src/Statistics.h
 
-LLVM_SLOT=19
+LLVM_SLOT=22
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit check-compiler-switch cmake flag-o-matic rocm
@@ -40,14 +40,13 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 asan cuda test
-ebuild_revision_20
+ebuild_revision_22
 "
 CUDA_12_6_CDEPEND="
 	(
-		(
-			>=dev-libs/cudnn-8.8.0
-			<dev-libs/cudnn-9.12.0
-		)
+		>=dev-libs/cudnn-8.8.0
+		<dev-libs/cudnn-9.25.0
+
 		>=x11-drivers/nvidia-drivers-560.35
 		=dev-util/nvidia-cuda-toolkit-12.6*
 		virtual/cuda-compiler:0/12.6
@@ -55,10 +54,9 @@ CUDA_12_6_CDEPEND="
 "
 CUDA_12_8_CDEPEND="
 	(
-		(
-			>=dev-libs/cudnn-8.8.0
-			<dev-libs/cudnn-9.12.0
-		)
+		>=dev-libs/cudnn-8.8.0
+		<dev-libs/cudnn-9.25.0
+
 		>=x11-drivers/nvidia-drivers-570.124
 		=dev-util/nvidia-cuda-toolkit-12.8*
 		virtual/cuda-compiler:0/12.8
@@ -66,10 +64,9 @@ CUDA_12_8_CDEPEND="
 "
 CUDA_12_9_CDEPEND="
 	(
-		(
-			>=dev-libs/cudnn-8.8.0
-			<dev-libs/cudnn-9.12.0
-		)
+		>=dev-libs/cudnn-8.8.0
+		<dev-libs/cudnn-9.25.0
+
 		>=x11-drivers/nvidia-drivers-575.57
 		=dev-util/nvidia-cuda-toolkit-12.9*
 		virtual/cuda-compiler:0/12.9
@@ -80,13 +77,14 @@ RDEPEND="
 		${ROCM_CLANG_DEPEND}
 	)
 	cuda? (
+		dev-util/nvidia-cuda-toolkit:=
+		virtual/cuda-compiler:=
+		x11-drivers/nvidia-drivers:=
 		|| (
 			${CUDA_12_9_CDEPEND}
 			${CUDA_12_8_CDEPEND}
 			${CUDA_12_6_CDEPEND}
 		)
-		virtual/cuda-compiler:=
-		dev-util/nvidia-cuda-toolkit:=
 	)
 "
 DEPEND="
@@ -95,13 +93,13 @@ DEPEND="
 BDEPEND="
 	${ROCM_CLANG_DEPEND}
 	test? (
+		virtual/cuda-compiler:=
+		dev-util/nvidia-cuda-toolkit:=
 		|| (
 			${CUDA_12_9_CDEPEND}
 			${CUDA_12_8_CDEPEND}
 			${CUDA_12_6_CDEPEND}
 		)
-		virtual/cuda-compiler:=
-		dev-util/nvidia-cuda-toolkit:=
 	)
 	>=dev-build/cmake-3.16.8
 "

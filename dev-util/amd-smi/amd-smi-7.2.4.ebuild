@@ -7,7 +7,7 @@ EAPI=8
 #AMD_HSMP_H_DATE="2024-01-03 11:46:22 +0100"
 #AMD_HSMP_H_COMMIT="54aa699e8094efb7d7675fefbc03dfce24f98456"
 ESMI_PV="4.2"
-LLVM_SLOT=19
+LLVM_SLOT=22
 PYTHON_COMPAT=( "python3_"{10..13} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 MY_PN="amdsmi"
@@ -56,7 +56,7 @@ RESTRICT="test" # Not tested
 SLOT="0/${ROCM_SLOT}"
 IUSE+="
 asan doc +esmi test
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -64,12 +64,12 @@ REQUIRED_USE+="
 "
 RDEPEND="
 	${PYTHON_DEPS}
-	|| (
-		>=virtual/kfd-6.4:0/6.4
-		>=virtual/kfd-6.3:0/6.3
-		>=virtual/kfd-6.2:0/6.2
-	)
 	virtual/kfd:=
+	|| (
+		>=virtual/kfd-7.2:0/7.2
+		>=virtual/kfd-7.1:0/7.1
+		>=virtual/kfd-7.0:0/7.0
+	)
 "
 DEPEND="
 	${RDEPEND}

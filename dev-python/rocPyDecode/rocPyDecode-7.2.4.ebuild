@@ -8,7 +8,7 @@ EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_12" )
-LLVM_SLOT=19
+LLVM_SLOT=22
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
@@ -46,7 +46,7 @@ LICENSE="
 # The distro's MIT license does not contain all rights reserved.
 RESTRICT="mirror"
 SLOT="0/${ROCM_SLOT}"
-IUSE+=" ebuild_revision_1"
+IUSE+=" ebuild_revision_2"
 RDEPEND+="
 	>=sci-libs/rocDecode-${PV}:${SLOT}
 	sci-libs/rocDecode:=

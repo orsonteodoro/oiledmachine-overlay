@@ -4,7 +4,7 @@
 
 EAPI=8
 
-LLVM_SLOT="19"
+LLVM_SLOT=22
 ROCM_SLOT="${PV%.*}"
 ROCM_VERSION="${PV}"
 
@@ -17,7 +17,7 @@ HOMEPAGE=""
 LICENSE="public-domain"
 RESTRICT="mirror"
 SLOT="0/${ROCM_SLOT}"
-IUSE+="ebuild_revision_11"
+IUSE+=" ebuild_revision_14"
 RDEPEND+="
 "
 DEPEND+="

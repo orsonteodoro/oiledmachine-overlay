@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_SLOT=19
+LLVM_SLOT=22
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit check-compiler-switch cmake flag-o-matic rocm
@@ -29,7 +29,7 @@ LICENSE="
 "
 # || ( ( GPL-2.0 Linux-syscall-note ) MIT ) - src/linux/kfd_sysfs.h
 SLOT="0/${ROCM_SLOT}"
-IUSE=" ebuild_revision_11"
+IUSE=" ebuild_revision_12"
 RDEPEND="
 	~dev-libs/rocm-comgr-${PV}:=
 	~dev-libs/rocr-runtime-${PV}:=

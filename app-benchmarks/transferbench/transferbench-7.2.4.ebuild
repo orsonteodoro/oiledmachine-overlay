@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_SLOT=19
+LLVM_SLOT=22
 MY_PN="TransferBench"
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 inherit hip-versions
@@ -39,7 +39,10 @@ LICENSE="
 "
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="0/${ROCM_SLOT}"
-IUSE+=" cuda rocm ebuild_revision_0"
+IUSE+="
+cuda rocm
+ebuild_revision_1
+"
 REQUIRED_USE+="
 	|| (
 		cuda

@@ -4,7 +4,7 @@
 EAPI=8
 
 CMAKE_BUILD_TYPE="RELEASE"
-LLVM_SLOT=19
+LLVM_SLOT=22
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit check-compiler-switch cmake flag-o-matic rocm
@@ -29,7 +29,10 @@ LICENSE="
 "
 # The distro's MIT license template does not have all rights reserved.
 SLOT="0/${ROCM_SLOT}"
-IUSE="debug ebuild_revision_13"
+IUSE="
+debug
+ebuild_revision_14
+"
 RDEPEND="
 	|| (
 		${ROCM_GCC_DEPEND}
