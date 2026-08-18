@@ -10,7 +10,7 @@ LLVM_SLOT=22
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 AMDGPU_TARGETS_COMPAT=(
-# See https://github.com/ROCm/rocDecode/blob/rocm-7.0.2/samples/videoDecodeRGB/CMakeLists.txt#L64
+# See https://github.com/ROCm/rocDecode/blob/rocm-7.2.4/samples/videoDecodeRGB/CMakeLists.txt#L64
 	"gfx908"
 	"gfx90a"
 	"gfx942"
@@ -89,7 +89,8 @@ RESTRICT="
 "
 SLOT="0/${ROCM_SLOT}"
 IUSE="
-samples ebuild_revision_7
+samples
+ebuild_revision_8
 "
 REQUIRED_USE="
 "
