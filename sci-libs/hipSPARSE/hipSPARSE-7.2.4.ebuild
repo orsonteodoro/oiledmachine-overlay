@@ -5,7 +5,7 @@ EAPI=8
 
 CXX_STANDARD=17
 HIP_SUPPORT_CUDA=1
-LLVM_SLOT=19
+LLVM_SLOT=22
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
@@ -79,7 +79,7 @@ LICENSE="
 # The distro's MIT license template does not have all rights reserved.
 RESTRICT="test" # Test ebuild sections needs update
 SLOT="0/${ROCM_SLOT}"
-IUSE="cuda +rocm test ebuild_revision_11"
+IUSE="cuda +rocm test ebuild_revision_12"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 	^^ (
