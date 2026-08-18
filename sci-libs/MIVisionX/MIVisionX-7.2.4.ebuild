@@ -104,7 +104,7 @@ IUSE="
 caffe cpu +enhanced-message ffmpeg -fp16 +ieee1394 +loom +migraphx -minimal +neural-net
 nnef onnx opencl opencv +rocal +rocal-python +rocm +rpp system-nnef-parser
 system-rapidjson
-ebuild_revision_30
+ebuild_revision_31
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
