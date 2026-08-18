@@ -61,6 +61,7 @@ IUSE="
 	tools-dev
 	tools-perf
 	tools-system
+	ebuild_revision_2
 "
 REQUIRED_USE="
 	ai? (
