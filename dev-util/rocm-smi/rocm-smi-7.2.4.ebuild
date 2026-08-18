@@ -5,7 +5,7 @@ EAPI=8
 
 CXX_STANDARD=17
 LLVM_SLOT=22
-PYTHON_COMPAT=( "python3_"{10..13} )
+PYTHON_COMPAT=( "python3_"{10,12} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit libstdcxx-compat
@@ -43,7 +43,7 @@ LICENSE="
 # NCSA-AMD - src/rocm_smi.cc
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="0/${ROCM_SLOT}"
-IUSE=" ebuild_revision_14"
+IUSE=" ebuild_revision_15"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
