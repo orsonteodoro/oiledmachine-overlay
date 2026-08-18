@@ -49,7 +49,7 @@ AMDGPU_UNTESTED_TARGETS=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
 inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot python-any-r1 rocm
@@ -76,7 +76,10 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="test"
 SLOT="0/${ROCM_SLOT}"
-IUSE=" plugins samples test ebuild_revision_21"
+IUSE="
+plugins samples test
+ebuild_revision_22
+"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
@@ -84,23 +87,17 @@ RDEPEND="
 	$(python_gen_any_dep '
 		dev-python/barectf[${PYTHON_USEDEP}]
 	')
-	>=dev-libs/hsa-amd-aqlprofile-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-	dev-libs/hsa-amd-aqlprofile:=
-	>=dev-libs/rocm-comgr-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-	dev-libs/rocm-comgr:=
-	>=dev-libs/rocm-core-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-	dev-libs/rocm-core:=
-	>=dev-libs/rocr-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-	dev-libs/rocr-runtime:=
-	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-	dev-util/hip:=
-	>=dev-util/roctracer-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-	dev-util/roctracer:=
+	~dev-libs/hsa-amd-aqlprofile-${PV}:=[${LIBSTDCXX_USEDEP}]
+	~dev-libs/rocm-comgr-${PV}:=[${LIBSTDCXX_USEDEP}]
+	~dev-libs/rocm-core-${PV}:=[${LIBSTDCXX_USEDEP}]
+	~dev-libs/rocr-runtime-${PV}:=[${LIBSTDCXX_USEDEP}]
+	~dev-util/hip-${PV}:=[${LIBSTDCXX_USEDEP}]
+	~dev-util/roctracer-${PV}:=[${LIBSTDCXX_USEDEP}]
 	plugins? (
-		sys-apps/systemd
+		sys-apps/systemd:=
 	)
 	samples? (
-		sys-apps/systemd
+		sys-apps/systemd:=
 	)
 "
 DEPEND="
@@ -112,12 +109,10 @@ BDEPEND="
 		dev-python/cppheaderparser[${PYTHON_USEDEP}]
 	')
 	>=dev-build/cmake-3.18.0
-	>=sys-devel/llvm-roc-symlinks-${PV}:${SLOT}
-	sys-devel/llvm-roc-symlinks:=
+	~sys-devel/llvm-roc-symlinks-${PV}:=
 	test? (
 		sys-devel/gcc[sanitize]
-		>=dev-libs/ROCdbgapi-${PV}:${SLOT}
-		dev-libs/ROCdbgapi:=
+		~dev-libs/ROCdbgapi-${PV}:=
 	)
 "
 PATCHES=(
