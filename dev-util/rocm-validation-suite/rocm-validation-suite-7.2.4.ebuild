@@ -11,7 +11,7 @@ ROCM_VERSION="${PV}"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
 inherit check-compiler-switch flag-o-matic cmake libstdcxx-slot rocm
@@ -51,19 +51,17 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="test" # Needs SRC_URI changes for offline install.
 SLOT="0/${ROCM_SLOT}"
-IUSE+=" doc test ebuild_revision_6"
+IUSE+="
+doc test
+ebuild_revision_7
+"
 RDEPEND="
-	dev-cpp/yaml-cpp[${LIBSTDCXX_USEDEP}]
-	dev-cpp/yaml-cpp:=
-	sys-apps/pciutils
-	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-	dev-util/hip:=
-	>=dev-libs/rocr-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-	dev-libs/rocr-runtime:=
-	>=dev-util/rocm-smi-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-	dev-util/rocm-smi:=
-	>=sci-libs/rocBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-	sci-libs/rocBLAS:=
+	dev-cpp/yaml-cpp:=[${LIBSTDCXX_USEDEP}]
+	sys-apps/pciutils:=
+	~dev-util/hip-${PV}:=[${LIBSTDCXX_USEDEP}]
+	~dev-libs/rocr-runtime-${PV}:=[${LIBSTDCXX_USEDEP}]
+	~dev-util/rocm-smi-${PV}:=[${LIBSTDCXX_USEDEP}]
+	~sci-libs/rocBLAS-${PV}:=[${LIBSTDCXX_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
