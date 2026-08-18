@@ -40,7 +40,7 @@ CUDA_TARGETS_COMPAT=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
 inherit cmake flag-o-matic libstdcxx-slot rocm toolchain-funcs
@@ -67,11 +67,11 @@ LICENSE="
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 cuda +rocm
-ebuild_revision_10
+ebuild_revision_11
 "
 gen_cuda_required_use() {
 	local x
-	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+	for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
 		echo "
 			cuda_targets_${x}? (
 				cuda
@@ -81,7 +81,7 @@ gen_cuda_required_use() {
 }
 gen_rocm_required_use() {
 	local x
-	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+	for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
 		echo "
 			amdgpu_targets_${x}? (
 				rocm
@@ -109,16 +109,13 @@ LICENSE="MIT"
 RESTRICT="test mirror" # The distro mirrored copy is wrong
 SLOT="0/${ROCM_SLOT}"
 RDEPEND="
-	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
-	dev-util/hip:=
+	~dev-util/hip-${PV}:=[${LIBSTDCXX_USEDEP},cuda?,rocm?]
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
-		>=sci-libs/rocFFT-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCFFT_7_2_AMDGPU_USEDEP},rocm]
-		sci-libs/rocFFT:=
-		>=sci-libs/rocRAND-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCRAND_7_2_AMDGPU_USEDEP},rocm]
-		sci-libs/rocRAND:=
+		~sci-libs/rocFFT-${PV}:=[${LIBSTDCXX_USEDEP},${ROCFFT_7_2_AMDGPU_USEDEP},rocm]
+		~sci-libs/rocRAND-${PV}:=[${LIBSTDCXX_USEDEP},${ROCRAND_7_2_AMDGPU_USEDEP},rocm]
 	)
 "
 DEPEND="
@@ -127,8 +124,7 @@ DEPEND="
 BDEPEND="
 	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.16
-	>=dev-build/rocm-cmake-${PV}:${SLOT}
-	dev-build/rocm-cmake:=
+	~dev-build/rocm-cmake-${PV}:=
 "
 
 PATCHES=(
