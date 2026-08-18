@@ -17,7 +17,7 @@ GCC_COMPAT=(
 
 BINUTILS_PV="2.40"
 CXX_STANDARD="ignore"
-LLVM_SLOT=19
+LLVM_SLOT=22
 PYTHON_COMPAT=( "python3_"{10..13} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
@@ -113,7 +113,7 @@ SLOT="0/${ROCM_SLOT}"
 IUSE="
 -debuginfod examples -mpi +openmp +papi -python +rccl +rocprofiler
 +roctracer test system-dyninst system-libunwind system-papi +rocm-smi
-ebuild_revision_4
+ebuild_revision_5
 "
 # The vendored dyninst is build-time broken.
 REQUIRED_USE="
