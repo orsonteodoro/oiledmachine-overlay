@@ -5,7 +5,7 @@ EAPI=8
 
 CXX_STANDARD=17
 HIP_SUPPORT_CUDA=1
-LLVM_SLOT=19
+LLVM_SLOT=22
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 AMDGPU_TARGETS_COMPAT=(
@@ -70,7 +70,7 @@ RESTRICT="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-asan benchmark cuda hip-cpu +rocm test ebuild_revision_14
+asan benchmark cuda hip-cpu +rocm test ebuild_revision_15
 "
 gen_cuda_required_use() {
 	local x
