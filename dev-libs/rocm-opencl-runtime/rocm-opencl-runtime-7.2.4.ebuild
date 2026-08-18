@@ -5,7 +5,7 @@ EAPI=8
 
 AMDOCL_VER="2.1" # AMDOCL_LIB_VERSION_MAJOR.AMDOCL_LIB_VERSION_MINOR
 CXX_STANDARD=17
-LLVM_SLOT=19
+LLVM_SLOT=22
 ROCM_SLOT=$(ver_cut "1-2" "${PV}")
 
 inherit libstdcxx-compat
@@ -59,7 +59,7 @@ RESTRICT="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 debug test
-ebuild_revision_15
+ebuild_revision_16
 "
 # ROCclr uses clang -print-libgcc-file-name which may output a static-lib to link to.
 #	=llvm-runtimes/compiler-rt-${LLVM_SLOT}*:=
