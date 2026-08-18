@@ -9,7 +9,7 @@ GCC_COMPAT=(
 )
 
 CXX_STANDARD=17
-LLVM_SLOT=19
+LLVM_SLOT=22
 PYTHON_COMPAT=( "python3_"{10..13} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
@@ -38,7 +38,7 @@ RESTRICT="
 	)
 "
 SLOT="0/${ROCM_SLOT}"
-IUSE=" test ebuild_revision_13"
+IUSE=" test ebuild_revision_14"
 CDEPEND="
 	${ROCM_CLANG_DEPEND}
 "
