@@ -7,11 +7,11 @@ inherit libstdcxx-compat
 GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
-DOWNLOAD_FILE_12_5="hsa-amd-aqlprofile_1.0.0.70002-56~22.04_amd64.deb"
-DOWNLOAD_FILE_13_4="hsa-amd-aqlprofile_1.0.0.70002-56~24.04_amd64.deb"
+DOWNLOAD_FILE_12_5="hsa-amd-aqlprofile_1.0.0.70204-93~22.04_amd64.deb"
+DOWNLOAD_FILE_13_4="hsa-amd-aqlprofile_1.0.0.70204-93~24.04_amd64.deb"
 DOWNLOAD_FOLDER_URI="http://repo.radeon.com/rocm/apt/7.2.4/pool/main/h/hsa-amd-aqlprofile/"
 QA_PREBUILT="
-/opt/rocm-7.2.4/lib/libhsa-amd-aqlprofile64.so.1.0.70002
+/opt/rocm-7.2.4/lib/libhsa-amd-aqlprofile64.so.1.0.70204
 /opt/rocm-7.2.4/lib/libhsa-amd-aqlprofile64.so
 /opt/rocm-7.2.4/lib/libhsa-amd-aqlprofile64.so.1
 "
@@ -45,7 +45,7 @@ SLOT="0/${ROCM_SLOT}"
 IUSE="
 ${GCC_COMPAT[@]}
 deny-install skip-install
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	^^ (
