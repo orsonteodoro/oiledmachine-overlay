@@ -3,21 +3,23 @@
 
 EAPI=7
 
-U_OS_REL="24.04"
+MY_PV="30.30.4.0.30300400-2341068"
+
 DRIVER_PV="30.30.4" # Folder name
-KERNEL_PV="6.14" # Equivalent for vanilla kernel based on amdkfd last commits
+PKG_POSTINST_LIST="" # Global var
+PKG_RADEON_LIST="" # Global var
+ROCM_PV="7.2.4"
+ROCM_SLOT="${ROCM_PV%.*}"
+U_OS_REL="24.04" # Must place before FN
+
+FN="amdgpu-dkms-firmware_${MY_PV}.${U_OS_REL}_all.deb"
+
 KV_LTS_LIST=(
 # See https://github.com/ROCm/rocm-install-on-linux/blob/rocm-7.2.0/docs/reference/system-requirements.rst#supported-operating-systems
 	"5.15"
 	"6.1"
 	"6.12"
 )
-MY_PV="30.30.4.0.30300400-2341068"
-PKG_POSTINST_LIST="" # Global var
-PKG_RADEON_LIST="" # Global var
-ROCM_PV="7.2.4"
-ROCM_SLOT="${ROCM_PV%.*}"
-FN="amdgpu-dkms-firmware_${MY_PV}.${U_OS_REL}_all.deb"
 
 inherit unpacker
 
@@ -43,7 +45,10 @@ LICENSE="
 	)
 "
 SLOT="0/${ROCM_SLOT}"
-IUSE="si ebuild_revision_8"
+IUSE="
+si
+ebuild_revision_9
+"
 REQUIRED_USE="
 "
 RDEPEND="
@@ -52,9 +57,9 @@ RDEPEND="
 
 unpack_deb() {
 	echo ">>> Unpacking ${1##*/} to ${PWD}"
-	unpack $1
-	unpacker ./data.tar*
-	rm -f debian-binary {control,data}.tar*
+	unpack "${1}"
+	unpacker "./data.tar"*
+	rm -f "debian-binary" {"control","data"}".tar"*
 }
 
 src_unpack() {
@@ -74,12 +79,13 @@ src_compile() {
 gen_radeon_list() {
 	local amdgpu_cgs_path="${DISTDIR}/amdgpu_cgs.c.${ROCM_PV}"
 	[[ -e "${amdgpu_cgs_path}" ]] || die "Missing file"
-	local F=$(grep -r \
-		-e "radeon/" \
-		"${amdgpu_cgs_path}" \
-		| sed \
-			-e "s|.*\"radeon|radeon|" \
-			-e "s|.bin.*|.bin|")
+	local F=$(grep \
+			-r \
+			-e "radeon/" \
+			"${amdgpu_cgs_path}" \
+			| sed \
+				-e "s|.*\"radeon|radeon|" \
+				-e "s|.bin.*|.bin|")
 	#typeset -p F # pickler if needed
 	declare -A L
 	for f in ${F} ; do
@@ -87,23 +93,23 @@ gen_radeon_list() {
 			| cut -f 2 -d "/" \
 			| cut -f 1 -d "_")
 		if [[ -v "L[${cn}]" ]] ; then
-			L[${cn}]+=" ${f}"
+			L["${cn}"]+=" ${f}"
 		else
-			L[${cn}]="${f}"
+			L["${cn}"]="${f}"
 		fi
 	done
 
 	local cn
-	for cn in ${!L[@]} ; do
+	for cn in "${!L[@]}" ; do
 		PKG_RADEON_LIST+=" \e[1m\e[92m*\e[0m ${cn}:\t${L[${cn}]}\n"
 	done
 }
 
 gen_all_list() {
 	local ma
-	for ma in ${MA[@]} ; do
+	for ma in "${MA[@]}" ; do
 		F=(
-			$(ls ${ma}_*)
+			$(ls "${ma}_"*)
 		)
 
 		PKG_POSTINST_LIST+=" \e[1m\e[92m*\e[0m ${ma}:\t${F[@]/#/amdgpu/}\n"
@@ -115,7 +121,7 @@ gen_ma() {
 	local _MA=$(ls *)
 
 	local ma
-	for ma in ${_MA[@]} ; do
+	for ma in "${_MA[@]}" ; do
 		if [[ "${ma}" =~ "_ce.bin" ]] ; then
 			MA+=(
 				"${ma%_*}"
@@ -155,12 +161,12 @@ gen_ma() {
 		fi
 	done
 	local MA=(
-		$(echo ${MA[@]} \
+		$(echo "${MA[@]}" \
 			| tr " " "\n" \
 			| sort \
 			| uniq)
 	)
-	echo ${MA[@]}
+	echo "${MA[@]}"
 }
 
 _pre_gen_radeon_list() {
@@ -175,65 +181,54 @@ _pre_gen_radeon_list() {
 }
 
 gen_scripts() {
-	dodir /usr/bin
+	dodir "/usr/bin"
 cat <<EOF > "${ED}/usr/bin/install-${P}.sh"
 #!/bin/bash
 echo "Installing ${P} into /lib/firmware/amdgpu"
-rm -f /lib/firmware/amdgpu/*
-mkdir -p /lib/firmware/amdgpu
-cp -aT /lib/firmware/amdgpu-${MY_PV%-*} /lib/firmware/amdgpu
+rm -f "/lib/firmware/amdgpu/"*
+mkdir -p "/lib/firmware/amdgpu"
+cp -aT "/lib/firmware/amdgpu-${MY_PV%-*}" "/lib/firmware/amdgpu"
 EOF
 
 	local kv_slot
-	for kv_slot in ${KV_LTS_LIST[@]} ; do
+	for kv_slot in "${KV_LTS_LIST[@]}" ; do
 cat <<EOF > "${ED}/usr/bin/install-${P}-for-rock-kernel-module-slot-${kv_slot}.sh"
 #!/bin/bash
 echo "Installing ${P} into /lib/firmware/amdgpu"
-rm -f /lib/firmware/amdgpu/*
-mkdir -p /lib/firmware/amdgpu
-cp -aT /lib/firmware/amdgpu-${MY_PV%-*} /lib/firmware/amdgpu
+rm -f "/lib/firmware/amdgpu/"*
+mkdir -p "/lib/firmware/amdgpu"
+cp -aT "/lib/firmware/amdgpu-${MY_PV%-*}" "/lib/firmware/amdgpu"
 EOF
 	done
-
-if false ; then
-cat <<EOF > "${ED}/usr/bin/install-${P}-for-vanilla-kernel-module-slot-${KERNEL_PV}.sh"
-#!/bin/bash
-echo "Installing ${P} into /lib/firmware/amdgpu"
-rm -f /lib/firmware/amdgpu/*
-mkdir -p /lib/firmware/amdgpu
-cp -aT /lib/firmware/amdgpu-${MY_PV%-*} /lib/firmware/amdgpu
-EOF
-fi
 
 cat <<EOF > "${ED}/usr/bin/install-rocm-firmware-${ROCM_PV}.sh"
 #!/bin/bash
 echo "Installing ROCm v${ROCM_PV} compatible firmware into /lib/firmware/amdgpu"
-rm -f /lib/firmware/amdgpu/*
-mkdir -p /lib/firmware/amdgpu
-cp -aT /lib/firmware/amdgpu-${MY_PV%-*} /lib/firmware/amdgpu
+rm -f "/lib/firmware/amdgpu/"*
+mkdir -p "/lib/firmware/amdgpu"
+cp -aT "/lib/firmware/amdgpu-${MY_PV%-*}" "/lib/firmware/amdgpu"
 EOF
 
 cat <<EOF > "${ED}/usr/bin/install-rocm-firmware-slot-${ROCM_SLOT}.sh"
 #!/bin/bash
 echo "Installing ROCm ${ROCM_SLOT} (slot) compatible firmware into /lib/firmware/amdgpu"
-rm -f /lib/firmware/amdgpu/*
-mkdir -p /lib/firmware/amdgpu
-cp -aT /lib/firmware/amdgpu-${MY_PV%-*} /lib/firmware/amdgpu
+rm -f "/lib/firmware/amdgpu/"*
+mkdir -p "/lib/firmware/amdgpu"
+cp -aT "/lib/firmware/amdgpu-${MY_PV%-*}" "/lib/firmware/amdgpu"
 EOF
-	fperms 0755 /usr/bin/install-${P}.sh
+	fperms "0755" "/usr/bin/install-${P}.sh"
 	local kv_slot
-	for kv_slot in ${KV_LTS_LIST[@]} ; do
-		fperms 0755 /usr/bin/install-${P}-for-rock-kernel-module-slot-${kv_slot}.sh
+	for kv_slot in "${KV_LTS_LIST[@]}" ; do
+		fperms "0755" "/usr/bin/install-${P}-for-rock-kernel-module-slot-${kv_slot}.sh"
 	done
-#	fperms 0755 /usr/bin/install-${P}-for-vanilla-kernel-module-slot-${KERNEL_PV}.sh
-	fperms 0755 /usr/bin/install-rocm-firmware-${ROCM_PV}.sh
-	fperms 0755 /usr/bin/install-rocm-firmware-slot-${ROCM_SLOT}.sh
+	fperms "0755" "/usr/bin/install-rocm-firmware-${ROCM_PV}.sh"
+	fperms "0755" "/usr/bin/install-rocm-firmware-slot-${ROCM_SLOT}.sh"
 }
 
 src_install() {
-	insinto /lib/firmware/amdgpu-${MY_PV%-*}
+	insinto "/lib/firmware/amdgpu-${MY_PV%-*}"
 	doins -r *
-	docinto licenses
+	docinto "licenses"
 	cd "${WORKDIR}/usr/share/doc/amdgpu-dkms-firmware" || die
 	dodoc "copyright"
 	dodoc "LICENSE"
@@ -241,10 +236,9 @@ src_install() {
 	touch "${ED}/lib/firmware/amdgpu-${MY_PV%-*}/rocm-version-${ROCM_PV}"
 	touch "${ED}/lib/firmware/amdgpu-${MY_PV%-*}/rocm-slot-${ROCM_SLOT}"
 	local kv_slot
-	for kv_slot in ${KV_LTS_LIST[@]} ; do
+	for kv_slot in "${KV_LTS_LIST[@]}" ; do
 		touch "${ED}/lib/firmware/amdgpu-${MY_PV%-*}/rock-kernel-module-slot-${kv_slot}"
 	done
-#	touch "${ED}/lib/firmware/amdgpu-${MY_PV%-*}/vanilla-kernel-module-series-${KERNEL_PV}"
 	gen_scripts
 	_pre_gen_radeon_list
 }
@@ -273,10 +267,9 @@ einfo "install:"
 einfo
 einfo "  install-${P}.sh"
 	local kv_slot
-	for kv_slot in ${KV_LTS_LIST[@]} ; do
+	for kv_slot in "${KV_LTS_LIST[@]}" ; do
 einfo "  install-${P}-for-rock-kernel-module-slot-${kv_slot}.sh"
 	done
-#einfo "  install-${P}-for-vanilla-kernel-module-slot-${KERNEL_PV}.sh"
 einfo "  install-rocm-firmware-${ROCM_PV}.sh"
 einfo "  install-rocm-firmware-slot-${ROCM_SLOT}.sh"
 einfo
