@@ -101,7 +101,7 @@ SLOT="0/${ROCM_SLOT}"
 IUSE="
 ${CPU_FLAGS_X86[@]}
 asan benchmark cuda +rocm test
-ebuild_revision_33
+ebuild_revision_34
 "
 gen_rocm_required_use() {
 	local x
@@ -137,8 +137,7 @@ gen_hipblaslt_rdepend() {
 		is_gpu_allowed "${x}" || continue
 		echo "
 			amdgpu_targets_${x}? (
-				>=sci-libs/hipBLASLt-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},amdgpu_targets_${x}]
-				sci-libs/hipBLASLt:=
+				~sci-libs/hipBLASLt-${PV}:=[${LIBSTDCXX_USEDEP},amdgpu_targets_${x}]
 			)
 		"
 	done
@@ -148,30 +147,26 @@ RDEPEND="
 	$(python_gen_cond_dep '
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 	')
-	>=dev-libs/msgpack-3.0.1
-	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
-	dev-util/hip:=
+	>=dev-libs/msgpack-3.0.1:=
+	~dev-util/hip-${PV}:=[${LIBSTDCXX_USEDEP},cuda?,rocm?]
 	benchmark? (
-		sys-libs/llvm-roc-libomp:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_2_AMDGPU_USEDEP}]
-		sys-libs/llvm-roc-libomp:=
-		virtual/blas
+		sys-libs/llvm-roc-libomp:=[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_2_AMDGPU_USEDEP}]
+		virtual/blas:*
 	)
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
-		>=dev-util/roctracer-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-		dev-util/roctracer:=
+		~dev-util/roctracer-${PV}:=[${LIBSTDCXX_USEDEP}]
 		virtual/hsa-code-object-version:=
 	)
 "
 DEPEND="
 	${RDEPEND}
 	test? (
-		dev-cpp/gtest
-		sys-libs/llvm-roc-libomp:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_2_AMDGPU_USEDEP}]
-		sys-libs/llvm-roc-libomp:=
-		virtual/blas
+		dev-cpp/gtest:=
+		sys-libs/llvm-roc-libomp:=[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_2_AMDGPU_USEDEP}]
+		virtual/blas:*
 	)
 "
 BDEPEND="
@@ -184,11 +179,9 @@ BDEPEND="
 		dev-python/virtualenv[${PYTHON_USEDEP}]
 		dev-python/wheel[${PYTHON_USEDEP}]
 	')
-	>=dev-build/rocm-cmake-${PV}:${SLOT}
-	dev-build/rocm-cmake:=
+	~dev-build/rocm-cmake-${PV}:=
 	rocm? (
-		>=dev-util/Tensile-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},${TENSILE_7_2_AMDGPU_USEDEP},client,rocm]
-		dev-util/Tensile:=
+		~dev-util/Tensile-${PV}:=[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},${TENSILE_7_2_AMDGPU_USEDEP},client,rocm]
 	)
 "
 PATCHES=(
