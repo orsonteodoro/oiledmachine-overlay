@@ -805,7 +805,10 @@ gen_rocm_depends() {
 				~sci-libs/rocSOLVER-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCSOLVER)]
 				~sci-libs/rocThrust-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCTHRUST)]
 				magma? (
-					=sci-libs/magma-2.9*:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep MAGMA_2_9),rocm]
+					sci-libs/magma:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep MAGMA_2_10),rocm]
+					|| (
+						=sci-libs/magma-2.10h[${LIBSTDCXX_USEDEP},$(get_rocm_usedep MAGMA_2_10),rocm]
+					)
 				)
 				openmp? (
 					~sys-libs/llvm-roc-libomp-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep LLVM_ROC_LIBOMP)]
