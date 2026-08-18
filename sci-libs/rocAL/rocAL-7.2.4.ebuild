@@ -12,7 +12,7 @@ ABSEIL_CPP_SLOT=""
 BOOST_PV="1.72.0"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CXX_STANDARD=17
-LLVM_SLOT=19
+LLVM_SLOT=22
 PYTHON_COMPAT=( "python3_"{10..13} )
 RAPIDJSON_COMMIT="24b5e7a8b27f42fa16b96fc70aade9106cf7102f" # Security fix for OOBR, 20250205
 PROTOBUF_PV="3.12.4" # The version is behind the 3.21 offered.
@@ -81,7 +81,7 @@ IUSE+="
 ${AMDGPU_TARGETS_COMPAT[@]}
 cpu enhanced-message ffmpeg ieee1394 opencv python system-rapidjson
 test
-ebuild_revision_15
+ebuild_revision_16
 "
 REQUIRED_USE="
 	|| (
