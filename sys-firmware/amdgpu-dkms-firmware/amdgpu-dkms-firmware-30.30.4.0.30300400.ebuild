@@ -4,18 +4,18 @@
 EAPI=7
 
 U_OS_REL="24.04"
-DRIVER_PV="7.0.2" # Folder name
+DRIVER_PV="30.30.4" # Folder name
 KERNEL_PV="6.14" # Equivalent for vanilla kernel based on amdkfd last commits
-KVS=(
-# See https://github.com/ROCm/rocm-install-on-linux/blob/release/rocm-rel-6.4.3/docs/reference/system-requirements.rst#supported-operating-systems
+KV_LTS_LIST=(
+# See https://github.com/ROCm/rocm-install-on-linux/blob/rocm-7.2.0/docs/reference/system-requirements.rst#supported-operating-systems
 	"5.15"
 	"6.1"
-	"6.6"
+	"6.12"
 )
-MY_PV="30.10.2.0.30100200-2226257"
+MY_PV="30.30.4.0.30300400-2341068"
 PKG_POSTINST_LIST="" # Global var
 PKG_RADEON_LIST="" # Global var
-ROCM_PV="7.0.2"
+ROCM_PV="7.2.4"
 ROCM_SLOT="${ROCM_PV%.*}"
 FN="amdgpu-dkms-firmware_${MY_PV}.${U_OS_REL}_all.deb"
 
@@ -185,7 +185,7 @@ cp -aT /lib/firmware/amdgpu-${MY_PV%-*} /lib/firmware/amdgpu
 EOF
 
 	local kv_slot
-	for kv_slot in ${KVS[@]} ; do
+	for kv_slot in ${KV_LTS_LIST[@]} ; do
 cat <<EOF > "${ED}/usr/bin/install-${P}-for-rock-kernel-module-slot-${kv_slot}.sh"
 #!/bin/bash
 echo "Installing ${P} into /lib/firmware/amdgpu"
@@ -222,7 +222,7 @@ cp -aT /lib/firmware/amdgpu-${MY_PV%-*} /lib/firmware/amdgpu
 EOF
 	fperms 0755 /usr/bin/install-${P}.sh
 	local kv_slot
-	for kv_slot in ${KVS[@]} ; do
+	for kv_slot in ${KV_LTS_LIST[@]} ; do
 		fperms 0755 /usr/bin/install-${P}-for-rock-kernel-module-slot-${kv_slot}.sh
 	done
 #	fperms 0755 /usr/bin/install-${P}-for-vanilla-kernel-module-slot-${KERNEL_PV}.sh
@@ -241,7 +241,7 @@ src_install() {
 	touch "${ED}/lib/firmware/amdgpu-${MY_PV%-*}/rocm-version-${ROCM_PV}"
 	touch "${ED}/lib/firmware/amdgpu-${MY_PV%-*}/rocm-slot-${ROCM_SLOT}"
 	local kv_slot
-	for kv_slot in ${KVS[@]} ; do
+	for kv_slot in ${KV_LTS_LIST[@]} ; do
 		touch "${ED}/lib/firmware/amdgpu-${MY_PV%-*}/rock-kernel-module-slot-${kv_slot}"
 	done
 #	touch "${ED}/lib/firmware/amdgpu-${MY_PV%-*}/vanilla-kernel-module-series-${KERNEL_PV}"
@@ -273,7 +273,7 @@ einfo "install:"
 einfo
 einfo "  install-${P}.sh"
 	local kv_slot
-	for kv_slot in ${KVS[@]} ; do
+	for kv_slot in ${KV_LTS_LIST[@]} ; do
 einfo "  install-${P}-for-rock-kernel-module-slot-${kv_slot}.sh"
 	done
 #einfo "  install-${P}-for-vanilla-kernel-module-slot-${KERNEL_PV}.sh"
