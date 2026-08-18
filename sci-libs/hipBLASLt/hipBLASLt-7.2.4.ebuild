@@ -3,9 +3,9 @@
 
 EAPI=8
 
-# Current CodeObjectVersion:  https://github.com/ROCm/llvm-project/blob/rocm-7.0.2/clang/lib/Driver/ToolChains/AMDGPU.h#L93
-# HSA CodeObjectVersion for Tensile:  https://github.com/ROCm/Tensile/blob/rocm-7.0.2/Tensile/Common.py#L2620
-# HSA CodeObjectVersion for TensileLite: https://github.com/ROCm/hipBLASLt/blob/rocm-7.0.2/tensilelite/Tensile/Common/Constants.py#L3
+# Current CodeObjectVersion:  https://github.com/ROCm/llvm-project/blob/rocm-7.2.4/clang/lib/Driver/ToolChains/AMDGPU.h#L93
+# HSA CodeObjectVersion for Tensile:  https://github.com/ROCm/Tensile/blob/rocm-7.2.4/Tensile/Common.py#L2620
+# HSA CodeObjectVersion for TensileLite: https://github.com/ROCm/hipBLASLt/blob/rocm-7.2.4/tensilelite/Tensile/Common/Constants.py#L3
 
 CXX_STANDARD=17
 CMAKE_BUILD_TYPE="RelWithDebInfo"
@@ -14,8 +14,8 @@ HIP_SUPPORT_CUDA=1
 LLVM_SLOT=22
 PYTHON_COMPAT=( "python3_"{10..13} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
-TENSILELITE_INTERNAL_PV="4.33.0" # https://github.com/ROCm/hipBLASLt/blob/rocm-7.0.2/tensilelite/Tensile/__init__.py#L29
-TENSILEFULL_INTERNAL_PV="4.44.0" # https://github.com/ROCm/Tensile/blob/rocm-7.0.2/Tensile/__init__.py#L29
+TENSILELITE_INTERNAL_PV="4.33.0" # https://github.com/ROCm/hipBLASLt/blob/rocm-7.2.4/tensilelite/Tensile/__init__.py#L29
+TENSILEFULL_INTERNAL_PV="4.44.0" # https://github.com/ROCm/Tensile/blob/rocm-7.2.4/Tensile/__init__.py#L29
 
 AMDGPU_TARGETS_COMPAT=(
 	"gfx908_xnack_minus"
@@ -37,7 +37,7 @@ AMDGPU_TARGETS_COMPAT=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
 inherit cmake flag-o-matic libstdcxx-slot python-r1 rocm
@@ -71,11 +71,11 @@ SLOT="0/${ROCM_SLOT}"
 IUSE+="
 ${ROCM_IUSE}
 -asan -benchmark -cuda +minimal +rocm
-ebuild_revision_16
+ebuild_revision_17
 "
 gen_rocm_required_use() {
 	local x
-	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+	for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
 		echo "
 			amdgpu_targets_${x}? (
 				rocm
@@ -95,59 +95,47 @@ REQUIRED_USE="
 "
 RDEPEND="
 	${HIPCC_DEPEND}
-	dev-cpp/msgpack-cxx
-	dev-libs/boost[${LIBSTDCXX_USEDEP}]
-	dev-libs/boost:=
-	dev-libs/msgpack
+	dev-cpp/msgpack-cxx:=
+	dev-libs/boost:=[${LIBSTDCXX_USEDEP}]
+	dev-libs/msgpack:=
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
-	virtual/blas
-	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
-	dev-util/hip:=
-	>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},amdgpu_targets_gfx942?,amdgpu_targets_gfx950?,amdgpu_targets_gfx1100?,amdgpu_targets_gfx1101?,amdgpu_targets_gfx1103?,amdgpu_targets_gfx1150?,amdgpu_targets_gfx1151?,amdgpu_targets_gfx1200?,amdgpu_targets_gfx1201?]
-	sys-libs/llvm-roc-libomp:=
+	virtual/blas:*
+	~dev-util/hip-${PV}:=[${LIBSTDCXX_USEDEP},cuda?,rocm?]
+	~sys-libs/llvm-roc-libomp-${PV}:=[${LIBSTDCXX_USEDEP},amdgpu_targets_gfx942?,amdgpu_targets_gfx950?,amdgpu_targets_gfx1100?,amdgpu_targets_gfx1101?,amdgpu_targets_gfx1103?,amdgpu_targets_gfx1150?,amdgpu_targets_gfx1151?,amdgpu_targets_gfx1200?,amdgpu_targets_gfx1201?]
 	amdgpu_targets_gfx908_xnack_minus? (
-		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},amdgpu_targets_gfx908]
-		sys-libs/llvm-roc-libomp:=
+		~sys-libs/llvm-roc-libomp-${PV}:=[${LIBSTDCXX_USEDEP},amdgpu_targets_gfx908]
 	)
 	amdgpu_targets_gfx908_xnack_plus? (
-		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},amdgpu_targets_gfx908]
-		sys-libs/llvm-roc-libomp:=
+		~sys-libs/llvm-roc-libomp-${PV}:=[${LIBSTDCXX_USEDEP},amdgpu_targets_gfx908]
 	)
 	amdgpu_targets_gfx90a_xnack_minus? (
-		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},amdgpu_targets_gfx90a]
-		sys-libs/llvm-roc-libomp:=
+		~sys-libs/llvm-roc-libomp-${PV}:=[${LIBSTDCXX_USEDEP},amdgpu_targets_gfx90a]
 	)
 	amdgpu_targets_gfx90a_xnack_plus? (
-		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},amdgpu_targets_gfx90a]
-		sys-libs/llvm-roc-libomp:=
+		~sys-libs/llvm-roc-libomp-${PV}:=[${LIBSTDCXX_USEDEP},amdgpu_targets_gfx90a]
 	)
 	amdgpu_targets_gfx942_xnack_plus? (
-		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},amdgpu_targets_gfx942]
-		sys-libs/llvm-roc-libomp:=
+		~sys-libs/llvm-roc-libomp-${PV}:=[${LIBSTDCXX_USEDEP},amdgpu_targets_gfx942]
 	)
 	amdgpu_targets_gfx950_xnack_plus? (
-		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},amdgpu_targets_gfx950]
-		sys-libs/llvm-roc-libomp:=
+		~sys-libs/llvm-roc-libomp-${PV}:=[${LIBSTDCXX_USEDEP},amdgpu_targets_gfx950]
 	)
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
-		>=dev-util/rocm-smi-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-		dev-util/rocm-smi:=
-		virtual/hsa-code-object-version
+		~dev-util/rocm-smi-${PV}:=[${LIBSTDCXX_USEDEP}]
+		virtual/hsa-code-object-version:*
 	)
 "
 DEPEND="
 	${RDEPEND}
 	!minimal? (
-		>=sci-libs/hipBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
-		sci-libs/hipBLAS:=
+		~sci-libs/hipBLAS-${PV}:=[${LIBSTDCXX_USEDEP},cuda?,rocm?]
 	)
 	minimal? (
-		>=sci-libs/hipBLAS-common-${PV}:${SLOT}
-		sci-libs/hipBLAS-common:=
+		~sci-libs/hipBLAS-common-${PV}:=
 	)
 "
 BDEPEND="
@@ -155,8 +143,7 @@ BDEPEND="
 	>=dev-build/cmake-3.16.8
 	dev-python/pip[${PYTHON_USEDEP}]
 	dev-python/virtualenv[${PYTHON_USEDEP}]
-	>=dev-build/rocm-cmake-${PV}:${SLOT}
-	dev-build/rocm-cmake:=
+	~dev-build/rocm-cmake-${PV}:=
 "
 RESTRICT="test"
 PATCHES=(
