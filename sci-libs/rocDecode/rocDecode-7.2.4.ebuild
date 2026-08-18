@@ -80,7 +80,7 @@ LICENSE="
 	)
 	MIT
 "
-# all-rights-reserved custom MIT - https://github.com/ROCm/rocDecode/blob/rocm-6.1.2/LICENSE
+# all-rights-reserved custom MIT - https://github.com/ROCm/rocDecode/blob/rocm-7.2.4/LICENSE
 # all-rights-reserved MIT - test/testScripts/run_rocDecode_Conformance.py
 # MIT - CMakeLists.txt
 # The distro's MIT license template does not contain all rights reserved.

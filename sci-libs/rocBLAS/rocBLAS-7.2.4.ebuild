@@ -33,7 +33,7 @@ CXX_STANDARD=17
 DOCS_BUILDER="doxygen"
 DOCS_DIR="docs"
 HIP_SUPPORT_CUDA=1
-LLVM_SLOT=22 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.4/llvm/CMakeLists.txt
+LLVM_SLOT=22 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-7.2.4/llvm/CMakeLists.txt
 PYTHON_COMPAT=( "python3_"{10,12} )
 ROCM_SLOT=$(ver_cut "1-2" "${PV}")
 

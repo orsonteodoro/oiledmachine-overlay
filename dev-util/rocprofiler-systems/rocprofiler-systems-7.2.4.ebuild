@@ -8,7 +8,7 @@ EAPI=8
 # Check if bindings uses the correct python.
 
 # For requirements, see
-# https://github.com/ROCm/omnitrace/blob/rocm-6.2.4/source/docs/installation.md
+# https://github.com/ROCm/omnitrace/blob/rocm-7.2.4/source/docs/installation.md
 
 inherit libstdcxx-compat
 GCC_COMPAT=(

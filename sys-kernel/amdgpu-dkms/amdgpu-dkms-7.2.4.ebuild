@@ -886,7 +886,7 @@ _copy_modules() {
 }
 
 _copy_modules_dkms() {
-	# Keep in sync with https://github.com/ROCm/amdgpu/blob/rocm-5.6.1/drivers/gpu/drm/amd/dkms/dkms.conf
+	# Keep in sync with https://github.com/ROCm/amdgpu/blob/rocm-7.2.4/drivers/gpu/drm/amd/dkms/dkms.conf
 	IFS=$'\n'
 
 	local x
