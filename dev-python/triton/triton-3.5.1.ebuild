@@ -41,15 +41,14 @@ LLVM_COMPAT=(
 	# Support object code version 5 for ROCm
 	# https://github.com/ROCm/llvm-project/blob/d366fa84f3fdcbd4b10847ebd5db572ae12a34fb/clang/lib/Driver/ToolChains/AMDGPU.h#L93
 	# The ^^ operator is bugged.
-	{18..19}
-	#${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]/llvm_slot_} # 19
-	#${LIBCXX_COMPAT_CXX17_ROCM_7_0[@]/llvm_slot_} # 19
+	#${LIBCXX_COMPAT_CXX17_ROCM_7_2[@]/llvm_slot_} # 22
 	#${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]/llvm_slot_} # 18, 19
+	{18..22}
 )
 
 ROCM_SLOTS=(
 # No LLVM 19 release for ROCm yet.  Use 3.0.0 without _p1.
-	"rocm_6_4" # Upstream uses ROCm 6.2 but relaxed to avoid issues
+	"rocm_7_2" # Upstream uses ROCm 6.2 but relaxed to avoid issues
 )
 
 LLVM_TARGETS=(
@@ -130,13 +129,17 @@ REQUIRED_USE="
 	)
 	rocm? (
 		^^ (
-			${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
+			${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
 		)
 		^^ (
-			${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]}
+			${LIBCXX_COMPAT_CXX17_ROCM_7_2[@]}
 		)
 		^^ (
 			$(gen_rocm_required_use)
+		)
+		^^ (
+			python_single_target_python3_10
+			python_single_target_python3_12
 		)
 	)
 "
@@ -207,9 +210,8 @@ RDEPEND+="
 		${CUDA_12_8_DEPEND}
 	)
 	rocm? (
-		rocm_6_4? (
-			sys-devel/llvm-roc:6.4[${LIBSTDCXX_USEDEP},llvm_targets_X86,llvm_targets_AMDGPU,mlir]
-			sys-devel/llvm-roc:=
+		rocm_7_2? (
+			~sys-devel/llvm-roc-${HIP_7_2_VERSION}:=[${LIBSTDCXX_USEDEP},llvm_targets_X86,llvm_targets_AMDGPU,mlir]
 		)
 	)
 	tutorials? (
@@ -318,9 +320,9 @@ python_configure() {
 einfo "Called python_configure"
 	local dynlib=0
 	local llvm_root_dir
-	if use rocm_6_4 ; then
-		llvm_root_dir="/opt/rocm/lib/llvm" # LLVM 19.0.0git
-		export ROCM_VERSION="${HIP_6_4_VERSION}"
+	if use rocm_7_2 ; then
+		llvm_root_dir="/opt/rocm/lib/llvm" # LLVM 22.0.0git
+		export ROCM_VERSION="${HIP_7_2_VERSION}"
 	elif use llvm_slot_19 && has_version "llvm-core/llvm:19" && has_version "llvm-core/mlir:19" ; then
 		llvm_root_dir="/usr/lib/llvm/19"
 		dynlib=1

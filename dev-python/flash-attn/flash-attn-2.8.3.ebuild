@@ -31,22 +31,22 @@ GCC_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	#${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]/llvm_slot_} # 19
+	#${LIBCXX_COMPAT_CXX17_ROCM_7_2[@]/llvm_slot_} # 22
 	#${LIBCXX_COMPAT_CXX17_CUDA_12_6[@]/llvm_slot_} # 18
 	#${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]/llvm_slot_} # 18, 19
 	#${LIBCXX_COMPAT_CXX17_CUDA_12_9[@]/llvm_slot_} # 18, 19
-	{18..19}
+	{18..22}
 )
 
 inherit hip-versions
-ROCM_SLOTS=(
+ROCM_VERSIONS=(
 	# For RDEPEND
-	"${HIP_6_4_VERSION}"
+	"${HIP_7_2_VERSION}"
 )
 
 gen_rocm_iuse() {
 	local pv
-	for pv in ${ROCM_SLOTS[@]} ; do
+	for pv in "${ROCM_VERSIONS[@]}" ; do
 		local u=$(ver_cut 1-2 "${pv}")
 		u="${u/./_}"
 		echo "rocm_${u}"
@@ -135,14 +135,18 @@ REQUIRED_USE="
 			gcc_slot_13_4
 		)
 		^^ (
-			llvm_slot_19
+			llvm_slot_22
+		)
+		^^ (
+			python_single_target_python3_10
+			python_single_target_python3_12
 		)
 	)
 "
 gen_rocm_required_use() {
 	local pv
-	for pv in ${ROCM_SLOTS[@]} ; do
-		local u=$(ver_cut 1-2 "${pv}")
+	for pv in "${ROCM_VERSIONS[@]}" ; do
+		local u=$(ver_cut "1-2" "${pv}")
 		u="${u/./_}"
 		echo "
 			rocm_${u}? (
@@ -153,7 +157,7 @@ gen_rocm_required_use() {
 }
 gen_rocm_targets_required_use() {
 	local g
-	for g in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+	for g in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
 		echo "
 			amdgpu_targets_${g}? (
 				rocm
@@ -176,8 +180,8 @@ REQUIRED_USE="
 "
 gen_rocm_rdepend() {
 	local pv
-	for pv in ${ROCM_SLOTS[@]} ; do
-		local s=$(ver_cut 1-2 ${pv})
+	for pv in "${ROCM_VERSIONS[@]}" ; do
+		local s=$(ver_cut "1-2" "${pv}")
 		local u="${s}"
 		u="${u/./_}"
 	# Check both the direct top and indirect bottom dependencies
@@ -236,10 +240,11 @@ RDEPEND+="
 	rocm? (
 		$(gen_rocm_rdepend)
 	)
-	rocm_6_4? (
+	rocm_7_2? (
 		|| (
-			=sci-ml/pytorch-2.8*[${PYTHON_SINGLE_USEDEP},rocm_6_4]
-			=sci-ml/pytorch-2.9*[${PYTHON_SINGLE_USEDEP},rocm_6_4]
+			=sci-ml/pytorch-2.13*[${PYTHON_SINGLE_USEDEP},rocm_7_2]
+			=sci-ml/pytorch-2.12*[${PYTHON_SINGLE_USEDEP},rocm_7_2]
+			=sci-ml/pytorch-2.11*[${PYTHON_SINGLE_USEDEP},rocm_7_2]
 		)
 		sci-ml/pytorch:=
 	)
@@ -308,7 +313,7 @@ _gpu_check_llvm() {
 	shift
 	local ALLOWED_SLOTS=( $@ )
 	local s
-	for s in ${ALLOWED_SLOTS[@]} ; do
+	for s in "${ALLOWED_SLOTS[@]}" ; do
 		if use "llvm_slot_${s}" ; then
 			return
 		fi
@@ -334,7 +339,7 @@ python_configure() {
 		done
 		list="${list:1}"
 		export GPU_ARCHS="${list}"
-		_gpu_check_llvm "ROCm" "6.4" 19
+		_gpu_check_llvm "ROCm" "7.2" "22"
 	fi
 }
 

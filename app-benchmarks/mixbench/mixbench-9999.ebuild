@@ -23,8 +23,7 @@ IMPLS=(
 	"sycl"
 )
 ROCM_SLOTS=(
-	rocm_6_4
-	rocm_7_0
+	rocm_7_2
 )
 
 inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot rocm
@@ -71,18 +70,14 @@ RDEPEND="
 		dev-util/nvidia-cuda-toolkit:=
 	)
 	opencl? (
-		dev-util/opencl-headers
-		virtual/opencl
+		virtual/opencl:=
 	)
 	openmp? (
-		sys-devel/gcc[openmp]
+		sys-devel/gcc:=[openmp]
 	)
 	rocm? (
-		rocm_6_4? (
-			~dev-util/hip-${HIP_6_4_VERSION}:0/6.4[rocm]
-		)
-		rocm_7_0? (
-			~dev-util/hip-${HIP_7_0_VERSION}:0/7.0[rocm]
+		rocm_7_2? (
+			~dev-util/hip-${HIP_7_2_VERSION}:=[rocm]
 		)
 		dev-util/hip:=
 	)
@@ -94,11 +89,14 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
+	opencl? (
+		dev-util/opencl-headers:=
+	)
 "
 BDEPEND="
 	>=dev-build/cmake-3.8
 	openmp? (
-		sys-devel/gcc[openmp]
+		sys-devel/gcc:=[openmp]
 	)
 "
 DOCS=( "README.md" )
@@ -109,14 +107,10 @@ _PATCHES=(
 pkg_setup() {
 	check-compiler-switch_start
 	if use rocm ; then
-		if use rocm_6_4 ; then
-			LLVM_SLOT="${HIP_6_4_LLVM_SLOT}"
-			export ROCM_SLOT="6.4"
-			ROCM_VERSION="${HIP_6_4_VERSION}"
-		elif use rocm_7_0 ; then
-			LLVM_SLOT="${HIP_7_0_LLVM_SLOT}"
-			export ROCM_SLOT="7.0"
-			ROCM_VERSION="${HIP_7_0_VERSION}"
+		if use rocm_7_2 ; then
+			LLVM_SLOT="${HIP_7_2_LLVM_SLOT}"
+			export ROCM_SLOT="7.2"
+			ROCM_VERSION="${HIP_7_2_VERSION}"
 		fi
 einfo "LLVM_SLOT:  ${LLVM_SLOT}"
 einfo "ROCM_SLOT:  ${ROCM_SLOT}"

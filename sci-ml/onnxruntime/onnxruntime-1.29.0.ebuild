@@ -131,7 +131,7 @@ GCC_COMPAT=(
 inherit libcxx-compat
 LLVM_COMPAT=(
 	#${LIBCXX_COMPAT_CXX17_CUDA_12_6[@]/llvm_slot_} # 18
-	#${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]/llvm_slot_} # 19
+	#${LIBCXX_COMPAT_CXX17_ROCM_7_2[@]/llvm_slot_} # 22
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
 )
 
@@ -168,7 +168,7 @@ OPENVINO_TARGETS=(
 )
 
 ROCM_SLOTS=(
-	"rocm_6_4"
+	"rocm_7_2"
 )
 
 inherit cflags-hardened check-compiler-switch cmake cuda edo dep-prepare distutils-r1 flag-o-matic libcxx-slot libstdcxx-slot llvm-r1 rocm toolchain-funcs
@@ -384,7 +384,7 @@ ebuild_revision_31
 "
 gen_cuda_required_use() {
 	local x
-	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+	for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
 		echo "
 			cuda_targets_${x}? (
 				cuda
@@ -394,7 +394,7 @@ gen_cuda_required_use() {
 }
 gen_rocm_required_use() {
 	local x
-	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+	for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
 		echo "
 			amdgpu_targets_${x}? (
 				rocm
@@ -445,10 +445,14 @@ REQUIRED_USE="
 		python
 	)
 	rocm? (
-		llvm_slot_19
+		llvm_slot_22
 		migraphx
 		^^ (
-			${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]}
+			${LIBCXX_COMPAT_CXX17_ROCM_7_2[@]}
+		)
+		^^ (
+			python_single_target_python3_10
+			python_single_target_python3_12
 		)
 	)
 	tensorrt-oss-parser? (
@@ -579,8 +583,13 @@ RDEPEND="
 	)
 	rocm? (
 		$(gen_rocm_rdepend)
-		rocm_6_4? (
-			=sci-ml/pytorch-2.3*:=[${PYTHON_SINGLE_USEDEP}]
+		rocm_7_2? (
+			sci-ml/pytorch:=[${PYTHON_SINGLE_USEDEP}]
+			|| (
+				=sci-ml/pytorch-2.13*:=[${PYTHON_SINGLE_USEDEP}]
+				=sci-ml/pytorch-2.12*:=[${PYTHON_SINGLE_USEDEP}]
+				=sci-ml/pytorch-2.11*:=[${PYTHON_SINGLE_USEDEP}]
+			)
 		)
 	)
 	system-eigen? (
@@ -667,10 +676,10 @@ pkg_setup() {
 	python-single-r1_pkg_setup
 	use llvm && llvm-r1_pkg_setup
 
-	if use rocm_6_4 ; then
-		LLVM_SLOT="19"
-		ROCM_SLOT="6.4"
-		export ROCM_VERSION="${HIP_6_4_VERSION}"
+	if use rocm_7_2 ; then
+		LLVM_SLOT="22"
+		ROCM_SLOT="7.2"
+		export ROCM_VERSION="${HIP_7_2_VERSION}"
 	fi
 
 	use rocm && rocm_pkg_setup

@@ -218,10 +218,10 @@ GCC_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	#${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]/llvm_slot_} # 19
+	#${LIBCXX_COMPAT_CXX17_ROCM_7_0[@]/llvm_slot_} # 22
 	#${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 18, 19
 	# Upstream uses LLVM 18
-	{18..19}
+	{18..22}
 )
 
 inherit abseil-cpp bazel cflags-hardened check-compiler-switch cuda distutils-r1
@@ -373,7 +373,7 @@ ${ROCM_IUSE}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${CPU_FLAGS_X86_64[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-clang cpu cuda debug rocm rocm_6_4
+clang cpu cuda debug rocm rocm_7_2
 ebuild_revision_32
 "
 # We don't add tpu because licensing issue with libtpu_nightly.
@@ -439,14 +439,14 @@ REQUIRED_USE+="
 		!cuda
 		${ROCM_REQUIRED_USE}
 		^^ (
-			rocm_6_4
+			rocm_7_2
 		)
 		^^ (
-			${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]}
+			${LIBCXX_COMPAT_CXX17_ROCM_7_2[@]}
 		)
 	)
-	rocm_6_4? (
-		llvm_slot_19
+	rocm_7_2? (
+		llvm_slot_22
 	)
 	|| (
 		cpu
@@ -459,11 +459,11 @@ REQUIRED_USE+="
 
 ROCM_SLOTS=(
 # See https://github.com/google/jax/blob/jaxlib-v0.4.32/build/rocm/Dockerfile.ms
-	"${HIP_6_4_VERSION}" # For llvm 19, relaxed, upstream uses 6.0.0
+	"${HIP_7_2_VERSION}" # For llvm 22, relaxed, upstream uses 6.0.0
 )
 
 declare -A LLD_SLOT=(
-	["${HIP_6_4_VERSION}"]="${HIP_6_4_LLVM_SLOT}"
+	["${HIP_7_2_VERSION}"]="${HIP_7_2_LLVM_SLOT}"
 )
 
 gen_rocm_depends() {
@@ -767,10 +767,10 @@ ewarn "ROCm support is a Work In Progress (WIP)"
 		_remove_llvm_from_path
 
 		# Build with GCC but initialize LLVM_SLOT.
-		if has "rocm_6_4" ${IUSE_EFFECTIVE} && use rocm_6_4 ; then
-			LLVM_SLOT=19
-			ROCM_SLOT="6.4"
-			ROCM_VERSION="${HIP_6_4_VERSION}"
+		if has "rocm_7_2" ${IUSE_EFFECTIVE} && use rocm_7_2 ; then
+			LLVM_SLOT=22
+			ROCM_SLOT="7.2"
+			ROCM_VERSION="${HIP_7_2_VERSION}"
 		fi
 		rocm_pkg_setup
 		rocm_set_default_hipcc

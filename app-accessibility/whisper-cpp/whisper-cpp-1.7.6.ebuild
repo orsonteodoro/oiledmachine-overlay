@@ -14,6 +14,11 @@ MY_P="${MY_PN}-${PV}"
 
 CXX_STANDARD=17
 
+inherit hip-versions
+ROCM_VERSIONS=(
+	"${HIP_7_2_VERSION}"
+)
+
 # Placeholder, TODO review
 AMDGPU_TARGETS_COMPAT=(
 	"gfx908"
@@ -26,7 +31,7 @@ AMDGPU_TARGETS_COMPAT=(
 	"gfx1201"
 )
 
-# See https://github.com/ROCm/rocm-install-on-linux/blob/docs/6.4.4/docs/reference/system-requirements.rst
+# See https://github.com/ROCm/rocm-install-on-linux/blob/rocm-7.2.0/docs/reference/system-requirements.rst
 AMDGPU_TARGETS_COMPAT=(
 	"gfx906"
 	"gfx908"
@@ -84,16 +89,13 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse4_2"
 )
 
-ROCM_SLOTS=(
-	# 5.5 minimum
-	"6.4"
-)
-
 gen_rocm_iuse() {
-	local s
-	for s in ${ROCM_SLOTS[@]} ; do
+	local pv
+	for pv in "${ROCM_VERSIONS[@]}" ; do
+		local s="${pv%.*}"
+		s="${pv/./_}"
 		echo "
-			rocm_${s/./_}
+			rocm_${s}
 		"
 	done
 }
@@ -101,22 +103,25 @@ ROCM_IUSE=(
 	$(gen_rocm_iuse)
 )
 
-inherit hip-versions
-declare -A ROCM_VERSIONS=(
-	["6_4"]="${HIP_6_4_VERSION}"
-)
-
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-inherit check-compiler-switch cmake flag-o-matic libcxx-slot libstdcxx-slot rocm
+CHKL_TIMESTAMP=(
+	"media-libs/libsdl2-9999"
+	"media-video/ffmpeg-9999"
+	"media-video/ffmpeg-9999m"
+	"sci-libs/openblas-9999"
+	"sci-ml/openvino-9999"
+)
+
+inherit check-compiler-switch chkl cmake flag-o-matic libcxx-slot libstdcxx-slot secure-version rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${MY_P}"
@@ -139,10 +144,12 @@ video_cards_intel
 ebuild_revision_7
 "
 gen_rocm_required_use() {
-	local s
-	for s in ${ROCM_SLOTS[@]} ; do
+	local pv
+	for pv in "${ROCM_VERSIONS[@]}" ; do
+		local s="${pv%.*}"
+		s="${s/./_}"
 		echo "
-			rocm_${s/./_}? (
+			rocm_${s}? (
 				rocm
 			)
 		"
@@ -150,7 +157,7 @@ gen_rocm_required_use() {
 }
 gen_cuda_required_use() {
 	local x
-	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+	for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
 		echo "
 			cuda_targets_${x}? (
 				cuda
@@ -160,7 +167,7 @@ gen_cuda_required_use() {
 }
 gen_rocm_required_use() {
 	local x
-	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+	for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
 		echo "
 			amdgpu_targets_${x}? (
 				rocm
@@ -282,63 +289,55 @@ REQUIRED_USE="
 gen_rocm_rdepend() {
 	# DEPENDs listed in llama/llama.go
 	local pv
-	for pv in ${ROCM_SLOTS[@]} ; do
+	for pv in "${ROCM_VERSIONS[@]}" ; do
 		local s="0/${pv}"
-		local s1="${pv/./_}"
-		local ROCM_SLOT="${pv}"
+		local u="rocm_${pv/./_}"
+		local ROCM_SLOT="${pv%.*}"
 		echo "
-			rocm_${s1}? (
-				>=dev-libs/rocm-comgr-${ROCM_VERSIONS[${s1}]}:${s}
-				dev-libs/rocm-comgr:=
-				>=dev-libs/rocr-runtime-${ROCM_VERSIONS[${s1}]}:${s}
-				dev-libs/rocr-runtime:=
-				>=dev-util/hip-${ROCM_VERSIONS[${s1}]}:${s}[lc,rocm]
-				dev-util/hip:=
-				>=sci-libs/hipBLAS-${ROCM_VERSIONS[${s1}]}:${s}[rocm]
-				sci-libs/hipBLAS:=
-				>=sci-libs/rocBLAS-${ROCM_VERSIONS[${s1}]}:${s}[$(get_rocm_usedep ROCBLAS)]
-				sci-libs/rocBLAS:=
-				>=sys-devel/llvm-roc-${ROCM_VERSIONS[${s1}]}:${s}[llvm_targets_AMDGPU,llvm_targets_X86]
-				sys-devel/llvm-roc:=
+			${u}? (
+				~dev-libs/rocm-comgr-${pv}:=
+				~dev-libs/rocr-runtime-${pv}:=
+				~dev-util/hip-${pv}:=[lc,rocm]
+				~sci-libs/hipBLAS-${pv}:=[rocm]
+				~sci-libs/rocBLAS-${pv}:=[$(get_rocm_usedep ROCBLAS)]
+				~sys-devel/llvm-roc-${pv}:=[llvm_targets_AMDGPU,llvm_targets_X86]
 			)
 		"
 	done
 }
 RDEPEND="
 	cuda? (
+		dev-util/nvidia-cuda-toolkit:=
 		|| (
 			=dev-util/nvidia-cuda-toolkit-11.8*
 			=dev-util/nvidia-cuda-toolkit-12.4*
 		)
-		dev-util/nvidia-cuda-toolkit:=
 	)
 	ffmpeg? (
-		>=media-video/ffmpeg-4.4.2
+		$(secure-version_gen_ffmpeg_depends)
 	)
 	openblas? (
-		>=sci-libs/openblas-0.3.20
+		>=sci-libs/openblas-${OPENBLAS_PV}:=
 	)
 	opencl? (
-		>=sci-libs/clblast-2.12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		sci-libs/clblast:=
+		>=sci-libs/clblast-2.12:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	openvino? (
-		sci-ml/openvino:=
+		>=sci-ml/openvino-${OPENVINO_PV}:=
 	)
 	rocm? (
 		$(gen_rocm_rdepend)
 	)
 	sdl2? (
-		>=media-libs/libsdl2-2.0.20
-		media-libs/libsdl2:=
+		>=media-libs/libsdl2-${LIBSDL2_PV}:=
 	)
 	vulkan? (
-		>=media-libs/vulkan-loader-1.3.204.1
+		>=media-libs/vulkan-loader-${VULKAN_PV}:=
 	)
 "
 DEPEND="
 	vulkan? (
-		>=dev-util/vulkan-headers-1.3.204.1
+		>=dev-util/vulkan-headers-${VULKAN_PV}:=
 	)
 "
 BDEPEND="
@@ -349,10 +348,10 @@ DOCS=( "AUTHORS" "README.md" )
 pkg_setup() {
 	check-compiler-switch_start
 	if use rocm ; then
-		if use rocm_6_4 ; then
-			export ROCM_SLOT="6.4"
-			export LLVM_SLOT=19
-			export ROCM_VERSION="${HIP_6_4_VERSION}"
+		if use rocm_7_2 ; then
+			export LLVM_SLOT=22
+			export ROCM_SLOT="7.2"
+			export ROCM_VERSION="${HIP_7_2_VERSION}"
 		fi
 		rocm_pkg_setup
 	fi
@@ -371,6 +370,7 @@ pkg_setup() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	strip-unsupported-flags
 
 	check-compiler-switch_end

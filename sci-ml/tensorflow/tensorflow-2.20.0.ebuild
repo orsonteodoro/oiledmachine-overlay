@@ -43,7 +43,7 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF SO HO IO UAF"
 CHECKREQS_DISK_BUILD="19G"
 CHECKREQS_DISK_USR="5G"
 CHECKREQS_MEMORY="11G" # Linking goes above 10 GiB
-PYTHON_COMPAT=( "python3_"{12..13} ) # NumPy needs >=3.12.  See https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/tools/pip_package/setup.py.tpl
+PYTHON_COMPAT=( "python3_13" ) # NumPy needs >=3.13.  See https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/tools/pip_package/setup.py.tpl
 # Limited by jax/flax
 # PYTHON_COMPAT limited by gast-4.0[python_targets_python3_9]
 RE2_SLOT="20250512"
@@ -88,7 +88,7 @@ LLVM_COMPAT=(
 inherit hip-versions
 HIP_SLOTS=(
 # See also https://github.com/ROCm/tensorflow-upstream/blob/develop-upstream/rocm_docs/tensorflow-rocm-release.md?plain=1
-	"${HIP_6_4_VERSION}" # Placeholder
+	"${HIP_7_2_VERSION}" # Placeholder
 )
 
 gen_hip_slots2() {
@@ -105,7 +105,7 @@ HIP_SLOTS2=(
 )
 
 declare -A LLD_SLOT=(
-	["${HIP_6_4_VERSION}"]="${HIP_6_4_LLVM_SLOT}" # Placeholder
+	["${HIP_7_2_VERSION}"]="${HIP_7_2_LLVM_SLOT}" # Placeholder
 )
 
 # *seq* can only be done in the eclass.
@@ -470,6 +470,7 @@ gen_required_use_rocm_targets() {
 REQUIRED_USE="
 	$(gen_required_use_cuda_targets)
 	$(gen_required_use_rocm_targets)
+	!rocm
 	?? (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
@@ -486,10 +487,9 @@ REQUIRED_USE="
 		^^ (
 			${HIP_SLOTS2[@]}
 		)
-		python_single_target_python3_12
 	)
-	rocm_6_4? (
-		llvm_slot_19
+	rocm_7_2? (
+		llvm_slot_22
 	)
 	test? (
 		python
@@ -730,7 +730,7 @@ RDEPEND="
 			>=dev-python/dill-0.3.7[${PYTHON_USEDEP}]
 			>=dev-python/pybind11-2.13.4[${PYTHON_USEDEP}]
 			>=dev-python/tblib-2.0.0[${PYTHON_USEDEP}]
-			virtual/numpy[${PYTHON_USEDEP}]
+			virtual/numpy:=[${PYTHON_USEDEP}]
 			system-flatbuffers? (
 				~dev-libs/flatbuffers-'${FLATBUFFERS_PV}'
 			)
@@ -900,8 +900,8 @@ eerror
 	local _LLVM_COMPAT=(" ${LLVM_COMPAT[@]}" )
 
 	if use rocm ; then
-		if has "rocm_6_4" ${IUSE_EFFECTIVE} && use rocm_6_4 ; then
-			_LLVM_COMPAT=( 19 )
+		if has "rocm_7_2" ${IUSE_EFFECTIVE} && use rocm_7_2 ; then
+			_LLVM_COMPAT=( 22 )
 		fi
 	fi
 
@@ -964,10 +964,10 @@ ewarn "ROCm support is a Work In Progress (WIP) and possibly broken"
 		_remove_llvm_from_path
 
 		# Build with GCC but initialize LLVM_SLOT.
-		if has "rocm_6_4" ${IUSE_EFFECTIVE} && use rocm_6_4 ; then
-			LLVM_SLOT=19
-			ROCM_SLOT="6.4"
-			ROCM_VERSION="${HIP_6_4_VERSION}"
+		if has "rocm_7_2" ${IUSE_EFFECTIVE} && use rocm_7_2 ; then
+			LLVM_SLOT=22
+			ROCM_SLOT="7.2"
+			ROCM_VERSION="${HIP_7_2_VERSION}"
 		fi
 	elif use clang ; then
 		use_clang

@@ -56,11 +56,11 @@ LLVM_COMPAT=(
 
 inherit hip-versions
 HIP_VERSIONS=(
-	"${HIP_6_4_VERSION}"
+	"${HIP_7_2_VERSION}"
 )
 
 ROCM_SLOTS=(
-	"rocm_6_4"
+	"rocm_7_2"
 )
 
 inherit check-compiler-switch cmake cuda flag-o-matic libcxx-slot libstdcxx-slot
@@ -112,7 +112,7 @@ ebuild_revision_13
 "
 gen_required_use_cuda_targets() {
 	local x
-	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+	for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
 		echo "
 			cuda_targets_${x}? (
 				cuda
@@ -122,7 +122,7 @@ gen_required_use_cuda_targets() {
 }
 gen_required_use_hip_targets() {
 	local x
-	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+	for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
 		echo "
 			amdgpu_targets_${x}? (
 				rocm
@@ -156,9 +156,13 @@ REQUIRED_USE+="
 		^^ (
 			${ROCM_SLOTS[@]}
 		)
+		^^ (
+			python_single_target_python3_10
+			python_single_target_python3_12
+		)
 	)
-	rocm_6_4? (
-		llvm_slot_19
+	rocm_7_2? (
+		llvm_slot_22
 	)
 "
 gen_clang_depends() {
@@ -177,19 +181,20 @@ gen_clang_depends() {
 
 # roct-thunk-interface moved to rocr-runtime
 gen_hip_depends() {
-	local hip_version
-	for hip_version in "${HIP_VERSIONS[@]}" ; do
+	local pv
+	for pv in "${HIP_VERSIONS[@]}" ; do
 		# Needed because of build failures
-		local s="0/"$(ver_cut "1-2" "${hip_version}")
-		local u=$(ver_cut "1-2" "${hip_version}")
-		u="${u/./_}"
+		local s="0/"$(ver_cut "1-2" "${pv}")
+		local u=$(ver_cut "1-2" "${pv}")
+		u="rocm_${u/./_}"
 		echo "
-			rocm_${u}? (
-				~dev-libs/rocm-comgr-${hip_version}:=[${LIBSTDCXX_USEDEP}]
-				~dev-libs/rocm-device-libs-${hip_version}:=
-				~dev-libs/rocr-runtime-${hip_version}:=[${LIBSTDCXX_USEDEP}]
-				~dev-util/hip-${hip_version}:=[${LIBSTDCXX_USEDEP},rocm]
-				~dev-util/rocminfo-${hip_version}:=
+			${u}? (
+				~dev-libs/rocm-comgr-${pv}:=[${LIBSTDCXX_USEDEP}]
+				~dev-libs/rocm-device-libs-${pv}:=
+				~dev-libs/rocr-runtime-${pv}:=[${LIBSTDCXX_USEDEP}]
+				~dev-util/hip-${pv}:=[${LIBSTDCXX_USEDEP},rocm]
+				~dev-util/rocminfo-${pv}:=
+				~sys-devel/llvm-roc-${pv}:=[${LIBSTDCXX_USEDEP}]
 			)
 		"
 	done
@@ -206,7 +211,6 @@ RDEPEND+="
 	)
 	rocm? (
 		$(gen_hip_depends)
-		dev-util/hip:=[${LIBSTDCXX_USEDEP},rocm]
 	)
 	sycl? (
 		>=sys-devel/DPC++-2023.10.26:=[aot?]
@@ -230,14 +234,8 @@ BDEPEND+="
 		sys-devel/binutils[gold,plugins]
 	)
 	rocm? (
-		(
-			$(gen_hip_depends)
-			sys-devel/llvm-roc:=
-		)
+		$(gen_hip_depends)
 		>=dev-build/cmake-3.21
-		rocm_6_4? (
-			~sys-devel/llvm-roc-${HIP_6_4_VERSION}:=[${LIBSTDCXX_USEDEP}]
-		)
 	)
 	sycl? (
 		>=dev-build/cmake-3.25.2
@@ -269,10 +267,10 @@ pkg_setup() {
 		use cpu && check_cpu
 	fi
 
-	if use rocm_6_4 ; then
-		LLVM_SLOT=19
-		ROCM_SLOT="6.4"
-		ROCM_VERSION="${HIP_6_4_VERSION}"
+	if use rocm_7_2 ; then
+		LLVM_SLOT=22
+		ROCM_SLOT="7.2"
+		ROCM_VERSION="${HIP_7_2_VERSION}"
 	fi
 
 	if use rocm ; then

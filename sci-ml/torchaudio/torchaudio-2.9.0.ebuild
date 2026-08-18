@@ -13,7 +13,7 @@ CXX_STANDARD=17
 DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{11..14} )
+PYTHON_COMPAT=( "python3_"{10..14} )
 
 AMDGPU_TARGETS_COMPAT=(
 	"gfx803"
@@ -33,20 +33,20 @@ LLVM_COMPAT=(
 )
 
 inherit hip-versions
-ROCM_SLOTS=(
-	"${HIP_6_4_VERSION}"
+ROCM_VERSIONS=(
+	"${HIP_7_2_VERSION}"
 )
 
 gen_rocm_iuse() {
 	local x
-	for x in ${ROCM_SLOTS[@]} ; do
+	for x in "${ROCM_VERSIONS[@]}" ; do
 		local t="${x%.*}"
 		echo "rocm_${t/./_}"
 	done
 }
 ROCM_IUSE=$(gen_rocm_iuse)
 
-inherit distutils-r1 fix-rpath libcxx-slot libstdcxx-slot pypi rocm
+inherit distutils-r1 fix-rpath libcxx-slot libstdcxx-slot pypi secure-version rocm
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${MY_PN}-${PV}"
@@ -76,54 +76,42 @@ REQUIRED_USE="
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
 	rocm? (
-		llvm_slot_19
+		llvm_slot_22
+		^^ (
+			python_single_target_python3_10
+			python_single_target_python3_12
+		)
 	)
 "
 
 gen_rocm_depend() {
 	local pv
-	for pv in ${ROCM_SLOTS[@]} ; do
-		local s="0/"$(ver_cut 1-2 ${pv})
-		local u=$(ver_cut 1-2 ${pv})
+	for pv in "${ROCM_VERSIONS[@]}" ; do
+		local s="0/"$(ver_cut "1-2" "${pv}")
+		local u=$(ver_cut "1-2" "${pv}")
 		local ROCM_SLOT="${u}"
-		u="${u/./_}"
+		u="rocm_${u/./_}"
 		echo "
-			rocm_${u}? (
-				>=dev-libs/rocm-comgr-${pv}:${s}[${LIBSTDCXX_USEDEP}]
-				dev-libs/rocm-comgr:=
-				>=dev-libs/rocm-device-libs-${pv}:${s}
-				dev-libs/rocm-device-libs:=
-				>=dev-libs/rocr-runtime-${pv}:${s}[${LIBSTDCXX_USEDEP}]
-				dev-libs/rocr-runtime:=
-				>=dev-util/hip-${pv}:${s}[${LIBSTDCXX_USEDEP},rocm]
-				dev-util/hip:=
-				>=sci-libs/hipCUB-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPCUB),rocm]
-				sci-libs/hipCUB:=
-				>=sci-libs/hipRAND-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPRAND),rocm]
-				sci-libs/hipRAND:=
-				>=sci-libs/hipSPARSE-${pv}:${s}[${LIBSTDCXX_USEDEP},rocm]
-				sci-libs/hipSPARSE:=
-				>=sci-libs/hipFFT-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPFFT),rocm]
-				sci-libs/hipFFT:=
-				>=sci-libs/miopen-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep MIOPEN)]
-				sci-libs/miopen:=
-				>=sci-libs/rocBLAS-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCBLAS)]
-				sci-libs/rocBLAS:=
-				>=sci-libs/rocFFT-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCFFT)]
-				sci-libs/rocFFT:=
-				>=sci-libs/rocRAND-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCRAND)]
-				sci-libs/rocRAND:=
-				>=sci-libs/rocPRIM-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCPRIM)]
-				sci-libs/rocPRIM:=
-				>=sci-libs/rocThrust-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCTHRUST)]
-				sci-libs/rocThrust:=
+			${u}? (
+				~dev-libs/rocm-comgr-${pv}:=[${LIBSTDCXX_USEDEP}]
+				~dev-libs/rocm-device-libs-${pv}:=
+				~dev-libs/rocr-runtime-${pv}:=[${LIBSTDCXX_USEDEP}]
+				~dev-util/hip-${pv}:=[${LIBSTDCXX_USEDEP},rocm]
+				~sci-libs/hipCUB-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPCUB),rocm]
+				~sci-libs/hipRAND-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPRAND),rocm]
+				~sci-libs/hipSPARSE-${pv}:=[${LIBSTDCXX_USEDEP},rocm]
+				~sci-libs/hipFFT-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPFFT),rocm]
+				~sci-libs/miopen-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep MIOPEN)]
+				~sci-libs/rocBLAS-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCBLAS)]
+				~sci-libs/rocFFT-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCFFT)]
+				~sci-libs/rocRAND-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCRAND)]
+				~sci-libs/rocPRIM-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCPRIM)]
+				~sci-libs/rocThrust-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCTHRUST)]
 				rccl? (
-					>=dev-libs/rccl-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep RCCL)]
-					dev-libs/rccl:=
+					~dev-libs/rccl-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep RCCL)]
 				)
 				roctracer? (
-					>=dev-util/roctracer-${pv}:${s}[${LIBSTDCXX_USEDEP}]
-					dev-util/roctracer:=
+					~dev-util/roctracer-${pv}:=[${LIBSTDCXX_USEDEP}]
 				)
 			)
 		"
@@ -133,10 +121,8 @@ gen_rocm_depend() {
 CUDA_12_6_RDEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.6*[profiler]
-		dev-util/nvidia-cuda-toolkit:=
 		>=x11-drivers/nvidia-drivers-560.35
 		virtual/cuda-compiler:0/12.6[${LIBSTDCXX_USEDEP}]
-		virtual/cuda-compiler:=
 	)
 "
 TRASH="
@@ -146,12 +132,13 @@ RDEPEND+="
 		dev-python/kaldi-io[${PYTHON_USEDEP}]
 		dev-python/soundfile[${PYTHON_USEDEP}]
 	')
-	>=media-sound/sox-14.4.2
-	=sci-ml/pytorch-${PV%.*}*[${PYTHON_SINGLE_USEDEP}]
-	sci-ml/pytorch:=
-	sci-ml/torchcodec-0.8*[${PYTHON_SINGLE_USEDEP}]
-	sci-ml/torchcodec:=
+	>=media-sound/sox-14.4.2:=
+	=sci-ml/pytorch-${PV%.*}*:=[${PYTHON_SINGLE_USEDEP}]
+	=sci-ml/torchcodec-0.8*:=[${PYTHON_SINGLE_USEDEP}]
 	cuda? (
+		dev-util/nvidia-cuda-toolkit:=
+		x11-drivers/nvidia-drivers:=
+		virtual/cuda-compiler:=
 		|| (
 			${CUDA_12_6_RDEPEND}
 		)
@@ -174,13 +161,13 @@ PATCHES=(
 
 pkg_setup() {
 	python_setup
-	if use rocm_6_4 ; then
-		export ROCM_SLOT="6.4"
-		export LLVM_SLOT=19
+	if use rocm_7_2 ; then
+		export ROCM_SLOT="7.2"
+		export LLVM_SLOT=22
 		rocm_pkg_setup
 	else
 		local s
-		for s in ${LLVM_COMPAT[@]} ; do
+		for s in "${LLVM_COMPAT[@]}" ; do
 			if use "llvm_slot_${s}" ; then
 				export LLVM_SLOT="${s}"
 				break

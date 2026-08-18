@@ -217,8 +217,9 @@ GCC_COMPAT=(
 inherit libcxx-compat
 LLVM_COMPAT=(
 	#"${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]/llvm_slot_}" # 18, 19
+	#"${LIBCXX_COMPAT_CXX17_ROCM_7_2[@]/llvm_slot_}" # 22
 	#"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
-	{18..19}
+	{18..22}
 )
 
 # Mitigate code execution
@@ -583,14 +584,14 @@ LLMS=(
 
 inherit hip-versions
 
-ROCM_SLOTS=(
+ROCM_VERSIONS=(
 	# Limited by libhipblas.so.2 hardcoded SOVERSION
-	${HIP_6_4_VERSION}
+	"${HIP_7_2_VERSION}"
 )
 
 gen_rocm_iuse() {
 	local pv
-	for pv in "${ROCM_SLOTS[@]}" ; do
+	for pv in "${ROCM_VERSIONS[@]}" ; do
 		local s
 		s="${pv%.*}"
 		s="${s/./_}"
@@ -2570,7 +2571,7 @@ ebuild_revision_145
 
 gen_rocm_required_use() {
 	local pv
-	for pv in "${ROCM_SLOTS[@]}" ; do
+	for pv in "${ROCM_VERSIONS[@]}" ; do
 		local s
 		s="${pv%.*}"
 		s="${s/./_}"
@@ -2720,7 +2721,7 @@ REQUIRED_USE="
 			${ROCM_IUSE[@]}
 		)
 		^^ (
-			${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]}
+			${LIBCXX_COMPAT_CXX17_ROCM_7_2[@]}
 		)
 	)
 	video_cards_intel? (
@@ -2758,7 +2759,7 @@ gen_clang_bdepend() {
 gen_rocm_bdepend() {
 	# DEPENDs listed in Dockerfile
 	local pv
-	for pv in "${ROCM_SLOTS[@]}" ; do
+	for pv in "${ROCM_VERSIONS[@]}" ; do
 		local s
 		s="${pv%.*}"
 		s="${s/./_}"
@@ -2774,7 +2775,7 @@ gen_rocm_bdepend() {
 gen_rocm_rdepend() {
 	# DEPENDs listed in Dockerfile
 	local pv
-	for pv in "${ROCM_SLOTS[@]}" ; do
+	for pv in "${ROCM_VERSIONS[@]}" ; do
 		local s
 		s="${pv%.*}"
 		s="${s/./_}"
@@ -2855,7 +2856,7 @@ DEPEND="
 "
 gen_rocm_bdepend() {
 	local pv
-	for pv in "${ROCM_SLOTS[@]}" ; do
+	for pv in "${ROCM_VERSIONS[@]}" ; do
 		local s
 		s="${pv%.*}"
 		s="${s/./_}"
@@ -3110,11 +3111,10 @@ ewarn "If a prebuilt LLM is marked all-rights-reserved, it is a placeholder and 
 		unset CXX
 		unset CPP
 	elif use rocm ; then
-		if use rocm_6_4 ; then
-			export ROCM_SLOT="6.4"
-			export LLVM_SLOT=19
-			export ROCM_VERSION="${HIP_6_4_VERSION}"
-ewarn "Upstream doesn't official support ROCm 6.4.  Use at your own risk."
+		if use rocm_7_2 ; then
+			export ROCM_SLOT="7.2"
+			export LLVM_SLOT=22
+			export ROCM_VERSION="${HIP_7_2_VERSION}"
 		fi
 		rocm_pkg_setup
 

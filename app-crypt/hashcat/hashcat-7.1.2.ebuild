@@ -7,12 +7,12 @@ EAPI=8
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
 CXX_STANDARD=17 # Compiler default
@@ -20,14 +20,13 @@ PYTHON_COMPAT=( "python3_12" )
 
 inherit hip-versions
 
-ROCM_SLOTS=(
-	"${HIP_6_4_VERSION}"
-	"${HIP_7_0_VERSION}"
+ROCM_VERSIONS=(
+	"${HIP_7_2_VERSION}"
 )
 rocm_gen_iuse() {
 	local s
-	for s in ${ROCM_SLOTS[@]} ; do
-		local s_mm=$(ver_cut 1-2 "${s}")
+	for s in "${ROCM_VERSIONS[@]}" ; do
+		local s_mm=$(ver_cut "1-2" "${s}")
 		echo "
 			rocm_${s_mm/./_}
 		"
@@ -38,8 +37,8 @@ inherit pax-utils python-single-r1 libcxx-slot libstdcxx-slot rocm toolchain-fun
 
 rocm_gen_rocm_required_use1() {
 	local s
-	for s in ${ROCM_SLOTS[@]} ; do
-		local s_mm=$(ver_cut 1-2 "${s}")
+	for s in "${ROCM_VERSIONS[@]}" ; do
+		local s_mm=$(ver_cut "1-2" "${s}")
 		echo "
 			rocm_${s_mm/./_}? (
 				rocm
@@ -54,8 +53,8 @@ rocm_gen_rocm_required_use2() {
 				|| (
 	"
 	local s
-	for s in ${ROCM_SLOTS[@]} ; do
-		local s_mm=$(ver_cut 1-2 "${s}")
+	for s in "${ROCM_VERSIONS[@]}" ; do
+		local s_mm=$(ver_cut "1-2" "${s}")
 		echo "
 			rocm_${s_mm/./_}
 		"
@@ -68,13 +67,12 @@ rocm_gen_rocm_required_use2() {
 }
 
 gen_depend_rocm() {
-	local s
-	for s in ${ROCM_SLOTS[@]} ; do
-		local s2="0/"$(ver_cut 1-2 ${s})
+	local pv
+	for pv in "${ROCM_VERSIONS[@]}" ; do
 		echo "
 			(
-				~dev-util/hip-${s}:${s2}[${LIBSTDCXX_USEDEP},hsa,lc,rocm]
-				~dev-libs/rocm-opencl-runtime-${s}:${s2}[${LIBSTDCXX_USEDEP}]
+				~dev-util/hip-${pv}:=[${LIBSTDCXX_USEDEP},hsa,lc,rocm]
+				~dev-libs/rocm-opencl-runtime-${pv}:=[${LIBSTDCXX_USEDEP}]
 			)
 		"
 	done
@@ -170,14 +168,10 @@ PATCHES=(
 pkg_setup() {
 	python-single-r1_pkg_setup
 	if use rocm ; then
-		if use rocm_6_4 ; then
-			LLVM_SLOT=19
-			ROCM_SLOT="6.4"
-			ROCM_VERSION="${HIP_6_4_VERSION}"
-		elif use rocm_6_4 ; then
-			LLVM_SLOT=19
-			ROCM_SLOT="6.4"
-			ROCM_VERSION="${HIP_7_0_VERSION}"
+		if use rocm_7_2 ; then
+			LLVM_SLOT=22
+			ROCM_SLOT="7.2"
+			ROCM_VERSION="${HIP_7_2_VERSION}"
 		fi
 		rocm_pkg_setup
 	fi

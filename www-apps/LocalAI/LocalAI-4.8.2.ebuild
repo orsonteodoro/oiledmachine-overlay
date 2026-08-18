@@ -44,7 +44,7 @@ GRPC_SLOT="5" # Same as the backends.  Ignore the /Makefile
 NODE_SLOT="26"
 PROTOBUF_CPP_SLOT="5"
 PROTOBUF_PYTHON_SLOT="5"
-PYTHON_COMPAT=( "python3_"{11..14} ) # Based on NumPy
+PYTHON_COMPAT=( "python3_"{10..14} ) # Based on NumPy
 RE2_SLOT="20250512"
 
 MODES=(
@@ -178,7 +178,7 @@ FFMPEG_COMPAT_SLOTS=(
 )
 
 ROCM_VERSIONS=(
-	"${HIP_6_4_VERSION}"
+	"${HIP_7_2_VERSION}"
 )
 
 get_rocm_iuse() {
@@ -316,11 +316,6 @@ REQUIRED_USE="
 	^^ (
 		${MODES[@]/+}
 	)
-	rocm? (
-		^^ (
-			${ROCM_IUSE}
-		)
-	)
 	?? (
 		cuda
 		openblas
@@ -448,6 +443,18 @@ REQUIRED_USE="
 			localai_backends_vllm
 		)
 	)
+	rocm? (
+		|| (
+			${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
+		)
+		^^ (
+			${ROCM_IUSE}
+		)
+		^^ (
+			python_single_target_python3_10
+			python_single_target_python3_12
+		)
+	)
 	stt? (
 		localai_backends_silero-vad
 		|| (
@@ -464,11 +471,6 @@ REQUIRED_USE="
 			localai_backends_mlx-audio
 			localai_backends_neutts
 			localai_backends_piper
-		)
-	)
-	rocm? (
-		|| (
-			${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 		)
 	)
 	|| (
