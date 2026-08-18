@@ -8,7 +8,7 @@ CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CXX_STANDARD=17
 LLVM_SLOT=22
 NNEF_TOOLS_COMMIT="f0aceb0a210dae1d7d9c0be86ebcd3fb3d326854" # Same as nnef-v1.0.7 tag
-PYTHON_COMPAT=( "python3_"{10..13} )
+PYTHON_COMPAT=( "python3_"{10,12} )
 RAPIDJSON_COMMIT="24b5e7a8b27f42fa16b96fc70aade9106cf7102f" # Security fix for OOBR
 ROCM_SLOT=$(ver_cut "1-2" "${PV}")
 RRAWTHER_LIBJPEG_TURBO_COMMIT="ae4e2a24e54514d1694d058650c929e6086cc4bb"
@@ -104,7 +104,7 @@ IUSE="
 caffe cpu +enhanced-message ffmpeg -fp16 +ieee1394 +loom +migraphx -minimal +neural-net
 nnef onnx opencl opencv +rocal +rocal-python +rocm +rpp system-nnef-parser
 system-rapidjson
-ebuild_revision_31
+ebuild_revision_32
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
