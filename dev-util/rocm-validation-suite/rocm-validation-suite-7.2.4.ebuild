@@ -4,7 +4,7 @@
 EAPI=8
 
 CXX_STANDARD=20
-LLVM_SLOT=19
+LLVM_SLOT=22
 MY_PN="ROCmValidationSuite"
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
@@ -51,7 +51,7 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="test" # Needs SRC_URI changes for offline install.
 SLOT="0/${ROCM_SLOT}"
-IUSE+=" doc test ebuild_revision_5"
+IUSE+=" doc test ebuild_revision_6"
 RDEPEND="
 	dev-cpp/yaml-cpp[${LIBSTDCXX_USEDEP}]
 	dev-cpp/yaml-cpp:=
