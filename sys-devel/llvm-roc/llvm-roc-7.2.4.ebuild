@@ -5,7 +5,7 @@
 EAPI=8
 
 # GH timestamp for tagged release in "Aug 11, 2025 7:47 AM PDT" format
-TAG_TIMESTAMP="Sep 26, 2025 8:42 AM PDT"
+TAG_TIMESTAMP="May 28, 2025 9:21 AM PDT"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -90,18 +90,18 @@ LICENSE="
 	rc
 	SunPro
 "
-# Apache-2.0 - llvm-project-rocm-5.7.0/third-party/benchmark/LICENSE
-# Apache-2.0-with-LLVM-exceptions, UoI-NCSA - llvm-project-rocm-5.7.0/lldb/LICENSE.TXT
-# Apache-2.0-with-LLVM-exceptions, BSD, MIT - llvm-project-rocm-5.7.0/libclc/LICENSE.TXT
-# Apache-2.0-with-LLVM-exceptions, UoI-NCSA, MIT, custom - llvm-project-rocm-5.7.0/openmp/LICENSE.TXT
+# Apache-2.0 - llvm-project-rocm-7.2.4/third-party/benchmark/LICENSE
+# Apache-2.0-with-LLVM-exceptions, UoI-NCSA - llvm-project-rocm-7.2.4/lldb/LICENSE.TXT
+# Apache-2.0-with-LLVM-exceptions, BSD, MIT - llvm-project-rocm-7.2.4/libclc/LICENSE.TXT
+# Apache-2.0-with-LLVM-exceptions, UoI-NCSA, MIT, custom - llvm-project-rocm-7.2.4/openmp/LICENSE.TXT
 #   Keyword search:  "all right, title, and interest"
-# BSD - llvm-project-rocm-5.7.0/third-party/unittest/googlemock/LICENSE.txt
-# BSD - llvm-project-rocm-5.7.0/openmp/runtime/src/thirdparty/ittnotify/LICENSE.txt
-# CC0-1.0, Apache-2.0 - llvm-project-rocm-5.7.0/llvm/lib/Support/BLAKE3/LICENSE
-# ISC - llvm-project-rocm-5.7.0/lldb/third_party/Python/module/pexpect-4.6/LICENSE
-# MIT - llvm-project-rocm-5.7.0/polly/lib/External/isl/LICENSE
+# BSD - llvm-project-rocm-7.2.4/third-party/unittest/googlemock/LICENSE.txt
+# BSD - llvm-project-rocm-7.2.4/openmp/runtime/src/thirdparty/ittnotify/LICENSE.txt
+# CC0-1.0, Apache-2.0 - llvm-project-rocm-7.2.4/llvm/lib/Support/BLAKE3/LICENSE
+# ISC - llvm-project-rocm-7.2.4/lldb/third_party/Python/module/pexpect-4.6/LICENSE
+# MIT - llvm-project-rocm-7.2.4/polly/lib/External/isl/LICENSE
 # NCSA-AMD - rocm-6.1.2/amd/device-libs/ockl/inc/hsa.h
-# rc, BSD - llvm-project-rocm-5.7.0/llvm/lib/Support/COPYRIGHT.regex
+# rc, BSD - llvm-project-rocm-7.2.4/llvm/lib/Support/COPYRIGHT.regex
 # SunPro - rocm-6.1.2/amd/device-libs/ocml/src/erfcF.cl
 RESTRICT="strip" # Prevent missing symbols
 SLOT="0/${ROCM_SLOT}"
@@ -109,7 +109,7 @@ IUSE+="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
 bolt flang -mlir profile
-ebuild_revision_59
+ebuild_revision_60
 "
 REQUIRED_USE="
 	^^ (
