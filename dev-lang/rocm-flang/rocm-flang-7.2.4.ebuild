@@ -5,7 +5,7 @@ EAPI=8
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
 CXX_STANDARD=11
@@ -44,15 +44,15 @@ RESTRICT="
 "
 SLOT="0/${ROCM_SLOT}"
 IUSE="
-doc test ebuild_revision_10
+doc test
+ebuild_revision_11
 "
 REQUIRED_USE="
 "
 RDEPEND="
 	${ROCM_CLANG_DEPEND}
 	sys-devel/gcc
-	>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},llvm_targets_AMDGPU,llvm_targets_X86,offload]
-	sys-libs/llvm-roc-libomp:=
+	~sys-libs/llvm-roc-libomp-${PV}:=[${LIBSTDCXX_USEDEP},llvm_targets_AMDGPU,llvm_targets_X86,offload]
 "
 DEPEND="
 	${RDEPEND}
@@ -61,7 +61,7 @@ BDEPEND="
 	${ROCM_CLANG_DEPEND}
 	>=dev-build/cmake-3.9.0
 	sys-devel/gcc-config
-	virtual/rocm-libstdcxx:${SLOT}[${LIBSTDCXX_USEDEP}]
+	virtual/rocm-libstdcxx:=[${LIBSTDCXX_USEDEP}]
 	doc? (
 		app-text/doxygen
 		$(python_gen_any_dep '
