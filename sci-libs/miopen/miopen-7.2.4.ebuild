@@ -5,7 +5,7 @@ EAPI=8
 
 CXX_STANDARD=17
 FIN_COMMIT="77669a7a1158e336ec831c19525a66db3d2d37f1"
-LLVM_SLOT=19
+LLVM_SLOT=22
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 AMDGPU_TARGETS_COMPAT=(
@@ -80,7 +80,7 @@ SLOT="0/${ROCM_SLOT}"
 IUSE="
 +ai-kernel-tuning comgr composable-kernel debug hipblaslt hiprtc kernels
 miopendriver mlir opencl +rocm test
-ebuild_revision_22
+ebuild_revision_23
 "
 gen_amdgpu_required_use() {
 	local x
