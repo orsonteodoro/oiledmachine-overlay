@@ -93,7 +93,7 @@ LICENSE="
 # The distro's GPL-3+ license template does not contain all rights reserved.
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="0/${ROCM_SLOT}"
-IUSE="ebuild_revision_14"
+IUSE="ebuild_revision_15"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
