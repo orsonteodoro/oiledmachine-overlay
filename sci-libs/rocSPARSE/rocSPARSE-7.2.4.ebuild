@@ -14,7 +14,7 @@ EAPI=8
 
 CMAKE_MAKEFILE_GENERATOR="emake"
 CXX_STANDARD=17
-LLVM_SLOT=19 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.4.4/llvm/CMakeLists.txt
+LLVM_SLOT=22 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.4.4/llvm/CMakeLists.txt
 PYTHON_COMPAT=( "python3_"{10..13} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -118,7 +118,7 @@ LICENSE="
 IUSE="
 ${GCC_COMPAT[@]}
 -asan -benchmark -test
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
