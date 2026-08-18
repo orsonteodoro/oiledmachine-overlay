@@ -4,7 +4,7 @@
 EAPI=8
 
 CXX_STANDARD=17
-LLVM_SLOT=19
+LLVM_SLOT=22
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 AMDGPU_TARGETS_COMPAT=(
@@ -56,7 +56,7 @@ RESTRICT="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 -asan +sparse -test -benchmark
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
