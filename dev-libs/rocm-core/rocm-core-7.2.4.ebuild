@@ -9,7 +9,7 @@ GCC_COMPAT=(
 )
 
 CXX_STANDARD=11
-LLVM_SLOT=19
+LLVM_SLOT=22
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
@@ -38,7 +38,7 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="0/${ROCM_SLOT}"
 IUSE="
-ebuild_revision_9
+ebuild_revision_10
 "
 RDEPEND="
 "
