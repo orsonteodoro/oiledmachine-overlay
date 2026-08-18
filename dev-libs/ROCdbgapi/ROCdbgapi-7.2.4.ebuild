@@ -29,18 +29,16 @@ LICENSE="
 "
 # || ( ( GPL-2.0 Linux-syscall-note ) MIT ) - src/linux/kfd_sysfs.h
 SLOT="0/${ROCM_SLOT}"
-IUSE=" ebuild_revision_10"
+IUSE=" ebuild_revision_11"
 RDEPEND="
-	>=dev-libs/rocm-comgr-${PV}:${SLOT}
-	dev-libs/rocm-comgr:=
-	>=dev-libs/rocr-runtime-${PV}:${SLOT}
-	dev-libs/rocr-runtime:=
-	|| (
-		>=virtual/kfd-6.4:0/6.4
-		>=virtual/kfd-6.3:0/6.3
-		>=virtual/kfd-6.2:0/6.2
-	)
+	~dev-libs/rocm-comgr-${PV}:=
+	~dev-libs/rocr-runtime-${PV}:=
 	virtual/kfd:=
+	|| (
+		>=virtual/kfd-7.2:0/7.2
+		>=virtual/kfd-7.1:0/7.1
+		>=virtual/kfd-7.0:0/7.0
+	)
 "
 DEPEND="
 	${RDEPEND}
