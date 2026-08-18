@@ -155,10 +155,9 @@ inherit libcxx-compat
 LLVM_COMPAT=(
 	# There is a bug if it is duplicate LLVM_COMPAT entry, it will complain it is more than 1 when emerging.
 	#${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]/llvm_slot_} # 16..19
-	#${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]/llvm_slot_} # 19
-	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
+	#${LIBCXX_COMPAT_CXX17_ROCM_7_2[@]/llvm_slot_} # 22
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19, 21, 22
 )
-# ROCm 6.4: 19, ROCm 6.3: 18
 # Upstream limits LLVM to [15, 18) but relaxed for ROCm and overlay compatibility
 # It uses LLVM 17 as default.
 LLVM_MAX_SLOT="19"
@@ -296,7 +295,7 @@ HIPRT_RAYTRACE_TARGETS=(
 inherit hip-versions
 
 ROCM_VERSIONS=(
-	"${HIP_6_4_VERSION}"
+	"${HIP_7_2_VERSION}"
 )
 
 gen_rocm_iuse() {
@@ -580,7 +579,7 @@ REQUIRED_USE+="
 			${HIPRT_RAYTRACE_TARGETS[@]/#/amdgpu_targets_}
 		)
 		|| (
-			rocm_6_4
+			rocm_7_2
 		)
 	)
 	hydra? (
@@ -690,11 +689,11 @@ REQUIRED_USE+="
 			${ROCM_IUSE[@]}
 		)
 		^^ (
-			${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]}
+			${LIBCXX_COMPAT_CXX17_ROCM_7_2[@]}
 		)
 	)
-	rocm_6_4? (
-		llvm_slot_19
+	rocm_7_2? (
+		llvm_slot_22
 		rocm
 	)
 	tbb-malloc-proxy? (
@@ -904,8 +903,7 @@ gen_rocm_hiprt_rdepend() {
 			rocm_${u}? (
 				media-libs/HIPRT:=[${LIBSTDCXX_USEDEP},rocm]
 				|| (
-					=media-libs/HIPRT-2.5*:0/${s}[${LIBSTDCXX_USEDEP},rocm,$(gen_hiprt_usedep 2.5 ${s})]
-					=media-libs/HIPRT-3.0*:0/${s}[${LIBSTDCXX_USEDEP},rocm,$(gen_hiprt_usedep 3.0 ${s})]
+					=media-libs/HIPRT-2.5*[${LIBSTDCXX_USEDEP},rocm,$(gen_hiprt_usedep 2.5 ${s})]
 				)
 			)
 		"
@@ -1271,8 +1269,8 @@ BDEPEND+="
 		sys-devel/gettext
 	)
 	rocm? (
-		rocm_6_4? (
-			~sys-devel/llvm-roc-${HIP_6_4_VERSION}:=
+		rocm_7_2? (
+			~sys-devel/llvm-roc-${HIP_7_2_VERSION}:=
 		)
 	)
 	test? (
@@ -1299,10 +1297,10 @@ PATCHES=(
 
 _blender_set_rocm_compiler() {
 	# See https://github.com/blender/blender/blob/v5.1.2/build_files/config/pipeline_config.yaml
-	if use rocm_6_4 ; then
-		export LLVM_SLOT=19
-		export ROCM_SLOT="6.4"
-		export ROCM_VERSION="${HIP_6_4_VERSION}"
+	if use rocm_7_2 ; then
+		export LLVM_SLOT="${HIP_7_2_LLVM_SLOT}"
+		export ROCM_SLOT="7.2"
+		export ROCM_VERSION="${HIP_7_2_VERSION}"
 	fi
 	rocm_pkg_setup
 	rocm_set_default_hipcc
@@ -1382,8 +1380,8 @@ _src_prepare_patches() {
 	eapply "${FILESDIR}/blender-5.0.0-parent-datafiles-dir-change.patch"
 	if use rocm ; then
 		local rocm_version=""
-		if use rocm_6_4 ; then
-			rocm_version="${HIP_6_4_VERSION}"
+		if use rocm_7_2 ; then
+			rocm_version="${HIP_7_2_VERSION}"
 		fi
 
 		sed \
