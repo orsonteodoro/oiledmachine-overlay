@@ -5,15 +5,15 @@ EAPI=8
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 DOWNLOAD_FILE_12_5="hsa-amd-aqlprofile_1.0.0.70002-56~22.04_amd64.deb"
 DOWNLOAD_FILE_13_4="hsa-amd-aqlprofile_1.0.0.70002-56~24.04_amd64.deb"
-DOWNLOAD_FOLDER_URI="http://repo.radeon.com/rocm/apt/7.0.2/pool/main/h/hsa-amd-aqlprofile/"
+DOWNLOAD_FOLDER_URI="http://repo.radeon.com/rocm/apt/7.2.4/pool/main/h/hsa-amd-aqlprofile/"
 QA_PREBUILT="
-/opt/rocm-7.0.2/lib/libhsa-amd-aqlprofile64.so.1.0.70002
-/opt/rocm-7.0.2/lib/libhsa-amd-aqlprofile64.so
-/opt/rocm-7.0.2/lib/libhsa-amd-aqlprofile64.so.1
+/opt/rocm-7.2.4/lib/libhsa-amd-aqlprofile64.so.1.0.70002
+/opt/rocm-7.2.4/lib/libhsa-amd-aqlprofile64.so
+/opt/rocm-7.2.4/lib/libhsa-amd-aqlprofile64.so.1
 "
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -45,7 +45,7 @@ SLOT="0/${ROCM_SLOT}"
 IUSE="
 ${GCC_COMPAT[@]}
 deny-install skip-install
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	^^ (
@@ -66,7 +66,7 @@ pkg_nofetch() {
 einfo
 einfo "Due to EULA restrictions.  You must manually download."
 einfo
-einfo "(1) Read https://github.com/ROCm/ROCm/blob/docs/7.0.2/docs/about/license.md?plain=1#L87 for the overview and general guidance."
+einfo "(1) Read https://github.com/ROCm/ROCm/blob/docs/7.2.4/docs/about/license.md?plain=1#L87 for the overview and general guidance."
 einfo "    Read and accept the EULA at https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/licenses/hsa-amd-aqlprofile-EULA"
 einfo "    Read and accept the DISCLAIMER at https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/licenses/hsa-amd-aqlprofile-DISCLAIMER"
 einfo "    Read and accept the LICENSE at https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/licenses/hsa-amd-aqlprofile-LICENSE"
