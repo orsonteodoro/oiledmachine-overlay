@@ -7,7 +7,7 @@ MY_PN="AMDMIGraphX"
 MY_P="${CATEGORY}/${MY_PN}-${PV}"
 
 CXX_STANDARD=17
-LLVM_SLOT=19
+LLVM_SLOT=22
 PYTHON_COMPAT=( "python3_"{10..13} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -52,7 +52,7 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 +composable-kernel -cpu -fpga -hip-rtc -mlir +rocm test
-ebuild_revision_13
+ebuild_revision_14
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
