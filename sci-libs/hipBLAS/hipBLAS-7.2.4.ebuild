@@ -10,7 +10,7 @@ ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
 inherit cmake flag-o-matic fix-rpath libstdcxx-slot rocm
@@ -34,7 +34,7 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE+="
 -asan cuda +rocm
-ebuild_revision_10
+ebuild_revision_11
 "
 REQUIRED_USE="
 	^^ (
@@ -43,22 +43,18 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
-	dev-util/hip:=
+	~dev-util/hip-${PV}:=[${LIBSTDCXX_USEDEP},cuda?,rocm?]
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
-		>=sci-libs/rocBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm]
-		sci-libs/rocBLAS:=
-		>=sci-libs/rocSOLVER-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm(+)]
-		sci-libs/rocSOLVER:=
+		~sci-libs/rocBLAS-${PV}:=[${LIBSTDCXX_USEDEP},rocm]
+		~sci-libs/rocSOLVER-${PV}:=[${LIBSTDCXX_USEDEP},rocm(+)]
 	)
 "
 DEPEND="
 	${RDEPEND}
-	>=sci-libs/hipBLAS-common-${PV}:${SLOT}
-	sci-libs/hipBLAS-common:=
+	~sci-libs/hipBLAS-common-${PV}:=
 "
 BDEPEND="
 	${HIPCC_DEPEND}
