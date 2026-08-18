@@ -109,7 +109,7 @@ IUSE+="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
 bolt flang -mlir profile
-ebuild_revision_58
+ebuild_revision_59
 "
 REQUIRED_USE="
 	^^ (
@@ -120,15 +120,14 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	dev-libs/libxml2
-	sys-devel/llvm-roc-symlinks:${SLOT}
-	sys-devel/llvm-roc-symlinks:=
+	dev-libs/libxml2:=
 	sys-libs/ncurses:=
-	virtual/zlib
-	virtual/cblas
+	virtual/cblas:*
+	virtual/zlib:=
+	~sys-devel/llvm-roc-symlinks-${PV}:=
 	asan? (
-		dev-libs/rocm-comgr:${SLOT}
-		dev-libs/rocr-runtime:${SLOT}
+		~dev-libs/rocm-comgr-${PV}:=
+		~dev-libs/rocr-runtime-${PV}:=
 	)
 "
 DEPEND="
@@ -371,7 +370,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 	)
 
 # For LIBUNWIND_ENABLE_SHARED=OFF, avoid check:
-# CMake Error at /var/tmp/portage/sys-devel/llvm-roc-7.0.2/work/llvm-project-rocm-7.0.2/libunwind/src/CMakeLists.txt:102 (message):
+# CMake Error at /var/tmp/portage/sys-devel/llvm-roc-7.2.4/work/llvm-project-rocm-7.2.4/libunwind/src/CMakeLists.txt:102 (message):
 #   Compiler doesn't support generation of unwind tables if exception support
 #   is disabled.  Building libunwind DSO with runtime dependency on C++ ABI
 #   library is not supported.
@@ -441,7 +440,7 @@ _src_compile() {
 	# If the compiler G2 and compiler G1 are the same, then only verification is done from transistion 2 to 3 before adding to a live system.
 	# More steps can be added or merged depending on planning.
 
-	# See also https://github.com/ROCm/ROCm/blob/rocm-7.0.2/tools/rocm-build/build_lightning.sh#L429
+	# See also https://github.com/ROCm/ROCm/blob/rocm-7.2.4/tools/rocm-build/build_lightning.sh#L429
 
 	# The boostrapping is being used fix amdclang dependency (libc++).
 einfo "Bootstrapping HIP-Clang basic build"
