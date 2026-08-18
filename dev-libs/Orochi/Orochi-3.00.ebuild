@@ -6,9 +6,9 @@ EAPI=8
 
 inherit hip-versions
 
-LLVM_SLOT=19
-ROCM_SLOT="6.4"
-ROCM_VERSION="${HIP_6_4_VERSION}"
+LLVM_SLOT=22
+ROCM_SLOT="7.2"
+ROCM_VERSION="${HIP_7_2_VERSION}"
 
 inherit rocm
 
