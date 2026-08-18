@@ -7,7 +7,7 @@ EAPI=8
 CMAKE_BUILD_TYPE="Debug"
 CMAKE_MAKEFILE_GENERATOR="emake"
 CXX_STANDARD=17
-LLVM_SLOT=19
+LLVM_SLOT=22
 PYTHON_COMPAT=( "python3_"{10..13} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -76,7 +76,7 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="test"
 SLOT="0/${ROCM_SLOT}"
-IUSE=" plugins samples test ebuild_revision_20"
+IUSE=" plugins samples test ebuild_revision_21"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
