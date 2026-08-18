@@ -8,7 +8,7 @@ EAPI=8
 #AMD_HSMP_H_COMMIT="54aa699e8094efb7d7675fefbc03dfce24f98456"
 ESMI_PV="4.2"
 LLVM_SLOT=22
-PYTHON_COMPAT=( "python3_"{10..13} )
+PYTHON_COMPAT=( "python3_"{10,12} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 MY_PN="amdsmi"
 
@@ -56,7 +56,7 @@ RESTRICT="test" # Not tested
 SLOT="0/${ROCM_SLOT}"
 IUSE+="
 asan doc +esmi test
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
