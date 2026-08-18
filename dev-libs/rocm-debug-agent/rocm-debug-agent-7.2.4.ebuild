@@ -25,7 +25,7 @@ RESTRICT="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 test
-ebuild_revision_10
+ebuild_revision_11
 "
 RDEPEND="
 	dev-libs/elfutils:=
