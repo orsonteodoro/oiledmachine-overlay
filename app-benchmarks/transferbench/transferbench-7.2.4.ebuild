@@ -41,7 +41,7 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE+="
 cuda rocm
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE+="
 	|| (
@@ -50,9 +50,8 @@ REQUIRED_USE+="
 	)
 "
 RDEPEND="
-	sys-process/numactl
-	>=dev-util/hip-${PV}:${SLOT}
-	dev-util/hip:=
+	sys-process/numactl:=
+	~dev-util/hip-${PV}:=
 "
 DEPEND="
 	${RDEPEND}
@@ -60,10 +59,8 @@ DEPEND="
 BDEPEND="
 	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.5.0
-	>=dev-build/rocm-cmake-${PV}:${SLOT}
-	dev-build/rocm-cmake:=
-	>=dev-util/hip-${PV}:${SLOT}
-	dev-util/hip:=
+	~dev-build/rocm-cmake-${PV}:=
+	~dev-util/hip-${PV}:=
 "
 PATCHES=(
 )
