@@ -141,7 +141,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE[@]}
 +cpu -cuda -cuda-f16 -ffmpeg -mkl -openblas -opencl -openvino -rocm -sdl2 -vulkan
 video_cards_intel
-ebuild_revision_7
+ebuild_revision_8
 "
 gen_rocm_required_use() {
 	local pv
@@ -349,7 +349,7 @@ pkg_setup() {
 	check-compiler-switch_start
 	if use rocm ; then
 		if use rocm_7_2 ; then
-			export LLVM_SLOT=22
+			export LLVM_SLOT="${HIP_7_2_LLVM_SLOT}"
 			export ROCM_SLOT="7.2"
 			export ROCM_VERSION="${HIP_7_2_VERSION}"
 		fi

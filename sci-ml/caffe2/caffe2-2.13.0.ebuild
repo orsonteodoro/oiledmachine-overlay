@@ -237,7 +237,7 @@ CUDA_TARGETS_COMPAT=(
 inherit hip-versions
 ROCM_SLOTS=(
 # See https://github.com/pytorch/pytorch/blob/v2.13.0/.ci/docker/build.sh#L190
-	"${HIP_6_4_VERSION}" # Placeholder
+	"${HIP_7_2_VERSION}" # Placeholder
 )
 
 gen_rocm_slots() {
@@ -262,7 +262,7 @@ inherit libcxx-compat
 LLVM_COMPAT=(
 	#"${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]/llvm_slot_}" # 18, 19
 	#"${LIBCXX_COMPAT_CXX17_CUDA_12_9[@]/llvm_slot_}" # 18, 19
-	#"${LIBCXX_COMPAT_CXX20_ROCM_6_4[@]/llvm_slot_}" # 19
+	#"${LIBCXX_COMPAT_CXX20_ROCM_7_2[@]/llvm_slot_}" # 22
 	"${LIBCXX_COMPAT_CXX20_GPU[@]/llvm_slot_}" # 18, 19; 18-19 is compatibile with c++20 on compiler side.
 )
 
@@ -527,7 +527,7 @@ ${ROCM_SLOTS2[@]}
 clang cuda +distributed +eigen +fbgemm +flash-attention +gloo -jit +kineto +magma -mimalloc
 -mkl +mpi +nccl +nnpack +numpy +onednn openblas -opencl +openmp +tensorpipe
 +qnnpack +rccl rocm roctracer -ssl system-libs test +xnnpack
-ebuild_revision_54
+ebuild_revision_55
 "
 # bin/torch_shm_manager requires openmp
 gen_cuda_required_use() {
@@ -564,7 +564,7 @@ REQUIRED_USE="
 	)
 	amdgpu_targets_gfx942? (
 		|| (
-			rocm_6_4
+			rocm_7_2
 		)
 	)
 	arm? (
@@ -750,7 +750,7 @@ REQUIRED_USE="
 	rocm? (
 		${ROCM_REQUIRED_USE}
 		^^ (
-			${LIBCXX_COMPAT_CXX17_ROCM_6_4[@]}
+			${LIBCXX_COMPAT_CXX17_ROCM_7_2[@]}
 		)
 		^^ (
 			${ROCM_SLOTS2[@]}
@@ -770,8 +770,8 @@ REQUIRED_USE="
 			)
 		)
 	)
-	rocm_6_4? (
-		llvm_slot_19
+	rocm_7_2? (
+		llvm_slot_22
 	)
 	tensorpipe? (
 		distributed
@@ -1287,10 +1287,10 @@ pkg_setup() {
 		unset CC
 		unset CXX
 		unset CPP
-	elif use rocm_6_4 ; then
-		LLVM_SLOT="19"
+	elif use rocm_7_2 ; then
+		LLVM_SLOT="22"
 		LLVM_MAX_SLOT="${LLVM_SLOT}"
-		ROCM_SLOT="6.4"
+		ROCM_SLOT="7.2"
 		rocm_pkg_setup
 
 	# Use GCC for relaxing C11 to avoid Python 3.11 atomics errors in host only code.

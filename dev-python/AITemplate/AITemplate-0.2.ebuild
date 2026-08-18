@@ -63,7 +63,10 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
-IUSE+=" cuda dev doc rocm"
+IUSE+="
+cuda dev doc rocm
+ebuild_revision_1
+"
 # ROCm 6.4 is not version aligned with this release which uses 5.2.3.
 REQUIRED_USE="
 	|| (
@@ -120,7 +123,7 @@ DOCS=()
 pkg_setup() {
 	python_setup
 	if has "rocm_7_2" ${IUSE_EFFECTIVE} && use rocm_7_2 ; then
-		LLVM_SLOT=22
+		LLVM_SLOT="${HIP_7_2_LLVM_SLOT}"
 		ROCM_SLOT="7.2"
 		ROCM_VERSION="${HIP_7_2_VERSION}"
 		rocm_pkg_setup

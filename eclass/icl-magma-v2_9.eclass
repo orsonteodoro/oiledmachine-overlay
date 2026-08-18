@@ -95,8 +95,8 @@ HOMEPAGE="
 "
 LICENSE="BSD"
 IUSE+="
+${EBUILD_REVISION}
 atlas doc examples -ilp64 mkl openblas tbb openmp test
-ebuild_revision_8
 "
 if ! [[ "${MAGMA_ROCM}" == "1" ]] ; then
 	IUSE+="

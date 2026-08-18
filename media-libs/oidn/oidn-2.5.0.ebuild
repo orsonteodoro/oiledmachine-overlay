@@ -108,7 +108,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_SLOTS[@]}
 aot +apps +built-in-weights +clang cpu cuda doc gcc openimageio rocm sycl
-ebuild_revision_13
+ebuild_revision_14
 "
 gen_required_use_cuda_targets() {
 	local x
@@ -268,7 +268,7 @@ pkg_setup() {
 	fi
 
 	if use rocm_7_2 ; then
-		LLVM_SLOT=22
+		LLVM_SLOT="${HIP_7_2_LLVM_SLOT}"
 		ROCM_SLOT="7.2"
 		ROCM_VERSION="${HIP_7_2_VERSION}"
 	fi

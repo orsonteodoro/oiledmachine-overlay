@@ -102,7 +102,7 @@ rocm
 video_cards_amdgpu
 video_cards_intel
 video_cards_nvidia
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	$(rocm_gen_rocm_required_use1)
@@ -169,7 +169,7 @@ pkg_setup() {
 	python-single-r1_pkg_setup
 	if use rocm ; then
 		if use rocm_7_2 ; then
-			LLVM_SLOT=22
+			LLVM_SLOT="${HIP_7_2_LLVM_SLOT}"
 			ROCM_SLOT="7.2"
 			ROCM_VERSION="${HIP_7_2_VERSION}"
 		fi

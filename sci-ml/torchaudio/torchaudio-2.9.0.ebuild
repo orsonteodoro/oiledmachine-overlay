@@ -69,7 +69,7 @@ IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE}
 cuda rocm rccl roctracer
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE="
 	^^ (
@@ -162,8 +162,8 @@ PATCHES=(
 pkg_setup() {
 	python_setup
 	if use rocm_7_2 ; then
+		export LLVM_SLOT="${HIP_7_2_LLVM_SLOT}"
 		export ROCM_SLOT="7.2"
-		export LLVM_SLOT=22
 		rocm_pkg_setup
 	else
 		local s

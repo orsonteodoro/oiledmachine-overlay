@@ -374,7 +374,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${CPU_FLAGS_X86_64[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang cpu cuda debug rocm rocm_7_2
-ebuild_revision_32
+ebuild_revision_33
 "
 # We don't add tpu because licensing issue with libtpu_nightly.
 
@@ -768,7 +768,7 @@ ewarn "ROCm support is a Work In Progress (WIP)"
 
 		# Build with GCC but initialize LLVM_SLOT.
 		if has "rocm_7_2" ${IUSE_EFFECTIVE} && use rocm_7_2 ; then
-			LLVM_SLOT=22
+			LLVM_SLOT="${HIP_7_2_LLVM_SLOT}"
 			ROCM_SLOT="7.2"
 			ROCM_VERSION="${HIP_7_2_VERSION}"
 		fi

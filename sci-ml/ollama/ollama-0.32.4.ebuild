@@ -2566,7 +2566,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 ai-agent blis cuda debug emoji +firejail flash lapack mkl openblas openrc
 rocm systemd unrestrict video_cards_intel -vulkan
-ebuild_revision_145
+ebuild_revision_146
 "
 
 gen_rocm_required_use() {
@@ -3112,8 +3112,8 @@ ewarn "If a prebuilt LLM is marked all-rights-reserved, it is a placeholder and 
 		unset CPP
 	elif use rocm ; then
 		if use rocm_7_2 ; then
+			export LLVM_SLOT="${HIP_7_2_LLVM_SLOT}"
 			export ROCM_SLOT="7.2"
-			export LLVM_SLOT=22
 			export ROCM_VERSION="${HIP_7_2_VERSION}"
 		fi
 		rocm_pkg_setup

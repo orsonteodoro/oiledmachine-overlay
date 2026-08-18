@@ -445,7 +445,7 @@ ${HIP_SLOTS2[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 alt-ssl -big-endian +clang cuda keras3 models -mpi +python rocm
 system-flatbuffers test +xla
-ebuild_revision_34
+ebuild_revision_35
 "
 gen_required_use_cuda_targets() {
 	local x
@@ -965,7 +965,7 @@ ewarn "ROCm support is a Work In Progress (WIP) and possibly broken"
 
 		# Build with GCC but initialize LLVM_SLOT.
 		if has "rocm_7_2" ${IUSE_EFFECTIVE} && use rocm_7_2 ; then
-			LLVM_SLOT=22
+			LLVM_SLOT="${HIP_7_2_LLVM_SLOT}"
 			ROCM_SLOT="7.2"
 			ROCM_VERSION="${HIP_7_2_VERSION}"
 		fi
