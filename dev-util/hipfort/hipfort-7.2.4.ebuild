@@ -31,7 +31,7 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 debug
-ebuild_revision_14
+ebuild_revision_15
 "
 RDEPEND="
 	|| (
@@ -45,8 +45,7 @@ DEPEND="
 BDEPEND="
 	${ROCM_GCC_DEPEND}
 	>=dev-build/cmake-2.8.12
-	>=dev-build/rocm-cmake-${PV}:${SLOT}
-	dev-build/rocm-cmake:=
+	~dev-build/rocm-cmake-${PV}:=
 "
 RESTRICT="test"
 DOCS=( "README.md" )
