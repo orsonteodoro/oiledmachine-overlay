@@ -51,7 +51,7 @@ CUDA_TARGETS_COMPAT=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
 inherit cmake check-reqs edo flag-o-matic libstdcxx-slot multiprocessing python-r1 rocm
@@ -81,7 +81,7 @@ SLOT="0/${ROCM_SLOT}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 -asan +aot benchmark cuda perfscripts +rocm test
-ebuild_revision_17
+ebuild_revision_18
 "
 gen_cuda_required_use() {
 	local x
@@ -132,23 +132,21 @@ REQUIRED_USE="
 # RDEPEND: perfscripts? dev-python/plotly[${PYTHON_USEDEP}] # currently masked by arch/amd64/x32/package.mask
 RDEPEND="
 	${PYTHON_DEPS}
-	>=dev-db/sqlite-3.36
-	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
-	dev-util/hip:=
-	>=sci-libs/rocRAND-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCRAND_7_2_AMDGPU_USEDEP}]
-	sci-libs/rocRAND:=
+	>=dev-db/sqlite-3.36:=
+	>=dev-util/hip-${PV}:=[${LIBSTDCXX_USEDEP},cuda?,rocm?]
+	>=sci-libs/rocRAND-${PV}:=[${LIBSTDCXX_USEDEP},${ROCRAND_7_2_AMDGPU_USEDEP}]
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
 	perfscripts? (
-		>=media-gfx/asymptote-2.61
+		>=media-gfx/asymptote-2.61:=
 		dev-tex/latexmk
 		dev-texlive/texlive-latex
-		sys-apps/texinfo
+		sys-apps/texinfo:=
 		dev-python/pandas[${PYTHON_USEDEP}]
 		dev-python/scipy[${PYTHON_USEDEP}]
 		dev-python/sympy[${PYTHON_USEDEP}]
-		virtual/numpy[${PYTHON_USEDEP}]
+		virtual/numpy:=[${PYTHON_USEDEP}]
 	)
 "
 DEPEND="
@@ -158,17 +156,13 @@ BDEPEND="
 	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.16
 	sys-devel/binutils[gold,plugins]
-	>=dev-build/rocm-cmake-${PV}:${SLOT}
-	dev-build/rocm-cmake:=
+	>=dev-build/rocm-cmake-${PV}:=
 	test? (
 		>=dev-cpp/gtest-1.11.0
 		>=sci-libs/fftw-3
-		dev-libs/boost[${LIBSTDCXX_USEDEP}]
-		dev-libs/boost:=
-		>=dev-libs/rocm-opencl-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-		dev-libs/rocm-opencl-runtime:=
-		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_2_AMDGPU_USEDEP}]
-		sys-libs/llvm-roc-libomp:=
+		dev-libs/boost:=[${LIBSTDCXX_USEDEP}]
+		>=dev-libs/rocm-opencl-runtime-${PV}:=[${LIBSTDCXX_USEDEP}]
+		>=sys-libs/llvm-roc-libomp-${PV}:=[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_2_AMDGPU_USEDEP}]
 	)
 "
 PATCHES=(
