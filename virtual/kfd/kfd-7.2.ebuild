@@ -174,7 +174,7 @@ RDEPEND="
 
 pkg_setup() {
 ewarn
-ewarn "For non DKMS driver, the following LTS kernel versions is only supported:"
+ewarn "For non DKMS driver, the following LTS kernel version is only supported:"
 ewarn
 ewarn "6.18.x"
 ewarn
