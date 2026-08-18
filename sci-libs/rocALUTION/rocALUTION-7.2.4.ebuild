@@ -57,7 +57,7 @@ SLOT="0/${ROCM_SLOT}"
 # Samples is default on upstream
 IUSE="
 -asan +rocm -samples openmp mpi
-ebuild_revision_12
+ebuild_revision_13
 "
 gen_rocm_required_use() {
 	local x
@@ -82,24 +82,18 @@ REQUIRED_USE="
 "
 RDEPEND="
 	mpi? (
-		virtual/mpi
+		virtual/mpi:*
 	)
 	openmp? (
 		${ROCM_CLANG_DEPEND}
-		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_2_AMDGPU_USEDEP}]
-		sys-libs/llvm-roc-libomp:=
+		~sys-libs/llvm-roc-libomp-${PV}:=[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_2_AMDGPU_USEDEP}]
 	)
 	rocm? (
-		>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-		dev-util/hip:=
-		>=sci-libs/rocBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCBLAS_7_2_AMDGPU_USEDEP}]
-		sci-libs/rocBLAS:=
-		>=sci-libs/rocPRIM-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCPRIM_7_2_AMDGPU_USEDEP}]
-		sci-libs/rocPRIM:=
-		>=sci-libs/rocRAND-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCRAND_7_2_AMDGPU_USEDEP}]
-		sci-libs/rocRAND:=
-		>=sci-libs/rocSPARSE-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCSPARSE_7_2_AMDGPU_USEDEP}]
-		sci-libs/rocSPARSE:=
+		~dev-util/hip-${PV}:=[${LIBSTDCXX_USEDEP}]
+		~sci-libs/rocBLAS-${PV}:=[${LIBSTDCXX_USEDEP},${ROCBLAS_7_2_AMDGPU_USEDEP}]
+		~sci-libs/rocPRIM-${PV}:=[${LIBSTDCXX_USEDEP},${ROCPRIM_7_2_AMDGPU_USEDEP}]
+		~sci-libs/rocRAND-${PV}:=[${LIBSTDCXX_USEDEP},${ROCRAND_7_2_AMDGPU_USEDEP}]
+		~sci-libs/rocSPARSE-${PV}:=[${LIBSTDCXX_USEDEP},${ROCSPARSE_7_2_AMDGPU_USEDEP}]
 	)
 "
 DEPEND="
@@ -108,8 +102,7 @@ DEPEND="
 BDEPEND="
 	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.5
-	>=dev-build/rocm-cmake-${PV}:${SLOT}
-	dev-build/rocm-cmake:=
+	~dev-build/rocm-cmake-${PV}:=
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.6.0-invalid-operands-fix.patch"
