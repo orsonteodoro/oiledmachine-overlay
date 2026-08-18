@@ -54,7 +54,7 @@ RESTRICT="mirror" # Speed up downloads
 SLOT="0/${ROCM_SLOT}"
 IUSE+="
 samples static-libs test
-ebuild_revision_13
+ebuild_revision_14
 "
 # glog downgraded originally 0.7.0
 RDEPEND="
