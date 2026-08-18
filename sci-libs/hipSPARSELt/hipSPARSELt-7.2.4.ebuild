@@ -7,7 +7,7 @@ EAPI=8
 CXX_STANDARD=17
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=22
-PYTHON_COMPAT=( "python3_"{10..13} )
+PYTHON_COMPAT=( "python3_"{10,12} )
 ROCM_SLOT="${PV%.*}"
 ROCM_VERSION="${PV}"
 
@@ -48,7 +48,7 @@ RESTRICT="test"
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 -asan -cuda rocm -samples -test
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE="
 	^^ (
