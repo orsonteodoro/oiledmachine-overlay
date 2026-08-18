@@ -26,7 +26,7 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="mirror" # Speed up downloads
 SLOT="0/${ROCM_SLOT}"
-IUSE+=" ebuild_revision_2"
+IUSE+=" ebuild_revision_3"
 
 pkg_setup() {
 	rocm_pkg_setup
