@@ -28,7 +28,7 @@ AMDGPU_TARGETS_COMPAT=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
 inherit cmake libstdcxx-slot rocm
@@ -52,11 +52,11 @@ SLOT="0/${ROCM_SLOT}"
 IUSE="
 ${ROCM_IUSE}
 asan cuda rocm
-ebuild_revision_10
+ebuild_revision_11
 "
 gen_rocm_required_use() {
 	local x
-	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+	for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
 		echo "
 			amdgpu_targets_${x}? (
 				rocm
@@ -72,14 +72,12 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	dev-util/hip:${SLOT}[${LIBSTDCXX_USEDEP}]
-	dev-util/hip:=
+	~dev-util/hip-${PV}:=[${LIBSTDCXX_USEDEP}]
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
-		sci-libs/rocRAND:${SLOT}[${LIBSTDCXX_USEDEP}]
-		sci-libs/rocRAND:=
+		~sci-libs/rocRAND-${PV}:=[${LIBSTDCXX_USEDEP}]
 	)
 "
 DEPEND="
