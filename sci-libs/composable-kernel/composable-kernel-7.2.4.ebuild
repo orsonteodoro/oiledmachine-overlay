@@ -7,7 +7,7 @@ MY_PN="${PN/-/_}"
 
 CMAKE_MAKEFILE_GENERATOR="emake"
 CXX_STANDARD=17
-LLVM_SLOT=19
+LLVM_SLOT=22
 ROCM_SLOT="${PV%.*}"
 ROCM_VERSION="${PV}"
 
@@ -82,7 +82,7 @@ LICENSE="
 RESTRICT="test"
 SLOT="0/${ROCM_SLOT}"
 IUSE+="
-test ebuild_revision_14
+test ebuild_revision_15
 "
 REQUIRED_USE="
 "
