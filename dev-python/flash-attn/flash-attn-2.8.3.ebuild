@@ -288,6 +288,15 @@ pkg_setup() {
 	python-single-r1_pkg_setup
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+	if use rocm ; then
+		local ROCM_VERSION
+		if has "rocm_7_2" ${IUSE_EFFECTIVE} && use rocm_7_2 ; then
+			LLVM_SLOT="${HIP_7_2_LLVM_SLOT}"
+			ROCM_SLOT="7.2"
+			ROCM_VERSION="${HIP_7_2_VERSION}"
+		fi
+		rocm_pkg_setup
+	fi
 }
 
 src_prepare() {
@@ -299,10 +308,6 @@ src_prepare() {
 	if use rocm ; then
 		dep_prepare_mv "${WORKDIR}/composable_kernel-${COMPOSABLE_KERNEL_COMMIT}" "${S}/csrc/composable_kernel"
 		eapply "${FILESDIR}/${PN}-2.8.3-composable_kernel-hardcoded-paths.patch"
-		local ROCM_VERSION
-		if use rocm_6_4 ; then
-			ROCM_VERSION="${HIP_6_4_VERSION}"
-		fi
 	fi
 }
 
@@ -332,7 +337,7 @@ python_configure() {
 	elif use rocm ; then
 		export BUILD_TARGET="rocm"
 		local list=""
-		for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+		for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
 			if use "amdgpu_targets_${x}" ; then
 				list+=";${x}"
 			fi

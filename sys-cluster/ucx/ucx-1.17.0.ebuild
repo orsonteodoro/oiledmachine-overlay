@@ -20,19 +20,18 @@ CXX_STANDARD=11
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX11[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX11[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}"
 )
 
 inherit hip-versions
 RDMA_CORE_PV="28.0"
 ROCM_VERSIONS=(
-	"${HIP_7_0_VERSION}"
-	"${HIP_6_4_VERSION}"
+	"${HIP_7_2_VERSION}"
 )
 gen_rocm_iuse() {
 	for ver in ${ROCM_VERSIONS[@]} ; do
@@ -74,7 +73,7 @@ ebuild_revision_8
 "
 get_cuda_targets_required_use() {
 	local x
-	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+	for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
 		echo "
 			cuda_targets_${x}? (
 				cuda
@@ -84,7 +83,7 @@ get_cuda_targets_required_use() {
 }
 gen_rocm_iuse_required_use() {
 	local u
-	for u in ${ROCM_IUSE[@]} ; do
+	for u in "${ROCM_IUSE[@]}" ; do
 		echo "
 			${u}? (
 				rocm
@@ -167,21 +166,12 @@ CUDA_TOOLKIT_12_5_DEPENDS="
 	)
 "
 ROCM_KFD_DEPEND="
-	rocm_7_0? (
+	rocm_7_2? (
 		rdma? (
 			|| (
+				virtual/kfd:0/7.2
+				virtual/kfd:0/7.1
 				virtual/kfd:0/7.0
-				virtual/kfd:0/6.4
-				virtual/kfd:0/6.3
-			)
-		)
-	)
-	rocm_6_4? (
-		rdma? (
-			|| (
-				virtual/kfd:0/6.4
-				virtual/kfd:0/6.3
-				virtual/kfd:0/6.2
 			)
 		)
 	)
@@ -310,7 +300,7 @@ DEPEND="
 "
 gen_clang_bdepend() {
 	local s
-	for s in ${LLVM_COMPAT[@]} ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
 		echo "
 			llvm_slot_${s}? (
 				llvm-core/clang:${s}=[${LIBSTDCXX_USEDEP}]
@@ -325,7 +315,7 @@ gen_clang_bdepend() {
 }
 gen_hip_clang_bdepend() {
 	local pv
-	for pv in ${ROCM_VERSIONS[@]} ; do
+	for pv in "${ROCM_VERSIONS[@]}" ; do
 		local s="0/${pv%.*}"
 		local u
 		u="${pv%.*}"
@@ -367,12 +357,12 @@ pkg_pretend() {
 
 _init_rocm_variables() {
 	if use rocm ; then
-		local ver
-		for ver in ${ROCM_VERSIONS[@]} ; do
-			local s="${ver//./_}"
+		local pv
+		for pv in "${ROCM_VERSIONS[@]}" ; do
+			local s="${pv//./_}"
 			s="${s%_*}"
 			if use "rocm_${s}" ; then
-				export ROCM_SLOT="${ver%.*}"
+				export ROCM_SLOT="${pv%.*}"
 				local n="HIP_${s}_VERSION"
 				export ROCM_VERSION="${!n}"
 				local m="HIP_${s}_LLVM_SLOT"
