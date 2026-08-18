@@ -43,7 +43,7 @@ SLOT="0/${ROCM_SLOT}"
 # raslib is installed by default, but disabled for security.
 IUSE="
 asan +compile-commands doc +raslib +standalone systemd test
-ebuild_revision_21
+ebuild_revision_22
 "
 REQUIRED_USE="
 	raslib
@@ -52,20 +52,21 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	sys-libs/libcap
-	>=dev-util/rocm-smi-${PV}:${SLOT}
-	dev-util/rocm-smi:=
+	sys-libs/libcap:=
+	>=dev-util/rocm-smi-${PV}:=
 	standalone? (
-		net-libs/grpc:5/1.71[${LIBSTDCXX_USEDEP}]
-		net-libs/grpc:=
+		net-libs/grpc:=[${LIBSTDCXX_USEDEP}]
+		|| (
+			net-libs/grpc:5/1.71[${LIBSTDCXX_USEDEP}]
+		)
 	)
 	systemd? (
-		sys-apps/systemd
+		sys-apps/systemd:=
 	)
 "
 #	|| (
-#		~sys-kernel/amdgpu-dkms-${PV}:${SLOT}
-#		~sys-kernel/amdgpu-sources-${PV}:${SLOT}
+#		~sys-kernel/amdgpu-dkms-${PV}:=
+#		~sys-kernel/amdgpu-sources-${PV}:=
 #	)
 DEPEND="
 	${RDEPEND}
@@ -81,9 +82,9 @@ BDEPEND="
 	)
 	test? (
 		>=dev-cpp/gtest-1.11.0
-		>=dev-libs/rocr-runtime-${PV}:${SLOT}
+		>=dev-libs/rocr-runtime-${PV}:=
 		dev-libs/rocr-runtime:=
-		>=dev-util/rocprofiler-${PV}:${SLOT}
+		>=dev-util/rocprofiler-${PV}:=
 		dev-util/rocprofiler:=
 	)
 "
