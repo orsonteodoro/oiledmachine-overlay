@@ -9,7 +9,13 @@ MY_PV=$(ver_cut 1-3)
 
 FORTRAN_STANDARD="77 90"
 GPU_FRAMEWORKS="" # Global var
-PYTHON_COMPAT=( "python3_"{11..12} )
+if [[ "${MAGMA_ROCM}" == "1" ]] ; then
+	PYTHON_COMPAT=( "python3_"{10,12} )
+elif [[ "${MAGMA_CUDA}" == "1" ]] ; then
+	PYTHON_COMPAT=( "python3_"{10..14} )
+else
+die "MAGMA_ROCM=1 or MAGMA_CUDA=1 are only supported"
+fi
 
 AMDGPU_TARGETS_COMPAT=(
 	"gfx700"
