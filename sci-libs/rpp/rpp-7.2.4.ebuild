@@ -5,7 +5,7 @@ EAPI=8
 
 # TODO:  review the install prefix
 
-# See https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/blob/rocm-7.0.2/docs/release.md?plain=1#L18
+# See https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/blob/rocm-7.2.4/docs/release.md?plain=1#L18
 CXX_STANDARD=17
 LLVM_COMPAT=( "18" )
 LLVM_SLOT="${LLVM_COMPAT[0]}"
@@ -71,7 +71,7 @@ IUSE+="
 ${LLVM_COMPAT/#/llvm_slot_}
 ${ROCM_IUSE}
 cpu opencl rocm test
-ebuild_revision_18
+ebuild_revision_19
 "
 gen_rocm_required_use() {
 	local x
@@ -95,26 +95,21 @@ REQUIRED_USE="
 RDEPEND="
 	${HIPCC_DEPEND}
 	${ROCM_CLANG_DEPEND}
-	>=dev-libs/boost-1.72[${LIBSTDCXX_USEDEP}]
-	dev-libs/boost:=
-	dev-libs/rocm-opencl-runtime:${SLOT}[${LIBSTDCXX_USEDEP}]
-	dev-libs/rocm-opencl-runtime:=
-	>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_2_AMDGPU_USEDEP}]
-	sys-libs/llvm-roc-libomp:=
+	>=dev-libs/boost-1.72:=[${LIBSTDCXX_USEDEP}]
+	~dev-libs/rocm-opencl-runtime-${PV}:=[${LIBSTDCXX_USEDEP}]
+	~sys-libs/llvm-roc-libomp-${PV}:=[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_2_AMDGPU_USEDEP}]
 	opencl? (
-		virtual/opencl
+		virtual/opencl:*
 	)
 	rocm? (
-		dev-libs/rocm-device-libs:${SLOT}
 		dev-libs/rocm-device-libs:=
-		>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm]
-		dev-util/hip:=
+		dev-libs/rocm-device-libs:=
+		~dev-util/hip-${PV}:=[${LIBSTDCXX_USEDEP},rocm]
 	)
 "
 DEPEND="
 	${RDEPEND}
-	>=dev-libs/half-1.12.0
-	dev-libs/half:=
+	>=dev-libs/half-1.12.0:=
 "
 BDEPEND="
 	${HIPCC_DEPEND}
@@ -122,8 +117,7 @@ BDEPEND="
 	>=dev-build/cmake-3.5
 	test? (
 		>=media-libs/libjpeg-turbo-2.0.6.1
-		>=media-libs/opencv-3.4.0[${LIBSTDCXX_USEDEP},jpeg]
-		media-libs/opencv:=
+		>=media-libs/opencv-3.4.0:=[${LIBSTDCXX_USEDEP},jpeg]
 	)
 "
 PATCHES=(
