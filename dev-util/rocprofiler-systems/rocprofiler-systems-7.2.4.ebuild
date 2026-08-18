@@ -12,7 +12,7 @@ EAPI=8
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
 BINUTILS_PV="2.40"
@@ -113,65 +113,59 @@ SLOT="0/${ROCM_SLOT}"
 IUSE="
 -debuginfod examples -mpi +openmp +papi -python +rccl +rocprofiler
 +roctracer test system-dyninst system-libunwind system-papi +rocm-smi
-ebuild_revision_5
+ebuild_revision_6
 "
 # The vendored dyninst is build-time broken.
 REQUIRED_USE="
 	system-dyninst
 "
 RDEPEND="
-	>=dev-libs/rocm-core-${PV}:${SLOT}
-	dev-libs/rocm-core:=
-	>=dev-util/hip-${PV}:${SLOT}
-	dev-util/hip:=
+	~dev-libs/rocm-core-${PV}:=
+	~dev-util/hip-${PV}:=
 	!system-dyninst? (
-		=dev-cpp/tbb-2019*:2
-		sys-devel/gcc[openmp?]
-		>=dev-libs/elfutils-0.178
-		>=dev-libs/boost-1.67.0
+		=dev-cpp/tbb-2019*:=
+		>=dev-libs/elfutils-0.178:=
+		>=dev-libs/boost-1.67.0:=
+		sys-devel/gcc:=[openmp?]
 	)
 	mpi? (
-		virtual/mpi
+		virtual/mpi:*
 	)
 	papi? (
 		system-papi? (
-			dev-libs/papi
+			dev-libs/papi:=
 		)
 	)
 	rccl? (
-		>=dev-libs/rccl-${PV}:${SLOT}
-		dev-libs/rccl:=
+		~dev-libs/rccl-${PV}:=
 	)
 	rocm-smi? (
-		>=dev-util/rocm-smi-${PV}:${SLOT}
-		dev-util/rocm-smi:=
+		~dev-util/rocm-smi-${PV}:=
 	)
 	rocprofiler? (
-		>=dev-util/rocprofiler-${PV}:${SLOT}
-		dev-util/rocprofiler:=
+		~dev-util/rocprofiler-${PV}:=
 	)
 	roctracer? (
-		>=dev-util/roctracer-${PV}:${SLOT}
-		dev-util/roctracer:=
+		~dev-util/roctracer-${PV}:=
 	)
 	system-dyninst? (
-		>=dev-util/dyninst-12.0[openmp?]
+		>=dev-util/dyninst-12.0:=[openmp?]
 	)
 	system-libunwind? (
-		sys-libs/libunwind
+		sys-libs/libunwind:=
 	)
 "
 DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	${ROCM_GCC_DEPEND}
 	>=dev-build/cmake-3.16
 	$(python_gen_cond_dep '
 		>=dev-python/setuptools-40.0.4[${PYTHON_USEDEP}]
 		>=dev-python/setuptools-scm-2.0.0[${PYTHON_USEDEP}]
 		>=dev-python/wheel-0.29.0[${PYTHON_USEDEP}]
 	')
-	${ROCM_GCC_DEPEND}
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-6.2.0-offline-install.patch"
