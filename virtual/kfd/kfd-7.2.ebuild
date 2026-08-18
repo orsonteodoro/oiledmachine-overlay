@@ -88,7 +88,7 @@ DESCRIPTION="KFD (Kernel Fusion Driver) with version limited upper boundary"
 IUSE="
 amdgpu-dkms amdgpu-dkms-firmware linux-firmware custom-kernel kernel
 strict-pairing
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE="
 	^^ (
@@ -181,10 +181,8 @@ ewarn
 ewarn
 ewarn "For building the DKMS driver, the following LTS kernel versions are only supported:"
 ewarn
-ewarn "5.10.x"
 ewarn "5.15.x"
 ewarn "6.1.x"
-ewarn "6.6.x"
 ewarn "6.12.x"
 ewarn
 }
