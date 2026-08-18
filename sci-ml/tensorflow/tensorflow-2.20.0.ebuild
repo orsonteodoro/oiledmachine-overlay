@@ -187,25 +187,25 @@ inherit prefix protobuf re2 rocm toolchain-funcs
 # The same results can be obtained by observing the console logs.
 # URIs provided for verification and faster future updates.
 
-ABSEIL_PY_PV="2.1.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/workspace2.bzl
-APPLE_SUPPORT_PV="1.18.1"	# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/workspace2.bzl
-CUDA_PV="12.5"			# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/tools/pip_package/setup.py.tpl#L150
-BAZEL_SKYLIB_PV="1.3.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/workspace3.bzl
-#?CUB_PV="1.9.9"			# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/workspace2.bzl ; recheck
-CUDNN_FRONTEND_PV="1.11.0"	# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/workspace2.bzl
-DLPACK_PV="1.1"			# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/third_party/xla/third_party/dlpack/workspace.bzl
-FLATBUFFERS_PV="24.3.25"	# From https://github.com/google/flatbuffers/blob/e6463926479bd6b330cbcf673f7e917803fd5831/CMake/Version.cmake ; hash from EGIT_COMMIT_FLATBUFFERS
-GRPC_PV="1.73.0"		# Based on the oldest grpc supporting abseil 20250127.1
-GRPCIO_PV="1.24.3"		# https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/tools/pip_package/setup.py.tpl#L100
-GRPCIO_PV_MAX="2.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/tools/pip_package/setup.py.tpl#L100
-KISSFFT_PV="131.1.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/third_party/kissfft/workspace.bzl
-NCCL_PV="2.25.1-1"		# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/workspace2.bzl
-ONEDNN_PV="3.7.3"		# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/workspace2.bzl
-OOURA_FFT_PV="1.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/workspace2.bzl
-OPENMP_PV="10.0.1"		# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/workspace2.bzl
-#PLATFORMS_PV="0.0.6"		# From https://github.com/tensorflow/runtime/blob/ea3168acde66aa0c51594d9392159bf8cf4b5566/third_party/rules_cuda/cuda/dependencies.bzl#L66 ; hash from with EGIT_COMMIT_TF_RUNTIME
-PROTOBUF_CPP_PV="5.28.3"	# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/workspace2.bzl
-PROTOBUF_PYTHON_SLOT="5"	# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/tools/pip_package/setup.py.tpl
+ABSEIL_PY_PV="2.1.0"				# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/workspace2.bzl
+APPLE_SUPPORT_PV="1.18.1"			# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/workspace2.bzl
+CUDA_PV="12.5"					# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/tools/pip_package/setup.py.tpl#L150
+BAZEL_SKYLIB_PV="1.3.0"				# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/workspace3.bzl
+#?CUB_PV="1.9.9"				# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/workspace2.bzl ; recheck
+CUDNN_FRONTEND_PV="1.11.0"			# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/workspace2.bzl
+DLPACK_PV="1.1"					# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/third_party/xla/third_party/dlpack/workspace.bzl
+FLATBUFFERS_PV="24.3.25"			# From https://github.com/google/flatbuffers/blob/e6463926479bd6b330cbcf673f7e917803fd5831/CMake/Version.cmake ; hash from EGIT_COMMIT_FLATBUFFERS
+GRPC_PV="1.73.0"				# Based on the oldest grpc supporting abseil 20250127.1
+GRPCIO_PV="1.24.3"				# https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/tools/pip_package/setup.py.tpl#L100
+GRPCIO_PV_MAX="2.0"				# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/tools/pip_package/setup.py.tpl#L100
+KISSFFT_PV="131.1.0"				# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/third_party/kissfft/workspace.bzl
+NCCL_PV="2.25.1-1"				# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/workspace2.bzl
+ONEDNN_PV="3.7.3"				# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/workspace2.bzl
+OOURA_FFT_PV="1.0"				# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/workspace2.bzl
+OPENMP_PV="10.0.1"				# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/workspace2.bzl
+#PLATFORMS_PV="0.0.6"				# From https://github.com/tensorflow/runtime/blob/ea3168acde66aa0c51594d9392159bf8cf4b5566/third_party/rules_cuda/cuda/dependencies.bzl#L66 ; hash from with EGIT_COMMIT_TF_RUNTIME
+PROTOBUF_CPP_PV="5.28.3"			# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/workspace2.bzl
+PROTOBUF_PYTHON_SLOT="5"			# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/tools/pip_package/setup.py.tpl
 RULES_ANDROID_PV="0.1.1"			# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/workspace2.bzl
 RULES_APPLE_PV="3.5.1"				# From https://github.com/tensorflow/tensorflow/blob/v2.20.0/tensorflow/workspace2.bzl
 RULES_CC_PV="0.0.2"				# From https://github.com/bazelbuild/rules_swift/blob/1.5.0/MODULE.bazel#L13
@@ -805,19 +805,21 @@ BDEPEND="
 		)
 	)
 	cuda? (
+		dev-util/nvidia-cuda-toolkit:=
 		|| (
 			${CUDA_12_5_RDEPENDS}
 		)
-		dev-util/nvidia-cuda-toolkit:=
 	)
 	python? (
 		!big-endian? (
 			${RDEPEND_GRPCIO}
 		)
 		$(python_gen_cond_dep '
-			>=dev-python/cython-3.1.2[${PYTHON_USEDEP}]
-			=dev-python/cython-3*[${PYTHON_USEDEP}]
-			dev-python/cython:=
+			>=dev-python/cython-3.1.2:=[${PYTHON_USEDEP}]
+			|| (
+				dev-python/cython:3.1[${PYTHON_USEDEP}]
+			)
+			=dev-python/cython-3*:=[${PYTHON_USEDEP}]
 			>=dev-python/packaging-23.2[${PYTHON_USEDEP}]
 			>=dev-python/requests-2.31.0[${PYTHON_USEDEP}]
 			>=dev-python/setuptools-78.1.1[${PYTHON_USEDEP}]
