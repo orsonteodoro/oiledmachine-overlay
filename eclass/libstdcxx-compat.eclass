@@ -77,34 +77,8 @@ _LIBSTDCXX_COMPAT_ECLASS=1
 # )
 #
 LIBSTDCXX_COMPAT_ROCM=(
-	"gcc_slot_12_5" # Support ROCm 6.4, 7.0, 7.2
-	"gcc_slot_13_4" # Support ROCm 6.4, 7.0, 7.2
-)
-
-# GCC_COMPAT template for ROCm 6.4 based apps/libs with latest security update
-#
-# Example:
-#
-# GCC_COMPAT=(
-#     ${LIBSTDCXX_COMPAT_ROCM_6_4[@]}
-# )
-#
-LIBSTDCXX_COMPAT_ROCM_6_4=(
-	"gcc_slot_12_5" # Support 6.4
-	"gcc_slot_13_4" # Support 6.4
-)
-
-# GCC_COMPAT template for ROCm 7.0 based apps/libs with latest security update
-#
-# Example:
-#
-# GCC_COMPAT=(
-#     ${LIBSTDCXX_COMPAT_ROCM_7_0[@]}
-# )
-#
-LIBSTDCXX_COMPAT_ROCM_7_0=(
-	"gcc_slot_12_5" # Support 7.0
-	"gcc_slot_13_4" # Support 7.0
+	"gcc_slot_12_5" # Support ROCm 7.2
+	"gcc_slot_13_4" # Support ROCm 7.2
 )
 
 # GCC_COMPAT template for ROCm 7.2 based apps/libs with latest security update
@@ -190,8 +164,8 @@ LIBSTDCXX_COMPAT_CUDA13=(
 #
 LIBSTDCXX_COMPAT_GPU=(
 	"gcc_slot_11_5" # Support CUDA 11.8, 12.3, 12.4, 12.5, 12.6, 12.8, 12.9, 13.0, 13.1, 13.2, 13.3
-	"gcc_slot_12_5" # Support CUDA 12.3, 12.4, 12.5, 12.6, 12.8, 12.9, 13.0, 13.1, 13.2, 13.3; ROCm 6.4, 7.0, 7.2
-	"gcc_slot_13_4" # Support CUDA 12.4, 12.5, 12.6, 12.8, 12.9, 13.0, 13.1, 13.2, 13.3; ROCm 6.4, 7.0, 7.2
+	"gcc_slot_12_5" # Support CUDA 12.3, 12.4, 12.5, 12.6, 12.8, 12.9, 13.0, 13.1, 13.2, 13.3; ROCm 7.2
+	"gcc_slot_13_4" # Support CUDA 12.4, 12.5, 12.6, 12.8, 12.9, 13.0, 13.1, 13.2, 13.3; ROCm 7.2
 	"gcc_slot_14_3" # Support CUDA 12.8, 12.9, 13.0, 13.1, 13.2
 	"gcc_slot_15_3" # Support CUDA 13.0, 13.1, 13.2, 13.3
 )
