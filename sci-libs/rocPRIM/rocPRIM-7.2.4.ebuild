@@ -4,7 +4,7 @@
 EAPI=8
 
 CXX_STANDARD=17
-LLVM_SLOT=19
+LLVM_SLOT=22
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 AMDGPU_TARGETS_COMPAT=(
@@ -60,7 +60,7 @@ RESTRICT="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 asan -benchmark hip-cpu +rocm test
-ebuild_revision_9
+ebuild_revision_10
 "
 gen_rocm_required_use() {
 	local x
