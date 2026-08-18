@@ -5,7 +5,7 @@ EAPI=8
 
 CMAKE_MAKEFILE_GENERATOR="emake"
 CXX_STANDARD=17
-LLVM_SLOT=19
+LLVM_SLOT=22
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit libstdcxx-compat
@@ -43,7 +43,7 @@ SLOT="0/${ROCM_SLOT}"
 # raslib is installed by default, but disabled for security.
 IUSE="
 asan +compile-commands doc +raslib +standalone systemd test
-ebuild_revision_20
+ebuild_revision_21
 "
 REQUIRED_USE="
 	raslib
