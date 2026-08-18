@@ -12,7 +12,7 @@ PYTHON_COMPAT=( "python3_"{10..13} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 AMDGPU_TARGETS_COMPAT=(
-# See https://github.com/ROCm/AMDMIGraphX/blob/rocm-7.0.2/Jenkinsfile
+# See https://github.com/ROCm/AMDMIGraphX/blob/rocm-7.2.4/Jenkinsfile
 	"gfx906"
 	"gfx908"
 	"gfx90a"
@@ -52,7 +52,7 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 +composable-kernel -cpu -fpga -hip-rtc -mlir +rocm test
-ebuild_revision_14
+ebuild_revision_15
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -67,56 +67,45 @@ REQUIRED_USE="
 "
 # The required Protobuf version is relaxed.
 RDEPEND="
-	>=dev-db/sqlite-3.17
-	>=dev-libs/half-1.12.0
+	>=dev-db/sqlite-3.17:=
+	>=dev-libs/half-1.12.0:=
+	>=dev-python/pybind11-2.6.0[${PYTHON_USEDEP}]
+	dev-libs/msgpack:=
+	dev-libs/protobuf:=[${LIBSTDCXX_USEDEP}]
 	|| (
 		dev-libs/protobuf:3/3.12[${LIBSTDCXX_USEDEP}]
 		dev-libs/protobuf:3/3.21[${LIBSTDCXX_USEDEP}]
 	)
-	dev-libs/protobuf:=
-	>=dev-python/pybind11-2.6.0[${PYTHON_USEDEP}]
-	dev-libs/msgpack
 	composable-kernel? (
-		>=sci-libs/composable-kernel-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${COMPOSABLE_KERNEL_7_2_AMDGPU_USEDEP}]
-		sci-libs/composable-kernel:=
+		~sci-libs/composable-kernel-${PV}:=[${LIBSTDCXX_USEDEP},${COMPOSABLE_KERNEL_7_2_AMDGPU_USEDEP}]
 	)
 	cpu? (
 		sci-ml/oneDNN
-		>=dev-libs/rocm-opencl-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-		dev-libs/rocm-opencl-runtime:=
-		>=sys-libs/llvm-roc-libomp-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_2_AMDGPU_USEDEP}]
-		sys-libs/llvm-roc-libomp:=
+		~dev-libs/rocm-opencl-runtime-${PV}:=[${LIBSTDCXX_USEDEP}]
+		~sys-libs/llvm-roc-libomp-${PV}:=[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_2_AMDGPU_USEDEP}]
 	)
 	mlir? (
-		>=sci-libs/rocMLIR-${ROCM_SLOT}:${SLOT}[${LIBSTDCXX_USEDEP}]
-		sci-libs/rocMLIR:=
+		>=sci-libs/rocMLIR-${ROCM_SLOT}:=[${LIBSTDCXX_USEDEP}]
 	)
 	rocm? (
-		>=sci-libs/miopen-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${MIOPEN_7_2_AMDGPU_USEDEP}]
-		sci-libs/miopen:=
-		>=sci-libs/rocBLAS-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},${ROCBLAS_7_2_AMDGPU_USEDEP}]
-		sci-libs/rocBLAS:=
+		~sci-libs/miopen-${PV}:=[${LIBSTDCXX_USEDEP},${MIOPEN_7_2_AMDGPU_USEDEP}]
+		~sci-libs/rocBLAS-${PV}:=[${LIBSTDCXX_USEDEP},${ROCBLAS_7_2_AMDGPU_USEDEP}]
 	)
 	test? (
-		>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-		dev-util/hip:=
+		~dev-util/hip-${PV}:=[${LIBSTDCXX_USEDEP}]
 	)
 "
 DEPEND="
 	${RDEPEND}
-	>=dev-cpp/blaze-3.4
-	dev-cpp/blaze:=
-	>=dev-cpp/msgpack-cxx-3.3.0
-	dev-cpp/msgpack-cxx:=
-	>=dev-cpp/nlohmann_json-3.8.0
-	dev-cpp/nlohmann_json:=
+	>=dev-cpp/blaze-3.4:=
+	>=dev-cpp/msgpack-cxx-3.3.0:=
+	>=dev-cpp/nlohmann_json-3.8.0:=
 "
 # It uses hip-clang (--cuda-host-only -x hip) for GPU.
 BDEPEND="
 	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.15
-	>=dev-build/rocm-cmake-${PV}:${SLOT}
-	dev-build/rocm-cmake:=
+	~dev-build/rocm-cmake-${PV}:=
 "
 PATCHES=(
 )
