@@ -56,7 +56,7 @@ RESTRICT="test" # Not tested
 SLOT="0/${ROCM_SLOT}"
 IUSE+="
 asan doc +esmi test
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
