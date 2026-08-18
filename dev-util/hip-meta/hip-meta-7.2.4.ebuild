@@ -43,7 +43,7 @@ IUSE="
 	rocm
 	runtimes
 	support-libs
-	ebuild_revision_2
+	ebuild_revision_3
 "
 REQUIRED_USE="
 	hip? (
