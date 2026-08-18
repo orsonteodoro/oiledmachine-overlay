@@ -4,7 +4,7 @@
 EAPI=8
 
 if [[ "${PV##*.}" == "0" ]] ; then
-	MY_PV=$(ver_cut 1-2 ${PV})
+	MY_PV=$(ver_cut "1-2" "${PV}")
 else
 	MY_PV="${PV}"
 fi
@@ -55,7 +55,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/MIOpen#installing-miopen-kerne
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/${ROCM_SLOT}"
-IUSE="ebuild_revision_5"
+IUSE="ebuild_revision_6"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
