@@ -11,7 +11,7 @@ GCC_COMPAT=(
 CXX_STANDARD=11
 FMT_COMMIT="123913715afeb8a437e6388b4473fcc4753e1c9a"
 GLOG_COMMIT="7b134a5c82c0c0b5698bb6bf7a835b230c5638e4"
-LLVM_SLOT=19
+LLVM_SLOT=22
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
@@ -54,7 +54,7 @@ RESTRICT="mirror" # Speed up downloads
 SLOT="0/${ROCM_SLOT}"
 IUSE+="
 samples static-libs test
-ebuild_revision_12
+ebuild_revision_13
 "
 # glog downgraded originally 0.7.0
 RDEPEND="
