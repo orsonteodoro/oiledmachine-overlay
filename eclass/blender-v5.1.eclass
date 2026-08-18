@@ -520,6 +520,7 @@ REQUIRED_USE+="
 	$(gen_required_use_cuda_targets)
 	$(gen_required_use_rocm_targets)
 	${PATENT_STATUS_REQUIRED_USE}
+	!rocm
 	!tbb? (
 		!cycles
 		!elbeem
