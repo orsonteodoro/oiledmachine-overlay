@@ -12,7 +12,7 @@ LLVM_SLOT=22
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
-inherit distutils-r1
+inherit secure-version distutils-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -46,22 +46,16 @@ LICENSE="
 # The distro's MIT license does not contain all rights reserved.
 RESTRICT="mirror"
 SLOT="0/${ROCM_SLOT}"
-IUSE+=" ebuild_revision_2"
+IUSE+=" ebuild_revision_3"
 RDEPEND+="
+	$(secure-version_gen_ffmpeg_depends '4.4-6.1')
 	>=sci-libs/rocDecode-${PV}:${SLOT}
-	sci-libs/rocDecode:=
 	dev-python/pybind11[${PYTHON_USEDEP}]
-	|| (
-		>=media-video/ffmpeg-4.4.1:56.58.58
-		>=media-video/ffmpeg-4.4.1:0/56.58.58
-		>=media-video/ffmpeg-6.1.1:58.60.60
-		>=media-video/ffmpeg-6.1.1:0/58.60.60
-	)
-	media-video/ffmpeg:=
+	sci-libs/rocDecode:=
 "
 DEPEND+="
 	${RDEPEND}
-	>=dev-libs/dlpack-0.6
+	>=dev-libs/dlpack-0.6:=
 "
 BDEPEND+="
 	>=dev-python/setuptools-42[${PYTHON_USEDEP}]
