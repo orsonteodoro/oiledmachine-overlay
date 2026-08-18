@@ -10,12 +10,12 @@ ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot python-r1 rocm
 
-if [[ ${PV} == *"9999" ]] ; then
+if [[ "${PV}" == *"9999" ]] ; then
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/rocm_smi_lib"
 	inherit git-r3
@@ -43,19 +43,19 @@ LICENSE="
 # NCSA-AMD - src/rocm_smi.cc
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="0/${ROCM_SLOT}"
-IUSE=" ebuild_revision_12"
+IUSE=" ebuild_revision_13"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
 RDEPEND="
 	${PYTHON_DEPS}
-	sys-apps/hwdata
-	|| (
-		>=virtual/kfd-7.0:0/7.0
-		>=virtual/kfd-6.4:0/6.4
-		>=virtual/kfd-6.3:0/6.3
-	)
+	sys-apps/hwdata:=
 	virtual/kfd:=
+	|| (
+		>=virtual/kfd-7.2:0/7.2
+		>=virtual/kfd-7.1:0/7.1
+		>=virtual/kfd-7.0:0/7.0
+	)
 "
 BDEPEND="
 	${ROCM_GCC_DEPEND}

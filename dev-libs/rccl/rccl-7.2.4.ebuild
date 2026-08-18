@@ -51,7 +51,7 @@ RESTRICT="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 test peermem rdma roce verbs
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE="
 	rdma? (
@@ -62,23 +62,20 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	>=dev-libs/rocr-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-	dev-libs/rocr-runtime:=
-	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm]
-	dev-util/hip:=
-	>=dev-util/rocm-smi-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-	dev-util/rocm-smi:=
+	~dev-libs/rocr-runtime-${PV}:=[${LIBSTDCXX_USEDEP}]
+	~dev-util/hip-${PV}:=[${LIBSTDCXX_USEDEP},rocm]
+	~dev-util/rocm-smi-${PV}:=[${LIBSTDCXX_USEDEP}]
 	peermem? (
-		dev-util/DOCA-Host[${LIBSTDCXX_USEDEP},mlnx-ofed-kernel]
-		|| (
-			>=virtual/kfd-7.0:0/7.0[rock-dkms]
-			>=virtual/kfd-6.4:0/6.4[rock-dkms]
-			>=virtual/kfd-6.3:0/6.3[rock-dkms]
-		)
+		dev-util/DOCA-Host:=[${LIBSTDCXX_USEDEP},mlnx-ofed-kernel]
 		virtual/kfd:=
+		|| (
+			>=virtual/kfd-7.2:0/7.2[rock-dkms]
+			>=virtual/kfd-7.1:0/7.1[rock-dkms]
+			>=virtual/kfd-7.0:0/7.0[rock-dkms]
+		)
 	)
 	verbs? (
-		sys-cluster/rdma-core
+		sys-cluster/rdma-core:=
 	)
 "
 DEPEND="
@@ -87,13 +84,10 @@ DEPEND="
 BDEPEND="
 	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.5
-	>=dev-util/HIPIFY-${PV}:${SLOT}
-	dev-util/HIPIFY:=
-	>=dev-build/rocm-cmake-${PV}:${SLOT}
-	dev-build/rocm-cmake:=
+	~dev-util/HIPIFY-${PV}:=
+	~dev-build/rocm-cmake-${PV}:=
 	test? (
-		>=dev-cpp/gtest-1.11[${LIBSTDCXX_USEDEP}]
-		dev-cpp/gtest:=
+		>=dev-cpp/gtest-1.11:=[${LIBSTDCXX_USEDEP}]
 	)
 "
 PATCHES=(
