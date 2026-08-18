@@ -5,7 +5,7 @@ EAPI=8
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
 CXX_STANDARD=11
@@ -52,13 +52,14 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="mirror" # Speed up downloads
 SLOT="0/${ROCM_SLOT}"
-IUSE+=" samples static-libs test ebuild_revision_11"
+IUSE+="
+samples static-libs test
+ebuild_revision_12
+"
 # glog downgraded originally 0.7.0
 RDEPEND="
-	>=dev-cpp/glog-0.6.0[${LIBSTDCXX_USEDEP}]
-	dev-cpp/glog:=
-	>=dev-libs/libfmt-10.1.0[${LIBSTDCXX_USEDEP}]
-	dev-libs/libfmt:=
+	>=dev-cpp/glog-0.6.0:=[${LIBSTDCXX_USEDEP}]
+	>=dev-libs/libfmt-10.1.0:=[${LIBSTDCXX_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}

@@ -89,7 +89,7 @@ RESTRICT="
 	)
 "
 SLOT="0/${ROCM_SLOT}"
-IUSE="test ebuild_revision_15"
+IUSE="test ebuild_revision_16"
 RDEPEND="
 	${ROCM_CLANG_DEPEND}
 "
@@ -99,8 +99,7 @@ DEPEND="
 BDEPEND="
 	${ROCM_CLANG_DEPEND}
 	>=dev-build/cmake-3.13.4
-	>=dev-build/rocm-cmake-${PV}:${SLOT}
-	dev-build/rocm-cmake:=
+	~dev-build/rocm-cmake-${PV}:=
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-6.2.4.patch"

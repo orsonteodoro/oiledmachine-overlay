@@ -13,7 +13,11 @@ GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
-inherit check-compiler-switch cmake edo flag-o-matic libstdcxx-slot rocm
+CHKL_TIMESTAMPS=(
+	"media-libs/mesa-9999"
+)
+
+inherit check-compiler-switch cmake edo flag-o-matic libstdcxx-slot secure-version rocm
 
 if [[ "${PV}" == *"9999" ]] ; then
 	EGIT_CLR_REPO_URI="https://github.com/ROCm-Developer-Tools/ROCclr"
@@ -55,29 +59,25 @@ RESTRICT="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 debug test
-ebuild_revision_14
+ebuild_revision_15
 "
 # ROCclr uses clang -print-libgcc-file-name which may output a static-lib to link to.
 #	=llvm-runtimes/compiler-rt-${LLVM_SLOT}*:=
 #	llvm-runtimes/compiler-rt:=
 RDEPEND="
-	>=media-libs/mesa-22.3.6[${LIBSTDCXX_USEDEP}]
-	>=virtual/opencl-3
-	>=dev-libs/rocm-comgr-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-	dev-libs/rocm-comgr:=
-	>=dev-libs/rocm-device-libs-${PV}:${SLOT}
-	dev-libs/rocm-device-libs:=
-	>=dev-libs/rocr-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-	dev-libs/rocr-runtime:=
+	>=media-libs/mesa-${MESA_PV}:=[${LIBSTDCXX_USEDEP}]
+	>=virtual/opencl-3:=
+	~dev-libs/rocm-comgr-${PV}:=[${LIBSTDCXX_USEDEP}]
+	~dev-libs/rocm-device-libs-${PV}:=
+	~dev-libs/rocr-runtime-${PV}:=[${LIBSTDCXX_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
-	>=dev-util/opencl-headers-2023.02.06
+	>=dev-util/opencl-headers-2023.02.06:=
 "
 BDEPEND="
 	${ROCM_GCC_DEPEND}
-	>=dev-build/rocm-cmake-${PV}:${SLOT}
-	dev-build/rocm-cmake:=
+	~dev-build/rocm-cmake-${PV}:=
 	test? (
 		>=x11-apps/mesa-progs-8.5.0[X]
 		media-libs/glew
@@ -123,6 +123,8 @@ src_prepare() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
+
 	rocm_set_default_gcc
 
 	check-compiler-switch_end

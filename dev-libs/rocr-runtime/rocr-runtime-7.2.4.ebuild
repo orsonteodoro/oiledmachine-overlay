@@ -5,14 +5,18 @@ EAPI=8
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
 CXX_STANDARD=17
 LLVM_SLOT=19 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.4.4/llvm/CMakeLists.txt
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot rocm
+CHKL_TIMESTAMPS=(
+	"dev-libs/elfutils-9999"
+)
+
+inherit check-compiler-switch chkl cmake flag-o-matic libstdcxx-slot secure-version rocm
 
 if [[ "${PV}" == *"9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/ROCR-Runtime/"
@@ -40,23 +44,22 @@ LICENSE="
 RESTRICT="strip" # Fix issue with finding symbols
 SLOT="0/${ROCM_SLOT}"
 IUSE="
-	debug
-	ebuild_revision_18
+debug
+ebuild_revision_20
 "
 RDEPEND="
 	${ROCM_CLANG_DEPEND}
-	dev-libs/elfutils
-	|| (
-		>=virtual/kfd-7.0:0/7.0
-		>=virtual/kfd-6.4:0/6.4
-		>=virtual/kfd-6.3:0/6.3
-	)
+	>=dev-libs/elfutils-${ELFUTILS_PV}:=
 	virtual/kfd:=
+	|| (
+		>=virtual/kfd-7.2:0/7.2
+		>=virtual/kfd-7.1:0/7.1
+		>=virtual/kfd-7.0:0/7.0
+	)
 "
 DEPEND="
 	${RDEPEND}
-	>=dev-libs/rocm-device-libs-${PV}:${SLOT}
-	dev-libs/rocm-device-libs:=
+	~dev-libs/rocm-device-libs-${PV}:=
 "
 # vim-core is needed for "xxd"
 BDEPEND="
@@ -79,6 +82,8 @@ src_prepare() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
+
 	rocm_set_default_clang
 
 	check-compiler-switch_end
