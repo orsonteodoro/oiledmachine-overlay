@@ -11,8 +11,8 @@ inherit check-compiler-switch cmake flag-o-matic rocm
 KEYWORDS="~amd64"
 S="${WORKDIR}/ROCdbgapi-rocm-${PV}"
 SRC_URI="
-	https://github.com/ROCm-Developer-Tools/ROCdbgapi/archive/rocm-${PV}.tar.gz
-		-> ${P}.tar.gz
+https://github.com/ROCm-Developer-Tools/ROCdbgapi/archive/rocm-${PV}.tar.gz
+	-> ${P}.tar.gz
 "
 
 DESCRIPTION="AMD Debugger API"
@@ -29,7 +29,7 @@ LICENSE="
 "
 # || ( ( GPL-2.0 Linux-syscall-note ) MIT ) - src/linux/kfd_sysfs.h
 SLOT="0/${ROCM_SLOT}"
-IUSE=" ebuild_revision_12"
+IUSE=" ebuild_revision_13"
 RDEPEND="
 	~dev-libs/rocm-comgr-${PV}:=
 	~dev-libs/rocr-runtime-${PV}:=
