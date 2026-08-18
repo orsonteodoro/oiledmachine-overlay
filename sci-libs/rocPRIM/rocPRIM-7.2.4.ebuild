@@ -30,7 +30,7 @@ AMDGPU_TARGETS_COMPAT=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
 inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot rocm
@@ -60,11 +60,11 @@ RESTRICT="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 asan -benchmark hip-cpu +rocm test
-ebuild_revision_10
+ebuild_revision_11
 "
 gen_rocm_required_use() {
 	local x
-	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+	for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
 		echo "
 			amdgpu_targets_${x}? (
 				rocm
@@ -83,19 +83,15 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},rocm]
-	dev-util/hip:=
+	~dev-util/hip-${PV}:=[${LIBSTDCXX_USEDEP},rocm]
 	benchmark? (
-		dev-cpp/benchmark[${LIBSTDCXX_USEDEP}]
-		dev-cpp/benchmark:=
+		dev-cpp/benchmark:=[${LIBSTDCXX_USEDEP}]
 	)
 	hip-cpu? (
-		dev-libs/hip-cpu[${LIBSTDCXX_USEDEP}]
-		dev-libs/hip-cpu:=
+		dev-libs/hip-cpu:=[${LIBSTDCXX_USEDEP}]
 	)
 	test? (
-		dev-cpp/gtest[${LIBSTDCXX_USEDEP}]
-		dev-cpp/gtest:=
+		dev-cpp/gtest:=[${LIBSTDCXX_USEDEP}]
 	)
 "
 DEPEND="
@@ -103,8 +99,7 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-build/cmake-3.16
-	>=dev-build/rocm-cmake-${PV}:${SLOT}
-	dev-build/rocm-cmake:=
+	>=dev-build/rocm-cmake-${PV}:=
 	!hip-cpu? (
 		${HIPCC_DEPEND}
 	)
