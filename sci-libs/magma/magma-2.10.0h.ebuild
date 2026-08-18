@@ -20,4 +20,4 @@ declare -A ROCM_PV_TO_LLVM_SLOT=(
 )
 SLOT="0/${ROCM_SLOT}"
 
-inherit icl-magma-v2_9
+inherit icl-magma-v2_10

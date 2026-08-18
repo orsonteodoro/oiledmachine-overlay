@@ -86,7 +86,10 @@ fi
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${MY_PV}"
-SRC_URI="https://icl.cs.utk.edu/projectsfiles/${PN}/downloads/${PN}-${MY_PV}.tar.gz"
+SRC_URI="
+https://github.com/icl-utk-edu/magma/archive/refs/tags/v${MY_PV}.tar.gz
+	-> ${PN}-${MY_PV}.gh.tar.gz
+"
 
 DESCRIPTION="Matrix Algebra on GPU and Multicore Architectures"
 HOMEPAGE="
@@ -380,7 +383,7 @@ RESTRICT="
 PATCHES=(
 )
 
-icl-magma-v2_9_pkg_setup() {
+icl-magma-v2_10_pkg_setup() {
 	check-compiler-switch_start
 	fortran-2_pkg_setup
 	python-any-r1_pkg_setup
@@ -506,7 +509,7 @@ eerror
 	emake generate
 }
 
-icl-magma-v2_9_src_prepare() {
+icl-magma-v2_10_src_prepare() {
 	# Let build script handle it.
 	unset CC
 	unset CXX
@@ -541,7 +544,7 @@ get_cuda_flags() {
 	echo "${list}"
 }
 
-icl-magma-v2_9_src_configure() {
+icl-magma-v2_10_src_configure() {
 	replace-flags "-O0" "-O1"
 
 	check-compiler-switch_end
@@ -680,11 +683,11 @@ ewarn
 	cmake_src_configure
 }
 
-icl-magma-v2_9_src_compile() {
+icl-magma-v2_10_src_compile() {
 	cmake_src_compile
 }
 
-icl-magma-v2_9_src_install() {
+icl-magma-v2_10_src_install() {
 	cmake_src_install
 	if [[ "${MAGMA_CUDA}" == "1" ]] ; then
 		insinto "/usr/include/${PN}"

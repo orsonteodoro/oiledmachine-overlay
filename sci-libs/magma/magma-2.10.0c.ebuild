@@ -10,4 +10,4 @@ EBUILD_REVISION="ebuild_revision_8"
 MAGMA_CUDA=1
 SLOT="0/cuda"
 
-inherit icl-magma-v2_9
+inherit icl-magma-v2_10
