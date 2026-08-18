@@ -7,8 +7,8 @@ EAPI=8
 # U22, U24
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10,12} )
 LLVM_SLOT=22
+PYTHON_COMPAT=( "python3_"{10,12} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
@@ -46,7 +46,7 @@ LICENSE="
 # The distro's MIT license does not contain all rights reserved.
 RESTRICT="mirror"
 SLOT="0/${ROCM_SLOT}"
-IUSE+=" ebuild_revision_4"
+IUSE+=" ebuild_revision_5"
 RDEPEND+="
 	$(secure-version_gen_ffmpeg_depends '4.4-6.1')
 	dev-python/pybind11[${PYTHON_USEDEP}]
