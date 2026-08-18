@@ -23,7 +23,7 @@ inherit secure-version
 # GC:  Graphics and compute
 # PSP:  Platform security processor, HDCP
 
-AMDGPU_FIRMWARE_PV="30.10.2.0.30100200"
+AMDGPU_FIRMWARE_PV="30.30.4.0.30300400"
 DC_VER="3.2.359" # From rock-dkms
 KERNEL_FIRMWARE_PV="20250808"
 # Expected firmware properites:
