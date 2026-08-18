@@ -12,7 +12,7 @@ ROCM_SLOT="${PV%.*}"
 ROCM_VERSION="${PV}"
 
 AMDGPU_TARGETS_COMPAT=(
-# https://github.com/ROCm/composable_kernel/blob/rocm-7.0.2/include/ck/ck.hpp#L48
+# https://github.com/ROCm/composable_kernel/blob/rocm-7.2.4/include/ck/ck.hpp#L48
 	"gfx803"
 	"gfx900"
 	"gfx906"
@@ -50,7 +50,7 @@ AMDGPU_UNTESTED_TARGETS=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
 inherit check-compiler-switch cmake dhms flag-o-matic libstdcxx-slot rocm
@@ -82,17 +82,15 @@ LICENSE="
 RESTRICT="test"
 SLOT="0/${ROCM_SLOT}"
 IUSE+="
-test ebuild_revision_15
+test
+ebuild_revision_16
 "
 REQUIRED_USE="
 "
 RDEPEND="
-	>=dev-libs/rocm-opencl-runtime-${ROCM_VERSION}:${SLOT}[${LIBSTDCXX_USEDEP}]
-	dev-libs/rocm-opencl-runtime:=
-	>=dev-util/hip-${ROCM_VERSION}:${SLOT}[${LIBSTDCXX_USEDEP}]
-	dev-util/hip:=
-	>=sys-libs/llvm-roc-libomp-${ROCM_VERSION}:${SLOT}[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_2_AMDGPU_USEDEP}]
-	sys-libs/llvm-roc-libomp:=
+	~dev-libs/rocm-opencl-runtime-${ROCM_VERSION}:=[${LIBSTDCXX_USEDEP}]
+	~dev-util/hip-${ROCM_VERSION}:=[${LIBSTDCXX_USEDEP}]
+	~sys-libs/llvm-roc-libomp-${ROCM_VERSION}:=[${LIBSTDCXX_USEDEP},${LLVM_ROC_LIBOMP_7_2_AMDGPU_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
@@ -100,11 +98,9 @@ DEPEND="
 #	sys-devel/binutils[gold]
 BDEPEND="
 	${ROCM_CLANG_DEPEND}
-	>=dev-build/rocm-cmake-${ROCM_VERSION}:${SLOT}
-	dev-build/rocm-cmake:=
+	~dev-build/rocm-cmake-${ROCM_VERSION}:=
 	test? (
-		dev-cpp/gtest[${LIBSTDCXX_USEDEP}]
-		dev-cpp/gtest:=
+		dev-cpp/gtest:=[${LIBSTDCXX_USEDEP}]
 	)
 "
 PATCHES=(
