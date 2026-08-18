@@ -107,7 +107,13 @@ _llvm_roc_libomp_globals() {
 _llvm_roc_libomp_globals
 unset -f _llvm_roc_libomp_globals
 
-inherit abseil-cpp check-compiler-switch cmake flag-o-matic grpc libstdcxx-slot protobuf python-single-r1 re2 rocm
+CHKL_TIMESTAMPS=(
+	"dev-libs/libffi-9999"
+	"sys-process/numactl-9999"
+	"x11-libs/libdrm-9999"
+)
+
+inherit abseil-cpp check-compiler-switch chkl cmake flag-o-matic grpc libstdcxx-slot protobuf python-single-r1 re2 secure-version rocm
 
 #KEYWORDS="~amd64" # Update is WIP
 S="${WORKDIR}/llvm-project-rocm-${PV}/openmp"
@@ -144,7 +150,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${ROCM_IUSE}
 +archer -cuda +gdb-plugin -offload -ompt +ompd -remote-offloading
-ebuild_revision_36
+ebuild_revision_37
 "
 
 gen_cuda_required_use() {
@@ -227,7 +233,7 @@ CUDA_12_5_RDEPEND="
 	)
 "
 RDEPEND="
-	dev-libs/libffi:=
+	>=dev-libs/libffi-${LIBFFI_PV}:=
 	~dev-libs/rocm-device-libs-${PV}:=
 	~sys-devel/llvm-roc-${PV}:=[${LIBSTDCXX_USEDEP},${LLVM_TARGETS_USEDEP}]
 	cuda? (
@@ -346,14 +352,11 @@ RDEPEND="
 	)
 	llvm_targets_AMDGPU? (
 		~dev-libs/rocr-runtime-${ROCM_SLOT}:=[${LIBSTDCXX_USEDEP}]
-		sys-process/numactl:=
-		x11-libs/libdrm:=[video_cards_amdgpu]
-	)
-	llvm_targets_NVPTX? (
-		<dev-util/nvidia-cuda-toolkit-11.9:=
+		>=sys-process/numactl-${NUMACTL_PV}:=
+		>=x11-libs/libdrm-${LIBDRM_PV}:=[video_cards_amdgpu]
 	)
 	offload? (
-		dev-libs/libffi:=
+		>=dev-libs/libffi-${LIBFFI_PV}:=
 		virtual/libelf:=
 	)
 	remote-offloading? (
@@ -475,6 +478,8 @@ src_prepare() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
+
 	addpredict "/dev/kfd"
 	addpredict "/proc/self/task/"
 	rocm_set_default_gcc

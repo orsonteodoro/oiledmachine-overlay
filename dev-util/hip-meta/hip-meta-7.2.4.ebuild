@@ -7,7 +7,7 @@ CXX_STANDARD="ignore"
 LIBCXX_SLOT_VERIFY=0
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-# See https://github.com/ROCm/rocm-install-on-linux/blob/rocm-7.0.0/docs/reference/system-requirements.rst
+# See https://github.com/ROCm/rocm-install-on-linux/blob/rocm-7.2.0/docs/reference/system-requirements.rst
 AMDGPU_TARGETS_COMPAT=(
 	"gfx908"
 	"gfx90a"

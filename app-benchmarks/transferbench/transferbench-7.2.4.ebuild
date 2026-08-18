@@ -9,7 +9,11 @@ ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 inherit hip-versions
 ROCM_VERSION="${PV}"
 
-inherit cmake rocm
+CHKL_TIMESTAMPS=(
+	"sys-process/numactl-9999"
+)
+
+inherit chkl cmake secure-version rocm
 
 if [[ ${PV} == *"9999" ]] ; then
 	EGIT_BRANCH="master"
@@ -41,7 +45,7 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE+="
 cuda rocm
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE+="
 	|| (
@@ -50,7 +54,7 @@ REQUIRED_USE+="
 	)
 "
 RDEPEND="
-	sys-process/numactl:=
+	>=sys-process/numactl-${NUMACTL_PV}:=
 	~dev-util/hip-${PV}:=
 "
 DEPEND="
@@ -75,6 +79,8 @@ src_prepare() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
+
 	rocm_set_default_hipcc
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
