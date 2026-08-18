@@ -5,7 +5,7 @@ EAPI=8
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
 CXX_STANDARD=17
@@ -38,18 +38,18 @@ RESTRICT="
 	)
 "
 SLOT="0/${ROCM_SLOT}"
-IUSE=" test ebuild_revision_14"
+IUSE="
+test
+ebuild_revision_15
+"
 CDEPEND="
 	${ROCM_CLANG_DEPEND}
 "
 RDEPEND="
 	${CDEPEND}
-	>=dev-libs/rocm-comgr-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-	dev-libs/rocm-comgr:=
-	>=dev-libs/rocr-runtime-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-	dev-libs/rocr-runtime:=
-	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP}]
-	dev-util/hip:=
+	~dev-libs/rocm-comgr-${PV}:=[${LIBSTDCXX_USEDEP}]
+	~dev-libs/rocr-runtime-${PV}:=[${LIBSTDCXX_USEDEP}]
+	~dev-util/hip-${PV}:=[${LIBSTDCXX_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}

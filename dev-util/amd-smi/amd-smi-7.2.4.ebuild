@@ -56,7 +56,7 @@ RESTRICT="test" # Not tested
 SLOT="0/${ROCM_SLOT}"
 IUSE+="
 asan doc +esmi test
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -80,12 +80,12 @@ BDEPEND="
 	>=dev-build/cmake-3.20
 	virtual/pkgconfig
 	doc? (
-		>=app-text/doxygen-1.8.11
-		app-text/texlive-core
-		dev-texlive/texlive-latexextra
 		$(python_gen_cond_dep '
 			dev-python/sphinx[${PYTHON_USEDEP}]
 		')
+		>=app-text/doxygen-1.8.11
+		app-text/texlive-core
+		dev-texlive/texlive-latexextra
 	)
 "
 PATCHES=(
