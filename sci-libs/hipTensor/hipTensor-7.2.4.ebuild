@@ -5,7 +5,7 @@ EAPI=8
 
 CXX_STANDARD=17
 HIP_SUPPORT_CUDA=1
-LLVM_SLOT=19
+LLVM_SLOT=22
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 AMDGPU_TARGETS_COMPAT=(
@@ -46,7 +46,7 @@ SLOT="0/${ROCM_SLOT}"
 # Upstream enables test
 IUSE="
 asan cuda +rocm -samples -test
-ebuild_revision_6
+ebuild_revision_7
 "
 gen_rocm_required_use() {
 	local x
