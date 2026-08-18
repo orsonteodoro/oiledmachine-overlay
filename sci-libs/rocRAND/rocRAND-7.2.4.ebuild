@@ -41,7 +41,7 @@ CUDA_TARGETS_COMPAT=(
 )
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
+	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
 inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot rocm
@@ -70,11 +70,12 @@ RESTRICT="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-asan benchmark cuda hip-cpu +rocm test ebuild_revision_15
+asan benchmark cuda hip-cpu +rocm test
+ebuild_revision_16
 "
 gen_cuda_required_use() {
 	local x
-	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+	for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
 		echo "
 			cuda_targets_${x}? (
 				cuda
@@ -84,7 +85,7 @@ gen_cuda_required_use() {
 }
 gen_rocm_required_use() {
 	local x
-	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+	for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
 		echo "
 			amdgpu_targets_${x}? (
 				rocm
@@ -110,30 +111,25 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	>=dev-util/hip-${PV}:${SLOT}[${LIBSTDCXX_USEDEP},cuda?,rocm?]
-	dev-util/hip:=
+	~dev-util/hip-${PV}:=[${LIBSTDCXX_USEDEP},cuda?,rocm?]
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
 	hip-cpu? (
 		${HIP_CLANG_DEPEND}
-		dev-libs/hip-cpu[${LIBSTDCXX_USEDEP}]
-		dev-libs/hip-cpu:=
+		dev-libs/hip-cpu:=[${LIBSTDCXX_USEDEP}]
 	)
 "
 DEPEND="
 	${RDEPEND}
-	>=dev-build/rocm-cmake-${PV}:${SLOT}
-	dev-build/rocm-cmake:=
+	~dev-build/rocm-cmake-${PV}:=
 	test? (
-		dev-cpp/gtest[${LIBSTDCXX_USEDEP}]
-		dev-cpp/gtest:=
+		dev-cpp/gtest:=[${LIBSTDCXX_USEDEP}]
 	)
 "
 BDEPEND="
 	>=dev-build/cmake-3.10.2
-	>=dev-build/rocm-cmake-${PV}:${SLOT}
-	dev-build/rocm-cmake:=
+	~dev-build/rocm-cmake-${PV}:=
 	!hip-cpu? (
 		${HIPCC_DEPEND}
 	)
