@@ -113,7 +113,7 @@ SLOT="0/${ROCM_SLOT}"
 IUSE="
 acpi +build +check-mmu-notifier +compress custom-kernel directgma gzip hybrid-graphics
 numa +sign-modules ssg strict-pairing xz zstd
-ebuild_revision_21
+ebuild_revision_22
 "
 REQUIRED_USE="
 	compress? (
@@ -177,11 +177,11 @@ CDEPEND="
 "
 RDEPEND="
 	${CDEPEND}
-	dev-build/autoconf
-	dev-build/automake
-	sys-apps/kmod[tools]
+	dev-build/autoconf:*
+	dev-build/automake:*
+	sys-apps/kmod:=[tools]
 	!build? (
-		>=sys-kernel/dkms-1.95
+		>=sys-kernel/dkms-1.95:*
 	)
 "
 DEPEND="
