@@ -10,7 +10,7 @@ GCC_COMPAT=(
 
 CXX_STANDARD=11
 CMAKE_MAKEFILE_GENERATOR="emake"
-LLVM_SLOT=19 # Same as llvm-roc
+LLVM_SLOT=22 # Same as llvm-roc
 PYTHON_COMPAT=( "python3_12" )
 ROCM_CLANG_USEDEP="llvm_targets_AMDGPU,llvm_targets_X86"
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
@@ -44,7 +44,7 @@ RESTRICT="
 "
 SLOT="0/${ROCM_SLOT}"
 IUSE="
-doc test ebuild_revision_9
+doc test ebuild_revision_10
 "
 REQUIRED_USE="
 "
