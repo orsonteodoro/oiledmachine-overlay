@@ -5,7 +5,7 @@ EAPI=8
 
 CMAKE_BUILD_TYPE="Release"
 CXX_STANDARD=17
-LLVM_SLOT=19 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-7.0.2/llvm/CMakeLists.txt
+LLVM_SLOT=22 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-7.0.2/llvm/CMakeLists.txt
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit libstdcxx-compat
@@ -93,7 +93,7 @@ RESTRICT="
 	)
 "
 SLOT="0/${ROCM_SLOT}"
-IUSE="test ebuild_revision_22"
+IUSE="test ebuild_revision_23"
 RDEPEND="
 	${ROCM_CLANG_DEPEND}
 	~dev-libs/rocm-device-libs-${PV}:=
