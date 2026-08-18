@@ -85,7 +85,11 @@ ROCM_SLOT="${ROCM_VERSION%.*}"
 
 DESCRIPTION="KFD (Kernel Fusion Driver) with version limited upper boundary"
 #KEYWORDS="~amd64 ~x86" # Work In Progress (WIP)
-IUSE="amdgpu-dkms amdgpu-dkms-firmware linux-firmware custom-kernel kernel strict-pairing ebuild_revision_5"
+IUSE="
+amdgpu-dkms amdgpu-dkms-firmware linux-firmware custom-kernel kernel
+strict-pairing
+ebuild_revision_6
+"
 REQUIRED_USE="
 	^^ (
 		amdgpu-dkms-firmware
