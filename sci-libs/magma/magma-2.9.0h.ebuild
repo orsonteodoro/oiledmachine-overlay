@@ -8,7 +8,8 @@ EAPI=8
 inherit hip-versions
 
 CXX_STANDARD=14
-LLVM_SLOT=22
+EBUILD_REVISION="ebuild_revision_9"
+LLVM_SLOT="${HIP_7_2_LLVM_SLOT}"
 MAGMA_ROCM=1
 ROCM_SLOT="7.2"
 ROCM_SLOTS=(
