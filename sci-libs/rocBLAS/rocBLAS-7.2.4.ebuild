@@ -34,7 +34,7 @@ DOCS_BUILDER="doxygen"
 DOCS_DIR="docs"
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=22 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.4/llvm/CMakeLists.txt
-PYTHON_COMPAT=( "python3_"{10..13} )
+PYTHON_COMPAT=( "python3_"{10,12} )
 ROCM_SLOT=$(ver_cut "1-2" "${PV}")
 
 AMDGPU_TARGETS_COMPAT=(
@@ -101,7 +101,7 @@ SLOT="0/${ROCM_SLOT}"
 IUSE="
 ${CPU_FLAGS_X86[@]}
 asan benchmark cuda +rocm test
-ebuild_revision_34
+ebuild_revision_35
 "
 gen_rocm_required_use() {
 	local x
