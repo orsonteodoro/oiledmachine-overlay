@@ -19,7 +19,7 @@ LLVM_COMPAT=(
 
 CMAKE_BUILD_TYPE="RelWithDebInfo" # RelWithDebInfo assumes no assertions.  RelWithDebInfo is the default if unset.
 CXX_STANDARD=17 # clang (17), llvm (17), compiler-rt-sanitizers (17), mlir (17), lld (17)
-LLVM_SLOT=19
+LLVM_SLOT=22
 LLVM_TARGETS=(
 	"AMDGPU"
 	"NVPTX"
@@ -109,7 +109,7 @@ IUSE+="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
 bolt flang -mlir profile
-ebuild_revision_57
+ebuild_revision_58
 "
 REQUIRED_USE="
 	^^ (
