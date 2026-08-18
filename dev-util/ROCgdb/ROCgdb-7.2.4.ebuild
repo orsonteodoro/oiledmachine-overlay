@@ -5,7 +5,7 @@ EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 LLVM_SLOT=22
-PYTHON_COMPAT=( "python3_"{10..13} )
+PYTHON_COMPAT=( "python3_"{10,12} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 CHKL_TIMESTAMPS=(
@@ -93,7 +93,7 @@ LICENSE="
 # The distro's GPL-3+ license template does not contain all rights reserved.
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="0/${ROCM_SLOT}"
-IUSE="ebuild_revision_15"
+IUSE="ebuild_revision_16"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
