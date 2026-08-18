@@ -6,7 +6,7 @@ EAPI=8
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 CXX_STANDARD=17
 GRPC_SLOT="3"
-LLVM_SLOT=19
+LLVM_SLOT=22
 MAKEOPTS="-j1" # Prevent build files race condition for /opt/rocm/lib/llvm/bin/llvm-link: No such file or directory: 'ocl_atomics_amdgcn.bc'
 PROTOBUF_CPP_SLOT="3"
 PYTHON_COMPAT=( "python3_"{10..13} )
@@ -144,7 +144,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${ROCM_IUSE}
 +archer -cuda +gdb-plugin -offload -ompt +ompd -remote-offloading
-ebuild_revision_33
+ebuild_revision_34
 "
 
 gen_cuda_required_use() {
