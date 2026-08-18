@@ -3,20 +3,24 @@
 
 EAPI=8
 
-MY_PV="2.5.a21e075.3"
+# The 3rd version component, using 1-based indexing, is based on the Unix timestamp.
+# date --date="Apr 25, 2025 11:16 AM PDT" "+%s"
+# The 4-6th version component, using 1-based indexing, is based on ROCm version.
+
+MY_PV="2.5.48ee995" # Not tagged, an approximation since it is untagged in next-release-7 branch
 
 # Versioning based on GH search: committer-date:<=YYYYMMDD [of dev-util/hip tag]
 
 inherit hip-versions
 
 CXX_STANDARD=17
-EGIT_COMMIT="4a0c5a0e0957642e7ab6947b1a9bfaf72dcf5506"
+EGIT_COMMIT="606b4886efabce918dd0634ef71c06615a47c83b" # Same as Blender 5.2 vendored, containing fPIC fix
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=19
-ROCM_SLOT="6.4"
-ROCM_VERSION="${HIP_6_4_VERSION}"
+ROCM_SLOT="7.2"
+ROCM_VERSION="${HIP_7_2_VERSION}"
 
-# No CMAKE arg yet
+# See https://github.com/GPUOpen-LibrariesAndSDKs/HIPRT/blob/606b4886efabce918dd0634ef71c06615a47c83b/scripts/bitcodes/common_tools.py#L51
 AMDGPU_TARGETS_COMPAT=(
 	"gfx900"
 	"gfx902"
@@ -26,8 +30,6 @@ AMDGPU_TARGETS_COMPAT=(
 	"gfx909"
 	"gfx90a"
 	"gfx90c"
-	"gfx940"
-	"gfx941"
 	"gfx942"
 	"gfx1010"
 	"gfx1011"
@@ -53,7 +55,7 @@ AMDGPU_TARGETS_COMPAT=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_ROCM_6_4[@]}"
+	"${LIBSTDCXX_COMPAT_ROCM_7_0[@]}"
 )
 
 inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot rocm
@@ -113,8 +115,7 @@ RDEPEND="
 		${HIP_CUDA_DEPEND}
 	)
 	system-orochi? (
-		=dev-libs/Orochi-3.00*:${SLOT}
-		dev-libs/Orochi:=
+		=dev-libs/Orochi-3.00*:=
 	)
 "
 DEPEND="

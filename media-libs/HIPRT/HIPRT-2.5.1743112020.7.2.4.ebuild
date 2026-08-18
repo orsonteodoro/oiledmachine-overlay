@@ -3,20 +3,24 @@
 
 EAPI=8
 
-MY_PV="3.0.4fea77f"
+# The 3rd version component, using 1-based indexing, is based on the Unix timestamp.
+# date --date="Mar 27, 2025 2:47 PM PDT" "+%s"
+# The 4-6th version component, using 1-based indexing, is based on ROCm version.
+
+MY_PV="2.5.a21e075.3" # Tagged
 
 # Versioning based on GH search: committer-date:<=YYYYMMDD [of dev-util/hip tag]
 
 inherit hip-versions
 
 CXX_STANDARD=17
-EGIT_COMMIT="6441305253f711bd2b7121f317a799d0b740e2b7"
+EGIT_COMMIT="4a0c5a0e0957642e7ab6947b1a9bfaf72dcf5506" # Same as most recent 2.5
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=19
-ROCM_SLOT="7.0"
-ROCM_VERSION="${HIP_7_0_VERSION}"
+ROCM_SLOT="7.2"
+ROCM_VERSION="${HIP_7_2_VERSION}"
 
-# No CMAKE arg yet
+# See https://github.com/GPUOpen-LibrariesAndSDKs/HIPRT/blob/4a0c5a0e0957642e7ab6947b1a9bfaf72dcf5506/scripts/bitcodes/precompile_bitcode.py
 AMDGPU_TARGETS_COMPAT=(
 	"gfx900"
 	"gfx902"
@@ -45,7 +49,6 @@ AMDGPU_TARGETS_COMPAT=(
 	"gfx1150"
 	"gfx1151"
 	"gfx1152"
-	"gfx1153"
 	"gfx1200"
 	"gfx1201"
 )
@@ -112,8 +115,7 @@ RDEPEND="
 		${HIP_CUDA_DEPEND}
 	)
 	system-orochi? (
-		=dev-libs/Orochi-3.00*:${SLOT}
-		dev-libs/Orochi:=
+		=dev-libs/Orochi-3.00*:=
 	)
 "
 DEPEND="

@@ -3,20 +3,24 @@
 
 EAPI=8
 
-MY_PV="2.5.a21e075.3"
+# The 4th version component, using 1-based indexing, is based on the Unix timestamp.
+# date --date="Nov 7, 2025 9:15 AM PST" "+%s"
+# The 5-7th version component, using 1-based indexing, is based on ROCm version.
+
+MY_PV="3.0.3.a1525e7" # Tagged
 
 # Versioning based on GH search: committer-date:<=YYYYMMDD [of dev-util/hip tag]
 
 inherit hip-versions
 
 CXX_STANDARD=17
-EGIT_COMMIT="4a0c5a0e0957642e7ab6947b1a9bfaf72dcf5506"
+EGIT_COMMIT="8602b8c475255fb922c2792654aae0a6bcdeb0af"
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=19
-ROCM_SLOT="7.0"
-ROCM_VERSION="${HIP_7_0_VERSION}"
+ROCM_SLOT="7.2"
+ROCM_VERSION="${HIP_7_2_VERSION}"
 
-# No CMAKE arg yet
+# See https://github.com/GPUOpen-LibrariesAndSDKs/HIPRT/blob/d612edeea9c83b964000a3450bccbc608aef39b8/scripts/bitcodes/common_tools.py#L51
 AMDGPU_TARGETS_COMPAT=(
 	"gfx900"
 	"gfx902"
@@ -26,8 +30,6 @@ AMDGPU_TARGETS_COMPAT=(
 	"gfx909"
 	"gfx90a"
 	"gfx90c"
-	"gfx940"
-	"gfx941"
 	"gfx942"
 	"gfx1010"
 	"gfx1011"
@@ -47,6 +49,7 @@ AMDGPU_TARGETS_COMPAT=(
 	"gfx1150"
 	"gfx1151"
 	"gfx1152"
+	"gfx1153"
 	"gfx1200"
 	"gfx1201"
 )
@@ -113,8 +116,7 @@ RDEPEND="
 		${HIP_CUDA_DEPEND}
 	)
 	system-orochi? (
-		=dev-libs/Orochi-3.00*:${SLOT}
-		dev-libs/Orochi:=
+		=dev-libs/Orochi-3.00*:=
 	)
 "
 DEPEND="
@@ -137,42 +139,9 @@ pkg_setup() {
 	libstdcxx-slot_verify
 }
 
-build_easy_encryption() {
-	pushd "contrib/easy-encryption" >/dev/null 2>&1 || die
-		premake5 gmake || die
-		make || die
-		make config=release_x64 || die
-		mv \
-			"${S}/contrib/easy-encryption/dist/bin/Release/ee64" \
-			"${S}/contrib/easy-encryption/bin/linux/ee64" \
-			|| die
-	popd >/dev/null 2>&1 || die
-}
-
 src_prepare() {
 	cmake_src_prepare
 	rocm_src_prepare
-
-	rm "contrib/easy-encryption/bin/linux/ee64" || die
-	build_easy_encryption
-
-	# Test build
-	echo "lol world" > "contrib/easy-encryption/bin/linux/message.plaintext"
-	"contrib/easy-encryption/bin/linux/ee64" \
-		"contrib/easy-encryption/bin/linux/message.plaintext" \
-		"contrib/easy-encryption/bin/linux/message.ciphertext" \
-		key \
-		0 \
-		|| die
-	"contrib/easy-encryption/bin/linux/ee64" \
-		"contrib/easy-encryption/bin/linux/message.ciphertext" \
-		"contrib/easy-encryption/bin/linux/message.plaintext2" \
-		key \
-		1 \
-		|| die
-	cat "contrib/easy-encryption/bin/linux/message.plaintext2" \
-		| grep -q -e "lol world" \
-		|| die
 }
 
 src_configure() {
