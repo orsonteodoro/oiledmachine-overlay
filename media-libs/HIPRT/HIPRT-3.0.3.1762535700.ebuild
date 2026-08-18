@@ -4,10 +4,9 @@
 EAPI=8
 
 # The 4th version component, using 1-based indexing, is based on the Unix timestamp.
-# date --date="Jan 5, 2026 6:43 AM PST" "+%s"
-# The 5-7th version component, using 1-based indexing, is based on ROCm version.
+# date --date="Nov 7, 2025 9:15 AM PST" "+%s"
 
-MY_PV="3.1.0.cb09c56" # Tagged
+MY_PV="3.0.3.a1525e7" # Tagged
 
 # Versioning based on GH search: committer-date:<=YYYYMMDD [of dev-util/hip tag]
 
@@ -16,11 +15,11 @@ inherit hip-versions
 CXX_STANDARD=17
 EGIT_COMMIT="8602b8c475255fb922c2792654aae0a6bcdeb0af"
 HIP_SUPPORT_CUDA=1
-LLVM_SLOT=19
+LLVM_SLOT=22
 ROCM_SLOT="7.2"
 ROCM_VERSION="${HIP_7_2_VERSION}"
 
-# See https://github.com/GPUOpen-LibrariesAndSDKs/HIPRT/blob/8602b8c475255fb922c2792654aae0a6bcdeb0af/scripts/bitcodes/common_tools.py#L51
+# See https://github.com/GPUOpen-LibrariesAndSDKs/HIPRT/blob/d612edeea9c83b964000a3450bccbc608aef39b8/scripts/bitcodes/common_tools.py#L51
 AMDGPU_TARGETS_COMPAT=(
 	"gfx900"
 	"gfx902"
@@ -91,7 +90,10 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="test"
 SLOT="0/${ROCM_SLOT}"
-IUSE="-bake-kernels -bitcode cuda encrypt precompile rocm system-orochi test ebuild_revision_9"
+IUSE="
+-bake-kernels -bitcode cuda encrypt precompile rocm system-orochi test
+ebuild_revision_10
+"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 	?? (

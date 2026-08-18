@@ -4,23 +4,22 @@
 EAPI=8
 
 # The 3rd version component, using 1-based indexing, is based on the Unix timestamp.
-# date --date="Apr 25, 2025 11:16 AM PDT" "+%s"
-# The 4-6th version component, using 1-based indexing, is based on ROCm version.
+# date --date="Mar 27, 2025 2:47 PM PDT" "+%s"
 
-MY_PV="2.5.48ee995" # Not tagged, an approximation since it is untagged in next-release-7 branch
+MY_PV="2.5.a21e075.3" # Tagged
 
 # Versioning based on GH search: committer-date:<=YYYYMMDD [of dev-util/hip tag]
 
 inherit hip-versions
 
 CXX_STANDARD=17
-EGIT_COMMIT="606b4886efabce918dd0634ef71c06615a47c83b" # Same as Blender 5.2 vendored, containing fPIC fix
+EGIT_COMMIT="4a0c5a0e0957642e7ab6947b1a9bfaf72dcf5506" # Same as most recent 2.5
 HIP_SUPPORT_CUDA=1
-LLVM_SLOT=19
+LLVM_SLOT=22
 ROCM_SLOT="7.2"
 ROCM_VERSION="${HIP_7_2_VERSION}"
 
-# See https://github.com/GPUOpen-LibrariesAndSDKs/HIPRT/blob/606b4886efabce918dd0634ef71c06615a47c83b/scripts/bitcodes/common_tools.py#L51
+# See https://github.com/GPUOpen-LibrariesAndSDKs/HIPRT/blob/4a0c5a0e0957642e7ab6947b1a9bfaf72dcf5506/scripts/bitcodes/precompile_bitcode.py
 AMDGPU_TARGETS_COMPAT=(
 	"gfx900"
 	"gfx902"
@@ -90,7 +89,10 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="test"
 SLOT="0/${ROCM_SLOT}"
-IUSE="-bake-kernels -bitcode cuda encrypt precompile rocm system-orochi test ebuild_revision_9"
+IUSE="
+-bake-kernels -bitcode cuda encrypt precompile rocm system-orochi test
+ebuild_revision_10
+"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 	?? (
