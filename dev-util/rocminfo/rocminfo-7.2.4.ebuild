@@ -9,7 +9,7 @@ GCC_COMPAT=(
 )
 
 CXX_STANDARD=11
-LLVM_SLOT=19
+LLVM_SLOT=22
 PYTHON_COMPAT=( "python3_"{10..13} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -34,7 +34,7 @@ DESCRIPTION="ROCm Application for Reporting System Info"
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocminfo"
 LICENSE="NCSA-AMD"
 SLOT="0/${ROCM_SLOT}"
-IUSE+=" ebuild_revision_11"
+IUSE+=" ebuild_revision_12"
 RDEPEND="
 	~dev-libs/rocr-runtime-${PV}:=
 	sys-apps/pciutils:=
