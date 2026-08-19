@@ -43,7 +43,7 @@ LLVM_COMPAT=(
 inherit autotools cflags-hardened chkl flag-o-matic libcxx-slot libstdcxx-slot toolchain-funcs secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="da36b382aa969c51c3dbd844478d29ac96c7f8f5"
+	FALLBACK_COMMIT="2035cef73160ef086549515bdff9196d93cbb50a"
 	EGIT_BRANCH="master"
 	#EGIT_REPO_URI="https://cgit.ghostscript.com/ghostpdl.git" # Stuck before downloading
 	EGIT_REPO_URI="https://github.com/ArtifexSoftware/ghostpdl.git"
@@ -66,7 +66,7 @@ SLOT="0/$(ver_cut 1-2)"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
 IUSE+="
 cups cpu_flags_arm_neon dbus gtk l10n_de openmp static-libs tesseract unicode X
-ebuild_revision_9
+ebuild_revision_10
 "
 
 LANGS="ja ko zh-CN zh-TW"
