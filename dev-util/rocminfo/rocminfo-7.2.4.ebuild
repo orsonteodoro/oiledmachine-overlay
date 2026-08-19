@@ -66,7 +66,9 @@ pkg_setup() {
 
 src_unpack() {
 	if [[ "${PV}" == *"9999" ]] ; then
-		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
 		git-r3_fetch
 		git-r3_checkout
 	else

@@ -18,10 +18,12 @@ ROCM_VERSION="${PV}"
 inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot rocm
 
 if [[ ${PV} == *"9999" ]] ; then
+	#FALLBACK_COMMIT=""
 	EGIT_REPO_URI="https://github.com/ROCm/rocprofiler-register.git"
 	EGIT_BRANCH="amd-mainline"
-	FALLBACK_COMMIT="f785235543aafe0bf49b1fcc304375ab0766e5aa" # Dec 21, 2023
-	IUSE+=" fallback-commit"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 	inherit git-r3
 else
 	S_GLOG="${WORKDIR}/glog-${GLOG_COMMIT}"
@@ -81,7 +83,9 @@ pkg_setup() {
 
 src_unpack() {
 	if [[ "${PV}" == *"9999" ]] ; then
-		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
 		git-r3_fetch
 		git-r3_checkout
 	else
