@@ -2316,32 +2316,6 @@ einfo
 einfo "Use the virtual/ot-sources-lts meta package to ensure proper updates in"
 einfo "the same major.minor branch."
 einfo
-	elif [[ "${KV_MAJOR_MINOR}" == "5.4" ]] ; then
-einfo
-einfo "The expected End Of Life (EOL) for the ${KV_MAJOR_MINOR} kernel series is"
-einfo "Dec 2025."
-einfo
-einfo "Use the virtual/ot-sources-lts meta package to ensure proper updates in"
-einfo "the same major.minor branch."
-einfo
-	elif [[ "${KV_MAJOR_MINOR}" == "4.19" ]] ; then
-einfo
-einfo "This kernel is now End Of Life (EOL) for the ${KV_MAJOR_MINOR} kernel"
-einfo "since Dec 2024.  It will be removed as soon as it is delisted from"
-einfo "The Linux Kernel Archives."
-einfo
-einfo "Use the virtual/ot-sources-lts meta package to ensure proper updates in"
-einfo "the same major.minor branch."
-einfo
-	elif [[ "${KV_MAJOR_MINOR}" == "4.14" ]] ; then
-einfo
-einfo "This kernel is now End Of Life (EOL) for the ${KV_MAJOR_MINOR} kernel"
-einfo "since Jan 2024.  It will be removed as soon as it is delisted from"
-einfo "The Linux Kernel Archives."
-einfo
-einfo "Use the virtual/ot-sources-lts meta package to ensure proper updates in"
-einfo "the same major.minor branch."
-einfo
 	else
 ewarn
 ewarn "The ${KV_MAJOR_MINOR} kernel series is not a Long Term Support (LTS)"
@@ -19091,5 +19065,4 @@ EXPORT_FUNCTIONS \
 	src_compile \
 	src_install \
 	pkg_postinst \
-	pkg_preinst \
 	pkg_postrm
