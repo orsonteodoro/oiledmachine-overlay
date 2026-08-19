@@ -3,7 +3,6 @@
 
 EAPI=8
 
-BOOST_PV="1.72.0"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CXX_STANDARD=17
 LLVM_SLOT=22
@@ -215,9 +214,6 @@ RDEPEND="
 		>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:=
 		~dev-libs/rocm-opencl-runtime-${PV}:=[${LIBSTDCXX_USEDEP}]
 		~sys-libs/llvm-roc-libomp-${PV}:=[${LIBSTDCXX_USEDEP}]
-		!ffmpeg? (
-			>=dev-libs/boost-${BOOST_PV}:=
-		)
 	)
 	rocm? (
 		~sci-libs/rocBLAS-${PV}:=[${LIBSTDCXX_USEDEP}]
@@ -225,7 +221,6 @@ RDEPEND="
 		~sys-libs/llvm-roc-libomp-${PV}:=[${LIBSTDCXX_USEDEP}]
 	)
 	rpp? (
-		>=dev-libs/boost-${BOOST_PV}:=[${LIBSTDCXX_USEDEP}]
 		~sci-libs/rpp-${PV}:=[${LIBSTDCXX_USEDEP}]
 	)
 "
