@@ -19003,7 +19003,7 @@ ot-kernel_postinst_remove_eol_configs_for_tcca() {
 
 	local pvr
 	for pvr in "${EOL_VERSIONS[@]}" ; do
-		local pv=$(ver_cut "1-2" "${PVR}")
+		local pv=$(ver_cut "1-2" "${pvr}")
 		local l=$(ls -1 "${EROOT}/etc/tcca-${pv}"*"-"*"-"*".conf" 2>/dev/null | wc -l)
 		if (( ${l} > 0 )) ; then
 einfo "Removing tcca configs for EOL version ${pv}"
