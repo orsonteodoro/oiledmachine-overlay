@@ -15,11 +15,13 @@ ROCM_VERSION="${PV}"
 inherit secure-version distutils-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
+	#FALLBACK_COMMIT=""
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/ROCm/rocPyDecode.git"
-	FALLBACK_COMMIT="50b3aef110ed89c82e4e6ed1fa7644545fafea60" # Aug 8, 2025
-	IUSE+=" fallback-commit"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
@@ -69,7 +71,9 @@ PATCHES=(
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
-		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
 		git-r3_fetch
 		git-r3_checkout
 	else
