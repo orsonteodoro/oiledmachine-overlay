@@ -107,7 +107,7 @@ RDEPEND="
 		virtual/opencl:*
 	)
 	rocm? (
-		dev-libs/rocm-device-libs:=
+		~dev-libs/rocm-device-libs-${PV}:=
 		~dev-util/hip-${PV}:=[${LIBSTDCXX_USEDEP},rocm]
 	)
 "
