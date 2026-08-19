@@ -31,7 +31,11 @@ SANITIZER_FLAGS=(
 	"cfi"
 )
 
-inherit check-compiler-switch cmake dhms flag-o-matic libcxx-slot libstdcxx-slot rocm toolchain-funcs
+CHKL_TIMESTAMPS=(
+	"dev-libs/libxml2-9999"
+)
+
+inherit check-compiler-switch chkl cmake dhms flag-o-matic libcxx-slot libstdcxx-slot secure-version toolchain-funcs rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/llvm-project-rocm-${PV}/llvm"
@@ -120,10 +124,10 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	dev-libs/libxml2:=
-	sys-libs/ncurses:=
+	>=dev-libs/libxml2-${LIBXML2_PV}:=
+	>=sys-libs/ncurses-${NCURSES_PV}:=
+	>=virtual/zlib-${ZLIB_PV}:=
 	virtual/cblas:*
-	virtual/zlib:=
 	~sys-devel/llvm-roc-symlinks-${PV}:=
 	asan? (
 		~dev-libs/rocm-comgr-${PV}:=
@@ -203,7 +207,7 @@ src_prepare() {
 }
 
 src_configure() {
-	:
+	chkl_check_many_timestamps
 }
 
 use_sanitizer() {
