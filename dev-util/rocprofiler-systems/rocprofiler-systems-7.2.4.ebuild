@@ -9,13 +9,14 @@ EAPI=8
 
 # For requirements, see
 # https://github.com/ROCm/omnitrace/blob/rocm-7.2.4/source/docs/installation.md
+# https://github.com/ROCm/rocprofiler-systems/blob/rocm-7.2.4/cmake/DyninstLibIberty.cmake#L88
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
-BINUTILS_PV="2.40"
+BINUTILS_PV="2.45"
 CXX_STANDARD="ignore"
 LLVM_SLOT=22
 PYTHON_COMPAT=( "python3_"{10,12} )
@@ -113,7 +114,7 @@ SLOT="0/${ROCM_SLOT}"
 IUSE="
 -debuginfod examples -mpi +openmp +papi -python +rccl +rocprofiler
 +roctracer test system-dyninst system-libunwind system-papi +rocm-smi
-ebuild_revision_8
+ebuild_revision_9
 "
 # The vendored dyninst is build-time broken.
 REQUIRED_USE="
