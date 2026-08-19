@@ -3,6 +3,7 @@
 
 EAPI=8
 
+# For versioning, the ebuild does accept the 153.0 like in the ftp folder.
 # See also https://ftp.mozilla.org/pub/firefox/releases/
 
 MOZ_ESR=yes
@@ -33,42 +34,62 @@ MOZ_P="${MOZ_PN}-${MOZ_PV}"
 MOZ_PV_DISTFILES="${MOZ_PV}${MOZ_PV_SUFFIX}"
 MOZ_P_DISTFILES="${MOZ_PN}-${MOZ_PV_DISTFILES}"
 
-MITIGATION_DATE="Jul 21, 2026" # Official annoucement (blog)
-MITIGATION_LAST_UPDATE=1784568240 # From `date +%s -d "20-Jul-2026 10:24"` From ftp linux-x86_64/en-US/
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-70/"
+MITIGATION_DATE="Aug 18, 2026" # Official annoucement (advisories)
+MITIGATION_LAST_UPDATE=1786993260 # From `date +%s -d "17-Aug-2026 12:01"` From ftp linux-x86_64/en-US/
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-77/"
 VULNERABILITIES_FIXED=(
-	"CVE-2026-15718;IF;Medium"
-	"CVE-2026-15719;IOV;"
-	"CVE-2026-16349;SOPB;"
-	"CVE-2026-16350;IBC;"
-	"CVE-2026-16362;UAF;"
-	"CVE-2026-16351;UAF, SBE;"
-	"CVE-2026-16352;UAF, SBE;"
-	"CVE-2026-16363;JITM;"
-	"CVE-2026-16353;UAF, NPD, UPTR;Critical"
-	"CVE-2026-16354;ID;"
-	"CVE-2026-16368;IBC;"
-	"CVE-2026-16369;IO;"
-	"CVE-2026-16355;JITM;"
-	"CVE-2026-16356;UAF, SBE;"
-	"CVE-2026-16357;IBC;"
-	"CVE-2026-16371;PE;"
-	"CVE-2026-16374;ID;"
-	"CVE-2026-16375;IOV;"
-	"CVE-2026-16377;SB;"
-	"CVE-2026-16379;PE;"
-	"CVE-2026-16358;IOV;"
-	"CVE-2026-16381;SOPB;"
-	"CVE-2026-16383;SB;"
-	"CVE-2026-16387;IOV, IAC, ID;Critical"
-	"CVE-2026-16390;SB;"
-	"CVE-2026-16391;ID;"
-	"CVE-2026-16359;IBC;"
-	"CVE-2026-16396;PE;"
-	"CVE-2026-16405;ID;"
-	"CVE-2026-16412;MC, ACE;"
-	"CVE-2026-16360;MC, ACE;"
-	"CVE-2026-16361;MC, ACE;"
+	"CVE-2026-74934;IOV;"
+	"CVE-2026-74935;PE;"
+	"CVE-2026-74936;UAF;"
+	"CVE-2026-74937;UAF;"
+	"CVE-2026-74938;SB;"
+	"CVE-2026-74939;PE;"
+	"CVE-2026-74940;UAF;"
+	"CVE-2026-74941;PE;"
+	"CVE-2026-74942;PE;"
+	"CVE-2026-74943;UAF;"
+	"CVE-2026-74944;UAF;"
+	"CVE-2026-74945;ID;"
+	"CVE-2026-74946;IBC, PE;"
+	"CVE-2026-74947;PE;"
+	"CVE-2026-74948;ID;"
+	"CVE-2026-74949;UAF, PE;"
+	"CVE-2026-74950;PE;"
+	"CVE-2026-74953;PE;"
+	"CVE-2026-74954;ID, SC;"
+	"CVE-2026-74955;PE;"
+	"CVE-2026-74956;SOPB, WBSPB;"
+	"CVE-2026-74957;SB;"
+	"CVE-2026-74958;ID;"
+	"CVE-2026-74959;SB;"
+	"CVE-2026-74960;IOV;"
+	"CVE-2026-74961;SC;"
+	"CVE-2026-74962;IOV;"
+	"CVE-2026-74963;SOPB, WBSPB;"
+	"CVE-2026-74964;IO;"
+	"CVE-2026-74965;PE;"
+	"CVE-2026-74966;ID;"
+	"CVE-2026-74967;SOPB, WBSPB;"
+	"CVE-2026-74968;IOV;"
+	"CVE-2026-74969;UAF;"
+	"CVE-2026-74970;IOV;"
+	"CVE-2026-74971;ID;"
+	"CVE-2026-74972;ID;"
+	"CVE-2026-74973;RC, UAF;"
+	"CVE-2026-74974;SOPB, WBSPB;"
+	"CVE-2026-74976;JITM;"
+	"CVE-2026-74977;IO;"
+	"CVE-2026-74978;;"
+	"CVE-2026-74979;SB;"
+	"CVE-2026-74981;IOV;"
+	"CVE-2026-74982;;"
+	"CVE-2026-74983;SB;"
+	"CVE-2026-74984;RC;"
+	"CVE-2026-74985;PE;"
+	"CVE-2026-74986;IOV;"
+	"CVE-2026-74987;;"
+	"CVE-2026-74988;;"
+	"CVE-2026-74990;;"
 )
 
 CHKL_TIMESTAMPS=(
@@ -91,12 +112,11 @@ inherit chkl desktop linux-info optfeature pax-utils secure-version vf web-kerne
 MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/releases/${MOZ_PV}"
 
 SRC_URI="amd64? ( ${MOZ_SRC_BASE_URI}/linux-x86_64/en-US/${MOZ_P}.tar.xz -> ${PN}_x86_64-${PV}.tar.xz )
-	arm64? ( ${MOZ_SRC_BASE_URI}/linux-aarch64/en-US/${MOZ_P}.tar.xz -> ${PN}_aarch64-${PV}.tar.xz )
-	x86? ( ${MOZ_SRC_BASE_URI}/linux-i686/en-US/${MOZ_P}.tar.xz -> ${PN}_i686-${PV}.tar.xz )"
+	arm64? ( ${MOZ_SRC_BASE_URI}/linux-aarch64/en-US/${MOZ_P}.tar.xz -> ${PN}_aarch64-${PV}.tar.xz )"
 
 DESCRIPTION="Firefox Web Browser"
 
-KEYWORDS="-* amd64 arm64 ~x86"
+KEYWORDS="-* amd64 ~arm64"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 IUSE="apulse +gmp-autoupdate +libpulse selinux wayland"
 REQUIRED_USE="
@@ -282,9 +302,8 @@ src_install() {
 		"${ED}${MOZILLA_FIVE_HOME}"/${MOZ_PN}-bin \
 		"${ED}${MOZILLA_FIVE_HOME}"/plugin-container
 
-	# Install policy (currently only used to disable application updates)
-	insinto "${MOZILLA_FIVE_HOME}/distribution"
-	newins "${FILESDIR}"/disable-auto-update.policy.json policies.json
+	# Prevent auto-updater from popping up.
+	echo "This installation is managed by Gentoo's package manager." > "${ED}${MOZILLA_FIVE_HOME}"/is-packaged-app
 
 	# Install system-wide preferences
 	local PREFS_DIR="${MOZILLA_FIVE_HOME}/browser/defaults/preferences"
@@ -433,3 +452,5 @@ pkg_postinst() {
 	# optfeature "ffmpeg-based audio/video codec support, required for HTML5 video rendering" media-video/ffmpeg
 	optfeature "desktop notifications" x11-libs/libnotify
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 152.0.6 (interactive, 20260714)
