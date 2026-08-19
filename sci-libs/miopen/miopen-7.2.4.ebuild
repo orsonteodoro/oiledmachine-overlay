@@ -3,8 +3,8 @@
 
 EAPI=8
 
-CXX_STANDARD=17
-FIN_COMMIT="77669a7a1158e336ec831c19525a66db3d2d37f1"
+CXX_STANDARD=20
+FIN_COMMIT="bf59df55d73601603833676c17de0efc727c247e"
 LLVM_SLOT=22
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -80,7 +80,7 @@ SLOT="0/${ROCM_SLOT}"
 IUSE="
 +ai-kernel-tuning comgr composable-kernel debug hipblaslt hiprtc kernels
 miopendriver mlir opencl +rocm test
-ebuild_revision_24
+ebuild_revision_26
 "
 gen_amdgpu_required_use() {
 	local x
@@ -196,10 +196,10 @@ DEPEND="
 	${RDEPEND}
 	>=dev-libs/half-1.12.0:=
 	>=dev-cpp/eigen-3.4.0:=
-	>=dev-cpp/frugally-deep-0.15.20:=
+	>=dev-cpp/frugally-deep-0.15.31:=
 	>=dev-cpp/nlohmann_json-${NLOHMANN_JSON_PV}:=
 	ai-kernel-tuning? (
-		>=dev-cpp/frugally-deep-0.15.21_p0:=
+		>=dev-cpp/frugally-deep-0.15.31:=
 		>=dev-cpp/eigen-3.4.0:=
 	)
 	hipblaslt? (
