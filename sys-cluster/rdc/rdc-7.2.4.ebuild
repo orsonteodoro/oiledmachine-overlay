@@ -13,7 +13,12 @@ GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
-inherit abseil-cpp check-compiler-switch cmake flag-o-matic grpc libstdcxx-slot protobuf re2 rocm
+CHKL_TIMESTAMPS=(
+	"sys-apps/systemd-9999"
+	"sys-libs/libcap-9999"
+)
+
+inherit abseil-cpp check-compiler-switch chkl cmake flag-o-matic grpc libstdcxx-slot protobuf re2 secure-version rocm
 
 if [[ "${PV}" == *"9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/rdc/"
@@ -43,7 +48,7 @@ SLOT="0/${ROCM_SLOT}"
 # raslib is installed by default, but disabled for security.
 IUSE="
 asan +compile-commands doc +raslib +standalone systemd test
-ebuild_revision_22
+ebuild_revision_23
 "
 REQUIRED_USE="
 	raslib
@@ -52,8 +57,8 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	sys-libs/libcap:=
 	>=dev-util/rocm-smi-${PV}:=
+	>=sys-libs/libcap-${LIBCAP_PV}:=
 	standalone? (
 		net-libs/grpc:=[${LIBSTDCXX_USEDEP}]
 		|| (
@@ -61,7 +66,7 @@ RDEPEND="
 		)
 	)
 	systemd? (
-		sys-apps/systemd:=
+		>=sys-apps/systemd-${SYSTEMD_PV}:=
 	)
 "
 #	|| (
@@ -82,10 +87,8 @@ BDEPEND="
 	)
 	test? (
 		>=dev-cpp/gtest-1.11.0
-		>=dev-libs/rocr-runtime-${PV}:=
-		dev-libs/rocr-runtime:=
-		>=dev-util/rocprofiler-${PV}:=
-		dev-util/rocprofiler:=
+		~dev-libs/rocr-runtime-${PV}:=
+		~dev-util/rocprofiler-${PV}:=
 	)
 "
 PATCHES=(
@@ -103,6 +106,8 @@ src_prepare() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
+
 	rocm_set_default_gcc
 
 	check-compiler-switch_end
