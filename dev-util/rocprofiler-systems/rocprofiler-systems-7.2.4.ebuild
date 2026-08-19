@@ -23,25 +23,25 @@ ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 LEGACY_TBB_SLOT=2
 
-CALIPER_COMMIT="7e66987f0d9af19dcaa13fb78197cdc8437d8a3f"
-DYNINST_COMMIT_1="b4350c3c1426a36d5d5e70b3b172bce1b0bff335"
+CALIPER_COMMIT="7e66987f0d9af19dcaa13fb78197cdc8437d8a3f" # timememory dep
+DYNINST_COMMIT_1="fceecfea0a6d414a867e0a55ee937ae4ab5c3d80"
 DYNINST_COMMIT_2="076d8bdef4f22639d16ca65cda9b909b6c726047" # timemory dep
 DYNINST_TESTSUITE_COMMIT_2="3a5c5794dcf38ad5452816046b39c0c2528d86f5" # dyninst (2) dep, committer-date:<=2021-09-29
 ELFIO_COMMIT="d00cc32f8b1ed85d22309fac10576a1baf8a4736"
-GOOGLETEST_COMMIT="4174e1703ba8412e84b2959c1cf57433d144b32d"
-GOTCHA_COMMIT="6ef1232a0acc99f3340c2ca4c5d23890e9b8a459"
-HATCHET_COMMIT="a1f13410b0bf2334459bf07fee767cda81794cad"
-LIBUNWIND_COMMIT="501d8d5e6a06236b87d10a2b1b85008fde3fcbcc"
-LLVM_OPENMP_COMMIT="998ea02399846927f3e329b6cc9fe387a8d39947"
-LINE_PROFILER_COMMIT="794adeb01ea1353f713a030f6cbd5e0e5780cb21"
-PAPI_COMMIT="3ce9001dff49e1b6b1653ffb429808795f71a0bd"
+GOOGLETEST_COMMIT="4174e1703ba8412e84b2959c1cf57433d144b32d" # timememory dep
+GOTCHA_COMMIT="6ef1232a0acc99f3340c2ca4c5d23890e9b8a459" # timememory dep
+HATCHET_COMMIT="a1f13410b0bf2334459bf07fee767cda81794cad" # timememory dep
+LIBUNWIND_COMMIT="501d8d5e6a06236b87d10a2b1b85008fde3fcbcc" # timememory dep
+LLVM_OPENMP_COMMIT="998ea02399846927f3e329b6cc9fe387a8d39947" # timememory dep
+LINE_PROFILER_COMMIT="794adeb01ea1353f713a030f6cbd5e0e5780cb21" # timememory dep
+PAPI_COMMIT="90e0121d775c3cacb18528d2bf64050cace38a3c"
 PERFETTO_COMMIT_1="35b3d9845c2f4017865c4dc93fafcf6d202f1651"
 PERFETTO_COMMIT_2="dd1f2f378fe2f292f78af922828f93a9f101d373" # timemory dep
 PTL_COMMIT_1="f0205c1935f14861b05152378b7ac1c9234cddc0"
 PTL_COMMIT_2="2275ff374d2e469c0e632e86d8319127349ec301" # timemory dep
 PYBIND11_COMMIT_1="1a917f1852eb7819b671fc3fa862840f4c491a07" # timemory dep also
-TIMEMORY_COMMIT="5780cc73c0f9f97e99b7ef3efdde6a4a26ccf3d0"
-YAML_CPP_COMMIT="1b50109f7bea60bd382d8ea7befce3d2bd67da5f"
+TIMEMORY_COMMIT="4daa81b7a49b918918bb12bcaa90fc2c4698d527"
+YAML_CPP_COMMIT="1b50109f7bea60bd382d8ea7befce3d2bd67da5f" # timemory dep
 
 inherit check-compiler-switch cmake dep-prepare flag-o-matic libstdcxx-slot python-single-r1 rocm
 
@@ -113,7 +113,7 @@ SLOT="0/${ROCM_SLOT}"
 IUSE="
 -debuginfod examples -mpi +openmp +papi -python +rccl +rocprofiler
 +roctracer test system-dyninst system-libunwind system-papi +rocm-smi
-ebuild_revision_7
+ebuild_revision_8
 "
 # The vendored dyninst is build-time broken.
 REQUIRED_USE="
