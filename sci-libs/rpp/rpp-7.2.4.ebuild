@@ -46,7 +46,12 @@ GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
-inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot rocm toolchain-funcs
+CHKL_TIMESTAMPS=(
+	"media-libs/libjpeg-turbo-9999"
+	"media-libs/opencv-4.9999"
+)
+
+inherit check-compiler-switch chkl cmake flag-o-matic libstdcxx-slot rocm secure-version toolchain-funcs
 
 if [[ ${PV} == *"9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/"
@@ -71,7 +76,7 @@ IUSE+="
 ${LLVM_COMPAT/#/llvm_slot_}
 ${ROCM_IUSE}
 cpu opencl rocm test
-ebuild_revision_19
+ebuild_revision_20
 "
 gen_rocm_required_use() {
 	local x
@@ -103,7 +108,6 @@ RDEPEND="
 	)
 	rocm? (
 		dev-libs/rocm-device-libs:=
-		dev-libs/rocm-device-libs:=
 		~dev-util/hip-${PV}:=[${LIBSTDCXX_USEDEP},rocm]
 	)
 "
@@ -116,8 +120,11 @@ BDEPEND="
 	${ROCM_CLANG_DEPEND}
 	>=dev-build/cmake-3.5
 	test? (
-		>=media-libs/libjpeg-turbo-2.0.6.1
-		>=media-libs/opencv-3.4.0:=[${LIBSTDCXX_USEDEP},jpeg]
+		>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:=
+		>=media-libs/opencv-${OPENCV4_PV}:=[${LIBSTDCXX_USEDEP},jpeg]
+		|| (
+			=media-libs/opencv-${OPENCV4_PV}[${LIBSTDCXX_USEDEP},jpeg]
+		)
 	)
 "
 PATCHES=(
@@ -169,6 +176,8 @@ src_prepare() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
+
 	local mycmakeargs=(
 		-DCMAKE_C_COMPILER="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang"
 		-DCMAKE_CXX_COMPILER="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang++"
