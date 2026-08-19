@@ -18986,7 +18986,7 @@ einfo "Removing tcca configs for EOL version ${pv}"
 			rm "${EROOT}/etc/tcca-${pv}"*"-"*"-"*".conf" 2>/dev/null
 		fi
 	done
-)
+}
 
 # @FUNCTION: ot-kernel_pkg_postinst
 # @DESCRIPTION:
