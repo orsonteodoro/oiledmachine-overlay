@@ -354,9 +354,9 @@ ${ARM_FLAGS[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PPC_FLAGS[@]}
 ${X86_FLAGS[@]}
-bbrv2 build c2tcp cfi +cfs -clang deepcc -debug doc -dwarf4 -dwarf5 -dwarf-auto
+amdgpu-dkms bbrv2 build c2tcp cfi +cfs -clang deepcc -debug doc -dwarf4 -dwarf5 -dwarf-auto
 -exfat -expoline -gdb +genpatches -genpatches_1510 -lto nest multigen_lru orca
-pgo prjc qt5 +retpoline rock-dkms rt shadowcallstack symlink tresor tresor_prompt
+pgo prjc qt5 +retpoline rt shadowcallstack symlink tresor tresor_prompt
 tresor_sysfs uksm zen-multigen_lru zen-sauce
 "
 
@@ -787,10 +787,9 @@ BDEPEND+="
 "
 
 PDEPEND+="
-	rock-dkms? (
+	amdgpu-dkms? (
 		|| (
-			>=virtual/kfd-7.0:0/7.0[rock-dkms]
-			>=virtual/kfd-6.4:0/6.4[rock-dkms]
+			>=virtual/kfd-7.2:0/7.2[amdgpu-dkms]
 		)
 	)
 "

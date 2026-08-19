@@ -405,7 +405,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PPC_FLAGS[@]}
 ${RISCV_FLAGS[@]}
 ${X86_FLAGS[@]}
-bbrv2 bbrv3 build c2tcp +cet -clang deepcc -debug doc -dwarf4 -dwarf5
+amdgpu-dkms bbrv2 bbrv3 build c2tcp +cet -clang deepcc -debug doc -dwarf4 -dwarf5
 -dwarf-auto +eevdf -exfat -expoline -gdb +genpatches -genpatches_1510 -kcfi -lto nest
 orca pgo prjc qt5 qt6 +retpoline rt -rust -scx shadowcallstack symlink tresor tresor_prompt
 tresor_sysfs zen-sauce
@@ -925,6 +925,11 @@ if ! [[ "${PV}" =~ "9999" ]] ; then
 	"
 fi
 PDEPEND+="
+	amdgpu-dkms? (
+		|| (
+			>=virtual/kfd-7.2:0/7.2[amdgpu-dkms]
+		)
+	)
 "
 
 if [[ "${PV}" =~ "9999" ]] ; then

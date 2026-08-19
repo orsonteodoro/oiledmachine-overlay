@@ -294,17 +294,22 @@
 
     GPU/AI stack compatibility
 
-      7.0:  * CUDA 12.6 - 13.2; x ROCm 7.2.x
-     6.18:  * CUDA 12.6 - 13.2; x ROCm 7.2.x
-     6.12:  * CUDA 12.6 - 13.2; A ROCm 7.0 - 7.2.x
-      6.6:  A CUDA 12.2 - 12.8; * ROCm 6.2, 6.3, 7.0
-      6.1:  A CUDA 12.0 - 12.6; * ROCm 6.1, 6.2, 6.3
-     5.15:  x CUDA 11.8 - 12.2; x ROCm 5.x - 6.0
-     5.10:  x CUDA 11.4 - 11.8; x ROCm 5.x - 6.0
+         :                     : Compat with amdgpu-dkms ; Without amdgpu-dkms
+     live:  x                  ; x ROCm-dev              ; x ROCm-dev
+      7.2:  x                  ; x ROCm-dev              ; x ROCm-dev
+      7.1:  x                  ; x -                     ; x -
+      7.0:  A CUDA 13.3 - 13.3 ; x -                     ; x -
+     6.18:  x -                ; x -                     ; W ROCm 7.1, 7.1, 7.2
+     6.12:  A CUDA 13.0 - 13.3 ; W ROCm 7.1 - ROCm-dev   ; x ROCm 6.3, 6.4
+      6.6:  A CUDA 13.0 - 13.3 ; x ROCm 6.0 - 7.1        ; x ROCm 6.0
+      6.1:  A CUDA 12.3 - 13.3 ; W ROCm 6.4 - ROCm-dev   ; x ROCm 5.3, 5.4, 5.5
+     5.15:  x CUDA 11.8 - 12.9 ; W ROCm 6.0 - ROCm-dev   ; x ROCm 4.5, 5.0
+     5.10:  x CUDA 11.8 - 12.9 ; x -                     ; x ROCm 4.1
 
     x Not supported on overlay
     * Supported on overlay
     A Available support but not tested
+    W Work-in-progress for ROCm 7.2 for both userland and kernel drivers
 
 
     Testing, uptime, maintenance mode status
@@ -5345,7 +5350,7 @@ unset OT_KERNEL_PRIVATE_KEY
     Valid values:  0 (default), 1
 
     AMDGPU_DIRECT_DMA_FOR_SSG - Enable Direct DMA for SSG.  This requires the
-    rock-dkms USE flag.
+    amdgpu-dkms USE flag.
     Valid values:  0 (default), 1
 
     AMDGPU_EXP_HW_SUPPORT - Enable kernel driver support for experimental hardware.
@@ -5356,7 +5361,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
         Kernel 5.4 for Arcturus, Renoir, Navi 12
 
-      For the rock-dkms kernel driver:
+      For the amdgpu-dkms kernel driver:
 
         Does not apply or fully supported
 
@@ -6009,6 +6014,24 @@ unset OT_KERNEL_PRIVATE_KEY
     <remote-id type="cpe">cpe:/o:linux:linux_kernel</remote-id>
   </upstream>
   <use>
+    <flag name="amdgpu-dkms">
+      Build the amdgpu DRM driver in this kernel package as an out-of-tree
+      external module so that the amdgpu-dkms driver can be loaded (via modprobe
+      or insmod) as its replacement.
+
+      In addition, install the amdgpu-dkms kernel module package after this
+      package.
+
+      The amdgpu-dkms driver is available for the following LTS kernels:
+
+      6.12.x
+      6.1.x
+      5.15.x
+
+      Alternatively, you can use the 6.18 kernel without amdgpu-dkms for the
+      equivalent compatible release for the ROCm 7.2.
+
+    </flag>
     <flag name="big-endian">
       Install dependencies needed to build big-endian support.
     </flag>
@@ -6324,13 +6347,6 @@ unset OT_KERNEL_PRIVATE_KEY
     </flag>
     <flag name="retpoline">
       Installs dependencies for retpoline support.
-    </flag>
-    <flag name="rock-dkms">
-      Build the amdgpu DRM driver in this kernel package as a module so that the
-      rock-dkms driver can be loaded (via modprobe or insmod) as its replacement.
-
-      In addition, install the rock-dkms kernel module package after this
-      package.
     </flag>
     <flag name="rt">
       Applies the the PREEMPT_RT patchset which makes the kernel program fully
