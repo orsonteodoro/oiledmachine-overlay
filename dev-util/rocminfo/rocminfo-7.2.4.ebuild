@@ -16,10 +16,12 @@ ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 inherit check-compiler-switch cmake flag-o-matic python-single-r1 rocm
 
 if [[ "${PV}" == *"9999" ]] ; then
+	#FALLBACK_COMMIT="rocm-7.2.4"
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/rocminfo/"
 	EGIT_BRANCH="amd-staging"
-	FALLBACK_COMMIT="rocm-6.2.4"
-	IUSE+=" fallback-commit"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 	inherit git-r3
 else
 	KEYWORDS="~amd64"
