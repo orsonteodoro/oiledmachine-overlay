@@ -286,6 +286,7 @@ RDEPEND="
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
 		virtual/cuda-compiler:=
+		x11-drivers/nvidia-drivers:=
 	)
 	cuda_targets_sm_35? (
 		${CUDA_11_8_RDEPEND}
