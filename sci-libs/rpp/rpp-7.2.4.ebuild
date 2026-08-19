@@ -6,8 +6,9 @@ EAPI=8
 # TODO:  review the install prefix
 
 # See https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/blob/rocm-7.2.4/docs/release.md?plain=1#L18
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CXX_STANDARD=17
-LLVM_COMPAT=( "18" )
+LLVM_COMPAT=( "22" )
 LLVM_SLOT="${LLVM_COMPAT[0]}"
 ROCM_SLOT=$(ver_cut "1-2" "${PV}")
 ROCM_VERSION="${PV}"
@@ -51,7 +52,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/opencv-4.9999"
 )
 
-inherit check-compiler-switch chkl cmake flag-o-matic libstdcxx-slot rocm secure-version toolchain-funcs
+inherit cflags-hardened check-compiler-switch chkl cmake flag-o-matic libstdcxx-slot rocm secure-version toolchain-funcs
 
 if [[ ${PV} == *"9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/"
@@ -76,7 +77,7 @@ IUSE+="
 ${LLVM_COMPAT/#/llvm_slot_}
 ${ROCM_IUSE}
 cpu opencl rocm test
-ebuild_revision_20
+ebuild_revision_21
 "
 gen_rocm_required_use() {
 	local x
@@ -177,6 +178,7 @@ src_prepare() {
 
 src_configure() {
 	chkl_check_many_timestamps
+	cflags-hardened_append
 
 	local mycmakeargs=(
 		-DCMAKE_C_COMPILER="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang"
@@ -226,7 +228,7 @@ ewarn "If the build fails, use either -O0 or the systemwide optimization level."
 		# Fix:
 		# lld: error: undefined symbol: __stack_chk_guard
 		append-flags \
-			-fno-stack-protector
+			"-fno-stack-protector"
 	elif use cpu ; then
 		mycmakeargs+=(
 			-DBACKEND="CPU"
