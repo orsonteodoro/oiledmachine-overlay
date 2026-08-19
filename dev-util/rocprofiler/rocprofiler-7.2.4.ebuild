@@ -52,7 +52,11 @@ GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_ROCM_7_2[@]}"
 )
 
-inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot python-any-r1 rocm
+CHKL_TIMESTAMPS=(
+	"sys-apps/systemd-9999"
+)
+
+inherit check-compiler-switch chkl cmake flag-o-matic libstdcxx-slot python-any-r1 secure-version rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-rocm-${PV}"
@@ -94,10 +98,10 @@ RDEPEND="
 	~dev-util/hip-${PV}:=[${LIBSTDCXX_USEDEP}]
 	~dev-util/roctracer-${PV}:=[${LIBSTDCXX_USEDEP}]
 	plugins? (
-		sys-apps/systemd:=
+		>=sys-apps/systemd-${SYSTEMD_PV}:=
 	)
 	samples? (
-		sys-apps/systemd:=
+		>=sys-apps/systemd-${SYSTEMD_PV}:=
 	)
 "
 DEPEND="
@@ -111,7 +115,7 @@ BDEPEND="
 	>=dev-build/cmake-3.18.0
 	~sys-devel/llvm-roc-symlinks-${PV}:=
 	test? (
-		sys-devel/gcc[sanitize]
+		sys-devel/gcc:=[sanitize]
 		~dev-libs/ROCdbgapi-${PV}:=
 	)
 "
@@ -146,6 +150,8 @@ src_prepare() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
+
 	# Fixes for libhsa-runtime64.so.1.12.0: undefined reference to `hsaKmtGetAMDGPUDeviceHandle'
 	rocm_set_default_clang
 
