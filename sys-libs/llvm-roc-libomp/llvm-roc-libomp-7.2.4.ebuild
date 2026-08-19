@@ -17,7 +17,8 @@ ROCM_USE_LLVM_ROC=1
 # https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-7.2.4/clang/include/clang/Basic/Cuda.h
 # CUDA targets:  https://github.com/ROCm/llvm-project/blob/rocm-7.2.4/offload/hostexec/CMakeLists.txt#L134
 # ROCm targets:  https://github.com/ROCm/llvm-project/blob/rocm-7.2.4/offload/hostexec/CMakeLists.txt#L129
-
+# See also https://github.com/ROCm/llvm-project/blob/rocm-7.2.4/clang/lib/Basic/OffloadArch.cpp#L21
+# See also https://github.com/ROCm/llvm-project/blob/rocm-7.2.4/clang/lib/CodeGen/CGOpenMPRuntimeGPU.cpp#L2518
 AMDGPU_TARGETS_COMPAT=(
 	"gfx700"
 	"gfx701"
@@ -54,8 +55,9 @@ AMDGPU_TARGETS_COMPAT=(
 )
 
 CUDA_TARGETS_COMPAT=(
-	#"sm_35"
-	#"sm_37"
+	"auto"
+	"sm_35"
+	"sm_37"
 	"sm_50"
 	"sm_52"
 	"sm_53"
@@ -67,8 +69,23 @@ CUDA_TARGETS_COMPAT=(
 	"sm_75"
 	"sm_80"
 	"sm_86"
+	"sm_87"
+	"sm_88"
 	"sm_89"
 	"sm_90"
+	"sm_90a"
+	"sm_100"
+	"sm_100a"
+	"sm_101"
+	"sm_101a"
+	"sm_103"
+	"sm_103a"
+	"sm_110"
+	"sm_110a"
+	"sm_120"
+	"sm_120a"
+	"sm_121"
+	"sm_121a"
 )
 
 inherit libstdcxx-compat
@@ -205,36 +222,63 @@ REQUIRED_USE="
 	)
 "
 
+CUDA_11_8_RDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-11.8*
+		>=x11-drivers/nvidia-drivers-520.61
+		virtual/cuda-compiler:0/11.8[${LIBSTDCXX_USEDEP}]
+	)
+"
+CUDA_12_3_RDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-12.3*
+		>=x11-drivers/nvidia-drivers-545.23
+		virtual/cuda-compiler:0/12.3[${LIBSTDCXX_USEDEP}]
+	)
+"
+CUDA_12_4_RDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-12.4*
+		>=x11-drivers/nvidia-drivers-550.54
+		virtual/cuda-compiler:0/12.4[${LIBSTDCXX_USEDEP}]
+	)
+"
+CUDA_12_5_RDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-12.5*
+		>=x11-drivers/nvidia-drivers-555.42
+		virtual/cuda-compiler:0/12.5[${LIBSTDCXX_USEDEP}]
+	)
+"
 CUDA_12_6_RDEPEND="
 	(
-		>=dev-libs/cudnn-8.8.0
-		<dev-libs/cudnn-9.25.0
-
-		>=x11-drivers/nvidia-drivers-560.35
 		=dev-util/nvidia-cuda-toolkit-12.6*
-		virtual/cuda-compiler:0/12.6
+		>=x11-drivers/nvidia-drivers-560.35
+		virtual/cuda-compiler:0/12.6[${LIBSTDCXX_USEDEP}]
 	)
 "
 CUDA_12_8_RDEPEND="
 	(
-		>=dev-libs/cudnn-8.8.0
-		<dev-libs/cudnn-9.25.0
-
-		>=x11-drivers/nvidia-drivers-570.124
 		=dev-util/nvidia-cuda-toolkit-12.8*
-		virtual/cuda-compiler:0/12.8
+		>=x11-drivers/nvidia-drivers-570.124
+		virtual/cuda-compiler:0/12.8[${LIBSTDCXX_USEDEP}]
 	)
 "
 CUDA_12_9_RDEPEND="
 	(
-		>=dev-libs/cudnn-8.8.0
-		<dev-libs/cudnn-9.25.0
-
-		>=x11-drivers/nvidia-drivers-575.57
 		=dev-util/nvidia-cuda-toolkit-12.9*
-		virtual/cuda-compiler:0/12.9
+		>=x11-drivers/nvidia-drivers-575.57
+		virtual/cuda-compiler:0/12.9[${LIBSTDCXX_USEDEP}]
 	)
 "
+CUDA_13_0_RDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-13.0*
+		>=x11-drivers/nvidia-drivers-580.95
+		virtual/cuda-compiler:0/13.0[${LIBSTDCXX_USEDEP}]
+	)
+"
+
 RDEPEND="
 	>=dev-libs/libffi-${LIBFFI_PV}:=
 	~dev-libs/rocm-device-libs-${PV}:=
@@ -243,95 +287,253 @@ RDEPEND="
 		dev-util/nvidia-cuda-toolkit:=
 		virtual/cuda-compiler:=
 	)
+	cuda_targets_sm_35? (
+		${CUDA_11_8_RDEPEND}
+	)
+	cuda_targets_sm_37? (
+		${CUDA_11_8_RDEPEND}
+	)
 	cuda_targets_sm_50? (
 		|| (
-			${CUDA_12_9_RDEPEND}
-			${CUDA_12_8_RDEPEND}
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
 			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
 		)
 	)
 	cuda_targets_sm_52? (
 		|| (
-			${CUDA_12_9_RDEPEND}
-			${CUDA_12_8_RDEPEND}
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
 			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
 		)
 	)
 	cuda_targets_sm_53? (
 		|| (
-			${CUDA_12_9_RDEPEND}
-			${CUDA_12_8_RDEPEND}
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
 			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
 		)
 	)
 	cuda_targets_sm_60? (
 		|| (
-			${CUDA_12_9_RDEPEND}
-			${CUDA_12_8_RDEPEND}
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
 			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
 		)
 	)
 	cuda_targets_sm_61? (
 		|| (
-			${CUDA_12_9_RDEPEND}
-			${CUDA_12_8_RDEPEND}
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
 			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
 		)
 	)
 	cuda_targets_sm_62? (
 		|| (
-			${CUDA_12_9_RDEPEND}
-			${CUDA_12_8_RDEPEND}
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
 			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
 		)
 	)
 	cuda_targets_sm_70? (
 		|| (
-			${CUDA_12_9_RDEPEND}
-			${CUDA_12_8_RDEPEND}
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
 			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
 		)
 	)
 	cuda_targets_sm_72? (
 		|| (
-			${CUDA_12_9_RDEPEND}
-			${CUDA_12_8_RDEPEND}
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
 			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
 		)
 	)
 	cuda_targets_sm_75? (
 		|| (
-			${CUDA_12_9_RDEPEND}
-			${CUDA_12_8_RDEPEND}
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
 			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
 		)
 	)
 	cuda_targets_sm_80? (
 		|| (
-			${CUDA_12_9_RDEPEND}
-			${CUDA_12_8_RDEPEND}
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
 			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
 		)
 	)
 	cuda_targets_sm_86? (
 		|| (
-			${CUDA_12_9_RDEPEND}
-			${CUDA_12_8_RDEPEND}
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
 			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+		)
+	)
+	cuda_targets_sm_87? (
+		|| (
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
+			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+		)
+	)
+	cuda_targets_sm_88? (
+		|| (
+			${CUDA_13_0_RDEPEND}
 		)
 	)
 	cuda_targets_sm_89? (
 		|| (
-			${CUDA_12_9_RDEPEND}
-			${CUDA_12_8_RDEPEND}
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
 			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
 		)
 	)
 	cuda_targets_sm_90? (
 		|| (
-			${CUDA_12_9_RDEPEND}
-			${CUDA_12_8_RDEPEND}
+			${CUDA_11_8_RDEPEND}
+			${CUDA_12_3_RDEPEND}
+			${CUDA_12_4_RDEPEND}
+			${CUDA_12_5_RDEPEND}
 			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+		)
+	)
+	cuda_targets_sm_100? (
+		|| (
+			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+		)
+	)
+	cuda_targets_sm_100a? (
+		|| (
+			${CUDA_12_6_RDEPEND}
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+		)
+	)
+	cuda_targets_sm_101? (
+		|| (
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+		)
+	)
+	cuda_targets_sm_101a? (
+		|| (
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+		)
+	)
+	cuda_targets_sm_103? (
+		|| (
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+		)
+	)
+	cuda_targets_sm_103a? (
+		|| (
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+		)
+	)
+	cuda_targets_sm_110? (
+		|| (
+			${CUDA_13_0_RDEPEND}
+		)
+	)
+	cuda_targets_sm_110a? (
+		|| (
+			${CUDA_13_0_RDEPEND}
+		)
+	)
+	cuda_targets_sm_120? (
+		|| (
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+		)
+	)
+	cuda_targets_sm_120a? (
+		|| (
+			${CUDA_12_8_RDEPEND}
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+		)
+	)
+	cuda_targets_sm_121? (
+		|| (
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
+		)
+	)
+	cuda_targets_sm_121a? (
+		|| (
+			${CUDA_12_9_RDEPEND}
+			${CUDA_13_0_RDEPEND}
 		)
 	)
 	llvm_targets_AMDGPU? (
