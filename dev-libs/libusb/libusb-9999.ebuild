@@ -8,7 +8,7 @@ CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 inherit cflags-hardened libtool multilib-minimal
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="7b4dc489578bb71a2e1186b9a6b15f416be49ee3"
+	FALLBACK_COMMIT="3601696fae591a4236a5030ea7b42c717e610aa5"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/libusb/libusb.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -27,7 +27,7 @@ LICENSE="LGPL-2.1"
 SLOT="1"
 IUSE+="
 debug doc examples static-libs test udev
-ebuild_revision_9
+ebuild_revision_11
 "
 RESTRICT="!test? ( test )"
 REQUIRED_USE="static-libs? ( !udev )"
