@@ -1,0 +1,55 @@
+--- a/init/Kconfig.orig	2026-08-20 03:25:31.880245703 -0700
++++ b/init/Kconfig	2026-08-20 03:26:27.155563267 -0700
+@@ -157,6 +157,12 @@ config ZEN_INTERACTIVE
+ 	    Background-reclaim hugepages...:   no   ->   yes
+ 	    MG-LRU minimum cache TTL.......:   0    ->   1000 ms
+ 
++	  --- EEVDF CPU Scheduler --------------------------------
++
++	    Minimal granularity............:   0.75 ->   0.4  ms
++	    Bandwidth slice size...........:   5    ->   3    ms
++	    Task rebalancing threshold.....:  32    ->  64
++
+ config BROKEN
+ 	bool
+ 
+--- a/kernel/sched/fair.c.orig	2026-08-20 03:25:15.197991095 -0700
++++ b/kernel/sched/fair.c	2026-08-20 03:27:11.999945236 -0700
+@@ -75,8 +75,13 @@ unsigned int sysctl_sched_tunable_scalin
+  *
+  * (default: 0.70 msec * (1 + ilog(ncpus)), units: nanoseconds)
+  */
++#ifdef CONFIG_ZEN_INTERACTIVE
++unsigned int sysctl_sched_base_slice			= 400000ULL;
++static unsigned int normalized_sysctl_sched_base_slice	= 400000ULL;
++#else
+ unsigned int sysctl_sched_base_slice			= 700000ULL;
+ static unsigned int normalized_sysctl_sched_base_slice	= 700000ULL;
++#endif
+ 
+ /*
+  * After fork, child runs first. If set to 0 (default) then
+@@ -135,8 +140,12 @@ int __weak arch_asym_cpu_priority(int cp
+  *
+  * (default: 5 msec, units: microseconds)
+  */
++#ifdef CONFIG_ZEN_INTERACTIVE
++static unsigned int sysctl_sched_cfs_bandwidth_slice		= 3000UL;
++#else
+ static unsigned int sysctl_sched_cfs_bandwidth_slice		= 5000UL;
+ #endif
++#endif
+ 
+ #ifdef CONFIG_NUMA_BALANCING
+ /* Restrict the NUMA promotion throughput (MB/s) for each target node. */
+--- a/kernel/sched/sched.h.orig	2026-08-20 03:24:55.860950306 -0700
++++ b/kernel/sched/sched.h	2026-08-20 03:26:27.158538320 -0700
+@@ -2531,6 +2531,8 @@ extern void wakeup_preempt(struct rq *rq
+ 
+ #ifdef CONFIG_PREEMPT_RT
+ #define SCHED_NR_MIGRATE_BREAK 8
++#elif defined(CONFIG_ZEN_INTERACTIVE)
++#define SCHED_NR_MIGRATE_BREAK 64
+ #else
+ #define SCHED_NR_MIGRATE_BREAK 32
+ #endif

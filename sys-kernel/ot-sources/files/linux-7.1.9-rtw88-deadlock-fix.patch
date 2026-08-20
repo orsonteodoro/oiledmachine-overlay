@@ -3,9 +3,9 @@ This will restore the 30 day uptime instead of hard reset every day.
 
 Patch status:  testing
 
---- a/drivers/net/wireless/realtek/rtw88/main.c.orig	2026-08-19 23:18:55.305764663 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/main.c	2026-08-20 00:18:44.230963499 -0700
-@@ -2137,6 +2137,9 @@ int rtw_core_init(struct rtw_dev *rtwdev
+--- a/drivers/net/wireless/realtek/rtw88/main.c.orig	2026-06-14 07:58:38.000000000 -0700
++++ b/drivers/net/wireless/realtek/rtw88/main.c	2026-08-20 02:36:43.335478785 -0700
+@@ -2178,6 +2178,9 @@ int rtw_core_init(struct rtw_dev *rtwdev
  	mutex_init(&rtwdev->mutex);
  	mutex_init(&rtwdev->hal.tx_power_mutex);
  
@@ -15,9 +15,9 @@ Patch status:  testing
  	init_waitqueue_head(&rtwdev->coex.wait);
  	init_completion(&rtwdev->lps_leave_check);
  	init_completion(&rtwdev->fw_scan_density);
---- a/drivers/net/wireless/realtek/rtw88/main.h.orig	2026-08-20 00:24:39.868338677 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/main.h	2026-08-20 00:19:08.838232762 -0700
-@@ -2020,6 +2020,8 @@ struct rtw_dev {
+--- a/drivers/net/wireless/realtek/rtw88/main.h.orig	2026-06-14 07:58:38.000000000 -0700
++++ b/drivers/net/wireless/realtek/rtw88/main.h	2026-08-20 02:36:43.336387073 -0700
+@@ -2079,6 +2079,8 @@ struct rtw_dev {
  	/* ensures exclusive access from mac80211 callbacks */
  	struct mutex mutex;
  
@@ -26,9 +26,9 @@ Patch status:  testing
  	/* watch dog every 2 sec */
  	struct delayed_work watch_dog_work;
  	u32 watch_dog_cnt;
---- a/drivers/net/wireless/realtek/rtw88/usb.c.orig	2026-08-19 23:19:19.009720216 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/usb.c	2026-08-20 00:22:24.464272134 -0700
-@@ -13,6 +13,7 @@
+--- a/drivers/net/wireless/realtek/rtw88/usb.c.orig	2026-08-20 02:34:06.571573044 -0700
++++ b/drivers/net/wireless/realtek/rtw88/usb.c	2026-08-20 02:37:15.401431282 -0700
+@@ -14,6 +14,7 @@
  #include "fw.h"
  #include "ps.h"
  #include "usb.h"
@@ -36,7 +36,7 @@ Patch status:  testing
  
  static bool rtw_switch_usb_mode = true;
  module_param_named(switch_usb_mode, rtw_switch_usb_mode, bool, 0644);
-@@ -399,10 +400,16 @@ static bool rtw_usb_tx_agg_skb(struct rt
+@@ -400,6 +401,7 @@ static bool rtw_usb_tx_agg_skb(struct rt
  	unsigned int align_next = 0;
  	u8 qsel;
  	int ret;
@@ -44,16 +44,19 @@ Patch status:  testing
  
  	if (skb_queue_empty(list))
  		return false;
+@@ -418,6 +420,11 @@ static bool rtw_usb_tx_agg_skb(struct rt
+ 		goto queue;
+ 	}
  
 +	if (unlikely(rtwdev->fail)) {
 +		__skb_queue_purge(list);
 +		return false;
 +	}
 +
- 	txcb = kmalloc(sizeof(*txcb), GFP_ATOMIC);
- 	if (!txcb)
- 		return false;
-@@ -459,8 +466,29 @@ queue:
+ 	skb_head = dev_alloc_skb(RTW_USB_MAX_XMITBUF_SZ);
+ 	if (!skb_head) {
+ 		skb_head = skb_iter;
+@@ -460,8 +467,29 @@ queue:
  	ret = rtw_usb_write_port(rtwdev, qsel, skb_head,
  				 rtw_usb_write_port_tx_complete, txcb);
  	if (ret) {
@@ -84,8 +87,8 @@ Patch status:  testing
  		return false;
  	}
  
-@@ -522,11 +550,35 @@ static int rtw_usb_write_data(struct rtw
- 	rtw_tx_fill_tx_desc(pkt_info, skb);
+@@ -523,11 +551,35 @@ static int rtw_usb_write_data(struct rtw
+ 	rtw_tx_fill_tx_desc(rtwdev, pkt_info, skb);
  	rtw_tx_fill_txdesc_checksum(rtwdev, pkt_info, skb->data);
  
 +	/* If device already marked failed from previous -110 storm,
@@ -120,15 +123,15 @@ Patch status:  testing
  	}
  
  	return ret;
-@@ -1063,6 +1115,7 @@ static int rtw_usb_switch_mode(struct rt
- 	return rtw_usb_switch_mode_new(rtwdev);
+@@ -1257,6 +1309,7 @@ static void rtw_usb_phy_cfg(struct rtw_d
+ 	}
  }
  
 +/* Add init in rtw_usb_probe - fits your sample */
  int rtw_usb_probe(struct usb_interface *intf, const struct usb_device_id *id)
  {
  	struct rtw_dev *rtwdev;
-@@ -1085,6 +1138,7 @@ int rtw_usb_probe(struct usb_interface *
+@@ -1279,6 +1332,7 @@ int rtw_usb_probe(struct usb_interface *
  
  	rtwusb = rtw_get_usb_priv(rtwdev);
  	rtwusb->rtwdev = rtwdev;
@@ -136,12 +139,12 @@ Patch status:  testing
  
  	ret = rtw_usb_alloc_rx_bufs(rtwusb);
  	if (ret)
---- a/drivers/net/wireless/realtek/rtw88/usb.h.orig	2024-11-17 14:15:08.000000000 -0800
-+++ b/drivers/net/wireless/realtek/rtw88/usb.h	2026-08-20 00:22:57.263377941 -0700
-@@ -82,6 +82,7 @@ struct rtw_usb {
- 	struct rx_usb_ctrl_block rx_cb[RTW_USB_RXCB_NUM];
- 	struct sk_buff_head rx_queue;
+--- a/drivers/net/wireless/realtek/rtw88/usb.h.orig	2026-06-14 07:58:38.000000000 -0700
++++ b/drivers/net/wireless/realtek/rtw88/usb.h	2026-08-20 02:36:43.337204851 -0700
+@@ -85,6 +85,7 @@ struct rtw_usb {
+ 	struct sk_buff_head rx_free_queue;
  	struct work_struct rx_work;
+ 	struct work_struct rx_urb_work;
 +	atomic_t fail_count;
  };
  

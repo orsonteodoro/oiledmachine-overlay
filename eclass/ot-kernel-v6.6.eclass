@@ -1416,6 +1416,8 @@ einfo "Already applied ${path} upstream"
 		_dpatch "${PATCH_OPTS}" "${path}"
 	elif [[ "${path}" =~ "zen-sauce-6.6.0-a1b7aab.patch" ]] ; then
 		_dpatch "${PATCH_OPTS}" "${path}"
+	elif [[ "${path}" =~ "zen-sauce-6.6.0-f6c3711.patch" ]] ; then
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/zen-sauce-6.6.0-f6c3711-fix-for-6.6.152.patch"
 	elif [[ "${path}" =~ "Nest_v6.6.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/nest-6.6-fix-for-6.6.7.patch"

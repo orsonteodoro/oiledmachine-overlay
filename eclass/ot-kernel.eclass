@@ -3635,9 +3635,14 @@ ot-kernel_apply_fixes() {
 # @DESCRIPTION:
 # Apply additional patch fixes to fix deadlocks and forced reboot less than 30 day uptime
 ot-kernel_apply_rtw88_fixes() {
-	if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.12" ; then
-	# Will enable after testing.
-		: #_fpatch "${FILESDIR}/linux-6.12.103-rtw88-deadlock-fix.patch"
+	if ver_test "${KV_MAJOR_MINOR}" "-ge" "7.1" ; then
+		_fpatch "${FILESDIR}/linux-7.1.9-rtw88-deadlock-fix.patch"
+	elif ver_test "${KV_MAJOR_MINOR}" "-ge" "6.18" ; then
+		_fpatch "${FILESDIR}/linux-6.18.45-rtw88-deadlock-fix.patch"
+	elif ver_test "${KV_MAJOR_MINOR}" "-ge" "6.12" ; then
+		_fpatch "${FILESDIR}/linux-6.12.103-rtw88-deadlock-fix.patch"
+	elif ver_test "${KV_MAJOR_MINOR}" "-ge" "6.6" ; then
+		_fpatch "${FILESDIR}/linux-6.12.103-rtw88-deadlock-fix.patch"
 	fi
 }
 
@@ -4169,7 +4174,26 @@ einfo
 		fi
 	done
 
-	(( ${moved} == 0 )) && die "You need to enable a profile"
+	if (( ${moved} == 0 )) ; then
+eerror
+eerror "You need to enable a new extraversion profile, and also to enable at least"
+eerror "one extraversion profile enabled with OT_KERNEL_DISABLE=\"0\"."
+eerror
+eerror "It is discussed in \"The config file-directory structure\" section of"
+eerror "the metadata.xml"
+eerror
+eerror "Steps:"
+eerror
+eerror "1. mkdir -p /etc/portage/ot-sources/${KV_MAJOR_MINOR}/<extraversion>/<arch>"
+eerror "2. touch /etc/portage/ot-sources/${KV_MAJOR_MINOR}/<extraversion>/<arch>/env"
+eerror "3. Edit /etc/portage/ot-sources/${KV_MAJOR_MINOR}/<extraversion>/<arch>/env"
+eerror "   using one of the templates."
+eerror "4. Copy and paste the section \"An example of a *builder* env file located"
+eerror "   in /etc/portage/ot-sources/6.18/builder/x86_64/env\" and change it."
+eerror "5. Set OT_KERNEL_DISABLE=\"0\" to at least one of the extraversion profiles."
+eerror
+		die
+	fi
 
 	if [[ "${OT_KERNEL_SIGN_KERNEL}" =~ ("uefi"|"efi"|"kexec") ]] ; then
 eerror
@@ -4325,7 +4349,12 @@ ewarn "Securely wiping private keys for ${extraversion}"
 # @DESCRIPTION:
 # Checks if the compiler has no problems
 is_clang_ready() {
-	[[ -z "${llvm_slot}" ]] && die "QA:  llvm_slot is empty"
+	if [[ -z "${llvm_slot}" ]] ; then
+eerror "QA:  llvm_slot is empty.  "
+eerror "Set OT_KERNEL_USE with at least one llvm_slot_<ver>."
+eerror "Both USE and OT_KERNEL_USE should have the same llvm_slot_<ver>."
+		die
+	fi
 einfo "Testing llvm slot ${llvm_slot}"
 	which "clang-${llvm_slot}" >/dev/null 2>&1 || return 1
 	local has_error=0
@@ -4351,7 +4380,12 @@ ewarn
 # @DESCRIPTION:
 # Checks if the compiler has no problems
 is_gcc_ready() {
-	[[ -z "${gcc_slot}" ]] && die "QA:  gcc_slot is empty"
+	if [[ -z "${gcc_slot}" ]] ; then
+eerror "QA:  gcc_slot is empty."
+eerror "Set OT_KERNEL_USE with at least one gcc_slot_<ver>."
+eerror "Both USE and OT_KERNEL_USE should have the same gcc_slot_<ver>."
+		die
+	fi
 einfo "Testing gcc slot ${gcc_slot}"
 	which "gcc-${gcc_slot}" >/dev/null 2>&1 || return 1
 	local has_error=0

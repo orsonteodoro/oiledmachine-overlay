@@ -647,7 +647,7 @@
 
     Example:
 
-      /etc/portage/ot-sources/5.16/ot/x86_64/env
+      /etc/portage/ot-sources/6.18/ot/x86_64/env
 
     Files:
 
@@ -663,7 +663,7 @@
 
 
 
-    An example of a *builder* env file located in /etc/portage/ot-sources/6.12/builder/x86_64/env:
+    An example of a *builder* env file located in /etc/portage/ot-sources/6.18/builder/x86_64/env:
 
 CFLAGS="-O2 -pipe"
 CXXFLAGS="-O2 -pipe"
@@ -701,15 +701,15 @@ OT_KERNEL_SECURITY_CRITICAL_TYPES="kfence ubsan cfi kcfi"
 OT_KERNEL_SLAB_ALLOCATOR="slub"
 OT_KERNEL_SWAP="1"
 OT_KERNEL_TARGET_TRIPLE="x86_64-pc-linux-gnu"
-OT_KERNEL_TCP_CONGESTION_CONTROLS="htcp ppc vegas"
-OT_KERNEL_USE="genpatches -lto kcfi -pgo -zen-sauce"
+OT_KERNEL_TCP_CONGESTION_CONTROLS="htcp cubic ppc vegas"
+OT_KERNEL_USE="gcc_slot_13_4 llvm_slot_19 genpatches -lto kcfi -pgo -zen-sauce"
 OT_KERNEL_VERBOSITY="1"
 OT_KERNEL_WORK_PROFILE="builder-interactive"
 OT_KERNEL_ZSWAP_ALLOCATOR="zsmalloc"
 OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
-    An example of a *gaming* env file located in /etc/portage/ot-sources/6.12/gaming/x86_64/env:
+    An example of a *gaming* env file located in /etc/portage/ot-sources/6.18/gaming/x86_64/env:
 
 CFLAGS="-march=native -O3 -pipe"
 CXXFLAGS="-march=native -O3 -pipe"
@@ -746,13 +746,13 @@ OT_KERNEL_SECURITY_CRITICAL=0
 OT_KERNEL_SLAB_ALLOCATOR="slab"
 OT_KERNEL_SWAP="0"
 OT_KERNEL_TARGET_TRIPLE="x86_64-pc-linux-gnu"
-OT_KERNEL_TCP_CONGESTION_CONTROLS="vegas bbr htcp pcc"
+OT_KERNEL_TCP_CONGESTION_CONTROLS="vegas bbr htcp cubic pcc"
 OT_KERNEL_VERBOSITY=1
-OT_KERNEL_USE="debug dwarf-auto genpatches scx zen-sauce"
+OT_KERNEL_USE="gcc_slot_13_4 llvm_slot_19 debug dwarf-auto genpatches scx zen-sauce"
 OT_KERNEL_WORK_PROFILE="gaming-tournament"
 TBM=3
 
-    An example of a *dj* env file located in /etc/portage/ot-sources/6.12/dj/x86_64/env:
+    An example of a *dj* env file located in /etc/portage/ot-sources/6.18/dj/x86_64/env:
 
 CFLAGS="-march=native -O3 -pipe"
 CXXFLAGS="-march=native -O3 -pipe"
@@ -790,13 +790,13 @@ OT_KERNEL_SECURITY_CRITICAL=0
 OT_KERNEL_SLAB_ALLOCATOR="slab"
 OT_KERNEL_SWAP="0"
 OT_KERNEL_TARGET_TRIPLE="x86_64-pc-linux-gnu"
-OT_KERNEL_TCP_CONGESTION_CONTROLS="vegas bbr htcp pcc"
+OT_KERNEL_TCP_CONGESTION_CONTROLS="vegas bbr cubic htcp pcc"
 OT_KERNEL_VERBOSITY=1
-OT_KERNEL_USE="debug dwarf-auto genpatches scx zen-sauce"
+OT_KERNEL_USE="gcc_slot_13_4 llvm_slot_19 debug dwarf-auto genpatches scx zen-sauce"
 OT_KERNEL_WORK_PROFILE="musical-live-performance"
 TBM=0 # Not recommened for this use case to avoid latency spikes
 
-    An example of a *secure* env file located in /etc/portage/ot-sources/6.12/secure/x86_64/env:
+    An example of a *secure* env file located in /etc/portage/ot-sources/6.18/secure/x86_64/env:
 
 CFLAGS="-O2 -pipe"
 CXXFLAGS="-O2 -pipe"
@@ -830,7 +830,7 @@ OT_KERNEL_SWAP="0"
 OT_KERNEL_TARGET_TRIPLE="aarch64-unknown-linux-gnu"
 OT_KERNEL_TCP_CONGESTION_CONTROLS="cubic bbr2"
 OT_KERNEL_VERBOSITY="1"
-OT_KERNEL_USE="bbrv2 cpu_flags_arm_bti genpatches kcfi zen-sauce"
+OT_KERNEL_USE="gcc_slot_13_4 llvm_slot_19 bbrv2 cpu_flags_arm_bti genpatches kcfi zen-sauce"
 OT_KERNEL_WORK_PROFILE="dss"
 TBM=0
 # An example of mitigating the Dirty Frag 0-day vulnerability.
@@ -5259,14 +5259,14 @@ unset OT_KERNEL_PRIVATE_KEY
     Examples:
 
       # For gaming without user generated content
-      /etc/portage/ot-sources/5.16/gaming/x86_64/env:
+      /etc/portage/ot-sources/6.18/gaming/x86_64/env:
       OT_KERNEL_EXTRAVERSION="gaming"
       OT_KERNEL_WORK_PROFILE="pro-gaming"
       OT_KERNEL_HARDENING_LEVEL="trusted"
       ...
 
       # For general use or web browsing
-      /etc/portage/ot-sources/5.16/web/x86_64/env:
+      /etc/portage/ot-sources/6.18/web/x86_64/env:
       OT_KERNEL_EXTRAVERSION="web"
       OT_KERNEL_WORK_PROFILE="mainstream-desktop"
       OT_KERNEL_HARDENING_LEVEL="untrusted"
