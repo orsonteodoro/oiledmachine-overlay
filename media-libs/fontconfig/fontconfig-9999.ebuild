@@ -18,7 +18,7 @@ CHKL_TIMESTAMPS=(
 inherit cflags-hardened eapi9-ver multilib meson-multilib python-any-r1 readme.gentoo-r1 secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="08441e56c98a08a39e2b20835d420c4bcc031595"
+	FALLBACK_COMMIT="fd05caf8f03ad7c1c1b6ba7bc4d3d6ede4342bcb"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/fontconfig/fontconfig.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -40,7 +40,10 @@ SLOT="1.0"
 if ! [[ $(ver_cut 3) -ge 90 ]] ; then
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
 fi
-IUSE+=" doc nls test"
+IUSE+="
+doc nls test
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 # - Check minimum freetype & other deps on bumps. See
