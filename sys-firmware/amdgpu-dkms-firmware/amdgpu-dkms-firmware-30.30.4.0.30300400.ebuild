@@ -47,7 +47,7 @@ LICENSE="
 SLOT="0/${ROCM_SLOT}"
 IUSE="
 si
-ebuild_revision_9
+ebuild_revision_11
 "
 REQUIRED_USE="
 "
@@ -101,80 +101,125 @@ gen_radeon_list() {
 
 	local cn
 	for cn in "${!L[@]}" ; do
-		PKG_RADEON_LIST+=" \e[1m\e[92m*\e[0m ${cn}:\t${L[${cn}]}\n"
+		PKG_RADEON_LIST+=" \e[1m\e[92m*\e[0m ${cn}:  ${L[${cn}]}\n"
 	done
 }
 
 gen_all_list() {
 	local ma
 	for ma in "${MA[@]}" ; do
+		ls -1 "${ma}"* >/dev/null 2>&1 || die "Cannot find ${ma} prefix in ${S}"
 		F=(
-			$(ls "${ma}_"*)
+			$(ls -1 "${ma}"*)
 		)
 
-		PKG_POSTINST_LIST+=" \e[1m\e[92m*\e[0m ${ma}:\t${F[@]/#/amdgpu/}\n"
+		PKG_POSTINST_LIST+=" \e[1m\e[92m*\e[0m ${ma}:  ${F[@]/#/amdgpu/}\n"
 	done
 }
 
-gen_ma() {
+gen_microarch_list() {
 	# MA = microarches
-	local _MA=$(ls *)
+	local _MA=( $(ls *) )
 
+	local suffix_list=(
+
+		"_k_0_mc.bin"
+		"_k_2_smc.bin"
+
+		"_32_mc.bin"
+		"_acg_smc.bin"
+		"_agc_smc.bin"
+		"_asd.bin"
+		"_ce_2.bin"
+		"_ce_wks.bin"
+		"_gpu_info.bin"
+		"_ip_discovery.bin"
+		"_k_mc.bin"
+		"_k_smc.bin"
+		"_k2_smc.bin"
+		"_kicker_rlc.bin"
+		"_me_2.bin"
+		"_me_wks.bin"
+		"_mec_2.bin"
+		"_mec_wks.bin"
+		"_mec2_2.bin"
+		"_mec2_wks.bin"
+		"_mes_2.bin"
+		"_pfp_2.bin"
+		"_pfp_wks.bin"
+		"_rlc_1.bin"
+		"_rlc_am4.bin"
+		"_smc_sk.bin"
+		"_sjt_mec.bin"
+		"_sjt_mec2.bin"
+		"_imu_kicker.bin"
+		"_rlc_kicker.bin"
+		"_sdma1.bin"
+		"_smc_sk.bin"
+		"_sos_kicker.bin"
+		"_ta_kicker.bin"
+		"_uni_mes.bin"
+
+		"_cap.bin"
+		"_ce.bin"
+		"_dmcu.bin"
+		"_dmcub.bin"
+		"_imu.bin"
+		"_kicker.bin"
+		"_mc.bin"
+		"_me.bin"
+		"_mec.bin"
+		"_mec2.bin"
+		"_mes.bin"
+		"_mes1.bin"
+		"_pfp.bin"
+		"_rlc.bin"
+		"_sdma.bin"
+		"_smc.bin"
+		"_sos.bin"
+		"_ta.bin"
+		"_toc.bin"
+		"_uvd.bin"
+		"_vce.bin"
+		"_vcn.bin"
+
+		".bin"
+	)
+
+	local MA1=()
 	local ma
 	for ma in "${_MA[@]}" ; do
-		if [[ "${ma}" =~ "_ce.bin" ]] ; then
-			MA+=(
-				"${ma%_*}"
-			)
-		elif [[ "${ma}" =~ "_me.bin" ]] ; then
-			MA+=(
-				"${ma%_*}"
-			)
-		elif [[ "${ma}" =~ "_"(32|k)"_mc.bin" ]] ; then
-			MA+=(
-				$(echo "${ma}" \
-					| sed -r -e "s#_(32|k)_mc\.bin##g")
-			)
-		elif [[ "${ma}" =~ "_mc.bin" ]] ; then
-			MA+=(
-				"${ma%_*}"
-			)
-		elif [[ "${ma}" =~ "_vcn.bin" ]] ; then
-			MA+=(
-				"${ma%_*}"
-			)
-		elif [[ "${ma}" =~ "_"(acg|k|k2)"_smc.bin" ]] ; then
-			MA+=(
-				$(echo "${ma}" \
-					| sed -r -e "s#_(acg|k|k2)_smc\.bin##g")
-			)
-		elif [[ "${ma}" =~ "_k_"[0-9]"_smc.bin" ]] ; then
-			MA+=(
-				$(echo "${ma}" \
-					| sed -e "s#_k_[0-9]_smc\.bin##g")
-			)
-		elif [[ "${ma}" =~ "_smc.bin" ]] ; then
-			MA+=(
-				$(echo "${ma}" \
-					| sed -e "s|_smc\.bin||g")
-			)
-		fi
+		[[ "${ma}" =~ ".bin"$ ]] || continue
+		local suffix
+		for suffix in "${suffix_list[@]}" ; do
+			if [[ "${ma}" =~ "${suffix}" ]] ; then
+				local t=$(echo "${ma}" | sed -e "s|${suffix}||g")
+#einfo "Added |${t}| from |${ma}| removing |${suffix}|"
+				MA1+=(
+					"${t}"
+				)
+				break
+			fi
+		done
 	done
-	local MA=(
-		$(echo "${MA[@]}" \
-			| tr " " "\n" \
+
+	# Sort and dedupe
+	local MA2=(
+		$(echo "${MA1[@]}" \
+			| tr " " $'\n' \
 			| sort \
 			| uniq)
 	)
-	echo "${MA[@]}"
+	echo "${MA2[@]}"
 }
 
 _pre_gen_radeon_list() {
 	cd "${S}" || die
 
 	local MA=(
-		$(gen_ma)
+		$(gen_microarch_list)
 	)
+#einfo "MA:  ${MA[@]}"
 
 	gen_all_list
 	use si && gen_radeon_list
