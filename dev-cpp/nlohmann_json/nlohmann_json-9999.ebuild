@@ -15,7 +15,7 @@ TEST_VERSION="3.1.0"
 inherit cmake-multilib
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="c37f82e5630c6a36b37b995896e1523c1d1f0654"
+	FALLBACK_COMMIT="734fd305a19995673c5b83b4a30c06a96ff5c9b0"
 	EGIT_BRANCH="develop"
 	EGIT_REPO_URI="https://github.com/nlohmann/json.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -41,7 +41,10 @@ HOMEPAGE="https://github.com/nlohmann/json https://nlohmann.github.io/json/"
 
 LICENSE="MIT"
 SLOT="0"
-IUSE+=" test"
+IUSE+="
+test
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 DOCS=( ChangeLog.md README.md )
