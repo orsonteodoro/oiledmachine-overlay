@@ -28,7 +28,7 @@ CHKL_TIMESTAMPS=(
 inherit cflags-hardened chkl cmake-multilib libcxx-slot libstdcxx-slot secure-version python-any-r1
 
 if [[ "${PV}" == *"9999"* ]]; then
-	FALLBACK_COMMIT="a665e21f3061f34064b39937cf00fe8d8769f4ef"
+	FALLBACK_COMMIT="47c74f488bad1136559f382ce99e8e52d7a392cd"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/KhronosGroup/${MY_PN}.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -46,11 +46,11 @@ DESCRIPTION="Provides an API and commands for processing SPIR-V modules"
 HOMEPAGE="https://github.com/KhronosGroup/SPIRV-Tools"
 
 LICENSE="Apache-2.0"
-INTERNAL_VERSION="2026.3" # From https://github.com/KhronosGroup/SPIRV-Tools/blob/main/CHANGES
+INTERNAL_VERSION="2026.4" # From https://github.com/KhronosGroup/SPIRV-Tools/blob/main/CHANGES
 SLOT="0/${INTERNAL_VERSION}"
 IUSE+="
 test
-ebuild_revision_1
+ebuild_revision_2
 "
 RESTRICT="!test? ( test )"
 
