@@ -105,7 +105,6 @@ BDEPEND="
 	~dev-build/rocm-cmake-${PV}:=
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-6.2.4.patch"
 )
 
 pkg_setup() {
