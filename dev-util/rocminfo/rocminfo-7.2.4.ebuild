@@ -13,7 +13,7 @@ LLVM_SLOT=22
 PYTHON_COMPAT=( "python3_"{10,12} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit check-compiler-switch cmake flag-o-matic python-single-r1 rocm
+inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot python-single-r1 rocm
 
 if [[ "${PV}" == *"9999" ]] ; then
 	#FALLBACK_COMMIT="rocm-7.2.4"
@@ -36,7 +36,7 @@ DESCRIPTION="ROCm Application for Reporting System Info"
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocminfo"
 LICENSE="NCSA-AMD"
 SLOT="0/${ROCM_SLOT}"
-IUSE+=" ebuild_revision_14"
+IUSE+=" ebuild_revision_15"
 RDEPEND="
 	~dev-libs/rocr-runtime-${PV}:=
 	sys-apps/pciutils:=
