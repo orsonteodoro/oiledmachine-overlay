@@ -27,12 +27,7 @@ KEYWORDS="~amd64"
 S="${WORKDIR}"
 SRC_URI="
 https://repo.radeon.com/amdgpu/${DRIVER_PV}/ubuntu/pool/main/a/amdgpu-dkms-firmware/${FN}
-	si? (
-https://raw.githubusercontent.com/RadeonOpenCompute/ROCK-Kernel-Driver/rocm-${ROCM_PV}/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
-	-> amdgpu_cgs.c.${ROCM_PV}
-	)
 "
-# The amdgpu_cgs.c file is used to obtain CONFIG_EXTRA_FIRMWARE for Southern Islands (SI).
 
 DESCRIPTION="Firmware blobs used by the amdgpu kernel driver"
 HOMEPAGE="
@@ -40,14 +35,10 @@ https://www.amd.com/en/support/linux-drivers
 "
 LICENSE="
 	AMDGPU-FIRMWARE-2020
-	si? (
-		MIT
-	)
 "
 SLOT="0/${ROCM_SLOT}"
 IUSE="
-si
-ebuild_revision_11
+ebuild_revision_12
 "
 REQUIRED_USE="
 "
@@ -74,35 +65,6 @@ src_configure() {
 
 src_compile() {
 	:
-}
-
-gen_radeon_list() {
-	local amdgpu_cgs_path="${DISTDIR}/amdgpu_cgs.c.${ROCM_PV}"
-	[[ -e "${amdgpu_cgs_path}" ]] || die "Missing file"
-	local F=$(grep \
-			-r \
-			-e "radeon/" \
-			"${amdgpu_cgs_path}" \
-			| sed \
-				-e "s|.*\"radeon|radeon|" \
-				-e "s|.bin.*|.bin|")
-	#typeset -p F # pickler if needed
-	declare -A L
-	for f in ${F} ; do
-		cn=$(echo "${f}" \
-			| cut -f 2 -d "/" \
-			| cut -f 1 -d "_")
-		if [[ -v "L[${cn}]" ]] ; then
-			L["${cn}"]+=" ${f}"
-		else
-			L["${cn}"]="${f}"
-		fi
-	done
-
-	local cn
-	for cn in "${!L[@]}" ; do
-		PKG_RADEON_LIST+=" \e[1m\e[92m*\e[0m ${cn}:  ${L[${cn}]}\n"
-	done
 }
 
 gen_all_list() {
@@ -213,7 +175,7 @@ gen_microarch_list() {
 	echo "${MA2[@]}"
 }
 
-_pre_gen_radeon_list() {
+_gen_final_list() {
 	cd "${S}" || die
 
 	local MA=(
@@ -222,7 +184,6 @@ _pre_gen_radeon_list() {
 #einfo "MA:  ${MA[@]}"
 
 	gen_all_list
-	use si && gen_radeon_list
 }
 
 gen_scripts() {
@@ -285,7 +246,7 @@ src_install() {
 		touch "${ED}/lib/firmware/amdgpu-${MY_PV%-*}/rock-kernel-module-slot-${kv_slot}"
 	done
 	gen_scripts
-	_pre_gen_radeon_list
+	_gen_final_list
 }
 
 pkg_postinst() {
@@ -298,11 +259,6 @@ einfo
 einfo "Additional firmware in the sys-kernel/linux-firmware package is"
 einfo "required by amdgpu-dkms for these codenames and should be added to"
 einfo "CONFIG_EXTRA_FIRMWARE:"
-einfo
-	if use si ; then
-		echo -e "${PKG_RADEON_LIST}"
-		einfo
-	fi
 einfo
 einfo "The firmware requirements may change if the amdgpu DKMS driver is"
 einfo "updated."
