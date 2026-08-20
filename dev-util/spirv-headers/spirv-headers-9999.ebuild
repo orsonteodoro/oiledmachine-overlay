@@ -10,7 +10,7 @@ INTERNAL_VERSION="1.6.7" # https://github.com/KhronosGroup/SPIRV-Headers/blob/ma
 inherit cmake
 
 if [[ ${PV} == *9999* ]]; then
-	FALLBACK_COMMIT="29981f65241605e08b0ede4cfeb999fe3b723c6a"
+	FALLBACK_COMMIT="0d25db97cb9b8f725e4c95e4553001710e7fc39d"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/KhronosGroup/${MY_PN}.git"
 	if [[ "${FALLBACK_COMMIT}" ]] ; then
@@ -28,6 +28,7 @@ HOMEPAGE="https://registry.khronos.org/SPIR-V/ https://github.com/KhronosGroup/S
 
 LICENSE="MIT"
 SLOT="0/${INTERNAL_VERSION}"
+IUSE+=" ebuild_revision_1"
 
 src_unpack() {
 	if [[ ${PV} == *9999* ]]; then
