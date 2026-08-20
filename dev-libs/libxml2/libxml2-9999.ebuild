@@ -24,7 +24,9 @@ inherit cflags-hardened check-compiler-switch chkl python-r1 meson-multilib
 DESCRIPTION="XML C parser and toolkit"
 HOMEPAGE="https://gitlab.gnome.org/GNOME/libxml2/-/wikis/home"
 if [[ ${PV} == 9999 ]] ; then
-	FALLBACK_COMMIT="ddcb79dc9934fd8a26263f6368c4eb7aa43f6d49"
+	PV_MAJOR="2"
+	SO_MINOR_COMPAT=14
+	FALLBACK_COMMIT="c63248941708bc1d2e3a4292954593312212f6ca"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://gitlab.gnome.org/GNOME/libxml2"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -32,6 +34,7 @@ if [[ ${PV} == 9999 ]] ; then
 	fi
 	inherit git-r3
 else
+	PV_MAJOR=$(ver_cut "1" "${PV}")
 	inherit gnome.org
 	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~arm64-macos ~x64-macos ~x64-solaris"
 fi
@@ -39,11 +42,12 @@ fi
 S="${WORKDIR}/${PN}-${PV%_rc*}"
 
 LICENSE="MIT"
-# see so_version = v_maj + v_min_compat for subslot
-SLOT="2/16"
+MINOR_COMPAT=14
+SOVER=$(( ${PV_MAJOR} + ${MINOR_COMPAT} ))
+SLOT="${PV_MAJOR}/${SOVER}"
 IUSE+="
 doc icu python readline static-libs test
-ebuild_revision_2
+ebuild_revision_4
 "
 RESTRICT="!test? ( test )"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
@@ -91,6 +95,22 @@ src_unpack() {
 	fi
 
 	cd "${S}" || die
+	local actual_minor_compat=$(grep -r -e "set(LIBXML_MINOR_COMPAT" "${S}/CMakeLists.txt" | grep -E -o "[0-9]+")
+	local expected_minor_compat="${MINOR_COMPAT}"
+	local actual_sover=$(( ${PV_MAJOR} + ${actual_minor_compat} ))
+	local expected_sover="${SOVER}"
+	if ver_test "${actual_sover}" "-ne" "${expected_sover}" ; then
+eerror
+eerror "QA:  Update PV_MAJOR or MINOR_COMPAT"
+eerror
+eerror "Actual SOVER:  ${actual_sover}"
+eerror "Expected SOVER:  ${expected_sover}"
+eerror
+eerror "Actual minor compat:  ${actual_minor_compat}"
+eerror "Expected minor compat:  ${expected_minor_compat}"
+eerror
+		die
+	fi
 }
 
 src_prepare() {
