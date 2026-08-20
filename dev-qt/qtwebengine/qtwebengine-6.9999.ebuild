@@ -16,7 +16,7 @@ CXX_STANDARD=17
 WEB_KERNEL_CONFIG_CHECK_YAMA=1
 PYTHON_COMPAT=( python3_{10..14} )
 
-FALLBACK_COMMIT="60eb977b8e47d7210db392206c324cd4c95c7d7d"
+FALLBACK_COMMIT="9df52595405089c33c5025361c4a91129ab2e7c1"
 
 # See https://github.com/qt/qtwebengine/tree/dev/src for submodule ID
 # See https://github.com/qt/qtwebengine-chromium/blob/1e2ffa9/chromium/chrome/VERSION
