@@ -25,7 +25,7 @@ CHKL_TIMESTAMPS=(
 inherit autotools cflags-hardened chkl libtool multilib-minimal secure-version verify-sig flag-o-matic
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="1ac62678c2c5d01ac901d07a5fdcaae901ea53dd"
+	FALLBACK_COMMIT="b99beace423ebb3d2040a2a61fe8c01bd857d854"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://gitlab.com/libtiff/libtiff.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -55,7 +55,7 @@ if [[ ${PV} != *_rc* ]] ; then
 fi
 IUSE+="
 +cxx jbig jpeg lerc libdeflate lzma opengl static-libs test webp zlib zstd
-ebuild_revision_4
+ebuild_revision_5
 "
 RESTRICT="!test? ( test )"
 
