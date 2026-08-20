@@ -1,0 +1,11 @@
+--- a/backends/aarch64_initreg.c.orig	2026-08-19 20:22:49.169872442 -0700
++++ b/backends/aarch64_initreg.c	2026-08-19 20:30:27.855777978 -0700
+@@ -115,7 +115,7 @@ aarch64_set_initial_registers_tid (pid_t
+ 
+   Dwarf_Word dwarf_fregs[32];
+   for (int r = 0; r < 32; r++)
+-    dwarf_fregs[r] = fregs.vregs[r] & 0xFFFFFFFF;
++    dwarf_fregs[r] = (unsigned int)fregs.vregs[r] & 0xFFFFFFFF;
+ 
+   if (! setfunc (64, 32, dwarf_fregs, arg))
+     return false;

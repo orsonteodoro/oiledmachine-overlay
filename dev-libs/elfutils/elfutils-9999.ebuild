@@ -3,6 +3,7 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 VERIFY_SIG_OPENPGP_KEY_PATH=/usr/share/openpgp-keys/elfutils.gpg
 
 CHKL_TIMESTAMPS=(
@@ -15,7 +16,7 @@ CHKL_TIMESTAMPS=(
 	"net-misc/curl-9999"
 )
 
-inherit autotools flag-o-matic chkl secure-version multilib-minimal
+inherit autotools cflags-hardened flag-o-matic chkl secure-version multilib-minimal
 
 DESCRIPTION="Libraries/utilities to handle ELF objects (drop in replacement for libelf)"
 HOMEPAGE="https://sourceware.org/elfutils/"
@@ -45,7 +46,10 @@ fi
 
 LICENSE="|| ( GPL-2+ LGPL-3+ ) utils? ( GPL-3+ )"
 SLOT="0"
-IUSE+=" bzip2 +debuginfod +libarchive +lzma nls static-libs stacktrace test +utils valgrind zstd"
+IUSE+="
+bzip2 +debuginfod +libarchive +lzma nls static-libs stacktrace test +utils valgrind zstd
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 REQUIRED_USE="debuginfod? ( libarchive )"
 
@@ -81,7 +85,7 @@ BDEPEND+="
 "
 
 PATCHES=(
-	"${FILESDIR}"/${PN}-0.189-musl-aarch64-regs.patch
+	"${FILESDIR}"/${PN}-64e8960-musl-aarch64-regs.patch
 	"${FILESDIR}"/${PN}-0.191-musl-macros.patch
 )
 
@@ -129,6 +133,8 @@ src_prepare() {
 }
 
 src_configure() {
+	cflags-hardened_append
+
 	# bug #407135
 	use test && append-flags -g
 
