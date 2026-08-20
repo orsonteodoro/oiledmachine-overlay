@@ -429,6 +429,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 fi
 
 REQUIRED_USE+="
+	!zen-sauce
 	?? (
 		qt5
 		qt6
