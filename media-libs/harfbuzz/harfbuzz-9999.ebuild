@@ -11,15 +11,15 @@ CXX_STANDARD=17
 CFLAGS_HARDENED_LANGS="c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO NPD"
-EXPECTED_CARGO_HASH="cb07a207f107faec2717eee8dab52bc65547b6f674d0f471fee0c5868c607a6320f5375fa2a755fc2c20b0418ed9b67d753074c8576f8f67037b08b223a43904"
+EXPECTED_CARGO_HASH="ea416ab40dca007bedca50cd5d6ac84714cdd28472d80e46d869b5104499bb4f8d987ce4bef8a25e52ae5d82f04c58a7365c715a770938e00c2f86cdf591b58e"
 PYTHON_COMPAT=( python3_{10..14} )
 RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO NPD"
 RUST_LIVE_TIMESTAMP="Fri, 22 May 2026 00:33:25 -0700" # Same as 1.98.0 version bump
-RUST_MAX_VER="9999" # LLVM 22.1
+RUST_MAX_VER="1.97.1" # LLVM 22.1
 RUST_MIN_VER="1.90.0" # LLVM 20.1 for harfbuzz_rust@0.0.0
 RUST_NEEDS_LLVM=1 # Prune rustc for unused LLVM slots
-RUST_NIGHTLY_PV="1.98.0"
+RUST_NIGHTLY_PV="1.100.0"
 
 KB_COMMIT="ca6c9624dd7c6b774e6cec9901f3d8d998d6f62a" # See https://github.com/harfbuzz/harfbuzz/blob/main/subprojects/kbts.wrap
 RAGEL_PV="6.10" # See https://github.com/harfbuzz/harfbuzz/blob/main/subprojects/ragel.wrap
@@ -42,17 +42,16 @@ harfbuzz_rust-0.0.0
 CRATES="
 bitflags-2.13.1
 bytemuck-1.25.2
-bytemuck_derive-1.11.0
-font-types-0.12.2
-harfrust-0.12.0
+bytemuck_derive-1.12.0
+font-types-0.12.3
+harfrust-0.13.0
 once_cell-1.21.4
 proc-macro2-1.0.107
 quote-1.0.47
-read-fonts-0.41.0
-read-fonts-0.42.1
-skrifa-0.45.1
+read-fonts-0.43.0
+skrifa-0.46.0
 smallvec-1.15.2
-syn-2.0.119
+syn-3.0.3
 unicode-ident-1.0.24
 "
 
@@ -73,7 +72,7 @@ DESCRIPTION="An OpenType text shaping engine"
 HOMEPAGE="https://harfbuzz.github.io/"
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="5b54d30ce7ade7b1c675bd71eb33fa5fa754fa8f"
+	FALLBACK_COMMIT="24b368ec170b6f35e1bd507f5dc491e3c441cb0c"
 	EGIT_REPO_URI="https://github.com/harfbuzz/harfbuzz.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
@@ -113,13 +112,14 @@ IUSE+="
 -benchmark +cairo +chafa debug doc -experimental -fatlto -fontations +glib +gpu
 +graphite -harfrust +icu +kbts +png +raster +ragel +subset -system-icu -system-ragel
 +introspection test -thinlto +truetype +utilities +vector +zlib
-ebuild_revision_3
+ebuild_revision_4
 "
 RESTRICT="
+	mirror
 	!test? (
 		test
 	)
-"
+" # mirror = speed up downloads and stop snooping
 REQUIRED_USE="
 	?? (
 		thinlto
@@ -211,8 +211,8 @@ RUST_BDEPEND="
 	)
 	llvm_slot_22? (
 		|| (
-			dev-lang/rust-bin:9999
-			dev-lang/rust:9999
+			dev-lang/rust-bin:1.97.1
+			dev-lang/rust:1.97.1
 		)
 	)
 	|| (
