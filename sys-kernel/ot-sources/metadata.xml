@@ -294,17 +294,17 @@
 
     GPU/AI stack compatibility
 
-  Version: CUDA support         ; Compat with amdgpu-dkms ; Without amdgpu-dkms [1]
-     live:  x                   ; x ROCm-develop          ; x ROCm-develop
-      7.2:  x                   ; x ROCm-develop          ; x ROCm-develop
-      7.1:  x                   ; x -                     ; x -
-      7.0:  A CUDA 13.3 - 13.3  ; x -                     ; x -
-     6.18:  x -                 ; x -                     ; W ROCm 7.1, 7.1, 7.2
-     6.12:  A CUDA 13.0 - 13.3  ; W ROCm 7.1 - ROCm-dev   ; x ROCm 6.3, 6.4
-      6.6:  A CUDA 13.0 - 13.3  ; x ROCm 6.0 - 7.1        ; x ROCm 6.0
-      6.1:  A CUDA 12.3 - 13.3  ; W ROCm 6.4 - ROCm-dev   ; x ROCm 5.3, 5.4, 5.5
-     5.15:  x CUDA 11.8 - 12.9  ; W ROCm 6.0 - ROCm-dev   ; x ROCm 4.5, 5.0
-     5.10:  x CUDA 11.8 - 12.9  ; x -                     ; x ROCm 4.1
+  Version: CUDA support         ; Compat with amdgpu-dkms   ; Without amdgpu-dkms [1]
+     live:  x                   ; x ROCm develop            ; x ROCm develop
+      7.2:  x                   ; x ROCm develop            ; x ROCm develop
+      7.1:  x                   ; x -                       ; x -
+      7.0:  A CUDA 13.3 - 13.3  ; x -                       ; x -
+     6.18:  x -                 ; x -                       ; W ROCm 7.1, 7.1, 7.2
+     6.12:  A CUDA 13.0 - 13.3  ; W ROCm 7.1 - ROCm develop ; x ROCm 6.3, 6.4
+      6.6:  A CUDA 13.0 - 13.3  ; x ROCm 6.0 - 7.1          ; x ROCm 6.0
+      6.1:  A CUDA 12.3 - 13.3  ; W ROCm 6.4 - ROCm develop ; x ROCm 5.3, 5.4, 5.5
+     5.15:  x CUDA 11.8 - 12.9  ; W ROCm 6.0 - ROCm develop ; x ROCm 4.5, 5.0
+     5.10:  x CUDA 11.8 - 12.9  ; x -                       ; x ROCm 4.1
 
     x Not supported on overlay
     * Supported on overlay
