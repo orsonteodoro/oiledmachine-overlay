@@ -59,7 +59,7 @@ inherit cflags-hardened check-compiler-switch cmake-multilib java-pkg-opt-2 flag
 inherit flag-o-matic-om toolchain-funcs uopts verify-sig
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="c082e8697dfc4b6f8e2eacf0a23e41d98004ba65"
+	FALLBACK_COMMIT="2646fa33f8d67373c27b558b47e77b2d8d517e31"
 	EGIT_REPO_URI="https://github.com/libjpeg-turbo/libjpeg-turbo.git"
 	IUSE+=" fallback-commit"
 	inherit git-r3
@@ -102,7 +102,7 @@ IUSE+="
 ${LLVM_COMPAT[@]}
 ${_TRAINERS[@]}
 +asm cpu_flags_arm_neon debug java test pgo static-libs
-ebuild_revision_43
+ebuild_revision_44
 "
 REQUIRED_USE="
 	?? (
