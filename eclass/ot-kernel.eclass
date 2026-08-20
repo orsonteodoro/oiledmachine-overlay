@@ -3625,6 +3625,16 @@ ot-kernel_apply_fixes() {
 	fi
 }
 
+# @FUNCTION: ot-kernel_apply_rtw88_fixes
+# @DESCRIPTION:
+# Apply additional patch fixes to fix deadlocks and forced reboot less than 30 day uptime
+ot-kernel_apply_rtw88_fixes() {
+	if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.12" ; then
+	# Will enable after testing.
+		: #_fpatch "${FILESDIR}/linux-6.12.103-rtw88-deadlock-fix.patch"
+	fi
+}
+
 # @FUNCTION: apply_all_patchsets
 # @DESCRIPTION:
 # Apply the patches conditionally based on extraversion or cpu_sched
@@ -3772,6 +3782,7 @@ apply_all_patchsets() {
 	ot-kernel_apply_kcmdline_for_sanitizers
 	ot-kernel_apply_noturbo
 	ot-kernel_apply_fixes
+	ot-kernel_apply_rtw88_fixes
 
 	if [[ "${PV}" =~ "9999" ]] ; then
 		# Disable + suffix

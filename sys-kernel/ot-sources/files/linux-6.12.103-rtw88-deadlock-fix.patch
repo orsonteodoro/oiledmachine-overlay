@@ -1,0 +1,148 @@
+This is an AI generated patch to fix issue with deadlock and forced reset to fix network.
+This will restore the 30 day uptime instead of hard reset every day.
+
+Patch status:  testing
+
+--- a/drivers/net/wireless/realtek/rtw88/main.c.orig	2026-08-19 23:18:55.305764663 -0700
++++ b/drivers/net/wireless/realtek/rtw88/main.c	2026-08-20 00:18:44.230963499 -0700
+@@ -2137,6 +2137,9 @@ int rtw_core_init(struct rtw_dev *rtwdev
+ 	mutex_init(&rtwdev->mutex);
+ 	mutex_init(&rtwdev->hal.tx_power_mutex);
+ 
++	/* for -110 storm detection: stop hammering 0x4e0 / 0xaa */
++	rtwdev->fail = false;
++
+ 	init_waitqueue_head(&rtwdev->coex.wait);
+ 	init_completion(&rtwdev->lps_leave_check);
+ 	init_completion(&rtwdev->fw_scan_density);
+--- a/drivers/net/wireless/realtek/rtw88/main.h.orig	2026-08-20 00:24:39.868338677 -0700
++++ b/drivers/net/wireless/realtek/rtw88/main.h	2026-08-20 00:19:08.838232762 -0700
+@@ -2020,6 +2020,8 @@ struct rtw_dev {
+ 	/* ensures exclusive access from mac80211 callbacks */
+ 	struct mutex mutex;
+ 
++	bool fail; /* true after 3 consecutive -110 to stop USB spam */
++
+ 	/* watch dog every 2 sec */
+ 	struct delayed_work watch_dog_work;
+ 	u32 watch_dog_cnt;
+--- a/drivers/net/wireless/realtek/rtw88/usb.c.orig	2026-08-19 23:19:19.009720216 -0700
++++ b/drivers/net/wireless/realtek/rtw88/usb.c	2026-08-20 00:22:24.464272134 -0700
+@@ -13,6 +13,7 @@
+ #include "fw.h"
+ #include "ps.h"
+ #include "usb.h"
++#include <linux/atomic.h>
+ 
+ static bool rtw_switch_usb_mode = true;
+ module_param_named(switch_usb_mode, rtw_switch_usb_mode, bool, 0644);
+@@ -399,10 +400,16 @@ static bool rtw_usb_tx_agg_skb(struct rt
+ 	unsigned int align_next = 0;
+ 	u8 qsel;
+ 	int ret;
++	bool mark_fail = false;
+ 
+ 	if (skb_queue_empty(list))
+ 		return false;
+ 
++	if (unlikely(rtwdev->fail)) {
++		__skb_queue_purge(list);
++		return false;
++	}
++
+ 	txcb = kmalloc(sizeof(*txcb), GFP_ATOMIC);
+ 	if (!txcb)
+ 		return false;
+@@ -459,8 +466,29 @@ queue:
+ 	ret = rtw_usb_write_port(rtwdev, qsel, skb_head,
+ 				 rtw_usb_write_port_tx_complete, txcb);
+ 	if (ret) {
+-		ieee80211_purge_tx_queue(rtwdev->hw, &txcb->tx_ack_queue);
++		struct sk_buff_head free_q;
++		__skb_queue_head_init(&free_q);
++		skb_queue_splice_init(&txcb->tx_ack_queue, &free_q);
++
++		if (ret == -110 || ret == -ENODEV || ret == -EPROTO)
++			mark_fail = true;
++
++		/* FIX: purge outside lock to avoid AA deadlock.
++		 * Old code called ieee80211_purge_tx_queue while holding
++		 * list->lock / rtwdev->mutex. purge takes hw conf mutex.
++		 * Correct: free after unlock. mutex is unlocked in caller
++		 * after we return, so do purge here after splice.
++		 */
++		ieee80211_purge_tx_queue(rtwdev->hw, &free_q);
++		skb_queue_purge(&free_q);
+ 		kfree(txcb);
++
++		if (mark_fail) {
++			if (atomic_inc_return(&rtwusb->fail_count) >= 3) {
++				rtwdev->fail = true;
++				schedule_work(&rtwdev->fw_recovery_work);
++			}
++		}
+ 		return false;
+ 	}
+ 
+@@ -522,11 +550,35 @@ static int rtw_usb_write_data(struct rtw
+ 	rtw_tx_fill_tx_desc(pkt_info, skb);
+ 	rtw_tx_fill_txdesc_checksum(rtwdev, pkt_info, skb->data);
+ 
++	/* If device already marked failed from previous -110 storm,
++	 * don't try to submit more URBs - free immediately.
++	 * This stops the log spam you saw:
++	 * read 0xaa failed -110, write 0x4e0 fail -110, etc.
++	 */
++	if (unlikely(rtwdev->fail)) {
++		dev_kfree_skb_any(skb);
++		return -ENODEV;
++	}
++
+ 	ret = rtw_usb_write_port(rtwdev, qsel, skb,
+ 				 rtw_usb_write_port_complete, skb);
+ 	if (unlikely(ret)) {
+ 		rtw_err(rtwdev, "failed to do USB write, ret=%d\n", ret);
++		/* 6b964941 fixed leak by adding kfree here, but caller
++		 * may hold rtwdev->mutex. Completion callback will NOT run
++		 * on failure, so we must free. Freeing here is OK because
++		 * this function does NOT hold mutex itself - caller does
++		 * unlock after return. Keep free outside any spinlock.
++		 */
+ 		dev_kfree_skb_any(skb);
++		if (ret == -110 || ret == -ENODEV || ret == -EPROTO) {
++			struct rtw_usb *rtwusb = rtw_get_usb_priv(rtwdev);
++			if (atomic_inc_return(&rtwusb->fail_count) >= 3) {
++				rtwdev->fail = true;
++				/* reuse existing fw_recovery_work - no new work needed */
++				schedule_work(&rtwdev->fw_recovery_work);
++			}
++		}
+ 	}
+ 
+ 	return ret;
+@@ -1063,6 +1115,7 @@ static int rtw_usb_switch_mode(struct rt
+ 	return rtw_usb_switch_mode_new(rtwdev);
+ }
+ 
++/* Add init in rtw_usb_probe - fits your sample */
+ int rtw_usb_probe(struct usb_interface *intf, const struct usb_device_id *id)
+ {
+ 	struct rtw_dev *rtwdev;
+@@ -1085,6 +1138,7 @@ int rtw_usb_probe(struct usb_interface *
+ 
+ 	rtwusb = rtw_get_usb_priv(rtwdev);
+ 	rtwusb->rtwdev = rtwdev;
++        atomic_set(&rtwusb->fail_count, 0);
+ 
+ 	ret = rtw_usb_alloc_rx_bufs(rtwusb);
+ 	if (ret)
+--- a/drivers/net/wireless/realtek/rtw88/usb.h.orig	2024-11-17 14:15:08.000000000 -0800
++++ b/drivers/net/wireless/realtek/rtw88/usb.h	2026-08-20 00:22:57.263377941 -0700
+@@ -82,6 +82,7 @@ struct rtw_usb {
+ 	struct rx_usb_ctrl_block rx_cb[RTW_USB_RXCB_NUM];
+ 	struct sk_buff_head rx_queue;
+ 	struct work_struct rx_work;
++	atomic_t fail_count;
+ };
+ 
+ static inline struct rtw_usb_tx_data *rtw_usb_get_tx_data(struct sk_buff *skb)
