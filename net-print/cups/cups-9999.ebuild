@@ -22,7 +22,7 @@ MY_PV="${MY_PV/_p/op}"
 MY_P="${PN}-${MY_PV}"
 
 if [[ ${PV} == *9999 ]] ; then
-	FALLBACK_COMMIT="d19bccfed26ac02b24dac80ba0258588dbeaea61"
+	FALLBACK_COMMIT="82fa7655d992632f49497d5cd445dcc724bd883e"
 	[[ ${PV} != 9999 ]] && EGIT_BRANCH=branch-${PV/.9999}
 	EGIT_REPO_URI="https://github.com/OpenPrinting/cups.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -44,7 +44,7 @@ LICENSE="Apache-2.0"
 SLOT="0"
 IUSE+="
 acl dbus debug kerberos mdnsresponder-compat openssl pam selinux static-libs systemd test usb X xinetd zeroconf
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE="
 	mdnsresponder-compat? (
