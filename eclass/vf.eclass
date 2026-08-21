@@ -532,6 +532,9 @@ einfo "OOBR = Out Of Bounds Read"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"OOBW"($|" "|";"|",") ]] ; then
 einfo "OOBW = Out Of Bounds Write"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("OOPS")($|" "|";"|",") ]] ; then
+einfo "OOPS = Panic On Oops"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"OOOI"($|" "|";"|",") ]] ; then
 # Same as IIO (Improper Initalization Order)
 einfo "OOOI = Out Of Order Initalization"
@@ -552,12 +555,6 @@ einfo "PGC = Poorly Generated Code"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"PI"($|" "|";"|",") ]] ; then
 einfo "PI = Prompt Injection"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("PoO"|"POO")($|" "|";"|",") ]] ; then
-einfo "PoO = Panic On Oops"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("PoW"|"POW")($|" "|";"|",") ]] ; then
-einfo "POW = Panic On Warn"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"PP"($|" "|";"|",") ]] ; then
 einfo "PP = Prototype Pollution"
@@ -739,6 +736,9 @@ einfo "UVAL = Uninitialized Value"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UVAR"($|" "|";"|",") ]] ; then
 einfo "UVAR = Uninitialized Variable"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("WARN")($|" "|";"|",") ]] ; then
+einfo "WARN = Panic On Warning"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"WC"($|" "|";"|",") ]] ; then
 einfo "WC = Weak Cipher"
