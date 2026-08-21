@@ -374,8 +374,13 @@ tresor_prompt tresor_sysfs uksm zen-muqss zen-sauce
 "
 
 REQUIRED_USE+="
+	!clang? (
+		^^ (
+			${GCC_COMPAT[@]}
+		)
+	)
 	clang? (
-		|| (
+		^^ (
 			${LLVM_COMPAT[@]/#/llvm_slot_}
 		)
 	)

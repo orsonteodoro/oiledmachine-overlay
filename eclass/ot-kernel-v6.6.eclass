@@ -406,6 +406,11 @@ tresor_prompt tresor_sysfs zen-sauce
 "
 
 REQUIRED_USE+="
+	!clang? (
+		^^ (
+			${GCC_COMPAT[@]}
+		)
+	)
 	?? (
 		qt5
 		qt6
@@ -417,7 +422,7 @@ REQUIRED_USE+="
 		!bbrv2
 	)
 	clang? (
-		|| (
+		^^ (
 			${LLVM_COMPAT[@]/#/llvm_slot_}
 		)
 	)
