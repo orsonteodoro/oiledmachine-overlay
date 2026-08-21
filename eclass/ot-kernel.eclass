@@ -15539,12 +15539,14 @@ ot-kernel_set_kconfig_localversion() {
 	ot-kernel_unset_configopt "CONFIG_LOCALVERSION_AUTO"
 }
 
-# @FUNCTION: ot-kernel_src_configure_assisted
+# @FUNCTION: ot-kernel_src_copy_savedconfig
 # @DESCRIPTION:
-# More assisted configuration
-ot-kernel_src_configure_assisted() {
-einfo "Using assisted config mode"
+# Copies ${OT_KERNEL_CONFIG} to ${BUILD_DIR}/.config
+ot-kernel_src_copy_savedconfig() {
+	[[ -z "${BUILD_DIR}" ]] && die "QA:  BUILD_DIR needs to be set before calling ot-kernel_src_copy_savedconfig"
 	local path_config="${BUILD_DIR}/.config"
+	local config="${OT_KERNEL_CONFIG}"
+
 	if [[ -e "${config}" ]] ; then
 einfo "Copying the savedconfig:  ${config} -> ${path_config}"
 		cat "${config}" > "${path_config}" || die
@@ -15553,10 +15555,21 @@ einfo "Running:  make olddefconfig ${args[@]}"
 		make olddefconfig "${args[@]}" || die
 	fi
 
-	local is_default_config=0
 	if [[ ! -e "${path_config}" ]] ; then
 ewarn "Missing ${path_config} so generating a new default config."
 		make defconfig "${args[@]}" || die
+	fi
+}
+
+# @FUNCTION: ot-kernel_src_configure_assisted
+# @DESCRIPTION:
+# More assisted configuration
+ot-kernel_src_configure_assisted() {
+einfo "Using assisted config mode"
+	local path_config="${BUILD_DIR}/.config"
+
+	local is_default_config=0
+	if [[ ! -e "${path_config}" ]] ; then
 		is_default_config=1
 		[[ -z "${boot_decomp}" ]] && boot_decomp="default"	# Reason why is for compatibility issues.
 	else
@@ -15786,15 +15799,6 @@ einfo "Running:  make olddefconfig ${args[@]}"
 ot-kernel_src_configure_custom() {
 einfo "Using custom config mode"
 	local path_config="${BUILD_DIR}/.config"
-	if [[ -e "${config}" ]] ; then
-einfo "Copying the savedconfig:  ${config} -> ${path_config}"
-		cat "${config}" > "${path_config}" || die
-	fi
-
-	if [[ ! -e "${path_config}" ]] ; then
-ewarn "Missing ${path_config} so generating a new default config."
-		make defconfig "${args[@]}" || die
-	fi
 
 	local gcc_slot=$(get_gcc_slot)
 	gcc_slot="${gcc_slot%_*}"
@@ -15952,7 +15956,12 @@ ewarn "corresponding value from USE.  Ensure both the USE and OT_KERNEL_USE are"
 ewarn "the same and present for llvm_slot_<y> and in both environment variables."
 ewarn
 		fi
+
+		ot-kernel_src_copy_savedconfig
+
+	# Must come after ot-kernel_src_copy_savedconfig
 		ot-kernel_setup_tc
+
 		MAKEOPTS="${MAKEOPTS_ORIG}"
 
 		if [[ "${OT_KERNEL_CONFIG_MODE:-assisted}" =~ "assist" ]] ; then
@@ -16007,6 +16016,8 @@ get_gcc_slot() {
 # @FUNCTION: ot-kernel_setup_tc
 # @DESCRIPTION:
 # Setup toolchain args to pass to make
+# Precondition:  after path_config init
+# Precondition:  ${BUILD_DIR}/.config must exist
 # Called in ot-kernel_src_configure().
 # Called in ot-kernel_src_compile().
 ot-kernel_setup_tc() {
@@ -16129,7 +16140,6 @@ einfo "Change the adjusted SLOT version by removing it from package.env and let"
 einfo "the eclass handle compiler selection or match the LLVM slot for this"
 einfo "package in /etc/portage/package.env with the same adjusted CC slot."
 einfo
-#wow1
 
 	#filter-flags '-march=*' '-mtune=*' '-flto*' '-fuse-ld=*' '-f*inline*'
 	strip-unsupported-flags
@@ -16920,7 +16930,11 @@ einfo
 		local gcc_slot=$(get_gcc_slot)
 		gcc_slot="${gcc_slot%_*}"
 		local llvm_slot=$(get_llvm_slot)
+
+	# Precondition:  after path_config init
+	# Precondition:  ${BUILD_DIR}/.config must exist
 		ot-kernel_setup_tc
+
 		ot-kernel_build_tresor_sysfs
 		ot-kernel_build_kernel
 	done
