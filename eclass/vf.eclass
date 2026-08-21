@@ -360,8 +360,11 @@ einfo "IIS = Insufficient Input Sanitiation"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IL"($|" "|";"|",") ]] ; then
 einfo "IL = Infinite Loop"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("IMPRREL")($|" "|";"|",") ]] ; then
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IMPRREL"($|" "|";"|",") ]] ; then
 einfo "IMPRREL = Improper Release"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"INFOLEAK"($|" "|";"|",") ]] ; then
+einfo "INFOLEAK = Sensitive Information Leak"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"INJECT"($|" "|";"|",") ]] ; then
 # Broader category includes or any type of injection
