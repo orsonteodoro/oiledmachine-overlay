@@ -3639,8 +3639,6 @@ ot-kernel_apply_rtw88_fixes() {
 		_fpatch "${FILESDIR}/linux-7.1.9-rtw88-deadlock-fix.patch"
 	elif ver_test "${KV_MAJOR_MINOR}" "-ge" "6.18" ; then
 		_fpatch "${FILESDIR}/linux-6.18.45-rtw88-deadlock-fix.patch"
-	elif ver_test "${KV_MAJOR_MINOR}" "-ge" "6.12" ; then
-		_fpatch "${FILESDIR}/linux-6.12.103-rtw88-deadlock-fix.patch"
 	elif ver_test "${KV_MAJOR_MINOR}" "-ge" "6.6" ; then
 		_fpatch "${FILESDIR}/linux-6.12.103-rtw88-deadlock-fix.patch"
 	fi
