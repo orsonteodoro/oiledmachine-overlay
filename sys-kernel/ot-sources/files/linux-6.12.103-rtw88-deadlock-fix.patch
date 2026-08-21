@@ -32,11 +32,11 @@ The driver has been broken for more than 3 months.
 When the deadlock happens, all network consuming commands (eg. ping, nmtui)
 will deadlock.  Also, it is not possible to unload the driver while
 deadlocking.  nmtui will refuse to deactivate or rescan for Wi-Fi.
-It is also likely to cause OpenRC to halt before restart.  It may cause
-compiler to halt because it affects maybe the IO scheduler.  So I am forced
-to reset the computer.  I tried unsetting CONFIG_CFG80211_DEFAULT_PS and
-setting CONFIG_USB_AUTOSUSPEND_DELAY=-1 for the kernel config, and the
-following for /etc/modprobe.d/rtw88.conf:
+It causes OpenRC to halt before restart because the init script cannot
+unload the driver.  It may cause compiler to halt because it affects maybe
+the IO scheduler.  So I am forced to reset the computer.  I tried unsetting
+CONFIG_CFG80211_DEFAULT_PS and setting CONFIG_USB_AUTOSUSPEND_DELAY=-1 for
+the kernel config, and the following for /etc/modprobe.d/rtw88.conf:
 
 options rtw88_core disable_lps_deep=Y support_bf=Y
 options rtw88_pci disable_aspm=Y
