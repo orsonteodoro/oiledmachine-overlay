@@ -1,5 +1,55 @@
-This is an AI generated patch to fix issue with deadlock and forced reset to fix network.
-This will restore the 30 day uptime instead of hard reset every day.
+This is an AI generated patch to fix issue with deadlock and forced reset to fix
+network.
+
+This will restore the 30 day uptime instead of doing a hard reset every day.
+
+The low uptime issue happened around CopyFail and Fragnesia fix was submitted.
+
+At around the time a deadlock happens, the kernel will output to dmesg the
+following:
+
+[73768.919526] wlp0s18f2u4: Limiting TX power to 127 (127 - 0) dBm as advertised by <redacted>
+[74893.329552] rtw88_8821cu 2-4:1.0: read register 0xaa failed with -110
+[74893.869270] rtw88_8821cu 2-4:1.0: rtw_usb_reg_sec: reg 0x4e0, usb write 1 fail, status: -110
+[74894.926330] rtw88_8821cu 2-4:1.0: read register 0x770 failed with -110
+[74895.982336] rtw88_8821cu 2-4:1.0: read register 0x774 failed with -110
+[74896.526379] rtw88_8821cu 2-4:1.0: write register 0x76e failed with -110
+[74897.582483] rtw88_8821cu 2-4:1.0: read register 0x1cc failed with -110
+[74899.186462] rtw88_8821cu 2-4:1.0: write register 0x1f0 failed with -110
+[74899.730467] rtw88_8821cu 2-4:1.0: write register 0x1d0 failed with -110
+[74909.778768] rtw88_8821cu 2-4:1.0: write register 0x9a4 failed with -110
+[74990.768155] rtw88_8821cu 2-4:1.0: rtw_usb_reg_sec: reg 0x4e0, usb write 1 fail, status: -110
+[74992.369198] rtw88_8821cu 2-4:1.0: rtw_usb_reg_sec: reg 0x4e0, usb write 1 fail, status: -110
+
+When analyzing commit 6b96494, I noticed that there was a freed memory but no
+mutex unlock and the code reviewer mindlessly okaying the commit into master.
+
+Code reviewers should consider the mutex unlocking whenever there is a memory
+free before rashly approving the commit.
+
+The driver has been broken for more than 3 months.
+
+When the deadlock happens, all network consuming commands (eg. ping, nmtui)
+will deadlock.  Also, it is not possible to unload the driver while
+deadlocking.  nmtui will refuse to deactivate or rescan for Wi-Fi.
+It is also likely to cause OpenRC to halt before restart.  It may cause
+compiler to halt because it affects maybe the IO scheduler.  So I am forced
+to reset the computer.  I tried unsetting CONFIG_CFG80211_DEFAULT_PS and
+setting CONFIG_USB_AUTOSUSPEND_DELAY=-1 for the kernel config, and the
+following for /etc/modprobe.d/rtw88.conf:
+
+options rtw88_core disable_lps_deep=Y support_bf=Y
+options rtw88_pci disable_aspm=Y
+options rtw88_usb switch_usb_mode=N
+options usbcore autosuspend=-1
+
+and it didn't fix the deadlock and frequent disconnect issue before this patch.
+
+For the frequent disconnect because of the recent driver security fixes, it
+will cause the DNS to mess up.  Some domains will work and others not.  I have
+to disconnect and reconnect more than usual after uploading.  Since applying
+this AI generated patch, I am doing fewer manual resets and no forced resets
+after uploading through nmtui.
 
 Patch status:  testing
 
