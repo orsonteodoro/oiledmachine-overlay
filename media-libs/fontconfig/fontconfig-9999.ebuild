@@ -207,7 +207,12 @@ multilib_src_install_all() {
 	insinto /usr/share/fc-lang
 	doins fc-lang/*.orth
 
-	dodoc doc/fontconfig-user.{txt,pdf}
+	if [[ -e "doc/fontconfig-user.txt" ]] ; then
+		dodoc doc/fontconfig-user.txt
+	fi
+	if [[ -e "doc/fontconfig-user.pdf" ]] ; then
+		dodoc doc/fontconfig-user.pdf
+	fi
 
 	if ! use doc ; then
 		find "${S}" -name "*.[[:digit:]]" -type f -exec doman '{}' + || die
