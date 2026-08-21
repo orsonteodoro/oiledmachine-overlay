@@ -15552,15 +15552,15 @@ ot-kernel_src_copy_savedconfig() {
 	if [[ -e "${config}" ]] ; then
 einfo "Copying the savedconfig:  ${config} -> ${path_config}"
 		cat "${config}" > "${path_config}" || die
-einfo "Auto updating the .config"
-einfo "Running:  make olddefconfig ${args[@]}"
+einfo "Updating kernel config option dependencies"
 		edo make olddefconfig "${args[@]}"
 	fi
 
 	# Do not combine the above and below ifs into one if-elif chain.
 	# If the above ${BUILD_DIR}/.config didn't happen...
 	if [[ ! -e "${path_config}" ]] ; then
-ewarn "Generating a new default config because of missing ${path_config}"
+ewarn "The kernel .config is missing"
+ewarn "Generating a new default config:  ${path_config}"
 		edo make defconfig "${args[@]}"
 	fi
 }
