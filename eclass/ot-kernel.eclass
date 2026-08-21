@@ -1791,7 +1791,7 @@ CHKL_TIMESTAMPS+=(
 	"sys-process/procps-9999"
 )
 
-inherit check-reqs dhms flag-o-matic multiprocessing python-single-r1 ot-kernel-kutils ot-kernel-pkgflags
+inherit check-reqs dhms edo flag-o-matic multiprocessing python-single-r1 ot-kernel-kutils ot-kernel-pkgflags
 inherit ot-kernel-driver-bundle sandbox-changes secure-version secure-version-python security-scan toolchain-funcs vf
 
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -15547,17 +15547,19 @@ ot-kernel_src_copy_savedconfig() {
 	local path_config="${BUILD_DIR}/.config"
 	local config="${OT_KERNEL_CONFIG}"
 
+	cd "${BUILD_DIR}" || die
+
 	if [[ -e "${config}" ]] ; then
 einfo "Copying the savedconfig:  ${config} -> ${path_config}"
 		cat "${config}" > "${path_config}" || die
 einfo "Auto updating the .config"
 einfo "Running:  make olddefconfig ${args[@]}"
-		make olddefconfig "${args[@]}" || die
+		edo make olddefconfig "${args[@]}"
 	fi
 
 	if [[ ! -e "${path_config}" ]] ; then
-ewarn "Missing ${path_config} so generating a new default config."
-		make defconfig "${args[@]}" || die
+ewarn "Generating a new default config because of missing ${path_config}"
+		edo make defconfig "${args[@]}"
 	fi
 }
 
@@ -15786,7 +15788,7 @@ einfo "Disabling all debug and shortening logging buffers"
 
 einfo "Updating the .config for defaults for the newly enabled options."
 einfo "Running:  make olddefconfig ${args[@]}"
-	make olddefconfig "${args[@]}" || die
+	edo make olddefconfig "${args[@]}"
 
 	ot-kernel_set_globals_post
 
@@ -15957,10 +15959,11 @@ ewarn "the same and present for llvm_slot_<y> and in both environment variables.
 ewarn
 		fi
 
-		ot-kernel_src_copy_savedconfig
-
 	# Must come after ot-kernel_src_copy_savedconfig
 		ot-kernel_setup_tc
+
+	# Must come after ot-kernel_setup_tc to populate args
+		ot-kernel_src_copy_savedconfig
 
 		MAKEOPTS="${MAKEOPTS_ORIG}"
 
