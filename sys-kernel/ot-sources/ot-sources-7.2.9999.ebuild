@@ -9,7 +9,7 @@ EAPI=8
 # See also https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/
 
 GENPATCHES_FALLBACK_COMMIT="d4fa92430e875432c3a61bb3abd9b6e68ea9fcbd" # 2026-06-04 18:26:32 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="a4ff2be345d0abc943da8dd8da98151843b750dc" # 2026-08-19 17:25:42 -0700 @ Merge tag 'v7.3-p1' of 
+LINUX_SOURCES_FALLBACK_COMMIT="8dbbc7e188949b6e1f6be4e82a44dd1d8b1d6c8b" # 2026-08-20 20:05:59 -0700 @ Merge tag 'mm-hotfixes-stable-2026-08-19-21-33' of
 RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
