@@ -1,0 +1,10 @@
+--- src/meson.build.orig	2026-08-20 18:16:15.194614127 -0700
++++ src/meson.build	2026-08-20 18:22:11.677845048 -0700
+@@ -61,6 +61,7 @@ fc_sources = files(
+ fcobjshash_gperf_i = cc.preprocess(
+   'fcobjshash.gperf.c',
+   include_directories: incbase,
++  compile_args: '-g0',
+ )
+ fcobjshash_gperf = custom_target(
+   input: fcobjshash_gperf_i,

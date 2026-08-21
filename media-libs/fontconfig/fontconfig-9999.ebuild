@@ -93,7 +93,7 @@ PATCHES=(
 	# Avoid network access and unpackaged pytest-tap
 	"${FILESDIR}"/${PN}-08441e5-network-test.patch
 	# Fix build failure with -ggdb3
-	"${FILESDIR}"/${PN}-2.17.0-macro-preprocess.patch
+	"${FILESDIR}"/${PN}-fd05caf-macro-preprocess.patch
 
 	# Patches from upstream (can usually be removed with next version bump)
 )
