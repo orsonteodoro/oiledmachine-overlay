@@ -15959,10 +15959,15 @@ ewarn "the same and present for llvm_slot_<y> and in both environment variables.
 ewarn
 		fi
 
-	# Must come after ot-kernel_src_copy_savedconfig
-		ot-kernel_setup_tc
+	# An explanation of why the grep issue exist for min/max compiler slot.
+	# ot-kernel_setup_tc -> args -> make defconfig ${args} or copy savedconfig -> saved ${BUILD_DIR}/.configure
+	#   -> skip grep -e "PAT" "${BUILD_DIR}/.configure" when src_configure because it doesn't exist
+	#   -> do grep -e "PAT" "${BUILD_DIR}/.configure" when src_compile
+	# Before the changes it will grep on a file not existing when *setup_tc is called from src_configure.
+	# This command must come after ot-kernel_src_copy_savedconfig.
+		ot-kernel_setup_tc "src_configure"
 
-	# Must come after ot-kernel_setup_tc to populate args
+	# This command must come after ot-kernel_setup_tc to populate args variable.
 		ot-kernel_src_copy_savedconfig
 
 		MAKEOPTS="${MAKEOPTS_ORIG}"
@@ -16016,6 +16021,49 @@ get_gcc_slot() {
 	echo "${gcc_slot}"
 }
 
+# @FUNCTION: _ot-kernel_setup_tc_verify_requirements
+# @DESCRIPTION:
+# Verify compiler slot requirements are met.
+_ot-kernel_setup_tc_verify_requirements() {
+	# Verify requirements
+	# Only LTS compiler slots allowed to avoid issues with closed source or
+	# out-of-source drivers
+	if ot-kernel_use "clang" ; then
+		local _llvm_min_slot=$(ot-kernel_get_llvm_min_slot)
+		local _llvm_max_slot=$(ot-kernel_get_llvm_max_slot)
+		local s=$(clang-major-version)
+		if ver_test "${s}" "-gt" "19" ; then
+ewarn "Using Clang > 19 may make it impossible to merge out-of-source drivers with max compiler slot limit."
+ewarn "One way to avoid this is to disable the kernel_compiler_patch mod."
+		fi
+		if ver_test "${s}" "-lt" "${_llvm_min_slot}" ; then
+eerror "You must switch Clang to >= ${_llvm_min_slot}"
+			die
+		fi
+		if ver_test "${s}" "-gt" "${_llvm_max_slot}" ; then
+eerror "You must switch Clang to <= ${_llvm_max_slot}"
+			die
+		fi
+	else
+# Prevent gcc-major-version to return 4 when CC is empty.
+		local _gcc_min_slot=$(ot-kernel_get_gcc_min_slot)
+		local _gcc_max_slot=$(ot-kernel_get_gcc_max_slot)
+		local s=$(gcc-major-version)
+		if ver_test "${s}" "-gt" "14" ; then
+ewarn "Using GCC > 14 may make it impossible to merge out-of-source drivers with max compiler slot limit."
+ewarn "One way to avoid this is to disable the kernel_compiler_patch mod."
+		fi
+		if ver_test "${s}" "-lt" "${_gcc_min_slot}" ; then
+eerror "You must switch GCC to >= ${_gcc_min_slot}"
+			die
+		fi
+		if ver_test "${s}" "-gt" "${_gcc_max_slot}" ; then
+eerror "You must switch GCC to <= ${_gcc_max_slot}"
+			die
+		fi
+	fi
+}
+
 # @FUNCTION: ot-kernel_setup_tc
 # @DESCRIPTION:
 # Setup toolchain args to pass to make
@@ -16024,6 +16072,7 @@ get_gcc_slot() {
 # Called in ot-kernel_src_configure().
 # Called in ot-kernel_src_compile().
 ot-kernel_setup_tc() {
+	local phase="${1}"
 	# The make command likes to complain before the build when trying to make menuconfig.
 einfo "Setting up the build toolchain"
 	args+=(
@@ -16147,43 +16196,11 @@ einfo
 	#filter-flags '-march=*' '-mtune=*' '-flto*' '-fuse-ld=*' '-f*inline*'
 	strip-unsupported-flags
 
-	# Verify requirements
-	# Only LTS compiler slots allowed to avoid issues with closed source or
-	# out-of-source drivers
-	if ot-kernel_use "clang" ; then
-		local _llvm_min_slot=$(ot-kernel_get_llvm_min_slot)
-		local _llvm_max_slot=$(ot-kernel_get_llvm_max_slot)
-		local s=$(clang-major-version)
-		if ver_test "${s}" "-gt" "19" ; then
-ewarn "Using Clang > 19 may make it impossible to merge out-of-source drivers with max compiler slot limit."
-ewarn "One way to avoid this is to disable the kernel_compiler_patch mod."
-		fi
-		if ver_test "${s}" "-lt" "${_llvm_min_slot}" ; then
-eerror "You must switch Clang to >= ${_llvm_min_slot}"
-			die
-		fi
-		if ver_test "${s}" "-gt" "${_llvm_max_slot}" ; then
-eerror "You must switch Clang to <= ${_llvm_max_slot}"
-			die
-		fi
-	else
-# Prevent gcc-major-version to return 4 when CC is empty.
-		local _gcc_min_slot=$(ot-kernel_get_gcc_min_slot)
-		local _gcc_max_slot=$(ot-kernel_get_gcc_max_slot)
-		local s=$(gcc-major-version)
-		if ver_test "${s}" "-gt" "14" ; then
-ewarn "Using GCC > 14 may make it impossible to merge out-of-source drivers with max compiler slot limit."
-ewarn "One way to avoid this is to disable the kernel_compiler_patch mod."
-		fi
-		if ver_test "${s}" "-lt" "${_gcc_min_slot}" ; then
-eerror "You must switch GCC to >= ${_gcc_min_slot}"
-			die
-		fi
-		if ver_test "${s}" "-gt" "${_gcc_max_slot}" ; then
-eerror "You must switch GCC to <= ${_gcc_max_slot}"
-			die
-		fi
+	if [[ "${phase}" != "src_configure" ]] ; then
+	# We cannot verify because the ${BUILD_DIR}/.config doesn't exist yet.
+		_ot-kernel_setup_tc_verify_requirements
 	fi
+
 
 #
 # Fix for the following below when building with Clang 18 with libstdc++:
@@ -16936,7 +16953,7 @@ einfo
 
 	# Precondition:  after path_config init
 	# Precondition:  ${BUILD_DIR}/.config must exist
-		ot-kernel_setup_tc
+		ot-kernel_setup_tc "src_compile"
 
 		ot-kernel_build_tresor_sysfs
 		ot-kernel_build_kernel
