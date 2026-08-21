@@ -9,14 +9,14 @@ EAPI=8
 # See also https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/
 
 GENPATCHES_FALLBACK_COMMIT="d4fa92430e875432c3a61bb3abd9b6e68ea9fcbd" # 2026-06-04 18:26:32 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="818bebeb63dd6bf5f4e07e145f6cdbace520a34c" # 2026-08-20 20:12:39 -0700 @ drm/xe: Don't hand out the flat CCS storage as usable VRAM
+LINUX_SOURCES_FALLBACK_COMMIT="2be02a7c996aa733bb36e29e07715621b0de9736" # 2026-08-21 12:05:10 -0700 @ Merge tag 'for-v7.3' of 
 RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
 # https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=7.2
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
-EBUILD_REV="ebuild_revision_21"
+EBUILD_REV="ebuild_revision_22"
 GENPATCHES_VER="1" # can be live only when 9999
 PATCH_PROJC_VER="7.1-r0"
 PATCH_RT_VER="7.2-rt5"
