@@ -102,7 +102,16 @@ ${CPU_FLAGS_X86[@]}
 examples test
 ebuild_revision_23
 "
+# SSE2 is required to avoid:
+# /var/tmp/portage/dev-cpp/highway-9999/work/highway-9999/hwy/cache_control.h:128:32: error: inlining failed in call to 'always_inline' 'void hwy::Pause()': target specific option mismatch
 REQUIRED_USE="
+	amd64? (
+		cpu_flags_x86_sse2
+	)
+	x86? (
+		cpu_flags_x86_sse2
+	)
+
 	cpu_flags_ppc_power8-vector? (
 		cpu_flags_ppc_altivec
 		cpu_flags_ppc_vsx
