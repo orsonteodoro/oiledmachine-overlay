@@ -3,79 +3,67 @@ This will restore the 30 day uptime instead of hard reset every day.
 
 Patch status:  testing
 
---- a/drivers/net/wireless/realtek/rtw88/main.c.orig	2026-08-21 08:09:36.453559109 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/main.c	2026-08-21 08:20:52.974309299 -0700
-@@ -620,10 +620,20 @@ void rtw_fw_recovery(struct rtw_dev *rtw
- static void __fw_recovery_work(struct rtw_dev *rtwdev)
- {
- 	int ret = 0;
-+	bool was_fail = rtwdev->fail;
- 
- 	set_bit(RTW_FLAG_RESTARTING, rtwdev->flags);
- 	clear_bit(RTW_FLAG_RESTART_TRIGGERING, rtwdev->flags);
- 
-+	/* If recovery was triggered by USB -110 storm (0xaa / 0x4e0),
-+	 * rtwdev->fail is true. Don't do fwcd dump which does more
-+	 * register IO that will also fail with -110. Skip to reset.
-+	 */
-+	if (was_fail) {
-+		rtw_warn(rtwdev, "rtw88: bypass fw crash dump, USB failed, going to reset\n");
-+		goto reset;
-+	}
-+
- 	ret = rtw_fwcd_prep(rtwdev);
- 	if (ret)
- 		goto free;
-@@ -641,6 +651,7 @@ free:
- 
- 	WARN(1, "firmware crash, start reset and recover\n");
- 
-+reset:
- 	rcu_read_lock();
- 	rtw_iterate_keys_rcu(rtwdev, NULL, rtw_reset_key_iter, rtwdev);
- 	rcu_read_unlock();
-@@ -648,17 +659,40 @@ free:
- 	rtw_iterate_vifs_atomic(rtwdev, rtw_reset_vif_iter, rtwdev);
- 	bitmap_zero(rtwdev->hw_port, RTW_PORT_NUM);
- 	rtw_enter_ips(rtwdev);
-+
-+	/* Clear USB fail state after reset path prepared.
-+	 * This is called with rtwdev->mutex held by caller
-+	 * rtw_fw_recovery_work(), so safe to clear here.
-+	 * Also clear fail_count so next -110 storm is detected anew.
-+	 */
-+	rtwdev->fail = false;
-+	atomic_set(&rtwdev->fail_count, 0);
+--- a/drivers/net/wireless/realtek/rtw88/main.c.orig	2026-08-21 11:22:35.270487004 -0700
++++ b/drivers/net/wireless/realtek/rtw88/main.c	2026-08-21 11:33:23.315631876 -0700
+@@ -611,57 +613,6 @@ static void rtw_reset_vif_iter(void *dat
+ 	rtw_release_macid(rtwdev, rtwvif->mac_id);
  }
  
- static void rtw_fw_recovery_work(struct work_struct *work)
- {
- 	struct rtw_dev *rtwdev = container_of(work, struct rtw_dev,
- 					      fw_recovery_work);
-+	struct rtw_usb *rtwusb;
-+	bool was_fail;
-+
-+	was_fail = rtwdev->fail;
-+	if (was_fail) {
-+		rtwusb = rtw_get_usb_priv(rtwdev);
-+		/* usb_reset_device sleeps, must be outside mutex */
-+		usb_reset_device(rtwusb->udev);
-+	}
+-void rtw_fw_recovery(struct rtw_dev *rtwdev)
+-{
+-	if (!test_bit(RTW_FLAG_RESTARTING, rtwdev->flags))
+-		ieee80211_queue_work(rtwdev->hw, &rtwdev->fw_recovery_work);
+-}
+-
+-static void __fw_recovery_work(struct rtw_dev *rtwdev)
+-{
+-	int ret = 0;
+-
+-	set_bit(RTW_FLAG_RESTARTING, rtwdev->flags);
+-	clear_bit(RTW_FLAG_RESTART_TRIGGERING, rtwdev->flags);
+-
+-	ret = rtw_fwcd_prep(rtwdev);
+-	if (ret)
+-		goto free;
+-	ret = rtw_fw_dump_crash_log(rtwdev);
+-	if (ret)
+-		goto free;
+-	ret = rtw_chip_dump_fw_crash(rtwdev);
+-	if (ret)
+-		goto free;
+-
+-	rtw_fwcd_dump(rtwdev);
+-free:
+-	rtw_fwcd_free(rtwdev, !!ret);
+-	rtw_write8(rtwdev, REG_MCU_TST_CFG, 0);
+-
+-	WARN(1, "firmware crash, start reset and recover\n");
+-
+-	rcu_read_lock();
+-	rtw_iterate_keys_rcu(rtwdev, NULL, rtw_reset_key_iter, rtwdev);
+-	rcu_read_unlock();
+-	rtw_iterate_stas_atomic(rtwdev, rtw_reset_sta_iter, rtwdev);
+-	rtw_iterate_vifs_atomic(rtwdev, rtw_reset_vif_iter, rtwdev);
+-	bitmap_zero(rtwdev->hw_port, RTW_PORT_NUM);
+-	rtw_enter_ips(rtwdev);
+-}
+-
+-static void rtw_fw_recovery_work(struct work_struct *work)
+-{
+-	struct rtw_dev *rtwdev = container_of(work, struct rtw_dev,
+-					      fw_recovery_work);
+-
+-	mutex_lock(&rtwdev->mutex);
+-	__fw_recovery_work(rtwdev);
+-	mutex_unlock(&rtwdev->mutex);
+-
+-	ieee80211_restart_hw(rtwdev->hw);
+-}
+-
+ struct rtw_txq_ba_iter_data {
+ };
  
- 	mutex_lock(&rtwdev->mutex);
- 	__fw_recovery_work(rtwdev);
- 	mutex_unlock(&rtwdev->mutex);
- 
-+	/* Final clear after restart_hw - ensures TX path in
-+	 * rtw_usb_write_data can proceed. Free after unlock order.
-+	 */
-+	rtwdev->fail = false;
-+	atomic_set(&rtwdev->fail_count, 0);
-+
- 	ieee80211_restart_hw(rtwdev->hw);
- }
- 
-@@ -2137,6 +2171,10 @@ int rtw_core_init(struct rtw_dev *rtwdev
+@@ -2137,6 +2088,10 @@ int rtw_core_init(struct rtw_dev *rtwdev
  	mutex_init(&rtwdev->mutex);
  	mutex_init(&rtwdev->hal.tx_power_mutex);
  
@@ -86,8 +74,8 @@ Patch status:  testing
  	init_waitqueue_head(&rtwdev->coex.wait);
  	init_completion(&rtwdev->lps_leave_check);
  	init_completion(&rtwdev->fw_scan_density);
---- a/drivers/net/wireless/realtek/rtw88/main.h.orig	2026-08-21 08:09:36.454032183 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/main.h	2026-08-21 08:21:28.204951375 -0700
+--- a/drivers/net/wireless/realtek/rtw88/main.h.orig	2026-08-21 11:22:35.270970009 -0700
++++ b/drivers/net/wireless/realtek/rtw88/main.h	2026-08-21 11:32:27.589290731 -0700
 @@ -14,6 +14,7 @@
  #include <linux/iopoll.h>
  #include <linux/interrupt.h>
@@ -106,8 +94,16 @@ Patch status:  testing
  	/* watch dog every 2 sec */
  	struct delayed_work watch_dog_work;
  	u32 watch_dog_cnt;
---- a/drivers/net/wireless/realtek/rtw88/usb.c.orig	2026-08-21 08:10:08.099183065 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/usb.c	2026-08-21 08:24:22.599794824 -0700
+@@ -2204,6 +2208,7 @@ int rtw_sta_add(struct rtw_dev *rtwdev,
+ void rtw_sta_remove(struct rtw_dev *rtwdev, struct ieee80211_sta *sta,
+ 		    bool fw_exist);
+ void rtw_fw_recovery(struct rtw_dev *rtwdev);
++void rtw_fw_recovery_work(struct work_struct *work);
+ void rtw_core_fw_scan_notify(struct rtw_dev *rtwdev, bool start);
+ int rtw_dump_fw(struct rtw_dev *rtwdev, const u32 ocp_src, u32 size,
+ 		u32 fwcd_item);
+--- a/drivers/net/wireless/realtek/rtw88/usb.c.orig	2026-08-21 11:23:09.930372467 -0700
++++ b/drivers/net/wireless/realtek/rtw88/usb.c	2026-08-21 11:32:19.390852938 -0700
 @@ -399,10 +399,16 @@ static bool rtw_usb_tx_agg_skb(struct rt
  	unsigned int align_next = 0;
  	u8 qsel;
@@ -208,7 +204,7 @@ Patch status:  testing
  	ret = rtw_usb_alloc_rx_bufs(rtwusb);
  	if (ret)
 --- a/drivers/net/wireless/realtek/rtw88/usb.h.orig	2024-11-17 14:15:08.000000000 -0800
-+++ b/drivers/net/wireless/realtek/rtw88/usb.h	2026-08-21 08:24:52.918748662 -0700
++++ b/drivers/net/wireless/realtek/rtw88/usb.h	2026-08-21 11:32:19.391197602 -0700
 @@ -82,6 +82,7 @@ struct rtw_usb {
  	struct rx_usb_ctrl_block rx_cb[RTW_USB_RXCB_NUM];
  	struct sk_buff_head rx_queue;
@@ -217,3 +213,110 @@ Patch status:  testing
  };
  
  static inline struct rtw_usb_tx_data *rtw_usb_get_tx_data(struct sk_buff *skb)
+--- a/drivers/net/wireless/realtek/rtw88/fw.c.orig	2024-11-17 14:15:08.000000000 -0800
++++ b/drivers/net/wireless/realtek/rtw88/fw.c	2026-08-21 11:33:00.292354054 -0700
+@@ -3,6 +3,7 @@
+  */
+ 
+ #include <linux/iopoll.h>
++#include <linux/usb.h>
+ 
+ #include "main.h"
+ #include "coex.h"
+@@ -16,6 +17,7 @@
+ #include "ps.h"
+ #include "phy.h"
+ #include "mac.h"
++#include "usb.h"
+ 
+ static const struct rtw_hw_reg_desc fw_h2c_regs[] = {
+ 	{REG_FWIMR, MASKDWORD, "FWIMR"},
+@@ -2436,3 +2438,88 @@ void rtw_hw_scan_chan_switch(struct rtw_
+ 	rtw_dbg(rtwdev, RTW_DBG_HW_SCAN,
+ 		"Chan switch: %x, id: %x, status: %x\n", chan, id, status);
+ }
++
++void rtw_fw_recovery(struct rtw_dev *rtwdev)
++{
++	if (!test_bit(RTW_FLAG_RESTARTING, rtwdev->flags))
++		ieee80211_queue_work(rtwdev->hw, &rtwdev->fw_recovery_work);
++}
++
++static void __fw_recovery_work(struct rtw_dev *rtwdev)
++{
++	int ret = 0;
++	bool was_fail = rtwdev->fail;
++
++	set_bit(RTW_FLAG_RESTARTING, rtwdev->flags);
++	clear_bit(RTW_FLAG_RESTART_TRIGGERING, rtwdev->flags);
++
++	/* If recovery was triggered by USB -110 storm (0xaa / 0x4e0),
++	 * rtwdev->fail is true. Don't do fwcd dump which does more
++	 * register IO that will also fail with -110. Skip to reset.
++	 */
++	if (was_fail) {
++		rtw_warn(rtwdev, "rtw88: bypass fw crash dump, USB failed, going to reset\n");
++		goto reset;
++	}
++
++	ret = rtw_fwcd_prep(rtwdev);
++	if (ret)
++		goto free;
++	ret = rtw_fw_dump_crash_log(rtwdev);
++	if (ret)
++		goto free;
++	ret = rtw_chip_dump_fw_crash(rtwdev);
++	if (ret)
++		goto free;
++
++	rtw_fwcd_dump(rtwdev);
++free:
++	rtw_fwcd_free(rtwdev, !!ret);
++	rtw_write8(rtwdev, REG_MCU_TST_CFG, 0);
++
++	WARN(1, "firmware crash, start reset and recover\n");
++
++reset:
++	rcu_read_lock();
++	rtw_iterate_keys_rcu(rtwdev, NULL, rtw_reset_key_iter, rtwdev);
++	rcu_read_unlock();
++	rtw_iterate_stas_atomic(rtwdev, rtw_reset_sta_iter, rtwdev);
++	rtw_iterate_vifs_atomic(rtwdev, rtw_reset_vif_iter, rtwdev);
++	bitmap_zero(rtwdev->hw_port, RTW_PORT_NUM);
++	rtw_enter_ips(rtwdev);
++
++	/* Clear USB fail state after reset path prepared.
++	 * This is called with rtwdev->mutex held by caller
++	 * rtw_fw_recovery_work(), so safe to clear here.
++	 * Also clear fail_count so next -110 storm is detected anew.
++	 */
++	rtwdev->fail = false;
++	atomic_set(&rtwdev->fail_count, 0);
++}
++
++static void rtw_fw_recovery_work(struct work_struct *work)
++{
++	struct rtw_dev *rtwdev = container_of(work, struct rtw_dev,
++					      fw_recovery_work);
++	struct rtw_usb *rtwusb;
++	bool was_fail;
++
++	was_fail = rtwdev->fail;
++	if (was_fail) {
++		rtwusb = rtw_get_usb_priv(rtwdev);
++		/* usb_reset_device sleeps, must be outside mutex */
++		usb_reset_device(rtwusb->udev);
++	}
++
++	mutex_lock(&rtwdev->mutex);
++	__fw_recovery_work(rtwdev);
++	mutex_unlock(&rtwdev->mutex);
++
++	/* Final clear after restart_hw - ensures TX path in
++	 * rtw_usb_write_data can proceed. Free after unlock order.
++	 */
++	rtwdev->fail = false;
++	atomic_set(&rtwdev->fail_count, 0);
++
++	ieee80211_restart_hw(rtwdev->hw);
++}
