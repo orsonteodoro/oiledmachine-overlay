@@ -15557,6 +15557,8 @@ einfo "Running:  make olddefconfig ${args[@]}"
 		edo make olddefconfig "${args[@]}"
 	fi
 
+	# Do not combine the above and below ifs into one if-elif chain.
+	# If the above ${BUILD_DIR}/.config didn't happen...
 	if [[ ! -e "${path_config}" ]] ; then
 ewarn "Generating a new default config because of missing ${path_config}"
 		edo make defconfig "${args[@]}"
