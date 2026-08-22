@@ -145,7 +145,7 @@ ${CPU_FEATURES[@]%:*}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang cuda doc gcc gui icc icx libcxx nofma optix partio python qt6 static-libs test wayland X
-ebuild_revision_13
+ebuild_revision_14
 "
 REQUIRED_USE+="
 	^^ (
@@ -300,11 +300,9 @@ RDEPEND+="
 		)
 	)
 	optix? (
-		>=dev-libs/optix-7.0
+		>=dev-libs/optix-7.0:=
 		>=media-libs/openimageio-${OIIO_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP}]
-		|| (
-			$(gen_opx_llvm_rdepend)
-		)
+		$(gen_opx_llvm_rdepend)
 	)
 	partio? (
 		>=media-libs/partio-1.13.2:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
