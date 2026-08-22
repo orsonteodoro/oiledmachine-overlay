@@ -54,8 +54,8 @@ after uploading through nmtui.
 Patch status:  testing
 Last test results:  issue persists
 
---- a/drivers/net/wireless/realtek/rtw88/main.h.orig	2026-08-21 23:05:58.838691420 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/main.h	2026-08-21 23:09:27.899008055 -0700
+--- a/drivers/net/wireless/realtek/rtw88/main.h.orig	2026-08-22 00:21:04.847019944 -0700
++++ b/drivers/net/wireless/realtek/rtw88/main.h	2026-08-22 00:30:59.599280652 -0700
 @@ -14,6 +14,7 @@
  #include <linux/iopoll.h>
  #include <linux/interrupt.h>
@@ -83,8 +83,8 @@ Last test results:  issue persists
  void rtw_core_fw_scan_notify(struct rtw_dev *rtwdev, bool start);
  int rtw_dump_fw(struct rtw_dev *rtwdev, const u32 ocp_src, u32 size,
  		u32 fwcd_item);
---- a/drivers/net/wireless/realtek/rtw88/main.c.orig	2026-08-21 23:05:58.838212597 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/main.c	2026-08-21 23:09:44.026479210 -0700
+--- a/drivers/net/wireless/realtek/rtw88/main.c.orig	2026-08-22 00:21:04.846522440 -0700
++++ b/drivers/net/wireless/realtek/rtw88/main.c	2026-08-22 00:31:15.006721934 -0700
 @@ -3,6 +3,7 @@
   */
  
@@ -176,9 +176,27 @@ Last test results:  issue persists
  	init_waitqueue_head(&rtwdev->coex.wait);
  	init_completion(&rtwdev->lps_leave_check);
  	init_completion(&rtwdev->fw_scan_density);
---- a/drivers/net/wireless/realtek/rtw88/usb.c.orig	2026-08-21 23:06:20.427009952 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/usb.c	2026-08-21 23:09:13.055597489 -0700
-@@ -59,13 +59,27 @@ static void rtw_usb_reg_sec(struct rtw_d
+--- a/drivers/net/wireless/realtek/rtw88/usb.c.orig	2026-08-22 00:21:44.226320002 -0700
++++ b/drivers/net/wireless/realtek/rtw88/usb.c	2026-08-22 00:30:46.737168512 -0700
+@@ -26,6 +26,17 @@ struct rtw_usb_txcb {
+ 	struct sk_buff_head tx_ack_queue;
+ };
+ 
++static void rtw_usb_mark_fail(struct rtw_dev *rtwdev, int status)
++{
++	if (status == -110 || status == -ENODEV || status == -EPROTO || status == -2) {
++		if (atomic_inc_return(&rtwdev->fail_count) >= 3 && !rtwdev->fail) {
++			rtwdev->fail = true;
++			rtw_warn(rtwdev, "-110 storm detected, scheduling reset from rtw_usb_mark_fail\n");
++			schedule_work(&rtwdev->fw_recovery_work);
++		}
++	}
++}
++
+ static void rtw_usb_fill_tx_checksum(struct rtw_usb *rtwusb,
+ 				     struct sk_buff *skb, int agg_num)
+ {
+@@ -59,13 +70,20 @@ static void rtw_usb_reg_sec(struct rtw_d
  	if (!reg_on_section)
  		return;
  
@@ -190,48 +208,45 @@ Last test results:  issue persists
  				 t_reg, 0, data, t_len, 500);
  
 -	if (status != t_len && status != -ENODEV)
-+	if (status!= t_len && status!= -ENODEV) {
++	if (status != t_len && status != -ENODEV) {
  		rtw_err(rtwdev, "%s: reg 0x%x, usb write %u fail, status: %d\n",
  			__func__, t_reg, t_len, status);
-+		/* NEW: trigger recovery on -110 storm */
-+		if (status == -110 || status == -EPROTO || status == -2 || status == -ESHUTDOWN) {
-+			if (atomic_inc_return(&rtwdev->fail_count) >= 3 &&!rtwdev->fail) {
-+				rtwdev->fail = true;
-+				rtw_warn(rtwdev, "-110 storm in reg_sec, scheduling reset from rtw_usb_reg_sec\n");
-+				schedule_work(&rtwdev->fw_recovery_work);
-+			}
-+		}
++		rtw_usb_mark_fail(rtwdev, status);
 +	} else {
 +		atomic_set(&rtwdev->fail_count, 0);
 +	}
  }
  
  static u32 rtw_usb_read(struct rtw_dev *rtwdev, u32 addr, u16 len)
-@@ -111,8 +125,31 @@ static u16 rtw_usb_read16(struct rtw_dev
- 	return (u16)rtw_usb_read(rtwdev, addr, 2);
- }
+@@ -77,11 +95,12 @@ static u32 rtw_usb_read(struct rtw_dev *
+ 	int idx, ret;
+ 	static int count;
  
-+static u32 rtw_usb_read(struct rtw_dev *rtwdev, u32 addr, int len)
-+{
-+	struct rtw_usb *rtwusb = rtw_get_usb_priv(rtwdev);
-+	__le32 data = 0;
-+	int ret;
-+
+-	spin_lock_irqsave(&rtwusb->usb_lock, flags);
 +	if (unlikely(rtwdev->fail))
 +		return 0;
-+
-+	ret = usb_control_msg(rtwusb->udev, usb_rcvctrlpipe(rtwusb->udev, 0),
-+			      RTW_USB_CMD_READ, USB_DIR_IN | USB_TYPE_VENDOR,
-+			      addr, 0, &data, len, 1000);
-+	if (ret < 0) {
-+		rtw_err(rtwdev, "read register 0x%x failed with %d\n", addr, ret);
+ 
++	spin_lock_irqsave(&rtwusb->usb_lock, flags);
+ 	idx = rtwusb->usb_data_index;
+ 	rtwusb->usb_data_index = (idx + 1) & (RTW_USB_MAX_RXTX_COUNT - 1);
+-
+ 	spin_unlock_irqrestore(&rtwusb->usb_lock, flags);
+ 
+ 	data = &rtwusb->usb_data[idx];
+@@ -93,6 +112,11 @@ static u32 rtw_usb_read(struct rtw_dev *
+ 		rtw_err(rtwdev, "read register 0x%x failed with %d\n",
+ 			addr, ret);
+ 
++	if (ret < 0)
 +		rtw_usb_mark_fail(rtwdev, ret);
-+		return 0;
-+	}
-+	atomic_set(&rtwdev->fail_count, 0);
-+	return le32_to_cpu(data);
-+}
++	else
++		atomic_set(&rtwdev->fail_count, 0);
 +
+ 	if (rtwdev->chip->id == RTW_CHIP_TYPE_8822C ||
+ 	    rtwdev->chip->id == RTW_CHIP_TYPE_8822B ||
+ 	    rtwdev->chip->id == RTW_CHIP_TYPE_8821C)
+@@ -113,6 +137,8 @@ static u16 rtw_usb_read16(struct rtw_dev
+ 
  static u32 rtw_usb_read32(struct rtw_dev *rtwdev, u32 addr)
  {
 +	if (unlikely(rtwdev->fail))
@@ -239,30 +254,41 @@ Last test results:  issue persists
  	return (u32)rtw_usb_read(rtwdev, addr, 4);
  }
  
-@@ -159,8 +196,30 @@ static void rtw_usb_write16(struct rtw_d
- 	rtw_usb_write(rtwdev, addr, val, 2);
- }
+@@ -125,15 +151,15 @@ static void rtw_usb_write(struct rtw_dev
+ 	int idx, ret;
+ 	static int count;
  
-+static int rtw_usb_write(struct rtw_dev *rtwdev, u32 addr, u32 val, int len)
-+{
-+	struct rtw_usb *rtwusb = rtw_get_usb_priv(rtwdev);
-+	int ret;
-+
+-	spin_lock_irqsave(&rtwusb->usb_lock, flags);
 +	if (unlikely(rtwdev->fail))
-+		return -ENODEV;
++		return;
+ 
++	spin_lock_irqsave(&rtwusb->usb_lock, flags);
+ 	idx = rtwusb->usb_data_index;
+ 	rtwusb->usb_data_index = (idx + 1) & (RTW_USB_MAX_RXTX_COUNT - 1);
+-
+ 	spin_unlock_irqrestore(&rtwusb->usb_lock, flags);
+ 
+ 	data = &rtwusb->usb_data[idx];
+-
+ 	*data = cpu_to_le32(val);
+ 
+ 	ret = usb_control_msg(udev, usb_sndctrlpipe(udev, 0),
+@@ -141,7 +167,12 @@ static void rtw_usb_write(struct rtw_dev
+ 			      addr, 0, data, len, 500);
+ 	if (ret < 0 && ret != -ENODEV && count++ < 4)
+ 		rtw_err(rtwdev, "write register 0x%x failed with %d\n",
+-			addr, ret);
++		        addr, ret);
 +
-+	ret = usb_control_msg(rtwusb->udev, usb_sndctrlpipe(rtwusb->udev, 0),
-+			      RTW_USB_CMD_WRITE, USB_DIR_OUT | USB_TYPE_VENDOR,
-+			      addr, 0, &val, len, 1000);
-+	if (ret < 0) {
-+		rtw_err(rtwdev, "write register 0x%x failed with %d\n", addr, ret);
++	if (ret < 0)
 +		rtw_usb_mark_fail(rtwdev, ret);
-+		return ret;
-+	}
-+	atomic_set(&rtwdev->fail_count, 0);
-+	return 0;
-+}
-+
++	else
++		atomic_set(&rtwdev->fail_count, 0);
+ 
+ 	if (rtwdev->chip->id == RTW_CHIP_TYPE_8822C ||
+ 	    rtwdev->chip->id == RTW_CHIP_TYPE_8822B ||
+@@ -161,6 +192,8 @@ static void rtw_usb_write16(struct rtw_d
+ 
  static void rtw_usb_write32(struct rtw_dev *rtwdev, u32 addr, u32 val)
  {
 +	if (unlikely(rtwdev->fail))
@@ -270,7 +296,7 @@ Last test results:  issue persists
  	rtw_usb_write(rtwdev, addr, val, 4);
  }
  
-@@ -399,10 +458,16 @@ static bool rtw_usb_tx_agg_skb(struct rt
+@@ -399,10 +432,16 @@ static bool rtw_usb_tx_agg_skb(struct rt
  	unsigned int align_next = 0;
  	u8 qsel;
  	int ret;
@@ -287,7 +313,7 @@ Last test results:  issue persists
  	txcb = kmalloc(sizeof(*txcb), GFP_ATOMIC);
  	if (!txcb)
  		return false;
-@@ -459,14 +524,48 @@ queue:
+@@ -459,9 +498,22 @@ queue:
  	ret = rtw_usb_write_port(rtwdev, qsel, skb_head,
  				 rtw_usb_write_port_tx_complete, txcb);
  	if (ret) {
@@ -313,51 +339,7 @@ Last test results:  issue persists
  	}
  
  	return true;
- }
- 
-+/* Add fail detection to register IO path that you see in dmesg */
-+int rtw_usb_read32(struct rtw_dev *rtwdev, u32 addr, u32 *val)
-+{
-+	int ret = __rtw_usb_read32(rtwdev, addr, val);
-+	if (ret == -110)
-+		rtw_usb_mark_fail(rtwdev, ret);
-+	else if (!ret)
-+		atomic_set(&rtwdev->fail_count, 0);
-+	return ret;
-+}
-+
-+int rtw_usb_write32(struct rtw_dev *rtwdev, u32 addr, u32 val)
-+{
-+	int ret = __rtw_usb_write32(rtwdev, addr, val);
-+	if (ret == -110)
-+		rtw_usb_mark_fail(rtwdev, ret);
-+	else if (!ret)
-+		atomic_set(&rtwdev->fail_count, 0);
-+	return ret;
-+}
-+
- static void rtw_usb_tx_handler(struct work_struct *work)
- {
- 	struct rtw_usb *rtwusb = container_of(work, struct rtw_usb, tx_work);
-@@ -498,6 +597,17 @@ static void rtw_usb_write_port_complete(
- 	dev_kfree_skb_any(skb);
- }
- 
-+static void rtw_usb_mark_fail(struct rtw_dev *rtwdev, int status)
-+{
-+	if (status == -110 || status == -ENODEV || status == -EPROTO || status == -2) {
-+		if (atomic_inc_return(&rtwdev->fail_count) >= 3 && !rtwdev->fail) {
-+			rtwdev->fail = true;
-+			rtw_warn(rtwdev, "-110 storm detected, scheduling reset from rtw_usb_mark_fail\n");
-+			schedule_work(&rtwdev->fw_recovery_work);
-+		}
-+	}
-+}
-+
- static int rtw_usb_write_data(struct rtw_dev *rtwdev,
- 			      struct rtw_tx_pkt_info *pkt_info,
- 			      u8 *buf)
-@@ -522,11 +632,28 @@ static int rtw_usb_write_data(struct rtw
+@@ -522,11 +574,28 @@ static int rtw_usb_write_data(struct rtw
  	rtw_tx_fill_tx_desc(pkt_info, skb);
  	rtw_tx_fill_txdesc_checksum(rtwdev, pkt_info, skb->data);
  
@@ -387,7 +369,7 @@ Last test results:  issue persists
  
  	return ret;
 --- a/drivers/net/wireless/realtek/rtw88/usb.h.orig	2024-11-17 14:15:08.000000000 -0800
-+++ b/drivers/net/wireless/realtek/rtw88/usb.h	2026-08-21 23:09:13.055955128 -0700
++++ b/drivers/net/wireless/realtek/rtw88/usb.h	2026-08-22 00:30:46.737501338 -0700
 @@ -96,5 +96,7 @@ static inline struct rtw_usb_tx_data *rt
  
  int rtw_usb_probe(struct usb_interface *intf, const struct usb_device_id *id);
@@ -396,8 +378,8 @@ Last test results:  issue persists
 +int __rtw_usb_write32(struct rtw_dev *rtwdev, u32 addr, u32 val);
  
  #endif
---- a/net/mac80211/mlme.c.orig	2026-08-21 23:06:16.404702905 -0700
-+++ b/net/mac80211/mlme.c	2026-08-21 23:11:02.344152740 -0700
+--- a/net/mac80211/mlme.c.orig	2026-08-22 00:21:37.783012518 -0700
++++ b/net/mac80211/mlme.c	2026-08-22 00:32:05.005293339 -0700
 @@ -2760,14 +2760,32 @@ static u64 ieee80211_handle_pwr_constr(s
  		has_80211h_pwr = ieee80211_find_80211h_pwr_constr(
  			sdata, channel, country_ie, country_ie_len,
