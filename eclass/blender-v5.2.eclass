@@ -1155,7 +1155,7 @@ RDEPEND+="
 	sdl? (
 		>=media-libs/libsdl3-${LIBSDL3_PV}:=[opengl,pulseaudio?]
 		!pulseaudio? (
-			>=media-libs/libsdl3-${LIBSDL3_PV}:=[alsa,opengl,sound]
+			>=media-libs/libsdl3-${LIBSDL3_PV}:=[alsa,opengl]
 		)
 	)
 	sndfile? (
