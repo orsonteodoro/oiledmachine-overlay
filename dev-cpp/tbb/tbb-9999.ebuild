@@ -42,7 +42,10 @@ SOVER_TBBMALLOC="2.20"
 SOVER_TBBBIND="3.20"
 SLOT="0/${SOVER_TBB}-${SOVER_TBBMALLOC}-${SOVER_TBBBIND}"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86 ~x64-macos"
-IUSE+=" test"
+IUSE+="
+test
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 RDEPEND="!kernel_Darwin? ( sys-apps/hwloc:= )"
