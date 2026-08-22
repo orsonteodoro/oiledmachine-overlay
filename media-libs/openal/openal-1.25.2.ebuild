@@ -45,6 +45,7 @@ IUSE="
 	alsa coreaudio dbus debug jack oss pipewire portaudio pulseaudio sdl sndio gui
 	cpu_flags_x86_sse cpu_flags_x86_sse2 cpu_flags_x86_sse4_1
 	cpu_flags_arm_neon
+	ebuild_revision_1
 "
 
 # PipeWire:
@@ -88,6 +89,7 @@ pkg_setup() {
 }
 
 multilib_src_configure() {
+	chkl_check_many_timestamps
 	local mycmakeargs=(
 		# We prefer linking for predictable behaviour
 		-DALSOFT_DLOPEN=OFF
