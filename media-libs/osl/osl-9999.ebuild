@@ -6,16 +6,14 @@ EAPI=8
 # U24
 
 # For requirements, see
-# https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.15.5.0/INSTALL.md
+# https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/main/INSTALL.md
 # For optix requirements, see
-# https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.15.5.0/src/cmake/externalpackages.cmake
+# https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/main/src/cmake/externalpackages.cmake
 
 CXX_STANDARD=17
-LLVM_MAX_SLOT="19"
+LLVM_MAX_SLOT="22"
 OIIO_PV="2.2"
 PYTHON_COMPAT=( "python3_"{7..14} )
-QT5_MIN="5.6"
-QT6_MIN="6"
 TEST_MODE="distroV2" # Can be upstream or distroV1 distroV2
 
 CUDA_TARGETS_COMPAT=(
@@ -92,19 +90,37 @@ inherit libcxx-compat
 LLVM_COMPAT=(
 	# There is a bug where if you duplicate entry in LLVM_COMPAT it will mistaken as more than 1 when emerging.
 	#${LIBCXX_COMPAT_CXX17_CUDA[@]/llvm_slot_} # 16..19
-	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19, 21, 22
 )
 
-inherit check-compiler-switch cmake cuda flag-o-matic flag-o-matic-om
-inherit libcxx-slot libstdcxx-slot llvm multilib-minimal python-single-r1
-inherit toolchain-funcs
+CHKL_TIMESTAMPS=(
+	"dev-libs/libfmt-9999"
+	"dev-qt/qtbase-6.9999"
+	"dev-qt/qtdeclarative-6.9999"
+	"dev-qt/qtwayland-6.9999"
+)
 
-S="${WORKDIR}/OpenShadingLanguage-${PV}"
+inherit check-compiler-switch chkl cmake cuda flag-o-matic flag-o-matic-om
+inherit libcxx-slot libstdcxx-slot llvm multilib-minimal python-single-r1
+inherit secure-version toolchain-funcs
+
 if [[ "${PV}" =~ "9999" ]] ; then
-	inherit git-r3
+	INTERNAL_VERSION="1.16.0.0" # https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/main/CMakeLists.txt#L7
+	SOVER=$(ver_cut "1-3" "${PV}")
+	FALLBACK_COMMIT="ad63273a0b0fb4d46c2d2e34bf2323f6cb69c3aa"
+	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/AcademySoftwareFoundation/OpenShadingLanguage.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+	S="${WORKDIR}/${PN}-${PV}"
+	SLOT="0/${SOVER}"
 else
+	SOVER=$(ver_cut "1-2" "${INTERNAL_VERSION}")
 	KEYWORDS="~amd64 ~arm64"
+	S="${WORKDIR}/OpenShadingLanguage-${PV}"
+	SLOT="0/${SOVER}"
 	SRC_URI="
 https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/archive/refs/tags/v${PV}.tar.gz
 		-> ${P}.tar.gz
@@ -124,12 +140,11 @@ RESTRICT="
 	mirror
 	test
 "
-SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FEATURES[@]%:*}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-clang cuda doc gcc gui icc icx libcxx nofma optix partio python qt5 qt6 static-libs test wayland X
+clang cuda doc gcc gui icc icx libcxx nofma optix partio python qt6 static-libs test wayland X
 ebuild_revision_13
 "
 REQUIRED_USE+="
@@ -157,12 +172,6 @@ REQUIRED_USE+="
 		cuda
 		|| (
 			cuda_targets_sm_60
-		)
-	)
-	qt5? (
-		|| (
-			wayland
-			X
 		)
 	)
 	qt6? (
@@ -269,9 +278,9 @@ RDEPEND+="
 	$(gen_llvm_depend)
 	>=media-libs/openimageio-2.5:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP}]
 	>=dev-libs/boost-1.55:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
-	>=dev-libs/pugixml-1.8:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
-	dev-libs/libfmt:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
-	virtual/zlib:=[${MULTILIB_USEDEP}]
+	>=dev-libs/pugixml-${PUGIXML_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	>=dev-libs/libfmt-${LIBFMT_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}]
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
 		x11-drivers/nvidia-drivers:=
@@ -307,16 +316,11 @@ RDEPEND+="
 			virtual/numpy:=[${PYTHON_USEDEP}]
 		')
 	)
-	qt5? (
-		>=dev-qt/qtcore-${QT5_MIN}:5=
-		>=dev-qt/qtgui-${QT5_MIN}:5=[wayland?,X?]
-		>=dev-qt/qtwidgets-${QT5_MIN}:5=[X?]
-	)
 	qt6? (
-		>=dev-qt/qtbase-${QT6_MIN}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui,wayland?,widgets,X?]
+		>=dev-qt/qtbase-${QTBASE6_PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui,wayland?,widgets,X?]
 		wayland? (
-			>=dev-qt/qtdeclarative-${QT6_MIN}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opengl]
-			>=dev-qt/qtwayland-${QT6_MIN}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+			>=dev-qt/qtdeclarative-${QTDECLARATIVE6_PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opengl]
+			>=dev-qt/qtwayland-${QTWAYLAND6_PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		)
 	)
 	media-libs/openexr:=
@@ -385,13 +389,6 @@ pkg_setup() {
 	# See https://github.com/imageworks/OpenShadingLanguage/blob/master/INSTALL.md
 	# Supports LLVM-{7..13} but should be the same throughout the system.
 
-	if use qt5 ; then
-ewarn
-ewarn "Enabling the qt5 USE flag with this ebuild may cause build time"
-ewarn "failures.  It may need to be disabled."
-ewarn
-	fi
-
 	if use optix ; then
 ewarn
 ewarn "The optix USE flag is untested.  Left for owners of those kinds of GPUs"
@@ -404,6 +401,37 @@ ewarn
 	llvm_pkg_setup
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+
+	# Versioning:  https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/main/docs/dev/RELEASING.md?plain=1#L10
+	# SOVER:  https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/main/src/cmake/compiler.cmake#L574
+	local pv_major=$(grep -e "OSL_VERSION" "${S}/CMakeLists.txt" | head -n 1 | cut -f 2 -d '"' | cut -f 1 -d ".")
+	local pv_minor=$(grep -e "OSL_VERSION" "${S}/CMakeLists.txt" | head -n 1 | cut -f 2 -d '"' | cut -f 2 -d ".")
+	local pv_patch=$(grep -e "OSL_VERSION" "${S}/CMakeLists.txt" | head -n 1 | cut -f 2 -d '"' | cut -f 3 -d ".")
+	local actual_sover
+	local expected_sover="${SOVER}"
+	if [[ "${PV}" =~ "9999" ]] ; then
+		local actual_sover="${pv_major}.${pv_minor}.${pv_patch}"
+	else
+		local actual_sover="${pv_major}.${pv_minor}"
+	fi
+	if ver_test "${actual_sover}" "-ne" "${expected_sover}" ; then
+eerror "QA:  Update SOVER or INTERNAL_VERSION"
+eerror "Actual SOVER:  ${actual_sover}"
+eerror "Expected SOVER:  ${expected_sover}"
+		die
+	fi
 }
 
 src_prepare() {
@@ -429,6 +457,7 @@ src_prepare() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	if tc-is-clang ; then
 		use clang || die "Enable the clang USE flag."
 	fi
@@ -539,7 +568,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 			# LLVM_STATIC=ON is broken for llvm:10
 
 			local has_qt="OFF"
-			if use qt5 || use qt6 ; then
+			if use qt6 ; then
 				has_qt="ON"
 			fi
 
