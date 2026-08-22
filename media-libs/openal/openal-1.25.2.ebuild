@@ -1,4 +1,4 @@
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -10,33 +10,41 @@ CXX_STANDARD=17
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-inherit cmake-multilib libcxx-slot libstdcxx-slot
+CHKL_TIMESTAMPS=(
+	"dev-qt/qtbase-6.9999"
+	"media-libs/alsa-lib-9999"
+	"media-libs/libsdl3-9999"
+	"media-sound/sndio-9999"
+	"media-video/pipewire-9999"
+	"sys-apps/dbus-9999"
+)
+
+inherit chkl prefix libcxx-slot libstdcxx-slot secure-version cmake-multilib
 
 MY_P="${PN}-soft-${PV}"
 
 DESCRIPTION="Software implementation of the OpenAL 3D audio API"
-HOMEPAGE="https://www.openal-soft.org/"
-SRC_URI="https://www.openal-soft.org/openal-releases/${MY_P}.tar.bz2"
+HOMEPAGE="https://openal-soft.org/"
+SRC_URI="https://openal-soft.org/openal-releases/${MY_P}.tar.bz2"
 S="${WORKDIR}"/${MY_P}
 
 # See https://github.com/kcat/openal-soft/blob/e0097c18b82d5da37248c4823fde48b6e0002cdd/BSD-3Clause
 # Some components are under BSD
 LICENSE="LGPL-2+ BSD"
 SLOT="0"
-KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~mips ppc ppc64 ~riscv ~sparc x86 ~amd64-linux ~x86-linux"
+KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86"
 IUSE="
-	alsa coreaudio debug jack oss pipewire portaudio pulseaudio sdl sndio gui
+	alsa coreaudio dbus debug jack oss pipewire portaudio pulseaudio sdl sndio gui
 	cpu_flags_x86_sse cpu_flags_x86_sse2 cpu_flags_x86_sse4_1
 	cpu_flags_arm_neon
-	ebuild_revision_1
 "
 
 # PipeWire:
@@ -44,30 +52,35 @@ IUSE="
 # - PW is in DEPEND although not linked against because we need configure to
 # find it anyway, but no :=.
 RDEPEND="
-	alsa? ( media-libs/alsa-lib[${MULTILIB_USEDEP}] )
-	gui? (
-		>=dev-qt/qtbase-6.8:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui,widgets]
-		dev-qt/qtbase:=
+	alsa? ( >=media-libs/alsa-lib-${ALSA_LIB_PV}:=[${MULTILIB_USEDEP}] )
+	dbus? (
+		>=sys-apps/dbus-${DBUS_PV}:=
+		sys-auth/rtkit:=
 	)
-	jack? ( virtual/jack[${MULTILIB_USEDEP}] )
-	pipewire? ( media-video/pipewire[${MULTILIB_USEDEP}] )
-	portaudio? ( media-libs/portaudio[${MULTILIB_USEDEP}] )
-	pulseaudio? ( media-libs/libpulse[${MULTILIB_USEDEP}] )
-	sdl? ( media-libs/libsdl2[${MULTILIB_USEDEP}] )
-	sndio? ( media-sound/sndio:=[${MULTILIB_USEDEP}] )
+	gui? ( >=dev-qt/qtbase-${QTBASE6_PV}:6[gui,widgets] )
+	jack? ( virtual/jack:*[${MULTILIB_USEDEP}] )
+	pipewire? ( >=media-video/pipewire-${PIPEWIRE_PV}:=[${MULTILIB_USEDEP}] )
+	portaudio? ( media-libs/portaudio:=[${MULTILIB_USEDEP}] )
+	pulseaudio? ( >=media-libs/libpulse-${LIBPULSE_PV}:=[${MULTILIB_USEDEP}] )
+	sdl? ( >=media-libs/libsdl3-${LIBSDL3_PV}:=[${MULTILIB_USEDEP}] )
+	sndio? ( >=media-sound/sndio-${SNDIO_PV}:=[${MULTILIB_USEDEP}] )
 "
-DEPEND="${RDEPEND}
-	oss? ( virtual/os-headers )
+DEPEND="
+	${RDEPEND}
+	oss? ( virtual/os-headers:* )
 "
 
 DOCS=( alsoftrc.sample docs/env-vars.txt docs/hrtf.txt ChangeLog README.md )
 
 PATCHES=(
-	# bug 955274; git master
-	"${FILESDIR}/${P}-qt6.patch"
-	# backport of https://github.com/fmtlib/fmt/commit/f4345467fce7edbc6b36c3fa1cf197a67be617e2 for bundled libfmt
-	"${FILESDIR}/${PN}-1.24.3-libfmt-libcxx-21.patch"
+	"${FILESDIR}"/${PN}-1.25.2-gcc17.patch
 )
+
+src_prepare() {
+	cmake_src_prepare
+	# bug #883407
+	hprefixify alc/alconfig.cpp || die
+}
 
 pkg_setup() {
 	libcxx-slot_verify
@@ -76,6 +89,12 @@ pkg_setup() {
 
 multilib_src_configure() {
 	local mycmakeargs=(
+		# We prefer linking for predictable behaviour
+		-DALSOFT_DLOPEN=OFF
+
+		# GCC 15 ICEs (bug #976806)
+		-DALSOFT_ENABLE_MODULES=OFF
+
 		# See bug #809314 for getting both options for backends
 		-DALSOFT_{BACKEND,REQUIRE}_ALSA=$(usex alsa)
 		-DALSOFT_{BACKEND,REQUIRE}_COREAUDIO=$(usex coreaudio)
@@ -84,13 +103,17 @@ multilib_src_configure() {
 		-DALSOFT_{BACKEND,REQUIRE}_PIPEWIRE=$(usex pipewire)
 		-DALSOFT_{BACKEND,REQUIRE}_PORTAUDIO=$(usex portaudio)
 		-DALSOFT_{BACKEND,REQUIRE}_PULSEAUDIO=$(usex pulseaudio)
-		-DALSOFT_{BACKEND,REQUIRE}_SDL2=$(usex sdl)
+		-DALSOFT_{BACKEND,REQUIRE}_SDL2=OFF
+		-DALSOFT_{BACKEND,REQUIRE}_SDL3=$(usex sdl)
 		-DALSOFT_{BACKEND,REQUIRE}_SNDIO=$(usex sndio)
 
 		-DALSOFT_UTILS=$(multilib_is_native_abi && echo "ON" || echo "OFF")
 		-DALSOFT_NO_CONFIG_UTIL=$(usex gui "$(multilib_is_native_abi && echo "OFF" || echo "ON")" ON)
 		 # EXAMPLES=OFF to avoid FFmpeg dependency, bug #481670
 		-DALSOFT_EXAMPLES=OFF
+
+		-DALSOFT_RTKIT=$(multilib_native_usex dbus)
+		-DALSOFT_REQUIRE_RTKIT=$(multilib_native_usex dbus)
 	)
 
 	# Avoid unused variable warnings, bug #738240
