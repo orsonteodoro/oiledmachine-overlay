@@ -54,12 +54,8 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 	SRC_URI=""
 	IUSE+=" fallback-commit"
-elif [[ "${PV}" == "2.83" ]] ; then
-	SRC_URI="https://download.blender.org/source/blender-${PV}.0.tar.xz"
-elif ver_test $(ver_cut 1-2 "${PV}") -ge "2.81" ; then
-	SRC_URI="https://download.blender.org/source/blender-${PV}.tar.xz"
 else
-	SRC_URI="https://download.blender.org/source/${P}.tar.gz"
+	SRC_URI="https://github.com/blender/blender/archive/refs/tags/v${PV}.tar.gz -> ${P}.gh.tar.gz"
 fi
 
 ARM_CPU_FLAGS=(

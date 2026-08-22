@@ -298,6 +298,7 @@ SECURE_TIMESTAMP["media_libs_openjpeg_9999"]="Sun, 5 Apr 2026 13:25:27 +0200"
 SECURE_TIMESTAMP["media_libs_openjph_9999"]="Jun 21, 2026 5:45 AM PDT"
 SECURE_TIMESTAMP["media_libs_opus_9999"]="Jun 12, 2026 12:26 PM PDT"
 SECURE_TIMESTAMP["media_libs_rnnoise_9999"]="Sep 2, 2017 5:51 PM PDT"
+SECURE_TIMESTAMP["media_libs_rubberband_9999"]="Oct 25, 2026 9:26 AM PDT"
 SECURE_TIMESTAMP["media_libs_speex_9999"]="Jun 16, 2026 6:20:59 AM PDT"
 SECURE_TIMESTAMP["media_libs_libspng_9999"]="May 8, 2023 6:45 AM PDT"
 SECURE_TIMESTAMP["media_libs_subrandr_9999"]="May 13, 2026 6:54 AM PDT"
@@ -408,7 +409,7 @@ SECURE_TIMESTAMP["sys_libs_libseccomp_9999"]="Jan 23, 2025 4:35 PM PST"
 SECURE_TIMESTAMP["sys_libs_libselinux_9999"]="Jul 30, 2026 10:36 AM PDT"
 SECURE_TIMESTAMP["sys_libs_libsepol_9999"]="Jul 31, 2026 1:03 PM PDT"
 SECURE_TIMESTAMP["sys_libs_libunwind_9999"]="Jun 19, 2026 9:44 AM PDT"
-SECURE_TIMESTAMP["sys_libs_minizip-ng_9999"]="Jul 13, 2026 10:21 PM PDT"
+SECURE_TIMESTAMP["sys_libs_minizip_ng_9999"]="Jul 13, 2026 10:21 PM PDT"
 SECURE_TIMESTAMP["sys_libs_readline_9999"]="2025-12-10 8:10 AM PST"
 SECURE_TIMESTAMP["sys_libs_pam_9999"]="Jun 30, 2026 3:00 AM PDT"
 
@@ -477,6 +478,7 @@ SECURE_TIMESTAMP["x11_libs_libdrm_9999"]="2026-04-06 08:00:12 +0000"
 SECURE_TIMESTAMP["x11_libs_pango_9999"]="Jun 1, 2026 3:30 PM PDT"
 SECURE_TIMESTAMP["x11_libs_pixman_9999"]="Aug 1, 2025 9:38:49 AM PDT"
 SECURE_TIMESTAMP["x11_misc_colord_9999"]="Feb 2, 2026 1:31 AM PST"
+
 
 	declare -p SECURE_TIMESTAMP
 }

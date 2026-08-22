@@ -110,7 +110,6 @@ inherit secure-version
 ONETBB_SLOT="0"
 OPENVDB_ABIS_MAJOR_VERS=12
 OSL_PV="1.14.3.0"
-VULKAN_PV="${VULKAN_LOADER_PV}"
 
 CHKL_TIMESTAMPS=(
 	"app-arch/zstd-9999"

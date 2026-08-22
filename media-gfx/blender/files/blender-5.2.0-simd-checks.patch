@@ -1,0 +1,91 @@
+diff '--color=auto' -urp blender-5.2.0.orig/intern/cycles/kernel/device/cpu/kernel_avx2.cpp blender-5.2.0/intern/cycles/kernel/device/cpu/kernel_avx2.cpp
+--- blender-5.2.0.orig/intern/cycles/kernel/device/cpu/kernel_avx2.cpp	2026-07-13 08:20:11.000000000 -0700
++++ blender-5.2.0/intern/cycles/kernel/device/cpu/kernel_avx2.cpp	2026-08-22 03:26:04.002988374 -0700
+@@ -13,13 +13,17 @@
+ #else
+ /* SSE optimization disabled for now on 32 bit, see bug #36316. */
+ #  if !(defined(__GNUC__) && (defined(i386) || defined(_M_IX86)))
+-#    define __KERNEL_SSE__
+-#    define __KERNEL_SSE2__
+-#    define __KERNEL_SSE3__
+-#    define __KERNEL_SSSE3__
+-#    define __KERNEL_SSE42__
+-#    define __KERNEL_AVX__
+-#    define __KERNEL_AVX2__
++#    if defined(__SSE__) && defined(__SSE2__) && defined(__SSE3__) && defined(__SSSE3__) && defined(__SSE42__) && defined(__AVX__) && defined(__AVX2__)
++#      define __KERNEL_SSE__
++#      define __KERNEL_SSE2__
++#      define __KERNEL_SSE3__
++#      define __KERNEL_SSSE3__
++#      define __KERNEL_SSE42__
++#      define __KERNEL_AVX__
++#      define __KERNEL_AVX2__
++#    else
++#      define KERNEL_STUB
++#    endif
+ #  endif
+ #endif /* WITH_CYCLES_OPTIMIZED_KERNEL_AVX2 */
+ 
+diff '--color=auto' -urp blender-5.2.0.orig/intern/cycles/kernel/device/cpu/kernel.cpp blender-5.2.0/intern/cycles/kernel/device/cpu/kernel.cpp
+--- blender-5.2.0.orig/intern/cycles/kernel/device/cpu/kernel.cpp	2026-07-13 08:20:11.000000000 -0700
++++ blender-5.2.0/intern/cycles/kernel/device/cpu/kernel.cpp	2026-08-22 03:26:04.136260207 -0700
+@@ -8,11 +8,13 @@
+  * one with SSE4.2 intrinsics.
+  */
+ #if defined(__x86_64__) || defined(_M_X64)
+-#  define __KERNEL_SSE__
+-#  define __KERNEL_SSE2__
+-#  define __KERNEL_SSE3__
+-#  define __KERNEL_SSSE3__
+-#  define __KERNEL_SSE42__
++#  if defined(__SSE__) && defined(__SSE2__) && defined(__SSE3__) && defined(__SSSE3__) && defined(__SSE4_2__)
++#    define __KERNEL_SSE__
++#    define __KERNEL_SSE2__
++#    define __KERNEL_SSE3__
++#    define __KERNEL_SSSE3__
++#    define __KERNEL_SSE42__
++#  endif
+ #endif
+ 
+ /* When building kernel for native machine detect kernel features from the flags
+diff '--color=auto' -urp blender-5.2.0.orig/intern/cycles/util/optimization.h blender-5.2.0/intern/cycles/util/optimization.h
+--- blender-5.2.0.orig/intern/cycles/util/optimization.h	2026-07-13 08:20:11.000000000 -0700
++++ blender-5.2.0/intern/cycles/util/optimization.h	2026-08-22 03:28:04.331144557 -0700
+@@ -21,11 +21,17 @@
+ /* SSE4.2 is our minimum requirement for x86-64 CPUs, so auto enable */
+ #    define __KERNEL_SSE__
+ #    define __KERNEL_SSE2__
+-#    define __KERNEL_SSE3__
+-#    define __KERNEL_SSE42__
++#    if defined(__SSE3__)
++#      define __KERNEL_SSE3__
++#    endif
++#    if defined(__SSE4_2__)
++#      define __KERNEL_SSE42__
++#    endif
+ /* no SSE4.2 kernel on x86-64, part of regular kernel */
+-#    ifdef WITH_KERNEL_AVX2
+-#      define WITH_CYCLES_OPTIMIZED_KERNEL_AVX2
++#    if defined(__AVX2__)
++#      ifdef WITH_KERNEL_AVX2
++#        define WITH_CYCLES_OPTIMIZED_KERNEL_AVX2
++#      endif
+ #    endif
+ 
+ /* Arm Neon
+Only in blender-5.2.0/intern/cycles/util: optimization.h.orig
+Only in blender-5.2.0/intern/cycles/util: optimization.h.rej
+diff '--color=auto' -urp blender-5.2.0.orig/source/blender/blenlib/BLI_bit_span_to_index_ranges.hh blender-5.2.0/source/blender/blenlib/BLI_bit_span_to_index_ranges.hh
+--- blender-5.2.0.orig/source/blender/blenlib/BLI_bit_span_to_index_ranges.hh	2026-07-13 08:20:11.000000000 -0700
++++ blender-5.2.0/source/blender/blenlib/BLI_bit_span_to_index_ranges.hh	2026-08-22 03:28:59.818960223 -0700
+@@ -106,7 +106,7 @@ inline void bits_to_index_ranges(const B
+     int64_t int_i = 0;
+ 
+ /* Checking for chunks of 0 bits can be speedup using intrinsics quite significantly. */
+-#if BLI_HAVE_SSE4
++#if BLI_HAVE_SSE4 && defined(__SSE4_1__)
+     for (; int_i + 1 < ints_to_check; int_i += 2) {
+       /* Loads the next 128 bit. */
+       const __m128i group = _mm_loadu_si128(reinterpret_cast<const __m128i *>(start + int_i));
+Only in blender-5.2.0/source/blender/blenlib: BLI_bit_span_to_index_ranges.hh.orig
+Only in blender-5.2.0/source/blender/blenlib: BLI_bit_span_to_index_ranges.hh.rej

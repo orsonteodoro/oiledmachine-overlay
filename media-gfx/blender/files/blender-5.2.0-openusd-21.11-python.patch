@@ -1,0 +1,22 @@
+--- blender-5.2.0.orig/source/blender/io/usd/CMakeLists.txt	2026-07-13 08:20:11.000000000 -0700
++++ blender-5.2.0/source/blender/io/usd/CMakeLists.txt	2026-08-22 03:13:38.304591660 -0700
+@@ -53,6 +53,7 @@ set(INC
+ )
+ 
+ set(INC_SYS
++  ${PYTHON_INCLUDE_DIRS}
+ )
+ 
+ set(SRC
+@@ -216,6 +217,11 @@ set(LIB
+   PRIVATE bf::dependencies::optional::tbb
+ )
+ 
++list(APPEND LIB
++  ${PYTHON_LINKFLAGS}
++  ${PYTHON_LIBRARIES}
++)
++
+ if(WITH_MATERIALX)
+   add_definitions(-DWITH_MATERIALX)
+   list(APPEND LIB MaterialXCore)

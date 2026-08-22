@@ -1,0 +1,14 @@
+diff '--color=auto' -urp blender-5.2.0.orig/build_files/cmake/platform/platform_unix.cmake blender-5.2.0/build_files/cmake/platform/platform_unix.cmake
+--- blender-5.2.0.orig/build_files/cmake/platform/platform_unix.cmake	2026-08-22 03:21:54.406759974 -0700
++++ blender-5.2.0/build_files/cmake/platform/platform_unix.cmake	2026-08-22 03:23:01.509828999 -0700
+@@ -181,7 +181,7 @@ function(check_freetype_for_brotli)
+   unset(HAVE_BROTLI CACHE)
+   include(CheckSymbolExists)
+   set(CMAKE_REQUIRED_INCLUDES ${FREETYPE_INCLUDE_DIRS})
+-  check_symbol_exists(FT_CONFIG_OPTION_USE_BROTLI "freetype/config/ftconfig.h" HAVE_BROTLI)
++  check_symbol_exists(FT_CONFIG_OPTION_USE_BROTLI "freetype/config/ftoption.h" HAVE_BROTLI)
+   unset(CMAKE_REQUIRED_INCLUDES)
+   if(NOT HAVE_BROTLI)
+     unset(HAVE_BROTLI CACHE)
+Only in blender-5.2.0/build_files/cmake/platform: platform_unix.cmake.orig
+Only in blender-5.2.0/build_files/cmake/platform: platform_unix.cmake.rej
