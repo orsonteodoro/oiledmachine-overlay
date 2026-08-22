@@ -71,10 +71,14 @@ RDEPEND="
 		')
 	)
 "
-DEPEND="
+BDEPEND="
+	>=dev-build/cmake-3.18
 	python? (
 		$(python_gen_cond_dep '
-			>=dev-python/nanobind-2.1.0[${PYTHON_USEDEP}]
+			>=dev-python/nanobind-1.8.0[${PYTHON_USEDEP}]
+			<dev-python/nanobind-3.0.0[${PYTHON_USEDEP}]
+
+			dev-python/scikit-build-core[${PYTHON_USEDEP}]
 		')
 	)
 	test? (
