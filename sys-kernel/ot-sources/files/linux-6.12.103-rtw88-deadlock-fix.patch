@@ -52,7 +52,30 @@ this AI generated patch, I am doing fewer manual resets and no forced resets
 after uploading through nmtui.
 
 Patch status:  testing
-Last test results:  issue persists
+Last test result:  issue persists
+Current test result:  actively testing
+
+AI summary of fixes [modified by ebuild maintainer]:
+
+rtw88: fix 30+ day uptime -110 storm and 127dBm power wedge on 8821CU
+
+Combined local fix that fixes three issues seen in field:
+
+- rtw_usb_reg_sec: reg 0x4e0 usb write 1 fail status -110 spamming
+  for 70+ seconds after read 0x770/0x774/0x1cc failed -110.
+  Root cause: -110 not tracked in register IO path, so recovery
+  never scheduled and device keeps hammering dead USB.
+
+- mac80211: Limiting TX power to 127 (127 - 0) dBm as advertised
+  by <reacted> triggers RF wedge that leads to -110 storm.
+  127 is used as "no limit" by some APs, invalid as real dBm.
+
+- rtw_usb_tx_agg_skb deadlock: ieee80211_purge_tx_queue under
+  spinlock + fw_recovery holding mutex causes modprobe -rf
+  Device or resource busy.
+
+Fix: add fail_count/fail flag, mark fail on -110 in all USB
+control paths, reset outside mutex, ignore invalid 127 dBm.
 
 --- a/drivers/net/wireless/realtek/rtw88/main.h.orig	2026-08-22 00:21:04.847019944 -0700
 +++ b/drivers/net/wireless/realtek/rtw88/main.h	2026-08-22 00:30:59.599280652 -0700
