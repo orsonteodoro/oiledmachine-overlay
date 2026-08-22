@@ -106,7 +106,7 @@ inherit secure-version toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	INTERNAL_VERSION="1.16.0.0" # https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/main/CMakeLists.txt#L7
-	SOVER=$(ver_cut "1-3" "${PV}")
+	SOVER=$(ver_cut "1-3" "${INTERNAL_VERSION}")
 	FALLBACK_COMMIT="ad63273a0b0fb4d46c2d2e34bf2323f6cb69c3aa"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/AcademySoftwareFoundation/OpenShadingLanguage.git"
@@ -145,7 +145,7 @@ ${CPU_FEATURES[@]%:*}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang cuda doc gcc gui icc icx libcxx nofma optix partio python qt6 static-libs test wayland X
-ebuild_revision_14
+ebuild_revision_15
 "
 REQUIRED_USE+="
 	^^ (
