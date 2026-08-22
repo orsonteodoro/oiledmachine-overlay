@@ -52,9 +52,39 @@ this AI generated patch, I am doing fewer manual resets and no forced resets
 after uploading through nmtui.
 
 Patch status:  testing
+Latest test results:  issue persists
 
+--- a/drivers/net/wireless/realtek/rtw88/main.h.orig	2026-06-14 07:58:38.000000000 -0700
++++ b/drivers/net/wireless/realtek/rtw88/main.h	2026-08-21 21:33:21.529143238 -0700
+@@ -14,6 +14,7 @@
+ #include <linux/iopoll.h>
+ #include <linux/interrupt.h>
+ #include <linux/workqueue.h>
++#include <linux/atomic.h>
+ 
+ #include "util.h"
+ 
+@@ -2079,6 +2080,10 @@ struct rtw_dev {
+ 	/* ensures exclusive access from mac80211 callbacks */
+ 	struct mutex mutex;
+ 
++	/* USB fail detection for -110 storm */
++	bool fail; /* true after 3 consecutive -110 to stop USB spam */
++	atomic_t fail_count;
++
+ 	/* watch dog every 2 sec */
+ 	struct delayed_work watch_dog_work;
+ 	u32 watch_dog_cnt;
+@@ -2268,6 +2273,7 @@ int rtw_sta_add(struct rtw_dev *rtwdev,
+ void rtw_sta_remove(struct rtw_dev *rtwdev, struct ieee80211_sta *sta,
+ 		    bool fw_exist);
+ void rtw_fw_recovery(struct rtw_dev *rtwdev);
++void rtw_fw_recovery_work(struct work_struct *work);
+ int rtw_wait_firmware_completion(struct rtw_dev *rtwdev);
+ int rtw_power_on(struct rtw_dev *rtwdev);
+ void rtw_core_fw_scan_notify(struct rtw_dev *rtwdev, bool start);
 --- a/drivers/net/wireless/realtek/rtw88/main.c.orig	2026-06-14 07:58:38.000000000 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/main.c	2026-08-21 14:41:40.106917532 -0700
++++ b/drivers/net/wireless/realtek/rtw88/main.c	2026-08-21 21:36:34.931303740 -0700
 @@ -3,6 +3,7 @@
   */
  
@@ -92,7 +122,7 @@ Patch status:  testing
  	rcu_read_lock();
  	rtw_iterate_keys_rcu(rtwdev, NULL, rtw_reset_key_iter, rtwdev);
  	rcu_read_unlock();
-@@ -669,17 +678,38 @@ free:
+@@ -669,17 +678,42 @@ free:
  	rtw_iterate_vifs_atomic(rtwdev, rtw_reset_vif_iter, rtwdev);
  	bitmap_zero(rtwdev->hw_port, RTW_PORT_NUM);
  	rtw_enter_ips(rtwdev);
@@ -114,8 +144,12 @@ Patch status:  testing
 +
 +	if (was_fail) {
 +		struct rtw_usb *rtwusb = rtw_get_usb_priv(rtwdev);
++		rtw_warn(rtwdev, "USB reset after -110 storm (reg 0x4e0/0xaa/0x770)\n");
 +		/* usb_reset_device sleeps, must be outside mutex */
 +		usb_reset_device(rtwusb->udev);
++		msleep(200);
++		rtwdev->fail = false;
++		atomic_set(&rtwdev->fail_count, 0);
 +	}
  
  	mutex_lock(&rtwdev->mutex);
@@ -131,7 +165,7 @@ Patch status:  testing
  	ieee80211_restart_hw(rtwdev->hw);
  }
  
-@@ -2178,6 +2208,10 @@ int rtw_core_init(struct rtw_dev *rtwdev
+@@ -2178,6 +2212,10 @@ int rtw_core_init(struct rtw_dev *rtwdev
  	mutex_init(&rtwdev->mutex);
  	mutex_init(&rtwdev->hal.tx_power_mutex);
  
@@ -142,37 +176,101 @@ Patch status:  testing
  	init_waitqueue_head(&rtwdev->coex.wait);
  	init_completion(&rtwdev->lps_leave_check);
  	init_completion(&rtwdev->fw_scan_density);
---- a/drivers/net/wireless/realtek/rtw88/main.h.orig	2026-06-14 07:58:38.000000000 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/main.h	2026-08-21 11:52:20.865730135 -0700
-@@ -14,6 +14,7 @@
- #include <linux/iopoll.h>
- #include <linux/interrupt.h>
- #include <linux/workqueue.h>
-+#include <linux/atomic.h>
+--- a/drivers/net/wireless/realtek/rtw88/usb.c.orig	2026-08-21 21:29:52.133751758 -0700
++++ b/drivers/net/wireless/realtek/rtw88/usb.c	2026-08-21 22:00:58.982744037 -0700
+@@ -60,13 +60,27 @@ static void rtw_usb_reg_sec(struct rtw_d
+ 	if (!reg_on_section)
+ 		return;
  
- #include "util.h"
- 
-@@ -2079,6 +2080,9 @@ struct rtw_dev {
- 	/* ensures exclusive access from mac80211 callbacks */
- 	struct mutex mutex;
- 
-+	bool fail; /* true after 3 consecutive -110 to stop USB spam */
-+	atomic_t fail_count;
++	if (unlikely(rtwdev->fail))
++		return;
 +
- 	/* watch dog every 2 sec */
- 	struct delayed_work watch_dog_work;
- 	u32 watch_dog_cnt;
-@@ -2268,6 +2272,7 @@ int rtw_sta_add(struct rtw_dev *rtwdev,
- void rtw_sta_remove(struct rtw_dev *rtwdev, struct ieee80211_sta *sta,
- 		    bool fw_exist);
- void rtw_fw_recovery(struct rtw_dev *rtwdev);
-+void rtw_fw_recovery_work(struct work_struct *work);
- int rtw_wait_firmware_completion(struct rtw_dev *rtwdev);
- int rtw_power_on(struct rtw_dev *rtwdev);
- void rtw_core_fw_scan_notify(struct rtw_dev *rtwdev, bool start);
---- a/drivers/net/wireless/realtek/rtw88/usb.c.orig	2026-08-21 11:38:41.736818595 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/usb.c	2026-08-21 11:52:09.618117397 -0700
-@@ -400,10 +400,16 @@ static bool rtw_usb_tx_agg_skb(struct rt
+ 	status = usb_control_msg(udev, usb_sndctrlpipe(udev, 0),
+ 				 RTW_USB_CMD_REQ, RTW_USB_CMD_WRITE,
+ 				 t_reg, 0, data, t_len, 500);
+ 
+-	if (status != t_len && status != -ENODEV)
++	if (status!= t_len && status!= -ENODEV) {
+ 		rtw_err(rtwdev, "%s: reg 0x%x, usb write %u fail, status: %d\n",
+ 			__func__, t_reg, t_len, status);
++		/* NEW: trigger recovery on -110 storm */
++		if (status == -110 || status == -EPROTO || status == -2 || status == -ESHUTDOWN) {
++			if (atomic_inc_return(&rtwdev->fail_count) >= 3 &&!rtwdev->fail) {
++				rtwdev->fail = true;
++				rtw_warn(rtwdev, "-110 storm in reg_sec, scheduling reset from rtw_usb_reg_sec\n");
++				schedule_work(&rtwdev->fw_recovery_work);
++			}
++		}
++	} else {
++		atomic_set(&rtwdev->fail_count, 0);
++	}
+ }
+ 
+ static u32 rtw_usb_read(struct rtw_dev *rtwdev, u32 addr, u16 len)
+@@ -112,8 +126,31 @@ static u16 rtw_usb_read16(struct rtw_dev
+ 	return (u16)rtw_usb_read(rtwdev, addr, 2);
+ }
+ 
++static u32 rtw_usb_read(struct rtw_dev *rtwdev, u32 addr, int len)
++{
++	struct rtw_usb *rtwusb = rtw_get_usb_priv(rtwdev);
++	__le32 data = 0;
++	int ret;
++
++	if (unlikely(rtwdev->fail))
++		return 0;
++
++	ret = usb_control_msg(rtwusb->udev, usb_rcvctrlpipe(rtwusb->udev, 0),
++			      RTW_USB_CMD_READ, USB_DIR_IN | USB_TYPE_VENDOR,
++			      addr, 0, &data, len, 1000);
++	if (ret < 0) {
++		rtw_err(rtwdev, "read register 0x%x failed with %d\n", addr, ret);
++		rtw_usb_mark_fail(rtwdev, ret);
++		return 0;
++	}
++	atomic_set(&rtwdev->fail_count, 0);
++	return le32_to_cpu(data);
++}
++
+ static u32 rtw_usb_read32(struct rtw_dev *rtwdev, u32 addr)
+ {
++	if (unlikely(rtwdev->fail))
++		return 0;
+ 	return (u32)rtw_usb_read(rtwdev, addr, 4);
+ }
+ 
+@@ -160,8 +197,30 @@ static void rtw_usb_write16(struct rtw_d
+ 	rtw_usb_write(rtwdev, addr, val, 2);
+ }
+ 
++static int rtw_usb_write(struct rtw_dev *rtwdev, u32 addr, u32 val, int len)
++{
++	struct rtw_usb *rtwusb = rtw_get_usb_priv(rtwdev);
++	int ret;
++
++	if (unlikely(rtwdev->fail))
++		return -ENODEV;
++
++	ret = usb_control_msg(rtwusb->udev, usb_sndctrlpipe(rtwusb->udev, 0),
++			      RTW_USB_CMD_WRITE, USB_DIR_OUT | USB_TYPE_VENDOR,
++			      addr, 0, &val, len, 1000);
++	if (ret < 0) {
++		rtw_err(rtwdev, "write register 0x%x failed with %d\n", addr, ret);
++		rtw_usb_mark_fail(rtwdev, ret);
++		return ret;
++	}
++	atomic_set(&rtwdev->fail_count, 0);
++	return 0;
++}
++
+ static void rtw_usb_write32(struct rtw_dev *rtwdev, u32 addr, u32 val)
+ {
++	if (unlikely(rtwdev->fail))
++		return;
+ 	rtw_usb_write(rtwdev, addr, val, 4);
+ }
+ 
+@@ -400,10 +459,16 @@ static bool rtw_usb_tx_agg_skb(struct rt
  	unsigned int align_next = 0;
  	u8 qsel;
  	int ret;
@@ -189,38 +287,77 @@ Patch status:  testing
  	txcb = kmalloc_obj(*txcb, GFP_ATOMIC);
  	if (!txcb)
  		return false;
-@@ -460,8 +466,29 @@ queue:
+@@ -460,14 +525,48 @@ queue:
  	ret = rtw_usb_write_port(rtwdev, qsel, skb_head,
  				 rtw_usb_write_port_tx_complete, txcb);
  	if (ret) {
 -		ieee80211_purge_tx_queue(rtwdev->hw, &txcb->tx_ack_queue);
+-		kfree(txcb);
+-		return false;
++		/* FIX deadlock: splice then purge outside lock */
 +		struct sk_buff_head free_q;
 +		__skb_queue_head_init(&free_q);
 +		skb_queue_splice_init(&txcb->tx_ack_queue, &free_q);
 +
-+		if (ret == -110 || ret == -ENODEV || ret == -EPROTO)
++		if (ret == -110 || ret == -ENODEV || ret == -EPROTO || ret == -ESHUTDOWN)
 +			mark_fail = true;
 +
-+		/* FIX: purge outside lock to avoid AA deadlock.
-+		 * Old code called ieee80211_purge_tx_queue while holding
-+		 * list->lock / rtwdev->mutex. purge takes hw conf mutex.
-+		 * Correct: free after unlock. mutex is unlocked in caller
-+		 * after we return, so do purge here after splice.
-+		 */
 +		ieee80211_purge_tx_queue(rtwdev->hw, &free_q);
 +		skb_queue_purge(&free_q);
- 		kfree(txcb);
++ 		kfree(txcb);
 +
-+		if (mark_fail) {
-+			if (atomic_inc_return(&rtwdev->fail_count) >= 3) {
-+				rtwdev->fail = true;
-+				schedule_work(&rtwdev->fw_recovery_work);
-+			}
-+		}
- 		return false;
++		if (mark_fail)
++			rtw_usb_mark_fail(rtwdev, ret);
++
++ 		return false;
  	}
  
-@@ -523,11 +550,34 @@ static int rtw_usb_write_data(struct rtw
+ 	return true;
+ }
+ 
++/* Add fail detection to register IO path that you see in dmesg */
++int rtw_usb_read32(struct rtw_dev *rtwdev, u32 addr, u32 *val)
++{
++	int ret = __rtw_usb_read32(rtwdev, addr, val);
++	if (ret == -110)
++		rtw_usb_mark_fail(rtwdev, ret);
++	else if (!ret)
++		atomic_set(&rtwdev->fail_count, 0);
++	return ret;
++}
++
++int rtw_usb_write32(struct rtw_dev *rtwdev, u32 addr, u32 val)
++{
++	int ret = __rtw_usb_write32(rtwdev, addr, val);
++	if (ret == -110)
++		rtw_usb_mark_fail(rtwdev, ret);
++	else if (!ret)
++		atomic_set(&rtwdev->fail_count, 0);
++	return ret;
++}
++
+ static void rtw_usb_tx_handler(struct work_struct *work)
+ {
+ 	struct rtw_usb *rtwusb = container_of(work, struct rtw_usb, tx_work);
+@@ -499,6 +598,17 @@ static void rtw_usb_write_port_complete(
+ 	dev_kfree_skb_any(skb);
+ }
+ 
++static void rtw_usb_mark_fail(struct rtw_dev *rtwdev, int status)
++{
++	if (status == -110 || status == -ENODEV || status == -EPROTO || status == -2) {
++		if (atomic_inc_return(&rtwdev->fail_count) >= 3 && !rtwdev->fail) {
++			rtwdev->fail = true;
++			rtw_warn(rtwdev, "-110 storm detected, scheduling reset from rtw_usb_mark_fail\n");
++			schedule_work(&rtwdev->fw_recovery_work);
++		}
++	}
++}
++
+ static int rtw_usb_write_data(struct rtw_dev *rtwdev,
+ 			      struct rtw_tx_pkt_info *pkt_info,
+ 			      u8 *buf)
+@@ -523,11 +633,28 @@ static int rtw_usb_write_data(struct rtw
  	rtw_tx_fill_tx_desc(rtwdev, pkt_info, skb);
  	rtw_tx_fill_txdesc_checksum(rtwdev, pkt_info, skb->data);
  
@@ -245,13 +382,55 @@ Patch status:  testing
 +		 * unlock after return. Keep free outside any spinlock.
 +		 */
  		dev_kfree_skb_any(skb);
-+		if (ret == -110 || ret == -ENODEV || ret == -EPROTO) {
-+			if (atomic_inc_return(&rtwdev->fail_count) >= 3) {
-+				rtwdev->fail = true;
-+				/* reuse existing fw_recovery_work - no new work needed */
-+				schedule_work(&rtwdev->fw_recovery_work);
++		rtw_usb_mark_fail(rtwdev, ret);
+ 	}
+ 
+ 	return ret;
+--- a/drivers/net/wireless/realtek/rtw88/usb.h.orig	2026-06-14 07:58:38.000000000 -0700
++++ b/drivers/net/wireless/realtek/rtw88/usb.h	2026-08-21 21:50:21.546088384 -0700
+@@ -99,5 +99,7 @@ static inline struct rtw_usb_tx_data *rt
+ 
+ int rtw_usb_probe(struct usb_interface *intf, const struct usb_device_id *id);
+ void rtw_usb_disconnect(struct usb_interface *intf);
++int __rtw_usb_read32(struct rtw_dev *rtwdev, u32 addr, u32 *val);
++int __rtw_usb_write32(struct rtw_dev *rtwdev, u32 addr, u32 val);
+ 
+ #endif
+--- a/net/mac80211/mlme.c.orig	2026-08-21 21:30:13.239457298 -0700
++++ b/net/mac80211/mlme.c	2026-08-21 22:17:52.312399075 -0700
+@@ -3335,14 +3335,32 @@ static u64 ieee80211_handle_pwr_constr(s
+ 		has_80211h_pwr = ieee80211_find_80211h_pwr_constr(
+ 			channel, country_ie, country_ie_len,
+ 			pwr_constr_ie, &chan_pwr, &pwr_reduction_80211h);
+-		pwr_level_80211h =
+-			max_t(int, 0, chan_pwr - pwr_reduction_80211h);
++
++		/* FIX: 127 is invalid, AP <redacted> advertises 127 as "no limit"
++		 * This wedges rtw88 -> read 0x770 fails -110
++		 */
++		if (chan_pwr == 127 || chan_pwr > 30) {
++			sdata_dbg(sdata,
++				  "Ignore invalid TX power %d as advertised by %pM\n",
++				  chan_pwr, link->u.mgd.bssid);
++			has_80211h_pwr = false;
++		} else {
++			pwr_level_80211h =
++				max_t(int, 0, chan_pwr - pwr_reduction_80211h);
++			if (pwr_level_80211h == 127 || pwr_level_80211h > 30) {
++				has_80211h_pwr = false;
 +			}
 +		}
  	}
  
- 	return ret;
+ 	if (cisco_dtpc_ie) {
+ 		ieee80211_find_cisco_dtpc(
+ 			channel, cisco_dtpc_ie, &pwr_level_cisco);
+-		has_cisco_pwr = true;
++		/* same for Cisco */
++		if (pwr_level_cisco == 127 || pwr_level_cisco > 30)
++			has_cisco_pwr = false;
++		else
++			has_cisco_pwr = true;
+ 	}
+ 
+ 	if (!has_80211h_pwr && !has_cisco_pwr)
