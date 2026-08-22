@@ -13,6 +13,15 @@ MITIGATION_DATE="Aug 18, 2026" # Official annoucement (blog)
 MITIGATION_LAST_UPDATE=1787036400 # From `date +%s -d "Aug 18, 2026"` From blog date
 MITIGATION_URI="https://chromereleases.googleblog.com/2026/08/stable-channel-update-for-desktop_0826575033.html"
 VULNERABILITIES_FIXED=(
+	# 151.0.7922.173
+	"CVE-2026-76017;UAF;"
+	"CVE-2026-76018;;"
+	"CVE-2026-76019;;"
+	"CVE-2026-76020;RC;"
+	"CVE-2026-76021;UAF;"
+	"CVE-2026-76022;BO;"
+	"CVE-2026-76023;;"
+
 	# 151.0.7922.169
 	"CVE-2026-76034;BO;"
 	"CVE-2026-76036;BO;"
