@@ -16,7 +16,13 @@ LLVM_COMPAT=(
 )
 
 PYTHON_COMPAT=( "python3_"{11..13} )
-inherit cmake libcxx-slot libstdcxx-slot python-single-r1
+
+CHKL_TIMESTAMPS=(
+	"dev-cpp/tbb-9999"
+	"media-libs/assimp-9999"
+)
+
+inherit chkl cmake libcxx-slot libstdcxx-slot secure-version python-single-r1
 
 DESCRIPTION="Geometry library for topological robustness"
 HOMEPAGE="https://github.com/elalish/manifold"
@@ -46,24 +52,22 @@ REQUIRED_USE="
 	)
 "
 RESTRICT="
+	mirror
 	!test? (
 		test
 	)
-"
+" # Avoid stuck server and speed up download
 RDEPEND="
-	sci-mathematics/clipper2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	sci-mathematics/clipper2:=
+	sci-mathematics/clipper2:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	assimp? (
-		media-libs/assimp[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		media-libs/assimp:=
+		>=media-libs/assimp-${ASSIMP_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	tbb? (
-		dev-cpp/tbb[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-cpp/tbb:=
+		>=dev-cpp/tbb-${TBB_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	python? ( ${PYTHON_DEPS}
 		$(python_gen_cond_dep '
-			virtual/numpy[${PYTHON_USEDEP}]
+			virtual/numpy:=[${PYTHON_USEDEP}]
 		')
 	)
 "
@@ -74,8 +78,7 @@ DEPEND="
 		')
 	)
 	test? (
-		dev-cpp/gtest[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-cpp/gtest:=
+		dev-cpp/gtest:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	${RDEPEND}
 "
@@ -87,6 +90,7 @@ pkg_setup() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	local mycmakeargs=(
 		-DMANIFOLD_CROSS_SECTION="yes"
 		-DMANIFOLD_DEBUG="$(usex debug)"
