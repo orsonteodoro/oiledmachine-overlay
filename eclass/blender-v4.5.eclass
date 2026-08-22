@@ -102,7 +102,6 @@ CXX_STANDARD=17
 PYTHON_COMPAT=( "python3_"{10..12} ) # < 3.13 for Numpy 1.x
 BOOST_PV="1.82"
 CLANG_MIN="18" # C++17
-FREETYPE_PV="2.13.0"
 GCC_MIN="11" # C++17
 
 inherit secure-version
@@ -160,7 +159,7 @@ LLVM_COMPAT=(
 )
 # Upstream limits LLVM to [15, 18) but relaxed for ROCm and overlay compatibility
 # It uses LLVM 17 as default.
-LLVM_MAX_SLOT="19"
+LLVM_MAX_SLOT="22"
 LLVM_MAX_UPSTREAM=17 # (inclusive)
 
 inherit ffmpeg

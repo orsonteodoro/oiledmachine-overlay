@@ -101,7 +101,6 @@ CXX_STANDARD=17
 # https://github.com/blender/blender/blob/v5.2.0/build_files/build_environment/install_linux_packages.py#L693 \
 PYTHON_COMPAT=( "python3_"{13,14} ) # >= 3.13 for Numpy 2.x
 CLANG_MIN="18" # C++17
-FREETYPE_PV="2.13.3"
 GCC_MIN="14" # C++17
 
 inherit secure-version
@@ -159,7 +158,7 @@ LLVM_COMPAT=(
 )
 # Upstream limits LLVM to [15, 18) but relaxed for ROCm and overlay compatibility
 # It uses LLVM 17 as default.
-LLVM_MAX_SLOT="19"
+LLVM_MAX_SLOT="22"
 LLVM_MAX_UPSTREAM=17 # (inclusive)
 
 inherit ffmpeg
