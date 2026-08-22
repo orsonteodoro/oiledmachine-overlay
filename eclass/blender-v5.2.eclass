@@ -800,7 +800,6 @@ gen_osl_depends()
 		echo "
 			llvm_slot_${s}? (
 				>=media-libs/osl-${OSL_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},static-libs]
-				<media-libs/osl-2.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},static-libs]
 			)
 		"
 	done
