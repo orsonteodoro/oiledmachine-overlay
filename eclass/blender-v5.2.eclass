@@ -1153,7 +1153,7 @@ RDEPEND+="
 		>=media-libs/rubberband-${RUBBERBAND_PV}:=
 	)
 	sdl? (
-		>=media-libs/libsdl3-${LIBSDL3_PV}:=[opengl,pulseaudio?,sound]
+		>=media-libs/libsdl3-${LIBSDL3_PV}:=[opengl,pulseaudio?]
 		!pulseaudio? (
 			>=media-libs/libsdl3-${LIBSDL3_PV}:=[alsa,opengl,sound]
 		)
