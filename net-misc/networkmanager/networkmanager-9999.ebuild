@@ -531,66 +531,74 @@ pkg_postinst() {
 	! use systemd && readme.gentoo_print_elog
 
 	if [[ -e "${EROOT}/etc/NetworkManager/nm-system-settings.conf" ]]; then
-		ewarn "The ${PN} system configuration file has moved to a new location."
-		ewarn "You must migrate your settings from ${EROOT}/etc/NetworkManager/nm-system-settings.conf"
-		ewarn "to ${EROOT}/etc/NetworkManager/NetworkManager.conf"
-		ewarn
-		ewarn "After doing so, you can remove ${EROOT}/etc/NetworkManager/nm-system-settings.conf"
+ewarn "The ${PN} system configuration file has moved to a new location."
+ewarn "You must migrate your settings from"
+ewarn "${EROOT}/etc/NetworkManager/nm-system-settings.conf to"
+ewarn "${EROOT}/etc/NetworkManager/NetworkManager.conf"
+ewarn
+ewarn "After doing so, you can remove"
+ewarn "${EROOT}/etc/NetworkManager/nm-system-settings.conf"
+ewarn
 	fi
 
 	# NM fallbacks to plugin specified at compile time (upstream bug #738611)
 	# but still show a warning to remember people to have cleaner config file
 	if [[ -e "${EROOT}/etc/NetworkManager/NetworkManager.conf" ]]; then
 		if grep plugins "${EROOT}/etc/NetworkManager/NetworkManager.conf" | grep -q ifnet; then
-			ewarn
-			ewarn "You seem to use 'ifnet' plugin in ${EROOT}/etc/NetworkManager/NetworkManager.conf"
-			ewarn "Since it won't be used, you will need to stop setting ifnet plugin there."
-			ewarn
+ewarn "You seem to use 'ifnet' plugin in"
+ewarn "${EROOT}/etc/NetworkManager/NetworkManager.conf"
+ewarn "Since it won't be used, you will need to stop setting ifnet plugin"
+ewarn "there."
+ewarn
 		fi
 	fi
 
 	# NM shows lots of errors making nmcli almost unusable, bug #528748 upstream bug #690457
 	if grep -r "psk-flags=1" "${EROOT}"/etc/NetworkManager/; then
-		ewarn "You have psk-flags=1 setting in above files, you will need to"
-		ewarn "either reconfigure affected networks or, at least, set the flag"
-		ewarn "value to '0'."
+ewarn "You have psk-flags=1 setting in above files, you will need to either"
+ewarn "reconfigure affected networks or, at least, set the flag value to '0'."
+ewarn
 	fi
 
 	if use dhcpcd; then
-		ewarn "You have enabled USE=dhcpcd, but NetworkManager since"
-		ewarn "version 1.20 defaults to the internal DHCP client. If the internal client"
-		ewarn "works for you, and you're happy with, the alternative USE flags can be"
-		ewarn "disabled. If you want to use dhcpcd, then you need to tweak"
-		ewarn "the main.dhcp configuration option to use one of them instead of internal."
-		# https://gitlab.freedesktop.org/NetworkManager/NetworkManager/-/merge_requests/1988
-		ewarn
+ewarn "You have enabled USE=dhcpcd, but NetworkManager since version 1.20"
+ewarn "defaults to the internal DHCP client. If the internal client works for"
+ewarn "you, and you're happy with, the alternative USE flags can be disabled."
+ewarn "If you want to use dhcpcd, then you need to tweak the main.dhcp"
+ewarn "configuration option to use one of them instead of internal."
+# https://gitlab.freedesktop.org/NetworkManager/NetworkManager/-/merge_requests/1988
+ewarn
 	fi
 
-	einfo "If you get ERR_ADDRESS_UNREACHABLE or similar while it works for"
-	einfo "some websites, instead of reconnecting there are ways to fix it."
-	einfo
-	einfo "1. Enable the psl USE flag."
-	einfo "2. Enable \"Ignore automatically obtained DNS parameters\" to"
-	einfo "   bypass the router firewall for both ipv4 and ipv6 and switch"
-	einfo "   to a public DNS service."
-	einfo "3. VPN"
-	einfo
-	einfo "Using the public DNS service or VPN may increase reliability at"
-	einfo "the cost of privacy with a data retention policy."
-	einfo
+einfo "If you get ERR_ADDRESS_UNREACHABLE or similar while it works for some"
+einfo "websites, instead of reconnecting there are ways to fix it."
+einfo
+einfo "1. Enable the psl USE flag."
+einfo "2. Enable \"Ignore automatically obtained DNS parameters\" to"
+einfo "   bypass the router firewall for both ipv4 and ipv6 and switch"
+einfo "   to a public DNS service."
+einfo "3. VPN"
+einfo
+einfo "Using the public DNS service or VPN may increase reliability at the cost"
+ewarn "of privacy with a data retention policy."
+einfo
 
-	einfo "To fix an unstable connection caused by autoselecting the"
-	einfo "weakest signal with a router with multiple BSSIDs, one can"
-	einfo "disable roaming and pin to a specific strong signal BSSID."
-	einfo "Use \`nmcli dev wifi list\` to list BSSIDs and use"
-	einfo "\`nmcli con mod \"<SSID>\" wifi.bssid <BSSID>\` or"
-	einfo "\`nmtui\` to force a connection profile to use the strongest"
-	einfo "BSSID to avoid running buggy auto roam or driver code, to"
-	einfo "disable an unreliable BSSID, or to avoid low bandwith BSSIDs to"
-	einfo "auto-connect to.  Disabling roaming is recommended for home"
-	einfo "access points.  Pinning is not recommended for public access"
-	einfo "points when using a mobile or a laptop."
-	einfo
+# There is a UX design flaw where the CLI tool has the superior info but the TUI
+# tool is degraded and inconsistent.  The TUI tool is designed for mobile but
+# not designed to inform about the best choice or to tell you which BSSID is
+# 2.4G or 5G.
+einfo "To fix an unstable connection caused by bias autoselecting to the"
+einfo "weakest signal with a router with multiple BSSIDs, one can disable"
+einfo "roaming and pin to a specific strong signal BSSID.  Use"
+einfo "\`nmcli dev wifi list\` to list BSSIDs and use"
+einfo "\`nmcli con mod \"<SSID>\" wifi.bssid <BSSID>\` or \`nmtui\` to force a"
+einfo "connection profile to use the strongest BSSID to avoid running buggy"
+einfo "auto roam or driver code, to disable an unreliable BSSID, or to"
+einfo "eliminate low throughput BSSIDs to auto-connect to.  Disabling roaming"
+einfo "is recommended for home access points.  Pinning is not recommended for"
+einfo "public, campus, or enterprise access points when using a mobile or a"
+einfo "laptop."
+einfo
 
 	local caps=$(get_fcaps)
 	export FILECAPS=(
