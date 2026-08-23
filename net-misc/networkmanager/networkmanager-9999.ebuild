@@ -580,7 +580,7 @@ einfo "   to a public DNS service."
 einfo "3. VPN"
 einfo
 einfo "Using the public DNS service or VPN may increase reliability at the cost"
-ewarn "of privacy with a data retention policy."
+ewarn "of compromised privacy with data retention policy hints."
 einfo
 
 # There is a UX design flaw where the CLI tool has the superior info but the TUI
