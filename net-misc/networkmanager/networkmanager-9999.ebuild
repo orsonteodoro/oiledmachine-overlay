@@ -599,6 +599,32 @@ einfo "is recommended for home access points.  Pinning is not recommended for"
 einfo "public, campus, or enterprise access points when using a mobile or a"
 einfo "laptop."
 einfo
+einfo
+einfo "For mobile or laptop or busy environments, you may need to tune"
+einfo "roaming to eagerly pick the strongest signal for either iwd or"
+einfo "wpa_supplicant if the environment is changing, or interference or load"
+einfo "balancing is/are suspected."
+einfo
+einfo "For wpa_supplicant in /etc/wpa_supplicant/wpa_supplicant.conf:"
+einfo
+einfo "# The example uses a 30 second scan if below -70 dBm."
+einfo "# The example uses a 5 second scan if above -70 dBm."
+einfo "# The default is \"simple:30:-70:86400\"."
+einfo "bgscan=\"simple:30:-70:5\""
+einfo
+einfo "For iwd in /etc/iwd/main.conf:"
+einfo
+einfo "[General]"
+einfo
+einfo "# The example uses a -65 dBm (-70 dBm is default for 2.4 G) as the"
+einfo "threshold to start finding/switching to a stronger signal."
+einfo "RoamThreshold=-65"
+einfo
+einfo "# The example uses a -70 dBm (-76 dBm is default for 5 G) as the"
+einfo "threshold to start finding/switching to a stronger signal."
+einfo "RoamThreshold5G=-70"
+einfo
+einfo
 
 	local caps=$(get_fcaps)
 	export FILECAPS=(
