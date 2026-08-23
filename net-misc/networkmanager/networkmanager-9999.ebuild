@@ -607,10 +607,10 @@ einfo "balancing is/are suspected."
 einfo
 einfo "For wpa_supplicant in /etc/wpa_supplicant/wpa_supplicant.conf:"
 einfo
-einfo "# The example uses a 30 second scan if below -70 dBm."
-einfo "# The example uses a 5 second scan if above -70 dBm."
+einfo "# The example uses a 30 second scan frequency if below -65 dBm."
+einfo "# The example uses a 300 second scan frequency if above -65 dBm."
 einfo "# The default is \"simple:30:-70:86400\"."
-einfo "bgscan=\"simple:30:-70:5\""
+einfo "bgscan=\"simple:30:-65:300\""
 einfo
 einfo "For iwd in /etc/iwd/main.conf:"
 einfo
@@ -624,6 +624,9 @@ einfo "# The example uses a -70 dBm (-76 dBm is default for 5 G) as the"
 einfo "# threshold to start finding/switching to a stronger signal."
 einfo "RoamThreshold5G=-70"
 einfo
+einfo "Improper settings may cause more issues (latency spikes,"
+einfo "wasted energy, low throughput, constant disconnects,"
+einfo "dropped packets)."
 einfo
 
 	local caps=$(get_fcaps)
