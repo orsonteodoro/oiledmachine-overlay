@@ -77,8 +77,8 @@ Combined local fix that fixes three issues seen in field:
 Fix: add fail_count/fail flag, mark fail on -110 in all USB
 control paths, reset outside mutex, ignore invalid 127 dBm.
 
---- a/drivers/net/wireless/realtek/rtw88/main.h.orig	2026-08-22 00:12:38.034867834 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/main.h	2026-08-22 00:12:55.586300662 -0700
+--- a/drivers/net/wireless/realtek/rtw88/main.h.orig	2026-08-22 16:53:49.337325979 -0700
++++ b/drivers/net/wireless/realtek/rtw88/main.h	2026-08-22 17:02:26.564052153 -0700
 @@ -14,6 +14,7 @@
  #include <linux/iopoll.h>
  #include <linux/interrupt.h>
@@ -106,8 +106,8 @@ control paths, reset outside mutex, ignore invalid 127 dBm.
  int rtw_wait_firmware_completion(struct rtw_dev *rtwdev);
  int rtw_power_on(struct rtw_dev *rtwdev);
  void rtw_core_fw_scan_notify(struct rtw_dev *rtwdev, bool start);
---- a/drivers/net/wireless/realtek/rtw88/main.c.orig	2026-08-22 00:12:38.035465847 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/main.c	2026-08-22 00:12:55.586836684 -0700
+--- a/drivers/net/wireless/realtek/rtw88/main.c.orig	2026-08-22 16:53:49.336833081 -0700
++++ b/drivers/net/wireless/realtek/rtw88/main.c	2026-08-22 17:02:58.768455460 -0700
 @@ -3,6 +3,7 @@
   */
  
@@ -145,7 +145,7 @@ control paths, reset outside mutex, ignore invalid 127 dBm.
  	rcu_read_lock();
  	rtw_iterate_keys_rcu(rtwdev, NULL, rtw_reset_key_iter, rtwdev);
  	rcu_read_unlock();
-@@ -669,17 +678,42 @@ free:
+@@ -669,18 +678,60 @@ free:
  	rtw_iterate_vifs_atomic(rtwdev, rtw_reset_vif_iter, rtwdev);
  	bitmap_zero(rtwdev->hw_port, RTW_PORT_NUM);
  	rtw_enter_ips(rtwdev);
@@ -164,13 +164,31 @@ control paths, reset outside mutex, ignore invalid 127 dBm.
  	struct rtw_dev *rtwdev = container_of(work, struct rtw_dev,
  					      fw_recovery_work);
 +	bool was_fail = rtwdev->fail;
++	struct rtw_usb *rtwusb;
++	int ret;
 +
 +	if (was_fail) {
-+		struct rtw_usb *rtwusb = rtw_get_usb_priv(rtwdev);
++		rtwusb = rtw_get_usb_priv(rtwdev);
 +		rtw_warn(rtwdev, "USB reset after -110 storm (reg 0x4e0/0xaa/0x770)\n");
-+		/* usb_reset_device sleeps, must be outside mutex */
-+		usb_reset_device(rtwusb->udev);
++
++		/* Don't hold mutex across reset - it sleeps and
++		 * triggers disconnect. If reset fails with -ENODEV,
++		 * device is gone, don't restart_hw.
++		 */
++		ret = usb_reset_device(rtwusb->udev);
 +		msleep(200);
++
++		/* If device disconnected during reset, bail out.
++		 * Let USB core re-enumerate as new device 1-5.
++		 * This is what you saw: 2-5 -> 1-5 (EHCI -> OHCI fallback)
++		 */
++		if (ret == -ENODEV || rtwdev->fail) {
++			rtw_warn(rtwdev, "USB device gone after reset (ret=%d), aborting restart_hw\n", ret);
++			rtwdev->fail = false;
++			atomic_set(&rtwdev->fail_count, 0);
++			return;
++		}
++
 +		rtwdev->fail = false;
 +		atomic_set(&rtwdev->fail_count, 0);
 +	}
@@ -179,16 +197,17 @@ control paths, reset outside mutex, ignore invalid 127 dBm.
  	__fw_recovery_work(rtwdev);
  	mutex_unlock(&rtwdev->mutex);
  
-+	/* Final clear after restart_hw - ensures TX path in
-+	 * rtw_usb_write_data can proceed. Free after unlock order.
-+	 */
-+	rtwdev->fail = false;
-+	atomic_set(&rtwdev->fail_count, 0);
-+
- 	ieee80211_restart_hw(rtwdev->hw);
+-	ieee80211_restart_hw(rtwdev->hw);
++	/* Only restart if device still present */
++	if (!rtwdev->fail && rtwusb && rtwusb->udev) {
++		rtwdev->fail = false;
++		atomic_set(&rtwdev->fail_count, 0);
++		ieee80211_restart_hw(rtwdev->hw);
++	}
  }
  
-@@ -2169,6 +2203,10 @@ int rtw_core_init(struct rtw_dev *rtwdev
+ struct rtw_txq_ba_iter_data {
+@@ -2169,6 +2220,10 @@ int rtw_core_init(struct rtw_dev *rtwdev
  	mutex_init(&rtwdev->mutex);
  	mutex_init(&rtwdev->hal.tx_power_mutex);
  
@@ -199,8 +218,8 @@ control paths, reset outside mutex, ignore invalid 127 dBm.
  	init_waitqueue_head(&rtwdev->coex.wait);
  	init_completion(&rtwdev->lps_leave_check);
  	init_completion(&rtwdev->fw_scan_density);
---- a/drivers/net/wireless/realtek/rtw88/usb.c.orig	2026-08-22 00:12:38.035949461 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/usb.c	2026-08-22 00:13:23.566722407 -0700
+--- a/drivers/net/wireless/realtek/rtw88/usb.c.orig	2026-08-22 16:54:34.585944753 -0700
++++ b/drivers/net/wireless/realtek/rtw88/usb.c	2026-08-22 17:02:26.565275839 -0700
 @@ -27,6 +27,17 @@ struct rtw_usb_txcb {
  	struct sk_buff_head tx_ack_queue;
  };
@@ -392,7 +411,7 @@ control paths, reset outside mutex, ignore invalid 127 dBm.
  
  	return ret;
 --- a/drivers/net/wireless/realtek/rtw88/usb.h.orig	2025-11-30 14:42:10.000000000 -0800
-+++ b/drivers/net/wireless/realtek/rtw88/usb.h	2026-08-22 00:12:55.587769324 -0700
++++ b/drivers/net/wireless/realtek/rtw88/usb.h	2026-08-22 17:02:26.565612918 -0700
 @@ -99,5 +99,7 @@ static inline struct rtw_usb_tx_data *rt
  
  int rtw_usb_probe(struct usb_interface *intf, const struct usb_device_id *id);
@@ -401,8 +420,8 @@ control paths, reset outside mutex, ignore invalid 127 dBm.
 +int __rtw_usb_write32(struct rtw_dev *rtwdev, u32 addr, u32 val);
  
  #endif
---- a/net/mac80211/mlme.c.orig	2026-08-22 00:12:38.037184310 -0700
-+++ b/net/mac80211/mlme.c	2026-08-22 00:12:55.588742356 -0700
+--- a/net/mac80211/mlme.c.orig	2026-08-22 16:54:45.855375398 -0700
++++ b/net/mac80211/mlme.c	2026-08-22 17:02:26.566072688 -0700
 @@ -3222,14 +3222,32 @@ static u64 ieee80211_handle_pwr_constr(s
  		has_80211h_pwr = ieee80211_find_80211h_pwr_constr(
  			channel, country_ie, country_ie_len,
