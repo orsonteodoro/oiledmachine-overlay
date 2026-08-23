@@ -579,11 +579,17 @@ pkg_postinst() {
 	einfo "the cost of privacy with a data retention policy."
 	einfo
 
+	einfo "To fix an unstable connection caused by autoselecting the"
+	einfo "weakest signal with a router with multiple BSSIDs, one can"
+	einfo "disable roaming and pin to a specific strong signal BSSID."
 	einfo "Use \`nmcli dev wifi list\` to list BSSIDs and use"
 	einfo "\`nmcli con mod \"<SSID>\" wifi.bssid <BSSID>\` or"
-	einfo "\`nmtui\` to pin a BSSID to avoid running buggy driver code"
-	einfo "and to disable unreliable BSSID or low performance BSSIDs to"
-	einfo "auto-connect to."
+	einfo "\`nmtui\` to force a connection profile to use the strongest"
+	einfo "BSSID to avoid running buggy auto roam or driver code, to"
+	einfo "disable an unreliable BSSID, or to avoid low bandwith BSSIDs to"
+	einfo "auto-connect to.  Disabling roaming is recommended for home"
+	einfo "access points.  Pinning is not recommended for public access"
+	einfo "points when using a mobile or a laptop."
 	einfo
 
 	local caps=$(get_fcaps)
