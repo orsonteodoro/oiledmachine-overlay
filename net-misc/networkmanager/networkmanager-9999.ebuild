@@ -597,7 +597,8 @@ einfo "auto roam or driver code, to disable an unreliable BSSID, or to"
 einfo "eliminate low throughput BSSIDs to auto-connect to.  Disabling roaming"
 einfo "is recommended for home access points.  Pinning is not recommended for"
 einfo "public, campus, or enterprise access points when using a mobile or a"
-einfo "laptop."
+einfo "laptop.  The <SSID> is the router name.  The <BSSID> is the hex string"
+einfo "string with : delimiters associated typically with the bandwidth."
 einfo
 einfo
 einfo "For mobile or laptop or busy environments, you may need to tune"
