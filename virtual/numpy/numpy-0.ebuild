@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# This is intentionally Python single dep for binary packages.
+
 # U22 - numpy 1.21 - python 3.10 - G23 distro dropped
 # D12 - numpy 1.24 - python 3.11 - G23 distro dropped
 # U24 - numpy 1.26 - python 3.12
@@ -16,6 +18,7 @@ EAPI=8
 # For upstream dropped versions, see also https://devguide.python.org/versions/
 # For dropped FAFO distro versions, see https://github.com/gentoo/gentoo/blob/master/eclass/python-utils-r1.eclass#L55
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="no"
 PYTHON_COMPAT=( "python3_"{10..14} )
 
@@ -30,42 +33,43 @@ LICENSE="
 	metapackage
 "
 RESTRICT="mirror"
-SLOT="0/2.4" # Bump subslot to the latest major-minor version
+SLOT="0/2.4" # Bump subslot to the latest numpy major-minor version
 IUSE+="
 +lts
 ebuild_revision_1
 "
 REQUIRED_USE="
 	^^ (
-		python_targets_python3_10
-		python_targets_python3_11
-		python_targets_python3_12
-		python_targets_python3_13
-		python_targets_python3_14
+		python_single_target_python3_10
+		python_single_target_python3_11
+		python_single_target_python3_12
+		python_single_target_python3_13
+		python_single_target_python3_14
 	)
 "
 RDEPEND+="
-	python_targets_python3_10? (
-		=dev-python/numpy-1.21*[${PYTHON_USEDEP}]
-	)
-	python_targets_python3_11? (
-		=dev-python/numpy-1.24*[${PYTHON_USEDEP}]
-	)
-	python_targets_python3_12? (
-		=dev-python/numpy-1.26*[${PYTHON_USEDEP}]
-	)
-	python_targets_python3_13? (
-		=dev-python/numpy-2.2*[${PYTHON_USEDEP}]
-	)
-	python_targets_python3_14? (
-		lts? (
-			=dev-python/numpy-2.3*[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		python_single_target_python3_10? (
+			=dev-python/numpy-1.21*:=[${PYTHON_USEDEP}]
 		)
-		!lts? (
-			=dev-python/numpy-2.4*[${PYTHON_USEDEP}]
+		python_single_target_python3_11? (
+			=dev-python/numpy-1.24*:=[${PYTHON_USEDEP}]
 		)
-	)
-	dev-python/numpy:=
+		python_single_target_python3_12? (
+			=dev-python/numpy-1.26*:=[${PYTHON_USEDEP}]
+		)
+		python_single_target_python3_13? (
+			=dev-python/numpy-2.2*:=[${PYTHON_USEDEP}]
+		)
+		python_single_target_python3_14? (
+			lts? (
+				=dev-python/numpy-2.3*:=[${PYTHON_USEDEP}]
+			)
+			!lts? (
+				=dev-python/numpy-2.4*:=[${PYTHON_USEDEP}]
+			)
+		)
+	')
 "
 DEPEND+="
 	${RDEPEND}
