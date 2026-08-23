@@ -90,7 +90,7 @@ Root causes:
    deadlock seen as google-chrome hang.
 Fix:
 * mac80211: Ignore chan_pwr == 127 or >30 in
-  ieee80211_handle_pwr_constr, ratelimited log.
+  ieee80211_handle_pwr_constr.
 * rtw88 usb: Add rtwdev->fail + fail_count, add rtw_usb_mark_fail(),
   check fail in all control paths (read/write/reg_sec/read32/
   write32/write_data/tx_agg), stop IO after 3x -110.
