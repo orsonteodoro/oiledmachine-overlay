@@ -4,7 +4,7 @@
 
 EAPI=8
 
-# This is intentionally Python single dep for binary packages.
+# This is intentionally Python single target for binary packages.
 
 # U22 - numpy 1.21 - python 3.10 - G23 distro dropped
 # D12 - numpy 1.24 - python 3.11 - G23 distro dropped
