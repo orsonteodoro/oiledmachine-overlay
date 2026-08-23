@@ -4,11 +4,12 @@
 
 EAPI=8
 
-# Same versions and commits for 151.0.7922.71 and 151.0.7922.108.
+# Add `www-client/chromium-toolchain -llvm_slot_23` to
+# `/etc/portage/profile/package.use.mask` to bypass the distro's FAFO hard mask
+# guardrail.
 
-# Add `www-client/chromium-toolchain -llvm_slot_23` to `/etc/portage/profile/package.use.mask` to bypass the distro's FAFO hard mask guardrail.
-
-# Use `USE="-system-clang -system-rust" ebuild chromium-toolchain-151.0.7922.108.ebuild digest clean unpack prepare compile install merge` to obtain numbers.
+# To obtain expected file count numbers, use
+# `USE="-system-clang -system-rust" ebuild chromium-toolchain-151.0.7922.173.ebuild digest clean unpack prepare compile install merge`
 
 inherit dhms
 
@@ -22,27 +23,27 @@ inherit dhms
 # llvm = c++17
 CXX_STANDARD=23 # Same as libcxx and chromium.
 # For commit history, see https://gn.googlesource.com/gn/+log
-# For the pinned gn version associated with a specific Chromium release, see https://github.com/chromium/chromium/blob/151.0.7922.108/DEPS#L557
+# For the pinned gn version associated with a specific Chromium release, see https://github.com/chromium/chromium/blob/151.0.7922.173/DEPS#L557
 GN_COMMIT="1d86777e7f2562a86ecea77d1809ac4f82bb5bfe"
 GN_PV="0.2435" # See get_gn_ver.sh to obtain the version.
 GN_USE_GIT=1
 INSTALL_PREFIX="/usr/share/chromium/${PV%.*}.x"
 LIBCXX_USEDEP_SKIP=1
-# https://github.com/chromium/chromium/blob/151.0.7922.108/tools/clang/scripts/update.py#L38 \
+# https://github.com/chromium/chromium/blob/151.0.7922.173/tools/clang/scripts/update.py#L38 \
 LLVM_SYSTEM_SLOT="24" # We use the latest to mitigate miscompilation vulnerabilities.
 LLVM_SYSTEM_SLOT_LIVE="1"
-LLVM_SYSTEM_TIMESTAMP_LIVE="Aug 1, 2026 2:01 PM PDT" # Unvendored timestamp for system-clang corresponding to https://github.com/llvm/llvm-project/commit/11038cc.patch
+LLVM_SYSTEM_TIMESTAMP_LIVE="Aug 2, 2026 5:18 PM PDT" # Unvendored timestamp for system-clang corresponding to https://github.com/llvm/llvm-project/commit/41322057c3af16d75e239ec6679c6c2bf7aec157
 # Vendored is before -rc release before -rc1 miscompile fixes.
 LLVM_VENDORED_COMMIT="53d18800" # without the g prefix; See also https://github.com/llvm/llvm-project/blob/53d18800eda3b7407e53366f27ca78e922c6e0db/cmake/Modules/LLVMVersion.cmake
 LLVM_VENDORED_N_COMMITS="19482" # The number to the right of -init- in llvmorg-23-init-10931-g20b6ec66
 LLVM_VENDORED_SLOT="23" # Cr official slot
 LLVM_VENDORED_SUB_REV="1" # Same as CLANG_SUB_REVISION
-# https://github.com/chromium/chromium/blob/151.0.7922.108/tools/rust/update_rust.py#L37 \
+# https://github.com/chromium/chromium/blob/151.0.7922.173/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
 RUST_SYSTEM_LIVE_TIMESTAMP="Jul 5, 2026 8:11 AM PDT" # Same as Rust 1.99.0 timestamp
-RUST_SYSTEM_LIVE_VER="1.99.0"
-RUST_SYSTEM_LIVE_LLVM_SLOT="22"
-RUST_SYSTEM_LIVE_LLVM_COMMIT="52ed14fcd56afc30f9cccd8ca8ce237c2eef7e04"
+RUST_SYSTEM_LIVE_VER="1.100.0"
+RUST_SYSTEM_LIVE_LLVM_SLOT="23"
+RUST_SYSTEM_LIVE_LLVM_COMMIT="7bec0dd6f361d3ec5f63294253dc1fc7eae98c29"
 RUST_VENDORED_COMMIT="b998449636a48e2c4a362809085b600a0174e1f2" # Vendored commit
 RUST_VENDORED_SUB_REV="2"
 RUST_VENDORED_VER="1.98.0" # For see https://github.com/rust-lang/rust/blob/b998449636a48e2c4a362809085b600a0174e1f2/src/version
