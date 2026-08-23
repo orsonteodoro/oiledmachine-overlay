@@ -90,6 +90,7 @@ EAPI=8
 # 150.0.7871.128 -> 150.0.7871.181
 # 150.0.7871.181 -> 151.0.7922.108
 # 151.0.7922.108 -> 151.0.7922.137
+# 151.0.7922.137 -> 
 
 #
 # For depends see:
@@ -202,9 +203,9 @@ EAPI=8
 
 # Use `USE="-system-clang -system-rust" ebuild chromium-toolchain-151.0.7922.137.ebuild digest clean unpack prepare compile install merge` to obtain numbers.
 TC_COUNT_EXPECTED_CLANG=433
-TC_COUNT_EXPECTED_GN=1184
+TC_COUNT_EXPECTED_GN=1185
 TC_COUNT_EXPECTED_RUST=6991
-SOURCES_COUNT_EXPECTED=569124
+SOURCES_COUNT_EXPECTED=569130
 CHROMIUM_EBUILD_MAINTAINER=0 # Also set GEN_ABOUT_CREDITS
 GEN_ABOUT_CREDITS=0
 
@@ -272,7 +273,7 @@ GN_PV="0.2435"
 ESBUILD_PV="0.25.1"
 ROLLUP_WASM_NODE_PV="4.57.1"
 QT6_PV="${QTBASE6_PV}"
-UNGOOGLED_CHROMIUM_PV="151.0.7922.137-1"
+UNGOOGLED_CHROMIUM_PV="151.0.7922.173-1"
 # Testing this V8 version to avoid breaking security.  The 13.6 series cause the \
 # mksnapshot "Return code is -11" error.  To fix it, it required to either \
 # disable v8 sandbox, or pointer compression and DrumBrake.  Before it was \
@@ -574,10 +575,36 @@ IUSE_CODECS=(
 	"+vpx"
 )
 
-MITIGATION_DATE="Aug 6, 2026" # Official annoucement (blog)
-MITIGATION_LAST_UPDATE=1786400820 # From `date +%s -d "Wed, Aug 10, 2026 3:27 PM PDT"` From tag in GH or upstream repo
-MITIGATION_URI="https://chromereleases.googleblog.com/2026/08/stable-channel-update-for-desktop_01815628406.html"
+MITIGATION_DATE="Aug 20, 2026" # Official annoucement (blog)
+MITIGATION_LAST_UPDATE=1787188747 # From `date +%s -d "Wed, Aug 19, 2026 18:19:07"` From tag in GH or upstream repo
+MITIGATION_URI="https://chromereleases.googleblog.com/2026/08/stable-channel-update-for-desktop_0404570826.html"
 VULNERABILITIES_FIXED=(
+	# 151.0.7922.173
+	"CVE-2026-76017;UAF;"
+	"CVE-2026-76018;PE;"
+	"CVE-2026-76019;;"
+	"CVE-2026-76020;RC;"
+	"CVE-2026-76021;UAF;"
+	"CVE-2026-76022;BO;"
+	"CVE-2026-76023;;"
+
+	# 151.0.7922.169
+	"CVE-2026-76034;BO;"
+	"CVE-2026-76036;BO;"
+	"CVE-2026-76033;II;"
+	"CVE-2026-76037;;"
+	"CVE-2026-76044;RC;"
+	"CVE-2026-76039;;"
+	"CVE-2026-76040;UAF;"
+	"CVE-2026-76035;II;"
+	"CVE-2026-76042;;"
+	"CVE-2026-76046;BO;"
+	"CVE-2026-76043;;"
+	"CVE-2026-76041;LEAK, ID;"
+	"CVE-2026-76047;TC;"
+	"CVE-2026-76038;TC;"
+	"CVE-2026-76045;UAF;"
+
 	# 151.0.7922.137
 	"CVE-2026-19556;UAF;"
 	"CVE-2026-19557;UAF;"
