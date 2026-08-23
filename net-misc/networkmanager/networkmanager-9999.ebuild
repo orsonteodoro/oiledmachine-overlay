@@ -577,6 +577,14 @@ pkg_postinst() {
 	einfo
 	einfo "Using the public DNS service or VPN may increase reliability at"
 	einfo "the cost of privacy with a data retention policy."
+	einfo
+
+	einfo "Use \`nmcli dev wifi list\` to list BSSIDs and use"
+	einfo "\`nmcli con mod \"<SSID>\" wifi.bssid <BSSID>\` or"
+	einfo "\`nmtui\` to pin a BSSID to avoid running buggy driver code"
+	einfo "and to disable unreliable BSSID or low performance BSSIDs to"
+	einfo "auto-connect to."
+	einfo
 
 	local caps=$(get_fcaps)
 	export FILECAPS=(
