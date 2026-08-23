@@ -188,6 +188,8 @@ ewarn "    disable_lps_deep=Y module autoload option for rtw88_core for"
 ewarn "    problematic USB dongles.  For integrated rtw88 WiFi, consider"
 ewarn "    disabling pcie_aspm=off or CONFIG_PCIEASPM_PERFORMANCE=y to"
 ewarn "    mitigate frequent/random disconnects."
+ewarn "11. Pin your BSSID to the strongest signal and disable auto-connect for"
+ewarn "    the weakest signal BSSID for your wireless connection profile."
 ewarn
 	fi
 }
