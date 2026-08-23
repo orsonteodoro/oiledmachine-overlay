@@ -52,30 +52,54 @@ this AI generated patch, I am doing fewer manual resets and no forced resets
 after uploading through nmtui.
 
 Patch status:  testing
-Last test result:  issue persists
+Latest test result:  issue persists
 Current test result:  actively testing
 
 AI summary of fixes [modified by ebuild maintainer]:
 
-rtw88: fix 30+ day uptime -110 storm and 127dBm power wedge on 8821CU
-
-Combined local fix that fixes three issues seen in field:
-
-- rtw_usb_reg_sec: reg 0x4e0 usb write 1 fail status -110 spamming
-  for 70+ seconds after read 0x770/0x774/0x1cc failed -110.
-  Root cause: -110 not tracked in register IO path, so recovery
-  never scheduled and device keeps hammering dead USB.
-
-- mac80211: Limiting TX power to 127 (127 - 0) dBm as advertised
-  by <reacted> triggers RF wedge that leads to -110 storm.
-  127 is used as "no limit" by some APs, invalid as real dBm.
-
-- rtw_usb_tx_agg_skb deadlock: ieee80211_purge_tx_queue under
-  spinlock + fw_recovery holding mutex causes modprobe -rf
-  Device or resource busy.
-
-Fix: add fail_count/fail flag, mark fail on -110 in all USB
-control paths, reset outside mutex, ignore invalid 127 dBm.
+From: Orson Teodoro
+Subject: [PATCH] rtw88: fix 30+ day -110 storm, NULL deref in restart_work and 127dBm wedge
+rtw88_8821cu 2-5:1.0 fails after 10-30 days uptime with:
+  read register 0xaa failed with -110
+  rtw_usb_reg_sec: reg 0x4e0, usb write 1 fail, status: -110
+  read register 0x770 failed with -110
+Followed by 70s spam and then deadlock on modprobe -rf and
+google-chrome hang with:
+  firmware crash, start reset and recover
+  WARNING: at __flush_workqueue
+  BUG: kernel NULL pointer dereference, address: 0000000000000000
+  __flush_workqueue+0x359
+  ieee80211_restart_work+0x1b
+  note: kworker/0:2 exited with irqs disabled
+Root causes:
+1) mac80211: AP <redacted> advertises country IE max power
+   127 dBm (127 - 0). 127 is invalid (means no limit). Programming
+   it wedges RF, leading to 0x770 -110.
+2) rtw88 usb: -110 only handled in TX path, not in rtw_usb_read,
+   rtw_usb_write, rtw_usb_reg_sec. Device keeps hammering 0x4e0
+   after failure, fail_count never checked, causing storm.
+3) rtw_usb_tx_agg_skb: ieee80211_purge_tx_queue called while
+   holding usb_lock / with fw_recovery holding mutex, causing
+   modprobe -rf EBUSY.
+4) rtw_fw_recovery_work: Calling usb_reset_device() from inside
+   fw_recovery_work that then calls ieee80211_restart_hw() on a
+   device that has just disconnected (USB disconnect, device number
+   2 -> new device 3). usb_reset fails with descriptor read -110 x4,
+   device not accepting address, then restart_work self-flushes its
+   own workqueue -> WARN + NULL deref + irqs disabled -> system
+   deadlock seen as google-chrome hang.
+Fix:
+* mac80211: Ignore chan_pwr == 127 or >30 in
+  ieee80211_handle_pwr_constr, ratelimited log.
+* rtw88 usb: Add rtwdev->fail + fail_count, add rtw_usb_mark_fail(),
+  check fail in all control paths (read/write/reg_sec/read32/
+  write32/write_data/tx_agg), stop IO after 3x -110.
+* rtw88 usb: Fix tx_agg to splice tx_ack_queue before purge outside lock.
+* rtw88 core: In fw_recovery_work, do usb_reset_device outside mutex,
+  check ret == -ENODEV, and abort ieee80211_restart_hw if device gone
+  after reset. Prevents self-flush deadlock and chrome hang. Reset
+  re-enumeration as 1-5 is expected after failed reset (EHCI->OHCI
+  fallback).
 
 --- a/drivers/net/wireless/realtek/rtw88/main.h.orig	2026-08-22 17:08:59.622289356 -0700
 +++ b/drivers/net/wireless/realtek/rtw88/main.h	2026-08-22 17:14:32.317495238 -0700
