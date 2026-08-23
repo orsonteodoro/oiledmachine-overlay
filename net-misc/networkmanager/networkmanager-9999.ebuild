@@ -617,11 +617,11 @@ einfo
 einfo "[General]"
 einfo
 einfo "# The example uses a -65 dBm (-70 dBm is default for 2.4 G) as the"
-einfo "threshold to start finding/switching to a stronger signal."
+einfo "# threshold to start finding/switching to a stronger signal."
 einfo "RoamThreshold=-65"
 einfo
 einfo "# The example uses a -70 dBm (-76 dBm is default for 5 G) as the"
-einfo "threshold to start finding/switching to a stronger signal."
+einfo "# threshold to start finding/switching to a stronger signal."
 einfo "RoamThreshold5G=-70"
 einfo
 einfo
