@@ -99,7 +99,7 @@ esac
 CXX_STANDARD=17
 # For the max exclusive Python supported (and others), see \
 # https://github.com/blender/blender/blob/v5.2.0/build_files/build_environment/install_linux_packages.py#L693 \
-PYTHON_COMPAT=( "python3_"{13,14} ) # >= 3.13 for Numpy 2.x
+PYTHON_COMPAT=( "python3_"{13,14} ) # >= 3.13 for Numpy 2.x, upstream uses vendored 3.13
 CLANG_MIN="18" # C++17
 GCC_MIN="14" # C++17
 
