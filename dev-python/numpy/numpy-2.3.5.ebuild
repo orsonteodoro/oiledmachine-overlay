@@ -195,6 +195,9 @@ setup_cython3_symlink() {
 }
 
 python_configure() {
+	if has_version "${CATEGORY}/${PN}" ; then
+ewarn "If install fails, try uninstall previous install of ${CATEGORY}/${PN} first."
+	fi
 	cython_python_configure
 	setup_cython3_symlink
 }

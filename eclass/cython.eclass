@@ -21,6 +21,7 @@ SUPPORTED_CYTHON_SLOTS=(
 	"0.98"
 	"3.0"
 	"3.1"
+	"3.2"
 )
 
 # @FUNCTION: cython_set_cython_slot
@@ -88,7 +89,14 @@ einfo "Setting up Cython ${CYTHON_SLOT} support for ${EPYTHON}"
 	export LD_LIBRARY_PATH="${ESYSROOT}/usr/lib/cython/${CYTHON_SLOT}/$(get_libdir):${LD_LIBRARY_PATH}"
 	export PATH="${ESYSROOT}/usr/lib/cython/${CYTHON_SLOT}/bin:${ESYSROOT}/usr/lib/cython/${CYTHON_SLOT}/lib/python-exec/${EPYTHON}:${PATH}"
 	export PYTHONPATH="${ESYSROOT}/usr/lib/cython/${CYTHON_SLOT}/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
+einfo "EPYTHON:  ${EPYTHON}"
+einfo "CYTHON_SLOT:  ${CYTHON_SLOT}"
+einfo "PATH:  ${PATH}"
 	which "cython" >/dev/null || die "Missing cython"
+	if ver_test "${CYTHON_SLOT}" "-ge" "3.0" && ! which "cython3" >/dev/null 2>&1 ; then
+eerror "Cannot detect cython3"
+		die
+	fi
 }
 
 # @FUNCTION: cython_python_compile
