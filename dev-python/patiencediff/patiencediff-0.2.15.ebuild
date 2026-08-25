@@ -9,7 +9,7 @@ EAPI=8
 CYTHON_SLOT="3.0"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..12} "pypy3" )
+PYTHON_COMPAT=( "python3_"{10..14} "pypy3" ) # Relaxed
 
 inherit cython distutils-r1
 

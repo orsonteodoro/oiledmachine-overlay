@@ -6,7 +6,7 @@
 
 EAPI=8
 
-# U16
+# U16 - Python 2.7, 3.5, 3.6, 3.7
 
 CFLAGS_HARDENED_USE_CASES="plugin security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
@@ -14,7 +14,7 @@ CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="PE"
 LANGS=( "ca" )
-PYTHON_COMPAT=( "python3_"{11..12} ) # 2.7, 3.5, 3.6, 3.7
+PYTHON_COMPAT=( "python3_"{11..14} ) # Relaxed
 
 inherit autotools cflags-hardened flag-o-matic linux-info pam python-single-r1 sandbox-changes
 

@@ -225,7 +225,7 @@ BDEPEND+="
 PATCHES=(
 #	"${FILESDIR}/breezy-3.3.3-fix-compile-test.patch" # Added by oiledmachine-overlay
 )
-DOCS=( "README.md" )
+DOCS=( "README.rst" )
 
 pkg_setup() {
 	[[ "${GENERATE_LOCKFILE}" == "1" ]] && sandbox-changes_no_network_sandbox "To update lockfile"

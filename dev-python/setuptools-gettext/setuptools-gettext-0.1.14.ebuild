@@ -7,7 +7,7 @@ EAPI=8
 # U22
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{11..12} )
+PYTHON_COMPAT=( "python3_"{10..14} ) # Relaxed
 
 inherit distutils-r1
 

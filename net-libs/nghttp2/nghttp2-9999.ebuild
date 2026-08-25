@@ -14,7 +14,7 @@ CFLAGS_HARDENED_CI_SANITIZERS_GCC_COMPAT="14"
 CFLAGS_HARDENED_USE_CASES="security-critical network sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DF DOS UAF"
 CXX_STANDARD=20
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{10..14} ) # Relaxed
 USE_RUBY="ruby32 ruby33"
 
 HTTP_PARSER_COMMIT="ec8b5ee63f0e51191ea43bb0c6eac7bfbff3141d"
