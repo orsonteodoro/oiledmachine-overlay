@@ -247,7 +247,7 @@ Language defaults
 | 3.10                 | Available [1]                         | U22 (EOL Apr 2027)                                             |
 | 3.11                 | Available [4]                         | D12 (EOL Jun 2026)                                             |
 | 3.12                 | Partially supported                   | U24 (EOL Apr 2029)                                             |
-| 3.13                 | Available                             | D13 (EOL Aug 2028)                                             |
+| 3.13                 | Partially supported                   | D13 (EOL Aug 2028)                                             |
 | >= 3.13t [3]         | Not supported                         |                                                                |
 | 3.14                 | Available                             | G23, F43, F44, U26                                             |
 | >= 3.15 [3]          | Not supported                         |                                                                |
