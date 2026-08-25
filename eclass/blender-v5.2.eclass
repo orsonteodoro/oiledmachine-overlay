@@ -924,6 +924,7 @@ gen_rocm_rdepend() {
 	done
 }
 
+# Upstream uses vendored numpy 2.3.4
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/attrs-25.3.0[${PYTHON_USEDEP}]

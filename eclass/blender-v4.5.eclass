@@ -929,6 +929,7 @@ gen_rocm_rdepend() {
 	done
 }
 
+# Upstream uses vendored numpy 1.26.4
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/certifi-2025.4.26[${PYTHON_USEDEP}]
