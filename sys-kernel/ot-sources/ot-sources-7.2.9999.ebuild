@@ -9,14 +9,14 @@ EAPI=8
 # See also https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/
 
 GENPATCHES_FALLBACK_COMMIT="d4fa92430e875432c3a61bb3abd9b6e68ea9fcbd" # 2026-06-04 18:26:32 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="4352b8aee98005853aa63f57d6377282de17a33f" # 2026-08-23 13:28:57 -0700 @ Merge tag 'i3c/for-7.3' of
+LINUX_SOURCES_FALLBACK_COMMIT="66498c75b4f8017f62d720d9b59675bdf3abce91" # 2026-08-24 12:21:15 -0700 @ Merge tag 'dmaengine-7.3-rc1' of
 RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
 # https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=7.2
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
-EBUILD_REV="ebuild_revision_25"
+EBUILD_REV="ebuild_revision_26"
 GENPATCHES_VER="1" # can be live only when 9999
 PATCH_PROJC_VER="7.1-r0"
 PATCH_RT_VER="7.2-rt5"
