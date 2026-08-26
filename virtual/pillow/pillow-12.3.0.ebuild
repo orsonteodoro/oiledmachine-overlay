@@ -12,8 +12,8 @@ LICENSE="metapackage"
 SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~x86"
 IUSE="
-examples imagequant +jpeg jpeg2k lcms pillow-simd test tiff tk truetype webp xcb
-zlib
+avif examples imagequant +jpeg jpeg2k lcms pillow-simd raqm test tiff tk
+truetype webp xcb zlib
 "
 REQUIRED_USE="
 	!pillow-simd
@@ -22,10 +22,10 @@ REQUIRED_USE="
 RDEPEND="
 	!pillow-simd? (
 		!dev-python/pillow-simd
-		>=dev-python/pillow-${PV}[${PYTHON_USEDEP},examples?,imagequant?,jpeg?,jpeg2k?,lcms?,test?,tiff?,tk?,truetype?,webp?,xcb?,zlib?]
+		>=dev-python/pillow-${PV}[${PYTHON_USEDEP},avif?,examples?,imagequant?,jpeg?,jpeg2k?,lcms?,raqm?,test?,tiff?,tk?,truetype?,webp?,xcb?,zlib?]
 	)
 	pillow-simd? (
 		!dev-python/pillow
-		>=dev-python/pillow-simd-${PV}[${PYTHON_USEDEP},imagequant?,jpeg?,jpeg2k?,lcms?,test?,tiff?,tk?,truetype?,webp?,xcb?,zlib?]
+		>=dev-python/pillow-simd-${PV}[${PYTHON_USEDEP},avif?,imagequant?,jpeg?,jpeg2k?,lcms?,raqm?,test?,tiff?,tk?,truetype?,webp?,xcb?,zlib?]
 	)
 "
