@@ -119,13 +119,14 @@ Fix:
  
  enum rtw_hci_type {
  	RTW_HCI_TYPE_PCIE,
-@@ -2020,6 +2022,10 @@ struct rtw_dev {
+@@ -2020,6 +2022,11 @@ struct rtw_dev {
  	/* ensures exclusive access from mac80211 callbacks */
  	struct mutex mutex;
  
 +	/* USB fail detection for -110 storm */
 +	bool fail; /* true after 3 consecutive -110 to stop USB spam */
 +	atomic_t fail_count;
++	struct work_struct usb_reset_work;
 +
  	/* watch dog every 2 sec */
  	struct delayed_work watch_dog_work;
@@ -148,11 +149,13 @@ Fix:
  
  #include "main.h"
  #include "regd.h"
-@@ -19,6 +20,7 @@
+@@ -19,6 +20,9 @@
  #include "bf.h"
  #include "sar.h"
  #include "sdio.h"
 +#include "usb.h"
++
++static void rtw_usb_reset_work(struct work_struct *work);
  
  bool rtw_disable_lps_deep_mode;
  EXPORT_SYMBOL(rtw_disable_lps_deep_mode);
