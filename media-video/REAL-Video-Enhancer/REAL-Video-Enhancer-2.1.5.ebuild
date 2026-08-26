@@ -13,7 +13,7 @@ EAPI=8
 
 # U20
 
-# For version requirements, see https://github.com/TNTwise/REAL-Video-Enhancer/blob/RVE-2.1.0/src/DownloadDeps.py
+# For version requirements, see https://github.com/TNTwise/REAL-Video-Enhancer/blob/RVE-2.1.5/src/DownloadDeps.py
 # Upstream uses numpy 1.26.4
 
 MY_PN="${PN}-RVE"
@@ -295,14 +295,12 @@ NCNN_DEPEND="
 	>=dev-python/upscale-ncnn-py-1.2.0[${PYTHON_SINGLE_USEDEP}]
 "
 ROCM_DEPEND="
+	dev-python/triton:=
 	|| (
 		=dev-python/triton-2.1*[${PYTHON_SINGLE_USEDEP},rocm,rocm_7_2?]
 	)
-	dev-python/triton:=
-	=sci-ml/pytorch-2.3*[${PYTHON_SINGLE_USEDEP},rocm_7_2?]
-	sci-ml/pytorch:=
-	=sci-ml/torchvision-0.18*[${PYTHON_SINGLE_USEDEP}]
-	sci-ml/torchvision:=
+	=sci-ml/pytorch-2.3*:=[${PYTHON_SINGLE_USEDEP},rocm_7_2?]
+	=sci-ml/torchvision-0.18*:=[${PYTHON_SINGLE_USEDEP}]
 "
 TENSORRT_DEPEND="
 	$(python_gen_cond_dep '
@@ -316,6 +314,7 @@ TENSORRT_DEPEND="
 PATENT_STATUS_RDEPEND="
 	virtual/patent-status[patent_status_nonfree=]
 	!patent_status_nonfree? (
+		media-video/ffmpeg:=[encode,-patent_status_nonfree,svt-av1?,vpx?,-x264,-x265]
 		|| (
 			media-video/ffmpeg:58.60.60[encode,-patent_status_nonfree,svt-av1?,vpx?,-x264,-x265]
 			media-video/ffmpeg:56.58.58[encode,-patent_status_nonfree,svt-av1?,vpx?,-x264,-x265]
@@ -324,6 +323,7 @@ PATENT_STATUS_RDEPEND="
 		)
 	)
 	patent_status_nonfree? (
+		media-video/ffmpeg:=[encode,patent_status_nonfree,svt-av1?,vpx?,x264?,x265?]
 		|| (
 			media-video/ffmpeg:58.60.60[encode,patent_status_nonfree,svt-av1?,vpx?,x264?,x265?]
 			media-video/ffmpeg:56.58.58[encode,patent_status_nonfree,svt-av1?,vpx?,x264?,x265?]
@@ -331,7 +331,6 @@ PATENT_STATUS_RDEPEND="
 			media-video/ffmpeg:0/56.58.58[encode,patent_status_nonfree,svt-av1?,vpx?,x264?,x265?]
 		)
 	)
-	media-video/ffmpeg:=
 "
 RDEPEND+="
 	${MISSING_DEPEND}
@@ -354,8 +353,7 @@ RDEPEND+="
 			>=dev-python/cx-Freeze-bin-7.0.0[${PYTHON_USEDEP}]
 		)
 	')
-	dev-qt/qtbase:6[gui,wayland?,widgets,X?]
-	dev-qt/qtbase:=
+	dev-qt/qtbase:6=[gui,wayland?,widgets,X?]
 	cuda? (
 		${COMMON_DEPEND}
 		${CUDA_DEPEND}
