@@ -63,7 +63,6 @@ REQUIRED_USE+="
 RDEPEND_DRIVERS="
 	video_cards_amdgpu? (
 		media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},patent_status_nonfree=,vaapi,video_cards_radeonsi]
-		media-libs/mesa:=
 	)
 	video_cards_intel? (
 		i965? (
@@ -75,7 +74,6 @@ RDEPEND_DRIVERS="
 	)
 	video_cards_nouveau? (
 		media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},patent_status_nonfree=,vaapi,video_cards_nouveau]
-		media-libs/mesa:=
 	)
 	video_cards_nvidia? (
 		firefox? (
@@ -85,11 +83,9 @@ RDEPEND_DRIVERS="
 	)
 	video_cards_r600? (
 		media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},patent_status_nonfree=,vaapi,video_cards_r600]
-		media-libs/mesa:=
 	)
 	video_cards_radeonsi? (
 		media-libs/mesa[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},patent_status_nonfree=,vaapi,video_cards_radeonsi]
-		media-libs/mesa:=
 	)
 "
 

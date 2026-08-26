@@ -3,7 +3,7 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( "python3_"{10..12} "pypy3" )
+PYTHON_COMPAT=( "python3_"{10..13} "pypy3" )
 
 inherit python-r1
 
@@ -14,6 +14,9 @@ KEYWORDS="~amd64 ~arm64 ~x86"
 IUSE="
 examples imagequant +jpeg jpeg2k lcms pillow-simd test tiff tk truetype webp xcb
 zlib
+"
+REQUIRED_USE="
+	!pillow-simd
 "
 
 RDEPEND="

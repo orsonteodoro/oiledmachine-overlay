@@ -778,6 +778,7 @@ gen_oiio_depends() {
 		(
 			>=dev-cpp/robin-map-1.3.0:=
 			>=dev-libs/libfmt-9.1.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+
 			>=media-libs/openimageio-3.0.6.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},color-management?,jpeg2k?,png,python,tools(+),webp?]
 			<media-libs/openimageio-3.1.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},color-management?,jpeg2k?,png,python,tools(+),webp?]
 		)
@@ -791,8 +792,8 @@ gen_openexr_pairs() {
 		local openexr_pv="${row%:*}"
 		echo "
 			(
-				~media-libs/openexr-${openexr_pv}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-				~dev-libs/imath-${imath_pv}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+				~dev-libs/imath-${imath_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+				~media-libs/openexr-${openexr_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 			)
 		"
 	done
