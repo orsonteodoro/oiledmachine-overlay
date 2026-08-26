@@ -82,7 +82,7 @@ PATENT_STATUS_IUSE=(
 )
 
 ROCM_SLOTS=(
-	"rocm_6_4"
+	"rocm_7_2"
 )
 
 inherit python-single-r1
@@ -296,10 +296,10 @@ NCNN_DEPEND="
 "
 ROCM_DEPEND="
 	|| (
-		=dev-python/triton-2.1*[${PYTHON_SINGLE_USEDEP},rocm,rocm_6_4?]
+		=dev-python/triton-2.1*[${PYTHON_SINGLE_USEDEP},rocm,rocm_7_2?]
 	)
 	dev-python/triton:=
-	=sci-ml/pytorch-2.3*[${PYTHON_SINGLE_USEDEP},rocm_6_4?]
+	=sci-ml/pytorch-2.3*[${PYTHON_SINGLE_USEDEP},rocm_7_2?]
 	sci-ml/pytorch:=
 	=sci-ml/torchvision-0.18*[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/torchvision:=
