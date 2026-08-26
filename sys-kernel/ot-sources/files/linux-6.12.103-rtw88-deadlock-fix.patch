@@ -472,7 +472,7 @@ Fix:
  
  	rtw_usb_free_rx_bufs(rtwusb);
  
-@@ -1187,6 +1264,44 @@ void rtw_usb_disconnect(struct usb_inter
+@@ -1187,6 +1264,43 @@ void rtw_usb_disconnect(struct usb_inter
  }
  EXPORT_SYMBOL(rtw_usb_disconnect);
  
@@ -493,13 +493,10 @@ Fix:
 +	msleep(500);
 +
 +	if (ret) {
-+		pr_warn("rtw88: reset failed %d, trying port power cycle\n", ret);
-+		/* power cycle port 2-5 that you saw in logs */
-+		usb_autosuspend_device(udev);
-+		msleep(100);
-+		usb_autoresume_device(udev);
-+		/* if still fails, let hub power cycle */
++		pr_warn("rtw88: reset failed %d, retrying\n", ret);
++		msleep(1000);
 +		ret = usb_reset_device(udev);
++		msleep(500);
 +	}
 +
 +	if (ret == 0) {
@@ -509,8 +506,10 @@ Fix:
 +		/* now trigger normal fw recovery which will power on */
 +		schedule_work(&rtwdev->fw_recovery_work);
 +	} else {
-+		pr_warn("rtw88: USB reset failed, waiting for re-enumeration to 1-5\n");
-+		/* device will re-enumerate as 1-5 (OHCI) as you saw at [61055] */
++		pr_warn("rtw88: USB reset failed ret=%d, waiting for re-enumeration to 1-5\n", ret);
++		/* device will re-enumerate as 1-5 (OHCI) as you saw at [61055]
++		 * and fail flag stays true so probe won't spam 0xf0
++		 */
 +	}
 +}
 +
