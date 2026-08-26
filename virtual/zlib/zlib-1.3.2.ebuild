@@ -12,7 +12,7 @@ IUSE="static-libs"
 
 RDEPEND="
 	|| (
-		>=sys-libs/zlib-1.3.2[${MULTILIB_USEDEP},static-libs?]
+		>=sys-libs/zlib-${PV}[${MULTILIB_USEDEP},static-libs?]
 		sys-libs/zlib-ng[${MULTILIB_USEDEP},compat,static-libs(-)?]
 	)
 "
