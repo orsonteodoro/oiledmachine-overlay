@@ -101,8 +101,8 @@ Fix:
   re-enumeration as 1-5 is expected after failed reset (EHCI->OHCI
   fallback).
 
---- a/drivers/net/wireless/realtek/rtw88/main.h.orig	2026-08-25 18:28:43.650363752 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/main.h	2026-08-25 18:35:49.165767739 -0700
+--- a/drivers/net/wireless/realtek/rtw88/main.h.orig	2026-08-25 19:58:44.727112894 -0700
++++ b/drivers/net/wireless/realtek/rtw88/main.h	2026-08-25 19:59:03.671205279 -0700
 @@ -14,6 +14,7 @@
  #include <linux/iopoll.h>
  #include <linux/interrupt.h>
@@ -130,8 +130,8 @@ Fix:
  int rtw_wait_firmware_completion(struct rtw_dev *rtwdev);
  int rtw_power_on(struct rtw_dev *rtwdev);
  void rtw_core_fw_scan_notify(struct rtw_dev *rtwdev, bool start);
---- a/drivers/net/wireless/realtek/rtw88/main.c.orig	2026-08-25 18:28:43.649874763 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/main.c	2026-08-25 18:35:49.166287244 -0700
+--- a/drivers/net/wireless/realtek/rtw88/main.c.orig	2026-08-25 19:58:44.727666506 -0700
++++ b/drivers/net/wireless/realtek/rtw88/main.c	2026-08-25 19:59:03.673781266 -0700
 @@ -3,6 +3,7 @@
   */
  
@@ -148,7 +148,20 @@ Fix:
  
  bool rtw_disable_lps_deep_mode;
  EXPORT_SYMBOL(rtw_disable_lps_deep_mode);
-@@ -645,6 +647,12 @@ static void __fw_recovery_work(struct rt
+@@ -232,6 +234,12 @@ static void rtw_watch_dog_work(struct wo
+ 	u32 tx_unicast_mbps, rx_unicast_mbps;
+ 	bool ps_active;
+ 
++	/* NEW: abort when in -110 storm, prevents mac power on failed loop
++	 * that deadlocks modprobe -r
++	 */
++	if (unlikely(rtwdev->fail))
++		return;
++
+ 	mutex_lock(&rtwdev->mutex);
+ 
+ 	if (!test_bit(RTW_FLAG_RUNNING, rtwdev->flags))
+@@ -645,6 +653,12 @@ static void __fw_recovery_work(struct rt
  	set_bit(RTW_FLAG_RESTARTING, rtwdev->flags);
  	clear_bit(RTW_FLAG_RESTART_TRIGGERING, rtwdev->flags);
  
@@ -161,7 +174,7 @@ Fix:
  	ret = rtw_fwcd_prep(rtwdev);
  	if (ret)
  		goto free;
-@@ -662,6 +670,7 @@ free:
+@@ -662,6 +676,7 @@ free:
  
  	WARN(1, "firmware crash, start reset and recover\n");
  
@@ -169,7 +182,7 @@ Fix:
  	rcu_read_lock();
  	rtw_iterate_keys_rcu(rtwdev, NULL, rtw_reset_key_iter, rtwdev);
  	rcu_read_unlock();
-@@ -669,12 +678,50 @@ free:
+@@ -669,12 +684,33 @@ free:
  	rtw_iterate_vifs_atomic(rtwdev, rtw_reset_vif_iter, rtwdev);
  	bitmap_zero(rtwdev->hw_port, RTW_PORT_NUM);
  	rtw_enter_ips(rtwdev);
@@ -188,39 +201,36 @@ Fix:
  	struct rtw_dev *rtwdev = container_of(work, struct rtw_dev,
  					      fw_recovery_work);
 +	struct rtw_usb *rtwusb;
-+	bool was_fail;
-+	int ret;
 +
-+	was_fail = rtwdev->fail;
-+	rtwusb = rtw_get_usb_priv(rtwdev);
-+
-+	if (was_fail) {
-+		/* device might already be disconnecting */
-+		if (!rtwusb || !rtwusb->udev) {
-+			rtwdev->fail = false;
-+			atomic_set(&rtwdev->fail_count, 0);
++	if (rtwdev->fail) {
++		rtwusb = rtw_get_usb_priv(rtwdev);
++		if (!rtwusb || !rtwusb->udev)
 +			return;
-+		}
 +
-+		pr_warn("rtw88: USB reset after -110 storm (reg 0x4e0/0xaa/0x770)\n");
-+
-+		/* Don't use rtw_warn after this point - rtwdev may be freed
-+		 * by disconnect during reset. Use pr_warn.
++		pr_warn("rtw88: -110 storm, aborting recovery, waiting for disconnect\n");
++		/* Don't reset, don't restart_hw. Let disconnect clean up.
++		 * This avoids mac power on failed loop.
 +		 */
-+		ret = usb_reset_device(rtwusb->udev);
-+		msleep(200);
-+
-+		/* After reset, rtwdev may be freed. Don't deref it to check
-+		 * udev again, just abort restart. USB core will re-enumerate
-+		 * as 1-5 as you saw.
-+		 */
-+		pr_warn("rtw88: USB reset ret=%d, aborting restart_hw to avoid use-after-free\n", ret);
 +		return;
 +	}
  
  	mutex_lock(&rtwdev->mutex);
  	__fw_recovery_work(rtwdev);
-@@ -2169,6 +2216,10 @@ int rtw_core_init(struct rtw_dev *rtwdev
+@@ -1378,6 +1414,13 @@ int rtw_power_on(struct rtw_dev *rtwdev)
+ 	bool wifi_only;
+ 	int ret;
+ 
++	/* NEW: abort power on when USB is in -110 fail state.
++	 * Fixes modprobe -r deadlock with 65s hang:
++	 * rtw88_8821cu: mac power on failed / leave idle state failed
++	 */
++	if (unlikely(rtwdev->fail))
++		return -ENODEV;
++
+ 	ret = rtw_hci_setup(rtwdev);
+ 	if (ret) {
+ 		rtw_err(rtwdev, "failed to setup hci\n");
+@@ -2169,6 +2212,10 @@ int rtw_core_init(struct rtw_dev *rtwdev
  	mutex_init(&rtwdev->mutex);
  	mutex_init(&rtwdev->hal.tx_power_mutex);
  
@@ -231,8 +241,8 @@ Fix:
  	init_waitqueue_head(&rtwdev->coex.wait);
  	init_completion(&rtwdev->lps_leave_check);
  	init_completion(&rtwdev->fw_scan_density);
---- a/drivers/net/wireless/realtek/rtw88/usb.c.orig	2026-08-25 18:29:18.015459418 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/usb.c	2026-08-25 18:36:14.138401028 -0700
+--- a/drivers/net/wireless/realtek/rtw88/usb.c.orig	2026-08-25 19:58:44.728138829 -0700
++++ b/drivers/net/wireless/realtek/rtw88/usb.c	2026-08-25 19:59:29.119019771 -0700
 @@ -27,6 +27,17 @@ struct rtw_usb_txcb {
  	struct sk_buff_head tx_ack_queue;
  };
@@ -423,10 +433,15 @@ Fix:
  	}
  
  	return ret;
-@@ -1366,13 +1435,25 @@ void rtw_usb_disconnect(struct usb_inter
+@@ -1366,14 +1435,29 @@ void rtw_usb_disconnect(struct usb_inter
  	rtwdev = hw->priv;
  	rtwusb = rtw_get_usb_priv(rtwdev);
  
++	/* NEW: mark failed so watch_dog / power_on abort immediately.
++	 * This unblocks the mutex that modprobe -r waits for.
++	 */
++	rtwdev->fail = true;
++
 +	/* NEW: stop recovery work BEFORE it does usb_reset_device
 +	 * and before we free hw. Fixes NULL deref 0xf7 in
 +	 * rtw_fw_recovery_work+0x323 after USB disconnect.
@@ -441,17 +456,17 @@ Fix:
  	rtw_usb_deinit_rx(rtwdev);
  
 -	if (rtwusb->udev->state != USB_STATE_NOTATTACHED)
-+	/* Don't reset if we are in -110 storm path - reset already
-+	 * attempted in rtw_fw_recovery_work and failed 4x, causing
-+	 * disconnect. Resetting again here triggers re-enumeration
-+	 * loop 2-5 -> 1-5 and chrome deadlock.
+-		usb_reset_device(rtwusb->udev);
++	/* Skip reset when in fail state - we already tried and it
++	 * causes the 2-5 -> 1-5 re-enumeration loop that hangs chrome.
 +	 */
-+	if (!rtwdev->fail && rtwusb->udev->state != USB_STATE_NOTATTACHED)
- 		usb_reset_device(rtwusb->udev);
++	// if (!rtwdev->fail && rtwusb->udev->state != USB_STATE_NOTATTACHED)
++	//         usb_reset_device(rtwusb->udev);
  
  	rtw_usb_free_rx_bufs(rtwusb);
+ 
 --- a/drivers/net/wireless/realtek/rtw88/usb.h.orig	2025-11-30 14:42:10.000000000 -0800
-+++ b/drivers/net/wireless/realtek/rtw88/usb.h	2026-08-25 18:35:49.167221290 -0700
++++ b/drivers/net/wireless/realtek/rtw88/usb.h	2026-08-25 19:59:03.675103939 -0700
 @@ -99,5 +99,7 @@ static inline struct rtw_usb_tx_data *rt
  
  int rtw_usb_probe(struct usb_interface *intf, const struct usb_device_id *id);
@@ -460,8 +475,8 @@ Fix:
 +int __rtw_usb_write32(struct rtw_dev *rtwdev, u32 addr, u32 val);
  
  #endif
---- a/net/mac80211/mlme.c.orig	2026-08-25 18:29:28.375457092 -0700
-+++ b/net/mac80211/mlme.c	2026-08-25 18:35:49.168136922 -0700
+--- a/net/mac80211/mlme.c.orig	2026-08-25 19:58:44.729360247 -0700
++++ b/net/mac80211/mlme.c	2026-08-25 19:59:03.676561523 -0700
 @@ -3222,14 +3222,32 @@ static u64 ieee80211_handle_pwr_constr(s
  		has_80211h_pwr = ieee80211_find_80211h_pwr_constr(
  			channel, country_ie, country_ie_len,
