@@ -374,7 +374,7 @@ FFMPEG_COMPAT_SLOTS=(
 )
 
 ROCM_SLOTS=(
-	"rocm_6_4"
+	"rocm_7_2"
 )
 
 CHKL_TIMESTAMPS=(
@@ -1656,7 +1656,7 @@ eerror "OpenVINO is not supported for ${ARCH}"
 		)
 	fi
 
-	if use openvx && use rocm_6_4 ; then
+	if use openvx && use rocm_7_2 ; then
 		export ROCM_PATH="/opt/rocm"
 		mycmakeargs+=(
 			-DOPENVX_ROOT="/opt/rocm"
