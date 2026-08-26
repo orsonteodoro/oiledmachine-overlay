@@ -47,23 +47,23 @@ REQUIRED_USE="
 RDEPEND+="
 	$(python_gen_cond_dep '
 		python_targets_python3_10? (
-			=dev-python/numpy-1.21*:=[${PYTHON_USEDEP}]
+			=dev-python/numpy-1.21*[${PYTHON_USEDEP}]
 		)
 		python_targets_python3_11? (
-			=dev-python/numpy-1.24*:=[${PYTHON_USEDEP}]
+			=dev-python/numpy-1.24*[${PYTHON_USEDEP}]
 		)
 		python_targets_python3_12? (
-			=dev-python/numpy-1.26*:=[${PYTHON_USEDEP}]
+			=dev-python/numpy-1.26*[${PYTHON_USEDEP}]
 		)
 		python_targets_python3_13? (
-			=dev-python/numpy-2.2*:=[${PYTHON_USEDEP}]
+			=dev-python/numpy-2.2*[${PYTHON_USEDEP}]
 		)
 		python_targets_python3_14? (
 			lts? (
-				=dev-python/numpy-2.3*:=[${PYTHON_USEDEP}]
+				=dev-python/numpy-2.3*[${PYTHON_USEDEP}]
 			)
 			!lts? (
-				=dev-python/numpy-2.4*:=[${PYTHON_USEDEP}]
+				=dev-python/numpy-2.4*[${PYTHON_USEDEP}]
 			)
 		)
 	')

@@ -47,7 +47,7 @@ LICENSE="
 SLOT="0/3" # 0/API_VERSION
 IUSE+="
 ${_VIDEO_CARDS[@]}
-clover cpu iocl neo neo-legacy pocl opencl orca rocm rocm_6_4 rocm_7_0
+clover cpu iocl neo neo-legacy pocl opencl orca rocm rocm_7_2
 rusticl vulkan
 ebuild_revision_3
 "
@@ -61,7 +61,7 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	>=dev-libs/opencl-icd-loader-2023.02.06[${MULTILIB_USEDEP}]
-	dev-cpp/clhpp:=
+	dev-cpp/clhpp
 	clover? (
 		<media-libs/mesa-25.2.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl]
 	)
@@ -115,11 +115,8 @@ RDEPEND+="
 			media-libs/mesa[video_cards_radeonsi]
 		)
 		rocm? (
-			rocm_6_4? (
-				dev-libs/rocm-opencl-runtime:0/6.4[${LIBSTDCXX_USEDEP}]
-			)
-			rocm_7_0? (
-				dev-libs/rocm-opencl-runtime:0/7.0[${LIBSTDCXX_USEDEP}]
+			rocm_7_2? (
+				dev-libs/rocm-opencl-runtime:0/7.2[${LIBSTDCXX_USEDEP}]
 			)
 		)
 	)
