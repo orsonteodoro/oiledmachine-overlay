@@ -115,7 +115,7 @@ Fix:
  
  struct rtw_dev;
  struct rtw_debugfs;
-+struct work_struct usb_reset_work;
++
  
  enum rtw_hci_type {
  	RTW_HCI_TYPE_PCIE,
