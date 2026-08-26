@@ -9,14 +9,14 @@ EAPI=8
 # See also https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/
 
 GENPATCHES_FALLBACK_COMMIT="d4fa92430e875432c3a61bb3abd9b6e68ea9fcbd" # 2026-06-04 18:26:32 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="45c13f3f9e3bb15fd89ff2864c6f627a3b4b4229" # 2026-08-25 14:21:47 -0700 @ Merge tag 'hwlock-v7.3' of
+LINUX_SOURCES_FALLBACK_COMMIT="502d45774af09f1c681c754c4b7cdfb5d7f72fd9" # 2026-08-26 11:14:30 -0700 @ Merge tag 'clk-for-linus' of
 RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
 # https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=7.2
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
-EBUILD_REV="ebuild_revision_27"
+EBUILD_REV="ebuild_revision_29"
 GENPATCHES_VER="1" # can be live only when 9999
 PATCH_PROJC_VER="7.1-r0"
 PATCH_RT_VER="7.2-rt5"
