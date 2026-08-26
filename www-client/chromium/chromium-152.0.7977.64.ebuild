@@ -90,12 +90,13 @@ EAPI=8
 # 150.0.7871.128 -> 150.0.7871.181
 # 150.0.7871.181 -> 151.0.7922.108
 # 151.0.7922.108 -> 151.0.7922.137
-# 151.0.7922.137 -> 
+# 151.0.7922.137 -> 151.0.7922.173
+# 151.0.7922.173 -> 152.0.7977.64
 
 #
 # For depends see:
 #
-# https://github.com/chromium/chromium/tree/151.0.7922.137/build/linux/sysroot_scripts/generated_package_lists				# Stable, Last update 20250523, D11
+# https://github.com/chromium/chromium/tree/152.0.7977.64/build/linux/sysroot_scripts/generated_package_lists				# Stable, Last update 20250523, D11
 #   alsa-lib, at-spi2-core, bluez (bluetooth), cairo, cups, curl, expat,
 #   flac [older], fontconfig [older], freetype [older], gcc, gdk-pixbuf, glib,
 #   glibc [missing check], gtk+3, gtk4, harfbuzz [older], libdrm [older], libffi, libglvnd,
@@ -104,7 +105,7 @@ EAPI=8
 #   libxkbcommon, libxml2 [older], libxrandr, libxrender, libxshmfence,
 #   libxslt [older], nspr, nss, opus [older], pango, pciutils, pipewire,
 #   libpulse, qt5, qt6, re2 [older], systemd, udev, wayland, zlib [older]
-# https://github.com/chromium/chromium/blob/151.0.7922.137/build/install-build-deps.py							# Stable
+# https://github.com/chromium/chromium/blob/152.0.7977.64/build/install-build-deps.py							# Stable
 #
 
 #
@@ -113,58 +114,58 @@ EAPI=8
 # All links below except for node are marked security-critical by upstream.
 # For "stable used instead", the stable is rounded up to the minimum required to the one containing the commit.
 #
-# https://github.com/chromium/chromium/blob/151.0.7922.137/third_party/abseil-cpp/README.chromium					# Live
-# https://github.com/chromium/chromium/blob/151.0.7922.137/third_party/brotli/README.chromium						# Live
-# https://github.com/chromium/chromium/blob/151.0.7922.137/third_party/crc32c/README.chromium						# Stable used instead.  The commit id is newer than the suggested version but both are old.
-# https://github.com/chromium/chromium/blob/151.0.7922.137/third_party/dav1d/version/vcs_version.h#L2					# Live
-# https://github.com/chromium/chromium/tree/151.0.7922.137/third_party/flatbuffers							# Stable.  See also include/flatbuffers/base.h and goldens/cpp/basic_generated.h
-# https://github.com/chromium/chromium/tree/151.0.7922.137/third_party/highway								# Stable
-# https://github.com/chromium/chromium/tree/151.0.7922.137/third_party/jsoncpp								# Stable used instead.  Both the submodule and version are old, but the submodule is newer.
-# https://github.com/chromium/chromium/blob/151.0.7922.137/third_party/libaom/source/config/config/aom_version.h#L19			# Stable
-# https://github.com/chromium/chromium/blob/151.0.7922.137/third_party/libpng/png.h#L288						# Stable
-# https://github.com/chromium/chromium/tree/151.0.7922.137/third_party/libsecret							# Stable used instead.  The revision is newer than the suggested version.
-# https://github.com/chromium/chromium/tree/151.0.7922.137/third_party/libusb								# Stable
-# https://github.com/chromium/chromium/tree/151.0.7922.137/third_party/libvpx								# Live
-# https://github.com/chromium/chromium/tree/151.0.7922.137/third_party/libwebp								# Live, used the version suggested in cpe prefix not the commit
-# https://github.com/chromium/chromium/blob/151.0.7922.137/third_party/libxml/linux/config.h#L86					# Live
-# https://github.com/chromium/chromium/blob/151.0.7922.137/third_party/libxslt/linux/config.h#L116					# Stable
-# https://github.com/chromium/chromium/blob/151.0.7922.137/third_party/node/update_node_binaries#L18					# Stable, marked no for security-critical by upstream
-# https://github.com/chromium/chromium/tree/151.0.7922.137/third_party/re2								# Live.  Submodule is newer commit than readme.
-# https://github.com/chromium/chromium/tree/151.0.7922.137/third_party/simdutf								# Stable used instead.  The version listed is newer than the revision, so the version is used.
-# https://github.com/chromium/chromium/tree/151.0.7922.137/third_party/snappy								# Stable used instead.  The submodule is newer than the version.git.revision listed in readme, but
+# https://github.com/chromium/chromium/blob/152.0.7977.64/third_party/abseil-cpp/README.chromium					# Live
+# https://github.com/chromium/chromium/blob/152.0.7977.64/third_party/brotli/README.chromium						# Live
+# https://github.com/chromium/chromium/blob/152.0.7977.64/third_party/crc32c/README.chromium						# Stable used instead.  The commit id is newer than the suggested version but both are old.
+# https://github.com/chromium/chromium/blob/152.0.7977.64/third_party/dav1d/version/vcs_version.h#L2					# Live
+# https://github.com/chromium/chromium/tree/152.0.7977.64/third_party/flatbuffers							# Stable.  See also include/flatbuffers/base.h and goldens/cpp/basic_generated.h
+# https://github.com/chromium/chromium/tree/152.0.7977.64/third_party/highway								# Stable
+# https://github.com/chromium/chromium/tree/152.0.7977.64/third_party/jsoncpp								# Stable used instead.  Both the submodule and version are old, but the submodule is newer.
+# https://github.com/chromium/chromium/blob/152.0.7977.64/third_party/libaom/source/config/config/aom_version.h#L19			# Stable
+# https://github.com/chromium/chromium/blob/152.0.7977.64/third_party/libpng/png.h#L288							# Stable
+# https://github.com/chromium/chromium/tree/152.0.7977.64/third_party/libsecret								# Stable used instead.  The revision is newer than the suggested version.
+# https://github.com/chromium/chromium/tree/152.0.7977.64/third_party/libusb								# Stable
+# https://github.com/chromium/chromium/tree/152.0.7977.64/third_party/libvpx								# Live
+# https://github.com/chromium/chromium/tree/152.0.7977.64/third_party/libwebp								# Live, used the version suggested in cpe prefix not the commit
+# https://github.com/chromium/chromium/blob/152.0.7977.64/third_party/libxml/linux/config.h#L86						# Live
+# https://github.com/chromium/chromium/blob/152.0.7977.64/third_party/libxslt/linux/config.h#L116					# Stable
+# https://github.com/chromium/chromium/blob/152.0.7977.64/third_party/node/update_node_binaries#L18					# Stable, marked no for security-critical by upstream
+# https://github.com/chromium/chromium/tree/152.0.7977.64/third_party/re2								# Live.  Submodule is newer commit than readme.
+# https://github.com/chromium/chromium/tree/152.0.7977.64/third_party/simdutf								# Stable used instead.  The version listed is newer than the revision, so the version is used.
+# https://github.com/chromium/chromium/tree/152.0.7977.64/third_party/snappy								# Stable used instead.  The submodule is newer than the version.git.revision listed in readme, but
 #																	# it is older than the latest commit tag.
-# https://github.com/chromium/chromium/blob/151.0.7922.137/third_party/sqlite/README.chromium						# Stable used instead.  Upstream uses custom fork.
-# https://github.com/chromium/chromium/tree/151.0.7922.137/third_party/spirv-headers							# Live.  Relaxed stable version used.
-# https://github.com/chromium/chromium/tree/151.0.7922.137/third_party/spirv-tools							# Live.  Relaxed stable version used.
-# https://github.com/chromium/chromium/tree/151.0.7922.137/third_party/wayland								# Stable
-# https://github.com/chromium/chromium/tree/151.0.7922.137/third_party/wayland-protocols						# Stable used instead.  The submodule is old.
-# https://github.com/chromium/chromium/blob/151.0.7922.137/third_party/woff2/README.chromium						# Live
-# https://github.com/chromium/chromium/blob/151.0.7922.137/third_party/zlib/zlib.h#L40							# Stable
-# https://github.com/chromium/chromium/blob/151.0.7922.137/tools/rust/update_rust.py#L35						#
+# https://github.com/chromium/chromium/blob/152.0.7977.64/third_party/sqlite/README.chromium						# Stable used instead.  Upstream uses custom fork.
+# https://github.com/chromium/chromium/tree/152.0.7977.64/third_party/spirv-headers							# Live.  Relaxed stable version used.
+# https://github.com/chromium/chromium/tree/152.0.7977.64/third_party/spirv-tools							# Live.  Relaxed stable version used.
+# https://github.com/chromium/chromium/tree/152.0.7977.64/third_party/wayland								# Stable
+# https://github.com/chromium/chromium/tree/152.0.7977.64/third_party/wayland-protocols							# Stable used instead.  The submodule is old.
+# https://github.com/chromium/chromium/blob/152.0.7977.64/third_party/woff2/README.chromium						# Live
+# https://github.com/chromium/chromium/blob/152.0.7977.64/third_party/zlib/zlib.h#L40							# Stable
+# https://github.com/chromium/chromium/blob/152.0.7977.64/tools/rust/update_rust.py#L35							#
 
 
 #   https://github.com/rust-lang/rust/blob/4c4205163abcbd08948b3efab796c543ba1ea687/src/version						# Live
-# /usr/share/chromium/151.0.7922.137/sources/third_party/expat/README.chromium								# Stable
-# /usr/share/chromium/151.0.7922.137/sources/third_party/ffmpeg/README.chromium								# Live but old
-# /usr/share/chromium/151.0.7922.137/sources/third_party/flac/BUILD.gn								L122	# Stable
-# /usr/share/chromium/151.0.7922.137/sources/third_party/fontconfig/src/fontconfig/fontconfig.h.in				L56     # Stable used instead, upstream provided old version id
-# /usr/share/chromium/151.0.7922.137/sources/third_party/freetype/src/CMakeLists.txt						L165	# Live.  The readme is confusing.  The commit is used instead.
-# /usr/share/chromium/151.0.7922.137/sources/third_party/harfbuzz/README.chromium							# Stable used instead, upstream provided old revision than tagged.
-# /usr/share/chromium/151.0.7922.137/sources/third_party/icu/source/configure							L609	# Stable
-# /usr/share/chromium/151.0.7922.137/sources/third_party/libdrm/src/meson.build							L24	# Stable
-# /usr/share/chromium/151.0.7922.137/sources/third_party/libjpeg_turbo/src/jconfig.h						L7	# Stable
-# /usr/share/chromium/151.0.7922.137/sources/third_party/libyuv/README.chromium								# Live snapshot, main branch
-# /usr/share/chromium/151.0.7922.137/sources/third_party/ninja/README.chromium								# Stable
-# /usr/share/chromium/151.0.7922.137/sources/third_party/openh264/src/meson.build						L2	# Stable
-# /usr/share/chromium/151.0.7922.137/sources/third_party/opus/README.chromium							L3	# Stable used instead of suggested old commit
+# /usr/share/chromium/152.0.7977.64/sources/third_party/expat/README.chromium								# Stable
+# /usr/share/chromium/152.0.7977.64/sources/third_party/ffmpeg/README.chromium								# Live but old
+# /usr/share/chromium/152.0.7977.64/sources/third_party/flac/BUILD.gn								L122	# Stable
+# /usr/share/chromium/152.0.7977.64/sources/third_party/fontconfig/src/fontconfig/fontconfig.h.in				L56     # Stable used instead, upstream provided old version id
+# /usr/share/chromium/152.0.7977.64/sources/third_party/freetype/src/CMakeLists.txt						L165	# Live.  The readme is confusing.  The commit is used instead.
+# /usr/share/chromium/152.0.7977.64/sources/third_party/harfbuzz/README.chromium							# Stable used instead, upstream provided old revision than tagged.
+# /usr/share/chromium/152.0.7977.64/sources/third_party/icu/source/configure							L609	# Stable
+# /usr/share/chromium/152.0.7977.64/sources/third_party/libdrm/src/meson.build							L24	# Stable
+# /usr/share/chromium/152.0.7977.64/sources/third_party/libjpeg_turbo/src/jconfig.h						L7	# Stable
+# /usr/share/chromium/152.0.7977.64/sources/third_party/libyuv/README.chromium								# Live snapshot, main branch
+# /usr/share/chromium/152.0.7977.64/sources/third_party/ninja/README.chromium								# Stable
+# /usr/share/chromium/152.0.7977.64/sources/third_party/openh264/src/meson.build						L2	# Stable
+# /usr/share/chromium/152.0.7977.64/sources/third_party/opus/README.chromium							L3	# Stable used instead of suggested old commit
 #   https://gitlab.xiph.org/xiph/opus/-/commit/55513e81d8f606bd75d0ff773d2144e5f2a732f5							# Stable
-# /usr/share/chromium/151.0.7922.137/sources/third_party/zstd/README.chromium								# Live
+# /usr/share/chromium/152.0.7977.64/sources/third_party/zstd/README.chromium								# Live
 #   https://github.com/facebook/zstd/commit/3ae099b48dfcfe02b1b3ba81ab85457f8a922e9f							# Live
 #   https://github.com/facebook/zstd/blob/3ae099b48dfcfe02b1b3ba81ab85457f8a922e9f/lib/zstd.h#L107					# Version
 #
-# https://github.com/chromium/chromium/blob/151.0.7922.137/DEPS#L542									# Live, for libcxx
+# https://github.com/chromium/chromium/blob/152.0.7977.64/DEPS#L542									# Live, for libcxx
 #
-# /usr/share/chromium/151.0.7922.137/sources/third_party/libc++/src/include/__configuration/compiler.h					# Stable, update LIBCXX_SLOT_MIN
+# /usr/share/chromium/152.0.7977.64/sources/third_party/libc++/src/include/__configuration/compiler.h					# Stable, update LIBCXX_SLOT_MIN
 
 
 #
@@ -185,7 +186,7 @@ EAPI=8
 
 #
 # The LLVM timestamp can be obtained from
-# https://github.com/chromium/chromium/blob/151.0.7922.137/tools/clang/scripts/update.py#L42
+# https://github.com/chromium/chromium/blob/152.0.7977.64/tools/clang/scripts/update.py#L42
 # https://github.com/llvm/llvm-project/commit/7b473dfe
 # Also change LLVM_VENDORED_SLOT
 #
@@ -193,21 +194,24 @@ EAPI=8
 #
 # For FFMPEG_SLOT, see also
 #
-# /usr/share/chromium/151.0.7922.137/sources/third_party/ffmpeg/libavutil/version.h
-# /usr/share/chromium/151.0.7922.137/sources/third_party/ffmpeg/libavcodec/version*.h
-# /usr/share/chromium/151.0.7922.137/sources/third_party/ffmpeg/libavformat/version*.h
+# /usr/share/chromium/152.0.7977.64/sources/third_party/ffmpeg/libavutil/version.h
+# /usr/share/chromium/152.0.7977.64/sources/third_party/ffmpeg/libavcodec/version*.h
+# /usr/share/chromium/152.0.7977.64/sources/third_party/ffmpeg/libavformat/version*.h
 #
 
 # The unbundle build files logic is in
-# /usr/share/chromium/151.0.7922.137/sources/build/linux/unbundle/replace_gn_files.py
+# /usr/share/chromium/152.0.7977.64/sources/build/linux/unbundle/replace_gn_files.py
 
-# Use `USE="-system-clang -system-rust" ebuild chromium-toolchain-151.0.7922.137.ebuild digest clean unpack prepare compile install merge` to obtain numbers.
+# Use `USE="-system-clang -system-rust" ebuild chromium-toolchain-152.0.7977.64.ebuild digest clean unpack prepare compile install merge` to obtain numbers.
 TC_COUNT_EXPECTED_CLANG=433
-TC_COUNT_EXPECTED_GN=1185
+TC_COUNT_EXPECTED_GN=1304
 TC_COUNT_EXPECTED_RUST=6991
-SOURCES_COUNT_EXPECTED=569130
-CHROMIUM_EBUILD_MAINTAINER=0 # Also set GEN_ABOUT_CREDITS
-GEN_ABOUT_CREDITS=0
+SOURCES_COUNT_EXPECTED=572681
+CHROMIUM_EBUILD_MAINTAINER=1 # Also set GEN_ABOUT_CREDITS
+GEN_ABOUT_CREDITS=1
+
+DISTRO_PATCHSET=${DISTRO_PATCHSET:-0}
+OILEDMACHINE_OVERLAY_PATCHSET=${OILEDMACHINE_OVERLAY_PATCHSET:-1}
 
 ABSEIL_CPP_SLOT="20251021"
 ALLOW_MKSNAPSHOT=1 # Ebuild maintainer value.  Setting to a value other than 1 is untested.
@@ -243,7 +247,7 @@ PYTHON_COMPAT=( "python3_"{9..13} )
 PYTHON_REQ_USE="xml(+)"
 USE_LTO=0 # Global variable
 RE2_SLOT="20250512"
-# https://github.com/chromium/chromium/blob/151.0.7922.137/tools/rust/update_rust.py#L37 \
+# https://github.com/chromium/chromium/blob/152.0.7977.64/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
 RUST_MAX_VER="9999" # Corresponds to llvm 22 to match LLVM_COMPAT
 RUST_MIN_VER="9999" # Corresponds to llvm 22 to match LLVM_COMPAT
@@ -575,457 +579,338 @@ IUSE_CODECS=(
 	"+vpx"
 )
 
-MITIGATION_DATE="Aug 20, 2026" # Official annoucement (blog)
-MITIGATION_LAST_UPDATE=1787188747 # From `date +%s -d "Wed, Aug 19, 2026 18:19:07"` From tag in GH or upstream repo
-MITIGATION_URI="https://chromereleases.googleblog.com/2026/08/stable-channel-update-for-desktop_0404570826.html"
+MITIGATION_DATE="Aug 25, 2026" # Official annoucement (blog)
+MITIGATION_LAST_UPDATE=1787598900 # From `date +%s -d "Aug 24, 2026 12:15 PM PDT"` From blog date
+MITIGATION_URI="https://chromereleases.googleblog.com/2026/08/stable-channel-update-for-desktop_0256176589.html"
 VULNERABILITIES_FIXED=(
-	# 151.0.7922.173
-	"CVE-2026-76017;UAF;"
-	"CVE-2026-76018;PE;"
-	"CVE-2026-76019;;"
-	"CVE-2026-76020;RC;"
-	"CVE-2026-76021;UAF;"
-	"CVE-2026-76022;BO;"
-	"CVE-2026-76023;;"
-
-	# 151.0.7922.169
-	"CVE-2026-76034;BO;"
-	"CVE-2026-76036;BO;"
-	"CVE-2026-76033;II;"
-	"CVE-2026-76037;;"
-	"CVE-2026-76044;RC;"
-	"CVE-2026-76039;;"
-	"CVE-2026-76040;UAF;"
-	"CVE-2026-76035;II;"
-	"CVE-2026-76042;;"
-	"CVE-2026-76046;BO;"
-	"CVE-2026-76043;;"
-	"CVE-2026-76041;LEAK, ID;"
-	"CVE-2026-76047;TC;"
-	"CVE-2026-76038;TC;"
-	"CVE-2026-76045;UAF;"
-
-	# 151.0.7922.137
-	"CVE-2026-19556;UAF;"
-	"CVE-2026-19557;UAF;"
-	"CVE-2026-19558;UAF;"
-	"CVE-2026-19559;UAF;"
-	"CVE-2026-19560;UAF;"
-
-	# 151.0.7922.108
-	"CVE-2026-19137;UAF;"
-	"CVE-2026-19149;UAF;"
-	"CVE-2026-19154;UAF;"
-	"CVE-2026-19157;OOBW;"
-	"CVE-2026-19170;UAF;"
-	"CVE-2026-19172;UAF;"
-	"CVE-2026-19169;IV;"
-	"CVE-2026-19168;II;"
-	"CVE-2026-19138;HO, DoS;"
-	"CVE-2026-19139;RC;"
-	"CVE-2026-19140;UAF;"
-	"CVE-2026-19141;UAF;"
-	"CVE-2026-19142;UAF;"
-	"CVE-2026-19143;IV;"
-	"CVE-2026-19144;UAF;"
-	"CVE-2026-19145;UAF;"
-	"CVE-2026-19146;WBUU;"
-	"CVE-2026-19147;UAF;"
-	"CVE-2026-19148;OOBW;"
-	"CVE-2026-19150;II;"
-	"CVE-2026-19151;UAF;"
-	"CVE-2026-19152;II;"
-	"CVE-2026-19153;IV;"
-	"CVE-2026-19155;UAF;"
-	"CVE-2026-19156;HO;"
-	"CVE-2026-19158;UAF;"
-	"CVE-2026-19159;UAF;"
-	"CVE-2026-19160;WBUU;"
-	"CVE-2026-19161;WBUU;"
-	"CVE-2026-19162;OOBW;"
-	"CVE-2026-19163;UAF;"
-	"CVE-2026-19164;IV;"
-	"CVE-2026-19165;UAF;"
-	"CVE-2026-19166;UAF;"
-	"CVE-2026-19167;IO;"
-	"CVE-2026-19171;UAF;"
-	"CVE-2026-19173;OOBW;"
-	"CVE-2026-19174;IO;"
-	"CVE-2026-19175;UAF;"
-	"CVE-2026-19176;UAF;"
-	"CVE-2026-19177;IV;"
-
-	# 151.0.7922.71
-	"CVE-2026-17650;UAF;"
-	"CVE-2026-17651;IV;"
-	"CVE-2026-17652;UAF;"
-	"CVE-2026-17653;UAF;"
-	"CVE-2026-17654;RC;"
-	"CVE-2026-17655;IV;"
-	"CVE-2026-17656;UAF;"
-	"CVE-2026-17657;UAF;"
-	"CVE-2026-17658;UAF;"
-	"CVE-2026-17659;II;"
-	"CVE-2026-17660;IV;"
-	"CVE-2026-17661;UAF;"
-	"CVE-2026-17662;WBSPI;"
-	"CVE-2026-17663;IV;"
-	"CVE-2026-17664;IV;"
-	"CVE-2026-17665;UAF;"
-	"CVE-2026-17666;ICI;"
-	"CVE-2026-17667;WBUU;"
-	"CVE-2026-17668;WBUU;"
-	"CVE-2026-17669;II;"
-	"CVE-2026-17670;UAF;"
-	"CVE-2026-17671;IV;"
-	"CVE-2026-17672;IV;"
-	"CVE-2026-17673;IO;"
-	"CVE-2026-17674;II;"
-	"CVE-2026-17675;OOBW;"
-	"CVE-2026-17676;II;"
-	"CVE-2026-17677;II;"
-	"CVE-2026-17678;OOBR;"
-	"CVE-2026-17679;IV;"
-	"CVE-2026-17680;HO;"
-	"CVE-2026-17681;IV;"
-	"CVE-2026-17682;IO;"
-	"CVE-2026-17683;II;"
-	"CVE-2026-17684;IV;"
-	"CVE-2026-17685;UAF;"
-	"CVE-2026-17686;IV;"
-	"CVE-2026-17687;TC;"
-	"CVE-2026-17688;UAF;"
-	"CVE-2026-17689;WBUU;"
-	"CVE-2026-17690;IV;"
-	"CVE-2026-17691;OOBW;"
-	"CVE-2026-17692;UAF;"
-	"CVE-2026-17693;II;"
-	"CVE-2026-17694;UAF;"
-	"CVE-2026-17695;II;"
-	"CVE-2026-17696;ID, SC;"
-	"CVE-2026-17697;TC;"
-	"CVE-2026-17698;IV;"
-	"CVE-2026-17699;UAF;"
-	"CVE-2026-17700;IV;"
-	"CVE-2026-17701;OOBR;"
-	"CVE-2026-17702;II;"
-	"CVE-2026-17703;WBSPB;"
-	"CVE-2026-17704;UAF;"
-	"CVE-2026-17705;IO;"
-	"CVE-2026-17706;IV;"
-	"CVE-2026-17707;WBUU;"
-	"CVE-2026-17708;UAF;"
-	"CVE-2026-17709;RC;"
-	"CVE-2026-17710;II;"
-	"CVE-2026-17711;RC;"
-	"CVE-2026-17712;RC;"
-	"CVE-2026-17713;IV;"
-	"CVE-2026-17714;WBUU;"
-	"CVE-2026-17715;II;"
-	"CVE-2026-17716;UAF;"
-	"CVE-2026-17717;IO;"
-	"CVE-2026-17718;UAF;"
-	"CVE-2026-17719;UAF;"
-	"CVE-2026-17720;WBSPI;"
-	"CVE-2026-17721;OOBW;"
-	"CVE-2026-17722;OLF;"
-	"CVE-2026-17723;UAF;"
-	"CVE-2026-17724;RC;"
-	"CVE-2026-17725;TC;"
-	"CVE-2026-17726;IO;"
-	"CVE-2026-17727;OOBW;"
-	"CVE-2026-17728;II;"
-	"CVE-2026-17758;HO;"
-	"CVE-2026-17732;II;"
-	"CVE-2026-17729;UAF;"
-	"CVE-2026-17730;ID, SC;"
-	"CVE-2026-17731;II;"
-	"CVE-2026-17733;II;"
-	"CVE-2026-17734;II;"
-	"CVE-2026-17735;IV;"
-	"CVE-2026-17736;IV;"
-	"CVE-2026-17737;UAF;"
-	"CVE-2026-17738;IV;"
-	"CVE-2026-17739;WBSPI;"
-	"CVE-2026-17740;WBUU;"
-	"CVE-2026-17741;IV;"
-	"CVE-2026-17742;WBSPI;"
-	"CVE-2026-17743;WBSPI;"
-	"CVE-2026-17744;II;"
-	"CVE-2026-17745;OOBR;"
-	"CVE-2026-17746;UAF;"
-	"CVE-2026-17747;IV;"
-	"CVE-2026-17748;II;"
-	"CVE-2026-17749;IV;"
-	"CVE-2026-17750;UAF;"
-	"CVE-2026-17751;II;"
-	"CVE-2026-17752;UAF;"
-	"CVE-2026-17753;II;"
-	"CVE-2026-17754;II;"
-	"CVE-2026-17755;INSI;"
-	"CVE-2026-17756;WBSPI;"
-	"CVE-2026-17757;WBUU;"
-	"CVE-2026-17759;WBUU;"
-	"CVE-2026-17760;ID, SC;"
-	"CVE-2026-17761;IV;"
-	"CVE-2026-17762;II;"
-	"CVE-2026-17763;II;"
-	"CVE-2026-17764;II;"
-	"CVE-2026-17765;II;"
-	"CVE-2026-17766;IV;"
-	"CVE-2026-17767;IV;"
-	"CVE-2026-17768;IV;"
-	"CVE-2026-17769;IV;"
-	"CVE-2026-17770;OOBR;"
-	"CVE-2026-17771;WBUU;"
-	"CVE-2026-17772;OOBR;"
-	"CVE-2026-17773;IV;"
-	"CVE-2026-17774;IV;"
-	"CVE-2026-17775;II;"
-	"CVE-2026-17776;WBSPB;"
-	"CVE-2026-17777;II;"
-	"CVE-2026-17778;UAF;"
-	"CVE-2026-17779;II;"
-	"CVE-2026-17780;II;"
-	"CVE-2026-17781;II;"
-	"CVE-2026-17782;INSI;"
-	"CVE-2026-17783;II;"
-	"CVE-2026-17784;UAF;"
-	"CVE-2026-17785;WBUU;"
-	"CVE-2026-17786;IV;"
-	"CVE-2026-17787;II;"
-	"CVE-2026-17788;II;"
-	"CVE-2026-17789;IV;"
-	"CVE-2026-17790;WBUU;"
-	"CVE-2026-17791;IV;"
-	"CVE-2026-17792;II;"
-	"CVE-2026-17793;II;"
-	"CVE-2026-17794;IV;"
-	"CVE-2026-17795;IV;"
-	"CVE-2026-17796;ID, SC;"
-	"CVE-2026-17797;II;"
-	"CVE-2026-17798;II;"
-	"CVE-2026-17799;IV;"
-	"CVE-2026-17800;ID, SC;"
-	"CVE-2026-17801;OOBA;"
-	"CVE-2026-17802;ID, SC;"
-	"CVE-2026-17803;IV;"
-	"CVE-2026-17804;UAF;"
-	"CVE-2026-17805;WBSPI;"
-	"CVE-2026-17806;IV;"
-	"CVE-2026-17807;UAF;"
-	"CVE-2026-17808;WBUU;"
-	"CVE-2026-17809;IV;"
-	"CVE-2026-17810;WBUU;"
-	"CVE-2026-17811;UAF;"
-	"CVE-2026-17812;II;"
-	"CVE-2026-17813;WBSPI;"
-	"CVE-2026-17814;IV;"
-	"CVE-2026-17815;WBSPI;"
-	"CVE-2026-17816;II;"
-	"CVE-2026-17817;II;"
-	"CVE-2026-17818;II;"
-	"CVE-2026-17819;II;"
-	"CVE-2026-17820;WBSPI;"
-	"CVE-2026-17821;WBSPI;"
-	"CVE-2026-17822;II;"
-	"CVE-2026-17823;WBSPI;"
-	"CVE-2026-17824;WBSPI;"
-	"CVE-2026-17825;WBSPI;"
-	"CVE-2026-17826;II;"
-	"CVE-2026-17827;II;"
-	"CVE-2026-17828;II;"
-	"CVE-2026-17829;WBSPI;"
-	"CVE-2026-17830;II;"
-	"CVE-2026-17831;IV;"
-	"CVE-2026-17832;UAF;"
-	"CVE-2026-17833;II;"
-	"CVE-2026-17834;II;"
-	"CVE-2026-17835;II;"
-	"CVE-2026-17836;UAF;"
-	"CVE-2026-17837;IV;"
-	"CVE-2026-17838;INSI;"
-	"CVE-2026-17839;II;"
-	"CVE-2026-17840;INSI;"
-	"CVE-2026-17841;RC;"
-	"CVE-2026-17842;II;"
-	"CVE-2026-17843;II;"
-	"CVE-2026-17844;IV;"
-	"CVE-2026-17845;II;"
-	"CVE-2026-17846;II;"
-	"CVE-2026-17847;IV;"
-	"CVE-2026-17848;IV;"
-	"CVE-2026-17849;II;"
-	"CVE-2026-17850;II;"
-	"CVE-2026-17851;ID, SC;"
-	"CVE-2026-17852;II;"
-	"CVE-2026-17853;II;"
-	"CVE-2026-17854;WBSPI;"
-	"CVE-2026-17855;RC;"
-	"CVE-2026-17856;II;"
-	"CVE-2026-17857;II;"
-	"CVE-2026-17858;WBUU;"
-	"CVE-2026-17859;ID, SC;"
-	"CVE-2026-17860;IV;"
-	"CVE-2026-17861;IV;"
-	"CVE-2026-17862;UAF;"
-	"CVE-2026-17863;II;"
-	"CVE-2026-17864;II;"
-	"CVE-2026-17865;II;"
-	"CVE-2026-17866;TC;"
-	"CVE-2026-17867;IV;"
-	"CVE-2026-17868;WBSPI;"
-	"CVE-2026-17869;OOBR;"
-	"CVE-2026-17870;IV;"
-	"CVE-2026-17871;II;"
-	"CVE-2026-17872;ICI;"
-	"CVE-2026-17873;WBSPI;"
-	"CVE-2026-17874;II;"
-	"CVE-2026-17875;UAF;"
-	"CVE-2026-17876;II;"
-	"CVE-2026-17877;II;"
-	"CVE-2026-17878;II;"
-	"CVE-2026-17879;II;"
-	"CVE-2026-17880;II;"
-	"CVE-2026-17881;UAF;"
-	"CVE-2026-17882;WBSPB;"
-	"CVE-2026-17883;II;"
-	"CVE-2026-17884;OLF;"
-	"CVE-2026-17885;II;"
-	"CVE-2026-17886;UAF;"
-	"CVE-2026-17887;UAF;"
-	"CVE-2026-17888;IV;"
-	"CVE-2026-17889;WBUU;"
-	"CVE-2026-17890;IV;"
-	"CVE-2026-17891;UAF;"
-	"CVE-2026-17892;II;"
-	"CVE-2026-17893;IV;"
-	"CVE-2026-17894;UAF;"
-	"CVE-2026-17895;II;"
-	"CVE-2026-17896;UAF;"
-	"CVE-2026-17897;II;"
-	"CVE-2026-17898;UAF;"
-	"CVE-2026-17899;WBSPI;"
-	"CVE-2026-17900;II;"
-	"CVE-2026-17901;II;"
-	"CVE-2026-17902;II;"
-	"CVE-2026-17903;WBSPI;"
-	"CVE-2026-17904;WBSPI;"
-	"CVE-2026-17905;II;"
-	"CVE-2026-17906;IV;"
-	"CVE-2026-17907;ID, SC;"
-	"CVE-2026-17908;IV;"
-	"CVE-2026-17909;IV;"
-	"CVE-2026-17910;WBSPI;"
-	"CVE-2026-17911;WBSPI;"
-	"CVE-2026-17912;II;"
-	"CVE-2026-17913;II;"
-	"CVE-2026-17914;ID, SC;"
-	"CVE-2026-17915;II;"
-	"CVE-2026-17916;WBSPI;"
-	"CVE-2026-17917;WBSPB;"
-	"CVE-2026-17918;UAF;"
-	"CVE-2026-17919;WBSPI;"
-	"CVE-2026-17920;UAF;"
-	"CVE-2026-17921;IV;"
-	"CVE-2026-17922;II;"
-	"CVE-2026-17923;WBSPB;"
-	"CVE-2026-17924;UAF;"
-	"CVE-2026-17925;II;"
-	"CVE-2026-17926;IV;"
-	"CVE-2026-17927;WBSPI;"
-	"CVE-2026-17928;II;"
-	"CVE-2026-17929;IV;"
-	"CVE-2026-17930;IV;"
-	"CVE-2026-17931;II;"
-	"CVE-2026-17932;UAF;"
-	"CVE-2026-17933;II;"
-	"CVE-2026-17934;IV;"
-	"CVE-2026-17935;HO;"
-	"CVE-2026-17936;II;"
-	"CVE-2026-17937;II;"
-	"CVE-2026-17938;II;"
-	"CVE-2026-17939;II;"
-	"CVE-2026-17940;IV;"
-	"CVE-2026-17941;II;"
-	"CVE-2026-17942;ID, SC;"
-	"CVE-2026-17943;II;"
-	"CVE-2026-17944;II;"
-	"CVE-2026-17945;II;"
-	"CVE-2026-17946;WBUU;"
-	"CVE-2026-17947;UAF;"
-	"CVE-2026-17948;TC;"
-	"CVE-2026-17949;WBUU;"
-	"CVE-2026-17950;WBSPB;"
-	"CVE-2026-17951;HO;"
-	"CVE-2026-17952;II;"
-	"CVE-2026-17953;WBSPI;"
-	"CVE-2026-17954;WBSPB;"
-	"CVE-2026-17955;IV;"
-	"CVE-2026-17956;II;"
-	"CVE-2026-17957;II;"
-	"CVE-2026-17958;II;"
-	"CVE-2026-17959;II;"
-	"CVE-2026-17960;II;"
-	"CVE-2026-17961;II;"
-	"CVE-2026-17962;II;"
-	"CVE-2026-17963;II;"
-	"CVE-2026-17964;INSI;"
-	"CVE-2026-17965;INSI;"
-	"CVE-2026-17966;II;"
-	"CVE-2026-17967;UAF;"
-	"CVE-2026-17968;WBUU;"
-	"CVE-2026-17969;II;"
-	"CVE-2026-17970;IV;"
-	"CVE-2026-17971;II;"
-	"CVE-2026-17972;II;"
-	"CVE-2026-17973;II;"
-	"CVE-2026-17974;WBSPI;"
-	"CVE-2026-17975;II;"
-	"CVE-2026-17976;WBSPB;"
-	"CVE-2026-17977;WBSPB;"
-	"CVE-2026-17978;ID, SC;"
-	"CVE-2026-17979;RC;"
-	"CVE-2026-17980;II;"
-	"CVE-2026-17981;II;"
-	"CVE-2026-17982;IV;"
-	"CVE-2026-17983;INSI;"
-	"CVE-2026-17984;II;"
-	"CVE-2026-17985;WBSPI;"
-	"CVE-2026-17986;WBSPI;"
-	"CVE-2026-17987;IV;"
-	"CVE-2026-17988;IV;"
-	"CVE-2026-17989;TC;"
-	"CVE-2026-17990;IV;"
-	"CVE-2026-17991;IV;"
-	"CVE-2026-17992;WBUU;"
-	"CVE-2026-17993;RC;"
-	"CVE-2026-17994;II;"
-	"CVE-2026-17995;OOBR;"
-	"CVE-2026-17996;II;"
-	"CVE-2026-17997;II;"
-	"CVE-2026-17998;INSI;"
-	"CVE-2026-17999;INSI;"
-	"CVE-2026-18000;WBSPI;"
-	"CVE-2026-18001;II;"
-	"CVE-2026-18002;IV;"
-	"CVE-2026-18003;II;"
-	"CVE-2026-18004;WBSPI;"
-	"CVE-2026-18005;II;"
-	"CVE-2026-18006;II;"
-	"CVE-2026-18007;II;"
-	"CVE-2026-18008;II;"
-	"CVE-2026-18009;IV;"
-	"CVE-2026-18010;II;"
-	"CVE-2026-18011;II;"
-	"CVE-2026-18012;UAF;"
-	"CVE-2026-18013;II;"
-	"CVE-2026-18014;IV;"
-	"CVE-2026-18015;II;"
-	"CVE-2026-18016;WBSPI;"
-	"CVE-2026-18017;UAF;"
-	"CVE-2026-18018;II;"
-	"CVE-2026-18019;ID, SC;"
+	# 152.0.7977.64
+	"CVE-2026-79282;UAF;"
+	"CVE-2026-79290;UAF;"
+	"CVE-2026-79054;UAF;"
+	"CVE-2026-79121;IV;"
+	"CVE-2026-79224;UAF;"
+	"CVE-2026-79052;UAF;"
+	"CVE-2026-79150;UAF;"
+	"CVE-2026-78935;;"
+	"CVE-2026-79012;UAF;"
+	"CVE-2026-79200;UAF;"
+	"CVE-2026-78989;OOBR;"
+	"CVE-2026-79069;MC;"
+	"CVE-2026-79175;TC;"
+	"CVE-2026-79218;;"
+	"CVE-2026-79195;UAF;"
+	"CVE-2026-78939;UAF;"
+	"CVE-2026-79194;UAF;"
+	"CVE-2026-79247;UAF;"
+	"CVE-2026-79219;UAF;"
+	"CVE-2026-79047;UAF;"
+	"CVE-2026-79292;IO;"
+	"CVE-2026-78986;;"
+	"CVE-2026-79039;UAF;"
+	"CVE-2026-78934;RC;"
+	"CVE-2026-79011;;"
+	"CVE-2026-78911;;"
+	"CVE-2026-79257;UAF;"
+	"CVE-2026-79202;UAF;"
+	"CVE-2026-79212;;"
+	"CVE-2026-79183;UAF;"
+	"CVE-2026-79155;RC;"
+	"CVE-2026-79093;;"
+	"CVE-2026-79019;OOBW;"
+	"CVE-2026-79187;UAF;"
+	"CVE-2026-79288;IV;"
+	"CVE-2026-79130;BO;"
+	"CVE-2026-78965;;"
+	"CVE-2026-79117;RC;"
+	"CVE-2026-79082;;"
+	"CVE-2026-79111;IV;"
+	"CVE-2026-79072;IV;"
+	"CVE-2026-79142;BO;"
+	"CVE-2026-78948;BO;"
+	"CVE-2026-78908;INFOLEAK, ID;"
+	"CVE-2026-78895;INFOLEAK, ID;"
+	"CVE-2026-79043;OOBW;"
+	"CVE-2026-79235;UAF;"
+	"CVE-2026-79232;UAF;"
+	"CVE-2026-79118;;"
+	"CVE-2026-79174;;"
+	"CVE-2026-78900;IV;"
+	"CVE-2026-79188;OOBW;"
+	"CVE-2026-79189;OOBW;"
+	"CVE-2026-79048;OOBW;"
+	"CVE-2026-79240;OOBW;"
+	"CVE-2026-79014;RC;"
+	"CVE-2026-79198;UAF;"
+	"CVE-2026-79131;OOBW;"
+	"CVE-2026-79149;UAF;"
+	"CVE-2026-79275;UAF;"
+	"CVE-2026-79138;OOBW;"
+	"CVE-2026-79026;UAF;"
+	"CVE-2026-79027;UAF;"
+	"CVE-2026-78904;TC;"
+	"CVE-2026-78899;UAF;"
+	"CVE-2026-78954;;"
+	"CVE-2026-79274;INFOLEAK, ID;"
+	"CVE-2026-78938;TC;"
+	"CVE-2026-78952;OOBW, CRSH, DoS;"
+	"CVE-2026-79236;TC;"
+	"CVE-2026-79078;UAF;"
+	"CVE-2026-79209;TC;"
+	"CVE-2026-79030;;"
+	"CVE-2026-79216;BO;"
+	"CVE-2026-79007;;"
+	"CVE-2026-78893;INFOLEAK, ID;"
+	"CVE-2026-79222;;"
+	"CVE-2026-79071;RC;"
+	"CVE-2026-79076;IV;"
+	"CVE-2026-79088;;"
+	"CVE-2026-79104;;"
+	"CVE-2026-79044;;"
+	"CVE-2026-78958;;"
+	"CVE-2026-78961;;"
+	"CVE-2026-79262;;"
+	"CVE-2026-79106;IV;"
+	"CVE-2026-79176;;"
+	"CVE-2026-78966;;"
+	"CVE-2026-79186;;"
+	"CVE-2026-79267;RC;"
+	"CVE-2026-79016;;"
+	"CVE-2026-79010;;"
+	"CVE-2026-79286;;"
+	"CVE-2026-78945;UAF;"
+	"CVE-2026-78999;;"
+	"CVE-2026-78941;INFOLEAK, ID;"
+	"CVE-2026-79032;IV;"
+	"CVE-2026-79109;IV;"
+	"CVE-2026-79256;;"
+	"CVE-2026-79237;;"
+	"CVE-2026-78898;;"
+	"CVE-2026-78985;;"
+	"CVE-2026-79028;;"
+	"CVE-2026-79210;UAF;"
+	"CVE-2026-79046;RC;"
+	"CVE-2026-79129;UAF;"
+	"CVE-2026-78937;UAF;"
+	"CVE-2026-78987;INFOLEAK, ID;"
+	"CVE-2026-78990;UAF;"
+	"CVE-2026-78909;UAF;"
+	"CVE-2026-79271;INFOLEAK, ID;"
+	"CVE-2026-79144;INFOLEAK, ID;"
+	"CVE-2026-79065;IV;"
+	"CVE-2026-79192;IV;"
+	"CVE-2026-79140;UAF;"
+	"CVE-2026-79128;UAF;"
+	"CVE-2026-78942;;"
+	"CVE-2026-79116;;"
+	"CVE-2026-79006;;"
+	"CVE-2026-79095;INFOLEAK, ID;"
+	"CVE-2026-79084;;"
+	"CVE-2026-78991;RC;"
+	"CVE-2026-79248;;"
+	"CVE-2026-78891;BO;"
+	"CVE-2026-79031;;"
+	"CVE-2026-79110;;"
+	"CVE-2026-79136;;"
+	"CVE-2026-78907;;"
+	"CVE-2026-79087;;"
+	"CVE-2026-79231;BO;"
+	"CVE-2026-78969;;"
+	"CVE-2026-79137;;"
+	"CVE-2026-79057;RC;"
+	"CVE-2026-78894;RC;"
+	"CVE-2026-79264;;"
+	"CVE-2026-78910;BO;"
+	"CVE-2026-79066;IV;"
+	"CVE-2026-79255;IV;"
+	"CVE-2026-79086;;"
+	"CVE-2026-79038;;"
+	"CVE-2026-78940;;"
+	"CVE-2026-79107;;"
+	"CVE-2026-79120;;"
+	"CVE-2026-79270;;"
+	"CVE-2026-79067;;"
+	"CVE-2026-79213;;"
+	"CVE-2026-78943;IV;"
+	"CVE-2026-79259;IV;"
+	"CVE-2026-79208;;"
+	"CVE-2026-79251;IV;"
+	"CVE-2026-79226;;"
+	"CVE-2026-79042;;"
+	"CVE-2026-79122;INFOLEAK, ID;"
+	"CVE-2026-79199;;"
+	"CVE-2026-79013;IV;"
+	"CVE-2026-79074;INFOLEAK, ID;"
+	"CVE-2026-79215;IO;"
+	"CVE-2026-79049;;"
+	"CVE-2026-79132;IV;"
+	"CVE-2026-79201;;"
+	"CVE-2026-79051;;"
+	"CVE-2026-79053;;"
+	"CVE-2026-79285;;"
+	"CVE-2026-78906;RC;"
+	"CVE-2026-79250;;"
+	"CVE-2026-79020;OOBR;"
+	"CVE-2026-79217;;"
+	"CVE-2026-79204;;"
+	"CVE-2026-78912;;"
+	"CVE-2026-78955;;"
+	"CVE-2026-79143;;"
+	"CVE-2026-79241;OOBR;"
+	"CVE-2026-78967;;"
+	"CVE-2026-79214;IV;"
+	"CVE-2026-79228;;"
+	"CVE-2026-78953;;"
+	"CVE-2026-79229;;"
+	"CVE-2026-79002;;"
+	"CVE-2026-79272;IV;"
+	"CVE-2026-79127;OOBW;"
+	"CVE-2026-79151;IV;"
+	"CVE-2026-78936;;"
+	"CVE-2026-78905;TC;"
+	"CVE-2026-79050;;"
+	"CVE-2026-79008;IV;"
+	"CVE-2026-78975;;"
+	"CVE-2026-79287;;"
+	"CVE-2026-79094;RC;"
+	"CVE-2026-79173;;"
+	"CVE-2026-78976;IV;"
+	"CVE-2026-79276;;"
+	"CVE-2026-79191;;"
+	"CVE-2026-79099;;"
+	"CVE-2026-79024;INFOLEAK, ID;"
+	"CVE-2026-79193;INFOLEAK, ID;"
+	"CVE-2026-79242;;"
+	"CVE-2026-79180;;"
+	"CVE-2026-79293;INFOLEAK, ID;"
+	"CVE-2026-79023;;"
+	"CVE-2026-79146;INFOLEAK, ID;"
+	"CVE-2026-79238;;"
+	"CVE-2026-78949;;"
+	"CVE-2026-79291;INFOLEAK, ID;"
+	"CVE-2026-79283;;"
+	"CVE-2026-78892;;"
+	"CVE-2026-79070;;"
+	"CVE-2026-79205;;"
+	"CVE-2026-78903;;"
+	"CVE-2026-78959;;"
+	"CVE-2026-79234;;"
+	"CVE-2026-78983;UAF;"
+	"CVE-2026-79083;;"
+	"CVE-2026-78944;UAF;"
+	"CVE-2026-79178;;"
+	"CVE-2026-79059;INFOLEAK, ID;"
+	"CVE-2026-79245;UAF;"
+	"CVE-2026-78978;OOBR;"
+	"CVE-2026-79103;;"
+	"CVE-2026-79154;;"
+	"CVE-2026-79230;IV;"
+	"CVE-2026-79068;;"
+	"CVE-2026-79269;;"
+	"CVE-2026-79085;;"
+	"CVE-2026-79134;;"
+	"CVE-2026-79064;UAF;"
+	"CVE-2026-79003;;"
+	"CVE-2026-79220;INFOLEAK, ID;"
+	"CVE-2026-78951;UAF;"
+	"CVE-2026-79249;;"
+	"CVE-2026-79091;UAF;"
+	"CVE-2026-79265;;"
+	"CVE-2026-78913;UAF;"
+	"CVE-2026-79258;;"
+	"CVE-2026-79211;;"
+	"CVE-2026-79252;INFOLEAK, ID;"
+	"CVE-2026-78962;;"
+	"CVE-2026-78901;RC;"
+	"CVE-2026-79097;UAF;"
+	"CVE-2026-79227;TC;"
+	"CVE-2026-79203;IV;"
+	"CVE-2026-79033;;"
+	"CVE-2026-79139;IV;"
+	"CVE-2026-79221;;"
+	"CVE-2026-79034;INFOLEAK, ID;"
+	"CVE-2026-79075;INFOLEAK, ID;"
+	"CVE-2026-78960;INFOLEAK, ID;"
+	"CVE-2026-78984;;"
+	"CVE-2026-78963;IV;"
+	"CVE-2026-79004;OOBR;"
+	"CVE-2026-79182;IV;"
+	"CVE-2026-79185;INFOLEAK, ID;"
+	"CVE-2026-79073;IV;"
+	"CVE-2026-79266;UAF;"
+	"CVE-2026-79025;IV;"
+	"CVE-2026-79141;;"
+	"CVE-2026-78974;;"
+	"CVE-2026-79055;INFOLEAK, ID;"
+	"CVE-2026-79263;RC;"
+	"CVE-2026-79124;INFOLEAK, ID;"
+	"CVE-2026-79184;;"
+	"CVE-2026-79289;;"
+	"CVE-2026-79001;INFOLEAK, ID;"
+	"CVE-2026-79077;;"
+	"CVE-2026-78950;IO;"
+	"CVE-2026-79196;RC;"
+	"CVE-2026-79000;IV;"
+	"CVE-2026-78979;RC;"
+	"CVE-2026-79181;;"
+	"CVE-2026-79190;;"
+	"CVE-2026-79206;OOBR;"
+	"CVE-2026-78897;;"
+	"CVE-2026-79119;UAF;"
+	"CVE-2026-79089;RC;"
+	"CVE-2026-79147;INFOLEAK, ID;"
+	"CVE-2026-79098;;"
+	"CVE-2026-79022;;"
+	"CVE-2026-79233;;"
+	"CVE-2026-79261;;"
+	"CVE-2026-78977;;"
+	"CVE-2026-79040;;"
+	"CVE-2026-79273;;"
+	"CVE-2026-79243;IV;"
+	"CVE-2026-79123;IV;"
+	"CVE-2026-79005;;"
+	"CVE-2026-79090;;"
+	"CVE-2026-78946;;"
+	"CVE-2026-78968;;"
+	"CVE-2026-79041;;"
+	"CVE-2026-79284;;"
+	"CVE-2026-78896;INFOLEAK, ID;"
+	"CVE-2026-79058;;"
+	"CVE-2026-79009;;"
+	"CVE-2026-79060;;"
+	"CVE-2026-79177;;"
+	"CVE-2026-78956;TC;"
+	"CVE-2026-79239;OOBR;"
+	"CVE-2026-79015;IV;"
+	"CVE-2026-79108;;"
+	"CVE-2026-79056;UAF;"
+	"CVE-2026-79018;INFOLEAK, ID;"
+	"CVE-2026-78980;IV;"
+	"CVE-2026-78947;;"
+	"CVE-2026-79244;UAF;"
+	"CVE-2026-79112;OOBR;"
+	"CVE-2026-79246;INFOLEAK, ID;"
+	"CVE-2026-79223;IO;"
+	"CVE-2026-79045;TC;"
+	"CVE-2026-79197;UAF;"
+	"CVE-2026-79148;Ob1;"
+	"CVE-2026-79125;INFOLEAK, ID;"
+	"CVE-2026-79207;INFOLEAK, ID;"
+	"CVE-2026-79017;RC;"
+	"CVE-2026-79105;IV;"
+	"CVE-2026-79225;;"
+	"CVE-2026-79021;;"
+	"CVE-2026-79133;;"
+	"CVE-2026-79179;;"
+	"CVE-2026-79152;;"
+	"CVE-2026-78981;INFOLEAK, ID;"
+	"CVE-2026-78957;INFOLEAK, ID;"
+	"CVE-2026-79126;;"
+	"CVE-2026-78915;RC;"
+	"CVE-2026-79253;IV;"
+	"CVE-2026-79260;IV;"
+	"CVE-2026-79254;;"
+	"CVE-2026-78914;;"
+	"CVE-2026-78964;UAF;"
 )
 
 PATENT_STATUS=(
@@ -1229,13 +1114,21 @@ fi
 # See https://gsdview.appspot.com/chromium-browser-official/?marker=chromium-137.0.7151.0.tar.x%40
 S_CROMITE="${WORKDIR}/cromite-${CROMITE_PV}-${CROMITE_HASH}"
 S_UNGOOGLED_CHROMIUM="${WORKDIR}/ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}"
-SRC_URI+="
-	https://deps.gentoo.zip/www-client/chromium/rollup-wasm-node-${ROLLUP_WASM_NODE_PV}.tgz
+if [[ "${DISTRO_PATCHSET}" == "1" ]] ; then
+	DISTRO_PATCH_URI="
 	system-clang? (
 https://gitlab.com/Matt.Jolly/chromium-patches/-/archive/${PATCH_VER}/chromium-patches-${PATCH_VER}.tar.bz2
 https://codeberg.org/selfisekai/copium/archive/${COPIUM_COMMIT}.tar.gz
 	-> chromium-patches-copium-${COPIUM_COMMIT:0:10}.tar.gz
 	)
+	"
+else
+	DISTRO_PATCH_URI="
+	"
+fi
+SRC_URI+="
+	${DISTRO_PATCH_URI}
+	https://deps.gentoo.zip/www-client/chromium/rollup-wasm-node-${ROLLUP_WASM_NODE_PV}.tgz
 	test? (
 https://chromium-fonts.storage.googleapis.com/${TEST_FONT}
         -> chromium-testfonts-${TEST_FONT:0:10}.tar.gz
@@ -1356,13 +1249,13 @@ RESTRICT="
 SLOT="stable"
 #
 # vaapi is enabled by default upstream for some arches \
-# See https://github.com/chromium/chromium/blob/151.0.7922.137/media/gpu/args.gni#L24
+# See https://github.com/chromium/chromium/blob/152.0.7977.64/media/gpu/args.gni#L24
 #
 # Using the system-ffmpeg or system-icu breaks cfi-icall or cfi-cast which is
 #   incompatible as a shared lib.
 #
 # The suid is built by default upstream but not necessarily used:  \
-#   https://github.com/chromium/chromium/blob/151.0.7922.137/sandbox/linux/BUILD.gn
+#   https://github.com/chromium/chromium/blob/152.0.7977.64/sandbox/linux/BUILD.gn
 #
 
 # Upstream uses official ON
@@ -1392,24 +1285,24 @@ ebuild_revision_41
 "
 # What is considered a proprietary codec can be found at:
 #
-#   https://github.com/chromium/chromium/blob/151.0.7922.137/media/filters/BUILD.gn#L160
-#   https://github.com/chromium/chromium/blob/151.0.7922.137/media/media_options.gni#L38
-#   https://github.com/chromium/chromium/blob/151.0.7922.137/media/base/supported_types.cc#L203
-#   https://github.com/chromium/chromium/blob/151.0.7922.137/media/base/supported_types.cc#L284
+#   https://github.com/chromium/chromium/blob/152.0.7977.64/media/filters/BUILD.gn#L160
+#   https://github.com/chromium/chromium/blob/152.0.7977.64/media/media_options.gni#L38
+#   https://github.com/chromium/chromium/blob/152.0.7977.64/media/base/supported_types.cc#L203
+#   https://github.com/chromium/chromium/blob/152.0.7977.64/media/base/supported_types.cc#L284
 #
 # Codec upstream default:
-#   https://github.com/chromium/chromium/blob/151.0.7922.137/tools/mb/mb_config_expectations/chromium.linux.json#L89
+#   https://github.com/chromium/chromium/blob/152.0.7977.64/tools/mb/mb_config_expectations/chromium.linux.json#L89
 #
 
 #
 # For cfi-vcall, cfi-icall defaults status, see \
-#   https://github.com/chromium/chromium/blob/151.0.7922.137/build/config/sanitizers/sanitizers.gni
+#   https://github.com/chromium/chromium/blob/152.0.7977.64/build/config/sanitizers/sanitizers.gni
 # For cfi-cast default status, see \
-#   https://github.com/chromium/chromium/blob/151.0.7922.137/build/config/sanitizers/sanitizers.gni#L123
+#   https://github.com/chromium/chromium/blob/152.0.7977.64/build/config/sanitizers/sanitizers.gni#L123
 # For pgo default status, see \
-#   https://github.com/chromium/chromium/blob/151.0.7922.137/build/config/compiler/pgo/pgo.gni#L15
+#   https://github.com/chromium/chromium/blob/152.0.7977.64/build/config/compiler/pgo/pgo.gni#L15
 # For libcxx default, see \
-#   https://github.com/chromium/chromium/blob/151.0.7922.137/build/config/c++/c++.gni#L14
+#   https://github.com/chromium/chromium/blob/152.0.7977.64/build/config/c++/c++.gni#L14
 # For cdm availability see third_party/widevine/cdm/widevine.gni#L28
 #
 
@@ -2268,7 +2161,7 @@ BDEPEND+="
 # This is why LLVM13 was set as the minimum and did fix the problem.
 
 # For the current llvm for this project, see
-#   https://github.com/chromium/chromium/blob/151.0.7922.137/tools/clang/scripts/update.py#L42
+#   https://github.com/chromium/chromium/blob/152.0.7977.64/tools/clang/scripts/update.py#L42
 # Use the same clang for official USE flag because of older llvm bugs which
 #   could result in security weaknesses (explained in the llvm:12 note below).
 # Used llvm >= 12 for arm64 for the same reason in the Linux kernel CFI comment.
@@ -2380,7 +2273,7 @@ is_debug_flags() {
 pre_build_checks() {
 	# Check build requirements: bugs #471810, #541816, #914220
 	if use official ; then
-	# https://github.com/chromium/chromium/blob/151.0.7922.137/docs/linux/build_instructions.md#system-requirements
+	# https://github.com/chromium/chromium/blob/152.0.7977.64/docs/linux/build_instructions.md#system-requirements
 		CHECKREQS_DISK_BUILD="100G"
 		CHECKREQS_MEMORY="16G"
 	else
@@ -2417,7 +2310,6 @@ einfo
 	# This is a nice idea but doesn't help noobs.
 ewarn "Set CHECKREQS_DONOTHING=1 to bypass build requirements not met check"
 	check-reqs_pkg_setup
-	APPLY_OILEDMACHINE_OVERLAY_PATCHSET=${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}
 }
 
 get_olast() {
@@ -3366,8 +3258,10 @@ eerror "gn >= ${GN_MIN_VER} is required"
 	fi
 
 	if use system-clang || use system-rust ; then
-		unpack "chromium-patches-${PATCH_VER}.tar.bz2"
-		unpack "chromium-patches-copium-${COPIUM_COMMIT:0:10}.tar.gz"
+		if [[ "${DISTRO_PATCHSET}" == "1" ]] ; then
+			unpack "chromium-patches-${PATCH_VER}.tar.bz2"
+			unpack "chromium-patches-copium-${COPIUM_COMMIT:0:10}.tar.gz"
+		fi
 		mkdir -p "${S}/third_party/rust-toolchain"
 		cat "${CHROMIUM_TOOLCHAIN_PREFIX}/rust/VERSION" > "${S}/third_party/rust-toolchain/VERSION" || die
 		cat "${CHROMIUM_TOOLCHAIN_PREFIX}/rust/INSTALLED_VERSION" > "${S}/third_party/rust-toolchain/INSTALLED_VERSION" || die
@@ -3440,7 +3334,7 @@ apply_distro_patchset_for_system_toolchain() {
 
 	if use system-clang || use system-rust ; then
 	# Copium patches go here.
-# Generated from `find /var/tmp/portage/www-client/chromium-151.0.7922.137/work/chromium-patches-151-1 | sort -V`
+# Generated from `find /var/tmp/portage/www-client/chromium-152.0.7977.64/work/chromium-patches-151-1 | sort -V`
 		DISTRO_PATCHSET_LLVM=(
 "${WORKDIR}/chromium-patches-${PATCH_VER}/llvm/lt-23/cr147-disable-fno-lifetime-dse.patch"
 "${WORKDIR}/chromium-patches-${PATCH_VER}/llvm/lt-23/cr149-ubsan-feature.patch"
@@ -3466,7 +3360,7 @@ apply_distro_patchset_for_system_toolchain() {
 "${FILESDIR}/extra-patches/${PN}-151.0.7922.108-mold-unbundle.patch"					# Same as cr151-mold-unbundle.patch
 		)
 		COPIUM_PATCHSET=(
-# Generated from `find /var/tmp/portage/www-client/chromium-151.0.7922.137/work/copium | sort -V`
+# Generated from `find /var/tmp/portage/www-client/chromium-152.0.7977.64/work/copium | sort -V`
 # There is some overlap so only the ones needed are applied.
 #"${WORKDIR}/copium/cr133-ffmpeg-no-noh264parse.patch"
 #"${WORKDIR}/copium/cr138-node-version-check.patch"
@@ -3590,10 +3484,12 @@ einfo "Adding SupportedLaneCount"
 }
 
 apply_distro_patchset() {
+	[[ "${DISTRO_PATCHSET}" == "1" ]] || return
+
 einfo "Applying the distro patchset ..."
 
 	if use system-clang ; then
-# Generated from `find /var/tmp/portage/www-client/chromium-151.0.7922.137/work/chromium-patches-151-1 | sort -V`
+# Generated from `find /var/tmp/portage/www-client/chromium-152.0.7977.64/work/chromium-patches-151-1 | sort -V`
 		DISTRO_PATCHSET_COMMON=(
 $(use system-zlib && echo "${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr109-system-zlib.patch")
 $(use system-icu && echo "${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr131-unbundle-icu-target.patch")
@@ -3626,7 +3522,10 @@ $((in_iuse ungoogled-chromium && use ungoogled-chromium) || echo "${WORKDIR}/chr
 }
 
 apply_oiledmachine_overlay_patchset() {
+	[[ "${OILEDMACHINE_OVERLAY_PATCHSET:-1}" == "1" ]] || return
+
 einfo "Applying the oiledmachine-overlay patchset ..."
+
 	if use system-clang && tc-is-clang ; then
 	# Using gcc with these patches results in this error:
 	# Two or more targets generate the same output:
@@ -4206,11 +4105,7 @@ src_prepare() {
 	# lib.
 	apply_distro_patchset
 
-	if [[ "${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}" == "1" ]] ; then
-		apply_oiledmachine_overlay_patchset
-	else
-ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
-	fi
+	apply_oiledmachine_overlay_patchset
 
 	# Do this before we apply patches since (e.g.) ppc64 needs to patch rollup and it's easier in ${S}
 	einfo "Moving rollup wasm-node package into place ..."
@@ -5252,7 +5147,7 @@ eerror
 	fi
 
 	# I noticed that the vendored clang doesn't use ccache.  Let us explicitly use ccache if requested.
-	# See https://github.com/chromium/chromium/blob/151.0.7922.137/build/toolchain/cc_wrapper.gni#L36
+	# See https://github.com/chromium/chromium/blob/152.0.7977.64/build/toolchain/cc_wrapper.gni#L36
 	if ! use system-clang ; then
 		if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
 			myconf_gn+=(
@@ -6003,8 +5898,8 @@ ewarn "You have enabled PGO"
 ewarn "For proper hardening, disable the pgo USE flag."
 	fi
 
-	# See https://github.com/chromium/chromium/blob/151.0.7922.137/build/config/sanitizers/BUILD.gn#L196
-	# See https://github.com/chromium/chromium/blob/151.0.7922.137/tools/mb/mb_config.pyl#L2950
+	# See https://github.com/chromium/chromium/blob/152.0.7977.64/build/config/sanitizers/BUILD.gn#L196
+	# See https://github.com/chromium/chromium/blob/152.0.7977.64/tools/mb/mb_config.pyl#L2950
 	local is_cfi_custom=0
 	if use official ; then
 	# Forced because it is the final official settings.
@@ -6270,7 +6165,7 @@ _configure_performance_pgo(){
 	fi
 
 	# See also build/config/compiler/pgo/BUILD.gn#L71 for PGO flags.
-	# See also https://github.com/chromium/chromium/blob/151.0.7922.137/docs/pgo.md
+	# See also https://github.com/chromium/chromium/blob/152.0.7977.64/docs/pgo.md
 	# profile-instr-use is clang which that file assumes but gcc doesn't have.
 	# chrome_pgo_phase:  0=NOP, 1=PGI, 2=PGO
 	if use pgo && tc-is-clang  ; then
@@ -7019,7 +6914,7 @@ _configure_v8() {
 				"v8_enable_gdbjit=$(usex debug true false)"
 				"v8_enable_lite_mode=false"
 			)
-	# See L553 in /usr/share/chromium/151.0.7922.137/sources/v8/BUILD.gn
+	# See L553 in /usr/share/chromium/152.0.7977.64/sources/v8/BUILD.gn
 			if \
 				[[ \
 					"${ARCH}"  == "amd64" \
@@ -7596,7 +7491,7 @@ _configure_features() {
 
 	# libevent: https://bugs.gentoo.org/593458
 	# [B] all of gn_system_libraries set
-	# List obtained from /usr/share/chromium/151.0.7922.137/sources/build/linux/unbundle/
+	# List obtained from /usr/share/chromium/152.0.7977.64/sources/build/linux/unbundle/
 	local gn_system_libraries=(
 		$(use system-abseil-cpp && echo "
 			absl_algorithm
@@ -7815,12 +7710,12 @@ ewarn "Unbundling libs and lowering security"
 		"enable_libaom=$(usex libaom $(usex encode true false) false)"
 		"enable_message_center=true"						# Required for Linux, but not Fucshia and Android
 		"enable_ml_internal=false"						# components/optimization_guide/internal is empty.  It is default disabled for unbranded.
-		"enable_openxr=false"							# https://github.com/chromium/chromium/tree/151.0.7922.137/device/vr#platform-support
+		"enable_openxr=false"							# https://github.com/chromium/chromium/tree/152.0.7977.64/device/vr#platform-support
 		"enable_platform_hevc=$(usex patent_status_nonfree $(usex vaapi-hevc true false) false)"
 		"enable_plugins=$(usex plugins true false)"
 
 #		"enable_speech_service=false"						# It is enabled but missing backend either local service or remote service.
-		"enable_vr=false"							# https://github.com/chromium/chromium/blob/151.0.7922.137/device/vr/buildflags/buildflags.gni#L32
+		"enable_vr=false"							# https://github.com/chromium/chromium/blob/152.0.7977.64/device/vr/buildflags/buildflags.gni#L32
 		"enable_websockets=true"						# requires devtools/devtools_http_handler.cc which is unconditionally added.
 		"enable_widevine=$(usex widevine true false)"
 
@@ -8014,7 +7909,7 @@ ewarn "Unbundling libs and lowering security"
 		)
 	fi
 
-	# See https://github.com/chromium/chromium/blob/151.0.7922.137/media/media_options.gni#L19
+	# See https://github.com/chromium/chromium/blob/152.0.7977.64/media/media_options.gni#L19
 
 	local proprietary_codecs=$(usex patent_status_nonfree "true" "false")
 	local ffmpeg_branding=$(usex patent_status_nonfree "Chrome" "Chromium")
@@ -8071,7 +7966,7 @@ ewarn "The system-re2 USE flag is experimental with multislot re2.  Consider dis
 	fi
 
 	# System features
-	# See also /usr/share/chromium/151.0.7922.137/sources/build/linux/unbundle/replace_gn_files.py
+	# See also /usr/share/chromium/152.0.7977.64/sources/build/linux/unbundle/replace_gn_files.py
 	myconf_gn+=(
 	# Set used by distros
 		"media_use_system_opus=$(usex system-opus true false)"			# For media/audio
@@ -8797,7 +8692,7 @@ pkg_postinst() {
 	if ! use headless && [[ -z "${REPLACING_VERSIONS}" ]] ; then
 		if use vaapi ; then
 	# It says 3 args:
-	# https://github.com/chromium/chromium/blob/151.0.7922.137/docs/gpu/vaapi.md#vaapi-on-linux
+	# https://github.com/chromium/chromium/blob/152.0.7977.64/docs/gpu/vaapi.md#vaapi-on-linux
 einfo
 einfo "Hardware-accelerated video decoding configuration:"
 einfo
