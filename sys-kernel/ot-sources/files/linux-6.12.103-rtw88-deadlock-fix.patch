@@ -101,8 +101,8 @@ Fix:
   re-enumeration as 1-5 is expected after failed reset (EHCI->OHCI
   fallback).
 
---- a/drivers/net/wireless/realtek/rtw88/main.h.orig	2026-08-24 16:33:17.365904164 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/main.h	2026-08-24 16:42:56.882360689 -0700
+--- a/drivers/net/wireless/realtek/rtw88/main.h.orig	2026-08-25 18:42:02.080809784 -0700
++++ b/drivers/net/wireless/realtek/rtw88/main.h	2026-08-25 18:45:43.993296492 -0700
 @@ -14,6 +14,7 @@
  #include <linux/iopoll.h>
  #include <linux/interrupt.h>
@@ -130,8 +130,8 @@ Fix:
  void rtw_core_fw_scan_notify(struct rtw_dev *rtwdev, bool start);
  int rtw_dump_fw(struct rtw_dev *rtwdev, const u32 ocp_src, u32 size,
  		u32 fwcd_item);
---- a/drivers/net/wireless/realtek/rtw88/main.c.orig	2026-08-24 16:33:17.365427504 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/main.c	2026-08-24 16:46:39.630398406 -0700
+--- a/drivers/net/wireless/realtek/rtw88/main.c.orig	2026-08-25 18:42:02.080307139 -0700
++++ b/drivers/net/wireless/realtek/rtw88/main.c	2026-08-25 18:45:57.192910038 -0700
 @@ -3,6 +3,7 @@
   */
  
@@ -231,8 +231,8 @@ Fix:
  	init_waitqueue_head(&rtwdev->coex.wait);
  	init_completion(&rtwdev->lps_leave_check);
  	init_completion(&rtwdev->fw_scan_density);
---- a/drivers/net/wireless/realtek/rtw88/usb.c.orig	2026-08-24 16:33:52.824262288 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/usb.c	2026-08-24 16:44:20.629027169 -0700
+--- a/drivers/net/wireless/realtek/rtw88/usb.c.orig	2026-08-25 18:42:30.808772434 -0700
++++ b/drivers/net/wireless/realtek/rtw88/usb.c	2026-08-25 18:45:29.453658078 -0700
 @@ -26,6 +26,17 @@ struct rtw_usb_txcb {
  	struct sk_buff_head tx_ack_queue;
  };
@@ -451,7 +451,7 @@ Fix:
  
  	rtw_usb_free_rx_bufs(rtwusb);
 --- a/drivers/net/wireless/realtek/rtw88/usb.h.orig	2024-11-17 14:15:08.000000000 -0800
-+++ b/drivers/net/wireless/realtek/rtw88/usb.h	2026-08-24 16:42:56.883530119 -0700
++++ b/drivers/net/wireless/realtek/rtw88/usb.h	2026-08-25 18:45:29.454015361 -0700
 @@ -96,5 +96,7 @@ static inline struct rtw_usb_tx_data *rt
  
  int rtw_usb_probe(struct usb_interface *intf, const struct usb_device_id *id);
@@ -460,8 +460,8 @@ Fix:
 +int __rtw_usb_write32(struct rtw_dev *rtwdev, u32 addr, u32 val);
  
  #endif
---- a/net/mac80211/mlme.c.orig	2026-08-24 16:33:42.219616287 -0700
-+++ b/net/mac80211/mlme.c	2026-08-24 16:42:56.901728756 -0700
+--- a/net/mac80211/mlme.c.orig	2026-08-25 18:42:24.538657362 -0700
++++ b/net/mac80211/mlme.c	2026-08-25 18:46:40.871642000 -0700
 @@ -2760,14 +2760,32 @@ static u64 ieee80211_handle_pwr_constr(s
  		has_80211h_pwr = ieee80211_find_80211h_pwr_constr(
  			sdata, channel, country_ie, country_ie_len,
