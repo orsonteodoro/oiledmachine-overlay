@@ -101,8 +101,8 @@ Fix:
   re-enumeration as 1-5 is expected after failed reset (EHCI->OHCI
   fallback).
 
---- a/drivers/net/wireless/realtek/rtw88/main.h.orig	2026-08-25 20:08:45.293054013 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/main.h	2026-08-25 20:13:31.737305421 -0700
+--- a/drivers/net/wireless/realtek/rtw88/main.h.orig	2026-08-26 08:17:10.582674494 -0700
++++ b/drivers/net/wireless/realtek/rtw88/main.h	2026-08-26 08:27:45.934558704 -0700
 @@ -14,6 +14,7 @@
  #include <linux/iopoll.h>
  #include <linux/interrupt.h>
@@ -111,7 +111,15 @@ Fix:
  
  #include "util.h"
  
-@@ -2020,6 +2021,10 @@ struct rtw_dev {
+@@ -51,6 +52,7 @@ extern const struct ieee80211_ops rtw_op
+ 
+ struct rtw_dev;
+ struct rtw_debugfs;
++struct work_struct usb_reset_work;
+ 
+ enum rtw_hci_type {
+ 	RTW_HCI_TYPE_PCIE,
+@@ -2020,6 +2022,10 @@ struct rtw_dev {
  	/* ensures exclusive access from mac80211 callbacks */
  	struct mutex mutex;
  
@@ -122,7 +130,7 @@ Fix:
  	/* watch dog every 2 sec */
  	struct delayed_work watch_dog_work;
  	u32 watch_dog_cnt;
-@@ -2204,6 +2209,7 @@ int rtw_sta_add(struct rtw_dev *rtwdev,
+@@ -2204,6 +2210,7 @@ int rtw_sta_add(struct rtw_dev *rtwdev,
  void rtw_sta_remove(struct rtw_dev *rtwdev, struct ieee80211_sta *sta,
  		    bool fw_exist);
  void rtw_fw_recovery(struct rtw_dev *rtwdev);
@@ -130,8 +138,8 @@ Fix:
  void rtw_core_fw_scan_notify(struct rtw_dev *rtwdev, bool start);
  int rtw_dump_fw(struct rtw_dev *rtwdev, const u32 ocp_src, u32 size,
  		u32 fwcd_item);
---- a/drivers/net/wireless/realtek/rtw88/main.c.orig	2026-08-25 20:08:45.292577836 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/main.c	2026-08-25 20:13:45.096809105 -0700
+--- a/drivers/net/wireless/realtek/rtw88/main.c.orig	2026-08-26 08:17:10.582175720 -0700
++++ b/drivers/net/wireless/realtek/rtw88/main.c	2026-08-26 08:28:01.054236081 -0700
 @@ -3,6 +3,7 @@
   */
  
@@ -182,7 +190,7 @@ Fix:
  	rcu_read_lock();
  	rtw_iterate_keys_rcu(rtwdev, NULL, rtw_reset_key_iter, rtwdev);
  	rcu_read_unlock();
-@@ -648,12 +663,33 @@ free:
+@@ -648,17 +663,25 @@ free:
  	rtw_iterate_vifs_atomic(rtwdev, rtw_reset_vif_iter, rtwdev);
  	bitmap_zero(rtwdev->hw_port, RTW_PORT_NUM);
  	rtw_enter_ips(rtwdev);
@@ -198,25 +206,20 @@ Fix:
  
  static void rtw_fw_recovery_work(struct work_struct *work)
  {
- 	struct rtw_dev *rtwdev = container_of(work, struct rtw_dev,
- 					      fw_recovery_work);
-+	struct rtw_usb *rtwusb;
-+
-+	if (rtwdev->fail) {
-+		rtwusb = rtw_get_usb_priv(rtwdev);
-+		if (!rtwusb || !rtwusb->udev)
-+			return;
-+
-+		pr_warn("rtw88: -110 storm, aborting recovery, waiting for disconnect\n");
-+		/* Don't reset, don't restart_hw. Let disconnect clean up.
-+		 * This avoids mac power on failed loop.
-+		 */
+-	struct rtw_dev *rtwdev = container_of(work, struct rtw_dev,
+-					      fw_recovery_work);
++	struct rtw_dev *rtwdev = container_of(work, struct rtw_dev, fw_recovery_work);
++	if (unlikely(rtwdev->fail))
 +		return;
-+	}
  
  	mutex_lock(&rtwdev->mutex);
  	__fw_recovery_work(rtwdev);
-@@ -1357,6 +1393,13 @@ static int rtw_power_on(struct rtw_dev *
+ 	mutex_unlock(&rtwdev->mutex);
+-
+ 	ieee80211_restart_hw(rtwdev->hw);
+ }
+ 
+@@ -1357,6 +1380,13 @@ static int rtw_power_on(struct rtw_dev *
  	bool wifi_only;
  	int ret;
  
@@ -230,7 +233,15 @@ Fix:
  	ret = rtw_hci_setup(rtwdev);
  	if (ret) {
  		rtw_err(rtwdev, "failed to setup hci\n");
-@@ -2137,6 +2180,10 @@ int rtw_core_init(struct rtw_dev *rtwdev
+@@ -2127,6 +2157,7 @@ int rtw_core_init(struct rtw_dev *rtwdev
+ 	INIT_WORK(&rtwdev->fw_recovery_work, rtw_fw_recovery_work);
+ 	INIT_WORK(&rtwdev->update_beacon_work, rtw_fw_update_beacon_work);
+ 	INIT_WORK(&rtwdev->ba_work, rtw_txq_ba_work);
++	INIT_WORK(&rtwdev->usb_reset_work, rtw_usb_reset_work);
+ 	skb_queue_head_init(&rtwdev->c2h_queue);
+ 	skb_queue_head_init(&rtwdev->coex.queue);
+ 	skb_queue_head_init(&rtwdev->tx_report.queue);
+@@ -2137,6 +2168,10 @@ int rtw_core_init(struct rtw_dev *rtwdev
  	mutex_init(&rtwdev->mutex);
  	mutex_init(&rtwdev->hal.tx_power_mutex);
  
@@ -241,8 +252,8 @@ Fix:
  	init_waitqueue_head(&rtwdev->coex.wait);
  	init_completion(&rtwdev->lps_leave_check);
  	init_completion(&rtwdev->fw_scan_density);
---- a/drivers/net/wireless/realtek/rtw88/usb.c.orig	2026-08-25 20:09:11.058729301 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/usb.c	2026-08-25 20:13:20.269758097 -0700
+--- a/drivers/net/wireless/realtek/rtw88/usb.c.orig	2026-08-26 08:17:39.277635478 -0700
++++ b/drivers/net/wireless/realtek/rtw88/usb.c	2026-08-26 08:27:26.755486372 -0700
 @@ -26,6 +26,17 @@ struct rtw_usb_txcb {
  	struct sk_buff_head tx_ack_queue;
  };
@@ -252,8 +263,8 @@ Fix:
 +	if (status == -110 || status == -ENODEV || status == -EPROTO || status == -2) {
 +		if (atomic_inc_return(&rtwdev->fail_count) >= 3 && !rtwdev->fail) {
 +			rtwdev->fail = true;
-+			rtw_warn(rtwdev, "-110 storm detected, scheduling reset from rtw_usb_mark_fail\n");
-+			schedule_work(&rtwdev->fw_recovery_work);
++			pr_warn("rtw88: -110 storm detected, scheduling USB reset work\n");
++			schedule_work(&rtwdev->usb_reset_work);
 +		}
 +	}
 +}
@@ -433,19 +444,12 @@ Fix:
  	}
  
  	return ret;
-@@ -1170,14 +1239,29 @@ void rtw_usb_disconnect(struct usb_inter
+@@ -1170,14 +1239,22 @@ void rtw_usb_disconnect(struct usb_inter
  	rtwdev = hw->priv;
  	rtwusb = rtw_get_usb_priv(rtwdev);
  
-+	/* NEW: mark failed so watch_dog / power_on abort immediately.
-+	 * This unblocks the mutex that modprobe -r waits for.
-+	 */
 +	rtwdev->fail = true;
-+
-+	/* NEW: stop recovery work BEFORE it does usb_reset_device
-+	 * and before we free hw. Fixes NULL deref 0xf7 in
-+	 * rtw_fw_recovery_work+0x323 after USB disconnect.
-+	 */
++	cancel_work_sync(&rtwdev->usb_reset_work);
 +	cancel_work_sync(&rtwdev->fw_recovery_work);
 +	cancel_delayed_work_sync(&rtwdev->watch_dog_work);
 +
@@ -465,8 +469,53 @@ Fix:
  
  	rtw_usb_free_rx_bufs(rtwusb);
  
+@@ -1187,6 +1264,44 @@ void rtw_usb_disconnect(struct usb_inter
+ }
+ EXPORT_SYMBOL(rtw_usb_disconnect);
+ 
++static void rtw_usb_reset_work(struct work_struct *work)
++{
++	struct rtw_dev *rtwdev = container_of(work, struct rtw_dev, usb_reset_work);
++	struct rtw_usb *rtwusb = rtw_get_usb_priv(rtwdev);
++	struct usb_device *udev;
++	int ret;
++
++	if (!rtwusb ||!rtwusb->udev)
++		return;
++
++	udev = rtwusb->udev;
++
++	pr_warn("rtw88: attempting USB reset for -110 storm\n");
++	ret = usb_reset_device(udev);
++	msleep(500);
++
++	if (ret) {
++		pr_warn("rtw88: reset failed %d, trying port power cycle\n", ret);
++		/* power cycle port 2-5 that you saw in logs */
++		usb_autosuspend_device(udev);
++		msleep(100);
++		usb_autoresume_device(udev);
++		/* if still fails, let hub power cycle */
++		ret = usb_reset_device(udev);
++	}
++
++	if (ret == 0) {
++		pr_warn("rtw88: USB reset success, clearing fail\n");
++		rtwdev->fail = false;
++		atomic_set(&rtwdev->fail_count, 0);
++		/* now trigger normal fw recovery which will power on */
++		schedule_work(&rtwdev->fw_recovery_work);
++	} else {
++		pr_warn("rtw88: USB reset failed, waiting for re-enumeration to 1-5\n");
++		/* device will re-enumerate as 1-5 (OHCI) as you saw at [61055] */
++	}
++}
++
+ MODULE_AUTHOR("Realtek Corporation");
+ MODULE_DESCRIPTION("Realtek USB 802.11ac wireless driver");
+ MODULE_LICENSE("Dual BSD/GPL");
 --- a/drivers/net/wireless/realtek/rtw88/usb.h.orig	2024-11-17 14:15:08.000000000 -0800
-+++ b/drivers/net/wireless/realtek/rtw88/usb.h	2026-08-25 20:13:20.270093589 -0700
++++ b/drivers/net/wireless/realtek/rtw88/usb.h	2026-08-26 08:27:26.755863566 -0700
 @@ -96,5 +96,7 @@ static inline struct rtw_usb_tx_data *rt
  
  int rtw_usb_probe(struct usb_interface *intf, const struct usb_device_id *id);
@@ -475,8 +524,8 @@ Fix:
 +int __rtw_usb_write32(struct rtw_dev *rtwdev, u32 addr, u32 val);
  
  #endif
---- a/net/mac80211/mlme.c.orig	2026-08-25 20:09:03.776470329 -0700
-+++ b/net/mac80211/mlme.c	2026-08-25 20:14:24.391671268 -0700
+--- a/net/mac80211/mlme.c.orig	2026-08-26 08:17:35.206322135 -0700
++++ b/net/mac80211/mlme.c	2026-08-26 08:28:52.444724393 -0700
 @@ -2760,14 +2760,32 @@ static u64 ieee80211_handle_pwr_constr(s
  		has_80211h_pwr = ieee80211_find_80211h_pwr_constr(
  			sdata, channel, country_ie, country_ie_len,
