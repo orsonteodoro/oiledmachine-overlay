@@ -58,17 +58,14 @@ CPU_FEATURES=( "${X86_CPU_FEATURES[@]/#/cpu_flags_x86_}" ) # Place after X86_CPU
 CHKL_TIMESTAMPS=(
 	"dev-cpp/tbb-9999"
 	"dev-libs/libfmt-9999"
-	"dev-libs/openssl-4.0.9999"
-	"dev-libs/openssl-3.6.9999"
-	"dev-libs/openssl-3.5.9999"
-	"dev-libs/openssl-3.4.9999"
-	"dev-libs/openssl-3.0.9999"
 	"media-libs/giflib-9999"
 	"media-libs/libjpeg-turbo-9999"
 	"media-libs/libjxl-9999"
 	"media-libs/libpng-9999"
 	"media-libs/opencv-4.9999"
 	"media-libs/tiff-9999"
+	"media-video/ffmpeg-9999"
+	"media-video/ffmpeg-9999m"
 )
 
 inherit cflags-hardened check-compiler-switch chkl cmake flag-o-matic font
