@@ -21,6 +21,7 @@ LLVM_COMPAT=(
 
 CHKL_TIMESTAMPS=(
 	"media-libs/openexr-9999"
+	"sci-libs/hdf5-9999"
 )
 
 inherit cflags-hardened chkl cmake libcxx-slot libstdcxx-slot secure-version python-single-r1
@@ -62,7 +63,7 @@ RDEPEND+="
 	${PYTHON_DEPS}
 	~dev-libs/imath-${IMATH_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP}]
 	hdf5? (
-		>=sci-libs/hdf5-1.8.9:=[zlib(+)]
+		>=sci-libs/hdf5-${HDF5_PV}:=[zlib(+)]
 		>=virtual/zlib-${ZLIB_PV}:=
 	)
 	python? (
