@@ -475,6 +475,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libvorbis-9999"
 	"media-libs/libvpx-9999"
 	"media-libs/libwebp-9999"
+	"media-libs/opencolorio-9999"
 	"media-libs/openh264-9999"
 	"media-libs/opus-9999"
 	"media-libs/speex-9999"

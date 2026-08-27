@@ -40,6 +40,7 @@ CHKL_TIMESTAMPS=(
 	"dev-qt/qtsvg-6.9999"
 	"dev-qt/qttools-6.9999"
 	"dev-util/glslang-9999"
+	"media-libs/opencolorio-9999"
 	"media-libs/openexr-9999"
 )
 
@@ -142,7 +143,7 @@ PATENT_STATUS_RDEPEND="
 RDEPEND="
 	${PATENT_STATUS_RDEPEND}
 	>=dev-cpp/pystring-${PYSTRING_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=media-libs/opencolorio-2.1.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=media-libs/opencolorio-${OPENCOLORIO_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=media-libs/openimageio-2.1.12:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},png?]
 	>=media-libs/portaudio-19.06.0:=[alsa?,jack?,oss?]
 	>=media-libs/openexr-${OPENEXR_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]

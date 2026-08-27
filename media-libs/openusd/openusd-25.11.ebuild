@@ -34,9 +34,11 @@ CHKL_TIMESTAMPS=(
 	"dev-cpp/tbb-9999"
 	"dev-libs/jemalloc-usd-9999"
 	"media-libs/libpng-9999"
+	"media-libs/opencolorio-9999"
 	"media-libs/openexr-9999"
 	"media-libs/osl-9999"
 	"media-libs/tiff-9999"
+	"sci-libs/hdf5-9999"
 	"x11-libs/libX11-9999"
 )
 
@@ -149,7 +151,7 @@ RDEPEND+="
 		>=media-libs/embree-${EMBREE_PV}:=
 	)
 	hdf5? (
-		>=sci-libs/hdf5-1.10:=[cxx,hl]
+		>=sci-libs/hdf5-${HDF5_PV}:=[cxx,hl]
 	)
 	imaging? (
 		>=media-libs/opensubdiv-3.6.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
@@ -162,7 +164,7 @@ RDEPEND+="
 		>=media-libs/materialx-1.39.3:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	opencolorio? (
-		>=media-libs/opencolorio-2.2.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=media-libs/opencolorio-${OPENCOLORIO_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	openexr? (
 		>=media-libs/openexr-${OPENEXR_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]

@@ -62,6 +62,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libjpeg-turbo-9999"
 	"media-libs/libjxl-9999"
 	"media-libs/libpng-9999"
+	"media-libs/opencolorio-9999"
 	"media-libs/opencv-4.9999"
 	"media-libs/tiff-9999"
 	"media-video/ffmpeg-9999"
@@ -216,7 +217,7 @@ RDEPEND+="
 	>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:=
 	virtual/jpeg:*
 	color-management? (
-		>=media-libs/opencolorio-2.2:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=media-libs/opencolorio-${OPENCOLORIO_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	dds? (
 		>=media-libs/libsquish-1.13:=

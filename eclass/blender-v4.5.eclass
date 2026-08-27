@@ -129,6 +129,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libvorbis-9999"
 	"media-libs/libvpx-9999"
 	"media-libs/libwebp-9999"
+	"media-libs/opencolorio-9999"
 	"media-libs/openexr-9999"
 	"media-libs/openjpeg-9999"
 	"media-libs/opus-9999"
@@ -930,7 +931,7 @@ RDEPEND+="
 	)
 	color-management? (
 		>=dev-libs/expat-${EXPAT_PV}:=
-		>=media-libs/opencolorio-2.4.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cpu_flags_x86_sse2?,python]
+		>=media-libs/opencolorio-${OPENCOLORIO_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cpu_flags_x86_sse2?,python]
 		<media-libs/opencolorio-3.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cpu_flags_x86_sse2?,python]
 	)
 	cuda? (

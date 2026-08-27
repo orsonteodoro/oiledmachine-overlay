@@ -353,6 +353,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/tiff-9999"
 	"media-libs/vulkan-loader-9999"
 	"sci-libs/gdal-9999"
+	"sci-libs/hdf5-9999"
 	"sci-libs/openblas-9999"
 	"sci-ml/openvino-9999"
 	"x11-base/xorg-server-9999"
@@ -876,7 +877,7 @@ RDEPEND="
 		)
 	)
 	contribhdf? (
-		>=sci-libs/hdf5-1.10.4:=
+		>=sci-libs/hdf5-${HDF5_PV}:=
 	)
 	contribfreetype? (
 		>=media-libs/harfbuzz-${HARFBUZZ_PV}:=[${MULTILIB_USEDEP}]
