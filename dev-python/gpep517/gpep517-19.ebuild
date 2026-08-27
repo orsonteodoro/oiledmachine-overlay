@@ -68,6 +68,9 @@ BDEPEND="
 "
 DOCS=( "README.rst" )
 
+EPYTEST_PLUGINS=()
+distutils_enable_tests "pytest"
+
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
@@ -78,10 +81,22 @@ src_unpack() {
 	fi
 }
 
+python_test() {
+	epytest -o tmp_path_retention_policy=all
+}
+
+python_install() {
+	python_domodule gpep517
+	python_newscript - gpep517 <<-EOF
+		#!${EPREFIX}/usr/bin/python
+		import sys
+		from gpep517.__main__ import main
+		sys.exit(main())
+	EOF
+}
+
 src_install() {
 	distutils-r1_src_install
 	docinto "licenses"
 	dodoc "COPYING"
 }
-
-# OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD
