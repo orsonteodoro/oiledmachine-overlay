@@ -30,41 +30,6 @@ CPU_FLAGS_X86=(
 	"sse4_2"
 )
 
-OPENEXR_V3_PV=(
-	# openexr:imath
-	#"3.4.0:9999"
-	"3.4.12:3.2.2"
-	"3.4.11:3.2.2"
-	"3.4.10:3.2.2"
-	"3.4.9:3.2.2"
-	"3.4.8:3.2.2"
-	"3.4.7:3.2.2"
-	"3.4.6:3.2.2"
-	"3.4.5:3.2.2"
-	"3.4.4:3.2.2"
-	"3.4.3:3.2.2"
-	"3.4.2:3.2.2"
-	"3.4.1:3.2.1"
-	"3.4.0:3.2.1"
-	"3.3.11:3.1.12"
-	"3.3.10:3.1.12"
-	"3.3.9:3.1.12"
-	"3.3.8:3.1.12"
-	"3.3.7:3.1.12"
-	"3.3.6:3.1.12"
-	"3.3.5:3.1.12"
-	"3.3.4:3.1.12"
-	"3.3.3:3.1.12"
-	"3.3.2:3.1.12"
-	"3.3.1:3.1.12"
-	"3.3.0:3.1.11"
-	"3.2.4:3.1.10"
-	"3.2.3:3.1.10"
-	"3.2.2:3.1.9"
-	"3.2.1:3.1.9"
-	"3.2.0:3.1.9"
-)
-
 VDB_UTILS=(
 	"vdb_lod"
 	"vdb_print"
@@ -72,7 +37,19 @@ VDB_UTILS=(
 	"vdb_view"
 )
 
-inherit check-compiler-switch cmake flag-o-matic libcxx-slot libstdcxx-slot llvm python-single-r1 toolchain-funcs
+CHKL_TIMESTAMPS=(
+	"dev-cpp/tbb-9999"
+	"dev-libs/jemalloc-9999"
+	"media-libs/glfw-9999"
+	"media-libs/libpng-9999"
+	"media-libs/openexr-9999"
+	"media-libs/mesa-9999"
+	"x11-libs/libX11-9999"
+	"x11-libs/libXcursor-9999"
+)
+
+inherit check-compiler-switch chkl cmake flag-o-matic libcxx-slot libstdcxx-slot
+inherit llvm python-single-r1 secure-version toolchain-funcs
 
 KEYWORDS="~amd64"
 SRC_URI="
@@ -95,7 +72,7 @@ SLOT="0"
 IUSE+="
 ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
--alembic ax +blosc clang cuda doc gcc icc -imath-half +jemalloc -jpeg -log4cplus
+-alembic ax +blosc clang cuda doc gcc icc +jemalloc -jpeg -log4cplus
 +nanovdb -python +static-libs -tbbmalloc nanovdb -no-concurrent-malloc
 -openexr -png test -vdb_lod +vdb_print -vdb_render -vdb_view
 ebuild_revision_11
@@ -129,48 +106,6 @@ REQUIRED_USE+="
 		${PYTHON_REQUIRED_USE}
 	)
 "
-gen_openexr_pairs() {
-	local g1=""
-	local g2=""
-	local g3=""
-	local row
-	for row in "${OPENEXR_V3_PV[@]}" ; do
-		local imath_pv="${row#*:}"
-		local openexr_pv="${row%:*}"
-		g1+="
-			(
-				~media-libs/openexr-${openexr_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-				~dev-libs/imath-${imath_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-			)
-		"
-		g2+="
-			~media-libs/openexr-${openexr_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		"
-		g3+="
-			~dev-libs/imath-${imath_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		"
-	done
-	echo "
-		openexr? (
-			imath-half? (
-				|| (
-					${g1}
-				)
-			)
-		)
-		openexr? (
-			|| (
-				${g2}
-			)
-		)
-		imath-half? (
-			|| (
-				${g3}
-			)
-		)
-
-	"
-}
 gen_ax_depend() {
 	local s
 	for s in "${LLVM_COMPAT[@]}" ; do
@@ -183,9 +118,9 @@ gen_ax_depend() {
 	done
 }
 RDEPEND+="
-	>=dev-cpp/tbb-2021:${ONETBB_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-cpp/tbb-${TBB_PV}:${ONETBB_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/boost-1.82:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=virtual/zlib-1.2.7:=
+	>=virtual/zlib-${ZLIB_PV}:=
 	ax? (
 		$(gen_ax_depend)
 	)
@@ -193,10 +128,13 @@ RDEPEND+="
 		>=dev-libs/c-blosc-1.17.0:=
 	)
 	jemalloc? (
-		dev-libs/jemalloc:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-libs/jemalloc-${JEMALLOC_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	log4cplus? (
 		>=dev-libs/log4cplus-1.1.2:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	)
+	openexr? (
+		>=media-libs/openexr-${OPENEXR_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	python? (
 		${PYTHON_DEPS}
@@ -206,31 +144,18 @@ RDEPEND+="
 		')
 	)
 	vdb_view? (
-		>=media-libs/glfw-3.3:=
+		>=media-libs/glfw-${GLFW_PV}:=
 		media-libs/glu:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		media-libs/mesa:=[egl(+)]
+		>=media-libs/mesa-${MESA_PV}:=[egl(+)]
 		virtual/opengl:=
-		x11-libs/libX11:=
-		x11-libs/libXcursor:=
-		x11-libs/libXi:=
-		x11-libs/libXinerama:=
-		x11-libs/libXrandr:=
-		x11-libs/libXxf86vm:=
+		>=x11-libs/libX11-${LIBX11_PV}:=
+		>=x11-libs/libXcursor-${LIBXCURSOR_PV}:=
+		>=x11-libs/libXi-${LIBXI_PV}:=
+		>=x11-libs/libXinerama-${LIBXINERAMA_PV}:=
+		>=x11-libs/libXrandr-${LIBXRANDR_PV}:=
+		>=x11-libs/libXxf86vm-${LIBXXF86VM_PV}:=
 		png? (
-			media-libs/libpng:=
-		)
-	)
-
-	openexr? (
-		media-libs/openexr:=
-	)
-	imath-half? (
-		dev-libs/imath:=
-	)
-	$(gen_openexr_pairs)
-	!openexr? (
-		!imath-half? (
-			virtual/libc:*
+			>=media-libs/libpng-${LIBPNG_PV}:=
 		)
 	)
 "
@@ -357,6 +282,7 @@ ewarn "You must set up CC/CXX manually for ICC support."
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
 	export CPP=$(tc-getCPP)
@@ -409,7 +335,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DUSE_CCACHE=OFF
 		-DUSE_COLORED_OUTPUT=ON
 		-DUSE_EXR=$(usex openexr)
-		-DUSE_IMATH_HALF=$(usex imath-half)
+		-DUSE_IMATH_HALF=ON
 		-DUSE_LOG4CPLUS=$(usex log4cplus)
 	)
 

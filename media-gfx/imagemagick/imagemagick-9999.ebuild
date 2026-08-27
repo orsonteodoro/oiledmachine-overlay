@@ -26,6 +26,7 @@ CHKL_TIMESTAMPS=(
 	"app-arch/xz-utils-9999"
 	"app-text/ghostscript-gpl-9999"
 	"dev-libs/libxml2-9999"
+	"dev-libs/libzip-9999"
 	"gnome-base/librsvg-9999"
 	"media-libs/freetype-9999"
 	"media-libs/libheif-9999"
@@ -34,7 +35,6 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libpng-9999"
 	"media-libs/libraw-9999"
 	"media-libs/libwebp-9999"
-	"dev-libs/libzip-9999"
 	"media-libs/openexr-9999"
 	"media-libs/tiff-9999"
 )
