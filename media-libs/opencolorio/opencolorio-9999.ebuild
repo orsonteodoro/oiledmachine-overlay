@@ -66,12 +66,27 @@ CHKL_TIMESTAMPS=(
 inherit check-compiler-switch chkl cmake flag-o-matic libcxx-slot libstdcxx-slot
 inherit secure-version virtualx python-single-r1
 
-KEYWORDS="~amd64 ~arm64"
-S="${WORKDIR}/OpenColorIO-${PV}"
-SRC_URI="
+if [[ "${PV}" =~ "9999" ]] ; then
+	INTERNAL_VERSION="2.6.0"
+	SOVER=$(ver_cut "1-2" "${INTERNAL_VERSION}")
+	FALLBACK_COMMIT="5a808fb57a94c7229640a97835c420c9a1fbd1fe"
+	EGIT_BRANCH="main"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/OpenColorIO-${PV}"
+	EGIT_REPO_URI="https://github.com/AcademySoftwareFoundation/OpenColorIO.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	SOVER=$(ver_cut "1-2" "${PV}")
+	KEYWORDS="~amd64 ~arm64"
+	SRC_URI="
 https://github.com/AcademySoftwareFoundation/OpenColorIO/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
-"
+	"
+fi
+
+S="${WORKDIR}/OpenColorIO-${PV}"
 
 DESCRIPTION="A color management framework for visual effects and animation"
 HOMEPAGE="
@@ -86,7 +101,7 @@ LICENSE="BSD"
 RESTRICT="
 	test
 "
-SLOT="0/$(ver_cut 1-2)"
+SLOT="0/${SOVER}"
 IUSE+="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_X86[@]}
@@ -220,6 +235,29 @@ pkg_setup() {
 	libstdcxx-slot_verify
 	if has_version "sys-libs/zlib[minizip]" && use minizip-ng ; then
 eerror "Re-emerge sys-libs/zlib with minizip disabled to continue."
+		die
+	fi
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+	local actual_sover=$(grep -E -e " VERSION [.0-9]+" "${S}/CMakeLists.txt" \
+		| head -n 1 \
+		| grep -o -E -e "[.0-9]+" \
+		| cut -f "1-2" -d ".")
+	local expected_sover="${SOVER}"
+	if ver_test "${actual_sover}" "-ne" "${expected_sover}" ; then
+eerror "QA:  Update INTERNAL_VERSION or SOVER"
+eerror "Actual SOVER:  ${actual_sover}"
+eerror "Expected SOVER:  ${expected_sover}"
 		die
 	fi
 }
