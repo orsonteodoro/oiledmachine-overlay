@@ -60,6 +60,7 @@ RESTRICT="
 "
 RDEPEND+="
 	${PYTHON_DEPS}
+	~dev-libs/imath-${IMATH_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP}]
 	hdf5? (
 		>=sci-libs/hdf5-1.8.9:=[zlib(+)]
 		>=virtual/zlib-${ZLIB_PV}:=
