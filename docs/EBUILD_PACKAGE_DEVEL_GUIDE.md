@@ -435,6 +435,7 @@ Performance QA
 | Runtime thrashing                                        | Disallowed                                                                    |
 | Build time severe thrashing                              | Only allowed for web browser or AI/ML packages                                |
 | Maximum install + merge time allowed                     | 1 hour                                                                        |
+| Emerge dependency resolution max allowed                 | 10 min (or 600 seconds), else fix circular dependency                         |
 
 LICENCE variable QA
 
