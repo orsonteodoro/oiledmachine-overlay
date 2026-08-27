@@ -1076,8 +1076,6 @@ RDEPEND+="
 		>=dev-libs/pugixml-${PUGIXML_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	openexr? (
-		!<media-libs/openexr-3
-		>=dev-libs/imath-${IMATH_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		>=media-libs/openexr-${OPENEXR_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	opensubdiv? (

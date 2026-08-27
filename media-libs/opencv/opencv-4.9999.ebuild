@@ -28,49 +28,6 @@ KLEIDICV_PV="0.5.0"
 QT5_PV="5.12.8"
 QT6_PV="${QTBASE6_PV}"
 
-OPENEXR3_PV=(
-	"3.4.12:3.2.2"
-	"3.4.11:3.2.2"
-	"3.4.10:3.2.2"
-	"3.4.9:3.2.2"
-	"3.4.8:3.2.2"
-	"3.4.7:3.2.2"
-	"3.4.6:3.2.2"
-	"3.4.5:3.2.2"
-	"3.4.4:3.2.2"
-	"3.4.3:3.2.2"
-	"3.4.2:3.2.2"
-	"3.4.1:3.2.1"
-	"3.4.0:3.2.1"
-	"3.3.11:3.1.12"
-	"3.3.10:3.1.12"
-	"3.3.9:3.1.12"
-	"3.3.8:3.1.12"
-	"3.3.7:3.1.12"
-	"3.3.6:3.1.12"
-	"3.3.5:3.1.12"
-	"3.3.4:3.1.12"
-	"3.3.3:3.1.12"
-	"3.3.2:3.1.12"
-	"3.3.1:3.1.12"
-	"3.3.0:3.1.11"
-	"3.2.4:3.1.10"
-	"3.2.3:3.1.10"
-	"3.2.2:3.1.9"
-	"3.2.1:3.1.9"
-	"3.2.0:3.1.9"
-	"3.1.13:3.1.9"
-	"3.1.12:3.1.9"
-	"3.1.11:3.1.9"
-	"3.1.10:3.1.9"
-	"3.1.9:3.1.9"
-	"3.1.8:3.1.8"
-	"3.1.7:3.1.7"
-	"3.1.6:3.1.5"
-	"3.1.5:3.1.5"
-	"3.1.4:3.1.4"
-)
-
 _CXX_STANDARD=(
 	"cxx_standard_cxx11"
 	"cxx_standard_cxx14"
@@ -815,25 +772,6 @@ REQUIRED_USE+="
 		!tbb
 	)
 "
-gen_openexr_rdepend() {
-	local g1=""
-	local row
-	for row in "${OPENEXR3_PV[@]}" ; do
-		local imath_pv="${row#*:}"
-		local openexr_pv="${row%:*}"
-		g1+="
-			(
-				~dev-libs/imath-${imath_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-				~media-libs/openexr-${openexr_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-			)
-		"
-	done
-	echo "
-		|| (
-			${g1}
-		)
-	"
-}
 CUDA_12_6_DEPEND="
 	(
 		=dev-util/nvidia-cuda-toolkit-12.6*
@@ -1010,9 +948,7 @@ RDEPEND="
 		dev-util/opencl-headers:=
 	)
 	openexr? (
-		dev-libs/imath:=
-		media-libs/openexr:=
-		$(gen_openexr_rdepend)
+		>=media-libs/openexr-${OPENEXR_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	opengl? (
 		virtual/opengl:*[${MULTILIB_USEDEP}]
