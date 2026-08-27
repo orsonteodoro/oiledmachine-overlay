@@ -20,7 +20,7 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{10..14} ) # Relaxed
 
 inherit cmake flag-o-matic libcxx-slot libstdcxx-slot python-single-r1
 
