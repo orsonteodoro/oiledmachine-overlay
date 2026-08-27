@@ -925,7 +925,6 @@ RDEPEND+="
 	(
 		>=dev-libs/expat-${EXPAT_PV}:=
 		>=media-libs/opencolorio-${OPENCOLORIO_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cpu_flags_x86_sse2?,python]
-		<media-libs/opencolorio-3.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cpu_flags_x86_sse2?,python]
 	)
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
