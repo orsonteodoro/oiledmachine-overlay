@@ -90,7 +90,7 @@ SLOT="0/$(ver_cut 1-2)"
 IUSE+="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_X86[@]}
-doc opengl python static-libs test
+doc minizip-ng opengl python static-libs test
 ebuild_revision_8
 "
 REQUIRED_USE="
@@ -152,8 +152,12 @@ RDEPEND="
 	>=dev-cpp/pystring-${PYSTRING_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/expat-${EXPAT_PV}:=
 	>=media-libs/openexr-${OPENEXR_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=sys-libs/minizip-ng-${MINIZIP_NG_PV}:=
-	>=virtual/zlib-${ZLIB_PV}:=
+	!minizip-ng? (
+		>=sys-libs/zlib-${ZLIB_PV}:=[minizip]
+	)
+	minizip-ng? (
+		>=sys-libs/minizip-ng-${MINIZIP_NG_PV}:=
+	)
 	opengl? (
 		>=media-libs/openimageio-2.2.14:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		>=media-libs/lcms-${LCMS_PV}:=
@@ -214,6 +218,10 @@ pkg_setup() {
 	python-single-r1_pkg_setup
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+	if has_version "sys-libs/zlib[minizip]" && use minizip-ng ; then
+eerror "Re-emerge sys-libs/zlib with minizip disabled to continue."
+		die
+	fi
 }
 
 src_prepare() {

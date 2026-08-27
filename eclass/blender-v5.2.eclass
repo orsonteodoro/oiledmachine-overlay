@@ -134,7 +134,6 @@ CHKL_TIMESTAMPS=(
 	"media-libs/tiff-9999"
 	"media-libs/vulkan-loader-9999"
 	"media-libs/x264-9999"
-	"sys-libs/minizip-ng-9999"
 )
 
 ARM_CPU_FLAGS_3_3=(
@@ -906,12 +905,11 @@ RDEPEND+="
 	>=media-libs/libpng-${LIBPNG_PV}:=
 	>=media-libs/shaderc-2025.4:=[${LIBSTDCXX_USEDEP}]
 	>=media-libs/vulkan-loader-${VULKAN_PV}:=
-	>=sci-mathematics/manifold-3.5.2:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=sys-libs/minizip-ng-${MINIZIP_NG_PV}:=
-	>=sys-libs/zlib-${ZLIB_PV}:=
 	>=media-libs/libglvnd-${LIBGLVND_PV}:=
 	>=media-libs/libsamplerate-${LIBSAMPLERATE_PV}:=
 	>=sci-libs/ceres-solver-9999:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=sci-mathematics/manifold-3.5.2:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=virtual/zlib-${ZLIB_PV}:=
 	virtual/glu:*
 	virtual/jpeg:*
 	virtual/libintl:*
