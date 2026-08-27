@@ -13,7 +13,7 @@ LIBREMINES_PV="1.10.0"
 LINUX_PV="6.1"
 NAUTILUS_PV="44.2.1"
 OPENFOAM_PV="3.0.1"
-PYTHON_COMPAT=( "python2_7" "python3_"{7..14} ) # Relaxed
+PYTHON_COMPAT=( "python2_7" "python3_"{7..12} ) # futurize needs < 3.13
 VIM_QT_PV="20170421"
 
 inherit check-compiler-switch distutils-r1 flag-o-matic
