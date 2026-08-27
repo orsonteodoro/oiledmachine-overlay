@@ -55,6 +55,8 @@ CHKL_TIMESTAMPS=(
 	"dev-qt/qtdeclarative-6.9999"
 	"dev-qt/qtwayland-6.9999"
 	"media-libs/openexr-9999"
+	"media-libs/openimageio-3.0.9999"
+	"media-libs/openimageio-3.1.9999"
 )
 
 inherit check-compiler-switch chkl cmake cuda flag-o-matic flag-o-matic-om
@@ -219,7 +221,11 @@ CUDA_12_9_CDEPEND="
 
 RDEPEND+="
 	$(gen_llvm_depend)
-	>=media-libs/openimageio-2.5:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP}]
+	media-libs/openimageio:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP}]
+	|| (
+		=media-libs/openimageio-${OPENIMAGEIO_3_0_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP}]
+		=media-libs/openimageio-${OPENIMAGEIO_3_1_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP}]
+	)
 	>=dev-libs/boost-1.55:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	>=dev-libs/pugixml-${PUGIXML_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	>=dev-libs/libfmt-${LIBFMT_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
