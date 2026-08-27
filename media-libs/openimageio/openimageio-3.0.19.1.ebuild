@@ -208,12 +208,10 @@ REQUIRED_USE="
 "
 # Depends Mar 16, 2024
 RDEPEND+="
-	>=dev-libs/imath-${IMATH_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=media-libs/openexr-${OPENEXR_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-
 	>=dev-libs/boost-1.53:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/libfmt-${LIBFMT_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/pugixml-${PUGIXML_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=media-libs/openexr-${OPENEXR_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=media-libs/tiff-${TIFF_PV}:=
 	>=virtual/zlib-${ZLIB_PV}:=
 	>=dev-cpp/robin-map-0.6.2:=
