@@ -36,8 +36,8 @@ HOMEPAGE="https://imath.readthedocs.io"
 LICENSE="BSD"
 # For slotting, see https://github.com/AcademySoftwareFoundation/Imath/blob/v3.2.2/CMakeLists.txt#L41
 SLOT_MAJOR="${PV%%.*}"
-SO_VERSION="30"
-SLOT="${SLOT_MAJOR}/${SO_VERSION}"
+SOVER="30"
+SLOT="${SLOT_MAJOR}/${SOVER}"
 IUSE="
 doc large-stack python test
 ebuild_revision_3
@@ -83,8 +83,7 @@ BDEPEND="
 DOCS=( "CHANGES.md" "README.md" )
 
 PATCHES=(
-	"${FILESDIR}/${PN}-3.1.11-fix_cmake_module_export.patch"
-	"${FILESDIR}/${PN}-3.1.11-use-correct-boost_python_version.patch"
+#	"${FILESDIR}/${PN}-3.1.11-use-correct-boost_python_version.patch"
 )
 
 pkg_setup() {
@@ -94,12 +93,14 @@ pkg_setup() {
 }
 
 src_configure() {
-	local so_ver=$(grep -o -E "IMATH_LIBTOOL_CURRENT [0-9]+" "CMakeLists.txt" \
-		| cut -f 2 -d " ")
-einfo "SLOT:  ${SLOT}"
-einfo "SO VERSION:  ${so_ver}"
-	if ! grep -q -e "IMATH_LIBTOOL_CURRENT ${SLOT#*/}" "CMakeLists.txt" ; then
-eerror "Bump subslot to ${so_ver}"
+	local actual_sover=$(grep -o -E "IMATH_LIB_SOVERSION [0-9]+" "CMakeLists.txt" \
+		| cut -f 2 -d " " \
+		| sed -e "s|)||g")
+	local expected_sover="${SOVER}"
+einfo "Actual SOVER:  ${actual_sover}"
+einfo "Expected SOVER:  ${expected_sover}"
+	if ver_test "${actual_sover}" "-ne" "${expected_sover}" ; then
+eerror "Bump SOVER to ${actual_sover}"
 		die
 	fi
 	local mycmakeargs=(
