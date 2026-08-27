@@ -39,13 +39,15 @@ X86_CPU_FLAGS=(
 	"sse4_2:sse4_2"
 )
 CPU_FLAGS=(
-	${ARM_CPU_FLAGS[@]/#/cpu_flags_arm_}
-	${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
+	"${ARM_CPU_FLAGS[@]/#/cpu_flags_arm_}"
+	"${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}"
 )
 
 CHKL_TIMESTAMPS=(
 	"dev-cpp/tbb-9999"
+	"dev-lang/ispc-9999"
 	"media-libs/glfw-9999"
+	"x11-base/xorg-server-9999"
 )
 
 inherit check-compiler-switch chkl cmake flag-o-matic linux-info python-r1 sandbox-changes secure-version toolchain-funcs uopts
@@ -169,10 +171,10 @@ BDEPEND+="
 		>=sys-devel/gcc-${GCC_PV}:=
 	)
 	ispc? (
-		>=dev-lang/ispc-1.22.0:=
+		>=dev-lang/ispc-${ISPC_PV}:=
 	)
 	pgo? (
-		x11-base/xorg-server[xvfb]
+		>=x11-base/xorg-server-${XORG_SERVER_PV}:=[xvfb]
 		x11-apps/xhost
 	)
 	sycl? (
