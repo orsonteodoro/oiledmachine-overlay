@@ -12,8 +12,6 @@ CXX_STANDARD=17
 EGIT_COMMIT="7e0e94abf6610026aebb9ddce8564c39522fac6e" # Dec 5, 2024
 KDDOCWIDGETS_COMMIT="8d2d0a5764f8393cc148a2296d511276a8ffe559"
 OLIVE_EDITOR_CORE_COMMIT="277792824801495e868580ca86f6e7a1b53e4779"
-QT5_PV="5.6.0"
-QT6_PV="6.0.0"
 
 PATENT_STATUS_IUSE=(
 	"patent_status_nonfree"
@@ -36,7 +34,16 @@ FFMPEG_COMPAT_SLOTS=(
 	"${FFMPEG_COMPAT_SLOTS_4[@]}"
 )
 
-inherit cmake dep-prepare libcxx-slot libstdcxx-slot xdg
+CHKL_TIMESTAMPS=(
+	"dev-qt/qt5compat-6.9999"
+	"dev-qt/qtbase-6.9999"
+	"dev-qt/qtsvg-6.9999"
+	"dev-qt/qttools-6.9999"
+	"dev-util/glslang-9999"
+	"media-libs/openexr-9999"
+)
+
+inherit chkl dep-prepare libcxx-slot libstdcxx-slot secure-version xdg cmake
 
 if [[ "${PV}" == *"9999" ]]; then
 	EGIT_BRANCH="master"
@@ -74,7 +81,7 @@ SLOT="0/${MY_PV}"
 #
 IUSE+="
 ${PATENT_STATUS_IUSE[@]}
-alsa doc glslang jack +jpeg2k +lame +opus oss +png qt5 qt6 test srt +svt-av1 +theora
+alsa doc glslang jack +jpeg2k +lame +opus oss +png qt6 test srt +svt-av1 +theora
 +truetype +vorbis wayland +webp X +xvid x264 x265
 ebuild_revision_5
 "
@@ -92,10 +99,7 @@ PATENT_STATUS_REQUIRED_USE="
 "
 REQUIRED_USE="
 	${PATENT_STATUS_REQUIRED_USE}
-	^^ (
-		qt5
-		qt6
-	)
+	qt6
 	|| (
 		lame
 		opus
@@ -122,26 +126,10 @@ RESTRICT="
 PATENT_STATUS_RDEPEND="
 	virtual/patent-status[patent_status_nonfree=]
 	!patent_status_nonfree? (
-		|| (
-			media-video/ffmpeg:58.60.60[glslang=,jpeg2k?,lame?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
-			media-video/ffmpeg:57.59.59[glslang=,jpeg2k?,lame?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
-			media-video/ffmpeg:56.58.58[glslang=,jpeg2k?,lame?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
-
-			media-video/ffmpeg:0/58.60.60[glslang=,jpeg2k?,lame?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
-			media-video/ffmpeg:0/57.59.59[glslang=,jpeg2k?,lame?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
-			media-video/ffmpeg:0/56.58.58[glslang=,jpeg2k?,lame?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
-		)
+		$(secure-version_gen_ffmpeg_depends '4.4-6.1' '[glslang=,jpeg2k?,lame?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]')
 	)
 	patent_status_nonfree? (
-		|| (
-			media-video/ffmpeg:58.60.60[glslang=,jpeg2k?,lame?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
-			media-video/ffmpeg:57.59.59[glslang=,jpeg2k?,lame?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
-			media-video/ffmpeg:56.58.58[glslang=,jpeg2k?,lame?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
-
-			media-video/ffmpeg:0/58.60.60[glslang=,jpeg2k?,lame?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
-			media-video/ffmpeg:0/57.59.59[glslang=,jpeg2k?,lame?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
-			media-video/ffmpeg:0/56.58.58[glslang=,jpeg2k?,lame?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
-		)
+		$(secure-version_gen_ffmpeg_depends '4.4-6.1' '[glslang=,jpeg2k?,lame?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]')
 		x264? (
 			media-video/ffmpeg[gpl]
 		)
@@ -153,48 +141,23 @@ PATENT_STATUS_RDEPEND="
 "
 RDEPEND="
 	${PATENT_STATUS_RDEPEND}
-	>=media-libs/opencolorio-2.1.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	media-libs/opencolorio:=
-	>=media-libs/openimageio-2.1.12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},png?]
-	media-libs/openimageio:=
-	>=media-libs/portaudio-19.06.0[alsa?,jack?,oss?]
-	>=media-libs/openexr-2.3.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	dev-cpp/pystring[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	dev-cpp/pystring:=
-	dev-libs/imath[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	dev-libs/imath:=
-	media-libs/openexr:=
-	media-libs/opentimelineio[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	media-libs/opentimelineio:=
-	virtual/opengl
+	>=dev-cpp/pystring-${PYSTRING_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=media-libs/opencolorio-2.1.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=media-libs/openimageio-2.1.12:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},png?]
+	>=media-libs/portaudio-19.06.0:=[alsa?,jack?,oss?]
+	>=media-libs/openexr-${OPENEXR_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	media-libs/opentimelineio:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	virtual/opengl:*
 	glslang? (
-		dev-util/glslang[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-util/glslang:=
-	)
-	qt5? (
-		>=dev-qt/qtconcurrent-${QT5_PV}:5
-		dev-qt/qtconcurrent:=
-		>=dev-qt/qtcore-${QT5_PV}:5
-		dev-qt/qtcore:=
-		>=dev-qt/qtgui-${QT5_PV}:5[wayland?,X?]
-		dev-qt/qtgui:=
-		>=dev-qt/qtopengl-${QT5_PV}:5
-		dev-qt/qtopengl:=
-		>=dev-qt/qtsvg-${QT5_PV}:5
-		dev-qt/qtsvg:=
-		>=dev-qt/qtwidgets-${QT5_PV}:5[X?]
-		dev-qt/qtwidgets:=
+		>=dev-util/glslang-${GLSLANG_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	qt6? (
-		>=dev-qt/qt5compat-${QT6_PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-qt/qt5compat:=
-		>=dev-qt/qtbase-${QT6_PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},concurrent,gui,opengl,wayland?,widgets,X?]
-		dev-qt/qtbase:=
-		>=dev-qt/qtsvg-${QT6_PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-qt/qtsvg:=
+		>=dev-qt/qt5compat-${QT5COMPAT6_PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-qt/qtbase-${QTBASE6_PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},concurrent,gui,opengl,wayland?,widgets,X?]
+		>=dev-qt/qtsvg-${QTBASE6_PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	xvid? (
-		media-video/ffmpeg[gpl,xvid]
+		$(secure-version_gen_ffmpeg_depends '' '[gpl,xvid]')
 	)
 "
 DEPEND="
@@ -205,13 +168,8 @@ BDEPEND="
 	doc? (
 		>=app-text/doxygen-1.8.17[dot]
 	)
-	qt5? (
-		>=dev-qt/linguist-tools-${QT5_PV}:5
-		dev-qt/linguist-tools:=
-	)
 	qt6? (
-		>=dev-qt/qttools-${QT6_PV}:6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},linguist]
-		dev-qt/qttools:=
+		>=dev-qt/qttools-${QTTOOLS6_PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},linguist]
 	)
 "
 PATCHES=(
@@ -235,11 +193,6 @@ eerror
 	if use qt6 && [[ "${qt_pv_major}" != "6" ]] ; then
 eerror
 eerror "QtCore is not 6.x"
-eerror
-		die
-	elif use qt5 && [[ "${qt_pv_major}" != "5" ]] ; then
-eerror
-eerror "QtCore is not 5.x"
 eerror
 		die
 	fi
@@ -314,6 +267,7 @@ eerror
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	verify_qt_consistency
 	local mycmakeargs=(
 		-DBUILD_DOXYGEN=$(usex doc)
