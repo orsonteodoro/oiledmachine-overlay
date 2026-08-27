@@ -72,9 +72,18 @@ CHKL_TIMESTAMPS=(
 inherit cflags-hardened check-compiler-switch chkl cmake flag-o-matic font
 inherit libcxx-slot libstdcxx-slot llvm secure-version virtualx python-single-r1
 
-KEYWORDS="~amd64 ~arm64"
-S="${WORKDIR}/OpenImageIO-${PV}"
-SRC_URI="
+if [[ "${PV}" =~ "9999" ]] ; then
+	INTERNAL_VERSION="3.0.21.0"
+	SOVER=$(ver_cut "1-3" "${INTERNAL_VERSION}")
+	FALLBACK_COMMIT="710eeafcf7cd75fbfd5e34387ee4c373aa875356"
+	EGIT_BRANCH="dev-3.0"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/OpenImageIO-${PV}"
+	EGIT_REPO_URI="https://github.com/AcademySoftwareFoundation/OpenImageIO.git"
+	inherit git-r3
+else
+	SOVER=$(ver_cut "1-2" "${PV}")
+	KEYWORDS="~amd64 ~arm64"
+	SRC_URI="
 https://github.com/OpenImageIO/oiio/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 	test? (
@@ -100,7 +109,9 @@ https://www.cv.nrao.edu/fits/data/tests/pg93/tst0013.fits
 https://www.itu.int/wftp3/Public/t/testsignal/SpeImage/T803/v2002_11/J2KP4files.zip
 		)
 	)
-"
+	"
+fi
+S="${WORKDIR}/OpenImageIO-${PV}"
 
 DESCRIPTION="A library for reading and writing images"
 HOMEPAGE="
@@ -115,7 +126,7 @@ RESTRICT="
 "
 
 RESTRICT+=" mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0/${SOVER}"
 # font install is enabled upstream
 # building test enabled upstream
 IUSE+="
@@ -383,6 +394,34 @@ pkg_setup() {
 	libstdcxx-slot_verify
 }
 
+src_unpack() {
+	local actual_sover
+	local expected_sover="${SOVER}"
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+		actual_sover=$(grep -E -e "OpenImageIO_VERSION" "${S}/CMakeLists.txt" \
+			| head -n 1 \
+			| grep -o -E -e "[.0-9]+" \
+			| cut -f "1-3" -d ".")
+	else
+		unpack ${A}
+		actual_sover=$(grep -E -e "OpenImageIO_VERSION" "${S}/CMakeLists.txt" \
+			| head -n 1 \
+			| grep -o -E -e "[.0-9]+" \
+			| cut -f "1-2" -d ".")
+	fi
+	if ver_test "${actual_sover}" "-ne" "${expected_sover}" ; then
+eerror "QA:  Update SOVER, INTERNAL_VERSION, or PV"
+eerror "Actual SOVER:  ${actual_sover}"
+eerror "Expected SOVER:  ${expected_sover}"
+		die
+	fi
+}
+
 src_prepare() {
 	if ! use dicom; then
 		rm -r \
@@ -449,7 +488,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	use ffmpeg && ffmpeg_src_configure
 
 	local has_qt="OFF"
-	if use qt5 || use qt6 ; then
+	if use qt6 ; then
 		has_qt="ON"
 	fi
 
