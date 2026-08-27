@@ -57,7 +57,6 @@ CPU_FLAGS_X86=(
 CHKL_TIMESTAMPS=(
 	"dev-cpp/yaml-cpp-9999"
 	"dev-libs/expat-9999"
-	"dev-libs/tinyxml-9999"
 	"media-libs/lcms-9999"
 	"media-libs/openexr-9999"
 	"media-libs/osl-9999"
@@ -152,7 +151,6 @@ RDEPEND="
 	>=dev-cpp/yaml-cpp-${YAML_CPP_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-cpp/pystring-${PYSTRING_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/expat-${EXPAT_PV}:=
-	>=dev-libs/tinyxml-${TINYXML_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=media-libs/openexr-${OPENEXR_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=sys-libs/minizip-ng-${MINIZIP_NG_PV}:=
 	>=virtual/zlib-${ZLIB_PV}:=
