@@ -6,7 +6,7 @@ EAPI=8
 # U22, U24
 
 # Requirements:
-# https://github.com/AcademySoftwareFoundation/OpenImageIO/blob/v3.0.10.1/INSTALL.md
+# https://github.com/AcademySoftwareFoundation/OpenImageIO/blob/dev-3.0/INSTALL.md
 # For OpenEXR to imath correspondence, see https://github.com/AcademySoftwareFoundation/openexr/blob/v3.4.0/MODULE.bazel
 
 CFLAGS_HARDENED_USE_CASES="ip-assets security-critical untrusted-data"
@@ -15,7 +15,7 @@ CXX_STANDARD="17"
 FONT_PN="OpenImageIO"
 LIBCXX_USEDEP_DEV="gcc_slot_skip(+)"
 LIBSTDCXX_USEDEP_DEV="gcc_slot_skip(+)"
-LLVM_MAX_SLOT="19"
+LLVM_MAX_SLOT="22"
 ONETBB_SLOT="0"
 OPENVDB_APIS=( {12..9} )
 PYTHON_COMPAT=( "python3_"{7..13} )
@@ -29,7 +29,7 @@ GCC_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19, 21, 22
 )
 
 inherit ffmpeg
