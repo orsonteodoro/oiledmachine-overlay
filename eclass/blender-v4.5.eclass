@@ -115,6 +115,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/expat-9999"
 	"dev-libs/fribidi-9999"
 	"dev-libs/jemalloc-9999"
+	"dev-libs/libfmt-9999"
 	"dev-libs/wayland-9999"
 	"dev-util/glslang-9999"
 	"dev-util/vulkan-headers-9999"
@@ -131,6 +132,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libwebp-9999"
 	"media-libs/opencolorio-9999"
 	"media-libs/openexr-9999"
+	"media-libs/openimageio-3.0.9999"
 	"media-libs/openjpeg-9999"
 	"media-libs/opus-9999"
 	"media-libs/tiff-9999"
@@ -745,10 +747,12 @@ gen_oiio_depends() {
 	echo "
 		(
 			>=dev-cpp/robin-map-1.3.0:=
-			>=dev-libs/libfmt-9.1.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+			>=dev-libs/libfmt-${LIBFMT_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 
-			>=media-libs/openimageio-3.0.6.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},color-management?,jpeg2k?,png,python,tools(+),webp?]
-			<media-libs/openimageio-3.1.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},color-management?,jpeg2k?,png,python,tools(+),webp?]
+			>=media-libs/openimageio-${OPENIMAGEIO_3_0_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},color-management?,jpeg2k?,png,python,tools(+),webp?]
+			|| (
+				=media-libs/openimageio-3.0*:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},color-management?,jpeg2k?,png,python,tools(+),webp?]
+			)
 		)
 	"
 }
