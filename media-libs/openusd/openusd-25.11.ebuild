@@ -209,8 +209,8 @@ RDEPEND+="
 		>=media-libs/opencolorio-2.2.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	openexr? (
-		media-libs/openexr:=
 		dev-libs/imath:=
+		media-libs/openexr:=
 		$(gen_openexr_pairs)
 	)
 	opengl? (
@@ -219,7 +219,6 @@ RDEPEND+="
 	openimageio? (
 		>=media-libs/libpng-1.6.29:=
 		>=media-libs/openimageio-2.5.16.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		media-libs/openimageio:=
 		>=media-libs/tiff-4.0.7:=
 		virtual/jpeg:*
 	)
