@@ -126,7 +126,7 @@ src_configure() {
 		-DEIGENSPARSE="yes"
 		-DMINIGLOG="no"
 		-DCUSTOM_BLAS="yes"
-		-DUSE_CUDA="$(usex cuda)"
+		-DWITH_CUDA="$(usex cuda)"
 	)
 
 	if use cuda; then
