@@ -97,7 +97,7 @@ REQUIRED_USE+="
 "
 RDEPEND+="
 	media-libs/openimageio:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	virtual/opengl
+	virtual/opengl:*
 	kernel_linux? (
 		x11-libs/libX11:=
 	)
