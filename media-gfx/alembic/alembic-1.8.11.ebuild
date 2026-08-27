@@ -48,7 +48,7 @@ LICENSE="
 SOVER=$(ver_cut "1-2" "${PV}")
 SLOT="0/${SOVER}"
 IUSE="
-examples hdf5 python test
+doc examples hdf5 python test
 ebuild_revision_13
 "
 REQUIRED_USE="
