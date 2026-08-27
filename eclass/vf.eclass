@@ -737,6 +737,9 @@ einfo "UPTR = Uninitialized Pointer"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UFNPTR"($|" "|";"|",") ]] ; then
 einfo "UFNPTR = Uninitialized Function Pointer"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UMVAR"($|" "|";"|",") ]] ; then
+einfo "UMVAR = Uninitialized Member Variable"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UVAL"($|" "|";"|",") ]] ; then
 einfo "UVAL = Uninitialized Value"
 		fi
