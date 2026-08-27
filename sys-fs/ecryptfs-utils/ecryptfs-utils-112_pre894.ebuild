@@ -14,7 +14,7 @@ CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="PE"
 LANGS=( "ca" )
-PYTHON_COMPAT=( "python3_"{11..14} ) # Relaxed
+PYTHON_COMPAT=( "python3_"{11..12} ) # futurize needs < 3.13
 
 inherit autotools cflags-hardened flag-o-matic linux-info pam python-single-r1 sandbox-changes
 
