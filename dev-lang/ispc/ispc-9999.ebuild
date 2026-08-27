@@ -17,8 +17,8 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="PE"
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 CMAKE_MAKEFILE_GENERATOR="emake"
 CXX_STANDARD=17
-LLVM_MAX_SLOT="19"
-PYTHON_COMPAT=( "python3_"{10..11} )
+LLVM_MAX_SLOT="23" # Upstream tests with LLVM 23 on U22
+PYTHON_COMPAT=( "python3_"{10..14} ) # Relaxed
 UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
@@ -26,17 +26,23 @@ UOPTS_SUPPORT_TPGO=1
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 18, 19
-) # See https://github.com/ispc/ispc/blob/v1.28.2/src/ispc_version.h
+	{20..23}
+) # For supported LLVM, see https://github.com/ispc/ispc/blob/main/src/ispc_version.h#L36
 
-inherit check-compiler-switch cflags-hardened cmake flag-o-matic libcxx-slot python-any-r1 llvm toolchain-funcs uopts
+inherit check-compiler-switch cflags-hardened cmake flag-o-matic libcxx-slot python-any-r1 llvm secure-version toolchain-funcs uopts
 
 if [[ "${PV}" =~ "9999" ]]; then
-	inherit git-r3
+	INTERNAL_VERSION="1.32.0"
+	SOVER=$(ver_cut "1" "${INTERNAL_VERSION}")
+	FALLBACK_COMMIT=""
+	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/ispc/ispc.git"
-	FALLBACK_COMMIT="5bf8fb90b34122b55813d3198fb45c42478d51ca" # Sep 24, 2025
-	IUSE+=" fallback-commit"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
 else
+	SOVER=$(ver_cut "1" "${PV}")
 	BENCHMARK_COMMIT="a6ad7fbbdc2e14fab82bb8a6d27760d700198cbf"
 	GTEST_COMMIT="f8d7d77c06936315286eb55f8de22cd23c188571"
 	SRC_URI="
@@ -69,13 +75,18 @@ RESTRICT="
 		test
 	)
 "
-SLOT="0"
+SLOT="0/${SOVER}"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-+cpu +examples -fast-math lto +openmp pthread tbb test +video_cards_intel -xe
+clang +cpu +examples -fast-math gcc lto +openmp pthread tbb test
++video_cards_intel -xe
 ebuild_revision_25
 "
 REQUIRED_USE+="
+	^^ (
+		clang
+		gcc
+	)
 	kernel_Darwin? (
 		^^ (
 			pthread
@@ -140,30 +151,33 @@ gen_omp_depends() {
 }
 RDEPEND="
 	$(gen_llvm_depends)
-	>=virtual/zlib-1.2.11
+	>=virtual/zlib-${ZLIB_PV}:=
 	openmp? (
-		|| (
+		clang? (
 			$(gen_omp_depends)
-			>=sys-devel/gcc-11.3[openmp]
+		)
+		gcc? (
+			>=sys-devel/gcc-12:=[openmp]
 		)
 	)
 	tbb? (
-		>=dev-cpp/tbb-2021.5.0:0
+		>=dev-cpp/tbb-${TBB_PV}:=
 	)
 	video_cards_intel? (
-		>=dev-libs/level-zero-1.10.0
+		>=dev-libs/level-zero-1.20.2:=
 	)
 "
 DEPEND="
 	${RDEPEND}
 "
+# intel-vc-intrinsics should be live but relaxed
 BDEPEND="
 	${PYTHON_DEPS}
 	>=sys-devel/bison-3.8.2
 	>=sys-devel/flex-2.6.4
 	video_cards_intel? (
-		>=dev-util/spirv-llvm-translator-15
-		>=dev-libs/intel-vc-intrinsics-0.12
+		>=dev-util/spirv-llvm-translator-23.1.0
+		>=dev-libs/intel-vc-intrinsics-0.25
 	)
 "
 PATCHES=(
@@ -173,7 +187,7 @@ PATCHES=(
 pkg_setup() {
 	check-compiler-switch_start
 	local s
-	for s in ${LLVM_COMPAT[@]} ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
 		if use "llvm_slot_${s}" ; then
 			export LLVM_MAX_SLOT=${s}
 			break
@@ -184,30 +198,25 @@ pkg_setup() {
 	python-any-r1_pkg_setup
 	uopts_setup
 	libcxx-slot_verify
+	if tc-is-clang ; then
+		use clang || die "Enable the clang USE flag"
+	fi
+	if tc-is-gcc ; then
+		use gcc || die "Enable the gcc USE flag"
+	fi
 }
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]]; then
-		use fallback-commit && export EGIT_COMMIT="${FALLBACK_COMMIT}"
+		if in_iuse fallback-commit && use fallback-commit ; then
+			export EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
 		git-r3_fetch
 		git-r3_checkout
 		cd "${S}" || die
 		local actual_pv=$(grep -r -e "ISPC_VERSION " "common/version.h" \
 			| sed -e "s|dev||g" \
 			| cut -f 2 -d '"')
-		local expected_pv=$(ver_cut 1-3 ${PV})
-		if ver_test "${actual_pv}" -ne "${expected_pv}" ; then
-eerror
-eerror "Version mismatch detected that might result in broken patches or"
-eerror "incompatible *DEPENDs."
-eerror
-eerror "Expected version:\t${expected_pv}"
-eerror "Actual version:\t${actual_pv}"
-eerror
-eerror "Use the fallback-commit USE flag to continue."
-eerror
-			die
-		fi
 	else
 		unpack "${P}.tar.gz"
 		if use bolt || use pgo ; then
@@ -233,6 +242,14 @@ eerror
 				"${d}" \
 				|| die
 		fi
+	fi
+	local actual_sover=$(grep -E -e "ISPC_VERSION_MAJOR" "${S}/common/version.h" | cut -f 3 -d " ")
+	local expected_sover="${SOVER}"
+	if ver_test "${actual_sover}" -ne "${expected_sover}" ; then
+eerror "QA:  Update SOVER, INTERNAL_VERSION, or PV"
+eerror "Actual SOVER:  ${actual_sover}"
+eerror "Expected SOVER:  ${expected_sover}"
+		die
 	fi
 }
 
@@ -402,7 +419,7 @@ train_trainer_custom() {
 src_test() {
 	# Set the path to prevent using the already installed ispc.
 	PATH="${BUILD_DIR}/bin:${PATH}" \
-	${EPYTHON} ./run_tests.py \
+	"${EPYTHON}" ./run_tests.py \
 		|| die "Testing failed under ${EPYTHON}"
 }
 
