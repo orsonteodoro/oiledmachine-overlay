@@ -27,45 +27,21 @@ LLVM_COMPAT=(
 )
 
 ONETBB_SLOT="0"
-OPENEXR_V3_PV=(
-	# openexr:imath
-	"3.4.12:3.2.2"
-	"3.4.11:3.2.2"
-	"3.4.10:3.2.2"
-	"3.4.9:3.2.2"
-	"3.4.8:3.2.2"
-	"3.4.7:3.2.2"
-	"3.4.6:3.2.2"
-	"3.4.5:3.2.2"
-	"3.4.4:3.2.2"
-	"3.4.3:3.2.2"
-	"3.4.2:3.2.2"
-	"3.4.1:3.2.1"
-	"3.4.0:3.2.1"
-	"3.3.11:3.1.12"
-	"3.3.10:3.1.12"
-	"3.3.9:3.1.12"
-	"3.3.8:3.1.12"
-	"3.3.7:3.1.12"
-	"3.3.6:3.1.12"
-	"3.3.5:3.1.12"
-	"3.3.4:3.1.12"
-	"3.3.3:3.1.12"
-	"3.3.2:3.1.12"
-	"3.3.1:3.1.12"
-	"3.3.0:3.1.11"
-	"3.2.4:3.1.10"
-	"3.2.3:3.1.10"
-	"3.2.2:3.1.9"
-	"3.2.1:3.1.9"
-	"3.2.0:3.1.9"
-	"3.1.13:3.1.9"
-)
 PYTHON_COMPAT=( "python3_"{9..14} )
 VULKAN_PV="1.4.321.0"
 
-inherit cflags-hardened check-compiler-switch cmake libcxx-slot libstdcxx-slot
-inherit python-single-r1 flag-o-matic
+CHKL_TIMESTAMPS=(
+	"dev-cpp/tbb-9999"
+	"dev-libs/jemalloc-usd-9999"
+	"media-libs/libpng-9999"
+	"media-libs/openexr-9999"
+	"media-libs/osl-9999"
+	"media-libs/tiff-9999"
+	"x11-libs/libX11-9999"
+)
+
+inherit cflags-hardened check-compiler-switch chkl libcxx-slot libstdcxx-slot
+inherit python-single-r1 flag-o-matic secure-version cmake
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/OpenUSD-${PV}"
@@ -154,32 +130,12 @@ REQUIRED_USE+="
 	)
 "
 
-gen_openexr_pairs() {
-	local g1=""
-	local row
-	for row in ${OPENEXR_V3_PV[@]} ; do
-		local imath_pv="${row#*:}"
-		local openexr_pv="${row%:*}"
-		g1+="
-			(
-				~media-libs/openexr-${openexr_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-				~dev-libs/imath-${imath_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-			)
-		"
-	done
-	echo "
-	|| (
-		${g1}
-	)
-	"
-}
-
 # TODO experimental
 # Missing GraphViz
 # Missing RenderMan
 RDEPEND+="
-	>=dev-cpp/tbb-2021:${ONETBB_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=virtual/zlib-1.2.11:=
+	>=dev-cpp/tbb-${TBB_PV}:${ONETBB_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=virtual/zlib-${ZLIB_PV}:=
 	!python? (
 		>=dev-libs/boost-${BOOST_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
@@ -190,17 +146,17 @@ RDEPEND+="
 		>=media-libs/draco-1.5.6:=
 	)
 	embree? (
-		>=media-libs/embree-4.3.3:=
+		>=media-libs/embree-${EMBREE_PV}:=
 	)
 	hdf5? (
 		>=sci-libs/hdf5-1.10:=[cxx,hl]
 	)
 	imaging? (
 		>=media-libs/opensubdiv-3.6.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		x11-libs/libX11:=
+		>=x11-libs/libX11-${LIBX11_PV}:=
 	)
 	jemalloc? (
-		dev-libs/jemalloc-usd:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-libs/jemalloc-usd-${JEMALLOC_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	materialx? (
 		>=media-libs/materialx-1.39.4:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
@@ -209,17 +165,15 @@ RDEPEND+="
 		>=media-libs/opencolorio-2.2.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	openexr? (
-		dev-libs/imath:=
-		media-libs/openexr:=
-		$(gen_openexr_pairs)
+		>=media-libs/openexr-${OPENEXR_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	opengl? (
 		>=media-libs/glew-2.0.0:=
 	)
 	openimageio? (
-		>=media-libs/libpng-1.6.29:=
+		>=media-libs/libpng-${LIBPNG_PV}:=
 		>=media-libs/openimageio-2.5.16.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		>=media-libs/tiff-4.0.7:=
+		>=media-libs/tiff-${TIFF_PV}:=
 		virtual/jpeg:*
 	)
 	openvdb? (
@@ -227,7 +181,7 @@ RDEPEND+="
 		>=media-gfx/openvdb-10.1.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	osl? (
-		>=media-libs/osl-1.13.11:=
+		>=media-libs/osl-${OSL_PV}:=
 	)
 	ptex? (
 		>=media-libs/ptex-2.4.2:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
@@ -303,6 +257,7 @@ src_prepare() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	check-compiler-switch_end
 	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
 	# Prevent static-libs IR mismatch.
