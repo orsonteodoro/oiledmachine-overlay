@@ -416,7 +416,7 @@ SECURE_TIMESTAMP["sys_libs_libsepol_9999"]="Jul 31, 2026 1:03 PM PDT"
 SECURE_TIMESTAMP["sys_libs_libunwind_9999"]="Jun 19, 2026 9:44 AM PDT"
 SECURE_TIMESTAMP["sys_libs_minizip_ng_9999"]="Aug 6, 2026 9:47 PM PDT"
 SECURE_TIMESTAMP["sys_libs_readline_9999"]="2025-12-10 8:10 AM PST"
-SECURE_TIMESTAMP["sys_libs_pam_9999"]="Jun 30, 2026 3:00 AM PDT"
+SECURE_TIMESTAMP["sys_libs_pam_9999"]="Jul 30, 2026 8:07 AM PDT"
 
 #
 # The linux-firmware timestamp currently tracks based on vulnerability keyword
