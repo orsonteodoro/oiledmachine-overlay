@@ -74,7 +74,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_X86[@]}
-test tiff utils
+doc test tiff utils
 "
 REQUIRED_USE="
 	cpu_flags_x86_sse2? (
