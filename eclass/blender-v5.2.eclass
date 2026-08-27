@@ -736,9 +736,9 @@ gen_oiio_depends() {
 			>=dev-cpp/robin-map-1.3.0:=
 			>=dev-libs/libfmt-${LIBFMT_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 
-			>=media-libs/openimageio-${OPENIMAGEIO_3_1_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},color-management?,heif?,jpeg2k?,png,python,tools(+),webp?]
+			media-libs/openimageio:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},color-management?,heif?,jpeg2k?,png,python,tools(+),webp?]
 			|| (
-				>=media-libs/openimageio-3.1*:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},color-management?,heif?,jpeg2k?,png,python,tools(+),webp?]
+				=media-libs/openimageio-${OPENIMAGEIO_3_1_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},color-management?,heif?,jpeg2k?,png,python,tools(+),webp?]
 			)
 
 			heif? (
