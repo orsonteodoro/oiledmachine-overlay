@@ -4,7 +4,7 @@
 
 EAPI=8
 
-DISTUTILS_USE_PEP517="flit"
+DISTUTILS_USE_PEP517=no # Must be no to avoid circular dependency
 PYTHON_COMPAT=( "python3_"{10..14} "pypy3_11" )
 
 inherit distutils-r1 pypi
@@ -37,23 +37,28 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+=" test test-full"
-RDEPEND+="
+# Prevent circular deps by not adding flit-core to *DEPENDs
+RDEPEND="
 	>=dev-python/installer-0.5[${PYTHON_USEDEP}]
 	$(python_gen_cond_dep '
 		>=dev-python/tomli-1.2.3[${PYTHON_USEDEP}]
 	' python3_10)
 "
-DEPEND+="
+DEPEND="
 	${RDEPEND}
 "
-BDEPEND+="
+DISABLED_BDEPEND="
 	>=dev-python/flit-core-3.2[${PYTHON_USEDEP}]
 	<dev-python/flit-core-4[${PYTHON_USEDEP}]
+	test-full? (
+		dev-python/flit_core[${PYTHON_USEDEP}]
+	)
+"
+BDEPEND="
 	test? (
 		dev-python/pytest[${PYTHON_USEDEP}]
 	)
 	test-full? (
-		dev-python/flit_core[${PYTHON_USEDEP}]
 		dev-python/hatchling[${PYTHON_USEDEP}]
 		dev-python/pdm-pep517[${PYTHON_USEDEP}]
 		dev-python/poetry-core[${PYTHON_USEDEP}]

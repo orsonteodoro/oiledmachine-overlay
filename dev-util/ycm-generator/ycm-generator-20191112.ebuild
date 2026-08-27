@@ -171,17 +171,11 @@ RDEPEND+="
 		)
 	)
 "
-CDEPEND+="
-	dev-python/future[${PYTHON_USEDEP}]
-"
-RDEPEND+="
-	${CDEPEND}
-"
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	${CDEPEND}
+	dev-python/future:=[${PYTHON_USEDEP}]
 	test? (
 		cmake? (
 			|| (
