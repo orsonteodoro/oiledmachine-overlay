@@ -6,7 +6,6 @@
 
 EAPI=8
 
-AOCC_COMPAT=( 14 16 )
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO IO"
 LIBVPX_TESTDATA_VER="1.14.1"
@@ -30,7 +29,7 @@ _TRAINERS="
 	"libvpx_trainers_lossless_quick"
 "
 
-inherit aocc cflags-hardened check-compiler-switch flag-o-matic flag-o-matic-om llvm multilib-minimal
+inherit cflags-hardened check-compiler-switch flag-o-matic flag-o-matic-om llvm multilib-minimal
 inherit python-single-r1 toolchain-funcs uopts
 
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -429,11 +428,7 @@ pkg_setup() {
 	check-compiler-switch_start
 	python-single-r1_pkg_setup
 	__pgo_setup
-	if use aocc ; then
-		aocc_pkg_setup
-	else
-		llvm_pkg_setup
-	fi
+	llvm_pkg_setup
 	uopts_setup
 }
 
@@ -451,7 +446,7 @@ src_unpack() {
 
 src_prepare() {
 	default
-	if tc-is-clang || use aocc ; then
+	if tc-is-clang ; then
 		eapply "${FILESDIR}/libvpx-1.10.0-cfi-static-link.patch"
 		eapply "${FILESDIR}/libvpx-1.14.0-add-cxxflags-to-linking-libvpx.patch"
 		eapply "${FILESDIR}/libvpx-1.10.0-add-cxxflags-to-linking-examples.patch"
@@ -475,13 +470,9 @@ src_prepare() {
 src_configure() { :; }
 
 _src_configure_compiler() {
-	if use aocc ; then
-		aocc_src_configure
-	else
-		export CC=$(tc-getCC)
-		export CXX=$(tc-getCXX)
-		export CPP=$(tc-getCPP)
-	fi
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+	export CPP=$(tc-getCPP)
 	strip-unsupported-flags
 }
 
@@ -536,10 +527,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 	if tc-is-clang && has_version "llvm-runtimes/compiler-rt-sanitizers[cfi]" ; then
 		append_all -fno-sanitize=cfi-icall # Prevent illegal instruction with vpxenc --help
 	fi
-	if use aocc ; then
-		CFLAGS_HARDENED_IGNORE_SANITIZER_CHECK=1
-		CFLAGS_HARDENED_NO_COMPILER_SWITCH=1
-	fi
+	CFLAGS_HARDENED_IGNORE_SANITIZER_CHECK=1
+	CFLAGS_HARDENED_NO_COMPILER_SWITCH=1
 	cflags-hardened_append
 
 	if use chromium && [[ "${lib_type}" == "static" ]] ; then

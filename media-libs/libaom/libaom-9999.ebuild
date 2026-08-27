@@ -5,7 +5,6 @@
 
 EAPI=8
 
-AOCC_COMPAT=( 14 16 )
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO HO IO UAF"
 CMAKE_ECLASS="cmake"
@@ -78,7 +77,7 @@ _TRAINERS=(
 	"libaom_trainers_lossless_quick"
 )
 
-inherit aocc cflags-hardened check-compiler-switch cmake-multilib flag-o-matic flag-o-matic-om
+inherit cflags-hardened check-compiler-switch cmake-multilib flag-o-matic flag-o-matic-om
 inherit libcxx-slot libstdcxx-slot multiprocessing python-single-r1 toolchain-funcs uopts
 
 if [[ "${PV}" == *"9999"* ]]; then
@@ -134,7 +133,6 @@ ebuild_revision_52
 "
 REQUIRED_USE="
 	^^ (
-		aocc
 		clang
 		gcc
 	)
@@ -366,9 +364,6 @@ check_video() {
 pkg_setup() {
 	check-compiler-switch_start
 	python-single-r1_pkg_setup
-	if use aocc ; then
-		aocc_pkg_setup
-	fi
 
 	LIBAOM_TRAINING_MAX_ASSETS_PER_TYPE=${LIBAOM_TRAINING_MAX_ASSETS_PER_TYPE:-100}
 	if use chromium ; then
@@ -409,9 +404,7 @@ eerror "CC/CXX must must be >=llvm-core/clang-${CLANG_MIN_SLOT}"
 			die
 		fi
 	fi
-	if ! use aocc ; then
-		libcxx-slot_verify
-	fi
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 
@@ -531,18 +524,14 @@ append_all() {
 }
 
 _src_configure_compiler() {
-	if use aocc ; then
-		aocc_src_configure
-	else
-		export CC=$(tc-getCC)
-		export CXX=$(tc-getCXX)
-		export CPP="${CC} -E"
-		if tc-is-clang ; then
-			use clang || die "Enable the clang USE flag"
-		fi
-		if tc-is-gcc ; then
-			use gcc || die "Enable the gcc USE flag"
-		fi
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+	export CPP="${CC} -E"
+	if tc-is-clang ; then
+		use clang || die "Enable the clang USE flag"
+	fi
+	if tc-is-gcc ; then
+		use gcc || die "Enable the gcc USE flag"
 	fi
 	strip-unsupported-flags
 }
@@ -652,10 +641,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 	if tc-is-clang && has_version "llvm-runtimes/compiler-rt-sanitizers[cfi]" ; then
 		append_all -fno-sanitize=cfi-icall
 	fi
-	if use aocc ; then
-		CFLAGS_HARDENED_IGNORE_SANITIZER_CHECK=1
-		CFLAGS_HARDENED_NO_COMPILER_SWITCH=1
-	fi
+	CFLAGS_HARDENED_IGNORE_SANITIZER_CHECK=1
+	CFLAGS_HARDENED_NO_COMPILER_SWITCH=1
 	cflags-hardened_append
 
 	if use chromium && [[ "${lib_type}" == "static" ]] ; then
