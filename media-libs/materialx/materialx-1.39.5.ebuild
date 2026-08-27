@@ -21,7 +21,15 @@ LLVM_COMPAT=(
 
 PYTHON_COMPAT=( "python3_"{10..14} ) # Relaxed requirements for Blender
 
-inherit cmake libcxx-slot libstdcxx-slot python-single-r1
+CHKL_TIMESTAMPS=(
+	"dev-libs/wayland-9999"
+	"media-libs/openimageio-3.0.9999"
+	"media-libs/openimageio-3.1.9999"
+	"x11-libs/libX11-9999"
+	"x11-libs/libxkbcommon-9999"
+)
+
+inherit chkl cmake libcxx-slot libstdcxx-slot secure-version python-single-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="7b64921ef1d42f2d57871e9d2c43dc11f041f26b"
@@ -97,9 +105,13 @@ REQUIRED_USE+="
 "
 RDEPEND+="
 	media-libs/openimageio:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	|| (
+		=media-libs/openimageio-${OPENIMAGEIO_3_0_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		=media-libs/openimageio-${OPENIMAGEIO_3_1_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	)
 	virtual/opengl:*
 	kernel_linux? (
-		x11-libs/libX11:=
+		>=x11-libs/libX11-${LIBX11_PV}:=
 	)
 	python? (
 		$(python_gen_cond_dep '
@@ -107,10 +119,10 @@ RDEPEND+="
 		')
 	)
 	wayland? (
-		dev-libs/wayland:=
+		>=dev-libs/wayland-${WAYLAND_PV}:=
+		>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=
 		dev-libs/wayland-protocols:=
 		dev-util/wayland-scanner:=
-		x11-libs/libxkbcommon:=
 	)
 "
 DEPEND+="
@@ -225,6 +237,7 @@ src_unpack() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	addpredict /usr/lib/materialx
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}"
