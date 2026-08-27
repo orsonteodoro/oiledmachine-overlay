@@ -282,10 +282,10 @@ src_prepare() {
 
 python_configure() {
 	cython_python_configure
-	cargo_src_configure
 }
 
 src_configure() {
+	cargo_src_configure
 	distutils-r1_src_configure
 }
 
