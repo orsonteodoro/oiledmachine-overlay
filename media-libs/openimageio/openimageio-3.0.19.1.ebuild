@@ -19,8 +19,6 @@ LLVM_MAX_SLOT="19"
 ONETBB_SLOT="0"
 OPENVDB_APIS=( {12..9} )
 PYTHON_COMPAT=( "python3_"{7..13} )
-QT5_PV="5.15"
-QT6_PV="6.6"
 TEST_OEXR_IMAGE_COMMIT="df16e765fee28a947244657cae3251959ae63c00" # committer-date:<=2024-05-01
 TEST_OIIO_IMAGE_COMMIT="aae37a54e31c0e719edcec852994d052ecf6541e" # committer-date:<=2024-05-01
 
@@ -43,50 +41,6 @@ FFMPEG_COMPAT_SLOTS=(
 	"${FFMPEG_COMPAT_SLOTS_4[@]}"
 )
 
-OPENEXR_V3_PV=(
-	# openexr:imath
-	"3.4.12:3.2.2"
-	"3.4.11:3.2.2"
-	"3.4.10:3.2.2"
-	"3.4.9:3.2.2"
-	"3.4.8:3.2.2"
-	"3.4.7:3.2.2"
-	"3.4.6:3.2.2"
-	"3.4.5:3.2.2"
-	"3.4.4:3.2.2"
-	"3.4.3:3.2.2"
-	"3.4.2:3.2.2"
-	"3.4.1:3.2.1"
-	"3.4.0:3.2.1"
-	"3.3.11:3.1.12"
-	"3.3.10:3.1.12"
-	"3.3.9:3.1.12"
-	"3.3.8:3.1.12"
-	"3.3.7:3.1.12"
-	"3.3.6:3.1.12"
-	"3.3.5:3.1.12"
-	"3.3.4:3.1.12"
-	"3.3.3:3.1.12"
-	"3.3.2:3.1.12"
-	"3.3.1:3.1.12"
-	"3.3.0:3.1.11"
-	"3.2.4:3.1.10"
-	"3.2.3:3.1.10"
-	"3.2.2:3.1.9"
-	"3.2.1:3.1.9"
-	"3.2.0:3.1.9"
-	"3.1.13:3.1.9"
-	"3.1.12:3.1.9"
-	"3.1.11:3.1.9"
-	"3.1.10:3.1.9"
-	"3.1.9:3.1.9"
-	"3.1.8:3.1.8"
-	"3.1.7:3.1.7"
-	"3.1.6:3.1.5"
-	"3.1.5:3.1.5"
-	"3.1.4:3.1.4"
-)
-
 X86_CPU_FEATURES=(
 	"aes:aes"
 	"avx:avx"
@@ -101,8 +55,24 @@ X86_CPU_FEATURES=(
 )
 CPU_FEATURES=( "${X86_CPU_FEATURES[@]/#/cpu_flags_x86_}" ) # Place after X86_CPU_FEATURES
 
-inherit cflags-hardened check-compiler-switch cmake flag-o-matic font
-inherit libcxx-slot libstdcxx-slot llvm python-single-r1 virtualx
+CHKL_TIMESTAMPS=(
+	"dev-cpp/tbb-9999"
+	"dev-libs/libfmt-9999"
+	"dev-libs/openssl-4.0.9999"
+	"dev-libs/openssl-3.6.9999"
+	"dev-libs/openssl-3.5.9999"
+	"dev-libs/openssl-3.4.9999"
+	"dev-libs/openssl-3.0.9999"
+	"media-libs/giflib-9999"
+	"media-libs/libjpeg-turbo-9999"
+	"media-libs/libjxl-9999"
+	"media-libs/libpng-9999"
+	"media-libs/opencv-4.9999"
+	"media-libs/tiff-9999"
+)
+
+inherit cflags-hardened check-compiler-switch chkl cmake flag-o-matic font
+inherit libcxx-slot libstdcxx-slot llvm secure-version virtualx python-single-r1
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/OpenImageIO-${PV}"
@@ -154,7 +124,7 @@ IUSE+="
 ${CPU_FEATURES[@]%:*}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 aom avif clang color-management cuda dds dicom +doc ffmpeg field3d fits
-gcc gif gui heif icc j2c jpeg2k jxl opencv opengl openvdb png ptex +python qt5 +qt6 raw
+gcc gif gui heif icc j2c jpeg2k jxl opencv opengl openvdb png ptex +python +qt6 raw
 rav1e tbb tools +truetype wayland webp X
 ebuild_revision_45
 "
@@ -217,7 +187,6 @@ REQUIRED_USE="
 	)
 	opengl? (
 		|| (
-			qt5
 			qt6
 		)
 	)
@@ -226,9 +195,6 @@ REQUIRED_USE="
 	)
 	python? (
 		${PYTHON_REQUIRED_USE}
-	)
-	qt5? (
-		opengl
 	)
 	qt6? (
 		opengl
@@ -240,29 +206,18 @@ REQUIRED_USE="
 		openvdb
 	)
 "
-gen_openexr_pairs() {
-	local row
-	for row in "${OPENEXR_V3_PV[@]}" ; do
-		local imath_pv="${row#*:}"
-		local openexr_pv="${row%:*}"
-		echo "
-			(
-				~media-libs/openexr-${openexr_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-				~dev-libs/imath-${imath_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-			)
-		"
-	done
-}
-
 # Depends Mar 16, 2024
 RDEPEND+="
+	>=dev-libs/imath-${IMATH_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=media-libs/openexr-${OPENEXR_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+
 	>=dev-libs/boost-1.53:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=dev-libs/libfmt-7.0.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=dev-libs/pugixml-1.8:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=media-libs/tiff-4.0:=
-	>=virtual/zlib-1.2.7:=
+	>=dev-libs/libfmt-${LIBFMT_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-libs/pugixml-${PUGIXML_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=media-libs/tiff-${TIFF_PV}:=
+	>=virtual/zlib-${ZLIB_PV}:=
 	>=dev-cpp/robin-map-0.6.2:=
-	>=media-libs/libjpeg-turbo-2.1:=
+	>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:=
 	virtual/jpeg:*
 	color-management? (
 		>=media-libs/opencolorio-2.2:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
@@ -274,20 +229,7 @@ RDEPEND+="
 		>=sci-libs/dcmtk-3.6.1:=
 	)
 	ffmpeg? (
-		media-video/ffmpeg:=
-		|| (
-			media-video/ffmpeg:56.58.58
-			media-video/ffmpeg:57.59.59
-			media-video/ffmpeg:58.60.60
-			media-video/ffmpeg:59.61.61
-			media-video/ffmpeg:60.62.62
-
-			media-video/ffmpeg:0/56.58.58
-			media-video/ffmpeg:0/57.59.59
-			media-video/ffmpeg:0/58.60.60
-			media-video/ffmpeg:0/59.61.61
-			media-video/ffmpeg:0/60.62.62
-		)
+		$(secure-version_gen_ffmpeg_depends '4.4-8.1')
 	)
 	field3d? (
 		>=media-libs/Field3D-1.7.3:=
@@ -296,7 +238,7 @@ RDEPEND+="
 		sci-libs/cfitsio:=
 	)
 	gif? (
-		>=media-libs/giflib-5.0:=
+		>=media-libs/giflib-${GIFLIB_PV}:=
 	)
 	heif? (
 		>=media-libs/libheif-1.11:=[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV}]
@@ -308,13 +250,16 @@ RDEPEND+="
 		>=media-libs/jph-0.21.2:=
 	)
 	jpeg2k? (
-		>=media-libs/openjpeg-2.0:=
+		>=media-libs/openjpeg-${OPENJPEG_PV}:=
 	)
 	jxl? (
-		>=media-libs/libjxl-0.10.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=media-libs/libjxl-${LIBJXL_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	opencv? (
-		>=media-libs/opencv-4:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=media-libs/opencv-${OPENCV4_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		|| (
+			=media-libs/opencv-${OPENCV4_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		)
 	)
 	opengl? (
 		media-libs/glew:=
@@ -322,14 +267,13 @@ RDEPEND+="
 		virtual/opengl:*
 	)
 	openvdb? (
-		media-gfx/openvdb:=
 		=media-gfx/openvdb-12*:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		tbb? (
-			>=dev-cpp/tbb-2021:${ONETBB_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+			>=dev-cpp/tbb-${TBB_PV}:${ONETBB_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		)
 	)
 	png? (
-		>=media-libs/libpng-1.6.0:=
+		>=media-libs/libpng-${LIBPNG_PV}:=
 	)
 	ptex? (
 		>=media-libs/ptex-2.3.1:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
@@ -342,37 +286,21 @@ RDEPEND+="
 			virtual/numpy:=[${PYTHON_USEDEP}]
 		')
 	)
-	qt5? (
-		>=dev-qt/qtcore-${QT5_PV}:5=
-		>=dev-qt/qtgui-${QT5_PV}:5=[wayland?,X?]
-		>=dev-qt/qtwidgets-${QT5_PV}:5=[X?]
-		opengl? (
-			>=dev-qt/qtopengl-${QT5_PV}:5=
-		)
-		wayland? (
-			>=dev-qt/qtwayland-${QT5_PV}:5=
-		)
-	)
 	qt6? (
-		>=dev-qt/qtbase-${QT6_PV}:6=[gui,opengl?,wayland?,widgets,X?]
+		>=dev-qt/qtbase-${QTBASE6_PV}:6=[gui,opengl?,wayland?,widgets,X?]
 		wayland? (
-			>=dev-qt/qtdeclarative-${QT6_PV}:6=[opengl]
-			>=dev-qt/qtwayland-${QT6_PV}:6=
+			>=dev-qt/qtdeclarative-${QTDECLARATIVE6_PV}:6=[opengl]
+			>=dev-qt/qtwayland-${QTWAYLAND6_PV}:6=
 		)
 	)
 	raw? (
 		>=media-libs/libraw-0.20:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	truetype? (
-		>=media-libs/freetype-2.10.0:=
+		>=media-libs/freetype-${FREETYPE_PV}:=
 	)
 	webp? (
-		>=media-libs/libwebp-1.1:=
-	)
-	media-libs/openexr:=
-	dev-libs/imath:=
-	|| (
-		$(gen_openexr_pairs)
+		>=media-libs/libwebp-${LIBWEBP_PV}:=
 	)
 "
 DEPEND+="
@@ -486,6 +414,8 @@ src_prepare() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
+
 	# Avoid missing symbol in oidn
 	if use cuda ; then
 		export CC="${CHOST}-gcc"
