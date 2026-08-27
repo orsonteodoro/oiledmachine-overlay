@@ -36,6 +36,8 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libpng-9999"
 	"media-libs/opencolorio-9999"
 	"media-libs/openexr-9999"
+	"media-libs/openimageio-3.0.9999"
+	"media-libs/openimageio-3.1.9999"
 	"media-libs/osl-9999"
 	"media-libs/tiff-9999"
 	"sci-libs/hdf5-9999"
@@ -174,7 +176,11 @@ RDEPEND+="
 	)
 	openimageio? (
 		>=media-libs/libpng-${LIBPNG_PV}:=
-		>=media-libs/openimageio-2.5.16.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		media-libs/openimageio:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		|| (
+			=media-libs/openimageio-${OPENIMAGEIO_3_0_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+			=media-libs/openimageio-${OPENIMAGEIO_3_1_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		)
 		>=media-libs/tiff-${TIFF_PV}:=
 		virtual/jpeg:*
 	)
