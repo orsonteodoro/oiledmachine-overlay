@@ -127,6 +127,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libvorbis-9999"
 	"media-libs/libvpx-9999"
 	"media-libs/libwebp-9999"
+	"media-libs/openexr-9999"
 	"media-libs/openjpeg-9999"
 	"media-libs/opus-9999"
 	"media-libs/rubberband-9999"
@@ -184,39 +185,6 @@ FFMPEG_IUSE=(
 	"x264"
 	"x265"
 	"+xvid"
-)
-
-OPENEXR_V3_PV=(
-	# openexr:imath
-	"3.4.12:3.2.2"
-	"3.4.11:3.2.2"
-	"3.4.10:3.2.2"
-	"3.4.9:3.2.2"
-	"3.4.8:3.2.2"
-	"3.4.7:3.2.2"
-	"3.4.6:3.2.2"
-	"3.4.5:3.2.2"
-	"3.4.4:3.2.2"
-	"3.4.3:3.2.2"
-	"3.4.2:3.2.2"
-	"3.4.1:3.2.1"
-	"3.4.0:3.2.1"
-	"3.3.11:3.1.12"
-	"3.3.10:3.1.12"
-	"3.3.9:3.1.12"
-	"3.3.8:3.1.12"
-	"3.3.7:3.1.12"
-	"3.3.6:3.1.12"
-	"3.3.5:3.1.12"
-	"3.3.4:3.1.12"
-	"3.3.3:3.1.12"
-	"3.3.2:3.1.12"
-	"3.3.1:3.1.12"
-	"3.3.0:3.1.11"
-	"3.2.4:3.1.10"
-	"3.2.3:3.1.10"
-	"3.2.2:3.1.9"
-	"3.2.1:3.1.9"
 )
 
 PATENT_STATUS_IUSE=(
@@ -779,22 +747,6 @@ gen_oiio_depends() {
 	"
 }
 
-gen_openexr_pairs() {
-	local row
-	for row in "${OPENEXR_V3_PV[@]}" ; do
-		local imath_pv="${row#*:}"
-		local openexr_pv="${row%:*}"
-		echo "
-
-			(
-				~dev-libs/imath-${imath_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-				~media-libs/openexr-${openexr_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-				>=media-libs/openjph-0.25.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-			)
-		"
-	done
-}
-
 gen_osl_depends()
 {
 	local s
@@ -1111,12 +1063,9 @@ RDEPEND+="
 	)
 	(
 		!<media-libs/openexr-3
-		dev-libs/imath:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		media-libs/openexr:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-libs/imath-${IMATH_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=media-libs/openexr-${OPENEXR_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		media-libs/openjph:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		|| (
-			$(gen_openexr_pairs)
-		)
 	)
 	opensubdiv? (
 		>=media-libs/opensubdiv-3.7.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cuda=,opencl=,opengl(+),tbb?]
