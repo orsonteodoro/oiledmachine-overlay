@@ -6,6 +6,9 @@ EAPI=8
 MY_PN="OpenEXR"
 
 # See also https://openexr.com/en/latest/install.html
+# For imath version, see:
+# https://github.com/AcademySoftwareFoundation/openexr/blob/main/.github/workflows/ci_workflow.yml#L83
+# https://github.com/AcademySoftwareFoundation/openexr/blob/main/MODULE.bazel
 
 CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO IO UAF"
@@ -26,10 +29,26 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_avx"
 )
 
-inherit cflags-hardened cmake flag-o-matic libcxx-slot libstdcxx-slot
+CHKL_TIMESTAMPS=(
+	"dev-cpp/tbb-9999"
+	"app-arch/libdeflate-9999"
+)
 
-KEYWORDS="~amd64 ~arm64 ~arm64-macos ~amd64-linux ~x86-linux"
-SRC_URI="
+inherit cflags-hardened chkl flag-o-matic libcxx-slot libstdcxx-slot secure-version cmake
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	SOVER="99"
+	FALLBACK_COMMIT="cfa2502daac8c41c0bcea78d5ca8ff53c8330e54"
+	EGIT_BRANCH="main"
+	EGIT_REPO_URI="https://github.com/AcademySoftwareFoundation/openexr.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	SOVER="33"
+	KEYWORDS="~amd64 ~arm64 ~arm64-macos ~amd64-linux ~x86-linux"
+	SRC_URI="
 https://github.com/AcademySoftwareFoundation/openexr/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz
 	test? (
 		utils? (
@@ -37,15 +56,21 @@ https://github.com/AcademySoftwareFoundation/openexr-images/archive/refs/tags/v$
 	-> openexr-images-${OPENEXR_IMAGES_PV}.tar.gz
 		)
 	)
-"
+	"
+fi
+
+CHKL_TIMESTAMPS=(
+	"app-arch/libdeflate-9999"
+	"dev-cpp/tbb-9999"
+)
 
 DESCRIPTION="ILM's OpenEXR high dynamic-range image file format libraries"
 HOMEPAGE="https://openexr.com/"
 LICENSE="BSD"
 # SLOT is based on SONAME.
-# See https://github.com/AcademySoftwareFoundation/openexr/blob/v3.3.2/CMakeLists.txt#L46
-SLOT="0/32"
-IUSE="
+# See https://github.com/AcademySoftwareFoundation/openexr/blob/main/CMakeLists.txt#L46
+SLOT="0/${SOVER}"
+IUSE+="
 ${CPU_FLAGS_X86[@]}
 doc examples -large-stack +utils tbb test +threads
 ebuild_revision_24
@@ -61,11 +86,11 @@ RESTRICT="
 	)
 "
 RDEPEND="
-	>=app-arch/libdeflate-1.23:=[zlib(+)]
-	~dev-libs/imath-3.2.2:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=media-libs/openjph-0.30.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=app-arch/libdeflate-${LIBDEFLATE_PV}:=[zlib(+)]
+	~dev-libs/imath-${IMATH_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=media-libs/openjph-${OPENJPH_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	tbb? (
-		dev-cpp/tbb:=
+		>=dev-cpp/tbb-${TBB_PV}:=
 	)
 "
 DEPEND="
@@ -86,6 +111,34 @@ DOCS=( "CHANGES.md" "README.md" )
 pkg_setup() {
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+	local actual_sover=$(grep -e "OPENEXR_LIB_SOVERSION" "${S}/CMakeLists.txt" | head -n 1 | cut -f 2 -d " " | sed -e "s|)||g")
+	local expected_sover="${SOVER}"
+	if ver_test "${actual_sover}" "-ne" "${expected_sover}" ; then
+eerror "QA:  Update SOVER"
+eerror "Actual sover:  ${actual_sover}"
+eerror "Expected sover:  ${expected_sover}"
+		die
+	fi
+	local actual_imath_pv=$(grep -e "imath" "${S}/MODULE.bazel" | cut -f 6 -d " " | cut -f 2 -d '"' | cut -f 1-3 -d ".")
+	local expected_imath_pv="${IMATH_PV}"
+	if ver_test "${actual_imath_pv}" "-ne" "${expected_imath_pv}" ; then
+eerror "QA:  Update IMATH_PV"
+eerror "Actual imath pv:  ${actual_imath_pv}"
+eerror "Expected imath pv:  ${expected_imath_pv}"
+		die
+	fi
 }
 
 src_prepare() {
@@ -139,6 +192,7 @@ src_prepare() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	local so_ver=$(grep -o -E "OPENEXR_LIB_SOVERSION [0-9]+" "CMakeLists.txt" | cut -f 2 -d " ")
 einfo "SOVER:  ${so_ver}"
 	if ! grep -q -e "OPENEXR_LIB_SOVERSION ${SLOT#*/}" "CMakeLists.txt" ; then
