@@ -54,80 +54,18 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse4_2"
 )
 
-OPENEXR_V3_PV=(
-	# openexr:imath
-	"3.4.12:3.2.2"
-	"3.4.11:3.2.2"
-	"3.4.10:3.2.2"
-	"3.4.9:3.2.2"
-	"3.4.8:3.2.2"
-	"3.4.7:3.2.2"
-	"3.4.6:3.2.2"
-	"3.4.5:3.2.2"
-	"3.4.4:3.2.2"
-	"3.4.3:3.2.2"
-	"3.4.2:3.2.2"
-	"3.4.1:3.2.1"
-	"3.4.0:3.2.1"
-	"3.3.11:3.1.12"
-	"3.3.10:3.1.12"
-	"3.3.9:3.1.12"
-	"3.3.8:3.1.12"
-	"3.3.7:3.1.12"
-	"3.3.6:3.1.12"
-	"3.3.5:3.1.12"
-	"3.3.4:3.1.12"
-	"3.3.3:3.1.12"
-	"3.3.2:3.1.12"
-	"3.3.1:3.1.12"
-	"3.3.0:3.1.11"
-	"3.2.4:3.1.10"
-	"3.2.3:3.1.10"
-	"3.2.2:3.1.9"
-	"3.2.1:3.1.9"
-	"3.2.0:3.1.9"
-	"3.1.13:3.1.9"
-	"3.1.12:3.1.9"
-	"3.1.11:3.1.9"
-	"3.1.10:3.1.9"
-	"3.1.9:3.1.9"
-	"3.1.8:3.1.8"
-	"3.1.7:3.1.7"
-	"3.1.6:3.1.4"
-	"3.1.5:3.1.4"
-	"3.1.4:3.1.4"
+CHKL_TIMESTAMPS=(
+	"dev-cpp/yaml-cpp-9999"
+	"dev-libs/expat-9999"
+	"dev-libs/tinyxml-9999"
+	"media-libs/lcms-9999"
+	"media-libs/openexr-9999"
+	"media-libs/osl-9999"
+	"sys-libs/minizip-ng-9999"
 )
 
-inherit check-compiler-switch cmake flag-o-matic libcxx-slot libstdcxx-slot
-inherit python-single-r1 virtualx
-
-gen_half_pairs_rdepend() {
-	local row
-	for row in ${OPENEXR_V3_PV[@]} ; do
-		local imath_pv="${row#*:}"
-		local openexr_pv="${row%:*}"
-		echo "
-			(
-				~media-libs/openexr-${openexr_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-				~dev-libs/imath-${imath_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-			)
-		"
-	done
-}
-
-gen_imath_bdepend() {
-	local row
-	for row in ${OPENEXR_V3_PV[@]} ; do
-		local imath_pv="${row#*:}"
-		local openexr_pv="${row%:*}"
-		echo "
-			(
-				~media-libs/openexr-${openexr_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-				~dev-libs/imath-${imath_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-			)
-		"
-	done
-}
+inherit check-compiler-switch chkl cmake flag-o-matic libcxx-slot libstdcxx-slot
+inherit secure-version virtualx python-single-r1
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/OpenColorIO-${PV}"
@@ -211,16 +149,17 @@ REQUIRED_USE="
 "
 # Depends update:  Sep 29, 2025
 RDEPEND="
-	>=dev-cpp/yaml-cpp-0.8.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=dev-cpp/pystring-1.1.3:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	>=dev-libs/expat-2.6.0:=
-	>=sys-libs/minizip-ng-4.0.0:=
-	>=virtual/zlib-1.2.13:=
-	dev-libs/tinyxml:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-cpp/yaml-cpp-${YAML_CPP_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-cpp/pystring-${PYSTRING_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-libs/expat-${EXPAT_PV}:=
+	>=dev-libs/tinyxml-${TINYXML_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=media-libs/openexr-${OPENEXR_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=sys-libs/minizip-ng-${MINIZIP_NG_PV}:=
+	>=virtual/zlib-${ZLIB_PV}:=
 	opengl? (
 		>=media-libs/openimageio-2.2.14:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		>=media-libs/lcms-2.2:=
-		media-libs/freeglut:=
+		>=media-libs/lcms-${LCMS_PV}:=
+		>=media-libs/freeglut-${FREEGLUT_PV}:=
 		media-libs/glew:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		virtual/opengl:*
 	)
@@ -229,11 +168,6 @@ RDEPEND="
 		$(python_gen_cond_dep '
 			>=dev-python/pybind11-2.9.2[${PYTHON_USEDEP}]
 		')
-	)
-	dev-libs/imath:=
-	media-libs/openexr:=
-	|| (
-		$(gen_half_pairs_rdepend)
 	)
 "
 DEPEND="
@@ -259,7 +193,7 @@ BDEPEND="
 			dev-python/wheel[${PYTHON_USEDEP}]
 		)
 		test? (
-			virtual/numpy[${PYTHON_USEDEP}]
+			virtual/numpy:=[${PYTHON_USEDEP}]
 		)
 	')
 	>=dev-build/cmake-3.14
@@ -269,12 +203,7 @@ BDEPEND="
 		app-text/doxygen
 	)
 	test? (
-		>=media-libs/osl-1.11
-		dev-libs/imath
-		media-libs/openexr
-		|| (
-			$(gen_imath_bdepend)
-		)
+		>=media-libs/osl-${OSL_PV}
 	)
 "
 PATCHES=(
@@ -308,6 +237,7 @@ src_prepare() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	check-compiler-switch_end
 	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
 	# Prevent static-libs IR mismatch.
