@@ -63,8 +63,16 @@ ROCM_SLOTS=(
 	"rocm_7_2"
 )
 
-inherit check-compiler-switch cmake cuda flag-o-matic libcxx-slot libstdcxx-slot
-inherit llvm python-single-r1 rocm toolchain-funcs
+CHKL_TIMESTAMPS=(
+	"dev-cpp/tbb-9999"
+	"dev-lang/ispc-9999"
+	"media-libs/openimageio-3.0.9999"
+	"media-libs/openimageio-3.1.9999"
+	"sys-devel/binutils-9999"
+)
+
+inherit check-compiler-switch chkl cmake cuda flag-o-matic libcxx-slot libstdcxx-slot
+inherit llvm python-single-r1 rocm secure-version toolchain-funcs
 
 if [[ ${PV} = *9999 ]]; then
 	inherit git-r3
@@ -203,8 +211,8 @@ gen_hip_depends() {
 # See https://github.com/OpenImageDenoise/oidn/blob/v1.4.3/scripts/build.py
 RDEPEND+="
 	${PYTHON_DEPS}
-	>=dev-cpp/tbb-2021.5:${ONETBB_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	virtual/libc
+	>=dev-cpp/tbb-${TBB_PV}:${ONETBB_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	virtual/libc:*
 	cuda? (
 		>=dev-util/nvidia-cuda-toolkit-12.8:=
 		>=x11-drivers/nvidia-drivers-525.60.13:=
@@ -220,10 +228,14 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 	media-libs/openimageio:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cuda?]
+	|| (
+		=media-libs/openimageio-${OPENIMAGEIO_3_0_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cuda?]
+		=media-libs/openimageio-${OPENIMAGEIO_3_1_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cuda?]
+	)
 "
 BDEPEND+="
 	${PYTHON_DEPS}
-	>=dev-lang/ispc-1.21.0
+	>=dev-lang/ispc-${ISPC_PV}:=
 	>=dev-build/cmake-3.15
 	clang? (
 		$(gen_clang_depends)
@@ -231,7 +243,7 @@ BDEPEND+="
 	cuda? (
 		>=dev-build/cmake-3.18
 		>=dev-util/nvidia-cuda-toolkit-12.8:=
-		sys-devel/binutils[gold,plugins]
+		>=sys-devel/binutils-${BINUTILS_PV}:=[gold,plugins]
 	)
 	rocm? (
 		$(gen_hip_depends)
@@ -348,6 +360,8 @@ get_cuda_targets() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
+
 	mycmakeargs=()
 
 	append-ldflags -fuse-ld=gold
