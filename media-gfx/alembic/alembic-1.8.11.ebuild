@@ -19,51 +19,11 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}"
 )
 
-OPENEXR_V3_PV=(
-	# openexr:imath
-	"3.4.12:3.2.2"
-	"3.4.11:3.2.2"
-	"3.4.10:3.2.2"
-	"3.4.9:3.2.2"
-	"3.4.8:3.2.2"
-	"3.4.7:3.2.2"
-	"3.4.6:3.2.2"
-	"3.4.5:3.2.2"
-	"3.4.4:3.2.2"
-	"3.4.3:3.2.2"
-	"3.4.2:3.2.2"
-	"3.4.1:3.2.1"
-	"3.4.0:3.2.1"
-	"3.3.11:3.1.12"
-	"3.3.10:3.1.12"
-	"3.3.9:3.1.12"
-	"3.3.8:3.1.12"
-	"3.3.7:3.1.12"
-	"3.3.6:3.1.12"
-	"3.3.5:3.1.12"
-	"3.3.4:3.1.12"
-	"3.3.3:3.1.12"
-	"3.3.2:3.1.12"
-	"3.3.1:3.1.12"
-	"3.3.0:3.1.11"
-	"3.2.4:3.1.10"
-	"3.2.3:3.1.10"
-	"3.2.2:3.1.9"
-	"3.2.1:3.1.9"
-	"3.2.0:3.1.9"
-	"3.1.13:3.1.9"
-	"3.1.12:3.1.9"
-	"3.1.11:3.1.9"
-	"3.1.10:3.1.9"
-	"3.1.9:3.1.9"
-	"3.1.8:3.1.8"
-	"3.1.7:3.1.7"
-	"3.1.6:3.1.5"
-	"3.1.5:3.1.5"
-	"3.1.4:3.1.4"
+CHKL_TIMESTAMPS=(
+	"media-libs/openexr-9999"
 )
 
-inherit cflags-hardened cmake libcxx-slot libstdcxx-slot python-single-r1
+inherit cflags-hardened chkl cmake libcxx-slot libstdcxx-slot secure-version python-single-r1
 
 KEYWORDS="~amd64 ~arm64"
 SRC_URI="
@@ -84,7 +44,8 @@ LICENSE="
 	custom
 "
 # custom - search "TO THE FULLEST EXTENT PERMITTED UNDER APPLICABLE LAW"
-SLOT="0"
+SOVER=$(ver_cut "1-2" "${PV}")
+SLOT="0/${SOVER}"
 IUSE="
 examples hdf5 python test
 ebuild_revision_13
@@ -97,67 +58,11 @@ RESTRICT="
 		test
 	)
 "
-gen_openexr_pairs() {
-	local g1=""
-	local g2=""
-	local g3=""
-	local row
-	for row in "${OPENEXR_V3_PV[@]}" ; do
-		local imath_pv="${row#*:}"
-		local openexr_pv="${row%:*}"
-		g1+="
-			(
-				~media-libs/openexr-${openexr_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-				~dev-libs/imath-${imath_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-			)
-		"
-		g2+="
-			~media-libs/openexr-${openexr_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		"
-		g3+="
-			~dev-libs/imath-${imath_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		"
-	done
-	echo "
-		|| (
-			${g1}
-		)
-		|| (
-			${g2}
-		)
-		|| (
-			${g3}
-		)
-
-	"
-}
-gen_openexr_py_pairs() {
-	local g1=""
-	local row
-	for row in "${OPENEXR_V3_PV[@]}" ; do
-		local imath_pv="${row#*:}"
-		local openexr_pv="${row%:*}"
-		g1+="
-			(
-				~media-libs/openexr-${openexr_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-				~dev-libs/imath-${imath_pv}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},python]
-			)
-		"
-	done
-	echo "
-		|| (
-			${g1}
-		)
-	"
-}
 RDEPEND+="
 	${PYTHON_DEPS}
 	hdf5? (
-		(
-			>=sci-libs/hdf5-1.8.9:=[zlib(+)]
-			sci-libs/hdf5:=
-		)
-		>=virtual/zlib-1.3:=
+		>=sci-libs/hdf5-1.8.9:=[zlib(+)]
+		>=virtual/zlib-${ZLIB_PV}:=
 	)
 	python? (
 		$(python_gen_cond_dep '
@@ -165,13 +70,9 @@ RDEPEND+="
 			virtual/numpy:=[${PYTHON_USEDEP}]
 		')
 		>=dev-libs/boost-1.55.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		media-libs/openexr:=
-		dev-libs/imath:=
-		$(gen_openexr_py_pairs)
+		>=media-libs/openexr-${OPENEXR_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		~dev-libs/imath-${IMATH_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},python]
 	)
-	media-libs/openexr:=
-	dev-libs/imath:=
-	$(gen_openexr_pairs)
 "
 DEPEND+="
 	${RDEPEND}
@@ -195,6 +96,7 @@ pkg_setup() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	cflags-hardened_append
 	local mycmakeargs=(
 		$(usex python "-DPython3_EXECUTABLE=${PYTHON}" "")
