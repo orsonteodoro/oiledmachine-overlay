@@ -59,6 +59,8 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/expat-9999"
 	"media-libs/lcms-9999"
 	"media-libs/openexr-9999"
+	"media-libs/openimageio-3.0.9999"
+	"media-libs/openimageio-3.1.9999"
 	"media-libs/osl-9999"
 	"sys-libs/minizip-ng-9999"
 )
@@ -174,7 +176,11 @@ RDEPEND="
 		>=sys-libs/minizip-ng-${MINIZIP_NG_PV}:=
 	)
 	opengl? (
-		>=media-libs/openimageio-2.2.14:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		media-libs/openimageio:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		|| (
+			=media-libs/openimageio-${OPENIMAGEIO_3_0_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+			=media-libs/openimageio-${OPENIMAGEIO_3_1_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		)
 		>=media-libs/lcms-${LCMS_PV}:=
 		>=media-libs/freeglut-${FREEGLUT_PV}:=
 		media-libs/glew:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
