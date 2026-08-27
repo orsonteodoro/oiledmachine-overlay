@@ -164,7 +164,7 @@ RDEPEND="
 		>=dev-cpp/tbb-${TBB_PV}:=
 	)
 	video_cards_intel? (
-		>=dev-libs/level-zero-1.20.2:=
+		>=dev-libs/level-zero-${LEVEL_ZERO_PV}:=
 	)
 "
 DEPEND="

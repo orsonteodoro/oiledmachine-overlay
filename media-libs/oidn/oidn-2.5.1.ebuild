@@ -222,7 +222,7 @@ RDEPEND+="
 	)
 	sycl? (
 		>=sys-devel/DPC++-2023.10.26:=[aot?]
-		dev-libs/level-zero:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-libs/level-zero-${LEVEL_ZERO_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 "
 DEPEND+="
