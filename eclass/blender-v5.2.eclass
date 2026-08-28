@@ -96,7 +96,7 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} is not supported." ;;
 esac
 
-CXX_STANDARD=17
+CXX_STANDARD=20
 # For the max exclusive Python supported (and others), see \
 # https://github.com/blender/blender/blob/v5.2.0/build_files/build_environment/install_linux_packages.py#L693 \
 PYTHON_COMPAT=( "python3_"{13,14} ) # >= 3.13 for Numpy 2.x, upstream uses vendored 3.13
@@ -152,15 +152,15 @@ CPU_FLAGS_3_3=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+	"${LIBSTDCXX_COMPAT_STDCXX20[@]}" # 13..16
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
 	# There is a bug if it is duplicate LLVM_COMPAT entry, it will complain it is more than 1 when emerging.
-	#${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]/llvm_slot_} # 16..19
-	#${LIBCXX_COMPAT_CXX17_ROCM_7_2[@]/llvm_slot_} # 22
-	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19, 21, 22
+	#${LIBCXX_COMPAT_CXX20_CUDA_12_8[@]/llvm_slot_} # 18..19
+	#${LIBCXX_COMPAT_CXX20_ROCM_7_2[@]/llvm_slot_} # 22
+	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}" # 21, 22
 )
 # Upstream limits LLVM to [15, 18) but relaxed for ROCm and overlay compatibility
 # It uses LLVM 17 as default.
