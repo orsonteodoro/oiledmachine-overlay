@@ -73,15 +73,15 @@ IUSE+="
 ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 -alembic ax +blosc clang cuda doc gcc icc +jemalloc -jpeg -log4cplus
-+nanovdb -numpy -python +static-libs -tbbmalloc -no-concurrent-malloc
++nanovdb -numpy -python +static-libs -tbb
 -openexr -png test -vdb_lod +vdb_print -vdb_render -vdb_view
 ebuild_revision_11
 "
 REQUIRED_USE+="
-	^^ (
+	!tbb
+	?? (
 		jemalloc
-		tbbmalloc
-		no-concurrent-malloc
+		tbb
 	)
 	^^ (
 		gcc
@@ -121,7 +121,6 @@ gen_ax_depend() {
 	done
 }
 RDEPEND+="
-	>=dev-cpp/tbb-${TBB_PV}:${ONETBB_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/boost-1.80:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=virtual/zlib-${ZLIB_PV}:=
 	ax? (
@@ -148,6 +147,9 @@ RDEPEND+="
 				virtual/numpy:=[${PYTHON_USEDEP}]
 			)
 		')
+	)
+	tbb? (
+		>=dev-cpp/tbb-${TBB_PV}:${ONETBB_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	vdb_view? (
 		>=media-libs/glfw-${GLFW_PV}:=
@@ -305,13 +307,13 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	export MAKEOPTS="-j1" # prevent stall
 
-	local version=${PV%%.*}
+	local version="${PV%%.*}"
 
 	local mycmakeargs=(
 		-DCHOST="${CHOST}"
 		-DCMAKE_INSTALL_DOCDIR="share/doc/${PF}/"
 		-DCONCURRENT_MALLOC=$(usex jemalloc "Jemalloc" \
-					$(usex tbbmalloc "Tbbmalloc" "None")\
+					$(usex tbb "Tbbmalloc" "None")\
 				     )
 		-DOPENVDB_BUILD_NANOVDB=$(usex nanovdb)
 		-DNANOVDB_BUILD_TOOLS=OFF
@@ -394,7 +396,7 @@ src_install()
 # Possible CFI problems
 eerror
 eerror "Detected vdb_print stall.  Re-emerge jemalloc and openvdb packages."
-eerror "or emerge openvdb with the no-concurrent-malloc USE flag."
+eerror "or emerge openvdb with both jemalloc and tbb USE flags disabled."
 eerror
 			die
 		fi

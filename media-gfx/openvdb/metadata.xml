@@ -78,15 +78,12 @@
     <flag name="nanovdb">
       Add the GPU friendly VDB implementation
     </flag>
-    <flag name="no-concurrent-malloc">
-      Do not use a concurrent malloc
+    <flag name="tbb">
+      Uses TBB as the concurrent memory allocator for binaries (that use the
+      utils USE flag) or unit tests.
     </flag>
     <flag name="test">
       Runs unit tests
-    </flag>
-    <flag name="tbbmalloc">
-      Uses TBB as the concurrent memory allocator for binaries (that use the
-      utils USE flag) or unit tests.
     </flag>
     <flag name="vdb_lod">
       Volume mipmap generator, from OpenVDB grid
