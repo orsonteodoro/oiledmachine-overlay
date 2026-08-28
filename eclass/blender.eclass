@@ -59,6 +59,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 else
 # We cannot use the GH tarball because of the following issue:
 # https://github.com/blender/blender/blob/v5.1.2/CMakeLists.txt#L128
+# They put their download link behind a link protect gatekeeper.
 	PV_MAJOR_MINOR=$(ver_cut "1-2" "${PV}")
 	if ver_test "${PV_MAJOR_MINOR}" "-eq" "4.5" ; then
 		SRC_URI="
