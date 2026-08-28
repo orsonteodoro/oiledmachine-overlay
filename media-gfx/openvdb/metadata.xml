@@ -77,8 +77,8 @@
     <flag name="nanovdb">
       Add the GPU friendly VDB implementation
     </flag>
-    <flag name="ptmalloc">
-      Uses glibc as the memory allocator
+    <flag name="libc-malloc">
+      Uses glibc/musl as the memory allocator
     </flag>
     <flag name="tbbmalloc">
       Uses tbbmalloc as the concurrent memory allocator

@@ -76,14 +76,14 @@ IUSE+="
 ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 -alembic ax +blosc clang cuda doc gcc icc -jemalloc -jpeg -log4cplus
-+nanovdb +ptmalloc -python +static-libs -tbbmalloc
++nanovdb +libc-malloc -python +static-libs -tbbmalloc
 -openexr -png test -vdb_lod +vdb_print -vdb_render -vdb_view
 ebuild_revision_13
 "
 REQUIRED_USE+="
 	^^ (
 		jemalloc
-		ptmalloc
+		libc-malloc
 		tbbmalloc
 	)
 	^^ (
@@ -287,16 +287,17 @@ einfo "Performance and security estimates of concurrent allocators as a normaliz
 einfo
 einfo "| Allocator | Performance | Security | Default                                   |"
 einfo "|-----------|-------------|----------|-------------------------------------------|"
-einfo "| jemalloc  | 1.4-1.5     | 0.8-0.9  | Upstream Windows default in CI/CD testing |"
-einfo "| tbbmalloc | 1.3-1.4     | 0.5-0.6  | Upstream Linux default in CI/CD testing   |"
-einfo "| ptmalloc  | 1.0         | 1.0      | Ebuild default                            |"
+einfo "| jemalloc  | 1.0         | 0.3      | Upstream Windows default in CI/CD testing |"
+einfo "| tbbmalloc | 0.95        | 0.2      | Upstream Linux default in CI/CD testing   |"
+einfo "| ptmalloc  | 0.4         | 0.6      | Ebuild default for glibc systems          |"
+einfo "| mallocng  | 0.3         | 0.9      | Ebuild default for musl systems           |"
 einfo
 	if use jemalloc ; then
 einfo "Your choice:  jemalloc"
 	elif use tbbmalloc ; then
 einfo "Your choice:  tbbmalloc"
 	else
-einfo "Your choice:  ptmalloc"
+einfo "Your choice:  libc-malloc"
 	fi
 einfo
 
