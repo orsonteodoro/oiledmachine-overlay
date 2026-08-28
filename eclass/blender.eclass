@@ -38,6 +38,7 @@ KEYWORDS=${KEYWORDS:-"~amd64 ~x86"}
 SLOT_MAJ="${SLOT%/*}"
 SLOT="${PV}"
 RESTRICT="
+	fetch
 	mirror
 	!test? (
 		test
@@ -55,7 +56,18 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	SRC_URI=""
 	IUSE+=" fallback-commit"
 else
-	SRC_URI="https://github.com/blender/blender/archive/refs/tags/v${PV}.tar.gz -> ${P}.gh.tar.gz"
+# We cannot use the GH tarball because of the following issue:
+# https://github.com/blender/blender/blob/v5.1.2/CMakeLists.txt#L128
+	PV_MAJOR_MINOR=$(ver_cut "1-2" "${PV}")
+	if ver_test "${PV_MAJOR_MINOR}" "-eq" "4.5" ; then
+		SRC_URI="
+			blender-${PV}.tar.xz
+		"
+	elif ver_test "${PV_MAJOR_MINOR}" "-eq" "5.2" ; then
+		SRC_URI="
+			blender-with-libraries-${PV}.tar.xz
+		"
+	fi
 fi
 
 ARM_CPU_FLAGS=(
@@ -433,6 +445,35 @@ ewarn "Consider using one of ${lts_versions} Long Term Support (LTS) series inst
 ewarn
 	else
 		:
+	fi
+}
+
+_download_4_5_tarball() {
+	local fn="blender-${PV}.tar.xz"
+einfo
+einfo "The download tarball is in"
+einfo "https://www.blender.org/releases/5-2/"
+einfo "Click Download button > Source Code Blender + Libraries"
+einfo "Place from /home/<username>/Downloads/${fm} into /var/cache/distfiles"
+einfo
+}
+
+_download_5_2_tarball() {
+	local fn="blender-with-libraries-${PV}.tar.xz"
+einfo
+einfo "The download tarball is in"
+einfo "https://www.blender.org/releases/5-2/"
+einfo "Click Download button > Source Code Blender + Libraries"
+einfo "Place from /home/<username>/Downloads/${fn} into /var/cache/distfiles"
+einfo
+}
+
+blender_pkg_nofetch() {
+	local pv_major_minor=$(ver_cut "1-2" "${PV}")
+	if ver_test "${pv_major_minor}" "-eq" "4.5" ; then
+		_download_4_5_tarball
+	elif ver_test "${pv_major_minor}" "-eq" "5.2" ; then
+		_download_5_2_tarball
 	fi
 }
 
