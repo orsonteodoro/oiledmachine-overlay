@@ -138,6 +138,14 @@ RDEPEND+="
 	jemalloc? (
 		>=dev-libs/jemalloc-${JEMALLOC_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
+	libc-malloc? (
+		elibc_musl? (
+			>=sys-libs/musl-${MUSL_PV}:=
+		)
+		elibc_glibc? (
+			>=sys-libs/glibc-${GLIBC_PV}:=
+		)
+	)
 	log4cplus? (
 		>=dev-libs/log4cplus-1.1.2:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
