@@ -68,19 +68,23 @@ RESTRICT="
 		test
 	)
 "
-SLOT="0"
+SOVER=$(ver_cut "1-2" "${PV}")
+SLOT="0/${SOVER}"
+# By default this ebuild uses the allegedly the most secure allocator.
+# Users can decide to degrade their own security.
 IUSE+="
 ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
--alembic ax +blosc clang cuda doc gcc icc +jemalloc -jpeg -log4cplus
-+nanovdb -python +static-libs -tbb
+-alembic ax +blosc clang cuda doc gcc icc -jemalloc -jpeg -log4cplus
++nanovdb +ptmalloc -python +static-libs -tbbmalloc
 -openexr -png test -vdb_lod +vdb_print -vdb_render -vdb_view
-ebuild_revision_12
+ebuild_revision_13
 "
 REQUIRED_USE+="
-	?? (
+	^^ (
 		jemalloc
-		tbb
+		ptmalloc
+		tbbmalloc
 	)
 	^^ (
 		gcc
@@ -305,7 +309,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DCMAKE_DISABLE_FIND_PACKAGE_JEMALLOC=$(usex !jemalloc "TRUE" "FALSE")
 		-DCMAKE_INSTALL_DOCDIR="share/doc/${PF}/"
 		-DCONCURRENT_MALLOC=$(usex jemalloc "Jemalloc" \
-					$(usex tbb "Tbbmalloc" "None")\
+					$(usex tbbmalloc "Tbbmalloc" "None")\
 				     )
 		-DOPENVDB_BUILD_NANOVDB=$(usex nanovdb)
 		-DNANOVDB_BUILD_TOOLS=OFF
