@@ -53,10 +53,23 @@ CHKL_TIMESTAMPS=(
 inherit check-compiler-switch chkl cmake flag-o-matic linux-info python-r1 sandbox-changes secure-version toolchain-funcs uopts
 
 S="${WORKDIR}/embree-${PV}"
-SRC_URI="
+if [[ "${PV}" =~ "9999" ]] ; then
+	INTERNAL_VERSION="4.4.1"
+	SOVER=$(ver_cut "1" "${INTERNAL_VERSION}")
+	FALLBACK_COMMIT=""
+	EGIT_BRANCH="master"
+	EGIT_REPO_URI="https://github.com/RenderKit/embree.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	SOVER=$(ver_cut "1" "${PV}")
+	SRC_URI="
 https://github.com/RenderKit/embree/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
-"
+	"
+fi
 
 DESCRIPTION="Collection of high-performance ray tracing kernels"
 HOMEPAGE="https://github.com/embree/embree"
@@ -74,14 +87,15 @@ LICENSE="
 	)
 "
 KEYWORDS="~amd64 ~arm64 ~x86"
-SLOT="${SLOT_MAJ}/${PV}"
+
+SLOT="${SOVER}"
 IUSE+="
 ${CPU_FLAGS[@]%:*}
 -allow-auto-vectorization -allow-strict-aliasing backface-culling clang
 -compact-polys -custom-cflags custom-optimization debug doc doc-docfiles
 doc-html doc-images doc-man +hardened +filter-function gcc ispc raymask -ssp
 static-libs sycl +tbb test tutorials
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -131,6 +145,7 @@ REQUIRED_USE+="
 # https://github.com/embree/embree/blob/v3.13.4/common/cmake/check_isa.cpp
 # See .gitlab-ci.yml (track: release-linux-x64-Release)
 RDEPEND+="
+	!media-libs/embree:4
 	>=dev-libs/level-zero-${LEVEL_ZERO_PV}:=
 	>=media-libs/glfw-${GLFW_PV}:=
 	virtual/opengl:*
@@ -264,6 +279,26 @@ ewarn
 	fi
 	uopts_setup
 	python_setup
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+	local actual_sover=$(grep -r -e "SET(EMBREE_VERSION_MAJOR" "${S}/CMakeLists.txt" | grep -o -E -e "[0-9]+")
+	local expected_sover="${SOVER}"
+	if ver_test "${actual_sover}" "-ne" "${expected_sover}" ; then
+eerror "QA:  Update PV or INTERNAL_VERSION"
+eerror "Actual SOVER:  ${actual_sover}"
+eerror "Expected SOVER:  ${expected_sover}"
+		die
+	fi
 }
 
 src_prepare() {
