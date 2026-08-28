@@ -1399,7 +1399,7 @@ blender_configure_custom_simd_flags() {
 			flags="-msse4"
 		fi
 	fi
-	sed -i -e "s|@CUSTOM_SIMD_FLAGS@|${flags}|g" "${S}/" || die
+	sed -i -e "s|@CUSTOM_SIMD_FLAGS@|${flags}|g" "${S}/build_files/cmake/macros.cmake" || die
 }
 
 _src_configure() {
