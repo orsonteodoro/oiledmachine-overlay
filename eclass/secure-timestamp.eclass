@@ -146,6 +146,7 @@ SECURE_TIMESTAMP["dev_libs_fribidi_9999"]="Apr 13, 2026 12:07 PM PDT"
 SECURE_TIMESTAMP["dev_libs_hyprlang_9999"]="Feb 23, 2026 9:02 AM PST"
 SECURE_TIMESTAMP["dev_libs_icu_79_0_9999"]="Jul 17, 2026 12:28 PM PDT"
 SECURE_TIMESTAMP["dev_libs_jemalloc_9999"]="Jul 27, 2026 7:45 PM PDT"
+SECURE_TIMESTAMP["dev_libs_jemalloc_usd_9999"]="Jul 27, 2026 7:45 PM PDT" # Same as above
 SECURE_TIMESTAMP["dev_libs_jansson_9999"]="Jun 13, 2026 1:54 PM PDT"
 SECURE_TIMESTAMP["dev_libs_json_c_9999"]="Jul 4, 2026 8:40 AM PDT"
 SECURE_TIMESTAMP["dev_libs_jsoncpp_9999"]="Jul 1, 2026 4:19 PM PDT"
