@@ -442,8 +442,10 @@ EOF
 	fi
 	if use python ; then
 		dodir "/usr/lib/${EPYTHON}"
-		mv "${ED}/usr/lib64/openusd/lib/python/pxr" \
-			"${ED}/usr/lib/${EPYTHON}" || die
+		if [[ -e "${ED}/usr/lib64/openusd/lib/${EPYTHON}/site-packages/pxr" ]] ; then
+			mv "${ED}/usr/lib64/openusd/lib/${EPYTHON}/site-packages/pxr" \
+				"${ED}/usr/lib/${EPYTHON}" || die
+		fi
 	fi
 	use doc && einstalldocs
 	dodoc "LICENSE.txt" "NOTICE.txt"
