@@ -78,7 +78,6 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ebuild_revision_11
 "
 REQUIRED_USE+="
-	!tbb
 	?? (
 		jemalloc
 		tbb
@@ -118,6 +117,7 @@ gen_ax_depend() {
 	done
 }
 RDEPEND+="
+	>=dev-cpp/tbb-${TBB_PV}:${ONETBB_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/boost-1.82:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=virtual/zlib-${ZLIB_PV}:=
 	ax? (
@@ -141,9 +141,6 @@ RDEPEND+="
 			>=dev-python/nanobind-2.0.0[${PYTHON_USEDEP}]
 			>=dev-python/pybind11-2.10.0[${PYTHON_USEDEP}]
 		')
-	)
-	tbb? (
-		>=dev-cpp/tbb-${TBB_PV}:${ONETBB_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	vdb_view? (
 		>=media-libs/glfw-${GLFW_PV}:=
@@ -305,12 +302,14 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	local mycmakeargs=(
 		-DCHOST="${CHOST}"
+		-DCMAKE_DISABLE_FIND_PACKAGE_JEMALLOC=$(use !jemalloc "TRUE" "FALSE")
 		-DCMAKE_INSTALL_DOCDIR="share/doc/${PF}/"
 		-DCONCURRENT_MALLOC=$(usex jemalloc "Jemalloc" \
 					$(usex tbb "Tbbmalloc" "None")\
 				     )
 		-DOPENVDB_BUILD_NANOVDB=$(usex nanovdb)
 		-DNANOVDB_BUILD_TOOLS=OFF
+		-DNANOVDB_BUILD_UNITTESTS=$(usex test)
 		-DOPENVDB_ABI_VERSION_NUMBER="${version}"
 		-DOPENVDB_BUILD_BINARIES=$(usex vdb_lod ON \
 						$(usex vdb_print ON \
@@ -372,6 +371,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 			-DOPENVDB_SIMD=SSE42
 		)
 	fi
+
+	append-cppflags -include "/usr/include/oneapi/tbb/version.h"
 
 	cmake_src_configure
 }
