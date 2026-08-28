@@ -1150,8 +1150,10 @@ RDEPEND+="
 		>=media-libs/tiff-${TIFF_PV}:=[jpeg,zlib]
 	)
 	usd? (
-		>=media-libs/openusd-25.02:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},imaging,materialx?,monolithic,opengl,openvdb,openimageio,python]
-		<media-libs/openusd-26.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},imaging,materialx?,monolithic,opengl,openvdb,openimageio,python]
+		media-libs/openusd:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},imaging,materialx?,monolithic,opengl,openvdb,openimageio,python]
+		|| (
+			=media-libs/openusd-${OPENUSD_25_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},imaging,materialx?,monolithic,opengl,openvdb,openimageio,python]
+		)
 	)
 	valgrind? (
 		dev-debug/valgrind:=

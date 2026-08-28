@@ -134,6 +134,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/openimageio-3.1.9999"
 	"media-libs/openjpeg-9999"
 	"media-libs/opensubdiv-9999"
+	"media-libs/openusd-26.9999"
 	"media-libs/opus-9999"
 	"media-libs/rubberband-9999"
 	"media-libs/tiff-9999"
@@ -1140,8 +1141,10 @@ RDEPEND+="
 		>=media-libs/tiff-${TIFF_PV}:=[jpeg,zlib]
 	)
 	usd? (
-		>=media-libs/openusd-25.08:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},imaging,materialx?,monolithic,opengl,openvdb,openimageio,python]
-		<media-libs/openusd-26.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},imaging,materialx?,monolithic,opengl,openvdb,openimageio,python]
+		media-libs/openusd:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},imaging,materialx?,monolithic,opengl,openvdb,openimageio,python]
+		|| (
+			=media-libs/openusd-${OPENUSD_26_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},imaging,materialx?,monolithic,opengl,openvdb,openimageio,python]
+		)
 	)
 	valgrind? (
 		dev-debug/valgrind:=
