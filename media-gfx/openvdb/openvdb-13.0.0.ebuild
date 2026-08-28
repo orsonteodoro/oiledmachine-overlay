@@ -287,8 +287,8 @@ einfo "Performance and security estimates of concurrent allocators as a normaliz
 einfo
 einfo "| Allocator | Performance | Security | Default                                   |"
 einfo "|-----------|-------------|----------|-------------------------------------------|"
-einfo "| jemalloc  | 1.4-1.5     | 0.8-0.9  | Upstream windows default in CI/CD testing |"
-einfo "| tbbmalloc | 1.3-1.4     | 0.5-0.6  | Upstream linux default in CI/CD testing   |"
+einfo "| jemalloc  | 1.4-1.5     | 0.8-0.9  | Upstream Windows default in CI/CD testing |"
+einfo "| tbbmalloc | 1.3-1.4     | 0.5-0.6  | Upstream Linux default in CI/CD testing   |"
 einfo "| ptmalloc  | 1.0         | 1.0      | Ebuild default                            |"
 einfo
 	if use jemalloc ; then
