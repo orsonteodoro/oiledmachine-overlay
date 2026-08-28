@@ -50,26 +50,21 @@ RESTRICT="
 # .gitmodules.  The download.blender.org tarball is preferred because they
 # bundle all the dependencies.
 if [[ "${PV}" =~ "9999" ]] ; then
-	EGIT_REPO_URI="https://projects.blender.org/blender/blender.git"
 	EGIT_BRANCH="main"
 	EGIT_MIN_CLONE_TYPE="single"
+	EGIT_REPO_URI="https://projects.blender.org/blender/blender.git"
 	inherit git-r3
-	SRC_URI=""
-	IUSE+=" fallback-commit"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 else
+#
 # We cannot use the GH tarball because of the following issue:
 # https://github.com/blender/blender/blob/v5.1.2/CMakeLists.txt#L128
-# They put their download link behind a link protect gatekeeper.
-	PV_MAJOR_MINOR=$(ver_cut "1-2" "${PV}")
-	if ver_test "${PV_MAJOR_MINOR}" "-eq" "4.5" ; then
-		SRC_URI="
-			blender-${PV}.tar.xz
-		"
-	elif ver_test "${PV_MAJOR_MINOR}" "-eq" "5.2" ; then
-		SRC_URI="
-			blender-with-libraries-${PV}.tar.xz
-		"
-	fi
+#
+	SRC_URI="
+		blender-${PV}.tar.xz
+	"
 fi
 
 ARM_CPU_FLAGS=(
@@ -450,38 +445,21 @@ ewarn
 	fi
 }
 
-_download_4_5_tarball() {
-	local fn="blender-${PV}.tar.xz"
+blender_pkg_nofetch() {
+	local fn="blender-${PN}.tar.xz"
 einfo
 einfo "The download tarball is in"
-einfo "https://www.blender.org/releases/4-5/"
-einfo "Click Download button > Source Code Blender"
-einfo "Place from /home/<username>/Downloads/${fm} into /var/cache/distfiles"
-einfo
-}
-
-_download_5_2_tarball() {
-	local fn="blender-with-libraries-${PV}.tar.xz"
-einfo
-einfo "The download tarball is in"
-einfo "https://www.blender.org/releases/5-2/"
-einfo "Click Download button > Source Code Blender + Libraries 1.7 GB"
+einfo "https://download.blender.org/source/"
+einfo "Download ${fn} using a well known web browser.  [Tested with Google Chrome.]"
 einfo "Place from /home/<username>/Downloads/${fn} into /var/cache/distfiles"
 einfo
 }
 
-blender_pkg_nofetch() {
-	local pv_major_minor=$(ver_cut "1-2" "${PV}")
-	if ver_test "${pv_major_minor}" "-eq" "4.5" ; then
-		_download_4_5_tarball
-	elif ver_test "${pv_major_minor}" "-eq" "5.2" ; then
-		_download_5_2_tarball
-	fi
-}
-
 blender_src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
-		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
 		git-r3_fetch
 		git-r3_checkout
 	else
