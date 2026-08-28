@@ -1,0 +1,45 @@
+--- a/build_files/cmake/macros.cmake.orig	2026-08-28 14:46:55.908877774 -0700
++++ b/build_files/cmake/macros.cmake	2026-08-28 15:16:06.651504009 -0700
+@@ -598,41 +598,7 @@ endfunction()
+ function(get_compiler_simd_flags
+   _simd_flags)
+ 
+-  if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86_64)|(AMD64)" OR CMAKE_OSX_ARCHITECTURES MATCHES x86_64)
+-    # message(STATUS "Detecting SIMD support")
+-    if((CMAKE_C_COMPILER_ID STREQUAL "GNU") OR (CMAKE_C_COMPILER_ID MATCHES "Clang"))
+-      set(${_simd_flags} "-march=x86-64-v2" PARENT_SCOPE)
+-    elseif(MSVC)
+-      # MSVC has no specific compile flags for SSE42 (only for AVX).
+-      set(${_simd_flags} PARENT_SCOPE)
+-      # It also doesn't define __SSE__/__MMX__ flags and only does the AVX and higher flags.
+-      # For consistency we define these flags for MSVC.
+-      add_compile_definitions(__MMX__ __SSE__ __SSE2__ __SSE3__ __SSE4_1__ __SSE4_2__)
+-    elseif(CMAKE_C_COMPILER_ID STREQUAL "Intel")
+-      if(WIN32)
+-        set(${_simd_flags} "/QxSSE4.2" PARENT_SCOPE)
+-      else()
+-        set(${_simd_flags} "-xsse4.2" PARENT_SCOPE)
+-      endif()
+-    else()
+-      message(WARNING "SIMD flags for this compiler: '${CMAKE_C_COMPILER_ID}' not known")
+-      set(${_simd_flags} PARENT_SCOPE)
+-    endif()
+-  elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|ARM64|arm64" OR CMAKE_OSX_ARCHITECTURES MATCHES "arm64")
+-    if((CMAKE_C_COMPILER_ID STREQUAL "GNU") OR (CMAKE_C_COMPILER_ID MATCHES "Clang"))
+-      if(UNIX AND NOT APPLE)
+-        # Target ARMv8.2-A with dot product and half float.
+-        set(${_simd_flags} "-march=armv8.2-a+dotprod+fp16+lse" PARENT_SCOPE)
+-      else()
+-        set(${_simd_flags} PARENT_SCOPE)
+-      endif()
+-    else()
+-      set(${_simd_flags} PARENT_SCOPE)
+-    endif()
+-  else()
+-    # Not a supported system, don't set any SIMD compiler flags.
+-    set(${_simd_flags} PARENT_SCOPE)
+-  endif()
++  set(${_simd_flags} "@CUSTOM_SIMD_FLAGS@" PARENT_SCOPE)
+ endfunction()
+ 
+ function(test_neon_support)

@@ -68,6 +68,9 @@ else
 fi
 
 ARM_CPU_FLAGS=(
+	"dotprod:dotprod"
+	"fp16:fp16"
+	"lse:lse"
 	"sve:sve"
 )
 MIPS_CPU_FLAGS=(
@@ -88,6 +91,7 @@ X86_CPU_FLAGS=(
 	"lzcnt:lzcnt"
 	"sse4_1:sse4_1"
 	"sse4_2:sse4_2"
+	"xsse4_2:xsse4_2"
 	"f16c:f16c"
 	"fma:fma"
 	"bmi:bmi"

@@ -1243,6 +1243,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.2.0-optionalize-simd.patch"
 	"${FILESDIR}/${PN}-5.0.0-math_half-sse4.1-check.patch"
 	"${FILESDIR}/${PN}-5.0.0-fix-hip-bin-path.patch"
+	"${FILESDIR}/${PN}-5.2.1-custom-simd-flags.patch"
 )
 
 _blender_set_rocm_compiler() {
@@ -1352,6 +1353,26 @@ _src_configure_compiler() {
 	set_blender_compiler
 }
 
+blender_configure_custom_simd_flags() {
+	local flags=""
+	if use gcc || use clang ; then
+		if [[ "${ABI}" =~ "amd64" ]] && [[ "${CFLAGS}" =~ "-march=x86-64-v2" ]] ; then
+			flags="-march=x86-64-v2"
+		elif [[ "${ABI}" =~ "amd64" ]] && use cpu_flags_x86_sse4_2 ; then
+			flags="-msse4"
+		elif [[ "${ABI}" =~ "arm64" ]] && [[ "${CFLAGS}" =~ "-march=armv8.2-a" ]] && use cpu_flags_arm_dotprod && use cpu_flags_arm_fp64 && use cpu_flags_arm_lse ; then
+			flags="-march=armv8.2-a+dotprod+fp16+lse"
+		fi
+	elif in_iuse icc && use icc ; then
+		if [[ "${ABI}" =~ "amd64" ]] && use cpu_flags_x86_xsse4_2 ; then
+			flags="-xsse4.2"
+		elif [[ "${ABI}" =~ "amd64" ]] && use cpu_flags_x86_sse4_2 ; then
+			flags="-msse4"
+		fi
+	fi
+	sed -i -e "s|@CUSTOM_SIMD_FLAGS@|${flags}|g" "${S}/" || die
+}
+
 _src_configure() {
 	chkl_check_many_timestamps
 	export CMAKE_USE_DIR="${S}"
@@ -1386,6 +1407,7 @@ eerror "You must enable the wayland USE flag or uninstall wayland."
 	unset CMAKE_PREFIX_PATH
 
 	blender_configure_eigen
+	blender_configure_custom_simd_flags
 
 	# TODO: migrate blender-libs changes from blender-v2.83 once LLVM-10 is deprecated
 

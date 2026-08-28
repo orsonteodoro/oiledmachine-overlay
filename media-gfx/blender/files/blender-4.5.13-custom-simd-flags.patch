@@ -1,0 +1,27 @@
+--- a/build_files/cmake/macros.cmake.orig	2026-08-20 22:30:09.000000000 -0700
++++ b/build_files/cmake/macros.cmake	2026-08-28 15:20:38.354630543 -0700
+@@ -546,23 +546,7 @@ macro(TEST_SSE_SUPPORT
+ 
+   include(CheckCSourceRuns)
+ 
+-  # message(STATUS "Detecting SSE support")
+-  if(CMAKE_COMPILER_IS_GNUCC OR (CMAKE_C_COMPILER_ID MATCHES "Clang"))
+-    set(${_sse42_flags} "-march=x86-64-v2")
+-  elseif(MSVC)
+-    # MSVC has no specific build flags for SSE42, but when using intrinsics it will
+-    # generate the right instructions.
+-    set(${_sse42_flags} "")
+-  elseif(CMAKE_C_COMPILER_ID STREQUAL "Intel")
+-    if(WIN32)
+-      set(${_sse42_flags} "/QxSSE4.2")
+-    else()
+-      set(${_sse42_flags} "-xsse4.2")
+-    endif()
+-  else()
+-    message(WARNING "SSE flags for this compiler: '${CMAKE_C_COMPILER_ID}' not known")
+-    set(${_sse42_flags})
+-  endif()
++  set(${_sse42_flags} "@CUSTOM_SIMD_FLAGS@")
+ 
+   set(CMAKE_REQUIRED_FLAGS "${${_sse42_flags}}")
+ 

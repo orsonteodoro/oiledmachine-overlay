@@ -99,7 +99,7 @@ esac
 CXX_STANDARD=17
 # For the max exclusive Python supported (and others), see \
 # https://github.com/blender/blender/blob/v4.5.11/build_files/build_environment/install_linux_packages.py#L693 \
-PYTHON_COMPAT=( "python3_"{10..12} ) # < 3.13 for Numpy 1.x, upstream uses vendored 3.11
+PYTHON_COMPAT=( "python3_"{10..14} ) # < 3.13 for Numpy 1.x, upstream uses vendored 3.11
 BOOST_PV="1.82"
 CLANG_MIN="18" # C++17
 GCC_MIN="11" # C++17
@@ -1251,6 +1251,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-4.5.3-optionalize-simd.patch"
 	"${FILESDIR}/${PN}-5.0.0-fix-hip-bin-path.patch"
 	"${FILESDIR}/${PN}-5.0.0-hip-symbolize-versions.patch"
+	"${FILESDIR}/${PN}-4.5.13-custom-simd-flags.patch"
 )
 
 _blender_set_rocm_compiler() {
@@ -1385,6 +1386,22 @@ _src_configure_compiler() {
 	set_blender_compiler
 }
 
+blender_configure_custom_simd_flags() {
+	local flags=""
+	if use gcc || use clang ; then
+		if [[ "${ABI}" =~ "amd64" ]] && [[ "${CFLAGS}" =~ "-march=x86-64-v2" ]] ; then
+			flags="-march=x86-64-v2"
+		elif [[ "${ABI}" =~ "amd64" ]] && use cpu_flags_x86_sse4_2 ; then
+			flags="-msse4"
+		fi
+	elif in_iuse icc && use icc ; then
+		if [[ "${ABI}" =~ "amd64" ]] && use cpu_flags_x86_sse4_2 ; then
+			flags="-msse4"
+		fi
+	fi
+	sed -i -e "s|@CUSTOM_SIMD_FLAGS@|${flags}|g" "${S}/" || die
+}
+
 _src_configure() {
 	chkl_check_many_timestamps
 	export CMAKE_USE_DIR="${S}"
@@ -1419,6 +1436,7 @@ eerror "You must enable the wayland USE flag or uninstall wayland."
 	unset CMAKE_PREFIX_PATH
 
 	blender_configure_eigen
+	blender_configure_custom_simd_flags
 
 	# TODO: migrate blender-libs changes from blender-v2.83 once LLVM-10 is deprecated
 
