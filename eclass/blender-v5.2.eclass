@@ -1363,16 +1363,16 @@ eerror "You must enable the wayland USE flag or uninstall wayland."
 		die
 	fi
 
+	filter-flags '-O*'
+	append-cflags '-O2' # For fortify source
+	append-cxxflags '-O2' # For fortify source
+
 	# FIX: forcing '-funsigned-char' fixes an anti-aliasing issue with menu
 	# shadows, see bug #276338 for reference
 	append-flags -funsigned-char
 	append-lfs-flags
 	cflags-hardened_append
 	fix_mb_len_max
-
-	filter-flags '-O*'
-	append-cflags '-O2' # For fortify source
-	append-cxxflags '-O2' # For fortify source
 
 	local s="${OPENVDB_ABIS_MAJOR_VERS}"
 	append-cppflags -DOPENVDB_ABI_VERSION_NUMBER="${s}"
