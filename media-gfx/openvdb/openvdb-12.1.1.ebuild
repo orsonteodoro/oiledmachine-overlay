@@ -73,7 +73,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 -alembic ax +blosc clang cuda doc gcc icc +jemalloc -jpeg -log4cplus
-+nanovdb -numpy -python +static-libs -tbbmalloc nanovdb -no-concurrent-malloc
++nanovdb -numpy -python +static-libs -tbbmalloc -no-concurrent-malloc
 -openexr -png test -vdb_lod +vdb_print -vdb_render -vdb_view
 ebuild_revision_11
 "
@@ -205,11 +205,6 @@ BDEPEND+="
 	test? (
 		>=dev-cpp/gtest-1.10
 		>=dev-util/cppunit-1.10
-	)
-"
-PDEPEND="
-	nanovdb? (
-		~media-gfx/nanovdb-32.6.0_p20231027[cuda?,openvdb]
 	)
 "
 PATCHES=(
