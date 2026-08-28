@@ -300,6 +300,9 @@ einfo "| tbbmalloc | 0.95        | 0.2      | Upstream Linux default in CI/CD te
 einfo "| ptmalloc  | 0.4         | 0.6      | Ebuild default for glibc systems          |"
 einfo "| mallocng  | 0.3         | 0.9      | Ebuild default for musl systems           |"
 einfo
+einfo "1 means the best."
+einfo "0 means the worst."
+einfo
 	if use jemalloc ; then
 einfo "Your choice:  jemalloc"
 	elif use tbbmalloc ; then
