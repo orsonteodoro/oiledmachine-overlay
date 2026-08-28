@@ -33,6 +33,7 @@ VULKAN_PV="1.4.321.0"
 CHKL_TIMESTAMPS=(
 	"dev-cpp/tbb-9999"
 	"dev-libs/jemalloc-usd-9999"
+	"media-libs/embree-9999"
 	"media-libs/libpng-9999"
 	"media-libs/opencolorio-9999"
 	"media-libs/openexr-9999"

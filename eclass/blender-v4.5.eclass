@@ -119,6 +119,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/wayland-9999"
 	"dev-util/glslang-9999"
 	"dev-util/vulkan-headers-9999"
+	"media-libs/embree-9999"
 	"media-libs/flac-9999"
 	"media-libs/harfbuzz-9999"
 	"media-libs/libaom-9999"
@@ -1002,8 +1003,7 @@ RDEPEND+="
 		>=sys-apps/dbus-${DBUS_PV}:=
 	)
 	embree? (
-		>=media-libs/embree-${EMBREE_PV}:=[-backface-culling(-),-compact-polys(-),cpu_flags_arm_neon2x?,cpu_flags_x86_sse4_2?,cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sycl?,tbb?]
-		<media-libs/embree-5:=[-backface-culling(-),-compact-polys(-),cpu_flags_arm_neon2x?,cpu_flags_x86_sse4_2?,cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sycl?,tbb?]
+		>=media-libs/embree-${EMBREE_PV}:4=[-backface-culling(-),-compact-polys(-),cpu_flags_arm_neon2x?,cpu_flags_x86_sse4_2?,cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sycl?,tbb?]
 	)
 	ffmpeg? (
 		media-video/ffmpeg:=
