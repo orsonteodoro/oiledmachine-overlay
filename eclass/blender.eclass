@@ -448,10 +448,15 @@ ewarn
 blender_pkg_nofetch() {
 	local fn="blender-${PN}.tar.xz"
 einfo
-einfo "The download tarball is in"
-einfo "https://download.blender.org/source/"
-einfo "Download ${fn} using a well known web browser.  [Tested with Google Chrome.]"
-einfo "Place from /home/<username>/Downloads/${fn} into /var/cache/distfiles"
+einfo "Unfortunately, the source tarball needs a web browser to download"
+einfo "due to download restrictions."
+einfo
+einfo "1. Open up a well known web browser.  [Tested with Google Chrome.]"
+einfo "2. Go to https://download.blender.org/source/"
+einfo "3. Download ${fn}"
+einfo "4. mv /home/<username>/Downloads/${fn} into /var/cache/distfiles"
+einfo "5. chown portage:portage /var/cache/distfiles/${fn}"
+einfo "6. chmod 0664 /var/cache/distfiles/${fn}"
 einfo
 }
 
