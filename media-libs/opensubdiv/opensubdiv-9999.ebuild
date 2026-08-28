@@ -39,17 +39,31 @@ CUDA_TARGETS_COMPAT=(
 )
 
 ONETBB_SLOT="0"
-PYTHON_COMPAT=( "python3_"{10..11} ) # U22 (3.10 - 3.11)
+PYTHON_COMPAT=( "python3_"{10..14} ) # U22 (3.10 - 3.11), Relaxed
 
 inherit check-compiler-switch cmake cuda flag-o-matic libcxx-slot libstdcxx-slot
 inherit python-any-r1 toolchain-funcs
 
-KEYWORDS="~amd64 ~arm64"
-S="${WORKDIR}/OpenSubdiv-${MY_PV}"
-SRC_URI="
+if [[ "${PV}" =~ "9999" ]] ; then
+	SOVER="3.7.0"
+	FALLBACK_COMMIT="3e685669767c7441f11a0cf2c2ac08ca7d08bd43"
+	EGIT_BRANCH="dev"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/OpenSubdiv-${MY_PV}"
+	EGIT_REPO_URI="https://github.com/PixarAnimationStudios/OpenSubdiv.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	SOVER="${PV}"
+	KEYWORDS="~amd64 ~arm64"
+	SRC_URI="
 https://github.com/PixarAnimationStudios/OpenSubdiv/archive/v${MY_PV}.tar.gz
 	-> ${P}.tar.gz
-"
+	"
+fi
+
+S="${WORKDIR}/OpenSubdiv-${MY_PV}"
 
 DESCRIPTION="A subdivision surface library"
 HOMEPAGE="https://graphics.pixar.com/opensubdiv/docs/intro.html"
@@ -61,7 +75,7 @@ RESTRICT="
 		test
 	)
 "
-SLOT="0"
+SLOT="0/${SOVER}"
 # cuda is default on upstream
 # test is default on upstream
 IUSE="
@@ -189,6 +203,29 @@ pkg_setup() {
 	python-any-r1_pkg_setup
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+	local c1=$(grep -e "OPENSUBDIV_VERSION_MAJOR" "${S}/opensubdiv/version.h" | cut -f 3 -d " ")
+	local c2=$(grep -e "OPENSUBDIV_VERSION_MINOR" "${S}/opensubdiv/version.h" | cut -f 3 -d " ")
+	local c3=$(grep -e "OPENSUBDIV_VERSION_PATCH" "${S}/opensubdiv/version.h" | cut -f 3 -d " ")
+	local actual_sover="${c1}.${c2}.${c3}"
+	local expected_sover="${SOVER}"
+	if ver_test "${actual_sover}" "-ne" "${expected_sover}" ; then
+eerror "QA:  Update PV or SOVER"
+eerror "Actual SOVER:  ${actual_sover}"
+eerror "Expected SOVER:  ${expected_sover}"
+		die
+	fi
 }
 
 src_prepare() {
