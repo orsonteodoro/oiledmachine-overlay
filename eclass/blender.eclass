@@ -25,6 +25,7 @@ IMPLS=(
 
 LTS_VERSIONS=(
 	"4.5"
+	"5.2"
 )
 
 inherit cflags-hardened check-compiler-switch chkl cuda check-reqs cmake cython dhms
@@ -452,8 +453,8 @@ _download_4_5_tarball() {
 	local fn="blender-${PV}.tar.xz"
 einfo
 einfo "The download tarball is in"
-einfo "https://www.blender.org/releases/5-2/"
-einfo "Click Download button > Source Code Blender + Libraries"
+einfo "https://www.blender.org/releases/4-5/"
+einfo "Click Download button > Source Code Blender"
 einfo "Place from /home/<username>/Downloads/${fm} into /var/cache/distfiles"
 einfo
 }
@@ -463,7 +464,7 @@ _download_5_2_tarball() {
 einfo
 einfo "The download tarball is in"
 einfo "https://www.blender.org/releases/5-2/"
-einfo "Click Download button > Source Code Blender + Libraries"
+einfo "Click Download button > Source Code Blender + Libraries 1.7 GB"
 einfo "Place from /home/<username>/Downloads/${fn} into /var/cache/distfiles"
 einfo
 }
