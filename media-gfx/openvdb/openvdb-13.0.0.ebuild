@@ -75,7 +75,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 -alembic ax +blosc clang cuda doc gcc icc +jemalloc -jpeg -log4cplus
 +nanovdb -python +static-libs -tbb
 -openexr -png test -vdb_lod +vdb_print -vdb_render -vdb_view
-ebuild_revision_11
+ebuild_revision_12
 "
 REQUIRED_USE+="
 	?? (
@@ -302,7 +302,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	local mycmakeargs=(
 		-DCHOST="${CHOST}"
-		-DCMAKE_DISABLE_FIND_PACKAGE_JEMALLOC=$(use !jemalloc "TRUE" "FALSE")
+		-DCMAKE_DISABLE_FIND_PACKAGE_JEMALLOC=$(usex !jemalloc "TRUE" "FALSE")
 		-DCMAKE_INSTALL_DOCDIR="share/doc/${PF}/"
 		-DCONCURRENT_MALLOC=$(usex jemalloc "Jemalloc" \
 					$(usex tbb "Tbbmalloc" "None")\
