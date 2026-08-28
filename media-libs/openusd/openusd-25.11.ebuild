@@ -49,12 +49,27 @@ CHKL_TIMESTAMPS=(
 inherit cflags-hardened check-compiler-switch chkl libcxx-slot libstdcxx-slot
 inherit python-single-r1 flag-o-matic secure-version cmake
 
-KEYWORDS="~amd64 ~arm64"
-S="${WORKDIR}/OpenUSD-${PV}"
-SRC_URI="
+if [[ "${PV}" =~ "9999" ]] ; then
+	INTERNAL_VERSION="0.26.11"
+	SUBSLOT="${INTERNAL_VERSION}"
+	FALLBACK_COMMIT=""
+	EGIT_BRANCH="dev"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/OpenUSD-${PV}"
+	EGIT_REPO_URI="https://github.com/PixarAnimationStudios/OpenUSD.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	SUBSLOT="0."$(ver_cut "1" "${PV}")
+	KEYWORDS="~amd64 ~arm64"
+	SRC_URI="
 https://github.com/PixarAnimationStudios/OpenUSD/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
-"
+	"
+fi
+
+S="${WORKDIR}/OpenUSD-${PV}"
 
 DESCRIPTION="Universal Scene Description is a system for 3D scene interexchange between apps"
 HOMEPAGE="http://www.openusd.org"
@@ -82,12 +97,12 @@ LICENSE="
 # custom - https://github.com/PixarAnimationStudios/OpenUSD/blob/v25.11/pxr/usdImaging/usdImaging/drawModeStandin.cpp#L9
 # custom - search "In consideration of your agreement"
 # MIT - the distro MIT license template does not have all rights reserved.
-SLOT="0"
+SLOT="0/${SUBSLOT}"
 # test USE flag is enabled upstream
 IUSE+="
 -alembic clang -doc +draco -embree +examples -experimental gcc +hdf5 hdstorm +imaging +jemalloc
 -materialx -monolithic -opencolorio +opengl -openimageio -openvdb openexr -osl
--ptex +python +safety-over-speed -static-libs +tutorials -test +tools +usdview
+-ptex +python -static-libs +tutorials -test +tools +usdview
 -vulkan
 ebuild_revision_17
 "
@@ -257,6 +272,34 @@ uic -g python "$@"
 EOF
 }
 
+src_unpack() {
+	local actual_subslot
+	local expected_subslot="${SUBSLOT}"
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+		local c1=$(grep -e "PXR_MAJOR_VERSION" "${S}/cmake/defaults/Version.cmake" | head -n 1 | cut -f 2 -d " " | cut -f 2 -d '"')
+		local c2=$(grep -e "PXR_MINOR_VERSION" "${S}/cmake/defaults/Version.cmake" | head -n 1 | cut -f 2 -d " " | cut -f 2 -d '"')
+		local c3=$(grep -e "PXR_PATCH_VERSION" "${S}/cmake/defaults/Version.cmake" | head -n 1 | cut -f 2 -d " " | cut -f 2 -d '"')
+		actual_subslot="${c1}.${c2}.${c3}"
+	else
+		unpack ${A}
+		local c1=$(grep -e "PXR_MAJOR_VERSION" "${S}/cmake/defaults/Version.cmake" | head -n 1 | cut -f 2 -d " " | cut -f 2 -d '"')
+		local c2=$(grep -e "PXR_MINOR_VERSION" "${S}/cmake/defaults/Version.cmake" | head -n 1 | cut -f 2 -d " " | cut -f 2 -d '"')
+		actual_subslot="${c1}.${c2}"
+	fi
+	if ver_test "${actual_subslot}" "-ne" "${expected_subslot}" ; then
+	# No sover.  Use the same one by openimageio.
+eerror "QA:  Update SUBSLOT or PV"
+eerror "Actual subslot:  ${actual_subslot}"
+eerror "Expected subslot:  ${expected_subslot}"
+		die
+	fi
+}
+
 src_prepare() {
 	cmake_src_prepare
 	# make dummy pyside-uid
@@ -321,7 +364,7 @@ ewarn "Uninstall ${PN} to avoid build failure the re-emerge ${PN}."
 		-DPXR_ENABLE_PYTHON_SUPPORT=$(usex python ON OFF)
 		-DPXR_ENABLE_VULKAN_SUPPORT=$(usex vulkan ON OFF)
 		-DPXR_INSTALL_LOCATION="${EPREFIX}${USD_PATH}"
-		-DPXR_PREFER_SAFETY_OVER_SPEED=$(usex safety-over-speed ON OFF)
+		-DPXR_PREFER_SAFETY_OVER_SPEED=ON # Crash (DoS), OOBR (ID) mitigation
 		-DPXR_PYTHON_SHEBANG="${PYTHON}"
 		-DPXR_SET_INTERNAL_NAMESPACE="usdBlender"
 		-DPXR_USE_PYTHON_3=ON
