@@ -104,7 +104,7 @@ ${CPU_FEATURES[@]%:*}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang cuda doc gcc gui icc icx libcxx nofma optix partio python qt6 static-libs test wayland X
-ebuild_revision_15
+ebuild_revision_16
 "
 REQUIRED_USE+="
 	^^ (
@@ -934,8 +934,13 @@ src_install() {
 			cmake_src_install
 		done
 		if multilib_is_native_abi ; then
-			dosym /usr/$(get_libdir)/osl/bin/oslc /usr/bin/oslc
-			dosym /usr/$(get_libdir)/osl/bin/oslinfo /usr/bin/oslinfo
+			local L=(
+				"bin/genluts"
+				"bin/oslc"
+				"bin/oslinfo"
+			)
+			exeinto "/usr/bin"
+			doexe "${L[@]}"
 		fi
 		multilib_check_headers
 	}
