@@ -133,6 +133,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/openexr-9999"
 	"media-libs/openimageio-3.1.9999"
 	"media-libs/openjpeg-9999"
+	"media-libs/opensubdiv-9999"
 	"media-libs/opus-9999"
 	"media-libs/rubberband-9999"
 	"media-libs/tiff-9999"
@@ -1068,8 +1069,7 @@ RDEPEND+="
 		media-libs/openjph:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	opensubdiv? (
-		>=media-libs/opensubdiv-3.7.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cuda=,opencl=,opengl(+),tbb?]
-		<media-libs/opensubdiv-4.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cuda=,opencl=,opengl(+),tbb?]
+		>=media-libs/opensubdiv-${OPENSUBDIV_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cuda=,opencl=,opengl(+),tbb?]
 	)
 	openvdb? (
 		>=dev-libs/c-blosc-1.21.1:=[zlib]
