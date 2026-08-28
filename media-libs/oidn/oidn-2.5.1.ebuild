@@ -71,8 +71,9 @@ CHKL_TIMESTAMPS=(
 	"sys-devel/binutils-9999"
 )
 
-inherit check-compiler-switch chkl cmake cuda flag-o-matic libcxx-slot libstdcxx-slot
-inherit llvm python-single-r1 rocm secure-version toolchain-funcs
+inherit check-compiler-switch chkl cmake cuda flag-o-matic flag-o-matic-om
+inherit libcxx-slot libstdcxx-slot llvm python-single-r1 rocm secure-version
+inherit toolchain-funcs
 
 if [[ ${PV} = *9999 ]]; then
 	inherit git-r3
@@ -411,6 +412,8 @@ ewarn "media-libs/openimageio must be built with the same gcc for cuda support."
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
+
+	fix_mb_len_max
 
 	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
 	# Prevent static-libs IR mismatch.
