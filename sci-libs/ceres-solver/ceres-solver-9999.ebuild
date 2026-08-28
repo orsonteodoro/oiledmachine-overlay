@@ -70,7 +70,7 @@ RDEPEND="
 "
 DEPEND="${RDEPEND}"
 
-DOCS=( README.md VERSION )
+DOCS=( "README.md" )
 
 PATCHES=(
 	"${FILESDIR}/${PN}-2.0.0-system-mathjax.patch"
@@ -150,7 +150,7 @@ src_install() {
 	cmake-multilib_src_install
 
 	if use examples; then
-		docompress -x /usr/share/doc/${PF}/examples
-		dodoc -r examples data
+		docompress -x "/usr/share/doc/${PF}/examples"
+		dodoc -r "examples" "data"
 	fi
 }
