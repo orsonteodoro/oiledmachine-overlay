@@ -191,11 +191,17 @@
     <flag name="color-management">
       Enable color management via <pkg>media-libs/opencolorio</pkg>.
     </flag>
+    <flag name="cpu_flags_arm_lse">
+      Enables support for Large System Extensions.
+    </flag>
     <flag name="cpu_flags_x86_bmi">
       Enables support for BMI optimizations if cpudetection is disabled.
     </flag>
     <flag name="cpu_flags_x86_lzcnt">
       Enables support for LZCNT optimization if cpudetection is disabled.
+    </flag>
+    <flag name="cpu_flags_x86_xsse4_2">
+      Use the -xSSE4.2 compiler flag optimized specifically for Intel® CPUs.
     </flag>
     <flag name="cpudetection">
       Detect at build time the SIMD instruction sets for cycles.
