@@ -289,6 +289,25 @@ ewarn "You must set up CC/CXX manually for ICC support."
 
 src_configure() {
 	chkl_check_many_timestamps
+
+einfo
+einfo "Performance and security estimates of concurrent allocators as a normalized number"
+einfo
+einfo "| Allocator | Performance | Security | Default                                   |"
+einfo "|-----------|-------------|----------|-------------------------------------------|"
+einfo "| jemalloc  | 1.4-1.5     | 0.8-0.9  | Upstream windows default in CI/CD testing |"
+einfo "| tbbmalloc | 1.3-1.4     | 0.5-0.6  | Upstream linux default in CI/CD testing   |"
+einfo "| ptmalloc  | 1.0         | 1.0      | Ebuild default                            |"
+einfo
+	if use jemalloc ; then
+einfo "Your choice:  jemalloc"
+	elif use tbbmalloc ; then
+einfo "Your choice:  tbbmalloc"
+	else
+einfo "Your choice:  ptmalloc"
+	fi
+einfo
+
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
 	export CPP=$(tc-getCPP)
