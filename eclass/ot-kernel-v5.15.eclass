@@ -210,7 +210,7 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}" # 18, 19, 21
 )
 
-LLVM_MAX_SLOT="21"
+LLVM_MAX_SLOT="22"
 LLVM_MIN_SLOT="18"
 LLVM_MIN_KCFI_ARM64="not supported"
 LLVM_MIN_KCFI_AMD64="not supported"
