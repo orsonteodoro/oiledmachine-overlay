@@ -168,7 +168,7 @@ LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 # Upstream limits LLVM to [15, 18) but relaxed for ROCm and overlay compatibility
 # It uses LLVM 17 as default.
 LLVM_MAX_SLOT="22"
-LLVM_MAX_UPSTREAM=17 # (inclusive)
+LLVM_MAX_UPSTREAM=20 # (inclusive)
 
 inherit ffmpeg
 FFMPEG_COMPAT_SLOTS=(
@@ -521,7 +521,7 @@ REQUIRED_USE+="
 			nvcc
 		)
 		^^ (
-			${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]}
+			${LIBCXX_COMPAT_CXX20_CUDA_12_8[@]}
 		)
 		cycles
 		|| (
@@ -661,7 +661,7 @@ REQUIRED_USE+="
 			${ROCM_IUSE[@]}
 		)
 		^^ (
-			${LIBCXX_COMPAT_CXX17_ROCM_7_2[@]}
+			${LIBCXX_COMPAT_CXX20_ROCM_7_2[@]}
 		)
 	)
 	rocm_7_2? (
