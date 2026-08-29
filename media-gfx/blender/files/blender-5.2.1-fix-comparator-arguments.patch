@@ -1,0 +1,12 @@
+This is an AI recommended fix.
+--- a/source/blender/modifiers/intern/MOD_grease_pencil_build.cc.orig	2026-06-03 06:03:50.000000000 -0700
++++ b/source/blender/modifiers/intern/MOD_grease_pencil_build.cc	2026-08-28 21:14:26.587464556 -0700
+@@ -469,7 +469,7 @@ static bke::CurvesGeometry reorder_strok
+   }
+ 
+   parallel_sort(
+-      distances.begin(), distances.end(), [](Pair &a, Pair &b) { return a.value < b.value; });
++      distances.begin(), distances.end(), [](const Pair &a, const Pair &b) { return a.value < b.value; });
+ 
+   Array<int> new_order(curves.curves_num());
+   for (const int i : curves.curves_range()) {
