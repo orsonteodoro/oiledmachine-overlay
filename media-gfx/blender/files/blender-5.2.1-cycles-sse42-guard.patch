@@ -1,0 +1,13 @@
+--- a/intern/cycles/util/math_float3.h.orig	2026-06-03 06:03:48.000000000 -0700
++++ b/intern/cycles/util/math_float3.h	2026-08-28 18:45:17.220391372 -0700
+@@ -423,8 +423,8 @@ ccl_device_inline float3 round(const flo
+ {
+ #  if defined(__KERNEL_NEON__)
+   return float3(vrndnq_f32(a.m128));
+-#  elif defined(__KERNEL_SSE__)
+-  return float3(_mm_round_ps(a.m128, _MM_FROUND_NINT));
++#  elif defined(__KERNEL_SSE__) && defined(__KERNEL_SSE42__)
++  return float3(_mm_round_ps(a.m128, _MM_FROUND_NINT)); // It needs SSE4.1.
+ #  else
+   return make_float3(roundf(a.x), roundf(a.y), roundf(a.z));
+ #  endif

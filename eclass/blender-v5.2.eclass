@@ -1249,6 +1249,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.0.0-math_half-sse4.1-check.patch"
 	"${FILESDIR}/${PN}-5.0.0-fix-hip-bin-path.patch"
 	"${FILESDIR}/${PN}-5.2.1-custom-simd-flags.patch"
+	"${FILESDIR}/${PN}-5.2.1-cycles-sse42-guard.patch"
 )
 
 _blender_set_rocm_compiler() {
