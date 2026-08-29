@@ -100,8 +100,8 @@ CXX_STANDARD=20
 # For the max exclusive Python supported (and others), see \
 # https://github.com/blender/blender/blob/v5.2.1/build_files/build_environment/install_linux_packages.py#L693 \
 PYTHON_COMPAT=( "python3_"{13,14} ) # >= 3.13 for Numpy 2.x, upstream uses vendored 3.13
-CLANG_MIN="18" # C++17
-GCC_MIN="14" # C++17
+CLANG_MIN="21" # C++20
+GCC_MIN="14" # C++20
 
 inherit secure-version
 
