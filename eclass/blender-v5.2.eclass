@@ -1250,6 +1250,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.0.0-fix-hip-bin-path.patch"
 	"${FILESDIR}/${PN}-5.2.1-custom-simd-flags.patch"
 	"${FILESDIR}/${PN}-5.2.1-cycles-sse42-guard.patch"
+	"${FILESDIR}/${PN}-5.2.1-fix-comparator-arguments.patch"
 )
 
 _blender_set_rocm_compiler() {
