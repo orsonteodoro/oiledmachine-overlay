@@ -24,10 +24,10 @@ inherit blender-v4.5
 # See eclass below for implementation:
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/blender.eclass
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/blender-multibuild.eclass
-# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/blender-v4.3.eclass
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/blender-v4.5.eclass
 
 # For version bumps see,
-# https://download.blender.org/release/Blender4.3/
+# https://download.blender.org/release/Blender4.5/
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  turned-into-split-eclasses
