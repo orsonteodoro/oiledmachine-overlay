@@ -129,58 +129,58 @@ LIBCXX_COMPAT_CXX17_CUDA_13_3=(
 )
 
 # For latest CUDA 12
-LIBCXX_COMPAT_CXX20_CUDA_12=(
-	"llvm_slot_18" # c++20 or earlier compatible
-	"llvm_slot_19" # c++20 or earlier compatible
-)
+#LIBCXX_COMPAT_CXX20_CUDA_12=(
+#	"llvm_slot_18" # c++20 or earlier compatible
+#	"llvm_slot_19" # c++20 or earlier compatible
+#)
 
 # For latest CUDA 13
 LIBCXX_COMPAT_CXX20_CUDA_13=(
-	"llvm_slot_18" # c++20 or earlier compatible
-	"llvm_slot_19" # c++20 or earlier compatible
+#	"llvm_slot_18" # c++20 or earlier compatible
+#	"llvm_slot_19" # c++20 or earlier compatible
 	"llvm_slot_21" # c++20 or earlier compatible
 )
 
-LIBCXX_COMPAT_CXX20_CUDA_12_6=(
-	"llvm_slot_18"
-)
+#LIBCXX_COMPAT_CXX20_CUDA_12_6=(
+#	"llvm_slot_18"
+#)
 
-LIBCXX_COMPAT_CXX20_CUDA_12_8=(
-	"llvm_slot_18"
-	"llvm_slot_19"
-)
+#LIBCXX_COMPAT_CXX20_CUDA_12_8=(
+#	"llvm_slot_18"
+#	"llvm_slot_19"
+#)
 
-LIBCXX_COMPAT_CXX20_CUDA_12_9=(
-	"llvm_slot_18"
-	"llvm_slot_19"
-)
+#LIBCXX_COMPAT_CXX20_CUDA_12_9=(
+#	"llvm_slot_18"
+#	"llvm_slot_19"
+#)
 
-LIBCXX_COMPAT_CXX20_CUDA_13_0=(
-	"llvm_slot_18"
-	"llvm_slot_19"
-)
+#LIBCXX_COMPAT_CXX20_CUDA_13_0=(
+#	"llvm_slot_18"
+#	"llvm_slot_19"
+#)
 
-LIBCXX_COMPAT_CXX20_CUDA_13_1=(
-	"llvm_slot_18"
-	"llvm_slot_19"
-)
+#LIBCXX_COMPAT_CXX20_CUDA_13_1=(
+#	"llvm_slot_18"
+#	"llvm_slot_19"
+#)
 
 LIBCXX_COMPAT_CXX20_CUDA_13_2=(
-	"llvm_slot_18"
-	"llvm_slot_19"
+#	"llvm_slot_18"
+#	"llvm_slot_19"
 	"llvm_slot_21"
 )
 
 LIBCXX_COMPAT_CXX20_CUDA_13_3=(
-	"llvm_slot_18"
-	"llvm_slot_19"
+#	"llvm_slot_18"
+#	"llvm_slot_19"
 	"llvm_slot_21"
 )
 
 # For latest CUDA 13
 LIBCXX_COMPAT_CXX23_CUDA_13=(
-	"llvm_slot_18" # c++23 or earlier compatible
-	"llvm_slot_19" # c++23 or earlier compatible
+#	"llvm_slot_18" # c++23 or earlier compatible
+#	"llvm_slot_19" # c++23 or earlier compatible
 	"llvm_slot_21" # c++23 or earlier compatible
 )
 
@@ -211,8 +211,8 @@ LIBCXX_COMPAT_CXX17_CUDA=(
 
 # For latest CUDA 12 on a c++20 or earlier project
 LIBCXX_COMPAT_CXX20_CUDA=(
-	"llvm_slot_18" # Support CUDA 12.6, 12.8, 12.9, 13.0, 13.2, 13.3
-	"llvm_slot_19" # Support CUDA 12.8, 12.9, 13.0, 13.1, 13.2, 13.3
+#	"llvm_slot_18" # Support CUDA 12.6, 12.8, 12.9, 13.0, 13.2, 13.3
+#	"llvm_slot_19" # Support CUDA 12.8, 12.9, 13.0, 13.1, 13.2, 13.3
 	"llvm_slot_21" # Support CUDA 13.2, 13.3
 )
 
@@ -294,8 +294,8 @@ LIBCXX_COMPAT_CXX17_GPU=(
 )
 
 LIBCXX_COMPAT_CXX20_GPU=(
-	"llvm_slot_18" # Support CUDA 12.6, 12.8, 12.9, 13.0, 13.1, 13.2, 13.3
-	"llvm_slot_19" # Support CUDA 12.8, 12.9, 13.0, 13.1, 13.2, 13.3
+#	"llvm_slot_18" # Support CUDA 12.6, 12.8, 12.9, 13.0, 13.1, 13.2, 13.3
+#	"llvm_slot_19" # Support CUDA 12.8, 12.9, 13.0, 13.1, 13.2, 13.3
 	"llvm_slot_21" # Support CUDA 13.2, 13.3
 	"llvm_slot_22" # Support ROCm 7.2
 )
