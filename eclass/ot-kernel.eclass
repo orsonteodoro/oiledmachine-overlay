@@ -477,7 +477,7 @@ VULNERABILITIES_FIXED=(
 # UBSAN: array-index-out-of-bounds - use panic_on_warn=1
 
 # For current month
-	"CVE-2026-53362;KEV, HO, OOBW, DoS, DT, ID;High"
+	"CVE-2026-53362;KEV, CB, PE, HO, OOBW, DoS, DT, ID;High"
 	"CVE-2022-0995;KEV, OOBW, PE, DoS, DT, ID;High"
 	"CVE-2026-80725;IV;"
 	"CVE-2026-80725;IV;"
