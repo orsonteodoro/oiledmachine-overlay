@@ -1,5 +1,5 @@
---- a/intern/cycles/util/math_float3.h.orig	2026-06-03 06:03:48.000000000 -0700
-+++ b/intern/cycles/util/math_float3.h	2026-08-28 18:45:17.220391372 -0700
+--- a/intern/cycles/util/math_float3.h.orig	2026-08-28 18:57:01.532014120 -0700
++++ b/intern/cycles/util/math_float3.h	2026-08-28 19:02:36.938572617 -0700
 @@ -423,8 +423,8 @@ ccl_device_inline float3 round(const flo
  {
  #  if defined(__KERNEL_NEON__)
@@ -11,3 +11,41 @@
  #  else
    return make_float3(roundf(a.x), roundf(a.y), roundf(a.z));
  #  endif
+@@ -432,8 +432,8 @@ ccl_device_inline float3 round(const flo
+ 
+ ccl_device_inline float3 floor(const float3 a)
+ {
+-#  ifdef __KERNEL_SSE__
+-  return float3(_mm_floor_ps(a));
++#  if defined(__KERNEL_SSE__) && defined(__KERNEL_SSE42__)
++  return float3(_mm_floor_ps(a)); // It needs SSE4.1.
+ #  else
+   return make_float3(floorf(a.x), floorf(a.y), floorf(a.z));
+ #  endif
+@@ -441,8 +441,8 @@ ccl_device_inline float3 floor(const flo
+ 
+ ccl_device_inline float3 ceil(const float3 a)
+ {
+-#  ifdef __KERNEL_SSE__
+-  return float3(_mm_ceil_ps(a));
++#  if defined(__KERNEL_SSE__) && defined(__KERNEL_SSE42__)
++  return float3(_mm_ceil_ps(a)); // It needs SSE4.1.
+ #  else
+   return make_float3(ceilf(a.x), ceilf(a.y), ceilf(a.z));
+ #  endif
+--- a/intern/cycles/util/math_float4.h.orig	2026-06-03 06:03:48.000000000 -0700
++++ b/intern/cycles/util/math_float4.h	2026-08-28 19:00:50.015731023 -0700
+@@ -503,11 +503,11 @@ ccl_device_inline float4 fmod(const floa
+ 
+ ccl_device_inline float4 floor(const float4 a)
+ {
+-#  ifdef __KERNEL_SSE__
++#  if defined(__KERNEL_SSE__) && defined(__KERNEL_SSE42__)
+ #    if defined(__KERNEL_NEON__)
+   return float4(vrndmq_f32(a));
+ #    else
+-  return float4(_mm_floor_ps(a));
++  return float4(_mm_floor_ps(a)); // It needs SSE4.1.
+ #    endif
+ #  else
+   return make_float4(floorf(a.x), floorf(a.y), floorf(a.z), floorf(a.w));
