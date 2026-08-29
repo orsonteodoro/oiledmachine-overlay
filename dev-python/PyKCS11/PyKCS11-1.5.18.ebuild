@@ -5,6 +5,7 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data"
+DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..14} ) # gnome-extra/secrets requires 12-14
 
@@ -37,7 +38,10 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
-IUSE+=" dev"
+IUSE+="
+dev
+ebuild_revision_1
+"
 RDEPEND+="
 "
 DEPEND+="
