@@ -1023,21 +1023,23 @@ RDEPEND+="
 	llvm? (
 		$(gen_llvm_depends)
 	)
-	llvm_slot_18? (
+	llvm_slot_21? (
 		media-libs/mesa:=
 		|| (
-			=media-libs/mesa-25.0*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},X?]
-			=media-libs/mesa-25.1*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},X?]
 			=media-libs/mesa-25.2*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},X?]
+			=media-libs/mesa-25.3*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},X?]
+			=media-libs/mesa-26.0*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},X?]
+			=media-libs/mesa-26.1*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},X?]
+			=media-libs/mesa-26.2*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},X?]
 			=media-libs/mesa-9999[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},X?]
 		)
 	)
-	llvm_slot_19? (
+	llvm_slot_22? (
 		media-libs/mesa:=
 		|| (
-			=media-libs/mesa-25.0*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},X?]
-			=media-libs/mesa-25.1*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},X?]
-			=media-libs/mesa-25.2*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},X?]
+			=media-libs/mesa-26.0*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},X?]
+			=media-libs/mesa-26.1*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},X?]
+			=media-libs/mesa-26.2*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},X?]
 			=media-libs/mesa-9999[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},X?]
 		)
 	)
