@@ -8887,6 +8887,11 @@ ot-kernel-pkgflags_rccl() { # DONE
 		ot-kernel_y_configopt "CONFIG_ZONE_DEVICE"
 		ot-kernel_y_configopt "CONFIG_64BIT"
 		ot-kernel_y_configopt "CONFIG_PCI_P2PDMA"
+
+	# amdgpu driver install deferred to ot-kernel-pkgflags_xf86_video_amdgpu.
+		ot-kernel_y_configopt "CONFIG_HSA_AMD"
+		ot-kernel_y_configopt "CONFIG_HSA_AMD_P2P"
+
 		_ot-kernel_set_shmem
 		ot-kernel_y_configopt "CONFIG_NET"
 		ot-kernel_y_configopt "CONFIG_INET"
@@ -11243,6 +11248,14 @@ ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 				ot-kernel_unset_pat_kconfig_kernel_cmdline "amdgpu.ssg=(1|0)"
 				ot-kernel_unset_pat_kconfig_kernel_cmdline "amdgpu.direct_gma_size=[0-9]+"
 			fi
+		fi
+
+		if [[ "${AMDGPU_SVM:-0}" == "1" ]] ; then
+ewarn "Enabling Shared Virtual Memory (AMDGPU_SVM=1) increases the attack-surface and possibly side-channel risk."
+			ot-kernel_y_configopt "CONFIG_HSA_AMD_SVM"
+		else
+ewarn "Disabling Shared Virtual Memory (AMDGPU_SVM=1) decreasing the attack-surface."
+			ot-kernel_n_configopt "CONFIG_HSA_AMD_SVM"
 		fi
 
 		if [[ "${AMDGPU_DEEP_COLOR:-0}" == "1" ]] ; then

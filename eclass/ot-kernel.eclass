@@ -5305,6 +5305,7 @@ ot-kernel_clear_env() {
 	unset AMDGPU_DIRECT_DMA_FOR_SSG
 	unset AMDGPU_EXP_HW_SUPPORT
 	unset AMDGPU_OVERDRIVE
+	unset AMDGPU_SVM
 	unset AMDGPU_VM_FRAGMENT_SIZE
 	unset CPU_CORES
 	unset CPU_HETEROGENEOUS_POWER_CORES
@@ -14028,6 +14029,9 @@ ewarn "Early KMS is disabled for the amdgpu driver."
 		ot-kernel_set_kconfig_kernel_cmdline "nomodeset"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "amdgpu.modeset=[01]"
 		ot-kernel_set_kconfig_kernel_cmdline "amdgpu.modeset=0"
+
+	# Prevent stall mitigations
+		ot-kernel_n_configopt "CONFIG_STANDALONE"
 	fi
 }
 

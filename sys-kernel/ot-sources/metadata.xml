@@ -5388,6 +5388,12 @@ unset OT_KERNEL_PRIVATE_KEY
     THIS ECLASS VARIABLE IS EXPERIMENTAL.
     Valid values:  0, 1, unset (default).
 
+    AMDGPU_SVM - Enable Shared Virtual Memory for projects that require it.
+    Valid values:  0 (default), 1
+    Notes:
+    0 - reduces the attack surface, more downstream code bloat.
+    1 - increases the attack surface and possibly side-channel risk, simplified downstream code.
+
     AMDGPU_VM_FRAGMENT_SIZE - Sets the large page size with the amdgpu driver.
     It uses the formula PAGE_SIZE = 4KB * 2^X.  Cryptominers typically suggest
     using 9.  9 is also documented by upstream as a way to enable large page
