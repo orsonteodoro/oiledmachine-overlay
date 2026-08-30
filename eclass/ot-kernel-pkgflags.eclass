@@ -7384,20 +7384,7 @@ ot-kernel-pkgflags_nvtop() { # DONE
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
 		if ot-kernel_has_version "${pkg}[video_cards_amdgpu]" ; then
-			if \
-					! in_iuse "amdgpu-dkms" \
-			; then
-				ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
-			elif \
-					  in_iuse "amdgpu-dkms" \
-				&& \
-					ot-kernel_use "amdgpu-dkms" \
-				&& \
-				( \
-					   ver_test "${KV_MAJOR_MINOR}" "-eq" "5.4" \
-					|| ver_test "${KV_MAJOR_MINOR}" "-eq" "5.15" \
-				) \
-			; then
+			if in_iuse "amdgpu-dkms" && ot-kernel_use "amdgpu-dkms" ; then
 	# For sys-kernel/amdgpu-dkms not installed yet scenario.
 				ot-kernel_y_configopt "CONFIG_MODULES"
 				ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
@@ -8952,24 +8939,14 @@ ot-kernel-pkgflags_redis() { # DONE
 ot-kernel-pkgflags_roct() { # DONE
 	if \
 		ot-kernel_has_version_pkgflags "dev-libs/roct-thunk-interface" \
-		|| ( in_iuse "amdgpu-dkms" && ot-kernel_use "amdgpu-dkms" ) \
+			|| \
+		( in_iuse "amdgpu-dkms" && ot-kernel_use "amdgpu-dkms" ) \
 	; then
 	# It enables the MMU_NOTIFIER indirectly. \
 		ot-kernel_y_configopt "CONFIG_HSA_AMD"
 		ot-kernel_y_configopt "CONFIG_HMM_MIRROR"
 		ot-kernel_y_configopt "CONFIG_ZONE_DEVICE"
-		if \
-			 ! in_iuse "amdgpu-dkms" \
-		; then
-			ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
-		elif \
-			   in_iuse "amdgpu-dkms" \
-			&& ot-kernel_use "amdgpu-dkms" \
-			&& ( \
-				   ver_test "${KV_MAJOR_MINOR}" "-eq" "5.4" \
-				|| ver_test "${KV_MAJOR_MINOR}" "-eq" "5.15" \
-			) \
-		; then
+		if in_iuse "amdgpu-dkms" && ot-kernel_use "amdgpu-dkms" ; then
 	# For sys-kernel/amdgpu-dkms not installed yet scenario.
 			ot-kernel_y_configopt "CONFIG_MODULES"
 			ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
@@ -11255,18 +11232,7 @@ ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 		fi
 		ot-kernel_y_configopt "CONFIG_DRM"
 		ot-kernel_y_configopt "CONFIG_MMU"
-		if \
-			 ! in_iuse "amdgpu-dkms" \
-		; then
-			ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
-		elif \
-			   in_iuse "amdgpu-dkms" \
-			&& ot-kernel_use "amdgpu-dkms" \
-			&& ( \
-				   ver_test "${KV_MAJOR_MINOR}" "-eq" "5.4" \
-				|| ver_test "${KV_MAJOR_MINOR}" "-eq" "5.15" \
-			) \
-		; then
+		if in_iuse "amdgpu-dkms" && ot-kernel_use "amdgpu-dkms" ; then
 	# For sys-kernel/amdgpu-dkms not installed yet scenario.
 			ot-kernel_y_configopt "CONFIG_MODULES"
 			ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"

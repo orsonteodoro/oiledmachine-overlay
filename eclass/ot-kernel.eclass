@@ -14010,23 +14010,8 @@ ewarn "Early KMS is disabled for the simpledrm driver."
 	fi
 
 
-	if \
-		   in_iuse "amdgpu-dkms" \
-		&& ot-kernel_use "amdgpu-dkms" \
-	; then
+	if in_iuse "amdgpu-dkms" && ot-kernel_use "amdgpu-dkms" ; then
 	# For sys-kernel/amdgpu-dkms not installed yet scenario.
-ewarn "Enabling modules support for sys-kernel/amdgpu-dkms."
-ewarn "Early KMS is disabled for the amdgpu driver."
-		ot-kernel_y_configopt "CONFIG_MODULES"
-		ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
-	elif \
-		   in_iuse "amdgpu-dkms" \
-		&& ot-kernel_use "amdgpu-dkms" \
-		&& ( \
-			   ver_test "${KV_MAJOR_MINOR}" "-eq" "5.4" \
-			|| ver_test "${KV_MAJOR_MINOR}" "-eq" "5.15" \
-		) \
-	; then
 ewarn "Enabling modules support for sys-kernel/amdgpu-dkms."
 ewarn "Early KMS is disabled for the amdgpu driver."
 		ot-kernel_y_configopt "CONFIG_MODULES"
@@ -17560,7 +17545,7 @@ ot-kernel_slotify_amdgpu() {
 	local canonical_target="${UPSTREAM_PV}-${extraversion}-${arch}" # ex. 6.6.0-builder-${arch}
 	local x
 	IFS=$'\n'
-	for x in ${KERNEL_MODULES[@]} ; do
+	for x in "${KERNEL_MODULES[@]}" ; do
 		local built_name=$(echo "${x}" | cut -f 1 -d " ")
 		local dest_location=$(echo "${x}" | cut -f 2 -d " ")
 		local FN=(
@@ -17570,7 +17555,7 @@ ot-kernel_slotify_amdgpu() {
 			"${built_name}.ko.zst"
 		)
 		local fn
-		for fn in ${FN[@]} ; do
+		for fn in "${FN[@]}" ; do
 			if [[ -e "${ED}/lib/modules/${canonical_target}${dest_location}/${fn}" ]] ; then
 				dodir "/lib/modules-amdgpu/${canonical_target}${dest_location}"
 				cp -a \
