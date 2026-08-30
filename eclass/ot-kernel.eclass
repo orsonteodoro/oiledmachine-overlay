@@ -14013,22 +14013,22 @@ ewarn "Early KMS is disabled for the simpledrm driver."
 
 
 	if \
-		has "rock-dkms" ${IUSE_EFFECTIVE} && ot-kernel_use "rock-dkms" \
+		has "amdgpu-dkms" ${IUSE_EFFECTIVE} && ot-kernel_use "amdgpu-dkms" \
 	; then
-	# For sys-kernel/rock-dkms not installed yet scenario.
-ewarn "Enabling modules support for sys-kernel/rock-dkms."
+	# For sys-kernel/amdgpu-dkms not installed yet scenario.
+ewarn "Enabling modules support for sys-kernel/amdgpu-dkms."
 ewarn "Early KMS is disabled for the amdgpu driver."
 		ot-kernel_y_configopt "CONFIG_MODULES"
 		ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
 	elif \
-		   has "rock-dkms" ${IUSE_EFFECTIVE} \
-		&& ot-kernel_use "rock-dkms" \
+		   has "amdgpu-dkms" ${IUSE_EFFECTIVE} \
+		&& ot-kernel_use "amdgpu-dkms" \
 		&& ( \
 			   ver_test "${KV_MAJOR_MINOR}" "-eq" "5.4" \
 			|| ver_test "${KV_MAJOR_MINOR}" "-eq" "5.15" \
 		) \
 	; then
-ewarn "Enabling modules support for sys-kernel/rock-dkms."
+ewarn "Enabling modules support for sys-kernel/amdgpu-dkms."
 ewarn "Early KMS is disabled for the amdgpu driver."
 		ot-kernel_y_configopt "CONFIG_MODULES"
 		ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
@@ -17505,7 +17505,7 @@ KERNEL_MODULES=(
 	"amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
 )
 
-# Entries from all versions of the rock-dkms driver and the vanilla amdgpu kernel driver.
+# Entries from all versions of the amdgpu-dkms driver and the vanilla amdgpu kernel driver.
 _DKMS_MODULES=(
 	"amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
 	"amdttm /kernel/drivers/gpu/drm/ttm"
@@ -17552,7 +17552,7 @@ EOF
 
 # @FUNCTION: ot-kernel_slotify_amdgpu
 # @DESCRIPTION:
-# Backup the amdgpu modules as a fallback for the rock-dkms ebuild.
+# Backup the amdgpu modules as a fallback for the amdgpu-dkms ebuild.
 ot-kernel_slotify_amdgpu() {
 	local KERNEL_MODULES=(
 		"amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
@@ -18612,7 +18612,7 @@ einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before
 		ot-kernel_install_tcca
 		ot-kernel_fix_modules
 
-		if has "rock-dkms" ${IUSE_EFFECTIVE} && ot-kernel_use "rock-dkms" ; then
+		if has "amdgpu-dkms" ${IUSE_EFFECTIVE} && ot-kernel_use "amdgpu-dkms" ; then
 			ot-kernel_slotify_amdgpu
 			ot-kernel_add_amdgpu_wrapper
 		fi

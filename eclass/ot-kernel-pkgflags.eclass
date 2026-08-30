@@ -7385,20 +7385,20 @@ ot-kernel-pkgflags_nvtop() { # DONE
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
 		if ot-kernel_has_version "${pkg}[video_cards_amdgpu]" ; then
 			if \
-					! has "rock-dkms" ${IUSE_EFFECTIVE} \
+					! has "amdgpu-dkms" ${IUSE_EFFECTIVE} \
 			; then
 				ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
 			elif \
-					  has "rock-dkms" ${IUSE_EFFECTIVE} \
+					  has "amdgpu-dkms" ${IUSE_EFFECTIVE} \
 				&& \
-					ot-kernel_use "rock-dkms" \
+					ot-kernel_use "amdgpu-dkms" \
 				&& \
 				( \
 					   ver_test "${KV_MAJOR_MINOR}" "-eq" "5.4" \
 					|| ver_test "${KV_MAJOR_MINOR}" "-eq" "5.15" \
 				) \
 			; then
-	# For sys-kernel/rock-dkms not installed yet scenario.
+	# For sys-kernel/amdgpu-dkms not installed yet scenario.
 				ot-kernel_y_configopt "CONFIG_MODULES"
 				ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
 			else
@@ -8952,25 +8952,25 @@ ot-kernel-pkgflags_redis() { # DONE
 ot-kernel-pkgflags_roct() { # DONE
 	if \
 		ot-kernel_has_version_pkgflags "dev-libs/roct-thunk-interface" \
-		|| ( has "rock-dkms" ${IUSE_EFFECTIVE} && ot-kernel_use "rock-dkms" ) \
+		|| ( has "amdgpu-dkms" ${IUSE_EFFECTIVE} && ot-kernel_use "amdgpu-dkms" ) \
 	; then
 	# It enables the MMU_NOTIFIER indirectly. \
 		ot-kernel_y_configopt "CONFIG_HSA_AMD"
 		ot-kernel_y_configopt "CONFIG_HMM_MIRROR"
 		ot-kernel_y_configopt "CONFIG_ZONE_DEVICE"
 		if \
-			 ! has "rock-dkms" ${IUSE_EFFECTIVE} \
+			 ! has "amdgpu-dkms" ${IUSE_EFFECTIVE} \
 		; then
 			ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
 		elif \
-			   has "rock-dkms" ${IUSE_EFFECTIVE} \
-			&& ot-kernel_use "rock-dkms" \
+			   has "amdgpu-dkms" ${IUSE_EFFECTIVE} \
+			&& ot-kernel_use "amdgpu-dkms" \
 			&& ( \
 				   ver_test "${KV_MAJOR_MINOR}" "-eq" "5.4" \
 				|| ver_test "${KV_MAJOR_MINOR}" "-eq" "5.15" \
 			) \
 		; then
-	# For sys-kernel/rock-dkms not installed yet scenario.
+	# For sys-kernel/amdgpu-dkms not installed yet scenario.
 			ot-kernel_y_configopt "CONFIG_MODULES"
 			ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
 		else
@@ -11235,7 +11235,7 @@ ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 		ot-kernel_has_version_pkgflags "x11-drivers/xf86-video-amdgpu" \
 			|| \
 		( \
-			has "rock-dkms" ${IUSE_EFFECTIVE} && ot-kernel_use "rock-dkms" \
+			has "amdgpu-dkms" ${IUSE_EFFECTIVE} && ot-kernel_use "amdgpu-dkms" \
 		) \
 	; then
 		ot-kernel_y_configopt "CONFIG_MTRR"
@@ -11256,18 +11256,18 @@ ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 		ot-kernel_y_configopt "CONFIG_DRM"
 		ot-kernel_y_configopt "CONFIG_MMU"
 		if \
-			 ! has "rock-dkms" ${IUSE_EFFECTIVE} \
+			 ! has "amdgpu-dkms" ${IUSE_EFFECTIVE} \
 		; then
 			ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
 		elif \
-			   has "rock-dkms" ${IUSE_EFFECTIVE} \
-			&& ot-kernel_use "rock-dkms" \
+			   has "amdgpu-dkms" ${IUSE_EFFECTIVE} \
+			&& ot-kernel_use "amdgpu-dkms" \
 			&& ( \
 				   ver_test "${KV_MAJOR_MINOR}" "-eq" "5.4" \
 				|| ver_test "${KV_MAJOR_MINOR}" "-eq" "5.15" \
 			) \
 		; then
-	# For sys-kernel/rock-dkms not installed yet scenario.
+	# For sys-kernel/amdgpu-dkms not installed yet scenario.
 			ot-kernel_y_configopt "CONFIG_MODULES"
 			ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
 
@@ -11303,7 +11303,7 @@ ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 			ot-kernel_unset_pat_kconfig_kernel_cmdline "amdgpu.exp_hw_support=1"
 		fi
 
-		ot-kernel_y_configopt "CONFIG_AMD_IOMMU_V2" # For rock-dkms
+		ot-kernel_y_configopt "CONFIG_AMD_IOMMU_V2" # For amdgpu-dkms
 		ot-kernel_y_configopt "CONFIG_DRM_AMDGPU_SI"
 		ot-kernel_y_configopt "CONFIG_DRM_AMDGPU_CIK"
 		ot-kernel_y_configopt "CONFIG_DRM_AMDGPU_USERPTR"

@@ -401,7 +401,7 @@ ${RISCV_FLAGS[@]}
 ${X86_FLAGS[@]}
 bbrv2 bbrv3 build c2tcp +cet -clang -deepcc -debug doc -dwarf4
 -dwarf5 dwarf-auto +eevdf -exfat -expoline -gdb +genpatches -genpatches_1510 -kcfi -lto
-nest orca pgo prjc qt5 qt6 +retpoline rock-dkms rt -rust shadowcallstack symlink tresor
+nest orca pgo prjc qt5 qt6 +retpoline amdgpu-dkms rt -rust shadowcallstack symlink tresor
 tresor_prompt tresor_sysfs zen-sauce
 "
 
@@ -929,10 +929,9 @@ if ! [[ "${PV}" =~ "9999" ]] ; then
 	"
 fi
 PDEPEND+="
-	rock-dkms? (
+	amdgpu-dkms? (
 		|| (
-			>=virtual/kfd-7.0:0/7.0[rock-dkms]
-			>=virtual/kfd-6.4:0/6.4[rock-dkms]
+			>=virtual/kfd-7.2:0/7.2[amdgpu-dkms]
 		)
 	)
 "
