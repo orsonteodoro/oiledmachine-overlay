@@ -1059,16 +1059,16 @@ ot-kernel_get_llvm_min_slot() {
 	if ot-kernel_use "clang" && ot-kernel_use "pgo" ; then
 		die "Clang PGO is not supported for this series.  Disable either the clang or pgo USE flag."
 	fi
-	if has "kcfi" ${IUSE_EFFECTIVE} && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ "kcfi" ]] && [[ "${arch}" == "arm64" ]] ; then
+	if in_iuse "kcfi" && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ "kcfi" ]] && [[ "${arch}" == "arm64" ]] ; then
 		die "KCFI is not supported for this series.  Disable the kcfi USE flag."
 	fi
-	if has "kcfi" ${IUSE_EFFECTIVE} && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ "kcfi" ]] && [[ "${arch}" == "x86_64" ]] ; then
+	if in_iuse "kcfi" && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ "kcfi" ]] && [[ "${arch}" == "x86_64" ]] ; then
 		die "KCFI is not supported for this series.  Disable the kcfi USE flag."
 	fi
-	if has "lto" ${IUSE_EFFECTIVE} && ot-kernel_use "lto" ; then
+	if in_iuse "lto" && ot-kernel_use "lto" ; then
 		die "LTO is not supported for this series.  Disable the lto USE flag."
 	fi
-	if has "shadowcallstack" ${IUSE_EFFECTIVE} && ot-kernel_use "shadowcallstack" && [[ "${arch}" == "x86_64" ]] ; then
+	if in_iuse "shadowcallstack" && ot-kernel_use "shadowcallstack" && [[ "${arch}" == "x86_64" ]] ; then
 		die "ShadowCallStack is not supported for this series.  Disable the shadowcallstack USE flag."
 	fi
 

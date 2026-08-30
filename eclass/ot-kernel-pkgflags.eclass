@@ -7385,11 +7385,11 @@ ot-kernel-pkgflags_nvtop() { # DONE
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
 		if ot-kernel_has_version "${pkg}[video_cards_amdgpu]" ; then
 			if \
-					! has "amdgpu-dkms" ${IUSE_EFFECTIVE} \
+					! in_iuse "amdgpu-dkms" \
 			; then
 				ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
 			elif \
-					  has "amdgpu-dkms" ${IUSE_EFFECTIVE} \
+					  in_iuse "amdgpu-dkms" \
 				&& \
 					ot-kernel_use "amdgpu-dkms" \
 				&& \
@@ -8952,18 +8952,18 @@ ot-kernel-pkgflags_redis() { # DONE
 ot-kernel-pkgflags_roct() { # DONE
 	if \
 		ot-kernel_has_version_pkgflags "dev-libs/roct-thunk-interface" \
-		|| ( has "amdgpu-dkms" ${IUSE_EFFECTIVE} && ot-kernel_use "amdgpu-dkms" ) \
+		|| ( in_iuse "amdgpu-dkms" && ot-kernel_use "amdgpu-dkms" ) \
 	; then
 	# It enables the MMU_NOTIFIER indirectly. \
 		ot-kernel_y_configopt "CONFIG_HSA_AMD"
 		ot-kernel_y_configopt "CONFIG_HMM_MIRROR"
 		ot-kernel_y_configopt "CONFIG_ZONE_DEVICE"
 		if \
-			 ! has "amdgpu-dkms" ${IUSE_EFFECTIVE} \
+			 ! in_iuse "amdgpu-dkms" \
 		; then
 			ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
 		elif \
-			   has "amdgpu-dkms" ${IUSE_EFFECTIVE} \
+			   in_iuse "amdgpu-dkms" \
 			&& ot-kernel_use "amdgpu-dkms" \
 			&& ( \
 				   ver_test "${KV_MAJOR_MINOR}" "-eq" "5.4" \
@@ -11235,7 +11235,7 @@ ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 		ot-kernel_has_version_pkgflags "x11-drivers/xf86-video-amdgpu" \
 			|| \
 		( \
-			has "amdgpu-dkms" ${IUSE_EFFECTIVE} && ot-kernel_use "amdgpu-dkms" \
+			in_iuse "amdgpu-dkms" && ot-kernel_use "amdgpu-dkms" \
 		) \
 	; then
 		ot-kernel_y_configopt "CONFIG_MTRR"
@@ -11256,11 +11256,11 @@ ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 		ot-kernel_y_configopt "CONFIG_DRM"
 		ot-kernel_y_configopt "CONFIG_MMU"
 		if \
-			 ! has "amdgpu-dkms" ${IUSE_EFFECTIVE} \
+			 ! in_iuse "amdgpu-dkms" \
 		; then
 			ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
 		elif \
-			   has "amdgpu-dkms" ${IUSE_EFFECTIVE} \
+			   in_iuse "amdgpu-dkms" \
 			&& ot-kernel_use "amdgpu-dkms" \
 			&& ( \
 				   ver_test "${KV_MAJOR_MINOR}" "-eq" "5.4" \
@@ -12262,7 +12262,7 @@ einfo "Added ${opt_raw}"
 # syscall.*__NR_futex.*31				; support dropped
 #
 _ot-kernel_set_futex() {
-	if has "futex" ${IUSE_EFFECTIVE} && ot-kernel_use "futex" ; then
+	if in_iuse "futex" && ot-kernel_use "futex" ; then
 einfo "Enabling futex in .config"
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_FUTEX"
@@ -12280,7 +12280,7 @@ einfo "Enabling futex in .config"
 # syscall.*__NR_futex_waitv
 #
 _ot-kernel_set_futex2() {
-	if has "futex2" ${IUSE_EFFECTIVE} && ot-kernel_use "futex2" ; then
+	if in_iuse "futex2" && ot-kernel_use "futex2" ; then
 einfo "Enabling futex2 in .config"
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_FUTEX"

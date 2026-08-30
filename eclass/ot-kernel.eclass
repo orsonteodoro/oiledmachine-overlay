@@ -2829,7 +2829,7 @@ ot-kernel_use() {
 	for u in ${OT_KERNEL_USE} ; do
 		[[ "${u}" =~ ^"-" ]] && continue
 		[[ "${u}" =~ ^"+" ]] && u="${u:1}"
-		has "${u}" ${IUSE_EFFECTIVE} || continue
+		in_iuse "${u}" || continue
 	# IUSE will say false if hard mask
 		if use "${u}" && [[ "${1}" == "${u}" ]] ; then
 			return 0
@@ -2875,7 +2875,7 @@ einfo "Time since the last security update:  ${dhms_passed}"
 	if declare -f ot-kernel_pkg_setup_cb > /dev/null ; then
 		ot-kernel_pkg_setup_cb
 	fi
-	if has "zen-sauce" ${IUSE_EFFECTIVE} ; then
+	if in_iuse "zen-sauce" ; then
 		if use zen-sauce ; then
 			zen_sauce_setup
 			zen_tune_setup
@@ -2889,7 +2889,7 @@ einfo "Time since the last security update:  ${dhms_passed}"
 		sandbox-changes_no_network_sandbox "To download logos"
 	fi
 
-	if has "tresor" ${IUSE_EFFECTIVE} ; then
+	if in_iuse "tresor" ; then
 		if [[ -z "${OT_KERNEL_DEVELOPER}" ]] && use tresor && ! tc-is-cross-compiler ; then
 			if [[ "${arch}" == "x86" ]] ; then
 				if ! grep -F -q "sse2" "/proc/cpuinfo" ; then
@@ -2922,7 +2922,7 @@ ewarn "Tresor for x86_64 with aesni requires SSE2 CPU support."
 		fi
 	fi
 
-	if has "clang" ${IUSE_EFFECTIVE} ; then
+	if in_iuse "clang" ; then
 		if use clang ; then
 			verify_profraw_compatibility
 		fi
@@ -3185,7 +3185,7 @@ apply_zen_sauce() {
 		blacklisted+=" ${PATCH_KCP_COMMIT:0:7}"
 	fi
 
-	if has "zen-sauce" ${IUSE_EFFECTIVE} ; then
+	if in_iuse "zen-sauce" ; then
 		local bl_all_zen_sauce=0
 		local bl_all_zen_tune=0
 		local wl_all_zen_sauce=0
@@ -4034,43 +4034,43 @@ ot-kernel_apply_rtw88_fixes() {
 # @DESCRIPTION:
 # Apply the patches conditionally based on extraversion or cpu_sched
 apply_all_patchsets() {
-	if has "rt" ${IUSE_EFFECTIVE} && use rt ; then
+	if in_iuse "rt" && use rt ; then
 		if ot-kernel_use "rt" ; then
 			apply_rt
 		fi
 	fi
 
-	if has "uksm" ${IUSE_EFFECTIVE} && use uksm ; then
+	if in_iuse "uksm" && use uksm ; then
 		if ot-kernel_use "uksm" ; then
 			apply_uksm
 		fi
 	fi
 
-	if has "multigen_lru" ${IUSE_EFFECTIVE} && use multigen_lru ; then
+	if in_iuse "multigen_lru" && use multigen_lru ; then
 		if ot-kernel_use "multigen_lru" ; then
 			apply_multigen_lru
 		fi
 	fi
 
-	if has "zen-multigen_lru" ${IUSE_EFFECTIVE} && use zen-multigen_lru ; then
+	if in_iuse "zen-multigen_lru" && use zen-multigen_lru ; then
 		if ot-kernel_use "zen-multigen_lru" ; then
 			apply_zen_multigen_lru
 		fi
 	fi
 
-	if has "bmq" ${IUSE_EFFECTIVE} && use bmq ; then
+	if in_iuse "bmq" && use bmq ; then
 		if ot-kernel_use "bmq" && [[ "${cpu_sched}" == "bmq" ]] ; then
 			apply_bmq
 		fi
 	fi
 
-	if has "pds" ${IUSE_EFFECTIVE} && use pds ; then
+	if in_iuse "pds" && use pds ; then
 		if ot-kernel_use "pds" && [[ "${cpu_sched}" == "pds" ]] ; then
 			apply_pds
 		fi
 	fi
 
-	if has "prjc" ${IUSE_EFFECTIVE} && use prjc ; then
+	if in_iuse "prjc" && use prjc ; then
 		if \
 		ot-kernel_use "prjc" \
 		&& \
@@ -4083,7 +4083,7 @@ apply_all_patchsets() {
 		fi
 	fi
 
-	if has "muqss" ${IUSE_EFFECTIVE} && use muqss ; then
+	if in_iuse "muqss" && use muqss ; then
 		if \
 			ot-kernel_use "muqss" \
 				&& \
@@ -4097,19 +4097,19 @@ apply_all_patchsets() {
 		fi
 	fi
 
-	if has "zen-muqss" ${IUSE_EFFECTIVE} && use zen-muqss ; then
+	if in_iuse "zen-muqss" && use zen-muqss ; then
 		if ot-kernel_use "zen-muqss" && [[ "${cpu_sched}" == "zen-muqss" ]] ; then
 			apply_zen_muqss
 		fi
 	fi
 
-	if has "tresor" ${IUSE_EFFECTIVE} && use tresor ; then
+	if in_iuse "tresor" && use tresor ; then
 		if ot-kernel_use "tresor" ; then
 			apply_tresor
 		fi
 	fi
 
-	if has "genpatches" ${IUSE_EFFECTIVE} && use genpatches ; then
+	if in_iuse "genpatches" && use genpatches ; then
 		if ot-kernel_use "genpatches" ; then
 			apply_genpatches
 		fi
@@ -4119,53 +4119,53 @@ apply_all_patchsets() {
 		apply_o3
 	fi
 
-	if has "zen-sauce" ${IUSE_EFFECTIVE} && use zen-sauce ; then
+	if in_iuse "zen-sauce" && use zen-sauce ; then
 		if ot-kernel_use "zen-sauce" ; then
 			apply_zen_sauce
 		fi
 	fi
 
-	if has "bbrv2" ${IUSE_EFFECTIVE} && use bbrv2 ; then
+	if in_iuse "bbrv2" && use bbrv2 ; then
 		if ot-kernel_use "bbrv2" ; then
 			apply_bbrv2
 		fi
 	fi
 
-	if has "bbrv3" ${IUSE_EFFECTIVE} && use bbrv3 ; then
+	if in_iuse "bbrv3" && use bbrv3 ; then
 		if ot-kernel_use "bbrv3" ; then
 			apply_bbrv3
 		fi
 	fi
 
-	if has "clang" ${USE} && use clang && ot-kernel_use "clang" ; then
+	if in_iuse "clang" && use clang && ot-kernel_use "clang" ; then
 		if use pgo && ot-kernel_use "pgo" ; then
 			apply_clang_pgo
 		fi
 	fi
 
-	if has "cfi" ${IUSE_EFFECTIVE} && use cfi ; then
+	if in_iuse "cfi" && use cfi ; then
 		if _has_security_critical_type "cfi" && [[ "${arch}" == "x86_64" ]] ; then
 			apply_cfi
 		fi
 	fi
 
-	if has "kcfi" ${IUSE_EFFECTIVE} && use kcfi ; then
+	if in_iuse "kcfi" && use kcfi ; then
 		if _has_security_critical_type "kcfi" && [[ "${arch}" == "x86_64" ]] ; then
 			apply_kcfi
 		fi
 	fi
 
 	if \
-		   ( has "c2tcp" ${IUSE_EFFECTIVE}  && use c2tcp && ot-kernel_use "c2tcp" ) \
-		|| ( has "deepcc" ${IUSE_EFFECTIVE} && use deepcc && ot-kernel_use "deepcc" ) \
-		|| ( has "orca" ${IUSE_EFFECTIVE}   && use orca && ot-kernel_use "orca" ) \
+		   ( in_iuse "c2tcp"  && use c2tcp && ot-kernel_use "c2tcp" ) \
+		|| ( in_iuse "deepcc" && use deepcc && ot-kernel_use "deepcc" ) \
+		|| ( in_iuse "orca"   && use orca && ot-kernel_use "orca" ) \
 	; then
 		if [[ "${C2TCP_MAJOR_VER}" == "2" ]] ; then
 			apply_c2tcp_v2
 		fi
 	fi
 
-	if has "nest" ${IUSE_EFFECTIVE} && use nest ; then
+	if in_iuse "nest" && use nest ; then
 		if ot-kernel_use "nest" && [[ "${cpu_sched}" == "nest" ]] ; then
 			apply_nest
 		fi
@@ -4436,7 +4436,7 @@ ot-kernel_src_prepare() {
 
 	cd "${BUILD_DIR}" || die
 
-	if has "tresor_sysfs" ${IUSE_EFFECTIVE} ; then
+	if in_iuse "tresor_sysfs" ; then
 		if use tresor_sysfs ; then
 			cat "${EDISTDIR}/tresor_sysfs.c" > "tresor_sysfs.c"
 		fi
@@ -4475,7 +4475,7 @@ einfo "Copying disable_debug to ${BUILD_DIR}"
 		|| die
 
 	if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.7" \
-		&& [[ "${IUSE_EFFECTIVE}" =~ "exfat" ]] \
+		&& in_iuse "exfat" \
 		&& ! use exfat ; then
 		ot-kernel_rm_exfat
 	fi
@@ -5559,9 +5559,9 @@ _ot-kernel_set_kconfig_get_init_tcp_congestion_controls() {
 	# Optimize for security.
 	# BBRv1 is not DoS resistant because ECN is ineffective.
 	# Cubic is the fallback if ECN is not supported by router.
-		if has "bbrv3" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv3" ; then
+		if   in_iuse "bbrv3" && ot-kernel_use "bbrv3" ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr3 cubic"}
-		elif has "bbrv2" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv2" ; then
+		elif in_iuse "bbrv2" && ot-kernel_use "bbrv2" ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2 cubic"}
 		else
 # TODO:  Update BBRv2, BBRv3 patches
@@ -5581,12 +5581,12 @@ _ot-kernel_set_kconfig_get_init_tcp_congestion_controls() {
 		   "${work_profile}" == "hpc-green" \
 	]] ; then
 	# Optimize for power savings.
-		if has "bbrv3" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv3" ; then
+		if in_iuse "bbrv3" && ot-kernel_use "bbrv3" ; then
 	# bbrv3 Energy savings is unknown.
 	# Deterministic power savings allowed only.
 eerror "Remove bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}.  Use bbr or dctcp instead."
 			die
-		elif has "bbrv2" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv3" ; then
+		elif in_iuse "bbrv2" && ot-kernel_use "bbrv3" ; then
 	# Patching may cause an unintended consequence (e.g. increased energy use).
 eerror "Remove bbrv2 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}.  Use bbr or dctcp instead"
 			die
@@ -5600,9 +5600,9 @@ eerror "Remove bbrv2 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profil
 	# Optimize for maximum capacity and security.
 	# BBRv2 is resistant to DoS if ECN supported by router.
 	# Cubic is fallback if ECN is not supported by router.
-		if has "bbrv3" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv3" ; then
+		if   in_iuse "bbrv3" && ot-kernel_use "bbrv3" ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr3 cubic"}
-		elif has "bbrv2" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv2" ; then
+		elif in_iuse "bbrv2" && ot-kernel_use "bbrv2" ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2 cubic"}
 		else
 eerror "Enable bbrv2 or bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile} for DoS mitigation."
@@ -5614,9 +5614,9 @@ eerror "Enable bbrv2 or bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${wo
 	# Optimize for security.
 	# BBRv2 is resistant to DoS if ECN supported by router.
 	# Cubic is fallback if ECN is not supported by router.
-		if has "bbrv3" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv3" ; then
+		if   in_iuse "bbrv3" && ot-kernel_use "bbrv3" ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr3 cubic"}
-		elif has "bbrv2" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv2" ; then
+		elif in_iuse "bbrv2" && ot-kernel_use "bbrv2" ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2 cubic"}
 		else
 eerror "Enable bbrv2 or bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile} for DoS mitigation."
@@ -5628,9 +5628,9 @@ eerror "Enable bbrv2 or bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${wo
 	# Optimize for low latency.  Vegas for production mode.
 	# Optimize for high throughput. BBRv2 for maintenace mode and fallback if under DoS.
 	# If router doesn't support ECN, fallback to Cubic for DoS mitigation.
-		if has "bbrv3" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv3" ; then
+		if   in_iuse "bbrv3" && ot-kernel_use "bbrv3" ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"vegas bbr3 cubic"}
-		elif has "bbrv2" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv2" ; then
+		elif in_iuse "bbrv2" && ot-kernel_use "bbrv2" ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"vegas bbr2 cubic"}
 		else
 eerror "Enable bbrv2 or bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile} for fallback DoS mitigation."
@@ -5652,9 +5652,9 @@ eerror "Enable bbrv2 or bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${wo
 		|| "${work_profile}" == "sdr" \
 	]] ; then
 	# Optimize for low jitter.
-		if has "bbrv3" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv3" ; then
+		if   in_iuse "bbrv3" && ot-kernel_use "bbrv3" ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr3"}
-		elif has "bbrv2" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv2" ; then
+		elif in_iuse "bbrv2" && ot-kernel_use "bbrv2" ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2"}
 		else
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr"}
@@ -5667,10 +5667,10 @@ eerror "Enable bbrv2 or bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${wo
 		|| "${work_profile}" == "video-tablet" \
 	]] ; then
 	# Optimize for power savings.
-		if has "bbrv3" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv3" ; then
+		if   in_iuse "bbrv3" && ot-kernel_use "bbrv3" ; then
 eerror "Remove bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}.  Use bbr instead."
 			die
-		elif has "bbrv2" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv2" ; then
+		elif in_iuse "bbrv2" && ot-kernel_use "bbrv2" ; then
 eerror "Remove bbrv2 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}.  Use bbr instead"
 			die
 		else
@@ -5688,10 +5688,10 @@ eerror "Remove bbrv2 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profil
 		|| "${work_profile}" == "touchscreen-laptop" \
 	]] ; then
 	# Optimize for power savings.
-		if has "bbrv3" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv3" ; then
+		if   in_iuse "bbrv3" && ot-kernel_use "bbrv3" ; then
 eerror "Remove bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}.  Use bbr instead."
 			die
-		elif has "bbrv2" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv2" ; then
+		elif in_iuse "bbrv2" && ot-kernel_use "bbrv2" ; then
 eerror "Remove bbrv2 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}.  Use bbr instead."
 			die
 		else
@@ -5699,9 +5699,9 @@ eerror "Remove bbrv2 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profil
 		fi
 	else
 	# Optimize for capabilities.
-		if has "bbrv3" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv3" ; then
+		if   in_iuse "bbrv3" && ot-kernel_use "bbrv3" ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr3 htcp hybla lp vegas westwood"}
-		elif has "bbrv2" ${IUSE_EFFECTIVE} && ot-kernel_use "bbrv2" ; then
+		elif in_iuse "bbrv2" && ot-kernel_use "bbrv2" ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2 htcp hybla lp vegas westwood"}
 		else
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr htcp hybla lp vegas westwood"}
@@ -5778,8 +5778,7 @@ ot-kernel_set_kconfig_set_tcp_congestion_controls() {
 				alg_canonical="bbr"
 			fi
 			if [[ "${alg}" == "bbr2" ]] ; then
-				if has "bbrv2" ${IUSE_EFFECTIVE} \
-					&& ! ot-kernel_use "bbrv2" ; then
+				if in_iuse "bbrv2" && ! ot-kernel_use "bbrv2" ; then
 					# Skip it if not patched.
 					continue
 				fi
@@ -5803,8 +5802,7 @@ einfo "Adding ${alg}"
 			picked_alg_canonical="bbr"
 		fi
 		if [[ "${picked_alg}" == "bbr2" ]] ; then
-			if has "bbrv2" ${IUSE_EFFECTIVE} \
-				&& ! ot-kernel_use "bbrv2" ; then
+			if in_iuse "bbrv2" && ! ot-kernel_use "bbrv2" ; then
 				# Skip it if not patched.
 				return
 			fi
@@ -6066,7 +6064,7 @@ ot-kernel_set_kconfig_boot_args() {
 # Sets the kernel config for Control Flow Integrity (CFI) using the non-production patches
 ot-kernel_set_kconfig_cfi() {
 	local enable=${1:-1}
-	if (( ${enable} == 1 )) && has "cfi" ${IUSE_EFFECTIVE} && ot-kernel_use "cfi" ; then
+	if (( ${enable} == 1 )) && in_iuse "cfi" && ot-kernel_use "cfi" ; then
 		if [[ "${arch}" == "arm64" ]] && (( ${llvm_slot} < 12 )) ; then
 eerror
 eerror "CFI requires LLVM >= 12 on arm64"
@@ -6097,7 +6095,7 @@ einfo "Disabling CFI support in the in the .config."
 # Sets the kernel config for Kernel Control Flow Integrity (KCFI)
 ot-kernel_set_kconfig_kcfi() {
 	local enable=${1:-1}
-	if (( ${enable} == 1 )) && has "kcfi" ${IUSE_EFFECTIVE} && use kcfi && _has_security_critical_type "kcfi" ; then
+	if (( ${enable} == 1 )) && in_iuse "kcfi" && use kcfi && _has_security_critical_type "kcfi" ; then
 		if [[ "${arch}" == "arm64" ]] && (( ${llvm_slot} < 15 )) ; then
 eerror
 eerror "CFI requires LLVM >= 15 on arm64"
@@ -6578,7 +6576,7 @@ einfo "Using the ${boot_decomp} boot decompressor settings"
 # @DESCRIPTION:
 # Set muqss kernel config flags
 _ot-kernel_set_kconfig_muqss() {
-	if has "muqss" ${IUSE_EFFECTIVE} && ot-kernel_use "muqss" ; then
+	if in_iuse "muqss" && ot-kernel_use "muqss" ; then
 		:
 	else
 		return
@@ -6869,7 +6867,7 @@ einfo "You are using CPU_SYSTEM=auto which is not portable.  Portable users set 
 # @DESCRIPTION:
 # Set prjc kernel config flags
 _ot-kernel_set_kconfig_prjc() {
-	if has "prjc" ${IUSE_EFFECTIVE} && ot-kernel_use "prjc" ; then
+	if in_iuse "prjc" && ot-kernel_use "prjc" ; then
 		:
 	else
 		return
@@ -6908,7 +6906,7 @@ ewarn
 # Set bmq kernel config flags
 _ot-kernel_set_kconfig_bmq() {
 	if \
-		has "bmq" ${IUSE_EFFECTIVE} && ot-kernel_use "bmq" \
+		in_iuse "bmq" && ot-kernel_use "bmq" \
 			&& \
 		[[ "${cpu_sched}" == "bmq" ]] \
 	; then
@@ -6923,7 +6921,7 @@ einfo "Changed .config to use BMQ"
 # Set pds kernel config flags
 _ot-kernel_set_kconfig_pds() {
 	if \
-		has "pds" ${IUSE_EFFECTIVE} && ot-kernel_use "pds" \
+		in_iuse "pds" && ot-kernel_use "pds" \
 			&& \
 		[[ "${cpu_sched}" == "pds" ]] \
 	; then
@@ -6937,9 +6935,9 @@ einfo "Changed .config to use PDS"
 # @DESCRIPTION:
 # Set CFS or EEVDF kernel config flags
 _ot-kernel_set_kconfig_cfs() {
-	if has "cfs" ${IUSE_EFFECTIVE} && ot-kernel_use "cfs" ; then
+	if   in_iuse "cfs"   && ot-kernel_use "cfs"   ; then
 		:
-	elif has "eevdf" ${IUSE_EFFECTIVE} && ot-kernel_use "eevdf" ; then
+	elif in_iuse "eevdf" && ot-kernel_use "eevdf" ; then
 		:
 	else
 		return
@@ -7216,7 +7214,7 @@ einfo "Enabled the ep800 driver"
 # @DESCRIPTION:
 # Sets the kernel config for the exFAT driver
 ot-kernel_set_kconfig_exfat() {
-	if has "exfat" ${IUSE_EFFECTIVE} && ot-kernel_use "exfat" ; then
+	if in_iuse "exfat" && ot-kernel_use "exfat" ; then
 		ot-kernel_y_configopt "CONFIG_EXFAT_FS"
 	else
 		ot-kernel_unset_configopt "CONFIG_EXFAT_FS"
@@ -7395,7 +7393,7 @@ eerror "Actual Clang version:  ${clang_version}"
 eerror
 eerror "Tip:  Add/remove clang in OT_KERNEL_USE and in USE."
 eerror
-			if has "cet" ${IUSE_EFFECTIVE} && ot-kernel_use "cet" ; then
+			if in_iuse "cet" && ot-kernel_use "cet" ; then
 				die
 			else
 				:
@@ -7427,7 +7425,7 @@ eerror "Actual Clang version:  ${clang_version}"
 eerror
 eerror "Tip:  Add/remove clang in OT_KERNEL_USE and in USE."
 eerror
-			if has "cet" ${IUSE_EFFECTIVE} && ot-kernel_use "cet" ; then
+			if in_iuse "cet" && ot-kernel_use "cet" ; then
 				die
 			else
 				:
@@ -8004,19 +8002,19 @@ ewarn "cpu_flags_arm_pac is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags
 	# CFI and SCS handled later
 
 	# Mitigate against ROP attack.
-		if has "cet" ${IUSE_EFFECTIVE} && ot-kernel_use "cet" ; then
+		if   in_iuse "cet"  && ot-kernel_use "cet" ; then
 			: # Hardware based
-		elif has "cfi" ${IUSE_EFFECTIVE} && [[ "${OT_KERNEL_SECURITY_CRITICAL}" == "1" ]] && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ (" "|^)"cfi"(" "|$) ]] ; then
+		elif in_iuse "cfi"  && [[ "${OT_KERNEL_SECURITY_CRITICAL}" == "1" ]] && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ (" "|^)"cfi"(" "|$)  ]] ; then
 			: # Software based
-		elif has "kcfi" ${IUSE_EFFECTIVE} && [[ "${OT_KERNEL_SECURITY_CRITICAL}" == "1" ]] && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ (" "|^)"kcfi"(" "|$) ]] ; then
+		elif in_iuse "kcfi" && [[ "${OT_KERNEL_SECURITY_CRITICAL}" == "1" ]] && [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ (" "|^)"kcfi"(" "|$) ]] ; then
 			: # Software based
-		elif has "cpu_flags_arm_bti" ${IUSE_EFFECTIVE} && ot-kernel_use "cpu_flags_arm_bti" ; then
+		elif in_iuse "cpu_flags_arm_bti" && ot-kernel_use "cpu_flags_arm_bti" ; then
 			: # JOP mitigation, but implies use of pac
 	# For reassurance, see https://github.com/torvalds/linux/blob/v6.10/arch/arm64/Makefile#L77
-		elif has "cpu_flags_arm_pac" ${IUSE_EFFECTIVE} && ot-kernel_use "cpu_flags_arm_pac" ; then
+		elif in_iuse "cpu_flags_arm_pac" && ot-kernel_use "cpu_flags_arm_pac" ; then
 			: # ROP mitigation
 		else
-			if [[ "${arch}" == "x86_64" ]] && ( has "cet" ${IUSE_EFFECTIVE} || has "cfi" ${IUSE_EFFECTIVE} || has "kcfi" ${IUSE_EFFECTIVE} ) ; then
+			if [[ "${arch}" == "x86_64" ]] && ( in_iuse "cet" || in_iuse "cfi" || in_iuse "kcfi" ) ; then
 eerror
 eerror "Enable either one of the following CFI providers to mitigate against ROP attacks:"
 eerror
@@ -8027,7 +8025,7 @@ eerror
 eerror "KCFI+CET can be combined and are complementary."
 eerror
 				die
-			elif [[ "${arch}" == "arm64" ]] && ( has "cpu_flags_arm_bti" ${IUSE_EFFECTIVE} || has "cpu_flags_arm_pac" ${IUSE_EFFECTIVE} || has "cfi" ${IUSE_EFFECTIVE} || has "kcfi" ${IUSE_EFFECTIVE} ) ; then
+			elif [[ "${arch}" == "arm64" ]] && ( in_iuse "cpu_flags_arm_bti" || in_iuse "cpu_flags_arm_pac" || in_iuse "cfi" || in_iuse "kcfi" ) ; then
 eerror
 eerror "Enable either one of the following CFI providers to mitigate against ROP attacks:"
 eerror
@@ -8041,14 +8039,14 @@ eerror "BTI+PAC is recommended over individual BTI and PAC."
 eerror "KCFI+BTI+PAC can be combined and are complementary."
 eerror
 				die
-			elif [[ "${arch}" == "arm" ]] && has "kcfi" ${IUSE_EFFECTIVE} ; then
+			elif [[ "${arch}" == "arm" ]] && in_iuse "kcfi" ; then
 eerror
 eerror "Enable either one of the following CFI providers to mitigate against ROP attacks:"
 eerror
 eerror "KCFI:  OT_KERNEL_SECURITY_CRITICAL=1, OT_KERNEL_SECURITY_CRITICAL_TYPES=\"kcfi\" USE=\"kcfi\""
 eerror
 				die
-			elif [[ "${arch}" == "riscv" ]] && has "kcfi" ${IUSE_EFFECTIVE} ; then
+			elif [[ "${arch}" == "riscv" ]] && in_iuse "kcfi" ; then
 eerror
 eerror "Enable either one of the following CFI providers to mitigate against ROP attacks:"
 eerror
@@ -8526,7 +8524,7 @@ eerror
 	# See https://en.wikipedia.org/wiki/Kernel_same-page_merging#Security_risks
 		ot-kernel_unset_configopt "CONFIG_KSM"
 		ot-kernel_unset_configopt "CONFIG_UKSM"
-		if has "uksm" ${IUSE_EFFECTIVE} && ot-kernel_use "uksm" ; then
+		if in_iuse "uksm" && ot-kernel_use "uksm" ; then
 # This disables patching with uksm or unintended consequences of patching with"
 # it.
 eerror
@@ -8769,7 +8767,7 @@ einfo "Detected -mtune=generic"
 # @DESCRIPTION:
 # Sets the kernel config for the init systems
 ot-kernel_set_kconfig_init_systems() {
-	if has "genpatches" ${IUSE_EFFECTIVE} && ot-kernel_use "genpatches" ; then
+	if in_iuse "genpatches" && ot-kernel_use "genpatches" ; then
 		ot-kernel_unset_configopt "CONFIG_GENTOO_PRINT_FIRMWARE_INFO" # For debug only not production.
 		if ot-kernel_has_version "sys-apps/openrc" ; then
 			ot-kernel_y_configopt "CONFIG_GENTOO_LINUX_INIT_SCRIPT"
@@ -9190,7 +9188,7 @@ eerror
 # @DESCRIPTION:
 # Sets the kernel config for Link Time Optimization (LTO)
 ot-kernel_set_kconfig_lto() {
-	if has "lto" ${IUSE_EFFECTIVE} && ot-kernel_use "lto" ; then
+	if in_iuse "lto" && ot-kernel_use "lto" ; then
 		if (( ${llvm_slot} < 11 )) ; then
 			if [[ ! -e "/usr/lib/llvm/${slot}/bin/clang" ]] ; then
 				ot-kernel_show_llvm_requirement 11 "Missing clang"
@@ -9450,8 +9448,8 @@ einfo "Modules support disabled"
 # @DESCRIPTION:
 # Sets the kernel config for Multi-Gen LRU
 ot-kernel_set_kconfig_multigen_lru() {
-	if ( has "multigen_lru" ${IUSE_EFFECTIVE} && ot-kernel_use "multigen_lru" ) \
-		|| ( has "zen-multigen_lru" ${IUSE_EFFECTIVE} && ot-kernel_use "zen-multigen_lru" ) ; then
+	if ( in_iuse "multigen_lru" && ot-kernel_use "multigen_lru" ) \
+		|| ( in_iuse "zen-multigen_lru" && ot-kernel_use "zen-multigen_lru" ) ; then
 einfo "Changed .config to use Multi-Gen LRU"
 		ot-kernel_y_configopt "CONFIG_LRU_GEN"
 		ot-kernel_y_configopt "CONFIG_LRU_GEN_ENABLED"
@@ -10150,7 +10148,7 @@ _ot-kernel_set_kconfig_pgo_clang() {
 	local pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/pgophase"
 	local profraw_dpath="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/vmlinux.profraw"
 	local profdata_dpath="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/vmlinux.profdata"
-	if has "clang" ${IUSE_EFFECTIVE} && ot-kernel_use "clang" && ot-kernel_use "pgo" ; then
+	if in_iuse "clang" && ot-kernel_use "clang" && ot-kernel_use "pgo" ; then
 		(( ${llvm_slot} < 13 )) && die "PGO requires LLVM >= 13"
 		local clang_pv=$("clang-${llvm_slot}" --version \
 			| head -n 1 \
@@ -10426,7 +10424,7 @@ ot-kernel_set_kconfig_pgo() {
 	else
 		return
 	fi
-	if has "clang" ${IUSE_EFFECTIVE} && use clang ; then
+	if in_iuse "clang" && use clang ; then
 		_ot-kernel_set_kconfig_pgo_clang
 	else
 		_ot-kernel_set_kconfig_pgo_gcc
@@ -10687,7 +10685,7 @@ eerror
 # Sets the kernel config for ShadowCallStack (SCS)
 ot-kernel_set_kconfig_scs() {
 	local enable=${1:-1}
-	if (( ${enable} == 1 )) && has "shadowcallstack" ${IUSE_EFFECTIVE} && ot-kernel_use "shadowcallstack" ; then
+	if (( ${enable} == 1 )) && in_iuse "shadowcallstack" && ot-kernel_use "shadowcallstack" ; then
 		if (( ${llvm_slot} < 10 )) && tc-is-clang ; then
 eerror
 eerror "Shadow Call Stack (SCS) requires LLVM >= 10"
@@ -10836,7 +10834,7 @@ einfo "Using manual swap settings"
 # @DESCRIPTION:
 # Sets the kernel config for TRESOR
 ot-kernel_set_kconfig_tresor() {
-	if has "tresor" ${IUSE_EFFECTIVE} && ot-kernel_use "tresor" && [[ "${arch}" == "x86" ]] ; then
+	if in_iuse "tresor" && ot-kernel_use "tresor" && [[ "${arch}" == "x86" ]] ; then
 einfo "Changed .config to use TRESOR (i686)"
 		ot-kernel_y_configopt "CONFIG_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CBC"
@@ -10854,7 +10852,7 @@ einfo "Disabling boot output for TRESOR early prompt."
 		fi
 	fi
 
-	if has "tresor" ${IUSE_EFFECTIVE} && ot-kernel_use "tresor" && [[ "${arch}" == "x86_64" ]] ; then
+	if in_iuse "tresor" && ot-kernel_use "tresor" && [[ "${arch}" == "x86_64" ]] ; then
 einfo "Changed .config to use TRESOR (x86_64)"
 		ot-kernel_y_configopt "CONFIG_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CBC"
@@ -10868,7 +10866,7 @@ einfo "Changed .config to use TRESOR (x86_64)"
 		fi
 	fi
 
-	if has "tresor" ${IUSE_EFFECTIVE} && ot-kernel_use "tresor" && [[ "${arch}" == "x86_64" ]] && ot-kernel_use "cpu_flags_x86_aes" ; then
+	if in_iuse "tresor" && ot-kernel_use "tresor" && [[ "${arch}" == "x86_64" ]] && ot-kernel_use "cpu_flags_x86_aes" ; then
 einfo "Changed .config to use TRESOR (AES-NI)"
 		ot-kernel_y_configopt "CONFIG_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CBC"
@@ -10881,7 +10879,7 @@ einfo "Changed .config to use TRESOR (AES-NI)"
 		fi
 	fi
 
-	if has "tresor_sysfs" ${IUSE_EFFECTIVE} && ot-kernel_use "tresor_sysfs" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+	if in_iuse "tresor_sysfs" && ot-kernel_use "tresor_sysfs" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 einfo "Changed .config to use the TRESOR sysfs interface"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_TRESOR_SYSFS"
 
@@ -10893,7 +10891,7 @@ ewarn
 		ot-kernel_n_configopt "CONFIG_HIBERNATION"
 	fi
 
-	if has "tresor" ${IUSE_EFFECTIVE} && ot-kernel_use "tresor" && [[ "${arch}" == "x86_64" ]] ; then
+	if in_iuse "tresor" && ot-kernel_use "tresor" && [[ "${arch}" == "x86_64" ]] ; then
 		if ot-kernel_use "tresor_prompt" ; then
 einfo "Disabling boot output for TRESOR early prompt."
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "2" # 7 is default
@@ -10914,7 +10912,7 @@ ot-kernel_set_kconfig_uksm() {
 einfo "Disabling UKSM"
 		ot-kernel_unset_configopt "CONFIG_KSM"
 		ot-kernel_unset_configopt "CONFIG_UKSM"
-		if has "uksm" ${IUSE_EFFECTIVE} && ot-kernel_use "uksm" ; then
+		if in_iuse "uksm" && ot-kernel_use "uksm" ; then
 eerror
 eerror "Please remove uksm from OT_KERNEL_USE for OT_KERNEL_USE=\"uksm\" for"
 eerror "OT_KERNEL_SWAP=\"0\"."
@@ -10929,7 +10927,7 @@ eerror
 		   _ot-kernel_is_hardening_level_secure \
 		|| _ot-kernel_is_hardening_level_most_secure \
 	; then
-		if has "uksm" ${IUSE_EFFECTIVE} && ot-kernel_use "uksm" ; then
+		if in_iuse "uksm" && ot-kernel_use "uksm" ; then
 ewarn "KSM/UKSM is only allowed in OT_KERNEL_HARDENING_LEVEL=fast-af"
 		fi
 		ot-kernel_unset_configopt "CONFIG_KSM"
@@ -10939,14 +10937,14 @@ ewarn "KSM/UKSM is only allowed in OT_KERNEL_HARDENING_LEVEL=fast-af"
 		ot-kernel_unset_configopt "CONFIG_KSM"
 		ot-kernel_unset_configopt "CONFIG_UKSM"
 
-		if has "uksm" ${IUSE_EFFECTIVE} && ot-kernel_use "uksm" && has "rt" ${IUSE_EFFECTIVE} && ot-kernel_use "rt" ; then
+		if in_iuse "uksm" && ot-kernel_use "uksm" && in_iuse "rt" && ot-kernel_use "rt" ; then
 eerror
 eerror "Please remove uksm from OT_KERNEL_USE for OT_KERNEL_USE=\"rt\" for"
 eerror "OT_KERNEL_EXTRAVERSION=\"${extraversion}\"."
 eerror
 			die
 		fi
-		if has "uksm" ${IUSE_EFFECTIVE} && ot-kernel_use "uksm" ; then
+		if in_iuse "uksm" && ot-kernel_use "uksm" ; then
 einfo "Changed .config to use UKSM"
 			if [[ "${arch}" == "arm" ]] ; then
 				ot-kernel_y_configopt "CONFIG_MMU"
@@ -13997,9 +13995,9 @@ ewarn "Early KMS is disabled for the simpledrm driver."
 	fi
 
 	if \
-		   has "c2tcp" ${IUSE_EFFECTIVE} && ot-kernel_use "c2tcp" \
-		|| has "orca" ${IUSE_EFFECTIVE} && ot-kernel_use "orca" \
-		|| has "deepcc" ${IUSE_EFFECTIVE} && ot-kernel_use "deepcc" \
+		   in_iuse "c2tcp" && ot-kernel_use "c2tcp" \
+		|| in_iuse "orca" && ot-kernel_use "orca" \
+		|| in_iuse "deepcc" && ot-kernel_use "deepcc" \
 	; then
 #
 # Problem:
@@ -14013,7 +14011,8 @@ ewarn "Early KMS is disabled for the simpledrm driver."
 
 
 	if \
-		has "amdgpu-dkms" ${IUSE_EFFECTIVE} && ot-kernel_use "amdgpu-dkms" \
+		   in_iuse "amdgpu-dkms" \
+		&& ot-kernel_use "amdgpu-dkms" \
 	; then
 	# For sys-kernel/amdgpu-dkms not installed yet scenario.
 ewarn "Enabling modules support for sys-kernel/amdgpu-dkms."
@@ -14021,7 +14020,7 @@ ewarn "Early KMS is disabled for the amdgpu driver."
 		ot-kernel_y_configopt "CONFIG_MODULES"
 		ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
 	elif \
-		   has "amdgpu-dkms" ${IUSE_EFFECTIVE} \
+		   in_iuse "amdgpu-dkms" \
 		&& ot-kernel_use "amdgpu-dkms" \
 		&& ( \
 			   ver_test "${KV_MAJOR_MINOR}" "-eq" "5.4" \
@@ -14442,7 +14441,7 @@ ewarn
 ewarn "The OT_KERNEL_LOGO_URI will restore the console log levels to defaults."
 ewarn "This may decrease security."
 ewarn
-		if has "tresor" ${IUSE_EFFECTIVE} && ot-kernel_use "tresor" ; then
+		if in_iuse "tresor" && ot-kernel_use "tresor" ; then
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "2"
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_QUIET" "1"
 		else
@@ -14570,7 +14569,7 @@ einfo "Changed to ${sym}=${OT_KERNEL_KCONFIG[${sym}]} in .config"
 # Sets config for support for drivers programmed in Rust and Rust related kernel
 # options.
 ot-kernel_set_rust() {
-	has "rust" ${IUSE_EFFECTIVE} || return
+	in_iuse "rust" || return
 	ot-kernel_use "rust" || return
 
 	unset BINDGEN
@@ -14637,7 +14636,7 @@ ewarn "Enabling CONFIG_DEBUG_KERNEL for Rust support and lowering security"
 		ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_REDUCED"
 		ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_SPLIT"
 		ot-kernel_y_configopt "CONFIG_DEBUG_INFO"
-		if has "scx" ${IUSE_EFFECTIVE} && ot-kernel_use "scx" ; then
+		if in_iuse "scx" && ot-kernel_use "scx" ; then
 ewarn "Disabling CONFIG_LTO for scx support and lowering security"
 ewarn "Disabling CONFIG_LTO disables kCFI"
 			ot-kernel_unset_configopt "CONFIG_LTO"		# Required for scx, disabling this disables Clang CFI
@@ -14688,7 +14687,7 @@ eerror "OT_KERNEL_HARDENING_LEVEL=fast-af are only supported for OT_KERNEL_USE=r
 # Sets config for support for scx CPU schedulers.
 ot-kernel_set_scx() {
 	# For Rust based CPU schedulers (e.g. scx_lavd)
-	if has "scx" ${IUSE_EFFECTIVE} && ot-kernel_use "scx" ; then
+	if in_iuse "scx" && ot-kernel_use "scx" ; then
 		if ! use debug ; then
 eerror "The scx USE flag requires the debug USE flag."
 			die
@@ -15080,7 +15079,7 @@ ot-kernel_set_debugger() {
 	if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.18" ; then
 		ot-kernel_y_configopt "CONFIG_DEBUG_INFO_NONE"
 	fi
-	if has "dwarf4" ${IUSE_EFFECTIVE} && ot-kernel_use "dwarf4" ; then
+	if in_iuse "dwarf4" && ot-kernel_use "dwarf4" ; then
 		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.18" ; then
 			ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_NONE"
 		fi
@@ -15090,7 +15089,7 @@ ot-kernel_set_debugger() {
 		picked=1
 ewarn "LTO is mutually exclusive with debug.  Disable the dwarf4 USE flag to use LTO."
 	fi
-	if has "dwarf5" ${IUSE_EFFECTIVE} && ot-kernel_use "dwarf5" ; then
+	if in_iuse "dwarf5" && ot-kernel_use "dwarf5" ; then
 		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.18" ; then
 			ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_NONE"
 		fi
@@ -15100,7 +15099,7 @@ ewarn "LTO is mutually exclusive with debug.  Disable the dwarf4 USE flag to use
 		picked=1
 ewarn "LTO is mutually exclusive with debug.  Disable the dwarf5 USE flag to use LTO."
 	fi
-	if has "dwarf-auto" ${IUSE_EFFECTIVE} && ot-kernel_use "dwarf-auto" ; then
+	if in_iuse "dwarf-auto" && ot-kernel_use "dwarf-auto" ; then
 		if ver_test "${KV_MAJOR_MINOR}" "-ge" "5.18" ; then
 			ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_NONE"
 		fi
@@ -15467,7 +15466,7 @@ ewarn "Disabling CFI will increase changes of trusted code hijack or code execut
 					&& \
 			tc-is-clang \
 		; then
-			if has "cfi" ${IUSE_EFFECTIVE} && use cfi ; then
+			if in_iuse "cfi" && use cfi ; then
 				:
 			else
 eerror "Enable USE=cfi to enable Clang CFI support or remove cfi from OT_KERNEL_SECURITY_CRITICAL_TYPES."
@@ -15505,7 +15504,7 @@ ewarn "Disabling KCFI will increase changes of trusted code hijack or code execu
 					&& \
 			tc-is-clang \
 		; then
-			if has "kcfi" ${IUSE_EFFECTIVE} && use kcfi ; then
+			if in_iuse "kcfi" && use kcfi ; then
 				:
 			else
 eerror "Enable USE=kcfi to enable KCFI support or remove kcfi from OT_KERNEL_SECURITY_CRITICAL_TYPES."
@@ -15529,7 +15528,7 @@ eerror "Enable USE=kcfi to enable KCFI support or remove kcfi from OT_KERNEL_SEC
 					&& \
 			ver_test "${KV_MAJOR_MINOR}" "-ge" "5.8" \
 		; then
-			if has "shadowcallstack" ${IUSE_EFFECTIVE} && use shadowcallstack ; then
+			if in_iuse "shadowcallstack" && use shadowcallstack ; then
 				:
 			else
 eerror "Enable USE=shadowcallstack to enable ShadowCallStack support or remove scs from OT_KERNEL_SECURITY_CRITICAL_TYPES."
@@ -16163,7 +16162,7 @@ einfo "Disabling all debug and shortening logging buffers"
 	ot-kernel_print_thp_status
 
 	if [[ -e "${BUILD_DIR}/.config" ]] ; then
-		if has "exfat" ${IUSE_EFFECTIVE} && ! use exfat ; then
+		if in_iuse "exfat" && ! use exfat ; then
 			sed -i -e "/CONFIG_EXFAT_FS/d" "${BUILD_DIR}/.config"
 		fi
 
@@ -16225,7 +16224,7 @@ ewarn ">=${_p} is maybe required by the kernel."
 # @DESCRIPTION:
 # Check qtversion is the same
 ot-kernel_check_qt_versions() {
-	if has "qt5" ${IUSE_EFFECTIVE} && ot-kernel_use "qt5" ; then
+	if in_iuse "qt5" && ot-kernel_use "qt5" ; then
 		local QTCORE_PV=$(pkg-config --modversion "Qt5Core")
 		local QTGUI_PV=$(pkg-config --modversion "Qt5Gui")
 		local QTWIDGETS_PV=$(pkg-config --modversion "Qt5Widgets")
@@ -16238,7 +16237,7 @@ eerror "QTCORE_PV is not the same version as Qt5Widgets"
 			die
 		fi
 	fi
-	if has "qt6" ${IUSE_EFFECTIVE} && ot-kernel_use "qt6" ; then
+	if in_iuse "qt6" && ot-kernel_use "qt6" ; then
 		local QTCORE_PV=$(pkg-config --modversion "Qt6Core")
 		local QTGUI_PV=$(pkg-config --modversion "Qt6Gui")
 		local QTWIDGETS_PV=$(pkg-config --modversion "Qt6Widgets")
@@ -16495,7 +16494,7 @@ eerror "OT_KERNEL_USE must not contain clang when USE clang is disabled."
 	# ld.lld: error: undefined symbol: puts
 
 	if ot-kernel_use "clang" ; then
-		if has "tresor" ${IUSE_EFFECTIVE} && ot-kernel_use "tresor" ; then
+		if in_iuse "tresor" && ot-kernel_use "tresor" ; then
 # Ask to disable to remove clang patches or force GCC PGO.
 eerror
 eerror "TRESOR is not compatable with clang."
@@ -16665,15 +16664,16 @@ einfo
 		)
 	fi
 
-	if has "tresor" ${IUSE_EFFECTIVE} && ot-kernel_use "tresor" && tc-is-clang ; then
+	if in_iuse "tresor" && ot-kernel_use "tresor" && tc-is-clang ; then
 		args+=(
 			"LLVM_IAS=0"
 		)
 	fi
 
-	local march_flags=($(echo "${CFLAGS}" \
-		| grep -E -e "(-march=[^[:space:]]+|-mcpu=[^[:space:]]+)"))
-	for x in ${march_flags[@]} ; do
+	local march_flags=( \
+		$(echo "${CFLAGS}" | grep -E -e "(-march=[^[:space:]]+|-mcpu=[^[:space:]]+)") \
+	)
+	for x in "${march_flags[@]}" ; do
 		if ! test-flags "${x}" >/dev/null 2>&1 ; then
 			# This test is for kernel_compiler_patch.
 eerror
@@ -16693,7 +16693,7 @@ einfo "Passed check for ${x}"
 # @DESCRIPTION:
 # Builds the tresor_sysfs program.
 ot-kernel_build_tresor_sysfs() {
-	if has "tresor_sysfs" ${IUSE_EFFECTIVE} ; then
+	if in_iuse "tresor_sysfs" ; then
 		if ot-kernel_use "tresor_sysfs" ; then
 einfo "Running:  $(tc-getCC) ${CFLAGS} -Wno-unused-result tresor_sysfs.c -o \
 tresor_sysfs"
@@ -17004,7 +17004,7 @@ ot-kernel_build_kernel() {
 		if \
 			[[ "${CLANG_PGO_SUPPORTED}" == "1" ]] \
 				&& \
-			has "clang" ${IUSE_EFFECTIVE} \
+			in_iuse "clang" \
 				&& \
 			ot-kernel_use "clang" \
 				&& \
@@ -17076,9 +17076,9 @@ einfo "Resuming as PGI since no profile generated"
 			fi
 		elif \
 			( \
-				( has "clang" ${IUSE_EFFECTIVE} && ! ot-kernel_use "clang" ) \
+				( in_iuse "clang" && ! ot-kernel_use "clang" ) \
 					|| \
-				( ! has "clang" ${IUSE_EFFECTIVE} ) \
+				( ! in_iuse "clang" ) \
 			) \
 				&& \
 			( \
@@ -18147,9 +18147,9 @@ EOF
 		_OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL=1
 	fi
 
-	if         has "c2tcp" ${IUSE_EFFECTIVE} \
-		|| has "deepcc" ${IUSE_EFFECTIVE} \
-		|| has "orca" ${IUSE_EFFECTIVE} ; then
+	if         in_iuse "c2tcp" \
+		|| in_iuse "deepcc" \
+		|| in_iuse "orca" ; then
 		if         ot-kernel_use "c2tcp" \
 			|| ot-kernel_use "deepcc" \
 			|| ot-kernel_use "orca" ; then
@@ -18351,7 +18351,7 @@ ot_kernel_serialize_pgo_state() {
 	[[ "${pgo_phase}" == "PDO" ]] && pgo_phase="PGO"
 	[[ "${pgo_phase}" == "PD0" ]] && pgo_phase="PG0"
 	local pgo_phase_statefile=""
-	if has "clang" ${IUSE_EFFECTIVE} && ot-kernel_use "clang" && use pgo && ot-kernel_use "pgo" ; then
+	if in_iuse "clang" && ot-kernel_use "clang" && use pgo && ot-kernel_use "pgo" ; then
 		if [[ "${CLANG_PGO_SUPPORTED}" == "1" ]] ; then
 			pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/pgophase"
 		fi
@@ -18515,7 +18515,7 @@ ot-kernel_install_pgo_state() {
 ot-kernel_src_install() {
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	export STRIP="/bin/true" # See https://github.com/torvalds/linux/blob/v5.16/init/Kconfig#L2169
-	if has tresor ${IUSE_EFFECTIVE} ; then
+	if in_iuse "tresor" ; then
 		if use tresor ; then
 			docinto "/usr/share/${PF}"
 			dodoc "${EDISTDIR}/${TRESOR_README_FN}"
@@ -18612,7 +18612,7 @@ einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before
 		ot-kernel_install_tcca
 		ot-kernel_fix_modules
 
-		if has "amdgpu-dkms" ${IUSE_EFFECTIVE} && ot-kernel_use "amdgpu-dkms" ; then
+		if in_iuse "amdgpu-dkms" && ot-kernel_use "amdgpu-dkms" ; then
 			ot-kernel_slotify_amdgpu
 			ot-kernel_add_amdgpu_wrapper
 		fi
@@ -18625,7 +18625,7 @@ einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before
 # @DESCRIPTION:
 # Send user messages for tresor
 ot-kernel_postinst_tresor() {
-	if has "tresor_sysfs" ${IUSE_EFFECTIVE} ; then
+	if in_iuse "tresor_sysfs" ; then
 		if use tresor_sysfs ; then
 			local highest_tresor_pv=$(best_version "sys-kernel/ot-sources[tresor_sysfs]" \
 				| sed -r -e "s|sys-kernel/ot-sources-||" -e "s|-r[0-9]+||")
@@ -18654,7 +18654,7 @@ einfo
 einfo "Advanced users may use /sys/kernel/tresor/key instead."
 einfo
 		else
-			if has "tresor" ${IUSE_EFFECTIVE} ; then
+			if in_iuse "tresor" ; then
 				if use tresor ; then
 ewarn
 ewarn "You can only enter a password that is 53 characters long without the null"
@@ -18665,7 +18665,7 @@ ewarn
 		fi
 	fi
 
-	if has "tresor" ${IUSE_EFFECTIVE} ; then
+	if in_iuse "tresor" ; then
 		if use tresor ; then
 einfo
 einfo "To prevent the prompt on boot from scrolling off the screen, you can do"
@@ -18720,7 +18720,7 @@ ewarn "TRESOR for AES-NI has not been tested.  It's left for users to test and"
 ewarn "fix."
 ewarn
 	fi
-	if has "tresor" ${IUSE_EFFECTIVE} ; then
+	if in_iuse "tresor" ; then
 		if use tresor ; then
 ewarn
 ewarn "TRESOR is currently not compatible with Integrated Assembler used by Clang/LLVM."
@@ -18734,7 +18734,7 @@ ewarn
 # @DESCRIPTION:
 # Send user message about exfat
 ot-kernel_postinst_exfat() {
-	if has "exfat" ${IUSE_EFFECTIVE} && use exfat ; then
+	if in_iuse "exfat" && use exfat ; then
 einfo
 einfo "exFAT users:  You must be a member of OIN and agree to the OIN license"
 einfo "for patent use legal protections and royalty free benefits."
@@ -18762,7 +18762,7 @@ einfo "Installing tcca"
 		chown root:root "${EROOT}/usr/bin/tcca"
 	fi
 
-	if has "bbrv2" ${IUSE_EFFECTIVE} ; then
+	if in_iuse "bbrv2" ; then
 		if use bbrv2 ; then
 einfo
 einfo "To enable BBRv2 go to"
@@ -18776,7 +18776,7 @@ einfo
 		fi
 	fi
 
-	if has "bbrv3" ${IUSE_EFFECTIVE} ; then
+	if in_iuse "bbrv3" ; then
 		if use bbrv3 ; then
 einfo
 einfo "To enable BBRv3 go to"
@@ -18792,7 +18792,7 @@ einfo
 		fi
 	fi
 
-	if has "c2tcp" ${IUSE_EFFECTIVE} && use c2tcp ; then
+	if in_iuse "c2tcp" && use c2tcp ; then
 einfo
 einfo "C2TCP is disabled by default."
 einfo
@@ -18800,7 +18800,7 @@ einfo "See epkginfo -x sys-apps/c2tcp::oiledmachine-overlay for details about"
 einfo "enabling and the tunable target delay knob."
 einfo
 	fi
-	if has "deepcc" ${IUSE_EFFECTIVE} && use deepcc ; then
+	if in_iuse "deepcc" && use deepcc ; then
 einfo
 einfo "DeepCC is disabled by default and needs the DRL Agent or learned models"
 einfo "loaded."
@@ -18810,7 +18810,7 @@ einfo "enabling and loading the DRL Agent and learned model(s) and tunable"
 einfo "target delay knob."
 einfo
 	fi
-	if has "orca" ${IUSE_EFFECTIVE} && use orca ; then
+	if in_iuse "orca" && use orca ; then
 einfo
 einfo "Orca needs the DRL Agent or learned models loaded."
 einfo
@@ -18824,7 +18824,7 @@ einfo
 # @DESCRIPTION:
 # Send user message about initramfs
 ot-kernel_postinst_initramfs() {
-	if has "build" ${IUSE_EFFECTIVE} && use build ; then
+	if in_iuse "build" && use build ; then
 einfo
 einfo "The kernel(s) still needs to complete the following steps:"
 einfo
@@ -18843,7 +18843,7 @@ einfo
 # @DESCRIPTION:
 # Send user message about pgo
 ot-kernel_postinst_pgo() {
-	if use pgo && has "build" ${IUSE_EFFECTIVE} && use build ; then
+	if use pgo && in_iuse "build" && use build ; then
 einfo
 einfo "The kernel(s) still needs to complete the following steps:"
 einfo
@@ -19011,17 +19011,17 @@ ot-kernel_postinst_clang_built_linux() {
 		-e "s|-r[0-9]+||" | cut -f 1 -d ".")
 	fi
 
-	if has "cfi" ${IUSE_EFFECTIVE} ; then
+	if in_iuse "cfi" ; then
 		if use cfi ; then
 			wants_cfi=1
 		fi
 	fi
-	if has "kcfi" ${IUSE_EFFECTIVE} ; then
+	if in_iuse "kcfi" ; then
 		if use kcfi ; then
 			wants_kcfi=1
 		fi
 	fi
-	if has "lto" ${IUSE_EFFECTIVE} ; then
+	if in_iuse "lto" ; then
 		if use lto ; then
 			wants_lto=1
 		fi
