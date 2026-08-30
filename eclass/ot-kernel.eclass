@@ -14003,14 +14003,31 @@ ewarn "Early KMS is disabled for the simpledrm driver."
 #
 		ot-kernel_y_configopt "CONFIG_TCP_CONG_CUBIC"
 	fi
+}
 
-
+# @FUNCTION: ot-kernel_amdgpu_fixes
+# @DESCRIPTION:
+# Force the amdgpu driver as a module and other fixes.
+ot-kernel_amdgpu_fixes() {
 	if in_iuse "amdgpu-dkms" && ot-kernel_use "amdgpu-dkms" ; then
-	# For sys-kernel/amdgpu-dkms not installed yet scenario.
+	#
+	# This is for when sys-kernel/amdgpu-dkms is not installed yet scenario
+	# as a PDEPEND requirement.
+	#
+	# To use the amdgpu-dkms driver, we want to build the amdgpu as module
+	# with required config.  Then, we replace the in tree amdgpu driver
+	# with the out-of-tree amdgpu-dkms driver.
+	#
 ewarn "Enabling modules support for sys-kernel/amdgpu-dkms."
 ewarn "Early KMS is disabled for the amdgpu driver."
 		ot-kernel_y_configopt "CONFIG_MODULES"
 		ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
+
+	# Prevent stall during early init.
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "nomodeset"
+		ot-kernel_set_kconfig_kernel_cmdline "nomodeset"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "amdgpu.modeset=[01]"
+		ot-kernel_set_kconfig_kernel_cmdline "amdgpu.modeset=0"
 	fi
 }
 
@@ -16136,6 +16153,7 @@ einfo "Disabling all debug and shortening logging buffers"
 
 	ot-kernel_disable_affected_modules
 	ot-kernel_verify_mitigation_late
+	ot-kernel_amdgpu_fixes
 
 	ot-kernel_set_globals_pre
 	ot-kernel_set_kconfig_from_envvar_array				# Final user override

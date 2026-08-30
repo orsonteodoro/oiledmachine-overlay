@@ -7384,13 +7384,8 @@ ot-kernel-pkgflags_nvtop() { # DONE
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
 		if ot-kernel_has_version "${pkg}[video_cards_amdgpu]" ; then
-			if in_iuse "amdgpu-dkms" && ot-kernel_use "amdgpu-dkms" ; then
-	# For sys-kernel/amdgpu-dkms not installed yet scenario.
-				ot-kernel_y_configopt "CONFIG_MODULES"
-				ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
-			else
-				ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
-			fi
+	# CONFIG_DRM_AMDGPU=y or CONFIG_DRM_AMDGPU=m deferred to ot-kernel_amdgpu_fixes.
+			ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
 			ot-kernel_y_configopt "CONFIG_SYSFS"
 		fi
 		if ot-kernel_has_version "${pkg}[video_cards_intel]" ; then
@@ -8946,13 +8941,8 @@ ot-kernel-pkgflags_roct() { # DONE
 		ot-kernel_y_configopt "CONFIG_HSA_AMD"
 		ot-kernel_y_configopt "CONFIG_HMM_MIRROR"
 		ot-kernel_y_configopt "CONFIG_ZONE_DEVICE"
-		if in_iuse "amdgpu-dkms" && ot-kernel_use "amdgpu-dkms" ; then
-	# For sys-kernel/amdgpu-dkms not installed yet scenario.
-			ot-kernel_y_configopt "CONFIG_MODULES"
-			ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
-		else
-			ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
-		fi
+	# CONFIG_DRM_AMDGPU=y or CONFIG_DRM_AMDGPU=m deferred to ot-kernel_amdgpu_fixes.
+		ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
 		ot-kernel_y_configopt "CONFIG_DRM_AMDGPU_USERPTR"
 	fi
 }
@@ -11232,11 +11222,11 @@ ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 		fi
 		ot-kernel_y_configopt "CONFIG_DRM"
 		ot-kernel_y_configopt "CONFIG_MMU"
-		if in_iuse "amdgpu-dkms" && ot-kernel_use "amdgpu-dkms" ; then
-	# For sys-kernel/amdgpu-dkms not installed yet scenario.
-			ot-kernel_y_configopt "CONFIG_MODULES"
-			ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
 
+	# CONFIG_DRM_AMDGPU=y or CONFIG_DRM_AMDGPU=m deferred to ot-kernel_amdgpu_fixes.
+		ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
+
+		if in_iuse "amdgpu-dkms" && ot-kernel_use "amdgpu-dkms" ; then
 			if ver_test "${KV_MAJOR_MINOR}" "-le" "5.5" ; then
 				# Missing DP_UHBR20 in latest 5.4 but appears in 5.19
 				ot-kernel_n_configopt "CONFIG_DRM_AMD_DC_DSC_SUPPORT"
@@ -11253,8 +11243,6 @@ ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 				ot-kernel_unset_pat_kconfig_kernel_cmdline "amdgpu.ssg=(1|0)"
 				ot-kernel_unset_pat_kconfig_kernel_cmdline "amdgpu.direct_gma_size=[0-9]+"
 			fi
-		else
-			ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
 		fi
 
 		if [[ "${AMDGPU_DEEP_COLOR:-0}" == "1" ]] ; then
