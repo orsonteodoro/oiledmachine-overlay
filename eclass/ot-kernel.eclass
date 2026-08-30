@@ -14031,9 +14031,17 @@ ewarn "Early KMS is disabled for the amdgpu driver."
 
 	# When we first boot, we just want to use the VGA driver during the boot process.
 	# We manually load the amdgpu-dkms after login.
-	# Fallback to one of these on early boot.
+	# Fallback to one of these 3 on early boot.
+		ot-kernel_y_configopt "CONFIG_DRM"
+		ot-kernel_y_configopt "CONFIG_MMU"
 		ot-kernel_y_configopt "CONFIG_DRM_SIMPLEDRM"
+
+		ot-kernel_y_configopt "CONFIG_FB"
+		ot-kernel_y_configopt "CONFIG_EFI"
 		ot-kernel_y_configopt "CONFIG_FB_EFI"
+
+		ot-kernel_y_configopt "CONFIG_FB"
+		ot-kernel_y_configopt "CONFIG_X86"
 		ot-kernel_y_configopt "CONFIG_FB_VESA"
 	fi
 }
