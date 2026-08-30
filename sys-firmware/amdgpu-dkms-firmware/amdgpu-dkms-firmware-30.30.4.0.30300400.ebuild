@@ -38,7 +38,7 @@ LICENSE="
 "
 SLOT="0/${ROCM_SLOT}"
 IUSE="
-ebuild_revision_12
+ebuild_revision_13
 "
 REQUIRED_USE="
 "
@@ -188,47 +188,15 @@ _gen_final_list() {
 
 gen_scripts() {
 	dodir "/usr/bin"
-cat <<EOF > "${ED}/usr/bin/install-${P}.sh"
+cat <<EOF > "${ED}/usr/bin/install-${PN}.sh"
 #!/bin/bash
-echo "Installing ${P} into /lib/firmware/amdgpu"
+echo "Installing ${P} into /lib/firmware/amdgpu for ROCm ${ROCM_PV}"
 rm -f "/lib/firmware/amdgpu/"*
 mkdir -p "/lib/firmware/amdgpu"
 cp -aT "/lib/firmware/amdgpu-${MY_PV%-*}" "/lib/firmware/amdgpu"
 EOF
 
-	local kv_slot
-	for kv_slot in "${KV_LTS_LIST[@]}" ; do
-cat <<EOF > "${ED}/usr/bin/install-${P}-for-rock-kernel-module-slot-${kv_slot}.sh"
-#!/bin/bash
-echo "Installing ${P} into /lib/firmware/amdgpu"
-rm -f "/lib/firmware/amdgpu/"*
-mkdir -p "/lib/firmware/amdgpu"
-cp -aT "/lib/firmware/amdgpu-${MY_PV%-*}" "/lib/firmware/amdgpu"
-EOF
-	done
-
-cat <<EOF > "${ED}/usr/bin/install-rocm-firmware-${ROCM_PV}.sh"
-#!/bin/bash
-echo "Installing ROCm v${ROCM_PV} compatible firmware into /lib/firmware/amdgpu"
-rm -f "/lib/firmware/amdgpu/"*
-mkdir -p "/lib/firmware/amdgpu"
-cp -aT "/lib/firmware/amdgpu-${MY_PV%-*}" "/lib/firmware/amdgpu"
-EOF
-
-cat <<EOF > "${ED}/usr/bin/install-rocm-firmware-slot-${ROCM_SLOT}.sh"
-#!/bin/bash
-echo "Installing ROCm ${ROCM_SLOT} (slot) compatible firmware into /lib/firmware/amdgpu"
-rm -f "/lib/firmware/amdgpu/"*
-mkdir -p "/lib/firmware/amdgpu"
-cp -aT "/lib/firmware/amdgpu-${MY_PV%-*}" "/lib/firmware/amdgpu"
-EOF
-	fperms "0755" "/usr/bin/install-${P}.sh"
-	local kv_slot
-	for kv_slot in "${KV_LTS_LIST[@]}" ; do
-		fperms "0755" "/usr/bin/install-${P}-for-rock-kernel-module-slot-${kv_slot}.sh"
-	done
-	fperms "0755" "/usr/bin/install-rocm-firmware-${ROCM_PV}.sh"
-	fperms "0755" "/usr/bin/install-rocm-firmware-slot-${ROCM_SLOT}.sh"
+	fperms "0755" "/usr/bin/install-${PN}.sh"
 }
 
 src_install() {
@@ -243,12 +211,19 @@ src_install() {
 	touch "${ED}/lib/firmware/amdgpu-${MY_PV%-*}/rocm-slot-${ROCM_SLOT}"
 	local kv_slot
 	for kv_slot in "${KV_LTS_LIST[@]}" ; do
-		touch "${ED}/lib/firmware/amdgpu-${MY_PV%-*}/rock-kernel-module-slot-${kv_slot}"
+		touch "${ED}/lib/firmware/amdgpu-${MY_PV%-*}/amdgpu-dkms-slot-${kv_slot}"
 	done
 	gen_scripts
 	_gen_final_list
 }
 
+# Purpose of each
+# install-amdgpu-dkms-firmware-30.30.4.0.30300400.sh
+# install-amdgpu-dkms-firmware-30.30.4.0.30300400-for-amdgpu-dkms-for-lts-kernel-5.15.sh - for install on 5.15.x kernels
+# install-amdgpu-dkms-firmware-30.30.4.0.30300400-for-amdgpu-dkms-for-lts-kernel-6.1.sh  - for install on 6.1.x kernels
+# install-amdgpu-dkms-firmware-30.30.4.0.30300400-for-amdgpu-dkms-for-lts-kernel-6.12.sh - for install on 6.12.x kernels
+# install-amdgpu-dkms-firmware-for-rocm-7.2.4.sh    - for single slot install
+# install-amdgpu-dkms-firmware-for-rocm-slot-7.2.sh -
 pkg_postinst() {
 einfo
 einfo "Please update your CONFIG_EXTRA_FIRMWARE of your kernel .config file"
@@ -266,12 +241,6 @@ einfo
 einfo "Manual install still required.  Use one of these helper scripts to"
 einfo "install:"
 einfo
-einfo "  install-${P}.sh"
-	local kv_slot
-	for kv_slot in "${KV_LTS_LIST[@]}" ; do
-einfo "  install-${P}-for-rock-kernel-module-slot-${kv_slot}.sh"
-	done
-einfo "  install-rocm-firmware-${ROCM_PV}.sh"
-einfo "  install-rocm-firmware-slot-${ROCM_SLOT}.sh"
+einfo "  install-${PN}.sh"
 einfo
 }
