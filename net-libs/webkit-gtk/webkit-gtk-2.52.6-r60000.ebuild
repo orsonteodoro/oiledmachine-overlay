@@ -18,7 +18,7 @@ EAPI=8
 # c = reserved
 # de = ebuild revision
 
-# See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Source/WebKit/Configurations/Version.xcconfig
+# See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.6/Source/WebKit/Configurations/Version.xcconfig
 # To make sure that libwebrtc is the same revision
 
 # libwebrtc requires git clone or the fix the tarball to contain the libwebrtc folder.
@@ -32,17 +32,17 @@ EAPI=8
 # This means also you cannot use the geolocation feature.
 
 # For dependencies, see:
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/CMakeLists.txt
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Source/cmake/BubblewrapSandboxChecks.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Source/cmake/FindGStreamer.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Source/cmake/GStreamerChecks.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Source/cmake/OptionsGTK.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Source/cmake/WebKitCommon.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Tools/buildstream/elements/sdk-platform.bst
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Tools/buildstream/elements/sdk/gst-plugin-dav1d.bst
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Tools/gtk/install-dependencies
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Tools/gtk/dependencies
-#   https://github.com/WebKit/WebKit/tree/webkitgtk-2.52.1/Tools/glib/dependencies
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.6/CMakeLists.txt
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.6/Source/cmake/BubblewrapSandboxChecks.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.6/Source/cmake/FindGStreamer.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.6/Source/cmake/GStreamerChecks.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.6/Source/cmake/OptionsGTK.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.6/Source/cmake/WebKitCommon.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.6/Tools/buildstream/elements/sdk-platform.bst
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.6/Tools/buildstream/elements/sdk/gst-plugin-dav1d.bst
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.6/Tools/gtk/install-dependencies
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.6/Tools/gtk/dependencies
+#   https://github.com/WebKit/WebKit/tree/webkitgtk-2.52.6/Tools/glib/dependencies
 #   https://docs.webkit.org/Ports/WebKitGTK%20and%20WPE%20WebKit/DependenciesPolicy.html
 #   https://docs.webkit.org/Ports/WebKitGTK%20and%20WPE%20WebKit/GCCRequirement.html
 
@@ -73,7 +73,7 @@ EAPI=8
 # Manette 0.2.4 is required by webkit-gtk but LTS version is 0.2.3
 # xdg-dbus-proxy is using U 20.04 version
 # Dependencies last updated from
-# https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1
+# https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.6
 # Do not use trunk!
 # media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
 
@@ -86,7 +86,7 @@ CFLAGS_HARDENED_USE_CASES="copy-paste-password jit network security-critical sen
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO MC UAF TC"
 CHECKREQS_DISK_BUILD="18G" # and even this might not be enough, bug #417307
 CMAKE_MAKEFILE_GENERATOR="ninja"
-# See https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Source/bmalloc/libpas/CMakeLists.txt#L5C5-L5C23
+# See https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.6/Source/bmalloc/libpas/CMakeLists.txt#L5C5-L5C23
 CXX_STANDARD=23
 LLVM_MAX_SLOT="21"
 OCDM_WV="virtual/libc:*" # Placeholder
@@ -229,33 +229,19 @@ LANGS=(
 	"zh_CN"
 )
 
-MITIGATION_DATE="Jul 10, 2026"
-MITIGATION_LAST_UPDATE=1783956703 # From `date +%s -d "Mon, 13 Jul 2026 08:31:43 -0700"` from tag in GH for this version
-MITIGATION_URI="https://webkitgtk.org/security/WSA-2026-0004.html"
+MITIGATION_DATE="Aug 20, 2026"
+MITIGATION_LAST_UPDATE=1787101140 # From `date +%s -d "Aug 18, 2026 5:59 PM PDT"` from tag in GH for this version
+MITIGATION_URI="https://webkitgtk.org/security/WSA-2026-0005.html"
 VULNERABILITIES_FIXED=(
-	"CVE-2024-4367;IV, CE;"
-	"CVE-2026-39872;CRSH, DoS;"
-	"CVE-2026-43663;CRSH, DoS;"
-	"CVE-2026-43676;DoS, OOBA, IBC;"
-	"CVE-2026-43699;CRSH, DoS, UAF;"
-	"CVE-2026-43701;;"
-	"CVE-2026-43705;MC, TC;"
-	"CVE-2026-43707;CRSH, DoS;"
-	"CVE-2026-43712;CRSH, DoS;"
-	"CVE-2026-43713;ID, ;"
-	"CVE-2026-43715;MC, UAF;"
-	"CVE-2026-43716;CRSH, DoS;"
-	"CVE-2026-43720;CRSH, UAF, DoS;"
-	"CVE-2026-43721;CBHJ, ID;"
-	"CVE-2026-43725;IV;"
-	"CVE-2026-43726;CRSH, UAF, DoS;"
-	"CVE-2026-43727;CRSH, UAF, DoS;"
-	"CVE-2026-43731;MC, UAF;"
-	"CVE-2026-43732;ID, IV;"
-	"CVE-2026-43734;UAF, CRSH, DoS;"
-	"CVE-2026-43740;ID;"
-	"CVE-2026-43742;UAF, CRSH, DoS;"
-	"CVE-2026-43745;OOBW, IV, CRSH, DoS;"
+	"CVE-2026-28984;CRSH, DoS;"
+	"CVE-2026-43804;;"
+	"CVE-2026-64713;;"
+	"CVE-2026-64719;OOBA, CRSH, DoS, IBC;"
+	"CVE-2026-64728;IV;"
+	"CVE-2026-64730;UI;"
+	"CVE-2026-64757;CRSH, DoS, MC;"
+	"CVE-2026-64783;UAF, CRSH, DoS;"
+	"CVE-2026-64787;UAF;"
 )
 
 PATENT_STATUS=(
@@ -296,11 +282,11 @@ MSE_VCODECS=(
 # For codecs, see
 # https://github.com/WebKit/WebKit/blob/main/Source/WebCore/platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp#L49
 # https://github.com/WebKit/WebKit/blob/main/Source/WebCore/platform/graphics/gstreamer/GStreamerRegistryScanner.cpp#L280
-# https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Source/WebCore/platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceGStreamer.cpp#L52
+# https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.6/Source/WebCore/platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceGStreamer.cpp#L52
 
 
 # Based on patent status
-# Compare https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.1/Tools/glib/dependencies
+# Compare https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.6/Tools/glib/dependencies
 DEFAULT_GST_PLUGINS=(
 	"+a52"
 	"-aac"
