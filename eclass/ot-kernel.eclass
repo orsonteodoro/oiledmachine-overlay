@@ -14021,7 +14021,7 @@ ot-kernel_gpu_driver_fallback() {
 	elif in_iuse "video_cards_nvidia" && ot-kernel_use "video_cards_nvidia" ; then
 		fb_early_boot_driver=${FB_EARLY_BOOT_DRIVER:-"simpledrm"}
 	else
-		fb_early_boot_driver=${FB_EARLY_BOOT_DRIVER:-"native"}
+		fb_early_boot_driver=${FB_EARLY_BOOT_DRIVER:-"kms"}
 	fi
 
 	if [[ "${fb_early_boot_driver}" == "efifb" ]] ; then
@@ -14095,8 +14095,8 @@ einfo "FB early boot driver mode:  ${fb_early_boot_mode}"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "video=[a-z0-9:@-]+"
 		ot-kernel_set_kconfig_kernel_cmdline "video=${fb_early_boot_mode}"
 
-	elif [[ "${fb_early_boot_driver}" == "native" ]] ; then
-einfo "FB early boot driver:  native"
+	elif [[ "${fb_early_boot_driver}" == "kms" ]] ; then
+einfo "FB early boot driver:  kms"
 	else
 einfo "FB early boot driver:  ignore"
 	fi
