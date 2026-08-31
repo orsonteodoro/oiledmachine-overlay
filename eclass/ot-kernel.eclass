@@ -14036,6 +14036,7 @@ ewarn "If motherboard is earlier than 2020 use FB_EARLY_BOOT_DRIVER=vesafb or FB
 		ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE"
 		local fb_early_boot_mode=${FB_EARLY_BOOT_MODE:-"efifb:1400x1050-8@60"}
 einfo "FB early boot driver mode:  ${fb_early_boot_mode}"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "vga=[0-9]+"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "video=[a-z0-9:@-]+"
 		ot-kernel_set_kconfig_kernel_cmdline "video=${fb_early_boot_mode}"
 
@@ -14050,17 +14051,16 @@ ewarn "If motherboard has pure UEFI (ca. 2020) use FB_EARLY_BOOT_DRIVER=efifb or
 		ot-kernel_y_configopt "CONFIG_FB_VESA"
 
 		# Legacy
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "vga=[0-9]+"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "video=[a-z0-9:@-]+"
 		local fb_early_boot_mode=${FB_EARLY_BOOT_MODE:-822} # 1400x1050x8
 		if [[ -n "${fb_early_boot_mode}" && "${fb_early_boot_mode}" =~ ":" && "${fb_early_boot_mode}" =~ [0-9]+ && ! "${fb_early_boot_mode}" =~ [a-zA-Z@,-]+ ]] ; then
 			fb_early_boot_mode=${FB_EARLY_BOOT_MODE:-822} # 1400x1050x8
 einfo "FB early boot driver mode:  ${fb_early_boot_mode}"
-			ot-kernel_unset_pat_kconfig_kernel_cmdline "video=[a-z0-9:@-]+"
-			ot-kernel_unset_pat_kconfig_kernel_cmdline "vga=[0-9]+"
 			ot-kernel_set_kconfig_kernel_cmdline "vga=${vga_mode}"
 		else
 			fb_early_boot_mode=${FB_EARLY_BOOT_MODE:-"vesafb:yres=1400,xres=1050,bpp=8"}
 einfo "FB early boot driver mode:  ${fb_early_boot_mode}"
-			ot-kernel_unset_pat_kconfig_kernel_cmdline "video=[a-z0-9:@-]+"
 			ot-kernel_set_kconfig_kernel_cmdline "video=${fb_early_boot_mode}"
 		fi
 
@@ -14091,6 +14091,7 @@ einfo "FB early boot driver:  simpledrm"
 		# HDMI-A-1:1400x1050@60		# For HDMI
 		local fb_early_boot_mode=${FB_EARLY_BOOT_MODE:-"DP-1:1400x1050@60"}
 einfo "FB early boot driver mode:  ${fb_early_boot_mode}"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "vga=[0-9]+"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "video=[a-z0-9:@-]+"
 		ot-kernel_set_kconfig_kernel_cmdline "video=${fb_early_boot_mode}"
 
