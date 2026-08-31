@@ -14005,6 +14005,111 @@ ewarn "Early KMS is disabled for the nouveau driver."
 	fi
 }
 
+# @FUNCTION: _framebuffer_validate_width_height
+# @DESCRIPTION:
+# Verify the resolution to avoid boot time rejection.
+_framebuffer_validate_width_height() {
+	local wh="${1}"
+	local resolutions=(
+		"640x480"
+		"800x600"
+		"1024x768"
+		"1280x1024"
+	)
+	local found=0
+	local x
+	for x in "${resolutions[@]}" ; do
+		if [[ "${x}" == "${wh}" ]] ; then
+			found=1
+			break
+		fi
+	done
+	if (( ${found} == 0 )) ; then
+eerror "The selected resolution is not considered safe or is non-standard and may cause boot failure."
+eerror "Rejected value:  ${wh}"
+eerror "Acceptable values:  ${resolutions[@]}"
+		die
+	fi
+}
+
+# @FUNCTION: _framebuffer_validate_vga_mode
+# @DESCRIPTION:
+# Verify the vga= mode to avoid boot time rejection.
+_framebuffer_validate_vga_mode() {
+	local mode="${1}"
+	local vga_modes=(
+		# 8  15  16  24 -bpp (bits per pixel)
+		769 784 785 786 # 640x480
+		771 787 788 789 # 800x600
+		773 790 791 792 # 1024x768
+		775 793 794 795 # 1280x1024
+	)
+	local found=0
+	local x
+	for x in ${vga_modes[@]} ; do
+		if (( ${x} == ${mode} )) ; then
+			found=1
+			break
+		fi
+	done
+	if (( ${found} == 0 )) ; then
+eerror "The selected vga= is not considered safe or is non-standard and may cause boot failure."
+eerror "Rejected value:  ${mode}"
+eerror "Acceptable values:  ${vga_modes[@]}"
+		die
+	fi
+}
+
+# @FUNCTION: _framebuffer_validate_bpp
+# @DESCRIPTION:
+# Verify the bpp to avoid boot time rejection
+_framebuffer_validate_bpp() {
+	local bpp="${1}"
+	local bpp_list=(
+		8 15 16 24
+	)
+	local found=0
+	local x
+	for x in ${bpp[@]} ; do
+		if (( ${x} == ${bpp} )) ; then
+			found=1
+		fi
+	done
+	if (( ${found} == 0 )) ; then
+eerror "The select bpp is not considered safe or is non-standard and may cause boot failure."
+eerror "Rejected value:  ${bpp}"
+eerror "Acceptable values:  ${bpp_list[@]}"
+		die
+	fi
+}
+
+# @FUNCTION: _framebuffer_validate_hz
+# @DESCRIPTION:
+# Verify hz to avoid boot time rejection.
+_framebuffer_validate_hz() {
+	local hz="${1}"
+	local hz_list=(
+		60		# Standard
+		50 60 70 85	# VESA CVT
+		120 144 240	# Modern high-refresh, conditionally EDID supported
+	)
+	local found=0
+	local x
+	for x in ${hz_list[@]} ; do
+		if (( ${x} == ${mode} )) ; then
+			found=1
+			break
+		fi
+	done
+	if (( ${found} == 0 )) ; then
+eerror "The select hz is not considered safe or is non-standard and may cause boot failure."
+eerror "Rejected value:  ${hz}"
+eerror "Acceptable values:  ${hz_list[@]}"
+		die
+	fi
+
+}
+
 # @FUNCTION: ot-kernel_gpu_driver_fallback
 # @DESCRIPTION:
 # Add fallback drivers for out-of-tree drivers.
@@ -14135,6 +14240,12 @@ eerror "Support only for:  arm, arm64, riscv, x86, x86_64"
 			die
 		fi
 		local fb_early_boot_mode=${FB_EARLY_BOOT_MODE:-"efifb:1280x1024-8@60"}
+		local wh=$(echo "${fb_early_boot_mode}" | grep -o -E "[0-9]+x[0-9]+")
+		local bpp=$(echo "${fb_early_boot_mode}" | grep -o -E "-[0-9]+" | sed -e "s|-||g")
+		local hz=$(echo "${fb_early_boot_mode}" | grep -o -E "@[0-9]+" | sed -e "s|@||g")
+		_framebuffer_validate_width_height "${wh}"
+		_framebuffer_validate_bpp "${bpp}"
+		_framebuffer_validate_hz "${hz}"
 einfo "FB early boot driver mode:  ${fb_early_boot_mode}"
 		ot-kernel_set_kconfig_kernel_cmdline "video=${fb_early_boot_mode}"
 
@@ -14207,32 +14318,16 @@ ewarn "If motherboard has pure UEFI (ca. 2020) use FB_EARLY_BOOT_DRIVER=efifb or
 		local fb_early_boot_mode=${FB_EARLY_BOOT_MODE:-775} # 1280x1024x8
 		if [[ -n "${fb_early_boot_mode}" && "${fb_early_boot_mode}" =~ [0-9]+ && ! "${fb_early_boot_mode}" =~ [a-zA-Z:@,-]+ ]] ; then
 			fb_early_boot_mode=${fb_early_boot_mode:-775} # 1280x1024x8
-	# Verify to avoid boot failure
-			local vga_modes=(
-				# 8  15  16  24 -bpp (bits per pixel)
-				769 784 785 786 # 640x480
-				771 787 788 789 # 800x600
-				773 790 791 792 # 1024x768
-				775 793 794 795 # 1280x1024
-			)
-			local found=0
-			local x
-			for x in ${vga_modes[@]} ; do
-				if (( ${x} == ${fb_early_boot_mode} )) ; then
-					found=1
-					break
-				fi
-			done
-			if (( ${found} == 0 )) ; then
-eerror "The select vga= is not considered safe or is non-standard and may cause boot failure."
-eerror "Rejected value:  ${fb_early_boot_mode}"
-eerror "Acceptable values:  ${vga_modes[@]}"
-				die
-			fi
+			_framebuffer_validate_vga_mode "${fb_early_boot_mode}"
 einfo "FB early boot driver mode:  ${fb_early_boot_mode}"
 			ot-kernel_set_kconfig_kernel_cmdline "vga=${vga_mode}"
 		else
 			fb_early_boot_mode=${fb_early_boot_mode:-"vesafb:yres=1280,xres=1024,bpp=8"}
+			local w=$(echo "${fb_early_boot_mode}" | grep -o -E "yres=[0-9]+" | cut -f 2 -d "=")
+			local h=$(echo "${fb_early_boot_mode}" | grep -o -E "xres=[0-9]+" | cut -f 2 -d "=")
+			local bpp=$(echo "${fb_early_boot_mode}" | grep -o -E "bpp=[0-9]+" | cut -f 2 -d "=")
+			_framebuffer_validate_width_height "${w}x${h}"
+			_framebuffer_validate_bpp "${bpp}"
 einfo "FB early boot driver mode:  ${fb_early_boot_mode}"
 			ot-kernel_set_kconfig_kernel_cmdline "video=${fb_early_boot_mode}"
 		fi
