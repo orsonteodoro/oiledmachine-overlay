@@ -5603,6 +5603,9 @@ unset OT_KERNEL_PRIVATE_KEY
     FB_EARLY_BOOT_MODE="DP-1:1400x1050@60"			# For SimpleDRM, DisplayPort
     FB_EARLY_BOOT_MODE="HDMI-A-1:1400x1050@60"			# For SimpleDRM, HDMI
 
+    All the default modes use 1400x1050 8-bpp which is close to 1080p.
+    Older monitors or BIOS/UEFI may need to adjust this setting.
+
     VESA legacy modes:
 
     | width x height | 8-bit (256 colors) | 15-bit (32k colors) | 16-bit (64k colors) | 24-bit (16M colors) |
