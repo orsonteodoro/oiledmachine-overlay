@@ -14026,8 +14026,8 @@ ewarn "Early KMS is disabled for the amdgpu driver."
 
 	# Prevent stall during early init.
 	# We just want to install/build the in tree version to make sure the dependencies are met.
-		ot-kernel_unset_pat_kconfig_kernel_cmdline "modprobe.blacklist=amdgpu"
-		ot-kernel_set_kconfig_kernel_cmdline "modprobe.blacklist=amdgpu"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "module_blacklist=amdgpu"
+		ot-kernel_set_kconfig_kernel_cmdline "module_blacklist=amdgpu"
 
 	# When we first boot, we just want to use the VGA driver during the boot process.
 	# We manually load the amdgpu-dkms after login.
