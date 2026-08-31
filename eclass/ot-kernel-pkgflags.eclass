@@ -7367,7 +7367,6 @@ ot-kernel-pkgflags_nv() { # DONE
 		fi
 
 	# Early boot framebuffer deferred to ot-kernel_gpu_driver_fallback.
-ewarn "It is assumed that you will use a recovery bootdisk to fix driver issues with nvidia-drivers package."
 	fi
 }
 
