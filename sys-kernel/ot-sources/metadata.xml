@@ -5597,12 +5597,11 @@ unset OT_KERNEL_PRIVATE_KEY
     It is the value passed to video: for the kernel command line.
     Examples:
     
-    FB_EARLY_BOOT_MODE="efifb:1400x1050-8@60"			# For EFI
-    FB_EARLY_BOOT_MODE="775"					# For VESA
-    FB_EARLY_BOOT_MODE="vesafb:yres=1400,xres=1050,bpp=8"	# For VESA
+    FB_EARLY_BOOT_MODE="efifb:640x480-8@60"			# For EFI
+    FB_EARLY_BOOT_MODE="769"					# For VESA
+    FB_EARLY_BOOT_MODE="vesafb:yres=640,xres=480,bpp=8"	# For VESA
 
-    All the default modes use 1400x1050 8-bpp which is close to 1080p.
-    Older monitors or BIOS/UEFI may need to adjust this setting.
+    All the default modes use 640x480 8-bpp for compatibility.
 
     Safe VESA legacy modes:
 

@@ -5389,7 +5389,6 @@ ot-kernel_clear_env() {
 	unset USB_FLASH_UDF
 	unset USB_MASS_STORAGE
 	unset USE_SUID_SANDBOX
-	unset VGA_MODE
 	unset VIRTUALBOX_GUEST_LINUX
 	unset VSYSCALL_MODE
 	unset WATCHDOG_DRIVERS
@@ -14114,7 +14113,7 @@ eerror "Acceptable values:  ${hz_list[@]}"
 # @DESCRIPTION:
 # Add fallback drivers for out-of-tree drivers.
 ot-kernel_gpu_driver_fallback() {
-	# Remove this to allow modprobe of out-of-tree driver.
+	# This to allow to modprobe out-of-tree drivers.
 	ot-kernel_unset_pat_kconfig_kernel_cmdline "nomodeset"
 
 	# When we first boot, we just want to use the VGA driver during the boot process.
@@ -14240,7 +14239,7 @@ eerror "ARCH=${arch} is not supported for efifb."
 eerror "Support only for:  arm, arm64, riscv, x86, x86_64"
 			die
 		fi
-		local fb_early_boot_mode=${FB_EARLY_BOOT_MODE:-"efifb:1280x1024-8@60"}
+		local fb_early_boot_mode=${FB_EARLY_BOOT_MODE:-"efifb:640x480-8@60"}
 		local wh=$(echo "${fb_early_boot_mode}" | grep -o -E -e "[0-9]+x[0-9]+")
 		local bpp=$(echo "${fb_early_boot_mode}" | grep -o -E -e "-[0-9]+" | sed -e "s|-||g")
 		local hz=$(echo "${fb_early_boot_mode}" | grep -o -E -e "@[0-9]+" | sed -e "s|@||g")
@@ -14316,14 +14315,14 @@ ewarn "If motherboard has pure UEFI (ca. 2020) use FB_EARLY_BOOT_DRIVER=efifb or
 		ot-kernel_y_configopt "CONFIG_FB_VESA"
 
 	# Legacy
-		local fb_early_boot_mode=${FB_EARLY_BOOT_MODE:-775} # 1280x1024x8
+		local fb_early_boot_mode=${FB_EARLY_BOOT_MODE:-769} # 640x480x8
 		if [[ -n "${fb_early_boot_mode}" && "${fb_early_boot_mode}" =~ [0-9]+ && ! "${fb_early_boot_mode}" =~ [a-zA-Z:@,-]+ ]] ; then
-			fb_early_boot_mode=${fb_early_boot_mode:-775} # 1280x1024x8
+			fb_early_boot_mode=${fb_early_boot_mode:-769} # 640x480x8
 			_framebuffer_validate_vga_mode "${fb_early_boot_mode}"
 einfo "FB early boot driver mode:  ${fb_early_boot_mode}"
 			ot-kernel_set_kconfig_kernel_cmdline "vga=${fb_early_boot_mode}"
 		else
-			fb_early_boot_mode=${fb_early_boot_mode:-"vesafb:yres=1280,xres=1024,bpp=8"}
+			fb_early_boot_mode=${fb_early_boot_mode:-"vesafb:yres=640,xres=480,bpp=8"}
 			local w=$(echo "${fb_early_boot_mode}" | grep -o -E -e "yres=[0-9]+" | cut -f 2 -d "=")
 			local h=$(echo "${fb_early_boot_mode}" | grep -o -E -e "xres=[0-9]+" | cut -f 2 -d "=")
 			local bpp=$(echo "${fb_early_boot_mode}" | grep -o -E -e "bpp=[0-9]+" | cut -f 2 -d "=")

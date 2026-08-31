@@ -101,8 +101,8 @@ Fix:
   re-enumeration as 1-5 is expected after failed reset (EHCI->OHCI
   fallback).
 
---- a/drivers/net/wireless/realtek/rtw88/main.h.orig	2026-08-29 13:07:19.436649206 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/main.h	2026-08-29 13:35:49.988294898 -0700
+--- a/drivers/net/wireless/realtek/rtw88/main.h.orig	2026-08-31 15:41:42.275618328 -0700
++++ b/drivers/net/wireless/realtek/rtw88/main.h	2026-08-31 15:44:51.324048730 -0700
 @@ -14,6 +14,7 @@
  #include <linux/iopoll.h>
  #include <linux/interrupt.h>
@@ -140,8 +140,8 @@ Fix:
  void rtw_core_fw_scan_notify(struct rtw_dev *rtwdev, bool start);
  int rtw_dump_fw(struct rtw_dev *rtwdev, const u32 ocp_src, u32 size,
  		u32 fwcd_item);
---- a/drivers/net/wireless/realtek/rtw88/main.c.orig	2026-08-29 13:07:19.436161321 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/main.c	2026-08-29 13:36:04.129640107 -0700
+--- a/drivers/net/wireless/realtek/rtw88/main.c.orig	2026-08-31 15:41:42.275131219 -0700
++++ b/drivers/net/wireless/realtek/rtw88/main.c	2026-08-31 15:45:06.262890315 -0700
 @@ -3,6 +3,7 @@
   */
  
@@ -300,8 +300,8 @@ Fix:
  	init_waitqueue_head(&rtwdev->coex.wait);
  	init_completion(&rtwdev->lps_leave_check);
  	init_completion(&rtwdev->fw_scan_density);
---- a/drivers/net/wireless/realtek/rtw88/usb.c.orig	2026-08-29 13:07:47.963550964 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/usb.c	2026-08-29 13:35:37.106233933 -0700
+--- a/drivers/net/wireless/realtek/rtw88/usb.c.orig	2026-08-31 15:42:08.912192021 -0700
++++ b/drivers/net/wireless/realtek/rtw88/usb.c	2026-08-31 15:44:33.730514073 -0700
 @@ -26,6 +26,17 @@ struct rtw_usb_txcb {
  	struct sk_buff_head tx_ack_queue;
  };
@@ -420,7 +420,7 @@ Fix:
  	rtw_usb_write(rtwdev, addr, val, 4);
  }
  
-@@ -399,6 +432,7 @@ static bool rtw_usb_tx_agg_skb(struct rt
+@@ -399,10 +432,16 @@ static bool rtw_usb_tx_agg_skb(struct rt
  	unsigned int align_next = 0;
  	u8 qsel;
  	int ret;
@@ -428,18 +428,15 @@ Fix:
  
  	if (skb_queue_empty(list))
  		return false;
-@@ -407,6 +441,11 @@ static bool rtw_usb_tx_agg_skb(struct rt
- 	if (!txcb)
- 		return false;
  
 +	if (unlikely(rtwdev->fail)) {
 +		__skb_queue_purge(list);
 +		return false;
 +	}
 +
- 	txcb->rtwdev = rtwdev;
- 	skb_queue_head_init(&txcb->tx_ack_queue);
- 
+ 	txcb = kmalloc(sizeof(*txcb), GFP_ATOMIC);
+ 	if (!txcb)
+ 		return false;
 @@ -459,9 +498,22 @@ queue:
  	ret = rtw_usb_write_port(rtwdev, qsel, skb_head,
  				 rtw_usb_write_port_tx_complete, txcb);
@@ -495,7 +492,7 @@ Fix:
  	}
  
  	return ret;
-@@ -1170,17 +1239,28 @@ void rtw_usb_disconnect(struct usb_inter
+@@ -1170,17 +1239,35 @@ void rtw_usb_disconnect(struct usb_inter
  	rtwdev = hw->priv;
  	rtwusb = rtw_get_usb_priv(rtwdev);
  
@@ -504,13 +501,20 @@ Fix:
 +	rtwdev->disconnecting = true;
 +	rtwdev->fail = true;
 +
-+	/* Don't cancel usb_reset_work with _sync - it calls usb_reset_device
-+	 * which sleeps and deadlocks with usbcore unbind.
-+	 * Just cancel and let it check disconnecting flag.
-+	 */
-+	cancel_work_sync(&rtwdev->usb_reset_work);
++	/* Stop mac80211 from queuing new auth that calls leave idle */
++	ieee80211_stop_queues(hw);
++
++	cancel_work(&rtwdev->usb_reset_work);
 +	cancel_work_sync(&rtwdev->fw_recovery_work);
 +	cancel_delayed_work_sync(&rtwdev->watch_dog_work);
++	cancel_work_sync(&rtwdev->ips_work); /* <-- THIS WAS MISSING, holds mutex */
++	cancel_work_sync(&rtwdev->tx_work);
++	cancel_work_sync(&rtwdev->c2h_work);
++	cancel_delayed_work_sync(&rtwdev->coex.bt_relink_work);
++	// cancel all coex delayed works too
++	cancel_delayed_work_sync(&rtwdev->coex.bt_reenable_work);
++	cancel_delayed_work_sync(&rtwdev->coex.defreeze_work);
++
 +	flush_work(&rtwdev->usb_reset_work);
  
 +	rtw_usb_cancel_rx_bufs(rtwusb);
@@ -529,7 +533,7 @@ Fix:
  	rtw_core_deinit(rtwdev);
  	ieee80211_free_hw(hw);
 --- a/drivers/net/wireless/realtek/rtw88/usb.h.orig	2024-11-17 14:15:08.000000000 -0800
-+++ b/drivers/net/wireless/realtek/rtw88/usb.h	2026-08-29 13:35:37.125031792 -0700
++++ b/drivers/net/wireless/realtek/rtw88/usb.h	2026-08-31 15:44:33.730877710 -0700
 @@ -96,5 +96,7 @@ static inline struct rtw_usb_tx_data *rt
  
  int rtw_usb_probe(struct usb_interface *intf, const struct usb_device_id *id);
@@ -538,8 +542,8 @@ Fix:
 +int __rtw_usb_write32(struct rtw_dev *rtwdev, u32 addr, u32 val);
  
  #endif
---- a/net/mac80211/mlme.c.orig	2026-08-29 13:07:43.562897575 -0700
-+++ b/net/mac80211/mlme.c	2026-08-29 13:36:41.890765407 -0700
+--- a/net/mac80211/mlme.c.orig	2026-08-31 15:42:00.863518627 -0700
++++ b/net/mac80211/mlme.c	2026-08-31 15:45:51.020059260 -0700
 @@ -2760,14 +2760,32 @@ static u64 ieee80211_handle_pwr_constr(s
  		has_80211h_pwr = ieee80211_find_80211h_pwr_constr(
  			sdata, channel, country_ie, country_ie_len,
@@ -576,9 +580,29 @@ Fix:
  	}
  
  	if (!has_80211h_pwr && !has_cisco_pwr)
---- a/drivers/net/wireless/realtek/rtw88/ps.c.orig	2024-11-17 14:15:08.000000000 -0800
-+++ b/drivers/net/wireless/realtek/rtw88/ps.c	2026-08-29 13:35:37.127752612 -0700
-@@ -276,6 +276,9 @@ static void __rtw_leave_lps(struct rtw_d
+--- a/drivers/net/wireless/realtek/rtw88/ps.c.orig	2026-06-14 07:58:38.000000000 -0700
++++ b/drivers/net/wireless/realtek/rtw88/ps.c	2026-08-31 15:57:11.559605750 -0700
+@@ -26,6 +26,9 @@ static int rtw_ips_pwr_up(struct rtw_dev
+ 
+ int rtw_enter_ips(struct rtw_dev *rtwdev)
+ {
++	if (unlikely(rtwdev->fail || rtwdev->disconnecting))
++		return -ENODEV;
++
+ 	if (!test_bit(RTW_FLAG_POWERON, rtwdev->flags))
+ 		return 0;
+ 
+@@ -50,6 +53,9 @@ int rtw_leave_ips(struct rtw_dev *rtwdev
+ {
+ 	int ret;
+ 
++	if (unlikely(rtwdev->fail || rtwdev->disconnecting))
++		return -ENODEV;
++
+ 	if (test_bit(RTW_FLAG_POWERON, rtwdev->flags))
+ 		return 0;
+ 
+@@ -276,6 +282,9 @@ static void __rtw_leave_lps(struct rtw_d
  
  void rtw_enter_lps(struct rtw_dev *rtwdev, u8 port_id)
  {
@@ -588,7 +612,7 @@ Fix:
  	lockdep_assert_held(&rtwdev->mutex);
  
  	if (rtwdev->coex.stat.wl_force_lps_ctrl)
-@@ -287,6 +290,9 @@ void rtw_enter_lps(struct rtw_dev *rtwde
+@@ -287,6 +296,9 @@ void rtw_enter_lps(struct rtw_dev *rtwde
  
  void rtw_leave_lps(struct rtw_dev *rtwdev)
  {
@@ -598,3 +622,35 @@ Fix:
  	lockdep_assert_held(&rtwdev->mutex);
  
  	__rtw_leave_lps_deep(rtwdev);
+--- a/drivers/net/wireless/realtek/rtw88/fw.c.orig	2024-11-17 14:15:08.000000000 -0800
++++ b/drivers/net/wireless/realtek/rtw88/fw.c	2026-08-31 15:44:33.733921461 -0700
+@@ -388,6 +388,9 @@ static void rtw_fw_send_h2c_command_regi
+ 	u8 box_state, box;
+ 	int ret;
+ 
++	if (unlikely(rtwdev->fail || rtwdev->disconnecting))
++		return;
++
+ 	rtw_dbg(rtwdev, RTW_DBG_FW, "send H2C content %08x %08x\n", h2c->w0,
+ 		h2c->w1);
+ 
+@@ -442,6 +445,9 @@ static void rtw_fw_send_h2c_command(stru
+ 	u32 box_reg, box_ex_reg;
+ 	int ret;
+ 
++	if (unlikely(rtwdev->fail || rtwdev->disconnecting))
++		return;
++
+ 	rtw_dbg(rtwdev, RTW_DBG_FW,
+ 		"send H2C content %02x%02x%02x%02x %02x%02x%02x%02x\n",
+ 		h2c[3], h2c[2], h2c[1], h2c[0],
+@@ -497,6 +503,9 @@ static void rtw_fw_send_h2c_packet(struc
+ {
+ 	int ret;
+ 
++	if (unlikely(rtwdev->fail || rtwdev->disconnecting))
++		return;
++
+ 	lockdep_assert_held(&rtwdev->mutex);
+ 
+ 	FW_OFFLOAD_H2C_SET_SEQ_NUM(h2c_pkt, rtwdev->h2c.seq);
