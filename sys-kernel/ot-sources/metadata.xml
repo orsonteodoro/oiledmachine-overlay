@@ -5589,9 +5589,8 @@ unset OT_KERNEL_PRIVATE_KEY
     Valid values:
     efifb     - EFI/UEFI framebuffer driver (compatible with pure UEFI systems ca. 2020)
     vesafb    - VESA framebuffer driver (compatible with older motherboards before 2020)
-    simpledrm - Simple DRM framebuffer driver (default if amdgpu-dkms or nvidia-drivers, compatible with older or newer BIOS/UEFI)
-    ignore    - Use the existing custom configuration
-    kms       - KMS driver (ebuild default if not amdgpu-dkms and not nvidia-drivers; alias for ignore)
+    simpledrm - Simple DRM framebuffer driver (compatible with older or newer BIOS/UEFI)
+    ignore    - Use the existing custom configuration (ebuild default)
 
     FB_EARLY_BOOT_MODE - Sets the resolution/hz for early boot framebuffer.
     It is the value passed to video: for the kernel command line.

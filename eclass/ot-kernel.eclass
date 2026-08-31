@@ -14016,19 +14016,93 @@ ot-kernel_gpu_driver_fallback() {
 	# We manually load the amdgpu-dkms after login.
 	local fb_early_boot_driver
 
-	if in_iuse "amdgpu-dkms" && ot-kernel_use "amdgpu-dkms" ; then
-		fb_early_boot_driver=${FB_EARLY_BOOT_DRIVER:-"simpledrm"}
+	fb_early_boot_driver=${FB_EARLY_BOOT_DRIVER:-"ignore"}
+
+	if [[ "${fb_early_boot_driver}" =~ ("efifb"|"simpledrm"|"vesafb") ]] ; then
+		:
+	elif in_iuse "amdgpu-dkms" && ot-kernel_use "amdgpu-dkms" ; then
+eerror
+eerror "FB_EARLY_BOOT_DRIVER=ignore (default) is disallowed for amdgpu-dkms."
+eerror "It is required as a temporary early boot/login driver before modprobing the amdgpu-dkms module."
+eerror
+eerror "Set FB_EARLY_BOOT_DRIVER to either one of the following:"
+eerror "    efifb - for pure UEFI systems (ca. 2020 and later)"
+eerror "simpledrm - for any BIOS/UEFI system"
+eerror "   vesafb - for legacy systems (before 2020)"
+eerror
+eerror "It must be added to the per-profile env file."
+eerror
+		die
 	elif in_iuse "video_cards_nvidia" && ot-kernel_use "video_cards_nvidia" ; then
-		fb_early_boot_driver=${FB_EARLY_BOOT_DRIVER:-"simpledrm"}
-	else
-		fb_early_boot_driver=${FB_EARLY_BOOT_DRIVER:-"kms"}
+eerror
+eerror "FB_EARLY_BOOT_DRIVER=ignore (default) is disallowed for video_cards_nvidia."
+eerror "It is required as a temporary early boot/login driver before modprobing the nvidia module."
+eerror
+eerror "Set FB_EARLY_BOOT_DRIVER to either one of the following:"
+eerror "    efifb - for pure UEFI systems (ca. 2020 and later)"
+eerror "simpledrm - for any BIOS/UEFI system"
+eerror "   vesafb - for legacy systems (before 2020)"
+eerror
+eerror "It must be added to the per-profile env file."
+eerror
+	fi
+
+	# Reset
+	if [[ "${fb_early_boot_driver}" =~ ("efifb"|"vesafb"|"simpledrm") ]] ; then
+		ot-kernel_n_configopt "CONFIG_FB_3DFX"
+		ot-kernel_n_configopt "CONFIG_FB_ARC"
+		ot-kernel_n_configopt "CONFIG_FB_ASILIANT"
+		ot-kernel_n_configopt "CONFIG_FB_ATY"
+		ot-kernel_n_configopt "CONFIG_FB_ATY128"
+		ot-kernel_n_configopt "CONFIG_FB_CARMINE"
+		ot-kernel_n_configopt "CONFIG_FB_CIRRUS"
+		ot-kernel_n_configopt "CONFIG_FB_CYBER2000"
+		ot-kernel_n_configopt "CONFIG_FB_EFI"
+		ot-kernel_n_configopt "CONFIG_FB_HGA"
+		ot-kernel_n_configopt "CONFIG_FB_I740"
+		ot-kernel_n_configopt "CONFIG_FB_IBM_GXT4500"
+		ot-kernel_n_configopt "CONFIG_FB_IMSTT"
+		ot-kernel_n_configopt "CONFIG_FB_KYRO"
+		ot-kernel_n_configopt "CONFIG_FB_MATROX"
+		ot-kernel_n_configopt "CONFIG_FB_MB862XX"
+		ot-kernel_n_configopt "CONFIG_FB_N411"
+		ot-kernel_n_configopt "CONFIG_FB_NEOMAGIC"
+		ot-kernel_n_configopt "CONFIG_FB_METRONOME"
+		ot-kernel_n_configopt "CONFIG_FB_NVIDIA"
+		ot-kernel_n_configopt "CONFIG_FB_OPENCORES"
+		ot-kernel_n_configopt "CONFIG_FB_PM2"
+		ot-kernel_n_configopt "CONFIG_FB_PM3"
+		ot-kernel_n_configopt "CONFIG_FB_RADEON"
+		ot-kernel_n_configopt "CONFIG_FB_RIVA"
+		ot-kernel_n_configopt "CONFIG_FB_S1D13XXX"
+		ot-kernel_n_configopt "CONFIG_FB_S3"
+		ot-kernel_n_configopt "CONFIG_FB_SAVAGE"
+		ot-kernel_n_configopt "CONFIG_FB_SIS"
+		ot-kernel_n_configopt "CONFIG_FB_SM712"
+		ot-kernel_n_configopt "CONFIG_FB_SMSCUFX"
+		ot-kernel_n_configopt "CONFIG_FB_TRIDENT"
+		ot-kernel_n_configopt "CONFIG_FB_UDL"
+		ot-kernel_n_configopt "CONFIG_FB_UVESA"
+		ot-kernel_n_configopt "CONFIG_FB_VESA"
+		ot-kernel_n_configopt "CONFIG_FB_VIRTUAL"
+		ot-kernel_n_configopt "CONFIG_FB_VOODOO1"
+		ot-kernel_n_configopt "CONFIG_FB_VT8623"
+		ot-kernel_n_configopt "CONFIG_FB_VGA16"
+		ot-kernel_n_configopt "CONFIG_SYSFB_SIMPLEFB"
+		if [[ "${fb_early_boot_driver}" == "simpledrm" ]] ; then
+			ot-kernel_n_configopt "CONFIG_FB"
+			ot-kernel_n_configopt "CONFIG_FB_CORE"
+			ot-kernel_n_configopt "CONFIG_DRM_FBDEV_EMULATION"
+		fi
 	fi
 
 	if [[ "${fb_early_boot_driver}" == "efifb" ]] ; then
 einfo "FB early boot driver:  efifb"
 ewarn "If motherboard is earlier than 2020 use FB_EARLY_BOOT_DRIVER=vesafb or FB_EARLY_BOOT_DRIVER=simpledrm instead."
+
 		ot-kernel_y_configopt "CONFIG_FB"
 		ot-kernel_y_configopt "CONFIG_EFI"
+		ot-kernel_y_configopt "CONFIG_FB_CORE"
 		ot-kernel_y_configopt "CONFIG_FB_EFI"
 		ot-kernel_y_configopt "CONFIG_TTY"
 		ot-kernel_y_configopt "CONFIG_VT"
@@ -14043,6 +14117,7 @@ einfo "FB early boot driver mode:  ${fb_early_boot_mode}"
 	elif [[ "${fb_early_boot_driver}" == "vesafb" ]] ; then
 einfo "FB early boot driver:  vesafb"
 ewarn "If motherboard has pure UEFI (ca. 2020) use FB_EARLY_BOOT_DRIVER=efifb or FB_EARLY_BOOT_DRIVER=simpledrm instead."
+
 		ot-kernel_y_configopt "CONFIG_FB_CORE"
 		ot-kernel_y_configopt "CONFIG_TTY"
 		ot-kernel_y_configopt "CONFIG_VT"
@@ -14050,7 +14125,7 @@ ewarn "If motherboard has pure UEFI (ca. 2020) use FB_EARLY_BOOT_DRIVER=efifb or
 		ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE"
 		ot-kernel_y_configopt "CONFIG_FB_VESA"
 
-		# Legacy
+	# Legacy
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "vga=[0-9]+"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "video=[a-z0-9:@-]+"
 		local fb_early_boot_mode=${FB_EARLY_BOOT_MODE:-822} # 1400x1050x8
@@ -14066,9 +14141,6 @@ einfo "FB early boot driver mode:  ${fb_early_boot_mode}"
 
 	elif [[ "${fb_early_boot_driver}" == "simpledrm" ]] ; then
 einfo "FB early boot driver:  simpledrm"
-		ot-kernel_y_configopt "CONFIG_DRM_FBDEV_EMULATION"
-		ot-kernel_y_configopt "CONFIG_FB"
-		ot-kernel_y_configopt "CONFIG_FB_CORE"
 		ot-kernel_y_configopt "CONFIG_EFI"
 		ot-kernel_y_configopt "CONFIG_SYSFB"
 		ot-kernel_y_configopt "CONFIG_SYSFB_SIMPLEFB"
@@ -14095,8 +14167,6 @@ einfo "FB early boot driver mode:  ${fb_early_boot_mode}"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "video=[a-z0-9:@-]+"
 		ot-kernel_set_kconfig_kernel_cmdline "video=${fb_early_boot_mode}"
 
-	elif [[ "${fb_early_boot_driver}" == "kms" ]] ; then
-einfo "FB early boot driver:  kms"
 	else
 einfo "FB early boot driver:  ignore"
 	fi
