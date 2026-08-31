@@ -14013,11 +14013,7 @@ ewarn "Early KMS is disabled for the simpledrm driver."
 # @DESCRIPTION:
 # Add fallback drivers for out-of-tree drivers.
 ot-kernel_gpu_driver_fallback() {
-	# Remove previous ineffective changes
-	# TODO:  Remove in Oct 2026
-	ot-kernel_unset_pat_kconfig_kernel_cmdline "amdgpu.modeset=[01]"
-	ot-kernel_unset_pat_kconfig_kernel_cmdline "modprobe.blacklist=amdgpu"
-	ot-kernel_unset_pat_kconfig_kernel_cmdline "module_blacklist=amdgpu"
+	# Remove this to allow modprobe of out-of-tree driver.
 	ot-kernel_unset_pat_kconfig_kernel_cmdline "nomodeset"
 
 	# When we first boot, we just want to use the VGA driver during the boot process.
@@ -14025,9 +14021,9 @@ ot-kernel_gpu_driver_fallback() {
 	local fb_early_boot_driver
 
 	if in_iuse "amdgpu-dkms" && ot-kernel_use "amdgpu-dkms" ; then
-		fb_early_boot_driver=${FB_EARLY_BOOT_DRIVER:-"efifb"}
+		fb_early_boot_driver=${FB_EARLY_BOOT_DRIVER:-"vesafb"}
 	elif has_version "x11-drivers/nvidia-drivers" ; then
-		fb_early_boot_driver=${FB_EARLY_BOOT_DRIVER:-"efifb"}
+		fb_early_boot_driver=${FB_EARLY_BOOT_DRIVER:-"vesafb"}
 	else
 		fb_early_boot_driver=${FB_EARLY_BOOT_DRIVER:-"native"}
 	fi
@@ -14041,10 +14037,11 @@ einfo "FB early boot driver:  efifb"
 		ot-kernel_y_configopt "CONFIG_VT"
 		ot-kernel_n_configopt "CONFIG_UML"
 		ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE"
-		local fb_early_boot_mode=${FB_EARLY_BOOT_MODE:-"efifb:2560x1440-32@60"} # 1440p
+		local fb_early_boot_mode=${FB_EARLY_BOOT_MODE:-"efifb:1400x1050-8@60"}
 einfo "FB early boot driver mode:  ${fb_early_boot_mode}"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "video=[a-z0-9:@-]+"
 		ot-kernel_set_kconfig_kernel_cmdline "video=${fb_early_boot_mode}"
+
 	elif [[ "${fb_early_boot_driver}" == "vesafb" ]] ; then
 einfo "FB early boot driver:  vesafb"
 		ot-kernel_y_configopt "CONFIG_FB_CORE"
@@ -14055,14 +14052,20 @@ einfo "FB early boot driver:  vesafb"
 		ot-kernel_y_configopt "CONFIG_FB_VESA"
 
 		# Legacy
-		#local vga_mode=${VGA_MODE:-769} # 640x480x8
-		#ot-kernel_unset_pat_kconfig_kernel_cmdline "vga=[0-9]+"
-		#ot-kernel_set_kconfig_kernel_cmdline "vga=${vga_mode}"
-
-		local fb_early_boot_mode=${FB_EARLY_BOOT_MODE:-"vesafb:yres=1440,xres=2560,bpp=32"} # 1440p
+		local fb_early_boot_mode=${FB_EARLY_BOOT_MODE:-822} # 1400x1050x8
+		if [[ -n "${fb_early_boot_mode}" && "${fb_early_boot_mode}" =~ ":" && "${fb_early_boot_mode}" =~ [0-9]+ && ! "${fb_early_boot_mode}" =~ [a-zA-Z@,-]+ ]] ; then
+			fb_early_boot_mode=${FB_EARLY_BOOT_MODE:-822} # 1400x1050x8
 einfo "FB early boot driver mode:  ${fb_early_boot_mode}"
-		ot-kernel_unset_pat_kconfig_kernel_cmdline "video=[a-z0-9:@-]+"
-		ot-kernel_set_kconfig_kernel_cmdline "video=${fb_early_boot_mode}"
+			ot-kernel_unset_pat_kconfig_kernel_cmdline "video=[a-z0-9:@-]+"
+			ot-kernel_unset_pat_kconfig_kernel_cmdline "vga=[0-9]+"
+			ot-kernel_set_kconfig_kernel_cmdline "vga=${vga_mode}"
+		else
+			fb_early_boot_mode=${FB_EARLY_BOOT_MODE:-"vesafb:yres=1400,xres=1050,bpp=8"}
+einfo "FB early boot driver mode:  ${fb_early_boot_mode}"
+			ot-kernel_unset_pat_kconfig_kernel_cmdline "video=[a-z0-9:@-]+"
+			ot-kernel_set_kconfig_kernel_cmdline "video=${fb_early_boot_mode}"
+		fi
+
 	elif [[ "${fb_early_boot_driver}" == "simpledrm" ]] ; then
 einfo "FB early boot driver:  simpledrm"
 		ot-kernel_y_configopt "CONFIG_DRM_FBDEV_EMULATION"
@@ -14080,14 +14083,17 @@ einfo "FB early boot driver:  simpledrm"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "amdgpu.modeset=[01]"
 		ot-kernel_set_kconfig_kernel_cmdline "amdgpu.modeset=1"
 
-		# DP-1:2560x1440@60		# For DisplayPort
-		# HDMI-A-1:2560x1440@60		# For HDMI
-		local fb_early_boot_mode=${FB_EARLY_BOOT_MODE:-"DP-1:2560x1440@60"} # 1440p
+		# DP-1:1400x1050@60		# For DisplayPort
+		# HDMI-A-1:1400x1050@60		# For HDMI
+		local fb_early_boot_mode=${FB_EARLY_BOOT_MODE:-"DP-1:1400x1050@60"}
 einfo "FB early boot driver mode:  ${fb_early_boot_mode}"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "video=[a-z0-9:@-]+"
 		ot-kernel_set_kconfig_kernel_cmdline "video=${fb_early_boot_mode}"
+
+	elif [[ "${fb_early_boot_driver}" == "native" ]] ; then
+einfo "FB early boot driver:  native"
 	else
-einfo "FB early boot driver:  ignored/native"
+einfo "FB early boot driver:  ignore"
 	fi
 }
 

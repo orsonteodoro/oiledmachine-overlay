@@ -5596,10 +5596,23 @@ unset OT_KERNEL_PRIVATE_KEY
     FB_EARLY_BOOT_MODE - Sets the resolution/hz for early boot framebuffer.
     It is the value passed to video: for the kernel command line.
     Examples:
-    FB_EARLY_BOOT_MODE="efifb:2560x1440-32@60"			# For EFI
-    FB_EARLY_BOOT_MODE="vesafb:yres=1440,xres=2560,bpp=32"	# For VESA
-    FB_EARLY_BOOT_MODE="DP-1:2560x1440@60"			# For SimpleDRM, DisplayPort
-    FB_EARLY_BOOT_MODE="HDMI-A-1:2560x1440@60"			# For SimpleDRM, HDMI
+    
+    FB_EARLY_BOOT_MODE="efifb:1400x1050-8@60"			# For EFI
+    FB_EARLY_BOOT_MODE="822"					# For VESA
+    FB_EARLY_BOOT_MODE="vesafb:yres=1400,xres=1050,bpp=8"	# For VESA
+    FB_EARLY_BOOT_MODE="DP-1:1400x1050@60"			# For SimpleDRM, DisplayPort
+    FB_EARLY_BOOT_MODE="HDMI-A-1:1400x1050@60"			# For SimpleDRM, HDMI
+
+    VESA legacy modes:
+
+    | width x height | 8-bit (256 colors) | 15-bit (32k colors) | 16-bit (64k colors) | 24-bit (16M colors) |
+    |----------------|--------------------|---------------------|---------------------|---------------------|
+    |     640x480    | 769                | 784                 | 785                 | 786                 |
+    |     800x600    | 771                | 787                 | 788                 | 789                 |
+    |    1024x768    | 773                | 790                 | 791                 | 792                 |
+    |   1280x1024    | 775                | 793                 | 794                 | 795                 |
+    |   1400x1050    | 822                | 823                 | 824                 | 825                 |
+    |   1600x1200    | 796                | 797                 | 798                 | 799                 |
 
     HT - Control mitigations against HT/SMT side-channel attacks when hardened
     level is secure-af.
