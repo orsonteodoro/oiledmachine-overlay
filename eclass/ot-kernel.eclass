@@ -18443,11 +18443,16 @@ ewarn "sys-kernel/amdgpu-dkms driver instead for the ${KV_MAJOR_MINOR} kernel"
 ewarn "series."
 ewarn
 ewarn "If you want to use the in tree amdgpu driver, disable the amdgpu-dkms"
-einfo "USE flag and make sure the amdgpu driver is built-in not module."
+ewarn "USE flag and make sure the amdgpu driver is built-in not module."
 ewarn
 	# The in tree amdgpu driver is broken as an module.
 	# It requires to be built as a built-in to work.
 	# We will install it as an amdgpu-dkms driver.
+	#
+	# Ideally, we want to blacklist the driver for genkernel but it is not
+	# possible because it automatically added by genkernel.  The workaround
+	# is to delete it before install or manually delete it in the initramfs.
+	# We do the easiest approach to delete it before install.
 	local slot="${UPSTREAM_PV}-${extraversion}-${arch}"
 	rm -v -f "${ED}/lib/modules/${slot}/kernel/drivers/gpu/drm/amd/amdgpu/amdgpu.ko"*
 }
