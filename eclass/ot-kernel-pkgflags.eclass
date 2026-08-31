@@ -7366,18 +7366,8 @@ ot-kernel-pkgflags_nv() { # DONE
 			ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.fbdev=1"
 		fi
 
-	# Disable all graphical framebuffer drivers for TTY
-	# Fallback deferred in ot-kernel_gpu_driver_fallback.
-		ot-kernel_unset_configopt "CONFIG_DRM_NOUVEAU"
-		ot-kernel_unset_configopt "CONFIG_DRM_SIMPLEDRM"
-		ot-kernel_unset_configopt "CONFIG_FB_EFI" # This is unaccelerated
-		ot-kernel_unset_configopt "CONFIG_FB_NVIDIA"
-		ot-kernel_unset_configopt "CONFIG_FB_SIMPLE"
-		ot-kernel_unset_configopt "CONFIG_FB_UVESA"
-		ot-kernel_unset_configopt "CONFIG_FB_VESA"
-		ot-kernel_unset_configopt "CONFIG_FB_VGA16"
-		ot-kernel_unset_configopt "CONFIG_VGA_CONSOLE" # This will conflict
-ewarn "It is assumed that you will use a bootdisk to fix driver issues with nvidia-drivers package."
+	# Early boot framebuffer deferred to ot-kernel_gpu_driver_fallback.
+ewarn "It is assumed that you will use a recovery bootdisk to fix driver issues with nvidia-drivers package."
 	fi
 }
 
