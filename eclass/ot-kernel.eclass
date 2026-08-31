@@ -14038,6 +14038,13 @@ ewarn "Early KMS is disabled for the amdgpu driver."
 		ot-kernel_y_configopt "CONFIG_FB"
 		ot-kernel_y_configopt "CONFIG_X86"
 		ot-kernel_y_configopt "CONFIG_FB_VESA"
+
+	# Remove previous ineffective changes
+	# TODO:  Remove in Oct 2026
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "amdgpu.modeset=[01]"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "modprobe.blacklist=amdgpu"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "module_blacklist=amdgpu"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "nomodeset"
 	fi
 }
 
