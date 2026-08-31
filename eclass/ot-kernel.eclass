@@ -14240,9 +14240,9 @@ eerror "Support only for:  arm, arm64, riscv, x86, x86_64"
 			die
 		fi
 		local fb_early_boot_mode=${FB_EARLY_BOOT_MODE:-"efifb:1280x1024-8@60"}
-		local wh=$(echo "${fb_early_boot_mode}" | grep -o -E "[0-9]+x[0-9]+")
-		local bpp=$(echo "${fb_early_boot_mode}" | grep -o -E "-[0-9]+" | sed -e "s|-||g")
-		local hz=$(echo "${fb_early_boot_mode}" | grep -o -E "@[0-9]+" | sed -e "s|@||g")
+		local wh=$(echo "${fb_early_boot_mode}" | grep -o -E -e "[0-9]+x[0-9]+")
+		local bpp=$(echo "${fb_early_boot_mode}" | grep -o -E -e "-[0-9]+" | sed -e "s|-||g")
+		local hz=$(echo "${fb_early_boot_mode}" | grep -o -E -e "@[0-9]+" | sed -e "s|@||g")
 		_framebuffer_validate_width_height "${wh}"
 		_framebuffer_validate_bpp "${bpp}"
 		_framebuffer_validate_hz "${hz}"
@@ -14323,9 +14323,9 @@ einfo "FB early boot driver mode:  ${fb_early_boot_mode}"
 			ot-kernel_set_kconfig_kernel_cmdline "vga=${vga_mode}"
 		else
 			fb_early_boot_mode=${fb_early_boot_mode:-"vesafb:yres=1280,xres=1024,bpp=8"}
-			local w=$(echo "${fb_early_boot_mode}" | grep -o -E "yres=[0-9]+" | cut -f 2 -d "=")
-			local h=$(echo "${fb_early_boot_mode}" | grep -o -E "xres=[0-9]+" | cut -f 2 -d "=")
-			local bpp=$(echo "${fb_early_boot_mode}" | grep -o -E "bpp=[0-9]+" | cut -f 2 -d "=")
+			local w=$(echo "${fb_early_boot_mode}" | grep -o -E -e "yres=[0-9]+" | cut -f 2 -d "=")
+			local h=$(echo "${fb_early_boot_mode}" | grep -o -E -e "xres=[0-9]+" | cut -f 2 -d "=")
+			local bpp=$(echo "${fb_early_boot_mode}" | grep -o -E -e "bpp=[0-9]+" | cut -f 2 -d "=")
 			_framebuffer_validate_width_height "${w}x${h}"
 			_framebuffer_validate_bpp "${bpp}"
 einfo "FB early boot driver mode:  ${fb_early_boot_mode}"
