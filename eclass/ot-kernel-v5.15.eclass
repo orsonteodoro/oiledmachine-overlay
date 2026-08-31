@@ -357,7 +357,7 @@ ${X86_FLAGS[@]}
 amdgpu-dkms bbrv2 build c2tcp cfi +cfs -clang deepcc -debug doc -dwarf4 -dwarf5 -dwarf-auto
 -exfat -expoline -gdb +genpatches -genpatches_1510 -lto nest multigen_lru orca
 pgo prjc qt5 +retpoline rt shadowcallstack symlink tresor tresor_prompt
-tresor_sysfs uksm zen-multigen_lru zen-sauce
+tresor_sysfs uksm video_cards_nvidia zen-multigen_lru zen-sauce
 "
 
 REQUIRED_USE+="
@@ -796,6 +796,9 @@ PDEPEND+="
 		|| (
 			>=virtual/kfd-7.2:0/7.2[amdgpu-dkms]
 		)
+	)
+	video_cards_nvidia? (
+		x11-drivers/nvidia-drivers
 	)
 "
 

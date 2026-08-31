@@ -370,7 +370,7 @@ ${PPC_FLAGS[@]}
 ${X86_FLAGS[@]}
 bbrv2 build c2tcp +cfs -clang deepcc -debug doc -dwarf4 -exfat -expoline -gdb
 +genpatches -genpatches_1510 muqss orca pgo prjc qt5 +retpoline rt symlink tresor
-tresor_prompt tresor_sysfs uksm zen-muqss zen-sauce
+tresor_prompt tresor_sysfs uksm video_cards_nvidia zen-muqss zen-sauce
 "
 
 REQUIRED_USE+="
@@ -655,6 +655,9 @@ PDEPEND+="
 		>=sys-kernel/linux-firmware-${RTL8XXXU_FIRMWARE_RELEASE_DATE}:=
 		>=sys-kernel/linux-firmware-${RTLWIFI_FIRMWARE_RELEASE_DATE}:=
 		>=sys-kernel/linux-firmware-${RTW_FIRMWARE_RELEASE_DATE}:=
+	)
+	video_cards_nvidia? (
+		x11-drivers/nvidia-drivers
 	)
 "
 

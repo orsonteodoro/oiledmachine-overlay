@@ -13978,19 +13978,15 @@ einfo "Fixing config for genkernel"
 # @DESCRIPTION:
 # Fix =y conflicts when a user wants both drivers install.
 ot-kernel_convert_tristate_fix() {
-	if ot-kernel_has_version "x11-drivers/nvidia-drivers" \
-		&& grep -q -e "^CONFIG_DRM_NOUVEAU=y" "${BUILD_DIR}/.config" ; then
+	if \
+		( in_iuse "video_cards_nvidia" && ot-kernel_use "video_cards_nvidia" ) \
+			&& \
+		grep -q -e "^CONFIG_DRM_NOUVEAU=y" "${BUILD_DIR}/.config" \
+	; then
 ewarn "Enabling modules support for nouveau."
 ewarn "Early KMS is disabled for the nouveau driver."
 		ot-kernel_y_configopt "CONFIG_MODULES"
 		ot-kernel_set_configopt "CONFIG_DRM_NOUVEAU" "m"
-	fi
-	if ot-kernel_has_version "x11-drivers/nvidia-drivers" \
-		&& grep -q -e "^CONFIG_DRM_SIMPLEDRM=y" "${BUILD_DIR}/.config" ; then
-ewarn "Enabling modules support for simpledrm."
-ewarn "Early KMS is disabled for the simpledrm driver."
-		ot-kernel_y_configopt "CONFIG_MODULES"
-		ot-kernel_set_configopt "CONFIG_DRM_SIMPLEDRM" "m"
 	fi
 
 	if \
@@ -14021,15 +14017,16 @@ ot-kernel_gpu_driver_fallback() {
 	local fb_early_boot_driver
 
 	if in_iuse "amdgpu-dkms" && ot-kernel_use "amdgpu-dkms" ; then
-		fb_early_boot_driver=${FB_EARLY_BOOT_DRIVER:-"vesafb"}
-	elif has_version "x11-drivers/nvidia-drivers" ; then
-		fb_early_boot_driver=${FB_EARLY_BOOT_DRIVER:-"vesafb"}
+		fb_early_boot_driver=${FB_EARLY_BOOT_DRIVER:-"simpledrm"}
+	elif in_iuse "video_cards_nvidia" && ot-kernel_use "video_cards_nvidia" ; then
+		fb_early_boot_driver=${FB_EARLY_BOOT_DRIVER:-"simpledrm"}
 	else
 		fb_early_boot_driver=${FB_EARLY_BOOT_DRIVER:-"native"}
 	fi
 
 	if [[ "${fb_early_boot_driver}" == "efifb" ]] ; then
 einfo "FB early boot driver:  efifb"
+ewarn "If motherboard is earlier than 2020 use FB_EARLY_BOOT_DRIVER=vesafb or FB_EARLY_BOOT_DRIVER=simpledrm instead."
 		ot-kernel_y_configopt "CONFIG_FB"
 		ot-kernel_y_configopt "CONFIG_EFI"
 		ot-kernel_y_configopt "CONFIG_FB_EFI"
@@ -14044,6 +14041,7 @@ einfo "FB early boot driver mode:  ${fb_early_boot_mode}"
 
 	elif [[ "${fb_early_boot_driver}" == "vesafb" ]] ; then
 einfo "FB early boot driver:  vesafb"
+ewarn "If motherboard has pure UEFI (ca. 2020) use FB_EARLY_BOOT_DRIVER=efifb or FB_EARLY_BOOT_DRIVER=simpledrm instead."
 		ot-kernel_y_configopt "CONFIG_FB_CORE"
 		ot-kernel_y_configopt "CONFIG_TTY"
 		ot-kernel_y_configopt "CONFIG_VT"
@@ -14081,7 +14079,13 @@ einfo "FB early boot driver:  simpledrm"
 
 		ot-kernel_set_kconfig_kernel_cmdline "initcall_blacklist=sysfb_init"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "amdgpu.modeset=[01]"
-		ot-kernel_set_kconfig_kernel_cmdline "amdgpu.modeset=1"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "nvidia-drm.modeset=[01]"
+
+		if in_iuse "amdgpu-dkms" && ot-kernel_use "amdgpu-dkms" ; then
+			ot-kernel_set_kconfig_kernel_cmdline "amdgpu.modeset=1"
+		elif in_iuse "video_cards_nvidia" && ot-kernel_use "video_cards_nvidia" ; then
+			ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.modeset=1"
+		fi
 
 		# DP-1:1400x1050@60		# For DisplayPort
 		# HDMI-A-1:1400x1050@60		# For HDMI

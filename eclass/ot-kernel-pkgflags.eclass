@@ -7244,7 +7244,11 @@ ot-kernel-pkgflags_nut() { # DONE
 # Applies kernel config flags for the nv driver
 ot-kernel-pkgflags_nv() { # DONE
 	local pkg="x11-drivers/nvidia-drivers"
-	if ot-kernel_has_version_pkgflags "${pkg}" ; then
+	if \
+		ot-kernel_has_version_pkgflags "${pkg}" \
+			|| \
+		( in_iuse "video_cards_nvidia" && ot-kernel_use "video_cards_nvidia" ) \
+	; then
 		ot-kernel_y_configopt "CONFIG_MODULES"
 		ot-kernel_y_configopt "CONFIG_MTRR"
 		ot-kernel_y_configopt "CONFIG_PCI"
@@ -11208,9 +11212,7 @@ ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 	if \
 		ot-kernel_has_version_pkgflags "x11-drivers/xf86-video-amdgpu" \
 			|| \
-		( \
-			in_iuse "amdgpu-dkms" && ot-kernel_use "amdgpu-dkms" \
-		) \
+		( in_iuse "amdgpu-dkms" && ot-kernel_use "amdgpu-dkms" ) \
 	; then
 		ot-kernel_y_configopt "CONFIG_MTRR"
 		ot-kernel_y_configopt "CONFIG_MEMORY_HOTPLUG"
