@@ -14134,7 +14134,7 @@ eerror "ARCH=${arch} is not supported for efifb."
 eerror "Support only for:  arm, arm64, riscv, x86, x86_64"
 			die
 		fi
-		local fb_early_boot_mode=${FB_EARLY_BOOT_MODE:-"efifb:1400x1050-8@60"}
+		local fb_early_boot_mode=${FB_EARLY_BOOT_MODE:-"efifb:1280x1024-8@60"}
 einfo "FB early boot driver mode:  ${fb_early_boot_mode}"
 		ot-kernel_set_kconfig_kernel_cmdline "video=${fb_early_boot_mode}"
 
@@ -14204,13 +14204,35 @@ ewarn "If motherboard has pure UEFI (ca. 2020) use FB_EARLY_BOOT_DRIVER=efifb or
 		ot-kernel_y_configopt "CONFIG_FB_VESA"
 
 	# Legacy
-		local fb_early_boot_mode=${FB_EARLY_BOOT_MODE:-822} # 1400x1050x8
+		local fb_early_boot_mode=${FB_EARLY_BOOT_MODE:-775} # 1280x1024x8
 		if [[ -n "${fb_early_boot_mode}" && "${fb_early_boot_mode}" =~ [0-9]+ && ! "${fb_early_boot_mode}" =~ [a-zA-Z:@,-]+ ]] ; then
-			fb_early_boot_mode=${FB_EARLY_BOOT_MODE:-822} # 1400x1050x8
+			fb_early_boot_mode=${fb_early_boot_mode:-775} # 1280x1024x8
+	# Verify to avoid boot failure
+			local vga_modes=(
+				# 8  15  16  24 -bpp (bits per pixel)
+				769 784 785 786 # 640x480
+				771 787 788 789 # 800x600
+				773 790 791 792 # 1024x768
+				775 793 794 795 # 1280x1024
+			)
+			local found=0
+			local x
+			for x in ${vga_modes[@]} ; do
+				if (( ${x} == ${fb_early_boot_mode} )) ; then
+					found=1
+					break
+				fi
+			done
+			if (( ${found} == 0 )) ; then
+eerror "The select vga= is not considered safe or is non-standard and may cause boot failure."
+eerror "Rejected value:  ${fb_early_boot_mode}"
+eerror "Acceptable values:  ${vga_modes[@]}"
+				die
+			fi
 einfo "FB early boot driver mode:  ${fb_early_boot_mode}"
 			ot-kernel_set_kconfig_kernel_cmdline "vga=${vga_mode}"
 		else
-			fb_early_boot_mode=${FB_EARLY_BOOT_MODE:-"vesafb:yres=1400,xres=1050,bpp=8"}
+			fb_early_boot_mode=${fb_early_boot_mode:-"vesafb:yres=1280,xres=1024,bpp=8"}
 einfo "FB early boot driver mode:  ${fb_early_boot_mode}"
 			ot-kernel_set_kconfig_kernel_cmdline "video=${fb_early_boot_mode}"
 		fi
