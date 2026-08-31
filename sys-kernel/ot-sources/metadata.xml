@@ -5584,6 +5584,23 @@ unset OT_KERNEL_PRIVATE_KEY
     EXT4_ENCRYPTION - Add support for ext4 encryption
     Valid values:  0, 1 (default).
 
+    FB_EARLY_BOOT_DRIVER - Sets the fallback driver for early boot framebuffer
+    for out-of-tree GPU drivers (e.g. for amdgpu-dkms or nvidia-driver packages).
+    Valid values:
+    efifb     - EFI/UEFI framebuffer driver (default if amdgpu-dkms or nvidia-drivers)
+    vesafb    - VESA framebuffer driver
+    simpledrm - Simple DRM framebuffer driver
+    ignore    - Use the existing custom configuration
+    native    - Use the native KMS driver (ebuild default if not amdgpu-dkms and not nvidia-drivers; alias for ignore)
+
+    FB_EARLY_BOOT_MODE - Sets the resolution/hz for early boot framebuffer.
+    It is the value passed to video: for the kernel command line.
+    Examples:
+    FB_EARLY_BOOT_MODE="efifb:2560x1440-32@60"			# For EFI
+    FB_EARLY_BOOT_MODE="vesafb:yres=1440,xres=2560,bpp=32"	# For VESA
+    FB_EARLY_BOOT_MODE="DP-1:2560x1440@60"			# For SimpleDRM, DisplayPort
+    FB_EARLY_BOOT_MODE="HDMI-A-1:2560x1440@60"			# For SimpleDRM, HDMI
+
     HT - Control mitigations against HT/SMT side-channel attacks when hardened
     level is secure-af.
     Valid values: 1, 2, 3, custom, manual, unset.

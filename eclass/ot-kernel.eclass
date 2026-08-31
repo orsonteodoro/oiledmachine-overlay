@@ -5326,6 +5326,8 @@ ot-kernel_clear_env() {
 	unset DSS_REGION
 	unset DSS_ROLE
 	unset EMU_16BIT
+	unset FB_EARLY_BOOT_DRIVER
+	unset FB_EARLY_BOOT_MODE
 	unset HPLIP_PARPORT
 	unset HPLIP_USB
 	unset I915_GEN9_HWACCEL_LOW_POWER_VIDEO_ENCODING
@@ -5387,6 +5389,7 @@ ot-kernel_clear_env() {
 	unset USB_FLASH_UDF
 	unset USB_MASS_STORAGE
 	unset USE_SUID_SANDBOX
+	unset VGA_MODE
 	unset VIRTUALBOX_GUEST_LINUX
 	unset VSYSCALL_MODE
 	unset WATCHDOG_DRIVERS
@@ -14006,6 +14009,88 @@ ewarn "Early KMS is disabled for the simpledrm driver."
 	fi
 }
 
+# @FUNCTION: ot-kernel_gpu_driver_fallback
+# @DESCRIPTION:
+# Add fallback drivers for out-of-tree drivers.
+ot-kernel_gpu_driver_fallback() {
+	# Remove previous ineffective changes
+	# TODO:  Remove in Oct 2026
+	ot-kernel_unset_pat_kconfig_kernel_cmdline "amdgpu.modeset=[01]"
+	ot-kernel_unset_pat_kconfig_kernel_cmdline "modprobe.blacklist=amdgpu"
+	ot-kernel_unset_pat_kconfig_kernel_cmdline "module_blacklist=amdgpu"
+	ot-kernel_unset_pat_kconfig_kernel_cmdline "nomodeset"
+
+	# When we first boot, we just want to use the VGA driver during the boot process.
+	# We manually load the amdgpu-dkms after login.
+	local fb_early_boot_driver
+
+	if in_iuse "amdgpu-dkms" && ot-kernel_use "amdgpu-dkms" ; then
+		fb_early_boot_driver=${FB_EARLY_BOOT_DRIVER:-"efifb"}
+	elif has_version "x11-drivers/nvidia-drivers" ; then
+		fb_early_boot_driver=${FB_EARLY_BOOT_DRIVER:-"efifb"}
+	else
+		fb_early_boot_driver=${FB_EARLY_BOOT_DRIVER:-"native"}
+	fi
+
+	if [[ "${fb_early_boot_driver}" == "efifb" ]] ; then
+einfo "FB early boot driver:  efifb"
+		ot-kernel_y_configopt "CONFIG_FB"
+		ot-kernel_y_configopt "CONFIG_EFI"
+		ot-kernel_y_configopt "CONFIG_FB_EFI"
+		ot-kernel_y_configopt "CONFIG_TTY"
+		ot-kernel_y_configopt "CONFIG_VT"
+		ot-kernel_n_configopt "CONFIG_UML"
+		ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE"
+		local fb_early_boot_mode=${FB_EARLY_BOOT_MODE:-"efifb:2560x1440-32@60"} # 1440p
+einfo "FB early boot driver mode:  ${fb_early_boot_mode}"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "video=[a-z0-9:@-]+"
+		ot-kernel_set_kconfig_kernel_cmdline "video=${fb_early_boot_mode}"
+	elif [[ "${fb_early_boot_driver}" == "vesafb" ]] ; then
+einfo "FB early boot driver:  vesafb"
+		ot-kernel_y_configopt "CONFIG_FB_CORE"
+		ot-kernel_y_configopt "CONFIG_TTY"
+		ot-kernel_y_configopt "CONFIG_VT"
+		ot-kernel_n_configopt "CONFIG_UML"
+		ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE"
+		ot-kernel_y_configopt "CONFIG_FB_VESA"
+
+		# Legacy
+		#local vga_mode=${VGA_MODE:-769} # 640x480x8
+		#ot-kernel_unset_pat_kconfig_kernel_cmdline "vga=[0-9]+"
+		#ot-kernel_set_kconfig_kernel_cmdline "vga=${vga_mode}"
+
+		local fb_early_boot_mode=${FB_EARLY_BOOT_MODE:-"vesafb:yres=1440,xres=2560,bpp=32"} # 1440p
+einfo "FB early boot driver mode:  ${fb_early_boot_mode}"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "video=[a-z0-9:@-]+"
+		ot-kernel_set_kconfig_kernel_cmdline "video=${fb_early_boot_mode}"
+	elif [[ "${fb_early_boot_driver}" == "simpledrm" ]] ; then
+einfo "FB early boot driver:  simpledrm"
+		ot-kernel_y_configopt "CONFIG_DRM_FBDEV_EMULATION"
+		ot-kernel_y_configopt "CONFIG_FB"
+		ot-kernel_y_configopt "CONFIG_FB_CORE"
+		ot-kernel_y_configopt "CONFIG_EFI"
+		ot-kernel_y_configopt "CONFIG_SYSFB"
+		ot-kernel_y_configopt "CONFIG_SYSFB_SIMPLEFB"
+		ot-kernel_y_configopt "CONFIG_AGP"
+		ot-kernel_y_configopt "CONFIG_DRM"
+		ot-kernel_y_configopt "CONFIG_MMU"
+		ot-kernel_y_configopt "CONFIG_DRM_SIMPLEDRM"
+
+		ot-kernel_set_kconfig_kernel_cmdline "initcall_blacklist=sysfb_init"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "amdgpu.modeset=[01]"
+		ot-kernel_set_kconfig_kernel_cmdline "amdgpu.modeset=1"
+
+		# DP-1:2560x1440@60		# For DisplayPort
+		# HDMI-A-1:2560x1440@60		# For HDMI
+		local fb_early_boot_mode=${FB_EARLY_BOOT_MODE:-"DP-1:2560x1440@60"} # 1440p
+einfo "FB early boot driver mode:  ${fb_early_boot_mode}"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "video=[a-z0-9:@-]+"
+		ot-kernel_set_kconfig_kernel_cmdline "video=${fb_early_boot_mode}"
+	else
+einfo "FB early boot driver:  ignored/native"
+	fi
+}
+
 # @FUNCTION: ot-kernel_amdgpu_fixes
 # @DESCRIPTION:
 # Force the amdgpu driver as a module and other fixes.
@@ -14023,28 +14108,6 @@ ewarn "Enabling modules support for sys-kernel/amdgpu-dkms."
 ewarn "Early KMS is disabled for the amdgpu driver."
 		ot-kernel_y_configopt "CONFIG_MODULES"
 		ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
-
-	# When we first boot, we just want to use the VGA driver during the boot process.
-	# We manually load the amdgpu-dkms after login.
-	# Fallback to one of these 3 on early boot.
-		ot-kernel_y_configopt "CONFIG_DRM"
-		ot-kernel_y_configopt "CONFIG_MMU"
-		ot-kernel_y_configopt "CONFIG_DRM_SIMPLEDRM"
-
-		ot-kernel_y_configopt "CONFIG_FB"
-		ot-kernel_y_configopt "CONFIG_EFI"
-		ot-kernel_y_configopt "CONFIG_FB_EFI"
-
-		ot-kernel_y_configopt "CONFIG_FB"
-		ot-kernel_y_configopt "CONFIG_X86"
-		ot-kernel_y_configopt "CONFIG_FB_VESA"
-
-	# Remove previous ineffective changes
-	# TODO:  Remove in Oct 2026
-		ot-kernel_unset_pat_kconfig_kernel_cmdline "amdgpu.modeset=[01]"
-		ot-kernel_unset_pat_kconfig_kernel_cmdline "modprobe.blacklist=amdgpu"
-		ot-kernel_unset_pat_kconfig_kernel_cmdline "module_blacklist=amdgpu"
-		ot-kernel_unset_pat_kconfig_kernel_cmdline "nomodeset"
 	fi
 }
 
@@ -16171,6 +16234,7 @@ einfo "Disabling all debug and shortening logging buffers"
 	ot-kernel_disable_affected_modules
 	ot-kernel_verify_mitigation_late
 	ot-kernel_amdgpu_fixes
+	ot-kernel_gpu_driver_fallback
 
 	ot-kernel_set_globals_pre
 	ot-kernel_set_kconfig_from_envvar_array				# Final user override
@@ -17504,6 +17568,99 @@ ot-kernel_is_full_sources_required() {
 	return 1
 }
 
+# @FUNCTION: ot-kernel_add_amdgpu_wrapper
+# @DESCRIPTION:
+# Add a wrapper for install of vanilla amdgpu kernel driver as a fallback.
+ot-kernel_add_amdgpu_wrapper() {
+# For multiple slot support.
+dodir "/usr/bin"
+cat <<EOF > "${ED}/usr/bin/install-amdgpu-kernel-module-for-${PV}-${extraversion}.sh"
+#!/bin/bash
+echo "Switching to the vanilla amdgpu kernel module for \${kernel_release}"
+kernel_release="${canonical_target}"
+modules_path="/lib/modules/\${kernel_release}"
+
+KERNEL_MODULES=(
+	"amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
+)
+
+# Entries from all versions of the amdgpu-dkms driver and the vanilla amdgpu kernel driver.
+_DKMS_MODULES=(
+	"amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
+	"amdttm /kernel/drivers/gpu/drm/ttm"
+	"amdkcl /kernel/drivers/gpu/drm/amd/amdkcl"
+	"amd-sched /kernel/drivers/gpu/drm/scheduler"
+	"amddrm_ttm_helper /kernel/drivers/gpu/drm"
+	"amddrm_buddy /kernel/drivers/gpu/drm"
+	"amdxcp /kernel/drivers/gpu/drm/amd/amdxcp"
+)
+
+IFS=\$'\n'
+
+for x in \${_DKMS_MODULES[@]} ; do
+	built_name=\$(echo "\${x}" | cut -f 1 -d " ")
+	dest_location=\$(echo "\${x}" | cut -f 2 -d " ")
+	rm -fv "\${modules_path}\${dest_location}/\${built_name}.ko"*
+done
+
+for x in \${KERNEL_MODULES[@]} ; do
+	built_name=\$(echo "\${x}" | cut -f 1 -d " ")
+	dest_location=\$(echo "\${x}" | cut -f 2 -d " ")
+	FN=(
+		"\${built_name}.ko"
+		"\${built_name}.ko.gz"
+		"\${built_name}.ko.xz"
+		"\${built_name}.ko.zst"
+	)
+	for fn in \${FN[@]} ; do
+		if [[ -e "/lib/modules-amdgpu/\${kernel_release}/\${dest_location}/\${fn}" ]] ; then
+			mkdir -p "\${modules_path}\${dest_location}"
+			rm -f "\${modules_path}\${dest_location}/\${built_name}.ko"{,.gz,.xz,.zst}
+			cp -a "/lib/modules-amdgpu/\${kernel_release}/\${dest_location}/\${fn}" "\${modules_path}\${dest_location}"
+		fi
+	done
+done
+
+IFS=\$' \t\n'
+
+echo "Updating /lib/modules/\${kernel_release}/module.dep for \`modprobe amdgpu\`"
+depmod -a \${kernel_release}
+EOF
+	fperms 0750 "/usr/bin/install-amdgpu-kernel-module-for-${PV}-${extraversion}.sh"
+}
+
+# @FUNCTION: ot-kernel_slotify_amdgpu
+# @DESCRIPTION:
+# Backup the amdgpu modules as a fallback for the amdgpu-dkms ebuild.
+ot-kernel_slotify_amdgpu() {
+	local KERNEL_MODULES=(
+		"amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
+	)
+	local canonical_target="${UPSTREAM_PV}-${extraversion}-${arch}" # ex. 6.6.0-builder-${arch}
+	local x
+	IFS=$'\n'
+	for x in "${KERNEL_MODULES[@]}" ; do
+		local built_name=$(echo "${x}" | cut -f 1 -d " ")
+		local dest_location=$(echo "${x}" | cut -f 2 -d " ")
+		local FN=(
+			"${built_name}.ko"
+			"${built_name}.ko.gz"
+			"${built_name}.ko.xz"
+			"${built_name}.ko.zst"
+		)
+		local fn
+		for fn in "${FN[@]}" ; do
+			if [[ -e "${ED}/lib/modules/${canonical_target}${dest_location}/${fn}" ]] ; then
+				dodir "/lib/modules-amdgpu/${canonical_target}${dest_location}"
+				cp -a \
+					"${ED}/lib/modules/${canonical_target}${dest_location}/${fn}" \
+					"${ED}/lib/modules-amdgpu/${canonical_target}${dest_location}"
+			fi
+		done
+	done
+	IFS=$' \t\n'
+}
+
 # @FUNCTION: ot-kernel_install_tcca
 # @DESCRIPTION:
 # Configure and install tcca
@@ -18430,33 +18587,6 @@ ot-kernel_install_pgo_state() {
 	fi
 }
 
-
-# @FUNCTION: ot-kernel_delete_amdgpu
-# @DESCRIPTION:
-# We delete the amdgpu driver to prevent stall.
-# Installs the pgo state data
-ot-kernel_delete_amdgpu() {
-ewarn "Removing the amdgpu.ko driver."
-ewarn
-ewarn "It is assumed that you will actually build and install the"
-ewarn "sys-kernel/amdgpu-dkms driver instead for the ${KV_MAJOR_MINOR} kernel"
-ewarn "series."
-ewarn
-ewarn "If you want to use the in tree amdgpu driver, disable the amdgpu-dkms"
-ewarn "USE flag and make sure the amdgpu driver is built-in not module."
-ewarn
-	# The in tree amdgpu driver is broken as an module.
-	# It requires to be built as a built-in to work.
-	# We will install it as an amdgpu-dkms driver.
-	#
-	# Ideally, we want to blacklist the driver for genkernel but it is not
-	# possible because it automatically added by genkernel.  The workaround
-	# is to delete it before install or manually delete it in the initramfs.
-	# We do the easiest approach to delete it before install.
-	local slot="${UPSTREAM_PV}-${extraversion}-${arch}"
-	rm -v -f "${ED}/lib/modules/${slot}/kernel/drivers/gpu/drm/amd/amdgpu/amdgpu.ko"*
-}
-
 # @FUNCTION: ot-kernel_src_install
 # @DESCRIPTION:
 # Removes patch cruft.
@@ -18561,7 +18691,8 @@ einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before
 		ot-kernel_fix_modules
 
 		if in_iuse "amdgpu-dkms" && ot-kernel_use "amdgpu-dkms" ; then
-			ot-kernel_delete_amdgpu
+			ot-kernel_slotify_amdgpu
+			ot-kernel_add_amdgpu_wrapper
 		fi
 	done
 
