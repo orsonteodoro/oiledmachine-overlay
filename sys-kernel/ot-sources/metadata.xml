@@ -5588,8 +5588,8 @@ unset OT_KERNEL_PRIVATE_KEY
     for out-of-tree GPU drivers (e.g. for amdgpu-dkms or nvidia-driver packages).
     Valid values:
     efifb     - EFI/UEFI framebuffer driver (compatible with pure UEFI systems ca. 2020)
-    vesafb    - VESA framebuffer driver (compatible with older motherboards before 2020)
-    simpledrm - Simple DRM framebuffer driver (compatible with older or newer BIOS/UEFI)
+    simpledrm - Simple DRM framebuffer driver (compatible with BIOS/UEFI, tested fail on older system)
+    vesafb    - VESA framebuffer driver (compatible with older motherboards before 2020, tested working on older system)
     ignore    - Use the existing custom configuration (ebuild default)
 
     FB_EARLY_BOOT_MODE - Sets the resolution/hz for early boot framebuffer.

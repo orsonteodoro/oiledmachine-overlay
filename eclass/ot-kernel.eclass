@@ -14027,8 +14027,8 @@ eerror "It is required as a temporary early boot/login driver before modprobing 
 eerror
 eerror "Set FB_EARLY_BOOT_DRIVER to either one of the following:"
 eerror "    efifb - for pure UEFI systems (ca. 2020 and later)"
-eerror "simpledrm - for any BIOS/UEFI system"
-eerror "   vesafb - for legacy systems (before 2020)"
+eerror "simpledrm - for any BIOS/UEFI system, but tested fail on older system"
+eerror "   vesafb - for legacy systems (before 2020, tested working on older systems)"
 eerror
 eerror "It must be added to the per-profile env file."
 eerror
@@ -14040,8 +14040,8 @@ eerror "It is required as a temporary early boot/login driver before modprobing 
 eerror
 eerror "Set FB_EARLY_BOOT_DRIVER to either one of the following:"
 eerror "    efifb - for pure UEFI systems (ca. 2020 and later)"
-eerror "simpledrm - for any BIOS/UEFI system"
-eerror "   vesafb - for legacy systems (before 2020)"
+eerror "simpledrm - for any BIOS/UEFI system, but tested fail on older system"
+eerror "   vesafb - for legacy systems (before 2020, tested working on older systems)"
 eerror
 eerror "It must be added to the per-profile env file."
 eerror
