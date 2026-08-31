@@ -14202,8 +14202,9 @@ eerror
 		ot-kernel_n_configopt "CONFIG_FB_VGA16"
 		ot-kernel_n_configopt "CONFIG_SYSFB_SIMPLEFB"
 		ot-kernel_n_configopt "CONFIG_VGA_CONSOLE"
-		ot-kernel_unset_pat_kconfig_kernel_cmdline "vga=[0-9]+"
-		ot-kernel_unset_pat_kconfig_kernel_cmdline "video=[a-zA-Z0-9:@,-]+"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "vga=[0-9]*"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "video=[a-zA-Z0-9=:@,-]*"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "=[0-9]+,xres=[0-9]+,bpp=[0-9]+" # Removed malformed arg
 		if in_iuse "video_cards_nvidia" && ot-kernel_use "video_cards_nvidia" ; then
 			ot-kernel_unset_configopt "CONFIG_DRM_NOUVEAU"
 		fi
@@ -14320,7 +14321,7 @@ ewarn "If motherboard has pure UEFI (ca. 2020) use FB_EARLY_BOOT_DRIVER=efifb or
 			fb_early_boot_mode=${fb_early_boot_mode:-775} # 1280x1024x8
 			_framebuffer_validate_vga_mode "${fb_early_boot_mode}"
 einfo "FB early boot driver mode:  ${fb_early_boot_mode}"
-			ot-kernel_set_kconfig_kernel_cmdline "vga=${vga_mode}"
+			ot-kernel_set_kconfig_kernel_cmdline "vga=${fb_early_boot_mode}"
 		else
 			fb_early_boot_mode=${fb_early_boot_mode:-"vesafb:yres=1280,xres=1024,bpp=8"}
 			local w=$(echo "${fb_early_boot_mode}" | grep -o -E -e "yres=[0-9]+" | cut -f 2 -d "=")
