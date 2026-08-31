@@ -18436,12 +18436,15 @@ ot-kernel_install_pgo_state() {
 # We delete the amdgpu driver to prevent stall.
 # Installs the pgo state data
 ot-kernel_delete_amdgpu() {
-einfo "Removing the amdgpu.ko driver."
-einfo
-einfo "It is assumed that you will actually build and install the"
-einfo "sys-kernel/amdgpu-dkms driver instead for the ${KV_MAJOR_MINOR} kernel"
-einfo "series."
-einfo
+ewarn "Removing the amdgpu.ko driver."
+ewarn
+ewarn "It is assumed that you will actually build and install the"
+ewarn "sys-kernel/amdgpu-dkms driver instead for the ${KV_MAJOR_MINOR} kernel"
+ewarn "series."
+ewarn
+ewarn "If you want to use the in tree amdgpu driver, disable the amdgpu-dkms"
+einfo "USE flag and make sure the amdgpu driver is built-in not module."
+ewarn
 	# The in tree amdgpu driver is broken as an module.
 	# It requires to be built as a built-in to work.
 	# We will install it as an amdgpu-dkms driver.
