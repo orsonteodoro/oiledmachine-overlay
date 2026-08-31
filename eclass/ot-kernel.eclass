@@ -14218,7 +14218,7 @@ einfo "FB early boot driver mode:  ${fb_early_boot_mode}"
 	else
 einfo "FB early boot driver:  ignore"
 	fi
-ewarn "It is required to have a rescue usb/disk to fix early boot framebuffer driver issues."
+ewarn "It is required to have a rescue usb stick or disk to fix early boot framebuffer driver issues."
 }
 
 # @FUNCTION: ot-kernel_amdgpu_fixes
