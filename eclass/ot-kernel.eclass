@@ -14024,11 +14024,6 @@ ewarn "Early KMS is disabled for the amdgpu driver."
 		ot-kernel_y_configopt "CONFIG_MODULES"
 		ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
 
-	# Prevent stall during early init.
-	# We just want to install/build the in tree version to make sure the dependencies are met.
-		ot-kernel_unset_pat_kconfig_kernel_cmdline "module_blacklist=amdgpu"
-		ot-kernel_set_kconfig_kernel_cmdline "module_blacklist=amdgpu"
-
 	# When we first boot, we just want to use the VGA driver during the boot process.
 	# We manually load the amdgpu-dkms after login.
 	# Fallback to one of these 3 on early boot.
@@ -17502,100 +17497,6 @@ ot-kernel_is_full_sources_required() {
 	return 1
 }
 
-# @FUNCTION: ot-kernel_add_amdgpu_wrapper
-# @DESCRIPTION:
-# Add a wrapper for install of vanilla amdgpu kernel driver as a fallback.
-ot-kernel_add_amdgpu_wrapper() {
-# For multiple slot support.
-dodir "/usr/bin"
-cat <<EOF > "${ED}/usr/bin/install-amdgpu-kernel-module-for-${PV}-${extraversion}.sh"
-#!/bin/bash
-echo "Switching to the vanilla amdgpu kernel module for \${kernel_release}"
-kernel_release="${canonical_target}"
-modules_path="/lib/modules/\${kernel_release}"
-
-KERNEL_MODULES=(
-	"amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
-)
-
-# Entries from all versions of the amdgpu-dkms driver and the vanilla amdgpu kernel driver.
-_DKMS_MODULES=(
-	"amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
-	"amdttm /kernel/drivers/gpu/drm/ttm"
-	"amdkcl /kernel/drivers/gpu/drm/amd/amdkcl"
-	"amd-sched /kernel/drivers/gpu/drm/scheduler"
-	"amddrm_ttm_helper /kernel/drivers/gpu/drm"
-	"amddrm_buddy /kernel/drivers/gpu/drm"
-	"amdxcp /kernel/drivers/gpu/drm/amd/amdxcp"
-)
-
-IFS=\$'\n'
-
-for x in \${_DKMS_MODULES[@]} ; do
-	built_name=\$(echo "\${x}" | cut -f 1 -d " ")
-	dest_location=\$(echo "\${x}" | cut -f 2 -d " ")
-	rm -fv "\${modules_path}\${dest_location}/\${built_name}.ko"*
-done
-
-for x in \${KERNEL_MODULES[@]} ; do
-	built_name=\$(echo "\${x}" | cut -f 1 -d " ")
-	dest_location=\$(echo "\${x}" | cut -f 2 -d " ")
-	FN=(
-		"\${built_name}.ko"
-		"\${built_name}.ko.gz"
-		"\${built_name}.ko.xz"
-		"\${built_name}.ko.zst"
-	)
-	for fn in \${FN[@]} ; do
-		if [[ -e "/lib/modules-amdgpu/\${kernel_release}/\${dest_location}/\${fn}" ]] ; then
-			mkdir -p "\${modules_path}\${dest_location}"
-			rm -f "\${modules_path}\${dest_location}/\${built_name}.ko"{,.gz,.xz,.zst}
-			cp -a "/lib/modules-amdgpu/\${kernel_release}/\${dest_location}/\${fn}" "\${modules_path}\${dest_location}"
-		fi
-	done
-done
-
-IFS=\$' \t\n'
-
-echo "Updating /lib/modules/\${kernel_release}/module.dep for \`modprobe amdgpu\`"
-depmod -a \${kernel_release}
-EOF
-	fperms 0750 "/usr/bin/install-amdgpu-kernel-module-for-${PV}-${extraversion}.sh"
-}
-
-# @FUNCTION: ot-kernel_slotify_amdgpu
-# @DESCRIPTION:
-# Backup the amdgpu modules as a fallback for the amdgpu-dkms ebuild.
-ot-kernel_slotify_amdgpu() {
-	local KERNEL_MODULES=(
-		"amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
-	)
-	local canonical_target="${UPSTREAM_PV}-${extraversion}-${arch}" # ex. 6.6.0-builder-${arch}
-	local x
-	IFS=$'\n'
-	for x in "${KERNEL_MODULES[@]}" ; do
-		local built_name=$(echo "${x}" | cut -f 1 -d " ")
-		local dest_location=$(echo "${x}" | cut -f 2 -d " ")
-		local FN=(
-			"${built_name}.ko"
-			"${built_name}.ko.gz"
-			"${built_name}.ko.xz"
-			"${built_name}.ko.zst"
-		)
-		local fn
-		for fn in "${FN[@]}" ; do
-			if [[ -e "${ED}/lib/modules/${canonical_target}${dest_location}/${fn}" ]] ; then
-				dodir "/lib/modules-amdgpu/${canonical_target}${dest_location}"
-				cp -a \
-					"${ED}/lib/modules/${canonical_target}${dest_location}/${fn}" \
-					"${ED}/lib/modules-amdgpu/${canonical_target}${dest_location}"
-			fi
-		done
-	done
-	IFS=$' \t\n'
-}
-
-
 # @FUNCTION: ot-kernel_install_tcca
 # @DESCRIPTION:
 # Configure and install tcca
@@ -18522,6 +18423,25 @@ ot-kernel_install_pgo_state() {
 	fi
 }
 
+
+# @FUNCTION: ot-kernel_delete_amdgpu
+# @DESCRIPTION:
+# We delete the amdgpu driver to prevent stall.
+# Installs the pgo state data
+ot-kernel_delete_amdgpu() {
+einfo "Removing the amdgpu.ko driver."
+einfo
+einfo "It is assumed that you will actually build and install the"
+einfo "sys-kernel/amdgpu-dkms driver instead for the ${KV_MAJOR_MINOR} kernel"
+einfo "series."
+einfo
+	# The in tree amdgpu driver is broken as an module.
+	# It requires to be built as a built-in to work.
+	# We will install it as an amdgpu-dkms driver.
+	local slot="${UPSTREAM_PV}-${extraversion}-${arch}"
+	rm -v -f "${ED}/lib/modules/${slot}/kernel/drivers/gpu/drm/amd/amdgpu/amdgpu.ko"*
+}
+
 # @FUNCTION: ot-kernel_src_install
 # @DESCRIPTION:
 # Removes patch cruft.
@@ -18626,8 +18546,7 @@ einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before
 		ot-kernel_fix_modules
 
 		if in_iuse "amdgpu-dkms" && ot-kernel_use "amdgpu-dkms" ; then
-			ot-kernel_slotify_amdgpu
-			ot-kernel_add_amdgpu_wrapper
+			ot-kernel_delete_amdgpu
 		fi
 	done
 
