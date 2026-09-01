@@ -14227,14 +14227,9 @@ ewarn "initcall_blacklist=sysfb_init must be manually removed from CONFIG_CMDLIN
 
 	# Only allow accelerated KMS on non VM use cases.
 		if in_iuse "amdgpu-dkms" && ot-kernel_use "amdgpu-dkms" ; then
-			if ! [[ "${work_profile}" =~ ("vm-guest"|"vm-host") ]] ; then
-				ot-kernel_set_kconfig_kernel_cmdline "amdgpu.modeset=1"
-			fi
+			ot-kernel_set_amdgpu_drm_command_line
 		elif in_iuse "video_cards_nvidia" && ot-kernel_use "video_cards_nvidia" ; then
-			if ! [[ "${work_profile}" =~ ("vm-guest"|"vm-host") ]] ; then
-				ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.fbdev=1"
-				ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.modeset=1"
-			fi
+			ot-kernel_set_nvidia_drm_command_line
 		fi
 	fi
 

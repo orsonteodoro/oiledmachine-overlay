@@ -1058,9 +1058,13 @@ ot-kernel_has_heterogeneous_power_cores() {
 # Proper "Enable legacy fbdev support for your modesetting driver" setup
 ot-kernel_set_drm_fbdev_emulation() {
 	# Enabling creates /dev/fb* for CONFIG_DRM based drivers.
-	if [[ "${work_profile}" =~ ("vm-host"|"vm-guest") ]] ; then
+	if [[ "${work_profile}" =~ ("vm-host-headless"|"vm-guest-headless") ]] ; then
+		ot-kernel_n_configopt "CONFIG_DRM_FBDEV_EMULATION"
+	elif [[ "${work_profile}" =~ ("vm-host"|"vm-guest") ]] ; then
 		local vm_gpu_accelerated=${VM_GPU_ACCELERATED:-"host"}
-		if [[ "${vm_gpu_accelerated}" == "guest" ]] ; then
+		if [[ "${vm_gpu_accelerated}" == "headless" ]] ; then
+			ot-kernel_n_configopt "CONFIG_DRM_FBDEV_EMULATION"
+		elif [[ "${vm_gpu_accelerated}" == "guest" ]] ; then
 			if [[ "${work_profile}" =~ ("vm-host") ]] ; then
 	# vm-host is not GPU accelerated
 				ot-kernel_n_configopt "CONFIG_DRM_FBDEV_EMULATION"
@@ -1080,6 +1084,83 @@ ot-kernel_set_drm_fbdev_emulation() {
 	else
 	# bare-metal, with accelerated KMS.
 		ot-kernel_y_configopt "CONFIG_DRM_FBDEV_EMULATION"
+	fi
+}
+
+# @FUNCTION: ot-kernel_set_nvidia_drm_command_line
+# @DESCRIPTION:
+# Set kernel command line args for the nvidia driver.
+ot-kernel_set_nvidia_drm_command_line() {
+	# nvidia-drm.modeset=1 enables KMS
+	# nvidia-drm.fbdev=1 enables FB device emulation and maps to nvidia driver
+	if [[ "${work_profile}" =~ ("vm-host-headless"|"vm-guest-headless") ]] ; then
+		ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.fbdev=0"
+		ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.modeset=0"
+	elif [[ "${work_profile}" =~ ("vm-host"|"vm-guest") ]] ; then
+		local vm_gpu_accelerated=${VM_GPU_ACCELERATED:-"host"}
+		if [[ "${vm_gpu_accelerated}" == "headless" ]] ; then
+			ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.fbdev=0"
+			ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.modeset=0"
+		elif [[ "${vm_gpu_accelerated}" == "guest" ]] ; then
+			if [[ "${work_profile}" =~ ("vm-host") ]] ; then
+	# vm-host is not GPU accelerated
+				ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.fbdev=0"
+				ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.modeset=0"
+			else
+	# vm-guest is GPU accelerated
+				ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.fbdev=1"
+				ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.modeset=1"
+			fi
+		else
+			if [[ "${work_profile}" =~ ("vm-host") ]] ; then
+	# vm-host is GPU accelerated
+				ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.fbdev=1"
+				ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.modeset=1"
+			else
+	# vm-guest is not GPU accelerated
+				ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.fbdev=0"
+				ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.modeset=0"
+			fi
+		fi
+	else
+	# bare-metal
+		ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.fbdev=1"
+		ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.modeset=1"
+	fi
+}
+
+# @FUNCTION: ot-kernel_set_amdgpu_drm_command_line
+# @DESCRIPTION:
+# Set kernel command line args for the amdgpu driver.
+ot-kernel_set_amdgpu_drm_command_line() {
+	# nvidia-drm.modeset=1 enables KMS
+	# nvidia-drm.fbdev=1 enables FB device emulation and maps to nvidia driver
+	if [[ "${work_profile}" =~ ("vm-host-headless"|"vm-guest-headless") ]] ; then
+		ot-kernel_set_kconfig_kernel_cmdline "amdgpu.modeset=0"
+	elif [[ "${work_profile}" =~ ("vm-host"|"vm-guest") ]] ; then
+		local vm_gpu_accelerated=${VM_GPU_ACCELERATED:-"host"}
+		if [[ "${vm_gpu_accelerated}" == "headless" ]] ; then
+			ot-kernel_set_kconfig_kernel_cmdline "amdgpu.modeset=0"
+		elif [[ "${vm_gpu_accelerated}" == "guest" ]] ; then
+			if [[ "${work_profile}" =~ ("vm-host") ]] ; then
+	# vm-host is not GPU accelerated
+				ot-kernel_set_kconfig_kernel_cmdline "amdgpu.modeset=0"
+			else
+	# vm-guest is GPU accelerated
+				ot-kernel_set_kconfig_kernel_cmdline "amdgpu.modeset=1"
+			fi
+		else
+			if [[ "${work_profile}" =~ ("vm-host") ]] ; then
+	# vm-host is GPU accelerated
+				ot-kernel_set_kconfig_kernel_cmdline "amdgpu.modeset=1"
+			else
+	# vm-guest is not GPU accelerated
+				ot-kernel_set_kconfig_kernel_cmdline "amdgpu.modeset=0"
+			fi
+		fi
+	else
+	# bare-metal
+		ot-kernel_set_kconfig_kernel_cmdline "amdgpu.modeset=1"
 	fi
 }
 
