@@ -295,7 +295,7 @@ SECURE_TIMESTAMP["media_libs_lv2_9999"]="Sep 28, 2025 4:27 PM PDT"
 # HTML interface is inconsistent.
 # The feed is buried at the 3 dots top right of the commit log.
 # https://gitlab.freedesktop.org/mesa/mesa/-/commits/main?format=atom
-SECURE_TIMESTAMP["media_libs_mesa_9999"]="2026-08-23 16:51:23 +03:00"
+SECURE_TIMESTAMP["media_libs_mesa_9999"]="2026-09-01 T12:23:27 -07:00"
 
 SECURE_TIMESTAMP["media_libs_opencolorio_9999"]="Jun 8, 2026 6:04 PM PDT"
 SECURE_TIMESTAMP["media_libs_opencv_4_9999"]="Aug 10, 2026 9:33 AM PDT"
