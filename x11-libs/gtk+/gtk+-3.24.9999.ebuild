@@ -28,7 +28,7 @@ CHKL_TIMESTAMPS=(
 	"x11-misc/colord-9999"
 )
 
-FALLBACK_COMMIT="84b3b8ebcc61d55d0aaf8df84cce638c80e04d70"
+FALLBACK_COMMIT="b30343717dc9b02cf157d2ea87da585d8d518845"
 
 inherit cflags-hardened check-compiler-switch chkl gnome2 meson-multilib multilib secure-version toolchain-funcs virtualx
 
@@ -43,7 +43,10 @@ HOMEPAGE="https://www.gtk.org/"
 LICENSE="LGPL-2+"
 SLOT="3"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~x64-solaris"
-IUSE+=" aqua broadway cloudproviders colord cups examples gtk-doc +introspection sysprof test vim-syntax wayland +X xinerama"
+IUSE+="
+aqua broadway cloudproviders colord cups examples gtk-doc +introspection sysprof test vim-syntax wayland +X xinerama
+ebuild_revision_1
+"
 REQUIRED_USE="
 	|| ( aqua wayland X )
 	test? ( X )
