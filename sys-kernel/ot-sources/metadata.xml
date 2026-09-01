@@ -5587,9 +5587,9 @@ unset OT_KERNEL_PRIVATE_KEY
     FB_EARLY_BOOT_DRIVER - Sets the fallback driver for early boot framebuffer
     for out-of-tree GPU drivers (e.g. for amdgpu-dkms or nvidia-driver packages).
     Valid values:
-    efifb     - EFI/UEFI framebuffer driver (compatible with pure UEFI systems ca. 2020)
+    efifb     - EFI/UEFI framebuffer driver (compatible with pure UEFI systems ca. 2020 or later)
     simpledrm - Generic Simple DRM driver with framebuffer support (for x86, tested fail on older system)
-    simplefb  - Generic Simple framebuffer (for embedded ARM/RISC-V)
+    simplefb  - Generic Simple framebuffer (for embedded ARM/RISC-V, tested fail on older system)
     vesafb    - VESA framebuffer driver (compatible with older motherboards before 2020, tested working on older system)
     ignore    - Use the existing custom configuration (ebuild default)
 

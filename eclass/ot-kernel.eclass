@@ -14133,7 +14133,7 @@ eerror
 eerror "Set FB_EARLY_BOOT_DRIVER to either one of the following:"
 eerror "    efifb - for pure UEFI systems (ca. 2020 and later)"
 eerror "simpledrm - for X86 systems, but tested fail on older system"
-eerror " simplefb - for ARM/RISC-V embedded systems"
+eerror " simplefb - for ARM/RISC-V embedded systems, but tested fail on older system"
 eerror "   vesafb - for legacy systems (before 2020, tested working on older systems)"
 eerror
 eerror "It must be added to the per-profile env file."
@@ -14147,7 +14147,7 @@ eerror
 eerror "Set FB_EARLY_BOOT_DRIVER to either one of the following:"
 eerror "    efifb - for pure UEFI systems (ca. 2020 and later)"
 eerror "simpledrm - for X86 systems, but tested fail on older system"
-eerror " simplefb - for ARM/RISC-V embedded systems"
+eerror " simplefb - for ARM/RISC-V embedded systems, but tested fail on older system"
 eerror "   vesafb - for legacy systems (before 2020, tested working on older systems)"
 eerror
 eerror "It must be added to the per-profile env file."
