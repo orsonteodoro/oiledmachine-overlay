@@ -14096,7 +14096,7 @@ _framebuffer_validate_hz() {
 	local found=0
 	local x
 	for x in ${hz_list[@]} ; do
-		if (( ${x} == ${mode} )) ; then
+		if (( ${x} == ${hz} )) ; then
 			found=1
 			break
 		fi
