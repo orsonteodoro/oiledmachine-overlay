@@ -14205,7 +14205,10 @@ eerror
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "=[0-9]+,xres=[0-9]+,bpp=[0-9]+" # Removed malformed arg
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "amdgpu.modeset=[01]"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "initcall_blacklist=sysfb_init" # FIXME:  fix ot-kernel_unset_pat_kconfig_kernel_cmdline
-ewarn "initcall_blacklist=sysfb_init must be manually removed from CONFIG_CMDLINE"
+		if  grep -q -e "^CONFIG_CMDLINE=.*initcall_blacklist=sysfb_init" "${BUILD_DIR}/.config" ; then
+eerror "initcall_blacklist=sysfb_init must be manually removed from CONFIG_CMDLINE"
+			die
+		fi
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "nvidia-drm.fbdev=[01]"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "nvidia-drm.modeset=[01]"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "vga=[0-9]*"
