@@ -14128,7 +14128,8 @@ ot-kernel_gpu_driver_fallback() {
 	elif in_iuse "amdgpu-dkms" && ot-kernel_use "amdgpu-dkms" ; then
 eerror
 eerror "FB_EARLY_BOOT_DRIVER=ignore (default) is disallowed for amdgpu-dkms."
-eerror "It is required as a temporary early boot/login driver before modprobing the amdgpu-dkms module."
+eerror "This workaround is required as a temporary early boot/login driver"
+eerror "before modprobing the out-of-tree amdgpu-dkms module."
 eerror
 eerror "Set FB_EARLY_BOOT_DRIVER to either one of the following:"
 eerror "    efifb - for EFI/UEFI systems (ca. 2012-present mobos)"
@@ -14136,8 +14137,8 @@ eerror "simpledrm - for UEFI/OpenFirmware systems (ca. 2011-present mobos)"
 eerror " simplefb - for UEFI/OpenFirmware systems (ca. 2013-present mobos)"
 eerror "   vesafb - for BIOS systems (ca. 1996-2011 mobos)"
 eerror
-eerror "Tip:  A firmware update may be needed for proper UEFI support,"
-eerror "      but vesafb may be used in some cases before UEFI firmware support."
+eerror "Tip:  A firmware update may be needed for proper UEFI GOP support,"
+eerror "      but vesafb may be used before firmware update."
 eerror
 eerror "It must be added to the per-profile env file."
 eerror
@@ -14145,7 +14146,8 @@ eerror
 	elif in_iuse "video_cards_nvidia" && ot-kernel_use "video_cards_nvidia" ; then
 eerror
 eerror "FB_EARLY_BOOT_DRIVER=ignore (default) is disallowed for video_cards_nvidia."
-eerror "It is required as a temporary early boot/login driver before modprobing the nvidia module."
+eerror "This workaround is required as a temporary early boot/login driver"
+eerror "before modprobing into the out-of-tree nvidia module."
 eerror
 eerror "Set FB_EARLY_BOOT_DRIVER to either one of the following:"
 eerror "    efifb - for EFI/UEFI systems (ca. 2012-present mobos)"
@@ -14153,8 +14155,8 @@ eerror "simpledrm - for UEFI/OpenFirmware systems (ca. 2011-present mobos)"
 eerror " simplefb - for UEFI/OpenFirmware systems (ca. 2013-present mobos)"
 eerror "   vesafb - for BIOS systems (ca. 1996-2011 mobos)"
 eerror
-eerror "Tip:  A firmware update may be needed for proper UEFI support,"
-eerror "      but vesafb may be used in some cases before UEFI firmware support."
+eerror "Tip:  A firmware update may be needed for proper UEFI GOP support,"
+eerror "      but vesafb may be used before firmware update."
 eerror
 eerror "It must be added to the per-profile env file."
 eerror

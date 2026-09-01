@@ -5584,8 +5584,9 @@ unset OT_KERNEL_PRIVATE_KEY
     EXT4_ENCRYPTION - Add support for ext4 encryption
     Valid values:  0, 1 (default).
 
-    FB_EARLY_BOOT_DRIVER - Sets the fallback driver for early boot framebuffer
-    for out-of-tree GPU drivers (e.g. for amdgpu-dkms or nvidia-driver packages).
+    FB_EARLY_BOOT_DRIVER - Use the temporary framebuffer driver for early boot
+    as a workaround before modprobing into any of the out-of-tree GPU drivers
+    (e.g. amdgpu-dkms or nvidia-driver packages).
     Valid values:
     efifb     - EFI/UEFI framebuffer driver, compatible with UEFI with
                 GOP (Graphics Output Protocol) or UGA (Universal Graphics
@@ -5593,14 +5594,14 @@ unset OT_KERNEL_PRIVATE_KEY
     simpledrm - Generic Simple DRM driver with framebuffer support, compatible
                 with UEFI GOP or OpenFirmware (with Device Tree),
                 ca. 2011-present mobos
-    simplefb  - Generic Simple framebuffer, compatible for UEFI (GOP),
+    simplefb  - Generic Simple framebuffer, compatible for UEFI GOP,
                 OpenFirmware (with Device Tree), ca. 2013-present mobos
     vesafb    - VESA framebuffer driver, compatible with Intel® x86 Real Mode,
                 VBE 2.0, BIOS, ca. 1996-2011 mobos
     ignore    - Use the existing custom configuration (ebuild default)
 
-    Tip:  Older mobos may need a firmware update to use UEFI properly, but
-          vesafb may be used before UEFI firmware support.
+    Tip:  Older mobos may need a firmware update to use UEFI GOP properly, but
+          vesafb may be used before firmware update.
 
     FB_EARLY_BOOT_MODE - Sets the resolution/hz for early boot framebuffer.
     It is the value passed to video: for the kernel command line.
