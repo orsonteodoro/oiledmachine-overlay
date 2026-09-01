@@ -14223,11 +14223,13 @@ eerror
 		ot-kernel_n_configopt "CONFIG_UML"
 		ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE"
 
+	# Only allow accelerated KMS on non VM use cases.
 		if in_iuse "amdgpu-dkms" && ot-kernel_use "amdgpu-dkms" ; then
-			ot-kernel_set_kconfig_kernel_cmdline "amdgpu.modeset=1"
+			if ! [[ "${work_profile}" =~ ("vm-guest"|"vm-host") ]] ; then
+				ot-kernel_set_kconfig_kernel_cmdline "amdgpu.modeset=1"
+			fi
 		elif in_iuse "video_cards_nvidia" && ot-kernel_use "video_cards_nvidia" ; then
 			if ! [[ "${work_profile}" =~ ("vm-guest"|"vm-host") ]] ; then
-	# Only allow accelerated KMS on non VM use cases.
 				ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.fbdev=1"
 				ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.modeset=1"
 			fi
@@ -14282,6 +14284,7 @@ einfo "FB early boot driver:  simpledrm"
 		ot-kernel_n_configopt "CONFIG_EMULATED_CMPXCHG"
 		ot-kernel_y_configopt "CONFIG_AGP"
 		ot-kernel_y_configopt "CONFIG_DRM"
+		ot-kernel_set_drm_fbdev_emulation
 		ot-kernel_y_configopt "CONFIG_MMU"
 		ot-kernel_y_configopt "CONFIG_DRM_SIMPLEDRM"
 

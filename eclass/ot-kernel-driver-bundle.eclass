@@ -3923,44 +3923,7 @@ ot-kernel-driver-bundle_add_graphics_drm_by_driver_name() {
 		ot-kernel_y_configopt "CONFIG_DRM"
 		ot-kernel_y_configopt "CONFIG_DRM_KMS_HELPER"
 
-	# The nvidia-drivers can only use the TTY framebuffer with either efifb
-	# or nvidia-drm (the proprietary KMS driver) with the two settings
-	# below.
-
-	# When both kernel command line options are enabled, the framebuffer is
-	# using accelerated KMS.
-		ot-kernel_unset_pat_kconfig_kernel_cmdline "nvidia-drm.modeset=1"
-		ot-kernel_unset_pat_kconfig_kernel_cmdline "nvidia-drm.fbdev=1"
-		if ! [[ "${work_profile}" =~ ("vm-guest"|"vm-host") ]] ; then
-			ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.modeset=1"
-			ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.fbdev=1"
-		fi
-
-	# Disable all graphical framebuffer drivers for TTY
-		ot-kernel_unset_configopt "CONFIG_DRM_NOUVEAU"
-		ot-kernel_unset_configopt "CONFIG_DRM_SIMPLEDRM"
-		ot-kernel_unset_configopt "CONFIG_FB_EFI" # This is unaccelerated
-		ot-kernel_unset_configopt "CONFIG_FB_NVIDIA"
-		ot-kernel_unset_configopt "CONFIG_FB_SIMPLE"
-		ot-kernel_unset_configopt "CONFIG_FB_UVESA"
-		ot-kernel_unset_configopt "CONFIG_FB_VESA"
-		ot-kernel_unset_configopt "CONFIG_FB_VGA16"
-		ot-kernel_unset_configopt "CONFIG_VGA_CONSOLE" # This will conflict
-ewarn "It is assumed that you will use a bootdisk to fix driver issues with nvidia-drivers package."
-
-	# Provide framebuffer console on boot
-		if [[ "${work_profile}" =~ ("vm-guest"|"vm-host") ]] ; then
-			ot-kernel_unset_configopt "CONFIG_DRM_FBDEV_EMULATION"
-		else
-			ot-kernel_y_configopt "CONFIG_DRM_FBDEV_EMULATION"
-		fi
-
-	# Allow only text based TTY driver for host as the fallback to fix broken driver versions
-		ot-kernel_y_configopt "CONFIG_EXPERT"
-		ot-kernel_y_configopt "CONFIG_FB_CORE"
-		ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE" # Graphics support >  Console display driver support > Framebuffer Console support
-		ot-kernel_y_configopt "CONFIG_TTY" # Character devices > Enable TTY
-		ot-kernel_y_configopt "CONFIG_VT"
+	# Deferred early boot framebuffer choices to ot-kernel_gpu_driver_fallback.
 
 	# Add temp sensor
 		ot-kernel_y_configopt "CONFIG_I2C"

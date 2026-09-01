@@ -5909,6 +5909,12 @@ unset OT_KERNEL_PRIVATE_KEY
     or web browsers.
     Valid values:  0 (default), 1.
 
+    VM_GUEST_IS_GPU_ACCELERATED - Set to decides who gets to grab the GPU.
+    Valid values:
+    1 - vm-guest is GPU accelerated; vm-host is not GPU accelerated.
+    0 - (Default) vm-host is GPU accelerated; vm-guest is not GPU accelerated.
+    vm-guest or GPU passthrough requires newer hardware requirements.
+
     WATCHDOG_DRIVERS - A space separated list of watchdog kernel flag(s) or drivers
     without the CONFIG_ prefix.
     Valid values:  SOFT_WATCHDOG (default ON, but OFF upstream)

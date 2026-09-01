@@ -4364,6 +4364,7 @@ ot-kernel-pkgflags_evdi() { # DONE
 		ot-kernel_y_configopt "CONFIG_FB_VIRTUAL"
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_DRM"
+		ot-kernel_set_drm_fbdev_emulation
 		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_USB_ARCH_HAS_HCD"
 		ot-kernel_y_configopt "CONFIG_MODULES"
@@ -7262,9 +7263,8 @@ ot-kernel-pkgflags_nv() { # DONE
 		fi
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
 
-	# These two selects DRM_KMS_HELPER indirectly. \
 		ot-kernel_y_configopt "CONFIG_DRM"
-		_ot-kernel_set_drm_fbdev_emulation
+		ot-kernel_set_drm_fbdev_emulation
 
 		ot-kernel_y_configopt "CONFIG_DRM_KMS_HELPER"
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
@@ -9472,7 +9472,7 @@ ot-kernel-pkgflags_sddm() { # DONE
 	if ot-kernel_has_version_pkgflags "x11-misc/sddm" ; then
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_MULTIUSER"
-		ot-kernel_y_configopt "CONFIG_DRM" # Has flag dependencies
+		ot-kernel_y_configopt "CONFIG_DRM" # Add flag dependencies recursively
 	fi
 }
 
@@ -10536,7 +10536,7 @@ ot-kernel-pkgflags_vbox() { # DONE
 			ot-kernel_y_configopt "CONFIG_VIRTIO_MENU"
 			ot-kernel_y_configopt "CONFIG_VIRTIO_PCI"
 			ot-kernel_y_configopt "CONFIG_DRM"
-			_ot-kernel_set_drm_fbdev_emulation
+			ot-kernel_set_drm_fbdev_emulation
 			ot-kernel_y_configopt "CONFIG_DRM_KMS_HELPER"
 			ot-kernel_y_configopt "CONFIG_FB"
 			ot-kernel_y_configopt "CONFIG_DRM_VMWGFX"
@@ -10562,6 +10562,7 @@ ot-kernel-pkgflags_vbox() { # DONE
 ot-kernel-pkgflags_vbox_guest_additions() { # DONE
 	if ot-kernel_has_version_pkgflags "app-emulation/virtualbox-guest-additions" ; then
 		ot-kernel_y_configopt "CONFIG_DRM"
+		ot-kernel_set_drm_fbdev_emulation
 		ot-kernel_y_configopt "CONFIG_MMU"
 		ot-kernel_y_configopt "CONFIG_DRM_TTM"
 	fi
@@ -11188,7 +11189,6 @@ ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 		ot-kernel_y_configopt "CONFIG_MEMORY_HOTREMOVE"
 		ot-kernel_y_configopt "CONFIG_ZONE_DEVICE"
 		ot-kernel_y_configopt "CONFIG_DEVICE_PRIVATE"
-		_ot-kernel_set_drm_fbdev_emulation
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_PCIEPORTBUS"
 		ot-kernel_y_configopt "CONFIG_AGP"
@@ -11199,6 +11199,7 @@ ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 			ot-kernel_y_configopt "CONFIG_AGP_AMD64"
 		fi
 		ot-kernel_y_configopt "CONFIG_DRM"
+		ot-kernel_set_drm_fbdev_emulation
 		ot-kernel_y_configopt "CONFIG_MMU"
 
 	# CONFIG_DRM_AMDGPU=y or CONFIG_DRM_AMDGPU=m deferred to ot-kernel_amdgpu_fixes.
@@ -11300,6 +11301,7 @@ ot-kernel-pkgflags_xf86_video_ati() { # DONE
 			ot-kernel_y_configopt "CONFIG_AGP_AMD64"
 		fi
 		ot-kernel_y_configopt "CONFIG_DRM"
+		ot-kernel_set_drm_fbdev_emulation
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_DRM_RADEON"
 		if ver_test "${KV_MAJOR_MINOR}" "-ge" "3.9" ; then
@@ -11337,13 +11339,11 @@ ot-kernel-pkgflags_xf86_video_intel() { # DONE
 		ot-kernel_y_configopt "CONFIG_AGP_INTEL"
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_DRM"
+		ot-kernel_set_drm_fbdev_emulation
 		ot-kernel_y_configopt "CONFIG_DRM_I915"
 		if ver_test "${KV_MAJOR_MINOR}" "-lt" "4.3" ; then
 			ot-kernel_y_configopt "CONFIG_DRM_I915_KMS"
 			ot-kernel_y_configopt "CONFIG_DRM_I915_FBDEV"
-		fi
-		if ver_test "${KV_MAJOR_MINOR}" "-ge" "4.3" ; then
-			_ot-kernel_set_drm_fbdev_emulation
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" "-ge" "4.6" ; then
 			ot-kernel_y_configopt "CONFIG_DRM_I915_USERPTR"
@@ -11408,8 +11408,8 @@ ewarn "Install sys-kernel/linux-firmware for HW accelerated media decoding."
 ot-kernel-pkgflags_xf86_video_nouveau() { # DONE
 	if ot-kernel_has_version_pkgflags "x11-drivers/xf86-video-nouveau" ; then
 		ot-kernel_y_configopt "CONFIG_DRM"
+		ot-kernel_set_drm_fbdev_emulation
 		ot-kernel_y_configopt "CONFIG_FB"
-		_ot-kernel_set_drm_fbdev_emulation
 		ot-kernel_y_configopt "CONFIG_DRM_NOUVEAU"
 	fi
 }
@@ -14038,17 +14038,6 @@ _ot-kernel_set_ia32_support() {
 	        ot-kernel_unset_configopt "CONFIG_IA32_EMULATION"
 	else
 	        ot-kernel_y_configopt "CONFIG_IA32_EMULATION"
-	fi
-}
-
-# @FUNCTION: _ot-kernel_set_drm_fbdev_emulation
-# @DESCRIPTION:
-# Proper "Enable legacy fbdev support for your modesetting driver" setup
-_ot-kernel_set_drm_fbdev_emulation() {
-	if [[ "${work_profile}" =~ ("vm-host"|"vm-guest") ]] ; then
-		ot-kernel_unset_configopt "CONFIG_DRM_FBDEV_EMULATION"
-	else
-		ot-kernel_y_configopt "CONFIG_DRM_FBDEV_EMULATION"
 	fi
 }
 

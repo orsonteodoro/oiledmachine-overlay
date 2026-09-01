@@ -1053,5 +1053,34 @@ ot-kernel_has_heterogeneous_power_cores() {
 	return 1
 }
 
+# @FUNCTION: ot-kernel_set_drm_fbdev_emulation
+# @DESCRIPTION:
+# Proper "Enable legacy fbdev support for your modesetting driver" setup
+ot-kernel_set_drm_fbdev_emulation() {
+	# Enabling creates /dev/fb* for CONFIG_DRM based drivers.
+	if [[ "${work_profile}" =~ ("vm-host"|"vm-guest") ]] ; then
+		if [[ "${VM_GUEST_IS_GPU_ACCELERATED:-0}" == "1" ]] ; then
+			if [[ "${work_profile}" =~ ("vm-host") ]] ; then
+	# vm-host is not GPU accelerated
+				ot-kernel_n_configopt "CONFIG_DRM_FBDEV_EMULATION"
+			else
+	# vm-guest is GPU accelerated
+				ot-kernel_y_configopt "CONFIG_DRM_FBDEV_EMULATION"
+			fi
+		else
+			if [[ "${work_profile}" =~ ("vm-host") ]] ; then
+	# vm-host is GPU accelerated
+				ot-kernel_y_configopt "CONFIG_DRM_FBDEV_EMULATION"
+			else
+	# vm-guest is not GPU accelerated
+				ot-kernel_n_configopt "CONFIG_DRM_FBDEV_EMULATION"
+			fi
+		fi
+	else
+	# bare-metal, with accelerated KMS.
+		ot-kernel_y_configopt "CONFIG_DRM_FBDEV_EMULATION"
+	fi
+}
+
 OT_KERNEL_KUTILS_ECLASS="1"
 fi
