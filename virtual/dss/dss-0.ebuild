@@ -107,7 +107,7 @@ SANDBOX_IUSE=(
 CHKL_TIMESTAMPS=(
 	"sys-kernel/linux-next-9999"
 	"sys-kernel/linux-firmware-99999999"
-	"sys-kernel/ot-sources-7.2.9999"
+	"sys-kernel/ot-sources-7.3.9999"
 )
 
 inherit chkl dss secure-timestamp secure-version verify-binutils
@@ -133,7 +133,7 @@ ${PASSWORD_MANAGER_IUSE[@]}
 ${PROFILES_IUSE[@]}
 ${SANDBOX_IUSE[@]}
 +enforce
-ebuild_revision_50
+ebuild_revision_51
 "
 REQUIRED_USE="
 	^^ (
@@ -607,6 +607,7 @@ KERNEL_DEPENDS="
 	gentoo-sources? (
 		sys-kernel/gentoo-sources:=
 		|| (
+			~sys-kernel/gentoo-sources-${LINUX_KERNEL_7_2_PV}
 			~sys-kernel/gentoo-sources-${LINUX_KERNEL_7_1_PV}
 			~sys-kernel/gentoo-sources-${LINUX_KERNEL_6_18_PV}
 			~sys-kernel/gentoo-sources-${LINUX_KERNEL_6_12_PV}
@@ -615,7 +616,7 @@ KERNEL_DEPENDS="
 	git-sources? (
 		sys-kernel/git-sources:=
 		|| (
-			~sys-kernel/git-sources-${LINUX_KERNEL_7_2_RC_PV}
+			~sys-kernel/git-sources-${LINUX_KERNEL_7_3_RC_PV}
 		)
 	)
 	linux-next? (
@@ -627,7 +628,8 @@ KERNEL_DEPENDS="
 	ot-sources? (
 		sys-kernel/ot-sources:=
 		|| (
-			~sys-kernel/ot-sources-7.2.9999
+			~sys-kernel/ot-sources-7.3.9999
+			~sys-kernel/ot-sources-${LINUX_KERNEL_7_2_PV}
 			~sys-kernel/ot-sources-${LINUX_KERNEL_7_1_PV}
 			~sys-kernel/ot-sources-${LINUX_KERNEL_6_18_PV}
 			~sys-kernel/ot-sources-${LINUX_KERNEL_6_12_PV}
@@ -636,6 +638,7 @@ KERNEL_DEPENDS="
 	vanilla-sources? (
 		sys-kernel/vanilla-sources:=
 		|| (
+			~sys-kernel/vanilla-sources-${LINUX_KERNEL_7_2_PV}
 			~sys-kernel/vanilla-sources-${LINUX_KERNEL_7_1_PV}
 			~sys-kernel/vanilla-sources-${LINUX_KERNEL_6_18_PV}
 			~sys-kernel/vanilla-sources-${LINUX_KERNEL_6_12_PV}
