@@ -5597,11 +5597,14 @@ unset OT_KERNEL_PRIVATE_KEY
     It is the value passed to video: for the kernel command line.
     Examples:
     
-    FB_EARLY_BOOT_MODE="efifb:640x480-8@60"			# For EFI
+    FB_EARLY_BOOT_MODE="efifb:1280x1024-8@60"			# For EFI
     FB_EARLY_BOOT_MODE="769"					# For VESA
-    FB_EARLY_BOOT_MODE="vesafb:yres=640,xres=480,bpp=8"	# For VESA
 
-    All the default modes use 640x480 8-bpp for compatibility.
+    All the default modes use 1280x1024 8-bpp.
+
+    For vesafb, you must manually add the vga=769 or equivalent to the
+    bootloader config kernel command line.  The kernel will not respect it in
+    the kernel command line as a built-in.
 
     Safe VESA legacy modes:
 
@@ -5611,6 +5614,7 @@ unset OT_KERNEL_PRIVATE_KEY
     |     800x600    | 771                | 787                 | 788                 | 789                 |
     |    1024x768    | 773                | 790                 | 791                 | 792                 |
     |   1280x1024    | 775                | 793                 | 794                 | 795                 |
+
 
     HT - Control mitigations against HT/SMT side-channel attacks when hardened
     level is secure-af.

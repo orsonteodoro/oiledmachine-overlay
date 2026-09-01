@@ -14256,7 +14256,7 @@ eerror "ARCH=${arch} is not supported for efifb."
 eerror "Support only for:  arm, arm64, riscv, x86, x86_64"
 			die
 		fi
-		local fb_early_boot_mode=${FB_EARLY_BOOT_MODE:-"efifb:640x480-8@60"}
+		local fb_early_boot_mode=${FB_EARLY_BOOT_MODE:-"efifb:1280x1024-8@60"}
 		local wh=$(echo "${fb_early_boot_mode}" | grep -o -E -e "[0-9]+x[0-9]+")
 		local bpp=$(echo "${fb_early_boot_mode}" | grep -o -E -e "-[0-9]+" | sed -e "s|-||g")
 		local hz=$(echo "${fb_early_boot_mode}" | grep -o -E -e "@[0-9]+" | sed -e "s|@||g")
@@ -14323,23 +14323,30 @@ ewarn "If motherboard has pure UEFI (ca. 2020) use FB_EARLY_BOOT_DRIVER=efifb or
 		ot-kernel_y_configopt "CONFIG_FB_VESA"
 
 	# Legacy
-		local fb_early_boot_mode=${FB_EARLY_BOOT_MODE:-769} # 640x480x8
-		if [[ -n "${fb_early_boot_mode}" && "${fb_early_boot_mode}" =~ [0-9]+ && ! "${fb_early_boot_mode}" =~ [a-zA-Z:@,-]+ ]] ; then
-			fb_early_boot_mode=${fb_early_boot_mode:-769} # 640x480x8
+		local fb_early_boot_mode=${FB_EARLY_BOOT_MODE:-775} # 1280x1024x8
+		if [[ -n "${fb_early_boot_mode}" && "${fb_early_boot_mode}" =~ [0-9]+ && ! "${fb_early_boot_mode}" =~ [a-zA-Z=:@,-]+ ]] ; then
+			fb_early_boot_mode=${fb_early_boot_mode:-775} # 1280x1024x8
 			_framebuffer_validate_vga_mode "${fb_early_boot_mode}"
 einfo "FB early boot driver mode:  ${fb_early_boot_mode}"
-			ot-kernel_set_kconfig_kernel_cmdline "vga=${fb_early_boot_mode}"
+ewarn "You must add vga=${fb_early_boot_mode} to the kernel command line in the bootloader configuration."
+			#ot-kernel_set_kconfig_kernel_cmdline "vga=${fb_early_boot_mode}" # Doesn't work
 		else
-			fb_early_boot_mode=${fb_early_boot_mode:-"vesafb:yres=640,xres=480,bpp=8"}
-			local w=$(echo "${fb_early_boot_mode}" | grep -o -E -e "yres=[0-9]+" | cut -f 2 -d "=")
-			local h=$(echo "${fb_early_boot_mode}" | grep -o -E -e "xres=[0-9]+" | cut -f 2 -d "=")
-			local bpp=$(echo "${fb_early_boot_mode}" | grep -o -E -e "bpp=[0-9]+" | cut -f 2 -d "=")
-			_framebuffer_validate_width_height "${w}x${h}"
-			_framebuffer_validate_bpp "${bpp}"
-einfo "FB early boot driver mode:  ${fb_early_boot_mode}"
-			#ot-kernel_set_kconfig_kernel_cmdline "video=${fb_early_boot_mode}"
+eerror
+eerror "Your FB_EARLY_BOOT_MODE is invalid."
+eerror
+eerror "Actual value:  ${FB_EARLY_BOOT_MODE}"
+eerror
+eerror "Expected valid values:"
+eerror "# 8  15  16  24 -bpp (bits per pixel)"
+eerror "769 784 785 786 # 640x480"
+eerror "771 787 788 789 # 800x600"
+eerror "773 790 791 792 # 1024x768"
+eerror "775 793 794 795 # 1280x1024"
+eerror
+eerror "The ebuild default is FB_EARLY_BOOT_MODE=775 for 1280x1024x8."
+eerror
+			die
 		fi
-
 	else
 einfo "FB early boot driver:  ignore"
 	fi
