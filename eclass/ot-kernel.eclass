@@ -14131,10 +14131,13 @@ eerror "FB_EARLY_BOOT_DRIVER=ignore (default) is disallowed for amdgpu-dkms."
 eerror "It is required as a temporary early boot/login driver before modprobing the amdgpu-dkms module."
 eerror
 eerror "Set FB_EARLY_BOOT_DRIVER to either one of the following:"
-eerror "    efifb - for pure UEFI systems (ca. 2020 and later)"
-eerror "simpledrm - for X86 systems, but tested fail on older system"
-eerror " simplefb - for ARM/RISC-V embedded systems, but tested fail on older system"
-eerror "   vesafb - for legacy systems (before 2020, tested working on older systems)"
+eerror "    efifb - for EFI/UEFI systems (ca. 2012-present mobos)"
+eerror "simpledrm - for UEFI/OpenFirmware systems (ca. 2011-present mobos)"
+eerror " simplefb - for UEFI/OpenFirmware systems (ca. 2013-present mobos)"
+eerror "   vesafb - for BIOS systems (ca. 1996-2011 mobos)"
+eerror
+eerror "Tip:  A firmware update may be needed for proper UEFI support,"
+eerror "      but vesafb may be used in some cases before UEFI firmware support."
 eerror
 eerror "It must be added to the per-profile env file."
 eerror
@@ -14145,10 +14148,13 @@ eerror "FB_EARLY_BOOT_DRIVER=ignore (default) is disallowed for video_cards_nvid
 eerror "It is required as a temporary early boot/login driver before modprobing the nvidia module."
 eerror
 eerror "Set FB_EARLY_BOOT_DRIVER to either one of the following:"
-eerror "    efifb - for pure UEFI systems (ca. 2020 and later)"
-eerror "simpledrm - for X86 systems, but tested fail on older system"
-eerror " simplefb - for ARM/RISC-V embedded systems, but tested fail on older system"
-eerror "   vesafb - for legacy systems (before 2020, tested working on older systems)"
+eerror "    efifb - for EFI/UEFI systems (ca. 2012-present mobos)"
+eerror "simpledrm - for UEFI/OpenFirmware systems (ca. 2011-present mobos)"
+eerror " simplefb - for UEFI/OpenFirmware systems (ca. 2013-present mobos)"
+eerror "   vesafb - for BIOS systems (ca. 1996-2011 mobos)"
+eerror
+eerror "Tip:  A firmware update may be needed for proper UEFI support,"
+eerror "      but vesafb may be used in some cases before UEFI firmware support."
 eerror
 eerror "It must be added to the per-profile env file."
 eerror
