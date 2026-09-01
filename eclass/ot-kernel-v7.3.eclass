@@ -410,10 +410,16 @@ tresor_sysfs video_cards_nvidia zen-sauce
 if [[ "${PV}" =~ "9999" ]] ; then
 # Vanilla sources only
 	REQUIRED_USE+="
+		!c2tcp
+		!deepcc
+		!genpatches
+		!genpatches_1510
 		!nest
+		!orca
 		!tresor
 		!tresor_prompt
 		!tresor_sysfs
+		!zen-sauce
 	"
 fi
 
