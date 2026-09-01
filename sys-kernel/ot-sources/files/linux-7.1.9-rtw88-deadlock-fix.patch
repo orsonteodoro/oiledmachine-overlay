@@ -492,7 +492,7 @@ Fix:
  	}
  
  	return ret;
-@@ -1367,17 +1436,35 @@ void rtw_usb_disconnect(struct usb_inter
+@@ -1367,17 +1436,31 @@ void rtw_usb_disconnect(struct usb_inter
  	rtwdev = hw->priv;
  	rtwusb = rtw_get_usb_priv(rtwdev);
  
@@ -501,21 +501,17 @@ Fix:
 +	rtwdev->disconnecting = true;
 +	rtwdev->fail = true;
 +
++	/* Fix modprobe -f -r EBUSY: don't wait for usb_reset_device */
++	cancel_work(&rtwdev->usb_reset_work);
++
 +	/* Stop mac80211 from queuing new auth that calls leave idle */
 +	ieee80211_stop_queues(hw);
 +
-+	cancel_work(&rtwdev->usb_reset_work);
 +	cancel_work_sync(&rtwdev->fw_recovery_work);
 +	cancel_delayed_work_sync(&rtwdev->watch_dog_work);
-+	cancel_work_sync(&rtwdev->ips_work); /* <-- THIS WAS MISSING, holds mutex */
++	cancel_work_sync(&rtwdev->ips_work);
 +	cancel_work_sync(&rtwdev->tx_work);
 +	cancel_work_sync(&rtwdev->c2h_work);
-+	cancel_delayed_work_sync(&rtwdev->coex.bt_relink_work);
-+	// cancel all coex delayed works too
-+	cancel_delayed_work_sync(&rtwdev->coex.bt_reenable_work);
-+	cancel_delayed_work_sync(&rtwdev->coex.defreeze_work);
-+
-+	flush_work(&rtwdev->usb_reset_work);
  
 +	rtw_usb_cancel_rx_bufs(rtwusb);
  	rtw_unregister_hw(rtwdev, hw);
@@ -587,7 +583,7 @@ Fix:
  int rtw_enter_ips(struct rtw_dev *rtwdev)
  {
 +	if (unlikely(rtwdev->fail || rtwdev->disconnecting))
-+		return -ENODEV;
++		return 0;
 +
  	if (!test_bit(RTW_FLAG_POWERON, rtwdev->flags))
  		return 0;
@@ -597,7 +593,7 @@ Fix:
  	int ret;
  
 +	if (unlikely(rtwdev->fail || rtwdev->disconnecting))
-+		return -ENODEV;
++		return 0; // <- return 0, not error, to stop "leave idle state failed" spam
 +
  	if (test_bit(RTW_FLAG_POWERON, rtwdev->flags))
  		return 0;
