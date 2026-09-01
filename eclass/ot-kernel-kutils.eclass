@@ -1059,7 +1059,8 @@ ot-kernel_has_heterogeneous_power_cores() {
 ot-kernel_set_drm_fbdev_emulation() {
 	# Enabling creates /dev/fb* for CONFIG_DRM based drivers.
 	if [[ "${work_profile}" =~ ("vm-host"|"vm-guest") ]] ; then
-		if [[ "${VM_GUEST_IS_GPU_ACCELERATED:-0}" == "1" ]] ; then
+		local vm_gpu_accelerated=${VM_GPU_ACCELERATED:-"host"}
+		if [[ "${vm_gpu_accelerated}" == "guest" ]] ; then
 			if [[ "${work_profile}" =~ ("vm-host") ]] ; then
 	# vm-host is not GPU accelerated
 				ot-kernel_n_configopt "CONFIG_DRM_FBDEV_EMULATION"
