@@ -14154,7 +14154,7 @@ eerror
 	fi
 
 	# Reset and sanitize to prevent eager grab
-	if [[ "${fb_early_boot_driver}" =~ ("efifb"|"vesafb"|"simpledrm"|"simplefb") ]] ; then
+	if [[ "${fb_early_boot_driver}" =~ ("efifb"|"simpledrm"|"simplefb"|"vesafb") ]] ; then
 		ot-kernel_n_configopt "CONFIG_DRM_FBDEV_EMULATION"
 		ot-kernel_n_configopt "CONFIG_DRM_SIMPLEDRM"
 		ot-kernel_n_configopt "CONFIG_FB"
@@ -14201,9 +14201,14 @@ eerror
 		ot-kernel_n_configopt "CONFIG_FB_VGA16"
 		ot-kernel_n_configopt "CONFIG_SYSFB_SIMPLEFB"
 		ot-kernel_n_configopt "CONFIG_VGA_CONSOLE"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "=[0-9]+,xres=[0-9]+,bpp=[0-9]+" # Removed malformed arg
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "amdgpu.modeset=[01]"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "initcall_blacklist=sysfb_init"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "nvidia-drm.fbdev=[01]"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "nvidia-drm.modeset=[01]"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "vga=[0-9]*"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "video=[a-zA-Z0-9=:@,-]*"
-		ot-kernel_unset_pat_kconfig_kernel_cmdline "=[0-9]+,xres=[0-9]+,bpp=[0-9]+" # Removed malformed arg
+
 		if in_iuse "video_cards_nvidia" && ot-kernel_use "video_cards_nvidia" ; then
 			ot-kernel_unset_configopt "CONFIG_DRM_NOUVEAU"
 		fi
@@ -14217,6 +14222,16 @@ eerror
 		ot-kernel_y_configopt "CONFIG_FB_CORE"
 		ot-kernel_n_configopt "CONFIG_UML"
 		ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE"
+
+		if in_iuse "amdgpu-dkms" && ot-kernel_use "amdgpu-dkms" ; then
+			ot-kernel_set_kconfig_kernel_cmdline "amdgpu.modeset=1"
+		elif in_iuse "video_cards_nvidia" && ot-kernel_use "video_cards_nvidia" ; then
+			if ! [[ "${work_profile}" =~ ("vm-guest"|"vm-host") ]] ; then
+	# Only allow accelerated KMS on non VM use cases.
+				ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.fbdev=1"
+				ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.modeset=1"
+			fi
+		fi
 	fi
 
 	# Backends for console frontend
@@ -14247,7 +14262,7 @@ eerror "Support only for:  arm, arm64, riscv, x86, x86_64"
 		_framebuffer_validate_bpp "${bpp}"
 		_framebuffer_validate_hz "${hz}"
 einfo "FB early boot driver mode:  ${fb_early_boot_mode}"
-		ot-kernel_set_kconfig_kernel_cmdline "video=${fb_early_boot_mode}"
+		#ot-kernel_set_kconfig_kernel_cmdline "video=${fb_early_boot_mode}"
 
 	elif [[ "${fb_early_boot_driver}" == "simpledrm" ]] ; then
 einfo "FB early boot driver:  simpledrm"
@@ -14269,16 +14284,6 @@ einfo "FB early boot driver:  simpledrm"
 		ot-kernel_y_configopt "CONFIG_DRM"
 		ot-kernel_y_configopt "CONFIG_MMU"
 		ot-kernel_y_configopt "CONFIG_DRM_SIMPLEDRM"
-
-		ot-kernel_set_kconfig_kernel_cmdline "initcall_blacklist=sysfb_init"
-		ot-kernel_unset_pat_kconfig_kernel_cmdline "amdgpu.modeset=[01]"
-		ot-kernel_unset_pat_kconfig_kernel_cmdline "nvidia-drm.modeset=[01]"
-
-		if in_iuse "amdgpu-dkms" && ot-kernel_use "amdgpu-dkms" ; then
-			ot-kernel_set_kconfig_kernel_cmdline "amdgpu.modeset=1"
-		elif in_iuse "video_cards_nvidia" && ot-kernel_use "video_cards_nvidia" ; then
-			ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.modeset=1"
-		fi
 
 	elif [[ "${fb_early_boot_driver}" == "simplefb" ]] ; then
 einfo "FB early boot driver:  simplefb"
@@ -14329,7 +14334,7 @@ einfo "FB early boot driver mode:  ${fb_early_boot_mode}"
 			_framebuffer_validate_width_height "${w}x${h}"
 			_framebuffer_validate_bpp "${bpp}"
 einfo "FB early boot driver mode:  ${fb_early_boot_mode}"
-			ot-kernel_set_kconfig_kernel_cmdline "video=${fb_early_boot_mode}"
+			#ot-kernel_set_kconfig_kernel_cmdline "video=${fb_early_boot_mode}"
 		fi
 
 	else
@@ -16083,8 +16088,8 @@ ot-kernel_set_kconfig_vm_host_gpu_passthrough() {
 	# Removed to prevent nvidia-drm being used
 	# It cannot be used in both host hypervisor and guest virtual machine.
 	# The options are only allowed in non-vm setups.
-		ot-kernel_unset_pat_kconfig_kernel_cmdline "nvidia-drm.modeset=1"
-		ot-kernel_unset_pat_kconfig_kernel_cmdline "nvidia-drm.fbdev=1"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "nvidia-drm.fbdev=[01]"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "nvidia-drm.modeset=[01]"
 
 	# Needs to be disabled on both guest virtual machine and host hypervisor.
 		ot-kernel_unset_configopt "CONFIG_DRM_FBDEV_EMULATION"

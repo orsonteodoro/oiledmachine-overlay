@@ -7346,26 +7346,6 @@ ot-kernel-pkgflags_nv() { # DONE
 			ot-kernel_unset_configopt "CONFIG_AMD_MEM_ENCRYPT_ACTIVE_BY_DEFAULT"
 		fi
 
-	# Add graphical framebuffer support
-		ot-kernel_y_configopt "CONFIG_FB"
-		ot-kernel_y_configopt "CONFIG_FB_CORE"
-		ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE" # Requires efifb or vesafb for backend
-		ot-kernel_y_configopt "CONFIG_VT"
-
-	# The nvidia-drivers can only use the TTY framebuffer with either efifb
-	# or nvidia-drm (the proprietary KMS driver) with the two settings
-	# below.
-
-	# When both kernel command line options are enabled, the framebuffer is
-	# using accelerated KMS.
-		ot-kernel_unset_pat_kconfig_kernel_cmdline "nvidia-drm.modeset=1"
-		ot-kernel_unset_pat_kconfig_kernel_cmdline "nvidia-drm.fbdev=1"
-		if ! [[ "${work_profile}" =~ ("vm-guest"|"vm-host") ]] ; then
-	# Enables KMS on non VM use cases.
-			ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.modeset=1"
-			ot-kernel_set_kconfig_kernel_cmdline "nvidia-drm.fbdev=1"
-		fi
-
 	# Early boot framebuffer deferred to ot-kernel_gpu_driver_fallback.
 	fi
 }
