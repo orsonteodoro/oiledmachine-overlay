@@ -5909,7 +5909,7 @@ unset OT_KERNEL_PRIVATE_KEY
     or web browsers.
     Valid values:  0 (default), 1.
 
-    VM_GPU_ACCELERATED - Set to decides who gets to grab the GPU.
+    VM_GPU_ACCELERATED - Set to decide who gets to grab the GPU.
     Valid values:
     guest - vm-guest is GPU accelerated; vm-host is not GPU accelerated.
     host - (Default) vm-host is GPU accelerated; vm-guest is not GPU accelerated.
