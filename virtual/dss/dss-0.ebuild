@@ -209,10 +209,10 @@ ${SANDBOX_IUSE[@]}
 ebuild_revision_52
 "
 REQUIRED_USE="
-	^^ (
+	|| (
 		${KERNEL_FLAVORS[@]}
 	)
-	^^ (
+	|| (
 		${KERNEL_SLOTS[@]}
 	)
 	^^ (

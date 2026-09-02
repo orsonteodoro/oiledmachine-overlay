@@ -116,10 +116,10 @@ ${VIDEO_CARDS[@]}
 ebuild_revision_44
 "
 REQUIRED_USE="
-	^^ (
+	|| (
 		${KERNEL_FLAVORS[@]}
 	)
-	^^ (
+	|| (
 		${KERNEL_SLOTS[@]}
 	)
 "
