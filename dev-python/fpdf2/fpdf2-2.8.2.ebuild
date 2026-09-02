@@ -36,7 +36,7 @@ LICENSE="
 	LGPL-3+
 "
 RESTRICT="mirror test" # Untested
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" doc"
 RDEPEND+="
 	dev-python/defusedxml[${PYTHON_USEDEP}]
