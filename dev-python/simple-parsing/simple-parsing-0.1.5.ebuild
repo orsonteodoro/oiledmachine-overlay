@@ -38,7 +38,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror test" # Untested and missing dependency
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" test toml yaml"
 RDEPEND+="
 	>=dev-python/docstring-parser-0.15[${PYTHON_USEDEP}]
