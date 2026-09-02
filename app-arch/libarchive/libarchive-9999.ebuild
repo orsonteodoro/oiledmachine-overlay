@@ -101,6 +101,9 @@ PATCHES=(
 	# https://github.com/libarchive/libarchive/issues/2069
 	# (we can simply update the command since we don't support old lrzip)
 	"${FILESDIR}/${PN}-f5509ae-lrzip.patch"
+
+	# oiledmachine-overlay patches:
+	"${FILESDIR}/${PN}-9ad95ee-__archive_get_umask-visibility.patch"
 )
 
 src_unpack() {

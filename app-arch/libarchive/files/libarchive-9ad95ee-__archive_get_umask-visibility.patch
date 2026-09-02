@@ -1,0 +1,13 @@
+--- a/libarchive/archive_umask_private.h.orig	2026-09-01 16:57:28.747164264 -0700
++++ b/libarchive/archive_umask_private.h	2026-09-01 16:58:10.922556638 -0700
+@@ -44,6 +44,9 @@
+ #include <sys/stat.h>
+ 
+ /* Return the current umask. Attempt to read it without changing. */
+-extern mode_t __archive_get_umask(void);
++#if defined(__GNUC__) || defined(__clang__)
++__attribute__((visibility("default")))
++#endif
++mode_t __archive_get_umask(void);
+ 
+ #endif
