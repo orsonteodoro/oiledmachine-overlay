@@ -14246,17 +14246,17 @@ eerror "initcall_blacklist=sysfb_init must be manually removed from CONFIG_CMDLI
 		elif in_iuse "video_cards_nvidia" && ot-kernel_use "video_cards_nvidia" ; then
 			ot-kernel_set_nvidia_drm_command_line
 		fi
-eerror
-eerror "A quick reminder:"
-eerror
-eerror "    efifb - for EFI/UEFI systems (ca. 2012-present mobos)"
-eerror "simpledrm - for UEFI/OpenFirmware systems (ca. 2011-present mobos)"
-eerror " simplefb - for UEFI/OpenFirmware systems (ca. 2013-present mobos)"
-eerror "   vesafb - for BIOS systems with VBE (ca. 1996-2011 mobos)"
-eerror
-eerror "TIP:  A firmware update to UEFI GOP can be used for transition period firmware (VBE->UEFI GOP)."
-eerror "TIP:  For transition period firmware that choose not to update to UEFI GOP, use vesafb instead."
-eerror
+einfo
+einfo "It can be confusing but a quick reminder:"
+einfo
+einfo "    efifb - for EFI/UEFI systems (ca. 2012-present mobos)"
+einfo "simpledrm - for UEFI/OpenFirmware systems (ca. 2011-present mobos)"
+einfo " simplefb - for UEFI/OpenFirmware systems (ca. 2013-present mobos)"
+einfo "   vesafb - for BIOS systems with VBE (ca. 1996-2011 mobos)"
+einfo
+einfo "TIP:  A firmware update to UEFI GOP can be used for transition period firmware (VBE->UEFI GOP)."
+einfo "TIP:  For transition period firmware that choose not to update to UEFI GOP, use vesafb instead."
+einfo
 	fi
 
 	# Backends for console frontend
