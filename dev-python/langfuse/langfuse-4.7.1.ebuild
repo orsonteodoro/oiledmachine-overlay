@@ -20,8 +20,11 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror test" # Untested
-SLOT="0/"$(ver_cut "1-2" "${PV}")
-IUSE+=" dev docs"
+SLOT="0"
+IUSE+="
+dev docs
+ebuild_revision_1
+"
 REQUIRED_USE="
 "
 RDEPEND+="
