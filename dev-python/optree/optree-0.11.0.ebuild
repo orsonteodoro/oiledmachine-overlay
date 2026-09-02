@@ -27,10 +27,10 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror test" # Not tested
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+="
 benchmark doc jax numpy test torch
-ebuild_revision_3
+ebuild_revision_4
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
