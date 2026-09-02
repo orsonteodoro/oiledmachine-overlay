@@ -35,8 +35,8 @@ LICENSE="
 	WTFPL-2
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" dev ebuild_revision_8"
+SLOT="0"
+IUSE+=" dev ebuild_revision_9"
 RDEPEND+="
 	>=dev-python/hidapi-0.14.0[${PYTHON_USEDEP}]
 "
