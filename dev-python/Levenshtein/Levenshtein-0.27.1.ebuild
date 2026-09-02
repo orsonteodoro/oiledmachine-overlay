@@ -24,10 +24,10 @@ LICENSE="GPL-2+"
 HOMEPAGE="https://github.com/maxbachmann/Levenshtein"
 KEYWORDS="~amd64 ~arm64"
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+="
 doc
-ebuild_revision_2
+ebuild_revision_3
 "
 RDEPEND+="
 	(
