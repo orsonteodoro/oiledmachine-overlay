@@ -210,7 +210,7 @@ LICENSE="
 # BSD BSD-2 ZLIB - ncnn
 # MIT - rife-ncnn-vulkan
 RESTRICT="mirror test" # Untested
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_LOONG[@]}
@@ -218,7 +218,7 @@ ${CPU_FLAGS_MIPS[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
