@@ -39,7 +39,7 @@ LICENSE="
 	GPL-3
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" doc encoding mime pillow"
 RDEPEND+="
 	>=dev-python/olefile-0.47[${PYTHON_USEDEP}]
