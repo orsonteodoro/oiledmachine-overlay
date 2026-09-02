@@ -92,13 +92,13 @@ LICENSE="
 # MIT - LICENSE
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="mirror test" # Untested
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${ROCM_SLOTS[@]}
 cuda rocm test tutorials video_cards_intel
-ebuild_revision_8
+ebuild_revision_9
 "
 gen_rocm_required_use() {
 	local u
