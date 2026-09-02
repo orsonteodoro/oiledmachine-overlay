@@ -35,8 +35,11 @@ LICENSE="
 	GPL-2+
 "
 RESTRICT="mirror"
-SLOT="0/"$(ver_cut "1-2" "${PV}")
-IUSE+=" test test-full"
+SLOT="0"
+IUSE+="
+test test-full
+ebuild_revision_1
+"
 # Prevent circular deps by not adding flit-core to *DEPENDs
 RDEPEND="
 	>=dev-python/installer-0.5[${PYTHON_USEDEP}]
