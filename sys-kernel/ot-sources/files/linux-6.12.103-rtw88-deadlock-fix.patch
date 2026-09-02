@@ -181,7 +181,7 @@ Fix:
  	mutex_lock(&rtwdev->mutex);
  	if (rtwdev->hw->conf.flags & IEEE80211_CONF_IDLE)
  		rtw_enter_ips(rtwdev);
-@@ -611,6 +622,47 @@ static void rtw_reset_vif_iter(void *dat
+@@ -611,6 +622,49 @@ static void rtw_reset_vif_iter(void *dat
  	rtw_release_macid(rtwdev, rtwvif->mac_id);
  }
  
@@ -190,18 +190,18 @@ Fix:
 +	struct rtw_dev *rtwdev = container_of(work, struct rtw_dev, usb_reset_work);
 +	struct rtw_usb *rtwusb;
 +	struct usb_device *udev;
-+	struct usb_interface *intf;
++	struct usb_interface *intf = NULL;
 +	int ret;
 +
 +	if (rtwdev->disconnecting)
 +		return;
 +
 +	rtwusb  = rtw_get_usb_priv(rtwdev);
-+	if (!rtwusb ||!rtwusb->udev)
++	if (!rtwusb || !rtwusb->udev)
 +		return;
 +
 +	udev = rtwusb->udev;
-+	intf = rtwusb->intf;
++	intf = usb_ifnum_to_if(udev, 0);
 +
 +	pr_warn("rtw88: -110 storm, attempting USB reset\n");
 +	ret = usb_reset_device(udev);
@@ -214,13 +214,15 @@ Fix:
 +		 */
 +		if (intf)
 +			usb_queue_reset_device(intf);
++		else
++			pr_warn("rtw88: no intf for queue_reset, falling back to disable\n");
 +		/* clear fail - new device will probe, keep it on ehci 2-5 high-speed */
 +		rtwdev->fail = false;
 +		atomic_set(&rtwdev->fail_count, 0);
 +		return;
 +	}
 +
-+	pr_warn("rtw88: USB reset success, clearing fail\n");
++	pr_warn("rtw88: USB reset success\n");
 +	rtwdev->fail = false;
 +	atomic_set(&rtwdev->fail_count, 0);
 +	schedule_work(&rtwdev->fw_recovery_work);
