@@ -20,7 +20,7 @@ DESCRIPTION="Python module for parsing messages from the 'js8' command line deco
 HOMEPAGE="https://github.com/jketterl/js8py"
 LICENSE="GPL-3"
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" test"
 RDEPEND+="
 "
