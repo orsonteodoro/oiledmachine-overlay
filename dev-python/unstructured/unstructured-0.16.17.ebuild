@@ -42,10 +42,10 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 DOCS_IUSE="
 all-docs csv doc docx epub image md odt org pdf ppt pptx rst rtf tsv xlsx
-ebuild_revision_5
+ebuild_revision_6
 "
 LEGACY_IUSE="
 huggingface local-inference paddleocr
