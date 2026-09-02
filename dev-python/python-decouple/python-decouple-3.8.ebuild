@@ -33,7 +33,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror test" # Untested
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" doc test"
 RDEPEND+="
 	>=dev-python/pygments-2.7.4[${PYTHON_USEDEP}]
