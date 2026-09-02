@@ -7,6 +7,15 @@
 
 EAPI=8
 
+KERNEL_SLOTS=(
+	"kernel_slot_5_10"
+	"kernel_slot_5_15"
+	"kernel_slot_6_1"
+	"kernel_slot_6_6"
+	"kernel_slot_6_12"
+	"kernel_slot_6_18"
+)
+
 inherit secure-version
 
 DESCRIPTION="Virtual for the ot-sources LTS ebuilds for"
@@ -14,26 +23,31 @@ KEYWORDS="
 ~alpha ~amd64 ~arm ~hppa ~loong ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86
 "
 IUSE="
-5_10 5_15 6_1 6_6 6_12 6_18
+${KERNEL_SLOTS[@]}
 ebuild_revision_2
 "
+REQUIRED_USE="
+	|| (
+		${KERNEL_SLOTS[@]}
+	)
+"
 RDEPEND="
-	5_10? (
+	kernel_slot_5_10? (
 		~sys-kernel/ot-sources-${LINUX_KERNEL_5_10_PV}
 	)
-	5_15? (
+	kernel_slot_5_15? (
 		~sys-kernel/ot-sources-${LINUX_KERNEL_5_15_PV}
 	)
-	6_1? (
+	kernel_slot_6_1? (
 		~sys-kernel/ot-sources-${LINUX_KERNEL_6_1_PV}
 	)
-	6_6? (
+	kernel_slot_6_6? (
 		~sys-kernel/ot-sources-${LINUX_KERNEL_6_6_PV}
 	)
-	6_12? (
+	kernel_slot_6_12? (
 		~sys-kernel/ot-sources-${LINUX_KERNEL_6_12_PV}
 	)
-	6_18? (
+	kernel_slot_6_18? (
 		~sys-kernel/ot-sources-${LINUX_KERNEL_6_18_PV}
 	)
 "
