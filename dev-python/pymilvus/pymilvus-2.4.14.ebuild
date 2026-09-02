@@ -40,10 +40,10 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+="
 bulk_writer dev model
-ebuild_revision_5
+ebuild_revision_6
 "
 gen_grpcio_dev() {
 	local impl
