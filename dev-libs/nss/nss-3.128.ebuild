@@ -64,7 +64,6 @@ MULTILIB_CHOST_TOOLS=(
 )
 
 PATCHES=(
-	"${FILESDIR}"/nss-3.126-bmo-2027768-fix-build-failure-due-to-missing-gcm-stubs-if-on-big-endian.patch
 	"${FILESDIR}"/nss-3.103-gentoo-fixes-add-pkgconfig-files.patch
 	"${FILESDIR}"/nss-3.21-gentoo-fixup-warnings.patch
 )
