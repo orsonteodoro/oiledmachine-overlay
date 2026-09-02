@@ -181,7 +181,7 @@ Fix:
  	mutex_lock(&rtwdev->mutex);
  	if (rtwdev->hw->conf.flags & IEEE80211_CONF_IDLE)
  		rtw_enter_ips(rtwdev);
-@@ -611,6 +622,48 @@ static void rtw_reset_vif_iter(void *dat
+@@ -611,6 +622,44 @@ static void rtw_reset_vif_iter(void *dat
  	rtw_release_macid(rtwdev, rtwvif->mac_id);
  }
  
@@ -201,21 +201,17 @@ Fix:
 +
 +	udev = rtwusb->udev;
 +
-+	pr_warn("rtw88: attempting USB reset for -110 storm\n");
++	pr_warn("rtw88: -110 storm, attempting USB reset\n");
 +	ret = usb_reset_device(udev);
 +
 +	if (ret) {
-+		pr_warn("rtw88: reset failed %d, power cycling port 2-5\n", ret);
-+		/* power cycle without deauthorize - works in module */
-+		usb_lock_device(udev);
-+		usb_disable_device(udev, 0); /* power off port */
-+		usb_unlock_device(udev);
-+		msleep(1000);
-+		usb_lock_device(udev);
-+		usb_enable_device(udev); /* power on + re-enumerate high-speed */
-+		usb_unlock_device(udev);
-+		msleep(2000);
-+		/* after power cycle, new enumeration will be 2-5 high-speed.  clear fail so probe doesn't immediately abort with -114. */
++		pr_warn("rtw88: reset failed %d, queuing hub reset to power cycle port\n", ret);
++		/* This triggers the power cycle you saw in logs:
++		 * [15699.315850] usb usb2-port5: attempt power cycle
++		 * but now immediately, not after 60s of descriptor read retries
++		 */
++		usb_queue_reset_device(udev);
++		/* clear fail - new device will probe, keep it on ehci 2-5 high-speed */
 +		rtwdev->fail = false;
 +		atomic_set(&rtwdev->fail_count, 0);
 +		return;
