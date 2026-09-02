@@ -31,7 +31,7 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" caffe full onnx tensorflow-lite tensorflow-protobuf test visualization"
 REQUIRED_USE="
 	full? (
