@@ -34,7 +34,7 @@ HOMEPAGE="https://github.com/aiortc/pylsqpack"
 LICENSE="
 	BSD
 "
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" doc test"
 RDEPEND+="
 "
