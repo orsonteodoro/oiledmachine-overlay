@@ -35,7 +35,7 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror test" # Not tested
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+="
 array-types doc eapp ecolab edc enp epath epath-gcs epath-s3 epy etqdm etree
 etree-dm etree-jax etree-tf lazy-imports test
