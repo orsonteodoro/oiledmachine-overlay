@@ -23,7 +23,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT="0/"$(ver_cut "1-2" "${PV}")
+SLOT="0"
 IUSE+="
 dev lint test typing
 "

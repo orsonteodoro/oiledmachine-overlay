@@ -36,7 +36,7 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror"
-SLOT="0/"$(ver_cut "1-2" "${PV}")
+SLOT="0"
 IUSE+="
 deepspeed dev quality rich sagemaker test test-dev test-fp8 test-prod test-trackers
 ebuild_revision_3
