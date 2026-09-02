@@ -42,7 +42,7 @@ LICENSE="
 	GPL-3 GPL-3+
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" test"
 RDEPEND+="
 	>=dev-python/scipy-0.9[${PYTHON_USEDEP}]
