@@ -39,11 +39,11 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+="
 aws azure dev gcp importers kubeflow launch media models perf sweeps test
 workspaces
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	dev? (
