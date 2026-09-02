@@ -29,7 +29,7 @@ LICENSE="
 "
 # The distro's MIT template does not contain the all rights reserved clause.
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" "
 RDEPEND+="
 	>=dev-python/azure-core-1.37.0[${PYTHON_USEDEP}]
