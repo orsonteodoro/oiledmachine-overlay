@@ -28,7 +28,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" faiss-cpu faiss-gpu pytorch"
 # Upstream lists ninja (a pypi package), but cannot find reference.
 RDEPEND+="
