@@ -35,7 +35,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror test" # Untested
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" doc speed test voice"
 RDEPEND+="
 	>=dev-python/aiohttp-3.7.4[${PYTHON_USEDEP}]
