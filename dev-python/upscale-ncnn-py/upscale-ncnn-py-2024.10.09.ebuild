@@ -68,10 +68,10 @@ LICENSE="
 # BSD - pybind11
 # BSD BSD-2 ZLIB - ncnn
 RESTRICT="mirror test"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+="
 dev test
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
