@@ -1,0 +1,14 @@
+5_10 - Add support for the 5.10 kernel series
+5_15 - Add support for the 5.15 kernel series
+6_1 - Add support for the 6.1 kernel series
+6_1_live - Add support for the 6.1 live kernel series
+6_6 - Add support for the 6.6 kernel series
+6_6_live - Add support for the 6.6 live kernel series
+6_12 - Add support for the 6.12 kernel series
+6_12_live - Add support for the 6.12 live kernel series
+6_18 - Add support for the 6.18 kernel series
+6_18_live - Add support for the 6.18 live kernel series
+7_1 - Add support for the 7.1 kernel series
+7_2 - Add support for the 7.2 kernel series
+rc - Add support for the release candidate kernel series
+live - Add support for the live kernel series

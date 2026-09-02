@@ -6,8 +6,11 @@ EAPI=8
 
 # Security:  update every kernel version bump
 
+KERNEL_MIN_SLOT="5.10" # inclusive
+KERNEL_MIN_LTS_SLOT="6.1" # inclusive
+KERNEL_MAX_LTS_SLOT="6.18" # inclusive
 LTS_VERSIONS=("5.10" "5.15" "6.1" "6.6" "6.12" "6.18")
-ACTIVE_VERSIONS=("5.10" "5.15" "6.1" "6.6" "6.12" "6.18" "6.19" "7.1" "7.2" "7.3")
+ACTIVE_VERSIONS=("5.10" "5.15" "6.1" "6.6" "6.12" "6.18" "7.1" "7.2" "7.3")
 STABLE_OR_MAINLINE_VERSIONS=("7.1" "7.2" "7.3")
 ALL_VERSIONS=(
 	"0"
@@ -40,6 +43,52 @@ CHKL_TIMESTAMPS=(
 	"sys-kernel/vanilla-kernel-6.18.9999"
 )
 
+KERNEL_FLAVORS=(
+        "kernel_flavor_asahi-kernel"
+        "kernel_flavor_asahi-sources"
+        "kernel_flavor_cachyos-kernel"
+        "kernel_flavor_cachyos-kernel-bin"
+	"kernel_flavor_cachyos-sources"
+        "kernel_flavor_gentoo-kernel"
+        "kernel_flavor_gentoo-kernel-bin"
+	"kernel_flavor_gentoo-sources"
+        "kernel_flavor_git-sources"
+        "kernel_flavor_hardened-sources"
+        "kernel_flavor_linux-next"
+        "kernel_flavor_liquorix-sources"
+        "kernel_flavor_mips-sources"
+        "kernel_flavor_ot-sources"
+        "kernel_flavor_pf-sources"
+        "kernel_flavor_raspberrypi-image"
+        "kernel_flavor_raspberrypi-sources"
+        "kernel_flavor_rt-sources"
+        "kernel_flavor_surface-sources"
+        "kernel_flavor_vanilla-kernel"
+        "kernel_flavor_vanilla-sources"
+        "kernel_flavor_xanmod-kernel"
+        "kernel_flavor_xanmod-rt"
+        "kernel_flavor_xanmod-sources"
+        "kernel_flavor_xanmod-sources-rt"
+        "kernel_flavor_zen-sources"
+)
+
+KERNEL_SLOTS=(
+	"kernel_slot_5_10"
+	"kernel_slot_5_15"
+	"kernel_slot_6_1"
+	"kernel_slot_6_1_live"
+	"kernel_slot_6_6"
+	"kernel_slot_6_6_live"
+	"kernel_slot_6_12"
+	"kernel_slot_6_12_live"
+	"kernel_slot_6_18"
+	"kernel_slot_6_18_live"
+	"kernel_slot_7_1"
+	"kernel_slot_7_2"
+	"kernel_slot_rc"
+	"kernel_slot_live"
+)
+
 inherit secure-version
 
 MULTISLOT_LATEST_KERNEL_RELEASE=("${LINUX_KERNEL_5_10_PV}" "${LINUX_KERNEL_5_15_PV}" "${LINUX_KERNEL_6_1_PV}" "${LINUX_KERNEL_6_6_PV}" "${LINUX_KERNEL_6_12_PV}" "${LINUX_KERNEL_6_18_PV}" "${LINUX_KERNEL_7_1_PV}" "${LINUX_KERNEL_7_2_PV}" "${LINUX_KERNEL_7_3_RC_PV}")
@@ -60,11 +109,19 @@ VIDEO_CARDS=(
 	video_cards_nvidia
 )
 IUSE+="
+${KERNEL_FLAVORS[@]}
+${KERNEL_SLOTS[@]}
 ${VIDEO_CARDS[@]}
 +max-uptime
 ebuild_revision_44
 "
 REQUIRED_USE="
+	^^ (
+		${KERNEL_FLAVORS[@]}
+	)
+	^^ (
+		${KERNEL_SLOTS[@]}
+	)
 "
 # CE - Code Execution
 # DoS - Denial of Service (CVSS A:H)
@@ -804,4 +861,10 @@ src_compile() {
 #	else
 #einfo "PASS"
 #	fi
+}
+
+pkg_postinst() {
+einfo "The optional sys-kernel/mitigate-id is also provided and can be emerged directly."
+einfo "The optional sys-kernel/mitigate-dt is also provided and can be emerged directly."
+einfo "The optional virtual/dss is also provided and can be emerged directly."
 }

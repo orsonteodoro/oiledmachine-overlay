@@ -1,0 +1,25 @@
+asahi-kernel - Add support for asahi-kernel
+asahi-sources - Add support for asahi-sources
+cachyos-kernel - Add support for cachyos-kernel
+cachyos-kernel-bin - Add support for cachyos-kernel-bin
+cachyos-sources - Add support for cachyos-sources
+gentoo-kernel - Add support for gentoo-kernel
+gentoo-kernel-bin - Add support for gentoo-kernel-bin
+gentoo-sources - Add support for flavor_gentoo-sources
+git-sources - Add support for git-sources
+hardened-sources - Add support for hardened-sources
+linux-next - Add support for linux-next
+liquorix-sources - Add support for liquorix-sources
+mips-sources - Add support for mips-sources
+ot-sources - Add support for ot-sources
+pf-sources - Add support for pf-sources
+raspberrypi-image - Add support for raspberrypi-image
+raspberrypi-sources - Add support for raspberrypi-sources
+rt-sources - Add support for rt-sources
+surface-sources - Add support for surface-sources for Microsoft Surface hardware
+vanilla-kernel - Add support for vanilla-kernel
+vanilla-sources - Add support for vanilla-sources
+xanmod-kernel - Add support for xanmod-kernel
+xanmod-sources - Add support for xanmod-sources
+xanmod-sources-rt - Add support for xanmod-sources-rt
+zen-sources - Add support for zen-sources

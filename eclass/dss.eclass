@@ -79,6 +79,7 @@ gen_render_kernels_list_v2() {
 	local acceptable_list=""
 	local eol_list=""
 	local o
+	local av
 	local pv
 	local slot
 	local x
@@ -189,52 +190,109 @@ eerror
 		done
 	done
 
+	# 7.2.3
 	for pv in "${MULTISLOT_LATEST_KERNEL_RELEASE[@]}" ; do
 		[[ "${pv}" =~ "rc" ]] && continue
+		local slot=$(ver_cut "1-2" "${pv}")
+		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
+		slot="${slot/./_}"
 		for x in "${FLAVORS_POINT_RELEASE[@]}" ; do
+			local pn="${x#*/}"
 			acceptable_list+="
-				~${x}-${pv}
+				kernel_flavor_${pn}? (
+					kernel_slot_${slot}? (
+						~${x}-${pv}
+					)
+				)
 			"
 		done
 	done
 
+	# 7.2.3_p1
 	for pv in "${MULTISLOT_LATEST_KERNEL_RELEASE[@]}" ; do
 		[[ "${pv}" =~ "rc" ]] && continue
+		local slot=$(ver_cut "1-2" "${pv}")
+		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
+		slot="${slot/./_}"
 		for x in "${FLAVORS_POST_3C_RELEASE[@]}" ; do
+			local pn="${x#*/}"
 			acceptable_list+="
-				=${x}-${pv}_p*
+				kernel_flavor_${pn}? (
+					kernel_slot_${slot}? (
+						=${x}-${pv}_p*
+					)
+				)
 			"
 		done
 	done
 
-	for slot in "${ACTIVE_VERSIONS[@]}" ; do
+	# 7.2_p1
+	for av in "${ACTIVE_VERSIONS[@]}" ; do
+		[[ "${pv}" =~ "rc" ]] && continue
+		local slot=$(ver_cut "1-2" "${av}")
+		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
+		slot="${slot/./_}"
 		for x in "${FLAVORS_POST_2C_RELEASE[@]}" ; do
+			local pn="${x#*/}"
 			acceptable_list+="
-				=${x}-${slot}_p*
+				kernel_flavor_${pn}? (
+					kernel_slot_${slot}? (
+						=${x}-${av}_p*
+					)
+				)
 			"
 		done
 	done
 
+	# 7.3_rc1
 	for pv in "${MULTISLOT_LATEST_KERNEL_RELEASE[@]}" ; do
 		[[ "${pv}" =~ "rc" ]] || continue
+		local slot=$(ver_cut "1-2" "${pv}")
+		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
+		slot="${slot/./_}"
 		for x in "${FLAVORS_RC[@]}" ; do
+			local pn="${x#*/}"
 			acceptable_list+="
-				~${x}-${pv}
+				kernel_flavor_${pn}? (
+					kernel_slot_rc? (
+						~${x}-${pv}
+					)
+				)
 			"
 		done
 	done
 
-	for slot in "${ACTIVE_VERSIONS[@]}" ; do
+	# 6.18.9999
+	for av in "${ACTIVE_VERSIONS[@]}" ; do
+		local slot=$(ver_cut "1-2" "${av}")
+		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
+		ver_test "${slot}" "-lt" "${KERNEL_MIN_LTS_SLOT}" && continue
+		ver_test "${slot}" "-gt" "${KERNEL_MAX_LTS_SLOT}" && continue
+		slot="${slot/./_}"
 		for x in "${FLAVORS_LIVE_9999[@]}" ; do
+			local pn="${x#*/}"
 			acceptable_list+="
-				=${x}-${slot}.9999
+				kernel_flavor_${pn}? (
+					kernel_slot_${slot}_live? (
+						=${x}-${av}.9999
+					)
+				)
 			"
 		done
 	done
 
+	# 7.3.9999
 	for x in "${FLAVORS_LIVE_SLOT_9999[@]}" ; do
+		local slot=$(ver_cut "1-2" "${pv}")
+		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
+		slot="${slot/./_}"
+		local pn="${x#*/}"
 		acceptable_list+="
-			=${x}-9999
+			kernel_flavor_${pn}? (
+				kernel_slot_live? (
+					=${x}-9999
+				)
+			)
 		"
 	done
 
@@ -248,9 +306,7 @@ eerror
 
 	# Acceptable list
 	o="
-		|| (
-			${acceptable_list}
-		)
+		${acceptable_list}
 	"
 	echo "${o}"
 #einfo "Acceptable list:"
