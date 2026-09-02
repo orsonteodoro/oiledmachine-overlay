@@ -34,7 +34,7 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" test"
 RDEPEND+="
 	>=dev-python/absl-py-1.0.0[${PYTHON_USEDEP}]
