@@ -161,7 +161,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="binchecks bindist fetch mirror strip test"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 gen_rom_iuse() {
 	local f
 	for f in ${ROM_LIST[@]} ; do
@@ -172,7 +172,7 @@ gen_rom_iuse() {
 IUSE+="
 $(gen_rom_iuse)
 +skip-roms test
-ebuild_revision_1
+ebuild_revision_2
 "
 gen_rom_required_use1() {
 	local f
