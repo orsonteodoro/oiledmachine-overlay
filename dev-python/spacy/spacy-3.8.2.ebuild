@@ -48,7 +48,7 @@ SLOT="0"
 IUSE+="
 ${LANGS[@]/#/l10n_}
 cuda dev lookups transformers
-ebuild_revision_4
+ebuild_revision_5
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
