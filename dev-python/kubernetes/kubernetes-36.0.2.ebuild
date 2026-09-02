@@ -39,7 +39,7 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" adal aiohttp google-auth test"
 RDEPEND+="
 	>=dev-python/websocket-client-0.32.0[${PYTHON_USEDEP}]
