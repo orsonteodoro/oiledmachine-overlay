@@ -115,7 +115,6 @@ IUSE+="
 	intel-microcode
 	linux-firmware
 	kvm
-	ebuild_revision_0
 "
 REQUIRED_USE="
 	cpu_target_x86_arrandale? (

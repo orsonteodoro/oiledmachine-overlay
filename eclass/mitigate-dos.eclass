@@ -118,7 +118,6 @@ IUSE+="
 	+enforce
 	intel-microcode
 	linux-firmware
-	ebuild_revision_3
 "
 REQUIRED_USE="
 	cpu_target_x86_ice_lake? (

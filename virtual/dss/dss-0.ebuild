@@ -209,12 +209,6 @@ ${SANDBOX_IUSE[@]}
 ebuild_revision_52
 "
 REQUIRED_USE="
-	|| (
-		${KERNEL_FLAVORS[@]}
-	)
-	|| (
-		${KERNEL_SLOTS[@]}
-	)
 	^^ (
 		${PROFILES_IUSE[@]}
 	)
@@ -241,6 +235,14 @@ REQUIRED_USE="
 	custom-kernel? (
 		!compliant
 		flexible
+	)
+	enforce? (
+		|| (
+			${KERNEL_FLAVORS[@]}
+		)
+		|| (
+			${KERNEL_SLOTS[@]}
+		)
 	)
 	lynis? (
 		audit

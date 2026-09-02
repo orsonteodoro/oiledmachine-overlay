@@ -120,11 +120,13 @@ ${VIDEO_CARDS[@]}
 ebuild_revision_43
 "
 REQUIRED_USE="
-	|| (
-		${KERNEL_FLAVORS[@]}
-	)
-	|| (
-		${KERNEL_SLOTS[@]}
+	enforce? (
+		|| (
+			${KERNEL_FLAVORS[@]}
+		)
+		|| (
+			${KERNEL_SLOTS[@]}
+		)
 	)
 "
 # CE - Code Execution
