@@ -41,7 +41,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror test" # Missing test dependencies
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" docker-compose-v1 test"
 RDEPEND+="
 	>=dev-python/pytest-4.0
