@@ -206,19 +206,19 @@ Fix:
 +
 +	if (ret) {
 +		pr_warn("rtw88: reset failed %d, power cycling port 2-5\n", ret);
-+		/* force power cycle instead of 4x descriptor read timeouts (60s) */
++		/* power cycle without deauthorize - works in module */
 +		usb_lock_device(udev);
-+		ret = usb_deauthorize_device(udev); /* power off port */
++		usb_disable_device(udev, 0); /* power off port */
 +		usb_unlock_device(udev);
 +		msleep(1000);
 +		usb_lock_device(udev);
-+		ret = usb_authorize_device(udev); /* power on + re-enumerate high-speed */
++		usb_enable_device(udev); /* power on + re-enumerate high-speed */
 +		usb_unlock_device(udev);
 +		msleep(2000);
-+		/* after authorize, udev is new, clear fail so probe can succeed on ehci 2-5 */
++		/* after power cycle, new enumeration will be 2-5 high-speed.  clear fail so probe doesn't immediately abort with -114. */
 +		rtwdev->fail = false;
 +		atomic_set(&rtwdev->fail_count, 0);
-+		return; /* new device will probe as 2-5 high-speed, not 1-5 full-speed */
++		return;
 +	}
 +
 +	pr_warn("rtw88: USB reset success, clearing fail\n");
