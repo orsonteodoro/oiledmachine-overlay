@@ -35,10 +35,10 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror test"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+="
 tensorflow test
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 "
