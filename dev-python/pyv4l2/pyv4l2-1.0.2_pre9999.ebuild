@@ -31,10 +31,10 @@ LICENSE="
 "
 # LICENSE - LGPL-3
 # setup.py - BSD in classifiers section of https://github.com/duanhongyi/pyv4l2/blob/master/setup.py#L43
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+="
 examples
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE+="
 "
