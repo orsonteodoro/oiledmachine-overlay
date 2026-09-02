@@ -38,8 +38,10 @@ LICENSE="
 	CC0-1.0
 "
 RESTRICT="mirror"
-SLOT="0/"$(ver_cut 1-2 ${PV})
-IUSE+=" "
+SLOT="0"
+IUSE+="
+ebuild_revision_1
+"
 RDEPEND+="
 "
 DEPEND+="
