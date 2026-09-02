@@ -4,9 +4,12 @@
 
 EAPI=8
 
+# D10, D11, D12, U20, U22
+
+DISTUTILS_USE_PEP517="setuptools"
 PYPI_NO_NORMALIZE=1
 PYPI_PN="nvidia-ml-py"
-PYTHON_COMPAT=( "python3_"{8..11} )
+PYTHON_COMPAT=( "python3_"{9..11} )
 inherit distutils-r1 pypi
 
 MY_PN="nvidia-ml-py"
