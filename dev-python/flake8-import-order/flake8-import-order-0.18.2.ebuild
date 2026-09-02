@@ -23,7 +23,7 @@ LICENSE="
 	LGPL-3
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" test"
 RDEPEND+="
 	dev-python/pycodestyle[${PYTHON_USEDEP}]
