@@ -39,7 +39,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror test" # Missing test dependencies
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" benchmark doc test"
 RDEPEND+="
 	>=dev-python/deprecated-1.2.14[${PYTHON_USEDEP}]
