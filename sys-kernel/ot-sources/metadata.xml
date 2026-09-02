@@ -5601,7 +5601,8 @@ unset OT_KERNEL_PRIVATE_KEY
     ignore    - Use the existing custom configuration (ebuild default)
 
     Tip:  Older mobos may need a firmware update to use UEFI GOP properly, but
-          vesafb may be used before firmware update.
+          vesafb may be used before firmware update, but upgrading the
+          firmware carries a risk of bricking the mobo.
 
     FB_EARLY_BOOT_MODE - Sets the resolution/hz for early boot framebuffer.
     It is the value passed to video: for the kernel command line.
@@ -5615,6 +5616,17 @@ unset OT_KERNEL_PRIVATE_KEY
     For vesafb, you must manually add the vga=769 or equivalent to the
     bootloader config kernel command line.  The kernel will not respect it in
     the kernel command line as a built-in.
+
+    For efifb, you may need to manually add the video=efifb:1280x1024-8@60 or
+    equivalent to the bootloader config kernel command line.
+
+    For grub2 for vesafb and efifb, you have two options:
+
+    1.  Update /etc/default/grub and append the vga=<...> or video=<...> arg
+        to GRUB_CMDLINE_LINUX for all kernels.  (NOT RECOMMENDED)
+    2.  Add a new entry to /etc/grub.d/41_custom and then copy the section
+        from /boot/grub/grub.cfg then paste into 41_custom appending the
+        vga=<...> or video=<...> to the end of the linux /vmlinuz line.
 
     Safe VESA legacy modes:
 

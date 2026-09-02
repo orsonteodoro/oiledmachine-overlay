@@ -140,6 +140,8 @@ _OT_KERNEL_IOSCHED_CONFIG_INSTALL=0 # Variable not const
 _OT_KERNEL_NEEDS_DEBUGFS=0 # Variable not const
 unset _OT_KERNEL_O3_PROVIDER
 declare -A _OT_KERNEL_O3_PROVIDER=()
+_OT_KERNEL_EFIFB="" # Variable not const
+_OT_KERNEL_VESAFB="" # Variable not const
 _OT_KERNEL_PRINK_DISABLED=0 # Variable not const
 _OT_KERNEL_ATH9K=0 # Variable not const
 _OT_KERNEL_IWLMVM=0 # Variable not const
@@ -14138,7 +14140,8 @@ eerror " simplefb - for UEFI/OpenFirmware systems (ca. 2013-present mobos)"
 eerror "   vesafb - for BIOS systems (ca. 1996-2011 mobos)"
 eerror
 eerror "Tip:  A firmware update may be needed for proper UEFI GOP support,"
-eerror "      but vesafb may be used before firmware update."
+eerror "      but vesafb may be used before firmware update, but upgrading the"
+eerror "      firmware carries a risk of bricking the mobo."
 eerror
 eerror "It must be added to the per-profile env file."
 eerror
@@ -14156,7 +14159,8 @@ eerror " simplefb - for UEFI/OpenFirmware systems (ca. 2013-present mobos)"
 eerror "   vesafb - for BIOS systems (ca. 1996-2011 mobos)"
 eerror
 eerror "Tip:  A firmware update may be needed for proper UEFI GOP support,"
-eerror "      but vesafb may be used before firmware update."
+eerror "      but vesafb may be used before firmware update, but upgrading the"
+eerror "      firmware carries a risk of bricking the mobo."
 eerror
 eerror "It must be added to the per-profile env file."
 eerror
@@ -14273,7 +14277,7 @@ eerror "Support only for:  arm, arm64, riscv, x86, x86_64"
 		_framebuffer_validate_hz "${hz}"
 einfo "FB early boot driver mode:  ${fb_early_boot_mode}"
 		#ot-kernel_set_kconfig_kernel_cmdline "video=${fb_early_boot_mode}"
-
+		_OT_KERNEL_EFIFB="video=${fb_early_boot_mode}"
 	elif [[ "${fb_early_boot_driver}" == "simpledrm" ]] ; then
 einfo "FB early boot driver:  simpledrm"
 		if [[ \
@@ -14355,6 +14359,7 @@ eerror "The ebuild default is FB_EARLY_BOOT_MODE=775 for 1280x1024x8."
 eerror
 			die
 		fi
+		_OT_KERNEL_VESAFB="vga=${fb_early_boot_mode}"
 	else
 einfo "FB early boot driver:  ignore"
 	fi
@@ -19807,6 +19812,40 @@ einfo "Removing tcca configs for EOL version ${pv}"
 	done
 }
 
+# @FUNCTION: ot-kernel_postinst_early_boot_framebuffer_bootloader_config
+# @DESCRIPTION:
+# Warn user changes required
+ot-kernel_postinst_early_boot_framebuffer_bootloader_config() {
+	if [[ -n "${_OT_KERNEL_VESAFB}" ]] ; then
+ewarn
+ewarn "vesafb requires you add ${_OT_KERNEL_VESAFB} to the bootloader."
+ewarn
+ewarn "You have two options for grub2:"
+ewarn
+ewarn "1. Add ${_OT_KERNEL_VESAFB} to every kernel by appending it to"
+ewarn "   GRUB_CMDLINE_LINUX in /etc/default/grub (NOT RECOMMENDED)"
+ewarn "2. Create a custom /etc/grub.d/41_custom and copy from the existing"
+ewarn "   section in /boot/grub/grub.cfg and paste into 41_custom with"
+ewarn "   ${_OT_KERNEL_VESAFB} changes to the end of the linux /vmlinuz line."
+ewarn "   changes."
+ewarn
+	fi
+	if [[ -n "${_OT_KERNEL_EFIFB}" ]] ; then
+ewarn
+ewarn "efifb may require you add ${_OT_KERNEL_EFIFB} to the bootloader."
+ewarn
+ewarn "You have two options for grub2:"
+ewarn
+ewarn "1. Add ${_OT_KERNEL_EFIFB} to every kernel by appending it to"
+ewarn "   GRUB_CMDLINE_LINUX in /etc/default/grub (NOT RECOMMENDED)"
+ewarn "2. Create a custom /etc/grub.d/41_custom and copy from the existing"
+ewarn "   section in /boot/grub/grub.cfg and paste into 41_custom with"
+ewarn "   ${_OT_KERNEL_EFIFB} changes to the end of the linux /vmlinuz line."
+ewarn
+	fi
+
+}
+
 # @FUNCTION: ot-kernel_pkg_postinst
 # @DESCRIPTION:
 # Present warnings and avoid collision checks.
@@ -19838,6 +19877,7 @@ ot-kernel_pkg_postinst() {
 	ot-kernel_postinst_experimental_kernel
 	ot-kernel_postinst_wireless_disable_power_management
 	ot-kernel_postinst_warn_external_module_signing_required
+	ot-kernel_postinst_early_boot_framebuffer_bootloader_config
 
 	ot-kernel_postinst_remove_eol_configs_for_tcca
 }
