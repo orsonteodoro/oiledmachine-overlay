@@ -32,10 +32,10 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror test" # untested
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+="
 dev doc test
-ebuild_revision_7
+ebuild_revision_8
 "
 RDEPEND+="
 "
