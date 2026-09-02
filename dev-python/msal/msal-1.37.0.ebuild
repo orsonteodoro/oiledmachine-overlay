@@ -39,7 +39,7 @@ LICENSE="
 "
 # The distro's MIT license template does not contain the all rights reserved clause.
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" broker doc test"
 REQUIRED_USE="
 	doc? (
