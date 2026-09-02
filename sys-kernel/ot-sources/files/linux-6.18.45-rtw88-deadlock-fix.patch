@@ -181,7 +181,7 @@ Fix:
  	mutex_lock(&rtwdev->mutex);
  	if (rtwdev->hw->conf.flags & IEEE80211_CONF_IDLE)
  		rtw_enter_ips(rtwdev);
-@@ -631,6 +642,44 @@ static void rtw_reset_vif_iter(void *dat
+@@ -631,6 +642,47 @@ static void rtw_reset_vif_iter(void *dat
  	rtw_release_macid(rtwdev, rtwvif->mac_id);
  }
  
@@ -190,6 +190,7 @@ Fix:
 +	struct rtw_dev *rtwdev = container_of(work, struct rtw_dev, usb_reset_work);
 +	struct rtw_usb *rtwusb;
 +	struct usb_device *udev;
++	struct usb_interface *intf;
 +	int ret;
 +
 +	if (rtwdev->disconnecting)
@@ -200,6 +201,7 @@ Fix:
 +		return;
 +
 +	udev = rtwusb->udev;
++	intf = rtwusb->intf;
 +
 +	pr_warn("rtw88: -110 storm, attempting USB reset\n");
 +	ret = usb_reset_device(udev);
@@ -210,7 +212,8 @@ Fix:
 +		 * [15699.315850] usb usb2-port5: attempt power cycle
 +		 * but now immediately, not after 60s of descriptor read retries
 +		 */
-+		usb_queue_reset_device(udev);
++		if (intf)
++			usb_queue_reset_device(intf);
 +		/* clear fail - new device will probe, keep it on ehci 2-5 high-speed */
 +		rtwdev->fail = false;
 +		atomic_set(&rtwdev->fail_count, 0);
