@@ -20,7 +20,7 @@ LICENSE="
 	BSD
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" test"
 RDEPEND+="
 	>=dev-python/beautifulsoup4-4.0[${PYTHON_USEDEP}]
