@@ -41,7 +41,7 @@ LICENSE="
 "
 # The SIFT patent, hinted in the LICENSE.txt, has expired in 2020.
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" "
 RDEPEND+="
 	$(python_gen_cond_dep '
