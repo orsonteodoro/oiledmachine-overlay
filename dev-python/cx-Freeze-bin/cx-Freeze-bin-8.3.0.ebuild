@@ -84,10 +84,10 @@ LICENSE="
 "
 # custom - See https://github.com/marcelotduarte/cx_Freeze/blob/7.2.7/LICENSE.md
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+="
 dev doc multiprocess pandas test
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	elibc_glibc? (
