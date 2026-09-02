@@ -39,7 +39,7 @@ RESTRICT="mirror test" # Untested
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 dev doc jpeg jpeg2k lcms png test tiff truetype
-ebuild_revision_2
+ebuild_revision_3
 "
 RDEPEND+="
 	dev-python/defusedxml[${PYTHON_USEDEP}]
