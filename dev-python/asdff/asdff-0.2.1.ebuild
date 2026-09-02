@@ -36,10 +36,10 @@ LICENSE="
 	AGPL-3
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+="
 dev test
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND+="
 	>=dev-python/diffusers-0.19.0[${PYTHON_SINGLE_USEDEP},torch]
