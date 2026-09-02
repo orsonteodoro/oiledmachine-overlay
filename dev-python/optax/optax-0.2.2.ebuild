@@ -35,7 +35,7 @@ LICENSE="
 	Apache-2.0
 "
 KEYWORDS="~amd64"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" doc examples dp-accounting test"
 REQUIRED_USE+="
 	dp-accounting? (
