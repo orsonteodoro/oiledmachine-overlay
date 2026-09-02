@@ -686,7 +686,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 # Upstream enables lto by default
 IUSE+="
 lto test
-ebuild_revision_2
+ebuild_revision_3
 "
 RDEPEND+="
 "
