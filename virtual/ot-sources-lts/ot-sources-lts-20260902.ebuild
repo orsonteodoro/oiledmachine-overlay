@@ -51,7 +51,7 @@ RDEPEND="
 		~sys-kernel/ot-sources-${LINUX_KERNEL_6_18_PV}
 	)
 "
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0/"$(ver_cut "1-2" "${PV}")
 
 pkg_postinst() {
 	einfo "You still need to call \`emerge --depclean\`."
