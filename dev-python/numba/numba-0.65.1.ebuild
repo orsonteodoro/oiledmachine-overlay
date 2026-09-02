@@ -41,11 +41,11 @@ LICENSE="
 	BSD
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 doc clang cuda gcc openmp tbb
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE="
 	^^ (
