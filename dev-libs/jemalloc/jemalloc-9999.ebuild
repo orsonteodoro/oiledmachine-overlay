@@ -44,7 +44,7 @@ inherit autotools cflags-hardened check-compiler-switch flag-o-matic libcxx-slot
 inherit libstdcxx-slot multilib-minimal uopts
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="85599c8b1213ffd410195885663920b463732681" # 160/160 greeen checkmarks
+	FALLBACK_COMMIT="61dc1da395644ac30ea1bcead839689c9367855e"
 	EGIT_BRANCH="dev"
 	EGIT_REPO_URI="https://github.com/jemalloc/jemalloc.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -78,7 +78,7 @@ SOVER="2"
 SLOT="0/${SOVER}"
 IUSE+="
 ${TRAINERS[@]}
-custom-cflags debug lazy-lock prof static-libs stats test xmalloc
+custom-cflags debug -fiber-safe-tls lazy-lock prof static-libs stats test xmalloc
 ebuild_revision_53
 "
 REQUIRED_USE+="
@@ -211,6 +211,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	cflags-hardened_append
 	local myconf=(
 		$(use_enable debug)
+		$(use_enable fiber-safe-tls experimental-fiber-safe-tls)
 		$(use_enable lazy-lock)
 		$(use_enable prof)
 		$(use_enable stats)

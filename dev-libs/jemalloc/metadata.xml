@@ -42,6 +42,10 @@
       If USE pgo or epgo is enabled, it will override and replace the manual hot
       and cold function marking with automatic detection.
     </flag>
+    <flag name="fiber-safe-tls">
+      Use fiber-safe-tls to partially mitigate a race condition vulnerability
+      that leads to heap corruption.  (EXPERIMENTAL)
+    </flag>
     <flag name="pgo">
       Perform 3 step PGO optimization in one emerge.
 
