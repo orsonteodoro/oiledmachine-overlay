@@ -25,7 +25,7 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="mirror"
 RESTRICT="test" # Untested
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" portalocker test"
 RDEPEND+="
 	(
