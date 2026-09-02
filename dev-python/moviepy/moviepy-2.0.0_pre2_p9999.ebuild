@@ -42,7 +42,7 @@ https://github.com/Zulko/moviepy
 "
 LICENSE="MIT"
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+="
 doc imagemagick lint matplotlib opencv pygame scipy scikit test youtube-dl
 "
