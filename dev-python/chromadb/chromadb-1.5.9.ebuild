@@ -1096,12 +1096,12 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 ${PROTOBUF_PYTHON[@]/+}
 dev
-ebuild_revision_13
+ebuild_revision_14
 "
 REQUIRED_USE+="
 	^^ (
