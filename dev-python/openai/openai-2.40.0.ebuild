@@ -29,7 +29,7 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror test" # untested
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+="
 aiohttp datalib dev realtime voice_helpers
 "
