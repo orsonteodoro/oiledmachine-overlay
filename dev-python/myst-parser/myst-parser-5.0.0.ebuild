@@ -35,7 +35,7 @@ LICENSE="
 	MIT
 "
 KEYWORDS="~amd64"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" codestyle doc linkify rtd test test-docutils"
 REQUIRED_USE="
 	doc? (
