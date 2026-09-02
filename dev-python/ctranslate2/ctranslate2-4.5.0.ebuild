@@ -73,12 +73,12 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 # OPENMP_RUNTIME=INTEL iomp is default ON but OPENMP_RUNTIME=COMP is used instead as USE flag default.
 IUSE+="
 +cli +cpu-dispatch -cuda -cudnn -dnnl dev -flash +openmp -tensor-parallel
 +mkl -openblas -profiling +python -ruy test
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE="
 	flash? (
