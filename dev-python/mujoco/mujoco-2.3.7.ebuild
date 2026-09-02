@@ -129,7 +129,7 @@ RESTRICT="
 	test
 "
 SLOT="0"
-IUSE+=" doc +test ebuild_revision_4"
+IUSE+=" doc +test ebuild_revision_5"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
