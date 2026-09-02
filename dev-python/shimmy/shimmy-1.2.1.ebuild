@@ -29,7 +29,7 @@ https://github.com/Farama-Foundation/Shimmy
 "
 LICENSE="MIT"
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" atari bsuite dm-control dm-control-multi-agent doc gym meltingpot openspiel test"
 RDEPEND+="
 	$(python_gen_cond_dep '
