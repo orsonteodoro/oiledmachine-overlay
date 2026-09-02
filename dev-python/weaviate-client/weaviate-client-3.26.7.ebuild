@@ -41,10 +41,10 @@ LICENSE="
 	BSD
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+="
 dev grpc
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	dev? (
