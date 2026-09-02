@@ -37,12 +37,12 @@ LICENSE="
 	MPL-2.0
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+="
 ${LANGS[@]/#/l10n_}
 all cpu cuda codec codec-cuda -cors dev doc notebooks server languages
 
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE="
 	all? (
