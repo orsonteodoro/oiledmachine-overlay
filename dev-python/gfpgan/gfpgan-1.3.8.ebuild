@@ -37,9 +37,9 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+="
-ebuild_revision_3
+ebuild_revision_4
 "
 # Tensorboard based on author-date:2022-09-16 and RELEASE.md
 RDEPEND+="
