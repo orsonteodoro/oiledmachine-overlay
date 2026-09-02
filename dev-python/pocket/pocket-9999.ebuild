@@ -28,7 +28,7 @@ DESCRIPTION="A Python wrapper for the Pocket API"
 HOMEPAGE="https://github.com/tapanpandita/pocket/"
 LICENSE="BSD"
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" test"
 RDEPEND+="
 	dev-python/requests[${PYTHON_USEDEP}]
