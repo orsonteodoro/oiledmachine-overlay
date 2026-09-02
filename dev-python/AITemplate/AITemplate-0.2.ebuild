@@ -65,7 +65,7 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 cuda dev doc rocm
-ebuild_revision_1
+ebuild_revision_2
 "
 # ROCm 6.4 is not version aligned with this release which uses 5.2.3.
 REQUIRED_USE="
