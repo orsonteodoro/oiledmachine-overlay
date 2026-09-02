@@ -24,10 +24,10 @@ DESCRIPTION="A Patience Diff implementation in Python"
 HOMEPAGE="https://github.com/breezy-team/patiencediff"
 LICENSE="GPL-2+"
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+="
 test
-ebuild_revision_3
+ebuild_revision_4
 "
 RDEPEND+="
 "
