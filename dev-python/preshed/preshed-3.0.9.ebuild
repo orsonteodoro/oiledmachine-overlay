@@ -30,7 +30,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 dev
-ebuild_revision_3
+ebuild_revision_4
 "
 RDEPEND+="
 	>=dev-python/cymem-2.0.2[${PYTHON_USEDEP}]
