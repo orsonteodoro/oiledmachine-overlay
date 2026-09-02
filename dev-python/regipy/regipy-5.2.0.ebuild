@@ -35,7 +35,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" cli dev full test"
 RDEPEND+="
 	>=dev-python/construct-2.10.68[${PYTHON_USEDEP}]
