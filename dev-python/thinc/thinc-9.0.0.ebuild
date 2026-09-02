@@ -34,7 +34,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 cuda cuda-autodetect datasets mxnet pytorch tensorflow
-ebuild_revision_4
+ebuild_revision_5
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
