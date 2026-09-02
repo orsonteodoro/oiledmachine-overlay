@@ -143,8 +143,8 @@ RESTRICT="
 	mirror
 	test
 "
-SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" doc +test ebuild_revision_2"
+SLOT="0"
+IUSE+=" doc +test ebuild_revision_3"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
