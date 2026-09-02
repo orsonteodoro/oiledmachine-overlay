@@ -23,7 +23,7 @@ https://github.com/Farama-Foundation/AutoROM
 "
 LICENSE="MIT"
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" accept-rom-license test"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
