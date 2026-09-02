@@ -29,7 +29,7 @@ https://github.com/mgbellemare/Arcade-Learning-Environment
 "
 LICENSE="GPL-2"
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" cibuildwheel test"
 RDEPEND+="
 	$(python_gen_cond_dep '
