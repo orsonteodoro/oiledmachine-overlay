@@ -20,10 +20,10 @@ DESCRIPTION="Fast implementation of bencode"
 HOMEPAGE="https://github.com/breezy-team/fastbencode"
 LICENSE="GPL-2+"
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+="
 test
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
