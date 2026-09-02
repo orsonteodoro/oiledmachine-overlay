@@ -31,7 +31,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" dev doc test"
 RDEPEND+="
 	dev-python/flask[${PYTHON_USEDEP}]
