@@ -27,10 +27,10 @@ https://github.com/deepmind/open_spiel
 "
 LICENSE="Apache-2.0"
 RESTRICT="mirror test" # Not tested
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+="
 doc -eigen -go -jax -julia -libnop -python-misc-deps -torch -rust -tensorflow test
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE="
 	tensorflow? (
