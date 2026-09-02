@@ -454,8 +454,8 @@ UKSM_BASE_URI="https://raw.githubusercontent.com/dolohow/uksm/master/v${KV_MAJOR
 UKSM_FN="uksm-${KV_MAJOR_MINOR}.patch"
 UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
 
-MITIGATION_DATE="Aug 29, 2026" # Advisory date
-MITIGATION_LAST_UPDATE=1787898322 # From `date --date="Fri Aug 28, 2026 08:25:22 +0200" +%s` from changelog for latest tag from either mainline, stable, or longterm
+MITIGATION_DATE="Sep 2, 2026" # Advisory date
+MITIGATION_LAST_UPDATE=1788352401 # From `date --date="Wed Sep 2, 2026 14:33:21 +0200" +%s` from changelog for latest tag from either mainline, stable, or longterm
 MITIGATION_URI="https://lore.kernel.org/linux-cve-announce/"
 VULNERABILITIES_FIXED=(
 # High and critical are noted and only those that are fixed on this release day
