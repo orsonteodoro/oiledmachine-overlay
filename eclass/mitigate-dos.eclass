@@ -112,7 +112,6 @@ is_microarch_selected() {
 }
 
 IUSE+="
-	${ACTIVE_VERSIONS[@]/./_}
 	${CPU_TARGET_X86[@]}
 	auto
 	custom-kernel
@@ -239,9 +238,6 @@ REQUIRED_USE="
 	)
 	cpu_target_x86_siena? (
 		linux-firmware
-	)
-	|| (
-		${ACTIVE_VERSIONS[@]/./_}
 	)
 "
 

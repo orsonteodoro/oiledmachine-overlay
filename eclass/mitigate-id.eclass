@@ -221,7 +221,6 @@ is_microarch_selected() {
 inherit linux-info toolchain-funcs
 
 IUSE+="
-	${ACTIVE_VERSIONS[@]/./_}
 	${CPU_TARGET_ARM[@]}
 	${CPU_TARGET_PPC[@]}
 	${CPU_TARGET_X86[@]}
@@ -436,10 +435,6 @@ REQUIRED_USE="
 	)
 	cpu_target_x86_siena? (
 		linux-firmware
-	)
-
-	|| (
-		${ACTIVE_VERSIONS[@]/./_}
 	)
 "
 
