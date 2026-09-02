@@ -35,7 +35,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+="
 anthropic cerebras_cloud_sdk cohere diskcache doc examples fastapi fireworks-ai
 google-cloud-aiplatform google-generativeai groq jsonref litellm mistralai
