@@ -27,10 +27,10 @@ https://github.com/deepmind/dm_control
 "
 LICENSE="Apache-2.0"
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+="
 hdf5 test
-ebuild_revision_4
+ebuild_revision_5
 "
 RDEPEND+="
 	>=dev-python/absl-py-2.1.0[${PYTHON_USEDEP}]
