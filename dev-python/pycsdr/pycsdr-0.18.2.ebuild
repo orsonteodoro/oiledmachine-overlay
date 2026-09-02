@@ -21,7 +21,7 @@ https://github.com/jketterl/pycsdr/archive/refs/tags/${PV}.tar.gz
 DESCRIPTION="Python bindings for the csdr library"
 HOMEPAGE="https://github.com/jketterl/pycsdr"
 LICENSE="GPL-3+"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" "
 RDEPEND+="
 	>=media-radio/csdr-${PV}:${SLOT}
