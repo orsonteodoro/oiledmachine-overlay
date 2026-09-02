@@ -37,7 +37,7 @@ LICENSE="
 "
 # The Apache-2.0 license template doesn't have all rights reserved.
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" dev doc full test"
 # boolean.py -> boolean-py
 # extractcode-7z -> extractcode_7z
