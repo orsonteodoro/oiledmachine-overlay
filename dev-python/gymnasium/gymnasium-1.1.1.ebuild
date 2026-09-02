@@ -29,10 +29,10 @@ https://github.com/Farama-Foundation/Gymnasium
 "
 LICENSE="MIT"
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+="
 all atari box2d classic-control jax mujoco other pygame pytorch test toy-text
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
