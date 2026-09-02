@@ -26,7 +26,7 @@ LICENSE="
 	GPL-3+
 "
 RESTRICT="mirror test"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" test"
 DEPEND+="
 	>=media-radio/digiham-0.6:${SLOT}
