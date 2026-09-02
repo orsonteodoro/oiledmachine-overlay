@@ -86,8 +86,8 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" -jit ebuild_revision_1"
+SLOT="0"
+IUSE+=" -jit ebuild_revision_2"
 REQUIRED_USE="
 	!jit
 "
