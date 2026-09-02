@@ -31,7 +31,7 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" dev"
 RDEPEND+="
 	>=dev-python/smart-open-5.2.1[${PYTHON_USEDEP}]
