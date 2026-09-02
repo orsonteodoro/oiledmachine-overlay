@@ -26,7 +26,7 @@ LICENSE="
 # MIT - LICENSE, pyproject.toml
 # GPL-3 - setup.py
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" dev"
 #	dev-python/asyncio[${PYTHON_USEDEP}]
 RDEPEND+="
