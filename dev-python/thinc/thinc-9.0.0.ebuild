@@ -31,10 +31,10 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+="
 cuda cuda-autodetect datasets mxnet pytorch tensorflow
-ebuild_revision_3
+ebuild_revision_4
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
