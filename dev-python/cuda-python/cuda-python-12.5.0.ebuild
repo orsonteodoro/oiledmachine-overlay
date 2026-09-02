@@ -25,7 +25,7 @@ LICENSE="
 	NVIDIA-CUDA-Python
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" test"
 RDEPEND+="
 	>=x11-drivers/nvidia-drivers-450.80.02
