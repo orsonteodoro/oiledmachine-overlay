@@ -14246,12 +14246,22 @@ eerror "initcall_blacklist=sysfb_init must be manually removed from CONFIG_CMDLI
 		elif in_iuse "video_cards_nvidia" && ot-kernel_use "video_cards_nvidia" ; then
 			ot-kernel_set_nvidia_drm_command_line
 		fi
+eerror
+eerror "A quick reminder:"
+eerror
+eerror "    efifb - for EFI/UEFI systems (ca. 2012-present mobos)"
+eerror "simpledrm - for UEFI/OpenFirmware systems (ca. 2011-present mobos)"
+eerror " simplefb - for UEFI/OpenFirmware systems (ca. 2013-present mobos)"
+eerror "   vesafb - for BIOS systems with VBE (ca. 1996-2011 mobos)"
+eerror
+eerror "TIP:  A firmware update to UEFI GOP can be used for transition period firmware (VBE->UEFI GOP)."
+eerror "TIP:  For transition period firmware that choose not to update to UEFI GOP, use vesafb instead."
+eerror
 	fi
 
 	# Backends for console frontend
 	if [[ "${fb_early_boot_driver}" == "efifb" ]] ; then
 einfo "FB early boot driver:  efifb"
-ewarn "If motherboard is earlier than 2020 use FB_EARLY_BOOT_DRIVER=vesafb instead."
 
 		if [[ \
 			   "${arch}" == "arm" \
@@ -14329,7 +14339,6 @@ einfo "FB early boot driver:  simplefb"
 
 	elif [[ "${fb_early_boot_driver}" == "vesafb" ]] ; then
 einfo "FB early boot driver:  vesafb"
-ewarn "If motherboard has pure UEFI (ca. 2020) use FB_EARLY_BOOT_DRIVER=efifb or FB_EARLY_BOOT_DRIVER=simpledrm instead."
 
 		ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE"
 		ot-kernel_y_configopt "CONFIG_FB_VESA"
@@ -14340,7 +14349,6 @@ ewarn "If motherboard has pure UEFI (ca. 2020) use FB_EARLY_BOOT_DRIVER=efifb or
 			fb_early_boot_mode=${fb_early_boot_mode:-775} # 1280x1024x8
 			_framebuffer_validate_vga_mode "${fb_early_boot_mode}"
 einfo "FB early boot driver mode:  ${fb_early_boot_mode}"
-ewarn "You must add vga=${fb_early_boot_mode} to the kernel command line in the bootloader configuration."
 			#ot-kernel_set_kconfig_kernel_cmdline "vga=${fb_early_boot_mode}" # Doesn't work
 		else
 eerror
@@ -14362,8 +14370,16 @@ eerror
 		_OT_KERNEL_VESAFB="vga=${fb_early_boot_mode}"
 	else
 einfo "FB early boot driver:  ignore"
+ewarn
+ewarn "No changes were made for vga=<...> or video=<...> in CONFIG_CMDLINE, but"
+ewarn "you may need to manually edit or remove the vga/video argument in"
+ewarn "CONFIG_CMDLINE to fix early boot framebuffer changes in /etc/kernels."
+ewarn
 	fi
-ewarn "It is required to have a rescue usb stick or disk to fix early boot framebuffer driver issues."
+ewarn
+ewarn "It is required to have a rescue usb stick or disk to fix early boot"
+ewarn "framebuffer driver issues."
+ewarn
 }
 
 # @FUNCTION: ot-kernel_amdgpu_fixes
