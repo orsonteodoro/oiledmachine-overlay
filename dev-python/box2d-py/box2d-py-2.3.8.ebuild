@@ -23,7 +23,7 @@ https://github.com/openai/box2d-py
 "
 LICENSE="ZLIB"
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" examples test"
 RDEPEND+="
 	${PYTHON_DEPS}
