@@ -22,7 +22,7 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror test" # no tests
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" "
 RDEPEND+="
 "
