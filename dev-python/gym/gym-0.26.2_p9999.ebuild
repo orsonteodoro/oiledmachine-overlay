@@ -33,7 +33,7 @@ https://github.com/openai/gym
 "
 LICENSE="MIT"
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" atari accept-rom-license box2d classic-control mujoco pygame toy_text test"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
