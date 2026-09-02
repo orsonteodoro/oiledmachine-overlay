@@ -34,7 +34,7 @@ LICENSE="
 	LGPL-3
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" dev msg_parse"
 RDEPEND+="
 	>=app-forensics/oletools-0.56[${PYTHON_USEDEP}]
