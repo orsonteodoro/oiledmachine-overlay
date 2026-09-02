@@ -97,7 +97,7 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 dev doc test types
-ebuild_revision_2
+ebuild_revision_3
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
