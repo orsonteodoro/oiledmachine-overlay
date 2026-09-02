@@ -25,7 +25,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror test" # untested
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" dev"
 RDEPEND+="
 	>=dev-python/confection-0.0.4[${PYTHON_USEDEP}]
