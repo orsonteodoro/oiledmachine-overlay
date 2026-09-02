@@ -46,7 +46,7 @@ LICENSE="
 "
 # custom - shape_predictor_68_face_landmarks.dat - See https://github.com/davisking/dlib-models?tab=readme-ov-file#shape_predictor_68_face_landmarksdatbz2
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" ffmpeg gstreamer +jpeg +model +png stasm"
 # opencv[ffmpeg] or opencv[gstreamer] enables mjpeg encoding for saving video morphing animation.
 REQUIRED_USE="
