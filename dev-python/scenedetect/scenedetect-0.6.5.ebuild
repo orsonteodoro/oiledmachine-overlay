@@ -38,7 +38,7 @@ LICENSE="
 	BSD
 "
 RESTRICT="mirror test" # Untested
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" dev moviepy opencv pyav test"
 RDEPEND+="
 	$(python_gen_cond_dep '
