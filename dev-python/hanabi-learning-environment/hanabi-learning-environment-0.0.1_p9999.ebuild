@@ -30,7 +30,7 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror test"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" examples"
 RDEPEND+="
 	dev-python/cffi[${PYTHON_USEDEP}]
