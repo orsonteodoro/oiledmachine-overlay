@@ -26,7 +26,7 @@ DESCRIPTION="A Python binding for the StackExchange API"
 HOMEPAGE="https://github.com/lucjon/Py-StackExchange"
 LICENSE="BSD"
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 RDEPEND+="
 	>=dev-python/six-1.8.0[${PYTHON_USEDEP}]
 "
