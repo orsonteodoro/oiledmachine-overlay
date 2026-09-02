@@ -39,7 +39,7 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror test" # Untested
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" dev doc test"
 # tensorboard based on author-date:2022-08-29 and RELEASE.md
 RDEPEND+="
