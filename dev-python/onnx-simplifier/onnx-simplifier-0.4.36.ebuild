@@ -206,7 +206,7 @@ LICENSE="
 # The distro's Apache-2.0 license template does not contain all rights reserved.
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="mirror test" # Untested
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+=" test"
 RDEPEND+="
 	!~dev-python/rich-12.1.0
