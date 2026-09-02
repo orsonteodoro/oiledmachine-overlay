@@ -41,7 +41,7 @@ RESTRICT="mirror test"
 SLOT="0"
 IUSE+="
 tensorflow test
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 "
