@@ -27,10 +27,10 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0"
 IUSE+="
 dev
-ebuild_revision_2
+ebuild_revision_3
 "
 RDEPEND+="
 	>=dev-python/cymem-2.0.2[${PYTHON_USEDEP}]
