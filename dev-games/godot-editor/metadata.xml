@@ -289,8 +289,8 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <flag name="angle">
       Add the ANGLE translation rendering driver from OpenGL ES 3.0 to
       Direct3D 11 (Windows) or Metal (macOS) allowing to render using those
-      backends instead of Desktop OpenGL where the OpenGL driver is
-      possibly not complete, broken, or underoptimized for the backend.
+      backends instead of desktop OpenGL which in some cases could be
+      possibly not complete, broken, or underoptimized.
     </angle>
     <flag name="asan">
       Enables ASan for unaccelerated detection of memory corruption, pointer
