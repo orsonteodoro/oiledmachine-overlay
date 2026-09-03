@@ -21,7 +21,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror test" # Untested
-SLOT="0/"$(ver_cut "1-2" "${PV}")
+SLOT=0
 IUSE+="
 anthropic aws azure-ai baseten community deepseek fireworks google-genai
 google-vertexai groq huggingface lint mistralai ollama openai perplexity test
