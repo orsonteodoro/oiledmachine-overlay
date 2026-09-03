@@ -35,7 +35,7 @@ LICENSE="
 	BSD-2
 "
 RESTRICT="mirror"
-SLOT=0
+SLOT="0"
 IUSE+=" "
 RDEPEND+="
 	dev-python/pyusb[${PYTHON_USEDEP}]
