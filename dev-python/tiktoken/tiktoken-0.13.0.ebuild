@@ -70,8 +70,8 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror test" # Untested
-SLOT="0/"$(ver_cut "1-2" "${PV}")
-IUSE+=" blobfile dev ebuild_revision_4"
+SLOT=0
+IUSE+=" blobfile dev ebuild_revision_5"
 RDEPEND+="
 	>=dev-python/regex-2022.1.18[${PYTHON_USEDEP}]
 	>=dev-python/requests-2.26.0[${PYTHON_USEDEP}]
