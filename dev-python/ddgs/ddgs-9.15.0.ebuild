@@ -40,7 +40,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT="0/"$(ver_cut "1-2" "${PV}")
+SLOT=0
 IUSE+=" api dev mcp"
 RDEPEND+="
 	>=dev-python/click-8.1.8[${PYTHON_USEDEP}]
