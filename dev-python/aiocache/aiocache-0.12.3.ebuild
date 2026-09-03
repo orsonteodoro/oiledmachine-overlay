@@ -35,7 +35,7 @@ LICENSE="
 	BSD
 "
 RESTRICT="mirror"
-SLOT="0
+SLOT="0"
 IUSE+=" dev memcached msgpack redis test"
 RDEPEND+="
 	memcached? (
