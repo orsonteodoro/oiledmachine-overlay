@@ -43,7 +43,7 @@ LICENSE="
 	)
 "
 RESTRICT="mirror test" # untested
-SLOT=0
+SLOT="0"
 IUSE+="
 azure_auth azure_config oci_auth oci_config test
 "
