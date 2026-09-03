@@ -125,6 +125,8 @@ fi
 
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} ) su? ( pam )"
 RESTRICT="!test? ( test )"
+PATCHES=(
+)
 
 pkg_pretend() {
 	if use su && ! use suid ; then
@@ -268,6 +270,13 @@ python_configure() {
 multilib_src_configure() {
 	chkl_check_many_timestamps
 	cflags-hardened_append
+
+	if tc-is-gcc && ver_test $(gcc-major-version) "-le" "11" ; then
+eerror "Unsupported compiler"
+eerror "GCC 11 or earlier is not supported (header conflicts with modern glibc/kernel headers)."
+eerror "Please switch to GCC 12 or newer (preferably 13+) with: gcc-config ..."
+		die
+	fi
 
 	local emesonargs=(
 		-Dbuild-python=disabled
