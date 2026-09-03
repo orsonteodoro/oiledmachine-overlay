@@ -35,7 +35,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT=0
+SLOT="0"
 IUSE+=" dev"
 RDEPEND+="
 	>=dev-python/typing-extensions-4.10[${PYTHON_USEDEP}]
