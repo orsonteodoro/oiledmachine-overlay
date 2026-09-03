@@ -74,7 +74,7 @@ LICENSE="
 	)
 "
 RESTRICT="mirror"
-SLOT="0/"$(ver_cut "1-2" "${PV}")
+SLOT=0
 # lto is upstream default
 IUSE+=" dev doc lto numpy"
 RDEPEND+="
