@@ -35,7 +35,7 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror"
-SLOT=0
+SLOT="0"
 IUSE+=" check cover doc enabler test type"
 RDEPEND+="
 	$(python_gen_cond_dep '
