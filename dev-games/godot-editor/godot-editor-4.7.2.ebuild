@@ -1326,7 +1326,7 @@ einfo "Setting up Linux editor environment"
 		"Godot ${SLOT}" \
 		"/usr/share/pixmaps/godot${SLOT}.png" \
 		"Development;IDE"
-	newicon "icon.png" "godot${SLOT}.png"
+	newicon "misc/logo/icon.png" "godot${SLOT}.png"
 }
 
 _install_template_datafiles() {
