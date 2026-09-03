@@ -356,7 +356,7 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror"
-SLOT=0
+SLOT="0"
 # Upstream uses lto
 IUSE+=" dev doc lto test"
 REQUIRED_USE="
