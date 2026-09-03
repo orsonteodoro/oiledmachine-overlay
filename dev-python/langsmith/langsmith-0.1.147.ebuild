@@ -23,7 +23,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT=0
+SLOT="0"
 IUSE+="
 dev langsmith-pyo3 lint test vcr
 "

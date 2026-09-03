@@ -23,7 +23,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT=0
+SLOT="0"
 IUSE+="
 claude-agent-sdk dev google-adk langsmith_pyo3 lint openai-agents
 otel pytest strands-agents test vcr
