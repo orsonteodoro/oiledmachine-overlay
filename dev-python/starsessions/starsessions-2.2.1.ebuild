@@ -35,7 +35,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT="0/"$(ver_cut "1-2" "${PV}")
+SLOT=0
 IUSE+=" dev redis"
 RDEPEND+="
 	>=dev-python/itsdangerous-2[${PYTHON_USEDEP}]
