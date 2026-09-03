@@ -1,0 +1,50 @@
+--- a/platform/linuxbsd/godot_linuxbsd.cpp.orig	2026-03-18 09:04:43.000000000 -0700
++++ b/platform/linuxbsd/godot_linuxbsd.cpp	2026-09-03 10:41:05.995880840 -0700
+@@ -66,6 +66,7 @@ extern "C" const char *pck_section_dummy
+ #endif
+ 
+ int main(int argc, char *argv[]) {
++#if defined(__SSE4_2__)
+ #if defined(__x86_64) || defined(__x86_64__)
+ 	int cpuinfo[4];
+ 	__cpuid(cpuinfo, 0x01);
+@@ -86,6 +87,7 @@ int main(int argc, char *argv[]) {
+ 		abort();
+ 	}
+ #endif
++#endif
+ 
+ #if defined(SANITIZERS_ENABLED)
+ 	// Note: Set stack size to be at least 30 MB (vs 8 MB default) to avoid overflow, address sanitizer can increase stack usage up to 3 times.
+--- a/platform/windows/cpu_feature_validation.c.orig	2026-03-18 09:04:43.000000000 -0700
++++ b/platform/windows/cpu_feature_validation.c	2026-09-03 10:41:05.996109304 -0700
+@@ -32,6 +32,7 @@
+ #ifdef _MSC_VER
+ #include <intrin.h> // For builtin __cpuid.
+ #else
++#if defined(__SSE4_2__)
+ void __cpuid(int *r_cpuinfo, int p_info) {
+ 	// Note: Some compilers have a buggy `__cpuid` intrinsic, using inline assembly (based on LLVM-20 implementation) instead.
+ 	__asm__ __volatile__(
+@@ -42,6 +43,7 @@ void __cpuid(int *r_cpuinfo, int p_info)
+ 			: "0"(p_info));
+ }
+ #endif
++#endif
+ 
+ #ifndef PF_SSE4_2_INSTRUCTIONS_AVAILABLE
+ #define PF_SSE4_2_INSTRUCTIONS_AVAILABLE 38
+@@ -58,6 +60,7 @@ extern int WINAPI ShimMainCRTStartup() _
+ #endif
+ 
+ extern int WINAPI ShimMainCRTStartup() {
++#if defined(__SSE4_2__)
+ 	BOOL win_sse42_supported = FALSE;
+ 	BOOL cpuid_sse42_supported = FALSE;
+ 
+@@ -77,4 +80,5 @@ extern int WINAPI ShimMainCRTStartup() {
+ 		MessageBoxW(NULL, L"A CPU with SSE4.2 instruction set support is required.", L"Godot Engine", MB_OK | MB_ICONEXCLAMATION | MB_TASKMODAL);
+ 		return -1;
+ 	}
++#endif
+ }

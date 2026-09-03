@@ -669,6 +669,7 @@ PATCHES=(
 	"${FILESDIR}/godot-4.5-set-ccache-dir.patch"
 	"${FILESDIR}/godot-4.5-sanitizers.patch"
 	"${FILESDIR}/godot-4.5-optionalize-x86-flags.patch"
+	"${FILESDIR}/godot-4.5.2-optionalize-cpu-flags.patch"
 )
 
 check_speech_dispatcher() {
