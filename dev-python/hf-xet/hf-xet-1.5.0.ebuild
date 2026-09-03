@@ -682,11 +682,11 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror"
-SLOT=0
+SLOT="0"
 # Upstream enables lto by default
 IUSE+="
 lto test
-ebuild_revision_5
+ebuild_revision_6
 "
 RDEPEND+="
 "
