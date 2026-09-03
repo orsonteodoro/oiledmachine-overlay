@@ -30,10 +30,10 @@ LICENSE="
 	BSD
 "
 RESTRICT="mirror"
-SLOT=0
+SLOT="0"
 IUSE+="
 test
-ebuild_revision_6
+ebuild_revision_7
 "
 RDEPEND+="
 	virtual/numpy[${PYTHON_USEDEP}]
