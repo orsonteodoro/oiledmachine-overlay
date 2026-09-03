@@ -71,7 +71,7 @@ LICENSE="
 "
 RESTRICT="mirror test" # Untested
 SLOT="0/"$(ver_cut "1-2" "${PV}")
-IUSE+=" blobfile dev ebuild_revision_3"
+IUSE+=" blobfile dev ebuild_revision_4"
 RDEPEND+="
 	>=dev-python/regex-2022.1.18[${PYTHON_USEDEP}]
 	>=dev-python/requests-2.26.0[${PYTHON_USEDEP}]
