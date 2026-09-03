@@ -36,10 +36,10 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT=0
+SLOT="0"
 IUSE+="
 dev lint test
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	dev? (
