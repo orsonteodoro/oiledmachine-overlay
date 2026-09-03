@@ -34,7 +34,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT=0
+SLOT="0"
 IUSE+="
 dev lint test test-integration typing
 "
