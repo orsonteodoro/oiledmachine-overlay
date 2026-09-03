@@ -22,7 +22,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT="0/"$(ver_cut "1-2" "${PV}")
+SLOT=0
 IUSE+="
 anthropic aws azure-ai cohere community deepseek dev fireworks lint google-genai
 google-vertexai groq huggingface mistralai ollama openai perplexity test
