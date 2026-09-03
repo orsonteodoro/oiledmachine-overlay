@@ -62,10 +62,10 @@ LICENSE="
 # MIT all-rights-reserved - composable_kernel
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="mirror"
-SLOT=0
+SLOT="0"
 IUSE+="
 cuda dev doc rocm
-ebuild_revision_4
+ebuild_revision_5
 "
 # ROCm 6.4 is not version aligned with this release which uses 5.2.3.
 REQUIRED_USE="
