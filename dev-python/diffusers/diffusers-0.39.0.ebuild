@@ -41,11 +41,11 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror test" # Untested
-SLOT=0
+SLOT="0"
 IUSE+="
 bitsandbytes dev doc flashpack flax gguf nvidia_modelopt optimum_quanto orphans
 quality test torch torchao training
-ebuild_revision_10
+ebuild_revision_11
 "
 REQUIRED_USE="
 	dev? (
