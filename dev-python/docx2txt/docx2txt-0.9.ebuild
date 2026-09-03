@@ -37,7 +37,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT=0
+SLOT="0"
 IUSE+=" "
 RDEPEND+="
 "
