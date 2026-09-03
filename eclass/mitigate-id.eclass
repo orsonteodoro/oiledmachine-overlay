@@ -641,7 +641,8 @@ _seq()
 }
 
 gen_render_kernels_list_v2_iuse() {
-	local acceptable_list=""
+	local desc_list=""
+	local iuse_list=""
 	local eol_list=""
 	local o
 	local av
@@ -704,7 +705,6 @@ eerror
 		)
 	fi
 
-	local desc_list=""
 	# 7.2.3
 	for pv in "${MULTISLOT_LATEST_KERNEL_RELEASE[@]}" ; do
 		[[ "${pv}" =~ "rc" ]] && continue
@@ -714,7 +714,7 @@ eerror
 		for x in "${FLAVORS_POINT_RELEASE[@]}" ; do
 			local pn="${x#*/}"
 			iuse_list+="
-				kernel_id_${pn}_${slot}
+				kernel_targets_${pn}_${slot}
 			"
 			desc_list+="
 				${pn}_${slot} - Support the ${pn} ${slot//_/.} series
@@ -731,7 +731,7 @@ eerror
 		for x in "${FLAVORS_POST_3C_RELEASE[@]}" ; do
 			local pn="${x#*/}"
 			iuse_list+="
-				kernel_id_${pn}_${slot}
+				kernel_targets_${pn}_${slot}
 			"
 			desc_list+="
 				${pn}_${slot} - Support the ${pn} ${slot//_/.} series
@@ -748,7 +748,7 @@ eerror
 		for x in "${FLAVORS_POST_2C_RELEASE[@]}" ; do
 			local pn="${x#*/}"
 			iuse_list+="
-				kernel_id_${pn}_${slot}
+				kernel_targets_${pn}_${slot}
 			"
 			desc_list+="
 				${pn}_${slot} - Support the ${pn} ${slot//_/.} series
@@ -765,7 +765,7 @@ eerror
 		for x in "${FLAVORS_RC[@]}" ; do
 			local pn="${x#*/}"
 			iuse_list+="
-				kernel_id_${pn}_rc
+				kernel_targets_${pn}_rc
 			"
 			desc_list+="
 				${pn}_rc - Support the ${pn} ${slot//_/.} release candidate series
@@ -783,7 +783,7 @@ eerror
 		for x in "${FLAVORS_LIVE_9999[@]}" ; do
 			local pn="${x#*/}"
 			iuse_list+="
-				kernel_id_${pn}_${slot}_live
+				kernel_targets_${pn}_${slot}_live
 			"
 			desc_list+="
 				${pn}_${slot}_live - Support the ${pn} ${slot//_/.} live LTS series
@@ -798,7 +798,7 @@ eerror
 		slot="${slot/./_}"
 		local pn="${x#*/}"
 		iuse_list+="
-			kernel_id_${pn}_live
+			kernel_targets_${pn}_live
 		"
 		desc_list+="
 			${pn}_live - Support the ${pn} live series
@@ -809,12 +809,11 @@ eerror
 	o="
 		${iuse_list}
 	"
-	#echo "${o}"
+	echo "${o}"
 #einfo "IUSE list:"
 #einfo "${o}"
-einfo "desc list:"
-einfo "${desc_list}"
-die
+#einfo "desc list:"
+#einfo "${desc_list}"
 }
 IUSE_KERNELS=( $(gen_render_kernels_list_v2_iuse) )
 IUSE+="
@@ -952,7 +951,7 @@ eerror
 		for x in "${FLAVORS_POINT_RELEASE[@]}" ; do
 			local pn="${x#*/}"
 			acceptable_list+="
-				kernel_id_${pn}_${slot}? (
+				kernel_targets_${pn}_${slot}? (
 					~${x}-${pv}
 				)
 			"
@@ -968,7 +967,7 @@ eerror
 		for x in "${FLAVORS_POST_3C_RELEASE[@]}" ; do
 			local pn="${x#*/}"
 			acceptable_list+="
-				kernel_id_${pn}_${slot}? (
+				kernel_targets_${pn}_${slot}? (
 					=${x}-${pv}_p*
 				)
 			"
@@ -984,7 +983,7 @@ eerror
 		for x in "${FLAVORS_POST_2C_RELEASE[@]}" ; do
 			local pn="${x#*/}"
 			acceptable_list+="
-				kernel_id_${pn}_${slot}? (
+				kernel_targets_${pn}_${slot}? (
 					=${x}-${av}_p*
 				)
 			"
@@ -1000,7 +999,7 @@ eerror
 		for x in "${FLAVORS_RC[@]}" ; do
 			local pn="${x#*/}"
 			acceptable_list+="
-				kernel_id_${pn}_rc? (
+				kernel_targets_${pn}_rc? (
 					~${x}-${pv}
 				)
 			"
@@ -1017,7 +1016,7 @@ eerror
 		for x in "${FLAVORS_LIVE_9999[@]}" ; do
 			local pn="${x#*/}"
 			acceptable_list+="
-				kernel_id_${pn}_${slot}_live? (
+				kernel_targets_${pn}_${slot}_live? (
 					=${x}-${av}.9999
 				)
 			"
@@ -1031,7 +1030,7 @@ eerror
 		slot="${slot/./_}"
 		local pn="${x#*/}"
 		acceptable_list+="
-			kernel_id_${pn}_live? (
+			kernel_targets_${pn}_live? (
 				=${x}-9999
 			)
 		"

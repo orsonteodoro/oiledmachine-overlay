@@ -119,7 +119,7 @@ IUSE+="
 	intel-microcode
 	linux-firmware
 "
-REQUIRED_USE="
+REQUIRED_USE+="
 	cpu_target_x86_ice_lake? (
 		intel-microcode
 	)
@@ -445,7 +445,7 @@ _seq()
 }
 
 gen_render_kernels_list_v2_iuse() {
-	local acceptable_list=""
+	local iuse_list=""
 	local eol_list=""
 	local o
 	local av
@@ -517,7 +517,7 @@ eerror
 		for x in "${FLAVORS_POINT_RELEASE[@]}" ; do
 			local pn="${x#*/}"
 			iuse_list+="
-				kernel_id_${pn}_${slot}
+				kernel_targets_${pn}_${slot}
 			"
 		done
 	done
@@ -531,7 +531,7 @@ eerror
 		for x in "${FLAVORS_POST_3C_RELEASE[@]}" ; do
 			local pn="${x#*/}"
 			iuse_list+="
-				kernel_id_${pn}_${slot}
+				kernel_targets_${pn}_${slot}
 			"
 		done
 	done
@@ -545,7 +545,7 @@ eerror
 		for x in "${FLAVORS_POST_2C_RELEASE[@]}" ; do
 			local pn="${x#*/}"
 			iuse_list+="
-				kernel_id_${pn}_${slot}
+				kernel_targets_${pn}_${slot}
 			"
 		done
 	done
@@ -559,7 +559,7 @@ eerror
 		for x in "${FLAVORS_RC[@]}" ; do
 			local pn="${x#*/}"
 			iuse_list+="
-				kernel_id_${pn}_rc
+				kernel_targets_${pn}_rc
 			"
 		done
 	done
@@ -574,7 +574,7 @@ eerror
 		for x in "${FLAVORS_LIVE_9999[@]}" ; do
 			local pn="${x#*/}"
 			iuse_list+="
-				kernel_id_${pn}_${slot}_live
+				kernel_targets_${pn}_${slot}_live
 			"
 		done
 	done
@@ -586,7 +586,7 @@ eerror
 		slot="${slot/./_}"
 		local pn="${x#*/}"
 		iuse_list+="
-			kernel_id_${pn}_live
+			kernel_targets_${pn}_live
 		"
 	done
 
@@ -734,7 +734,7 @@ eerror
 		for x in "${FLAVORS_POINT_RELEASE[@]}" ; do
 			local pn="${x#*/}"
 			acceptable_list+="
-				kernel_id_${pn}_${slot}? (
+				kernel_targets_${pn}_${slot}? (
 					~${x}-${pv}
 				)
 			"
@@ -750,7 +750,7 @@ eerror
 		for x in "${FLAVORS_POST_3C_RELEASE[@]}" ; do
 			local pn="${x#*/}"
 			acceptable_list+="
-				kernel_id_${pn}_${slot}? (
+				kernel_targets_${pn}_${slot}? (
 					=${x}-${pv}_p*
 				)
 			"
@@ -766,7 +766,7 @@ eerror
 		for x in "${FLAVORS_POST_2C_RELEASE[@]}" ; do
 			local pn="${x#*/}"
 			acceptable_list+="
-				kernel_id_${pn}_${slot}? (
+				kernel_targets_${pn}_${slot}? (
 					=${x}-${av}_p*
 				)
 			"
@@ -782,7 +782,7 @@ eerror
 		for x in "${FLAVORS_RC[@]}" ; do
 			local pn="${x#*/}"
 			acceptable_list+="
-				kernel_id_${pn}_rc? (
+				kernel_targets_${pn}_rc? (
 					~${x}-${pv}
 				)
 			"
@@ -799,7 +799,7 @@ eerror
 		for x in "${FLAVORS_LIVE_9999[@]}" ; do
 			local pn="${x#*/}"
 			acceptable_list+="
-				kernel_id_${pn}_${slot}_live? (
+				kernel_targets_${pn}_${slot}_live? (
 					=${x}-${av}.9999
 				)
 			"
@@ -813,7 +813,7 @@ eerror
 		slot="${slot/./_}"
 		local pn="${x#*/}"
 		acceptable_list+="
-			kernel_id_${pn}_live? (
+			kernel_targets_${pn}_live? (
 				=${x}-9999
 			)
 		"
