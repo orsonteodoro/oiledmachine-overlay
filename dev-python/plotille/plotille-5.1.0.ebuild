@@ -40,7 +40,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror test" # Not tested
-SLOT=0
+SLOT="0"
 IUSE+=" dev"
 REQUIRED_USE="
 	dev? (
