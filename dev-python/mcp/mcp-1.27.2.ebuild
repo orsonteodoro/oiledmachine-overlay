@@ -38,7 +38,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT="0/"$(ver_cut "1-2" "${PV}")
+SLOT=0
 IUSE+=" cli dev doc rich ws"
 RDEPEND+="
 	>=dev-python/pydantic-2.11.0[${PYTHON_USEDEP}]
