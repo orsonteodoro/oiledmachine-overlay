@@ -38,10 +38,10 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror"
-SLOT=0
+SLOT="0"
 IUSE+="
 +keras2
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIREMENTS_RDEPEND="
 	$(python_gen_cond_dep '
