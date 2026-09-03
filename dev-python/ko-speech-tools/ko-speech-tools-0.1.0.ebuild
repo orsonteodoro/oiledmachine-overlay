@@ -34,7 +34,7 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror"
-SLOT=0
+SLOT="0"
 IUSE+=" dev g2p"
 RDEPEND+="
 	dev-python/dek[${PYTHON_USEDEP}]
