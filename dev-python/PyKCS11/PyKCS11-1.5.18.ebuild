@@ -37,10 +37,10 @@ LICENSE="
 	GPL-2+
 "
 RESTRICT="mirror"
-SLOT=0
+SLOT="0"
 IUSE+="
 dev
-ebuild_revision_4
+ebuild_revision_5
 "
 RDEPEND+="
 "
