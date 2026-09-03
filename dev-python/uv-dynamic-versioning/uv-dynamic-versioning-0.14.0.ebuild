@@ -36,7 +36,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT=0
+SLOT="0"
 IUSE+=" dev"
 RDEPEND+="
 	$(cro dev-python/dunamai 1.26 '[${PYTHON_USEDEP}]')
