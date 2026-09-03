@@ -35,7 +35,7 @@ LICENSE="
 	BSD
 "
 RESTRICT="mirror"
-SLOT=0
+SLOT="0"
 IUSE+="
 brotli chardet cli doc http2 pypi socks test zstd
 "
