@@ -367,14 +367,14 @@ LICENSE="
 	)
 "
 KEYWORDS="~amd64 ~arm64 ~ppc64"
-SLOT="0/"$(ver_cut "1-2" "${PV}")
+SLOT=0
 IUSE+="
 ${ROCM_IUSE}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${CPU_FLAGS_X86_64[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang cpu cuda debug rocm rocm_7_2
-ebuild_revision_35
+ebuild_revision_36
 "
 # We don't add tpu because licensing issue with libtpu_nightly.
 
