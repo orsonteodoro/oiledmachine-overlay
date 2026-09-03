@@ -74,7 +74,7 @@ LICENSE="
 	)
 "
 RESTRICT="mirror"
-SLOT=0
+SLOT="0"
 # lto is upstream default
 IUSE+=" dev doc lto numpy"
 RDEPEND+="
