@@ -18,6 +18,8 @@
 
     Scripting language compatibility:
 
+    4.7:  GDScript, C#, C++, Go, JavaScript, Rust, TypeScript
+    4.6:  GDScript, C#, C++, Go, JavaScript, Rust, TypeScript
     4.5:  GDScript, C#, C++, Go, JavaScript, Rust, TypeScript
     4.4:  GDScript, C#, C++, JavaScript, Nim, Odin, Rust, TypeScript
     4.3:  GDScript, C#, C++, Nim, Odin, Orchestrator, Rust, Swift
@@ -256,6 +258,8 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <changelog>https://github.com/godotengine/godot/blob/master/CHANGELOG.md</changelog>
     <changelog>https://godotengine.github.io/godot-interactive-changelog/</changelog>
     <doc lang="en">https://docs.godotengine.org/en/stable/</doc>
+    <doc lang="en">https://docs.godotengine.org/en/4.7/</doc>
+    <doc lang="en">https://docs.godotengine.org/en/4.6/</doc>
     <doc lang="en">https://docs.godotengine.org/en/4.5/</doc>
     <doc lang="en">https://docs.godotengine.org/en/4.3</doc>
     <doc lang="en">https://docs.godotengine.org/en/3.6</doc>
@@ -272,6 +276,8 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <doc lang="ru">https://docs.godotengine.org/ru/latest/</doc>
     <doc lang="uk">https://docs.godotengine.org/uk/latest/</doc>
     <doc lang="zh_CN">https://docs.godotengine.org/zh_CN/latest/</doc>
+    <doc lang="en">https://docs.godotengine.org/en/4.7/classes/index.html</doc>
+    <doc lang="en">https://docs.godotengine.org/en/4.6/classes/index.html</doc>
     <doc lang="en">https://docs.godotengine.org/en/4.5/classes/index.html</doc>
     <doc lang="en">https://docs.godotengine.org/en/4.4/classes/index.html</doc>
     <doc lang="en">https://docs.godotengine.org/en/4.3/classes/index.html</doc>
@@ -280,6 +286,10 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <remote-id type="github">godotengine/godot</remote-id>
   </upstream>
   <use>
+    <flag name="angle">
+      Add the ANGLE translation rendering driver from OpenGL ES 3.0 to
+      DirectX, Metal, or Vulkan.
+    </angle>
     <flag name="asan">
       Enables ASan for unaccelerated detection of memory corruption, pointer
       corruption, heap overflow, stack overflow, out-of-bounds, double free, use
@@ -770,6 +780,9 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <flag name="visual-script">
       Add support for the VisualScript visual programming language.
     </flag>
+    <flag name="visual-shader">
+      Add visual shader shader support.
+    </flag>
     <flag name="vorbis">
       Enables support for the Vorbis audio codec.
     </flag>
@@ -806,6 +819,12 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       For compatibility with 4.4.x projects, C#, C++, JavaScript, Nim, Odin, Rust, TypeScript.
     </slot>
     <slot name="4.5">
+      For compatibility with 4.5.x projects, C#, C++, Go, JavaScript, Rust, TypeScript.
+    </slot>
+    <slot name="4.6">
+      For compatibility with 4.5.x projects, C#, C++, Go, JavaScript, Rust, TypeScript.
+    </slot>
+    <slot name="4.7">
       For compatibility with 4.5.x projects, C#, C++, Go, JavaScript, Rust, TypeScript.
     </slot>
   </slots>

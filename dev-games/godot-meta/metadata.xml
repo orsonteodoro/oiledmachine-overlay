@@ -14,6 +14,8 @@
     <doc lang="en">https://docs.godotengine.org/en/4.3/</doc>
     <doc lang="en">https://docs.godotengine.org/en/4.4/</doc>
     <doc lang="en">https://docs.godotengine.org/en/4.5/</doc>
+    <doc lang="en">https://docs.godotengine.org/en/4.6/</doc>
+    <doc lang="en">https://docs.godotengine.org/en/4.7/</doc>
     <doc lang="de">https://docs.godotengine.org/de/latest/</doc>
     <doc lang="es">https://docs.godotengine.org/es/latest/</doc>
     <doc lang="fi">https://docs.godotengine.org/fi/latest/</doc>
@@ -27,6 +29,8 @@
     <doc lang="ru">https://docs.godotengine.org/ru/latest/</doc>
     <doc lang="uk">https://docs.godotengine.org/uk/latest/</doc>
     <doc lang="zh_CN">https://docs.godotengine.org/zh_CN/latest/</doc>
+    <doc lang="en">https://docs.godotengine.org/en/4.7/classes/index.html</doc>
+    <doc lang="en">https://docs.godotengine.org/en/4.6/classes/index.html</doc>
     <doc lang="en">https://docs.godotengine.org/en/4.5/classes/index.html</doc>
     <doc lang="en">https://docs.godotengine.org/en/4.4/classes/index.html</doc>
     <doc lang="en">https://docs.godotengine.org/en/4.3/classes/index.html</doc>
@@ -63,6 +67,12 @@
     </slot>
     <slot name="4.5">
       For compatibility with 4.5.x projects, C#, C++, Go, JavaScript, Rust, TypeScript.
+    </slot>
+    <slot name="4.6">
+      For compatibility with 4.6.x projects, C#, C++, Go, JavaScript, Rust, TypeScript.
+    </slot>
+    <slot name="4.7">
+      For compatibility with 4.7.x projects, C#, C++, Go, JavaScript, Rust, TypeScript.
     </slot>
   </slots>
 </pkgmetadata>
