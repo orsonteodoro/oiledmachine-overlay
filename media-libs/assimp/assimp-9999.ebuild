@@ -24,7 +24,7 @@ CHKL_TIMESTAMPS=(
 inherit cflags-hardened check-compiler-switch chkl flag-o-matic libcxx-slot libstdcxx-slot secure-version cmake-multilib
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="80a33d6a4078df317fdd5b38d8e7b7b4292c01cb"
+	FALLBACK_COMMIT="19f7386d7321faa3e93b6e9c208113bab1390535"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/assimp/assimp.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -61,7 +61,7 @@ SOVER="6"
 SLOT="0/${SOVER}"
 IUSE+="
 samples static-libs test
-ebuild_revision_27
+ebuild_revision_28
 "
 RDEPEND="
 	>=sys-libs/zlib-${ZLIB_PV}[${MULTILIB_USEDEP},minizip]
