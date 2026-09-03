@@ -179,10 +179,10 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT=0
+SLOT="0"
 IUSE+="
 bench dev linting
-ebuild_revision_4
+ebuild_revision_5
 "
 RDEPEND+="
 "
