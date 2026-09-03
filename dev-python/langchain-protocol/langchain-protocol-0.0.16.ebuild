@@ -36,7 +36,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT="0/"$(ver_cut "1-2" "${PV}")
+SLOT=0
 IUSE+=" dev"
 RDEPEND+="
 	>=dev-python/typing-extensions-4.13.0[${PYTHON_USEDEP}]
