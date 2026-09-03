@@ -115,8 +115,8 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT=0
-IUSE+=" ebuild_revision_10"
+SLOT="0"
+IUSE+=" ebuild_revision_11"
 RDEPEND+="
 "
 DEPEND+="
