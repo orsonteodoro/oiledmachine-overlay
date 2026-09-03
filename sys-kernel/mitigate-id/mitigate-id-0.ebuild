@@ -114,20 +114,8 @@ VIDEO_CARDS=(
 	video_cards_nvidia
 )
 IUSE+="
-${KERNEL_FLAVORS[@]}
-${KERNEL_SLOTS[@]}
 ${VIDEO_CARDS[@]}
 ebuild_revision_43
-"
-REQUIRED_USE="
-	enforce? (
-		|| (
-			${KERNEL_FLAVORS[@]}
-		)
-		|| (
-			${KERNEL_SLOTS[@]}
-		)
-	)
 "
 # CE - Code Execution
 # DoS - Denial of Service (CVSS A:H)

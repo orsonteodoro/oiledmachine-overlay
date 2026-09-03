@@ -196,9 +196,7 @@ ${FIREWALL_IUSE[@]}
 ${FIRMWARE_IUSE[@]}
 ${HOST_TYPE_IUSE[@]/+}
 ${IDS_IUSE[@]}
-${KERNEL_FLAVORS[@]}
 ${KERNEL_IUSE[@]}
-${KERNEL_SLOTS[@]}
 ${LOGGER_IUSE[@]}
 ${LSM_IUSE[@]}
 ${NTP_IUSE[@]}
@@ -235,14 +233,6 @@ REQUIRED_USE="
 	custom-kernel? (
 		!compliant
 		flexible
-	)
-	enforce? (
-		|| (
-			${KERNEL_FLAVORS[@]}
-		)
-		|| (
-			${KERNEL_SLOTS[@]}
-		)
 	)
 	lynis? (
 		audit
