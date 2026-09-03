@@ -211,10 +211,10 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror"
-SLOT=0
+SLOT="0"
 IUSE+="
 dev doc
-ebuild_revision_6
+ebuild_revision_7
 "
 RDEPEND+="
 	(
