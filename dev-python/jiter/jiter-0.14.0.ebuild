@@ -179,10 +179,10 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT="0/"$(ver_cut "1-2" "${PV}")
+SLOT=0
 IUSE+="
 bench dev linting
-ebuild_revision_3
+ebuild_revision_4
 "
 RDEPEND+="
 "
