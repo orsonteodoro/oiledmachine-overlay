@@ -36,7 +36,7 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror"
-SLOT=0
+SLOT="0"
 IUSE+=" aiohttp local-tokenizer mypy pyopenssl"
 REQUIREMENTS_TXT="
 	>=dev-python/absl-py-2.1.0[${PYTHON_USEDEP}]
