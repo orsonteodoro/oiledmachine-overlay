@@ -35,7 +35,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT=0
+SLOT="0"
 IUSE+=" crypto dev doc test"
 RDEPEND+="
 	$(python_gen_cond_dep '
