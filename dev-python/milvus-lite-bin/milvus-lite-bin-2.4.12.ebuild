@@ -33,9 +33,9 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror"
-SLOT=0
+SLOT="0"
 IUSE+="
-ebuild_revision_5
+ebuild_revision_6
 "
 RDEPEND+="
 	>=dev-cpp/gflags-2.2.2
