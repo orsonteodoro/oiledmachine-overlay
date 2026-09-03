@@ -211,10 +211,10 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror"
-SLOT="0/"$(ver_cut "1-2" "${PV}")
+SLOT=0
 IUSE+="
 dev doc
-ebuild_revision_5
+ebuild_revision_6
 "
 RDEPEND+="
 	(
