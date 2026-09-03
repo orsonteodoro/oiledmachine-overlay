@@ -46,7 +46,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT=0
+SLOT="0"
 IUSE+=" all dev doc doc-tests github-actions standard standard-no-fastapi-cloud-cli test translations"
 REQUIRED_USE="
 	dev? (
