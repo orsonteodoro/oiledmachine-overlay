@@ -62,9 +62,9 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror"
-SLOT=0
+SLOT="0"
 IUSE+="
-ebuild_revision_10
+ebuild_revision_11
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
