@@ -25,7 +25,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror test" # Untested
-SLOT=0
+SLOT="0"
 IUSE+=" dev test"
 RDEPEND+="
 	${PYTHON_DEPS}
