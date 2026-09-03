@@ -64,7 +64,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
-ebuild_revision_8
+ebuild_revision_9
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
