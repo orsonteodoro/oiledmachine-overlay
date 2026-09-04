@@ -9,10 +9,24 @@ CHROMIUM_LANGS="af am ar bg bn ca cs da de el en-GB es es-419 et fa fi fil fr gu
 	hi hr hu id it ja kn ko lt lv ml mr ms nb nl pl pt-BR pt-PT ro ru sk sl sr
 	sv sw ta te th tr uk ur vi zh-CN zh-TW"
 
-MITIGATION_DATE="Sep 1, 2026" # Official annoucement (blog)
-MITIGATION_LAST_UPDATE=1788246000 # From `date +%s -d "Sep 1, 2026"` From blog date
-MITIGATION_URI="https://chromereleases.googleblog.com/2026/09/stable-channel-update-for-desktop.html"
+MITIGATION_DATE="Sep 3, 2026" # Official annoucement (blog)
+MITIGATION_LAST_UPDATE=1788418800 # From `date +%s -d "Sep 3, 2026"` From blog date
+MITIGATION_URI="https://chromereleases.googleblog.com/2026/09/stable-channel-update-for-desktop_01882797386.html"
 VULNERABILITIES_FIXED=(
+	# 152.0.7977.82
+	"CVE-2026-85046;ITW, TC;"
+	"CVE-2026-85052;OOBR, CRSH, DoS;"
+	"CVE-2026-85043;;"
+	"CVE-2026-85048;UAF;"
+	"CVE-2026-85045;RC;"
+	"CVE-2026-85050;OOBW;"
+	"CVE-2026-85053;;"
+	"CVE-2026-85042;UAF;"
+	"CVE-2026-85049;UAF;"
+	"CVE-2026-85051;TC;"
+	"CVE-2026-85047;IV;"
+	"CVE-2026-85044;;"
+
 	# 152.0.7977.75
 	"CVE-2026-84353;UAF;"
 	"CVE-2026-84352;UAF;"
