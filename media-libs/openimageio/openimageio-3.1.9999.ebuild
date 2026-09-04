@@ -73,7 +73,7 @@ inherit cflags-hardened check-compiler-switch chkl cmake flag-o-matic font
 inherit libcxx-slot libstdcxx-slot llvm secure-version virtualx python-single-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	INTERNAL_VERSION="3.1.16.0"
+	INTERNAL_VERSION="3.1.17.0"
 	SOVER=$(ver_cut "1-3" "${INTERNAL_VERSION}")
 	FALLBACK_COMMIT="8150e261266e2dfd9a78883d8eab622938617cc6"
 	EGIT_BRANCH="dev-3.1"
