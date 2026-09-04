@@ -9,7 +9,7 @@ CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data 
 CFLAGS_HARDENED_VTABLE_VERIFY=1
 CXX_STANDARD=17
 
-FALLBACK_COMMIT="882935fdbc3b06dc4cd45b8e5181906916403243"
+FALLBACK_COMMIT="d8bb0db1d1aef963aa82b3b5b617e7606f8f0762"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -39,7 +39,7 @@ fi
 
 IUSE+="
 gnome qml
-ebuild_revision_1
+ebuild_revision_2
 "
 
 RDEPEND="
