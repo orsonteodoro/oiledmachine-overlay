@@ -43,7 +43,9 @@ LLVM_COMPAT=(
 inherit autotools cflags-hardened chkl flag-o-matic libcxx-slot libstdcxx-slot toolchain-funcs secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="2035cef73160ef086549515bdff9196d93cbb50a"
+	INTERNAL_VERSION="10.09"
+	SOVER=$(ver_cut "1-2" "${INTERNAL_VERSION}")
+	FALLBACK_COMMIT="f13745a17ff7af385d70d230c3d8594e501d6b6b"
 	EGIT_BRANCH="master"
 	#EGIT_REPO_URI="https://cgit.ghostscript.com/ghostpdl.git" # Stuck before downloading
 	EGIT_REPO_URI="https://github.com/ArtifexSoftware/ghostpdl.git"
@@ -52,6 +54,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	fi
 	inherit git-r3
 else
+	SOVER=$(ver_cut "1-2" "${PV}")
 	S="${WORKDIR}/${MY_P}"
 	SRC_URI+="https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs${PVM_S}/${MY_P}.tar.xz"
 fi
@@ -62,11 +65,11 @@ fi
 DESCRIPTION="Interpreter for the PostScript language and PDF"
 HOMEPAGE="https://ghostscript.com/ https://cgit.ghostscript.com/cgi-bin/cgit.cgi/ghostpdl.git/"
 LICENSE="AGPL-3 CPL-1.0"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="0/${SOVER}"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
 IUSE+="
 cups cpu_flags_arm_neon dbus gtk l10n_de openmp static-libs tesseract unicode X
-ebuild_revision_10
+ebuild_revision_11
 "
 
 LANGS="ja ko zh-CN zh-TW"
@@ -139,6 +142,16 @@ src_unpack() {
 		fi
 	else
 		unpack ${A}
+	fi
+	local expected_sover="${SOVER}"
+	local pv_major=$(grep -e "^GS_VERSION_MAJOR=" "${S}/base/version.mak" | head -n 1 | cut -f 2 -d "=")
+	local pv_minor=$(grep -e "^GS_VERSION_MINOR=" "${S}/base/version.mak" | head -n 1 | cut -f 2 -d "=")
+	local actual_sover="${pv_major}.${pv_minor}"
+	if ver_test "${actual_sover}" "-ne" "${expected_sover}" ; then
+eerror "QA:  Update INTERNAL_VERSION or PV"
+eerror "Actual SOVER:  ${actual_sover}"
+eerror "Expected SOVER:  ${expected_sover}"
+		die
 	fi
 }
 
