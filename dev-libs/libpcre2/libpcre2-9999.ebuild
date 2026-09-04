@@ -23,7 +23,7 @@ VERIFY_SIG_OPENPGP_KEY_PATH=/usr/share/openpgp-keys/nicholaswilson.asc
 inherit autotools cflags-hardened check-compiler-switch dot-a libtool multilib multilib-minimal secure-version toolchain-funcs verify-sig
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="ff92e0b9cea5b5ae3af12ba930d03556684f098b"
+	FALLBACK_COMMIT="aac57f978e38fb4a04899d623b68e0fbb5bcaf6c"
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${MY_P}"
 	EGIT_REPO_URI="https://github.com/PCRE2Project/pcre2.git"
@@ -51,7 +51,7 @@ if [[ ${PV} != *_rc* ]] ; then
 fi
 IUSE+="
 bzip2 +jit libedit +pcre16 +pcre32 +readline static-libs unicode valgrind zlib
-ebuild_revision_13
+ebuild_revision_14
 "
 REQUIRED_USE="?? ( libedit readline )"
 
