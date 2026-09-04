@@ -141,7 +141,7 @@ Fix:
  int rtw_power_on(struct rtw_dev *rtwdev);
  void rtw_core_fw_scan_notify(struct rtw_dev *rtwdev, bool start);
 --- a/drivers/net/wireless/realtek/rtw88/main.c.orig	2026-06-14 07:58:38.000000000 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/main.c	2026-09-01 21:49:27.006192201 -0700
++++ b/drivers/net/wireless/realtek/rtw88/main.c	2026-09-04 06:25:03.184100454 -0700
 @@ -3,6 +3,7 @@
   */
  
@@ -181,7 +181,7 @@ Fix:
  	mutex_lock(&rtwdev->mutex);
  	if (rtwdev->hw->conf.flags & IEEE80211_CONF_IDLE)
  		rtw_enter_ips(rtwdev);
-@@ -631,6 +642,49 @@ static void rtw_reset_vif_iter(void *dat
+@@ -631,6 +642,36 @@ static void rtw_reset_vif_iter(void *dat
  	rtw_release_macid(rtwdev, rtwvif->mac_id);
  }
  
@@ -203,35 +203,22 @@ Fix:
 +	udev = rtwusb->udev;
 +	intf = usb_ifnum_to_if(udev, 0);
 +
-+	pr_warn("rtw88: -110 storm, attempting USB reset\n");
-+	ret = usb_reset_device(udev);
++	pr_warn("rtw88: -110 storm, power cycling port 2-5 immediately\n");
 +
-+	if (ret) {
-+		pr_warn("rtw88: reset failed %d, queuing hub reset to power cycle port\n", ret);
-+		/* This triggers the power cycle you saw in logs:
-+		 * [15699.315850] usb usb2-port5: attempt power cycle
-+		 * but now immediately, not after 60s of descriptor read retries
-+		 */
-+		if (intf)
-+			usb_queue_reset_device(intf);
-+		else
-+			pr_warn("rtw88: no intf for queue_reset, falling back to disable\n");
-+		/* clear fail - new device will probe, keep it on ehci 2-5 high-speed */
-+		rtwdev->fail = false;
-+		atomic_set(&rtwdev->fail_count, 0);
-+		return;
-+	}
++	/* DO NOT call usb_reset_device - it causes 60s descriptor read loop
++	 * Go straight to hub power cycle which you saw works at 164976.931410
++	 */
++	if (intf)
++		usb_queue_reset_device(intf);
 +
-+	pr_warn("rtw88: USB reset success\n");
 +	rtwdev->fail = false;
 +	atomic_set(&rtwdev->fail_count, 0);
-+	schedule_work(&rtwdev->fw_recovery_work);
 +}
 +
  void rtw_fw_recovery(struct rtw_dev *rtwdev)
  {
  	if (!test_bit(RTW_FLAG_RESTARTING, rtwdev->flags))
-@@ -645,6 +698,12 @@ static void __fw_recovery_work(struct rt
+@@ -645,6 +686,12 @@ static void __fw_recovery_work(struct rt
  	set_bit(RTW_FLAG_RESTARTING, rtwdev->flags);
  	clear_bit(RTW_FLAG_RESTART_TRIGGERING, rtwdev->flags);
  
@@ -244,7 +231,7 @@ Fix:
  	ret = rtw_fwcd_prep(rtwdev);
  	if (ret)
  		goto free;
-@@ -662,6 +721,7 @@ free:
+@@ -662,6 +709,7 @@ free:
  
  	WARN(1, "firmware crash, start reset and recover\n");
  
@@ -252,7 +239,7 @@ Fix:
  	rcu_read_lock();
  	rtw_iterate_keys_rcu(rtwdev, NULL, rtw_reset_key_iter, rtwdev);
  	rcu_read_unlock();
-@@ -669,17 +729,25 @@ free:
+@@ -669,17 +717,25 @@ free:
  	rtw_iterate_vifs_atomic(rtwdev, rtw_reset_vif_iter, rtwdev);
  	bitmap_zero(rtwdev->hw_port, RTW_PORT_NUM);
  	rtw_enter_ips(rtwdev);
@@ -281,7 +268,7 @@ Fix:
  	ieee80211_restart_hw(rtwdev->hw);
  }
  
-@@ -1378,6 +1446,13 @@ int rtw_power_on(struct rtw_dev *rtwdev)
+@@ -1378,6 +1434,13 @@ int rtw_power_on(struct rtw_dev *rtwdev)
  	bool wifi_only;
  	int ret;
  
@@ -295,7 +282,7 @@ Fix:
  	ret = rtw_hci_setup(rtwdev);
  	if (ret) {
  		rtw_err(rtwdev, "failed to setup hci\n");
-@@ -2168,6 +2243,7 @@ int rtw_core_init(struct rtw_dev *rtwdev
+@@ -2168,6 +2231,7 @@ int rtw_core_init(struct rtw_dev *rtwdev
  	INIT_WORK(&rtwdev->fw_recovery_work, rtw_fw_recovery_work);
  	INIT_WORK(&rtwdev->update_beacon_work, rtw_fw_update_beacon_work);
  	INIT_WORK(&rtwdev->ba_work, rtw_txq_ba_work);
@@ -303,7 +290,7 @@ Fix:
  	skb_queue_head_init(&rtwdev->c2h_queue);
  	skb_queue_head_init(&rtwdev->coex.queue);
  	skb_queue_head_init(&rtwdev->tx_report.queue);
-@@ -2178,6 +2254,10 @@ int rtw_core_init(struct rtw_dev *rtwdev
+@@ -2178,6 +2242,10 @@ int rtw_core_init(struct rtw_dev *rtwdev
  	mutex_init(&rtwdev->mutex);
  	mutex_init(&rtwdev->hal.tx_power_mutex);
  
@@ -314,8 +301,8 @@ Fix:
  	init_waitqueue_head(&rtwdev->coex.wait);
  	init_completion(&rtwdev->lps_leave_check);
  	init_completion(&rtwdev->fw_scan_density);
---- a/drivers/net/wireless/realtek/rtw88/usb.c.orig	2026-09-01 21:23:11.958151838 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/usb.c	2026-09-01 21:29:22.006691284 -0700
+--- a/drivers/net/wireless/realtek/rtw88/usb.c.orig	2026-09-04 06:19:48.222536595 -0700
++++ b/drivers/net/wireless/realtek/rtw88/usb.c	2026-09-04 06:28:33.977453561 -0700
 @@ -27,6 +27,17 @@ struct rtw_usb_txcb {
  	struct sk_buff_head tx_ack_queue;
  };
@@ -506,7 +493,19 @@ Fix:
  	}
  
  	return ret;
-@@ -1367,17 +1436,31 @@ void rtw_usb_disconnect(struct usb_inter
+@@ -1277,6 +1346,11 @@ int rtw_usb_probe(struct usb_interface *
+ 	rtwdev->hci.ops = &rtw_usb_ops;
+ 	rtwdev->hci.type = RTW_HCI_TYPE_USB;
+ 
++	/* clear storm state from previous failed device on same port */
++	rtwdev->fail = false;
++	rtwdev->disconnecting = false;
++	atomic_set(&rtwdev->fail_count, 0);
++
+ 	rtwusb = rtw_get_usb_priv(rtwdev);
+ 	rtwusb->rtwdev = rtwdev;
+ 
+@@ -1367,17 +1441,31 @@ void rtw_usb_disconnect(struct usb_inter
  	rtwdev = hw->priv;
  	rtwusb = rtw_get_usb_priv(rtwdev);
  
