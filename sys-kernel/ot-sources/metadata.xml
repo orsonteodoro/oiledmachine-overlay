@@ -5645,6 +5645,11 @@ unset OT_KERNEL_PRIVATE_KEY
     |    1024x768    | 773                | 790                 | 791                 | 792                 |
     |   1280x1024    | 775                | 793                 | 794                 | 795                 |
 
+    vga16 modes:
+
+    vga=normal # for 80x25 text mode
+    vga=ext # for 80x50 text mode
+    vga=ask
 
     HT - Control mitigations against HT/SMT side-channel attacks when hardened
     level is secure-af.

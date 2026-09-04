@@ -142,6 +142,7 @@ unset _OT_KERNEL_O3_PROVIDER
 declare -A _OT_KERNEL_O3_PROVIDER=()
 _OT_KERNEL_EFIFB="" # Variable not const
 _OT_KERNEL_VESAFB="" # Variable not const
+_OT_KERNEL_VGA16="" # Variable not const
 _OT_KERNEL_PRINK_DISABLED=0 # Variable not const
 _OT_KERNEL_ATH9K=0 # Variable not const
 _OT_KERNEL_IWLMVM=0 # Variable not const
@@ -14320,6 +14321,9 @@ ot-kernel_gpu_driver_fallback() {
 	if [[ "${fb_early_boot_driver}" =~ ("efifb"|"simpledrm"|"simplefb"|"vesafb"|"vga16") ]] ; then
 		:
 	elif in_iuse "amdgpu-dkms" && ot-kernel_use "amdgpu-dkms" ; then
+# The AI eagerly disagrees, but it is verified:
+# vesafb -> amdgpu + kms
+# vga16 -> amdgpu + kms
 eerror
 eerror "FB_EARLY_BOOT_DRIVER=ignore (default) is disallowed for amdgpu-dkms."
 eerror "This workaround is required as a temporary early boot/login driver"
@@ -14330,6 +14334,7 @@ eerror "    efifb - for EFI/UEFI systems (ca. 2012-present mobos)"
 eerror "simpledrm - for UEFI/OpenFirmware systems (ca. 2011-present mobos)"
 eerror " simplefb - for UEFI/OpenFirmware systems (ca. 2013-present mobos)"
 eerror "   vesafb - for BIOS systems (ca. 1996-2011 mobos)"
+eerror "    vga16 - for BIOS systems (ca. 1987-2011 mobos, 2012-2020), for UEFI set to Compatibility Support Module (CSM) or Legacy mode)"
 eerror
 eerror "Tip:  A firmware update may be needed for proper UEFI GOP support,"
 eerror "      but vesafb may be used before firmware update, but upgrading the"
@@ -14349,6 +14354,7 @@ eerror "    efifb - for EFI/UEFI systems (ca. 2012-present mobos)"
 eerror "simpledrm - for UEFI/OpenFirmware systems (ca. 2011-present mobos)"
 eerror " simplefb - for UEFI/OpenFirmware systems (ca. 2013-present mobos)"
 eerror "   vesafb - for BIOS systems (ca. 1996-2011 mobos)"
+eerror "    vga16 - for BIOS systems (ca. 1987-2011 mobos, 2012-2020), for UEFI set to Compatibility Support Module (CSM) or Legacy mode)"
 eerror
 eerror "Tip:  A firmware update may be needed for proper UEFI GOP support,"
 eerror "      but vesafb may be used before firmware update, but upgrading the"
@@ -20095,7 +20101,16 @@ ewarn "   section in /boot/grub/grub.cfg and paste into 41_custom with"
 ewarn "   ${_OT_KERNEL_EFIFB} changes to the end of the linux /vmlinuz line."
 ewarn
 	fi
-
+	if [[ -n "${_OT_KERNEL_VGA16}" ]] ; then
+ewarn
+ewarn "vga16 requires you to remove all VESA vga=<...> modes from the bootloader."
+ewarn
+einfo "The following are only supported for the vga16 early boot framebuffer:"
+einfo "vga=normal"
+einfo "vga=ext"
+einfo "vga=ask"
+einfo
+	fi
 }
 
 # @FUNCTION: ot-kernel_postinst_out_of_tree_display_driver_message
