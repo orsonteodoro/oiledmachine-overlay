@@ -19916,18 +19916,20 @@ ewarn
 ot-kernel_postinst_out_of_tree_display_driver_message() {
 	if in_iuse "amdgpu-dkms" && use amdgpu-dkms ; then
 ewarn
-ewarn "It is strongly recommended add \"blacklist amdgpu\" to"
+ewarn "It is recommended add \`blacklist amdgpu\` to"
 ewarn "/etc/modprobe.d/amdgpu.conf to prevent black screen display manager loop"
 ewarn "for a out-of-tree amdgpu-dkms build that is not updated to the latest"
-ewarn "kernel point release or not signed for the same point release."
+ewarn "kernel point release or not signed for the same point release.  You will"
+ewarn "need to manually \`modprobe amdgpu\` after login."
 ewarn
 	fi
 	if in_iuse "video_cards_nvidia" && use video_cards_nvidia ; then
 ewarn
-ewarn "It is strongly recommended add \"blacklist nvidia\" to"
+ewarn "It is recommended add \`blacklist nvidia\` to"
 ewarn "/etc/modprobe.d/nvidia.conf to prevent black screen display manager loop"
 ewarn "for a out-of-tree amdgpu-dkms build that is not updated to the latest"
-ewarn "kernel point release or not signed for the same point release."
+ewarn "kernel point release or not signed for the same point release.  You will"
+ewarn "need to manually \`modprobe nvidia\` after login."
 ewarn
 	fi
 }
