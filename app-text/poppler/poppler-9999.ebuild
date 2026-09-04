@@ -138,7 +138,7 @@ src_unpack() {
 	local expected_sover="${SOVER}"
 	local actual_sover=$(grep -e "POPPLER_SOVERSION_NUMBER" "${S}/CMakeLists.txt" | head -n 1 | cut -f 2 -d '"')
 	if ver_test "${actual_sover}" "-ne" "${expected_sover}" ; then
-eerror "QA:  Update INTERNAL_VERSION or PV"
+eerror "QA:  Update SOVER"
 eerror "Actual SOVER:  ${actual_sover}"
 eerror "Expected SOVER:  ${expected_sover}"
 		die
