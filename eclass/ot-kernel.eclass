@@ -14382,10 +14382,10 @@ ewarn "framebuffer driver issues."
 ewarn
 }
 
-# @FUNCTION: ot-kernel_amdgpu_fixes
+# @FUNCTION: ot-kernel_gpu_fixes
 # @DESCRIPTION:
 # Force the amdgpu driver as a module and other fixes.
-ot-kernel_amdgpu_fixes() {
+ot-kernel_gpu_fixes() {
 	if in_iuse "amdgpu-dkms" && ot-kernel_use "amdgpu-dkms" ; then
 	#
 	# This is for when sys-kernel/amdgpu-dkms is not installed yet scenario
@@ -14395,10 +14395,19 @@ ot-kernel_amdgpu_fixes() {
 	# with required config.  Then, we replace the in tree amdgpu driver
 	# with the out-of-tree amdgpu-dkms driver.
 	#
-ewarn "Enabling modules support for sys-kernel/amdgpu-dkms."
-ewarn "Early KMS is disabled for the amdgpu driver."
 		ot-kernel_y_configopt "CONFIG_MODULES"
 		ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
+		ot-kernel_n_configopt "CONFIG_DRM_RADEON"
+		ot-kernel_n_configopt "CONFIG_FB_ATY128"
+		ot-kernel_n_configopt "CONFIG_FB_ATY"
+		ot-kernel_n_configopt "CONFIG_FB_RADEON"
+	fi
+
+	if in_iuse "video_cards_nvidia" && ot-kernel_use "video_cards_nvidia" ; then
+		ot-kernel_y_configopt "CONFIG_MODULES"
+		ot-kernel_n_configopt "CONFIG_DRM_NOUVEAU"
+		ot-kernel_n_configopt "CONFIG_FB_NVIDIA"
+		ot-kernel_n_configopt "CONFIG_FB_RIVA"
 	fi
 }
 
@@ -16524,7 +16533,7 @@ einfo "Disabling all debug and shortening logging buffers"
 
 	ot-kernel_disable_affected_modules
 	ot-kernel_verify_mitigation_late
-	ot-kernel_amdgpu_fixes
+	ot-kernel_gpu_fixes
 	ot-kernel_gpu_driver_fallback
 
 	ot-kernel_set_globals_pre
