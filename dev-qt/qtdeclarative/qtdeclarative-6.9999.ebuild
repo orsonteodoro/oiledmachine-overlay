@@ -17,7 +17,7 @@ QT6_HAS_STATIC_LIBS=1
 # other more minor issues (installs junk, sandbox/offscreen issues)
 QT6_RESTRICT_TESTS=1
 
-FALLBACK_COMMIT="287ee7fdad2151446548327ac9f7f37664dcac03"
+FALLBACK_COMMIT="9aeb2337499875fbd7f359a9148484990a691f2f"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -45,7 +45,7 @@ fi
 
 IUSE+="
 accessibility +jit +network opengl qmlls +sql +ssl svg vulkan +widgets
-ebuild_revision_3
+ebuild_revision_4
 "
 
 RDEPEND="
