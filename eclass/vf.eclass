@@ -433,10 +433,10 @@ einfo "ISI = Improper Secure Implementation"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("ISoI"|"ISOI")($|" "|";"|",") ]] ; then
 einfo "ISoI = Insufficient Sanitiation of Input"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ITW"($|" "|";"|",") ]] ; then
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"EEITW"($|" "|";"|",") ]] ; then
 # Alias for AEITW.
 # Not necessarily KEV.
-einfo "ITW = In The Wild" # More informal but more commonly used
+einfo "EEITW = Exploit Exists In The Wild" # More informal but more commonly used
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IU"($|" "|";"|",") ]] ; then
 einfo "IU = Integer Underflow"

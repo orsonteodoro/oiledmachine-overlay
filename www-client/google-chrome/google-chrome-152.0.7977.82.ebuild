@@ -14,7 +14,7 @@ MITIGATION_LAST_UPDATE=1788418800 # From `date +%s -d "Sep 3, 2026"` From blog d
 MITIGATION_URI="https://chromereleases.googleblog.com/2026/09/stable-channel-update-for-desktop_01882797386.html"
 VULNERABILITIES_FIXED=(
 	# 152.0.7977.82
-	"CVE-2026-85046;ITW, TC;"
+	"CVE-2026-85046;EEITW, TC;"
 	"CVE-2026-85052;OOBR, CRSH, DoS;"
 	"CVE-2026-85043;;"
 	"CVE-2026-85048;UAF;"
