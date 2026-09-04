@@ -20102,14 +20102,11 @@ ewarn "   ${_OT_KERNEL_EFIFB} changes to the end of the linux /vmlinuz line."
 ewarn
 	fi
 	if [[ -n "${_OT_KERNEL_VGA16}" ]] ; then
+# They all use the same default resolution and vga=ask is removed.
 ewarn
-ewarn "vga16 requires you to remove all VESA vga=<...> modes from the bootloader."
+ewarn "for vga16, remove all vga=<...> references from the bootloader kernel"
+ewarn "command line."
 ewarn
-einfo "The following are only supported for the vga16 early boot framebuffer:"
-einfo "vga=normal"
-einfo "vga=ext"
-einfo "vga=ask"
-einfo
 	fi
 }
 

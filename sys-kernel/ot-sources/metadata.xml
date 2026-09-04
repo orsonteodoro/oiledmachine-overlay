@@ -5626,9 +5626,9 @@ unset OT_KERNEL_PRIVATE_KEY
     bootloader config kernel command line.  The kernel will not respect it in
     the kernel command line as a built-in.
 
-    For vga16, you need to manually remove the old VESA vga=<...> modes,
-    and optionally add vga=normal, vga=ext, or vga=ask to the bootloader
-    config for the kernel command line.
+    For vga16, you need to manually remove the all vga=<...> modes from
+    the bootloader config for the kernel command line.  They all use the
+    same resolution as the default.
 
     For grub2 for vesafb and efifb, you have two options:
 
@@ -5646,12 +5646,6 @@ unset OT_KERNEL_PRIVATE_KEY
     |     800x600    | 771                | 787                 | 788                 | 789                 |
     |    1024x768    | 773                | 790                 | 791                 | 792                 |
     |   1280x1024    | 775                | 793                 | 794                 | 795                 |
-
-    vga16 modes:
-
-    vga=normal # for 80x25 text mode
-    vga=ext # for 80x50 text mode
-    vga=ask
 
     HT - Control mitigations against HT/SMT side-channel attacks when hardened
     level is secure-af.
