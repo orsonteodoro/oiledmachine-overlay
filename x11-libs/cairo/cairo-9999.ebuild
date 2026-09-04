@@ -44,7 +44,7 @@ inherit meson
 inherit check-compiler-switch cflags-hardened chkl flag-o-matic multilib-minimal python-any-r1 secure-version toolchain-funcs uopts virtualx
 
 if [[ "${PV}" == *"9999"* ]] ; then
-	FALLBACK_COMMIT="8e3ac5e404f45b92ea186ad7a776b5e5160f38ac"
+	FALLBACK_COMMIT="bd04e43e201ef9beddcacdf379b610a0e199112e"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/cairo/cairo.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -74,7 +74,7 @@ LICENSE="
 SLOT="0"
 IUSE+="
 X aqua debug gles2-only gles3 +glib gtk-doc lzo opengl spectre test
-ebuild_revision_18
+ebuild_revision_19
 "
 REQUIRED_USE="
 	gles2-only? (
