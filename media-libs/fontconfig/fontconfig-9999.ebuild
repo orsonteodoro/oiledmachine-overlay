@@ -18,7 +18,7 @@ CHKL_TIMESTAMPS=(
 inherit cflags-hardened eapi9-ver multilib meson-multilib python-any-r1 readme.gentoo-r1 secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="fd05caf8f03ad7c1c1b6ba7bc4d3d6ede4342bcb"
+	FALLBACK_COMMIT="d17ee184e436712c2abbe14a9c0ec02fb6acf5c5"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/fontconfig/fontconfig.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -42,7 +42,7 @@ if ! [[ $(ver_cut 3) -ge 90 ]] ; then
 fi
 IUSE+="
 doc nls test
-ebuild_revision_1
+ebuild_revision_2
 "
 RESTRICT="!test? ( test )"
 
