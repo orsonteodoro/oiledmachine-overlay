@@ -5619,14 +5619,16 @@ unset OT_KERNEL_PRIVATE_KEY
     FB_EARLY_BOOT_MODE="efifb:1280x1024-8@60"			# For EFI
     FB_EARLY_BOOT_MODE="769"					# For VESA
 
-    All the default modes use 1280x1024 8-bpp.
+    For efifb, you may need to manually add the video=efifb:1280x1024-8@60 or
+    equivalent to the bootloader config kernel command line.
 
     For vesafb, you must manually add the vga=769 or equivalent to the
     bootloader config kernel command line.  The kernel will not respect it in
     the kernel command line as a built-in.
 
-    For efifb, you may need to manually add the video=efifb:1280x1024-8@60 or
-    equivalent to the bootloader config kernel command line.
+    For vga16, you need to manually remove the old VESA vga=<...> modes,
+    and optionally add vga=normal, vga=ext, or vga=ask to the bootloader
+    config for the kernel command line.
 
     For grub2 for vesafb and efifb, you have two options:
 
