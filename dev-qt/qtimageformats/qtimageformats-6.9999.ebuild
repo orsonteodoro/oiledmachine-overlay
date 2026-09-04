@@ -8,7 +8,7 @@ CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CXX_STANDARD=17
 
-FALLBACK_COMMIT="3d4cb983875b013327c8100fb7d80c6276bfa31b"
+FALLBACK_COMMIT="d86fa38f25291c1a8e5e7442206942d39d105d38"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -36,7 +36,7 @@ fi
 
 IUSE+="
 mng
-ebuild_revision_2
+ebuild_revision_3
 "
 
 RDEPEND="
