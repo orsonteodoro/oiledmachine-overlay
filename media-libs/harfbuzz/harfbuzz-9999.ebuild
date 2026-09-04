@@ -72,7 +72,7 @@ DESCRIPTION="An OpenType text shaping engine"
 HOMEPAGE="https://harfbuzz.github.io/"
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="24b368ec170b6f35e1bd507f5dc491e3c441cb0c"
+	FALLBACK_COMMIT="80540ed4b1dfa7059339c91758d6868f1829c09e"
 	EGIT_REPO_URI="https://github.com/harfbuzz/harfbuzz.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
@@ -112,7 +112,7 @@ IUSE+="
 -benchmark +cairo +chafa debug doc -experimental -fatlto -fontations +glib +gpu
 +graphite -harfrust +icu +kbts +png +raster +ragel +subset -system-icu -system-ragel
 +introspection test -thinlto +truetype +utilities +vector +zlib
-ebuild_revision_4
+ebuild_revision_6
 "
 RESTRICT="
 	mirror
