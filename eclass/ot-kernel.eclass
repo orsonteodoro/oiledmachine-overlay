@@ -14119,13 +14119,17 @@ ot-kernel_gpu_driver_fallback() {
 	# This to allow to modprobe out-of-tree drivers.
 	ot-kernel_unset_pat_kconfig_kernel_cmdline "nomodeset"
 
+	if [[ "${fb_early_boot_driver}" =~ ("efifb-nokms"|"simpledrm-nokms"|"simplefb-nokms"|"vesafb-nokms"|"vga16-nokms") ]] ; then
+		ot-kernel_set_kconfig_kernel_cmdline "nomodeset"
+	fi
+
 	# When we first boot, we just want to use the VGA driver during the boot process.
 	# We manually load the amdgpu-dkms after login.
 	local fb_early_boot_driver
 
 	fb_early_boot_driver=${FB_EARLY_BOOT_DRIVER:-"ignore"}
 
-	if [[ "${fb_early_boot_driver}" =~ ("efifb"|"simpledrm"|"simplefb"|"vesafb") ]] ; then
+	if [[ "${fb_early_boot_driver}" =~ ("efifb"|"simpledrm"|"simplefb"|"vesafb"|"vga16") ]] ; then
 		:
 	elif in_iuse "amdgpu-dkms" && ot-kernel_use "amdgpu-dkms" ; then
 eerror
@@ -14167,7 +14171,7 @@ eerror
 	fi
 
 	# Reset and sanitize to prevent eager grab
-	if [[ "${fb_early_boot_driver}" =~ ("efifb"|"simpledrm"|"simplefb"|"vesafb") ]] ; then
+	if [[ "${fb_early_boot_driver}" =~ ("efifb"|"simpledrm"|"simplefb"|"vesafb"|"vga16") ]] ; then
 		ot-kernel_n_configopt "CONFIG_DRM_FBDEV_EMULATION"
 		ot-kernel_n_configopt "CONFIG_DRM_SIMPLEDRM"
 		ot-kernel_n_configopt "CONFIG_FB"
@@ -14212,6 +14216,7 @@ eerror
 		ot-kernel_n_configopt "CONFIG_FB_VOODOO1"
 		ot-kernel_n_configopt "CONFIG_FB_VT8623"
 		ot-kernel_n_configopt "CONFIG_FB_VGA16"
+		ot-kernel_n_configopt "CONFIG_FRAMEBUFFER_CONSOLE"
 		ot-kernel_n_configopt "CONFIG_SYSFB_SIMPLEFB"
 		ot-kernel_n_configopt "CONFIG_VGA_CONSOLE"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "=[0-9]+,xres=[0-9]+,bpp=[0-9]+" # Removed malformed arg
@@ -14232,13 +14237,11 @@ eerror "initcall_blacklist=sysfb_init must be manually removed from CONFIG_CMDLI
 	fi
 
 	# For console frontend
-	if [[ "${fb_early_boot_driver}" =~ ("efifb"|"simpledrm"|"simplefb"|"vesafb") ]] ; then
+	if [[ "${fb_early_boot_driver}" =~ ("efifb"|"simpledrm"|"simplefb"|"vesafb"|"vga16") ]] ; then
+		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_TTY"
 		ot-kernel_y_configopt "CONFIG_VT"
 		ot-kernel_y_configopt "CONFIG_FB"
-		ot-kernel_y_configopt "CONFIG_FB_CORE"
-		ot-kernel_n_configopt "CONFIG_UML"
-		ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE"
 
 	# Only allow accelerated KMS on non VM use cases.
 		if in_iuse "amdgpu-dkms" && ot-kernel_use "amdgpu-dkms" ; then
@@ -14249,14 +14252,41 @@ eerror "initcall_blacklist=sysfb_init must be manually removed from CONFIG_CMDLI
 einfo
 einfo "It can be confusing but a quick reminder:"
 einfo
-einfo "    efifb - for EFI/UEFI systems (ca. 2012-present mobos)"
-einfo "simpledrm - for UEFI/OpenFirmware systems (ca. 2011-present mobos)"
-einfo " simplefb - for UEFI/OpenFirmware systems (ca. 2013-present mobos)"
-einfo "   vesafb - for BIOS systems with VBE (ca. 1996-2011 mobos)"
+einfo "      efifb - for EFI/UEFI systems (ca. 2012-present mobos)"
+einfo "  simpledrm - for UEFI/OpenFirmware systems (ca. 2011-present mobos)"
+einfo "   simplefb - for UEFI/OpenFirmware systems (ca. 2013-present mobos)"
+einfo "     vesafb - for BIOS systems with VBE (ca. 1996-2011 mobos)"
+einfo "      vga16 - for BIOS systems (ca. 1987-2011 mobos, 2012-2020), for UEFI set to Compatibility Support Module (CSM) or Legacy mode)"
 einfo
 einfo "TIP:  A firmware update to UEFI GOP can be used for transition period firmware (VBE->UEFI GOP)."
 einfo "TIP:  For transition period firmware that choose not to update to UEFI GOP, use vesafb instead."
 einfo
+	fi
+
+	if [[ "${fb_early_boot_driver}" =~ "vga16" ]] ; then
+		ot-kernel_y_configopt "CONFIG_VGA_CONSOLE"
+	fi
+
+	# Handoff
+	if [[ "${fb_early_boot_driver}" =~ ("efifb"|"simpledrm"|"simplefb"|"vesafb"|"vga16") && ! "${fb_early_boot_driver}" =~ "-nokms" ]] ; then
+	# For vesafb -> modprobe nvidia.ko KMS handoff
+
+	# Modern console framework support for vesafb
+		ot-kernel_y_configopt "CONFIG_FB_CORE"
+		ot-kernel_n_configopt "CONFIG_UML"
+		ot-kernel_y_configopt "CONFIG_FRAMEBUFFER_CONSOLE"
+		ot-kernel_y_configopt "CONFIG_CONSOLE_TRANSLATIONS"
+		ot-kernel_y_configopt "CONFIG_VT_CONSOLE"
+	# Console bind/unbind support
+		ot-kernel_y_configopt "CONFIG_VT_HW_CONSOLE_BINDING"
+
+	# Generic DRM support
+		ot-kernel_n_configopt "EMULATED_CMPXCHG"
+		ot-kernel_y_configopt "CONFIG_AGP"
+		ot-kernel_y_configopt "CONFIG_DRM"
+		ot-kernel_y_configopt "CONFIG_DRM_KMS_HELPER"
+		ot-kernel_y_configopt "CONFIG_DRM_FBDEV_EMULATION"
+		ot-kernel_set_configopt "CONFIG_DRM_FBDEV_OVERALLOC" "100"
 	fi
 
 	# Backends for console frontend
@@ -14300,7 +14330,7 @@ einfo "FB early boot driver:  simpledrm"
 	# For BIOS/UEFI FB
 			ot-kernel_y_configopt "CONFIG_ACPI"
 			ot-kernel_y_configopt "CONFIG_EFI"
-			ot-kernel_y_configopt "CONFIG_SYSFB_SIMPLEFB"
+			ot-kernel_y_configopt "CONFIG_SYSFB_SIMPLEFB" # Selects CONFIG_FB
 		fi
 
 		ot-kernel_n_configopt "CONFIG_EMULATED_CMPXCHG"
@@ -14368,6 +14398,15 @@ eerror
 			die
 		fi
 		_OT_KERNEL_VESAFB="vga=${fb_early_boot_mode}"
+	elif [[ "${fb_early_boot_driver}" == "vga16" ]] ; then
+einfo "FB early boot driver:  vga16"
+		if [[ \
+			   "${arch}" == "x86" \
+			|| "${arch}" == "x86_64"
+		]] ; then
+			ot-kernel_y_configopt "CONFIG_X86"
+			ot-kernel_y_configopt "CONFIG_FB_VGA16"
+		fi
 	else
 einfo "FB early boot driver:  ignore"
 ewarn

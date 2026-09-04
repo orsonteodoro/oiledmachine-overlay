@@ -5588,17 +5588,25 @@ unset OT_KERNEL_PRIVATE_KEY
     as a workaround before modprobing into any of the out-of-tree GPU drivers
     (e.g. amdgpu-dkms or nvidia-driver packages).
     Valid values:
-    efifb     - EFI/UEFI framebuffer driver, compatible with UEFI with
-                GOP (Graphics Output Protocol) or UGA (Universal Graphics
-                Adapter), ca. 2012-present mobos
-    simpledrm - Generic Simple DRM driver with framebuffer support, compatible
-                with UEFI GOP or OpenFirmware (with Device Tree),
-                ca. 2011-present mobos
-    simplefb  - Generic Simple framebuffer, compatible for UEFI GOP,
-                OpenFirmware (with Device Tree), ca. 2013-present mobos
-    vesafb    - VESA framebuffer driver, compatible with Intel® x86 Real Mode,
-                VBE 2.0, BIOS, ca. 1996-2011 mobos
-    ignore    - Use the existing custom configuration (ebuild default)
+    efifb           - EFI/UEFI framebuffer driver, compatible with UEFI with
+                      GOP (Graphics Output Protocol) or UGA (Universal Graphics
+                      Adapter), ca. 2012-present mobos
+    simpledrm       - Generic Simple DRM driver with framebuffer support,
+                      compatible with UEFI GOP or OpenFirmware (with Device
+                      Tree), ca. 2011-present mobos
+    simplefb        - Generic Simple framebuffer, compatible for UEFI GOP,
+                      OpenFirmware (with Device Tree), ca. 2013-present mobos
+    vesafb          - VESA framebuffer driver, compatible with Intel® x86 Real
+                      Mode, VBE 2.0, BIOS, ca. 1996-2011 mobos
+    vga16           - VGA text only mode, compatible with BIOS systems ca.
+                      1987-2011 mobos, 2012-2020), for UEFI set to Compatibility
+                      Support Module (CSM) or Legacy mode
+    ignore          - Use the existing custom configuration (ebuild default)
+    efifb-nokms     - efifb without KMS handover
+    simpledrm-nokms - simpledrm without KMS handover
+    simplefb-nokms  - simplefb without KMS handover
+    vesafb-nokms    - vesafb without KMS handover
+    vga16-nokms     - vga16 without KMS handover
 
     Tip:  Older mobos may need a firmware update to use UEFI GOP properly, but
           vesafb may be used before firmware update, but upgrading the
