@@ -17,7 +17,7 @@ ONIGURUMA_PV="6.9.10"
 inherit autotools cflags-hardened check-compiler-switch flag-o-matic
 
 if [[ "${PV}" == "9999" ]] ; then
-	FALLBACK_COMMIT="579e6f76cffd7643ba4002a2c3618a5ea710589a"
+	FALLBACK_COMMIT="9d241e277204b83c4a7ddc7d733e5c72f99ef500"
 	EGIT_BRANCH="master"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${PN}-${MY_P}"
 	EGIT_REPO_URI="https://github.com/jqlang/jq.git"
@@ -39,7 +39,7 @@ SOVER="1"
 SLOT="0/${SOVER}"
 IUSE="
 +oniguruma static-libs test
-ebuild_revision_11
+ebuild_revision_12
 "
 REQUIRED_USE="test? ( oniguruma )"
 RDEPEND="
