@@ -255,6 +255,7 @@ PATCHES=(
 #	"${FILESDIR}/openusd-21.11-clang-14-compat.patch"
 	"${FILESDIR}/openusd-26.05-use-whole-archive-for-lld.patch"
 	"${FILESDIR}/openusd-25.08-replace-fix.patch"
+	"${FILESDIR}/openusd-25.11-include-tbb-version.patch"
 )
 DOCS=( "CHANGELOG.md" "README.md" )
 
