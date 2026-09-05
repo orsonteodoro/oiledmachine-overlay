@@ -682,7 +682,7 @@ Fix:
  
  /**
   * get_port_ssp_rate - Match the extended port status to SSP rate
-@@ -6569,3 +6571,21 @@ acpi_handle usb_get_hub_port_acpi_handle
+@@ -6569,3 +6571,27 @@ acpi_handle usb_get_hub_port_acpi_handle
  	return ACPI_HANDLE(&hub->ports[port1 - 1]->dev);
  }
  #endif
@@ -690,17 +690,23 @@ Fix:
 +int usb_port_power_cycle(struct usb_device *udev)
 +{
 +	struct usb_device *hdev = udev->parent;
++	struct usb_hub *hub;
 +	int port1 = udev->portnum;
 +	int ret;
 +
 +	if (!hdev || !port1)
 +		return -ENODEV;
 +
-+	ret = usb_hub_set_port_power(hdev, port1, false);
++	hub = usb_hub_to_struct_hub(hdev);
++	if (!hub)
++		return -ENODEV;
++
++	ret = usb_hub_set_port_power(hdev, hub, port1, false);
 +	if (ret)
 +		return ret;
++
 +	msleep(1200); /* RTL8821CU PHY needs >1s */
-+	ret = usb_hub_set_port_power(hdev, port1, true);
++	ret = usb_hub_set_port_power(hdev, hub, port1, true);
 +	return ret;
 +}
 +EXPORT_SYMBOL_GPL(usb_port_power_cycle);
