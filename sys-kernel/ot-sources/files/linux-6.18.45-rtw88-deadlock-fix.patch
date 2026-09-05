@@ -140,8 +140,8 @@ Fix:
  int rtw_wait_firmware_completion(struct rtw_dev *rtwdev);
  int rtw_power_on(struct rtw_dev *rtwdev);
  void rtw_core_fw_scan_notify(struct rtw_dev *rtwdev, bool start);
---- a/drivers/net/wireless/realtek/rtw88/main.c.orig	2026-09-04 15:32:01.582142179 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/main.c	2026-09-04 15:35:23.068410327 -0700
+--- a/drivers/net/wireless/realtek/rtw88/main.c.orig	2026-09-05 09:54:08.790904339 -0700
++++ b/drivers/net/wireless/realtek/rtw88/main.c	2026-09-05 10:00:43.963332908 -0700
 @@ -3,6 +3,8 @@
   */
  
@@ -151,7 +151,7 @@ Fix:
  
  #include "main.h"
  #include "regd.h"
-@@ -20,6 +21,7 @@
+@@ -20,6 +22,7 @@
  #include "sar.h"
  #include "sdio.h"
  #include "led.h"
@@ -159,7 +159,7 @@ Fix:
  
  bool rtw_disable_lps_deep_mode;
  EXPORT_SYMBOL(rtw_disable_lps_deep_mode);
-@@ -232,6 +234,12 @@ static void rtw_watch_dog_work(struct wo
+@@ -232,6 +235,12 @@ static void rtw_watch_dog_work(struct wo
  	u32 tx_unicast_mbps, rx_unicast_mbps;
  	bool ps_active;
  
@@ -172,7 +172,7 @@ Fix:
  	mutex_lock(&rtwdev->mutex);
  
  	if (!test_bit(RTW_FLAG_RUNNING, rtwdev->flags))
-@@ -325,6 +333,9 @@ static void rtw_ips_work(struct work_str
+@@ -325,6 +334,9 @@ static void rtw_ips_work(struct work_str
  {
  	struct rtw_dev *rtwdev = container_of(work, struct rtw_dev, ips_work);
  
@@ -182,7 +182,7 @@ Fix:
  	mutex_lock(&rtwdev->mutex);
  	if (rtwdev->hw->conf.flags & IEEE80211_CONF_IDLE)
  		rtw_enter_ips(rtwdev);
-@@ -631,6 +642,37 @@ static void rtw_reset_vif_iter(void *dat
+@@ -631,6 +643,36 @@ static void rtw_reset_vif_iter(void *dat
  	rtw_release_macid(rtwdev, rtwvif->mac_id);
  }
  
@@ -200,21 +200,20 @@ Fix:
 +		return;
 +
 +	udev = rtwusb->udev;
++	usb_get_dev(udev); /* inc kref.  not extraneous.  required to fix race.  only drop if udev not deref. */
 +
-+	pr_warn("rtw88: -110 storm, power cycling %s via deauthorize\n", dev_name(&udev->dev));
++	pr_warn("rtw88: -110 storm, power cycling port %s\n", dev_name(&udev->dev));
 +
-+	usb_lock_device(udev);
-+	usb_deauthorize_device(udev); // power off port - stops descriptor read/64 -110 loop
-+	usb_unlock_device(udev);
++	/* force disconnect old netdev so auth timeout stops */
++	rtwdev->fail = true; /* stop new h2c */
++	ieee80211_stop_queues(rtwdev->hw);
 +
-+	msleep(1100); // RTL8821CU needs >1s
-+
-+	usb_lock_device(udev);
-+	usb_authorize_device(udev); // power on, re-enum as 2-5 high-speed, not 1-5 full-speed
-+	usb_unlock_device(udev);
++	usb_port_power_cycle(udev); /* -> USB disconnect + new high-speed 2-5 */
 +
 +	rtwdev->fail = false;
 +	atomic_set(&rtwdev->fail_count, 0);
++
++	usb_put_dev(udev); /* dec kref */
 +}
 +
  void rtw_fw_recovery(struct rtw_dev *rtwdev)
@@ -665,9 +664,9 @@ Fix:
  	lockdep_assert_held(&rtwdev->mutex);
  
  	FW_OFFLOAD_H2C_SET_SEQ_NUM(h2c_pkt, rtwdev->h2c.seq);
---- a/drivers/usb/core/hub.c.orig	2026-09-04 15:14:11.480166726 -0700
-+++ b/drivers/usb/core/hub.c	2026-09-04 15:18:20.715537090 -0700
-@@ -2767,6 +2767,7 @@ out_unauthorized:
+--- a/drivers/usb/core/hub.c.orig	2026-09-05 09:54:39.239233385 -0700
++++ b/drivers/usb/core/hub.c	2026-09-05 09:59:01.790321215 -0700
+@@ -2766,6 +2766,7 @@ out_unauthorized:
  	usb_unlock_device(usb_dev);
  	return 0;
  }
@@ -675,7 +674,7 @@ Fix:
  
  
  int usb_authorize_device(struct usb_device *usb_dev)
-@@ -2806,6 +2807,7 @@ out_authorized:
+@@ -2805,6 +2806,7 @@ out_authorized:
  	usb_unlock_device(usb_dev);	/* complements locktree */
  	return result;
  }
@@ -683,6 +682,28 @@ Fix:
  
  /**
   * get_port_ssp_rate - Match the extended port status to SSP rate
+@@ -6569,3 +6571,21 @@ acpi_handle usb_get_hub_port_acpi_handle
+ 	return ACPI_HANDLE(&hub->ports[port1 - 1]->dev);
+ }
+ #endif
++
++int usb_port_power_cycle(struct usb_device *udev)
++{
++	struct usb_device *hdev = udev->parent;
++	int port1 = udev->portnum;
++	int ret;
++
++	if (!hdev || !port1)
++		return -ENODEV;
++
++	ret = usb_hub_set_port_power(hdev, port1, false);
++	if (ret)
++		return ret;
++	msleep(1200); /* RTL8821CU PHY needs >1s */
++	ret = usb_hub_set_port_power(hdev, port1, true);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(usb_port_power_cycle);
 --- a/drivers/usb/core/message.c.orig	2026-06-14 07:58:38.000000000 -0700
 +++ b/drivers/usb/core/message.c	2026-09-04 15:19:36.248794831 -0700
 @@ -1500,6 +1500,7 @@ void usb_disable_device(struct usb_devic
@@ -693,3 +714,11 @@ Fix:
  
  /**
   * usb_enable_endpoint - Enable an endpoint for USB communications
+--- a/drivers/usb/core/usb.h.orig	2025-11-30 14:42:10.000000000 -0800
++++ b/drivers/usb/core/usb.h	2026-09-05 10:02:25.080439586 -0700
+@@ -215,3 +215,5 @@ extern acpi_handle usb_get_hub_port_acpi
+ static inline int usb_acpi_register(void) { return 0; };
+ static inline void usb_acpi_unregister(void) { };
+ #endif
++
++extern int usb_port_power_cycle(struct usb_device *udev);
