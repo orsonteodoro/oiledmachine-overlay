@@ -142,11 +142,12 @@ Fix:
  void rtw_core_fw_scan_notify(struct rtw_dev *rtwdev, bool start);
 --- a/drivers/net/wireless/realtek/rtw88/main.c.orig	2026-09-04 15:32:01.582142179 -0700
 +++ b/drivers/net/wireless/realtek/rtw88/main.c	2026-09-04 15:35:23.068410327 -0700
-@@ -3,6 +3,7 @@
+@@ -3,6 +3,8 @@
   */
  
  #include <linux/devcoredump.h>
 +#include <linux/usb.h>
++#include "../../../../drivers/usb/core/usb.h" /* for usb_deauthorize/authorize */
  
  #include "main.h"
  #include "regd.h"

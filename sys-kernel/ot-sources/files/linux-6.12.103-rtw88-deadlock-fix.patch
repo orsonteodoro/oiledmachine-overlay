@@ -142,12 +142,13 @@ Fix:
  		u32 fwcd_item);
 --- a/drivers/net/wireless/realtek/rtw88/main.c.orig	2026-09-04 15:41:17.528662210 -0700
 +++ b/drivers/net/wireless/realtek/rtw88/main.c	2026-09-04 15:45:13.770826842 -0700
-@@ -3,6 +3,7 @@
+@@ -3,6 +3,8 @@
   */
  
  #include <linux/devcoredump.h>
 +#include <linux/usb.h>
- 
++#include "../../../../drivers/usb/core/usb.h" /* for usb_deauthorize/authorize */
+
  #include "main.h"
  #include "regd.h"
 @@ -19,6 +20,7 @@
