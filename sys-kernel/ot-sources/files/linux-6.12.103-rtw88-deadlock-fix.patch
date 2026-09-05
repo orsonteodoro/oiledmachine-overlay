@@ -542,16 +542,6 @@ Fix:
  	rtw_usb_intf_deinit(rtwdev, intf);
  	rtw_core_deinit(rtwdev);
  	ieee80211_free_hw(hw);
---- a/drivers/net/wireless/realtek/rtw88/usb.h.orig	2024-11-17 14:15:08.000000000 -0800
-+++ b/drivers/net/wireless/realtek/rtw88/usb.h	2026-09-01 22:17:22.760049409 -0700
-@@ -96,5 +96,7 @@ static inline struct rtw_usb_tx_data *rt
- 
- int rtw_usb_probe(struct usb_interface *intf, const struct usb_device_id *id);
- void rtw_usb_disconnect(struct usb_interface *intf);
-+int __rtw_usb_read32(struct rtw_dev *rtwdev, u32 addr, u32 *val);
-+int __rtw_usb_write32(struct rtw_dev *rtwdev, u32 addr, u32 val);
- 
- #endif
 --- a/net/mac80211/mlme.c.orig	2026-09-01 22:15:51.403900538 -0700
 +++ b/net/mac80211/mlme.c	2026-09-01 22:18:37.834515965 -0700
 @@ -2760,14 +2760,32 @@ static u64 ieee80211_handle_pwr_constr(s
@@ -666,22 +656,6 @@ Fix:
  	FW_OFFLOAD_H2C_SET_SEQ_NUM(h2c_pkt, rtwdev->h2c.seq);
 --- a/drivers/usb/core/hub.c.orig	2026-09-05 10:11:10.716924952 -0700
 +++ b/drivers/usb/core/hub.c	2026-09-05 10:29:03.993885489 -0700
-@@ -2765,6 +2765,7 @@ out_unauthorized:
- 	usb_unlock_device(usb_dev);
- 	return 0;
- }
-+EXPORT_SYMBOL_GPL(usb_deauthorize_device);
- 
- 
- int usb_authorize_device(struct usb_device *usb_dev)
-@@ -2804,6 +2805,7 @@ out_authorized:
- 	usb_unlock_device(usb_dev);	/* complements locktree */
- 	return result;
- }
-+EXPORT_SYMBOL_GPL(usb_authorize_device);
- 
- /**
-  * get_port_ssp_rate - Match the extended port status to SSP rate
 @@ -6567,3 +6569,27 @@ acpi_handle usb_get_hub_port_acpi_handle
  	return ACPI_HANDLE(&hub->ports[port1 - 1]->dev);
  }
@@ -710,16 +684,6 @@ Fix:
 +	return ret;
 +}
 +EXPORT_SYMBOL_GPL(usb_port_power_cycle);
---- a/drivers/usb/core/message.c.orig	2026-06-14 07:58:38.000000000 -0700
-+++ b/drivers/usb/core/message.c	2026-09-04 15:19:36.248794831 -0700
-@@ -1500,6 +1500,7 @@ void usb_disable_device(struct usb_devic
- 
- 	usb_disable_device_endpoints(dev, skip_ep0);
- }
-+EXPORT_SYMBOL_GPL(usb_disable_device);
- 
- /**
-  * usb_enable_endpoint - Enable an endpoint for USB communications
 --- a/drivers/usb/core/usb.h.orig	2024-11-17 14:15:08.000000000 -0800
 +++ b/drivers/usb/core/usb.h	2026-09-05 10:29:21.192907263 -0700
 @@ -215,3 +215,5 @@ extern acpi_handle usb_get_hub_port_acpi
