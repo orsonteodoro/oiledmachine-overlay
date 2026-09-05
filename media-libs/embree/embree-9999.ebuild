@@ -56,7 +56,7 @@ S="${WORKDIR}/embree-${PV}"
 if [[ "${PV}" =~ "9999" ]] ; then
 	INTERNAL_VERSION="4.4.1"
 	SOVER=$(ver_cut "1" "${INTERNAL_VERSION}")
-	FALLBACK_COMMIT=""
+	FALLBACK_COMMIT="3d9cb89b9ea099c630e6272d37767e7dd4e78e74"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/RenderKit/embree.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
