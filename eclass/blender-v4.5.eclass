@@ -103,6 +103,7 @@ PYTHON_COMPAT=( "python3_"{10..12} ) # < 3.13 for Numpy 1.x, upstream uses vendo
 BOOST_PV="1.82"
 CLANG_MIN="18" # C++17
 GCC_MIN="11" # C++17
+IS_LTS=1
 
 inherit secure-version
 

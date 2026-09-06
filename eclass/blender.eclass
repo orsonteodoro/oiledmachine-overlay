@@ -286,6 +286,22 @@ einfo "Detected compiler switch.  Disabling LTO."
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
+
+	local symlink_mode=${BLENDER_MAIN_SYMLINK_MODE:-"latest"}
+einfo "BLENDER_MAIN_SYMLINK_MODE:  ${BLENDER_MAIN_SYMLINK_MODE}"
+	if [[ \
+		   "${symlink_mode}" == "latest-lts" \
+		|| "${symlink_mode}" == "latest" \
+		|| "${symlink_mode}" == ^"slot-"[0-9]"."[0-9]+$ \
+		|| "${symlink_mode}" == ^"version-"[0-9]"."[0-9]+"."[0-9]+$ \
+	]] ; then
+		:
+	else
+eerror "Your BLENDER_MAIN_SYMLINK_MODE is invalid"
+eerror "Requested BLENDER_MAIN_SYMLINK_MODE:  ${BLENDER_MAIN_SYMLINK_MODE}"
+eerror "Valid BLENDER_MAIN_SYMLINK_MODE options:  latest, latest-lts, slot-4.5, slot-5.2, version-4.5.13, version-5.2.1"
+		die
+	fi
 }
 
 check_portable_dependencies() {
@@ -941,7 +957,7 @@ _src_install() {
 		python_optimize "${ED}/usr/share/${PN}/${SLOT_MAJ}/scripts"
 	fi
 
-	local suffix=
+	local suffix=""
 	if [[ "${impl}" == "build_creator" ]] ; then
 		cp "${ED}/usr/share/applications/blender"{,-${SLOT_MAJ}}".desktop" || die
 		local menu_file="${ED}/usr/share/applications/blender-${SLOT_MAJ}.desktop"
@@ -1097,10 +1113,21 @@ ewarn
 
 	xdg_pkg_postinst
 
+	# This is needed for non-monotonic emerges.
+	# You have have 2 LTS versions installed but the active one is the older one.
+	local symlink_mode=${BLENDER_MAIN_SYMLINK_MODE:-"latest"}
+einfo "BLENDER_MAIN_SYMLINK_MODE:  ${BLENDER_MAIN_SYMLINK_MODE}"
 	local d_src="${EROOT}/usr/$(get_libdir)/${PN}"
 	local pv=""
-	if [[ "${BLENDER_MAIN_SYMLINK_MODE}" == "latest-lts" ]] ; then
-		# The highest LTS
+	if [[ "${symlink_mode}" == "latest" ]] ; then
+	# The highest pv
+		pv=$(ls "${d_src}/" \
+			| sed -e "/^[a-z]/d" \
+			| sort -V \
+			| tail -n 1 \
+		)
+	elif [[ "${symlink_mode}" == "latest-lts" ]] ; then
+	# The highest LTS
 		pv=$(basename \
 			$(dirname \
 				$(dirname \
@@ -1112,15 +1139,23 @@ ewarn
 				) \
 			) \
 		)
-	elif [[ "${BLENDER_MAIN_SYMLINK_MODE}" == "latest" ]] ; then
-		# The highest pv
-		pv=$(ls "${d_src}/" \
-			| sed -e "/^[a-z]/d" \
-			| sort -V \
-			| tail -n 1 \
+	elif [[ "${symlink_mode}" =~ ^"slot-"[0-9]"."[0-9]+$ ]] ; then
+	# By slot
+		slot=$(echo "${BLENDER_MAIN_SYMLINK_MODE}" \
+			| cut -f 2 -d "-")
+		pv=$(basename \
+			$(dirname \
+				$(dirname \
+					$(ls \
+						"${d_src}/${slot}"*"/creator/.lts" \
+						| sort -V \
+						| tail -n 1 \
+					) \
+				) \
+			) \
 		)
-	elif [[ "${BLENDER_MAIN_SYMLINK_MODE}" =~ ^"custom-"[0-9]"."[0-9]+$ ]] ; then
-		# A custom pv
+	elif [[ "${symlink_mode}" =~ ^"version-"[0-9]"."[0-9]+.[0-9]+$ ]] ; then
+	# By version
 		pv=$(echo "${BLENDER_MAIN_SYMLINK_MODE}" \
 			| cut -f 2 -d "-")
 	fi

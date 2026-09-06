@@ -102,6 +102,7 @@ CXX_STANDARD=20
 PYTHON_COMPAT=( "python3_"{13,14} ) # >= 3.13 for Numpy 2.x, upstream uses vendored 3.13
 CLANG_MIN="21" # C++20
 GCC_MIN="14" # C++20
+IS_LTS=1
 
 inherit secure-version
 

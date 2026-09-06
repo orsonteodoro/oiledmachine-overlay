@@ -42,9 +42,16 @@
     https://developer.blender.org/D2808
 
     BLENDER_MAIN_SYMLINK_MODE as a per-package environmental variable
-    can be set to latest-lts, latest (default), custom-x.yy where x.yy is a
-    slotted version series.  This will set the /usr/bin/blender symlink
-    to that version
+    to set the /usr/bin/blender symlink.  It can be set to on of the
+    following:
+
+    latest         for the latest point release (default)
+    latest-lts     for the latest Long Term Support release
+    slot-x.y       for any of the LTS or rolling releases, where x is the major
+                   version component and y is the minor version component
+    version-x.y.z  for any of the point releases, where x is the major version
+                   component, y is the minor version component, z is the patch
+                   version component
 
     For tracking the latest or stable please use virtual/blender-lts or
     virtual/blender-stable instead.  Do not emerge this package directly.  The
