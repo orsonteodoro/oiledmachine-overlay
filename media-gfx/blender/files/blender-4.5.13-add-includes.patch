@@ -1,0 +1,20 @@
+--- a/intern/libmv/libmv/numeric/numeric.h.orig	2025-07-30 22:34:35.000000000 -0700
++++ b/intern/libmv/libmv/numeric/numeric.h	2026-09-05 16:52:36.907649756 -0700
+@@ -25,6 +25,7 @@
+ #ifndef LIBMV_NUMERIC_NUMERIC_H
+ #define LIBMV_NUMERIC_NUMERIC_H
+ 
++#include <cassert>
+ #include <Eigen/Cholesky>
+ #include <Eigen/Core>
+ #include <Eigen/Eigenvalues>
+--- a/intern/libmv/libmv/simple_pipeline/camera_intrinsics_impl.h.orig	2025-07-30 22:34:35.000000000 -0700
++++ b/intern/libmv/libmv/simple_pipeline/camera_intrinsics_impl.h	2026-09-05 16:52:51.675456128 -0700
+@@ -18,6 +18,7 @@
+ // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ // IN THE SOFTWARE.
+ 
++#include <cassert>
+ #include "libmv/threading/parallel_for.h"
+ 
+ namespace libmv {
