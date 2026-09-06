@@ -1276,6 +1276,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.0.0-hip-symbolize-versions.patch"
 	"${FILESDIR}/${PN}-4.5.13-custom-simd-flags.patch"
 	"${FILESDIR}/${PN}-4.5.13-add-includes.patch"
+	"${FILESDIR}/${PN}-5.2.1-fix-comparator-arguments.patch"
 )
 
 _blender_set_rocm_compiler() {
