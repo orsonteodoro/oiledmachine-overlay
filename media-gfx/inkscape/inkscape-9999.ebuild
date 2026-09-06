@@ -1,4 +1,4 @@
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -8,18 +8,39 @@ EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="ip-assets untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE FS OOBR OOBW"
-PYTHON_COMPAT=( python3_{10..13} )
+PYTHON_COMPAT=( python3_{10..14} )
 PYTHON_REQ_USE="xml(+)"
 
-inherit cflags-hardened cmake flag-o-matic xdg toolchain-funcs python-single-r1
+CHKL_TIMESTAMPS=(
+	"app-text/ghostscript-gpl-9999"
+	"app-text/poppler-9999"
+	"dev-libs/double-conversion-9999"
+	"dev-libs/glib-2.89.9999"
+	"dev-libs/libxml2-9999"
+	"media-gfx/imagemagick-9999"
+	"media-libs/fontconfig-9999"
+	"media-libs/freetype-9999"
+	"media-libs/lcms-9999"
+	"media-libs/libjpeg-turbo-9999"
+	"sys-libs/readline-9999"
+	"x11-libs/gtk+-3.24.9999"
+	"x11-libs/libX11-9999"
+)
+
+inherit cflags-hardened chkl cmake flag-o-matic xdg secure-version toolchain-funcs python-single-r1
 
 MY_P="${P/_/}"
 DESCRIPTION="SVG based generic vector-drawing program"
 HOMEPAGE="https://inkscape.org/ https://gitlab.com/inkscape/inkscape/"
 
 if [[ ${PV} = 9999* ]]; then
-	inherit git-r3
+	FALLBACK_COMMIT="4ecab4da64eeccfb884e7eb45e717b13847f66de"
+	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://gitlab.com/inkscape/inkscape.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
 else
 	SRC_URI="https://media.inkscape.org/dl/resources/file/${MY_P}.tar.xz"
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86"
@@ -29,8 +50,8 @@ S="${WORKDIR}/${MY_P}"
 
 LICENSE="GPL-2 LGPL-2.1"
 SLOT="0"
-IUSE="
-cdr dia exif graphicsmagick imagemagick inkjar jpeg openmp postscript readline sourceview spell svg2 test visio wpg X
+IUSE+="
+cdr dia exif graphicsmagick imagemagick inkjar jpeg openmp postscript readline sourceview spell svg2 test visio wayland wpg X
 ebuild_revision_10
 "
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
@@ -44,29 +65,29 @@ BDEPEND="
 	test? ( virtual/imagemagick-tools )
 "
 COMMON_DEPEND="${PYTHON_DEPS}
-	>=app-text/poppler-0.57.0:=[cairo]
-	>=dev-cpp/cairomm-1.12:0
-	>=dev-cpp/glibmm-2.58:2
-	dev-cpp/gtkmm:3.0
-	>=dev-cpp/pangomm-2.40:1.4
-	>=dev-libs/boehm-gc-7.1:=
+	>=app-text/poppler-${POPPLER_PV}:=[cairo,lcms]
+	>=dev-cpp/cairomm-1.12:0=
+	>=dev-cpp/glibmm-2.58:2=
+	dev-cpp/gtkmm:3.0=
+	>=dev-cpp/pangomm-2.40:1.4=
+	>=dev-libs/boehm-gc-${BOEHM_GC_PV}:=
 	dev-libs/boost:=[stacktrace(-)]
-	dev-libs/double-conversion:=
-	>=dev-libs/glib-2.41
-	>=dev-libs/libsigc++-2.8:2
-	>=dev-libs/libxml2-2.7.4:=
-	>=dev-libs/libxslt-1.1.25
-	dev-libs/popt
-	media-gfx/potrace
-	media-libs/libepoxy
-	media-libs/fontconfig
-	media-libs/freetype:2
-	media-libs/lcms:2
-	media-libs/libpng:0=
+	>=dev-libs/double-conversion-${DOUBLE_CONVERSION_PV}:=
+	>=dev-libs/glib-${GLIB_PV}:=
+	>=dev-libs/libsigc++-2.8:2=
+	>=dev-libs/libxml2-${LIBXML2_PV}:=
+	>=dev-libs/libxslt-${LIBXSLT_PV}:=
+	>=dev-libs/popt-${POPT_PV}:=
+	media-gfx/potrace:=
+	media-libs/libepoxy:=
+	>=media-libs/fontconfig-${FONTCONFIG_PV}:=
+	>=media-libs/freetype-${FREETYPE_PV}:=
+	>=media-libs/lcms-${LCMS_PV}:=
+	>=media-libs/libpng-${LIBPNG_PV}:=
 	sci-libs/gsl:=
-	>=x11-libs/pango-1.44
-	x11-libs/gtk+:3[X?]
-	X? ( x11-libs/libX11 )
+	>=x11-libs/pango-${PANGO_PV}:=
+	>=x11-libs/gtk+-${GTK3_PV}:3=[X?,wayland?]
+	X? ( >=x11-libs/libX11-${LIBX11_PV}:= )
 	$(python_gen_cond_dep '
 		dev-python/appdirs[${PYTHON_USEDEP}]
 		dev-python/cachecontrol[${PYTHON_USEDEP}]
@@ -74,32 +95,32 @@ COMMON_DEPEND="${PYTHON_DEPS}
 		dev-python/filelock[${PYTHON_USEDEP}]
 		dev-python/lockfile[${PYTHON_USEDEP}]
 		dev-python/lxml[${PYTHON_USEDEP}]
-		dev-python/pillow[jpeg?,tiff,webp,${PYTHON_USEDEP}]
 		dev-python/tinycss2[${PYTHON_USEDEP}]
-		media-gfx/scour[${PYTHON_USEDEP}]
+		virtual/pillow:=[${PYTHON_USEDEP},jpeg?,tiff,webp]
+		media-gfx/scour:=[${PYTHON_USEDEP}]
 	')
 	cdr? (
-		app-text/libwpg:0.3
-		dev-libs/librevenge
-		media-libs/libcdr
+		app-text/libwpg:=
+		dev-libs/librevenge:=
+		media-libs/libcdr:=
 	)
-	exif? ( media-libs/libexif )
+	exif? ( >=media-libs/libexif-${LIBEXIF_PV}:= )
 	imagemagick? (
-		!graphicsmagick? ( media-gfx/imagemagick:=[cxx] )
-		graphicsmagick? ( media-gfx/graphicsmagick:=[cxx] )
+		!graphicsmagick? ( >=media-gfx/imagemagick-${IMAGEMAGICK_PV}:=[cxx] )
+		graphicsmagick? ( >=media-gfx/graphicsmagick-${GRAPHICSMAGICK_PV}:=[cxx] )
 	)
-	jpeg? ( media-libs/libjpeg-turbo:= )
-	readline? ( sys-libs/readline:= )
-	sourceview? ( x11-libs/gtksourceview:4 )
+	jpeg? ( >=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:= )
+	readline? ( >=sys-libs/readline-${READLINE_PV}:= )
+	sourceview? ( x11-libs/gtksourceview:4= )
 	spell? ( app-text/gspell:= )
 	visio? (
-		app-text/libwpg:0.3
-		dev-libs/librevenge
-		media-libs/libvisio
+		app-text/libwpg:=
+		dev-libs/librevenge:=
+		media-libs/libvisio:=
 	)
 	wpg? (
-		app-text/libwpg:0.3
-		dev-libs/librevenge
+		app-text/libwpg:=
+		dev-libs/librevenge:=
 	)
 "
 # These only use executables provided by these packages
@@ -108,17 +129,17 @@ COMMON_DEPEND="${PYTHON_DEPS}
 # on that.
 RDEPEND="${COMMON_DEPEND}
 	$(python_gen_cond_dep '
-		virtual/numpy[${PYTHON_USEDEP}]
+		virtual/numpy:=[${PYTHON_USEDEP}]
 	')
-	dia? ( app-office/dia )
-	postscript? ( app-text/ghostscript-gpl )
+	dia? ( app-office/dia:= )
+	postscript? ( >=app-text/ghostscript-gpl-${GHOSTSCRIPT_GPL_PV}:= )
 "
 DEPEND="${COMMON_DEPEND}
-	test? ( dev-cpp/gtest )
+	test? ( dev-cpp/gtest:= )
 "
 
 PATCHES=(
-        "${FILESDIR}"/${P}-poppler-25.{06,07,09}.patch # bugs 949531, 957137, 962278
+	"${FILESDIR}"/${PN}-1.4.4-respect-EPYTHON.patch # bug 924747
 )
 
 pkg_pretend() {
@@ -132,6 +153,9 @@ pkg_setup() {
 
 src_unpack() {
 	if [[ ${PV} = 9999* ]]; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
 		git-r3_src_unpack
 	else
 		default
@@ -140,15 +164,22 @@ src_unpack() {
 }
 
 src_prepare() {
+	rm -vr src/3rdparty/2geom/tests/dependent-project || die # unused, causing bug #964016
 	cmake_src_prepare
 	sed -i "/install.*COPYING/d" CMakeScripts/ConfigCPack.cmake || die
+	# bug #924747
+	sed -i -e "s:@GENTOO_PYTHON_INTERP@:${EPYTHON}:" src/extension/implementation/script.cpp || die
 }
 
 src_configure() {
+	chkl_check_many_timestamps
+
 	# ODR violation (https://gitlab.com/inkscape/lib2geom/-/issues/71, bug #859628)
 	filter-lto
 	# Aliasing unsafe (bug #310393)
 	append-flags -fno-strict-aliasing
+
+	use wayland || append-flags -DGENTOO_GTK_HIDE_WAYLAND
 
 	cflags-hardened_append
 

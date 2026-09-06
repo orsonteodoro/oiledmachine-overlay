@@ -238,6 +238,7 @@ SECURE_TIMESTAMP["llvm_runtimes_libcxxabi_9999"]="Aug 2, 2026 5:18 PM PDT"
 SECURE_TIMESTAMP["llvm_runtimes_libcxxabi_23_0_0_9999"]="Aug 7, 2026 2:00 AM PDT"
 SECURE_TIMESTAMP["llvm_runtimes_libcxxabi_24_0_0_9999"]="Aug 2, 2026 5:18 PM PDT"
 SECURE_TIMESTAMP["media_gfx_graphicsmagick_9999"]="2026-07-23 15:11:48 -05:00"
+SECURE_TIMESTAMP["media_gfx_inkscape_9999"]="Aug 10, 2026 11:11:14 AM PDT"
 SECURE_TIMESTAMP["media_libs_alsa_lib_9999"]="Jul 5, 2026 9:28 AM PDT"
 SECURE_TIMESTAMP["media_libs_assimp_9999"]="Sep 4, 2026 1:01 PM PDT"
 SECURE_TIMESTAMP["media_libs_chromaprint_9999"]="Jun 16, 2026 4:22 AM PDT"
@@ -495,7 +496,6 @@ SECURE_TIMESTAMP["x11_libs_pixman_9999"]="Aug 1, 2025 9:38:49 AM PDT"
 SECURE_TIMESTAMP["x11_misc_colord_9999"]="Feb 2, 2026 1:31 AM PST"
 
 #SECURE_TIMESTAMP[""]=""
-
 
 	declare -p SECURE_TIMESTAMP
 }
