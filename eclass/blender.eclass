@@ -10,6 +10,8 @@
 # The blender eclass helps reduce code duplication
 # across the blender eclasses to reduce maintenance cost.
 
+# The wrapper contains AI suggested fix.
+
 case ${EAPI:-0} in
 	[8]) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} is not supported" ;;
@@ -959,6 +961,7 @@ _src_install() {
 		fi
 		cat <<EOF > "${T}/${PN}${suffix}-${SLOT_MAJ}"
 #!${EPREFIX}/bin/bash
+# This launch wrapper contains an AI suggested fix.
 export BLENDER_SYSTEM_RESOURCES="/usr/share/blender/${PV}"
 export PYTHONPATH="${EPREFIX}/usr/lib/${EPYTHON}:${EPREFIX}/usr/lib/${EPYTHON}/lib-dynload:${EPREFIX}/usr/lib/${EPYTHON}/site-packages:\${PYTHONPATH}"
 BLENDER_EXTERN_DRACO_LIBRARY_PATH="${EPREFIX}/usr/$(get_libdir)/${PN}/$(ver_cut 1-3 ${PV})/python/lib/${EPYTHON}/site-packages"
