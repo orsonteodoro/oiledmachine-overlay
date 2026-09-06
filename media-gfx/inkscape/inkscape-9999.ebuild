@@ -8,6 +8,7 @@ EAPI=8
 # Remember to check the release notes for a 'Important Changes for Packagers'
 # section, e.g. https://inkscape.org/doc/release_notes/1.4/Inkscape_1.4.html#Important_Changes_for_Packagers.
 # For requirements, see https://gitlab.com/inkscape/inkscape/-/blob/master/CMakeScripts/DefineDependsandFlags.cmake
+# See also https://gitlab.com/inkscape/extensions
 
 CXX_STANDARD=20
 CFLAGS_HARDENED_USE_CASES="ip-assets untrusted-data"
@@ -46,7 +47,7 @@ CHKL_TIMESTAMPS=(
 	"x11-libs/libX11-9999"
 )
 
-inherit cflags-hardened chkl cmake flag-o-matic libcxx-slot libstdcxx-slot secure-version toolchain-funcs xdg python-single-r1
+inherit cflags-hardened chkl cmake flag-o-matic libcxx-slot libstdcxx-slot optfeature secure-version toolchain-funcs xdg python-single-r1
 
 MY_P="${P/_/}"
 DESCRIPTION="SVG based generic vector-drawing program"
@@ -69,8 +70,11 @@ S="${WORKDIR}/${MY_P}"
 
 LICENSE="GPL-2 LGPL-2.1"
 SLOT="0"
+# -exif based on CI/CD
+# -graphicsmagick based on CI/CD
+# -imagemagick based on CI/CD
 IUSE+="
-cdr dia exif graphicsmagick imagemagick inkjar jemalloc jpeg openmp postscript readline sourceview spell svg2 test visio wayland wpg X
++cdr -exif -graphicsmagick -imagemagick -jemalloc jpeg openmp postscript +readline +sourceview +spell +svg2 test +visio wayland +wpg X
 ebuild_revision_10
 "
 # The oiledmachine-overlay uses imagemagick 7 (live) but the project needs 6 or earlier, so it is disabled.
@@ -92,10 +96,10 @@ BDEPEND="
 "
 COMMON_DEPEND="${PYTHON_DEPS}
 	>=app-text/poppler-${POPPLER_PV}:=[cairo,lcms]
-	>=dev-cpp/cairomm-1.16:0=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
-	>=dev-cpp/glibmm-2.78.1:2=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
-	>=dev-cpp/gtkmm-4.13.3:4.0=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
-	>=dev-cpp/pangomm-2.48:1.4=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+	>=dev-cpp/cairomm-1.18.0:1.16=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+	>=dev-cpp/glibmm-2.86.0:2.68=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+	>=dev-cpp/gtkmm-4.20.0:4.0=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+	>=dev-cpp/pangomm-2.56.1:2.48=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	>=dev-libs/boehm-gc-${BOEHM_GC_PV}:=
 	>=dev-libs/boost-1.19.0:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},stacktrace(-)]
 	>=dev-libs/double-conversion-${DOUBLE_CONVERSION_PV}:=
@@ -111,16 +115,16 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	>=media-libs/graphene-1.0:=
 	>=media-libs/harfbuzz-${HARFBUZZ_PV}:=
 	>=media-libs/lcms-${LCMS_PV}:=
+	>=media-libs/libepoxy-1.5.10:=
 	>=media-libs/libpng-${LIBPNG_PV}:=
+	>=sci-libs/gsl-2.8:=
 	>=virtual/zlib-${ZLIB_PV}:=
 	>=x11-libs/pango-${PANGO_PV}:=
 	>=x11-libs/gdk-pixbuf-${GDK_PIXBUF_PV}:=
 	dev-cpp/mm-common:=
 	media-gfx/potrace:=
 	media-libs/gst-plugins-bad:=
-	media-libs/libepoxy:=
 	media-libs/shaderc:=
-	sci-libs/gsl:=
 	virtual/libiconv:*
 	virtual/libintl:*
 	$(python_gen_cond_dep '
@@ -138,7 +142,7 @@ COMMON_DEPEND="${PYTHON_DEPS}
 		>=dev-libs/jemalloc-${JEMALLOC_PV}:=
 	)
 	cdr? (
-		dev-libs/librevenge:=
+		>=dev-libs/librevenge-0.0.5:=
 		>=media-libs/libcdr-0.1:=
 	)
 	exif? (
@@ -162,18 +166,18 @@ COMMON_DEPEND="${PYTHON_DEPS}
 		>=sys-libs/readline-${READLINE_PV}:=
 	)
 	sourceview? (
-		x11-libs/gtksourceview:5=
+		>=x11-libs/gtksourceview-5.18.0:5=
 	)
 	spell? (
-		>=app-text/libspelling-1:=
+		>=app-text/libspelling-0.4.9:=
 	)
 	visio? (
-		dev-libs/librevenge:=
+		>=dev-libs/librevenge-0.0.5:=
 		>=media-libs/libvisio-0.1:=
 	)
 	wpg? (
 		>=app-text/libwpg-0.3:=
-		dev-libs/librevenge:=
+		>=dev-libs/librevenge-0.0.5:=
 	)
 	X? (
 		>=x11-libs/libX11-${LIBX11_PV}:=
@@ -187,12 +191,6 @@ RDEPEND="${COMMON_DEPEND}
 	$(python_gen_cond_dep '
 		virtual/numpy:=[${PYTHON_USEDEP}]
 	')
-	dia? (
-		app-office/dia:=
-	)
-	postscript? (
-		>=app-text/ghostscript-gpl-${GHOSTSCRIPT_GPL_PV}:=
-	)
 "
 DEPEND="${COMMON_DEPEND}
 	test? (
@@ -305,4 +303,20 @@ src_install() {
 		python_fix_shebang "${ED}"/usr/share/${PN}/extensions
 		python_optimize "${ED}"/usr/share/${PN}/extensions
 	fi
+}
+
+pkg_postinst() {
+	xdg_pkg_postinst
+
+	# In https://gitlab.com/inkscape/extensions there are .inx metadata files for extension summaries.
+	# The one with external dependences will have a dependency type="executable" in .inx.
+	optfeature_header "Install optional extension dependency packages:"
+	optfeature "export Gimp's XCF file format" "media-gfx/gimp"
+	optfeature "export PDF documents" "app-office/scribus"
+	optfeature "import XFIG graphics files" "media-gfx/fig2dev"
+	optfeature "load Postscript/EPS Files" "app-text/ghostscript-gpl"
+	optfeature "LaTeX formula support" "app-text/texlive"
+	optfeature "PNG optimized output" "media-gfx/optipng"
+	optfeature "PS/EPS importer for determining page orientation from text direction" "app-office/scribus"
+	optfeature "Typst math formula support" "app-text/typst"
 }
