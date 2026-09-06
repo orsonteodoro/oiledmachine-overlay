@@ -97,7 +97,7 @@ BDEPEND="
 COMMON_DEPEND="${PYTHON_DEPS}
 	>=app-text/poppler-${POPPLER_PV}:=[cairo,lcms]
 	>=dev-cpp/cairomm-1.18.0:1.16=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
-	>=dev-cpp/glibmm-2.86.0:2.68=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+	>=dev-cpp/glibmm-${GLIBMM_PV}:2.68=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	>=dev-cpp/gtkmm-4.20.0:4.0=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	>=dev-cpp/pangomm-2.56.1:2.48=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	>=dev-libs/boehm-gc-${BOEHM_GC_PV}:=
