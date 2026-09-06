@@ -34,6 +34,8 @@ inherit blender-v4.5
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 3.6.0 (20230715)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 4.5.3 (20251011) with Clang 18
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.0.0 (20251130) with Clang 18
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.2.1 (20260828) with Clang 21, Python 3.13, Numpy 2.x
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 4.5.13 (20260905) with Clang 19, Python 3.12, Numpy 1.x
 # USE="X abi10-compat alembic boost build_creator bullet collada
 # color-management cycles cycles-path-guiding dds draco elbeem embree ffmpeg
 # fftw gmp jack jemalloc jpeg2k llvm llvm-15 man materialx nanovdb ndof nls

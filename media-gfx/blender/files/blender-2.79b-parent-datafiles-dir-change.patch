@@ -6,7 +6,7 @@
  {
 -	static char version_str[5];
 -	sprintf(version_str, "%d.%02d", ver / 100, ver % 100);
-+	static char version_str[6]; /* recalculate size of array for tag length */
++	static char version_str[8]; /* recalculate size of array for tag length */
 +	sprintf(version_str, "%d.%02d%s%s", ver / 100, ver % 100, STRINGIFY(BLENDER_VERSION_CHAR), STRINGIFY(BLENDER_VERSION_TAG));
  	return version_str;
  }
