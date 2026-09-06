@@ -24,7 +24,7 @@ DESCRIPTION="Libraries for PulseAudio clients"
 HOMEPAGE="https://www.freedesktop.org/wiki/Software/PulseAudio/"
 
 if [[ ${PV} = 9999 ]]; then
-	FALLBACK_COMMIT="b096704c0d42c5e784deb781a07b23cfb5286a82"
+	FALLBACK_COMMIT="77d25a1e613095bdf87a1d13b65e7c330565077a"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/pulseaudio/pulseaudio"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -42,7 +42,7 @@ LICENSE="LGPL-2.1+"
 SLOT="0"
 IUSE+="
 +asyncns dbus doc +glib gtk pipewire pulseaudio-daemon selinux systemd test valgrind X
-ebuild_revision_1
+ebuild_revision_2
 "
 RESTRICT="!test? ( test )"
 
