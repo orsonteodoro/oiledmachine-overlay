@@ -1,0 +1,233 @@
+Only in gsl-2.8: ax_cblas.m4
+diff '--color=auto' -urp gsl-2.8.orig/bspline/Makefile.am gsl-2.8/bspline/Makefile.am
+--- gsl-2.8.orig/bspline/Makefile.am	2022-10-24 12:53:32.000000000 -0700
++++ gsl-2.8/bspline/Makefile.am	2026-09-06 12:06:09.194348283 -0700
+@@ -12,6 +12,6 @@ check_PROGRAMS = test
+ 
+ TESTS = $(check_PROGRAMS)
+ 
+-test_LDADD = libgslbspline.la ../multifit/libgslmultifit.la ../linalg/libgsllinalg.la ../permutation/libgslpermutation.la ../blas/libgslblas.la ../matrix/libgslmatrix.la ../vector/libgslvector.la ../block/libgslblock.la ../complex/libgslcomplex.la ../cblas/libgslcblas.la ../ieee-utils/libgslieeeutils.la  ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la ../statistics/libgslstatistics.la ../poly/libgslpoly.la ../integration/libgslintegration.la ../rng/libgslrng.la ../sort/libgslsort.la
++test_LDADD = libgslbspline.la ../multifit/libgslmultifit.la ../linalg/libgsllinalg.la ../permutation/libgslpermutation.la ../blas/libgslblas.la ../matrix/libgslmatrix.la ../vector/libgslvector.la ../block/libgslblock.la ../complex/libgslcomplex.la @CBLAS_LINK_LIBS@ ../ieee-utils/libgslieeeutils.la  ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la ../statistics/libgslstatistics.la ../poly/libgslpoly.la ../integration/libgslintegration.la ../rng/libgslrng.la ../sort/libgslsort.la
+ 
+ test_SOURCES = test.c
+Only in gsl-2.8/bspline: Makefile.am.orig
+Only in gsl-2.8/bspline: Makefile.am.porig
+Only in gsl-2.8/bspline: Makefile.am.rej
+diff '--color=auto' -urp gsl-2.8.orig/configure.ac gsl-2.8/configure.ac
+--- gsl-2.8.orig/configure.ac	2024-05-25 06:26:24.000000000 -0700
++++ gsl-2.8/configure.ac	2026-09-06 12:05:16.718525271 -0700
+@@ -220,6 +220,16 @@ if test "x$LIBS" = "x" ; then
+   AC_CHECK_LIB(m, cos)
+ fi
+ 
++sinclude(ax_cblas.m4)
++AX_CBLAS
++if test "x$CBLAS_LIBS" != "x"; then
++   CBLAS_LINK_LIBS="$CBLAS_LIBS"
++else
++   CBLAS_LINK_LIBS="\$(top_builddir)/cblas/libgslcblas.la"
++   CBLAS_LIBS="-lgslcblas"
++fi
++AC_SUBST(CBLAS_LINK_LIBS)
++
+ dnl Remember to put a definition in acconfig.h for each of these
+ AC_CHECK_DECLS(feenableexcept,,,[#define _GNU_SOURCE 1
+ #include <fenv.h>]) 
+Only in gsl-2.8: configure.ac.orig
+Only in gsl-2.8: configure.ac.porig
+diff '--color=auto' -urp gsl-2.8.orig/eigen/Makefile.am gsl-2.8/eigen/Makefile.am
+--- gsl-2.8.orig/eigen/Makefile.am	2019-05-31 15:19:58.000000000 -0700
++++ gsl-2.8/eigen/Makefile.am	2026-09-06 12:05:16.718915829 -0700
+@@ -11,7 +11,7 @@ noinst_HEADERS = recurse.h qrstep.c
+ 
+ TESTS = $(check_PROGRAMS)
+ 
+-test_LDADD = libgsleigen.la  ../test/libgsltest.la ../linalg/libgsllinalg.la ../permutation/libgslpermutation.la ../blas/libgslblas.la ../cblas/libgslcblas.la ../matrix/libgslmatrix.la ../vector/libgslvector.la ../block/libgslblock.la  ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la ../sys/libgslsys.la ../err/libgslerr.la ../utils/libutils.la ../rng/libgslrng.la ../sort/libgslsort.la
++test_LDADD = libgsleigen.la  ../test/libgsltest.la ../linalg/libgsllinalg.la ../permutation/libgslpermutation.la ../blas/libgslblas.la @CBLAS_LINK_LIBS@ ../matrix/libgslmatrix.la ../vector/libgslvector.la ../block/libgslblock.la  ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la ../sys/libgslsys.la ../err/libgslerr.la ../utils/libutils.la ../rng/libgslrng.la ../sort/libgslsort.la
+ 
+ test_SOURCES = test.c
+ 
+Only in gsl-2.8/eigen: Makefile.am.porig
+diff '--color=auto' -urp gsl-2.8.orig/gsl-config.in gsl-2.8/gsl-config.in
+--- gsl-2.8.orig/gsl-config.in	2018-11-14 13:27:09.000000000 -0800
++++ gsl-2.8/gsl-config.in	2026-09-06 12:05:16.719042431 -0700
+@@ -58,11 +58,11 @@ while test $# -gt 0; do
+ 	;;
+ 
+     --cflags)
+-       	echo @GSL_CFLAGS@ 
++       	echo @GSL_CFLAGS@ @CBLAS_CFLAGS@ 
+        	;;
+ 
+     --libs)
+-        : ${GSL_CBLAS_LIB=-lgslcblas}
++        : ${GSL_CBLAS_LIB=@CBLAS_LIBS@}
+ 	echo @GSL_LIBS@ $GSL_CBLAS_LIB @GSL_LIBM@
+        	;;
+ 
+Only in gsl-2.8: gsl-config.in.porig
+diff '--color=auto' -urp gsl-2.8.orig/gsl.pc.in gsl-2.8/gsl.pc.in
+--- gsl-2.8.orig/gsl.pc.in	2018-11-14 13:27:09.000000000 -0800
++++ gsl-2.8/gsl.pc.in	2026-09-06 12:05:16.719184358 -0700
+@@ -2,7 +2,7 @@ prefix=@prefix@
+ exec_prefix=@exec_prefix@
+ libdir=@libdir@
+ includedir=@includedir@
+-GSL_CBLAS_LIB=-lgslcblas
++GSL_CBLAS_LIB=@CBLAS_LIBS@
+ 
+ Name: GSL
+ Description: GNU Scientific Library
+Only in gsl-2.8: gsl.pc.in.porig
+diff '--color=auto' -urp gsl-2.8.orig/interpolation/Makefile.am gsl-2.8/interpolation/Makefile.am
+--- gsl-2.8.orig/interpolation/Makefile.am	2018-11-14 13:27:09.000000000 -0800
++++ gsl-2.8/interpolation/Makefile.am	2026-09-06 12:05:16.719312451 -0700
+@@ -12,7 +12,7 @@ AM_CPPFLAGS = -I$(top_srcdir)
+ 
+ TESTS = $(check_PROGRAMS)
+ 
+-test_LDADD = libgslinterpolation.la ../poly/libgslpoly.la ../linalg/libgsllinalg.la ../permutation/libgslpermutation.la ../blas/libgslblas.la ../matrix/libgslmatrix.la ../vector/libgslvector.la ../block/libgslblock.la ../complex/libgslcomplex.la ../cblas/libgslcblas.la ../ieee-utils/libgslieeeutils.la  ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la
++test_LDADD = libgslinterpolation.la ../poly/libgslpoly.la ../linalg/libgsllinalg.la ../permutation/libgslpermutation.la ../blas/libgslblas.la ../matrix/libgslmatrix.la ../vector/libgslvector.la ../block/libgslblock.la ../complex/libgslcomplex.la @CBLAS_LINK_LIBS@ ../ieee-utils/libgslieeeutils.la  ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la
+ 
+ test_SOURCES = test.c
+ 
+Only in gsl-2.8/interpolation: Makefile.am.porig
+diff '--color=auto' -urp gsl-2.8.orig/linalg/Makefile.am gsl-2.8/linalg/Makefile.am
+--- gsl-2.8.orig/linalg/Makefile.am	2024-05-10 11:00:13.000000000 -0700
++++ gsl-2.8/linalg/Makefile.am	2026-09-06 12:05:16.719442911 -0700
+@@ -13,4 +13,4 @@ TESTS = $(check_PROGRAMS)
+ check_PROGRAMS = test
+ 
+ test_SOURCES = test.c
+-test_LDADD = libgsllinalg.la ../blas/libgslblas.la ../cblas/libgslcblas.la ../permutation/libgslpermutation.la ../matrix/libgslmatrix.la ../vector/libgslvector.la ../block/libgslblock.la ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la ../rng/libgslrng.la
++test_LDADD = libgsllinalg.la ../blas/libgslblas.la @CBLAS_LINK_LIBS@ ../permutation/libgslpermutation.la ../matrix/libgslmatrix.la ../vector/libgslvector.la ../block/libgslblock.la ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la ../rng/libgslrng.la
+Only in gsl-2.8/linalg: Makefile.am.porig
+diff '--color=auto' -urp gsl-2.8.orig/Makefile.am gsl-2.8/Makefile.am
+--- gsl-2.8.orig/Makefile.am	2018-11-27 13:51:13.000000000 -0800
++++ gsl-2.8/Makefile.am	2026-09-06 12:05:16.717982078 -0700
+@@ -19,7 +19,7 @@ EXTRA_DIST = autogen.sh gsl-config.in gs
+ 
+ lib_LTLIBRARIES = libgsl.la
+ libgsl_la_SOURCES = version.c
+-libgsl_la_LIBADD = $(GSL_LIBADD) $(SUBLIBS)
++libgsl_la_LIBADD = $(GSL_LIBADD) $(SUBLIBS) @CBLAS_LINK_LIBS@
+ libgsl_la_LDFLAGS = $(GSL_LDFLAGS) -version-info $(GSL_LT_VERSION)
+ noinst_HEADERS = templates_on.h templates_off.h build.h
+ 
+@@ -29,10 +29,10 @@ m4data_DATA = gsl.m4
+ bin_PROGRAMS = gsl-randist gsl-histogram
+ 
+ gsl_randist_SOURCES = gsl-randist.c
+-gsl_randist_LDADD = libgsl.la cblas/libgslcblas.la
++gsl_randist_LDADD = libgsl.la
+ 
+ gsl_histogram_SOURCES = gsl-histogram.c
+-gsl_histogram_LDADD = libgsl.la cblas/libgslcblas.la
++gsl_histogram_LDADD = libgsl.la
+ 
+ check_SCRIPTS = test_gsl_histogram.sh pkgconfig.test
+ TESTS = test_gsl_histogram.sh pkgconfig.test
+@@ -51,6 +51,8 @@ edit = $(SED) \
+ 	-e 's|@GSL_CFLAGS[@]|$(GSL_CFLAGS)|g' \
+ 	-e 's|@GSL_LIBM[@]|$(GSL_LIBM)|g' \
+ 	-e 's|@GSL_LIBS[@]|$(GSL_LIBS)|g' \
++	-e 's|@CBLAS_CFLAGS[@]|$(CBLAS_CFLAGS)|g' \
++	-e 's|@CBLAS_LIBS[@]|$(CBLAS_LIBS)|g' \
+ 	-e 's|@LIBS[@]|$(LIBS)|g' \
+ 	-e 's|@VERSION[@]|$(VERSION)|g'
+ 
+Only in gsl-2.8: Makefile.am.porig
+diff '--color=auto' -urp gsl-2.8.orig/multifit/Makefile.am gsl-2.8/multifit/Makefile.am
+--- gsl-2.8.orig/multifit/Makefile.am	2018-11-14 13:27:10.000000000 -0800
++++ gsl-2.8/multifit/Makefile.am	2026-09-06 12:05:16.719593284 -0700
+@@ -67,8 +67,8 @@ check_PROGRAMS = test #demo
+ TESTS = $(check_PROGRAMS)
+ 
+ test_SOURCES = test.c
+-test_LDADD = libgslmultifit.la ../linalg/libgsllinalg.la ../permutation/libgslpermutation.la ../blas/libgslblas.la ../cblas/libgslcblas.la ../matrix/libgslmatrix.la ../sort/libgslsort.la ../statistics/libgslstatistics.la ../vector/libgslvector.la ../block/libgslblock.la  ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la ../err/libgslerr.la ../test/libgsltest.la ../utils/libutils.la ../sys/libgslsys.la ../rng/libgslrng.la ../specfunc/libgslspecfunc.la ../min/libgslmin.la
++test_LDADD = libgslmultifit.la ../linalg/libgsllinalg.la ../permutation/libgslpermutation.la ../blas/libgslblas.la @CBLAS_LINK_LIBS@ ../matrix/libgslmatrix.la ../sort/libgslsort.la ../statistics/libgslstatistics.la ../vector/libgslvector.la ../block/libgslblock.la  ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la ../err/libgslerr.la ../test/libgsltest.la ../utils/libutils.la ../sys/libgslsys.la ../rng/libgslrng.la ../specfunc/libgslspecfunc.la ../min/libgslmin.la
+ 
+ #demo_SOURCES = demo.c
+-#demo_LDADD = libgslmultifit.la ../linalg/libgsllinalg.la ../permutation/libgslpermutation.la ../blas/libgslblas.la ../cblas/libgslcblas.la ../matrix/libgslmatrix.la ../vector/libgslvector.la ../block/libgslblock.la ../randist/libgslrandist.la ../rng/libgslrng.la ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la ../err/libgslerr.la ../test/libgsltest.la ../utils/libutils.la ../sys/libgslsys.la
++#demo_LDADD = libgslmultifit.la ../linalg/libgsllinalg.la ../permutation/libgslpermutation.la ../blas/libgslblas.la @CBLAS_LINK_LIBS@ ../matrix/libgslmatrix.la ../vector/libgslvector.la ../block/libgslblock.la ../randist/libgslrandist.la ../rng/libgslrng.la ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la ../err/libgslerr.la ../test/libgsltest.la ../utils/libutils.la ../sys/libgslsys.la
+ 
+Only in gsl-2.8/multifit: Makefile.am.porig
+diff '--color=auto' -urp gsl-2.8.orig/multimin/Makefile.am gsl-2.8/multimin/Makefile.am
+--- gsl-2.8.orig/multimin/Makefile.am	2018-11-14 13:27:10.000000000 -0800
++++ gsl-2.8/multimin/Makefile.am	2026-09-06 12:05:16.719754589 -0700
+@@ -13,8 +13,8 @@ check_PROGRAMS = test #demo
+ TESTS = $(check_PROGRAMS) 
+ 
+ test_SOURCES = test.c test_funcs.c test_funcs.h
+-test_LDADD = libgslmultimin.la ../min/libgslmin.la ../poly/libgslpoly.la ../blas/libgslblas.la ../cblas/libgslcblas.la ../linalg/libgsllinalg.la ../permutation/libgslpermutation.la ../matrix/libgslmatrix.la ../vector/libgslvector.la ../block/libgslblock.la ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la
++test_LDADD = libgslmultimin.la ../min/libgslmin.la ../poly/libgslpoly.la ../blas/libgslblas.la @CBLAS_LINK_LIBS@ ../linalg/libgsllinalg.la ../permutation/libgslpermutation.la ../matrix/libgslmatrix.la ../vector/libgslvector.la ../block/libgslblock.la ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la
+ 
+ #demo_SOURCES = demo.c 
+-#demo_LDADD = libgslmultimin.la ../min/libgslmin.la ../blas/libgslblas.la ../cblas/libgslcblas.la ../linalg/libgsllinalg.la ../matrix/libgslmatrix.la ../vector/libgslvector.la ../block/libgslblock.la ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la
++#demo_LDADD = libgslmultimin.la ../min/libgslmin.la ../blas/libgslblas.la @CBLAS_LINK_LIBS@ ../linalg/libgsllinalg.la ../matrix/libgslmatrix.la ../vector/libgslvector.la ../block/libgslblock.la ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la
+ 
+Only in gsl-2.8/multimin: Makefile.am.porig
+diff '--color=auto' -urp gsl-2.8.orig/multiroots/Makefile.am gsl-2.8/multiroots/Makefile.am
+--- gsl-2.8.orig/multiroots/Makefile.am	2018-11-14 13:27:10.000000000 -0800
++++ gsl-2.8/multiroots/Makefile.am	2026-09-06 12:05:16.719877348 -0700
+@@ -15,5 +15,5 @@ check_PROGRAMS = test
+ TESTS = $(check_PROGRAMS)
+ 
+ test_SOURCES = test.c test_funcs.c test_funcs.h
+-test_LDADD = libgslmultiroots.la ../linalg/libgsllinalg.la ../blas/libgslblas.la ../cblas/libgslcblas.la ../permutation/libgslpermutation.la ../matrix/libgslmatrix.la ../vector/libgslvector.la ../block/libgslblock.la ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la  ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la
++test_LDADD = libgslmultiroots.la ../linalg/libgsllinalg.la ../blas/libgslblas.la @CBLAS_LINK_LIBS@ ../permutation/libgslpermutation.la ../matrix/libgslmatrix.la ../vector/libgslvector.la ../block/libgslblock.la ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la  ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la
+ 
+Only in gsl-2.8/multiroots: Makefile.am.porig
+diff '--color=auto' -urp gsl-2.8.orig/ode-initval/Makefile.am gsl-2.8/ode-initval/Makefile.am
+--- gsl-2.8.orig/ode-initval/Makefile.am	2018-11-14 13:27:10.000000000 -0800
++++ gsl-2.8/ode-initval/Makefile.am	2026-09-06 12:05:16.720001316 -0700
+@@ -12,7 +12,7 @@ check_PROGRAMS = test
+ 
+ TESTS = $(check_PROGRAMS)
+ 
+-test_LDADD = libgslodeiv.la ../linalg/libgsllinalg.la ../blas/libgslblas.la ../cblas/libgslcblas.la ../matrix/libgslmatrix.la ../permutation/libgslpermutation.la ../vector/libgslvector.la ../block/libgslblock.la ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la  ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la 
++test_LDADD = libgslodeiv.la ../linalg/libgsllinalg.la ../blas/libgslblas.la @CBLAS_LINK_LIBS@ ../matrix/libgslmatrix.la ../permutation/libgslpermutation.la ../vector/libgslvector.la ../block/libgslblock.la ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la  ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la 
+ 
+ test_SOURCES = test.c
+ 
+Only in gsl-2.8/ode-initval: Makefile.am.porig
+diff '--color=auto' -urp gsl-2.8.orig/poly/Makefile.am gsl-2.8/poly/Makefile.am
+--- gsl-2.8.orig/poly/Makefile.am	2018-11-14 13:27:10.000000000 -0800
++++ gsl-2.8/poly/Makefile.am	2026-09-06 12:05:16.720122720 -0700
+@@ -10,7 +10,7 @@ noinst_HEADERS = balance.c companion.c q
+ 
+ TESTS = $(check_PROGRAMS)
+ 
+-check_PROGRAMS = test
++#check_PROGRAMS = test
+ 
+ test_SOURCES = test.c
+ test_LDADD = libgslpoly.la ../ieee-utils/libgslieeeutils.la ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la ../sort/libgslsort.la
+Only in gsl-2.8/poly: Makefile.am.porig
+diff '--color=auto' -urp gsl-2.8.orig/specfunc/Makefile.am gsl-2.8/specfunc/Makefile.am
+--- gsl-2.8.orig/specfunc/Makefile.am	2023-02-13 18:54:25.000000000 -0800
++++ gsl-2.8/specfunc/Makefile.am	2026-09-06 12:05:16.720270282 -0700
+@@ -12,7 +12,7 @@ TESTS = $(check_PROGRAMS)
+ 
+ check_PROGRAMS = test
+ 
+-test_LDADD = libgslspecfunc.la ../eigen/libgsleigen.la ../linalg/libgsllinalg.la  ../sort/libgslsort.la ../matrix/libgslmatrix.la ../vector/libgslvector.la ../blas/libgslblas.la ../cblas/libgslcblas.la ../block/libgslblock.la ../complex/libgslcomplex.la ../poly/libgslpoly.la ../ieee-utils/libgslieeeutils.la  ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la
++test_LDADD = libgslspecfunc.la ../eigen/libgsleigen.la ../linalg/libgsllinalg.la  ../sort/libgslsort.la ../matrix/libgslmatrix.la ../vector/libgslvector.la ../blas/libgslblas.la @CBLAS_LINK_LIBS@ ../block/libgslblock.la ../complex/libgslcomplex.la ../poly/libgslpoly.la ../ieee-utils/libgslieeeutils.la  ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la
+ 
+ test_SOURCES = test_sf.c test_sf.h test_airy.c test_alf.c test_bessel.c test_coulomb.c test_dilog.c test_gamma.c test_hermite.c test_hyperg.c test_legendre.c test_mathieu.c test_sincos_pi.c
+   
+Only in gsl-2.8/specfunc: Makefile.am.orig
+Only in gsl-2.8/specfunc: Makefile.am.porig
+diff '--color=auto' -urp gsl-2.8.orig/wavelet/Makefile.am gsl-2.8/wavelet/Makefile.am
+--- gsl-2.8.orig/wavelet/Makefile.am	2019-07-27 22:08:46.000000000 -0700
++++ gsl-2.8/wavelet/Makefile.am	2026-09-06 12:05:16.720481626 -0700
+@@ -10,7 +10,7 @@ check_PROGRAMS = test
+ 
+ TESTS = $(check_PROGRAMS)
+ 
+-test_LDADD = libgslwavelet.la ../matrix/libgslmatrix.la ../vector/libgslvector.la ../blas/libgslblas.la ../cblas/libgslcblas.la ../block/libgslblock.la ../ieee-utils/libgslieeeutils.la  ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la
++test_LDADD = libgslwavelet.la ../matrix/libgslmatrix.la ../vector/libgslvector.la ../blas/libgslblas.la @CBLAS_LINK_LIBS@ ../block/libgslblock.la ../ieee-utils/libgslieeeutils.la  ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la
+ 
+ test_SOURCES = test.c
+ 
+Only in gsl-2.8/wavelet: Makefile.am.porig

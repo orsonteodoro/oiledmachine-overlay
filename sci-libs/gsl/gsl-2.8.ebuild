@@ -1,0 +1,67 @@
+# Copyright 1999-2025 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+inherit autotools flag-o-matic toolchain-funcs
+
+DESCRIPTION="The GNU Scientific Library"
+HOMEPAGE="https://www.gnu.org/software/gsl/"
+SRC_URI="mirror://gnu/${PN}/${P}.tar.gz
+"
+LICENSE="GPL-3+"
+RESTRICT="mirror" # Speed up downloads and mitigate snooping
+# Usually 0/${PV} but check
+SLOT="0/27"
+KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~mips ppc ppc64 ~riscv ~s390 ~sparc x86"
+IUSE="cblas-external +deprecated static-libs"
+
+RDEPEND="cblas-external? ( virtual/cblas:= )"
+DEPEND="${RDEPEND}"
+BDEPEND="virtual/pkgconfig"
+
+PATCHES=(
+	"${FILESDIR}"/${PN}-2.8-cblas.patch
+	"${FILESDIR}"/${PN}-2.7.1-test-tolerance.patch
+)
+
+src_prepare() {
+	default
+
+	if use deprecated; then
+		sed -i -e "/GSL_DISABLE_DEPRECATED/,+2d" configure.ac || die
+	fi
+
+	eautoreconf
+}
+
+src_configure() {
+	# -Werror=lto-type-mismatch
+	# https://bugs.gentoo.org/927585
+	#
+	# Testsuite issue. Seems fixed in 2.8.
+	filter-lto
+
+	filter-flags -ffast-math
+
+	if use cblas-external; then
+		export CBLAS_LIBS="$($(tc-getPKG_CONFIG) --libs cblas)"
+		export CBLAS_CFLAGS="$($(tc-getPKG_CONFIG) --cflags cblas)"
+	fi
+
+	econf \
+		--enable-shared \
+		$(use_with cblas-external) \
+		$(use_enable static-libs static)
+}
+
+src_test() {
+	local MAKEOPTS="${MAKEOPTS} -j1"
+	default
+}
+
+src_install() {
+	default
+
+	find "${ED}" -name '*.la' -delete || die
+}
