@@ -45,7 +45,7 @@ ieee1394
 # For context, see
 # https://github.com/mm2/Little-CMS/commit/bc4ee0633d375cb3bd1dd83b9ffc15ba37d12a64
 # https://github.com/mm2/Little-CMS/issues/580
-lcms
+#lcms
 
 # The last release of libmng was in 2015.
 mng
