@@ -3,31 +3,50 @@
 
 EAPI=8
 
+# U26
+
 # Remember to check the release notes for a 'Important Changes for Packagers'
 # section, e.g. https://inkscape.org/doc/release_notes/1.4/Inkscape_1.4.html#Important_Changes_for_Packagers.
+# For requirements, see https://gitlab.com/inkscape/inkscape/-/blob/master/CMakeScripts/DefineDependsandFlags.cmake
 
+CXX_STANDARD=20
 CFLAGS_HARDENED_USE_CASES="ip-assets untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE FS OOBR OOBW"
 PYTHON_COMPAT=( python3_{10..14} )
 PYTHON_REQ_USE="xml(+)"
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX20[@]}" # 13..16
+)
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}" # 21, 22
+)
+LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
 CHKL_TIMESTAMPS=(
 	"app-text/ghostscript-gpl-9999"
 	"app-text/poppler-9999"
 	"dev-libs/double-conversion-9999"
 	"dev-libs/glib-2.89.9999"
+	"dev-libs/icu-79.0.9999"
+	"dev-libs/jemalloc-9999"
 	"dev-libs/libxml2-9999"
+	"gui-libs/gtk-4.23.9999"
 	"media-gfx/imagemagick-9999"
 	"media-libs/fontconfig-9999"
 	"media-libs/freetype-9999"
+	"media-libs/harfbuzz-9999"
 	"media-libs/lcms-9999"
 	"media-libs/libjpeg-turbo-9999"
 	"sys-libs/readline-9999"
-	"x11-libs/gtk+-3.24.9999"
 	"x11-libs/libX11-9999"
 )
 
-inherit cflags-hardened chkl cmake flag-o-matic xdg secure-version toolchain-funcs python-single-r1
+inherit cflags-hardened chkl cmake flag-o-matic libcxx-slot libstdcxx-slot secure-version toolchain-funcs xdg python-single-r1
 
 MY_P="${P/_/}"
 DESCRIPTION="SVG based generic vector-drawing program"
@@ -51,43 +70,59 @@ S="${WORKDIR}/${MY_P}"
 LICENSE="GPL-2 LGPL-2.1"
 SLOT="0"
 IUSE+="
-cdr dia exif graphicsmagick imagemagick inkjar jpeg openmp postscript readline sourceview spell svg2 test visio wayland wpg X
+cdr dia exif graphicsmagick imagemagick inkjar jemalloc jpeg openmp postscript readline sourceview spell svg2 test visio wayland wpg X
 ebuild_revision_10
 "
-REQUIRED_USE="${PYTHON_REQUIRED_USE}"
+# The oiledmachine-overlay uses imagemagick 7 (live) but the project needs 6 or earlier, so it is disabled.
+REQUIRED_USE="
+${PYTHON_REQUIRED_USE}
+!imagemagick
+"
 # Lots of test failures which need investigating, bug #871621
 RESTRICT="!test? ( test ) test"
 
 BDEPEND="
-	dev-util/glib-utils
+	>=dev-build/cmake-3.24.0
 	>=sys-devel/gettext-0.17
+	dev-util/glib-utils
 	virtual/pkgconfig
-	test? ( virtual/imagemagick-tools )
+	test? (
+		virtual/imagemagick-tools
+	)
 "
 COMMON_DEPEND="${PYTHON_DEPS}
 	>=app-text/poppler-${POPPLER_PV}:=[cairo,lcms]
-	>=dev-cpp/cairomm-1.12:0=
-	>=dev-cpp/glibmm-2.58:2=
-	dev-cpp/gtkmm:3.0=
-	>=dev-cpp/pangomm-2.40:1.4=
+	>=dev-cpp/cairomm-1.16:0=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+	>=dev-cpp/glibmm-2.78.1:2=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+	>=dev-cpp/gtkmm-4.13.3:4.0=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+	>=dev-cpp/pangomm-2.48:1.4=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	>=dev-libs/boehm-gc-${BOEHM_GC_PV}:=
-	dev-libs/boost:=[stacktrace(-)]
+	>=dev-libs/boost-1.19.0:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},stacktrace(-)]
 	>=dev-libs/double-conversion-${DOUBLE_CONVERSION_PV}:=
 	>=dev-libs/glib-${GLIB_PV}:=
-	>=dev-libs/libsigc++-2.8:2=
+	>=dev-libs/icu-${ICU_PV}:=
+	>=dev-libs/libsigc++-3.6:3=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	>=dev-libs/libxml2-${LIBXML2_PV}:=
 	>=dev-libs/libxslt-${LIBXSLT_PV}:=
 	>=dev-libs/popt-${POPT_PV}:=
-	media-gfx/potrace:=
-	media-libs/libepoxy:=
+	>=gui-libs/gtk-${GTK4_PV}:4=[X?,wayland?]
 	>=media-libs/fontconfig-${FONTCONFIG_PV}:=
 	>=media-libs/freetype-${FREETYPE_PV}:=
+	>=media-libs/graphene-1.0:=
+	>=media-libs/harfbuzz-${HARFBUZZ_PV}:=
 	>=media-libs/lcms-${LCMS_PV}:=
 	>=media-libs/libpng-${LIBPNG_PV}:=
-	sci-libs/gsl:=
+	>=virtual/zlib-${ZLIB_PV}:=
 	>=x11-libs/pango-${PANGO_PV}:=
-	>=x11-libs/gtk+-${GTK3_PV}:3=[X?,wayland?]
-	X? ( >=x11-libs/libX11-${LIBX11_PV}:= )
+	>=x11-libs/gdk-pixbuf-${GDK_PIXBUF_PV}:=
+	dev-cpp/mm-common:=
+	media-gfx/potrace:=
+	media-libs/gst-plugins-bad:=
+	media-libs/libepoxy:=
+	media-libs/shaderc:=
+	sci-libs/gsl:=
+	virtual/libiconv:*
+	virtual/libintl:*
 	$(python_gen_cond_dep '
 		dev-python/appdirs[${PYTHON_USEDEP}]
 		dev-python/cachecontrol[${PYTHON_USEDEP}]
@@ -99,28 +134,49 @@ COMMON_DEPEND="${PYTHON_DEPS}
 		virtual/pillow:=[${PYTHON_USEDEP},jpeg?,tiff,webp]
 		media-gfx/scour:=[${PYTHON_USEDEP}]
 	')
+	jemalloc? (
+		>=dev-libs/jemalloc-${JEMALLOC_PV}:=
+	)
 	cdr? (
-		app-text/libwpg:=
 		dev-libs/librevenge:=
-		media-libs/libcdr:=
+		>=media-libs/libcdr-0.1:=
 	)
-	exif? ( >=media-libs/libexif-${LIBEXIF_PV}:= )
+	exif? (
+		>=media-libs/libexif-${LIBEXIF_PV}:=
+	)
 	imagemagick? (
-		!graphicsmagick? ( >=media-gfx/imagemagick-${IMAGEMAGICK_PV}:=[cxx] )
-		graphicsmagick? ( >=media-gfx/graphicsmagick-${GRAPHICSMAGICK_PV}:=[cxx] )
+		!graphicsmagick? (
+			>=media-gfx/imagemagick-${IMAGEMAGICK_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},cxx]
+			|| (
+				=media-gfx/imagemagick-6*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},cxx]
+			)
+		)
+		graphicsmagick? (
+			>=media-gfx/graphicsmagick-${GRAPHICSMAGICK_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},cxx]
+		)
 	)
-	jpeg? ( >=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:= )
-	readline? ( >=sys-libs/readline-${READLINE_PV}:= )
-	sourceview? ( x11-libs/gtksourceview:4= )
-	spell? ( app-text/gspell:= )
+	jpeg? (
+		>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:=
+	)
+	readline? (
+		>=sys-libs/readline-${READLINE_PV}:=
+	)
+	sourceview? (
+		x11-libs/gtksourceview:5=
+	)
+	spell? (
+		>=app-text/libspelling-1:=
+	)
 	visio? (
-		app-text/libwpg:=
 		dev-libs/librevenge:=
-		media-libs/libvisio:=
+		>=media-libs/libvisio-0.1:=
 	)
 	wpg? (
-		app-text/libwpg:=
+		>=app-text/libwpg-0.3:=
 		dev-libs/librevenge:=
+	)
+	X? (
+		>=x11-libs/libX11-${LIBX11_PV}:=
 	)
 "
 # These only use executables provided by these packages
@@ -131,11 +187,17 @@ RDEPEND="${COMMON_DEPEND}
 	$(python_gen_cond_dep '
 		virtual/numpy:=[${PYTHON_USEDEP}]
 	')
-	dia? ( app-office/dia:= )
-	postscript? ( >=app-text/ghostscript-gpl-${GHOSTSCRIPT_GPL_PV}:= )
+	dia? (
+		app-office/dia:=
+	)
+	postscript? (
+		>=app-text/ghostscript-gpl-${GHOSTSCRIPT_GPL_PV}:=
+	)
 "
 DEPEND="${COMMON_DEPEND}
-	test? ( dev-cpp/gtest:= )
+	test? (
+		dev-cpp/gtest:=
+	)
 "
 
 PATCHES=(
@@ -184,26 +246,26 @@ src_configure() {
 	cflags-hardened_append
 
 	local mycmakeargs=(
-		# -DWITH_LPETOOL   # Compile with LPE Tool and experimental LPEs enabled
-		-DWITH_NLS=ON
+		-DBUILD_SHARED_LIBS=ON
+		-DENABLE_LCMS=ON
 		-DENABLE_POPPLER=ON
 		-DENABLE_POPPLER_CAIRO=ON
-		-DWITH_PROFILING=OFF
-		-DWITH_INTERNAL_2GEOM=ON
 		-DBUILD_TESTING=$(usex test)
-		-DWITH_LIBCDR=$(usex cdr)
-		-DWITH_IMAGE_MAGICK=$(usex imagemagick $(usex !graphicsmagick)) # requires ImageMagick 6, only IM must be enabled
-		-DWITH_GRAPHICS_MAGICK=$(usex graphicsmagick $(usex imagemagick)) # both must be enabled to use GraphicsMagick
 		-DWITH_GNU_READLINE=$(usex readline)
-		-DWITH_GSPELL=$(usex spell)
-		-DWITH_JEMALLOC=OFF
-		-DENABLE_LCMS=ON
-		-DWITH_OPENMP=$(usex openmp)
-		-DBUILD_SHARED_LIBS=ON
+		-DWITH_GRAPHICS_MAGICK=$(usex graphicsmagick $(usex imagemagick)) # both must be enabled to use GraphicsMagick
 		-DWITH_GSOURCEVIEW=$(usex sourceview)
-		-DWITH_SVG2=$(usex svg2)
+		-DWITH_IMAGE_MAGICK=$(usex imagemagick $(usex !graphicsmagick)) # requires ImageMagick 6, only IM must be enabled
+		-DWITH_INTERNAL_2GEOM=ON
+		-DWITH_JEMALLOC=$(usex jemalloc)
+		-DWITH_LIBCDR=$(usex cdr)
+		-DWITH_LIBSPELLING=$(usex spell)
 		-DWITH_LIBVISIO=$(usex visio)
 		-DWITH_LIBWPG=$(usex wpg)
+		#-DWITH_LPETOOL   # Compile with LPE Tool and experimental LPEs enabled
+		-DWITH_NLS=ON
+		-DWITH_OPENMP=$(usex openmp)
+		-DWITH_PROFILING=OFF
+		-DWITH_SVG2=$(usex svg2)
 		-DWITH_X11=$(usex X)
 	)
 
