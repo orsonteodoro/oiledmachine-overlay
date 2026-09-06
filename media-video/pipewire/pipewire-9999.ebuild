@@ -53,8 +53,9 @@ CHKL_TIMESTAMPS=(
 inherit cflags-hardened chkl meson-multilib optfeature prefix python-any-r1 systemd tmpfiles secure-version udev
 
 if [[ ${PV} =~ 9999 ]] ; then
+	SOVER="0.7"
 	if [[ "${PV}" == 9999 ]] ; then
-		FALLBACK_COMMIT="2a7bd1aed2818d280ba34384f8b893e358cf0e92"
+		FALLBACK_COMMIT="b0b792fa72451fd9a068c1a8f877d21d4c67cd3f"
 		EGIT_BRANCH="master"
 	fi
 	if [[ "${PV}" == *.9999 ]] ; then
@@ -67,6 +68,7 @@ if [[ ${PV} =~ 9999 ]] ; then
 	fi
 	inherit git-r3
 else
+	SOVER="0."$(ver_cut "1-2" "${PV}")
 	if [[ ${PV} == *_p* ]] ; then
 		MY_COMMIT=""
 		SRC_URI="https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/${MY_COMMIT}/pipewire-${MY_COMMIT}.tar.bz2 -> ${P}.tar.bz2"
@@ -88,11 +90,11 @@ HOMEPAGE="https://pipewire.org/"
 
 LICENSE="MIT LGPL-2.1+ GPL-2"
 # ABI was broken in 0.3.42 for https://gitlab.freedesktop.org/pipewire/wireplumber/-/issues/49
-SLOT="0/0.4"
+SLOT="0/${SOVER}"
 IUSE+=" ${PIPEWIRE_DOCS_USEFLAG} bluetooth elogind dbus doc echo-cancel extra ffmpeg fftw flatpak gstreamer gsettings"
 IUSE+=" ieee1394 jack-client jack-sdk libcamera loudness lv2 modemmanager pipewire-alsa readline roc selinux"
 IUSE+=" pulseaudio sound-server ssl system-service systemd test v4l X zeroconf"
-IUSE+=" ebuild_revision_3"
+IUSE+=" ebuild_revision_5"
 
 # Once replacing system JACK libraries is possible, it's likely that
 # jack-client IUSE will need blocking to avoid users accidentally
@@ -240,6 +242,16 @@ src_unpack() {
 		git-r3_checkout
 	else
 		unpack ${A}
+	fi
+	local lib_sover=$(grep -E -e "^soversion =" | head -n 1 | grep -E -o -e "[0-9]+")
+	local pv_minor_version=$(grep -E -e "^version :" | head -n 1 | grep -E -o -e "[0-9]+.[0-9]+.[0-9]+" | cut -f 2 -d ".")
+	local actual_sover="${lib_sover}.${pv_minor_version}"
+	local expected_sover="${SOVER}"
+	if "${actual_sover}" "-ne" "${expected_sover}" ; then
+eerror "QA:  Update SOVER"
+eerror "Actual SOVER:  ${actual_sover}"
+eerror "Expected SOVER:  ${expected_sover}"
+		die
 	fi
 }
 
