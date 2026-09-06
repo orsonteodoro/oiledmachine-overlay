@@ -288,7 +288,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 
 	local symlink_mode=${BLENDER_MAIN_SYMLINK_MODE:-"latest"}
-einfo "BLENDER_MAIN_SYMLINK_MODE:  ${BLENDER_MAIN_SYMLINK_MODE}"
+einfo "BLENDER_MAIN_SYMLINK_MODE:  ${symlink_mode}"
 	if [[ \
 		   "${symlink_mode}" == "latest-lts" \
 		|| "${symlink_mode}" == "latest" \
@@ -1116,7 +1116,7 @@ ewarn
 	# This is needed for non-monotonic emerges.
 	# You have have 2 LTS versions installed but the active one is the older one.
 	local symlink_mode=${BLENDER_MAIN_SYMLINK_MODE:-"latest"}
-einfo "BLENDER_MAIN_SYMLINK_MODE:  ${BLENDER_MAIN_SYMLINK_MODE}"
+einfo "BLENDER_MAIN_SYMLINK_MODE:  ${symlink_mode}"
 	local d_src="${EROOT}/usr/$(get_libdir)/${PN}"
 	local pv=""
 	if [[ "${symlink_mode}" == "latest" ]] ; then
