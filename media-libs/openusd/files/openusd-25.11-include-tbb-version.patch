@@ -1,3 +1,4 @@
+# This is an AI suggested fix
 --- a/pxr/base/work/workTBB/dispatcher_impl.h.orig	2025-10-24 09:21:56.000000000 -0700
 +++ b/pxr/base/work/workTBB/dispatcher_impl.h	2026-09-05 14:30:36.455205171 -0700
 @@ -12,6 +12,7 @@
