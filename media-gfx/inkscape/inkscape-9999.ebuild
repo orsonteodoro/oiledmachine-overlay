@@ -94,6 +94,7 @@ BDEPEND="
 		virtual/imagemagick-tools
 	)
 "
+# gsl relaxed
 COMMON_DEPEND="${PYTHON_DEPS}
 	>=app-text/poppler-${POPPLER_PV}:=[cairo,lcms]
 	>=dev-cpp/cairomm-1.18.0:1.16=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
@@ -117,7 +118,6 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	>=media-libs/lcms-${LCMS_PV}:=
 	>=media-libs/libepoxy-1.5.10:=
 	>=media-libs/libpng-${LIBPNG_PV}:=
-	>=sci-libs/gsl-2.8:=
 	>=virtual/zlib-${ZLIB_PV}:=
 	>=x11-libs/pango-${PANGO_PV}:=
 	>=x11-libs/gdk-pixbuf-${GDK_PIXBUF_PV}:=
@@ -125,6 +125,7 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	media-gfx/potrace:=
 	media-libs/gst-plugins-bad:=
 	media-libs/shaderc:=
+	sci-libs/gsl:=
 	virtual/libiconv:*
 	virtual/libintl:*
 	$(python_gen_cond_dep '
