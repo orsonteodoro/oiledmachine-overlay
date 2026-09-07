@@ -318,7 +318,7 @@ pkg_postinst() {
 	optfeature "load Postscript/EPS Files" "app-text/ghostscript-gpl"
 	optfeature "LaTeX formula support" "app-text/texlive"
 	optfeature "PNG optimized output" "media-gfx/optipng"
-	optfeature "PS/EPS importer for determining page orientation from text direction" "app-office/scribus"
+	optfeature "PS/EPS importer for determining page orientation from text direction" "app-text/ghostscript-gpl"
 	optfeature "Typst math formula support" "app-text/typst"
 }
 
