@@ -312,14 +312,14 @@ pkg_postinst() {
 	# In https://gitlab.com/inkscape/extensions there are .inx metadata files for extension summaries.
 	# The one with external dependences will have a dependency type="executable" in .inx.
 	optfeature_header "Install optional extension dependency packages:"
-	optfeature "export Gimp's XCF file format" "media-gfx/gimp"
-	optfeature "export PDF documents" "app-office/scribus"
-	optfeature "import XFIG graphics files" "media-gfx/fig2dev"
-	optfeature "load Postscript/EPS Files" "app-text/ghostscript-gpl"
-	optfeature "LaTeX formula support" "app-text/texlive"
-	optfeature "PNG optimized output" "media-gfx/optipng"
-	optfeature "PS/EPS importer for determining page orientation from text direction" "app-text/ghostscript-gpl"
-	optfeature "Typst math formula support" "app-text/typst"
+	optfeature "exporting Gimp's XCF file format" "media-gfx/gimp"
+	optfeature "exporting PDF documents" "app-office/scribus"
+	optfeature "generating LaTeX formulas" "app-text/texlive"
+	optfeature "generating Typst math formulas" "app-text/typst"
+	optfeature "importing PS/EPS for determining page orientation from text direction" "app-text/ghostscript-gpl"
+	optfeature "importing XFIG graphics files" "media-gfx/fig2dev"
+	optfeature "importing Postscript/EPS Files" "app-text/ghostscript-gpl"
+	optfeature "optimizing PNG images before exporting to TIFF" "media-gfx/optipng"
 }
 
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 4ecab4d (20260906, INTERACTIVE)
