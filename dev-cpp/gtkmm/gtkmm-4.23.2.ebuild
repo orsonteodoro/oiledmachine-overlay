@@ -22,7 +22,7 @@ CHKL_TIMESTAMPS=(
 	"gui-libs/gtk-4.23.9999"
 )
 
-inherit cflags-hardened gnome.org libcxx-slot libstdcxx-slot meson secure-version python-any-r1 virtualx
+inherit cflags-hardened chkl gnome.org libcxx-slot libstdcxx-slot meson secure-version python-any-r1 virtualx
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86"
 
