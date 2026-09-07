@@ -1,3 +1,4 @@
+# This is an AI suggested fix.
 --- a/src/display/cairo-utils.h.orig	2026-09-06 21:55:22.200392063 -0700
 +++ b/src/display/cairo-utils.h	2026-09-06 22:00:29.027471307 -0700
 @@ -14,7 +14,14 @@
