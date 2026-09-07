@@ -148,7 +148,7 @@ Language defaults
 | LTS                      | gnu++17 / gnu++17     | gnu17 / gnu17     | 14          | 19            | gcc_slot_14_3, llvm_slot_19      | D13                     | CPU, CUDA 12.8, CUDA 12.9, Vulkan                                    |
 | LTS                      | gnu++17 / gnu++17     | gnu17 / gnu17     | 13          | 19            | gcc_slot_13_4, llvm_slot_19      | [1]                     | CPU, CUDA 12.8, CUDA 12.9, Vulkan                                    |
 | Rolling                  | gnu++17 / gnu++17     | gnu23 / gnu17     | 15          | 22            | gcc_slot_15_3, llvm_slot_22      | G23 [2]                 | CPU, Vulkan                                                          |
-| LTS [10]                 | gnu++17 / gnu++17     | gnu17 / gnu17     | 12          | 22 [4]        | gcc_slot_12_5, llvm_slot_22      | D12                     | CPU, ROCm 7.2, Vulkan                                                |
+| LTS [10]                 | gnu++17 / gnu++17     | gnu17 / gnu17     | 12          | 22 [4]        | gcc_slot_11_5, llvm_slot_22      | U22                     | CPU, ROCm 7.2, Vulkan                                                |
 | LTS [10]                 | gnu++17 / gnu++17     | gnu17 / gnu17     | 13          | 22 [4]        | gcc_slot_13_4, llvm_slot_22      | U24                     | CPU, ROCm 7.2, Vulkan                                                |
 
 * [1] This is the oiledmachine-overlay's defaults for testing.
