@@ -299,6 +299,9 @@ Language defaults
 | GTK 2 (4)                           | Not Supported                         |                                                          |
 | GTK 3 live                          | Fully supported                       |                                                          |
 | GTK 4 live                          | Fully supported                       |                                                          |
+| gtkmm 2                             | Not supported                         |                                                          |
+| gtkmm 3                             | Not supported                         |                                                          |
+| gtkmm 4                             | Fully supported                       |                                                          |
 | LocalAI (llama.cpp with CPU)        | Fully supported                       |                                                          |
 | LocalAI (llama.cpp with ROCm 7.0)   | WIP                                   |                                                          |
 | LocalAI (llama.cpp with CUDA 12.4)  | Not supported                         |                                                          |
