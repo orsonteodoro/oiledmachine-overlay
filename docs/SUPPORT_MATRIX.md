@@ -146,21 +146,14 @@ Language defaults
 | LTS                      | gnu++17 / gnu++14     | gnu17 / gnu17     | 12          | 14            | gcc_slot_12_5                    | D12                     | CPU, CUDA 12.6, CUDA 12.8, CUDA 12.9, Vulkan [3]                     |
 | LTS                      | gnu++17 / gnu++17     | gnu17 / gnu17     | 13          | 18            | gcc_slot_13_4, llvm_slot_18      | U24                     | CPU, CUDA 12.6, CUDA 12.8, CUDA 12.9, Vulkan                         |
 | LTS                      | gnu++17 / gnu++17     | gnu17 / gnu17     | 14          | 19            | gcc_slot_14_3, llvm_slot_19      | D13                     | CPU, CUDA 12.8, CUDA 12.9, Vulkan                                    |
-| LTS                      | gnu++17 / gnu++17     | gnu17 / gnu17     | 13          | 19            | gcc_slot_13_4, llvm_slot_19      | G23 [1]                 | CPU, CUDA 12.8, CUDA 12.9, Vulkan                                    |
-| Rolling                  | gnu++17 / gnu++17     | gnu17 / gnu17     | 14          | 20            | gcc_slot_14_3, llvm_slot_20      | G23 [2]                 | CPU, CUDA 12.8, CUDA 12.9, Vulkan [3]                                |
-| Rolling                  | gnu++17 / gnu++17     | gnu23 / gnu17     | 15          | 20            | gcc_slot_15_2, llvm_slot_20      |                         | CPU, Vulkan                                                          |
-| Rolling                  | gnu++17 / gnu++17     | gnu23 / gnu17     | 15          | 21            | gcc_slot_15_2, llvm_slot_21      |                         | CPU, Vulkan                                                          |
-| Rolling                  | gnu++17 / -           | gnu23 / -         | 16          |               | gcc_slot_16_1                    |                         | CPU, Vulkan                                                          |
-| Rolling                  | -       / gnu++17     | -     / gnu17     |             | 22            | llvm_slot_22                     |                         | CPU, Vulkan                                                          |
-| LTS [10]                 | gnu++17 / gnu++14     | gnu17 / gnu17     | 12          | 22 [4]        | gcc_slot_12_5, llvm_slot_22      | D12                     | CPU, ROCm 7.2, Vulkan                                                |
+| LTS                      | gnu++17 / gnu++17     | gnu17 / gnu17     | 13          | 19            | gcc_slot_13_4, llvm_slot_19      | [1]                     | CPU, CUDA 12.8, CUDA 12.9, Vulkan                                    |
+| Rolling                  | gnu++17 / gnu++17     | gnu23 / gnu17     | 15          | 22            | gcc_slot_15_3, llvm_slot_22      | G23 [2]                 | CPU, Vulkan                                                          |
+| LTS [10]                 | gnu++17 / gnu++17     | gnu17 / gnu17     | 12          | 22 [4]        | gcc_slot_12_5, llvm_slot_22      | D12                     | CPU, ROCm 7.2, Vulkan                                                |
 | LTS [10]                 | gnu++17 / gnu++17     | gnu17 / gnu17     | 13          | 22 [4]        | gcc_slot_13_4, llvm_slot_22      | U24                     | CPU, ROCm 7.2, Vulkan                                                |
 
-* [1] This is the overlay's current test and development defaults, which is
-      similar to U24 and has LLVM 19 available.  In addition, gcc_slot_15_2 and
-      llvm_slot_20 are used to build rolling packages.
-* [2] The latest stable for this distro.
-* [3] CUDA GPU acceleration is only available with GCC built packages on this
-      overlay for this GCC & Clang compiler combo.
+* [1] This is the oiledmachine-overlay's defaults for testing.  Compatible with
+      U24.
+* [2] The latest stable for the G23 distro.  Compatible with U26, F44, F45.
 * [4] Same as HIP-Clang
 * [5] The GCC USE flags add the minor version because GCC 9 has multiple
       GLIBCXX_ versions, but the GCC USE flags may later be simplified on major
