@@ -42,7 +42,7 @@ RESTRICT="
 
 RDEPEND="
 	>=dev-libs/libsigc++-2.6.0:2=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},gtk-doc?]
-	>=x11-libs/cairo-${CAIRO_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},X=]
+	>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP},X=]
 "
 DEPEND="${RDEPEND}
 	test? (
