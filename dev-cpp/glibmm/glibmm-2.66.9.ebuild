@@ -3,29 +3,29 @@
 
 EAPI=8
 
-API_VERSION="2.68" # https://gitlab.gnome.org/GNOME/glibmm/-/blob/2.88.1/meson.build?ref_type=tags#L13
+API_VERSION="2.4" # https://gitlab.gnome.org/GNOME/glibmm/-/blob/2.66.9/meson.build?ref_type=tags#L13
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
-CXX_STANDARD=17
+CXX_STANDARD=11
 PYTHON_COMPAT=( python3_{10..14} )
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+	"${LIBSTDCXX_COMPAT_STDCXX11[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
+	"${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}"
 )
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/glib-2.89.9999"
 )
 
-inherit cflags-hardened chkl flag-o-matic gnome.org libcxx-slot libstdcxx-slot meson-multilib secure-version python-any-r1
+inherit cflags-hardened chkl libcxx-slot libstdcxx-slot gnome.org meson-multilib secure-version python-any-r1
 
 DESCRIPTION="C++ interface for glib2"
-HOMEPAGE="https://gnome.pages.gitlab.gnome.org/glibmm/"
+HOMEPAGE="https://gtkmm.gnome.org/en/index.html"
 LICENSE="LGPL-2.1+"
 RESTRICT="mirror
 	!test? (
@@ -37,26 +37,22 @@ KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~mips ppc ppc64 ~riscv ~sparc x86"
 IUSE="gtk-doc debug test"
 RDEPEND="
 	>=dev-libs/glib-${GLIB_PV}:2=[${MULTILIB_USEDEP}]
-	>=dev-libs/libsigc++-3:3=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},gtk-doc?]
+	>=dev-libs/libsigc++-2.9.1:2=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
 	${PYTHON_DEPS}
-	dev-cpp/mm-common
 	>=dev-lang/perl-${PERL_PV}
 	dev-perl/XML-Parser
 	virtual/pkgconfig
 	gtk-doc? (
 		app-text/doxygen[dot]
 		>=dev-libs/libxslt-${LIBXSLT_PV}
+		media-gfx/graphviz
 	)
 "
-
-PATCHES=(
-	#"${FILESDIR}"/${PN}-2.88.1-const-whoops.patch
-)
 
 pkg_setup() {
 	python-any-r1_pkg_setup
@@ -104,10 +100,6 @@ multilib_src_configure() {
 		$(meson_native_use_bool gtk-doc build-documentation)
 		$(meson_use debug debug-refcounting)
 		-Dbuild-examples=false
-		-Dbuild-mmgir=false
-
-		# XXX: Drop this once https://gitlab.gnome.org/GNOME/glibmm/-/merge_requests/77 is in a release
-		-Dmaintainer-mode=true
 	)
 	meson_src_configure
 }
