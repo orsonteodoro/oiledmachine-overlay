@@ -142,8 +142,8 @@ Language defaults
 
 | LTS or rolling compiler? | C++ standard [6][7]   | C standard [6][7] | GCC         | Clang         | Overlay USE flags [5]            | Distro correspondance   | Hardware acceleration support [8][9]                                 |
 | ---                      | ---                   | ---               | ---         | ---           | ---                              | ---                     | ---                                                                  |
-| LTS                      | gnu++17 / gnu++14     | gnu17 / gnu17     | 11          | 14            | gcc_slot_11_5                    | U22                     | CPU, CUDA 12.6, CUDA 12.8, CUDA 12.9, Vulkan                         |
-| LTS                      | gnu++17 / gnu++14     | gnu17 / gnu17     | 12          | 14            | gcc_slot_12_5                    | D12                     | CPU, CUDA 12.6, CUDA 12.8, CUDA 12.9, Vulkan                         |
+| LTS                      | gnu++17 / gnu++14     | gnu17 / gnu17     | 11          | 14            | gcc_slot_11_5                    | U22                     | CPU, CUDA 12.6, CUDA 12.8, CUDA 12.9, Vulkan [3]                     |
+| LTS                      | gnu++17 / gnu++14     | gnu17 / gnu17     | 12          | 14            | gcc_slot_12_5                    | D12                     | CPU, CUDA 12.6, CUDA 12.8, CUDA 12.9, Vulkan [3]                     |
 | LTS                      | gnu++17 / gnu++17     | gnu17 / gnu17     | 13          | 18            | gcc_slot_13_4, llvm_slot_18      | U24                     | CPU, CUDA 12.6, CUDA 12.8, CUDA 12.9, Vulkan                         |
 | LTS                      | gnu++17 / gnu++17     | gnu17 / gnu17     | 14          | 19            | gcc_slot_14_3, llvm_slot_19      | D13                     | CPU, CUDA 12.8, CUDA 12.9, Vulkan                                    |
 | LTS                      | gnu++17 / gnu++17     | gnu17 / gnu17     | 13          | 19            | gcc_slot_13_4, llvm_slot_19      | [1]                     | CPU, CUDA 12.8, CUDA 12.9, Vulkan                                    |
@@ -154,6 +154,7 @@ Language defaults
 * [1] This is the oiledmachine-overlay's defaults for testing.  Compatible with
       U24.
 * [2] The latest stable for the G23 distro.  Compatible with U26, F44, F45.
+* [3] CUDA GPU acceleration is only available with GCC built packages on this overlay for this GCC & Clang compiler combo.
 * [4] Same as HIP-Clang
 * [5] The GCC USE flags add the minor version because GCC 9 has multiple
       GLIBCXX_ versions, but the GCC USE flags may later be simplified on major
