@@ -163,8 +163,8 @@ Fix:
   * there is a tough reason to maintain rtw_edcca_enabled by device.
   */
  bool rtw_edcca_enabled = true;
-+static unsigned long rtw_usb_last_cycle;
-+static atomic_t rtw_usb_cycling = ATOMIC_INIT(0);
++unsigned long rtw_usb_last_cycle;
++atomic_t rtw_usb_cycling = ATOMIC_INIT(0);
  
  module_param_named(disable_lps_deep, rtw_disable_lps_deep_mode, bool, 0644);
  module_param_named(support_bf, rtw_bf_support, bool, 0644);
