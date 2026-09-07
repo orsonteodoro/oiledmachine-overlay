@@ -170,21 +170,7 @@
 		    TRESOR (x86-64) [5]			D
 		    zen-sauce				A
 
-    7.1 (Stable)					A
-		    -rt	(RT_PREEMPT)			A
-		    Clang PGO				D
-		    genpatches				A
-		    kernel_compiler_patch		D
-		    Nest				D
-		    Project C				A
-		    TCP BBR v2 [5]			D
-		    TCP BBR v3 [5]			D
-		    TRESOR (AES-NI) [5]			D
-		    TRESOR (x86) [5]			D
-		    TRESOR (x86-64) [5]			D
-		    zen-sauce				A
-
-    7.2							A
+    7.2	(Stable)					A
 		    -rt	(RT_PREEMPT)			A
 		    Clang PGO				D
 		    genpatches				A
@@ -258,11 +244,11 @@
 
     Recommended slot use cases
 
-     7.2:  Daily security updates, developer testing
+     7.3:  Daily security updates, developer testing
            Use the live with caution.  The live (9999) release may mess up your
            data or result in data loss if the developers make a mistake.  Be
            mindful of that.
- 7.0/7.1:  Debugging team, enthusiast gaming, virtualization, containers, best
+     7.2:  Debugging team, enthusiast gaming, virtualization, containers, best
            rolling experience, AI/ML testing and development
     6.18:  Debugging team, new hardware gaming, AI/ML testing and development,
            virtualization, containers, DSS testing
@@ -279,7 +265,8 @@
 
     Virtualization and containerization compatibility
 
-      7.0:  A VirtualBox 7.2.x        ; x QEMU 11        ; * Docker 26.x - 29.x
+      7.3:  A VirtualBox 7.2.x        ; x QEMU 11        ; * Docker 26.x - 29.x
+      7.2:  A VirtualBox 7.2.x        ; x QEMU 11        ; * Docker 26.x - 29.x
      6.18:  A VirtualBox 7.2.x        ; * QEMU 10        ; * Docker 26.x - 29.x
      6.12:  A VirtualBox 7.1.x        ; A QEMU 9.0 - 9.2 ; A Docker 25.x - 29.x
       6.6:  A VirtualBox 7.0.x        ; x QEMU 8.1 - 9.0 ; A Docker 24.x - 29.x
@@ -295,10 +282,8 @@
     GPU/AI stack compatibility
 
   Version: CUDA support         ; Compat with amdgpu-dkms   ; Without amdgpu-dkms [1]
-     live:  x                   ; x ROCm develop            ; x ROCm develop
+      7.3:  x                   ; x ROCm develop            ; x ROCm develop
       7.2:  x                   ; x ROCm develop            ; x ROCm develop
-      7.1:  x                   ; x -                       ; x -
-      7.0:  A CUDA 13.3 - 13.3  ; x -                       ; x -
      6.18:  x -                 ; x -                       ; W ROCm 7.1, 7.1, 7.2
      6.12:  A CUDA 13.0 - 13.3  ; W ROCm 7.1 - ROCm develop ; x ROCm 6.3, 6.4
       6.6:  A CUDA 13.0 - 13.3  ; x ROCm 6.0 - 7.1          ; x ROCm 6.0
@@ -321,8 +306,9 @@
     - Active move means per month testing, fixes, active development.
     - Maintenance mode means seldom testing, security fixes, build time fixes.
 
-      7.0: Actively tested/supported, randomly produces zombie processes and has network deadlock issue
-     6.18: Actively tested/supported, randomly produces zombie processes and has network deadlock issue
+      7.3: Actively tested/supported, has network deadlock issue for rtw88
+      7.2: Actively tested/supported, has network deadlock issue for rtw88
+     6.18: Actively tested/supported, has network deadlock issue for rtw88
      6.12: Actively tested/supported, no lockups, longest uptimes
       6.6: Testing on ice, maintenance mode, unknown lock up quality
       6.1: Testing on ice, maintenance mode, unknown lock up quality
@@ -6078,8 +6064,7 @@ unset OT_KERNEL_PRIVATE_KEY
      6.6:  https://github.com/torvalds/linux/compare/v6.6...zen-kernel:6.6/zen-sauce
     6.12:  https://github.com/torvalds/linux/compare/v6.12...zen-kernel:6.12/zen-sauce
     6.18:  https://github.com/torvalds/linux/compare/v6.18...zen-kernel:6.18/zen-sauce
-     7.0:  https://github.com/torvalds/linux/compare/v7.0...zen-kernel:7.0/zen-sauce
-     7.1:  https://github.com/torvalds/linux/compare/v7.1...zen-kernel:7.1/zen-sauce
+     7.2:  https://github.com/torvalds/linux/compare/v7.2...zen-kernel:7.2/zen-sauce
 
     Use the zen-sauce USE flags instead of passing their Zen commit IDs
     equivalents.
