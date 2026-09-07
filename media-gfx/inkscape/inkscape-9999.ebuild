@@ -53,7 +53,7 @@ MY_P="${P/_/}"
 DESCRIPTION="SVG based generic vector-drawing program"
 HOMEPAGE="https://inkscape.org/ https://gitlab.com/inkscape/inkscape/"
 
-if [[ ${PV} = 9999* ]]; then
+if [[ ${PV} =~ 9999 ]]; then
 	FALLBACK_COMMIT="4ecab4da64eeccfb884e7eb45e717b13847f66de"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://gitlab.com/inkscape/inkscape.git"
@@ -83,7 +83,13 @@ ${PYTHON_REQUIRED_USE}
 !imagemagick
 "
 # Lots of test failures which need investigating, bug #871621
-RESTRICT="!test? ( test ) test"
+RESTRICT="
+	mirror
+	test
+	!test? (
+		test
+	)
+" # Speed up downloads and stop snooping
 
 BDEPEND="
 	>=dev-build/cmake-3.24.0
@@ -96,17 +102,17 @@ BDEPEND="
 "
 COMMON_DEPEND="${PYTHON_DEPS}
 	>=app-text/poppler-${POPPLER_PV}:=[cairo,lcms]
-	>=dev-cpp/cairomm-1.18.0:1.16=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
-	>=dev-cpp/glibmm-${GLIBMM_PV}:2.68=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
-	>=dev-cpp/gtkmm-4.20.0:4.0=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+	>=dev-cpp/cairomm-1.19.1:1.16=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+	>=dev-cpp/glibmm-2.89.1:2.68=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+	>=dev-cpp/gtkmm-4.23.2:4.0=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	>=dev-cpp/mm-common-1.0.0:=
-	>=dev-cpp/pangomm-2.56.1:2.48=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+	>=dev-cpp/pangomm-2.56.2:2.48=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	>=dev-libs/boehm-gc-${BOEHM_GC_PV}:=
 	>=dev-libs/boost-1.19.0:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},stacktrace(-)]
 	>=dev-libs/double-conversion-${DOUBLE_CONVERSION_PV}:=
 	>=dev-libs/glib-${GLIB_PV}:=
 	>=dev-libs/icu-${ICU_PV}:=
-	>=dev-libs/libsigc++-3.6:3=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+	>=dev-libs/libsigc++-3.8.1:3=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	>=dev-libs/libxml2-${LIBXML2_PV}:=
 	>=dev-libs/libxslt-${LIBXSLT_PV}:=
 	>=dev-libs/popt-${POPT_PV}:=
@@ -200,6 +206,8 @@ DEPEND="${COMMON_DEPEND}
 
 PATCHES=(
 	"${FILESDIR}"/${PN}-1.4.4-respect-EPYTHON.patch # bug 924747
+
+	# oiledmachine-overlay patches
 	"${FILESDIR}"/${PN}-6018a00-cairo-utils-selective-includes.patch
 )
 
