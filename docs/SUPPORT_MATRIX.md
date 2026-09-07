@@ -153,7 +153,7 @@ Language defaults
 
 * [1] This is the oiledmachine-overlay's defaults for testing.  Compatible with
       U24.
-* [2] The latest stable for the G23 distro.  Compatible with U26, F44, F45.
+* [2] The latest stable KEYWORDS for the G23 distro.  Compatible with U26, F44, F45.
 * [3] CUDA GPU acceleration is only available with GCC built packages on this overlay for this GCC & Clang compiler combo.
 * [4] Same as HIP-Clang
 * [5] The GCC USE flags add the minor version because GCC 9 has multiple
