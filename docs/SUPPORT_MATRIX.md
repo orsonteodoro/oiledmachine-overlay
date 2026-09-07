@@ -151,10 +151,12 @@ Language defaults
 | LTS [10]                 | gnu++17 / gnu++17     | gnu17 / gnu17     | 12          | 22 [4]        | gcc_slot_12_5, llvm_slot_22      | D12                     | CPU, ROCm 7.2, Vulkan                                                |
 | LTS [10]                 | gnu++17 / gnu++17     | gnu17 / gnu17     | 13          | 22 [4]        | gcc_slot_13_4, llvm_slot_22      | U24                     | CPU, ROCm 7.2, Vulkan                                                |
 
-* [1] This is the oiledmachine-overlay's defaults for testing.  Compatible with
-      U24.
-* [2] The latest stable KEYWORDS for the G23 distro.  Compatible with U26, F44, F45.
-* [3] CUDA GPU acceleration is only available with GCC built packages on this overlay for this GCC & Clang compiler combo.
+* [1] This is the oiledmachine-overlay's defaults for testing.
+      Compatible with U24.
+* [2] The latest stable KEYWORDS for the G23 distro.
+      Compatible with U26, F44, F45.
+* [3] CUDA GPU acceleration is only available with GCC built packages on this
+      overlay for this GCC & Clang compiler combo.
 * [4] Same as HIP-Clang
 * [5] The GCC USE flags add the minor version because GCC 9 has multiple
       GLIBCXX_ versions, but the GCC USE flags may later be simplified on major
