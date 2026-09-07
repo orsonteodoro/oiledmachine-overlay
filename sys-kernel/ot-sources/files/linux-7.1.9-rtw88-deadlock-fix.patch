@@ -329,10 +329,12 @@ Fix:
  	init_completion(&rtwdev->fw_scan_density);
 --- a/drivers/net/wireless/realtek/rtw88/usb.c.orig	2026-08-16 14:32:26.000000000 -0700
 +++ b/drivers/net/wireless/realtek/rtw88/usb.c	2026-09-07 10:48:41.056340261 -0700
-@@ -27,6 +27,18 @@ struct rtw_usb_txcb {
+@@ -27,6 +27,20 @@ struct rtw_usb_txcb {
  	struct sk_buff_head tx_ack_queue;
  };
  
++extern atomic_t rtw_usb_cycling;
++extern unsigned long rtw_usb_last_cycle;
 +static void rtw_usb_mark_fail(struct rtw_dev *rtwdev, int status)
 +{
 +	if (status == -110 || status == -ENODEV || status == -EPROTO || status == -2) {
