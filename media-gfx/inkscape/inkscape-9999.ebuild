@@ -314,11 +314,11 @@ pkg_postinst() {
 	optfeature_header "Install optional extension dependency packages:"
 	optfeature "exporting Gimp's XCF file format" "media-gfx/gimp"
 	optfeature "exporting PDF documents" "app-office/scribus"
-	optfeature "generating LaTeX formulas" "app-text/texlive"
-	optfeature "generating Typst math formulas" "app-text/typst"
 	optfeature "importing PS/EPS for determining page orientation from text direction" "app-text/ghostscript-gpl"
 	optfeature "importing XFIG graphics files" "media-gfx/fig2dev"
 	optfeature "importing Postscript/EPS Files" "app-text/ghostscript-gpl"
+	optfeature "inserting LaTeX formulas into Inkscape" "app-text/texlive"
+	optfeature "inserting Typst math formulas into Inkscape" "app-text/typst"
 	optfeature "optimizing PNG images before exporting to TIFF" "media-gfx/optipng"
 }
 
