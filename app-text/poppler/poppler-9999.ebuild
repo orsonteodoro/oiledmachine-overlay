@@ -12,7 +12,7 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO ID IO MC NPD OOBR OOBW SO UA
 CXX_STANDARD=23
 PYTHON_COMPAT=( python3_{10..15} )
 
-TEST_COMMIT="b85e4d1ce75636b3e727555a9d31da34ad771c1c"
+TEST_COMMIT="48b6219b84fc0a708040cb279d51095cc4e1c603"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -70,7 +70,12 @@ IUSE+="
 boost cairo cjk curl +cxx debug doc gpg +introspection +jpeg +jpeg2k +lcms nss png qt6 test tiff +utils
 ebuild_revision_5
 "
-RESTRICT="!test? ( test )"
+RESTRICT="
+	mirror
+	!test? (
+		test
+	)
+" # Speed up download and stop snooping
 
 COMMON_DEPEND="
 	>=media-libs/fontconfig-${FONTCONFIG_PV}:=
