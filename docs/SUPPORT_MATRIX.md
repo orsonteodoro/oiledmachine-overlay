@@ -152,8 +152,8 @@ Language defaults
 | Rolling                  | gnu++17 / gnu++17     | gnu23 / gnu17     | 15          | 21            | gcc_slot_15_2, llvm_slot_21      |                         | CPU, Vulkan                                                          |
 | Rolling                  | gnu++17 / -           | gnu23 / -         | 16          |               | gcc_slot_16_1                    |                         | CPU, Vulkan                                                          |
 | Rolling                  | -       / gnu++17     | -     / gnu17     |             | 22            | llvm_slot_22                     |                         | CPU, Vulkan                                                          |
-| LTS [10]                 | gnu++17 / gnu++14     | gnu17 / gnu17     | 12          | 22 [4]        | gcc_slot_12_5, llvm_slot_22      | D12                     | ROCm 7.2                                                             |
-| LTS [10]                 | gnu++17 / gnu++17     | gnu17 / gnu17     | 13          | 22 [4]        | gcc_slot_13_4, llvm_slot_22      | U24                     | ROCm 7.2                                                             |
+| LTS [10]                 | gnu++17 / gnu++14     | gnu17 / gnu17     | 12          | 22 [4]        | gcc_slot_12_5, llvm_slot_22      | D12                     | CPU, ROCm 7.2                                                        |
+| LTS [10]                 | gnu++17 / gnu++17     | gnu17 / gnu17     | 13          | 22 [4]        | gcc_slot_13_4, llvm_slot_22      | U24                     | CPU, ROCm 7.2                                                        |
 
 * [1] This is the overlay's current test and development defaults, which is
       similar to U24 and has LLVM 19 available.  In addition, gcc_slot_15_2 and
@@ -288,10 +288,12 @@ Language defaults
 | CUDA 12.4                            | Not supported                         | D10, D11, D12, F39, U20, U22                             |
 | CUDA 12.5                            | Not supported                         | D10, D11, D12, F39, U20, U22, U24                        |
 | CUDA 12.6                            | Available                             | D11, D12, F39, U20, U22, U24                             |
-| CUDA 12.8                            | Available                             | D12, U20, U22, U24                                       |
-| CUDA 12.9                            | Available                             | D12, U20, U22, U24                                       |
-| CUDA 13.0                            | Not supported                         | D12, U22, U24                                            |
-| CUDA 13.1                            | Not supported                         | U26                                                      |
+| CUDA 12.8                            | Available                             | D12, F41, U20, U22, U24                                  |
+| CUDA 12.9                            | Available                             | D12, F41, U20, U22, U24                                  |
+| CUDA 13.0                            | Available [6]                         | D12, F42, U22, U24                                       |
+| CUDA 13.1                            | Available [6]                         | D12, D13, F42, U22, U24                                  |
+| CUDA 13.2                            | Available [6]                         | D12, D13, F43, U22, U24                                  |
+| CUDA 13.3                            | Available [6]                         | D12, D13, F44, U22, U22, U26                             |
 | Electron (amd64)                     | Fully supported                       |                                                          |
 | Electron (arm64)                     | Not supported                         |                                                          |
 | Electron (armv7)                     | Not supported                         |                                                          |
@@ -337,8 +339,8 @@ Language defaults
 | Qt 6.x live                          | Fully supported                       |                                                          |
 | ROCm 6.4                             | Not supported                         | D12, U22, U24                                            |
 | ROCm 7.0                             | Not supported                         | D12, D13, U22, U24                                       |
-| ROCm 7.1                             | Not supported                         | U26                                                      |
-| ROCm 7.2                             | WIP                                   |                                                          |
+| ROCm 7.1                             | Not supported                         | D12, D13, U22, U24                                       |
+| ROCm 7.2                             | WIP                                   | D12, D13, U22, U24                                       |
 | SYCL                                 | Not supported                         |                                                          |
 | systemd                              | Partially supported                   |                                                          |
 | Tauri 1.x                            | Not supported                         |                                                          |
@@ -369,6 +371,7 @@ Language defaults
       If no C++ standard stated, assume LTS.  The Qt5 based project will state
       in the build files either `-std=c++<ver>` or `-std=gnu++<ver>` or
       `CMAKE_CXX_STANDARD`.
+* [6] Requires local repo/ebuild
 * Due to the lack of GPU access or GPU dev testers, the requirements are the
   exact major.minor version requirements for GPU, Machine Learning (ML), and
   Large Language Model (LLM) ebuild packages in this overlay for increased
