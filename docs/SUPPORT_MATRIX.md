@@ -371,7 +371,7 @@ Language defaults
       If no C++ standard stated, assume LTS.  The Qt5 based project will state
       in the build files either `-std=c++<ver>` or `-std=gnu++<ver>` or
       `CMAKE_CXX_STANDARD`.
-* [6] Requires local repo/ebuild
+* [6] Requires local repo/ebuild or community overlay
 * Due to the lack of GPU access or GPU dev testers, the requirements are the
   exact major.minor version requirements for GPU, Machine Learning (ML), and
   Large Language Model (LLM) ebuild packages in this overlay for increased
