@@ -6,7 +6,11 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE PE"
 
-inherit autotools cflags-hardened flag-o-matic pam tmpfiles
+CHKL_TIMESTAMPS=(
+	"sys-libs/pam-9999"
+)
+
+inherit autotools cflags-hardened chkl flag-o-matic pam secure-version tmpfiles
 
 DESCRIPTION="screen manager with VT100/ANSI terminal emulation"
 HOMEPAGE="https://www.gnu.org/software/screen/"
@@ -32,17 +36,17 @@ debug nethack pam selinux utempter multiuser
 ebuild_revision_20
 "
 DEPEND="
-	>=sys-libs/ncurses-5.2:=
+	>=sys-libs/ncurses-${NCURSES_PV}:=
 	virtual/libcrypt:=
 	pam? (
-		sys-libs/pam
+		>=sys-libs/pam-${PAM_PV}:=
 	)
 "
 RDEPEND="
 	${DEPEND}
-	acct-group/utmp
+	acct-group/utmp:*
 	selinux? (
-		sec-policy/selinux-screen
+		sec-policy/selinux-screen:*
 	)
 	utempter? (
 		sys-libs/libutempter:=
@@ -53,7 +57,6 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.0.0-utmp-musl.patch"
-	"${FILESDIR}/${PN}-5.0.1-man-screen.patch"
 )
 
 src_prepare() {
@@ -78,6 +81,7 @@ src_prepare() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	append-lfs-flags
 	append-cppflags "-DMAXWIN=${MAX_SCREEN_WINDOWS:-100}"
 	cflags-hardened_append
