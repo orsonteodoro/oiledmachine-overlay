@@ -110,7 +110,7 @@ VIDEO_CARDS=(
 IUSE+="
 ${VIDEO_CARDS[@]}
 +max-uptime
-ebuild_revision_48
+ebuild_revision_49
 "
 # CE - Code Execution
 # DoS - Denial of Service (CVSS A:H)
