@@ -10,8 +10,8 @@ KERNEL_MIN_SLOT="5.10" # inclusive
 KERNEL_MIN_LTS_SLOT="6.1" # inclusive
 KERNEL_MAX_LTS_SLOT="6.18" # inclusive
 LTS_VERSIONS=("5.10" "5.15" "6.1" "6.6" "6.12" "6.18")
-ACTIVE_VERSIONS=("5.10" "5.15" "6.1" "6.6" "6.12" "6.18" "7.1" "7.2" "7.3")
-STABLE_OR_MAINLINE_VERSIONS=("7.1" "7.2" "7.3")
+ACTIVE_VERSIONS=("5.10" "5.15" "6.1" "6.6" "6.12" "6.18" "7.2" "7.3")
+STABLE_OR_MAINLINE_VERSIONS=("7.2" "7.3")
 ALL_VERSIONS=(
 	"0"
 	"1"
@@ -29,7 +29,7 @@ EOL_VERSIONS=(
 	"3"
 	"4.0" "4.1" "4.2" "4.3" "4.4" "4.5" "4.6" "4.7" "4.8" "4.9" "4.10" "4.11" "4.12" "4.13" "4.14" "4.15" "4.16" "4.17" "4.18" "4.19" "4.20"
 	"5.0" "5.1" "5.2" "5.3" "5.4" "5.5" "5.6" "5.7" "5.8" "5.9" "5.11" "5.12" "5.13" "5.14" "5.16" "5.17" "5.18" "5.19"
-	"6.0" "6.2" "6.3" "6.4" "6.5" "6.7" "6.8" "6.9" "6.10" "6.11" "6.13" "6.14" "6.15" "6.16" "6.17" "6.19" "7.0"
+	"6.0" "6.2" "6.3" "6.4" "6.5" "6.7" "6.8" "6.9" "6.10" "6.11" "6.13" "6.14" "6.15" "6.16" "6.17" "6.19" "7.0" "7.1"
 )
 
 CHKL_TIMESTAMPS=(
@@ -83,7 +83,6 @@ KERNEL_SLOTS=(
 	"kernel_slot_6_12_live"
 	"kernel_slot_6_18"
 	"kernel_slot_6_18_live"
-	"kernel_slot_7_1"
 	"kernel_slot_7_2"
 	"kernel_slot_rc"
 	"kernel_slot_live"
@@ -91,7 +90,7 @@ KERNEL_SLOTS=(
 
 inherit secure-version
 
-MULTISLOT_LATEST_KERNEL_RELEASE=("${LINUX_KERNEL_5_10_PV}" "${LINUX_KERNEL_5_15_PV}" "${LINUX_KERNEL_6_1_PV}" "${LINUX_KERNEL_6_6_PV}" "${LINUX_KERNEL_6_12_PV}" "${LINUX_KERNEL_6_18_PV}" "${LINUX_KERNEL_7_1_PV}" "${LINUX_KERNEL_7_2_PV}" "${LINUX_KERNEL_7_3_RC_PV}")
+MULTISLOT_LATEST_KERNEL_RELEASE=("${LINUX_KERNEL_5_10_PV}" "${LINUX_KERNEL_5_15_PV}" "${LINUX_KERNEL_6_1_PV}" "${LINUX_KERNEL_6_6_PV}" "${LINUX_KERNEL_6_12_PV}" "${LINUX_KERNEL_6_18_PV}" "${LINUX_KERNEL_7_2_PV}" "${LINUX_KERNEL_7_3_RC_PV}")
 
 inherit chkl mitigate-dos toolchain-funcs verify-binutils
 
@@ -111,7 +110,7 @@ VIDEO_CARDS=(
 IUSE+="
 ${VIDEO_CARDS[@]}
 +max-uptime
-ebuild_revision_47
+ebuild_revision_48
 "
 # CE - Code Execution
 # DoS - Denial of Service (CVSS A:H)

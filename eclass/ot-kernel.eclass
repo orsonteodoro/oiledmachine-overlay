@@ -458,7 +458,7 @@ UKSM_FN="uksm-${KV_MAJOR_MINOR}.patch"
 UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
 
 MITIGATION_DATE="Sep 4, 2026" # Advisory date
-MITIGATION_LAST_UPDATE=1788352401 # From `date --date="Wed Sep 2, 2026 14:33:21 +0200" +%s` from changelog for latest tag from either mainline, stable, or longterm
+MITIGATION_LAST_UPDATE=1788795448 # From `date --date="Mon Sep 7, 2026 17:37:28 +0200" +%s` from changelog for latest tag from either mainline, stable, or longterm
 MITIGATION_URI="https://lore.kernel.org/linux-cve-announce/"
 VULNERABILITIES_FIXED=(
 # High and critical are noted and only those that are fixed on this release day
