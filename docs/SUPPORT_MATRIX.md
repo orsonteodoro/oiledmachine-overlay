@@ -152,8 +152,8 @@ Language defaults
 | Rolling                  | gnu++17 / gnu++17     | gnu23 / gnu17     | 15          | 21            | gcc_slot_15_2, llvm_slot_21      |                         | CPU, Vulkan                                                          |
 | Rolling                  | gnu++17 / -           | gnu23 / -         | 16          |               | gcc_slot_16_1                    |                         | CPU, Vulkan                                                          |
 | Rolling                  | -       / gnu++17     | -     / gnu17     |             | 22            | llvm_slot_22                     |                         | CPU, Vulkan                                                          |
-| LTS [10]                 | gnu++17 / gnu++14     | gnu17 / gnu17     | 12          | 22 [4]        | gcc_slot_12_5, llvm_slot_22      | D12                     | CPU, ROCm 7.2                                                        |
-| LTS [10]                 | gnu++17 / gnu++17     | gnu17 / gnu17     | 13          | 22 [4]        | gcc_slot_13_4, llvm_slot_22      | U24                     | CPU, ROCm 7.2                                                        |
+| LTS [10]                 | gnu++17 / gnu++14     | gnu17 / gnu17     | 12          | 22 [4]        | gcc_slot_12_5, llvm_slot_22      | D12                     | CPU, ROCm 7.2, Vulkan                                                |
+| LTS [10]                 | gnu++17 / gnu++17     | gnu17 / gnu17     | 13          | 22 [4]        | gcc_slot_13_4, llvm_slot_22      | U24                     | CPU, ROCm 7.2, Vulkan                                                |
 
 * [1] This is the overlay's current test and development defaults, which is
       similar to U24 and has LLVM 19 available.  In addition, gcc_slot_15_2 and
