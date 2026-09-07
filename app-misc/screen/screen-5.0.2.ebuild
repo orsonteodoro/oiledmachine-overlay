@@ -33,7 +33,7 @@ LICENSE="GPL-3+"
 SLOT="0"
 IUSE="
 debug nethack pam selinux utempter multiuser
-ebuild_revision_20
+ebuild_revision_21
 "
 DEPEND="
 	>=sys-libs/ncurses-${NCURSES_PV}:=
@@ -96,13 +96,11 @@ src_configure() {
 	use debug && append-cppflags "-DDEBUG"
 
 	local myeconfargs=(
-		--with-socket-dir="${EPREFIX}/tmp/${PN}"
+		--enable-socket-dir="${EPREFIX}/tmp/${PN}"
 		--with-system-screenrc="${EPREFIX}/etc/screenrc"
 		--with-pty-mode=0620
 		--with-pty-group=5
-		--enable-rxvt_osc
 		--enable-telnet
-		--enable-colors256
 		$(use_enable pam)
 		$(use_enable utempter utmp)
 	)
