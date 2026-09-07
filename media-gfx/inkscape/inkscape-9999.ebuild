@@ -200,6 +200,7 @@ DEPEND="${COMMON_DEPEND}
 
 PATCHES=(
 	"${FILESDIR}"/${PN}-1.4.4-respect-EPYTHON.patch # bug 924747
+	"${FILESDIR}"/${PN}-6018a00-cairo-utils-selective-includes.patch
 )
 
 pkg_pretend() {
@@ -320,3 +321,5 @@ pkg_postinst() {
 	optfeature "PS/EPS importer for determining page orientation from text direction" "app-office/scribus"
 	optfeature "Typst math formula support" "app-text/typst"
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 4ecab4d (20260906, INTERACTIVE)

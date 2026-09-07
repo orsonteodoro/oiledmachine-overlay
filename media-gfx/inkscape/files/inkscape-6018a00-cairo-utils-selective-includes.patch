@@ -1,0 +1,18 @@
+--- a/src/display/cairo-utils.h.orig	2026-09-06 21:55:22.200392063 -0700
++++ b/src/display/cairo-utils.h	2026-09-06 22:00:29.027471307 -0700
+@@ -14,7 +14,14 @@
+ #define SEEN_INKSCAPE_DISPLAY_CAIRO_UTILS_H
+ 
+ #include <2geom/forward.h>
+-#include <cairomm/cairomm.h>
++#include <cairomm/context.h>
++#include <cairomm/surface.h>
++#include <cairomm/refptr.h>
++#include <cairomm/enums.h>
++#include <cairomm/matrix.h>
++#include <cairomm/pattern.h>
++#include <cairomm/fontoptions.h>
++//#include <cairomm/cairomm.h>
+ #include "style.h"
+ 
+ typedef struct _GdkPixbuf GdkPixbuf;
