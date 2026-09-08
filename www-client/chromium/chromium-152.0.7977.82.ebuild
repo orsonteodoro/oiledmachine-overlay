@@ -3629,11 +3629,11 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		)
 	elif in_iuse "cromite" && use cromite ; then
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-150.0.7871.114-mold.patch"
+			"${FILESDIR}/extra-patches/${PN}-152.0.7977.82-mold.patch"
 		)
 	else
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-151.0.7922.108-mold.patch"
+			"${FILESDIR}/extra-patches/${PN}-152.0.7977.82-mold.patch"
 		)
 	fi
 
