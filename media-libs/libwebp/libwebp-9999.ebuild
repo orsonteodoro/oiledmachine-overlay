@@ -18,7 +18,7 @@ CHKL_TIMESTAMPS=(
 inherit autotools cflags-hardened check-compiler-switch chkl multilib-minimal secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="add5156cb23d8c2742ced4198be578b570f50c88"
+	FALLBACK_COMMIT="9c4a699e5aacc1995a27ca3bf1643c8b2378616c"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://chromium.googlesource.com/webm/libwebp"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -37,10 +37,11 @@ DESCRIPTION="A lossy image compression format"
 HOMEPAGE="https://developers.google.com/speed/webp/download"
 
 LICENSE="BSD"
-SLOT="0/7" # subslot = libwebp soname version
+SOVER="7"
+SLOT="0/${SOVER}" # subslot = libwebp soname version
 IUSE+="
 cpu_flags_arm_neon cpu_flags_x86_avx2 cpu_flags_x86_sse2 cpu_flags_x86_sse4_1 gif +jpeg opengl +png static-libs swap-16bit-csp tiff
-ebuild_revision_10
+ebuild_revision_12
 "
 
 # TODO: dev-lang/swig bindings in swig/ subdirectory
@@ -66,7 +67,6 @@ DEPEND="${RDEPEND}"
 
 PATCHES=(
 	"${FILESDIR}"/${PN}-1.2.3-libpng-pkg-config.patch
-	"${FILESDIR}"/${PN}-1.6.0-configure-typo.patch
 )
 
 pkg_setup() {
@@ -82,6 +82,16 @@ src_unpack() {
 		git-r3_checkout
 	else
 		unpack ${A}
+	fi
+	local c=$(grep -E -o -e "libwebp_la_.*-version-info [0-9:]+" "${S}/src/Makefile.am" | cut -f 5 -d " " | cut -f 1 -d ":")
+	local a=$(grep -E -o -e "libwebp_la_.*-version-info [0-9:]+" "${S}/src/Makefile.am" | cut -f 5 -d " " | cut -f 3 -d ":")
+	local actual_sover=$(( ${c} - ${a} ))
+	local expected_sover="${SOVER}"
+	if ver_test "${actual_sover}" "-ne" "${expected_sover}" ; then
+eerror "QA:  Update SOVER"
+eerror "Actual SOVER:  ${actual_sover}"
+eerror "Expected SOVER:  ${expected_sover}"
+		die
 	fi
 }
 
