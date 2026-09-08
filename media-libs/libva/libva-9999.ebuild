@@ -17,7 +17,7 @@ DESCRIPTION="Video Acceleration (VA) API for Linux"
 HOMEPAGE="https://github.com/intel/libva"
 
 if [[ ${PV} = *9999 ]] ; then
-	FALLBACK_COMMIT="ad64eb9b616d1b66afaf4cb9f0ea0b8e0ec1169c"
+	FALLBACK_COMMIT="6b07f7100512817f736967e899b8c26313c20623"
 	inherit git-r3
 	EGIT_BRANCH=master
 	if [[ "${FALLBACK_COMMIT}" ]] ; then
@@ -31,7 +31,10 @@ fi
 
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1)"
-IUSE+=" glx wayland X"
+IUSE+="
+glx wayland X
+ebuild_revision_1
+"
 REQUIRED_USE="glx? ( X )"
 
 RDEPEND="
