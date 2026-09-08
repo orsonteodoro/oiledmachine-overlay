@@ -9,14 +9,14 @@ EAPI=8
 # See also https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/
 
 GENPATCHES_FALLBACK_COMMIT="d4fa92430e875432c3a61bb3abd9b6e68ea9fcbd" # 2026-06-04 18:26:32 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="28924df2a08f440c73991b83028032c901de2ae4" # 2026-09-07 10:26:56 -0700 @ Merge tag 'perf-tools-fixes-for-v7.3-2026-09-07'
+LINUX_SOURCES_FALLBACK_COMMIT="5acbae5f7eb3d5275120abfe698c394b7325dcec" # 2026-09-08 07:59:12 -0700 @ 2026-09-08 07:59:12 -0700
 RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
 # https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=7.2
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
-EBUILD_REV="ebuild_revision_37"
+EBUILD_REV="ebuild_revision_38"
 GENPATCHES_VER="9999" # can be live only when 9999
 PATCH_PROJC_VER="7.1-r0"
 PATCH_RT_VER="7.2-rt5"
