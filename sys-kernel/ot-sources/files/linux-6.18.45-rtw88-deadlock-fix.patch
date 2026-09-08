@@ -681,7 +681,7 @@ Fix:
  	FW_OFFLOAD_H2C_SET_SEQ_NUM(h2c_pkt, rtwdev->h2c.seq);
 --- a/drivers/usb/core/hub.c.orig	2026-09-05 09:54:39.239233385 -0700
 +++ b/drivers/usb/core/hub.c	2026-09-05 09:59:01.790321215 -0700
-@@ -6569,3 +6571,27 @@ acpi_handle usb_get_hub_port_acpi_handle
+@@ -6569,3 +6571,21 @@ acpi_handle usb_get_hub_port_acpi_handle
  	return ACPI_HANDLE(&hub->ports[port1 - 1]->dev);
  }
  #endif
@@ -700,13 +700,7 @@ Fix:
 +	if (!hub)
 +		return -ENODEV;
 +
-+	ret = usb_hub_set_port_power(hdev, hub, port1, false);
-+	if (ret)
-+		return ret;
-+
-+	msleep(1200); /* RTL8821CU PHY needs >1s */
-+	ret = usb_hub_set_port_power(hdev, hub, port1, true);
-+	return ret;
++	return hub_port_power_cycle(hub, port1); /* disable, 1.2s, enable -> forces disconnect */
 +}
 +EXPORT_SYMBOL_GPL(usb_port_power_cycle);
 --- a/drivers/usb/core/usb.h.orig	2025-11-30 14:42:10.000000000 -0800
