@@ -42,6 +42,7 @@ EAPI=8
 # 151.0.4 -> 152.0.5
 # 152.0.5 -> 153.0.1
 # 153.0.1 -> 153.0.4
+# 153.0 -> 155.0.1
 
 # Originally based on the firefox-89.0.ebuild from the gentoo-overlay,
 # with update sync updated to this version of the ebuild.
@@ -182,12 +183,12 @@ RUSTFLAGS_HARDENED_USE_CASES="network sensitive-data untrusted-data web-browser"
 RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IBC ID IO JITM MC NPD OOBA OOBR OOBW PE SA SB SBE SO SOPB UAF UM TC"
 DBUS_PV="0.60"
 EBUILD_MAINTAINER_MODE=0
-FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-05.tar.xz"
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
 LICENSE_FINGERPRINT="\
-1270ae66a4fe4828f207913edb5aad34fa0d115d9cc1bb157d08aff6cd43605b\
-3e35f3a7603f97f98704d17496514eb50a35a5314780fb8215fdcc99ffeaf297\
+126b3c9e06952bc33f56bc29ccf71b685e2a8f6968394960e99c344dd5e39757\
+8e85470ceb0c096daf4ddefa6ebd54b4eb57755b998973e2fb42703d4cd6a43d\
 " # SHA512
 LTO_TYPE="" # Global variable
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
@@ -297,73 +298,39 @@ declare -A CFLAGS_RDEPEND=(
 	["media-libs/libvpx"]=">=;-O1" # -O0 causes FPS to lag below 25 FPS.
 )
 
-MITIGATION_DATE="Jul 21, 2026" # Official annoucement (blog)
-MITIGATION_LAST_UPDATE=1786430460 # From `date +%s -d "10-Aug-2026 23:41"` From ftp
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-68/"
+MITIGATION_DATE="Sep 1, 2026" # Official annoucement (advisories)
+MITIGATION_LAST_UPDATE=1788225900 # From `date +%s -d "31-Aug-2026 18:25"` From ftp linux-x86_64/en-US/
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-82/"
 VULNERABILITIES_FIXED=(
-	"CVE-2026-16349;SOPB;"
-	"CVE-2026-16350;IBC;"
-	"CVE-2026-16362;UAF;"
-	"CVE-2026-16351;UAF, SBE;"
-	"CVE-2026-16352;UAF, SBE;"
-	"CVE-2026-16363;JITM;"
-	"CVE-2026-16364;IBC;"
-	"CVE-2026-16365;PE;"
-	"CVE-2026-16366;PE;"
-	"CVE-2026-16353;UAF, NPD, UPTR;Critical"
-	"CVE-2026-16354;ID;"
-	"CVE-2026-16367;SBE;"
-	"CVE-2026-16368;IBC;"
-	"CVE-2026-16369;IO;"
-	"CVE-2026-16355;JITM;"
-	"CVE-2026-16356;UAF, SBE;"
-	"CVE-2026-16357;IBC;"
-	"CVE-2026-16370;SB;"
-	"CVE-2026-16371;PE;"
-	"CVE-2026-16372;PE;"
-	"CVE-2026-16373;ID;"
-	"CVE-2026-16374;ID;"
-	"CVE-2026-16375;IOV;"
-	"CVE-2026-16376;DoS;High"
-	"CVE-2026-16377;SB;"
-	"CVE-2026-16378;IV;High"
-	"CVE-2026-16379;PE;"
-	"CVE-2026-16358;IOV;"
-	"CVE-2026-16380;SB;"
-	"CVE-2026-16381;SOPB;"
-	"CVE-2026-16382;SB;"
-	"CVE-2026-16383;SB;"
-	"CVE-2026-16384;ID;"
-	"CVE-2026-16385;ID;"
-	"CVE-2026-16386;ID;"
-	"CVE-2026-16387;IOV;"
-	"CVE-2026-16388;SBE;"
-	"CVE-2026-16389;IO, IBC;"
-	"CVE-2026-16390;SB;"
-	"CVE-2026-16391;ID;"
-	"CVE-2026-16392;JITM;"
-	"CVE-2026-16393;IBC;"
-	"CVE-2026-16359;IBC;"
-	"CVE-2026-16394;SB;"
-	"CVE-2026-16395;IO;"
-	"CVE-2026-16396;PE;"
-	"CVE-2026-16397;CJ, IUIR, SAV;Medium"
-	"CVE-2026-16398;IOV;"
-	"CVE-2026-16399;IOV;"
-	"CVE-2026-16400;ID;"
-	"CVE-2026-16401;PE;"
-	"CVE-2026-16402;IO;"
-	"CVE-2026-16403;INSI, SAV;Medium"
-	"CVE-2026-16404;AB, SAV;High"
-	"CVE-2026-16405;ID;"
-	"CVE-2026-16406;SB;"
-	"CVE-2026-16407;SB;"
-	"CVE-2026-16408;IO;"
-	"CVE-2026-16409;UPTR;High"
-	"CVE-2026-16410;JITM;"
-	"CVE-2026-16411;MC, ACE;"
-	"CVE-2026-16412;MC, ACE;"
-	"CVE-2026-16360;MC, ACE;"
+	"CVE-2026-84117;PE;"
+	"CVE-2026-84118;UAF;"
+	"CVE-2026-84119;UAF, SBE;"
+	"CVE-2026-84120;UAF;"
+	"CVE-2026-84121;UAF, SBE;"
+	"CVE-2026-84122;UAF;"
+	"CVE-2026-84123;UAF, PE;"
+	"CVE-2026-84124;UAF;"
+	"CVE-2026-84125;UAF;"
+	"CVE-2026-84126;IBC;"
+	"CVE-2026-84127;ID;"
+	"CVE-2026-84128;PE;"
+	"CVE-2026-84129;IOV;"
+	"CVE-2026-84130;ID;"
+	"CVE-2026-84131;PE;"
+	"CVE-2026-84132;ID;"
+	"CVE-2026-84133;IOV;"
+	"CVE-2026-84134;;"
+	"CVE-2026-84135;;"
+	"CVE-2026-84136;;"
+	"CVE-2026-84137;;"
+	"CVE-2026-84138;DoS;"
+	"CVE-2026-84139;CJ;"
+	"CVE-2026-84140;IOV;"
+	"CVE-2026-84141;IO;"
+	"CVE-2026-84142;MC;"
+	"CVE-2026-84143;MC;"
+	"CVE-2026-84144;MC;"
+	"CVE-2026-84145;MC;"
 )
 
 inherit cflags-depends cflags-hardened check-compiler-switch check-linker
@@ -454,14 +421,14 @@ alsa cpu_flags_arm_neon cups +dbus debug eme-free firejail +hardened
 libsecret mold +pgo +pulseaudio
 rust-simd selinux sndio speech +system-av1
 +system-harfbuzz +system-icu +system-jpeg +system-libevent
-+system-libvpx system-pipewire system-png +system-webp systemd -telemetry +vaapi -valgrind
++system-libvpx system-pipewire system-png +system-webp systemd -telemetry +vaapi
 +wayland +webrtc wifi webspeech
 ebuild_revision_36
 "
 
 # Firefox-only IUSE
 IUSE+="
-+gmp-autoupdate gnome-shell screencast +X +wasm-sandbox
++gmp-autoupdate gnome-shell screencast -valgrind +X +wasm-sandbox
 "
 
 # The wayland flag actually allows vaapi, but upstream lazy to make it
@@ -768,9 +735,15 @@ DEPEND+="
 
 # ESR and rapid dependencies.
 if [[ -n "${MOZ_ESR}" ]] ; then
-	RDEPEND+=" !www-client/firefox:rapid"
+	RDEPEND+="
+		!www-client/firefox:rapid
+		~www-client/firefox-l10n-${PV}:0/esr
+	"
 else
-	RDEPEND+=" !www-client/firefox:esr"
+	RDEPEND+="
+		!www-client/firefox:esr
+		~www-client/firefox-l10n-${PV}:0/rapid
+	"
 fi
 
 gen_llvm_bdepend() {
@@ -835,9 +808,6 @@ PDEPEND+="
 		>=sys-apps/xdg-desktop-portal-${XDG_DESKTOP_PORTAL_PV}
 	)
 "
-
-# Firefox-only RDEPEND
-RDEPEND+=" ~www-client/firefox-l10n-${PV}"
 
 # Allow MOZ_GMP_PLUGIN_LIST to be set in an eclass or overridden in the
 # enviromnent.  (For advanced hackers only)
@@ -1883,9 +1853,6 @@ einfo "Removing pre-built binaries ..."
 
 	# Clear checksums from cargo crates we've manually patched.
 	# moz_clear_vendor_checksums xyz
-	# glslopt: bgo#969412
-	moz_clear_vendor_checksums glslopt
-	moz_clear_vendor_checksums encoding_rs
 
 	# Changing the value for FILES_PER_UNIFIED_FILE may not work, see #905431
 	if [[ -n "${FILES_PER_UNIFIED_FILE}" ]] && ! use debug ; then
@@ -2307,8 +2274,6 @@ einfo
 	# bug 833001, bug 903411#c8
 	if use loong || use ppc64 || use riscv; then
 		mozconfig_add_options_ac "" "--disable-sandbox"
-	elif use valgrind ; then
-		mozconfig_add_options_ac "valgrind requirement" "--disable-sandbox"
 	else
 		mozconfig_add_options_ac "" "--enable-sandbox"
 	fi
@@ -2317,6 +2282,15 @@ einfo
 	if use riscv ; then
 		mozconfig_add_options_ac 'Disable webrtc for RISC-V' --disable-webrtc
 		mozconfig_add_options_ac 'Disable JIT for RISC-V' --disable-jit
+	fi
+
+	mozconfig_use_enable valgrind
+
+	if use valgrind ; then
+		mozconfig_add_options_ac 'valgrind requirement' --disable-sandbox
+		mozconfig_add_options_ac 'valgrind requirement' --disable-jemalloc
+
+		sed -i -e 's/--enable-optimize=-O[0-9s]/--enable-optimize="-g -O2"/' .mozconfig || die
 	fi
 
 	if [[ -s "${s}/api-google.key" ]] ; then
@@ -2382,7 +2356,7 @@ einfo "Building without Mozilla API key ..."
 
 	mozconfig_use_enable "dbus"
 	mozconfig_use_enable "libproxy"
-	mozconfig_use_enable "valgrind"
+	mozconfig_use_enable "jumbo-build" "unified-build"
 	mozconfig_use_enable "cups" "printing"
 	multilib_is_native_abi && mozconfig_use_enable "speech" "synth-speechd"
 	mozconfig_use_enable "webrtc"
@@ -2419,14 +2393,6 @@ einfo "Building without Mozilla API key ..."
 
 	mozconfig_use_enable "wifi" "necko-wifi"
 
-	# Reduce longer *rebuilds* when debug testing experimental code changes.
-	local use_jumbo_build=1
-	use debug && use_jumbo_build=0
-	if (( ${use_jumbo_build} == 1 )) ; then
-		mozconfig_add_options_ac \
-			"--disable-unified-build" \
-			"--disable-unified-build"
-	fi
 	if tc-is-clang ; then
 # Required for GCC atomics
 eerror "Building with Clang is not supported."
@@ -2673,10 +2639,6 @@ ewarn "Add more swap space if linker causes an out of memory (OOM) condition."
 		mozconfig_add_options_ac "+jemalloc" "--enable-jemalloc"
 	fi
 
-	if use valgrind ; then
-		mozconfig_add_options_ac "valgrind requirement" "--disable-jemalloc"
-	fi
-
 	# Make revdep-rebuild.sh happy; Also required for musl
 	append-ldflags "-Wl,-rpath=${MOZILLA_FIVE_HOME},--enable-new-dtags"
 
@@ -2769,10 +2731,6 @@ einfo "Build RUSTFLAGS:  ${RUSTFLAGS:-no value set}"
 	done
 	echo "=========================================================="
 	echo
-
-	if use valgrind; then
-		sed -i -e 's/--enable-optimize=-O[0-9s]/--enable-optimize="-g -O2"/' ".mozconfig" || die
-	fi
 
 	"./mach" "configure" || die
 
@@ -2967,7 +2925,7 @@ EOF
 
 	# Force hwaccel prefs if USE=hwaccel is enabled
 	if use hwaccel ; then
-		cat "${FILESDIR}/gentoo-hwaccel-prefs.js-r2" \
+		cat "${FILESDIR}/gentoo-hwaccel-prefs.js-r4" \
 		>>"${GENTOO_PREFS}" \
 || die "failed to add prefs to force hardware-accelerated rendering to all-gentoo.js"
 
@@ -2981,16 +2939,9 @@ pref("gfx.x11-egl.force-enabled", true);
 EOF
 		fi
 
-		# Install the vaapitest binary on supported arches (+arm when keyworded)
+	# Install the gfxtest binary on supported arches
 		exeinto "${MOZILLA_FIVE_HOME}"
-		doexe "${BUILD_DIR}/dist/bin/vaapitest"
-		doexe "${BUILD_DIR}/dist/bin/vulkantest"
-
-		# Install the v4l2test on supported arches (+ arm, + riscv64 when keyworded)
-		if use arm64 ; then
-			exeinto "${MOZILLA_FIVE_HOME}"
-			doexe "${BUILD_DIR}/dist/bin/v4l2test"
-		fi
+		doexe "${BUILD_DIR}/dist/bin/gfxtest"
 	fi
 
 	if ! use gmp-autoupdate ; then
@@ -3195,17 +3146,6 @@ einfo "one generic Mozilla ${PN^} shortcut."
 einfo "If you still want to be able to select between running Mozilla ${PN^}"
 einfo "on X11 or Wayland, you have to re-create these shortcuts on your own."
 einfo
-	fi
-
-	# Bug 835078
-	# might work fine with vulkan, starting in 152.0?
-	if use hwaccel && has_version "x11-drivers/xf86-video-nouveau"; then
-ewarn
-ewarn "You have nouveau drivers installed in your system and 'hwaccel' enabled"
-ewarn "for Firefox. Nouveau or your GPU might not support the required EGL, so"
-ewarn "either disable 'hwaccel' or try the workaround explained in"
-ewarn "https://bugs.gentoo.org/835078#c5 if Firefox crashes."
-ewarn
 	fi
 
 ewarn

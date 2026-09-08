@@ -36,6 +36,7 @@ EAPI=8
 # 140.10.1 -> 140.10.2
 # 140.10.2 -> 140.11.0
 # 140.11.0 -> 140.12.0
+# 140.13.0 -> 140.15.0
 
 # SECURITY:  If this gets bumped, then dev-lang/spidermonkey should be bumped too with the same ESR version.
 
@@ -290,42 +291,21 @@ declare -A CFLAGS_RDEPEND=(
 	["media-libs/libvpx"]=">=;-O1" # -O0 causes FPS to lag below 25 FPS.
 )
 
-MITIGATION_DATE="Jul 21, 2026" # Official annoucement (blog)
-MITIGATION_LAST_UPDATE=1784568240 # From `date +%s -d "20-Jul-2026 10:24"` From ftp
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-70/"
+MITIGATION_DATE="Sep 1, 2026" # Official annoucement (advisories)
+MITIGATION_LAST_UPDATE=1788205920 # From `date +%s -d "31-Aug-2026 12:52"` From ftp linux-x86_64/en-US/
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-76/"
 VULNERABILITIES_FIXED=(
-	"CVE-2026-15718;IF;Medium"
-	"CVE-2026-15719;IOV;"
-	"CVE-2026-16349;SOPB;"
-	"CVE-2026-16350;IBC;"
-	"CVE-2026-16362;UAF;"
-	"CVE-2026-16351;UAF, SBE;"
-	"CVE-2026-16352;UAF, SBE;"
-	"CVE-2026-16363;JITM;"
-	"CVE-2026-16353;UAF, NPD, UPTR;Critical"
-	"CVE-2026-16354;ID;"
-	"CVE-2026-16368;IBC;"
-	"CVE-2026-16369;IO;"
-	"CVE-2026-16355;JITM;"
-	"CVE-2026-16356;UAF, SBE;"
-	"CVE-2026-16357;IBC;"
+	"CVE-2026-75874;SBE;"
+	"CVE-2026-16365;PE;"
+	"CVE-2026-84119;UAF, SBE;"
+	"CVE-2026-84120;UAF;"
+	"CVE-2026-84121;UAF, SBE;"
+	"CVE-2026-84122;UAF;"
+	"CVE-2026-84124;UAF;"
 	"CVE-2026-16371;PE;"
-	"CVE-2026-16374;ID;"
-	"CVE-2026-16375;IOV;"
-	"CVE-2026-16377;SB;"
-	"CVE-2026-16379;PE;"
-	"CVE-2026-16358;IOV;"
-	"CVE-2026-16381;SOPB;"
-	"CVE-2026-16383;SB;"
-	"CVE-2026-16387;IOV, IAC, ID;Critical"
-	"CVE-2026-16390;SB;"
-	"CVE-2026-16391;ID;"
-	"CVE-2026-16359;IBC;"
-	"CVE-2026-16396;PE;"
-	"CVE-2026-16405;ID;"
-	"CVE-2026-16412;MC, ACE;"
-	"CVE-2026-16360;MC, ACE;"
-	"CVE-2026-16361;MC, ACE;"
+	"CVE-2026-84131;PE;"
+	"CVE-2026-84143;MC;"
+	"CVE-2026-84145;MC;"
 )
 
 MOZ_LANGS=(
@@ -441,7 +421,7 @@ inherit libstdcxx-slot linux-info llvm multilib-minimal multiprocessing
 inherit node optfeature pax-utils python-any-r1 readme.gentoo-r1 rust
 inherit rustflags-hardened secure-version toolchain-funcs virtualx vf web-kernel-config xdg
 
-KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~riscv ~x86"
+KEYWORDS="amd64 arm64 ~loong ~ppc64 ~riscv ~x86"
 S="${WORKDIR}/${PN}-${PV/e}"
 S_BAK="${WORKDIR}/${PN}-${PV/e}"
 if [[ "${PV}" == *"_rc"* ]] ; then
