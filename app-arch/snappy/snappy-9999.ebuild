@@ -31,7 +31,7 @@ LLVM_COMPAT=(
 inherit cflags-hardened cmake-multilib libcxx-slot libstdcxx-slot
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="7406111ac4ae539ea0db8b7ea2dc76730cd957f4"
+	FALLBACK_COMMIT="5a11aa37d66396283848f71f535cb78acf1d0c9d"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/google/snappy.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -57,7 +57,7 @@ IUSE="
 ${_CXX_STANDARD[@]}
 ${CPU_FLAGS_X86[@]}
 test
-ebuild_revision_12
+ebuild_revision_13
 "
 REQUIRED_USE="
 	test? (
