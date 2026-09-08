@@ -20,7 +20,7 @@ OPUS_DATA_ID="a5177ec6fb7d15058e99e57029746100121f68e4890b1467d4094aa336b6013e"
 inherit cflags-hardened check-compiler-switch flag-o-matic meson-multilib python-any-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="3da9f7a6db1c05c3996cb363a9d1931a978bf1be"
+	FALLBACK_COMMIT="a6128f40d74fa6d9252ba3aadf726e3bbdc80c47"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/xiph/opus.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -45,7 +45,7 @@ IUSE+="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_X86[@]}
 custom-modes deep-plc dred doc osce static-libs test
-ebuild_revision_28
+ebuild_revision_29
 "
 REQUIRED_USE="
 	dred? (
