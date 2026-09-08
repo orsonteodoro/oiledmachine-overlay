@@ -9,11 +9,13 @@ DISTUTILS_EXT=1
 DISTUTILS_OPTIONAL="1"
 DISTUTILS_USE_PEP517=setuptools
 PYTHON_COMPAT=( python3_{10..14} )
+SO_CURRENT=3
+SO_AGE=2
 
 inherit cflags-hardened cmake-multilib distutils-r1 flag-o-matic
 
 if [[ ${PV} == *9999* ]] ; then
-	FALLBACK_COMMIT="83fe766bc81f7911a78716b8d3b3d01367009995" # Sun, 7 Jun 2026 00:08:16 +0700
+	FALLBACK_COMMIT="4508218e7fef90fa4273286f7a415065946f2c43"
 	EGIT_REPO_URI="https://github.com/google/${PN}.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
@@ -31,8 +33,12 @@ DESCRIPTION="Generic-purpose lossless compression algorithm"
 HOMEPAGE="https://github.com/google/brotli/"
 
 LICENSE="MIT python? ( Apache-2.0 )"
-SLOT="0/$(ver_cut 1)"
-IUSE+=" python test"
+SOVER=$(( ${SO_CURRENT} - ${SO_AGE} )) # The distro formula is wrong.
+SLOT="0/${SOVER}"
+IUSE+="
+python test
+ebuild_revision_1
+"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 RESTRICT="!test? ( test )"
 
@@ -59,6 +65,16 @@ src_unpack() {
 		git-r3_checkout
 	else
 		unpack ${A}
+	fi
+	local c=$(grep -E -e "BROTLI_ABI_CURRENT" "${S}/c/common/version.h" | head -n 1 | sed -E -e "s|[ ]+| |g" | cut -f 3 -d " ")
+	local a=$(grep -E -e "BROTLI_ABI_AGE" "${S}/c/common/version.h" | head -n 1 | sed -E -e "s|[ ]+| |g" | cut -f 3 -d " ")
+	local actual_sover=$(( ${c} - ${a} ))
+	local expected_sover="${SOVER}"
+	if ver_test "${actual_sover}" "-ne" "${expected_sover}" ; then
+eerror "QA:  Update SO_CURRENT, SO_AGE"
+eerror "Actual SOVER:  ${actual_sover}"
+eerror "Expected SOVER:  ${expected_sover}"
+		die
 	fi
 }
 
