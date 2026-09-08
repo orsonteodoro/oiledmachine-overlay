@@ -14,7 +14,7 @@ CHKL_TIMESTAMPS=(
 inherit cflags-hardened meson-multilib
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="76ffc49448b8bd6aa6a36c1f5869ab318831abb9"
+	FALLBACK_COMMIT="ab329ad5ce09dbb1f3547b6c126031aca606eb42"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/mm2/Little-CMS.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -37,7 +37,7 @@ if [[ ${PV} != *_rc* ]] ; then
 fi
 IUSE+="
 doc jpeg static-libs test tiff
-ebuild_revision_1
+ebuild_revision_2
 "
 RESTRICT="!test? ( test )"
 
