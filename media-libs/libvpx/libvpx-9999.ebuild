@@ -33,7 +33,7 @@ inherit cflags-hardened check-compiler-switch flag-o-matic flag-o-matic-om llvm 
 inherit python-single-r1 toolchain-funcs uopts
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="8729fc25eaaace0736e6a2e1da3cd307f75446fc"
+	FALLBACK_COMMIT="d2413e2ca11039724ca33bb4d661ca2c94cb501e"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://chromium.googlesource.com/webm/libvpx"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -65,7 +65,7 @@ IUSE+="
 ${_TRAINERS[@]}
 ${CPU_FLAGS_PPC[@]}
 chromium doc +examples +highbitdepth pgo postproc static-libs svc test +threads
-ebuild_revision_45
+ebuild_revision_46
 "
 REQUIRED_USE="
 	pgo? (
