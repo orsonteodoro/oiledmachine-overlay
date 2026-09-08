@@ -702,7 +702,7 @@ Fix:
 +
 +	/* mirror hub_port_power_cycle() - works even if hub has no per-port power switch */
 +	usb_disable_device(udev, 1);
-+	usb_hub_clear_port_feature(hdev, port1, USB_PORT_FEAT_ENABLE);
++	usb_clear_port_feature(hdev, port1, USB_PORT_FEAT_ENABLE);
 +
 +	/* try power off/on if hub supports it */
 +	usb_hub_set_port_power(hdev, hub, port1, false);
