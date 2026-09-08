@@ -3606,7 +3606,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-148.0.7778.167-skia-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-152.0.7977.82-perfetto-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-ruy-optionalize-simd.patch"
-		"A${FILESDIR}/extra-patches/${PN}-136.0.7103.92-webrtc-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-152.0.7977.82-webrtc-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-dav1d-optionalize-simd.patch"		# Fix missing symbols for disabled SIMD
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-dav1d-pic.patch"
 		"${FILESDIR}/extra-patches/${PN}-148.0.7778.167-libjpeg-turbo-optionalize-simd.patch"	# Fix missing symbols for disabled SIMD
