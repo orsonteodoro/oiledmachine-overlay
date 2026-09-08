@@ -80,7 +80,6 @@ multilib_src_configure() {
 		-Dcairo-tests=disabled
 		$(meson_feature video_cards_amdgpu amdgpu)
 		$(meson_feature video_cards_exynos exynos)
-		$(meson_feature video_cards_freedreno freedreno)
 		$(meson_feature video_cards_intel intel)
 		$(meson_feature video_cards_nouveau nouveau)
 		$(meson_feature video_cards_omap omap)
