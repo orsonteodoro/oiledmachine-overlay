@@ -16,7 +16,7 @@ inherit cflags-hardened ${GIT_ECLASS} python-any-r1 meson-multilib
 DESCRIPTION="X.Org libdrm library"
 HOMEPAGE="https://dri.freedesktop.org/ https://gitlab.freedesktop.org/mesa/drm"
 if [[ ${PV} == *9999 ]]; then
-	FALLBACK_COMMIT="f9816a42b0d6138851cbe5eb7a33ee1a2f2a15ca"
+	FALLBACK_COMMIT="773536b1e5dde694dd743815528aff8bb2cf2cc3"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/mesa/drm"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -37,6 +37,7 @@ SLOT="0"
 IUSE+="
 ${IUSE_VIDEO_CARDS}
 doc test tools udev valgrind
+ebuild_revision_1
 "
 RESTRICT="!test? ( test )"
 
