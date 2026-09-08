@@ -151,23 +151,19 @@ Fix:
  
  #include "main.h"
  #include "regd.h"
-@@ -19,6 +21,7 @@
+@@ -19,6 +21,12 @@
  #include "bf.h"
  #include "sar.h"
  #include "sdio.h"
 +#include "usb.h"
++
++unsigned long rtw_usb_last_cycle;
++EXPORT_SYMBOL_GPL(rtw_usb_last_cycle);
++atomic_t rtw_usb_cycling = ATOMIC_INIT(0);
++EXPORT_SYMBOL_GPL(rtw_usb_cycling);
  
  bool rtw_disable_lps_deep_mode;
  EXPORT_SYMBOL(rtw_disable_lps_deep_mode);
-@@ -33,6 +36,8 @@ EXPORT_SYMBOL(rtw_debug_mask);
-  * there is a tough reason to maintain rtw_edcca_enabled by device.
-  */
- bool rtw_edcca_enabled = true;
-+unsigned long rtw_usb_last_cycle;
-+atomic_t rtw_usb_cycling = ATOMIC_INIT(0);
- 
- module_param_named(disable_lps_deep, rtw_disable_lps_deep_mode, bool, 0644);
- module_param_named(support_bf, rtw_bf_support, bool, 0644);
 @@ -215,6 +220,12 @@ static void rtw_watch_dog_work(struct wo
  	u32 tx_unicast_mbps, rx_unicast_mbps;
  	bool ps_active;
