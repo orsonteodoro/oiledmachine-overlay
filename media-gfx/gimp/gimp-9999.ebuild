@@ -75,7 +75,7 @@ SLOT="0/${MAJOR_VERSION}"
 
 IUSE="
 X aalib alsa bash-completion doc fits gnome heif javascript jpeg2k jpegxl lua mng openexr openmp postscript test udev unwind vala vector-icons wayland webp wmf xpm
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
