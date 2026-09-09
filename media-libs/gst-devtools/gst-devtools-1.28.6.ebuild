@@ -4,7 +4,7 @@
 EAPI=8
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"x11-libs/gtk+-3.24.9999"
 )
 
@@ -27,7 +27,7 @@ LICENSE="
 "
 IUSE="
 cairo -debug_viewer doc dots_viewer gtk3 +introspection +nls static-libs test +tools validate
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND="
 	>=media-libs/gstreamer-${PV}:${SLOT}=[${MULTILIB_USEDEP},introspection?]
