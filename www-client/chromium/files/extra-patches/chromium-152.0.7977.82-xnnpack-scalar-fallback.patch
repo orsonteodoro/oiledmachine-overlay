@@ -1,5 +1,5 @@
---- third_party/xnnpack/src/src/configs/gemm-config.c.orig	2026-09-02 13:40:03.000000000 -0700
-+++ third_party/xnnpack/src/src/configs/gemm-config.c	2026-09-08 19:44:13.493610172 -0700
+--- a/third_party/xnnpack/src/src/configs/gemm-config.c.orig	2026-09-02 13:40:03.000000000 -0700
++++ b/third_party/xnnpack/src/src/configs/gemm-config.c	2026-09-08 19:44:13.493610172 -0700
 @@ -1949,13 +1949,23 @@ static void init_f32_qc4w_gemm_config(vo
          f32_qc4w_gemm_config.nr = 16;
      } else
