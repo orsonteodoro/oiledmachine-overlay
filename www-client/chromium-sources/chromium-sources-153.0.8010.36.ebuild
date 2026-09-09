@@ -97,10 +97,6 @@ _unpack_depot_tools() {
 		einfo "Cache missing or incomplete (.complete file not found)."
 		einfo "Wiping target directory and starting clean for point release..."
 
-		# Allow writes to modify the cache structure under Portage's sandbox environment
-		addwrite "${BASE_DIR}"
-		addwrite "${CACHE_DIR}"
-
 		# Safely wipe and recreate the target directory
 		rm -rf "${CACHE_DIR}"
 		mkdir -p "${CACHE_DIR}"
@@ -118,6 +114,15 @@ _unpack_depot_tools() {
 		export PATH="${DEPOT_TOOLS_DIR}:${PATH}"
 		export DEPOT_TOOLS_UPDATE=1
 		export PYTHONHTTPSVERIFY=1
+
+	# Prevent eager timeout
+#[0:17:31] Still working on:
+#[0:17:31]   src
+#
+#[0:17:31] STALL DETECTED: gclient has been silent for 5 minutes.
+#[0:17:31] Currently active tasks:
+#[0:17:31]    src (Running for 0:17:30)
+		export DEPOT_TOOLS_WIN_TIMEOUT=0
 
 		# Navigate into our controlled persistent cache space to perform the checkout
 		cd "${CACHE_DIR}" || die
@@ -153,9 +158,6 @@ _unpack_depot_tools() {
 
 	# We use a hardlink or copy to maintain isolation during the build steps
 	cp -al "${CACHE_DIR}/src/." "${S}/" || cp -a "${CACHE_DIR}/src/." "${S}/" || die
-
-
-
 }
 
 _unpack_tarball() {
