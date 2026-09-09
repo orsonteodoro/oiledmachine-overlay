@@ -62,7 +62,7 @@ CHKL_TIMESTAMPS=(
 	"app-crypt/rhash-9999"
 	"app-misc/jq-9999"
 	"dev-libs/expat-9999"
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"media-libs/alsa-lib-9999"
 	"net-print/cups-9999"
 	"sys-apps/dbus-9999"
@@ -100,7 +100,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 beta cefclient cefsimple debug minimal test wayland X
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE+="
 	cefclient? (
