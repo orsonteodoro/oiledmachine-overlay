@@ -218,7 +218,7 @@ CHKL_TIMESTAMPS=(
 	"app-accessibility/at-spi2-core-9999"
 	"app-accessibility/speech-dispatcher-9999"
 	"dev-libs/expat-9999"
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"dev-libs/icu-79.0.9999"
 	"dev-libs/libevent-9999"
 	"dev-libs/libffi-9999"
@@ -423,7 +423,7 @@ rust-simd selinux sndio speech +system-av1
 +system-harfbuzz +system-icu +system-jpeg +system-libevent
 +system-libvpx system-pipewire system-png +system-webp systemd -telemetry +vaapi
 +wayland +webrtc wifi webspeech
-ebuild_revision_37
+ebuild_revision_38
 "
 
 # Firefox-only IUSE
