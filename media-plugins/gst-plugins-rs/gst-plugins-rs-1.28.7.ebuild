@@ -42,6 +42,7 @@ LLVM_MAX_SLOT="22"
 PYTHON_COMPAT=( "python3_"{8..11} )
 RUST_MAX_VER="1.97.1"
 RUST_MIN_VER="1.97.1" # LLVM 22.1
+RUST_PV="${RUST_MAX_VER}"
 
 GSTREAMER_RS_COMMIT="4e20c0caa0100421080f081065e51f9341ba4693" # The ID from GIT_CRATES variable below at the [gstreamer] row
 
@@ -1301,7 +1302,7 @@ ${MODULES[@]}
 ${PATENT_STATUS_IUSE[@]}
 aom clang doc gcc nvcodec qsv openh264 rav1e system-libsodium vaapi vpx vulkan x264 x265
 webrtc-aws webrtc-livekit
-ebuild_revision_61
+ebuild_revision_62
 "
 WEBRTC_AV1_ENCODERS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -1694,16 +1695,16 @@ gen_llvm_bdepend() {
 RUST1_BDEPEND="
 	llvm_slot_22? (
 		|| (
-			dev-lang/rust:1.95.0[${MULTILIB_USEDEP}]
-			dev-lang/rust-bin:1.95.0[${MULTILIB_USEDEP}]
+			dev-lang/rust:${RUST_PV}[${MULTILIB_USEDEP}]
+			dev-lang/rust-bin:${RUST_PV}[${MULTILIB_USEDEP}]
 		)
 	)
 "
 RUST_BDEPEND="
 	llvm_slot_22? (
 		|| (
-			dev-lang/rust-bin:1.95.0[${MULTILIB_USEDEP}]
-			dev-lang/rust:1.95.0[${MULTILIB_USEDEP}]
+			dev-lang/rust-bin:${RUST_PV}[${MULTILIB_USEDEP}]
+			dev-lang/rust:${RUST_PV}[${MULTILIB_USEDEP}]
 		)
 	)
 "
