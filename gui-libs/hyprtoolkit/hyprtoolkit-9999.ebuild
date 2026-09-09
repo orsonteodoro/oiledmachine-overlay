@@ -56,7 +56,10 @@ RESTRICT="
 "
 SOVER="5"
 SLOT="0/${SOVER}"
-IUSE="test"
+IUSE="
+test
+ebuild_revision_2
+"
 
 BDEPEND="
 	test? (
