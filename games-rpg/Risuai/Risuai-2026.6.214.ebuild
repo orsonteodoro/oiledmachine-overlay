@@ -695,7 +695,7 @@ PNPM_INSTALL_ARGS=(
 
 CHKL_TIMESTAMPS=(
 	"app-accessibility/at-spi2-core-9999"
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"x11-libs/cairo-9999"
 	"x11-libs/gtk+-3.24.9999"
 )
@@ -721,7 +721,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
 ${CPU_FLAGS_X86[@]}
 ollama server tray wayland X
-ebuild_revision_23
+ebuild_revision_24
 "
 RESTRICT="mirror" # Speed up downloads
 REQUIRED_USE="
