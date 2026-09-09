@@ -21,7 +21,7 @@ LLVM_COMPAT=(
 )
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"dev-qt/qtbase-6.9999"
 	"dev-util/vulkan-headers-9999"
 	"media-libs/alsa-lib-9999"
@@ -48,7 +48,7 @@ fi
 IUSE+="
 	+X alsa +dbus eglfs +ffmpeg gstreamer opengl pipewire pulseaudio
 	qml +v4l vaapi vulkan wayland
-	ebuild_revision_4
+	ebuild_revision_5
 "
 REQUIRED_USE="
 	|| ( ffmpeg gstreamer )
