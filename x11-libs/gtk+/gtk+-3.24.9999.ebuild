@@ -45,7 +45,7 @@ SLOT="3"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~x64-solaris"
 IUSE+="
 aqua broadway cloudproviders colord cups examples gtk-doc +introspection sysprof test vim-syntax wayland +X xinerama
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	|| ( aqua wayland X )
