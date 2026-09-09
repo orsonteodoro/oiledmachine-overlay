@@ -27,7 +27,7 @@ LLVM_COMPAT=(
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"dev-qt/qtbase-6.9999"
 	"net-misc/curl-9999"
 	"media-libs/fontconfig-9999"
@@ -68,7 +68,7 @@ SLOT="0/${SOVER}"
 LICENSE="GPL-2"
 IUSE+="
 boost cairo cjk curl +cxx debug doc gpg +introspection +jpeg +jpeg2k +lcms nss png qt6 test tiff +utils
-ebuild_revision_6
+ebuild_revision_7
 "
 RESTRICT="
 	mirror
