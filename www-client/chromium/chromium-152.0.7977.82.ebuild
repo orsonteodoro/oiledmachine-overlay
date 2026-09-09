@@ -3666,15 +3666,20 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	# Did you run "gclient sync"?
 			"${FILESDIR}/extra-patches/${PN}-117.0.5938.92-skip-rust-check.patch"
 
-			"${FILESDIR}/extra-patches/${PN}-149.0.7827.114-clang-paths.patch"
+			"${FILESDIR}/extra-patches/${PN}-152.0.7977.82-clang-paths.patch"
 		)
 	fi
 
+	local v8_pv_c1=$(grep "V8_MAJOR_VERSION" "${S}/v8/include/v8-version.h" | cut -f 3 -d " ")
+	local v8_pv_c2=$(grep "V8_MINOR_VERSION" "${S}/v8/include/v8-version.h" | cut -f 3 -d " ")
+	local v8_pv_c3=$(grep "V8_BUILD_NUMBER" "${S}/v8/include/v8-version.h" | cut -f 3 -d " ")
+	local v8_pv_c4=$(grep "V8_PATCH_LEVEL" "${S}/v8/include/v8-version.h" | cut -f 3 -d " ")
+einfo "V8 version:  ${v8_pv_c1}.${v8_pv_c2}.${v8_pv_c3}.${v8_pv_c4}" # For patch name and vulnerability advisories
 	PATCHES+=(
 		"${FILESDIR}/extra-patches/${PN}-149.0.7827.114-custom-optimization-level.patch"
 		$((in_iuse "cromite" && use cromite) || echo "${FILESDIR}/extra-patches/${PN}-149.0.7827.114-hardening.patch")
 		$((in_iuse "cromite" && use cromite) && echo "${FILESDIR}/extra-patches/${PN}-146.0.7680.71-hardening-cromite.patch")
-		"${FILESDIR}/extra-patches/v8-14.3.127.17-custom-optimization-level.patch"			# Patch for the original version in the Chromium tarball.  Different v8 versions needs forward port.
+		"${FILESDIR}/extra-patches/v8-15.2.124.21-custom-optimization-level.patch"			# Patch for the original version in the Chromium tarball.  Different v8 versions needs forward port.
 	)
 
 	if ! use official ; then
@@ -3715,7 +3720,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 #		"${FILESDIR}/extra-patches/${PN}-143.0.7499.192-system-libsecret-includes-path.patch"
 		"${FILESDIR}/extra-patches/${PN}-143.0.7499.192-custom-march.patch"
 		"${FILESDIR}/extra-patches/${PN}-151.0.7922.108-optionalize-sanitize-array-bounds.patch"
-		"${FILESDIR}/extra-patches/${PN}-151.0.7922.108-xnnpack-scalar-fallback.patch"
+		"${FILESDIR}/extra-patches/${PN}-152.0.7977.82-xnnpack-scalar-fallback.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-pdfium-system-deps.patch"
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.45-use-system-opus-alt.patch"
 #		$(use system-libpng && echo "${FILESDIR}/extra-patches/${PN}-144.0.7559.59-libpng-test-only.patch")

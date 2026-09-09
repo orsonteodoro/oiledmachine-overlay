@@ -1,0 +1,40 @@
+--- a/v8/BUILD.gn.orig	2026-09-02 13:40:03.000000000 -0700
++++ b/v8/BUILD.gn	2026-09-08 18:19:41.909483872 -0700
+@@ -1969,9 +1969,15 @@ config("always_turbofanimize") {
+   # TODO(crbug.com/621335) Rework this so that we don't have the confusion
+   # between "optimize_speed" and "optimize_max".
+   if (((is_posix && !is_android) || is_fuchsia || is_win) && !using_sanitizer) {
+-    configs += [ "//build/config/compiler:optimize_speed" ]
++    configs += [
++      "//build/config/compiler:optimize_speed",
++      "//build/config/compiler:v8_custom_optimization_config"
++    ]
+   } else {
+-    configs += [ "//build/config/compiler:optimize_max" ]
++    configs += [
++      "//build/config/compiler:optimize_max",
++      "//build/config/compiler:v8_custom_optimization_config"
++    ]
+   }
+ }
+ 
+--- a/v8/gni/v8.gni.orig	2026-09-02 13:40:03.000000000 -0700
++++ b/v8/gni/v8.gni	2026-09-08 18:19:41.910747589 -0700
+@@ -285,6 +285,8 @@ declare_args() {
+   # Some fuzzers depend on fuzzing functionality linked into the v8 library.
+   # For binary size reasons this functionality is not always available.
+   v8_wasm_random_fuzzers = ""
++
++  #v8_custom_optimization_level = ""
+ }
+ 
+ declare_args() {
+@@ -415,6 +417,8 @@ if (v8_force_optimize_speed) {
+   v8_add_configs += [ "//build/config/compiler:optimize_max" ]
+ }
+ 
++v8_add_configs += [ "//build/config/compiler:v8_custom_optimization_config" ]
++
+ if (!is_debug) {
+   v8_remove_configs += [
+     # Too much performance impact, unclear security benefit.
