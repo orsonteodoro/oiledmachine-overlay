@@ -33,7 +33,7 @@ CHKL_TIMESTAMPS=(
 	"app-misc/jq-9999"
 	"dev-cpp/muParser-9999"
 	"dev-cpp/tomlplusplus-9999"
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"dev-libs/hyprlang-9999"
 	"dev-libs/libinput-9999"
 	"dev-libs/wayland-9999"
@@ -80,7 +80,7 @@ SLOT="0"
 IUSE+="
 ${GCC_COMPAT[@]}
 clang gcc legacy-renderer -guiutils systemd test X
-ebuild_revision_33
+ebuild_revision_34
 "
 REQUIRED_USE="
 	^^ (
