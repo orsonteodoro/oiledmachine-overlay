@@ -16,7 +16,7 @@ TMPFILES_OPTIONAL=1
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/expat-9999"
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"sys-apps/systemd-9999"
 	"sys-auth/elogind-257.9999"
 	"sys-libs/libselinux-9999"

@@ -9,7 +9,7 @@ PYTHON_COMPAT=( python3_{10..14} )
 
 CHKL_TIMESTAMPS=(
 	"sys-apps/dbus-9999"
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"dev-libs/libxml2-9999"
 	"sys-apps/systemd-9999"
 	"x11-libs/libX11-9999"
@@ -35,7 +35,7 @@ SLOT="2"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~x64-macos"
 IUSE+="
 X dbus-broker gtk-doc +introspection systemd
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
