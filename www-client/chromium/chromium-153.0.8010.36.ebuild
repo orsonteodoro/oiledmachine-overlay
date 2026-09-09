@@ -852,7 +852,7 @@ LLVM_COMPAT=(
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 LIBCXX_SLOT_MIN="21"
 LLVM_SYSTEM_SLOT="24"
-LLVM_VENDORED_SLOT="23" # Cr official slot
+LLVM_VENDORED_SLOT="24" # Cr official slot
 # For simplicity, the PGO profdata compatibility assumes the same as
 # LLVM_VENDORED_SLOT to LLVM_VENDORED_SLOT + 1.
 
@@ -1557,11 +1557,9 @@ REQUIRED_USE+="
 		patent_status_nonfree
 	)
 	llvm_slot_${LLVM_SYSTEM_SLOT}? (
-		!official
 		system-clang
 	)
 	llvm_slot_${LLVM_VENDORED_SLOT}? (
-		!system-clang
 		official
 	)
 	miracleptr? (
