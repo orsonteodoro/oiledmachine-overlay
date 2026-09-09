@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# 26.7.0 -> 26.8.2
+
 # FIXME:
 # ../../deps/v8/src/heap/memory-chunk.h:361:2: error: #error The global metadata pointer table requires a single external code space.
 
@@ -30,8 +32,8 @@ UOPTS_SUPPORT_TPGO=1
 
 ACORN_PV="8.18.0"
 AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
-COREPACK_PV="0.35.0"
-NPM_PV="11.19.0" # See https://github.com/nodejs/node/blob/v26.7.0/deps/npm/package.json
+COREPACK_PV="0.36.0"
+NPM_PV="11.19.1" # See https://github.com/nodejs/node/blob/v26.8.2/deps/npm/package.json
 WRK_PV="1.2.1" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 
 CHKL_TIMESTAMPS=(
