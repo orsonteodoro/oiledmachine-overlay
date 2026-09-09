@@ -33,7 +33,10 @@ HOMEPAGE="https://gitlab.gnome.org/GNOME/at-spi2-core"
 LICENSE="LGPL-2.1+"
 SLOT="2"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~x64-macos"
-IUSE+=" X dbus-broker gtk-doc +introspection systemd"
+IUSE+="
+X dbus-broker gtk-doc +introspection systemd
+ebuild_revision_2
+"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 	dbus-broker? ( systemd )
