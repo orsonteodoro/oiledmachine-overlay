@@ -7,7 +7,7 @@ MY_PV="${PV/_pre*}"
 MY_P="pulseaudio-${MY_PV}"
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
@@ -60,7 +60,7 @@ SLOT="0"
 IUSE+="
 +alsa +alsa-plugin aptx +asyncns bluetooth dbus elogind equalizer fftw +gdbm +glib gstreamer jack ldac lirc
 ofono-headset +orc oss selinux sox ssl systemd system-wide tcpd test +udev valgrind +webrtc-aec +X zeroconf
-ebuild_revision_2
+ebuild_revision_3
 "
 
 RESTRICT="!test? ( test )"
