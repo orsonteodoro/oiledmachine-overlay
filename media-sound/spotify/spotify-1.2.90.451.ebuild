@@ -219,7 +219,7 @@ SLOT="0/${DEFAULT_CONFIGURATION}"
 IUSE+="
 ${COREUTILS_IMPLS[@]}
 clang emoji ffmpeg gcc firejail libnotify wayland +X
-ebuild_revision_5
+ebuild_revision_6
 "
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
