@@ -13,7 +13,7 @@ GNOME_ORG_MODULE=gtk
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/fribidi-9999"
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"dev-libs/libxslt-9999"
 	"dev-libs/wayland-9999"
 	"media-libs/fontconfig-9999"
@@ -45,7 +45,7 @@ SLOT="3"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~x64-solaris"
 IUSE+="
 aqua broadway cloudproviders colord cups examples gtk-doc +introspection sysprof test vim-syntax wayland +X xinerama
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	|| ( aqua wayland X )
