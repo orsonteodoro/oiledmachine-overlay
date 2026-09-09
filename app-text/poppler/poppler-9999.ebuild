@@ -68,7 +68,7 @@ SLOT="0/${SOVER}"
 LICENSE="GPL-2"
 IUSE+="
 boost cairo cjk curl +cxx debug doc gpg +introspection +jpeg +jpeg2k +lcms nss png qt6 test tiff +utils
-ebuild_revision_5
+ebuild_revision_6
 "
 RESTRICT="
 	mirror
