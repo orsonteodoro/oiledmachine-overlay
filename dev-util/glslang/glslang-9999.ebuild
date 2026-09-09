@@ -21,7 +21,7 @@ PYTHON_COMPAT=( "python3_"{10..14} )
 inherit cflags-hardened cmake-multilib libcxx-slot libstdcxx-slot python-any-r1
 
 if [[ ${PV} == *9999* ]]; then
-	FALLBACK_COMMIT="32238786c835d237c729375f96218e834ab83787"
+	FALLBACK_COMMIT="ebe60e331c21d5c7f09734fbdcebbc46ee5d8507"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/KhronosGroup/${PN}.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -40,7 +40,7 @@ HOMEPAGE="https://www.khronos.org/opengles/sdk/tools/Reference-Compiler/ https:/
 LICENSE="BSD"
 INTERNAL_PV="16.5" # Versioning based on https://github.com/KhronosGroup/glslang/blob/main/CHANGES.md
 SLOT="0/${INTERNAL_PV}"
-IUSE+=" ebuild_revision_1"
+IUSE+=" ebuild_revision_3"
 BDEPEND="${PYTHON_DEPS}
 	>=dev-util/spirv-tools-${PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 "

@@ -4,7 +4,7 @@
 EAPI=8
 
 MY_PN=Vulkan-Loader
-COMMIT_ID="5f157b62e333c63260d05d81bf66faa216ab0fb8"
+COMMIT_ID="b8b96a2862bff1eed468e602d43f706beae89cf1"
 FLAVOR="vulkan-tmp" # vulkan-tmp or vulkan-sdk
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
@@ -18,7 +18,7 @@ CHKL_TIMESTAMPS=(
 inherit chkl cmake-multilib cflags-hardened flag-o-matic secure-version toolchain-funcs
 
 if [[ ${PV} == *9999* ]]; then
-	VULKAN_HEADER_SLOT="1.4.357"
+	VULKAN_HEADER_SLOT="1.4.362"
 	FALLBACK_COMMIT="${COMMIT_ID}"
 	EGIT_REPO_URI="https://github.com/KhronosGroup/${MY_PN}.git"
 	EGIT_SUBMODULES=()

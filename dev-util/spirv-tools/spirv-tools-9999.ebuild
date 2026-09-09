@@ -28,7 +28,7 @@ CHKL_TIMESTAMPS=(
 inherit cflags-hardened chkl cmake-multilib libcxx-slot libstdcxx-slot secure-version python-any-r1
 
 if [[ "${PV}" == *"9999"* ]]; then
-	FALLBACK_COMMIT="47c74f488bad1136559f382ce99e8e52d7a392cd"
+	FALLBACK_COMMIT="14521db96e91200a0ef7cc50e6df331e71282a6b"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/KhronosGroup/${MY_PN}.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -50,7 +50,7 @@ INTERNAL_VERSION="2026.4" # From https://github.com/KhronosGroup/SPIRV-Tools/blo
 SLOT="0/${INTERNAL_VERSION}"
 IUSE+="
 test
-ebuild_revision_2
+ebuild_revision_4
 "
 RESTRICT="!test? ( test )"
 

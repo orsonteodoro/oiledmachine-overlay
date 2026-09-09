@@ -4,13 +4,13 @@
 EAPI=8
 
 MY_PN=Vulkan-Headers
-COMMIT_ID="e3b1eec08173d6b825cd3ac88c885a63b621504a"
+COMMIT_ID="ee2ec5fd83dafce291024683b50dc89219333076"
 FLAVOR="vulkan-tmp" # vulkan-tmp or vulkan-sdk
 
 inherit cmake
 
 if [[ ${PV} == *9999* ]]; then
-	INTERNAL_PV="1.4.357"
+	INTERNAL_PV="1.4.362"
 	FALLBACK_COMMIT="${COMMIT_ID}"
 	EGIT_BRANCH="${FLAVOR}-1.4.356"
 	EGIT_REPO_URI="https://github.com/KhronosGroup/${MY_PN}.git"
