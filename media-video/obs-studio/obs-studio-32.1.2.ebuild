@@ -73,7 +73,7 @@ PATENT_STATUS_IUSE=(
 
 CHKL_TIMESTAMPS=(
 	"dev-cpp/nlohmann_json-9999"
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"dev-libs/jansson-9999"
 	"dev-libs/wayland-9999"
 	"dev-qt/qtbase-6.9999"
@@ -179,7 +179,7 @@ nvenc nvvfx opus oss +pipewire +pulseaudio +python qsv +qt6 +rnnoise +rtmps
 +service-updates -sndio +speexdsp svt-av1 -test +v4l2 vaapi +vlc +virtualcam
 +vst +wayland +webrtc win-dshow +websocket -win-mf +whatsnew x264
 
-ebuild_revision_27
+ebuild_revision_28
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
