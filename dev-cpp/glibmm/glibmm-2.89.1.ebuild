@@ -19,7 +19,7 @@ LLVM_COMPAT=(
 )
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 )
 
 inherit cflags-hardened chkl flag-o-matic gnome.org libcxx-slot libstdcxx-slot meson-multilib secure-version python-any-r1
@@ -36,7 +36,7 @@ SLOT="${API_VERSION}"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~mips ppc ppc64 ~riscv ~sparc x86"
 IUSE="
 gtk-doc debug test
-ebuild_revision_2
+ebuild_revision_3
 "
 RDEPEND="
 	>=dev-libs/glib-${GLIB_PV}:2=[${MULTILIB_USEDEP}]
