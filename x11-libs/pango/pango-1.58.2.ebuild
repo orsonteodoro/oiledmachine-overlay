@@ -13,7 +13,7 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO"
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/fribidi-9999"
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"media-libs/fontconfig-9999"
 	"media-libs/freetype-9999"
 	"media-libs/harfbuzz-9999"
@@ -33,7 +33,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv 
 
 IUSE+="
 debug examples gtk-doc +introspection sysprof test X
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE="gtk-doc? ( introspection )"
 RESTRICT="!test? ( test )"
