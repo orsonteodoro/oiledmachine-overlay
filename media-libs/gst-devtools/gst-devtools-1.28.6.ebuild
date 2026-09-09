@@ -27,7 +27,7 @@ LICENSE="
 "
 IUSE="
 cairo -debug_viewer doc dots_viewer gtk3 +introspection +nls static-libs test +tools validate
-ebuild_revision_0
+ebuild_revision_1
 "
 RDEPEND="
 	>=media-libs/gstreamer-${PV}:${SLOT}=[${MULTILIB_USEDEP},introspection?]
