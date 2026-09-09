@@ -16,7 +16,7 @@ MULTILIB_CHOST_TOOLS=(
 )
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"media-libs/libjpeg-turbo-9999"
 	"media-libs/libpng-9999"
 	"media-libs/tiff-9999"
@@ -33,7 +33,7 @@ LICENSE="LGPL-2.1+"
 SLOT="2"
 IUSE="
 +glycin gtk-doc +introspection gif jpeg png test tiff
-ebuild_revision_21
+ebuild_revision_22
 "
 RESTRICT="
 	!test? (
