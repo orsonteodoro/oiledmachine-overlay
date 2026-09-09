@@ -20,26 +20,18 @@ esac
 
 #
 # Commit snapshot quality comparison on Aug 8, 2026
-#
 # | Source                 | Commit ID    | Date     | LLVM slot  | Checkmarks | sanitizer-* test fails    | sanitizer-* checks    | llvm-clang-pauth pass | llvm-clang-pac-ret pass | libc-asan passed | [6] |
 # | -----------------------|--------------|----------|------------|------------|---------------------------|-----------------------|-----------------------|-------------------------|------------------|-----|
-# | chromium-toolchain     | 53d1880 [7]  | 20260616 | 23.0.0-git | 6/6        | 0 [3]                     | 0 [3]                 | 0 [3]                 | 0 [3]                   | 0 [3]            | N   |
+# | chromium-toolchain     | 53d1880 [7]  | 20260616 | 23.0.0-git | 40/46      | 0                         | 6                     | 0                     | 0                       | 2                | N   |
 # | distro                 | 0bf3638 [8]  | 20260725 | 24.0.0-git | 120/134    | 0                         | 17                    | 1                     | 1                       | 2                | Y   |
 # | distro                 | bb9934d [8]  | 20260724 | 23.1.0-rc1 | 27/32      | 0 [2]                     | 0 [1]                 | 0 [1][2]              | 0 [1]                   | 0 [1]            | Y   |
-# | oiledmachine-overlay   | 4132205 [10] | 20260802 | 24.0.0-git | 127/142    | 0                         | 17                    | 1                     | 1                       | 2                | Y   |
-# | oiledmachine-overlay   | 6278eba [9]  | 20260807 | 23.1.0-rc2 | 33/38 [5]  | 0 [2]                     | 0 [1]                 | 0 [1][2]              | 0 [1]                   | 0 [1]            | Y   |
+# | oiledmachine-overlay   | 3efd20d [10] | 20260802 | 24.0.0-git | 116/134    | 0                         | 16                    | 1                     | 1                       | 2                | Y   |
 # | -                      | bd6bfba      | 20260802 | 23.0.0-git | 99/126     | 0 [4]                     | 9                     | 0 [2]                 | 0                       | 2                | N   |
-# | -                      | 8b68596      | 20260616 | 23.0.0-git | 77/81      | 2                         | 10                    | 0                     | 1                       | 2                | N   |
 #
-# [1] See bd6bfba3 (tagged llvmorg-23-init)
-# [2] Passes with adjacent commit 1546138, adjacent to bd6bfba3 (code freeze)
-# [3] See 8b68596 adjacent commit, adjacent to 53d1880 (git repo snapshot)
-# [4] Fail detected with adjacent commit 1546138, adjacent to bd6bfba3 (code freeze)
-# [5] The updated 23.x branch is preferred over an older pre llvmorg-23-init development snapshot to address miscompilation vulnerabilities
-# [6] Contains f2dfbf0 (20260710) miscompilation fix?
-#     UB - https://github.com/llvm/llvm-project/pull/208683
-#     OOBR, segfault - https://github.com/llvm/llvm-project/issues/208611
-# [7] Based on Chromium 151.0.7922.108, https://github.com/chromium/chromium/blob/151.0.7922.108/tools/clang/scripts/update.py#L42
+# [1] See bd6bfba (tagged llvmorg-23-init)
+# [2] Passes with adjacent commit 1546138, adjacent to bd6bfba (code freeze)
+# [4] Fail detected with adjacent commit 1546138, adjacent to bd6bfba (code freeze)
+# [7] Based on Chromium 153.0.8010.36, https://github.com/chromium/chromium/blob/153.0.8010.36/tools/clang/scripts/update.py#L42
 # [8] Based on llvm.org.eclass, https://github.com/gentoo/gentoo/blob/master/eclass/llvm.org.eclass#L75
 # [9] Based on commit message resolving miscompilation in release/23.x branch, https://github.com/llvm/llvm-project/commits/release/23.x
 # [10] Based on latest with 120+ checks passed and check results in main branch, https://github.com/llvm/llvm-project/commits/main
@@ -129,7 +121,7 @@ esac
 # zero-tolerance policy or bump once a month to balance the costs/benefits.
 #
 
-LLVM_EBUILDS_LLVM24_FALLBACK_COMMIT="41322057c3af16d75e239ec6679c6c2bf7aec157" # Aug 2, 2026 (127 / 142 green checkmarks)
+LLVM_EBUILDS_LLVM24_FALLBACK_COMMIT="3efd20d463e1b1210d2ff07cd79b68d6fa215f24" # Sep 4, 2026 (116 / 134 green checkmarks)
 LLVM_EBUILDS_LLVM23_FALLBACK_COMMIT="6278eba367e2f0eebfdc31ab8b29a02ca27e6f15" # Aug 7, 2026 (33 / 38 green checkmarks)
 
 LLVM_EBUILDS_LLVM24_BRANCH="main"
