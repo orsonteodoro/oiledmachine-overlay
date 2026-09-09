@@ -48,7 +48,7 @@ fi
 IUSE+="
 	+X alsa +dbus eglfs +ffmpeg gstreamer opengl pipewire pulseaudio
 	qml +v4l vaapi vulkan wayland
-	ebuild_revision_3
+	ebuild_revision_4
 "
 REQUIRED_USE="
 	|| ( ffmpeg gstreamer )
