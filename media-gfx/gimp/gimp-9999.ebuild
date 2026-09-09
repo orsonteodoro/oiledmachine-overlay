@@ -19,7 +19,7 @@ CHKL_TIMESTAMPS=(
 	"app-text/ghostscript-gpl-9999"
 	"app-text/poppler-9999"
 	"app-arch/xz-utils-9999"
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"gnome-base/librsvg-9999"
 	"media-libs/alsa-lib-9999"
 	"media-libs/fontconfig-9999"
@@ -75,7 +75,7 @@ SLOT="0/${MAJOR_VERSION}"
 
 IUSE="
 X aalib alsa bash-completion doc fits gnome heif javascript jpeg2k jpegxl lua mng openexr openmp postscript test udev unwind vala vector-icons wayland webp wmf xpm
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
