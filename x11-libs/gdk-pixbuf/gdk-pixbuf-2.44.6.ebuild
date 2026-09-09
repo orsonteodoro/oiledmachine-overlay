@@ -33,7 +33,7 @@ LICENSE="LGPL-2.1+"
 SLOT="2"
 IUSE="
 +glycin gtk-doc +introspection gif jpeg png test tiff
-ebuild_revision_20
+ebuild_revision_21
 "
 RESTRICT="
 	!test? (
