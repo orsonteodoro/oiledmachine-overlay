@@ -77,7 +77,10 @@ DESCRIPTION="Firefox Web Browser"
 
 KEYWORDS="-* amd64 arm64 ~x86"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
-IUSE="apulse +gmp-autoupdate +libpulse selinux wayland"
+IUSE="
+apulse +gmp-autoupdate +libpulse selinux wayland
+ebuild_revision_2
+"
 REQUIRED_USE="
 	|| (
 		apulse
