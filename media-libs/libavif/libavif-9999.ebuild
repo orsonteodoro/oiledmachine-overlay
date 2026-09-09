@@ -46,7 +46,10 @@ LICENSE="
 	BSD-2
 "
 
-IUSE+=" +aom dav1d examples extras gdk-pixbuf rav1e svt-av1 libyuv test"
+IUSE+="
++aom dav1d examples extras gdk-pixbuf rav1e svt-av1 libyuv test
+ebuild_revision_2
+"
 RESTRICT="!test? ( test )"
 REQUIRED_USE="|| ( aom dav1d )"
 
