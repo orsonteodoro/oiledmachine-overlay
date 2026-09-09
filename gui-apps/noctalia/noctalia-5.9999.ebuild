@@ -24,7 +24,7 @@ LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
 CHKL_TIMESTAMPS=(
 	"dev-cpp/nlohmann_json-9999"
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"dev-libs/jemalloc-9999"
 	"dev-libs/libsodium-9999"
 	"dev-libs/libxml2-9999"
@@ -69,7 +69,7 @@ LICENSE="MIT"
 SLOT="0/5"
 IUSE+="
 jemalloc native-optimizations systemd test
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 "
