@@ -13,7 +13,7 @@ BASE_DIR="${DISTDIR_DIR}/chromium-src"
 CACHE_DIR="${DISTDIR_DIR}/chromium-src/${PV}"
 INSTALL_PREFIX="/usr/share/chromium/${PV}"
 DOWNLOAD_FLAVOR="depot_tools" # tarball-full, tarball-lite, depot_tools
-PYTHON_COMPAT=( "python3_11" )
+PYTHON_COMPAT=( "python3_11" ) # See https://chromium.googlesource.com/chromium/tools/depot_tools/+/refs/heads/main/vpython.toml#1
 
 # For lite versus full tarball see:
 # https://github.com/OSSystems/meta-browser/issues/763
@@ -115,15 +115,6 @@ _unpack_depot_tools() {
 		export DEPOT_TOOLS_UPDATE=1
 		export PYTHONHTTPSVERIFY=1
 
-	# Prevent eager timeout
-#[0:17:31] Still working on:
-#[0:17:31]   src
-#
-#[0:17:31] STALL DETECTED: gclient has been silent for 5 minutes.
-#[0:17:31] Currently active tasks:
-#[0:17:31]    src (Running for 0:17:30)
-		export DEPOT_TOOLS_WIN_TIMEOUT=0
-
 		# Navigate into our controlled persistent cache space to perform the checkout
 		cd "${CACHE_DIR}" || die
 
@@ -154,10 +145,10 @@ _unpack_depot_tools() {
 	# Copy or symlink the cache workspace content into Portage's standard WORKDIR
 	# so that src_prepare() and src_compile() can proceed smoothly in isolated sandboxes.
 	einfo "Populating Portage WORKDIR from persistent source cache..."
-	mkdir -p "${S}" || die
+	mkdir -p "${S}/chromium-${PV}" || die
 
 	# We use a hardlink or copy to maintain isolation during the build steps
-	cp -al "${CACHE_DIR}/src/." "${S}/" || cp -a "${CACHE_DIR}/src/." "${S}/" || die
+	cp -al "${CACHE_DIR}/src/." "${S}/chromium-${PV}" || cp -a "${CACHE_DIR}/src/." "${S}/chromium-${PV}" || die
 }
 
 _unpack_tarball() {
