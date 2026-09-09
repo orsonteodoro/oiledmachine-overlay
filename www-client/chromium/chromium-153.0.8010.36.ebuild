@@ -570,9 +570,9 @@ CPU_FLAGS_X86=(
 
 inherit ffmpeg
 FFMPEG_COMPAT_SLOTS=(
-	"${FFMPEG_COMPAT_SLOTS_8[@]}"
+	"${FFMPEG_COMPAT_SLOTS_9[@]}"
 )
-FFMPEG_SLOT="60.62.62" # Same as ffmpeg 8.0 ; 0/libavutil_sover_maj.libavcodec_sover_maj.libformat_sover_maj
+FFMPEG_SLOT="61.63.63" # Same as ffmpeg 9.0 ; 0/libavutil_sover_maj.libavcodec_sover_maj.libformat_sover_maj
 
 # CFI Basic (.a) mode requires all third party modules built as static.
 
@@ -846,8 +846,7 @@ LLVM_COMPAT=(
 	# Also, only the one that passes all the fuzz tests is allowed, this
 	# means that the compiler must be pinned to the exact commit that meets
 	# all security requirements (A+ grade commit snapshot).
-	23 # vendored-slot, official
-	24 # system-clang
+	24 # system-clang, vendored-slot, official
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 LIBCXX_SLOT_MIN="21"
@@ -1920,10 +1919,10 @@ PATENT_STATUS_DEPEND="
 	system-ffmpeg? (
 		>=media-libs/mesa-${MESA_PV}:=[${MULTILIB_USEDEP},patent_status_nonfree=]
 		patent_status_nonfree? (
-			$(secure-version_gen_ffmpeg_depends '8.0' '[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]' 'single')
+			$(secure-version_gen_ffmpeg_depends '9.0' '[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]' 'single')
 		)
 		!patent_status_nonfree? (
-			$(secure-version_gen_ffmpeg_depends '8.0' '[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]' 'single')
+			$(secure-version_gen_ffmpeg_depends '9.0' '[${MULTILIB_USEDEP},-amf,-cuda,encode?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]' 'single')
 		)
 	)
 "
