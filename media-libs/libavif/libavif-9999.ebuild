@@ -6,7 +6,7 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"media-libs/dav1d-9999"
 	"media-libs/libaom-9999"
 	"media-libs/libjpeg-turbo-9999"
@@ -48,7 +48,7 @@ LICENSE="
 
 IUSE+="
 +aom dav1d examples extras gdk-pixbuf rav1e svt-av1 libyuv test
-ebuild_revision_2
+ebuild_revision_3
 "
 RESTRICT="!test? ( test )"
 REQUIRED_USE="|| ( aom dav1d )"
