@@ -71,7 +71,7 @@ VULNERABILITIES_FIXED=(
 
 CHKL_TIMESTAMPS=(
 	"app-accessibility/at-spi2-core-9999"
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"media-libs/alsa-lib-9999"
 	"media-libs/fontconfig-9999"
 	"media-libs/freetype-9999"
@@ -97,7 +97,7 @@ KEYWORDS="-* amd64 ~arm64"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 IUSE="
 apulse +gmp-autoupdate +libpulse selinux wayland
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	|| (
