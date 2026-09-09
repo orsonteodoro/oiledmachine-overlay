@@ -17,7 +17,7 @@ LLVM_COMPAT=(
 )
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"dev-libs/hyprlang-9999"
 	"gui-libs/hyprtoolkit-9999"
 	"media-libs/mesa-9999"
@@ -48,7 +48,7 @@ DESCRIPTION="Hyprland GUI utilities, successor to hyprland-qtutils"
 HOMEPAGE="https://github.com/hyprwm/hyprland-guiutils"
 LICENSE="BSD"
 SLOT="0/${SUBSLOT}"
-IUSE+=" ebuild_revision_2"
+IUSE+=" ebuild_revision_3"
 RDEPEND="
 	!gui-libs/hyprland-qtutils
 	>=dev-cpp/abseil-cpp-20260107.1:${ABSEIL_CPP_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
