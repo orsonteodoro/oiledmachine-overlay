@@ -38,7 +38,7 @@ VIDEO_CARDS=(
 
 CHKL_TIMESTAMPS=(
 	"app-arch/bzip2-9999"
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"dev-libs/wayland-9999"
 	"dev-util/vulkan-headers-9999"
 	"media-libs/libva-9999"
@@ -64,7 +64,7 @@ ${PATENT_STATUS}
 ${VIDEO_CARDS[@]}
 amf bzip2 +introspection msdk nls nvcodec onevpl +orc qsv udev vaapi vnc vulkan
 vulkan-video wayland X
-ebuild_revision_29
+ebuild_revision_30
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
