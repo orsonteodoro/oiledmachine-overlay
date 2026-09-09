@@ -48,6 +48,7 @@ DESCRIPTION="Hyprland GUI utilities, successor to hyprland-qtutils"
 HOMEPAGE="https://github.com/hyprwm/hyprland-guiutils"
 LICENSE="BSD"
 SLOT="0/${SUBSLOT}"
+IUSE+=" ebuild_revision_2"
 RDEPEND="
 	!gui-libs/hyprland-qtutils
 	>=dev-cpp/abseil-cpp-20260107.1:${ABSEIL_CPP_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
