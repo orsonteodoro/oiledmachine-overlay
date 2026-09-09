@@ -4,12 +4,12 @@
 
 EAPI=8
 
-# Add `www-client/chromium-toolchain -llvm_slot_23` to
+# Add `www-client/chromium-toolchain -llvm_slot_24` to
 # `/etc/portage/profile/package.use.mask` to bypass the distro's FAFO hard mask
 # guardrail.
 
 # To obtain expected file count numbers, use
-# `USE="-system-clang -system-rust" ebuild chromium-toolchain-152.0.7977.82.ebuild digest clean unpack prepare compile install merge`
+# `USE="-system-clang -system-rust" ebuild chromium-toolchain-153.0.8010.36.ebuild digest clean unpack prepare compile install merge`
 
 inherit dhms
 
@@ -23,36 +23,35 @@ inherit dhms
 # llvm = c++17
 CXX_STANDARD=23 # Same as libcxx and chromium.
 # For commit history, see https://gn.googlesource.com/gn/+log
-# For the pinned gn version associated with a specific Chromium release, see https://github.com/chromium/chromium/blob/152.0.7977.82/DEPS#L557
+# For the pinned gn version associated with a specific Chromium release, see https://github.com/chromium/chromium/blob/153.0.8010.36/DEPS#L567
 GN_COMMIT="641ace93dd9560e75e7add0d08f77b446fbb3b78"
-GN_PV="0.2486" # See get_gn_ver.sh to obtain the version.
+GN_PV="0.2517" # See get_gn_ver.sh to obtain the version.
 GN_USE_GIT=1
 INSTALL_PREFIX="/usr/share/chromium/${PV%.*}.x"
 LIBCXX_USEDEP_SKIP=1
 LLVM_SYSTEM_SLOT="24" # We use the latest to mitigate miscompilation vulnerabilities.
 LLVM_SYSTEM_SLOT_LIVE="1"
 LLVM_SYSTEM_TIMESTAMP_LIVE="Aug 2, 2026 5:18 PM PDT" # Unvendored timestamp for system-clang corresponding to https://github.com/llvm/llvm-project/commit/41322057c3af16d75e239ec6679c6c2bf7aec157
-# Vendored commit reference:  https://github.com/chromium/chromium/blob/152.0.7977.82/DEPS#L902 \
+# Vendored commit reference:  https://github.com/chromium/chromium/blob/153.0.8010.36/DEPS#L902 \
 # Vendored is before -rc release before -rc1 miscompile fixes.
-LLVM_VENDORED_COMMIT="53d18800" # without the g prefix; See also https://github.com/llvm/llvm-project/blob/53d18800eda3b7407e53366f27ca78e922c6e0db/cmake/Modules/LLVMVersion.cmake
-LLVM_VENDORED_N_COMMITS="19482" # The number to the right of -init- in llvmorg-23-init-10931-g53d18800
-LLVM_VENDORED_SLOT="23" # Cr official slot
-LLVM_VENDORED_SUB_REV="1" # Same as CLANG_SUB_REVISION
-# Vendored commit reference:  https://github.com/chromium/chromium/blob/152.0.7977.82/tools/rust/update_rust.py#L37 \
+LLVM_VENDORED_COMMIT="20e97c4b" # without the g prefix; See also https://github.com/llvm/llvm-project/blob/20e97c4b/cmake/Modules/LLVMVersion.cmake
+LLVM_VENDORED_N_COMMITS="3796" # The number to the right of -init- in llvmorg-24-init-3796-g20e97c4b
+LLVM_VENDORED_SLOT="24" # Cr official slot
+LLVM_VENDORED_SUB_REV="2" # Same as CLANG_SUB_REVISION
+# Vendored commit reference:  https://github.com/chromium/chromium/blob/153.0.8010.36/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
 RUST_SYSTEM_LIVE_TIMESTAMP="Jul 5, 2026 8:11 AM PDT" # Same as Rust 1.99.0 timestamp
 RUST_SYSTEM_LIVE_VER="1.100.0"
 RUST_SYSTEM_LIVE_LLVM_SLOT="23"
 RUST_SYSTEM_LIVE_LLVM_COMMIT="7bec0dd6f361d3ec5f63294253dc1fc7eae98c29"
-RUST_VENDORED_COMMIT="b998449636a48e2c4a362809085b600a0174e1f2" # Vendored commit
-RUST_VENDORED_SUB_REV="5"
-RUST_VENDORED_VER="1.98.0" # For see https://github.com/rust-lang/rust/blob/b998449636a48e2c4a362809085b600a0174e1f2/src/version
-# Upstream uses 1.96.0 corresponding to LLVM 22.1
-# This ebuild assumes 1.98.0 (live 9999) corresponding to llvm 22 to reduce build time.
-# For the LLVM version used for Rust snapshot, see https://github.com/rust-lang/rust/blob/4c4205163abcbd08948b3efab796c543ba1ea687/.gitmodules#L28
-# For the Rust version, see https://github.com/rust-lang/rust/blob/4c4205163abcbd08948b3efab796c543ba1ea687/src/version
+RUST_VENDORED_COMMIT="0913b18e489ac1011b580e31fa5559654be12bfc" # Vendored commit
+RUST_VENDORED_SUB_REV="2"
+RUST_VENDORED_VER="1.99.0" # For see https://github.com/rust-lang/rust/blob/0913b18e489ac1011b580e31fa5559654be12bfc/src/version
+# Upstream uses 1.99.0 corresponding to LLVM 23.1
+# For the LLVM version used for Rust snapshot, see https://github.com/rust-lang/rust/blob/0913b18e489ac1011b580e31fa5559654be12bfc/.gitmodules#L28
+# For the Rust version, see https://github.com/rust-lang/rust/blob/0913b18e489ac1011b580e31fa5559654be12bfc/src/version
 RUST_MAX_VER="9999" # Inclusive
-RUST_MIN_VER="9999" # Corresponds to llvm-22.1
+RUST_MIN_VER="9999" # Corresponds to llvm-23.1
 RUST_PV="${RUST_MIN_VER}"
 VENDORED_CLANG_VER="llvmorg-${LLVM_VENDORED_SLOT}-init-${LLVM_VENDORED_N_COMMITS}-g${LLVM_VENDORED_COMMIT:0:8}-${LLVM_VENDORED_SUB_REV}"
 VENDORED_RUST_VER="${RUST_VENDORED_COMMIT}-${RUST_VENDORED_SUB_REV}"
@@ -66,7 +65,6 @@ LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 inherit libcxx-compat
 LLVM_COMPAT=(
 	#"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}" # 21-22
-	23 # vendored
 	24 # system-clang
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
@@ -231,18 +229,13 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ebuild_revision_35
 "
 REQUIRED_USE="
-	!system-clang? (
-		llvm_slot_${LLVM_VENDORED_SLOT}
-	)
-	llvm_slot_${LLVM_SYSTEM_SLOT}? (
-		system-clang
-	)
-	llvm_slot_${LLVM_VENDORED_SLOT}? (
-		!system-clang
-	)
 	system-clang? (
 		llvm_slot_${LLVM_SYSTEM_SLOT}
 	)
+	!system-clang? (
+		llvm_slot_${LLVM_VENDORED_SLOT}
+	)
+
 	^^ (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
