@@ -20,7 +20,7 @@ WEBKIT_APIS=(
 )
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"dev-libs/wayland-9999"
 	"dev-libs/libxkbcommon-9999"
 )
@@ -31,7 +31,7 @@ inherit cflags-hardened chkl gstreamer-meson
 
 DESCRIPTION="WPE Web browser plugin for GStreamer"
 IUSE="
-ebuild_revision_24
+ebuild_revision_25
 "
 gen_wpe_rdepend() {
 	local row
