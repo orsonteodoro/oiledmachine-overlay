@@ -9,7 +9,7 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO BOR CE CRSH DF DOS H HO IAC ID IV OOBR
 PYTHON_COMPAT=( python3_{10..14} )
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"dev-libs/json-c-9999"
 	"media-libs/alsa-lib-9999"
 	"net-print/cups-9999"
@@ -41,7 +41,7 @@ SOVER="3"
 SLOT="0/${SOVER}"
 IUSE="
 btpclient cups doc debug deprecated extra-tools experimental man +mesh midi +obex +readline selinux systemd test test-programs +udev
-ebuild_revision_2
+ebuild_revision_3
 "
 
 # Since this release all remaining extra-tools need readline support, but this could
