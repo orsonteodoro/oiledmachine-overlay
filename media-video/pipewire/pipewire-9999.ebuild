@@ -31,7 +31,7 @@ PIPEWIRE_DOCS_USEFLAG="+man"
 PYTHON_COMPAT=( python3_{10..14} )
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
@@ -94,7 +94,7 @@ SLOT="0/${SOVER}"
 IUSE+=" ${PIPEWIRE_DOCS_USEFLAG} bluetooth elogind dbus doc echo-cancel extra ffmpeg fftw flatpak gstreamer gsettings"
 IUSE+=" ieee1394 jack-client jack-sdk libcamera loudness lv2 modemmanager pipewire-alsa readline roc selinux"
 IUSE+=" pulseaudio sound-server ssl system-service systemd test v4l X zeroconf"
-IUSE+=" ebuild_revision_7"
+IUSE+=" ebuild_revision_8"
 
 # Once replacing system JACK libraries is possible, it's likely that
 # jack-client IUSE will need blocking to avoid users accidentally
