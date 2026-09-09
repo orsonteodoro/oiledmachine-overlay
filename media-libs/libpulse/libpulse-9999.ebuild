@@ -10,7 +10,7 @@ CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CRSH DOS DF H MC ML PE OOB RC SYM"
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"media-libs/libsndfile-9999"
 	"sys-apps/dbus-9999"
 	"sys-apps/systemd-9999"
@@ -42,7 +42,7 @@ LICENSE="LGPL-2.1+"
 SLOT="0"
 IUSE+="
 +asyncns dbus doc +glib gtk pipewire pulseaudio-daemon selinux systemd test valgrind X
-ebuild_revision_3
+ebuild_revision_4
 "
 RESTRICT="!test? ( test )"
 
