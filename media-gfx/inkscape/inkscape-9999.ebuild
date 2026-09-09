@@ -32,7 +32,7 @@ CHKL_TIMESTAMPS=(
 	"app-text/ghostscript-gpl-9999"
 	"app-text/poppler-9999"
 	"dev-libs/double-conversion-9999"
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"dev-libs/icu-79.0.9999"
 	"dev-libs/jemalloc-9999"
 	"dev-libs/libxml2-9999"
@@ -75,7 +75,7 @@ SLOT="0"
 # -imagemagick based on CI/CD
 IUSE+="
 +cdr -exif -graphicsmagick -imagemagick -jemalloc jpeg openmp postscript +readline +sourceview +spell +svg2 test +visio wayland +wpg X
-ebuild_revision_11
+ebuild_revision_12
 "
 # The oiledmachine-overlay uses imagemagick 7 (live) but the project needs 6 or earlier, so it is disabled.
 REQUIRED_USE="
