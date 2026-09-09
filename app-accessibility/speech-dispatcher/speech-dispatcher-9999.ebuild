@@ -11,7 +11,7 @@ PYTHON_COMPAT=( python3_{10..14} )
 CHKL_TIMESTAMPS=(
 	"app-accessibility/espeak-ng-9999"
 	"dev-libs/dotconf-9999"
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"media-libs/alsa-lib-9999"
 	"media-libs/libpulse-9999"
 	"media-libs/libsndfile-9999"
@@ -41,7 +41,7 @@ SLOT="0"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ppc ppc64 ~riscv ~sparc x86"
 IUSE+="
 alsa ao +espeak flite nas pulseaudio pipewire +python systemd
-ebuild_revision_2
+ebuild_revision_3
 "
 
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
