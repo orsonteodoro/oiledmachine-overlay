@@ -24,7 +24,7 @@ CFLAGS_HARDENED_USE_CASES="plugin security-critical untrusted-data"
 
 # Forced FFmpeg live for mitigation
 CHKL_TIMESTAMPS=(
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"media-video/ffmpeg-9999"
 	"media-video/ffmpeg-9999m"
 )
@@ -40,7 +40,7 @@ HOMEPAGE="https://gstreamer.freedesktop.org/modules/gst-libav.html"
 LICENSE="LGPL-2+"
 SLOT="1.0"
 IUSE+="
-ebuild_revision_29
+ebuild_revision_30
 "
 RDEPEND="
 	$(secure-version_gen_ffmpeg_depends '7.1-' '[${MULTILIB_USEDEP}]')
