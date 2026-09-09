@@ -69,7 +69,7 @@ LICENSE="MIT"
 SLOT="0/5"
 IUSE+="
 jemalloc native-optimizations systemd test
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 "
