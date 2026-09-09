@@ -10,7 +10,7 @@ DIST_AUTHOR="YANICK"
 FILE_SHAREDIR_PV="1.3"
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"x11-libs/libX11-9999"
 )
 
@@ -33,7 +33,7 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE+="
 system-libcaca
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE="
 	system-libcaca
