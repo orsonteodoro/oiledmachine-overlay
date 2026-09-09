@@ -21,7 +21,7 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="IU"
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/elfutils-9999"
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"sys-libs/libcap-9999"
 	"sys-libs/libunwind-9999"
 )
@@ -40,7 +40,7 @@ LICENSE="LGPL-2+"
 SLOT="1.0"
 IUSE="
 +caps +introspection nls unwind
-ebuild_revision_29
+ebuild_revision_30
 "
 RDEPEND="
 	>=dev-libs/glib-${GLIB_PV}:=[${MULTILIB_USEDEP}]
