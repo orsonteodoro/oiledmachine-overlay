@@ -646,7 +646,7 @@ aqua +avif -bmalloc -cache-partitioning clang dash debug +doc elogind -eme
 +minibrowser mold +opengl openmp -seccomp +speech-synthesis -spell
 -system-malloc systemd test thunder +variation-fonts wayland +webassembly
 -webdriver +webgl webm-eme -webrtc webvtt -webxr +woff2 +X
-ebuild_revision_41
+ebuild_revision_42
 "
 
 gen_gst_plugins_duse() {
