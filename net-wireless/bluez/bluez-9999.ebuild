@@ -39,7 +39,10 @@ HOMEPAGE="https://www.bluez.org https://github.com/bluez/bluez"
 LICENSE="GPL-2+ LGPL-2.1+"
 SOVER="3"
 SLOT="0/${SOVER}"
-IUSE="btpclient cups doc debug deprecated extra-tools experimental man +mesh midi +obex +readline selinux systemd test test-programs +udev"
+IUSE="
+btpclient cups doc debug deprecated extra-tools experimental man +mesh midi +obex +readline selinux systemd test test-programs +udev
+ebuild_revision_2
+"
 
 # Since this release all remaining extra-tools need readline support, but this could
 # change in the future, hence, this REQUIRED_USE constraint could be dropped
