@@ -59,7 +59,7 @@ LICENSE="BSD"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 +gdk-pixbuf gif jpeg openexr +png test
-ebuild_revision_12
+ebuild_revision_13
 "
 REQUIRED_USE="test? ( png )"
 RESTRICT="!test? ( test )"
