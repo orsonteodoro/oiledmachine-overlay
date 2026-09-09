@@ -338,7 +338,7 @@ CHKL_TIMESTAMPS=(
 	"app-arch/bzip2-9999"
 	"app-text/tesseract-9999"
 	"dev-games/ogre-9999"
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"dev-libs/wayland-9999"
 	"dev-util/vulkan-headers-9999"
 	"media-libs/harfbuzz-9999"
@@ -441,7 +441,7 @@ IUSE+="
 	${PATENT_STATUS_IUSE[@]}
 	debug -doc +eigen gflags glog -halide +java -non-free +opencvapps +protobuf +python
 	-system-flatbuffers test -testprograms -vulkan -zlib-ng
-	ebuild_revision_61
+	ebuild_revision_62
 "
 # hal for acceleration
 IUSE+="
