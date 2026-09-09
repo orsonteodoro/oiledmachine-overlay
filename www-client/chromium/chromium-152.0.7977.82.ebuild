@@ -3722,11 +3722,11 @@ einfo "V8 version:  ${v8_pv_c1}.${v8_pv_c2}.${v8_pv_c3}.${v8_pv_c4}" # For patch
 		"${FILESDIR}/extra-patches/${PN}-151.0.7922.108-optionalize-sanitize-array-bounds.patch"
 		"${FILESDIR}/extra-patches/${PN}-152.0.7977.82-xnnpack-scalar-fallback.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-pdfium-system-deps.patch"
-		"${FILESDIR}/extra-patches/${PN}-145.0.7632.45-use-system-opus-alt.patch"
+		"${FILESDIR}/extra-patches/${PN}-152.0.7977.82-use-system-opus-alt.patch"
 #		$(use system-libpng && echo "${FILESDIR}/extra-patches/${PN}-144.0.7559.59-libpng-test-only.patch")
 		"${FILESDIR}/extra-patches/${PN}-151.0.7922.108-optionalize-clang-flags.patch"
-		"${FILESDIR}/extra-patches/${PN}-149.0.7827.114-optionalize-omit-frame-pointer.patch"
-		"${FILESDIR}/extra-patches/${PN}-145.0.7632.75-dedupe-use-system-zlib.patch" # It appears twice in cromite build
+		"${FILESDIR}/extra-patches/${PN}-152.0.7977.82-optionalize-omit-frame-pointer.patch"
+		"${FILESDIR}/extra-patches/${PN}-152.0.7977.82-dedupe-use-system-zlib.patch" # It appears twice in cromite build
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-optionalize-clang-warning-suppression-mappings.patch"
 		"${FILESDIR}/extra-patches/${PN}-148.0.7778.167-system-clang-flags.patch"
 #		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-libcxx-headers.patch"
