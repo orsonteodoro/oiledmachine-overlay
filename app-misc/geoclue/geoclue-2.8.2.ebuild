@@ -9,7 +9,7 @@ PYTHON_COMPAT=( python3_{10..14} )
 PYTHON_REQ_USE="xml(+)"
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"net-dns/avahi-9999"
 )
 
@@ -35,7 +35,7 @@ SLOT="2.0"
 KEYWORDS="~alpha amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv ~sparc x86"
 IUSE+="
 +introspection gtk-doc modemmanager selinux vala zeroconf
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="vala? ( introspection )"
 
