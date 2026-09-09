@@ -34,7 +34,10 @@ RESTRICT="mirror
 " # speed up and stop snooping
 SLOT="${API_VERSION}"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~mips ppc ppc64 ~riscv ~sparc x86"
-IUSE="gtk-doc debug test"
+IUSE="
+gtk-doc debug test
+ebuild_revision_2
+"
 RDEPEND="
 	>=dev-libs/glib-${GLIB_PV}:2=[${MULTILIB_USEDEP}]
 	>=dev-libs/libsigc++-3:3=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},gtk-doc?]
