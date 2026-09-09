@@ -331,7 +331,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/double-conversion-9999"
 	"dev-libs/expat-9999"
 	"dev-libs/flatbuffers-9999"
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"dev-libs/icu-79.0.9999"
 	"dev-libs/jsoncpp-9999"
 	"dev-libs/libffi-9999"
