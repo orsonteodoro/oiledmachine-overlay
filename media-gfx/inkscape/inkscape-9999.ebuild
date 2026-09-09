@@ -75,7 +75,7 @@ SLOT="0"
 # -imagemagick based on CI/CD
 IUSE+="
 +cdr -exif -graphicsmagick -imagemagick -jemalloc jpeg openmp postscript +readline +sourceview +spell +svg2 test +visio wayland +wpg X
-ebuild_revision_10
+ebuild_revision_11
 "
 # The oiledmachine-overlay uses imagemagick 7 (live) but the project needs 6 or earlier, so it is disabled.
 REQUIRED_USE="
