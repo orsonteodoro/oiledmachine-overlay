@@ -80,7 +80,7 @@ SLOT="0"
 IUSE+="
 ${GCC_COMPAT[@]}
 clang gcc legacy-renderer -guiutils systemd test X
-ebuild_revision_32
+ebuild_revision_33
 "
 REQUIRED_USE="
 	^^ (
