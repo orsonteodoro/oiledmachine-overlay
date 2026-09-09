@@ -57,7 +57,7 @@ CHKL_TIMESTAMPS=(
 	"app-text/poppler-9999"
 	"dev-cpp/highway-9999"
 	"dev-libs/expat-9999"
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"dev-libs/libffi-9999"
 	"gnome-base/librsvg-9999"
 	"media-gfx/imagemagick-9999"
@@ -105,7 +105,7 @@ ${PATENT_STATUS_IUSE[@]}
 +jpeg2k +jpegxl +lcms +matio -nifti +openexr +openslide +orc
 +pango +png +poppler +python +ppm -raw -spng +svg test +tiff
 -uhdr +vala +webp +zlib
-ebuild_revision_54
+ebuild_revision_55
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
