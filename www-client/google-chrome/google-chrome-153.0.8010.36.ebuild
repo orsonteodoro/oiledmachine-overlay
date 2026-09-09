@@ -285,7 +285,10 @@ LICENSE="google-chrome"
 SLOT="0"
 KEYWORDS="-* amd64"
 
-IUSE="gtk3 +gtk4 qt6 selinux"
+IUSE="
+gtk3 +gtk4 qt6 selinux
+ebuild_revision_2
+"
 REQUIRED_USE="
 	|| (
 		gtk3
