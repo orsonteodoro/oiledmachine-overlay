@@ -33,7 +33,7 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE+="
 system-libcaca
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE="
 	system-libcaca
