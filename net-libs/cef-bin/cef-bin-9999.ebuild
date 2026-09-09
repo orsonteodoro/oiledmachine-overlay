@@ -100,7 +100,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 beta cefclient cefsimple debug minimal test wayland X
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE+="
 	cefclient? (
