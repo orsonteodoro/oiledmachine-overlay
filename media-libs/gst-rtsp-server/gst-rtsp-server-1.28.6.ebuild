@@ -11,7 +11,7 @@ CFLAGS_HARDENED_USE_CASES="network security-critical server untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO"
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"dev-libs/libcgroup-9999"
 )
 
@@ -24,7 +24,7 @@ HOMEPAGE="https://gstreamer.freedesktop.org/modules/gst-rtsp-server.html"
 LICENSE="LGPL-2+"
 IUSE="
 examples +introspection static-libs
-ebuild_revision_30
+ebuild_revision_31
 "
 RDEPEND="
 	>=media-libs/gstreamer-${PV}:${SLOT}=[${MULTILIB_USEDEP},introspection?]
