@@ -20,7 +20,7 @@ GST_ORG_MODULE="gst-plugins-good"
 
 CHKL_TIMESTAMPS=(
 	"app-arch/bzip2-9999"
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 )
 
 inherit cflags-hardened chkl secure-version vf gstreamer-meson
@@ -35,7 +35,7 @@ HOMEPAGE="https://gstreamer.freedesktop.org/"
 LICENSE="LGPL-2.1+"
 IUSE="
 nls +orc
-ebuild_revision_30
+ebuild_revision_31
 "
 RDEPEND="
 	>=dev-libs/glib-${GLIB_PV}:=[${MULTILIB_USEDEP}]
