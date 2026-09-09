@@ -74,7 +74,7 @@ LLVM_COMPAT=(
 inherit cflags-hardened check-compiler-switch cmake-multilib flag-o-matic libcxx-slot libstdcxx-slot toolchain-funcs
 
 if [[ "${PV}" == *"9999"* ]]; then
-	FALLBACK_COMMIT="9d5b12611fcfe145f988771c45e7bae9f78cb7fa"
+	FALLBACK_COMMIT="67e106d6ce639748b939be2baa37848b10fa8963"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/google/highway.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -100,7 +100,7 @@ ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
 examples test
-ebuild_revision_23
+ebuild_revision_25
 "
 # SSE2 is required to avoid:
 # /var/tmp/portage/dev-cpp/highway-9999/work/highway-9999/hwy/cache_control.h:128:32: error: inlining failed in call to 'always_inline' 'void hwy::Pause()': target specific option mismatch
