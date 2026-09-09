@@ -8,7 +8,7 @@ PYTHON_REQ_USE="gdbm"
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/expat-9999"
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"dev-libs/libevent-9999"
 	"dev-qt/qtbase-6.9999"
 	"sys-apps/systemd-9999"
@@ -39,7 +39,7 @@ SLOT="0"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~mips ppc ppc64 ~riscv ~s390 ~sparc x86"
 IUSE+="
 autoipd bookmarks +dbus doc gdbm gtk howl-compat +introspection mdnsresponder-compat nls python qt6 selinux systemd test
-ebuild_revision_4
+ebuild_revision_5
 "
 
 REQUIRED_USE="
