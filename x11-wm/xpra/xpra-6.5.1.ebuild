@@ -26,7 +26,7 @@ PYTHON_COMPAT=( "python3_"{10..14} ) # See pyproject.toml but disagrees in https
 
 CHKL_TIMESTAMPS=(
 	"app-arch/brotli-9999"
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"gnome-base/librsvg-9999"
 	"media-libs/libavif-9999"
 	"media-libs/libjpeg-turbo-9999"
@@ -97,7 +97,7 @@ sd_listen selinux +server +socks sound-forwarding sql sqlite +ssh sshpass
 +ssl systemd +tcp-wrappers test tiff -tk u2f -uinput +v4l2 vaapi vpx vsock
 wayland +webcam webcam-forwarding webp +websockets +websockets-browser-cookie
 -wireshark +X x264 +xdg xdummy +xinput +yaml zeroconf zlib
-ebuild_revision_27
+ebuild_revision_28
 "
 # Upstream enables uinput by default.  Disabled because ebuild exists.
 # Upstream enables drm by default.  Disabled because unfinished.
