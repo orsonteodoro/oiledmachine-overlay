@@ -33,7 +33,10 @@ HOMEPAGE="https://gitlab.freedesktop.org/geoclue/geoclue/-/wikis/home"
 LICENSE="LGPL-2.1+ GPL-2+"
 SLOT="2.0"
 KEYWORDS="~alpha amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv ~sparc x86"
-IUSE+=" +introspection gtk-doc modemmanager selinux vala zeroconf"
+IUSE+="
++introspection gtk-doc modemmanager selinux vala zeroconf
+ebuild_revision_2
+"
 REQUIRED_USE="vala? ( introspection )"
 
 DEPEND="
