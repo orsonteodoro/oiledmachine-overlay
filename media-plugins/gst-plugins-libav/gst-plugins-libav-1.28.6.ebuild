@@ -40,7 +40,7 @@ HOMEPAGE="https://gstreamer.freedesktop.org/modules/gst-libav.html"
 LICENSE="LGPL-2+"
 SLOT="1.0"
 IUSE+="
-ebuild_revision_28
+ebuild_revision_29
 "
 RDEPEND="
 	$(secure-version_gen_ffmpeg_depends '7.1-' '[${MULTILIB_USEDEP}]')
