@@ -249,7 +249,7 @@ VULNERABILITIES_FIXED=(
 CHKL_TIMESTAMPS=(
 	"app-accessibility/at-spi2-core-9999"
 	"dev-libs/expat-9999"
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"dev-qt/qtbase-6.9999"
 	"gui-libs/gtk-4.23.9999"
 	"media-libs/alsa-lib-9999"
@@ -287,7 +287,7 @@ KEYWORDS="-* amd64"
 
 IUSE="
 gtk3 +gtk4 qt6 selinux
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	|| (
