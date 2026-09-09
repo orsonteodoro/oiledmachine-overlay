@@ -45,7 +45,10 @@ LICENSE="|| ( AFL-2.1 GPL-2+ ) Apache-2.0 BSD GPL-2+ LGPL-2.1+ MIT tcltk"
 SLOT="0"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~x64-macos ~x64-solaris"
 # TODO: USE=daemon
-IUSE+=" apparmor audit debug doc elogind selinux static-libs systemd test valgrind X"
+IUSE+="
+apparmor audit debug doc elogind selinux static-libs systemd test valgrind X
+ebuild_revision_2
+"
 RESTRICT="!test? ( test )"
 
 BDEPEND="
