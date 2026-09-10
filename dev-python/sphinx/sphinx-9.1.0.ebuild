@@ -90,7 +90,7 @@ python_prepare_all() {
 }
 
 python_configure() {
-	cython_set_cython_slot "3"
+	cython_set_cython_slot "3.0"
 	cython_python_configure
 }
 
