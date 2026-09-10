@@ -27,7 +27,10 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	=dev-python/flit-core-3*
+	>=dev-python/flit-core-3.11[${PYTHON_USEDEP}]
+	|| (
+		=dev-python/flit-core-3*[${PYTHON_USEDEP}]
+	)
 "
 
 python_compile_all() {
