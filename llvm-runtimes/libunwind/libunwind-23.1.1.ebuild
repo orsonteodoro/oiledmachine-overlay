@@ -28,9 +28,9 @@ PYTHON_COMPAT=( "python3_"{13..14} )
 inherit check-compiler-switch cmake-multilib crossdev flag-o-matic llvm.org llvm-utils python-any-r1
 inherit toolchain-funcs
 
-#KEYWORDS="
-#~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos
-#"
+KEYWORDS="
+~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos
+"
 
 DESCRIPTION="C++ runtime stack unwinder from LLVM"
 HOMEPAGE="https://llvm.org/docs/ExceptionHandling.html"
@@ -44,7 +44,7 @@ LICENSE="
 SLOT="0"
 IUSE+="
 ${LLVM_EBUILDS_LLVM23_REVISION}
-+clang +debug static-libs test
+cet +clang debug static-libs test
 ebuild_revision_6
 "
 REQUIRED_USE="
@@ -195,6 +195,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DLLVM_LIBDIR_SUFFIX="${libdir#lib}"
 		-DLLVM_INCLUDE_TESTS=OFF
 		-DLIBUNWIND_ENABLE_ASSERTIONS=$(usex debug)
+		-DLIBUNWIND_ENABLE_CET=$(usex cet)
 		-DLIBUNWIND_ENABLE_STATIC=$(usex static-libs)
 		-DLIBUNWIND_INCLUDE_TESTS=$(usex test)
 		-DLIBUNWIND_INSTALL_HEADERS=ON

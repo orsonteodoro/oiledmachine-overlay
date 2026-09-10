@@ -33,9 +33,9 @@ PYTHON_COMPAT=( "python3_"{13..14} )
 inherit check-compiler-switch check-reqs cmake flag-o-matic flag-o-matic-om libstdcxx-slot linux-info llvm.org llvm-utils python-any-r1
 
 LLVM_MAX_SLOT=${LLVM_MAJOR}
-#KEYWORDS="
-#~amd64 ~arm ~arm64 ~loong ~mips ~ppc64 ~riscv ~x86 ~x64-macos
-#"
+KEYWORDS="
+~amd64 ~arm ~arm64 ~loong ~mips ~ppc64 ~riscv ~x86 ~x64-macos
+"
 
 DESCRIPTION="Compiler runtime libraries for clang (sanitizers & xray)"
 HOMEPAGE="https://llvm.org/"
@@ -49,7 +49,7 @@ LICENSE="
 SLOT="${LLVM_MAJOR}"
 IUSE+="
 ${LLVM_EBUILDS_LLVM23_REVISION}
-+abi_x86_32 abi_x86_64 +clang +ctx-profile +debug hexagon +libfuzzer +memprof
++abi_x86_32 abi_x86_64 +clang +ctx-profile debug hexagon +libfuzzer +memprof
 +orc +profile test +xray
 ebuild_revision_19
 "

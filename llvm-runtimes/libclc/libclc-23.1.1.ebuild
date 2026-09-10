@@ -32,6 +32,10 @@ unset -f _llvm_set_globals
 
 inherit cmake libstdcxx-slot llvm.org multibuild python-any-r1
 
+KEYWORDS="
+~amd64 ~arm ~arm64 ~loong ~riscv ~x86
+"
+
 DESCRIPTION="OpenCL C library"
 HOMEPAGE="https://libclc.llvm.org/"
 

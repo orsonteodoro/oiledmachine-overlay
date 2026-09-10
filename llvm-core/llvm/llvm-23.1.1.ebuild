@@ -44,6 +44,10 @@ CHKL_TIMESTAMPS=(
 inherit check-compiler-switch chkl cmake dhms libstdcxx-slot llvm.org multilib-minimal pax-utils python-any-r1 secure-version toolchain-funcs
 inherit flag-o-matic git-r3 ninja-utils
 
+KEYWORDS="
+~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos
+"
+
 DESCRIPTION="Low Level Virtual Machine"
 HOMEPAGE="https://llvm.org/"
 LICENSE="
@@ -61,7 +65,7 @@ LICENSE="
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
 ${LLVM_EBUILDS_LLVM23_REVISION}
-+binutils-plugin bolt bolt-heatmap +debug debuginfod doc -dump exegesis jemalloc
++binutils-plugin bolt bolt-heatmap debug debuginfod doc -dump exegesis jemalloc
 libedit +libffi tcmalloc test xml z3 zstd
 ebuild_revision_4
 "
@@ -627,6 +631,9 @@ _src_configure() {
 	# to avoid people grumbling. GCC is, anecdotally, more likely to miscompile
 	# LLVM with LTO anyway (which is not necessarily its fault).
 	tc-is-gcc && filter-lto
+
+	# https://github.com/llvm/llvm-project/issues/219693
+	append-flags -fno-strict-aliasing
 
 	local ffi_cflags ffi_ldflags
 	if use libffi; then

@@ -44,7 +44,7 @@ LICENSE="
 SLOT="0"
 IUSE+="
 ${LLVM_EBUILDS_LLVM22_REVISION}
-+clang debug static-libs test
+cet +clang debug static-libs test
 ebuild_revision_6
 "
 REQUIRED_USE="
@@ -195,6 +195,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DLLVM_LIBDIR_SUFFIX="${libdir#lib}"
 		-DLLVM_INCLUDE_TESTS=OFF
 		-DLIBUNWIND_ENABLE_ASSERTIONS=$(usex debug)
+		-DLIBUNWIND_ENABLE_CET=$(usex cet)
 		-DLIBUNWIND_ENABLE_STATIC=$(usex static-libs)
 		-DLIBUNWIND_INCLUDE_TESTS=$(usex test)
 		-DLIBUNWIND_INSTALL_HEADERS=ON

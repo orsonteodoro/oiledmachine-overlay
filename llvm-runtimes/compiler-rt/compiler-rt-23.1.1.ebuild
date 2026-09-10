@@ -32,9 +32,9 @@ PYTHON_COMPAT=( "python3_"{13..14} )
 inherit check-compiler-switch cmake crossdev flag-o-matic libstdcxx-slot llvm.org llvm-utils python-any-r1
 inherit toolchain-funcs
 
-#KEYWORDS="
-#~amd64 ~arm ~arm64 ~loong ~mips ~ppc64 ~riscv ~x86 ~arm64-macos ~x64-macos
-#"
+KEYWORDS="
+~amd64 ~arm ~arm64 ~loong ~mips ~ppc64 ~riscv ~x86 ~arm64-macos ~x64-macos
+"
 
 DESCRIPTION="Compiler runtime library for clang (built-in part)"
 HOMEPAGE="https://llvm.org/"
@@ -56,7 +56,7 @@ RESTRICT="
 SLOT="${LLVM_MAJOR}"
 IUSE+="
 ${LLVM_EBUILDS_LLVM23_REVISION}
-+abi_x86_32 abi_x86_64 +atomic-builtins +clang +debug test
++abi_x86_32 abi_x86_64 +atomic-builtins +clang debug test
 ebuild_revision_5
 "
 REQUIRED_USE="

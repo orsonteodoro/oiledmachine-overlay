@@ -281,6 +281,10 @@ einfo "Detected compiler switch.  Disabling LTO."
 			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/${CTARGET}/usr"
 		)
 	fi
+	if use kernel_Darwin ; then
+		# For Darwin it ships libc++ in system by default, conflicting prefix
+		mycmakeargs+=( -DLIBCXX_ABI_NAMESPACE=__gentoo1 )
+	fi
 	if use test; then
 		local clang_path=$(type -P "${CHOST:+${CHOST}-}clang" 2>/dev/null)
 		[[ -n "${clang_path}" ]] || die "Unable to find ${CHOST}-clang for tests"

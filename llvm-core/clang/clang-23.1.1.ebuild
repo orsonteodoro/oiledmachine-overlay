@@ -37,9 +37,9 @@ CHKL_TIMESTAMPS=(
 inherit check-compiler-switch chkl cmake dhms flag-o-matic git-r3 hip-versions libstdcxx-slot llvm.org multilib
 inherit multilib-minimal ninja-utils prefix python-single-r1 secure-version toolchain-funcs
 
-#KEYWORDS="
-#~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos
-#"
+KEYWORDS="
+~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos
+"
 
 DESCRIPTION="C language family frontend for LLVM"
 HOMEPAGE="https://llvm.org/"
@@ -53,7 +53,7 @@ LICENSE="
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
 ${LLVM_EBUILDS_LLVM23_REVISION}
-cet +debug default-fortify-source-2 default-fortify-source-3 default-full-relro
+cet debug default-fortify-source-2 default-fortify-source-3 default-full-relro
 default-partial-relro default-ssp-buffer-size-4 default-stack-clash-protection
 doc +extra hardened hardened-compat ieee-long-double +pie ssp +static-analyzer
 test xml

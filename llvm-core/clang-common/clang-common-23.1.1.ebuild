@@ -23,11 +23,11 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-inherit bash-completion-r1 check-compiler-switch flag-o-matic elisp-common llvm.org multilib
+inherit check-compiler-switch flag-o-matic elisp-common llvm.org shell-completion multilib
 
-#KEYWORDS="
-#~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos
-#"
+KEYWORDS="
+~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos
+"
 
 DESCRIPTION="Common files shared between multiple slots of clang"
 HOMEPAGE="https://llvm.org/"
@@ -358,6 +358,7 @@ src_install() {
 				-Wl,-rpath,"${EPREFIX}/../usr/lib"
 				-Wl,-L,"${EPREFIX}/../usr/lib"
 				-isystem "${EPREFIX}/../usr/include"
+				-stdlib++-isystem "${EPREFIX}/../usr/include/c++/v1"
 			EOF
 		fi
 		# Using -Wl,-L instead of -L to trick compiler driver to put it
@@ -366,6 +367,7 @@ src_install() {
 			-Wl,-rpath,"${EPREFIX}/usr/lib"
 			-Wl,-L,"${EPREFIX}/usr/lib"
 			-isystem "${EPREFIX}/usr/include"
+			-stdlib++-isystem "${EPREFIX}/usr/include/c++/v1"
 			-isysroot "${EPREFIX}/MacOSX.sdk"
 		EOF
 	fi

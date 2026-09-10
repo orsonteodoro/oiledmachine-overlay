@@ -527,6 +527,7 @@ get_distribution_components() {
 			clang-ssaf-analyzer
 			clang-ssaf-format
 			clang-ssaf-linker
+			clang-ssaf-src-edit-merge
 			clang-sycl-linker
 			diagtool
 			hmaptool

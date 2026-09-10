@@ -36,9 +36,9 @@ CHKL_TIMESTAMPS=(
 
 inherit check-compiler-switch chkl cmake flag-o-matic libstdcxx-slot llvm.org llvm-utils python-single-r1 secure-version toolchain-funcs
 
-#KEYWORDS="
-#~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos
-#"
+KEYWORDS="
+~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos
+"
 
 DESCRIPTION="The LLVM linker (link editor)"
 HOMEPAGE="https://llvm.org/"
@@ -49,7 +49,7 @@ LICENSE="
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
 ${LLVM_EBUILDS_LLVM23_REVISION}
-+debug default-full-relro default-no-relro +default-partial-relro hardened
+debug default-full-relro default-no-relro +default-partial-relro hardened
 hardened-compat test zstd
 ebuild_revision_4
 "

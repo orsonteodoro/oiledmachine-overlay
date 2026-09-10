@@ -76,9 +76,9 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 	fi
 else
 	:
-#	KEYWORDS="
-#~amd64 ~arm ~arm64 ~loong ~mips ~ppc64 ~riscv ~x86 ~x64-macos
-#	"
+	KEYWORDS="
+~amd64 ~arm ~arm64 ~loong ~mips ~ppc64 ~riscv ~x86 ~x64-macos
+	"
 fi
 
 DESCRIPTION="OpenMP runtime libraries for LLVM/clang compiler"
@@ -99,7 +99,7 @@ SLOT="0/${LLVM_SOABI}"
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_EBUILDS_LLVM23_REVISION}
-+clang cuda +debug gdb-plugin hwloc level-zero offload ompt remote-offloading rocm test llvm_targets_NVPTX
++clang cuda debug gdb-plugin hwloc level-zero offload ompt remote-offloading rocm test llvm_targets_NVPTX
 ebuild_revision_11
 "
 gen_cuda_required_use() {
