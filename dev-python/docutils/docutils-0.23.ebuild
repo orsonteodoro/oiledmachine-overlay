@@ -3,8 +3,8 @@
 
 EAPI=8
 
-DISTUTILS_USE_PEP517=flit
-PYTHON_COMPAT=( python3_{10..14} pypy3 )
+DISTUTILS_USE_PEP517="flit"
+PYTHON_COMPAT=( "python3_"{10..14} "pypy3" )
 
 inherit distutils-r1 optfeature pypi
 
@@ -27,10 +27,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	(
-		>=dev-python/flit-core-3.11
-		<dev-python/flit-core-4
-	)
+	=dev-python/flit-core-3*
 "
 
 python_compile_all() {
