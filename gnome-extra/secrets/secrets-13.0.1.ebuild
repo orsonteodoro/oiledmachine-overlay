@@ -18,7 +18,16 @@ DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{12..14} )
 DISTUTILS_SINGLE_IMPL=1
 
-inherit gnome2-utils meson distutils-r1 optfeature web-kernel-config xdg
+CHKL_TIMESTAMPS=(
+	"dev-lang/python-3.15.9999"
+	"dev-lang/python-3.14.9999"
+	"dev-lang/python-3.13.9999"
+	"dev-lang/python-3.12.9999"
+	"dev-libs/glib-2.90.9999"
+	"gui-libs/gtk-4.23.9999"
+)
+
+inherit chkl gnome2-utils meson optfeature secure-version web-kernel-config xdg distutils-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
@@ -57,7 +66,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 # Upstream uses -safe-symbols by default.
 IUSE+="
 dev hibp +safe-symbols wayland X
-ebuild_revision_11
+ebuild_revision_12
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -68,6 +77,7 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	${PYTHON_DEPS}
+	$(secure-version_gen_python_depends '3.12-3.14')
 	$(python_gen_cond_dep '
 		>=dev-python/pygobject-3.52[${PYTHON_USEDEP}]
 		>=dev-python/pykeepass-4.1.1[${PYTHON_USEDEP}]
@@ -81,21 +91,21 @@ RDEPEND+="
 			dev-python/pyhibp[${PYTHON_USEDEP}]
 		)
 	')
-	>=dev-libs/glib-2.73.1[introspection]
-	>=dev-libs/gobject-introspection-1.66.0[${PYTHON_SINGLE_USEDEP}]
-	>=gui-libs/gtk-4.15.3[introspection,wayland?,X?]
-	>=gui-libs/gtksourceview-5.0[introspection]
-	>=gui-libs/libadwaita-1.8_beta[introspection]
-	dev? (
-		dev-python/mypy
-		dev-util/ruff
-	)
+	>=dev-libs/glib-${GLIB_PV}:=[introspection]
+	>=dev-libs/gobject-introspection-${GOBJECT_INTROSPECTION_PV}:=[${PYTHON_SINGLE_USEDEP}]
+	>=gui-libs/gtk-${GTK4_PV}:=[introspection,wayland?,X?]
+	>=gui-libs/gtksourceview-5.0:=[introspection]
+	>=gui-libs/libadwaita-1.8_beta:=[introspection]
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
 	>=dev-build/meson-1.7
+	dev? (
+		dev-python/mypy
+		dev-util/ruff:=
+	)
 "
 DOCS=( "CHANGELOG.md" "README.md" )
 PATCHES=(
@@ -304,6 +314,7 @@ ewarn "Packages that interact with ${PN} (e.g. password managers, clipboard mana
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	verify_compiler_flags_hardening
 	local emesonargs=()
 	meson_src_configure

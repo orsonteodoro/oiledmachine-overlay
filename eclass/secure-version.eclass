@@ -512,6 +512,12 @@ POSTGRES_16_PV=${POSTGRES_16_PV:-"16.14"}
 POSTGRES_15_PV=${POSTGRES_15_PV:-"15.18"}
 POSTGRES_14_PV=${POSTGRES_14_PV:-"14.23"}
 PYSTRING_PV=${PYSTRING_PV:-"1.1.4"}
+PYTHON_3_15_PV=${PYTHON_3_15_PV:-"3.15.0_rc2"}
+PYTHON_3_14_PV=${PYTHON_3_14_PV:-"3.14.7"}
+PYTHON_3_13_PV=${PYTHON_3_13_PV:-"3.13.15"}
+PYTHON_3_12_PV=${PYTHON_3_12_PV:-"3.12.14"}
+PYTHON_3_11_PV=${PYTHON_3_11_PV:-"3.11.16"}
+PYTHON_3_10_PV=${PYTHON_3_10_PV:-"3.10.21"}
 QCORO_PV=${QCORO_PV:-"0.13.0"}
 QRENCODE_PV=${QRENCODE_PV:-"4.1.0"} # Same as libqrencode
 QT5COMPAT6_PV=${QT5COMPAT6_PV:-"6.9999"}
@@ -836,5 +842,83 @@ secure-version_gen_perl_depends() {
 #einfo "${output}"
 	echo "${output}"
 }
+
+# Some packages require security guarantees. (e.g. password manager)
+secure-version_gen_python_depends() {
+	local range="${1}" # 3.10; 3.10-3.14; 3.11, 3.13; 3.10-r, 3.10-l, 3.10-, <empty string>
+	local usedep="${2}" # [ssl], <empty string>
+	local t=""
+	t+="
+		dev-lang/python:=${usedep}
+		|| (
+	"
+	local l=""
+	local r=""
+	if [[ -z "${range}" ]] ; then
+	# Slots used in any distro releases
+		l="3.10"
+		r="3.15"
+	elif [[ "${range}" == "s" ]] ; then
+	# Slots used in LTS distro releases
+		l="3.10"
+		r="8.0"
+	elif [[ "${range}" == "r" ]] ; then
+	# Slots used in rolling distro releases
+		l="3.10"
+		r="8.1"
+	elif [[ "${range}" == "l" ]] ; then
+	# Slots used in live distro releases
+		l="3.15"
+		r="3.15"
+	elif [[ "${range}" =~ "-" ]] ; then
+		l="${range%-*}"
+		r="${range#*-}"
+		if [[ "${r}" == "r" ]] ; then
+	# Slot used in rolling distro releases
+			r="3.14"
+		elif [[ "${r}" == "s" ]] ; then
+	# Slot used in LTS distro releases
+			r="3.14"
+		elif [[ "${r}" == "l" ]] ; then
+	# Slot used in live distro releases
+			r="3.15"
+		elif [[ -z "${r}" ]] ; then
+	# Slot used in live distro releases
+			r="3.15"
+		fi
+	else
+		l="${range}"
+		r="${range}"
+	fi
+	local L=(
+	# See https://devguide.python.org/versions/
+		"3.15"
+		"3.14"
+		"3.13"
+		"3.12"
+		"3.11"
+		"3.10"
+	)
+	local x
+	for x in "${L[@]}" ; do
+		if ver_test "${l}" "-le" "${x}" && ver_test "${x}" "-le" "${r}" ; then
+			local u="PYTHON_${x/./_}_PV"
+#einfo "${u} ${x} ${!u}"
+			t+="
+				>=dev-lang/python-${!u}:${x}${usedep}
+			"
+		fi
+	done
+	t+="
+		)
+	"
+
+	local output=""
+
+	output="${t2}"
+#einfo "${output}"
+	echo "${output}"
+}
+
 
 fi
