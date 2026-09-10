@@ -843,7 +843,7 @@ secure-version_gen_perl_depends() {
 	echo "${output}"
 }
 
-# Some packages require security guarantees. (e.g. password manager)
+# Some packages require security-critical security guarantees. (e.g. password manager)
 secure-version_gen_python_depends() {
 	local range="${1}" # 3.10; 3.10-3.14; 3.11, 3.13; 3.10-r, 3.10-l, 3.10-, <empty string>
 	local usedep="${2}" # [ssl], <empty string>
