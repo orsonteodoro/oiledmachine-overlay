@@ -17,7 +17,7 @@ DISTUTILS_USE_PEP517="flit"
 MY_PN="MyST-Parser"
 PYTHON_COMPAT=( "python3_"{11..14} )
 
-inherit distutils-r1
+inherit cro distutils-r1
 
 SRC_URI="
 https://github.com/executablebooks/MyST-Parser/archive/refs/tags/v${PV}.tar.gz
@@ -36,7 +36,7 @@ LICENSE="
 "
 KEYWORDS="~amd64"
 SLOT="0"
-IUSE+=" codestyle doc linkify rtd test test-docutils"
+IUSE+=" code-style doc linkify rtd test test-docutils"
 REQUIRED_USE="
 	doc? (
 		linkify
@@ -44,45 +44,46 @@ REQUIRED_USE="
 	)
 "
 RDEPEND+="
-	(
-		>=dev-python/docutils-0.20[${PYTHON_USEDEP}]
-		<dev-python/docutils-0.23[${PYTHON_USEDEP}]
-	)
-	(
-		>=dev-python/markdown-it-py-4.0[${PYTHON_USEDEP}]
-	)
-	(
-		>=dev-python/sphinx-8[${PYTHON_USEDEP}]
-		<dev-python/sphinx-10[${PYTHON_USEDEP}]
-	)
-	>=dev-python/jinja2-2[${PYTHON_USEDEP}]
-	>=dev-python/mdit-py-plugins-0.5[${PYTHON_USEDEP}]
+	>=dev-python/docutils-0.20[${PYTHON_USEDEP}]
+	<dev-python/docutils-0.23[${PYTHON_USEDEP}]
+
+	$(cro dev-python/markdown-it-py 4.2 '[${PYTHON_USEDEP}]')
+
+	$(cro dev-python/mdit-py-plugins 0.6 '[${PYTHON_USEDEP}]')
+	>=dev-python/mdit-py-plugins-0.6.1[${PYTHON_USEDEP}]
+
+	>=dev-python/sphinx-8[${PYTHON_USEDEP}]
+	<dev-python/sphinx-10[${PYTHON_USEDEP}]
+
+	dev-python/jinja2[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 
 "
 DEPEND+="
 	${RDEPEND}
 "
+TRASH="
+"
 BDEPEND+="
-	(
-		>=dev-python/flit-core-3.4[${PYTHON_USEDEP}]
-		<dev-python/flit-core-4[${PYTHON_USEDEP}]
-	)
-	codestyle? (
+	>=dev-python/flit-core-3.4[${PYTHON_USEDEP}]
+	<dev-python/flit-core-4[${PYTHON_USEDEP}]
+
+	code-style? (
 		$(python_gen_any_dep '
 			>=dev-vcs/pre-commit-4.0[${PYTHON_SINGLE_USEDEP}]
+			<dev-vcs/pre-commit-5.0[${PYTHON_SINGLE_USEDEP}]
 		')
 	)
 	linkify? (
-		>=dev-python/linkify-it-py-2.0[${PYTHON_USEDEP}]
+		$(cro dev-python/linkify-it-py 2.0 '[${PYTHON_USEDEP}]')
 	)
 	rtd? (
 		>=dev-python/sphinx-8[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-book-theme-1.1[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-tippy-0.4.3[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-autodoc2-0.5.0[${PYTHON_USEDEP}]
-		>=dev-python/sphinxext-opengraph-0.13.0[${PYTHON_USEDEP}]
-		>=dev-python/sphinxext-rediraffe-0.3.0[${PYTHON_USEDEP}]
+		$(cro dev-python/sphinx-book-theme 1.1 '[${PYTHON_USEDEP}]')
+		$(cro dev-python/sphinx-autodoc2 0.5.0 '[${PYTHON_USEDEP}]')
+		$(cro dev-python/sphinxext-opengraph 0.13.0 '[${PYTHON_USEDEP}]')
+		$(cro dev-python/sphinxext-rediraffe 0.3.0 '[${PYTHON_USEDEP}]')
 		dev-python/ipython[${PYTHON_USEDEP}]
 		dev-python/sphinx-copybutton[${PYTHON_USEDEP}]
 		dev-python/sphinx-design[${PYTHON_USEDEP}]
@@ -90,18 +91,18 @@ BDEPEND+="
 		dev-python/sphinx-togglebutton[${PYTHON_USEDEP}]
 	)
 	test? (
-		(
-			>=dev-python/pytest-9[${PYTHON_USEDEP}]
-			<dev-python/pytest-10[${PYTHON_USEDEP}]
-		)
-		>=dev-python/pytest-param-files-0.6.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-9[${PYTHON_USEDEP}]
+		<dev-python/pytest-10[${PYTHON_USEDEP}]
+
+		$(cro dev-python/pytest-param-files 0.6.0 '[${PYTHON_USEDEP}]')
 		dev-python/tox[${PYTHON_USEDEP}]
 		dev-python/beautifulsoup4[${PYTHON_USEDEP}]
-		dev-python/coverage[${PYTHON_USEDEP}]
+		dev-python/coverage[${PYTHON_USEDEP},toml(+)]
 		dev-python/defusedxml[${PYTHON_USEDEP}]
 		dev-python/pytest-cov[${PYTHON_USEDEP}]
 		dev-python/pytest-regressions[${PYTHON_USEDEP}]
-		dev-python/sphinx-pytest[${PYTHON_USEDEP}]
+		$(cro dev-python/sphinx-pytest 0.3.0 '[${PYTHON_USEDEP}]')
+		<dev-python/pygments-2.21[${PYTHON_USEDEP}]
 
 		>=dev-python/mypy-1.19.1[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-8.2[${PYTHON_USEDEP}]
@@ -110,11 +111,10 @@ BDEPEND+="
 		>=dev-util/ruff-0.14.11
 	)
 	test-docutils? (
-		(
-			>=dev-python/pytest-9[${PYTHON_USEDEP}]
-			<dev-python/pytest-10[${PYTHON_USEDEP}]
-		)
-		>=dev-python/pytest-param-files-0.6.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-9[${PYTHON_USEDEP}]
+		<dev-python/pytest-10[${PYTHON_USEDEP}]
+
+		$(cro dev-python/pytest-param-files 0.6.0 '[${PYTHON_USEDEP}]')
 		dev-python/pygments[${PYTHON_USEDEP}]
 	)
 "
