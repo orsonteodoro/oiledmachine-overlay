@@ -380,7 +380,7 @@ CHKL_TIMESTAMPS=(
 	"app-shells/bash-9999"
 	"sys-apps/util-linux-9999"
 	"sys-devel/binutils-9999"
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"app-arch/lz4-9999"
 	"app-arch/xz-utils-9999"
 )

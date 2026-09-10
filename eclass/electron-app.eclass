@@ -29,7 +29,7 @@ CHKL_TIMESTAMPS+=(
 	"app-accessibility/at-spi2-core-9999"
 	"app-misc/jq-9999"
 	"dev-libs/expat-9999"
-	"dev-libs/glib-2.89.9999"
+	"dev-libs/glib-2.90.9999"
 	"dev-libs/wayland-9999"
 	"media-libs/alsa-lib-9999"
 	"media-libs/libpulse-9999"
