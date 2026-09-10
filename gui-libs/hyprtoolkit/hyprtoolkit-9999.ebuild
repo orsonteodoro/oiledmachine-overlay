@@ -23,10 +23,8 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/hyprlang-9999"
 	"dev-libs/wayland-9999"
 	"gui-libs/hyprutils-9999"
-	"x11-libs/cairo-9999"
 	"x11-libs/libdrm-9999"
 	"x11-libs/libxkbcommon-9999"
-	"x11-libs/pixman-9999"
 )
 
 inherit abseil-cpp chkl cmake libcxx-slot libstdcxx-slot secure-version
@@ -35,7 +33,7 @@ DESCRIPTION="A modern C++ Wayland-native GUI toolkit"
 HOMEPAGE="https://github.com/hyprwm/hyprtoolkit"
 
 if [[ "${PV}" =~ "9999" ]]; then
-	FALLBACK_COMMIT="67d9012d7d3a902a6a37e313fbfaf56ce7d3c53e"
+	FALLBACK_COMMIT="f8cbaf42e1f7fdc9c7565d7be3e935f6d56c7a39"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/hyprwm/hyprtoolkit.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -54,11 +52,11 @@ RESTRICT="
 		test
 	)
 "
-SOVER="5"
+SOVER="6"
 SLOT="0/${SOVER}"
 IUSE="
 test
-ebuild_revision_3
+ebuild_revision_4
 "
 
 BDEPEND="
@@ -69,7 +67,6 @@ BDEPEND="
 RDEPEND="
 	>=dev-cpp/abseil-cpp-20260107.1:${ABSEIL_CPP_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/glib-${GLIB_PV}:=
-	>=dev-libs/hyprgraphics-0.5.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/hyprlang-${HYPRLANG_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/iniparser-${INIPARSER_PV}:=
 	>=dev-libs/wayland-${WAYLAND_PV}:=
@@ -77,11 +74,8 @@ RDEPEND="
 	>=gui-libs/aquamarine-0.10.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=gui-libs/hyprutils-${HYPRUTILS_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=media-libs/libglvnd-${LIBGLVND_PV}:=
-	>=x11-libs/cairo-${CAIRO_PV}:=
 	>=x11-libs/libdrm-${LIBDRM_PV}:=
 	>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=
-	>=x11-libs/pango-${PANGO_PV}:=
-	>=x11-libs/pixman-${PIXMAN_PV}:=
 "
 DEPEND="
 	${RDEPEND}
