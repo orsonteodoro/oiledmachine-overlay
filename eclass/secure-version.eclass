@@ -847,10 +847,19 @@ secure-version_gen_perl_depends() {
 secure-version_gen_python_depends() {
 	local range="${1}" # 3.10; 3.10-3.14; 3.11, 3.13; 3.10-r, 3.10-l, 3.10-, <empty string>
 	local usedep="${2}" # [ssl], <empty string>
+	local python_usefix="" # python_targets_python, python_single_target_python
+
+	if [[ "${_PYTHON_R1_ECLASS}" == "1" ]] ; then
+		python_usefix="python_targets_python"
+	elif [[ "${_PYTHON_SINGLE_R1_ECLASS}" == "1" ]] ; then
+		python_usefix="python_single_target_python"
+	else
+eerror "You must inherit python-r1 or python-single-r1 before inherit secure-version."
+		die
+	fi
+
 	local t=""
 	t+="
-		dev-lang/python:=${usedep}
-		|| (
 	"
 	local l=""
 	local r=""
@@ -905,17 +914,18 @@ secure-version_gen_python_depends() {
 			local u="PYTHON_${x/./_}_PV"
 #einfo "${u} ${x} ${!u}"
 			t+="
-				>=dev-lang/python-${!u}:${x}${usedep}
+				${python_usefix}${x/./_}? (
+					>=dev-lang/python-${!u}:${x}${usedep}
+				)
 			"
 		fi
 	done
 	t+="
-		)
 	"
 
 	local output=""
 
-	output="${t2}"
+	output="${t}"
 #einfo "${output}"
 	echo "${output}"
 }

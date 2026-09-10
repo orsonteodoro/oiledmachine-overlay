@@ -27,7 +27,8 @@ CHKL_TIMESTAMPS=(
 	"gui-libs/gtk-4.23.9999"
 )
 
-inherit chkl gnome2-utils meson optfeature secure-version web-kernel-config xdg distutils-r1
+inherit chkl gnome2-utils meson optfeature web-kernel-config xdg distutils-r1
+inherit secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
@@ -66,7 +67,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 # Upstream uses -safe-symbols by default.
 IUSE+="
 dev hibp +safe-symbols wayland X
-ebuild_revision_12
+ebuild_revision_13
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
