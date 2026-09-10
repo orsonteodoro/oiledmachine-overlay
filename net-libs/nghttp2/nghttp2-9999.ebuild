@@ -17,11 +17,11 @@ CXX_STANDARD=20
 PYTHON_COMPAT=( "python3_"{10..14} ) # Relaxed
 USE_RUBY="ruby32 ruby33"
 
-HTTP_PARSER_COMMIT="ec8b5ee63f0e51191ea43bb0c6eac7bfbff3141d"
-MRUBY_COMMIT="31ebcb349eb1c4749e3dcbd554db5f12bcd6b5e5"
-MUNIT_COMMIT_1="114805e1bab0222574b5eb3a92461ad5216647ed"
-MUNIT_COMMIT_2="3cf9c79f3a76f313d560dedd5b47c0416a0fbb6e"
-NEVERBLEED_COMMIT="8a91f9be3438d70b7cd005f8e9dfb418894c5c06"
+HTTP_PARSER_COMMIT="ec8b5ee63f0e51191ea43bb0c6eac7bfbff3141d" # dep of urlparse
+MRUBY_COMMIT="831da26b9021de0369d17b71b5667e2941a1a32d"
+MUNIT_COMMIT_1="cb04288a5225645be005a521c537b83c51934ef6"
+MUNIT_COMMIT_2="3cf9c79f3a76f313d560dedd5b47c0416a0fbb6e" # dep of urlparse
+NEVERBLEED_COMMIT="68f65c7b05f68e6fd93631668d4f469875946656"
 URLPARSE_COMMIT="59b068a7618a256c6823b0b9801b61d1d04677a3"
 
 CHKL_TIMESTAMPS=(
@@ -57,7 +57,7 @@ LLVM_COMPAT=(
 inherit cflags-hardened check-compiler-switch chkl cmake dep-prepare flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal python-r1 ruby-single secure-version toolchain-funcs
 
 if [[ "${PV}" == "9999" ]] ; then
-	FALLBACK_COMMIT="c3c47b7ee1861cc201a90c4a8d5b4ecfde8129dc"
+	FALLBACK_COMMIT="e4a2c989b39a9285791a8c0bbb9eb90fcb328659"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/nghttp2/nghttp2.git"
 	inherit git-r3
@@ -128,7 +128,7 @@ SLOT="0/1.$((${SO_CURRENT} - ${SO_AGE}))"
 IUSE+="
 -bpf debug doc +hpack-tools -http3 -mruby -neverbleed +jemalloc quic -static-libs
 systemd test +threads +utils +xml
-ebuild_revision_24
+ebuild_revision_26
 "
 REQUIRED_USE="
 	doc? (
