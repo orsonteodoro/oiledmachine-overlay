@@ -40,7 +40,7 @@ CHKL_TIMESTAMPS=(
 	"x11-libs/libXcursor-9999"
 )
 
-inherit bash-completion-r1 branding chkl flag-o-matic lua-single meson python-single-r1 secure-version toolchain-funcs vala xdg
+inherit bash-completion-r1 branding cflags-hardened chkl flag-o-matic lua-single meson python-single-r1 secure-version toolchain-funcs vala xdg
 
 DESCRIPTION="GNU Image Manipulation Program"
 HOMEPAGE="https://www.gimp.org/"
@@ -75,7 +75,7 @@ SLOT="0/${MAJOR_VERSION}"
 
 IUSE="
 X aalib alsa bash-completion doc fits gnome heif javascript jpeg2k jpegxl lua mng openexr openmp postscript test udev unwind vala vector-icons wayland webp wmf xpm
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
