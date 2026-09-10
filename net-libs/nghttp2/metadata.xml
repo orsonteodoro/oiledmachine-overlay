@@ -16,6 +16,9 @@
     <remote-id type="github">nghttp2/nghttp2</remote-id>
   </upstream>
   <use>
+    <flag name="apparmor">
+      Install the nghttpx AppArmor profile.
+    </flag>
     <flag name="hpack-tools">
       Install HPACK (header compression) helper tools
     </flag>
@@ -23,11 +26,22 @@
       Enable mruby support for nghttpx reverse proxy
     </flag>
     <flag name="neverbleed">
-      Protect private keys when using nghttpx reverse proxy
+      Increase protection against private key leaking when using the nghttpx
+      reverse proxy.  Enabling this USE flag protects using multiprocess
+      and separation with limited uid/gid.
+    </flag>
+    <flag name="openrc">
+      Install the nghttpx daemon init script for OpenRC.
+    </flag>
+    <flag name="systemd">
+      Install the nghttpx daemon init script for systemd.
     </flag>
     <flag name="utils">
-      Install nghttp [HTTP/2 client], nghttpd [HTTP/2 server],
-      nghttpx [reverse proxy]
+      Adds the following tools:
+
+      nghttp - a HTTP/2 client
+      nghttpd - a HTTP/2 server
+      nghttpx - a reverse proxy
     </flag>
   </use>
 </pkgmetadata>

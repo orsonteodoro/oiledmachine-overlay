@@ -6,6 +6,7 @@ EAPI=8
 # U24
 
 # AI inference is used to fix security tags.
+# AI generation is used for init scripts and suggestions.
 
 CFLAGS_ASSEMBLERS="gas"
 CFLAGS_HARDENED_CI_SANITIZERS="asan ubsan"
@@ -13,7 +14,7 @@ CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="18"
 CFLAGS_HARDENED_CI_SANITIZERS_GCC_COMPAT="14"
 CFLAGS_HARDENED_USE_CASES="security-critical network sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DF DOS UAF"
-CXX_STANDARD=20
+CXX_STANDARD=23
 PYTHON_COMPAT=( "python3_"{10..14} ) # Relaxed
 USE_RUBY="ruby32 ruby33"
 
@@ -36,7 +37,6 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-3.4.9999"
 	"dev-libs/openssl-3.0.9999"
 	"net-dns/c-ares-9999"
-	"net-libs/nghttp2-9999"
 	"net-libs/nghttp3-9999"
 	"net-libs/ngtcp2-9999"
 	"sys-apps/systemd-9999"
@@ -44,17 +44,25 @@ CHKL_TIMESTAMPS=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX20[@]}"
+	#"${LIBSTDCXX_COMPAT_STDCXX23[@]}"
+	"gcc_slot_11_5" # Support -std=c++17.
+	"gcc_slot_12_5" # Support -std=c++17.
+	"gcc_slot_13_4" # Support -std=c++17.
+	"gcc_slot_14_3" # Support -std=c++17
+	"gcc_slot_15_3" # Support -std=c++17, -std=c++23.
+	"gcc_slot_16_1" # Support -std=c++23.
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}"
+	#"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}"
+	18 19 # c++17
+	21 22 # c++17, c++23
 )
 
 
 
-inherit cflags-hardened check-compiler-switch chkl cmake dep-prepare flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal python-r1 ruby-single secure-version toolchain-funcs
+inherit cflags-hardened check-compiler-switch chkl cmake dep-prepare flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal python-r1 ruby-single secure-version systemd toolchain-funcs
 
 if [[ "${PV}" == "9999" ]] ; then
 	FALLBACK_COMMIT="e4a2c989b39a9285791a8c0bbb9eb90fcb328659"
@@ -119,18 +127,58 @@ RESTRICT="
 SO_CURRENT="43"
 SO_AGE="29"
 SLOT="0/1.$((${SO_CURRENT} - ${SO_AGE}))"
-# bpf is default ON if clang and http3
-# doc is default on upstream
-# hpack-tools is enabled on CI
-# jemalloc is enabled on CI
-# utils is enabled on CI
-# xml is enabled on CI
+# bpf is disabled on CI for release
+# hpack-tools is disabled on CI for release
+# http3 is disabled on CI for release
+# jemalloc is disabled on CI for release
+# threads is enabled on CI for release
+# utils is disabled on CI for release
+# xml is enabled on CI for release
 IUSE+="
--bpf debug doc +hpack-tools -http3 -mruby -neverbleed +jemalloc quic -static-libs
-systemd test +threads +utils +xml
+apparmor -bpf clang debug doc gcc -hpack-tools -http3 -mruby -neverbleed -jemalloc openrc quic
+-static-libs systemd test +threads -utils +xml
 ebuild_revision_26
 "
 REQUIRED_USE="
+	|| (
+		gcc
+		clang
+	)
+	!utils? (
+		!hpack-tools? (
+			gcc? (
+				|| (
+					gcc_slot_11_5
+					gcc_slot_12_5
+					gcc_slot_13_4
+					gcc_slot_14_3
+					gcc_slot_15_3
+				)
+			)
+			clang? (
+				|| (
+					llvm_slot_18
+					llvm_slot_19
+					llvm_slot_21
+					llvm_slot_22
+				)
+			)
+		)
+	)
+	utils? (
+		gcc? (
+			|| (
+				gcc_slot_15_3
+				gcc_slot_16_1
+			)
+		)
+		clang? (
+			|| (
+				llvm_slot_21
+				llvm_slot_22
+			)
+		)
+	)
 	doc? (
 		${PYTHON_REQUIRED_USE}
 	)
@@ -141,6 +189,8 @@ SSL_DEPEND="
 	>=net-libs/ngtcp2-${NGTCP2_PV}:=[${MULTILIB_USEDEP},openssl]
 "
 RDEPEND="
+	acct-group/nghttpx
+	acct-user/nghttpx
 	bpf? (
 		>=dev-libs/libbpf-${LIBBPF_PV}:=
 	)
@@ -195,6 +245,12 @@ ewarn "bpf is default ON upstream if clang ON, http3 ON"
 	fi
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+	if tc-is-clang ; then
+		use clang || die "Enable the clang USE flag"
+	fi
+	if tc-is-gcc ; then
+		use gcc || die "Enable the gcc USE flag"
+	fi
 }
 
 src_unpack() {
@@ -273,6 +329,15 @@ eerror
 		-DWITH_MRUBY=$(usex mruby)
 		-DWITH_NEVERBLEED=$(usex neverbleed)
 	)
+
+	if ! use utils && ! use hpack-tools ; then
+		mycmakeargs=(
+			-DENABLE_LIB_ONLY=ON # For C++20
+		)
+	else
+ewarn "Using -std=c++23"
+	fi
+
 	cmake_src_configure
 }
 
@@ -286,6 +351,26 @@ multilib_src_test() {
 
 multilib_src_install() {
 	cmake_src_install
+
+	if use apparmor ; then
+		insinto "/etc/apparmor.d"
+		sed -i -e "s|/usr/sbin/nghttpx|/usr/bin/nghttpx|" \
+			"${S}/contrib/usr.sbin.nghttpx" \
+			|| die
+		doins "${S}/contrib/usr.sbin.nghttpx"
+	fi
+
+	if use openrc  ; then
+	# OpenRC deployment
+		newinitd "${FILESDIR}/nghttpx.initd" "nghttpx"
+		newconfd "${FILESDIR}/nghttpx.confd" "nghttpx"
+	fi
+
+	if use systemd ; then
+	# systemd deployment
+		systemd_dounit "${FILESDIR}/nghttpx.service"
+	fi
+
 }
 
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 1.54.0 (20230709)

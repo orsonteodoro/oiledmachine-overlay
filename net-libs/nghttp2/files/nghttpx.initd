@@ -1,0 +1,30 @@
+#!/sbin/openrc-run
+# Copyright 1999-2026 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+# This file is AI generated.
+
+extra_started_commands="reload"
+description="nghttpx - HTTP/2 and HTTP/3 reverse proxy"
+description_reload="Reload configuration file via SIGHUP"
+
+command="/usr/bin/nghttpx"
+# Note: DO NOT specify a "user" variable here. We must start as root.
+# Let nghttpx drop privileges via --user after setting up neverbleed.
+command_args="--conf=${NGHTTPX_CONF:-/etc/nghttpx/nghttpx.conf} \
+             --user=nghttpx \
+             --pid-file=/run/nghttpx.pid \
+             --daemon"
+
+pidfile="/run/nghttpx.pid"
+
+depend() {
+    need net
+    after firewall
+}
+
+reload() {
+    ebegin "Reloading ${RC_SVCNAME} configuration"
+    start-stop-daemon --signal SIGHUP --pidfile "${pidfile}"
+    eend $?
+}
