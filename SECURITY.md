@@ -138,6 +138,26 @@ before the deadline.
 The initial start time is not always constant in reality due to backlogs,
 package triage fairness, or understaffing.
 
+| Package name             | Typical ebuild ready the time period | Recommended? | For?                         | Operational uptime in 30 days |
+|--------------------------|--------------------------------------|--------------|------------------------------|-------------------------------|
+| www-client/google-chrome | Any                                  | Y            | Production use [1][3]        | 100%                          |
+| www-client/firefox-bin   | Any                                  | Y            | Production use [1][3]        | 100%                          |
+| www-client/webkit-gtk    | Any                                  | N            | Production use [4]           | Varies                        |
+| www-client/firefox       | 18-30 of the month                   | N            | Educational, informative [2] | Less than 15 days [3]         |
+| www-client/chromium      | 18-30 of the month                   | N            | Educational, informative [2] | Less than 15 days [3]         |
+
+[1] The ebuild fork is provided as alternative up-to-date ebuild at that time
+    against an insider threat possibility or negligent package maintainer.  It
+    is also has changes for additional security verification of dependencies
+    which the distro ebuild lacks.
+
+[2] The ebuild on this overlay is to inform to other ebuild developers how to
+    make it work on x32 ABI, or to educate users on how to get it configure it
+    appropriately performance-wise, proper coding style, or how I would have done
+    it if I were hypothetically the main package maintainer on the distro overlay.
+
+[3] Understaffed and outdated hardware to fix issues
+
 ### Small packages cases
 
 Remediation start time happens when there is a version bump and the period
@@ -184,24 +204,38 @@ In short for this overlay,
 because it is easy to remember.  After research, the threshold is changed
 based on a grade school perspective or a gamer perspective.)
 
-## Patching/triage priorities (ranked high top)
+## Patching/triage priorities (top is higher priority)
+
+Updated Sep 2026
 
 0. Ebuilds that block (security) updates
 1. Fixing untested ebuilds
-2. Critical severity vulernabilities
-3. High severity vulernabilities
-4. Bumping versions for high value assets with weekly or biweekly vulnerability recurrence intervals
-5. Zero click attack
-6. Uncaught Information Disclosure (ID)
-7. Uncaught Data Tampering (DT)
-8. Uncaught Denial of Service (DoS)
-9. Uncaught security vulnerability advisories
-10. Memory leaks (CWE-401)
-11. Heavy I/O (CWE-400, CWE-770)
-12. Modifying or speeding up ebuilds to mitigate against vulnerability backlog
-13. Bumping EOL software (CWE-1104)
-14. Pruning or substituting EOL software (CWE-1329)
-15. Testing untested software (CWE-1357)
+2. Kernel (ZC, SBX)
+3a. High remediated vulnerability per day packages
+3b. High remediated vulnerability per week packages
+3c. High remediated vulnerability per month packages
+4. Network libs and apps (ZC, ID)
+5. Network daemons (ZC, ID)
+6. Archiving packages (DoS, CE)
+7. Web based image, video, document packages (ZC, CE)
+8. Desktop / clipboard packages (ID)
+9. Sandboxed libraries (SBX)
+10a. Lightweight web browser packages (DoS, DT, ID, SBX, ZC)
+10a. Heavy web browser packages (DoS, DT, ID, SBX, ZC)
+11. Low market share image parsers (ZC, CE)
+12. Delayed release for known supply chain compromised or alleged compromised open source projects (CE, ID)
+
+Attack vector triage (top is higher priority)
+
+1. Annoying AF DoS - Severe Denial of Service in the typical use case
+2. ZC - Zero Click Attack [Attack Vector:Network, Privileges Required: None, User Interaction:None]
+3. CE - Code Execution
+4. PE - Privilege Escalation
+5. SB - Security Bypass
+6. SBX - Sandbox Escape
+7. ID - Information Disclosure
+8. DT - Data Tampering
+9. DoS - Denial of Service in less common use cases
 
 ## Binary packages
 
