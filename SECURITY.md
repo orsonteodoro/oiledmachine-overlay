@@ -146,7 +146,7 @@ package triage fairness, or understaffing.
 | www-client/firefox       | 18-30 of the month                   | N            | Educational, informative [2] | Less than 15 days [3]         |
 | www-client/chromium      | 18-30 of the month                   | N            | Educational, informative [2] | Less than 15 days [3]         |
 
-[1] The ebuild fork is provided as alternative up-to-date ebuild at that time
+[1] The ebuild fork is provided as an alternative up-to-date ebuild at that time
     against an insider threat possibility or negligent package maintainer.  It
     is also has changes for additional security verification of dependencies
     which the distro ebuild lacks.
