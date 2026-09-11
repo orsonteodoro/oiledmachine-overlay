@@ -189,7 +189,7 @@ case ${LLVM_MAJOR} in
 			XCore
 		)
 		;;
-	*)
+	2[0-3])
 		ALL_LLVM_EXPERIMENTAL_TARGETS=(
 			ARC CSKY DirectX M68k Xtensa
 		)
@@ -199,6 +199,15 @@ case ${LLVM_MAJOR} in
 			WebAssembly X86 XCore
 		)
 		;;
+	*)
+		ALL_LLVM_EXPERIMENTAL_TARGETS=(
+			ARC CSKY M68k Xtensa
+		)
+		ALL_LLVM_PRODUCTION_TARGETS=(
+			AArch64 AMDGPU ARM AVR BPF DirectX Hexagon Lanai LoongArch
+			Mips MSP430 NVPTX PowerPC RISCV Sparc SPIRV SystemZ VE
+			WebAssembly X86 XCore
+		)
 esac
 
 ALL_LLVM_TARGET_FLAGS=(
