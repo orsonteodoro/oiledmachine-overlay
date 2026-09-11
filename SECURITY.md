@@ -162,7 +162,7 @@ package triage fairness, or understaffing.
 
 [3] Understaffed and outdated hardware to fix issues
 
-[4] There a lot of wrongs with the upstream project that make Electron look more safer.
+[4] There a lot of wrongs with this upstream project that make Electron look more safer.
 
 ### Small packages cases
 
