@@ -141,6 +141,7 @@ package triage fairness, or understaffing.
 | Package name             | Typical ebuild ready the time period | Recommended? | For?                         | Operational uptime in 30 days |
 |--------------------------|--------------------------------------|--------------|------------------------------|-------------------------------|
 | dev-qt/qtwebengine       | Any                                  | N [4]        | The most secure commit for downstream browsers/apps     | Untested                      |
+| net-libs/cef-bin         | Any                                  | N [5]        | For OBS                      | 100%                          |
 | www-client/google-chrome | Any                                  | Y            | Production use [1][3]        | 100%                          |
 | www-client/firefox-bin   | Any                                  | Y            | Production use [1][3]        | 100%                          |
 | www-client/webkit-gtk    | Any                                  | N            | Production use               | Varies                        |
@@ -163,6 +164,8 @@ package triage fairness, or understaffing.
 [3] Understaffed and outdated hardware to fix issues
 
 [4] There a lot of wrongs with this upstream project that make Electron look more safer.
+
+[5] It makes production look more polished but has a slight lower security score than the actual browser.
 
 ### Small packages cases
 
