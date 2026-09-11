@@ -71,6 +71,7 @@ hashbrown-0.14.1
 indexmap-2.2.6
 libc-0.2.185
 log-0.4.27
+mach2-0.7.0
 once_cell-1.8.0
 paste-1.0.14
 pest-2.8.0
@@ -144,7 +145,7 @@ done
 unset card
 
 if [[ "${PV}" == "9999" ]] ; then
-	FALLBACK_COMMIT="73ff21ef2d03f8b57a1470dad49ed49ae71913c5"
+	FALLBACK_COMMIT="aed26d2b59e730e1d2e00829f07160b7d06762c3"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/mesa/mesa.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -186,7 +187,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
 asahi debug +llvm lm-sensors opencl +opengl +proprietary-codecs +shader-cache
 sysprof test unwind vaapi valgrind vulkan wayland +X +zstd
-ebuild_revision_46
+ebuild_revision_47
 "
 REQUIRED_USE="
 	video_cards_i915? (
@@ -579,7 +580,7 @@ src_unpack() {
 		unpack "${MY_P}.tar.xz"
 	fi
 
-	local expected_fingerprint="d40549d9af08a015c00cc4677adc5ae33cb847b690cd29af969bab07f328f8ca2a4afb0e8fa6e8f599d71c0be3aaa98195cd0d423648fc44a5605979fb55e233"
+	local expected_fingerprint="b534cf1204007a41bd8db96b85da22dfb143570c9c0983d4e4aee7f8fad0ca9846a5d1804b544c6ebef0a70dd60b044047d36eb5432a04d19450ccb52ba5ff3e"
 	local actual_fingerprint
 	pushd "${S}/subprojects/" >/dev/null 2>&1 || die
 		actual_fingerprint=$(sha512sum $(grep -l -r -e ".crates.io") | cut -f 1 -d " " | sort | sha512sum | cut -f 1 -d " ")
