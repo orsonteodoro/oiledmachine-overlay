@@ -166,8 +166,8 @@ package triage fairness, or understaffing.
 [4] There are a lot of wrongs with this upstream project that make Electron look
     more secure.
 
-[5] It makes production look more polished and professional but has a slight
-    lower security score than the actual web browser.
+[5] It makes the video production look more polished and professional, but it
+    has a slight lower security score than the actual web browser.
 
 [6] When the release is the same as the upstream release at that time and
     dependencies are up-to-date secure, it is security-critical.  If it is
