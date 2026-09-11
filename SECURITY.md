@@ -151,7 +151,7 @@ package triage fairness, or understaffing.
 [1] The ebuild fork is provided as an alternative up-to-date ebuild at that time
     against an insider threat possibility or negligent package maintainer.  It
     is also has changes for additional security verification of dependencies
-    which the distro ebuild lacks.
+    and kernel config which the distro ebuild lacks.
 
 [2] The ebuild on this overlay is to inform to other ebuild developers how to
     configure it appropriately performance-wise, to get it working for TTS,
