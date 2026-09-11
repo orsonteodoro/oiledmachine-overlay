@@ -215,7 +215,7 @@ Updated Sep 2026
 4. Network libs and apps (ZC, ID)
 5. Network daemons (ZC, ID)
 6. Archiving packages (DoS, CE)
-7. Web based image, video, document packages (ZC, CE)
+7. Web based image, video, audio, document packages (ZC, CE)
 8. Desktop / clipboard packages (ID)
 9. Sandboxed libraries (SBX)
 10. (A) Lightweight web browser packages (DoS, DT, ID, SBX, ZC). (B) Heavy web browser packages (DoS, DT, ID, SBX, ZC).
