@@ -56,7 +56,7 @@ FFMPEG_COMPAT_SLOTS=(
 )
 
 if [[ ${PV} == *9999* ]] ; then
-	FALLBACK_COMMIT="1a3583bcce77de6d3f8701c0758e3954863681ba"
+	FALLBACK_COMMIT="08075aebcc0d9bf7d35f900c36114b1b6e90ed7d"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/strukturag/libheif.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -98,7 +98,7 @@ avif +aom -brotli -dav1d devel-tools doc -doxygen +examples -ffmpeg +gdk-pixbuf 
 jpeg -jpeg2k -kvazaar -heic -htj2k -libde265 -openh264 -rav1e +libsharpyuv
 -system-libsharpyuv -svt-av1 test +threads -uncompressed -uvg266 -vvc
 -vvenc -webcodecs -x264 -x265
-ebuild_revision_28
+ebuild_revision_29
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
