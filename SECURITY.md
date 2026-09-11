@@ -142,7 +142,7 @@ package triage fairness, or understaffing.
 |--------------------------|--------------------------------------|--------------|------------------------------|-------------------------------|
 | www-client/google-chrome | Any                                  | Y            | Production use [1][3]        | 100%                          |
 | www-client/firefox-bin   | Any                                  | Y            | Production use [1][3]        | 100%                          |
-| www-client/webkit-gtk    | Any                                  | N            | Production use [4]           | Varies                        |
+| www-client/webkit-gtk    | Any                                  | N            | Production use               | Varies                        |
 | www-client/firefox       | 18-30 of the month                   | N            | Educational, informative [2] | Less than 15 days [3]         |
 | www-client/chromium      | 18-30 of the month                   | N            | Educational, informative [2] | Less than 15 days [3]         |
 
