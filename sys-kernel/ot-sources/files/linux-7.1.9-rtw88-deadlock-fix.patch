@@ -681,7 +681,7 @@ Fix:
  	FW_OFFLOAD_H2C_SET_SEQ_NUM(h2c_pkt, rtwdev->h2c.seq);
 --- a/drivers/usb/core/hub.c.orig	2026-09-05 09:13:45.259332462 -0700
 +++ b/drivers/usb/core/hub.c	2026-09-05 09:39:57.375854419 -0700
-@@ -6570,3 +6572,31 @@ acpi_handle usb_get_hub_port_acpi_handle
+@@ -6570,3 +6572,36 @@ acpi_handle usb_get_hub_port_acpi_handle
  	return ACPI_HANDLE(&hub->ports[port1 - 1]->dev);
  }
  #endif
@@ -691,7 +691,6 @@ Fix:
 +	struct usb_device *hdev = udev->parent;
 +	struct usb_hub *hub;
 +	int port1 = udev->portnum;
-+	int ret;
 +
 +	if (!hdev || !port1)
 +		return -ENODEV;
@@ -699,6 +698,8 @@ Fix:
 +	hub = usb_hub_to_struct_hub(hdev);
 +	if (!hub)
 +		return -ENODEV;
++
++	pr_info("rtw88: hub power cycle port %d\n", port1);
 +
 +	/* mirror hub_port_power_cycle() - works even if hub has no per-port power switch */
 +	usb_disable_device(udev, 1);
@@ -710,6 +711,10 @@ Fix:
 +	usb_hub_set_port_power(hdev, hub, port1, true);
 +
 +	msleep(hub_power_on_good_delay(hub));
++
++	/* trigger hub enumeration - this was missing, so physical removal was required */
++	set_bit(port1, hub->change_bits);
++	kick_hub_wq(hub);
 +	return 0;
 +}
 +EXPORT_SYMBOL_GPL(usb_port_power_cycle);
