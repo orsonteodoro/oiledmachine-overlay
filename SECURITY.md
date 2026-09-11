@@ -167,7 +167,7 @@ package triage fairness, or understaffing.
     more safer.
 
 [5] It makes production look more polished and professional but has a slight
-    lower security score than the actual browser.
+    lower security score than the actual web browser.
 
 [6] When the release is the same as the upstream release at that time and
     dependencies are up-to-date secure, it is security-critical.  If it is
