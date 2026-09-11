@@ -218,21 +218,23 @@ Updated Sep 2026
 7. Web based image, video, audio, document packages (ZC, CE)
 8. Desktop / clipboard packages (ID)
 9. Sandboxed libraries (SBE)
-10. (A) Lightweight web browser packages (DoS, DT, ID, SBE, ZC, PE). (B) Heavy web browser packages (DoS, DT, ID, SBE, ZC, PE).
-11. Low market share image parsers (ZC, CE)
-12. Delayed release for known supply chain compromised or alleged compromised open source projects (CE, ID, DoS, PE)
+10. Compilers (DoS, B/T)
+11. (A) Lightweight web browser packages (DoS, DT, ID, SBE, ZC, PE). (B) Heavy web browser packages (DoS, DT, ID, SBE, ZC, PE).
+12. Low market share image parsers (ZC, CE)
+13. Delayed release for known supply chain compromised or alleged compromised open source projects (CE, ID, DoS, PE, B/T)
 
 Attack vector triage (top is higher priority)
 
-1. Annoying AF DoS - Severe Denial of Service in the typical use case
-2. ZC - Zero Click Attack [Attack Vector:Network, Privileges Required: None, User Interaction:None]
-3. CE - Code Execution
-4. PE - Privilege Escalation
-5. SB - Security Bypass
-6. SBE - Sandbox Escape
-7. ID - Information Disclosure
-8. DT - Data Tampering
-9. DoS - Denial of Service in less common use cases
+1. B/T - Backdoor or Trojan
+2. Annoying AF DoS - Severe Denial of Service in the typical use case
+3. ZC - Zero Click Attack [Attack Vector:Network, Privileges Required: None, User Interaction:None]
+4. CE - Code Execution
+5. PE - Privilege Escalation
+6. SB - Security Bypass
+7. SBE - Sandbox Escape
+8. ID - Information Disclosure
+9. DT - Data Tampering
+10. DoS - Denial of Service in less common use cases
 
 ## Binary packages
 
