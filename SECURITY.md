@@ -223,30 +223,29 @@ based on a grade school perspective or a gamer perspective.)
 
 Updated Sep 2026
 
-0. Ebuilds that block (security) updates
-1. Fixing untested ebuilds
-2. Kernel (ZC, SBE, PE)
-3. High remediated vulnerabilities per day packages
-4. Network libs and apps (ZC, ID)
-5. Network daemons (ZC, ID)
-6. Archiving packages (DoS, CE)
-7. Web based image, video, audio, document packages (ZC, CE)
-8. Memory allocator libraries (SB, ID, MC)
-9. High remediated vulnerabilities per week packages
-10. Desktop / clipboard packages (ID)
-11. Sandboxed libraries (SBE)
-12. Compilers (DoS, B/T)
-13. High remediated vulnerabilities per month packages
-14. Lightweight web browser packages (DoS, DT, ID, SBE, ZC, PE)
-15. Heavy web browser packages (DoS, DT, ID, SBE, ZC, PE)
-16. Low market share image parsers (ZC, CE)
-17. Delayed release for known supply chain compromised or alleged compromised open source projects (CE, ID, DoS, PE, B/T)
+0. Fixing ebuilds that block (security) updates
+1. Kernel (ZC, SBE, PE)
+2. High remediated vulnerabilities per day packages
+3. Network libs and apps (ZC, ID)
+4. Network daemons (ZC, ID)
+5. Archiving packages (DoS, CE)
+6. Web based image, video, audio, document packages (ZC, CE)
+7. Memory allocator libraries (SB, ID, MC)
+8. High remediated vulnerabilities per week packages
+9. Desktop / clipboard packages (ID)
+10. Sandboxed libraries (SBE)
+11. Compilers (DoS, B/T)
+12. High remediated vulnerabilities per month packages
+13. Lightweight web browser packages (DoS, DT, ID, SBE, ZC, PE)
+14. Heavy web browser packages (DoS, DT, ID, SBE, ZC, PE)
+15. Low market share image parsers (ZC, CE)
+16. Delayed release for known supply chain compromised or alleged compromised open source projects (CE, ID, DoS, PE, B/T)
 
 Attack vector triage (top is higher priority)
 
 1. B/T - Backdoor or Trojan
 2. Annoying AF DoS - Severe Denial of Service in the typical use case
-3. ZC - Zero Click Attack [Attack Vector:Network, Privileges Required: None, User Interaction:None]
+3. ZC - Zero Click Attack [Attack Vector:  Network, Privileges Required:  None, User Interaction:  None]
 4. MC - Memory Corruption
 5. CE - Code Execution
 6. PE - Privilege Escalation
