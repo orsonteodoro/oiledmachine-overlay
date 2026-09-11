@@ -142,8 +142,8 @@ package triage fairness, or understaffing.
 |--------------------------|----------------------------------|-------------------|--------------|---------------------------------------------------------|-------------------------------|
 | dev-qt/qtwebengine       | Any                              | Casual            | N [4]        | The most secure commit for downstream browsers/apps     | Untested                      |
 | net-libs/cef-bin         | Any                              | Casual            | N [5]        | For OBS                                                 | 100%                          |
-| www-client/google-chrome | Any                              | Security-critical | Y            | Production use [1][3]                                   | 100%                          |
-| www-client/firefox-bin   | Any                              | Security-critical | Y            | Production use [1][3]                                   | 100%                          |
+| www-client/google-chrome | Any                              | Security-critical | Y            | Production use [1]                                      | 100%                          |
+| www-client/firefox-bin   | Any                              | Security-critical | Y            | Production use [1]                                      | 100%                          |
 | www-client/webkit-gtk    | Any                              | Varies [6]        | N            | Production use                                          | Varies                        |
 | www-client/firefox       | 18-30 of the month               | Varies [6]        | N            | Educational, informative [2]                            | Less than 15 days [3]         |
 | www-client/chromium      | 18-30 of the month               | Varies [6]        | N            | Educational, informative [2]                            | Less than 15 days [3]         |
