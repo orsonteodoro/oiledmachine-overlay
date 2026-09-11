@@ -20,13 +20,13 @@ esac
 
 #
 # Commit snapshot quality comparison on Aug 8, 2026
-# | Source                 | Commit ID    | Date     | LLVM slot  | Checkmarks | sanitizer-* test fails    | sanitizer-* checks    | llvm-clang-pauth pass | llvm-clang-pac-ret pass | libc-asan passed | [6] |
-# | -----------------------|--------------|----------|------------|------------|---------------------------|-----------------------|-----------------------|-------------------------|------------------|-----|
-# | chromium-toolchain     | 53d1880 [7]  | 20260616 | 23.0.0-git | 40/46      | 0                         | 6                     | 0                     | 0                       | 2                | N   |
-# | distro                 | 0bf3638 [8]  | 20260725 | 24.0.0-git | 120/134    | 0                         | 17                    | 1                     | 1                       | 2                | Y   |
-# | distro                 | bb9934d [8]  | 20260724 | 23.1.0-rc1 | 27/32      | 0 [2]                     | 0 [1]                 | 0 [1][2]              | 0 [1]                   | 0 [1]            | Y   |
-# | oiledmachine-overlay   | 3efd20d [10] | 20260802 | 24.0.0-git | 116/134    | 0                         | 16                    | 1                     | 1                       | 2                | Y   |
-# | -                      | bd6bfba      | 20260802 | 23.0.0-git | 99/126     | 0 [4]                     | 9                     | 0 [2]                 | 0                       | 2                | N   |
+# | Source                 | Commit ID    | Date     | LLVM slot  | Checkmarks | sanitizer-* test fails    | sanitizer-* checks    | llvm-clang-pauth pass | llvm-clang-pac-ret pass | libc-asan passed |
+# | -----------------------|--------------|----------|------------|------------|---------------------------|-----------------------|-----------------------|-------------------------|------------------|
+# | chromium-toolchain     | 20e97c4 [7]  | 20260811 | 24.0.0-git | 40/46      | 0                         | 6                     | 0                     | 0                       | 2                |
+# | distro                 | 0bf3638 [8]  | 20260725 | 24.0.0-git | 120/134    | 0                         | 17                    | 1                     | 1                       | 2                |
+# | distro                 | bb9934d [8]  | 20260724 | 23.1.0-rc1 | 27/32      | 0 [2]                     | 0 [1]                 | 0 [1][2]              | 0 [1]                   | 0 [1]            |
+# | oiledmachine-overlay   | 338e0c9 [10] | 20260905 | 24.0.0-git | 116/134    | 0                         | 17                    | 1                     | 1                       | 2                |
+# | -                      | bd6bfba      | 20260802 | 23.0.0-git | 99/126     | 0 [4]                     | 9                     | 0 [2]                 | 0                       | 2                |
 #
 # [1] See bd6bfba (tagged llvmorg-23-init)
 # [2] Passes with adjacent commit 1546138, adjacent to bd6bfba (code freeze)
@@ -121,14 +121,11 @@ esac
 # zero-tolerance policy or bump once a month to balance the costs/benefits.
 #
 
-LLVM_EBUILDS_LLVM24_FALLBACK_COMMIT="3efd20d463e1b1210d2ff07cd79b68d6fa215f24" # Sep 4, 2026 (116 / 134 green checkmarks)
-LLVM_EBUILDS_LLVM23_FALLBACK_COMMIT="6278eba367e2f0eebfdc31ab8b29a02ca27e6f15" # Aug 7, 2026 (33 / 38 green checkmarks)
+LLVM_EBUILDS_LLVM24_FALLBACK_COMMIT="338e0c94943a6fb917c276bbbd9ff4b6cd6dd71e" # Sep 5, 2026 (116 / 136 green checkmarks)
 
 LLVM_EBUILDS_LLVM24_BRANCH="main"
-LLVM_EBUILDS_LLVM23_BRANCH="release/23.x"
 
-LLVM_EBUILDS_LLVM24_REVISION="llvm23_revision_2"
-LLVM_EBUILDS_LLVM23_REVISION="llvm23_revision_3"
+LLVM_EBUILDS_LLVM24_REVISION="llvm23_revision_3"
 
 if [[ -z "${_LLVM_EBUILDS_ECLASS}" ]] ; then
 
