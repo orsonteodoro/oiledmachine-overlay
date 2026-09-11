@@ -210,15 +210,15 @@ Updated Sep 2026
 
 0. Ebuilds that block (security) updates
 1. Fixing untested ebuilds
-2. Kernel (ZC, SBX, PE)
+2. Kernel (ZC, SBE, PE)
 3. (A) High remediated vulnerability per day packages. (B) High remediated vulnerability per week packages. (C). High remediated vulnerability per month packages.
 4. Network libs and apps (ZC, ID)
 5. Network daemons (ZC, ID)
 6. Archiving packages (DoS, CE)
 7. Web based image, video, audio, document packages (ZC, CE)
 8. Desktop / clipboard packages (ID)
-9. Sandboxed libraries (SBX)
-10. (A) Lightweight web browser packages (DoS, DT, ID, SBX, ZC, PE). (B) Heavy web browser packages (DoS, DT, ID, SBX, ZC, PE).
+9. Sandboxed libraries (SBE)
+10. (A) Lightweight web browser packages (DoS, DT, ID, SBE, ZC, PE). (B) Heavy web browser packages (DoS, DT, ID, SBE, ZC, PE).
 11. Low market share image parsers (ZC, CE)
 12. Delayed release for known supply chain compromised or alleged compromised open source projects (CE, ID, DoS, PE)
 
@@ -229,7 +229,7 @@ Attack vector triage (top is higher priority)
 3. CE - Code Execution
 4. PE - Privilege Escalation
 5. SB - Security Bypass
-6. SBX - Sandbox Escape
+6. SBE - Sandbox Escape
 7. ID - Information Disclosure
 8. DT - Data Tampering
 9. DoS - Denial of Service in less common use cases
