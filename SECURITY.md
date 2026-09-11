@@ -140,7 +140,7 @@ package triage fairness, or understaffing.
 
 | Package name             | Typical ebuild ready the time period | Recommended? | For?                         | Operational uptime in 30 days |
 |--------------------------|--------------------------------------|--------------|------------------------------|-------------------------------|
-| dev-qt/qtwebengine       | Any                                  | N [4]        | Downstream browsers/apps     | Untested                      |
+| dev-qt/qtwebengine       | Any                                  | N [4]        | The most secure commit for downstream browsers/apps     | Untested                      |
 | www-client/google-chrome | Any                                  | Y            | Production use [1][3]        | 100%                          |
 | www-client/firefox-bin   | Any                                  | Y            | Production use [1][3]        | 100%                          |
 | www-client/webkit-gtk    | Any                                  | N            | Production use               | Varies                        |
