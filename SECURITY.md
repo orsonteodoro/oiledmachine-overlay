@@ -152,9 +152,12 @@ package triage fairness, or understaffing.
     which the distro ebuild lacks.
 
 [2] The ebuild on this overlay is to inform to other ebuild developers how to
-    make it work on x32 ABI, or to educate users on how to get it configure it
-    appropriately performance-wise, proper coding style, or how I would have done
-    it if I were hypothetically the main package maintainer on the distro overlay.
+    configure it appropriately performance-wise, to get it working for TTS,
+    proper coding style, or how I would have done it if I were
+    hypothetically the main package maintainer on the distro overlay.
+    Originally it was to get a 32-bit build on 64-bit, to evaluate the
+    peformance but no obvious benefits.  Alternatively, it was to test if it
+    was possible to build an x86 ABI build for the x32 ABI profile.
 
 [3] Understaffed and outdated hardware to fix issues
 
