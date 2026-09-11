@@ -211,17 +211,14 @@ Updated Sep 2026
 0. Ebuilds that block (security) updates
 1. Fixing untested ebuilds
 2. Kernel (ZC, SBX)
-3a. High remediated vulnerability per day packages
-3b. High remediated vulnerability per week packages
-3c. High remediated vulnerability per month packages
+3. (A) High remediated vulnerability per day packages. (B) High remediated vulnerability per week packages. (C). High remediated vulnerability per month packages.
 4. Network libs and apps (ZC, ID)
 5. Network daemons (ZC, ID)
 6. Archiving packages (DoS, CE)
 7. Web based image, video, document packages (ZC, CE)
 8. Desktop / clipboard packages (ID)
 9. Sandboxed libraries (SBX)
-10a. Lightweight web browser packages (DoS, DT, ID, SBX, ZC)
-10a. Heavy web browser packages (DoS, DT, ID, SBX, ZC)
+10. (A) Lightweight web browser packages (DoS, DT, ID, SBX, ZC). (B) Heavy web browser packages (DoS, DT, ID, SBX, ZC).
 11. Low market share image parsers (ZC, CE)
 12. Delayed release for known supply chain compromised or alleged compromised open source projects (CE, ID)
 
