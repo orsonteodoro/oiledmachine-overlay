@@ -138,15 +138,15 @@ before the deadline.
 The initial start time is not always constant in reality due to backlogs,
 package triage fairness, or understaffing.
 
-| Package name             | Typical ebuild ready the time period | Recommended? | For?                         | Operational uptime in 30 days |
-|--------------------------|--------------------------------------|--------------|------------------------------|-------------------------------|
-| dev-qt/qtwebengine       | Any                                  | N [4]        | The most secure commit for downstream browsers/apps     | Untested                      |
-| net-libs/cef-bin         | Any                                  | N [5]        | For OBS                      | 100%                          |
-| www-client/google-chrome | Any                                  | Y            | Production use [1][3]        | 100%                          |
-| www-client/firefox-bin   | Any                                  | Y            | Production use [1][3]        | 100%                          |
-| www-client/webkit-gtk    | Any                                  | N            | Production use               | Varies                        |
-| www-client/firefox       | 18-30 of the month                   | N            | Educational, informative [2] | Less than 15 days [3]         |
-| www-client/chromium      | 18-30 of the month                   | N            | Educational, informative [2] | Less than 15 days [3]         |
+| Package name             | Typical ebuild ready the time period | Security rating   | Recommended? | For?                                                    | Operational uptime in 30 days |
+|--------------------------|--------------------------------------|-------------------|--------------|---------------------------------------------------------|-------------------------------|
+| dev-qt/qtwebengine       | Any                                  | Casual            | N [4]        | The most secure commit for downstream browsers/apps     | Untested                      |
+| net-libs/cef-bin         | Any                                  | Casual            | N [5]        | For OBS                                                 | 100%                          |
+| www-client/google-chrome | Any                                  | Security-critical | Y            | Production use [1][3]                                   | 100%                          |
+| www-client/firefox-bin   | Any                                  | Security-critical | Y            | Production use [1][3]                                   | 100%                          |
+| www-client/webkit-gtk    | Any                                  | Varies [6]        | N            | Production use                                          | Varies                        |
+| www-client/firefox       | 18-30 of the month                   | Varies [6]        | N            | Educational, informative [2]                            | Less than 15 days [3]         |
+| www-client/chromium      | 18-30 of the month                   | Varies [6]        | N            | Educational, informative [2]                            | Less than 15 days [3]         |
 
 [1] The ebuild fork is provided as an alternative up-to-date ebuild at that time
     against an insider threat possibility or negligent package maintainer.  It
@@ -163,9 +163,15 @@ package triage fairness, or understaffing.
 
 [3] Understaffed and outdated hardware to fix issues
 
-[4] There a lot of wrongs with this upstream project that make Electron look more safer.
+[4] There a lot of wrongs with this upstream project that make Electron look
+    more safer.
 
-[5] It makes production look more polished and professional but has a slight lower security score than the actual browser.
+[5] It makes production look more polished and professional but has a slight
+    lower security score than the actual browser.
+
+[6] When the release is the same as the upstream release at that time and
+    dependencies are up-to-date secure, it is security-critical.  If it is
+    an outdated release, it is rated for casual/entertainment use only.
 
 ### Small packages cases
 
