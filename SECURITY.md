@@ -165,7 +165,7 @@ package triage fairness, or understaffing.
 
 [4] There a lot of wrongs with this upstream project that make Electron look more safer.
 
-[5] It makes production look more polished but has a slight lower security score than the actual browser.
+[5] It makes production look more polished and professional but has a slight lower security score than the actual browser.
 
 ### Small packages cases
 
