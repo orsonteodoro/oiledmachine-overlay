@@ -157,7 +157,7 @@ package triage fairness, or understaffing.
     hypothetically the main package maintainer on the distro overlay.
     Originally it was to get a 32-bit build on 64-bit, to evaluate the
     peformance but no obvious benefits.  Alternatively, it was to test if it
-    was possible to build an x86 ABI build for the x32 ABI profile.
+    was possible to build a x86 ABI build for the x32 ABI profile.
 
 [3] Understaffed and outdated hardware to fix issues
 
