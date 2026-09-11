@@ -211,18 +211,21 @@ Updated Sep 2026
 0. Ebuilds that block (security) updates
 1. Fixing untested ebuilds
 2. Kernel (ZC, SBE, PE)
-3. (A) High remediated vulnerability per day packages. (B) High remediated vulnerability per week packages. (C). High remediated vulnerability per month packages.
+3. High remediated vulnerabilities per day packages
 4. Network libs and apps (ZC, ID)
 5. Network daemons (ZC, ID)
 6. Archiving packages (DoS, CE)
 7. Web based image, video, audio, document packages (ZC, CE)
 8. Memory allocator libraries (SB, ID, MC)
-9. Desktop / clipboard packages (ID)
-10. Sandboxed libraries (SBE)
-11. Compilers (DoS, B/T)
-12. (A) Lightweight web browser packages (DoS, DT, ID, SBE, ZC, PE). (B) Heavy web browser packages (DoS, DT, ID, SBE, ZC, PE).
-13. Low market share image parsers (ZC, CE)
-14. Delayed release for known supply chain compromised or alleged compromised open source projects (CE, ID, DoS, PE, B/T)
+9. High remediated vulnerabilities per week packages
+10. Desktop / clipboard packages (ID)
+11. Sandboxed libraries (SBE)
+12. Compilers (DoS, B/T)
+13. High remediated vulnerabilities per month packages
+14. Lightweight web browser packages (DoS, DT, ID, SBE, ZC, PE)
+15. Heavy web browser packages (DoS, DT, ID, SBE, ZC, PE)
+16. Low market share image parsers (ZC, CE)
+17. Delayed release for known supply chain compromised or alleged compromised open source projects (CE, ID, DoS, PE, B/T)
 
 Attack vector triage (top is higher priority)
 
