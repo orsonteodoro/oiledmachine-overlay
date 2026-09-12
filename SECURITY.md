@@ -224,7 +224,7 @@ based on a grade school perspective or a gamer perspective.)
 Updated Sep 2026
 
 0. Fixing ebuilds that block (security) updates
-1. Kernel (ZC, SBE, PE)
+1. Kernel (ZC, SBE, PE, DoS)
 2. High remediated vulnerabilities per day packages
 3. Network libs and apps (ZC, ID)
 4. Network daemons (ZC, ID)
