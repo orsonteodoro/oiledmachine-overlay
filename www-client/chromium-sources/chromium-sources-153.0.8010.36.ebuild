@@ -12,7 +12,8 @@ DISTDIR_DIR="/var/cache/distfiles"
 BASE_DIR="${DISTDIR_DIR}/chromium-src"
 CACHE_DIR="${DISTDIR_DIR}/chromium-src/${PV}"
 INSTALL_PREFIX="/usr/share/chromium/${PV}"
-DOWNLOAD_FLAVOR="depot_tools" # tarball-full, tarball-lite, depot_tools
+#DOWNLOAD_FLAVOR="depot_tools" # tarball-full, tarball-lite, depot_tools
+DOWNLOAD_FLAVOR="tarball-lite" # tarball-full, tarball-lite, depot_tools
 PYTHON_COMPAT=( "python3_11" ) # See https://chromium.googlesource.com/chromium/tools/depot_tools/+/refs/heads/main/vpython.toml#1
 
 # For lite versus full tarball see:
@@ -55,7 +56,7 @@ LICENSE="
 "
 RESTRICT="binchecks mirror strip test"
 SLOT="${PV}"
-IUSE+=" ebuild_revision_7"
+IUSE+=" ebuild_revision_8"
 RDEPEND+="
 "
 DEPEND+="
