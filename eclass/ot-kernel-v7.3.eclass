@@ -1084,8 +1084,8 @@ PDEPEND+="
 # Does pre-emerge checks and warnings
 ot-kernel_pkg_setup_cb() {
 ewarn
-ewarn "Upstream backport mitigation:  Grade A"
-ewarn "Release quality:  Production ready"
+ewarn "Upstream security update delay from live:  0"
+ewarn "Release quality:  Development quality (equivalent to RC2, development quality for WIP code, production quality for mature code)"
 ewarn
 	if [[ "${PV}" =~ "9999" ]] ; then
 ewarn

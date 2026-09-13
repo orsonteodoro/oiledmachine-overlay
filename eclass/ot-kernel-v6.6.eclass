@@ -1053,8 +1053,8 @@ fi
 # Does pre-emerge checks and warnings
 ot-kernel_pkg_setup_cb() {
 ewarn
-ewarn "Upstream backport mitigation:  Grade C (good coverage for common use cases)"
-ewarn "Release quality:  Production ready LTS"
+ewarn "Upstream security update delay from live:  ~11 days"
+ewarn "Release quality:  For recovery purposes only.  Use >= 6.18 series for production."
 ewarn
 ewarn "[1] Missing some Transient execution CPU mitigations against information disclosure.  Newer CPUs should try >= 6.10 instead."
 ewarn "[2] RAID234 users may want to try >= 6.10 instead."

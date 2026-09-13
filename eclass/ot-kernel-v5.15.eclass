@@ -901,8 +901,8 @@ fi
 # Does pre-emerge checks and warnings
 ot-kernel_pkg_setup_cb() {
 ewarn
-ewarn "Upstream backport mitigation:  Grade F (incomplete coverage)"
-ewarn "Release quality:  For recovery purposes only.  Use >= 6.6 series for production."
+ewarn "Upstream security update delay from live:  ~11 days"
+ewarn "Release quality:  For recovery purposes only.  Use >= 6.18 series for production."
 ewarn
 	if use cfi && use amd64 ; then
 ewarn
