@@ -140,8 +140,8 @@ package triage fairness, or understaffing.
 
 | Package name             | Typical ebuild ready time period | Security rating   | Recommended? | For?                                                    | Operational uptime in 30 days |
 |--------------------------|----------------------------------|-------------------|--------------|---------------------------------------------------------|-------------------------------|
-| dev-qt/qtwebengine       | Any                              | Casual            | N [4]        | The most secure commit for downstream browsers/apps     | Untested                      |
-| net-libs/cef-bin         | Any                              | Casual            | N [5]        | For OBS                                                 | 100%                          |
+| dev-qt/qtwebengine       | Any                              | Casual [7]        | N [4]        | The most secure commit for downstream browsers/apps     | Untested                      |
+| net-libs/cef-bin         | Any                              | Casual [7]        | N [5]        | For OBS                                                 | 100%                          |
 | www-client/google-chrome | Any                              | Security-critical | Y            | Production use [1]                                      | 100%                          |
 | www-client/firefox-bin   | Any                              | Security-critical | Y            | Production use [1]                                      | 100%                          |
 | www-client/webkit-gtk    | Any                              | Varies [6]        | N            | Production use                                          | Varies                        |
@@ -171,7 +171,10 @@ package triage fairness, or understaffing.
 
 [6] When the release is the same as the upstream release at that time and
     dependencies are up-to-date secure, it is security-critical.  If it is
-    an outdated release, it is rated for casual/entertainment use only.
+    an outdated release, it is rated for casual/entertainment use not for
+    ingesting sketchy content.
+
+[7] For casual/entertainment use only not for ingesting sketchy content.
 
 ### Small packages cases
 
