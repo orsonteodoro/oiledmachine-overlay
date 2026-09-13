@@ -518,7 +518,7 @@ Fix:
  	}
  
  	return ret;
-@@ -1280,8 +1352,24 @@ int rtw_usb_probe(struct usb_interface *
+@@ -1280,8 +1352,26 @@ int rtw_usb_probe(struct usb_interface *
  	rtwdev->hci.ops = &rtw_usb_ops;
  	rtwdev->hci.type = RTW_HCI_TYPE_USB;
  
@@ -538,7 +538,9 @@ Fix:
 +		pr_info("rtw88: disabling lps_deep for %04x:%04x\n",
 +			rtwusb->udev->descriptor.idVendor,
 +			rtwusb->udev->descriptor.idProduct);
-+		rtw_disable_lps_deep_mode(rtwdev, true);
++		disable_lps_deep = true;
++		/* also clear chip cap, as in b2bf9d61 rtw_disable_lps_deep_mode() did */
++		rtwdev->chip->lps_deep_mode_supported = false;
 +	}
  
  	ret = rtw_usb_alloc_rx_bufs(rtwusb);
