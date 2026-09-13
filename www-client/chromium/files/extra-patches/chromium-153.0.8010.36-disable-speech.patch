@@ -1,0 +1,10 @@
+--- a/chrome/test/BUILD.gn.orig	2026-09-07 03:14:27.000000000 -0700
++++ b/chrome/test/BUILD.gn	2026-09-12 09:04:26.655926558 -0700
+@@ -6758,7 +6758,6 @@ test("unit_tests") {
+       "//chrome/browser/webauthn/proto",
+       "//chrome/common/read_anything:mojo_bindings",
+       "//chrome/services/readaloud:unit_tests",
+-      "//chrome/services/speech:unit_tests",
+       "//components/app_constants",
+       "//components/application_locale_storage",
+       "//components/color",

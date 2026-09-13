@@ -214,7 +214,7 @@ EAPI=8
 TC_COUNT_EXPECTED_CLANG=445
 TC_COUNT_EXPECTED_GN=1306
 TC_COUNT_EXPECTED_RUST=7167
-SOURCES_COUNT_EXPECTED=1094297
+SOURCES_COUNT_EXPECTED=579945 # Update with DOWNLOAD_FLAVOR change
 CHROMIUM_EBUILD_MAINTAINER=1 # Also set GEN_ABOUT_CREDITS
 GEN_ABOUT_CREDITS=1
 
@@ -240,6 +240,7 @@ CHROMIUM_TOOLCHAIN_PREFIX="/usr/share/chromium/${PV%.*}.x/toolchain"
 CURRENT_PROFDATA_VERSION= # Global variable
 CURRENT_PROFDATA_LLVM_VERSION= # Global variable
 CXX_STANDARD=23
+DOWNLOAD_FLAVOR="tarball-lite" # tarball-lite, tarball-full, depot_tools; Same as chromium-sources.
 DISABLE_AUTOFORMATTING="yes"
 DISTRIBUTED_BUILD=0 # Global variable
 ENABLE_FULL_OPTIMIZATION=1 # Global variable
@@ -1554,12 +1555,6 @@ REQUIRED_USE+="
 	ffmpeg-chromium? (
 		bindist
 		patent_status_nonfree
-	)
-	llvm_slot_${LLVM_SYSTEM_SLOT}? (
-		system-clang
-	)
-	llvm_slot_${LLVM_VENDORED_SLOT}? (
-		official
 	)
 	miracleptr? (
 		partitionalloc
@@ -3201,7 +3196,9 @@ eerror "${ARCH} is not supported.  Missing Go support for Dawn used for WebGPU."
 		die
 	fi
 	mkdir -p "${S}/third_party/dawn/tools/golang/linux-${golang_arch}/bin" || die
-	ln -s "/usr/bin/go" "${S}/third_party/dawn/tools/golang/linux-${golang_arch}/bin/go" || die
+	if [[ "${DOWNLOAD_FLAVOR}" =~ "tarball" ]] ; then
+		ln -s "/usr/bin/go" "${S}/third_party/dawn/tools/golang/linux-${golang_arch}/bin/go" || die
+	fi
 
 	if use ppc64 && [[ "${KEYWORDS}" =~ "ppc64" ]] ; then
 		unpack "chromium-openpower-${OPENPOWER_PATCHES_COMMIT:0:10}.tar.bz2"
@@ -3461,13 +3458,13 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 
 	PATCHES+=(
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.45-zlib-optionalize-simd.patch"
-		"${FILESDIR}/extra-patches/${PN}-133.0.6943.53-disable-speech.patch"
+		"${FILESDIR}/extra-patches/${PN}-153.0.8010.36-disable-speech.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-use-memory-tagging.patch"
 		"${FILESDIR}/extra-patches/${PN}-148.0.7778.167-highway-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-simd-defaults.patch"
 		"${FILESDIR}/extra-patches/${PN}-150.0.7871.46-build-config-compiler-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.45-libaom-optionalize-simd.patch"
-		"${FILESDIR}/extra-patches/${PN}-150.0.7871.114-libvpx-optionalize-simd.patch"		# Fix missing symbols for disabled SIMD
+		"${FILESDIR}/extra-patches/${PN}-153.0.8010.36-libvpx-optionalize-simd.patch"		# Fix missing symbols for disabled SIMD
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-pdfium-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-148.0.7778.167-skia-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-152.0.7977.82-perfetto-optionalize-simd.patch"
@@ -3495,11 +3492,11 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		)
 	elif in_iuse "cromite" && use cromite ; then
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-152.0.7977.82-mold.patch"
+			"${FILESDIR}/extra-patches/${PN}-153.0.8010.36-mold.patch"
 		)
 	else
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-152.0.7977.82-mold.patch"
+			"${FILESDIR}/extra-patches/${PN}-153.0.8010.36-mold.patch"
 		)
 	fi
 
@@ -3532,7 +3529,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	# Did you run "gclient sync"?
 			"${FILESDIR}/extra-patches/${PN}-117.0.5938.92-skip-rust-check.patch"
 
-			"${FILESDIR}/extra-patches/${PN}-152.0.7977.82-clang-paths.patch"
+			"${FILESDIR}/extra-patches/${PN}-153.0.8010.36-clang-paths.patch"
 		)
 	fi
 
@@ -3552,7 +3549,7 @@ einfo "V8 version:  ${v8_pv_c1}.${v8_pv_c2}.${v8_pv_c3}.${v8_pv_c4}" # For patch
 	# This section contains significant changes.  The above sections contains minor changes.
 
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-146.0.7680.71-disable-perfetto.patch"
+			"${FILESDIR}/extra-patches/${PN}-153.0.8010.36-disable-perfetto.patch"
 			"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-icu-tracing.patch"
 		)
 
@@ -3585,13 +3582,13 @@ einfo "V8 version:  ${v8_pv_c1}.${v8_pv_c2}.${v8_pv_c3}.${v8_pv_c4}" # For patch
 	PATCHES+=(
 #		"${FILESDIR}/extra-patches/${PN}-143.0.7499.192-system-libsecret-includes-path.patch"
 		"${FILESDIR}/extra-patches/${PN}-143.0.7499.192-custom-march.patch"
-		"${FILESDIR}/extra-patches/${PN}-151.0.7922.108-optionalize-sanitize-array-bounds.patch"
+		"${FILESDIR}/extra-patches/${PN}-153.0.8010.36-optionalize-sanitize-array-bounds.patch"
 		"${FILESDIR}/extra-patches/${PN}-152.0.7977.82-xnnpack-scalar-fallback.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-pdfium-system-deps.patch"
 		"${FILESDIR}/extra-patches/${PN}-152.0.7977.82-use-system-opus-alt.patch"
 #		$(use system-libpng && echo "${FILESDIR}/extra-patches/${PN}-144.0.7559.59-libpng-test-only.patch")
 		"${FILESDIR}/extra-patches/${PN}-151.0.7922.108-optionalize-clang-flags.patch"
-		"${FILESDIR}/extra-patches/${PN}-152.0.7977.82-optionalize-omit-frame-pointer.patch"
+		"${FILESDIR}/extra-patches/${PN}-153.0.8010.36-optionalize-omit-frame-pointer.patch"
 		"${FILESDIR}/extra-patches/${PN}-152.0.7977.82-dedupe-use-system-zlib.patch" # It appears twice in cromite build
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-optionalize-clang-warning-suppression-mappings.patch"
 		"${FILESDIR}/extra-patches/${PN}-148.0.7778.167-system-clang-flags.patch"
