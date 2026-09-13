@@ -286,7 +286,7 @@ GN_PV="0.2435"
 ESBUILD_PV="0.25.1"
 ROLLUP_WASM_NODE_PV="4.57.1"
 QT6_PV="${QTBASE6_PV}"
-UNGOOGLED_CHROMIUM_PV="152.0.7922.82-1"
+UNGOOGLED_CHROMIUM_PV="153.0.8010.36-1"
 # Testing this V8 version to avoid breaking security.  The 13.6 series cause the \
 # mksnapshot "Return code is -11" error.  To fix it, it required to either \
 # disable v8 sandbox, or pointer compression and DrumBrake.  Before it was \
@@ -3488,7 +3488,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	if in_iuse "ungoogled-chromium" && use ungoogled-chromium ; then
 	# Same as USE="ungoogled-chromium cromite" or USE=ungoogled-chromium
 		PATCHES+=(
-			"A${FILESDIR}/extra-patches/${PN}-151.0.7922.108-mold-ungoogled-chromium.patch"
+			"${FILESDIR}/extra-patches/${PN}-151.0.7922.108-mold-ungoogled-chromium.patch"
 		)
 	elif in_iuse "cromite" && use cromite ; then
 		PATCHES+=(
