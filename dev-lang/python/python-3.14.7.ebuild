@@ -32,7 +32,7 @@ inherit autotools cflags-hardened check-reqs chkl flag-o-matic linux-info llvm-r
 inherit multiprocessing pax-utils python-utils-r1 secure-version toolchain-funcs
 inherit verify-sig
 
-MY_PV=${PV}
+MY_PV=${PV/_/}
 MY_P="Python-${MY_PV%_p*}"
 PYVER=$(ver_cut 1-2)
 PATCHSET="python-gentoo-patches-${MY_PV}"

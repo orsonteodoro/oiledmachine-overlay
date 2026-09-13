@@ -116,7 +116,7 @@ BDEPEND="
 			llvm-core/llvm:${LLVM_SLOT}
 		')
 	)
-	verify-sig? ( >=sec-keys/openpgp-keys-python-20221025 )
+	verify-sig? ( >=sec-keys/openpgp-keys-python-20260805 )
 "
 if [[ ${PV} != *_alpha* ]]; then
 	RDEPEND+="
