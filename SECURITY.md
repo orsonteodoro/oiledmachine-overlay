@@ -149,9 +149,10 @@ package triage fairness, or understaffing.
 | www-client/chromium      | 18-30 of the month               | Varies [6]        | N            | Educational, informative [2]                            | Less than 15 days [3]         |
 
 [1] The ebuild fork is provided as an alternative up-to-date ebuild at that time
-    against an insider threat possibility or negligent package maintainer.  It
-    is also has changes for additional security verification of dependencies
-    and kernel config which the distro ebuild lacks.
+    against a distro overlay insider threat possibility or negligent distro
+    overlay package maintainer.  It is also has changes for additional security
+    verification of live/tagged dependencies and kernel config check for custom
+    kernel configs which the distro ebuild lacks.
 
 [2] The ebuild on this overlay is to inform to other ebuild developers how to
     configure it appropriately performance-wise, to get it working for TTS,
