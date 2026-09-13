@@ -1085,7 +1085,7 @@ PDEPEND+="
 ot-kernel_pkg_setup_cb() {
 ewarn
 ewarn "Upstream security update delay from live:  0"
-ewarn "Release quality:  Development quality (equivalent to RC2, development quality for WIP code, production quality for mature code)"
+ewarn "Release quality:  Live release candiate (RC3 out of RC7, development quality for WIP code, production quality for mature code)"
 ewarn
 	if [[ "${PV}" =~ "9999" ]] ; then
 ewarn
@@ -1116,6 +1116,20 @@ ewarn "The live sources is intended for people that want to submit commits or"
 ewarn "patches to upstream, to use daily security fixes, for ebuild maintainers"
 ewarn "or modders to smooth out updates before stable, or to volunteer and"
 ewarn "report sanitizer findings for bug reports."
+ewarn
+ewarn "The merge window - the period when reworks or new code are accepted."
+ewarn
+ewarn "Release Candidate (RC) - the period when bug fixes, security patches,"
+ewarn "regression are fixes accepted."
+ewarn
+ewarn
+ewarn "Tip:  Ask the following prompt to learn what is new about this release"
+ewarn "or if your configuration is impacted:"
+ewarn
+ewarn "For the linux ${KV_MAJOR_MINOR}, which linux core/subsystems are being"
+ewarn "reworked or added?  I am evaluating which parts of the kernel are mature"
+ewarn "or development quality."
+ewarn
 ewarn
 	fi
 
