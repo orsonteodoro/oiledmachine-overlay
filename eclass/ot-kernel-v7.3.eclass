@@ -1118,9 +1118,11 @@ ewarn "or modders to smooth out updates before stable, or to volunteer and"
 ewarn "report sanitizer findings for bug reports."
 ewarn
 ewarn "The merge window - the period when reworks or new code are accepted."
+ewarn "The period after RC7 (no extraversion) and before RC1.  Officially"
+ewarn "announced in the Linux Kernel Mailing List (LKML) and lasting 2 weeks."
 ewarn
 ewarn "Release Candidate (RC) - the period when bug fixes, security patches,"
-ewarn "regression are fixes accepted."
+ewarn "or regression fixes are accepted."
 ewarn
 ewarn
 ewarn "Tip:  Ask the following prompt to learn what is new about this release"
