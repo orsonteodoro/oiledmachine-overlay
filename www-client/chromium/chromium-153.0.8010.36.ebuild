@@ -4,20 +4,7 @@
 
 EAPI=8
 
-# FIXME:
-#ERROR at //build/rust/crubit/BUILD.gn:11:5: Unable to load "/var/tmp/portage/www-client/chromium-153.0.8010.36/work/chromium-153.0.8010.36/third_party/rust-toolchain/lib/third_party/crubit/support/BUILD.gn".
-#    "$crubit_src_dir/support:support_cpp",
-#    ^------------------------------------
-
-
-
-#ERROR Unresolved dependencies.
-#//tools/metrics:metrics_metadata(//build/toolchain/linux/unbundle:default)
-#  needs //tools/metrics:histograms_xml(//build/toolchain/linux/unbundle:default)
-
-
-
-# Add `www-client/chromium -llvm_slot_23` to `/etc/portage/profile/package.use.mask` to bypass the distro's FAFO hard mask guardrail.
+# Add `www-client/chromium -llvm_slot_24` to `/etc/portage/profile/package.use.mask` to bypass the distro's FAFO hard mask guardrail.
 
 # This ebuild uses AI interence to fix build issue and uses AI suggested configure time option.
 # This ebuild and metadata.xml contains some AI generated code and synthetic data.
@@ -215,8 +202,8 @@ TC_COUNT_EXPECTED_CLANG=445
 TC_COUNT_EXPECTED_GN=1306
 TC_COUNT_EXPECTED_RUST=7167
 SOURCES_COUNT_EXPECTED=579945 # Update with DOWNLOAD_FLAVOR change
-CHROMIUM_EBUILD_MAINTAINER=1 # Also set GEN_ABOUT_CREDITS
-GEN_ABOUT_CREDITS=1
+CHROMIUM_EBUILD_MAINTAINER=0 # Also set GEN_ABOUT_CREDITS
+GEN_ABOUT_CREDITS=0
 
 DISTRO_PATCHSET=${DISTRO_PATCHSET:-0}
 OILEDMACHINE_OVERLAY_PATCHSET=${OILEDMACHINE_OVERLAY_PATCHSET:-1}
@@ -302,8 +289,8 @@ OPENPOWER_PATCHES_COMMIT="a85b64f07b489b8c6fdb13ecf79c16c56c560fc6" # Same as PP
 TEST_FONT="9c07d19d9c5ee1ff94f717e6fb17e0c8c354e6f9"
 
 # SHA512 about_credits.html fingerprint:
-LICENSE_FINGERPRINT_UNGOOGLED_CHROMIUM="93287c1296de800c34fd2aa19fb8a6233313e15b9779024a51de62d0d17fa5f53235c3180d0e45d40af1ca8f04872f0875f048e2b3c989164bbe95c634621568"
-LICENSE_FINGERPRINT_VANILLA="1a1f8b6631e936ba5ff81eee3fde9b0cb4299b90f56fe7a482c9ff2807fd23d0cb94504a03b0a4fa0b4fe6b5ccbdb3e321ec981d1bd765aed54a6d6e557b923f"
+LICENSE_FINGERPRINT_UNGOOGLED_CHROMIUM="4633d93cbe061ed993cb6f4bc31338344aea1add42945d600c3e44a86bea63b4fd3dc8399d3cb187879c2f8d091086556334148aed5343291578ad83596ea9f5"
+LICENSE_FINGERPRINT_VANILLA="106f9bd7fe947694e08510adb586760c2a026f97e1cc01725380429236146758010bab5869ade4914934aea20ebf474311c403e59bf712999757dbd044c2cf75"
 
 # Mitigate flood the zone vulnerability.
 # If there is a live ebuild, it needs a check.
@@ -3488,7 +3475,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	if in_iuse "ungoogled-chromium" && use ungoogled-chromium ; then
 	# Same as USE="ungoogled-chromium cromite" or USE=ungoogled-chromium
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-151.0.7922.108-mold-ungoogled-chromium.patch"
+			"${FILESDIR}/extra-patches/${PN}-153.0.8010.36-mold-ungoogled-chromium.patch"
 		)
 	elif in_iuse "cromite" && use cromite ; then
 		PATCHES+=(
@@ -3636,6 +3623,10 @@ einfo "Removing SupportedLaneCount"
 		-e "s|generate_location_tags = true|generate_location_tags = false|g" \
 		"${S}/build/config/gclient_args.gni" \
 		|| die
+
+	PATCHES+=(
+		"${FILESDIR}/extra-patches/chromium-153-crubit.patch"
+	)
 }
 
 is_cromite_patch_non_fatal() {
@@ -7683,6 +7674,7 @@ ewarn "Unbundling libs and lowering security"
 
 	# Enables building without non-free unRAR licence
 		"safe_browsing_use_unrar=$(usex rar true false)"
+
 	)
 
 	# Since we build from tarballs, we need to set the channel here so that
