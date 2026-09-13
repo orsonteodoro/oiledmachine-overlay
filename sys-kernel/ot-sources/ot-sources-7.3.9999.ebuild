@@ -9,14 +9,14 @@ EAPI=8
 # See also https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/
 
 GENPATCHES_FALLBACK_COMMIT="d4fa92430e875432c3a61bb3abd9b6e68ea9fcbd" # 2026-06-04 18:26:32 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="2f0c1cf72f4682178506f513bbf015e591b1aa4a" # 2026-09-12 16:22:25 -0700 @ Merge tag 's390-7.3-3'
+LINUX_SOURCES_FALLBACK_COMMIT="22098763a10d9c1340827fcf6edab66f153b27f0" # 2026-09-13 12:27:00 -0700 @ Merge tag 'trace-v7.3-rc2'
 RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
 # https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=7.2
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
-EBUILD_REV="ebuild_revision_40"
+EBUILD_REV="ebuild_revision_41"
 GENPATCHES_VER="9999" # can be live only when 9999
 PATCH_PROJC_VER="7.1-r0"
 PATCH_RT_VER="7.2-rt5"

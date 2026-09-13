@@ -110,7 +110,7 @@ VIDEO_CARDS=(
 )
 IUSE+="
 ${VIDEO_CARDS[@]}
-ebuild_revision_52
+ebuild_revision_53
 "
 # CE - Code Execution
 # DoS - Denial of Service (CVSS A:H)
