@@ -132,26 +132,17 @@ Fix:
  	/* watch dog every 2 sec */
  	struct delayed_work watch_dog_work;
  	u32 watch_dog_cnt;
-@@ -2204,6 +2212,7 @@ int rtw_sta_add(struct rtw_dev *rtwdev,
- void rtw_sta_remove(struct rtw_dev *rtwdev, struct ieee80211_sta *sta,
- 		    bool fw_exist);
- void rtw_fw_recovery(struct rtw_dev *rtwdev);
-+//void rtw_fw_recovery_work(struct work_struct *work);
- void rtw_core_fw_scan_notify(struct rtw_dev *rtwdev, bool start);
- int rtw_dump_fw(struct rtw_dev *rtwdev, const u32 ocp_src, u32 size,
- 		u32 fwcd_item);
 --- a/drivers/net/wireless/realtek/rtw88/main.c.orig	2026-09-07 11:06:35.790166931 -0700
 +++ b/drivers/net/wireless/realtek/rtw88/main.c	2026-09-07 11:11:16.696056274 -0700
-@@ -3,6 +3,8 @@
+@@ -3,6 +3,7 @@
   */
  
  #include <linux/devcoredump.h>
 +#include <linux/usb.h>
-+#include "../../../../drivers/usb/core/usb.h" /* for usb_deauthorize/authorize */
  
  #include "main.h"
  #include "regd.h"
-@@ -19,6 +21,12 @@
+@@ -19,6 +21,13 @@
  #include "bf.h"
  #include "sar.h"
  #include "sdio.h"
@@ -161,6 +152,7 @@ Fix:
 +EXPORT_SYMBOL_GPL(rtw_usb_last_cycle);
 +atomic_t rtw_usb_cycling = ATOMIC_INIT(0);
 +EXPORT_SYMBOL_GPL(rtw_usb_cycling);
++extern int usb_port_power_cycle(struct usb_device *udev);
  
  bool rtw_disable_lps_deep_mode;
  EXPORT_SYMBOL(rtw_disable_lps_deep_mode);
@@ -187,53 +179,42 @@ Fix:
  	mutex_lock(&rtwdev->mutex);
  	if (rtwdev->hw->conf.flags & IEEE80211_CONF_IDLE)
  		rtw_enter_ips(rtwdev);
-@@ -611,6 +625,52 @@ static void rtw_reset_vif_iter(void *dat
+@@ -611,6 +625,41 @@ static void rtw_reset_vif_iter(void *dat
  	rtw_release_macid(rtwdev, rtwvif->mac_id);
  }
  
 +static void rtw_usb_reset_work(struct work_struct *work)
 +{
 +	struct rtw_dev *rtwdev = container_of(work, struct rtw_dev, usb_reset_work);
-+	struct rtw_usb *rtwusb;
++	struct rtw_usb *rtwusb = rtw_get_usb_priv(rtwdev);
 +	struct usb_device *udev;
 +
 +	if (rtwdev->disconnecting)
-+		goto out_clear;
++		goto out;
++
++	if (atomic_xchg(&rtw_usb_cycling, 1)) {
++		goto out;
++	}
 +
 +	/* debounce 5s - this stops modprobe immediate storm loop */
 +	if (time_before(jiffies, rtw_usb_last_cycle + msecs_to_jiffies(5000))) {
-+		pr_warn("rtw88: debounce power cycle, skip\n");
-+		goto out_clear;
-+	}
-+
-+	if (atomic_xchg(&rtw_usb_cycling, 1)) {
-+		pr_warn("rtw88: power cycle already in progress\n");
-+		goto out_clear;
++		goto out2;
 +	}
 +
 +	rtwusb = rtw_get_usb_priv(rtwdev);
 +	if (!rtwusb || !rtwusb->udev)
-+		goto out_clear2;
++		goto out2;
 +
 +	udev = rtwusb->udev;
 +	usb_get_dev(udev);
-+
 +	rtw_usb_last_cycle = jiffies;
-+	pr_warn("rtw88: -110 storm, power cycling port %s\n", dev_name(&udev->dev));
-+
 +	rtwdev->fail = true;
-+	ieee80211_stop_queues(rtwdev->hw);
-+
-+	usb_port_power_cycle(udev);
-+	msleep(2000); /* wait for new high-speed enum before clearing fail */
-+
-+	rtwdev->fail = false;
-+	atomic_set(&rtwdev->fail_count, 0);
-+
++	pr_warn("rtw88: -110 storm, power cycling port %s\n", dev_name(&udev->dev));
++	usb_port_power_cycle(udev); // no msleep(2000) here
 +	usb_put_dev(udev);
-+out_clear2:
++out2:
 +	atomic_set(&rtw_usb_cycling, 0);
-+out_clear:
++out:
 +	return;
 +}
 +
@@ -323,8 +304,8 @@ Fix:
  	init_waitqueue_head(&rtwdev->coex.wait);
  	init_completion(&rtwdev->lps_leave_check);
  	init_completion(&rtwdev->fw_scan_density);
---- a/drivers/net/wireless/realtek/rtw88/usb.c.orig	2026-09-10 19:59:35.284044793 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/usb.c	2026-09-10 20:03:03.640640591 -0700
+--- a/drivers/net/wireless/realtek/rtw88/usb.c.orig	2026-09-14 00:03:43.810612993 -0700
++++ b/drivers/net/wireless/realtek/rtw88/usb.c	2026-09-14 00:05:58.627315861 -0700
 @@ -26,6 +26,20 @@ struct rtw_usb_txcb {
  	struct sk_buff_head tx_ack_queue;
  };
@@ -518,32 +499,34 @@ Fix:
  	}
  
  	return ret;
-@@ -1083,8 +1155,24 @@ int rtw_usb_probe(struct usb_interface *
- 	rtwdev->hci.ops = &rtw_usb_ops;
- 	rtwdev->hci.type = RTW_HCI_TYPE_USB;
+@@ -1085,6 +1157,7 @@ int rtw_usb_probe(struct usb_interface *
  
-+	/* clear storm state from previous failed device on same port */
-+	rtwdev->disconnecting = false;
-+	atomic_set(&rtwdev->fail_count, 0);
-+	rtwdev->fail = false;
-+	msleep(100); /* let PHY settle after power cycle */
-+
  	rtwusb = rtw_get_usb_priv(rtwdev);
  	rtwusb->rtwdev = rtwdev;
 +	rtwusb->udev = interface_to_usbdev(intf);
-+
-+	/* hard disable LPS deep for 0bda:c811 - module param ignored */
-+	if (rtwusb->udev->descriptor.idVendor == __cpu_to_le16(0x0bda) &&
-+	    rtwusb->udev->descriptor.idProduct == __cpu_to_le16(0xc811)) {
-+		pr_info("rtw88: disabling lps_deep for 0bda:c811\n");
-+		rtw_disable_lps_deep_mode = true;
-+		/* also clear chip cap, as in b2bf9d61 rtw_disable_lps_deep_mode() did */
-+		((struct rtw_chip_info *)rtwdev->chip)->lps_deep_mode_supported = false;
-+	}
  
  	ret = rtw_usb_alloc_rx_bufs(rtwusb);
  	if (ret)
-@@ -1170,17 +1258,31 @@ void rtw_usb_disconnect(struct usb_inter
+@@ -1094,6 +1167,18 @@ int rtw_usb_probe(struct usb_interface *
+ 	if (ret)
+ 		goto err_free_rx_bufs;
+ 
++	/* init after core_init - safe, no msleep in probe */
++	rtwdev->disconnecting = false;
++	atomic_set(&rtwdev->fail_count, 0);
++	rtwdev->fail = false;
++
++	/* hard disable LPS deep for 0bda:c811 - module param ignored */
++	if (le16_to_cpu(rtwusb->udev->descriptor.idVendor) == 0x0bda &&
++	    le16_to_cpu(rtwusb->udev->descriptor.idProduct) == 0xc811) {
++		extern bool rtw_disable_lps_deep_mode;
++		rtw_disable_lps_deep_mode = true;
++	}
++
+ 	ret = rtw_usb_intf_init(rtwdev, intf);
+ 	if (ret) {
+ 		rtw_err(rtwdev, "failed to init USB interface\n");
+@@ -1170,17 +1257,31 @@ void rtw_usb_disconnect(struct usb_inter
  	rtwdev = hw->priv;
  	rtwusb = rtw_get_usb_priv(rtwdev);
  
@@ -693,7 +676,7 @@ Fix:
  	FW_OFFLOAD_H2C_SET_SEQ_NUM(h2c_pkt, rtwdev->h2c.seq);
 --- a/drivers/usb/core/hub.c.orig	2026-09-05 10:11:10.716924952 -0700
 +++ b/drivers/usb/core/hub.c	2026-09-05 10:29:03.993885489 -0700
-@@ -6567,3 +6569,36 @@ acpi_handle usb_get_hub_port_acpi_handle
+@@ -6567,3 +6569,31 @@ acpi_handle usb_get_hub_port_acpi_handle
  	return ACPI_HANDLE(&hub->ports[port1 - 1]->dev);
  }
  #endif
@@ -711,8 +694,6 @@ Fix:
 +	if (!hub)
 +		return -ENODEV;
 +
-+	pr_info("rtw88: hub power cycle port %d\n", port1);
-+
 +	/* mirror hub_port_power_cycle() - works even if hub has no per-port power switch */
 +	usb_disable_device(udev, 1);
 +	usb_clear_port_feature(hdev, port1, USB_PORT_FEAT_ENABLE);
@@ -721,12 +702,9 @@ Fix:
 +	usb_hub_set_port_power(hdev, hub, port1, false);
 +	msleep(1200); /* RTL8821CU needs >1s */
 +	usb_hub_set_port_power(hdev, hub, port1, true);
-+
-+	msleep(hub_power_on_good_delay(hub));
-+
 +	/* trigger hub enumeration - this was missing, so physical removal was required */
 +	set_bit(port1, hub->change_bits);
-+	kick_hub_wq(hub);
++	schedule_work(&hub->events);
 +	return 0;
 +}
 +EXPORT_SYMBOL_GPL(usb_port_power_cycle);
