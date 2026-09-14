@@ -4808,7 +4808,7 @@ apply_all_patchsets() {
 	ot-kernel_apply_kcmdline_for_sanitizers
 	ot-kernel_apply_noturbo
 	ot-kernel_apply_fixes
-	#ot-kernel_apply_rtw88_fixes
+	ot-kernel_apply_rtw88_fixes
 
 	if [[ "${PV}" =~ "9999" ]] ; then
 		# Disable + suffix
