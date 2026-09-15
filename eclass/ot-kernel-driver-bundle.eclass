@@ -1046,6 +1046,7 @@ ewarn "Disabling xpad driver"
 	ot-kernel-driver-bundle_add_late_1990s_desktop_pc_drivers
 	ot-kernel-driver-bundle_add_early_2000s_desktop_pc_drivers
 	ot-kernel-driver-bundle_add_late_2000s_desktop_pc_drivers
+	ot-kernel-driver-bundle_add_g62_346nr_drivers
 	ot-kernel-driver-bundle_add_vpceb25fx_drivers
 	ot-kernel-driver-bundle_add_2010s_desktop_pc_drivers
 	ot-kernel-driver-bundle_add_15_da0086nr_drivers
@@ -1358,6 +1359,98 @@ ewarn "The late-2000s-desktop-pc driver bundle has not been recently tested."
 	ot-kernel-driver-bundle_add_usb_gamer_headsets
 	ot-kernel-driver-bundle_add_x86_desktop_gamer_controller_drivers "serial gameport hid usb bt"
 	ot-kernel-driver-bundle_add_tv_tuner "pci pcie usb-1.1 usb-2.0 usb-3.0"
+}
+
+# @FUNCTION: ot-kernel-driver-bundle_add_g62_drivers
+# @DESCRIPTION:
+# Driver bundle for G62-346NR (2010)
+ot-kernel-driver-bundle_add_g62_346nr_drivers() {
+	[[ "${OT_KERNEL_DRIVER_BUNDLE}" =~ "g62-346nr" ]] || return
+
+	# CPU
+	ot-kernel_y_configopt "CONFIG_MK8"
+	ot-kernel_y_configopt "CONFIG_X86_MCE_AMD"
+	ot-kernel_y_configopt "CONFIG_X86_AMD_PLATFORM_DEVICE"
+	ot-kernel_y_configopt "CONFIG_SMP"
+
+	# Power and thermal
+	ot-kernel_y_configopt "CONFIG_SENSORS_K10TEMP"
+	ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+	ot-kernel_y_configopt "CONFIG_X86_POWERNOW_K8"
+	ot-kernel_y_configopt "CONFIG_CPU_FREQ_STAT"
+	ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_ONDEMAND"
+	ot-kernel_y_configopt "CONFIG_ACPI_BATTERY"
+	ot-kernel_y_configopt "CONFIG_ACPI_PROCFS_POWER"
+	ot-kernel_y_configopt "CONFIG_ACPI_FAN"
+	ot-kernel_y_configopt "CONFIG_ACPI_THERMAL"
+	ot-kernel_y_configopt "CONFIG_HP_ACCEL"
+	ot-kernel_y_configopt "CONFIG_HP_WMI" # Hotkeys, RF-kill switch, Wi-Fi LED
+
+	# Graphics
+	ot-kernel_y_configopt "CONFIG_AGP_AMD64"
+	ot-kernel_y_configopt "CONFIG_DRM_RADEON"
+	ot-kernel_y_configopt "CONFIG_DRM_FBDEV_EMULATION"
+
+	# Chipset and bridges
+	ot-kernel_y_configopt "CONFIG_PCI"
+
+	# HDD/SSD
+	ot-kernel_y_configopt "CONFIG_BLK_DEV_SD"
+	ot-kernel_y_configopt "CONFIG_ATA"
+	ot-kernel_y_configopt "CONFIG_SATA_AHCI"
+	ot-kernel_y_configopt "CONFIG_I2C_AMD756"
+	ot-kernel_y_configopt "CONFIG_I2C_PIIX4"
+
+	# Ethernet
+	ot-kernel_y_configopt "CONFIG_R8169"
+	ot-kernel_y_configopt "CONFIG_NETDEVICES"
+	ot-kernel_y_configopt "CONFIG_ETHERNET"
+	ot-kernel_y_configopt "CONFIG_NET_VENDOR_REALTEK"
+
+	# Wi-Fi
+	ot-kernel_y_configopt "CONFIG_ATH9K"
+	ot-kernel_y_configopt "CONFIG_MAC80211"
+	ot-kernel_y_configopt "CONFIG_CFG80211"
+
+	# USB
+	ot-kernel_y_configopt "CONFIG_USB_EHCI_HCD"
+	ot-kernel_y_configopt "CONFIG_USB_EHCI_PCI"
+	ot-kernel_y_configopt "CONFIG_USB_OHCI_HCD"
+	ot-kernel_y_configopt "CONFIG_USB_OHCI_PCI"
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_USB_EDAC"
+	ot-kernel_y_configopt "CONFIG_USB_PCI"
+
+	# USB Card Reader
+	ot-kernel_y_configopt "CONFIG_USB_STORAGE"
+	ot-kernel_y_configopt "CONFIG_REALTEK_AUTOPM"
+	ot-kernel_y_configopt "CONFIG_MISC_RTSX_USB"
+	ot-kernel_y_configopt "CONFIG_MMC_REALTEK_USB"
+
+	# Audio
+	ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL"
+	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_REALTEK"
+	ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI"
+
+	# Timers
+	ot-kernel_y_configopt "CONFIG_HPET_TIMER"
+	ot-kernel_y_configopt "CONFIG_HPET"
+
+	# Touchpad
+	ot-kernel_y_configopt "CONFIG_KEYBOARD_ATKBD"
+	ot-kernel_y_configopt "CONFIG_MOUSE_PS2"
+	ot-kernel_y_configopt "CONFIG_MOUSE_PS2_SYNAPTICS"
+
+	# DVD
+	ot-kernel_y_configopt "CONFIG_ATA"
+	ot-kernel_y_configopt "CONFIG_SATA_AHCI"
+	ot-kernel_y_configopt "CONFIG_BLK_DEV_SR"
+
+	# Webcam
+	ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
+	ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+	ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS"
 }
 
 # @FUNCTION: ot-kernel-driver-bundle_add_vpceb25fx_drivers
