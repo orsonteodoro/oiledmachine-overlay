@@ -63,7 +63,7 @@ arping audit bluetooth clat +concheck connection-sharing debug dhcpcd doc elogin
 gnutls iputils +introspection iptables iwd libedit +modemmanager nbft +nss
 nftables ofono ovs policykit +ppp psl resolvconf selinux syslog systemd teamd
 test +tools vala +wpa_supplicant +wext +wifi
-ebuild_revision_7
+ebuild_revision_8
 "
 RESTRICT="!test? ( test )"
 
@@ -311,7 +311,7 @@ eerror "QA: NM_CAPS:  ${NM_CAPS}"
 
 multilib_src_configure() {
 	chkl_check_many_timestamps
-	#cflags-hardened_append
+	cflags-hardened_append
 	# Workaround for LLD on musl systems (bug #959603)
 	append-ldflags $(test-flags-CCLD -Wl,--undefined-version)
 
