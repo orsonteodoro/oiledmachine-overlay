@@ -235,6 +235,7 @@ Feature QA
 | Hard USE appropriateness                                         | Only use if catastropic or last option, do not abuse it                                                                     |
 | Custom USE flags or custom config options patches allowed?       | Y                                                                                                                           |
 | Forcing defaults is okay or no effort for adding USE flags okay? | The quality is frowned upon but is acceptable sometimes for small packages but increases bloat, increases build time, increases the attack surface, or possibly hard codes paths.  Users should be able to consent to the attack surface risk but not forced unconsensually to have the risk. |
+| The alternative package should be hidden/obfuscated?             | N, there should be transparency not attempt to subvert with weaker security, unmaintained package, as subversive replacement of removing user entitlements of the GPL with the MIT license.  Both clang and gcc are separate USE flags.  Both iwd and wpa_supplicant are separate USE flags.  Both libpulse and apluse are separate USE flags. |
 
 Slotting QA
 
