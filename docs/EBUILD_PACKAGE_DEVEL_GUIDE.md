@@ -192,11 +192,11 @@ Rust defaults
 | Default LTS Rust                       | Rust 1.91.1                                                |
 | Default rolling Rust                   | Rust 1.95.0                                                |
 | What is a rolling or LTS Rust package? | Determined by most recent Rust slot needed for Cargo.lock. |
-|                                        | LTS if <= 1.91.1                                           |
-|                                        | Rolling if > 1.91.1                                        |
-| Acceptable LTS Rust for non C++        | Rust 1.91.1                                                |
-| Acceptable rolling Rust for non C++    | Rust 1.95.0                                                |
-| Acceptable Rust for LLVM 22 for C++    | Rust 1.95.0                                                |
+|                                        | LTS if <= 1.93.1                                           |
+|                                        | Rolling if > 1.93.1                                        |
+| Acceptable LTS Rust for non C++        | Rust 1.93.1                                                |
+| Acceptable rolling Rust for non C++    | Rust 1.98.1                                                |
+| Acceptable Rust for LLVM 22 for C++    | Rust 1.98.1                                                |
 | Acceptable Rust for LLVM 21 for C++    | Rust 1.94.1                                                |
 | Acceptable Rust for LLVM 20 for C++    | Rust 1.90.0                                                |
 | Acceptable Rust for LLVM 19 for C++    | Rust 1.85.1                                                |
