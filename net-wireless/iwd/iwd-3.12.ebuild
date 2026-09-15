@@ -6,6 +6,7 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="security-critical daemon sensitive-data untrusted-data"
 
 CHKL_TIMESTAMPS=(
+	"sys-apps/dbus-9999"
 	"sys-libs/readline-9999"
 )
 
