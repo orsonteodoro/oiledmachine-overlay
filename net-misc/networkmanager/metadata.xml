@@ -40,7 +40,7 @@
     <flag name="dhcpcd">Use <pkg>net-misc/dhcpcd</pkg> for getting an IP</flag>
     <flag name="elogind">Use <pkg>sys-auth/elogind</pkg> for session tracking</flag>
     <flag name="iptables">Use <pkg>net-firewall/iptables</pkg> for connection sharing</flag>
-    <flag name="iwd">Use <pkg>net-wireless/iwd</pkg> instead of <pkg>net-wireless/wpa_supplicant</pkg> for wifi support by default</flag>
+    <flag name="iwd">Use the newer backend for Wi-Fi support provided by <pkg>net-wireless/iwd</pkg></flag>
     <flag name="modemmanager">Enable support for mobile broadband devices using <pkg>net-misc/modemmanager</pkg></flag>
     <flag name="nbft">Enable NBFT support in the initrd generator</flag>
     <flag name="nftables">Use <pkg>net-firewall/nftables</pkg> for connection sharing</flag>
@@ -54,6 +54,7 @@
     <flag name="tools">Build cli tools such as nmcli, nmtui and nm_cloud_setup</flag>
     <flag name="wext">Enable support for the deprecated Wext (Wireless Extensions) API; needed for some older drivers (e.g. ipw2200, ndiswrapper)</flag>
     <flag name="wifi">Enable support for wifi and 802.1x security</flag>
+    <flag name="wpa_supplicant">Use the older backend for Wi-Fi support provided by <pkg>net-wireless/wpa_supplicant</pkg></flag>
   </use>
   <upstream>
     <remote-id type="freedesktop-gitlab">NetworkManager/NetworkManager</remote-id>

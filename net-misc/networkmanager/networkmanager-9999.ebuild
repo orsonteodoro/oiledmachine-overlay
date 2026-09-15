@@ -61,7 +61,7 @@ IUSE+="
 arping audit bluetooth clat +concheck connection-sharing debug dhcpcd doc elogind
 gnutls iputils +introspection iptables iwd libedit +modemmanager nbft +nss
 nftables ofono ovs policykit +ppp psl resolvconf selinux syslog systemd teamd
-test +tools vala +wext +wifi
+test +tools vala +wpa_supplicant +wext +wifi
 ebuild_revision_7
 "
 RESTRICT="!test? ( test )"
@@ -75,6 +75,10 @@ REQUIRED_USE="
 	test? ( tools )
 	vala? ( introspection )
 	wext? ( wifi )
+	wifi? (
+		iwd
+		wpa_supplicant
+	)
 	^^ ( gnutls nss )
 	^^ (
 		arping
@@ -148,15 +152,13 @@ RDEPEND="${COMMON_DEPEND}
 	iputils? (
 		>=net-misc/iputils-${IPUTILS_PV}:=[arping(+)]
 	)
-	wifi? (
-		!iwd? (
-			!net-wireless/iwd
-			>=net-wireless/wpa_supplicant-${WPA_SUPPLICANT_PV}:=[dbus]
-		)
-		iwd? (
-			!net-wireless/wpa_supplicant
-			>=net-wireless/iwd-${IWD_PV}:=
-		)
+	iwd? (
+		!net-wireless/wpa_supplicant
+		>=net-wireless/iwd-${IWD_PV}:=
+	)
+	wpa_supplicant? (
+		!net-wireless/iwd
+		>=net-wireless/wpa_supplicant-${WPA_SUPPLICANT_PV}:=[dbus]
 	)
 "
 DEPEND="${COMMON_DEPEND}
