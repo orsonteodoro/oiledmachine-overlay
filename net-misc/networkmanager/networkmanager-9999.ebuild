@@ -21,6 +21,7 @@ CHKL_TIMESTAMPS=(
 	"net-misc/curl-9999"
 	"net-misc/dhcpcd-9999"
 	"net-misc/iputils-99999999"
+	"net-wireless/iwd-9999"
 	"sys-auth/polkit-9999"
 	"sys-apps/dbus-9999"
 	"sys-apps/systemd-9999"
