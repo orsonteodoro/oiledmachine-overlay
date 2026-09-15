@@ -76,13 +76,19 @@ REQUIRED_USE="
 	vala? ( introspection )
 	wext? ( wifi )
 	wifi? (
-		iwd
-		wpa_supplicant
+		^^ (
+			iwd
+			wpa_supplicant
+		)
 	)
 	^^ ( gnutls nss )
 	^^ (
 		arping
 		iputils
+	)
+	?? (
+		iwd
+		wpa_supplicant
 	)
 	?? ( elogind systemd )
 	?? ( syslog systemd )
