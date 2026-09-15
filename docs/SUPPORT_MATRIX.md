@@ -115,15 +115,15 @@ causing errors or vulnerabilities which could lead to the worst case RCE).
 
 For C/C++ the Rust slot rules for version pinning are as follows:
 
-| LLVM slot    | Rust slot |
-| ---          | ---       |
-| 23 (Rolling) | 9999 with timestamp verification associated with latest [version](https://github.com/rust-lang/rust/blob/main/src/version) |
-| 22 (Rolling) | 1.98.1    |
-| 21 (Rolling) | 1.94.1    |
-| 20 (Rolling) | 1.90.0    |
-| 19 (LTS)     | 1.86.0    |
-| 18 (LTS)     | 1.81.0    |
-| 17 (LTS)     | 1.77.2    |
+| LLVM slot          | Rust slot |
+| ---                | ---       |
+| 23 (Rolling)       | 9999 with timestamp verification associated with latest [version](https://github.com/rust-lang/rust/blob/main/src/version) |
+| 22 (Rolling)       | 1.98.1    |
+| 21 (LTS)           | 1.94.1    |
+| 20 (Not supported) | 1.90.0    |
+| 19 (LTS)           | 1.86.0    |
+| 18 (LTS)           | 1.81.0    |
+| 17 (LTS)           | 1.77.2    |
 
 The version ranges are matching to avoid multiple LLVM versions loaded issues.
 
