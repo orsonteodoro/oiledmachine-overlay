@@ -419,7 +419,7 @@ ${WIFI_IMPL[@]/+}
 alsa cpu_flags_arm_neon cups +dbus debug eme-free firejail +hardened
 -hwaccel jack +jemalloc +jit jpegxl libcanberra libnotify libproxy
 libsecret mold +pgo +pulseaudio
-rust-simd selinux sndio speech +system-av1
+selinux sndio speech +system-av1
 +system-harfbuzz +system-icu +system-jpeg +system-libevent
 +system-libvpx system-pipewire system-png +system-webp systemd -telemetry +vaapi
 +wayland +webrtc wifi webspeech

@@ -515,7 +515,7 @@ ${PULSEAUDIO_IMPL[@]/+}
 ${WIFI_IMPL[@]/+}
 alsa cups +dbus debug eme-free firejail +hardened -hwaccel jack +jemalloc
 +jit libcanberra libnotify libproxy libsecret mold +pgo
-+pulseaudio rust-simd selinux sndio speech +system-av1
++pulseaudio selinux sndio speech +system-av1
 +system-harfbuzz +system-icu +system-jpeg +system-libevent +system-libvpx
 system-pipewire
 system-png +system-webp systemd -telemetry test +vaapi +wayland +webrtc wifi
@@ -562,9 +562,6 @@ REQUIRED_USE="
 		|| (
 			${PULSEAUDIO_IMPL[@]}
 		)
-	)
-	rust-simd? (
-		!llvm_slot_19
 	)
 	vaapi? (
 		wayland
