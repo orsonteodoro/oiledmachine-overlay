@@ -141,17 +141,17 @@ The version ranges are matching to avoid multiple LLVM versions loaded issues.
 
 Language defaults
 
-| LTS or rolling compiler? | C++ standard [6][7]   | C standard [6][7] | GCC         | Clang         | Overlay USE flags [5]            | Distro correspondance   | Hardware acceleration support [8][9]                                 |
-| ---                      | ---                   | ---               | ---         | ---           | ---                              | ---                     | ---                                                                  |
-| LTS                      | gnu++17 / gnu++14     | gnu17 / gnu17     | 11          | 14            | gcc_slot_11_5                    | U22                     | CPU, CUDA 12.6, CUDA 12.8, CUDA 12.9, Vulkan [3]                     |
-| LTS                      | gnu++17 / gnu++14     | gnu17 / gnu17     | 12          | 14            | gcc_slot_12_5                    | D12                     | CPU, CUDA 12.6, CUDA 12.8, CUDA 12.9, Vulkan [3]                     |
-| LTS                      | gnu++17 / gnu++17     | gnu17 / gnu17     | 13          | 18            | gcc_slot_13_4, llvm_slot_18      | U24                     | CPU, CUDA 12.6, CUDA 12.8, CUDA 12.9, Vulkan                         |
-| LTS                      | gnu++17 / gnu++17     | gnu17 / gnu17     | 14          | 19            | gcc_slot_14_3, llvm_slot_19      | D13                     | CPU, CUDA 12.8, CUDA 12.9, Vulkan                                    |
-| LTS                      | gnu++17 / gnu++17     | gnu23 / gnu17     | 15          | 21            | gcc_slot_15_3, llvm_slot_21      | U26                     | CPU, CUDA 13.3, CUDA 13.4, Vulkan                                    |
-| Rolling                  | gnu++17 / gnu++17     | gnu23 / gnu17     | 15          | 22            | gcc_slot_15_3, llvm_slot_22      | G23 [2]                 | CPU, Vulkan                                                          |
-| LTS [10]                 | gnu++17 / gnu++17     | gnu17 / gnu17     | 12          | 22 [4]        | gcc_slot_11_5, llvm_slot_22      | U22                     | CPU, ROCm 7.2, Vulkan                                                |
-| LTS [10][12]             | gnu++17 / gnu++17     | gnu17 / gnu17     | 13          | 22 [4]        | gcc_slot_13_4, llvm_slot_22      | U24                     | CPU, ROCm 7.2, Vulkan                                                |
-| LTS [11]                 | gnu++17 / gnu++17     | gnu17 / gnu17     | 13          | 19            | gcc_slot_13_4, llvm_slot_19      | [1]                     | CPU, CUDA 12.8, CUDA 12.9, Vulkan                                    |
+| LTS or rolling compiler? | C++ standard [6][7]   | C standard [6][7] | GCC         | Clang         | Overlay USE flags [5]            | Distro correspondance   | Hardware acceleration support [8][9]                                  |
+| ---                      | ---                   | ---               | ---         | ---           | ---                              | ---                     | ---                                                                   |
+| LTS                      | gnu++17 / gnu++14     | gnu17 / gnu17     | 11          | 14            | gcc_slot_11_5                    | U22                     | SIMD, CUDA 12.6, CUDA 12.8, CUDA 12.9, Vulkan [3]                     |
+| LTS                      | gnu++17 / gnu++14     | gnu17 / gnu17     | 12          | 14            | gcc_slot_12_5                    | D12                     | SIMD, CUDA 12.6, CUDA 12.8, CUDA 12.9, Vulkan [3]                     |
+| LTS                      | gnu++17 / gnu++17     | gnu17 / gnu17     | 13          | 18            | gcc_slot_13_4, llvm_slot_18      | U24                     | SIMD, CUDA 12.6, CUDA 12.8, CUDA 12.9, Vulkan                         |
+| LTS                      | gnu++17 / gnu++17     | gnu17 / gnu17     | 14          | 19            | gcc_slot_14_3, llvm_slot_19      | D13                     | SIMD, CUDA 12.8, CUDA 12.9, Vulkan                                    |
+| LTS                      | gnu++17 / gnu++17     | gnu23 / gnu17     | 15          | 21            | gcc_slot_15_3, llvm_slot_21      | U26                     | SIMD, CUDA 13.3, CUDA 13.4, Vulkan                                    |
+| Rolling                  | gnu++17 / gnu++17     | gnu23 / gnu17     | 15          | 22            | gcc_slot_15_3, llvm_slot_22      | G23 [2]                 | SIMD, Vulkan                                                          |
+| LTS [10]                 | gnu++17 / gnu++17     | gnu17 / gnu17     | 12          | 22 [4]        | gcc_slot_11_5, llvm_slot_22      | U22                     | SIMD, ROCm 7.2, Vulkan                                                |
+| LTS [10][12]             | gnu++17 / gnu++17     | gnu17 / gnu17     | 13          | 22 [4]        | gcc_slot_13_4, llvm_slot_22      | U24                     | SIMD, ROCm 7.2, Vulkan                                                |
+| LTS [11]                 | gnu++17 / gnu++17     | gnu17 / gnu17     | 13          | 19            | gcc_slot_13_4, llvm_slot_19      | [1]                     | SIMD, CUDA 12.8, CUDA 12.9, Vulkan                                    |
 
 * [1] This is the old oiledmachine-overlay's defaults for testing.
       Compatible with U24.
@@ -168,7 +168,7 @@ Language defaults
       prevent ODR violations or mismatched signatures.
 * [8] Full ROCm support is based on the GCC slot because of prebuilt binaries.
 * [9] Examples of typical use or capabilities:
-  - CPU:  audio/image processing, 3D transforms
+  - SIMD:  audio/image processing, 3D transforms
   - CUDA:  Machine learning (ML), LLM inference, raytracing in 3D editors or CGI movies, computer vision, academic research
   - ROCm:  Machine learning (ML), LLM interence, cryptocurrency mining
   - Vulkan:  Gaming graphics (e.g. raytracing, post-processing, procedural rendering), AI upscaling, video remastering, LLM inference
