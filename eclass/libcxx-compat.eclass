@@ -334,7 +334,7 @@ LIBCXX_COMPAT_ROLLING=(
 
 # LLVM_COMPAT template for Rust with LTS compilers
 #
-# Rust < 1.87 is LTS
+# Rust <= 1.93.1 is LTS
 #
 # Status:  Production ready
 #
@@ -353,7 +353,7 @@ LIBCXX_COMPAT_RUST_LTS=(
 
 # LLVM_COMPAT template for Rust with Rolling compilers
 #
-# Rust >= 1.87 is rolling
+# Rust > 1.93.1 is rolling
 #
 # Status:  Production ready
 #
@@ -364,8 +364,19 @@ LIBCXX_COMPAT_RUST_LTS=(
 # )
 #
 LIBCXX_COMPAT_RUST_ROLLING=(
-	"llvm_slot_21"
 	"llvm_slot_22"
+)
+
+# LLVM_COMPAT template for Rust with Rolling compilers
+#
+# Example:
+#
+# LLVM_COMPAT=(
+#     ${LIBCXX_COMPAT_RUST_ROLLING[@]/llvm_slot_}
+# )
+#
+LIBCXX_COMPAT_RUST_LIVE=(
+	"llvm_slot_23"
 )
 
 # LLVM_COMPAT template for Rust with both LTS and Rolling compilers

@@ -6,8 +6,8 @@ EAPI=8
 
 # This ebuild contains AI generated code and AI synthetic data.
 
-# D11, D12, D13, F36, F37, F38, F39, F40, F41, F42, U22, U23, U24
-# See /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/taskcluster/kinds/bootstrap/kind.yml
+# D11, D12, D13, F36, F37, F38, F39, F40, F41, F42, U22, U24
+# See /var/tmp/portage/www-client/firefox-140.15.0e/work/firefox-140.15.0/taskcluster/kinds/bootstrap/kind.yml
 
 # 115.12.0 -> 128.1.0
 # 128.1.0 -> 128.2.0
@@ -57,28 +57,28 @@ EAPI=8
 #
 # For dependency versioning, see also
 # https://firefox-source-docs.mozilla.org/setup/linux_build.html
-# https://www.mozilla.org/en-US/firefox/140.11.0/system-requirements/
-# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/moz.configure
-# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41  [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
-# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/security/nss/lib/nss/nss.h
-# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/gfx/graphite2/include/graphite2/Font.h L31
-# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/gfx/harfbuzz/moz.yaml
-# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/intl/icu/source/common/unicode/uvernum.h L63
-# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/ipc/chromium/src/third_party/libevent/configure.ac L8
-# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/media/libjpeg/jconfig.h L7
-# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/media/libpng/png.h L281
-# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/media/libvpx/config/vpx_version.h L8
-# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/media/libwebp/moz.yaml L16, two versions listed, newest chosen
-# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/modules/freetype2/include/freetype/freetype.h L5175
-# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/nsprpub/pr/include/prinit.h L35
-# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/third_party/aom/CHANGELOG
-# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/third_party/dav1d/meson.build L26
-# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/third_party/pipewire/pipewire/version.h L49
-# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/taskcluster/kinds/toolchain/node.yml
-# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/taskcluster/kinds/toolchain/rust.yml
-# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/taskcluster/kinds/fetch/toolchains.yml
+# https://www.mozilla.org/en-US/firefox/140.15.0/system-requirements/
+# /var/tmp/portage/www-client/firefox-140.15.0e/work/firefox-140.15.0/moz.configure
+# /var/tmp/portage/www-client/firefox-140.15.0e/work/firefox-140.15.0/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41  [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
+# /var/tmp/portage/www-client/firefox-140.15.0e/work/firefox-140.15.0/security/nss/lib/nss/nss.h
+# /var/tmp/portage/www-client/firefox-140.15.0e/work/firefox-140.15.0/gfx/graphite2/include/graphite2/Font.h L31
+# /var/tmp/portage/www-client/firefox-140.15.0e/work/firefox-140.15.0/gfx/harfbuzz/moz.yaml
+# /var/tmp/portage/www-client/firefox-140.15.0e/work/firefox-140.15.0/intl/icu/source/common/unicode/uvernum.h L63
+# /var/tmp/portage/www-client/firefox-140.15.0e/work/firefox-140.15.0/ipc/chromium/src/third_party/libevent/configure.ac L8
+# /var/tmp/portage/www-client/firefox-140.15.0e/work/firefox-140.15.0/media/libjpeg/jconfig.h L7
+# /var/tmp/portage/www-client/firefox-140.15.0e/work/firefox-140.15.0/media/libpng/png.h L281
+# /var/tmp/portage/www-client/firefox-140.15.0e/work/firefox-140.15.0/media/libvpx/config/vpx_version.h L8
+# /var/tmp/portage/www-client/firefox-140.15.0e/work/firefox-140.15.0/media/libwebp/moz.yaml L16, two versions listed, newest chosen
+# /var/tmp/portage/www-client/firefox-140.15.0e/work/firefox-140.15.0/modules/freetype2/include/freetype/freetype.h L5175
+# /var/tmp/portage/www-client/firefox-140.15.0e/work/firefox-140.15.0/nsprpub/pr/include/prinit.h L35
+# /var/tmp/portage/www-client/firefox-140.15.0e/work/firefox-140.15.0/third_party/aom/CHANGELOG
+# /var/tmp/portage/www-client/firefox-140.15.0e/work/firefox-140.15.0/third_party/dav1d/meson.build L26
+# /var/tmp/portage/www-client/firefox-140.15.0e/work/firefox-140.15.0/third_party/pipewire/pipewire/version.h L49
+# /var/tmp/portage/www-client/firefox-140.15.0e/work/firefox-140.15.0/taskcluster/kinds/toolchain/node.yml
+# /var/tmp/portage/www-client/firefox-140.15.0e/work/firefox-140.15.0/taskcluster/kinds/toolchain/rust.yml
+# /var/tmp/portage/www-client/firefox-140.15.0e/work/firefox-140.15.0/taskcluster/kinds/fetch/toolchains.yml
 #   Keyword searches:  cbindgen-, llvm-, nasm, pkgconf-, zlib
-# /var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0/taskcluster
+# /var/tmp/portage/www-client/firefox-140.15.0e/work/firefox-140.15.0/taskcluster
 #   Keyword search:  gtk
 
 # Due to versioning conflicts and ebuild assumptions, you cannot have stable and esr be the same version
@@ -97,7 +97,7 @@ unset __
 
 # To check every minor version or update MOZ_LANGS use the code below:
 __='
-PV="140.11.0"
+PV="140.15.0"
 wget -q -O - "http://ftp.mozilla.org/pub/firefox/releases/${PV}esr/linux-x86_64/xpi/" \
 	| grep "href.*linux-x86_64"  \
 	| cut -f 3 -d ">" \
@@ -114,7 +114,7 @@ unset __
 
 __='
 # For dependency versions, scan also with:
-SRC="/var/tmp/portage/www-client/firefox-140.11.0e/work/firefox-140.11.0"
+SRC="/var/tmp/portage/www-client/firefox-140.15.0e/work/firefox-140.15.0"
 grep -E \
 	-e "[0-9]+\.[0-9]+(\.[0-9]+)?" \
 	-e "dependency" \
@@ -174,7 +174,7 @@ CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan msan tsan"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="copy-paste-password jit language-runtime network scripting security-critical sensitive-data untrusted-data web-browser"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IBC ID IO JITM MC NPD OOBA OOBR OOBW PE SA SB SBE SO SOPB UAF UM TC"
-CXX_STANDARD=17
+CXX_STANDARD=17 # See check_compiler in build/moz.configure/toolchain.configure and https://firefox-source-docs.mozilla.org/code-quality/coding-style/using_cxx_in_firefox_code.html#c-language-features
 RUSTFLAGS_HARDENED_USE_CASES="network sensitive-data untrusted-data web-browser"
 RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IBC ID IO JITM MC NPD OOBA OOBR OOBW PE SA SB SBE SO SOPB UAF UM TC"
 DBUS_PV="0.60"
@@ -196,7 +196,7 @@ NASM_PV="2.14.02"
 NODE_SLOT=22
 PYTHON_COMPAT=( "python3_"{10..13} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
-RUST_MAX_VER="1.94.1"
+RUST_MAX_VER="1.97.1"
 RUST_MIN_VER="1.86.0"
 RUST_NEEDS_LLVM=1 # Prune rustc for unused LLVM slots
 RUST_PV="${RUST_MIN_VER}"
@@ -256,23 +256,24 @@ CHKL_TIMESTAMPS=(
 
 # Information about the bundled wasi toolchain from
 # https://github.com/WebAssembly/wasi-sdk/
-# For LLVM slot correspondence, see https://github.com/WebAssembly/wasi-sdk/tree/wasi-sdk-32/src
+# For LLVM slot correspondence, see https://github.com/WebAssembly/wasi-sdk/tree/wasi-sdk-22/src
 declare -A WASI_SLOTS=(
 	["19"]="25.0"
 	["21"]="30.0"
+	["22"]="33.0"
 )
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}" # 11-15
+	# Upstream tests with 8, 9, 11, 14
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-#	"${LIBCXX_COMPAT_RUST_LTS[@]/llvm_slot_}" # 18, 19
-	19 21 # Based on LLVM LTS slots for LTS distros
-	# LLVM for compiler:  19 20 23
-	# LLVM for Rust:  19 22
+	#"${LIBCXX_COMPAT_RUST_LTS[@]/llvm_slot_}" # 18, 19, 21, 22
+	19 21 22
+	# Upstream tests with 8, 14, 19, 20, trunk
 )
 
 inherit ffmpeg
@@ -448,6 +449,9 @@ SRC_URI="
 			llvm_slot_21? (
 				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SLOTS[21]%.*}/wasi-sdk-${WASI_SLOTS[21]}-x86_64-linux.tar.gz
 			)
+			llvm_slot_22? (
+				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SLOTS[22]%.*}/wasi-sdk-${WASI_SLOTS[22]}-x86_64-linux.tar.gz
+			)
 		)
 		arm64? (
 			llvm_slot_19? (
@@ -455,6 +459,9 @@ SRC_URI="
 			)
 			llvm_slot_21? (
 				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SLOTS[21]%.*}/wasi-sdk-${WASI_SLOTS[21]}-arm64-linux.tar.gz
+			)
+			llvm_slot_22? (
+				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SLOTS[22]%.*}/wasi-sdk-${WASI_SLOTS[22]}-arm64-linux.tar.gz
 			)
 		)
 	)
@@ -633,6 +640,12 @@ RUST_CDEPEND="
 		|| (
 			dev-lang/rust:1.94.1[${MULTILIB_USEDEP}]
 			dev-lang/rust-bin:1.94.1[${MULTILIB_USEDEP}]
+		)
+	)
+	llvm_slot_22? (
+		|| (
+			dev-lang/rust:1.97.1[${MULTILIB_USEDEP}]
+			dev-lang/rust-bin:1.97.1[${MULTILIB_USEDEP}]
 		)
 	)
 "
