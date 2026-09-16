@@ -172,8 +172,8 @@ Language defaults
   - CUDA:  Machine learning, AI/LLM inference, raytracing in 3D editors or CGI movies, computer vision, academic research
   - ROCm:  Machine learning, AI/LLM inference, cryptocurrency mining
   - Vulkan:  Gaming graphics (e.g. raytracing, post-processing, procedural rendering), AI upscaling, video remastering
-* [10] Based on ROCm prebuilt packages and HIP-Clang 7.2.4 for U22, U24. (Recommended on overlay for ROCm support/testing)
-* [11] Based on ROCm prebuilt packages and HIP-Clang 6.4.4 for U22, U24. (Deprecated on overlay for ROCm support/testing)
+* [10] Based on ROCm prebuilt packages and HIP-Clang 7.2.4 for U22, U24. (Recommended by overlay for ROCm support/testing)
+* [11] Based on ROCm prebuilt packages and HIP-Clang 6.4.4 for U22, U24. (Deprecated by overlay for ROCm support/testing)
 * [12] This will be the next overlay default.
 
 * This overlay prefers users use one of the LTS combos to avoid issues.
