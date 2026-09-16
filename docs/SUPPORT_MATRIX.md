@@ -168,8 +168,8 @@ Language defaults
       prevent ODR violations or mismatched signatures.
 * [8] Full ROCm support is based on the GCC slot because of prebuilt binaries.
 * [9] Examples of typical use or capabilities:
-  - SIMD:  audio/image processing, 3D transforms
-  - CUDA:  Machine learning (ML), LLM inference, raytracing in 3D editors or CGI movies, computer vision, academic research
+  - SIMD:  Audio/image processing, 3D transforms
+  - CUDA:  Machine learning (ML), LLM inference, raytracing in 3D editors or CGI movies, computer vision (CV), academic research
   - ROCm:  Machine learning (ML), LLM interence, cryptocurrency mining
   - Vulkan:  Gaming graphics (e.g. raytracing, particle systems, post-processing, procedural rendering), AI upscaling, video remastering, LLM inference
 * [10] Based on ROCm prebuilt packages and HIP-Clang 7.2.4 for U22, U24. (Recommended by overlay for ROCm support/testing)
