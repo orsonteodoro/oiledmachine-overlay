@@ -150,10 +150,10 @@ Language defaults
 | LTS                      | gnu++17 / gnu++17     | gnu23 / gnu17     | 15          | 21            | gcc_slot_15_3, llvm_slot_21      | U26                     | CPU, CUDA 13.3, CUDA 13.4, Vulkan                                    |
 | Rolling                  | gnu++17 / gnu++17     | gnu23 / gnu17     | 15          | 22            | gcc_slot_15_3, llvm_slot_22      | G23 [2]                 | CPU, Vulkan                                                          |
 | LTS [10]                 | gnu++17 / gnu++17     | gnu17 / gnu17     | 12          | 22 [4]        | gcc_slot_11_5, llvm_slot_22      | U22                     | CPU, ROCm 7.2, Vulkan                                                |
-| LTS [10]                 | gnu++17 / gnu++17     | gnu17 / gnu17     | 13          | 22 [4]        | gcc_slot_13_4, llvm_slot_22      | U24                     | CPU, ROCm 7.2, Vulkan                                                |
-| LTS                      | gnu++17 / gnu++17     | gnu17 / gnu17     | 13          | 19            | gcc_slot_13_4, llvm_slot_19      | [1]                     | CPU, CUDA 12.8, CUDA 12.9, Vulkan                                    |
+| LTS [10][12]             | gnu++17 / gnu++17     | gnu17 / gnu17     | 13          | 22 [4]        | gcc_slot_13_4, llvm_slot_22      | U24                     | CPU, ROCm 7.2, Vulkan                                                |
+| LTS [11]                 | gnu++17 / gnu++17     | gnu17 / gnu17     | 13          | 19            | gcc_slot_13_4, llvm_slot_19      | [1]                     | CPU, CUDA 12.8, CUDA 12.9, Vulkan                                    |
 
-* [1] This is the oiledmachine-overlay's defaults for testing.
+* [1] This is the old oiledmachine-overlay's defaults for testing.
       Compatible with U24.
 * [2] The latest stable KEYWORDS for the G23 distro.
       Compatible with U26, F44, F45.
@@ -172,7 +172,9 @@ Language defaults
   - CUDA:  Machine learning, AI/LLM inference, raytracing in 3D editors or CGI movies, computer vision, academic research
   - ROCm:  Machine learning, AI/LLM inference, cryptocurrency mining
   - Vulkan:  Gaming graphics (e.g. raytracing, post-processing, procedural rendering), AI upscaling, video remastering
-* [10] Based on ROCm prebuilt packages and HIP-Clang for U22, U24
+* [10] Based on ROCm prebuilt packages and HIP-Clang 7.2.4 for U22, U24. (Recommended on overlay for ROCm support/testing)
+* [11] Based on ROCm prebuilt packages and HIP-Clang 6.4.4 for U22, U24. (Deprecated on overlay for ROCm support/testing)
+* [12] This will be the next overlay default.
 
 * This overlay prefers users use one of the LTS combos to avoid issues.
 * The default C++ standard can be found at:
