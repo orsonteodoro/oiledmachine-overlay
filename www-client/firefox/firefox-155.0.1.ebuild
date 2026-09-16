@@ -272,7 +272,6 @@ GCC_COMPAT=(
 	# Upstream tests with 8, 9, 10, 11, 14
 )
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
-LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
@@ -280,6 +279,7 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_RUST_LIVE[@]/llvm_slot_}" # 23
 	# Upstream tests with 14, 19, 20, 21, trunk
 )
+LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
 inherit ffmpeg
 FFMPEG_COMPAT_SLOTS=(
