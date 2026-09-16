@@ -3,6 +3,7 @@
 
 EAPI=8
 
+# For versioning, the ebuild does accept the 153.0 like in the ftp folder.
 # See also https://ftp.mozilla.org/pub/firefox/releases/
 
 MOZ_ESR=yes
@@ -33,21 +34,73 @@ MOZ_P="${MOZ_PN}-${MOZ_PV}"
 MOZ_PV_DISTFILES="${MOZ_PV}${MOZ_PV_SUFFIX}"
 MOZ_P_DISTFILES="${MOZ_PN}-${MOZ_PV_DISTFILES}"
 
-MITIGATION_DATE="Sep 1, 2026" # Official annoucement (advisories)
-MITIGATION_LAST_UPDATE=1788205920 # From `date +%s -d "31-Aug-2026 12:52"` From ftp linux-x86_64/en-US/
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-76/"
+MITIGATION_DATE="Sep 15, 2026" # Official annoucement (advisories)
+MITIGATION_LAST_UPDATE=1789416600 # From `date +%s -d "14-Sep-2026 13:10"` From ftp linux-x86_64/en-US/
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-93/"
 VULNERABILITIES_FIXED=(
-	"CVE-2026-75874;SBE;"
-	"CVE-2026-16365;PE;"
-	"CVE-2026-84119;UAF, SBE;"
-	"CVE-2026-84120;UAF;"
-	"CVE-2026-84121;UAF, SBE;"
-	"CVE-2026-84122;UAF;"
-	"CVE-2026-84124;UAF;"
-	"CVE-2026-16371;PE;"
-	"CVE-2026-84131;PE;"
-	"CVE-2026-84143;MC;"
-	"CVE-2026-84145;MC;"
+	"CVE-2026-92005;UAF;"
+	"CVE-2026-92006;IBC, PE;"
+	"CVE-2026-92007;IBC, PE;"
+	"CVE-2026-92008;IBC, PE;"
+	"CVE-2026-92009;IBC, PE;"
+	"CVE-2026-92010;IBC, PE;"
+	"CVE-2026-92011;IBC, PE;"
+	"CVE-2026-92012;IBC, PE;"
+	"CVE-2026-92013;IBC, PE;"
+	"CVE-2026-92015;PE;"
+	"CVE-2026-92035;IBC, SBE;"
+	"CVE-2026-92016;UAF;"
+	"CVE-2026-92017;PE;"
+	"CVE-2026-92018;SBE;"
+	"CVE-2026-92019;SB;"
+	"CVE-2026-92020;IBC, PE;"
+	"CVE-2026-92022;UAF;"
+	"CVE-2026-92023;UAF;"
+	"CVE-2026-92024;UAF;"
+	"CVE-2026-92025;UAF;"
+	"CVE-2026-92026;UAF;"
+	"CVE-2026-92027;UAF;"
+	"CVE-2026-92028;UAF;"
+	"CVE-2026-92029;UAF;"
+	"CVE-2026-92038;SB;"
+	"CVE-2026-92039;SB;"
+	"CVE-2026-92041;SB;"
+	"CVE-2026-92042;RC;"
+	"CVE-2026-92043;IBC, PE;"
+	"CVE-2026-92044;ID;"
+	"CVE-2026-92045;IBC, SBE;"
+	"CVE-2026-92030;SB;"
+	"CVE-2026-92046;UAF;"
+	"CVE-2026-92047;CRSH, DoS, PE;"
+	"CVE-2026-92048;IBC, SBE;"
+	"CVE-2026-92049;UAF;"
+	"CVE-2026-92052;PE;"
+	"CVE-2026-92053;PE;"
+	"CVE-2026-92054;PE;"
+	"CVE-2026-92055;PE;"
+	"CVE-2026-92056;UAF;"
+	"CVE-2026-92057;SB;"
+	"CVE-2026-92031;ID;"
+	"CVE-2026-92032;SBE;"
+	"CVE-2026-92058;UAF;"
+	"CVE-2026-92059;IBC;"
+	"CVE-2026-92060;UAF;"
+	"CVE-2026-92062;PE;"
+	"CVE-2026-92064;IBC, SBE;"
+	"CVE-2026-92065;IBC, SBE;"
+	"CVE-2026-92067;UAF;"
+	"CVE-2026-92068;IOV;"
+	"CVE-2026-92069;;"
+	"CVE-2026-92070;ID;"
+	"CVE-2026-92071;IBC, SBE;"
+	"CVE-2026-92072;IBC;"
+	"CVE-2026-92073;PE;"
+	"CVE-2026-92074;SB;"
+	"CVE-2026-92075;SB;"
+	"CVE-2026-92076;IBC;"
+	"CVE-2026-92077;DoS;"
+	"CVE-2026-92078;DoS;"
+	"CVE-2026-92079;SB;"
 )
 
 CHKL_TIMESTAMPS=(
@@ -70,12 +123,11 @@ inherit chkl desktop linux-info optfeature pax-utils secure-version vf web-kerne
 MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/releases/${MOZ_PV}"
 
 SRC_URI="amd64? ( ${MOZ_SRC_BASE_URI}/linux-x86_64/en-US/${MOZ_P}.tar.xz -> ${PN}_x86_64-${PV}.tar.xz )
-	arm64? ( ${MOZ_SRC_BASE_URI}/linux-aarch64/en-US/${MOZ_P}.tar.xz -> ${PN}_aarch64-${PV}.tar.xz )
-	x86? ( ${MOZ_SRC_BASE_URI}/linux-i686/en-US/${MOZ_P}.tar.xz -> ${PN}_i686-${PV}.tar.xz )"
+	arm64? ( ${MOZ_SRC_BASE_URI}/linux-aarch64/en-US/${MOZ_P}.tar.xz -> ${PN}_aarch64-${PV}.tar.xz )"
 
 DESCRIPTION="Firefox Web Browser"
 
-KEYWORDS="-* amd64 arm64 ~x86"
+KEYWORDS="-* amd64 ~arm64"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 IUSE="
 apulse +gmp-autoupdate +libpulse selinux wayland
@@ -264,9 +316,8 @@ src_install() {
 		"${ED}${MOZILLA_FIVE_HOME}"/${MOZ_PN}-bin \
 		"${ED}${MOZILLA_FIVE_HOME}"/plugin-container
 
-	# Install policy (currently only used to disable application updates)
-	insinto "${MOZILLA_FIVE_HOME}/distribution"
-	newins "${FILESDIR}"/disable-auto-update.policy.json policies.json
+	# Prevent auto-updater from popping up.
+	echo "This installation is managed by Gentoo's package manager." > "${ED}${MOZILLA_FIVE_HOME}"/is-packaged-app
 
 	# Install system-wide preferences
 	local PREFS_DIR="${MOZILLA_FIVE_HOME}/browser/defaults/preferences"
@@ -415,3 +466,5 @@ pkg_postinst() {
 	# optfeature "ffmpeg-based audio/video codec support, required for HTML5 video rendering" media-video/ffmpeg
 	optfeature "desktop notifications" x11-libs/libnotify
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 152.0.6 (interactive, 20260714)
