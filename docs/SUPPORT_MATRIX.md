@@ -196,10 +196,20 @@ Language defaults
   avoid linker issues and backtracking to miscategorized LTS/rolling packages.
 * A package without explicit C or C++ standard will fallback to the compiler
   default mentioned in the C++ standard or C standard columns above.
-* This overlay allows the user to choose gcc_slot_11_5, gcc_slot_12_5,
-  gcc_slot_13_4, gcc_slot_14_3, llvm_slot_18, llvm_slot_19, for LTS compilers.
-* This overlay allows the user to choose gcc_slot_15_2, gcc_slot_16_1,
-  llvm_slot_20, llvm_slot_21, llvm_slot_22 for rolling compilers.
+* The following may be used for LTS compilers:
+  - gcc_slot_11_5 (U23)
+  - gcc_slot_12_5 (D12)
+  - gcc_slot_13_4 (U24)
+  - gcc_slot_14_3 (D13)
+  - gcc_slot_15_3 (U26)
+  - llvm_slot_18 (U24)
+  - llvm_slot_19 (D13)
+  - llvm_slot_21 (U26)
+* The following may be used for rolling compilers:
+  - gcc_slot_16_1 (F44, F45)
+  - llvm_slot_22 (F44, F45)
+* The following may be used for live compilers:
+  - llvm_slot_24
 * The USE flags provide verification and build consistency.
 * The CC/CXX changes resolve an ambiguous choice between selecting a GCC build
   or a Clang build when both sets are used.
