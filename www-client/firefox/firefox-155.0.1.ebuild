@@ -278,6 +278,7 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_RUST_ROLLING[@]/llvm_slot_}" # 22
 	"${LIBCXX_COMPAT_RUST_LIVE[@]/llvm_slot_}" # 23
 	# Upstream tests with 14, 19, 20, 21, trunk
+	# We don't use 24 because it would misalign with the wasm sandbox (aka. wasi).
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
