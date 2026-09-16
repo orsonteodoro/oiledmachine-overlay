@@ -196,7 +196,7 @@ Language defaults
   avoid linker issues and backtracking to miscategorized LTS/rolling packages.
 * A package without explicit C or C++ standard will fallback to the compiler
   default mentioned in the C++ standard or C standard columns above.
-* The following may be used for LTS compilers:
+* The following stable compilers USE flags may be used in c++17 packages or earlier packages:
   - gcc_slot_11_5 (U23)
   - gcc_slot_12_5 (D12)
   - gcc_slot_13_4 (U24)
@@ -205,10 +205,10 @@ Language defaults
   - llvm_slot_18 (U24)
   - llvm_slot_19 (D13)
   - llvm_slot_21 (U26)
-* The following may be used for rolling compilers:
+* The following rolling compilers USE flags may be used c++20 or newer packages:
   - gcc_slot_16_1 (F44, F45)
   - llvm_slot_22 (F44, F45)
-* The following may be used for live compilers:
+* The following live compilers USE flags may be used in web browsers targeting c++20 in Firefox rapid or c++23 in Chromium:
   - llvm_slot_24
 * The USE flags provide verification and build consistency.
 * The CC/CXX changes resolve an ambiguous choice between selecting a GCC build
