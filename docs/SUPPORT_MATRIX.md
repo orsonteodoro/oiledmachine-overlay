@@ -147,10 +147,11 @@ Language defaults
 | LTS                      | gnu++17 / gnu++14     | gnu17 / gnu17     | 12          | 14            | gcc_slot_12_5                    | D12                     | CPU, CUDA 12.6, CUDA 12.8, CUDA 12.9, Vulkan [3]                     |
 | LTS                      | gnu++17 / gnu++17     | gnu17 / gnu17     | 13          | 18            | gcc_slot_13_4, llvm_slot_18      | U24                     | CPU, CUDA 12.6, CUDA 12.8, CUDA 12.9, Vulkan                         |
 | LTS                      | gnu++17 / gnu++17     | gnu17 / gnu17     | 14          | 19            | gcc_slot_14_3, llvm_slot_19      | D13                     | CPU, CUDA 12.8, CUDA 12.9, Vulkan                                    |
-| LTS                      | gnu++17 / gnu++17     | gnu17 / gnu17     | 13          | 19            | gcc_slot_13_4, llvm_slot_19      | [1]                     | CPU, CUDA 12.8, CUDA 12.9, Vulkan                                    |
+| LTS                      | gnu++17 / gnu++17     | gnu23 / gnu17     | 15          | 21            | gcc_slot_15_3, llvm_slot_21      | U26                     | CPU, CUDA 13.3, CUDA 13.4, Vulkan                                    |
 | Rolling                  | gnu++17 / gnu++17     | gnu23 / gnu17     | 15          | 22            | gcc_slot_15_3, llvm_slot_22      | G23 [2]                 | CPU, Vulkan                                                          |
 | LTS [10]                 | gnu++17 / gnu++17     | gnu17 / gnu17     | 12          | 22 [4]        | gcc_slot_11_5, llvm_slot_22      | U22                     | CPU, ROCm 7.2, Vulkan                                                |
 | LTS [10]                 | gnu++17 / gnu++17     | gnu17 / gnu17     | 13          | 22 [4]        | gcc_slot_13_4, llvm_slot_22      | U24                     | CPU, ROCm 7.2, Vulkan                                                |
+| LTS                      | gnu++17 / gnu++17     | gnu17 / gnu17     | 13          | 19            | gcc_slot_13_4, llvm_slot_19      | [1]                     | CPU, CUDA 12.8, CUDA 12.9, Vulkan                                    |
 
 * [1] This is the oiledmachine-overlay's defaults for testing.
       Compatible with U24.
@@ -171,7 +172,7 @@ Language defaults
   - CUDA:  Machine learning, AI/LLM inference, raytracing in 3D editors or CGI movies, computer vision, academic research
   - ROCm:  Machine learning, AI/LLM inference, cryptocurrency mining
   - Vulkan:  Gaming graphics (e.g. raytracing, post-processing, procedural rendering), AI upscaling, video remastering
-* [10] Based on U22, U24 prebuilt packages
+* [10] Based on ROCm prebuilt packages and HIP-Clang for U22, U24
 
 * This overlay prefers users use one of the LTS combos to avoid issues.
 * The default C++ standard can be found at:
