@@ -1987,6 +1987,7 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
       base:late-2000s-desktop-pc
       base:2010s-desktop-pc
       base:2020s-desktop-pc
+      base:g62-346nr
       base:vpceb25fx
       base:15-da0086nr
  
