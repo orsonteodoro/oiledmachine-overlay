@@ -99,7 +99,7 @@ pinning are as follows:
 - The latest LTS slot by LTS distro releases used in CI is supported for LTS packages.
 - The latest rolling slot by a rolling distro release is supported for rolling
   packages.
-- The live slot for Chromium.
+- The live slot for Chromium, Firefox rapid.
 - The bootstrap slots that are unassociated with any LTS distros are deprecated
   so packages need to use either the latest LTS slot or rolling slot.
 - The highest slot required by the lockfile should determine if the package is a
