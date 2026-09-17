@@ -13,6 +13,7 @@ EAPI=8
 
 # | Topic                        | Distro overlay          | oiledmachine-overlay             |
 # |------------------------------|-------------------------|----------------------------------|
+# | Release date                 | Aug 2024                | Sep 2026                         |
 # | CEF version                  | CEF 127 (6533)          | CEF 154 (8037)                   |
 # | Chromium version             | 127.0.6533.120          | 154.0.8037.17                    |
 # | Support                      | EOL                     | Upstream support                 |
@@ -20,7 +21,7 @@ EAPI=8
 # | Maximum unpatched CVSS score | 9.8-10.0                | 0.0                              |
 # | Active 0-day exposure        | High                    | Low                              |
 # | Sandbox and memory safety    | Lacking                 | Memory tagging, isolation fixes  |
-# | Estimated posture            | F (critical risk        | A / A- (optimal production       |
+# | Estimated posture            | F (critical risk /      | A / A- (optimal production       |
 # |                              |    negligible security) |         security)                |
 # | Estimated security score     | Near 0/100              | Near 90-95/100                   |
 
