@@ -20,6 +20,7 @@ LLVM_COMPAT=(
 )
 
 CHKL_TIMESTAMPS=(
+	"media-libs/libheif-9999"
 	"media-libs/libjpeg-turbo-9999"
 	"media-libs/mesa-9999"
 )
@@ -27,7 +28,7 @@ CHKL_TIMESTAMPS=(
 inherit cflags-hardened chkl cmake-multilib libcxx-slot libstdcxx-slot secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="ad4a92eea0d2f39f18b5ecae3165fdd56c6a478b"
+	FALLBACK_COMMIT="6929c2b087e74120e6de52f361e77b06f07b1441"
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/google/libultrahdr.git"
@@ -58,17 +59,20 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SOVER="1"
+SOVER="2"
 SLOT="0/${SOVER}"
 # examples is enabled on upstream but disabled by default in this ebuild.
 IUSE+="
--benchmark -examples -gles +intrinsics -smpte2094-50 -test
-ebuild_revision_1
+-benchmark -examples -gles +heif +intrinsics -smpte2094-50 -test
+ebuild_revision_2
 "
 RDEPEND+="
 	>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:=
 	gles? (
 		>=media-libs/mesa-${MESA_PV}:=
+	)
+	heif? (
+		>=media-libs/libheif-${LIBHEIF_PV}:=
 	)
 "
 DEPEND+="
@@ -108,10 +112,12 @@ src_configure() {
 	cflags-hardened_append
 	local mycmakeargs=(
 		-DUHDR_BUILD_BENCHMARK=$(usex benchmark)
+		-DUHDR_BUILD_DEPS=OFF
 		-DUHDR_BUILD_EXAMPLES=$(usex examples)
 		-DUHDR_BUILD_JAVA=OFF
 		-DUHDR_BUILD_TESTS=$(usex test)
 		-DUHDR_ENABLE_GLES=$(usex gles)
+		-DUHDR_ENABLE_HEIF=$(usex heif)
 		-DUHDR_ENABLE_INTRINSICS=$(usex intrinsics)
 		-DUHDR_ENABLE_LOGS=OFF
 		-DUHDR_ENABLE_SMPTE2094_50=$(usex smpte2094-50)
