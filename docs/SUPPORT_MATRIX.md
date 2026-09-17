@@ -210,6 +210,7 @@ Language defaults
   - llvm_slot_22 (F44, F45)
 * The following live compilers USE flags may be used in web browsers targeting c++20 in Firefox rapid or c++23 in Chromium:
   - llvm_slot_24
+* Use only 1 GCC slot per LTS, rolling, live to avoid symbol issues.
 * The USE flags provide verification and build consistency.
 * The CC/CXX changes resolve an ambiguous choice between selecting a GCC build
   or a Clang build when both sets are used.
