@@ -167,7 +167,7 @@ RESTRICT="mirror" # Speed up and prevent snooping
 SLOT="0"
 IUSE+="
 +chromium clipboard
-ebuild_revision_22
+ebuild_revision_23
 "
 REQUIRED_USE+="
 	|| (
