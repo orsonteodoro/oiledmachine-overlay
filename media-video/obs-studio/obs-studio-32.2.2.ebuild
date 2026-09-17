@@ -20,8 +20,8 @@ EAPI=8
 #
 # To find differences between release use:
 #
-# S1="/var/tmp/portage/media-video/obs-studio-31.0.0/work/obs-studio-30.1.2" \
-# S2="/var/tmp/portage/media-video/obs-studio-32.0.2/work/obs-studio-30.2.3" ; \
+# S1="/var/tmp/portage/media-video/obs-studio-32.1.2/work/obs-studio-32.1.2" \
+# S2="/var/tmp/portage/media-video/obs-studio-32.2.2/work/obs-studio-32.2.2" ; \
 # for x in $(find ${S2} -name "CMakeLists.txt" -o -name "*.cmake" | cut -f 9- -d "/" | sort) ; do \
 #   diff -urp "${S1}/${x}" "${S2}/${x}" ; \
 # done
@@ -29,7 +29,7 @@ EAPI=8
 
 # 95 is EOL.  The current Cr version is 122.
 # See also
-# https://github.com/obsproject/obs-studio/blob/30.1.0/build-aux/modules/99-cef.json
+# https://github.com/obsproject/obs-studio/blob/30.2.2/build-aux/modules/99-cef.json
 # https://bitbucket.org/chromiumembedded/cef/wiki/BranchesAndBuilding
 # https://bitbucket.org/chromiumembedded/cef/src/5060/CHROMIUM_BUILD_COMPATIBILITY.txt?at=5060
 CMAKE_REMOVE_MODULES_LIST=( "FindFreetype" )
@@ -41,15 +41,15 @@ PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit secure-version
 
-# For CEF version, See https://github.com/obsproject/obs-browser/blob/a776dd6a1a0ded4a8a723f2f572f3f8a9707f5a8/CMakeLists.txt#L12
+# For CEF version, See https://github.com/obsproject/obs-browser/blob/3f0a2cdf378939ebe3c6f9ab36d4ea100c25aac2/CMakeLists.txt#L12
 QT6_PV="${QTBASE6_PV}"
 QT6_SLOT=$(ver_cut "1" "${QT6_PV}")
 SWIG_PV="4.2.0"
 
 LIBDSHOWCAPTURE_COMMIT="8878638324393815512f802640b0d5ce940161f1"
 CAPTURE_DEVICE_SUPPORT="fe9630974d47f51bf54826e72fb8b654e620aa93"
-OBS_BROWSER_COMMIT="ea04212e4bbadd077f9e6038758c4e4779c24fa3"
-OBS_WEBSOCKET_COMMIT="1fcb95b15aa88b1b7e9bda3f9c8650e314377169"
+OBS_BROWSER_COMMIT="3f0a2cdf378939ebe3c6f9ab36d4ea100c25aac2"
+OBS_WEBSOCKET_COMMIT="1ef34bf48110c2a18184e50e41cd0b1a855e2147"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -459,6 +459,7 @@ RDEPEND_CURL="
 "
 
 RDEPEND_PLUGINS_OBS_OUTPUTS="
+	${RDEPEND_JANSSON}
 	${RDEPEND_LIBOBS}
 	${RDEPEND_ZLIB}
 	>=net-libs/mbedtls-${MBEDTLS_3_PV}:3=
