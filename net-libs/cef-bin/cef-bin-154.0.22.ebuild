@@ -118,7 +118,7 @@ RESTRICT="mirror"
 SLOT="0/${PV%%.*}"
 IUSE+="
 cefclient cefsimple debug minimal test wayland X
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE+="
 	cefclient? (
