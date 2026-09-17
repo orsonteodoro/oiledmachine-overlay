@@ -1069,6 +1069,9 @@ einfo "CXX:  ${CXX}"
 		append-cppflags "-I${ESYSROOT}/usr/include/qt6/QtCore"
 	fi
 
+	# For obs-outputs
+	append-cppflags "-I/usr/include/mbedtls3/"
+
 	ffmpeg_src_configure
 
 	local libdir=$(get_libdir)
