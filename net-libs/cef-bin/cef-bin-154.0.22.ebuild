@@ -6,7 +6,8 @@ EAPI=8
 
 # D12, U22, U24
 
-# Contains AI generated synthetic data.
+# This ebuild contains AI suggested fixes.
+# This ebuild contains AI generated synthetic data.
 
 inherit secure-version
 #cef_binary_154.0.22+g<CEF_BIN_PV_REV>+chromium-<CEF_BIN_PV_CHROMIUM>_linux64_beta.tar.bz2

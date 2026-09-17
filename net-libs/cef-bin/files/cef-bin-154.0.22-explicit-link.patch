@@ -1,3 +1,4 @@
+# This patch contains AI suggested changes.
 --- a/libcef_dll/CMakeLists.txt.orig	2026-09-17 07:29:15.051749245 -0700
 +++ b/libcef_dll/CMakeLists.txt	2026-09-17 07:42:14.035930246 -0700
 @@ -843,3 +843,6 @@ target_compile_definitions(${CEF_TARGET}
