@@ -175,6 +175,8 @@ SLOT="0"
 IUSE+="
 ${LIBCXX_COMPAT_STDCXX17[@]}
 ${LIBCXX_COMPAT_STDCXX20[@]}
+${LIBSTDCXX_COMPAT_STDCXX17[@]}
+${LIBSTDCXX_COMPAT_STDCXX20[@]}
 ${PATENT_STATUS_IUSE[@]}
 aac +alsa aja amf +browser +browser-panels coreaudio -decklink -fdk firejail
 +flac +freetype +hevc +ipv6 jack libaom +lua mac-syphon +mpegts nvafx
@@ -243,13 +245,18 @@ REQUIRED_USE+="
 
 	!browser? (
 		^^ (
+			${LIBSTDCXX_COMPAT_STDCXX17[@]}
+		)
+		^^ (
 			${LIBCXX_COMPAT_STDCXX17[@]}
 		)
 	)
 	browser? (
 		^^ (
-			llvm_slot_21
-			llvm_slot_22
+			${LIBSTDCXX_COMPAT_STDCXX20[@]}
+		)
+		^^ (
+			${LIBCXX_COMPAT_STDCXX20[@]}
 		)
 	)
 
@@ -332,7 +339,7 @@ RDEPEND_PLUGINS_AJA="
 		${RDEPEND_LIBX11}
 		media-libs/ntv2:=
 		qt6? (
-			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui,widgets,X]
+			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},gui,widgets,X]
 		)
 	)
 "
@@ -356,7 +363,7 @@ RDEPEND_PLUGINS_DECKLINK_CAPTIONS="
 	decklink? (
 		${RDEPEND_LIBX11}
 		qt6? (
-			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},widgets,X]
+			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},widgets,X]
 		)
 	)
 "
@@ -366,7 +373,7 @@ RDEPEND_PLUGINS_DECKLINK_OUTPUT_UI="
 	decklink? (
 		${RDEPEND_LIBX11}
 		qt6? (
-			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui,widgets,X]
+			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},gui,widgets,X]
 		)
 	)
 "
@@ -383,7 +390,7 @@ RDEPEND_PLUGINS_DECKLINK="
 RDEPEND_PLUGINS_FRONTEND_TOOLS="
 	${RDEPEND_LIBX11}
 	qt6? (
-		>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui,widgets,X]
+		>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},gui,widgets,X]
 	)
 "
 
@@ -432,7 +439,7 @@ PATENT_STATUS_FFMPEG_DEPEND="
 		vaapi? (
 			$(gen_ffmpeg_depend 'patent_status_nonfree,vaapi')
 			>=media-libs/libva-${LIBVA_PV}:=[X,wayland?]
-			virtual/vaapi:*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},patent_status_nonfree]
+			virtual/vaapi:*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},patent_status_nonfree]
 		)
 		x264? (
 			$(gen_ffmpeg_depend 'patent_status_nonfree,x264')
@@ -460,9 +467,9 @@ RDEPEND_PLUGINS_OBS_OUTPUTS="
 RDEPEND_PLUGINS_OBS_BROWSER="
 	browser? (
 		qt6? (
-			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},widgets,X]
+			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},widgets,X]
 		)
-		>=net-libs/cef-bin-${CEF_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=net-libs/cef-bin-${CEF_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 		!=net-libs/cef-bin-9999
 		!net-libs/cef
 	)
@@ -496,7 +503,7 @@ RDEPEND_PLUGINS_VST="
 	vst? (
 		${RDEPEND_LIBOBS}
 		qt6? (
-			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},widgets,X]
+			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},widgets,X]
 		)
 	)
 "
@@ -507,8 +514,8 @@ RDEPEND_PLUGINS_WEBSOCKET="
 		>=dev-cpp/websocketpp-0.8.2:=
 		>=dev-libs/qr-code-generator-1.8.0:=
 		qt6? (
-			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},network,widgets]
-			>=dev-qt/qtsvg-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},network,widgets]
+			>=dev-qt/qtsvg-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 		)
 	)
 "
@@ -593,9 +600,9 @@ DEPEND_PLUGINS="
 # They were mentioned in the original ebuild.
 RDEPEND_UNSOURCED="
 	qt6? (
-		>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},sql]
-		>=dev-qt/qtdeclarative-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		>=dev-qt/qtmultimedia-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},sql]
+		>=dev-qt/qtdeclarative-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+		>=dev-qt/qtmultimedia-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	)
 "
 
@@ -636,11 +643,11 @@ RDEPEND_UI="
 	${RDEPEND_LIBOBS}
 	${RDEPEND_WHATSNEW}
 	qt6? (
-		>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},dbus,gui,network,wayland?,widgets,X,xml]
-		>=dev-qt/qtsvg-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},dbus,gui,network,wayland?,widgets,X,xml]
+		>=dev-qt/qtsvg-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 		wayland? (
-			>=dev-qt/qtdeclarative-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opengl]
-			>=dev-qt/qtwayland-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+			>=dev-qt/qtdeclarative-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},opengl]
+			>=dev-qt/qtwayland-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 		)
 	)
 "
@@ -656,7 +663,7 @@ RDEPEND_DEPS_LIBFF="
 
 # Found in multiple CMakeLists.txt
 RDEPEND_MESA="
-	>=media-libs/mesa-${MESA_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=media-libs/mesa-${MESA_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 "
 
 # See deps/glad/CMakeLists.txt
@@ -664,7 +671,7 @@ RDEPEND_GLAD="
 	${RDEPEND_MESA}
 	${RDEPEND_LIBX11}
 	>=media-libs/libglvnd-1.7.0:=
-	>=media-libs/mesa-${MESA_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},egl(+)]
+	>=media-libs/mesa-${MESA_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},egl(+)]
 "
 
 # See libobs-opengl/CMakeLists.txt
@@ -734,16 +741,16 @@ BDEPEND+="
 	>=dev-build/cmake-3.28.3
 	>=dev-util/pkgconf-1.8.0[pkg-config(+)]
 	lua? (
-		>=dev-lang/swig-${SWIG_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-lang/swig-${SWIG_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	)
 	python? (
 		${PYTHON_DEPS}
-		>=dev-lang/swig-${SWIG_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-lang/swig-${SWIG_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	)
 	test? (
 		>=dev-util/cmocka-1.1.7
 		websocket? (
-			>=dev-libs/boost-1.83.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+			>=dev-libs/boost-1.83.0:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 		)
 	)
 "
