@@ -85,8 +85,6 @@ CHKL_TIMESTAMPS=(
 	"media-sound/sndio-9999"
 	"media-video/pipewire-9999"
 	"net-misc/curl-9999"
-	"net-libs/cef-9999"
-	"net-libs/cef-bin-9999"
 	"net-libs/librist-9999"
 	"net-libs/srt-9999"
 	"x11-libs/libX11-9999"
@@ -446,10 +444,9 @@ RDEPEND_PLUGINS_OBS_BROWSER="
 		qt6? (
 			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},widgets,X]
 		)
-		|| (
-			>=net-libs/cef-bin-${CEF_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-			>=net-libs/cef-${CEF_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		)
+		>=net-libs/cef-bin-${CEF_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		!=net-libs/cef-bin-9999
+		!net-libs/cef
 	)
 "
 
@@ -1037,29 +1034,6 @@ src_configure() {
 	export CPP=$(tc-getCPP)
 einfo "CC:  ${CC}"
 einfo "CXX:  ${CXX}"
-
-
-	if use browser ; then
-		if has_version "=net-libs/cef-bin-9999" ; then
-			local merged_timestamp=$(cat "${ESYSROOT}/var/db/pkg/net-libs/cef-bin-9999/BUILD_TIME")
-			local current_timestamp=$(date "+%s")
-			local insecure_timestamp=$(( ${current_timestamp} - $(( 60 * 60 * 24 * 15 )) )) # -15 days or ~2 weeks
-			if (( ${merged_timestamp} < ${insecure_timestamp} )) ; then
-eerror
-eerror "SECURITY:  The current prebuilt CEF has passed its security expiration"
-eerror "date."
-eerror
-eerror "Please re-emerge the =net-libs/cef-bin-9999 ebuild or"
-eerror "disable the browser USE flag to continue."
-eerror
-eerror "Current date:  "$(date --date="@${current_timestamp}")
-eerror "CEF last update:  "$(date --date="@${merged_timestamp}")
-eerror "Security expiration date:  "$(date --date="@${insecure_timestamp}")
-eerror
-				die
-			fi
-		fi
-	fi
 
 	# For obs-browser
 	# obs-browser-source.cpp:25:10: fatal error: QApplication: No such file or directory

@@ -8,28 +8,25 @@ EAPI=8
 
 # Contains AI generated synthetic data.
 
-CEF_STABLE_VER="147.0.7727.118" # For *DEPENDs
-# CEF_STABLE_VER_A="147"
-# CEF_STABLE_VER_B="0"
-# CEF_STABLE_VER_C="7727"
-# CEF_STABLE_VER_D="118"
+inherit secure-version
+#cef_binary_154.0.22+g<CEF_BIN_PV_REV>+chromium-<CEF_BIN_PV_CHROMIUM>_linux64_beta.tar.bz2
 
-CEF_BETA_VER="148.0.7778.40" # Upstream suggested tested
-# CEF_BETA_VER_A="148"
-# CEF_BETA_VER_B="0"
-# CEF_BETA_VER_C="7778"
-# CEF_BETA_VER_D="40"
+#CEF_BIN_PV_CHROMIUM="154.0.8037.17"
+#CEF_BIN_PV_CHROMIUM_A="154"
+#CEF_BIN_PV_CHROMIUM_B="0"
+#CEF_BIN_PV_CHROMIUM_C="8037"
+#CEF_BIN_PV_CHROMIUM_D="17"
 
 # Third party licenses:
 #
 # CEF uses the BSD license
 # CEF uses the Chromium source code and internal third party libraries/codecs which may be under additional licenses and copyright notices.
 # Additional copyright notices can be obtained from
-# CEF (tarball):        https://bitbucket.org/chromiumembedded/cef/get/<CEF_STABLE_VER_C>.tar.bz2
-# Chromium (tarball):   https://gsdview.appspot.com/chromium-browser-official/chromium-<CEF_STABLE_VER>.tar.xz
-# CEF (repo):           https://bitbucket.org/chromiumembedded/cef/src/<CEF_STABLE_VER_C>
-#                       https://github.com/chromiumembedded/cef/tree/<CEF_STABLE_VER_C>
-# Chromium (repo):      https://github.com/chromium/chromium/tree/<CEF_STABLE_VER>
+# CEF (tarball):        https://bitbucket.org/chromiumembedded/cef/get/<CEF_BIN_PV_CHROMIUM_C>.tar.bz2
+# Chromium (tarball):   https://gsdview.appspot.com/chromium-browser-official/chromium-<CEF_BIN_PV_CHROMIUM>.tar.xz
+# CEF (repo):           https://bitbucket.org/chromiumembedded/cef/src/<CEF_BIN_PV_CHROMIUM_C>
+#                       https://github.com/chromiumembedded/cef/tree/<CEF_BIN_PV_CHROMIUM_C>
+# Chromium (repo):      https://github.com/chromium/chromium/tree/<CEF_BIN_PV_CHROMIUM>
 #
 # The repos may not contain all the third party modules.
 # Refer to the tarballs for more copyright notices and licenses for the third party packages.
@@ -79,17 +76,38 @@ inherit chkl chromium-2 cmake flag-o-matic libcxx-slot libstdcxx-slot linux-info
 REQUIRED_USE=""
 KEYWORDS="~arm ~arm64 ~amd64"
 S="${WORKDIR}" # Dummy
+SRC_URI="
+	amd64? (
+		!minimal? (
+https://cef-builds.spotifycdn.com/cef_binary_154.0.22%2Bg${CEF_BIN_PV_REV}%2Bchromium-${CEF_BIN_PV_CHROMIUM}_linux64_beta.tar.bz2
+		)
+		minimal? (
+https://cef-builds.spotifycdn.com/cef_binary_154.0.22%2Bg${CEF_BIN_PV_REV}%2Bchromium-${CEF_BIN_PV_CHROMIUM}_linux64_beta_minimal.tar.bz2
+		)
+	)
+	arm64? (
+		!minimal? (
+https://cef-builds.spotifycdn.com/cef_binary_154.0.22%2Bg${CEF_BIN_PV_REV}%2Bchromium-${CEF_BIN_PV_CHROMIUM}_linuxarm64_beta.tar.bz2
+		)
+		minimal? (
+https://cef-builds.spotifycdn.com/cef_binary_154.0.22%2Bg${CEF_BIN_PV_REV}%2Bchromium-${CEF_BIN_PV_CHROMIUM}_linuxarm64_beta_minimal.tar.bz2
+		)
+	)
+	arm? (
+		!minimal? (
+https://cef-builds.spotifycdn.com/cef_binary_154.0.22%2Bg${CEF_BIN_PV_REV}%2Bchromium-${CEF_BIN_PV_CHROMIUM}_linuxarm_beta.tar.bz2
+		)
+		minimal? (
+https://cef-builds.spotifycdn.com/cef_binary_154.0.22%2Bg${CEF_BIN_PV_REV}%2Bchromium-${CEF_BIN_PV_CHROMIUM}_linuxarm_beta_minimal.tar.bz2
+		)
+	)
+"
 
 DESCRIPTION="Chromium Embedded Framework (CEF) is a simple framework for \
 embedding Chromium-based browsers in other applications."
 LICENSE="
 	BSD
-	!beta? (
-		chromium-${CEF_STABLE_VER%.*}.x.html
-	)
-	beta? (
-		chromium-${CEF_BETA_VER%.*}.x.html
-	)
+	chromium-${CEF_BIN_PV_CHROMIUM%.*}.x.html
 "
 HOMEPAGE="
 https://bitbucket.org/chromiumembedded/cef/src/master/
@@ -97,9 +115,9 @@ https://github.com/chromiumembedded/cef
 https://cef-builds.spotifycdn.com/index.html
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0/${PV%%.*}"
 IUSE+="
-beta cefclient cefsimple debug minimal test wayland X
+cefclient cefsimple debug minimal test wayland X
 ebuild_revision_9
 "
 REQUIRED_USE+="
@@ -121,7 +139,7 @@ REQUIRED_USE+="
 "
 
 # For *DEPENDs see:
-# https://github.com/chromium/chromium/tree/147.0.7727.118/build/linux/sysroot_scripts/generated_package_lists				; 20231117
+# https://github.com/chromium/chromium/tree/154.0.8037.17/build/linux/sysroot_scripts/generated_package_lists				; 20231117
 #   alsa-lib, at-spi2-core, bluez (bluetooth), cairo, cups, curl, expat,
 #   flac [older], fontconfig [older], freetype [older], gcc, gdk-pixbuf, glib,
 #   glibc, gtk+3, gtk4, harfbuzz [older], libdrm [older], libffi, libglvnd,
@@ -135,15 +153,15 @@ REQUIRED_USE+="
 #   libxau, libXtst, util-linux, pam, libcap, libevdev, sqlite3,
 #   speech-dispatcher
 #
-# https://github.com/chromium/chromium/blob/147.0.7727.118/build/install-build-deps.py
+# https://github.com/chromium/chromium/blob/154.0.8037.17/build/install-build-deps.py
 # https://github.com/chromiumembedded/cef/blob/6613/CMakeLists.txt.in   # Same as 3rd component c in a.b.c.d versioning.
 #   For version correspondance see https://bitbucket.org/chromiumembedded/cef/wiki/BranchesAndBuilding
 
 #
 # Additional *DEPENDs versioning info:
 #
-# https://github.com/chromium/chromium/blob/147.0.7727.118/tools/clang/scripts/update.py#L42
-# https://chromium.googlesource.com/chromium/src.git/+/refs/tags/147.0.7727.118/third_party/
+# https://github.com/chromium/chromium/blob/154.0.8037.17/tools/clang/scripts/update.py#L42
+# https://chromium.googlesource.com/chromium/src.git/+/refs/tags/154.0.8037.17/third_party/
 
 # gnome-keyring, vulkan-loader, gtkglext, libappindicator versioning from U 16.06
 
@@ -214,11 +232,7 @@ eerror "Your LIBC and/or your ABI are not supported."
 }
 
 get_S_abi() {
-	local minimal=$(usex minimal "_minimal" "")
-	local configuration=$(usex beta "_beta" "")
-	local suffix="$(get_xrid)${configuration}${minimal}"
-	local version="${MY_PV}+g${CEF_COMMIT}+chromium-${CHROMIUM_PV}"
-	echo "${WORKDIR}/cef_binary_${version}_${suffix}"
+	echo "${WORKDIR}/${P}"
 }
 
 append_all() {
@@ -485,186 +499,13 @@ ewarn
 	verify_compiler_flags_hardening
 }
 
-get_uri_tarball() {
-	local minimal=""
-	local xrid=$(get_xrid)
-	local configuration=""
-	use minimal && minimal="_minimal"
-	use beta && configuration="_beta"
-	local suffix="${xrid}${configuration}${minimal}"
-	local version="${MY_PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_PV}"
-	local filename="cef_binary_${version}_${suffix}.tar.bz2"
-	echo "https://cef-builds.spotifycdn.com/${filename}"
-}
-
-get_version_list() {
-	# Necessary to get the CEF version.
-	wget -O "${WORKDIR}/index.json" \
-		"https://cef-builds.spotifycdn.com/index.json" || die
-}
-
-check_tarball_integrity() {
-	local bn="${1}"
-	local fatal="${2}"
-	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-
-	[[ -n "${distdir}/${bn}" ]] || return 1
-	[[ -n "${WORKDIR}/index.json" ]] || return 1
-
-	[[ -n "${distdir}/${bn}.sha1" ]] || return 1
-	[[ -n "${distdir}/${bn}.blake2b" ]] || return 1
-	[[ -n "${distdir}/${bn}.sha512" ]] || return 1
-	local actual_fingerprint_size_sha1=$(stat -c "%s" "${distdir}/${bn}.sha1")
-	local expected_fingerprint_size_sha1="40"
-	[[ "${actual_fingerprint_size_sha1}" != "${expected_fingerprint_size_sha1}" ]] \
-		&& return 1
-
-	local actual_fingerprint_size_blake2b=$(stat -c "%s" "${distdir}/${bn}.blake2b")
-	local expected_fingerprint_size_blake2b="128"
-	[[ "${actual_fingerprint_size_blake2b}" != "${expected_fingerprint_size_blake2b}" ]] \
-		&& return 1
-
-	local actual_fingerprint_size_sha512=$(stat -c "%s" "${distdir}/${bn}.sha512")
-	local expected_fingerprint_size_sha512="128"
-	[[ "${actual_fingerprint_size_sha512}" != "${expected_fingerprint_size_sha512}" ]] \
-		&& return 1
-
-	local actual_sha1=$(sha1sum "${distdir}/${bn}" \
-		| cut -f 1 -d " ")
-	local expected_sha1=$(cat "${distdir}/${bn}.sha1")
-	local actual_blake2b=$(rhash --blake2b "${distdir}/${bn}" \
-		| cut -f 1 -d " ")
-	local actual_sha512=$(sha512sum "${distdir}/${bn}" \
-		| cut -f 1 -d " ")
-	local expected_blake2b=$(cat "${distdir}/${bn}.blake2b")
-	local expected_sha512=$(cat "${distdir}/${bn}.sha512")
-	if [[ "${actual_sha1}" != "${expected_sha1}" ]] ; then
-eerror
-eerror "Fingerprint mismatch"
-eerror
-eerror "Actual:  ${actual_sha1}"
-eerror "Expected:  ${expected_sha1}"
-eerror
-		return 1
-	fi
-	if [[ "${actual_blake2b}" != "${expected_blake2b}" ]] ; then
-eerror
-eerror "Fingerprint mismatch"
-eerror
-eerror "Actual:  ${actual_blake2b}"
-eerror "Expected:  ${expected_blake2b}"
-eerror
-		return 1
-	fi
-	if [[ "${actual_sha512}" != "${expected_sha512}" ]] ; then
-eerror
-eerror "Fingerprint mismatch"
-eerror
-eerror "Actual:  ${actual_sha512}"
-eerror "Expected:  ${expected_sha512}"
-eerror
-		return 1
-	fi
-
-	local xrid=$(get_xrid)
-	local expected_tarball_size=$(cat "${WORKDIR}/index.json" \
-		| jq '.'${xrid}'.versions[].files | .[] | select(.sha1=="'${expected_sha1}'") | .size')
-	local actual_tarball_size=$(stat -c "%s" "${distdir}/${bn}")
-	if [[ "${actual_tarball_size}" != "${expected_tarball_size}" ]] ; then
-eerror
-eerror "Tarball size mismatch"
-eerror
-eerror "Actual:  ${actual_tarball_size}"
-eerror "Expected:  ${expected_tarball_size}"
-eerror
-		return 1
-	fi
-
-	return 0
-}
-
 src_unpack() {
-	local minimal=$(usex minimal "_minimal" "")
-	local configuration=$(usex beta "_beta" "")
-	local xrid=$(get_xrid)
-	local fsuffix="${xrid}${configuration}${minimal}.tar.bz2"
-	local bn=""
-
-	get_version_list
-
-	if use beta ; then
-		local unstable_branch=$(git ls-remote "https://bitbucket.org/chromiumembedded/cef.git" \
-			| grep -E -o -e "refs/heads/[0-9]+" \
-			| grep -E -o -e "[0-9]+" \
-			| sort -V \
-			| tail -n 1)
-		bn=$(cat "${WORKDIR}/index.json" \
-			| grep -E -o -e "cef_binary[^\"]+${unstable_branch}[^\"]+\""  \
-			| sort -V \
-			| sed -e "s|\"||g" \
-			| grep -e "${fsuffix}" \
-			| tail -n 1)
-	else
-		local stable_branch=$(git ls-remote "https://bitbucket.org/chromiumembedded/cef.git" \
-			| grep -E -o -e "refs/heads/[0-9]+" \
-			| grep -E -o -e "[0-9]+" \
-			| sort -V \
-			| tail -n 2 \
-			| head -n 1)
-		bn=$(cat "${WORKDIR}/index.json" \
-			| grep -E -o -e "cef_binary[^\"]+${stable_branch}[^\"]+\""  \
-			| sort -V \
-			| sed -e "s|\"||g" \
-			| grep -e "${fsuffix}" \
-			| tail -n 1)
-	fi
-
-	export CEF_COMMIT=$(echo "${bn}" \
-		| grep -E -o -e "\+g[a-z0-f]{7}" \
-		| sed -e "s|\+g||g")
-	export CHROMIUM_PV=$(echo "${bn}" \
-		| grep -E -o -e "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+")
-	export MY_PV=$(echo "${bn}" \
-		| grep -E -o -e "[0-9]+\.[0-9]+\.[0-9]+\+" \
-		| sed -e "s|\+||g")
-	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	local uri="https://cef-builds.spotifycdn.com/${bn}"
-	if check_tarball_integrity "${bn}" ; then
-einfo "Using cached tarball copy"
-	else
-		addwrite "${distdir}"
-		wget -O "${distdir}/${bn}.sha1" "${uri}.sha1" || die
-		wget -O "${distdir}/${bn}" "${uri}" || die
-		local blake2b=$(rhash --blake2b "${distdir}/${bn}" \
-			| cut -f 1 -d " ")
-		local sha512=$(sha512sum "${distdir}/${bn}" \
-			| cut -f 1 -d " ")
-		echo -n "${blake2b}" > "${distdir}/${bn}.blake2b" || die
-		echo -n "${sha512}" > "${distdir}/${bn}.sha512" || die
-	fi
-
-	if ! check_tarball_integrity "${bn}" ; then
-eerror
-eerror "This indicates that the download has either been corrupted,"
-eerror "compromised, or is incomplete."
-eerror
-		die
-	fi
-
-	local cef_ver=$(usex beta "${CEF_BETA_VER}" "${CEF_STABLE_VER}")
-	local update_channel=$(usex beta "beta" "stable")
-
-	if ver_test "${CHROMIUM_PV}" "-ne" "${CEF_STABLE_VER}" ; then
-ewarn "You are using a CEF version that differs from the *DEPENDs assumptions."
-	fi
-einfo "Installing version:  ${CHROMIUM_PV} (${update_channel})"
-einfo "*DEPENDs assumption:  ${CEF_STABLE_VER} (stable)"
-
-	unpack "${distdir}/${bn}"
+	unpack ${A}
+	mv "cef_binary_"* "${P}" || die
 }
 
 src_prepare() {
-	export CMAKE_USE_DIR=$(get_S_abi)
+	export CMAKE_USE_DIR="${WORKDIR}/${P}"
 einfo "CMAKE_USE_DIR=${CMAKE_USE_DIR}"
 	cd "${CMAKE_USE_DIR}" || die
 	cmake_src_prepare
@@ -684,8 +525,8 @@ einfo "CMAKE_USE_DIR=${CMAKE_USE_DIR}"
 
 src_configure() {
 	chkl_check_many_timestamps
-	export CMAKE_USE_DIR=$(get_S_abi)
-	export BUILD_DIR=$(get_S_abi)
+	export CMAKE_USE_DIR="${WORKDIR}/${P}"
+	export BUILD_DIR="${WORKDIR}/${P}"
 	strip-unsupported-flags
 	filter-flags \
 		"-f*sanitize*" \
@@ -702,8 +543,8 @@ src_configure() {
 	fi
 
 	export CMAKE_BUILD_TYPE=$(usex debug "Debug" "Release")
-	export CMAKE_USE_DIR=$(get_S_abi)
-	export BUILD_DIR=$(get_S_abi)
+	export CMAKE_USE_DIR="${WORKDIR}/${P}"
+	export BUILD_DIR="${WORKDIR}/${P}"
 	cd "${CMAKE_USE_DIR}" || die
 	mycmakeargs=(
 		-DBUILD_SHARED_LIBS=ON
@@ -727,8 +568,8 @@ einfo "addwrite ${d}"
 }
 
 src_compile() {
-	export CMAKE_USE_DIR=$(get_S_abi)
-	export BUILD_DIR=$(get_S_abi)
+	export CMAKE_USE_DIR="${WORKDIR}/${P}"
+	export BUILD_DIR="${WORKDIR}/${P}"
 	cd "${BUILD_DIR}" || die
 	cmake_src_compile \
 		libcef_dll_wrapper \
@@ -743,8 +584,8 @@ src_compile() {
 
 src_test() {
 ewarn "This test failed on 87.1.12+g03f9336+chromium-87.0.4280.88"
-	export CMAKE_USE_DIR=$(get_S_abi)
-	export BUILD_DIR=$(get_S_abi)
+	export CMAKE_USE_DIR="${WORKDIR}/${P}"
+	export BUILD_DIR="${WORKDIR}/${P}"
 	cd "${BUILD_DIR}" || die
 	local build_type=$(usex debug "Debug" "Release")
 	if use test ; then
@@ -756,8 +597,8 @@ ewarn "This test failed on 87.1.12+g03f9336+chromium-87.0.4280.88"
 }
 
 src_install() {
-	export CMAKE_USE_DIR=$(get_S_abi)
-	export BUILD_DIR=$(get_S_abi)
+	export CMAKE_USE_DIR="${WORKDIR}/${P}"
+	export BUILD_DIR="${WORKDIR}/${P}"
 	cd "${BUILD_DIR}" || die
 	dodir "/opt/${PN}"
 	cp -rT "${BUILD_DIR}" "${ED}/opt/${PN}" || die
