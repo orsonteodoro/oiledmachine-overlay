@@ -769,7 +769,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-30.2.3-hevc-preprocessor-cond.patch"
 	"${FILESDIR}/${PN}-32.0.2-browser-checks.patch"
 	"${FILESDIR}/${PN}-32.0.2-optionalize-plugins.patch"
-	"${FILESDIR}/${PN}-32.1.2-symbolize-default-codecs.patch"
+	"${FILESDIR}/${PN}-32.2.2-symbolize-default-codecs.patch"
 )
 
 CEF_PATCHES=(
