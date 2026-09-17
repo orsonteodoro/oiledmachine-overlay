@@ -182,7 +182,6 @@ nvenc nvvfx opus oss +pipewire +pulseaudio +python qsv +qt6 +rnnoise +rtmps
 +service-updates -sndio +speexdsp svt-av1 -test +v4l2 vaapi +vlc +virtualcam
 +vst +wayland +webrtc win-dshow +websocket -win-mf +whatsnew x264
 
-libcxx
 ebuild_revision_28
 "
 PATENT_STATUS_REQUIRED_USE="
@@ -714,16 +713,6 @@ RDEPEND+="
 	${RDEPEND_DEPS}
 	${RDEPEND_PLUGINS}
 	${RDEPEND_UI}
-	!browser? (
-		libcxx? (
-			virtual/libcxx[cxx_standard_cxx17]
-		)
-	)
-	browser? (
-		libcxx? (
-			virtual/libcxx[cxx_standard_cxx20]
-		)
-	)
 	test? (
 		${RDEPEND_LIBOBS}
 	)
