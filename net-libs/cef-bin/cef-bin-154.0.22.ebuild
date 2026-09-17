@@ -112,11 +112,11 @@ https://bitbucket.org/chromiumembedded/cef/src/master/
 https://github.com/chromiumembedded/cef
 https://cef-builds.spotifycdn.com/index.html
 "
-RESTRICT="mirror"
+RESTRICT="binchecks mirror strip"
 SLOT="0/${PV%%.*}"
 IUSE+="
 cefclient cefsimple debug minimal test wayland X
-ebuild_revision_10
+ebuild_revision_11
 "
 REQUIRED_USE+="
 	cefclient? (
@@ -204,7 +204,8 @@ BDEPEND+="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/cef-bin-145.0.28-disable-test.patch"
+	"${FILESDIR}/${PN}-145.0.28-disable-test.patch"
+	"${FILESDIR}/${PN}-154.0.22-explicit-link.patch"
 )
 
 get_xrid() {

@@ -1,0 +1,9 @@
+--- a/libcef_dll/CMakeLists.txt.orig	2026-09-17 07:29:15.051749245 -0700
++++ b/libcef_dll/CMakeLists.txt	2026-09-17 07:42:14.035930246 -0700
+@@ -843,3 +843,6 @@ target_compile_definitions(${CEF_TARGET}
+ 
+ # Remove the default "lib" prefix from the resulting library.
+ set_target_properties(${CEF_TARGET} PROPERTIES PREFIX "")
++
++target_link_libraries(${CEF_TARGET} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../${CMAKE_BUILD_TYPE}/libcef.so)
++set_target_properties(${CEF_TARGET} PROPERTIES BUILD_WITH_INSTALL_RPATH TRUE INSTALL_RPATH "$ORIGIN/../${CMAKE_BUILD_TYPE};$ORIGIN")
