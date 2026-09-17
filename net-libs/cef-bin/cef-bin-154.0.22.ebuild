@@ -56,8 +56,6 @@ LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
 CHKL_TIMESTAMPS=(
 	"app-accessibility/at-spi2-core-9999"
-	"app-crypt/rhash-9999"
-	"app-misc/jq-9999"
 	"dev-libs/expat-9999"
 	"dev-libs/glib-2.90.9999"
 	"media-libs/alsa-lib-9999"
@@ -198,12 +196,7 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 "
-INTEGRITY_CHECK_BDEPEND="
-	>=app-crypt/rhash-${RHASH_PV}
-	>=app-misc/jq-${JQ_PV}
-" # From ebuild dev
 BDEPEND+="
-	${INTEGRITY_CHECK_BDEPEND}
 	>=dev-build/cmake-3.21
 	test? (
 		>=x11-base/xorg-server-${XORG_SERVER_PV}[xvfb]
