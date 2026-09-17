@@ -169,7 +169,7 @@ eerror "Remove the /usr/local/bin/node wrapper to continue."
 	export PATH="${prefix}/bin:${PATH}"
 einfo "Node prefix:  ${prefix}"
 einfo "PATH:  ${PATH}"
-	[[ -e "${prefix}/bin/node" ]] || die "Install net-libs/nodejs:${NODE_SLOT} to continue"
+	[[ -e "${prefix}/bin/node" ]] || die "Install net-libs/nodejs:${NODE_SLOT} or bump NODE_SLOT to non EOL version to continue"
 }
 
 fi
