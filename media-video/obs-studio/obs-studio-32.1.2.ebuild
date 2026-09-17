@@ -34,6 +34,7 @@ EAPI=8
 # https://bitbucket.org/chromiumembedded/cef/src/5060/CHROMIUM_BUILD_COMPATIBILITY.txt?at=5060
 CMAKE_REMOVE_MODULES_LIST=( "FindFreetype" )
 CXX_STANDARD=17 # 17 without browser, 20 with browser
+LIBCXX_GLOBALS="custom"
 LUA_COMPAT=( "luajit" )
 MAKEOPTS="-j1"
 PYTHON_COMPAT=( "python3_"{10..12} )
@@ -54,13 +55,15 @@ inherit libstdcxx-compat
 GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
+LIBSTDCXX_USEDEP="gcc_slot_11_5(-)?,gcc_slot_12_5(-)?,gcc_slot_13_4(-)?,gcc_slot_14_3(-)?,gcc_slot_15_3(-)?"
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
 )
-LIBCXX_USEDEP_LTS="gcc_slot_skip(+)"
+LIBCXX_USEDEP="llvm_slot_18(-)?,llvm_slot_19(-)?,llvm_slot_21(-)?,llvm_slot_22(-)?"
+LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
 inherit ffmpeg
 FFMPEG_COMPAT_SLOTS=(
@@ -170,6 +173,8 @@ SLOT="0"
 # qsv is enabled by default upstream
 # vlc is enabled by default upstream
 IUSE+="
+${LIBCXX_COMPAT_STDCXX17[@]}
+${LIBCXX_COMPAT_STDCXX20[@]}
 ${PATENT_STATUS_IUSE[@]}
 aac +alsa aja amf +browser +browser-panels coreaudio -decklink -fdk firejail
 +flac +freetype +hevc +ipv6 jack libaom +lua mac-syphon +mpegts nvafx
@@ -177,6 +182,7 @@ nvenc nvvfx opus oss +pipewire +pulseaudio +python qsv +qt6 +rnnoise +rtmps
 +service-updates -sndio +speexdsp svt-av1 -test +v4l2 vaapi +vlc +virtualcam
 +vst +wayland +webrtc win-dshow +websocket -win-mf +whatsnew x264
 
+libcxx
 ebuild_revision_28
 "
 PATENT_STATUS_REQUIRED_USE="
@@ -235,6 +241,19 @@ REQUIRED_USE+="
 	!win-dshow
 	!win-mf
 	qt6
+
+	!browser? (
+		^^ (
+			${LIBCXX_COMPAT_STDCXX17[@]}
+		)
+	)
+	browser? (
+		^^ (
+			llvm_slot_21
+			llvm_slot_22
+		)
+	)
+
 	!kernel_Darwin? (
 		!coreaudio
 		!mac-syphon
@@ -695,6 +714,16 @@ RDEPEND+="
 	${RDEPEND_DEPS}
 	${RDEPEND_PLUGINS}
 	${RDEPEND_UI}
+	!browser? (
+		libcxx? (
+			virtual/libcxx[cxx_standard_cxx17]
+		)
+	)
+	browser? (
+		libcxx? (
+			virtual/libcxx[cxx_standard_cxx20]
+		)
+	)
 	test? (
 		${RDEPEND_LIBOBS}
 	)

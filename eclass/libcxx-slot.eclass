@@ -101,6 +101,11 @@ _LIBCXX_SLOT_ECLASS=1
 # }
 #
 
+# @ECLASS_VARIABLE: LIBCXX_GLOBALS
+# @DESCRIPTION:
+# Whether or not to set globals automatically
+LIBCXX_GLOBALS=${LIBCXX_GLOBALS:-"auto"} # auto or custom
+
 # See also https://github.com/llvm/llvm-project/blob/llvmorg-18.1.0/libcxx/include/__config#L65
 # Clang version to libc++ version mappings
 CLANG_11_0_1="11000"
@@ -396,7 +401,9 @@ ewarn "QA:  Add LIBCXX_USEDEP_SKIP=1 for libcxx-slot to avoid LIBCXX_USEDEP issu
 		LIBCXX_USEDEP="${usedep:1}"
 	fi
 }
-_libcxx_slot_set_globals
+if [[ "${LIBCXX_GLOBALS}" == "auto" ]] ; then
+	_libcxx_slot_set_globals
+fi
 unset -f _libcxx_slot_set_globals
 
 # @FUNCTION: _switch_gcc_to_continue_message
