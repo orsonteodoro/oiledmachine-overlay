@@ -697,7 +697,7 @@ diff '--color=auto' -urp obs-studio-32.2.2.orig/frontend/settings/OBSBasicSettin
  
 -	if (codec && strcmp(codec, "aac") == 0) {
 +#ifdef ENABLE_OPUS
-+	if (codec && strcmp(codec, "opus") == 0)
++	if (codec && strcmp(codec, "opus") == 0) {
  		return "ffmpeg_opus";
  	}
 +#endif
