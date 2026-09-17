@@ -22,6 +22,7 @@ EAPI=8
 # | Sandbox and memory safety    | Lacking                 | Memory tagging, isolation fixes  |
 # | Estimated posture            | F (critical risk        | A / A- (optimal production       |
 # |                              |    negligible security) |         security)                |
+# | Estimated security score     | Near 0/100              | Near 90-95/100                   |
 
 # 32.0.4 -> 32.1.2
 
