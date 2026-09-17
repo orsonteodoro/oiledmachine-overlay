@@ -1,0 +1,53 @@
+--- a/cmake/finders/FindMbedTLS.cmake.orig	2026-09-17 00:37:47.077509316 -0700
++++ b/cmake/finders/FindMbedTLS.cmake	2026-09-17 00:41:40.476141729 -0700
+@@ -65,7 +65,7 @@ include(FindPackageHandleStandardArgs)
+ 
+ find_package(PkgConfig QUIET)
+ if(PKG_CONFIG_FOUND)
+-  pkg_check_modules(PC_MbedTLS QUIET mbedtls mbedcrypto mbedx509)
++  pkg_check_modules(PC_MbedTLS REQUIRED mbedtls-3 mbedcrypto-3 mbedx509-3)
+ endif()
+ 
+ # MbedTLS_set_soname: Set SONAME on imported library targets
+@@ -100,8 +100,7 @@ endmacro()
+ find_path(
+   MbedTLS_INCLUDE_DIR
+   NAMES mbedtls/ssl.h
+-  HINTS "${PC_MbedTLS_INCLUDE_DIRS}"
+-  PATHS /usr/include /usr/local/include
++  PATHS /usr/include/mbedtls3
+   DOC "MbedTLS include directory"
+ )
+ 
+@@ -149,25 +148,22 @@ endif()
+ 
+ find_library(
+   Mbedtls_LIBRARY
+-  NAMES libmbedtls mbedtls
+-  HINTS "${PC_MbedTLS_LIBRARY_DIRS}"
+-  PATHS /usr/lib /usr/local/lib
++  NAMES libmbedtls-3 mbedtls-3
++  PATHS /usr/lib64 /usr/lib
+   DOC "MbedTLS location"
+ )
+ 
+ find_library(
+   Mbedcrypto_LIBRARY
+-  NAMES libmbedcrypto mbedcrypto
+-  HINTS "${PC_MbedTLS_LIBRARY_DIRS}"
+-  PATHS /usr/lib /usr/local/lib
++  NAMES libmbedcrypto-3 mbedcrypto-3
++  PATHS /usr/lib64 /usr/lib
+   DOC "MbedCrypto location"
+ )
+ 
+ find_library(
+   Mbedx509_LIBRARY
+-  NAMES libmbedx509 mbedx509
+-  HINTS "${PC_MbedTLS_LIBRARY_DIRS}"
+-  PATHS /usr/lib /usr/local/lib
++  NAMES libmbedx509-3 mbedx509-3
++  PATHS /usr/lib64 /usr/lib
+   DOC "MbedX509 location"
+ )
+ 

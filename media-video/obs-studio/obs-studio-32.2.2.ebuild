@@ -184,7 +184,7 @@ nvenc nvvfx opus oss +pipewire +pulseaudio +python qsv +qt6 +rnnoise +rtmps
 +service-updates -sndio +speexdsp svt-av1 -test +v4l2 vaapi +vlc +virtualcam
 +vst +wayland +webrtc win-dshow +websocket -win-mf +whatsnew x264
 
-ebuild_revision_28
+ebuild_revision_31
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -770,6 +770,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-32.0.2-browser-checks.patch"
 	"${FILESDIR}/${PN}-32.0.2-optionalize-plugins.patch"
 	"${FILESDIR}/${PN}-32.2.2-symbolize-default-codecs.patch"
+	"${FILESDIR}/${PN}-32.2.2-mbedtls3-detect.patch"
 )
 
 CEF_PATCHES=(
@@ -1070,8 +1071,7 @@ einfo "CXX:  ${CXX}"
 		append-cppflags "-I${ESYSROOT}/usr/include/qt6/QtCore"
 	fi
 
-	# For obs-outputs
-	append-cppflags "-I/usr/include/mbedtls3/"
+	append-cppflags "-I${ESYSROOT}/usr/include/mbedtls3"
 
 	ffmpeg_src_configure
 
@@ -1120,6 +1120,9 @@ einfo "CXX:  ${CXX}"
 		-DENABLE_X264=$(usex x264)
 		-DOBS_MULTIARCH_SUFFIX=${libdir#lib}
 		-DUNIX_STRUCTURE=1
+
+		# Force version 3
+		-DMbedTLS_ROOT="/usr/${libdir}/cmake/MbedTLS-3"
 	)
 
 	local clang_slot=$(clang-major-version)
