@@ -16,7 +16,7 @@ MY_PN="LLocal"
 MY_PV="${PV/_beta/-beta.}"
 
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
-NODE_SLOT="22" # Upstream uses 20
+NODE_SLOT="24" # Upstream uses 20
 NPM_AUDIT_FATAL=0
 NPM_AUDIT_FIX=1
 NPM_LOCKFILE_SOURCE="ebuild"
@@ -30,7 +30,7 @@ inherit secure-version secure-version-node
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="${NODE_22_ELECTRON_PV}"
+	ELECTRON_APP_ELECTRON_PV="${NODE_24_ELECTRON_PV}"
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="28.3.3" # Cr 120.0.6099.291, node 18.18.2
