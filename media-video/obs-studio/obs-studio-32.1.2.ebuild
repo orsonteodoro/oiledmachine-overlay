@@ -469,7 +469,7 @@ RDEPEND_PLUGINS_OBS_BROWSER="
 		qt6? (
 			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},widgets,X]
 		)
-		>=net-libs/cef-bin-${CEF_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+		>=net-libs/cef-bin-${CEF_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		!=net-libs/cef-bin-9999
 		!net-libs/cef
 	)
