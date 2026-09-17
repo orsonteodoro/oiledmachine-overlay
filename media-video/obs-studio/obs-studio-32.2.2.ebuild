@@ -11,17 +11,17 @@ EAPI=8
 
 # CEF comparison (Sep 17, 2026)
 
-# | Topic                     | Distro overlay          | oiledmachine-overlay             |
-# |---------------------------|-------------------------|----------------------------------|
-# | CEF version               | CEF 127 (6533)          | CEF 154 (8037)                   |
-# | Chromium version          | 127.0.6533.120          | 154.0.8037.17                    |
-# | Support                   | EOL                     | Upstream support                 |
-# | Known patched CVEs        | 100s                    | Zero known                       |
-# | Maximum unpatched         | 9.8-10.0                | 0.0                              |
-# | Active 0-day exposure     | High                    | Low                              |
-# | Sandbox and memory safety | Lacking                 | Memory tagging, isolation fixes  |
-# | Estimated posture         | F (critical risk        | A / A- (optimal production       |
-# |                           |    negligible security) |         security)                |
+# | Topic                        | Distro overlay          | oiledmachine-overlay             |
+# |------------------------------|-------------------------|----------------------------------|
+# | CEF version                  | CEF 127 (6533)          | CEF 154 (8037)                   |
+# | Chromium version             | 127.0.6533.120          | 154.0.8037.17                    |
+# | Support                      | EOL                     | Upstream support                 |
+# | Known patched CVEs           | 100s                    | Zero known                       |
+# | Maximum unpatched CVSS score | 9.8-10.0                | 0.0                              |
+# | Active 0-day exposure        | High                    | Low                              |
+# | Sandbox and memory safety    | Lacking                 | Memory tagging, isolation fixes  |
+# | Estimated posture            | F (critical risk        | A / A- (optimal production       |
+# |                              |    negligible security) |         security)                |
 
 # The cef in obs is verified working even with the message below.
 # libcef_dll_wrapper.so: undefined symbol: cef_get_min_log_level
