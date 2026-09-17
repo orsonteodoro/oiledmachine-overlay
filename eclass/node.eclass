@@ -151,6 +151,15 @@ eerror "QA:  NODE_SLOT must be defined"
 		die
 	fi
 
+	if [[ -e "/usr/bin/node" ]] ; then
+eerror "Remove the old /usr/bin/node wrapper to continue."
+		die
+	fi
+	if [[ -e "/usr/local/bin/node" ]] ; then
+eerror "Remove the /usr/local/bin/node wrapper to continue."
+		die
+	fi
+
 	# Sanitize paths for logs
 	filter-flags "-I*/usr/lib/node/*"
 	export PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "\|/usr/lib/node/|d" | tr $'\n' ":")
@@ -158,7 +167,9 @@ eerror "QA:  NODE_SLOT must be defined"
 	local prefix="${ESYSROOT}/usr/lib/node/${NODE_SLOT}"
 	append-flags "-I${prefix}/include"
 	export PATH="${prefix}/bin:${PATH}"
+einfo "Node prefix:  ${prefix}"
 einfo "PATH:  ${PATH}"
+	[[ -e "${prefix}/bin/node" ]] || die "Install net-libs/nodejs:${NODE_SLOT} to continue"
 }
 
 fi
