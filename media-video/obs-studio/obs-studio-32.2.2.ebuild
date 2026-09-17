@@ -23,9 +23,6 @@ EAPI=8
 # | Estimated posture            | F (critical risk        | A / A- (optimal production       |
 # |                              |    negligible security) |         security)                |
 
-# The cef in obs is verified working even with the message below.
-# libcef_dll_wrapper.so: undefined symbol: cef_get_min_log_level
-
 # 32.0.4 -> 32.1.2
 
 # TODO package:
