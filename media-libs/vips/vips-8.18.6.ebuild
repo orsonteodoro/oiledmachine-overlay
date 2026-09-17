@@ -26,7 +26,7 @@ PYTHON_COMPAT=( "python3_"{8..12} )
 SO_C=62
 SO_R=1
 SO_A=20
-SO_MAJOR=$((${SO_C} - ${SO_A})) # Currently 42
+SOVER=$((${SO_C} - ${SO_A})) # Currently 42
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -89,7 +89,7 @@ DESCRIPTION="VIPS Image Processing Library"
 HOMEPAGE="https://jcupitt.github.io/libvips/"
 LICENSE="LGPL-2.1+"
 RESTRICT="mirror"
-SLOT="0/${SO_MAJOR}"
+SLOT="0/${SOVER}"
 # Upstream has heic indirectly default on
 #
 # In the meson_options.txt, some codecs are set to auto.
@@ -430,6 +430,20 @@ eerror
 	fi
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+}
+
+src_unpack() {
+	unpack ${A}
+	local c=$(grep -E -e "library_current = [0-9]+" "${S}/meson.build" | head -n 1 | cut -f 3 -d " ")
+	local a=$(grep -E -e "library_age = [0-9]+" "${S}/meson.build" | head -n 1 | cut -f 3 -d " ")
+	local actual_sover=$(( ${c} - ${a} ))
+	local expected_sover="${SOVER}"
+	if ver_test "${actual_sover}" "-ne" "${expected_sover}" ; then
+eerror "QA:  Update SOVER"
+eerror "Actual SOVER:  ${actual_sover}"
+eerror "Expected SOVER:  ${expected_sover}"
+		die
+	fi
 }
 
 _remove_avx() {
