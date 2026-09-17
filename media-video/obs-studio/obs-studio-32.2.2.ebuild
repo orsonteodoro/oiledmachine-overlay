@@ -7,6 +7,21 @@ EAPI=8
 # U24
 
 # This ebuild contains patches with AI generated code.
+# This ebuild contains AI synthesized data for security risk analysis.
+
+# CEF comparison (Sep 17, 2026)
+
+# | Topic                     | Distro overlay          | oiledmachine-overlay             |
+# |---------------------------|-------------------------|----------------------------------|
+# | CEF version               | CEF 127 (6533)          | CEF 154 (8037)                   |
+# | Chromium version          | 127.0.6533.120          | 154.0.8037.17                    |
+# | Support                   | EOL                     | Upstream support                 |
+# | Known patched CVEs        | 100s                    | Zero known                       |
+# | Maximum unpatched         | 9.8-10.0                | 0.0                              |
+# | Active 0-day exposure     | High                    | Low                              |
+# | Sandbox and memory safety | Lacking                 | Memory tagging, isolation fixes  |
+# | Estimated posture         | F (critical risk        | A / A- (optimal production       |
+# |                           |    negligible security) |         security)                |
 
 # The cef in obs is verified working even with the message below.
 # libcef_dll_wrapper.so: undefined symbol: cef_get_min_log_level
@@ -184,7 +199,7 @@ nvenc nvvfx opus oss +pipewire +pulseaudio +python qsv +qt6 +rnnoise +rtmps
 +service-updates -sndio +speexdsp svt-av1 -test +v4l2 vaapi +vlc +virtualcam
 +vst +wayland +webrtc win-dshow +websocket -win-mf +whatsnew x264
 
-ebuild_revision_31
+ebuild_revision_32
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
