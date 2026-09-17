@@ -16,7 +16,7 @@ MY_PN="LLocal"
 MY_PV="${PV/_beta/-beta.}"
 
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
-NODE_SLOT="20"
+NODE_SLOT="22" # Upstream uses 20
 NPM_AUDIT_FATAL=0
 NPM_AUDIT_FIX=1
 NPM_LOCKFILE_SOURCE="ebuild"
@@ -26,11 +26,11 @@ RUST_MIN_VER="1.93.1" # llvm-21.1, required by @swc/core
 RUST_PV="${RUST_MIN_VER}"
 ELECTRON_BUILDER_PV="26.15.3" # 24.13.3 used upstream.  Old pinned version required
 
-inherit secure-version
+inherit secure-version secure-version-node
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="${ELECTRON_PV}"
+	ELECTRON_APP_ELECTRON_PV="${NODE_22_ELECTRON_PV}"
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="28.3.3" # Cr 120.0.6099.291, node 18.18.2
@@ -94,6 +94,7 @@ else
 		electron-28.3.3-chromium.html
 	"
 fi
+RESTRICT="mirror" # Speed up downloads
 SLOT="0"
 IUSE+=" ebuild_revision_20"
 RDEPEND="

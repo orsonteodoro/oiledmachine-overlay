@@ -23,7 +23,7 @@ ICON_TYPE=${ICON_TYPE:-"png"} # svg or png.  png is used by upstream and is brok
 NPM_AUDIT_FIX=0 # Breaks build
 #export NODE_SHARP_DEBUG=1
 NODE_SHARP_USE="png svg"
-NODE_SLOT="22"
+NODE_SLOT="22" # From CI
 YARN_AUDIT_FIX=0
 YARN_INSTALL_PATH="/opt/${MY_PN}"
 YARN_LOCKFILE_SOURCE="ebuild"
@@ -36,7 +36,7 @@ NODE_GYP_PV="12.3.0"
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="${ELECTRON_PV}" # Cr 150.0.7871.129, node 24.18.0
+	ELECTRON_APP_ELECTRON_PV="${NODE_24_ELECTRON_PV}" # Cr 150.0.7871.129, node 24.18.0
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="42.3.0" # Cr 148.0.7778.180, node 24.15.0

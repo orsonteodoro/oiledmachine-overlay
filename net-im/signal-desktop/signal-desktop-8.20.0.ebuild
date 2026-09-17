@@ -76,7 +76,7 @@ ELECTRON_BUILDER_PV="26.15.7" # 26.11.1 works, 26.15.7 is latest
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
-	ELECTRON_APP_ELECTRON_PV="${ELECTRON_PV}"
+	ELECTRON_APP_ELECTRON_PV="${NODE_24_ELECTRON_PV}"
 else
 	# Upstream's choice
 	ELECTRON_APP_ELECTRON_PV="42.3.0" # Cr 148.0.7778.180, node 24.15.0

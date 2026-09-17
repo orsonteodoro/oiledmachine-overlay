@@ -882,7 +882,7 @@ ewarn "QA:  Manually change \"protobufjs\": \"^6.8.8\" to \"protobufjs\": \"^7.6
 	#####################
 		pkgs=(
 			"next@${NODE_NEXT_PV}"
-			"protobufjs@${NODE_24_PROTOBUFJS_PV}"
+			"protobufjs@${NODE_PROTOBUFJS_7_PV}"
 		)
 		enpm install "${pkgs[@]}" -P --legacy-peer-deps
 
