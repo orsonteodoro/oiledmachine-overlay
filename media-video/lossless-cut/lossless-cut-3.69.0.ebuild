@@ -107,7 +107,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${PATENT_STATUS[@]}
 lame opus svt-av1 theora vorbis vpx x264
-ebuild_revision_39
+ebuild_revision_40
 "
 REQUIRED_USE="
 	!patent_status_nonfree? (
