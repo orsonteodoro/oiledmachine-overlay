@@ -45,7 +45,7 @@ DESCRIPTION="A collection of tools and libraries for many image formats"
 HOMEPAGE="https://imagemagick.org"
 
 if [[ ${PV} == 9999 ]] ; then
-	FALLBACK_COMMIT="5a774ca17c5e25c16e54798876e85c03f8c5c033"
+	FALLBACK_COMMIT="84e11a0c73fb1213d221431d60f856db3fcbb190"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/ImageMagick/ImageMagick.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -78,7 +78,7 @@ IUSE+=" avif bzip2 corefonts +cxx djvu fftw fontconfig fpx graphviz hardened hdr
 IUSE+=" jbig jpeg jpeg2k jpegxl lcms lqr lzma opencl openexr openmp pango perl ${GENTOO_PERL_USESTRING}"
 IUSE+=" +png postscript q32 q8 raw static-libs svg test tiff truetype webp wmf"
 IUSE+=" X xml zip zlib"
-IUSE+=" ebuild_revision_3"
+IUSE+=" ebuild_revision_5"
 
 REQUIRED_USE="
 	corefonts? ( truetype )
@@ -313,6 +313,14 @@ src_install() {
 		install
 
 	einstalldocs
+
+	local pv_major=$(ver_cut "1" "${PV}")
+	if [[ "${PV}" =~ "9999" ]] ; then
+		pv_major=$(grep -E -e "magick_major_version" "${S}/m4/version.m4" | grep -E -o "[0-9]+")
+	fi
+
+	insinto "/usr/include/ImageMagick-${pv_major}/MagickCore"
+	doins "MagickCore/image-private.h"
 
 	if use perl; then
 		find "${ED}" -type f -name perllocal.pod -exec rm -f {} + || die
