@@ -1185,11 +1185,11 @@ src_install() {
 
 	LCNR_SOURCE="${WORKDIR}/cargo_home/gentoo"
 	LCNR_TAG="third_party_cargo"
-#	lcnr_install_files
+	lcnr_install_files
 
 	LCNR_SOURCE="${S_PROJECT}/node_modules"
 	LCNR_TAG="third_party_pnpm"
-#	lcnr_install_files
+	lcnr_install_files
 
 	# For the server but it needs path changes modificaiton and a key.txt (32 digit hex)
 	insinto "/opt/${PN}"
@@ -1270,4 +1270,5 @@ ewarn
 # OILEDMACHINE-OVERLAY-TEST:  FAILED (2026.4.181, 20260428) with rust 1.88.0.  tiktoken wasm errors and ollama/app freezes
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (2026.4.181, 20260522) with rust 1.88.0 and js-tiktoken
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (2026.6.214, 20260726) with rust 1.93.1 and js-tiktoken
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (2026.8.250, 20260917) with rust 1.93.1 and js-tiktoken
 # ollama support - passed
