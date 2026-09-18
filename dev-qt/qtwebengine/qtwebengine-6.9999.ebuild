@@ -711,7 +711,9 @@ elog "${PN}'s Chromium version:  ${CHROMIUM_VENDORED_VER} (${CHROMIUM_VENDORED_T
 elog "Latest Chromium version:  ${CHROMIUM_BROWSER_VER} (${CHROMIUM_BROWSER_TIMESTAMP})"
 elog "CVE backports patch fixes up to:  ${CVE_BACKPORTS}"
 elog
-elog "The CVE backport fixes only may be underreported and will miss"
-elog "undisclosed internal security fixes."
+elog "The CVE backport fixes are underreported and will miss undisclosed"
+elog "internal security fixes.  The upstream repo doesn't have a commit history"
+elog "of adding independent security fixes that span the internal security"
+elog "fixes set."
 elog
 }
