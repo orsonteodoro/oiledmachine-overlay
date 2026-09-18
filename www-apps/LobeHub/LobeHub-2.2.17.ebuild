@@ -27,6 +27,7 @@ EAPI=8
 # 2.1.52 - > 2.2.0
 # 2.2.0 -> 2.2.10
 # 2.2.10 -> 2.2.13
+# 2.2.13 -> 2.2.17
 
 # Ebuild using React 19
 
@@ -44,7 +45,7 @@ EAPI=8
 # Generate the lockfile as follows:
 #
 #   PATH=$(realpath "../../scripts")":${PATH}"
-#   PNPM_UPDATER_VERSIONS="2.2.13" pnpm_updater_update_locks.sh
+#   PNPM_UPDATER_VERSIONS="2.2.17" pnpm_updater_update_locks.sh
 #
 
 # U22, U24, D12
@@ -81,7 +82,6 @@ RUST_MIN_VER="1.93.1" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0
 RUST_PV="${RUST_MIN_VER}"
 
 ELECTRON_BUILDER_PV="26.15.7"
-NEXTJS_PV="16.3.0"
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
@@ -118,7 +118,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${MY_PN2}-${PV}"
 	inherit git-r3
 else
-	KEYWORDS="~amd64"
+#	KEYWORDS="~amd64"
 	S="${WORKDIR}/${MY_PN2}-${PV}"
 	SRC_URI="
 	electron? (
@@ -632,15 +632,15 @@ pnpm_unpack_post() {
 	eapply "${FILESDIR}/lobe-chat-1.65.0-sharp-declaration.patch"
 #	eapply "${FILESDIR}/${PN}-2.1.33-use-e965-xlsx.patch"
 	if use pwa ; then
-		eapply "${FILESDIR}/${MY_PN2}-2.1.34-hardcoded-paths.patch"
+		eapply "${FILESDIR}/${MY_PN2}-2.2.17-hardcoded-paths.patch"
 		eapply "${FILESDIR}/${PN}-2.2.13-postgresjs-driver-support.patch"
 		eapply "${FILESDIR}/${PN}-2.2.13-docker-cjs-multidriver-support.patch"
 	fi
 
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
-		eapply "${FILESDIR}/${PN}-2.2.13-build-files-changes.patch"
+		eapply "${FILESDIR}/${PN}-2.2.17-build-files-changes.patch"
 	fi
-	eapply "${FILESDIR}/${PN}-2.2.13-pnpm-workspace-changes.patch"
+	eapply "A${FILESDIR}/${PN}-2.2.13-pnpm-workspace-changes.patch"
 
 	# secure-version-node changes
 	sed -i \
@@ -1029,7 +1029,7 @@ ewarn "Removing ${S}/.next"
 	# Force rebuild to prevent illegal instruction
 	#edo npm rebuild "sharp"
 
-	if ver_test "${NEXTJS_PV%%.*}" "-lt" "15" ; then
+	if ver_test "${NODE_NEXT_PV%%.*}" "-lt" "15" ; then
 	# tsc will ignore tsconfig.json, so it must be explicit.
 einfo "Building next.config.js"
 		tsc \

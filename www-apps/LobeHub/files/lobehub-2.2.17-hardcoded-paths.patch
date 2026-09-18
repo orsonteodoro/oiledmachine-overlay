@@ -1,0 +1,51 @@
+--- a/scripts/serverLauncher/startServer.js.orig	2026-09-11 02:18:23.000000000 -0700
++++ b/scripts/serverLauncher/startServer.js	2026-09-17 22:55:36.856253706 -0700
+@@ -9,14 +9,33 @@ const { existsSync } = require('node:fs'
+ // Docker: /app/startServer.js -> /app/scripts/_shared/...
+ const localPath = path.join(__dirname, '..', '_shared', 'checkDeprecatedAuth.js');
+ const dockerPath = '/app/scripts/_shared/checkDeprecatedAuth.js';
+-const sharedModulePath = existsSync(localPath) ? localPath : dockerPath;
++let sharedModulePath;
++
++// 1. Try relative (local dev: scripts/serverLauncher/ -> scripts/_shared/)
++const localRelative = path.join(__dirname, '..', '_shared', 'checkDeprecatedAuth.js');
++if (existsSync(localRelative)) {
++  sharedModulePath = localRelative;
++}
++// 2. Try Docker-style absolute (/app/...)
++else if (existsSync('/app/scripts/_shared/checkDeprecatedAuth.js')) {
++  sharedModulePath = '/app/scripts/_shared/checkDeprecatedAuth.js';
++}
++// 3. Try Gentoo /opt/lobehub/ install (scripts/_shared lives next to startServer.js)
++else {
++  const optPath = path.join(__dirname, 'scripts', '_shared', 'checkDeprecatedAuth.js');
++  if (existsSync(optPath)) {
++    sharedModulePath = optPath;
++  } else {
++    throw new Error('Cannot locate checkDeprecatedAuth.js in any known path');
++  }
++}
+ 
+ const { checkDeprecatedAuth } = require(sharedModulePath);
+ 
+ // Set file paths
+-const DB_MIGRATION_SCRIPT_PATH = '/app/docker.cjs';
+-const ES_MIGRATION_SCRIPT_PATH = '/app/fts-search-elasticsearch-reindex.cjs';
+-const SERVER_SCRIPT_PATH = '/app/server.js';
++const DB_MIGRATION_SCRIPT_PATH = '/opt/lobehub/docker.cjs';
++const ES_MIGRATION_SCRIPT_PATH = '/opt/lobehub/fts-search-elasticsearch-reindex.cjs';
++const SERVER_SCRIPT_PATH = '/opt/lobehub/server.js';
+ const PROXYCHAINS_CONF_PATH = '/etc/proxychains4.conf';
+ 
+ // Function to check if a string is a valid IP address
+@@ -117,8 +136,8 @@ ${protocol} ${ip} ${port} ${user} ${pass
+ // Function to execute a script with child process spawn
+ const runScript = (scriptPath, useProxy = false, args = []) => {
+   const command = useProxy
+-    ? ['/bin/proxychains', '-q', '/bin/node', scriptPath, ...args]
+-    : ['/bin/node', scriptPath, ...args];
++    ? ['/usr/bin/proxychains', '-q', '/usr/lib/node/@NODE_SLOT@/bin/node', scriptPath, ...args]
++    : ['/usr/lib/node/@NODE_SLOT@/bin/node', scriptPath, ...args];
+   return new Promise((resolve, reject) => {
+     const process = spawn(command.shift(), command, { stdio: 'inherit' });
+     process.on('error', reject);
