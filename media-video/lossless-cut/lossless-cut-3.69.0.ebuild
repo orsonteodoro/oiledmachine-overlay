@@ -17,14 +17,13 @@ EAPI=8
 
 MY_PN="${PN/-/}"
 
-#_ELECTRON_DEP_ROUTE="reproducible" # reproducible or secure.  Working with reproducible but not secure.
-_ELECTRON_DEP_ROUTE="secure" # reproducible or secure.  Working with reproducible but not secure.
+_ELECTRON_DEP_ROUTE="reproducible" # reproducible or secure.  Working with reproducible but not secure.
 # TODO:  Fix newer sharp with ICON_TYPE="png"
 ICON_TYPE=${ICON_TYPE:-"png"} # svg or png.  png is used by upstream and is broken for newer sharp.
 NPM_AUDIT_FIX=0 # Breaks build
 #export NODE_SHARP_DEBUG=1
 NODE_SHARP_USE="png svg"
-NODE_SLOT="22" # From CI
+NODE_SLOT="22"
 YARN_AUDIT_FIX=0
 YARN_INSTALL_PATH="/opt/${MY_PN}"
 YARN_LOCKFILE_SOURCE="ebuild"
@@ -36,6 +35,7 @@ inherit secure-version secure-version-node
 NODE_GYP_PV="12.3.0"
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
+	# Bugged, it will show the show problem report and not cut
 	# Ebuild maintainer preference
 	ELECTRON_APP_ELECTRON_PV="${NODE_24_ELECTRON_PV}" # Cr 150.0.7871.129, node 24.18.0
 else
@@ -108,7 +108,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${PATENT_STATUS[@]}
 lame opus svt-av1 theora vorbis vpx x264
-ebuild_revision_40
+ebuild_revision_41
 "
 REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -381,12 +381,10 @@ src_install() {
 
 	local EXE_FILES=(
 		"libffmpeg.so"
-		"losslesscut"
-		"libGLESv2.so"
 		"libvk_swiftshader.so"
-		"libEGL.so"
-		"chrome-sandbox"
 		"libvulkan.so.1"
+		"losslesscut"
+		"chrome-sandbox"
 		"chrome_crashpad_handler"
 	)
 
@@ -400,7 +398,7 @@ src_install() {
 		"${ED}/usr/share/applications/no.mifi.losslesscut.desktop" \
 		|| die
 
-	lcnr_install_files
+#	lcnr_install_files
 	electron-app_set_sandbox_suid "/opt/${MY_PN}/chrome-sandbox"
 
 	# It is leaking stdout in stderr.

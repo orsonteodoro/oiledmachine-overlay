@@ -90,7 +90,7 @@
     "csv-parse": "^6.2.1",
     "csv-stringify": "^6.7.0",
     "data-uri-to-buffer": "^8.0.0",
-    "electron": "44.4.1",
+    "electron": "42.3.0",
     "electron-builder": "26.15.7",
     "electron-vite": "^5.0.0",
     "esbuild": "0.28.1",
@@ -491,6 +491,9 @@
         "removable-media"
       ]
     }
+  },
+  "resolutions": {
+    "icon-gen/sharp": "^0.34.5"
   },
   "packageManager": "yarn@4.6.0"
 }
