@@ -108,7 +108,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${PATENT_STATUS[@]}
 lame opus svt-av1 theora vorbis vpx x264
-ebuild_revision_41
+ebuild_revision_42
 "
 REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -398,7 +398,7 @@ src_install() {
 		"${ED}/usr/share/applications/no.mifi.losslesscut.desktop" \
 		|| die
 
-#	lcnr_install_files
+	lcnr_install_files
 	electron-app_set_sandbox_suid "/opt/${MY_PN}/chrome-sandbox"
 
 	# It is leaking stdout in stderr.
