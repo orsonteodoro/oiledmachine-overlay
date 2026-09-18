@@ -133,7 +133,7 @@ Fix:
  	struct delayed_work watch_dog_work;
  	u32 watch_dog_cnt;
 --- a/drivers/net/wireless/realtek/rtw88/main.c.orig	2026-08-16 14:32:26.000000000 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/main.c	2026-09-07 10:41:13.405709965 -0700
++++ b/drivers/net/wireless/realtek/rtw88/main.c	2026-09-18 14:38:14.876375580 -0700
 @@ -3,6 +3,7 @@
   */
  
@@ -142,7 +142,7 @@ Fix:
  
  #include "main.h"
  #include "regd.h"
-@@ -20,6 +22,13 @@
+@@ -20,6 +21,12 @@
  #include "sar.h"
  #include "sdio.h"
  #include "led.h"
@@ -152,11 +152,10 @@ Fix:
 +EXPORT_SYMBOL_GPL(rtw_usb_last_cycle);
 +atomic_t rtw_usb_cycling = ATOMIC_INIT(0);
 +EXPORT_SYMBOL_GPL(rtw_usb_cycling);
-+extern int usb_port_power_cycle(struct usb_device *udev);
  
  bool rtw_disable_lps_deep_mode;
  EXPORT_SYMBOL(rtw_disable_lps_deep_mode);
-@@ -232,6 +237,12 @@ static void rtw_watch_dog_work(struct wo
+@@ -232,6 +239,12 @@ static void rtw_watch_dog_work(struct wo
  	u32 tx_unicast_mbps, rx_unicast_mbps;
  	bool ps_active;
  
@@ -169,7 +168,7 @@ Fix:
  	mutex_lock(&rtwdev->mutex);
  
  	if (!test_bit(RTW_FLAG_RUNNING, rtwdev->flags))
-@@ -325,6 +336,9 @@ static void rtw_ips_work(struct work_str
+@@ -325,6 +338,9 @@ static void rtw_ips_work(struct work_str
  {
  	struct rtw_dev *rtwdev = container_of(work, struct rtw_dev, ips_work);
  
@@ -179,7 +178,7 @@ Fix:
  	mutex_lock(&rtwdev->mutex);
  	if (rtwdev->hw->conf.flags & IEEE80211_CONF_IDLE)
  		rtw_enter_ips(rtwdev);
-@@ -631,6 +645,41 @@ static void rtw_reset_vif_iter(void *dat
+@@ -631,6 +647,48 @@ static void rtw_reset_vif_iter(void *dat
  	rtw_release_macid(rtwdev, rtwvif->mac_id);
  }
  
@@ -190,38 +189,45 @@ Fix:
 +	struct usb_device *udev;
 +
 +	if (rtwdev->disconnecting)
-+		goto out;
++		return;
 +
-+	if (atomic_xchg(&rtw_usb_cycling, 1)) {
-+		goto out;
-+	}
++	if (atomic_xchg(&rtw_usb_cycling, 1))
++		return;
 +
-+	/* debounce 5s - this stops modprobe immediate storm loop */
 +	if (time_before(jiffies, rtw_usb_last_cycle + msecs_to_jiffies(5000))) {
-+		goto out2;
++		atomic_set(&rtw_usb_cycling, 0);
++		return;
 +	}
 +
 +	rtwusb = rtw_get_usb_priv(rtwdev);
-+	if (!rtwusb || !rtwusb->udev)
-+		goto out2;
++	if (!rtwusb || !rtwusb->udev) {
++		atomic_set(&rtw_usb_cycling, 0);
++		return;
++	}
 +
 +	udev = rtwusb->udev;
 +	usb_get_dev(udev);
 +	rtw_usb_last_cycle = jiffies;
++
++	pr_warn("rtw88: -110 storm on %s, resetting not power cycling\n",
++		dev_name(&udev->dev));
++
++	/* stop spamming registers */
 +	rtwdev->fail = true;
-+	pr_warn("rtw88: -110 storm, power cycling port %s\n", dev_name(&udev->dev));
-+	usb_port_power_cycle(udev); // no msleep(2000) here
++	ieee80211_stop_queues(rtwdev->hw);
++
++	/* usb_reset_device keeps high-speed, power cycle doesn't */
++	usb_queue_reset_device(udev->parent ? udev->parent : udev);
++	/* or: usb_reset_device(udev); */
++
 +	usb_put_dev(udev);
-+out2:
 +	atomic_set(&rtw_usb_cycling, 0);
-+out:
-+	return;
 +}
 +
  void rtw_fw_recovery(struct rtw_dev *rtwdev)
  {
  	if (!test_bit(RTW_FLAG_RESTARTING, rtwdev->flags))
-@@ -645,6 +705,12 @@ static void __fw_recovery_work(struct rt
+@@ -645,6 +704,12 @@ static void __fw_recovery_work(struct rt
  	set_bit(RTW_FLAG_RESTARTING, rtwdev->flags);
  	clear_bit(RTW_FLAG_RESTART_TRIGGERING, rtwdev->flags);
  
@@ -234,7 +240,7 @@ Fix:
  	ret = rtw_fwcd_prep(rtwdev);
  	if (ret)
  		goto free;
-@@ -662,6 +728,7 @@ free:
+@@ -662,6 +727,7 @@ free:
  
  	WARN(1, "firmware crash, start reset and recover\n");
  
@@ -242,7 +248,7 @@ Fix:
  	rcu_read_lock();
  	rtw_iterate_keys_rcu(rtwdev, NULL, rtw_reset_key_iter, rtwdev);
  	rcu_read_unlock();
-@@ -669,17 +736,25 @@ free:
+@@ -669,17 +735,25 @@ free:
  	rtw_iterate_vifs_atomic(rtwdev, rtw_reset_vif_iter, rtwdev);
  	bitmap_zero(rtwdev->hw_port, RTW_PORT_NUM);
  	rtw_enter_ips(rtwdev);
@@ -271,7 +277,7 @@ Fix:
  	ieee80211_restart_hw(rtwdev->hw);
  }
  
-@@ -1378,6 +1453,13 @@ int rtw_power_on(struct rtw_dev *rtwdev)
+@@ -1378,6 +1452,13 @@ int rtw_power_on(struct rtw_dev *rtwdev)
  	bool wifi_only;
  	int ret;
  
@@ -285,7 +291,7 @@ Fix:
  	ret = rtw_hci_setup(rtwdev);
  	if (ret) {
  		rtw_err(rtwdev, "failed to setup hci\n");
-@@ -2168,6 +2250,7 @@ int rtw_core_init(struct rtw_dev *rtwdev
+@@ -2168,6 +2249,7 @@ int rtw_core_init(struct rtw_dev *rtwdev
  	INIT_WORK(&rtwdev->fw_recovery_work, rtw_fw_recovery_work);
  	INIT_WORK(&rtwdev->update_beacon_work, rtw_fw_update_beacon_work);
  	INIT_WORK(&rtwdev->ba_work, rtw_txq_ba_work);
@@ -293,7 +299,7 @@ Fix:
  	skb_queue_head_init(&rtwdev->c2h_queue);
  	skb_queue_head_init(&rtwdev->coex.queue);
  	skb_queue_head_init(&rtwdev->tx_report.queue);
-@@ -2178,6 +2261,10 @@ int rtw_core_init(struct rtw_dev *rtwdev
+@@ -2178,6 +2260,10 @@ int rtw_core_init(struct rtw_dev *rtwdev
  	mutex_init(&rtwdev->mutex);
  	mutex_init(&rtwdev->hal.tx_power_mutex);
  
@@ -305,8 +311,8 @@ Fix:
  	init_completion(&rtwdev->lps_leave_check);
  	init_completion(&rtwdev->fw_scan_density);
 --- a/drivers/net/wireless/realtek/rtw88/usb.c.orig	2026-08-16 14:32:26.000000000 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/usb.c	2026-09-17 22:39:49.508622866 -0700
-@@ -27,6 +27,20 @@ struct rtw_usb_txcb {
++++ b/drivers/net/wireless/realtek/rtw88/usb.c	2026-09-18 14:13:46.216837755 -0700
+@@ -27,6 +27,18 @@ struct rtw_usb_txcb {
  	struct sk_buff_head tx_ack_queue;
  };
  
@@ -318,8 +324,6 @@ Fix:
 +		if (atomic_inc_return(&rtwdev->fail_count) >= 3 && !rtwdev->fail) {
 +			rtwdev->fail = true;
 +			pr_warn("rtw88: -110 storm detected, scheduling USB reset work\n");
-+			if (!work_pending(&rtwdev->usb_reset_work) && !atomic_read(&rtw_usb_cycling))
-+				schedule_work(&rtwdev->usb_reset_work);
 +		}
 +	}
 +}
@@ -327,7 +331,7 @@ Fix:
  static void rtw_usb_fill_tx_checksum(struct rtw_usb *rtwusb,
  				     struct sk_buff *skb, int agg_num)
  {
-@@ -60,13 +74,20 @@ static void rtw_usb_reg_sec(struct rtw_d
+@@ -60,13 +72,20 @@ static void rtw_usb_reg_sec(struct rtw_d
  	if (!reg_on_section)
  		return;
  
@@ -349,7 +353,7 @@ Fix:
  }
  
  static u32 rtw_usb_read(struct rtw_dev *rtwdev, u32 addr, u16 len)
-@@ -78,11 +99,12 @@ static u32 rtw_usb_read(struct rtw_dev *
+@@ -78,11 +97,12 @@ static u32 rtw_usb_read(struct rtw_dev *
  	int idx, ret;
  	static int count;
  
@@ -364,7 +368,7 @@ Fix:
  	spin_unlock_irqrestore(&rtwusb->usb_lock, flags);
  
  	data = &rtwusb->usb_data[idx];
-@@ -94,6 +116,11 @@ static u32 rtw_usb_read(struct rtw_dev *
+@@ -94,6 +114,11 @@ static u32 rtw_usb_read(struct rtw_dev *
  		rtw_err(rtwdev, "read register 0x%x failed with %d\n",
  			addr, ret);
  
@@ -376,7 +380,7 @@ Fix:
  	if (rtwdev->chip->id == RTW_CHIP_TYPE_8822C ||
  	    rtwdev->chip->id == RTW_CHIP_TYPE_8822B ||
  	    rtwdev->chip->id == RTW_CHIP_TYPE_8821C)
-@@ -114,6 +141,8 @@ static u16 rtw_usb_read16(struct rtw_dev
+@@ -114,6 +139,8 @@ static u16 rtw_usb_read16(struct rtw_dev
  
  static u32 rtw_usb_read32(struct rtw_dev *rtwdev, u32 addr)
  {
@@ -385,7 +389,7 @@ Fix:
  	return (u32)rtw_usb_read(rtwdev, addr, 4);
  }
  
-@@ -126,15 +155,15 @@ static void rtw_usb_write(struct rtw_dev
+@@ -126,15 +153,15 @@ static void rtw_usb_write(struct rtw_dev
  	int idx, ret;
  	static int count;
  
@@ -404,7 +408,7 @@ Fix:
  	*data = cpu_to_le32(val);
  
  	ret = usb_control_msg(udev, usb_sndctrlpipe(udev, 0),
-@@ -142,7 +171,12 @@ static void rtw_usb_write(struct rtw_dev
+@@ -142,7 +169,12 @@ static void rtw_usb_write(struct rtw_dev
  			      addr, 0, data, len, 500);
  	if (ret < 0 && ret != -ENODEV && count++ < 4)
  		rtw_err(rtwdev, "write register 0x%x failed with %d\n",
@@ -418,7 +422,7 @@ Fix:
  
  	if (rtwdev->chip->id == RTW_CHIP_TYPE_8822C ||
  	    rtwdev->chip->id == RTW_CHIP_TYPE_8822B ||
-@@ -162,6 +196,8 @@ static void rtw_usb_write16(struct rtw_d
+@@ -162,6 +194,8 @@ static void rtw_usb_write16(struct rtw_d
  
  static void rtw_usb_write32(struct rtw_dev *rtwdev, u32 addr, u32 val)
  {
@@ -427,7 +431,7 @@ Fix:
  	rtw_usb_write(rtwdev, addr, val, 4);
  }
  
-@@ -400,10 +436,16 @@ static bool rtw_usb_tx_agg_skb(struct rt
+@@ -400,10 +434,16 @@ static bool rtw_usb_tx_agg_skb(struct rt
  	unsigned int align_next = 0;
  	u8 qsel;
  	int ret;
@@ -444,7 +448,7 @@ Fix:
  	txcb = kmalloc_obj(*txcb, GFP_ATOMIC);
  	if (!txcb)
  		return false;
-@@ -460,9 +502,22 @@ queue:
+@@ -460,9 +500,22 @@ queue:
  	ret = rtw_usb_write_port(rtwdev, qsel, skb_head,
  				 rtw_usb_write_port_tx_complete, txcb);
  	if (ret) {
@@ -470,7 +474,7 @@ Fix:
  	}
  
  	return true;
-@@ -523,11 +578,28 @@ static int rtw_usb_write_data(struct rtw
+@@ -523,11 +576,28 @@ static int rtw_usb_write_data(struct rtw
  	rtw_tx_fill_tx_desc(rtwdev, pkt_info, skb);
  	rtw_tx_fill_txdesc_checksum(rtwdev, pkt_info, skb->data);
  
@@ -499,7 +503,7 @@ Fix:
  	}
  
  	return ret;
-@@ -1282,6 +1354,19 @@ int rtw_usb_probe(struct usb_interface *
+@@ -1282,6 +1352,19 @@ int rtw_usb_probe(struct usb_interface *
  
  	rtwusb = rtw_get_usb_priv(rtwdev);
  	rtwusb->rtwdev = rtwdev;
@@ -519,7 +523,7 @@ Fix:
  
  	ret = rtw_usb_alloc_rx_bufs(rtwusb);
  	if (ret)
-@@ -1370,17 +1455,31 @@ void rtw_usb_disconnect(struct usb_inter
+@@ -1370,17 +1453,31 @@ void rtw_usb_disconnect(struct usb_inter
  	rtwdev = hw->priv;
  	rtwusb = rtw_get_usb_priv(rtwdev);
  
@@ -667,42 +671,3 @@ Fix:
  	lockdep_assert_held(&rtwdev->mutex);
  
  	FW_OFFLOAD_H2C_SET_SEQ_NUM(h2c_pkt, rtwdev->h2c.seq);
---- a/drivers/usb/core/hub.c.orig	2026-09-05 09:13:45.259332462 -0700
-+++ b/drivers/usb/core/hub.c	2026-09-05 09:39:57.375854419 -0700
-@@ -6570,3 +6572,28 @@ acpi_handle usb_get_hub_port_acpi_handle
- 	return ACPI_HANDLE(&hub->ports[port1 - 1]->dev);
- }
- #endif
-+
-+int usb_port_power_cycle(struct usb_device *udev)
-+{
-+	struct usb_device *hdev = udev->parent;
-+	struct usb_hub *hub;
-+	int port1 = udev->portnum;
-+
-+	if (!hdev || !port1)
-+		return -ENODEV;
-+
-+	hub = usb_hub_to_struct_hub(hdev);
-+	if (!hub)
-+		return -ENODEV;
-+
-+	pr_info("rtw88: hub power cycle port %d\n", port1);
-+	usb_hub_set_port_power(hdev, hub, port1, false);
-+	msleep(1500); /* RTL8821CU needs >1s */
-+	usb_hub_set_port_power(hdev, hub, port1, true);
-+	msleep(hub_power_on_good_delay(hub) + 500);
-+
-+	set_bit(port1, hub->change_bits);
-+	schedule_work(&hub->events);
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(usb_port_power_cycle);
---- a/drivers/usb/core/usb.h.orig	2025-11-30 14:42:10.000000000 -0800
-+++ b/drivers/usb/core/usb.h	2026-09-05 10:02:25.080439586 -0700
-@@ -215,3 +215,5 @@ extern acpi_handle usb_get_hub_port_acpi
- static inline int usb_acpi_register(void) { return 0; };
- static inline void usb_acpi_unregister(void) { };
- #endif
-+
-+extern int usb_port_power_cycle(struct usb_device *udev);
