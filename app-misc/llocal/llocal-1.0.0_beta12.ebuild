@@ -96,9 +96,8 @@ LICENSE="
 "
 # OFL-1.1 - Poppins-*.ttf
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
-	# The fingerprint of 42.2.0 and 43.2.0 are the same.
 	LICENSE+="
-		electron-42.2.0-chromium.html
+		electron-44.4.1-chromium.html
 	"
 else
 	LICENSE+="

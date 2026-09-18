@@ -79,7 +79,7 @@ LICENSE="
 	(
 		${ELECTRON_APP_LICENSES}
 		Artistic-2
-		electron-42.2.0-chromium.html
+		electron-44.4.1-chromium.html
 	)
 	GPL-3+
 "

@@ -114,9 +114,8 @@ THIRD_PARTY_LICENSES="
 	)
 "
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
-	# The 42.2.0 and 42.5.0 have the same fingerprint.
 	THIRD_PARTY_LICENSES+="
-		electron-42.2.0-chromium.html
+		electron-44.4.1-chromium.html
 	"
 else
 	THIRD_PARTY_LICENSES+="
