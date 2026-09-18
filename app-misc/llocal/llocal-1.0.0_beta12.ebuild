@@ -24,7 +24,7 @@ NPM_INSTALL_PATH="/opt/${PN}"
 RUST_MAX_VER="1.93.1" # Inclusive
 RUST_MIN_VER="1.93.1" # llvm-21.1, required by @swc/core
 RUST_PV="${RUST_MIN_VER}"
-ELECTRON_BUILDER_PV="26.15.3" # 24.13.3 used upstream.  Old pinned version required
+ELECTRON_BUILDER_PV="26.15.7" # 24.13.3 used upstream.  Old pinned version required
 
 inherit secure-version secure-version-node
 
@@ -54,12 +54,23 @@ NPM_INSTALL_ARGS=(
 
 NPM_EXE_LIST=(
 	"/opt/llocal/libffmpeg.so"
-	"/opt/llocal/libGLESv2.so"
 	"/opt/llocal/libvk_swiftshader.so"
-	"/opt/llocal/libEGL.so"
+	"/opt/llocal/resources/app.asar.unpacked/node_modules/onnxruntime-node/bin/napi-v3/linux/x64/libonnxruntime_providers_tensorrt.so"
+	"/opt/llocal/resources/app.asar.unpacked/node_modules/onnxruntime-node/bin/napi-v3/linux/x64/libonnxruntime_providers_shared.so"
+	"/opt/llocal/resources/app.asar.unpacked/node_modules/onnxruntime-node/bin/napi-v3/linux/x64/libonnxruntime.so.1"
+	"/opt/llocal/resources/app.asar.unpacked/node_modules/onnxruntime-node/bin/napi-v3/linux/x64/libonnxruntime.so.1.21.0"
+	"/opt/llocal/resources/app.asar.unpacked/node_modules/onnxruntime-node/bin/napi-v3/linux/x64/libonnxruntime_providers_cuda.so"
+	"/opt/llocal/resources/app.asar.unpacked/node_modules/onnxruntime-node/bin/napi-v3/linux/arm64/libonnxruntime.so.1"
+	"/opt/llocal/resources/app.asar.unpacked/node_modules/onnxruntime-node/bin/napi-v3/linux/arm64/libonnxruntime.so.1.21.0"
+	"/opt/llocal/resources/app.asar.unpacked/node_modules/faiss-node/build/Release/libopenblas.so.0"
+	"/opt/llocal/resources/app.asar.unpacked/node_modules/faiss-node/build/Release/libgfortran.so.5"
+	"/opt/llocal/resources/app.asar.unpacked/node_modules/faiss-node/build/Release/libgomp.so.1"
+	"/opt/llocal/resources/app.asar.unpacked/node_modules/faiss-node/build/Release/libquadmath.so.0"
+	"/opt/llocal/resources/app.asar.unpacked/node_modules/@img/sharp-libvips-linuxmusl-x64/lib/libvips-cpp.so.8.17.3"
+	"/opt/llocal/resources/app.asar.unpacked/node_modules/@img/sharp-libvips-linux-x64/lib/libvips-cpp.so.8.17.3"
+	"/opt/llocal/libvulkan.so.1"
 	"/opt/llocal/chrome-sandbox"
 	"/opt/llocal/llocal"
-	"/opt/llocal/libvulkan.so.1"
 	"/opt/llocal/chrome_crashpad_handler"
 )
 
@@ -96,7 +107,7 @@ else
 fi
 RESTRICT="mirror" # Speed up downloads
 SLOT="0"
-IUSE+=" ebuild_revision_20"
+IUSE+=" ebuild_revision_21"
 RDEPEND="
 	>=sci-ml/ollama-${OLLAMA_PV}:=
 "
@@ -165,7 +176,8 @@ ewarn "QA:  Remove node_modules/vite/node_modules/esbuild and @esbuild/* <0.25.1
 			"@langchain/community@0.3.55"			# For langchain/document_loaders/fs/text
 			"kokoro-js@1.2.1"				# For package.json
 			"react-icons@5.2.1"
-			"officeparser@4.1.1"				# For parseOfficeAsync used in node_modules/@langchain/community/dist/document_loaders/fs/pptx.js
+			#"officeparser@4.1.1"				# For parseOfficeAsync used in node_modules/@langchain/community/dist/document_loaders/fs/pptx.js
+			"officeparser@5.2.2"
 
 			"langsmith@0.3.67"
 			"ollama@0.5.17"
@@ -180,6 +192,7 @@ ewarn "QA:  Remove node_modules/vite/node_modules/esbuild and @esbuild/* <0.25.1
 			"electron-builder@^${ELECTRON_BUILDER_PV}"
 		)
 		enpm install "${L[@]}" -D "${NPM_INSTALL_ARGS[@]}"
+
 	fi
 }
 
@@ -231,7 +244,7 @@ src_install() {
 	insinto "${NPM_INSTALL_PATH}"
 	doins -r "dist/linux-unpacked/"*
 	fperms 0755 "${NPM_INSTALL_PATH}/${PN}"
-	lcnr_install_files
+#	lcnr_install_files
 	local path
 	for path in "${NPM_EXE_LIST[@]}" ; do
 		fperms 0755 "${path}"
