@@ -497,7 +497,7 @@ ewarn
 ewarn "Protection summary:"
 ewarn
 ewarn "N-day (CVE fixes):  yes"
-ewarn "Security bug (Chromium internal audit/fuzzer/sanitizer fixes):  no, a CVE entry write-up is skipped"
+ewarn "Security bug (Chromium internal security-audit/fuzzer/sanitizer fixes):  no, a CVE entry write-up is skipped"
 ewarn "0-day:  no"
 ewarn
 }
@@ -719,7 +719,7 @@ elog
 elog "Protection summary:"
 elog
 elog "N-day (CVE fixes):  yes"
-elog "Security bug (Chromium internal audit/fuzzer/sanitizer fixes):  no, a CVE entry write-up is skipped"
+elog "Security bug (Chromium internal security-audit/fuzzer/sanitizer fixes):  no, a CVE entry write-up is skipped"
 elog "0-day:  no"
 elog
 }
