@@ -217,7 +217,7 @@ Fix:
 +	ieee80211_stop_queues(rtwdev->hw);
 +
 +	/* usb_reset_device keeps high-speed, power cycle doesn't */
-+	usb_queue_reset_device(udev->parent ? udev->parent : udev);
++	usb_reset_device(udev);
 +	/* or: usb_reset_device(udev); */
 +
 +	usb_put_dev(udev);
