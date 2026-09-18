@@ -491,10 +491,14 @@ src_prepare() {
 ewarn
 ewarn "${PN}'s Chromium version:  ${QT6_CHROMIUM_VER} (${QT6_CHROMIUM_TIMESTAMP})"
 ewarn "Latest Chromium version:  ${CHROMIUM_BROWSER_VER} (${CHROMIUM_VENDORED_TIMESTAMP})"
-ewarn "CVE backports patch fixes up to:  ${CVE_BACKPORTS}"
+ewarn "CVE fixes up to:  ${CVE_BACKPORTS}"
 ewarn
-ewarn "This package is behind in security updates."
-ewarn "Find a way to remove it or stop it from being added."
+ewarn
+ewarn "Protection summary:"
+ewarn
+ewarn "N-day (CVE fixes):  yes"
+ewarn "Security bug (Chromium internal audit/fuzzer/sanitizer fixes):  no, a CVE entry write-up is skipped"
+ewarn "0-day:  no"
 ewarn
 }
 
@@ -702,18 +706,20 @@ pkg_postinst() {
 			www-plugins/chrome-binary-plugins
 
 elog
-elog "${PN} is behind in security updates.  Do not use at all."
-elog "${PN} may still miss internal fixes that may not be fully disclosed."
-elog "Please remove the package after use from the system to avoid"
-elog "weaponization or misuse."
+elog "${PN} may be behind in security updates.  Do not use at all.  Please"
+elog "remove the package after use from the system to avoid weaponization or"
+elog "misuse."
+elog
 elog
 elog "${PN}'s Chromium version:  ${CHROMIUM_VENDORED_VER} (${CHROMIUM_VENDORED_TIMESTAMP})"
 elog "Latest Chromium version:  ${CHROMIUM_BROWSER_VER} (${CHROMIUM_BROWSER_TIMESTAMP})"
-elog "CVE backports patch fixes up to:  ${CVE_BACKPORTS}"
+elog "CVE fixes up to:  ${CVE_BACKPORTS}"
 elog
-elog "The CVE backport fixes are underreported and will miss undisclosed"
-elog "internal security fixes.  The upstream repo doesn't have a commit history"
-elog "of adding independent security fixes that span the internal security"
-elog "fixes set."
+elog
+elog "Protection summary:"
+elog
+elog "N-day (CVE fixes):  yes"
+elog "Security bug (Chromium internal audit/fuzzer/sanitizer fixes):  no, a CVE entry write-up is skipped"
+elog "0-day:  no"
 elog
 }
