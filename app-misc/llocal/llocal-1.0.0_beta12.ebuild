@@ -107,7 +107,7 @@ else
 fi
 RESTRICT="mirror" # Speed up downloads
 SLOT="0"
-IUSE+=" ebuild_revision_21"
+IUSE+=" ebuild_revision_22"
 RDEPEND="
 	>=sci-ml/ollama-${OLLAMA_PV}:=
 "
@@ -244,7 +244,7 @@ src_install() {
 	insinto "${NPM_INSTALL_PATH}"
 	doins -r "dist/linux-unpacked/"*
 	fperms 0755 "${NPM_INSTALL_PATH}/${PN}"
-#	lcnr_install_files
+	lcnr_install_files
 	local path
 	for path in "${NPM_EXE_LIST[@]}" ; do
 		fperms 0755 "${path}"
@@ -257,6 +257,7 @@ pkg_postinst() {
 ewarn "The ollama service must be started from init system in order to list models."
 }
 
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (with bugs) 1.0.0_beta12 (20260917 with electron 44.4.1)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (with bugs) 1.0.0_beta12 (20260728 with electron 43.2.0)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.0_beta12 (20260422 with electron 41.2.2)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.0_beta12 (20260321 with electron 41.0.3)
