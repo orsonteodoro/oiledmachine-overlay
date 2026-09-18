@@ -44,7 +44,7 @@ DESCRIPTION="A Client that groks URLs"
 HOMEPAGE="https://curl.se/"
 
 if [[ ${PV} == 9999 ]]; then
-	FALLBACK_COMMIT="c0c4971fceb41f312065b96be623d24dcc399892"
+	FALLBACK_COMMIT="d1823ebc17e5778c30f8a6b2221a057ec607a9b7"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
 	fi
