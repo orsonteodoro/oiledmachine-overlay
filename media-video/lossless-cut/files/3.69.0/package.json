@@ -90,7 +90,7 @@
     "csv-parse": "^6.2.1",
     "csv-stringify": "^6.7.0",
     "data-uri-to-buffer": "^8.0.0",
-    "electron": "42.3.0",
+    "electron": "44.4.1",
     "electron-builder": "26.15.7",
     "electron-vite": "^5.0.0",
     "esbuild": "0.28.1",
@@ -126,7 +126,7 @@
     "react-use": "^17.6.0",
     "sass": "^1.100.0",
     "screenfull": "^6.0.2",
-    "sharp": "0.35.3",
+    "sharp": "0.35.4",
     "smpte-timecode": "^1.3.6",
     "sweetalert2": "^11.26.17",
     "sweetalert2-react-content": "^5.1.1",
@@ -491,9 +491,6 @@
         "removable-media"
       ]
     }
-  },
-  "resolutions": {
-    "icon-gen/sharp": "^0.34.5"
   },
   "packageManager": "yarn@4.6.0"
 }

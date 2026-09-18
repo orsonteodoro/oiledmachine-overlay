@@ -17,7 +17,8 @@ EAPI=8
 
 MY_PN="${PN/-/}"
 
-_ELECTRON_DEP_ROUTE="reproducible" # reproducible or secure.  Working with reproducible but not secure.
+#_ELECTRON_DEP_ROUTE="reproducible" # reproducible or secure.  Working with reproducible but not secure.
+_ELECTRON_DEP_ROUTE="secure" # reproducible or secure.  Working with reproducible but not secure.
 # TODO:  Fix newer sharp with ICON_TYPE="png"
 ICON_TYPE=${ICON_TYPE:-"png"} # svg or png.  png is used by upstream and is broken for newer sharp.
 NPM_AUDIT_FIX=0 # Breaks build
