@@ -28,10 +28,10 @@ PYTHON_COMPAT=( python3_{10..14} )
 # For releases, see also https://sources.debian.org/src/ca-certificates/
 # For the type of release, see also https://firefox-source-docs.mozilla.org/security/nss/releases/index.html#mozilla-projects-nss-releases
 # For certdata commits IDs, see https://github.com/mozilla/nss/commits/master/lib/ckfw/builtins/certdata.txt
-NSS_LIVE_COMMIT="670f6a153802bd98e7797855e71b35854f63a232" # Jul 14, 2026 (NSS master) # oiledmachine-overlay preference
-NSS_ESR_COMMIT="6e2ba79aada69c4f7d8dca95e93fcfe0248319aa" # Apr 22, 2026 (NSS 3.112.5) # distro preference
-NSS_LATEST_COMMIT="670f6a153802bd98e7797855e71b35854f63a232" # Jul 14, 2026 (NSS 3.126)
-# Apr 9, 2026 (b646e2b, NSS 3.123 beta1) # https://wiki.mozilla.org/CA/Included_Certificates
+NSS_LIVE_COMMIT="a073fb61a7003fffa193491c8c8eedf5676d3de4" # Sep 18, 2026 (NSS master) # oiledmachine-overlay preference
+NSS_ESR_COMMIT="108de14257bf363cf53a42e1ef382d44fe39c599" # Apr 22, 2026 (NSS 3.125) # distro preference
+NSS_LATEST_COMMIT="23b159efa6d74923192ab6c7f6d0d5f3ad952d4d" # Jul 14, 2026 (NSS 3.129)
+# Sep 18, 2026 (fc16813, NSS 3.129) # https://wiki.mozilla.org/CA/Included_Certificates
 
 NSS_FLAVORS=(
 	"certdata-esr"
@@ -210,7 +210,10 @@ einfo "PRECOMPILED:  ${PRECOMPILED}"
 
 	# Cheap integrity check of certdata.txt content
 		grep -q -e "Mozilla Builtin Roots" "${d}/certdata.txt" || die "Integrity failed for start of ${d}/certdata.txt"
-		grep -q -e "SecureSign Root CA16" "${d}/certdata.txt" || die "Integrity failed for end of ${d}/certdata.txt"
+		grep -q -F -e "\150\025\322\064" "${d}/certdata.txt" || die "Integrity failed for end of ${d}/certdata.txt"
+
+	# Cheap integrity check for last seen commit
+		grep -q -F -e "For Server Distrust After: Wed Apr 15 23:59:59 2026" "${d}/certdata.txt" || die "Integrity failed for last commit ${d}/certdata.txt"
 
 	# Cheap integrity check of nssckbi.h content
 		grep -q -e "#ifndef NSSCKBI_H" "${d}/nssckbi.h" || die "Integrity failed for start of ${d}/nssckbi.h"
