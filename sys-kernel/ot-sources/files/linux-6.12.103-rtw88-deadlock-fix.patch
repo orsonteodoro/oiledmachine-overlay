@@ -304,8 +304,8 @@ Fix:
  	init_waitqueue_head(&rtwdev->coex.wait);
  	init_completion(&rtwdev->lps_leave_check);
  	init_completion(&rtwdev->fw_scan_density);
---- a/drivers/net/wireless/realtek/rtw88/usb.c.orig	2026-09-14 00:03:43.810612993 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/usb.c	2026-09-14 00:05:58.627315861 -0700
+--- a/drivers/net/wireless/realtek/rtw88/usb.c.orig	2026-09-17 22:53:16.809668035 -0700
++++ b/drivers/net/wireless/realtek/rtw88/usb.c	2026-09-17 22:59:04.674141668 -0700
 @@ -26,6 +26,20 @@ struct rtw_usb_txcb {
  	struct sk_buff_head tx_ack_queue;
  };
@@ -499,18 +499,12 @@ Fix:
  	}
  
  	return ret;
-@@ -1085,6 +1157,7 @@ int rtw_usb_probe(struct usb_interface *
+@@ -1085,6 +1157,19 @@ int rtw_usb_probe(struct usb_interface *
  
  	rtwusb = rtw_get_usb_priv(rtwdev);
  	rtwusb->rtwdev = rtwdev;
 +	rtwusb->udev = interface_to_usbdev(intf);
- 
- 	ret = rtw_usb_alloc_rx_bufs(rtwusb);
- 	if (ret)
-@@ -1094,6 +1167,18 @@ int rtw_usb_probe(struct usb_interface *
- 	if (ret)
- 		goto err_free_rx_bufs;
- 
++
 +	/* init after core_init - safe, no msleep in probe */
 +	rtwdev->disconnecting = false;
 +	atomic_set(&rtwdev->fail_count, 0);
@@ -522,11 +516,10 @@ Fix:
 +		extern bool rtw_disable_lps_deep_mode;
 +		rtw_disable_lps_deep_mode = true;
 +	}
-+
- 	ret = rtw_usb_intf_init(rtwdev, intf);
- 	if (ret) {
- 		rtw_err(rtwdev, "failed to init USB interface\n");
-@@ -1170,17 +1257,31 @@ void rtw_usb_disconnect(struct usb_inter
+ 
+ 	ret = rtw_usb_alloc_rx_bufs(rtwusb);
+ 	if (ret)
+@@ -1170,17 +1255,31 @@ void rtw_usb_disconnect(struct usb_inter
  	rtwdev = hw->priv;
  	rtwusb = rtw_get_usb_priv(rtwdev);
  
@@ -676,7 +669,7 @@ Fix:
  	FW_OFFLOAD_H2C_SET_SEQ_NUM(h2c_pkt, rtwdev->h2c.seq);
 --- a/drivers/usb/core/hub.c.orig	2026-09-05 10:11:10.716924952 -0700
 +++ b/drivers/usb/core/hub.c	2026-09-05 10:29:03.993885489 -0700
-@@ -6567,3 +6569,31 @@ acpi_handle usb_get_hub_port_acpi_handle
+@@ -6567,3 +6569,28 @@ acpi_handle usb_get_hub_port_acpi_handle
  	return ACPI_HANDLE(&hub->ports[port1 - 1]->dev);
  }
  #endif
@@ -694,15 +687,12 @@ Fix:
 +	if (!hub)
 +		return -ENODEV;
 +
-+	/* mirror hub_port_power_cycle() - works even if hub has no per-port power switch */
-+	usb_disable_device(udev, 1);
-+	usb_clear_port_feature(hdev, port1, USB_PORT_FEAT_ENABLE);
-+
-+	/* try power off/on if hub supports it */
++	pr_info("rtw88: hub power cycle port %d\n", port1);
 +	usb_hub_set_port_power(hdev, hub, port1, false);
-+	msleep(1200); /* RTL8821CU needs >1s */
++	msleep(1500); /* RTL8821CU needs >1s */
 +	usb_hub_set_port_power(hdev, hub, port1, true);
-+	/* trigger hub enumeration - this was missing, so physical removal was required */
++	msleep(hub_power_on_good_delay(hub) + 500);
++
 +	set_bit(port1, hub->change_bits);
 +	schedule_work(&hub->events);
 +	return 0;
