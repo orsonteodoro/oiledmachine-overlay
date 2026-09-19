@@ -299,7 +299,7 @@ Pairing rules and support
       choose not to apply patches because it is unpaid free labor to fix any
       issue, stress relief, or an alternative to replace it exists.  It is a
       common practice by the distro overlay to delete ebuilds for EOL packages
-      or defuct projects.
+      or defunct projects.
 
 * [2] [Python 3.10](https://projects.gentoo.org/python/guide/basic.html#python-compat)
 * [3] Not widely tested with CI.
