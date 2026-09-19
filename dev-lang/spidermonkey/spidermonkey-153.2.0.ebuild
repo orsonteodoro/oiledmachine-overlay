@@ -3,12 +3,12 @@
 
 EAPI="8"
 
-# For downloads, see 140 ESRs in https://ftp.mozilla.org/pub/firefox/releases/
+# For downloads, see 154 ESRs in https://ftp.mozilla.org/pub/firefox/releases/
 
 # See also
-# /var/tmp/portage/dev-lang/spidermonkey-140.12.0/work/firefox-140.12.0/taskcluster/kinds/fetch/toolchains.yml
-# /var/tmp/portage/dev-lang/spidermonkey-140.12.0/work/firefox-140.12.0/taskcluster/kinds/toolchain/node.yml
-# /var/tmp/portage/dev-lang/spidermonkey-140.12.0/work/firefox-140.12.0/taskcluster/kinds/toolchain/rust.yml
+# /var/tmp/portage/dev-lang/spidermonkey-153.2.0/work/firefox-153.2.0/taskcluster/kinds/fetch/toolchains.yml
+# /var/tmp/portage/dev-lang/spidermonkey-153.2.0/work/firefox-153.2.0/taskcluster/kinds/toolchain/node.yml
+# /var/tmp/portage/dev-lang/spidermonkey-153.2.0/work/firefox-153.2.0/taskcluster/kinds/toolchain/rust.yml
 
 CFLAGS_HARDENED_USE_CASES="jit language-runtime scripting security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="IO TC"
@@ -22,13 +22,13 @@ SEVERITY_LABEL="Severity:"
 VULNERABILITIES_FIXED=(
 )
 
-FIREFOX_PATCHSET="firefox-140esr-patches-12.tar.xz"
+FIREFOX_PATCHSET="firefox-153esr-patches-03.tar.xz"
 SPIDERMONKEY_PATCHSET="spidermonkey-140-patches-02.tar.xz"
 
-LLVM_COMPAT=( 19 20 22 )
+LLVM_COMPAT=( 22 )
 RUST_LIVE_TIMESTAMP="Jul 5, 2026 8:11 AM PDT"
-RUST_MAX_VER="9999"
-RUST_MIN_VER="1.86.0"
+RUST_MAX_VER="1.97.1"
+RUST_MIN_VER="1.97.1"
 RUST_NEEDS_LLVM=1 # Prune rustc for unused LLVM slots
 RUST_NIGHTLY_PV="1.99.0"
 
@@ -91,13 +91,18 @@ LICENSE="
 	Firefox-ESR-$(ver_cut 1-2 ${PV}).x-Licenses.html
 	MPL-2.0
 "
-SLOT="$(ver_cut 1)/140.11.0"
+SLOT="$(ver_cut 1)/153.1.0"
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~x86"
 
 IUSE="clang cpu_flags_arm_neon debug +jit test"
 
 #RESTRICT="test"
-RESTRICT="!test? ( test )"
+RESTRICT="
+	mirror
+	!test? (
+		test
+	)
+" # Speed up downloads
 
 BDEPEND="${PYTHON_DEPS}
 	$(llvm_gen_dep '
@@ -109,22 +114,10 @@ BDEPEND="${PYTHON_DEPS}
 	')
 	>=dev-util/cbindgen-0.27.0
 	virtual/pkgconfig
-	llvm_slot_19? (
-		|| (
-			~dev-lang/rust-bin-1.86.0
-			~dev-lang/rust-1.86.0
-		)
-	)
-	llvm_slot_20? (
-		|| (
-			~dev-lang/rust-bin-1.90.0
-			~dev-lang/rust-1.90.0
-		)
-	)
 	llvm_slot_22? (
 		|| (
-			=dev-lang/rust-bin-9999
-			=dev-lang/rust-9999
+			=dev-lang/rust-bin-1.97.1
+			=dev-lang/rust-1.97.1
 		)
 	)
 	test? (
@@ -210,9 +203,9 @@ python_check_deps() {
 
 pkg_pretend() {
 	if use test ; then
-		CHECKREQS_DISK_BUILD="4400M"
+		CHECKREQS_DISK_BUILD="5600M"
 	else
-		CHECKREQS_DISK_BUILD="4300M"
+		CHECKREQS_DISK_BUILD="5500M"
 	fi
 
 	check-reqs_pkg_pretend
@@ -280,9 +273,9 @@ pkg_setup() {
 		fi
 
 		if use test ; then
-			CHECKREQS_DISK_BUILD="4400M"
+			CHECKREQS_DISK_BUILD="5600M"
 		else
-			CHECKREQS_DISK_BUILD="4300M"
+			CHECKREQS_DISK_BUILD="5500M"
 		fi
 
 		check-reqs_pkg_setup
@@ -305,9 +298,9 @@ pkg_setup() {
 
 	export use_lto
 
-	if use llvm_slot_22 ; then
-		verify_rust_nightly
-	fi
+	#if use llvm_slot_22 ; then
+	#	verify_rust_nightly
+	#fi
 }
 
 src_prepare() {
@@ -315,9 +308,18 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch || die
 	fi
 
-	# Workaround for bgo #915651,915651,929013 on musl
+	# Workaround for bgo #915651,915651,929013 and bmo#1988166 on musl
 	if use elibc_glibc ; then
 		rm -v "${WORKDIR}"/firefox-patches/*bgo-748849-RUST_TARGET_override.patch || die
+		rm -v "${WORKDIR}"/firefox-patches/*bgo-967694-musl-prctrl-exception-on-musl.patch || die
+	else
+		# in musl, the rust-1.98 patch probably handles RUST_TARGET like we want to?
+		local rustver=$(rustc --version | cut -d' ' -f2)
+		if ver_test "${rustver}" -ge 1.98 ; then
+			rm -v "${WORKDIR}"/firefox-patches/*bgo-748849-RUST_TARGET_override.patch || die
+		else
+			rm -v "${WORKDIR}"/firefox-patches/*-bmo-2053518-handle-oe-linux-rust-targets-added-in-rustc-1.98.patch || die
+		fi
 	fi
 
 	eapply "${WORKDIR}"/firefox-patches
@@ -587,7 +589,7 @@ src_test() {
 		die "Smoke-test failed: did interpreter initialization fail?"
 	fi
 
-	cp "${FILESDIR}"/spidermonkey-140-known-test-failures.txt "${T}"/known_test_failures.list || die
+	cp "${FILESDIR}"/spidermonkey-${PV%%.*}-known-test-failures.txt "${T}"/known_test_failures.list || die
 	./mach jstests --exclude-file="${T}"/known_test_failures.list || die
 }
 
