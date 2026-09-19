@@ -102,7 +102,6 @@ pinning are as follows:
 - The latest LTS slot by LTS distro releases used in CI is supported for LTS packages.
 - The latest rolling slot by a rolling distro release is supported for rolling
   packages.
-- The live slot limited to Chromium, Firefox ESR 153, Firefox rapid release, SpiderMonkey 153.
 - The bootstrap slots that are unassociated with any LTS distros are deprecated
   so packages need to use either the latest LTS slot or rolling slot.
 - The highest slot required by the lockfile should determine if the package is a
@@ -127,6 +126,10 @@ For C/C++ the Rust slot rules for version pinning are as follows:
 | 19 (LTS)           | 1.86.0    |
 | 18 (LTS)           | 1.81.0    |
 | 17 (LTS)           | 1.77.2    |
+
+For Rust live, this slot is limited to the following packages:
+
+- Chromium, Firefox ESR 153, Firefox rapid release, SpiderMonkey 153
 
 The version ranges are matching to avoid multiple LLVM versions loaded issues.
 
