@@ -259,7 +259,7 @@ Pairing rules and support
 
 | Pairing                                                              | Allowed? | Reason                                                                                   | Example                                        |
 | ---                                                                  | ---      | ---                                                                                      | ---                                            |
-| Lib A (C++17, GCC13) + Lib B (C++17, GCC13) + App (C++17, GCC13)     | Y        | All the same, the most consistent and reliable build                                     | Firefox ESR, LTS linux packages                |
+| Lib A (C++17, GCC13) + Lib B (C++17, GCC13) + App (C++17, GCC13)     | Y        | All the same, the most consistent and reliable build                                     | Firefox ESR, enterprise LTS packages           |
 | Lib A (C++17, GCC13) + Lib B (C++20, GCC13) + App (C++23, LLVM23)    | Y        | The app has highest C++ version AND no library GCC/LLVM slot is greater than it          | Chromium, Hyprland, rolling FAFO packages      |
 | Lib A (C++17, GCC13) depends on Lib B (C++23, GCC16)                 | Y        | The parent library needs to be >= C++ version, USE flag disabled, or version blacklisted |                                                |
 | Lib A (C++17, GCC13) depends on Lib B (C++17, GCC13)                 | Y        | All the same C++ version and same GCC slot                                               |                                                |
