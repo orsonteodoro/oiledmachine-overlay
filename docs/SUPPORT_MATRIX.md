@@ -265,7 +265,7 @@ Pairing rules and support
 | Lib A (C++17, GCC13) depends on Lib B (C++17, GCC13)                 | Y        | All the same C++ version and same GCC slot                                                    | gtkmm, qtbase:6                                |
 | Lib A (C++17, GCC13) depends on Lib B (C++17, GCC14)                 | N        | All the same C++ version and only 1 GCC slot allowed for LTS (C++17)                          |                                                |
 | Lib A (C++17, GCC13) depends on Lib B (C++20, GCC13)                 | N        | The dependee B library C++ version typically cannot exceed the depender A library C++ version |                                                |
-| Lib A (C++14, GCC13) depends on Lib B (C++17, GCC13)                 | N        | The exception, it is allowed if using the same GCC compiler slot                              | Boost links to ICU                             |
+| Lib A (C++14, GCC13) depends on Lib B (C++17, GCC13)                 | Y        | The exception, it is allowed if using the same GCC compiler slot                              | Boost links to ICU                             |
 
 * Security note:  FAFO or breaking the rules may cause undefined behavior (UB) or memory corruption.
 
