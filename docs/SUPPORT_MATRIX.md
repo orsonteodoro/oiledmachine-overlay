@@ -263,7 +263,7 @@ Pairing rules and support
 | Lib A (C++17, GCC13) + Lib B (C++20, GCC13) + App (C++23, LLVM23)    | Y        | The app has highest C++ version AND no library GCC/LLVM slot is greater than it                     | Chromium, Hyprland, rolling FAFO packages      |
 | Lib A (C++26, GCC16) depends on Lib B (C++17, GCC13)                 | Y        | The depender library A meets the >= C++ version of the dependee B library.  A rolling lib can link to LTS lib(s), but typically not in the opposite direction. | Hyprland libraries (e.g. hyprgraphics)         |
 | Lib A (C++17, GCC13) depends on Lib B (C++17, GCC13)                 | Y        | All the same C++ version and same GCC slot                                                          | gtkmm, qtbase:6                                |
-| Lib A (C++17, GCC13) depends on Lib B (C++17, GCC14)                 | N        | All the same C++ version and only 1 GCC slot allowed for LTS (C++17)                                |                                                |
+| Lib A (C++17, GCC13) depends on Lib B (C++17, GCC14)                 | N        | All the same C++ version and only 1 GCC slot allowed for LTS (C++17 or earlier)                     |                                                |
 | Lib A (C++17, GCC13) depends on Lib B (C++20, GCC13)                 | N        | The dependee B library C++ version typically cannot exceed the depender A library C++ version       |                                                |
 | Lib A (C++14, GCC13) depends on Lib B (C++17, GCC13)                 | Y        | The exception, it is allowed if using the same GCC compiler slot.  LTS lib with LTS lib is allowed. | Boost links to ICU                             |
 
