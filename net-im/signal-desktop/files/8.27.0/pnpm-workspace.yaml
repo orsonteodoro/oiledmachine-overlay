@@ -15,8 +15,8 @@ packages:
 #minimumReleaseAgeIgnoreMissingTime: false
 #minimumReleaseAgeStrict: true
 minimumReleaseAgeExclude:
-  - '@babel/core@7.29.6'
-  - '@babel/runtime@7.26.10'
+  - '@babel/core@7.29.7'
+  - '@babel/runtime@7.29.7'
   - '@indutny/protopiler@4.0.2'
   - '@remix-run/router@1.23.2'
   - '@signalapp/libsignal-client'
@@ -24,41 +24,39 @@ minimumReleaseAgeExclude:
   - 'electron'
   - '@storybook/core@8.6.18'
   - '@storybook/theming@8.6.18'
-  - '@xmldom/xmldom@0.9.10'
+  - '@xmldom/xmldom@0.9.12'
   - 'ajv@8.18.0'
   - 'tar@7.5.21'
-  - 'electron@43.2.0'
+  - 'electron@44.4.1'
   - 'electron-builder@26.15.7'
-  - 'esbuild@0.25.0'
-  - 'flatted@3.4.2'
-  - 'immutable@4.3.8'
-  - 'js-yaml@4.3.0'
+  - 'esbuild@0.28.1'
+  - 'flatted@3.4.4'
+  - 'immutable@4.3.9'
+  - 'js-yaml@4.3.2'
   - 'jws@3.2.3'
-  - 'linkify-it@5.0.2'
+  - 'linkify-it@6.1.0'
   - 'picomatch@2.3.2'
-  - 'postcss@8.5.10'
-  - 'react-router@8.3.0'
+  - 'postcss@8.5.23'
+  - 'react-router@8.4.0'
   - 'rollup@3.30.0'
-  - 'qs@6.15.2'
-  - 'sax@1.6.0'
+  - 'qs@6.14.1'
+  - 'sax@1.6.1'
   - 'shell-quote@1.9.0'
-  - 'serialize-javascript@7.0.5'
+  - 'serialize-javascript@7.1.1'
   - 'storybook@8.6.18'
-  - 'svgo@4.0.2'
+  - 'svgo@4.1.0'
   - 'uuid@13.0.2'
   - 'vite@6.4.3'
-  - 'webpack@5.104.1'
+  - 'webpack@5.111.1'
   - got@11.8.5
   - cross-spawn@6.0.6
   - diff@8.0.3
   - serialize-javascript@7.0.3
+  - serialize-javascript@7.0.5
   - uuid@11.1.1
-  - undici@6.28.0
   - '@remix-run/router@1.23.3'
-  - js-yaml@4.3.1
+  - svgo@4.0.2
   - csv-parse@7.0.2
-  - js-yaml@4.3.2
-  - svgo@4.1.0
 
 trustPolicy: no-downgrade
 trustPolicyExclude:
@@ -100,51 +98,51 @@ trustPolicyExclude:
 # Bans or rollbacks
 overrides:
   # Security fixes
-  '@babel/core': '7.29.6'
-  '@reduxjs/toolkit@1.9.5>@babel/runtime': '7.26.10'
+  '@babel/core': '7.29.7'
+  '@reduxjs/toolkit@1.9.5>@babel/runtime': '7.29.7'
   '@signalapp/ringrtc@2.69.7>tar': '7.5.21'
-  '@storybook/test-runner@0.22.0>js-yaml': '4.3.0'
-  '@typescript-eslint/eslint-plugin@5.59.0>js-yaml': '4.3.0'
+  '@storybook/test-runner@0.22.0>js-yaml': '4.3.2'
+  '@typescript-eslint/eslint-plugin@5.59.0>js-yaml': '4.3.2'
   '@typescript-eslint/eslint-plugin@5.59.0>picomatch': '2.3.2'
-  '@typescript-eslint/parser@5.59.0>js-yaml': '4.3.0'
+  '@typescript-eslint/parser@5.59.0>js-yaml': '4.3.2'
   '@typescript-eslint/parser@5.59.0>picomatch': '2.3.2'
-  '@vitejs/plugin-react@3.1.0>@babel/core': '7.29.6'
-  '@vitejs/plugin-react@3.1.0>esbuild': '0.25.0'
-  '@vitejs/plugin-react@3.1.0>immutable': '4.3.8'
+  '@vitejs/plugin-react@3.1.0>@babel/core': '7.29.7'
+  '@vitejs/plugin-react@3.1.0>esbuild': '0.28.1'
+  '@vitejs/plugin-react@3.1.0>immutable': '4.3.9'
   '@vitejs/plugin-react@3.1.0>picomatch': '2.3.2'
-  '@vitejs/plugin-react@3.1.0>postcss': '8.5.10'
+  '@vitejs/plugin-react@3.1.0>postcss': '8.5.23'
   '@vitejs/plugin-react@3.1.0>rollup': '3.30.0'
   '@vitejs/plugin-react@3.1.0>vite': '6.4.3'
-  'danger@13.0.10>js-yaml': '4.3.0'
+  'danger@13.0.10>js-yaml': '4.3.2'
   'danger@13.0.10>jws': '3.2.3'
-  'danger@13.0.10>qs': '6.15.2'
-  'danger@13.0.10>undici': '6.27.0'
+  'danger@13.0.10>qs': '6.14.1'
+  'danger@13.0.10>undici': '6.28.0'
   'fabric': '4.6.0'
-  'electron': '43.2.0'
+  'electron': '44.4.1'
   'electron-builder': '26.15.7'
   #'electron-builder@26.0.14>tar': '7.5.21'
-  'eslint@8.38.0>js-yaml': '4.3.0'
-  'eslint-config-airbnb-typescript-prettier@5.0.0>js-yaml': '4.3.0'
+  'eslint@8.38.0>js-yaml': '4.3.2'
+  'eslint-config-airbnb-typescript-prettier@5.0.0>js-yaml': '4.3.2'
   'eslint-config-airbnb-typescript-prettier@5.0.0>picomatch': '2.3.2'
-  'eslint-plugin-react@7.32.2>js-yaml': '4.3.0'
-  'js-yaml': '4.3.0'
-  'linkify-it': '5.0.2'
+  'eslint-plugin-react@7.32.2>js-yaml': '4.3.2'
+  'js-yaml': '4.3.2'
+  'linkify-it': '6.1.0'
   'npm-run-all2@8.0.4>shell-quote': '1.9.0'
-  'react-redux@8.0.5>@babel/runtime': '7.26.10'
+  'react-redux@8.0.5>@babel/runtime': '7.29.7'
   'react-router-dom@6.10.0>@remix-run/router': '1.23.2'
-  'react-router': '8.3.0'
-  'redux@4.2.1>@babel/runtime': '7.26.10'
+  'react-router': '8.4.0'
+  'redux@4.2.1>@babel/runtime': '7.29.7'
   'rollup-plugin-visualizer@5.9.0>rollup': '3.30.0'
   'rollup-plugin-visualizer@5.9.0>picomatch': '2.3.2'
-  'sass@1.62.0>immutable': '4.3.7'
+  'sass@1.62.0>immutable': '4.3.9'
   'sass@1.62.0>picomatch': '2.3.2'
   'uuid@>=13.0.0 <13.0.2': '13.0.2'
-  'vite@4.5.3>esbuild': '0.25.0'
-  'vite@4.5.3>immutable': '4.3.8'
+  'vite@4.5.3>esbuild': '0.28.1'
+  'vite@4.5.3>immutable': '4.3.9'
   'vite@4.5.3>picomatch': '2.3.2'
-  'vite@4.5.3>postcss': '8.5.10'
+  'vite@4.5.3>postcss': '8.5.23'
   'vite@4.5.3>rollup': '3.30.0'
-  'webpack': '5.104.1'
+  'webpack': '5.111.1'
   # Deny or reject rules
   'canvas': '-' # Required by jsdom, but both canvas and jsdom are not needed for our use case
   'electron@39.8.1': '-' # Allow only monoslot
@@ -167,13 +165,10 @@ overrides:
   csv-parse@<7.0.2: ^7.0.2
   diff@>=6.0.0 <8.0.3: ^8.0.3
   got@<11.8.5: ^11.8.5
-  js-yaml@>=4.0.0 <4.3.1: ^4.3.1
-  js-yaml@>=4.0.0 <4.3.2: ^4.3.2
   serialize-javascript@<=7.0.2: ^7.0.3
   serialize-javascript@>=5.0.0 <7.0.5: ^7.0.5
   svgo@>=4.0.0 <4.0.2: ^4.0.2
   svgo@>=4.0.0 <4.1.0: ^4.1.0
-  undici@<6.28.0: ^6.28.0
   uuid@<11.1.1: ^11.1.1
 
 allowUnusedPatches: false

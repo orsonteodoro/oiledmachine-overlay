@@ -145,7 +145,7 @@ SLOT="0"
 RESTRICT="splitdebug binchecks strip mirror" # Prevent slow down and snooping
 IUSE+="
 firejail wayland +X
-ebuild_revision_97
+ebuild_revision_99
 "
 REQUIRED_USE+="
 	|| (
@@ -253,6 +253,33 @@ _apply_patches() {
 einfo "DEBUG:  Called pnpm_unpack_post()"
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		eapply "${FILESDIR}/${PN}-8.27.0-project-files-changes.patch"
+
+		sed -i -e "s|@NODE_24_ELECTRON_PV@|${NODE_24_ELECTRON_PV}|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_AJV_PV@|${NODE_AJV_PV}|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_AT_XMLDOM_XMLDOM_PV@|${NODE_AT_XMLDOM_XMLDOM_PV}|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_BABEL_CORE_7_PV@|${NODE_BABEL_CORE_7_PV}|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_BABEL_RUNTIME_7_PV@|${NODE_BABEL_RUNTIME_7_PV}|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_ESBUILD_PV@|${NODE_ESBUILD_PV}|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_FLATTED_PV@|${NODE_FLATTED_PV}|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_IMMUTABLE_4_PV@|${NODE_IMMUTABLE_4_PV}|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_JS_YAML_4_PV@|${NODE_JS_YAML_4_PV}|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_JWS_3_PV@|${NODE_JWS_3_PV}|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_LINKIFY_IT_PV@|${NODE_LINKIFY_IT_PV}|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_PICOMATCH_2_PV@|${NODE_PICOMATCH_2_PV}|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_POSTCSS_PV@|${NODE_POSTCSS_PV}|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_REACT_ROUTER_8_PV@|${NODE_REACT_ROUTER_8_PV}|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_ROLLUP_3_PV@|${NODE_ROLLUP_3_PV}|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_SAX_PV@|${NODE_SAX_PV}|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_SERIALIZE_JAVASCRIPT_PV@|${NODE_SERIALIZE_JAVASCRIPT_PV}|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_SHELL_QUOTE_PV@|${NODE_SHELL_QUOTE_PV}|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_STORYBOOK_8_PV@|${NODE_STORYBOOK_8_PV}|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_SVGO_4_PV@|${NODE_SVGO_4_PV}|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_TAR_PV@|${NODE_TAR_PV}|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_QS_PV@|${NODE_QS_PV}|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_UNDICI_PV@|${NODE_UNDICI_PV}|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_UUID_13_PV@|${NODE_UUID_13_PV}|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_VITE_6_PV@|${NODE_VITE_6_PV}|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_WEBPACK_5_PV@|${NODE_WEBPACK_5_PV}|g" "${S}/pnpm-workspace.yaml" || die
 	fi
 
 einfo "Increasing verbosity to debug"
@@ -343,13 +370,13 @@ src_unpack() {
 	#############################################################
 	# pnpm is sloppy/inconsistent.  It is fixed but missed some spots that offends Dependabot that it is strict about.
 		patch_build_files() {
-			sed -i -e "s|\"@babel/core\": \"7.29.0\"|\"@babel/core\": \"7.29.6\"|g" "${S}/package.json" || die
-			sed -i -e "s|\"js-yaml\": \"4.1.1\"|\"js-yaml\": \"4.3.0\"|g" "${S}/package.json" || die
-			sed -i -e "s|\"js-yaml\": \"4.1.1\"|\"js-yaml\": \"4.3.0\"|g" "${S}/danger/package.json" || die
-			sed -i -e "s|\"uuid\": \"13.0.0\"|\"uuid\": \"13.0.2\"|g" "${S}/package.json" || die
-			sed -i -e "s|\"webpack\": \"5.96.1\"|\"webpack\": \"5.104.1\"|g" "${S}/package.json" || die
-			sed -i -e "s|\"svgo\": \"4.0.1\"|\"svgo\": \"4.0.2\"|g" "${S}/package.json" || die
-			sed -i -e "s|\"linkify-it\": \"5.0.1\"|\"linkify-it\": \"5.0.2\"|g" "${S}/package.json" || die
+			sed -i -e "s|\"@babel/core\": \"7.29.0\"|\"@babel/core\": \"${NODE_BABEL_CORE_7_PV}\"|g" "${S}/package.json" || die
+			sed -i -e "s|\"js-yaml\": \"4.1.1\"|\"js-yaml\": \"${NODE_JS_YAML_4_PV}\"|g" "${S}/package.json" || die
+			sed -i -e "s|\"js-yaml\": \"4.1.1\"|\"js-yaml\": \"${NODE_JS_YAML_4_PV}\"|g" "${S}/danger/package.json" || die
+			sed -i -e "s|\"uuid\": \"13.0.0\"|\"uuid\": \"${NODE_UUID_13_PV}\"|g" "${S}/package.json" || die
+			sed -i -e "s|\"webpack\": \"5.96.1\"|\"webpack\": \"${NODE_WEBPACK_5_PV}\"|g" "${S}/package.json" || die
+			sed -i -e "s|\"svgo\": \"4.0.1\"|\"svgo\": \"${NODE_SVGO_4_PV}\"|g" "${S}/package.json" || die
+			sed -i -e "s|\"linkify-it\": \"5.0.1\"|\"linkify-it\": \"${NODE_LINKIFY_IT_PV}\"|g" "${S}/package.json" || die
 		}
 einfo "QA:  Remove react-router@<8.3.0 from pnpm-lock.yaml"
 

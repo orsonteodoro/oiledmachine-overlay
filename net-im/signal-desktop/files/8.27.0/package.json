@@ -134,7 +134,7 @@
     "google-libphonenumber": "3.2.44"
   },
   "devDependencies": {
-    "@babel/core": "7.29.6",
+    "@babel/core": "7.29.7",
     "@babel/helper-plugin-utils": "7.28.6",
     "@babel/plugin-transform-runtime": "7.29.0",
     "@babel/plugin-transform-typescript": "7.28.6",
@@ -332,7 +332,7 @@
     "stylelint-config-css-modules": "4.6.0",
     "stylelint-config-recommended-scss": "17.0.1",
     "stylelint-use-logical-spec": "5.0.1",
-    "svgo": "4.0.2",
+    "svgo": "4.1.0",
     "synckit": "0.11.12",
     "tailwindcss": "4.3.0",
     "tinykeys": "3.1.0",
@@ -343,7 +343,7 @@
     "url": "0.11.4",
     "uuid": "13.0.2",
     "wait-on": "9.0.5",
-    "webpack": "5.104.1",
+    "webpack": "5.111.1",
     "write-file-atomic": "7.0.1",
     "zod": "4.3.6"
   },
