@@ -36,7 +36,7 @@ overrides:
   linkify-it: 6.1.0
   npm-run-all2@8.0.4>shell-quote: 1.9.0
   react-redux@8.0.5>@babel/runtime: 7.29.7
-  react-router-dom@6.10.0>@remix-run/router: 1.23.2
+  react-router-dom@6.10.0>@remix-run/router: 1.23.4
   react-router: 8.4.0
   redux@4.2.1>@babel/runtime: 7.29.7
   rollup-plugin-visualizer@5.9.0>rollup: 3.30.0
@@ -65,7 +65,6 @@ overrides:
   electron@<39.8.9: ^39.8.9
   ip-address@<=10.3.0: ^10.3.1
   nanoid@<3.3.17: 3.3.18
-  '@remix-run/router@>=1.3.0 <1.23.3': ^1.23.3
   cross-spawn@<6.0.6: ^6.0.6
   csv-parse@<7.0.2: ^7.0.2
   diff@>=6.0.0 <8.0.3: ^8.0.3
@@ -4155,8 +4154,8 @@ packages:
   '@remix-run/route-pattern@0.22.1':
     resolution: {integrity: sha512-czdGJWh09Lapvcqt7Vb09KlrU2PhRJ8xQaI+AItTuD9aDJ5MAgxnS38lnys6Ll+6RJEqPiaUqTwIQhVLwFvv+w==, tarball: https://registry.npmjs.org/@remix-run/route-pattern/-/route-pattern-0.22.1.tgz}
 
-  '@remix-run/router@1.23.2':
-    resolution: {integrity: sha512-Ic6m2U/rMjTkhERIa/0ZtXJP17QUi2CbWE7cqx4J58M8aA3QTfW+2UlQ4psvTX9IO1RfNVhK3pcpdjej7L+t2w==, tarball: https://registry.npmjs.org/@remix-run/router/-/router-1.23.2.tgz}
+  '@remix-run/router@1.23.4':
+    resolution: {integrity: sha512-q7j5geK7xs3UJSdm9/iytUNclBnLmYx1EnSeCFXHPeutdqgIMeFeHtUZgS3EhlKxdBEAu8OwtJCwmLrEzpSs7Q==, tarball: https://registry.npmjs.org/@remix-run/router/-/router-1.23.4.tgz}
     engines: {node: '>=14.0.0'}
 
   '@rolldown/binding-android-arm-eabi@1.2.9':
@@ -14926,7 +14925,7 @@ snapshots:
 
   '@remix-run/route-pattern@0.22.1': {}
 
-  '@remix-run/router@1.23.2': {}
+  '@remix-run/router@1.23.4': {}
 
   '@rolldown/binding-android-arm-eabi@1.2.9':
     optional: true
@@ -21478,7 +21477,7 @@ snapshots:
 
   react-router-dom@6.10.0(react-dom@19.2.4)(react@19.2.4):
     dependencies:
-      '@remix-run/router': 1.23.2
+      '@remix-run/router': 1.23.4
       react: 19.2.4
       react-dom: 19.2.4(react@19.2.4)
       react-router: 8.4.0(react-dom@19.2.4)(react@19.2.4)

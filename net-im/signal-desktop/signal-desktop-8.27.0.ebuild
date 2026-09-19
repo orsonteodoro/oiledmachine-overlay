@@ -145,7 +145,7 @@ SLOT="0"
 RESTRICT="splitdebug binchecks strip mirror" # Prevent slow down and snooping
 IUSE+="
 firejail wayland +X
-ebuild_revision_99
+ebuild_revision_100
 "
 REQUIRED_USE+="
 	|| (
@@ -256,6 +256,7 @@ einfo "DEBUG:  Called pnpm_unpack_post()"
 
 		sed -i -e "s|@NODE_24_ELECTRON_PV@|${NODE_24_ELECTRON_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_AJV_PV@|${NODE_AJV_PV}|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_AT_REMIX_RUN_ROUTER_PV@|${NODE_AT_REMIX_RUN_ROUTER_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_AT_XMLDOM_XMLDOM_PV@|${NODE_AT_XMLDOM_XMLDOM_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_BABEL_CORE_7_PV@|${NODE_BABEL_CORE_7_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_BABEL_RUNTIME_7_PV@|${NODE_BABEL_RUNTIME_7_PV}|g" "${S}/pnpm-workspace.yaml" || die
