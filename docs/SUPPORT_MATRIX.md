@@ -267,7 +267,7 @@ Pairing rules and support
 | Lib A (C++17, GCC13) depends on Lib B (C++20, GCC13)                 | N        | The child libraries C++ version typically cannot exceed the parent library C++ version   |                                                |
 | Lib A (C++14, GCC13) depends on Lib B (C++17, GCC13)                 | N        | The exception, it is allowed if using the same GCC compiler slot                         | Boost links to ICU                             |
 
-* FAFO or breaking the rules may cause undefined behavior (UB) or memory corruption.
+* Security note:  FAFO or breaking the rules may cause undefined behavior (UB) or memory corruption.
 
 | Python               | Ebuild level of support               | Distro or CI image correspondence                              |
 | ---                  | ---                                   | ---                                                            |
