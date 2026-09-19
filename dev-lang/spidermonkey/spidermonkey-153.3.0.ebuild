@@ -3,45 +3,62 @@
 
 EAPI="8"
 
-# For downloads, see 140 ESRs in https://ftp.mozilla.org/pub/firefox/releases/
+# For downloads, see 154 ESRs in https://ftp.mozilla.org/pub/firefox/releases/
 
 # See also
-# /var/tmp/portage/dev-lang/spidermonkey-140.14.0/work/firefox-140.14.0/taskcluster/kinds/fetch/toolchains.yml
-# /var/tmp/portage/dev-lang/spidermonkey-140.14.0/work/firefox-140.14.0/taskcluster/kinds/toolchain/node.yml
-# /var/tmp/portage/dev-lang/spidermonkey-140.14.0/work/firefox-140.14.0/taskcluster/kinds/toolchain/rust.yml
+# /var/tmp/portage/dev-lang/spidermonkey-153.3.0/work/firefox-153.3.0/taskcluster/kinds/fetch/toolchains.yml
+# /var/tmp/portage/dev-lang/spidermonkey-153.3.0/work/firefox-153.3.0/taskcluster/kinds/toolchain/node.yml
+# /var/tmp/portage/dev-lang/spidermonkey-153.3.0/work/firefox-153.3.0/taskcluster/kinds/toolchain/rust.yml
 
+CXX_STANDARD=20 # See check_compiler in build/moz.configure/toolchain.configure and https://firefox-source-docs.mozilla.org/code-quality/coding-style/using_cxx_in_firefox_code.html#c-language-features
 CFLAGS_HARDENED_USE_CASES="jit language-runtime scripting security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="IO TC"
 RUSTFLAGS_HARDENED_USE_CASES="jit language-runtime scripting sensitive-data untrusted-data"
 RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="IO TC"
 
-MITIGATION_DATE="Aug 18, 2026" # Advisory date
-MITIGATION_LAST_UPDATE=1786993140 # From `date +%s -d "17-Aug-2026 11:59"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-76/"
+MITIGATION_DATE="Sep 15, 2026" # Advisory date
+MITIGATION_LAST_UPDATE=1789416720 # From `date +%s -d "14-Sep-2026 13:12"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-93/"
 SEVERITY_LABEL="Severity:"
 VULNERABILITIES_FIXED=(
 )
 
-FIREFOX_PATCHSET="firefox-140esr-patches-12.tar.xz"
+FIREFOX_PATCHSET="firefox-153esr-patches-03.tar.xz"
 SPIDERMONKEY_PATCHSET="spidermonkey-140-patches-02.tar.xz"
 
-LLVM_COMPAT=( 19 20 22 )
-RUST_LIVE_TIMESTAMP="Jul 5, 2026 8:11 AM PDT"
-RUST_MAX_VER="1.97.1"
-RUST_MIN_VER="1.86.0"
+RUST_LIVE_TIMESTAMP="Fri, 14 Aug 2026 09:23:13 -0700"
+RUST_MAX_VER="9999"
+RUST_MIN_VER="1.97.1"
 RUST_NEEDS_LLVM=1 # Prune rustc for unused LLVM slots
-RUST_NIGHTLY_PV="1.99.0"
+RUST_NIGHTLY_PV="1.100.0"
 
 PYTHON_COMPAT=( python3_{10..14} )
 PYTHON_REQ_USE="ncurses,ssl,xml(+)"
 
 WANT_AUTOCONF="2.1"
 
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX20[@]}" # 13-16
+	# Upstream tests with 8, 9, 10, 11, 14
+)
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	"${LIBCXX_COMPAT_RUST_ROLLING[@]/llvm_slot_}" # 22
+	"${LIBCXX_COMPAT_RUST_LIVE[@]/llvm_slot_}" # 23
+	# Upstream tests with 14, 19, 20, 21, trunk
+	# We don't use 24 because it would misalign with the wasm sandbox (aka. wasi).
+)
+LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
+
 CHKL_TIMESTAMPS=(
 	"dev-libs/icu-79.0.9999"
+	"sys-libs/readline-9999"
 )
 
-inherit cflags-hardened check-compiler-switch check-reqs chkl dhms flag-o-matic llvm-r1 multiprocessing python-any-r1 rust secure-version toolchain-funcs
+inherit cflags-hardened check-compiler-switch check-reqs chkl dhms flag-o-matic libcxx-slot libstdcxx-slot llvm-r1 multiprocessing python-any-r1 rust secure-version toolchain-funcs
 
 MY_PN="mozjs"
 MY_PV="${PV/_pre*}"
@@ -91,7 +108,7 @@ LICENSE="
 	Firefox-ESR-$(ver_cut 1-2 ${PV}).x-Licenses.html
 	MPL-2.0
 "
-SLOT="$(ver_cut 1)/140.11.0"
+SLOT="$(ver_cut 1)/${PV}"
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~x86"
 
 IUSE="clang cpu_flags_arm_neon debug +jit test"
@@ -114,30 +131,24 @@ BDEPEND="${PYTHON_DEPS}
 	')
 	>=dev-util/cbindgen-0.27.0
 	virtual/pkgconfig
-	llvm_slot_19? (
-		|| (
-			~dev-lang/rust-bin-1.86.0
-			~dev-lang/rust-1.86.0
-		)
-	)
-	llvm_slot_20? (
-		|| (
-			~dev-lang/rust-bin-1.90.0
-			~dev-lang/rust-1.90.0
-		)
-	)
 	llvm_slot_22? (
 		|| (
-			=dev-lang/rust-bin-1.97.1
-			=dev-lang/rust-1.97.1
+			dev-lang/rust:1.97.1
+			dev-lang/rust-bin:1.97.1
+		)
+	)
+	llvm_slot_23? (
+		|| (
+			dev-lang/rust:9999
+			dev-lang/rust-bin:9999
 		)
 	)
 	test? (
 		$(python_gen_any_dep 'dev-python/six[${PYTHON_USEDEP}]')
 	)"
-DEPEND=">=dev-libs/icu-${ICU_PV}:=
+DEPEND=">=dev-libs/icu-${ICU_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	>=dev-libs/nspr-${NSPR_PV}:=
-	sys-libs/readline:=
+	>=sys-libs/readline-${READLINE_PV}:=
 	>=virtual/zlib-${ZLIB_PV}:="
 RDEPEND="${DEPEND}"
 
@@ -215,9 +226,9 @@ python_check_deps() {
 
 pkg_pretend() {
 	if use test ; then
-		CHECKREQS_DISK_BUILD="4400M"
+		CHECKREQS_DISK_BUILD="5600M"
 	else
-		CHECKREQS_DISK_BUILD="4300M"
+		CHECKREQS_DISK_BUILD="5500M"
 	fi
 
 	check-reqs_pkg_pretend
@@ -285,9 +296,9 @@ pkg_setup() {
 		fi
 
 		if use test ; then
-			CHECKREQS_DISK_BUILD="4400M"
+			CHECKREQS_DISK_BUILD="5600M"
 		else
-			CHECKREQS_DISK_BUILD="4300M"
+			CHECKREQS_DISK_BUILD="5500M"
 		fi
 
 		check-reqs_pkg_setup
@@ -310,9 +321,12 @@ pkg_setup() {
 
 	export use_lto
 
-	#if use llvm_slot_22 ; then
+	#if use llvm_slot_23 ; then
 	#	verify_rust_nightly
 	#fi
+
+	libcxx-slot_verify
+	libstdcxx-slot_verify
 }
 
 src_prepare() {
@@ -320,9 +334,18 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch || die
 	fi
 
-	# Workaround for bgo #915651,915651,929013 on musl
+	# Workaround for bgo #915651,915651,929013 and bmo#1988166 on musl
 	if use elibc_glibc ; then
 		rm -v "${WORKDIR}"/firefox-patches/*bgo-748849-RUST_TARGET_override.patch || die
+		rm -v "${WORKDIR}"/firefox-patches/*bgo-967694-musl-prctrl-exception-on-musl.patch || die
+	else
+		# in musl, the rust-1.98 patch probably handles RUST_TARGET like we want to?
+		local rustver=$(rustc --version | cut -d' ' -f2)
+		if ver_test "${rustver}" -ge 1.98 ; then
+			rm -v "${WORKDIR}"/firefox-patches/*bgo-748849-RUST_TARGET_override.patch || die
+		else
+			rm -v "${WORKDIR}"/firefox-patches/*-bmo-2053518-handle-oe-linux-rust-targets-added-in-rustc-1.98.patch || die
+		fi
 	fi
 
 	eapply "${WORKDIR}"/firefox-patches
@@ -592,7 +615,7 @@ src_test() {
 		die "Smoke-test failed: did interpreter initialization fail?"
 	fi
 
-	cp "${FILESDIR}"/spidermonkey-140-known-test-failures.txt "${T}"/known_test_failures.list || die
+	cp "${FILESDIR}"/spidermonkey-${PV%%.*}-known-test-failures.txt "${T}"/known_test_failures.list || die
 	./mach jstests --exclude-file="${T}"/known_test_failures.list || die
 }
 
