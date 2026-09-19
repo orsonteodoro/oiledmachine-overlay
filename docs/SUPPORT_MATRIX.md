@@ -332,8 +332,8 @@ Pairing rules and support
 | gRPC 1.48.4                          | Not supported                         | F43 (1.48.4), F44 (1.48.4), F45 (1.48.4)                 |
 | gRPC 1.51.3 [3]                      | Fully supported                       | D12 (1.51.1), D13 (1.51.1), U24 (1.51.1), U26 (1.51.1)   |
 | gRPC 1.71.2 [3]                      | Fully supported                       |                                                          |
-| gRPC >= 1.75.1 (3)                   | Fully supported                       |                                                          |
-| GTK 2 (4)                            | Not Supported                         |                                                          |
+| gRPC >= 1.75.1 [3]                   | Fully supported                       |                                                          |
+| GTK 2 [4]                            | Not Supported                         |                                                          |
 | GTK 3 live                           | Fully supported                       |                                                          |
 | GTK 4 live                           | Fully supported                       |                                                          |
 | gtkmm 2                              | Not supported                         |                                                          |
@@ -356,7 +356,7 @@ Pairing rules and support
 | LLVM OpenMP (CPU)                    | Fully supported                       |                                                          |
 | LLVM OpenMP offload (CUDA)           | Available                             |                                                          |
 | LLVM OpenMP offload (ROCm)           | Not Supported                         |                                                          |
-| ROCm OpenMP offload (2)              | WIP                                   |                                                          |
+| ROCm OpenMP offload [2]              | WIP                                   |                                                          |
 | DPC++ OpenMP offload                 | Not Supported                         |                                                          |
 | OpenRC                               | Fully supported                       |                                                          |
 | Protobuf-cpp 3 [3]                   | Fully supported                       | D12 (3.21.12), F43 (3.19.6), F44 (3.19.6) U24 (3.21.12), U26 (3.21.12) |
