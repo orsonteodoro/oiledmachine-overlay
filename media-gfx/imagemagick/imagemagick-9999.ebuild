@@ -316,7 +316,7 @@ src_install() {
 
 	local pv_major=$(ver_cut "1" "${PV}")
 	if [[ "${PV}" =~ "9999" ]] ; then
-		pv_major=$(grep -E -e "magick_major_version" "${S}/m4/version.m4" | grep -E -o "[0-9]+")
+		pv_major=$(grep -E -e "magick_major_version = [0-9]+" "${S}/m4/version.m4" | grep -E -o "[0-9]+")
 	fi
 
 	insinto "/usr/include/ImageMagick-${pv_major}/MagickCore"
