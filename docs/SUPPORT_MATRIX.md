@@ -318,6 +318,7 @@ Pairing rules and support
 | CUDA 13.1                            | Available [6]                         | D12, D13, F42, U22, U24                                  |
 | CUDA 13.2                            | Available [6]                         | D12, D13, F43, U22, U24                                  |
 | CUDA 13.3                            | Available [6]                         | D12, D13, F44, U22, U24, U26                             |
+| CUDA 13.4                            | Planned                               | D12, D13, F44, U22, U24, U26                             |
 | Electron (amd64)                     | Fully supported                       |                                                          |
 | Electron (arm64)                     | Not supported                         |                                                          |
 | Electron (armv7)                     | Not supported                         |                                                          |
