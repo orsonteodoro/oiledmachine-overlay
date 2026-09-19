@@ -34,7 +34,7 @@ DESCRIPTION="Standard GNU utilities (chmod, cp, dd, ls, sort, tr, head, wc, who,
 HOMEPAGE="https://www.gnu.org/software/coreutils/"
 
 if [[ ${PV} == 9999 ]] ; then
-	FALLBACK_COMMIT="1ee46ac2c990a6a3b10737d59d8cb358b59af5df"
+	FALLBACK_COMMIT="b25722854370b8206d7f53f8934c36710cdd9974"
 	EGIT_COMMIT="master"
 	EGIT_REPO_URI="https://git.savannah.gnu.org/git/coreutils.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
