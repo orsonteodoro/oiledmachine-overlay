@@ -127,7 +127,6 @@ For C/C++ the Rust slot rules for version pinning are as follows:
 
 The version ranges are matching to avoid multiple LLVM versions loaded issues.
 
-
 | `-std=c++<ver>` or CXX_STANDARD | LTS or rolling compiler?         | Compiler status for C++ standard | C++ standard library status for C++ standard |
 | ---                             | ---                              | ---                              | ---                                          |
 | c++98                           | LTS                              | ?                                | ?                                            |
@@ -255,6 +254,17 @@ Language defaults
   be used in security-critical packages.
 * rust-bin older supported stable (1.74.0, 1.75.0) and rust-bin latest stable
   (1.86.0) are recommended as fallbacks for non security-critical packages.
+
+Pairing rules and support
+
+| Pairing                                                              | Allowed? | Reason                                                                                   | Example                                        |
+| ---                                                                  | ---      | ---                                                                                      | ---                                            |
+| Lib A (C++17, GCC13) + Lib B (C++17, GCC13) + App (C++17, GCC13)     | Y        | All the same, the most consistent and reliable build                                     | Firefox ESR, LTS linux packages                |
+| Lib A (C++17, GCC13) + Lib B (C++20, GCC13) + App (C++23, LLVM23)    | Y        | The app has highest C++ version AND no library GCC/LLVM slot is greater than it          | Chromium, Hyprland, rolling FAFO packages      |
+| Lib B (C++17, GCC13) depends on Lib A (C++23, GCC16)                 | Y        | The parent library needs to be >= C++ version, USE flag disabled, or version blacklisted |                                                |
+| Lib A (C++17, GCC13) depends on Lib A (C++17, GCC13)                 | Y        | All the same C++ version and same GCC slot                                               |                                                |
+| Lib A (C++17, GCC13) depends on Lib A (C++17, GCC14)                 | N        | All the same C++ version and only 1 GCC slot allowed for LTS (C++17)                     |                                                |
+| Lib B (C++17, GCC13) depends on Lib A (C++20, GCC13)                 | N        | The child libraries C++ version cannot exceed the parent library C++ version             |                                                |
 
 | Python               | Ebuild level of support               | Distro or CI image correspondence                              |
 | ---                  | ---                                   | ---                                                            |
