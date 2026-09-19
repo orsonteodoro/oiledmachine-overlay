@@ -257,15 +257,15 @@ Language defaults
 
 Pairing rules and support
 
-| Pairing                                                              | Allowed? | Reason                                                                                        | Examples                                       |
-| ---                                                                  | ---      | ---                                                                                           | ---                                            |
-| Lib A (C++17, GCC13) + Lib B (C++17, GCC13) + App (C++17, GCC13)     | Y        | All the same C++ version and GCC slot, the most consistent and reliable build                 | Firefox ESR 140, enterprise LTS packages       |
-| Lib A (C++17, GCC13) + Lib B (C++20, GCC13) + App (C++23, LLVM23)    | Y        | The app has highest C++ version AND no library GCC/LLVM slot is greater than it               | Chromium, Hyprland, rolling FAFO packages      |
-| Lib A (C++23, GCC16) depends on Lib B (C++17, GCC13)                 | Y        | The depender library A meets the >= C++ version of the dependee B..Z libraries                |                                                |
-| Lib A (C++17, GCC13) depends on Lib B (C++17, GCC13)                 | Y        | All the same C++ version and same GCC slot                                                    | gtkmm, qtbase:6                                |
-| Lib A (C++17, GCC13) depends on Lib B (C++17, GCC14)                 | N        | All the same C++ version and only 1 GCC slot allowed for LTS (C++17)                          |                                                |
-| Lib A (C++17, GCC13) depends on Lib B (C++20, GCC13)                 | N        | The dependee B library C++ version typically cannot exceed the depender A library C++ version |                                                |
-| Lib A (C++14, GCC13) depends on Lib B (C++17, GCC13)                 | Y        | The exception, it is allowed if using the same GCC compiler slot                              | Boost links to ICU                             |
+| Pairing                                                              | Allowed? | Reason                                                                                              | Examples                                       |
+| ---                                                                  | ---      | ---                                                                                                 | ---                                            |
+| Lib A (C++17, GCC13) + Lib B (C++17, GCC13) + App (C++17, GCC13)     | Y        | All the same C++ version and GCC slot, the most consistent and reliable build                       | Firefox ESR 140, enterprise LTS packages       |
+| Lib A (C++17, GCC13) + Lib B (C++20, GCC13) + App (C++23, LLVM23)    | Y        | The app has highest C++ version AND no library GCC/LLVM slot is greater than it                     | Chromium, Hyprland, rolling FAFO packages      |
+| Lib A (C++23, GCC16) depends on Lib B (C++17, GCC13)                 | Y        | The depender library A meets the >= C++ version of the dependee B library                           |                                                |
+| Lib A (C++17, GCC13) depends on Lib B (C++17, GCC13)                 | Y        | All the same C++ version and same GCC slot                                                          | gtkmm, qtbase:6                                |
+| Lib A (C++17, GCC13) depends on Lib B (C++17, GCC14)                 | N        | All the same C++ version and only 1 GCC slot allowed for LTS (C++17)                                |                                                |
+| Lib A (C++17, GCC13) depends on Lib B (C++20, GCC13)                 | N        | The dependee B library C++ version typically cannot exceed the depender A library C++ version       |                                                |
+| Lib A (C++14, GCC13) depends on Lib B (C++17, GCC13)                 | Y        | The exception, it is allowed if using the same GCC compiler slot.  LTS lib with LTS lib is allowed. | Boost links to ICU                             |
 
 * Security note:  FAFO or breaking the rules may cause undefined behavior (UB) or memory corruption.
 
