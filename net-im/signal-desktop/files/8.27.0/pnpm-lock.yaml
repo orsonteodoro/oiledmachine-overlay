@@ -33,7 +33,7 @@ overrides:
   eslint-config-airbnb-typescript-prettier@5.0.0>picomatch: 2.3.2
   eslint-plugin-react@7.32.2>js-yaml: 4.3.2
   js-yaml: 4.3.2
-  linkify-it: 6.1.0
+  linkify-it: 5.0.2
   npm-run-all2@8.0.4>shell-quote: 1.9.0
   react-redux@8.0.5>@babel/runtime: 7.29.7
   react-router-dom@6.10.0>@remix-run/router: 1.23.4
@@ -532,8 +532,8 @@ importers:
         specifier: 6.14.0
         version: 6.14.0
       linkify-it:
-        specifier: 6.1.0
-        version: 6.1.0
+        specifier: 5.0.2
+        version: 5.0.2
       lodash:
         specifier: 4.18.1
         version: 4.18.1
@@ -8746,8 +8746,8 @@ packages:
   lines-and-columns@1.2.4:
     resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==, tarball: https://registry.npmjs.org/lines-and-columns/-/lines-and-columns-1.2.4.tgz}
 
-  linkify-it@6.1.0:
-    resolution: {integrity: sha512-wJ/TwpSDTLepCrQoYWYIExIKg5Zchex2Nn5yk2mFnB+6PtdkHtyLx742md9csRjjOnGkKIS/RrbY7l8D6gT9Vw==, tarball: https://registry.npmjs.org/linkify-it/-/linkify-it-6.1.0.tgz}
+  linkify-it@5.0.2:
+    resolution: {integrity: sha512-ONTm2jCMAVZjgQa/Fy1kScXsuOoF5NPTsoFBdE1KVIZ2vAh/r9+Bqo+0jINCBYnavTPQZz38QzFTme79ENoN3Q==, tarball: https://registry.npmjs.org/linkify-it/-/linkify-it-5.0.2.tgz}
 
   locate-path@3.0.0:
     resolution: {integrity: sha512-7AO748wWnIhNqAuaty2ZWHkQHRSNfPVIsPIfwEOWO22AmaoVrWavlOcMR5nzTLNYvp36X220/maaRsrec1G65A==, tarball: https://registry.npmjs.org/locate-path/-/locate-path-3.0.0.tgz}
@@ -11188,8 +11188,8 @@ packages:
     engines: {node: '>=16.20.0'}
     hasBin: true
 
-  uc.micro@3.0.0:
-    resolution: {integrity: sha512-U3PppEkleoTnIfi8BozMx3yju3qc/L6SwqWo2Sw+54PX+PX0q9I+r1Um5HCmqD7n9VDX5/v3vQH/AjA6deDdtw==, tarball: https://registry.npmjs.org/uc.micro/-/uc.micro-3.0.0.tgz}
+  uc.micro@2.1.0:
+    resolution: {integrity: sha512-ARDJmphmdvUk6Glw7y9DQ2bFkKBHwQHLi2lsaH6PPmz/Ka9sFOBsBluozhDltWmnv9u/cF6Rt87znRTPV+yp/A==, tarball: https://registry.npmjs.org/uc.micro/-/uc.micro-2.1.0.tgz}
 
   unbash@3.0.0:
     resolution: {integrity: sha512-FeFPZ/WFT0mbRCuydiZzpPFlrYN8ZUpphQKoq4EeElVIYjYyGzPMxQR/simUwCOJIyVhpFk4RbtyO7RuMpMnHA==, tarball: https://registry.npmjs.org/unbash/-/unbash-3.0.0.tgz}
@@ -20075,9 +20075,9 @@ snapshots:
 
   lines-and-columns@1.2.4: {}
 
-  linkify-it@6.1.0:
+  linkify-it@5.0.2:
     dependencies:
-      uc.micro: 3.0.0
+      uc.micro: 2.1.0
 
   locate-path@3.0.0:
     dependencies:
@@ -22709,7 +22709,7 @@ snapshots:
       '@typescript/typescript-win32-arm64': 7.0.2
       '@typescript/typescript-win32-x64': 7.0.2
 
-  uc.micro@3.0.0: {}
+  uc.micro@2.1.0: {}
 
   unbash@3.0.0: {}
 

@@ -244,7 +244,7 @@
     "direction": "2.0.1",
     "dom-accessibility-api": "0.7.1",
     "electron": "44.4.1",
-    "electron-builder": "26.15.7",
+    "electron-builder": "26.11.1",
     "electron-mocha": "13.1.0",
     "emoji-regex-xs": "2.0.1",
     "enhanced-resolve": "5.21.3",

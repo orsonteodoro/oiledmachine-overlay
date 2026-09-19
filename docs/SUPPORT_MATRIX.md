@@ -372,7 +372,7 @@ Pairing rules and support
 | PyTorch 2.13 (CPU)                   | WIP                                     |                                                                        |
 | PyTorch 2.13 (CUDA 12.6, 12.8, 13.x) | WIP                                     |                                                                        |
 | PyTorch 2.13 (ROCm 6.4)              | WIP                                     |                                                                        |
-| Qt 5.x [4][5]                        | Not supported, but available            |                                                                        |
+| Qt 5.x [4][5]                        | Not supported, removing support         |                                                                        |
 | Qt 6.x live                          | Fully supported                         |                                                                        |
 | ROCm 6.4                             | Not supported                           | D12, U22, U24                                                          |
 | ROCm 7.0                             | Not supported                           | D12, D13, U22, U24                                                     |

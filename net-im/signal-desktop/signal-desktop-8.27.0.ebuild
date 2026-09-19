@@ -72,7 +72,7 @@ PNPM_INSTALL_ARGS=(
 inherit secure-version secure-version-node
 
 AT_TYPES_NODE_PV="24.12.0"
-ELECTRON_BUILDER_PV="26.15.7" # 26.11.1 works, 26.15.7 is latest
+ELECTRON_BUILDER_PV="26.11.1" # 26.11.1 works, 26.15.7 is broken
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
@@ -265,7 +265,7 @@ einfo "DEBUG:  Called pnpm_unpack_post()"
 		sed -i -e "s|@NODE_IMMUTABLE_4_PV@|${NODE_IMMUTABLE_4_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_JS_YAML_4_PV@|${NODE_JS_YAML_4_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_JWS_3_PV@|${NODE_JWS_3_PV}|g" "${S}/pnpm-workspace.yaml" || die
-		sed -i -e "s|@NODE_LINKIFY_IT_PV@|${NODE_LINKIFY_IT_PV}|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_LINKIFY_IT_5_PV@|${NODE_LINKIFY_IT_5_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_PICOMATCH_2_PV@|${NODE_PICOMATCH_2_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_POSTCSS_PV@|${NODE_POSTCSS_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_REACT_ROUTER_8_PV@|${NODE_REACT_ROUTER_8_PV}|g" "${S}/pnpm-workspace.yaml" || die
