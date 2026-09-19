@@ -145,7 +145,7 @@ SLOT="0"
 RESTRICT="splitdebug binchecks strip mirror" # Prevent slow down and snooping
 IUSE+="
 firejail wayland +X
-ebuild_revision_100
+ebuild_revision_101
 "
 REQUIRED_USE+="
 	|| (

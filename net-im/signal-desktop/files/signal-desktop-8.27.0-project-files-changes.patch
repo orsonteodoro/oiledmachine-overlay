@@ -1,5 +1,6 @@
---- a/pnpm-workspace.yaml.orig	2026-09-10 05:04:23.000000000 -0700
-+++ b/pnpm-workspace.yaml	2026-09-18 23:35:16.459307356 -0700
+diff '--color=auto' -urp Signal-Desktop-8.27.0.orig/pnpm-workspace.yaml Signal-Desktop-8.27.0/pnpm-workspace.yaml
+--- Signal-Desktop-8.27.0.orig/pnpm-workspace.yaml	2026-09-10 05:04:23.000000000 -0700
++++ Signal-Desktop-8.27.0/pnpm-workspace.yaml	2026-09-19 11:20:32.797339356 -0700
 @@ -1,5 +1,5 @@
  saveExact: true
 -blockExoticSubdeps: true
@@ -202,7 +203,7 @@
    'qrcode-generator': 'patches/qrcode-generator.patch'
    'react-popper@2.3.0': 'patches/react-popper@2.3.0.patch'
    'zod@4.3.6': 'patches/zod@4.3.6.patch'
-@@ -100,13 +180,13 @@ allowBuilds:
+@@ -100,22 +180,23 @@ allowBuilds:
    #   ex: 'package@0.0.0': true
    '@indutny/mac-screen-share@1.0.13': true
    '@indutny/simple-windows-notifications@2.0.16': true
@@ -217,8 +218,12 @@
 +  '@swc/core@1.16.2': true
    '@tailwindcss/oxide@4.3.0': true
    'electron@23.3.13': false # duplicate package
-   'electron@39.8.10': true # duplicate package through react-devtools
-@@ -116,6 +196,7 @@ allowBuilds:
+-  'electron@39.8.10': true # duplicate package through react-devtools
+-  'electron@43.0.0': true
++  'electron@39.8.10': false # duplicate package through react-devtools
++  'electron@@NODE_24_ELECTRON_PV@': true
+   'fs-xattr@0.4.0': true
+ 
    # Disabled Builds: Use wildcard version
    #   ex: 'package': false
    'bufferutil': false
