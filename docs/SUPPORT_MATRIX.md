@@ -316,80 +316,80 @@ Pairing rules and support
 * [3] Not widely tested with CI.
 * [4] Distro - deprecated, this overlay - EOL.  The portage ebuild dropped support for 3.11.
 
-| Platform                             | Ebuild level of support               | Distro or CI image correspondence                                      |
-| ---                                  | ---                                   | ---                                                                    |
-| CUDA 11.8                            | Not supported                         | D12, F35, U18, U20, U22                                                |
-| CUDA 12.3                            | Not supported                         | D10, D11, D12, F37, U20, U22                                           |
-| CUDA 12.4                            | Not supported                         | D10, D11, D12, F39, U20, U22                                           |
-| CUDA 12.5                            | Not supported                         | D10, D11, D12, F39, U20, U22, U24                                      |
-| CUDA 12.6                            | Available                             | D11, D12, F39, U20, U22, U24                                           |
-| CUDA 12.8                            | Available                             | D12, F41, U20, U22, U24                                                |
-| CUDA 12.9                            | Available                             | D12, F41, U20, U22, U24                                                |
-| CUDA 13.0                            | Available [6]                         | D12, F42, U22, U24                                                     |
-| CUDA 13.1                            | Available [6]                         | D12, D13, F42, U22, U24                                                |
-| CUDA 13.2                            | Available [6]                         | D12, D13, F43, U22, U24                                                |
-| CUDA 13.3                            | Available [6]                         | D12, D13, F44, U22, U24, U26                                           |
-| CUDA 13.4                            | Planned                               | D12, D13, F44, U22, U24, U26                                           |
-| Electron (amd64)                     | Fully supported                       |                                                                        |
-| Electron (arm64)                     | Not supported                         |                                                                        |
-| Electron (armv7)                     | Not supported                         |                                                                        |
-| Electron (x86)                       | Not supported                         |                                                                        |
-| gRPC 1.30.2 [3]                      | Fully supported                       | U22 (1.30.2)                                                           |
-| gRPC 1.48.4                          | Not supported                         | F43 (1.48.4), F44 (1.48.4), F45 (1.48.4)                               |
-| gRPC 1.51.3 [3]                      | Fully supported                       | D12 (1.51.1), D13 (1.51.1), U24 (1.51.1), U26 (1.51.1)                 |
-| gRPC 1.71.2 [3]                      | Fully supported                       |                                                                        |
-| gRPC >= 1.75.1 [3]                   | Fully supported                       |                                                                        |
-| GTK 2 [4]                            | Not Supported                         |                                                                        |
-| GTK 3 live                           | Fully supported                       |                                                                        |
-| GTK 4 live                           | Fully supported                       |                                                                        |
-| gtkmm 2                              | Not supported                         |                                                                        |
-| gtkmm 3                              | Not supported                         |                                                                        |
-| gtkmm 4                              | Fully supported                       |                                                                        |
-| LocalAI (llama.cpp with CPU)         | Fully supported                       |                                                                        |
-| LocalAI (llama.cpp with ROCm 7.0)    | WIP                                   |                                                                        |
-| LocalAI (llama.cpp with CUDA 12.4)   | Not supported                         |                                                                        |
-| LocalAI (llama.cpp with Vulkan)      | Fully supported                       |                                                                        |
-| Node.js 22                           | Available                             |                                                                        |
-| Node.js 24                           | Fully supported                       |                                                                        |
-| Node.js 26                           | Available                             |                                                                        |
-| OpenGL <= 4.6                        | Fully supported                       |                                                                        |
-| OpenCL <= 2.0                        | Fully supported                       |                                                                        |
-| Ollama 0.30.7 (CPU)                  | Fully supported                       |                                                                        |
-| Ollama 0.30.7 (ROCm)                 | Not supported                         |                                                                        |
-| Ollama 0.30.7 (CUDA)                 | Not supported                         |                                                                        |
-| Ollama 0.30.7 (Vulkan)               | Fully supported                       |                                                                        |
-| GCC OpenMP (CPU)                     | Fully supported                       |                                                                        |
-| LLVM OpenMP (CPU)                    | Fully supported                       |                                                                        |
-| LLVM OpenMP offload (CUDA)           | Available                             |                                                                        |
-| LLVM OpenMP offload (ROCm)           | Not Supported                         |                                                                        |
-| ROCm OpenMP offload [2]              | WIP                                   |                                                                        |
-| DPC++ OpenMP offload                 | Not Supported                         |                                                                        |
-| OpenRC                               | Fully supported                       |                                                                        |
-| Protobuf-cpp 3 [3]                   | Fully supported                       | D12 (3.21.12), F43 (3.19.6), F44 (3.19.6) U24 (3.21.12), U26 (3.21.12) |
-| Protobuf-cpp 5 [3]                   | Fully supported                       |                                                                        |
-| Protobuf-cpp 6 [3]                   | Fully supported                       | F45 (6.33.5)                                                           |
-| PyTorch <= 2.13                      | Not supported                         |                                                                        |
-| PyTorch 2.13 (CPU)                   | WIP                                   |                                                                        |
-| PyTorch 2.13 (CUDA 12.6, 12.8, 13.x) | WIP                                   |                                                                        |
-| PyTorch 2.13 (ROCm 6.4)              | WIP                                   |                                                                        |
-| Qt 5.x [4][5]                        | Not supported, but available          |                                                                        |
-| Qt 6.x live                          | Fully supported                       |                                                                        |
-| ROCm 6.4                             | Not supported                         | D12, U22, U24                                                          |
-| ROCm 7.0                             | Not supported                         | D12, D13, U22, U24                                                     |
-| ROCm 7.1                             | Not supported                         | D12, D13, U22, U24                                                     |
-| ROCm 7.2                             | WIP                                   | D12, D13, U22, U24                                                     |
-| SYCL                                 | Not supported                         |                                                                        |
-| systemd                              | Partially supported                   |                                                                        |
-| Tauri 1.x                            | Not supported                         |                                                                        |
-| Tauri 2.x                            | Supported                             |                                                                        |
-| TensorFlow 2.17 (CPU)                | WIP                                   |                                                                        |
-| TensorFlow 2.17 (CUDA 12.3)          | Not supported                         |                                                                        |
-| TensorFlow 2.20 (CPU)                | WIP                                   |                                                                        |
-| TensorFlow 2.20 (CUDA 12.5)          | Not supported                         |                                                                        |
-| TensorFlow 2.20 (ROCm 6.4)           | WIP                                   |                                                                        |
-| Vulkan                               | Fully supported                       |                                                                        |
-| Wayland                              | Fully supported                       |                                                                        |
-| X                                    | Fully supported                       |                                                                        |
+| Platform                             | Ebuild level of support                 | Distro or CI image correspondence                                      |
+| ---                                  | ---                                     | ---                                                                    |
+| CUDA 11.8                            | Not supported                           | D12, F35, U18, U20, U22                                                |
+| CUDA 12.3                            | Not supported                           | D10, D11, D12, F37, U20, U22                                           |
+| CUDA 12.4                            | Not supported                           | D10, D11, D12, F39, U20, U22                                           |
+| CUDA 12.5                            | Not supported                           | D10, D11, D12, F39, U20, U22, U24                                      |
+| CUDA 12.6                            | Available                               | D11, D12, F39, U20, U22, U24                                           |
+| CUDA 12.8                            | Available                               | D12, F41, U20, U22, U24                                                |
+| CUDA 12.9                            | Available                               | D12, F41, U20, U22, U24                                                |
+| CUDA 13.0                            | Available [6]                           | D12, F42, U22, U24                                                     |
+| CUDA 13.1                            | Available [6]                           | D12, D13, F42, U22, U24                                                |
+| CUDA 13.2                            | Available [6]                           | D12, D13, F43, U22, U24                                                |
+| CUDA 13.3                            | Available [6]                           | D12, D13, F44, U22, U24, U26                                           |
+| CUDA 13.4                            | Planned                                 | D12, D13, F44, U22, U24, U26                                           |
+| Electron (amd64)                     | Fully supported                         |                                                                        |
+| Electron (arm64)                     | Not supported, planned for availability |                                                                        |
+| Electron (armv7)                     | Not supported                           |                                                                        |
+| Electron (x86)                       | Not supported                           |                                                                        |
+| gRPC 1.30.2 [3]                      | Fully supported                         | U22 (1.30.2)                                                           |
+| gRPC 1.48.4                          | Not supported                           | F43 (1.48.4), F44 (1.48.4), F45 (1.48.4)                               |
+| gRPC 1.51.3 [3]                      | Fully supported                         | D12 (1.51.1), D13 (1.51.1), U24 (1.51.1), U26 (1.51.1)                 |
+| gRPC 1.71.2 [3]                      | Fully supported                         |                                                                        |
+| gRPC >= 1.75.1 [3]                   | Fully supported                         |                                                                        |
+| GTK 2 [4]                            | Not Supported                           |                                                                        |
+| GTK 3 live                           | Fully supported                         |                                                                        |
+| GTK 4 live                           | Fully supported                         |                                                                        |
+| gtkmm 2                              | Not supported                           |                                                                        |
+| gtkmm 3                              | Not supported                           |                                                                        |
+| gtkmm 4                              | Fully supported                         |                                                                        |
+| LocalAI (llama.cpp with CPU)         | Fully supported                         |                                                                        |
+| LocalAI (llama.cpp with ROCm 7.0)    | WIP                                     |                                                                        |
+| LocalAI (llama.cpp with CUDA 12.4)   | Not supported                           |                                                                        |
+| LocalAI (llama.cpp with Vulkan)      | Fully supported                         |                                                                        |
+| Node.js 22                           | Available                               |                                                                        |
+| Node.js 24                           | Fully supported                         |                                                                        |
+| Node.js 26                           | Available                               |                                                                        |
+| OpenGL <= 4.6                        | Fully supported                         |                                                                        |
+| OpenCL <= 2.0                        | Fully supported                         |                                                                        |
+| Ollama 0.30.7 (CPU)                  | Fully supported                         |                                                                        |
+| Ollama 0.30.7 (ROCm)                 | Not supported                           |                                                                        |
+| Ollama 0.30.7 (CUDA)                 | Not supported                           |                                                                        |
+| Ollama 0.30.7 (Vulkan)               | Fully supported                         |                                                                        |
+| GCC OpenMP (CPU)                     | Fully supported                         |                                                                        |
+| LLVM OpenMP (CPU)                    | Fully supported                         |                                                                        |
+| LLVM OpenMP offload (CUDA)           | Available                               |                                                                        |
+| LLVM OpenMP offload (ROCm)           | Not Supported                           |                                                                        |
+| ROCm OpenMP offload [2]              | WIP                                     |                                                                        |
+| DPC++ OpenMP offload                 | Not Supported                           |                                                                        |
+| OpenRC                               | Fully supported                         |                                                                        |
+| Protobuf-cpp 3 [3]                   | Fully supported                         | D12 (3.21.12), F43 (3.19.6), F44 (3.19.6) U24 (3.21.12), U26 (3.21.12) |
+| Protobuf-cpp 5 [3]                   | Fully supported                         |                                                                        |
+| Protobuf-cpp 6 [3]                   | Fully supported                         | F45 (6.33.5)                                                           |
+| PyTorch <= 2.13                      | Not supported                           |                                                                        |
+| PyTorch 2.13 (CPU)                   | WIP                                     |                                                                        |
+| PyTorch 2.13 (CUDA 12.6, 12.8, 13.x) | WIP                                     |                                                                        |
+| PyTorch 2.13 (ROCm 6.4)              | WIP                                     |                                                                        |
+| Qt 5.x [4][5]                        | Not supported, but available            |                                                                        |
+| Qt 6.x live                          | Fully supported                         |                                                                        |
+| ROCm 6.4                             | Not supported                           | D12, U22, U24                                                          |
+| ROCm 7.0                             | Not supported                           | D12, D13, U22, U24                                                     |
+| ROCm 7.1                             | Not supported                           | D12, D13, U22, U24                                                     |
+| ROCm 7.2                             | WIP                                     | D12, D13, U22, U24                                                     |
+| SYCL                                 | Not supported                           |                                                                        |
+| systemd                              | Partially supported                     |                                                                        |
+| Tauri 1.x                            | Not supported                           |                                                                        |
+| Tauri 2.x                            | Supported                               |                                                                        |
+| TensorFlow 2.17 (CPU)                | WIP                                     |                                                                        |
+| TensorFlow 2.17 (CUDA 12.3)          | Not supported                           |                                                                        |
+| TensorFlow 2.20 (CPU)                | WIP                                     |                                                                        |
+| TensorFlow 2.20 (CUDA 12.5)          | Not supported                           |                                                                        |
+| TensorFlow 2.20 (ROCm 6.4)           | WIP                                     |                                                                        |
+| Vulkan                               | Fully supported                         |                                                                        |
+| Wayland                              | Fully supported                         |                                                                        |
+| X                                    | Fully supported                         |                                                                        |
 
 * [2] Via llvm-roc-libomp
 * [3] Multislotted on this overlay to allow LTS and rolling packages to
