@@ -423,9 +423,19 @@ USE flags support
 
 | USE flag  | Ebuild level of support |
 | ---       | ---                     |
-| split-usr | Full supported [1]       |
+| split-usr | Fully supported [1]     |
 
 [1] To test if you are using split-usr do
 `ls -id /bin /usr/bin` if the id is not the same it is split.  Usually
 AI will tell you to give up because the AI is compromised and so is the
 Wiki and the devs who are pro systemd.
+
+Unsupported or rejected projects/ebuilds
+
+| Topic                                                                                    | Overlay response                                                | Reason                                                                                         |
+| ---                                                                                      | ---                                                             | ---                                                                                            |
+| Security audit refusal (human or AI)                                                     | Hard mask or ebuild removal                                     | Possibly threat actor involvment, threat actor or security review evasion                      |
+| AI [security audit] refusal with no history of security fixes in memory unsafe language  | Hard mask or ebuild removal                                     | Unaudited, may contain at worst malicious code                                                 |
+| Projects with commit messages not in English                                             | Ebuild removal                                                  | Difficult to security audit or fix issues                                                      |
+| Projects without commit messages                                                         | Ebuild removal                                                  | Difficult to security audit                                                                    |
+| Projects with weak/opposite remediation                                                  | Package hard mask, USE flag mask, security warnings, or removal | High cost/risk if exploited, same inappropriate security policy in different parts of the code |
