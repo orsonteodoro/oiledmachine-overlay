@@ -7,7 +7,7 @@ EAPI=8
 # This ebuild uses suggestions from AI to build on Linux.
 
 # TODO:
-# For 8.20.0 or later ebuild release:
+# For 8.27.0 or later ebuild release:
 # Add ebuild @signalapp/libsignal-client (Rust/TS) for custom hardening
 # Add ebuild @signalapp/sqlcipher (C++) for custom hardening
 # Add ebuild @signalapp/ringrtc (C++) for custom hardening
@@ -35,7 +35,7 @@ EAPI=8
 
 # To update use:
 # PATH=$(realpath "../../scripts")":${PATH}"
-# PNPM_UPDATER_PROJECT_ROOT="Signal-Desktop-8.20.0" pnpm_updater_update_locks.sh
+# PNPM_UPDATER_PROJECT_ROOT="Signal-Desktop-8.27.0" pnpm_updater_update_locks.sh
 
 # Ignore if error:
 # Could not detect abi for version ' + target + ' and runtime ' + runtime + '.  Updating "node-abi" might help solve this issue if it is a new release of ' + runtime)
@@ -132,9 +132,8 @@ LICENSE="
 	AGPL-3
 "
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
-	# The fingerprints of 42.4.0 and 42.2.0 are the same.
 	LICENSE+="
-		electron-42.2.0-chromium.html
+		electron-44.4.1-chromium.html
 	"
 else
 	LICENSE+="
@@ -243,6 +242,9 @@ einfo "DEBUG:  Deleting old electron changes suggested by pnpm audit --fix"
 einfo "DEBUG:  Allowing only the pinned fabric versions and rejected non-pinned suggested by pnpm audit --fix"
 		sed -i -e "\|fabric.*7.2.0|d" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "\|fabric.*7.4.0|d" "${S}/pnpm-workspace.yaml" || die
+
+einfo "DEBUG:  Deleting non-existing extract-zip version suggested by pnpm audit --fix"
+		sed -i -e "\|extract-zip|d" "${S}/pnpm-workspace.yaml" || die
 	fi
 }
 
@@ -250,7 +252,7 @@ _apply_patches() {
 	[[ "${ALREADY_PATCHED}" == "1" ]] && return
 einfo "DEBUG:  Called pnpm_unpack_post()"
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
-		eapply "${FILESDIR}/${PN}-8.20.0-project-files-changes.patch"
+		eapply "${FILESDIR}/${PN}-8.27.0-project-files-changes.patch"
 	fi
 
 einfo "Increasing verbosity to debug"

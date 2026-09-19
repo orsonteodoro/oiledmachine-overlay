@@ -53,7 +53,12 @@ minimumReleaseAgeExclude:
   - diff@8.0.3
   - serialize-javascript@7.0.3
   - uuid@11.1.1
-  - brace-expansion@5.0.8
+  - undici@6.28.0
+  - '@remix-run/router@1.23.3'
+  - js-yaml@4.3.1
+  - csv-parse@7.0.2
+  - js-yaml@4.3.2
+  - svgo@4.1.0
 
 trustPolicy: no-downgrade
 trustPolicyExclude:
@@ -78,6 +83,19 @@ trustPolicyExclude:
 #    - GHSA-9wfr-w7mm-pc7f # react-devtools > electron
 #    - GHSA-c27g-q93r-2cwf # sticker-creator > vite
 #    - GHSA-2w69-qvjg-hvjx # sticker-creator > @remix-run/router
+#    - GHSA-23hp-3jrh-7fpw # node-tar, only used at dev-time
+#    - GHSA-3jxr-9vmj-r5cp # brace-expansion, only used at dev-time
+#    - GHSA-52cp-r559-cp3m # js-yaml, only used at dev-time
+#    - GHSA-8x88-c5mf-7j5w # tar, only used at dev-time
+#    - GHSA-395f-4hp3-45gv # shell-quote, only used at dev-time
+#    - GHSA-gcfj-64vw-6mp9 # axios, only used at dev-time
+#    - GHSA-v56q-mh7h-f735 # used by sass, only used at dev-time
+#    - GHSA-xvcm-6775-5m9r # used by sass, only used at dev-time
+#    - GHSA-2p49-hgcm-8545 # svgo, only used at dev-time
+#    - GHSA-v2hh-gcrm-f6hx # fast-uri, only used at dev-time
+#    - GHSA-4c8g-83qw-93j6 # fast-uri, only used at dev-time
+#    - GHSA-7g7r-gx96-252g # electron-builder > app-builder-lib
+#    - GHSA-r292-9mhp-454m # tar, only used at dev-time
 
 # Bans or rollbacks
 overrides:
@@ -133,16 +151,29 @@ overrides:
   'jsdom': '-' # References canvas package
   # Upstream pins
   '@electron/rebuild>node-gyp': '12.4.0'
+  'brace-expansion@5': '^5.0.9'
+  'brace-expansion@2': '^2.1.4'
+  'brace-expansion@1': '^1.1.18'
+  'builder-util-runtime': '9.7.0'
   'react-popper@2.3.0>react-dom': '19.2.4'
   'react-popper@2.3.0>react': '19.2.4'
   'thenify-all>thenify': '3.3.1'
-  brace-expansion@<=5.0.7: ^5.0.8
+  electron@<39.8.10: ^39.8.10
+  electron@<39.8.9: ^39.8.9
+  ip-address@<=10.3.0: ^10.3.1
+  nanoid@<3.3.17: 3.3.18
+  '@remix-run/router@>=1.3.0 <1.23.3': ^1.23.3
   cross-spawn@<6.0.6: ^6.0.6
+  csv-parse@<7.0.2: ^7.0.2
   diff@>=6.0.0 <8.0.3: ^8.0.3
   got@<11.8.5: ^11.8.5
+  js-yaml@>=4.0.0 <4.3.1: ^4.3.1
+  js-yaml@>=4.0.0 <4.3.2: ^4.3.2
   serialize-javascript@<=7.0.2: ^7.0.3
   serialize-javascript@>=5.0.0 <7.0.5: ^7.0.5
   svgo@>=4.0.0 <4.0.2: ^4.0.2
+  svgo@>=4.0.0 <4.1.0: ^4.1.0
+  undici@<6.28.0: ^6.28.0
   uuid@<11.1.1: ^11.1.1
 
 allowUnusedPatches: false
@@ -163,6 +194,7 @@ patchedDependencies:
   'node-fetch@3.3.2': 'patches/node-fetch@3.3.2.patch'
   #'playwright-core': 'patches/playwright-core.patch'
   'qrcode-generator': 'patches/qrcode-generator.patch'
+  'react-popper@2.3.0': 'patches/react-popper@2.3.0.patch'
   'zod@4.3.6': 'patches/zod@4.3.6.patch'
 
 strictDepBuilds: true
@@ -173,14 +205,15 @@ allowBuilds:
   '@indutny/simple-windows-notifications@2.0.16': true
   '@parcel/watcher@2.6.0': true
   '@signalapp/libsignal-client@0.92.2': true # duplicate package
-  '@signalapp/libsignal-client@0.97.3': true
+  '@signalapp/libsignal-client@0.100.0': true
   '@signalapp/ringrtc@2.69.4': true
-  '@signalapp/sqlcipher@3.3.9': true
+  '@signalapp/sqlcipher@4.1.0': true
   '@signalapp/windows-ucv@1.0.1': true
-  '@swc/core@1.15.46': true
+  '@swc/core@1.16.2': true
   '@tailwindcss/oxide@4.3.0': true
   'electron@23.3.13': false # duplicate package
-  'electron@42.3.0': true
+  'electron@39.8.10': true # duplicate package through react-devtools
+  'electron@43.0.0': true
   'fs-xattr@0.4.0': true
 
   # Disabled Builds: Use wildcard version
@@ -204,8 +237,8 @@ peerDependencyRules:
     '@storybook/test@8.6.15>storybook': '8.4.4'
     '@storybook/test@8.6.14>storybook': '8.4.4'
     '@storybook/addon-interactions@8.6.14>storybook': '8.4.4'
-    '@formatjs/intl@4.1.4>typescript': '6.0.3'
-    'react-intl@10.1.0>typescript': '6.0.3'
+    '@formatjs/intl@4.1.4>typescript': '6.0.2'
+    'react-intl@10.1.0>typescript': '6.0.2'
     '@storybook/react@8.4.4>@storybook/test': '8.6.15'
     'stylelint-use-logical-spec@5.0.1>stylelint': '17.11.1'
     'react-popper@2.3.0>react': '18.3.1'
