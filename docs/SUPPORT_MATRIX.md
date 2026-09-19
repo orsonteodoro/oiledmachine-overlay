@@ -257,14 +257,15 @@ Language defaults
 
 Pairing rules and support
 
-| Pairing                                                              | Allowed? | Reason                                                                                   | Example                                        |
+| Pairing                                                              | Allowed? | Reason                                                                                   | Examples                                       |
 | ---                                                                  | ---      | ---                                                                                      | ---                                            |
-| Lib A (C++17, GCC13) + Lib B (C++17, GCC13) + App (C++17, GCC13)     | Y        | All the same, the most consistent and reliable build                                     | Firefox ESR, enterprise LTS packages           |
+| Lib A (C++17, GCC13) + Lib B (C++17, GCC13) + App (C++17, GCC13)     | Y        | All the same, the most consistent and reliable build                                     | Firefox ESR 140, enterprise LTS packages       |
 | Lib A (C++17, GCC13) + Lib B (C++20, GCC13) + App (C++23, LLVM23)    | Y        | The app has highest C++ version AND no library GCC/LLVM slot is greater than it          | Chromium, Hyprland, rolling FAFO packages      |
 | Lib A (C++17, GCC13) depends on Lib B (C++23, GCC16)                 | Y        | The parent library needs to be >= C++ version, USE flag disabled, or version blacklisted |                                                |
-| Lib A (C++17, GCC13) depends on Lib B (C++17, GCC13)                 | Y        | All the same C++ version and same GCC slot                                               |                                                |
+| Lib A (C++17, GCC13) depends on Lib B (C++17, GCC13)                 | Y        | All the same C++ version and same GCC slot                                               | gtkmm, qtbase:6                                |
 | Lib A (C++17, GCC13) depends on Lib B (C++17, GCC14)                 | N        | All the same C++ version and only 1 GCC slot allowed for LTS (C++17)                     |                                                |
-| Lib A (C++17, GCC13) depends on Lib B (C++20, GCC13)                 | N        | The child libraries C++ version cannot exceed the parent library C++ version             |                                                |
+| Lib A (C++17, GCC13) depends on Lib B (C++20, GCC13)                 | N        | The child libraries C++ version typically cannot exceed the parent library C++ version   |                                                |
+| Lib A (C++14, GCC13) depends on Lib B (C++17, GCC13)                 | N        | The exception, it is allowed if using the same GCC compiler slot                         | Boost links to ICU                             |
 
 | Python               | Ebuild level of support               | Distro or CI image correspondence                              |
 | ---                  | ---                                   | ---                                                            |
