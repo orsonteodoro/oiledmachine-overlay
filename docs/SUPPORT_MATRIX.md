@@ -154,8 +154,8 @@ Language defaults
 | LTS                      | gnu++17        | gnu++17          | gnu17        | gnu17          | 14          | 19            | gcc_slot_14_3, llvm_slot_19      | D13                     | SIMD, CUDA 12.8, CUDA 12.9, CUDA 13.4, Vulkan                           |
 | LTS                      | gnu++17        | gnu++17          | gnu23        | gnu17          | 15          | 21            | gcc_slot_15_3, llvm_slot_21      | U26                     | SIMD, CUDA 13.4, Vulkan                                                 |
 | Rolling                  | gnu++17        | gnu++17          | gnu23        | gnu17          | 15          | 22            | gcc_slot_15_3, llvm_slot_22      | G23 [2]                 | SIMD, CUDA 13.4, Vulkan                                                 |
-| Rolling                  | gnu++20        | gnu++17          | gnu23        | gnu17          | 16          | 22            | gcc_slot_16_2, llvm_slot_22      | F44                     | SIMD, CUDA 13.4, Vulkan                                                 |
 | Rolling                  | gnu++17        | gnu++17          | gnu23        | gnu17          | 15          | 21            | gcc_slot_15_3, llvm_slot_21      | F43                     | SIMD, CUDA 13.2, Vulkan                                                 |
+| Rolling                  | gnu++20        | gnu++17          | gnu23        | gnu17          | 16          | 22            | gcc_slot_16_2, llvm_slot_22      | F44                     | SIMD, CUDA 13.4, Vulkan                                                 |
 | Rolling                  | gnu++20        | gnu++17          | gnu23        | gnu17          | 16          | 23            | gcc_slot_16_2, llvm_slot_23      | F45                     | SIMD, Vulkan                                                            |
 
 * [1] This is the old oiledmachine-overlay's defaults for testing.
