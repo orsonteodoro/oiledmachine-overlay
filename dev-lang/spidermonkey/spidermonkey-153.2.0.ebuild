@@ -15,9 +15,9 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="IO TC"
 RUSTFLAGS_HARDENED_USE_CASES="jit language-runtime scripting sensitive-data untrusted-data"
 RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="IO TC"
 
-MITIGATION_DATE="Jun 16, 2026" # Advisory date
-MITIGATION_LAST_UPDATE=1781557080 # From `date +%s -d "2026-06-15 13:58"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-58/"
+MITIGATION_DATE="Sep 1, 2026" # Advisory date
+MITIGATION_LAST_UPDATE=1788205980 # From `date +%s -d "31-Aug-2026 12:53"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-85/"
 SEVERITY_LABEL="Severity:"
 VULNERABILITIES_FIXED=(
 )
