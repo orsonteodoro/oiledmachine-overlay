@@ -778,12 +778,11 @@ eerror "QA:  ELECTRON_BUILDER_PV must be defined."
 eerror "ELECTRON_BUILDER_PV must be defined"
 		die
 	fi
-	if ver_test "${ELECTRON_BUILDER_PV}" "-eq" "26.15.3" ; then
-eerror "ELECTRON_BUILDER_PV=26.15.3 is broken.  Bump electron-builder to 26.15.7 or newer."
-		die
-	fi
-	if ver_test "${ELECTRON_BUILDER_PV}" "-eq" "26.11.1" ; then
-eerror "ELECTRON_BUILDER_PV=26.15.3 is broken.  Bump electron-builder to 26.15.7 or newer."
+	if \
+		   ver_test "${ELECTRON_BUILDER_PV}" "-eq" "26.15.3" \
+		|| ver_test "${ELECTRON_BUILDER_PV}" "-eq" "26.11.1" \
+	; then
+eerror "ELECTRON_BUILDER_PV=${ELECTRON_BUILDER_PV} is broken.  Bump electron-builder to 26.15.7 or newer."
 		die
 	fi
 	if ver_test "${ELECTRON_BUILDER_PV}" "-ge" "26.15.3" ; then
