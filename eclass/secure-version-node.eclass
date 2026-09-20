@@ -37,7 +37,7 @@ _SECURE_VERSION_NODE_ECLASS=1
 # typescript
 # uuid
 NODE_24_GRPC_GRPC_JS_PV=${NODE_24_GRPC_GRPC_JS_PV:-"1.9.16"} # typescript@^5.1.x uses @types/node@20
-NODE_24_ELECTRON_PV=${NODE_24_ELECTRON_PV:-"44.4.1"} # node 24.21.0, chromium 152.0.7977.78
+NODE_24_ELECTRON_PV=${NODE_24_ELECTRON_PV:-"44.4.3"} # node 24.21.0, chromium 152.0.7977.130
 NODE_22_ELECTRON_PV=${NODE_22_ELECTRON_PV:-"35.7.4"} # node 22.16.0, chromium 134.0.6998.205
 
 # Unislot

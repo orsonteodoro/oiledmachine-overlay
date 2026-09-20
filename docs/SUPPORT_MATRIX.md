@@ -331,7 +331,7 @@ Pairing rules and support
 | CUDA 13.3                            | Available [6]                           | D12, D13, F44, U22, U24, U26                                           |
 | CUDA 13.4                            | Planned                                 | D12, D13, F44, U22, U24, U26                                           |
 | Electron (amd64)                     | Fully supported                         |                                                                        |
-| Electron (arm64)                     | Not supported, planned for availability |                                                                        |
+| Electron (arm64)                     | Available (WIP)                         |                                                                        |
 | Electron (armv7)                     | Not supported                           |                                                                        |
 | Electron (x86)                       | Not supported                           |                                                                        |
 | gRPC 1.30.2 [3]                      | Fully supported                         | U22 (1.30.2)                                                           |

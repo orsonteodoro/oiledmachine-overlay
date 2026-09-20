@@ -99,7 +99,7 @@ inherit chkl chromium-2 desktop linux-info secure-version web-kernel-config
 ELECTRON_APP_ELECTRON_PV_SUPPORTED="29.0" # Minimum version
 
 ELECTRON_APP_MODE=${ELECTRON_APP_MODE:-"npm"} # can be npm, yarn
-ELECTRON_APP_ECLASS_DEBUG=${ELECTRON_APP_ECLASS_DEBUG:-"debug"} # debug or production
+ELECTRON_APP_ECLASS_DEBUG=${ELECTRON_APP_ECLASS_DEBUG:-"production"} # debug or production
 
 # User generated content (images, audio, models, files)
 ELECTRON_APP_USES_UGC_FILES=${ELECTRON_APP_USES_UGC_FILES:-"0"}
@@ -696,9 +696,6 @@ _electron-app_gen_electron_uris_prod() {
 			arm64? (
 				https://github.com/electron/electron/releases/download/v${ELECTRON_APP_ELECTRON_PV}/electron-v${ELECTRON_APP_ELECTRON_PV}-linux-arm64.zip
 			)
-			arm? (
-				https://github.com/electron/electron/releases/download/v${ELECTRON_APP_ELECTRON_PV}/electron-v${ELECTRON_APP_ELECTRON_PV}-linux-armv7l.zip
-			)
 		)
 		kernel_Darwin? (
 			x64-macos? (
@@ -715,6 +712,7 @@ _electron-app_gen_electron_uris_prod() {
 # @FUNCTION: _electron-app_gen_electron_uris_devel
 # @DESCRIPTION:
 # Generate URIs for offline install of electron based apps for ebuild/eclass development.
+# It is reduced to speed up testing.
 _electron-app_gen_electron_uris_devel() {
 	echo "
 		kernel_linux? (
@@ -781,6 +779,10 @@ eerror "ELECTRON_BUILDER_PV must be defined"
 		die
 	fi
 	if ver_test "${ELECTRON_BUILDER_PV}" "-eq" "26.15.3" ; then
+eerror "ELECTRON_BUILDER_PV=26.15.3 is broken.  Bump electron-builder to 26.15.7 or newer."
+		die
+	fi
+	if ver_test "${ELECTRON_BUILDER_PV}" "-eq" "26.11.1" ; then
 eerror "ELECTRON_BUILDER_PV=26.15.3 is broken.  Bump electron-builder to 26.15.7 or newer."
 		die
 	fi
