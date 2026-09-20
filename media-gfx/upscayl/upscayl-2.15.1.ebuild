@@ -131,7 +131,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 	custom-models firejail
-	ebuild_revision_30
+	ebuild_revision_31
 "
 RDEPEND+="
 	>=media-libs/vulkan-loader-${VULKAN_PV}:=
@@ -218,7 +218,7 @@ src_install() {
 	for f in "${L[@]}" ; do
 		fperms 0755 "${NPM_INSTALL_PATH}/${f}"
 	done
-	lcnr_install_files
+#	lcnr_install_files
 
 	electron-app_set_sandbox_suid "/opt/upscayl/chrome-sandbox"
 }
