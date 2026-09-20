@@ -593,6 +593,7 @@ pkg_postinst() {
 	elog "For using the tray icon on compatible desktop environments, start Signal with"
 	elog " '--start-in-tray' or '--use-tray-icon'."
 }
+# OILEDMACHINE-OVERLAY-TEST:  passed (8.27.0, 20260920, Electron 44.4.3)
 # OILEDMACHINE-OVERLAY-TEST:  passed (8.20.0, 20260729, Electron 43.2.0)
 # OILEDMACHINE-OVERLAY-TEST:  passed (8.19.0, 20260718, Electron 43.1.1 with Firejail and GPU acceleration off hardening)
 # OILEDMACHINE-OVERLAY-TEST:  passed (8.14.0, 20260610, Electron 42.4.0 with Firejail and GPU acceleration off hardening)
