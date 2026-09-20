@@ -41,6 +41,10 @@ EAPI=8
 # Could not detect abi for version ' + target + ' and runtime ' + runtime + '.  Updating "node-abi" might help solve this issue if it is a new release of ' + runtime)
 # https://github.com/signalapp/Signal-Desktop/blob/v8.19.0/CONTRIBUTING.md#known-issues
 
+# Do the following in ${S} if you get:
+# [WARN] Issues with peer dependencies found. Run "pnpm peers check" to list them.
+#PATH="/usr/lib/node/24/bin:/var/tmp/portage/net-im/signal-desktop-8.27.0/homedir/.cache/node/corepack/v1/pnpm/11.10.0/bin:${PATH}" pnpm peers check
+
 MY_PN="Signal-Desktop"
 MY_PN2="Signal"
 
@@ -145,7 +149,7 @@ SLOT="0"
 RESTRICT="splitdebug binchecks strip mirror" # Prevent slow down and snooping
 IUSE+="
 firejail wayland +X
-ebuild_revision_101
+ebuild_revision_102
 "
 REQUIRED_USE+="
 	|| (
@@ -238,13 +242,18 @@ einfo "DEBUG:  Deleting old electron changes suggested by pnpm audit --fix"
 		sed -i -e "\|35.7.5|d" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "\|38.8.6|d" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "\|39.8.5|d" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "\|39.8.10|d" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "\|39.8.9|d" "${S}/pnpm-workspace.yaml" || die
 
 einfo "DEBUG:  Allowing only the pinned fabric versions and rejected non-pinned suggested by pnpm audit --fix"
 		sed -i -e "\|fabric.*7.2.0|d" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "\|fabric.*7.4.0|d" "${S}/pnpm-workspace.yaml" || die
 
 einfo "DEBUG:  Deleting non-existing extract-zip version suggested by pnpm audit --fix"
-		sed -i -e "\|extract-zip|d" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "\|extract-zip.*2.0.2|d" "${S}/pnpm-workspace.yaml" || die
+
+einfo "DEBUG:  Deleting newer app-builder-lib version suggested by pnpm audit --fix"
+		sed -i -e "\|26.15.0|d" "${S}/pnpm-workspace.yaml" || die
 	fi
 }
 
@@ -253,6 +262,9 @@ _apply_patches() {
 einfo "DEBUG:  Called pnpm_unpack_post()"
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		eapply "${FILESDIR}/${PN}-8.27.0-project-files-changes.patch"
+
+	# Must be pinned
+		sed -i -e "s|@ELECTRON_BUILDER_PV@|${ELECTRON_BUILDER_PV}|g" "${S}/pnpm-workspace.yaml" || die
 
 		sed -i -e "s|@NODE_24_ELECTRON_PV@|${NODE_24_ELECTRON_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_AJV_PV@|${NODE_AJV_PV}|g" "${S}/pnpm-workspace.yaml" || die
@@ -281,6 +293,14 @@ einfo "DEBUG:  Called pnpm_unpack_post()"
 		sed -i -e "s|@NODE_UUID_13_PV@|${NODE_UUID_13_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_VITE_6_PV@|${NODE_VITE_6_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_WEBPACK_5_PV@|${NODE_WEBPACK_5_PV}|g" "${S}/pnpm-workspace.yaml" || die
+
+	# Prevent:
+	# [WARN] Issues with peer dependencies found. Run "pnpm peers check" to list them.
+		sed -i -e "s|@NODE_APP_BUILDER_LIB_PV@|26.11.1|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_DMG_BUILDER_PV@|26.11.1|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_ELECTRON_BUILDER_SQUIRREL_WINDOWS_PV@|26.11.1|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_REACT_19_PV@|${NODE_REACT_19_PV}|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_REACT_DOM_19_PV@|${NODE_REACT_DOM_19_PV}|g" "${S}/pnpm-workspace.yaml" || die
 	fi
 
 einfo "Increasing verbosity to debug"

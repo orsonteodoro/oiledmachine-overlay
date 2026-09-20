@@ -1,6 +1,5 @@
-diff '--color=auto' -urp Signal-Desktop-8.27.0.orig/pnpm-workspace.yaml Signal-Desktop-8.27.0/pnpm-workspace.yaml
---- Signal-Desktop-8.27.0.orig/pnpm-workspace.yaml	2026-09-10 05:04:23.000000000 -0700
-+++ Signal-Desktop-8.27.0/pnpm-workspace.yaml	2026-09-19 11:20:32.797339356 -0700
+--- a/pnpm-workspace.yaml.orig	2026-09-10 05:04:23.000000000 -0700
++++ b/pnpm-workspace.yaml	2026-09-19 17:51:17.195222615 -0700
 @@ -1,5 +1,5 @@
  saveExact: true
 -blockExoticSubdeps: true
@@ -8,7 +7,7 @@ diff '--color=auto' -urp Signal-Desktop-8.27.0.orig/pnpm-workspace.yaml Signal-D
  lockfileIncludeTarballUrl: true
  verifyDepsBeforeRun: prompt
  verifyStoreIntegrity: true
-@@ -8,15 +8,46 @@ packages:
+@@ -8,15 +8,49 @@ packages:
    - 'packages/*'
    - 'sticker-creator'
  
@@ -31,13 +30,14 @@ diff '--color=auto' -urp Signal-Desktop-8.27.0.orig/pnpm-workspace.yaml Signal-D
 +  - '@signalapp/libsignal-client'
    - '@signalapp/*'
    - 'electron'
++  - 'dmg-builder@@NODE_DMG_BUILDER_PV@'
 +  - '@storybook/core@@NODE_STORYBOOK_8_PV@'
 +  - '@storybook/theming@@NODE_STORYBOOK_8_PV@'
 +  - '@xmldom/xmldom@@NODE_AT_XMLDOM_XMLDOM_PV@'
 +  - 'ajv@@NODE_AJV_PV@'
 +  - 'tar@@NODE_TAR_PV@'
 +  - 'electron@@NODE_24_ELECTRON_PV@'
-+  - 'electron-builder@26.15.7'
++  - 'electron-builder@@ELECTRON_BUILDER_PV@'
 +  - 'esbuild@@NODE_ESBUILD_PV@'
 +  - 'flatted@@NODE_FLATTED_PV@'
 +  - 'immutable@@NODE_IMMUTABLE_4_PV@'
@@ -46,6 +46,8 @@ diff '--color=auto' -urp Signal-Desktop-8.27.0.orig/pnpm-workspace.yaml Signal-D
 +  - 'linkify-it@@NODE_LINKIFY_IT_5_PV@'
 +  - 'picomatch@@NODE_PICOMATCH_2_PV@'
 +  - 'postcss@@NODE_POSTCSS_PV@'
++  - 'react@@NODE_REACT_19_PV@'
++  - 'react-dom@@NODE_REACT_DOM_19_PV@'
 +  - 'react-router@@NODE_REACT_ROUTER_8_PV@'
 +  - 'rollup@@NODE_ROLLUP_3_PV@'
 +  - 'qs@@NODE_QS_PV@'
@@ -60,7 +62,7 @@ diff '--color=auto' -urp Signal-Desktop-8.27.0.orig/pnpm-workspace.yaml Signal-D
  
  trustPolicy: no-downgrade
  trustPolicyExclude:
-@@ -30,41 +61,90 @@ trustPolicyExclude:
+@@ -30,43 +64,100 @@ trustPolicyExclude:
    - 'undici-types@6.21.0'
    - 'vite@4.5.14'
  
@@ -133,14 +135,18 @@ diff '--color=auto' -urp Signal-Desktop-8.27.0.orig/pnpm-workspace.yaml Signal-D
 +  '@vitejs/plugin-react@3.1.0>postcss': '@NODE_POSTCSS_PV@'
 +  '@vitejs/plugin-react@3.1.0>rollup': '@NODE_ROLLUP_3_PV@'
 +  '@vitejs/plugin-react@3.1.0>vite': '@NODE_VITE_6_PV@'
++  'app-builder-lib': '@NODE_APP_BUILDER_LIB_PV@'
++  'app-builder-lib@26.11.1>electron-builder-squirrel-windows': '@NODE_ELECTRON_BUILDER_SQUIRREL_WINDOWS_PV@'
 +  'danger@13.0.10>js-yaml': '@NODE_JS_YAML_4_PV@'
 +  'danger@13.0.10>jws': '@NODE_JWS_3_PV@'
 +  'danger@13.0.10>qs': '@NODE_QS_PV@'
 +  'danger@13.0.10>undici': '@NODE_UNDICI_PV@'
++  'dmg-builder': '@NODE_DMG_BUILDER_PV@'
 +  'fabric': '4.6.0'
 +  'electron': '@NODE_24_ELECTRON_PV@'
-+  'electron-builder': '26.15.7'
-+  #'electron-builder@26.0.14>tar': '@NODE_TAR_PV@'
++  'electron-builder': '@ELECTRON_BUILDER_PV@'
++  #'electron-builder@@ELECTRON_BUILDER_PV@>tar': '@NODE_TAR_PV@'
++  'electron-builder-squirrel-windows': '@NODE_ELECTRON_BUILDER_SQUIRREL_WINDOWS_PV@'
 +  'eslint@8.38.0>js-yaml': '@NODE_JS_YAML_4_PV@'
 +  'eslint-config-airbnb-typescript-prettier@5.0.0>js-yaml': '@NODE_JS_YAML_4_PV@'
 +  'eslint-config-airbnb-typescript-prettier@5.0.0>picomatch': '@NODE_PICOMATCH_2_PV@'
@@ -148,9 +154,15 @@ diff '--color=auto' -urp Signal-Desktop-8.27.0.orig/pnpm-workspace.yaml Signal-D
 +  'js-yaml': '@NODE_JS_YAML_4_PV@'
 +  'linkify-it': '@NODE_LINKIFY_IT_5_PV@'
 +  'npm-run-all2@8.0.4>shell-quote': '@NODE_SHELL_QUOTE_PV@'
++  'react': '@NODE_REACT_19_PV@'
++  'react-dom': '@NODE_REACT_DOM_19_PV@'
++  'react-popper@2.3.0>react': '@NODE_REACT_19_PV@'
++  'react-popper@2.3.0>react-dom': '@NODE_REACT_DOM_19_PV@'
 +  'react-redux@8.0.5>@babel/runtime': '@NODE_BABEL_RUNTIME_7_PV@'
-+  'react-router-dom@6.10.0>@remix-run/router': '@NODE_AT_REMIX_RUN_ROUTER_PV@'
 +  'react-router': '@NODE_REACT_ROUTER_8_PV@'
++  'react-router-dom@6.10.0>@remix-run/router': '@NODE_AT_REMIX_RUN_ROUTER_PV@'
++  'react-router@8.4.0>react': '@NODE_REACT_19_PV@'
++  'react-router@8.4.0>react-dom': '@NODE_REACT_DOM_19_PV@'
 +  'redux@4.2.1>@babel/runtime': '@NODE_BABEL_RUNTIME_7_PV@'
 +  'rollup-plugin-visualizer@5.9.0>rollup': '@NODE_ROLLUP_3_PV@'
 +  'rollup-plugin-visualizer@5.9.0>picomatch': '@NODE_PICOMATCH_2_PV@'
@@ -176,10 +188,12 @@ diff '--color=auto' -urp Signal-Desktop-8.27.0.orig/pnpm-workspace.yaml Signal-D
 -  'canvas': '-'
 -  'danger@13.0.10>undici': '6.27.0'
 -  'jsdom': '-'
-   'react-popper@2.3.0>react-dom': '19.2.4'
-   'react-popper@2.3.0>react': '19.2.4'
+-  'react-popper@2.3.0>react-dom': '19.2.4'
+-  'react-popper@2.3.0>react': '19.2.4'
    'thenify-all>thenify': '3.3.1'
-@@ -77,19 +157,19 @@ allowUnusedPatches: false
+   electron@<39.8.10: ^39.8.10
+   electron@<39.8.9: ^39.8.9
+@@ -77,19 +160,19 @@ allowUnusedPatches: false
  ignorePatchFailures: false
  patchedDependencies:
    # Note: Prefer adding without version so that pnpm attempts to re-apply the patch after an upgrade
@@ -203,7 +217,7 @@ diff '--color=auto' -urp Signal-Desktop-8.27.0.orig/pnpm-workspace.yaml Signal-D
    'qrcode-generator': 'patches/qrcode-generator.patch'
    'react-popper@2.3.0': 'patches/react-popper@2.3.0.patch'
    'zod@4.3.6': 'patches/zod@4.3.6.patch'
-@@ -100,22 +180,23 @@ allowBuilds:
+@@ -100,22 +183,23 @@ allowBuilds:
    #   ex: 'package@0.0.0': true
    '@indutny/mac-screen-share@1.0.13': true
    '@indutny/simple-windows-notifications@2.0.16': true
@@ -231,7 +245,7 @@ diff '--color=auto' -urp Signal-Desktop-8.27.0.orig/pnpm-workspace.yaml Signal-D
    'core-js': false
    'electron-winstaller': false
    'es5-ext': false
-@@ -125,7 +206,7 @@ allowBuilds:
+@@ -125,7 +209,7 @@ allowBuilds:
  
  dedupePeers: true
  dedupePeerDependents: true
@@ -240,7 +254,15 @@ diff '--color=auto' -urp Signal-Desktop-8.27.0.orig/pnpm-workspace.yaml Signal-D
  peerDependencyRules:
    allowedVersions:
      '@storybook/instrumenter@8.6.14>storybook': '8.4.4'
-@@ -143,18 +224,31 @@ peerDependencyRules:
+@@ -137,24 +221,37 @@ peerDependencyRules:
+     'react-intl@10.1.0>typescript': '6.0.2'
+     '@storybook/react@8.4.4>@storybook/test': '8.6.15'
+     'stylelint-use-logical-spec@5.0.1>stylelint': '17.11.1'
+-    'react-popper@2.3.0>react': '18.3.1'
+-    'react-popper@2.3.0>react-dom': '18.3.1'
++    'react-popper@2.3.0>react': '@NODE_REACT_19_PV@'
++    'react-popper@2.3.0>react-dom': '@NODE_REACT_DOM_19_PV@'
+ 
  allowedDeprecatedVersions:
    '@humanwhocodes/config-array': '0.11.14'
    '@humanwhocodes/object-schema': '2.0.3'
