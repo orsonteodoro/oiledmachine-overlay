@@ -76,7 +76,7 @@ PNPM_INSTALL_ARGS=(
 inherit secure-version secure-version-node
 
 AT_TYPES_NODE_PV="24.12.0"
-ELECTRON_BUILDER_PV="26.11.1" # 26.11.1 works, 26.15.7 is broken
+ELECTRON_BUILDER_PV="26.15.7" # 26.11.1 no longer works
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
@@ -102,17 +102,13 @@ NPM_DEDUPE_ARGS=(
 #fi
 
 QA_PREBUILT="
+	opt/Signal/libvk_swiftshader.so
+	opt/Signal/libffmpeg.so
+	opt/Signal/resources/app.asar.unpacked/node_modules/*
 	opt/Signal/chrome_crashpad_handler
 	opt/Signal/chrome-sandbox
-	opt/Signal/libEGL.so
-	opt/Signal/libGLESv2.so
-	opt/Signal/libffmpeg.so
-	opt/Signal/libvk_swiftshader.so
 	opt/Signal/libvulkan.so.1
-	opt/Signal/resources/app.asar.unpacked/node_modules/*
 	opt/Signal/signal-desktop
-	opt/Signal/swiftshader/libEGL.so
-	opt/Signal/swiftshader/libGLESv2.so
 "
 
 inherit edo electron-app lcnr pax-utils pnpm npm rust unpacker virtualx xdg
@@ -149,7 +145,7 @@ SLOT="0"
 RESTRICT="splitdebug binchecks strip mirror" # Prevent slow down and snooping
 IUSE+="
 firejail wayland +X
-ebuild_revision_104
+ebuild_revision_106
 "
 REQUIRED_USE+="
 	|| (
@@ -296,9 +292,9 @@ einfo "DEBUG:  Called pnpm_unpack_post()"
 
 	# Prevent:
 	# [WARN] Issues with peer dependencies found. Run "pnpm peers check" to list them.
-		sed -i -e "s|@NODE_APP_BUILDER_LIB_PV@|26.11.1|g" "${S}/pnpm-workspace.yaml" || die
-		sed -i -e "s|@NODE_DMG_BUILDER_PV@|26.11.1|g" "${S}/pnpm-workspace.yaml" || die
-		sed -i -e "s|@NODE_ELECTRON_BUILDER_SQUIRREL_WINDOWS_PV@|26.11.1|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_APP_BUILDER_LIB_PV@|26.15.7|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_DMG_BUILDER_PV@|26.15.7|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_ELECTRON_BUILDER_SQUIRREL_WINDOWS_PV@|26.15.7|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_REACT_19_PV@|${NODE_REACT_19_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_REACT_DOM_19_PV@|${NODE_REACT_DOM_19_PV}|g" "${S}/pnpm-workspace.yaml" || die
 
@@ -549,14 +545,12 @@ src_install() {
 	doins -r "dist/linux-unpacked/"*
 
 	local L=(
-		"signal-desktop"
 		"libffmpeg.so"
-		"libGLESv2.so"
 		"libvk_swiftshader.so"
-		"libEGL.so"
-		"chrome-sandbox"
 		"libvulkan.so.1"
+		"signal-desktop"
 		"chrome_crashpad_handler"
+		"chrome-sandbox"
 	)
 
 	local x
