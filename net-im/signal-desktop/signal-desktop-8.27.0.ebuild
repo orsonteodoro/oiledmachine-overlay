@@ -126,12 +126,12 @@ HOMEPAGE="
 	https://github.com/signalapp/Signal-Desktop
 "
 
-# The electron 37.2.0 license file fingerprint is the same as 37.1.0.
 LICENSE="
 	${ELECTRON_APP_LICENSES}
 	AGPL-3
 "
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
+	# The Electron 44.4.1 license file fingerprint is the same as 44.4.3.
 	LICENSE+="
 		electron-44.4.1-chromium.html
 	"
