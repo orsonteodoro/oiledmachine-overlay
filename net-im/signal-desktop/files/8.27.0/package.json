@@ -369,7 +369,6 @@
       ],
       "mergeASARs": true,
       "sign": "scripts/sign-macos.mjs",
-      "signInstaller": "scripts/sign-mas-installer.mjs",
       "releaseInfo": {
         "vendor": {
           "minOSVersion": "21.0.1"

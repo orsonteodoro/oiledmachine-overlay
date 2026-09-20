@@ -149,7 +149,7 @@ SLOT="0"
 RESTRICT="splitdebug binchecks strip mirror" # Prevent slow down and snooping
 IUSE+="
 firejail wayland +X
-ebuild_revision_103
+ebuild_revision_104
 "
 REQUIRED_USE+="
 	|| (
@@ -301,6 +301,10 @@ einfo "DEBUG:  Called pnpm_unpack_post()"
 		sed -i -e "s|@NODE_ELECTRON_BUILDER_SQUIRREL_WINDOWS_PV@|26.11.1|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_REACT_19_PV@|${NODE_REACT_19_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_REACT_DOM_19_PV@|${NODE_REACT_DOM_19_PV}|g" "${S}/pnpm-workspace.yaml" || die
+
+	# Prevent:
+	# configuration.mac has an unknown property 'signInstaller'
+		sed -i -e "\|signInstaller|d" "${S}/package.json" || die
 	fi
 
 einfo "Increasing verbosity to debug"
