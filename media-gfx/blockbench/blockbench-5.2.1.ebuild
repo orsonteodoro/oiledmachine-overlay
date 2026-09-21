@@ -9,7 +9,7 @@ EAPI=8
 
 # To update lockfile:
 # PATH=$(realpath ../../scripts)":${PATH}"
-# NPM_UPDATER_VERSIONS="5.1.6" npm_updater_update_locks.sh
+# NPM_UPDATER_VERSIONS="5.2.1" npm_updater_update_locks.sh
 
 MY_PN="${PN^}"
 
