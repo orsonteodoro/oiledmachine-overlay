@@ -30,7 +30,7 @@
 +  - 'qs@@NODE_QS_PV@'
 +  - 'sharp@@NODE_SHARP_PV@'
 +  - 'tough-cookie@@NODE_TOUGH_COOKIE_PV@'
-+  - 'uuid@@NODE_UUID_PV@'
++  - 'uuid@@NODE_UUID_11_PV@'
  
  onlyBuiltDependencies:
    - '@google/genai'
@@ -92,7 +92,7 @@
 +  'react-scan@0.5.7>@opentelemetry/core': '@NODE_AT_OPENTELEMETRY_CORE_PV@'
 +  'react-scan@0.5.7>fast-xml-parser': '@NODE_FAST_XML_PARSER_5_PV@'
 +  'react-scan@0.5.7>qs': '@NODE_QS_PV@'
-+  'resend@6.8.0>uuid': '@NODE_UUID_PV@'
++  'resend@6.8.0>uuid': '@NODE_UUID_11_PV@'
 +  's3rver@3.7.1>fast-xml-parser': '@NODE_FAST_XML_PARSER_5_PV@'
 +  'stripe@17.7.0>qs': '@NODE_QS_PV@'
 +  'vite@@NODE_VITE_8_PV@>ajv': '@NODE_AJV_PV@'

@@ -596,10 +596,10 @@ fix_lockfiles() {
 			-e "s|tar: 6.2.1|tar: ${NODE_TAR_PV}|g" \
 			-e "s|tar: 7.5.22|tar: ${NODE_TAR_PV}|g" \
 			-e "s|tough-cookie: 2.5.0|tough-cookie: ${NODE_TOUGH_COOKIE_PV}|g" \
-			-e "s|uuid: 3.4.0|uuid: ${NODE_UUID_PV}|g" \
-			-e "s|uuid: 8.3.2|uuid: ${NODE_UUID_PV}|g" \
-			-e "s|uuid: 9.0.1|uuid: ${NODE_UUID_PV}|g" \
-			-e "s|uuid: 11.1.1|uuid: ${NODE_UUID_PV}|g" \
+			-e "s|uuid: 3.4.0|uuid: ${NODE_UUID_11_PV}|g" \
+			-e "s|uuid: 8.3.2|uuid: ${NODE_UUID_11_PV}|g" \
+			-e "s|uuid: 9.0.1|uuid: ${NODE_UUID_11_PV}|g" \
+			-e "s|uuid: 11.1.1|uuid: ${NODE_UUID_11_PV}|g" \
 			"${S}/pnpm-lock.yaml" \
 			"${S}/apps/cli/pnpm-lock.yaml" \
 			"${S}/apps/desktop/pnpm-lock.yaml" \
@@ -669,7 +669,7 @@ pnpm_unpack_post() {
 		-e "s|@NODE_SHARP_PV@|${NODE_SHARP_PV}|g" \
 		-e "s|@NODE_TAR_PV@|${NODE_TAR_PV}|g" \
 		-e "s|@NODE_TOUGH_COOKIE_PV@|${NODE_TOUGH_COOKIE_PV}|g" \
-		-e "s|@NODE_UUID_PV@|${NODE_UUID_PV}|g" \
+		-e "s|@NODE_UUID_11_PV@|${NODE_UUID_11_PV}|g" \
 		-e "s|@NODE_VITE_8_PV@|${NODE_VITE_8_PV}|g" \
 		-e "s|@NODE_ELECTRON_BUILDER_PV@|${ELECTRON_BUILDER_PV}|g" \
 		"${S}/apps/desktop/package.json" \
@@ -817,7 +817,7 @@ pnpm_dedupe_post() {
 			"protobufjs@${NODE_PROTOBUFJS_8_PV}"
 			"qs@${NODE_QS_PV}"
 			"tough-cookie@${NODE_TOUGH_COOKIE_PV}"
-			"uuid@${NODE_UUID_PV}"
+			"uuid@${NODE_UUID_11_PV}"
 		)
 		#epnpm add "${pkgs[@]}" -w "${PNPM_INSTALL_ARGS[@]}"
 
