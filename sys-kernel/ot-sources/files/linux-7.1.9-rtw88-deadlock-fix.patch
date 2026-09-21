@@ -559,9 +559,27 @@ Fix:
  	rtw_usb_intf_deinit(rtwdev, intf);
  	rtw_core_deinit(rtwdev);
  	ieee80211_free_hw(hw);
---- a/net/mac80211/mlme.c.orig	2026-09-01 21:23:37.950079645 -0700
-+++ b/net/mac80211/mlme.c	2026-09-01 21:29:22.007932246 -0700
-@@ -3335,14 +3335,32 @@ static u64 ieee80211_handle_pwr_constr(s
+--- a/net/mac80211/mlme.c.orig	2026-09-20 13:27:01.490907891 -0700
++++ b/net/mac80211/mlme.c	2026-09-20 13:38:09.431121008 -0700
+@@ -1646,12 +1646,14 @@ static int ieee80211_config_bw(struct ie
+ 	link->u.mgd.conn.dbe_enabled = ap_chan_out.dbe_used;
+ 
+ 	if (ap_mode != link->u.mgd.conn.mode) {
++		/* The 2 BSSID access point for 2.4G or 5G advertises VHT then legacy with TX power 127 - ignore */
+ 		link_info(link,
+-			  "AP %pM appears to change mode (expected %s, found %s) in %s, disconnect\n",
++			  "AP %pM mode flip %s -> %s in %s ignored, keeping %s\n",
+ 			  link->u.mgd.bssid,
+ 			  ieee80211_conn_mode_str(link->u.mgd.conn.mode),
+-			  ieee80211_conn_mode_str(ap_mode), frame);
+-		return -EINVAL;
++			  ieee80211_conn_mode_str(ap_mode), frame,
++			  ieee80211_conn_mode_str(link->u.mgd.conn.mode));
++		return 0;
+ 	}
+ 
+ 	chanreq.oper = ap_chandef;
+@@ -3699,14 +3702,32 @@ static u64 ieee80211_handle_pwr_constr(s
  		has_80211h_pwr = ieee80211_find_80211h_pwr_constr(
  			channel, country_ie, country_ie_len,
  			pwr_constr_ie, &chan_pwr, &pwr_reduction_80211h);
