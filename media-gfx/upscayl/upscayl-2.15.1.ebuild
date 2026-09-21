@@ -197,6 +197,7 @@ einfo "QA:  Manually remove node_modules/next/node_modules/postcss from package-
 	)
 	enpm install -P "${pkgs[@]}" "${NPM_INSTALL_ARGS[@]}"
 	pkgs=(
+		"glob@^${NODE_GLOB_PV}"
 		"postcss@^${NODE_POSTCSS_PV}"
 		"tar@^${NODE_TAR_PV}"
 	)
@@ -287,3 +288,5 @@ ewarn "You need vulkan drivers to use ${PN}."
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20260727, Electron 43.2.0)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20260809, Electron 43.3.0) but the Firejail profile needs to be fixed.
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20260917, Electron 44.4.1) without Firejail test
+# OILEDMACHINE-OVERLAY-TEST:  FAIL 2.15.1 (20260920, Electron 44.4.3) with upscale test
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20260920, Electron 39.8.10) with upscale test
