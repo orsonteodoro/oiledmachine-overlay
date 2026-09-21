@@ -108,7 +108,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${PATENT_STATUS[@]}
 lame opus svt-av1 theora vorbis vpx x264
-ebuild_revision_42
+ebuild_revision_43
 "
 REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -429,7 +429,8 @@ pkg_postinst() {
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (3.68.0, 20260304 with Electron 40.6.1)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (3.68.0, 20260304 with Electron 40.7.0)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (3.68.1, 20260422 with Electron 41.3.0)
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (3.69.0, 20270725 with Electron 42.3.0)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (3.69.0, 20260725 with Electron 42.3.0)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (3.69.0, 20260921 with Electron 42.3.0)
 # UI load:  pass
 # Load video:  pass
 # Export by segment:  pass
