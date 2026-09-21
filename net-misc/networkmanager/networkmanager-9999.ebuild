@@ -63,7 +63,7 @@ arping audit bluetooth clat +concheck connection-sharing debug dhcpcd doc elogin
 gnutls iputils +introspection iptables iwd libedit +modemmanager nbft +nss
 nftables ofono ovs policykit +ppp psl resolvconf selinux syslog systemd teamd
 test +tools vala +wpa_supplicant +wext +wifi
-ebuild_revision_9
+ebuild_revision_11
 "
 RESTRICT="!test? ( test )"
 
@@ -315,7 +315,9 @@ multilib_src_configure() {
 	cflags-hardened_append
 
 	# This flag when set to 3 may break connection uptime and attempts to connect.
-	replace-flags "-fstrict-flex-arrays=*" "-fstrict-flex-arrays=1"
+	# When set to 1, it may make the connection disappear, but it could be a driver issue.
+	# Disabled as a precaution.
+	filter-flags "-fstrict-flex-arrays=*"
 
 	# Workaround for LLD on musl systems (bug #959603)
 	append-ldflags $(test-flags-CCLD -Wl,--undefined-version)
