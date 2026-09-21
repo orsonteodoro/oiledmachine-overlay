@@ -121,7 +121,7 @@ overrides:
   'danger@13.0.10>js-yaml': '4.3.2'
   'danger@13.0.10>jws': '3.2.3'
   'danger@13.0.10>qs': '6.14.1'
-  'danger@13.0.10>undici': '6.28.0'
+  'danger@13.0.10>undici': '6.28.1'
   'dmg-builder': '26.15.7'
   'fabric': '4.6.0'
   'electron': '44.4.3'

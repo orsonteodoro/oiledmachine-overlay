@@ -26,7 +26,7 @@ overrides:
   danger@13.0.10>js-yaml: 4.3.2
   danger@13.0.10>jws: 3.2.3
   danger@13.0.10>qs: 6.14.1
-  danger@13.0.10>undici: 6.28.0
+  danger@13.0.10>undici: 6.28.1
   dmg-builder: 26.15.7
   fabric: 4.6.0
   electron: 44.4.3
@@ -11198,10 +11198,6 @@ packages:
   undici-types@7.16.0:
     resolution: {integrity: sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw==, tarball: https://registry.npmjs.org/undici-types/-/undici-types-7.16.0.tgz}
 
-  undici@6.28.0:
-    resolution: {integrity: sha512-LIY910g9TI13YS95lrMFrs8Rm/u/irgHeTWoKCoteeJ04CUJ92eEfj0rVn+7VKMPBpUPiUoBKfhNyLI23EE/KA==, tarball: https://registry.npmjs.org/undici/-/undici-6.28.0.tgz}
-    engines: {node: '>=18.17'}
-
   undici@6.28.1:
     resolution: {integrity: sha512-zWpdTVD54H48CIybL0rWQ3ukpb9d23wM7eH5RtfdmeP70cWHNjtfo7P4vZX+5CoDcO53J4Pu5uXp7lNfjc6DRA==, tarball: https://registry.npmjs.org/undici/-/undici-6.28.1.tgz}
     engines: {node: '>=18.17'}
@@ -17342,7 +17338,7 @@ snapshots:
       regenerator-runtime: 0.13.11
       require-from-string: 2.0.2
       supports-hyperlinks: 4.5.0
-      undici: 6.28.0
+      undici: 6.28.1
     transitivePeerDependencies:
       - supports-color
 
@@ -22672,8 +22668,6 @@ snapshots:
   undici-types@6.21.0: {}
 
   undici-types@7.16.0: {}
-
-  undici@6.28.0: {}
 
   undici@6.28.1: {}
 
