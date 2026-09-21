@@ -125,16 +125,6 @@ eerror
 # }
 #
 chkl_check_many_timestamps() {
-	if [[ "${PV}" =~ "9999" ]] ; then
-einfo
-einfo "Detected ${PN} as a live package."
-einfo
-einfo "For live packages, you may add EVCS_OFFLINE=1 before using emerge, if"
-einfo "you just want to emerge a single specific package but have network"
-einfo "issues.  You will need to re-emerge ${PN} again without the flag to pick"
-einfo "up the security update."
-einfo
-	fi
 	local row
 	for row in "${CHKL_TIMESTAMPS[@]}" ; do
 		local atom=$(echo "${row}")
