@@ -140,7 +140,7 @@
 +  'danger@13.0.10>js-yaml': '@NODE_JS_YAML_4_PV@'
 +  'danger@13.0.10>jws': '@NODE_JWS_3_PV@'
 +  'danger@13.0.10>qs': '@NODE_QS_PV@'
-+  'danger@13.0.10>undici': '@NODE_UNDICI_PV@'
++  'danger@13.0.10>undici': '@NODE_UNDICI_6_PV@'
 +  'dmg-builder': '@NODE_DMG_BUILDER_PV@'
 +  'fabric': '4.6.0'
 +  'electron': '@NODE_24_ELECTRON_PV@'

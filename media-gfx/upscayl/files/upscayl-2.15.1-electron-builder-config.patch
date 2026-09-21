@@ -1,0 +1,10 @@
+--- a/package.json.orig	2024-12-25 08:05:21.000000000 -0800
++++ b/package.json	2026-09-20 10:11:05.173171654 -0700
+@@ -180,7 +180,6 @@
+       "icon": "resources/icons/"
+     },
+     "win": {
+-      "publisherName": "Upscayl Team",
+       "target": [
+         "nsis",
+         "zip"

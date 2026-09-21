@@ -705,7 +705,7 @@ _electron-app_gen_electron_uris_prod() {
 				https://github.com/electron/electron/releases/download/v${ELECTRON_APP_ELECTRON_PV}/electron-v${ELECTRON_APP_ELECTRON_PV}-darwin-arm64.zip
 			)
 		)
-		https://github.com/electron/electron/releases/download/v${ELECTRON_APP_ELECTRON_PV}/SHASUMS256.txt -> SHASUMS256.txt.${ELECTRON_APP_ELECTRON_PV}
+		https://github.com/electron/electron/releases/download/v${ELECTRON_APP_ELECTRON_PV}/SHASUMS256.txt -> electron-SHASUMS256.txt.${ELECTRON_APP_ELECTRON_PV}
 	"
 }
 

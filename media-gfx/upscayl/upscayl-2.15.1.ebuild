@@ -4,6 +4,11 @@
 
 EAPI=8
 
+# FIXME:
+# ⨯ Invalid configuration object. electron-builder 26.16.1 has been initialized using a configuration object that does not match the API schema.
+# - configuration.win should be one of these:
+#   null
+
 # Upstream uses U 18.04.6 for CI
 
 # For Cr version correspondance, see https://releases.electronjs.org/releases.json for version details.
@@ -23,13 +28,18 @@ ELECTRON_APP_MODE="npm"
 ELECTRON_APP_REACT_PV="ignore"
 NODE_ENV="development"
 NODE_SLOT="24" # Same as Electron 42.4.1
-ELECTRON_BUILDER_PV="24.13.3" # Pinned required.  Error:  ⨯ Invalid configuration object. electron-builder 26.15.7 has been initialized using a configuration object that does not match the API schema.
+
+# 24.13.3 works
+# 26.16.1 works with patch
+ELECTRON_BUILDER_PV="26.16.1"
 
 inherit secure-version secure-version-node
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="${NODE_24_ELECTRON_PV}"
+	# Tested working for Electron 39.8.10, Node 22.22.1, Chromium 142.0.7444.265
+	# The Electron 44 will show the UI but break when loading requested image to upscale.
+	ELECTRON_APP_ELECTRON_PV="${NODE_22_ELECTRON_PV}" # Breaks with Electron 44.4.3, Node 24.21.0, Chromium 152.0.7977.130
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="27.3.10" # Cr 118.0.5993.159, node 18.17.1
@@ -131,7 +141,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 	custom-models firejail
-	ebuild_revision_31
+	ebuild_revision_32
 "
 RDEPEND+="
 	>=media-libs/vulkan-loader-${VULKAN_PV}:=
@@ -158,11 +168,18 @@ pkg_setup() {
 	npm_pkg_setup
 }
 
+npm_unpack_post() {
+	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+		eapply "${FILESDIR}/${PN}-2.15.1-electron-builder-config.patch"
+	fi
+}
+
 npm_update_lock_audit_post() {
+
 	# --prefer-offline is broken
 	enpm install -D "electron@${ELECTRON_APP_ELECTRON_PV}"
 
-	enpm audit fix --force
+	# Audit already performed
 einfo "QA:  Manually remove node_modules/next/node_modules/postcss from package-lock.json"
 
 	# Required pinned versions
@@ -170,6 +187,18 @@ einfo "QA:  Manually remove node_modules/next/node_modules/postcss from package-
 	pkgs=(
 		"electron-builder@^${ELECTRON_BUILDER_PV}"
 		"next@^15.5.19"
+	)
+	enpm install -D "${pkgs[@]}" "${NPM_INSTALL_ARGS[@]}"
+
+	# Vulnerability fixes
+	# The stuff that audit fix --force missed.
+	pkgs=(
+		"undici@^${NODE_UNDICI_7_PV}"
+	)
+	enpm install -P "${pkgs[@]}" "${NPM_INSTALL_ARGS[@]}"
+	pkgs=(
+		"postcss@^${NODE_POSTCSS_PV}"
+		"tar@^${NODE_TAR_PV}"
 	)
 	enpm install -D "${pkgs[@]}" "${NPM_INSTALL_ARGS[@]}"
 }
@@ -204,21 +233,19 @@ src_install() {
 	# Generated from:
 	# find "${S}/dist" -executable -type f | cut -f 11- -d "/" | sort
 	local L=(
-		"chrome-sandbox"
-		"chrome_crashpad_handler"
-		"libEGL.so"
-		"libGLESv2.so"
 		"libffmpeg.so"
 		"libvk_swiftshader.so"
 		"libvulkan.so.1"
 		"resources/bin/upscayl-bin"
+		"chrome-sandbox"
+		"chrome_crashpad_handler"
 		"upscayl"
 	)
 	local f
 	for f in "${L[@]}" ; do
 		fperms 0755 "${NPM_INSTALL_PATH}/${f}"
 	done
-#	lcnr_install_files
+	lcnr_install_files
 
 	electron-app_set_sandbox_suid "/opt/upscayl/chrome-sandbox"
 }

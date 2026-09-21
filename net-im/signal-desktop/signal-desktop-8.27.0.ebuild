@@ -285,7 +285,7 @@ einfo "DEBUG:  Called pnpm_unpack_post()"
 		sed -i -e "s|@NODE_SVGO_4_PV@|${NODE_SVGO_4_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_TAR_PV@|${NODE_TAR_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_QS_PV@|${NODE_QS_PV}|g" "${S}/pnpm-workspace.yaml" || die
-		sed -i -e "s|@NODE_UNDICI_PV@|${NODE_UNDICI_PV}|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_UNDICI_6_PV@|${NODE_UNDICI_6_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_UUID_13_PV@|${NODE_UUID_13_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_VITE_6_PV@|${NODE_VITE_6_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_WEBPACK_5_PV@|${NODE_WEBPACK_5_PV}|g" "${S}/pnpm-workspace.yaml" || die
