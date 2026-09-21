@@ -37,7 +37,7 @@ fi
 SLOT="0"
 IUSE+="
 +ap broadcom-sta dbus eap-sim eapol-test +fils gui macsec +mbo +mesh p2p privsep readline selinux smartcard tkip uncommon-eap-types wep wps
-ebuild_revision_1
+ebuild_revision_3
 "
 
 # CONFIG_PRIVSEP=y does not have sufficient support for the new driver
@@ -154,7 +154,10 @@ src_prepare() {
 
 src_configure() {
 	chkl_check_many_timestamps
-	cflags-hardened_append
+
+	# Currently disabled till the issue is isolated
+	#cflags-hardened_append
+
 	# Toolchain setup
 	tc-export CC PKG_CONFIG
 

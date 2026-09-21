@@ -30,7 +30,10 @@ HOMEPAGE="https://git.kernel.org/pub/scm/network/wireless/iwd.git/"
 
 LICENSE="GPL-2"
 SLOT="0"
-IUSE="+client cpu_flags_x86_aes cpu_flags_x86_ssse3 +monitor ofono selinux standalone systemd wired"
+IUSE="
++client cpu_flags_x86_aes cpu_flags_x86_ssse3 +monitor ofono selinux standalone systemd wired
+ebuild_revision_1
+"
 
 DEPEND="
 	>=sys-apps/dbus-${DBUS_PV}:=
@@ -125,7 +128,10 @@ src_prepare() {
 
 src_configure() {
 	chkl_check_many_timestamps
-	cflags-hardened_append
+
+	# Currently disabled till the issue is isolated
+	#cflags-hardened_append
+
 	append-cflags "-fsigned-char"
 	local myeconfargs=(
 		--sysconfdir="${EPREFIX}"/etc/iwd --localstatedir="${EPREFIX}"/var

@@ -23,7 +23,10 @@ fi
 LICENSE="LGPL-2.1+"
 SLOT="0"
 
-IUSE="pie test"
+IUSE="
+pie test
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 DEPEND="test? ( >=sys-apps/dbus-${DBUS_PV}:= )"
@@ -47,7 +50,10 @@ src_prepare() {
 
 src_configure() {
 	chkl_check_many_timestamps
-	cflags-hardened_append
+
+	# Currently disabled till the issue is isolated.
+	#cflags-hardened_append
+
 	append-cflags "-fsigned-char" #662694
 	local myeconfargs=(
 		$(use_enable pie)
