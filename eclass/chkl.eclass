@@ -125,6 +125,12 @@ eerror
 # }
 #
 chkl_check_many_timestamps() {
+einfo
+einfo "Add EVCS_OFFLINE=1 before using emerge, if you just want to"
+einfo "emerge a single specific package but have network issues.  You"
+einfo "will need to re-emerge ${PN} again without the flag"
+einfo "to pick up the security update."
+einfo
 	local row
 	for row in "${CHKL_TIMESTAMPS[@]}" ; do
 		local atom=$(echo "${row}")
@@ -132,7 +138,7 @@ chkl_check_many_timestamps() {
 	done
 }
 
-# @FUNCTION: chkl_check_many_stable
+# @FUNCTION: chkl_check_one_live_ban
 # @DESCRIPTION:
 # Verify one package for stable
 #
@@ -153,7 +159,7 @@ eerror "or set CHKL_NONFATAL=1 per-package or as an environment-variable."
 	fi
 }
 
-# @FUNCTION: chkl_check_many_stable
+# @FUNCTION: chkl_check_many_live_bans
 # @DESCRIPTION:
 # Verify many packages for stable
 #
