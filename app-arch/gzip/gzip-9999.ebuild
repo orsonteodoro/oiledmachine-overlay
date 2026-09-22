@@ -13,7 +13,7 @@ DESCRIPTION="Standard GNU compressor"
 HOMEPAGE="https://www.gnu.org/software/gzip/"
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="3a74eb1c4b6ec09e03461a9a2063da9d8f0c1f98"
+	FALLBACK_COMMIT="b4ed8e73401968bcad749afb0e636dd3ec205ca7"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://https.git.savannah.gnu.org/git/gzip.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -34,7 +34,10 @@ SLOT="0"
 if [[ ${PV} != *_p* ]] ; then
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
 fi
-IUSE+=" doc pic static"
+IUSE+="
+doc pic static
+ebuild_revision_1
+"
 
 BDEPEND="verify-sig? ( sec-keys/openpgp-keys-gzip )"
 RDEPEND="!app-arch/pigz[symlink(-)]"
