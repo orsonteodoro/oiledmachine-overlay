@@ -22,7 +22,7 @@ _SECURE_VERSION_NODE_ECLASS=1
 # Use NODE_ for version agnostic
 
 # This timestamp was generated from `date +%s`.
-SECURE_VERSION_NODE_UPDATE=1790090697
+SECURE_VERSION_NODE_ECLASS_UPDATE=1790090697
 
 # Version sensitive to Node slot
 NODE_24_ELECTRON_PV=${NODE_24_ELECTRON_PV:-"44.4.3"} # Node 24.21.0, Chromium 152.0.7977.130
@@ -139,5 +139,18 @@ NODE_VITEST_5_PV=${NODE_VITEST_5_PV:-"5.0.1"}
 NODE_VITEST_4_PV=${NODE_VITEST_4_PV:-"4.1.11"}
 NODE_VITEST_3_PV=${NODE_VITEST_3_PV:-"3.2.7"}
 NODE_WEBPACK_5_PV=${NODE_WEBPACK_5_PV:-"5.111.1"}
+
+# QA check
+secure-version-node_check_update() {
+	if [[ -z "${SECURE_VERSION_NODE_EBUILD_UPDATE}" ]] ; then
+ewarn "QA:  Missing SECURE_VERSION_NODE_EBUILD_UPDATE for lockfile verification"
+	else
+		if (( ${SECURE_VERSION_NODE_ECLASS_UPDATE} > ${SECURE_VERSION_NODE_EBUILD_UPDATE} )) ; then
+ewarn "QA:  Old lockfile detected.  Update the lockfile to avoid unpack/compile time issues."
+ewarn "secure-version-node eclass timestamp:  "$(date --date=@${SECURE_VERSION_NODE_ECLASS_UPDATE})
+ewarn "secure-version-node ebuild timestamp:  "$(date --date=@${SECURE_VERSION_NODE_EBUILD_UPDATE})
+		fi
+	fi
+}
 
 fi
