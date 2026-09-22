@@ -1065,7 +1065,7 @@ PDEPEND+="
 # Does pre-emerge checks and warnings
 ot-kernel_pkg_setup_cb() {
 ewarn
-ewarn "Upstream security update delay from live:  ~2 days"
+ewarn "Upstream security update delay from live:  0-6 days"
 ewarn "Release quality:  Production ready"
 ewarn
 	if [[ "${PV}" =~ "9999" ]] ; then

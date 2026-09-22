@@ -1053,7 +1053,7 @@ fi
 # Does pre-emerge checks and warnings
 ot-kernel_pkg_setup_cb() {
 ewarn
-ewarn "Upstream security update delay from live:  ~11 days"
+ewarn "Upstream security update delay from live:  7-11 days"
 ewarn "Release quality:  For recovery purposes only.  Use >= 6.18 series for production."
 ewarn
 ewarn "[1] Missing some Transient execution CPU mitigations against information disclosure.  Newer CPUs should try >= 6.10 instead."

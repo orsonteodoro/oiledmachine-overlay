@@ -9,14 +9,14 @@ EAPI=8
 # See also https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/
 
 GENPATCHES_FALLBACK_COMMIT="d4fa92430e875432c3a61bb3abd9b6e68ea9fcbd" # 2026-06-04 18:26:32 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="17e7b8eacf4cac800a4fc89a28729df72a2dabda" # 2026-09-18 13:44:59 -0700 @ Merge tag 'cifs-fixes-7.3-rc4'
+LINUX_SOURCES_FALLBACK_COMMIT="f0100363d8c374bd8e9ea7c9ba02744f0b802ca4" # 2026-09-21 08:22:53 -0700 @ Merge tag 'xfs-fixes-7.3-rc5'
 RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
 # https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=7.2
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
-EBUILD_REV="ebuild_revision_47"
+EBUILD_REV="ebuild_revision_48"
 GENPATCHES_VER="9999" # can be live only when 9999
 PATCH_PROJC_VER="7.1-r0"
 PATCH_RT_VER="7.2-rt5"

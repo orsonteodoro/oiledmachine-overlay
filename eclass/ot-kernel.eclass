@@ -455,7 +455,7 @@ UKSM_FN="uksm-${KV_MAJOR_MINOR}.patch"
 UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
 
 MITIGATION_DATE="Sep 18, 2026" # Advisory date
-MITIGATION_LAST_UPDATE=1789386071 # From `date --date="Mon Sep 14, 2026 13:41:11 +0200" +%s` from changelog for latest tag from either mainline, stable, or longterm
+MITIGATION_LAST_UPDATE=1789996140 # From `date --date="Mon Sep 21, 2026 15:09:00 +0200" +%s` from changelog for latest tag from either mainline, stable, or longterm
 MITIGATION_URI="https://lore.kernel.org/linux-cve-announce/"
 VULNERABILITIES_FIXED=(
 # High and critical are noted and only those that are fixed on this release day
@@ -5695,7 +5695,7 @@ apply_all_patchsets() {
 	ot-kernel_apply_kcmdline_for_sanitizers
 	ot-kernel_apply_noturbo
 	ot-kernel_apply_fixes
-	ot-kernel_apply_rtw88_fixes
+	#ot-kernel_apply_rtw88_fixes
 
 	if [[ "${PV}" =~ "9999" ]] ; then
 		# Disable + suffix
