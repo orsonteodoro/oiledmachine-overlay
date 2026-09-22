@@ -25,6 +25,7 @@ RUST_MAX_VER="1.93.1" # Inclusive
 RUST_MIN_VER="1.93.1" # llvm-21.1, required by @swc/core
 RUST_PV="${RUST_MIN_VER}"
 ELECTRON_BUILDER_PV="26.15.7" # 24.13.3 used upstream.  Old pinned version required
+SECURE_VERSION_NODE_EBUILD_UPDATE=1790090697
 
 inherit secure-version secure-version-node
 
@@ -147,6 +148,7 @@ pkg_setup() {
 		rust_prepend_path "${RUST_PV}" "source"
 	fi
 	node-sharp_pkg_setup
+	secure-version-node_check_update
 }
 
 npm_unpack_post() {
@@ -188,7 +190,21 @@ ewarn "QA:  Remove node_modules/vite/node_modules/esbuild and @esbuild/* <0.25.1
 
 		# Required pinned dependencies
 		L=(
-			"electron-builder@^${ELECTRON_BUILDER_PV}"
+			"electron-builder@${ELECTRON_BUILDER_PV}"
+		)
+		enpm install "${L[@]}" -D "${NPM_INSTALL_ARGS[@]}"
+
+		# Security fixes
+		L=(
+			"brace-expansion@^${NODE_BRACE_EXPANSION_2_PV}"
+			"file-type@^${NODE_FILE_TYPE_22_PV}"
+			"tar@^${NODE_TAR_PV}"
+			"undici@^${NODE_UNDICI_7_PV}"
+			"uuid@^${NODE_UUID_11_PV}"
+		)
+		enpm install "${L[@]}" -P "${NPM_INSTALL_ARGS[@]}"
+		L=(
+			"minimatch@^${NODE_MINIMATCH_9_PV}"
 		)
 		enpm install "${L[@]}" -D "${NPM_INSTALL_ARGS[@]}"
 
@@ -256,6 +272,7 @@ pkg_postinst() {
 ewarn "The ollama service must be started from init system in order to list models."
 }
 
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (with bugs) 1.0.0_beta12 (20260922 with electron 44.4.1)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (with bugs) 1.0.0_beta12 (20260917 with electron 44.4.1)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (with bugs) 1.0.0_beta12 (20260728 with electron 43.2.0)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.0_beta12 (20260422 with electron 41.2.2)
