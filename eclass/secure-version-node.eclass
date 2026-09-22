@@ -21,11 +21,15 @@ _SECURE_VERSION_NODE_ECLASS=1
 # Use NODE_<SLOT>_ for multislot version sensitive (See engines.node)
 # Use NODE_ for version agnostic
 
-# Simply put, if this Unix timestamp is newer and it references this eclass, the package needs an update.
-# Last update:  1790088733
+# Simply put, if this Unix timestamp is newer and the package references this
+# eclass, the package needs an update.  Make sure you add a
+# `# secure-version-node@timestamp:  <UNIX_TIMESTAMP>` field in the ebuild.
+# For example, `# secure-version-node@timestamp:  1790090697`.
+
+# This timestamp was generated from `date +%s`.
+# Last update:  1790090697
 
 # Version sensitive to Node slot
-NODE_24_GRPC_GRPC_JS_PV=${NODE_24_GRPC_GRPC_JS_PV:-"1.9.16"} # typescript@^5.1.x uses @types/node@20
 NODE_24_ELECTRON_PV=${NODE_24_ELECTRON_PV:-"44.4.3"} # Node 24.21.0, Chromium 152.0.7977.130
 NODE_22_ELECTRON_PV=${NODE_22_ELECTRON_PV:-"39.8.10"} # Node 22.22.1, Chromium 142.0.7444.265
 NODE_FILE_TYPE_22_PV=${NODE_FILE_TYPE_22_PV:-"22.1.1"} # For Node >= 22
